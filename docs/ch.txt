@@ -1,6 +1,6 @@
 /**
  * @mainpage ChibiOS/RT
- * @author Giovanni Di Sirio (gdisirio@chibios.sourceforge.net).
+ * @author Giovanni Di Sirio (gdisirio@users.sourceforge.net).
  * @section Chibi Chibi ?
  * It is the Japanese word for small as in small child. So ChibiOS/RT
  * \htmlonly (<span class="t_nihongo_kanji" xml:lang="ja" lang="ja">&#12385;&#12403;</span>OS/RT) \endhtmlonly
