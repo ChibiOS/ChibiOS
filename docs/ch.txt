@@ -1,0 +1,258 @@
+/**
+ * @mainpage ChibiOS/RT
+ * @author Giovanni Di Sirio (gdisirio@chibios.sourceforge.net).
+ * @section Chibi Chibi ?
+ * It is the Japanese word for small as in small child. So ChibiOS/RT
+ * \htmlonly (<span class="t_nihongo_kanji" xml:lang="ja" lang="ja">&#12385;&#12403;</span>OS/RT) \endhtmlonly
+ * means small Real Time Operating System.
+ * Source <a href="http://en.wikipedia.org/wiki/Chibi" target="_blank">Wikipedia</a>.
+ * @section ch_features Features
+ * <ul>
+ * <li>Free software, GPL3 licensed.</li>
+ * <li>Designed for realtime applications.</li>
+ * <li>Easily portable.</li>
+ * <li>Mixed programming model:</li>
+ *   <ul>
+ *   <li>Synchronous, using semaphores and/or messages.</li>
+ *   <li>Asynchronous, using event sources.</li>
+ *   <li>Mix of the above models, multiple threads listening to multiple event
+ *       sources while serving message queues.</li>
+ *   </ul>
+ * <li>PC simulator target included, the development can be done on the PC
+ *     using MinGW or VS.
+ *     Timers, I/O channels and other HW resources are simulated in a
+ *     Win32 process and the application code does not need to be aware of it.
+ *     MinGW and VS demos available and ready to go, use them as templates for
+ *     your application.</li>
+ * <li>Unlimited number of threads.</li>
+ * <li>Unlimited number of virtual timers.</li>
+ * <li>Unlimited number of semaphores.</li>
+ * <li>Unlimited number of event sources.</li>
+ * <li>Unlimited number of messages in queue.</li>
+ * <li>Unlimited number of I/O queues.</li>
+ * <li>No static setup at compile time, there is no need to configure a maximum
+ *     number of all the above resources.</li>
+ * <li>No *need* for a memory allocator, all the kernel structures are static
+ *     and declaratively allocated. A memory allocator can be used in your
+ *     application but it is not required by the ChibiOS/RT itself.</li>
+ * <li>Threads, Semaphores, Event Sources, Virtual Timers creation/deletion at
+ *     runtime.</li>
+ * <li>Blocking and non blocking I/O channels with timeout and events generation
+ *     capability.</li>
+ * <li>Pre-emptive scheduling.</li>
+ * <li>Minimal system requirements: about 8KiB ROM with all options enabled and
+ *     speed optimizations on. The size can shrink under 2KiB by disabling the
+ *     the unused subsystems and optimizing for size.</li>
+ * <li>Small memory footprint, unused subsystems can be excluded by the
+ *     memory image.</li>
+ * <li>Almost totally written in C with little ASM code required for ports.</li>
+ * </ul>
+ */
+
+/**
+ * @defgroup Kernel Kernel
+ * @{
+ */
+/** @} */
+
+/**
+ * @defgroup Config Configuration
+ * @{
+ * In \p chconf.h are defined the required subsystems for your application.
+ * @ingroup Kernel
+ * @file chconf.h ChibiOS/RT configuration file.
+ */
+/** @} */
+
+/**
+ * @defgroup Core Core
+ * @{
+ * Non portable code.
+ * @ingroup Kernel
+ * @file chcore.c Non portable code.
+ */
+/** @} */
+
+/**
+ * @defgroup Initialization Initialization
+ * @{
+ * Initialization APIs and procedures.
+ * @ingroup Kernel
+ * @file ch.h ChibiOS/RT main include file, it includes everything else.
+ * @file chinit.c ChibiOS/RT Initialization code.
+ */
+/** @} */
+
+/**
+ * @defgroup Scheduler Scheduler
+ * @{
+ * ChibiOS/RT scheduler.
+ * @ingroup Kernel
+ * @file chschd.c Scheduler code.
+ * @file scheduler.h Scheduler macros and structures.
+ */
+/** @} */
+
+/**
+ * @defgroup Threads Threads
+ * @{
+ * Threads creation and termination APIs.
+ * @file threads.h Threads structures, macros and functions.
+ * @file chthreads.c Threads code.
+ */
+/** @} */
+
+/**
+ * @defgroup VirtualTimers Virtual Timers
+ * @{
+ * Virtual Timers APIs.
+ * In order to use the Virtual Timers the \p CH_USE_VIRTUAL_TIMERS option
+ * must be specified in \p chconf.h.
+ * @file src/chdelta.c Virtual Timers code.
+ * @file delta.h Virtual Timers macros and structures.
+ */
+/** @} */
+
+/**
+ * @defgroup Time Time
+ * @{
+ * Time related APIs.
+ * In order to use the Time APIs the \p CH_USE_SLEEP
+ * option must be specified in \p chconf.h.
+ * @file include/sleep.h Time macros and structures.
+ * @file chsleep.c Time functions.
+ */
+/** @} */
+
+/**
+ * @defgroup Semaphores Semaphores
+ * @{
+ * Semaphores and threads synchronization.
+ * <b>Operation mode</b><br><br>
+ * A semaphore is a threads synchronization object, some operations
+ * are defined on semaphores:<br>
+ * <ul>
+ * <li><b>Signal</b>: The semaphore counter is increased and if the result
+ *     is non-positive then a waiting thread is removed from the semaphore
+ *     queue and made ready for execution.</li>
+ * <li><b>Wait</b>: The semaphore counter is decreased and if the result
+ *     becomes negative the thread is queued in the semaphore and suspended.
+ *     </li>
+ * <li><b>Reset</b>: The semaphore counter is reset to a non-negative value
+ *     and all the threads in the queue are released.</li>
+ * </ul>
+ * Semaphores are mainly used as guards for mutual exclusion code zones but
+ * also have other uses, queues guards and counters as example.<br>
+ * In order to use the Semaphores APIs the \p CH_USE_SEMAPHORES
+ * option must be specified in \p chconf.h.<br><br>
+ * <b>Realtime Semaphores</b><br><br>
+ * The RT Semaphores work exactly like normal semaphores except that the
+ * thread gaining access to a mutex zone receives a priority boost, the
+ * priority is increased by \p MEPRIO and becomes higher than any thread that
+ * does not have the boost, note that all the boosted threads still keep their
+ * relative priorities.<br>
+ * Another difference is that the threads are queued by priority when trying
+ * to acquire RT semaphores, normal semaphores use a FIFO strategy.<br>
+ * The reason of this mechanism is to make the threads leave very critical
+ * guarded zones in a predictable time. Use this mechanism if your application
+ * has very strong realtime requirements.<br>
+ * In order to use the RT Semaphores APIs the \p CH_USE_RT_SEMAPHORES
+ * option must be specified in \p chconf.h.<br>
+ * This mechanism is <b>experimental</b>.
+ * @file semaphores.h Semaphores macros and structures.
+ * @file chsem.c Semaphores code.
+ */
+/** @} */
+
+/**
+ * @defgroup Events Events
+ * @{
+ * Event Sources and Event Listeners.<br>
+ * <b>Operation mode</b><br><br>
+ * An Event Source is a special object that can be signaled by a thread or
+ * an interrupt service routine. Signaling an Event Source has the effect
+ * that all the threads registered on the Event Source will receive
+ * and serve the event.<br>
+ * An unlimited number of Event Sources can exists in a system and each
+ * thread can listen on an unlimited number of them.<br>
+ * Note that the events can be asynchronously generated but are synchronously
+ * served, a thread can serve event by calling the \p chEvtWait()
+ * API. If an event is generated while a listening thread is not ready to
+ * serve it then the event becomes "pending" and will be served as soon the
+ * thread invokes the \p chEvtWait().<br>
+ * In order to use the Event APIs the \p CH_USE_EVENTS option must be
+ * specified in \p chconf.h.
+ * @file events.h Events macros and structures.
+ * @file chevents.c Events functions.
+ */
+/** @} */
+
+/**
+ * @defgroup Messages Messages
+ * @{
+ * Synchronous Messages.<br>
+ * <b>Operation Mode</b><br><br>
+ * Messages are an easy to use and fast IPC mechanism, threads can both serve
+ * messages and send messages to other threads, the mechanism allows data to
+ * be carryed in both directions. Data is not copyed between the client and
+ * server threads but just a pointer passed so the exchange is very time
+ * efficient.<br>
+ * Messages are always processed in FIFO order.<br>
+ * Threads do not need to allocate space for message queues, the mechanism
+ * just requires two extra pointers in the \p Thread structure (the message
+ * queue header).<br>
+ * In order to use the Messages APIs the \p CH_USE_MESSAGES option must be
+ * specified in \p chconf.h.
+ * @file messages.h	Messages macros and structures.
+ * @file chmsg.c Messages functions.
+ */
+/** @} */
+
+/**
+ * @defgroup IOQueues I/O Queues
+ * @{
+ * ChibiOS/RT supports several kinds of queues. The queues are mostly used
+ * in serial-like device drivers. The device drivers are usually designed to
+ * have a lower side (lower driver, it is usually an interrupt service
+ * routine) and an upper side (upper driver, accessed by the application
+ * threads).<br>
+ * There are several kind of queues:<br>
+ * <ul>
+ * <li><b>Input queue</b>, monodirectional queue where the writer is the
+ *     lower side and the reader is the upper side.</li>
+ * <li><b>Output queue</b>, monodirectional queue where the writer is the
+ *     upper side and the reader is the lower side.</li>
+ * <li><b>Half duplex queue</b>, bidirectional queue where the buffer is shared
+ *     between a receive and a transmit queues. This means that concurrent
+ *     buffered input and output operations are not possible, this is perfectly
+ *     acceptable for a lot of applications however, as example an RS485 driver.
+ * <li><b>Full duplex queue</b>, bidirectional queue where read and write
+ *     operations can happen at the same time. Full duplex queues
+ *     are implemented by pairing an input queue and an output queue together.
+ * </ul>
+ * In order to use the I/O queues the \p CH_USE_QUEUES option must
+ * be specified in \p chconf.h.<br>
+ * In order to use the half duplex queues the \p CH_USE_QUEUES_HALFDUPLEX
+ * option must be specified in \p chconf.h.
+ * @file queues.h I/O Queues macros and structures.
+ * @file chqueues.c I/O Queues code.
+ */
+/** @} */
+
+/**
+ * @defgroup Serial Serial Drivers
+ * @{
+ * This module implements a generic full duplex serial driver and a generic
+ * half duplex serial driver. It uses the I/O Queues for communication between
+ * the upper and the lower driver and events to notify the application about
+ * incoming data, outcoming data and other I/O events.
+ * The  module also contains functions that make the implementation of the
+ * interrupt service routines much easier.<br>
+ * In order to use the serial full duplex driver the
+ * \p CH_USE_SERIAL_FULLDUPLEX option must be specified in \p chconf.h.<br>
+ * In order to use the serial half duplex driver the
+ * \p CH_USE_SERIAL_HALFDUPLEX option must be specified in \p chconf.h.
+ * @file serial.h Serial Drivers macros and structures.
+ * @file chserial.c Serial Drivers code.
+ */
+/** @} */
