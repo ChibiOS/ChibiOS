@@ -130,8 +130,7 @@ t_msg chMsgSendTimeout(Thread *tp, t_msg msg, t_time time) {
  *         message associated to the thread on the top of the messages queue.
  * @note You can assume that the data contained in the message is stable until
  *       you invoke \p chMsgRelease() because the sending thread is
- *       suspended until then. Always remember that the message data is not
- *       copied between the sender and the receiver, just a pointer is passed.
+ *       suspended until then.
  */
 t_msg chMsgWait(void) {
   t_msg msg;
