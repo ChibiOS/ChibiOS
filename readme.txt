@@ -1,4 +1,6 @@
-Directories structure:
+*****************************************************************************
+*** Directories structure                                                 ***
+*****************************************************************************
 
 ./readme.txt        - This file.
 ./license.txt       - GPL3 license file.
@@ -23,3 +25,14 @@ LPC214x-GCC         - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
                       for any processor into the LPC2000 family or other
                       boards. The demo can be compiled using YAGARTO or any
                       other GCC-based ARM toolchain.
+
+*****************************************************************************
+*** Releases                                                              ***
+*****************************************************************************
+
+*** 0.1.1 ***
+- Some fixes into the documentation
+- Renamed makefiles to Makefiles, upper case M.
+
+*** 0.1.0 ***
+- First alpha release
