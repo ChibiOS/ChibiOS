@@ -32,6 +32,8 @@ LPC214x-GCC         - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
 
 *** 0.2.0 ***
 - Introduced support for ARM in thumb mode.
+- Optimized context switching when thumb-interworking is not required, one
+  less instruction.
 - Minor fixes to the ARM demo.
 
 *** 0.1.1 ***
