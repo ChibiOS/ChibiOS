@@ -55,21 +55,41 @@ DefIrqHandler:
 FiqHandler:
         b       FiqHandler
 
+#ifdef THUMB_INTERWORK
+.globl chSysLock
+chSysLock:
+    msr     CPSR_c, #0x9F
+    bx      lr
+
+.globl chSysUnlock
+chSysUnlock:
+    msr     CPSR_c, #0x1F
+    bx      lr
+#endif
+
 .globl chSysSwitchI
 chSysSwitchI:
-#ifdef MK_CURRP_REGISTER_CACHE
+#ifdef CH_CURRP_REGISTER_CACHE
     stmfd   sp!, {r4, r5, r6, r8, r9, r10, r11, lr}
     str     sp, [r0, #0]
     ldr     sp, [r1, #0]
+#ifdef THUMB_INTERWORK
     ldmfd   sp!, {r4, r5, r6, r8, r9, r10, r11, lr}
-    bx          lr
+    bx      lr
+#else
+    ldmfd   sp!, {r4, r5, r6, r8, r9, r10, r11, pc}
+#endif
 #else
     stmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
     str     sp, [r0, #0]
     ldr     sp, [r1, #0]
+#ifdef THUMB_INTERWORK
     ldmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
-    bx          lr
+    bx      lr
+#else
+    ldmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, pc}
 #endif
+#endif /* CH_CURRP_REGISTER_CACHE */
 
 /*
  * System stack frame structure after a context switch in the

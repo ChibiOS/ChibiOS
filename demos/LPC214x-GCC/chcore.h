@@ -76,9 +76,13 @@ typedef struct {
 }
 #endif
 
+#ifdef THUMB
+extern void chSysLock(void);
+extern void chSysUnlock(void);
+#else /* !THUMB */
 #define chSysLock() asm("msr     CPSR_c, #0x9F")
-
 #define chSysUnlock() asm("msr     CPSR_c, #0x1F")
+#endif /* THUMB */
 
 #define INT_REQUIRED_STACK 0x40  // Must include registers and stack frames.
 

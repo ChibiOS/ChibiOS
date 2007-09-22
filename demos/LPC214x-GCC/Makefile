@@ -61,15 +61,20 @@ UDEFS =
 # Define ASM defines here
 UADEFS =
 
-# List C source files here
-SRC  = chcore.c buzzer.c main.c \
+# List ARM-mode C source files here
+ASRC = chcore.c main.c buzzer.c \
        ../../ports/ARM7-LPC214x/GCC/lpc214x_serial.c  \
        ../../src/chinit.c ../../src/chdelta.c ../../src/chschd.c ../../src/chthreads.c \
        ../../src/chsem.c ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c \
        ../../src/chqueues.c ../../src/chserial.c
 
+# List THUMB-mode C sources here
+# NOTE: If any module is compiled in thumb mode then -mthumb-interwork is
+#       enabled for all modules and that lowers performance.
+TSRC =
+
 # List ASM source files here
-ASRC = crt0.s chcore2.s
+ASMSRC = crt0.s chcore2.s
 
 # List all user directories here
 UINCDIR = ../../src/include ../../ports/ARM7-LPC214x/GCC
@@ -80,12 +85,18 @@ ULIBDIR =
 # List all user libraries here
 ULIBS =
 
-# Define optimisation level here
-# NOTE: -mthumb-interwork increases the code size, remove it if you don't really need it.
+# ARM-specific options here
+AOPT =
+
+# THUMB-specific options here
+TOPT = -mthumb -D THUMB
+
+# Common options here
+# NOTE: -mthumb-interwork increases the code size, remove it if you dont have
+#       Thumb code anywhere in the project.
 # NOTE: -ffixed-f7 is only needed if you enabled CH_CURRP_REGISTER_CACHE in chconf.h.
-#OPT = -Os -ggdb -fomit-frame-pointer -fno-strict-aliasing
-#OPT = -O0 -ggdb -fomit-frame-pointer -fno-strict-aliasing
 OPT = -O2 -ggdb -fomit-frame-pointer -fno-strict-aliasing
+#OPT += -ffixed-f7
 
 # Define warning options here
 WARN = -Wall -Wstrict-prototypes
@@ -98,33 +109,44 @@ INCDIR  = $(patsubst %,-I%,$(DINCDIR) $(UINCDIR))
 LIBDIR  = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
 DEFS    = $(DDEFS) $(UDEFS)
 ADEFS   = $(DADEFS) $(UADEFS)
-OBJS    = $(ASRC:.s=.o) $(SRC:.c=.o)
+AOBJS   = $(ASRC:.c=.o)
+TOBJS   = $(TSRC:.c=.o)
+OBJS	= $(ASMOBJS) $(AOBJS) $(TOBJS)
+ASMOBJS = $(ASMSRC:.s=.o) 
 LIBS    = $(DLIBS) $(ULIBS)
 MCFLAGS = -mcpu=$(MCU)
 
-#ASFLAGS = $(MCFLAGS) -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
 ASFLAGS = $(MCFLAGS) -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
 CPFLAGS = $(MCFLAGS) $(OPT) $(WARN) -fverbose-asm -Wa,-ahlms=$(<:.c=.lst) $(DEFS)
 LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
 ODFLAGS	= -x --syms
 
+ifneq ($(TSRC),)
+  ASFLAGS += -mthumb-interwork -D THUMB_INTERWORK
+  CPFLAGS += -mthumb-interwork -D THUMB_INTERWORK
+  LDFLAGS += -mthumb-interwork
+endif
+
 # Generate dependency information
 CPFLAGS += -MD -MP -MF .dep/$(@F).d
 
 #
-# makefile rules
+# Makefile rules
 #
 
 all: $(OBJS) $(PROJECT).elf $(PROJECT).hex $(PROJECT).bin $(PROJECT).dmp
 
-%o : %c
-	$(CC) -c $(CPFLAGS) -I . $(INCDIR) $< -o $@
+$(AOBJS) : %.o : %.c
+	$(CC) -c $(CPFLAGS) $(AOPT) -I . $(INCDIR) $< -o $@
 
-%o : %s
+$(TOBJS) : %.o : %.c
+	$(CC) -c $(CPFLAGS) $(TOPT) -I . $(INCDIR) $< -o $@
+
+$(ASMOBJS) : %.o : %.s
 	$(AS) -c $(ASFLAGS) $< -o $@
 
 %elf: $(OBJS)
-	$(CC) $(OBJS) $(LDFLAGS) $(LIBS) -o $@
+	$(CC) $(ASMOBJS) $(AOBJS) $(TOBJS) $(LDFLAGS) $(LIBS) -o $@
 
 %hex: %elf
 	$(HEX) $< $@
@@ -142,10 +164,12 @@ clean:
 	-rm -f $(PROJECT).map
 	-rm -f $(PROJECT).hex
 	-rm -f $(PROJECT).bin
-	-rm -f $(SRC:.c=.c.bak)
-	-rm -f $(SRC:.c=.lst)
-	-rm -f $(ASRC:.s=.s.bak)
-	-rm -f $(ASRC:.s=.lst)
+	-rm -f $(ASRC:.c=.c.bak)
+	-rm -f $(ASRC:.c=.lst)
+	-rm -f $(TSRC:.c=.c.bak)
+	-rm -f $(TSRC:.c=.lst)
+	-rm -f $(ASMSRC:.s=.s.bak)
+	-rm -f $(ASMSRC:.s=.lst)
 	-rm -fR .dep
 
 #

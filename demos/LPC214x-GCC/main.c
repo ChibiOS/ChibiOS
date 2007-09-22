@@ -63,7 +63,6 @@ static t_msg Thread3(void *arg) {
     if (!(IO0PIN & 0x00010000)) // Button 2
       chFDDWrite(&COM1, (BYTE8 *)"Hello World!\r\n", 14);
     chThdSleep(500);
-
   }
   return 0;
 }
@@ -71,9 +70,9 @@ static t_msg Thread3(void *arg) {
 int main(int argc, char **argv) {
 
   chSysInit();
-  chThdCreate(NORMALPRIO + 1, 0, waThread1, sizeof(waThread1), Thread1, NULL);
-  chThdCreate(NORMALPRIO + 1, 0, waThread2, sizeof(waThread2), Thread2, NULL);
-  chThdCreate(NORMALPRIO + 1, 0, waThread3, sizeof(waThread3), Thread3, NULL);
+  chThdCreate(NORMALPRIO, 0, waThread1, sizeof(waThread1), Thread1, NULL);
+  chThdCreate(NORMALPRIO, 0, waThread2, sizeof(waThread2), Thread2, NULL);
+  chThdCreate(NORMALPRIO, 0, waThread3, sizeof(waThread3), Thread3, NULL);
   chSysPause();
   return 0;
 }
