@@ -188,7 +188,17 @@ void chSchTimerHandlerI(void) {
 #endif
 
 #ifdef CH_USE_VIRTUAL_TIMERS
-  chVTDoTickI();
+  if (&dlist != (DeltaList *)dlist.dl_next) {
+    VirtualTimer *vtp;
+
+    --dlist.dl_next->vt_dtime;
+    while (!(vtp = dlist.dl_next)->vt_dtime) {
+      vtp->vt_prev->vt_next = vtp->vt_next;
+      vtp->vt_next->vt_prev = vtp->vt_prev;
+      vtp->vt_func(vtp->vt_par);
+      vtp->vt_func = 0; // Required, flags the timer as triggered.
+    }
+  }
 #endif
 }
 

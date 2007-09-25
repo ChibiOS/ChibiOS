@@ -11,10 +11,8 @@
                       under ./demos/.
 ./ports/            - Architecture/compiler specific portable files.
 ./demos/            - Demo programs for specific archtectures/boards.
-./docs/Doxifile     - Doxigen project file.
-./docs/index.html   - ChibiOS/RT documentation (after running doxigen). The
-                      documentation is also available on the project web
-                      page: http://chibios.sourceforge.net/
+./docs/doxifile     - Doxigen project file.
+./docs/index.html   - ChibiOS/RT documentation (after running doxigen).
 
 Current ports under ./demos:
 
@@ -31,15 +29,6 @@ LPC214x-GCC         - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
 *****************************************************************************
 *** Releases                                                              ***
 *****************************************************************************
-
-*** 0.2.1 ***
-- Optimizations in the RT semaphores subsystem. The support for this
-  subsystem should still be considered experimental and further changes may
-  happen in future versions.
-- Bug fix in the virtual timers handling code, now the timers can be re-armed
-  from within the callback code in order to create periodic virtual timers.
-- Modified the t_prio type in the demos to be 32bits wide instead of 16bits,
-  this results in a better code in critical sections of the kernel.
 
 *** 0.2.0 ***
 - Introduced support for ARM in thumb mode.

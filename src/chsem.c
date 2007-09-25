@@ -288,7 +288,7 @@ void chSemLowerPrioSignal(Semaphore *sp) {
   chSysLock();
 
   if (!--currp->p_rtcnt) {
-    currp->p_prio -= MEPRIO;
+    currp->p_prio = currp->p_bakprio;
     if (sp->s_cnt++ < 0)
       chSchReadyI(dequeue(sp->s_queue.p_next));
     chSchRescheduleI();
@@ -308,11 +308,14 @@ void chSemLowerPrioSignal(Semaphore *sp) {
  *       option is enabled in \p chconf.h.
  */
 void chSemRaisePrioSignalWait(Semaphore *sps, Semaphore *spw) {
+  BOOL flag;
 
   chSysLock();
 
   if (sps->s_cnt++ < 0)
-    chSchReadyI(dequeue(sps->s_queue.p_next));
+    chSchReadyI(dequeue(sps->s_queue.p_next)), flag = TRUE;
+  else
+    flag = FALSE;
 
   if (--spw->s_cnt < 0) {
     prioenq(currp, &spw->s_queue);
@@ -320,13 +323,19 @@ void chSemRaisePrioSignalWait(Semaphore *sps, Semaphore *spw) {
 
     if (!currp->p_rtcnt++)
       currp->p_prio += MEPRIO;
-  }
-  else {
-    if (!currp->p_rtcnt++)
-      currp->p_prio += MEPRIO;
 
-    chSchRescheduleI();
+    chSysUnlock();
+    return;
   }
+
+  if (!currp->p_rtcnt++) {
+    currp->p_bakprio = currp->p_prio;
+    currp->p_prio += MEPRIO;
+    flag = TRUE;
+  }
+
+  if( flag)
+    chSchRescheduleI();
 
   chSysUnlock();
 }
@@ -340,20 +349,21 @@ void chSemRaisePrioSignalWait(Semaphore *sps, Semaphore *spw) {
  *       option is enabled in \p chconf.h.
  */
 void chSemLowerPrioSignalWait(Semaphore *sps, Semaphore *spw) {
+  BOOL flag = FALSE;
 
   chSysLock();
 
   if (!--currp->p_rtcnt)
-    currp->p_prio -= MEPRIO;
+    currp->p_prio = currp->p_bakprio, flag = TRUE;
 
   if (sps->s_cnt++ < 0)
-    chSchReadyI(dequeue(sps->s_queue.p_next));
+    chSchReadyI(dequeue(sps->s_queue.p_next)), flag = TRUE;
 
   if (--spw->s_cnt < 0) {
     enqueue(currp, &spw->s_queue); // enqueue() because the spw is a normal sem.
     chSchGoSleepI(PRWTSEM);
   }
-  else
+  else if (flag)
     chSchRescheduleI();
 
   chSysUnlock();
