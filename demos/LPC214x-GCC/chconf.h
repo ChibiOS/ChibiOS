@@ -72,7 +72,7 @@
 /** Configuration option: if specified then the Semaphores APIs with priority
  *  shift are included in the kernel.
  * @note requires \p CH_USE_SEMAPHORES.*/
-//#define CH_USE_RT_SEMAPHORES
+#define CH_USE_RT_SEMAPHORES
 
 /** Configuration option: if specified then the Events APIs are included in
  *  the kernel.*/
@@ -82,7 +82,7 @@
  *  function is included in the kernel.
  * @note requires \p CH_USE_EVENTS.
  * @note requires \p CH_USE_VIRTUAL_TIMERS.*/
-//#define CH_USE_EVENTS_TIMEOUT
+#define CH_USE_EVENTS_TIMEOUT
 
 /** Configuration option: if specified then the Synchronous Messages APIs are
  *  included in the kernel.*/
@@ -92,13 +92,13 @@
  *  function is included in the kernel.
  * @note requires \p CH_USE_MESSAGES.
  * @note requires \p CH_USE_VIRTUAL_TIMERS.*/
-//#define CH_USE_MESSAGES_TIMEOUT
+#define CH_USE_MESSAGES_TIMEOUT
 
 /** Configuration option: if specified then the \p chMsgSendWithEvent()
  *  function is included in the kernel.
  * @note requires \p CH_USE_MESSAGES.
  * @note requires \p CH_USE_VIRTUAL_TIMERS.*/
-//#define CH_USE_MESSAGES_EVENT
+#define CH_USE_MESSAGES_EVENT
 
 /** Configuration option: if specified then the
  *  \p chThdGetExitEventSource() function is included in the kernel.

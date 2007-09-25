@@ -69,6 +69,20 @@ typedef struct {
 
 extern DeltaList dlist;
 
+#define chVTDoTickI() \
+  if (&dlist != (DeltaList *)dlist.dl_next) {                           \
+    VirtualTimer *vtp;                                                  \
+                                                                        \
+    --dlist.dl_next->vt_dtime;                                          \
+    while (!(vtp = dlist.dl_next)->vt_dtime) {                          \
+      t_vtfunc fn = vtp->vt_func;                                       \
+      vtp->vt_func = 0;                                                 \
+      vtp->vt_prev->vt_next = vtp->vt_next;                             \
+      vtp->vt_next->vt_prev = vtp->vt_prev;                             \
+      fn(vtp->vt_par);                                                  \
+    }                                                                   \
+  }
+
 /*
  * Virtual Timers APIs.
  */

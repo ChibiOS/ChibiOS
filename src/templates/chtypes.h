@@ -40,7 +40,7 @@
 
 typedef BYTE8       t_tmode;
 typedef BYTE8       t_tstate;
-typedef WORD16      t_prio;
+typedef LONG32      t_prio;
 typedef PTR_EQ      t_msg;
 typedef LONG32      t_eventid;
 typedef ULONG32     t_eventmask;
