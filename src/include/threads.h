@@ -80,7 +80,7 @@ struct Thread {
 #endif
   };
   /** Machine dependent processor context.*/
-  Context                       p_ctx;
+  Context           p_ctx;
   /*
    * Start of the optional fields. Note, the null thread may also let its
    * stack overwrite the following fields since it never uses semaphores,
@@ -104,9 +104,8 @@ struct Thread {
 #endif
 #ifdef CH_USE_RT_SEMAPHORES
   /** Priority backup after acquiring a RT semaphore.*/
-  t_prio            p_bakprio;
   /** RT semaphores depth counter.*/
-  WORD16            p_rtcnt;
+  int               p_rtcnt;
 #endif
 };
 

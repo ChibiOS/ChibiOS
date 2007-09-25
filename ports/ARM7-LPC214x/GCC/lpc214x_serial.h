@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _LPC2000_SERIAL_H_
-#define _LPC2000_SERIAL_H_
+#ifndef _LPC214x_SERIAL_H_
+#define _LPC214x_SERIAL_H_
 
 void InitSerial(void);
 void SetUARTI(UART *u, int speed, int lcr, int fcr);
@@ -27,4 +27,4 @@ void UART1IrqHandler(void);
 
 extern FullDuplexDriver COM1, COM2;
 
-#endif /* _LPC2000_SERIAL_H_*/
+#endif /* _LPC214x_SERIAL_H_*/

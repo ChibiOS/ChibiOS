@@ -61,7 +61,6 @@ void _InitThread(t_prio prio, t_tmode mode, Thread *tp) {
   tp->p_rdymsg = RDY_OK;
 #ifdef CH_USE_RT_SEMAPHORES
   tp->p_rtcnt = 0;
-  tp->p_bakprio = prio;
 #endif
 #ifdef CH_USE_WAITEXIT
   tp->p_waiting.p_next = (Thread *)&tp->p_waiting;
