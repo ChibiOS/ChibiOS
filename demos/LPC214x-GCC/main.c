@@ -23,7 +23,7 @@
 #include "lpc214x_serial.h"
 #include "buzzer.h"
 
-static BYTE8 waThread1[UserStackSize(16)];
+static BYTE8 waThread1[UserStackSize(32)];
 
 static t_msg Thread1(void *arg) {
 
@@ -40,7 +40,7 @@ static t_msg Thread1(void *arg) {
   return 0;
 }
 
-static BYTE8 waThread2[UserStackSize(16)];
+static BYTE8 waThread2[UserStackSize(32)];
 
 static t_msg Thread2(void *arg) {
 
@@ -53,7 +53,7 @@ static t_msg Thread2(void *arg) {
   return 0;
 }
 
-static BYTE8 waThread3[UserStackSize(16)];
+static BYTE8 waThread3[UserStackSize(32)];
 
 static t_msg Thread3(void *arg) {
 

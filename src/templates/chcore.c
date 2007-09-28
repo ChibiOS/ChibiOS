@@ -37,7 +37,7 @@
 void chSysPause(void) {}
 
 /**
- * Abonormal system termination handler. Invoked by the ChobiOS/RT when an
+ * Abonormal system termination handler. Invoked by the ChibiOS/RT when an
  * abnormal unrecoverable condition is met.
  */
 void chSysHalt(void) {}

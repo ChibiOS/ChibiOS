@@ -47,7 +47,76 @@
  *     memory image.</li>
  * <li>Almost totally written in C with little ASM code required for ports.</li>
  * </ul>
+ *
+ * ChibiOS/RT architecture:<br><br>
+ * @subpage Concepts
  */
+
+/**
+ * @page Concepts Concepts
+ * @{
+ * @section naming Naming Conventions
+ * ChibiOS/RT APIs are all named following this convention:
+ * \a ch\<group\>\<action\>\<suffix\>().
+ * The possible groups are: \a Sys, \a Sch, \a VT, \a Thd, \a Sem, \a Evt,
+ * \a Msg, \a IQ, \a OQ, \a HQ,\a FDD, \a HDD.
+ * The suffix is not present for normal APIs but can be one of
+ * the following: "I" for APIs meant to be invoked from an interrupt handler
+ * or within the system mutex zone but not from user code, "S" for APIs only
+ * useable from within the system mutex zone but not from interrupt handlers
+ * or user code. The APIs without suffix can be invoked only from the user
+ * code.<br>
+ * Examples: \p chThdCreate(), \p chSemSignalI(), \p chIQGetTimeout().
+ *
+ * @section scheduling Scheduling
+ * The strategy is very simple the currently ready thread with the highest
+ * priority is executed. If more than one thread with equal priority are
+ * eligible for execution then they are executed in a round-robin way, the
+ * CPU time slice constant is configurable. The ready list is a double linked
+ * list of threads ordered by priority.
+ * @image html readylist.png
+ * Note that the currently running thread is not in the ready list, the list
+ * only contains the threads ready to be executed but still actually waiting.
+ *
+ * @section warea Thread Working Area
+ * Each thread has its own stack, a Thread structure and a registers dump
+ * structure. All the structures are allocated into a "Thread working area",
+ * a thread private heap, usually allocated in a char array declared in your
+ * code, there is not a central threads table or list, this means you can
+ * have as many threads you want as long you have enough available RAM
+ * memory. The threads do not use any memory outside the allocated working
+ * area.<br>
+
+ * @image html workspace.png
+ * <br>
+ * Note that the registers dump is only present when the Thread is not
+ * running, the context switching is done by pushing the registers on the
+ * stack of the switched-out thread and popping the registers of the
+ * switched-in thread from its stack.
+ *
+ * @section sysmutex System Mutex Zone
+ * It is the code within the OS that cannot be preempted, this code is
+ * everything between the \p chSysLock() and \p chSysUnlock() API calls.
+ * The implementation of the APIs in most cases just enables/disables the
+ * interrupts. Of course the code in the system mutex zone must be as short
+ * and efficient possible as it affects the RT performance of the whole
+ * system. The worst case response time is affected by the longest code
+ * path in the system mutex zone or interrupt handler.
+ * @code
+ * // User code, not critical, preemption possible.
+ * chSysLock();
+ * ...
+ * // System critical code, preemption delayed.
+ * ...
+ * chSysUnlock();
+ * // User code, preemption possible again.
+ * @endcode
+ * Applications usually do not need to put code into the system mutex zone
+ * unless you are implementing device drivers or special synchronization
+ * primitives, everything else can be implemented by using semaphores,
+ * messages or events.
+ */
+/** @} */
 
 /**
  * @defgroup Kernel Kernel

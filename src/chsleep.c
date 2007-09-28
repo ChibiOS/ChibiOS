@@ -62,11 +62,11 @@ t_time chSysGetTime(void) {
  *       option is enabled in \p chconf.h.
  */
 void chThdSleepUntil(t_time time) {
-  VirtualTimer t;
+  VirtualTimer vt;
 
   chSysLock();
 
-  chVTSetI(&t, (t_time)(time - stime), (t_vtfunc)chSchReadyI, currp);
+  chVTSetI(&vt, (t_time)(time - stime), (t_vtfunc)chSchReadyI, currp);
   chSchGoSleepI(PRSLEEP);
 
   chSysUnlock();

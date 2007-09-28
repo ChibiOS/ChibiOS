@@ -182,19 +182,55 @@ static INLINE void enqueue(Thread *tp, ThreadsQueue *tqp) {
 /*
  * Threads APIs.
  */
-#define chThdSelf() currp
 Thread *chThdCreate(t_prio prio, t_tmode mode, void *workspace,
                     t_size wsize, t_tfunc pf, void *arg);
 void chThdResume(Thread *tp);
-void chThdTerminate(Thread *tp);
-BOOL chThdShouldTerminate(void);
-BOOL chThdTerminated(Thread *tp);
 void chThdExit(t_msg msg);
+
+/** Returns the pointer to the \p Thread currently in execution.*/
+#define chThdSelf() currp
+
+/** Returns the pointer to the \p Thread local storage area, if any.*/
+#define chThdLS() (void *)(currp + 1)
+
+/** Verifies if the specified thread is in the \p PREXIT state.*/
+#define chThdTerminated(tp) ((tp)->p_state == PREXIT)
+
+#ifdef CH_USE_TERMINATE
+/**
+ * Verifies if the current thread has a termination request pending.
+ */
+#define chThdShouldTerminate() (currp->p_flags & P_TERMINATE)
+
+void chThdTerminate(Thread *tp);
+#endif
+
 #ifdef CH_USE_WAITEXIT
 t_msg chThdWait(Thread *tp);
 #endif
+
 #ifdef CH_USE_EXIT_EVENT
-EventSource *chThdGetExitEventSource(Thread *tp);
+/**
+ * Returns the exit event source for the specified thread. The source is
+ * signaled when the thread terminates.
+ * @param tp the pointer to the thread
+ * @note When registering on a thread termination make sure the thread
+ *       is still alive, if you do that after the thread termination
+ *       then you would miss the event. There are two ways to ensure
+ *       this:<br>
+ *       <ul>
+ *       <li>Create the thread suspended, register on the event source
+ *           and then resume the thread (recommended).</li>
+ *       <li>Create the thread with a lower priority then register on it.
+ *           This does not work if the hardware is capable of multiple
+ *           physical threads.</li>
+ *       </ul>
+ * @note You dont need to unregister from a terminated thread because
+ *       the event source becomes inactive.
+ * @note The function is available only if the \p CH_USE_EXIT_EVENT
+ *       option is enabled in \p chconf.h.
+ */
+#define chThdGetExitEventSource(tp) (&(tp)->p_exitesource)
 #endif
 
 #endif  /* _THREADS_H_ */

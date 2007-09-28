@@ -32,6 +32,15 @@ LPC214x-GCC         - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.3.0 ***
+- ChibiOS/RT goes beta.
+- Diet for the threads code, some simple APIs become macros.
+- Thread Local Storage implemented as a single API: chThdLS().
+  The API simply returns a pointer into the thread working area, see the
+  documentation on the web site.
+- Moved some documentation and images from the web site into the Doxigen
+  generated HTMLs.
+
 *** 0.2.1 ***
 - Optimizations in the RT semaphores subsystem. The support for this
   subsystem should still be considered experimental and further changes may

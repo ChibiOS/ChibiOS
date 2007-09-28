@@ -39,7 +39,7 @@ struct stackregs {
 }
 
 /**
- * Enters the ChobiOS/RT system mutual exclusion zone, the implementation is
+ * Enters the ChibiOS/RT system mutual exclusion zone, the implementation is
  * architecture dependent, on single core systems usually this function
  * just disables the interrupts.
  * @note The code in the system mutual exclusion zone must be as light and
@@ -50,7 +50,7 @@ struct stackregs {
 #define chSysLock()
 
 /**
- * Leaves the ChobiOS/RT system mutual exclusion zone, the implementation is
+ * Leaves the ChibiOS/RT system mutual exclusion zone, the implementation is
  * architecture dependent, on single core systems usually this function
  * just enables the interrupts.
  * @note The code in the system mutual exclusion zone must be as light and

@@ -129,17 +129,6 @@ Thread *chThdCreate(t_prio prio, t_tmode mode, void *workspace,
   return tp;
 }
 
-/**
- * Verifies if the specified thread is in the \p PREXIT state.
- * @param tp the pointer to the thread
- * @return \p TRUE if the thread is ended else \p FALSE. \p TRUE ensures that
- *         a subsequent call to \p chThdWait() would not block.
- */
-BOOL chThdTerminated(Thread *tp) {
-
-  return tp->p_state == PREXIT;
-}
-
 #ifdef CH_USE_RESUME
 /**
  * Resumes a thread created with the \p P_SUSPENDED option.
@@ -176,17 +165,6 @@ void chThdTerminate(Thread *tp) {
 
   chSysUnlock();
 }
-
-/**
- * Verifies if the current thread has a termination request pending.
- * @return \p TRUE if the termination was requested. The thread should terminate
- *         as soon it is ready to do so.
- */
-BOOL chThdShouldTerminate(void) {
-
-  return currp->p_flags & P_TERMINATE ? TRUE : FALSE;
-}
-
 #endif
 
 /**
@@ -233,32 +211,5 @@ t_msg chThdWait(Thread *tp) {
   return tp->p_exitcode;
 }
 #endif /* CH_USE_WAITEXIT */
-
-#ifdef CH_USE_EXIT_EVENT
-/**
- * Returns the exit event source for the specified thread. The source is
- * signaled when the thread terminates.
- * @param tp the pointer to the thread
- * @note When registering on a thread termination make sure the thread
- *       is still alive, if you do that after the thread termination
- *       then you would miss the event. There are two ways to ensure
- *       this:<br>
- *       <ul>
- *       <li>Create the thread suspended, register on the event source
- *           and then resume the thread (recommended).</li>
- *       <li>Create the thread with a lower priority then register on it.
- *           This does not work if the hardware is capable of multiple
- *           physical threads.</li>
- *       </ul>
- * @note You dont need to unregister from a terminated thread because
- *       the event source becomes inactive.
- * @note The function is available only if the \p CH_USE_EXIT_EVENT
- *       option is enabled in \p chconf.h.
- */
-EventSource *chThdGetExitEventSource(Thread *tp) {
-
-  return &tp->p_exitesource;
-}
-#endif /* CH_USE_EXIT_EVENT */
 
 /** @} */
