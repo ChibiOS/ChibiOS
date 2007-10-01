@@ -92,7 +92,6 @@ void chEvtClear(t_eventmask mask) {
  */
 void chEvtSend(EventSource *esp) {
   EventListener *elp;
-  BOOL flag = FALSE;
 
   chSysLock();
 
@@ -102,11 +101,10 @@ void chEvtSend(EventSource *esp) {
 
     tp->p_epending |= EventMask(elp->el_id);
     if ((tp->p_state == PRWTEVENT) && (tp->p_epending & tp->p_ewmask))
-      chSchReadyI(tp), flag = TRUE;
+      chSchReadyI(tp);
     elp = elp->el_next;
   }
-  if (flag)
-    chSchRescheduleI();
+  chSchRescheduleI();
 
   chSysUnlock();
 }
@@ -174,7 +172,7 @@ static void unwait(void *p) {
 
 // Test removed, it should never happen.
 //  if (((Thread *)p)->p_state == PRWTEVENT)
-  chSchReadyI(dequeue(p))->p_rdymsg = RDY_TIMEOUT;
+  chSchReadyI(p)->p_rdymsg = RDY_TIMEOUT;
 }
 
 /**

@@ -24,33 +24,6 @@
 
 #include <ch.h>
 
-#ifndef CH_OPTIMIZE_SPEED
-/*
- * Removes a Thread from a list and returns it.
- * @param tp the pointer to the thread to be removed from the list
- * @return the removed thread pointer
- */
-Thread *dequeue(Thread *tp) {
-
-  tp->p_prev->p_next = tp->p_next;
-  tp->p_next->p_prev = tp->p_prev;
-  return tp;
-}
-
-/*
- * Inserts a thread into a bi-directional list in FIFO order.
- * @param tp the pointer to the thread to be inserted in the list
- * @param tqp the pointer to the threads list header
- */
-void enqueue(Thread *tp, ThreadsQueue *tqp) {
-
-  tp->p_next = (Thread *)tqp;
-  tp->p_prev = tqp->p_prev;
-  tqp->p_prev->p_next = tp;
-  tqp->p_prev = tp;
-}
-#endif /* CH_OPTIMIZE_SPEED */
-
 /*
  * Initializes a thread structure.
  */
@@ -63,12 +36,10 @@ void _InitThread(t_prio prio, t_tmode mode, Thread *tp) {
   tp->p_rtcnt = 0;
 #endif
 #ifdef CH_USE_WAITEXIT
-  tp->p_waiting.p_next = (Thread *)&tp->p_waiting;
-  tp->p_waiting.p_prev = (Thread *)&tp->p_waiting;
+  list_init(&tp->p_waiting);
 #endif
 #ifdef CH_USE_MESSAGES
-  tp->p_msgqueue.p_next = (Thread *)&tp->p_msgqueue;
-  tp->p_msgqueue.p_prev = (Thread *)&tp->p_msgqueue;
+  fifo_init(&tp->p_msgqueue);
 #endif
 #ifdef CH_USE_EVENTS
   tp->p_epending = 0;
@@ -179,7 +150,7 @@ void chThdExit(t_msg msg) {
   currp->p_exitcode = msg;              /* Post mortem info.            */
 #ifdef CH_USE_WAITEXIT
   while (notempty(&currp->p_waiting))
-    chSchReadyI(dequeue(currp->p_waiting.p_next));
+    chSchReadyI(list_remove(&currp->p_waiting));
 #endif
 #ifdef CH_USE_EXIT_EVENT
   chEvtSendI(&currp->p_exitesource);
@@ -203,7 +174,7 @@ t_msg chThdWait(Thread *tp) {
   chSysLock();
 
   if (tp->p_state != PREXIT) {
-    enqueue(currp, &tp->p_waiting);
+    list_insert(currp, &tp->p_waiting);
     chSchGoSleepI(PRWAIT);
   }
 

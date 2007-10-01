@@ -25,21 +25,6 @@
 #ifndef _THREADS_H_
 #define _THREADS_H_
 
-#define isempty(qp)     ((qp)->p_next == (Thread *)(qp))
-#define notempty(qp)    ((qp)->p_next != (Thread *)(qp))
-#define firstprio(qp)   ((qp)->p_next->p_prio)
-#define lastprio(qp)    ((qp)->p_prev->p_prio)
-
-/**
- * Generic threads queue header and element.
- */
-typedef struct {
-  /** First \p Thread in the queue.*/
-  Thread            *p_next;
-  /** Last \p Thread in the queue.*/
-  Thread            *p_prev;
-} ThreadsQueue;
-
 /**
  * Structure representing a thread.
  * @note Not all the listed fields are always needed, by switching off some
@@ -49,6 +34,7 @@ typedef struct {
 struct Thread {
   /** Next \p Thread in the threads list.*/
   Thread            *p_next;
+  /* End of the fields shared with the ThreadsList structure. */
   /** Previous \p Thread in the threads list.*/
   Thread            *p_prev;
   /* End of the fields shared with the ThreadsQueue structure. */
@@ -66,10 +52,14 @@ struct Thread {
    */
   union {
     /** Thread wakeup code, normally set to \p RDY_OK by the \p chSchReadyI()
-     * (only while in \p PRCURR or \p PRREADY states).*/
+     * (only while in \p PRREADY state).*/
     t_msg           p_rdymsg;
     /** The thread exit code (only while in \p PREXIT state).*/
     t_msg           p_exitcode;
+#ifdef CH_USE_SEMAPHORES
+    /** Semaphore where the thread is waiting on (only in \p PRWTSEM state).*/
+    Semaphore       *p_semp;
+#endif
 #ifdef CH_USE_EVENTS
     /** Enabled events mask (only while in \p PRWTEVENT state).*/
     t_eventmask     p_ewmask;
@@ -89,7 +79,7 @@ struct Thread {
    */
 #ifdef CH_USE_WAITEXIT
   /** The queue of the threads waiting for this thread termination.*/
-  ThreadsQueue      p_waiting;
+  ThreadsList       p_waiting;
 #endif
 #ifdef CH_USE_EXIT_EVENT
   /** The thread termination \p EventSource.*/
@@ -103,9 +93,8 @@ struct Thread {
   t_eventmask       p_epending;
 #endif
 #ifdef CH_USE_RT_SEMAPHORES
-  /** Priority backup after acquiring a RT semaphore.*/
   /** RT semaphores depth counter.*/
-  int               p_rtcnt;
+  t_cnt             p_rtcnt;
 #endif
 };
 
@@ -142,13 +131,13 @@ struct Thread {
 /** Lowest user priority.*/
 #define LOWPRIO     1
 /** Normal user priority.*/
-#define NORMALPRIO  128
+#define NORMALPRIO  64
 /** Highest user priority.*/
-#define HIGHPRIO    255
+#define HIGHPRIO    127
 /** Boosted base priority.*/
-#define MEPRIO      256
-/** Absolute priority.*/
-#define ABSPRIO     512
+#define MEPRIO      128
+/** Greatest possible priority.*/
+#define ABSPRIO     255
 
 /* Not an API, don't use into the application code.*/
 void _InitThread(t_prio prio, t_tmode mode, Thread *tp);
@@ -157,12 +146,24 @@ void _InitThread(t_prio prio, t_tmode mode, Thread *tp);
 typedef t_msg (*t_tfunc)(void *);
 
 /*
- * Threads Lists functions.
+ * Inlined functions if CH_OPTIMIZE_SPEED is enabled.
  */
-#ifndef CH_OPTIMIZE_SPEED
-void enqueue(Thread *tp, ThreadsQueue *tqp);
-Thread *dequeue(Thread *tp);
-#else
+#ifdef CH_OPTIMIZE_SPEED
+static INLINE void fifo_insert(Thread *tp, ThreadsQueue *tqp) {
+
+  tp->p_next = (Thread *)tqp;
+  tp->p_prev = tqp->p_prev;
+  tqp->p_prev->p_next = tp;
+  tqp->p_prev = tp;
+}
+
+static INLINE Thread *fifo_remove(ThreadsQueue *tqp) {
+  Thread *tp = tqp->p_next;
+
+  (tqp->p_next = tp->p_next)->p_prev = (Thread *)tqp;
+  return tp;
+}
+
 static INLINE Thread *dequeue(Thread *tp) {
 
   tp->p_prev->p_next = tp->p_next;
@@ -170,12 +171,17 @@ static INLINE Thread *dequeue(Thread *tp) {
   return tp;
 }
 
-static INLINE void enqueue(Thread *tp, ThreadsQueue *tqp) {
+static INLINE void list_insert(Thread *tp, ThreadsList *tlp) {
 
-  tp->p_next = (Thread *)tqp;
-  tp->p_prev = tqp->p_prev;
-  tqp->p_prev->p_next = tp;
-  tqp->p_prev = tp;
+  tp->p_next = tlp->p_next;
+  tlp->p_next = tp;
+}
+
+static INLINE Thread *list_remove(ThreadsList *tlp) {
+
+  Thread *tp = tlp->p_next;
+  tlp->p_next = tp->p_next;
+  return tp;
 }
 #endif
 

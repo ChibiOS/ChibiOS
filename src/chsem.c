@@ -31,10 +31,10 @@
  * @param n initial value of the semaphore counter. Must be non-negative.
  * @note Can be called with interrupts disabled or enabled.
  */
-void chSemInit(Semaphore *sp, t_semcnt n) {
+void chSemInit(Semaphore *sp, t_cnt n) {
 
+  fifo_init(&sp->s_queue);
   sp->s_cnt = n;
-  sp->s_queue.p_next = sp->s_queue.p_prev = (Thread *)&sp->s_queue;
 }
 
 /**
@@ -45,8 +45,8 @@ void chSemInit(Semaphore *sp, t_semcnt n) {
  *       instead than a signal because the \p p_rdymsg field is set to
  *       \p RDY_RESET.
  */
-void chSemReset(Semaphore *sp, t_semcnt n) {
-  t_semcnt cnt;
+void chSemReset(Semaphore *sp, t_cnt n) {
+  t_cnt cnt;
 
   chSysLock();
 
@@ -54,7 +54,7 @@ void chSemReset(Semaphore *sp, t_semcnt n) {
   sp->s_cnt = n;
   if (cnt < 0) {
     while (cnt++)
-      chSchReadyI(dequeue(sp->s_queue.p_next))->p_rdymsg = RDY_RESET;
+      chSchReadyI(fifo_remove(&sp->s_queue))->p_rdymsg = RDY_RESET;
     chSchRescheduleI();
   }
 
@@ -70,13 +70,13 @@ void chSemReset(Semaphore *sp, t_semcnt n) {
  *       \p RDY_RESET.
  * @note This function must be called with interrupts disabled.
  */
-void chSemResetI(Semaphore *sp, t_semcnt n) {
-  t_semcnt cnt;
+void chSemResetI(Semaphore *sp, t_cnt n) {
+  t_cnt cnt;
 
   cnt = sp->s_cnt;
   sp->s_cnt = n;
   while (cnt++ < 0)
-    chSchReadyI(dequeue(sp->s_queue.p_next))->p_rdymsg = RDY_RESET;
+    chSchReadyI(fifo_remove(&sp->s_queue))->p_rdymsg = RDY_RESET;
 }
 
 /**
@@ -88,7 +88,8 @@ void chSemWait(Semaphore *sp) {
   chSysLock();
 
   if (--sp->s_cnt < 0) {
-    enqueue(currp, &sp->s_queue);
+    fifo_insert(currp, &sp->s_queue);
+    currp->p_semp = sp;
     chSchGoSleepI(PRWTSEM);
   }
 
@@ -104,7 +105,8 @@ void chSemWait(Semaphore *sp) {
 void chSemWaitS(Semaphore *sp) {
 
   if (--sp->s_cnt < 0) {
-    enqueue(currp, &sp->s_queue);
+    fifo_insert(currp, &sp->s_queue);
+    currp->p_semp = sp;
     chSchGoSleepI(PRWTSEM);
   }
 }
@@ -114,6 +116,7 @@ static void unwait(void *p) {
 
 // Test removed, it should never happen.
 //  if (((Thread *)p)->p_state == PRWTSEM)
+  chSemFastSignalI(((Thread *)p)->p_semp);
   chSchReadyI(dequeue(p))->p_rdymsg = RDY_TIMEOUT;
 }
 
@@ -132,11 +135,11 @@ t_msg chSemWaitTimeout(Semaphore *sp, t_time time) {
     VirtualTimer vt;
 
     chVTSetI(&vt, time, unwait, currp);
-    enqueue(currp, &sp->s_queue);
+    fifo_insert(currp, &sp->s_queue);
+    currp->p_semp = sp;
     chSchGoSleepI(PRWTSEM);
     msg = currp->p_rdymsg; // Note, got value *before* invoking CH_LEAVE_SYSTEM().
     if (!vt.vt_func) {
-      sp->s_cnt++;
 
       chSysUnlock();
       return msg;
@@ -167,12 +170,11 @@ t_msg chSemWaitTimeoutS(Semaphore *sp, t_time time) {
     VirtualTimer vt;
 
     chVTSetI(&vt, time, unwait, currp);
-    enqueue(currp, &sp->s_queue);
+    fifo_insert(currp, &sp->s_queue);
+    currp->p_semp = sp;
     chSchGoSleepI(PRWTSEM);
-    if (!vt.vt_func) {
-      sp->s_cnt++;
+    if (!vt.vt_func)
       return currp->p_rdymsg;
-    }
     chVTResetI(&vt);
     return currp->p_rdymsg;
   }
@@ -191,7 +193,7 @@ void chSemSignal(Semaphore *sp) {
   chSysLock();
 
   if (sp->s_cnt++ < 0)
-    chSchWakeupI(dequeue(sp->s_queue.p_next), RDY_OK);
+    chSchWakeupI(fifo_remove(&sp->s_queue), RDY_OK);
 
   chSysUnlock();
 }
@@ -206,7 +208,7 @@ void chSemSignal(Semaphore *sp) {
 void chSemSignalI(Semaphore *sp) {
 
   if (sp->s_cnt++ < 0)
-    chSchReadyI(dequeue(sp->s_queue.p_next));
+    chSchReadyI(fifo_remove(&sp->s_queue));
 }
 
 /**
@@ -217,20 +219,18 @@ void chSemSignalI(Semaphore *sp) {
  *       option is enabled in \p chconf.h.
  */
 void chSemSignalWait(Semaphore *sps, Semaphore *spw) {
-  BOOL flag;
 
   chSysLock();
 
   if (sps->s_cnt++ < 0)
-    chSchReadyI(dequeue(sps->s_queue.p_next)), flag = TRUE;
-  else
-    flag = FALSE;
+    chSchReadyI(fifo_remove(&sps->s_queue));
 
   if (--spw->s_cnt < 0) {
-    enqueue(currp, &spw->s_queue);
+    fifo_insert(currp, &spw->s_queue);
+    currp->p_semp = spw;
     chSchGoSleepI(PRWTSEM);
   }
-  else if (flag)
+  else
     chSchRescheduleI();
 
   chSysUnlock();
@@ -245,15 +245,14 @@ void chSemSignalWait(Semaphore *sps, Semaphore *spw) {
  *       you want to create some custom threads synchronization mechanism.
  */
 static void prioenq(Thread *tp, ThreadsQueue *tqp) {
-  Thread *p;
+  Thread *cp;
 
-  p = tqp->p_next;
-  while ((p != (Thread *)tqp) && (p->p_prio >= tp->p_prio))
-    p = p->p_next;
-  tp->p_next = p;
-  tp->p_prev = tqp->p_prev;
-  p->p_prev->p_next = tp;
-  p->p_prev = tp;
+  cp = tqp->p_next;
+  while ((cp != (Thread *)tqp) && (cp->p_prio >= tp->p_prio))
+    cp = cp->p_next;
+  // Insertion on p_prev
+  tp->p_prev = (tp->p_next = cp)->p_prev;
+  tp->p_prev->p_next = cp->p_prev = tp;
 }
 
 /**
@@ -268,6 +267,7 @@ void chSemRaisePrioWait(Semaphore *sp) {
 
   if (--sp->s_cnt < 0) {
     prioenq(currp, &sp->s_queue);
+    currp->p_semp = sp;
     chSchGoSleepI(PRWTSEM);
   }
 
@@ -290,11 +290,11 @@ void chSemLowerPrioSignal(Semaphore *sp) {
   if (!--currp->p_rtcnt) {
     currp->p_prio -= MEPRIO;
     if (sp->s_cnt++ < 0)
-      chSchReadyI(dequeue(sp->s_queue.p_next));
+      chSchReadyI(fifo_remove(&sp->s_queue));
     chSchRescheduleI();
   }
   else if (sp->s_cnt++ < 0)
-    chSchWakeupI(dequeue(sp->s_queue.p_next), RDY_OK);
+    chSchWakeupI(fifo_remove(&sp->s_queue), RDY_OK);
 
   chSysUnlock();
 }
@@ -312,10 +312,11 @@ void chSemRaisePrioSignalWait(Semaphore *sps, Semaphore *spw) {
   chSysLock();
 
   if (sps->s_cnt++ < 0)
-    chSchReadyI(dequeue(sps->s_queue.p_next));
+    chSchReadyI(fifo_remove(&sps->s_queue));
 
   if (--spw->s_cnt < 0) {
     prioenq(currp, &spw->s_queue);
+    currp->p_semp = spw;
     chSchGoSleepI(PRWTSEM);
 
     if (!currp->p_rtcnt++)
@@ -347,10 +348,11 @@ void chSemLowerPrioSignalWait(Semaphore *sps, Semaphore *spw) {
     currp->p_prio -= MEPRIO;
 
   if (sps->s_cnt++ < 0)
-    chSchReadyI(dequeue(sps->s_queue.p_next));
+    chSchReadyI(fifo_remove(&sps->s_queue));
 
   if (--spw->s_cnt < 0) {
-    enqueue(currp, &spw->s_queue); // enqueue() because the spw is a normal sem.
+    fifo_insert(currp, &spw->s_queue); // fifo_insert() because the spw is a normal sem.
+    currp->p_semp = spw;
     chSchGoSleepI(PRWTSEM);
   }
   else

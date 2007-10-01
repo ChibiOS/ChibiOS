@@ -31,12 +31,21 @@
 struct stackregs {
 };
 
+typedef struct {
+  struct stackregs *sp;
+} Context;
+
 /**
  * Platform dependent part of the \p chThdCreate() API.
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg)                   \
 {                                                                  \
 }
+
+#define INT_REQUIRED_STACK 0  // Must include registers and stack frames.
+
+#define UserStackSize(n) (sizeof(Thread) + \
+                          sizeof(struct stackregs) + (n) + (INT_REQUIRED_STACK))
 
 /**
  * Enters the ChibiOS/RT system mutual exclusion zone, the implementation is
@@ -62,7 +71,7 @@ struct stackregs {
 
 void chSysHalt(void);
 void chSysPause(void);
-void chSysSwitchI(struct ctxswc **oldp, struct ctxswc *new);
+void chSysSwitchI(Context *oldp, Context *newp);
 
 #endif /* _CHCORE_H_ */
 

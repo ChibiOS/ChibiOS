@@ -33,7 +33,7 @@ DeltaList dlist;
 void chVTInit(void) {
 
   dlist.dl_next = dlist.dl_prev = (VirtualTimer *)&dlist;
-  dlist.dl_dtime = MAXDELTA;
+  dlist.dl_dtime = (t_time)-1;
 }
 
 /**

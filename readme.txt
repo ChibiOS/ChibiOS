@@ -32,6 +32,25 @@ LPC214x-GCC         - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.3.1 ***
+- Lists code moved into chlists.c from various other places and reorganized.
+- The list of the threads waiting in chThdWait() is now a single link list,
+  this saves some space.
+- Cleaned the template files code, the files contained some obsolete
+  declarations.
+- Code optimization in scSemSignalWait().
+- Code optimization in chEvtSend().
+- Added a Semaphore pointer to the Thread structure, this allows to know on
+  which semaphore a thread is waiting on. It takes no space because it is
+  located in the union inside the Thread structure. This also allowed a minor
+  optimization inside chSemWaitTimeout() and chSemWaitTimeoutS().
+- Changed the priority constants in order to make the t_prio type compatible
+  with a signed byte, this is very important for 8 bits architectures.
+  Now the threads priorities can range from 1 to 63, more than enough anyway.
+- Fixed bug in chEvtWaitTimeout(), the timeout code performed a useless
+  dequeue operation.
+- Fixed bug on RT semaphores, the priority queuing was broken.
+
 *** 0.3.0 ***
 - ChibiOS/RT goes beta.
 - Diet for the threads code, some simple APIs become macros.

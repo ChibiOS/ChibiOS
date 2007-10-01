@@ -45,6 +45,6 @@ void chSysHalt(void) {}
 /**
  * Context switch.
  */
-void chSysSwitchI(struct ctxswc **oldp, struct ctxswc *new) {}
+void chSysSwitchI(Context *oldp, Context *newp) {}
 
 /** @} */

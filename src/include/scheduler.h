@@ -32,6 +32,8 @@
 /** Returned if the thread was made ready because a reset.*/
 #define RDY_RESET   -2
 
+#define firstprio(qp)   ((qp)->p_next->p_prio)
+
 /**
  * Ready list header.
  */

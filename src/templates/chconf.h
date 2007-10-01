@@ -147,7 +147,7 @@
  *        ChibiOS/RT code <b>must</b> be recompiled with the GCC option \p
  *        -ffixed-\<reg\>.
  */
-#define CH_CURRP_REGISTER_CACHE "reg"
+//#define CH_CURRP_REGISTER_CACHE "reg"
 
 #endif  /* _CHCONF_H_ */
 

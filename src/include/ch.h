@@ -25,8 +25,6 @@
 #ifndef _CH_H_
 #define _CH_H_
 
-typedef struct Thread Thread;
-
 #ifndef __DOXIGEN__
 #ifndef _CHCONF_H_
 #include <chconf.h>
@@ -41,12 +39,20 @@ typedef struct Thread Thread;
 #endif
 #endif /* __DOXIGEN__ */
 
-#ifndef _DELTA_H_
+#ifndef _LISTS_H_
 #include "delta.h"
+#endif
+
+#ifndef _LISTS_H_
+#include "lists.h"
 #endif
 
 #ifndef _SCHEDULER_H_
 #include "scheduler.h"
+#endif
+
+#ifndef _SEMAPHORES_H_
+#include "semaphores.h"
 #endif
 
 #ifndef _EVENTS_H_
@@ -63,10 +69,6 @@ typedef struct Thread Thread;
 
 #ifndef _SLEEP_H_
 #include "sleep.h"
-#endif
-
-#ifndef _SEMAPHORES_H_
-#include "semaphores.h"
 #endif
 
 #ifndef _QUEUES_H_

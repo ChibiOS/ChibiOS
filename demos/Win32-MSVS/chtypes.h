@@ -25,27 +25,21 @@
  */
 #define BOOL        char
 #define BYTE8       unsigned char
+#define SBYTE8      char
 #define WORD16      short
 #define UWORD16     unsigned short
 #define LONG32      int
 #define ULONG32     unsigned int
-#define PTR_EQ      int
 
 typedef BYTE8       t_tmode;
 typedef BYTE8       t_tstate;
-typedef LONG32      t_prio;
-typedef PTR_EQ      t_msg;
+typedef ULONG32     t_prio;
+typedef LONG32      t_msg;
 typedef LONG32      t_eventid;
 typedef ULONG32     t_eventmask;
 typedef ULONG32     t_time;
-typedef LONG32      t_semcnt;
+typedef LONG32      t_cnt;
 typedef ULONG32     t_size;
-
-#define MINPRIO     0x8000
-#define MAXPRIO     0x7fff
-
-#define MINDELTA    0
-#define MAXDELTA    0xffff
 
 #define INLINE      __inline
 

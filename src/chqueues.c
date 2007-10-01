@@ -212,7 +212,7 @@ void chOQReset(Queue *qp) {
   chSysLock();
 
   qp->q_rdptr = qp->q_wrptr = qp->q_buffer;
-  chSemResetI(&qp->q_sem, (t_semcnt)(qp->q_top - qp->q_buffer));
+  chSemResetI(&qp->q_sem, (t_cnt)(qp->q_top - qp->q_buffer));
 
   chSysUnlock();
 }

@@ -32,7 +32,7 @@ static ReadyList rlist;
 Thread *currp;
 #endif
 
-static UWORD16 preempt;
+static t_cnt preempt;
 #ifdef CH_USE_SYSTEMTIME
 t_time stime;
 #endif
@@ -46,7 +46,7 @@ t_time stime;
 void chSchInit(void) {
 
   rlist.p_next = rlist.p_prev = (Thread *)&rlist;
-  rlist.p_prio = MAXPRIO;
+  rlist.p_prio = ABSPRIO;
   preempt = CH_TIME_QUANTUM;
 #ifdef CH_USE_SYSTEMTIME
   stime = 0;
@@ -68,11 +68,12 @@ Thread *chSchReadyI(Thread *tp) {
 
   tp->p_state = PRREADY;
   tp->p_rdymsg = RDY_OK;
-  cp = rlist.p_next;
+  cp = rlist.p_prev;
   while (cp->p_prio < prio)
-    cp = cp->p_next;
-  tp->p_prev = (tp->p_next = cp)->p_prev;
-  tp->p_prev->p_next = cp->p_prev = tp;
+    cp = cp->p_prev;
+  // Insertion on p_next
+  tp->p_next = (tp->p_prev = cp)->p_next;
+  tp->p_next->p_prev = cp->p_next = tp;
   return tp;
 }
 
@@ -83,7 +84,7 @@ Thread *chSchReadyI(Thread *tp) {
 static void nextready(void) {
   Thread *otp = currp;
 
-  (currp = dequeue(rlist.p_prev))->p_state = PRCURR;
+  (currp = fifo_remove((ThreadsQueue *)&rlist))->p_state = PRCURR;
   preempt = CH_TIME_QUANTUM;
   chSysSwitchI(&otp->p_ctx, &currp->p_ctx);
 }
@@ -135,7 +136,7 @@ void chSchWakeupI(Thread *tp, t_msg msg) {
  */
 void chSchRescheduleI(void) {
 
-  if (isempty(&rlist) || lastprio(&rlist) <= currp->p_prio)
+  if (isempty(&rlist) || firstprio(&rlist) <= currp->p_prio)
     return;
 
   chSchDoRescheduleI();
@@ -162,11 +163,11 @@ BOOL chSchRescRequiredI(void) {
     return FALSE;
 
   if (preempt) {
-    if (lastprio(&rlist) <= currp->p_prio)
+    if (firstprio(&rlist) <= currp->p_prio)
       return FALSE;
   }
   else { /* Time quantum elapsed. */
-    if (lastprio(&rlist) < currp->p_prio)
+    if (firstprio(&rlist) < currp->p_prio)
       return FALSE;
   }
   return TRUE;

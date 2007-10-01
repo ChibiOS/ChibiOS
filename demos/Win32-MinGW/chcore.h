@@ -63,7 +63,7 @@ typedef struct {
 
 #define INT_REQUIRED_STACK 0x0
 
-#define UserStackSize(n) (sizeof(Thread) + sizeof(PTR_EQ) + sizeof(PTR_EQ) + \
+#define UserStackSize(n) (sizeof(Thread) + sizeof(void *) * 2 + \
                           sizeof(struct stackregs) + (n) + (INT_REQUIRED_STACK))
 
 __attribute__((fastcall)) void chSysHalt(void);
