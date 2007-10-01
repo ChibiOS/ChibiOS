@@ -44,9 +44,8 @@ LPC214x-GCC         - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
   which semaphore a thread is waiting on. It takes no space because it is
   located in the union inside the Thread structure. This also allowed a minor
   optimization inside chSemWaitTimeout() and chSemWaitTimeoutS().
-- Changed the priority constants in order to make the t_prio type compatible
-  with a signed byte, this is very important for 8 bits architectures.
-  Now the threads priorities can range from 1 to 63, more than enough anyway.
+- Changed the priority type to unsigned in order to make it compatible
+  with a byte value, this is very important for 8 bits architectures.
 - Fixed bug in chEvtWaitTimeout(), the timeout code performed a useless
   dequeue operation.
 - Fixed bug on RT semaphores, the priority queuing was broken.
