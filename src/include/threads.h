@@ -78,7 +78,7 @@ struct Thread {
    * systems, be caruful in doing so.
    */
 #ifdef CH_USE_WAITEXIT
-  /** The queue of the threads waiting for this thread termination.*/
+  /** The list of the threads waiting for this thread termination.*/
   ThreadsList       p_waiting;
 #endif
 #ifdef CH_USE_EXIT_EVENT
@@ -151,10 +151,8 @@ typedef t_msg (*t_tfunc)(void *);
 #ifdef CH_OPTIMIZE_SPEED
 static INLINE void fifo_insert(Thread *tp, ThreadsQueue *tqp) {
 
-  tp->p_next = (Thread *)tqp;
-  tp->p_prev = tqp->p_prev;
-  tqp->p_prev->p_next = tp;
-  tqp->p_prev = tp;
+  tp->p_prev = (tp->p_next = (Thread *)tqp)->p_prev;
+  tp->p_prev->p_next = tqp->p_prev = tp;
 }
 
 static INLINE Thread *fifo_remove(ThreadsQueue *tqp) {

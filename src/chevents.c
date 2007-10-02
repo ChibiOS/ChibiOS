@@ -140,11 +140,12 @@ void chEvtSendI(EventSource *esp) {
  * @return the event identifier
  * @note Only a single event is served in the function, the one with the
  *       lowest event id. The function is meant to be invoked into a loop so
- *        that all events are received and served.<br>
+ *       that all events are received and served.<br>
  *       This means that Event Listeners with a lower event identifier have
  *       an higher priority.
  */
-t_eventid chEvtWait(t_eventmask ewmask, t_evhandler handlers[]) {
+t_eventid chEvtWait(t_eventmask ewmask,
+                    t_evhandler handlers[]) {
   t_eventid i;
   t_eventmask m;
 

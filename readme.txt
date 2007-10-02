@@ -33,7 +33,8 @@ LPC214x-GCC         - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
 *****************************************************************************
 
 *** 0.3.1 ***
-- Lists code moved into chlists.c from various other places and reorganized.
+- Lists code moved into chlists.c from various other places optimized and
+  reorganized.
 - The list of the threads waiting in chThdWait() is now a single link list,
   this saves some space.
 - Cleaned the template files code, the files contained some obsolete

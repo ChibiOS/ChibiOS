@@ -70,7 +70,7 @@ typedef struct EventSource {
  * @note Can be called with interrupts disabled or enabled.
  */
 #define chEvtIsListening(esp) \
-  		((esp) != (EventSource *)(esp)->es_next)
+                ((esp) != (EventSource *)(esp)->es_next)
 
 
 /** Event Handler callback function.*/
@@ -81,7 +81,8 @@ void chEvtUnregister(EventSource *esp, EventListener *elp);
 void chEvtClear(t_eventmask mask);
 void chEvtSend(EventSource *esp);
 void chEvtSendI(EventSource *esp);
-t_eventid chEvtWait(t_eventmask ewmask, t_evhandler handlers[]);
+t_eventid chEvtWait(t_eventmask ewmask,
+                    t_evhandler handlers[]);
 #ifdef CH_USE_EVENTS_TIMEOUT
 t_eventid chEvtWaitTimeout(t_eventmask ewmask,
                            t_evhandler handlers[],

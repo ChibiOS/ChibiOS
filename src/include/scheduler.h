@@ -32,18 +32,14 @@
 /** Returned if the thread was made ready because a reset.*/
 #define RDY_RESET   -2
 
-#define firstprio(qp)   ((qp)->p_next->p_prio)
+#define firstprio(rlp)   ((rlp)->p_next->p_prio)
 
 /**
  * Ready list header.
  */
 typedef struct {
-  /** Highest priority \p Thread in the list.*/
-  Thread            *p_next;
-  /** Lowest priority \p Thread in the list.*/
-  Thread            *p_prev;
-  /** Alwas set to \p MAXPRIO.*/
-  t_prio            p_prio;
+  ThreadsQueue      r_queue;
+  t_prio            r_prio;
 } ReadyList;
 
 /*

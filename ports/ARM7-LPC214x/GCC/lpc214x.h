@@ -24,14 +24,6 @@ typedef volatile unsigned char IOREG8;
 typedef volatile unsigned int IOREG32;
 
 /*
- * The following values are implementation dependent. You may change them in
- * order to match your HW.
- */
-#define FOSC 12000000
-#define CCLK 48000000
-#define PCLK 12000000
-
-/*
  * System.
  */
 #define MEMMAP                  (*((IOREG32 *)0xE01FC040))

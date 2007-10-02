@@ -31,10 +31,8 @@
  */
 void fifo_insert(Thread *tp, ThreadsQueue *tqp) {
 
-  tp->p_next = (Thread *)tqp;
-  tp->p_prev = tqp->p_prev;
-  tqp->p_prev->p_next = tp;
-  tqp->p_prev = tp;
+  tp->p_prev = (tp->p_next = (Thread *)tqp)->p_prev;
+  tp->p_prev->p_next = tqp->p_prev = tp;
 }
 
 /*

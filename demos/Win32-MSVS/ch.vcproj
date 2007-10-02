@@ -151,6 +151,9 @@
 					RelativePath="..\..\src\chinit.c">
 				</File>
 				<File
+					RelativePath="..\..\src\chlists.c">
+				</File>
+				<File
 					RelativePath="..\..\src\chmsg.c">
 				</File>
 				<File
@@ -204,6 +207,9 @@
 				</File>
 				<File
 					RelativePath="..\..\src\include\events.h">
+				</File>
+				<File
+					RelativePath="..\..\src\include\lists.h">
 				</File>
 				<File
 					RelativePath="..\..\src\include\messages.h">
