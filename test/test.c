@@ -75,34 +75,6 @@ t_msg Thread3(void *p) {
 }
 
 t_msg Thread4(void *p) {
-
-  chSemWait(&sem1);
-  chFDDPut(comp, *(BYTE8 *)p);
-  /*
-   * NOTE: chSemSignalWait() is not the same of chSemSignal()+chSemWait().
-   *       The former is performed atomically, try it.
-   */
-  chSemSignalWait(&sem1, &sem2);
-//  chSemSignal(&sem1);
-//  chSemWait(&sem2);
-  chFDDPut(comp, *(BYTE8 *)p);
-  chSemSignal(&sem2);
-  return 0;
-}
-
-t_msg Thread5(void *p) {
-
-  chSemWait(&sem1);
-  chFDDPut(comp, *(BYTE8 *)p);
-  chSemRaisePrioSignalWait(&sem1, &sem2);
-//  chSemSignal(&sem1);
-//  chSemRaisePrioWait(&sem2);
-  chFDDPut(comp, *(BYTE8 *)p);
-  chSemLowerPrioSignal(&sem2);
-  return 0;
-}
-
-t_msg Thread6(void *p) {
   t_msg msg;
   int i;
 
@@ -114,7 +86,7 @@ t_msg Thread6(void *p) {
   return 0;
 }
 
-t_msg Thread7(void *p) {
+t_msg Thread5(void *p) {
 
   // NOTE, this thread does not serve messages this causes the client to
   // timeout.
@@ -130,6 +102,10 @@ t_msg TestThread(void *p) {
   int i;
 
   comp = p;
+  println("*****************************");
+  println("*** ChibiOS/RT test suite ***");
+  println("*****************************");
+  println("");
 
   /*
    * Ready list ordering test.
@@ -169,6 +145,7 @@ t_msg TestThread(void *p) {
   wait();
   println("");
   println("*** Semaphores, priority enqueuing test #1, you should read ABCDE:");
+  chSemInit(&sem1, 0);
   t5 = chThdCreate(NORMALPRIO+1, 0, wsT5, sizeof(wsT5), Thread3, "E");
   t4 = chThdCreate(NORMALPRIO+2, 0, wsT4, sizeof(wsT4), Thread3, "D");
   t3 = chThdCreate(NORMALPRIO+3, 0, wsT3, sizeof(wsT3), Thread3, "C");
@@ -182,6 +159,7 @@ t_msg TestThread(void *p) {
   wait();
   println("");
   println("*** Semaphores, priority enqueuing test #2, you should read ABCDE:");
+  chSemInit(&sem1, 0);
   t4 = chThdCreate(NORMALPRIO+2, 0, wsT4, sizeof(wsT4), Thread3, "D");
   t5 = chThdCreate(NORMALPRIO+1, 0, wsT5, sizeof(wsT5), Thread3, "E");
   t1 = chThdCreate(NORMALPRIO+5, 0, wsT1, sizeof(wsT1), Thread3, "A");
@@ -192,50 +170,6 @@ t_msg TestThread(void *p) {
   chSemLowerPrioSignal(&sem1);
   chSemLowerPrioSignal(&sem1);
   chSemLowerPrioSignal(&sem1);
-  wait();
-  println("");
-  println("*** Semaphores, atomicity test #1, you should read ABCDEABCDE:");
-  chSemInit(&sem1, 0);
-  chSemInit(&sem2, 1);
-  t1 = chThdCreate(NORMALPRIO+1, 0, wsT1, sizeof(wsT1), Thread4, "A");
-  t2 = chThdCreate(NORMALPRIO+2, 0, wsT2, sizeof(wsT2), Thread4, "B");
-  t3 = chThdCreate(NORMALPRIO+3, 0, wsT3, sizeof(wsT3), Thread4, "C");
-  t4 = chThdCreate(NORMALPRIO+4, 0, wsT4, sizeof(wsT4), Thread4, "D");
-  t5 = chThdCreate(NORMALPRIO+5, 0, wsT5, sizeof(wsT5), Thread4, "E");
-  chSemSignal(&sem1);
-  wait();
-  println("");
-  println("*** Semaphores, atomicity test #2, you should read ABCDEABCDE:");
-  chSemInit(&sem1, 0);
-  chSemInit(&sem2, 1);
-  t1 = chThdCreate(NORMALPRIO+1, 0, wsT1, sizeof(wsT1), Thread4, "A");
-  t2 = chThdCreate(NORMALPRIO+5, 0, wsT2, sizeof(wsT2), Thread4, "B");
-  t3 = chThdCreate(NORMALPRIO+2, 0, wsT3, sizeof(wsT3), Thread4, "C");
-  t4 = chThdCreate(NORMALPRIO+4, 0, wsT4, sizeof(wsT4), Thread4, "D");
-  t5 = chThdCreate(NORMALPRIO+3, 0, wsT5, sizeof(wsT5), Thread4, "E");
-  chSemSignal(&sem1);
-  wait();
-  println("");
-  println("*** Semaphores, atomicity test #3, you should read AABBCCDDEE:");
-  chSemInit(&sem1, 0);
-  chSemInit(&sem2, 1);
-  t1 = chThdCreate(NORMALPRIO+1, 0, wsT1, sizeof(wsT1), Thread5, "A");
-  t2 = chThdCreate(NORMALPRIO+2, 0, wsT2, sizeof(wsT2), Thread5, "B");
-  t3 = chThdCreate(NORMALPRIO+3, 0, wsT3, sizeof(wsT3), Thread5, "C");
-  t4 = chThdCreate(NORMALPRIO+4, 0, wsT4, sizeof(wsT4), Thread5, "D");
-  t5 = chThdCreate(NORMALPRIO+5, 0, wsT5, sizeof(wsT5), Thread5, "E");
-  chSemSignal(&sem1);
-  wait();
-  println("");
-  println("*** Semaphores, atomicity test #4, you should read AABBCCDDEE:");
-  chSemInit(&sem1, 0);
-  chSemInit(&sem2, 1);
-  t1 = chThdCreate(NORMALPRIO+1, 0, wsT1, sizeof(wsT1), Thread5, "A");
-  t2 = chThdCreate(NORMALPRIO+5, 0, wsT2, sizeof(wsT2), Thread5, "B");
-  t3 = chThdCreate(NORMALPRIO+2, 0, wsT3, sizeof(wsT3), Thread5, "C");
-  t4 = chThdCreate(NORMALPRIO+4, 0, wsT4, sizeof(wsT4), Thread5, "D");
-  t5 = chThdCreate(NORMALPRIO+3, 0, wsT5, sizeof(wsT5), Thread5, "E");
-  chSemSignal(&sem1);
   wait();
   println("");
   println("*** Semaphores, timeout test, you should read ABCDE (slowly):");
@@ -250,7 +184,7 @@ t_msg TestThread(void *p) {
    * Messages test.
    */
   println("*** Messages, dispatch test, you should read AABBCCDDEE:");
-  t1 = chThdCreate(NORMALPRIO-1, 0, wsT1, sizeof(wsT1), Thread6, chThdSelf());
+  t1 = chThdCreate(NORMALPRIO-1, 0, wsT1, sizeof(wsT1), Thread4, chThdSelf());
   do {
     chMsgRelease(msg = chMsgWait());
     if (msg)
@@ -259,7 +193,7 @@ t_msg TestThread(void *p) {
   chThdWait(t1);
   println("");
   println("*** Messages, timeout test, you should read ABCDE (slowly):");
-  t1 = chThdCreate(NORMALPRIO-1, 0, wsT1, sizeof(wsT1), Thread7, chThdSelf());
+  t1 = chThdCreate(NORMALPRIO-1, 0, wsT1, sizeof(wsT1), Thread5, chThdSelf());
   for (i = 0; i < 5; i++) {
     chFDDPut(comp, 'A'+i);
     chMsgSendTimeout(t1, 'A'+i, 500);

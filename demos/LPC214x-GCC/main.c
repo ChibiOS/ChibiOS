@@ -53,15 +53,22 @@ static t_msg Thread2(void *arg) {
   return 0;
 }
 
-static BYTE8 waThread3[UserStackSize(32)];
+static BYTE8 waThread3[UserStackSize(64)];
 
 static t_msg Thread3(void *arg) {
-
+  t_msg TestThread(void *p);
+  
   while (TRUE) {
-    if (!(IO0PIN & 0x00008000)) // Button 1
-      PlaySound(1000, 100);
-    if (!(IO0PIN & 0x00010000)) // Button 2
-      chFDDWrite(&COM1, (BYTE8 *)"Hello World!\r\n", 14);
+  	if (!(IO0PIN & 0x00018000)) {
+      TestThread(&COM1);
+      PlaySound(500, 100);
+  	}
+  	else {
+      if (!(IO0PIN & 0x00008000)) // Button 1
+        PlaySound(1000, 100);
+      if (!(IO0PIN & 0x00010000)) // Button 2
+        chFDDWrite(&COM1, (BYTE8 *)"Hello World!\r\n", 14);
+  	}
     chThdSleep(500);
   }
   return 0;

@@ -2,19 +2,20 @@
 *** Directories structure                                                 ***
 *****************************************************************************
 
-./readme.txt        - This file.
-./license.txt       - GPL3 license file.
-./src/              - ChibiOS/RT portable kernel source files.
-./src/include/      - ChibiOS/RT include files.
-./src/templates/    - ChibiOS/RT non portable source templates, new ports are
-                      started by copying the templates into a new directory
-                      under ./demos/.
-./ports/            - Architecture/compiler specific portable files.
-./demos/            - Demo programs for specific archtectures/boards.
-./docs/Doxifile     - Doxigen project file.
-./docs/index.html   - ChibiOS/RT documentation (after running doxigen). The
-                      documentation is also available on the project web
-                      page: http://chibios.sourceforge.net/
+./readme.txt           - This file.
+./license.txt          - GPL3 license file.
+./src/                 - ChibiOS/RT portable kernel source files.
+./src/include/         - ChibiOS/RT include files.
+./src/templates/       - ChibiOS/RT non portable source templates, new ports
+                         are started by copying the templates into a new
+                         directory under ./demos/.
+./ports/               - Architecture/compiler specific portable files.
+./demos/               - Demo programs for specific archtectures/boards.
+./test/                - Test code, used by some demos.
+./docs/Doxifile        - Doxigen project file.
+./docs/html/index.html - ChibiOS/RT documentation (after running doxigen).
+                         The documentation is also available on the project
+                         web page: http://chibios.sourceforge.net/
 
 Current ports under ./demos:
 
@@ -33,8 +34,9 @@ LPC214x-GCC         - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
 *****************************************************************************
 
 *** 0.3.1 ***
-- Test program added to the MinGW and MSVS demos. Telnet the demo and type
-  "test" at the "ch>" prompt. The test performs integrity tests on the main
+- Test program added to the demos. Telnet the MinGW and MSVS demos and type
+  "test" at the "ch>" prompt. On the LPC214x demo the test is activated by
+  pressing both the board. The test performs integrity tests on the main
   ChibiOS/RT functionalities.
   The test code is also a good example of APIs usage and ChibiOS/RT behavior.
 - Fixed bug in chEvtWaitTimeout(), the timeout code performed an useless

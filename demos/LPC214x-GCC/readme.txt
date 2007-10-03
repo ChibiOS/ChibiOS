@@ -11,7 +11,8 @@ members of the LPC2000 family should be an easy task.
 
 The demo blinks the leds on the board by using multiple threads. By pressing
 the buttons on the board it is possible to activate the buzzer and send a
-message over the serial ports.
+message over the serial ports. Pressing both buttons activates the test
+procedure on the serial port 1.
 See main.c for details. Buzzer.c contains an interesting device driver
 example that uses a physical timer for the waveform generation and a virtual
 timer for the sound duration.
