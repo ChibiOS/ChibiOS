@@ -63,6 +63,10 @@
  *  in the kernel.*/
 #define CH_USE_SEMAPHORES
 
+/** Configuration option: if specified then the Semaphores atomic Signal+Wait
+ *  APIs are included in the kernel.*/
+#define CH_USE_SEMSW
+
 /** Configuration option: if specified then the Semaphores with timeout APIs
  *  are included in the kernel.
  * @note requires \p CH_USE_SEMAPHORES.

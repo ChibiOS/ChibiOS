@@ -46,7 +46,7 @@ t_msg chSemWaitTimeout(Semaphore *sp, t_time time);
 t_msg chSemWaitTimeoutS(Semaphore *sp, t_time time);
 void chSemSignal(Semaphore *sp);
 void chSemSignalI(Semaphore *sp);
-void chSignalWait(Semaphore *sps, Semaphore *spw);
+void chSemSignalWait(Semaphore *sps, Semaphore *spw);
 
 #ifdef CH_USE_RT_SEMAPHORES
 void chSemRaisePrioWait(Semaphore *sp);

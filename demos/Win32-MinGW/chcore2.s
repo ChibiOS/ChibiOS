@@ -39,5 +39,5 @@
 .p2align 4,,15
 .globl @threadstart@0
 @threadstart@0:
-        push    %ecx
+        push    %eax
         call    _chThdExit

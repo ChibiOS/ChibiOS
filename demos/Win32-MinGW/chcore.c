@@ -52,7 +52,7 @@ void InitCore(void) {
     exit(1);
   }
 
-  printf("Win32 ChobiOS/RT simulator\n\n");
+  printf("Win32 ChibiOS/RT simulator\n\n");
   printf("Thread structure %d bytes\n", sizeof(Thread));
   if (!QueryPerformanceFrequency(&slice)) {
     printf("QueryPerformanceFrequency() error");

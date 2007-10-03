@@ -138,13 +138,9 @@ t_msg chSemWaitTimeout(Semaphore *sp, t_time time) {
     fifo_insert(currp, &sp->s_queue);
     currp->p_semp = sp;
     chSchGoSleepI(PRWTSEM);
-    msg = currp->p_rdymsg; // Note, got value *before* invoking CH_LEAVE_SYSTEM().
-    if (!vt.vt_func) {
-
-      chSysUnlock();
-      return msg;
-    }
-    chVTResetI(&vt);
+    msg = currp->p_rdymsg;
+    if (vt.vt_func)
+      chVTResetI(&vt);
 
     chSysUnlock();
     return msg;
@@ -173,9 +169,8 @@ t_msg chSemWaitTimeoutS(Semaphore *sp, t_time time) {
     fifo_insert(currp, &sp->s_queue);
     currp->p_semp = sp;
     chSchGoSleepI(PRWTSEM);
-    if (!vt.vt_func)
-      return currp->p_rdymsg;
-    chVTResetI(&vt);
+    if (vt.vt_func)
+      chVTResetI(&vt);
     return currp->p_rdymsg;
   }
   return RDY_OK;
@@ -211,6 +206,7 @@ void chSemSignalI(Semaphore *sp) {
     chSchReadyI(fifo_remove(&sp->s_queue));
 }
 
+#ifdef CH_USE_SEMSW
 /**
  * Performs atomic signal and wait operations on two semaphores.
  * @param sps pointer to a \p Semaphore structure to be signaled
@@ -235,6 +231,7 @@ void chSemSignalWait(Semaphore *sps, Semaphore *spw) {
 
   chSysUnlock();
 }
+#endif /* CH_USE_SEMSW */
 
 #ifdef CH_USE_RT_SEMAPHORES
 /*
@@ -299,6 +296,7 @@ void chSemLowerPrioSignal(Semaphore *sp) {
   chSysUnlock();
 }
 
+#ifdef CH_USE_SEMSW
 /**
  * Performs atomic signal and wait operations on two semaphores with priority
  * boost.
@@ -326,7 +324,7 @@ void chSemRaisePrioSignalWait(Semaphore *sps, Semaphore *spw) {
     if (!currp->p_rtcnt++)
       currp->p_prio += MEPRIO;
 
-    chSchRescheduleI();
+    chSchRescheduleI(); // Really needed ?
   }
 
   chSysUnlock();
@@ -360,6 +358,7 @@ void chSemLowerPrioSignalWait(Semaphore *sps, Semaphore *spw) {
 
   chSysUnlock();
 }
+#endif /* CH_USE_SEMSW */
 
 #endif /* CH_USE_RT_SEMAPHORES */
 

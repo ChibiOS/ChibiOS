@@ -182,6 +182,13 @@
 					RelativePath="..\..\ports\Win32\simcom.c">
 				</File>
 			</Filter>
+			<Filter
+				Name="test"
+				Filter="">
+				<File
+					RelativePath="..\..\test\test.c">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"

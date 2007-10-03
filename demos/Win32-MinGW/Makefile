@@ -57,7 +57,7 @@ UADEFS =
 
 # List C source files here
 SRC  = chcore.c demo.c \
-       ../../ports/win32/simcom.c \
+       ../../test/test.c ../../ports/win32/simcom.c \
        ../../src/chinit.c ../../src/chlists.c ../../src/chdelta.c ../../src/chschd.c \
        ../../src/chthreads.c ../../src/chsem.c ../../src/chevents.c ../../src/chmsg.c \
        ../../src/chsleep.c ../../src/chqueues.c ../../src/chserial.c

@@ -33,23 +33,36 @@ LPC214x-GCC         - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
 *****************************************************************************
 
 *** 0.3.1 ***
+- Test program added to the MinGW and MSVS demos. Telnet the demo and type
+  "test" at the "ch>" prompt. The test performs integrity tests on the main
+  ChibiOS/RT functionalities.
+  The test code is also a good example of APIs usage and ChibiOS/RT behavior.
+- Fixed bug in chEvtWaitTimeout(), the timeout code performed an useless
+  dequeue operation.
+- Fixed a bug in chSemWaitTimeoutS() and chSemWaitTimeout(), the semaphore
+  counter was not atomically updated on a timeout condition.
+- Fixed bug on RT semaphores, the priority queuing was broken.
+- Fixed a bug in the MinGW demo, the chThdExit() code was not correctly
+  reported to the thread waiting in chThdWait().
+- Fixed a function declaration in semaphores.h.
 - Lists code moved into chlists.c from various other places optimized and
   reorganized.
 - The list of the threads waiting in chThdWait() is now a single link list,
   this saves some space.
 - Cleaned the template files code, the files contained some obsolete
   declarations.
-- Code optimization in scSemSignalWait().
+- Code optimization in chSemWaitTimeoutS(), chSemWaitTimeout() and
+  chSemSignalWait().
 - Code optimization in chEvtSend().
+- Code optimization in chVTDoTickI().
 - Added a Semaphore pointer to the Thread structure, this allows to know on
   which semaphore a thread is waiting on. It takes no space because it is
   located in the union inside the Thread structure. This also allowed a minor
   optimization inside chSemWaitTimeout() and chSemWaitTimeoutS().
 - Changed the priority type to unsigned in order to make it compatible
   with a byte value, this is very important for 8 bits architectures.
-- Fixed bug in chEvtWaitTimeout(), the timeout code performed a useless
-  dequeue operation.
-- Fixed bug on RT semaphores, the priority queuing was broken.
+- Modified the MinGW and MSVS demos to use 1ms ticks instead of 10ms as
+  before.
 
 *** 0.3.0 ***
 - ChibiOS/RT goes beta.

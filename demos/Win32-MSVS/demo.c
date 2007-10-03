@@ -31,10 +31,12 @@ static BYTE8 iarea[UserStackSize(2048)];
 static ULONG32 cdguard;
 static BYTE8 cdarea[UserStackSize(2048)];
 static Thread *cdtp;
-                        
+
 static t_msg WatchdogThread(void *arg);
 static t_msg ConsoleThread(void *arg);
 static t_msg InitThread(void *arg);
+
+t_msg TestThread(void *p);
 
 void InitCore(void);
 extern FullDuplexDriver COM1, COM2;
@@ -73,7 +75,7 @@ static t_msg WatchdogThread(void *arg) {
       printf("Halted by watchdog");
       chSysHalt();
     }
-    chThdSleep(5);
+    chThdSleep(50);
   }
   return 0;
 }
@@ -144,7 +146,7 @@ static t_msg HelloWorldThread(void *arg) {
   for (i = 0; i < 100; i++) {
 
     PrintLineFDD(sd, "Hello World\r\n");
-    c = chFDDGetTimeout(sd, 33);
+    c = chFDDGetTimeout(sd, 333);
     switch (c) {
     case -1:
       continue;
@@ -154,7 +156,7 @@ static t_msg HelloWorldThread(void *arg) {
       PrintLineFDD(sd, "^C\r\n");
       return 0;
     default:
-      chThdSleep(33);
+      chThdSleep(333);
     }
   }
   return 0;
@@ -202,6 +204,7 @@ static t_msg ShellThread(void *arg) {
         PrintLineFDD(sd, "  exit     - Logout from ChibiOS/RT\r\n");
         PrintLineFDD(sd, "  time     - Prints the system timer value\r\n");
         PrintLineFDD(sd, "  hello    - Runs the Hello World demo thread\r\n");
+        PrintLineFDD(sd, "  test     - Runs the System Test thread\r\n");
       }
       else if (stricmp(lp, "exit") == 0) {
         if (checkend(sd))
@@ -220,6 +223,14 @@ static t_msg ShellThread(void *arg) {
           continue;
         tp = chThdCreate(NORMALPRIO, 0, tarea, sizeof(tarea),
                          HelloWorldThread, sd);
+        if (chThdWait(tp))
+          break;  // Lost connection while executing the hello thread.
+      }
+      else if (stricmp(lp, "test") == 0) {
+        if (checkend(sd))
+          continue;
+        tp = chThdCreate(NORMALPRIO, 0, tarea, sizeof(tarea),
+                         TestThread, arg);
         if (chThdWait(tp))
           break;  // Lost connection while executing the hello thread.
       }
@@ -281,7 +292,7 @@ static void COM2Handler(t_eventid id) {
 static t_evhandler fhandlers[2] = {
   COM1Handler,
   COM2Handler
-};                  
+};
 
 /*
  * Init-like thread, it starts the shells and handles their termination.

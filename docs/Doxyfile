@@ -241,7 +241,8 @@ PREDEFINED             = __JUST_STUBS__ \
                          CH_USE_SERIAL_HALFDUPLEX \
                          CH_USE_MESSAGES \
                          CH_USE_MESSAGES_TIMEOUT \
-                         CH_USE_MESSAGES_EVENT
+                         CH_USE_MESSAGES_EVENT \
+                         CH_USE_SEMSW
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
