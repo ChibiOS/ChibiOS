@@ -36,8 +36,8 @@ LPC214x-GCC         - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
 *** 0.3.1 ***
 - Test program added to the demos. Telnet the MinGW and MSVS demos and type
   "test" at the "ch>" prompt. On the LPC214x demo the test is activated by
-  pressing both the board. The test performs integrity tests on the main
-  ChibiOS/RT functionalities.
+  pressing both the board buttons. The test performs tests on the ChibiOS/RT
+  functionalities.
   The test code is also a good example of APIs usage and ChibiOS/RT behavior.
 - Fixed bug in chEvtWaitTimeout(), the timeout code performed an useless
   dequeue operation.
