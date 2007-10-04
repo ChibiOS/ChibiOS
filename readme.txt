@@ -23,15 +23,19 @@ Win32-MinGW         - ChibiOS/RT simulator and demo into a WIN32 process,
                       MinGW version.
 Win32-MSVS          - ChibiOS/RT simulator and demo into a WIN32 process,
                       Visual Studio 7 or any later version should work.
-LPC214x-GCC         - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
+ARM7-LPC214x-GCC    - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
                       Olimex LPC-P2148 board. This port can be easily modified
                       for any processor into the LPC2000 family or other
                       boards. The demo can be compiled using YAGARTO or any
                       other GCC-based ARM toolchain.
+AVR-AT90CANx-GCC    - Port on AVER AT90CAN128, not complete yet.
 
 *****************************************************************************
 *** Releases                                                              ***
 *****************************************************************************
+
+*** 0.3.2 ***
+- Removed an obsolete definition in ./src/templates/chtypes.h
 
 *** 0.3.1 ***
 - Test program added to the demos. Telnet the MinGW and MSVS demos and type

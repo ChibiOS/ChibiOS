@@ -46,7 +46,6 @@ typedef ULONG32     t_time;     /* Time, recommended fastest unsigned.*/
 typedef LONG32      t_cnt;      /* Counter, recommended fastest signed.*/
 typedef ULONG32     t_size;     /* Size, use unsigned pointer equivalent.*/
 
-#define THREAD
 #define INLINE      inline
 
 #endif /* _CHTYPES_H_ */
