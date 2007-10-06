@@ -39,6 +39,11 @@ AVR-AT90CANx-GCC    - Port on AVER AT90CAN128, not complete yet.
 *****************************************************************************
 
 *** 0.3.2 ***
+- Modified the chSysInit() to give the idle thread absolute priority, the
+  priority is then lowered to the minimum value into the chSysPause(). This
+  is done in order to ensure that the initializations performed into the
+  main() procedure are performed before any thread starts.
+- Added chThdSetPriority() new API.
 - Added a generic events generator timer to the library code.
 - Added the "#ifdef __cplusplus" stuff to the header files.
 - Removed an obsolete definition in ./src/templates/chtypes.h.

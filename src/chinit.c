@@ -37,8 +37,12 @@ static Thread idlethread;
  *   chThdCreate(...); // Starts one or more user threads.
  *   chSysPause();
  * @endcode
- * @note Interrupts should be still disabled when \p chSysInit() is invoked and
- *       are internally enabled.
+ * @note Interrupts should be still disabled when \p chSysInit() is invoked
+ *       and are internally enabled.
+ * @note The idle thread has absolute priority when exiting from the
+ *       \p chSysInit(), this is done to make sure that all the initializations
+ *       performed in the \p main() procedure are completed before any thread
+ *       starts. The priority is set to \p IDLEPRIO into the \p chSysPause().
  */
 void chSysInit(void) {
 
@@ -49,7 +53,7 @@ void chSysInit(void) {
   /*
    * Now this instructions flow becomes the idle thread.
    */
-  _InitThread(IDLEPRIO, 0, &idlethread);
+  _InitThread(ABSPRIO, 0, &idlethread);
   idlethread.p_state = PRCURR;
   currp = &idlethread;
 

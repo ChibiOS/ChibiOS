@@ -100,6 +100,27 @@ Thread *chThdCreate(t_prio prio, t_tmode mode, void *workspace,
   return tp;
 }
 
+/**
+ * Changes the thread priority, reschedules if necessary.
+ * @param newprio the new priority of the invoking thread
+ */
+void chThdSetPriority(t_prio newprio) {
+
+  chSysLock();
+
+#ifdef CH_USE_RT_SEMAPHORES
+  if (currp->p_rtcnt)
+    currp->p_prio = newprio + MEPRIO;
+  else
+    currp->p_prio = newprio;
+#else
+  currp->p_prio = newprio;
+#endif
+  chSchRescheduleI();
+
+  chSysUnlock();
+}
+
 #ifdef CH_USE_RESUME
 /**
  * Resumes a thread created with the \p P_SUSPENDED option.

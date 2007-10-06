@@ -58,7 +58,7 @@ void InitCore(void) {
     printf("QueryPerformanceFrequency() error");
     exit(1);
   }
-  printf("Core Frequency   %d Hz\n", (int)slice.LowPart);
+  printf("Core Frequency   %u Hz\n", (int)slice.LowPart);
   slice.QuadPart /= CH_FREQUENCY;
   QueryPerformanceCounter(&nextcnt);
   nextcnt.QuadPart += slice.QuadPart;
@@ -91,6 +91,8 @@ static void ChkIntSources(void) {
 }
 
 __attribute__((fastcall)) void chSysPause(void) {
+
+  chThdSetPriority(IDLEPRIO);
 
   while (TRUE) {
 

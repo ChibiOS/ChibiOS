@@ -145,6 +145,8 @@ void hwinit(void) {
 
 void chSysPause(void) {
 
+  chThdSetPriority(IDLEPRIO);
+
   while (TRUE) {
 // Note, it is disabled because it causes trouble with the JTAG probe.
 // Enable it in the final code only.

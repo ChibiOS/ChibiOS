@@ -191,6 +191,7 @@ extern "C" {
 #endif
   Thread *chThdCreate(t_prio prio, t_tmode mode, void *workspace,
                       t_size wsize, t_tfunc pf, void *arg);
+  void chThdSetPriority(t_prio newprio);
   void chThdResume(Thread *tp);
   void chThdExit(t_msg msg);
 #ifdef CH_USE_TERMINATE

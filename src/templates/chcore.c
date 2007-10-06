@@ -33,14 +33,28 @@
 /**
  * This function implements the idle thread infinite loop. The function should
  * put the processor in the lowest power mode capable to serve interrupts.
+ * The priority is internally set to the minimum system value so that this
+ * thread is executed only if there are no other ready threads in the system.
  */
-void chSysPause(void) {}
+void chSysPause(void) {
+
+  chThdSetPriority(IDLEPRIO);
+
+  while (TRUE)
+    ;
+}
 
 /**
  * Abonormal system termination handler. Invoked by the ChibiOS/RT when an
  * abnormal unrecoverable condition is met.
  */
-void chSysHalt(void) {}
+void chSysHalt(void) {
+
+  chSysLock();
+
+  while (TRUE)
+    ;
+}
 
 /**
  * Context switch.
