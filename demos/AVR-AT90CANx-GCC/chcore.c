@@ -24,11 +24,11 @@ void chSysPause(void) {
   chThdSetPriority(IDLEPRIO);
 
   asm volatile (
-  "ldi     r18, 1     \n\t"   // SE bit
-  "out     0x33, r18  \n"     // SMCR
+  "ldi     r18, 1       \n\t"   // SE bit
+  "out     0x33, r18"           // SMCR
   );
   while (TRUE) {
-    asm volatile ("sleep\n\t");
+    asm volatile ("sleep");
   }
 }
 
