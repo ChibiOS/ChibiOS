@@ -77,7 +77,7 @@ TSRC =
 ASMSRC = crt0.s chcore2.s
 
 # List all user directories here
-UINCDIR = ../../src/include ../../ports/ARM7-LPC214x/GCC
+UINCDIR = ../../src/include ../../src/lib ../../ports/ARM7-LPC214x/GCC
 
 # List the user directory to look for the libraries here
 ULIBDIR =

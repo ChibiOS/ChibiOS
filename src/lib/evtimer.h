@@ -46,9 +46,9 @@ extern "C" {
 /**
  * Initializes an \p EvTimer structure.
  */
-#define evtInit(et, i) (chEvtInit(&(etp)->et_es), \
-                       (etp)->et_vt.vt_func = NULL, \
-                       (etp)->et_interval = (i))
+#define evtInit(etp, i) (chEvtInit(&(etp)->et_es), \
+                        (etp)->et_vt.vt_func = NULL, \
+                        (etp)->et_interval = (i))
 
 /**
  * Registers the invoking thread as listener on the timer event.

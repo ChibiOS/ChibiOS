@@ -22,6 +22,7 @@
 #include "lpc214x.h"
 #include "lpc214x_serial.h"
 #include "buzzer.h"
+#include "evtimer.h"
 
 static BYTE8 waThread1[UserStackSize(32)];
 
@@ -53,24 +54,36 @@ static t_msg Thread2(void *arg) {
   return 0;
 }
 
+static void TimerHandler(t_eventid id) {
+
+  t_msg TestThread(void *p);
+  
+  if (!(IO0PIN & 0x00018000)) { // Both buttons
+    TestThread(&COM1);
+    PlaySound(500, 100);
+  }
+  else {
+    if (!(IO0PIN & 0x00008000)) // Button 1
+      PlaySound(1000, 100);
+    if (!(IO0PIN & 0x00010000)) // Button 2
+      chFDDWrite(&COM1, (BYTE8 *)"Hello World!\r\n", 14);
+  }
+}
+
 static BYTE8 waThread3[UserStackSize(64)];
+static EvTimer evt;
+static t_evhandler evhndl[1] = {
+  TimerHandler
+};
 
 static t_msg Thread3(void *arg) {
-  t_msg TestThread(void *p);
+  struct EventListener el;
 
-  while (TRUE) {
-    if (!(IO0PIN & 0x00018000)) {
-      TestThread(&COM1);
-      PlaySound(500, 100);
-    }
-    else {
-      if (!(IO0PIN & 0x00008000)) // Button 1
-        PlaySound(1000, 100);
-      if (!(IO0PIN & 0x00010000)) // Button 2
-        chFDDWrite(&COM1, (BYTE8 *)"Hello World!\r\n", 14);
-    }
-    chThdSleep(500);
-  }
+  evtInit(&evt, 500);
+  evtRegister(&evt, &el, 0);
+  evtStart(&evt);
+  while (TRUE)
+    chEvtWait(ALL_EVENTS, evhndl);
   return 0;
 }
 
