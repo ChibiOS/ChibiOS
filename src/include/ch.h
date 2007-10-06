@@ -92,7 +92,13 @@
 #define NULL        0
 #endif
 
-void chSysInit(void);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chSysInit(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _CH_H_ */
 

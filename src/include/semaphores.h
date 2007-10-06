@@ -37,22 +37,28 @@ typedef struct {
   t_cnt           s_cnt;
 } Semaphore;
 
-void chSemInit(Semaphore *sp, t_cnt n);
-void chSemReset(Semaphore *sp, t_cnt n);
-void chSemResetI(Semaphore *sp, t_cnt n);
-void chSemWait(Semaphore *sp);
-void chSemWaitS(Semaphore *sp);
-t_msg chSemWaitTimeout(Semaphore *sp, t_time time);
-t_msg chSemWaitTimeoutS(Semaphore *sp, t_time time);
-void chSemSignal(Semaphore *sp);
-void chSemSignalI(Semaphore *sp);
-void chSemSignalWait(Semaphore *sps, Semaphore *spw);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chSemInit(Semaphore *sp, t_cnt n);
+  void chSemReset(Semaphore *sp, t_cnt n);
+  void chSemResetI(Semaphore *sp, t_cnt n);
+  void chSemWait(Semaphore *sp);
+  void chSemWaitS(Semaphore *sp);
+  t_msg chSemWaitTimeout(Semaphore *sp, t_time time);
+  t_msg chSemWaitTimeoutS(Semaphore *sp, t_time time);
+  void chSemSignal(Semaphore *sp);
+  void chSemSignalI(Semaphore *sp);
+  void chSemSignalWait(Semaphore *sps, Semaphore *spw);
 
 #ifdef CH_USE_RT_SEMAPHORES
-void chSemRaisePrioWait(Semaphore *sp);
-void chSemLowerPrioSignal(Semaphore *sp);
-void chSemRaisePrioSignalWait(Semaphore *sps, Semaphore *spw);
-void chSemLowerPrioSignalWait(Semaphore *sps, Semaphore *spw);
+  void chSemRaisePrioWait(Semaphore *sp);
+  void chSemLowerPrioSignal(Semaphore *sp);
+  void chSemRaisePrioSignalWait(Semaphore *sps, Semaphore *spw);
+  void chSemLowerPrioSignalWait(Semaphore *sps, Semaphore *spw);
+#endif
+#ifdef __cplusplus
+}
 #endif
 
 /**

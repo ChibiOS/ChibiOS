@@ -55,12 +55,20 @@ typedef struct {
 #define list_init(tlp) ((tlp)->p_next = (Thread *)(tlp))
 
 #ifndef CH_OPTIMIZE_SPEED
-void fifo_insert(Thread *tp, ThreadsQueue *tqp);
-Thread *fifo_remove(ThreadsQueue *tqp);
-Thread *dequeue(Thread *tp);
-void list_insert(Thread *tp, ThreadsList *tlp);
-Thread *list_remove(ThreadsList *tlp);
+
+#ifdef __cplusplus
+extern "C" {
 #endif
+  void fifo_insert(Thread *tp, ThreadsQueue *tqp);
+  Thread *fifo_remove(ThreadsQueue *tqp);
+  Thread *dequeue(Thread *tp);
+  void list_insert(Thread *tp, ThreadsList *tlp);
+  Thread *list_remove(ThreadsList *tlp);
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* CH_OPTIMIZE_SPEED */
 
 #endif  /* _LISTS_H_ */
 

@@ -25,18 +25,19 @@
 #ifndef _SLEEP_H_
 #define _SLEEP_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #ifdef CH_USE_SLEEP
-
-void chThdSleep(t_time time);
-
+  void chThdSleep(t_time time);
 #ifdef CH_USE_SYSTEMTIME
-
-void chThdSleepUntil(t_time time);
-t_time chSysGetTime(void);
-
+  void chThdSleepUntil(t_time time);
+  t_time chSysGetTime(void);
 #endif /* CH_USE_SYSTEMTIME */
-
 #endif /* CH_USE_SLEEP */
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _SLEEP_H_ */
 

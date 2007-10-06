@@ -45,14 +45,20 @@ typedef struct {
 /*
  * Scheduler APIs.
  */
-void chSchInit(void);
-Thread *chSchReadyI(Thread *tp);
-void chSchGoSleepI(t_tstate newstate);
-void chSchWakeupI(Thread *tp, t_msg msg);
-void chSchRescheduleI(void);
-void chSchDoRescheduleI(void);
-BOOL chSchRescRequiredI(void);
-void chSchTimerHandlerI(void);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chSchInit(void);
+  Thread *chSchReadyI(Thread *tp);
+  void chSchGoSleepI(t_tstate newstate);
+  void chSchWakeupI(Thread *tp, t_msg msg);
+  void chSchRescheduleI(void);
+  void chSchDoRescheduleI(void);
+  BOOL chSchRescRequiredI(void);
+  void chSchTimerHandlerI(void);
+#ifdef __cplusplus
+}
+#endif
 
 /**
  * Current thread pointer.

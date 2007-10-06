@@ -6,6 +6,10 @@
 ./license.txt          - GPL3 license file.
 ./src/                 - ChibiOS/RT portable kernel source files.
 ./src/include/         - ChibiOS/RT include files.
+./src/lib/             - ChibiOS/RT library code that can be included into
+                         user applications but is not part of the core system.
+                         The code in this directory is meant to be portable,
+                         generic and architecture indipendent.
 ./src/templates/       - ChibiOS/RT non portable source templates, new ports
                          are started by copying the templates into a new
                          directory under ./demos/.
@@ -35,7 +39,9 @@ AVR-AT90CANx-GCC    - Port on AVER AT90CAN128, not complete yet.
 *****************************************************************************
 
 *** 0.3.2 ***
-- Removed an obsolete definition in ./src/templates/chtypes.h
+- Added a generic events generator timer to the library code.
+- Added the "#ifdef __cplusplus" stuff to the header files.
+- Removed an obsolete definition in ./src/templates/chtypes.h.
 
 *** 0.3.1 ***
 - Test program added to the demos. Telnet the MinGW and MSVS demos and type

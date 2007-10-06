@@ -84,28 +84,34 @@ typedef struct {
 #define chOQIsFull(q) \
         (chQSpace(q) <= 0)
 
-/*
- * Input Queues functions. An Input Queue is usually written into by an
- * interrupt handler and read from a thread.
- */
-void chIQInit(Queue *qp, BYTE8 *buffer, t_size size, t_qnotify inotify);
-void chIQReset(Queue *qp);
-t_msg chIQPutI(Queue *qp, BYTE8 b);
-t_msg chIQGet(Queue *qp);
-t_size chIQRead(Queue *qp, BYTE8 *buffer, t_size n);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  /*
+   * Input Queues functions. An Input Queue is usually written into by an
+   * interrupt handler and read from a thread.
+   */
+  void chIQInit(Queue *qp, BYTE8 *buffer, t_size size, t_qnotify inotify);
+  void chIQReset(Queue *qp);
+  t_msg chIQPutI(Queue *qp, BYTE8 b);
+  t_msg chIQGet(Queue *qp);
+  t_size chIQRead(Queue *qp, BYTE8 *buffer, t_size n);
 #ifdef CH_USE_QUEUES_TIMEOUT
-t_msg chIQGetTimeout(Queue *qp, t_time time);
+  t_msg chIQGetTimeout(Queue *qp, t_time time);
 #endif
 
-/*
- * Output Queues functions. An Output Queue is usually written into by a
- * thread and read from an interrupt handler.
- */
-void chOQInit(Queue *queue, BYTE8 *buffer, t_size size, t_qnotify onotify);
-void chOQReset(Queue *queue);
-void chOQPut(Queue *queue, BYTE8 b);
-t_msg chOQGetI(Queue *queue);
-t_size chOQWrite(Queue *queue, BYTE8 *buffer, t_size n);
+  /*
+   * Output Queues functions. An Output Queue is usually written into by a
+   * thread and read from an interrupt handler.
+   */
+  void chOQInit(Queue *queue, BYTE8 *buffer, t_size size, t_qnotify onotify);
+  void chOQReset(Queue *queue);
+  void chOQPut(Queue *queue, BYTE8 b);
+  t_msg chOQGetI(Queue *queue);
+  t_size chOQWrite(Queue *queue, BYTE8 *buffer, t_size n);
+#ifdef __cplusplus
+}
+#endif
 #endif  /* CH_USE_QUEUES */
 
 #ifdef CH_USE_QUEUES_HALFDUPLEX
@@ -155,14 +161,20 @@ typedef struct {
 #define chHDQIsFullReceive(q) \
         (chHDQFilledSpace(q) >= chHDQSize(q))
 
-void chHDQInit(HalfDuplexQueue *qp, BYTE8 *buffer, t_size size,
-               t_qnotify inotify, t_qnotify onotify);
-t_msg chHDQGetReceive(HalfDuplexQueue *qp);
-void chHDQPutTransmit(HalfDuplexQueue *qp, BYTE8 b);
-t_msg chHDQGetTransmitI(HalfDuplexQueue *qp);
-t_msg chHDQPutReceiveI(HalfDuplexQueue *qp, BYTE8 b);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chHDQInit(HalfDuplexQueue *qp, BYTE8 *buffer, t_size size,
+                 t_qnotify inotify, t_qnotify onotify);
+  t_msg chHDQGetReceive(HalfDuplexQueue *qp);
+  void chHDQPutTransmit(HalfDuplexQueue *qp, BYTE8 b);
+  t_msg chHDQGetTransmitI(HalfDuplexQueue *qp);
+  t_msg chHDQPutReceiveI(HalfDuplexQueue *qp, BYTE8 b);
 #ifdef CH_USE_QUEUES_TIMEOUT
-t_msg chHDQGetReceiveTimeout(HalfDuplexQueue *qp, t_time time);
+  t_msg chHDQGetReceiveTimeout(HalfDuplexQueue *qp, t_time time);
+#endif
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* CH_USE_QUEUES_HALFDUPLEX */

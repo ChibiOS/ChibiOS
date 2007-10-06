@@ -72,13 +72,19 @@ typedef struct {
   EventSource       sd_sevent;
 } FullDuplexDriver;
 
-void chFDDInit(FullDuplexDriver *sd,
-               BYTE8 *ib, t_size isize, t_qnotify inotify,
-               BYTE8 *ob, t_size osize, t_qnotify onotify);
-void chFDDIncomingDataI(FullDuplexDriver *sd, BYTE8 b);
-t_msg chFDDRequestDataI(FullDuplexDriver *sd);
-void chFDDAddFlagsI(FullDuplexDriver *sd, t_dflags mask);
-t_dflags chFDDGetAndClearFlags(FullDuplexDriver *sd);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chFDDInit(FullDuplexDriver *sd,
+                 BYTE8 *ib, t_size isize, t_qnotify inotify,
+                 BYTE8 *ob, t_size osize, t_qnotify onotify);
+  void chFDDIncomingDataI(FullDuplexDriver *sd, BYTE8 b);
+  t_msg chFDDRequestDataI(FullDuplexDriver *sd);
+  void chFDDAddFlagsI(FullDuplexDriver *sd, t_dflags mask);
+  t_dflags chFDDGetAndClearFlags(FullDuplexDriver *sd);
+#ifdef __cplusplus
+}
+#endif
 
 /** @see chIQRead()*/
 #define chFDDRead(sd, b, n) \
@@ -128,12 +134,18 @@ typedef struct {
   EventSource       sd_sevent;
 } HalfDuplexDriver;
 
-void chHDDInit(HalfDuplexDriver *sd, BYTE8 *b, t_size size,
-              t_qnotify inotify, t_qnotify onotify);
-void chHDDIncomingDataI(HalfDuplexDriver *sd, BYTE8 b);
-t_msg chHDDRequestDataI(HalfDuplexDriver *sd);
-void chHDDAddFlagsI(HalfDuplexDriver *sd, t_dflags mask);
-t_dflags chHDDGetAndClearFlags(HalfDuplexDriver *sd);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chHDDInit(HalfDuplexDriver *sd, BYTE8 *b, t_size size,
+                t_qnotify inotify, t_qnotify onotify);
+  void chHDDIncomingDataI(HalfDuplexDriver *sd, BYTE8 b);
+  t_msg chHDDRequestDataI(HalfDuplexDriver *sd);
+  void chHDDAddFlagsI(HalfDuplexDriver *sd, t_dflags mask);
+  t_dflags chHDDGetAndClearFlags(HalfDuplexDriver *sd);
+#ifdef __cplusplus
+}
+#endif
 
 /** @see chHDQGetReceive()*/
 #define chHDDGetReceive(sd) \

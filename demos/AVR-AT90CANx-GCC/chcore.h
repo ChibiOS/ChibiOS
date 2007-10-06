@@ -97,8 +97,8 @@ typedef struct {
 #define chSysLock() asm("cli")
 #define chSysUnlock() asm("sei")
 
-void chSysHalt(void);
-void chSysPause(void);
+void chSysHalt(void) __attribute__((noreturn)) ;
+void chSysPause(void) __attribute__((noreturn)) ;
 void chSysSwitchI(Context *oldp, Context *newp);
 
 #endif /* _CHCORE_H_ */

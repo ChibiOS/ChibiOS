@@ -18,48 +18,48 @@
 */
 
 /**
- * @addtogroup Messages
+ * @file evtimer.h
  * @{
+ * Event Timer definitions.
+ * @see evtimer.c
  */
 
-#ifndef _MESSAGES_H_
-#define _MESSAGES_H_
+#ifndef _EVTIMER_H_
+#define _EVTIMER_H_
 
-#ifdef CH_USE_MESSAGES
 
-/**
- * Evaluates to TRUE if the thread has pending messages.
- */
-#define chMsgIsPendingI(tp) \
-                        ((tp)->p_msgqueue.p_next != (Thread *)&(tp)->p_msgqueue)
-
-/**
- * Returns the first message in the queue.
- */
-#define chMsgGetI(tp) \
-                        ((tp)->p_msgqueue.p_next->p_msg)
+typedef struct {
+  VirtualTimer  et_vt;
+  EventSource   et_es;
+  t_time        et_interval;
+} EvTimer;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  t_msg chMsgSend(Thread *tp, t_msg msg);
-  t_msg chMsgWait(void);
-  t_msg chMsgGet(void);
-  void chMsgRelease(t_msg msg);
-
-#ifdef CH_USE_MESSAGES_EVENT
-  t_msg chMsgSendWithEvent(Thread *tp, t_msg msg, EventSource *esp);
-#endif
-
-#ifdef CH_USE_MESSAGES_TIMEOUT
-  t_msg chMsgSendTimeout(Thread *tp, t_msg msg, t_time time);
-#endif
+  void evtStart(EvTimer *etp);
+  void evtStop(EvTimer *etp);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* CH_USE_MESSAGES */
+/**
+ * Initializes an \p EvTimer structure.
+ */
+#define evtInit(et, i) (chEvtInit(&(etp)->et_es), \
+                       (etp)->et_vt.vt_func = NULL, \
+                       (etp)->et_interval = (i))
 
-#endif /* _MESSAGES_H_ */
+/**
+ * Registers the invoking thread as listener on the timer event.
+ */
+#define evtRegister(etp, el, eid) chEvtRegister(&(etp)->et_es, el, eid)
+
+/**
+ * Unregisters the invoking thread as listener on the timer event.
+ */
+#define evtUnregister(etp, el) chEvtUnregister(&(etp)->et_es, el)
+
+#endif /* _EVTIMER_H_ */
 
 /** @} */

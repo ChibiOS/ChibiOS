@@ -98,7 +98,7 @@ extern void chSysUnlock(void);
                           sizeof(struct stackregs) + (n) + (INT_REQUIRED_STACK))
 
 void chSysHalt(void) __attribute__((noreturn));
-void chSysPause(void);
+void chSysPause(void)  __attribute__((noreturn));
 void chSysSwitchI(Context *oldp, Context *newp);
 void threadstart(void);
 void DefFiqHandler(void);

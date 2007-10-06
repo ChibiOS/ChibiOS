@@ -66,7 +66,6 @@ typedef struct {
     t_time          dl_dtime;
 } DeltaList;
 
-
 extern DeltaList dlist;
 
 #define chVTDoTickI() \
@@ -85,9 +84,15 @@ extern DeltaList dlist;
 /*
  * Virtual Timers APIs.
  */
-void chVTInit(void);
-void chVTSetI(VirtualTimer *vtp, t_time time, t_vtfunc vtfunc, void *par);
-void chVTResetI(VirtualTimer *vtp);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chVTInit(void);
+  void chVTSetI(VirtualTimer *vtp, t_time time, t_vtfunc vtfunc, void *par);
+  void chVTResetI(VirtualTimer *vtp);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* CH_USE_VIRTUAL_TIMER */
 

@@ -62,7 +62,7 @@ UDEFS =
 UADEFS =
 
 # List ARM-mode C source files here
-ASRC = chcore.c main.c buzzer.c \
+ASRC = chcore.c main.c buzzer.c ../../src/lib/evtimer.c \
        ../../test/test.c ../../ports/ARM7-LPC214x/GCC/lpc214x_serial.c  \
        ../../src/chinit.c ../../src/chlists.c ../../src/chdelta.c ../../src/chschd.c \
        ../../src/chthreads.c ../../src/chsem.c ../../src/chevents.c ../../src/chmsg.c \
@@ -92,8 +92,6 @@ AOPT =
 TOPT = -mthumb -D THUMB
 
 # Common options here
-# NOTE: -mthumb-interwork increases the code size, remove it if you dont have
-#       Thumb code anywhere in the project.
 # NOTE: -ffixed-f7 is only needed if you enabled CH_CURRP_REGISTER_CACHE in chconf.h.
 OPT = -O2 -ggdb -fomit-frame-pointer -fno-strict-aliasing
 #OPT += -ffixed-f7
@@ -117,7 +115,7 @@ LIBS    = $(DLIBS) $(ULIBS)
 MCFLAGS = -mcpu=$(MCU)
 
 ASFLAGS = $(MCFLAGS) -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
-CPFLAGS = $(MCFLAGS) $(OPT) $(WARN) -fverbose-asm -Wa,-ahlms=$(<:.c=.lst) $(DEFS)
+CPFLAGS = $(MCFLAGS) $(OPT) $(WARN) -Wa,-ahlms=$(<:.c=.lst) $(DEFS)
 LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
 ODFLAGS	= -x --syms
 
@@ -137,15 +135,19 @@ CPFLAGS += -MD -MP -MF .dep/$(@F).d
 all: $(OBJS) $(PROJECT).elf $(PROJECT).hex $(PROJECT).bin $(PROJECT).dmp
 
 $(AOBJS) : %.o : %.c
+	@echo
 	$(CC) -c $(CPFLAGS) $(AOPT) -I . $(INCDIR) $< -o $@
 
 $(TOBJS) : %.o : %.c
+	@echo
 	$(CC) -c $(CPFLAGS) $(TOPT) -I . $(INCDIR) $< -o $@
 
 $(ASMOBJS) : %.o : %.s
+	@echo
 	$(AS) -c $(ASFLAGS) $< -o $@
 
 %elf: $(OBJS)
+	@echo
 	$(CC) $(ASMOBJS) $(AOBJS) $(TOBJS) $(LDFLAGS) $(LIBS) -o $@
 
 %hex: %elf

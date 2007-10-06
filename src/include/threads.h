@@ -186,10 +186,22 @@ static INLINE Thread *list_remove(ThreadsList *tlp) {
 /*
  * Threads APIs.
  */
-Thread *chThdCreate(t_prio prio, t_tmode mode, void *workspace,
-                    t_size wsize, t_tfunc pf, void *arg);
-void chThdResume(Thread *tp);
-void chThdExit(t_msg msg);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  Thread *chThdCreate(t_prio prio, t_tmode mode, void *workspace,
+                      t_size wsize, t_tfunc pf, void *arg);
+  void chThdResume(Thread *tp);
+  void chThdExit(t_msg msg);
+#ifdef CH_USE_TERMINATE
+  void chThdTerminate(Thread *tp);
+#endif
+#ifdef CH_USE_WAITEXIT
+  t_msg chThdWait(Thread *tp);
+#endif
+#ifdef __cplusplus
+}
+#endif
 
 /** Returns the pointer to the \p Thread currently in execution.*/
 #define chThdSelf() currp
@@ -200,20 +212,11 @@ void chThdExit(t_msg msg);
 /** Verifies if the specified thread is in the \p PREXIT state.*/
 #define chThdTerminated(tp) ((tp)->p_state == PREXIT)
 
-#ifdef CH_USE_TERMINATE
 /**
  * Verifies if the current thread has a termination request pending.
  */
 #define chThdShouldTerminate() (currp->p_flags & P_TERMINATE)
 
-void chThdTerminate(Thread *tp);
-#endif
-
-#ifdef CH_USE_WAITEXIT
-t_msg chThdWait(Thread *tp);
-#endif
-
-#ifdef CH_USE_EXIT_EVENT
 /**
  * Returns the exit event source for the specified thread. The source is
  * signaled when the thread terminates.
@@ -235,7 +238,6 @@ t_msg chThdWait(Thread *tp);
  *       option is enabled in \p chconf.h.
  */
 #define chThdGetExitEventSource(tp) (&(tp)->p_exitesource)
-#endif
 
 #endif  /* _THREADS_H_ */
 

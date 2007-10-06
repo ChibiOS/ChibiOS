@@ -35,7 +35,7 @@ static BYTE8 wsT5[UserStackSize(64)];
 static Thread *t1, *t2, *t3, *t4, *t5;
 
 static FullDuplexDriver *comp;
-static Semaphore sem1, sem2;
+static Semaphore sem1;
 
 static void wait(void) {
 

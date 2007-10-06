@@ -76,17 +76,23 @@ typedef struct EventSource {
 /** Event Handler callback function.*/
 typedef void (*t_evhandler)(t_eventid);
 
-void chEvtRegister(EventSource *esp, EventListener *elp, t_eventid eid);
-void chEvtUnregister(EventSource *esp, EventListener *elp);
-void chEvtClear(t_eventmask mask);
-void chEvtSend(EventSource *esp);
-void chEvtSendI(EventSource *esp);
-t_eventid chEvtWait(t_eventmask ewmask,
-                    t_evhandler handlers[]);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chEvtRegister(EventSource *esp, EventListener *elp, t_eventid eid);
+  void chEvtUnregister(EventSource *esp, EventListener *elp);
+  void chEvtClear(t_eventmask mask);
+  void chEvtSend(EventSource *esp);
+  void chEvtSendI(EventSource *esp);
+  t_eventid chEvtWait(t_eventmask ewmask,
+                      t_evhandler handlers[]);
 #ifdef CH_USE_EVENTS_TIMEOUT
-t_eventid chEvtWaitTimeout(t_eventmask ewmask,
+  t_eventid chEvtWaitTimeout(t_eventmask ewmask,
                            t_evhandler handlers[],
                            t_time time);
+#endif
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* CH_USE_EVENTS */
