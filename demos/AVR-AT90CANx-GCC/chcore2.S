@@ -19,14 +19,6 @@
 
 #include <avr/io.h>
 
-.global chSysPause
-chSysPause:
-        ldi     r18, (1 << SE)
-        out     _SFR_IO_ADDR(SMCR), r18
-stay:
-        sleep
-        rjmp    stay
-
 .global chSysSwitchI
 chSysSwitchI:
         push    r2
