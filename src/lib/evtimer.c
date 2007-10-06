@@ -32,6 +32,7 @@
 static void tmrcb(void *p) {
   EvTimer *etp = p;
 
+  chEvtSendI(&etp->et_es);
   chVTSetI(&etp->et_vt, etp->et_interval, tmrcb, etp);
 }
 

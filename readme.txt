@@ -45,6 +45,7 @@ AVR-AT90CANx-GCC    - Port on AVER AT90CAN128, not complete yet.
   main() procedure are performed before any thread starts.
 - Added chThdSetPriority() new API.
 - Added a generic events generator timer to the library code.
+- Modified the ARM7-LPC214x-GCC demo to show the use of the event timer.
 - Added the "#ifdef __cplusplus" stuff to the header files.
 - Removed an obsolete definition in ./src/templates/chtypes.h.
 
