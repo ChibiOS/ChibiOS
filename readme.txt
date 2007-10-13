@@ -40,9 +40,8 @@ AVR-AT90CANx-GCC    - Port on AVER AT90CAN128, not complete yet.
 
 *** 0.3.3 ***
 - Modified the chVTSetI(), now for the "time" parameter can have value zero
-  with meaning "infinite".
-  This allows all the APIs with timeout parameters to be invoked
-  with timeout=0 and work with no timeout.
+  with meaning "infinite". This allows all the APIs with timeout parameters
+  to be invoked with no timeout.
 - Fixes in the documentation.
 - Renamed some APIs in the "Sch" group to have an S suffix instead of I.
 
