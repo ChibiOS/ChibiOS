@@ -91,7 +91,7 @@ Thread *chThdCreate(t_prio prio, t_tmode mode, void *workspace,
 #endif
     chSysLock();
 
-    chSchWakeupI(tp, RDY_OK);
+    chSchWakeupS(tp, RDY_OK);
 
     chSysUnlock();
 #ifdef CH_USE_RESUME
@@ -116,7 +116,7 @@ void chThdSetPriority(t_prio newprio) {
 #else
   currp->p_prio = newprio;
 #endif
-  chSchRescheduleI();
+  chSchRescheduleS();
 
   chSysUnlock();
 }
@@ -135,7 +135,7 @@ void chThdResume(Thread *tp) {
   chSysLock();
 
   if (tp->p_state == PRSUSPENDED)
-    chSchWakeupI(tp, RDY_OK);
+    chSchWakeupS(tp, RDY_OK);
 
   chSysUnlock();
 }
@@ -176,7 +176,7 @@ void chThdExit(t_msg msg) {
 #ifdef CH_USE_EXIT_EVENT
   chEvtSendI(&currp->p_exitesource);
 #endif
-  chSchGoSleepI(PREXIT);
+  chSchGoSleepS(PREXIT);
 
   chSysUnlock();                        /* Never executed.              */
 }
@@ -196,7 +196,7 @@ t_msg chThdWait(Thread *tp) {
 
   if (tp->p_state != PREXIT) {
     list_insert(currp, &tp->p_waiting);
-    chSchGoSleepI(PRWAIT);
+    chSchGoSleepS(PRWAIT);
   }
 
   chSysUnlock();

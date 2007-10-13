@@ -50,9 +50,9 @@ extern "C" {
 #endif
   void chSchInit(void);
   Thread *chSchReadyI(Thread *tp);
-  void chSchGoSleepI(t_tstate newstate);
-  void chSchWakeupI(Thread *tp, t_msg msg);
-  void chSchRescheduleI(void);
+  void chSchGoSleepS(t_tstate newstate);
+  void chSchWakeupS(Thread *tp, t_msg msg);
+  void chSchRescheduleS(void);
   void chSchDoRescheduleI(void);
   BOOL chSchRescRequiredI(void);
   void chSchTimerHandlerI(void);

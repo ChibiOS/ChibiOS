@@ -104,7 +104,7 @@ void chEvtSend(EventSource *esp) {
       chSchReadyI(tp);
     elp = elp->el_next;
   }
-  chSchRescheduleI();
+  chSchRescheduleS();
 
   chSysUnlock();
 }
@@ -112,7 +112,7 @@ void chEvtSend(EventSource *esp) {
 /**
  * Signals all the Event Listeners registered on the specified Event Source.
  * @param esp pointer to the \p EventSource structure
- * @note This function must be called with interrupts disabled.
+ * @note This function does not reschedule.
  */
 void chEvtSendI(EventSource *esp) {
   EventListener *elp;
@@ -153,7 +153,7 @@ t_eventid chEvtWait(t_eventmask ewmask,
 
   if ((currp->p_epending & ewmask) == 0) {
     currp->p_ewmask = ewmask;
-    chSchGoSleepI(PRWTEVENT);
+    chSchGoSleepS(PRWTEVENT);
   }
   i = 0, m = 1;
   while ((currp->p_epending & ewmask & m) == 0)
@@ -219,7 +219,7 @@ t_eventid chEvtWaitTimeout(t_eventmask ewmask,
 
     chVTSetI(&vt, time, unwait, currp);
     currp->p_ewmask = ewmask;
-    chSchGoSleepI(PRWTEVENT);
+    chSchGoSleepS(PRWTEVENT);
     if (!vt.vt_func) {
 
       chSysUnlock();

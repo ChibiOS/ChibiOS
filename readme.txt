@@ -38,13 +38,21 @@ AVR-AT90CANx-GCC    - Port on AVER AT90CAN128, not complete yet.
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.3.3 ***
+- Modified the chVTSetI(), now for the "time" parameter can have value zero
+  with meaning "infinite".
+  This allows all the APIs with timeout parameters to be invoked
+  with timeout=0 and work with no timeout.
+- Fixes in the documentation.
+- Renamed some APIs in the "Sch" group to have an S suffix instead of I.
+
 *** 0.3.2 ***
 - Modified the chSysInit() to give the idle thread absolute priority, the
   priority is then lowered to the minimum value into the chSysPause(). This
   is done in order to ensure that the initializations performed into the
   main() procedure are performed before any thread starts.
 - Added chThdSetPriority() new API.
-- Added a generic events generator timer to the library code.
+- Added a generic events generator timer modulee to the library code.
 - Modified the ARM7-LPC214x-GCC demo to show the use of the event timer.
 - Added the "#ifdef __cplusplus" stuff to the header files.
 - Removed an obsolete definition in ./src/templates/chtypes.h.

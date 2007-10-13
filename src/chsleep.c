@@ -35,7 +35,7 @@ void chThdSleep(t_time time) {
   chSysLock();
 
   chVTSetI(&vt, time, (t_vtfunc)chSchReadyI, currp);
-  chSchGoSleepI(PRSLEEP);
+  chSchGoSleepS(PRSLEEP);
 
   chSysUnlock();
 }
@@ -67,7 +67,7 @@ void chThdSleepUntil(t_time time) {
   chSysLock();
 
   chVTSetI(&vt, (t_time)(time - stime), (t_vtfunc)chSchReadyI, currp);
-  chSchGoSleepI(PRSLEEP);
+  chSchGoSleepS(PRSLEEP);
 
   chSysUnlock();
 }

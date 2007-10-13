@@ -81,6 +81,9 @@ extern DeltaList dlist;
     }                                                                   \
   }
 
+/** Infinite time specification.*/
+#define TIME_INFINITE 0
+
 /*
  * Virtual Timers APIs.
  */

@@ -39,7 +39,8 @@ void chVTInit(void) {
 /**
  * Enables a virtual timer.
  * @param vtp the \p VirtualTimer structure pointer
- * @param time the number of time ticks
+ * @param time the number of time ticks, the value zero is allowed with
+ *             meaning "infinite".
  * @param vtfunc the timer callback function. After invoking the callback
  *               the timer is disabled and the structure can be disposed or
  *               reused.
@@ -48,21 +49,23 @@ void chVTInit(void) {
  * @note The associated function is invoked by an interrupt handler.
  */
 void chVTSetI(VirtualTimer *vtp, t_time time, t_vtfunc vtfunc, void *par) {
-  VirtualTimer *p;
 
   vtp->vt_func = vtfunc;
   vtp->vt_par = par;
-  p = dlist.dl_next;
-  while (p->vt_dtime < time) {
-    time -= p->vt_dtime;
-    p = p->vt_next;
-  }
 
-  vtp->vt_prev = (vtp->vt_next = p)->vt_prev;
-  vtp->vt_prev->vt_next = p->vt_prev = vtp;
-  vtp->vt_dtime = time;
-  if (p != (VirtualTimer *)&dlist)
-    p->vt_dtime -= time;
+  if (time) {
+    VirtualTimer *p = dlist.dl_next;
+    while (p->vt_dtime < time) {
+      time -= p->vt_dtime;
+      p = p->vt_next;
+    }
+
+    vtp->vt_prev = (vtp->vt_next = p)->vt_prev;
+    vtp->vt_prev->vt_next = p->vt_prev = vtp;
+    vtp->vt_dtime = time;
+    if (p != (VirtualTimer *)&dlist)
+      p->vt_dtime -= time;
+  }
 }
 
 /**

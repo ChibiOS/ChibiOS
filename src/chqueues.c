@@ -145,10 +145,10 @@ t_msg chIQGetTimeout(Queue *qp, t_time time) {
  * is non-blocking and can return zero if the queue is empty.
  * @param qp pointer to a \p Queue structure
  * @param buffer the data buffer
- * @param n the maxium amount of data to be read
+ * @param n the maximum amount of data to be read
  * @return the number of bytes read
  * @note This function is the upper side endpoint of the input queue.
- * @note The function is not atomical, if you need atomicity it is suggested
+ * @note The function is not atomic, if you need atomicity it is suggested
  *       to use a semaphore for mutual exclusion.
  */
 t_size chIQRead(Queue *qp, BYTE8 *buffer, t_size n) {
@@ -166,9 +166,6 @@ t_size chIQRead(Queue *qp, BYTE8 *buffer, t_size n) {
     *buffer++ = *qp->q_rdptr++;
     if (qp->q_rdptr >= qp->q_top)
       qp->q_rdptr = qp->q_buffer;
-
-//    if (qp->q_notify)
-//      qp->q_notify();
 
     chSysUnlock();
     r++;
@@ -264,9 +261,9 @@ t_msg chOQGetI(Queue *qp) {
  * is non-blocking and can return zero if the queue is full.
  * @param qp pointer to a \p Queue structure
  * @param buffer the data buffer
- * @param n the maxium amount of data to be written
+ * @param n the maximum amount of data to be written
  * @note This function is the upper side endpoint of the output queue.
- * @note The function is not atomical, if you need atomicity it is suggested
+ * @note The function is not atomic, if you need atomicity it is suggested
  *       to use a semaphore for mutual exclusion.
  */
 t_size chOQWrite(Queue *qp, BYTE8 *buffer, t_size n) {
@@ -284,9 +281,6 @@ t_size chOQWrite(Queue *qp, BYTE8 *buffer, t_size n) {
     *qp->q_wrptr++ = *buffer++;
     if (qp->q_wrptr >= qp->q_top)
       qp->q_wrptr = qp->q_buffer;
-
-//    if (qp->q_notify)
-//      qp->q_notify();
 
     chSysUnlock();
     w++;

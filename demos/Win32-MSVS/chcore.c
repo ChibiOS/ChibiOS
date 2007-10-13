@@ -53,7 +53,8 @@ static void ChkIntSources(void) {
   if (Com1InInterruptSimCom()   || Com2InInterruptSimCom()  ||
       Com1OutInterruptSimCom()  || Com2OutInterruptSimCom() ||
       Com1ConnInterruptSimCom() || Com2ConnInterruptSimCom()) {
-    chSchRescheduleI();
+    if (chSchRescRequiredI())
+      chSchDoRescheduleI();
     return;
   }
 

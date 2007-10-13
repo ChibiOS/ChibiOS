@@ -55,7 +55,7 @@ void chSemReset(Semaphore *sp, t_cnt n) {
   if (cnt < 0) {
     while (cnt++)
       chSchReadyI(fifo_remove(&sp->s_queue))->p_rdymsg = RDY_RESET;
-    chSchRescheduleI();
+    chSchRescheduleS();
   }
 
   chSysUnlock();
@@ -68,7 +68,7 @@ void chSemReset(Semaphore *sp, t_cnt n) {
  * @note The released threads can recognize they were waked up by a reset
  *       instead than a signal because the \p p_rdymsg field is set to
  *       \p RDY_RESET.
- * @note This function must be called with interrupts disabled.
+ * @note This function does not reschedule.
  */
 void chSemResetI(Semaphore *sp, t_cnt n) {
   t_cnt cnt;
@@ -90,7 +90,7 @@ void chSemWait(Semaphore *sp) {
   if (--sp->s_cnt < 0) {
     fifo_insert(currp, &sp->s_queue);
     currp->p_semp = sp;
-    chSchGoSleepI(PRWTSEM);
+    chSchGoSleepS(PRWTSEM);
   }
 
   chSysUnlock();
@@ -107,7 +107,7 @@ void chSemWaitS(Semaphore *sp) {
   if (--sp->s_cnt < 0) {
     fifo_insert(currp, &sp->s_queue);
     currp->p_semp = sp;
-    chSchGoSleepI(PRWTSEM);
+    chSchGoSleepS(PRWTSEM);
   }
 }
 
@@ -137,7 +137,7 @@ t_msg chSemWaitTimeout(Semaphore *sp, t_time time) {
     chVTSetI(&vt, time, unwait, currp);
     fifo_insert(currp, &sp->s_queue);
     currp->p_semp = sp;
-    chSchGoSleepI(PRWTSEM);
+    chSchGoSleepS(PRWTSEM);
     msg = currp->p_rdymsg;
     if (vt.vt_func)
       chVTResetI(&vt);
@@ -168,7 +168,7 @@ t_msg chSemWaitTimeoutS(Semaphore *sp, t_time time) {
     chVTSetI(&vt, time, unwait, currp);
     fifo_insert(currp, &sp->s_queue);
     currp->p_semp = sp;
-    chSchGoSleepI(PRWTSEM);
+    chSchGoSleepS(PRWTSEM);
     if (vt.vt_func)
       chVTResetI(&vt);
     return currp->p_rdymsg;
@@ -188,7 +188,7 @@ void chSemSignal(Semaphore *sp) {
   chSysLock();
 
   if (sp->s_cnt++ < 0)
-    chSchWakeupI(fifo_remove(&sp->s_queue), RDY_OK);
+    chSchWakeupS(fifo_remove(&sp->s_queue), RDY_OK);
 
   chSysUnlock();
 }
@@ -199,6 +199,7 @@ void chSemSignal(Semaphore *sp) {
  * @note This function must be called with interrupts disabled.
  * @note The function is available only if the \p CH_USE_SEMAPHORES
  *       option is enabled in \p chconf.h.
+ * @note This function does not reschedule.
  */
 void chSemSignalI(Semaphore *sp) {
 
@@ -224,10 +225,10 @@ void chSemSignalWait(Semaphore *sps, Semaphore *spw) {
   if (--spw->s_cnt < 0) {
     fifo_insert(currp, &spw->s_queue);
     currp->p_semp = spw;
-    chSchGoSleepI(PRWTSEM);
+    chSchGoSleepS(PRWTSEM);
   }
   else
-    chSchRescheduleI();
+    chSchRescheduleS();
 
   chSysUnlock();
 }
@@ -265,7 +266,7 @@ void chSemRaisePrioWait(Semaphore *sp) {
   if (--sp->s_cnt < 0) {
     prioenq(currp, &sp->s_queue);
     currp->p_semp = sp;
-    chSchGoSleepI(PRWTSEM);
+    chSchGoSleepS(PRWTSEM);
   }
 
   if (!currp->p_rtcnt++)
@@ -288,10 +289,10 @@ void chSemLowerPrioSignal(Semaphore *sp) {
     currp->p_prio -= MEPRIO;
     if (sp->s_cnt++ < 0)
       chSchReadyI(fifo_remove(&sp->s_queue));
-    chSchRescheduleI();
+    chSchRescheduleS();
   }
   else if (sp->s_cnt++ < 0)
-    chSchWakeupI(fifo_remove(&sp->s_queue), RDY_OK);
+    chSchWakeupS(fifo_remove(&sp->s_queue), RDY_OK);
 
   chSysUnlock();
 }
@@ -315,7 +316,7 @@ void chSemRaisePrioSignalWait(Semaphore *sps, Semaphore *spw) {
   if (--spw->s_cnt < 0) {
     prioenq(currp, &spw->s_queue);
     currp->p_semp = spw;
-    chSchGoSleepI(PRWTSEM);
+    chSchGoSleepS(PRWTSEM);
 
     if (!currp->p_rtcnt++)
       currp->p_prio += MEPRIO;
@@ -324,7 +325,7 @@ void chSemRaisePrioSignalWait(Semaphore *sps, Semaphore *spw) {
     if (!currp->p_rtcnt++)
       currp->p_prio += MEPRIO;
 
-    chSchRescheduleI(); // Really needed ?
+    chSchRescheduleS(); // Really needed ?
   }
 
   chSysUnlock();
@@ -351,10 +352,10 @@ void chSemLowerPrioSignalWait(Semaphore *sps, Semaphore *spw) {
   if (--spw->s_cnt < 0) {
     fifo_insert(currp, &spw->s_queue); // fifo_insert() because the spw is a normal sem.
     currp->p_semp = spw;
-    chSchGoSleepI(PRWTSEM);
+    chSchGoSleepS(PRWTSEM);
   }
   else
-    chSchRescheduleI();
+    chSchRescheduleS();
 
   chSysUnlock();
 }

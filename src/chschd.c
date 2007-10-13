@@ -98,7 +98,7 @@ static void nextready(void) {
  * @note The function must be called in the system mutex zone.
  * @note The function is not meant to be used in the user code directly.
  */
-void chSchGoSleepI(t_tstate newstate) {
+void chSchGoSleepS(t_tstate newstate) {
 
   currp->p_state = newstate;
   nextready();
@@ -115,7 +115,7 @@ void chSchGoSleepI(t_tstate newstate) {
  * @note It is equivalent to a \p chSchReadyI() followed by a
  *       \p chSchRescheduleI() but much more efficient.
  */
-void chSchWakeupI(Thread *tp, t_msg msg) {
+void chSchWakeupS(Thread *tp, t_msg msg) {
   Thread *ctp = currp;
 
   if (tp->p_prio <= ctp->p_prio)
@@ -134,7 +134,7 @@ void chSchWakeupI(Thread *tp, t_msg msg) {
  * ready list then it becomes running.
  * @note The function must be called in the system mutex zone.
  */
-void chSchRescheduleI(void) {
+void chSchRescheduleS(void) {
 
   if (isempty(&rlist.r_queue) || firstprio(&rlist.r_queue) <= currp->p_prio)
     return;

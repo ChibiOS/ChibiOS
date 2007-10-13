@@ -40,7 +40,7 @@ t_msg chMsgSend(Thread *tp, t_msg msg) {
   if (tp->p_state == PRWTMSG)
     chSchReadyI(tp);
   currp->p_msg = msg;
-  chSchGoSleepI(PRSNDMSG);
+  chSchGoSleepS(PRSNDMSG);
   msg = currp->p_rdymsg;
 
   chSysUnlock();
@@ -71,7 +71,7 @@ t_msg chMsgSendWithEvent(Thread *tp, t_msg msg, EventSource *esp) {
 //    chSchReadyI(tp);
   chEvtSendI(esp);
   currp->p_msg = msg;
-  chSchGoSleepI(PRSNDMSG);
+  chSchGoSleepS(PRSNDMSG);
   msg = currp->p_rdymsg;
 
   chSysUnlock();
@@ -113,7 +113,7 @@ t_msg chMsgSendTimeout(Thread *tp, t_msg msg, t_time time) {
   if (tp->p_state == PRWTMSG)
     chSchReadyI(tp);
   currp->p_msg = msg;
-  chSchGoSleepI(PRSNDMSG);
+  chSchGoSleepS(PRSNDMSG);
   msg = currp->p_rdymsg;
   if (vt.vt_func)
     chVTResetI(&vt);
@@ -138,7 +138,7 @@ t_msg chMsgWait(void) {
   chSysLock();
 
   if (!chMsgIsPendingI(currp))
-    chSchGoSleepI(PRWTMSG);
+    chSchGoSleepS(PRWTMSG);
   msg = chMsgGetI(currp);
 
   chSysUnlock();
@@ -183,7 +183,7 @@ void chMsgRelease(t_msg msg) {
   chSysLock();
 
 //  if (!chMsgIsPendingI(currp)
-  chSchWakeupI(fifo_remove(&currp->p_msgqueue), msg);
+  chSchWakeupS(fifo_remove(&currp->p_msgqueue), msg);
 
   chSysUnlock();
 }
