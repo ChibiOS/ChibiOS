@@ -50,10 +50,9 @@ void chVTInit(void) {
  */
 void chVTSetI(VirtualTimer *vtp, t_time time, t_vtfunc vtfunc, void *par) {
 
-  vtp->vt_func = vtfunc;
   vtp->vt_par = par;
-
   if (time) {
+    vtp->vt_func = vtfunc;
     VirtualTimer *p = dlist.dl_next;
     while (p->vt_dtime < time) {
       time -= p->vt_dtime;
@@ -66,6 +65,8 @@ void chVTSetI(VirtualTimer *vtp, t_time time, t_vtfunc vtfunc, void *par) {
     if (p != (VirtualTimer *)&dlist)
       p->vt_dtime -= time;
   }
+  else
+    vtp->vt_func = NULL;
 }
 
 /**

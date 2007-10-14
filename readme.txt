@@ -38,6 +38,11 @@ AVR-AT90CANx-GCC    - Port on AVER AT90CAN128, not complete yet.
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.3.4 ***
+- Fixed a problem in chVTSetI().
+- Modified chEvtWaitTimeout() to work correctly in the TIME_INFINITE
+  scenario.
+  
 *** 0.3.3 ***
 - Modified the chVTSetI(), now for the "time" parameter can have value zero
   with meaning "infinite". This allows all the APIs with timeout parameters
