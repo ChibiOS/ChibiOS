@@ -40,7 +40,9 @@ void chVTInit(void) {
  * Enables a virtual timer.
  * @param vtp the \p VirtualTimer structure pointer
  * @param time the number of time ticks, the value zero is allowed with
- *             meaning "infinite".
+ *             meaning "infinite". In this case the structure is initialized
+ *             but not inserted in the delta list, the timer will never be
+ *             triggered.
  * @param vtfunc the timer callback function. After invoking the callback
  *               the timer is disabled and the structure can be disposed or
  *               reused.
@@ -51,8 +53,8 @@ void chVTInit(void) {
 void chVTSetI(VirtualTimer *vtp, t_time time, t_vtfunc vtfunc, void *par) {
 
   vtp->vt_par = par;
+  vtp->vt_func = vtfunc;
   if (time) {
-    vtp->vt_func = vtfunc;
     VirtualTimer *p = dlist.dl_next;
     while (p->vt_dtime < time) {
       time -= p->vt_dtime;
@@ -66,7 +68,7 @@ void chVTSetI(VirtualTimer *vtp, t_time time, t_vtfunc vtfunc, void *par) {
       p->vt_dtime -= time;
   }
   else
-    vtp->vt_func = NULL;
+    vtp->vt_next = vtp->vt_prev = vtp; // Allows a chVTResetI() on the fake timer.
 }
 
 /**

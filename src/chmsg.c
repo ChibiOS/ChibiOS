@@ -115,7 +115,7 @@ t_msg chMsgSendTimeout(Thread *tp, t_msg msg, t_time time) {
   currp->p_msg = msg;
   chSchGoSleepS(PRSNDMSG);
   msg = currp->p_rdymsg;
-  if (vt.vt_func)
+  if (chVTIsArmedI(&vt))
     chVTResetI(&vt);
 
   chSysUnlock();

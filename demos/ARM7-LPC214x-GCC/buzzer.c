@@ -69,7 +69,7 @@ void PlaySound(int freq, t_time duration) {
 
   chSysLock();
 
-  if (bvt.vt_func) {                    // If a sound is already being played
+  if (chVTIsArmedI(&bvt)) {              // If a sound is already being played
     chVTResetI(&bvt);                   // then aborts it.
     StopCounter(tc);
   }

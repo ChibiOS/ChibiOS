@@ -121,9 +121,34 @@ void chThdSetPriority(t_prio newprio) {
   chSysUnlock();
 }
 
+#ifdef CH_USE_SUSPEND
+/**
+ * Suspends the invoking thread.
+ *
+ * @param tpp pointer to a \p Thread pointer, the \p Thread pointer is set
+ *            to point to the suspended process before it enters the
+ *            \p PRSUSPENDED state, it is set to \p NULL after it is resumed.
+ *            This allows to implement a "test and resume" on the variable
+ *            into interrupt handlers.
+ * @note The function is available only if the \p CH_USE_SUSPEND
+ *       option is enabled in \p chconf.h.
+ */
+void chThdSuspend(Thread **tpp) {
+
+  chSysLock();
+
+  *tpp = currp;
+  chSchGoSleepS(PRSUSPENDED);
+  *tpp = NULL;
+
+  chSysUnlock();
+}
+#endif /* CH_USE_SUSPEND */
+
 #ifdef CH_USE_RESUME
 /**
- * Resumes a thread created with the \p P_SUSPENDED option.
+ * Resumes a thread created with the \p P_SUSPENDED option or suspended with
+ * \p chThdSuspend().
  * @param tp the pointer to the thread
  * @note The function has no effect on threads in any other state than
  *       \p PRSUSPENDED.
@@ -134,8 +159,8 @@ void chThdResume(Thread *tp) {
 
   chSysLock();
 
-  if (tp->p_state == PRSUSPENDED)
-    chSchWakeupS(tp, RDY_OK);
+  if ((tp)->p_state == PRSUSPENDED)
+    chSchWakeupS((tp), RDY_OK);
 
   chSysUnlock();
 }

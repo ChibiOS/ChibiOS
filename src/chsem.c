@@ -139,7 +139,7 @@ t_msg chSemWaitTimeout(Semaphore *sp, t_time time) {
     currp->p_semp = sp;
     chSchGoSleepS(PRWTSEM);
     msg = currp->p_rdymsg;
-    if (vt.vt_func)
+    if (chVTIsArmedI(&vt))
       chVTResetI(&vt);
 
     chSysUnlock();
@@ -169,7 +169,7 @@ t_msg chSemWaitTimeoutS(Semaphore *sp, t_time time) {
     fifo_insert(currp, &sp->s_queue);
     currp->p_semp = sp;
     chSchGoSleepS(PRWTSEM);
-    if (vt.vt_func)
+    if (chVTIsArmedI(&vt))
       chVTResetI(&vt);
     return currp->p_rdymsg;
   }

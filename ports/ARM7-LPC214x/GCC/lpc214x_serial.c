@@ -106,12 +106,12 @@ static void OutNotify2(void) {
   u->UART_IER |= IER_THRE;
 }
 
-void UART0Irq(void){
+void UART0Irq(void) {
 
   ServeInterrupt(U0Base, &COM1);
 }
 
-void UART1Irq(void){
+void UART1Irq(void) {
 
   ServeInterrupt(U1Base, &COM2);
 }

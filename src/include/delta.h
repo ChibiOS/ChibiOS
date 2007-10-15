@@ -97,6 +97,9 @@ extern "C" {
 }
 #endif
 
+/** Returns TRUE if the speciified timer is armed.*/
+#define chVTIsArmedI(vtp) ((vtp)->vt_func != NULL)
+
 #endif /* CH_USE_VIRTUAL_TIMER */
 
 #endif /* _DELTA_H_ */

@@ -192,8 +192,10 @@ extern "C" {
   Thread *chThdCreate(t_prio prio, t_tmode mode, void *workspace,
                       t_size wsize, t_tfunc pf, void *arg);
   void chThdSetPriority(t_prio newprio);
-  void chThdResume(Thread *tp);
   void chThdExit(t_msg msg);
+#ifdef CH_USE_RESUME
+  void chThdResume(Thread *tp);
+#endif
 #ifdef CH_USE_TERMINATE
   void chThdTerminate(Thread *tp);
 #endif
@@ -239,6 +241,13 @@ extern "C" {
  *       option is enabled in \p chconf.h.
  */
 #define chThdGetExitEventSource(tp) (&(tp)->p_exitesource)
+
+/**
+ * Resumes a thread created with the \p P_SUSPENDED option or suspended with
+ * \p chThdSuspend().
+ * @param tp the pointer to the thread
+ */
+#define chThdResumeI(tp) chSchReadyI(tp)
 
 #endif  /* _THREADS_H_ */
 

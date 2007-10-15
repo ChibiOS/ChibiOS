@@ -205,7 +205,6 @@ t_eventid chEvtWaitTimeout(t_eventmask ewmask,
                            t_time time) {
   t_eventid i;
   t_eventmask m;
-  t_msg msg;
 
   chSysLock();
 
@@ -221,11 +220,10 @@ t_eventid chEvtWaitTimeout(t_eventmask ewmask,
     chVTSetI(&vt, time, unwait, currp);
     currp->p_ewmask = ewmask;
     chSchGoSleepS(PRWTEVENT);
-    if (!vt.vt_func) {
-      t_msg msg = currp->p_rdymsg;
+    if (!chVTIsArmedI(&vt)) {
 
       chSysUnlock();
-      return msg;
+      return RDY_TIMEOUT;
     }
     chVTResetI(&vt);
   }

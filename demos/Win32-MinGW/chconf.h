@@ -56,6 +56,10 @@
  *  function is included in the kernel.*/
 #define CH_USE_RESUME
 
+/** Configuration option: if specified then the \p chThdSuspend()
+ *  function is included in the kernel.*/
+#define CH_USE_SUSPEND
+
 /** Configuration option: if specified then the \p chThdTerminate()
  *  and \p chThdShouldTerminate() functions are included in the kernel.*/
 #define CH_USE_TERMINATE

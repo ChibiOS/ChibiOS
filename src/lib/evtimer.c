@@ -45,7 +45,7 @@ void evtStart(EvTimer *etp) {
 
   chSysLock();
 
-  if (!etp->et_vt.vt_func)
+  if (!chVTIsArmedI(&etp->et_vt))
     chVTSetI(&etp->et_vt, etp->et_interval, tmrcb, etp);
 
   chSysUnlock();
@@ -60,7 +60,7 @@ void evtStop(EvTimer *etp) {
 
   chSysLock();
 
-  if (etp->et_vt.vt_func)
+  if (chVTIsArmedI(&etp->et_vt))
     chVTResetI(&etp->et_vt);
 
   chSysUnlock();
