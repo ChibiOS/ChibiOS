@@ -79,7 +79,7 @@ void _InitThread(t_prio prio, t_tmode mode, Thread *tp) {
  *       returning from its main function.
  */
 Thread *chThdCreate(t_prio prio, t_tmode mode, void *workspace,
-                        t_size wsize, t_tfunc pf, void *arg) {
+                    t_size wsize, t_tfunc pf, void *arg) {
   Thread *tp = workspace;
 
   _InitThread(prio, mode, tp);
