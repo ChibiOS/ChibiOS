@@ -32,7 +32,7 @@ ARM7-LPC214x-GCC    - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
                       for any processor into the LPC2000 family or other
                       boards. The demo can be compiled using YAGARTO or any
                       other GCC-based ARM toolchain.
-AVR-AT90CANx-GCC    - Port on AVER AT90CAN128, not complete yet.
+AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 
 *****************************************************************************
 *** Releases                                                              ***
