@@ -146,44 +146,6 @@ void _InitThread(t_prio prio, t_tmode mode, Thread *tp);
 typedef t_msg (*t_tfunc)(void *);
 
 /*
- * Inlined functions if CH_OPTIMIZE_SPEED is enabled.
- */
-#ifdef CH_OPTIMIZE_SPEED
-static INLINE void fifo_insert(Thread *tp, ThreadsQueue *tqp) {
-
-  tp->p_prev = (tp->p_next = (Thread *)tqp)->p_prev;
-  tp->p_prev->p_next = tqp->p_prev = tp;
-}
-
-static INLINE Thread *fifo_remove(ThreadsQueue *tqp) {
-  Thread *tp = tqp->p_next;
-
-  (tqp->p_next = tp->p_next)->p_prev = (Thread *)tqp;
-  return tp;
-}
-
-static INLINE Thread *dequeue(Thread *tp) {
-
-  tp->p_prev->p_next = tp->p_next;
-  tp->p_next->p_prev = tp->p_prev;
-  return tp;
-}
-
-static INLINE void list_insert(Thread *tp, ThreadsList *tlp) {
-
-  tp->p_next = tlp->p_next;
-  tlp->p_next = tp;
-}
-
-static INLINE Thread *list_remove(ThreadsList *tlp) {
-
-  Thread *tp = tlp->p_next;
-  tlp->p_next = tp->p_next;
-  return tp;
-}
-#endif
-
-/*
  * Threads APIs.
  */
 #ifdef __cplusplus

@@ -40,6 +40,10 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 
 *** 0.3.5 ***
 - Space optimization in events code.
+- Changed the behavior of chEvtWaitTimeout() when the timeout parameter is
+  set to zero, now it is consistent with all the other syscalls that have a
+  timeout option.
+- Reorganized all the inline definitions into a single file (inline.h).
 
 *** 0.3.4 ***
 - Fixed a problem in chVTSetI().

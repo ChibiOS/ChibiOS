@@ -216,6 +216,9 @@
 					RelativePath="..\..\src\include\events.h">
 				</File>
 				<File
+					RelativePath="..\..\src\include\inline.h">
+				</File>
+				<File
 					RelativePath="..\..\src\include\lists.h">
 				</File>
 				<File

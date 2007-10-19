@@ -67,6 +67,10 @@
 #include "threads.h"
 #endif
 
+#ifndef _INLINE_H_
+#include "inline.h"
+#endif
+
 #ifndef _SLEEP_H_
 #include "sleep.h"
 #endif
