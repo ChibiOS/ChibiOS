@@ -38,6 +38,9 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.3.5 ***
+- Space optimization in events code.
+
 *** 0.3.4 ***
 - Fixed a problem in chVTSetI().
 - New API, chVTIsArmedI(), it is a macro in delta.h.

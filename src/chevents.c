@@ -91,19 +91,10 @@ void chEvtClear(t_eventmask mask) {
  * @param esp pointer to the \p EventSource structure
  */
 void chEvtSend(EventSource *esp) {
-  EventListener *elp;
 
   chSysLock();
 
-  elp = esp->es_next;
-  while (elp != (EventListener *)esp) {
-    Thread *tp = elp->el_listener;
-
-    tp->p_epending |= EventMask(elp->el_id);
-    if ((tp->p_state == PRWTEVENT) && (tp->p_epending & tp->p_ewmask))
-      chSchReadyI(tp);
-    elp = elp->el_next;
-  }
+  chEvtSendI(esp);
   chSchRescheduleS();
 
   chSysUnlock();
