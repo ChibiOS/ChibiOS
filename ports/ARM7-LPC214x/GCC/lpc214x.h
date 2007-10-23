@@ -122,6 +122,17 @@ typedef struct {
 #define SOURCE_USB              22
 
 #define INTMASK(n)              (1 << (n))
+#define ALLINTMASK (INTMASK(SOURCE_WDT) | INTMASK(SOURCE_ARMCore0) | \
+                    INTMASK(SOURCE_ARMCore1) | INTMASK(SOURCE_Timer0) | \
+                    INTMASK(SOURCE_Timer1) | INTMASK(SOURCE_UART0) | \
+                    INTMASK(SOURCE_UART1) | INTMASK(SOURCE_PWM0) | \
+                    INTMASK(SOURCE_I2C0) | INTMASK(SOURCE_SPI0) | \
+                    INTMASK(SOURCE_SPI1) | INTMASK(SOURCE_PLL) | \
+                    INTMASK(SOURCE_RTC) | INTMASK(SOURCE_EINT0) | \
+                    INTMASK(SOURCE_EINT1) | INTMASK(SOURCE_EINT2) | \
+                    INTMASK(SOURCE_EINT3) | INTMASK(SOURCE_ADC0) | \
+                    INTMASK(SOURCE_I2C1) | INTMASK(SOURCE_BOD) | \
+                    INTMASK(SOURCE_ADC1) | INTMASK(SOURCE_USB))
 
 typedef struct {
   IOREG32       VIC_IRQStatus;
@@ -248,42 +259,6 @@ typedef struct {
   IOREG32       unused2C;
   IOREG32       UART_TER;
 } UART;
-
-/*typedef struct {
-  union {
-    IOREG8      UART_RBR;
-    IOREG8      UART_THR;
-    IOREG8      UART_DLL;
-    IOREG8      f1[4];
-  };
-  union {
-    IOREG8      UART_IER;
-    IOREG8      UART_DLM;
-    IOREG8      f2[4];
-  };
-  union {
-    IOREG8      UART_IIR;
-    IOREG8      UART_FCR;
-    IOREG8      f3[4];
-  };
-  IOREG8        UART_LCR;
-  IOREG8        f4[3];
-  IOREG8        UART_MCR;   // UART1 only
-  IOREG8        f5[3];
-  IOREG8        UART_LSR;
-  IOREG8        f6[3];
-  IOREG32       unused18;
-  IOREG8        UART_SCR;
-  IOREG8        f7[3];
-  IOREG8        UART_ACR;
-  IOREG8        f8[3];
-  IOREG32       unused24;
-  IOREG8        UART_FDR;
-  IOREG8        f9[3];
-  IOREG32       unused2C;
-  IOREG8        UART_TER;
-  IOREG8        f10[3];
-} UART;*/
 
 #define U0Base                  ((UART *)0xE000C000)
 #define U0RBR                   (U0Base->UART_RBR)

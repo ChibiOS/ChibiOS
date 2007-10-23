@@ -19,6 +19,10 @@
 
 #include <ch.h>
 
+#include <avr/io.h>
+
+void hwinit(void);
+
 static BYTE8 waThread1[UserStackSize(32)];
 
 static t_msg Thread1(void *arg) {
@@ -30,6 +34,8 @@ static t_msg Thread1(void *arg) {
 }
 
 int main(int argc, char **argv) {
+
+  hwinit();
 
   chSysInit();
   chThdCreate(NORMALPRIO, 0, waThread1, sizeof(waThread1), Thread1, NULL);

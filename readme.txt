@@ -43,7 +43,9 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 - Changed the behavior of chEvtWaitTimeout() when the timeout parameter is
   set to zero, now it is consistent with all the other syscalls that have a
   timeout option.
-- Reorganized all the inline definitions into a single file (inline.h).
+- Reorganized all the kernel inline definitions into a single file (inline.h).
+- Fixed a minor problem in the interrupt initialization code for the LPC214x
+  demo, regrouped the VIC code into vic.c/vic.h.
 
 *** 0.3.4 ***
 - Fixed a problem in chVTSetI().

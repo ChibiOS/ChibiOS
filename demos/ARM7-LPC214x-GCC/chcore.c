@@ -20,7 +20,9 @@
 #include <ch.h>
 
 #include "lpc214x.h"
+#include "vic.h"
 #include "lpc214x_serial.h"
+
 #include "buzzer.h"
 
 extern void IrqHandler(void);
@@ -62,7 +64,6 @@ extern void T0IrqHandler(void);
  * NOTE: Interrupts are still disabled.
  */
 void hwinit(void) {
-  int i;
 
   /*
    * All peripherals clock disabled by default in order to save power.
@@ -110,17 +111,9 @@ void hwinit(void) {
 
   /*
    * Interrupt vectors assignment.
-   * NOTE: Better reset everything in the VIC, it is a HUGE source of trouble.
    */
-  VIC *vic = VICBase;
-  vic->VIC_IntSelect = 0;
-  vic->VIC_IntEnable = 0;
-  vic->VIC_VectAddr = 0;
-  for (i = 0; i < 16; i++) {
-    vic->VIC_VectCntls[i] = 0;
-    vic->VIC_VectAddrs[i] = 0;
-  }
-  vic->VIC_DefVectAddr = (IOREG32)IrqHandler;
+  InitVIC();
+  VICDefVectAddr = (IOREG32)IrqHandler;
   SetVICVector(T0IrqHandler, 0, SOURCE_Timer0);
   SetVICVector(UART0IrqHandler, 1, SOURCE_UART0);
   SetVICVector(UART1IrqHandler, 2, SOURCE_UART1);
@@ -128,7 +121,7 @@ void hwinit(void) {
   /*
    * System Timer initialization, 1ms intervals.
    */
-  vic->VIC_IntEnable |= INTMASK(SOURCE_Timer0);
+  VICIntEnable = INTMASK(SOURCE_Timer0);
   TC *timer = T0Base;
   timer->TC_PR = VAL_TC0_PRESCALER;
   timer->TC_MR0 = (PCLK / CH_FREQUENCY) / (VAL_TC0_PRESCALER + 1);
@@ -168,20 +161,11 @@ void chSysHalt(void) {
 }
 
 /*
- * Set a vector for an interrupt source, the vector is enabled too.
- */
-void SetVICVector(void *handler, int vector, int source) {
-
-  VIC *vicp = VICBase;
-  vicp->VIC_VectAddrs[vector] = (IOREG32)handler;
-  vicp->VIC_VectCntls[vector] = (IOREG32)(source | 0x20);
-}
-
-/*
  * Undefined Instruction exception handler.
  * Yellow LED + RED LED 2.
  */
 void UndHandler(void) {
+
   IO0SET = 0x80000C00;
   IO0CLR = 0x80000800;
   while(TRUE)
@@ -193,6 +177,7 @@ void UndHandler(void) {
  * Yellow LED + RED LED 1.
  */
 void PrefetchHandler(void) {
+
   IO0SET = 0x80000C00;
   IO0CLR = 0x80000400;
   while(TRUE)
@@ -204,6 +189,7 @@ void PrefetchHandler(void) {
  * Yellow LED + both RED LEDs.
  */
 void AbortHandler(void) {
+
   IO0SET = 0x80000C00;
   IO0CLR = 0x80000C00;
   while(TRUE)
@@ -214,6 +200,7 @@ void AbortHandler(void) {
  * Non-vectored IRQs handling here.
  */
 void NonVectoredIrq(void) {
+
   VICVectAddr = 0;
 }
 
@@ -221,7 +208,8 @@ void NonVectoredIrq(void) {
  * Timer 0 IRQ handling here.
  */
 void Timer0Irq(void) {
-  chSchTimerHandlerI();
+
   T0IR = 1;             /* Clear interrupt on match MR0. */
   VICVectAddr = 0;
+  chSchTimerHandlerI();
 }

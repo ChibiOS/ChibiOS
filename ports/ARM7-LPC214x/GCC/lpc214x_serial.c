@@ -146,5 +146,5 @@ void InitSerial(void) {
   chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
   SetUARTI(U1Base, 38400, LCR_WL8 | LCR_STOP1 | LCR_NOPARITY, FCR_TRIGGER0);
 
-  VICIntEnable |= INTMASK(SOURCE_UART0) | INTMASK(SOURCE_UART1);
+  VICIntEnable = INTMASK(SOURCE_UART0) | INTMASK(SOURCE_UART1);
 }

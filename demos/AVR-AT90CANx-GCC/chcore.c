@@ -19,16 +19,41 @@
 
 #include <ch.h>
 
+#include <avr/io.h>
+
+void hwinit(void) {
+
+  /*
+   * I/O ports setup.
+   * Everything configured as input with pull-up initially.
+   */
+  DDRA  = 0;
+  PORTA = 0xFF;
+  DDRB  = 0;
+  PORTB = 0xFF;
+  DDRC  = 0;
+  PORTC = 0xFF;
+  DDRD  = 0;
+  PORTD = 0xFF;
+  DDRE  = 0;
+  PORTE = 0xFF;
+  DDRF  = 0;
+  PORTF = 0xFF;
+  DDRG  = 0;
+  PORTG = 0xFF;
+
+  /*
+   * Enables Idle mode for SLEEP instruction.
+   */
+  SMCR = 1;
+}
+
 void chSysPause(void) {
 
   chThdSetPriority(IDLEPRIO);
 
-  asm volatile (
-  "ldi     r18, 1       \n\t"   // SE bit
-  "out     0x33, r18"           // SMCR
-  );
   while (TRUE) {
-    asm volatile ("sleep");
+//    asm volatile ("sleep");
   }
 }
 
