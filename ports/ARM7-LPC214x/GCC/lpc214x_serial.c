@@ -102,7 +102,7 @@ static void OutNotify2(void) {
   UART *u = U1Base;
 
   if (u->UART_LSR & LSR_THRE)
-    u->UART_THR = chOQGetI(&COM1.sd_oqueue);
+    u->UART_THR = chOQGetI(&COM2.sd_oqueue);
   u->UART_IER |= IER_THRE;
 }
 

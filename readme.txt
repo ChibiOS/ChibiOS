@@ -46,6 +46,7 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 - Reorganized all the kernel inline definitions into a single file (inline.h).
 - Fixed a minor problem in the interrupt initialization code for the LPC214x
   demo, regrouped the VIC code into vic.c/vic.h.
+- Fixed a bug into the LPC2148 serial driver (limited to the serial port 2).
 
 *** 0.3.4 ***
 - Fixed a problem in chVTSetI().
