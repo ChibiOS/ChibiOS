@@ -67,16 +67,16 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
     case IIR_SRC_TX:
       {
 #ifdef FIFO_PRELOAD
-        int i = 0;
-        while (i < FIFO_PRELOAD) {
-          t_msg b = chFDDRequestDataI(com);
+        int i = FIFO_PRELOAD;
+        do {
+          t_msg b = chOQGetI(&com->sd_oqueue);
           if (b < Q_OK) {
             u->UART_IER &= ~IER_THRE;
+            chEvtSendI(&com->sd_oevent);
             break;
           }
           u->UART_THR = b;
-          i++;
-        }
+        } while (--i);
 #else
         t_msg b = chFDDRequestDataI(com);
         if (b < Q_OK)
@@ -92,6 +92,16 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
   }
 }
 
+void UART0Irq(void) {
+
+  ServeInterrupt(U0Base, &COM1);
+}
+
+void UART1Irq(void) {
+
+  ServeInterrupt(U1Base, &COM2);
+}
+
 /*
  * Invoked by the high driver when one or more bytes are inserted in the
  * output queue.
@@ -99,20 +109,22 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
 static void OutNotify1(void) {
   UART *u = U0Base;
 
-  if (u->UART_LSR & LSR_THRE) {
 #ifdef FIFO_PRELOAD
-    int i = 0;
-    while (i < FIFO_PRELOAD) {
+  if (u->UART_LSR & LSR_THRE) {
+    int i = FIFO_PRELOAD;
+    do {
       t_msg b = chOQGetI(&COM1.sd_oqueue);
-      if (b < Q_OK)
-        break;
+      if (b < Q_OK) {
+        chEvtSendI(&COM1.sd_oevent);
+        return;
+      }
       u->UART_THR = b;
-      i++;
-    }
+    } while (--i);
+  }
 #else
+  if (u->UART_LSR & LSR_THRE)
     u->UART_THR = chOQGetI(&COM1.sd_oqueue);
 #endif
-  }
   u->UART_IER |= IER_THRE;
 }
 
@@ -123,31 +135,23 @@ static void OutNotify1(void) {
 static void OutNotify2(void) {
   UART *u = U1Base;
 
-  if (u->UART_LSR & LSR_THRE) {
 #ifdef FIFO_PRELOAD
-    int i = 0;
-    while (i < FIFO_PRELOAD) {
+  if (u->UART_LSR & LSR_THRE) {
+    int i = FIFO_PRELOAD;
+    do {
       t_msg b = chOQGetI(&COM2.sd_oqueue);
-      if (b < Q_OK)
-        break;
+      if (b < Q_OK) {
+        chEvtSendI(&COM2.sd_oevent);
+        return;
+      }
       u->UART_THR = b;
-      i++;
-    }
+    } while (--i);
+  }
 #else
+  if (u->UART_LSR & LSR_THRE)
     u->UART_THR = chOQGetI(&COM2.sd_oqueue);
 #endif
-  }
   u->UART_IER |= IER_THRE;
-}
-
-void UART0Irq(void) {
-
-  ServeInterrupt(U0Base, &COM1);
-}
-
-void UART1Irq(void) {
-
-  ServeInterrupt(U1Base, &COM2);
 }
 
 /*
