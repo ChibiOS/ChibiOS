@@ -20,6 +20,23 @@
 #ifndef _LPC214x_SERIAL_H_
 #define _LPC214x_SERIAL_H_
 
+/*
+ * Configuration parameter, this values defines how many bytes are preloaded
+ * in the HW transmit FIFO for each interrupt, the maximum value is 16 the
+ * minimum is 2.
+ * NOTE: A greater value reduces the number of interrupts generated but can
+ *       also increase the worst case interrupt response time.
+ * NOTE: You can undefine the following macro and revert to a simpler code
+ *       that will generate an interrupt for each output byte,
+ */
+#define FIFO_PRELOAD 16
+
+/*
+ * Configuration parameter, you can change the depth of the queue buffers
+ * depending on the requirements of your application.
+ */
+#define SERIAL_BUFFERS_SIZE 128
+
 void InitSerial(void);
 void SetUARTI(UART *u, int speed, int lcr, int fcr);
 void UART0IrqHandler(void);

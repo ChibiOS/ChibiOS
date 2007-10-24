@@ -47,6 +47,10 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 - Fixed a minor problem in the interrupt initialization code for the LPC214x
   demo, regrouped the VIC code into vic.c/vic.h.
 - Fixed a bug into the LPC2148 serial driver (limited to the serial port 2).
+- Implemented HW transmit FIFO preloading in the LPC2142 serial driver in
+  order to minimize the number of interrupts generated, it is possible to
+  disable the feature and return to the old code which is a bit smaller, see
+  the configuration parameters in ./ARM7-LPC214x/GCC/lpc214x_serial.h.
 
 *** 0.3.4 ***
 - Fixed a problem in chVTSetI().

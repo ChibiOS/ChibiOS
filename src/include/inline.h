@@ -22,6 +22,8 @@
 
 /*
  * Inlined functions if CH_OPTIMIZE_SPEED is enabled.
+ * Note: static inlined functions do not duplicate the code in every module
+ *       this is true for GCC, not sure about other compilers.
  */
 #ifdef CH_OPTIMIZE_SPEED
 static INLINE void fifo_insert(Thread *tp, ThreadsQueue *tqp) {

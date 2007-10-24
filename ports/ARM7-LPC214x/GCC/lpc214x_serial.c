@@ -22,8 +22,6 @@
 #include "lpc214x.h"
 #include "lpc214x_serial.h"
 
-#define SERIAL_BUFFERS_SIZE 128
-
 FullDuplexDriver COM1;
 BYTE8 ib1[SERIAL_BUFFERS_SIZE];
 BYTE8 ob1[SERIAL_BUFFERS_SIZE];
@@ -68,16 +66,28 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
       break;
     case IIR_SRC_TX:
       {
+#ifdef FIFO_PRELOAD
+        int i = 0;
+        while (i < FIFO_PRELOAD) {
+          t_msg b = chFDDRequestDataI(com);
+          if (b < Q_OK) {
+            u->UART_IER &= ~IER_THRE;
+            break;
+          }
+          u->UART_THR = b;
+          i++;
+        }
+#else
         t_msg b = chFDDRequestDataI(com);
         if (b < Q_OK)
           u->UART_IER &= ~IER_THRE;
         else
           u->UART_THR = b;
+#endif
       }
     default:
       u->UART_THR;
       u->UART_RBR;
-      u->UART_IIR;
     }
   }
 }
@@ -89,8 +99,20 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
 static void OutNotify1(void) {
   UART *u = U0Base;
 
-  if (u->UART_LSR & LSR_THRE)
+  if (u->UART_LSR & LSR_THRE) {
+#ifdef FIFO_PRELOAD
+    int i = 0;
+    while (i < FIFO_PRELOAD) {
+      t_msg b = chOQGetI(&COM1.sd_oqueue);
+      if (b < Q_OK)
+        break;
+      u->UART_THR = b;
+      i++;
+    }
+#else
     u->UART_THR = chOQGetI(&COM1.sd_oqueue);
+#endif
+  }
   u->UART_IER |= IER_THRE;
 }
 
@@ -101,8 +123,20 @@ static void OutNotify1(void) {
 static void OutNotify2(void) {
   UART *u = U1Base;
 
-  if (u->UART_LSR & LSR_THRE)
+  if (u->UART_LSR & LSR_THRE) {
+#ifdef FIFO_PRELOAD
+    int i = 0;
+    while (i < FIFO_PRELOAD) {
+      t_msg b = chOQGetI(&COM2.sd_oqueue);
+      if (b < Q_OK)
+        break;
+      u->UART_THR = b;
+      i++;
+    }
+#else
     u->UART_THR = chOQGetI(&COM2.sd_oqueue);
+#endif
+  }
   u->UART_IER |= IER_THRE;
 }
 
