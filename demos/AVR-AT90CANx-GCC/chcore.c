@@ -82,32 +82,43 @@ void hwinit(void) {
   /*
    * I/O ports setup.
    */
-  DDRA  = VAL_DDRA;
-  PORTA = VAL_PORTA;
-  DDRB  = VAL_DDRB;
-  PORTB = VAL_PORTB;
-  DDRC  = VAL_DDRC;
-  PORTC = VAL_PORTC;
-  DDRD  = VAL_DDRD;
-  PORTD = VAL_PORTD;
-  DDRE  = VAL_DDRE;
-  PORTE = VAL_PORTE;
-  DDRF  = VAL_DDRF;
-  PORTF = VAL_PORTF;
-  DDRG  = VAL_DDRG;
-  PORTG = VAL_PORTG;
+  DDRA   = VAL_DDRA;
+  PORTA  = VAL_PORTA;
+  DDRB   = VAL_DDRB;
+  PORTB  = VAL_PORTB;
+  DDRC   = VAL_DDRC;
+  PORTC  = VAL_PORTC;
+  DDRD   = VAL_DDRD;
+  PORTD  = VAL_PORTD;
+  DDRE   = VAL_DDRE;
+  PORTE  = VAL_PORTE;
+  DDRF   = VAL_DDRF;
+  PORTF  = VAL_PORTF;
+  DDRG   = VAL_DDRG;
+  PORTG  = VAL_PORTG;
 
   /*
    * External interrupts setup, all disabled initially.
    */
-   EICRA = 0x00;
-   EICRB = 0x00;
-   EIMSK = 0x00;
+  EICRA  = 0x00;
+  EICRB  = 0x00;
+  EIMSK  = 0x00;
 
   /*
    * Enables Idle mode for SLEEP instruction.
    */
-  SMCR = 1;
+  SMCR   = 1;
+
+  /*
+   * Timer 0 setup.
+   */
+  TCCR0A = (1 << WGM01) | (0 << WGM00) |                // CTC mode.
+           (0 << COM0A1) | (0 << COM0A0) |              // OC0A disabled (normal I/O).
+           (0 << CS02) | (1 << CS01) | (1 << CS00);     // CLK/64 clock source.
+  OCR0A  = F_CPU / 64 / CH_FREQUENCY - 1;
+  TCNT0  = 0;                                           // Reset counter.
+  TIFR0  = (1 << OCF0A);                                // Reset pending (if any).
+  TIMSK0 = (1 << OCIE0A);                               // Interrupt on compare.
 }
 
 void chSysPause(void) {

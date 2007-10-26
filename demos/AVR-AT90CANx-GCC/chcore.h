@@ -79,8 +79,13 @@ typedef struct {
 /**
  * Platform dependent part of the \p chThdCreate() API.
  */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg)                   \
-{                                                                  \
+#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                 \
+  tp->p_ctx.sp--;                                                  \
+  tp->p_ctx.sp->r2 = (int)pf;                                      \
+  tp->p_ctx.sp->r3 = (int)pf >> 8;                                 \
+  tp->p_ctx.sp->r4 = (int)arg;                                     \
+  tp->p_ctx.sp->r5 = (int)arg >> 8;                                \
+  tp->p_ctx.sp->pc = (UWORD16)threadstart;                         \
 }
 
 /*
@@ -100,6 +105,7 @@ typedef struct {
 void chSysHalt(void) __attribute__((noreturn)) ;
 void chSysPause(void) __attribute__((noreturn)) ;
 void chSysSwitchI(Context *oldp, Context *newp);
+void threadstart(void);
 
 #endif /* _CHCORE_H_ */
 

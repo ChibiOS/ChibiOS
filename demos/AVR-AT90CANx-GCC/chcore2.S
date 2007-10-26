@@ -19,6 +19,14 @@
 
 #include <avr/io.h>
 
+.global threadstart
+threadstart:
+        sei
+        movw    r24, r4         // argument
+        movw    r30, r2         // thread function
+        icall
+        call    chThdExit
+
 .global chSysSwitchI
 chSysSwitchI:
         push    r2
@@ -113,4 +121,3 @@ noschd:
         pop     r1
         pop     r0
         reti
-
