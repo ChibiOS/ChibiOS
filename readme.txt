@@ -51,7 +51,8 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
   order to minimize the number of interrupts generated, it is possible to
   disable the feature and return to the old code which is a bit smaller, see
   the configuration parameters in ./ARM7-LPC214x/GCC/lpc214x_serial.h.
-- Some more work done on the AVR port, not tested yet.
+- Some more work done on the AVR port, it is almost complete but not tested
+  yet because my JTAG probe broke...
 
 *** 0.3.4 ***
 - Fixed a problem in chVTSetI().
