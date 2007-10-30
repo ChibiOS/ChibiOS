@@ -158,6 +158,9 @@ extern "C" {
 #ifdef CH_USE_RESUME
   void chThdResume(Thread *tp);
 #endif
+#ifdef CH_USE_SUSPEND
+  void chThdSuspend(Thread **tpp);
+#endif
 #ifdef CH_USE_TERMINATE
   void chThdTerminate(Thread *tp);
 #endif

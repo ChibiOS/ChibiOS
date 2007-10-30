@@ -23,10 +23,13 @@
 #define SSP_OK      RDY_OK
 #define SSP_RUNNING -3
 
-typedef void (*t_sspnotify)(void);
+typedef void (*t_sspnotify)(void *par);
 
 void InitSSP(void);
 void SetSSPI(int cpsr, int cr0, int cr1);
 void SSPIrqHandler(void);
+
+t_msg sspRWI(BYTE8 *in, BYTE8 *out, t_size n, t_sspnotify fn, void *par);
+BOOL sspIsRunningI(void);
 
 #endif /* _LPC214x_SSP_H_*/

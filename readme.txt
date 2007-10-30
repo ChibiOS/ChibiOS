@@ -40,6 +40,9 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 
 *** 0.3.6 ***
 - Added SSP (SPI1) definitions to the lpc214x.h file.
+- Added SSP driver for the LPC2148. It allows both asynchronous and
+  synchronous operations.
+- Added missing chThdSuspend() declararion in threads.h.
 
 *** 0.3.5 ***
 - Space optimization in events code.

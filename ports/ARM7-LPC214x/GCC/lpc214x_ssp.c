@@ -23,10 +23,49 @@
 #include "lpc214x_ssp.h"
 
 static BYTE8 *ip, *op;
-static t_size icnt, ocnt;
+static int icnt, ocnt;
 static t_sspnotify callback;
+static void *cbpar;
 
 void SSPIrq(void) {
+  SSP *ssp = SSPBase;
+  BYTE8 b;
+
+  while (ssp->SSP_MIS & (MIS_ROR | MIS_RT | MIS_RX | MIS_TX)) {
+
+    if (ssp->SSP_MIS & MIS_ROR)
+      chSysHalt();
+
+    if (ssp->SSP_MIS & (MIS_RX | MIS_RT)) {
+      ssp->SSP_ICR = ICR_RT;
+      while (ssp->SSP_SR & SR_RNE) {
+        b = ssp->SSP_DR;
+        if (ip)
+          *ip++ = b;
+        icnt--;
+      }
+      if (icnt <= 0) { /* It should never become less than zero */
+        t_sspnotify fn = callback;
+        callback = NULL;
+        ssp->SSP_IMSC = 0;
+        VICVectAddr = 0;
+        fn(cbpar);
+        return;
+      }
+      continue;
+    }
+    /* It is MIS_TX, no need to test it again. */
+    while (ocnt && (ssp->SSP_SR & SR_TNF)) {
+      if (op)
+        ssp->SSP_DR = *op++;
+      else
+        ssp->SSP_DR = 0xFF;
+      ocnt--;
+    }
+    if (!ocnt)
+      ssp->SSP_IMSC = IMSC_ROR | IMSC_RT | IMSC_RX;
+  }
+  VICVectAddr = 0;
 }
 
 /*
@@ -37,17 +76,55 @@ void SSPIrq(void) {
  *           \p NULL then 0xFF bytes will be output.
  * @param n the number of bytes to be transferred
  * @param fn callback function invoked when the operation is done
- * @return \p SSP_OK if the trasfer is started else \p SSP_RUNNING if a
+ * @param par parameter to be passed to the callback function
+ * @return \p SSP_OK if the trasfer was started else \p SSP_RUNNING if a
  *         an operation was already started
  */
-t_msg sspRWI(BYTE8 *in, BYTE8 *out, t_size n, t_sspnotify fn) {
+t_msg sspRWI(BYTE8 *in, BYTE8 *out, t_size n, t_sspnotify fn, void *par) {
 
   if (callback)
     return SSP_RUNNING;
 
-  callback = fn, ip = in, op = out, icnt = ocnt = n;
+  callback = fn, cbpar = par, ip = in, op = out, icnt = ocnt = n;
   SSPIMSC = IMSC_ROR | IMSC_RT | IMSC_RX | IMSC_TX;
   return SSP_OK;
+}
+
+
+static void done(void *tp) {
+
+  chThdResumeI(tp);
+}
+
+/*
+ * Synchronous SSP transfer.
+ * @param in pointer to the incoming data buffer, if this parameter is set to
+ *           \p NULL then the incoming data is discarded.
+ * @param out pointer to the outgoing data buffer, if this parameter is set to
+ *           \p NULL then 0xFF bytes will be output.
+ * @param n the number of bytes to be transferred
+ * @return \p SSP_OK if the trasfer was performed else \p SSP_RUNNING if a
+ *         an operation was already started
+ */
+t_msg sspRW(BYTE8 *in, BYTE8 *out, t_size n) {
+
+  chSysLock();
+
+  t_msg sts = sspRWI(in, out, n, done, chThdSelf());
+  if (sts == SSP_OK)
+    chSchGoSleepS(PRSUSPENDED);
+
+  chSysUnlock();
+  return sts;
+}
+
+/*
+ * Checks if a SSP operation is running.
+ * @return \p TRUE if an asynchronous operation is already running.
+ */
+BOOL sspIsRunningI(void) {
+
+  return callback != NULL;
 }
 
 /*
