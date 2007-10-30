@@ -38,6 +38,9 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.3.6 ***
+- Added SSP (SPI1) definitions to the lpc214x.h file.
+
 *** 0.3.5 ***
 - Space optimization in events code.
 - Changed the behavior of chEvtWaitTimeout() when the timeout parameter is

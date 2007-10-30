@@ -22,6 +22,7 @@
 #include "lpc214x.h"
 #include "vic.h"
 #include "lpc214x_serial.h"
+#include "lpc214x_ssp.h"
 
 #include "buzzer.h"
 
@@ -117,6 +118,7 @@ void hwinit(void) {
   SetVICVector(T0IrqHandler, 0, SOURCE_Timer0);
   SetVICVector(UART0IrqHandler, 1, SOURCE_UART0);
   SetVICVector(UART1IrqHandler, 2, SOURCE_UART1);
+  SetVICVector(SSPIrqHandler, 3, SOURCE_SPI1);
 
   /*
    * System Timer initialization, 1ms intervals.
@@ -133,6 +135,7 @@ void hwinit(void) {
    * Other subsystems.
    */
   InitSerial();
+  InitSSP();
   InitBuzzer();
 }
 

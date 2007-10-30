@@ -338,6 +338,81 @@ typedef struct {
 #define TER_ENABLE      0x80
 
 /*
+ * SSP.
+ */
+typedef struct {
+  IOREG32       SSP_CR0;
+  IOREG32       SSP_CR1;
+  IOREG32       SSP_DR;
+  IOREG32       SSP_SR;
+  IOREG32       SSP_CPSR;
+  IOREG32       SSP_IMSC;
+  IOREG32       SSP_RIS;
+  IOREG32       SSP_MIS;
+  IOREG32       SSP_ICR;
+} SSP;
+
+#define SSPBase                 ((SSP *)0xE0068000)
+#define SSPCR0                  (SSPBase->SSP_CR0)
+#define SSPCR1                  (SSPBase->SSP_CR1)
+#define SSPDR                   (SSPBase->SSP_DR)
+#define SSPSR                   (SSPBase->SSP_SR)
+#define SSPCPSR                 (SSPBase->SSP_CPSR)
+#define SSPIMSC                 (SSPBase->SSP_IMSC)
+#define SSPRIS                  (SSPBase->SSP_RIS)
+#define SSPMIS                  (SSPBase->SSP_MIS)
+#define SSPICR                  (SSPBase->SSP_ICR)
+
+#define CR0_DSS4BIT             3
+#define CR0_DSS5BIT             4
+#define CR0_DSS6BIT             5
+#define CR0_DSS7BIT             6
+#define CR0_DSS8BIT             7
+#define CR0_DSS9BIT             8
+#define CR0_DSS10BIT            9
+#define CR0_DSS11BIT            0xA
+#define CR0_DSS12BIT            0xB
+#define CR0_DSS13BIT            0xC
+#define CR0_DSS14BIT            0xD
+#define CR0_DSS15BIT            0xE
+#define CR0_DSS16BIT            0xF
+#define CR0_FRFSPI              0
+#define CR0_FRFSSI              0x10
+#define CR0_FRFMW               0x20
+#define CR0_CPOL                0x40
+#define CR0_CPHA                0x80
+#define CR0_CLOCKRATE(n)        ((n) << 8)
+
+#define CR1_LBM                 1
+#define CR1_SSE                 2
+#define CR1_MS                  4
+#define CR1_SOD                 8
+
+#define SR_TFE                  1
+#define SR_TNF                  2
+#define SR_RNE                  4
+#define SR_RFF                  8
+#define SR_BSY                  0x10
+
+#define IMSC_ROR                1
+#define IMSC_RT                 2
+#define IMSC_RX                 4
+#define IMSC_TX                 8
+
+#define RIS_ROR                1
+#define RIS_RT                 2
+#define RIS_RX                 4
+#define RIS_TX                 8
+
+#define MIS_ROR                1
+#define MIS_RT                 2
+#define MIS_RX                 4
+#define MIS_TX                 8
+
+#define ICR_ROR                1
+#define ICR_RT                 2
+
+/*
  * Timers/Counters.
  */
 typedef struct {
