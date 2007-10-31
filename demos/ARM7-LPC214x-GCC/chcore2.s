@@ -155,16 +155,6 @@ UART1IrqHandler:
         bl      UART1Irq
         b       IrqCommon
 
-.globl SSPIrqHandler
-SSPIrqHandler:
-        sub     lr, lr, #4
-        stmfd   sp!, {r0-r3, r12, lr}
-        mrs     r0, SPSR                        // Workaround for ARM7TDMI+VIC
-        tst     r0, #I_BIT                      // spurious interrupts.
-        ldmnefd sp!, {r0-r3, r12, pc}^
-        bl      SSPIrq
-        b       IrqCommon
-
 /*
  * Common exit point for all IRQ routines, it performs the rescheduling if
  * required.

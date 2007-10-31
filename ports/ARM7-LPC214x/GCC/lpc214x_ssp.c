@@ -22,78 +22,22 @@
 #include "lpc214x.h"
 #include "lpc214x_ssp.h"
 
-static BYTE8 *ip, *op;
-static int icnt, ocnt;
-static t_sspnotify callback;
-static void *cbpar;
+#ifdef SSP_USE_MUTEX
+static Semaphore me;
+#endif
 
-void SSPIrq(void) {
-  SSP *ssp = SSPBase;
-  BYTE8 b;
+void sspAcquireBus(void) {
 
-  while (ssp->SSP_MIS & (MIS_ROR | MIS_RT | MIS_RX | MIS_TX)) {
-
-    if (ssp->SSP_MIS & MIS_ROR)
-      chSysHalt();
-
-    if (ssp->SSP_MIS & (MIS_RX | MIS_RT)) {
-      ssp->SSP_ICR = ICR_RT;
-      while (ssp->SSP_SR & SR_RNE) {
-        b = ssp->SSP_DR;
-        if (ip)
-          *ip++ = b;
-        icnt--;
-      }
-      if (icnt <= 0) { /* It should never become less than zero */
-        t_sspnotify fn = callback;
-        callback = NULL;
-        ssp->SSP_IMSC = 0;
-        VICVectAddr = 0;
-        fn(cbpar);
-        return;
-      }
-      continue;
-    }
-    /* It is MIS_TX, no need to test it again. */
-    while (ocnt && (ssp->SSP_SR & SR_TNF)) {
-      if (op)
-        ssp->SSP_DR = *op++;
-      else
-        ssp->SSP_DR = 0xFF;
-      ocnt--;
-    }
-    if (!ocnt)
-      ssp->SSP_IMSC = IMSC_ROR | IMSC_RT | IMSC_RX;
-  }
-  VICVectAddr = 0;
+#ifdef SSP_USE_MUTEX
+  chSemWait(&me);
+#endif
 }
 
-/*
- * Starts an asynchronous SSP transfer.
- * @param in pointer to the incoming data buffer, if this parameter is set to
- *           \p NULL then the incoming data is discarded.
- * @param out pointer to the outgoing data buffer, if this parameter is set to
- *           \p NULL then 0xFF bytes will be output.
- * @param n the number of bytes to be transferred
- * @param fn callback function invoked when the operation is done
- * @param par parameter to be passed to the callback function
- * @return \p SSP_OK if the trasfer was started else \p SSP_RUNNING if a
- *         an operation was already started
- */
-t_msg sspRWI(BYTE8 *in, BYTE8 *out, t_size n, t_sspnotify fn, void *par) {
+void sspReleaseBus(void) {
 
-  if (callback)
-    return SSP_RUNNING;
-
-  callback = fn, cbpar = par, ip = in, op = out, icnt = ocnt = n;
-  SSPIMSC = IMSC_ROR | IMSC_RT | IMSC_RX | IMSC_TX;
-  return SSP_OK;
-}
-
-
-static void done(void *tp) {
-
-  chThdResumeI(tp);
+#ifdef SSP_USE_MUTEX
+  chSemSignal(&me);
+#endif
 }
 
 /*
@@ -103,38 +47,45 @@ static void done(void *tp) {
  * @param out pointer to the outgoing data buffer, if this parameter is set to
  *           \p NULL then 0xFF bytes will be output.
  * @param n the number of bytes to be transferred
- * @return \p SSP_OK if the trasfer was performed else \p SSP_RUNNING if a
- *         an operation was already started
+ * @note The transfer is performed in a software loop and is not interrupt
+ *       driven for performance reasons, this function should be invoked
+ *       by a low priority thread in order to "play nice" with the
+ *       rest of the system. This kind of peripheral would really need a
+ *       dedicated DMA channel.
  */
-t_msg sspRW(BYTE8 *in, BYTE8 *out, t_size n) {
+void sspRW(BYTE8 *in, BYTE8 *out, t_size n) {
+  int icnt, ocnt;
 
-  chSysLock();
+  SSP *ssp = SSPBase;
+  icnt = ocnt = n;
+  while (icnt) {
 
-  t_msg sts = sspRWI(in, out, n, done, chThdSelf());
-  if (sts == SSP_OK)
-    chSchGoSleepS(PRSUSPENDED);
+    if (ssp->SSP_SR & SR_RNE) {
+      if (in)
+        *in++ = ssp->SSP_DR;
+      else
+        ssp->SSP_DR;
+      icnt--;
+      continue; /* Priority over transmission. */
+    }
 
-  chSysUnlock();
-  return sts;
+    if (ocnt && (ssp->SSP_SR & SR_TNF)) {
+      if (out)
+        ssp->SSP_DR = *out++;
+      else
+        ssp->SSP_DR = 0xFF;
+      ocnt--;
+    }
+  }
 }
 
 /*
- * Checks if a SSP operation is running.
- * @return \p TRUE if an asynchronous operation is already running.
+ * SSP setup.
  */
-BOOL sspIsRunningI(void) {
-
-  return callback != NULL;
-}
-
-/*
- * SSP setup, must be invoked with interrupts disabled.
- * Do not invoke while an operation is in progress.
- */
-void SetSSPI(int cpsr, int cr0, int cr1) {
+void SetSSP(int cpsr, int cr0, int cr1) {
   SSP *ssp = SSPBase;
 
-  ssp->SSP_CR1 = cr1 & ~CR1_SSE;
+  ssp->SSP_CR1 = 0;
   ssp->SSP_CR0 = cr0;
   ssp->SSP_CPSR = cpsr;
   ssp->SSP_CR1 = cr1 | CR1_SSE;
@@ -148,8 +99,10 @@ void InitSSP(void) {
   /* Enables the SPI1 clock */
   PCONP = (PCONP & PCALL) | PCSPI1;
 
-  /* Clock = PCLK / 2 */
-  SetSSPI(2, CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0), 0);
+  /* Clock = PCLK / 2 (fastest). */
+  SetSSP(2, CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0), CR1_LBM);
 
-  VICIntEnable = INTMASK(SOURCE_SPI1);
+#ifdef SSP_USE_MUTEX
+  chSemInit(&me, 1);
+#endif
 }

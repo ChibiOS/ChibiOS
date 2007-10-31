@@ -399,18 +399,18 @@ typedef struct {
 #define IMSC_RX                 4
 #define IMSC_TX                 8
 
-#define RIS_ROR                1
-#define RIS_RT                 2
-#define RIS_RX                 4
-#define RIS_TX                 8
+#define RIS_ROR                 1
+#define RIS_RT                  2
+#define RIS_RX                  4
+#define RIS_TX                  8
 
-#define MIS_ROR                1
-#define MIS_RT                 2
-#define MIS_RX                 4
-#define MIS_TX                 8
+#define MIS_ROR                 1
+#define MIS_RT                  2
+#define MIS_RX                  4
+#define MIS_TX                  8
 
-#define ICR_ROR                1
-#define ICR_RT                 2
+#define ICR_ROR                 1
+#define ICR_RT                  2
 
 /*
  * Timers/Counters.

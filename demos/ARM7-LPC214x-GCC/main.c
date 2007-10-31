@@ -21,6 +21,7 @@
 
 #include "lpc214x.h"
 #include "lpc214x_serial.h"
+#include "lpc214x_ssp.h"
 #include "buzzer.h"
 #include "evtimer.h"
 
@@ -55,9 +56,9 @@ static t_msg Thread2(void *arg) {
 }
 
 static void TimerHandler(t_eventid id) {
-
+  static BYTE8 sspbuf[16];
   t_msg TestThread(void *p);
-  
+
   if (!(IO0PIN & 0x00018000)) { // Both buttons
     TestThread(&COM1);
     PlaySound(500, 100);
@@ -65,8 +66,10 @@ static void TimerHandler(t_eventid id) {
   else {
     if (!(IO0PIN & 0x00008000)) // Button 1
       PlaySound(1000, 100);
-    if (!(IO0PIN & 0x00010000)) // Button 2
-      chFDDWrite(&COM1, (BYTE8 *)"Hello World!\r\n", 14);
+    if (!(IO0PIN & 0x00010000)) { // Button 2
+      sspRW(sspbuf, (BYTE8 *)"Hello World!\r\n", 14);
+      chFDDWrite(&COM1, sspbuf, 14);
+    }
   }
 }
 

@@ -20,16 +20,17 @@
 #ifndef _LPC214x_SSP_H_
 #define _LPC214x_SSP_H_
 
-#define SSP_OK      RDY_OK
-#define SSP_RUNNING -3
-
-typedef void (*t_sspnotify)(void *par);
+/*
+ * Configuration parameter, if defined this macro enforces mutual exclusion
+ * when invoking \p sspAcquireBus() and \p sspReleaseBus().
+ */
+#define SSP_USE_MUTEX
 
 void InitSSP(void);
-void SetSSPI(int cpsr, int cr0, int cr1);
-void SSPIrqHandler(void);
+void SetSSP(int cpsr, int cr0, int cr1);
 
-t_msg sspRWI(BYTE8 *in, BYTE8 *out, t_size n, t_sspnotify fn, void *par);
-BOOL sspIsRunningI(void);
+void sspAcquireBus(void);
+void sspReleaseBus(void);
+void sspRW(BYTE8 *in, BYTE8 *out, t_size n);
 
 #endif /* _LPC214x_SSP_H_*/
