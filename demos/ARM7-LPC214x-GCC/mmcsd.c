@@ -26,7 +26,7 @@
 
 static EventSource MMCInsertEventSource;
 
-void MMCInit(void) {
+void InitMMC(void) {
 
   chEvtInit(&MMCInsertEventSource);
 }
@@ -47,11 +47,11 @@ BOOL mmcInit(void) {
   sspRW(NULL, NULL, 16);        /* 128 clock pulses without ~CS asserted. */
   int i = 0;
   while (TRUE) {
-    chThdSleep(10);
     if (mmcSendCommand(0, 0) == 0x01)
       break;
     if (++i >= CMD0_RETRY)
       return TRUE;
+    chThdSleep(10);
   }
 
   /*
@@ -59,15 +59,14 @@ BOOL mmcInit(void) {
    */
   i = 0;
   while (TRUE) {
-    BYTE8 b;
-    chThdSleep(10);
-    b = mmcSendCommand(0, 0);
+    BYTE8 b = mmcSendCommand(1, 0);
     if (b == 0x00)
       break;
     if (b != 0x01)
       return TRUE;
     if (++i >= CMD1_RETRY)
       return TRUE;
+    chThdSleep(10);
   }
 
   /*
@@ -77,21 +76,41 @@ BOOL mmcInit(void) {
   return FALSE;
 }
 
+static void sendhdr(BYTE8 cmd, ULONG32 arg) {
+  BYTE8 buf[8];
+
+  buf[0] = 0xFF;
+  buf[1] = 0x40 | cmd;
+  buf[2] = arg >> 24;
+  buf[3] = arg >> 16;
+  buf[4] = arg >> 8;
+  buf[5] = arg;
+  buf[6] = 0x95; /* Valid for CMD0 ingnored by other commands. */
+  buf[7] = 0xFF;
+  sspRW(NULL, buf, 8);
+}
+
+static BYTE8 recvr1(void) {
+  int i;
+  BYTE8 r1[1];
+
+  for (i = 0; i < 8; i++) {
+    sspRW(r1, NULL, 1);
+    if (r1[0] != 0xFF)
+      return r1[0];
+  }
+  return 0xFF;
+}
+
 /*
  * Sends a simple command and returns a R1-type response.
  */
 BYTE8 mmcSendCommand(BYTE8 cmd, ULONG32 arg) {
-  BYTE8 buf[6];
+  BYTE8 r1;
 
-  buf[0] = 0x40 | cmd;
-  buf[1] = arg >> 24;
-  buf[2] = arg >> 16;
-  buf[3] = arg >> 8;
-  buf[4] = arg;
-  buf[5] = 0x95; /* Valid for CMD0 ingnored by other commands. */
   sspAcquireBus();
-  sspRW(NULL, buf, 6);
-  sspRW(buf, NULL, 1);
+  sendhdr(cmd, arg);
+  r1 = recvr1();
   sspReleaseBus();
-  return buf[0];
+  return r1;
 }

@@ -32,15 +32,14 @@ void sspAcquireBus(void) {
   chSemWait(&me);
 #endif
   IO0CLR = 1 << 20;
-
 }
 
 void sspReleaseBus(void) {
 
+  IO0SET = 1 << 20;
 #ifdef SSP_USE_MUTEX
   chSemSignal(&me);
 #endif
-  IO0SET = 1 << 20;
 }
 
 /*
@@ -103,7 +102,7 @@ void InitSSP(void) {
   PCONP = (PCONP & PCALL) | PCSPI1;
 
   /* Clock = PCLK / 2 (fastest). */
-  SetSSP(2, CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0), CR1_LBM);
+  SetSSP(2, CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0), 0);
 
 #ifdef SSP_USE_MUTEX
   chSemInit(&me, 1);

@@ -23,6 +23,7 @@
 #include "vic.h"
 #include "lpc214x_serial.h"
 #include "lpc214x_ssp.h"
+#include "mmcsd.h"
 
 #include "buzzer.h"
 
@@ -135,6 +136,7 @@ void hwinit(void) {
    */
   InitSerial();
   InitSSP();
+  InitMMC();
   InitBuzzer();
 }
 

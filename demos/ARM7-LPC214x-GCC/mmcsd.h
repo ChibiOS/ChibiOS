@@ -23,7 +23,7 @@
 #define CMD0_RETRY      10
 #define CMD1_RETRY      100
 
-void MMCInit(void);
+void InitMMC(void);
 
 BOOL mmcInit(void);
 BYTE8 mmcSendCommand(BYTE8 cmd, ULONG32 arg);
