@@ -62,7 +62,7 @@ UDEFS =
 UADEFS =
 
 # List ARM-mode C source files here
-ASRC = chcore.c main.c buzzer.c ../../src/lib/evtimer.c ../../test/test.c \
+ASRC = chcore.c main.c buzzer.c mmcsd.c ../../src/lib/evtimer.c ../../test/test.c \
        ../../ports/ARM7-LPC214x/GCC/vic.c  ../../ports/ARM7-LPC214x/GCC/lpc214x_serial.c  \
        ../../ports/ARM7-LPC214x/GCC/lpc214x_ssp.c  \
        ../../src/chinit.c ../../src/chlists.c ../../src/chdelta.c ../../src/chschd.c \
