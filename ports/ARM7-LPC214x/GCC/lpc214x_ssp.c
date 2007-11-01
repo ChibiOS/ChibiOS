@@ -31,6 +31,8 @@ void sspAcquireBus(void) {
 #ifdef SSP_USE_MUTEX
   chSemWait(&me);
 #endif
+  IO0CLR = 1 << 20;
+
 }
 
 void sspReleaseBus(void) {
@@ -38,6 +40,7 @@ void sspReleaseBus(void) {
 #ifdef SSP_USE_MUTEX
   chSemSignal(&me);
 #endif
+  IO0SET = 1 << 20;
 }
 
 /*
@@ -83,8 +86,8 @@ void sspRW(BYTE8 *in, BYTE8 *out, t_size n) {
  * SSP setup.
  */
 void SetSSP(int cpsr, int cr0, int cr1) {
-  SSP *ssp = SSPBase;
 
+  SSP *ssp = SSPBase;
   ssp->SSP_CR1 = 0;
   ssp->SSP_CR0 = cr0;
   ssp->SSP_CPSR = cpsr;
