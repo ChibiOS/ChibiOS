@@ -20,7 +20,7 @@
 #include <ch.h>
 
 #include "lpc214x.h"
-#include "lpc214x_ssp.h"
+#include "lpc214x_SSP.h"
 
 #ifdef SSP_USE_MUTEX
 static Semaphore me;
