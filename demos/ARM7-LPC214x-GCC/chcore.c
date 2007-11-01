@@ -42,11 +42,11 @@ extern void T0IrqHandler(void);
  *  0   0   1   1   1   1   0   0   0   0   0   0   0   0   0   0
  *
  * PINSEL1
- *  P0  AD  P0  P0  --  --  AO  --  VB  P0  P0  SSE MOS MIS SCK P0
- *  31  03  29  28  --  --  UT  --  US  22  21  L1  I1  O1  1   16
- *  00  01  00  00  00  00  10  00  01  00  00  10  10  10  10  00
- *  OUT --  OUT OUT --  --  --  --  --  OUT OUT --  --  --  --  IN
- *  1   0   1   1   0   0   0   0   0   1   1   0   0   0   0   0
+ *  P0  AD  P0  P0  --  --  AO  --  VB  P0  P0  P0  MOS MIS SCK P0
+ *  31  03  29  28  --  --  UT  --  US  22  21  20  I1  O1  1   16
+ *  00  01  00  00  00  00  10  00  01  00  00  00  10  10  10  00
+ *  OUT --  OUT OUT --  --  --  --  --  OUT OUT OUT --  --  --  IN
+ *  1   0   1   1   0   0   0   0   0   1   1   1   0   0   0   0
  *
  * PINSEL2
  *  --  --  --  --  --  --  --  --  --  --  --  --  --  --  GP  DBG --
@@ -55,9 +55,9 @@ extern void T0IrqHandler(void);
  *  --  --  --  --  --  --  --  --  --  --  --  --  --  --  IN  --  --
  */
 #define VAL_PINSEL0 0x00055555
-#define VAL_PINSEL1 0x100842A8
+#define VAL_PINSEL1 0x100840A8
 #define VAL_PINSEL2 0x00000004
-#define VAL_FIO0DIR 0xB0603C00
+#define VAL_FIO0DIR 0xB0703C00
 #define VAL_FIO1DIR 0x00000000
 
 /*
