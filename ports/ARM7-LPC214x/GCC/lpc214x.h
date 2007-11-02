@@ -60,6 +60,29 @@ typedef volatile unsigned int IOREG32;
                                  PCPWM0 | PCI2C0 | PCSPI0 | PCRTC | PCSPI1 | \
                                  PCAD0 | PCI2C1 | PCAD1 | PCUSB)
 
+#define EINT0                   1
+#define EINT1                   2
+#define EINT2                   4
+#define EINT3                   8
+
+#define EXTWAKE0                1
+#define EXTWAKE1                2
+#define EXTWAKE2                4
+#define EXTWAKE3                8
+#define USBWAKE                 0x20
+#define BODWAKE                 0x4000
+#define RTCWAKE                 0x8000
+
+#define EXTMODE0                1
+#define EXTMODE1                2
+#define EXTMODE2                4
+#define EXTMODE3                8
+
+#define EXTPOLAR0               1
+#define EXTPOLAR1               2
+#define EXTPOLAR2               4
+#define EXTPOLAR3               8
+
 typedef struct {
   IOREG32       PLL0_CON;
   IOREG32       PLL0_CFG;

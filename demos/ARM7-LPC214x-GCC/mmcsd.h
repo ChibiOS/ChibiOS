@@ -20,12 +20,33 @@
 #ifndef _MMCSD_H_
 #define _MMCSD_H_
 
+#define NICE_WAITING
+
+/* Following times are 10mS units.*/
 #define CMD0_RETRY      10
 #define CMD1_RETRY      100
+
+/* Byte transfer time units.*/
+#define MMC_WAIT_DATA   10000
+
+#define CMDGOIDLE       0
+#define CMDINIT         1
+#define CMDREADCSD      9
+#define CMDREAD         17
+#define CMDWRITE        24
+
+typedef struct {
+  ULONG32       csize;
+  ULONG32       rdblklen;
+} MMCCSD;
 
 void InitMMC(void);
 
 BOOL mmcInit(void);
 BYTE8 mmcSendCommand(BYTE8 cmd, ULONG32 arg);
+BOOL mmcGetSize(MMCCSD *data);
+BOOL mmcBlockRead(ULONG32 blknum, BYTE8 *buf);
+BOOL mmcBlockWrite(ULONG32 blknum, BYTE8 *buf);
+void mmcSynch(void);
 
 #endif /* _MMCSD_H_*/

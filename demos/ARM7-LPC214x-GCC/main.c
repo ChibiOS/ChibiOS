@@ -21,7 +21,6 @@
 
 #include "lpc214x.h"
 #include "lpc214x_serial.h"
-//#include "lpc214x_ssp.h"
 #include "mmcsd.h"
 #include "buzzer.h"
 #include "evtimer.h"
@@ -56,8 +55,9 @@ static t_msg Thread2(void *arg) {
   return 0;
 }
 
+static BYTE8 rwbuf[512];
+
 static void TimerHandler(t_eventid id) {
-//  static BYTE8 sspbuf[16];
   t_msg TestThread(void *p);
 
   if (!(IO0PIN & 0x00018000)) { // Both buttons
@@ -68,16 +68,21 @@ static void TimerHandler(t_eventid id) {
     if (!(IO0PIN & 0x00008000)) // Button 1
       PlaySound(1000, 100);
     if (!(IO0PIN & 0x00010000)) { // Button 2
-//      sspRW(sspbuf, (BYTE8 *)"Hello World!\r\n", 14);
-//      chFDDWrite(&COM1, sspbuf, 14);
+      MMCCSD data;
+
       chFDDWrite(&COM1, (BYTE8 *)"Hello World!\r\n", 14);
-      if (!mmcInit())
-        PlaySound(2000, 500);
+      if (mmcInit())
+        return;
+      if (mmcGetSize(&data))
+        return;
+      if (mmcBlockRead(0x200000, rwbuf))
+        return;
+      PlaySound(2000, 100);
     }
   }
 }
 
-static BYTE8 waThread3[UserStackSize(64)];
+static BYTE8 waThread3[UserStackSize(128)];
 static EvTimer evt;
 static t_evhandler evhndl[1] = {
   TimerHandler
