@@ -48,6 +48,7 @@ void InitMMC(void);
 BOOL mmcInit(void);
 void mmcStartPolling(void);
 void mmcStopPolling(void);
+BOOL mmcCardInserted (void);
 BYTE8 mmcSendCommand(BYTE8 cmd, ULONG32 arg);
 BOOL mmcGetSize(MMCCSD *data);
 BOOL mmcBlockRead(ULONG32 blknum, BYTE8 *buf);
