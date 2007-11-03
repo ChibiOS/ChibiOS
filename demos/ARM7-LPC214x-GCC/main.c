@@ -55,8 +55,6 @@ static t_msg Thread2(void *arg) {
   return 0;
 }
 
-static BYTE8 rwbuf[512];
-
 static void TimerHandler(t_eventid id) {
   t_msg TestThread(void *p);
 
@@ -68,32 +66,50 @@ static void TimerHandler(t_eventid id) {
     if (!(IO0PIN & 0x00008000)) // Button 1
       PlaySound(1000, 100);
     if (!(IO0PIN & 0x00010000)) { // Button 2
-      MMCCSD data;
-
       chFDDWrite(&COM1, (BYTE8 *)"Hello World!\r\n", 14);
-      if (mmcInit())
-        return;
-      if (mmcGetSize(&data))
-        return;
-      if (mmcBlockRead(0x200000, rwbuf))
-        return;
       PlaySound(2000, 100);
     }
   }
 }
 
+static void InsertHandler(t_eventid id) {
+  static BYTE8 rwbuf[512];
+  MMCCSD data;
+
+  PlaySoundWait(1000, 100);
+  PlaySoundWait(2000, 100);
+  if (mmcInit())
+    return;
+  /* Card ready, do stuff.*/
+  if (mmcGetSize(&data))
+    return;
+  if (mmcBlockRead(0x200000, rwbuf))
+    return;
+}
+
+static void RemoveHandler(t_eventid id) {
+
+  PlaySoundWait(2000, 100);
+  PlaySoundWait(1000, 100);
+}
+
 static BYTE8 waThread3[UserStackSize(128)];
 static EvTimer evt;
-static t_evhandler evhndl[1] = {
-  TimerHandler
+static t_evhandler evhndl[] = {
+  TimerHandler,
+  InsertHandler,
+  RemoveHandler
 };
 
 static t_msg Thread3(void *arg) {
-  struct EventListener el;
+  struct EventListener el0, el1, el2;
 
   evtInit(&evt, 500);
-  evtRegister(&evt, &el, 0);
   evtStart(&evt);
+  mmcStartPolling();
+  evtRegister(&evt, &el0, 0);
+  chEvtRegister(&MMCInsertEventSource, &el1, 1);
+  chEvtRegister(&MMCRemoveEventSource, &el2, 2);
   while (TRUE)
     chEvtWait(ALL_EVENTS, evhndl);
   return 0;

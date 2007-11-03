@@ -22,6 +22,7 @@
 
 void InitBuzzer(void);
 void PlaySound(int freq, t_time duration);
+void PlaySoundWait(int freq, t_time duration);
 
 extern EventSource BuzzerSilentEventSource;
 

@@ -42,7 +42,8 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 - Added SSP (SPI1) and ext.interrupts definitions to the lpc214x.h file.
 - Added SSP driver for the LPC2148.
 - Added experimental MMC/SD block driver to the LPC2148 demo in order to
-  support file systems.
+  support file systems. The driver features also events generation on card
+  insert/remove, hot plugging supported.
 - Added missing chThdSuspend() declararion in threads.h.
 
 *** 0.3.5 ***

@@ -80,3 +80,13 @@ void PlaySound(int freq, t_time duration) {
 
   chSysUnlock();
 }
+
+void PlaySoundWait(int freq, t_time duration) {
+  TC *tc = T1Base;
+
+  StopCounter(tc);
+  tc->TC_MR0 = tc->TC_MR1 = (PCLK / (freq * 2));
+  StartCounter(tc);
+  chThdSleep(duration);
+  StopCounter(tc);
+}

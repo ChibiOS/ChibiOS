@@ -24,7 +24,10 @@
 
 #include "mmcsd.h"
 
-static EventSource MMCInsertEventSource;
+EventSource MMCInsertEventSource, MMCRemoveEventSource;
+
+static VirtualTimer vt;
+static int cnt;
 
 /*
  * Subsystem initialization.
@@ -32,6 +35,56 @@ static EventSource MMCInsertEventSource;
 void InitMMC(void) {
 
   chEvtInit(&MMCInsertEventSource);
+  chEvtInit(&MMCRemoveEventSource);
+  cnt = POLLING_INTERVAL;
+}
+
+void tmrfunc(void *par) {
+
+  if (cnt) {
+    if (!(IO1PIN & (1 << 25))) {
+      if (!--cnt)
+        chEvtSendI(&MMCInsertEventSource);
+    }
+    else
+      cnt = POLLING_INTERVAL;
+  }
+  else {
+    if (IO1PIN & (1 << 25)) {
+      cnt = POLLING_INTERVAL;
+      chEvtSendI(&MMCRemoveEventSource);
+    }
+  }
+  chVTSetI(&vt, 10, tmrfunc, NULL);
+}
+
+void mmcStartPolling(void) {
+
+  chSysLock();
+
+  if (!chVTIsArmedI(&vt)) {
+    chVTSetI(&vt, 10, tmrfunc, NULL);
+    cnt = POLLING_INTERVAL;
+  }
+
+  chSysUnlock();
+}
+
+void mmcStopPolling(void) {
+
+  chSysLock();
+
+  if (chVTIsArmedI(&vt)) {
+    chVTResetI(&vt);
+    cnt = POLLING_INTERVAL;
+  }
+
+  chSysUnlock();
+}
+
+BOOL mmcCardInserted (void) {
+
+  return cnt == 0;
 }
 
 static void sendhdr(BYTE8 cmd, ULONG32 arg) {

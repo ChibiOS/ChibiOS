@@ -23,26 +23,31 @@
 #define NICE_WAITING
 
 /* Following times are 10mS units.*/
-#define CMD0_RETRY      10
-#define CMD1_RETRY      100
+#define CMD0_RETRY              10
+#define CMD1_RETRY              100
+#define POLLING_INTERVAL        10
 
 /* Byte transfer time units.*/
-#define MMC_WAIT_DATA   10000
+#define MMC_WAIT_DATA           10000
 
-#define CMDGOIDLE       0
-#define CMDINIT         1
-#define CMDREADCSD      9
-#define CMDREAD         17
-#define CMDWRITE        24
+#define CMDGOIDLE               0
+#define CMDINIT                 1
+#define CMDREADCSD              9
+#define CMDREAD                 17
+#define CMDWRITE                24
 
 typedef struct {
   ULONG32       csize;
   ULONG32       rdblklen;
 } MMCCSD;
 
+extern EventSource MMCInsertEventSource, MMCRemoveEventSource;
+
 void InitMMC(void);
 
 BOOL mmcInit(void);
+void mmcStartPolling(void);
+void mmcStopPolling(void);
 BYTE8 mmcSendCommand(BYTE8 cmd, ULONG32 arg);
 BOOL mmcGetSize(MMCCSD *data);
 BOOL mmcBlockRead(ULONG32 blknum, BYTE8 *buf);
