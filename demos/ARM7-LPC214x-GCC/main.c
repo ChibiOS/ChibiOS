@@ -83,8 +83,9 @@ static void InsertHandler(t_eventid id) {
   /* Card ready, do stuff.*/
   if (mmcGetSize(&data))
     return;
-  if (mmcBlockRead(0x200000, rwbuf))
+  if (mmcRead(rwbuf, 0))
     return;
+  PlaySound(440, 200);
 }
 
 static void RemoveHandler(t_eventid id) {
