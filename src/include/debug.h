@@ -27,7 +27,9 @@
 
 #ifdef CH_USE_DEBUG
 
-#define TRACE_BUFFER_SIZE 1024
+#ifndef TRACE_BUFFER_SIZE 
+#define TRACE_BUFFER_SIZE 64
+#endif
 
 typedef struct {
   void          *cse_slpdata;
