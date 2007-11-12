@@ -69,6 +69,11 @@ typedef struct {
  */
 #define chSysUnlock()
 
+/**
+ * Prints a message on the system console (if any).
+ */
+#define chSysPuts(msg) {}
+
 void chSysHalt(void);
 void chSysPause(void);
 void chSysSwitchI(Context *oldp, Context *newp);

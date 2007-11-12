@@ -41,6 +41,8 @@ struct Thread {
   /** The thread priority.*/
   t_prio            p_prio;
   /* End of the fields shared with the ReadyList structure. */
+  /** Thread identifier. */
+  t_tid             p_tid;
   /** Current thread state.*/
   t_tstate          p_state;
   /** Mode flags.*/
@@ -68,6 +70,8 @@ struct Thread {
     /** Message (only while in \p PRSNDMSG state).*/
     t_msg           p_msg;
 #endif
+    /** Generic way to access the union.*/
+    void            *p_common;
   };
   /** Machine dependent processor context.*/
   Context           p_ctx;

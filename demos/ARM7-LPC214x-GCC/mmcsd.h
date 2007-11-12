@@ -43,18 +43,24 @@ typedef struct {
 
 extern EventSource MMCInsertEventSource, MMCRemoveEventSource;
 
-void InitMMC(void);
+#ifdef __cplusplus
+}
+#endif
+  void InitMMC(void);
 
-BOOL mmcInit(void);
-void mmcStartPolling(void);
-void mmcStopPolling(void);
-BOOL mmcCardInserted (void);
-BYTE8 mmcSendCommand(BYTE8 cmd, ULONG32 arg);
-BOOL mmcGetSize(MMCCSD *data);
-BOOL mmcRead(BYTE8 *buf, ULONG32 blknum);
-BOOL mmcReadMultiple(BYTE8 *buf, ULONG32 blknum, ULONG32 n);
-BOOL mmcWrite(BYTE8 *buf, ULONG32 blknum);
-BOOL mmcWriteMultiple(BYTE8 *buf, ULONG32 blknum, ULONG32 n);
-void mmcSynch(void);
+  BOOL mmcInit(void);
+  void mmcStartPolling(void);
+  void mmcStopPolling(void);
+  BOOL mmcCardInserted (void);
+  BYTE8 mmcSendCommand(BYTE8 cmd, ULONG32 arg);
+  BOOL mmcGetSize(MMCCSD *data);
+  BOOL mmcRead(BYTE8 *buf, ULONG32 blknum);
+  BOOL mmcReadMultiple(BYTE8 *buf, ULONG32 blknum, ULONG32 n);
+  BOOL mmcWrite(BYTE8 *buf, ULONG32 blknum);
+  BOOL mmcWriteMultiple(BYTE8 *buf, ULONG32 blknum, ULONG32 n);
+  void mmcSynch(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _MMCSD_H_*/

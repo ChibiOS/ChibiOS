@@ -92,8 +92,9 @@ extern void chSysUnlock(void);
 #define chSysUnlock() asm("msr     CPSR_c, #0x1F")
 #endif /* THUMB */
 
-#define INT_REQUIRED_STACK 0x40  // Must include registers and stack frames.
+#define chSysPuts(msg) {}
 
+#define INT_REQUIRED_STACK 0x40  // Must include registers and stack frames.
 #define UserStackSize(n) (sizeof(Thread) + \
                           sizeof(struct stackregs) + (n) + (INT_REQUIRED_STACK))
 
@@ -104,7 +105,5 @@ void threadstart(void);
 void DefFiqHandler(void);
 void DefIrqHandler(void);
 void SpuriousHandler(void);
-
-void SetVICVector(void *handler, int vector, int source);
 
 #endif /* _CHCORE_H_ */

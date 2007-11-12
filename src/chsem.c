@@ -112,10 +112,11 @@ void chSemWaitS(Semaphore *sp) {
 }
 
 #ifdef CH_USE_SEMAPHORES_TIMEOUT
-static void unwait(void *p) {
-
-// Test removed, it should never happen.
-//  if (((Thread *)p)->p_state == PRWTSEM)
+static void wakeup(void *p) {
+#ifdef CH_USE_DEBUG
+  if (((Thread *)p)->p_state != PRWTSEM)
+    chDbgPanic("chsem.c, wakeup()\r\n");
+#endif
   chSemFastSignalI(((Thread *)p)->p_semp);
   chSchReadyI(dequeue(p))->p_rdymsg = RDY_TIMEOUT;
 }
@@ -134,7 +135,7 @@ t_msg chSemWaitTimeout(Semaphore *sp, t_time time) {
   if (--sp->s_cnt < 0) {
     VirtualTimer vt;
 
-    chVTSetI(&vt, time, unwait, currp);
+    chVTSetI(&vt, time, wakeup, currp);
     fifo_insert(currp, &sp->s_queue);
     currp->p_semp = sp;
     chSchGoSleepS(PRWTSEM);
@@ -165,7 +166,7 @@ t_msg chSemWaitTimeoutS(Semaphore *sp, t_time time) {
   if (--sp->s_cnt < 0) {
     VirtualTimer vt;
 
-    chVTSetI(&vt, time, unwait, currp);
+    chVTSetI(&vt, time, wakeup, currp);
     fifo_insert(currp, &sp->s_queue);
     currp->p_semp = sp;
     chSchGoSleepS(PRWTSEM);

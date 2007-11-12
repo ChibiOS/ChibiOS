@@ -28,7 +28,9 @@
  * Initializes a thread structure.
  */
 void _InitThread(t_prio prio, t_tmode mode, Thread *tp) {
+  static t_tid nextid = 0;
 
+  tp->p_tid = nextid++;
   tp->p_flags = mode;
   tp->p_prio = prio;
   tp->p_rdymsg = RDY_OK;

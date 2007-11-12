@@ -38,6 +38,17 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.4.0 ***
+- Implemented a debug subsystem, it supports debug messages and a context
+  switch circular trace buffer. The debug code can be enabled/disabled by
+  using the CH_USE_DEBUG in chconf.h.
+  The trace buffer is meant to be fetched and decoded by an external tool
+  (coming soon, it can be accessed using JTAG in the meanwhile).
+- Implemented panic messages when CH_USE_DEBUG is enabled.
+- Added a thread identifier field to the Thread structure, it is used only
+  for debug.
+- Fixed an harmless warning message in buzzer.c.
+
 *** 0.3.6 ***
 - Added SSP (SPI1) and ext.interrupts definitions to the lpc214x.h file.
 - Added SSP driver for the LPC2148.

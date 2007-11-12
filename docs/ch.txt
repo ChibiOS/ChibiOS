@@ -153,6 +153,16 @@
 /** @} */
 
 /**
+ * @defgroup Debug Debug
+ * @{
+ * Debug APIs and procedures.
+ * @ingroup Kernel
+ * @file debug.h Debug macros and structures.
+ * @file chdebug.c ChibiOS/RT Debug code.
+ */
+/** @} */
+
+/**
  * @defgroup Scheduler Scheduler
  * @{
  * ChibiOS/RT scheduler.

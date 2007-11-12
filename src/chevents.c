@@ -160,10 +160,11 @@ t_eventid chEvtWait(t_eventmask ewmask,
 }
 
 #ifdef CH_USE_EVENTS_TIMEOUT
-static void unwait(void *p) {
-
-// Test removed, it should never happen.
-//  if (((Thread *)p)->p_state == PRWTEVENT)
+static void wakeup(void *p) {
+#ifdef CH_USE_DEBUG
+  if (((Thread *)p)->p_state != PRWTEVENT)
+    chDbgPanic("chevents.c, wakeup()\r\n");
+#endif
   chSchReadyI(p)->p_rdymsg = RDY_TIMEOUT;
 }
 
@@ -200,7 +201,7 @@ t_eventid chEvtWaitTimeout(t_eventmask ewmask,
   if ((currp->p_epending & ewmask) == 0) {
     VirtualTimer vt;
 
-    chVTSetI(&vt, time, unwait, currp);
+    chVTSetI(&vt, time, wakeup, currp);
     currp->p_ewmask = ewmask;
     chSchGoSleepS(PRWTEVENT);
     if (!chVTIsArmedI(&vt)) {

@@ -37,10 +37,16 @@
  */
 #define SERIAL_BUFFERS_SIZE 128
 
-void InitSerial(void);
-void SetUARTI(UART *u, int speed, int lcr, int fcr);
-void UART0IrqHandler(void);
-void UART1IrqHandler(void);
+#ifdef __cplusplus
+}
+#endif
+  void InitSerial(void);
+  void UART0IrqHandler(void);
+  void UART1IrqHandler(void);
+  void SetUARTI(UART *u, int speed, int lcr, int fcr);
+#ifdef __cplusplus
+}
+#endif
 
 extern FullDuplexDriver COM1, COM2;
 

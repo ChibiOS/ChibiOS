@@ -17,26 +17,54 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _LPC214x_SSP_H_
-#define _LPC214x_SSP_H_
-
-/*
- * Configuration parameter, if defined this macro enforces mutual exclusion
- * when invoking \p sspAcquireBus() and \p sspReleaseBus().
+/**
+ * @addtogroup Debug
+ * @{
  */
-#define SSP_USE_MUTEX
 
+#ifndef _DEBUG_H_
+#define _DEBUG_H_
+
+#ifdef CH_USE_DEBUG
+
+#define TRACE_BUFFER_SIZE 1024
+
+typedef struct {
+  void          *cse_slpdata;
+  t_time        cse_time;
+  UWORD16       cse_state: 4;
+  UWORD16       cse_tid: 12;
+} CtxSwcEvent;
+
+typedef struct {
+  t_size        tb_size;
+  CtxSwcEvent   *tb_ptr;
+  CtxSwcEvent   tb_buffer[TRACE_BUFFER_SIZE];
+} TraceBuffer;
+
+extern CtxSwcEvent *dbgnext;
+extern TraceBuffer dbgtb;
+extern char *dbglastmsg;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chDbgInit(void);
+  void chDbgTrace(Thread *otp, Thread *ntp);
+  void chDbgPuts(char *msg);
+  void chDbgPanic(char *msg);
 #ifdef __cplusplus
 }
 #endif
-  void InitSSP(void);
-  void SetSSP(int cpsr, int cr0, int cr1);
 
-  void sspAcquireBus(void);
-  void sspReleaseBus(void);
-  void sspRW(BYTE8 *in, BYTE8 *out, t_size n);
-#ifdef __cplusplus
-}
-#endif
+#else /* CH_USE_DEBUG */
 
-#endif /* _LPC214x_SSP_H_*/
+#define chDbgInit()
+#define chDbgPuts(msg) {}
+#define chDbgPanic(msg) {}
+
+#endif /* CH_USE_DEBUG */
+
+#endif /* _DEBUG_H_ */
+
+/** @} */

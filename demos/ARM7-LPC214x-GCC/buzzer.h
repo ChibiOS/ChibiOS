@@ -20,9 +20,15 @@
 #ifndef _BUZZER_H_
 #define _BUZZER_H_
 
-void InitBuzzer(void);
-void PlaySound(int freq, t_time duration);
-void PlaySoundWait(int freq, t_time duration);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void InitBuzzer(void);
+  void PlaySound(int freq, t_time duration);
+  void PlaySoundWait(int freq, t_time duration);
+#ifdef __cplusplus
+}
+#endif
 
 extern EventSource BuzzerSilentEventSource;
 

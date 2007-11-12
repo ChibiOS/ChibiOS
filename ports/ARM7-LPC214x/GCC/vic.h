@@ -20,7 +20,13 @@
 #ifndef _VIC_H_
 #define _VIC_H_
 
-void InitVIC(void);
-void SetVICVector(void *handler, int vector, int source);
+#ifdef __cplusplus
+}
+#endif
+  void InitVIC(void);
+  void SetVICVector(void *handler, int vector, int source);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _VIC_H_*/

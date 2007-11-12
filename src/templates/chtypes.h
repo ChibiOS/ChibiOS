@@ -38,6 +38,7 @@
 
 typedef BYTE8       t_tmode;    /* Thread mode flags, BYTE8 is ok. */
 typedef BYTE8       t_tstate;   /* Thread state, BYTE8 is ok. */
+typedef UWORD16     t_tid;      /* Thread id. */
 typedef ULONG32     t_prio;     /* Priority, use the fastest unsigned type. */
 typedef LONG32      t_msg;      /* Message, use signed pointer equivalent.*/
 typedef LONG32      t_eventid;  /* Event Id, use fastest signed.*/

@@ -80,10 +80,12 @@ t_msg chMsgSendWithEvent(Thread *tp, t_msg msg, EventSource *esp) {
 #endif
 
 #ifdef CH_USE_MESSAGES_TIMEOUT
-static void unsend(void *p) {
+static void wakeup(void *p) {
 
-// Test removed, it should never happen.
-//  if (((Thread *)p)->p_state == PRSNDMSG)
+#ifdef CH_USE_DEBUG
+  if (((Thread *)p)->p_state != PRSNDMSG)
+    chDbgPanic("chmsg.c, wakeup()\r\n");
+#endif
   chSchReadyI(dequeue(p))->p_rdymsg = RDY_TIMEOUT;
 }
 
@@ -108,7 +110,7 @@ t_msg chMsgSendTimeout(Thread *tp, t_msg msg, t_time time) {
 
   chSysLock();
 
-  chVTSetI(&vt, time, unsend, currp);
+  chVTSetI(&vt, time, wakeup, currp);
   fifo_insert(currp, &tp->p_msgqueue);
   if (tp->p_state == PRWTMSG)
     chSchReadyI(tp);

@@ -47,6 +47,7 @@ static Thread idlethread;
 void chSysInit(void) {
 
   chSchInit();
+  chDbgInit();
 #ifdef CH_USE_VIRTUAL_TIMERS
   chVTInit();
 #endif

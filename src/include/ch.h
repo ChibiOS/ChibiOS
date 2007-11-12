@@ -83,6 +83,10 @@
 #include "serial.h"
 #endif
 
+#ifndef _DEBUG_H_
+#include "debug.h"
+#endif
+
 /*
  * Common values.
  */

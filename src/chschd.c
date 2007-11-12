@@ -86,6 +86,9 @@ static void nextready(void) {
 
   (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
   preempt = CH_TIME_QUANTUM;
+#ifdef CH_USE_DEBUG
+  chDbgTrace(otp, currp);
+#endif
   chSysSwitchI(&otp->p_ctx, &currp->p_ctx);
 }
 
@@ -125,6 +128,9 @@ void chSchWakeupS(Thread *tp, t_msg msg) {
     (currp = tp)->p_state = PRCURR;
     tp->p_rdymsg = msg;
     preempt = CH_TIME_QUANTUM;
+#ifdef CH_USE_DEBUG
+    chDbgTrace(ctp, tp);
+#endif
     chSysSwitchI(&ctp->p_ctx, &tp->p_ctx);
   }
 }

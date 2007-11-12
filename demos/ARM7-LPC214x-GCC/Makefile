@@ -65,9 +65,9 @@ UADEFS =
 ASRC = chcore.c main.c buzzer.c mmcsd.c ../../src/lib/evtimer.c ../../test/test.c \
        ../../ports/ARM7-LPC214x/GCC/vic.c  ../../ports/ARM7-LPC214x/GCC/lpc214x_serial.c  \
        ../../ports/ARM7-LPC214x/GCC/lpc214x_ssp.c  \
-       ../../src/chinit.c ../../src/chlists.c ../../src/chdelta.c ../../src/chschd.c \
-       ../../src/chthreads.c ../../src/chsem.c ../../src/chevents.c ../../src/chmsg.c \
-       ../../src/chsleep.c ../../src/chqueues.c ../../src/chserial.c
+       ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
+       ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chevents.c \
+       ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c ../../src/chserial.c
 
 # List THUMB-mode C sources here
 # NOTE: If any module is compiled in thumb mode then -mthumb-interwork is
