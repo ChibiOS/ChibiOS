@@ -46,10 +46,29 @@ static void wait(void) {
   chThdWait(t5);
 }
 
-static void println(char *msgp) {
+static void printn(unsigned int n) {
+  char buf[16], *p;
+
+  if (!n)
+    chFDDPut(comp, '0');
+  else {
+    p = buf;
+    while (n)
+          *p++ = (n % 10) + '0', n /= 10;
+    while (p > buf)
+      chFDDPut(comp, *--p);
+  }
+}
+
+static void print(char *msgp) {
 
   while (*msgp)
     chFDDPut(comp, *msgp++);
+}
+
+static void println(char *msgp) {
+
+  print(msgp);
   chFDDPut(comp, '\r');
   chFDDPut(comp, '\n');
 }
@@ -94,12 +113,19 @@ t_msg Thread5(void *p) {
   return 0;
 }
 
+t_msg Thread6(void *p) {
+
+  while (!chThdShouldTerminate())
+    chMsgRelease(chMsgWait() + 1);
+  return 0;
+}
+
 /**
  * Tester thread, this thread must be created with priority \p NORMALPRIO.
  */
 t_msg TestThread(void *p) {
   t_msg msg;
-  int i;
+  unsigned int i;
 
   comp = p;
   println("*****************************");
@@ -201,6 +227,27 @@ t_msg TestThread(void *p) {
   chMsgSendTimeout(t1, 0, 500);
   chThdWait(t1);
   println("");
+
+  /*
+   * Kernel benchmarks.
+   */
+  println("*** Kernel Benchmark, context switch stress test:");
+  t_time time = chSysGetTime() + 1;
+  while (chSysGetTime() < time)
+    ;
+  time += 1000;
+  i = 0;
+  t1 = chThdCreate(NORMALPRIO+1, 0, wsT1, sizeof(wsT1), Thread6, chThdSelf());
+  while (chSysGetTime() < time)
+    i = chMsgSend(t1, i);
+  chThdTerminate(t1);
+  chMsgSend(t1, 0); /* Lets the thread check the termination flag.*/
+  chThdWait(t1);
+  print("Messages throughput = ");
+  printn(i);
+  print(" msg/S, ");
+  printn(i << 1);
+  println(" ctxsw/S");
 
   println("\r\nTest complete");
   return 0;

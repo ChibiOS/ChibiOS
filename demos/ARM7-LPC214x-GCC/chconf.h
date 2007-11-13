@@ -160,7 +160,7 @@
  *  @note the debug support is port-dependent, it may be not present on some
  *       targets. In that case stub functions will be included.
  */
-#define CH_USE_DEBUG
+//#define CH_USE_DEBUG
 
 #endif  /* _CHCONF_H_ */
 

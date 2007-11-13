@@ -78,7 +78,7 @@ extern Thread *currp;
  *       instead. Direct use of system global variables is discouraged because
  *       portability reasons.
  */
-extern t_time stime;
+extern volatile t_time stime;
 
 #endif /* _SCHEDULER_H_ */
 

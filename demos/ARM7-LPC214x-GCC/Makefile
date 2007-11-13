@@ -93,9 +93,9 @@ AOPT =
 TOPT = -mthumb -D THUMB
 
 # Common options here
-# NOTE: -ffixed-f7 is only needed if you enabled CH_CURRP_REGISTER_CACHE in chconf.h.
+# NOTE: -ffixed-r7 is only needed if you enabled CH_CURRP_REGISTER_CACHE in chconf.h.
 OPT = -O2 -ggdb -fomit-frame-pointer -fno-strict-aliasing
-#OPT += -ffixed-f7
+#OPT += -ffixed-r7
 
 # Define warning options here
 WARN = -Wall -Wstrict-prototypes

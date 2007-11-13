@@ -39,7 +39,11 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 *****************************************************************************
 
 *** 0.4.0 ***
-- Implemented a debug subsystem, it supports debug messages and a context
+- NEW, added a benchmark functionality to the test suite. The benchmark
+  measures the kernel throughput as messages per second and context switches
+  per second. The benchmark will be useful for fine tuning the compiler
+  options and the kernel itself.
+- NEW, implemented a debug subsystem, it supports debug messages and a context
   switch circular trace buffer. The debug code can be enabled/disabled by
   using the CH_USE_DEBUG in chconf.h.
   The trace buffer is meant to be fetched and decoded by an external tool
@@ -47,6 +51,12 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 - Implemented panic messages when CH_USE_DEBUG is enabled.
 - Added a thread identifier field to the Thread structure, it is used only
   for debug.
+- Global variable stime modified as volatile.
+- API chSysGetTime() reimplemented as a macro.
+- Fixed a regression with the CH_CURRP_REGISTER_CACHE option.
+- Fixed a problem in the LPC2148 interrupt handling code, a spurious
+  interrupts fix recommended on the NXP data sheet proved to be a very bad
+  idea and not about real spurious interrupts also...
 - Fixed an harmless warning message in buzzer.c.
 
 *** 0.3.6 ***
@@ -66,7 +76,7 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 - Fixed a minor problem in the interrupt initialization code for the LPC214x
   demo, regrouped the VIC-specific code into vic.c/vic.h.
 - Fixed a bug into the LPC2148 serial driver (limited to the serial port 2).
-- Implemented HW transmit FIFO preloading in the LPC2142 serial driver in
+- Implemented HW transmit FIFO preloading in the LPC2148 serial driver in
   order to minimize the number of interrupts generated, it is possible to
   disable the feature and return to the old code which is a bit smaller, see
   the configuration parameters in ./ARM7-LPC214x/GCC/lpc214x_serial.h.

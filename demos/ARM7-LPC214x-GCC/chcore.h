@@ -37,7 +37,7 @@ struct stackregs {
   regarm  r4;
   regarm  r5;
   regarm  r6;
-#ifndef MK_CURRP_REGISTER_CACHE
+#ifndef CH_CURRP_REGISTER_CACHE
   regarm  r7;
 #endif
   regarm  r8;
@@ -51,7 +51,7 @@ typedef struct {
   struct stackregs *r13;
 } Context;
 
-#ifdef MK_CURRP_REGISTER_CACHE
+#ifdef CH_CURRP_REGISTER_CACHE
 #define SETUP_CONTEXT(workspace, wsize, pf, arg)                   \
 {                                                                  \
   tp->p_ctx.r13 = (struct stackregs *)((BYTE8 *)workspace +        \

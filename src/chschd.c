@@ -34,7 +34,7 @@ Thread *currp;
 #endif
 
 #ifdef CH_USE_SYSTEMTIME
-t_time stime;
+volatile t_time stime;
 #endif
 
 /** @endcond */

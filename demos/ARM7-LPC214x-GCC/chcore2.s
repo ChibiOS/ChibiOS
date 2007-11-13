@@ -47,10 +47,6 @@ threadstart:
 SwiHandler:
         b       SwiHandler
 
-.globl DefIrqHandler
-DefIrqHandler:
-        b       DefIrqHandler
-
 .globl FiqHandler
 FiqHandler:
         b       FiqHandler
@@ -109,7 +105,7 @@ chSysSwitchI:
  *      |     R10    |  |
  *      |     R9     |  |
  *      |     R8     |  | Internal context: mk_SwitchI() frame
- *      |    (R7)    |  |   (optional, see MK_CURRP_REGISTER_CACHE)
+ *      |    (R7)    |  |   (optional, see CH_CURRP_REGISTER_CACHE)
  *      |     R6     |  |
  *      |     R5     |  |
  * SP-> |     R4     | -+
@@ -119,9 +115,9 @@ chSysSwitchI:
 IrqHandler:
         sub     lr, lr, #4
         stmfd   sp!, {r0-r3, r12, lr}
-        mrs     r0, SPSR                        // Workaround for ARM7TDMI+VIC
-        tst     r0, #I_BIT                      // spurious interrupts.
-        ldmnefd sp!, {r0-r3, r12, pc}
+//        mrs     r0, SPSR                        // Workaround for ARM7TDMI+VIC
+//        tst     r0, #I_BIT                      // spurious interrupts.
+//        ldmnefd sp!, {r0-r3, r12, pc}
         bl      NonVectoredIrq
         b       IrqCommon
 
@@ -129,9 +125,9 @@ IrqHandler:
 T0IrqHandler:
         sub     lr, lr, #4
         stmfd   sp!, {r0-r3, r12, lr}
-        mrs     r0, SPSR                        // Workaround for ARM7TDMI+VIC
-        tst     r0, #I_BIT                      // spurious interrupts.
-        ldmnefd sp!, {r0-r3, r12, pc}^
+//        mrs     r0, SPSR                        // Workaround for ARM7TDMI+VIC
+//        tst     r0, #I_BIT                      // spurious interrupts.
+//        ldmnefd sp!, {r0-r3, r12, pc}^
         bl      Timer0Irq
         b       IrqCommon
 
@@ -139,9 +135,9 @@ T0IrqHandler:
 UART0IrqHandler:
         sub     lr, lr, #4
         stmfd   sp!, {r0-r3, r12, lr}
-        mrs     r0, SPSR                        // Workaround for ARM7TDMI+VIC
-        tst     r0, #I_BIT                      // spurious interrupts.
-        ldmnefd sp!, {r0-r3, r12, pc}^
+//        mrs     r0, SPSR                        // Workaround for ARM7TDMI+VIC
+//        tst     r0, #I_BIT                      // spurious interrupts.
+//        ldmnefd sp!, {r0-r3, r12, pc}^
         bl      UART0Irq
         b       IrqCommon
 
@@ -149,9 +145,9 @@ UART0IrqHandler:
 UART1IrqHandler:
         sub     lr, lr, #4
         stmfd   sp!, {r0-r3, r12, lr}
-        mrs     r0, SPSR                        // Workaround for ARM7TDMI+VIC
-        tst     r0, #I_BIT                      // spurious interrupts.
-        ldmnefd sp!, {r0-r3, r12, pc}^
+//        mrs     r0, SPSR                        // Workaround for ARM7TDMI+VIC
+//        tst     r0, #I_BIT                      // spurious interrupts.
+//        ldmnefd sp!, {r0-r3, r12, pc}^
         bl      UART1Irq
         b       IrqCommon
 
