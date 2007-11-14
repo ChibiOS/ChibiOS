@@ -101,6 +101,7 @@ typedef struct {
 
 #define chSysLock() asm("cli")
 #define chSysUnlock() asm("sei")
+#define chSysPuts(msg) {}
 
 void chSysHalt(void) __attribute__((noreturn)) ;
 void chSysPause(void) __attribute__((noreturn)) ;

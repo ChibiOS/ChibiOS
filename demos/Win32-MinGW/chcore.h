@@ -58,8 +58,8 @@ typedef struct {
 }
 
 #define chSysLock()
-
 #define chSysUnlock()
+#define chSysPuts(msg) {}
 
 #define INT_REQUIRED_STACK 0x0
 

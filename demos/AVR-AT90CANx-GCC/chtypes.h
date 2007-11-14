@@ -34,6 +34,7 @@
 
 typedef BYTE8       t_tmode;
 typedef BYTE8       t_tstate;
+typedef BYTE8       t_tid;
 typedef BYTE8       t_prio;
 typedef WORD16      t_msg;
 typedef BYTE8       t_eventid;

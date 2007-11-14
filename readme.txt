@@ -48,6 +48,7 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
   using the CH_USE_DEBUG in chconf.h.
   The trace buffer is meant to be fetched and decoded by an external tool
   (coming soon, it can be accessed using JTAG in the meanwhile).
+- Added new API chThdGetPriority() as a macro.
 - Implemented panic messages when CH_USE_DEBUG is enabled.
 - Added a thread identifier field to the Thread structure, it is used only
   for debug.

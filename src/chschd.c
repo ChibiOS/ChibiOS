@@ -81,7 +81,11 @@ Thread *chSchReadyI(Thread *tp) {
  * Switches to the next thread in the ready list, the ready list is assumed
  * to contain at least a thread.
  */
+#ifdef CH_OPTIMIZE_SPEED
+static INLINE void nextready(void) {
+#else
 static void nextready(void) {
+#endif
   Thread *otp = currp;
 
   (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
@@ -111,27 +115,27 @@ void chSchGoSleepS(t_tstate newstate) {
  * Wakeups a thread, the thread is inserted into the ready list or made
  * running directly depending on its relative priority compared to the current
  * thread.
- * @param tp the Thread to be made ready
+ * @param ntp the Thread to be made ready
  * @param msg wakeup message to the awakened thread
  * @note The function must be called in the system mutex zone.
  * @note The function is not meant to be used in the user code directly.
  * @note It is equivalent to a \p chSchReadyI() followed by a
  *       \p chSchRescheduleI() but much more efficient.
  */
-void chSchWakeupS(Thread *tp, t_msg msg) {
-  Thread *ctp = currp;
+void chSchWakeupS(Thread *ntp, t_msg msg) {
 
-  if (tp->p_prio <= ctp->p_prio)
-    chSchReadyI(tp)->p_rdymsg = msg;
+  if (ntp->p_prio <= currp->p_prio)
+    chSchReadyI(ntp)->p_rdymsg = msg;
   else {
-    chSchReadyI(ctp);
-    (currp = tp)->p_state = PRCURR;
-    tp->p_rdymsg = msg;
+    Thread *otp = currp;
+    chSchReadyI(otp);
+    (currp = ntp)->p_state = PRCURR;
+    ntp->p_rdymsg = msg;
     preempt = CH_TIME_QUANTUM;
 #ifdef CH_USE_DEBUG
-    chDbgTrace(ctp, tp);
+    chDbgTrace(otp, ntp);
 #endif
-    chSysSwitchI(&ctp->p_ctx, &tp->p_ctx);
+    chSysSwitchI(&otp->p_ctx, &ntp->p_ctx);
   }
 }
 

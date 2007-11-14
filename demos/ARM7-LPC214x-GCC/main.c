@@ -119,8 +119,14 @@ static t_msg Thread3(void *arg) {
 int main(int argc, char **argv) {
 
   chSysInit();
-  chThdCreate(NORMALPRIO, 0, waThread1, sizeof(waThread1), Thread1, NULL);
-  chThdCreate(NORMALPRIO, 0, waThread2, sizeof(waThread2), Thread2, NULL);
+  /*
+   * If a button is pressed during the reset then the blinking leds are not
+   * started in order to make accurate benchmarks.
+   */
+  if ((IO0PIN & 0x00018000) == 0x00018000) {
+    chThdCreate(NORMALPRIO, 0, waThread1, sizeof(waThread1), Thread1, NULL);
+    chThdCreate(NORMALPRIO, 0, waThread2, sizeof(waThread2), Thread2, NULL);
+  }
   chThdCreate(NORMALPRIO, 0, waThread3, sizeof(waThread3), Thread3, NULL);
   chSysPause();
   return 0;

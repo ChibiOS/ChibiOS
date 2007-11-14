@@ -70,7 +70,7 @@ void InitCore(void) {
 /*
  * Interrupt simulation.
  */
-static void ChkIntSources(void) {
+void ChkIntSources(void) {
   LARGE_INTEGER n;
 
   if (Com1InInterruptSimCom()   || Com2InInterruptSimCom()  ||

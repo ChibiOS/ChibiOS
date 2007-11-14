@@ -142,6 +142,9 @@
 				Name="src"
 				Filter="">
 				<File
+					RelativePath="..\..\src\chdebug.c">
+				</File>
+				<File
 					RelativePath="..\..\src\chdelta.c">
 				</File>
 				<File
@@ -208,6 +211,9 @@
 				Filter="">
 				<File
 					RelativePath="..\..\src\include\ch.h">
+				</File>
+				<File
+					RelativePath="..\..\src\include\debug.h">
 				</File>
 				<File
 					RelativePath="..\..\src\include\delta.h">

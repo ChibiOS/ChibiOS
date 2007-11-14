@@ -153,7 +153,7 @@ t_msg chMsgWait(void) {
  * @return the pointer to the message structure. Note, it is always the
  *         message associated to the thread on the top of the messages queue.
  *         If the queue is empty then \p NULL is returned.
- * @note You can assume that the data contained in the message is stable until
+ * @note You can assume that the data pointed by the message is stable until
  *       you invoke \p chMsgRelease() because the sending thread is
  *       suspended until then. Always remember that the message data is not
  *       copied between the sender and the receiver, just a pointer is passed.

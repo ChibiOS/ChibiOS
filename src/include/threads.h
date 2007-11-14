@@ -178,6 +178,9 @@ extern "C" {
 /** Returns the pointer to the \p Thread currently in execution.*/
 #define chThdSelf() currp
 
+/** Returns the thread priority.*/
+#define chThdGetPriority() (currp->p_prio)
+
 /** Returns the pointer to the \p Thread local storage area, if any.*/
 #define chThdLS() (void *)(currp + 1)
 
