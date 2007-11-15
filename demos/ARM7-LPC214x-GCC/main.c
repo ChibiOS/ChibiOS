@@ -94,7 +94,7 @@ static void RemoveHandler(t_eventid id) {
   PlaySoundWait(1000, 100);
 }
 
-static BYTE8 waThread3[UserStackSize(128)];
+static BYTE8 waThread3[UserStackSize(256)];
 static EvTimer evt;
 static t_evhandler evhndl[] = {
   TimerHandler,
