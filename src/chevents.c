@@ -136,7 +136,7 @@ void chEvtSendI(EventSource *esp) {
  *       an higher priority.
  */
 t_eventid chEvtWait(t_eventmask ewmask,
-                    t_evhandler handlers[]) {
+                    const t_evhandler handlers[]) {
   t_eventid i;
   t_eventmask m;
 
@@ -191,7 +191,7 @@ static void wakeup(void *p) {
  *       option is enabled in \p chconf.h.
  */
 t_eventid chEvtWaitTimeout(t_eventmask ewmask,
-                           t_evhandler handlers[],
+                           const t_evhandler handlers[],
                            t_time time) {
   t_eventid i;
   t_eventmask m;

@@ -61,13 +61,17 @@ void chSchInit(void) {
  *       be called soon after.
  * @note The function is not meant to be used in the user code directly.
  */
+#ifdef CH_OPTIMIZE_SPEED
+/* NOTE: it is inlined in this module only.*/
+INLINE Thread *chSchReadyI(Thread *tp) {
+#else
 Thread *chSchReadyI(Thread *tp) {
-  Thread *cp;
+#endif
+  Thread *cp = rlist.r_queue.p_prev;
   t_prio prio = tp->p_prio;
 
   tp->p_state = PRREADY;
   tp->p_rdymsg = RDY_OK;
-  cp = rlist.r_queue.p_prev;
   while (cp->p_prio < prio)
     cp = cp->p_prev;
   // Insertion on p_next
@@ -79,6 +83,7 @@ Thread *chSchReadyI(Thread *tp) {
 /*
  * Switches to the next thread in the ready list, the ready list is assumed
  * to contain at least a thread.
+ * NOTE: it is inlined in this module only.
  */
 #ifdef CH_OPTIMIZE_SPEED
 static INLINE void nextready(void) {

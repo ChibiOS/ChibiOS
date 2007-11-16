@@ -41,17 +41,21 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 *** 0.4.1 ***
 - Cleaned up the LPC2148 demo in main.c, it is now well documented and
   explains everything, I assumed too much stuff to be "obvious".
-- Included a Makefile in the LPC2148 demo that builds in THUMB mode.
 - Added a spreadsheet in the documentation that describes the advantages
   and disadvantages of the various optimization options (both GCC options and
   ChibiOS/RT options), very interesting read IMO. No .xls available, ODF only.
 - The GCC option +falign-functions=16 is now default in the Makefile, it is
   required because of the MAM unit into the LPC chips, without this option
   the code performance is less predictable and can change of some % points
-  depending on how the code is aligned in the flash memory, unpredictabilty
+  depending on how the code is aligned in the flash memory, unpredictability
   is bad for a RTOS. This option however increases the code size slightly
-  because of alignment gaps.
-- Fine tuning in the scheduler code for improved performance.
+  because of the alignment gaps.
+- Fine tuning in the scheduler code for improved performance, deeper
+  inlining and small changes.
+- Increased the default system-mode stack size from 128 to 256 bytes because
+  some optimizations and the THUMB mode seem to use more stack space.
+- Included a Makefile in the LPC2148 demo that builds in THUMB mode.
+- Const-ified a parameter in the chEvtWait() and chEvtWaitTimeout() APIs.
 
 *** 0.4.0 ***
 - NEW, added a benchmark functionality to the test suite. The benchmark

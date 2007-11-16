@@ -25,12 +25,21 @@
 #include "buzzer.h"
 #include "evtimer.h"
 
+/*
+ * System Idle Thread, this thread only runs when on other threads in the
+ * system require the CPU.
+ * The role of this thread is to minimize the power consumption when idling
+ * and serve the interrupts.
+ */
 static BYTE8 waIdleThread[UserStackSize(16)];
 static t_msg IdleThread(void *arg) {
 
   chSysPause();
 }
 
+/*
+ * Red LEDs blinker thread, times are in milliseconds.
+ */
 static BYTE8 waThread1[UserStackSize(32)];
 static t_msg Thread1(void *arg) {
 
@@ -47,6 +56,9 @@ static t_msg Thread1(void *arg) {
   return 0;
 }
 
+/*
+ * Yellow LED blinker thread, times are in milliseconds.
+ */
 static BYTE8 waThread2[UserStackSize(32)];
 static t_msg Thread2(void *arg) {
 
@@ -59,6 +71,9 @@ static t_msg Thread2(void *arg) {
   return 0;
 }
 
+/*
+ * Executed as event handler at 500mS intervals.
+ */
 static void TimerHandler(t_eventid id) {
   t_msg TestThread(void *p);
 
@@ -76,6 +91,10 @@ static void TimerHandler(t_eventid id) {
   }
 }
 
+/*
+ * Plays sounds when a MMC/SD card is inserted, then initializes the MMC
+ * driver and reads a sector.
+ */
 static void InsertHandler(t_eventid id) {
   static BYTE8 rwbuf[512];
   MMCCSD data;
@@ -92,39 +111,30 @@ static void InsertHandler(t_eventid id) {
   PlaySound(440, 200);
 }
 
+/*
+ * Plays sounds when a MMC/SD card is removed.
+ */
 static void RemoveHandler(t_eventid id) {
 
   PlaySoundWait(2000, 100);
   PlaySoundWait(1000, 100);
 }
 
-/*static BYTE8 waThread3[UserStackSize(256)];*/
-static EvTimer evt;
-static t_evhandler evhndl[] = {
-  TimerHandler,
-  InsertHandler,
-  RemoveHandler
-};
-
-/*static t_msg Thread3(void *arg) {
-  struct EventListener el0, el1, el2;
-
-  evtInit(&evt, 500);
-  evtStart(&evt);
-  mmcStartPolling();
-  evtRegister(&evt, &el0, 0);
-  chEvtRegister(&MMCInsertEventSource, &el1, 1);
-  chEvtRegister(&MMCRemoveEventSource, &el2, 2);
-  while (TRUE)
-    chEvtWait(ALL_EVENTS, evhndl);
-  return 0;
-}*/
-
+/*
+ * Entry point, the interrupts are disabled on entry.
+ */
 int main(int argc, char **argv) {
+  static const t_evhandler evhndl[] = {
+    TimerHandler,
+    InsertHandler,
+    RemoveHandler
+  };
+  static EvTimer evt;
   struct EventListener el0, el1, el2;
 
   /*
-   * The main() function becomes a thread here, ChibiOS/RT goes live.
+   * The main() function becomes a thread here then the interrupts are
+   * enabled and ChibiOS/RT goes live.
    */
   chSysInit();
 

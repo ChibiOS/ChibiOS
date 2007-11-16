@@ -85,11 +85,11 @@ extern "C" {
   void chEvtSend(EventSource *esp);
   void chEvtSendI(EventSource *esp);
   t_eventid chEvtWait(t_eventmask ewmask,
-                      t_evhandler handlers[]);
+                      const t_evhandler handlers[]);
 #ifdef CH_USE_EVENTS_TIMEOUT
   t_eventid chEvtWaitTimeout(t_eventmask ewmask,
-                           t_evhandler handlers[],
-                           t_time time);
+                             const t_evhandler handlers[],
+                             t_time time);
 #endif
 #ifdef __cplusplus
 }
