@@ -25,8 +25,13 @@
 #include "buzzer.h"
 #include "evtimer.h"
 
-static BYTE8 waThread1[UserStackSize(32)];
+static BYTE8 waIdleThread[UserStackSize(16)];
+static t_msg IdleThread(void *arg) {
 
+  chSysPause();
+}
+
+static BYTE8 waThread1[UserStackSize(32)];
 static t_msg Thread1(void *arg) {
 
   while (TRUE) {
@@ -43,7 +48,6 @@ static t_msg Thread1(void *arg) {
 }
 
 static BYTE8 waThread2[UserStackSize(32)];
-
 static t_msg Thread2(void *arg) {
 
   while (TRUE) {
@@ -94,7 +98,7 @@ static void RemoveHandler(t_eventid id) {
   PlaySoundWait(1000, 100);
 }
 
-static BYTE8 waThread3[UserStackSize(256)];
+/*static BYTE8 waThread3[UserStackSize(256)];*/
 static EvTimer evt;
 static t_evhandler evhndl[] = {
   TimerHandler,
@@ -102,7 +106,7 @@ static t_evhandler evhndl[] = {
   RemoveHandler
 };
 
-static t_msg Thread3(void *arg) {
+/*static t_msg Thread3(void *arg) {
   struct EventListener el0, el1, el2;
 
   evtInit(&evt, 500);
@@ -114,20 +118,51 @@ static t_msg Thread3(void *arg) {
   while (TRUE)
     chEvtWait(ALL_EVENTS, evhndl);
   return 0;
-}
+}*/
 
 int main(int argc, char **argv) {
+  struct EventListener el0, el1, el2;
 
-  chSysInit();
   /*
-   * If a button is pressed during the reset then the blinking leds are not
-   * started in order to make accurate benchmarks.
+   * The main() function becomes a thread here, ChibiOS/RT goes live.
+   */
+  chSysInit();
+
+  /*
+   * This thread has the lowest priority in the system, its role is just to
+   * execute the chSysPause() and serve interrupts in its context.
+   * In ChibiOS/RT at least one thread in the system *must* execute
+   * chThdPause(), it can be done in a dedicated thread or in the main()
+   * function (that would never exit the call).
+   */
+  chThdCreate(IDLEPRIO, 0, waIdleThread, sizeof(waIdleThread), IdleThread, NULL);
+
+  /*
+   * If a button is pressed during the reset then the blinking leds threads
+   * are not started in order to make accurate benchmarks.
    */
   if ((IO0PIN & 0x00018000) == 0x00018000) {
     chThdCreate(NORMALPRIO, 0, waThread1, sizeof(waThread1), Thread1, NULL);
     chThdCreate(NORMALPRIO, 0, waThread2, sizeof(waThread2), Thread2, NULL);
   }
-  chThdCreate(NORMALPRIO, 0, waThread3, sizeof(waThread3), Thread3, NULL);
-  chSysPause();
+
+  /*
+   * Allows the other threads to run by lowering the priority, remember,
+   * the priority is set to the maximum in the \p chSysInit().
+   */
+  chThdSetPriority(NORMALPRIO);
+
+  /*
+   * Normal main() activity, in this demo it server events incoming from
+   * various sources.
+   */
+  evtInit(&evt, 500);           /* Initializes an event timer object.   */
+  evtRegister(&evt, &el0, 0);   /* Registers on the timer event source. */
+  evtStart(&evt);               /* Starts the event timer.              */
+  mmcStartPolling();            /* Starts the MMC connector polling.    */
+  chEvtRegister(&MMCInsertEventSource, &el1, 1);
+  chEvtRegister(&MMCRemoveEventSource, &el2, 2);
+  while (TRUE)                  /* Just serve events.                   */
+    chEvtWait(ALL_EVENTS, evhndl);
   return 0;
 }

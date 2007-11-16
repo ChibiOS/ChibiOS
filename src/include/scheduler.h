@@ -38,8 +38,9 @@
  * Ready list header.
  */
 typedef struct {
-  ThreadsQueue      r_queue;
-  t_prio            r_prio;
+  ThreadsQueue  r_queue;
+  t_prio        r_prio;
+  t_cnt         r_preempt;
 } ReadyList;
 
 /*

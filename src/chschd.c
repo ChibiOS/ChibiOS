@@ -27,7 +27,6 @@
 /** @cond never*/
 
 static ReadyList rlist;
-static t_cnt preempt;
 
 #ifndef CH_CURRP_REGISTER_CACHE
 Thread *currp;
@@ -47,7 +46,7 @@ void chSchInit(void) {
 
   fifo_init(&rlist.r_queue);
   rlist.r_prio = ABSPRIO;
-  preempt = CH_TIME_QUANTUM;
+  rlist.r_preempt = CH_TIME_QUANTUM;
 #ifdef CH_USE_SYSTEMTIME
   stime = 0;
 #endif
@@ -89,7 +88,7 @@ static void nextready(void) {
   Thread *otp = currp;
 
   (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
-  preempt = CH_TIME_QUANTUM;
+  rlist.r_preempt = CH_TIME_QUANTUM;
 #ifdef CH_USE_DEBUG
   chDbgTrace(otp, currp);
 #endif
@@ -131,7 +130,7 @@ void chSchWakeupS(Thread *ntp, t_msg msg) {
     chSchReadyI(otp);
     (currp = ntp)->p_state = PRCURR;
     ntp->p_rdymsg = msg;
-    preempt = CH_TIME_QUANTUM;
+    rlist.r_preempt = CH_TIME_QUANTUM;
 #ifdef CH_USE_DEBUG
     chDbgTrace(otp, ntp);
 #endif
@@ -172,7 +171,7 @@ BOOL chSchRescRequiredI(void) {
   if (isempty(&rlist.r_queue))
     return FALSE;
 
-  if (preempt) {
+  if (rlist.r_preempt) {
     if (firstprio(&rlist.r_queue) <= currp->p_prio)
       return FALSE;
   }
@@ -191,8 +190,8 @@ BOOL chSchRescRequiredI(void) {
  */
 void chSchTimerHandlerI(void) {
 
-  if (preempt)
-    preempt--;
+  if (rlist.r_preempt)
+    rlist.r_preempt--;
 
 #ifdef CH_USE_SYSTEMTIME
   stime++;

@@ -62,12 +62,15 @@ UDEFS =
 UADEFS =
 
 # List ARM-mode C source files here
-ASRC = chcore.c main.c buzzer.c mmcsd.c ../../src/lib/evtimer.c ../../test/test.c \
-       ../../ports/ARM7-LPC214x/GCC/vic.c  ../../ports/ARM7-LPC214x/GCC/lpc214x_serial.c  \
-       ../../ports/ARM7-LPC214x/GCC/lpc214x_ssp.c  \
+ASRC = chcore.c \
        ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
        ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chevents.c \
-       ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c ../../src/chserial.c
+       ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c ../../src/chserial.c \
+       ../../ports/ARM7-LPC214x/GCC/vic.c  ../../ports/ARM7-LPC214x/GCC/lpc214x_serial.c  \
+       ../../ports/ARM7-LPC214x/GCC/lpc214x_ssp.c  \
+       ../../src/lib/evtimer.c ../../test/test.c \
+       buzzer.c mmcsd.c main.c
+
 
 # List THUMB-mode C sources here
 # NOTE: If any module is compiled in thumb mode then -mthumb-interwork is
@@ -99,7 +102,7 @@ TOPT = -mthumb -D THUMB
 #       increases the code size.
 OPT = -O2 -ggdb -fomit-frame-pointer -fno-strict-aliasing
 #OPT += -ffixed-r7
-#OPT += -falign-functions=16
+OPT += -falign-functions=16
 
 # Define warning options here
 WARN = -Wall -Wstrict-prototypes
