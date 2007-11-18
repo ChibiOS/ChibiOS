@@ -44,8 +44,8 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
   executing chSysInit() and can use all the ChibiOS/RT APIs (it was required
   to run the idle loop in previous versions).
   Now it is also possible to use ChibiOS/RT with a single main() thread and
-  just use it for the I/O capabilities, Virtual Timers and events. You don't
-  have to use multiple threads if you don't really need to.
+  just use it for the I/O capabilities, Virtual Timers and events. Mow you
+  don't have to use multiple threads if you don't really need to.
 - Cleaned up the LPC2148 demo in main.c, it is now well documented and
   explains everything, I assumed too much stuff to be "obvious".
 - Added a spreadsheet in the documentation that describes the advantages
