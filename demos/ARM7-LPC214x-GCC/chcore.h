@@ -98,6 +98,10 @@ extern void chSysUnlock(void);
 #define UserStackSize(n) (sizeof(Thread) + \
                           sizeof(struct stackregs) + (n) + (INT_REQUIRED_STACK))
 
+
+#define IDLE_THREAD_STACK_SIZE 8
+void _IdleThread(void *p) __attribute__((noreturn));
+
 void chSysHalt(void) __attribute__((noreturn));
 void chSysPause(void)  __attribute__((noreturn));
 void chSysSwitchI(Context *oldp, Context *newp);

@@ -52,8 +52,8 @@ void InitBuzzer(void) {
   TC *tc = T1Base;
   StopCounter(tc);
   tc->TC_CTCR = 0;                      // Clock source is PCLK.
-  tc->TC_PR = 0;                        // Prescaler disabled.
-  tc->TC_MCR = 2;                       // Clear TC on match MR0.
+  tc->TC_PR   = 0;                        // Prescaler disabled.
+  tc->TC_MCR  = 2;                       // Clear TC on match MR0.
 }
 
 static void stop(void *p) {

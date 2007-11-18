@@ -42,8 +42,20 @@ typedef struct {
 {                                                                  \
 }
 
-#define INT_REQUIRED_STACK 0  // Must include registers and stack frames.
+/**
+ * Stack size for the system idle thread.
+ */
+#define IDLE_THREAD_STACK_SIZE 0
 
+/**
+ * Per-thread stack overhead for interrupts servicing.
+ */
+#define INT_REQUIRED_STACK 0
+
+/**
+ * Macro to be used when allocating stack spaces, it adds the system-specific
+ * overhead.
+ */
 #define UserStackSize(n) (sizeof(Thread) + \
                           sizeof(struct stackregs) + (n) + (INT_REQUIRED_STACK))
 
@@ -74,8 +86,8 @@ typedef struct {
  */
 #define chSysPuts(msg) {}
 
+void _IdleThread(void *p);
 void chSysHalt(void);
-void chSysPause(void);
 void chSysSwitchI(Context *oldp, Context *newp);
 
 #endif /* _CHCORE_H_ */

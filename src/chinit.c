@@ -24,27 +24,17 @@
 
 #include <ch.h>
 
-static Thread idlethread;
 
 /**
  * ChibiOS/RT initialization. After executing this function the current
- * instructions stream becomes the idle thread. The thread must execute the
- * first user thread and then go to sleep into the \p chSysPause() where it
- * will just serve the interrupts while keeping the lowest possible power
- * mode.<br><br>
- * @code
- *   chSysInit();
- *   chThdCreate(...); // Starts one or more user threads.
- *   chSysPause();
- * @endcode
+ * instructions stream becomes the main thread.
  * @note Interrupts should be still disabled when \p chSysInit() is invoked
  *       and are internally enabled.
- * @note The idle thread has absolute priority when exiting from the
- *       \p chSysInit(), this is done to make sure that all the initializations
- *       performed in the \p main() procedure are completed before any thread
- *       starts. The priority is set to \p IDLEPRIO into the \p chSysPause().
+ * @note The main thread is created with priority \p NORMALPRIO.
  */
 void chSysInit(void) {
+  static Thread mainthread;
+  static BYTE8 waIdleThread[UserStackSize(IDLE_THREAD_STACK_SIZE)];
 
   chSchInit();
   chDbgInit();
@@ -52,13 +42,23 @@ void chSysInit(void) {
   chVTInit();
 #endif
   /*
-   * Now this instructions flow becomes the idle thread.
+   * Now this instructions flow becomes the main thread.
    */
-  _InitThread(ABSPRIO, 0, &idlethread);
-  idlethread.p_state = PRCURR;
-  currp = &idlethread;
+  _InitThread(NORMALPRIO, 0, &mainthread);
+  mainthread.p_state = PRCURR;
+  currp = &mainthread;
 
   chSysUnlock();
+
+  /*
+   * The idle thread is created using the port-provided implementation.
+   * This thread has the lowest priority in the system, its role is just to
+   * execute the chSysPause() and serve interrupts in its context.
+   * In ChibiOS/RT at least one thread in the system *must* execute
+   * chThdPause(), it can be done in a dedicated thread or in the main()
+   * function (that would never exit the call).
+   */
+  chThdCreate(IDLEPRIO, 0, waIdleThread, sizeof(waIdleThread), (t_tfunc)_IdleThread, NULL);
 }
 
 /** @} */

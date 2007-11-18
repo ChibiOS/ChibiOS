@@ -36,9 +36,7 @@
  * The priority is internally set to the minimum system value so that this
  * thread is executed only if there are no other ready threads in the system.
  */
-void chSysPause(void) {
-
-  chThdSetPriority(IDLEPRIO);
+void _IdleThread(void *p) {
 
   while (TRUE)
     ;

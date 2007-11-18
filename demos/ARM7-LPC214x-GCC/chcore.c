@@ -140,14 +140,15 @@ void hwinit(void) {
   InitBuzzer();
 }
 
-void chSysPause(void) {
-
-  chThdSetPriority(IDLEPRIO);
+/*
+ * System idle thread loop.
+ */
+void _IdleThread(void *p) {
 
   while (TRUE) {
 // Note, it is disabled because it causes trouble with the JTAG probe.
 // Enable it in the final code only.
-//    PCON = 1;   /* Stops CPU clock until next interrupt. */
+//    PCON = 1;
   }
 }
 

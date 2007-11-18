@@ -39,6 +39,13 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 *****************************************************************************
 
 *** 0.4.1 ***
+- Modified the initialization code in order to have a dedicated idle thread in
+  the system, now the main() function behaves like a normal thread after
+  executing chSysInit() and can use all the ChibiOS/RT APIs (it was required
+  to run the idle loop in previous versions).
+  Now it is also possible to use ChibiOS/RT with a single main() thread and
+  just use it for the I/O capabilities, Virtual Timers and events. You don't
+  have to use multiple threads if you don't really need to.
 - Cleaned up the LPC2148 demo in main.c, it is now well documented and
   explains everything, I assumed too much stuff to be "obvious".
 - Added a spreadsheet in the documentation that describes the advantages
@@ -51,7 +58,7 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
   is bad for a RTOS. This option however increases the code size slightly
   because of the alignment gaps.
 - Fine tuning in the scheduler code for improved performance, deeper
-  inlining and small changes.
+  inlining and small changes, about 5% better scheduler performance.
 - Increased the default system-mode stack size from 128 to 256 bytes because
   some optimizations and the THUMB mode seem to use more stack space.
 - Included a Makefile in the LPC2148 demo that builds in THUMB mode.
