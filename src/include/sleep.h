@@ -1,0 +1,54 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006-2007 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @addtogroup Time
+ * @{
+ */
+
+#ifndef _SLEEP_H_
+#define _SLEEP_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+#ifdef CH_USE_SLEEP
+  void chThdSleep(t_time time);
+#ifdef CH_USE_SYSTEMTIME
+  void chThdSleepUntil(t_time time);
+  t_time chSysGetTime(void);
+#endif /* CH_USE_SYSTEMTIME */
+#endif /* CH_USE_SLEEP */
+#ifdef __cplusplus
+}
+#endif
+
+/**
+ * Returns the number of system ticks since the \p chSysInit() invocation.
+ * @return the system ticks number
+ * @note The counter can reach its maximum and then returns to zero.
+ * @note This function is designed to work with the \p chThdSleepUntil().
+ * @note The function is available only if the \p CH_USE_SYSTEMTIME
+ *       option is enabled in \p chconf.h.
+ */
+#define chSysGetTime() stime
+
+#endif /* _SLEEP_H_ */
+
+/** @} */
