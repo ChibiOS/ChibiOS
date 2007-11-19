@@ -91,9 +91,7 @@ void ChkIntSources(void) {
   }
 }
 
-__attribute__((fastcall)) void chSysPause(void) {
-
-  chThdSetPriority(IDLEPRIO);
+t_msg _IdleThread(void *p) {
 
   while (TRUE) {
 

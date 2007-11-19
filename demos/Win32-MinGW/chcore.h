@@ -62,12 +62,13 @@ typedef struct {
 #define chSysPuts(msg) {}
 
 #define INT_REQUIRED_STACK 0x0
-
 #define UserStackSize(n) (sizeof(Thread) + sizeof(void *) * 2 + \
                           sizeof(struct stackregs) + (n) + (INT_REQUIRED_STACK))
 
+#define IDLE_THREAD_STACK_SIZE 16384
+t_msg _IdleThread(void *p);
+
 __attribute__((fastcall)) void chSysHalt(void);
-__attribute__((fastcall)) void chSysPause(void);
 __attribute__((fastcall)) void chSysSwitchI(Context *oldp, Context *newp);
 __attribute__((fastcall)) void threadstart(void);
 

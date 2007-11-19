@@ -121,9 +121,7 @@ void hwinit(void) {
   TIMSK0 = (1 << OCIE0A);                               // Interrupt on compare.
 }
 
-void chSysPause(void) {
-
-  chThdSetPriority(IDLEPRIO);
+void _IdleThread(void *p) {
 
   while (TRUE) {
 //    asm volatile ("sleep");

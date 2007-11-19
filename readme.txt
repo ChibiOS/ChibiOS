@@ -44,13 +44,11 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
   executing chSysInit() and can use all the ChibiOS/RT APIs (it was required
   to run the idle loop in previous versions).
   Now it is also possible to use ChibiOS/RT with a single main() thread and
-  just use it for the I/O capabilities, Virtual Timers and events. Mow you
+  just use it for the I/O capabilities, Virtual Timers and events. Now you
   don't have to use multiple threads if you don't really need to.
-- Cleaned up the LPC2148 demo in main.c, it is now well documented and
-  explains everything, I assumed too much stuff to be "obvious".
 - Added a spreadsheet in the documentation that describes the advantages
   and disadvantages of the various optimization options (both GCC options and
-  ChibiOS/RT options), very interesting read IMO. No .xls available, ODF only.
+  ChibiOS/RT options), very interesting read IMO.
 - The GCC option +falign-functions=16 is now default in the Makefile, it is
   required because of the MAM unit into the LPC chips, without this option
   the code performance is less predictable and can change of some % points
@@ -58,11 +56,16 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
   is bad for a RTOS. This option however increases the code size slightly
   because of the alignment gaps.
 - Fine tuning in the scheduler code for improved performance, deeper
-  inlining and small changes, about 5% better scheduler performance.
+  inlining and other small changes, about 5% better scheduler performance.
 - Increased the default system-mode stack size from 128 to 256 bytes because
-  some optimizations and the THUMB mode seem to use more stack space.
+  some optimizations and the THUMB mode seem to eat more stack space.
 - Included a Makefile in the LPC2148 demo that builds in THUMB mode.
 - Const-ified a parameter in the chEvtWait() and chEvtWaitTimeout() APIs.
+- Removed the CPU register clearing on thread start, it was not really useful,
+  it is better to maximize performance instead.
+- Cleaned up the ARM port code. Now it is easier to understand.
+- Cleaned up the LPC2148 demo in main.c, it is now well documented and
+  explains everything, I assumed too much stuff to be "obvious".
 
 *** 0.4.0 ***
 - NEW, added a benchmark functionality to the test suite. The benchmark

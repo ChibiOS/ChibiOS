@@ -48,7 +48,7 @@ struct extctx {
 };
 
 /*
- * Stack saved context.
+ * System saved context.
  */
 struct intctx {
   BYTE8         r29;
@@ -72,6 +72,10 @@ struct intctx {
   UWORD16       pc;
 };
 
+/*
+ * Port dependent part of the Thread structure, you may add fields in
+ * this structure.
+ */
 typedef struct {
   struct intctx *sp;
 } Context;
@@ -93,18 +97,20 @@ typedef struct {
  */
 #define EXTRA_INT_STACK 0x10
 
-#define UserStackSize(n) (sizeof(Thread) + \
-                          sizeof(struct intctx) + \
-                          sizeof(struct extctx) + \
-                          EXTRA_INT_STACK + \
+#define UserStackSize(n) (sizeof(Thread) +                         \
+                          sizeof(struct intctx) +                  \
+                          sizeof(struct extctx) +                  \
+                          EXTRA_INT_STACK +                        \
                           (n))
 
 #define chSysLock() asm("cli")
 #define chSysUnlock() asm("sei")
 #define chSysPuts(msg) {}
 
+#define IDLE_THREAD_STACK_SIZE 8
+void _IdleThread(void *p) __attribute__((noreturn));
+
 void chSysHalt(void) __attribute__((noreturn)) ;
-void chSysPause(void) __attribute__((noreturn)) ;
 void chSysSwitchI(Context *oldp, Context *newp);
 void threadstart(void);
 

@@ -31,9 +31,22 @@
 typedef void *regarm;
 
 /*
- * Stack saved context.
+ * Interrupt saved context.
  */
-struct stackregs {
+struct extctx {
+  regarm  spsr_irq;
+  regarm  lr_irq;
+  regarm  r0;
+  regarm  r1;
+  regarm  r2;
+  regarm  r3;
+  regarm  r12;
+};
+
+/*
+ * System saved context.
+ */
+struct intctx {
   regarm  r4;
   regarm  r5;
   regarm  r6;
@@ -47,42 +60,25 @@ struct stackregs {
   regarm  lr;
 };
 
+/*
+ * Port dependent part of the Thread structure, you may add fields in
+ * this structure.
+ */
 typedef struct {
-  struct stackregs *r13;
+  struct intctx *r13;
 } Context;
 
-#ifdef CH_CURRP_REGISTER_CACHE
-#define SETUP_CONTEXT(workspace, wsize, pf, arg)                   \
-{                                                                  \
-  tp->p_ctx.r13 = (struct stackregs *)((BYTE8 *)workspace +        \
-                                       wsize -                     \
-                                       sizeof(struct stackregs));  \
+/*
+ * Platform dependent part of the \p chThdCreate() API.
+ */
+#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                 \
+  tp->p_ctx.r13 = (struct intctx *)((BYTE8 *)workspace +           \
+                                     wsize -                       \
+                                     sizeof(struct intctx));       \
   tp->p_ctx.r13->r4 = pf;                                          \
   tp->p_ctx.r13->r5 = arg;                                         \
-  tp->p_ctx.r13->r6 = 0;                                           \
-  tp->p_ctx.r13->r8 = 0;                                           \
-  tp->p_ctx.r13->r9 = 0;                                           \
-  tp->p_ctx.r13->r10 = 0;                                          \
-  tp->p_ctx.r13->r11 = 0;                                          \
   tp->p_ctx.r13->lr = threadstart;                                 \
 }
-#else
-#define SETUP_CONTEXT(workspace, wsize, pf, arg)                   \
-{                                                                  \
-  tp->p_ctx.r13 = (struct stackregs *)((BYTE8 *)workspace +        \
-                                       wsize -                     \
-                                       sizeof(struct stackregs));  \
-  tp->p_ctx.r13->r4 = pf;                                          \
-  tp->p_ctx.r13->r5 = arg;                                         \
-  tp->p_ctx.r13->r6 = 0;                                           \
-  tp->p_ctx.r13->r7 = 0;                                           \
-  tp->p_ctx.r13->r8 = 0;                                           \
-  tp->p_ctx.r13->r9 = 0;                                           \
-  tp->p_ctx.r13->r10 = 0;                                          \
-  tp->p_ctx.r13->r11 = 0;                                          \
-  tp->p_ctx.r13->lr = threadstart;                                 \
-}
-#endif
 
 #ifdef THUMB
 extern void chSysLock(void);
@@ -94,16 +90,21 @@ extern void chSysUnlock(void);
 
 #define chSysPuts(msg) {}
 
-#define INT_REQUIRED_STACK 0x40  // Must include registers and stack frames.
-#define UserStackSize(n) (sizeof(Thread) + \
-                          sizeof(struct stackregs) + (n) + (INT_REQUIRED_STACK))
-
+#ifdef THUMB
+#define INT_REQUIRED_STACK 0x10
+#else /* !THUMB */
+#define INT_REQUIRED_STACK 0
+#endif /* THUMB */
+#define UserStackSize(n) (sizeof(Thread) +                         \
+                          sizeof(struct intctx) +                  \
+                          sizeof(struct extctx) +                  \
+                          (INT_REQUIRED_STACK) +                   \
+                          (n))
 
 #define IDLE_THREAD_STACK_SIZE 8
 void _IdleThread(void *p) __attribute__((noreturn));
 
 void chSysHalt(void) __attribute__((noreturn));
-void chSysPause(void)  __attribute__((noreturn));
 void chSysSwitchI(Context *oldp, Context *newp);
 void threadstart(void);
 void DefFiqHandler(void);

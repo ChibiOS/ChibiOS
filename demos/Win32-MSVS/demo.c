@@ -25,16 +25,12 @@
 static ULONG32 wdguard;
 static BYTE8 wdarea[UserStackSize(2048)];
 
-static ULONG32 iguard;
-static BYTE8 iarea[UserStackSize(2048)];
-
 static ULONG32 cdguard;
 static BYTE8 cdarea[UserStackSize(2048)];
 static Thread *cdtp;
 
 static t_msg WatchdogThread(void *arg);
 static t_msg ConsoleThread(void *arg);
-static t_msg InitThread(void *arg);
 
 t_msg TestThread(void *p);
 
@@ -43,34 +39,16 @@ extern FullDuplexDriver COM1, COM2;
 
 #define cprint(msg) chMsgSend(cdtp, (t_msg)msg)
 
-/*------------------------------------------------------------------------*
- * Simulator main, start here your threads, examples inside.              *
- *------------------------------------------------------------------------*/
-int main(void) {
-
-  InitCore();
-
-  // Startup ChibiOS/RT.
-  chSysInit();
-  chThdCreate(NORMALPRIO + 2, 0, wdarea, sizeof(wdarea), WatchdogThread, NULL);
-  cdtp = chThdCreate(NORMALPRIO + 1, 0, cdarea, sizeof(cdarea), ConsoleThread, NULL);
-  chThdCreate(NORMALPRIO, 0, iarea, sizeof(iarea), InitThread, NULL);
-  chSysPause();
-  return 0;
-}
-
 /*
  * Watchdog thread, it checks magic values located under the various stack
  * areas. The system is halted if something is wrong.
  */
 static t_msg WatchdogThread(void *arg) {
   wdguard = 0xA51F2E3D;
-  iguard = 0xA51F2E3D;
   cdguard = 0xA51F2E3D;
   while (TRUE) {
 
     if ((wdguard != 0xA51F2E3D) ||
-        (iguard != 0xA51F2E3D) ||
         (cdguard != 0xA51F2E3D)) {
       printf("Halted by watchdog");
       chSysHalt();
@@ -294,12 +272,19 @@ static t_evhandler fhandlers[2] = {
   COM2Handler
 };
 
-/*
- * Init-like thread, it starts the shells and handles their termination.
- * It is a good example of events usage.
- */
-static t_msg InitThread(void *arg) {
+/*------------------------------------------------------------------------*
+ * Simulator main, start here your threads, examples inside.              *
+ *------------------------------------------------------------------------*/
+int main(void) {
   EventListener c1fel, c2fel;
+
+  InitCore();
+
+  // Startup ChibiOS/RT.
+  chSysInit();
+
+  chThdCreate(NORMALPRIO + 2, 0, wdarea, sizeof(wdarea), WatchdogThread, NULL);
+  cdtp = chThdCreate(NORMALPRIO + 1, 0, cdarea, sizeof(cdarea), ConsoleThread, NULL);
 
   cprint("Console service started on COM1, COM2\n");
   cprint("  - Listening for connections on COM1\n");

@@ -24,7 +24,6 @@
 void hwinit(void);
 
 static BYTE8 waThread1[UserStackSize(32)];
-
 static t_msg Thread1(void *arg) {
 
   while (TRUE) {
@@ -37,8 +36,19 @@ int main(int argc, char **argv) {
 
   hwinit();
 
+  /*
+   * The main() function becomes a thread here then the interrupts are
+   * enabled and ChibiOS/RT goes live.
+   */
   chSysInit();
+
+  /*
+   * Starts the LED blinker thread.
+   */
   chThdCreate(NORMALPRIO, 0, waThread1, sizeof(waThread1), Thread1, NULL);
-  chSysPause();
+
+  while(TRUE)
+    /* Do stuff*/ ;
+
   return 0;
 }
