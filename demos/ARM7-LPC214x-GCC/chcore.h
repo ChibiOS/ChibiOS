@@ -101,6 +101,7 @@ extern void chSysUnlock(void);
                           (INT_REQUIRED_STACK) +                   \
                           (n))
 
+/* It requires zero bytes, but better be safe.*/
 #define IDLE_THREAD_STACK_SIZE 8
 void _IdleThread(void *p) __attribute__((noreturn));
 

@@ -37,9 +37,9 @@ t_msg chMsgSend(Thread *tp, t_msg msg) {
   chSysLock();
 
   fifo_insert(currp, &tp->p_msgqueue);
+  currp->p_msg = msg;
   if (tp->p_state == PRWTMSG)
     chSchReadyI(tp);
-  currp->p_msg = msg;
   chSchGoSleepS(PRSNDMSG);
   msg = currp->p_rdymsg;
 
@@ -184,7 +184,10 @@ void chMsgRelease(t_msg msg) {
 
   chSysLock();
 
-//  if (!chMsgIsPendingI(currp)
+#ifdef CH_USE_DEBUG
+  if (!chMsgIsPendingI(currp))
+    chDbgPanic("chmsg.c, chMsgRelease()\r\n");
+#endif
   chSchWakeupS(fifo_remove(&currp->p_msgqueue), msg);
 
   chSysUnlock();
