@@ -54,7 +54,7 @@ void chSemReset(Semaphore *sp, t_cnt n) {
   sp->s_cnt = n;
   if (cnt < 0) {
     while (cnt++)
-      chSchReadyI(fifo_remove(&sp->s_queue))->p_rdymsg = RDY_RESET;
+      chSchReadyI(fifo_remove(&sp->s_queue), RDY_RESET);
     chSchRescheduleS();
   }
 
@@ -76,7 +76,7 @@ void chSemResetI(Semaphore *sp, t_cnt n) {
   cnt = sp->s_cnt;
   sp->s_cnt = n;
   while (cnt++ < 0)
-    chSchReadyI(fifo_remove(&sp->s_queue))->p_rdymsg = RDY_RESET;
+    chSchReadyI(fifo_remove(&sp->s_queue), RDY_RESET);
 }
 
 /**
@@ -118,7 +118,7 @@ static void wakeup(void *p) {
     chDbgPanic("chsem.c, wakeup()\r\n");
 #endif
   chSemFastSignalI(((Thread *)p)->p_semp);
-  chSchReadyI(dequeue(p))->p_rdymsg = RDY_TIMEOUT;
+  chSchReadyI(dequeue(p), RDY_TIMEOUT);
 }
 
 /**
@@ -205,7 +205,7 @@ void chSemSignal(Semaphore *sp) {
 void chSemSignalI(Semaphore *sp) {
 
   if (sp->s_cnt++ < 0)
-    chSchReadyI(fifo_remove(&sp->s_queue));
+    chSchReadyI(fifo_remove(&sp->s_queue), RDY_OK);
 }
 
 #ifdef CH_USE_SEMSW
@@ -221,7 +221,7 @@ void chSemSignalWait(Semaphore *sps, Semaphore *spw) {
   chSysLock();
 
   if (sps->s_cnt++ < 0)
-    chSchReadyI(fifo_remove(&sps->s_queue));
+    chSchReadyI(fifo_remove(&sps->s_queue), RDY_OK);
 
   if (--spw->s_cnt < 0) {
     fifo_insert(currp, &spw->s_queue);
@@ -289,7 +289,7 @@ void chSemLowerPrioSignal(Semaphore *sp) {
   if (!--currp->p_rtcnt) {
     currp->p_prio -= MEPRIO;
     if (sp->s_cnt++ < 0)
-      chSchReadyI(fifo_remove(&sp->s_queue));
+      chSchReadyI(fifo_remove(&sp->s_queue), RDY_OK);
     chSchRescheduleS();
   }
   else if (sp->s_cnt++ < 0)
@@ -312,7 +312,7 @@ void chSemRaisePrioSignalWait(Semaphore *sps, Semaphore *spw) {
   chSysLock();
 
   if (sps->s_cnt++ < 0)
-    chSchReadyI(fifo_remove(&sps->s_queue));
+    chSchReadyI(fifo_remove(&sps->s_queue), RDY_OK);
 
   if (--spw->s_cnt < 0) {
     prioenq(currp, &spw->s_queue);
@@ -348,7 +348,7 @@ void chSemLowerPrioSignalWait(Semaphore *sps, Semaphore *spw) {
     currp->p_prio -= MEPRIO;
 
   if (sps->s_cnt++ < 0)
-    chSchReadyI(fifo_remove(&sps->s_queue));
+    chSchReadyI(fifo_remove(&sps->s_queue), RDY_OK);
 
   if (--spw->s_cnt < 0) {
     fifo_insert(currp, &spw->s_queue); // fifo_insert() because the spw is a normal sem.

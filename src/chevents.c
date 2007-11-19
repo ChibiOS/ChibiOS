@@ -114,7 +114,7 @@ void chEvtSendI(EventSource *esp) {
 
     tp->p_epending |= EventMask(elp->el_id);
     if ((tp->p_state == PRWTEVENT) && (tp->p_epending & tp->p_ewmask))
-      chSchReadyI(tp);
+      chSchReadyI(tp, RDY_OK);
     elp = elp->el_next;
   }
 }
@@ -165,7 +165,7 @@ static void wakeup(void *p) {
   if (((Thread *)p)->p_state != PRWTEVENT)
     chDbgPanic("chevents.c, wakeup()\r\n");
 #endif
-  chSchReadyI(p)->p_rdymsg = RDY_TIMEOUT;
+  chSchReadyI(p, RDY_TIMEOUT);
 }
 
 /**

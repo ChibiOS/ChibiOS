@@ -55,6 +55,7 @@ void chSchInit(void) {
 /**
  * Inserts a thread in the Ready List.
  * @param tp the Thread to be made ready
+ * @param msg message to the awakened thread
  * @return the Thread pointer
  * @note The function must be called in the system mutex zone.
  * @note The function does not reschedule, the \p chSchRescheduleI() should
@@ -63,27 +64,24 @@ void chSchInit(void) {
  */
 #ifdef CH_OPTIMIZE_SPEED
 /* NOTE: it is inlined in this module only.*/
-INLINE Thread *chSchReadyI(Thread *tp) {
+INLINE void chSchReadyI(Thread *tp, t_msg msg) {
 #else
-Thread *chSchReadyI(Thread *tp) {
+void chSchReadyI(Thread *tp, t_msg msg) {
 #endif
   Thread *cp = rlist.r_queue.p_prev;
-  t_prio prio = tp->p_prio;
 
   tp->p_state = PRREADY;
-  tp->p_rdymsg = RDY_OK;
-  while (cp->p_prio < prio)
+  tp->p_rdymsg = msg;
+  while (cp->p_prio < tp->p_prio)
     cp = cp->p_prev;
-  // Insertion on p_next
+  /* Insertion on p_next.*/
   tp->p_next = (tp->p_prev = cp)->p_next;
   tp->p_next->p_prev = cp->p_next = tp;
-  return tp;
 }
 
 /*
  * Switches to the next thread in the ready list, the ready list is assumed
  * to contain at least a thread.
- * NOTE: it is inlined in this module only.
  */
 #ifdef CH_OPTIMIZE_SPEED
 static INLINE void nextready(void) {
@@ -120,7 +118,7 @@ void chSchGoSleepS(t_tstate newstate) {
  * running directly depending on its relative priority compared to the current
  * thread.
  * @param ntp the Thread to be made ready
- * @param msg wakeup message to the awakened thread
+ * @param msg message to the awakened thread
  * @note The function must be called in the system mutex zone.
  * @note The function is not meant to be used in the user code directly.
  * @note It is equivalent to a \p chSchReadyI() followed by a
@@ -129,10 +127,10 @@ void chSchGoSleepS(t_tstate newstate) {
 void chSchWakeupS(Thread *ntp, t_msg msg) {
 
   if (ntp->p_prio <= currp->p_prio)
-    chSchReadyI(ntp)->p_rdymsg = msg;
+    chSchReadyI(ntp, msg);
   else {
     Thread *otp = currp;
-    chSchReadyI(otp);
+    chSchReadyI(otp, RDY_OK);
     (currp = ntp)->p_state = PRCURR;
     ntp->p_rdymsg = msg;
     rlist.r_preempt = CH_TIME_QUANTUM;
@@ -162,7 +160,7 @@ void chSchRescheduleS(void) {
  */
 void chSchDoRescheduleI(void) {
 
-  chSchReadyI(currp);
+  chSchReadyI(currp, RDY_OK);
   nextready();
 }
 

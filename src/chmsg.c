@@ -39,7 +39,7 @@ t_msg chMsgSend(Thread *tp, t_msg msg) {
   fifo_insert(currp, &tp->p_msgqueue);
   currp->p_msg = msg;
   if (tp->p_state == PRWTMSG)
-    chSchReadyI(tp);
+    chSchReadyI(tp, RDY_OK);
   chSchGoSleepS(PRSNDMSG);
   msg = currp->p_rdymsg;
 
@@ -68,7 +68,7 @@ t_msg chMsgSendWithEvent(Thread *tp, t_msg msg, EventSource *esp) {
 
   fifo_insert(currp, &tp->p_msgqueue);
 //  if (tp->p_state == PRWTMSG)
-//    chSchReadyI(tp);
+//    chSchReadyI(tp, RDY_OK);
   chEvtSendI(esp);
   currp->p_msg = msg;
   chSchGoSleepS(PRSNDMSG);
@@ -86,7 +86,7 @@ static void wakeup(void *p) {
   if (((Thread *)p)->p_state != PRSNDMSG)
     chDbgPanic("chmsg.c, wakeup()\r\n");
 #endif
-  chSchReadyI(dequeue(p))->p_rdymsg = RDY_TIMEOUT;
+  chSchReadyI(dequeue(p), RDY_TIMEOUT);
 }
 
 /**
@@ -113,7 +113,7 @@ t_msg chMsgSendTimeout(Thread *tp, t_msg msg, t_time time) {
   chVTSetI(&vt, time, wakeup, currp);
   fifo_insert(currp, &tp->p_msgqueue);
   if (tp->p_state == PRWTMSG)
-    chSchReadyI(tp);
+    chSchReadyI(tp, RDY_OK);
   currp->p_msg = msg;
   chSchGoSleepS(PRSNDMSG);
   msg = currp->p_rdymsg;
