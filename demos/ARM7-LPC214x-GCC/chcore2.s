@@ -37,17 +37,21 @@
 .globl threadstart
 threadstart:
         msr     CPSR_c, #MODE_SYS
-        mov     r0, r5
 #ifndef PURE_THUMB
+        mov     r0, r5
         mov     lr, pc
         bx      r4
         bl      chThdExit
 #else
+        ldr     r0, =.L1
+        bx      r0
+.code 16
+.L1:
+        mov     r0, r5
         mov     lr, pc
         bx      r4
-.code 16
-        ldr     r4, =chThdExit
-        bx      r4
+        bl      chThdExit
+.code 32
 #endif
 
 .globl UndHandler
