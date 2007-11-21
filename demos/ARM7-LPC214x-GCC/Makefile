@@ -127,10 +127,19 @@ CPFLAGS = $(MCFLAGS) $(OPT) $(WARN) -Wa,-ahlms=$(<:.c=.lst) $(DEFS)
 LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
 ODFLAGS	= -x --syms
 
+# Thumb interwork enabled only if needed because it kills performance.
 ifneq ($(TSRC),)
-  ASFLAGS += -mthumb-interwork -D THUMB_INTERWORK
-  CPFLAGS += -mthumb-interwork -D THUMB_INTERWORK
-  LDFLAGS += -mthumb-interwork
+  ifneq ($(ASRC),)
+    # Both ARM and THUMB case
+    CPFLAGS += -mthumb-interwork -D THUMB
+    LDFLAGS += -mthumb-interwork
+    ASFLAGS += -mthumb-interwork -D THUMB
+  else
+    # Pure THUMB case, THUMB C code cannot be called by ARM asm code directly
+    CPFLAGS += -D THUMB
+    LDFLAGS += -mthumb
+    ASFLAGS += -mthumb-interwork -D THUMB -D PURE_THUMB
+  endif
 endif
 
 # Generate dependency information
@@ -148,7 +157,7 @@ $(AOBJS) : %.o : %.c
 
 $(TOBJS) : %.o : %.c
 	@echo
-	$(CC) -c $(CPFLAGS) $(TOPT) -I . $(INCDIR) $< -o $@
+	$(CC) -c $(CPFLAGS) $(TOPT) -mthumb -I . $(INCDIR) $< -o $@
 
 $(ASMOBJS) : %.o : %.s
 	@echo

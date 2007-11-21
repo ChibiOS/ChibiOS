@@ -38,6 +38,14 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.4.2 ***
+- Improved the THUMB mode: when all C sources are compiled in thumb mode then
+  the -mthumb-interworking option is not enabled in the makefile, this greatly
+  improves the performance and reduces the overall code size.
+  It is recommended to either use ARM mode or THUMB mode and not mix them
+  unless you know exactly what you are doing and understand the consequences.
+  Mixing is still supported anyway.
+
 *** 0.4.1 ***
 - Modified the initialization code in order to have a dedicated idle thread in
   the system, now the main() function behaves like a normal thread after

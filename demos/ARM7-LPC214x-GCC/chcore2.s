@@ -38,52 +38,72 @@
 threadstart:
         msr     CPSR_c, #MODE_SYS
         mov     r0, r5
-/*        blx     r4*/
+#ifndef PURE_THUMB
         mov     lr, pc
         bx      r4
         bl      chThdExit
+#else
+        mov     lr, pc
+        bx      r4
+.code 16
+        ldr     r4, =chThdExit
+        bx      r4
+#endif
+
+.globl UndHandler
+UndHandler:
 
 .globl SwiHandler
 SwiHandler:
-        b       SwiHandler
+
+.globl PrefetchHandler
+PrefetchHandler:
+
+.globl AbortHandler
+AbortHandler:
 
 .globl FiqHandler
 FiqHandler:
-        b       FiqHandler
+#ifdef PURE_THUMB
+        ldr     r0, =chSysHalt
+        bx      r0
+#else
+        bl      chSysHalt
+#endif
 
-#ifdef THUMB_INTERWORK
+#ifdef THUMB
 .globl chSysLock
 chSysLock:
-    msr     CPSR_c, #0x9F
-    bx      lr
+        msr     CPSR_c, #0x9F
+        bx      lr
 
 .globl chSysUnlock
 chSysUnlock:
-    msr     CPSR_c, #0x1F
-    bx      lr
+        msr     CPSR_c, #0x1F
+        bx      lr
 #endif
 
 .globl chSysSwitchI
 chSysSwitchI:
 #ifdef CH_CURRP_REGISTER_CACHE
-    stmfd   sp!, {r4, r5, r6, r8, r9, r10, r11, lr}
-    str     sp, [r0, #0]
-    ldr     sp, [r1, #0]
-#ifdef THUMB_INTERWORK
-    ldmfd   sp!, {r4, r5, r6, r8, r9, r10, r11, lr}
-    bx      lr
+        stmfd   sp!, {r4, r5, r6, r8, r9, r10, r11, lr}
+        str     sp, [r0, #0]
+        ldr     sp, [r1, #0]
+#ifdef THUMB
+        ldmfd   sp!, {r4, r5, r6, r8, r9, r10, r11, lr}
+        bx      lr
 #else
-    ldmfd   sp!, {r4, r5, r6, r8, r9, r10, r11, pc}
+        ldmfd   sp!, {r4, r5, r6, r8, r9, r10, r11, pc}
 #endif
 #else
-    stmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
-    str     sp, [r0, #0]
-    ldr     sp, [r1, #0]
-#ifdef THUMB_INTERWORK
-    ldmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
-    bx      lr
+        stmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+        str     sp, [r0, #0]
+        ldr     sp, [r1, #0]
+#ifdef THUMB
+        ldmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+        bx      lr
 #else
-    ldmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+        ldmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, pc}
 #endif
 #endif /* CH_CURRP_REGISTER_CACHE */
 
@@ -115,28 +135,68 @@ chSysSwitchI:
 IrqHandler:
         sub     lr, lr, #4
         stmfd   sp!, {r0-r3, r12, lr}
+#ifdef PURE_THUMB
+        ldr     r0, =NonVectoredIrq
+        mov     lr, pc
+        bx      r0
+.code 16
+        mov     lr, pc
+        bx      lr
+.code 32
+#else
         bl      NonVectoredIrq
+#endif
         b       IrqCommon
 
 .globl T0IrqHandler
 T0IrqHandler:
         sub     lr, lr, #4
         stmfd   sp!, {r0-r3, r12, lr}
+#ifdef PURE_THUMB
+        ldr     r0, =Timer0Irq
+        mov     lr, pc
+        bx      r0
+.code 16
+        mov     lr, pc
+        bx      lr
+.code 32
+#else
         bl      Timer0Irq
+#endif
         b       IrqCommon
 
 .globl UART0IrqHandler
 UART0IrqHandler:
         sub     lr, lr, #4
         stmfd   sp!, {r0-r3, r12, lr}
+#ifdef PURE_THUMB
+        ldr     r0, =UART0Irq
+        mov     lr, pc
+        bx      r0
+.code 16
+        mov     lr, pc
+        bx      lr
+.code 32
+#else
         bl      UART0Irq
+#endif
         b       IrqCommon
 
 .globl UART1IrqHandler
 UART1IrqHandler:
         sub     lr, lr, #4
         stmfd   sp!, {r0-r3, r12, lr}
+#ifdef PURE_THUMB
+        ldr     r0, =UART1Irq
+        mov     lr, pc
+        bx      r0
+.code 16
+        mov     lr, pc
+        bx      lr
+.code 32
+#else
         bl      UART1Irq
+#endif
         b       IrqCommon
 
 /*
@@ -144,7 +204,17 @@ UART1IrqHandler:
  * required.
  */
 IrqCommon:
+#ifdef PURE_THUMB
+        ldr     r0, =chSchRescRequiredI
+        mov     lr, pc
+        bx      r0
+.code 16
+        mov     lr, pc
+        bx      lr
+.code 32
+#else
         bl      chSchRescRequiredI
+#endif
         cmp     r0, #0                          // Simply returns if a
         ldmeqfd sp!, {r0-r3, r12, pc}^          // reschedule is not required.
 
@@ -159,7 +229,17 @@ IrqCommon:
         stmfd   sp!, {r0, r1}                   // Push R0=SPSR, R1=LR_IRQ.
 
         // Context switch.
+#ifdef PURE_THUMB
+        ldr     r0, =chSchDoRescheduleI
+        mov     lr, pc
+        bx      r0
+.code 16
+        mov     lr, pc
+        bx      lr
+.code 32
+#else
         bl      chSchDoRescheduleI
+#endif
 
         // Re-establish the IRQ conditions again.
         ldmfd   sp!, {r0, r1}                   // Pop R0=SPSR, R1=LR_IRQ.

@@ -159,45 +159,9 @@ void _IdleThread(void *p) {
 void chSysHalt(void) {
 
   chSysLock();
-  IO0SET = 0x80000C00;
+  IO0SET = 0x00000C00;
   IO0CLR = 0x80000000;
   while (TRUE)
-    ;
-}
-
-/*
- * Undefined Instruction exception handler.
- * Yellow LED + RED LED 2.
- */
-void UndHandler(void) {
-
-  IO0SET = 0x80000C00;
-  IO0CLR = 0x80000800;
-  while(TRUE)
-    ;
-}
-
-/*
- * Prefetch exception handler.
- * Yellow LED + RED LED 1.
- */
-void PrefetchHandler(void) {
-
-  IO0SET = 0x80000C00;
-  IO0CLR = 0x80000400;
-  while(TRUE)
-    ;
-}
-
-/*
- * Abort exception handler.
- * Yellow LED + both RED LEDs.
- */
-void AbortHandler(void) {
-
-  IO0SET = 0x80000C00;
-  IO0CLR = 0x80000C00;
-  while(TRUE)
     ;
 }
 

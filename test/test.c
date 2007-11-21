@@ -77,7 +77,7 @@ static void println(char *msgp) {
 
 t_msg Thread1(void *p) {
 
-  chFDDPut(comp, *(BYTE8 *)p);
+//  chFDDPut(comp, *(BYTE8 *)p);
   return 0;
 }
 

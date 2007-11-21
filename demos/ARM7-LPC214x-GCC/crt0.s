@@ -99,17 +99,8 @@ ResetHandler:
         /* System */
         msr     CPSR_c, #MODE_SYS | I_BIT | F_BIT
         mov     sp, r0
-        ldr     r1, =__sys_stack_size__
-        sub     r0, r0, r1
-        /*
-         * Check on allocated stacks size. This should never happen unless you
-         * don't care to verify the map file after compiling your application.
-         */
-        ldr     r1, =_bss_end
-        cmp     r0, r1
-        bge     ramsizeok
-        bl      chSysHalt
-ramsizeok:
+//        ldr     r1, =__sys_stack_size__
+//        sub     r0, r0, r1
         /*
          * Data initialization.
          * NOTE: It assumes that the DATA size is a multiple of 4.
@@ -136,11 +127,33 @@ bssloop:
         /*
          * Application-provided HW initialization routine.
          */
+#ifndef PURE_THUMB
         bl      hwinit
+#else
+        ldr     r0, =hwinit
+        mov     lr, pc
+        bx      r0
+.code 16
+        mov     lr, pc
+        bx      lr
+.code 32
+#endif
         /*
          * main(0, NULL).
          */
         mov     r0, #0
         mov     r1, #0
+#ifndef PURE_THUMB
         bl      main
         bl      chSysHalt
+#else
+        ldr     r2, =main
+        mov     lr, pc
+        bx      r2
+.code 16
+        mov     lr, pc
+        bx      lr
+.code 32
+        ldr     r2, =chSysHalt
+        bx      r2
+#endif
