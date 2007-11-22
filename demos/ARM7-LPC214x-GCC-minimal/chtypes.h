@@ -17,38 +17,31 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ch.h>
+#ifndef _CHTYPES_H_
+#define _CHTYPES_H_
 
-#include <avr/io.h>
+/*
+ * Generic types often dependant on the compiler.
+ */
+#define BOOL        char
+#define BYTE8       unsigned char
+#define SBYTE8      char
+#define WORD16      short
+#define UWORD16     unsigned short
+#define LONG32      int
+#define ULONG32     unsigned int
 
-void hwinit(void);
+typedef BYTE8       t_tmode;
+typedef BYTE8       t_tstate;
+typedef UWORD16     t_tid;
+typedef ULONG32     t_prio;
+typedef LONG32      t_msg;
+typedef LONG32      t_eventid;
+typedef ULONG32     t_eventmask;
+typedef ULONG32     t_time;
+typedef LONG32      t_cnt;
+typedef ULONG32     t_size;
 
-static WorkingArea(waThread1, 32);
-static t_msg Thread1(void *arg) {
+#define INLINE      inline
 
-  while (TRUE) {
-    chThdSleep(800);
-  }
-  return 0;
-}
-
-int main(int argc, char **argv) {
-
-  hwinit();
-
-  /*
-   * The main() function becomes a thread here then the interrupts are
-   * enabled and ChibiOS/RT goes live.
-   */
-  chSysInit();
-
-  /*
-   * Starts the LED blinker thread.
-   */
-  chThdCreate(NORMALPRIO, 0, waThread1, sizeof(waThread1), Thread1, NULL);
-
-  while(TRUE)
-    /* Do stuff*/ ;
-
-  return 0;
-}
+#endif /* _CHTYPES_H_ */

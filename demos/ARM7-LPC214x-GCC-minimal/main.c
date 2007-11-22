@@ -19,22 +19,46 @@
 
 #include <ch.h>
 
-#include <avr/io.h>
+#include "lpc214x.h"
 
-void hwinit(void);
-
+/*
+ * Red LEDs blinker thread, times are in milliseconds.
+ */
 static WorkingArea(waThread1, 32);
 static t_msg Thread1(void *arg) {
 
   while (TRUE) {
+    IO0CLR = 0x00000800;
+    chThdSleep(200);
+    IO0SET = 0x00000C00;
+    chThdSleep(800);
+    IO0CLR = 0x00000400;
+    chThdSleep(200);
+    IO0SET = 0x00000C00;
     chThdSleep(800);
   }
   return 0;
 }
 
-int main(int argc, char **argv) {
+/*
+ * Yellow LED blinker thread, times are in milliseconds.
+ */
+static WorkingArea(waThread2, 32);
+static t_msg Thread2(void *arg) {
 
-  hwinit();
+  while (TRUE) {
+    IO0CLR = 0x80000000;
+    chThdSleep(200);
+    IO0SET = 0x80000000;
+    chThdSleep(300);
+  }
+  return 0;
+}
+
+/*
+ * Entry point, the interrupts are disabled on entry.
+ */
+int main(int argc, char **argv) {
 
   /*
    * The main() function becomes a thread here then the interrupts are
@@ -43,12 +67,16 @@ int main(int argc, char **argv) {
   chSysInit();
 
   /*
-   * Starts the LED blinker thread.
+   * Creates the blinker threads.
    */
   chThdCreate(NORMALPRIO, 0, waThread1, sizeof(waThread1), Thread1, NULL);
+  chThdCreate(NORMALPRIO, 0, waThread2, sizeof(waThread2), Thread2, NULL);
 
-  while(TRUE)
-    /* Do stuff*/ ;
-
+  /*
+   * Normal main() thread activity, in this demo it does nothing except
+   * sleeping in a loop.
+   */
+  while (TRUE)
+    chThdSleep(1000);
   return 0;
 }

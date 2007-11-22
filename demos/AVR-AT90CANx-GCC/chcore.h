@@ -103,6 +103,8 @@ typedef struct {
                           EXTRA_INT_STACK +                        \
                           (n))
 
+#define WorkingArea(s, n) BYTE8 s[UserStackSize(n)];
+
 #define chSysLock() asm("cli")
 #define chSysUnlock() asm("sei")
 #define chSysPuts(msg) {}

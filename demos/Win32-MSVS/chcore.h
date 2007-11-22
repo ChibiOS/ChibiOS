@@ -65,6 +65,8 @@ typedef struct {
 #define UserStackSize(n) (sizeof(Thread) + sizeof(void *)*2 + \
                           sizeof(struct stackregs) + (n) + (INT_REQUIRED_STACK))
 
+#define WorkingArea(s, n) ULONG32 s[UserStackSize(n) >> 2];
+
 #define IDLE_THREAD_STACK_SIZE 16384
 t_msg _IdleThread(void *p);
 

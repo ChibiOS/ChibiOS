@@ -22,17 +22,17 @@
 void ChkIntSources(void);
 
 #if defined(WIN32) && defined(_DEBUG)
-static BYTE8 wsT1[UserStackSize(512)];
-static BYTE8 wsT2[UserStackSize(512)];
-static BYTE8 wsT3[UserStackSize(512)];
-static BYTE8 wsT4[UserStackSize(512)];
-static BYTE8 wsT5[UserStackSize(512)];
+static WorkingArea(wsT1, 512);
+static WorkingArea(wsT2, 512);
+static WorkingArea(wsT3, 512);
+static WorkingArea(wsT4, 512);
+static WorkingArea(wsT5, 512);
 #else
-static BYTE8 wsT1[UserStackSize(64)];
-static BYTE8 wsT2[UserStackSize(64)];
-static BYTE8 wsT3[UserStackSize(64)];
-static BYTE8 wsT4[UserStackSize(64)];
-static BYTE8 wsT5[UserStackSize(64)];
+static WorkingArea(wsT1, 64);
+static WorkingArea(wsT2, 64);
+static WorkingArea(wsT3, 64);
+static WorkingArea(wsT4, 64);
+static WorkingArea(wsT5, 64);
 #endif
 static Thread *t1, *t2, *t3, *t4, *t5;
 

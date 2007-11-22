@@ -31,7 +31,7 @@ ARM7-LPC214x-GCC    - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
                       Olimex LPC-P2148 board. This port can be easily modified
                       for any processor into the LPC2000 family or other
                       boards. The demo can be compiled using YAGARTO or any
-                      other GCC-based ARM toolchain.
+                      other GCC-based ARM toolchain. Full demo.
 AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 
 *****************************************************************************
@@ -39,12 +39,25 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 *****************************************************************************
 
 *** 0.4.2 ***
+- Added a minimal ARM7 demo, you can use this one as template in order to
+  create your application. It is easier to add subsystems back to the small
+  demo than remove stuff from the large one.
 - Introduced support for "pure" THUMB mode, it is activated when all the
   source files are compiled in THUMB mode, the option -mthumb-interworking is
-  not used in this scenario greatly improving both code size and speed.
+  not used in this scenario and this greatly improves both code size and
+  speed.
   It is recommended to either use ARM mode or THUMB mode and not mix them
   unless you know exactly what you are doing and understand the consequences.
   Mixing is still supported anyway.
+- Fixed a problem with the thread working area declarations, the alignment to
+  4 bytes boundary was not enforced. Now it is defined a new macro
+  WorkingArea(name, length) that takes care of both the allocation and the
+  alignment.
+  Example:
+    static WorkingArea(waThread1, 32);
+  It is expanded as:
+    ULONG32 waThread1[UserStackSpace(32) >> 2];
+  Now the demos use the new declaration style.
 
 *** 0.4.1 ***
 - Modified the initialization code in order to have a dedicated idle thread in
@@ -205,7 +218,7 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 
 *** 0.1.1 ***
 - Some fixes into the documentation
-- Renamed makefiles to Makefiles, upper case M.
+- Renamed the makefiles to Makefile, upper case M.
 
 *** 0.1.0 ***
 - First alpha release

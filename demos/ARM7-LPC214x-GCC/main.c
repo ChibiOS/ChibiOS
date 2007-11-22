@@ -28,7 +28,7 @@
 /*
  * Red LEDs blinker thread, times are in milliseconds.
  */
-static BYTE8 waThread1[UserStackSize(32)];
+static WorkingArea(waThread1, 32);
 static t_msg Thread1(void *arg) {
 
   while (TRUE) {
@@ -47,7 +47,7 @@ static t_msg Thread1(void *arg) {
 /*
  * Yellow LED blinker thread, times are in milliseconds.
  */
-static BYTE8 waThread2[UserStackSize(32)];
+static WorkingArea(waThread2, 32);
 static t_msg Thread2(void *arg) {
 
   while (TRUE) {

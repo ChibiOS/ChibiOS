@@ -23,10 +23,10 @@
 #include <ch.h>
 
 static ULONG32 wdguard;
-static BYTE8 wdarea[UserStackSize(2048)];
+static WorkingArea(wdarea, 2048);
 
 static ULONG32 cdguard;
-static BYTE8 cdarea[UserStackSize(2048)];
+static WorkingArea(cdarea, 2048);
 static Thread *cdtp;
 
 static t_msg WatchdogThread(void *arg);
@@ -159,7 +159,7 @@ static t_msg ShellThread(void *arg) {
   FullDuplexDriver *sd = (FullDuplexDriver *)arg;
   char *lp, line[64];
   Thread *tp;
-  BYTE8 tarea[UserStackSize(1024)];
+  WorkingArea(tarea, 1024);
 
   chIQReset(&sd->sd_iqueue);
   chOQReset(&sd->sd_oqueue);
@@ -221,7 +221,7 @@ static t_msg ShellThread(void *arg) {
   return 0;
 }
 
-static BYTE8 s1area[UserStackSize(4096)];
+static WorkingArea(s1area, 2048);
 static Thread *s1;
 EventListener s1tel;
 
@@ -244,7 +244,7 @@ static void COM1Handler(t_eventid id) {
     chIQReset(&COM1.sd_iqueue);
 }
 
-static BYTE8 s2area[UserStackSize(4096)];
+static WorkingArea(s2area, 2048);
 static Thread *s2;
 EventListener s2tel;
 
