@@ -37,16 +37,15 @@
 .globl threadstart
 threadstart:
         msr     CPSR_c, #MODE_SYS
-#ifndef PURE_THUMB
+#ifndef THUMB_NO_INTERWORKING
         mov     r0, r5
         mov     lr, pc
         bx      r4
         bl      chThdExit
 #else
-        ldr     r0, =.L1
+        add     r0, pc, #1
         bx      r0
 .code 16
-.L1:
         mov     r0, r5
         mov     lr, pc
         bx      r4
@@ -68,7 +67,7 @@ AbortHandler:
 
 .globl FiqHandler
 FiqHandler:
-#ifdef PURE_THUMB
+#ifdef THUMB_NO_INTERWORKING
         ldr     r0, =chSysHalt
         bx      r0
 #else
@@ -139,80 +138,74 @@ chSysSwitchI:
 IrqHandler:
         sub     lr, lr, #4
         stmfd   sp!, {r0-r3, r12, lr}
-#ifdef PURE_THUMB
-        ldr     r0, =NonVectoredIrq
-        mov     lr, pc
+#ifdef THUMB_NO_INTERWORKING
+        add     r0, pc, #1
         bx      r0
 .code 16
-        mov     lr, pc
-        bx      lr
+        bl      NonVectoredIrq
+        b       IrqCommon
 .code 32
 #else
         bl      NonVectoredIrq
-#endif
         b       IrqCommon
+#endif
 
 .globl T0IrqHandler
 T0IrqHandler:
         sub     lr, lr, #4
         stmfd   sp!, {r0-r3, r12, lr}
-#ifdef PURE_THUMB
-        ldr     r0, =Timer0Irq
-        mov     lr, pc
+#ifdef THUMB_NO_INTERWORKING
+        add     r0, pc, #1
         bx      r0
 .code 16
-        mov     lr, pc
-        bx      lr
+        bl      Timer0Irq
+        b       IrqCommon
 .code 32
 #else
         bl      Timer0Irq
-#endif
         b       IrqCommon
+#endif
 
 .globl UART0IrqHandler
 UART0IrqHandler:
         sub     lr, lr, #4
         stmfd   sp!, {r0-r3, r12, lr}
-#ifdef PURE_THUMB
-        ldr     r0, =UART0Irq
-        mov     lr, pc
+#ifdef THUMB_NO_INTERWORKING
+        add     r0, pc, #1
         bx      r0
 .code 16
-        mov     lr, pc
-        bx      lr
+        bl      UART0Irq
+        b       IrqCommon
 .code 32
 #else
         bl      UART0Irq
-#endif
         b       IrqCommon
+#endif
 
 .globl UART1IrqHandler
 UART1IrqHandler:
         sub     lr, lr, #4
         stmfd   sp!, {r0-r3, r12, lr}
-#ifdef PURE_THUMB
-        ldr     r0, =UART1Irq
-        mov     lr, pc
+#ifdef THUMB_NO_INTERWORKING
+        add     r0, pc, #1
         bx      r0
 .code 16
-        mov     lr, pc
-        bx      lr
+        bl      UART1Irq
+        b       IrqCommon
 .code 32
 #else
         bl      UART1Irq
-#endif
         b       IrqCommon
+#endif
 
 /*
  * Common exit point for all IRQ routines, it performs the rescheduling if
  * required.
  */
 IrqCommon:
-#ifdef PURE_THUMB
-        ldr     r0, =chSchRescRequiredI
-        mov     lr, pc
-        bx      r0
+#ifdef THUMB_NO_INTERWORKING
 .code 16
+        bl      chSchRescRequiredI
         mov     lr, pc
         bx      lr
 .code 32
@@ -233,11 +226,11 @@ IrqCommon:
         stmfd   sp!, {r0, r1}                   // Push R0=SPSR, R1=LR_IRQ.
 
         // Context switch.
-#ifdef PURE_THUMB
-        ldr     r0, =chSchDoRescheduleI
-        mov     lr, pc
+#ifdef THUMB_NO_INTERWORKING
+        add     r0, pc, #1
         bx      r0
 .code 16
+        bl      chSchDoRescheduleI
         mov     lr, pc
         bx      lr
 .code 32

@@ -127,33 +127,23 @@ bssloop:
         /*
          * Application-provided HW initialization routine.
          */
-#ifndef PURE_THUMB
+#ifndef THUMB_NO_INTERWORKING
         bl      hwinit
-#else
-        ldr     r0, =hwinit
-        mov     lr, pc
-        bx      r0
-.code 16
-        mov     lr, pc
-        bx      lr
-.code 32
-#endif
         /*
          * main(0, NULL).
          */
         mov     r0, #0
-        mov     r1, #0
-#ifndef PURE_THUMB
+        mov     r1, r0
         bl      main
         bl      chSysHalt
 #else
-        ldr     r2, =main
-        mov     lr, pc
-        bx      r2
+        add     r0, pc, #1
+        bx      r0
 .code 16
-        mov     lr, pc
-        bx      lr
+        bl      hwinit
+        mov     r0, #0
+        mov     r1, r0
+        bl      main
+        bl      chSysHalt
 .code 32
-        ldr     r2, =chSysHalt
-        bx      r2
 #endif

@@ -39,9 +39,9 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 *****************************************************************************
 
 *** 0.4.2 ***
-- Improved the THUMB mode: when all C sources are compiled in thumb mode then
-  the -mthumb-interworking option is not enabled in the makefile, this greatly
-  improves the performance and reduces the overall code size.
+- Introduced support for "pure" THUMB mode, it is activated when all the
+  source files are compiled in THUMB mode, the option -mthumb-interworking is
+  not used in this scenario greatly improving both code size and speed.
   It is recommended to either use ARM mode or THUMB mode and not mix them
   unless you know exactly what you are doing and understand the consequences.
   Mixing is still supported anyway.

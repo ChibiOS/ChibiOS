@@ -138,7 +138,7 @@ ifneq ($(TSRC),)
     # Pure THUMB case, THUMB C code cannot be called by ARM asm code directly
     CPFLAGS += -D THUMB
     LDFLAGS += -mthumb
-    ASFLAGS += -mthumb-interwork -D THUMB -D PURE_THUMB
+    ASFLAGS += -mthumb-interwork -D THUMB -D THUMB_NO_INTERWORKING
   endif
 endif
 
