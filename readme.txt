@@ -47,8 +47,8 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
   not used in this scenario and this greatly improves both code size and
   speed.
   It is recommended to either use ARM mode or THUMB mode and not mix them
-  unless you know exactly what you are doing and understand the consequences.
-  Mixing is still supported anyway.
+  unless you know exactly what you are doing. Mixing modes is still supported
+  anyway.
 - More optimizations in the scheduler, an extra 4% performance found using
   the default performance settings.
 - Fixed a problem with the thread working area declarations, the alignment to
