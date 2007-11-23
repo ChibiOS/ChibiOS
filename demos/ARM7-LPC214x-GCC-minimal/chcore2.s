@@ -166,7 +166,7 @@ T0IrqHandler:
         b       IrqCommon
 #endif
 
-/*
+#if 0
 .globl UART0IrqHandler
 UART0IrqHandler:
         sub     lr, lr, #4
@@ -182,7 +182,9 @@ UART0IrqHandler:
         bl      UART0Irq
         b       IrqCommon
 #endif
+#endif
 
+#if 0
 .globl UART1IrqHandler
 UART1IrqHandler:
         sub     lr, lr, #4
@@ -198,7 +200,7 @@ UART1IrqHandler:
         bl      UART1Irq
         b       IrqCommon
 #endif
-*/
+#endif
 
 /*
  * Common exit point for all IRQ routines, it performs the rescheduling if

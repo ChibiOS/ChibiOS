@@ -38,14 +38,14 @@
  * Ready list header.
  */
 typedef struct {
-  ThreadsQueue  r_queue;
-  t_prio        r_prio;
-  t_cnt         r_preempt;
+  ThreadsQueue          r_queue;
+  t_prio                r_prio;
+  t_cnt                 r_preempt;
 #ifndef CH_CURRP_REGISTER_CACHE
-  Thread        *r_current;
+  Thread                *r_current;
 #endif
 #ifdef CH_USE_SYSTEMTIME
-  volatile t_time r_stime;
+  volatile t_time       r_stime;
 #endif
 } ReadyList;
 
@@ -69,25 +69,11 @@ extern "C" {
 }
 #endif
 
-/**
- * Current thread pointer.
- * @note Dont use this directly but use the \p chThdSelf()
- *       instead. Direct use of system global variables is discouraged because
- *       portability reasons.
- */
 #ifdef CH_CURRP_REGISTER_CACHE
 register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
 #else
 #define currp rlist.r_current
 #endif
-
-/**
- * System ticks counter.
- * @note Dont use this directly but use the \p chSysGetTime()
- *       instead. Direct use of system global variables is discouraged because
- *       portability reasons.
- */
-extern volatile t_time stime;
 
 #endif /* _SCHEDULER_H_ */
 

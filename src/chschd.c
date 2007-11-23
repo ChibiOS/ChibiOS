@@ -183,9 +183,7 @@ BOOL chSchRescRequiredI(void) {
  */
 void chSchTimerHandlerI(void) {
 
-  if (rlist.r_preempt)
-    rlist.r_preempt--;
-
+  rlist.r_preempt--;
 #ifdef CH_USE_SYSTEMTIME
   rlist.r_stime++;
 #endif
