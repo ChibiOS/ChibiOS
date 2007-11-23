@@ -50,16 +50,6 @@ extern "C" {
                         (etp)->et_vt.vt_func = NULL, \
                         (etp)->et_interval = (i))
 
-/**
- * Registers the invoking thread as listener on the timer event.
- */
-#define evtRegister(etp, el, eid) chEvtRegister(&(etp)->et_es, el, eid)
-
-/**
- * Unregisters the invoking thread as listener on the timer event.
- */
-#define evtUnregister(etp, el) chEvtUnregister(&(etp)->et_es, el)
-
 #endif /* _EVTIMER_H_ */
 
 /** @} */

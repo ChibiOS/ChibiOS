@@ -44,6 +44,9 @@ typedef struct {
 #ifndef CH_CURRP_REGISTER_CACHE
   Thread        *r_current;
 #endif
+#ifdef CH_USE_SYSTEMTIME
+  volatile t_time r_stime;
+#endif
 } ReadyList;
 
 extern ReadyList rlist;

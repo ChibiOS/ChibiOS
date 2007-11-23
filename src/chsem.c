@@ -113,6 +113,7 @@ void chSemWaitS(Semaphore *sp) {
 
 #ifdef CH_USE_SEMAPHORES_TIMEOUT
 static void wakeup(void *p) {
+
 #ifdef CH_USE_DEBUG
   if (((Thread *)p)->p_state != PRWTSEM)
     chDbgPanic("chsem.c, wakeup()\r\n");

@@ -32,7 +32,6 @@ extern "C" {
   void chThdSleep(t_time time);
 #ifdef CH_USE_SYSTEMTIME
   void chThdSleepUntil(t_time time);
-  t_time chSysGetTime(void);
 #endif /* CH_USE_SYSTEMTIME */
 #endif /* CH_USE_SLEEP */
 #ifdef __cplusplus
@@ -47,7 +46,7 @@ extern "C" {
  * @note The function is available only if the \p CH_USE_SYSTEMTIME
  *       option is enabled in \p chconf.h.
  */
-#define chSysGetTime() stime
+#define chSysGetTime() rlist.r_stime
 
 #endif /* _SLEEP_H_ */
 

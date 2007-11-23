@@ -25,6 +25,15 @@
 #include <ch.h>
 
 #ifdef CH_USE_SLEEP
+static void wakeup(void *p) {
+
+#ifdef CH_USE_DEBUG
+  if (((Thread *)p)->p_state != PRSLEEP)
+    chDbgPanic("chsleep.c, wakeup()\r\n");
+#endif
+  chSchReadyI(p, RDY_OK);
+}
+
 /**
  * Suspends the invoking thread for the specified time.
  * @param time the system ticks number
@@ -34,7 +43,7 @@ void chThdSleep(t_time time) {
 
   chSysLock();
 
-  chVTSetI(&vt, time, (t_vtfunc)chSchReadyI, currp);
+  chVTSetI(&vt, time, wakeup, currp);
   chSchGoSleepS(PRSLEEP);
 
   chSysUnlock();
@@ -53,7 +62,7 @@ void chThdSleepUntil(t_time time) {
 
   chSysLock();
 
-  chVTSetI(&vt, (t_time)(time - stime), (t_vtfunc)chSchReadyI, currp);
+  chVTSetI(&vt, (t_time)(time - rlist.r_stime), wakeup, currp);
   chSchGoSleepS(PRSLEEP);
 
   chSysUnlock();

@@ -60,6 +60,7 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
   It is expanded as:
     ULONG32 waThread1[UserStackSpace(32) >> 2];
   Now the demos use the new declaration style.
+- Fixed a small problem in sleep functions introduced in 0.4.1.
 
 *** 0.4.1 ***
 - Modified the initialization code in order to have a dedicated idle thread in

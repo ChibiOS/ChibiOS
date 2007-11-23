@@ -25,13 +25,7 @@
 #include <ch.h>
 
 /** @cond never*/
-
 ReadyList rlist;
-
-#ifdef CH_USE_SYSTEMTIME
-volatile t_time stime;
-#endif
-
 /** @endcond */
 
 /**
@@ -44,7 +38,7 @@ void chSchInit(void) {
   rlist.r_prio = ABSPRIO;
   rlist.r_preempt = CH_TIME_QUANTUM;
 #ifdef CH_USE_SYSTEMTIME
-  stime = 0;
+  rlist.r_stime = 0;
 #endif
 }
 
@@ -193,7 +187,7 @@ void chSchTimerHandlerI(void) {
     rlist.r_preempt--;
 
 #ifdef CH_USE_SYSTEMTIME
-  stime++;
+  rlist.r_stime++;
 #endif
 
 #ifdef CH_USE_VIRTUAL_TIMERS
