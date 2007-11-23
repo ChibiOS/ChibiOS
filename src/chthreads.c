@@ -195,7 +195,7 @@ void chThdExit(t_msg msg) {
 
   chSysLock();
 
-  currp->p_exitcode = msg;              /* Post mortem info.            */
+  currp->p_exitcode = msg;
 #ifdef CH_USE_WAITEXIT
   while (notempty(&currp->p_waiting))
     chSchReadyI(list_remove(&currp->p_waiting), RDY_OK);
@@ -204,8 +204,6 @@ void chThdExit(t_msg msg) {
   chEvtSendI(&currp->p_exitesource);
 #endif
   chSchGoSleepS(PREXIT);
-
-  chSysUnlock();                        /* Never executed.              */
 }
 
 #ifdef CH_USE_WAITEXIT
@@ -218,6 +216,7 @@ void chThdExit(t_msg msg) {
  *       option is enabled in \p chconf.h.
  */
 t_msg chThdWait(Thread *tp) {
+  t_msg msg;
 
   chSysLock();
 
@@ -225,9 +224,10 @@ t_msg chThdWait(Thread *tp) {
     list_insert(currp, &tp->p_waiting);
     chSchGoSleepS(PRWAIT);
   }
+  msg = tp->p_exitcode;
 
   chSysUnlock();
-  return tp->p_exitcode;
+  return msg;
 }
 #endif /* CH_USE_WAITEXIT */
 
