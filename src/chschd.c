@@ -26,11 +26,7 @@
 
 /** @cond never*/
 
-static ReadyList rlist;
-
-#ifndef CH_CURRP_REGISTER_CACHE
-Thread *currp;
-#endif
+ReadyList rlist;
 
 #ifdef CH_USE_SYSTEMTIME
 volatile t_time stime;

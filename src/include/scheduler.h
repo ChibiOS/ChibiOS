@@ -41,7 +41,12 @@ typedef struct {
   ThreadsQueue  r_queue;
   t_prio        r_prio;
   t_cnt         r_preempt;
+#ifndef CH_CURRP_REGISTER_CACHE
+  Thread        *r_current;
+#endif
 } ReadyList;
+
+extern ReadyList rlist;
 
 /*
  * Scheduler APIs.
@@ -70,7 +75,7 @@ extern "C" {
 #ifdef CH_CURRP_REGISTER_CACHE
 register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
 #else
-extern Thread *currp;
+#define currp rlist.r_current
 #endif
 
 /**
