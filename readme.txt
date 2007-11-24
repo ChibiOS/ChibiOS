@@ -39,7 +39,7 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
 *****************************************************************************
 
 *** 0.4.2 ***
-- Added a minimal ARM7 demo, you can use this one as template in order to
+- Added a minimal ARM7-LPC demo, you can use this one as template in order to
   create your application. It is easier to add subsystems back to the small
   demo than remove stuff from the large one.
 - Introduced support for "pure" THUMB mode, it is activated when all the
@@ -49,8 +49,7 @@ AVR-AT90CANx-GCC    - Port on AVR AT90CAN128, not complete yet.
   It is recommended to either use ARM mode or THUMB mode and not mix them
   unless you know exactly what you are doing. Mixing modes is still supported
   anyway.
-- More optimizations in the scheduler, an extra 4% performance found using
-  the default performance settings.
+- More optimizations in the scheduler, updated the performance spreadsheet.
 - Fixed a problem with the thread working area declarations, the alignment to
   4 bytes boundary was not enforced. Now it is defined a new macro
   WorkingArea(name, length) that takes care of both the allocation and the
