@@ -53,10 +53,8 @@ void chSysInit(void) {
   /*
    * The idle thread is created using the port-provided implementation.
    * This thread has the lowest priority in the system, its role is just to
-   * execute the chSysPause() and serve interrupts in its context.
-   * In ChibiOS/RT at least one thread in the system *must* execute
-   * chThdPause(), it can be done in a dedicated thread or in the main()
-   * function (that would never exit the call).
+   * serve interrupts in its context while keeping the lowest energy saving
+   * mode compatible with the system status.
    */
   chThdCreate(IDLEPRIO, 0, waIdleThread, sizeof(waIdleThread), (t_tfunc)_IdleThread, NULL);
 }

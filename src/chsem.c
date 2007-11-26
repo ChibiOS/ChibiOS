@@ -116,7 +116,7 @@ static void wakeup(void *p) {
 
 #ifdef CH_USE_DEBUG
   if (((Thread *)p)->p_state != PRWTSEM)
-    chDbgPanic("chsem.c, wakeup()\r\n");
+    chDbgPanic("chsem.c, wakeup()");
 #endif
   chSemFastSignalI(((Thread *)p)->p_semp);
   chSchReadyI(dequeue(p), RDY_TIMEOUT);
@@ -133,23 +133,10 @@ t_msg chSemWaitTimeout(Semaphore *sp, t_time time) {
 
   chSysLock();
 
-  if (--sp->s_cnt < 0) {
-    VirtualTimer vt;
-
-    chVTSetI(&vt, time, wakeup, currp);
-    fifo_insert(currp, &sp->s_queue);
-    currp->p_semp = sp;
-    chSchGoSleepS(PRWTSEM);
-    msg = currp->p_rdymsg;
-    if (chVTIsArmedI(&vt))
-      chVTResetI(&vt);
-
-    chSysUnlock();
-    return msg;
-  }
+  msg = chSemWaitTimeoutS(sp, time);
 
   chSysUnlock();
-  return RDY_OK;
+  return msg;
 }
 
 /**

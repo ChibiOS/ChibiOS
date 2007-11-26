@@ -62,7 +62,9 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
     case IIR_SRC_TIMEOUT:
     case IIR_SRC_RX:
       while (u->UART_LSR & LSR_RBR_FULL)
-        chFDDIncomingDataI(com, u->UART_RBR);
+        if (chIQPutI(&com->sd_iqueue, u->UART_RBR) < Q_OK)
+           chFDDAddFlagsI(com, SD_OVERRUN_ERROR);
+      chEvtSendI(&com->sd_ievent);
       break;
     case IIR_SRC_TX:
       {

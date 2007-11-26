@@ -139,6 +139,10 @@ void chThdSuspend(Thread **tpp) {
 
   chSysLock();
 
+#ifdef CH_USE_DEBUG
+  if (*tpp)
+    chDbgPanic("chthreads.c, chThdSuspend()");
+#endif
   *tpp = currp;
   chSchGoSleepS(PRSUSPENDED);
   *tpp = NULL;

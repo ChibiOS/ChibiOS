@@ -29,7 +29,7 @@ static void wakeup(void *p) {
 
 #ifdef CH_USE_DEBUG
   if (((Thread *)p)->p_state != PRSLEEP)
-    chDbgPanic("chsleep.c, wakeup()\r\n");
+    chDbgPanic("chsleep.c, wakeup()");
 #endif
   chSchReadyI(p, RDY_OK);
 }
