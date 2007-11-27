@@ -25,21 +25,27 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
-/*
- * Stack saved context.
+/**
+ * Interrupt saved context.
  */
-struct stackregs {
+struct extctx {
+};
+
+/**
+ * System saved context.
+ */
+struct intctx {
 };
 
 typedef struct {
-  struct stackregs *sp;
+  struct intctx *sp;
 } Context;
 
 /**
  * Platform dependent part of the \p chThdCreate() API.
  */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg)                   \
-{                                                                  \
+#define SETUP_CONTEXT(workspace, wsize, pf, arg)                        \
+{                                                                       \
 }
 
 /**
@@ -53,11 +59,24 @@ typedef struct {
 #define INT_REQUIRED_STACK 0
 
 /**
+ * Enforces a stack size alignment.
+ */
+#define StackAlign(n) (n)
+
+/**
  * Macro to be used when allocating stack spaces, it adds the system-specific
  * overhead.
  */
-#define UserStackSize(n) (sizeof(Thread) + \
-                          sizeof(struct stackregs) + (n) + (INT_REQUIRED_STACK))
+#define UserStackSize(n) StackAlign(sizeof(Thread) +                    \
+                                    sizeof(struct intctx) +             \
+                                    sizeof(struct extctx) +             \
+                                    (n) + (INT_REQUIRED_STACK))
+
+/**
+ * Macro used to allocate a thread working area aligned as both position and
+ * size.
+ */
+#define WorkingArea(s, n) BYTE8 s[UserStackSize(n)];
 
 /**
  * Enters the ChibiOS/RT system mutual exclusion zone, the implementation is
@@ -81,14 +100,10 @@ typedef struct {
  */
 #define chSysUnlock()
 
-/**
- * Prints a message on the system console (if any).
- */
-#define chSysPuts(msg) {}
-
 void _IdleThread(void *p);
 void chSysHalt(void);
 void chSysSwitchI(Context *oldp, Context *newp);
+void chSysPuts(char *msg);
 
 #endif /* _CHCORE_H_ */
 

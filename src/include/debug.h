@@ -27,7 +27,7 @@
 
 #ifdef CH_USE_DEBUG
 
-#ifndef TRACE_BUFFER_SIZE 
+#ifndef TRACE_BUFFER_SIZE
 #define TRACE_BUFFER_SIZE 64
 #endif
 
@@ -52,7 +52,6 @@ extern char *dbglastmsg;
 extern "C" {
 #endif
   void chDbgInit(void);
-  void chDbgTrace(Thread *otp, Thread *ntp);
   void chDbgPuts(char *msg);
   void chDbgPanic(char *msg);
 #ifdef __cplusplus
@@ -66,6 +65,16 @@ extern "C" {
 #define chDbgPanic(msg) {}
 
 #endif /* CH_USE_DEBUG */
+
+#ifdef CH_USE_TRACE
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chDbgTrace(Thread *otp, Thread *ntp);
+#ifdef __cplusplus
+}
+#endif
+#endif /* CH_USE_TRACE */
 
 #endif /* _DEBUG_H_ */
 

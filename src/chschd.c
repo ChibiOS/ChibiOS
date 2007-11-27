@@ -88,7 +88,7 @@ void chSchGoSleepS(t_tstate newstate) {
   (otp = currp)->p_state = newstate;
   (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
   rlist.r_preempt = CH_TIME_QUANTUM;
-#ifdef CH_USE_DEBUG
+#ifdef CH_USE_TRACE
   chDbgTrace(otp, currp);
 #endif
   chSysSwitchI(&otp->p_ctx, &currp->p_ctx);
@@ -115,7 +115,7 @@ void chSchWakeupS(Thread *ntp, t_msg msg) {
     (currp = ntp)->p_state = PRCURR;
     ntp->p_rdymsg = msg;
     rlist.r_preempt = CH_TIME_QUANTUM;
-#ifdef CH_USE_DEBUG
+#ifdef CH_USE_TRACE
     chDbgTrace(otp, ntp);
 #endif
     chSysSwitchI(&otp->p_ctx, &ntp->p_ctx);

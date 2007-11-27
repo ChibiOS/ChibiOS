@@ -71,13 +71,13 @@ typedef struct {
 /*
  * Platform dependent part of the \p chThdCreate() API.
  */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                 \
-  tp->p_ctx.r13 = (struct intctx *)((BYTE8 *)workspace +           \
-                                     wsize -                       \
-                                     sizeof(struct intctx));       \
-  tp->p_ctx.r13->r4 = pf;                                          \
-  tp->p_ctx.r13->r5 = arg;                                         \
-  tp->p_ctx.r13->lr = threadstart;                                 \
+#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
+  tp->p_ctx.r13 = (struct intctx *)((BYTE8 *)workspace +                \
+                                     wsize -                            \
+                                     sizeof(struct intctx));            \
+  tp->p_ctx.r13->r4 = pf;                                               \
+  tp->p_ctx.r13->r5 = arg;                                              \
+  tp->p_ctx.r13->lr = threadstart;                                      \
 }
 
 #ifdef THUMB
@@ -88,19 +88,16 @@ extern void chSysUnlock(void);
 #define chSysUnlock() asm("msr     CPSR_c, #0x1F")
 #endif /* THUMB */
 
-#define chSysPuts(msg) {}
-
 #ifdef THUMB
 #define INT_REQUIRED_STACK 0x10
 #else /* !THUMB */
 #define INT_REQUIRED_STACK 0
 #endif /* THUMB */
-#define UserStackSize(n)  (((sizeof(Thread) +                      \
-                             sizeof(struct intctx) +               \
-                             sizeof(struct extctx) +               \
-                             (INT_REQUIRED_STACK) +                \
-                             (n) - 1) | 3) + 1)
-
+#define StackAlign(n) ((((n) - 1) | 3) + 1)
+#define UserStackSize(n) StackAlign(sizeof(Thread) +                    \
+                                    sizeof(struct intctx) +             \
+                                    sizeof(struct extctx) +             \
+                                    (n) + (INT_REQUIRED_STACK))
 #define WorkingArea(s, n) ULONG32 s[UserStackSize(n) >> 2];
 
 /* It requires zero bytes, but better be safe.*/
@@ -109,6 +106,7 @@ void _IdleThread(void *p) __attribute__((noreturn));
 
 void chSysHalt(void) __attribute__((noreturn));
 void chSysSwitchI(Context *oldp, Context *newp);
+void chSysPuts(char *msg);
 void threadstart(void);
 void DefFiqHandler(void);
 void DefIrqHandler(void);

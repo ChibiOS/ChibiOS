@@ -167,6 +167,10 @@
  */
 //#define CH_USE_DEBUG
 
+/** Debug option: Includes the threads context switch tracing feature.
+ */
+//#define CH_USE_TRACE
+
 #endif  /* _CHCONF_H_ */
 
 /** @} */

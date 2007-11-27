@@ -166,6 +166,12 @@ void chSysHalt(void) {
 }
 
 /*
+ * System console message (implemented via JTAG).
+ */
+void chSysPuts(char *msg) {
+}
+
+/*
  * Non-vectored IRQs handling here.
  */
 void NonVectoredIrq(void) {

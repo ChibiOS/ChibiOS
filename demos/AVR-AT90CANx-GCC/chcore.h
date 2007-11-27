@@ -83,26 +83,21 @@ typedef struct {
 /**
  * Platform dependent part of the \p chThdCreate() API.
  */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                 \
-  tp->p_ctx.sp--;                                                  \
-  tp->p_ctx.sp->r2 = (int)pf;                                      \
-  tp->p_ctx.sp->r3 = (int)pf >> 8;                                 \
-  tp->p_ctx.sp->r4 = (int)arg;                                     \
-  tp->p_ctx.sp->r5 = (int)arg >> 8;                                \
-  tp->p_ctx.sp->pc = (UWORD16)threadstart;                         \
+#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
+  tp->p_ctx.sp--;                                                       \
+  tp->p_ctx.sp->r2 = (int)pf;                                           \
+  tp->p_ctx.sp->r3 = (int)pf >> 8;                                      \
+  tp->p_ctx.sp->r4 = (int)arg;                                          \
+  tp->p_ctx.sp->r5 = (int)arg >> 8;                                     \
+  tp->p_ctx.sp->pc = (UWORD16)threadstart;                              \
 }
 
-/*
- * Interrupt stack usage except for saved registers.
- */
-#define EXTRA_INT_STACK 0x10
-
-#define UserStackSize(n) (sizeof(Thread) +                         \
-                          sizeof(struct intctx) +                  \
-                          sizeof(struct extctx) +                  \
-                          EXTRA_INT_STACK +                        \
-                          (n))
-
+#define INT_REQUIRED_STACK 0x10
+#define StackAlign(n) (n)
+#define UserStackSize(n) StackAlign(sizeof(Thread) +                    \
+                                    sizeof(struct intctx) +             \
+                                    sizeof(struct extctx) +             \
+                                    (n) + (INT_REQUIRED_STACK))
 #define WorkingArea(s, n) BYTE8 s[UserStackSize(n)];
 
 #define chSysLock() asm("cli")

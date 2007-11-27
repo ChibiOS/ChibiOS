@@ -59,4 +59,10 @@ void chSysHalt(void) {
  */
 void chSysSwitchI(Context *oldp, Context *newp) {}
 
+/**
+ * Prints a message on the system console (if any).
+ */
+void chSysPuts(char *msg) {
+}
+
 /** @} */

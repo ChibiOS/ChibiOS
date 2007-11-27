@@ -21,7 +21,6 @@
 
 #ifdef CH_USE_DEBUG
 
-TraceBuffer dbgtb;
 char *dbglastmsg;
 
 /**
@@ -29,27 +28,10 @@ char *dbglastmsg;
  */
 void chDbgInit(void) {
 
+#ifdef CH_USE_TRACE
   dbgtb.tb_size = TRACE_BUFFER_SIZE;
   dbgtb.tb_ptr = &dbgtb.tb_buffer[0];
-}
-
-/**
- * Inserts in the circular debug trace buffer a context switch record.
- * @param otp the thread being switched out
- * @param ntp the thread to be resumed
- */
-void chDbgTrace(Thread *otp, Thread *ntp) {
-
-  dbgtb.tb_ptr->cse_slpdata = otp->p_common;
-#ifdef CH_USE_SYSTEMTIME
-  dbgtb.tb_ptr->cse_time = chSysGetTime();
-#else
-  dbgtb.tb_ptr->cse_time = 0;
 #endif
-  dbgtb.tb_ptr->cse_state = otp->p_state;
-  dbgtb.tb_ptr->cse_tid = ntp->p_tid;
-  if (++dbgtb.tb_ptr >= &dbgtb.tb_buffer[TRACE_BUFFER_SIZE])
-    dbgtb.tb_ptr = &dbgtb.tb_buffer[0];
 }
 
 /**
@@ -71,5 +53,31 @@ void chDbgPanic(char *msg) {
   chDbgPuts(msg);
   chSysHalt();
 }
+
+#ifdef CH_USE_TRACE
+/**
+ * Public trace buffer.
+ */
+TraceBuffer dbgtb;
+
+/**
+ * Inserts in the circular debug trace buffer a context switch record.
+ * @param otp the thread being switched out
+ * @param ntp the thread to be resumed
+ */
+void chDbgTrace(Thread *otp, Thread *ntp) {
+
+  dbgtb.tb_ptr->cse_slpdata = otp->p_common;
+#ifdef CH_USE_SYSTEMTIME
+  dbgtb.tb_ptr->cse_time = chSysGetTime();
+#else
+  dbgtb.tb_ptr->cse_time = 0;
+#endif
+  dbgtb.tb_ptr->cse_state = otp->p_state;
+  dbgtb.tb_ptr->cse_tid = ntp->p_tid;
+  if (++dbgtb.tb_ptr >= &dbgtb.tb_buffer[TRACE_BUFFER_SIZE])
+    dbgtb.tb_ptr = &dbgtb.tb_buffer[0];
+}
+#endif /* CH_USE_TRACE */
 
 #endif /* CH_USE_DEBUG */
