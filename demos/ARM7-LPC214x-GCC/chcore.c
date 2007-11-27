@@ -166,7 +166,7 @@ void chSysHalt(void) {
 }
 
 /*
- * System console message (implemented via JTAG).
+ * System console message (not implemented).
  */
 void chSysPuts(char *msg) {
 }
