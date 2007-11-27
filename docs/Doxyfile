@@ -244,7 +244,8 @@ PREDEFINED             = __JUST_STUBS__ \
                          CH_USE_MESSAGES_TIMEOUT \
                          CH_USE_MESSAGES_EVENT \
                          CH_USE_SEMSW \
-                         CH_USE_DEBUG
+                         CH_USE_DEBUG \
+                         CH_USE_TRACE
 EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

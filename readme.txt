@@ -40,13 +40,15 @@ AVR-AT90CANx-GCC     - Port on AVR AT90CAN128, not complete yet.
 *****************************************************************************
 
 *** 0.4.3 ***
-- Minor improvement in the LPC214x serial driver, unneeded events were
-  generated.
 - Size optimization in the events code, now the chEvtWait() reuses the
   chEvtWaitTimeout() code if it is enabled.
 - Size optimization in the semaphores code, now the chSemWaitTimeout() just
   invokes the chSemWaitTimeoutS() inside its system mutex zone.
+- Minor improvement in the LPC214x serial driver, unneeded events were
+  generated in some rare cases.
 - Fixed a chSysInit() documentation error.
+- Added a new debug switch: CH_USE_TRACE, previously the trace functionality
+  was associated to the CH_USE_DEBUG switch.
 
 *** 0.4.2 ***
 - Added a minimal ARM7-LPC demo, you can use this one as template in order to

@@ -29,7 +29,7 @@ typedef void *regx86;
 /*
  * Stack saved context.
  */
-struct stackregs {
+struct intctx {
   regx86  ebx;
   regx86  edi;
   regx86  esi;
@@ -38,33 +38,36 @@ struct stackregs {
 };
 
 typedef struct {
-  struct stackregs *esp;
+  struct intctx *esp;
 } Context;
 
 #define APUSH(p, a) (p) -= sizeof(void *), *(void **)(p) = (void*)(a)
 
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) \
-{ \
-  BYTE8 *esp = (BYTE8 *)workspace + wsize; \
-  APUSH(esp, arg); \
-  APUSH(esp, threadexit); \
-  esp -= sizeof(struct stackregs); \
-  ((struct stackregs *)esp)->eip = pf; \
-  ((struct stackregs *)esp)->ebx = 0; \
-  ((struct stackregs *)esp)->edi = 0; \
-  ((struct stackregs *)esp)->esi = 0; \
-  ((struct stackregs *)esp)->ebp = 0; \
-  tp->p_ctx.esp = (struct stackregs *)esp; \
+#define SETUP_CONTEXT(workspace, wsize, pf, arg)                        \
+{                                                                       \
+  BYTE8 *esp = (BYTE8 *)workspace + wsize;                              \
+  APUSH(esp, arg);                                                      \
+  APUSH(esp, threadexit);                                               \
+  esp -= sizeof(struct intctx);                                         \
+  ((struct intctx *)esp)->eip = pf;                                     \
+  ((struct intctx *)esp)->ebx = 0;                                      \
+  ((struct intctx *)esp)->edi = 0;                                      \
+  ((struct intctx *)esp)->esi = 0;                                      \
+  ((struct intctx *)esp)->ebp = 0;                                      \
+  tp->p_ctx.esp = (struct intctx *)esp;                                 \
 }
 
 #define chSysLock()
 #define chSysUnlock()
 #define chSysPuts(msg) {}
 
-#define INT_REQUIRED_STACK 0x0
-#define UserStackSize(n) (sizeof(Thread) + sizeof(void *)*2 + \
-                          sizeof(struct stackregs) + (n) + (INT_REQUIRED_STACK))
-
+#define INT_REQUIRED_STACK 0
+#define StackAlign(n) ((((n) - 1) | 3) + 1)
+#define UserStackSize(n) StackAlign(sizeof(Thread) +                    \
+                                    sizeof(void *) * 2 +                \
+                                    sizeof(struct intctx) +             \
+                                    (n) +                               \
+                                    INT_REQUIRED_STACK)
 #define WorkingArea(s, n) ULONG32 s[UserStackSize(n) >> 2];
 
 #define IDLE_THREAD_STACK_SIZE 16384

@@ -21,7 +21,7 @@
 
 #ifdef CH_USE_DEBUG
 
-char *dbglastmsg;
+char *panicmsg;
 
 /**
  * Debug subsystem initialization.
@@ -35,22 +35,13 @@ void chDbgInit(void) {
 }
 
 /**
- * Prints a message on the console/debugger. The latest message pointer
- * is retained.
- */
-void chDbgPuts(char *msg) {
-
-  dbglastmsg = msg;
-  chSysPuts(msg);
-}
-
-/**
  * Prints a panic message on the console/debugger and then halts the system.
  */
 void chDbgPanic(char *msg) {
 
+  panicmsg = msg;
   chSysPuts("PANIC: ");
-  chDbgPuts(msg);
+  chSysPuts(msg);
   chSysHalt();
 }
 

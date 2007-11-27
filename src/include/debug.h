@@ -61,7 +61,6 @@ extern "C" {
 #else /* CH_USE_DEBUG */
 
 #define chDbgInit()
-#define chDbgPuts(msg) {}
 #define chDbgPanic(msg) {}
 
 #endif /* CH_USE_DEBUG */

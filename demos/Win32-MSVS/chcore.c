@@ -68,7 +68,7 @@ void ChkIntSources(void) {
   }
 }
 
-t_msg _IdleThread(void) {
+t_msg _IdleThread(void *p) {
 
   chThdSetPriority(IDLEPRIO);
 

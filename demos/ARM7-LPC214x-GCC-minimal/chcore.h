@@ -97,7 +97,8 @@ extern void chSysUnlock(void);
 #define UserStackSize(n) StackAlign(sizeof(Thread) +                    \
                                     sizeof(struct intctx) +             \
                                     sizeof(struct extctx) +             \
-                                    (n) + (INT_REQUIRED_STACK))
+                                    (n) +                               \
+                                    INT_REQUIRED_STACK)
 #define WorkingArea(s, n) ULONG32 s[UserStackSize(n) >> 2];
 
 /* It requires zero bytes, but better be safe.*/

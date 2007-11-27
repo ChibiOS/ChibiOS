@@ -24,7 +24,6 @@
 //#include "lpc214x_serial.h"
 //#include "lpc214x_ssp.h"
 //#include "mmcsd.h"
-
 //#include "buzzer.h"
 
 extern void IrqHandler(void);
@@ -163,6 +162,12 @@ void chSysHalt(void) {
   IO0CLR = 0x80000000;
   while (TRUE)
     ;
+}
+
+/*
+ * System console message (not implemented).
+ */
+void chSysPuts(char *msg) {
 }
 
 /*
