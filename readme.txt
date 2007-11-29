@@ -51,6 +51,7 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 - Minor improvement in the LPC214x serial driver, unneeded events were
   generated in some rare cases.
 - Fixed a chSysInit() documentation error.
+- Fixed a chEvtWaitTimeout() documentation error.
 - Added a new debug switch: CH_USE_TRACE, previously the trace functionality
   was associated to the CH_USE_DEBUG switch.
 

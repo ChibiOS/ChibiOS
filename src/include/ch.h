@@ -25,6 +25,8 @@
 #ifndef _CH_H_
 #define _CH_H_
 
+#define _CHIBIOS_RT_
+
 #ifndef __DOXIGEN__
 #ifndef _CHCONF_H_
 #include <chconf.h>

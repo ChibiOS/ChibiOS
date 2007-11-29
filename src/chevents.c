@@ -161,9 +161,7 @@ static void wakeup(void *p) {
  *                 identifier. The array can be NULL or contain NULL elements
  *                 (no callback specified).
  * @param time the number of ticks before the operation timouts
- * @return the event identifier or \p RDY_TIMEOUT the specified time expired or
- *         if the timeout was set to zero and no serviceable pending events
- *         were present
+ * @return the event identifier or \p RDY_TIMEOUT if the specified time expired
  * @note Only a single event is served in the function, the one with the
  *       lowest event id. The function is meant to be invoked into a loop so
  *       that all events are received and served.<br>

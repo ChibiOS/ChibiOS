@@ -24,7 +24,6 @@
 
 #include <ch.h>
 
-
 /**
  * ChibiOS/RT initialization. After executing this function the current
  * instructions stream becomes the main thread.
