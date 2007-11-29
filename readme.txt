@@ -23,17 +23,17 @@
 
 Current ports under ./demos:
 
-Win32-MinGW          - ChibiOS/RT simulator and demo into a WIN32 process,
-                       MinGW version.
-Win32-MSVS           - ChibiOS/RT simulator and demo into a WIN32 process,
-                       Visual Studio 7 or any later version should work.
-ARM7-LPC214x-GCC     - ChibiOS/RT port for ARM7 LPC2148, the demo targets the
-                       Olimex LPC-P2148 board. This port can be easily
-                       modified for any processor into the LPC2000 family or
-                       other boards. The demo can be compiled using YAGARTO
-                       or any other GCC-based ARM toolchain. Full demo.
-ARM7-LPC214x-GCC-min - Minimal demo for LPC214X.
-AVR-AT90CANx-GCC     - Port on AVR AT90CAN128, not complete yet.
+Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
+                         MinGW version.
+Win32-MSVS             - ChibiOS/RT simulator and demo into a WIN32 process,
+                         Visual Studio 7 or any later version should work.
+ARM7-LPC214x-GCC       - ChibiOS/RT port for ARM7 LPC2148, the demo targets
+                         the Olimex LPC-P2148 board. This port can be easily
+                         modified for any processor into the LPC2000 family or
+                         other boards. The demo can be compiled using YAGARTO
+                         or any other GCC-based ARM toolchain. Full demo.
+ARM7-LPC214x-GCC-min   - Minimal demo for LPC214X.
+AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 
 *****************************************************************************
 *** Releases                                                              ***
@@ -44,6 +44,10 @@ AVR-AT90CANx-GCC     - Port on AVR AT90CAN128, not complete yet.
   chEvtWaitTimeout() code if it is enabled.
 - Size optimization in the semaphores code, now the chSemWaitTimeout() just
   invokes the chSemWaitTimeoutS() inside its system mutex zone.
+- Added a threads create/exit/wait benchmark to the test suite, the system
+  is capable of 81712 threads started/terminated per second on the reference
+  LPC2148 board. The figure is inclusive of two context switch operations
+  for each thread.
 - Minor improvement in the LPC214x serial driver, unneeded events were
   generated in some rare cases.
 - Fixed a chSysInit() documentation error.

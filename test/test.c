@@ -19,7 +19,9 @@
 
 #include <ch.h>
 
+#if defined(WIN32)
 void ChkIntSources(void);
+#endif
 
 #if defined(WIN32) && defined(_DEBUG)
 static WorkingArea(wsT1, 512);
@@ -120,6 +122,11 @@ t_msg Thread6(void *p) {
   while (!chThdShouldTerminate())
     chMsgRelease(chMsgWait() + 1);
   return 0;
+}
+
+t_msg Thread7(void *p) {
+
+  return (unsigned int)p + 1;
 }
 
 /**
@@ -254,9 +261,29 @@ t_msg TestThread(void *p) {
   chThdWait(t1);
   print("Messages throughput = ");
   printn(i);
-  print(" msg/S, ");
+  print(" msgs/S, ");
   printn(i << 1);
-  println(" ctxsw/S");
+  println(" ctxsws/S");
+
+  println("*** Kernel Benchmark, threads creation/termination:");
+  time = chSysGetTime() + 1;
+  while (chSysGetTime() < time) {
+#if defined(WIN32)
+    ChkIntSources();
+#endif
+  }
+  time += 1000;
+  i = 0;
+  while (chSysGetTime() < time) {
+    t1 = chThdCreate(chThdGetPriority()-1, 0, wsT1, sizeof(wsT1), Thread7, (void *)i);
+    i = chThdWait(t1);
+#if defined(WIN32)
+    ChkIntSources();
+#endif
+  }
+  print("Threads throughput = ");
+  printn(i);
+  print(" threads/S");
 
   println("\r\nTest complete");
   return 0;
