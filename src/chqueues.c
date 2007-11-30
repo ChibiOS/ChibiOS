@@ -91,11 +91,10 @@ t_msg chIQGet(Queue *qp) {
 
   chSysLock();
 
-  chSemWaitS(&qp->q_sem);
-  if (currp->p_rdymsg < RDY_OK) {
+  if (chSemWaitS(&qp->q_sem) < RDY_OK) {
 
     chSysUnlock();
-    return currp->p_rdymsg;
+    return Q_RESET;
   }
   b = *qp->q_rdptr++;
   if (qp->q_rdptr >= qp->q_top)
@@ -324,18 +323,17 @@ void chHDQInit(HalfDuplexQueue *qp, BYTE8 *buffer, t_size size,
  * Reads a byte from the receive queue, if the queue is empty or is in
  * transmission mode then the invoking thread is suspended.
  * @param qp pointer to a \p HalfDuplexQueue structure
- * @return the byte value
+ * @return the byte value or \p Q_RESET if the queue was reset
  */
 t_msg chHDQGetReceive(HalfDuplexQueue *qp) {
   BYTE8 b;
 
   chSysLock();
 
-  chSemWaitS(&qp->hdq_isem);
-  if (currp->p_rdymsg < RDY_OK) {
+  if (chSemWaitS(&qp->hdq_isem) < RDY_OK) {
 
     chSysUnlock();
-    return currp->p_rdymsg;
+    return Q_RESET;
   }
   /*
    * NOTE: The semaphore can be signaled only if the queue is in

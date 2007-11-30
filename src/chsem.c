@@ -82,33 +82,35 @@ void chSemResetI(Semaphore *sp, t_cnt n) {
 /**
  * Performs a wait operation on a semaphore.
  * @param sp pointer to a \p Semaphore structure
+ * @return the function can return \p RDY_OK or \p RDY_RESET.
  */
-void chSemWait(Semaphore *sp) {
+t_msg chSemWait(Semaphore *sp) {
+  t_msg msg;
 
   chSysLock();
 
-  if (--sp->s_cnt < 0) {
-    fifo_insert(currp, &sp->s_queue);
-    currp->p_semp = sp;
-    chSchGoSleepS(PRWTSEM);
-  }
+  msg = chSemWaitS(sp);
 
   chSysUnlock();
+  return msg;
 }
 
 /**
  * Performs a wait operation on a semaphore.
  * @param sp pointer to a \p Semaphore structure
+ * @return the function can return \p RDY_OK or \p RDY_RESET.
  * @note This function must be called with interrupts disabled.
  * @note This function cannot be called by an interrupt handler.
  */
-void chSemWaitS(Semaphore *sp) {
+t_msg chSemWaitS(Semaphore *sp) {
 
   if (--sp->s_cnt < 0) {
     fifo_insert(currp, &sp->s_queue);
     currp->p_semp = sp;
     chSchGoSleepS(PRWTSEM);
+    return currp->p_rdymsg;
   }
+  return RDY_OK;
 }
 
 #ifdef CH_USE_SEMAPHORES_TIMEOUT
@@ -126,7 +128,7 @@ static void wakeup(void *p) {
  * Performs a wait operation on a semaphore with timeout specification.
  * @param sp pointer to a \p Semaphore structure
  * @param time the number of ticks before the operation fails
- * @return the function can return \p RDY_OK. \p RDY_TIMEOUT or \p RDY_RESET.
+ * @return the function can return \p RDY_OK, \p RDY_TIMEOUT or \p RDY_RESET.
  */
 t_msg chSemWaitTimeout(Semaphore *sp, t_time time) {
   t_msg msg;
@@ -143,7 +145,7 @@ t_msg chSemWaitTimeout(Semaphore *sp, t_time time) {
  * Performs a wait operation on a semaphore with timeout specification.
  * @param sp pointer to a \p Semaphore structure
  * @param time the number of ticks before the operation fails
- * @return the function can return \p RDY_OK. \p RDY_TIMEOUT or \p RDY_RESET.
+ * @return the function can return \p RDY_OK, \p RDY_TIMEOUT or \p RDY_RESET.
  * @note This function must be called with interrupts disabled.
  * @note This function cannot be called by an interrupt handler.
  * @note The function is available only if the \p CH_USE_SEMAPHORES_TIMEOUT
