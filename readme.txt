@@ -46,7 +46,9 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   invokes the chSemWaitTimeoutS() inside its system mutex zone. Same thing
   done with chSemWait() and chSemWaitS().
 - Size optimization in the queues code.
-- Modified the return type of chSemWait() and chSemWaitS() from void to t_msg.
+- Modified the return type of chSemWait() and chSemWaitS() from void to t_msg,
+  this allows to understand if the semaphore was signaled or reset without
+  have to access the Thread structure.
 - Added a threads create/exit/wait benchmark to the test suite, the system
   is capable of 81712 threads started/terminated per second on the reference
   LPC2148 board. The figure is inclusive of two context switch operations
@@ -57,8 +59,6 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 - Fixed a chEvtWaitTimeout() documentation error.
 - Added a new debug switch: CH_USE_TRACE, previously the trace functionality
   was associated to the CH_USE_DEBUG switch.
-- I am meditating to to make a 1.0.0 release from this version, I am out of
-  things to do on the kernel...
 
 *** 0.4.2 ***
 - Added a minimal ARM7-LPC demo, you can use this one as template in order to
