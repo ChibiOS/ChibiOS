@@ -143,10 +143,8 @@ t_eventid chEvtWait(t_eventmask ewmask,
 }
 
 static void wakeup(void *p) {
-#ifdef CH_USE_DEBUG
-  if (((Thread *)p)->p_state != PRWTEVENT)
-    chDbgPanic("chevents.c, wakeup()");
-#endif
+
+  chDbgAssert(((Thread *)p)->p_state == PRWTEVENT, "chevents.c, wakeup()");
   chSchReadyI(p, RDY_TIMEOUT);
 }
 

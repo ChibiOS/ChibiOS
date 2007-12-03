@@ -39,6 +39,13 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.4.4 ***
+- Added a chDbgAssert() API to the debug subsystem.
+- Cleaned up the kernel source code using chDbgAssert() instead of a lot of
+  "#ifdef CH_USE_DEBUG", it is much more readable now.
+- Now the threads working area is filled with a 0x55 when in debug mode, this
+  will make easier to track stack usage using a JTAG probe.
+
 *** 0.4.3 ***
 - Size optimization in the events code, now the chEvtWait() reuses the
   chEvtWaitTimeout() code if it is enabled.

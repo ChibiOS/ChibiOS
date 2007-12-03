@@ -51,6 +51,14 @@ void _InitThread(t_prio prio, t_tmode mode, Thread *tp) {
 #endif
 }
 
+#ifdef CH_USE_DEBUG
+static void memfill(BYTE8 *p, ULONG32 n, BYTE8 v) {
+
+  while (n)
+    *p++ = v, n--;
+}
+#endif
+
 /**
  * Creates a new thread.
  * @param prio the priority level for the new thread. Usually the threads are
@@ -84,6 +92,12 @@ Thread *chThdCreate(t_prio prio, t_tmode mode, void *workspace,
                     t_size wsize, t_tfunc pf, void *arg) {
   Thread *tp = workspace;
 
+  chDbgAssert((wsize > UserStackSize(0)) && (prio <= HIGHPRIO) &&
+              (workspace != NULL) && (pf != NULL),
+              "chthreads.c, chThdCreate()");
+#ifdef CH_USE_DEBUG
+  memfill(workspace, wsize, MEM_FILL_PATTERN);
+#endif
   _InitThread(prio, mode, tp);
   SETUP_CONTEXT(workspace, wsize, pf, arg);
 #ifdef CH_USE_RESUME
@@ -108,6 +122,7 @@ Thread *chThdCreate(t_prio prio, t_tmode mode, void *workspace,
  */
 void chThdSetPriority(t_prio newprio) {
 
+  chDbgAssert(newprio <= HIGHPRIO, "chthreads.c, chThdSetPriority()")
   chSysLock();
 
 #ifdef CH_USE_RT_SEMAPHORES
@@ -139,10 +154,7 @@ void chThdSuspend(Thread **tpp) {
 
   chSysLock();
 
-#ifdef CH_USE_DEBUG
-  if (*tpp)
-    chDbgPanic("chthreads.c, chThdSuspend()");
-#endif
+  chDbgAssert(*tpp == NULL, "chthreads.c, chThdSuspend()");
   *tpp = currp;
   chSchGoSleepS(PRSUSPENDED);
   *tpp = NULL;

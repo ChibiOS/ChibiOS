@@ -33,6 +33,7 @@
  */
 void chSemInit(Semaphore *sp, t_cnt n) {
 
+  chDbgAssert(n >= 0, "chsem.c, chSemInit()");
   fifo_init(&sp->s_queue);
   sp->s_cnt = n;
 }
@@ -48,6 +49,7 @@ void chSemInit(Semaphore *sp, t_cnt n) {
 void chSemReset(Semaphore *sp, t_cnt n) {
   t_cnt cnt;
 
+  chDbgAssert(n >= 0, "chsem.c, chSemReset()");
   chSysLock();
 
   cnt = sp->s_cnt;
@@ -73,6 +75,7 @@ void chSemReset(Semaphore *sp, t_cnt n) {
 void chSemResetI(Semaphore *sp, t_cnt n) {
   t_cnt cnt;
 
+  chDbgAssert(n >= 0, "chsem.c, chSemResetI()");
   cnt = sp->s_cnt;
   sp->s_cnt = n;
   while (cnt++ < 0)
@@ -116,10 +119,7 @@ t_msg chSemWaitS(Semaphore *sp) {
 #ifdef CH_USE_SEMAPHORES_TIMEOUT
 static void wakeup(void *p) {
 
-#ifdef CH_USE_DEBUG
-  if (((Thread *)p)->p_state != PRWTSEM)
-    chDbgPanic("chsem.c, wakeup()");
-#endif
+  chDbgAssert(((Thread *)p)->p_state == PRWTSEM, "chsem.c, wakeup()");
   chSemFastSignalI(((Thread *)p)->p_semp);
   chSchReadyI(dequeue(p), RDY_TIMEOUT);
 }
