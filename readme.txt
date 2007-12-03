@@ -45,6 +45,7 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   "#ifdef CH_USE_DEBUG", it is much more readable now.
 - Now the threads working area is filled with a 0x55 when in debug mode, this
   will make easier to track stack usage using a JTAG probe.
+- Added an I/O Queues benchmark to the test suite.
 
 *** 0.4.3 ***
 - Size optimization in the events code, now the chEvtWait() reuses the

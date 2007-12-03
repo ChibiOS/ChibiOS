@@ -129,10 +129,13 @@ t_msg Thread7(void *p) {
   return (unsigned int)p + 1;
 }
 
+
 /**
  * Tester thread, this thread must be created with priority \p NORMALPRIO.
  */
 t_msg TestThread(void *p) {
+  static BYTE8 ib[16];
+  static Queue iq;
   t_msg msg;
   unsigned int i;
   t_time time;
@@ -283,7 +286,32 @@ t_msg TestThread(void *p) {
   }
   print("Threads throughput = ");
   printn(i);
-  print(" threads/S");
+  println(" threads/S");
+
+  println("*** Kernel Benchmark, I/O Queues throughput:");
+  chIQInit(&iq, ib, sizeof(ib), NULL);
+  time = chSysGetTime() + 1;
+  while (chSysGetTime() < time) {
+#if defined(WIN32)
+    ChkIntSources();
+#endif
+  }
+  time += 1000;
+  i = 0;
+  while (chSysGetTime() < time) {
+    chIQPutI(&iq, i >> 24);
+    chIQPutI(&iq, i >> 16);
+    chIQPutI(&iq, i >> 8);
+    chIQPutI(&iq, i);
+    i = chIQGet(&iq) << 24;
+    i |= chIQGet(&iq) << 16;
+    i |= chIQGet(&iq) << 8;
+    i |= chIQGet(&iq);
+    i++;
+  }
+  print("Queues throughput = ");
+  printn(i * 4);
+  print(" bytes/S");
 
   println("\r\nTest complete");
   return 0;
