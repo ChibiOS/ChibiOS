@@ -166,22 +166,4 @@ BOOL chSchRescRequiredI(void) {
   return TRUE;
 }
 
-/**
- * Preemption routine, this function must be called into an interrupt
- * handler invoked by a system timer.
- * The frequency of the timer determines the system tick granularity and,
- * together with the \p CH_TIME_QUANTUM macro, the round robin interval.
- */
-void chSchTimerHandlerI(void) {
-
-  rlist.r_preempt--;
-#ifdef CH_USE_SYSTEMTIME
-  rlist.r_stime++;
-#endif
-
-#ifdef CH_USE_VIRTUAL_TIMERS
-  chVTDoTickI();
-#endif
-}
-
 /** @} */

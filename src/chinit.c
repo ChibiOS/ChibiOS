@@ -58,4 +58,22 @@ void chSysInit(void) {
   chThdCreate(IDLEPRIO, 0, waIdleThread, sizeof(waIdleThread), (t_tfunc)_IdleThread, NULL);
 }
 
+/**
+ * Preemption routine, this function must be called into an interrupt
+ * handler invoked by a system timer.
+ * The frequency of the timer determines the system tick granularity and,
+ * together with the \p CH_TIME_QUANTUM macro, the round robin interval.
+ */
+void chSysTimerHandlerI(void) {
+
+  rlist.r_preempt--;
+#ifdef CH_USE_SYSTEMTIME
+  rlist.r_stime++;
+#endif
+
+#ifdef CH_USE_VIRTUAL_TIMERS
+  chVTDoTickI();
+#endif
+}
+
 /** @} */

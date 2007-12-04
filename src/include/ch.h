@@ -106,6 +106,7 @@
 extern "C" {
 #endif
   void chSysInit(void);
+  void chSysTimerHandlerI(void);
 #ifdef __cplusplus
 }
 #endif

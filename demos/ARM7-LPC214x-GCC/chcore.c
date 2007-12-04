@@ -185,6 +185,6 @@ void NonVectoredIrq(void) {
 void Timer0Irq(void) {
 
   T0IR = 1;             /* Clear interrupt on match MR0. */
-  chSchTimerHandlerI();
+  chSysTimerHandlerI();
   VICVectAddr = 0;
 }

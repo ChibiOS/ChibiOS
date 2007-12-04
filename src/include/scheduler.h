@@ -64,7 +64,6 @@ extern "C" {
   void chSchRescheduleS(void);
   void chSchDoRescheduleI(void);
   BOOL chSchRescRequiredI(void);
-  void chSchTimerHandlerI(void);
 #ifdef __cplusplus
 }
 #endif

@@ -97,7 +97,7 @@ __vector_17:
         in      r0, _SFR_IO_ADDR(SREG)
         push    r0
         clr     r1
-        call    chSchTimerHandlerI
+        call    chSysTimerHandlerI
 intcommon:
         call    chSchRescRequiredI
         tst     r24

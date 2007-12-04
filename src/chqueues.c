@@ -125,8 +125,11 @@ t_msg chIQGetTimeout(Queue *qp, t_time time) {
 
   chSysLock();
 
-  if ((msg = chSemWaitTimeoutS(&qp->q_sem, time)) < RDY_OK)
+  if ((msg = chSemWaitTimeoutS(&qp->q_sem, time)) < RDY_OK) {
+
+    chSysUnlock();
     return msg;
+  }
   b = *qp->q_rdptr++;
   if (qp->q_rdptr >= qp->q_top)
     qp->q_rdptr = qp->q_buffer;

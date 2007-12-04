@@ -62,7 +62,7 @@ void ChkIntSources(void) {
   QueryPerformanceCounter(&n);
   if (n.QuadPart > nextcnt.QuadPart) {
     nextcnt.QuadPart += slice.QuadPart;
-    chSchTimerHandlerI();
+    chSysTimerHandlerI();
     if (chSchRescRequiredI())
       chSchDoRescheduleI();
   }

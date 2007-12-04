@@ -27,10 +27,7 @@
 #ifdef CH_USE_SLEEP
 static void wakeup(void *p) {
 
-#ifdef CH_USE_DEBUG
-  if (((Thread *)p)->p_state != PRSLEEP)
-    chDbgPanic("chsleep.c, wakeup()");
-#endif
+  chDbgAssert(((Thread *)p)->p_state == PRSLEEP, "chsleep.c, wakeup()");
   chSchReadyI(p, RDY_OK);
 }
 
@@ -72,4 +69,3 @@ void chThdSleepUntil(t_time time) {
 #endif /* CH_USE_SLEEP */
 
 /** @} */
-
