@@ -33,7 +33,7 @@
  */
 void chSysInit(void) {
   static Thread mainthread;
-  static BYTE8 waIdleThread[UserStackSize(IDLE_THREAD_STACK_SIZE)];
+  static WorkingArea(waIdleThread, IDLE_THREAD_STACK_SIZE);
 
   chSchInit();
   chDbgInit();
