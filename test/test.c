@@ -129,7 +129,6 @@ t_msg Thread7(void *p) {
   return (unsigned int)p + 1;
 }
 
-
 /**
  * Tester thread, this thread must be created with priority \p NORMALPRIO.
  */

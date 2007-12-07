@@ -40,14 +40,17 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 *****************************************************************************
 
 *** 0.4.4 ***
+- Fixed a nasty bug in the pure THUMB mode threads trampoline code (chcore2.s,
+  threadstart), it failed on THUMB threads returning with a "bx" instruction.
+  The bug did not affect ARM mode or THUMB with interworking mode.
+- Fixed a bug in chIQGetTimeout(), interrupts were not re-enabled when exiting
+  the function because a timeout. The problem affected that API only.
 - Added a chDbgAssert() API to the debug subsystem.
 - Cleaned up the kernel source code using chDbgAssert() instead of a lot of
   "#ifdef CH_USE_DEBUG", it is much more readable now.
 - Now the threads working area is filled with a 0x55 when in debug mode, this
   will make easier to track stack usage using a JTAG probe.
 - Added an I/O Queues benchmark to the test suite.
-- Fixed a bug in chIQGetTimeout(), interrupts were not re-enabled when exiting
-  the function because a timeout. The problem affected that API only.
 - Removed the chSchTimerHandlerI() routine from chschd.c and moved it into
   chinit.c renaming it chSysTimerHandlerI() because it is not part of the
   scheduler.
