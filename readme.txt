@@ -45,6 +45,8 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   The bug did not affect ARM mode or THUMB with interworking mode.
 - Fixed a bug in chIQGetTimeout(), interrupts were not re-enabled when exiting
   the function because a timeout. The problem affected that API only.
+- Fixed a potential problem in chSysInit(), it should not affect any past
+  application.
 - Added a chDbgAssert() API to the debug subsystem.
 - Cleaned up the kernel source code using chDbgAssert() instead of a lot of
   "#ifdef CH_USE_DEBUG", it is much more readable now.
