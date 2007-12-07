@@ -47,9 +47,9 @@ threadstart:
         bx      r0
 .code 16
         mov     r0, r5
-        mov     lr, pc
-        bx      r4
+        bl      jmpr4
         bl      chThdExit
+jmpr4:  bx      r4
 .code 32
 #endif
 
@@ -202,14 +202,17 @@ UART1IrqHandler:
  * Common exit point for all IRQ routines, it performs the rescheduling if
  * required.
  */
-IrqCommon:
 #ifdef THUMB_NO_INTERWORKING
 .code 16
+.globl IrqCommon
+IrqCommon:
         bl      chSchRescRequiredI
         mov     lr, pc
         bx      lr
 .code 32
 #else
+.globl IrqCommon
+IrqCommon:
         bl      chSchRescRequiredI
 #endif
         cmp     r0, #0                          // Simply returns if a
