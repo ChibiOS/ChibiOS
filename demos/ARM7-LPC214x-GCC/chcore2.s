@@ -71,7 +71,7 @@ FiqHandler:
         ldr     r0, =chSysHalt
         bx      r0
 #else
-        bl      chSysHalt
+        b       chSysHalt
 #endif
 
 #ifdef THUMB
