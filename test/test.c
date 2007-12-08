@@ -310,7 +310,7 @@ t_msg TestThread(void *p) {
   }
   print("Queues throughput = ");
   printn(i * 4);
-  print(" bytes/S");
+  println(" bytes/S");
 
   println("\r\nTest complete");
   return 0;

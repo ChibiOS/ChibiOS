@@ -40,9 +40,15 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 *****************************************************************************
 
 *** 0.4.4 ***
+- Fixed a very important bug in the preemption ARM code, important enough to
+  make this update *mandatory*.
+  Note: This is not a kernel bug but something specific with the ARM port, the
+        other ports are not affected.
 - Fixed a nasty bug in the pure THUMB mode threads trampoline code (chcore2.s,
   threadstart), it failed on THUMB threads returning with a "bx" instruction.
   The bug did not affect ARM mode or THUMB with interworking mode.
+  Note: This is not a kernel bug but something specific with the ARM port, the
+        other ports are not affected.
 - Fixed a bug in chIQGetTimeout(), interrupts were not re-enabled when exiting
   the function because a timeout. The problem affected that API only.
 - Fixed a potential problem in chSysInit(), it should not affect any past
