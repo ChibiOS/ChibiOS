@@ -20,6 +20,7 @@
 #include <ch.h>
 
 #include "lpc214x.h"
+#include "vic.h"
 #include "lpc214x_serial.h"
 
 FullDuplexDriver COM1;
@@ -94,14 +95,40 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
   }
 }
 
-void UART0Irq(void) {
+__attribute__((naked, weak))
+void UART0IrqHandler(void) {
 
+  asm(".code 32                                 \n\t" \
+      "stmfd    sp!, {r0-r3, r12, lr}           \n\t");
+#ifdef THUMB
+  asm("add      r0, pc, #1                      \n\t" \
+      "bx       r0                              \n\t" \
+      ".code 16                                 \n\t");
   ServeInterrupt(U0Base, &COM1);
+  asm("ldr      r0, =IrqCommon                  \n\t" \
+      "bx       r0                              \n\t");
+#else
+  ServeInterrupt(U0Base, &COM1);
+  asm("b        IrqCommon                       \n\t");
+#endif
 }
 
-void UART1Irq(void) {
+__attribute__((naked, weak))
+void UART1IrqHandler(void) {
 
+  asm(".code 32                                 \n\t" \
+      "stmfd    sp!, {r0-r3, r12, lr}           \n\t");
+#ifdef THUMB
+  asm("add      r0, pc, #1                      \n\t" \
+      "bx       r0                              \n\t" \
+      ".code 16                                 \n\t");
   ServeInterrupt(U1Base, &COM2);
+  asm("ldr      r0, =IrqCommon                  \n\t" \
+      "bx       r0                              \n\t");
+#else
+  ServeInterrupt(U1Base, &COM2);
+  asm("b        IrqCommon                       \n\t");
+#endif
 }
 
 #ifdef FIFO_PRELOAD
@@ -176,7 +203,10 @@ void SetUARTI(UART *u, int speed, int lcr, int fcr) {
 /*
  * Serial subsystem initialization.
  */
-void InitSerial(void) {
+void InitSerial(int vector1, int vector2) {
+
+  SetVICVector(UART0IrqHandler, vector1, SOURCE_UART0);
+  SetVICVector(UART1IrqHandler, vector2, SOURCE_UART1);
 
   PCONP = (PCONP & PCALL) | PCUART0 | PCUART1;
 

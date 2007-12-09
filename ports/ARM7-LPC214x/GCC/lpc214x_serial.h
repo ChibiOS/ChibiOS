@@ -40,7 +40,7 @@
 #ifdef __cplusplus
 }
 #endif
-  void InitSerial(void);
+  void InitSerial(int vector1, int vector2);
   void UART0IrqHandler(void);
   void UART1IrqHandler(void);
   void SetUARTI(UART *u, int speed, int lcr, int fcr);

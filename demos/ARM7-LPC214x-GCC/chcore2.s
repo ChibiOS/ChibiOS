@@ -53,18 +53,23 @@ jmpr4:  bx      r4
 .code 32
 #endif
 
+.weak UndHandler
 .globl UndHandler
 UndHandler:
 
+.weak SwiHandler
 .globl SwiHandler
 SwiHandler:
 
+.weak PrefetchHandler
 .globl PrefetchHandler
 PrefetchHandler:
 
+.weak AbortHandler
 .globl AbortHandler
 AbortHandler:
 
+.weak FiqHandler
 .globl FiqHandler
 FiqHandler:
 #ifdef THUMB_NO_INTERWORKING
@@ -111,6 +116,8 @@ chSysSwitchI:
 #endif /* CH_CURRP_REGISTER_CACHE */
 
 /*
+ * Common exit point for all IRQ routines, it performs the rescheduling if
+ * required.
  * System stack frame structure after a context switch in the
  * interrupt handler:
  *
@@ -134,70 +141,6 @@ chSysSwitchI:
  *      |     R5     |  |
  * SP-> |     R4     | -+
  * Low  +------------+
- */
-.globl IrqHandler
-IrqHandler:
-        stmfd   sp!, {r0-r3, r12, lr}
-#ifdef THUMB_NO_INTERWORKING
-        add     r0, pc, #1
-        bx      r0
-.code 16
-        bl      NonVectoredIrq
-        b       IrqCommon
-.code 32
-#else
-        bl      NonVectoredIrq
-        b       IrqCommon
-#endif
-
-.globl T0IrqHandler
-T0IrqHandler:
-        stmfd   sp!, {r0-r3, r12, lr}
-#ifdef THUMB_NO_INTERWORKING
-        add     r0, pc, #1
-        bx      r0
-.code 16
-        bl      Timer0Irq
-        b       IrqCommon
-.code 32
-#else
-        bl      Timer0Irq
-        b       IrqCommon
-#endif
-
-.globl UART0IrqHandler
-UART0IrqHandler:
-        stmfd   sp!, {r0-r3, r12, lr}
-#ifdef THUMB_NO_INTERWORKING
-        add     r0, pc, #1
-        bx      r0
-.code 16
-        bl      UART0Irq
-        b       IrqCommon
-.code 32
-#else
-        bl      UART0Irq
-        b       IrqCommon
-#endif
-
-.globl UART1IrqHandler
-UART1IrqHandler:
-        stmfd   sp!, {r0-r3, r12, lr}
-#ifdef THUMB_NO_INTERWORKING
-        add     r0, pc, #1
-        bx      r0
-.code 16
-        bl      UART1Irq
-        b       IrqCommon
-.code 32
-#else
-        bl      UART1Irq
-        b       IrqCommon
-#endif
-
-/*
- * Common exit point for all IRQ routines, it performs the rescheduling if
- * required.
  */
 #ifdef THUMB_NO_INTERWORKING
 .code 16

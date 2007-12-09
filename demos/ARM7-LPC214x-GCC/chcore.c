@@ -116,13 +116,11 @@ void hwinit(void) {
    */
   InitVIC();
   VICDefVectAddr = (IOREG32)IrqHandler;
-  SetVICVector(T0IrqHandler, 0, SOURCE_Timer0);
-  SetVICVector(UART0IrqHandler, 1, SOURCE_UART0);
-  SetVICVector(UART1IrqHandler, 2, SOURCE_UART1);
 
   /*
    * System Timer initialization, 1ms intervals.
    */
+  SetVICVector(T0IrqHandler, 0, SOURCE_Timer0);
   VICIntEnable = INTMASK(SOURCE_Timer0);
   TC *timer = T0Base;
   timer->TC_PR = VAL_TC0_PRESCALER;
@@ -134,7 +132,7 @@ void hwinit(void) {
   /*
    * Other subsystems.
    */
-  InitSerial();
+  InitSerial(1, 2);
   InitSSP();
   InitMMC();
   InitBuzzer();
@@ -174,17 +172,45 @@ void chSysPuts(char *msg) {
 /*
  * Non-vectored IRQs handling here.
  */
-void NonVectoredIrq(void) {
+__attribute__((naked, weak))
+void IrqHandler(void) {
 
+  asm(".code 32                                 \n\t" \
+      "stmfd    sp!, {r0-r3, r12, lr}           \n\t");
+#ifdef THUMB
+  asm("add      r0, pc, #1                      \n\t" \
+      "bx       r0                              \n\t" \
+      ".code 16                                 \n\t");
   VICVectAddr = 0;
+  asm("ldr      r0, =IrqCommon                  \n\t" \
+      "bx       r0                              \n\t");
+#else
+  VICVectAddr = 0;
+  asm("b        IrqCommon                       \n\t");
+#endif
 }
 
 /*
  * Timer 0 IRQ handling here.
  */
-void Timer0Irq(void) {
+__attribute__((naked, weak))
+void T0IrqHandler(void) {
 
+  asm(".code 32                                 \n\t" \
+      "stmfd    sp!, {r0-r3, r12, lr}           \n\t");
+#ifdef THUMB
+  asm("add      r0, pc, #1                      \n\t" \
+      "bx       r0                              \n\t" \
+      ".code 16                                 \n\t");
   T0IR = 1;             /* Clear interrupt on match MR0. */
   chSysTimerHandlerI();
   VICVectAddr = 0;
+  asm("ldr      r0, =IrqCommon                  \n\t" \
+      "bx       r0                              \n\t");
+#else
+  T0IR = 1;             /* Clear interrupt on match MR0. */
+  chSysTimerHandlerI();
+  VICVectAddr = 0;
+  asm("b        IrqCommon                       \n\t");
+#endif
 }
