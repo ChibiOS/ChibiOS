@@ -72,12 +72,25 @@ AbortHandler:
 .weak FiqHandler
 .globl FiqHandler
 FiqHandler:
+        b       halt32
+
+.weak chSysHalt
 #ifdef THUMB_NO_INTERWORKING
-        ldr     r0, =chSysHalt
+.code 16
+.globl chSysHalt
+chSysHalt:
+        mov     r0, pc
         bx      r0
+.code 32
 #else
-        b       chSysHalt
+.globl chSysHalt
+chSysHalt:
 #endif
+halt32:
+        mrs     r0, CPSR
+        orr     r0, #I_BIT | F_BIT
+        msr     CPSR_c, r0
+.loop:  b       .loop
 
 #ifdef THUMB
 .globl chSysLock
@@ -157,7 +170,7 @@ IrqCommon:
 #endif
         cmp     r0, #0                          // Simply returns if a
         ldmeqfd sp!, {r0-r3, r12, lr}           // reschedule is not
-        subeqs  pc, lr, #4			// required.
+        subeqs  pc, lr, #4                      // required.
 
         // Saves the IRQ mode registers in the system stack.
         ldmfd   sp!, {r0-r3, r12, lr}           // IRQ stack now empty.

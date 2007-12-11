@@ -151,19 +151,6 @@ void _IdleThread(void *p) {
 }
 
 /*
- * System halt.
- * Yellow LED only.
- */
-void chSysHalt(void) {
-
-  chSysLock();
-  IO0SET = 0x00000C00;
-  IO0CLR = 0x80000000;
-  while (TRUE)
-    ;
-}
-
-/*
  * System console message (not implemented).
  */
 void chSysPuts(char *msg) {

@@ -53,26 +53,44 @@ jmpr4:  bx      r4
 .code 32
 #endif
 
+.weak UndHandler
 .globl UndHandler
 UndHandler:
 
+.weak SwiHandler
 .globl SwiHandler
 SwiHandler:
 
+.weak PrefetchHandler
 .globl PrefetchHandler
 PrefetchHandler:
 
+.weak AbortHandler
 .globl AbortHandler
 AbortHandler:
 
+.weak FiqHandler
 .globl FiqHandler
 FiqHandler:
+        b       halt32
+
+.weak chSysHalt
 #ifdef THUMB_NO_INTERWORKING
-        ldr     r0, =chSysHalt
+.code 16
+.globl chSysHalt
+chSysHalt:
+        mov     r0, pc
         bx      r0
+.code 32
 #else
-        b       chSysHalt
+.globl chSysHalt
+chSysHalt:
 #endif
+halt32:
+        mrs     r0, CPSR
+        orr     r0, #I_BIT | F_BIT
+        msr     CPSR_c, r0
+.loop:  b       .loop
 
 #ifdef THUMB
 .globl chSysLock
@@ -111,6 +129,8 @@ chSysSwitchI:
 #endif /* CH_CURRP_REGISTER_CACHE */
 
 /*
+ * Common exit point for all IRQ routines, it performs the rescheduling if
+ * required.
  * System stack frame structure after a context switch in the
  * interrupt handler:
  *
@@ -135,70 +155,6 @@ chSysSwitchI:
  * SP-> |     R4     | -+
  * Low  +------------+
  */
-.globl IrqHandler
-IrqHandler:
-        stmfd   sp!, {r0-r3, r12, lr}
-#ifdef THUMB_NO_INTERWORKING
-        add     r0, pc, #1
-        bx      r0
-.code 16
-        bl      NonVectoredIrq
-        b       IrqCommon
-.code 32
-#else
-        bl      NonVectoredIrq
-        b       IrqCommon
-#endif
-
-.globl T0IrqHandler
-T0IrqHandler:
-        stmfd   sp!, {r0-r3, r12, lr}
-#ifdef THUMB_NO_INTERWORKING
-        add     r0, pc, #1
-        bx      r0
-.code 16
-        bl      Timer0Irq
-        b       IrqCommon
-.code 32
-#else
-        bl      Timer0Irq
-        b       IrqCommon
-#endif
-/*
-.globl UART0IrqHandler
-UART0IrqHandler:
-        stmfd   sp!, {r0-r3, r12, lr}
-#ifdef THUMB_NO_INTERWORKING
-        add     r0, pc, #1
-        bx      r0
-.code 16
-        bl      UART0Irq
-        b       IrqCommon
-.code 32
-#else
-        bl      UART0Irq
-        b       IrqCommon
-#endif
-
-.globl UART1IrqHandler
-UART1IrqHandler:
-        stmfd   sp!, {r0-r3, r12, lr}
-#ifdef THUMB_NO_INTERWORKING
-        add     r0, pc, #1
-        bx      r0
-.code 16
-        bl      UART1Irq
-        b       IrqCommon
-.code 32
-#else
-        bl      UART1Irq
-        b       IrqCommon
-#endif
-*/
-/*
- * Common exit point for all IRQ routines, it performs the rescheduling if
- * required.
- */
 #ifdef THUMB_NO_INTERWORKING
 .code 16
 .globl IrqCommon
@@ -214,7 +170,7 @@ IrqCommon:
 #endif
         cmp     r0, #0                          // Simply returns if a
         ldmeqfd sp!, {r0-r3, r12, lr}           // reschedule is not
-        subeqs  pc, lr, #4			// required.
+        subeqs  pc, lr, #4                      // required.
 
         // Saves the IRQ mode registers in the system stack.
         ldmfd   sp!, {r0-r3, r12, lr}           // IRQ stack now empty.
