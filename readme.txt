@@ -49,6 +49,7 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   to keep the processor in the state it had when it was halted.
   Note: This is not a kernel bug but something specific with the ARM port, the
         other ports are not affected.
+- Fixed the macro chThdResumeI(), it had a regression.
 
 *** 0.4.4 ***
 - Fixed a very important bug in the preemption ARM code, important enough to
