@@ -219,7 +219,7 @@ extern "C" {
  * \p chThdSuspend().
  * @param tp the pointer to the thread
  */
-#define chThdResumeI(tp) chSchReadyI(tp)
+#define chThdResumeI(tp) chSchReadyI((tp), RDY_OK)
 
 #endif  /* _THREADS_H_ */
 
