@@ -39,6 +39,18 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.5.0 ***
+- NEW: Binary Mutexes, the new mechanism provides a complete implementation
+  of the "priority inheritance" algorithm as a tool for work around the
+  priority inversion problem.
+  The Mutexes are not meant to replace the Semaphores that are still the best
+  mechanism for synchronization between interrupt handlers and high level
+  code, something Mutexes cannot do.
+  Soon an article will be added to the wiki describing pro and cons of the
+  various mechanisms and the correct use cases.
+- RT Semaphores subsystem removed, the Mutexes implements a better solution
+  for the same problem.
+
 *** 0.4.5 ***
 - Moved the serial IRQ handlers and VIC vectors initialization inside the
   serial drivers. Now the serial-related code is all inside the driver.

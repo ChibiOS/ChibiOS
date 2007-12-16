@@ -4,7 +4,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = ChibiOS/RT
-PROJECT_NUMBER         = "0.4.5 beta"
+PROJECT_NUMBER         = "0.5.0 beta"
 OUTPUT_DIRECTORY       = .
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
@@ -231,7 +231,7 @@ PREDEFINED             = __JUST_STUBS__ \
                          CH_USE_TERMINATE \
                          CH_USE_WAITEXIT \
                          CH_USE_SEMAPHORES \
-                         CH_USE_RT_SEMAPHORES \
+                         CH_USE_MUTEXES \
                          CH_USE_EVENTS \
                          CH_USE_EVENTS_TIMEOUT \
                          CH_USE_EXIT_EVENT \

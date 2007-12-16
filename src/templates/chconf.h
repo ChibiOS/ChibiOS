@@ -78,10 +78,9 @@
  * @note requires \p CH_USE_VIRTUAL_TIMERS.*/
 #define CH_USE_SEMAPHORES_TIMEOUT
 
-/** Configuration option: if specified then the Semaphores APIs with priority
- *  shift are included in the kernel.
- * @note requires \p CH_USE_SEMAPHORES.*/
-#define CH_USE_RT_SEMAPHORES
+/** Configuration option: if specified then the Mutexes APIs are included in
+ * the kernel.*/
+#define CH_USE_MUTEXES
 
 /** Configuration option: if specified then the Events APIs are included in
  *  the kernel.*/

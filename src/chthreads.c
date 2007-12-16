@@ -34,8 +34,9 @@ void _InitThread(t_prio prio, t_tmode mode, Thread *tp) {
   tp->p_flags = mode;
   tp->p_prio = prio;
   tp->p_rdymsg = RDY_OK;
-#ifdef CH_USE_RT_SEMAPHORES
-  tp->p_rtcnt = 0;
+#ifdef CH_USE_MUTEXES
+  tp->p_mtxlist = NULL;
+  tp->p_realprio = prio;
 #endif
 #ifdef CH_USE_WAITEXIT
   list_init(&tp->p_waiting);
@@ -125,11 +126,14 @@ void chThdSetPriority(t_prio newprio) {
   chDbgAssert(newprio <= HIGHPRIO, "chthreads.c, chThdSetPriority()")
   chSysLock();
 
-#ifdef CH_USE_RT_SEMAPHORES
-  if (currp->p_rtcnt)
-    currp->p_prio = newprio + MEPRIO;
+#ifdef CH_USE_MUTEXES
+  if (currp->p_prio != currp->p_realprio) {
+    if (newprio > currp->p_prio)
+      currp->p_prio = newprio;
+  }
   else
     currp->p_prio = newprio;
+  currp->p_realprio = newprio;
 #else
   currp->p_prio = newprio;
 #endif

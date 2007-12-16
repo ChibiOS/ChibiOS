@@ -57,6 +57,10 @@
 #include "semaphores.h"
 #endif
 
+#ifndef _MUTEXES_H_
+#include "mutexes.h"
+#endif
+
 #ifndef _EVENTS_H_
 #include "events.h"
 #endif

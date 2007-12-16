@@ -69,8 +69,9 @@ ASRC =
 #       enabled for all modules and that lowers performance.
 TSRC = chcore.c \
        ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
-       ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chevents.c \
-       ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c ../../src/chserial.c \
+       ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chmtx.c \
+       ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \
+       ../../src/chserial.c \
        ../../ports/ARM7-LPC214x/GCC/vic.c \
        main.c
 

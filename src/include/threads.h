@@ -62,6 +62,9 @@ struct Thread {
     /** Semaphore where the thread is waiting on (only in \p PRWTSEM state).*/
     Semaphore       *p_semp;
 #endif
+#ifdef CH_USE_MUTEXES
+    Mutex           *p_mtxp;
+#endif
 #ifdef CH_USE_EVENTS
     /** Enabled events mask (only while in \p PRWTEVENT state).*/
     t_eventmask     p_ewmask;
@@ -96,9 +99,10 @@ struct Thread {
   /** Pending events mask.*/
   t_eventmask       p_epending;
 #endif
-#ifdef CH_USE_RT_SEMAPHORES
-  /** RT semaphores depth counter.*/
-  t_cnt             p_rtcnt;
+#ifdef CH_USE_MUTEXES
+  /** Owner mutexes list, \p NULL terminated.*/
+  Mutex             *p_mtxlist;
+  t_prio            p_realprio;
 #endif
 };
 
@@ -112,18 +116,20 @@ struct Thread {
 #define PRSUSPENDED 3
 /** Thread state: Waiting on a semaphore.*/
 #define PRWTSEM     4
+/** Thread state: Waiting on a mutex.*/
+#define PRWTMTX     5
 /** Thread state: Waiting in \p chThdSleep() or \p chThdSleepUntil().*/
-#define PRSLEEP     5
+#define PRSLEEP     6
 /** Thread state: Waiting in \p chThdWait().*/
-#define PRWAIT      6
+#define PRWAIT      7
 /** Thread state: Waiting in \p chEvtWait().*/
-#define PRWTEVENT   7
+#define PRWTEVENT   8
 /** Thread state: Waiting in \p chMsgSend().*/
-#define PRSNDMSG    8
+#define PRSNDMSG    9
 /** Thread state: Waiting in \p chMsgWait().*/
-#define PRWTMSG     9
+#define PRWTMSG     10
 /** Thread state: After termination.*/
-#define PREXIT      10
+#define PREXIT      11
 
 /** Thread option: Termination requested flag.*/
 #define P_TERMINATE 1
@@ -138,8 +144,6 @@ struct Thread {
 #define NORMALPRIO  64
 /** Highest user priority.*/
 #define HIGHPRIO    127
-/** Boosted base priority.*/
-#define MEPRIO      128
 /** Greatest possible priority.*/
 #define ABSPRIO     255
 

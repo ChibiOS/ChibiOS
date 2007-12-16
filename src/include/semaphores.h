@@ -52,13 +52,6 @@ extern "C" {
   void chSemSignal(Semaphore *sp);
   void chSemSignalI(Semaphore *sp);
   void chSemSignalWait(Semaphore *sps, Semaphore *spw);
-
-#ifdef CH_USE_RT_SEMAPHORES
-  void chSemRaisePrioWait(Semaphore *sp);
-  void chSemLowerPrioSignal(Semaphore *sp);
-  void chSemRaisePrioSignalWait(Semaphore *sps, Semaphore *spw);
-  void chSemLowerPrioSignalWait(Semaphore *sps, Semaphore *spw);
-#endif
 #ifdef __cplusplus
 }
 #endif
@@ -82,6 +75,6 @@ extern "C" {
 
 #endif /* CH_USE_SEMAPHORES */
 
-#endif /* _SEM_H_ */
+#endif /* _SEMAPHORES_H_ */
 
 /** @} */
