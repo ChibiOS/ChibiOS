@@ -147,3 +147,24 @@ bssloop:
         bl      chSysHalt
 .code 32
 #endif
+
+.weak UndHandler
+.globl UndHandler
+UndHandler:
+
+.weak SwiHandler
+.globl SwiHandler
+SwiHandler:
+
+.weak PrefetchHandler
+.globl PrefetchHandler
+PrefetchHandler:
+
+.weak AbortHandler
+.globl AbortHandler
+AbortHandler:
+
+.weak FiqHandler
+.globl FiqHandler
+FiqHandler:
+        b       _halt32

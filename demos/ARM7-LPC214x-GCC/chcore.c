@@ -162,19 +162,11 @@ void chSysPuts(char *msg) {
 __attribute__((naked, weak))
 void IrqHandler(void) {
 
-  asm(".code 32                                 \n\t" \
-      "stmfd    sp!, {r0-r3, r12, lr}           \n\t");
-#ifdef THUMB
-  asm("add      r0, pc, #1                      \n\t" \
-      "bx       r0                              \n\t" \
-      ".code 16                                 \n\t");
-  VICVectAddr = 0;
-  asm("ldr      r0, =IrqCommon                  \n\t" \
-      "bx       r0                              \n\t");
-#else
-  VICVectAddr = 0;
-  asm("b        IrqCommon                       \n\t");
-#endif
+  chSysIRQEnterI();
+
+  /* nothing */
+
+  chSysIRQExitI();
 }
 
 /*
@@ -183,21 +175,148 @@ void IrqHandler(void) {
 __attribute__((naked, weak))
 void T0IrqHandler(void) {
 
-  asm(".code 32                                 \n\t" \
-      "stmfd    sp!, {r0-r3, r12, lr}           \n\t");
+  chSysIRQEnterI();
+
+  T0IR = 1;             /* Clear interrupt on match MR0. */
+  chSysTimerHandlerI();
+
+  chSysIRQExitI();
+}
+
+/*
+ * Common IRQ exit code, \p chSysIRQExitI() just jumps here.
+ *
+ * System stack frame structure after a context switch in the
+ * interrupt handler:
+ *
+ * High +------------+
+ *      |   LR_USR   | -+
+ *      |     R12    |  |
+ *      |     R3     |  |
+ *      |     R2     |  | External context: IRQ handler frame
+ *      |     R1     |  |
+ *      |     R0     |  |
+ *      |   LR_IRQ   |  |   (user code return address)
+ *      |    SPSR    | -+   (user code status)
+ *      |    ....    | <- chSchDoRescheduleI() stack frame, optimize it for space
+ *      |     LR     | -+   (system code return address)
+ *      |     R11    |  |
+ *      |     R10    |  |
+ *      |     R9     |  |
+ *      |     R8     |  | Internal context: chSysSwitchI() frame
+ *      |    (R7)    |  |   (optional, see CH_CURRP_REGISTER_CACHE)
+ *      |     R6     |  |
+ *      |     R5     |  |
+ * SP-> |     R4     | -+
+ * Low  +------------+
+ */
+__attribute__((naked, weak))
+void IrqCommon(void) {
+  register BOOL b asm("r0");
+
+  VICVectAddr = 0;
+  b = chSchRescRequiredI();
 #ifdef THUMB
-  asm("add      r0, pc, #1                      \n\t" \
-      "bx       r0                              \n\t" \
-      ".code 16                                 \n\t");
-  T0IR = 1;             /* Clear interrupt on match MR0. */
-  chSysTimerHandlerI();
-  VICVectAddr = 0;
-  asm("ldr      r0, =IrqCommon                  \n\t" \
-      "bx       r0                              \n\t");
-#else
-  T0IR = 1;             /* Clear interrupt on match MR0. */
-  chSysTimerHandlerI();
-  VICVectAddr = 0;
-  asm("b        IrqCommon                       \n\t");
+  asm(".p2align 2,,                                             \n\t" \
+      "mov      lr, pc                                          \n\t" \
+      "bx       lr                                              \n\t" \
+      ".code 32                                                 \n\t");
 #endif
+  /*
+   * If a reschedulation is not required then just returns from the IRQ.
+   */
+  asm("cmp      r0, #0                                          \n\t" \
+      "ldmeqfd  sp!, {r0-r3, r12, lr}                           \n\t" \
+      "subeqs   pc, lr, #4                                      \n\t");
+  /*
+   * Reschedulation required, saves the external context on the
+   * system/user stack and empties the IRQ stack.
+   */
+  asm(".set     MODE_IRQ, 0x12                                  \n\t" \
+      ".set     MODE_SYS, 0x1F                                  \n\t" \
+      ".set     I_BIT, 0x80                                     \n\t" \
+      "ldmfd    sp!, {r0-r3, r12, lr}                           \n\t" \
+      "msr      CPSR_c, #MODE_SYS | I_BIT                       \n\t" \
+      "stmfd    sp!, {r0-r3, r12, lr}                           \n\t" \
+      "msr      CPSR_c, #MODE_IRQ | I_BIT                       \n\t" \
+      "mrs      r0, SPSR                                        \n\t" \
+      "mov      r1, lr                                          \n\t" \
+      "msr      CPSR_c, #MODE_SYS | I_BIT                       \n\t" \
+      "stmfd    sp!, {r0, r1}                                   \n\t");
+
+#ifdef THUMB_NO_INTERWORKING
+  asm("add      r0, pc, #1                                      \n\t" \
+      "bx       r0                                              \n\t" \
+      ".code 16                                                 \n\t" \
+      "bl       chSchDoRescheduleI                              \n\t" \
+      ".p2align 2,,                                             \n\t" \
+      "mov      lr, pc                                          \n\t" \
+      "bx       lr                                              \n\t" \
+      ".code 32                                                 \n\t");
+#else
+  asm("bl       chSchDoRescheduleI                              \n\t");
+#endif
+
+  /*
+   * Restores the external context.
+   */
+  asm("ldmfd    sp!, {r0, r1}                                   \n\t" \
+      "msr      CPSR_c, #MODE_IRQ | I_BIT                       \n\t" \
+      "msr      SPSR_fsxc, r0                                   \n\t" \
+      "mov      lr, r1                                          \n\t" \
+      "msr      CPSR_c, #MODE_SYS | I_BIT                       \n\t" \
+      "ldmfd    sp!, {r0-r3, r12, lr}                           \n\t" \
+      "msr      CPSR_c, #MODE_IRQ | I_BIT                       \n\t" \
+      "subs     pc, lr, #4                                      \n\t");
+
+  /*
+   * Threads entry/exit code. It is declared weak so you can easily replace it.
+   * NOTE: It is always invoked in ARM mode, it does the mode switching.
+   * NOTE: It is included into IrqCommon to make sure the symbol refers to
+   *       32 bit code.
+   */
+  asm(".set    F_BIT, 0x40                                      \n\t" \
+      ".weak threadstart                                        \n\t" \
+      ".globl threadstart                                       \n\t" \
+      "threadstart:                                             \n\t" \
+      "msr      CPSR_c, #MODE_SYS                               \n\t");
+#ifndef THUMB_NO_INTERWORKING
+  asm("mov      r0, r5                                          \n\t" \
+      "mov      lr, pc                                          \n\t" \
+      "bx       r4                                              \n\t" \
+      "bl       chThdExit                                       \n\t");
+#else
+  asm("add      r0, pc, #1                                      \n\t" \
+      "bx       r0                                              \n\t" \
+      ".code 16                                                 \n\t" \
+      "mov      r0, r5                                          \n\t" \
+      "bl       jmpr4                                           \n\t" \
+      "bl       chThdExit                                       \n\t" \
+      "jmpr4:                                                   \n\t" \
+      "bx       r4                                              \n\t");
+#endif
+}
+
+/*
+ * System halt.
+ */
+__attribute__((naked, weak))
+void chSysHalt(void) {
+
+  asm(".set     F_BIT, 0x40                                     \n\t" \
+      ".set     I_BIT, 0x80                                     \n\t");
+#ifdef THUMB
+  asm(".p2align 2,,                                             \n\t" \
+      "mov      r0, pc                                          \n\t" \
+      "bx       r0                                              \n\t");
+#endif
+  asm(".code 32                                                 \n\t" \
+      ".weak _halt32                                            \n\t" \
+      ".globl _halt32                                           \n\t" \
+      "_halt32:                                                 \n\t" \
+      "mrs      r0, CPSR                                        \n\t" \
+      "orr      r0, #I_BIT | F_BIT                              \n\t" \
+      "msr      CPSR_c, r0                                      \n\t" \
+      ".loop:                                                   \n\t" \
+      "b        .loop                                           \n\t");
 }

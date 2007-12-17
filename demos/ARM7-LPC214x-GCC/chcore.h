@@ -92,7 +92,7 @@ extern void chSysUnlock(void);
 #define INT_REQUIRED_STACK 0x10
 #else /* !THUMB */
 #define INT_REQUIRED_STACK 0
-#endif /* THUMB */
+#endif /* !THUMB */
 #define StackAlign(n) ((((n) - 1) | 3) + 1)
 #define UserStackSize(n) StackAlign(sizeof(Thread) +                    \
                                     sizeof(struct intctx) +             \
@@ -101,16 +101,37 @@ extern void chSysUnlock(void);
                                     INT_REQUIRED_STACK)
 #define WorkingArea(s, n) ULONG32 s[UserStackSize(n) >> 2];
 
+#ifdef THUMB
+#define chSysIRQEnterI() {                                              \
+  asm(".code 32                                 \n\t"                   \
+      "stmfd    sp!, {r0-r3, r12, lr}           \n\t"                   \
+      "add      r0, pc, #1                      \n\t"                   \
+      "bx       r0                              \n\t"                   \
+      ".code 16                                 \n\t");                 \
+}
+
+#define chSysIRQExitI() {                                               \
+  VICVectAddr = 0;                                                      \
+  asm("ldr      r0, =IrqCommon                  \n\t"                   \
+      "bx       r0                              \n\t");                 \
+}
+#else /* !THUMB */
+#define chSysIRQEnterI() {                                              \
+  asm("stmfd    sp!, {r0-r3, r12, lr}           \n\t");                 \
+}
+
+#define chSysIRQExitI() {                                               \
+  asm("b        IrqCommon                       \n\t");                 \
+}
+#endif /* !THUMB */
+
 /* It requires zero bytes, but better be safe.*/
 #define IDLE_THREAD_STACK_SIZE 8
 void _IdleThread(void *p) __attribute__((noreturn));
 
-void chSysHalt(void) __attribute__((noreturn));
+void chSysHalt(void);
 void chSysSwitchI(Context *oldp, Context *newp);
 void chSysPuts(char *msg);
 void threadstart(void);
-void DefFiqHandler(void);
-void DefIrqHandler(void);
-void SpuriousHandler(void);
 
 #endif /* _CHCORE_H_ */

@@ -55,7 +55,6 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
 
     switch (u->UART_IIR & IIR_SRC_MASK) {
     case IIR_SRC_NONE:
-      VICVectAddr = 0;
       return;
     case IIR_SRC_ERROR:
       SetError(u->UART_LSR, com);
@@ -98,37 +97,21 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
 __attribute__((naked, weak))
 void UART0IrqHandler(void) {
 
-  asm(".code 32                                 \n\t" \
-      "stmfd    sp!, {r0-r3, r12, lr}           \n\t");
-#ifdef THUMB
-  asm("add      r0, pc, #1                      \n\t" \
-      "bx       r0                              \n\t" \
-      ".code 16                                 \n\t");
+  chSysIRQEnterI();
+
   ServeInterrupt(U0Base, &COM1);
-  asm("ldr      r0, =IrqCommon                  \n\t" \
-      "bx       r0                              \n\t");
-#else
-  ServeInterrupt(U0Base, &COM1);
-  asm("b        IrqCommon                       \n\t");
-#endif
+
+  chSysIRQExitI();
 }
 
 __attribute__((naked, weak))
 void UART1IrqHandler(void) {
 
-  asm(".code 32                                 \n\t" \
-      "stmfd    sp!, {r0-r3, r12, lr}           \n\t");
-#ifdef THUMB
-  asm("add      r0, pc, #1                      \n\t" \
-      "bx       r0                              \n\t" \
-      ".code 16                                 \n\t");
+  chSysIRQEnterI();
+
   ServeInterrupt(U1Base, &COM2);
-  asm("ldr      r0, =IrqCommon                  \n\t" \
-      "bx       r0                              \n\t");
-#else
-  ServeInterrupt(U1Base, &COM2);
-  asm("b        IrqCommon                       \n\t");
-#endif
+
+  chSysIRQExitI();
 }
 
 #ifdef FIFO_PRELOAD

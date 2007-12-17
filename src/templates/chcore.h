@@ -100,6 +100,21 @@ typedef struct {
  */
 #define chSysUnlock()
 
+/**
+ * IRQ handler enter code.
+ * @note Usually IRQ handlers function are also declared naked.
+ * @note On some architectures this macro can be empty.
+ */
+#define chSysIRQEnterI()
+
+/**
+ * IRQ handler exit code.
+ * @note Usually IRQ handlers function are also declared naked.
+ * @note This macro must perform the final reschedulation by using
+ *       \p chSchRescRequiredI() and \p chSchDoRescheduleI().
+ */
+#define chSysIRQExitI()
+
 void _IdleThread(void *p);
 void chSysHalt(void);
 void chSysSwitchI(Context *oldp, Context *newp);

@@ -60,6 +60,8 @@ typedef struct {
 #define chSysLock()
 #define chSysUnlock()
 #define chSysPuts(msg) {}
+#define chSysIRQEnterI()
+#define chSysIRQExitI()
 
 #define INT_REQUIRED_STACK 0
 #define StackAlign(n) ((((n) - 1) | 3) + 1)
