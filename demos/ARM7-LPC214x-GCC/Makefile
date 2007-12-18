@@ -79,7 +79,7 @@ ASRC = ../../ports/ARM7-LPC214x/GCC/chcore.c \
 TSRC =
 
 # List ASM source files here
-ASMSRC = ../../ports/ARM7-LPC214x/GCC/crt0.s ../../ports/ARM7-LPC214x/GCC/chcore2.s
+ASMSRC = ../../ports/ARM7-LPC214x/GCC/crt0.s
 
 # List all user directories here
 UINCDIR = ../../src/include ../../src/lib ../../ports/ARM7-LPC214x/GCC

@@ -33,6 +33,67 @@ void _IdleThread(void *p) {
   }
 }
 
+#ifdef THUMB
+void chSysLock(void) {
+
+  asm(".p2align 2,,                                             \n\t" \
+      "mov      r0, pc                                          \n\t" \
+      "bx       r0                                              \n\t" \
+      ".code 32                                                 \n\t" \
+      "msr      CPSR_c, #0x9F                                   \n\t" \
+      "bx       lr                                              \n\t");
+}
+
+void chSysUnlock(void) {
+
+  asm(".p2align 2,,                                             \n\t" \
+      "mov      r0, pc                                          \n\t" \
+      "bx       r0                                              \n\t" \
+      ".code 32                                                 \n\t" \
+      "msr      CPSR_c, #0x1F                                   \n\t" \
+      "bx       lr                                              \n\t");
+}
+#endif
+
+void chSysSwitchI(Context *oldp, Context *newp) {
+
+#ifdef CH_CURRP_REGISTER_CACHE
+#ifdef THUMB
+  asm(".p2align 2,,                                             \n\t" \
+      "mov      r2, pc                                          \n\t" \
+      "bx       r2                                              \n\t" \
+      ".code 32                                                 \n\t" \
+      "stmfd    sp!, {r4, r5, r6, r8, r9, r10, r11, lr}         \n\t" \
+      "str      sp, [r0, #0]                                    \n\t" \
+      "ldr      sp, [r1, #0]                                    \n\t" \
+      "ldmfd    sp!, {r4, r5, r6, r8, r9, r10, r11, lr}         \n\t" \
+      "bx       lr                                              \n\t");
+#else /* !THUMB */
+  asm("stmfd    sp!, {r4, r5, r6, r8, r9, r10, r11, lr}         \n\t" \
+      "str      sp, [r0, #0]                                    \n\t" \
+      "ldr      sp, [r1, #0]                                    \n\t" \
+      "ldmfd    sp!, {r4, r5, r6, r8, r9, r10, r11, pc}         \n\t");
+#endif /* !THUMB */
+#else /* !CH_CURRP_REGISTER_CACHE */
+#ifdef THUMB
+  asm(".p2align 2,,                                             \n\t" \
+      "mov      r2, pc                                          \n\t" \
+      "bx       r2                                              \n\t" \
+      ".code 32                                                 \n\t" \
+      "stmfd    sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}     \n\t" \
+      "str      sp, [r0, #0]                                    \n\t" \
+      "ldr      sp, [r1, #0]                                    \n\t" \
+      "ldmfd    sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}     \n\t" \
+      "bx       lr                                              \n\t");
+#else /* !THUMB */
+  asm("stmfd    sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}     \n\t" \
+      "str      sp, [r0, #0]                                    \n\t" \
+      "ldr      sp, [r1, #0]                                    \n\t" \
+      "ldmfd    sp!, {r4, r5, r6, r7, r8, r9, r10, r11, pc}     \n\t");
+#endif /* !THUMB */
+#endif /* !CH_CURRP_REGISTER_CACHE */
+}
+
 /*
  * System console message (not implemented).
  */
