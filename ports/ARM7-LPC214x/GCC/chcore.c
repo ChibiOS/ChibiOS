@@ -40,33 +40,6 @@ void chSysPuts(char *msg) {
 }
 
 /*
- * Non-vectored IRQs handling here.
- */
-__attribute__((naked, weak))
-void IrqHandler(void) {
-
-  chSysIRQEnterI();
-
-  /* nothing */
-
-  chSysIRQExitI();
-}
-
-/*
- * Timer 0 IRQ handling here.
- */
-__attribute__((naked, weak))
-void T0IrqHandler(void) {
-
-  chSysIRQEnterI();
-
-  T0IR = 1;             /* Clear interrupt on match MR0. */
-  chSysTimerHandlerI();
-
-  chSysIRQExitI();
-}
-
-/*
  * Common IRQ exit code, \p chSysIRQExitI() just jumps here.
  *
  * System stack frame structure after a context switch in the

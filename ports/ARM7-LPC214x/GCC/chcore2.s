@@ -32,9 +32,9 @@
 
 .text
 .code 32
-.balign 4
 
 #ifdef THUMB
+.balign 16
 .globl chSysLock
 chSysLock:
         msr     CPSR_c, #MODE_SYS | I_BIT
@@ -46,6 +46,7 @@ chSysUnlock:
         bx      lr
 #endif
 
+.balign 16
 .globl chSysSwitchI
 chSysSwitchI:
 #ifdef CH_CURRP_REGISTER_CACHE

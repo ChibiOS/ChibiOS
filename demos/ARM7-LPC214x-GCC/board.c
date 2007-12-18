@@ -28,8 +28,32 @@
 #include "mmcsd.h"
 #include "buzzer.h"
 
-extern void IrqHandler(void);
-extern void T0IrqHandler(void);
+/*
+ * Non-vectored IRQs handling here.
+ */
+__attribute__((naked))
+static void IrqHandler(void) {
+
+  chSysIRQEnterI();
+
+  /* nothing */
+
+  chSysIRQExitI();
+}
+
+/*
+ * Timer 0 IRQ handling here.
+ */
+__attribute__((naked))
+static void T0IrqHandler(void) {
+
+  chSysIRQEnterI();
+
+  T0IR = 1;             /* Clear interrupt on match MR0. */
+  chSysTimerHandlerI();
+
+  chSysIRQExitI();
+}
 
 /*
  * Hardware initialization goes here.

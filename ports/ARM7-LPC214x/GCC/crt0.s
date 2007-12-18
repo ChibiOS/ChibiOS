@@ -136,8 +136,6 @@ bssloop:
         mov     r1, r0
         bl      main
         bl      chSysHalt
-.weak hwinit
-hwinit: bx      lr
 #else
         add     r0, pc, #1
         bx      r0
@@ -147,8 +145,6 @@ hwinit: bx      lr
         mov     r1, r0
         bl      main
         bl      chSysHalt
-.weak hwinit
-hwinit: bx      lr
 .code 32
 #endif
 
