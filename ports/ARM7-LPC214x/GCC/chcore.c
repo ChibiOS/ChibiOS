@@ -33,64 +33,71 @@ void _IdleThread(void *p) {
   }
 }
 
-#ifdef THUMB
+/*
+ * The following functions are present only if there is in the system any
+ * code compiled as THUMB that may invoke them.
+ * NOTE: The undefs are there in case this module is compiled in ARM mode but
+ *       there are THUMB modules in the system.
+ */
+#ifdef THUMB_PRESENT
+#undef chSysLock
 void chSysLock(void) {
 
+#ifdef THUMB
   asm(".p2align 2,,                                             \n\t" \
       "mov      r0, pc                                          \n\t" \
       "bx       r0                                              \n\t" \
-      ".code 32                                                 \n\t" \
-      "msr      CPSR_c, #0x9F                                   \n\t" \
+      ".code 32                                                 \n\t");
+#endif
+
+  asm("msr      CPSR_c, #0x9F                                   \n\t" \
       "bx       lr                                              \n\t");
 }
 
+#undef chSysUnlock
 void chSysUnlock(void) {
 
+#ifdef THUMB
   asm(".p2align 2,,                                             \n\t" \
       "mov      r0, pc                                          \n\t" \
       "bx       r0                                              \n\t" \
-      ".code 32                                                 \n\t" \
-      "msr      CPSR_c, #0x1F                                   \n\t" \
+      ".code 32                                                 \n\t");
+#endif
+
+  asm("msr      CPSR_c, #0x1F                                   \n\t" \
       "bx       lr                                              \n\t");
 }
 #endif
 
 void chSysSwitchI(Context *oldp, Context *newp) {
 
-#ifdef CH_CURRP_REGISTER_CACHE
 #ifdef THUMB
   asm(".p2align 2,,                                             \n\t" \
       "mov      r2, pc                                          \n\t" \
       "bx       r2                                              \n\t" \
-      ".code 32                                                 \n\t" \
-      "stmfd    sp!, {r4, r5, r6, r8, r9, r10, r11, lr}         \n\t" \
-      "str      sp, [r0, #0]                                    \n\t" \
-      "ldr      sp, [r1, #0]                                    \n\t" \
-      "ldmfd    sp!, {r4, r5, r6, r8, r9, r10, r11, lr}         \n\t" \
-      "bx       lr                                              \n\t");
-#else /* !THUMB */
+      ".code 32                                                 \n\t");
+#endif
+
+#ifdef CH_CURRP_REGISTER_CACHE
   asm("stmfd    sp!, {r4, r5, r6, r8, r9, r10, r11, lr}         \n\t" \
       "str      sp, [r0, #0]                                    \n\t" \
-      "ldr      sp, [r1, #0]                                    \n\t" \
-      "ldmfd    sp!, {r4, r5, r6, r8, r9, r10, r11, pc}         \n\t");
-#endif /* !THUMB */
-#else /* !CH_CURRP_REGISTER_CACHE */
-#ifdef THUMB
-  asm(".p2align 2,,                                             \n\t" \
-      "mov      r2, pc                                          \n\t" \
-      "bx       r2                                              \n\t" \
-      ".code 32                                                 \n\t" \
-      "stmfd    sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}     \n\t" \
-      "str      sp, [r0, #0]                                    \n\t" \
-      "ldr      sp, [r1, #0]                                    \n\t" \
-      "ldmfd    sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}     \n\t" \
+      "ldr      sp, [r1, #0]                                    \n\t");
+#ifdef THUMB_PRESENT
+  asm("ldmfd    sp!, {r4, r5, r6, r8, r9, r10, r11, lr}         \n\t" \
       "bx       lr                                              \n\t");
-#else /* !THUMB */
+#else /* !THUMB_PRESENT */
+  asm("ldmfd    sp!, {r4, r5, r6, r8, r9, r10, r11, pc}         \n\t");
+#endif /* !THUMB_PRESENT */
+#else /* !CH_CURRP_REGISTER_CACHE */
   asm("stmfd    sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}     \n\t" \
       "str      sp, [r0, #0]                                    \n\t" \
-      "ldr      sp, [r1, #0]                                    \n\t" \
-      "ldmfd    sp!, {r4, r5, r6, r7, r8, r9, r10, r11, pc}     \n\t");
-#endif /* !THUMB */
+      "ldr      sp, [r1, #0]                                    \n\t");
+#ifdef THUMB_PRESENT
+  asm("ldmfd    sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}     \n\t" \
+      "bx       lr                                              \n\t");
+#else /* !THUMB_PRESENT */
+  asm("ldmfd    sp!, {r4, r5, r6, r7, r8, r9, r10, r11, pc}     \n\t");
+#endif /* !THUMB_PRESENT */
 #endif /* !CH_CURRP_REGISTER_CACHE */
 }
 
@@ -151,7 +158,7 @@ void IrqCommon(void) {
    */
   asm(".set     MODE_IRQ, 0x12                                  \n\t" \
       ".set     MODE_SYS, 0x1F                                  \n\t" \
-      ".set     F_BIT, 0x40                                      \n\t" \
+      ".set     F_BIT, 0x40                                     \n\t" \
       ".set     I_BIT, 0x80                                     \n\t" \
       "ldmfd    sp!, {r0-r3, r12, lr}                           \n\t" \
       "msr      CPSR_c, #MODE_SYS | I_BIT                       \n\t" \

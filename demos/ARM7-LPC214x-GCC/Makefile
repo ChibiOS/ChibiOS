@@ -130,16 +130,16 @@ ODFLAGS	= -x --syms
 
 # Thumb interwork enabled only if needed because it kills performance.
 ifneq ($(TSRC),)
+  CPFLAGS += -D THUMB_PRESENT
   ifneq ($(ASRC),)
-    # Both ARM and THUMB case
-    CPFLAGS += -mthumb-interwork -D THUMB
+    # Mixed ARM and THUMB case.
+    CPFLAGS += -mthumb-interwork
     LDFLAGS += -mthumb-interwork
-    ASFLAGS += -mthumb-interwork -D THUMB
   else
-    # Pure THUMB case, THUMB C code cannot be called by ARM asm code directly
-    CPFLAGS += -D THUMB
+    # Pure THUMB case, THUMB C code cannot be called by ARM asm code directly.
+    CPFLAGS += -D THUMB_NO_INTERWORKING
     LDFLAGS += -mthumb
-    ASFLAGS += -mthumb-interwork -D THUMB -D THUMB_NO_INTERWORKING
+    ASFLAGS += -D THUMB_NO_INTERWORKING
   endif
 endif
 
@@ -158,7 +158,7 @@ $(AOBJS) : %.o : %.c
 
 $(TOBJS) : %.o : %.c
 	@echo
-	$(CC) -c $(CPFLAGS) $(TOPT) -mthumb -I . $(INCDIR) $< -o $@
+	$(CC) -c $(CPFLAGS) $(TOPT) -I . $(INCDIR) $< -o $@
 
 $(ASMOBJS) : %.o : %.s
 	@echo
