@@ -27,6 +27,7 @@
 #include <ch.h>
 
 #include "lpc214x.h"
+#include "board.h"
 #include "buzzer.h"
 
 EventSource BuzzerSilentEventSource;

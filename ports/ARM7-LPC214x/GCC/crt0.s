@@ -136,6 +136,8 @@ bssloop:
         mov     r1, r0
         bl      main
         bl      chSysHalt
+.weak hwinit
+hwinit: bx      lr
 #else
         add     r0, pc, #1
         bx      r0
@@ -145,6 +147,8 @@ bssloop:
         mov     r1, r0
         bl      main
         bl      chSysHalt
+.weak hwinit
+hwinit: bx      lr
 .code 32
 #endif
 
@@ -167,4 +171,11 @@ AbortHandler:
 .weak FiqHandler
 .globl FiqHandler
 FiqHandler:
-        b       _halt32
+
+.weak _halt32
+.globl _halt32
+_halt32:
+       mrs      r0, CPSR
+       orr      r0, #I_BIT | F_BIT
+       msr      CPSR_c, r0
+.loop: b        .loop

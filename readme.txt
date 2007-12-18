@@ -57,6 +57,9 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   for details.
 - Most of the asm code previously in chcore2.s is now inline asm code in
   chcore.c (ARM port).
+- Moved all the board specific definitions/code into two new files: board.c
+  and board.h. Moved all the files no more board-dependent under ports/
+  (ARM port).
 
 *** 0.4.5 ***
 - Moved the serial IRQ handlers and VIC vectors initialization inside the

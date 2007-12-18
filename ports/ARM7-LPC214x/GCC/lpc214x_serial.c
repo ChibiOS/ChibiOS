@@ -22,6 +22,7 @@
 #include "lpc214x.h"
 #include "vic.h"
 #include "lpc214x_serial.h"
+#include "board.h"
 
 FullDuplexDriver COM1;
 BYTE8 ib1[SERIAL_BUFFERS_SIZE];

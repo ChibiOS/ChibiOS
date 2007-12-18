@@ -20,14 +20,6 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
-/*
- * The following values are implementation dependent. You may change them in
- * order to match your HW.
- */
-#define FOSC 12000000
-#define CCLK 48000000
-#define PCLK 12000000
-
 typedef void *regarm;
 
 /*

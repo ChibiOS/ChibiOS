@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "chconf.h"
+#include <chconf.h>
 
 .set    MODE_USR, 0x10
 .set    MODE_FIQ, 0x11
