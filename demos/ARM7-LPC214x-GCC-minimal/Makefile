@@ -62,14 +62,13 @@ UDEFS =
 UADEFS =
 
 # List ARM-mode C source files here
-ASRC = chcore.c \
+ASRC = ../../ports/ARM7-LPC214x/GCC/chcore.c \
+       ../../ports/ARM7-LPC214x/GCC/vic.c  \
        ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
        ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chmtx.c \
        ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \
        ../../src/chserial.c \
-       ../../ports/ARM7-LPC214x/GCC/vic.c \
-       main.c
-
+       board.c main.c
 
 # List THUMB-mode C sources here
 # NOTE: If any module is compiled in thumb mode then -mthumb-interwork is
@@ -77,7 +76,7 @@ ASRC = chcore.c \
 TSRC =
 
 # List ASM source files here
-ASMSRC = crt0.s chcore2.s
+ASMSRC = ../../ports/ARM7-LPC214x/GCC/crt0.s
 
 # List all user directories here
 UINCDIR = ../../src/include ../../src/lib ../../ports/ARM7-LPC214x/GCC
@@ -160,7 +159,7 @@ $(TOBJS) : %.o : %.c
 
 $(ASMOBJS) : %.o : %.s
 	@echo
-	$(AS) -c $(ASFLAGS) $< -o $@
+	$(AS) -c $(ASFLAGS) -I . $(INCDIR) $< -o $@
 
 %elf: $(OBJS)
 	@echo
