@@ -40,9 +40,9 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 *****************************************************************************
 
 *** 0.5.0 ***
-- NEW: Binary Mutexes, the new mechanism provides a complete implementation
-  of the "priority inheritance" algorithm as a tool for work around the
-  priority inversion problem.
+- NEW: Mutexes, the new mechanism provides a complete implementation of the
+  "priority inheritance" algorithm as a tool for work around the priority
+  inversion problem.
   The Mutexes are not meant to replace the Semaphores that still are the best
   synchronization mechanism between interrupt handlers and high level
   code, something that Mutexes cannot do.

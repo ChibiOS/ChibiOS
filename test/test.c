@@ -78,6 +78,13 @@ static void println(char *msgp) {
   chFDDPut(comp, '\n');
 }
 
+static void CPU(t_time ms) {
+
+  t_time time = chSysGetTime() + ms;
+  while (chSysGetTime() != time)
+    ;
+}
+
 t_msg Thread1(void *p) {
 
   chFDDPut(comp, *(BYTE8 *)p);
@@ -131,7 +138,7 @@ t_msg Thread7(void *p) {
   return (unsigned int)p + 1;
 }
 
-static void testrdy1(void) {
+void testrdy1(void) {
 
   println("*** Ready List, priority enqueuing test #1, you should read ABCDE:");
   t5 = chThdCreate(chThdGetPriority()-5, 0, wsT5, sizeof(wsT5), Thread1, "E");
@@ -143,7 +150,7 @@ static void testrdy1(void) {
   println("");
 }
 
-static void testrdy2(void) {
+void testrdy2(void) {
 
   println("*** Ready List, priority enqueuing test #2, you should read ABCDE:");
   t4 = chThdCreate(chThdGetPriority()-4, 0, wsT4, sizeof(wsT4), Thread1, "D");
@@ -155,7 +162,7 @@ static void testrdy2(void) {
   println("");
 }
 
-static void testsem1(void) {
+void testsem1(void) {
 
   println("*** Semaphores, FIFO enqueuing test, you should read ABCDE:");
   chSemInit(&sem1, 0);
@@ -173,7 +180,7 @@ static void testsem1(void) {
   println("");
 }
 
-static void testsem2(void) {
+void testsem2(void) {
   unsigned int i;
 
   println("*** Semaphores, timeout test, you should read ABCDE (slowly):");
@@ -185,7 +192,7 @@ static void testsem2(void) {
   println("");
 }
 
-static void testmtx1(void) {
+void testmtx1(void) {
 
   chMtxInit(&m1);
   println("*** Mutexes, priority enqueuing test, you should read ABCDE:");
@@ -221,10 +228,7 @@ t_msg Thread9(void *p) {
 t_msg Thread10(void *p) {
 
   chThdSleep(10);
-  /* 50mS CPU pulse */
-  t_time time = chSysGetTime() + 50;
-  while (chSysGetTime() != time)
-    ;
+  CPU(50);
   chFDDPut(comp, *(BYTE8 *)p);
   return 0;
 }
@@ -247,10 +251,16 @@ t_msg Thread12(void *p) {
   return 0;
 }
 
-static void testmtx2(void) {
+/*
+ * Time
+ *    0 ++++++++++++++++++AL+....2++++++++++++++AU0------------------------------
+ *    1 .....................++--------------------------------------------------
+ *    2 .......................++AL.............+++++++++AU++++++++++++++++++++++
+ */
+void testmtx2(void) {
 
   chMtxInit(&m1);
-  println("*** Mutexes, mutex with inheritance, you should read ABC:");
+  println("*** Mutexes, mutex with inheritance (simple case), you should read ABC:");
   t1 = chThdCreate(chThdGetPriority()-1, 0, wsT1, sizeof(wsT1), Thread8, "A");
   t2 = chThdCreate(chThdGetPriority()-3, 0, wsT2, sizeof(wsT2), Thread9, "C");
   t3 = chThdCreate(chThdGetPriority()-2, 0, wsT3, sizeof(wsT3), Thread10, "B");
@@ -260,7 +270,7 @@ static void testmtx2(void) {
   println("");
 }
 
-static void testmtx3(void) {
+void testmtx3(void) {
 
   chSemInit(&sem1, 1);
   println("*** Mutexes, mutex without inheritance, inversion happens, you should read BAC:");
@@ -273,7 +283,80 @@ static void testmtx3(void) {
   println("");
 }
 
-static void testmsg1(void) {
+t_msg Thread13(void *p) {
+
+  chMtxLock(&m1);
+  CPU(50);
+  chMtxUnlock();
+  chFDDPut(comp, *(BYTE8 *)p);
+  return 0;
+}
+
+t_msg Thread14(void *p) {
+
+  chThdSleep(10);
+  chMtxLock(&m2);
+  CPU(20);
+  chMtxLock(&m1);
+  CPU(50);
+  chMtxUnlock();
+  CPU(20);
+  chMtxUnlock();
+  chFDDPut(comp, *(BYTE8 *)p);
+  return 0;
+}
+
+t_msg Thread15(void *p) {
+
+  chThdSleep(20);
+  chMtxLock(&m2);
+  CPU(50);
+  chMtxUnlock();
+  chFDDPut(comp, *(BYTE8 *)p);
+  return 0;
+}
+
+t_msg Thread16(void *p) {
+
+  chThdSleep(40);
+  CPU(200);
+  chFDDPut(comp, *(BYTE8 *)p);
+  return 0;
+}
+
+t_msg Thread17(void *p) {
+
+  chThdSleep(50);
+  chMtxLock(&m2);
+  CPU(50);
+  chMtxUnlock();
+  chFDDPut(comp, *(BYTE8 *)p);
+  return 0;
+}
+
+/*
+ * Time    0     10    20        30   40    50
+ *    0 +++BL++------------------2++++------4+++++BU0--------------------------
+ *    1 .......++AL++--2+++++++++BL.........4.....++++++++BU4++++AU1-----------
+ *    2 .............++AL............................................------++AU
+ *    3 ..............................++++-------------------------------++....
+ *    4 ..................................++AL...................++++AU++......
+ */
+void testmtx4(void) {
+
+  chMtxInit(&m1); /* B */
+  chMtxInit(&m2); /* A */
+  println("*** Mutexes, mutex with inheritance (complex case), you should read ABCDE:");
+  t1 = chThdCreate(chThdGetPriority()-5, 0, wsT1, sizeof(wsT1), Thread13, "E");
+  t2 = chThdCreate(chThdGetPriority()-4, 0, wsT2, sizeof(wsT2), Thread14, "D");
+  t3 = chThdCreate(chThdGetPriority()-3, 0, wsT3, sizeof(wsT3), Thread15, "C");
+  t4 = chThdCreate(chThdGetPriority()-2, 0, wsT4, sizeof(wsT4), Thread16, "B");
+  t5 = chThdCreate(chThdGetPriority()-1, 0, wsT5, sizeof(wsT5), Thread17, "A");
+  wait();
+  println("");
+}
+
+void testmsg1(void) {
   t_msg msg;
 
   println("*** Messages, dispatch test, you should read AABBCCDDEE:");
@@ -287,7 +370,7 @@ static void testmsg1(void) {
   println("");
 }
 
-static void testmsg2(void) {
+void testmsg2(void) {
   unsigned int i;
 
   println("*** Messages, timeout test, you should read ABCDE (slowly):");
@@ -301,7 +384,7 @@ static void testmsg2(void) {
   println("");
 }
 
-static void bench1(void) {
+void bench1(void) {
   unsigned int i;
   t_time time;
 
@@ -330,7 +413,7 @@ static void bench1(void) {
   println(" ctxsws/S");
 }
 
-static void bench2(void) {
+void bench2(void) {
   unsigned int i;
   t_time time;
 
@@ -355,7 +438,7 @@ static void bench2(void) {
   println(" threads/S");
 }
 
-static void bench3(void) {
+void bench3(void) {
   static BYTE8 ib[16];
   static Queue iq;
   unsigned int i;
@@ -416,6 +499,7 @@ t_msg TestThread(void *p) {
   testmtx1();
   testmtx2();
   testmtx3();
+  testmtx4();
 
   /*
    * Messages tests.
