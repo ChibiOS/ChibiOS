@@ -104,6 +104,8 @@ void chSchGoSleepS(t_tstate newstate) {
  * @note The function is not meant to be used in the user code directly.
  * @note It is equivalent to a \p chSchReadyI() followed by a
  *       \p chSchRescheduleS() but much more efficient.
+ * @note The function assumes that the invoking thread is the highest priority
+ *       thread, so you can't use it to change priority and reschedule.
  */
 void chSchWakeupS(Thread *ntp, t_msg msg) {
 
@@ -111,7 +113,15 @@ void chSchWakeupS(Thread *ntp, t_msg msg) {
     chSchReadyI(ntp, msg);
   else {
     Thread *otp = currp;
-    chSchReadyI(otp, RDY_OK);
+    /* Optimization, assumes that the invoking thread has the highest priority
+       which is always true unless the priority was willingly changed.
+       This assumption allows us to place the thread always on top of the
+       ready list without have to scan it, free lunch.*/
+/*    chSchReadyI(otp, RDY_OK);*/
+    otp->p_state = PRREADY;
+    otp->p_rdymsg = RDY_OK;
+    otp->p_next = (otp->p_prev = (Thread *)&rlist.r_queue)->p_next;
+    otp->p_next->p_prev = rlist.r_queue.p_next = otp;
     (currp = ntp)->p_state = PRCURR;
     ntp->p_rdymsg = msg;
     rlist.r_preempt = CH_TIME_QUANTUM;

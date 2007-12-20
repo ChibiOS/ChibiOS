@@ -189,8 +189,15 @@ void chMtxUnlockS(void) {
         newprio = mp->m_queue.p_next->p_prio;
       mp = mp->m_next;
     }
-    currp->p_prio = newprio;
-    chSchWakeupS(tp, RDY_OK);
+    if (currp->p_prio == newprio)
+      chSchWakeupS(tp, RDY_OK);
+    else {
+      /* Note, changing priority and use chSchWakeupS() is wrong because the
+         internal optimization, see the chSchWakeupS() notes.*/
+      currp->p_prio = newprio;
+      chSchReadyI(tp, RDY_OK);
+      chSchRescheduleS();
+    }
   }
 }
 
