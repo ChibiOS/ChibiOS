@@ -78,11 +78,24 @@ static void println(char *msgp) {
   chFDDPut(comp, '\n');
 }
 
-static void CPU(t_time ms) {
+__attribute__((noinline))
+void CPU(t_time ms) {
 
   t_time time = chSysGetTime() + ms;
   while (chSysGetTime() != time)
     ;
+}
+
+__attribute__((noinline))
+t_time wait_tick(void) {
+
+  t_time time = chSysGetTime() + 1;
+  while (chSysGetTime() < time) {
+#if defined(WIN32)
+    ChkIntSources();
+#endif
+  }
+  return time;
 }
 
 t_msg Thread1(void *p) {
@@ -384,47 +397,93 @@ void testmsg2(void) {
   println("");
 }
 
+__attribute__((noinline))
+unsigned int msg_loop_test(Thread *tp) {
+  unsigned int i;
+
+  t_time time = wait_tick() + 1000;
+  i = 0;
+  while (chSysGetTime() < time) {
+    i = chMsgSend(tp, i);
+#if defined(WIN32)
+    ChkIntSources();
+#endif
+  }
+  return i;
+}
+
+__attribute__((noinline))
+void precache(void) {
+  unsigned int i;
+
+  println("\r\nPreparing for benchmarks\r\n");
+  t1 = chThdCreate(chThdGetPriority()-1, 0, wsT1, sizeof(wsT1), Thread6, 0);
+  i = msg_loop_test(t1);
+  chThdTerminate(t1);
+  chThdWait(t1);
+}
+
+__attribute__((noinline))
 void bench1(void) {
   unsigned int i;
-  t_time time;
 
-  println("*** Kernel Benchmark, context switch stress test:");
-  time = chSysGetTime() + 1;
-  while (chSysGetTime() < time) {
-#if defined(WIN32)
-    ChkIntSources();
-#endif
-  }
-  time += 1000;
-  i = 0;
-  t1 = chThdCreate(chThdGetPriority()-1, 0, wsT1, sizeof(wsT1), Thread6, chThdSelf());
-  while (chSysGetTime() < time) {
-    i = chMsgSend(t1, i);
-#if defined(WIN32)
-    ChkIntSources();
-#endif
-  }
+  println("*** Kernel Benchmark, context switch test #1 (optimal):");
+  t1 = chThdCreate(chThdGetPriority()-1, 0, wsT1, sizeof(wsT1), Thread6, 0);
+  i = msg_loop_test(t1);
   chThdTerminate(t1);
   chThdWait(t1);
   print("Messages throughput = ");
   printn(i);
   print(" msgs/S, ");
   printn(i << 1);
-  println(" ctxsws/S");
+  println(" ctxswc/S");
 }
 
+__attribute__((noinline))
 void bench2(void) {
+  unsigned int i;
+
+  println("*** Kernel Benchmark, context switch test #2 (no threads in ready list):");
+  t1 = chThdCreate(chThdGetPriority()+1, 0, wsT1, sizeof(wsT1), Thread6, 0);
+  i = msg_loop_test(t1);
+  chThdTerminate(t1);
+chMsgSend(t1, 0);
+  chThdWait(t1);
+  print("Messages throughput = ");
+  printn(i);
+  print(" msgs/S, ");
+  printn(i << 1);
+  println(" ctxswc/S");
+}
+
+__attribute__((noinline))
+void bench3(void) {
+  unsigned int i;
+
+  println("*** Kernel Benchmark, context switch test #3 (04 threads in ready list):");
+  t1 = chThdCreate(chThdGetPriority()+1, 0, wsT1, sizeof(wsT1), Thread6, "A");
+  t2 = chThdCreate(chThdGetPriority()-2, 0, wsT2, sizeof(wsT2), Thread7, "B");
+  t3 = chThdCreate(chThdGetPriority()-3, 0, wsT3, sizeof(wsT3), Thread7, "C");
+  t4 = chThdCreate(chThdGetPriority()-4, 0, wsT4, sizeof(wsT4), Thread7, "D");
+  t5 = chThdCreate(chThdGetPriority()-5, 0, wsT5, sizeof(wsT5), Thread7, "E");
+  i = msg_loop_test(t1);
+  chThdTerminate(t1);
+chMsgSend(t1, 0);
+  wait();
+  print("Messages throughput = ");
+  printn(i);
+  print(" msgs/S, ");
+  printn(i << 1);
+  println(" ctxswc/S");
+}
+
+__attribute__((noinline))
+void bench4(void) {
   unsigned int i;
   t_time time;
 
   println("*** Kernel Benchmark, threads creation/termination:");
-  time = chSysGetTime() + 1;
-  while (chSysGetTime() < time) {
-#if defined(WIN32)
-    ChkIntSources();
-#endif
-  }
-  time += 1000;
+  time = wait_tick() + 1000;
   i = 0;
   while (chSysGetTime() < time) {
     t1 = chThdCreate(chThdGetPriority()-1, 0, wsT1, sizeof(wsT1), Thread7, (void *)i);
@@ -438,7 +497,8 @@ void bench2(void) {
   println(" threads/S");
 }
 
-void bench3(void) {
+__attribute__((noinline))
+void bench5(void) {
   static BYTE8 ib[16];
   static Queue iq;
   unsigned int i;
@@ -446,13 +506,7 @@ void bench3(void) {
 
   println("*** Kernel Benchmark, I/O Queues throughput:");
   chIQInit(&iq, ib, sizeof(ib), NULL);
-  time = chSysGetTime() + 1;
-  while (chSysGetTime() < time) {
-#if defined(WIN32)
-    ChkIntSources();
-#endif
-  }
-  time += 1000;
+  time = wait_tick() + 1000;
   i = 0;
   while (chSysGetTime() < time) {
     chIQPutI(&iq, i >> 24);
@@ -509,10 +563,22 @@ t_msg TestThread(void *p) {
 
   /*
    * Kernel benchmarks.
+   * NOTE: The calls to chThdSleep() are required in order to give I/O queues
+   *       enough time to transmit everything, else the tests would get some
+   *       extra interrupts to serve from previous tests.
    */
+  precache();
+  chThdSleep(100);
   bench1();
+  chThdSleep(100);
   bench2();
+  chThdSleep(100);
   bench3();
+  chThdSleep(100);
+  bench4();
+  chThdSleep(100);
+  bench5();
+  chThdSleep(100);
 
   println("\r\nTest complete");
   return 0;

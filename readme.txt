@@ -53,7 +53,7 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 - More performance improvements to the scheduler, see the remarks into the
   chSchWakeupS() function source. The benchmark suite reports a 6% increase
   in the context switch performance.
-- Added mutexes test cases to the test suite.
+- Added mutexes test cases and new benchmarks to the test suite.
 - Modified the test suite in order to have each test case to have the same
   alignment enforced on functions. This is done to reduce MAM/Cache alignment
   effects on the measurement.
