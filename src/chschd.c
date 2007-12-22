@@ -35,7 +35,7 @@ ReadyList rlist;
 void chSchInit(void) {
 
   fifo_init(&rlist.r_queue);
-//  rlist.r_prio = ABSPRIO;
+  rlist.r_prio = NOPRIO;
   rlist.r_preempt = CH_TIME_QUANTUM;
 #ifdef CH_USE_SYSTEMTIME
   rlist.r_stime = 0;
@@ -58,10 +58,17 @@ INLINE void chSchReadyI(Thread *tp, t_msg msg) {
 #else
 void chSchReadyI(Thread *tp, t_msg msg) {
 #endif
+  Thread *cp = rlist.r_queue.p_next;
 
   tp->p_state = PRREADY;
   tp->p_rdymsg = msg;
-  prio_insert(tp, &rlist.r_queue);
+//  prio_insert(tp, &rlist.r_queue);
+  while (cp->p_prio >= tp->p_prio)
+    cp = cp->p_next;
+  /* Insertion on p_prev.*/
+  tp->p_prev = (tp->p_next = cp)->p_prev;
+  tp->p_prev->p_next = cp->p_prev = tp;
+
 }
 
 /**
@@ -106,13 +113,7 @@ void chSchWakeupS(Thread *ntp, t_msg msg) {
     chSchReadyI(ntp, msg);
   else {
     Thread *otp = currp;
-    /* Note, does a prio_insert() instead of a chSchReadyI() because of the
-       relative priority between the two threads, prio_insert() scans the
-       list starting from the highest priority end downward.*/
-/*    chSchReadyI(otp, RDY_OK);*/
-    otp->p_state = PRREADY;
-    otp->p_rdymsg = RDY_OK;
-    prio_insert(otp, &rlist.r_queue);
+    chSchReadyI(otp, RDY_OK);
     (currp = ntp)->p_state = PRCURR;
     ntp->p_rdymsg = msg;
     rlist.r_preempt = CH_TIME_QUANTUM;

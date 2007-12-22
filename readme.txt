@@ -52,9 +52,11 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   for the same problem.
 - Fixed a bug in the round robin scheduling mode, see the bug tracker for
   details and a fix for previous versions.
-- More performance improvements to the scheduler, see the remarks into the
-  chSchWakeupS() function source. This change makes the ready list insertion
-  time in many cases constant (not influenced by the number of ready threads).
+- More performance improvements to the scheduler. The ready list insertion
+  sequence is now reversed, it is scanned starting from the highest priority
+  end. This has an important side effect into the chSchWakeupS() that makes
+  most of the ready list insertions happen in constant time (extraction is
+  done always in constant time).
   The worst case is always proportional to the number of threads in the ready
   list but the normal case is much more often constant than linear. See the
   new benchmarks added to the test suite.

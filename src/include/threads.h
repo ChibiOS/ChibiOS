@@ -136,10 +136,12 @@ struct Thread {
 /** Thread option: Create suspended thread.*/
 #define P_SUSPENDED 2
 
+/** Pseudo priority used by the ready list header, do not use.*/
+#define NOPRIO      0
 /** Idle thread priority.*/
-#define IDLEPRIO    0
+#define IDLEPRIO    1
 /** Lowest user priority.*/
-#define LOWPRIO     1
+#define LOWPRIO     2
 /** Normal user priority.*/
 #define NORMALPRIO  64
 /** Highest user priority.*/
