@@ -135,7 +135,7 @@ void chMtxUnlock(void) {
   chSysLock();
 
   chDbgAssert((currp->p_mtxlist != NULL) && (currp->p_mtxlist->m_owner == currp),
-              "chmtx.c, chMtxUnlockS()");
+              "chmtx.c, chMtxUnlock()");
 
   /*
    * Removes the top Mutex from the owned mutexes list and marks it as not owned.
