@@ -59,6 +59,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void prio_insert(Thread *tp, ThreadsQueue *tqp);
   void fifo_insert(Thread *tp, ThreadsQueue *tqp);
   Thread *fifo_remove(ThreadsQueue *tqp);
   Thread *dequeue(Thread *tp);

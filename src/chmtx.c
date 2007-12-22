@@ -36,25 +36,6 @@ void chMtxInit(Mutex *mp) {
   mp->m_owner = NULL;
 }
 
-/*
- * Inserts a thread into a list ordering it by priority.
- * @param tp the pointer to the thread to be inserted in the list
- * @param tqp the pointer to the threads list header
- */
-#ifdef CH_OPTIMIZE_SPEED
-static INLINE void prio_enq(Thread *tp, ThreadsQueue *tqp) {
-#else
-static void prio_enq(Thread *tp, ThreadsQueue *tqp) {
-#endif
-
-  Thread *cp = tqp->p_next;
-  while ((cp != (Thread *)tqp) && (cp->p_prio >= tp->p_prio))
-    cp = cp->p_next;
-  /* Insertion on p_prev.*/
-  tp->p_prev = (tp->p_next = cp)->p_prev;
-  tp->p_prev->p_next = cp->p_prev = tp;
-}
-
 /**
  * Locks the specified mutex.
  * @param mp pointer to the \p Mutex structure
@@ -86,7 +67,7 @@ void chMtxLockS(Mutex *mp) {
       tp->p_prio = currp->p_prio;
       switch (tp->p_state) {
       case PRWTMTX:
-        prio_enq(dequeue(tp), &tp->p_mtxp->m_queue);
+        prio_insert(dequeue(tp), &tp->p_mtxp->m_queue);
         tp = tp->p_mtxp->m_owner;
         continue;
       case PRREADY:
@@ -97,7 +78,7 @@ void chMtxLockS(Mutex *mp) {
     /*
      * Goes to sleep on the mutex.
      */
-    prio_enq(currp, &mp->m_queue);
+    prio_insert(currp, &mp->m_queue);
     currp->p_mtxp = mp;
     chSchGoSleepS(PRWTMTX);
     chDbgAssert(mp->m_owner == NULL, "chmtx.c, chMtxLockS()");
@@ -189,15 +170,8 @@ void chMtxUnlockS(void) {
         newprio = mp->m_queue.p_next->p_prio;
       mp = mp->m_next;
     }
-    if (currp->p_prio == newprio)
-      chSchWakeupS(tp, RDY_OK);
-    else {
-      /* Note, changing priority and use chSchWakeupS() is wrong because the
-         internal optimization, see the chSchWakeupS() notes.*/
-      currp->p_prio = newprio;
-      chSchReadyI(tp, RDY_OK);
-      chSchRescheduleS();
-    }
+    currp->p_prio = newprio;
+    chSchWakeupS(tp, RDY_OK);
   }
 }
 

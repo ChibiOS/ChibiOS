@@ -50,9 +50,14 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   various mechanisms and the correct use cases.
 - RT Semaphores subsystem removed, the Mutexes implements a better solution
   for the same problem.
+- Fixed a bug in the round robin scheduling mode, see the bug tracker for
+  details and a fix for previous versions.
 - More performance improvements to the scheduler, see the remarks into the
-  chSchWakeupS() function source. The benchmark suite reports a 6% increase
-  in the context switch performance.
+  chSchWakeupS() function source. This change makes the ready list insertion
+  time in many cases constant (not influenced by the number of ready threads).
+  The worst case is always proportional to the number of threads in the ready
+  list but the normal case is much more often constant than linear. See the
+  new benchmarks added to the test suite.
 - Added mutexes test cases and new benchmarks to the test suite.
 - Modified the test suite in order to have each test case to have the same
   alignment enforced on functions. This is done to reduce MAM/Cache alignment

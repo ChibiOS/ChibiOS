@@ -18,12 +18,29 @@
 */
 
 /**
- * @addtogroup Messages
+ * @addtogroup Threads
  * @{
  */
 #include <ch.h>
 
 #ifndef CH_OPTIMIZE_SPEED
+/*
+ * Inserts a thread into a priority ordered queue.
+ * @param tp the pointer to the thread to be inserted in the list
+ * @param tqp the pointer to the threads list header
+ * @note the insertion is done by scanning the list from the highest priority
+ *       toward the lowest
+ */
+void prio_insert(Thread *tp, ThreadsQueue *tqp) {
+
+  Thread *cp = tqp->p_next;
+  while ((cp != (Thread *)tqp) && (cp->p_prio >= tp->p_prio))
+    cp = cp->p_next;
+  /* Insertion on p_prev.*/
+  tp->p_prev = (tp->p_next = cp)->p_prev;
+  tp->p_prev->p_next = cp->p_prev = tp;
+}
+
 /*
  * Inserts a thread into a FIFO queue.
  * @param tp the pointer to the thread to be inserted in the list

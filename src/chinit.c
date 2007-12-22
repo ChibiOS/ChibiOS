@@ -66,7 +66,8 @@ void chSysInit(void) {
  */
 void chSysTimerHandlerI(void) {
 
-  rlist.r_preempt--;
+  if (rlist.r_preempt > 0)
+    rlist.r_preempt--;
 #ifdef CH_USE_SYSTEMTIME
   rlist.r_stime++;
 #endif

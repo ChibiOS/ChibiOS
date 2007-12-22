@@ -39,7 +39,6 @@
  */
 typedef struct {
   ThreadsQueue          r_queue;
-  t_prio                r_prio;
   t_cnt                 r_preempt;
 #ifndef CH_CURRP_REGISTER_CACHE
   Thread                *r_current;

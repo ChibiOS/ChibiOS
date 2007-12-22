@@ -35,7 +35,7 @@ ReadyList rlist;
 void chSchInit(void) {
 
   fifo_init(&rlist.r_queue);
-  rlist.r_prio = ABSPRIO;
+//  rlist.r_prio = ABSPRIO;
   rlist.r_preempt = CH_TIME_QUANTUM;
 #ifdef CH_USE_SYSTEMTIME
   rlist.r_stime = 0;
@@ -58,15 +58,10 @@ INLINE void chSchReadyI(Thread *tp, t_msg msg) {
 #else
 void chSchReadyI(Thread *tp, t_msg msg) {
 #endif
-  Thread *cp = rlist.r_queue.p_prev;
 
   tp->p_state = PRREADY;
   tp->p_rdymsg = msg;
-  while (cp->p_prio < tp->p_prio)
-    cp = cp->p_prev;
-  /* Insertion on p_next.*/
-  tp->p_next = (tp->p_prev = cp)->p_next;
-  tp->p_next->p_prev = cp->p_next = tp;
+  prio_insert(tp, &rlist.r_queue);
 }
 
 /**
@@ -104,8 +99,6 @@ void chSchGoSleepS(t_tstate newstate) {
  * @note The function is not meant to be used in the user code directly.
  * @note It is equivalent to a \p chSchReadyI() followed by a
  *       \p chSchRescheduleS() but much more efficient.
- * @note The function assumes that the invoking thread is the highest priority
- *       thread, so you can't use it to change priority and reschedule.
  */
 void chSchWakeupS(Thread *ntp, t_msg msg) {
 
@@ -113,15 +106,13 @@ void chSchWakeupS(Thread *ntp, t_msg msg) {
     chSchReadyI(ntp, msg);
   else {
     Thread *otp = currp;
-    /* Optimization, assumes that the invoking thread has the highest priority
-       which is always true unless the priority was willingly changed.
-       This assumption allows us to place the thread always on top of the
-       ready list without have to scan it, free lunch.*/
+    /* Note, does a prio_insert() instead of a chSchReadyI() because of the
+       relative priority between the two threads, prio_insert() scans the
+       list starting from the highest priority end downward.*/
 /*    chSchReadyI(otp, RDY_OK);*/
     otp->p_state = PRREADY;
     otp->p_rdymsg = RDY_OK;
-    otp->p_next = (otp->p_prev = (Thread *)&rlist.r_queue)->p_next;
-    otp->p_next->p_prev = rlist.r_queue.p_next = otp;
+    prio_insert(otp, &rlist.r_queue);
     (currp = ntp)->p_state = PRCURR;
     ntp->p_rdymsg = msg;
     rlist.r_preempt = CH_TIME_QUANTUM;

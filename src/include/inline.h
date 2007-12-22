@@ -26,6 +26,16 @@
  *       this is true for GCC, not sure about other compilers.
  */
 #ifdef CH_OPTIMIZE_SPEED
+static INLINE void prio_insert(Thread *tp, ThreadsQueue *tqp) {
+
+  Thread *cp = tqp->p_next;
+  while ((cp != (Thread *)tqp) && (cp->p_prio >= tp->p_prio))
+    cp = cp->p_next;
+  /* Insertion on p_prev.*/
+  tp->p_prev = (tp->p_next = cp)->p_prev;
+  tp->p_prev->p_next = cp->p_prev = tp;
+}
+
 static INLINE void fifo_insert(Thread *tp, ThreadsQueue *tqp) {
 
   tp->p_prev = (tp->p_next = (Thread *)tqp)->p_prev;
