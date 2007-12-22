@@ -134,7 +134,33 @@ void chMtxUnlock(void) {
 
   chSysLock();
 
-  chMtxUnlockS();
+  chDbgAssert((currp->p_mtxlist != NULL) && (currp->p_mtxlist->m_owner == currp),
+              "chmtx.c, chMtxUnlockS()");
+
+  /*
+   * Removes the top Mutex from the owned mutexes list and marks it as not owned.
+   */
+  Mutex *mp = currp->p_mtxlist;
+  currp->p_mtxlist = mp->m_next;
+  mp->m_owner = NULL;
+  /*
+   * If a thread is waiting on the mutex then the hard part begins.
+   */
+  if (chMtxQueueNotEmptyS(mp)) {
+    Thread *tp = fifo_remove(&mp->m_queue);
+    /*
+     * Recalculates the optimal thread priority by scanning the owned mutexes list.
+     */
+    t_prio newprio = currp->p_realprio;
+    mp = currp->p_mtxlist;
+    while (mp != NULL) {
+      if (chMtxQueueNotEmptyS(mp) && (mp->m_queue.p_next->p_prio > newprio))
+        newprio = mp->m_queue.p_next->p_prio;
+      mp = mp->m_next;
+    }
+    currp->p_prio = newprio;
+    chSchWakeupS(tp, RDY_OK);
+  }
 
   chSysUnlock();
 }
@@ -143,6 +169,7 @@ void chMtxUnlock(void) {
  * Unlocks the next owned mutex in reverse lock order.
  * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
  *       block.
+ * @note This function does not reschedule internally.
  */
 void chMtxUnlockS(void) {
 
@@ -171,7 +198,7 @@ void chMtxUnlockS(void) {
       mp = mp->m_next;
     }
     currp->p_prio = newprio;
-    chSchWakeupS(tp, RDY_OK);
+    chSchReadyI(tp, RDY_OK);
   }
 }
 
@@ -186,6 +213,7 @@ void chMtxUnlockAll(void) {
   chSysLock();
 
   chMtxUnlockAllS();
+  chSchRescheduleS();
 
   chSysUnlock();
 }
@@ -197,6 +225,7 @@ void chMtxUnlockAll(void) {
  * priority inheritance mechanism.
  * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
  *       block.
+ * @note This function does not reschedule internally.
  */
 void chMtxUnlockAllS(void) {
 
@@ -209,7 +238,6 @@ void chMtxUnlockAllS(void) {
         chSchReadyI(fifo_remove(&mp->m_queue), RDY_OK);
     } while (currp->p_mtxlist != NULL);
     currp->p_prio = currp->p_realprio;
-    chSchRescheduleS();
   }
 }
 
