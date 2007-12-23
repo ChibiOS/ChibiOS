@@ -250,7 +250,7 @@
  *   </li>
  * </ul>
  * In order to use the Event APIs the \p CH_USE_MUTEXES option must be
- * specified in \p chconf.h.<br><br>
+ * specified in \p chconf.h.<br>
  *
  * <b>Constraints</b><br><br>
  * In ChibiOS/RT the Unlock operations are always performed in Lock-reverse
@@ -260,7 +260,7 @@
  * inheritance mechanism.
  *
  * <b>The priority inversion problem</b><br><br>
- * The mutexes in ChibiOS/RT implements the <b>full recursive<b> priority
+ * The mutexes in ChibiOS/RT implements the <b>full</b> priority
  * inheritance mechanism in order handle the priority inversion problem.<br>
  * When a thread is queued on a mutex, any thread, directly or indirectly,
  * holding the mutex gains the same priority of the waiting thread (if their
