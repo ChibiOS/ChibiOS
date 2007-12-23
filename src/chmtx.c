@@ -212,23 +212,6 @@ void chMtxUnlockAll(void) {
 
   chSysLock();
 
-  chMtxUnlockAllS();
-  chSchRescheduleS();
-
-  chSysUnlock();
-}
-
-/**
- * Unlocks all the mutexes owned by the invoking thread, this is <b>MUCH MORE</b>
- * efficient than releasing the mutexes one by one and not just because the
- * call overhead, this function does not have any overhead related to the
- * priority inheritance mechanism.
- * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
- *       block.
- * @note This function does not reschedule internally.
- */
-void chMtxUnlockAllS(void) {
-
   if (currp->p_mtxlist != NULL) {
     do {
       Mutex *mp = currp->p_mtxlist;
@@ -238,7 +221,10 @@ void chMtxUnlockAllS(void) {
         chSchReadyI(fifo_remove(&mp->m_queue), RDY_OK);
     } while (currp->p_mtxlist != NULL);
     currp->p_prio = currp->p_realprio;
+    chSchRescheduleS();
   }
+
+  chSysUnlock();
 }
 
 #endif /* CH_USE_MUTEXES */

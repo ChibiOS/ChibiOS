@@ -23,7 +23,7 @@
 void ChkIntSources(void);
 #endif
 
-#if defined(WIN32) && defined(_DEBUG)
+#if defined(WIN32)
 static WorkingArea(wsT1, 512);
 static WorkingArea(wsT2, 512);
 static WorkingArea(wsT3, 512);
@@ -82,8 +82,11 @@ __attribute__((noinline))
 void CPU(t_time ms) {
 
   t_time time = chSysGetTime() + ms;
-  while (chSysGetTime() != time)
-    ;
+  while (chSysGetTime() != time) {
+#if defined(WIN32)
+    ChkIntSources();
+#endif
+  }
 }
 
 __attribute__((noinline))
@@ -518,6 +521,9 @@ void bench5(void) {
     i |= chIQGet(&iq) << 8;
     i |= chIQGet(&iq);
     i++;
+#if defined(WIN32)
+    ChkIntSources();
+#endif
   }
   print("Queues throughput = ");
   printn(i * 4);

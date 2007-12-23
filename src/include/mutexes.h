@@ -49,7 +49,6 @@ extern "C" {
   void chMtxUnlock(void);
   void chMtxUnlockS(void);
   void chMtxUnlockAll(void);
-  void chMtxUnlockAllS(void);
 #ifdef __cplusplus
 }
 #endif

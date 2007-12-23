@@ -159,7 +159,7 @@ static t_msg ShellThread(void *arg) {
   FullDuplexDriver *sd = (FullDuplexDriver *)arg;
   char *lp, line[64];
   Thread *tp;
-  WorkingArea(tarea, 1024);
+  WorkingArea(tarea, 2048);
 
   chIQReset(&sd->sd_iqueue);
   chOQReset(&sd->sd_oqueue);
@@ -221,7 +221,7 @@ static t_msg ShellThread(void *arg) {
   return 0;
 }
 
-static WorkingArea(s1area, 2048);
+static WorkingArea(s1area, 4096);
 static Thread *s1;
 EventListener s1tel;
 
@@ -244,7 +244,7 @@ static void COM1Handler(t_eventid id) {
     chIQReset(&COM1.sd_iqueue);
 }
 
-static WorkingArea(s2area, 2048);
+static WorkingArea(s2area, 4096);
 static Thread *s2;
 EventListener s2tel;
 
