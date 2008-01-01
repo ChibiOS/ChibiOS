@@ -39,6 +39,12 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.5.1 ***
+- Added to the ARM demos load scripts the capability to load code in RAM
+  instead flash, the function must be marked as:
+    __attribute__((section(".ramtext")))
+  The option -mlong-calls should be specified in the makefile too.
+
 *** 0.5.0 ***
 - NEW: Mutexes, the new mechanism provides a complete implementation of the
   "priority inheritance" algorithm as a tool for work around the priority
