@@ -80,11 +80,7 @@ void chSchReadyI(Thread *tp, t_msg msg) {
  * @note The function must be called in the system mutex zone.
  * @note The function is not meant to be used in the user code directly.
  */
-#ifdef CH_OPTIMIZE_SPEED
-INLINE void chSchGoSleepS(t_tstate newstate) {
-#else
 void chSchGoSleepS(t_tstate newstate) {
-#endif
   Thread *otp;
 
   (otp = currp)->p_state = newstate;
@@ -142,9 +138,15 @@ void chSchRescheduleS(void) {
  * \p chSchRescRequired() evaluates to \p TRUE.
  */
 void chSchDoRescheduleI(void) {
+  Thread *otp = currp;
 
-  chSchReadyI(currp, RDY_OK);
-  chSchGoSleepS(PRREADY);
+  chSchReadyI(otp, RDY_OK);
+  (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
+  rlist.r_preempt = CH_TIME_QUANTUM;
+#ifdef CH_USE_TRACE
+  chDbgTrace(otp, currp);
+#endif
+  chSysSwitchI(&otp->p_ctx, &currp->p_ctx);
 }
 
 /**
