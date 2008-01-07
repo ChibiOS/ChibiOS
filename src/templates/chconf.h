@@ -111,7 +111,7 @@
 /** Configuration option: If enabled then the threads have an option to serve
  *  messages by priority instead of FIFO order.
  * @note requires \p CH_USE_MESSAGES.*/
-//#define CH_USE_MESSAGES_PRIORITY
+#define CH_USE_MESSAGES_PRIORITY
 
 /** Configuration option: if specified then the
  *  \p chThdGetExitEventSource() function is included in the kernel.
