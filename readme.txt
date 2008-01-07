@@ -45,12 +45,12 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   This change allows the implementation of a priority ceiling protocol into
   message servers threads. Threads serving messages by priority and threads
   serving messages in FIFO orded can exist at the same time in the system.
-  This feature can be enabled or disabled by removing the option
-  CH_USE_MESSAGES_PRIORITY into the chconf.h file.
+  This feature can be enabled or disabled by toggling the option
+  CH_USE_MESSAGES_PRIORITY into the chconf.h file (disabled by default, old
+  behavior).
   Note: This option brings a small overhead when sending a message regardless
   if in FIFO or priority order, if you dont need priority ordering for your
-  messages it is better disable the feature in chconf.h. It also saves some
-  space.
+  messages it is better to keep disabled the feature in chconf.h.
 - Added to the ARM demos load scripts the capability to load code in RAM
   instead flash, the function must be marked as:
     __attribute__((section(".ramtext")))
