@@ -131,12 +131,18 @@ struct Thread {
 /** Thread state: After termination.*/
 #define PREXIT      11
 
+#ifdef CH_USE_TERMINATE
 /** Thread option: Termination requested flag.*/
 #define P_TERMINATE 1
+#endif
+#ifdef CH_USE_RESUME
 /** Thread option: Create suspended thread.*/
 #define P_SUSPENDED 2
+#endif
+#ifdef CH_USE_MESSAGES_PRIORITY
 /** Thread option: Serve messages by priority instead of FIFO order.*/
 #define P_MSGBYPRIO 4
+#endif
 
 /** Pseudo priority used by the ready list header, do not use.*/
 #define NOPRIO      0
