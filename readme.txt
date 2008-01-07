@@ -40,6 +40,17 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 *****************************************************************************
 
 *** 0.5.1 ***
+- NEW: Priority enqueing for messages can be optionally enabled by specifying
+  the P_MSGBYPRIO option when creating a server thread.
+  This change allows the implementation of a priority ceiling protocol into
+  message servers threads. Threads serving messages by priority and threads
+  serving messages in FIFO orded can exist at the same time in the system.
+  This feature can be enabled or disabled by removing the option
+  CH_USE_MESSAGES_PRIORITY into the chconf.h file.
+  Note: This option brings a small overhead when sending a message regardless
+  if in FIFO or priority order, if you dont need priority ordering for your
+  messages it is better disable the feature in chconf.h. It also saves some
+  space.
 - Added to the ARM demos load scripts the capability to load code in RAM
   instead flash, the function must be marked as:
     __attribute__((section(".ramtext")))

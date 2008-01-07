@@ -36,7 +36,14 @@ t_msg chMsgSend(Thread *tp, t_msg msg) {
 
   chSysLock();
 
+#ifdef CH_USE_MESSAGES_PRIORITY
+  if (tp->p_flags & P_MSGBYPRIO)
+    prio_insert(currp, &tp->p_msgqueue);
+  else
+    fifo_insert(currp, &tp->p_msgqueue);
+#else
   fifo_insert(currp, &tp->p_msgqueue);
+#endif
   currp->p_msg = msg;
   if (tp->p_state == PRWTMSG)
     chSchReadyI(tp, RDY_OK);
@@ -67,7 +74,14 @@ t_msg chMsgSendWithEvent(Thread *tp, t_msg msg, EventSource *esp) {
   chSysLock();
 
   chDbgAssert(tp->p_state != PRWTMSG, "chmsg.c, chMsgSendWithEvent()");
+#ifdef CH_USE_MESSAGES_PRIORITY
+  if (tp->p_flags & P_MSGBYPRIO)
+    prio_insert(currp, &tp->p_msgqueue);
+  else
+    fifo_insert(currp, &tp->p_msgqueue);
+#else
   fifo_insert(currp, &tp->p_msgqueue);
+#endif
   chEvtSendI(esp);
   currp->p_msg = msg;
   chSchGoSleepS(PRSNDMSG);
@@ -107,7 +121,14 @@ t_msg chMsgSendTimeout(Thread *tp, t_msg msg, t_time time) {
   chSysLock();
 
   chVTSetI(&vt, time, wakeup, currp);
+#ifdef CH_USE_MESSAGES_PRIORITY
+  if (tp->p_flags & P_MSGBYPRIO)
+    prio_insert(currp, &tp->p_msgqueue);
+  else
+    fifo_insert(currp, &tp->p_msgqueue);
+#else
   fifo_insert(currp, &tp->p_msgqueue);
+#endif
   if (tp->p_state == PRWTMSG)
     chSchReadyI(tp, RDY_OK);
   currp->p_msg = msg;

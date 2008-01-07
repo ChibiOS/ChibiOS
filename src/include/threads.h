@@ -135,6 +135,8 @@ struct Thread {
 #define P_TERMINATE 1
 /** Thread option: Create suspended thread.*/
 #define P_SUSPENDED 2
+/** Thread option: Serve messages by priority instead of FIFO order.*/
+#define P_MSGBYPRIO 4
 
 /** Pseudo priority used by the ready list header, do not use.*/
 #define NOPRIO      0
