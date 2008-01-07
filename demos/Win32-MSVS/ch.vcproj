@@ -160,6 +160,9 @@
 					RelativePath="..\..\src\chmsg.c">
 				</File>
 				<File
+					RelativePath="..\..\src\chmtx.c">
+				</File>
+				<File
 					RelativePath="..\..\src\chqueues.c">
 				</File>
 				<File
@@ -183,13 +186,6 @@
 				Filter="">
 				<File
 					RelativePath="..\..\ports\Win32\simcom.c">
-				</File>
-			</Filter>
-			<Filter
-				Name="test"
-				Filter="">
-				<File
-					RelativePath="..\..\test\test.c">
 				</File>
 			</Filter>
 		</Filter>
@@ -229,6 +225,9 @@
 				</File>
 				<File
 					RelativePath="..\..\src\include\messages.h">
+				</File>
+				<File
+					RelativePath="..\..\src\include\mutexes.h">
 				</File>
 				<File
 					RelativePath="..\..\src\include\queues.h">

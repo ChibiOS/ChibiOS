@@ -43,7 +43,10 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 - Added to the ARM demos load scripts the capability to load code in RAM
   instead flash, the function must be marked as:
     __attribute__((section(".ramtext")))
-  The option -mlong-calls should be specified in the makefile too.
+  The option -mlong-calls should be specified in the makefile too or the
+  function declared with the "long-call" attribute.
+- Fixed the MSVC demo project files.
+- Fixed some syntax incompatibilites between GCC and MSVC into chmtx.c.
 
 *** 0.5.0 ***
 - NEW: Mutexes, the new mechanism provides a complete implementation of the

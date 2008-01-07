@@ -182,7 +182,6 @@ static t_msg ShellThread(void *arg) {
         PrintLineFDD(sd, "  exit     - Logout from ChibiOS/RT\r\n");
         PrintLineFDD(sd, "  time     - Prints the system timer value\r\n");
         PrintLineFDD(sd, "  hello    - Runs the Hello World demo thread\r\n");
-        PrintLineFDD(sd, "  test     - Runs the System Test thread\r\n");
       }
       else if (stricmp(lp, "exit") == 0) {
         if (checkend(sd))
@@ -201,14 +200,6 @@ static t_msg ShellThread(void *arg) {
           continue;
         tp = chThdCreate(NORMALPRIO, 0, tarea, sizeof(tarea),
                          HelloWorldThread, sd);
-        if (chThdWait(tp))
-          break;  // Lost connection while executing the hello thread.
-      }
-      else if (stricmp(lp, "test") == 0) {
-        if (checkend(sd))
-          continue;
-        tp = chThdCreate(NORMALPRIO, 0, tarea, sizeof(tarea),
-                         TestThread, arg);
         if (chThdWait(tp))
           break;  // Lost connection while executing the hello thread.
       }

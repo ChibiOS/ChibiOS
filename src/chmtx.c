@@ -99,10 +99,11 @@ void chMtxLockS(Mutex *mp) {
  * @return \p TRUE if the mutex was successfully acquired else \p FALSE
  */
 BOOL chMtxTryLock(Mutex *mp) {
+  BOOL b;
 
   chSysLock();
 
-  BOOL b = chMtxTryLockS(mp);
+  b = chMtxTryLockS(mp);
 
   chSysUnlock();
   return b;
@@ -131,6 +132,7 @@ BOOL chMtxTryLockS(Mutex *mp) {
  * Unlocks the next owned mutex in reverse lock order.
  */
 void chMtxUnlock(void) {
+  Mutex *mp;
 
   chSysLock();
 
@@ -140,7 +142,7 @@ void chMtxUnlock(void) {
   /*
    * Removes the top Mutex from the owned mutexes list and marks it as not owned.
    */
-  Mutex *mp = currp->p_mtxlist;
+  mp = currp->p_mtxlist;
   currp->p_mtxlist = mp->m_next;
   mp->m_owner = NULL;
   /*
@@ -172,6 +174,7 @@ void chMtxUnlock(void) {
  * @note This function does not reschedule internally.
  */
 void chMtxUnlockS(void) {
+  Mutex *mp;
 
   chDbgAssert((currp->p_mtxlist != NULL) && (currp->p_mtxlist->m_owner == currp),
               "chmtx.c, chMtxUnlockS()");
@@ -179,7 +182,7 @@ void chMtxUnlockS(void) {
   /*
    * Removes the top Mutex from the owned mutexes list and marks it as not owned.
    */
-  Mutex *mp = currp->p_mtxlist;
+  mp = currp->p_mtxlist;
   currp->p_mtxlist = mp->m_next;
   mp->m_owner = NULL;
   /*
