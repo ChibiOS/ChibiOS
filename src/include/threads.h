@@ -48,23 +48,30 @@ struct Thread {
   /** Mode flags.*/
   t_tmode           p_flags;
   /*
-   * The following fields are merged in an union because they are all
+   * The following fields are merged in unions because they are all
    * state-specific fields. This trick saves some extra space for each
    * thread in the system.
    */
+  union {
+#ifdef CH_USE_SEMAPHORES
+    /** Semaphore where the thread is waiting on (only in \p PRWTSEM state).*/
+    Semaphore       *p_wtsemp;
+#endif
+#ifdef CH_USE_MUTEXES
+    /** Mutex where the thread is waiting on (only in \p PRWTMTX state).*/
+    Mutex           *p_wtmtxp;
+#endif
+#ifdef CH_USE_MESSAGES
+    /** Destination thread for message send (only in \p PRSNDMSG state).*/
+    Thread          *p_wtthdp;
+#endif
+  };
   union {
     /** Thread wakeup code, normally set to \p RDY_OK by the \p chSchReadyI()
      * (only while in \p PRREADY state).*/
     t_msg           p_rdymsg;
     /** The thread exit code (only while in \p PREXIT state).*/
     t_msg           p_exitcode;
-#ifdef CH_USE_SEMAPHORES
-    /** Semaphore where the thread is waiting on (only in \p PRWTSEM state).*/
-    Semaphore       *p_semp;
-#endif
-#ifdef CH_USE_MUTEXES
-    Mutex           *p_mtxp;
-#endif
 #ifdef CH_USE_EVENTS
     /** Enabled events mask (only while in \p PRWTEVENT state).*/
     t_eventmask     p_ewmask;
@@ -73,8 +80,6 @@ struct Thread {
     /** Message (only while in \p PRSNDMSG state).*/
     t_msg           p_msg;
 #endif
-    /** Generic way to access the union.*/
-    void            *p_common;
   };
   /** Machine dependent processor context.*/
   Context           p_ctx;

@@ -45,6 +45,7 @@ t_msg chMsgSend(Thread *tp, t_msg msg) {
   fifo_insert(currp, &tp->p_msgqueue);
 #endif
   currp->p_msg = msg;
+  currp->p_wtthdp = tp;
   if (tp->p_state == PRWTMSG)
     chSchReadyI(tp, RDY_OK);
   chSchGoSleepS(PRSNDMSG);
@@ -83,6 +84,7 @@ t_msg chMsgSendWithEvent(Thread *tp, t_msg msg, EventSource *esp) {
   fifo_insert(currp, &tp->p_msgqueue);
 #endif
   chEvtSendI(esp);
+  currp->p_wtthdp = tp;
   currp->p_msg = msg;
   chSchGoSleepS(PRSNDMSG);
   msg = currp->p_rdymsg;
@@ -129,9 +131,10 @@ t_msg chMsgSendTimeout(Thread *tp, t_msg msg, t_time time) {
 #else
   fifo_insert(currp, &tp->p_msgqueue);
 #endif
+  currp->p_msg = msg;
+  currp->p_wtthdp = tp;
   if (tp->p_state == PRWTMSG)
     chSchReadyI(tp, RDY_OK);
-  currp->p_msg = msg;
   chSchGoSleepS(PRSNDMSG);
   msg = currp->p_rdymsg;
   if (chVTIsArmedI(&vt))

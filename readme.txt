@@ -41,7 +41,7 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 
 *** 0.5.1 ***
 - NEW: Priority enqueing for messages can be optionally enabled by specifying
-  the P_MSGBYPRIO option when creating a server thread.
+  the P_MSGBYPRIO option when creating a message server thread.
   This change allows the implementation of a priority ceiling protocol into
   message servers threads. Threads serving messages by priority and threads
   serving messages in FIFO orded can exist at the same time in the system.

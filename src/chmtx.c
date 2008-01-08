@@ -65,11 +65,19 @@ void chMtxLockS(Mutex *mp) {
     Thread *tp = mp->m_owner;
     while (tp->p_prio < currp->p_prio) {
       tp->p_prio = currp->p_prio;
+      /*
+       * The following states need priority queues reordering.
+       */
       switch (tp->p_state) {
       case PRWTMTX:
-        prio_insert(dequeue(tp), &tp->p_mtxp->m_queue);
-        tp = tp->p_mtxp->m_owner;
+        prio_insert(dequeue(tp), &tp->p_wtmtxp->m_queue);
+        tp = tp->p_wtmtxp->m_owner;
         continue;
+#ifdef CH_USE_MESSAGES_PRIORITY
+      case PRSNDMSG:
+        if (tp->p_flags & P_MSGBYPRIO)
+          prio_insert(dequeue(tp), &tp->p_wtthdp->p_msgqueue);
+#endif
       case PRREADY:
         chSchReadyI(dequeue(tp), RDY_OK);
       }
@@ -79,7 +87,7 @@ void chMtxLockS(Mutex *mp) {
      * Goes to sleep on the mutex.
      */
     prio_insert(currp, &mp->m_queue);
-    currp->p_mtxp = mp;
+    currp->p_wtmtxp = mp;
     chSchGoSleepS(PRWTMTX);
     chDbgAssert(mp->m_owner == NULL, "chmtx.c, chMtxLockS()");
   }

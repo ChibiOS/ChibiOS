@@ -109,7 +109,7 @@ t_msg chSemWaitS(Semaphore *sp) {
 
   if (--sp->s_cnt < 0) {
     fifo_insert(currp, &sp->s_queue);
-    currp->p_semp = sp;
+    currp->p_wtsemp = sp;
     chSchGoSleepS(PRWTSEM);
     return currp->p_rdymsg;
   }
@@ -120,7 +120,7 @@ t_msg chSemWaitS(Semaphore *sp) {
 static void wakeup(void *p) {
 
   chDbgAssert(((Thread *)p)->p_state == PRWTSEM, "chsem.c, wakeup()");
-  chSemFastSignalI(((Thread *)p)->p_semp);
+  chSemFastSignalI(((Thread *)p)->p_wtsemp);
   chSchReadyI(dequeue(p), RDY_TIMEOUT);
 }
 
@@ -158,7 +158,7 @@ t_msg chSemWaitTimeoutS(Semaphore *sp, t_time time) {
 
     chVTSetI(&vt, time, wakeup, currp);
     fifo_insert(currp, &sp->s_queue);
-    currp->p_semp = sp;
+    currp->p_wtsemp = sp;
     chSchGoSleepS(PRWTSEM);
     if (chVTIsArmedI(&vt))
       chVTResetI(&vt);
@@ -215,7 +215,7 @@ void chSemSignalWait(Semaphore *sps, Semaphore *spw) {
 
   if (--spw->s_cnt < 0) {
     fifo_insert(currp, &spw->s_queue);
-    currp->p_semp = spw;
+    currp->p_wtsemp = spw;
     chSchGoSleepS(PRWTSEM);
   }
   else
