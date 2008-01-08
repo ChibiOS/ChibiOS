@@ -53,6 +53,10 @@ struct Thread {
    * thread in the system.
    */
   union {
+#ifdef CH_USE_TRACE
+    /** Kernel object where the thread is waiting on.*/
+    void            *p_wtobjp;
+#endif
 #ifdef CH_USE_SEMAPHORES
     /** Semaphore where the thread is waiting on (only in \p PRWTSEM state).*/
     Semaphore       *p_wtsemp;
@@ -84,10 +88,7 @@ struct Thread {
   /** Machine dependent processor context.*/
   Context           p_ctx;
   /*
-   * Start of the optional fields. Note, the null thread may also let its
-   * stack overwrite the following fields since it never uses semaphores,
-   * events, messages, exit etc, this can save some space on RAM starved
-   * systems, be caruful in doing so.
+   * Start of the optional fields.
    */
 #ifdef CH_USE_WAITEXIT
   /** The list of the threads waiting for this thread termination.*/

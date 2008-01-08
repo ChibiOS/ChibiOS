@@ -37,7 +37,7 @@
 #define MEM_FILL_PATTERN 0x55
 
 typedef struct {
-  void          *cse_slpdata;
+  void          *cse_wtobjp;
   t_time        cse_time;
   UWORD16       cse_state: 4;
   UWORD16       cse_tid: 12;

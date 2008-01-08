@@ -58,7 +58,7 @@ TraceBuffer dbgtb;
  */
 void chDbgTrace(Thread *otp, Thread *ntp) {
 
-  dbgtb.tb_ptr->cse_slpdata = otp->p_common;
+  dbgtb.tb_ptr->cse_wtobjp = otp->p_wtobjp;
 #ifdef CH_USE_SYSTEMTIME
   dbgtb.tb_ptr->cse_time = chSysGetTime();
 #else
