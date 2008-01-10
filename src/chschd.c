@@ -119,19 +119,6 @@ void chSchWakeupS(Thread *ntp, t_msg msg) {
 }
 
 /**
- * If a thread with an higher priority than the current thread is in the
- * ready list then it becomes running.
- * @note The function must be called in the system mutex zone.
- */
-void chSchRescheduleS(void) {
-
-  if (isempty(&rlist.r_queue) || firstprio(&rlist.r_queue) <= currp->p_prio)
-    return;
-
-  chSchDoRescheduleI();
-}
-
-/**
  * Performs a reschedulation. It is meant to be called if
  * \p chSchRescRequired() evaluates to \p TRUE.
  */
@@ -145,6 +132,19 @@ void chSchDoRescheduleI(void) {
   chDbgTrace(otp, currp);
 #endif
   chSysSwitchI(&otp->p_ctx, &currp->p_ctx);
+}
+
+/**
+ * If a thread with an higher priority than the current thread is in the
+ * ready list then it becomes running.
+ * @note The function must be called in the system mutex zone.
+ */
+void chSchRescheduleS(void) {
+
+  if (isempty(&rlist.r_queue) || firstprio(&rlist.r_queue) <= currp->p_prio)
+    return;
+
+  chSchDoRescheduleI();
 }
 
 /**
