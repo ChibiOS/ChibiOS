@@ -122,7 +122,7 @@ extern void chSysUnlock(void);
 void _IdleThread(void *p) __attribute__((noreturn));
 
 void chSysHalt(void);
-void chSysSwitchI(Context *oldp, Context *newp);
+void chSysSwitchI(struct Thread *otp, struct Thread *ntp);
 void chSysPuts(char *msg);
 void threadstart(void);
 

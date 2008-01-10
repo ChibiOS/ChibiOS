@@ -61,8 +61,8 @@ extern "C" {
   void chSchReadyI(Thread *tp, t_msg msg);
   void chSchGoSleepS(t_tstate newstate);
   void chSchWakeupS(Thread *tp, t_msg msg);
-  void chSchRescheduleS(void);
   void chSchDoRescheduleI(void);
+  void chSchRescheduleS(void);
   BOOL chSchRescRequiredI(void);
 #ifdef __cplusplus
 }

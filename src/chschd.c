@@ -87,7 +87,7 @@ void chSchGoSleepS(t_tstate newstate) {
 #ifdef CH_USE_TRACE
   chDbgTrace(otp, currp);
 #endif
-  chSysSwitchI(&otp->p_ctx, &currp->p_ctx);
+  chSysSwitchI(otp, currp);
 }
 
 /**
@@ -114,7 +114,7 @@ void chSchWakeupS(Thread *ntp, t_msg msg) {
 #ifdef CH_USE_TRACE
     chDbgTrace(otp, ntp);
 #endif
-    chSysSwitchI(&otp->p_ctx, &ntp->p_ctx);
+    chSysSwitchI(otp, ntp);
   }
 }
 
@@ -131,7 +131,7 @@ void chSchDoRescheduleI(void) {
 #ifdef CH_USE_TRACE
   chDbgTrace(otp, currp);
 #endif
-  chSysSwitchI(&otp->p_ctx, &currp->p_ctx);
+  chSysSwitchI(otp, currp);
 }
 
 /**

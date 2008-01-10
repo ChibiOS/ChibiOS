@@ -27,6 +27,8 @@
 
 #define _CHIBIOS_RT_
 
+struct Thread;
+
 #ifndef __DOXIGEN__
 #ifndef _CHCONF_H_
 #include <chconf.h>

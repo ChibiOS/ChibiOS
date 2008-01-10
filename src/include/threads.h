@@ -47,6 +47,8 @@ struct Thread {
   t_tstate          p_state;
   /** Mode flags.*/
   t_tmode           p_flags;
+  /** Machine dependent processor context.*/
+  Context           p_ctx;
   /*
    * The following fields are merged in unions because they are all
    * state-specific fields. This trick saves some extra space for each
@@ -79,8 +81,6 @@ struct Thread {
     void            *p_wtobjp;
 #endif
   };
-  /** Machine dependent processor context.*/
-  Context           p_ctx;
   /*
    * Start of the optional fields.
    */

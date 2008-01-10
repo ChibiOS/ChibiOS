@@ -69,7 +69,7 @@ void chSysUnlock(void) {
 }
 #endif
 
-void chSysSwitchI(Context *oldp, Context *newp) {
+void chSysSwitchI(struct Thread *otp, struct Thread *ntp) {
 
 #ifdef THUMB
   asm(".p2align 2,,                                             \n\t" \
@@ -80,8 +80,8 @@ void chSysSwitchI(Context *oldp, Context *newp) {
 
 #ifdef CH_CURRP_REGISTER_CACHE
   asm("stmfd    sp!, {r4, r5, r6, r8, r9, r10, r11, lr}         \n\t" \
-      "str      sp, [r0, #0]                                    \n\t" \
-      "ldr      sp, [r1, #0]                                    \n\t");
+      "str      sp, [r0, #16]                                   \n\t" \
+      "ldr      sp, [r1, #16]                                   \n\t");
 #ifdef THUMB_PRESENT
   asm("ldmfd    sp!, {r4, r5, r6, r8, r9, r10, r11, lr}         \n\t" \
       "bx       lr                                              \n\t");
@@ -90,8 +90,8 @@ void chSysSwitchI(Context *oldp, Context *newp) {
 #endif /* !THUMB_PRESENT */
 #else /* !CH_CURRP_REGISTER_CACHE */
   asm("stmfd    sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}     \n\t" \
-      "str      sp, [r0, #0]                                    \n\t" \
-      "ldr      sp, [r1, #0]                                    \n\t");
+      "str      sp, [r0, #16]                                   \n\t" \
+      "ldr      sp, [r1, #16]                                   \n\t");
 #ifdef THUMB_PRESENT
   asm("ldmfd    sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}     \n\t" \
       "bx       lr                                              \n\t");
