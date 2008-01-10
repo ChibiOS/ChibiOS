@@ -117,7 +117,7 @@ typedef struct {
 
 void _IdleThread(void *p);
 void chSysHalt(void);
-void chSysSwitchI(Context *oldp, Context *newp);
+void chSysSwitchI(Thread *otp, Thread *ntp);
 void chSysPuts(char *msg);
 
 #endif /* _CHCORE_H_ */
