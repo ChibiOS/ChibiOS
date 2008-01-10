@@ -39,6 +39,10 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.5.2 ***
+- Small reordering in the fields of the Thread structure in order to optimize
+  the space when messages are not used.
+
 *** 0.5.1 ***
 - NEW: Priority enqueing for messages can be optionally enabled by specifying
   the P_MSGBYPRIO option when creating a message server thread.

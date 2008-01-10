@@ -62,13 +62,11 @@ void chSchReadyI(Thread *tp, t_msg msg) {
 
   tp->p_state = PRREADY;
   tp->p_rdymsg = msg;
-//  prio_insert(tp, &rlist.r_queue);
   while (cp->p_prio >= tp->p_prio)
     cp = cp->p_next;
   /* Insertion on p_prev.*/
   tp->p_prev = (tp->p_next = cp)->p_prev;
   tp->p_prev->p_next = cp->p_prev = tp;
-
 }
 
 /**
