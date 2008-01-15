@@ -62,6 +62,7 @@ _fiq:
         .word   FiqHandler
         .word   0
         .word   0
+        .word   0
 
 /*
  * Reset handler.
