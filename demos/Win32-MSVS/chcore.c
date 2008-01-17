@@ -84,7 +84,7 @@ __declspec(naked) void __fastcall chSysHalt(void) {
   exit(2);
 }
 
-__declspec(naked) void __fastcall chSysSwitchI(Context *oldp, Context *newp) {
+__declspec(naked) void __fastcall chSysSwitchI(Thread *otp, Thread *ntp) {
 
   __asm {
     // Switch out code
@@ -92,9 +92,9 @@ __declspec(naked) void __fastcall chSysSwitchI(Context *oldp, Context *newp) {
     push    esi
     push    edi
     push    ebx
-    mov     dword ptr [ecx],esp
+    mov     dword ptr 16[ecx],esp
     // Switch in code
-    mov     esp,[edx]
+    mov     esp,16[edx]
     pop     ebx
     pop     edi
     pop     esi

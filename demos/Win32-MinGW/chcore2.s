@@ -27,9 +27,9 @@
         push    %esi
         push    %edi
         push    %ebx
-        movl    %esp,(%ecx)
+        movl    %esp,16(%ecx)
         # Switch in
-        movl    (%edx),%esp
+        movl    16(%edx),%esp
         pop     %ebx
         pop     %edi
         pop     %esi

@@ -76,7 +76,7 @@ typedef struct {
 t_msg _IdleThread(void *p);
 
 void __fastcall chSysHalt(void);
-void __fastcall chSysSwitchI(Context *oldp, Context *newp);
+void __fastcall chSysSwitchI(Thread *otp, Thread *ntp);
 void __fastcall threadexit(void);
 
 #endif /* _CHCORE_H_ */

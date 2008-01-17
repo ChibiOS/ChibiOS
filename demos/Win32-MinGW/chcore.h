@@ -76,7 +76,7 @@ typedef struct {
 t_msg _IdleThread(void *p);
 
 __attribute__((fastcall)) void chSysHalt(void);
-__attribute__((fastcall)) void chSysSwitchI(Context *oldp, Context *newp);
+__attribute__((fastcall)) void chSysSwitchI(Thread *otp, Thread *ntp);
 __attribute__((fastcall)) void threadstart(void);
 
 #endif /* _CHCORE_H_ */
