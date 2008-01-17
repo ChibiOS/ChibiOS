@@ -57,7 +57,7 @@ void chSysHalt(void) {
 /**
  * Context switch.
  */
-void chSysSwitchI(Context *oldp, Context *newp) {}
+void chSysSwitchI(Thread *otp, Thread *ntp) {}
 
 /**
  * Prints a message on the system console (if any).

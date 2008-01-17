@@ -32,7 +32,7 @@ typedef struct Thread Thread;
 #define notempty(p)    ((p)->p_next != (Thread *)(p))
 
 /**
- * Generic threads FIFO queue header and element.
+ * Generic threads queue header and element.
  */
 typedef struct {
   /** Next \p Thread in the queue, in FIFO order.*/

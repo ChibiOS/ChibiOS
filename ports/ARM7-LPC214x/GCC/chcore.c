@@ -69,7 +69,7 @@ void chSysUnlock(void) {
 }
 #endif
 
-void chSysSwitchI(struct Thread *otp, struct Thread *ntp) {
+void chSysSwitchI(Thread *otp, Thread *ntp) {
 
 #ifdef THUMB
   asm(".p2align 2,,                                             \n\t" \

@@ -27,9 +27,6 @@
 
 #define _CHIBIOS_RT_
 
-struct Thread;
-
-#ifndef __DOXIGEN__
 #ifndef _CHCONF_H_
 #include <chconf.h>
 #endif
@@ -38,17 +35,16 @@ struct Thread;
 #include <chtypes.h>
 #endif
 
+#ifndef _LISTS_H_
+#include "lists.h"
+#endif
+
 #ifndef _CHCORE_H_
 #include <chcore.h>
 #endif
-#endif /* __DOXIGEN__ */
 
-#ifndef _LISTS_H_
+#ifndef _DELTA_H_
 #include "delta.h"
-#endif
-
-#ifndef _LISTS_H_
-#include "lists.h"
 #endif
 
 #ifndef _SCHEDULER_H_

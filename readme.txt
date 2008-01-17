@@ -40,6 +40,7 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 *****************************************************************************
 
 *** 0.5.2 ***
+- Fixed a small problem in the main header file ch.h.
 - Small reordering in the fields of the Thread structure in order to optimize
   the space when messages are not used.
 
