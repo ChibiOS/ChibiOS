@@ -35,9 +35,9 @@ typedef struct Thread Thread;
  * Generic threads queue header and element.
  */
 typedef struct {
-  /** Next \p Thread in the queue, in FIFO order.*/
+  /** First \p Thread in the queue.*/
   Thread            *p_next;
-  /** Last \p Thread in the queue, in FIFO order.*/
+  /** Last \p Thread in the queue.*/
   Thread            *p_prev;
 } ThreadsQueue;
 
