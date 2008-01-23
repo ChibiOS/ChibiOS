@@ -30,14 +30,12 @@ extern "C" {
 #endif
 #ifdef CH_USE_SLEEP
   void chThdSleep(t_time time);
-#ifdef CH_USE_SYSTEMTIME
-  void chThdSleepUntil(t_time time);
-#endif /* CH_USE_SYSTEMTIME */
 #endif /* CH_USE_SLEEP */
 #ifdef __cplusplus
 }
 #endif
 
+#ifdef CH_USE_SYSTEMTIME
 /**
  * Returns the number of system ticks since the \p chSysInit() invocation.
  * @return the system ticks number
@@ -47,6 +45,20 @@ extern "C" {
  *       option is enabled in \p chconf.h.
  */
 #define chSysGetTime() rlist.r_stime
+
+/**
+ * Suspends the invoking thread until the system time arrives to the specified
+ * value.
+ * @note The function is available only if the \p CH_USE_SYSTEMTIME
+ *       option is enabled in \p chconf.h.
+ */
+#define chThdSleepUntil(t) {                                            \
+  chSysLock();                                                          \
+  chSchGoSleepTimeoutS(PRSLEEP,                                         \
+                      (t_time)((t) - chSysGetTime()))                   \
+  chSysUnlock();                                                        \
+}
+#endif /* CH_USE_SYSTEMTIME */
 
 #endif /* _SLEEP_H_ */
 

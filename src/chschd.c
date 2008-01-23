@@ -90,6 +90,33 @@ void chSchGoSleepS(t_tstate newstate) {
   chSysSwitchI(otp, currp);
 }
 
+static void wakeup(void *p) {
+
+  if (((Thread *)p)->p_state == PRWTSEM)
+    chSemFastSignalI(((Thread *)p)->p_wtsemp);
+  chSchReadyI(p, RDY_TIMEOUT);
+}
+
+/**
+ * Puts the current thread to sleep into the specified state, the next highest
+ * priority thread becomes running. The thread is automatically awakened after
+ * the specified time elapsed.
+ * @param newstate the new thread state
+ * @param time the number of ticks before the operation timouts
+ * @return the wakeup message, it is \p RDY_TIMEOUT if a timeout occurs
+ * @note The function must be called in the system mutex zone.
+ * @note The function is not meant to be used in the user code directly.
+ */
+t_msg chSchGoSleepTimeoutS(t_tstate newstate, t_time time) {
+  VirtualTimer vt;
+
+  chVTSetI(&vt, time, wakeup, currp);
+  chSchGoSleepS(newstate);
+  if (chVTIsArmedI(&vt))
+    chVTResetI(&vt);
+  return currp->p_rdymsg;
+}
+
 /**
  * Wakeups a thread, the thread is inserted into the ready list or made
  * running directly depending on its relative priority compared to the current

@@ -142,12 +142,6 @@ t_eventid chEvtWait(t_eventmask ewmask,
   return chEvtWaitTimeout(ewmask, handlers, TIME_INFINITE);
 }
 
-static void wakeup(void *p) {
-
-  chDbgAssert(((Thread *)p)->p_state == PRWTEVENT, "chevents.c, wakeup()");
-  chSchReadyI(p, RDY_TIMEOUT);
-}
-
 /**
  * The function waits for an event or the specified timeout then returns the
  * event identifier, if an event handler is specified then the handler is
@@ -177,17 +171,9 @@ t_eventid chEvtWaitTimeout(t_eventmask ewmask,
   chSysLock();
 
   if ((currp->p_epending & ewmask) == 0) {
-    VirtualTimer vt;
-
-    chVTSetI(&vt, time, wakeup, currp);
     currp->p_ewmask = ewmask;
-    chSchGoSleepS(PRWTEVENT);
-    if (!chVTIsArmedI(&vt)) {
-
-      chSysUnlock();
+    if (chSchGoSleepTimeoutS(PRWTEVENT, time) < RDY_OK)
       return RDY_TIMEOUT;
-    }
-    chVTResetI(&vt);
   }
   i = 0, m = 1;
   while ((currp->p_epending & ewmask & m) == 0)

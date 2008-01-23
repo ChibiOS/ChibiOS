@@ -95,12 +95,6 @@
  *  included in the kernel.*/
 //#define CH_USE_MESSAGES
 
-/** Configuration option: if specified then the \p chMsgSendTimeout()
- *  function is included in the kernel.
- * @note requires \p CH_USE_MESSAGES.
- * @note requires \p CH_USE_VIRTUAL_TIMERS.*/
-//#define CH_USE_MESSAGES_TIMEOUT
-
 /** Configuration option: if specified then the \p chMsgSendWithEvent()
  *  function is included in the kernel.
  * @note requires \p CH_USE_MESSAGES.

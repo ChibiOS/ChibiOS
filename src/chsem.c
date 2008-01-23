@@ -117,13 +117,6 @@ t_msg chSemWaitS(Semaphore *sp) {
 }
 
 #ifdef CH_USE_SEMAPHORES_TIMEOUT
-static void wakeup(void *p) {
-
-  chDbgAssert(((Thread *)p)->p_state == PRWTSEM, "chsem.c, wakeup()");
-  chSemFastSignalI(((Thread *)p)->p_wtsemp);
-  chSchReadyI(dequeue(p), RDY_TIMEOUT);
-}
-
 /**
  * Performs a wait operation on a semaphore with timeout specification.
  * @param sp pointer to a \p Semaphore structure
@@ -154,15 +147,9 @@ t_msg chSemWaitTimeout(Semaphore *sp, t_time time) {
 t_msg chSemWaitTimeoutS(Semaphore *sp, t_time time) {
 
   if (--sp->s_cnt < 0) {
-    VirtualTimer vt;
-
-    chVTSetI(&vt, time, wakeup, currp);
     fifo_insert(currp, &sp->s_queue);
     currp->p_wtsemp = sp;
-    chSchGoSleepS(PRWTSEM);
-    if (chVTIsArmedI(&vt))
-      chVTResetI(&vt);
-    return currp->p_rdymsg;
+    return chSchGoSleepTimeoutS(PRWTSEM, time);
   }
   return RDY_OK;
 }

@@ -134,14 +134,6 @@ t_msg Thread4(void *p) {
   return 0;
 }
 
-t_msg Thread5(void *p) {
-
-  // NOTE, this thread does not serve messages this causes the client to
-  // timeout.
-  chThdSleep(3000);
-  return 0;
-}
-
 t_msg Thread6(void *p) {
 
   while (!chThdShouldTerminate())
@@ -386,20 +378,6 @@ void testmsg1(void) {
   println("");
 }
 
-void testmsg2(void) {
-  unsigned int i;
-
-  println("*** Messages, timeout test, you should read ABCDE (slowly):");
-  t1 = chThdCreate(chThdGetPriority()-1, 0, wsT1, sizeof(wsT1), Thread5, chThdSelf());
-  for (i = 0; i < 5; i++) {
-    chFDDPut(comp, 'A' + i);
-    chMsgSendTimeout(t1, 'A' + i, 500);
-  }
-  chMsgSendTimeout(t1, 0, 500);
-  chThdWait(t1);
-  println("");
-}
-
 __attribute__((noinline))
 unsigned int msg_loop_test(Thread *tp) {
   unsigned int i;
@@ -565,7 +543,6 @@ t_msg TestThread(void *p) {
    * Messages tests.
    */
   testmsg1();
-  testmsg2();
 
   /*
    * Kernel benchmarks.

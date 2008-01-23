@@ -94,57 +94,6 @@ t_msg chMsgSendWithEvent(Thread *tp, t_msg msg, EventSource *esp) {
 }
 #endif
 
-#ifdef CH_USE_MESSAGES_TIMEOUT
-static void wakeup(void *p) {
-
-  chDbgAssert(((Thread *)p)->p_state == PRSNDMSG, "chmsg.c, wakeup()");
-  chSchReadyI(dequeue(p), RDY_TIMEOUT);
-}
-
-/**
- * Sends a message to the specified thread with timeout specification. The
- * sender is stopped until the receiver executes a \p chMsgRelease().
- *
- * @param tp the pointer to the thread
- * @param msg the message. Note that it can be a pointer to a complex
- *            message structure.
- * @param time the number of ticks before the operation fails
- * @return the message return status from \p chMsgRelease() or
- *         \p RDY_TIMEOUT the specified time expired.
- * @note The server thread can also return data into the message structure
- *       if you need messages to be bidirectional, just define the structure
- *       according your needs. If you dont need complicated messages exchange
- *       you may just use the \p chMsgRelease() status code as response
- *       to the message.
- */
-t_msg chMsgSendTimeout(Thread *tp, t_msg msg, t_time time) {
-  VirtualTimer vt;
-
-  chSysLock();
-
-  chVTSetI(&vt, time, wakeup, currp);
-#ifdef CH_USE_MESSAGES_PRIORITY
-  if (tp->p_flags & P_MSGBYPRIO)
-    prio_insert(currp, &tp->p_msgqueue);
-  else
-    fifo_insert(currp, &tp->p_msgqueue);
-#else
-  fifo_insert(currp, &tp->p_msgqueue);
-#endif
-  currp->p_msg = msg;
-  currp->p_wtthdp = tp;
-  if (tp->p_state == PRWTMSG)
-    chSchReadyI(tp, RDY_OK);
-  chSchGoSleepS(PRSNDMSG);
-  msg = currp->p_rdymsg;
-  if (chVTIsArmedI(&vt))
-    chVTResetI(&vt);
-
-  chSysUnlock();
-  return msg;
-}
-#endif /* CH_USE_MESSAGES_TIMEOUT */
-
 /**
  * Suspends the thread and waits for an incoming message.
  *

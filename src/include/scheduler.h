@@ -60,6 +60,7 @@ extern "C" {
   void chSchInit(void);
   void chSchReadyI(Thread *tp, t_msg msg);
   void chSchGoSleepS(t_tstate newstate);
+  t_msg chSchGoSleepTimeoutS(t_tstate newstate, t_time time);
   void chSchWakeupS(Thread *tp, t_msg msg);
   void chSchDoRescheduleI(void);
   void chSchRescheduleS(void);
