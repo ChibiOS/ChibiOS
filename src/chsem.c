@@ -47,18 +47,11 @@ void chSemInit(Semaphore *sp, t_cnt n) {
  *       \p RDY_RESET.
  */
 void chSemReset(Semaphore *sp, t_cnt n) {
-  t_cnt cnt;
 
-  chDbgAssert(n >= 0, "chsem.c, chSemReset()");
   chSysLock();
 
-  cnt = sp->s_cnt;
-  sp->s_cnt = n;
-  if (cnt < 0) {
-    while (cnt++)
-      chSchReadyI(fifo_remove(&sp->s_queue), RDY_RESET);
-    chSchRescheduleS();
-  }
+  chSemResetI(sp, n);
+  chSchRescheduleS();
 
   chSysUnlock();
 }

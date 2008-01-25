@@ -90,6 +90,7 @@ void chSchGoSleepS(t_tstate newstate) {
   chSysSwitchI(otp, currp);
 }
 
+#ifdef CH_USE_VIRTUAL_TIMERS
 static void wakeup(void *p) {
 
   if (((Thread *)p)->p_state == PRWTSEM)
@@ -116,6 +117,7 @@ t_msg chSchGoSleepTimeoutS(t_tstate newstate, t_time time) {
     chVTResetI(&vt);
   return currp->p_rdymsg;
 }
+#endif /* CH_USE_VIRTUAL_TIMERS */
 
 /**
  * Wakeups a thread, the thread is inserted into the ready list or made

@@ -40,7 +40,7 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 *****************************************************************************
 
 *** 0.5.3 ***
-- Removed the chMsgSendTimeout() API, it was conceptually flawed because
+- Removed the chMsgSendTimeout() API, it was conceptually flawed because,
   after sending a message, the sender *has* to wait for the answer or
   the next sender in queue would receive it instead (the messages server has
   no way to know that the sender is gone because a timeout).
@@ -49,8 +49,9 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 - Removed the test case for chMsgSendTimeout() from the test suite.
 - Space saved by reorganizing the timeout code into a single scheduler
   function.
+- Space optimizations in the semaphores code.
 - The API chThdSleepUntil() become a macro saving some more code space.
-- Because all the above changes the kernel code (ARM) is over 600 bytes
+- Because all the above changes the kernel code (ARM) is over 700 bytes
   smaller.
 
 *** 0.5.2 ***

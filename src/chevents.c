@@ -53,9 +53,9 @@ void chEvtRegister(EventSource *esp, EventListener *elp, t_eventid eid) {
  * @param elp pointer to the \p EventListener structure
  * @note If the event listener is not registered on the specified event source
  *       then the function does nothing.
- * @note For optimal performance perform the unregister operations in inverse
- *       order of the register operations (elements are found on top of the
- *       list).
+ * @note For optimal performance it is better to perform the unregister
+ *       operations in inverse order of the register operations (elements are
+ *       found on top of the list).
  */
 void chEvtUnregister(EventSource *esp, EventListener *elp) {
   EventListener *p = (EventListener *)esp;
