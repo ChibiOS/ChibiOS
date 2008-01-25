@@ -43,8 +43,8 @@ void chSemInit(Semaphore *sp, t_cnt n) {
  * @param sp pointer to a \p Semaphore structure
  * @param n the new value of the semaphore counter. Must be non-negative.
  * @note The released threads can recognize they were waked up by a reset
- *       instead than a signal because the \p p_rdymsg field is set to
- *       \p RDY_RESET.
+ *       instead than a signal because the \p chSemWait() will return
+ *       \p RDY_RESET instead of \p RDY_OK.
  */
 void chSemReset(Semaphore *sp, t_cnt n) {
 
@@ -61,8 +61,8 @@ void chSemReset(Semaphore *sp, t_cnt n) {
  * @param sp pointer to a \p Semaphore structure
  * @param n the new value of the semaphore counter. Must be non-negative.
  * @note The released threads can recognize they were waked up by a reset
- *       instead than a signal because the \p p_rdymsg field is set to
- *       \p RDY_RESET.
+ *       instead than a signal because the \p chSemWait() will return
+ *       \p RDY_RESET instead of \p RDY_OK.
  * @note This function does not reschedule.
  */
 void chSemResetI(Semaphore *sp, t_cnt n) {
@@ -146,8 +146,8 @@ t_msg chSemWaitTimeoutS(Semaphore *sp, t_time time) {
   }
   return RDY_OK;
 }
-
 #endif /* CH_USE_SEMAPHORES_TIMEOUT */
+
 /**
  * Performs a signal operation on a semaphore.
  * @param sp pointer to a \p Semaphore structure

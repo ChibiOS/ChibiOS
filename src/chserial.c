@@ -25,7 +25,6 @@
 #include <ch.h>
 
 #ifdef CH_USE_SERIAL_FULLDUPLEX
-
 /**
  * Initializes a generic full duplex driver. The HW dependent part of the
  * initialization has to be performed outside, usually in the hardware
@@ -108,7 +107,6 @@ t_dflags chFDDGetAndClearFlags(FullDuplexDriver *sd) {
   sd->sd_flags = SD_NO_ERROR;
   return mask;
 }
-
 #endif /* CH_USE_SERIAL_FULLDUPLEX */
 
 #ifdef CH_USE_SERIAL_HALFDUPLEX
