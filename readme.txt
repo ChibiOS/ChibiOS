@@ -45,7 +45,7 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   the next sender in queue would receive it instead (the messages server has
   no way to know that the sender is gone because a timeout).
   A workaround would make the messages subsystem much heavier and this is
-  not desiderable.
+  not acceptable.
 - Removed the test case for chMsgSendTimeout() from the test suite.
 - Space saved by reorganizing the timeout code into a single scheduler
   function.
