@@ -48,7 +48,7 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   not acceptable.
 - Removed the test case for chMsgSendTimeout() from the test suite.
 - Space saved by reorganizing the timeout code into a single scheduler
-  function.
+  function chSchGoSleepTimeoutS().
 - Space optimizations in the semaphores code.
 - The API chThdSleepUntil() become a macro saving some more code space.
 - Because all the above changes the kernel code (ARM) is over 700 bytes
