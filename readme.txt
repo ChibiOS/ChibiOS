@@ -39,6 +39,9 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.5.4 ***
+- Begun the work for the port on Atmel AT91SAM7X256 (and similar models).
+
 *** 0.5.3 ***
 - Removed the chMsgSendTimeout() API, it was conceptually flawed because,
   after sending a message, the sender *has* to wait for the answer or
