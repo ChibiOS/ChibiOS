@@ -47,8 +47,8 @@ _start:
         ldr     pc, _prefetch
         ldr     pc, _abort
         nop
-        ldr     pc, [pc,#-0xFF0]        /* VIC - IRQ Vector Register */
-        ldr     pc, _fiq
+        ldr     pc, [pc,#-0xF20]        /* AIC - AIC_IVR */
+        ldr     pc, [pc,#-0xF20]        /* AIC - AIC_FVR */
 
 _undefined:
         .word   UndHandler
