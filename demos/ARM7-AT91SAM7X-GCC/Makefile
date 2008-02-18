@@ -68,6 +68,7 @@ ASRC = ../../ports/ARM7-LPC214x/GCC/chcore.c \
        ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \
        ../../src/chserial.c \
        ../../src/lib/evtimer.c ../../test/test.c \
+       at91lib\aic.c \
        board.c main.c
 
 # List THUMB-mode C sources here

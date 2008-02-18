@@ -19,7 +19,8 @@
 
 #include <ch.h>
 
-#include "at91lib/AT91SAM7X256.h"
+#include "board.h"
+#include "at91lib/aic.h"
 
 extern void FiqHandler(void);
 
@@ -29,10 +30,24 @@ static void SpuriousHandler(void) {
   AT91C_BASE_AIC->AIC_EOICR = (AT91_REG)AT91C_BASE_AIC;
 }
 
+/*
+ * Timer 0 IRQ handling here.
+ */
+__attribute__((naked))
+static void SYSIrqHandler(void) {
+
+  chSysIRQEnterI();
+
+  if (AT91C_BASE_PITC->PITC_PISR & AT91C_PITC_PITS) {
+    chSysTimerHandlerI();
+    (void) AT91C_BASE_PITC->PITC_PIVR;
+  }
+
+  chSysIRQExitI();
+}
+
 void hwinit(void) {
   int i;
-  AT91PS_PMC pmcp = AT91C_BASE_PMC;
-  AT91PS_AIC aicp = AT91C_BASE_AIC;
 
   /*
    * Flash Memory: 1 wait state, about 50 cycles in a microsecond.
@@ -47,40 +62,71 @@ void hwinit(void) {
   /*
    * Enables the main oscillator and waits 56 slow cycles as startup time.
    */
-  pmcp->PMC_MOR = (AT91C_CKGR_OSCOUNT & (7 << 8)) | AT91C_CKGR_MOSCEN;
-  while (!(pmcp->PMC_SR & AT91C_PMC_MOSCS))
+  AT91C_BASE_PMC->PMC_MOR = (AT91C_CKGR_OSCOUNT & (7 << 8)) | AT91C_CKGR_MOSCEN;
+  while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MOSCS))
     ;
 
   /*
    * PLL setup: DIV = 14, MUL = 72, PLLCOUNT = 10
    * PLLfreq = 96109714 Hz (rounded)
    */
-  pmcp->PMC_PLLR = (AT91C_CKGR_DIV & 14) |
-                   (AT91C_CKGR_PLLCOUNT & (10 << 8)) |
-                   (AT91C_CKGR_MUL & (72 << 16));
-  while (!(pmcp->PMC_SR & (AT91C_PMC_LOCK)))
+  AT91C_BASE_PMC->PMC_PLLR = (AT91C_CKGR_DIV & 14) |
+                             (AT91C_CKGR_PLLCOUNT & (10 << 8)) |
+                             (AT91C_CKGR_MUL & (72 << 16));
+  while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_LOCK))
     ;
 
   /*
    * Master clock = PLLfreq / 2 = 48054858 Hz (rounded)
    */
-  pmcp->PMC_MCKR = AT91C_PMC_CSS_PLL_CLK | AT91C_PMC_PRES_CLK_2;
-  while (!(pmcp->PMC_SR & (AT91C_PMC_MCKRDY)))
+  AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_CSS_PLL_CLK | AT91C_PMC_PRES_CLK_2;
+  while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY))
     ;
-
-  /*
-   * Default AIC setup, the device drivers will modify it as needed.
-   */
-  aicp->AIC_SVR[0] = (AT91_REG)FiqHandler;
-  for (i = 1; i < 31; i++) {
-    aicp->AIC_SVR[i] = (AT91_REG)NULL;
-    aicp->AIC_EOICR = (AT91_REG)i;
-  }
-  aicp->AIC_SPU  = (AT91_REG)SpuriousHandler;
 
   /*
    * I/O setup, enable clocks, initially all pins are inputs with pullups.
    */
-  pmcp->PMC_PCER = (1 << AT91C_ID_PIOA) | (1 << AT91C_ID_PIOB);
+  AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_PIOA) | (1 << AT91C_ID_PIOB);
   AT91C_BASE_PIOA->PIO_PER = 0xFFFFFFFF;
+  AT91C_BASE_PIOB->PIO_PER = 0xFFFFFFFF;
+
+  /*
+   * Default AIC setup, the device drivers will modify it as needed.
+   */
+  AT91C_BASE_AIC->AIC_ICCR = 0xFFFFFFFF;
+  AT91C_BASE_AIC->AIC_SVR[0] = (AT91_REG)FiqHandler;
+  for (i = 1; i < 31; i++) {
+    AT91C_BASE_AIC->AIC_SVR[i] = (AT91_REG)NULL;
+    AT91C_BASE_AIC->AIC_EOICR = (AT91_REG)i;
+  }
+  AT91C_BASE_AIC->AIC_SPU  = (AT91_REG)SpuriousHandler;
+
+  /*
+   * LCD pins setup.
+   */
+  AT91C_BASE_PIOB->PIO_SODR   = PIOB_LCD_BL;    // Set to high.
+  AT91C_BASE_PIOB->PIO_OER    = PIOB_LCD_BL;    // Configure as output.
+  AT91C_BASE_SYS->PIOA_PPUDR  = PIOB_LCD_BL;    // Disable internal pullup resistor.
+
+  AT91C_BASE_PIOA->PIO_SODR   = PIOA_LCD_RESET; // Set to high.
+  AT91C_BASE_PIOA->PIO_OER    = PIOA_LCD_RESET; // Configure as output.
+  AT91C_BASE_SYS->PIOB_PPUDR  = PIOA_LCD_RESET; // Disable internal pullup resistor.
+
+  /*
+   * Joystick and buttons, disable pullups, already inputs.
+   */
+  AT91C_BASE_SYS->PIOA_PPUDR  = PIOA_B1 | PIOA_B2 | PIOA_B3 | PIOA_B4 | PIOA_B5;
+  AT91C_BASE_SYS->PIOB_PPUDR  = PIOB_SW1 | PIOB_SW2;
+
+  /*
+   * MMC/SD slot, disable pullups, already inputs.
+   */
+  AT91C_BASE_SYS->PIOB_PPUDR  = PIOB_MMC_WP | PIOB_MMC_CP;
+
+  /*
+   * PIT Initialization.
+   */
+  AIC_ConfigureIT(AT91C_ID_SYS, AT91C_AIC_SRCTYPE_POSITIVE_EDGE, SYSIrqHandler);
+  AT91C_BASE_PITC->PITC_PIMR = (MCK / 16 / CH_FREQUENCY) - 1;
+  AT91C_BASE_PITC->PITC_PIMR |= AT91C_PITC_PITEN | AT91C_PITC_PITIEN;
 }
