@@ -26,7 +26,8 @@
 
 #define BOARD_OLIMEX_SAM7_EX256
 
-#define MCK             18432000
+#define CLK             18432000
+#define MCK             48054857
 
 /*
  * I/O definitions.

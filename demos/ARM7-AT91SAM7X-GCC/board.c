@@ -31,7 +31,7 @@ static void SpuriousHandler(void) {
 }
 
 /*
- * Timer 0 IRQ handling here.
+ * SYS IRQ handling here.
  */
 __attribute__((naked))
 static void SYSIrqHandler(void) {
@@ -39,6 +39,7 @@ static void SYSIrqHandler(void) {
   chSysIRQEnterI();
 
   if (AT91C_BASE_PITC->PITC_PISR & AT91C_PITC_PITS) {
+//    AT91C_BASE_PIOB->PIO_SODR = PIOB_LCD_BL;            // LCD on.
     chSysTimerHandlerI();
     (void) AT91C_BASE_PITC->PITC_PIVR;
   }
@@ -46,6 +47,9 @@ static void SYSIrqHandler(void) {
   chSysIRQExitI();
 }
 
+/*
+ * Board initialization code.
+ */
 void hwinit(void) {
   int i;
 
@@ -104,7 +108,7 @@ void hwinit(void) {
   /*
    * LCD pins setup.
    */
-  AT91C_BASE_PIOB->PIO_SODR   = PIOB_LCD_BL;    // Set to high.
+  AT91C_BASE_PIOB->PIO_CODR   = PIOB_LCD_BL;    // Set to low.
   AT91C_BASE_PIOB->PIO_OER    = PIOB_LCD_BL;    // Configure as output.
   AT91C_BASE_SYS->PIOA_PPUDR  = PIOB_LCD_BL;    // Disable internal pullup resistor.
 
@@ -126,7 +130,10 @@ void hwinit(void) {
   /*
    * PIT Initialization.
    */
-  AIC_ConfigureIT(AT91C_ID_SYS, AT91C_AIC_SRCTYPE_POSITIVE_EDGE, SYSIrqHandler);
+  AIC_ConfigureIT(AT91C_ID_SYS,
+                  AT91C_AIC_SRCTYPE_POSITIVE_EDGE | (AT91C_AIC_PRIOR_HIGHEST -1),
+                  SYSIrqHandler);
+  AIC_EnableIT(AT91C_ID_SYS);
   AT91C_BASE_PITC->PITC_PIMR = (MCK / 16 / CH_FREQUENCY) - 1;
   AT91C_BASE_PITC->PITC_PIMR |= AT91C_PITC_PITEN | AT91C_PITC_PITIEN;
 }

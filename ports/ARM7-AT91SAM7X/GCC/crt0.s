@@ -18,7 +18,7 @@
 */
 
 /*
- * Generic ARM startup file for ChibiOS/RT.
+ * Generic ARM startup file for ChibiOS/RT (Atmel variant).
  */
 
 .extern _main

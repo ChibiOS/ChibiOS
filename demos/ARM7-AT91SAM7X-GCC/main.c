@@ -19,7 +19,19 @@
 
 #include <ch.h>
 
-#include "at91lib/AT91SAM7X256.h"
+#include "board.h"
+
+static WorkingArea(waThread1, 64);
+static t_msg Thread1(void *arg) {
+
+  while (TRUE) {
+    AT91C_BASE_PIOB->PIO_SODR = PIOB_LCD_BL;            // LCD on.
+    chThdSleep(500);
+    AT91C_BASE_PIOB->PIO_CODR = PIOB_LCD_BL;            // LCD off.
+    chThdSleep(500);
+  }
+  return 0;
+}
 
 /*
  * Entry point, the interrupts are disabled on entry.
@@ -32,8 +44,11 @@ int main(int argc, char **argv) {
    */
   chSysInit();
 
-  while (TRUE)
+  chThdCreate(NORMALPRIO, 0, waThread1, sizeof(waThread1), Thread1, NULL);
+
+  while (TRUE) {
     chThdSleep(1000);
+  }
 
   return 0;
 }

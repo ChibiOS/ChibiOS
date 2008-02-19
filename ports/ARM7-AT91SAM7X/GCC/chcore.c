@@ -138,7 +138,7 @@ __attribute__((naked, weak))
 void IrqCommon(void) {
   register BOOL b asm("r0");
 
-//  VICVectAddr = 0;
+  AT91C_BASE_AIC->AIC_EOICR = (AT91_REG)AT91C_BASE_AIC;
   b = chSchRescRequiredI();
 #ifdef THUMB
   asm(".p2align 2,,                                             \n\t" \
