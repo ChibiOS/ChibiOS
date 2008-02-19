@@ -8,7 +8,7 @@ The demo runs on an Olimex SAM7-EX256 board.
 
 ** The Demo **
 
-The demo blinks the leds on the board by using multiple threads.
+The demo currently just flashes the LCD background using a thread.
 
 ** Build Procedure **
 

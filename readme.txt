@@ -47,6 +47,8 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   also be useable with limited changes.
   The demo currently just performs basic operations, will be enhanced in next
   ChibiOS/RT releases.
+  The kernel is *unchanged* compared to version 0.5.3, just the new port and
+  the new demo were added.
 
 *** 0.5.3 ***
 - Removed the chMsgSendTimeout() API, it was conceptually flawed because,
