@@ -20,6 +20,7 @@
 #include <ch.h>
 
 #include "board.h"
+#include "sam7x_serial.h"
 #include "at91lib/aic.h"
 
 extern void FiqHandler(void);
@@ -39,7 +40,6 @@ static void SYSIrqHandler(void) {
   chSysIRQEnterI();
 
   if (AT91C_BASE_PITC->PITC_PISR & AT91C_PITC_PITS) {
-//    AT91C_BASE_PIOB->PIO_SODR = PIOB_LCD_BL;            // LCD on.
     chSysTimerHandlerI();
     (void) AT91C_BASE_PITC->PITC_PIVR;
   }
@@ -90,9 +90,9 @@ void hwinit(void) {
   /*
    * I/O setup, enable clocks, initially all pins are inputs with pullups.
    */
-  AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_PIOA) | (1 << AT91C_ID_PIOB);
-  AT91C_BASE_PIOA->PIO_PER = 0xFFFFFFFF;
-  AT91C_BASE_PIOB->PIO_PER = 0xFFFFFFFF;
+  AT91C_BASE_PMC->PMC_PCER   = (1 << AT91C_ID_PIOA) | (1 << AT91C_ID_PIOB);
+  AT91C_BASE_PIOA->PIO_PER   = 0xFFFFFFFF;
+  AT91C_BASE_PIOB->PIO_PER   = 0xFFFFFFFF;
 
   /*
    * Default AIC setup, the device drivers will modify it as needed.
@@ -110,30 +110,38 @@ void hwinit(void) {
    */
   AT91C_BASE_PIOB->PIO_CODR   = PIOB_LCD_BL;    // Set to low.
   AT91C_BASE_PIOB->PIO_OER    = PIOB_LCD_BL;    // Configure as output.
-  AT91C_BASE_SYS->PIOA_PPUDR  = PIOB_LCD_BL;    // Disable internal pullup resistor.
+  AT91C_BASE_PIOA->PIO_PPUDR  = PIOB_LCD_BL;    // Disable internal pullup resistor.
 
   AT91C_BASE_PIOA->PIO_SODR   = PIOA_LCD_RESET; // Set to high.
   AT91C_BASE_PIOA->PIO_OER    = PIOA_LCD_RESET; // Configure as output.
-  AT91C_BASE_SYS->PIOB_PPUDR  = PIOA_LCD_RESET; // Disable internal pullup resistor.
+  AT91C_BASE_PIOA->PIO_PPUDR  = PIOA_LCD_RESET; // Disable internal pullup resistor.
 
   /*
    * Joystick and buttons, disable pullups, already inputs.
    */
-  AT91C_BASE_SYS->PIOA_PPUDR  = PIOA_B1 | PIOA_B2 | PIOA_B3 | PIOA_B4 | PIOA_B5;
-  AT91C_BASE_SYS->PIOB_PPUDR  = PIOB_SW1 | PIOB_SW2;
+  AT91C_BASE_PIOA->PIO_PPUDR = PIOA_B1 | PIOA_B2 | PIOA_B3 | PIOA_B4 | PIOA_B5;
+  AT91C_BASE_PIOB->PIO_PPUDR = PIOB_SW1 | PIOB_SW2;
 
   /*
    * MMC/SD slot, disable pullups, already inputs.
    */
-  AT91C_BASE_SYS->PIOB_PPUDR  = PIOB_MMC_WP | PIOB_MMC_CP;
+  AT91C_BASE_SYS->PIOB_PPUDR = PIOB_MMC_WP | PIOB_MMC_CP;
 
   /*
    * PIT Initialization.
    */
   AIC_ConfigureIT(AT91C_ID_SYS,
-                  AT91C_AIC_SRCTYPE_POSITIVE_EDGE | (AT91C_AIC_PRIOR_HIGHEST -1),
+                  AT91C_AIC_SRCTYPE_HIGH_LEVEL | (AT91C_AIC_PRIOR_HIGHEST - 1),
                   SYSIrqHandler);
   AIC_EnableIT(AT91C_ID_SYS);
   AT91C_BASE_PITC->PITC_PIMR = (MCK / 16 / CH_FREQUENCY) - 1;
   AT91C_BASE_PITC->PITC_PIMR |= AT91C_PITC_PITEN | AT91C_PITC_PITIEN;
+
+  /*
+   * Serial driver initialization, RTS/CTS pins enabled for USART0 only.
+   */
+  InitSerial(AT91C_AIC_PRIOR_HIGHEST - 2, AT91C_AIC_PRIOR_HIGHEST - 2);
+  AT91C_BASE_PIOA->PIO_PDR   = AT91C_PA3_RTS0 | AT91C_PA4_CTS0;
+  AT91C_BASE_PIOA->PIO_ASR   = AT91C_PIO_PA3 | AT91C_PIO_PA4;
+  AT91C_BASE_PIOA->PIO_PPUDR = AT91C_PIO_PA3 | AT91C_PIO_PA4;
 }

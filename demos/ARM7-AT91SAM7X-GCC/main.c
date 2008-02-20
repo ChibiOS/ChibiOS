@@ -20,6 +20,7 @@
 #include <ch.h>
 
 #include "board.h"
+#include "sam7x_serial.h"
 
 static WorkingArea(waThread1, 64);
 static t_msg Thread1(void *arg) {
@@ -37,6 +38,7 @@ static t_msg Thread1(void *arg) {
  * Entry point, the interrupts are disabled on entry.
  */
 int main(int argc, char **argv) {
+  t_msg TestThread(void *p);
 
   /*
    * The main() function becomes a thread here then the interrupts are
@@ -47,7 +49,11 @@ int main(int argc, char **argv) {
   chThdCreate(NORMALPRIO, 0, waThread1, sizeof(waThread1), Thread1, NULL);
 
   while (TRUE) {
-    chThdSleep(1000);
+    chThdSleep(500);
+    if (!(AT91C_BASE_PIOB->PIO_PDSR & PIOB_SW1))
+      chFDDWrite(&COM1, (BYTE8 *)"Hello World!\r\n", 14);
+    if (!(AT91C_BASE_PIOB->PIO_PDSR & PIOB_SW2))
+      TestThread(&COM1);
   }
 
   return 0;
