@@ -25,10 +25,14 @@
 
 extern void FiqHandler(void);
 
-__attribute__((interrupt("IRQ")))
+__attribute__((naked))
 static void SpuriousHandler(void) {
 
+  chSysIRQEnterI();
+
   AT91C_BASE_AIC->AIC_EOICR = (AT91_REG)AT91C_BASE_AIC;
+
+  chSysIRQExitI();
 }
 
 /*

@@ -62,7 +62,12 @@ UDEFS =
 UADEFS =
 
 # List ARM-mode C source files here
-ASRC = ../../ports/ARM7-AT91SAM7X/GCC/chcore.c \
+ASRC =
+
+# List THUMB-mode C sources here
+# NOTE: If any module is compiled in thumb mode then -mthumb-interwork is
+#       enabled for all modules and that lowers performance.
+TSRC = ../../ports/ARM7-AT91SAM7X/GCC/chcore.c \
        ../../ports/ARM7-AT91SAM7X/GCC/sam7x_serial.c \
        ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
        ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chmtx.c \
@@ -71,11 +76,6 @@ ASRC = ../../ports/ARM7-AT91SAM7X/GCC/chcore.c \
        ../../src/lib/evtimer.c ../../test/test.c \
        at91lib/aic.c \
        board.c main.c
-
-# List THUMB-mode C sources here
-# NOTE: If any module is compiled in thumb mode then -mthumb-interwork is
-#       enabled for all modules and that lowers performance.
-TSRC =
 
 # List ASM source files here
 ASMSRC = ../../ports/ARM7-AT91SAM7X/GCC/crt0.s
@@ -100,7 +100,7 @@ TOPT = -mthumb -D THUMB
 #       chconf.h.
 # NOTE: -falign-functions=16 may improve the performance, not always, but
 #       increases the code size.
-OPT = -O2 -ggdb -fomit-frame-pointer -fno-strict-aliasing
+OPT = -Os -ggdb -fomit-frame-pointer -fno-strict-aliasing
 #OPT += -ffixed-r7
 OPT += -falign-functions=16
 

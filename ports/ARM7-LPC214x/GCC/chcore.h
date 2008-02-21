@@ -103,7 +103,6 @@ extern void chSysUnlock(void);
 }
 
 #define chSysIRQExitI() {                                               \
-  VICVectAddr = 0;                                                      \
   asm("ldr      r0, =IrqCommon                  \n\t"                   \
       "bx       r0                              \n\t");                 \
 }

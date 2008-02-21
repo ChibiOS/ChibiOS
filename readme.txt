@@ -49,6 +49,8 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   ChibiOS/RT releases, see the demo readme.txt file.
   The kernel is *unchanged* compared to version 0.5.3, just the new port and
   the new demo were added.
+- Small fix to the thumb mode IRQ code on the LPC214x port, removed some extra
+  code.
 
 *** 0.5.3 ***
 - Removed the chMsgSendTimeout() API, it was conceptually flawed because,
