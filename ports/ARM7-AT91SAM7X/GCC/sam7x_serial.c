@@ -24,12 +24,12 @@
 #include "at91lib/aic.h"
 
 FullDuplexDriver COM1;
-BYTE8 ib1[SERIAL_BUFFERS_SIZE];
-BYTE8 ob1[SERIAL_BUFFERS_SIZE];
+static BYTE8 ib1[SERIAL_BUFFERS_SIZE];
+static BYTE8 ob1[SERIAL_BUFFERS_SIZE];
 
 FullDuplexDriver COM2;
-BYTE8 ib2[SERIAL_BUFFERS_SIZE];
-BYTE8 ob2[SERIAL_BUFFERS_SIZE];
+static BYTE8 ib2[SERIAL_BUFFERS_SIZE];
+static BYTE8 ob2[SERIAL_BUFFERS_SIZE];
 
 static void SetError(AT91_REG csr, FullDuplexDriver *com) {
   UWORD16 sts = 0;
@@ -46,27 +46,22 @@ static void SetError(AT91_REG csr, FullDuplexDriver *com) {
 }
 
 /*
- * Tries hard to clear all the pending interrupt sources, we dont want to
- * go through the whole ISR and have another interrupt soon after.
+ * Serves the pending sources on the USART.
  */
 static void ServeInterrupt(AT91PS_USART u, FullDuplexDriver *com) {
 
-  while (u->US_CSR & u->US_IMR) {
-
-    if (u->US_CSR & AT91C_US_RXRDY) {
+  if (u->US_CSR & AT91C_US_RXRDY)
       chFDDIncomingDataI(com, u->US_RHR);
-    }
-    else if (u->US_CSR & AT91C_US_TXRDY) {
-      t_msg b = chFDDRequestDataI(com);
-      if (b < Q_OK)
-        u->US_IDR = AT91C_US_TXRDY;
-      else
-        u->US_THR = b;
-    }
-    else {
-      SetError(u->US_CSR, com);
-      u->US_CR = AT91C_US_RSTSTA;
-    }
+  if (u->US_CSR & AT91C_US_TXRDY) {
+    t_msg b = chFDDRequestDataI(com);
+    if (b < Q_OK)
+      u->US_IDR = AT91C_US_TXRDY;
+    else
+      u->US_THR = b;
+  }
+  if (u->US_CSR & (AT91C_US_OVRE | AT91C_US_FRAME | AT91C_US_PARE | AT91C_US_RXBRK)) {
+    SetError(u->US_CSR, com);
+    u->US_CR = AT91C_US_RSTSTA;
   }
 }
 

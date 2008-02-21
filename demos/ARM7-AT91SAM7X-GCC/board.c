@@ -40,8 +40,8 @@ static void SYSIrqHandler(void) {
   chSysIRQEnterI();
 
   if (AT91C_BASE_PITC->PITC_PISR & AT91C_PITC_PITS) {
-    chSysTimerHandlerI();
     (void) AT91C_BASE_PITC->PITC_PIVR;
+    chSysTimerHandlerI();
   }
 
   chSysIRQExitI();

@@ -46,7 +46,7 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   SAM7S and SAM7XC but no tests were performed. Other SAM7 processors should
   also be useable with limited changes.
   The demo currently just performs basic operations, will be enhanced in next
-  ChibiOS/RT releases.
+  ChibiOS/RT releases, see the demo readme.txt file.
   The kernel is *unchanged* compared to version 0.5.3, just the new port and
   the new demo were added.
 

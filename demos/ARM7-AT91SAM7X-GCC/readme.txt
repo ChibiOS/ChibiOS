@@ -9,6 +9,8 @@ The demo runs on an Olimex SAM7-EX256 board.
 ** The Demo **
 
 The demo currently just flashes the LCD background using a thread.
+The button SW1 prints an "Hello World!" string on COM1, the button SW2
+activates che ChibiOS/RT test suite, output on COM1.
 
 ** Build Procedure **
 
