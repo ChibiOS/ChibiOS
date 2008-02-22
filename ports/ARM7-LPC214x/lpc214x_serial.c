@@ -101,6 +101,7 @@ void UART0IrqHandler(void) {
   chSysIRQEnterI();
 
   ServeInterrupt(U0Base, &COM1);
+  VICVectAddr = 0;
 
   chSysIRQExitI();
 }
@@ -111,6 +112,7 @@ void UART1IrqHandler(void) {
   chSysIRQEnterI();
 
   ServeInterrupt(U1Base, &COM2);
+  VICVectAddr = 0;
 
   chSysIRQExitI();
 }

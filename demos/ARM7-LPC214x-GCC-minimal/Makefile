@@ -62,8 +62,8 @@ UDEFS =
 UADEFS =
 
 # List ARM-mode C source files here
-ASRC = ../../ports/ARM7-LPC214x/GCC/chcore.c \
-       ../../ports/ARM7-LPC214x/GCC/vic.c  \
+ASRC = ../../ports/ARM7-LPC214x/chcore.c \
+       ../../ports/ARM7-LPC214x/vic.c  \
        ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
        ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chmtx.c \
        ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \
@@ -76,10 +76,11 @@ ASRC = ../../ports/ARM7-LPC214x/GCC/chcore.c \
 TSRC =
 
 # List ASM source files here
-ASMSRC = ../../ports/ARM7-LPC214x/GCC/crt0.s
+ASMSRC = ../../ports/ARM7-LPC214x/crt0.s ../../ports/ARM7/chsys.s
 
 # List all user directories here
-UINCDIR = ../../src/include ../../src/lib ../../ports/ARM7-LPC214x/GCC
+UINCDIR = ../../src/include ../../src/lib \
+          ../../ports/ARM7 ../../ports/ARM7-LPC214x
 
 # List the user directory to look for the libraries here
 ULIBDIR =
@@ -128,6 +129,7 @@ ODFLAGS	= -x --syms
 # Thumb interwork enabled only if needed because it kills performance.
 ifneq ($(TSRC),)
   CPFLAGS += -D THUMB_PRESENT
+  ASFLAGS += -D THUMB_PRESENT
   ifneq ($(ASRC),)
     # Mixed ARM and THUMB case.
     CPFLAGS += -mthumb-interwork
@@ -155,7 +157,7 @@ $(AOBJS) : %.o : %.c
 
 $(TOBJS) : %.o : %.c
 	@echo
-	$(CC) -c $(CPFLAGS) $(TOPT) -mthumb -I . $(INCDIR) $< -o $@
+	$(CC) -c $(CPFLAGS) $(TOPT) -I . $(INCDIR) $< -o $@
 
 $(ASMOBJS) : %.o : %.s
 	@echo

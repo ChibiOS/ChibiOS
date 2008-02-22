@@ -37,6 +37,7 @@ static void IrqHandler(void) {
   chSysIRQEnterI();
 
   /* nothing */
+  VICVectAddr = 0;
 
   chSysIRQExitI();
 }
@@ -51,6 +52,7 @@ static void T0IrqHandler(void) {
 
   T0IR = 1;             /* Clear interrupt on match MR0. */
   chSysTimerHandlerI();
+  VICVectAddr = 0;
 
   chSysIRQExitI();
 }
