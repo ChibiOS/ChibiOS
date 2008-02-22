@@ -21,6 +21,9 @@
                          The documentation is also available on the project
                          web page: http://chibios.sourceforge.net/
 
+*****************************************************************************
+*** Current ports/demos                                                   ***
+*****************************************************************************
 Current ports under ./demos:
 
 Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
@@ -54,6 +57,8 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 - Reorganized the code of the two ARM7 ports, now all the common ARM7 code
   is in ./ports/ARM7. This will make maintenance and new ARM7 ports much
   easier.
+- Simplified the directory structure under ./ports.
+- Added to the readme a section with our future plans/ideas.
 
 *** 0.5.4 ***
 - Port for Atmel AT91SAM7X256 introduced, the port should be useable also on
