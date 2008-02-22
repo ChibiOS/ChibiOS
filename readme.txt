@@ -38,8 +38,22 @@ ARM7-AT91SAM7X-GCC     - Port for Atmel AT91SAM7X256. The demo program targets
 AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
 
 *****************************************************************************
+*** Plans                                                                 ***
+*****************************************************************************
+
+- Restart the work on the AVR port ASAP.
+- Look into importing or implementing a TCP/IP stack and a File System.
+- Start the work on a Cortex-M3 port as soon GCC 4.3.0 will be released.
+- Evaluate other architectures for a possible ChibiOS/RT port.
+
+*****************************************************************************
 *** Releases                                                              ***
 *****************************************************************************
+
+*** 0.5.5 ***
+- Reorganized the code of the two ARM7 ports, now all the common ARM7 code
+  is in ./ports/ARM7. This will make maintenance and new ARM7 ports much
+  easier.
 
 *** 0.5.4 ***
 - Port for Atmel AT91SAM7X256 introduced, the port should be useable also on
