@@ -78,10 +78,11 @@ ASRC = ../../ports/ARM7-AT91SAM7X/GCC/chcore.c \
 TSRC =
 
 # List ASM source files here
-ASMSRC = ../../ports/ARM7-AT91SAM7X/GCC/crt0.s
+ASMSRC = ../../ports/ARM7-AT91SAM7X/GCC/crt0.s ../../ports/ARM7/chsys.s
 
 # List all user directories here
-UINCDIR = ../../src/include ../../src/lib ../../ports/ARM7-AT91SAM7X/GCC
+UINCDIR = ../../src/include ../../src/lib \
+          ../../ports/ARM7 ../../ports/ARM7-AT91SAM7X/GCC
 
 # List the user directory to look for the libraries here
 ULIBDIR =
@@ -130,6 +131,7 @@ ODFLAGS	= -x --syms
 # Thumb interwork enabled only if needed because it kills performance.
 ifneq ($(TSRC),)
   CPFLAGS += -D THUMB_PRESENT
+  ASFLAGS += -D THUMB_PRESENT
   ifneq ($(ASRC),)
     # Mixed ARM and THUMB case.
     CPFLAGS += -mthumb-interwork

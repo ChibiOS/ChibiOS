@@ -116,6 +116,10 @@ extern void chSysUnlock(void);
 }
 #endif /* !THUMB */
 
+#ifdef THUMB
+#define chSysSwitchI chSysSwitchI_thumb
+#endif /* THUMB */
+
 /* It requires zero bytes, but better be safe.*/
 #define IDLE_THREAD_STACK_SIZE 8
 void _IdleThread(void *p) __attribute__((noreturn));
