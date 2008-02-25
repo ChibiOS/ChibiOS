@@ -94,6 +94,8 @@ extern void chSysUnlock(void);
 #define WorkingArea(s, n) ULONG32 s[UserStackSize(n) >> 2];
 
 #ifdef THUMB
+#define chSysSwitchI chSysSwitchI_thumb
+
 #define chSysIRQEnterI() {                                              \
   asm(".code 32                                 \n\t"                   \
       "stmfd    sp!, {r0-r3, r12, lr}           \n\t"                   \
@@ -107,6 +109,8 @@ extern void chSysUnlock(void);
       "bx       r0                              \n\t");                 \
 }
 #else /* !THUMB */
+#define chSysSwitchI chSysSwitchI_arm
+
 #define chSysIRQEnterI() {                                              \
   asm("stmfd    sp!, {r0-r3, r12, lr}           \n\t");                 \
 }
@@ -115,10 +119,6 @@ extern void chSysUnlock(void);
   asm("b        IrqCommon                       \n\t");                 \
 }
 #endif /* !THUMB */
-
-#ifdef THUMB
-#define chSysSwitchI chSysSwitchI_thumb
-#endif /* THUMB */
 
 /* It requires zero bytes, but better be safe.*/
 #define IDLE_THREAD_STACK_SIZE 8

@@ -75,8 +75,8 @@ chSysSwitchI_thumb:
         // Jumps into chSysSwitchI in ARM mode
 #endif
 .code 32
-.global chSysSwitchI
-chSysSwitchI:
+.global chSysSwitchI_arm
+chSysSwitchI_arm:
 #ifdef CH_CURRP_REGISTER_CACHE
         stmfd   sp!, {r4, r5, r6, r8, r9, r10, r11, lr}
         str     sp, [r0, #16]
@@ -112,8 +112,8 @@ chSysSwitchI:
  *      |     R2     |  | External context: IRQ handler frame
  *      |     R1     |  |
  *      |     R0     |  |
- *      |   LR_IRQ   |  |   (user code return address)
- *      |    SPSR    | -+   (user code status)
+ *      |     PC     |  |   (user code return address)
+ *      |   PSR_USR  | -+   (user code status)
  *      |    ....    | <- mk_DoRescheduleI() stack frame, optimize it for space
  *      |     LR     | -+   (system code return address)
  *      |     R11    |  |

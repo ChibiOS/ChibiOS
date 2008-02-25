@@ -102,7 +102,7 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   behavior).
   Note: This option brings a small overhead when sending a message regardless
   if in FIFO or priority order, if you dont need priority ordering for your
-  messages it is better to keep disabled the feature in chconf.h.
+  messages it is better to keep the feature disabled in chconf.h.
 - Added to the ARM demos load scripts the capability to load code in RAM
   instead flash, the function must be marked as:
     __attribute__((section(".ramtext")))
