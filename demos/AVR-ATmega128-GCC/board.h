@@ -1,0 +1,89 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006-2007 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef _BOARD_H_
+#define _BOARD_H_
+
+#define BOARD_OLIMEX_AVR_MT_128
+
+/*       PA7 RLY  DS  B5  B4  B3  B2  B1
+ *        IN OUT  IN  IN  IN  IN  IN  IN
+ * DDRA    0   1   0   0   0   0   0   0
+ *        PU VAL HiZ HiZ HiZ HiZ HiZ HiZ
+ * PORTA   1   0   0   0   0   0   0   0
+ */
+#define VAL_DDRA  0x40
+#define VAL_PORTA 0x80
+
+/*
+ * All inputs with pullups.
+ */
+#define VAL_DDRB  0x00
+#define VAL_PORTB 0xFF
+
+/*        D7  D6  D5  D4 PC3   E R/W  RS
+ *        IN  IN  IN  IN  IN OUT OUT OUT
+ * DDRC    0   0   0   0   0   1   1   1
+ *        PU  PU  PU  PU  PU VAL VAL VAL
+ * PORTC   1   1   1   1   1   0   0   0
+ */
+#define VAL_DDRC  0x03
+#define VAL_PORTC 0xF8
+
+/*       PD7 PD6 PD5 PD4 TXD RXD PD1 PD0
+ *        IN  IN  IN  IN OUT  IN  IN  IN
+ * DDRD    0   0   0   0   1   0   0   0
+ *        PU  PU  PU  PU VAL HiZ HiZ HiZ
+ * PORTD   1   1   1   1   1   0   0   0
+ */
+#define VAL_DDRD  0x08
+#define VAL_PORTD 0xF8
+
+/*       PE7 PE6 BZ2 BZ2 PE3 PE2 PE1 PE0
+ *        IN  IN OUT OUT  IN  IN OUT  IN
+ * DDRE    0   0   1   1   0   0   1   0
+ *        PU  PU VAL VAL  PU  PU VAL  PU
+ * PORTE   1   1   1   1   1   1   1   1
+ */
+#define VAL_DDRE  0x32
+#define VAL_PORTE 0xFF
+
+/*       TDI TDO TMS TCK PF3 PF2 PF1 PF0
+ *         x   x   x   x  IN  IN  IN  IN
+ * DDRF    0   0   0   0   0   0   0   0
+ *        PU  PU  PU  PU  PU  PU  PU  PU
+ * PORTF   1   1   1   1   1   1   1   1
+ *
+ */
+#define VAL_DDRF  0x00
+#define VAL_PORTF 0xFF
+
+/*         x   x   x   x   x PG2 PG1 PG0
+ *         x   x   x   x   x  IN  IN  IN
+ * DDRG    0   0   0   0   0   0   0   0
+ *         x   x   x   x   x  PU  PU  PU
+ * PORTG   0   0   0   0   0   1   1   1
+ *
+ */
+#define VAL_DDRG  0x00
+#define VAL_PORTG 0x07
+
+void hwinit(void);
+
+#endif /* _BOARD_H_ */
