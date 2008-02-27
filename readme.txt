@@ -38,27 +38,42 @@ ARM7-LPC214x-GCC       - ChibiOS/RT port for ARM7 LPC2148, the demo targets
 ARM7-LPC214x-GCC-min   - Minimal demo for LPC214X.
 ARM7-AT91SAM7X-GCC     - Port for Atmel AT91SAM7X256. The demo program targets
                          the Olimex SAM7-EX256 board.
-AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
+AVR-AVRmega128-GCC     - Port on AVRmega128, experimental. A special thanks to
+                         Vladimir for the work done on the AVR port. The demo
+                         program targets the Olimex AVR-MT-128 mini terminal
+                         board.
+AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet, scheduled
+                         for a complete rewrite.
 
 *****************************************************************************
 *** Plans                                                                 ***
 *****************************************************************************
 
-- Restart the work on the AVR port ASAP.
-- Look into importing or implementing a TCP/IP stack and a File System.
-- Start the work on a Cortex-M3 port as soon GCC 4.3.0 will be released.
-- Evaluate other architectures for a possible ChibiOS/RT port.
+- Finish the work on the AVR ports ASAP.
+- Look into importing *or* implementing a TCP/IP stack and a File System.
+- Start the work on a Cortex-M3 port as soon GCC 4.3.0 will be released and
+  incorporated in YAGARTO.
+- Evaluate other architectures for a possible ChibiOS/RT port. An important
+  selection parameter will be the availability of FOSS toolchains.
+- Creation of a reduced ChibiOS/RT kernel targeted to lesser 8bit micros and
+  educational purposes, the name will probably be ChibiOS/SX, we are still
+  discussing it.
 
 *****************************************************************************
 *** Releases                                                              ***
 *****************************************************************************
 
 *** 0.5.5 ***
+- Added an AVRmega128 port, it is still experimental. The previous AT90CANx
+  port is still present but it will be redone after the AVRmega128 port is
+  complete because it will share most of it.
 - Reorganized the code of the two ARM7 ports, now all the common ARM7 code
-  is in ./ports/ARM7. This will make maintenance and new ARM7 ports much
+  is in ./ports/ARM7. This will make maintenance and new ARM7 ports much much
   easier.
 - Simplified the directory structure under ./ports.
 - Added to the readme a section with our future plans/ideas.
+- The kernel is *unchanged* compared to version 0.5.3, just the new port and
+  the new demo were added.
 
 *** 0.5.4 ***
 - Port for Atmel AT91SAM7X256 introduced, the port should be useable also on
@@ -66,10 +81,10 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet.
   also be useable with limited changes.
   The demo currently just performs basic operations, will be enhanced in next
   ChibiOS/RT releases, see the demo readme.txt file.
-  The kernel is *unchanged* compared to version 0.5.3, just the new port and
-  the new demo were added.
 - Small fix to the thumb mode IRQ code on the LPC214x port, removed some extra
   code.
+- The kernel is *unchanged* compared to version 0.5.3, just the new port and
+  the new demo were added.
 
 *** 0.5.3 ***
 - Removed the chMsgSendTimeout() API, it was conceptually flawed because,

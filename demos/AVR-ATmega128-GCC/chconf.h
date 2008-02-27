@@ -152,7 +152,7 @@
  *        ChibiOS/RT code <b>must</b> be recompiled with the GCC option \p
  *        -ffixed-<reg>.
  */
-//#define CH_CURRP_REGISTER_CACHE "r7"
+//#define CH_CURRP_REGISTER_CACHE "r8"
 
 /** Configuration option: Includes basic debug support to the kernel.
  *  @note the debug support is port-dependent, it may be not present on some
