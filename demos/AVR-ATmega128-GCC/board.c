@@ -24,7 +24,7 @@
 
 #include "board.h"
 
-ISR(TIMER0_OVF_vect) {
+ISR(TIMER0_COMP_vect) {
 
   chSysIRQEnterI();
 
@@ -73,7 +73,7 @@ void hwinit(void) {
    */
   TCCR0  = (1 << WGM01) | (0 << WGM00) |                // CTC mode.
            (0 << COM01) | (0 << COM00) |                // OC0A disabled (normal I/O).
-           (0 << CS02)  | (1 << CS01)  | (1 << CS00);   // CLK/64 clock source.
+           (1 << CS02)  | (0 << CS01)  | (0 << CS00);   // CLK/64 clock source.
   OCR0   = F_CPU / 64 / CH_FREQUENCY - 1;
   TCNT0  = 0;                                           // Reset counter.
   TIFR   = (1 << OCF0);                                 // Reset pending (if any).

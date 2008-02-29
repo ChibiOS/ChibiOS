@@ -67,6 +67,8 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet, scheduled
 - Added an AVRmega128 port, it is still experimental. The previous AT90CANx
   port is still present but it will be redone after the AVRmega128 port is
   complete because it will share most of it.
+  The code only ran in the AVR Studio simulator, it will be tested on real
+  hardware ASAP.
 - Reorganized the code of the two ARM7 ports, now all the common ARM7 code
   is in ./ports/ARM7. This will make maintenance and new ARM7 ports much much
   easier.

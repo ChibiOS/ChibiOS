@@ -84,6 +84,25 @@
 #define VAL_DDRG  0x00
 #define VAL_PORTG 0x07
 
+#define PORTA_BUTTON1           (1 << 0)
+#define PORTA_BUTTON2           (1 << 1)
+#define PORTA_BUTTON3           (1 << 2)
+#define PORTA_BUTTON4           (1 << 3)
+#define PORTA_BUTTON5           (1 << 4)
+#define PORTA_DALLAS            (1 << 5)
+#define PORTA_RELAY             (1 << 6)
+
+#define PORTC_44780_RS          (1 << 0)
+#define PORTC_44780_RW          (1 << 1)
+#define PORTC_44780_E           (1 << 2)
+#define PORTC_44780_D4          (1 << 4)
+#define PORTC_44780_D5          (1 << 5)
+#define PORTC_44780_D6          (1 << 6)
+#define PORTC_44780_D7          (1 << 7)
+
+#define PORTE_BUZZ1             (1 << 4)
+#define PORTE_BUZZ2             (1 << 5)
+
 void hwinit(void);
 
 #endif /* _BOARD_H_ */

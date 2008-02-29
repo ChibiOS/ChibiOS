@@ -24,7 +24,7 @@
 void _IdleThread(void *p) {
 
   while (TRUE) {
-//    asm("sleep");
+    asm("sleep");
   }
 }
 

@@ -21,13 +21,16 @@
 
 #include <avr/io.h>
 
+#include "board.h"
+
 void hwinit(void);
 
 static WorkingArea(waThread1, 32);
 static t_msg Thread1(void *arg) {
 
   while (TRUE) {
-    chThdSleep(800);
+    PORTA ^= PORTA_RELAY;
+    chThdSleep(1000);
   }
   return 0;
 }
@@ -48,7 +51,7 @@ int main(int argc, char **argv) {
   chThdCreate(NORMALPRIO, 0, waThread1, sizeof(waThread1), Thread1, NULL);
 
   while(TRUE)
-    /* Do stuff*/ ;
+    chThdSleep(1000);
 
   return 0;
 }

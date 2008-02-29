@@ -94,7 +94,7 @@ typedef struct {
   tp->p_ctx.sp->pch = (int)threadstart;                                 \
 }
 
-#define INT_REQUIRED_STACK 0x10
+#define INT_REQUIRED_STACK 8
 #define StackAlign(n) (n)
 #define UserStackSize(n) StackAlign(sizeof(Thread) +                    \
                                     (sizeof(struct intctx) - 1) +       \
