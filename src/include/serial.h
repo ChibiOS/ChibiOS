@@ -41,7 +41,7 @@
 #define SD_BREAK_DETECTED         32
 
 /** Serial Driver condition flags type.*/
-typedef UWORD16 t_dflags;
+typedef uint16_t t_dflags;
 
 #ifdef CH_USE_SERIAL_FULLDUPLEX
 
@@ -76,9 +76,9 @@ typedef struct {
 extern "C" {
 #endif
   void chFDDInit(FullDuplexDriver *sd,
-                 BYTE8 *ib, t_size isize, t_qnotify inotify,
-                 BYTE8 *ob, t_size osize, t_qnotify onotify);
-  void chFDDIncomingDataI(FullDuplexDriver *sd, BYTE8 b);
+                 uint8_t *ib, t_size isize, t_qnotify inotify,
+                 uint8_t *ob, t_size osize, t_qnotify onotify);
+  void chFDDIncomingDataI(FullDuplexDriver *sd, uint8_t b);
   t_msg chFDDRequestDataI(FullDuplexDriver *sd);
   void chFDDAddFlagsI(FullDuplexDriver *sd, t_dflags mask);
   t_dflags chFDDGetAndClearFlags(FullDuplexDriver *sd);
@@ -137,9 +137,9 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chHDDInit(HalfDuplexDriver *sd, BYTE8 *b, t_size size,
+  void chHDDInit(HalfDuplexDriver *sd, uint8_t *b, t_size size,
                 t_qnotify inotify, t_qnotify onotify);
-  void chHDDIncomingDataI(HalfDuplexDriver *sd, BYTE8 b);
+  void chHDDIncomingDataI(HalfDuplexDriver *sd, uint8_t b);
   t_msg chHDDRequestDataI(HalfDuplexDriver *sd);
   void chHDDAddFlagsI(HalfDuplexDriver *sd, t_dflags mask);
   t_dflags chHDDGetAndClearFlags(HalfDuplexDriver *sd);

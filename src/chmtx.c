@@ -106,8 +106,8 @@ void chMtxLockS(Mutex *mp) {
  * @param mp pointer to the \p Mutex structure
  * @return \p TRUE if the mutex was successfully acquired else \p FALSE
  */
-BOOL chMtxTryLock(Mutex *mp) {
-  BOOL b;
+t_bool chMtxTryLock(Mutex *mp) {
+  t_bool b;
 
   chSysLock();
 
@@ -126,7 +126,7 @@ BOOL chMtxTryLock(Mutex *mp) {
  * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
  *       block.
  */
-BOOL chMtxTryLockS(Mutex *mp) {
+t_bool chMtxTryLockS(Mutex *mp) {
 
   if (mp->m_owner != NULL)
     return FALSE;

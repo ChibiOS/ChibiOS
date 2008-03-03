@@ -64,7 +64,7 @@ extern "C" {
   void chSchWakeupS(Thread *tp, t_msg msg);
   void chSchDoRescheduleI(void);
   void chSchRescheduleS(void);
-  BOOL chSchRescRequiredI(void);
+  t_bool chSchRescRequiredI(void);
 #ifdef __cplusplus
 }
 #endif

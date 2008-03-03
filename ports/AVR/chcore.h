@@ -24,52 +24,52 @@
  * Interrupt saved context.
  */
 struct extctx {
-  BYTE8         _next;
-  BYTE8         r31;
-  BYTE8         r30;
-  BYTE8         r27;
-  BYTE8         r26;
-  BYTE8         r25;
-  BYTE8         r24;
-  BYTE8         r23;
-  BYTE8         r22;
-  BYTE8         r21;
-  BYTE8         r20;
-  BYTE8         r19;
-  BYTE8         r18;
-  BYTE8         sr;
-  BYTE8         r1;
-  BYTE8         r0;
-  UWORD16       pc;
+  uint8_t       _next;
+  uint8_t       r31;
+  uint8_t       r30;
+  uint8_t       r27;
+  uint8_t       r26;
+  uint8_t       r25;
+  uint8_t       r24;
+  uint8_t       r23;
+  uint8_t       r22;
+  uint8_t       r21;
+  uint8_t       r20;
+  uint8_t       r19;
+  uint8_t       r18;
+  uint8_t       sr;
+  uint8_t       r1;
+  uint8_t       r0;
+  uint16_t      pc;
 };
 
 /*
  * System saved context.
  */
 struct intctx {
-  BYTE8         _next;
-  BYTE8         r29;
-  BYTE8         r28;
-  BYTE8         r17;
-  BYTE8         r16;
-  BYTE8         r15;
-  BYTE8         r14;
-  BYTE8         r13;
-  BYTE8         r12;
-  BYTE8         r11;
-  BYTE8         r10;
+  uint8_t       _next;
+  uint8_t       r29;
+  uint8_t       r28;
+  uint8_t       r17;
+  uint8_t       r16;
+  uint8_t       r15;
+  uint8_t       r14;
+  uint8_t       r13;
+  uint8_t       r12;
+  uint8_t       r11;
+  uint8_t       r10;
 #ifndef CH_CURRP_REGISTER_CACHE
-  BYTE8         r9;
-  BYTE8         r8;
+  uint8_t       r9;
+  uint8_t       r8;
 #endif
-  BYTE8         r7;
-  BYTE8         r6;
-  BYTE8         r5;
-  BYTE8         r4;
-  BYTE8         r3;
-  BYTE8         r2;
-  BYTE8         pcl;
-  BYTE8         pch;
+  uint8_t       r7;
+  uint8_t       r6;
+  uint8_t       r5;
+  uint8_t       r4;
+  uint8_t       r3;
+  uint8_t       r2;
+  uint8_t       pcl;
+  uint8_t       pch;
 };
 
 /*
@@ -84,7 +84,7 @@ typedef struct {
  * Platform dependent part of the \p chThdCreate() API.
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
-  tp->p_ctx.sp = (struct intctx*)((BYTE8 *)workspace + wsize - 1 -      \
+  tp->p_ctx.sp = (struct intctx*)((uint8_t *)workspace + wsize - 1 -    \
                                   (sizeof(struct intctx) - 1));         \
   tp->p_ctx.sp->r2  = (int)pf;                                          \
   tp->p_ctx.sp->r3  = (int)pf >> 8;                                     \
@@ -100,7 +100,7 @@ typedef struct {
                                     (sizeof(struct intctx) - 1) +       \
                                     (sizeof(struct extctx) - 1) +       \
                                     (n) + (INT_REQUIRED_STACK))
-#define WorkingArea(s, n) BYTE8 s[UserStackSize(n)];
+#define WorkingArea(s, n) uint8_t s[UserStackSize(n)];
 
 #define chSysLock() asm volatile ("cli")
 

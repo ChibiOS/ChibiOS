@@ -73,7 +73,7 @@ static void TimerHandler(t_eventid id) {
     if (!(IO0PIN & 0x00008000)) // Button 1
       PlaySound(1000, 100);
     if (!(IO0PIN & 0x00010000)) { // Button 2
-      chFDDWrite(&COM1, (BYTE8 *)"Hello World!\r\n", 14);
+      chFDDWrite(&COM1, (uint8_t *)"Hello World!\r\n", 14);
       PlaySound(2000, 100);
     }
   }
@@ -84,7 +84,7 @@ static void TimerHandler(t_eventid id) {
  * driver and reads a sector.
  */
 static void InsertHandler(t_eventid id) {
-  static BYTE8 rwbuf[512];
+  static uint8_t rwbuf[512];
   MMCCSD data;
 
   PlaySoundWait(1000, 100);

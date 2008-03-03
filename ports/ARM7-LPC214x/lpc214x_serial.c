@@ -25,15 +25,15 @@
 #include "board.h"
 
 FullDuplexDriver COM1;
-BYTE8 ib1[SERIAL_BUFFERS_SIZE];
-BYTE8 ob1[SERIAL_BUFFERS_SIZE];
+uint8_t ib1[SERIAL_BUFFERS_SIZE];
+uint8_t ob1[SERIAL_BUFFERS_SIZE];
 
 FullDuplexDriver COM2;
-BYTE8 ib2[SERIAL_BUFFERS_SIZE];
-BYTE8 ob2[SERIAL_BUFFERS_SIZE];
+uint8_t ib2[SERIAL_BUFFERS_SIZE];
+uint8_t ob2[SERIAL_BUFFERS_SIZE];
 
 static void SetError(IOREG32 err, FullDuplexDriver *com) {
-  UWORD16 sts = 0;
+  uint16_t sts = 0;
 
   if (err & LSR_OVERRUN)
     sts |= SD_OVERRUN_ERROR;

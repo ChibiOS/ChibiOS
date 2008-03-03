@@ -46,13 +46,13 @@ typedef void (*t_qnotify)(void);
  */
 typedef struct {
   /** Pointer to the queue buffer.*/
-  BYTE8             *q_buffer;
+  uint8_t           *q_buffer;
   /** Pointer to the first location after the buffer.*/
-  BYTE8             *q_top;
+  uint8_t           *q_top;
   /** Write pointer.*/
-  BYTE8             *q_wrptr;
+  uint8_t           *q_wrptr;
   /** Read pointer.*/
-  BYTE8             *q_rdptr;
+  uint8_t           *q_rdptr;
   /** Counter semaphore.*/
   Semaphore         q_sem;
   /** Data notification callback.*/
@@ -91,11 +91,11 @@ extern "C" {
    * Input Queues functions. An Input Queue is usually written into by an
    * interrupt handler and read from a thread.
    */
-  void chIQInit(Queue *qp, BYTE8 *buffer, t_size size, t_qnotify inotify);
+  void chIQInit(Queue *qp, uint8_t *buffer, t_size size, t_qnotify inotify);
   void chIQReset(Queue *qp);
-  t_msg chIQPutI(Queue *qp, BYTE8 b);
+  t_msg chIQPutI(Queue *qp, uint8_t b);
   t_msg chIQGet(Queue *qp);
-  t_size chIQRead(Queue *qp, BYTE8 *buffer, t_size n);
+  t_size chIQRead(Queue *qp, uint8_t *buffer, t_size n);
 #ifdef CH_USE_QUEUES_TIMEOUT
   t_msg chIQGetTimeout(Queue *qp, t_time time);
 #endif
@@ -104,11 +104,11 @@ extern "C" {
    * Output Queues functions. An Output Queue is usually written into by a
    * thread and read from an interrupt handler.
    */
-  void chOQInit(Queue *queue, BYTE8 *buffer, t_size size, t_qnotify onotify);
+  void chOQInit(Queue *queue, uint8_t *buffer, t_size size, t_qnotify onotify);
   void chOQReset(Queue *queue);
-  void chOQPut(Queue *queue, BYTE8 b);
+  void chOQPut(Queue *queue, uint8_t b);
   t_msg chOQGetI(Queue *queue);
-  t_size chOQWrite(Queue *queue, BYTE8 *buffer, t_size n);
+  t_size chOQWrite(Queue *queue, uint8_t *buffer, t_size n);
 #ifdef __cplusplus
 }
 #endif
@@ -120,13 +120,13 @@ extern "C" {
  */
 typedef struct {
   /** Pointer to the queue buffer.*/
-  BYTE8             *hdq_buffer;
+  uint8_t           *hdq_buffer;
   /** Pointer to the first location after the buffer.*/
-  BYTE8             *hdq_top;
+  uint8_t           *hdq_top;
   /** Write pointer.*/
-  BYTE8             *hdq_wrptr;
+  uint8_t           *hdq_wrptr;
   /** Read pointer.*/
-  BYTE8             *hdq_rdptr;
+  uint8_t           *hdq_rdptr;
   /** Input counter semaphore.*/
   Semaphore         hdq_isem;
   /** Output counter semaphore.*/
@@ -164,12 +164,12 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chHDQInit(HalfDuplexQueue *qp, BYTE8 *buffer, t_size size,
+  void chHDQInit(HalfDuplexQueue *qp, uint8_t *buffer, t_size size,
                  t_qnotify inotify, t_qnotify onotify);
   t_msg chHDQGetReceive(HalfDuplexQueue *qp);
-  void chHDQPutTransmit(HalfDuplexQueue *qp, BYTE8 b);
+  void chHDQPutTransmit(HalfDuplexQueue *qp, uint8_t b);
   t_msg chHDQGetTransmitI(HalfDuplexQueue *qp);
-  t_msg chHDQPutReceiveI(HalfDuplexQueue *qp, BYTE8 b);
+  t_msg chHDQPutReceiveI(HalfDuplexQueue *qp, uint8_t b);
 #ifdef CH_USE_QUEUES_TIMEOUT
   t_msg chHDQGetReceiveTimeout(HalfDuplexQueue *qp, t_time time);
 #endif

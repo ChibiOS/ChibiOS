@@ -53,7 +53,7 @@ void _InitThread(t_prio prio, t_tmode mode, Thread *tp) {
 }
 
 #ifdef CH_USE_DEBUG
-static void memfill(BYTE8 *p, ULONG32 n, BYTE8 v) {
+static void memfill(uint8_t *p, uint32_t n, uint8_t v) {
 
   while (n)
     *p++ = v, n--;

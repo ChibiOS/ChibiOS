@@ -40,8 +40,8 @@
  *        some data is written in the Queue. The value can be \p NULL.
  */
 void chFDDInit(FullDuplexDriver *sd,
-               BYTE8 *ib, t_size isize, t_qnotify inotify,
-               BYTE8 *ob, t_size osize, t_qnotify onotify) {
+               uint8_t *ib, t_size isize, t_qnotify inotify,
+               uint8_t *ob, t_size osize, t_qnotify onotify) {
 
   chIQInit(&sd->sd_iqueue, ib, isize, inotify);
   chEvtInit(&sd->sd_ievent);
@@ -57,7 +57,7 @@ void chFDDInit(FullDuplexDriver *sd,
  * @param sd pointer to a \p FullDuplexDriver structure
  * @param b the byte to be written in the driver's Input Queue
  */
-void chFDDIncomingDataI(FullDuplexDriver *sd, BYTE8 b) {
+void chFDDIncomingDataI(FullDuplexDriver *sd, uint8_t b) {
 
   if (chIQPutI(&sd->sd_iqueue, b) < Q_OK)
     chFDDAddFlagsI(sd, SD_OVERRUN_ERROR);
@@ -122,7 +122,7 @@ t_dflags chFDDGetAndClearFlags(FullDuplexDriver *sd) {
  * @param onotify pointer to a callback function that is invoked when
  *        some data is written in the queue. The value can be \p NULL.
  */
-void chHDDInit(HalfDuplexDriver *sd, BYTE8 *b, t_size size,
+void chHDDInit(HalfDuplexDriver *sd, uint8_t *b, t_size size,
                t_qnotify inotify, t_qnotify onotify) {
 
   chHDQInit(&sd->sd_queue, b, size, inotify, onotify);
@@ -138,7 +138,7 @@ void chHDDInit(HalfDuplexDriver *sd, BYTE8 *b, t_size size,
  * @param sd pointer to a \p FullDuplexDriver structure
  * @param b the byte to be written in the driver's Input Queue
  */
-void chHDDIncomingDataI(HalfDuplexDriver *sd, BYTE8 b) {
+void chHDDIncomingDataI(HalfDuplexDriver *sd, uint8_t b) {
 
   if (chHDQPutReceiveI(&sd->sd_queue, b) < Q_OK)
     chHDDAddFlagsI(sd, SD_OVERRUN_ERROR);

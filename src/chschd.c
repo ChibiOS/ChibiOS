@@ -181,7 +181,7 @@ void chSchRescheduleS(void) {
  * @return \p TRUE if there is a thread that should go in running state
  *         immediatly else \p FALSE.
  */
-BOOL chSchRescRequiredI(void) {
+t_bool chSchRescRequiredI(void) {
 
   if (isempty(&rlist.r_queue))
     return FALSE;

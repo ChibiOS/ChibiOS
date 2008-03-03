@@ -91,14 +91,14 @@ void mmcStopPolling(void) {
 /*
  * Returns TRUE if the card is safely inserted in the reader.
  */
-BOOL mmcCardInserted (void) {
+t_bool mmcCardInserted (void) {
 
   return cnt == 0;
 }
 
 static void wait(void) {
   int i;
-  BYTE8 buf[4];
+  uint8_t buf[4];
 
   for (i = 0; i < 16; i++) {
     sspRW(buf, NULL, 1);
@@ -116,8 +116,8 @@ static void wait(void) {
   }
 }
 
-static void sendhdr(BYTE8 cmd, ULONG32 arg) {
-  BYTE8 buf[6];
+static void sendhdr(uint8_t cmd, uint32_t arg) {
+  uint8_t buf[6];
 
   /*
    * Wait for the bus to become idle if a write operation was in progress.
@@ -133,9 +133,9 @@ static void sendhdr(BYTE8 cmd, ULONG32 arg) {
   sspRW(NULL, buf, 6);
 }
 
-static BYTE8 recvr1(void) {
+static uint8_t recvr1(void) {
   int i;
-  BYTE8 r1[1];
+  uint8_t r1[1];
 
   for (i = 0; i < 9; i++) {
     sspRW(r1, NULL, 1);
@@ -145,7 +145,7 @@ static BYTE8 recvr1(void) {
   return 0xFF;                  /* Timeout.*/
 }
 
-static BOOL getdata(BYTE8 *buf, ULONG32 n) {
+static t_bool getdata(uint8_t *buf, uint32_t n) {
   int i;
 
   for (i = 0; i < MMC_WAIT_DATA; i++) {
@@ -162,7 +162,7 @@ static BOOL getdata(BYTE8 *buf, ULONG32 n) {
 /*
  * Initializes a card after the power up by selecting the SPI mode.
  */
-BOOL mmcInit(void) {
+t_bool mmcInit(void) {
 
   /*
    * Starting initialization with slow clock mode.
@@ -187,7 +187,7 @@ BOOL mmcInit(void) {
    */
   i = 0;
   while (TRUE) {
-    BYTE8 b = mmcSendCommand(CMDINIT, 0);
+    uint8_t b = mmcSendCommand(CMDINIT, 0);
     if (b == 0x00)
       break;
     if (b != 0x01)
@@ -207,8 +207,8 @@ BOOL mmcInit(void) {
 /*
  * Sends a simple command and returns a R1-type response.
  */
-BYTE8 mmcSendCommand(BYTE8 cmd, ULONG32 arg) {
-  BYTE8 r1;
+uint8_t mmcSendCommand(uint8_t cmd, uint32_t arg) {
+  uint8_t r1;
 
   sspAcquireBus();
   sendhdr(cmd, arg);
@@ -222,8 +222,8 @@ BYTE8 mmcSendCommand(BYTE8 cmd, ULONG32 arg) {
  * @param data the pointer to a \p MMCCSD structure
  * @return \p TRUE if an error happened
  */
-BOOL mmcGetSize(MMCCSD *data) {
-  BYTE8 buf[16];
+t_bool mmcGetSize(MMCCSD *data) {
+  uint8_t buf[16];
 
   sspAcquireBus();
   sendhdr(CMDREADCSD, 0);
@@ -250,7 +250,7 @@ BOOL mmcGetSize(MMCCSD *data) {
  * @param buf the pointer to the read buffer
  * @return \p TRUE if an error happened
  */
-BOOL mmcRead(BYTE8 *buf, ULONG32 blknum) {
+t_bool mmcRead(uint8_t *buf, uint32_t blknum) {
 
   sspAcquireBus();
   sendhdr(CMDREAD, blknum << 8);
@@ -273,8 +273,8 @@ BOOL mmcRead(BYTE8 *buf, ULONG32 blknum) {
  * @param buf the pointer to the read buffer
  * @return \p TRUE if an error happened
  */
-BOOL mmcReadMultiple(BYTE8 *buf, ULONG32 blknum, ULONG32 n) {
-  static const BYTE8 stopcmd[] = {0x40 | CMDSTOP, 0, 0, 0, 0, 1, 0xFF};
+t_bool mmcReadMultiple(uint8_t *buf, uint32_t blknum, uint32_t n) {
+  static const uint8_t stopcmd[] = {0x40 | CMDSTOP, 0, 0, 0, 0, 1, 0xFF};
 
   sspAcquireBus();
   sendhdr(CMDREADMULTIPLE, blknum << 8);
@@ -290,7 +290,7 @@ BOOL mmcReadMultiple(BYTE8 *buf, ULONG32 blknum, ULONG32 n) {
     buf += 512;
     n--;
   }
-  sspRW(NULL, (BYTE8 *)stopcmd, sizeof(stopcmd));
+  sspRW(NULL, (uint8_t *)stopcmd, sizeof(stopcmd));
   if (recvr1() != 0x00) {
     sspReleaseBus();
     return TRUE;
@@ -309,9 +309,9 @@ BOOL mmcReadMultiple(BYTE8 *buf, ULONG32 blknum, ULONG32 n) {
  *       the card, this allows to not make useless busy waiting. The invoking
  *       thread can do other things while the data is being written.
  */
-BOOL mmcWrite(BYTE8 *buf, ULONG32 blknum) {
-  static const BYTE8 start[] = {0xFF, 0xFE};
-  BYTE8 b[4];
+t_bool mmcWrite(uint8_t *buf, uint32_t blknum) {
+  static const uint8_t start[] = {0xFF, 0xFE};
+  uint8_t b[4];
 
   sspAcquireBus();
   sendhdr(CMDWRITE, blknum << 8);
@@ -319,7 +319,7 @@ BOOL mmcWrite(BYTE8 *buf, ULONG32 blknum) {
     sspReleaseBus();
     return TRUE;
   }
-  sspRW(NULL, (BYTE8 *)start, 2);       /* Data prologue.*/
+  sspRW(NULL, (uint8_t *)start, 2);       /* Data prologue.*/
   sspRW(NULL, buf, 512);                /* Data.*/
   sspRW(NULL, NULL, 2);                 /* CRC ignored in this version.*/
   sspRW(b, NULL, 1);
@@ -340,10 +340,10 @@ BOOL mmcWrite(BYTE8 *buf, ULONG32 blknum) {
  *       the card, this allows to not make useless busy waiting. The invoking
  *       thread can do other things while the data is being written.
  */
-BOOL mmcWriteMultiple(BYTE8 *buf, ULONG32 blknum, ULONG32 n) {
-  static const BYTE8 start[] = {0xFF, 0xFC},
+t_bool mmcWriteMultiple(uint8_t *buf, uint32_t blknum, uint32_t n) {
+  static const uint8_t start[] = {0xFF, 0xFC},
                      stop[] = {0xFD, 0xFF};
-  BYTE8 b[4];
+  uint8_t b[4];
 
   sspAcquireBus();
   sendhdr(CMDWRITEMULTIPLE, blknum << 8);
@@ -352,7 +352,7 @@ BOOL mmcWriteMultiple(BYTE8 *buf, ULONG32 blknum, ULONG32 n) {
     return TRUE;
   }
   while (n) {
-    sspRW(NULL, (BYTE8 *)start, sizeof(start)); /* Data prologue.*/
+    sspRW(NULL, (uint8_t *)start, sizeof(start)); /* Data prologue.*/
     sspRW(NULL, buf, 512);                /* Data.*/
     sspRW(NULL, NULL, 2);                 /* CRC ignored in this version.*/
     sspRW(b, NULL, 1);
@@ -364,7 +364,7 @@ BOOL mmcWriteMultiple(BYTE8 *buf, ULONG32 blknum, ULONG32 n) {
     buf += 512;
     n--;
   }
-  sspRW(NULL, (BYTE8 *)stop, sizeof(stop)); /* Stops the transfer.*/
+  sspRW(NULL, (uint8_t *)stop, sizeof(stop)); /* Stops the transfer.*/
   sspReleaseBus();
   return FALSE;
 }
@@ -373,7 +373,7 @@ BOOL mmcWriteMultiple(BYTE8 *buf, ULONG32 blknum, ULONG32 n) {
  * Makes sure that pending operations are completed before returning.
  */
 void mmcSynch(void) {
-  BYTE8 buf[4];
+  uint8_t buf[4];
 
   sspAcquireBus();
   while (TRUE) {

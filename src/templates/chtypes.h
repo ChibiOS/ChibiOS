@@ -25,27 +25,21 @@
 #ifndef _CHTYPES_H_
 #define _CHTYPES_H_
 
-/*
- * Generic types often dependant on the compiler.
- */
-#define BOOL        char
-#define BYTE8       unsigned char
-#define SBYTE8      char
-#define WORD16      short
-#define UWORD16     unsigned short
-#define LONG32      int
-#define ULONG32     unsigned int
+#if !defined(_STDINT_H) && !defined(__STDINT_H_)
+#include <stdint.h>
+#endif
 
-typedef BYTE8       t_tmode;    /* Thread mode flags, BYTE8 is ok. */
-typedef BYTE8       t_tstate;   /* Thread state, BYTE8 is ok. */
-typedef UWORD16     t_tid;      /* Thread id. */
-typedef ULONG32     t_prio;     /* Priority, use the fastest unsigned type. */
-typedef LONG32      t_msg;      /* Message, use signed pointer equivalent.*/
-typedef LONG32      t_eventid;  /* Event Id, use fastest signed.*/
-typedef ULONG32     t_eventmask;/* Event Mask, recommended fastest unsigned.*/
-typedef ULONG32     t_time;     /* Time, recommended fastest unsigned.*/
-typedef LONG32      t_cnt;      /* Counter, recommended fastest signed.*/
-typedef ULONG32     t_size;     /* Size, use unsigned pointer equivalent.*/
+typedef int8_t          bool_t;
+typedef uint8_t         t_tmode;    /* Thread mode flags, BYTE8 is ok. */
+typedef uint8_t         t_tstate;   /* Thread state, BYTE8 is ok. */
+typedef uint16_t        t_tid;      /* Thread id. */
+typedef uint32_t        t_prio;     /* Priority, use the fastest unsigned type. */
+typedef int32_t         t_msg;      /* Message, use signed pointer equivalent.*/
+typedef int32_t         t_eventid;  /* Event Id, use fastest signed.*/
+typedef uint32_t        t_eventmask;/* Event Mask, recommended fastest unsigned.*/
+typedef uint32_t        t_time;     /* Time, recommended fastest unsigned.*/
+typedef int32_t         t_cnt;      /* Counter, recommended fastest signed.*/
+typedef uint32_t        t_size;     /* Size, use unsigned pointer equivalent.*/
 
 #define INLINE      inline
 

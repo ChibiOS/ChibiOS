@@ -63,6 +63,12 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet, scheduled
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.5.6 ***
+- Code refactory, all the old sized-integer definitions like LONG32, UWORD16
+  etc are now replaced by the proper definitions provided by the compiler
+  into stdint.h. This has an impact on some API prototypes but we can't
+  help it.
+
 *** 0.5.5 ***
 - Added an AVRmega128 port. The previous AT90CANx port is still present but
   it will be redone after the AVRmega128 port is complete because it will

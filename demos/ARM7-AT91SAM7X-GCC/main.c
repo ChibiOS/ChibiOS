@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
   while (TRUE) {
     chThdSleep(500);
     if (!(AT91C_BASE_PIOB->PIO_PDSR & PIOB_SW1))
-      chFDDWrite(&COM1, (BYTE8 *)"Hello World!\r\n", 14);
+      chFDDWrite(&COM1, (uint8_t *)"Hello World!\r\n", 14);
     if (!(AT91C_BASE_PIOB->PIO_PDSR & PIOB_SW2))
       TestThread(&COM1);
   }

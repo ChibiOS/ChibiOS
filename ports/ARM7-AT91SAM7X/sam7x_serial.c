@@ -24,15 +24,15 @@
 #include "at91lib/aic.h"
 
 FullDuplexDriver COM1;
-static BYTE8 ib1[SERIAL_BUFFERS_SIZE];
-static BYTE8 ob1[SERIAL_BUFFERS_SIZE];
+static uint8_t ib1[SERIAL_BUFFERS_SIZE];
+static uint8_t ob1[SERIAL_BUFFERS_SIZE];
 
 FullDuplexDriver COM2;
-static BYTE8 ib2[SERIAL_BUFFERS_SIZE];
-static BYTE8 ob2[SERIAL_BUFFERS_SIZE];
+static uint8_t ib2[SERIAL_BUFFERS_SIZE];
+static uint8_t ob2[SERIAL_BUFFERS_SIZE];
 
 static void SetError(AT91_REG csr, FullDuplexDriver *com) {
-  UWORD16 sts = 0;
+  uint16_t sts = 0;
 
   if (csr & AT91C_US_OVRE)
     sts |= SD_OVERRUN_ERROR;

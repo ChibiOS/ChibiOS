@@ -35,7 +35,7 @@
  * @param inotify pointer to a callback function that is invoked when
  *        some data is read from the Queue. The value can be \p NULL.
  */
-void chIQInit(Queue *qp, BYTE8 *buffer, t_size size, t_qnotify inotify) {
+void chIQInit(Queue *qp, uint8_t *buffer, t_size size, t_qnotify inotify) {
 
   qp->q_buffer = qp->q_rdptr = qp->q_wrptr = buffer;
   qp->q_top = buffer + size;
@@ -68,7 +68,7 @@ void chIQReset(Queue *qp) {
  * @note This function must be called with interrupts disabled or from an
  *       interrupt handler.
  */
-t_msg chIQPutI(Queue *qp, BYTE8 b) {
+t_msg chIQPutI(Queue *qp, uint8_t b) {
 
   if (chIQIsFull(qp))
     return Q_FULL;
@@ -87,7 +87,7 @@ t_msg chIQPutI(Queue *qp, BYTE8 b) {
  * @return a byte from the queue or \p Q_RESET if the queue was reset
  */
 t_msg chIQGet(Queue *qp) {
-  BYTE8 b;
+  uint8_t b;
 
   chSysLock();
 
@@ -120,7 +120,7 @@ t_msg chIQGet(Queue *qp) {
  *       option is enabled in \p chconf.h.
  */
 t_msg chIQGetTimeout(Queue *qp, t_time time) {
-  BYTE8 b;
+  uint8_t b;
   t_msg msg;
 
   chSysLock();
@@ -153,7 +153,7 @@ t_msg chIQGetTimeout(Queue *qp, t_time time) {
  * @note The function is not atomic, if you need atomicity it is suggested
  *       to use a semaphore for mutual exclusion.
  */
-t_size chIQRead(Queue *qp, BYTE8 *buffer, t_size n) {
+t_size chIQRead(Queue *qp, uint8_t *buffer, t_size n) {
 
   t_size r = 0;
   while (n--) {
@@ -193,7 +193,7 @@ t_size chIQRead(Queue *qp, BYTE8 *buffer, t_size n) {
  * @param onotify pointer to a callback function that is invoked when
  *        some data is written in the Queue. The value can be \p NULL.
  */
-void chOQInit(Queue *qp, BYTE8 *buffer, t_size size, t_qnotify onotify) {
+void chOQInit(Queue *qp, uint8_t *buffer, t_size size, t_qnotify onotify) {
 
   qp->q_buffer = qp->q_rdptr = qp->q_wrptr = buffer;
   qp->q_top = buffer + size;
@@ -222,7 +222,7 @@ void chOQReset(Queue *qp) {
  * @param qp pointer to a \p Queue structure
  * @param b the byte value to be written
  */
-void chOQPut(Queue *qp, BYTE8 b) {
+void chOQPut(Queue *qp, uint8_t b) {
 
   chSysLock();
 
@@ -246,7 +246,7 @@ void chOQPut(Queue *qp, BYTE8 b) {
  *       interrupt handler.
  */
 t_msg chOQGetI(Queue *qp) {
-  BYTE8 b;
+  uint8_t b;
 
   if (chOQIsEmpty(qp))
     return Q_EMPTY;
@@ -268,7 +268,7 @@ t_msg chOQGetI(Queue *qp) {
  * @note The function is not atomic, if you need atomicity it is suggested
  *       to use a semaphore for mutual exclusion.
  */
-t_size chOQWrite(Queue *qp, BYTE8 *buffer, t_size n) {
+t_size chOQWrite(Queue *qp, uint8_t *buffer, t_size n) {
 
   t_size w = 0;
   while (n--) {
@@ -311,7 +311,7 @@ t_size chOQWrite(Queue *qp, BYTE8 *buffer, t_size n) {
  * @param onotify pointer to a callback function that is invoked when
  *        some data is written to the queue. The value can be \p NULL.
  */
-void chHDQInit(HalfDuplexQueue *qp, BYTE8 *buffer, t_size size,
+void chHDQInit(HalfDuplexQueue *qp, uint8_t *buffer, t_size size,
                t_qnotify inotify, t_qnotify onotify) {
 
   qp->hdq_buffer = qp->hdq_rdptr = qp->hdq_wrptr = buffer;
@@ -329,7 +329,7 @@ void chHDQInit(HalfDuplexQueue *qp, BYTE8 *buffer, t_size size,
  * @return the byte value or \p Q_RESET if the queue was reset
  */
 t_msg chHDQGetReceive(HalfDuplexQueue *qp) {
-  BYTE8 b;
+  uint8_t b;
 
   chSysLock();
 
@@ -364,7 +364,7 @@ t_msg chHDQGetReceive(HalfDuplexQueue *qp) {
  *       option is enabled in \p chconf.h.
  */
 t_msg chHDQGetReceiveTimeout(HalfDuplexQueue *qp, t_time time) {
-  BYTE8 b;
+  uint8_t b;
   t_msg msg;
 
   chSysLock();
@@ -397,7 +397,7 @@ t_msg chHDQGetReceiveTimeout(HalfDuplexQueue *qp, t_time time) {
  * @param qp pointer to a \p HalfDuplexQueue structure
  * @param b the byte value to be written
  */
-void chHDQPutTransmit(HalfDuplexQueue *qp, BYTE8 b) {
+void chHDQPutTransmit(HalfDuplexQueue *qp, uint8_t b) {
 
   chSysLock();
 
@@ -432,7 +432,7 @@ void chHDQPutTransmit(HalfDuplexQueue *qp, BYTE8 b) {
  *       interrupt handler.
  */
 t_msg chHDQGetTransmitI(HalfDuplexQueue *qp) {
-  BYTE8 b;
+  uint8_t b;
 
   if (!chHDQIsTransmitting(qp))
     return Q_EMPTY;
@@ -454,7 +454,7 @@ t_msg chHDQGetTransmitI(HalfDuplexQueue *qp) {
  * @note This function must be called with interrupts disabled or from an
  *       interrupt handler.
  */
-t_msg chHDQPutReceiveI(HalfDuplexQueue *qp, BYTE8 b) {
+t_msg chHDQPutReceiveI(HalfDuplexQueue *qp, uint8_t b) {
 
   if (chHDQIsTransmitting(qp))
     return Q_FULL;

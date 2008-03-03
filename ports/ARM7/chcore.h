@@ -64,7 +64,7 @@ typedef struct {
  * Platform dependent part of the \p chThdCreate() API.
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
-  tp->p_ctx.r13 = (struct intctx *)((BYTE8 *)workspace +                \
+  tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +              \
                                      wsize -                            \
                                      sizeof(struct intctx));            \
   tp->p_ctx.r13->r4 = pf;                                               \
@@ -91,7 +91,7 @@ extern void chSysUnlock(void);
                                     sizeof(struct extctx) +             \
                                     (n) +                               \
                                     INT_REQUIRED_STACK)
-#define WorkingArea(s, n) ULONG32 s[UserStackSize(n) >> 2];
+#define WorkingArea(s, n) uint32_t s[UserStackSize(n) >> 2];
 
 #ifdef THUMB
 #define chSysSwitchI chSysSwitchI_thumb

@@ -103,21 +103,21 @@ t_time wait_tick(void) {
 
 t_msg Thread1(void *p) {
 
-  chFDDPut(comp, *(BYTE8 *)p);
+  chFDDPut(comp, *(uint8_t *)p);
   return 0;
 }
 
 t_msg Thread2(void *p) {
 
   chSemWait(&sem1);
-  chFDDPut(comp, *(BYTE8 *)p);
+  chFDDPut(comp, *(uint8_t *)p);
   return 0;
 }
 
 t_msg Thread3(void *p) {
 
   chMtxLock(&m1);
-  chFDDPut(comp, *(BYTE8 *)p);
+  chFDDPut(comp, *(uint8_t *)p);
   chMtxUnlock();
   return 0;
 }
@@ -220,7 +220,7 @@ t_msg Thread8(void *p) {
   chThdSleep(5);
   chMtxLock(&m1);
   chMtxUnlock();
-  chFDDPut(comp, *(BYTE8 *)p);
+  chFDDPut(comp, *(uint8_t *)p);
   return 0;
 }
 
@@ -229,7 +229,7 @@ t_msg Thread9(void *p) {
   chMtxLock(&m1);
   chThdSleep(20);
   chMtxUnlock();
-  chFDDPut(comp, *(BYTE8 *)p);
+  chFDDPut(comp, *(uint8_t *)p);
   return 0;
 }
 
@@ -237,7 +237,7 @@ t_msg Thread10(void *p) {
 
   chThdSleep(10);
   CPU(50);
-  chFDDPut(comp, *(BYTE8 *)p);
+  chFDDPut(comp, *(uint8_t *)p);
   return 0;
 }
 
@@ -246,7 +246,7 @@ t_msg Thread11(void *p) {
   chThdSleep(5);
   chSemWait(&sem1);
   chSemSignal(&sem1);
-  chFDDPut(comp, *(BYTE8 *)p);
+  chFDDPut(comp, *(uint8_t *)p);
   return 0;
 }
 
@@ -255,7 +255,7 @@ t_msg Thread12(void *p) {
   chSemWait(&sem1);
   chThdSleep(20);
   chSemSignal(&sem1);
-  chFDDPut(comp, *(BYTE8 *)p);
+  chFDDPut(comp, *(uint8_t *)p);
   return 0;
 }
 
@@ -296,7 +296,7 @@ t_msg Thread13(void *p) {
   chMtxLock(&m1);
   CPU(50);
   chMtxUnlock();
-  chFDDPut(comp, *(BYTE8 *)p);
+  chFDDPut(comp, *(uint8_t *)p);
   return 0;
 }
 
@@ -310,7 +310,7 @@ t_msg Thread14(void *p) {
   chMtxUnlock();
   CPU(20);
   chMtxUnlock();
-  chFDDPut(comp, *(BYTE8 *)p);
+  chFDDPut(comp, *(uint8_t *)p);
   return 0;
 }
 
@@ -320,7 +320,7 @@ t_msg Thread15(void *p) {
   chMtxLock(&m2);
   CPU(50);
   chMtxUnlock();
-  chFDDPut(comp, *(BYTE8 *)p);
+  chFDDPut(comp, *(uint8_t *)p);
   return 0;
 }
 
@@ -328,7 +328,7 @@ t_msg Thread16(void *p) {
 
   chThdSleep(40);
   CPU(200);
-  chFDDPut(comp, *(BYTE8 *)p);
+  chFDDPut(comp, *(uint8_t *)p);
   return 0;
 }
 
@@ -338,7 +338,7 @@ t_msg Thread17(void *p) {
   chMtxLock(&m2);
   CPU(50);
   chMtxUnlock();
-  chFDDPut(comp, *(BYTE8 *)p);
+  chFDDPut(comp, *(uint8_t *)p);
   return 0;
 }
 
@@ -480,7 +480,7 @@ void bench4(void) {
 
 __attribute__((noinline))
 void bench5(void) {
-  static BYTE8 ib[16];
+  static uint8_t ib[16];
   static Queue iq;
   unsigned int i;
   t_time time;
