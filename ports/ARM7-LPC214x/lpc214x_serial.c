@@ -25,12 +25,12 @@
 #include "board.h"
 
 FullDuplexDriver COM1;
-uint8_t ib1[SERIAL_BUFFERS_SIZE];
-uint8_t ob1[SERIAL_BUFFERS_SIZE];
+static uint8_t ib1[SERIAL_BUFFERS_SIZE];
+static uint8_t ob1[SERIAL_BUFFERS_SIZE];
 
 FullDuplexDriver COM2;
-uint8_t ib2[SERIAL_BUFFERS_SIZE];
-uint8_t ob2[SERIAL_BUFFERS_SIZE];
+static uint8_t ib2[SERIAL_BUFFERS_SIZE];
+static uint8_t ob2[SERIAL_BUFFERS_SIZE];
 
 static void SetError(IOREG32 err, FullDuplexDriver *com) {
   uint16_t sts = 0;

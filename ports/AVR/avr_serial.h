@@ -17,26 +17,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _SAM7X_SERIAL_H_
-#define _SAM7X_SERIAL_H_
+#ifndef _AVR_SERIAL_H_
+#define _AVR_SERIAL_H_
 
 /*
  * Configuration parameter, you can change the depth of the queue buffers
  * depending on the requirements of your application.
  */
-#define SERIAL_BUFFERS_SIZE 128
+#define SERIAL_BUFFERS_SIZE 32
+
+//#define USE_AVR_USART0
+#define USE_AVR_USART1
+
+/*
+ * Macro for baud rate computation.
+ */
+#define UBRR(b) ((F_CPU / (b << 4)) - 1)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void InitSerial(int prio0, int prio1);
-  void UART0IrqHandler(void);
-  void UART1IrqHandler(void);
-  void SetUSARTI(AT91PS_USART u, int speed, int mode);
+  void InitSerial(void);
+  void SetUSART0I(uint16_t brr, uint8_t csrc);
+  void SetUSART1I(uint16_t brr, uint8_t csrc);
 #ifdef __cplusplus
 }
 #endif
 
-extern FullDuplexDriver COM1, COM2;
+extern FullDuplexDriver SER1, SER2;
 
-#endif /* _SAM7X_SERIAL_H_ */
+#endif /* _AVR_SERIAL_H_ */

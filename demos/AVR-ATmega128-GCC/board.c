@@ -23,6 +23,7 @@
 #include <avr/interrupt.h>
 
 #include "board.h"
+#include "avr_serial.h"
 
 ISR(TIMER0_COMP_vect) {
 
@@ -78,4 +79,9 @@ void hwinit(void) {
   TCNT0  = 0;                                           // Reset counter.
   TIFR   = (1 << OCF0);                                 // Reset pending (if any).
   TIMSK  = (1 << OCIE0);                                // Interrupt on compare.
+
+  /*
+   * Other initializations.
+   */
+  InitSerial();
 }

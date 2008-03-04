@@ -38,7 +38,7 @@
 #define SERIAL_BUFFERS_SIZE 128
 
 #ifdef __cplusplus
-}
+extern "C" {
 #endif
   void InitSerial(int vector1, int vector2);
   void UART0IrqHandler(void);

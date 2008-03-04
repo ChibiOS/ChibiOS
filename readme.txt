@@ -64,12 +64,14 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet, scheduled
 *****************************************************************************
 
 *** 0.5.6 ***
+- Implemented a serial driver in the AVR port.
 - Code refactory, all the old sized-integer definitions like LONG32, UWORD16
   etc are now replaced by the proper definitions provided by the compiler
   into stdint.h. This has an impact on some API prototypes but we can't
   help it.
 - MSVC demo dropped, it is still possible to use the MinGW demo as simulator
   in Win32.
+- Fixed a minor error in sam7x_serial.h and lpc214x_serial.h.
 
 *** 0.5.5 ***
 - Added an AVRmega128 port. The previous AT90CANx port is still present but
