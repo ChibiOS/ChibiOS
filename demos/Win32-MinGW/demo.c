@@ -22,10 +22,10 @@
 
 #include <ch.h>
 
-static ULONG32 wdguard;
+static uint32_t wdguard;
 static WorkingArea(wdarea, 2048);
 
-static ULONG32 cdguard;
+static uint32_t cdguard;
 static WorkingArea(cdarea, 2048);
 static Thread *cdtp;
 
@@ -78,7 +78,7 @@ static void PrintLineFDD(FullDuplexDriver *sd, char *msg) {
     chFDDPut(sd, *msg++);
 }
 
-static BOOL GetLineFDD(FullDuplexDriver *sd, char *line, int size) {
+static t_bool GetLineFDD(FullDuplexDriver *sd, char *line, int size) {
   char *p = line;
 
   while (TRUE) {
@@ -91,9 +91,9 @@ static BOOL GetLineFDD(FullDuplexDriver *sd, char *line, int size) {
     }
     if (c == 8) {
       if (p != line) {
-        chFDDPut(sd, (BYTE8)c);
+        chFDDPut(sd, (uint8_t)c);
         chFDDPut(sd, 0x20);
-        chFDDPut(sd, (BYTE8)c);
+        chFDDPut(sd, (uint8_t)c);
         p--;
       }
       continue;
@@ -106,8 +106,8 @@ static BOOL GetLineFDD(FullDuplexDriver *sd, char *line, int size) {
     if (c < 0x20)
       continue;
     if (p < line + size - 1) {
-      chFDDPut(sd, (BYTE8)c);
-      *p++ = (BYTE8)c;
+      chFDDPut(sd, (uint8_t)c);
+      *p++ = (uint8_t)c;
     }
   }
 }
@@ -140,7 +140,7 @@ static t_msg HelloWorldThread(void *arg) {
   return 0;
 }
 
-static BOOL checkend(FullDuplexDriver *sd) {
+static t_bool checkend(FullDuplexDriver *sd) {
 
   char * lp = strtok(NULL, " \009"); /* It is not thread safe but this is a demo.*/
   if (lp) {

@@ -45,7 +45,7 @@ typedef struct {
 
 #define SETUP_CONTEXT(workspace, wsize, pf, arg)                        \
 {                                                                       \
-  BYTE8 *esp = (BYTE8 *)workspace + wsize;                              \
+  uint8_t *esp = (uint8_t *)workspace + wsize;                          \
   APUSH(esp, arg);                                                      \
   APUSH(esp, threadstart);                                              \
   esp -= sizeof(struct intctx);                                         \
@@ -70,7 +70,7 @@ typedef struct {
                                     sizeof(struct intctx) +             \
                                     (n) +                               \
                                     INT_REQUIRED_STACK)
-#define WorkingArea(s, n) ULONG32 s[UserStackSize(n) >> 2];
+#define WorkingArea(s, n) uint32_t s[UserStackSize(n) >> 2];
 
 #define IDLE_THREAD_STACK_SIZE 16384
 t_msg _IdleThread(void *p);

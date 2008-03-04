@@ -35,8 +35,8 @@
 
 struct simcom {
 
-  BYTE8 com_ib[1024];
-  BYTE8 com_ob[1024];
+  uint8_t com_ib[1024];
+  uint8_t com_ob[1024];
   SOCKET com_listen;
   SOCKET com_data;
 };
@@ -108,7 +108,7 @@ void InitSimCom2(void) {
   init("COM2", &COM2, &sc2, COM2PORT);
 }
 
-static BOOL connint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
+static t_bool connint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
 
   if (sc->com_data == INVALID_SOCKET) {
     struct sockaddr addr;
@@ -134,21 +134,21 @@ abort:
   exit(1);
 }
 
-BOOL Com1ConnInterruptSimCom(void) {
+t_bool Com1ConnInterruptSimCom(void) {
 
   return connint("COM1", &COM1, &sc1);
 }
 
-BOOL Com2ConnInterruptSimCom(void) {
+t_bool Com2ConnInterruptSimCom(void) {
 
   return connint("COM2", &COM2, &sc2);
 }
 
-static BOOL inint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
+static t_bool inint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
 
   if (sc->com_data != INVALID_SOCKET) {
     int i;
-    BYTE8 data[32];
+    uint8_t data[32];
 
     /*
      * Input.
@@ -174,21 +174,21 @@ static BOOL inint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
   return FALSE;
 }
 
-BOOL Com1InInterruptSimCom(void) {
+t_bool Com1InInterruptSimCom(void) {
 
   return inint("COM1", &COM1, &sc1);
 }
 
-BOOL Com2InInterruptSimCom(void) {
+t_bool Com2InInterruptSimCom(void) {
 
   return inint("COM2", &COM2, &sc2);
 }
 
-static BOOL outint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
+static t_bool outint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
 
   if (sc->com_data != INVALID_SOCKET) {
     int n;
-    BYTE8 data[1];
+    uint8_t data[1];
 
     /*
      * Input.
@@ -196,7 +196,7 @@ static BOOL outint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
     n = chFDDRequestDataI(sd);
     if (n < 0)
       return FALSE;
-    data[0] = (BYTE8)n;
+    data[0] = (uint8_t)n;
     n = send(sc->com_data, data, sizeof(data), 0);
     switch (n) {
     case 0:
@@ -216,12 +216,12 @@ static BOOL outint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
   return FALSE;
 }
 
-BOOL Com1OutInterruptSimCom(void) {
+t_bool Com1OutInterruptSimCom(void) {
 
   return outint("COM1", &COM1, &sc1);
 }
 
-BOOL Com2OutInterruptSimCom(void) {
+t_bool Com2OutInterruptSimCom(void) {
 
   return outint("COM2", &COM2, &sc2);
 }
