@@ -26,7 +26,7 @@
 void hwinit(void);
 
 static WorkingArea(waThread1, 32);
-static t_msg Thread1(void *arg) {
+static msg_t Thread1(void *arg) {
 
   while (TRUE) {
     PORTA ^= PORTA_RELAY;

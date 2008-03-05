@@ -28,7 +28,7 @@
 #ifdef CH_USE_VIRTUAL_TIMERS
 
 /** Virtual Timer callback function.*/
-typedef void (*t_vtfunc)(void *);
+typedef void (*vtfunc_t)(void *);
 
 typedef struct VirtualTimer VirtualTimer;
 
@@ -41,10 +41,10 @@ struct VirtualTimer {
     /** Previous timer in the delta list.*/
     VirtualTimer    *vt_prev;
     /** Time delta before timeout.*/
-    t_time          vt_dtime;
+    systime_t       vt_dtime;
     /** Timer callback function pointer. The pointer is reset to zero after
         the callback is invoked.*/
-    t_vtfunc        vt_func;
+    vtfunc_t        vt_func;
     /** Timer callback function parameter.*/
     void            *vt_par;
 };
@@ -63,7 +63,7 @@ typedef struct {
     /** Last timer in the list.*/
     VirtualTimer    *dl_prev;
     /** Not used but it must be set to /p MAXDELTA.*/
-    t_time          dl_dtime;
+    systime_t       dl_dtime;
 } DeltaList;
 
 extern DeltaList dlist;
@@ -74,7 +74,7 @@ extern DeltaList dlist;
                                                                         \
     --dlist.dl_next->vt_dtime;                                          \
     while (!(vtp = dlist.dl_next)->vt_dtime) {                          \
-      t_vtfunc fn = vtp->vt_func;                                       \
+      vtfunc_t fn = vtp->vt_func;                                       \
       vtp->vt_func = 0;                                                 \
       (vtp->vt_next->vt_prev = (VirtualTimer *)&dlist)->vt_next = vtp->vt_next; \
       fn(vtp->vt_par);                                                  \
@@ -91,7 +91,7 @@ extern DeltaList dlist;
 extern "C" {
 #endif
   void chVTInit(void);
-  void chVTSetI(VirtualTimer *vtp, t_time time, t_vtfunc vtfunc, void *par);
+  void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par);
   void chVTResetI(VirtualTimer *vtp);
 #ifdef __cplusplus
 }

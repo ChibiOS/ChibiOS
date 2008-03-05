@@ -29,7 +29,7 @@
  * Suspends the invoking thread for the specified time.
  * @param time the system ticks number
  */
-void chThdSleep(t_time time) {
+void chThdSleep(systime_t time) {
 
   chSysLock();
 

@@ -20,21 +20,24 @@
 #ifndef _CHTYPES_H_
 #define _CHTYPES_H_
 
+#define __need_NULL
+#define __need_size_t
+#include <stddef.h>
+
 #if !defined(_STDINT_H) && !defined(__STDINT_H_)
 #include <stdint.h>
 #endif
 
-typedef int8_t          t_bool;
-typedef uint8_t         t_tmode;
-typedef uint8_t         t_tstate;
-typedef uint8_t         t_tid;
-typedef uint8_t         t_prio;
-typedef int16_t         t_msg;
-typedef uint8_t         t_eventid;
-typedef uint8_t         t_eventmask;
-typedef uint16_t        t_time;
-typedef int8_t          t_cnt;
-typedef uint16_t        t_size;
+typedef int8_t          bool_t;
+typedef uint8_t         tmode_t;
+typedef uint8_t         tstate_t;
+typedef uint8_t         tid_t;
+typedef uint8_t         tprio_t;
+typedef int16_t         msg_t;
+typedef uint8_t         eventid_t;
+typedef uint8_t         eventmask_t;
+typedef uint16_t        systime_t;
+typedef int8_t          cnt_t;
 
 #define INLINE      inline
 

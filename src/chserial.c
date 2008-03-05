@@ -40,8 +40,8 @@
  *        some data is written in the Queue. The value can be \p NULL.
  */
 void chFDDInit(FullDuplexDriver *sd,
-               uint8_t *ib, t_size isize, t_qnotify inotify,
-               uint8_t *ob, t_size osize, t_qnotify onotify) {
+               uint8_t *ib, size_t isize, qnotify_t inotify,
+               uint8_t *ob, size_t osize, qnotify_t onotify) {
 
   chIQInit(&sd->sd_iqueue, ib, isize, inotify);
   chEvtInit(&sd->sd_ievent);
@@ -74,9 +74,9 @@ void chFDDIncomingDataI(FullDuplexDriver *sd, uint8_t b) {
  *         queue is empty (the lower driver usually disables the interrupt
  *         source when this happens).
  */
-t_msg chFDDRequestDataI(FullDuplexDriver *sd) {
+msg_t chFDDRequestDataI(FullDuplexDriver *sd) {
 
-  t_msg b = chOQGetI(&sd->sd_oqueue);
+  msg_t b = chOQGetI(&sd->sd_oqueue);
   if (b < Q_OK)
     chEvtSendI(&sd->sd_oevent);
   return b;
@@ -88,7 +88,7 @@ t_msg chFDDRequestDataI(FullDuplexDriver *sd) {
  * @param sd pointer to a \p FullDuplexDriver structure
  * @param mask condition flags to be added to the mask
  */
-void chFDDAddFlagsI(FullDuplexDriver *sd, t_dflags mask) {
+void chFDDAddFlagsI(FullDuplexDriver *sd, dflags_t mask) {
 
   sd->sd_flags |= mask;
   chEvtSendI(&sd->sd_sevent);
@@ -100,8 +100,8 @@ void chFDDAddFlagsI(FullDuplexDriver *sd, t_dflags mask) {
  * @return the condition flags modified since last time this function was
  *         invoked
  */
-t_dflags chFDDGetAndClearFlags(FullDuplexDriver *sd) {
-  t_dflags mask;
+dflags_t chFDDGetAndClearFlags(FullDuplexDriver *sd) {
+  dflags_t mask;
 
   mask = sd->sd_flags;
   sd->sd_flags = SD_NO_ERROR;
@@ -122,8 +122,8 @@ t_dflags chFDDGetAndClearFlags(FullDuplexDriver *sd) {
  * @param onotify pointer to a callback function that is invoked when
  *        some data is written in the queue. The value can be \p NULL.
  */
-void chHDDInit(HalfDuplexDriver *sd, uint8_t *b, t_size size,
-               t_qnotify inotify, t_qnotify onotify) {
+void chHDDInit(HalfDuplexDriver *sd, uint8_t *b, size_t size,
+               qnotify_t inotify, qnotify_t onotify) {
 
   chHDQInit(&sd->sd_queue, b, size, inotify, onotify);
   chEvtInit(&sd->sd_ievent);
@@ -155,9 +155,9 @@ void chHDDIncomingDataI(HalfDuplexDriver *sd, uint8_t b) {
  *         queue is empty (the lower driver usually disables the interrupt
  *         source when this happens).
  */
-t_msg chHDDRequestDataI(HalfDuplexDriver *sd) {
+msg_t chHDDRequestDataI(HalfDuplexDriver *sd) {
 
-  t_msg b = chHDQGetTransmitI(&sd->sd_queue);
+  msg_t b = chHDQGetTransmitI(&sd->sd_queue);
   if (b < Q_OK)
     chEvtSendI(&sd->sd_oevent);
   return b;
@@ -169,7 +169,7 @@ t_msg chHDDRequestDataI(HalfDuplexDriver *sd) {
  * @param sd pointer to a \p HalfDuplexDriver structure
  * @param mask condition flags to be added to the mask
  */
-void chHDDAddFlagsI(HalfDuplexDriver *sd, t_dflags mask) {
+void chHDDAddFlagsI(HalfDuplexDriver *sd, dflags_t mask) {
 
   sd->sd_flags |= mask;
   chEvtSendI(&sd->sd_sevent);
@@ -181,8 +181,8 @@ void chHDDAddFlagsI(HalfDuplexDriver *sd, t_dflags mask) {
  * @return the condition flags modified since last time this function was
  *         invoked
  */
-t_dflags chHDDGetAndClearFlags(HalfDuplexDriver *sd) {
-  t_dflags mask;
+dflags_t chHDDGetAndClearFlags(HalfDuplexDriver *sd) {
+  dflags_t mask;
 
   mask = sd->sd_flags;
   sd->sd_flags = SD_NO_ERROR;

@@ -64,7 +64,7 @@ static void stop(void *p) {
   chEvtSendI(&BuzzerSilentEventSource);
 }
 
-void PlaySound(int freq, t_time duration) {
+void PlaySound(int freq, systime_t duration) {
   static VirtualTimer bvt;
   TC *tc = T1Base;
 
@@ -82,7 +82,7 @@ void PlaySound(int freq, t_time duration) {
   chSysUnlock();
 }
 
-void PlaySoundWait(int freq, t_time duration) {
+void PlaySoundWait(int freq, systime_t duration) {
   TC *tc = T1Base;
 
   StopCounter(tc);

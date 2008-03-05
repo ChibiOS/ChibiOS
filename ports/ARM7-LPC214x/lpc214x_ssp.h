@@ -34,7 +34,7 @@
 
   void sspAcquireBus(void);
   void sspReleaseBus(void);
-  void sspRW(uint8_t *in, uint8_t *out, t_size n);
+  void sspRW(uint8_t *in, uint8_t *out, size_t n);
 #ifdef __cplusplus
 }
 #endif

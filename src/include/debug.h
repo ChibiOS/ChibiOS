@@ -38,13 +38,13 @@
 
 typedef struct {
   void          *cse_wtobjp;
-  t_time        cse_time;
-  UWORD16       cse_state: 4;
-  UWORD16       cse_tid: 12;
+  systime_t     cse_time;
+  uint16_t      cse_state: 4;
+  uint16_t      cse_tid: 12;
 } CtxSwcEvent;
 
 typedef struct {
-  t_size        tb_size;
+  size_t        tb_size;
   CtxSwcEvent   *tb_ptr;
   CtxSwcEvent   tb_buffer[TRACE_BUFFER_SIZE];
 } TraceBuffer;

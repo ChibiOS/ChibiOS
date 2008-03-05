@@ -41,7 +41,7 @@
 #define SD_BREAK_DETECTED         32
 
 /** Serial Driver condition flags type.*/
-typedef uint16_t t_dflags;
+typedef uint16_t dflags_t;
 
 #ifdef CH_USE_SERIAL_FULLDUPLEX
 
@@ -66,7 +66,7 @@ typedef struct {
 
   /** I/O driver status flags. This field should not be read directly but
    *  the \p chFDDGetAndClearFlags() funtion should be used instead.*/
-  t_dflags          sd_flags;
+  dflags_t          sd_flags;
   /** Status Change \p EventSource. This event is generated when a
    *  condition flag was changed.*/
   EventSource       sd_sevent;
@@ -76,12 +76,12 @@ typedef struct {
 extern "C" {
 #endif
   void chFDDInit(FullDuplexDriver *sd,
-                 uint8_t *ib, t_size isize, t_qnotify inotify,
-                 uint8_t *ob, t_size osize, t_qnotify onotify);
+                 uint8_t *ib, size_t isize, qnotify_t inotify,
+                 uint8_t *ob, size_t osize, qnotify_t onotify);
   void chFDDIncomingDataI(FullDuplexDriver *sd, uint8_t b);
-  t_msg chFDDRequestDataI(FullDuplexDriver *sd);
-  void chFDDAddFlagsI(FullDuplexDriver *sd, t_dflags mask);
-  t_dflags chFDDGetAndClearFlags(FullDuplexDriver *sd);
+  msg_t chFDDRequestDataI(FullDuplexDriver *sd);
+  void chFDDAddFlagsI(FullDuplexDriver *sd, dflags_t mask);
+  dflags_t chFDDGetAndClearFlags(FullDuplexDriver *sd);
 #ifdef __cplusplus
 }
 #endif
@@ -128,7 +128,7 @@ typedef struct {
   /** I/O driver status flags. This field should not be read directly but
    *  the \p chHDDGetAndClearFlags() funtion should be used
    *  instead.*/
-  t_dflags          sd_flags;
+  dflags_t          sd_flags;
   /** Status Change Event Source. This event is generated when a condition
    *  flag was changed.*/
   EventSource       sd_sevent;
@@ -137,12 +137,12 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chHDDInit(HalfDuplexDriver *sd, uint8_t *b, t_size size,
-                t_qnotify inotify, t_qnotify onotify);
+  void chHDDInit(HalfDuplexDriver *sd, uint8_t *b, size_t size,
+                qnotify_t inotify, qnotify_t onotify);
   void chHDDIncomingDataI(HalfDuplexDriver *sd, uint8_t b);
-  t_msg chHDDRequestDataI(HalfDuplexDriver *sd);
-  void chHDDAddFlagsI(HalfDuplexDriver *sd, t_dflags mask);
-  t_dflags chHDDGetAndClearFlags(HalfDuplexDriver *sd);
+  msg_t chHDDRequestDataI(HalfDuplexDriver *sd);
+  void chHDDAddFlagsI(HalfDuplexDriver *sd, dflags_t mask);
+  dflags_t chHDDGetAndClearFlags(HalfDuplexDriver *sd);
 #ifdef __cplusplus
 }
 #endif

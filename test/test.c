@@ -79,9 +79,9 @@ static void println(char *msgp) {
 }
 
 __attribute__((noinline))
-void CPU(t_time ms) {
+void CPU(systime_t ms) {
 
-  t_time time = chSysGetTime() + ms;
+  systime_t time = chSysGetTime() + ms;
   while (chSysGetTime() != time) {
 #if defined(WIN32)
     ChkIntSources();
@@ -90,9 +90,9 @@ void CPU(t_time ms) {
 }
 
 __attribute__((noinline))
-t_time wait_tick(void) {
+systime_t wait_tick(void) {
 
-  t_time time = chSysGetTime() + 1;
+  systime_t time = chSysGetTime() + 1;
   while (chSysGetTime() < time) {
 #if defined(WIN32)
     ChkIntSources();
@@ -101,20 +101,20 @@ t_time wait_tick(void) {
   return time;
 }
 
-t_msg Thread1(void *p) {
+msg_t Thread1(void *p) {
 
   chFDDPut(comp, *(uint8_t *)p);
   return 0;
 }
 
-t_msg Thread2(void *p) {
+msg_t Thread2(void *p) {
 
   chSemWait(&sem1);
   chFDDPut(comp, *(uint8_t *)p);
   return 0;
 }
 
-t_msg Thread3(void *p) {
+msg_t Thread3(void *p) {
 
   chMtxLock(&m1);
   chFDDPut(comp, *(uint8_t *)p);
@@ -122,8 +122,8 @@ t_msg Thread3(void *p) {
   return 0;
 }
 
-t_msg Thread4(void *p) {
-  t_msg msg;
+msg_t Thread4(void *p) {
+  msg_t msg;
   int i;
 
   for (i = 0; i < 5; i++) {
@@ -134,14 +134,14 @@ t_msg Thread4(void *p) {
   return 0;
 }
 
-t_msg Thread6(void *p) {
+msg_t Thread6(void *p) {
 
   while (!chThdShouldTerminate())
     chMsgRelease(chMsgWait() + 1);
   return 0;
 }
 
-t_msg Thread7(void *p) {
+msg_t Thread7(void *p) {
 
   return (unsigned int)p + 1;
 }
@@ -215,7 +215,7 @@ void testmtx1(void) {
   println("");
 }
 
-t_msg Thread8(void *p) {
+msg_t Thread8(void *p) {
 
   chThdSleep(5);
   chMtxLock(&m1);
@@ -224,7 +224,7 @@ t_msg Thread8(void *p) {
   return 0;
 }
 
-t_msg Thread9(void *p) {
+msg_t Thread9(void *p) {
 
   chMtxLock(&m1);
   chThdSleep(20);
@@ -233,7 +233,7 @@ t_msg Thread9(void *p) {
   return 0;
 }
 
-t_msg Thread10(void *p) {
+msg_t Thread10(void *p) {
 
   chThdSleep(10);
   CPU(50);
@@ -241,7 +241,7 @@ t_msg Thread10(void *p) {
   return 0;
 }
 
-t_msg Thread11(void *p) {
+msg_t Thread11(void *p) {
 
   chThdSleep(5);
   chSemWait(&sem1);
@@ -250,7 +250,7 @@ t_msg Thread11(void *p) {
   return 0;
 }
 
-t_msg Thread12(void *p) {
+msg_t Thread12(void *p) {
 
   chSemWait(&sem1);
   chThdSleep(20);
@@ -291,7 +291,7 @@ void testmtx3(void) {
   println("");
 }
 
-t_msg Thread13(void *p) {
+msg_t Thread13(void *p) {
 
   chMtxLock(&m1);
   CPU(50);
@@ -300,7 +300,7 @@ t_msg Thread13(void *p) {
   return 0;
 }
 
-t_msg Thread14(void *p) {
+msg_t Thread14(void *p) {
 
   chThdSleep(10);
   chMtxLock(&m2);
@@ -314,7 +314,7 @@ t_msg Thread14(void *p) {
   return 0;
 }
 
-t_msg Thread15(void *p) {
+msg_t Thread15(void *p) {
 
   chThdSleep(20);
   chMtxLock(&m2);
@@ -324,7 +324,7 @@ t_msg Thread15(void *p) {
   return 0;
 }
 
-t_msg Thread16(void *p) {
+msg_t Thread16(void *p) {
 
   chThdSleep(40);
   CPU(200);
@@ -332,7 +332,7 @@ t_msg Thread16(void *p) {
   return 0;
 }
 
-t_msg Thread17(void *p) {
+msg_t Thread17(void *p) {
 
   chThdSleep(50);
   chMtxLock(&m2);
@@ -365,7 +365,7 @@ void testmtx4(void) {
 }
 
 void testmsg1(void) {
-  t_msg msg;
+  msg_t msg;
 
   println("*** Messages, dispatch test, you should read AABBCCDDEE:");
   t1 = chThdCreate(chThdGetPriority()-1, 0, wsT1, sizeof(wsT1), Thread4, chThdSelf());
@@ -382,7 +382,7 @@ __attribute__((noinline))
 unsigned int msg_loop_test(Thread *tp) {
   unsigned int i;
 
-  t_time time = wait_tick() + 1000;
+  systime_t time = wait_tick() + 1000;
   i = 0;
   while (chSysGetTime() < time) {
     i = chMsgSend(tp, i);
@@ -461,7 +461,7 @@ chMsgSend(t1, 0);
 __attribute__((noinline))
 void bench4(void) {
   unsigned int i;
-  t_time time;
+  systime_t time;
 
   println("*** Kernel Benchmark, threads creation/termination:");
   time = wait_tick() + 1000;
@@ -483,7 +483,7 @@ void bench5(void) {
   static uint8_t ib[16];
   static Queue iq;
   unsigned int i;
-  t_time time;
+  systime_t time;
 
   println("*** Kernel Benchmark, I/O Queues throughput:");
   chIQInit(&iq, ib, sizeof(ib), NULL);
@@ -511,7 +511,7 @@ void bench5(void) {
 /**
  * Tester thread, this thread must be created with priority \p NORMALPRIO.
  */
-t_msg TestThread(void *p) {
+msg_t TestThread(void *p) {
 
   comp = p;
   println("*****************************");

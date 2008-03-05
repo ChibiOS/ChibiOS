@@ -55,7 +55,7 @@ void sspReleaseBus(void) {
  *       rest of the system. This kind of peripheral would really need a
  *       dedicated DMA channel.
  */
-void sspRW(uint8_t *in, uint8_t *out, t_size n) {
+void sspRW(uint8_t *in, uint8_t *out, size_t n) {
   int icnt, ocnt;
 
   SSP *ssp = SSPBase;

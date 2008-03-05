@@ -54,9 +54,9 @@ void chSchInit(void) {
  */
 #ifdef CH_OPTIMIZE_SPEED
 /* NOTE: it is inlined in this module only.*/
-INLINE void chSchReadyI(Thread *tp, t_msg msg) {
+INLINE void chSchReadyI(Thread *tp, msg_t msg) {
 #else
-void chSchReadyI(Thread *tp, t_msg msg) {
+void chSchReadyI(Thread *tp, msg_t msg) {
 #endif
   Thread *cp = rlist.r_queue.p_next;
 
@@ -78,7 +78,7 @@ void chSchReadyI(Thread *tp, t_msg msg) {
  * @note The function must be called in the system mutex zone.
  * @note The function is not meant to be used in the user code directly.
  */
-void chSchGoSleepS(t_tstate newstate) {
+void chSchGoSleepS(tstate_t newstate) {
   Thread *otp;
 
   (otp = currp)->p_state = newstate;
@@ -108,7 +108,7 @@ static void wakeup(void *p) {
  * @note The function must be called in the system mutex zone.
  * @note The function is not meant to be used in the user code directly.
  */
-t_msg chSchGoSleepTimeoutS(t_tstate newstate, t_time time) {
+msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
   VirtualTimer vt;
 
   chVTSetI(&vt, time, wakeup, currp);
@@ -130,7 +130,7 @@ t_msg chSchGoSleepTimeoutS(t_tstate newstate, t_time time) {
  * @note It is equivalent to a \p chSchReadyI() followed by a
  *       \p chSchRescheduleS() but much more efficient.
  */
-void chSchWakeupS(Thread *ntp, t_msg msg) {
+void chSchWakeupS(Thread *ntp, msg_t msg) {
 
   if (ntp->p_prio <= currp->p_prio)
     chSchReadyI(ntp, msg);
@@ -181,7 +181,7 @@ void chSchRescheduleS(void) {
  * @return \p TRUE if there is a thread that should go in running state
  *         immediatly else \p FALSE.
  */
-t_bool chSchRescRequiredI(void) {
+bool_t chSchRescRequiredI(void) {
 
   if (isempty(&rlist.r_queue))
     return FALSE;

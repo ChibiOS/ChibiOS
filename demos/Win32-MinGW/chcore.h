@@ -73,7 +73,7 @@ typedef struct {
 #define WorkingArea(s, n) uint32_t s[UserStackSize(n) >> 2];
 
 #define IDLE_THREAD_STACK_SIZE 16384
-t_msg _IdleThread(void *p);
+msg_t _IdleThread(void *p);
 
 __attribute__((fastcall)) void chSysHalt(void);
 __attribute__((fastcall)) void chSysSwitchI(Thread *otp, Thread *ntp);

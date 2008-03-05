@@ -29,7 +29,7 @@
 extern "C" {
 #endif
 #ifdef CH_USE_SLEEP
-  void chThdSleep(t_time time);
+  void chThdSleep(systime_t time);
 #endif /* CH_USE_SLEEP */
 #ifdef __cplusplus
 }
@@ -55,7 +55,7 @@ extern "C" {
 #define chThdSleepUntil(t) {                                            \
   chSysLock();                                                          \
   chSchGoSleepTimeoutS(PRSLEEP,                                         \
-                      (t_time)((t) - chSysGetTime()))                   \
+                      (systime_t)((t) - chSysGetTime()))                \
   chSysUnlock();                                                        \
 }
 #endif /* CH_USE_SYSTEMTIME */

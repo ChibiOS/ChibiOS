@@ -34,20 +34,20 @@ typedef struct {
   /** Queue of the threads sleeping on this Semaphore.*/
   ThreadsQueue    s_queue;
   /** The Semaphore counter.*/
-  t_cnt           s_cnt;
+  cnt_t           s_cnt;
 } Semaphore;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chSemInit(Semaphore *sp, t_cnt n);
-  void chSemReset(Semaphore *sp, t_cnt n);
-  void chSemResetI(Semaphore *sp, t_cnt n);
-  t_msg chSemWait(Semaphore *sp);
-  t_msg chSemWaitS(Semaphore *sp);
+  void chSemInit(Semaphore *sp, cnt_t n);
+  void chSemReset(Semaphore *sp, cnt_t n);
+  void chSemResetI(Semaphore *sp, cnt_t n);
+  msg_t chSemWait(Semaphore *sp);
+  msg_t chSemWaitS(Semaphore *sp);
 #ifdef CH_USE_SEMAPHORES_TIMEOUT
-  t_msg chSemWaitTimeout(Semaphore *sp, t_time time);
-  t_msg chSemWaitTimeoutS(Semaphore *sp, t_time time);
+  msg_t chSemWaitTimeout(Semaphore *sp, systime_t time);
+  msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time);
 #endif
   void chSemSignal(Semaphore *sp);
   void chSemSignalI(Semaphore *sp);

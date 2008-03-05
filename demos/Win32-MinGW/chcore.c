@@ -91,7 +91,7 @@ void ChkIntSources(void) {
   }
 }
 
-t_msg _IdleThread(void *p) {
+msg_t _IdleThread(void *p) {
 
   while (TRUE) {
 

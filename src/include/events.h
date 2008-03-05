@@ -41,7 +41,7 @@ struct EventListener {
   /** Thread interested in the Event Source.*/
   Thread            *el_listener;
   /** Event identifier associated by the thread to the Event Source.*/
-  t_eventid         el_id;
+  eventid_t         el_id;
 };
 
 /**
@@ -74,22 +74,22 @@ typedef struct EventSource {
 
 
 /** Event Handler callback function.*/
-typedef void (*t_evhandler)(t_eventid);
+typedef void (*evhandler_t)(eventid_t);
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chEvtRegister(EventSource *esp, EventListener *elp, t_eventid eid);
+  void chEvtRegister(EventSource *esp, EventListener *elp, eventid_t eid);
   void chEvtUnregister(EventSource *esp, EventListener *elp);
-  void chEvtClear(t_eventmask mask);
+  void chEvtClear(eventmask_t mask);
   void chEvtSend(EventSource *esp);
   void chEvtSendI(EventSource *esp);
-  t_eventid chEvtWait(t_eventmask ewmask,
-                      const t_evhandler handlers[]);
+  eventid_t chEvtWait(eventmask_t ewmask,
+                      const evhandler_t handlers[]);
 #ifdef CH_USE_EVENTS_TIMEOUT
-  t_eventid chEvtWaitTimeout(t_eventmask ewmask,
-                             const t_evhandler handlers[],
-                             t_time time);
+  eventid_t chEvtWaitTimeout(eventmask_t ewmask,
+                             const evhandler_t handlers[],
+                             systime_t time);
 #endif
 #ifdef __cplusplus
 }

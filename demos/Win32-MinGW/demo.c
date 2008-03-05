@@ -29,21 +29,21 @@ static uint32_t cdguard;
 static WorkingArea(cdarea, 2048);
 static Thread *cdtp;
 
-static t_msg WatchdogThread(void *arg);
-static t_msg ConsoleThread(void *arg);
+static msg_t WatchdogThread(void *arg);
+static msg_t ConsoleThread(void *arg);
 
-t_msg TestThread(void *p);
+msg_t TestThread(void *p);
 
 void InitCore(void);
 extern FullDuplexDriver COM1, COM2;
 
-#define cprint(msg) chMsgSend(cdtp, (t_msg)msg)
+#define cprint(msg) chMsgSend(cdtp, (msg_t)msg)
 
 /*
  * Watchdog thread, it checks magic values located under the various stack
  * areas. The system is halted if something is wrong.
  */
-static t_msg WatchdogThread(void *arg) {
+static msg_t WatchdogThread(void *arg) {
   wdguard = 0xA51F2E3D;
   cdguard = 0xA51F2E3D;
   while (TRUE) {
@@ -63,7 +63,7 @@ static t_msg WatchdogThread(void *arg) {
  * to the C printf() thread safe and the print operation atomic among threads.
  * In this example the message is the zero termitated string itself.
  */
-static t_msg ConsoleThread(void *arg) {
+static msg_t ConsoleThread(void *arg) {
 
   while (!chThdShouldTerminate()) {
     printf((char *)chMsgWait());
@@ -78,7 +78,7 @@ static void PrintLineFDD(FullDuplexDriver *sd, char *msg) {
     chFDDPut(sd, *msg++);
 }
 
-static t_bool GetLineFDD(FullDuplexDriver *sd, char *line, int size) {
+static bool_t GetLineFDD(FullDuplexDriver *sd, char *line, int size) {
   char *p = line;
 
   while (TRUE) {
@@ -116,7 +116,7 @@ static t_bool GetLineFDD(FullDuplexDriver *sd, char *line, int size) {
  * Example thread, not much to see here. It simulates the CTRL-C but there
  * are no real signals involved.
  */
-static t_msg HelloWorldThread(void *arg) {
+static msg_t HelloWorldThread(void *arg) {
   int i;
   short c;
   FullDuplexDriver *sd = (FullDuplexDriver *)arg;
@@ -140,7 +140,7 @@ static t_msg HelloWorldThread(void *arg) {
   return 0;
 }
 
-static t_bool checkend(FullDuplexDriver *sd) {
+static bool_t checkend(FullDuplexDriver *sd) {
 
   char * lp = strtok(NULL, " \009"); /* It is not thread safe but this is a demo.*/
   if (lp) {
@@ -155,7 +155,7 @@ static t_bool checkend(FullDuplexDriver *sd) {
  * Simple command shell thread, the argument is the serial line for the
  * standard input and output. It recognizes few simple commands.
  */
-static t_msg ShellThread(void *arg) {
+static msg_t ShellThread(void *arg) {
   FullDuplexDriver *sd = (FullDuplexDriver *)arg;
   char *lp, line[64];
   Thread *tp;
@@ -225,8 +225,8 @@ static WorkingArea(s1area, 4096);
 static Thread *s1;
 EventListener s1tel;
 
-static void COM1Handler(t_eventid id) {
-  t_dflags flags;
+static void COM1Handler(eventid_t id) {
+  dflags_t flags;
 
   if (s1 && chThdTerminated(s1)) {
     s1 = NULL;
@@ -248,8 +248,8 @@ static WorkingArea(s2area, 4096);
 static Thread *s2;
 EventListener s2tel;
 
-static void COM2Handler(t_eventid id) {
-  t_dflags flags;
+static void COM2Handler(eventid_t id) {
+  dflags_t flags;
 
   if (s2 && chThdTerminated(s2)) {
     s2 = NULL;
@@ -267,7 +267,7 @@ static void COM2Handler(t_eventid id) {
     chIQReset(&COM2.sd_iqueue);
 }
 
-static t_evhandler fhandlers[2] = {
+static evhandler_t fhandlers[2] = {
   COM1Handler,
   COM2Handler
 };

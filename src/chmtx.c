@@ -106,8 +106,8 @@ void chMtxLockS(Mutex *mp) {
  * @param mp pointer to the \p Mutex structure
  * @return \p TRUE if the mutex was successfully acquired else \p FALSE
  */
-t_bool chMtxTryLock(Mutex *mp) {
-  t_bool b;
+bool_t chMtxTryLock(Mutex *mp) {
+  bool_t b;
 
   chSysLock();
 
@@ -126,7 +126,7 @@ t_bool chMtxTryLock(Mutex *mp) {
  * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
  *       block.
  */
-t_bool chMtxTryLockS(Mutex *mp) {
+bool_t chMtxTryLockS(Mutex *mp) {
 
   if (mp->m_owner != NULL)
     return FALSE;
@@ -161,7 +161,7 @@ void chMtxUnlock(void) {
     /*
      * Recalculates the optimal thread priority by scanning the owned mutexes list.
      */
-    t_prio newprio = currp->p_realprio;
+    tprio_t newprio = currp->p_realprio;
     mp = currp->p_mtxlist;
     while (mp != NULL) {
       if (chMtxQueueNotEmptyS(mp) && (mp->m_queue.p_next->p_prio > newprio))
@@ -201,7 +201,7 @@ void chMtxUnlockS(void) {
     /*
      * Recalculates the optimal thread priority by scanning the owned mutexes list.
      */
-    t_prio newprio = currp->p_realprio;
+    tprio_t newprio = currp->p_realprio;
     mp = currp->p_mtxlist;
     while (mp != NULL) {
       if (chMtxQueueNotEmptyS(mp) && (mp->m_queue.p_next->p_prio > newprio))

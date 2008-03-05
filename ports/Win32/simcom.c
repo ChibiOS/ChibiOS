@@ -108,7 +108,7 @@ void InitSimCom2(void) {
   init("COM2", &COM2, &sc2, COM2PORT);
 }
 
-static t_bool connint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
+static bool_t connint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
 
   if (sc->com_data == INVALID_SOCKET) {
     struct sockaddr addr;
@@ -134,17 +134,17 @@ abort:
   exit(1);
 }
 
-t_bool Com1ConnInterruptSimCom(void) {
+bool_t Com1ConnInterruptSimCom(void) {
 
   return connint("COM1", &COM1, &sc1);
 }
 
-t_bool Com2ConnInterruptSimCom(void) {
+bool_t Com2ConnInterruptSimCom(void) {
 
   return connint("COM2", &COM2, &sc2);
 }
 
-static t_bool inint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
+static bool_t inint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
 
   if (sc->com_data != INVALID_SOCKET) {
     int i;
@@ -174,17 +174,17 @@ static t_bool inint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
   return FALSE;
 }
 
-t_bool Com1InInterruptSimCom(void) {
+bool_t Com1InInterruptSimCom(void) {
 
   return inint("COM1", &COM1, &sc1);
 }
 
-t_bool Com2InInterruptSimCom(void) {
+bool_t Com2InInterruptSimCom(void) {
 
   return inint("COM2", &COM2, &sc2);
 }
 
-static t_bool outint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
+static bool_t outint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
 
   if (sc->com_data != INVALID_SOCKET) {
     int n;
@@ -216,12 +216,12 @@ static t_bool outint(char *name, FullDuplexDriver *sd, struct simcom *sc) {
   return FALSE;
 }
 
-t_bool Com1OutInterruptSimCom(void) {
+bool_t Com1OutInterruptSimCom(void) {
 
   return outint("COM1", &COM1, &sc1);
 }
 
-t_bool Com2OutInterruptSimCom(void) {
+bool_t Com2OutInterruptSimCom(void) {
 
   return outint("COM2", &COM2, &sc2);
 }

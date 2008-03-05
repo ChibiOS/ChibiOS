@@ -24,8 +24,8 @@
 extern "C" {
 #endif
   void InitBuzzer(void);
-  void PlaySound(int freq, t_time duration);
-  void PlaySoundWait(int freq, t_time duration);
+  void PlaySound(int freq, systime_t duration);
+  void PlaySoundWait(int freq, systime_t duration);
 #ifdef __cplusplus
 }
 #endif

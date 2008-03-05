@@ -27,8 +27,8 @@
 /*
  * Initializes a thread structure.
  */
-void _InitThread(t_prio prio, t_tmode mode, Thread *tp) {
-  static t_tid nextid = 0;
+void _InitThread(tprio_t prio, tmode_t mode, Thread *tp) {
+  static tid_t nextid = 0;
 
   tp->p_tid = nextid++;
   tp->p_flags = mode;
@@ -89,8 +89,8 @@ static void memfill(uint8_t *p, uint32_t n, uint8_t v) {
  * @note A thread can terminate by calling \p chThdExit() or by simply
  *       returning from its main function.
  */
-Thread *chThdCreate(t_prio prio, t_tmode mode, void *workspace,
-                    t_size wsize, t_tfunc pf, void *arg) {
+Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
+                    size_t wsize, tfunc_t pf, void *arg) {
   Thread *tp = workspace;
 
   chDbgAssert((wsize > UserStackSize(0)) && (prio <= HIGHPRIO) &&
@@ -121,7 +121,7 @@ Thread *chThdCreate(t_prio prio, t_tmode mode, void *workspace,
  * Changes the thread priority, reschedules if necessary.
  * @param newprio the new priority of the invoking thread
  */
-void chThdSetPriority(t_prio newprio) {
+void chThdSetPriority(tprio_t newprio) {
 
   chDbgAssert(newprio <= HIGHPRIO, "chthreads.c, chThdSetPriority()")
   chSysLock();
@@ -211,7 +211,7 @@ void chThdTerminate(Thread *tp) {
  * @param msg the thread exit code. The code can be retrieved by using
  *            \p chThdWait().
  */
-void chThdExit(t_msg msg) {
+void chThdExit(msg_t msg) {
 
   chSysLock();
 
@@ -235,8 +235,8 @@ void chThdExit(t_msg msg) {
  * @note The function is available only if the \p CH_USE_WAITEXIT
  *       option is enabled in \p chconf.h.
  */
-t_msg chThdWait(Thread *tp) {
-  t_msg msg;
+msg_t chThdWait(Thread *tp) {
+  msg_t msg;
 
   chSysLock();
 

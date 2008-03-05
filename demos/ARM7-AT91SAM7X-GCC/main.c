@@ -23,7 +23,7 @@
 #include "sam7x_serial.h"
 
 static WorkingArea(waThread1, 64);
-static t_msg Thread1(void *arg) {
+static msg_t Thread1(void *arg) {
 
   while (TRUE) {
     AT91C_BASE_PIOB->PIO_SODR = PIOB_LCD_BL;            // LCD on.
@@ -38,7 +38,7 @@ static t_msg Thread1(void *arg) {
  * Entry point, the interrupts are disabled on entry.
  */
 int main(int argc, char **argv) {
-  t_msg TestThread(void *p);
+  msg_t TestThread(void *p);
 
   /*
    * The main() function becomes a thread here then the interrupts are

@@ -31,11 +31,11 @@
  * @param eid numeric identifier assigned to the Event Listener. The identifier
  *            is used as index for the event callback function.
  *            The value must range between zero and the size, in bit, of the
- *            \p t_eventid type minus one.
+ *            \p eventid_t type minus one.
  * @note Multiple Event Listeners can use the same event identifier, the
  *       listener will share the callback function.
  */
-void chEvtRegister(EventSource *esp, EventListener *elp, t_eventid eid) {
+void chEvtRegister(EventSource *esp, EventListener *elp, eventid_t eid) {
 
   chSysLock();
 
@@ -77,7 +77,7 @@ void chEvtUnregister(EventSource *esp, EventListener *elp) {
  * Clears the pending events specified in the mask.
  * @param mask the events to be cleared
  */
-void chEvtClear(t_eventmask mask) {
+void chEvtClear(eventmask_t mask) {
 
   chSysLock();
 
@@ -125,7 +125,7 @@ void chEvtSendI(EventSource *esp) {
  * event handler is specified then the handler is executed before returning.
  * @param ewmask mask of the events that should be served by the function,
  *               \p ALL_EVENTS enables all the sources
- * @param handlers an array of \p t_evhandler. The array must be
+ * @param handlers an array of \p evhandler_t. The array must be
  *                 have indexes from zero up the higher registered event
  *                 identifier. The array can be \p NULL or contain \p NULL
  *                 elements (no callbacks specified).
@@ -136,8 +136,8 @@ void chEvtSendI(EventSource *esp) {
  *       This means that Event Listeners with a lower event identifier have
  *       an higher priority.
  */
-t_eventid chEvtWait(t_eventmask ewmask,
-                    const t_evhandler handlers[]) {
+eventid_t chEvtWait(eventmask_t ewmask,
+                    const evhandler_t handlers[]) {
 
   return chEvtWaitTimeout(ewmask, handlers, TIME_INFINITE);
 }
@@ -148,7 +148,7 @@ t_eventid chEvtWait(t_eventmask ewmask,
  * executed before returning.
  * @param ewmask mask of the events that should be served by the function,
  *               \p ALL_EVENTS enables all the sources
- * @param handlers an array of \p t_evhandler. The array must be
+ * @param handlers an array of \p evhandler_t. The array must be
  *                 have indexes from zero up the higher registered event
  *                 identifier. The array can be NULL or contain NULL elements
  *                 (no callback specified).
@@ -162,11 +162,11 @@ t_eventid chEvtWait(t_eventmask ewmask,
  * @note The function is available only if the \p CH_USE_EVENTS_TIMEOUT
  *       option is enabled in \p chconf.h.
  */
-t_eventid chEvtWaitTimeout(t_eventmask ewmask,
-                           const t_evhandler handlers[],
-                           t_time time) {
-  t_eventid i;
-  t_eventmask m;
+eventid_t chEvtWaitTimeout(eventmask_t ewmask,
+                           const evhandler_t handlers[],
+                           systime_t time) {
+  eventid_t i;
+  eventmask_t m;
 
   chSysLock();
 
@@ -189,10 +189,10 @@ t_eventid chEvtWaitTimeout(t_eventmask ewmask,
 }
 
 #else /* !CH_USE_EVENTS_TIMEOUT */
-t_eventid chEvtWait(t_eventmask ewmask,
-                    const t_evhandler handlers[]) {
-  t_eventid i;
-  t_eventmask m;
+eventid_t chEvtWait(eventmask_t ewmask,
+                    const evhandler_t handlers[]) {
+  eventid_t i;
+  eventmask_t m;
 
   chSysLock();
 

@@ -63,12 +63,18 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet, scheduled
 *** Releases                                                              ***
 *****************************************************************************
 
-*** 0.5.6 ***
-- Implemented a serial driver in the AVR port.
+*** 0.6.0 ***
 - Code refactory, all the old sized-integer definitions like LONG32, UWORD16
   etc are now replaced by the proper definitions provided by the compiler
-  into stdint.h. This has an impact on some API prototypes but we can't
-  help it.
+  into stdint.h.
+- Code refactory, the previous system types style using a t_ in front of the
+  name has been replaced with the standard trailing _t. The system now uses
+  the size_t type defined into stddef.h. Some type names were modified in
+  order to not match commonly used type names.
+- The above changes have an impact on some API prototypes but we can't help
+  it, the change was required because the type names were the main concern of
+  some users.
+- Implemented a serial driver in the AVR port.
 - MSVC demo dropped, it is still possible to use the MinGW demo as simulator
   in Win32.
 - Fixed a minor error in sam7x_serial.h and lpc214x_serial.h.

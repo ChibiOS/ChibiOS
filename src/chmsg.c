@@ -32,7 +32,7 @@
  * @param msg the message, it can be a pointer to a complex structure
  * @return the return message from \p chMsgRelease()
  */
-t_msg chMsgSend(Thread *tp, t_msg msg) {
+msg_t chMsgSend(Thread *tp, msg_t msg) {
 
   chSysLock();
 
@@ -70,7 +70,7 @@ t_msg chMsgSend(Thread *tp, t_msg msg) {
  *       a \p chMsgWait(). The use case is that the server thread is waiting
  *       for both messages AND events while waiting into \p chEvtWait().
  */
-t_msg chMsgSendWithEvent(Thread *tp, t_msg msg, EventSource *esp) {
+msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, EventSource *esp) {
 
   chSysLock();
 
@@ -103,8 +103,8 @@ t_msg chMsgSendWithEvent(Thread *tp, t_msg msg, EventSource *esp) {
  *       you invoke \p chMsgRelease() because the sending thread is
  *       suspended until then.
  */
-t_msg chMsgWait(void) {
-  t_msg msg;
+msg_t chMsgWait(void) {
+  msg_t msg;
 
   chSysLock();
 
@@ -127,12 +127,12 @@ t_msg chMsgWait(void) {
  *       suspended until then. Always remember that the message data is not
  *       copied between the sender and the receiver, just a pointer is passed.
  */
-t_msg chMsgGet(void) {
-  t_msg msg;
+msg_t chMsgGet(void) {
+  msg_t msg;
 
   chSysLock();
 
-  msg = chMsgIsPendingI(currp) ? chMsgGetI(currp) : NULL;
+  msg = chMsgIsPendingI(currp) ? chMsgGetI(currp) : (msg_t)NULL;
 
   chSysUnlock();
   return msg;
@@ -149,7 +149,7 @@ t_msg chMsgGet(void) {
  *       The condition is not checked in order to make this code as fast as
  *       possible.
  */
-void chMsgRelease(t_msg msg) {
+void chMsgRelease(msg_t msg) {
 
   chSysLock();
 

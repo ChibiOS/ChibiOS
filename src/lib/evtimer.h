@@ -31,7 +31,7 @@
 typedef struct {
   VirtualTimer  et_vt;
   EventSource   et_es;
-  t_time        et_interval;
+  systime_t     et_interval;
 } EvTimer;
 
 #ifdef __cplusplus

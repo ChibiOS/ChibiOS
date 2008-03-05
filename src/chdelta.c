@@ -33,7 +33,7 @@ DeltaList dlist;
 void chVTInit(void) {
 
   dlist.dl_next = dlist.dl_prev = (VirtualTimer *)&dlist;
-  dlist.dl_dtime = (t_time)-1;
+  dlist.dl_dtime = (systime_t)-1;
 }
 
 /**
@@ -50,7 +50,7 @@ void chVTInit(void) {
  * @note Must be called with the interrupts disabled.
  * @note The associated function is invoked by an interrupt handler.
  */
-void chVTSetI(VirtualTimer *vtp, t_time time, t_vtfunc vtfunc, void *par) {
+void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
 
   vtp->vt_par = par;
   vtp->vt_func = vtfunc;

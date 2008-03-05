@@ -39,14 +39,14 @@ struct Thread {
   Thread            *p_prev;
   /* End of the fields shared with the ThreadsQueue structure. */
   /** The thread priority.*/
-  t_prio            p_prio;
+  tprio_t           p_prio;
   /* End of the fields shared with the ReadyList structure. */
   /** Thread identifier. */
-  t_tid             p_tid;
+  tid_t             p_tid;
   /** Current thread state.*/
-  t_tstate          p_state;
+  tstate_t          p_state;
   /** Mode flags.*/
-  t_tmode           p_flags;
+  tmode_t           p_flags;
   /** Machine dependent processor context.*/
   Context           p_ctx;
   /*
@@ -56,9 +56,9 @@ struct Thread {
    */
   union {
     /** Thread wakeup code (only valid when exiting the \p PRREADY state).*/
-    t_msg           p_rdymsg;
+    msg_t           p_rdymsg;
     /** The thread exit code (only while in \p PREXIT state).*/
-    t_msg           p_exitcode;
+    msg_t           p_exitcode;
 #ifdef CH_USE_SEMAPHORES
     /** Semaphore where the thread is waiting on (only in \p PRWTSEM state).*/
     Semaphore       *p_wtsemp;
@@ -73,7 +73,7 @@ struct Thread {
 #endif
 #ifdef CH_USE_EVENTS
     /** Enabled events mask (only while in \p PRWTEVENT state).*/
-    t_eventmask     p_ewmask;
+    eventmask_t     p_ewmask;
 #endif
 #ifdef CH_USE_TRACE
     /** Kernel object where the thread is waiting on. It is only valid when
@@ -94,16 +94,16 @@ struct Thread {
 #endif
 #ifdef CH_USE_MESSAGES
   ThreadsQueue      p_msgqueue;
-  t_msg             p_msg;
+  msg_t             p_msg;
 #endif
 #ifdef CH_USE_EVENTS
   /** Pending events mask.*/
-  t_eventmask       p_epending;
+  eventmask_t       p_epending;
 #endif
 #ifdef CH_USE_MUTEXES
   /** Owner mutexes list, \p NULL terminated.*/
   Mutex             *p_mtxlist;
-  t_prio            p_realprio;
+  tprio_t           p_realprio;
 #endif
 };
 
@@ -159,10 +159,10 @@ struct Thread {
 #define ABSPRIO     255
 
 /* Not an API, don't use into the application code.*/
-void _InitThread(t_prio prio, t_tmode mode, Thread *tp);
+void _InitThread(tprio_t prio, tmode_t mode, Thread *tp);
 
 /** Thread function.*/
-typedef t_msg (*t_tfunc)(void *);
+typedef msg_t (*tfunc_t)(void *);
 
 /*
  * Threads APIs.
@@ -170,10 +170,10 @@ typedef t_msg (*t_tfunc)(void *);
 #ifdef __cplusplus
 extern "C" {
 #endif
-  Thread *chThdCreate(t_prio prio, t_tmode mode, void *workspace,
-                      t_size wsize, t_tfunc pf, void *arg);
-  void chThdSetPriority(t_prio newprio);
-  void chThdExit(t_msg msg);
+  Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
+                      size_t wsize, tfunc_t pf, void *arg);
+  void chThdSetPriority(tprio_t newprio);
+  void chThdExit(msg_t msg);
 #ifdef CH_USE_RESUME
   void chThdResume(Thread *tp);
 #endif
@@ -184,7 +184,7 @@ extern "C" {
   void chThdTerminate(Thread *tp);
 #endif
 #ifdef CH_USE_WAITEXIT
-  t_msg chThdWait(Thread *tp);
+  msg_t chThdWait(Thread *tp);
 #endif
 #ifdef __cplusplus
 }

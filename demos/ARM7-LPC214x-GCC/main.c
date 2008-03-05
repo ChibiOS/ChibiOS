@@ -29,7 +29,7 @@
  * Red LEDs blinker thread, times are in milliseconds.
  */
 static WorkingArea(waThread1, 64);
-static t_msg Thread1(void *arg) {
+static msg_t Thread1(void *arg) {
 
   while (TRUE) {
     IO0CLR = 0x00000800;
@@ -48,7 +48,7 @@ static t_msg Thread1(void *arg) {
  * Yellow LED blinker thread, times are in milliseconds.
  */
 static WorkingArea(waThread2, 64);
-static t_msg Thread2(void *arg) {
+static msg_t Thread2(void *arg) {
 
   while (TRUE) {
     IO0CLR = 0x80000000;
@@ -62,8 +62,8 @@ static t_msg Thread2(void *arg) {
 /*
  * Executed as event handler at 500mS intervals.
  */
-static void TimerHandler(t_eventid id) {
-  t_msg TestThread(void *p);
+static void TimerHandler(eventid_t id) {
+  msg_t TestThread(void *p);
 
   if (!(IO0PIN & 0x00018000)) { // Both buttons
     TestThread(&COM1);
@@ -83,7 +83,7 @@ static void TimerHandler(t_eventid id) {
  * Plays sounds when a MMC/SD card is inserted, then initializes the MMC
  * driver and reads a sector.
  */
-static void InsertHandler(t_eventid id) {
+static void InsertHandler(eventid_t id) {
   static uint8_t rwbuf[512];
   MMCCSD data;
 
@@ -102,7 +102,7 @@ static void InsertHandler(t_eventid id) {
 /*
  * Plays sounds when a MMC/SD card is removed.
  */
-static void RemoveHandler(t_eventid id) {
+static void RemoveHandler(eventid_t id) {
 
   PlaySoundWait(2000, 100);
   PlaySoundWait(1000, 100);
@@ -112,7 +112,7 @@ static void RemoveHandler(t_eventid id) {
  * Entry point, the interrupts are disabled on entry.
  */
 int main(int argc, char **argv) {
-  static const t_evhandler evhndl[] = {
+  static const evhandler_t evhndl[] = {
     TimerHandler,
     InsertHandler,
     RemoveHandler

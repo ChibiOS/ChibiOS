@@ -31,7 +31,7 @@
  * @param n initial value of the semaphore counter. Must be non-negative.
  * @note Can be called with interrupts disabled or enabled.
  */
-void chSemInit(Semaphore *sp, t_cnt n) {
+void chSemInit(Semaphore *sp, cnt_t n) {
 
   chDbgAssert(n >= 0, "chsem.c, chSemInit()");
   fifo_init(&sp->s_queue);
@@ -46,7 +46,7 @@ void chSemInit(Semaphore *sp, t_cnt n) {
  *       instead than a signal because the \p chSemWait() will return
  *       \p RDY_RESET instead of \p RDY_OK.
  */
-void chSemReset(Semaphore *sp, t_cnt n) {
+void chSemReset(Semaphore *sp, cnt_t n) {
 
   chSysLock();
 
@@ -65,8 +65,8 @@ void chSemReset(Semaphore *sp, t_cnt n) {
  *       \p RDY_RESET instead of \p RDY_OK.
  * @note This function does not reschedule.
  */
-void chSemResetI(Semaphore *sp, t_cnt n) {
-  t_cnt cnt;
+void chSemResetI(Semaphore *sp, cnt_t n) {
+  cnt_t cnt;
 
   chDbgAssert(n >= 0, "chsem.c, chSemResetI()");
   cnt = sp->s_cnt;
@@ -80,8 +80,8 @@ void chSemResetI(Semaphore *sp, t_cnt n) {
  * @param sp pointer to a \p Semaphore structure
  * @return the function can return \p RDY_OK or \p RDY_RESET.
  */
-t_msg chSemWait(Semaphore *sp) {
-  t_msg msg;
+msg_t chSemWait(Semaphore *sp) {
+  msg_t msg;
 
   chSysLock();
 
@@ -98,7 +98,7 @@ t_msg chSemWait(Semaphore *sp) {
  * @note This function must be called with interrupts disabled.
  * @note This function cannot be called by an interrupt handler.
  */
-t_msg chSemWaitS(Semaphore *sp) {
+msg_t chSemWaitS(Semaphore *sp) {
 
   if (--sp->s_cnt < 0) {
     fifo_insert(currp, &sp->s_queue);
@@ -116,8 +116,8 @@ t_msg chSemWaitS(Semaphore *sp) {
  * @param time the number of ticks before the operation fails
  * @return the function can return \p RDY_OK, \p RDY_TIMEOUT or \p RDY_RESET.
  */
-t_msg chSemWaitTimeout(Semaphore *sp, t_time time) {
-  t_msg msg;
+msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
+  msg_t msg;
 
   chSysLock();
 
@@ -137,7 +137,7 @@ t_msg chSemWaitTimeout(Semaphore *sp, t_time time) {
  * @note The function is available only if the \p CH_USE_SEMAPHORES_TIMEOUT
  *       option is enabled in \p chconf.h.
  */
-t_msg chSemWaitTimeoutS(Semaphore *sp, t_time time) {
+msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
 
   if (--sp->s_cnt < 0) {
     fifo_insert(currp, &sp->s_queue);

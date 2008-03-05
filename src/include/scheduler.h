@@ -39,13 +39,13 @@
  */
 typedef struct {
   ThreadsQueue          r_queue;
-  t_prio                r_prio;
-  t_cnt                 r_preempt;
+  tprio_t               r_prio;
+  cnt_t                 r_preempt;
 #ifndef CH_CURRP_REGISTER_CACHE
   Thread                *r_current;
 #endif
 #ifdef CH_USE_SYSTEMTIME
-  volatile t_time       r_stime;
+  volatile systime_t    r_stime;
 #endif
 } ReadyList;
 
@@ -58,13 +58,13 @@ extern ReadyList rlist;
 extern "C" {
 #endif
   void chSchInit(void);
-  void chSchReadyI(Thread *tp, t_msg msg);
-  void chSchGoSleepS(t_tstate newstate);
-  t_msg chSchGoSleepTimeoutS(t_tstate newstate, t_time time);
-  void chSchWakeupS(Thread *tp, t_msg msg);
+  void chSchReadyI(Thread *tp, msg_t msg);
+  void chSchGoSleepS(tstate_t newstate);
+  msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time);
+  void chSchWakeupS(Thread *tp, msg_t msg);
   void chSchDoRescheduleI(void);
   void chSchRescheduleS(void);
-  t_bool chSchRescRequiredI(void);
+  bool_t chSchRescRequiredI(void);
 #ifdef __cplusplus
 }
 #endif

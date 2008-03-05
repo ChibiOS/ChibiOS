@@ -48,16 +48,16 @@ extern EventSource MMCInsertEventSource, MMCRemoveEventSource;
 #endif
   void InitMMC(void);
 
-  t_bool mmcInit(void);
+  bool_t mmcInit(void);
   void mmcStartPolling(void);
   void mmcStopPolling(void);
-  t_bool mmcCardInserted (void);
+  bool_t mmcCardInserted (void);
   uint8_t mmcSendCommand(uint8_t cmd, uint32_t arg);
-  t_bool mmcGetSize(MMCCSD *data);
-  t_bool mmcRead(uint8_t *buf, uint32_t blknum);
-  t_bool mmcReadMultiple(uint8_t *buf, uint32_t blknum, uint32_t n);
-  t_bool mmcWrite(uint8_t *buf, uint32_t blknum);
-  t_bool mmcWriteMultiple(uint8_t *buf, uint32_t blknum, uint32_t n);
+  bool_t mmcGetSize(MMCCSD *data);
+  bool_t mmcRead(uint8_t *buf, uint32_t blknum);
+  bool_t mmcReadMultiple(uint8_t *buf, uint32_t blknum, uint32_t n);
+  bool_t mmcWrite(uint8_t *buf, uint32_t blknum);
+  bool_t mmcWriteMultiple(uint8_t *buf, uint32_t blknum, uint32_t n);
   void mmcSynch(void);
 #ifdef __cplusplus
 }

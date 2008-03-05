@@ -91,7 +91,7 @@ void mmcStopPolling(void) {
 /*
  * Returns TRUE if the card is safely inserted in the reader.
  */
-t_bool mmcCardInserted (void) {
+bool_t mmcCardInserted (void) {
 
   return cnt == 0;
 }
@@ -145,7 +145,7 @@ static uint8_t recvr1(void) {
   return 0xFF;                  /* Timeout.*/
 }
 
-static t_bool getdata(uint8_t *buf, uint32_t n) {
+static bool_t getdata(uint8_t *buf, uint32_t n) {
   int i;
 
   for (i = 0; i < MMC_WAIT_DATA; i++) {
@@ -162,7 +162,7 @@ static t_bool getdata(uint8_t *buf, uint32_t n) {
 /*
  * Initializes a card after the power up by selecting the SPI mode.
  */
-t_bool mmcInit(void) {
+bool_t mmcInit(void) {
 
   /*
    * Starting initialization with slow clock mode.
@@ -222,7 +222,7 @@ uint8_t mmcSendCommand(uint8_t cmd, uint32_t arg) {
  * @param data the pointer to a \p MMCCSD structure
  * @return \p TRUE if an error happened
  */
-t_bool mmcGetSize(MMCCSD *data) {
+bool_t mmcGetSize(MMCCSD *data) {
   uint8_t buf[16];
 
   sspAcquireBus();
@@ -250,7 +250,7 @@ t_bool mmcGetSize(MMCCSD *data) {
  * @param buf the pointer to the read buffer
  * @return \p TRUE if an error happened
  */
-t_bool mmcRead(uint8_t *buf, uint32_t blknum) {
+bool_t mmcRead(uint8_t *buf, uint32_t blknum) {
 
   sspAcquireBus();
   sendhdr(CMDREAD, blknum << 8);
@@ -273,7 +273,7 @@ t_bool mmcRead(uint8_t *buf, uint32_t blknum) {
  * @param buf the pointer to the read buffer
  * @return \p TRUE if an error happened
  */
-t_bool mmcReadMultiple(uint8_t *buf, uint32_t blknum, uint32_t n) {
+bool_t mmcReadMultiple(uint8_t *buf, uint32_t blknum, uint32_t n) {
   static const uint8_t stopcmd[] = {0x40 | CMDSTOP, 0, 0, 0, 0, 1, 0xFF};
 
   sspAcquireBus();
@@ -309,7 +309,7 @@ t_bool mmcReadMultiple(uint8_t *buf, uint32_t blknum, uint32_t n) {
  *       the card, this allows to not make useless busy waiting. The invoking
  *       thread can do other things while the data is being written.
  */
-t_bool mmcWrite(uint8_t *buf, uint32_t blknum) {
+bool_t mmcWrite(uint8_t *buf, uint32_t blknum) {
   static const uint8_t start[] = {0xFF, 0xFE};
   uint8_t b[4];
 
@@ -340,7 +340,7 @@ t_bool mmcWrite(uint8_t *buf, uint32_t blknum) {
  *       the card, this allows to not make useless busy waiting. The invoking
  *       thread can do other things while the data is being written.
  */
-t_bool mmcWriteMultiple(uint8_t *buf, uint32_t blknum, uint32_t n) {
+bool_t mmcWriteMultiple(uint8_t *buf, uint32_t blknum, uint32_t n) {
   static const uint8_t start[] = {0xFF, 0xFC},
                      stop[] = {0xFD, 0xFF};
   uint8_t b[4];

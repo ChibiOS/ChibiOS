@@ -25,7 +25,7 @@
 #include "avr_serial.h"
 
 static void SetError(uint8_t sra, FullDuplexDriver *com) {
-  uint16_t sts = 0;
+  dflags_t sts = 0;
 
   if (sra & (1 << DOR))
     sts |= SD_OVERRUN_ERROR;
@@ -54,7 +54,7 @@ ISR(USART0_RX_vect) {
 }
 
 ISR(USART0_UDRE_vect) {
-  t_msg b;
+  msg_t b;
 
   chSysIRQEnterI();
 
@@ -109,7 +109,7 @@ ISR(USART1_RX_vect) {
 }
 
 ISR(USART1_UDRE_vect) {
-  t_msg b;
+  msg_t b;
 
   chSysIRQEnterI();
 

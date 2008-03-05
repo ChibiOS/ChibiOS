@@ -42,17 +42,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  t_msg chMsgSend(Thread *tp, t_msg msg);
-  t_msg chMsgWait(void);
-  t_msg chMsgGet(void);
-  void chMsgRelease(t_msg msg);
+  msg_t chMsgSend(Thread *tp, msg_t msg);
+  msg_t chMsgWait(void);
+  msg_t chMsgGet(void);
+  void chMsgRelease(msg_t msg);
 
 #ifdef CH_USE_MESSAGES_EVENT
-  t_msg chMsgSendWithEvent(Thread *tp, t_msg msg, EventSource *esp);
-#endif
-
-#ifdef CH_USE_MESSAGES_TIMEOUT
-  t_msg chMsgSendTimeout(Thread *tp, t_msg msg, t_time time);
+  msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, EventSource *esp);
 #endif
 #ifdef __cplusplus
 }
