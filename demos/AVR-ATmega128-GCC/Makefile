@@ -86,6 +86,7 @@ SRC = ../../ports/AVR/chcore.c ../../ports/AVR/avr_serial.c \
       ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \
       ../../src/chserial.c \
       ../../src/lib/evtimer.c \
+      ../../test/test.c \
       board.c main.c
 
 

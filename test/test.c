@@ -51,7 +51,7 @@ static void wait(void) {
   chThdWait(t5);
 }
 
-static void printn(unsigned int n) {
+static void printn(uint32_t n) {
   char buf[16], *p;
 
   if (!n)
@@ -59,7 +59,7 @@ static void printn(unsigned int n) {
   else {
     p = buf;
     while (n)
-          *p++ = (n % 10) + '0', n /= 10;
+      *p++ = (n % 10) + '0', n /= 10;
     while (p > buf)
       chFDDPut(comp, *--p);
   }
@@ -137,13 +137,13 @@ msg_t Thread4(void *p) {
 msg_t Thread6(void *p) {
 
   while (!chThdShouldTerminate())
-    chMsgRelease(chMsgWait() + 1);
+    chMsgRelease(chMsgWait());
   return 0;
 }
 
 msg_t Thread7(void *p) {
 
-  return (unsigned int)p + 1;
+  return (msg_t)NULL;
 }
 
 void testrdy1(void) {
@@ -380,12 +380,13 @@ void testmsg1(void) {
 
 __attribute__((noinline))
 unsigned int msg_loop_test(Thread *tp) {
-  unsigned int i;
+  uint32_t i;
 
   systime_t time = wait_tick() + 1000;
   i = 0;
   while (chSysGetTime() < time) {
-    i = chMsgSend(tp, i);
+    (void)chMsgSend(tp, 0);
+    i++;
 #if defined(WIN32)
     ChkIntSources();
 #endif
@@ -395,7 +396,7 @@ unsigned int msg_loop_test(Thread *tp) {
 
 __attribute__((noinline))
 void precache(void) {
-  unsigned int i;
+  uint32_t i;
 
   println("\r\nPreparing for benchmarks\r\n");
   t1 = chThdCreate(chThdGetPriority()-1, 0, wsT1, sizeof(wsT1), Thread6, 0);
@@ -406,7 +407,7 @@ void precache(void) {
 
 __attribute__((noinline))
 void bench1(void) {
-  unsigned int i;
+  uint32_t i;
 
   println("*** Kernel Benchmark, context switch test #1 (optimal):");
   t1 = chThdCreate(chThdGetPriority()-1, 0, wsT1, sizeof(wsT1), Thread6, 0);
@@ -422,7 +423,7 @@ void bench1(void) {
 
 __attribute__((noinline))
 void bench2(void) {
-  unsigned int i;
+  uint32_t i;
 
   println("*** Kernel Benchmark, context switch test #2 (no threads in ready list):");
   t1 = chThdCreate(chThdGetPriority()+1, 0, wsT1, sizeof(wsT1), Thread6, 0);
@@ -439,7 +440,7 @@ chMsgSend(t1, 0);
 
 __attribute__((noinline))
 void bench3(void) {
-  unsigned int i;
+  uint32_t i;
 
   println("*** Kernel Benchmark, context switch test #3 (04 threads in ready list):");
   t1 = chThdCreate(chThdGetPriority()+1, 0, wsT1, sizeof(wsT1), Thread6, "A");
@@ -460,15 +461,16 @@ chMsgSend(t1, 0);
 
 __attribute__((noinline))
 void bench4(void) {
-  unsigned int i;
+  uint32_t i;
   systime_t time;
 
   println("*** Kernel Benchmark, threads creation/termination:");
   time = wait_tick() + 1000;
   i = 0;
   while (chSysGetTime() < time) {
-    t1 = chThdCreate(chThdGetPriority()-1, 0, wsT1, sizeof(wsT1), Thread7, (void *)i);
-    i = chThdWait(t1);
+    t1 = chThdCreate(chThdGetPriority()-1, 0, wsT1, sizeof(wsT1), Thread7, NULL);
+    chThdWait(t1);
+    i++;
 #if defined(WIN32)
     ChkIntSources();
 #endif
@@ -482,7 +484,7 @@ __attribute__((noinline))
 void bench5(void) {
   static uint8_t ib[16];
   static Queue iq;
-  unsigned int i;
+  uint32_t i;
   systime_t time;
 
   println("*** Kernel Benchmark, I/O Queues throughput:");
@@ -490,14 +492,14 @@ void bench5(void) {
   time = wait_tick() + 1000;
   i = 0;
   while (chSysGetTime() < time) {
-    chIQPutI(&iq, i >> 24);
-    chIQPutI(&iq, i >> 16);
-    chIQPutI(&iq, i >> 8);
-    chIQPutI(&iq, i);
-    i = chIQGet(&iq) << 24;
-    i |= chIQGet(&iq) << 16;
-    i |= chIQGet(&iq) << 8;
-    i |= chIQGet(&iq);
+    chIQPutI(&iq, 0);
+    chIQPutI(&iq, 1);
+    chIQPutI(&iq, 2);
+    chIQPutI(&iq, 3);
+    (void)chIQGet(&iq);
+    (void)chIQGet(&iq);
+    (void)chIQGet(&iq);
+    (void)chIQGet(&iq);
     i++;
 #if defined(WIN32)
     ChkIntSources();

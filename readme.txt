@@ -75,9 +75,12 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not complete yet, scheduled
   it, the change was required because the type names were the main concern of
   some users.
 - Implemented a serial driver in the AVR port.
+- Modified the test suite to be compatible with 8 bit micros.
 - MSVC demo dropped, it is still possible to use the MinGW demo as simulator
   in Win32.
 - Fixed a minor error in sam7x_serial.h and lpc214x_serial.h.
+- The kernel is *unchanged* compared to version 0.5.3 except for the type
+  names but the change is important enough to make this a recommended update.
 
 *** 0.5.5 ***
 - Added an AVRmega128 port. The previous AT90CANx port is still present but
