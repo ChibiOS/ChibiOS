@@ -1,16 +1,17 @@
 *****************************************************************************
-** ChibiOS/RT port for Atmel AVR ATmega128.                                **
+** ChibiOS/RT port for Atmel AVR AT90CAN128.                               **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an Olimex AVR-MT-128 board.
+The demo runs on an Olimex AVR-CAN board.
 
 ** The Demo **
 
-The demo currently just toggles the relay using a thread. It will be expanded
-in next releases.
-By pressing the button 1 the test suite is activated, output on serial port 2.
+The demo currently just flashes the board LED using a thread. It will be
+expanded in next releases.
+By pressing the board button the test suite is activated, output on serial
+port 2.
 
 ** Build Procedure **
 

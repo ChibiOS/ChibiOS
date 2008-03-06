@@ -80,8 +80,14 @@ OBJDIR = .
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = ./main.c ./chcore.c ../../src/chinit.c ../../src/chlists.c ../../src/chdelta.c ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c ../../src/chserial.c
-
+SRC = ../../ports/AVR/chcore.c ../../ports/AVR/avr_serial.c \
+      ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
+      ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chmtx.c \
+      ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \
+      ../../src/chserial.c \
+      ../../src/lib/evtimer.c \
+      ../../test/test.c \
+      board.c main.c
 
 
 # List C++ source files here. (C dependencies are automatically generated.)
@@ -95,7 +101,7 @@ CPPSRC =
 #     Even though the DOS/Win* filesystem matches both .s and .S the same,
 #     it will preserve the spelling of the filenames, and gcc itself does
 #     care about how the name is spelled on its command-line.
-ASRC = ./chcore2.S
+ASRC =
 
 
 # Optimization level, can be [0, 1, 2, 3, s].
@@ -115,7 +121,7 @@ DEBUG = dwarf-2
 #     Each directory must be seperated by a space.
 #     Use forward slashes for directory separators.
 #     For a directory that has spaces, enclose it in quotes.
-EXTRAINCDIRS = ../../src/include
+EXTRAINCDIRS = ../../src/include ../../src/lib ../../ports/AVR
 
 
 # Compiler flag to set the C Standard level.
@@ -402,12 +408,13 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 all: begin gccversion sizebefore build sizeafter end
 
 # Change the build target to build a HEX file or a library.
-build: elf hex eep lss sym
+build: elf hex bin eep lss sym
 #build: lib
 
 
 elf: $(TARGET).elf
 hex: $(TARGET).hex
+bin: $(TARGET).bin
 eep: $(TARGET).eep
 lss: $(TARGET).lss
 sym: $(TARGET).sym
@@ -512,6 +519,11 @@ extcoff: $(TARGET).elf
 	@echo $(MSG_FLASH) $@
 	$(OBJCOPY) -O $(FORMAT) -R .eeprom $< $@
 
+%.bin: %.elf
+	@echo
+	@echo $(MSG_FLASH) $@
+	$(OBJCOPY) -O binary -R .eeprom $< $@
+
 %.eep: %.elf
 	@echo
 	@echo $(MSG_EEPROM) $@
@@ -593,6 +605,7 @@ clean_list :
 	@echo
 	@echo $(MSG_CLEANING)
 	$(REMOVE) $(TARGET).hex
+	$(REMOVE) $(TARGET).bin
 	$(REMOVE) $(TARGET).eep
 	$(REMOVE) $(TARGET).cof
 	$(REMOVE) $(TARGET).elf
@@ -617,7 +630,7 @@ $(shell mkdir $(OBJDIR) 2>/dev/null)
 
 # Listing of phony targets.
 .PHONY : all begin finish end sizebefore sizeafter gccversion \
-build elf hex eep lss sym coff extcoff \
+build elf hex bin eep lss sym coff extcoff \
 clean clean_list program debug gdb-config
 
 

@@ -17,6 +17,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*
+ * Configuration file for LPC214x-GCC demo project.
+ */
+
 /**
  * @addtogroup Config
  * @{
@@ -25,15 +29,10 @@
 #ifndef _CHCONF_H_
 #define _CHCONF_H_
 
-/*
- * NOTE: this is just documentation for doxigen, the real configuration file
- * is the one into the project directories.
- */
-
 /** Configuration option: if specified then time efficient rather than space
  *  efficient code is used when two possible implementations exist, note
  *  that this is not related to the compiler optimization options.*/
-//#define CH_OPTIMIZE_SPEED
+#define CH_OPTIMIZE_SPEED
 
 /** Configuration option: if specified then the Virtual Timers subsystem is
  *  included in the kernel.*/
@@ -151,9 +150,9 @@
  *        on processors with many registers like ARM cores.
  *  @note If this option is enabled then ALL the libraries linked to the
  *        ChibiOS/RT code <b>must</b> be recompiled with the GCC option \p
- *        -ffixed-\<reg\>.
+ *        -ffixed-<reg>.
  */
-//#define CH_CURRP_REGISTER_CACHE "reg"
+//#define CH_CURRP_REGISTER_CACHE "r8"
 
 /** Configuration option: Includes basic debug support to the kernel.
  *  @note the debug support is port-dependent, it may be not present on some

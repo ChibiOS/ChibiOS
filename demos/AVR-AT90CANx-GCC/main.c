@@ -18,21 +18,38 @@
 */
 
 #include <ch.h>
+#include <evtimer.h>
+#include <avr_serial.h>
 
 #include <avr/io.h>
+
+#include "board.h"
 
 void hwinit(void);
 
 static WorkingArea(waThread1, 32);
-static t_msg Thread1(void *arg) {
+static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    chThdSleep(800);
+    PORTE ^= PORTE_LED;
+    chThdSleep(500);
   }
   return 0;
 }
 
+static void TimerHandler(eventid_t id) {
+  msg_t TestThread(void *p);
+
+  if (!(PORTE & PORTE_BUTTON))
+    TestThread(&SER2);
+}
+
 int main(int argc, char **argv) {
+  static EvTimer evt;
+  static evhandler_t handlers[1] = {
+    TimerHandler
+  };
+  static EventListener el0;
 
   hwinit();
 
@@ -43,12 +60,19 @@ int main(int argc, char **argv) {
   chSysInit();
 
   /*
+   * Event Timer initialization.
+   */
+  evtInit(&evt, 500);                   /* Initializes an event timer object.   */
+  evtStart(&evt);                       /* Starts the event timer.              */
+  chEvtRegister(&evt.et_es, &el0, 0);   /* Registers on the timer event source. */
+
+  /*
    * Starts the LED blinker thread.
    */
   chThdCreate(NORMALPRIO, 0, waThread1, sizeof(waThread1), Thread1, NULL);
 
   while(TRUE)
-    /* Do stuff*/ ;
+    chEvtWait(ALL_EVENTS, handlers);
 
   return 0;
 }
