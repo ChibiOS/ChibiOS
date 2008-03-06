@@ -71,7 +71,7 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not tested on hardware yet.
   the size_t type defined into stddef.h. Some type names were modified in
   order to not match commonly used type names.
 - The above changes have an impact on some API prototypes but we can't help
-  it, the change was required because the type names were a concern for
+  it, the changes were required because the type names were a concern for
   some users.
 - Implemented a serial driver in the AVR port.
 - Reworked the AVR AT90CAN128 port to share the common AVR code.
