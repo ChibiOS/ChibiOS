@@ -24,6 +24,7 @@
 #include <avr/io.h>
 
 #include "board.h"
+#include "lcd.h"
 
 void hwinit(void);
 
@@ -31,7 +32,8 @@ static WorkingArea(waThread1, 32);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    PORTA ^= PORTA_RELAY;
+    if (!(PINA & PORTA_BUTTON2))
+      PORTA ^= PORTA_RELAY;
     chThdSleep(1000);
   }
   return 0;
@@ -40,7 +42,7 @@ static msg_t Thread1(void *arg) {
 static void TimerHandler(eventid_t id) {
   msg_t TestThread(void *p);
 
-  if (!(PORTA & PORTA_BUTTON1))
+  if (!(PINA & PORTA_BUTTON1))
     TestThread(&SER2);
 }
 
@@ -58,6 +60,15 @@ int main(int argc, char **argv) {
    * enabled and ChibiOS/RT goes live.
    */
   chSysInit();
+
+  /*
+   * This initialization requires the OS already active because it uses delay
+   * APIs inside.
+   */
+  lcdInit();
+  lcdCmd(LCD_CLEAR);
+  lcdPuts(LCD_LINE1, "   ChibiOS/RT   ");
+  lcdPuts(LCD_LINE2, "  Hello World!  ");
 
   /*
    * Event Timer initialization.

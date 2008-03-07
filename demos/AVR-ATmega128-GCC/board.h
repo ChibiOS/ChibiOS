@@ -38,22 +38,22 @@
 #define VAL_PORTB 0xFF
 
 /*        D7  D6  D5  D4 PC3   E R/W  RS
- *        IN  IN  IN  IN  IN OUT OUT OUT
- * DDRC    0   0   0   0   0   1   1   1
+ *        OUT OUT OUT OUT IN OUT OUT OUT
+ * DDRC    1   1   1   1   0   1   1   1
  *        PU  PU  PU  PU  PU VAL VAL VAL
- * PORTC   1   1   1   1   1   0   0   0
+ * PORTC   0   0   0   0   1   0   0   0
  */
-#define VAL_DDRC  0x03
-#define VAL_PORTC 0xF8
+#define VAL_DDRC  0xF7
+#define VAL_PORTC 0x08
 
 /*       PD7 PD6 PD5 PD4 TXD RXD PD1 PD0
  *        IN  IN  IN  IN OUT  IN  IN  IN
  * DDRD    0   0   0   0   1   0   0   0
- *        PU  PU  PU  PU VAL HiZ HiZ HiZ
- * PORTD   1   1   1   1   1   0   0   0
+ *        PU  PU  PU  PU VAL HiZ  PU  PU
+ * PORTD   1   1   1   1   1   0   1   1
  */
 #define VAL_DDRD  0x08
-#define VAL_PORTD 0xF8
+#define VAL_PORTD 0xFB
 
 /*       PE7 PE6 BZ2 BZ2 PE3 PE2 PE1 PE0
  *        IN  IN OUT OUT  IN  IN OUT  IN
@@ -67,12 +67,12 @@
 /*       TDI TDO TMS TCK PF3 PF2 PF1 PF0
  *         x   x   x   x  IN  IN  IN  IN
  * DDRF    0   0   0   0   0   0   0   0
- *        PU  PU  PU  PU  PU  PU  PU  PU
- * PORTF   1   1   1   1   1   1   1   1
+ *         x   x   x   x  PU  PU  PU  PU
+ * PORTF   0   0   0   0   1   1   1   1
  *
  */
 #define VAL_DDRF  0x00
-#define VAL_PORTF 0xFF
+#define VAL_PORTF 0x0F
 
 /*         x   x   x   x   x PG2 PG1 PG0
  *         x   x   x   x   x  IN  IN  IN
@@ -99,6 +99,8 @@
 #define PORTC_44780_D5          (1 << 5)
 #define PORTC_44780_D6          (1 << 6)
 #define PORTC_44780_D7          (1 << 7)
+#define PORTC_44780_DATA        (PORTC_44780_D4 | PORTC_44780_D5 | \
+                                 PORTC_44780_D6 | PORTC_44780_D7)
 
 #define PORTE_BUZZ1             (1 << 4)
 #define PORTE_BUZZ2             (1 << 5)

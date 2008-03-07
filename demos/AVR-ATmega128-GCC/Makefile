@@ -87,7 +87,7 @@ SRC = ../../ports/AVR/chcore.c ../../ports/AVR/avr_serial.c \
       ../../src/chserial.c \
       ../../src/lib/evtimer.c \
       ../../test/test.c \
-      board.c main.c
+      board.c lcd.c main.c
 
 
 # List C++ source files here. (C dependencies are automatically generated.)

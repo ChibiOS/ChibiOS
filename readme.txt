@@ -74,6 +74,7 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not tested on hardware yet.
   it, the changes were required because the type names were a concern for
   some users.
 - Implemented a serial driver in the AVR port.
+- Implemented a simple HD44780 LCD driver into the AVRmega128 demo.
 - Reworked the AVR AT90CAN128 port to share the common AVR code.
 - Modified the test suite to be compatible with 8 bit micros.
 - MSVC demo dropped, it is still possible to use the MinGW demo as simulator

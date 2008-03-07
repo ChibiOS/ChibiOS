@@ -8,8 +8,8 @@ The demo runs on an Olimex AVR-MT-128 board.
 
 ** The Demo **
 
-The demo currently just toggles the relay using a thread. It will be expanded
-in next releases.
+The demo currently just writes a hello world on the LCD and toggles the relay
+using a thread while button 2 is pressed.
 By pressing the button 1 the test suite is activated, output on serial port 2.
 
 ** Build Procedure **

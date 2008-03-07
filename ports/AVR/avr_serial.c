@@ -150,11 +150,11 @@ void InitSerial(void) {
 #ifdef USE_AVR_USART0
   /* I/O queues setup.*/
   chFDDInit(&SER1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
-  SetUSART0I(UBRR(38400), 0);
+  SetUSART0I(UBRR(38400), (1 << UCSZ1) | (1 << UCSZ0));
 #endif
 
 #ifdef USE_AVR_USART1
   chFDDInit(&SER2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
-  SetUSART1I(UBRR(38400), 0);
+  SetUSART1I(UBRR(38400), (1 << UCSZ1) | (1 << UCSZ0));
 #endif
 }
