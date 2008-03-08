@@ -48,12 +48,12 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not tested on hardware yet.
 *** Plans                                                                 ***
 *****************************************************************************
 
-- Finish the work on the AVR ports ASAP.
 - Look into importing *or* implementing a TCP/IP stack and a File System.
 - Start the work on a Cortex-M3 port as soon GCC 4.3.0 will be released and
   incorporated in YAGARTO.
 - Evaluate other architectures for a possible ChibiOS/RT port. An important
-  selection parameter will be the availability of FOSS toolchains.
+  selection parameter will be the availability of FOSS toolchains. Currently
+  we are evaluating the Cortex-M3 and the MSP430.
 - Creation of a reduced ChibiOS/RT kernel targeted to lesser 8bit micros and
   educational purposes, the name will probably be ChibiOS/SX, we are still
   discussing it.
