@@ -93,8 +93,10 @@ void chSchGoSleepS(tstate_t newstate) {
 #ifdef CH_USE_VIRTUAL_TIMERS
 static void wakeup(void *p) {
 
+#ifdef CH_USE_SEMAPHORES
   if (((Thread *)p)->p_state == PRWTSEM)
     chSemFastSignalI(((Thread *)p)->p_wtsemp);
+#endif
   chSchReadyI(p, RDY_TIMEOUT);
 }
 
@@ -170,10 +172,8 @@ void chSchDoRescheduleI(void) {
  */
 void chSchRescheduleS(void) {
 
-  if (isempty(&rlist.r_queue) || firstprio(&rlist.r_queue) <= currp->p_prio)
-    return;
-
-  chSchDoRescheduleI();
+  if (firstprio(&rlist.r_queue) > currp->p_prio)
+    chSchDoRescheduleI();
 }
 
 /**
@@ -182,9 +182,6 @@ void chSchRescheduleS(void) {
  *         immediatly else \p FALSE.
  */
 bool_t chSchRescRequiredI(void) {
-
-  if (isempty(&rlist.r_queue))
-    return FALSE;
 
   if (rlist.r_preempt) {
     if (firstprio(&rlist.r_queue) <= currp->p_prio)
