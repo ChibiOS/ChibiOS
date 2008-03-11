@@ -24,7 +24,7 @@
 
 #include <ch.h>
 
-/** @cond never*/
+/** @cond never */
 ReadyList rlist;
 /** @endcond */
 
@@ -58,10 +58,11 @@ INLINE void chSchReadyI(Thread *tp, msg_t msg) {
 #else
 void chSchReadyI(Thread *tp, msg_t msg) {
 #endif
-  Thread *cp = rlist.r_queue.p_next;
+  Thread *cp;
 
   tp->p_state = PRREADY;
   tp->p_rdymsg = msg;
+  cp = rlist.r_queue.p_next;
   while (cp->p_prio >= tp->p_prio)
     cp = cp->p_next;
   /* Insertion on p_prev.*/
