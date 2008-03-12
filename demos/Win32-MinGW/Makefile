@@ -76,7 +76,7 @@ ULIBDIR =
 ULIBS =
 
 # Define optimisation level here
-OPT = -Os -fomit-frame-pointer -fno-strict-aliasing
+OPT = -Os -fomit-frame-pointer
 
 #
 # End of user defines

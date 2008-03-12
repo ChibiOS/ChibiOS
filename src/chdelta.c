@@ -32,7 +32,7 @@ DeltaList dlist;
  */
 void chVTInit(void) {
 
-  dlist.dl_next = dlist.dl_prev = (VirtualTimer *)&dlist;
+  dlist.dl_next = dlist.dl_prev = (void *)&dlist;
   dlist.dl_dtime = (systime_t)-1;
 }
 
@@ -64,7 +64,7 @@ void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
     vtp->vt_prev = (vtp->vt_next = p)->vt_prev;
     vtp->vt_prev->vt_next = p->vt_prev = vtp;
     vtp->vt_dtime = time;
-    if (p != (VirtualTimer *)&dlist)
+    if (p != (void *)&dlist)
       p->vt_dtime -= time;
   }
   else
@@ -79,7 +79,7 @@ void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
  */
 void chVTResetI(VirtualTimer *vtp) {
 
-  if (vtp->vt_next != (VirtualTimer *)&dlist)
+  if (vtp->vt_next != (void *)&dlist)
     vtp->vt_next->vt_dtime += vtp->vt_dtime;
   vtp->vt_prev->vt_next = vtp->vt_next;
   vtp->vt_next->vt_prev = vtp->vt_prev;

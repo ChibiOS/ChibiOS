@@ -76,7 +76,7 @@ extern DeltaList dlist;
     while (!(vtp = dlist.dl_next)->vt_dtime) {                          \
       vtfunc_t fn = vtp->vt_func;                                       \
       vtp->vt_func = 0;                                                 \
-      (vtp->vt_next->vt_prev = (VirtualTimer *)&dlist)->vt_next = vtp->vt_next; \
+      (vtp->vt_next->vt_prev = (void *)&dlist)->vt_next = vtp->vt_next; \
       fn(vtp->vt_par);                                                  \
     }                                                                   \
   }
