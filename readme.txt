@@ -66,12 +66,12 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not tested on hardware yet.
 - Nice scheduler speed improvement obtained by removing the 2nd parameter to
   the chSchReadyI() API and manually assigning the message value only where
   is really needed (very few points in the code).
-- Huge space saving and speed improvement obtained by removing the
+- More space savings and speed improvements obtained by removing the
   -fno-strict-aliasing option from the makefiles, now the kernel compiles
-  without any warning without this option.
+  without any warning even without this option.
 - Removed the -falign-functions=16 option from the AT91SAM7X demo makefiles,
   the Atmel chip does not require it, the option is still present on the
-  LPC21xx demos. This saves significant ROM space.
+  LPC21xx demos. This saves significant program space.
 - Fixes to the doxigen documentation.
 
 *** 0.6.0 ***
