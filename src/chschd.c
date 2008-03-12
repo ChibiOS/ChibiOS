@@ -92,6 +92,9 @@ void chSchGoSleepS(tstate_t newstate) {
 }
 
 #ifdef CH_USE_VIRTUAL_TIMERS
+/*
+ * Timeout wakeup callback.
+ */
 static void wakeup(void *p) {
 
 #ifdef CH_USE_SEMAPHORES
@@ -139,9 +142,9 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
     chSchReadyI(ntp, msg);
   else {
     Thread *otp = currp;
+    ntp->p_rdymsg = msg;
     chSchReadyI(otp, RDY_OK);
     (currp = ntp)->p_state = PRCURR;
-    ntp->p_rdymsg = msg;
     rlist.r_preempt = CH_TIME_QUANTUM;
 #ifdef CH_USE_TRACE
     chDbgTrace(otp, ntp);

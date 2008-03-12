@@ -28,8 +28,6 @@ Current ports under ./demos:
 
 Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
                          MinGW version.
-Win32-MSVS             - ChibiOS/RT simulator and demo into a WIN32 process,
-                         Visual Studio 7 or any later version should work.
 ARM7-LPC214x-GCC       - ChibiOS/RT port for ARM7 LPC2148, the demo targets
                          the Olimex LPC-P2148 board. This port can be easily
                          modified for any processor into the LPC2000 family or
