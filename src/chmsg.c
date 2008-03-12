@@ -47,7 +47,7 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
   currp->p_msg = msg;
   currp->p_wtthdp = tp;
   if (tp->p_state == PRWTMSG)
-    chSchReadyI(tp, RDY_OK);
+    chSchReadyI(tp);
   chSchGoSleepS(PRSNDMSG);
   msg = currp->p_rdymsg;
 

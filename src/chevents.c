@@ -114,7 +114,7 @@ void chEvtSendI(EventSource *esp) {
 
     tp->p_epending |= EventMask(elp->el_id);
     if ((tp->p_state == PRWTEVENT) && (tp->p_epending & tp->p_ewmask))
-      chSchReadyI(tp, RDY_OK);
+      chSchReadyI(tp)->p_rdymsg = RDY_OK;
     elp = elp->el_next;
   }
 }

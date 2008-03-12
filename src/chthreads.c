@@ -218,7 +218,7 @@ void chThdExit(msg_t msg) {
   currp->p_exitcode = msg;
 #ifdef CH_USE_WAITEXIT
   while (notempty(&currp->p_waiting))
-    chSchReadyI(list_remove(&currp->p_waiting), RDY_OK);
+    chSchReadyI(list_remove(&currp->p_waiting));
 #endif
 #ifdef CH_USE_EXIT_EVENT
   chEvtSendI(&currp->p_exitesource);

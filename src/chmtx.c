@@ -79,7 +79,7 @@ void chMtxLockS(Mutex *mp) {
           prio_insert(dequeue(tp), &tp->p_wtthdp->p_msgqueue);
 #endif
       case PRREADY:
-        chSchReadyI(dequeue(tp), RDY_OK);
+        chSchReadyI(dequeue(tp));
       }
       break;
     }
@@ -209,7 +209,7 @@ void chMtxUnlockS(void) {
       mp = mp->m_next;
     }
     currp->p_prio = newprio;
-    chSchReadyI(tp, RDY_OK);
+    chSchReadyI(tp);
   }
 }
 
@@ -229,7 +229,7 @@ void chMtxUnlockAll(void) {
       currp->p_mtxlist = mp->m_next;
       mp->m_owner = NULL;
       if (chMtxQueueNotEmptyS(mp))
-        chSchReadyI(fifo_remove(&mp->m_queue), RDY_OK);
+        chSchReadyI(fifo_remove(&mp->m_queue));
     } while (currp->p_mtxlist != NULL);
     currp->p_prio = currp->p_realprio;
     chSchRescheduleS();

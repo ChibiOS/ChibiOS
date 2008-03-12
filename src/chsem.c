@@ -72,7 +72,7 @@ void chSemResetI(Semaphore *sp, cnt_t n) {
   cnt = sp->s_cnt;
   sp->s_cnt = n;
   while (cnt++ < 0)
-    chSchReadyI(fifo_remove(&sp->s_queue), RDY_RESET);
+    chSchReadyI(fifo_remove(&sp->s_queue))->p_rdymsg = RDY_RESET;
 }
 
 /**
@@ -175,7 +175,7 @@ void chSemSignal(Semaphore *sp) {
 void chSemSignalI(Semaphore *sp) {
 
   if (sp->s_cnt++ < 0)
-    chSchReadyI(fifo_remove(&sp->s_queue), RDY_OK);
+    chSchReadyI(fifo_remove(&sp->s_queue))->p_rdymsg = RDY_OK;
 }
 
 #ifdef CH_USE_SEMSW
@@ -191,7 +191,7 @@ void chSemSignalWait(Semaphore *sps, Semaphore *spw) {
   chSysLock();
 
   if (sps->s_cnt++ < 0)
-    chSchReadyI(fifo_remove(&sps->s_queue), RDY_OK);
+    chSchReadyI(fifo_remove(&sps->s_queue))->p_rdymsg = RDY_OK;
 
   if (--spw->s_cnt < 0) {
     fifo_insert(currp, &spw->s_queue);

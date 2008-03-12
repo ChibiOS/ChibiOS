@@ -63,11 +63,13 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not tested on hardware yet.
 *** 0.6.1 ***
 - Removed some redundant checks from the scheduler code: improved threads
   flyback time.
-- Manual optimization in chSchReadyI(), it seems GCC is missing some obvious
-  code optimizations here. Both code size and speed improved.
+- Huge scheduler speed improvement obtained by removing the 2nd parameter to
+  the chSchReadyI() API and manually assigning the message value only where
+  is really needed (very few points in the code).
 - Removed the -falign-functions=16 option from the AT91SAM7X demo makefiles,
   the Atmel chip does not require it, the option is still present on the
   LPC21xx demos. This saves significant ROM space.
+- Fixes to the doxigen documentation.
 
 *** 0.6.0 ***
 - Code refactory, all the old sized-integer definitions like LONG32, UWORD16

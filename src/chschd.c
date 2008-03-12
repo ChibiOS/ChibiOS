@@ -45,7 +45,6 @@ void chSchInit(void) {
 /**
  * Inserts a thread in the Ready List.
  * @param tp the Thread to be made ready
- * @param msg message to the awakened thread
  * @return the Thread pointer
  * @note The function must be called in the system mutex zone.
  * @note The function does not reschedule, the \p chSchRescheduleS() should
@@ -54,20 +53,21 @@ void chSchInit(void) {
  */
 #ifdef CH_OPTIMIZE_SPEED
 /* NOTE: it is inlined in this module only.*/
-INLINE void chSchReadyI(Thread *tp, msg_t msg) {
+INLINE Thread *chSchReadyI(Thread *tp) {
 #else
-void chSchReadyI(Thread *tp, msg_t msg) {
+void chSchReadyI(Thread *tp) {
 #endif
   Thread *cp;
 
   tp->p_state = PRREADY;
-  tp->p_rdymsg = msg;
+//  tp->p_rdymsg = RDY_OK;
   cp = rlist.r_queue.p_next;
   while (cp->p_prio >= tp->p_prio)
     cp = cp->p_next;
   /* Insertion on p_prev.*/
   tp->p_prev = (tp->p_next = cp)->p_prev;
   tp->p_prev->p_next = cp->p_prev = tp;
+  return tp;
 }
 
 /**
@@ -75,7 +75,6 @@ void chSchReadyI(Thread *tp, msg_t msg) {
  * priority thread becomes running. The threads states are described into
  * \p threads.h
  * @param newstate the new thread state
- * @return the wakeup message
  * @note The function must be called in the system mutex zone.
  * @note The function is not meant to be used in the user code directly.
  */
@@ -101,7 +100,7 @@ static void wakeup(void *p) {
   if (((Thread *)p)->p_state == PRWTSEM)
     chSemFastSignalI(((Thread *)p)->p_wtsemp);
 #endif
-  chSchReadyI(p, RDY_TIMEOUT);
+  chSchReadyI(p)->p_rdymsg = RDY_TIMEOUT;;
 }
 
 /**
@@ -138,12 +137,12 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
  */
 void chSchWakeupS(Thread *ntp, msg_t msg) {
 
+  ntp->p_rdymsg = msg;
   if (ntp->p_prio <= currp->p_prio)
-    chSchReadyI(ntp, msg);
+    chSchReadyI(ntp);
   else {
     Thread *otp = currp;
-    ntp->p_rdymsg = msg;
-    chSchReadyI(otp, RDY_OK);
+    chSchReadyI(otp);
     (currp = ntp)->p_state = PRCURR;
     rlist.r_preempt = CH_TIME_QUANTUM;
 #ifdef CH_USE_TRACE
@@ -160,7 +159,7 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
 void chSchDoRescheduleI(void) {
   Thread *otp = currp;
 
-  chSchReadyI(otp, RDY_OK);
+  chSchReadyI(otp);
   (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
   rlist.r_preempt = CH_TIME_QUANTUM;
 #ifdef CH_USE_TRACE

@@ -58,7 +58,7 @@ extern ReadyList rlist;
 extern "C" {
 #endif
   void chSchInit(void);
-  void chSchReadyI(Thread *tp, msg_t msg);
+  Thread *chSchReadyI(Thread *tp);
   void chSchGoSleepS(tstate_t newstate);
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time);
   void chSchWakeupS(Thread *tp, msg_t msg);
