@@ -174,8 +174,13 @@ void chSemSignal(Semaphore *sp) {
  */
 void chSemSignalI(Semaphore *sp) {
 
-  if (sp->s_cnt++ < 0)
-    chSchReadyI(fifo_remove(&sp->s_queue))->p_rdymsg = RDY_OK;
+  if (sp->s_cnt++ < 0) {
+    /* NOTE: It is done this way in order to allow a tail call on
+             chSchReadyI().*/
+    Thread *tp = fifo_remove(&sp->s_queue);
+    tp->p_rdymsg = RDY_OK;
+    chSchReadyI(tp);
+  }
 }
 
 #ifdef CH_USE_SEMSW
