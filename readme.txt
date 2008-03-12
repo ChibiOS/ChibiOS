@@ -62,8 +62,8 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not tested on hardware yet.
 
 *** 0.6.1 ***
 - Removed some redundant checks from the scheduler code: improved threads
-  flyback time.
-- Huge scheduler speed improvement obtained by removing the 2nd parameter to
+  flyback time, reduced interrupts service time.
+- Nice scheduler speed improvement obtained by removing the 2nd parameter to
   the chSchReadyI() API and manually assigning the message value only where
   is really needed (very few points in the code).
 - Removed the -falign-functions=16 option from the AT91SAM7X demo makefiles,

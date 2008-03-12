@@ -55,12 +55,11 @@ void chSchInit(void) {
 /* NOTE: it is inlined in this module only.*/
 INLINE Thread *chSchReadyI(Thread *tp) {
 #else
-void chSchReadyI(Thread *tp) {
+Thread *chSchReadyI(Thread *tp) {
 #endif
   Thread *cp;
 
   tp->p_state = PRREADY;
-//  tp->p_rdymsg = RDY_OK;
   cp = rlist.r_queue.p_next;
   while (cp->p_prio >= tp->p_prio)
     cp = cp->p_next;
@@ -100,7 +99,7 @@ static void wakeup(void *p) {
   if (((Thread *)p)->p_state == PRWTSEM)
     chSemFastSignalI(((Thread *)p)->p_wtsemp);
 #endif
-  chSchReadyI(p)->p_rdymsg = RDY_TIMEOUT;;
+  chSchReadyI(p)->p_rdymsg = RDY_TIMEOUT;
 }
 
 /**
@@ -185,16 +184,10 @@ void chSchRescheduleS(void) {
  *         immediatly else \p FALSE.
  */
 bool_t chSchRescRequiredI(void) {
+  tprio_t p1 = firstprio(&rlist.r_queue);
+  tprio_t p2 = currp->p_prio;
 
-  if (rlist.r_preempt) {
-    if (firstprio(&rlist.r_queue) <= currp->p_prio)
-      return FALSE;
-  }
-  else { /* Time quantum elapsed. */
-    if (firstprio(&rlist.r_queue) < currp->p_prio)
-      return FALSE;
-  }
-  return TRUE;
+  return rlist.r_preempt ? p1 > p2 : p1 >= p2;
 }
 
 /** @} */
