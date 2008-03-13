@@ -36,6 +36,9 @@ ARM7-LPC214x-GCC       - ChibiOS/RT port for ARM7 LPC2148, the demo targets
 ARM7-LPC214x-GCC-min   - Minimal demo for LPC214X.
 ARM7-AT91SAM7X-GCC     - Port for Atmel AT91SAM7X256. The demo program targets
                          the Olimex SAM7-EX256 board.
+ARMCM3-ST32F103-GCC    - ARM Cortex-M3 port, work in progress, not complete
+                         yet. The demo will target the Olimex STM32-P103
+                         board.
 AVR-AVRmega128-GCC     - Port on AVRmega128, experimental. A special thanks to
                          Vladimir for the work done on the AVR port. The demo
                          program targets the Olimex AVR-MT-128 mini terminal
@@ -47,8 +50,6 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not tested on hardware yet.
 *****************************************************************************
 
 - Look into importing *or* implementing a TCP/IP stack and a File System.
-- Start the work on a Cortex-M3 port as soon GCC 4.3.0 will be released and
-  incorporated in YAGARTO.
 - Evaluate other architectures for a possible ChibiOS/RT port. An important
   selection parameter will be the availability of FOSS toolchains. Currently
   we are evaluating the Cortex-M3 and the MSP430.
@@ -72,7 +73,9 @@ AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not tested on hardware yet.
 - Removed the -falign-functions=16 option from the AT91SAM7X demo makefiles,
   the Atmel chip does not require it, the option is still present on the
   LPC21xx demos. This saves significant program space.
-- Fixes to the doxigen documentation.
+- Started work on ARM Cortex-M3 architecture. The target chip is the ST32F103
+  on a Olimex STM32-P103 board.
+- Various fixes to the doxigen documentation.
 
 *** 0.6.0 ***
 - Code refactory, all the old sized-integer definitions like LONG32, UWORD16
