@@ -182,7 +182,7 @@ void chThdResume(Thread *tp) {
   chSysLock();
 
   if ((tp)->p_state == PRSUSPENDED)
-    chSchWakeupS((tp), RDY_OK);
+    chSchWakeupS(tp, RDY_OK);
 
   chSysUnlock();
 }
