@@ -21,8 +21,6 @@
  * Generic ARM startup file for ChibiOS/RT.
  */
 
-.extern _main
-
 .set    MODE_USR, 0x10
 .set    MODE_FIQ, 0x11
 .set    MODE_IRQ, 0x12

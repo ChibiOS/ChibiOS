@@ -71,8 +71,7 @@ SRC = ../../ports/ARMCM3/chcore.c \
       board.c main.c
 
 # List ASM source files here
-ASMSRC =
-#../../ports/ARMCM3/crt0.s
+ASMSRC = ../../ports/ARMCM3/crt0.s
 
 # List all user directories here
 UINCDIR = ../../src/include ../../src/lib ../../ports/ARMCM3
@@ -109,7 +108,7 @@ OBJS	= $(ASMOBJS) $(COBJS)
 LIBS    = $(DLIBS) $(ULIBS)
 MCFLAGS = -mcpu=$(MCU) -mthumb
 
-ASFLAGS = $(MCFLAGS) -mthumb -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
+ASFLAGS = $(MCFLAGS) -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
 CPFLAGS = $(MCFLAGS) $(OPT) $(WARN) -Wa,-alms=$(<:.c=.lst) $(DEFS)
 LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
 ODFLAGS	= -x --syms

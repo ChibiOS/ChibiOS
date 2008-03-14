@@ -18,89 +18,31 @@
 */
 
 /*
- * Generic ARM startup file for ChibiOS/RT.
+ * Generic ARM-CortexM3 startup file for ChibiOS/RT.
  */
 
-.extern _main
-
-.set    MODE_USR, 0x10
-.set    MODE_FIQ, 0x11
-.set    MODE_IRQ, 0x12
-.set    MODE_SVC, 0x13
-.set    MODE_ABT, 0x17
-.set    MODE_UND, 0x1B
-.set    MODE_SYS, 0x1F
-
-.equ    I_BIT, 0x80
-.equ    F_BIT, 0x40
+.set    CONTROL_MODE_PRIVILEGED, 0
+.set    CONTROL_MODE_UNPRIVILEGED, 1
+.set    CONTROL_USE_MSP, 0
+.set    CONTROL_USE_PSP, 0
 
 .text
-.code 32
-.balign 4
-/*
- * System entry points.
- */
-_start:
-        b       ResetHandler
-        ldr     pc, _undefined
-        ldr     pc, _swi
-        ldr     pc, _prefetch
-        ldr     pc, _abort
-        nop
-        ldr     pc, [pc,#-0xFF0]        /* VIC - IRQ Vector Register */
-        ldr     pc, _fiq
-
-_undefined:
-        .word   UndHandler
-_swi:
-        .word   SwiHandler
-_prefetch:
-        .word   PrefetchHandler
-_abort:
-        .word   AbortHandler
-_fiq:
-        .word   FiqHandler
-        .word   0
-        .word   0
-        .word   0
+.balign 2
+.syntax unified
 
 /*
  * Reset handler.
  */
+.global ResetHandler
 ResetHandler:
         /*
          * Stack pointers initialization.
          */
         ldr     r0, =__ram_end__
-        /* Undefined */
-        msr     CPSR_c, #MODE_UND | I_BIT | F_BIT
-        mov     sp, r0
-        ldr     r1, =__und_stack_size__
+        ldr     r1, =__main_stack_size__
         sub     r0, r0, r1
-        /* Abort */
-        msr     CPSR_c, #MODE_ABT | I_BIT | F_BIT
-        mov     sp, r0
-        ldr     r1, =__abt_stack_size__
-        sub     r0, r0, r1
-        /* FIQ */
-        msr     CPSR_c, #MODE_FIQ | I_BIT | F_BIT
-        mov     sp, r0
-        ldr     r1, =__fiq_stack_size__
-        sub     r0, r0, r1
-        /* IRQ */
-        msr     CPSR_c, #MODE_IRQ | I_BIT | F_BIT
-        mov     sp, r0
-        ldr     r1, =__irq_stack_size__
-        sub     r0, r0, r1
-        /* Supervisor */
-        msr     CPSR_c, #MODE_SVC | I_BIT | F_BIT
-        mov     sp, r0
-        ldr     r1, =__svc_stack_size__
-        sub     r0, r0, r1
-        /* System */
-        msr     CPSR_c, #MODE_SYS | I_BIT | F_BIT
-        mov     sp, r0
-//        ldr     r1, =__sys_stack_size__
+        msr     PSP, r0
+//        ldr     r1, =__process_stack_size__
 //        sub     r0, r0, r1
         /*
          * Data initialization.
@@ -109,11 +51,12 @@ ResetHandler:
         ldr     r1, =_textdata
         ldr     r2, =_data
         ldr     r3, =_edata
-dataloop:
+dloop:
         cmp     r2, r3
+        ittt    lo
         ldrlo   r0, [r1], #4
         strlo   r0, [r2], #4
-        blo     dataloop
+        blo     dloop
         /*
          * BSS initialization.
          * NOTE: It assumes that the BSS size is a multiple of 4.
@@ -121,14 +64,20 @@ dataloop:
         mov     r0, #0
         ldr     r1, =_bss_start
         ldr     r2, =_bss_end
-bssloop:
+bloop:
         cmp     r1, r2
+        itt     lo
         strlo   r0, [r1], #4
-        blo     bssloop
+        blo     bloop
+        /*
+         * Switches to the Process Stack and disables the interrupts globally.
+         */
+        mov     r0, #CONTROL_MODE_PRIVILEGED | CONTROL_USE_PSP
+        msr     CONTROL, r0
+        cpsid   i
         /*
          * Application-provided HW initialization routine.
          */
-#ifndef THUMB_NO_INTERWORKING
         bl      hwinit
         /*
          * main(0, NULL).
@@ -137,36 +86,3 @@ bssloop:
         mov     r1, r0
         bl      main
         bl      chSysHalt
-#else
-        add     r0, pc, #1
-        bx      r0
-.code 16
-        bl      hwinit
-        mov     r0, #0
-        mov     r1, r0
-        bl      main
-        bl      chSysHalt
-.code 32
-#endif
-
-.weak UndHandler
-.globl UndHandler
-UndHandler:
-
-.weak SwiHandler
-.globl SwiHandler
-SwiHandler:
-
-.weak PrefetchHandler
-.globl PrefetchHandler
-PrefetchHandler:
-
-.weak AbortHandler
-.globl AbortHandler
-AbortHandler:
-
-.weak FiqHandler
-.globl FiqHandler
-FiqHandler:
-
-.loop: b        .loop
