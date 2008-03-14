@@ -59,8 +59,8 @@
  * @section naming Naming Conventions
  * ChibiOS/RT APIs are all named following this convention:
  * \a ch\<group\>\<action\>\<suffix\>().
- * The possible groups are: \a Sys, \a Sch, \a VT, \a Thd, \a Sem, \a Evt,
- * \a Msg, \a IQ, \a OQ, \a HQ,\a FDD, \a HDD.
+ * The possible groups are: \a Sys, \a Sch, \a VT, \a Thd, \a Sem, \a Mtx,
+ * \a Evt, \a Msg, \a IQ, \a OQ, \a HQ,\a FDD, \a HDD, \a Dbg.
  * The suffix is not present for normal APIs but can be one of
  * the following: "I" for APIs meant to be invoked from an interrupt handler
  * or within the system mutex zone but not from user code, "S" for APIs only
@@ -79,6 +79,10 @@
  * Note that the currently running thread is not in the ready list, the list
  * only contains the threads ready to be executed but still actually waiting.
  *
+ * @section states Threads States Diagram
+ * The image shows how threads can change their state in ChibiOS/RT.<br>
+ * @image html states.png
+ *
  * @section warea Thread Working Area
  * Each thread has its own stack, a Thread structure and a registers dump
  * structure. All the structures are allocated into a "Thread working area",
@@ -87,7 +91,6 @@
  * have as many threads you want as long you have enough available RAM
  * memory. The threads do not use any memory outside the allocated working
  * area.<br>
-
  * @image html workspace.png
  * <br>
  * Note that the registers dump is only present when the Thread is not
