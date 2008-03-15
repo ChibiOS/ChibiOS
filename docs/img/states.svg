@@ -15,10 +15,10 @@
    sodipodi:version="0.32"
    inkscape:version="0.45.1"
    version="1.0"
-   sodipodi:docbase="C:\Progetti\ChibiOS-RT\docs\img"
+   sodipodi:docbase="D:\Progetti\ChibiOS-RT\docs\img"
    sodipodi:docname="states.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="C:\Progetti\ChibiOS-RT\docs\img\states.png"
+   inkscape:export-filename="d:\Progetti\ChibiOS-RT\docs\img\states.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -80,7 +80,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="2"
      inkscape:cx="198.03694"
-     inkscape:cy="300.90085"
+     inkscape:cy="240.90085"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -115,16 +115,6 @@
      id="layer1">
     <flowRoot
        xml:space="preserve"
-       id="flowRoot3188"
-       transform="translate(-3.1464844,-407.84915)"><flowRegion
-         id="flowRegion3190"><rect
-           id="rect3192"
-           width="97.01046"
-           height="17.563538"
-           x="2.9895365"
-           y="332.43646" /></flowRegion><flowPara
-         id="flowPara3196">Workspace top</flowPara></flowRoot>    <flowRoot
-       xml:space="preserve"
        id="flowRoot3208"
        transform="translate(-99.457031,-40.853054)"
        style="fill:url(#linearGradient3230);fill-opacity:1"><flowRegion
@@ -137,11 +127,7 @@
            y="299.55157"
            style="fill:url(#linearGradient3230);fill-opacity:1" /></flowRegion><flowPara
          id="flowPara3214"
-         style="fill:url(#linearGradient3230);fill-opacity:1">Thread Structure</flowPara></flowRoot>    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6978516px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow1Mend);stroke-opacity:1"
-       d="M 100.34893,-51.570166 C 109.31485,-51.570166 109.31485,-51.570166 109.31485,-51.570166"
-       id="path3491" />
-    <flowRoot
+         style="fill:url(#linearGradient3230);fill-opacity:1">Thread Structure</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot2216"
        transform="translate(31.53125,-269.98977)"
@@ -333,13 +319,16 @@
     <text
        xml:space="preserve"
        style="font-size:8px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-       x="98"
-       y="350.82422"
-       id="text14197"><tspan
+       x="104.55859"
+       y="368.33594"
+       id="text14197"
+       inkscape:export-filename="D:\Progetti\ChibiOS-RT\docs\img\states.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
          sodipodi:role="line"
          id="tspan14199"
-         x="98"
-         y="350.82422">chSchWakeupS()</tspan></text>
+         x="104.55859"
+         y="368.33594">chSchWakeupS()</tspan></text>
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow1Mend);stroke-opacity:1"
        d="M 250,380 L 250,280"
@@ -397,13 +386,13 @@
     <text
        xml:space="preserve"
        style="font-size:8px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-       x="134.6875"
-       y="93.316406"
+       x="127.00391"
+       y="96.078125"
        id="text20045"><tspan
          sodipodi:role="line"
          id="tspan20047"
-         x="134.6875"
-         y="93.316406">chSchGoSleepS()</tspan></text>
+         x="127.00391"
+         y="96.078125">chSchGoSleepS()</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:8px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
