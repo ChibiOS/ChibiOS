@@ -72,7 +72,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Removed the -falign-functions=16 option from the AT91SAM7X demo makefiles,
   the Atmel chip does not require it, the option is still present on the
   LPC21xx demos. This saves significant program space.
-- Started work on ARM Cortex-M3 architecture. The target chip is the ST32F103
+- Started work on ARM Cortex-M3 architecture. The target chip is the STM32F103
   on a Olimex STM32-P103 board.
 - Added a threads state diagram to the documentation.
 - Various fixes to the doxigen documentation.
