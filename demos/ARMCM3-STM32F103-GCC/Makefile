@@ -71,7 +71,7 @@ SRC = ../../ports/ARMCM3/chcore.c \
       board.c main.c
 
 # List ASM source files here
-ASMSRC = ../../ports/ARMCM3/crt0.s
+ASMSRC = ../../ports/ARMCM3/crt0.s ../../ports/ARMCM3-STM32F103/vectors.s
 
 # List all user directories here
 UINCDIR = ../../src/include ../../src/lib ../../ports/ARMCM3

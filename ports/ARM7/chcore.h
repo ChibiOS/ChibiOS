@@ -32,7 +32,8 @@ struct extctx {
   regarm  r1;
   regarm  r2;
   regarm  r3;
-  regarm  r12;
+  regarm  r12
+  regarm  lr_usr;
 };
 
 /*

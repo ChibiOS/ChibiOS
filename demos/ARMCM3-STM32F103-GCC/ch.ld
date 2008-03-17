@@ -41,6 +41,7 @@ SECTIONS
 	.text :
 	{
 		_text = .;
+		*(INTVEC);
 		*(.text);
 		*(.rodata);
 		*(.rodata*);

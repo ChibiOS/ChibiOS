@@ -66,5 +66,25 @@ void threadstart(void) {
   asm volatile ("mov     r0, r5                                 \n\t" \
                 "blx     r4                                     \n\t" \
                 "bl      chThdExit                              ");
+}
 
+void *retaddr;
+
+__attribute__((naked, weak))
+void threadswitch(void) {
+
+  asm volatile ("sub     sp, sp, #4                             \n\t" \
+                "push    {r0-r3, r12, lr}                       \n\t" \
+                "mrs     r0, XPSR                               \n\t" \
+                "push    {r0}                                   \n\t" \
+                "ldr     r0, =retaddr                           \n\t" \
+                "str     r0, [sp, #28]                          ");
+
+  chSchDoRescheduleI();
+
+  asm volatile ("pop     {r0}                                   \n\t" \
+                "msr     XPSR, r0                               \n\t" \
+                "pop     {r0-r3, r12, lr}                       \n\t" \
+                "cpsie   i                                      \n\t" \
+                "pop     {pc}                                   ");
 }

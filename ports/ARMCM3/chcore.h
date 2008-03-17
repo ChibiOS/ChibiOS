@@ -26,13 +26,14 @@ typedef void *regarm;
  * Interrupt saved context.
  */
 struct extctx {
-  regarm  spsr_irq;
-  regarm  lr_irq;
+  regarm  pc;
+  regarm  xpsr;
   regarm  r0;
   regarm  r1;
   regarm  r2;
   regarm  r3;
   regarm  r12;
+  regarm  lr;
 };
 
 /*
