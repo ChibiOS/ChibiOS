@@ -70,6 +70,32 @@ void threadstart(void) {
 
 void *retaddr;
 
+/*
+ * Software-generated interrupt, it must have the lowest possible priority so
+ * it is executed last in the interrupts tail-chain.
+ */
+void PendSVVector(void) {
+
+  chSysLock();
+
+  if (!chSchRescRequiredI()) {
+
+    chSysUnlock();
+    return;
+  }
+
+  asm volatile ("mrs     r0, PSP                                \n\t" \
+                "ldr     r1, =retaddr                           \n\t" \
+                "ldr     r2, [r0, #18]                          \n\t" \
+                "str     r2, [r1]                               \n\t" \
+                "ldr     r1, =threadswitch                      \n\t" \
+                "str     r1, [r0, #18]                          ");
+}
+
+/*
+ * This code is execute in thread mode when exiting from an ISR routine that
+ * requires rescheduling.
+ */
 __attribute__((naked, weak))
 void threadswitch(void) {
 
@@ -78,11 +104,9 @@ void threadswitch(void) {
                 "mrs     r0, XPSR                               \n\t" \
                 "push    {r0}                                   \n\t" \
                 "ldr     r0, =retaddr                           \n\t" \
-                "str     r0, [sp, #28]                          ");
-
-  chSchDoRescheduleI();
-
-  asm volatile ("pop     {r0}                                   \n\t" \
+                "str     r0, [sp, #28]                          \n\t" \
+                "b       chSchDoRescheduleI                     \n\t" \
+                "pop     {r0}                                   \n\t" \
                 "msr     XPSR, r0                               \n\t" \
                 "pop     {r0-r3, r12, lr}                       \n\t" \
                 "cpsie   i                                      \n\t" \

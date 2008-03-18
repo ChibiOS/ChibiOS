@@ -61,9 +61,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.6.2 ***
-- Fixed a minor problem in the ARM7 port, the structure extctx definition was
-  missing one field, the effect was to allocate stacks 4 bytes shorter. This
-  was not a problem in most scenarios.
+- Fixed a minor problem in the ARM7 port, the extctx structure definition was
+  missing one field, the effect was to allocate stacks 4 bytes shorter than
+  the declared size.
+- More work on the ARM-CM3 port but it is still not complete.
 
 *** 0.6.1 ***
 - Removed some redundant checks from the scheduler code: improved threads
