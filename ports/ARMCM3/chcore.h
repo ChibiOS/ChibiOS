@@ -26,7 +26,6 @@ typedef void *regarm;
  * Interrupt saved context.
  */
 struct extctx {
-  regarm  pc;
   regarm  xpsr;
   regarm  r0;
   regarm  r1;
@@ -34,6 +33,7 @@ struct extctx {
   regarm  r3;
   regarm  r12;
   regarm  lr;
+  regarm  pc;
 };
 
 /*

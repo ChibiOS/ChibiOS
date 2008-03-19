@@ -36,7 +36,7 @@ _vectors:
         .word   DebugMonitorVector
         .word   Vector34
         .word   PendSVVector
-        .word   Vector3C
+        .word   SysTickVector
         .word   Vector40
         .word   Vector44
         .word   Vector48
@@ -120,8 +120,8 @@ Vector34:
 .weak PendSVVector
 PendSVVector:
 
-.weak Vector3C
-Vector3C:
+.weak SysTickVector
+SysTickVector:
 
 .weak Vector40
 Vector40:

@@ -17,6 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "stm32lib/stm32f10x_map.h"
+
 #include <ch.h>
 
 /*
@@ -71,18 +73,13 @@ void threadstart(void) {
 void *retaddr;
 
 /*
- * Software-generated interrupt, it must have the lowest possible priority so
- * it is executed last in the interrupts tail-chain.
+ * System Timer vector.
  */
-void PendSVVector(void) {
+void SysTickVector(void) {
 
   chSysLock();
-
-  if (!chSchRescRequiredI()) {
-
-    chSysUnlock();
-    return;
-  }
+  if (SCB->ICSR & (1 << 11)) {  /* RETTOBASE */
+    if (chSchRescRequiredI()) {
 
   asm volatile ("mrs     r0, PSP                                \n\t" \
                 "ldr     r1, =retaddr                           \n\t" \
@@ -90,6 +87,10 @@ void PendSVVector(void) {
                 "str     r2, [r1]                               \n\t" \
                 "ldr     r1, =threadswitch                      \n\t" \
                 "str     r1, [r0, #18]                          ");
+      return;
+    }
+  }
+  chSysUnlock();
 }
 
 /*
