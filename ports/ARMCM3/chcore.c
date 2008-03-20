@@ -77,6 +77,19 @@ void *retaddr;
  */
 void SysTickVector(void) {
 
+  chSysIRQEnterI();
+
+  chSysTimerHandlerI();
+
+  chSysIRQExitI();
+}
+
+/*
+ * To be invoked at the end of any interrupt handler that can trigger a
+ * reschedule.
+ */
+void chSysIRQExitI(void) {
+
   chSysLock();
   if (SCB->ICSR & (1 << 11)) {  /* RETTOBASE */
     if (chSchRescRequiredI()) {
@@ -87,7 +100,7 @@ void SysTickVector(void) {
                 "str     r2, [r1]                               \n\t" \
                 "ldr     r1, =threadswitch                      \n\t" \
                 "str     r1, [r0, #18]                          ");
-      return;
+      return; /* Note, returns *without* re-enabling interrupts.*/
     }
   }
   chSysUnlock();

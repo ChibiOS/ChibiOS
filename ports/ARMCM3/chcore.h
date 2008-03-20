@@ -85,12 +85,7 @@ typedef struct {
                                     INT_REQUIRED_STACK)
 #define WorkingArea(s, n) uint32_t s[UserStackSize(n) >> 2];
 
-#define chSysIRQEnterI() {                                              \
-}
-
-#define chSysIRQExitI() {                                               \
-  asm("b        IrqCommon                       \n\t");                 \
-}
+#define chSysIRQEnterI()
 
 /* It requires zero bytes, but better be safe.*/
 #define IDLE_THREAD_STACK_SIZE 8
@@ -100,5 +95,6 @@ void chSysHalt(void);
 void chSysSwitchI(Thread *otp, Thread *ntp);
 void chSysPuts(char *msg);
 void threadstart(void);
+void chSysIRQExitI(void);
 
 #endif /* _CHCORE_H_ */
