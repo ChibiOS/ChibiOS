@@ -55,7 +55,7 @@ extern "C" {
 #define chThdSleepUntil(t) {                                            \
   chSysLock();                                                          \
   chSchGoSleepTimeoutS(PRSLEEP,                                         \
-                      (systime_t)((t) - chSysGetTime()))                \
+                      (systime_t)((t) - chSysGetTime()));               \
   chSysUnlock();                                                        \
 }
 #endif /* CH_USE_SYSTEMTIME */
