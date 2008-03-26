@@ -61,7 +61,7 @@ typedef struct EventSource {
  * @note Can be called with interrupts disabled or enabled.
  */
 #define chEvtInit(esp) \
-        ((esp)->es_next = (void *)(esp))
+        ((esp)->es_next = (EventListener *)(void *)(esp))
 
 /**
  * Verifies if there is at least one \p EventListener registered on the
@@ -70,7 +70,7 @@ typedef struct EventSource {
  * @note Can be called with interrupts disabled or enabled.
  */
 #define chEvtIsListening(esp) \
-                ((esp) != (void *)(esp)->es_next)
+                ((esp) != (EventListener *)(void *)(esp)->es_next)
 
 
 /** Event Handler callback function.*/

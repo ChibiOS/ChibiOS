@@ -61,9 +61,18 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.6.2 ***
+- NEW: Added C++ wrapper around the ChibiOS/RT core APIs, now it is possible
+  to use the OS in a fully object oriented application. The wrapper offers
+  classes that encapsulate threads, semaphores, mutexes, timers etc. Normal C
+  APIs are still accessible from C++ code as usual.
+- NEW: Added a new LPC2148 demo using the new C++ wrapper, it is a good
+  example of C++ used for an embedded application. The demo does not use RTTI
+  nor standard libraries so the resulting code is very compact.
 - Fixed a minor problem in the ARM7 port, the extctx structure definition was
   missing one field, the effect was to allocate stacks 4 bytes shorter than
   the declared size.
+- Fixed a compile time error into the chThdSleepUntil() macro.
+- Fixes in various headers to make some macros compatible with both C and C++.
 - More work on the ARM-CM3 port but it is still not complete.
 
 *** 0.6.1 ***
