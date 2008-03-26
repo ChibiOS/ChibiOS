@@ -54,7 +54,7 @@ extern "C" {
 #endif
 
 /**
- * Returns \p TRUE if the mutex queus contains at least a waiting thread.
+ * Returns \p TRUE if the mutex queue contains at least a waiting thread.
  */
 #define chMtxQueueNotEmptyS(mp) notempty(&(mp)->m_queue)
 
