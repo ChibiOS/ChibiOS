@@ -19,9 +19,9 @@
 
 #include <ch.h>
 
-#include "lpc214x.h"
-#include "vic.h"
-//#include "lpc214x_serial.h"
+#include <lpc214x.h>
+#include <vic.h>
+#include <lpc214x_serial.h>
 //#include "lpc214x_ssp.h"
 
 #include "board.h"
@@ -128,7 +128,7 @@ void hwinit(void) {
   /*
    * Other subsystems.
    */
-//  InitSerial(1, 2);
+  InitSerial(1, 2);
 //  InitSSP();
 //  InitMMC();
 //  InitBuzzer();
