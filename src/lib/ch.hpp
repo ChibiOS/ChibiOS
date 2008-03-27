@@ -92,40 +92,6 @@ namespace chibios_rt {
    * function /p Main().
    */
   class BaseThread {
-  protected:
-    /**
-     * Thread exit.
-     */
-//    __attribute__((noreturn))
-    void Exit(msg_t msg);
-
-    /**
-     * Change thread priority.
-     */
-    void SetPriority(tprio_t newprio);
-
-#ifdef CH_USE_MESSAGES
-    /**
-     * Waits for a message and returns it.
-     */
-    msg_t WaitMessage(void);
-
-    /**
-     * Returns an enqueued message or /p NULL.
-     */
-    msg_t GetMessage(void);
-
-    /**
-     * Releases the next message in queue with a reply.
-     */
-    void ReleaseMessage(msg_t msg);
-
-    /**
-     * Returns true if there is at least one message in queue.
-     */
-    bool IsPendingMessage(void);
-#endif /* CH_USE_MESSAGES */
-
   public:
     ::Thread *thread_ref;
 
@@ -133,6 +99,11 @@ namespace chibios_rt {
      * Thread constructor.
      */
     BaseThread(tprio_t prio, tmode_t mode, void *workspace, size_t wsize);
+
+    /**
+     * Thread exit.
+     */
+    static void Exit(msg_t msg);
 
 #ifdef CH_USE_WAITEXIT
     /**
@@ -148,6 +119,11 @@ namespace chibios_rt {
     void Resume(void);
 #endif /* CH_USE_RESUME */
 
+    /**
+     * Change thread priority.
+     */
+    static void SetPriority(tprio_t newprio);
+
 #ifdef CH_USE_TERMINATE
     /**
      * Requests thread termination.
@@ -159,13 +135,13 @@ namespace chibios_rt {
     /**
      * Suspends the thread execution for the specified number of system ticks.
      */
-    void Sleep(systime_t n);
+    static void Sleep(systime_t n);
 
 #ifdef CH_USE_SYSTEMTIME
     /**
      * Suspends the thread execution until the specified time arrives.
      */
-    void SleepUntil(systime_t time);
+    static void SleepUntil(systime_t time);
 #endif /* CH_USE_SYSTEMTIME */
 #endif /* CH_USE_SLEEP */
 
@@ -174,12 +150,31 @@ namespace chibios_rt {
      * Sends a message to the thread and returns the answer.
      */
     msg_t SendMessage(msg_t msg);
+
+    /**
+     * Waits for a message and returns it.
+     */
+    static msg_t WaitMessage(void);
+
+    /**
+     * Returns an enqueued message or /p NULL.
+     */
+    static msg_t GetMessage(void);
+
+    /**
+     * Releases the next message in queue with a reply.
+     */
+    static void ReleaseMessage(msg_t msg);
+
+    /**
+     * Returns true if there is at least one message in queue.
+     */
+    static bool IsPendingMessage(void);
 #endif /* CH_USE_MESSAGES */
 
     /**
      * Thread body function.
      */
-//    __attribute__((naked))
     virtual msg_t Main(void);
   };
 
@@ -217,6 +212,13 @@ namespace chibios_rt {
      * Signal operation on the semaphore.
      */
     void Signal(void);
+
+#ifdef CH_USE_SEMSW
+    /**
+     * Atomic signal and wait operations.
+     */
+    msg_t SignalWait(Semaphore *ssem, Semaphore *wsem);
+#endif /* CH_USE_SEMSW */
   };
 #endif /* CH_USE_SEMAPHORES */
 

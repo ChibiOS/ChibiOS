@@ -188,10 +188,12 @@ void chSemSignalI(Semaphore *sp) {
  * Performs atomic signal and wait operations on two semaphores.
  * @param sps pointer to a \p Semaphore structure to be signaled
  * @param spw pointer to a \p Semaphore structure to be wait on
- * @note The function is available only if the \p CH_USE_SEMAPHORES
+ * @return the function can return \p RDY_OK or \p RDY_RESET.
+ * @note The function is available only if the \p CH_USE_SEMSW
  *       option is enabled in \p chconf.h.
  */
-void chSemSignalWait(Semaphore *sps, Semaphore *spw) {
+msg_t chSemSignalWait(Semaphore *sps, Semaphore *spw) {
+  msg_t msg;
 
   chSysLock();
 
@@ -202,11 +204,15 @@ void chSemSignalWait(Semaphore *sps, Semaphore *spw) {
     fifo_insert(currp, &spw->s_queue);
     currp->p_wtsemp = spw;
     chSchGoSleepS(PRWTSEM);
+    msg = currp->p_rdymsg;
   }
-  else
+  else {
     chSchRescheduleS();
+    msg = RDY_OK;
+  }
 
   chSysUnlock();
+  return msg;
 }
 #endif /* CH_USE_SEMSW */
 

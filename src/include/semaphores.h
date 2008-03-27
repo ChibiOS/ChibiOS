@@ -51,7 +51,9 @@ extern "C" {
 #endif
   void chSemSignal(Semaphore *sp);
   void chSemSignalI(Semaphore *sp);
-  void chSemSignalWait(Semaphore *sps, Semaphore *spw);
+#ifdef CH_USE_SEMSW
+  msg_t chSemSignalWait(Semaphore *sps, Semaphore *spw);
+#endif
 #ifdef __cplusplus
 }
 #endif

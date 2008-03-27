@@ -70,13 +70,11 @@ namespace chibios_rt {
    * chibios_rt::BaseThread                                                 *
    *------------------------------------------------------------------------*/
   static msg_t thdstart(void *arg) {
-    BaseThread *btp = (BaseThread *)arg;
 
-    return btp->Main();
+    return ((BaseThread *)arg)->Main();
   }
 
   BaseThread::BaseThread(tprio_t prio, tmode_t mode, void *workspace, size_t wsize) {
-    msg_t thdstart(void *arg);
 
     thread_ref = chThdCreate(prio, mode, workspace, wsize, thdstart, this);
   }
@@ -149,7 +147,7 @@ namespace chibios_rt {
 
   bool BaseThread::IsPendingMessage(void) {
 
-    return chMsgIsPendingI(thread_ref);
+    return chMsgIsPendingI(currp);
   }
 #endif /* CH_USE_MESSAGES */
 
@@ -188,6 +186,13 @@ namespace chibios_rt {
 
     chSemSignal(&sem);
   }
+
+#ifdef CH_USE_SEMSW
+  msg_t Semaphore::SignalWait(Semaphore *ssem, Semaphore *wsem) {
+
+    return chSemSignalWait(&ssem->sem, &wsem->sem);
+  }
+#endif /* CH_USE_SEMSW */
 #endif /* CH_USE_SEMAPHORES */
 
 #ifdef CH_USE_MUTEXES
