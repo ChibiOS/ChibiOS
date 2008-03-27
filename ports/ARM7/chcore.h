@@ -74,8 +74,14 @@ typedef struct {
 }
 
 #ifdef THUMB
-extern void chSysLock(void);
-extern void chSysUnlock(void);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chSysLock(void);
+  void chSysUnlock(void);
+#ifdef __cplusplus
+}
+#endif
 #else /* !THUMB */
 #define chSysLock() asm("msr     CPSR_c, #0x9F")
 #define chSysUnlock() asm("msr     CPSR_c, #0x1F")
@@ -123,11 +129,17 @@ extern void chSysUnlock(void);
 
 /* It requires zero bytes, but better be safe.*/
 #define IDLE_THREAD_STACK_SIZE 8
-void _IdleThread(void *p) __attribute__((noreturn));
 
-void chSysHalt(void);
-void chSysSwitchI(Thread *otp, Thread *ntp);
-void chSysPuts(char *msg);
-void threadstart(void);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void _IdleThread(void *p) __attribute__((noreturn));
+  void chSysHalt(void);
+  void chSysSwitchI(Thread *otp, Thread *ntp);
+  void chSysPuts(char *msg);
+  void threadstart(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _CHCORE_H_ */

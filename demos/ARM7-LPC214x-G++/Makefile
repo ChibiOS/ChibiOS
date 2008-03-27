@@ -68,23 +68,24 @@ UDEFS =
 UADEFS =
 
 # List ARM-mode C source files here
-CSRC = ../../ports/ARM7-LPC214x/chcore.c \
-       ../../ports/ARM7-LPC214x/vic.c  \
-       ../../ports/ARM7-LPC214x/lpc214x_serial.c  \
-       ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
-       ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chmtx.c \
-       ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \
-       ../../src/chserial.c \
-       ../../src/lib/evtimer.c ../../test/test.c \
-       board.c
+ACSRC = ../../ports/ARM7-LPC214x/chcore.c \
+        ../../ports/ARM7-LPC214x/vic.c  \
+        ../../ports/ARM7-LPC214x/lpc214x_serial.c  \
+        ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
+        ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chmtx.c \
+        ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \
+        ../../src/chserial.c \
+        ../../src/lib/evtimer.c ../../test/test.c \
+        board.c
 
 # List ARM-mode C++ source files here
-CPPSRC = ../../src/lib/ch.cpp main.cpp
+ACPPSRC = ../../src/lib/ch.cpp main.cpp
 
 # List THUMB-mode C sources here
-# NOTE: If any module is compiled in thumb mode then -mthumb-interwork is
-#       enabled for all modules and that lowers performance.
-TSRC =
+TCSRC =
+
+# List THUMB-mode C++ source files here
+TCPPSRC =
 
 # List ASM source files here
 ASMSRC = ../../ports/ARM7-LPC214x/crt0.s ../../ports/ARM7/chsys.s
@@ -130,11 +131,15 @@ INCDIR   = $(patsubst %,-I%,$(DINCDIR) $(UINCDIR))
 LIBDIR   = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
 DEFS     = $(DDEFS) $(UDEFS)
 ADEFS    = $(DADEFS) $(UADEFS)
-AOBJS    = $(CSRC:.c=.o)
-TOBJS    = $(TSRC:.c=.o)
-CPPOBJS  = $(CPPSRC:.cpp=.o)
+ASRC	 = $(ACSRC)$(ACPPSRC)
+TSRC	 = $(TCSRC)$(TCPPSRC)
+SRC	 = $(ASRC)$(TSRC)
+ACOBJS   = $(ACSRC:.c=.o)
+ACPPOBJS = $(ACPPSRC:.cpp=.o)
+TCOBJS   = $(TCSRC:.c=.o)
+TCPPOBJS = $(TCPPSRC:.cpp=.o)
 ASMOBJS  = $(ASMSRC:.s=.o)
-OBJS	 = $(ASMOBJS) $(CPPOBJS) $(AOBJS) $(TOBJS)
+OBJS	 = $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS)
 LIBS     = $(DLIBS) $(ULIBS)
 MCFLAGS  = -mcpu=$(MCU)
 
@@ -149,7 +154,7 @@ ifneq ($(TSRC),)
   CFLAGS += -D THUMB_PRESENT
   CPPFLAGS += -D THUMB_PRESENT
   ASFLAGS += -D THUMB_PRESENT
-  ifneq ($(CSRC),)
+  ifneq ($(ASRC),)
     # Mixed ARM and THUMB case.
     CFLAGS += -mthumb-interwork
     CPPFLAGS += -mthumb-interwork
@@ -173,15 +178,19 @@ CPPFLAGS += -MD -MP -MF .dep/$(@F).d
 
 all: $(OBJS) $(PROJECT).elf $(PROJECT).hex $(PROJECT).bin $(PROJECT).dmp
 
-$(CPPOBJS) : %.o : %.cpp
+$(ACPPOBJS) : %.o : %.cpp
 	@echo
 	$(CPPC) -c $(CPPFLAGS) $(AOPT) -I . $(INCDIR) $< -o $@
 
-$(AOBJS) : %.o : %.c
+$(TCPPOBJS) : %.o : %.cpp
+	@echo
+	$(CPPC) -c $(CPPFLAGS) $(TOPT) -I . $(INCDIR) $< -o $@
+
+$(ACOBJS) : %.o : %.c
 	@echo
 	$(CC) -c $(CFLAGS) $(AOPT) -I . $(INCDIR) $< -o $@
 
-$(TOBJS) : %.o : %.c
+$(TCOBJS) : %.o : %.c
 	@echo
 	$(CC) -c $(CFLAGS) $(TOPT) -I . $(INCDIR) $< -o $@
 
@@ -191,7 +200,7 @@ $(ASMOBJS) : %.o : %.s
 
 %elf: $(OBJS)
 	@echo
-	$(LD) $(ASMOBJS) $(AOBJS) $(TOBJS) $(CPPOBJS) $(LDFLAGS) $(LIBS) -o $@
+	$(LD) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS) $(LDFLAGS) $(LIBS) -o $@
 
 %hex: %elf
 	$(HEX) $< $@
@@ -209,12 +218,14 @@ clean:
 	-rm -f $(PROJECT).map
 	-rm -f $(PROJECT).hex
 	-rm -f $(PROJECT).bin
-	-rm -f $(CSRC:.c=.c.bak)
-	-rm -f $(CSRC:.c=.lst)
-	-rm -f $(CPPSRC:.cpp=.c.bak)
-	-rm -f $(CPPSRC:.cpp=.lst)
-	-rm -f $(TSRC:.c=.c.bak)
-	-rm -f $(TSRC:.c=.lst)
+	-rm -f $(ACSRC:.c=.c.bak)
+	-rm -f $(ACSRC:.c=.lst)
+	-rm -f $(TCSRC:.c=.c.bak)
+	-rm -f $(TCSRC:.c=.lst)
+	-rm -f $(ACPPSRC:.cpp=.c.bak)
+	-rm -f $(ACPPSRC:.cpp=.lst)
+	-rm -f $(TCPPSRC:.cpp=.c.bak)
+	-rm -f $(TCPPSRC:.cpp=.lst)
 	-rm -f $(ASMSRC:.s=.s.bak)
 	-rm -f $(ASMSRC:.s=.lst)
 	-rm -fR .dep

@@ -28,7 +28,8 @@
 using namespace chibios_rt;
 
 /*
- * LED blinking sequences.
+ * LED blink sequences.
+ * NOTE: Sequences must always be terminated by a GOTO instruction.
  */
 #define SLEEP           0
 #define GOTO            1
@@ -39,9 +40,9 @@ using namespace chibios_rt;
 typedef struct {
   uint8_t       action;
   uint32_t      value;
-} bitop_t;
+} seqop_t;
 
-bitop_t LED1_sequence[] =
+static const seqop_t LED1_sequence[] =
 {
   {BITCLEAR, 0x00000400},
   {SLEEP,    200},
@@ -50,7 +51,7 @@ bitop_t LED1_sequence[] =
   {GOTO,     0}
 };
 
-bitop_t LED2_sequence[] =
+static const seqop_t LED2_sequence[] =
 {
   {SLEEP,    1000},
   {BITCLEAR, 0x00000800},
@@ -60,7 +61,7 @@ bitop_t LED2_sequence[] =
   {GOTO,     1}
 };
 
-bitop_t LED3_sequence[] =
+static const seqop_t LED3_sequence[] =
 {
   {BITCLEAR, 0x80000000},
   {SLEEP,    200},
@@ -70,14 +71,16 @@ bitop_t LED3_sequence[] =
 };
 
 /**
- * Blinker thread class. It can drive LEDs or other output pins.
+ * Sequencer thread class. It can drive LEDs or other output pins.
  */
-class BlinkerThread : BaseThread {
+class SequencerThread : BaseThread {
 private:
-  WorkingArea(wa, 64);
-  bitop_t *base, *curr, *top;
+
+  WorkingArea(wa, 64);                          // Thread working area.
+  const seqop_t *base, *curr;                   // Thread local variables.
 
 protected:
+
   virtual msg_t Main(void) {
 
     while (TRUE) {
@@ -102,7 +105,7 @@ protected:
   }
 
 public:
-  BlinkerThread(bitop_t *sequence) : BaseThread(NORMALPRIO, 0, wa, sizeof wa) {
+  SequencerThread(const seqop_t *sequence) : BaseThread(NORMALPRIO, 0, wa, sizeof wa) {
 
     base = curr = sequence;
   }
@@ -127,19 +130,19 @@ int main(int argc, char **argv) {
   static EvTimer evt;
   struct EventListener el0;
 
-  System::Init();
+  System::Init();                       // ChibiOS/RT goes live here.
 
-  evtInit(&evt, 500);                   /* Initializes an event timer object.   */
-  evtStart(&evt);                       /* Starts the event timer.              */
-  chEvtRegister(&evt.et_es, &el0, 0);   /* Registers on the timer event source. */
+  evtInit(&evt, 500);                   // Initializes an event timer object.
+  evtStart(&evt);                       // Starts the event timer.
+  chEvtRegister(&evt.et_es, &el0, 0);   // Registers on the timer event source.
 
   /*
-   * Starts serveral instances of the BlinkerThread class, each one operating
+   * Starts serveral instances of the SequencerThread class, each one operating
    * on a different LED.
    */
-  BlinkerThread blinker1(LED1_sequence);
-  BlinkerThread blinker2(LED2_sequence);
-  BlinkerThread blinker3(LED3_sequence);
+  SequencerThread blinker1(LED1_sequence);
+  SequencerThread blinker2(LED2_sequence);
+  SequencerThread blinker3(LED3_sequence);
 
   /*
    * Serves timer events.
