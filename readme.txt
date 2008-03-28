@@ -12,8 +12,8 @@
                          generic and architecture indipendent.
 ./src/templates/       - ChibiOS/RT non portable source templates, new ports
                          are started by copying the templates into a new
-                         directory under ./demos/.
-./ports/               - Architecture/compiler specific portable files.
+                         directory under ./demos/ and/or ./ports/.
+./ports/               - Architecture specific portable files.
 ./demos/               - Demo programs for specific archtectures/boards.
 ./test/                - Test code, used by some demos.
 ./docs/Doxifile        - Doxigen project file.

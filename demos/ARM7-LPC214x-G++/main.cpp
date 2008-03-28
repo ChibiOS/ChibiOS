@@ -73,17 +73,14 @@ static const seqop_t LED3_sequence[] =
 /**
  * Sequencer thread class. It can drive LEDs or other output pins.
  */
-class SequencerThread : BaseThread {
+class SequencerThread : EnhancedThread<64> {
 private:
-
-  WorkingArea(wa, 64);                          // Thread working area.
   const seqop_t *base, *curr;                   // Thread local variables.
 
 protected:
-
   virtual msg_t Main(void) {
 
-    while (TRUE) {
+    while (true) {
       switch(curr->action) {
       case SLEEP:
         Sleep(curr->value);
@@ -105,7 +102,8 @@ protected:
   }
 
 public:
-  SequencerThread(const seqop_t *sequence) : BaseThread(NORMALPRIO, 0, wa, sizeof wa) {
+  SequencerThread(const seqop_t *sequence):
+        EnhancedThread<64>("sequencer", NORMALPRIO, 0) {
 
     base = curr = sequence;
   }

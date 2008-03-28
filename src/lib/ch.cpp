@@ -29,12 +29,12 @@ namespace chibios_rt {
     chSysInit();
   }
 
-  void Lock(void) {
+  void System::Lock(void) {
 
     chSysLock();
   }
 
-  void Unlock(void) {
+  void System::Unlock(void) {
 
     chSysUnlock();
   }
@@ -125,6 +125,11 @@ namespace chibios_rt {
 #endif /* CH_USE_SLEEP */
 
 #ifdef CH_USE_MESSAGES
+  msg_t BaseThread::SendMessage(::Thread* tp, msg_t msg) {
+
+    return chMsgSend(tp, msg);
+  }
+
   msg_t BaseThread::SendMessage(msg_t msg) {
 
     return chMsgSend(thread_ref, msg);

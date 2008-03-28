@@ -149,6 +149,11 @@ namespace chibios_rt {
     /**
      * Sends a message to the thread and returns the answer.
      */
+    static msg_t SendMessage(::Thread *tp, msg_t msg);
+
+    /**
+     * Sends a message to the thread and returns the answer.
+     */
     msg_t SendMessage(msg_t msg);
 
     /**
@@ -176,6 +181,25 @@ namespace chibios_rt {
      * Thread body function.
      */
     virtual msg_t Main(void);
+  };
+
+  /**
+   * Enhanced threads template class. This class introduces thread names
+   * and static working area allocation.
+   */
+  template <int N>
+  class EnhancedThread : public BaseThread {
+  protected:
+    WorkingArea(wa, N);                         // Thread working area.
+
+  public:
+    const char *name;
+
+    EnhancedThread(const char *tname, tprio_t prio, tmode_t mode) :
+          BaseThread(prio, mode, wa, sizeof wa) {
+
+      name = tname;
+    }
   };
 
 #ifdef CH_USE_SEMAPHORES
