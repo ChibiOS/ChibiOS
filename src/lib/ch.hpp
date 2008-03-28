@@ -195,8 +195,23 @@ namespace chibios_rt {
   public:
     const char *name;
 
+    /**
+     * Full constructor. It allows to set a priority level for the new thread
+     * and specify the special option flags.
+     */
     EnhancedThread(const char *tname, tprio_t prio, tmode_t mode) :
           BaseThread(prio, mode, wa, sizeof wa) {
+
+      name = tname;
+    }
+
+    /**
+     * Simplified constructor, it allows to create a thread by simply
+     * specifying a name. In is assumed /p NORMALPRIO as initial priority
+     * and no special option flags.
+     */
+    EnhancedThread(const char *tname) :
+          BaseThread(NORMALPRIO, 0, wa, sizeof wa) {
 
       name = tname;
     }

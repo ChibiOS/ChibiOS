@@ -30,6 +30,8 @@ using namespace chibios_rt;
 /*
  * LED blink sequences.
  * NOTE: Sequences must always be terminated by a GOTO instruction.
+ * NOTE: The sequencer language could be easily improved but this is outside
+ *       the scope of this demo.
  */
 #define SLEEP           0
 #define GOTO            1
@@ -42,6 +44,7 @@ typedef struct {
   uint32_t      value;
 } seqop_t;
 
+// Flashing sequence for LED1.
 static const seqop_t LED1_sequence[] =
 {
   {BITCLEAR, 0x00000400},
@@ -51,6 +54,7 @@ static const seqop_t LED1_sequence[] =
   {GOTO,     0}
 };
 
+// Flashing sequence for LED2.
 static const seqop_t LED2_sequence[] =
 {
   {SLEEP,    1000},
@@ -61,6 +65,7 @@ static const seqop_t LED2_sequence[] =
   {GOTO,     1}
 };
 
+// Flashing sequence for LED3.
 static const seqop_t LED3_sequence[] =
 {
   {BITCLEAR, 0x80000000},
@@ -70,8 +75,10 @@ static const seqop_t LED3_sequence[] =
   {GOTO,     0}
 };
 
-/**
+/*
  * Sequencer thread class. It can drive LEDs or other output pins.
+ * Any sequencer is just an instance of this class, all the details are
+ * totally encapsulated and hidden to the application level.
  */
 class SequencerThread : EnhancedThread<64> {
 private:
@@ -79,7 +86,6 @@ private:
 
 protected:
   virtual msg_t Main(void) {
-
     while (true) {
       switch(curr->action) {
       case SLEEP:
@@ -102,15 +108,14 @@ protected:
   }
 
 public:
-  SequencerThread(const seqop_t *sequence):
-        EnhancedThread<64>("sequencer", NORMALPRIO, 0) {
+  SequencerThread(const seqop_t *sequence) : EnhancedThread<64>("sequencer") {
 
     base = curr = sequence;
   }
 };
 
 /*
- * Executed as event handler at 500mS intervals.
+ * Executed as an event handler at 500mS intervals.
  */
 static void TimerHandler(eventid_t id) {
 
@@ -120,6 +125,7 @@ static void TimerHandler(eventid_t id) {
 
 /*
  * Entry point, the interrupts are disabled on entry.
+ * This is the real "application".
  */
 int main(int argc, char **argv) {
   static const evhandler_t evhndl[] = {
@@ -130,9 +136,9 @@ int main(int argc, char **argv) {
 
   System::Init();                       // ChibiOS/RT goes live here.
 
-  evtInit(&evt, 500);                   // Initializes an event timer object.
+  evtInit(&evt, 500);                   // Initializes an event timer.
   evtStart(&evt);                       // Starts the event timer.
-  chEvtRegister(&evt.et_es, &el0, 0);   // Registers on the timer event source.
+  chEvtRegister(&evt.et_es, &el0, 0);   // Registers a listener on the source.
 
   /*
    * Starts serveral instances of the SequencerThread class, each one operating
