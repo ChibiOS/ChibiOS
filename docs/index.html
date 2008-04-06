@@ -7,13 +7,12 @@
   <tbody>
     <tr align="center">
       <td colspan="2" rowspan="1">
-      <h2><small><span class="t_nihongo_kanji" xml:lang="ja" lang="ja">&#12385;&#12403;</span></small>OS/RT<sup><font size="-2">TM</font></sup>
-Homepage</h2>
-(ChibiOS/RT)</td>
+      <h2>ChibiOS/RT<sup><font size="-2">TM</font></sup>Homepage</h2>
+      </td>
     </tr>
     <tr>
       <td style="text-align: center; vertical-align: top; width: 150px;">Current
-Version 0.6.2<br>
+Version 0.6.3<br>
 -<br>
       <a href="http://sourceforge.net/projects/chibios/" rel="me" target="_top">Project on SourceForge</a><br>
       <a href="html/index.html" target="_top" rel="me">Documentation</a><br>
@@ -58,8 +57,12 @@ ChibiOS/RT is designed for embedded applications and it is meant to be
 linked with the application code. The design philosophy is to make it
 easy to use so I hope that all the APIs are meaningful, easy to
 understand and with the parameters you would expect from them.<br>The
-system offers threads, semaphores, messages, events, virtual timers,
-queues, I/O channels with timeout capability and much more.<br>
+system offers threads, semaphores, mutexes, messages, events, virtual
+timers,
+queues, I/O channels with timeout capability and much more. The
+Priority Inheritance algorithm is implemented through the Mutexes
+mechaninsm, the implementation supports any number of threads and
+nested mutexes.<br>
       <h3><a name="Current_ports"></a>Current
 ports</h3>
 Currently the ChibiOS/RT is ported to the following architectures:<br>
@@ -69,8 +72,7 @@ should be trivial. Both ARM and THUMB modes are supported.</li>
         <li>ARM7TDMI-AT91SAM7X256, this port also supports other Atmel
 chips: SAM7XC, SAM7S and the various sizes (128, 256, 512) with
 minimal changes.</li>
-        <li>Atmel AVR, the port is almost complete but untested because
-I broke my JTAG probe...</li>
+        <li>Atmel AVR: AT90CAN128 and ATmega128 demos included.</li>
         <li>x86 as a Win32 process, this port allows to write
 your application on the PC without the need of a development
 board/simulator/emulator. Communication ports are simulated over
@@ -124,7 +126,7 @@ chconf.h. On ARM processors, the kernel size&nbsp;starts at just
 1.5KiB&nbsp;depending on the included subsystems and the choosen
 compiler optimizations.<br>As reference, a kernel configured with...<br><ul><li>System startup code</li><li>Chip initialization code</li><li>Multithreading APIs</li><li>Virtual Timer APIs</li><li>Semaphore APIs</li><li>System time + Sleep API</li><li>Suspend/Resume APIs</li><li>Small main() program with flashing LEDs demo and 3 threads</li></ul>...just takes 2.11KiB of program space when compiled using THUMB code and space optimizations. Note that this is quite a <span style="font-weight: bold;">typical configuration</span>
 not a minimal one. A kernel configured with all the options and
-optimized for speed takes about 8KiB. See the documentation about the
+optimized for speed takes about 6KiB. See the documentation about the
 many available subsystems.<br><br>About performance, on a 48MHz LPC
 ARM7 processor the kernel is capable of context switch time ranging
 from 3 to 6 microseconds depending on the code type (ARM/THUMB) and the
