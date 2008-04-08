@@ -19,10 +19,30 @@
 
 #include <ch.h>
 
+#include "board.h"
+
 /*
  * Hardware initialization goes here.
  * NOTE: Interrupts are still disabled.
  */
 void hwinit(void) {
 
+  /*
+   * I/O ports initialization as specified in board.h.
+   */
+  GPIOA->CRL = VAL_GPIOACRL;
+  GPIOA->CRH = VAL_GPIOACRH;
+  GPIOA->ODR = VAL_GPIOAODR;
+
+  GPIOB->CRL = VAL_GPIOBCRL;
+  GPIOB->CRH = VAL_GPIOBCRH;
+  GPIOB->ODR = VAL_GPIOBODR;
+
+  GPIOC->CRL = VAL_GPIOCCRL;
+  GPIOC->CRH = VAL_GPIOCCRH;
+  GPIOC->ODR = VAL_GPIOCODR;
+
+  GPIOD->CRL = VAL_GPIODCRL;
+  GPIOD->CRH = VAL_GPIODCRH;
+  GPIOD->ODR = VAL_GPIODODR;
 }

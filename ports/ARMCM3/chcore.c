@@ -70,8 +70,6 @@ void threadstart(void) {
                 "bl      chThdExit                              ");
 }
 
-void *retaddr;
-
 /*
  * System Timer vector.
  */
@@ -83,6 +81,8 @@ void SysTickVector(void) {
 
   chSysIRQExitI();
 }
+
+void *retaddr;
 
 /*
  * To be invoked at the end of any interrupt handler that can trigger a

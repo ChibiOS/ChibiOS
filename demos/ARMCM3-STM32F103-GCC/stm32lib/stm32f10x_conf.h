@@ -34,7 +34,7 @@
 //#define _ADC2
 
 /************************************* BKP ************************************/
-//#define _BKP 
+//#define _BKP
 
 /************************************* CAN ************************************/
 //#define _CAN
@@ -60,11 +60,11 @@
 /* #define _FLASH_PROG */
 
 /************************************* GPIO ***********************************/
-//#define _GPIO
-//#define _GPIOA
-//#define _GPIOB
-//#define _GPIOC
-//#define _GPIOD
+#define _GPIO
+#define _GPIOA
+#define _GPIOB
+#define _GPIOC
+#define _GPIOD
 //#define _GPIOE
 //#define _AFIO
 
@@ -94,7 +94,7 @@
 //#define _SPI2
 
 /************************************* SysTick ********************************/
-//#define _SysTick
+#define _SysTick
 
 /************************************* TIM1 ***********************************/
 //#define _TIM1
@@ -123,13 +123,13 @@
 /*******************************************************************************
 * Macro Name     : assert_param
 * Description    : The assert_param macro is used for function's parameters check.
-*                  It is used only if the library is compiled in DEBUG mode. 
+*                  It is used only if the library is compiled in DEBUG mode.
 * Input          : - expr: If expr is false, it calls assert_failed function
 *                    which reports the name of the source file and the source
-*                    line number of the call that failed. 
+*                    line number of the call that failed.
 *                    If expr is true, it returns no value.
 * Return         : None
-*******************************************************************************/ 
+*******************************************************************************/
   #define assert_param(expr) ((expr) ? (void)0 : assert_failed((u8 *)__FILE__, __LINE__))
 /* Exported functions ------------------------------------------------------- */
   void assert_failed(u8* file, u32 line);
