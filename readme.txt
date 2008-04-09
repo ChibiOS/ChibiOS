@@ -63,6 +63,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.6.3 ***
+
 *** 0.6.2 ***
 - NEW: Added C++ wrapper around the ChibiOS/RT core APIs, now it is possible
   to use the OS in a fully object oriented application. The wrapper offers

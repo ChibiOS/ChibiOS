@@ -28,11 +28,47 @@
 
 #define BOARD_OLIMEX_STM32_P103
 
+/*
+ * Uncomment this if you want a 48MHz system clock, else it will be 72MHz.
+ */
+//#define SYSCLK_48
+
+/*
+ * NOTES: PLLPRE can be 1 or 2, PLLMUL can be 2..16.
+ */
 #define LSECLK          32768
 #define HSECLK          8000000
-#define PLLDIV          1
+#define HSICLK          8000000
+#define PLLPRE          1
+#ifdef SYSCLK_48
+#define PLLMUL          6
+#else
 #define PLLMUL          9
-#define PLLCLK          ((HSECLK / PLLDIV) * PLLMUL)
+#endif
+#define PLLCLK          ((HSECLK / PLLPRE) * PLLMUL)
+#define SYSCLK          PLLCLK
+#define APB1CLK         (SYSCLK / 2)
+#define APB2CLK         (SYSCLK / 2)
+#define AHB1CLK         (SYSCLK / 1)
+
+/*
+ * Various clock settings.
+ */
+#define SYSSRCBITS      (0x2 << 0)      // PLLCLK is SYSCLK (do not change)
+#define AHBBITS         (0x0 << 4)      // Divided by 1
+#define PPRE1BITS       (0x4 << 8)      // Divided by 2 (must be <= 36MHz)
+#define PPRE2BITS       (0x4 << 11)     // Divided by 2
+#define ADCPREBITS      (0x3 << 14)     // Divided by 8
+#define PLLSRCBITS      (0x1 << 16)     // PLL source is HSE/1
+#define PLLPREBITS      ((PLLPRE - 1) << 17)
+#define PLLMULBITS      ((PLLMUL - 2) << 18)
+#ifdef SYSCLK_48
+#define USBPREBITS      (0x1 << 22)     // Divided by 1
+#else
+#define USBPREBITS      (0x0 << 22)     // Divided by 1.5
+#endif
+#define MCOSRCBITS      (0x0 << 24)     // No MCO output.
+
 
 #define GPIOA_BUTTON    (1 << 0)
 
