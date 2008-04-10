@@ -17,16 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _VIC_H_
-#define _VIC_H_
+#include <ch.h>
+#include <nvic.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void InitVIC(void);
-  void SetVICVector(void *handler, int vector, int source);
-#ifdef __cplusplus
+void SetNVICVector(void) {
 }
-#endif
-
-#endif /* _VIC_H_ */

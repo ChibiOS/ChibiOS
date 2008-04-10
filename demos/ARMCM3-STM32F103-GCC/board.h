@@ -52,24 +52,69 @@
 #define AHB1CLK         (SYSCLK / 1)
 
 /*
- * Various clock settings.
+ * Values derived from clock settings.
  */
-#define SYSSRCBITS      (0x2 << 0)      // PLLCLK is SYSCLK (do not change)
-#define AHBBITS         (0x0 << 4)      // Divided by 1
-#define PPRE1BITS       (0x4 << 8)      // Divided by 2 (must be <= 36MHz)
-#define PPRE2BITS       (0x4 << 11)     // Divided by 2
-#define ADCPREBITS      (0x3 << 14)     // Divided by 8
-#define PLLSRCBITS      (0x1 << 16)     // PLL source is HSE/1
 #define PLLPREBITS      ((PLLPRE - 1) << 17)
 #define PLLMULBITS      ((PLLMUL - 2) << 18)
 #ifdef SYSCLK_48
-#define USBPREBITS      (0x1 << 22)     // Divided by 1
+#define USBPREBITS      USBPRE_DIV1_BITS
 #else
-#define USBPREBITS      (0x0 << 22)     // Divided by 1.5
+#define USBPREBITS      USBPRE_DIV1P5_BITS
 #endif
-#define MCOSRCBITS      (0x0 << 24)     // No MCO output.
 
+/*
+ * Definitions for RCC_CR register.
+ */
+#define CR_HSION_MASK           (0x1 << 0)
+#define CR_HSIRDY_MASK          (0x1 << 1)
+#define CR_HSITRIM_MASK         (0x1F << 3)
+#define   HSITRIM_RESET_BITS    (1 << 3)
+#define CR_HSICAL_MASK          (0xFF << 8)
+#define CR_HSEON_MASK           (0x1 << 16)
+#define CR_HSERDY_MASK          (0x1 << 17)
+#define CR_HSEBYP_MASK          (0x1 << 18)
+#define CR_CSSON_MASK           (0x1 << 19)
+#define CR_PLLON_MASK           (0x1 << 24)
+#define CR_PLLRDY_MASK          (0x1 << 25)
 
+/*
+ * Definitions for RCC_CFGR register.
+ */
+#define CFGR_SW_MASK            (0x3 << 0)
+#define   SW_HSI_BITS           (0 << 2)
+#define   SW_HSE_BITS           (1 << 2)
+#define   SW_PLL_BITS           (2 << 2)
+#define CFGR_SWS_MASK           (0x3 << 2)
+#define   SWS_HSI_BITS          (0 << 2)
+#define   SWS_HSE_BITS          (1 << 2)
+#define   SWS_PLL_BITS          (2 << 2)
+#define CFGR_HPRE_MASK          (0xF << 4)
+#define    HPRE_DIV1_BITS       (0 << 4)
+#define CFGR_PPRE1_MASK         (0x7 << 8)
+#define   PPRE1_DIV1_BITS       (0 << 8)
+#define   PPRE1_DIV2_BITS       (4 << 8)
+#define CFGR_PPRE2_MASK         (0x7 << 11)
+#define   PPRE2_DIV1_BITS       (0 << 11)
+#define   PPRE2_DIV2_BITS       (4 << 11)
+#define CFGR_ADCPRE_MASK        (0x3 << 14)
+#define   ADCPRE_DIV2_BITS      (0 << 14)
+#define   ADCPRE_DIV4_BITS      (1 << 14)
+#define   ADCPRE_DIV6_BITS      (2 << 14)
+#define   ADCPRE_DIV8_BITS      (3 << 14)
+#define CFGR_PLLSRC_MASK        (0x1 << 16)
+#define   PLLSRC_HSI_BITS       (0 << 16)
+#define   PLLSRC_HSE_BITS       (1 << 16)
+#define CFGR_PLLXTPRE_MASK      (0x1 << 17)
+#define CFGR_PLLMUL_MASK        (0xF << 18)
+#define CFGR_USBPRE_MASK        (0x1 << 22)
+#define   USBPRE_DIV1P5_BITS    (0 << 22)
+#define   USBPRE_DIV1_BITS      (1 << 22)
+#define CFGR_MCO_MASK           (0x7 << 24)
+#define   MCO_DISABLED_BITS     (0 << 24)
+
+/*
+ * IO pins assignments.
+ */
 #define GPIOA_BUTTON    (1 << 0)
 
 #define GPIOC_MMCWP     (1 << 6)

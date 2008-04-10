@@ -64,6 +64,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.6.3 ***
+- Fixed a minor error in ./ports/ARM7/vic.h, it should not affect anything.
 
 *** 0.6.2 ***
 - NEW: Added C++ wrapper around the ChibiOS/RT core APIs, now it is possible

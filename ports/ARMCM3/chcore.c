@@ -17,9 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stm32lib/stm32f10x_map.h"
-
 #include <ch.h>
+#include <nvic.h>
 
 /*
  * System idle thread loop.
@@ -91,7 +90,7 @@ void *retaddr;
 void chSysIRQExitI(void) {
 
   chSysLock();
-  if (SCB->ICSR & (1 << 11)) {  /* RETTOBASE */
+  if (SCB_ICSR & ICSR_RETTOBASE_MASK) {
     if (chSchRescRequiredI()) {
 
   asm volatile ("mrs     r0, PSP                                \n\t" \

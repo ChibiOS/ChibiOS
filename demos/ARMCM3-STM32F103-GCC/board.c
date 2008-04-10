@@ -18,6 +18,7 @@
 */
 
 #include <ch.h>
+#include <nvic.h>
 
 #include "board.h"
 
@@ -45,27 +46,29 @@ void hwinit(void) {
    * Clocks and PLL initialization.
    */
   // HSI setup.
-  RCC->CR = 0x00000083;         // Enforces a known state (HSI ON).
-  while (!(RCC->CR & (1 << 1)))
+  RCC->CR = HSITRIM_RESET_BITS | CR_HSION_MASK;
+  while (!(RCC->CR & CR_HSIRDY_MASK))
     ;                           // Waits until HSI stable, it should already be.
   // HSE setup.
-  RCC->CR |= (1 << 16);         // HSE ON.
-  while (!(RCC->CR & (1 << 17)))
+  RCC->CR |= CR_HSEON_MASK;
+  while (!(RCC->CR & CR_HSERDY_MASK))
     ;                           // Waits until HSE stable.
   // PLL setup.
-  RCC->CFGR |= PLLPREBITS | PLLMULBITS | PLLSRCBITS;
-  RCC->CR |= (1 << 24);         // PLL ON.
-  while (!(RCC->CR & (1 << 25)))
+  RCC->CFGR = PLLSRC_HSE_BITS | PLLPREBITS | PLLMULBITS;
+  RCC->CR |= CR_PLLON_MASK;
+  while (!(RCC->CR & CR_PLLRDY_MASK))
     ;                           // Waits until PLL stable.
   // Clock sources.
-  RCC->CFGR |= AHBBITS | PPRE1BITS | PPRE2BITS | ADCPREBITS |
-               USBPREBITS | MCOSRCBITS;
+  RCC->CFGR |= HPRE_DIV1_BITS | PPRE1_DIV2_BITS | PPRE2_DIV2_BITS |
+               ADCPRE_DIV8_BITS | USBPREBITS | MCO_DISABLED_BITS;
 
   /*
    * Flash setup and final clock selection.
    */
   FLASH->ACR = FLASHBITS;       // Flash wait states depending on clock.
-  RCC->CFGR |= SYSSRCBITS;      // Switches on the PLL clock.
+  RCC->CFGR |= SW_PLL_BITS;     // Switches on the PLL clock.
+  while ((RCC->CFGR & CFGR_SWS_MASK) != SWS_PLL_BITS)
+    ;
 
   /*
    * I/O ports initialization as specified in board.h.
@@ -88,7 +91,15 @@ void hwinit(void) {
   GPIOD->ODR = VAL_GPIODODR;
 
   /*
-   * NVIC/SCB setup.
+   * NVIC/SCB initialization.
    */
-  SCB->AIRCR = (0x5FA << 16) | (0x5 << 8);      // PRIGROUP = 5 (2:6).
+  SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0x3); // PRIGROUP 4:0 (4:4).
+
+  /*
+   * SysTick initialization.
+   */
+  SCB_SHPR(2) = 0x10 << 24;     // SysTick at priority 1:0 (highest - 1).
+  ST_RVR = SYSCLK / (8000000 / CH_FREQUENCY) - 1;
+  ST_CVR = 0;
+  ST_CSR = ENABLE_ON_BITS | TICKINT_ENABLED_BITS | CLKSOURCE_EXT_BITS;
 }
