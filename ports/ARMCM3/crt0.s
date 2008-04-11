@@ -33,6 +33,8 @@
 /*
  * Reset handler.
  */
+.thumb
+.thumb_func
 .global ResetHandler
 ResetHandler:
         /*

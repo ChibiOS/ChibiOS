@@ -19,6 +19,8 @@
 
 #include <ch.h>
 
+#include "board.h"
+
 /*
  * Red LEDs blinker thread, times are in milliseconds.
  */
@@ -35,6 +37,10 @@ static msg_t Thread1(void *arg) {
  * Entry point, the interrupts are disabled on entry.
  */
 int main(int argc, char **argv) {
+
+  GPIOC->BRR = GPIOC_LED;
+  while(1)
+    ;
 
   /*
    * The main() function becomes a thread here then the interrupts are

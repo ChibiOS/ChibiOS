@@ -23,20 +23,6 @@
 #include "board.h"
 
 /*
- * Wait states setting is a function of the system clock. Those are the
- * recommended values, there should not be need to change them.
- */
-#if SYSCLK <= 24000000
-#define FLASHBITS 0x00000010
-#else
-#if SYSCLK <= 48000000
-#define FLASHBITS 0x00000011
-#else
-#define FLASHBITS 0x00000012
-#endif
-#endif
-
-/*
  * Hardware initialization goes here.
  * NOTE: Interrupts are still disabled.
  */
@@ -89,7 +75,7 @@ void hwinit(void) {
   GPIOD->CRL = VAL_GPIODCRL;
   GPIOD->CRH = VAL_GPIODCRH;
   GPIOD->ODR = VAL_GPIODODR;
-
+#if 0
   /*
    * NVIC/SCB initialization.
    */
@@ -98,8 +84,9 @@ void hwinit(void) {
   /*
    * SysTick initialization.
    */
-  SCB_SHPR(2) = 0x10 << 24;     // SysTick at priority 1:0 (highest - 1).
+  SCB_SHPR(2) = 0x80 << 24;     // SysTick at priority 8:0.
   ST_RVR = SYSCLK / (8000000 / CH_FREQUENCY) - 1;
   ST_CVR = 0;
   ST_CSR = ENABLE_ON_BITS | TICKINT_ENABLED_BITS | CLKSOURCE_EXT_BITS;
+#endif
 }

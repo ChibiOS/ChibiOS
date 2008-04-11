@@ -41,9 +41,9 @@
 #define HSICLK          8000000
 #define PLLPRE          1
 #ifdef SYSCLK_48
-#define PLLMUL          6
+  #define PLLMUL        6
 #else
-#define PLLMUL          9
+  #define PLLMUL        9
 #endif
 #define PLLCLK          ((HSECLK / PLLPRE) * PLLMUL)
 #define SYSCLK          PLLCLK
@@ -52,14 +52,16 @@
 #define AHB1CLK         (SYSCLK / 1)
 
 /*
- * Values derived from clock settings.
+ * Values derived from the clock settings.
  */
 #define PLLPREBITS      ((PLLPRE - 1) << 17)
 #define PLLMULBITS      ((PLLMUL - 2) << 18)
 #ifdef SYSCLK_48
-#define USBPREBITS      USBPRE_DIV1_BITS
+  #define USBPREBITS    USBPRE_DIV1_BITS
+  #define FLASHBITS     0x00000011
 #else
-#define USBPREBITS      USBPRE_DIV1P5_BITS
+  #define USBPREBITS    USBPRE_DIV1P5_BITS
+  #define FLASHBITS     0x00000012
 #endif
 
 /*
@@ -81,9 +83,9 @@
  * Definitions for RCC_CFGR register.
  */
 #define CFGR_SW_MASK            (0x3 << 0)
-#define   SW_HSI_BITS           (0 << 2)
-#define   SW_HSE_BITS           (1 << 2)
-#define   SW_PLL_BITS           (2 << 2)
+#define   SW_HSI_BITS           (0 << 0)
+#define   SW_HSE_BITS           (1 << 0)
+#define   SW_PLL_BITS           (2 << 0)
 #define CFGR_SWS_MASK           (0x3 << 2)
 #define   SWS_HSI_BITS          (0 << 2)
 #define   SWS_HSE_BITS          (1 << 2)

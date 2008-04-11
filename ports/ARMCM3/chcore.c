@@ -95,10 +95,10 @@ void chSysIRQExitI(void) {
 
   asm volatile ("mrs     r0, PSP                                \n\t" \
                 "ldr     r1, =retaddr                           \n\t" \
-                "ldr     r2, [r0, #18]                          \n\t" \
+                "ldr     r2, [r0, #24]                          \n\t" \
                 "str     r2, [r1]                               \n\t" \
                 "ldr     r1, =threadswitch                      \n\t" \
-                "str     r1, [r0, #18]                          ");
+                "str     r1, [r0, #24]                          ");
       return; /* Note, returns *without* re-enabling interrupts.*/
     }
   }
@@ -106,7 +106,7 @@ void chSysIRQExitI(void) {
 }
 
 /*
- * This code is execute in thread mode when exiting from an ISR routine that
+ * This code is executed in thread mode when exiting from an ISR routine that
  * requires rescheduling.
  */
 __attribute__((naked, weak))
