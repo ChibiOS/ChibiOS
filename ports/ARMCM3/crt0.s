@@ -24,16 +24,16 @@
 .set    CONTROL_MODE_PRIVILEGED, 0
 .set    CONTROL_MODE_UNPRIVILEGED, 1
 .set    CONTROL_USE_MSP, 0
-.set    CONTROL_USE_PSP, 0
+.set    CONTROL_USE_PSP, 2
 
 .text
 .balign 2
 .syntax unified
+.thumb
 
 /*
  * Reset handler.
  */
-.thumb
 .thumb_func
 .global ResetHandler
 ResetHandler:

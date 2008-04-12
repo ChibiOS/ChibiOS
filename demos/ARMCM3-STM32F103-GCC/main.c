@@ -28,7 +28,10 @@ static WorkingArea(waThread1, 64);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    chThdSleep(1000);
+    GPIOC->BRR = GPIOC_LED;
+    chThdSleep(500);
+    GPIOC->BSRR = GPIOC_LED;
+    chThdSleep(500);
   }
   return 0;
 }
@@ -37,10 +40,6 @@ static msg_t Thread1(void *arg) {
  * Entry point, the interrupts are disabled on entry.
  */
 int main(int argc, char **argv) {
-
-  GPIOC->BRR = GPIOC_LED;
-  while(1)
-    ;
 
   /*
    * The main() function becomes a thread here then the interrupts are

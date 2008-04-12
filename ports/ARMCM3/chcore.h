@@ -87,8 +87,8 @@ typedef struct {
 
 #define chSysIRQEnterI()
 
-/* It requires zero bytes, but better be safe.*/
-#define IDLE_THREAD_STACK_SIZE 8
+/* It should be 8.*/
+#define IDLE_THREAD_STACK_SIZE 16
 void _IdleThread(void *p) __attribute__((noreturn));
 
 void chSysHalt(void);

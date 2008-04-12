@@ -75,7 +75,7 @@ void hwinit(void) {
   GPIOD->CRL = VAL_GPIODCRL;
   GPIOD->CRH = VAL_GPIODCRH;
   GPIOD->ODR = VAL_GPIODODR;
-#if 0
+
   /*
    * NVIC/SCB initialization.
    */
@@ -88,5 +88,4 @@ void hwinit(void) {
   ST_RVR = SYSCLK / (8000000 / CH_FREQUENCY) - 1;
   ST_CVR = 0;
   ST_CSR = ENABLE_ON_BITS | TICKINT_ENABLED_BITS | CLKSOURCE_EXT_BITS;
-#endif
 }
