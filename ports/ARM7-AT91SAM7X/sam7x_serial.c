@@ -51,7 +51,7 @@ static void SetError(AT91_REG csr, FullDuplexDriver *com) {
 static void ServeInterrupt(AT91PS_USART u, FullDuplexDriver *com) {
 
   if (u->US_CSR & AT91C_US_RXRDY)
-      chFDDIncomingDataI(com, u->US_RHR);
+    chFDDIncomingDataI(com, u->US_RHR);
   if (u->US_CSR & AT91C_US_TXRDY) {
     msg_t b = chFDDRequestDataI(com);
     if (b < Q_OK)

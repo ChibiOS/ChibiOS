@@ -67,10 +67,10 @@
 #define CR2_CPOL                (1 << 10)
 #define CR2_CLKEN               (1 << 11)
 #define CR2_STOP_MASK           (3 << 12)
-#define CR2_STOP1_BITS          (0 << 12
-#define CR2_STOP0P5_BITS        (1 << 12
-#define CR2_STOP2_BITS          (2 << 12
-#define CR2_STOP1P5_BITS        (3 << 12
+#define CR2_STOP1_BITS          (0 << 12)
+#define CR2_STOP0P5_BITS        (1 << 12)
+#define CR2_STOP2_BITS          (2 << 12)
+#define CR2_STOP1P5_BITS        (3 << 12)
 #define CR2_LINEN               (1 << 14)
 
 #define CR3_EIE                 (1 << 0)

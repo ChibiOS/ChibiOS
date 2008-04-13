@@ -51,10 +51,30 @@ static void SetError(uint16_t sr, FullDuplexDriver *com) {
     sts |= SD_FRAMING_ERROR;
   if (sr & SR_LBD)
     sts |= SD_BREAK_DETECTED;
+  chSysLock();
   chFDDAddFlagsI(com, sts);
+  chSysUnlock();
 }
 
 static void ServeInterrupt(USART_TypeDef *u, FullDuplexDriver *com) {
+  uint16_t sr = u->SR;
+
+  if (sr & (SR_ORE | SR_FE | SR_PE | SR_LBD))
+    SetError(sr, com);
+  if (sr & SR_RXNE) {
+    chSysLock();
+    chFDDIncomingDataI(com, u->DR);
+    chSysUnlock();
+  }
+  if (sr & SR_TXE) {
+    chSysLock();
+    msg_t b = chFDDRequestDataI(com);
+    chSysUnlock();
+    if (b < Q_OK)
+      u->CR1 &= ~CR1_TXEIE;
+    else
+      u->DR = b;
+  }
 }
 
 #ifdef USE_USART1
@@ -150,15 +170,18 @@ void SetUSARTI(USART_TypeDef *u, uint32_t speed, uint16_t cr1,
  */
 void InitSerial(uint32_t prio1, uint32_t prio2, uint32_t prio3) {
 
-  /* I/O queues setup.*/
 #ifdef USE_USART1
   chFDDInit(&COM1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
-#endif
-#ifdef USE_USART2
-  chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
-#endif
-#ifdef USE_USART3
-  chFDDInit(&COM3, ib3, sizeof ib3, NULL, ob3, sizeof ob3, OutNotify3);
+  SetUSARTI(USART1, 38400, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
 #endif
 
+#ifdef USE_USART2
+  chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
+  SetUSARTI(USART2, 38400, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
+#endif
+
+#ifdef USE_USART3
+  chFDDInit(&COM3, ib3, sizeof ib3, NULL, ob3, sizeof ob3, OutNotify3);
+  SetUSARTI(USART3, 38400, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
+#endif
 }
