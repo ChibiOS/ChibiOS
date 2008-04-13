@@ -21,6 +21,7 @@
 #include <nvic.h>
 
 #include "board.h"
+#include "stm32_serial.h"
 
 /*
  * Hardware initialization goes here.
@@ -88,4 +89,9 @@ void hwinit(void) {
   ST_RVR = SYSCLK / (8000000 / CH_FREQUENCY) - 1;
   ST_CVR = 0;
   ST_CSR = ENABLE_ON_BITS | TICKINT_ENABLED_BITS | CLKSOURCE_EXT_BITS;
+
+  /*
+   * Other subsystems initialization.
+   */
+  InitSerial(0xA0, 0xA0, 0xA0);
 }

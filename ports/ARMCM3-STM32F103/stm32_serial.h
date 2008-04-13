@@ -20,9 +20,9 @@
 #ifndef _STM32_SERIAL_H_
 #define _STM32_SERIAL_H_
 
-#define USE_USART1
+//#define USE_USART1
 #define USE_USART2
-#define USE_USART3
+//#define USE_USART3
 
 /*
  * Configuration parameter, you can change the depth of the queue buffers

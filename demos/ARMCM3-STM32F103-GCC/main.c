@@ -18,8 +18,10 @@
 */
 
 #include <ch.h>
+#include <test.h>
 
 #include "board.h"
+#include "stm32_serial.h"
 
 /*
  * Red LEDs blinker thread, times are in milliseconds.
@@ -56,7 +58,10 @@ int main(int argc, char **argv) {
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop.
    */
-  while (TRUE)
-    chThdSleep(1000);
+  while (TRUE) {
+    if (GPIOA->IDR & GPIOA_BUTTON)
+      TestThread(&COM2);
+    chThdSleep(500);
+  }
   return 0;
 }

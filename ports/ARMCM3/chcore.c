@@ -56,6 +56,7 @@ void chSysSwitchI(Thread *otp, Thread *ntp) {
 __attribute__((naked, weak))
 void chSysHalt(void) {
 
+  chSysLock();
   while (TRUE) {
   }
 }

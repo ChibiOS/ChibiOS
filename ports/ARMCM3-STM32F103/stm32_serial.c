@@ -20,7 +20,9 @@
 #include <ch.h>
 
 #include "board.h"
+#include "nvic.h"
 #include "stm32_serial.h"
+#include "stm32lib/stm32f10x_nvic.h"
 
 #ifdef USE_USART1
 FullDuplexDriver COM1;
@@ -172,16 +174,25 @@ void InitSerial(uint32_t prio1, uint32_t prio2, uint32_t prio3) {
 
 #ifdef USE_USART1
   chFDDInit(&COM1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
+  GPIOA->CRH = (GPIOA->CRH & 0xFFFFF00F) | 0x000004B0;
+  RCC->APB2ENR |= 0x00002000;
   SetUSARTI(USART1, 38400, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
+  NVICEnableVector(USART1_IRQChannel, prio1);
 #endif
 
 #ifdef USE_USART2
   chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
+  GPIOA->CRL = (GPIOA->CRL & 0xFFFF00FF) | 0x00004B00;
+  RCC->APB1ENR |= 0x00020000;
   SetUSARTI(USART2, 38400, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
+  NVICEnableVector(USART2_IRQChannel, prio2);
 #endif
 
 #ifdef USE_USART3
   chFDDInit(&COM3, ib3, sizeof ib3, NULL, ob3, sizeof ob3, OutNotify3);
+  GPIOB->CRH = (GPIOB->CRH & 0xFFFF00FF) | 0x00004B00;
+  RCC->APB1ENR |= 0x00040000;
   SetUSARTI(USART3, 38400, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
+  NVICEnableVector(USART3_IRQChannel, prio3);
 #endif
 }

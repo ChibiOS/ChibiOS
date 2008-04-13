@@ -131,7 +131,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void SetNVICVector(void);
+  void NVICEnableVector(uint32_t n, uint32_t prio);
 #ifdef __cplusplus
 }
 #endif
