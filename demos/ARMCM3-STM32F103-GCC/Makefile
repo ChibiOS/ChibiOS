@@ -63,6 +63,7 @@ UADEFS =
 
 # List ARM-mode C source files here
 SRC = ../../ports/ARMCM3/chcore.c ../../ports/ARMCM3/nvic.c \
+      ../../ports/ARMCM3-STM32F103/stm32_serial.c \
       ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
       ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chmtx.c \
       ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \

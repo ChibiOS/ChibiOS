@@ -106,10 +106,10 @@
 //#define _TIM4
 
 /************************************* USART **********************************/
-//#define _USART
-//#define _USART1
-//#define _USART2
-//#define _USART3
+#define _USART
+#define _USART1
+#define _USART2
+#define _USART3
 
 /************************************* WWDG ***********************************/
 //#define _WWDG
