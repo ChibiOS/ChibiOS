@@ -76,7 +76,11 @@ void threadstart(void) {
 void SysTickVector(void) {
 
   chSysIRQEnterI();
+  chSysLock();
+
   chSysTimerHandlerI();
+
+  chSysUnlock();
   chSysIRQExitI();
 }
 
@@ -94,7 +98,6 @@ void chSysIRQExitI(void) {
 
   asm volatile ("mrs     r0, PSP                                \n\t" \
                 "ldr     r2, [r0, #24]                          \n\t" \
-                "orr     r2, r2, #1                             \n\t" \
                 "ldr     r1, =retaddr                           \n\t" \
                 "str     r2, [r1]                               \n\t" \
                 "ldr     r1, =threadswitch                      \n\t" \
@@ -118,6 +121,7 @@ void threadswitch(void) {
                 "push    {r0}                                   \n\t" \
                 "ldr     r0, =retaddr                           \n\t" \
                 "ldr     r0, [r0]                               \n\t" \
+                "orr     r0, r0, #1                             \n\t" \
                 "str     r0, [sp, #28]                          \n\t" \
                 "bl      chSchDoRescheduleI                     \n\t" \
                 "pop     {r0}                                   \n\t" \
