@@ -18,6 +18,7 @@
 */
 
 .syntax unified
+.thumb
 
 .section INTVEC
 _vectors:
