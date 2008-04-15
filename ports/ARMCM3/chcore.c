@@ -23,15 +23,18 @@
 /*
  * System idle thread loop.
  */
+__attribute__((weak))
 void _IdleThread(void *p) {
 
   while (TRUE) {
+//    asm volatile ("wfi");
   }
 }
 
 /*
  * System console message (not implemented).
  */
+__attribute__((weak))
 void chSysPuts(char *msg) {
 }
 
@@ -39,15 +42,10 @@ void chSysPuts(char *msg) {
  * Context switch.
  */
 void chSysSwitchI(Thread *otp, Thread *ntp) {
-  register struct intctx * volatile sp asm("sp"); /* Don't ask... */
 
-#ifdef CH_CURRP_REGISTER_CACHE
-  asm ("" : : : "r4", "r5", "r6", "r8", "r9", "r10", "r11", "lr");
-#else
-  asm ("" : : : "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "lr");
-#endif
-  otp->p_ctx.r13 = sp;
-  sp = ntp->p_ctx.r13;
+  asm volatile ("cpsie   i                                      \n\t" \
+                "svc     #0                                     \n\t" \
+                "cpsid   i                                      ");
 }
 
 /*
@@ -64,10 +62,10 @@ void chSysHalt(void) {
 __attribute__((naked, weak))
 void threadstart(void) {
 
-  chSysUnlock();
-  asm volatile ("mov     r0, r5                                 \n\t" \
-                "blx     r4                                     \n\t" \
-                "bl      chThdExit                              ");
+  asm volatile ("cpsie   i                                      \n\t" \
+                "blx     r1                                     \n\t" \
+                "bl      chThdExit                              \n\t" \
+                "bl      chSysHalt                              ");
 }
 
 /*
@@ -93,40 +91,75 @@ void *retaddr;
 void chSysIRQExitI(void) {
 
   chSysLock();
-  if (SCB_ICSR & ICSR_RETTOBASE_MASK) {
-    if (chSchRescRequiredI()) {
 
-  asm volatile ("mrs     r0, PSP                                \n\t" \
-                "ldr     r2, [r0, #24]                          \n\t" \
-                "ldr     r1, =retaddr                           \n\t" \
-                "str     r2, [r1]                               \n\t" \
-                "ldr     r1, =threadswitch                      \n\t" \
-                "str     r1, [r0, #24]                          ");
-      return; /* Note, returns *without* re-enabling interrupts.*/
-    }
+  if ((SCB_ICSR & ICSR_RETTOBASE) && chSchRescRequiredI()) {
+    SCB_ICSR = ICSR_PENDSVSET;
   }
+
   chSysUnlock();
 }
 
 /*
- * This code is executed in thread mode when exiting from an ISR routine that
- * requires rescheduling.
+ * System invoked context switch.
  */
-__attribute__((naked, weak))
-void threadswitch(void) {
+__attribute__((naked))
+void SVCallVector(Thread *otp, Thread *ntp) {
 
-  asm volatile ("sub     sp, sp, #4                             \n\t" \
-                "push    {r0-r3, r12, lr}                       \n\t" \
-                "mrs     r0, XPSR                               \n\t" \
-                "push    {r0}                                   \n\t" \
-                "ldr     r0, =retaddr                           \n\t" \
-                "ldr     r0, [r0]                               \n\t" \
-                "orr     r0, r0, #1                             \n\t" \
-                "str     r0, [sp, #28]                          \n\t" \
-                "bl      chSchDoRescheduleI                     \n\t" \
-                "pop     {r0}                                   \n\t" \
-                "msr     XPSR, r0                               \n\t" \
-                "pop     {r0-r3, r12, lr}                       \n\t" \
+#ifdef CH_CURRP_REGISTER_CACHE
+  asm volatile ("mrs     r12, PSP                               \n\t" \
+                "stmdb   r12!, {r4-6,r8-r11, lr}                \n\t" \
+                "str     r12, [r0, #16]                         \n\t" \
+                "ldr     r12, [r1, #16]                         \n\t" \
+                "ldmia   r12!, {r4-6,r8-r11, lr}                \n\t" \
+                "msr     PSP, r12                               \n\t" \
+                "bx      lr                                     ");
+#else
+  asm volatile ("mrs     r12, PSP                               \n\t" \
+                "stmdb   r12!, {r4-r11, lr}                     \n\t" \
+                "str     r12, [r0, #16]                         \n\t" \
+                "ldr     r12, [r1, #16]                         \n\t" \
+                "ldmia   r12!, {r4-r11, lr}                     \n\t" \
+                "msr     PSP, r12                               \n\t" \
+                "bx      lr                                     ");
+#endif
+}
+
+/*
+ * Preemption invoked context switch.
+ */
+__attribute__((naked))
+void PendSVVector(void) {
+  Thread *otp;
+  register struct intctx *sp_thd asm("r12");
+
+  asm volatile ("cpsid   i                                      \n\t" \
+                "mrs     %0, PSP" : "=r" (sp_thd) : );
+#ifdef CH_CURRP_REGISTER_CACHE
+  asm volatile ("stmdb   %0!, {r4-r6,r8-r11, lr}" :
+                "=r" (sp_thd) :
+                "r" (sp_thd));
+#else
+  asm volatile ("stmdb   %0!, {r4-r11, lr}" :
+                "=r" (sp_thd) :
+                "r" (sp_thd));
+#endif
+
+  (otp  = currp)->p_ctx.r13 = sp_thd;
+  chSchReadyI(otp);
+  (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
+  rlist.r_preempt = CH_TIME_QUANTUM;
+#ifdef CH_USE_TRACE
+  chDbgTrace(otp, currp);
+#endif
+
+  sp_thd = currp->p_ctx.r13;
+
+#ifdef CH_CURRP_REGISTER_CACHE
+  asm volatile ("ldmia   %0!, {r4-r6,r8-r11, lr}" : : "r" (sp_thd));
+#else
+  asm volatile ("ldmia   %0!, {r4-r11, lr}" : : "r" (sp_thd));
+#endif
+  asm volatile ("msr     PSP, %0                                \n\t" \
                 "cpsie   i                                      \n\t" \
-                "pop     {pc}                                   ");
+                "bx      lr" : : "r" (sp_thd));
 }

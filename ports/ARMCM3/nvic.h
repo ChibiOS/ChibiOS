@@ -114,15 +114,15 @@ typedef struct {
 #define SCB_AFSR                (SCBBase->AFSR)
 
 #define ICSR_VECTACTIVE_MASK    (0x1FF << 0)
-#define ICSR_RETTOBASE_MASK     (0x1 << 11)
+#define ICSR_RETTOBASE          (0x1 << 11)
 #define ICSR_VECTPENDING_MASK   (0x1FF << 12)
-#define ICSR_ISRPENDING_MASK    (0x1 << 22)
-#define ICSR_ISRPREEMPT_MASK    (0x1 << 23)
-#define ICSR_PENDSTCLR_MASK     (0x1 << 25)
-#define ICSR_PENDSTSET_MASK     (0x1 << 26)
-#define ICSR_PENDSVCLR_MASK     (0x1 << 27)
-#define ICSR_PENDSVSET_MASK     (0x1 << 28)
-#define ICSR_NMIPENDSET_MASK    (0x1 << 31)
+#define ICSR_ISRPENDING         (0x1 << 22)
+#define ICSR_ISRPREEMPT         (0x1 << 23)
+#define ICSR_PENDSTCLR          (0x1 << 25)
+#define ICSR_PENDSTSET          (0x1 << 26)
+#define ICSR_PENDSVCLR          (0x1 << 27)
+#define ICSR_PENDSVSET          (0x1 << 28)
+#define ICSR_NMIPENDSET         (0x1 << 31)
 
 #define AIRCR_VECTKEY           0x05FA0000
 #define AIRCR_PRIGROUP_MASK     (0x7 << 8)
