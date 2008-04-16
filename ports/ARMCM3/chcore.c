@@ -43,9 +43,7 @@ void chSysPuts(char *msg) {
  */
 void chSysSwitchI(Thread *otp, Thread *ntp) {
 
-  asm volatile ("cpsie   i                                      \n\t" \
-                "svc     #0                                     \n\t" \
-                "cpsid   i                                      ");
+  asm volatile ("svc     #0");
 }
 
 /*
@@ -54,7 +52,7 @@ void chSysSwitchI(Thread *otp, Thread *ntp) {
 __attribute__((naked, weak))
 void chSysHalt(void) {
 
-  chSysLock();
+  asm volatile ("cpsid   i");
   while (TRUE) {
   }
 }
@@ -62,10 +60,11 @@ void chSysHalt(void) {
 __attribute__((naked, weak))
 void threadstart(void) {
 
-  asm volatile ("cpsie   i                                      \n\t" \
+  asm volatile ( \
                 "blx     r1                                     \n\t" \
                 "bl      chThdExit                              \n\t" \
-                "bl      chSysHalt                              ");
+                "bl      chSysHalt                              \n\t" \
+               );
 }
 
 /*
@@ -85,41 +84,30 @@ void SysTickVector(void) {
 void *retaddr;
 
 /*
- * To be invoked at the end of any interrupt handler that can trigger a
- * reschedule.
- */
-void chSysIRQExitI(void) {
-
-  chSysLock();
-
-  if ((SCB_ICSR & ICSR_RETTOBASE) && chSchRescRequiredI()) {
-    SCB_ICSR = ICSR_PENDSVSET;
-  }
-
-  chSysUnlock();
-}
-
-/*
  * System invoked context switch.
  */
 __attribute__((naked))
 void SVCallVector(Thread *otp, Thread *ntp) {
 
 #ifdef CH_CURRP_REGISTER_CACHE
-  asm volatile ("mrs     r12, PSP                               \n\t" \
-                "stmdb   r12!, {r4-6,r8-r11, lr}                \n\t" \
+  asm volatile ("mrs     r3, BASEPRI                            \n\t" \
+                "mrs     r12, PSP                               \n\t" \
+                "stmdb   r12!, {r3-r6,r8-r11, lr}               \n\t" \
                 "str     r12, [r0, #16]                         \n\t" \
                 "ldr     r12, [r1, #16]                         \n\t" \
-                "ldmia   r12!, {r4-6,r8-r11, lr}                \n\t" \
+                "ldmia   r12!, {r3-r6,r8-r11, lr}               \n\t" \
                 "msr     PSP, r12                               \n\t" \
+                "msr     BASEPRI, r3                            \n\t" \
                 "bx      lr                                     ");
 #else
-  asm volatile ("mrs     r12, PSP                               \n\t" \
-                "stmdb   r12!, {r4-r11, lr}                     \n\t" \
+  asm volatile ("mrs     r3, BASEPRI                            \n\t" \
+                "mrs     r12, PSP                               \n\t" \
+                "stmdb   r12!, {r3-r11, lr}                     \n\t" \
                 "str     r12, [r0, #16]                         \n\t" \
                 "ldr     r12, [r1, #16]                         \n\t" \
-                "ldmia   r12!, {r4-r11, lr}                     \n\t" \
+                "ldmia   r12!, {r3-r11, lr}                     \n\t" \
                 "msr     PSP, r12                               \n\t" \
+                "msr     BASEPRI, r3                            \n\t" \
                 "bx      lr                                     ");
 #endif
 }
@@ -132,34 +120,41 @@ void PendSVVector(void) {
   Thread *otp;
   register struct intctx *sp_thd asm("r12");
 
-  asm volatile ("cpsid   i                                      \n\t" \
+  chSysLock();
+  asm volatile ("push    {lr}");
+  if (!chSchRescRequiredI()) {
+    chSysUnlock();
+    asm volatile ("pop     {pc}");
+  }
+
+  asm volatile ("pop     {lr}                                   \n\t" \
+                "mov     r3, #0                                 \n\t" \
                 "mrs     %0, PSP" : "=r" (sp_thd) : );
 #ifdef CH_CURRP_REGISTER_CACHE
-  asm volatile ("stmdb   %0!, {r4-r6,r8-r11, lr}" :
+  asm volatile ("stmdb   %0!, {r3-r6,r8-r11, lr}" :
                 "=r" (sp_thd) :
                 "r" (sp_thd));
 #else
-  asm volatile ("stmdb   %0!, {r4-r11, lr}" :
+  asm volatile ("stmdb   %0!, {r3-r11,lr}" :
                 "=r" (sp_thd) :
                 "r" (sp_thd));
 #endif
 
-  (otp  = currp)->p_ctx.r13 = sp_thd;
+  (otp = currp)->p_ctx.r13 = sp_thd;
   chSchReadyI(otp);
   (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
   rlist.r_preempt = CH_TIME_QUANTUM;
 #ifdef CH_USE_TRACE
   chDbgTrace(otp, currp);
 #endif
-
   sp_thd = currp->p_ctx.r13;
 
 #ifdef CH_CURRP_REGISTER_CACHE
-  asm volatile ("ldmia   %0!, {r4-r6,r8-r11, lr}" : : "r" (sp_thd));
+  asm volatile ("ldmia   %0!, {r3-r6,r8-r11, lr}" : : "r" (sp_thd));
 #else
-  asm volatile ("ldmia   %0!, {r4-r11, lr}" : : "r" (sp_thd));
+  asm volatile ("ldmia   %0!, {r3-r11, lr}" : : "r" (sp_thd));
 #endif
   asm volatile ("msr     PSP, %0                                \n\t" \
-                "cpsie   i                                      \n\t" \
+                "msr     BASEPRI, r3                            \n\t" \
                 "bx      lr" : : "r" (sp_thd));
 }

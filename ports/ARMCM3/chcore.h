@@ -32,6 +32,7 @@ struct extctx {
  * System saved context.
  */
 struct intctx {
+  regarm  basepri;
   regarm  r4;
   regarm  r5;
   regarm  r6;
@@ -68,15 +69,26 @@ typedef struct {
   tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +              \
                                      wsize -                            \
                                      sizeof(struct intctx));            \
+  tp->p_ctx.r13->basepri = 0;                                           \
+  tp->p_ctx.r13->lr_exc = (regarm)0xFFFFFFFD;                           \
   tp->p_ctx.r13->r0 = arg;                                              \
   tp->p_ctx.r13->r1 = pf;                                               \
-  tp->p_ctx.r13->lr_exc = (regarm)0xFFFFFFFD;                           \
   tp->p_ctx.r13->pc = threadstart;                                      \
   tp->p_ctx.r13->xpsr = (regarm)0x01000000;                             \
 }
 
-#define chSysLock() asm("cpsid   i")
-#define chSysUnlock() asm("cpsie   i")
+#define chSysLock() {                                                   \
+  asm volatile ("push    {r12}");                                       \
+  asm volatile ("mov     r12, #0x10");                                  \
+  asm volatile ("msr     BASEPRI, r12");                                \
+  asm volatile ("pop     {r12}");                                       \
+}
+#define chSysUnlock() {                                                 \
+  asm volatile ("push    {r12}");                                       \
+  asm volatile ("mov     r12, #0");                                     \
+  asm volatile ("msr     BASEPRI, r12");                                \
+  asm volatile ("pop     {r12}");                                       \
+}
 
 #define INT_REQUIRED_STACK 0
 #define StackAlign(n) ((((n) - 1) | 3) + 1)
@@ -88,6 +100,9 @@ typedef struct {
 #define WorkingArea(s, n) uint32_t s[UserStackSize(n) >> 2];
 
 #define chSysIRQEnterI()
+#define chSysIRQExitI() {                                               \
+  SCB_ICSR = ICSR_PENDSVSET;                                            \
+}
 
 /* It should be 8.*/
 #define IDLE_THREAD_STACK_SIZE 0
@@ -97,6 +112,5 @@ void chSysHalt(void);
 void chSysSwitchI(Thread *otp, Thread *ntp);
 void chSysPuts(char *msg);
 void threadstart(void);
-void chSysIRQExitI(void);
 
 #endif /* _CHCORE_H_ */

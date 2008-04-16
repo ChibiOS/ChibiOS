@@ -24,17 +24,17 @@ void ChkIntSources(void);
 #endif
 
 #if defined(WIN32)
-static WorkingArea(wsT1, 512);
-static WorkingArea(wsT2, 512);
-static WorkingArea(wsT3, 512);
-static WorkingArea(wsT4, 512);
-static WorkingArea(wsT5, 512);
+WorkingArea(wsT1, 512);
+WorkingArea(wsT2, 512);
+WorkingArea(wsT3, 512);
+WorkingArea(wsT4, 512);
+WorkingArea(wsT5, 512);
 #else
-static WorkingArea(wsT1, 64);
-static WorkingArea(wsT2, 64);
-static WorkingArea(wsT3, 64);
-static WorkingArea(wsT4, 64);
-static WorkingArea(wsT5, 64);
+WorkingArea(wsT1, 64);
+WorkingArea(wsT2, 64);
+WorkingArea(wsT3, 64);
+WorkingArea(wsT4, 64);
+WorkingArea(wsT5, 64);
 #endif
 static Thread *t1, *t2, *t3, *t4, *t5;
 
