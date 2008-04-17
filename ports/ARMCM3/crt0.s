@@ -63,7 +63,7 @@ dloop:
          * BSS initialization.
          * NOTE: It assumes that the BSS size is a multiple of 4.
          */
-        mov     r0, #0
+        movs    r0, #0
         ldr     r1, =_bss_start
         ldr     r2, =_bss_end
 bloop:
@@ -74,9 +74,10 @@ bloop:
         /*
          * Switches to the Process Stack and disables the interrupts globally.
          */
-        mov     r0, #CONTROL_MODE_PRIVILEGED | CONTROL_USE_PSP
+        movs    r0, #CONTROL_MODE_PRIVILEGED | CONTROL_USE_PSP
         msr     CONTROL, r0
-	mov	r0, #0x10
+        isb
+	movs    r0, #0x10
 	msr	BASEPRI, r0
         cpsie   i
         /*
@@ -86,7 +87,7 @@ bloop:
         /*
          * main(0, NULL).
          */
-        mov     r0, #0
+        movs    r0, #0
         mov     r1, r0
         bl      main
         bl      chSysHalt

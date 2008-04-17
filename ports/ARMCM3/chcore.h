@@ -78,16 +78,16 @@ typedef struct {
 }
 
 #define chSysLock() {                                                   \
-  asm volatile ("push    {r12}");                                       \
-  asm volatile ("mov     r12, #0x10");                                  \
-  asm volatile ("msr     BASEPRI, r12");                                \
-  asm volatile ("pop     {r12}");                                       \
+  asm volatile ("push    {r3}");                                        \
+  asm volatile ("movs    r3, #0x10");                                   \
+  asm volatile ("msr     BASEPRI, r3");                                 \
+  asm volatile ("pop     {r3}");                                        \
 }
 #define chSysUnlock() {                                                 \
-  asm volatile ("push    {r12}");                                       \
-  asm volatile ("mov     r12, #0");                                     \
-  asm volatile ("msr     BASEPRI, r12");                                \
-  asm volatile ("pop     {r12}");                                       \
+  asm volatile ("push    {r3}");                                        \
+  asm volatile ("movs    r3, #0");                                      \
+  asm volatile ("msr     BASEPRI, r3");                                 \
+  asm volatile ("pop     {r3}");                                        \
 }
 
 #define INT_REQUIRED_STACK 0

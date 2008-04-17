@@ -93,7 +93,7 @@ Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
                     size_t wsize, tfunc_t pf, void *arg) {
   Thread *tp = workspace;
 
-  chDbgAssert((wsize > UserStackSize(0)) && (prio <= HIGHPRIO) &&
+  chDbgAssert((wsize >= UserStackSize(0)) && (prio <= HIGHPRIO) &&
               (workspace != NULL) && (pf != NULL),
               "chthreads.c, chThdCreate()");
 #ifdef CH_USE_DEBUG

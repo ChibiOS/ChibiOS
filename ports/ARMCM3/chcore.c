@@ -128,7 +128,7 @@ void PendSVVector(void) {
   }
 
   asm volatile ("pop     {lr}                                   \n\t" \
-                "mov     r3, #0                                 \n\t" \
+                "movs    r3, #0                                 \n\t" \
                 "mrs     %0, PSP" : "=r" (sp_thd) : );
 #ifdef CH_CURRP_REGISTER_CACHE
   asm volatile ("stmdb   %0!, {r3-r6,r8-r11, lr}" :
