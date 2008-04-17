@@ -65,10 +65,11 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 
 *** 0.6.3 ***
 - Fixed a minor error in ./ports/ARM7/vic.h, it should not affect anything.
-- Minor bug fix: now chThdCreate() allows a working area size equal to
-  UserStackSize(0) when in debug mode, it caused an assert panic.
+- Minor bug fix: in chThdCreate() a working area size equal to UserStackSize(0)
+  was asserted as an error when in debug mode. It is now allowed.
 - Increased the stack size for the threads in the test suite to 128 bytes
   because THUMB/THUMB2 modes seem to use a lot more stack than ARM mode.
+- More work done on the ARM-CM3 port but it does not pass the test suite yet.
 
 *** 0.6.2 ***
 - NEW: Added C++ wrapper around the ChibiOS/RT core APIs, now it is possible
