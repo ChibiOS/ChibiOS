@@ -68,7 +68,7 @@ typedef struct {
   IOREG32       ICPR[8];
   IOREG32       unused4[24];
   IOREG32       IABR[8];
-  IOREG32       unused5[54];
+  IOREG32       unused5[56];
   IOREG32       IPR[60];
 } NVIC;
 

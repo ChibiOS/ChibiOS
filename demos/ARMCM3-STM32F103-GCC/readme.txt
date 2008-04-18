@@ -8,7 +8,9 @@ The demo will on an Olimex STM32-P103 board.
 
 ** The Demo **
 
-Not complete yet.
+The demo flashes the board LED using a thread, by pressing the button located
+on the board the test procedure is activated with output on the serial port
+COM2 (USART2).
 
 ** Build Procedure **
 

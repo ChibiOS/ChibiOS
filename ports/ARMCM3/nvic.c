@@ -21,7 +21,8 @@
 #include <nvic.h>
 
 void NVICEnableVector(uint32_t n, uint32_t prio) {
+  int sh = (n & 3) << 3;
 
-  NVIC_IPR(n >> 2) = (NVIC_IPR(n >> 2) & ~(0xFF << (n & 3))) | (prio << (n & 3));
+  NVIC_IPR(n >> 2) = (NVIC_IPR(n >> 2) & ~(0xFF << sh)) | (prio << sh);
   NVIC_ISER(n >> 5) = 1 << (n & 0x1F);
 }

@@ -37,9 +37,8 @@ ARM7-LPC214x-G++       - Yet another LPC214X demo but this one is done using
                          ChibiOS/RT users.
 ARM7-AT91SAM7X-GCC     - Port for Atmel AT91SAM7X256. The demo program targets
                          the Olimex SAM7-EX256 board.
-ARMCM3-ST32F103-GCC    - ARM Cortex-M3 port, work in progress, not complete
-                         yet. The demo will target the Olimex STM32-P103
-                         board.
+ARMCM3-ST32F103-GCC    - ARM Cortex-M3 port. The demo targets the Olimex
+                         STM32-P103 board.
 AVR-AVRmega128-GCC     - Port on AVRmega128. A special thanks to Vladimir for
                          the work done on the AVR port. The demo program
                          targets the Olimex AVR-MT-128 mini terminal board.
@@ -64,12 +63,13 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.6.3 ***
+- NEW: ARM Cortex-M3 port completed. The demo program targets the STM32F103
+  chip from ST Microelectronics on an Olimex STM32-P103 board.
 - Fixed a minor error in ./ports/ARM7/vic.h, it should not affect anything.
 - Minor bug fix: in chThdCreate() a working area size equal to UserStackSize(0)
   was asserted as an error when in debug mode. It is now allowed.
 - Increased the stack size for the threads in the test suite to 128 bytes
   because THUMB/THUMB2 modes seem to use a lot more stack than ARM mode.
-- More work done on the ARM-CM3 port but it does not pass the test suite yet.
 
 *** 0.6.2 ***
 - NEW: Added C++ wrapper around the ChibiOS/RT core APIs, now it is possible
