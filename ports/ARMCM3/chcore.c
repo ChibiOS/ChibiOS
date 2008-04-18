@@ -39,14 +39,6 @@ void chSysPuts(char *msg) {
 }
 
 /*
- * Context switch.
- */
-void chSysSwitchI(Thread *otp, Thread *ntp) {
-
-  asm volatile ("svc     #0");
-}
-
-/*
  * System halt.
  */
 __attribute__((naked, weak))

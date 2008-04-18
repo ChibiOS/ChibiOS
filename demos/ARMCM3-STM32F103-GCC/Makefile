@@ -89,9 +89,9 @@ ULIBS =
 #       chconf.h.
 # NOTE: -falign-functions=16 may improve the performance, not always, but
 #       increases the code size.
-OPT = -O2 -ggdb -fomit-frame-pointer
+OPT = -O2 -ggdb -fomit-frame-pointer -mabi=apcs-gnu
 #OPT += -ffixed-r7
-#OPT += -falign-functions=16
+OPT += -falign-functions=16
 
 # Define warning options here
 WARN = -Wall -Wstrict-prototypes

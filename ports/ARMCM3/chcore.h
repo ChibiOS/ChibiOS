@@ -78,16 +78,19 @@ typedef struct {
 }
 
 #define chSysLock() {                                                   \
-  asm volatile ("push    {r3}");                                        \
-  asm volatile ("movs    r3, #0x10");                                   \
-  asm volatile ("msr     BASEPRI, r3");                                 \
-  asm volatile ("pop     {r3}");                                        \
+  register uint32_t tmp asm ("r3");                                     \
+  asm volatile ("movs    %0, #0x10" : "=r" (tmp): );                    \
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
 }
 #define chSysUnlock() {                                                 \
-  asm volatile ("push    {r3}");                                        \
-  asm volatile ("movs    r3, #0");                                      \
-  asm volatile ("msr     BASEPRI, r3");                                 \
-  asm volatile ("pop     {r3}");                                        \
+  register uint32_t tmp asm ("r3");                                     \
+  asm volatile ("movs    %0, #0" : "=r" (tmp): );                       \
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
+}
+#define chSysSwitchI(otp, ntp) {                                        \
+  register Thread *_otp asm ("r0") = (otp);                             \
+  register Thread *_ntp asm ("r1") = (ntp);                             \
+  asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp));               \
 }
 
 #define INT_REQUIRED_STACK 0
@@ -109,7 +112,6 @@ typedef struct {
 void _IdleThread(void *p) __attribute__((noreturn));
 
 void chSysHalt(void);
-void chSysSwitchI(Thread *otp, Thread *ntp);
 void chSysPuts(char *msg);
 void threadstart(void);
 
