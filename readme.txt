@@ -53,7 +53,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Look into importing *or* implementing a TCP/IP stack and a File System.
 - Evaluate other architectures for a possible ChibiOS/RT port. An important
   selection parameter will be the availability of FOSS toolchains. Currently
-  we are evaluating the Cortex-M3 and the MSP430.
+  we are evaluating the MSP430 and the MicroBlaze.
 - Creation of a reduced ChibiOS/RT kernel targeted to lesser 8bit micros and
   educational purposes, the name will probably be ChibiOS/SX, we are still
   discussing it.
@@ -65,10 +65,12 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** 0.6.3 ***
 - NEW: ARM Cortex-M3 port completed. The demo program targets the STM32F103
   chip from ST Microelectronics on an Olimex STM32-P103 board.
-- Fixed a minor error in ./ports/ARM7/vic.h, it should not affect anything.
-- Minor bug fix: in chThdCreate() a working area size equal to UserStackSize(0)
-  was asserted as an error when in debug mode. It is now allowed.
-- Increased the stack size for the threads in the test suite to 128 bytes
+- FIX: Fixed a minor error in ./ports/ARM7-LPC214x/vic.h, it should not affect
+  anything.
+- FIX: Minor fix: in chThdCreate() a working area size equal to
+  UserStackSize(0) was asserted as an error when in debug mode. It is now
+  allowed.
+- FIX: Increased the stack size for the threads in the test suite to 128 bytes
   because THUMB/THUMB2 modes seem to use a lot more stack than ARM mode.
 
 *** 0.6.2 ***
