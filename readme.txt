@@ -65,9 +65,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** 0.6.4 ***
 - Modified the ARM demos makefiles in order to make them more compatible with
   GCC 4.3.0, it seems the new GCC assumes -mthumb-interworking and -mabi=apcs
-  by default, now the makefiles explictly assert -mno-thumb-interworking and
-  -mabi=apcs-gnu in order to produce better code. CodeSourcery's compilers
-  also share this behaviour.
+  by default, at least the builds I tested did so, now the makefiles
+  explicitly assert -mno-thumb-interworking and -mabi=apcs-gnu in order to
+  produce better code.
 - In the ARM7 and ARMCM3 ports chanced the bool_t base type from int8_t to
   int32_t, this produces a bit faster and smaller code.
   
