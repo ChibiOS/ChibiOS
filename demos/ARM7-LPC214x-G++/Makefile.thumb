@@ -111,7 +111,7 @@ TOPT = -mthumb -D THUMB
 #       chconf.h.
 # NOTE: -falign-functions=16 may improve the performance, not always, but
 #       increases the code size.
-OPT = -O2 -ggdb -fomit-frame-pointer
+OPT = -O2 -ggdb -fomit-frame-pointer -mabi=apcs-gnu
 #OPT += -ffixed-r7
 OPT += -falign-functions=16
 
@@ -161,11 +161,15 @@ ifneq ($(TSRC),)
     LDFLAGS += -mthumb-interwork
   else
     # Pure THUMB case, THUMB C code cannot be called by ARM asm code directly.
-    CFLAGS += -D THUMB_NO_INTERWORKING
-    CPPFLAGS += -D THUMB_NO_INTERWORKING
-    LDFLAGS += -mthumb
+    CFLAGS += -mno-thumb-interwork -D THUMB_NO_INTERWORKING
+    CPPFLAGS += -mno-thumb-interwork -D THUMB_NO_INTERWORKING
+    LDFLAGS += -mno-thumb-interwork -mthumb
     ASFLAGS += -D THUMB_NO_INTERWORKING
   endif
+else
+  CPFLAGS += -mno-thumb-interwork
+  CPPFLAGS += -mno-thumb-interwork
+  LDFLAGS += -mno-thumb-interwork
 endif
 
 # Generate dependency information

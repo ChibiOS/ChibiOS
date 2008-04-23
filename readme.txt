@@ -62,6 +62,13 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.6.4 ***
+- Modified the ARM demos makefiles in order to make them more compatible with
+  GCC 4.3.0, it seems the new GCC assumes -mthumb-interworking and -mabi=apcs
+  by default, now the makefiles explictly assert -mno-thumb-interworking and
+  -mabi=apcs-gnu in order to produce better code. CodeSourcery's compilers
+  also share this behaviour.
+  
 *** 0.6.3 ***
 - NEW: ARM Cortex-M3 port completed. The demo program targets the STM32F103
   chip from ST Microelectronics on an Olimex STM32-P103 board.
