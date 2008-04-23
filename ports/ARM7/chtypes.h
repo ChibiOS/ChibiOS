@@ -28,7 +28,7 @@
 #include <stdint.h>
 #endif
 
-typedef int8_t          bool_t;
+typedef int32_t         bool_t;
 typedef uint8_t         tmode_t;
 typedef uint8_t         tstate_t;
 typedef uint16_t        tid_t;
@@ -39,6 +39,6 @@ typedef uint32_t        eventmask_t;
 typedef uint32_t        systime_t;
 typedef int32_t         cnt_t;
 
-#define INLINE      inline
+#define INLINE inline
 
 #endif /* _CHTYPES_H_ */

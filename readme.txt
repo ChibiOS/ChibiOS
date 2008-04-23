@@ -68,6 +68,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   by default, now the makefiles explictly assert -mno-thumb-interworking and
   -mabi=apcs-gnu in order to produce better code. CodeSourcery's compilers
   also share this behaviour.
+- In the ARM7 and ARMCM3 ports chanced the bool_t base type from int8_t to
+  int32_t, this produces a bit faster and smaller code.
   
 *** 0.6.3 ***
 - NEW: ARM Cortex-M3 port completed. The demo program targets the STM32F103
@@ -89,7 +91,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   example of C++ used for an embedded application. The demo does not use RTTI
   nor standard libraries so the resulting code is very compact.
 - Enhanced the chSemSignalWait() API to return the wakeup message just like
-  the other "Wait" semaphore functions.
+  the other "Wait" semaphore functions do.
 - Fixed a minor problem in the ARM7 port, the extctx structure definition was
   missing one field, the effect was to allocate stacks 4 bytes shorter than
   the declared size.
