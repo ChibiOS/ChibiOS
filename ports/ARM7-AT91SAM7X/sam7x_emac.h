@@ -65,6 +65,7 @@ typedef struct {
 extern "C" {
 #endif
   void InitEMAC(int prio);
+  void EMACSetAddress(uint8_t *eaddr);
   bool_t EMACTransmit(uint8_t *buf, size_t size);
 #ifdef __cplusplus
 }

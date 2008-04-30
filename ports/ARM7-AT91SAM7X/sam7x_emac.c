@@ -30,6 +30,7 @@ static uint8_t rbuffers[128 * EMAC_RECEIVE_BUFFERS] __attribute__((aligned(4)));
 
 EventSource TransmitDone, ReceiveNotEmpty;
 
+#define PHY_ADDRESS 1
 #define AT91C_PB15_ERXDV AT91C_PB15_ERXDV_ECRSDV
 #define EMAC_PIN_MASK (AT91C_PB1_ETXEN  | AT91C_PB2_ETX0   | \
                        AT91C_PB3_ETX1   | AT91C_PB4_ECRS   | \
@@ -40,6 +41,33 @@ EventSource TransmitDone, ReceiveNotEmpty;
                        AT91C_PB13_ERX2  | AT91C_PB14_ERX3  | \
                        AT91C_PB15_ERXDV | AT91C_PB16_ECOL  | \
                        AT91C_PB17_ERXCK)
+
+/*
+ * PHY utilities.
+ */
+static uint32_t phy_get(uint8_t regno) {
+
+  AT91C_BASE_EMAC->EMAC_MAN = (1 << 30) |               // SOF = 01
+                              (2 << 28) |               // RW = 10
+                              (PHY_ADDRESS << 23) |
+                              (regno << 18) |
+                              (2 << 16);                // CODE = 10
+  while (!( AT91C_BASE_EMAC->EMAC_NSR & AT91C_EMAC_IDLE))
+    ;
+  return AT91C_BASE_EMAC->EMAC_MAN & 0xFFFF;
+}
+
+static void phy_put(uint8_t regno, uint32_t val) {
+
+  AT91C_BASE_EMAC->EMAC_MAN = (1 << 30) |               // SOF = 01
+                              (1 << 28) |               // RW = 01
+                              (PHY_ADDRESS << 23) |
+                              (regno << 18) |
+                              (2 << 16) |               // CODE = 10
+                              val;
+  while (!( AT91C_BASE_EMAC->EMAC_NSR & AT91C_EMAC_IDLE))
+    ;
+}
 
 /*
  * EMAC subsystem initialization.
@@ -84,10 +112,29 @@ void InitEMAC(int prio) {
   /*
    * EMAC setup.
    */
-  AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_MPE;  // Enable Management Port.
-  AT91C_BASE_EMAC->EMAC_NCFGR |= 2 << 10;       // CLK = MCK / 32
+  AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_MPE;          // Enable Management Port
+  AT91C_BASE_EMAC->EMAC_NCFGR |= 2 << 10;               // CLK = MCK / 32
 
   chThdSleep(5);
+
+  (void)phy_get(MII_BMCR);
+  phy_put(MII_BMCR, phy_get(MII_BMCR) & ~BMCR_ISOLATE); // Disable ISOLATE
+
+  AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;         // Disable Management Port
+
+  AT91C_BASE_EMAC->EMAC_USRIO = AT91C_EMAC_CLKEN;       // Enable EMAC in MII mode
+
+
+}
+
+/*
+ * Set the MAC address.
+ */
+void EMACSetAddress(uint8_t *eaddr) {
+
+  AT91C_BASE_EMAC->EMAC_SA1L = (AT91_REG)((eaddr[3] << 24) | (eaddr[2] << 16) |
+                                          (eaddr[1] << 8) | eaddr[0]);
+  AT91C_BASE_EMAC->EMAC_SA1H = (AT91_REG)((eaddr[5] << 8) | eaddr[4]);
 }
 
 /*

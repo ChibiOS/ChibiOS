@@ -149,4 +149,8 @@
 #define LPA_1000FULL            0x0800  /* Link partner 1000BASE-T full duplex */
 #define LPA_1000HALF            0x0400  /* Link partner 1000BASE-T half duplex */
 
+#define MII_DM9161_ID     0x0181b8a0
+#define MII_AM79C875_ID   0x00225540
+#define MII_MICREL_ID     0x00221610
+
 #endif /* _MII_H_ */
