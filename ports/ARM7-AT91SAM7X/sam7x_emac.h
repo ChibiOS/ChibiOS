@@ -20,9 +20,6 @@
 #ifndef _SAM7X_EMAC_H_
 #define _SAM7X_EMAC_H_
 
-#define EMAC_RECEIVE_BUFFERS    60
-#define EMAC_TRANSMIT_BUFFERS   12
-
 typedef struct {
   uint32_t      w1;
   uint32_t      w2;
@@ -66,7 +63,7 @@ extern "C" {
 #endif
   void InitEMAC(int prio);
   void EMACSetAddress(uint8_t *eaddr);
-  bool_t EMACTransmit(uint8_t *buf, size_t size);
+  bool_t EMACTransmit(uint8_t *hdr, size_t hsize, uint8_t *data, size_t dsize);
 #ifdef __cplusplus
 }
 #endif

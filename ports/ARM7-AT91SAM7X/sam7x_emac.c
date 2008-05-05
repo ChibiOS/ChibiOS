@@ -24,9 +24,16 @@
 #include "mii.h"
 #include "at91lib/aic.h"
 
+#define EMAC_RECEIVE_BUFFERS            25
+#define EMAC_RECEIVE_BUFFERS_SIZE       128
+#define EMAC_TRANSMIT_BUFFERS           2
+#define EMAC_TRANSMIT_BUFFERS_SIZE      1518
+
+
 static BufDescriptorEntry rent[EMAC_RECEIVE_BUFFERS] __attribute__((aligned(4)));
-//static BufDescriptorEntry tent[EMAC_TRANSMIT_BUFFERS] __attribute__((aligned(4)));
-static uint8_t rbuffers[128 * EMAC_RECEIVE_BUFFERS] __attribute__((aligned(4)));
+static uint8_t rbuffers[EMAC_RECEIVE_BUFFERS * EMAC_RECEIVE_BUFFERS_SIZE] __attribute__((aligned(4)));
+static BufDescriptorEntry tent[EMAC_TRANSMIT_BUFFERS] __attribute__((aligned(4)));
+static uint8_t tbuffers[EMAC_TRANSMIT_BUFFERS * EMAC_TRANSMIT_BUFFERS_SIZE] __attribute__((aligned(4)));
 
 EventSource TransmitDone, ReceiveNotEmpty;
 
@@ -75,11 +82,20 @@ static void phy_put(uint8_t regno, uint32_t val) {
 void InitEMAC(int prio) {
   int i;
 
+  /*
+   * Buffers initialization.
+   */
   for (i = 0; i < EMAC_RECEIVE_BUFFERS; i++) {
-    rent[i].w1 = (uint32_t)&rbuffers[i * 128];
+    rent[i].w1 = (uint32_t)&rbuffers[i * EMAC_RECEIVE_BUFFERS_SIZE];
     rent[i].w2 = 0;
   }
   rent[EMAC_RECEIVE_BUFFERS - 1].w1 |= W1_R_WRAP;
+
+  for (i = 0; i < EMAC_TRANSMIT_BUFFERS; i++) {
+    rent[i].w1 = ((uint32_t)&tbuffers[i * EMAC_TRANSMIT_BUFFERS_SIZE]) | W2_T_USED;
+    tent[i].w2 = 0;
+  }
+  tent[EMAC_TRANSMIT_BUFFERS - 1].w1 |= W2_T_WRAP;
 
   /*
    * Disables default pullups, the PHY has an internal pulldowns.
@@ -90,9 +106,9 @@ void InitEMAC(int prio) {
   /*
    * PHY powerdown.
    */
-  AT91C_BASE_PIOB->PIO_OER = PIOB_PHY_PD;       // Becomes an output.
-  AT91C_BASE_PIOB->PIO_PPUDR = PIOB_PHY_PD;     // Default pullup disabled.
-  AT91C_BASE_PIOB->PIO_CODR = PIOB_PHY_PD;      // Output to low level.
+  AT91C_BASE_PIOB->PIO_OER = PIOB_PHY_PD;               // Becomes an output.
+  AT91C_BASE_PIOB->PIO_PPUDR = PIOB_PHY_PD;             // Default pullup disabled.
+  AT91C_BASE_PIOB->PIO_CODR = PIOB_PHY_PD;              // Output to low level.
 
   /*
    * PHY reset by pulsing the NRST pin.
@@ -107,23 +123,34 @@ void InitEMAC(int prio) {
    */
   AT91C_BASE_PIOB->PIO_ASR = EMAC_PIN_MASK;
   AT91C_BASE_PIOB->PIO_PDR = EMAC_PIN_MASK;
-  AT91C_BASE_PIOB->PIO_PPUDR = EMAC_PIN_MASK; // ?????
+  AT91C_BASE_PIOB->PIO_PPUDR = EMAC_PIN_MASK; // Really needed ?????
 
   /*
    * EMAC setup.
    */
-  AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_MPE;          // Enable Management Port
-  AT91C_BASE_EMAC->EMAC_NCFGR |= 2 << 10;               // CLK = MCK / 32
-
-  chThdSleep(5);
-
+  AT91C_BASE_EMAC->EMAC_NCR = AT91C_EMAC_MPE;           // Enable Management Port
+  AT91C_BASE_EMAC->EMAC_NCFGR = 2 << 10;                // MDC-CLK = MCK / 32
+  chThdSleep(5); // It could perform one or more dummy phy_get() instead.
   (void)phy_get(MII_BMCR);
   phy_put(MII_BMCR, phy_get(MII_BMCR) & ~BMCR_ISOLATE); // Disable ISOLATE
-
-  AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;         // Disable Management Port
+  AT91C_BASE_EMAC->EMAC_NCR = 0;                        // Disable Management Port
 
   AT91C_BASE_EMAC->EMAC_USRIO = AT91C_EMAC_CLKEN;       // Enable EMAC in MII mode
 
+  AT91C_BASE_EMAC->EMAC_RBQP = (AT91_REG)rent;          // RX buffers list
+  AT91C_BASE_EMAC->EMAC_TBQP = (AT91_REG)tent;          // TX buffers list
+
+  AT91C_BASE_EMAC->EMAC_RSR = AT91C_EMAC_OVR |
+                              AT91C_EMAC_REC |
+                              AT91C_EMAC_BNA;           // Clears RSR
+
+  AT91C_BASE_EMAC->EMAC_NCFGR |= AT91C_EMAC_CAF |
+                                 AT91C_EMAC_NBC |
+                                 AT91C_EMAC_DRFCS;      // Initial NCFGR settings
+
+  AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TE |
+                               AT91C_EMAC_RE |
+                               AT91C_EMAC_CLRSTAT;      // Initial NCR settings
 
 }
 
@@ -138,7 +165,9 @@ void EMACSetAddress(uint8_t *eaddr) {
 }
 
 /*
- * Transmits a data buffer (whole ethernet frame).
+ * Transmits an ethernet frame.
  */
-//bool_t EMACTransmit(uint8_t *buf, size_t size) {
-//}
+bool_t EMACTransmit(uint8_t *hdr, size_t hsize, uint8_t *data, size_t dsize) {
+
+  return FALSE;
+}
