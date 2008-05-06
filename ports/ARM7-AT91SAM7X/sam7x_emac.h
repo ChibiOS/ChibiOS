@@ -63,9 +63,11 @@ extern "C" {
 #endif
   void InitEMAC(int prio);
   void EMACSetAddress(uint8_t *eaddr);
-  bool_t EMACTransmit(uint8_t *hdr, size_t hsize, uint8_t *data, size_t dsize);
+  bool_t EMACTransmit(uint8_t *hdr, uint8_t *data, size_t size);
 #ifdef __cplusplus
 }
 #endif
+
+extern EventSource EMACFrameTransmitted, EMACFrameReceived;
 
 #endif /* _SAM7X_EMAC_H_ */

@@ -55,8 +55,8 @@
 #define PIOB_SW2        (1 << 25)
 #define PIOB_PHY_IRQ    (1 << 26)
 #define PIOB_PB27_AD0   (1 << 27)
-#define PIOB_PB27_AD1   (1 << 28)
-#define PIOB_PB27_AD2   (1 << 29)
-#define PIOB_PB27_AD3   (1 << 30)
+#define PIOB_PB28_AD1   (1 << 28)
+#define PIOB_PB29_AD2   (1 << 29)
+#define PIOB_PB30_AD3   (1 << 30)
 
 #endif /* _BOARD_H_ */
