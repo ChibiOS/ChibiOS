@@ -63,7 +63,7 @@ static void ServeInterrupt(AT91PS_USART u, FullDuplexDriver *com) {
     SetError(u->US_CSR, com);
     u->US_CR = AT91C_US_RSTSTA;
   }
-  AT91C_BASE_AIC->AIC_EOICR = 0;                                        \
+  AT91C_BASE_AIC->AIC_EOICR = 0;
 }
 
 __attribute__((naked, weak))

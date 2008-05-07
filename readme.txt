@@ -70,7 +70,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   produce better code.
 - In the ARM7 and ARMCM3 ports chanced the bool_t base type from int8_t to
   int32_t, this produces a bit faster and smaller code.
-  
+- Small fixes to the template files, there were some leftovers of the old
+  type names.
+
 *** 0.6.3 ***
 - NEW: ARM Cortex-M3 port completed. The demo program targets the STM32F103
   chip from ST Microelectronics on an Olimex STM32-P103 board.

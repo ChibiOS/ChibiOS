@@ -76,7 +76,7 @@ typedef struct {
  * Macro used to allocate a thread working area aligned as both position and
  * size.
  */
-#define WorkingArea(s, n) BYTE8 s[UserStackSize(n)];
+#define WorkingArea(s, n) uint8_t s[UserStackSize(n)];
 
 /**
  * Enters the ChibiOS/RT system mutual exclusion zone, the implementation is
@@ -115,10 +115,16 @@ typedef struct {
  */
 #define chSysIRQExitI()
 
-void _IdleThread(void *p);
-void chSysHalt(void);
-void chSysSwitchI(Thread *otp, Thread *ntp);
-void chSysPuts(char *msg);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void _IdleThread(void *p);
+  void chSysHalt(void);
+  void chSysSwitchI(Thread *otp, Thread *ntp);
+  void chSysPuts(char *msg);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _CHCORE_H_ */
 

@@ -33,9 +33,9 @@
 #include <stdint.h>
 #endif
 
-typedef int8_t          bool_t;     /* Signed byte boolean. */
-typedef uint8_t         tmode_t;    /* Thread mode flags, BYTE8 is ok. */
-typedef uint8_t         tstate_t;   /* Thread state, BYTE8 is ok. */
+typedef int32_t         bool_t;     /* Signed boolean. */
+typedef uint8_t         tmode_t;    /* Thread mode flags, uint8_t is ok. */
+typedef uint8_t         tstate_t;   /* Thread state, uint8_t is ok. */
 typedef uint16_t        tid_t;      /* Thread id. */
 typedef uint32_t        tprio_t;    /* Priority, use the fastest unsigned type. */
 typedef int32_t         msg_t;      /* Message, use signed pointer equivalent.*/

@@ -82,16 +82,16 @@ static uint32_t phy_get(uint8_t regno) {
 }*/
 
 /*
- * Returns TRUE if the link is active else FALSE.
+ * Returns FALSE if the link is not established.
  * It also setup the link-related EMAC registers.
  */
-static bool_t check_link_status(void) {
+static bool_t get_link_status(void) {
   uint32_t ncfgr, bmsr, bmcr, lpa;
 
   (void)phy_get(MII_BMSR);
   bmsr = phy_get(MII_BMSR);
   if (!(bmsr & BMSR_LSTATUS))
-    return TRUE;
+    return FALSE;
 
   ncfgr = AT91C_BASE_EMAC->EMAC_NCFGR & ~(AT91C_EMAC_SPD | AT91C_EMAC_FD);
   bmcr = phy_get(MII_BMCR);
@@ -109,20 +109,41 @@ static bool_t check_link_status(void) {
       ncfgr |= AT91C_EMAC_FD;
   }
   AT91C_BASE_EMAC->EMAC_NCFGR = ncfgr;
-  return FALSE;
+  return TRUE;
 }
+
+#define RSR_BITS (AT91C_EMAC_BNA | AT91C_EMAC_REC | AT91C_EMAC_OVR)
+#define TSR_BITS (AT91C_EMAC_UBR | AT91C_EMAC_COL | AT91C_EMAC_RLES | \
+                  AT91C_EMAC_BEX | AT91C_EMAC_COMP | AT91C_EMAC_UND)
 
 __attribute__((noinline))
 static void ServeInterrupt(void) {
+  uint32_t isr, rsr, tsr;
+
+  /* Fix for the EMAC errata */
+  isr = AT91C_BASE_EMAC->EMAC_ISR;
+  rsr = AT91C_BASE_EMAC->EMAC_RSR;
+  tsr = AT91C_BASE_EMAC->EMAC_TSR;
+
+  if ((isr & AT91C_EMAC_RCOMP) || (rsr & RSR_BITS)) {
+    if (rsr & AT91C_EMAC_REC)
+      chEvtSendI(&EMACFrameReceived);
+    AT91C_BASE_EMAC->EMAC_RSR = RSR_BITS;
+  }
+
+  if ((isr & AT91C_EMAC_TCOMP) || (tsr & TSR_BITS)) {
+    if (tsr & AT91C_EMAC_COMP)
+      chEvtSendI(&EMACFrameTransmitted);
+    AT91C_BASE_EMAC->EMAC_TSR = TSR_BITS;
+  }
+  AT91C_BASE_AIC->AIC_EOICR = 0;
 }
 
-__attribute__((naked, weak))
+__attribute__((naked))
 void EMACIrqHandler(void) {
 
   chSysIRQEnterI();
-
   ServeInterrupt();
-
   chSysIRQExitI();
 }
 
@@ -216,13 +237,14 @@ void InitEMAC(int prio) {
   if ((phy_get(MII_PHYSID1) != (MII_MICREL_ID >> 16)) ||
       (phy_get(MII_PHYSID2 & 0xFFF0) != (MII_MICREL_ID & 0xFFF0)))
     chDbgPanic("Wrong PHY identifier");
-  if (check_link_status())
+  if (!get_link_status())
     chDbgPanic("No link");
   AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
 
   /*
    * Interrupt setup.
    */
+  AT91C_BASE_EMAC->EMAC_IER = AT91C_EMAC_RCOMP;
   AIC_ConfigureIT(AT91C_ID_EMAC,
                   AT91C_AIC_SRCTYPE_INT_HIGH_LEVEL | prio,
                   EMACIrqHandler);
