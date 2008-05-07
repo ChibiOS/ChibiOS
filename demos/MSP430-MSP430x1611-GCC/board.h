@@ -24,6 +24,9 @@
 #include <msp430x16x.h>
 #endif
 
+#define MCLK 8000000
+#define ACLK 8000000
+
 void hwinit(void);
 
 #endif /* _BOARD_H_ */

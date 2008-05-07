@@ -18,6 +18,7 @@
 */
 
 #include <ch.h>
+#include <signal.h>
 
 #include "board.h"
 
@@ -26,4 +27,23 @@
  * NOTE: Interrupts are still disabled.
  */
 void hwinit(void) {
+
+  /*
+   * I/O ports initialization.
+   */
+
+  /*
+   * Timer 0 setup.
+   */
+  TACCR0 = ACLK / CH_FREQUENCY;         /* Counter limit.               */
+  TACTL = TACLR;                        /* Clean start.                 */
+  TACTL = TASSEL_1 | MC_1;              /* Src=ACLK, cmp=TACCR0.        */
+  TACCTL0 = CCIE;                       /* Interrupt on compare.        */
+}
+
+interrupt(TIMERA0_VECTOR) tmr0irq(void) {
+
+  chSysIRQEnterI();
+  chSysTimerHandlerI();
+  chSysIRQExitI();
 }

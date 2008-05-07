@@ -79,7 +79,7 @@ typedef struct {
 
 #define chSysIRQEnterI()
 #define chSysIRQExitI() {                                               \
-  if (chSchRescRequiredI1())                                            \
+  if (chSchRescRequiredI())                                            \
     chSchDoRescheduleI();                                               \
 }
 
