@@ -20,6 +20,8 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
+#define CH_ARCHITECTURE_ARMCM3
+
 typedef void *regarm;
 
 /*

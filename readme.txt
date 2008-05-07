@@ -43,6 +43,8 @@ AVR-AVRmega128-GCC     - Port on AVRmega128. A special thanks to Vladimir for
                          the work done on the AVR port. The demo program
                          targets the Olimex AVR-MT-128 mini terminal board.
 AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not tested on hardware yet.
+MSP430-MSP430x1611-GCC - Port on Texas Instruments MSP430F1611, not tested on
+                         hardware yet, consider it work in progress.
 Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
                          MinGW version.
 
@@ -63,15 +65,22 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.6.4 ***
-- Modified the ARM demos makefiles in order to make them more compatible with
-  GCC 4.3.0, it seems the new GCC assumes -mthumb-interworking and -mabi=apcs
-  by default, at least the builds I tested did so, now the makefiles
+- NEW: Added a CH_ARCHITECTURE_xxx define to the various chcore.h files, it
+  allows to write port-dependent code.
+- FIX: In the ARM7 and ARMCM3 ports chanced the bool_t base type from int8_t
+  to int32_t, this produces a bit faster and smaller code.
+- FIX: Small fixes to the template files, there were some leftovers of the old
+  type names.
+- FIX: Modified the ARM demos makefiles in order to make them more compatible
+  with GCC 4.3.0, it seems the new GCC assumes -mthumb-interworking and
+  -mabi=apcs by default, at least the builds I tested did so, now the makefiles
   explicitly assert -mno-thumb-interworking and -mabi=apcs-gnu in order to
   produce better code.
-- In the ARM7 and ARMCM3 ports chanced the bool_t base type from int8_t to
-  int32_t, this produces a bit faster and smaller code.
-- Small fixes to the template files, there were some leftovers of the old
-  type names.
+- Work started on the MSP430 port, the port code compiles correctly but it is
+  not tested yet. The port requires the MSPGCC toolchain.
+- Added an Ethernet driver for AT91SAM7X EMAC, not tested yet, it will be
+  required by a uIP web server demo under ChibiOS/RT coming in some next
+  release.
 
 *** 0.6.3 ***
 - NEW: ARM Cortex-M3 port completed. The demo program targets the STM32F103

@@ -26,6 +26,11 @@
 #define _CHCORE_H_
 
 /**
+ * Unique macro for the implemented architecture.
+ */
+#define CH_ARCHITECTURE_XXX
+
+/**
  * Interrupt saved context.
  */
 struct extctx {
