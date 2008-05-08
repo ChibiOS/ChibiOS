@@ -46,10 +46,12 @@ void chSysHalt(void) {
 /**
  * Context switch.
  */
+__attribute__((naked))
 void chSysSwitchI(Thread *otp, Thread *ntp) {
   register struct intctx *sp asm("r1");
 
-  asm volatile ("push    r11                                    \n\t" \
+  asm volatile ("push    r2                                     \n\t" \
+                "push    r11                                    \n\t" \
                 "push    r10                                    \n\t" \
                 "push    r9                                     \n\t" \
                 "push    r8                                     \n\t" \
@@ -66,7 +68,8 @@ void chSysSwitchI(Thread *otp, Thread *ntp) {
                 "pop     r8                                     \n\t" \
                 "pop     r9                                     \n\t" \
                 "pop     r10                                    \n\t" \
-                "pop     r11" : : "r" (sp));
+                "pop     r11                                    \n\t" \
+                "reti" : : "r" (sp));
 }
 
 /**
@@ -77,8 +80,7 @@ void chSysPuts(char *msg) {
 
 void threadstart(void) {
 
-  asm volatile ("eint                                           \n\t" \
-                "mov     r11, r15                               \n\t" \
+  asm volatile ("mov     r11, r15                               \n\t" \
                 "call    r10                                    \n\t" \
                 "call    #chThdExit");
 }

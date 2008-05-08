@@ -20,6 +20,9 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
+#include <iomacros.h>
+#include <msp430/common.h>
+
 #define CH_ARCHITECTURE_MSP430
 
 typedef void *regmsp;
@@ -48,6 +51,7 @@ struct intctx {
   regmsp        r9;
   regmsp        r10;
   regmsp        r11;
+  regmsp        sr;
   regmsp        pc;
 };
 
@@ -61,6 +65,7 @@ typedef struct {
                                    sizeof(struct intctx));              \
   tp->p_ctx.sp->r10 = pf;                                               \
   tp->p_ctx.sp->r11 = arg;                                              \
+  tp->p_ctx.sp->sr = (regmsp)GIE;                                       \
   tp->p_ctx.sp->pc = threadstart;                                       \
 }
 

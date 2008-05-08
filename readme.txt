@@ -43,8 +43,9 @@ AVR-AVRmega128-GCC     - Port on AVRmega128. A special thanks to Vladimir for
                          the work done on the AVR port. The demo program
                          targets the Olimex AVR-MT-128 mini terminal board.
 AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not tested on hardware yet.
-MSP430-MSP430x1611-GCC - Port on Texas Instruments MSP430F1611, not tested on
-                         hardware yet, consider it work in progress.
+MSP430-MSP430x1611-GCC - Port on Texas Instruments MSP430F1611, the demo
+                         targets the Olimex MSP430-P1611 board. It is not
+                         tested on hardware yet, consider it work in progress.
 Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
                          MinGW version.
 
@@ -55,7 +56,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Look into importing *or* implementing a TCP/IP stack and a File System.
 - Evaluate other architectures for a possible ChibiOS/RT port. An important
   selection parameter will be the availability of FOSS toolchains. Currently
-  we are evaluating the MSP430 and the MicroBlaze.
+  we are evaluating the MicroBlaze.
 - Creation of a reduced ChibiOS/RT kernel targeted to lesser 8bit micros and
   educational purposes, the name will probably be ChibiOS/SX, we are still
   discussing it.

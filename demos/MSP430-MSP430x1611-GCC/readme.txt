@@ -4,11 +4,11 @@
 
 ** TARGET **
 
-This is an abstract demo. it is not tested on real hardware yet.
+The demo runs on an Olimex MSP430-P1611 board but it is still untested.
 
 ** The Demo **
 
-Creates a thread that just sleeps in a continuous loop.
+The demo flashes the board LED using a thread.
 
 ** Build Procedure **
 

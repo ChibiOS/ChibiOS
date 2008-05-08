@@ -29,13 +29,43 @@
 void hwinit(void) {
 
   /*
+   * Clock sources setup.
+   */
+  DCOCTL  = VAL_DCOCTL;
+  BCSCTL1 = VAL_BCSCTL1;
+  BCSCTL2 = VAL_BCSCTL2;
+
+  /*
    * I/O ports initialization.
    */
+  P1OUT = VAL_P1OUT;
+  P1DIR = VAL_P1DIR;
+  P1SEL = VAL_P1SEL;
+
+  P2OUT = VAL_P2OUT;
+  P2DIR = VAL_P2DIR;
+  P2SEL = VAL_P2SEL;
+
+  P3OUT = VAL_P3OUT;
+  P3DIR = VAL_P3DIR;
+  P3SEL = VAL_P3SEL;
+
+  P4OUT = VAL_P4OUT;
+  P4DIR = VAL_P4DIR;
+  P4SEL = VAL_P4SEL;
+
+  P5OUT = VAL_P5OUT;
+  P5DIR = VAL_P5DIR;
+  P5SEL = VAL_P5SEL;
+
+  P6OUT = VAL_P6OUT;
+  P6DIR = VAL_P6DIR;
+  P6SEL = VAL_P6SEL;
 
   /*
    * Timer 0 setup.
    */
-  TACCR0 = ACLK / CH_FREQUENCY;         /* Counter limit.               */
+  TACCR0 = ACLK / CH_FREQUENCY - 1;     /* Counter limit.               */
   TACTL = TACLR;                        /* Clean start.                 */
   TACTL = TASSEL_1 | MC_1;              /* Src=ACLK, cmp=TACCR0.        */
   TACCTL0 = CCIE;                       /* Interrupt on compare.        */

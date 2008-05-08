@@ -20,12 +20,66 @@
 #ifndef _BOARD_H_
 #define _BOARD_H_
 
-#ifndef __msp430x16x
 #include <msp430x16x.h>
+
+#define MSP_USE_XT2CLK
+
+#define LFXT1CLK        32768
+#define XT2CLK          8000000
+#define DCOCLK          1000000
+
+#define ACLK            LFXT1CLK
+#ifdef MSP_USE_XT2CLK
+#define MCLK            XT2CLK
+#define SMCLK           (XT2CLK / 8)
+#else
+#define MCLK            DCOCLK
+#define SMCLK           LFXT1CLK
 #endif
 
-#define MCLK 8000000
-#define ACLK 8000000
+#define VAL_DCOCTL      (DCO0 | DCO1)
+#ifdef MSP_USE_XT2CLK
+#define VAL_BCSCTL1     (RSEL2)
+#define VAL_BCSCTL2     (SELM_2 | DIVM_0 | DIVS_3 | SELS)
+#else
+#define VAL_BCSCTL1     (XT2OFF | RSEL2)
+#define VAL_BCSCTL2     (SELM_0 | DIVM_0 | DIVS_0)
+#endif
+
+/*
+ * Pin definitionsfor the Olimex MSP430-P1611 board.
+ */
+#define P3_O_TXD0       (1 << 4)
+#define P3_I_RXD0       (1 << 5)
+#define P6_O_LED        (1 << 0)
+#define P6_I_BUTTON     (1 << 1)
+
+/*
+ * Initial I/O ports settings.
+ */
+#define VAL_P1OUT       0x00
+#define VAL_P1DIR       0xFF
+#define VAL_P1SEL       0x00
+
+#define VAL_P2OUT       0x00
+#define VAL_P2DIR       0xFF
+#define VAL_P2SEL       0x00
+
+#define VAL_P3OUT       P3_O_TXD0
+#define VAL_P3DIR       ~P3_I_RXD0
+#define VAL_P3SEL       0x00
+
+#define VAL_P4OUT       0x00
+#define VAL_P4DIR       0xFF
+#define VAL_P4SEL       0x00
+
+#define VAL_P5OUT       0x00
+#define VAL_P5DIR       0xFF
+#define VAL_P5SEL       0x00
+
+#define VAL_P6OUT       P6_O_LED
+#define VAL_P6DIR       ~P6_I_BUTTON
+#define VAL_P6SEL       0x00
 
 void hwinit(void);
 

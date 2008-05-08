@@ -29,7 +29,9 @@ static WorkingArea(waThread1, 64);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
+    P6OUT |= P6_O_LED;
     chThdSleep(500);
+    P6OUT &= ~P6_O_LED;
     chThdSleep(500);
   }
   return 0;
@@ -61,6 +63,8 @@ int main(int argc, char **argv) {
    * sleeping in a loop.
    */
   while (TRUE) {
+//    if (!(P6IN & P6_I_BUTTON))
+//      TestThread(&COM1);
     chThdSleep(500);
   }
   return 0;
