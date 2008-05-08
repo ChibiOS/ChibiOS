@@ -63,11 +63,11 @@ void hwinit(void) {
   P6SEL = VAL_P6SEL;
 
   /*
-   * Timer 0 setup.
+   * Timer 0 setup, uses SMCLK as source.
    */
-  TACCR0 = ACLK / CH_FREQUENCY - 1;     /* Counter limit.               */
+  TACCR0 = SMCLK / CH_FREQUENCY - 1;    /* Counter limit.               */
   TACTL = TACLR;                        /* Clean start.                 */
-  TACTL = TASSEL_1 | MC_1;              /* Src=ACLK, cmp=TACCR0.        */
+  TACTL = TASSEL_2 | MC_1;              /* Src=SMCLK, cmp=TACCR0.       */
   TACCTL0 = CCIE;                       /* Interrupt on compare.        */
 }
 

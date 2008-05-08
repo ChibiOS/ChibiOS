@@ -118,7 +118,141 @@
  * Applications usually do not need to put code into the system mutex zone
  * unless you are implementing device drivers or special synchronization
  * primitives, everything else can be implemented by using semaphores,
- * messages or events.
+ * mutexes, messages or events.
+ */
+/** @} */
+
+/**
+ * @defgroup Ports Ports
+ * @{
+ * This section describes the technical details for the various supported
+ * ChibiOS/RT ports.
+ */
+/** @} */
+
+/**
+ * @defgroup ARM7 ARM7TDMI
+ * @{
+ * <p>
+ * The ARM7 port makes some assumptions on the application code organization:
+ * <ul>
+ * <li>The \p main() function is invoked in system mode and with interrupts
+ *     disabled.</li>
+ * <li>Each thread has a private user/system stack, the system has a single
+ *     interrupt stack where all the interrupts are processed.</li>
+ * <li>The threads are started in system mode.</li>
+ * <li>The threads code can run in system mode or user mode, however the
+ *     code running in user mode cannot invoke the ChibiOS/RT APIs directly
+ *     because privileged instructions are used inside.<br>
+ *     The kernel APIs can be eventually invoked by using a SWI entry point
+ *     that handles the switch in system mode and the return in user mode.</li>
+ * <li>Other modes are not preempt-able because the system code assumes the
+ *     threads running in system mode. When running in supervisor or other
+ *     modes make sure that the interrupts are globally disabled.</li>
+ * <li>Interrupts nesting is not supported in the ARM7 code because their
+ *     implementation, even if possible, is not really efficient in this
+ *     architecture.</li>
+ * <li>FIQ sources can preempt the kernel (by design) so it is not possible to
+ *     invoke the kernel APIs from inside a FIQ handler.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * The ARM7 port is shared by multiple demos targeted to various implementations:
+ * </p>
+ * @ingroup Ports
+ */
+/** @} */
+
+/**
+ * @defgroup LPC214x LPC214x Support
+ * @{
+ * <p>
+ * The LPC214x support includes:
+ * <ul>
+ * <li>VIC support code.</li>
+ * <li>Buffered, interrupt driver, serial driver.</li>
+ * <li>SSP driver.</li>
+ * <li>A MMC/SD demo driver.</li>
+ * <li>A buzzer demo driver.</li>
+ * <li>A minimal demo, useful as project template.</li>
+ * <li>A demo supporting the kernel test suite.</li>
+ * <li>A C++ demo supporting the kernel test suite.</li>
+ * </ul>
+ * </p>
+ * @ingroup ARM7
+ */
+/** @} */
+
+/**
+ * @defgroup AT91SAM7X AT91SAM7X Support
+ * @{
+ * <p>
+ * The AT91SAM7X support includes:
+ * <ul>
+ * <li>Buffered, interrupt driver, serial driver.</li>
+ * <li>A demo supporting the kernel test suite.</li>
+ * </ul>
+ * </p>
+ * @ingroup ARM7
+ */
+/** @} */
+
+/**
+ * @defgroup ARMCM3 ARM Cortex-M3
+ * @{
+ * <p>
+ * The ARM Cortex-M3 port is organized as follow:
+ * </p>
+ * <ul>
+ * <li>The \p main() function is invoked in thread-privileged mode.</li>
+ * <li>Each thread has a private process stack, the system has a single main
+ *     stack where all the interrupts and exceptions are processed.</li>
+ * <li>Only the 4 MSb of the priority level are used, the 4 LSb are assumed
+ *     to be zero.</li>
+ * <li>The threads are started in thread-privileged mode with BASEPRI level
+ *     0x00 (disabled).</li>
+ * <li>The kernel raises its BASEPRI level to 0x10 in order to protect the
+ *     system mutex zones. Note that exceptions with level 0x00 can preempt
+ *     the kernel, such exception handlers cannot invoke kernel APIs directly.</li>
+ * <li>Interrupt nesting and the other advanced NVIC features are supported.</li>
+ * <li>The SVC instruction and vector, with parameter #0,  is internally used
+ *     for commanded context switching.<br>
+ *     It is possible to share the SVC handler at the cost of slower context
+ *     switching.</li>
+ * <li>The PendSV vector is internally used for preemption context switching.</li>
+ * </ul>
+ * @ingroup Ports
+ */
+/** @} */
+
+/**
+ * @defgroup AVR MegaAVR
+ * @{
+ * <p>
+ * Notes about the AVR port:
+ * </p>
+ * <ul>
+ * <li>The AVR does not have a dedicated interrupt stack, make sure to reserve
+ *     enough stack space for interrupts in each thread stack. This can be done
+ *     by modifying the \p INT_REQUIRED_STACK macro into \p ports/AVR/chcore.h.</li>
+ * </ul>
+ * @ingroup Ports
+ */
+/** @} */
+
+/**
+ * @defgroup MSP430 MSP430
+ * @{
+ * <p>
+ * Notes about the MSP430 port:
+ * </p>
+ * <ul>
+ * <li>In the current version the MSP430 port is still untested.</li>
+ * <li>The MSP430 does not have a dedicated interrupt stack, make sure to reserve
+ *     enough stack space for interrupts in each thread stack. This can be done
+ *     by modifying the \p INT_REQUIRED_STACK macro into \p ports/MSP430/chcore.h.</li>
+ * </ul>
+ * @ingroup Ports
  */
 /** @} */
 

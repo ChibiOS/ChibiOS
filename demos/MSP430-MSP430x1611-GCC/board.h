@@ -22,6 +22,9 @@
 
 #include <msp430x16x.h>
 
+/*
+ * Clock settings.
+ */
 #define MSP_USE_XT2CLK
 
 #define LFXT1CLK        32768
@@ -34,7 +37,7 @@
 #define SMCLK           (XT2CLK / 8)
 #else
 #define MCLK            DCOCLK
-#define SMCLK           LFXT1CLK
+#define SMCLK           DCOCLK
 #endif
 
 #define VAL_DCOCTL      (DCO0 | DCO1)

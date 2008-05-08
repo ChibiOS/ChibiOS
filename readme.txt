@@ -66,10 +66,15 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.6.4 ***
+- NEW: MSP430 port, the port code compiles correctly but it is not tested yet.
+  The port requires the MSPGCC toolchain.
 - NEW: Added a CH_ARCHITECTURE_xxx define to the various chcore.h files, it
   allows to write port-dependent code.
+- NEW: Added to the documentation the technical notes about the currently
+  supported ports.
 - FIX: In the ARM7 and ARMCM3 ports chanced the bool_t base type from int8_t
   to int32_t, this produces a bit faster and smaller code.
+  It is nowhere required the bool_t type to be one byte sized.
 - FIX: Small fixes to the template files, there were some leftovers of the old
   type names.
 - FIX: Modified the ARM demos makefiles in order to make them more compatible
@@ -77,9 +82,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   -mabi=apcs by default, at least the builds I tested did so, now the makefiles
   explicitly assert -mno-thumb-interworking and -mabi=apcs-gnu in order to
   produce better code.
-- Work started on the MSP430 port, the port code compiles correctly but it is
-  not tested yet. The port requires the MSPGCC toolchain.
-- Added an Ethernet driver for AT91SAM7X EMAC, not tested yet, it will be
+- Added an Ethernet driver for AT91SAM7X EMAC, not complete yet, it will be
   required by a uIP web server demo under ChibiOS/RT coming in some next
   release.
 
