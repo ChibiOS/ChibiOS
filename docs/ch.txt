@@ -170,7 +170,7 @@
  * The LPC214x support includes:
  * <ul>
  * <li>VIC support code.</li>
- * <li>Buffered, interrupt driver, serial driver.</li>
+ * <li>Buffered, interrupt driven, serial driver.</li>
  * <li>SSP driver.</li>
  * <li>A MMC/SD demo driver.</li>
  * <li>A buzzer demo driver.</li>
@@ -189,7 +189,7 @@
  * <p>
  * The AT91SAM7X support includes:
  * <ul>
- * <li>Buffered, interrupt driver, serial driver.</li>
+ * <li>Buffered, interrupt driven, serial driver.</li>
  * <li>A demo supporting the kernel test suite.</li>
  * </ul>
  * </p>
