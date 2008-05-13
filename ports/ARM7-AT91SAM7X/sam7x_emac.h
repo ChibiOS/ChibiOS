@@ -47,8 +47,11 @@ typedef struct {
 #define W2_R_MULTICAST_MATCH    0x40000000
 #define W2_R_BROADCAST_DETECTED 0x80000000
 
+#define W1_T_BUFFER_MASK        0xFFFFFFFC
+
 #define W2_T_LENGTH_MASK        0x000007FF
-#define W2_T_RFU1               0x00003800
+#define W2_T_LOCKED             0x00000800 /* Not an EMAC flag, used by the driver */
+#define W2_T_RFU1               0x00003000
 #define W2_T_LAST_BUFFER        0x00004000
 #define W2_T_NO_CRC             0x00008000
 #define W2_T_RFU2               0x07FF0000
@@ -58,12 +61,19 @@ typedef struct {
 #define W2_T_WRAP               0x40000000
 #define W2_T_USED               0x80000000
 
+struct MACHeader {
+  uint8_t       destination[6];
+  uint8_t       source[6];
+  uint8_t       ethertype[2];
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
   void InitEMAC(int prio);
   void EMACSetAddress(uint8_t *eaddr);
-  bool_t EMACTransmit(uint8_t *hdr, uint8_t *data, size_t size);
+  bool_t EMACTransmit(struct MACHeader *hdr, uint8_t *data, size_t size);
+  bool_t EMACReceive(uint8_t *buf, size_t *sizep);
 #ifdef __cplusplus
 }
 #endif
