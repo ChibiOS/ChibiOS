@@ -26,7 +26,7 @@
 #include "mii.h"
 #include "at91lib/aic.h"
 
-#define EMAC_RECEIVE_BUFFERS            25
+#define EMAC_RECEIVE_BUFFERS            24
 #define EMAC_RECEIVE_BUFFERS_SIZE       128
 #define EMAC_TRANSMIT_BUFFERS           2
 #define EMAC_TRANSMIT_BUFFERS_SIZE      1518
@@ -39,11 +39,11 @@ static uint8_t default_mac[] = {0xAA, 0x55, 0x13, 0x37, 0x01, 0x10};
 
 static BufDescriptorEntry rent[EMAC_RECEIVE_BUFFERS] __attribute__((aligned(8)));
 static uint8_t rbuffers[EMAC_RECEIVE_BUFFERS * EMAC_RECEIVE_BUFFERS_SIZE] __attribute__((aligned(8)));
-static unsigned rxidx;
+static BufDescriptorEntry *rxptr;
 
 static BufDescriptorEntry tent[EMAC_TRANSMIT_BUFFERS] __attribute__((aligned(8)));
 static uint8_t tbuffers[EMAC_TRANSMIT_BUFFERS * EMAC_TRANSMIT_BUFFERS_SIZE] __attribute__((aligned(8)));
-static unsigned txidx;
+static BufDescriptorEntry *txptr;
 
 #define PHY_ADDRESS 1
 #define AT91C_PB15_ERXDV AT91C_PB15_ERXDV_ECRSDV
@@ -171,13 +171,13 @@ void InitEMAC(int prio) {
     rent[i].w2 = 0;
   }
   rent[EMAC_RECEIVE_BUFFERS - 1].w1 |= W1_R_WRAP;
-  rxidx = 0;
+  rxptr = rent;
   for (i = 0; i < EMAC_TRANSMIT_BUFFERS; i++) {
     tent[i].w1 = ((uint32_t)&tbuffers[i * EMAC_TRANSMIT_BUFFERS_SIZE]);
     tent[i].w2 = EMAC_TRANSMIT_BUFFERS_SIZE | W2_T_LAST_BUFFER | W2_T_USED;
   }
   tent[EMAC_TRANSMIT_BUFFERS - 1].w2 |= W2_T_WRAP;
-  txidx = 0;
+  txptr = tent;
 
   /*
    * Disables the pullups on all the pins that are latched on reset by the PHY.
@@ -283,7 +283,7 @@ void EMACSetAddress(uint8_t *eaddr) {
  */
 bool_t EMACTransmit(struct MACHeader *hdr, uint8_t *data, size_t size) {
   uint8_t *p;
-  unsigned i;
+  BufDescriptorEntry *cptr;
 
   chDbgAssert((hdr != NULL) || (data != NULL),
               "sam7x_emac.c, EMACTransmit #1");
@@ -292,18 +292,18 @@ bool_t EMACTransmit(struct MACHeader *hdr, uint8_t *data, size_t size) {
               "sam7x_emac.c, EMACTransmit #2");
 
   chSysLock();
-  i = txidx;
-  if (!(tent[i].w2 & W2_T_USED) ||
-       (tent[i].w2 & W2_T_LOCKED)) {
+  cptr = txptr;
+  if (!(cptr->w2 & W2_T_USED) ||
+       (cptr->w2 & W2_T_LOCKED)) {
     chSysUnlock();
     return FALSE;
   }
-  tent[i].w2 |= W2_T_LOCKED;        /* Locks the buffer while copying.*/
-  if (++txidx >= EMAC_TRANSMIT_BUFFERS)
-    txidx = 0;
+  cptr->w2 |= W2_T_LOCKED;        /* Locks the buffer while copying.*/
+  if (++txptr >= &tent[EMAC_TRANSMIT_BUFFERS])
+    txptr = tent;
   chSysUnlock();
 
-  p = (uint8_t *)tent[i].w1;
+  p = (uint8_t *)cptr->w1;
   if (hdr) {
     memcpy(p, hdr, sizeof(struct MACHeader));
     p += sizeof(struct MACHeader);
@@ -312,11 +312,11 @@ bool_t EMACTransmit(struct MACHeader *hdr, uint8_t *data, size_t size) {
     memcpy(p, data, size);
     p += size;
   }
-  tent[i].w2 &= ~W2_R_LENGTH_MASK;
-  tent[i].w2 |= p - (uint8_t *)tent[i].w1;
+  cptr->w2 &= ~W2_R_LENGTH_MASK;
+  cptr->w2 |= p - (uint8_t *)cptr->w1;
 
   chSysLock();
-  tent[i].w2 &= ~(W2_T_USED | W2_T_LOCKED);
+  cptr->w2 &= ~(W2_T_USED | W2_T_LOCKED);
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TSTART;
   chSysUnlock();
   return TRUE;
@@ -347,19 +347,19 @@ bool_t EMACReceive(uint8_t *buf, size_t *sizep) {
    * Skips unused buffers, if any.
    */
 skip:
-  while (n && !(rent[rxidx].w1 & W1_R_OWNERSHIP)) {
-    if (++rxidx >= EMAC_RECEIVE_BUFFERS)
-      rxidx = 0;
+  while (n && !(rxptr->w1 & W1_R_OWNERSHIP)) {
+    if (++rxptr >= &rxptr[EMAC_RECEIVE_BUFFERS])
+      rxptr = rent;
     n--;
   }
 
   /*
    * Skips fragments, if any.
    */
-  while (n && (rent[rxidx].w1 & W1_R_OWNERSHIP) && !(rent[rxidx].w2 & W2_R_FRAME_START)) {
-    rent[rxidx].w1 &= ~W1_R_OWNERSHIP;
-    if (++rxidx >= EMAC_RECEIVE_BUFFERS)
-      rxidx = 0;
+  while (n && (rxptr->w1 & W1_R_OWNERSHIP) && !(rxptr->w2 & W2_R_FRAME_START)) {
+    rxptr->w1 &= ~W1_R_OWNERSHIP;
+    if (++rxptr >= &rxptr[EMAC_RECEIVE_BUFFERS])
+      rxptr = rent;
     n--;
   }
 
@@ -370,15 +370,15 @@ restart:
   while (n && !found) {
     size_t segsize;
 
-    if (!(rent[rxidx].w1 & W1_R_OWNERSHIP))
+    if (!(rxptr->w1 & W1_R_OWNERSHIP))
       goto skip;        /* Empty buffer for some reason... */
 
-    if (size && (rent[rxidx].w2 & W2_R_FRAME_START))
+    if (size && (rxptr->w2 & W2_R_FRAME_START))
       goto restart;     /* Another start buffer for some reason... */
 
-    if (rent[rxidx].w2 & W2_R_FRAME_END) {
-      segsize = (rent[rxidx].w2 & W2_T_LENGTH_MASK) - size;
-      if (((rent[rxidx].w2 & W2_T_LENGTH_MASK) > *sizep) ||
+    if (rxptr->w2 & W2_R_FRAME_END) {
+      segsize = (rxptr->w2 & W2_T_LENGTH_MASK) - size;
+      if (((rxptr->w2 & W2_T_LENGTH_MASK) > *sizep) ||
           (segsize > EMAC_RECEIVE_BUFFERS_SIZE))
         overflow = TRUE;
       found = TRUE;
@@ -390,14 +390,14 @@ restart:
     }
 
     if (!overflow) {
-      memcpy(p, (void *)(rent[rxidx].w1 & W1_T_BUFFER_MASK), segsize);
+      memcpy(p, (void *)(rxptr->w1 & W1_T_BUFFER_MASK), segsize);
       p += segsize;
       size += segsize;
     }
 
-    rent[rxidx++].w1 &= ~W1_R_OWNERSHIP;
-    if (rxidx >= EMAC_RECEIVE_BUFFERS)
-      rxidx = 0;
+    rxptr->w1 &= ~W1_R_OWNERSHIP;
+    if (++rxptr >= &rxptr[EMAC_RECEIVE_BUFFERS])
+      rxptr = rent;
     n--;
   }
 
