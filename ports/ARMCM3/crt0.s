@@ -77,8 +77,8 @@ bloop:
         movs    r0, #CONTROL_MODE_PRIVILEGED | CONTROL_USE_PSP
         msr     CONTROL, r0
         isb
-	movs    r0, #0x10
-	msr	BASEPRI, r0
+        movs    r0, #0x10
+        msr     BASEPRI, r0
         cpsie   i
         /*
          * Application-provided HW initialization routine.

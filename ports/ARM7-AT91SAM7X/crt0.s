@@ -39,7 +39,7 @@
  * System entry points.
  */
 _start:
-        b       ResetHandler
+        ldr     pc, _reset
         ldr     pc, _undefined
         ldr     pc, _swi
         ldr     pc, _prefetch
@@ -48,6 +48,8 @@ _start:
         ldr     pc, [pc,#-0xF20]        /* AIC - AIC_IVR */
         ldr     pc, [pc,#-0xF20]        /* AIC - AIC_FVR */
 
+_reset:
+        .word   ResetHandler
 _undefined:
         .word   UndHandler
 _swi:
@@ -58,7 +60,6 @@ _abort:
         .word   AbortHandler
 _fiq:
         .word   FiqHandler
-        .word   0
         .word   0
         .word   0
 
