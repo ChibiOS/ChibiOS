@@ -18,6 +18,7 @@
 */
 
 #include <ch.h>
+#include <test.h>
 
 #include "board.h"
 #include "sam7x_serial.h"
@@ -27,9 +28,9 @@ static msg_t Thread1(void *arg) {
 
   while (TRUE) {
     AT91C_BASE_PIOB->PIO_SODR = PIOB_LCD_BL;            // LCD on.
-    chThdSleep(500);
+    chThdSleep(100);
     AT91C_BASE_PIOB->PIO_CODR = PIOB_LCD_BL;            // LCD off.
-    chThdSleep(500);
+    chThdSleep(900);
   }
   return 0;
 }
@@ -38,7 +39,6 @@ static msg_t Thread1(void *arg) {
  * Entry point, the interrupts are disabled on entry.
  */
 int main(int argc, char **argv) {
-  msg_t TestThread(void *p);
 
   /*
    * The main() function becomes a thread here then the interrupts are

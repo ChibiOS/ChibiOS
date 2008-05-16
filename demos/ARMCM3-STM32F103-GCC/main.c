@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop.
+   * sleeping in a loop and check the button state.
    */
   while (TRUE) {
     if (GPIOA->IDR & GPIOA_BUTTON)

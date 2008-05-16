@@ -65,6 +65,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.6.5 ***
+- Modified the AT91SAM7X256 demo load script in order to make code segments
+  to start at address 0 instead of 0x100000.
+
 *** 0.6.4 ***
 - NEW: MSP430 port, the port code compiles correctly but it is not tested yet.
   The port requires the MSPGCC toolchain.

@@ -64,6 +64,7 @@ UADEFS =
 # List ARM-mode C source files here
 ASRC = ../../ports/ARM7-AT91SAM7X/chcore.c \
        ../../ports/ARM7-AT91SAM7X/sam7x_serial.c \
+       ../../ports/ARM7-AT91SAM7X/sam7x_emac.c \
        ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
        ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chmtx.c \
        ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \
@@ -81,7 +82,7 @@ TSRC =
 ASMSRC = ../../ports/ARM7-AT91SAM7X/crt0.s ../../ports/ARM7/chsys.s
 
 # List all user directories here
-UINCDIR = ../../src/include ../../src/lib \
+UINCDIR = ../../src/include ../../src/lib ../../test \
           ../../ports/ARM7 ../../ports/ARM7-AT91SAM7X
 
 # List the user directory to look for the libraries here

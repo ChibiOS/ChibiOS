@@ -18,6 +18,7 @@
 */
 
 #include <ch.h>
+#include <test.h>
 
 #include "lpc214x.h"
 #include "lpc214x_serial.h"
@@ -63,7 +64,6 @@ static msg_t Thread2(void *arg) {
  * Executed as event handler at 500mS intervals.
  */
 static void TimerHandler(eventid_t id) {
-  msg_t TestThread(void *p);
 
   if (!(IO0PIN & 0x00018000)) { // Both buttons
     TestThread(&COM1);
