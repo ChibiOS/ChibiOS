@@ -76,7 +76,7 @@ extern "C" {
     chDbgPanic(m);                                                      \
 }
 
-#else /* CH_USE_DEBUG */
+#else /* !CH_USE_DEBUG */
 
 #define chDbgInit()
 #define chDbgPanic(msg) {}
