@@ -21,7 +21,8 @@
 #include <test.h>
 
 #include "board.h"
-#include "sam7x_serial.h"
+#include <sam7x_serial.h>
+#include <sam7x_emac.h>
 
 static WorkingArea(waThread1, 64);
 static msg_t Thread1(void *arg) {
@@ -40,6 +41,8 @@ static msg_t Thread1(void *arg) {
  */
 int main(int argc, char **argv) {
 
+  InitEMAC(AT91C_AIC_PRIOR_HIGHEST - 3);
+  
   /*
    * The main() function becomes a thread here then the interrupts are
    * enabled and ChibiOS/RT goes live.

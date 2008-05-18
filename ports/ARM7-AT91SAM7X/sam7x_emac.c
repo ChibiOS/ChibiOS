@@ -246,9 +246,9 @@ void InitEMAC(int prio) {
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_MPE;
   if ((phy_get(MII_PHYSID1) != (MII_MICREL_ID >> 16)) ||
       (phy_get(MII_PHYSID2 & 0xFFF0) != (MII_MICREL_ID & 0xFFF0)))
-    chDbgPanic("Wrong PHY identifier");
+    chSysHalt();
   if (!get_link_status())
-    chDbgPanic("No link");
+    chSysHalt();
   AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
 
   /*
