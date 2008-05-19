@@ -115,7 +115,7 @@ void hwinit(void) {
    */
   AT91C_BASE_PIOB->PIO_CODR   = PIOB_LCD_BL;    // Set to low.
   AT91C_BASE_PIOB->PIO_OER    = PIOB_LCD_BL;    // Configure as output.
-  AT91C_BASE_PIOA->PIO_PPUDR  = PIOB_LCD_BL;    // Disable internal pullup resistor.
+  AT91C_BASE_PIOB->PIO_PPUDR  = PIOB_LCD_BL;    // Disable internal pullup resistor.
 
   AT91C_BASE_PIOA->PIO_SODR   = PIOA_LCD_RESET; // Set to high.
   AT91C_BASE_PIOA->PIO_OER    = PIOA_LCD_RESET; // Configure as output.
