@@ -47,7 +47,8 @@ static BufDescriptorEntry *txptr;
 
 #define PHY_ADDRESS 1
 #define AT91C_PB15_ERXDV AT91C_PB15_ERXDV_ECRSDV
-#define EMAC_PIN_MASK (AT91C_PB1_ETXEN  | AT91C_PB2_ETX0   | \
+#define EMAC_PIN_MASK (AT91C_PB0_ETXCK_EREFCK | \
+                       AT91C_PB1_ETXEN  | AT91C_PB2_ETX0   | \
                        AT91C_PB3_ETX1   | AT91C_PB4_ECRS   | \
                        AT91C_PB5_ERX0   | AT91C_PB6_ERX1   | \
                        AT91C_PB7_ERXER  | AT91C_PB8_EMDC   | \
@@ -210,9 +211,10 @@ void InitEMAC(int prio) {
     ;
 
   /*
-   * EMAC pins setup. Note, PB18 is not included because it is used as #PD
-   * control and not as EF100.
+   * EMAC pins setup and clock enable. Note, PB18 is not included because it is
+   * used as #PD control and not as EF100.
    */
+  AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_EMAC;
   AT91C_BASE_PIOB->PIO_ASR = EMAC_PIN_MASK;
   AT91C_BASE_PIOB->PIO_PDR = EMAC_PIN_MASK;
   AT91C_BASE_PIOB->PIO_PPUDR = EMAC_PIN_MASK; // Really needed ?????
@@ -223,6 +225,8 @@ void InitEMAC(int prio) {
 //  AT91C_BASE_EMAC->EMAC_NCR = AT91C_EMAC_MPE;           // Enable Management Port
   AT91C_BASE_EMAC->EMAC_NCFGR = 2 << 10;                // MDC-CLK = MCK / 32
 //  chThdSleep(5); // It could perform one or more dummy phy_get() instead.
+//  (void)phy_get(MII_PHYSID1);
+//  (void)phy_get(MII_PHYSID2);
 //  (void)phy_get(MII_BMCR);
 //  phy_put(MII_BMCR, phy_get(MII_BMCR) & ~BMCR_ISOLATE); // Disable ISOLATE
   AT91C_BASE_EMAC->EMAC_NCR = 0;                        // Disable Management Port
@@ -245,7 +249,7 @@ void InitEMAC(int prio) {
    */
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_MPE;
   if ((phy_get(MII_PHYSID1) != (MII_MICREL_ID >> 16)) ||
-      (phy_get(MII_PHYSID2 & 0xFFF0) != (MII_MICREL_ID & 0xFFF0)))
+      ((phy_get(MII_PHYSID2) & 0xFFF0) != (MII_MICREL_ID & 0xFFF0)))
     chSysHalt();
   if (!get_link_status())
     chSysHalt();
