@@ -64,7 +64,6 @@ UADEFS =
 # List ARM-mode C source files here
 ASRC = ../../ports/ARM7-AT91SAM7X/chcore.c \
        ../../ports/ARM7-AT91SAM7X/sam7x_serial.c \
-       ../../ports/ARM7-AT91SAM7X/sam7x_emac.c \
        ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
        ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chmtx.c \
        ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \
@@ -102,7 +101,7 @@ TOPT = -mthumb -D THUMB
 #       chconf.h.
 # NOTE: -falign-functions=16 may improve the performance, not always, but
 #       increases the code size.
-OPT = -ggdb -fomit-frame-pointer -mabi=apcs-gnu
+OPT = -O2 -ggdb -fomit-frame-pointer -mabi=apcs-gnu
 #OPT += -ffixed-r7
 #OPT += -falign-functions=16
 

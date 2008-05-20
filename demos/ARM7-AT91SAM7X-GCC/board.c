@@ -20,8 +20,9 @@
 #include <ch.h>
 
 #include "board.h"
-#include "sam7x_serial.h"
 #include "at91lib/aic.h"
+
+#include <sam7x_serial.h>
 
 extern void FiqHandler(void);
 
