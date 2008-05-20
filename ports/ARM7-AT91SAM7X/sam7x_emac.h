@@ -72,6 +72,7 @@ extern "C" {
 #endif
   void InitEMAC(int prio);
   void EMACSetAddress(uint8_t *eaddr);
+  bool_t EMACGetLinkStatus(void);
   bool_t EMACTransmit(struct MACHeader *hdr, uint8_t *data, size_t size);
   bool_t EMACReceive(uint8_t *buf, size_t *sizep);
 #ifdef __cplusplus

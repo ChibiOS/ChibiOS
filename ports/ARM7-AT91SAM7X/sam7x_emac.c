@@ -31,9 +31,10 @@
 #define EMAC_TRANSMIT_BUFFERS           2
 #define EMAC_TRANSMIT_BUFFERS_SIZE      1518
 
-EventSource EMACFrameTransmitted;               /* A frame was transmitted.     */
-EventSource EMACFrameReceived;                  /* A frame was received.        */
-static int received;                            /* Buffered frames counter.     */
+EventSource EMACFrameTransmitted;       /* A frame was transmitted.     */
+EventSource EMACFrameReceived;          /* A frame was received.        */
+static int received;                    /* Buffered frames counter.     */
+static bool_t link_up;                  /* Last from EMACGetLinkStatus()*/
 
 static uint8_t default_mac[] = {0xAA, 0x55, 0x13, 0x37, 0x01, 0x10};
 
@@ -88,37 +89,6 @@ static uint32_t phy_get(uint8_t regno) {
   while (!( AT91C_BASE_EMAC->EMAC_NSR & AT91C_EMAC_IDLE))
     ;
 }*/
-
-/*
- * Returns FALSE if the link is not established.
- * It also setup the link-related EMAC registers.
- */
-static bool_t get_link_status(void) {
-  uint32_t ncfgr, bmsr, bmcr, lpa;
-
-  (void)phy_get(MII_BMSR);
-  bmsr = phy_get(MII_BMSR);
-  if (!(bmsr & BMSR_LSTATUS))
-    return FALSE;
-
-  ncfgr = AT91C_BASE_EMAC->EMAC_NCFGR & ~(AT91C_EMAC_SPD | AT91C_EMAC_FD);
-  bmcr = phy_get(MII_BMCR);
-  if (bmcr & BMCR_ANENABLE) {
-    lpa = phy_get(MII_LPA);
-    if (lpa & (LPA_100HALF | LPA_100FULL | LPA_100BASE4))
-      ncfgr |= AT91C_EMAC_SPD;
-    if (lpa & (LPA_10FULL | LPA_100FULL))
-      ncfgr |= AT91C_EMAC_FD;
-  }
-  else {
-    if (bmcr & BMCR_SPEED100)
-      ncfgr |= AT91C_EMAC_SPD;
-    if (bmcr & BMCR_FULLDPLX)
-      ncfgr |= AT91C_EMAC_FD;
-  }
-  AT91C_BASE_EMAC->EMAC_NCFGR = ncfgr;
-  return TRUE;
-}
 
 #define RSR_BITS (AT91C_EMAC_BNA | AT91C_EMAC_REC | AT91C_EMAC_OVR)
 #define TSR_BITS (AT91C_EMAC_UBR | AT91C_EMAC_COL | AT91C_EMAC_RLES | \
@@ -199,7 +169,6 @@ void InitEMAC(int prio) {
    */
   AT91C_BASE_PIOB->PIO_OER = PIOB_PHY_PD;       // Becomes an output.
   AT91C_BASE_PIOB->PIO_PPUDR = PIOB_PHY_PD;     // Default pullup disabled.
-//  AT91C_BASE_PIOB->PIO_CODR = PIOB_PHY_PD;      // Output to low level.
   AT91C_BASE_PIOB->PIO_SODR = PIOB_PHY_PD;      // Output to high level.
 
   /*
@@ -217,20 +186,13 @@ void InitEMAC(int prio) {
   AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_EMAC;
   AT91C_BASE_PIOB->PIO_ASR = EMAC_PIN_MASK;
   AT91C_BASE_PIOB->PIO_PDR = EMAC_PIN_MASK;
-  AT91C_BASE_PIOB->PIO_PPUDR = EMAC_PIN_MASK; // Really needed ?????
+  AT91C_BASE_PIOB->PIO_PPUDR = EMAC_PIN_MASK;
 
   /*
    * EMAC setup.
    */
-//  AT91C_BASE_EMAC->EMAC_NCR = AT91C_EMAC_MPE;           // Enable Management Port
+  AT91C_BASE_EMAC->EMAC_NCR = 0;                        // Initial setting.
   AT91C_BASE_EMAC->EMAC_NCFGR = 2 << 10;                // MDC-CLK = MCK / 32
-//  chThdSleep(5); // It could perform one or more dummy phy_get() instead.
-//  (void)phy_get(MII_PHYSID1);
-//  (void)phy_get(MII_PHYSID2);
-//  (void)phy_get(MII_BMCR);
-//  phy_put(MII_BMCR, phy_get(MII_BMCR) & ~BMCR_ISOLATE); // Disable ISOLATE
-  AT91C_BASE_EMAC->EMAC_NCR = 0;                        // Disable Management Port
-
   AT91C_BASE_EMAC->EMAC_USRIO = AT91C_EMAC_CLKEN;       // Enable EMAC in MII mode
   AT91C_BASE_EMAC->EMAC_RBQP = (AT91_REG)rent;          // RX buffers list
   AT91C_BASE_EMAC->EMAC_TBQP = (AT91_REG)tent;          // TX buffers list
@@ -245,14 +207,20 @@ void InitEMAC(int prio) {
   EMACSetAddress(default_mac);
 
   /*
-   * PHY checks and settings.
+   * PHY detection and settings.
    */
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_MPE;
   if ((phy_get(MII_PHYSID1) != (MII_MICREL_ID >> 16)) ||
       ((phy_get(MII_PHYSID2) & 0xFFF0) != (MII_MICREL_ID & 0xFFF0)))
     chSysHalt();
-  if (!get_link_status())
-    chSysHalt();
+
+  /*
+   * Waits for auto-negotiation to end and then detects the link status.
+   */
+/*  while (!(phy_get(MII_BMSR) & BMSR_ANEGCOMPLETE))
+    ;
+  if (!EMACGetLinkStatus())
+    chDbgPanic("no link");*/
   AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
 
   /*
@@ -282,6 +250,42 @@ void EMACSetAddress(uint8_t *eaddr) {
 }
 
 /*
+ * Returns TRUE if the link is active. To be invoked at regular intervals in
+ * order to monitor the link.
+ * @note It is not thread-safe.
+ */
+bool_t EMACGetLinkStatus(void) {
+  uint32_t ncfgr, bmsr, bmcr, lpa;
+
+  AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_MPE;
+  (void)phy_get(MII_BMSR);
+  bmsr = phy_get(MII_BMSR);
+  if (!(bmsr & BMSR_LSTATUS)) {
+    AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
+    return link_up = FALSE;
+  }
+
+  ncfgr = AT91C_BASE_EMAC->EMAC_NCFGR & ~(AT91C_EMAC_SPD | AT91C_EMAC_FD);
+  bmcr = phy_get(MII_BMCR);
+  if (bmcr & BMCR_ANENABLE) {
+    lpa = phy_get(MII_LPA);
+    if (lpa & (LPA_100HALF | LPA_100FULL | LPA_100BASE4))
+      ncfgr |= AT91C_EMAC_SPD;
+    if (lpa & (LPA_10FULL | LPA_100FULL))
+      ncfgr |= AT91C_EMAC_FD;
+  }
+  else {
+    if (bmcr & BMCR_SPEED100)
+      ncfgr |= AT91C_EMAC_SPD;
+    if (bmcr & BMCR_FULLDPLX)
+      ncfgr |= AT91C_EMAC_FD;
+  }
+  AT91C_BASE_EMAC->EMAC_NCFGR = ncfgr;
+  AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
+  return link_up = TRUE;
+}
+
+/*
  * Transmits an ethernet frame.
  * Returns TRUE if the frame is queued for transmission else FALSE.
  */
@@ -295,6 +299,9 @@ bool_t EMACTransmit(struct MACHeader *hdr, uint8_t *data, size_t size) {
                              EMAC_TRANSMIT_BUFFERS_SIZE),
               "sam7x_emac.c, EMACTransmit #2");
 
+  if (!link_up)
+    return FALSE;
+  
   chSysLock();
   cptr = txptr;
   if (!(cptr->w2 & W2_T_USED) ||
@@ -329,7 +336,7 @@ bool_t EMACTransmit(struct MACHeader *hdr, uint8_t *data, size_t size) {
 /*
  * Reads a buffered frame.
  * Returns TRUE if a frame was present and read else FALSE.
- * Note, it is not thread safe, it would require a semaphore or a mutex.
+ * @note It is not thread-safe.
  */
 bool_t EMACReceive(uint8_t *buf, size_t *sizep) {
   unsigned n;
