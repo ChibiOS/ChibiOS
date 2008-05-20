@@ -2,7 +2,7 @@
 ** External Libraries.                                                     **
 *****************************************************************************
 
-The files under this directory are not part of ChibiOS/RT but are used by
+The libraries under this directory are not part of ChibiOS/RT but are used by
 some of the demo applications.
 Please note that each item is covered by its own license, please read the
 instructions contained in the various distributions.

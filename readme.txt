@@ -53,7 +53,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Plans                                                                 ***
 *****************************************************************************
 
-- We are looking into adding an excpetion clause to the ChibiOS/RT license in
+- We are looking into adding an exception clause to the ChibiOS/RT license in
   order to allow linking with non-GLP code under certain conditions.
   The license change will happen before the 1.0.0 release, we are almost
   there, everything looks very stable now.
@@ -71,7 +71,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 
 *** 0.6.5 ***
 - FIX: Small fix to the ARM7 startup files. It used a short jump in the reset
-  vector and that could fail in some configurations.
+  vector and that could fail in some memory configurations.
 
 *** 0.6.4 ***
 - NEW: MSP430 port, the port code compiles correctly but it is not tested yet.
