@@ -17,9 +17,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ch.h>
-
 #include <string.h>
+
+#include <ch.h>
 
 #include "board.h"
 #include "sam7x_emac.h"
@@ -242,7 +242,7 @@ void InitEMAC(int prio) {
 /*
  * Set the MAC address.
  */
-void EMACSetAddress(uint8_t *eaddr) {
+void EMACSetAddress(const uint8_t *eaddr) {
 
   AT91C_BASE_EMAC->EMAC_SA1L = (AT91_REG)((eaddr[3] << 24) | (eaddr[2] << 16) |
                                           (eaddr[1] << 8) | eaddr[0]);
@@ -286,10 +286,50 @@ bool_t EMACGetLinkStatus(void) {
 }
 
 /*
+ * Allocates and locks a buffer for a transmission operation.
+ */
+BufDescriptorEntry *EMACGetTransmitbuffer(void) {
+  BufDescriptorEntry *cptr;
+
+  if (!link_up)
+    return NULL;
+
+  chSysLock();
+  cptr = txptr;
+  if (!(cptr->w2 & W2_T_USED) ||
+       (cptr->w2 & W2_T_LOCKED)) {
+    chSysUnlock();
+    return FALSE;
+  }
+  cptr->w2 |= W2_T_LOCKED;        /* Locks the buffer while copying.*/
+  if (++txptr >= &tent[EMAC_TRANSMIT_BUFFERS])
+    txptr = tent;
+  chSysUnlock();
+  return cptr;
+}
+
+/*
+ * Transmits a previously allocated buffer and then releases it.
+ */
+void EMACTransmit(BufDescriptorEntry *cptr, size_t size) {
+  
+  chDbgAssert(size < EMAC_TRANSMIT_BUFFERS_SIZE, "sam7x_emac.c, EMACTransmit");
+  
+  cptr->w2 &= ~W2_R_LENGTH_MASK;
+  cptr->w2 |= size;
+
+  chSysLock();
+  cptr->w2 &= ~(W2_T_USED | W2_T_LOCKED);
+  AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TSTART;
+  chSysUnlock();
+}
+
+/*
  * Transmits an ethernet frame.
  * Returns TRUE if the frame is queued for transmission else FALSE.
  */
-bool_t EMACTransmit(struct MACHeader *hdr, uint8_t *data, size_t size) {
+#if 0
+bool_t EMACTransmit2(struct MACHeader *hdr, uint8_t *data, size_t size) {
   uint8_t *p;
   BufDescriptorEntry *cptr;
 
@@ -332,6 +372,7 @@ bool_t EMACTransmit(struct MACHeader *hdr, uint8_t *data, size_t size) {
   chSysUnlock();
   return TRUE;
 }
+#endif
 
 /*
  * Reads a buffered frame.
