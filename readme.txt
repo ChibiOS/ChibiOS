@@ -15,6 +15,8 @@
                          directory under ./demos/ and/or ./ports/.
 ./ports/               - Architecture specific portable files.
 ./demos/               - Demo programs for specific archtectures/boards.
+./ext/                 - External libraries or other code not part of
+                         ChibiOS/RT but used in the demo applications.
 ./test/                - Test code, used by some demos.
 ./docs/Doxifile        - Doxigen project file.
 ./docs/html/index.html - ChibiOS/RT documentation (after running doxigen).

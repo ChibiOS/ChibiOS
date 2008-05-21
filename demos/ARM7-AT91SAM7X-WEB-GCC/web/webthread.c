@@ -119,8 +119,8 @@ msg_t WebThread(void *p) {
   /*
    * uIP initialization.
    */
-  timer_set(&periodic_timer, 500);
-  timer_set(&arp_timer, 10000);
+  timer_set(&periodic_timer, CLOCK_SECOND / 2);
+  timer_set(&arp_timer, CLOCK_SECOND * 10);
   uip_init();
   uip_setethaddr(macaddr);
   uip_ipaddr(ipaddr, IPADDR0, IPADDR1, IPADDR2, IPADDR3);
