@@ -47,8 +47,6 @@ typedef struct {
 #define W2_R_MULTICAST_MATCH    0x40000000
 #define W2_R_BROADCAST_DETECTED 0x80000000
 
-#define W1_T_BUFFER_MASK        0xFFFFFFFC
-
 #define W2_T_LENGTH_MASK        0x000007FF
 #define W2_T_LOCKED             0x00000800 /* Not an EMAC flag, used by the driver */
 #define W2_T_RFU1               0x00003000
@@ -67,7 +65,7 @@ extern "C" {
   void InitEMAC(int prio);
   void EMACSetAddress(const uint8_t *eaddr);
   bool_t EMACGetLinkStatus(void);
-  BufDescriptorEntry *EMACGetTransmitbuffer(void);
+  BufDescriptorEntry *EMACGetTransmitBuffer(void);
   void EMACTransmit(BufDescriptorEntry *cptr, size_t size);
   bool_t EMACReceive(uint8_t *buf, size_t *sizep);
 #ifdef __cplusplus

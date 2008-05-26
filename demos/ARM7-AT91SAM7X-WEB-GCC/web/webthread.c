@@ -54,7 +54,7 @@ static void network_device_send(void) {
   BufDescriptorEntry *bdep;
 
   for (i = 0; i < SEND_RETRY_MAX; i++) {
-    if ((bdep = EMACGetTransmitbuffer()) != NULL) {
+    if ((bdep = EMACGetTransmitBuffer()) != NULL) {
       uint8_t *bp = (uint8_t *)bdep->w1;
       
       if(uip_len <= UIP_LLH_LEN + UIP_TCPIP_HLEN)

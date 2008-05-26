@@ -33,18 +33,18 @@
 
 EventSource EMACFrameTransmitted;       /* A frame was transmitted.     */
 EventSource EMACFrameReceived;          /* A frame was received.        */
-static int received;                    /* Buffered frames counter.     */
+//static int received;                    /* Buffered frames counter.     */
 static bool_t link_up;                  /* Last from EMACGetLinkStatus()*/
 
 static uint8_t default_mac[] = {0xAA, 0x55, 0x13, 0x37, 0x01, 0x10};
 
-static BufDescriptorEntry rent[EMAC_RECEIVE_BUFFERS] __attribute__((aligned(8)));
+BufDescriptorEntry rent[EMAC_RECEIVE_BUFFERS] __attribute__((aligned(8)));
 static uint8_t rbuffers[EMAC_RECEIVE_BUFFERS * EMAC_RECEIVE_BUFFERS_SIZE] __attribute__((aligned(8)));
-static BufDescriptorEntry *rxptr;
+BufDescriptorEntry *rxptr;
 
-static BufDescriptorEntry tent[EMAC_TRANSMIT_BUFFERS] __attribute__((aligned(8)));
+BufDescriptorEntry tent[EMAC_TRANSMIT_BUFFERS] __attribute__((aligned(8)));
 static uint8_t tbuffers[EMAC_TRANSMIT_BUFFERS * EMAC_TRANSMIT_BUFFERS_SIZE] __attribute__((aligned(8)));
-static BufDescriptorEntry *txptr;
+BufDescriptorEntry *txptr;
 
 #define PHY_ADDRESS 1
 #define AT91C_PB15_ERXDV AT91C_PB15_ERXDV_ECRSDV
@@ -105,7 +105,7 @@ static void ServeInterrupt(void) {
 
   if ((isr & AT91C_EMAC_RCOMP) || (rsr & RSR_BITS)) {
     if (rsr & AT91C_EMAC_REC) {
-      received++;
+//      received++;
       chEvtSendI(&EMACFrameReceived);
     }
     AT91C_BASE_EMAC->EMAC_RSR = RSR_BITS;
@@ -136,7 +136,7 @@ void InitEMAC(int prio) {
   /*
    * Buffers initialization.
    */
-  received = 0;
+//  received = 0;
   for (i = 0; i < EMAC_RECEIVE_BUFFERS; i++) {
     rent[i].w1 = (uint32_t)&rbuffers[i * EMAC_RECEIVE_BUFFERS_SIZE];
     rent[i].w2 = 0;
@@ -144,8 +144,8 @@ void InitEMAC(int prio) {
   rent[EMAC_RECEIVE_BUFFERS - 1].w1 |= W1_R_WRAP;
   rxptr = rent;
   for (i = 0; i < EMAC_TRANSMIT_BUFFERS; i++) {
-    tent[i].w1 = ((uint32_t)&tbuffers[i * EMAC_TRANSMIT_BUFFERS_SIZE]);
-    tent[i].w2 = EMAC_TRANSMIT_BUFFERS_SIZE | W2_T_LAST_BUFFER | W2_T_USED;
+    tent[i].w1 = (uint32_t)&tbuffers[i * EMAC_TRANSMIT_BUFFERS_SIZE];
+    tent[i].w2 = EMAC_TRANSMIT_BUFFERS_SIZE | W2_T_USED;
   }
   tent[EMAC_TRANSMIT_BUFFERS - 1].w2 |= W2_T_WRAP;
   txptr = tent;
@@ -289,7 +289,7 @@ bool_t EMACGetLinkStatus(void) {
 /*
  * Allocates and locks a buffer for a transmission operation.
  */
-BufDescriptorEntry *EMACGetTransmitbuffer(void) {
+BufDescriptorEntry *EMACGetTransmitBuffer(void) {
   BufDescriptorEntry *cptr;
 
   if (!link_up)
@@ -314,7 +314,7 @@ BufDescriptorEntry *EMACGetTransmitbuffer(void) {
  */
 void EMACTransmit(BufDescriptorEntry *cptr, size_t size) {
   
-  chDbgAssert(size < EMAC_TRANSMIT_BUFFERS_SIZE, "sam7x_emac.c, EMACTransmit");
+  chDbgAssert(size <= EMAC_TRANSMIT_BUFFERS_SIZE, "sam7x_emac.c, EMACTransmit");
   
   cptr->w2 &= ~W2_R_LENGTH_MASK;
   cptr->w2 |= size;
@@ -324,56 +324,6 @@ void EMACTransmit(BufDescriptorEntry *cptr, size_t size) {
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TSTART;
   chSysUnlock();
 }
-
-/*
- * Transmits an ethernet frame.
- * Returns TRUE if the frame is queued for transmission else FALSE.
- */
-#if 0
-bool_t EMACTransmit2(struct MACHeader *hdr, uint8_t *data, size_t size) {
-  uint8_t *p;
-  BufDescriptorEntry *cptr;
-
-  chDbgAssert((hdr != NULL) || (data != NULL),
-              "sam7x_emac.c, EMACTransmit #1");
-  chDbgAssert(size <= (hdr ? EMAC_TRANSMIT_BUFFERS_SIZE - sizeof(struct MACHeader) :
-                             EMAC_TRANSMIT_BUFFERS_SIZE),
-              "sam7x_emac.c, EMACTransmit #2");
-
-  if (!link_up)
-    return FALSE;
-  
-  chSysLock();
-  cptr = txptr;
-  if (!(cptr->w2 & W2_T_USED) ||
-       (cptr->w2 & W2_T_LOCKED)) {
-    chSysUnlock();
-    return FALSE;
-  }
-  cptr->w2 |= W2_T_LOCKED;        /* Locks the buffer while copying.*/
-  if (++txptr >= &tent[EMAC_TRANSMIT_BUFFERS])
-    txptr = tent;
-  chSysUnlock();
-
-  p = (uint8_t *)cptr->w1;
-  if (hdr) {
-    memcpy(p, hdr, sizeof(struct MACHeader));
-    p += sizeof(struct MACHeader);
-  }
-  if (data) {
-    memcpy(p, data, size);
-    p += size;
-  }
-  cptr->w2 &= ~W2_R_LENGTH_MASK;
-  cptr->w2 |= p - (uint8_t *)cptr->w1;
-
-  chSysLock();
-  cptr->w2 &= ~(W2_T_USED | W2_T_LOCKED);
-  AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TSTART;
-  chSysUnlock();
-  return TRUE;
-}
-#endif
 
 /*
  * Reads a buffered frame.
@@ -386,13 +336,13 @@ bool_t EMACReceive(uint8_t *buf, size_t *sizep) {
   uint8_t *p;
   bool_t overflow, found;
 
-  chSysLock();
-  if (received <= 0) {
-    chSysUnlock();
-    return FALSE;
-  }
-  received--;
-  chSysUnlock();
+//  chSysLock();
+//  if (received <= 0) {
+//    chSysUnlock();
+//    return FALSE;
+//  }
+//  received--;
+//  chSysUnlock();
 
   n = EMAC_RECEIVE_BUFFERS;
 
@@ -401,7 +351,7 @@ bool_t EMACReceive(uint8_t *buf, size_t *sizep) {
    */
 skip:
   while (n && !(rxptr->w1 & W1_R_OWNERSHIP)) {
-    if (++rxptr >= &rxptr[EMAC_RECEIVE_BUFFERS])
+    if (++rxptr >= &rent[EMAC_RECEIVE_BUFFERS])
       rxptr = rent;
     n--;
   }
@@ -411,7 +361,7 @@ skip:
    */
   while (n && (rxptr->w1 & W1_R_OWNERSHIP) && !(rxptr->w2 & W2_R_FRAME_START)) {
     rxptr->w1 &= ~W1_R_OWNERSHIP;
-    if (++rxptr >= &rxptr[EMAC_RECEIVE_BUFFERS])
+    if (++rxptr >= &rent[EMAC_RECEIVE_BUFFERS])
       rxptr = rent;
     n--;
   }
@@ -443,13 +393,14 @@ restart:
     }
 
     if (!overflow) {
-      memcpy(p, (void *)(rxptr->w1 & W1_T_BUFFER_MASK), segsize);
+      chDbgAssert(segsize <= 128, "sam7x_emac.c, EMACReceive()")
+      memcpy(p, (void *)(rxptr->w1 & W1_R_ADDRESS_MASK), segsize);
       p += segsize;
       size += segsize;
     }
 
     rxptr->w1 &= ~W1_R_OWNERSHIP;
-    if (++rxptr >= &rxptr[EMAC_RECEIVE_BUFFERS])
+    if (++rxptr >= &rent[EMAC_RECEIVE_BUFFERS])
       rxptr = rent;
     n--;
   }
