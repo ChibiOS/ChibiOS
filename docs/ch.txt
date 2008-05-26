@@ -24,6 +24,10 @@
  *     Win32 process and the application code does not need to be aware of it.
  *     MinGW and VS demos available and ready to go, use them as templates for
  *     your application.</li>
+ * <li>Preemptive scheduling.</li>
+ * <li>128 priority levels.</li>
+ * <li>Multiple threads at the same priorily level allowed.</li>
+ * <li>Round robin scheduling for threads at the same priority level.</li>
  * <li>Unlimited number of threads.</li>
  * <li>Unlimited number of virtual timers.</li>
  * <li>Unlimited number of semaphores.</li>
@@ -40,7 +44,6 @@
  *     runtime.</li>
  * <li>Blocking and non blocking I/O channels with timeout and events generation
  *     capability.</li>
- * <li>Pre-emptive scheduling.</li>
  * <li>Minimal system requirements: about 8KiB ROM with all options enabled and
  *     speed optimizations on. The size can shrink under 2KiB by disabling the
  *     the unused subsystems and optimizing for size.</li>

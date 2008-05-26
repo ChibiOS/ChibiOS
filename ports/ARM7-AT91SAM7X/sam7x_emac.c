@@ -38,13 +38,13 @@ static bool_t link_up;                  /* Last from EMACGetLinkStatus()*/
 
 static uint8_t default_mac[] = {0xAA, 0x55, 0x13, 0x37, 0x01, 0x10};
 
-BufDescriptorEntry rent[EMAC_RECEIVE_BUFFERS] __attribute__((aligned(8)));
+static BufDescriptorEntry rent[EMAC_RECEIVE_BUFFERS] __attribute__((aligned(8)));
 static uint8_t rbuffers[EMAC_RECEIVE_BUFFERS * EMAC_RECEIVE_BUFFERS_SIZE] __attribute__((aligned(8)));
-BufDescriptorEntry *rxptr;
+static BufDescriptorEntry *rxptr;
 
-BufDescriptorEntry tent[EMAC_TRANSMIT_BUFFERS] __attribute__((aligned(8)));
+static BufDescriptorEntry tent[EMAC_TRANSMIT_BUFFERS] __attribute__((aligned(8)));
 static uint8_t tbuffers[EMAC_TRANSMIT_BUFFERS * EMAC_TRANSMIT_BUFFERS_SIZE] __attribute__((aligned(8)));
-BufDescriptorEntry *txptr;
+static BufDescriptorEntry *txptr;
 
 #define PHY_ADDRESS 1
 #define AT91C_PB15_ERXDV AT91C_PB15_ERXDV_ECRSDV
@@ -199,9 +199,7 @@ void InitEMAC(int prio) {
   AT91C_BASE_EMAC->EMAC_RSR = AT91C_EMAC_OVR |
                               AT91C_EMAC_REC |
                               AT91C_EMAC_BNA;           // Clears RSR
-  AT91C_BASE_EMAC->EMAC_NCFGR |= AT91C_EMAC_CAF |
-                                 AT91C_EMAC_NBC |
-                                 AT91C_EMAC_DRFCS;      // Initial NCFGR settings
+  AT91C_BASE_EMAC->EMAC_NCFGR |= AT91C_EMAC_DRFCS;      // Initial NCFGR settings
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TE |
                                AT91C_EMAC_RE |
                                AT91C_EMAC_CLRSTAT;      // Initial NCR settings
@@ -218,10 +216,6 @@ void InitEMAC(int prio) {
   /*
    * Waits for auto-negotiation to end and then detects the link status.
    */
-/*  while (!(phy_get(MII_BMSR) & BMSR_ANEGCOMPLETE))
-    ;
-  if (!EMACGetLinkStatus())
-    chDbgPanic("no link");*/
   AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
 
   /*
