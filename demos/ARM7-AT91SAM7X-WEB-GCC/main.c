@@ -26,8 +26,8 @@
 
 #include "web/webthread.h"
 
-static WorkingArea(waWebThread, 256);
-static WorkingArea(waThread1, 64);
+static WorkingArea(waWebThread, 512);
+static WorkingArea(waThread1, 128);
 
 static msg_t Thread1(void *arg) {
 

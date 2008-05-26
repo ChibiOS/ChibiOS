@@ -199,7 +199,8 @@ void InitEMAC(int prio) {
   AT91C_BASE_EMAC->EMAC_RSR = AT91C_EMAC_OVR |
                               AT91C_EMAC_REC |
                               AT91C_EMAC_BNA;           // Clears RSR
-  AT91C_BASE_EMAC->EMAC_NCFGR |= AT91C_EMAC_NBC |
+  AT91C_BASE_EMAC->EMAC_NCFGR |= AT91C_EMAC_CAF |
+                                 AT91C_EMAC_NBC |
                                  AT91C_EMAC_DRFCS;      // Initial NCFGR settings
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TE |
                                AT91C_EMAC_RE |
