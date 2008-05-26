@@ -50,9 +50,9 @@ typedef struct {
 #define W2_T_LENGTH_MASK        0x000007FF
 #define W2_T_LOCKED             0x00000800 /* Not an EMAC flag, used by the driver */
 #define W2_T_RFU1               0x00003000
-#define W2_T_LAST_BUFFER        0x00004000
-#define W2_T_NO_CRC             0x00008000
-#define W2_T_RFU2               0x07FF0000
+#define W2_T_LAST_BUFFER        0x00008000
+#define W2_T_NO_CRC             0x00010000
+#define W2_T_RFU2               0x07FE0000
 #define W2_T_BUFFERS_EXHAUSTED  0x08000000
 #define W2_T_TRANSMIT_UNDERRUN  0x10000000
 #define W2_T_RETRY_LIMIT_EXC    0x20000000

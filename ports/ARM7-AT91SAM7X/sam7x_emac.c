@@ -315,12 +315,12 @@ BufDescriptorEntry *EMACGetTransmitBuffer(void) {
 void EMACTransmit(BufDescriptorEntry *cptr, size_t size) {
   
   chDbgAssert(size <= EMAC_TRANSMIT_BUFFERS_SIZE, "sam7x_emac.c, EMACTransmit");
-  
-  cptr->w2 &= ~W2_R_LENGTH_MASK;
-  cptr->w2 |= size;
 
   chSysLock();
-  cptr->w2 &= ~(W2_T_USED | W2_T_LOCKED);
+  if (cptr < &tent[EMAC_TRANSMIT_BUFFERS - 1])
+    cptr->w2 = size | W2_T_LAST_BUFFER;
+  else
+    cptr->w2 = size | W2_T_LAST_BUFFER | W2_T_WRAP;
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TSTART;
   chSysUnlock();
 }
