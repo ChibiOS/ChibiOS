@@ -151,14 +151,12 @@ msg_t WebThread(void *p) {
   EventListener el0, el1, el2;
   uip_ipaddr_t ipaddr;
   
-  EMACSetAddress(&macaddr.addr[0]);
-  (void)EMACGetLinkStatus();
-
   /*
    * Event sources setup.
    */
   chEvtRegister(&EMACFrameReceived, &el0, FRAME_RECEIVED_ID);
-
+  chEvtSend(&EMACFrameReceived); /* In case some frames are already buffered */
+  
   evtInit(&evt1, CH_FREQUENCY / 2);
   evtStart(&evt1);
   chEvtRegister(&evt1.et_es, &el1, PERIODIC_TIMER_ID);
@@ -167,7 +165,13 @@ msg_t WebThread(void *p) {
   evtStart(&evt2);
   chEvtRegister(&evt2.et_es, &el2, ARP_TIMER_ID);
 
- /*
+  /*
+   * EMAC settings.
+   */
+  EMACSetAddress(&macaddr.addr[0]);
+  (void)EMACGetLinkStatus();
+
+  /*
    * uIP initialization.
    */
   uip_init();
