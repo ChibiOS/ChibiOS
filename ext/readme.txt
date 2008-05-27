@@ -10,7 +10,13 @@ instructions contained in the various distributions.
 The currently included items are:
 
 1. uip-1.0, a minimal TCP/IP implementation: http://www.sics.se/~adam/uip/
-
-The files are included packed as downloaded from the original repository
+   
+The above files are included packed as downloaded from the original repository
 and without any modification, in order to use the libraries unpack them
 under ./ext.
+
+Some patches are also present:
+
+1. uip-1.0 patches, small fixes to the uIP required to make it work with
+   ChibiOS/RT, unpack the archive over the uIP distribution and replace the
+   files.

@@ -39,6 +39,8 @@ ARM7-LPC214x-G++       - Yet another LPC214X demo but this one is done using
                          ChibiOS/RT users.
 ARM7-AT91SAM7X-GCC     - Port for Atmel AT91SAM7X256. The demo program targets
                          the Olimex SAM7-EX256 board.
+ARM7-AT91SAM7X-WEB-GCC - Port for Atmel AT91SAM7X256. The web demo program
+                         targets the Olimex SAM7-EX256 board.
 ARMCM3-ST32F103-GCC    - ARM Cortex-M3 port. The demo targets the Olimex
                          STM32-P103 board.
 AVR-AVRmega128-GCC     - Port on AVRmega128. A special thanks to Vladimir for
@@ -72,6 +74,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.6.5 ***
+- NEW: Web server demo for the AT91SAM7X256, the demo integrates the uIP
+  stack and its demo applications.
+- NEW: EMAC driver added to the AT91SAM7X port.
 - FIX: Small fix to the ARM7 startup files. It used a short jump in the reset
   vector and that could fail in some memory configurations.
 

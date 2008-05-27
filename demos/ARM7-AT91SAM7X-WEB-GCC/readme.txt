@@ -8,7 +8,10 @@ The demo runs on an Olimex SAM7-EX256 board.
 
 ** The Demo **
 
-Work in progress, not finished yet.
+The demo currently just flashes the LCD background using a thread and serves
+HTTP requests at address 192.168.1.20 on port 80.
+The button SW1 prints an "Hello World!" string on COM1, the button SW2
+activates che ChibiOS/RT test suite, output on COM1.
 
 ** Build Procedure **
 
@@ -24,3 +27,6 @@ Also note that not all the files present in the Atmel library are distribuited
 with ChibiOS/RT, you can find the whole library on the Atmel web site:
 
                              http://www.atmel.com
+
+The uIP stack also has its own license, please read the info into the included
+uIP distribution files.

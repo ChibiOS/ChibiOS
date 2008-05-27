@@ -29,6 +29,10 @@
 #include <timer.h>
 #include <clock-arch.h>
 
+//#define IPADDR0  192
+//#define IPADDR1  168
+//#define IPADDR2  1
+//#define IPADDR3  20
 #define IPADDR0  10
 #define IPADDR1  151
 #define IPADDR2  218
@@ -130,7 +134,7 @@ msg_t WebThread(void *p) {
   while (TRUE) {
     uip_len = network_device_read();
     if (uip_len > 0) {    
-      if (BUF->type == htons(UIP_ETHTYPE_IP)) {
+      if (BUF->type == HTONS(UIP_ETHTYPE_IP)) {
         uip_arp_ipin();
         uip_input();
         if (uip_len > 0) {
@@ -138,7 +142,7 @@ msg_t WebThread(void *p) {
           network_device_send();
         }
       }
-      else if (BUF->type == htons(UIP_ETHTYPE_ARP)) {
+      else if (BUF->type == HTONS(UIP_ETHTYPE_ARP)) {
         uip_arp_arpin();
         if (uip_len > 0)
           network_device_send();

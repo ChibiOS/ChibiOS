@@ -57,6 +57,8 @@
 
 #include <stdint.h>
 
+#include <cc-arch.h> /* patched */
+
 /**
  * 8 bit datatype
  *
@@ -84,13 +86,6 @@ typedef uint16_t u16_t;
  * \hideinitializer
  */
 typedef unsigned short uip_stats_t;
-
-/**
- * Modifier for packed structures.
- *
- * \hideinitializer
- */
-#define UIP_CONF_PACKED __attribute__((packed))
 
 /**
  * Maximum number of TCP connections.
