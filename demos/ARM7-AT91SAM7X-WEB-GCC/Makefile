@@ -74,7 +74,6 @@ KSRC = ../../src/chinit.c ../../src/chdebug.c \
 # List of the required uIP source files.
 USRC = ../../ext/uip-1.0/uip/uip_arp.c \
        ../../ext/uip-1.0/uip/psock.c \
-       ../../ext/uip-1.0/uip/timer.c \
        ../../ext/uip-1.0/uip/uip.c \
        ../../ext/uip-1.0/apps/webserver/httpd.c \
        ../../ext/uip-1.0/apps/webserver/http-strings.c \
