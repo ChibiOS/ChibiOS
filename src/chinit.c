@@ -43,7 +43,7 @@ void chSysInit(void) {
   /*
    * Now this instructions flow becomes the main thread.
    */
-  _InitThread(NORMALPRIO, 0, &mainthread);
+  init_thread(NORMALPRIO, 0, &mainthread);
   mainthread.p_state = PRCURR;
   currp = &mainthread;
 

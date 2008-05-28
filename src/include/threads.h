@@ -157,7 +157,7 @@ struct Thread {
 #define ABSPRIO     255
 
 /* Not an API, don't use into the application code.*/
-void _InitThread(tprio_t prio, tmode_t mode, Thread *tp);
+void init_thread(tprio_t prio, tmode_t mode, Thread *tp);
 
 /** Thread function.*/
 typedef msg_t (*tfunc_t)(void *);

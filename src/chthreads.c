@@ -27,7 +27,7 @@
 /*
  * Initializes a thread structure.
  */
-void _InitThread(tprio_t prio, tmode_t mode, Thread *tp) {
+void init_thread(tprio_t prio, tmode_t mode, Thread *tp) {
   static tid_t nextid = 0;
 
   tp->p_tid = nextid++;
@@ -99,7 +99,7 @@ Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
 #ifdef CH_USE_DEBUG
   memfill(workspace, wsize, MEM_FILL_PATTERN);
 #endif
-  _InitThread(prio, mode, tp);
+  init_thread(prio, mode, tp);
   SETUP_CONTEXT(workspace, wsize, pf, arg);
 #ifdef CH_USE_RESUME
   if (tp->p_flags & P_SUSPENDED)
