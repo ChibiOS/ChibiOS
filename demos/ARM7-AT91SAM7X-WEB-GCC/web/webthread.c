@@ -28,14 +28,10 @@
 #include <httpd.h>
 #include <clock-arch.h>
 
-//#define IPADDR0  192
-//#define IPADDR1  168
-//#define IPADDR2  1
-//#define IPADDR3  20
-#define IPADDR0  10
-#define IPADDR1  151
-#define IPADDR2  218
-#define IPADDR3  245
+#define IPADDR0  192
+#define IPADDR1  168
+#define IPADDR2  1
+#define IPADDR3  20
 
 #define SEND_RETRY_MAX 10
 #define SEND_RETRY_INTERVAL 2

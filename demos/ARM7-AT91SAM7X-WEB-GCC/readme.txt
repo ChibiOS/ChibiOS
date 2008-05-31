@@ -9,7 +9,8 @@ The demo runs on an Olimex SAM7-EX256 board.
 ** The Demo **
 
 The demo currently just flashes the LCD background using a thread and serves
-HTTP requests at address 192.168.1.20 on port 80.
+HTTP requests at address 192.168.1.20 on port 80 (remember to change it IP
+address into webthread.c in order to adapt it to your network settings).
 The button SW1 prints an "Hello World!" string on COM1, the button SW2
 activates che ChibiOS/RT test suite, output on COM1.
 
@@ -17,6 +18,7 @@ activates che ChibiOS/RT test suite, output on COM1.
 
 The demo was built using the YAGARTO toolchain but any toolchain based on GCC
 and GNU userspace programs will work.
+The demo requires the patcher uIP 1.0 stack, see: ./ext/readme.txt
 
 ** Notes **
 
