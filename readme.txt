@@ -79,6 +79,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - NEW: EMAC driver added to the AT91SAM7X port.
 - FIX: Small fix to the ARM7 startup files. It used a short jump in the reset
   vector and that could fail in some memory configurations.
+- Documentation improvements.
 
 *** 0.6.4 ***
 - NEW: MSP430 port, the port code compiles correctly but it is not tested yet.
