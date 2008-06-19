@@ -40,5 +40,8 @@ typedef uint16_t        systime_t;
 typedef int8_t          cnt_t;
 
 #define INLINE      inline
+#define PACK_STRUCT_STRUCT __attribute__((packed))
+#define PACK_STRUCT_BEGIN
+#define PACK_STRUCT_END
 
 #endif /* _CHTYPES_H_ */

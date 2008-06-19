@@ -61,17 +61,21 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   order to allow linking with non-GLP code under certain conditions.
   The license change will happen before the 1.0.0 release, we are almost
   there, everything looks very stable now.
-- Look into importing *or* implementing a TCP/IP stack and a File System.
 - Evaluate other architectures for a possible ChibiOS/RT port. An important
   selection parameter will be the availability of FOSS toolchains. Currently
   we are evaluating the MicroBlaze.
 - Creation of a reduced ChibiOS/RT kernel targeted to lesser 8bit micros and
   educational purposes, the name will probably be ChibiOS/SX, we are still
   discussing it.
+- File System implementation as side project. Basic requirements: Thread safe,
+  concurrent accesses, proper buffers cache.
 
 *****************************************************************************
 *** Releases                                                              ***
 *****************************************************************************
+
+*** 0.6.6 ***
+- Added the definitions for packed structures to the chtypes.h files.
 
 *** 0.6.5 ***
 - NEW: Web server demo for the AT91SAM7X256, the demo integrates the uIP

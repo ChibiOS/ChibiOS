@@ -45,6 +45,9 @@ typedef uint32_t        systime_t;  /* System Time, recommended fastest unsigned
 typedef int32_t         cnt_t;      /* Counter, recommended fastest signed.*/
 
 #define INLINE      inline
+#define PACK_STRUCT_STRUCT __attribute__((packed))
+#define PACK_STRUCT_BEGIN
+#define PACK_STRUCT_END
 
 #endif /* _CHTYPES_H_ */
 
