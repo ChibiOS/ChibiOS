@@ -76,6 +76,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 
 *** 0.6.6 ***
 - Added the definitions for packed structures to the chtypes.h files.
+- Fixed a problem in the MMC/SD driver in the LPC2148 demo.
 
 *** 0.6.5 ***
 - NEW: Web server demo for the AT91SAM7X256, the demo integrates the uIP

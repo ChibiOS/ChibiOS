@@ -253,7 +253,7 @@ bool_t mmcGetSize(MMCCSD *data) {
 bool_t mmcRead(uint8_t *buf, uint32_t blknum) {
 
   sspAcquireBus();
-  sendhdr(CMDREAD, blknum << 8);
+  sendhdr(CMDREAD, blknum << 9);
   if (recvr1() != 0x00) {
     sspReleaseBus();
     return TRUE;
@@ -277,7 +277,7 @@ bool_t mmcReadMultiple(uint8_t *buf, uint32_t blknum, uint32_t n) {
   static const uint8_t stopcmd[] = {0x40 | CMDSTOP, 0, 0, 0, 0, 1, 0xFF};
 
   sspAcquireBus();
-  sendhdr(CMDREADMULTIPLE, blknum << 8);
+  sendhdr(CMDREADMULTIPLE, blknum << 9);
   if (recvr1() != 0x00) {
     sspReleaseBus();
     return TRUE;
@@ -314,7 +314,7 @@ bool_t mmcWrite(uint8_t *buf, uint32_t blknum) {
   uint8_t b[4];
 
   sspAcquireBus();
-  sendhdr(CMDWRITE, blknum << 8);
+  sendhdr(CMDWRITE, blknum << 9);
   if (recvr1() != 0x00) {
     sspReleaseBus();
     return TRUE;
@@ -346,7 +346,7 @@ bool_t mmcWriteMultiple(uint8_t *buf, uint32_t blknum, uint32_t n) {
   uint8_t b[4];
 
   sspAcquireBus();
-  sendhdr(CMDWRITEMULTIPLE, blknum << 8);
+  sendhdr(CMDWRITEMULTIPLE, blknum << 9);
   if (recvr1() != 0x00) {
     sspReleaseBus();
     return TRUE;
