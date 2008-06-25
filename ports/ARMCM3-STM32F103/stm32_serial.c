@@ -174,7 +174,7 @@ void InitSerial(uint32_t prio1, uint32_t prio2, uint32_t prio3) {
 
 #ifdef USE_USART1
   chFDDInit(&COM1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
-  RCC->APB2ENR |= 0x00002000;
+  RCC->APB2ENR |= 0x00004000;
   SetUSARTI(USART1, 38400, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
   GPIOA->CRH = (GPIOA->CRH & 0xFFFFF00F) | 0x000004B0;
   NVICEnableVector(USART1_IRQChannel, prio1);
