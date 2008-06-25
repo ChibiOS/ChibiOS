@@ -75,6 +75,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.6.6 ***
+- FIX: Fixed a problem in the STM32 port USART1 driver.
 - Added the definitions for packed structures to the chtypes.h files.
 - Fixed a problem in the MMC/SD driver in the LPC2148 demo.
 
