@@ -42,12 +42,16 @@ struct testcase {
 extern "C" {
 #endif
   msg_t TestThread(void *p);
+  void test_printn(uint32_t n);
+  void test_print(char *msgp);
+  void test_println(char *msgp);
   void test_emit_token(char token);
   void test_fail(char * msg);
   void test_assert(bool_t condition, char * msg);
   void test_assert_sequence(char *expected);
   void test_assert_time_window(systime_t start, systime_t end);
   void test_wait_threads(void);
+  systime_t test_wait_tick(void);
   void test_cpu_pulse(systime_t ms);
 #ifdef __cplusplus
 }

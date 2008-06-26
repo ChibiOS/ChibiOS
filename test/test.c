@@ -24,6 +24,7 @@
 #include "testsem.h"
 #include "testmtx.h"
 #include "testmsg.h"
+#include "testbmk.h"
 
 /*
  * Array of all the test cases.
@@ -37,6 +38,11 @@ static const struct testcase *tests[] = {
   &testmtx2,
   &testmtx3,
   &testmsg1,
+  &testbmk1,
+  &testbmk2,
+  &testbmk3,
+  &testbmk4,
+  &testbmk5,
   NULL
 };
 
@@ -159,6 +165,26 @@ void test_cpu_pulse(systime_t ms) {
   }
 }
 
+systime_t test_wait_tick(void) {
+
+  systime_t time = chSysGetTime() + 1;
+  if (time) {
+    while (chSysGetTime() < time) {
+#if defined(WIN32)
+      ChkIntSources();
+#endif
+    }
+  }
+  else {
+    while (chSysGetTime() > time) {
+#if defined(WIN32)
+      ChkIntSources();
+#endif
+    }
+  }
+  return time;
+}
+
 /*
  * Test suite execution.
  */
@@ -192,7 +218,7 @@ msg_t TestThread(void *p) {
 #if DELAY_BETWEEN_TESTS > 0
     chThdSleep(DELAY_BETWEEN_TESTS);
 #endif
-    test_println("------------------------------------------------------------");
+    test_println("---------------------------------------------------------------------------");
     test_print("--- Test Case ");
     test_printn(i + 1);
     test_print(" (");
@@ -213,7 +239,7 @@ msg_t TestThread(void *p) {
       test_println("--- Result: SUCCESS");
     i++;
   }
-  test_println("------------------------------------------------------------");
+  test_println("---------------------------------------------------------------------------");
   test_println("");
   test_print("Final result: ");
   if (global_fail)

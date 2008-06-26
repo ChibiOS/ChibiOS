@@ -72,7 +72,7 @@ ASRC = ../../ports/ARM7-LPC214x/chcore.c \
        ../../src/chserial.c \
        ../../src/lib/evtimer.c \
        ../../test/test.c ../../test/testrdy.c  ../../test/testsem.c \
-       ../../test/testmtx.c ../../test/testmsg.c \
+       ../../test/testmtx.c ../../test/testmsg.c ../../test/testbmk.c \
        board.c buzzer.c mmcsd.c main.c
 
 # List THUMB-mode C sources here
