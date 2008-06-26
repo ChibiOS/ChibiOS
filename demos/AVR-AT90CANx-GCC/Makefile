@@ -79,14 +79,16 @@ TARGET = ch
 OBJDIR = .
 
 
+# Imported source files
+include ../../src/kernel.mk
+include ../../test/test.mk
+
+
 # List C source files here. (C dependencies are automatically generated.)
 SRC = ../../ports/AVR/chcore.c ../../ports/AVR/avr_serial.c \
-      ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
-      ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chmtx.c \
-      ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \
-      ../../src/chserial.c \
+       ${KERNSRC} \
+       ${TESTSRC} \
       ../../src/lib/evtimer.c \
-      ../../test/test.c \
       board.c main.c
 
 

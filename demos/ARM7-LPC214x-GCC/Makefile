@@ -61,18 +61,18 @@ UDEFS =
 # Define ASM defines here
 UADEFS =
 
+# Imported source files
+include ../../src/kernel.mk
+include ../../test/test.mk
+
 # List ARM-mode C source files here
 ASRC = ../../ports/ARM7-LPC214x/chcore.c \
        ../../ports/ARM7-LPC214x/vic.c  \
        ../../ports/ARM7-LPC214x/lpc214x_serial.c  \
        ../../ports/ARM7-LPC214x/lpc214x_ssp.c  \
-       ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
-       ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chmtx.c \
-       ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \
-       ../../src/chserial.c \
+       ${KERNSRC} \
+       ${TESTSRC} \
        ../../src/lib/evtimer.c \
-       ../../test/test.c ../../test/testrdy.c  ../../test/testsem.c \
-       ../../test/testmtx.c ../../test/testmsg.c ../../test/testbmk.c \
        board.c buzzer.c mmcsd.c main.c
 
 # List THUMB-mode C sources here

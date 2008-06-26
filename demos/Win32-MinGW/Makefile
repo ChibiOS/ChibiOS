@@ -55,13 +55,14 @@ UDEFS =
 # Define ASM defines here
 UADEFS =
 
+# Imported source files
+include ../../src/kernel.mk
+include ../../test/test.mk
+
 # List C source files here
-SRC  = chcore.c demo.c \
-       ../../test/test.c ../../ports/win32/simcom.c \
-       ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
-       ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chmtx.c \
-       ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \
-       ../../src/chserial.c \
+SRC  = chcore.c demo.c ../../ports/win32/simcom.c \
+       ${KERNSRC} \
+       ${TESTSRC}
 
 # List ASM source files here
 ASRC = chcore2.s

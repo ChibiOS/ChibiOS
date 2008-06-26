@@ -61,15 +61,9 @@ UDEFS =
 # Define ASM defines here
 UADEFS =
 
-# List of all the ChibiOS/RT kernel files, there is no need to remove the files
-# from this list, you can disable parts of the kernel by editing chconf.h.
-KSRC = ../../src/chinit.c ../../src/chdebug.c \
-       ../../src/chlists.c ../../src/chdelta.c \
-       ../../src/chschd.c ../../src/chthreads.c \
-       ../../src/chsem.c ../../src/chmtx.c \
-       ../../src/chevents.c ../../src/chmsg.c \
-       ../../src/chsleep.c ../../src/chqueues.c \
-       ../../src/chserial.c
+# Imported source files
+include ../../src/kernel.mk
+include ../../test/test.mk
 
 # List of the required uIP source files.
 USRC = ../../ext/uip-1.0/uip/uip_arp.c \
@@ -90,8 +84,10 @@ ASRC =
 TSRC = ../../ports/ARM7-AT91SAM7X/chcore.c \
        ../../ports/ARM7-AT91SAM7X/sam7x_serial.c \
        ../../ports/ARM7-AT91SAM7X/sam7x_emac.c \
-       ${KSRC} ${USRC} \
-       ../../src/lib/evtimer.c ../../test/test.c \
+       ${KERNSRC} \
+       ${TESTSRC} \
+       ${USRC} \
+       ../../src/lib/evtimer.c \
        at91lib/aic.c \
        web/webthread.c \
        board.c main.c

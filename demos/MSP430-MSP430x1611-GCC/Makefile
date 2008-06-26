@@ -61,13 +61,15 @@ UDEFS =
 # Define ASM defines here
 UADEFS =
 
+# Imported source files
+include ../../src/kernel.mk
+include ../../test/test.mk
+
 # List ARM-mode C source files here
 SRC = ../../ports/MSP430/chcore.c \
-      ../../src/chinit.c ../../src/chdebug.c ../../src/chlists.c ../../src/chdelta.c \
-      ../../src/chschd.c ../../src/chthreads.c ../../src/chsem.c ../../src/chmtx.c \
-      ../../src/chevents.c ../../src/chmsg.c ../../src/chsleep.c ../../src/chqueues.c \
-      ../../src/chserial.c \
-      ../../src/lib/evtimer.c ../../test/test.c \
+       ${KERNSRC} \
+       ${TESTSRC} \
+      ../../src/lib/evtimer.c \
       board.c main.c
 
 # List ASM source files here
