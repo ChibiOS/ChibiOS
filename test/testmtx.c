@@ -48,13 +48,15 @@ static msg_t thread1(void *p) {
 
 static void mtx1_execute(void) {
 
+  tprio_t prio = chThdGetPriority(); // Bacause priority inheritance.
   chMtxLock(&m1);
-  threads[0] = chThdCreate(chThdGetPriority()+1, 0, wa[0], STKSIZE, thread1, "E");
-  threads[1] = chThdCreate(chThdGetPriority()+2, 0, wa[1], STKSIZE, thread1, "D");
-  threads[2] = chThdCreate(chThdGetPriority()+3, 0, wa[2], STKSIZE, thread1, "C");
-  threads[3] = chThdCreate(chThdGetPriority()+4, 0, wa[3], STKSIZE, thread1, "B");
-  threads[4] = chThdCreate(chThdGetPriority()+5, 0, wa[4], STKSIZE, thread1, "A");
+  threads[0] = chThdCreate(prio+1, 0, wa[0], STKSIZE, thread1, "E");
+  threads[1] = chThdCreate(prio+2, 0, wa[1], STKSIZE, thread1, "D");
+  threads[2] = chThdCreate(prio+3, 0, wa[2], STKSIZE, thread1, "C");
+  threads[3] = chThdCreate(prio+4, 0, wa[3], STKSIZE, thread1, "B");
+  threads[4] = chThdCreate(prio+5, 0, wa[4], STKSIZE, thread1, "A");
   chMtxUnlock();
+  test_assert(prio == chThdGetPriority(), "priority return failure");
   test_wait_threads();
   test_assert_sequence("ABCDE");
 }

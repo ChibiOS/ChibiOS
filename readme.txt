@@ -81,6 +81,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   timing of test events.
 - NEW: New API chSysInTimeWindow() that checks if the current system time is
   within the specified time window.
+- FIX: Mutex test #1 in the test suite corrected, it failed to... fail.
 - FIX: Fixed a problem in the STM32 port USART1 driver.
 - Added the definitions for packed structures to the chtypes.h files.
 - Fixed a problem in the MMC/SD driver in the LPC2148 demo.
