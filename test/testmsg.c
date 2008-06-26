@@ -17,40 +17,49 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * @addtogroup Time
- * @{
- */
-
 #include <ch.h>
 
-#ifdef CH_USE_SLEEP
-/**
- * Suspends the invoking thread for the specified time.
- * @param time the system ticks number
- */
-void chThdSleep(systime_t time) {
+#include "test.h"
 
-  chSysLock();
+static char *msg1_gettest(void) {
 
-  chSchGoSleepTimeoutS(PRSLEEP, time);
-
-  chSysUnlock();
+  return "Messages, dispatch test";
 }
-#endif /* CH_USE_SLEEP */
 
-#ifdef CH_USE_SYSTEMTIME
-/**
- * Checks if the current system time is within the specified time window.
- * @param start the start of the time window (inclusive)
- * @param end the end of the time window (non inclusive)
- */
-bool_t chSysInTimeWindow(systime_t start, systime_t end) {
-
-  systime_t time = chSysGetTime();
-  return end >= start ? (time >= start) && (time < end) :
-                        (time >= start) || (time < end);
+static void msg1_setup(void) {
 }
-#endif /* CH_USE_SYSTEMTIME */
 
-/** @} */
+static void msg1_teardown(void) {
+}
+
+static msg_t thread(void *p) {
+  msg_t msg;
+  int i;
+
+  for (i = 0; i < 5; i++) {
+    msg = chMsgSend(p, 'A' + i);
+    test_emit_token(msg);
+  }
+  chMsgSend(p, 0);
+  return 0;
+}
+
+static void msg1_execute(void) {
+  msg_t msg;
+
+  threads[0] = chThdCreate(chThdGetPriority()-1, 0, wa[0], STKSIZE, thread, chThdSelf());
+  do {
+    chMsgRelease(msg = chMsgWait());
+    if (msg)
+      test_emit_token(msg);
+  } while (msg);
+  test_wait_threads();
+  test_assert_sequence("AABBCCDDEE");
+}
+
+const struct testcase testmsg1 = {
+  msg1_gettest,
+  msg1_setup,
+  msg1_teardown,
+  msg1_execute
+};

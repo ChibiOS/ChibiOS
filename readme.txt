@@ -75,6 +75,12 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.6.6 ***
+- NEW: Improved test suite, now the suite is divided in modules and the code
+  is much easier to understand. The new framework simplifies the inclusion of
+  new test cases and makes possible to verify the exact sequence and the
+  timing of test events.
+- NEW: New API chSysInTimeWindow() that checks if the current system time is
+  within the specified time window.
 - FIX: Fixed a problem in the STM32 port USART1 driver.
 - Added the definitions for packed structures to the chtypes.h files.
 - Fixed a problem in the MMC/SD driver in the LPC2148 demo.

@@ -17,17 +17,43 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ch.h>
-
 #ifndef _TEST_H_
 #define _TEST_H_
+
+#define MAX_THREADS             5
+#define MAX_TOKENS              16
+#define DELAY_BETWEEN_TESTS     200
+
+#if defined(CH_ARCHITECTURE_AVR) || defined(CH_ARCHITECTURE_MSP430)
+#define THREADS_STACK_SIZE      64
+#else
+#define THREADS_STACK_SIZE      128
+#endif
+#define STKSIZE UserStackSize(THREADS_STACK_SIZE)
+
+struct testcase {
+  char *(*gettest)(void);
+  void (*setup)(void);
+  void (*teardown)(void);
+  void (*execute)(void);
+};
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   msg_t TestThread(void *p);
+  void test_emit_token(char token);
+  void test_fail(char * msg);
+  void test_assert(bool_t condition, char * msg);
+  void test_assert_sequence(char *expected);
+  void test_assert_time_window(systime_t start, systime_t end);
+  void test_wait_threads(void);
+  void test_cpu_pulse(systime_t ms);
 #ifdef __cplusplus
 }
 #endif
+
+extern Thread *threads[MAX_THREADS];
+extern void *wa[MAX_THREADS];
 
 #endif /* _TEST_H_ */
