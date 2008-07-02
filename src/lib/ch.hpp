@@ -41,12 +41,15 @@ namespace chibios_rt {
 
     /**
      * Disables interrupts.
-     * @note On some ports it is faster to invoke chSysLock() directly.
+     * @note On some ports it is faster to invoke chSysLock() directly because
+     *       inlining.
      */
     static void Lock(void);
+
     /**
      * Enables interrupts.
-     * @note On some ports it is faster to invoke chSysUnlock() directly.
+     * @note On some ports it is faster to invoke chSysUnlock() directly
+     *       because inlining.
      */
     static void Unlock(void);
 
@@ -89,7 +92,7 @@ namespace chibios_rt {
 
   /**
    * Base class for a ChibiOS/RT thread, the thread body is the virtual
-   * function /p Main().
+   * function \p Main().
    */
   class BaseThread {
   public:
@@ -162,7 +165,7 @@ namespace chibios_rt {
     static msg_t WaitMessage(void);
 
     /**
-     * Returns an enqueued message or /p NULL.
+     * Returns an enqueued message or \p NULL.
      */
     static msg_t GetMessage(void);
 
@@ -207,7 +210,7 @@ namespace chibios_rt {
 
     /**
      * Simplified constructor, it allows to create a thread by simply
-     * specifying a name. In is assumed /p NORMALPRIO as initial priority
+     * specifying a name. In is assumed \p NORMALPRIO as initial priority
      * and no special option flags.
      */
     EnhancedThread(const char *tname) :
@@ -219,7 +222,7 @@ namespace chibios_rt {
 
 #ifdef CH_USE_SEMAPHORES
   /**
-   * Class encapsulating a /p Semaphore.
+   * Class encapsulating a \p Semaphore.
    */
   class Semaphore {
   public:
@@ -263,7 +266,7 @@ namespace chibios_rt {
 
 #ifdef CH_USE_MUTEXES
   /**
-   * Class encapsulating a /p Mutex.
+   * Class encapsulating a \p Mutex.
    */
   class Mutex {
   public:
@@ -298,7 +301,7 @@ namespace chibios_rt {
 
 #ifdef CH_USE_EVENTS
   /**
-   * Class encapsulating an /p EventSource.
+   * Class encapsulating an \p EventSource.
    */
   class Event {
   public:

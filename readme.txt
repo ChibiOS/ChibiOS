@@ -74,6 +74,11 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.6.7 ***
+- Improvements to the test framework, now a virtual timer is used instead of
+  software loops into the bechmarks in order to have more stable results.
+- Added the C++ wrapper entries to the documentation.
+
 *** 0.6.6 ***
 - NEW: Improved test suite, now the suite is divided in modules and the code
   is much easier to understand. The new framework simplifies the inclusion of

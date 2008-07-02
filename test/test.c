@@ -167,22 +167,27 @@ void test_cpu_pulse(systime_t ms) {
 
 systime_t test_wait_tick(void) {
 
-  systime_t time = chSysGetTime() + 1;
-  if (time) {
-    while (chSysGetTime() < time) {
-#if defined(WIN32)
-      ChkIntSources();
-#endif
-    }
-  }
-  else {
-    while (chSysGetTime() > time) {
-#if defined(WIN32)
-      ChkIntSources();
-#endif
-    }
-  }
-  return time;
+  chThdSleep(1);
+  return chSysGetTime();
+}
+
+/*
+ * Timer utils.
+ */
+static VirtualTimer vt;
+bool_t test_timer_done;
+
+static void tmr(void *p) {
+
+  test_timer_done = TRUE;
+}
+
+void test_start_timer(systime_t time) {
+
+  test_timer_done = FALSE;
+  chSysLock();
+  chVTSetI(&vt, time, tmr, NULL);
+  chSysUnlock();
 }
 
 /*

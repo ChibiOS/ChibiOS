@@ -507,3 +507,13 @@
  * @file chserial.c Serial Drivers code.
  */
 /** @} */
+
+/**
+ * @defgroup CPlusPlusLibrary C++ Wrapper
+ * @{
+ * C++ wrapper module. This module allows to use the ChibiOS/RT functionalities
+ * from C++ as classes and objects rather the traditional "C" APIs.
+ * @file ch.hpp C++ wrapper classes and definitions.
+ * @file ch.cpp C++ wrapper code.
+ */
+/** @} */

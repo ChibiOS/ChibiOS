@@ -53,11 +53,13 @@ extern "C" {
   void test_wait_threads(void);
   systime_t test_wait_tick(void);
   void test_cpu_pulse(systime_t ms);
+  void test_start_timer(systime_t time);
 #ifdef __cplusplus
 }
 #endif
 
 extern Thread *threads[MAX_THREADS];
 extern void *wa[MAX_THREADS];
+extern bool_t test_timer_done;
 
 #endif /* _TEST_H_ */

@@ -25,9 +25,9 @@ __attribute__((noinline))
 static unsigned int msg_loop_test(Thread *tp) {
 
   uint32_t n = 0;
-  systime_t start = test_wait_tick();
-  systime_t end = start + 1000;
-  while (chSysInTimeWindow(start, end)) {
+  test_wait_tick();
+  test_start_timer(1000);
+  while (!test_timer_done) {
     (void)chMsgSend(tp, 0);
     n++;
 #if defined(WIN32)
@@ -164,10 +164,10 @@ static void bmk4_teardown(void) {
 
 static void bmk4_execute(void) {
 
-  systime_t start = test_wait_tick();
-  systime_t end = start + 1000;
   uint32_t n = 0;
-  while (chSysInTimeWindow(start, end)) {
+  test_wait_tick();
+  test_start_timer(1000);
+  while (!test_timer_done) {
     threads[0] = chThdCreate(chThdGetPriority()-1, 0, wa[0], STKSIZE, thread2, NULL);
     chThdWait(threads[0]);
     n++;
@@ -203,10 +203,10 @@ static void bmk5_execute(void) {
   static Queue iq;
 
   chIQInit(&iq, ib, sizeof(ib), NULL);
-  systime_t start = test_wait_tick();
-  systime_t end = start + 1000;
   uint32_t n = 0;
-  while (chSysInTimeWindow(start, end)) {
+  test_wait_tick();
+  test_start_timer(1000);
+  while (!test_timer_done) {
     chIQPutI(&iq, 0);
     chIQPutI(&iq, 1);
     chIQPutI(&iq, 2);
