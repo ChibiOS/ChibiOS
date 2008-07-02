@@ -75,8 +75,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.6.7 ***
-- Improvements to the test framework, now a virtual timer is used instead of
-  software loops into the bechmarks in order to have more stable results.
+- OPT: Removed an unrequired initialization from the chThdCreate().
+- OPT: Improvements to the test framework, now a virtual timer is used instead
+  of software loops into the bechmarks in order to have more stable results.
 - Added the C++ wrapper entries to the documentation.
 
 *** 0.6.6 ***
@@ -88,8 +89,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   within the specified time window.
 - FIX: Mutex test #1 in the test suite corrected, it failed to... fail.
 - FIX: Fixed a problem in the STM32 port USART1 driver.
+- FIX: Fixed a problem in the MMC/SD driver in the LPC2148 demo.
 - Added the definitions for packed structures to the chtypes.h files.
-- Fixed a problem in the MMC/SD driver in the LPC2148 demo.
 - Improvements to the makefiles, now each source group has its own .mk include
   file. Now it is no more required to rewrite everything in each makefile.
 

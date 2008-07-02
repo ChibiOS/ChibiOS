@@ -33,7 +33,6 @@ void init_thread(tprio_t prio, tmode_t mode, Thread *tp) {
   tp->p_tid = nextid++;
   tp->p_flags = mode;
   tp->p_prio = prio;
-  tp->p_rdymsg = RDY_OK;
 #ifdef CH_USE_MUTEXES
   tp->p_mtxlist = NULL;
   tp->p_realprio = prio;
@@ -48,7 +47,7 @@ void init_thread(tprio_t prio, tmode_t mode, Thread *tp) {
   tp->p_epending = 0;
 #endif
 #ifdef CH_USE_EXIT_EVENT
-    chEvtInit(&tp->p_exitesource);
+  chEvtInit(&tp->p_exitesource);
 #endif
 }
 

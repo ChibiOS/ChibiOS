@@ -27,13 +27,13 @@ static unsigned int msg_loop_test(Thread *tp) {
   uint32_t n = 0;
   test_wait_tick();
   test_start_timer(1000);
-  while (!test_timer_done) {
+  do {
     (void)chMsgSend(tp, 0);
     n++;
 #if defined(WIN32)
     ChkIntSources();
 #endif
-  }
+  } while (!test_timer_done);
   return n;
 }
 
@@ -122,7 +122,7 @@ static void bmk3_teardown(void) {
 
 static msg_t thread2(void *p) {
 
-  return 0;
+  return (msg_t)p;
 }
 
 static void bmk3_execute(void) {
@@ -153,7 +153,7 @@ const struct testcase testbmk3 = {
 
 static char *bmk4_gettest(void) {
 
-  return "Benchmark, threads creation/termination";
+  return "Benchmark, threads creation/termination, worst case";
 }
 
 static void bmk4_setup(void) {
@@ -165,16 +165,17 @@ static void bmk4_teardown(void) {
 static void bmk4_execute(void) {
 
   uint32_t n = 0;
+  void *wap = wa[0];
+  tprio_t prio = chThdGetPriority() - 1;
   test_wait_tick();
   test_start_timer(1000);
-  while (!test_timer_done) {
-    threads[0] = chThdCreate(chThdGetPriority()-1, 0, wa[0], STKSIZE, thread2, NULL);
-    chThdWait(threads[0]);
+  do {
+    chThdWait(chThdCreate(prio, 0, wap, STKSIZE, thread2, NULL));
     n++;
 #if defined(WIN32)
     ChkIntSources();
 #endif
-  }
+  } while (!test_timer_done);
   test_print("--- Score : ");
   test_printn(n);
   test_println(" threads/S");
@@ -206,7 +207,7 @@ static void bmk5_execute(void) {
   uint32_t n = 0;
   test_wait_tick();
   test_start_timer(1000);
-  while (!test_timer_done) {
+  do {
     chIQPutI(&iq, 0);
     chIQPutI(&iq, 1);
     chIQPutI(&iq, 2);
@@ -219,7 +220,7 @@ static void bmk5_execute(void) {
 #if defined(WIN32)
     ChkIntSources();
 #endif
-  }
+  } while (!test_timer_done);
   test_print("--- Score : ");
   test_printn(n * 4);
   test_println(" bytes/S");
