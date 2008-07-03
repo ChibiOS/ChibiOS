@@ -21,6 +21,15 @@
 
 #include "test.h"
 
+static msg_t thread1(void *p) {
+  msg_t msg;
+
+  do {
+    chMsgRelease(msg = chMsgWait());
+  } while (msg);
+  return 0;
+}
+
 __attribute__((noinline))
 static unsigned int msg_loop_test(Thread *tp) {
 
@@ -28,12 +37,13 @@ static unsigned int msg_loop_test(Thread *tp) {
   test_wait_tick();
   test_start_timer(1000);
   do {
-    (void)chMsgSend(tp, 0);
+    (void)chMsgSend(tp, 1);
     n++;
 #if defined(WIN32)
     ChkIntSources();
 #endif
   } while (!test_timer_done);
+  (void)chMsgSend(tp, 0);
   return n;
 }
 
@@ -46,13 +56,6 @@ static void bmk1_setup(void) {
 }
 
 static void bmk1_teardown(void) {
-}
-
-static msg_t thread1(void *p) {
-
-  while (!chThdShouldTerminate())
-    chMsgRelease(chMsgWait());
-  return 0;
 }
 
 static void bmk1_execute(void) {
@@ -93,7 +96,6 @@ static void bmk2_execute(void) {
   threads[0] = chThdCreate(chThdGetPriority()+1, 0, wa[0], STKSIZE, thread1, 0);
   n = msg_loop_test(threads[0]);
   chThdTerminate(threads[0]);
-  chMsgSend(threads[0], 0);
   test_wait_threads();
   test_print("--- Score : ");
   test_printn(n);
@@ -109,6 +111,11 @@ const struct testcase testbmk2 = {
   bmk2_execute
 };
 
+static msg_t thread2(void *p) {
+
+  return (msg_t)p;
+}
+
 static char *bmk3_gettest(void) {
 
   return "Benchmark, context switch #3, 4 threads in ready list";
@@ -118,11 +125,6 @@ static void bmk3_setup(void) {
 }
 
 static void bmk3_teardown(void) {
-}
-
-static msg_t thread2(void *p) {
-
-  return (msg_t)p;
 }
 
 static void bmk3_execute(void) {
@@ -135,7 +137,6 @@ static void bmk3_execute(void) {
   threads[4] = chThdCreate(chThdGetPriority()-5, 0, wa[4], STKSIZE, thread2, 0);
   n = msg_loop_test(threads[0]);
   chThdTerminate(threads[0]);
-  chMsgSend(threads[0], 0);
   test_wait_threads();
   test_print("--- Score : ");
   test_printn(n);
