@@ -55,7 +55,8 @@ void chSysInit(void) {
    * serve interrupts in its context while keeping the lowest energy saving
    * mode compatible with the system status.
    */
-  chThdCreate(IDLEPRIO, 0, waIdleThread, sizeof(waIdleThread), (tfunc_t)_IdleThread, NULL);
+  chThdCreateFast(IDLEPRIO, waIdleThread,
+                  sizeof(waIdleThread), (tfunc_t)_IdleThread);
 }
 
 /**

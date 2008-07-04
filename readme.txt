@@ -75,10 +75,14 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.6.7 ***
+- NEW: New chThdCreateFast() API, it is a simplified form of chThdCreate()
+       that allows even faster threads creation. The new API does not support
+       the "mode" and "arg" parameters (still available in the old API).
 - OPT: Removed an unrequired initialization from the chThdCreate().
 - OPT: Improvements to the test framework, now a virtual timer is used instead
   of software loops into the bechmarks in order to have more stable results.
 - Added the C++ wrapper entries to the documentation.
+- Fixed the documentation entry for the chThdCreate() API.
 
 *** 0.6.6 ***
 - NEW: Improved test suite, now the suite is divided in modules and the code

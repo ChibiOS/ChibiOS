@@ -131,8 +131,8 @@ int main(int argc, char **argv) {
    * are not started in order to make accurate benchmarks.
    */
   if ((IO0PIN & 0x00018000) == 0x00018000) {
-    chThdCreate(NORMALPRIO, 0, waThread1, sizeof(waThread1), Thread1, NULL);
-    chThdCreate(NORMALPRIO, 0, waThread2, sizeof(waThread2), Thread2, NULL);
+    chThdCreateFast(NORMALPRIO, waThread1, sizeof(waThread1), Thread1);
+    chThdCreateFast(NORMALPRIO, waThread2, sizeof(waThread2), Thread2);
   }
 
   /*

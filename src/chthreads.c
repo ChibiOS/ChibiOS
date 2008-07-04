@@ -62,9 +62,8 @@ static void memfill(uint8_t *p, uint32_t n, uint8_t v) {
 /**
  * Creates a new thread.
  * @param prio the priority level for the new thread. Usually the threads are
- *             created with priority \p NORMALPRIO (128), priorities
- *             can range from \p LOWPRIO (1) to \p HIGHPRIO
- *             (255).
+ *             created with priority \p NORMALPRIO, priorities
+ *             can range from \p LOWPRIO to \p HIGHPRIO.
  * @param mode the creation option flags for the thread. The following options
  *             can be OR'ed in this parameter:<br>
  *             <ul>
@@ -106,13 +105,43 @@ Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
   else {
 #endif
     chSysLock();
-
     chSchWakeupS(tp, RDY_OK);
-
     chSysUnlock();
 #ifdef CH_USE_RESUME
   }
 #endif
+  return tp;
+}
+
+/**
+ * Creates a new thread.
+ * @param prio the priority level for the new thread. Usually the threads are
+ *             created with priority \p NORMALPRIO, priorities
+ *             can range from \p LOWPRIO to \p HIGHPRIO.
+ * @param workspace pointer to a working area dedicated to the thread stack
+ * @param wsize size of the working area.
+ * @param pf the thread function. Returning from this function automatically
+ *           terminates the thread.
+ * @return the pointer to the \p Thread structure allocated for the
+ *         thread into the working space area.
+ * @note A thread can terminate by calling \p chThdExit() or by simply
+ *       returning from its main function.
+ */
+Thread *chThdCreateFast(tprio_t prio, void *workspace,
+                        size_t wsize, tfunc_t pf) {
+  Thread *tp = workspace;
+
+  chDbgAssert((wsize >= UserStackSize(0)) && (prio <= HIGHPRIO) &&
+              (workspace != NULL) && (pf != NULL),
+              "chthreads.c, chThdCreateFast()");
+#ifdef CH_USE_DEBUG
+  memfill(workspace, wsize, MEM_FILL_PATTERN);
+#endif
+  init_thread(prio, 0, tp);
+  SETUP_CONTEXT(workspace, wsize, pf, NULL);
+  chSysLock();
+  chSchWakeupS(tp, RDY_OK);
+  chSysUnlock();
   return tp;
 }
 
