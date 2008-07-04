@@ -51,8 +51,8 @@ int main(int argc, char **argv) {
    */
   chSysInit();
 
-  chThdCreate(NORMALPRIO, 0, waThread1, sizeof(waThread1), Thread1, NULL);
-  chThdCreate(NORMALPRIO - 1, 0, waWebThread, sizeof(waWebThread), WebThread, NULL);
+  chThdCreateFast(NORMALPRIO, waThread1, sizeof(waThread1), Thread1);
+  chThdCreateFast(NORMALPRIO - 1, waWebThread, sizeof(waWebThread), WebThread);
 
   while (TRUE) {
     chThdSleep(500);
