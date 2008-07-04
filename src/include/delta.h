@@ -68,7 +68,7 @@ typedef struct {
 
 extern DeltaList dlist;
 
-#define chVTDoTickI() \
+#define chVTDoTickI() {                                                 \
   if (&dlist != (DeltaList *)dlist.dl_next) {                           \
     VirtualTimer *vtp;                                                  \
                                                                         \
@@ -79,7 +79,8 @@ extern DeltaList dlist;
       (vtp->vt_next->vt_prev = (void *)&dlist)->vt_next = vtp->vt_next; \
       fn(vtp->vt_par);                                                  \
     }                                                                   \
-  }
+  }                                                                     \
+}
 
 /** Infinite time specification.*/
 #define TIME_INFINITE 0
