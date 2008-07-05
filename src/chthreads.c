@@ -34,8 +34,8 @@ void init_thread(tprio_t prio, tmode_t mode, Thread *tp) {
   tp->p_flags = mode;
   tp->p_prio = prio;
 #ifdef CH_USE_MUTEXES
-  tp->p_mtxlist = NULL;
   tp->p_realprio = prio;
+  tp->p_mtxlist = NULL;
 #endif
 #ifdef CH_USE_WAITEXIT
   list_init(&tp->p_waiting);
