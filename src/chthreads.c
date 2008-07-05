@@ -97,8 +97,8 @@ Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
 #ifdef CH_USE_DEBUG
   memfill(workspace, wsize, MEM_FILL_PATTERN);
 #endif
-  init_thread(prio, mode, tp);
   SETUP_CONTEXT(workspace, wsize, pf, arg);
+  init_thread(prio, mode, tp);
 #ifdef CH_USE_RESUME
   if (tp->p_flags & P_SUSPENDED)
     tp->p_state = PRSUSPENDED;
@@ -137,8 +137,8 @@ Thread *chThdCreateFast(tprio_t prio, void *workspace,
 #ifdef CH_USE_DEBUG
   memfill(workspace, wsize, MEM_FILL_PATTERN);
 #endif
-  init_thread(prio, 0, tp);
   SETUP_CONTEXT(workspace, wsize, pf, NULL);
+  init_thread(prio, 0, tp);
   chSysLock();
   chSchWakeupS(tp, RDY_OK);
   chSysUnlock();
