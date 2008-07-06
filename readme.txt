@@ -82,6 +82,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   to the chThdCreate().
 - OPT: Improvements to the test framework, now a virtual timer is used instead
   of software loops into the bechmarks in order to have more stable results.
+- New benchmark added to the test suite.
 - Added the C++ wrapper entries to the documentation.
 - Fixed the documentation entry for the chThdCreate() API.
 

@@ -191,7 +191,7 @@ const struct testcase testbmk4 = {
 
 static char *bmk5_gettest(void) {
 
-  return "Benchmark, I/O Queues throughput";
+  return "Benchmark, threads creation/termination, optimal";
 }
 
 static void bmk5_setup(void) {
@@ -201,6 +201,43 @@ static void bmk5_teardown(void) {
 }
 
 static void bmk5_execute(void) {
+
+  uint32_t n = 0;
+  void *wap = wa[0];
+  tprio_t prio = chThdGetPriority() + 1;
+  test_wait_tick();
+  test_start_timer(1000);
+  do {
+    chThdCreateFast(prio, wap, STKSIZE, thread2);
+    n++;
+#if defined(WIN32)
+    ChkIntSources();
+#endif
+  } while (!test_timer_done);
+  test_print("--- Score : ");
+  test_printn(n);
+  test_println(" threads/S");
+}
+
+const struct testcase testbmk5 = {
+  bmk5_gettest,
+  bmk5_setup,
+  bmk5_teardown,
+  bmk5_execute
+};
+
+static char *bmk6_gettest(void) {
+
+  return "Benchmark, I/O Queues throughput";
+}
+
+static void bmk6_setup(void) {
+}
+
+static void bmk6_teardown(void) {
+}
+
+static void bmk6_execute(void) {
   static uint8_t ib[16];
   static Queue iq;
 
@@ -227,9 +264,9 @@ static void bmk5_execute(void) {
   test_println(" bytes/S");
 }
 
-const struct testcase testbmk5 = {
-  bmk5_gettest,
-  bmk5_setup,
-  bmk5_teardown,
-  bmk5_execute
+const struct testcase testbmk6 = {
+  bmk6_gettest,
+  bmk6_setup,
+  bmk6_teardown,
+  bmk6_execute
 };

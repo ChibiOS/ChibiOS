@@ -20,6 +20,7 @@
 #ifndef _TESTBMK_H_
 #define _TESTBMK_H_
 
-extern const struct testcase testbmk1, testbmk2, testbmk3, testbmk4, testbmk5;
+extern const struct testcase testbmk1, testbmk2, testbmk3,
+                             testbmk4, testbmk5, testbmk6;
 
 #endif /* _TESTBMK_H_ */
