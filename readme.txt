@@ -85,6 +85,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - New benchmark added to the test suite.
 - Added the C++ wrapper entries to the documentation.
 - Fixed the documentation entry for the chThdCreate() API.
+- Removed redundant ifdefs from the ch.h header.
 
 *** 0.6.6 ***
 - NEW: Improved test suite, now the suite is divided in modules and the code

@@ -27,69 +27,22 @@
 
 #define _CHIBIOS_RT_
 
-#ifndef _CHCONF_H_
 #include <chconf.h>
-#endif
-
-#ifndef _CHTYPES_H_
 #include <chtypes.h>
-#endif
-
-#ifndef _LISTS_H_
 #include "lists.h"
-#endif
-
-#ifndef _CHCORE_H_
 #include <chcore.h>
-#endif
-
-#ifndef _DELTA_H_
 #include "delta.h"
-#endif
-
-#ifndef _SCHEDULER_H_
 #include "scheduler.h"
-#endif
-
-#ifndef _SEMAPHORES_H_
 #include "semaphores.h"
-#endif
-
-#ifndef _MUTEXES_H_
 #include "mutexes.h"
-#endif
-
-#ifndef _EVENTS_H_
 #include "events.h"
-#endif
-
-#ifndef _MESSAGES_H_
 #include "messages.h"
-#endif
-
-#ifndef _THREADS_H_
 #include "threads.h"
-#endif
-
-#ifndef _INLINE_H_
 #include "inline.h"
-#endif
-
-#ifndef _SLEEP_H_
 #include "sleep.h"
-#endif
-
-#ifndef _QUEUES_H_
 #include "queues.h"
-#endif
-
-#ifndef _SERIAL_H_
 #include "serial.h"
-#endif
-
-#ifndef _DEBUG_H_
 #include "debug.h"
-#endif
 
 /*
  * Common values.
