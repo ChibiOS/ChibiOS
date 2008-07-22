@@ -49,6 +49,12 @@ void chSysHalt(void) {
   }
 }
 
+/*
+ * Start a thread by invoking its work function.
+ *
+ * Start a thread by calling its work function. If the work function returns,
+ * call chThdExit and chSysHalt.
+ */
 __attribute__((naked, weak))
 void threadstart(void) {
 
@@ -80,7 +86,15 @@ void *retaddr;
  */
 __attribute__((naked))
 void SVCallVector(Thread *otp, Thread *ntp) {
-
+  /* { r0 = otp, r1 = ntp } */
+  /* get the BASEPRI in r3 */
+  /* get the PSP in r12 */
+  /* push the registers on the PSP stack */
+  /* stores the modified PSP into the thread context */
+  /* fetches the PSP position from the new thread context */
+  /* pop the registers from the PSP stack */
+  /* set the PSP from r12 */
+  /* set the BASEPRI from R3 */
 #ifdef CH_CURRP_REGISTER_CACHE
   asm volatile ("mrs     r3, BASEPRI                            \n\t" \
                 "mrs     r12, PSP                               \n\t" \
@@ -135,6 +149,7 @@ void PendSVVector(void) {
   (otp = currp)->p_ctx.r13 = sp_thd;
   chSchReadyI(otp);
   (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
+  /* set the round-robin time quantum */
   rlist.r_preempt = CH_TIME_QUANTUM;
 #ifdef CH_USE_TRACE
   chDbgTrace(otp, currp);

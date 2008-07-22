@@ -66,6 +66,9 @@ typedef struct {
 
 /*
  * Platform dependent part of the \p chThdCreate() API.
+ *
+ * The top of the workspace is used for the intctx datastructure.
+ *
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
   tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +              \
@@ -104,7 +107,10 @@ typedef struct {
                                     INT_REQUIRED_STACK)
 #define WorkingArea(s, n) uint32_t s[UserStackSize(n) >> 2];
 
+/* called on each interrupt entry, currently nothing is done */
 #define chSysIRQEnterI()
+/* called on each interrupt exit, pends a supervisor handler for
+ * execution after all higher priority interrupts; PendSVVector() */
 #define chSysIRQExitI() {                                               \
   SCB_ICSR = ICSR_PENDSVSET;                                            \
 }

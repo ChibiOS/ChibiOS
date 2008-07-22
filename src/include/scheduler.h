@@ -25,13 +25,14 @@
 #ifndef _SCHEDULER_H_
 #define _SCHEDULER_H_
 
-/** Normal \p chSchReadyI() message.*/
+/** Normal \p chSchReadyI() message. */
 #define RDY_OK      0
-/** Returned if the thread was made ready because a timeout.*/
+/** Returned when the thread was made ready because of a timeout. */
 #define RDY_TIMEOUT -1
-/** Returned if the thread was made ready because a reset.*/
+/** Returned when the thread was made ready because of a reset. */
 #define RDY_RESET   -2
 
+/** The priority of the first thread on the given ready list. */
 #define firstprio(rlp)   ((rlp)->p_next->p_prio)
 
 /**
@@ -42,6 +43,7 @@ typedef struct {
   tprio_t               r_prio;
   cnt_t                 r_preempt;
 #ifndef CH_CURRP_REGISTER_CACHE
+  /** the currently running thread */
   Thread                *r_current;
 #endif
 #ifdef CH_USE_SYSTEMTIME

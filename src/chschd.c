@@ -44,6 +44,7 @@ void chSchInit(void) {
 
 /**
  * Inserts a thread in the Ready List.
+ *
  * @param tp the Thread to be made ready
  * @return the Thread pointer
  * @note The function must be called in the system mutex zone.
@@ -103,9 +104,12 @@ static void wakeup(void *p) {
 }
 
 /**
- * Puts the current thread to sleep into the specified state, the next highest
- * priority thread becomes running. The thread is automatically awakened after
- * the specified time elapsed.
+ * Put the current thread to sleep.
+ *
+ * Puts the current thread to sleep into the specified state. The next highest
+ * priority thread becomes running. The thread put to sleep is awakened after
+ * the specified time has elapsed.
+ *
  * @param newstate the new thread state
  * @param time the number of ticks before the operation timouts
  * @return the wakeup message, it is \p RDY_TIMEOUT if a timeout occurs
@@ -124,8 +128,10 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
 #endif /* CH_USE_VIRTUAL_TIMERS */
 
 /**
- * Wakeups a thread, the thread is inserted into the ready list or made
- * running directly depending on its relative priority compared to the current
+ * Wakes up a thread.
+ *
+ * Wakes up a thread. The thread is inserted into the ready list or immediately
+ * made running depending on its relative priority compared to the current
  * thread.
  * @param ntp the Thread to be made ready
  * @param msg message to the awakened thread
@@ -135,11 +141,14 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
  *       \p chSchRescheduleS() but much more efficient.
  */
 void chSchWakeupS(Thread *ntp, msg_t msg) {
-
   ntp->p_rdymsg = msg;
+  /* the woken thread has equal or lower priority than the running thread? */
   if (ntp->p_prio <= currp->p_prio)
+    /* put the woken thread on the ready queue */
     chSchReadyI(ntp);
+  /* the woken thread has higher priority than the running thread */
   else {
+    /* put the running thread on the ready queue */
     Thread *otp = currp;
     chSchReadyI(otp);
     (currp = ntp)->p_state = PRCURR;
@@ -147,46 +156,59 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
 #ifdef CH_USE_TRACE
     chDbgTrace(otp, ntp);
 #endif
+    /* switch the thread context */
     chSysSwitchI(otp, ntp);
   }
 }
 
 /**
- * Performs a reschedulation. It is meant to be called if
- * \p chSchRescRequired() evaluates to \p TRUE.
+ * Switch to the first thread on the runnable queue.
+ *
+ * Intended to be called if \p chSchRescRequired() evaluates to \p TRUE.
  */
 void chSchDoRescheduleI(void) {
+  /* put the running thread on the ready queue */
   Thread *otp = currp;
-
   chSchReadyI(otp);
+  /* pick the first thread from the ready queue */
   (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
   rlist.r_preempt = CH_TIME_QUANTUM;
 #ifdef CH_USE_TRACE
   chDbgTrace(otp, currp);
 #endif
+  /* switch thread context */
   chSysSwitchI(otp, currp);
 }
 
 /**
- * If a thread with an higher priority than the current thread is in the
- * ready list then it becomes running.
+ * Reschedule only if a higher priority thread is runnable.
+ *
+ * If a thread with a higher priority than the current thread is in the
+ * ready list then make the higher priority thread running.
+ *
  * @note The function must be called in the system mutex zone.
  */
 void chSchRescheduleS(void) {
-
+  /* first thread in the runnable queue has higher priority than the running
+   * thread? */
   if (firstprio(&rlist.r_queue) > currp->p_prio)
     chSchDoRescheduleI();
 }
 
 /**
- * Evaluates if a reschedulation is required.
+ * Evaluates if rescheduling is required.
+ *
  * @return \p TRUE if there is a thread that should go in running state
- *         immediatly else \p FALSE.
+ *         immediately else \p FALSE.
  */
 bool_t chSchRescRequiredI(void) {
   tprio_t p1 = firstprio(&rlist.r_queue);
   tprio_t p2 = currp->p_prio;
-
+  /* If the running thread has not reached its time quantum, reschedule only
+   * if the first thread on the ready queue has a higher priority.
+   * Otherwise, if the running thread has used up its time quantum, reschedule
+   * if the first thread on the ready queue has equal or higher priority.
+   */
   return rlist.r_preempt ? p1 > p2 : p1 >= p2;
 }
 

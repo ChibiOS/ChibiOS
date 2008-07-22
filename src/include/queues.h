@@ -25,18 +25,18 @@
 #ifndef _QUEUES_H_
 #define _QUEUES_H_
 
-/** Queue notification callback type.*/
+/** Queue notification callback type. */
 typedef void (*qnotify_t)(void);
 
-/** Returned by the queue functions if the operation is successful.*/
+/** Returned by the queue functions if the operation is successful. */
 #define Q_OK        RDY_OK
-/** Returned by the queue functions if a timeout occurs.*/
+/** Returned by the queue functions if a timeout occurs. */
 #define Q_TIMEOUT   RDY_TIMEOUT
-/** Returned by the queue functions if the queue is reset.*/
+/** Returned by the queue functions if the queue is reset. */
 #define Q_RESET     RDY_RESET
-/** Returned by the queue functions if the queue is empty.*/
+/** Returned by the queue functions if the queue is empty. */
 #define Q_EMPTY     -3
-/** Returned by the queue functions if the queue is full.*/
+/** Returned by the queue functions if the queue is full. */
 #define Q_FULL      -4
 
 #ifdef CH_USE_QUEUES
@@ -45,42 +45,42 @@ typedef void (*qnotify_t)(void);
  * the difference is on how the semaphore is initialized.
  */
 typedef struct {
-  /** Pointer to the queue buffer.*/
+  /** Pointer to the queue buffer. */
   uint8_t           *q_buffer;
-  /** Pointer to the first location after the buffer.*/
+  /** Pointer to the first location after the buffer. */
   uint8_t           *q_top;
-  /** Write pointer.*/
+  /** Write pointer. */
   uint8_t           *q_wrptr;
-  /** Read pointer.*/
+  /** Read pointer. */
   uint8_t           *q_rdptr;
-  /** Counter semaphore.*/
+  /** Counter semaphore. */
   Semaphore         q_sem;
-  /** Data notification callback.*/
+  /** Data notification callback. */
   qnotify_t         q_notify;
 } Queue;
 
-/** Returns the queue's buffer size.*/
+/** Returns the queue's buffer size. */
 #define chQSize(q) \
         ((q)->q_top - (q)->q_buffer)
 
 /** Returns the used space if used on an Input Queue and the empty space if
- *  used on an Output Queue.*/
+ *  used on an Output Queue. */
 #define chQSpace(q) \
         ((q)->q_sem.s_cnt)
 
-/** Evaluates to TRUE if the specified Input Queue is empty.*/
+/** Evaluates to TRUE if the specified Input Queue is empty. */
 #define chIQIsEmpty(q) \
         (chQSpace(q) <= 0)
 
-/** Evaluates to TRUE if the specified Input Queue is full.*/
+/** Evaluates to TRUE if the specified Input Queue is full. */
 #define chIQIsFull(q) \
         (chQSpace(q) >= chQSize(q))
 
-/** Evaluates to TRUE if the specified Output Queue is empty.*/
+/** Evaluates to TRUE if the specified Output Queue is empty. */
 #define chOQIsEmpty(q) \
         (chQSpace(q) >= chQSize(q))
 
-/** Evaluates to TRUE if the specified Output Queue is full.*/
+/** Evaluates to TRUE if the specified Output Queue is full. */
 #define chOQIsFull(q) \
         (chQSpace(q) <= 0)
 
@@ -119,45 +119,45 @@ extern "C" {
  * Half duplex queue structure.
  */
 typedef struct {
-  /** Pointer to the queue buffer.*/
+  /** Pointer to the queue buffer. */
   uint8_t           *hdq_buffer;
-  /** Pointer to the first location after the buffer.*/
+  /** Pointer to the first location after the buffer. */
   uint8_t           *hdq_top;
   /** Write pointer.*/
   uint8_t           *hdq_wrptr;
   /** Read pointer.*/
   uint8_t           *hdq_rdptr;
-  /** Input counter semaphore.*/
+  /** Input counter semaphore. */
   Semaphore         hdq_isem;
-  /** Output counter semaphore.*/
+  /** Output counter semaphore. */
   Semaphore         hdq_osem;
-  /** Input data notification callback.*/
+  /** Input data notification callback. */
   qnotify_t         hdq_inotify;
-  /** Output data notification callback.*/
+  /** Output data notification callback. */
   qnotify_t         hdq_onotify;
 } HalfDuplexQueue;
 
-/** Returns the queue's buffer size.*/
+/** Returns the queue's buffer size. */
 #define chHDQSize(q) \
         ((q)->hdq_top - (q)->hdq_buffer)
 
-/** Returns the queue space when in transmission mode.*/
+/** Returns the queue space when in transmission mode. */
 #define chHDQEmptySpace(q) \
         ((q)->hdq_osem.s_cnt)
 
-/** Returns the number of the bytes in the queue when in receive mode.*/
+/** Returns the number of the bytes in the queue when in receive mode. */
 #define chHDQFilledSpace(q) \
         ((q)->hdq_isem.s_cnt)
 
-/** Evaluates to TRUE if the queue is in transmit mode.*/
+/** Evaluates to TRUE if the queue is in transmit mode. */
 #define chHDQIsTransmitting(q) \
         (chHDQEmptySpace(q) < chHDQSize(q))
 
-/** Evaluates to TRUE if the queue is in receive mode.*/
+/** Evaluates to TRUE if the queue is in receive mode. */
 #define chHDQIsReceiving(q) \
         (chHDQEmptySpaceQ(q) >= chHDQSize(q))
 
-/** Evaluates to TRUE if the receive queue is full.*/
+/** Evaluates to TRUE if the receive queue is full. */
 #define chHDQIsFullReceive(q) \
         (chHDQFilledSpace(q) >= chHDQSize(q))
 

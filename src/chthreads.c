@@ -34,6 +34,7 @@ void init_thread(tprio_t prio, tmode_t mode, Thread *tp) {
   tp->p_flags = mode;
   tp->p_prio = prio;
 #ifdef CH_USE_MUTEXES
+  /* realprio is the thread's own, non-inherited, priority */
   tp->p_realprio = prio;
   tp->p_mtxlist = NULL;
 #endif
@@ -89,6 +90,7 @@ static void memfill(uint8_t *p, uint32_t n, uint8_t v) {
  */
 Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
                     size_t wsize, tfunc_t pf, void *arg) {
+  /* thread structure is layed out in the lower part of the thread workspace */
   Thread *tp = workspace;
 
   chDbgAssert((wsize >= UserStackSize(0)) && (prio <= HIGHPRIO) &&
@@ -146,8 +148,9 @@ Thread *chThdCreateFast(tprio_t prio, void *workspace,
 }
 
 /**
- * Changes the thread priority, reschedules if necessary.
- * @param newprio the new priority of the invoking thread
+ * Changes the running thread priority, reschedules if necessary.
+ *
+ * @param newprio the new priority of the running thread
  */
 void chThdSetPriority(tprio_t newprio) {
 
@@ -236,6 +239,7 @@ void chThdTerminate(Thread *tp) {
 
 /**
  * Terminates the current thread by specifying an exit status code.
+ *
  * @param msg the thread exit code. The code can be retrieved by using
  *            \p chThdWait().
  */
@@ -258,6 +262,7 @@ void chThdExit(msg_t msg) {
 /**
  * Blocks the execution of the invoking thread until the specified thread
  * terminates then the exit code is returned.
+ *
  * @param tp the pointer to the thread
  * @return the exit code
  * @note The function is available only if the \p CH_USE_WAITEXIT

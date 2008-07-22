@@ -51,34 +51,46 @@ void chMtxLock(Mutex *mp) {
 
 /**
  * Locks the specified mutex.
+ *
  * @param mp pointer to the \p Mutex structure
  * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
  *       block.
  */
 void chMtxLockS(Mutex *mp) {
-
+  /* the mutex is already locked? */
   if (mp->m_owner != NULL) {
     /*
-     * Inheritance, explores the thread-mutex dependances adjusting
-     * the priority of all the affected threads.
+     * Priority inheritance protocol; explores the thread-mutex dependencies
+     * boosting the priority of all the affected threads to equal the priority
+     * of the running thread requesting the mutex.
      */
     Thread *tp = mp->m_owner;
+    /* { tp is the thread currently owning the mutex } */
+    /* the running thread has higher priority than tp? */
     while (tp->p_prio < currp->p_prio) {
+      /* make priority of thread tp match the running thread's priority */
       tp->p_prio = currp->p_prio;
       /*
        * The following states need priority queues reordering.
        */
       switch (tp->p_state) {
+      /* thread tp is waiting on a mutex? */
       case PRWTMTX:
+        /* requeue tp with its new priority on the mutex wait queue */
         prio_insert(dequeue(tp), &tp->p_wtmtxp->m_queue);
+        /* boost the owner of this mutex if needed */
         tp = tp->p_wtmtxp->m_owner;
         continue;
 #ifdef CH_USE_MESSAGES_PRIORITY
       case PRSNDMSG:
         if (tp->p_flags & P_MSGBYPRIO)
+          /* requeue tp with its new priority on (?) */
           prio_insert(dequeue(tp), &tp->p_wtthdp->p_msgqueue);
+        break;
 #endif
+      /* thread tp is ready? */
       case PRREADY:
+        /* requeue tp with its new priority on the ready list */
         chSchReadyI(dequeue(tp));
       }
       break;
@@ -157,21 +169,26 @@ void chMtxUnlock(void) {
    * If a thread is waiting on the mutex then the hard part begins.
    */
   if (chMtxQueueNotEmptyS(mp)) {
+    /* get the highest priority thread waiting for the unlocked mutex */
     Thread *tp = fifo_remove(&mp->m_queue);
     /*
      * Recalculates the optimal thread priority by scanning the owned mutexes list.
      */
     tprio_t newprio = currp->p_realprio;
+    /* iterate mp over all the (other) mutexes the current thread still owns */
     mp = currp->p_mtxlist;
     while (mp != NULL) {
+      /* mutex mp has a higher priority thread pending? */
       if (chMtxQueueNotEmptyS(mp) && (mp->m_queue.p_next->p_prio > newprio))
+        /* boost current thread's priority to waiting thread */
         newprio = mp->m_queue.p_next->p_prio;
       mp = mp->m_next;
     }
+    /* (possibly) boost the priority of the current thread */
     currp->p_prio = newprio;
+    /* awaken the highest priority thread waiting for the unlocked mutex */
     chSchWakeupS(tp, RDY_OK);
   }
-
   chSysUnlock();
 }
 
