@@ -90,11 +90,11 @@ void chEvtClear(eventmask_t mask) {
  * Signals all the Event Listeners registered on the specified Event Source.
  * @param esp pointer to the \p EventSource structure
  */
-void chEvtSend(EventSource *esp) {
+void chEvtBroadcast(EventSource *esp) {
 
   chSysLock();
 
-  chEvtSendI(esp);
+  chEvtBroadcastI(esp);
   chSchRescheduleS();
 
   chSysUnlock();
@@ -105,7 +105,7 @@ void chEvtSend(EventSource *esp) {
  * @param esp pointer to the \p EventSource structure
  * @note This function does not reschedule.
  */
-void chEvtSendI(EventSource *esp) {
+void chEvtBroadcastI(EventSource *esp) {
   EventListener *elp;
 
   elp = esp->es_next;

@@ -62,7 +62,7 @@ void chFDDIncomingDataI(FullDuplexDriver *sd, uint8_t b) {
   if (chIQPutI(&sd->sd_iqueue, b) < Q_OK)
     chFDDAddFlagsI(sd, SD_OVERRUN_ERROR);
   else
-    chEvtSendI(&sd->sd_ievent);
+    chEvtBroadcastI(&sd->sd_ievent);
 }
 
 /**
@@ -78,7 +78,7 @@ msg_t chFDDRequestDataI(FullDuplexDriver *sd) {
 
   msg_t b = chOQGetI(&sd->sd_oqueue);
   if (b < Q_OK)
-    chEvtSendI(&sd->sd_oevent);
+    chEvtBroadcastI(&sd->sd_oevent);
   return b;
 }
 
@@ -91,7 +91,7 @@ msg_t chFDDRequestDataI(FullDuplexDriver *sd) {
 void chFDDAddFlagsI(FullDuplexDriver *sd, dflags_t mask) {
 
   sd->sd_flags |= mask;
-  chEvtSendI(&sd->sd_sevent);
+  chEvtBroadcastI(&sd->sd_sevent);
 }
 
 /**
@@ -143,7 +143,7 @@ void chHDDIncomingDataI(HalfDuplexDriver *sd, uint8_t b) {
   if (chHDQPutReceiveI(&sd->sd_queue, b) < Q_OK)
     chHDDAddFlagsI(sd, SD_OVERRUN_ERROR);
   else
-    chEvtSendI(&sd->sd_ievent);
+    chEvtBroadcastI(&sd->sd_ievent);
 }
 
 /**
@@ -159,7 +159,7 @@ msg_t chHDDRequestDataI(HalfDuplexDriver *sd) {
 
   msg_t b = chHDQGetTransmitI(&sd->sd_queue);
   if (b < Q_OK)
-    chEvtSendI(&sd->sd_oevent);
+    chEvtBroadcastI(&sd->sd_oevent);
   return b;
 }
 
@@ -172,7 +172,7 @@ msg_t chHDDRequestDataI(HalfDuplexDriver *sd) {
 void chHDDAddFlagsI(HalfDuplexDriver *sd, dflags_t mask) {
 
   sd->sd_flags |= mask;
-  chEvtSendI(&sd->sd_sevent);
+  chEvtBroadcastI(&sd->sd_sevent);
 }
 
 /**

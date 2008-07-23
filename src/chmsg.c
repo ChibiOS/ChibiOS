@@ -83,7 +83,7 @@ msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, EventSource *esp) {
 #else
   fifo_insert(currp, &tp->p_msgqueue);
 #endif
-  chEvtSendI(esp);
+  chEvtBroadcastI(esp);
   currp->p_wtthdp = tp;
   currp->p_msg = msg;
   chSchGoSleepS(PRSNDMSG);

@@ -52,7 +52,7 @@ static void network_device_send(void) {
   for (i = 0; i < SEND_RETRY_MAX; i++) {
     if ((bdep = EMACGetTransmitBuffer()) != NULL) {
       uint8_t *bp = (uint8_t *)bdep->w1;
-      
+
       if(uip_len <= UIP_LLH_LEN + UIP_TCPIP_HLEN)
         memcpy(bp, &uip_buf[0], uip_len);
       else {
@@ -98,7 +98,7 @@ static void PeriodicTimerHandler(eventid_t id) {
       uip_arp_out();
       network_device_send();
     }
-  }       
+  }
 }
 
 /*
@@ -114,7 +114,7 @@ static void ARPTimerHandler(eventid_t id) {
  * Ethernet frame received.
  */
 static void FrameReceivedHandler(eventid_t id) {
-  
+
   while ((uip_len = network_device_read()) > 0) {
     if (BUF->type == HTONS(UIP_ETHTYPE_IP)) {
       uip_arp_ipin();
@@ -146,13 +146,13 @@ msg_t WebThread(void *p) {
   EvTimer evt1, evt2;
   EventListener el0, el1, el2;
   uip_ipaddr_t ipaddr;
-  
+
   /*
    * Event sources setup.
    */
   chEvtRegister(&EMACFrameReceived, &el0, FRAME_RECEIVED_ID);
-  chEvtSend(&EMACFrameReceived); /* In case some frames are already buffered */
-  
+  chEvtBroadcast(&EMACFrameReceived); /* In case some frames are already buffered */
+
   evtInit(&evt1, CH_FREQUENCY / 2);
   evtStart(&evt1);
   chEvtRegister(&evt1.et_es, &el1, PERIODIC_TIMER_ID);

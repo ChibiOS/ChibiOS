@@ -44,7 +44,7 @@ void tmrfunc(void *par) {
   if (cnt) {
     if (!(IO1PIN & (1 << 25))) {
       if (!--cnt)
-        chEvtSendI(&MMCInsertEventSource);
+        chEvtBroadcastI(&MMCInsertEventSource);
     }
     else
       cnt = POLLING_INTERVAL;
@@ -52,7 +52,7 @@ void tmrfunc(void *par) {
   else {
     if (IO1PIN & (1 << 25)) {
       cnt = POLLING_INTERVAL;
-      chEvtSendI(&MMCRemoveEventSource);
+      chEvtBroadcastI(&MMCRemoveEventSource);
     }
   }
   chVTSetI(&vt, 10, tmrfunc, NULL);

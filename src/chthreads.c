@@ -253,7 +253,7 @@ void chThdExit(msg_t msg) {
     chSchReadyI(list_remove(&currp->p_waiting));
 #endif
 #ifdef CH_USE_EXIT_EVENT
-  chEvtSendI(&currp->p_exitesource);
+  chEvtBroadcastI(&currp->p_exitesource);
 #endif
   chSchGoSleepS(PREXIT);
 }

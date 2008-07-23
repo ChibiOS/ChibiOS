@@ -61,7 +61,7 @@ static void stop(void *p) {
   TC *tc = T1Base;
 
   StopCounter(tc);
-  chEvtSendI(&BuzzerSilentEventSource);
+  chEvtBroadcastI(&BuzzerSilentEventSource);
 }
 
 void PlaySound(int freq, systime_t duration) {

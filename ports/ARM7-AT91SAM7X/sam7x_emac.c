@@ -106,14 +106,14 @@ static void ServeInterrupt(void) {
   if ((isr & AT91C_EMAC_RCOMP) || (rsr & RSR_BITS)) {
     if (rsr & AT91C_EMAC_REC) {
 //      received++;
-      chEvtSendI(&EMACFrameReceived);
+      chEvtBroadcastI(&EMACFrameReceived);
     }
     AT91C_BASE_EMAC->EMAC_RSR = RSR_BITS;
   }
 
   if ((isr & AT91C_EMAC_TCOMP) || (tsr & TSR_BITS)) {
     if (tsr & AT91C_EMAC_COMP)
-      chEvtSendI(&EMACFrameTransmitted);
+      chEvtBroadcastI(&EMACFrameTransmitted);
     AT91C_BASE_EMAC->EMAC_TSR = TSR_BITS;
   }
   AT91C_BASE_AIC->AIC_EOICR = 0;
@@ -307,7 +307,7 @@ BufDescriptorEntry *EMACGetTransmitBuffer(void) {
  * Transmits a previously allocated buffer and then releases it.
  */
 void EMACTransmit(BufDescriptorEntry *cptr, size_t size) {
-  
+
   chDbgAssert(size <= EMAC_TRANSMIT_BUFFERS_SIZE, "sam7x_emac.c, EMACTransmit");
 
   chSysLock();

@@ -78,8 +78,13 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Fixed a bug in the priority inheritance mechanism, the bug was only a
   problems when the CH_USE_MESSAGES_PRIORITY was enabled, this option is
   disabled by default in ChibiOS/RT so it should not affect any user.
-- Merged the documentation fixes submitted by Leon Woestenberg (thank you).
+- CHANGE: The function chEvtSend() and chEvtSendI() are now renamed in
+  chEvtBroadcast() and chEvtBroadcastI(), the old names are still available
+  but are deprecated.
 - Made the default BASEPRI levels (CM3 port) configurable into chcore.h.
+- Many improvements to the documentation.
+- All the fixes and changes in this release were suggested/submitted by
+  Leon Woestenberg (thank you).
 
 *** 0.6.7 ***
 - NEW: New chThdCreateFast() API, it is a simplified form of chThdCreate()

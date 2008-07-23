@@ -82,8 +82,8 @@ extern "C" {
   void chEvtRegister(EventSource *esp, EventListener *elp, eventid_t eid);
   void chEvtUnregister(EventSource *esp, EventListener *elp);
   void chEvtClear(eventmask_t mask);
-  void chEvtSend(EventSource *esp);
-  void chEvtSendI(EventSource *esp);
+  void chEvtBroadcast(EventSource *esp);
+  void chEvtBroadcastI(EventSource *esp);
   eventid_t chEvtWait(eventmask_t ewmask,
                       const evhandler_t handlers[]);
 #ifdef CH_USE_EVENTS_TIMEOUT
@@ -94,6 +94,12 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+/*
+ * Old function names, deprecated, will be removed in some next release.
+ */
+#define chEvtSend chEvtBroadcast
+#define chEvtSendI chEvtBroadcastI
 
 #endif /* CH_USE_EVENTS */
 

@@ -65,7 +65,7 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
       while (u->UART_LSR & LSR_RBR_FULL)
         if (chIQPutI(&com->sd_iqueue, u->UART_RBR) < Q_OK)
            chFDDAddFlagsI(com, SD_OVERRUN_ERROR);
-      chEvtSendI(&com->sd_ievent);
+      chEvtBroadcastI(&com->sd_ievent);
       break;
     case IIR_SRC_TX:
       {
@@ -75,7 +75,7 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
           msg_t b = chOQGetI(&com->sd_oqueue);
           if (b < Q_OK) {
             u->UART_IER &= ~IER_THRE;
-            chEvtSendI(&com->sd_oevent);
+            chEvtBroadcastI(&com->sd_oevent);
             break;
           }
           u->UART_THR = b;
@@ -125,7 +125,7 @@ static void preload(UART *u, FullDuplexDriver *com) {
     do {
       msg_t b = chOQGetI(&com->sd_oqueue);
       if (b < Q_OK) {
-        chEvtSendI(&com->sd_oevent);
+        chEvtBroadcastI(&com->sd_oevent);
         return;
       }
       u->UART_THR = b;
