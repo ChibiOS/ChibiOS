@@ -25,6 +25,12 @@
 typedef void *regarm;
 
 /*
+ * Port-related configuration parameters.
+ */
+#define BASEPRI_USER    0       /* User level BASEPRI, 0 = disabled.    */
+#define BASEPRI_KERNEL  0x10    /* BASEPRI level within kernel lock.    */
+
+/*
  * Interrupt saved context, empty in this architecture.
  */
 struct extctx {
@@ -83,13 +89,11 @@ typedef struct {
 }
 
 #define chSysLock() {                                                   \
-  register uint32_t tmp asm ("r3");                                     \
-  asm volatile ("movs    %0, #0x10" : "=r" (tmp): );                    \
+  register uint32_t tmp asm ("r3") = BASEPRI_KERNEL;                    \
   asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
 }
 #define chSysUnlock() {                                                 \
-  register uint32_t tmp asm ("r3");                                     \
-  asm volatile ("movs    %0, #0" : "=r" (tmp): );                       \
+  register uint32_t tmp asm ("r3") = BASEPRI_USER;                      \
   asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
 }
 #define chSysSwitchI(otp, ntp) {                                        \

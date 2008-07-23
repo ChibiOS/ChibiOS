@@ -79,6 +79,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   problems when the CH_USE_MESSAGES_PRIORITY was enabled, this option is
   disabled by default in ChibiOS/RT so it should not affect any user.
 - Merged the documentation fixes submitted by Leon Woestenberg (thank you).
+- Made the default BASEPRI levels (CM3 port) configurable into chcore.h.
 
 *** 0.6.7 ***
 - NEW: New chThdCreateFast() API, it is a simplified form of chThdCreate()
