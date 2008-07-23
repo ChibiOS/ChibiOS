@@ -31,7 +31,7 @@
 /*
  * Uncomment this if you want a 48MHz system clock, else it will be 72MHz.
  */
-#define SYSCLK_48
+//#define SYSCLK_48
 
 /*
  * NOTES: PLLPRE can be 1 or 2, PLLMUL can be 2..16.
