@@ -69,6 +69,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   discussing it.
 - File System implementation as side project. Basic requirements: Thread safe,
   concurrent accesses, proper buffers cache.
+- Tickless kernel option, high resolution timers.
 
 *****************************************************************************
 *** Releases                                                              ***
