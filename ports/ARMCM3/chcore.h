@@ -119,7 +119,6 @@ typedef struct {
   SCB_ICSR = ICSR_PENDSVSET;                                            \
 }
 
-/* It should be 8.*/
 #define IDLE_THREAD_STACK_SIZE 0
 void _IdleThread(void *p) __attribute__((noreturn));
 
