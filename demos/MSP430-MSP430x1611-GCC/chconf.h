@@ -39,6 +39,10 @@
  *  included in the kernel.*/
 #define CH_USE_VIRTUAL_TIMERS
 
+/** Configuration option: if specified then the kernel performs the round
+ *  robin scheduling algorithm on threads of equal priority. */
+#define CH_USE_ROUNDROBIN
+
 /** Configuration option: if specified then the System Timer subsystem is
  *  included in the kernel.*/
 #define CH_USE_SYSTEMTIME
@@ -139,7 +143,8 @@
 #define CH_FREQUENCY 1000
 
 /** Configuration option: This constant is the number of ticks allowed for the
- *  threads before preemption occurs.*/
+ *  threads before preemption occurs. This option is only meaningful if the
+ *  option \p CH_USE_ROUNDROBIN is also active.*/
 #define CH_TIME_QUANTUM 20
 
 /** Configuration option: Defines a CPU register to be used as storage for the

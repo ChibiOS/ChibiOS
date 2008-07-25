@@ -75,6 +75,13 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.6.9 ***
+- NEW: Added an option to exclude the support for the round robin scheduling,
+  this can save some extra program space and makes the context switch a bit
+  faster if the feature is not required. Threads at the same priority are
+  still supported when the feature is disabled but the scheduling among them
+  becomes cooperative.
+
 *** 0.6.8 ***
 - FIX: Fixed a bug in the priority inheritance mechanism, the bug was only a
   problems when the CH_USE_MESSAGES_PRIORITY was enabled, this option is
