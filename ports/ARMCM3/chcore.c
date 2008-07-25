@@ -129,7 +129,8 @@ void SVCallVector(Thread *otp, Thread *ntp) {
 #define POP_CONTEXT(sp) {                                               \
   asm volatile ("ldmia   %0!, {r3-r6,r8-r11, lr}                \n\t"   \
                 "msr     PSP, %0                                \n\t"   \
-                "msr     BASEPRI, r3" : "=r" (sp) : "r" (sp));          \
+                "msr     BASEPRI, r3                            \n\t"   \
+                "bx      lr" : "=r" (sp) : "r" (sp));                   \
 }
 #else
 #define PUSH_CONTEXT(sp) {                                              \
@@ -142,7 +143,8 @@ void SVCallVector(Thread *otp, Thread *ntp) {
 #define POP_CONTEXT(sp) {                                               \
   asm volatile ("ldmia   %0!, {r3-r11, lr}                      \n\t"   \
                 "msr     PSP, %0                                \n\t"   \
-                "msr     BASEPRI, r3" : "=r" (sp) : "r" (sp));          \
+                "msr     BASEPRI, r3                            \n\t"   \
+                "bx      lr" : "=r" (sp) : "r" (sp));                   \
 }
 #endif
 
@@ -177,6 +179,4 @@ void PendSVVector(void) {
   sp_thd = currp->p_ctx.r13;
 
   POP_CONTEXT(sp_thd);
-
-  asm volatile ("bx      lr");
 }
