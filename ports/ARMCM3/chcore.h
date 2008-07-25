@@ -80,7 +80,7 @@ typedef struct {
   tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +              \
                                      wsize -                            \
                                      sizeof(struct intctx));            \
-  tp->p_ctx.r13->basepri = 0;                                           \
+  tp->p_ctx.r13->basepri = BASEPRI_USER;                                \
   tp->p_ctx.r13->lr_exc = (regarm)0xFFFFFFFD;                           \
   tp->p_ctx.r13->r0 = arg;                                              \
   tp->p_ctx.r13->r1 = pf;                                               \
