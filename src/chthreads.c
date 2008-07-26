@@ -154,7 +154,7 @@ Thread *chThdCreateFast(tprio_t prio, void *workspace,
  */
 void chThdSetPriority(tprio_t newprio) {
 
-  chDbgAssert(newprio <= HIGHPRIO, "chthreads.c, chThdSetPriority()")
+  chDbgAssert(newprio <= HIGHPRIO, "chthreads.c, chThdSetPriority()");
   chSysLock();
 
 #ifdef CH_USE_MUTEXES
