@@ -67,6 +67,10 @@ struct Thread {
     /** Mutex where the thread is waiting on (only in \p PRWTMTX state). */
     Mutex           *p_wtmtxp;
 #endif
+#ifdef CH_USE_CONDVARS
+    /** CondVar where the thread is waiting on (only in \p PRWTCOND state). */
+    CondVar         *p_wtcondp;
+#endif
 #ifdef CH_USE_MESSAGES
     /** Destination thread for message send (only in \p PRSNDMSG state). */
     Thread          *p_wtthdp;
@@ -85,11 +89,11 @@ struct Thread {
    * Start of the optional fields.
    */
 #ifdef CH_USE_WAITEXIT
-  /** The list of the threads waiting for this thread termination.*/
+  /** The list of the threads waiting for this thread termination. */
   ThreadsList       p_waiting;
 #endif
 #ifdef CH_USE_EXIT_EVENT
-  /** The thread termination \p EventSource.*/
+  /** The thread termination \p EventSource. */
   EventSource       p_exitesource;
 #endif
 #ifdef CH_USE_MESSAGES
@@ -97,39 +101,41 @@ struct Thread {
   msg_t             p_msg;
 #endif
 #ifdef CH_USE_EVENTS
-  /** Pending events mask.*/
+  /** Pending events mask. */
   eventmask_t       p_epending;
 #endif
 #ifdef CH_USE_MUTEXES
-  /** List of mutexes owned by this thread, \p NULL terminated.*/
+  /** List of mutexes owned by this thread, \p NULL terminated. */
   Mutex             *p_mtxlist;
-  /** Thread's own, non-inherited, priority */
+  /** Thread's own, non-inherited, priority. */
   tprio_t           p_realprio;
 #endif
 };
 
-/** Thread state: Thread in the ready list.*/
+/** Thread state: Ready to run, waiting on the ready list.*/
 #define PRREADY     0
-/** Thread state: Current.*/
+/** Thread state: Currently running. */
 #define PRCURR      1
-/** Thread state: Thread created in suspended state.*/
+/** Thread state: Thread created in suspended state. */
 #define PRSUSPENDED 2
-/** Thread state: Waiting on a semaphore.*/
+/** Thread state: Waiting on a semaphore. */
 #define PRWTSEM     3
-/** Thread state: Waiting on a mutex.*/
+/** Thread state: Waiting on a mutex. */
 #define PRWTMTX     4
-/** Thread state: Waiting in \p chThdSleep() or \p chThdSleepUntil().*/
-#define PRSLEEP     5
-/** Thread state: Waiting in \p chThdWait().*/
-#define PRWAIT      6
-/** Thread state: Waiting in \p chEvtWait().*/
-#define PRWTEVENT   7
-/** Thread state: Waiting in \p chMsgSend().*/
-#define PRSNDMSG    8
-/** Thread state: Waiting in \p chMsgWait().*/
-#define PRWTMSG     9
+/** Thread state: Waiting on a condition variable. */
+#define PRWTCOND     5
+/** Thread state: Waiting in \p chThdSleep() or \p chThdSleepUntil(). */
+#define PRSLEEP     6
+/** Thread state: Waiting in \p chThdWait(). */
+#define PRWAIT      7
+/** Thread state: Waiting in \p chEvtWait(). */
+#define PRWTEVENT   8
+/** Thread state: Waiting in \p chMsgSend(). */
+#define PRSNDMSG    9
+/** Thread state: Waiting in \p chMsgWait(). */
+#define PRWTMSG     10
 /** Thread state: After termination.*/
-#define PREXIT      10
+#define PREXIT      11
 
 #ifdef CH_USE_TERMINATE
 /** Thread option: Termination requested flag.*/

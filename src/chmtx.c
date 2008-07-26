@@ -95,10 +95,9 @@ void chMtxLockS(Mutex *mp) {
       }
       break;
     }
-    /*
-     * Goes to sleep on the mutex.
-     */
+    /* sleep on the mutex */
     prio_insert(currp, &mp->m_queue);
+    /* thread remembers the mutex where it is waiting on */
     currp->p_wtmtxp = mp;
     chSchGoSleepS(PRWTMTX);
     chDbgAssert(mp->m_owner == NULL, "chmtx.c, chMtxLockS()");
@@ -159,11 +158,10 @@ void chMtxUnlock(void) {
   chDbgAssert((currp->p_mtxlist != NULL) && (currp->p_mtxlist->m_owner == currp),
               "chmtx.c, chMtxUnlock()");
 
-  /*
-   * Removes the top Mutex from the owned mutexes list and marks it as not owned.
-   */
+  /* remove the top Mutex from the Threads's owned mutexes list */
   mp = currp->p_mtxlist;
   currp->p_mtxlist = mp->m_next;
+  /* mark the Mutex as not owned */
   mp->m_owner = NULL;
   /*
    * If a thread is waiting on the mutex then the hard part begins.

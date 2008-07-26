@@ -35,9 +35,9 @@ typedef struct Thread Thread;
  * Generic threads queue header and element.
  */
 typedef struct {
-  /** First \p Thread in the queue.*/
+  /** First \p Thread in the queue, or \p ThreadQueue when empty. */
   Thread            *p_next;
-  /** Last \p Thread in the queue.*/
+  /** Last \p Thread in the queue, or \p ThreadQueue when empty. */
   Thread            *p_prev;
 } ThreadsQueue;
 
@@ -45,6 +45,7 @@ typedef struct {
  * Generic threads single link list, it works like a stack.
  */
 typedef struct {
+  /** Last pushed \p Thread on the stack list, or \p ThreadList when empty. */
   Thread            *p_next;
 } ThreadsList;
 
