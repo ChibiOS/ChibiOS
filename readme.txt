@@ -81,6 +81,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   faster if the feature is not required. Threads at the same priority are
   still supported when the feature is disabled but the scheduling among them
   becomes cooperative.
+- FIX: Fixed a bug in the chThdSetPriority() API.
 - Made the Cortex-M3 port preemption code more readable.
 
 *** 0.6.8 ***
