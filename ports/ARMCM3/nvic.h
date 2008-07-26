@@ -31,9 +31,9 @@ typedef struct {
   IOREG32       RVR;
   IOREG32       CVR;
   IOREG32       CBVR;
-} ST;
+} CM3_ST;
 
-#define STBase                  ((ST *)0xE000E010)
+#define STBase                  ((CM3_ST *)0xE000E010)
 #define ST_CSR                  (STBase->CSR)
 #define ST_RVR                  (STBase->RVR)
 #define ST_CVR                  (STBase->CVR)
@@ -70,9 +70,9 @@ typedef struct {
   IOREG32       IABR[8];
   IOREG32       unused5[56];
   IOREG32       IPR[60];
-} NVIC;
+} CM3_NVIC;
 
-#define NVICBase                ((NVIC *)0xE000E100)
+#define NVICBase                ((CM3_NVIC *)0xE000E100)
 #define NVIC_ISER(n)            (NVICBase->ISER[n])
 #define NVIC_ICER(n)            (NVICBase->ICER[n])
 #define NVIC_ISPR(n)            (NVICBase->ISPR[n])
@@ -95,9 +95,9 @@ typedef struct {
   IOREG32       MMFAR;
   IOREG32       BFAR;
   IOREG32       AFSR;
-} SCB;
+} CM3_SCB;
 
-#define SCBBase                 ((SCB *)0xE000ED00)
+#define SCBBase                 ((CM3_SCB *)0xE000ED00)
 #define SCB_CPUID               (SCBBase->CPUID)
 #define SCB_ICSR                (SCBBase->ICSR)
 #define SCB_VTOR                (SCBBase->VTOR)

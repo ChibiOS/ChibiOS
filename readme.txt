@@ -82,6 +82,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   still supported when the feature is disabled but the scheduling among them
   becomes cooperative.
 - FIX: Fixed a bug in the chThdSetPriority() API.
+- FIX: Modified the structure names into nvic.h in order to not make them
+  collide with external libraries.
 - Made the Cortex-M3 port preemption code more readable.
 
 *** 0.6.8 ***

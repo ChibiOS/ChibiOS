@@ -35,7 +35,6 @@
 #include "scheduler.h"
 #include "semaphores.h"
 #include "mutexes.h"
-#include "condvars.h"
 #include "events.h"
 #include "messages.h"
 #include "threads.h"
