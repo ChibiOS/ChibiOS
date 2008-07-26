@@ -18,7 +18,7 @@
 */
 
 /**
- * @addtogroup Condition Variables
+ * @addtogroup CondVars
  * @{
  */
 

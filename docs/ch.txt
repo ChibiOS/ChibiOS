@@ -373,6 +373,19 @@
 /** @} */
 
 /**
+ * @defgroup CondVars Conditional Variables
+ * @{
+ * Conditional Variables and threads synchronization.
+ * <b>Operation mode</b><br><br>
+ * Add description here.<br>
+ * In order to use the Conditional Variables APIs the \p CH_USE_CONDVARS
+ * option must be specified in \p chconf.h.<br><br>
+ * @file condvars.h Conditional Variables macros and structures.
+ * @file chcond.c Conditional Variables code.
+ */
+/** @} */
+
+/**
  * @defgroup Mutexes Mutexes
  * @{
  * Mutexes and threads synchronization.
