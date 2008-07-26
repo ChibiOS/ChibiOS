@@ -78,9 +78,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** 0.6.9 ***
 - NEW: Added an option to exclude the support for the round robin scheduling,
   this can save some extra program space and makes the context switch a bit
-  faster if the feature is not required. Threads at the same priority are
-  still supported when the feature is disabled but the scheduling among them
-  becomes cooperative.
+  faster if the feature is not required. Threads at the same priority level
+  are still supported when the feature is disabled but the scheduling among
+  them becomes cooperative.
 - FIX: Fixed a bug in the chThdSetPriority() API.
 - FIX: Modified the structure names into nvic.h in order to not make them
   collide with external libraries.
