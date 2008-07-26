@@ -111,8 +111,8 @@ msg_t chCondWait(CondVar *cp, Mutex *mp) {
   return msg;
 }
 
-msg_t chCondWaitS(CondVar *cp, Mutex *mp)
-{
+msg_t chCondWaitS(CondVar *cp, Mutex *mp) {
+
   /* lock the mutex that protects access to the condition variable */
   chMtxLockS(mp);
   /* wait on the condition variable */
