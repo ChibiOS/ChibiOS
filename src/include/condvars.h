@@ -27,12 +27,10 @@
 
 #ifdef CH_USE_CONDVARS
 
-typedef struct CondVar CondVar;
-
-struct CondVar {
+typedef struct CondVar {
   /** Queue of the threads sleeping on this CondVar. */
   ThreadsQueue  c_queue;
-};
+} CondVar;
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,7 +45,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif /* CH_USE_CONDVARS */
 
