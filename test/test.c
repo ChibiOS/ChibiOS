@@ -148,6 +148,14 @@ void test_assert_time_window(systime_t start, systime_t end) {
 /*
  * Threads utils.
  */
+void test_terminate_threads(void) {
+  int i;
+
+  for (i = 0; i < MAX_THREADS; i++)
+    if (threads[i])
+      chThdTerminate(threads[i]);
+}
+
 void test_wait_threads(void) {
   int i;
 

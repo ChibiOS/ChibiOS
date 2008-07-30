@@ -236,11 +236,7 @@ static void bmk6_execute(void) {
     ChkIntSources();
 #endif
   } while (!test_timer_done);
-  chThdTerminate(threads[0]);
-  chThdTerminate(threads[1]);
-  chThdTerminate(threads[2]);
-  chThdTerminate(threads[3]);
-  chThdTerminate(threads[4]);
+  test_terminate_threads();
   chSemReset(&sem1, 0);
   test_wait_threads();
 

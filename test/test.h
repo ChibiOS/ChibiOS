@@ -50,6 +50,7 @@ extern "C" {
   void test_assert(bool_t condition, char * msg);
   void test_assert_sequence(char *expected);
   void test_assert_time_window(systime_t start, systime_t end);
+  void test_terminate_threads(void);
   void test_wait_threads(void);
   systime_t test_wait_tick(void);
   void test_cpu_pulse(systime_t ms);

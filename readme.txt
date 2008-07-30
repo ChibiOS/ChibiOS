@@ -89,6 +89,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   collide with external libraries.
 - Added a benchmark to the test suit that measures the mass reschedulation
   performance.
+- Added a test_terminate_threads() function to the test framework.
 - Made the Cortex-M3 port preemption code more readable.
 
 *** 0.6.8 ***
