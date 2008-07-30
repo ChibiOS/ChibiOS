@@ -40,9 +40,9 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
   if (tp->p_flags & P_MSGBYPRIO)
     prio_insert(currp, &tp->p_msgqueue);
   else
-    fifo_insert(currp, &tp->p_msgqueue);
+    queue_insert(currp, &tp->p_msgqueue);
 #else
-  fifo_insert(currp, &tp->p_msgqueue);
+  queue_insert(currp, &tp->p_msgqueue);
 #endif
   currp->p_msg = msg;
   currp->p_wtthdp = tp;
@@ -79,9 +79,9 @@ msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, EventSource *esp) {
   if (tp->p_flags & P_MSGBYPRIO)
     prio_insert(currp, &tp->p_msgqueue);
   else
-    fifo_insert(currp, &tp->p_msgqueue);
+    queue_insert(currp, &tp->p_msgqueue);
 #else
-  fifo_insert(currp, &tp->p_msgqueue);
+  queue_insert(currp, &tp->p_msgqueue);
 #endif
   chEvtBroadcastI(esp);
   currp->p_wtthdp = tp;

@@ -21,6 +21,7 @@
 #define _TESTBMK_H_
 
 extern const struct testcase testbmk1, testbmk2, testbmk3,
-                             testbmk4, testbmk5, testbmk6;
+                             testbmk4, testbmk5, testbmk6,
+                             testbmk7;
 
 #endif /* _TESTBMK_H_ */

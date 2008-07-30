@@ -36,7 +36,7 @@ static INLINE void prio_insert(Thread *tp, ThreadsQueue *tqp) {
   tp->p_prev->p_next = cp->p_prev = tp;
 }
 
-static INLINE void fifo_insert(Thread *tp, ThreadsQueue *tqp) {
+static INLINE void queue_insert(Thread *tp, ThreadsQueue *tqp) {
 
   tp->p_prev = (tp->p_next = (Thread *)tqp)->p_prev;
   tp->p_prev->p_next = tqp->p_prev = tp;
@@ -46,6 +46,13 @@ static INLINE Thread *fifo_remove(ThreadsQueue *tqp) {
   Thread *tp = tqp->p_next;
 
   (tqp->p_next = tp->p_next)->p_prev = (Thread *)tqp;
+  return tp;
+}
+
+static INLINE Thread *lifo_remove(ThreadsQueue *tqp) {
+  Thread *tp = tqp->p_prev;
+
+  (tqp->p_prev = tp->p_prev)->p_next = (Thread *)tqp;
   return tp;
 }
 

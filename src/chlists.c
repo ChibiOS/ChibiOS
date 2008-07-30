@@ -47,24 +47,37 @@ void prio_insert(Thread *tp, ThreadsQueue *tqp) {
 }
 
 /*
- * Inserts a Thread into a FIFO queue.
+ * Inserts a Thread into a queue.
  *
  * @param tp the pointer to the thread to be inserted in the list
  * @param tqp the pointer to the threads list header
  */
-void fifo_insert(Thread *tp, ThreadsQueue *tqp) {
+void queue_insert(Thread *tp, ThreadsQueue *tqp) {
 
   tp->p_prev = (tp->p_next = (Thread *)tqp)->p_prev;
   tp->p_prev->p_next = tqp->p_prev = tp;
 }
 
 /*
- * Removes the first-out Thread from a FIFO queue and returns it.
+ * Removes the first-out Thread from a queue and returns it.
  *
  * @param tqp the pointer to the threads list header
  * @return the removed thread pointer
  */
 Thread *fifo_remove(ThreadsQueue *tqp) {
+  Thread *tp = tqp->p_next;
+
+  (tqp->p_next = tp->p_next)->p_prev = (Thread *)tqp;
+  return tp;
+}
+
+/*
+ * Removes the last-out Thread from a queue and returns it.
+ *
+ * @param tqp the pointer to the threads list header
+ * @return the removed thread pointer
+ */
+Thread *lifo_remove(ThreadsQueue *tqp) {
   Thread *tp = tqp->p_next;
 
   (tqp->p_next = tp->p_next)->p_prev = (Thread *)tqp;

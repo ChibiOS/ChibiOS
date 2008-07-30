@@ -61,8 +61,9 @@ typedef struct {
 extern "C" {
 #endif
   void prio_insert(Thread *tp, ThreadsQueue *tqp);
-  void fifo_insert(Thread *tp, ThreadsQueue *tqp);
+  void queue_insert(Thread *tp, ThreadsQueue *tqp);
   Thread *fifo_remove(ThreadsQueue *tqp);
+  Thread *lifo_remove(ThreadsQueue *tqp);
   Thread *dequeue(Thread *tp);
   void list_insert(Thread *tp, ThreadsList *tlp);
   Thread *list_remove(ThreadsList *tlp);

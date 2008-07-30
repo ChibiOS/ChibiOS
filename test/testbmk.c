@@ -21,6 +21,10 @@
 
 #include "test.h"
 
+static Semaphore sem1;
+
+static void empty(void) {}
+
 static msg_t thread1(void *p) {
   msg_t msg;
 
@@ -52,12 +56,6 @@ static char *bmk1_gettest(void) {
   return "Benchmark, context switch #1, optimal";
 }
 
-static void bmk1_setup(void) {
-}
-
-static void bmk1_teardown(void) {
-}
-
 static void bmk1_execute(void) {
   uint32_t n;
 
@@ -74,20 +72,14 @@ static void bmk1_execute(void) {
 
 const struct testcase testbmk1 = {
   bmk1_gettest,
-  bmk1_setup,
-  bmk1_teardown,
+  empty,
+  empty,
   bmk1_execute
 };
 
 static char *bmk2_gettest(void) {
 
   return "Benchmark, context switch #2, empty ready list";
-}
-
-static void bmk2_setup(void) {
-}
-
-static void bmk2_teardown(void) {
 }
 
 static void bmk2_execute(void) {
@@ -106,8 +98,8 @@ static void bmk2_execute(void) {
 
 const struct testcase testbmk2 = {
   bmk2_gettest,
-  bmk2_setup,
-  bmk2_teardown,
+  empty,
+  empty,
   bmk2_execute
 };
 
@@ -119,12 +111,6 @@ static msg_t thread2(void *p) {
 static char *bmk3_gettest(void) {
 
   return "Benchmark, context switch #3, 4 threads in ready list";
-}
-
-static void bmk3_setup(void) {
-}
-
-static void bmk3_teardown(void) {
 }
 
 static void bmk3_execute(void) {
@@ -147,20 +133,14 @@ static void bmk3_execute(void) {
 
 const struct testcase testbmk3 = {
   bmk3_gettest,
-  bmk3_setup,
-  bmk3_teardown,
+  empty,
+  empty,
   bmk3_execute
 };
 
 static char *bmk4_gettest(void) {
 
   return "Benchmark, threads creation/termination, worst case";
-}
-
-static void bmk4_setup(void) {
-}
-
-static void bmk4_teardown(void) {
 }
 
 static void bmk4_execute(void) {
@@ -184,20 +164,14 @@ static void bmk4_execute(void) {
 
 const struct testcase testbmk4 = {
   bmk4_gettest,
-  bmk4_setup,
-  bmk4_teardown,
+  empty,
+  empty,
   bmk4_execute
 };
 
 static char *bmk5_gettest(void) {
 
   return "Benchmark, threads creation/termination, optimal";
-}
-
-static void bmk5_setup(void) {
-}
-
-static void bmk5_teardown(void) {
 }
 
 static void bmk5_execute(void) {
@@ -221,23 +195,75 @@ static void bmk5_execute(void) {
 
 const struct testcase testbmk5 = {
   bmk5_gettest,
-  bmk5_setup,
-  bmk5_teardown,
+  empty,
+  empty,
   bmk5_execute
 };
 
+static msg_t thread3(void *p) {
+
+  while (!chThdShouldTerminate())
+    chSemWait(&sem1);
+  return 0;
+}
+
 static char *bmk6_gettest(void) {
+
+  return "Benchmark, mass reschedulation, 5 threads";
+}
+
+static void bmk6_setup(void) {
+
+  chSemInit(&sem1, 0);
+}
+
+static void bmk6_execute(void) {
+  uint32_t n;
+
+  threads[0] = chThdCreateFast(chThdGetPriority()+1, wa[0], STKSIZE, thread3);
+  threads[1] = chThdCreateFast(chThdGetPriority()+2, wa[1], STKSIZE, thread3);
+  threads[2] = chThdCreateFast(chThdGetPriority()+3, wa[2], STKSIZE, thread3);
+  threads[3] = chThdCreateFast(chThdGetPriority()+4, wa[3], STKSIZE, thread3);
+  threads[4] = chThdCreateFast(chThdGetPriority()+5, wa[4], STKSIZE, thread3);
+
+  n = 0;
+  test_wait_tick();
+  test_start_timer(1000);
+  do {
+    chSemReset(&sem1, 0);
+    n++;
+#if defined(WIN32)
+    ChkIntSources();
+#endif
+  } while (!test_timer_done);
+  chThdTerminate(threads[0]);
+  chThdTerminate(threads[1]);
+  chThdTerminate(threads[2]);
+  chThdTerminate(threads[3]);
+  chThdTerminate(threads[4]);
+  chSemReset(&sem1, 0);
+  test_wait_threads();
+
+  test_print("--- Score : ");
+  test_printn(n);
+  test_print(" reschedulations/S, ");
+  test_printn(n * 6);
+  test_println(" ctxswc/S");
+}
+
+const struct testcase testbmk6 = {
+  bmk6_gettest,
+  bmk6_setup,
+  empty,
+  bmk6_execute
+};
+
+static char *bmk7_gettest(void) {
 
   return "Benchmark, I/O Queues throughput";
 }
 
-static void bmk6_setup(void) {
-}
-
-static void bmk6_teardown(void) {
-}
-
-static void bmk6_execute(void) {
+static void bmk7_execute(void) {
   static uint8_t ib[16];
   static Queue iq;
 
@@ -264,9 +290,9 @@ static void bmk6_execute(void) {
   test_println(" bytes/S");
 }
 
-const struct testcase testbmk6 = {
-  bmk6_gettest,
-  bmk6_setup,
-  bmk6_teardown,
-  bmk6_execute
+const struct testcase testbmk7 = {
+  bmk7_gettest,
+  empty,
+  empty,
+  bmk7_execute
 };

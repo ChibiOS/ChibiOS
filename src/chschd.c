@@ -174,18 +174,17 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
  * Intended to be called if \p chSchRescRequired() evaluates to \p TRUE.
  */
 void chSchDoRescheduleI(void) {
-  /* put the running thread on the ready queue */
+
   Thread *otp = currp;
-  chSchReadyI(otp);
-  /* pick the first thread from the ready queue */
+  /* pick the first thread from the ready queue and makes it current */
   (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
+  chSchReadyI(otp);
 #ifdef CH_USE_ROUNDROBIN
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
 #ifdef CH_USE_TRACE
   chDbgTrace(otp, currp);
 #endif
-  /* switch thread context */
   chSysSwitchI(otp, currp);
 }
 

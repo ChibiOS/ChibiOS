@@ -80,9 +80,15 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   faster if the feature is not required. Threads at the same priority level
   are still supported when the feature is disabled but the scheduling among
   them becomes cooperative.
+- OPT: Improved reschedulation time by reordering the sequence of operations,
+  now during enqueuing the ready list contains one less element. This change
+  also slightly improves the interrupt latency.
+- OPT: Optimization to the chSemReset(), reversed the order of dequeuing.
 - FIX: Fixed a bug in the chThdSetPriority() API.
 - FIX: Modified the structure names into nvic.h in order to not make them
   collide with external libraries.
+- Added a benchmark to the test suit that measures the mass reschedulation
+  performance.
 - Made the Cortex-M3 port preemption code more readable.
 
 *** 0.6.8 ***
