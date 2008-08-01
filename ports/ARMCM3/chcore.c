@@ -27,7 +27,9 @@ __attribute__((weak))
 void _IdleThread(void *p) {
 
   while (TRUE) {
-//    asm volatile ("wfi");
+#if ENABLE_WFI_IDLE != 0
+    asm volatile ("wfi");
+#endif
   }
 }
 

@@ -29,6 +29,7 @@ typedef void *regarm;
  */
 #define BASEPRI_USER    0       /* User level BASEPRI, 0 = disabled.    */
 #define BASEPRI_KERNEL  0x10    /* BASEPRI level within kernel lock.    */
+#define ENABLE_WFI_IDLE 0       /* Enables the use of the WFI ins.      */
 
 /*
  * Interrupt saved context, empty in this architecture.
