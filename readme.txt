@@ -94,7 +94,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Added a ENABLE_WFI_IDLE option to the chcore.h file in the Cortex-M3 port,
   setting this option to 1 enables the kernel to enter a low power mode when
   executing the idle thread. Be careful however, this option can be not
-  compatible with some JTAB probes, it is better to enable it only on final
+  compatible with some JTAG probes, it is better to enable it only on final
   builds and not when debugging.
 
 *** 0.6.8 ***
