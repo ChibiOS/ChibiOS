@@ -44,6 +44,7 @@ static const struct testcase *tests[] = {
   &testbmk4,
   &testbmk5,
   &testbmk6,
+  &testbmk7,
   NULL
 };
 
