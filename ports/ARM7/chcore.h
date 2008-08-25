@@ -79,14 +79,33 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chSysLock(void);
-  void chSysUnlock(void);
+  uint32_t _lock(void);
+  void _unlock(uint32_t);
+  void _enable(void);
 #ifdef __cplusplus
 }
 #endif
+#ifdef REENTRANT_LOCKS
+#define chSysLock() uint32_t ps = _lock()
+#define chSysUnlock() _unlock(ps)
+#else
+#define chSysLock() _lock()
+#define chSysUnlock() _enable()
+#endif /* !REENTRANT_LOCKS */
+#define chSysEnable() _enable()
 #else /* !THUMB */
-#define chSysLock() asm("msr     CPSR_c, #0x9F")
-#define chSysUnlock() asm("msr     CPSR_c, #0x1F")
+#ifdef REENTRANT_LOCKS
+#define chSysLock()                                                     \
+  uint32_t ps;                                                          \
+  asm volatile ("mrs     %0, CPSR" : "=r" (ps) : );                     \
+  asm volatile ("msr     CPSR_c, #0x9F");
+#define chSysUnlock() asm volatile ("msr     CPSR_c, %0" : : "r" (ps))
+#define chSysEnable() asm volatile ("msr     CPSR_c, #0x1F")
+#else
+#define chSysLock() asm volatile ("msr     CPSR_c, #0x9F");
+#define chSysUnlock() asm volatile ("msr     CPSR_c, #0x1F")
+#define chSysEnable() asm volatile ("msr     CPSR_c, #0x1F")
+#endif /* !REENTRANT_LOCKS */
 #endif /* THUMB */
 
 #ifdef THUMB

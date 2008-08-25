@@ -97,6 +97,10 @@ typedef struct {
   register uint32_t tmp asm ("r3") = BASEPRI_USER;                      \
   asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
 }
+#define chSysEnable() {                                                 \
+  register uint32_t tmp asm ("r3") = BASEPRI_USER;                      \
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
+}
 #define chSysSwitchI(otp, ntp) {                                        \
   register Thread *_otp asm ("r0") = (otp);                             \
   register Thread *_ntp asm ("r1") = (ntp);                             \

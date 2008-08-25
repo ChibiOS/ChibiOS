@@ -79,6 +79,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   linux/unix users.
 - FIX: Fixed a regression introduced in version 0.6.9, the queues benchmark
   test case was missing from the tests list.
+- NEW: Added an option to the ARM7 ports, by specifying -DREENTRANT_LOCKS in
+  the makefile options the chSysLock() and chSysUnlock() become reentrant.
+  The code becomes a bit larger and slower.
 
 *** 0.6.9 ***
 - NEW: Added an option to exclude the support for the round robin scheduling,

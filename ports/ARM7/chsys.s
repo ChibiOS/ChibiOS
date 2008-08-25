@@ -44,19 +44,31 @@
 .balign 16
 .code 16
 .thumb_func
-.global chSysLock
-chSysLock:
+.global _lock
+_lock:
         mov     r0, pc
         bx      r0
 .code 32
+        mrs     r0, CPSR
         msr     CPSR_c, #MODE_SYS | I_BIT
         bx      lr
 
 .balign 16
 .code 16
 .thumb_func
-.global chSysUnlock
-chSysUnlock:
+.global _unlock
+_unlock:
+        mov     r1, pc
+        bx      r1
+.code 32
+        msr     CPSR_c, r0
+        bx      lr
+
+.balign 16
+.code 16
+.thumb_func
+.global _enable
+_enable:
         mov     r0, pc
         bx      r0
 .code 32

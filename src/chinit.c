@@ -47,7 +47,7 @@ void chSysInit(void) {
   mainthread.p_state = PRCURR;
   currp = &mainthread;
 
-  chSysUnlock();
+  chSysEnable();
 
   /*
    * The idle thread is created using the port-provided implementation.

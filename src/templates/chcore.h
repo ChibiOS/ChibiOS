@@ -106,6 +106,11 @@ typedef struct {
 #define chSysUnlock()
 
 /**
+ * Enables the interrupts, it is only invoked once into \p chSysInit().
+ */
+#define chSysEnable()
+
+/**
  * IRQ handler enter code.
  * @note Usually IRQ handlers function are also declared naked.
  * @note On some architectures this macro can be empty.

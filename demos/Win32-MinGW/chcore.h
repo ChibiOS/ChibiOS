@@ -59,6 +59,7 @@ typedef struct {
 
 #define chSysLock()
 #define chSysUnlock()
+#define chSysEnable()
 #define chSysPuts(msg) {}
 #define chSysIRQEnterI()
 #define chSysIRQExitI()

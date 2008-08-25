@@ -81,10 +81,11 @@ typedef struct {
 
 #define chSysLock() asm volatile ("dint")
 #define chSysUnlock() asm volatile ("eint")
+#define chSysEnable() asm volatile ("eint")
 
 #define chSysIRQEnterI()
 #define chSysIRQExitI() {                                               \
-  if (chSchRescRequiredI())                                            \
+  if (chSchRescRequiredI())                                             \
     chSchDoRescheduleI();                                               \
 }
 
