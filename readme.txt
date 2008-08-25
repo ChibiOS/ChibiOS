@@ -83,6 +83,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   the makefile options makes the chSysLock() and chSysUnlock() become
   reentrant. The code becomes a bit larger and slower, use it only if your
   application really needs to invoke system API under lock.
+- NEW: Added an option to the ARM7 and CM3 makefiles to strip any unused code
+  and data from the binary file (the default is on).
 
 *** 0.6.9 ***
 - NEW: Added an option to exclude the support for the round robin scheduling,

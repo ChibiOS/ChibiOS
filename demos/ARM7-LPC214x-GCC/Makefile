@@ -111,16 +111,16 @@ OPT = -O2 -ggdb -fomit-frame-pointer -mabi=apcs-gnu
 #OPT += -ffixed-r7
 OPT += -falign-functions=16
 
-ifeq ($(LINK_GC),yes)
-  OPT += -ffunction-sections -fdata-sections
-endif
-
 # Define warning options here
 WARN = -Wall -Wstrict-prototypes
 
 #
 # End of user defines
 ##############################################################################################
+
+ifeq ($(LINK_GC),yes)
+  OPT += -ffunction-sections -fdata-sections
+endif
 
 INCDIR  = $(patsubst %,-I%,$(DINCDIR) $(UINCDIR))
 LIBDIR  = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))

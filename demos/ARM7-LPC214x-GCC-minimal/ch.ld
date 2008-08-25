@@ -48,11 +48,16 @@ SECTIONS
 	.text :
 	{
 		_text = .;
-		*(.text);
+                KEEP(*(.startup))
+                *(.text)
+		*(.text.*);
 		*(.rodata);
-		*(.rodata*);
+		*(.rodata.*);
 		*(.glue_7t);
 		*(.glue_7);
+		*(.gcc*);
+		*(.ctors);
+		*(.dtors);
 		. = ALIGN(4);
 		_etext = .;
 	} > flash
@@ -64,6 +69,8 @@ SECTIONS
 		_data = .;
 		*(.data)
 		. = ALIGN(4);
+		*(.data.*)
+		. = ALIGN(4);
 		*(.ramtext)
 		. = ALIGN(4);
 		_edata = .;
@@ -73,6 +80,8 @@ SECTIONS
 	{
 		_bss_start = .;
 		*(.bss)
+		. = ALIGN(4);
+		*(.bss.*)
 		. = ALIGN(4);
 		*(COMMON)
 		. = ALIGN(4);

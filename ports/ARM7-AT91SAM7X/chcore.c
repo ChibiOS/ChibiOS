@@ -46,7 +46,8 @@ __attribute__((naked, weak))
 void chSysHalt(void) {
 
 #ifdef THUMB
-  asm("b        _halt16");
+  asm volatile ("ldr      r0, =_halt16");
+  asm volatile ("bx       r0");
 #else
   asm("b        _halt32");
 #endif

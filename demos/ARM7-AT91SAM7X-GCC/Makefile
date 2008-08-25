@@ -26,6 +26,9 @@ BIN  = $(CP) -O binary
 
 MCU  = arm7tdmi
 
+# Enable this if you want the linker to remove unused code and data
+LINK_GC = yes
+
 # List all default C defines here, like -D_DEBUG=1
 DDEFS =
 
@@ -114,6 +117,10 @@ WARN = -Wall -Wstrict-prototypes
 # End of user defines
 ##############################################################################################
 
+ifeq ($(LINK_GC),yes)
+  OPT += -ffunction-sections -fdata-sections
+endif
+
 INCDIR  = $(patsubst %,-I%,$(DINCDIR) $(UINCDIR))
 LIBDIR  = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
 DEFS    = $(DDEFS) $(UDEFS)
@@ -125,10 +132,14 @@ ASMOBJS = $(ASMSRC:.s=.o)
 LIBS    = $(DLIBS) $(ULIBS)
 MCFLAGS = -mcpu=$(MCU)
 
+ODFLAGS	= -x --syms
 ASFLAGS = $(MCFLAGS) -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
 CPFLAGS = $(MCFLAGS) $(OPT) $(WARN) -Wa,-alms=$(<:.c=.lst) $(DEFS)
-LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
-ODFLAGS	= -x --syms
+ifeq ($(LINK_GC),yes)
+  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch,--gc-sections $(LIBDIR)
+else
+  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
+endif
 
 # Thumb interwork enabled only if needed because it kills performance.
 ifneq ($(TSRC),)

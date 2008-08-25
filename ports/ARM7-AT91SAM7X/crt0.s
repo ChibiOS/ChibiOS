@@ -32,7 +32,7 @@
 .equ    I_BIT, 0x80
 .equ    F_BIT, 0x40
 
-.text
+.section .startup
 .code 32
 .balign 4
 /*
@@ -66,6 +66,7 @@ _fiq:
 /*
  * Reset handler.
  */
+.text
 ResetHandler:
         /*
          * Stack pointers initialization.
