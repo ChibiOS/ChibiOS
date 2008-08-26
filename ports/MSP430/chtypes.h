@@ -27,6 +27,7 @@
 
 #define __need_NULL
 #define __need_size_t
+#define __need_ptrdiff_t
 #include <stddef.h>
 
 #if !defined(_STDINT_H) && !defined(__STDINT_H_)
