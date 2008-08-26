@@ -18,52 +18,36 @@
 */
 
 /**
- * @addtogroup Initialization
+ * @addtogroup MemoryPools
  * @{
  */
 
-#ifndef _CH_H_
-#define _CH_H_
+#ifndef _MEMPOOLS_H_
+#define _MEMPOOLS_H_
 
-#define _CHIBIOS_RT_
+#ifdef CH_USE_MEMPOOLS
 
-#include <chconf.h>
-#include <chtypes.h>
-#include "lists.h"
-#include <chcore.h>
-#include "delta.h"
-#include "scheduler.h"
-#include "semaphores.h"
-#include "mutexes.h"
-#include "events.h"
-#include "messages.h"
-#include "threads.h"
-#include "inline.h"
-#include "sleep.h"
-#include "queues.h"
-#include "serial.h"
-#include "mempools.h"
-#include "debug.h"
+struct pool_header {
+  struct pool_header *ph_next;
+};
 
-/*
- * Common values.
- */
-#ifndef FALSE
-#define FALSE       0
-#endif
-#ifndef TRUE
-#define TRUE        (!FALSE)
-#endif
+typedef struct {
+  struct pool_header    *mp_next;
+  size_t                mp_object_size;
+} MemoryPool;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chSysInit(void);
-  void chSysTimerHandlerI(void);
+  void chPoolInit(MemoryPool *mp, size_t size);
+  void *chPoolAlloc(MemoryPool *mp, bool_t grow);
+  void chPoolFree(MemoryPool *mp, void *objp);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _CH_H_ */
+#endif /* CH_USE_MEMPOOLS */
+
+#endif /* _MEMPOOLS_H_ */
 
 /** @} */

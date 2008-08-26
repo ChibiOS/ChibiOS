@@ -139,11 +139,11 @@
 
 /** Configuration option: if specified then the memory pools allocator APIs
  *  are included in the kernel.*/
-#define CH_USE_MEMPOOLS
+//#define CH_USE_MEMPOOLS
 
 /** Configuration option: if specified then the memory pools allocator
     provides an implementation of the sbrk() function.*/
-#define CH_MEMPOOLS_PROVIDE_SBRK
+//#define CH_MEMPOOLS_PROVIDE_SBRK
 
 /** Configuration option: Frequency of the system timer that drives the system
  *  ticks. This also defines the system time unit.*/
