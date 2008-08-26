@@ -21,6 +21,8 @@
 
 #include "test.h"
 
+#ifdef CH_USE_MUTEXES
+
 #define ALLOWED_DELAY 5
 
 static Mutex m1, m2;
@@ -219,3 +221,5 @@ const struct testcase testmtx3 = {
   mtx3_teardown,
   mtx3_execute
 };
+
+#endif /* CH_USE_MUTEXES */

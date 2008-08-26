@@ -77,11 +77,13 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** 0.7.0 ***
 - NEW: Memory Pools functionality added, this mechanism allows constant-time
   allocation/freeing of constant size objects. It can be used to dynamically
-  allocate kernel objects like Semaphores, Mutexes, Threads etc it can also
-  handle application-defined objects. The allocator is, of course, thread-safe.
+  allocate kernel objects like Semaphores, Mutexes, Threads etc, of course it
+  is also possible to handle application-defined objects. The allocator is
+  thread-safe.
 - NEW: Kernel-provided sbrk() function, it is used internally by the Memory
   Pools but can also be used by the C runtime. There is also an option to
   meke the Memory Pools use an user-provided sbrk() function.
+- Added a Memory Pools test case to the test suite.
 
 *** 0.6.10 ***
 - FIX: Fixed a case-sensitiveness error in lpc214x_ssp.c, it affected only

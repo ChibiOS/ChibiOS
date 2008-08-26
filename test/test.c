@@ -24,6 +24,7 @@
 #include "testsem.h"
 #include "testmtx.h"
 #include "testmsg.h"
+#include "testpools.h"
 #include "testbmk.h"
 
 /*
@@ -34,10 +35,15 @@ static const struct testcase *tests[] = {
   &testrdy2,
   &testsem1,
   &testsem2,
+#ifdef CH_USE_MUTEXES
   &testmtx1,
   &testmtx2,
   &testmtx3,
+#endif
   &testmsg1,
+#ifdef CH_USE_MEMPOOLS
+  &testpools1,
+#endif
   &testbmk1,
   &testbmk2,
   &testbmk3,
