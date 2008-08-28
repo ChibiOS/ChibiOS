@@ -78,13 +78,13 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - NEW: Memory Heap Allocator functionality added. The allocator implements a
   first-fit strategy but there is an option that allow it to wrap the compiler
   provided malloc() that may implement a different strategy. The heap
-  allocator is entirely thread-safe and can use both a mutex or a semaphores
-  as internal synchronization primitive.
+  allocator is thread-safe and can use both a mutex or a semaphores as
+  internal synchronization primitive.
 - NEW: Memory Pools functionality added, this mechanism allows constant-time
   allocation/freeing of constant-size objects. It can be used to dynamically
   allocate kernel objects like Semaphores, Mutexes, Threads etc fully in real
   time, of course it is also possible to manage application-defined objects.
-  The pool allocator is entirely thread-safe.
+  The pool allocator is thread-safe.
   It is worth remember that the kernel is still entirely static, it does not
   use the allocation services internally, it is up to the application code
   to use the allocators in order to use dynamic system objects.

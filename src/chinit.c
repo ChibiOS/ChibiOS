@@ -40,6 +40,12 @@ void chSysInit(void) {
 #ifdef CH_USE_VIRTUAL_TIMERS
   chVTInit();
 #endif
+#ifdef CH_USE_HEAP
+  chHeapInit();
+#endif
+#ifdef CH_USE_HEAP
+  chHeapInit();
+#endif
   /*
    * Now this instructions flow becomes the main thread.
    */

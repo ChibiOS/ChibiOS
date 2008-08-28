@@ -24,6 +24,7 @@
 #include "testsem.h"
 #include "testmtx.h"
 #include "testmsg.h"
+#include "testheap.h"
 #include "testpools.h"
 #include "testbmk.h"
 
@@ -41,6 +42,9 @@ static const struct testcase *tests[] = {
   &testmtx3,
 #endif
   &testmsg1,
+#ifdef CH_USE_HEAP
+  &testheap1,
+#endif
 #ifdef CH_USE_MEMPOOLS
   &testpools1,
 #endif

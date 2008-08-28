@@ -17,25 +17,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * @addtogroup Heap
- * @{
- */
+#ifndef _TESTHEAP_H_
+#define _TESTHEAP_H_
 
-#ifndef _HEAP_H_
-#define _HEAP_H_
+extern const struct testcase testheap1;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void chHeapInit(void);
-  void *chHeapAlloc(size_t size);
-  void chHeapFree(void *p);
-  bool_t chHeapNotFragmented(void);
-#ifdef __cplusplus
-}
-#endif
-
-#endif  /* _HEAP_H_ */
-
-/** @} */
+#endif /* _TESTHEAP_H_ */

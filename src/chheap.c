@@ -49,7 +49,7 @@ static struct {
   Mutex                 hmtx;
 #elif defined(CH_USE_SEMAPHORES)
 #define H_LOCK()        chSemWait(&heap.hsem)
-#define H_UNLOCK()      chMtxSignal(&heap.hsem)
+#define H_UNLOCK()      chSemSignal(&heap.hsem)
   Semaphore             hsem;
 #else
 #error "The heap allocator requires mutexes or semaphores to be enabled"
@@ -181,6 +181,23 @@ void chHeapFree(void *p) {
   }
 }
 
+/**
+ * Checks if the heap is non-empty and non-fragmented.
+ * @return \p TRUE if the condition is satisfied
+ * @note This function is meant to be used in the test suite, it should not be
+ *       really useful for the application code.
+ */
+bool_t chHeapNotFragmented(void) {
+  bool_t b;
+
+  H_LOCK();
+
+  b = (heap.free.h_next != NULL) && (heap.free.h_next->h_next == NULL);
+
+  H_UNLOCK();
+  return b;
+}
+
 #else /* CH_USE_MALLOC_HEAP */
 
 #include <stdlib.h>
@@ -191,7 +208,7 @@ void chHeapFree(void *p) {
 static Mutex            hmtx;
 #elif defined(CH_USE_SEMAPHORES)
 #define H_LOCK()        chSemWait(&hsem)
-#define H_UNLOCK()      chMtxSignal(&hsem)
+#define H_UNLOCK()      chSemSignal(&hsem)
 static Semaphore        hsem;
 #else
 #error "The heap allocator requires mutexes or semaphores to be enabled"
@@ -224,6 +241,11 @@ void chHeapFree(void *p) {
   free(p);
 
   H_UNLOCK();
+}
+
+bool_t chHeapNotFragmented(void) {
+
+  return FALSE;
 }
 
 #endif /* CH_USE_MALLOC_HEAP */
