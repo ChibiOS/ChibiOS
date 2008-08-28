@@ -75,15 +75,21 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.7.0 ***
+- NEW: Memory Heap Allocator functionality added. The allocator implements a
+  first-fit strategy but there is an option that allow it to wrap the compiler
+  provided malloc() that may implement a different strategy. The heap
+  allocator is entirely thread-safe and can use both a mutex or a semaphores
+  as internal synchronization primitive.
 - NEW: Memory Pools functionality added, this mechanism allows constant-time
-  allocation/freeing of constant size objects. It can be used to dynamically
-  allocate kernel objects like Semaphores, Mutexes, Threads etc, of course it
-  is also possible to handle application-defined objects. The allocator is
-  thread-safe.
-- NEW: Kernel-provided sbrk() function, it is used internally by the Memory
-  Pools but can also be used by the C runtime. There is also an option to
-  meke the Memory Pools use an user-provided sbrk() function.
-- Added a Memory Pools test case to the test suite.
+  allocation/freeing of constant-size objects. It can be used to dynamically
+  allocate kernel objects like Semaphores, Mutexes, Threads etc fully in real
+  time, of course it is also possible to manage application-defined objects.
+  The pool allocator is entirely thread-safe.
+  It is worth remember that the kernel is still entirely static, it does not
+  use the allocation services internally, it is up to the application code
+  to use the allocators in order to use dynamic system objects.
+  Both the allocators can be disabled and removed from the memory image.
+- Added new test cases to the test suite.
 
 *** 0.6.10 ***
 - FIX: Fixed a case-sensitiveness error in lpc214x_ssp.c, it affected only

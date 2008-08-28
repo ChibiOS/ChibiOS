@@ -18,39 +18,23 @@
 */
 
 /**
- * @addtogroup MemoryPools
+ * @addtogroup Heap
  * @{
  */
 
-#ifndef _MEMPOOLS_H_
-#define _MEMPOOLS_H_
-
-#ifdef CH_USE_MEMPOOLS
-
-struct pool_header {
-  struct pool_header *ph_next;
-};
-
-typedef struct {
-  struct pool_header    *mp_next;
-  size_t                mp_object_size;
-} MemoryPool;
+#ifndef _HEAP_H_
+#define _HEAP_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chPoolInit(MemoryPool *mp, size_t size);
-  void *chPoolAlloc(MemoryPool *mp, bool_t grow);
-  void chPoolFree(MemoryPool *mp, void *objp);
-#ifdef CH_USE_HEAP
-  void chPoolRelease(MemoryPool *mp);
-#endif
+  void chHeapInit(void);
+  void *chHeapAlloc(size_t size);
+  void chHeapFree(void *p);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* CH_USE_MEMPOOLS */
-
-#endif /* _MEMPOOLS_H_ */
+#endif  /* _HEAP_H_ */
 
 /** @} */

@@ -138,6 +138,26 @@
  *  are included in the kernel.*/
 #define CH_USE_SERIAL_HALFDUPLEX
 
+/** Configuration option: if specified then the memory heap allocator APIs
+ *  are included in the kernel.*/
+#define CH_USE_HEAP
+
+/** Configuration option: Number of RAM bytes to use as system heap. If set to
+ *  zero then the whole available RAM is used as system heap.
+ * @note In order to use the whole RAM as system heap the linker script must
+ *       provide the \p __heap_base__ and \p __heap_end__ symbols.
+ * @note requires \p CH_USE_HEAP.
+ */
+#define CH_HEAP_SIZE 0
+
+/** Configuration option: enforces the use of the C-runtime \p malloc() and
+ *  \p free() functions as backend for the system heap allocator.*/
+//#define CH_USE_MALLOC_HEAP
+
+/** Configuration option: if specified then the memory pools allocator APIs
+ *  are included in the kernel.*/
+#define CH_USE_MEMPOOLS
+
 /** Configuration option: Frequency of the system timer that drives the system
  *  ticks. This also defines the system time unit.*/
 #define CH_FREQUENCY 1000

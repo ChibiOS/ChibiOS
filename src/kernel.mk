@@ -6,4 +6,5 @@ KERNSRC = ../../src/chinit.c   ../../src/chdebug.c \
           ../../src/chsem.c    ../../src/chmtx.c \
           ../../src/chevents.c ../../src/chmsg.c \
           ../../src/chsleep.c  ../../src/chqueues.c \
-          ../../src/chserial.c ../../src/chmempools.c
+          ../../src/chserial.c ../../src/chheap.c \
+          ../../src/chmempools.c

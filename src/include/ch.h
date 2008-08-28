@@ -42,6 +42,7 @@
 #include "sleep.h"
 #include "queues.h"
 #include "serial.h"
+#include "heap.h"
 #include "mempools.h"
 #include "debug.h"
 

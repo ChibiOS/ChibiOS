@@ -26,29 +26,6 @@
 
 #ifdef CH_USE_MEMPOOLS
 
-#ifndef CH_MEMPOOLS_PROVIDE_SBRK
-#include <unistd.h>
-#else
-/*
- * Optional internal sbrk() implementation, this code requires the linker to
- * provide two symbols: __heap_base__ and __heap_end__ that are the boundaries
- * of the free RAM space.
- */
-extern char __heap_base__;
-extern char __heap_end__;
-static char *current = &__heap_base__;
-
-void *sbrk(ptrdiff_t increment) {
-  char *cp;
-
-  if (current + increment >= &__heap_end__)
-    return (void *)-1;
-  cp = current;
-  current += increment;
-  return cp;
-}
-#endif /* CH_MEMPOOLS_PROVIDE_SBRK */
-
 /**
  * Initializes a memory pool.
  * @param mp pointer to a \p MemoryPool structure
@@ -67,7 +44,7 @@ void chPoolInit(MemoryPool *mp, size_t size) {
  * Allocates an object from a memory pool.
  * @param mp pointer to a \p MemoryPool structure
  * @param allow_growth if \p TRUE then the object is allocated by using
- *                     \p sbrk() in case the memory pool is empty
+ *                     \p chHeapAlloc() in case the memory pool is empty
  * @return the pointer to the allocated object or \p NULL if the memory is
  *         exhausted
  */
@@ -79,13 +56,13 @@ void *chPoolAlloc(MemoryPool *mp, bool_t allow_growth) {
   chSysLock();
 
   if (mp->mp_next == NULL) {
+#ifdef CH_USE_HEAP
     if (allow_growth) {
-      p = sbrk(mp->mp_object_size);
 
       chSysUnlock();
-      if (p != (void *)-1)
-        return p;
+      return chHeapAlloc(mp->mp_object_size);
     }
+#endif /* CH_USE_HEAP */
     return NULL;
   }
   p = mp->mp_next;
@@ -96,7 +73,7 @@ void *chPoolAlloc(MemoryPool *mp, bool_t allow_growth) {
 }
 
 /**
- * Releases (or adds) an object to a memory pool.
+ * Releases (or adds) an object into a memory pool.
  * @param mp pointer to a \p MemoryPool structure
  * @param objp the pointer to the object to be released or added
  * @note the object is assumed to be of the right size for the specified
@@ -115,6 +92,21 @@ void chPoolFree(MemoryPool *mp, void *objp) {
 
   chSysUnlock();
 }
+
+#ifdef CH_USE_HEAP
+/**
+ * Releases all the objects contained into a pool.
+ * @param mp pointer to a \p MemoryPool structure
+ * @note It is assumed that all the object are allocated using the heap
+ *       allocator, do not use this function if the pool contains other kind
+ *       of objects.
+ */
+void chPoolRelease(MemoryPool *mp) {
+
+  while (mp->mp_next)
+    chHeapFree(mp->mp_next);
+}
+#endif
 
 #endif /* CH_USE_MEMPOOLS */
 
