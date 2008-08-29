@@ -345,6 +345,38 @@
 /** @} */
 
 /**
+ * @defgroup Heap Heap
+ * @{
+ * Heap Allocator related APIs.
+ * <b>Operation mode</b><br><br>
+ * The heap allocator implements a first-fit strategy and its APIs are
+ * functionally equivalent to the usual \p malloc() and \p free(). The main
+ * difference is that the heap APIs are thread safe.<br>
+ * By enabling the \p CH_USE_MALLOC_HEAP option the heap manager will use the
+ * runtime-provided \p malloc() and \p free() as backend for the heap APIs
+ * instead of the system provided allocator.<br>
+ * In order to use the heap APIs the \p CH_USE_HEAP option must be specified
+ * in \p chconf.h.
+ * @file include/heap.h Heap macros and structures.
+ * @file chheap.c Heap functions.
+ */
+/** @} */
+
+/**
+ * @defgroup MemoryPools Memory Pools
+ * @{
+ * Memory Pools related APIs.
+ * <b>Operation mode</b><br><br>
+ * The Memory Pools APIs allow to allocate/free fixed size objects in
+ * <b>constant time</b> and reliably without memory fragmentation problems.<br>
+ * In order to use the Time APIs the \p CH_USE_MEMPOOLS option must be
+ * specified in \p chconf.h.
+ * @file include/mempools.h Memory Pools macros and structures.
+ * @file chmempools.c Memory Pools functions.
+ */
+/** @} */
+
+/**
  * @defgroup Semaphores Semaphores
  * @{
  * Semaphores and threads synchronization.

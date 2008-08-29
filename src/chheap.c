@@ -18,7 +18,7 @@
 */
 
 /**
- * @addtogroup Memory
+ * @addtogroup Heap
  * @{
  */
 
@@ -251,3 +251,5 @@ bool_t chHeapNotFragmented(void) {
 #endif /* CH_USE_MALLOC_HEAP */
 
 #endif /* CH_USE_HEAP */
+
+/** @} */

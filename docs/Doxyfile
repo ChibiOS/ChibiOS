@@ -255,6 +255,8 @@ PREDEFINED             = __JUST_STUBS__ \
                          CH_USE_QUEUES_HALFDUPLEX \
                          CH_USE_SERIAL_FULLDUPLEX \
                          CH_USE_SERIAL_HALFDUPLEX \
+                         CH_USE_HEAP \
+                         CH_USE_MEMPOOLS \
                          CH_USE_MESSAGES \
                          CH_USE_MESSAGES_EVENT \
                          CH_USE_MESSAGES_PRIORITY \

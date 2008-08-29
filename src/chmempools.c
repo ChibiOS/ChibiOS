@@ -102,9 +102,10 @@ void chPoolFree(MemoryPool *mp, void *objp) {
  *       of objects.
  */
 void chPoolRelease(MemoryPool *mp) {
+  void *p;
 
-  while (mp->mp_next)
-    chHeapFree(mp->mp_next);
+  while ((p = chPoolAlloc(mp, FALSE)) != NULL)
+    chHeapFree(p);
 }
 #endif
 
