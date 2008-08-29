@@ -203,11 +203,6 @@ size_t chHeapStatus(size_t *sizep) {
   if (sizep)
     *sizep = sz;
 
-//  if ((heap.free.h_next != NULL) && (heap.free.h_next->h_next == NULL))
-//    n = heap.free.h_next->h_size;
-//  else
-//    n = 0;
-
   H_UNLOCK();
   return n;
 }
