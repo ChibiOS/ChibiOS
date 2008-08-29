@@ -45,7 +45,7 @@ static struct {
   struct header         free;   /* Guaranteed to be not adjacent to the heap */
 #if defined(CH_USE_MUTEXES)
 #define H_LOCK()        chMtxLock(&heap.hmtx)
-#define H_UNLOCK()      chMtxLock(&heap.hmtx)
+#define H_UNLOCK()      chMtxUnlock()
   Mutex                 hmtx;
 #elif defined(CH_USE_SEMAPHORES)
 #define H_LOCK()        chSemWait(&heap.hsem)
@@ -120,7 +120,7 @@ void *chHeapAlloc(size_t size) {
       else {
         /* Block bigger enough, must split it */
         fp = (void *)((char *)(hp) + sizeof(struct header) + size);
-        fp->h_next = qp->h_next;
+        fp->h_next = hp->h_next;
         fp->h_size = hp->h_size - sizeof(struct header) - size;
         qp->h_next = fp;
         hp->h_size = size;
@@ -137,7 +137,9 @@ void *chHeapAlloc(size_t size) {
   return NULL;
 }
 
-#define LIMIT(p) (struct header *)((char *)(p) + (p)->h_size)
+#define LIMIT(p) (struct header *)((char *)(p) + \
+                                   sizeof(struct header) + \
+                                   (p)->h_size)
 
 /**
  * Frees a previously allocated memory block.
@@ -168,7 +170,7 @@ void chHeapFree(void *p) {
         hp->h_size += hp->h_next->h_size + sizeof(struct header);
         hp->h_next = hp->h_next->h_next;
       }
-      if ((LIMIT(qp) == hp)) {          /* Cannot happen when qp == &heap.free */
+      if ((LIMIT(qp) == hp)) {  /* Cannot happen when qp == &heap.free */
         /* Merge with the previous block */
         qp->h_size += hp->h_size + sizeof(struct header);
         qp->h_next = hp->h_next;
