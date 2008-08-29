@@ -184,20 +184,32 @@ void chHeapFree(void *p) {
 }
 
 /**
- * Checks if the heap is non-empty and non-fragmented.
- * @return \p TRUE if the condition is satisfied
+ * Determines the heap status.
+ * @sizep pointer to a variable that will receive the total fragmented free
+ *        space
+ * @return the number of fragments in the heap
  * @note This function is meant to be used in the test suite, it should not be
  *       really useful for the application code.
  */
-bool_t chHeapNotFragmented(void) {
-  bool_t b;
+size_t chHeapStatus(size_t *sizep) {
+  struct header *qp;
+  size_t n, sz;
 
   H_LOCK();
 
-  b = (heap.free.h_next != NULL) && (heap.free.h_next->h_next == NULL);
+  sz = 0;
+  for (n = 0, qp = &heap.free; qp->h_next; n++, qp = qp->h_next)
+    sz += qp->h_next->h_size;
+  if (sizep)
+    *sizep = sz;
+
+//  if ((heap.free.h_next != NULL) && (heap.free.h_next->h_next == NULL))
+//    n = heap.free.h_next->h_size;
+//  else
+//    n = 0;
 
   H_UNLOCK();
-  return b;
+  return n;
 }
 
 #else /* CH_USE_MALLOC_HEAP */
@@ -245,9 +257,11 @@ void chHeapFree(void *p) {
   H_UNLOCK();
 }
 
-bool_t chHeapNotFragmented(void) {
+size_t chHeapStatus(size_t *sizep) {
 
-  return FALSE;
+  if (sizep)
+    *sizep = 0;
+  return 0;
 }
 
 #endif /* CH_USE_MALLOC_HEAP */

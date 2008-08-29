@@ -31,7 +31,7 @@ extern "C" {
   void chHeapInit(void);
   void *chHeapAlloc(size_t size);
   void chHeapFree(void *p);
-  bool_t chHeapNotFragmented(void);
+  size_t chHeapStatus(size_t *sizep);
 #ifdef __cplusplus
 }
 #endif

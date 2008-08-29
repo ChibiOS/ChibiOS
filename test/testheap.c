@@ -38,9 +38,15 @@ static void heap1_teardown(void) {
 
 static void heap1_execute(void) {
   void *p1, *p2, *p3;
+  size_t n, sz;
 
   /* Test skipped if the heap is already fragmented. */
-  if (chHeapNotFragmented()) {
+
+  if ((n = chHeapStatus(&sz)) == 1) {
+    test_print("--- Size  : ");
+    test_printn(sz);
+    test_println(" bytes, not fragmented");
+
     /* Same order */
     p1 = chHeapAlloc(SIZE);
     p2 = chHeapAlloc(SIZE);
@@ -48,7 +54,7 @@ static void heap1_execute(void) {
     chHeapFree(p1);               /* Does not merge */
     chHeapFree(p2);               /* Merges backward */
     chHeapFree(p3);               /* Merges both sides */
-    test_assert(chHeapNotFragmented(), "heap fragmented #1");
+    test_assert(chHeapStatus(&n) == 1, "heap fragmented #1");
 
     /* Reverse order */
     p1 = chHeapAlloc(SIZE);
@@ -57,7 +63,14 @@ static void heap1_execute(void) {
     chHeapFree(p3);               /* Merges forward */
     chHeapFree(p2);               /* Merges forward */
     chHeapFree(p1);               /* Merges forward */
-    test_assert(chHeapNotFragmented(), "heap fragmented #2");
+    test_assert(chHeapStatus(&n) == 1, "heap fragmented #2");
+
+    test_assert(n == sz, "heap size changed");
+  }
+  else {
+    test_print("--- Size  : ");
+    test_printn(sz);
+    test_println(" bytes, fragmented, test skipped");
   }
 }
 
