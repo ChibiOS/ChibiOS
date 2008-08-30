@@ -77,7 +77,7 @@ void chHeapInit(void) {
   hp = (void *)&__heap_base__;
   hp->h_size = &__heap_end__ - &__heap_base__ - sizeof(struct header);
 #else
-  hp = (void *)&heap;
+  hp = (void *)&heap.buffer[0];
   hp->h_size = (&heap.buffer[ALIGN_SIZE(CH_HEAP_SIZE)] - &heap.buffer[0]) -
                sizeof(struct header);
 #endif
