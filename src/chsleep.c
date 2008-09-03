@@ -24,7 +24,6 @@
 
 #include <ch.h>
 
-#ifdef CH_USE_SLEEP
 /**
  * Suspends the invoking thread for the specified time.
  * @param time the system ticks number
@@ -32,12 +31,9 @@
 void chThdSleep(systime_t time) {
 
   chSysLock();
-
   chSchGoSleepTimeoutS(PRSLEEP, time);
-
   chSysUnlock();
 }
-#endif /* CH_USE_SLEEP */
 
 #ifdef CH_USE_SYSTEMTIME
 /**

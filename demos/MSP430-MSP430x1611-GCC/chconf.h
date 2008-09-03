@@ -47,23 +47,6 @@
  *  included in the kernel.*/
 #define CH_USE_SYSTEMTIME
 
-/** Configuration option: if specified then the \p chThdSleep() function is
- *  included in the kernel.
- * @note requires \p CH_USE_VIRTUAL_TIMERS.*/
-#define CH_USE_SLEEP
-
-/** Configuration option: if specified then the \p chThdResume()
- *  function is included in the kernel.*/
-#define CH_USE_RESUME
-
-/** Configuration option: if specified then the \p chThdSuspend()
- *  function is included in the kernel.*/
-#define CH_USE_SUSPEND
-
-/** Configuration option: if specified then the \p chThdTerminate()
- *  and \p chThdShouldTerminate() functions are included in the kernel.*/
-#define CH_USE_TERMINATE
-
 /** Configuration option: if specified then the \p chThdWait() function
  *  is included in the kernel.*/
 #define CH_USE_WAITEXIT

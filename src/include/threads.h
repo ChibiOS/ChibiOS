@@ -135,14 +135,10 @@ struct Thread {
 /** Thread state: After termination.*/
 #define PREXIT      10
 
-#ifdef CH_USE_TERMINATE
 /** Thread option: Termination requested flag.*/
 #define P_TERMINATE 1
-#endif
-#ifdef CH_USE_RESUME
 /** Thread option: Create suspended thread.*/
 #define P_SUSPENDED 2
-#endif
 #ifdef CH_USE_MESSAGES_PRIORITY
 /** Thread option: Serve messages by priority instead of FIFO order.*/
 #define P_MSGBYPRIO 4
@@ -179,15 +175,9 @@ extern "C" {
                           size_t wsize, tfunc_t pf);
   void chThdSetPriority(tprio_t newprio);
   void chThdExit(msg_t msg);
-#ifdef CH_USE_RESUME
   void chThdResume(Thread *tp);
-#endif
-#ifdef CH_USE_SUSPEND
   void chThdSuspend(Thread **tpp);
-#endif
-#ifdef CH_USE_TERMINATE
   void chThdTerminate(Thread *tp);
-#endif
 #ifdef CH_USE_WAITEXIT
   msg_t chThdWait(Thread *tp);
 #endif

@@ -204,7 +204,6 @@ void chThdResume(Thread *tp) {
   chSysUnlock();
 }
 
-#ifdef CH_USE_TERMINATE
 /**
  * Requests a thread termination.
  * @param tp the pointer to the thread
@@ -215,12 +214,9 @@ void chThdResume(Thread *tp) {
 void chThdTerminate(Thread *tp) {
 
   chSysLock();
-
   tp->p_flags |= P_TERMINATE;
-
   chSysUnlock();
 }
-#endif
 
 /**
  * Terminates the current thread by specifying an exit status code.
