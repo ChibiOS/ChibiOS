@@ -85,9 +85,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   allocate kernel objects like Semaphores, Mutexes, Threads etc fully in real
   time, of course it is also possible to manage application-defined objects.
   The pool allocator is thread-safe.
-  It is worth remember that the kernel is still entirely static, it does not
-  use the allocation services internally, it is up to the application code
-  to use the allocators in order to use dynamic system objects.
+  It is worth remembering that the kernel is still entirely static, it does
+  not use the allocation services internally, it is up to the application
+  code to use the allocators in order to use dynamic system objects.
   Both the allocators can be disabled and removed from the memory image.
 - FIX: Corrected the wrong definition of the chThdResumeI() macro.
 - FIX: The API chSemWaitTimeout() was missing in the documentation.
