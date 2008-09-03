@@ -90,6 +90,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   to use the allocators in order to use dynamic system objects.
   Both the allocators can be disabled and removed from the memory image.
 - FIX: Corrected the wrong definition of the chThdResumeI() macro.
+- FIX: The API chSemWaitTimeout() was missing in the documentation.
 - CHANGE: Now the chThdResume() asserts that the thread is in PRSUSPEND state
   rather than test it.
 - CHANGE: Removed the CH_USE_TERMINATE, CH_USE_SLEEP, CH_USE_SUSPEND and

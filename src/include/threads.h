@@ -67,10 +67,6 @@ struct Thread {
     /** Mutex where the thread is waiting on (only in \p PRWTMTX state). */
     Mutex           *p_wtmtxp;
 #endif
-#ifdef CH_USE_CONDVARS
-    /** CondVar where the thread is waiting on (only in \p PRWTCOND state). */
-    CondVar         *p_wtcondp;
-#endif
 #ifdef CH_USE_MESSAGES
     /** Destination thread for message send (only in \p PRSNDMSG state). */
     Thread          *p_wtthdp;

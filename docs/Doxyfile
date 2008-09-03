@@ -240,12 +240,10 @@ PREDEFINED             = __JUST_STUBS__ \
                          __DOXIGEN__ \
                          CH_USE_VIRTUAL_TIMERS \
                          CH_USE_SYSTEMTIME \
-                         CH_USE_SLEEP \
-                         CH_USE_RESUME \
-                         CH_USE_SUSPEND \
-                         CH_USE_TERMINATE \
                          CH_USE_WAITEXIT \
                          CH_USE_SEMAPHORES \
+                         CH_USE_SEMSW \
+                         CH_USE_SEMAPHORES_TIMEOUT \
                          CH_USE_MUTEXES \
                          CH_USE_EVENTS \
                          CH_USE_EVENTS_TIMEOUT \
@@ -260,7 +258,6 @@ PREDEFINED             = __JUST_STUBS__ \
                          CH_USE_MESSAGES \
                          CH_USE_MESSAGES_EVENT \
                          CH_USE_MESSAGES_PRIORITY \
-                         CH_USE_SEMSW \
                          CH_USE_DEBUG \
                          CH_USE_TRACE
 EXPAND_AS_DEFINED      = 
