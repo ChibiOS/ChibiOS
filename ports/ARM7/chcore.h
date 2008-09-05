@@ -102,7 +102,7 @@ extern "C" {
 #define chSysUnlock() asm volatile ("msr     CPSR_c, %0" : : "r" (ps))
 #define chSysEnable() asm volatile ("msr     CPSR_c, #0x1F")
 #else
-#define chSysLock() asm volatile ("msr     CPSR_c, #0x9F");
+#define chSysLock() asm volatile ("msr     CPSR_c, #0x9F")
 #define chSysUnlock() asm volatile ("msr     CPSR_c, #0x1F")
 #define chSysEnable() asm volatile ("msr     CPSR_c, #0x1F")
 #endif /* !REENTRANT_LOCKS */
