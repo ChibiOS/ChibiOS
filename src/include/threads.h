@@ -106,6 +106,9 @@ struct Thread {
   /** Thread's own, non-inherited, priority. */
   tprio_t           p_realprio;
 #endif
+#ifdef CH_USE_THREAD_EXT
+  THREAD_EXT_FIELDS
+#endif
 };
 
 /** Thread state: Ready to run, waiting on the ready list.*/

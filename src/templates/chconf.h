@@ -35,12 +35,19 @@
  *  that this is not related to the compiler optimization options.*/
 #define CH_OPTIMIZE_SPEED
 
+/** Configuration option: it specified this option enables the \p Thread
+ *  extension fields and initiazation code.
+ * @see THREAD_EXT_FIELDS
+ * @see THREAD_EXT_INIT
+ */
+#define CH_USE_THREAD_EXT
+
 /** Configuration option: if specified then the Virtual Timers subsystem is
  *  included in the kernel.*/
 #define CH_USE_VIRTUAL_TIMERS
 
 /** Configuration option: if specified then the kernel performs the round
- *  robin scheduling algorithm on threads of equal priority. */
+ *  robin scheduling algorithm on threads of equal priority.*/
 #define CH_USE_ROUNDROBIN
 
 /** Configuration option: if specified then the System Timer subsystem is
@@ -172,6 +179,23 @@
 /** Debug option: Includes the threads context switch tracing feature.
  */
 #define CH_USE_TRACE
+
+/** User fields added to the end of the \p Thread structure if the
+ * \p CH_USE_THREAD_EXT option is enabled.
+ * @see CH_USE_THREAD_EXT
+ */
+#define THREAD_EXT_FIELDS                                               \
+struct {                                                                \
+  /* Add fields here.*/                                                 \
+};
+
+/** User initialization code added to the \p chThdCreate() API if the
+ *  \p CH_USE_THREAD_EXT option is enabled.
+ * @see CH_USE_THREAD_EXT
+ */
+#define THREAD_EXT_INIT(tp) {                                           \
+  /* Add initialization code here.*/                                    \
+}
 
 #endif  /* _CHCONF_H_ */
 

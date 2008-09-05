@@ -50,6 +50,9 @@ void init_thread(tprio_t prio, tmode_t mode, Thread *tp) {
 #ifdef CH_USE_EXIT_EVENT
   chEvtInit(&tp->p_exitesource);
 #endif
+#ifdef CH_USE_THREAD_EXT
+  THREAD_EXT_INIT(tp);
+#endif
 }
 
 #ifdef CH_USE_DEBUG

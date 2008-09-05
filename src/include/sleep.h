@@ -28,9 +28,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#ifdef CH_USE_SLEEP
   void chThdSleep(systime_t time);
-#endif /* CH_USE_SLEEP */
 #ifdef CH_USE_SYSTEMTIME
 bool_t chSysInTimeWindow(systime_t start, systime_t end);
 #endif /* CH_USE_SYSTEMTIME */
