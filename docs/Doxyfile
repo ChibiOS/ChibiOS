@@ -238,6 +238,7 @@ INCLUDE_PATH           =
 INCLUDE_FILE_PATTERNS  = 
 PREDEFINED             = __JUST_STUBS__ \
                          __DOXIGEN__ \
+                         CH_USE_THREAD_EXT \
                          CH_USE_VIRTUAL_TIMERS \
                          CH_USE_SYSTEMTIME \
                          CH_USE_WAITEXIT \

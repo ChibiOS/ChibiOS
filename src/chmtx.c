@@ -83,9 +83,8 @@ void chMtxLockS(Mutex *mp) {
         continue;
 #ifdef CH_USE_MESSAGES_PRIORITY
       case PRSNDMSG:
-        if (tp->p_flags & P_MSGBYPRIO)
-          /* requeue tp with its new priority on (?) */
-          prio_insert(dequeue(tp), &tp->p_wtthdp->p_msgqueue);
+        /* requeue tp with its new priority on (?) */
+        prio_insert(dequeue(tp), &tp->p_wtthdp->p_msgqueue);
         break;
 #endif
       /* thread tp is ready? */

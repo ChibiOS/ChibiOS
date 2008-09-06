@@ -103,9 +103,10 @@
 
 /** Configuration option: if specified then the
  *  \p chThdGetExitEventSource() function is included in the kernel.
+ * @deprecated
  * @note requires \p CH_USE_MESSAGES.
  * @note requires \p CH_USE_EVENTS.*/
-#define CH_USE_EXIT_EVENT
+//#define CH_USE_EXIT_EVENT
 
 /** Configuration option: if specified then the I/O queues APIs are included
  *  in the kernel.*/

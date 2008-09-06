@@ -138,10 +138,6 @@ struct Thread {
 #define P_TERMINATE 1
 /** Thread option: Create suspended thread.*/
 #define P_SUSPENDED 2
-#ifdef CH_USE_MESSAGES_PRIORITY
-/** Thread option: Serve messages by priority instead of FIFO order.*/
-#define P_MSGBYPRIO 4
-#endif
 
 /** Pseudo priority used by the ready list header, do not use.*/
 #define NOPRIO      0
@@ -205,6 +201,7 @@ extern "C" {
  * Returns the exit event source for the specified thread. The source is
  * signaled when the thread terminates.
  * @param tp the pointer to the thread
+ * @deprecated
  * @note When registering on a thread termination make sure the thread
  *       is still alive, if you do that after the thread termination
  *       then you would miss the event. There are two ways to ensure

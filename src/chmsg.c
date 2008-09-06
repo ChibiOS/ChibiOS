@@ -37,10 +37,7 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
   chSysLock();
 
 #ifdef CH_USE_MESSAGES_PRIORITY
-  if (tp->p_flags & P_MSGBYPRIO)
-    prio_insert(currp, &tp->p_msgqueue);
-  else
-    queue_insert(currp, &tp->p_msgqueue);
+  prio_insert(currp, &tp->p_msgqueue);
 #else
   queue_insert(currp, &tp->p_msgqueue);
 #endif
@@ -76,10 +73,7 @@ msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, EventSource *esp) {
 
   chDbgAssert(tp->p_state != PRWTMSG, "chmsg.c, chMsgSendWithEvent()");
 #ifdef CH_USE_MESSAGES_PRIORITY
-  if (tp->p_flags & P_MSGBYPRIO)
-    prio_insert(currp, &tp->p_msgqueue);
-  else
-    queue_insert(currp, &tp->p_msgqueue);
+  prio_insert(currp, &tp->p_msgqueue);
 #else
   queue_insert(currp, &tp->p_msgqueue);
 #endif

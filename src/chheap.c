@@ -185,11 +185,13 @@ void chHeapFree(void *p) {
 
 /**
  * Determines the heap status.
- * @sizep pointer to a variable that will receive the total fragmented free
- *        space
+ * @param sizep pointer to a variable that will receive the total fragmented
+ *              free space
  * @return the number of fragments in the heap
  * @note This function is meant to be used in the test suite, it should not be
  *       really useful for the application code.
+ * @note This function is not implemented when the \p CH_USE_MALLOC_HEAP
+ *       configuration option is used (it always returns zero).
  */
 size_t chHeapStatus(size_t *sizep) {
   struct header *qp;
