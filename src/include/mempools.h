@@ -34,13 +34,16 @@ struct pool_header {
 typedef struct {
   struct pool_header    *mp_next;
   size_t                mp_object_size;
+#ifdef CH_USE_HEAP
+  bool_t                mp_grow;
+#endif /* CH_USE_HEAP */
 } MemoryPool;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chPoolInit(MemoryPool *mp, size_t size);
-  void *chPoolAlloc(MemoryPool *mp, bool_t grow);
+  void chPoolInit(MemoryPool *mp, size_t size, bool_t allow_growth);
+  void *chPoolAlloc(MemoryPool *mp);
   void chPoolFree(MemoryPool *mp, void *objp);
 #ifdef CH_USE_HEAP
   void chPoolRelease(MemoryPool *mp);

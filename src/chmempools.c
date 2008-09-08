@@ -30,25 +30,30 @@
  * Initializes a memory pool.
  * @param mp pointer to a \p MemoryPool structure
  * @param size the size of the objects contained in this memory pool
+ * @param allow_growth if \p TRUE then the memory pool can allocate
+ *                     more space from the heap when needed
+ * @note The parameter \p allow_growth is ignored if the \p CH_USE_HEAP
+ *       configuration option is not enabled.
  */
-void chPoolInit(MemoryPool *mp, size_t size) {
+void chPoolInit(MemoryPool *mp, size_t size, bool_t allow_growth) {
 
   chDbgAssert((mp != NULL) && (size >= sizeof(void *)),
               "chpools.c, chPoolFree()");
 
   mp->mp_next = NULL;
   mp->mp_object_size = size;
+#ifdef CH_USE_HEAP
+  mp->mp_grow = allow_growth;
+#endif /* CH_USE_HEAP */
 }
 
 /**
  * Allocates an object from a memory pool.
  * @param mp pointer to a \p MemoryPool structure
- * @param allow_growth if \p TRUE then the object is allocated by using
- *                     \p chHeapAlloc() in case the memory pool is empty
  * @return the pointer to the allocated object or \p NULL if the memory is
  *         exhausted
  */
-void *chPoolAlloc(MemoryPool *mp, bool_t allow_growth) {
+void *chPoolAlloc(MemoryPool *mp) {
   void *p;
 
   chDbgAssert(mp != NULL, "chpools.c, chPoolAlloc()");
@@ -57,7 +62,7 @@ void *chPoolAlloc(MemoryPool *mp, bool_t allow_growth) {
 
   if (mp->mp_next == NULL) {
 #ifdef CH_USE_HEAP
-    if (allow_growth) {
+    if (mp->mp_grow) {
 
       chSysUnlock();
       return chHeapAlloc(mp->mp_object_size);
@@ -73,7 +78,7 @@ void *chPoolAlloc(MemoryPool *mp, bool_t allow_growth) {
 }
 
 /**
- * Releases (or adds) an object into a memory pool.
+ * Releases (or adds) an object into (to) a memory pool.
  * @param mp pointer to a \p MemoryPool structure
  * @param objp the pointer to the object to be released or added
  * @note the object is assumed to be of the right size for the specified
@@ -99,12 +104,12 @@ void chPoolFree(MemoryPool *mp, void *objp) {
  * @param mp pointer to a \p MemoryPool structure
  * @note It is assumed that all the object are allocated using the heap
  *       allocator, do not use this function if the pool contains other kind
- *       of objects.
+ *       of objects, as example static areas.
  */
 void chPoolRelease(MemoryPool *mp) {
   void *p;
 
-  while ((p = chPoolAlloc(mp, FALSE)) != NULL)
+  while ((p = chPoolAlloc(mp)) != NULL)
     chHeapFree(p);
 }
 #endif

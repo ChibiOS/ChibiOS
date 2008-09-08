@@ -32,7 +32,7 @@ static char *pools1_gettest(void) {
 
 static void pools1_setup(void) {
 
-  chPoolInit(&mp1, UserStackSize(THREADS_STACK_SIZE));
+  chPoolInit(&mp1, UserStackSize(THREADS_STACK_SIZE), FALSE);
 }
 
 static void pools1_teardown(void) {
@@ -47,10 +47,10 @@ static void pools1_execute(void) {
 
   /* Empting the pool again. */
   for (i = 0; i < 5; i++)
-    test_assert(chPoolAlloc(&mp1, FALSE) != NULL, "pool list empty");
+    test_assert(chPoolAlloc(&mp1) != NULL, "pool list empty");
 
   /* Now must be empty. */
-  test_assert(chPoolAlloc(&mp1, FALSE) == NULL, "pool list not empty");
+  test_assert(chPoolAlloc(&mp1) == NULL, "pool list not empty");
 }
 
 const struct testcase testpools1 = {
