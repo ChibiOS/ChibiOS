@@ -96,12 +96,10 @@ namespace chibios_rt {
     chThdSetPriority(newprio);
   }
 
-#ifdef CH_USE_RESUME
   void BaseThread::Resume(void) {
 
     chThdResume(thread_ref);
   }
-#endif /* CH_USE_RESUME */
 
 #ifdef CH_USE_TERMINATE
   void BaseThread::Terminate(void) {
@@ -110,7 +108,6 @@ namespace chibios_rt {
   }
 #endif /* CH_USE_TERMINATE */
 
-#ifdef CH_USE_SLEEP
   void BaseThread::Sleep(systime_t n) {
 
     chThdSleep(n);
@@ -122,7 +119,6 @@ namespace chibios_rt {
     chThdSleepUntil(time);
   }
 #endif /* CH_USE_SYSTEMTIME */
-#endif /* CH_USE_SLEEP */
 
 #ifdef CH_USE_MESSAGES
   msg_t BaseThread::SendMessage(::Thread* tp, msg_t msg) {

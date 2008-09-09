@@ -115,26 +115,21 @@ namespace chibios_rt {
     msg_t Wait(void);
 #endif /* CH_USE_WAITEXIT */
 
-#ifdef CH_USE_RESUME
     /**
      * Resumes thread.
      */
     void Resume(void);
-#endif /* CH_USE_RESUME */
 
     /**
      * Change thread priority.
      */
     static void SetPriority(tprio_t newprio);
 
-#ifdef CH_USE_TERMINATE
     /**
      * Requests thread termination.
      */
     void Terminate(void);
-#endif /* CH_USE_TERMINATE */
 
-#ifdef CH_USE_SLEEP
     /**
      * Suspends the thread execution for the specified number of system ticks.
      */
@@ -146,7 +141,6 @@ namespace chibios_rt {
      */
     static void SleepUntil(systime_t time);
 #endif /* CH_USE_SYSTEMTIME */
-#endif /* CH_USE_SLEEP */
 
 #ifdef CH_USE_MESSAGES
     /**
