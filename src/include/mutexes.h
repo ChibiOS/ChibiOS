@@ -46,8 +46,8 @@ extern "C" {
   void chMtxLockS(Mutex *mp);
   bool_t chMtxTryLock(Mutex *mp);
   bool_t chMtxTryLockS(Mutex *mp);
-  void chMtxUnlock(void);
-  void chMtxUnlockS(void);
+  Mutex *chMtxUnlock(void);
+  Mutex *chMtxUnlockS(void);
   void chMtxUnlockAll(void);
 #ifdef __cplusplus
 }

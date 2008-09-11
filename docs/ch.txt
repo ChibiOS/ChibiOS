@@ -38,10 +38,11 @@
  * <li>No static setup at compile time, there is no need to configure a maximum
  *     number of all the above resources.</li>
  * <li>No *need* for a memory allocator, all the kernel structures are static
- *     and declaratively allocated. A memory allocator can be used in your
- *     application but it is not required by the ChibiOS/RT itself.</li>
+ *     and declaratively allocated.</li>
  * <li>Threads, Semaphores, Event Sources, Virtual Timers creation/deletion at
  *     runtime.</li>
+ * <li>Optional, thread safe, Heap Allocator subsystem.</li>
+ * <li>Optional, thread safe, Memory Pools Allocator subsystem.</li>
  * <li>Blocking and non blocking I/O channels with timeout and events generation
  *     capability.</li>
  * <li>Minimal system requirements: about 8KiB ROM with all options enabled and

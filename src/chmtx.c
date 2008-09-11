@@ -149,8 +149,8 @@ bool_t chMtxTryLockS(Mutex *mp) {
 /**
  * Unlocks the next owned mutex in reverse lock order.
  */
-void chMtxUnlock(void) {
-  Mutex *mp;
+Mutex *chMtxUnlock(void) {
+  Mutex *ump, *mp;
 
   chSysLock();
 
@@ -158,16 +158,16 @@ void chMtxUnlock(void) {
               "chmtx.c, chMtxUnlock()");
 
   /* remove the top Mutex from the Threads's owned mutexes list */
-  mp = currp->p_mtxlist;
-  currp->p_mtxlist = mp->m_next;
+  ump = currp->p_mtxlist;
+  currp->p_mtxlist = ump->m_next;
   /* mark the Mutex as not owned */
-  mp->m_owner = NULL;
+  ump->m_owner = NULL;
   /*
    * If a thread is waiting on the mutex then the hard part begins.
    */
-  if (chMtxQueueNotEmptyS(mp)) {
+  if (chMtxQueueNotEmptyS(ump)) {
     /* get the highest priority thread waiting for the unlocked mutex */
-    Thread *tp = fifo_remove(&mp->m_queue);
+    Thread *tp = fifo_remove(&ump->m_queue);
     /*
      * Recalculates the optimal thread priority by scanning the owned mutexes list.
      */
@@ -187,6 +187,7 @@ void chMtxUnlock(void) {
     chSchWakeupS(tp, RDY_OK);
   }
   chSysUnlock();
+  return ump;
 }
 
 /**
@@ -195,8 +196,8 @@ void chMtxUnlock(void) {
  *       block.
  * @note This function does not reschedule internally.
  */
-void chMtxUnlockS(void) {
-  Mutex *mp;
+Mutex *chMtxUnlockS(void) {
+  Mutex *ump, *mp;
 
   chDbgAssert((currp->p_mtxlist != NULL) && (currp->p_mtxlist->m_owner == currp),
               "chmtx.c, chMtxUnlockS()");
@@ -204,14 +205,14 @@ void chMtxUnlockS(void) {
   /*
    * Removes the top Mutex from the owned mutexes list and marks it as not owned.
    */
-  mp = currp->p_mtxlist;
-  currp->p_mtxlist = mp->m_next;
-  mp->m_owner = NULL;
+  ump = currp->p_mtxlist;
+  currp->p_mtxlist = ump->m_next;
+  ump->m_owner = NULL;
   /*
    * If a thread is waiting on the mutex then the hard part begins.
    */
-  if (chMtxQueueNotEmptyS(mp)) {
-    Thread *tp = fifo_remove(&mp->m_queue);
+  if (chMtxQueueNotEmptyS(ump)) {
+    Thread *tp = fifo_remove(&ump->m_queue);
     /*
      * Recalculates the optimal thread priority by scanning the owned mutexes list.
      */
@@ -225,6 +226,7 @@ void chMtxUnlockS(void) {
     currp->p_prio = newprio;
     chSchReadyI(tp);
   }
+  return ump;
 }
 
 /**

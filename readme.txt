@@ -93,13 +93,13 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   code to the Thread structure.
 - FIX: Corrected the wrong definition of the chThdResumeI() macro.
 - FIX: The API chSemWaitTimeout() was missing in the documentation.
+- CHANGE: Modified the chMtxUnlock() and chMtxUnlockS() APIs to return the
+  pointer to the released mutex instead of void.
 - CHANGE: Now the chThdResume() asserts that the thread is in PRSUSPEND state
   rather than test it.
 - CHANGE: Removed the CH_USE_TERMINATE, CH_USE_SLEEP, CH_USE_SUSPEND and
   CH_USE_RESUME configuration options in order to make the chconf.h file
   simpler. The related functions are very small and almost always required.
-- CHANGE: The CH_USE_EXIT_EVENT configuration option and related functions are
-  now deprecated.
 - CHANGE: The P_MSGBYPRIO thread option has been removed, now the threads
   always serve messages in priority order if the CH_USE_MESSAGES_PRIORITY
   configuration option is active.
