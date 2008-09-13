@@ -95,8 +95,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: The API chSemWaitTimeout() was missing in the documentation.
 - CHANGE: Modified the chMtxUnlock() and chMtxUnlockS() APIs to return the
   pointer to the released mutex instead of void.
-- CHANGE: Now the chThdResume() asserts that the thread is in PRSUSPEND state
-  rather than test it.
+- CHANGE: Now the chThdResume() API asserts that the thread is in PRSUSPEND
+  state rather than test it.
 - CHANGE: Removed the CH_USE_TERMINATE, CH_USE_SLEEP, CH_USE_SUSPEND and
   CH_USE_RESUME configuration options in order to make the chconf.h file
   simpler. The related functions are very small and almost always required.

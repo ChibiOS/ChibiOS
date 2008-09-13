@@ -27,54 +27,36 @@
 #ifdef CH_USE_MEMPOOLS
 
 /**
- * Initializes a memory pool.
+ * Initializes an empty memory pool.
  * @param mp pointer to a \p MemoryPool structure
  * @param size the size of the objects contained in this memory pool
- * @param allow_growth if \p TRUE then the memory pool can allocate
- *                     more space from the heap when needed
- * @note The parameter \p allow_growth is ignored if the \p CH_USE_HEAP
- *       configuration option is not enabled.
  */
-void chPoolInit(MemoryPool *mp, size_t size, bool_t allow_growth) {
+void chPoolInit(MemoryPool *mp, size_t size) {
 
   chDbgAssert((mp != NULL) && (size >= sizeof(void *)),
               "chpools.c, chPoolFree()");
 
   mp->mp_next = NULL;
   mp->mp_object_size = size;
-#ifdef CH_USE_HEAP
-  mp->mp_grow = allow_growth;
-#endif /* CH_USE_HEAP */
 }
 
 /**
  * Allocates an object from a memory pool.
  * @param mp pointer to a \p MemoryPool structure
- * @return the pointer to the allocated object or \p NULL if the memory is
- *         exhausted
+ * @return the pointer to the allocated object or \p NULL if pool is empty
  */
 void *chPoolAlloc(MemoryPool *mp) {
-  void *p;
+  void *objp;
 
   chDbgAssert(mp != NULL, "chpools.c, chPoolAlloc()");
 
   chSysLock();
 
-  if (mp->mp_next == NULL) {
-#ifdef CH_USE_HEAP
-    if (mp->mp_grow) {
-
-      chSysUnlock();
-      return chHeapAlloc(mp->mp_object_size);
-    }
-#endif /* CH_USE_HEAP */
-    return NULL;
-  }
-  p = mp->mp_next;
-  mp->mp_next = mp->mp_next->ph_next;
+  if ((objp = mp->mp_next) != NULL)
+    mp->mp_next = mp->mp_next->ph_next;
 
   chSysUnlock();
-  return p;
+  return objp;
 }
 
 /**
@@ -82,7 +64,7 @@ void *chPoolAlloc(MemoryPool *mp) {
  * @param mp pointer to a \p MemoryPool structure
  * @param objp the pointer to the object to be released or added
  * @note the object is assumed to be of the right size for the specified
- *       buffer.
+ *       memory pool.
  */
 void chPoolFree(MemoryPool *mp, void *objp) {
   struct pool_header *php = objp;
@@ -97,22 +79,6 @@ void chPoolFree(MemoryPool *mp, void *objp) {
 
   chSysUnlock();
 }
-
-#ifdef CH_USE_HEAP
-/**
- * Releases all the objects contained into a pool.
- * @param mp pointer to a \p MemoryPool structure
- * @note It is assumed that all the object are allocated using the heap
- *       allocator, do not use this function if the pool contains other kind
- *       of objects, as example static areas.
- */
-void chPoolRelease(MemoryPool *mp) {
-  void *p;
-
-  while ((p = chPoolAlloc(mp)) != NULL)
-    chHeapFree(p);
-}
-#endif
 
 #endif /* CH_USE_MEMPOOLS */
 

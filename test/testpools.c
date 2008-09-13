@@ -32,7 +32,7 @@ static char *pools1_gettest(void) {
 
 static void pools1_setup(void) {
 
-  chPoolInit(&mp1, UserStackSize(THREADS_STACK_SIZE), FALSE);
+  chPoolInit(&mp1, UserStackSize(THREADS_STACK_SIZE));
 }
 
 static void pools1_teardown(void) {
