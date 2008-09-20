@@ -136,8 +136,6 @@ struct Thread {
 
 /** Thread option: Termination requested flag.*/
 #define P_TERMINATE 1
-/** Thread option: Create suspended thread.*/
-#define P_SUSPENDED 2
 
 /** Pseudo priority used by the ready list header, do not use.*/
 #define NOPRIO      0
