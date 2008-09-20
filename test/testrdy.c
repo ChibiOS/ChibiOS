@@ -40,11 +40,11 @@ static void rdy1_teardown(void) {
 
 static void rdy1_execute(void) {
 
-  threads[0] = chThdCreate(chThdGetPriority()-5, 0, wa[0], STKSIZE, thread, "E");
-  threads[1] = chThdCreate(chThdGetPriority()-4, 0, wa[1], STKSIZE, thread, "D");
-  threads[2] = chThdCreate(chThdGetPriority()-3, 0, wa[2], STKSIZE, thread, "C");
-  threads[3] = chThdCreate(chThdGetPriority()-2, 0, wa[3], STKSIZE, thread, "B");
-  threads[4] = chThdCreate(chThdGetPriority()-1, 0, wa[4], STKSIZE, thread, "A");
+  threads[0] = chThdCreate(chThdGetPriority()-5, wa[0], STKSIZE, thread, "E");
+  threads[1] = chThdCreate(chThdGetPriority()-4, wa[1], STKSIZE, thread, "D");
+  threads[2] = chThdCreate(chThdGetPriority()-3, wa[2], STKSIZE, thread, "C");
+  threads[3] = chThdCreate(chThdGetPriority()-2, wa[3], STKSIZE, thread, "B");
+  threads[4] = chThdCreate(chThdGetPriority()-1, wa[4], STKSIZE, thread, "A");
   test_wait_threads();
   test_assert_sequence("ABCDE");
 }
@@ -69,11 +69,11 @@ static void rdy2_teardown(void) {
 
 static void rdy2_execute(void) {
 
-  threads[1] = chThdCreate(chThdGetPriority()-4, 0, wa[1], STKSIZE, thread, "D");
-  threads[0] = chThdCreate(chThdGetPriority()-5, 0, wa[0], STKSIZE, thread, "E");
-  threads[4] = chThdCreate(chThdGetPriority()-1, 0, wa[4], STKSIZE, thread, "A");
-  threads[3] = chThdCreate(chThdGetPriority()-2, 0, wa[3], STKSIZE, thread, "B");
-  threads[2] = chThdCreate(chThdGetPriority()-3, 0, wa[2], STKSIZE, thread, "C");
+  threads[1] = chThdCreate(chThdGetPriority()-4, wa[1], STKSIZE, thread, "D");
+  threads[0] = chThdCreate(chThdGetPriority()-5, wa[0], STKSIZE, thread, "E");
+  threads[4] = chThdCreate(chThdGetPriority()-1, wa[4], STKSIZE, thread, "A");
+  threads[3] = chThdCreate(chThdGetPriority()-2, wa[3], STKSIZE, thread, "B");
+  threads[2] = chThdCreate(chThdGetPriority()-3, wa[2], STKSIZE, thread, "C");
   test_wait_threads();
   test_assert_sequence("ABCDE");
 }

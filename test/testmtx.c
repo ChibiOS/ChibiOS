@@ -52,11 +52,11 @@ static void mtx1_execute(void) {
 
   tprio_t prio = chThdGetPriority(); // Bacause priority inheritance.
   chMtxLock(&m1);
-  threads[0] = chThdCreate(prio+1, 0, wa[0], STKSIZE, thread1, "E");
-  threads[1] = chThdCreate(prio+2, 0, wa[1], STKSIZE, thread1, "D");
-  threads[2] = chThdCreate(prio+3, 0, wa[2], STKSIZE, thread1, "C");
-  threads[3] = chThdCreate(prio+4, 0, wa[3], STKSIZE, thread1, "B");
-  threads[4] = chThdCreate(prio+5, 0, wa[4], STKSIZE, thread1, "A");
+  threads[0] = chThdCreate(prio+1, wa[0], STKSIZE, thread1, "E");
+  threads[1] = chThdCreate(prio+2, wa[1], STKSIZE, thread1, "D");
+  threads[2] = chThdCreate(prio+3, wa[2], STKSIZE, thread1, "C");
+  threads[3] = chThdCreate(prio+4, wa[3], STKSIZE, thread1, "B");
+  threads[4] = chThdCreate(prio+5, wa[4], STKSIZE, thread1, "A");
   chMtxUnlock();
   test_assert(prio == chThdGetPriority(), "priority return failure");
   test_wait_threads();
@@ -117,9 +117,9 @@ static msg_t thread4(void *p) {
  */
 static void mtx2_execute(void) {
 
-  threads[0] = chThdCreate(chThdGetPriority()-1, 0, wa[0], STKSIZE, thread2, "A");
-  threads[1] = chThdCreate(chThdGetPriority()-3, 0, wa[1], STKSIZE, thread3, "C");
-  threads[2] = chThdCreate(chThdGetPriority()-2, 0, wa[2], STKSIZE, thread4, "B");
+  threads[0] = chThdCreate(chThdGetPriority()-1, wa[0], STKSIZE, thread2, "A");
+  threads[1] = chThdCreate(chThdGetPriority()-3, wa[1], STKSIZE, thread3, "C");
+  threads[2] = chThdCreate(chThdGetPriority()-2, wa[2], STKSIZE, thread4, "B");
   test_wait_threads();
   test_assert_sequence("ABC");
 }
@@ -206,11 +206,11 @@ static msg_t thread9(void *p) {
  */
 static void mtx3_execute(void) {
 
-  threads[0] = chThdCreate(chThdGetPriority()-5, 0, wa[0], STKSIZE, thread5, "E");
-  threads[1] = chThdCreate(chThdGetPriority()-4, 0, wa[1], STKSIZE, thread6, "D");
-  threads[2] = chThdCreate(chThdGetPriority()-3, 0, wa[2], STKSIZE, thread7, "C");
-  threads[3] = chThdCreate(chThdGetPriority()-2, 0, wa[3], STKSIZE, thread8, "B");
-  threads[4] = chThdCreate(chThdGetPriority()-1, 0, wa[4], STKSIZE, thread9, "A");
+  threads[0] = chThdCreate(chThdGetPriority()-5, wa[0], STKSIZE, thread5, "E");
+  threads[1] = chThdCreate(chThdGetPriority()-4, wa[1], STKSIZE, thread6, "D");
+  threads[2] = chThdCreate(chThdGetPriority()-3, wa[2], STKSIZE, thread7, "C");
+  threads[3] = chThdCreate(chThdGetPriority()-2, wa[3], STKSIZE, thread8, "B");
+  threads[4] = chThdCreate(chThdGetPriority()-1, wa[4], STKSIZE, thread9, "A");
   test_wait_threads();
   test_assert_sequence("ABCDE");
 }

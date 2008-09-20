@@ -27,12 +27,13 @@
 /*
  * Initializes a thread structure.
  */
-void init_thread(tprio_t prio, tmode_t mode, Thread *tp) {
+void init_thread(tprio_t prio, Thread *tp) {
   static tid_t nextid = 0;
 
   tp->p_tid = nextid++;
-  tp->p_flags = mode;
+  tp->p_flags = 0;
   tp->p_prio = prio;
+  tp->p_state = PRSUSPENDED;
 #ifdef CH_USE_MUTEXES
   /* realprio is the thread's own, non-inherited, priority */
   tp->p_realprio = prio;
@@ -64,23 +65,45 @@ static void memfill(uint8_t *p, uint32_t n, uint8_t v) {
 #endif
 
 /**
+ * Initializes a new thread.
+ * The new thread is initialized but not inserted in the ready list, the
+ * initial state is \p PRSUSPENDED.
+ * @param prio the priority level for the new thread. Usually the threads are
+ *             created with priority \p NORMALPRIO, priorities
+ *             can range from \p LOWPRIO to \p HIGHPRIO.
+ * @param workspace pointer to a working area dedicated to the thread stack
+ * @param wsize size of the working area.
+ * @param pf the thread function. Returning from this function automatically
+ *           terminates the thread.
+ * @param arg an argument passed to the thread function. It can be \p NULL.
+ * @return the pointer to the \p Thread structure allocated for the
+ *         thread into the working space area.
+ * @note A thread can terminate by calling \p chThdExit() or by simply
+ *       returning from its main function.
+ * @note This function can be used to start a thead from within an interrupt
+ *       handler by manually making it ready with \p chSchReadyI().
+ */
+Thread *chThdInit(tprio_t prio, void *workspace,
+                  size_t wsize, tfunc_t pf, void *arg) {
+  /* thread structure is layed out in the lower part of the thread workspace */
+  Thread *tp = workspace;
+
+  chDbgAssert((wsize >= UserStackSize(0)) && (prio <= HIGHPRIO) &&
+              (workspace != NULL) && (pf != NULL),
+              "chthreads.c, chThdInit()");
+#ifdef CH_USE_DEBUG
+  memfill(workspace, wsize, MEM_FILL_PATTERN);
+#endif
+  SETUP_CONTEXT(workspace, wsize, pf, arg);
+  init_thread(prio, tp);
+  return tp;
+}
+
+/**
  * Creates a new thread.
  * @param prio the priority level for the new thread. Usually the threads are
  *             created with priority \p NORMALPRIO, priorities
  *             can range from \p LOWPRIO to \p HIGHPRIO.
- * @param mode the creation option flags for the thread. The following options
- *             can be OR'ed in this parameter:<br>
- *             <ul>
- *             <li>\p P_SUSPENDED, the thread is created in the
- *                 \p PRSUSPENDED state and a subsequent call to
- *                 \p chThdResume() will make it ready for
- *                 execution.</li>
- *             <li>\p P_TERMINATED, this flag is usually set
- *                 by the \p chThdTerminate() function and it is not
- *                 normally used as parameter for this function. The
- *                 result would be to create a thread with a termination
- *                 request already pending.</li>
- *             </ul>
  * @param workspace pointer to a working area dedicated to the thread stack
  * @param wsize size of the working area.
  * @param pf the thread function. Returning from this function automatically
@@ -91,30 +114,13 @@ static void memfill(uint8_t *p, uint32_t n, uint8_t v) {
  * @note A thread can terminate by calling \p chThdExit() or by simply
  *       returning from its main function.
  */
-Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
+Thread *chThdCreate(tprio_t prio, void *workspace,
                     size_t wsize, tfunc_t pf, void *arg) {
-  /* thread structure is layed out in the lower part of the thread workspace */
-  Thread *tp = workspace;
 
-  chDbgAssert((wsize >= UserStackSize(0)) && (prio <= HIGHPRIO) &&
-              (workspace != NULL) && (pf != NULL),
-              "chthreads.c, chThdCreate()");
-#ifdef CH_USE_DEBUG
-  memfill(workspace, wsize, MEM_FILL_PATTERN);
-#endif
-  SETUP_CONTEXT(workspace, wsize, pf, arg);
-  init_thread(prio, mode, tp);
-#ifdef CH_USE_RESUME
-  if (tp->p_flags & P_SUSPENDED)
-    tp->p_state = PRSUSPENDED;
-  else {
-#endif
-    chSysLock();
-    chSchWakeupS(tp, RDY_OK);
-    chSysUnlock();
-#ifdef CH_USE_RESUME
-  }
-#endif
+  Thread *tp = chThdInit(prio, workspace, wsize, pf, arg);
+  chSysLock();
+  chSchWakeupS(tp, RDY_OK);
+  chSysUnlock();
   return tp;
 }
 
@@ -131,19 +137,12 @@ Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
  *         thread into the working space area.
  * @note A thread can terminate by calling \p chThdExit() or by simply
  *       returning from its main function.
+ * @deprecated
  */
 Thread *chThdCreateFast(tprio_t prio, void *workspace,
                         size_t wsize, tfunc_t pf) {
-  Thread *tp = workspace;
 
-  chDbgAssert((wsize >= UserStackSize(0)) && (prio <= HIGHPRIO) &&
-              (workspace != NULL) && (pf != NULL),
-              "chthreads.c, chThdCreateFast()");
-#ifdef CH_USE_DEBUG
-  memfill(workspace, wsize, MEM_FILL_PATTERN);
-#endif
-  SETUP_CONTEXT(workspace, wsize, pf, NULL);
-  init_thread(prio, 0, tp);
+  Thread *tp = chThdInit(prio, workspace, wsize, pf, NULL);
   chSysLock();
   chSchWakeupS(tp, RDY_OK);
   chSysUnlock();

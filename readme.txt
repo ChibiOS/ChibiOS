@@ -74,6 +74,15 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.7.1 ***
+- NEW: New chThdInit() API, this API allows to quickly create threads in the
+  PRSUSPENDED state. This API also allows to start threads from interrupt
+  handlers.
+- CHANGE: The chThdCreate() API no more has the mode parameter, a different
+  API is now used in order to start suspended threads.
+- FIX: The chThdCreate() had a regression in 0.7.0, the mode parameter was
+  ignored. Note that in this version the mode parameter had been removed.
+
 *** 0.7.0 ***
 - NEW: Memory Heap Allocator functionality added. The allocator implements a
   first-fit strategy but there is an option that allow it to wrap the compiler

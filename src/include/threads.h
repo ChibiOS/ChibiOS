@@ -153,7 +153,7 @@ struct Thread {
 #define ABSPRIO     255
 
 /* Not an API, don't use into the application code.*/
-void init_thread(tprio_t prio, tmode_t mode, Thread *tp);
+void init_thread(tprio_t prio, Thread *tp);
 
 /** Thread function.*/
 typedef msg_t (*tfunc_t)(void *);
@@ -164,7 +164,9 @@ typedef msg_t (*tfunc_t)(void *);
 #ifdef __cplusplus
 extern "C" {
 #endif
-  Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
+  Thread *chThdInit(tprio_t prio, void *workspace,
+                    size_t wsize, tfunc_t pf, void *arg);
+  Thread *chThdCreate(tprio_t prio, void *workspace,
                       size_t wsize, tfunc_t pf, void *arg);
   Thread *chThdCreateFast(tprio_t prio, void *workspace,
                           size_t wsize, tfunc_t pf);
