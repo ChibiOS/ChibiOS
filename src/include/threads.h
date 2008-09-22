@@ -106,6 +106,10 @@ struct Thread {
   /** Thread's own, non-inherited, priority. */
   tprio_t           p_realprio;
 #endif
+#if defined(CH_USE_DYNAMIC) && defined(CH_USE_MEMPOOLS)
+  /** Memory Pool where the thread workspace is returned. */
+  void              *p_mpool;
+#endif
 #ifdef CH_USE_THREAD_EXT
   THREAD_EXT_FIELDS
 #endif
@@ -134,8 +138,14 @@ struct Thread {
 /** Thread state: After termination.*/
 #define PREXIT      10
 
-/** Thread option: Termination requested flag.*/
-#define P_TERMINATE 1
+/*
+ * Various flags into the thread p_flags field.
+ */
+#define P_MEM_MODE_MASK         3       /* Thread memory mode mask.     */
+#define P_MEM_MODE_STATIC       0       /* Thread memory mode: static.  */
+#define P_MEM_MODE_HEAP         1       /* Thread memory mode: heap.    */
+#define P_MEM_MODE_MEMPOOL      2       /* Thread memory mode: mempool. */
+#define P_TERMINATE             4       /* Termination requested.       */
 
 /** Pseudo priority used by the ready list header, do not use.*/
 #define NOPRIO      0
@@ -151,7 +161,7 @@ struct Thread {
 #define ABSPRIO     255
 
 /* Not an API, don't use into the application code.*/
-void init_thread(tprio_t prio, Thread *tp);
+void init_thread(Thread *tp, tprio_t prio);
 
 /** Thread function.*/
 typedef msg_t (*tfunc_t)(void *);
@@ -162,9 +172,15 @@ typedef msg_t (*tfunc_t)(void *);
 #ifdef __cplusplus
 extern "C" {
 #endif
-  Thread *chThdInit(tprio_t prio, void *workspace,
-                    size_t wsize, tfunc_t pf, void *arg);
-  Thread *chThdCreate(tprio_t prio, void *workspace,
+  Thread *chThdInit(void *workspace, size_t wsize,
+                    tprio_t prio, tfunc_t pf, void *arg);
+  Thread *chThdCreateStatic(void *workspace, size_t wsize,
+                            tprio_t prio, tfunc_t pf, void *arg);
+  Thread *chThdCreateFromHeap(size_t wsize, tprio_t prio,
+                              tfunc_t pf, void *arg);
+  Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
+                                    tfunc_t pf, void *arg);
+  Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
                       size_t wsize, tfunc_t pf, void *arg);
   Thread *chThdCreateFast(tprio_t prio, void *workspace,
                           size_t wsize, tfunc_t pf);

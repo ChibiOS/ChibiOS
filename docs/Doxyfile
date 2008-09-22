@@ -260,7 +260,8 @@ PREDEFINED             = __JUST_STUBS__ \
                          CH_USE_MESSAGES_EVENT \
                          CH_USE_MESSAGES_PRIORITY \
                          CH_USE_DEBUG \
-                         CH_USE_TRACE
+                         CH_USE_TRACE \
+                         CH_USE_DYNAMIC
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

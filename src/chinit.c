@@ -49,7 +49,7 @@ void chSysInit(void) {
   /*
    * Now this instructions flow becomes the main thread.
    */
-  init_thread(NORMALPRIO, &mainthread);
+  init_thread(&mainthread, NORMALPRIO);
   mainthread.p_state = PRCURR;
   currp = &mainthread;
 
@@ -61,8 +61,8 @@ void chSysInit(void) {
    * serve interrupts in its context while keeping the lowest energy saving
    * mode compatible with the system status.
    */
-  chThdCreateFast(IDLEPRIO, waIdleThread, sizeof(waIdleThread),
-                  (tfunc_t)_IdleThread);
+  chThdCreateStatic(waIdleThread, sizeof(waIdleThread),
+                    IDLEPRIO, (tfunc_t)_IdleThread, NULL);
 }
 
 /**

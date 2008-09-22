@@ -147,6 +147,12 @@
  *  are included in the kernel.*/
 //#define CH_USE_MEMPOOLS
 
+/** Configuration option: if specified then the dynamic objects creation APIs
+ *  are included in the kernel.
+ * @note requires \p CH_USE_WAITEXIT.
+ */
+//#define CH_USE_DYNAMIC
+
 /** Configuration option: Frequency of the system timer that drives the system
  *  ticks. This also defines the system time unit.*/
 #define CH_FREQUENCY 1000

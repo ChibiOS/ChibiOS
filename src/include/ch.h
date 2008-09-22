@@ -37,13 +37,13 @@
 #include "mutexes.h"
 #include "events.h"
 #include "messages.h"
+#include "heap.h"
+#include "mempools.h"
 #include "threads.h"
 #include "inline.h"
 #include "sleep.h"
 #include "queues.h"
 #include "serial.h"
-#include "heap.h"
-#include "mempools.h"
 #include "debug.h"
 
 /*
