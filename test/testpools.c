@@ -42,11 +42,11 @@ static void pools1_execute(void) {
   int i;
 
   /* Adding the WAs to the pool. */
-  for (i = 0; i < 5; i++)
+  for (i = 0; i < MAX_THREADS; i++)
     chPoolFree(&mp1, wa[i]);
 
   /* Empting the pool again. */
-  for (i = 0; i < 5; i++)
+  for (i = 0; i < MAX_THREADS; i++)
     test_assert(chPoolAlloc(&mp1) != NULL, "pool list empty");
 
   /* Now must be empty. */

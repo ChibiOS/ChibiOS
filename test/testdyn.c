@@ -99,7 +99,7 @@ static void dyn2_execute(void) {
   tprio_t prio = chThdGetPriority();
 
   /* Adding the WAs to the pool. */
-  for (i = 0; i < 5; i++)
+  for (i = 0; i < MAX_THREADS; i++)
     chPoolFree(&mp1, wa[i]);
 
   /* Starting threads from the memory pool. */
