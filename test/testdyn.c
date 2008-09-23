@@ -99,7 +99,7 @@ static void dyn2_execute(void) {
   tprio_t prio = chThdGetPriority();
 
   /* Adding the WAs to the pool. */
-  for (i = 0; i < MAX_THREADS; i++)
+  for (i = 0; i < 5; i++)
     chPoolFree(&mp1, wa[i]);
 
   /* Starting threads from the memory pool. */
@@ -120,7 +120,9 @@ static void dyn2_execute(void) {
   test_wait_threads();
   test_assert_sequence("ABCDE");
 
-  /* Now the pool must be empty again. */
+  /* Now the pool must be full again. */
+  for (i = 0; i < 5; i++)
+    test_assert(chPoolAlloc(&mp1) != NULL, "pool list empty");
   test_assert(chPoolAlloc(&mp1) == NULL, "pool list not empty");
 }
 
