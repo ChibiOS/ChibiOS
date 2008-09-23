@@ -26,6 +26,7 @@
 #include "testmsg.h"
 #include "testheap.h"
 #include "testpools.h"
+#include "testdyn.h"
 #include "testbmk.h"
 
 /*
@@ -47,6 +48,12 @@ static const struct testcase *tests[] = {
 #endif
 #ifdef CH_USE_MEMPOOLS
   &testpools1,
+#endif
+#if defined(CH_USE_DYNAMIC) && defined(CH_USE_HEAP)
+  &testdyn1,
+#endif
+#if defined(CH_USE_DYNAMIC) && defined(CH_USE_MEMPOOLS)
+  &testdyn2,
 #endif
   &testbmk1,
   &testbmk2,

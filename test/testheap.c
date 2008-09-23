@@ -41,7 +41,6 @@ static void heap1_execute(void) {
   size_t n, sz;
 
   /* Test skipped if the heap is already fragmented. */
-
   if ((n = chHeapStatus(&sz)) == 1) {
     test_print("--- Size  : ");
     test_printn(sz);

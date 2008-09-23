@@ -76,7 +76,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 
 *** 0.7.1 ***
 - NEW: New chThdInit() and chThdCreateStatic() APIs now replace the old
-  chThdCreate() and chThdCreateFast() that are marked as deprecated.
+  chThdCreate() and chThdCreateFast() that are thus marked as deprecated.
   The new APIs use one less parameter and are faster.
 - NEW: New dynamic chThdCreateFromHeap() and chthdCreateFromMemoryPool() APIs.
   The dynamic APIs are only included if the CH_USE_DYNAMIC option is specified
@@ -85,6 +85,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   ignored. Note that in this version the API is deprecated and the bug
   documented as correct behavior. If you need to create a suspended thread
   please use the new chThdInit() API.
+- Added new test cases to the test suite for the new dynamic APIs.
 
 *** 0.7.0 ***
 - NEW: Memory Heap Allocator functionality added. The allocator implements a
