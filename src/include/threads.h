@@ -187,8 +187,6 @@ extern "C" {
 #endif
   Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
                       size_t wsize, tfunc_t pf, void *arg);
-  Thread *chThdCreateFast(tprio_t prio, void *workspace,
-                          size_t wsize, tfunc_t pf);
   void chThdSetPriority(tprio_t newprio);
   void chThdExit(msg_t msg);
   Thread *chThdResume(Thread *tp);
@@ -254,8 +252,7 @@ extern "C" {
  *             can range from \p LOWPRIO to \p HIGHPRIO.
  * @param workspace pointer to a working area dedicated to the thread stack
  * @param wsize size of the working area.
- * @param pf the thread function. Returning from this function automatically
- *           terminates the thread.
+ * @param pf the thread function
  * @return the pointer to the \p Thread structure allocated for the
  *         thread into the working space area.
  * @note A thread can terminate by calling \p chThdExit() or by simply

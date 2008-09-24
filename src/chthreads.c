@@ -74,15 +74,13 @@ static void memfill(uint8_t *p, uint32_t n, uint8_t v) {
  *             can range from \p LOWPRIO to \p HIGHPRIO.
  * @param workspace pointer to a working area dedicated to the thread stack
  * @param wsize size of the working area.
- * @param pf the thread function. Returning from this function automatically
- *           terminates the thread.
+ * @param pf the thread function
  * @param arg an argument passed to the thread function. It can be \p NULL.
  * @return the pointer to the \p Thread structure allocated for the
  *         thread into the working space area.
  * @note A thread can terminate by calling \p chThdExit() or by simply
  *       returning from its main function.
- * @note This function can be used to start a thead from within an interrupt
- *       handler by manually making it ready with \p chSchReadyI().
+ * @note This function can be invoked from within an interrupt handler.
  */
 Thread *chThdInit(void *workspace, size_t wsize,
                   tprio_t prio, tfunc_t pf, void *arg) {
@@ -106,8 +104,7 @@ Thread *chThdInit(void *workspace, size_t wsize,
  * @param prio the priority level for the new thread. Usually the threads are
  *             created with priority \p NORMALPRIO, priorities
  *             can range from \p LOWPRIO to \p HIGHPRIO.
- * @param pf the thread function. Returning from this function automatically
- *           terminates the thread.
+ * @param pf the thread function
  * @param arg an argument passed to the thread function. It can be \p NULL.
  * @return the pointer to the \p Thread structure allocated for the
  *         thread into the working space area.
@@ -127,8 +124,7 @@ Thread *chThdCreateStatic(void *workspace, size_t wsize,
  * @param prio the priority level for the new thread. Usually the threads are
  *             created with priority \p NORMALPRIO, priorities
  *             can range from \p LOWPRIO to \p HIGHPRIO.
- * @param pf the thread function. Returning from this function automatically
- *           terminates the thread.
+ * @param pf the thread function
  * @param arg an argument passed to the thread function. It can be \p NULL.
  * @return the pointer to the \p Thread structure allocated for the
  *         thread into the working space area or \p NULL if the memory cannot
@@ -160,8 +156,7 @@ Thread *chThdCreateFromHeap(size_t wsize, tprio_t prio,
  * @param prio the priority level for the new thread. Usually the threads are
  *             created with priority \p NORMALPRIO, priorities
  *             can range from \p LOWPRIO to \p HIGHPRIO.
- * @param pf the thread function. Returning from this function automatically
- *           terminates the thread.
+ * @param pf the thread function
  * @param arg an argument passed to the thread function. It can be \p NULL.
  * @return the pointer to the \p Thread structure allocated for the
  *         thread into the working space area or \p NULL if the memory cannot
@@ -199,16 +194,10 @@ Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
  *                 \p PRSUSPENDED state and a subsequent call to
  *                 \p chThdResume() will make it ready for
  *                 execution.</li>
- *             <li>\p P_TERMINATED, this flag is usually set
- *                 by the \p chThdTerminate() function and it is not
- *                 normally used as parameter for this function. The
- *                 result would be to create a thread with a termination
- *                 request already pending.</li>
  *             </ul>
  * @param workspace pointer to a working area dedicated to the thread stack
  * @param wsize size of the working area.
- * @param pf the thread function. Returning from this function automatically
- *           terminates the thread.
+ * @param pf the thread function
  * @param arg an argument passed to the thread function. It can be \p NULL.
  * @return the pointer to the \p Thread structure allocated for the
  *         thread into the working space area.

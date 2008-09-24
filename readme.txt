@@ -86,11 +86,12 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   chThdCreateFromHeap() and chthdCreateFromMemoryPool(). Threads created
   through the static APIs are not affected thus the behavior is backward
   compatible.
+- CHANGE: Modified the chThdResume() API to return the resumed thread pointer
+  instead of void.
 - FIX: The chThdCreate() had a regression in 0.7.0, the mode parameter was
   ignored.
 - FIX: Removed duplicated call to chHeapInit() into chSysInit().
-- FIX: Fixed a syntax error in chheap.c, the error was only triggered when
-  the CH_USE_DEBUG option was specified.
+- FIX: Fixed a syntax error in chheap.c triggered by the CH_USE_DEBUG option.
 - Added new test cases to the test suite for the new dynamic APIs.
 - Documentation fixes.
 
