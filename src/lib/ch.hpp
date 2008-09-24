@@ -101,7 +101,7 @@ namespace chibios_rt {
     /**
      * Thread constructor.
      */
-    BaseThread(tprio_t prio, tmode_t mode, void *workspace, size_t wsize);
+    BaseThread(void *workspace, size_t wsize, tprio_t prio);
 
     /**
      * Thread exit.
@@ -196,8 +196,8 @@ namespace chibios_rt {
      * Full constructor. It allows to set a priority level for the new thread
      * and specify the special option flags.
      */
-    EnhancedThread(const char *tname, tprio_t prio, tmode_t mode) :
-          BaseThread(prio, mode, wa, sizeof wa) {
+    EnhancedThread(const char *tname, tprio_t prio) :
+          BaseThread(wa, sizeof wa, prio) {
 
       name = tname;
     }
@@ -208,7 +208,7 @@ namespace chibios_rt {
      * and no special option flags.
      */
     EnhancedThread(const char *tname) :
-          BaseThread(NORMALPRIO, 0, wa, sizeof wa) {
+          BaseThread(wa, sizeof wa, NORMALPRIO) {
 
       name = tname;
     }

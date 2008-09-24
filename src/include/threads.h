@@ -177,10 +177,14 @@ extern "C" {
                     tprio_t prio, tfunc_t pf, void *arg);
   Thread *chThdCreateStatic(void *workspace, size_t wsize,
                             tprio_t prio, tfunc_t pf, void *arg);
+#if defined(CH_USE_DYNAMIC) && defined(CH_USE_WAITEXIT) && defined(CH_USE_HEAP)
   Thread *chThdCreateFromHeap(size_t wsize, tprio_t prio,
                               tfunc_t pf, void *arg);
+#endif
+#if defined(CH_USE_DYNAMIC) && defined(CH_USE_WAITEXIT) && defined(CH_USE_MEMPOOLS)
   Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
                                     tfunc_t pf, void *arg);
+#endif
   Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
                       size_t wsize, tfunc_t pf, void *arg);
   Thread *chThdCreateFast(tprio_t prio, void *workspace,
@@ -218,7 +222,6 @@ extern "C" {
  * Returns the exit event source for the specified thread. The source is
  * signaled when the thread terminates.
  * @param tp the pointer to the thread
- * @deprecated
  * @note When registering on a thread termination make sure the thread
  *       is still alive, if you do that after the thread termination
  *       then you would miss the event. There are two ways to ensure

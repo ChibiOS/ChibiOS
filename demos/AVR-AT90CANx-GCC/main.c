@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
   /*
    * Starts the LED blinker thread.
    */
-  chThdCreateFast(NORMALPRIO, waThread1, sizeof(waThread1), Thread1);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   while(TRUE)
     chEvtWait(ALL_EVENTS, handlers);

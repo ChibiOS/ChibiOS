@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
    */
   chSysInit();
 
-  chThdCreateFast(NORMALPRIO, waThread1, sizeof(waThread1), Thread1);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   while (TRUE) {
     chThdSleep(500);

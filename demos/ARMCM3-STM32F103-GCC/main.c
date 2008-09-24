@@ -50,9 +50,9 @@ int main(int argc, char **argv) {
   chSysInit();
 
   /*
-   * Creates the blinker threads.
+   * Creates the blinker thread.
    */
-  chThdCreateFast(NORMALPRIO, waThread1, sizeof(waThread1), Thread1);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

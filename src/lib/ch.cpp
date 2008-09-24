@@ -74,9 +74,9 @@ namespace chibios_rt {
     return ((BaseThread *)arg)->Main();
   }
 
-  BaseThread::BaseThread(tprio_t prio, tmode_t mode, void *workspace, size_t wsize) {
+  BaseThread::BaseThread(void *workspace, size_t wsize, tprio_t prio) {
 
-    thread_ref = chThdCreate(prio, mode, workspace, wsize, thdstart, this);
+    thread_ref = chThdCreateStatic(workspace, wsize, prio, thdstart, this);
   }
 
   void BaseThread::Exit(msg_t msg) {
