@@ -150,7 +150,7 @@ void chHeapFree(void *p) {
 
   hp = (struct header *)p - 1;
 
-  chDbgAssert(hp->h_magig == MAGIC, "chheap.c, chHeapFree() #1");
+  chDbgAssert(hp->h_magic == MAGIC, "chheap.c, chHeapFree() #1");
 
   qp = &heap.free;
   H_LOCK();

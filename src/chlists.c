@@ -114,6 +114,7 @@ void list_insert(Thread *tp, ThreadsList *tlp) {
  *
  * @param tlp the pointer to the threads list header
  * @return the removed thread pointer
+ * @note The list must be non-empty before calling this function.
  */
 Thread *list_remove(ThreadsList *tlp) {
 

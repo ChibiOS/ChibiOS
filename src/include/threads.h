@@ -146,6 +146,7 @@ struct Thread {
 #define P_MEM_MODE_HEAP         1       /* Thread memory mode: heap.    */
 #define P_MEM_MODE_MEMPOOL      2       /* Thread memory mode: mempool. */
 #define P_TERMINATE             4       /* Termination requested.       */
+#define P_SUSPENDED             8       /* Create suspended (old).      */
 
 /** Pseudo priority used by the ready list header, do not use.*/
 #define NOPRIO      0
@@ -161,7 +162,7 @@ struct Thread {
 #define ABSPRIO     255
 
 /* Not an API, don't use into the application code.*/
-void init_thread(Thread *tp, tprio_t prio);
+Thread *init_thread(Thread *tp, tprio_t prio);
 
 /** Thread function.*/
 typedef msg_t (*tfunc_t)(void *);
@@ -186,7 +187,7 @@ extern "C" {
                           size_t wsize, tfunc_t pf);
   void chThdSetPriority(tprio_t newprio);
   void chThdExit(msg_t msg);
-  void chThdResume(Thread *tp);
+  Thread *chThdResume(Thread *tp);
   void chThdSuspend(Thread **tpp);
   void chThdTerminate(Thread *tp);
 #ifdef CH_USE_WAITEXIT
@@ -242,6 +243,25 @@ extern "C" {
  * @param tp the pointer to the thread
  */
 #define chThdResumeI(tp) chSchReadyI(tp)
+
+/**
+ * Creates a new thread, simplified variant.
+ * @param prio the priority level for the new thread. Usually the threads are
+ *             created with priority \p NORMALPRIO, priorities
+ *             can range from \p LOWPRIO to \p HIGHPRIO.
+ * @param workspace pointer to a working area dedicated to the thread stack
+ * @param wsize size of the working area.
+ * @param pf the thread function. Returning from this function automatically
+ *           terminates the thread.
+ * @return the pointer to the \p Thread structure allocated for the
+ *         thread into the working space area.
+ * @note A thread can terminate by calling \p chThdExit() or by simply
+ *       returning from its main function.
+ * @deprecated Please use \p chThdCreateStatic() or \p chThdInit() instead,
+ *             this function will be removed in version 1.0.0.
+ */
+#define chThdCreateFast(prio, workspace, wsize, pf) \
+        chThdCreateStatic(workspace, wsize, prio, pf, NULL)
 
 #endif  /* _THREADS_H_ */
 

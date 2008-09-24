@@ -81,11 +81,18 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - NEW: New dynamic chThdCreateFromHeap() and chthdCreateFromMemoryPool() APIs.
   The dynamic APIs are only included if the CH_USE_DYNAMIC option is specified
   into the project configuration file.
+- CHANGE: chThdCreateFast() is now a macro that uses chThdCreateStatic().
+- CHANGE: chThdWait() now releases the memory allocated by
+  chThdCreateFromHeap() and chthdCreateFromMemoryPool(). Threads created
+  through the static APIs are not affected thus the behavior is backward
+  compatible.
 - FIX: The chThdCreate() had a regression in 0.7.0, the mode parameter was
-  ignored. Note that in this version the API is deprecated and the bug
-  documented as correct behavior. If you need to create a suspended thread
-  please use the new chThdInit() API.
+  ignored.
+- FIX: Removed duplicated call to chHeapInit() into chSysInit().
+- FIX: Fixed a syntax error in chheap.c, the error was only triggered when
+  the CH_USE_DEBUG option was specified.
 - Added new test cases to the test suite for the new dynamic APIs.
+- Documentation fixes.
 
 *** 0.7.0 ***
 - NEW: Memory Heap Allocator functionality added. The allocator implements a

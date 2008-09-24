@@ -43,15 +43,10 @@ void chSysInit(void) {
 #ifdef CH_USE_HEAP
   chHeapInit();
 #endif
-#ifdef CH_USE_HEAP
-  chHeapInit();
-#endif
   /*
    * Now this instructions flow becomes the main thread.
    */
-  init_thread(&mainthread, NORMALPRIO);
-  mainthread.p_state = PRCURR;
-  currp = &mainthread;
+  (currp = init_thread(&mainthread, NORMALPRIO))->p_state = PRCURR;
 
   chSysEnable();
 
