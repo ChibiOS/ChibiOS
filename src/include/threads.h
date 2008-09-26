@@ -235,6 +235,8 @@ extern "C" {
  *       the event source becomes inactive.
  * @note The function is available only if the \p CH_USE_EXIT_EVENT
  *       option is enabled in \p chconf.h.
+ * @deprecated \p THREAD_EXT_EXIT should be used, this functionality will be
+ *             removed in version 1.0.0.
  */
 #define chThdGetExitEventSource(tp) (&(tp)->p_exitesource)
 

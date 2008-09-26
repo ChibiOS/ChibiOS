@@ -81,13 +81,19 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - NEW: New dynamic chThdCreateFromHeap() and chthdCreateFromMemoryPool() APIs.
   The dynamic APIs are only included if the CH_USE_DYNAMIC option is specified
   into the project configuration file.
+- NEW: Added an THREAD_EXT_EXIT macro in chconf.h to add finalization code to
+  the chThdExit() API.
 - CHANGE: chThdCreateFast() is now a macro that uses chThdCreateStatic().
 - CHANGE: chThdWait() now releases the memory allocated by
   chThdCreateFromHeap() and chthdCreateFromMemoryPool(). Threads created
   through the static APIs are not affected thus the behavior is backward
   compatible.
 - CHANGE: Modified the chThdResume() API to return the resumed thread pointer
-  instead of void.
+  instead of void. This allowed few optimization into the threads creation
+  code.
+- CHANGE: The chThdGetExitEventSource() API and the CH_USE_EXIT_EVENT
+  configuration option and the are now deprecated. Use the THREAD_EXT_EXIT
+  finalization macro in order to implement a similar functionality if needed.
 - FIX: The chThdCreate() had a regression in 0.7.0, the mode parameter was
   ignored.
 - FIX: Removed duplicated call to chHeapInit() into chSysInit().

@@ -51,9 +51,7 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
 #ifdef CH_USE_EXIT_EVENT
   chEvtInit(&tp->p_exitesource);
 #endif
-#ifdef CH_USE_THREAD_EXT
   THREAD_EXT_INIT(tp);
-#endif
   return tp;
 }
 
@@ -295,16 +293,17 @@ void chThdTerminate(Thread *tp) {
  *            \p chThdWait().
  */
 void chThdExit(msg_t msg) {
+  Thread *tp = currp;
 
   chSysLock();
-
-  currp->p_exitcode = msg;
+  tp->p_exitcode = msg;
+  THREAD_EXT_EXIT(tp);
 #ifdef CH_USE_WAITEXIT
-  while (notempty(&currp->p_waiting))
-    chSchReadyI(list_remove(&currp->p_waiting));
+  while (notempty(&tp->p_waiting))
+    chSchReadyI(list_remove(&tp->p_waiting));
 #endif
 #ifdef CH_USE_EXIT_EVENT
-  chEvtBroadcastI(&currp->p_exitesource);
+  chEvtBroadcastI(&tp->p_exitesource);
 #endif
   chSchGoSleepS(PREXIT);
 }

@@ -34,13 +34,6 @@
  *  that this is not related to the compiler optimization options.*/
 #define CH_OPTIMIZE_SPEED
 
-/** Configuration option: it specified this option enables the \p Thread
- *  extension fields and initiazation code.
- * @see THREAD_EXT_FIELDS
- * @see THREAD_EXT_INIT
- */
-//#define CH_USE_THREAD_EXT
-
 /** Configuration option: if specified then the Virtual Timers subsystem is
  *  included in the kernel.*/
 #define CH_USE_VIRTUAL_TIMERS
@@ -79,10 +72,12 @@
  *  the kernel.*/
 #define CH_USE_EVENTS
 
-/** Configuration option: if specified then the \p chEvtWaitTimeout()
- *  function is included in the kernel.
+/** Configuration option: if specified then the
+ *  \p chThdGetExitEventSource() function is included in the kernel.
  * @note requires \p CH_USE_EVENTS.
- * @note requires \p CH_USE_VIRTUAL_TIMERS.*/
+ * @deprecated \p THREAD_EXT_EXIT should be used, this functionality will be
+ *             removed in version 1.0.0.
+ */
 #define CH_USE_EVENTS_TIMEOUT
 
 /** Configuration option: if specified then the Synchronous Messages APIs are
@@ -185,21 +180,22 @@
  */
 //#define CH_USE_TRACE
 
-/** User fields added to the end of the \p Thread structure if the
- * \p CH_USE_THREAD_EXT option is enabled.
- * @see CH_USE_THREAD_EXT
- */
+/** User fields added to the end of the \p Thread structure. */
 #define THREAD_EXT_FIELDS                                               \
 struct {                                                                \
-  /* Add fields here.*/                                                 \
+  /* Add thread custom fields here.*/                                   \
 };
 
-/** User initialization code added to the \p chThdCreate() API if the
- *  \p CH_USE_THREAD_EXT option is enabled.
- * @see CH_USE_THREAD_EXT
- */
+/** User initialization code added to the \p chThdCreate() API.
+ *  @note It is invoked from within \p chThdInit(). */
 #define THREAD_EXT_INIT(tp) {                                           \
-  /* Add initialization code here.*/                                    \
+  /* Add thread initialization code here.*/                             \
+}
+
+/** User finalization code added to the \p chThdExit() API.
+ *  @note It is inserted into lock zone. */
+#define THREAD_EXT_EXIT(tp) {                                           \
+  /* Add thread finalization code here.*/                               \
 }
 
 #endif  /* _CHCONF_H_ */
