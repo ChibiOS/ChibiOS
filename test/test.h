@@ -55,6 +55,9 @@ extern "C" {
   systime_t test_wait_tick(void);
   void test_cpu_pulse(systime_t ms);
   void test_start_timer(systime_t time);
+#if defined(WIN32)
+  void ChkIntSources(void);
+#endif
 #ifdef __cplusplus
 }
 #endif
