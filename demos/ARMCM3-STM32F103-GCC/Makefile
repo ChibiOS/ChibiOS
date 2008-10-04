@@ -16,8 +16,9 @@
 # Start of default section
 #
 
-TRGT = arm-none-eabi-
+#TRGT = arm-none-eabi-
 #TRGT = arm-eabi-
+TRGT = arm-elf-
 CC   = $(TRGT)gcc
 CP   = $(TRGT)objcopy
 AS   = $(TRGT)gcc -x assembler-with-cpp

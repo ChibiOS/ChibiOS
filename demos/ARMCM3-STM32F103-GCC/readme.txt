@@ -15,7 +15,8 @@ COM2 (USART2).
 ** Build Procedure **
 
 The demo was tested by using the free Codesourcery GCC-based toolchain (a
-modified 4.2.1 GCC) and an experimental WinARM build including GCC 4.3.0.
+modified 4.2.3 GCC),  YAGARTO 4.3.2 and an experimental WinARM build including
+GCC 4.3.0.
 Just modify the TRGT line in the makefile in order to use different GCC ports.
 
 ** Notes **
