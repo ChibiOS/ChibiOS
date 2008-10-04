@@ -79,6 +79,11 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   initializaiton phase: hwinit0, the late initialization phase is now named
   hwinit1. The demo now initializes the PLL before initializing the BSS and
   DATA segments, this greatly optimizes the system start up time.
+- NEW: Unified ARM7 startup file, it is shared by the LPC and SAM7 demo
+  projects. The new startup file implements early and late initialization
+  phases as described above for the CM3 startup file.
+  The architecture specific vector tables are now encapsulated into the
+  vectors.s file.
 - Modified the STM32 demo makefile to use the latest YAGARTO toolchain as
   default (arm-elf-gcc).
   
