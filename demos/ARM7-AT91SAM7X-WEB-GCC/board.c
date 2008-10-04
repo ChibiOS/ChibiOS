@@ -165,4 +165,9 @@ void hwinit1(void) {
    * EMAC driver initialization.
    */
   InitEMAC(AT91C_AIC_PRIOR_HIGHEST - 3);
+
+  /*
+   * ChibiOS/RT initialization.
+   */
+  chSysInit();
 }
