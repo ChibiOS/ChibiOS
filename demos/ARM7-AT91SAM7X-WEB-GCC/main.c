@@ -41,19 +41,20 @@ static msg_t Thread1(void *arg) {
 }
 
 /*
- * Entry point, the interrupts are disabled on entry.
+ * Entry point, note, the main() function is already a thread in the system
+ * on entry.
  */
 int main(int argc, char **argv) {
 
   /*
-   * The main() function becomes a thread here then the interrupts are
-   * enabled and ChibiOS/RT goes live.
+   * Creates the blinker and web server threads.
    */
-  chSysInit();
-
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
   chThdCreateStatic(waWebThread, sizeof(waWebThread), NORMALPRIO - 1, WebThread, NULL);
 
+  /*
+   * Normal main() thread activity.
+   */
   while (TRUE) {
     chThdSleep(500);
     if (!(AT91C_BASE_PIOB->PIO_PDSR & PIOB_SW1))

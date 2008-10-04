@@ -41,7 +41,6 @@ static msg_t Thread1(void *arg) {
  */
 int main(int argc, char **argv) {
 
-
   /*
    * Creates the blinker thread.
    */

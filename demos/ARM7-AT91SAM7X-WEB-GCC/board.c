@@ -55,11 +55,11 @@ static void SYSIrqHandler(void) {
 }
 
 /*
- * Board initialization code.
+ * Early initialization code.
+ * This initialization is performed just after reset before BSS and DATA
+ * segments initialization.
  */
-void hwinit(void) {
-  int i;
-
+void hwinit0(void) {
   /*
    * Flash Memory: 1 wait state, about 50 cycles in a microsecond.
    */
@@ -100,6 +100,15 @@ void hwinit(void) {
   AT91C_BASE_PMC->PMC_PCER   = (1 << AT91C_ID_PIOA) | (1 << AT91C_ID_PIOB);
   AT91C_BASE_PIOA->PIO_PER   = 0xFFFFFFFF;
   AT91C_BASE_PIOB->PIO_PER   = 0xFFFFFFFF;
+}
+
+/*
+ * Late initialization code.
+ * This initialization is performed after BSS and DATA segments initialization
+ * and before invoking the main() function.
+ */
+void hwinit1(void) {
+  int i;
 
   /*
    * Default AIC setup, the device drivers will modify it as needed.
