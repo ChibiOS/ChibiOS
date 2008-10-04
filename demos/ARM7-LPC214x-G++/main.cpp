@@ -124,8 +124,8 @@ static void TimerHandler(eventid_t id) {
 }
 
 /*
- * Entry point, the interrupts are disabled on entry.
- * This is the real "application".
+ * Entry point, note, the main() function is already a thread in the system
+ * on entry.
  */
 int main(int argc, char **argv) {
   static const evhandler_t evhndl[] = {
@@ -133,8 +133,6 @@ int main(int argc, char **argv) {
   };
   static EvTimer evt;
   struct EventListener el0;
-
-  System::Init();                       // ChibiOS/RT goes live here.
 
   evtInit(&evt, 500);                   // Initializes an event timer.
   evtStart(&evt);                       // Starts the event timer.

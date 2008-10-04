@@ -56,15 +56,10 @@ static msg_t Thread2(void *arg) {
 }
 
 /*
- * Entry point, the interrupts are disabled on entry.
+ * Entry point, note, the main() function is already a thread in the system
+ * on entry.
  */
 int main(int argc, char **argv) {
-
-  /*
-   * The main() function becomes a thread here then the interrupts are
-   * enabled and ChibiOS/RT goes live.
-   */
-  chSysInit();
 
   /*
    * Creates the blinker threads.

@@ -83,7 +83,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   projects. The new startup file implements early and late initialization
   phases as described above for the CM3 startup file.
   The architecture specific vector tables are now encapsulated into the
-  vectors.s file.
+  vectors.s files.
 - Modified the STM32 demo makefile to use the latest YAGARTO toolchain as
   default (arm-elf-gcc).
   

@@ -109,7 +109,8 @@ static void RemoveHandler(eventid_t id) {
 }
 
 /*
- * Entry point, the interrupts are disabled on entry.
+ * Entry point, note, the main() function is already a thread in the system
+ * on entry.
  */
 int main(int argc, char **argv) {
   static const evhandler_t evhndl[] = {
@@ -119,12 +120,6 @@ int main(int argc, char **argv) {
   };
   static EvTimer evt;
   struct EventListener el0, el1, el2;
-
-  /*
-   * The main() function becomes a thread here then the interrupts are
-   * enabled and ChibiOS/RT goes live.
-   */
-  chSysInit();
 
   /*
    * If a button is pressed during the reset then the blinking leds threads
