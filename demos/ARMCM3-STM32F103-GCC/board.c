@@ -24,10 +24,11 @@
 #include "stm32_serial.h"
 
 /*
- * Hardware initialization goes here.
- * NOTE: Interrupts are still disabled.
+ * Early initialization code.
+ * This initialization is performed just after reset before BSS and DATA
+ * segments initialization.
  */
-void hwinit(void) {
+void hwinit0(void) {
 
   /*
    * Clocks and PLL initialization.
@@ -76,6 +77,14 @@ void hwinit(void) {
   GPIOD->CRL = VAL_GPIODCRL;
   GPIOD->CRH = VAL_GPIODCRH;
   GPIOD->ODR = VAL_GPIODODR;
+}
+
+/*
+ * Late initialization code.
+ * This initialization is performed after BSS and DATA segments initialization
+ * and before invoking the main() function.
+ */
+void hwinit1(void) {
 
   /*
    * NVIC/SCB initialization.
@@ -95,4 +104,9 @@ void hwinit(void) {
    * Other subsystems initialization.
    */
   InitSerial(0x80, 0x80, 0x80);
+
+  /*
+   * ChibiOS/RT initialization.
+   */
+  chSysInit();
 }

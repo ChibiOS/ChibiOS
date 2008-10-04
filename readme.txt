@@ -75,6 +75,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.7.2 ***
+- CHANGE: Modified the CM3 startup file in order to implement an early
+  initializaiton phase: hwinit0, the late initialization phase is now named
+  hwinit1. The demo now initializes the PLL before initializing the BSS and
+  DATA segments, this greatly optimizes the system start up time.
 - Modified the STM32 demo makefile to use the latest YAGARTO toolchain as
   default (arm-elf-gcc).
   

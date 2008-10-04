@@ -48,6 +48,10 @@ ResetHandler:
 //        ldr     r1, =__process_stack_size__
 //        sub     r0, r0, r1
         /*
+         * Early initialization.
+         */
+        bl      hwinit0
+        /*
          * Data initialization.
          * NOTE: It assumes that the DATA size is a multiple of 4.
          */
@@ -82,9 +86,9 @@ bloop:
         msr     BASEPRI, r0
         cpsie   i
         /*
-         * Application-provided HW initialization routine.
+         * Late initialization.
          */
-        bl      hwinit
+        bl      hwinit1
         /*
          * main(0, NULL).
          */
@@ -92,3 +96,27 @@ bloop:
         mov     r1, r0
         bl      main
         bl      chSysHalt
+
+/*
+ * Default early initialization code. It is declared weak in order to be
+ * replaced by the real initialization code.
+ * Early initialization is performed just after reset before BSS and DATA
+ * segments initialization.
+ */
+.thumb_func
+.global hwinit0
+.weak hwinit0
+hwinit0:
+        bx      lr
+        
+/*
+ * Default late initialization code. It is declared weak in order to be
+ * replaced by the real initialization code.
+ * Late initialization is performed after BSS and DATA segments initialization
+ * and before invoking the main() function.
+ */
+.thumb_func
+.global hwinit1
+.weak hwinit1
+hwinit1:
+        bx      lr
