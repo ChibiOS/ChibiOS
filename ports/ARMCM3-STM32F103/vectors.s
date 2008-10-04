@@ -20,7 +20,7 @@
 .syntax unified
 .thumb
 
-.section INTVEC
+.section vectors
 _vectors:
         .word   __ram_end__
         .word   ResetHandler
