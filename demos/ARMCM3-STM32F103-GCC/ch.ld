@@ -41,7 +41,7 @@ SECTIONS
 	.text :
 	{
 		_text = .;
-		KEEP(*(INTVEC));
+		KEEP(*(vectors));
                 *(.text)
 		*(.text.*);
 		*(.rodata);
