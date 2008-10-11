@@ -33,6 +33,14 @@ void hwinit(void) {
    */
   DCOCTL  = VAL_DCOCTL;
   BCSCTL1 = VAL_BCSCTL1;
+#if defined(MSP_USE_XT2CLK)
+  do {
+    int i;
+    IFG1 &= ~OFIFG;
+     for (i = 255; i > 0; i--)
+       asm("nop");
+  } while (IFG1 & OFIFG);
+#endif
   BCSCTL2 = VAL_BCSCTL2;
 
   /*
