@@ -74,6 +74,8 @@ interrupt(USART0RX_VECTOR) u0rxirq(void) {
  */
 static void OutNotify1(void) {
 
+  if (!(U0IE & UTXIE0))
+    U0TXBUF = (uint8_t)chFDDRequestDataI(&COM1);
   U0IE |= UTXIE0;
 }
 
