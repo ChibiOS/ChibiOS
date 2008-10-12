@@ -76,6 +76,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** 0.7.2 ***
 - NEW: Added a serial driver to the MSP430 port, the MSP430 port now has been
   tested on hardware and passes the test suite.
+- NEW: Added to the MSP demo program the option to run from the internal DCO
+  or from an external xtal. The default is the internal DCO,
 - CHANGE: Modified the CM3 startup file in order to implement an early
   initializaiton phase: hwinit0, the late initialization phase is now named
   hwinit1. The demo now initializes the PLL before initializing the BSS and
