@@ -48,8 +48,7 @@ AVR-AVRmega128-GCC     - Port on AVRmega128. A special thanks to Vladimir for
                          targets the Olimex AVR-MT-128 mini terminal board.
 AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not tested on hardware yet.
 MSP430-MSP430x1611-GCC - Port on Texas Instruments MSP430F1611, the demo
-                         targets the Olimex MSP430-P1611 board. It is not
-                         tested on hardware yet, consider it work in progress.
+                         targets the Olimex MSP430-P1611 board.
 Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
                          MinGW version.
 
@@ -75,6 +74,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.7.2 ***
+- NEW: Added a serial driver to the MSP430 port, the MSP430 port now has been
+  tested on hardware and passes the test suite.
 - CHANGE: Modified the CM3 startup file in order to implement an early
   initializaiton phase: hwinit0, the late initialization phase is now named
   hwinit1. The demo now initializes the PLL before initializing the BSS and
