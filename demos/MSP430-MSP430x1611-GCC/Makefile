@@ -67,6 +67,7 @@ include ../../test/test.mk
 
 # List ARM-mode C source files here
 SRC = ../../ports/MSP430/chcore.c \
+      ../../ports/MSP430/msp430_serial.c \
        ${KERNSRC} \
        ${TESTSRC} \
       ../../src/lib/evtimer.c \

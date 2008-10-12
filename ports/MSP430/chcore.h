@@ -71,7 +71,7 @@ typedef struct {
 
 #define IDLE_THREAD_STACK_SIZE 0
 
-#define INT_REQUIRED_STACK 16
+#define INT_REQUIRED_STACK 32
 #define StackAlign(n) ((((n) - 1) | 1) + 1)
 #define UserStackSize(n) StackAlign(sizeof(Thread) +                    \
                                     sizeof(struct intctx) +             \

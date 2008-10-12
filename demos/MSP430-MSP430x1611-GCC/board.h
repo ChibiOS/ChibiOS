@@ -34,7 +34,7 @@
 
 #define LFXT1CLK        32768
 #define XT2CLK          8000000
-#define DCOCLK          1000000
+#define DCOCLK          750000
 
 #define ACLK            LFXT1CLK
 #if defined(MSP_USE_XT2CLK)

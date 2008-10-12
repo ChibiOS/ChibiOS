@@ -21,6 +21,7 @@
 #include <signal.h>
 
 #include "board.h"
+#include "msp430_serial.h"
 
 /*
  * Hardware initialization goes here.
@@ -77,6 +78,11 @@ void hwinit(void) {
   TACTL = TACLR;                        /* Clean start.                 */
   TACTL = TASSEL_2 | MC_1;              /* Src=SMCLK, cmp=TACCR0.       */
   TACCTL0 = CCIE;                       /* Interrupt on compare.        */
+
+  /*
+   * Other subsystems.
+   */
+  InitSerial();
 }
 
 interrupt(TIMERA0_VECTOR) tmr0irq(void) {
