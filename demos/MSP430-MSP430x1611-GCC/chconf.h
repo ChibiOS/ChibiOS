@@ -151,12 +151,12 @@
 
 /** Configuration option: Frequency of the system timer that drives the system
  *  ticks. This also defines the system time unit.*/
-#define CH_FREQUENCY 1000
+#define CH_FREQUENCY 100
 
 /** Configuration option: This constant is the number of ticks allowed for the
  *  threads before preemption occurs. This option is only meaningful if the
  *  option \p CH_USE_ROUNDROBIN is also active.*/
-#define CH_TIME_QUANTUM 20
+#define CH_TIME_QUANTUM 10
 
 /** Configuration option: Defines a CPU register to be used as storage for the
  *  global \p currp variable. Caching this variable in a register can greatly

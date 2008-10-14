@@ -74,9 +74,9 @@ void hwinit(void) {
   /*
    * Timer 0 setup, uses SMCLK as source.
    */
-  TACCR0 = SMCLK / CH_FREQUENCY - 1;    /* Counter limit.               */
+  TACCR0 = SMCLK / 4 / CH_FREQUENCY - 1;/* Counter limit.               */
   TACTL = TACLR;                        /* Clean start.                 */
-  TACTL = TASSEL_2 | MC_1;              /* Src=SMCLK, cmp=TACCR0.       */
+  TACTL = TASSEL_2 | ID_2 | MC_1;       /* Src=SMCLK, ID=4, cmp=TACCR0. */
   TACCTL0 = CCIE;                       /* Interrupt on compare.        */
 
   /*

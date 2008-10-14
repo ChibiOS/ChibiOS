@@ -4,11 +4,13 @@
 
 ** TARGET **
 
-The demo runs on an Olimex MSP430-P1611 board but it is still untested.
+The demo runs on an Olimex MSP430-P1611 board.
 
 ** The Demo **
 
-The demo flashes the board LED using a thread.
+The demo flashes the board LED using a thread, by pressing the button located
+on the board the test procedure is activated with output on the serial port
+COM1 (USART0).
 
 ** Build Procedure **
 
