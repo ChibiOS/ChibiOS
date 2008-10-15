@@ -51,7 +51,7 @@ struct intctx {
   regmsp        r9;
   regmsp        r10;
   regmsp        r11;
-  regmsp        sr;
+//  regmsp        sr;
   regmsp        pc;
 };
 
@@ -65,7 +65,6 @@ typedef struct {
                                    sizeof(struct intctx));              \
   tp->p_ctx.sp->r10 = pf;                                               \
   tp->p_ctx.sp->r11 = arg;                                              \
-  tp->p_ctx.sp->sr = (regmsp)GIE;                                       \
   tp->p_ctx.sp->pc = threadstart;                                       \
 }
 
