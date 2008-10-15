@@ -141,8 +141,7 @@
  * <p>
  * The ARM7 port makes some assumptions on the application code organization:
  * <ul>
- * <li>The \p main() function is invoked in system mode and with interrupts
- *     disabled.</li>
+ * <li>The \p main() function is invoked in system mode.</li>
  * <li>Each thread has a private user/system stack, the system has a single
  *     interrupt stack where all the interrupts are processed.</li>
  * <li>The threads are started in system mode.</li>

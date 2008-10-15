@@ -28,19 +28,19 @@
 /**
  * Time conversion utility. Converts from seconds to system ticks number.
  */
-#define S2ST(sec)   ((sec) * CH_FREQUENCY)
+#define S2ST(sec)   ((systime_t)((sec) * CH_FREQUENCY))
 
 /**
  * Time conversion utility. Converts from milliseconds to system ticks number.
  * @note The result is rounded upward to the next tick boundary.
  */
-#define MS2ST(msec) (((((msec) - 1L) * CH_FREQUENCY) / 1000) + 1)
+#define MS2ST(msec) ((systime_t)(((((msec) - 1L) * CH_FREQUENCY) / 1000) + 1))
 
 /**
  * Time conversion utility. Converts from microseconds to system ticks number.
  * @note The result is rounded upward to the next tick boundary.
  */
-#define US2ST(usec) (((((usec) - 1L) * CH_FREQUENCY) / 1000000) + 1)
+#define US2ST(usec) ((systime_t)(((((usec) - 1L) * CH_FREQUENCY) / 1000000) + 1))
 
 #ifdef __cplusplus
 extern "C" {

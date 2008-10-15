@@ -83,7 +83,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   ports.
 - CHANGE: Modified the test suite to use the new time conversion macros.
 - CHANGE: Modified the CM3 startup file in order to implement an early
-  initializaiton phase: hwinit0, the late initialization phase is now named
+  initialization phase: hwinit0, the late initialization phase is now named
   hwinit1. The demo now initializes the PLL before initializing the BSS and
   DATA segments, this greatly optimizes the system start up time.
 - NEW: Unified ARM7 startup file, it is shared by the LPC and SAM7 demo

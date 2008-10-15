@@ -250,7 +250,7 @@ msg_t TestThread(void *p) {
   i = 0;
   while (tests[i]) {
 #if DELAY_BETWEEN_TESTS > 0
-    chThdSleep(DELAY_BETWEEN_TESTS);
+    chThdSleep(MS2ST(DELAY_BETWEEN_TESTS));
 #endif
     test_println("---------------------------------------------------------------------------");
     test_print("--- Test Case ");
