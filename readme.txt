@@ -81,6 +81,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - NEW: Added macros to convert from seconds, milliseconds and microseconds to
   system ticks. This improves application code portability among different
   ports.
+- CHANGE: Modified the test suite to use the new time conversion macros.
 - CHANGE: Modified the CM3 startup file in order to implement an early
   initializaiton phase: hwinit0, the late initialization phase is now named
   hwinit1. The demo now initializes the PLL before initializing the BSS and
