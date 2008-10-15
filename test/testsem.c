@@ -21,7 +21,7 @@
 
 #include "test.h"
 
-#define ALLOWED_DELAY 5
+#define ALLOWED_DELAY MS2ST(5)
 
 static Semaphore sem1;
 
@@ -85,10 +85,10 @@ static void sem2_execute(void) {
   int i;
   systime_t target_time;
 
-  target_time = chSysGetTime() + 5 * 500;
+  target_time = chSysGetTime() + MS2ST(5 * 500);
   for (i = 0; i < 5; i++) {
     test_emit_token('A' + i);
-    chSemWaitTimeout(&sem1, 500);
+    chSemWaitTimeout(&sem1, MS2ST(500));
   }
   test_assert_sequence("ABCDE");
   test_assert_time_window(target_time, target_time + ALLOWED_DELAY);

@@ -85,7 +85,7 @@ static void mtx2_teardown(void) {
 
 static msg_t thread2(void *p) {
 
-  chThdSleep(5);
+  chThdSleep(MS2ST(10));
   chMtxLock(&m1);
   chMtxUnlock();
   test_emit_token(*(char *)p);
@@ -95,7 +95,7 @@ static msg_t thread2(void *p) {
 static msg_t thread3(void *p) {
 
   chMtxLock(&m1);
-  chThdSleep(20);
+  chThdSleep(MS2ST(40));
   chMtxUnlock();
   test_emit_token(*(char *)p);
   return 0;
@@ -103,7 +103,7 @@ static msg_t thread3(void *p) {
 
 static msg_t thread4(void *p) {
 
-  chThdSleep(10);
+  chThdSleep(MS2ST(20));
   test_cpu_pulse(50);
   test_emit_token(*(char *)p);
   return 0;
@@ -156,7 +156,7 @@ static msg_t thread5(void *p) {
 
 static msg_t thread6(void *p) {
 
-  chThdSleep(10);
+  chThdSleep(MS2ST(10));
   chMtxLock(&m2);
   test_cpu_pulse(20);
   chMtxLock(&m1);
@@ -170,7 +170,7 @@ static msg_t thread6(void *p) {
 
 static msg_t thread7(void *p) {
 
-  chThdSleep(20);
+  chThdSleep(MS2ST(20));
   chMtxLock(&m2);
   test_cpu_pulse(50);
   chMtxUnlock();
@@ -180,7 +180,7 @@ static msg_t thread7(void *p) {
 
 static msg_t thread8(void *p) {
 
-  chThdSleep(40);
+  chThdSleep(MS2ST(40));
   test_cpu_pulse(200);
   test_emit_token(*(char *)p);
   return 0;
@@ -188,7 +188,7 @@ static msg_t thread8(void *p) {
 
 static msg_t thread9(void *p) {
 
-  chThdSleep(50);
+  chThdSleep(MS2ST(50));
   chMtxLock(&m2);
   test_cpu_pulse(50);
   chMtxUnlock();

@@ -31,9 +31,9 @@ static msg_t Thread1(void *arg) {
 
   while (TRUE) {
     P6OUT |= P6_O_LED;
-    chThdSleep(50);
+    chThdSleep(MS2ST(500));
     P6OUT &= ~P6_O_LED;
-    chThdSleep(50);
+    chThdSleep(MS2ST(500));
   }
   return 0;
 }
@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
   while (TRUE) {
     if (!(P6IN & P6_I_BUTTON))
       TestThread(&COM1);
-    chThdSleep(50);
+    chThdSleep(MS2ST(500));
   }
   return 0;
 }
