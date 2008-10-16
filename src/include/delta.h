@@ -34,6 +34,7 @@ typedef struct VirtualTimer VirtualTimer;
 
 /**
  * Virtual Timer descriptor structure.
+ * @extends DeltaList
  */
 struct VirtualTimer {
     /** Next timer in the delta list.*/

@@ -27,6 +27,7 @@
 
 /**
  * Structure representing a thread.
+ * @extends ThreadsQueue
  * @note Not all the listed fields are always needed, by switching off some
  *       not needed ChibiOS/RT subsystems it is possible to save RAM space by
  *       shrinking the \p Thread structure.

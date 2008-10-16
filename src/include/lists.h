@@ -33,6 +33,7 @@ typedef struct Thread Thread;
 
 /**
  * Generic threads queue header and element.
+ * @extends ThreadsList
  */
 typedef struct {
   /** First \p Thread in the queue, or \p ThreadQueue when empty. */

@@ -230,6 +230,20 @@
 /** @} */
 
 /**
+ * @defgroup STM32F103 STM32F103 Support
+ * @{
+ * <p>
+ * The STM32F103 support includes:
+ * <ul>
+ * <li>Buffered, interrupt driven, serial driver.</li>
+ * <li>A demo supporting the kernel test suite.</li>
+ * </ul>
+ * </p>
+ * @ingroup ARMCM3
+ */
+/** @} */
+
+/**
  * @defgroup AVR MegaAVR
  * @{
  * <p>

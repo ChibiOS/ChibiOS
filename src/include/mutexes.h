@@ -29,6 +29,9 @@
 
 typedef struct Mutex Mutex;
 
+/**
+ * Mutex structure.
+ */
 struct Mutex {
   /** Queue of the threads sleeping on this Mutex.*/
   ThreadsQueue  m_queue;
