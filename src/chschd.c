@@ -171,7 +171,7 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
 /**
  * Switch to the first thread on the runnable queue.
  *
- * @note It is intended to be called if \p chSchRescRequired() evaluates to \p TRUE.
+ * @note It is intended to be called if \p chSchRescRequiredI() evaluates to \p TRUE.
  */
 void chSchDoRescheduleI(void) {
 
