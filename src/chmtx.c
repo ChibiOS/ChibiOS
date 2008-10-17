@@ -114,7 +114,8 @@ void chMtxLockS(Mutex *mp) {
  * the priority inheritance mechanism because it does not try to enter a sleep
  * state on the mutex.
  * @param mp pointer to the \p Mutex structure
- * @return \p TRUE if the mutex was successfully acquired else \p FALSE
+ * @retval TRUE if the mutex was successfully acquired
+ * @retval FALSE if the lock attempt failed.
  */
 bool_t chMtxTryLock(Mutex *mp) {
   bool_t b;
@@ -132,7 +133,8 @@ bool_t chMtxTryLock(Mutex *mp) {
  * the priority inheritance mechanism because it does not try to enter a sleep
  * state on the mutex.
  * @param mp pointer to the \p Mutex structure
- * @return \p TRUE if the mutex was successfully acquired else \p FALSE
+ * @retval TRUE if the mutex was successfully acquired
+ * @retval FALSE if the lock attempt failed.
  * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
  *       block.
  */
@@ -148,6 +150,7 @@ bool_t chMtxTryLockS(Mutex *mp) {
 
 /**
  * Unlocks the next owned mutex in reverse lock order.
+ * @return The pointer to the unlocked mutex.
  */
 Mutex *chMtxUnlock(void) {
   Mutex *ump, *mp;
@@ -192,6 +195,7 @@ Mutex *chMtxUnlock(void) {
 
 /**
  * Unlocks the next owned mutex in reverse lock order.
+ * @return The pointer to the unlocked mutex.
  * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
  *       block.
  * @note This function does not reschedule internally.

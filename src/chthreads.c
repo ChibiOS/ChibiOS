@@ -74,7 +74,7 @@ static void memfill(uint8_t *p, uint32_t n, uint8_t v) {
  * @param wsize size of the working area.
  * @param pf the thread function
  * @param arg an argument passed to the thread function. It can be \p NULL.
- * @return the pointer to the \p Thread structure allocated for the
+ * @return The pointer to the \p Thread structure allocated for the
  *         thread into the working space area.
  * @note A thread can terminate by calling \p chThdExit() or by simply
  *       returning from its main function.
@@ -104,7 +104,7 @@ Thread *chThdInit(void *workspace, size_t wsize,
  *             can range from \p LOWPRIO to \p HIGHPRIO.
  * @param pf the thread function
  * @param arg an argument passed to the thread function. It can be \p NULL.
- * @return the pointer to the \p Thread structure allocated for the
+ * @return The pointer to the \p Thread structure allocated for the
  *         thread into the working space area.
  * @note A thread can terminate by calling \p chThdExit() or by simply
  *       returning from its main function.
@@ -124,9 +124,9 @@ Thread *chThdCreateStatic(void *workspace, size_t wsize,
  *             can range from \p LOWPRIO to \p HIGHPRIO.
  * @param pf the thread function
  * @param arg an argument passed to the thread function. It can be \p NULL.
- * @return the pointer to the \p Thread structure allocated for the
- *         thread into the working space area or \p NULL if the memory cannot
- *         be allocated.
+ * @return The pointer to the \p Thread structure allocated for the
+ *         thread into the working space area.
+ * @retval NULL if the memory cannot be allocated.
  * @note A thread can terminate by calling \p chThdExit() or by simply
  *       returning from its main function.
  * @note The memory allocated for the thread is not released when the thread
@@ -156,9 +156,10 @@ Thread *chThdCreateFromHeap(size_t wsize, tprio_t prio,
  *             can range from \p LOWPRIO to \p HIGHPRIO.
  * @param pf the thread function
  * @param arg an argument passed to the thread function. It can be \p NULL.
- * @return the pointer to the \p Thread structure allocated for the
+ * @return The pointer to the \p Thread structure allocated for the
  *         thread into the working space area or \p NULL if the memory cannot
  *         be allocated.
+ * @retval NULL if the memory pool is empty.
  * @note A thread can terminate by calling \p chThdExit() or by simply
  *       returning from its main function.
  * @note The memory allocated for the thread is not released when the thread
@@ -197,7 +198,7 @@ Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
  * @param wsize size of the working area.
  * @param pf the thread function
  * @param arg an argument passed to the thread function. It can be \p NULL.
- * @return the pointer to the \p Thread structure allocated for the
+ * @return The pointer to the \p Thread structure allocated for the
  *         thread into the working space area.
  * @note A thread can terminate by calling \p chThdExit() or by simply
  *       returning from its main function.
@@ -261,7 +262,7 @@ void chThdSuspend(Thread **tpp) {
 /**
  * Resumes a suspended thread.
  * @param tp the pointer to the thread
- * @return the pointer to the thread
+ * @return The pointer to the thread.
  */
 Thread *chThdResume(Thread *tp) {
 
@@ -324,7 +325,7 @@ void chThdExit(msg_t msg) {
  *     working area is returned to the owning memory pool.</li>
  * </ul>
  * @param tp the thread pointer
- * @return the exit code from the terminated thread
+ * @return The exit code from the terminated thread
  * @note After invoking \p chThdWait() the thread pointer becomes invalid and
  *       must not be used as parameter for further system calls.
  * @note The function is available only if the \p CH_USE_WAITEXIT

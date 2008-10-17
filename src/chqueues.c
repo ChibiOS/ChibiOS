@@ -62,8 +62,8 @@ void chIQReset(Queue *qp) {
  * Inserts a byte into an input queue.
  * @param qp pointer to a \p Queue structure
  * @param b the byte value to be written
- * @return \p Q_OK if the operation is successful or \p Q_FULL if the queue is
- *         full.
+ * @retval Q_OK if the operation is successful.
+ * @retval Q_FULL if the queue is full.
  * @note This function is the lower side endpoint of the Input Queue.
  * @note This function must be called with interrupts disabled or from an
  *       interrupt handler.
@@ -84,7 +84,8 @@ msg_t chIQPutI(Queue *qp, uint8_t b) {
  * Gets a byte from the input queue, if the queue is empty then the
  * calling thread is suspended until a byte arrives in the queue.
  * @param qp pointer to a \p Queue structure
- * @return a byte from the queue or \p Q_RESET if the queue was reset
+ * @return A byte value from the queue.
+ * @retval Q_RESET if the queue was reset.
  */
 msg_t chIQGet(Queue *qp) {
   uint8_t b;
@@ -114,8 +115,9 @@ msg_t chIQGet(Queue *qp) {
  * specified time expires.
  * @param qp pointer to a \p Queue structure
  * @param time the number of ticks before the operation timouts
- * @return a byte from the queue, \p Q_TIMEOUT if the specified time expired
- *         or \p Q_RESET if the queue was reset
+ * @return A byte value from the queue.
+ * @retval Q_TIMEOUT if the specified time expired.
+ * @retval Q_RESET if the queue was reset.
  * @note The function is available only if the \p CH_USE_QUEUES_TIMEOUT
  *       option is enabled in \p chconf.h.
  */
@@ -148,7 +150,7 @@ msg_t chIQGetTimeout(Queue *qp, systime_t time) {
  * @param qp pointer to a \p Queue structure
  * @param buffer the data buffer
  * @param n the maximum amount of data to be read
- * @return the number of bytes read
+ * @return The number of bytes read.
  * @note This function is the upper side endpoint of the input queue.
  * @note The function is not atomic, if you need atomicity it is suggested
  *       to use a semaphore for mutual exclusion.
@@ -240,7 +242,8 @@ void chOQPut(Queue *qp, uint8_t b) {
 /**
  * Gets a byte from an output queue.
  * @param qp pointer to a \p Queue structure
- * @return the byte value or \p Q_EMPTY if the queue is empty
+ * @return The byte value from the queue.
+ * @retval Q_EMPTY if the queue is empty.
  * @note This function is the lower side endpoint of the output queue.
  * @note This function must be called with interrupts disabled or from an
  *       interrupt handler.
@@ -264,6 +267,7 @@ msg_t chOQGetI(Queue *qp) {
  * @param qp pointer to a \p Queue structure
  * @param buffer the data buffer
  * @param n the maximum amount of data to be written
+ * @return The number of written bytes.
  * @note This function is the upper side endpoint of the output queue.
  * @note The function is not atomic, if you need atomicity it is suggested
  *       to use a semaphore for mutual exclusion.
@@ -326,7 +330,8 @@ void chHDQInit(HalfDuplexQueue *qp, uint8_t *buffer, size_t size,
  * Reads a byte from the receive queue, if the queue is empty or is in
  * transmission mode then the invoking thread is suspended.
  * @param qp pointer to a \p HalfDuplexQueue structure
- * @return the byte value or \p Q_RESET if the queue was reset
+ * @return The byte value.
+ * @retval Q_RESET if the queue was reset.
  */
 msg_t chHDQGetReceive(HalfDuplexQueue *qp) {
   uint8_t b;
@@ -359,7 +364,8 @@ msg_t chHDQGetReceive(HalfDuplexQueue *qp) {
  * transmission mode then the invoking thread is suspended.
  * @param qp pointer to a \p HalfDuplexQueue structure
  * @param time the number of ticks before the operation timouts
- * @return the byte value or \p Q_TIMEOUT if a timeout occurs
+ * @return The byte value.
+ * @retval Q_TIMEOUT if a timeout occurs.
  * @note The function is available only if the \p CH_USE_QUEUES_TIMEOUT
  *       option is enabled in \p chconf.h.
  */
@@ -426,8 +432,8 @@ void chHDQPutTransmit(HalfDuplexQueue *qp, uint8_t b) {
 /**
  * Gets a byte from the transmit queue.
  * @param qp pointer to a \p HalfDuplexQueue structure
- * @return the byte value or \p Q_EMPTY if the transmit queue is empty (not in
- *         transmission mode)
+ * @return The byte value.
+ * @retval Q_EMPTY if the transmit queue is empty (not in transmission mode).
  * @note This function must be called with interrupts disabled or from an
  *       interrupt handler.
  */
@@ -449,8 +455,8 @@ msg_t chHDQGetTransmitI(HalfDuplexQueue *qp) {
  * then the byte is lost.
  * @param qp pointer to a \p HalfDuplexQueue structure
  * @param b the byte value to be written
- * @return \p Q_OK if the operation is successful or \p Q_FULL if the driver
- *         is in transmit mode or the receive queue is full.
+ * @retval Q_OK if the operation is successful.
+ * @retval Q_FULL if the driver is in transmit mode or the receive queue is full.
  * @note This function must be called with interrupts disabled or from an
  *       interrupt handler.
  */

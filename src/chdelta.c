@@ -28,7 +28,8 @@
 DeltaList dlist;
 
 /**
- * Virtual Timers initialization. Internal use only.
+ * Virtual Timers initialization.
+ * @note Internal use only.
  */
 void chVTInit(void) {
 

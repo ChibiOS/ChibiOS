@@ -70,9 +70,9 @@ void chFDDIncomingDataI(FullDuplexDriver *sd, uint8_t b) {
  * the next byte to be transmitted.
  *
  * @param sd pointer to a \p FullDuplexDriver structure
- * @return the byte read from the driver's Output Queue or \p Q_EMPTY if the
- *         queue is empty (the lower driver usually disables the interrupt
- *         source when this happens).
+ * @return The byte value read from the driver's output queue.
+ * @retval Q_EMPTY if the queue is empty (the lower driver usually disables
+ *         the interrupt source when this happens).
  */
 msg_t chFDDRequestDataI(FullDuplexDriver *sd) {
 
@@ -97,8 +97,8 @@ void chFDDAddFlagsI(FullDuplexDriver *sd, dflags_t mask) {
 /**
  * This function returns and clears the errors mask associated to the driver.
  * @param sd pointer to a \p FullDuplexDriver structure
- * @return the condition flags modified since last time this function was
- *         invoked
+ * @return The condition flags modified since last time this function was
+ *         invoked.
  */
 dflags_t chFDDGetAndClearFlags(FullDuplexDriver *sd) {
   dflags_t mask;
@@ -136,7 +136,7 @@ void chHDDInit(HalfDuplexDriver *sd, uint8_t *b, size_t size,
  * This function must be called from the input interrupt service routine in
  * order to enqueue incoming data and generate the related events.
  * @param sd pointer to a \p FullDuplexDriver structure
- * @param b the byte to be written in the driver's Input Queue
+ * @param b the byte to be written in the driver's input queue
  */
 void chHDDIncomingDataI(HalfDuplexDriver *sd, uint8_t b) {
 
@@ -151,9 +151,9 @@ void chHDDIncomingDataI(HalfDuplexDriver *sd, uint8_t b) {
  * the next byte to be transmitted.
  *
  * @param sd pointer to a \p HalfDuplexDriver structure
- * @return the byte read from the driver's Output Queue or \p Q_EMPTY if the
- *         queue is empty (the lower driver usually disables the interrupt
- *         source when this happens).
+ * @return The byte value read from the driver's output queue.
+ * @retval Q_EMPTY if the queue is empty (the lower driver usually disables
+ *         the interrupt source when this happens).
  */
 msg_t chHDDRequestDataI(HalfDuplexDriver *sd) {
 
@@ -178,8 +178,8 @@ void chHDDAddFlagsI(HalfDuplexDriver *sd, dflags_t mask) {
 /**
  * This function returns and clears the errors mask associated to the driver.
  * @param sd pointer to a \p HalfDuplexDriver structure
- * @return the condition flags modified since last time this function was
- *         invoked
+ * @return The condition flags modified since last time this function was
+ *         invoked.
  */
 dflags_t chHDDGetAndClearFlags(HalfDuplexDriver *sd) {
   dflags_t mask;

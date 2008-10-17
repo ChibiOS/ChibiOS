@@ -33,16 +33,35 @@
 #include <stdint.h>
 #endif
 
-typedef int32_t         bool_t;     /* Signed boolean. */
-typedef uint8_t         tmode_t;    /* Thread mode flags, uint8_t is ok. */
-typedef uint8_t         tstate_t;   /* Thread state, uint8_t is ok. */
-typedef uint16_t        tid_t;      /* Thread id. */
-typedef uint32_t        tprio_t;    /* Priority, use the fastest unsigned type. */
-typedef int32_t         msg_t;      /* Message, use signed pointer equivalent.*/
-typedef int32_t         eventid_t;  /* Event Id, use fastest signed.*/
-typedef uint32_t        eventmask_t;/* Event Mask, recommended fastest unsigned.*/
-typedef uint32_t        systime_t;  /* System Time, recommended fastest unsigned.*/
-typedef int32_t         cnt_t;      /* Counter, recommended fastest signed.*/
+/** Signed boolean. */
+typedef int32_t         bool_t;
+
+/** Thread mode flags, uint8_t is ok. */
+typedef uint8_t         tmode_t;
+
+/** Thread state, uint8_t is ok. */
+typedef uint8_t         tstate_t;
+
+/** Thread id. */
+typedef uint16_t        tid_t;
+
+/** Priority, use the fastest unsigned type. */
+typedef uint32_t        tprio_t;
+
+/** Message, use signed pointer equivalent.*/
+typedef int32_t         msg_t;
+
+/** Event Id, use fastest signed.*/
+typedef int32_t         eventid_t;
+
+/** Event Mask, recommended fastest unsigned.*/
+typedef uint32_t        eventmask_t;
+
+/** System Time, recommended fastest unsigned.*/
+typedef uint32_t        systime_t;
+
+/** Counter, recommended fastest signed.*/
+typedef int32_t         cnt_t;
 
 #define INLINE      inline
 #define PACK_STRUCT_STRUCT __attribute__((packed))

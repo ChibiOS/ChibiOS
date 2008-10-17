@@ -98,8 +98,8 @@ void chHeapInit(void) {
  * @param size the size of the block to be allocated. Note that the allocated
  *             block may be a bit bigger than the requested size for alignment
  *             and fragmentation reasons.
- * @return a pointer to the allocated block or \p NULL if the block cannot be
- *         allocated.
+ * @return A pointer to the allocated block.
+ * @retval NULL if the block cannot be allocated.
  */
 void *chHeapAlloc(size_t size) {
   struct header *qp, *hp, *fp;
@@ -187,7 +187,7 @@ void chHeapFree(void *p) {
  * Determines the heap status.
  * @param sizep pointer to a variable that will receive the total fragmented
  *              free space
- * @return the number of fragments in the heap
+ * @return The number of fragments in the heap.
  * @note This function is meant to be used in the test suite, it should not be
  *       really useful for the application code.
  * @note This function is not implemented when the \p CH_USE_MALLOC_HEAP

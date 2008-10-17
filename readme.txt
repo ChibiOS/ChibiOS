@@ -94,6 +94,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Modified the STM32 demo makefile to use the latest YAGARTO toolchain as
   default (arm-elf-gcc).
 - Documentation improvements, added collaboration diagrams and call graphs.
+  Added a documentation-related readme under ./docs.
 
 *** 0.7.1 ***
 - NEW: New chThdInit() and chThdCreateStatic() APIs now replace the old

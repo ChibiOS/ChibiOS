@@ -129,7 +129,7 @@ void chEvtBroadcastI(EventSource *esp) {
  *                 have indexes from zero up the higher registered event
  *                 identifier. The array can be \p NULL or contain \p NULL
  *                 elements (no callbacks specified).
- * @return the event identifier
+ * @return The event identifier.
  * @note Only a single event is served in the function, the one with the
  *       lowest event id. The function is meant to be invoked into a loop so
  *       that all events are received and served.<br>
@@ -153,7 +153,8 @@ eventid_t chEvtWait(eventmask_t ewmask,
  *                 identifier. The array can be NULL or contain NULL elements
  *                 (no callback specified).
  * @param time the number of ticks before the operation timouts
- * @return the event identifier or \p RDY_TIMEOUT if the specified time expired
+ * @return The event identifier.
+ * @retval RDY_TIMEOUT if the specified timeout expired.
  * @note Only a single event is served in the function, the one with the
  *       lowest event id. The function is meant to be invoked into a loop so
  *       that all events are received and served.<br>

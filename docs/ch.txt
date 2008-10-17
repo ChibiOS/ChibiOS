@@ -329,6 +329,16 @@
 /** @} */
 
 /**
+ * @defgroup ThreadLists Thread Lists and Queues
+ * @{
+ * ChibiOS/RT thread lists and queues utilities.
+ * @ingroup Kernel
+ * @file chlists.c Lists and queues code.
+ * @file lists.h Lists and queues macros and structures.
+ */
+/** @} */
+
+/**
  * @defgroup Threads Threads
  * @{
  * Threads creation and termination APIs.

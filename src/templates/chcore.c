@@ -55,6 +55,30 @@ void chSysHalt(void) {
 }
 
 /**
+ * Enters the ChibiOS/RT system mutual exclusion zone. The implementation is
+ * architecture dependent, on single core systems usually this function usually
+ * just disables the interrupts.
+ * @note The code in the system mutual exclusion zone must be as light and
+ *       fast as possible, the system performance is affected by this.
+ * @note The use of system mutual exclusion zones are not recommended in
+ *       the user code, it is a better idea to use the Semaphores instead.
+ */
+void chSysLock(void) {
+}
+
+/**
+ * Leaves the ChibiOS/RT system mutual exclusion zone. The implementation is
+ * architecture dependent, on single core systems usually this function usually
+ * just enables the interrupts.
+ * @note The code in the system mutual exclusion zone must be as light and
+ *       fast as possible, the system performance is affected by this.
+ * @note The use of system mutual exclusion zones are not recommended in
+ *       the user code, it is a better idea to use the Semaphores instead.
+ */
+void chSysUnlock(void) {
+}
+
+/**
  * Context switch.
  */
 void chSysSwitchI(Thread *otp, Thread *ntp) {}

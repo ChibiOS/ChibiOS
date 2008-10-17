@@ -84,28 +84,6 @@ typedef struct {
 #define WorkingArea(s, n) uint8_t s[UserStackSize(n)];
 
 /**
- * Enters the ChibiOS/RT system mutual exclusion zone, the implementation is
- * architecture dependent, on single core systems usually this function
- * just disables the interrupts.
- * @note The code in the system mutual exclusion zone must be as light and
- *       fast as possible, the system performance is affected by this.
- * @note The use of system mutual exclusion zones are not recommended in
- *       the user code, it is a better idea to use the Semaphores instead.
- */
-#define chSysLock()
-
-/**
- * Leaves the ChibiOS/RT system mutual exclusion zone, the implementation is
- * architecture dependent, on single core systems usually this function
- * just enables the interrupts.
- * @note The code in the system mutual exclusion zone must be as light and
- *       fast as possible, the system performance is affected by this.
- * @note The use of system mutual exclusion zones are not recommended in
- *       the user code, it is a better idea to use the Semaphores instead.
- */
-#define chSysUnlock()
-
-/**
  * Enables the interrupts, it is only invoked once into \p chSysInit().
  */
 #define chSysEnable()
@@ -130,6 +108,8 @@ extern "C" {
 #endif
   void _IdleThread(void *p);
   void chSysHalt(void);
+  void chSysLock(void);
+  void chSysUnlock(void);
   void chSysSwitchI(Thread *otp, Thread *ntp);
   void chSysPuts(char *msg);
 #ifdef __cplusplus

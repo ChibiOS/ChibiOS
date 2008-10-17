@@ -48,7 +48,7 @@ void chSchInit(void) {
  * Inserts a thread in the Ready List.
  *
  * @param tp the Thread to be made ready
- * @return the Thread pointer
+ * @return The Thread pointer.
  * @note The function must be called in the system mutex zone.
  * @note The function does not reschedule, the \p chSchRescheduleS() should
  *       be called soon after.
@@ -108,15 +108,16 @@ static void wakeup(void *p) {
 }
 
 /**
- * Put the current thread to sleep.
+ * Puts the current thread to sleep.
  *
  * Puts the current thread to sleep into the specified state. The next highest
  * priority thread becomes running. The thread put to sleep is awakened after
  * the specified time has elapsed.
  *
  * @param newstate the new thread state
- * @param time the number of ticks before the operation timouts
- * @return the wakeup message, it is \p RDY_TIMEOUT if a timeout occurs
+ * @param time the number of ticks before the operation timeouts
+ * @return The wakeup message.
+ * @retval RDY_TIMEOUT if a timeout occurs.
  * @note The function must be called in the system mutex zone.
  * @note The function is not meant to be used in the user code directly.
  */
@@ -134,9 +135,8 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
 /**
  * Wakes up a thread.
  *
- * Wakes up a thread. The thread is inserted into the ready list or immediately
- * made running depending on its relative priority compared to the current
- * thread.
+ * The thread is inserted into the ready list or immediately made running
+ * depending on its relative priority compared to the current thread.
  * @param ntp the Thread to be made ready
  * @param msg message to the awakened thread
  * @note The function must be called in the system mutex zone.
@@ -171,7 +171,7 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
 /**
  * Switch to the first thread on the runnable queue.
  *
- * Intended to be called if \p chSchRescRequired() evaluates to \p TRUE.
+ * @note It is intended to be called if \p chSchRescRequired() evaluates to \p TRUE.
  */
 void chSchDoRescheduleI(void) {
 
@@ -206,8 +206,8 @@ void chSchRescheduleS(void) {
 /**
  * Evaluates if rescheduling is required.
  *
- * @return \p TRUE if there is a thread that should go in running state
- *         immediately else \p FALSE.
+ * @retval TRUE if there is a thread that should go in running state.
+ * @retval FALSE if a reschedulation is not required.
  */
 bool_t chSchRescRequiredI(void) {
   tprio_t p1 = firstprio(&rlist.r_queue);

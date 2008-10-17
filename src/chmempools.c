@@ -43,7 +43,8 @@ void chPoolInit(MemoryPool *mp, size_t size) {
 /**
  * Allocates an object from a memory pool.
  * @param mp pointer to a \p MemoryPool structure
- * @return the pointer to the allocated object or \p NULL if pool is empty
+ * @return The pointer to the allocated object.
+ * @retval NULL if pool is empty.
  */
 void *chPoolAlloc(MemoryPool *mp) {
   void *objp;

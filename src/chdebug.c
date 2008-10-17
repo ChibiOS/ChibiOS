@@ -36,6 +36,7 @@ void chDbgInit(void) {
 
 /**
  * Prints a panic message on the console/debugger and then halts the system.
+ * @param msg the pointer to the message string
  */
 void chDbgPanic(char *msg) {
 

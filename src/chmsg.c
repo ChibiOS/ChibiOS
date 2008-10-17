@@ -30,7 +30,7 @@
  *
  * @param tp the pointer to the thread
  * @param msg the message, it can be a pointer to a complex structure
- * @return the return message from \p chMsgRelease()
+ * @return The return message from \p chMsgRelease().
  */
 msg_t chMsgSend(Thread *tp, msg_t msg) {
 
@@ -61,8 +61,7 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
  * @param tp the pointer to the thread
  * @param msg the message, it can be a pointer to a complex structure
  * @param esp the event source to pulse while sending the message
- * @return the return message from \p chMsgRelease()
- * @return the message return status from \p chMsgRelease()
+ * @return The return message from \p chMsgRelease().
  * @note This function assumes that the receiving thread is not sleeping into
  *       a \p chMsgWait(). The use case is that the server thread is waiting
  *       for both messages AND events while waiting into \p chEvtWait().
@@ -91,7 +90,7 @@ msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, EventSource *esp) {
 /**
  * Suspends the thread and waits for an incoming message.
  *
- * @return the pointer to the message structure. Note, it is always the
+ * @return The pointer to the message structure. Note, it is always the
  *         message associated to the thread on the top of the messages queue.
  * @note You can assume that the data contained in the message is stable until
  *       you invoke \p chMsgRelease() because the sending thread is
@@ -113,7 +112,7 @@ msg_t chMsgWait(void) {
 /**
  * Returns the next message in the queue.
  *
- * @return the pointer to the message structure. Note, it is always the
+ * @return The pointer to the message structure. Note, it is always the
  *         message associated to the thread on the top of the messages queue.
  *         If the queue is empty then \p NULL is returned.
  * @note You can assume that the data pointed by the message is stable until

@@ -18,7 +18,7 @@
 */
 
 /**
- * @addtogroup Threads
+ * @addtogroup ThreadLists
  * @{
  */
 
