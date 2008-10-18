@@ -73,6 +73,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.7.3 ***
+- Removed the performance spreadsheet (it was *very* old) and added a
+  directory containing the test reports ./docs/reports.
+
 *** 0.7.2 ***
 - NEW: Added a serial driver to the MSP430 port, the MSP430 port now has been
   tested on hardware and passes the test suite.
