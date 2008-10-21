@@ -74,9 +74,10 @@ interrupt(USART0RX_VECTOR) u0rxirq(void) {
  */
 static void OutNotify1(void) {
 
-  if (!(U0IE & UTXIE0))
+  if (!(U0IE & UTXIE0)) {
     U0TXBUF = (uint8_t)chFDDRequestDataI(&COM1);
-  U0IE |= UTXIE0;
+    U0IE |= UTXIE0;
+  }
 }
 
 /*
@@ -140,9 +141,10 @@ interrupt(USART1RX_VECTOR) u1rxirq(void) {
  */
 static void OutNotify2(void) {
 
-  if (!(U1IE & UTXIE1))
+  if (!(U1IE & UTXIE1)) {
     U1TXBUF = (uint8_t)chFDDRequestDataI(&COM2);
-  U1IE |= UTXIE1;
+    U1IE |= UTXIE1;
+  }
 }
 
 /*
