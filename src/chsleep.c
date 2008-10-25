@@ -35,7 +35,6 @@ void chThdSleep(systime_t time) {
   chSysUnlock();
 }
 
-#ifdef CH_USE_SYSTEMTIME
 /**
  * Checks if the current system time is within the specified time window.
  * @param start the start of the time window (inclusive)
@@ -47,6 +46,5 @@ bool_t chSysInTimeWindow(systime_t start, systime_t end) {
   return end >= start ? (time >= start) && (time < end) :
                         (time >= start) || (time < end);
 }
-#endif /* CH_USE_SYSTEMTIME */
 
 /** @} */

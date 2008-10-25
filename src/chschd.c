@@ -39,9 +39,6 @@ void chSchInit(void) {
 #ifdef CH_USE_ROUNDROBIN
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-#ifdef CH_USE_SYSTEMTIME
-  rlist.r_stime = 0;
-#endif
 }
 
 /**
@@ -94,7 +91,6 @@ void chSchGoSleepS(tstate_t newstate) {
   chSysSwitchI(otp, currp);
 }
 
-#ifdef CH_USE_VIRTUAL_TIMERS
 /*
  * Timeout wakeup callback.
  */
@@ -130,7 +126,6 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
     chVTResetI(&vt);
   return currp->p_rdymsg;
 }
-#endif /* CH_USE_VIRTUAL_TIMERS */
 
 /**
  * Wakes up a thread.

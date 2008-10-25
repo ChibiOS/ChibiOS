@@ -17,10 +17,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
- * Configuration file for LPC214x-GCC demo project.
- */
-
 /**
  * @addtogroup Config
  * @{
@@ -34,17 +30,9 @@
  *  that this is not related to the compiler optimization options.*/
 #define CH_OPTIMIZE_SPEED
 
-/** Configuration option: if specified then the Virtual Timers subsystem is
- *  included in the kernel.*/
-#define CH_USE_VIRTUAL_TIMERS
-
 /** Configuration option: if specified then the kernel performs the round
  *  robin scheduling algorithm on threads of equal priority. */
 #define CH_USE_ROUNDROBIN
-
-/** Configuration option: if specified then the System Timer subsystem is
- *  included in the kernel.*/
-#define CH_USE_SYSTEMTIME
 
 /** Configuration option: if specified then the \p chThdWait() function
  *  is included in the kernel.*/
@@ -60,8 +48,7 @@
 
 /** Configuration option: if specified then the Semaphores with timeout APIs
  *  are included in the kernel.
- * @note requires \p CH_USE_SEMAPHORES.
- * @note requires \p CH_USE_VIRTUAL_TIMERS.*/
+ * @note requires \p CH_USE_SEMAPHORES.*/
 #define CH_USE_SEMAPHORES_TIMEOUT
 
 /** Configuration option: if specified then the Mutexes APIs are included in
@@ -86,8 +73,7 @@
 
 /** Configuration option: if specified then the \p chMsgSendWithEvent()
  *  function is included in the kernel.
- * @note requires \p CH_USE_MESSAGES.
- * @note requires \p CH_USE_VIRTUAL_TIMERS.*/
+ * @note requires \p CH_USE_MESSAGES.*/
 #define CH_USE_MESSAGES_EVENT
 
 /** Configuration option: If enabled then the threads have an option to serve

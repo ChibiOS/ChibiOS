@@ -351,8 +351,6 @@
  * @defgroup VirtualTimers Virtual Timers
  * @{
  * Virtual Timers APIs.
- * In order to use the Virtual Timers the \p CH_USE_VIRTUAL_TIMERS option
- * must be specified in \p chconf.h.
  * @file src/chdelta.c Virtual Timers code.
  * @file delta.h Virtual Timers macros and structures.
  */
@@ -362,8 +360,6 @@
  * @defgroup Time Time
  * @{
  * Time related APIs.
- * In order to use the Time APIs the \p CH_USE_SLEEP
- * option must be specified in \p chconf.h.
  * @file include/sleep.h Time macros and structures.
  * @file chsleep.c Time functions.
  */
@@ -503,9 +499,8 @@
  * server threads but just a pointer passed so the exchange is very time
  * efficient.<br>
  * Messages are usually processed in FIFO order but it is possible to process
- * them in priority order by specifying \p P_MSGBYPRIO when creating a server
- * thread, \p CH_USE_MESSAGES_PRIORITY must also be specified in \p chconf.h
- * in order to enable the feature.<br>
+ * them in priority order by specifying CH_USE_MESSAGES_PRIORITY 
+ * in \p chconf.h.<br>
  * Threads do not need to allocate space for message queues, the mechanism
  * just requires two extra pointers in the \p Thread structure (the message
  * queue header).<br>

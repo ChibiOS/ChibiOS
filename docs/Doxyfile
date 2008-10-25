@@ -249,8 +249,6 @@ INCLUDE_PATH           =
 INCLUDE_FILE_PATTERNS  = 
 PREDEFINED             = __JUST_STUBS__ \
                          __DOXIGEN__ \
-                         CH_USE_VIRTUAL_TIMERS \
-                         CH_USE_SYSTEMTIME \
                          CH_USE_WAITEXIT \
                          CH_USE_SEMAPHORES \
                          CH_USE_SEMSW \
@@ -271,7 +269,8 @@ PREDEFINED             = __JUST_STUBS__ \
                          CH_USE_MESSAGES_PRIORITY \
                          CH_USE_DEBUG \
                          CH_USE_TRACE \
-                         CH_USE_DYNAMIC
+                         CH_USE_DYNAMIC \
+                         CH_USE_ROUNDROBIN
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

@@ -60,11 +60,7 @@ TraceBuffer dbgtb;
 void chDbgTrace(Thread *otp, Thread *ntp) {
 
   dbgtb.tb_ptr->cse_wtobjp = otp->p_wtobjp;
-#ifdef CH_USE_SYSTEMTIME
   dbgtb.tb_ptr->cse_time = chSysGetTime();
-#else
-  dbgtb.tb_ptr->cse_time = 0;
-#endif
   dbgtb.tb_ptr->cse_state = otp->p_state;
   dbgtb.tb_ptr->cse_tid = ntp->p_tid;
   if (++dbgtb.tb_ptr >= &dbgtb.tb_buffer[TRACE_BUFFER_SIZE])

@@ -37,9 +37,7 @@ void chSysInit(void) {
 
   chSchInit();
   chDbgInit();
-#ifdef CH_USE_VIRTUAL_TIMERS
   chVTInit();
-#endif
 #ifdef CH_USE_HEAP
   chHeapInit();
 #endif
@@ -69,19 +67,14 @@ void chSysInit(void) {
  * together with the \p CH_TIME_QUANTUM macro, the round robin interval.
  */
 void chSysTimerHandlerI(void) {
+
 #ifdef CH_USE_ROUNDROBIN
   /* running thread has not used up quantum yet? */
   if (rlist.r_preempt > 0)
     /* decrement remaining quantum */
     rlist.r_preempt--;
 #endif
-#ifdef CH_USE_SYSTEMTIME
-  rlist.r_stime++;
-#endif
-
-#ifdef CH_USE_VIRTUAL_TIMERS
   chVTDoTickI();
-#endif
 }
 
 /** @} */

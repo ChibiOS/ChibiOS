@@ -24,7 +24,6 @@
 
 #include <ch.h>
 
-#ifdef CH_USE_VIRTUAL_TIMERS
 DeltaList dlist;
 
 /**
@@ -35,6 +34,7 @@ void chVTInit(void) {
 
   dlist.dl_next = dlist.dl_prev = (void *)&dlist;
   dlist.dl_dtime = (systime_t)-1;
+  dlist.dl_stime = 0;
 }
 
 /**
@@ -86,6 +86,5 @@ void chVTResetI(VirtualTimer *vtp) {
   vtp->vt_next->vt_prev = vtp->vt_prev;
   vtp->vt_func = 0;
 }
-#endif /* CH_USE_VIRTUAL_TIMER */
 
 /** @} */

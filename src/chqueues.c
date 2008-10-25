@@ -108,7 +108,7 @@ msg_t chIQGet(Queue *qp) {
   return b;
 }
 
-#ifdef CH_USE_QUEUES_TIMEOUT
+#if defined(CH_USE_QUEUES_TIMEOUT) && defined(CH_USE_SEMAPHORES_TIMEOUT)
 /**
  * Gets a byte from the input queue, if the queue is empty then the
  * calling thread is suspended until a byte arrives in the queue or the
@@ -118,8 +118,8 @@ msg_t chIQGet(Queue *qp) {
  * @return A byte value from the queue.
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the queue was reset.
- * @note The function is available only if the \p CH_USE_QUEUES_TIMEOUT
- *       option is enabled in \p chconf.h.
+ * @note The function is available only if the \p CH_USE_QUEUES_TIMEOUT and
+ *       \p CH_USE_SEMAPHORES_TIMEOUT options are enabled in \p chconf.h.
  */
 msg_t chIQGetTimeout(Queue *qp, systime_t time) {
   uint8_t b;
@@ -142,7 +142,7 @@ msg_t chIQGetTimeout(Queue *qp, systime_t time) {
   chSysUnlock();
   return b;
 }
-#endif /* CH_USE_QUEUES_TIMEOUTS */
+#endif /* defined(CH_USE_QUEUES_TIMEOUT) && defined(CH_USE_SEMAPHORES_TIMEOUT) */
 
 /**
  * Reads some data from the input queue into the specified buffer. The function
@@ -358,7 +358,7 @@ msg_t chHDQGetReceive(HalfDuplexQueue *qp) {
   return b;
 }
 
-#ifdef CH_USE_QUEUES_TIMEOUT
+#if defined(CH_USE_QUEUES_TIMEOUT) && defined(CH_USE_SEMAPHORES_TIMEOUT)
 /**
  * Reads a byte from the receive queue, if the queue is empty or is in
  * transmission mode then the invoking thread is suspended.
@@ -366,8 +366,8 @@ msg_t chHDQGetReceive(HalfDuplexQueue *qp) {
  * @param time the number of ticks before the operation timouts
  * @return The byte value.
  * @retval Q_TIMEOUT if a timeout occurs.
- * @note The function is available only if the \p CH_USE_QUEUES_TIMEOUT
- *       option is enabled in \p chconf.h.
+ * @note The function is available only if the \p CH_USE_QUEUES_TIMEOUT and
+ *       \p CH_USE_SEMAPHORES_TIMEOUT options are enabled in \p chconf.h.
  */
 msg_t chHDQGetReceiveTimeout(HalfDuplexQueue *qp, systime_t time) {
   uint8_t b;
@@ -394,7 +394,7 @@ msg_t chHDQGetReceiveTimeout(HalfDuplexQueue *qp, systime_t time) {
   chSysUnlock();
   return b;
 }
-#endif
+#endif /* defined(CH_USE_QUEUES_TIMEOUT) && defined(CH_USE_SEMAPHORES_TIMEOUT) */
 
 /**
  * Writes a byte into the transmit queue. If the buffer contains unread

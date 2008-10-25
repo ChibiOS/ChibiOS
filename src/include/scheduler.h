@@ -48,9 +48,6 @@ typedef struct {
   /** the currently running thread */
   Thread                *r_current;
 #endif
-#ifdef CH_USE_SYSTEMTIME
-  volatile systime_t    r_stime;
-#endif
 } ReadyList;
 
 extern ReadyList rlist;

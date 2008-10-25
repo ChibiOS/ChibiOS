@@ -74,11 +74,15 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.7.3 ***
+- CHANGE: Removed the CH_USE_SYSTEMTIME and CH_USE_VIRTUAL_TIMER configuration
+  options in order to make the chconf.h file simpler. The related subsystems
+  are almost always required and are now always included.
 - Small optimization to the MSP430 serial driver.
 - Added dependency informations handling to the MSP430 demo Makefile.
 - Removed the performance spreadsheet (it was *very* old) and added a
   directory containing the test reports ./docs/reports. Each report shows the
   results from the latest test run on each target.
+- Small fixes in the documentation.
 
 *** 0.7.2 ***
 - NEW: Added a serial driver to the MSP430 port, the MSP430 port now has been

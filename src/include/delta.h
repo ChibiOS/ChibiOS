@@ -25,8 +25,6 @@
 #ifndef _DELTA_H_
 #define _DELTA_H_
 
-#ifdef CH_USE_VIRTUAL_TIMERS
-
 /** Virtual Timer callback function.*/
 typedef void (*vtfunc_t)(void *);
 
@@ -37,17 +35,17 @@ typedef struct VirtualTimer VirtualTimer;
  * @extends DeltaList
  */
 struct VirtualTimer {
-    /** Next timer in the delta list.*/
-    VirtualTimer    *vt_next;
-    /** Previous timer in the delta list.*/
-    VirtualTimer    *vt_prev;
-    /** Time delta before timeout.*/
-    systime_t       vt_dtime;
-    /** Timer callback function pointer. The pointer is reset to zero after
-        the callback is invoked.*/
-    vtfunc_t        vt_func;
-    /** Timer callback function parameter.*/
-    void            *vt_par;
+  /** Next timer in the delta list.*/
+  VirtualTimer          *vt_next;
+  /** Previous timer in the delta list.*/
+  VirtualTimer          *vt_prev;
+  /** Time delta before timeout.*/
+  systime_t             vt_dtime;
+  /** Timer callback function pointer. The pointer is reset to zero after
+      the callback is invoked.*/
+  vtfunc_t              vt_func;
+  /** Timer callback function parameter.*/
+  void                  *vt_par;
 };
 
 /**
@@ -57,17 +55,19 @@ struct VirtualTimer {
  *       is often used in the code.
  */
 typedef struct {
-    /** Next timer in the list (the one that will be triggered next).*/
-    VirtualTimer    *dl_next;
-    /** Last timer in the list.*/
-    VirtualTimer    *dl_prev;
-    /** Not used but it must be set to -1.*/
-    systime_t       dl_dtime;
+  /** Next timer in the list (the one that will be triggered next).*/
+  VirtualTimer          *dl_next;
+  /** Last timer in the list.*/
+  VirtualTimer          *dl_prev;
+  /** Not used but it must be set to -1.*/
+  systime_t             dl_dtime;
+  volatile systime_t    dl_stime;
 } DeltaList;
 
 extern DeltaList dlist;
 
 #define chVTDoTickI() {                                                 \
+  dlist.dl_stime++;                                                     \
   if (&dlist != (DeltaList *)dlist.dl_next) {                           \
     VirtualTimer *vtp;                                                  \
                                                                         \
@@ -99,8 +99,6 @@ extern "C" {
 
 /** Returns TRUE if the speciified timer is armed.*/
 #define chVTIsArmedI(vtp) ((vtp)->vt_func != NULL)
-
-#endif /* CH_USE_VIRTUAL_TIMER */
 
 #endif /* _DELTA_H_ */
 
