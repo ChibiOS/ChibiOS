@@ -74,10 +74,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.7.3 ***
+- CHANGE: Removed the files chsleep.c and sleep.h.
 - CHANGE: Renamed the files chdelta.c and delta.h to chvt.c and vt.h. All the
   system time related functions and macros are now moved here.
-- CHANGE: Removed the files chsleep.c and sleep.h, the content was moved in
-  other files.
 - CHANGE: Renamed the structure DeltaList to VTList, it includes the system
   time counter too now.
 - CHANGE: Removed the CH_USE_SYSTEMTIME and CH_USE_VIRTUAL_TIMER configuration
