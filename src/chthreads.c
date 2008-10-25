@@ -288,6 +288,17 @@ void chThdTerminate(Thread *tp) {
 }
 
 /**
+ * Suspends the invoking thread for the specified time.
+ * @param time the system ticks number
+ */
+void chThdSleep(systime_t time) {
+
+  chSysLock();
+  chSchGoSleepTimeoutS(PRSLEEP, time);
+  chSysUnlock();
+}
+
+/**
  * Terminates the current thread by specifying an exit status code.
  *
  * @param msg the thread exit code. The code can be retrieved by using

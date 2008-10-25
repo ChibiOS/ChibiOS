@@ -189,10 +189,11 @@ extern "C" {
   Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
                       size_t wsize, tfunc_t pf, void *arg);
   void chThdSetPriority(tprio_t newprio);
-  void chThdExit(msg_t msg);
   Thread *chThdResume(Thread *tp);
   void chThdSuspend(Thread **tpp);
   void chThdTerminate(Thread *tp);
+  void chThdSleep(systime_t time);
+  void chThdExit(msg_t msg);
 #ifdef CH_USE_WAITEXIT
   msg_t chThdWait(Thread *tp);
 #endif
@@ -265,6 +266,17 @@ extern "C" {
  */
 #define chThdCreateFast(prio, workspace, wsize, pf) \
         chThdCreateStatic(workspace, wsize, prio, pf, NULL)
+
+/**
+ * Suspends the invoking thread until the system time arrives to the specified
+ * value.
+ */
+#define chThdSleepUntil(t) {                                            \
+  chSysLock();                                                          \
+  chSchGoSleepTimeoutS(PRSLEEP,                                         \
+                      (systime_t)((t) - chSysGetTime()));               \
+  chSysUnlock();                                                        \
+}
 
 #endif  /* _THREADS_H_ */
 

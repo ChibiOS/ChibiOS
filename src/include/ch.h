@@ -31,7 +31,7 @@
 #include <chtypes.h>
 #include "lists.h"
 #include <chcore.h>
-#include "delta.h"
+#include "vt.h"
 #include "scheduler.h"
 #include "semaphores.h"
 #include "mutexes.h"
@@ -41,7 +41,6 @@
 #include "mempools.h"
 #include "threads.h"
 #include "inline.h"
-#include "sleep.h"
 #include "queues.h"
 #include "serial.h"
 #include "debug.h"

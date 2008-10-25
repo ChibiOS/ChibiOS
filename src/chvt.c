@@ -24,7 +24,7 @@
 
 #include <ch.h>
 
-DeltaList dlist;
+VTList vtlist;
 
 /**
  * Virtual Timers initialization.
@@ -32,9 +32,9 @@ DeltaList dlist;
  */
 void chVTInit(void) {
 
-  dlist.dl_next = dlist.dl_prev = (void *)&dlist;
-  dlist.dl_dtime = (systime_t)-1;
-  dlist.dl_stime = 0;
+  vtlist.vt_next = vtlist.vt_prev = (void *)&vtlist;
+  vtlist.vt_time = (systime_t)-1;
+  vtlist.vt_systime = 0;
 }
 
 /**
@@ -56,17 +56,17 @@ void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
   vtp->vt_par = par;
   vtp->vt_func = vtfunc;
   if (time) {
-    VirtualTimer *p = dlist.dl_next;
-    while (p->vt_dtime < time) {
-      time -= p->vt_dtime;
+    VirtualTimer *p = vtlist.vt_next;
+    while (p->vt_time < time) {
+      time -= p->vt_time;
       p = p->vt_next;
     }
 
     vtp->vt_prev = (vtp->vt_next = p)->vt_prev;
     vtp->vt_prev->vt_next = p->vt_prev = vtp;
-    vtp->vt_dtime = time;
-    if (p != (void *)&dlist)
-      p->vt_dtime -= time;
+    vtp->vt_time = time;
+    if (p != (void *)&vtlist)
+      p->vt_time -= time;
   }
   else
     vtp->vt_next = vtp->vt_prev = vtp; // Allows a chVTResetI() on the fake timer.
@@ -80,11 +80,23 @@ void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
  */
 void chVTResetI(VirtualTimer *vtp) {
 
-  if (vtp->vt_next != (void *)&dlist)
-    vtp->vt_next->vt_dtime += vtp->vt_dtime;
+  if (vtp->vt_next != (void *)&vtlist)
+    vtp->vt_next->vt_time += vtp->vt_time;
   vtp->vt_prev->vt_next = vtp->vt_next;
   vtp->vt_next->vt_prev = vtp->vt_prev;
   vtp->vt_func = 0;
+}
+
+/**
+ * Checks if the current system time is within the specified time window.
+ * @param start the start of the time window (inclusive)
+ * @param end the end of the time window (non inclusive)
+ */
+bool_t chSysInTimeWindow(systime_t start, systime_t end) {
+
+  systime_t time = chSysGetTime();
+  return end >= start ? (time >= start) && (time < end) :
+                        (time >= start) || (time < end);
 }
 
 /** @} */

@@ -348,20 +348,11 @@
 /** @} */
 
 /**
- * @defgroup VirtualTimers Virtual Timers
+ * @defgroup Time Time and Virtual Timers
  * @{
- * Virtual Timers APIs.
- * @file src/chdelta.c Virtual Timers code.
- * @file delta.h Virtual Timers macros and structures.
- */
-/** @} */
-
-/**
- * @defgroup Time Time
- * @{
- * Time related APIs.
- * @file include/sleep.h Time macros and structures.
- * @file chsleep.c Time functions.
+ * Time and Virtual Timers related APIs.
+ * @file include/vt.h Time macros and structures.
+ * @file chvt.c Time functions.
  */
 /** @} */
 
