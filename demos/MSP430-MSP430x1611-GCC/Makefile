@@ -113,6 +113,9 @@ CPFLAGS = $(MCFLAGS) $(OPT) $(WARN) -Wa,-alms=$(<:.c=.lst) $(DEFS)
 LDFLAGS = $(MCFLAGS) -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
 ODFLAGS	= -x --syms
 
+# Generate dependency information
+CPFLAGS += -MD -MP -MF .dep/$(@F).d
+
 #
 # Makefile rules
 #
@@ -150,5 +153,11 @@ clean:
 	-rm -f $(SRC:.c=.lst)
 	-rm -f $(ASMSRC:.s=.s.bak)
 	-rm -f $(ASMSRC:.s=.lst)
+	-rm -fR .dep
+
+#
+# Include the dependency files, should be the last of the makefile
+#
+-include $(shell mkdir .dep 2>/dev/null) $(wildcard .dep/*)
 
 # *** EOF ***
