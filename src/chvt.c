@@ -46,7 +46,7 @@ void chVTInit(void) {
  *               reused.
  * @param par a parameter that will be passed to the callback function
  * @note Must be called with the interrupts disabled.
- * @note The associated function is invoked from an interrupt handler.
+ * @note The associated function is invoked by an interrupt handler.
  */
 void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
   VirtualTimer *p;
