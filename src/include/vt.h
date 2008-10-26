@@ -34,13 +34,13 @@
  * Time conversion utility. Converts from milliseconds to system ticks number.
  * @note The result is rounded upward to the next tick boundary.
  */
-#define MS2ST(msec) ((systime_t)(((((msec) - 1L) * CH_FREQUENCY) / 1000) + 1))
+#define MS2ST(msec) ((systime_t)(((((msec) - 1L) * CH_FREQUENCY) / 1000L) + 1L))
 
 /**
  * Time conversion utility. Converts from microseconds to system ticks number.
  * @note The result is rounded upward to the next tick boundary.
  */
-#define US2ST(usec) ((systime_t)(((((usec) - 1L) * CH_FREQUENCY) / 1000000) + 1))
+#define US2ST(usec) ((systime_t)(((((usec) - 1L) * CH_FREQUENCY) / 1000000L) + 1L))
 
 /** Virtual Timer callback function.*/
 typedef void (*vtfunc_t)(void *);
@@ -85,12 +85,12 @@ typedef struct {
 extern VTList vtlist;
 
 #define chVTDoTickI() {                                                 \
-  vtlist.vt_systime++;                                                    \
+  vtlist.vt_systime++;                                                  \
   if (&vtlist != (VTList *)vtlist.vt_next) {                            \
     VirtualTimer *vtp;                                                  \
                                                                         \
-    --vtlist.vt_next->vt_time;                                         \
-    while (!(vtp = vtlist.vt_next)->vt_time) {                         \
+    --vtlist.vt_next->vt_time;                                          \
+    while (!(vtp = vtlist.vt_next)->vt_time) {                          \
       vtfunc_t fn = vtp->vt_func;                                       \
       vtp->vt_func = NULL;                                              \
       (vtp->vt_next->vt_prev = (void *)&vtlist)->vt_next = vtp->vt_next;\
@@ -98,9 +98,6 @@ extern VTList vtlist;
     }                                                                   \
   }                                                                     \
 }
-
-/** Infinite time specification.*/
-#define TIME_INFINITE 0
 
 /*
  * Virtual Timers APIs.

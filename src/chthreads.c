@@ -289,12 +289,25 @@ void chThdTerminate(Thread *tp) {
 
 /**
  * Suspends the invoking thread for the specified time.
- * @param time the system ticks number
+ * @param time the delay in system ticks
  */
 void chThdSleep(systime_t time) {
 
   chSysLock();
   chSchGoSleepTimeoutS(PRSLEEP, time);
+  chSysUnlock();
+}
+
+/**
+ * Suspends the invoking thread until the system time arrives to the specified
+ * value.
+ * @param time the absolute system time
+ */
+void chThdSleepUntil(systime_t time) {
+
+  chSysLock();
+  if ((time -= chSysGetTime()) > 0)
+    chSchGoSleepTimeoutS(PRSLEEP, time);
   chSysUnlock();
 }
 

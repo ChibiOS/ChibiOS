@@ -74,6 +74,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.7.3 ***
+- FIX: Fixed a bug in chThdSleepUntil(), this API is no more a macro now.
+- NEW: New chThdSleepSeconds(), chThdSleepMilliseconds() and
+  chThdSleepMicroseconds() utility macros.
+- CHANGE: Zero is no more a valid time specification for the chVTSetI() API.
 - CHANGE: Removed the files chsleep.c and sleep.h.
 - CHANGE: Renamed the files chdelta.c and delta.h to chvt.c and vt.h. All the
   system time related functions and macros are now moved here.

@@ -32,6 +32,10 @@
 /** Returned when the thread was made ready because of a reset. */
 #define RDY_RESET   -2
 
+/** Infinite time specification for all the syscalls with a timeout
+    specification.*/
+#define TIME_INFINITE 0
+
 /** The priority of the first thread on the given ready list. */
 #define firstprio(rlp)   ((rlp)->p_next->p_prio)
 

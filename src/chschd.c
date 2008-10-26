@@ -111,19 +111,25 @@ static void wakeup(void *p) {
  * the specified time has elapsed.
  *
  * @param newstate the new thread state
- * @param time the number of ticks before the operation timeouts
+ * @param time the number of ticks before the operation timeouts. the value
+ *             zero (\p TIME_INFINITE) is allowed.
  * @return The wakeup message.
  * @retval RDY_TIMEOUT if a timeout occurs.
  * @note The function must be called in the system mutex zone.
  * @note The function is not meant to be used in the user code directly.
  */
 msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
-  VirtualTimer vt;
 
-  chVTSetI(&vt, time, wakeup, currp);
-  chSchGoSleepS(newstate);
-  if (chVTIsArmedI(&vt))
-    chVTResetI(&vt);
+  if (TIME_INFINITE != time) {
+    VirtualTimer vt;
+
+    chVTSetI(&vt, time, wakeup, currp);
+    chSchGoSleepS(newstate);
+    if (chVTIsArmedI(&vt))
+      chVTResetI(&vt);
+  }
+  else
+    chSchGoSleepS(newstate);
   return currp->p_rdymsg;
 }
 
