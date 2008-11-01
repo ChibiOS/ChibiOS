@@ -87,6 +87,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   options in order to make the chconf.h file simpler. The related subsystems
   are almost always required and are now always included.
 - Small optimization to the MSP430 serial driver.
+- Improvements to the test code, now a failed assert terminates the test case.
 - Added dependency informations handling to the MSP430 demo Makefile.
 - Removed the performance spreadsheet (it was *very* old) and added a
   directory containing the test reports ./docs/reports. Each report shows the
