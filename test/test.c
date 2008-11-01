@@ -135,32 +135,35 @@ void test_emit_token(char token) {
 /*
  * Assertions.
  */
-void test_fail(char * msg) {
+bool_t _test_fail(char * msg) {
 
   local_fail = TRUE;
   global_fail = TRUE;
   failmsg = msg;
+  return TRUE;
 }
 
-void test_assert(bool_t condition, char * msg) {
+bool_t _test_assert(bool_t condition, char * msg) {
 
   if (!condition)
-    test_fail(msg);
+    return _test_fail(msg);
+  return FALSE;
 }
 
-void test_assert_sequence(char *expected) {
+bool_t _test_assert_sequence(char *expected) {
   char *cp = tokens_buffer;
   while (cp < tokp) {
     if (*cp++ != *expected++)
-      test_fail(NULL);
+     return _test_fail(NULL);
   }
   if (*expected)
-    test_fail(NULL);
+    return _test_fail(NULL);
+  return FALSE;
 }
 
-void test_assert_time_window(systime_t start, systime_t end) {
+bool_t _test_assert_time_window(systime_t start, systime_t end) {
 
-  test_assert(chSysInTimeWindow(start, end), "time window error");
+  return _test_assert(chSysInTimeWindow(start, end), "time window error");
 }
 
 /*

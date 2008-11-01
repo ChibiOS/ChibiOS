@@ -46,10 +46,10 @@ extern "C" {
   void test_print(char *msgp);
   void test_println(char *msgp);
   void test_emit_token(char token);
-  void test_fail(char * msg);
-  void test_assert(bool_t condition, char * msg);
-  void test_assert_sequence(char *expected);
-  void test_assert_time_window(systime_t start, systime_t end);
+  bool_t _test_fail(char * msg);
+  bool_t _test_assert(bool_t condition, char * msg);
+  bool_t _test_assert_sequence(char *expected);
+  bool_t _test_assert_time_window(systime_t start, systime_t end);
   void test_terminate_threads(void);
   void test_wait_threads(void);
   systime_t test_wait_tick(void);
@@ -61,6 +61,26 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#define test_fail(msg) {                                                \
+  test_fail(msg);                                                       \
+  return;                                                               \
+}
+
+#define test_assert(condition, msg) {                                   \
+  if (_test_assert(condition, msg))                                     \
+    return;                                                             \
+}
+
+#define test_assert_sequence(expected) {                                \
+  if (_test_assert_sequence(expected))                                  \
+    return;                                                             \
+}
+
+#define test_assert_time_window(start, end) {                           \
+  if (_test_assert_time_window(start, end))                             \
+    return;                                                             \
+}
 
 extern Thread *threads[MAX_THREADS];
 extern void *wa[MAX_THREADS];

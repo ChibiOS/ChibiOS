@@ -58,8 +58,8 @@ static void mtx1_execute(void) {
   threads[3] = chThdCreateStatic(wa[3], STKSIZE, prio+4, thread1, "B");
   threads[4] = chThdCreateStatic(wa[4], STKSIZE, prio+5, thread1, "A");
   chMtxUnlock();
-  test_assert(prio == chThdGetPriority(), "priority return failure");
   test_wait_threads();
+  test_assert(prio == chThdGetPriority(), "priority return failure");
   test_assert_sequence("ABCDE");
 }
 
