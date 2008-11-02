@@ -136,7 +136,6 @@ CPFLAGS += -MD -MP -MF .dep/$(@F).d
 #
 # Makefile rules
 #
-
 all: $(OBJS) $(PROJECT).elf $(PROJECT).hex $(PROJECT).bin $(PROJECT).dmp
 
 $(COBJS) : %.o : %.c
