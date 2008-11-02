@@ -292,3 +292,40 @@ const struct testcase testbmk7 = {
   empty,
   bmk7_execute
 };
+
+static char *bmk8_gettest(void) {
+
+  return "Benchmark, virtual timers set/reset";
+}
+
+static void tmo(void *param) {}
+
+static void bmk8_execute(void) {
+  static VirtualTimer vt1, vt2;
+  uint32_t n = 0;
+
+  test_wait_tick();
+  test_start_timer(1000);
+  do {
+    chSysLock();
+    chVTSetI(&vt1, 1, tmo, NULL);
+    chVTSetI(&vt2, 10000, tmo, NULL);
+    chVTResetI(&vt1);
+    chVTResetI(&vt2);
+    chSysUnlock();
+    n++;
+#if defined(WIN32)
+    ChkIntSources();
+#endif
+  } while (!test_timer_done);
+  test_print("--- Score : ");
+  test_printn(n * 2);
+  test_println(" timers/S");
+}
+
+const struct testcase testbmk8 = {
+  bmk8_gettest,
+  empty,
+  empty,
+  bmk8_execute
+};
