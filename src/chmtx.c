@@ -32,7 +32,7 @@
  */
 void chMtxInit(Mutex *mp) {
 
-  fifo_init(&mp->m_queue);
+  queue_init(&mp->m_queue);
   mp->m_owner = NULL;
 }
 

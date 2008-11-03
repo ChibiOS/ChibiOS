@@ -43,7 +43,7 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
   list_init(&tp->p_waiting);
 #endif
 #ifdef CH_USE_MESSAGES
-  fifo_init(&tp->p_msgqueue);
+  queue_init(&tp->p_msgqueue);
 #endif
 #ifdef CH_USE_EVENTS
   tp->p_epending = 0;

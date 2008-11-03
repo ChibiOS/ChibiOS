@@ -34,7 +34,7 @@ ReadyList rlist;
  */
 void chSchInit(void) {
 
-  fifo_init(&rlist.r_queue);
+  queue_init(&rlist.r_queue);
   rlist.r_prio = NOPRIO;
 #ifdef CH_USE_ROUNDROBIN
   rlist.r_preempt = CH_TIME_QUANTUM;

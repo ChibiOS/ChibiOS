@@ -34,7 +34,7 @@
 void chSemInit(Semaphore *sp, cnt_t n) {
 
   chDbgAssert(n >= 0, "chsem.c, chSemInit()");
-  fifo_init(&sp->s_queue);
+  queue_init(&sp->s_queue);
   sp->s_cnt = n;
 }
 

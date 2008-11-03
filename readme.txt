@@ -75,6 +75,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 
 *** 0.7.4 ***
 - Added a new benchmark to the test suite (timers set/reset performance).
+- Renamed the macro fifo_init() to queue_init() because it is used to init
+  both FIFO queues and priority queues.
 
 *** 0.7.3 ***
 - FIX: Fixed a bug in chThdSleepUntil(), this API is no more a macro now.

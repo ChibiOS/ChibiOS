@@ -53,7 +53,7 @@ typedef struct {
 /*
  * Threads Lists functions and macros.
  */
-#define fifo_init(tqp) ((tqp)->p_next = (tqp)->p_prev = (Thread *)(tqp));
+#define queue_init(tqp) ((tqp)->p_next = (tqp)->p_prev = (Thread *)(tqp));
 #define list_init(tlp) ((tlp)->p_next = (Thread *)(tlp))
 
 #ifndef CH_OPTIMIZE_SPEED
