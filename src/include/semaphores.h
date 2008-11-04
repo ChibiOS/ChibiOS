@@ -29,7 +29,6 @@
 
 /**
  * Semaphore structure.
- * @extends ThreadsQueue
  */
 typedef struct {
   /** Queue of the threads sleeping on this Semaphore.*/

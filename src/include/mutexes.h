@@ -29,7 +29,6 @@
 
 /**
  * Mutex structure.
- * @extends ThreadsQueue
  */
 typedef struct Mutex {
   /** Queue of the threads sleeping on this Mutex.*/

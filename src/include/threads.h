@@ -149,19 +149,6 @@ struct Thread {
 #define P_TERMINATE             4       /* Termination requested.       */
 #define P_SUSPENDED             8       /* Create suspended (old).      */
 
-/** Pseudo priority used by the ready list header, do not use.*/
-#define NOPRIO      0
-/** Idle thread priority.*/
-#define IDLEPRIO    1
-/** Lowest user priority.*/
-#define LOWPRIO     2
-/** Normal user priority.*/
-#define NORMALPRIO  64
-/** Highest user priority.*/
-#define HIGHPRIO    127
-/** Greatest possible priority.*/
-#define ABSPRIO     255
-
 /* Not an API, don't use into the application code.*/
 Thread *init_thread(Thread *tp, tprio_t prio);
 
