@@ -27,19 +27,18 @@
 
 #ifdef CH_USE_MUTEXES
 
-typedef struct Mutex Mutex;
-
 /**
  * Mutex structure.
+ * @extends ThreadsQueue
  */
-struct Mutex {
+typedef struct Mutex {
   /** Queue of the threads sleeping on this Mutex.*/
   ThreadsQueue  m_queue;
   /** Owner \p Thread pointer or \p NULL.*/
   Thread        *m_owner;
   /** Next \p Mutex into an owner-list, \p NULL if none.*/
-  Mutex         *m_next;
-};
+  struct Mutex  *m_next;
+} Mutex;
 
 #ifdef __cplusplus
 extern "C" {
