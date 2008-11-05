@@ -74,6 +74,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.7.4 ***
+- CHANGE: Modified chDbgAssert() to syntax check the condition even when the
+  CH_USE_DEBUG is disabled, it produces no code but allows to check the
+  option without have to compile twice.
 - Added a new benchmark to the test suite (timers set/reset performance).
 - Renamed the macro fifo_init() to queue_init() because it is used to init
   both FIFO queues and priority queues.
