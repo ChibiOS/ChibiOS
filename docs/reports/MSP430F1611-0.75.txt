@@ -71,5 +71,9 @@ Settings: MCLK=DCOCLK 750Khz
 --- Score : 5432 bytes/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
+--- Test Case 20 (Benchmark, virtual timers set/reset)
+--- Score : 5636 timers/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
 
 Final result: SUCCESS

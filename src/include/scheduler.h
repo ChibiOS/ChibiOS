@@ -57,8 +57,14 @@
  * @extends ThreadsQueue
  */
 typedef struct {
-  ThreadsQueue          r_queue;
+  /** Next \p Thread in the ready list.*/
+  Thread            *p_next;
+  /** Previous \p Thread in the ready list.*/
+  Thread            *p_prev;
+  /* End of the fields shared with the ThreadsQueue structure. */
+  /** The thread priority.*/
   tprio_t               r_prio;
+  /* End of the fields shared with the Thread structure. */
 #ifdef CH_USE_ROUNDROBIN
   cnt_t                 r_preempt;
 #endif
