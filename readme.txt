@@ -85,8 +85,6 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   All the "wait"-type APIs have a timeout-capable variant.
 - CHANGE: The old chEvtWait() and chEvtWaitTimeout() APIs are now deprecated
   and will be removed in version 1.0.0.
-- CHANGE: Removed the CH_USE_EVENT_TIMEOUT configuration option in order to
-  make the chconf.h file simpler.
 - CHANGE: Modified chDbgAssert() to syntax check the condition even when the
   CH_USE_DEBUG is disabled, it produces no code but allows to check the
   optional code without have to compile twice.

@@ -147,6 +147,146 @@ void chEvtBroadcastI(EventSource *esp) {
 }
 
 /**
+ * Invokes the event handlers associated with a mask.
+ * @param mask mask of the events that should be invoked by the function,
+ *               \p ALL_EVENTS enables all the sources
+ * @param handlers an array of \p evhandler_t. The array must be
+ *                 have indexes from zero up the higher registered event
+ *                 identifier. The array can be \p NULL or contain \p NULL
+ *                 elements (no callbacks specified).
+ */
+void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask) {
+  eventid_t i;
+  eventmask_t m;
+
+  i = 0, m = 1;
+  while ((mask & m) == 0) {
+    i += 1, m <<= 1;
+    mask &= ~m;
+    handlers[i](i);
+  }
+}
+
+#if defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENT_TIMEOUT)
+/**
+ * A pending event among those specified in \p ewmask is selected, cleared and
+ * its mask returned.
+ * @param ewmask mask of the events that the function should wait for,
+ *               \p ALL_EVENTS enables all the events
+ * @return The mask of the lowest id served and cleared event.
+ * @note Only a single event is served in the function, the one with the
+ *       lowest event id. The function is meant to be invoked into a loop in
+ *       order to serve all the pending events.<br>
+ *       This means that Event Listeners with a lower event identifier have
+ *       an higher priority.
+ */
+eventmask_t chEvtWaitOne(eventmask_t ewmask) {
+  eventmask_t m;
+
+  chSysLock();
+
+  if ((m = (currp->p_epending & ewmask)) == 0) {
+    currp->p_ewmask = ewmask;
+    chSchGoSleepS(PRWTOREVT);
+    m = currp->p_epending & ewmask;
+  }
+  m &= -m;
+  currp->p_epending &= ~m;
+
+  chSysUnlock();
+  return m;
+}
+
+/**
+ * Waits for any of the specified events.
+ * The function waits for any event among those specified in \p ewmask to
+ * become pending then the events are cleared and returned.
+ * @param ewmask mask of the events that the function should wait for,
+ *               \p ALL_EVENTS enables all the events
+ * @return The mask of the served and cleared events.
+ */
+eventmask_t chEvtWaitAny(eventmask_t ewmask) {
+  eventmask_t m;
+
+  chSysLock();
+
+  if ((m = (currp->p_epending & ewmask)) == 0) {
+    currp->p_ewmask = ewmask;
+    chSchGoSleepS(PRWTOREVT);
+    m = currp->p_epending & ewmask;
+  }
+  currp->p_epending &= ~m;
+
+  chSysUnlock();
+  return m;
+}
+
+/**
+ * Waits for all the specified event flags then clears them.
+ * The function waits for all the events specified in \p ewmask to become
+ * pending then the events are cleared and returned.
+ * @param ewmask mask of the event ids that the function should wait for
+ * @return The mask of the served and cleared events.
+ */
+eventmask_t chEvtWaitAll(eventmask_t ewmask) {
+
+  chSysLock();
+
+  if ((currp->p_epending & ewmask) != ewmask) {
+    currp->p_ewmask = ewmask;
+    chSchGoSleepS(PRWTOREVT);
+  }
+  currp->p_epending &= ~ewmask;
+
+  chSysUnlock();
+  return ewmask;
+}
+
+/**
+ * The function waits for an event and returns the event identifier, if an
+ * event handler is specified then the handler is executed before returning.
+ * @param ewmask mask of the events that should be served by the function,
+ *               \p ALL_EVENTS enables all the sources
+ * @param handlers an array of \p evhandler_t. The array must be
+ *                 have indexes from zero up the higher registered event
+ *                 identifier. The array can be \p NULL or contain \p NULL
+ *                 elements (no callbacks specified).
+ * @return The event identifier.
+ * @note Only a single event is served in the function, the one with the
+ *       lowest event id. The function is meant to be invoked into a loop so
+ *       that all events are received and served.<br>
+ *       This means that Event Listeners with a lower event identifier have
+ *       an higher priority.
+ * @deprecated Please use \p chEvtWaitOne() and \p chEvtDispatch() instead,
+ *             this function will be removed in version 1.0.0.
+ */
+eventid_t chEvtWait(eventmask_t ewmask,
+                    const evhandler_t handlers[]) {
+  eventid_t i;
+  eventmask_t m;
+
+  chSysLock();
+
+  if ((currp->p_epending & ewmask) == 0) {
+    currp->p_ewmask = ewmask;
+    chSchGoSleepS(PRWTOREVT);
+  }
+  i = 0, m = 1;
+  while ((currp->p_epending & ewmask & m) == 0)
+    i += 1, m <<= 1;
+  currp->p_epending &= ~m;
+
+  chSysUnlock();
+
+  if (handlers && handlers[i])
+    handlers[i](i);
+
+  return i;
+}
+#endif /* defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENT_TIMEOUT) */
+
+#ifdef CH_USE_EVENT_TIMEOUT
+/**
  * Waits for a single event.
  * A pending event among those specified in \p ewmask is selected, cleared and
  * its mask returned.
@@ -172,7 +312,6 @@ eventmask_t chEvtWaitOneTimeout(eventmask_t ewmask, systime_t time) {
       return (eventmask_t)0;
     m = currp->p_epending & ewmask;
   }
-//  m ^= m & (m - 1);
   m &= -m;
   currp->p_epending &= ~m;
 
@@ -232,51 +371,6 @@ eventmask_t chEvtWaitAllTimeout(eventmask_t ewmask, systime_t time) {
 }
 
 /**
- * Invokes the event handlers associated with a mask.
- * @param mask mask of the events that should be invoked by the function,
- *               \p ALL_EVENTS enables all the sources
- * @param handlers an array of \p evhandler_t. The array must be
- *                 have indexes from zero up the higher registered event
- *                 identifier. The array can be \p NULL or contain \p NULL
- *                 elements (no callbacks specified).
- */
-void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask) {
-  eventid_t i;
-  eventmask_t m;
-
-  i = 0, m = 1;
-  while ((mask & m) == 0) {
-    i += 1, m <<= 1;
-    mask &= ~m;
-    handlers[i](i);
-  }
-}
-
-/**
- * The function waits for an event and returns the event identifier, if an
- * event handler is specified then the handler is executed before returning.
- * @param ewmask mask of the events that should be served by the function,
- *               \p ALL_EVENTS enables all the sources
- * @param handlers an array of \p evhandler_t. The array must be
- *                 have indexes from zero up the higher registered event
- *                 identifier. The array can be \p NULL or contain \p NULL
- *                 elements (no callbacks specified).
- * @return The event identifier.
- * @note Only a single event is served in the function, the one with the
- *       lowest event id. The function is meant to be invoked into a loop so
- *       that all events are received and served.<br>
- *       This means that Event Listeners with a lower event identifier have
- *       an higher priority.
- * @deprecated Please use \p chEvtWaitOne() and \p chEvtDispatch() instead,
- *             this function will be removed in version 1.0.0.
- */
-eventid_t chEvtWait(eventmask_t ewmask,
-                    const evhandler_t handlers[]) {
-
-  return chEvtWaitTimeout(ewmask, handlers, TIME_INFINITE);
-}
-
-/**
  * The function waits for an event or the specified timeout then returns the
  * event identifier, if an event handler is specified then the handler is
  * executed before returning.
@@ -322,6 +416,7 @@ eventid_t chEvtWaitTimeout(eventmask_t ewmask,
 
   return i;
 }
+#endif /* CH_USE_EVENT_TIMEOUT */
 
 #endif /* CH_USE_EVENTS */
 

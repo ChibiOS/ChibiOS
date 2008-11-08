@@ -59,6 +59,12 @@
  *  the kernel.*/
 #define CH_USE_EVENTS
 
+/** Configuration option: if specified then the \p chEvtWaitXXXTimeout()
+ * functions are included in the kernel.
+ * @note requires \p CH_USE_EVENTS.
+ */
+#define CH_USE_EVENTS_TIMEOUT
+
 /** Configuration option: if specified then the Synchronous Messages APIs are
  *  included in the kernel.*/
 #define CH_USE_MESSAGES
