@@ -76,14 +76,34 @@ void chEvtUnregister(EventSource *esp, EventListener *elp) {
 /**
  * Clears the pending events specified in the mask.
  * @param mask the events to be cleared
+ * @return The pending events that were cleared.
  */
-void chEvtClear(eventmask_t mask) {
+eventmask_t chEvtClear(eventmask_t mask) {
+  eventmask_t m;
 
   chSysLock();
 
+  m = currp->p_epending & mask;
   currp->p_epending &= ~mask;
 
   chSysUnlock();
+  return m;
+}
+
+/**
+ * Makes an events mask pending in the current thread, this is \b much faster than
+ * using \p chEvtBreadcast().
+ * @param mask the events to be pended
+ * @return The current pending events mask.
+ */
+eventmask_t chEvtPend(eventmask_t mask) {
+
+  chSysLock();
+
+  mask = (currp->p_epending |= mask);
+
+  chSysUnlock();
+  return mask;
 }
 
 /**
@@ -113,13 +133,125 @@ void chEvtBroadcastI(EventSource *esp) {
     Thread *tp = elp->el_listener;
 
     tp->p_epending |= EventMask(elp->el_id);
-    if ((tp->p_state == PRWTEVENT) && (tp->p_epending & tp->p_ewmask))
+
+    /* Test on the AND/OR conditions wait states.*/
+    if ((tp->p_state == PRWTOREVT) &&
+        ((tp->p_epending & tp->p_ewmask) != 0))
       chSchReadyI(tp)->p_rdymsg = RDY_OK;
+    else if ((tp->p_state == PRWTANDEVT) &&
+             ((tp->p_epending & tp->p_ewmask) == tp->p_ewmask))
+      chSchReadyI(tp)->p_rdymsg = RDY_OK;
+
     elp = elp->el_next;
   }
 }
 
-#ifdef CH_USE_EVENTS_TIMEOUT
+/**
+ * Waits for a single event.
+ * A pending event among those specified in \p ewmask is selected, cleared and
+ * its mask returned.
+ * @param ewmask mask of the events that the function should wait for,
+ *               \p ALL_EVENTS enables all the events
+ * @param time the number of ticks before the operation timouts
+ * @return The mask of the lowest id served and cleared event.
+ * @retval 0 if the specified timeout expired
+ * @note Only a single event is served in the function, the one with the
+ *       lowest event id. The function is meant to be invoked into a loop in
+ *       order to serve all the pending events.<br>
+ *       This means that Event Listeners with a lower event identifier have
+ *       an higher priority.
+ */
+eventmask_t chEvtWaitOneTimeout(eventmask_t ewmask, systime_t time) {
+  eventmask_t m;
+
+  chSysLock();
+
+  if ((m = (currp->p_epending & ewmask)) == 0) {
+    currp->p_ewmask = ewmask;
+    if (chSchGoSleepTimeoutS(PRWTOREVT, time) < RDY_OK)
+      return (eventmask_t)0;
+    m = currp->p_epending & ewmask;
+  }
+//  m ^= m & (m - 1);
+  m &= -m;
+  currp->p_epending &= ~m;
+
+  chSysUnlock();
+  return m;
+}
+
+/**
+ * Waits for any of the specified events.
+ * The function waits for any event among those specified in \p ewmask to
+ * become pending then the events are cleared and returned.
+ * @param ewmask mask of the events that the function should wait for,
+ *               \p ALL_EVENTS enables all the events
+ * @param time the number of ticks before the operation timouts
+ * @return The mask of the served and cleared events.
+ * @retval 0 if the specified timeout expired
+ */
+eventmask_t chEvtWaitAnyTimeout(eventmask_t ewmask, systime_t time) {
+  eventmask_t m;
+
+  chSysLock();
+
+  if ((m = (currp->p_epending & ewmask)) == 0) {
+    currp->p_ewmask = ewmask;
+    if (chSchGoSleepTimeoutS(PRWTOREVT, time) < RDY_OK)
+      return (eventmask_t)0;
+    m = currp->p_epending & ewmask;
+  }
+  currp->p_epending &= ~m;
+
+  chSysUnlock();
+  return m;
+}
+
+/**
+ * Waits for all the specified event flags then clears them.
+ * The function waits for all the events specified in \p ewmask to become
+ * pending then the events are cleared and returned.
+ * @param ewmask mask of the event ids that the function should wait for
+ * @param time the number of ticks before the operation timouts
+ * @return The mask of the served and cleared events.
+ * @retval 0 if the specified timeout expired
+ */
+eventmask_t chEvtWaitAllTimeout(eventmask_t ewmask, systime_t time) {
+
+  chSysLock();
+
+  if ((currp->p_epending & ewmask) != ewmask) {
+    currp->p_ewmask = ewmask;
+    if (chSchGoSleepTimeoutS(PRWTANDEVT, time) < RDY_OK)
+      return (eventmask_t)0;
+  }
+  currp->p_epending &= ~ewmask;
+
+  chSysUnlock();
+  return ewmask;
+}
+
+/**
+ * Invokes the event handlers associated with a mask.
+ * @param mask mask of the events that should be invoked by the function,
+ *               \p ALL_EVENTS enables all the sources
+ * @param handlers an array of \p evhandler_t. The array must be
+ *                 have indexes from zero up the higher registered event
+ *                 identifier. The array can be \p NULL or contain \p NULL
+ *                 elements (no callbacks specified).
+ */
+void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask) {
+  eventid_t i;
+  eventmask_t m;
+
+  i = 0, m = 1;
+  while ((mask & m) == 0) {
+    i += 1, m <<= 1;
+    mask &= ~m;
+    handlers[i](i);
+  }
+}
+
 /**
  * The function waits for an event and returns the event identifier, if an
  * event handler is specified then the handler is executed before returning.
@@ -135,6 +267,8 @@ void chEvtBroadcastI(EventSource *esp) {
  *       that all events are received and served.<br>
  *       This means that Event Listeners with a lower event identifier have
  *       an higher priority.
+ * @deprecated Please use \p chEvtWaitOne() and \p chEvtDispatch() instead,
+ *             this function will be removed in version 1.0.0.
  */
 eventid_t chEvtWait(eventmask_t ewmask,
                     const evhandler_t handlers[]) {
@@ -160,8 +294,8 @@ eventid_t chEvtWait(eventmask_t ewmask,
  *       that all events are received and served.<br>
  *       This means that Event Listeners with a lower event identifier have
  *       an higher priority.
- * @note The function is available only if the \p CH_USE_EVENTS_TIMEOUT
- *       option is enabled in \p chconf.h.
+ * @deprecated Please use \p chEvtWaitOneTimeout() and \p chEvtDispatch()
+ *             instead, this function will be removed in version 1.0.0.
  */
 eventid_t chEvtWaitTimeout(eventmask_t ewmask,
                            const evhandler_t handlers[],
@@ -173,7 +307,7 @@ eventid_t chEvtWaitTimeout(eventmask_t ewmask,
 
   if ((currp->p_epending & ewmask) == 0) {
     currp->p_ewmask = ewmask;
-    if (chSchGoSleepTimeoutS(PRWTEVENT, time) < RDY_OK)
+    if (chSchGoSleepTimeoutS(PRWTOREVT, time) < RDY_OK)
       return RDY_TIMEOUT;
   }
   i = 0, m = 1;
@@ -188,33 +322,6 @@ eventid_t chEvtWaitTimeout(eventmask_t ewmask,
 
   return i;
 }
-
-#else /* !CH_USE_EVENTS_TIMEOUT */
-eventid_t chEvtWait(eventmask_t ewmask,
-                    const evhandler_t handlers[]) {
-  eventid_t i;
-  eventmask_t m;
-
-  chSysLock();
-
-  if ((currp->p_epending & ewmask) == 0) {
-    currp->p_ewmask = ewmask;
-    chSchGoSleepS(PRWTEVENT);
-  }
-  i = 0, m = 1;
-  while ((currp->p_epending & ewmask & m) == 0)
-    i += 1, m <<= 1;
-  currp->p_epending &= ~m;
-
-  chSysUnlock();
-
-  if (handlers && handlers[i])
-    handlers[i](i);
-
-  return i;
-}
-
-#endif /* CH_USE_EVENTS_TIMEOUT */
 
 #endif /* CH_USE_EVENTS */
 

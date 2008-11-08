@@ -73,10 +73,23 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
-*** 0.7.4 ***
+*** 0.8.0 ***
+- NEW: Improved events subsystems, now it is also possible to use it just as
+  "event flags" without have to use event handler callbacks.
+  Some new APIs were introduced:
+  * chEvtWaitOne()  - Wait for a single event.
+  * chEvtWaitAny()  - Wait with OR condition.
+  * chEvtWaitAll()  - Wait with AND condition.
+  * chEvtDispatch() - Invokes the event handlers associated to a mask.
+  * chEvtPend()     - Quickly self-pends some events.
+  All the "wait"-type APIs have a timeout-capable variant.
+- CHANGE: The old chEvtWait() and chEvtWaitTimeout() APIs are now deprecated
+  and will be removed in version 1.0.0.
+- CHANGE: Removed the CH_USE_EVENT_TIMEOUT configuration option in order to
+  make the chconf.h file simpler.
 - CHANGE: Modified chDbgAssert() to syntax check the condition even when the
   CH_USE_DEBUG is disabled, it produces no code but allows to check the
-  option without have to compile twice.
+  optional code without have to compile twice.
 - Added a new benchmark to the test suite (timers set/reset performance).
 - Renamed the macro fifo_init() to queue_init() because it is used to init
   both FIFO queues and priority queues.

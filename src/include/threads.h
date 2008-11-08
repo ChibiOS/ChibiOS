@@ -127,17 +127,22 @@ struct Thread {
 /** Thread state: Waiting on a mutex. */
 #define PRWTMTX     4
 /** Thread state: Waiting in \p chThdSleep() or \p chThdSleepUntil(). */
-#define PRSLEEP     5
+#define PRWTCOND    5
+/** Thread state: Waiting in \p chCondWait(). */
+#define PRSLEEP     6
 /** Thread state: Waiting in \p chThdWait(). */
-#define PRWAIT      6
-/** Thread state: Waiting in \p chEvtWait(). */
-#define PRWTEVENT   7
+#define PRWAIT      7
+/** Thread state: Waiting in \p chEvtWaitOneTimeout() or
+    \p chEvtWaitAnyTimeout(). */
+#define PRWTOREVT   8
+/** Thread state: Waiting in \p chEvtWaitAllTimeout(). */
+#define PRWTANDEVT  9
 /** Thread state: Waiting in \p chMsgSend(). */
-#define PRSNDMSG    8
+#define PRSNDMSG    10
 /** Thread state: Waiting in \p chMsgWait(). */
-#define PRWTMSG     9
+#define PRWTMSG     11
 /** Thread state: After termination.*/
-#define PREXIT      10
+#define PREXIT      12
 
 /*
  * Various flags into the thread p_flags field.

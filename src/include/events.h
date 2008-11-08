@@ -81,19 +81,54 @@ extern "C" {
 #endif
   void chEvtRegister(EventSource *esp, EventListener *elp, eventid_t eid);
   void chEvtUnregister(EventSource *esp, EventListener *elp);
-  void chEvtClear(eventmask_t mask);
+  eventmask_t chEvtClear(eventmask_t mask);
+  eventmask_t chEvtPend(eventmask_t mask);
+  eventmask_t chEvtWaitOneTimeout(eventmask_t ewmask, systime_t time);
+  eventmask_t chEvtWaitAnyTimeout(eventmask_t ewmask, systime_t time);
+  eventmask_t chEvtWaitAllTimeout(eventmask_t ewmask, systime_t time);
   void chEvtBroadcast(EventSource *esp);
   void chEvtBroadcastI(EventSource *esp);
   eventid_t chEvtWait(eventmask_t ewmask,
                       const evhandler_t handlers[]);
-#ifdef CH_USE_EVENTS_TIMEOUT
   eventid_t chEvtWaitTimeout(eventmask_t ewmask,
                              const evhandler_t handlers[],
                              systime_t time);
-#endif
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * A pending event among those specified in \p ewmask is selected, cleared and
+ * its mask returned.
+ * @param ewmask mask of the events that the function should wait for,
+ *               \p ALL_EVENTS enables all the events
+ * @return The mask of the lowest id served and cleared event.
+ * @note Only a single event is served in the function, the one with the
+ *       lowest event id. The function is meant to be invoked into a loop in
+ *       order to serve all the pending events.<br>
+ *       This means that Event Listeners with a lower event identifier have
+ *       an higher priority.
+ */
+#define chEvtWaitOne(ewmask) chEvtWaitOneTimeout(ewmask, TIME_INFINITE)
+
+/**
+ * Waits for any of the specified events.
+ * The function waits for any event among those specified in \p ewmask to
+ * become pending then the events are cleared and returned.
+ * @param ewmask mask of the events that the function should wait for,
+ *               \p ALL_EVENTS enables all the events
+ * @return The mask of the served and cleared events.
+ */
+#define chEvtWaitAny(ewmask) chEvtWaitAnyTimeout(ewmask, TIME_INFINITE)
+
+/**
+ * Waits for all the specified event flags then clears them.
+ * The function waits for all the events specified in \p ewmask to become
+ * pending then the events are cleared and returned.
+ * @param ewmask mask of the event ids that the function should wait for
+ * @return The mask of the served and cleared events.
+ */
+#define chEvtWaitAll(ewmask) chEvtWaitAllTimeout(ewmask, TIME_INFINITE)
 
 /*
  * Old function names, deprecated, will be removed in some next release.
