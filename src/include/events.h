@@ -83,21 +83,23 @@ extern "C" {
   void chEvtUnregister(EventSource *esp, EventListener *elp);
   eventmask_t chEvtClear(eventmask_t mask);
   eventmask_t chEvtPend(eventmask_t mask);
+  void chEvtBroadcast(EventSource *esp);
+  void chEvtBroadcastI(EventSource *esp);
 #if defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENT_TIMEOUT)
   eventmask_t chEvtWaitOne(eventmask_t ewmask);
   eventmask_t chEvtWaitAny(eventmask_t ewmask);
   eventmask_t chEvtWaitAll(eventmask_t ewmask);
+  eventid_t chEvtWait(eventmask_t ewmask,
+                      const evhandler_t handlers[]);
 #endif
+#ifdef CH_USE_EVENT_TIMEOUT
   eventmask_t chEvtWaitOneTimeout(eventmask_t ewmask, systime_t time);
   eventmask_t chEvtWaitAnyTimeout(eventmask_t ewmask, systime_t time);
   eventmask_t chEvtWaitAllTimeout(eventmask_t ewmask, systime_t time);
-  void chEvtBroadcast(EventSource *esp);
-  void chEvtBroadcastI(EventSource *esp);
-  eventid_t chEvtWait(eventmask_t ewmask,
-                      const evhandler_t handlers[]);
   eventid_t chEvtWaitTimeout(eventmask_t ewmask,
                              const evhandler_t handlers[],
                              systime_t time);
+#endif
 #ifdef __cplusplus
 }
 #endif
