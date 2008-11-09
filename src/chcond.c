@@ -42,7 +42,7 @@ void chCondInit(CondVar *cp) {
 /**
  * Signals one thread that is waiting on the condition variable.
  *
- * @param mp pointer to the \p CondVar structure
+ * @param cp pointer to the \p CondVar structure
  */
 void chCondSignal(CondVar *cp) {
 
@@ -70,7 +70,7 @@ void chCondSignalI(CondVar *cp) {
 /**
  * Signal all threads that are waiting on the condition variable.
  *
- * @param mp pointer to the \p CondVar structure
+ * @param cp pointer to the \p CondVar structure
  */
 void chCondBroadcast(CondVar *cp) {
 

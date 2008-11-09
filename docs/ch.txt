@@ -66,7 +66,7 @@
  * The possible groups are: \a Sys, \a Sch, \a VT, \a Thd, \a Sem, \a Mtx,
  * \a Evt, \a Msg, \a IQ, \a OQ, \a HQ,\a FDD, \a HDD, \a Dbg.
  * The suffix is not present for normal APIs but can be one of
- * the following: "I" for APIs meant to be invoked within the system mutex 
+ * the following: "I" for APIs meant to be invoked within the system mutex
  * zone, "S" for APIs only useable from within the system mutex zone but not
  * from interrupt handlers.<br>
  * The APIs without suffix can be invoked only from the user code outsize the
@@ -457,6 +457,21 @@
 /** @} */
 
 /**
+ * @defgroup CondVars Conditional Variables
+ * @{
+ * Conditional Variables and threads synchronization.
+ * <b>Operation mode</b><br><br>
+ * The condition variable is a synchronization object meant to be used inside
+ * a zone protected by a \p Mutex. Mutexes and CondVars together can implement
+ * a Monitor construct.<br>
+ * In order to use the Conditional Variables APIs the \p CH_USE_CONDVARS
+ * option must be specified in \p chconf.h.<br><br>
+ * @file condvars.h Conditional Variables macros and structures.
+ * @file chcond.c Conditional Variables code.
+ */
+/** @} */
+
+/**
  * @defgroup Events Events
  * @{
  * Event Sources and Event Listeners.<br>
@@ -490,7 +505,7 @@
  * server threads but just a pointer passed so the exchange is very time
  * efficient.<br>
  * Messages are usually processed in FIFO order but it is possible to process
- * them in priority order by specifying CH_USE_MESSAGES_PRIORITY 
+ * them in priority order by specifying CH_USE_MESSAGES_PRIORITY
  * in \p chconf.h.<br>
  * Threads do not need to allocate space for message queues, the mechanism
  * just requires two extra pointers in the \p Thread structure (the message
