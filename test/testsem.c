@@ -21,6 +21,8 @@
 
 #include "test.h"
 
+#ifdef CH_USE_SEMAPHORES
+
 #define ALLOWED_DELAY MS2ST(5)
 
 static Semaphore sem1;
@@ -100,3 +102,5 @@ const struct testcase testsem2 = {
   sem2_teardown,
   sem2_execute
 };
+
+#endif /* CH_USE_SEMAPHORES */

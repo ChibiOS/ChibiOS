@@ -40,8 +40,8 @@ struct EventListener {
   EventListener     *el_next;
   /** Thread interested in the Event Source.*/
   Thread            *el_listener;
-  /** Event identifier associated by the thread to the Event Source.*/
-  eventid_t         el_id;
+  /** Event flags mask associated by the thread to the Event Source.*/
+  eventmask_t       el_mask;
 };
 
 /**
@@ -70,7 +70,7 @@ typedef struct EventSource {
  * @note Can be called with interrupts disabled or enabled.
  */
 #define chEvtIsListening(esp) \
-                ((esp) != (EventListener *)(void *)(esp)->es_next)
+                ((void *)(esp) != (void *)(esp)->es_next)
 
 
 /** Event Handler callback function.*/
@@ -79,7 +79,7 @@ typedef void (*evhandler_t)(eventid_t);
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chEvtRegister(EventSource *esp, EventListener *elp, eventid_t eid);
+  void chEvtRegisterMask(EventSource *esp, EventListener *elp, eventmask_t emask);
   void chEvtUnregister(EventSource *esp, EventListener *elp);
   eventmask_t chEvtClear(eventmask_t mask);
   eventmask_t chEvtPend(eventmask_t mask);
@@ -103,6 +103,19 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * Registers an Event Listener on an Event Source.
+ * @param esp pointer to the  \p EventSource structure
+ * @param elp pointer to the \p EventListener structure
+ * @param eid numeric identifier assigned to the Event Listener. The identifier
+ *            is used as index for the event callback function.
+ *            The value must range between zero and the size, in bit, of the
+ *            \p eventid_t type minus one.
+ * @note Multiple Event Listeners can use the same event identifier, the
+ *       listener will share the callback function.
+ */
+#define chEvtRegister(esp, elp, eid) chEvtRegisterMask(esp, elp, EventMask(eid))
 
 #if !defined(CH_OPTIMIZE_SPEED) && defined(CH_USE_EVENT_TIMEOUT)
 #define chEvtWaitOne(ewmask) chEvtWaitOneTimeout(ewmask, TIME_INFINITE)

@@ -24,6 +24,7 @@
 #include "testsem.h"
 #include "testmtx.h"
 #include "testmsg.h"
+#include "testevt.h"
 #include "testheap.h"
 #include "testpools.h"
 #include "testdyn.h"
@@ -35,14 +36,21 @@
 static const struct testcase *tests[] = {
   &testrdy1,
   &testrdy2,
+#ifdef CH_USE_SEMAPHORES
   &testsem1,
   &testsem2,
+#endif
 #ifdef CH_USE_MUTEXES
   &testmtx1,
   &testmtx2,
   &testmtx3,
 #endif
+#ifdef CH_USE_MESSAGES
   &testmsg1,
+#endif
+#ifdef CH_USE_EVENTS
+  &testevt1,
+#endif
 #ifdef CH_USE_HEAP
   &testheap1,
 #endif

@@ -60,13 +60,17 @@ static msg_t Thread2(void *arg) {
   return 0;
 }
 
+static WorkingArea(waTestThread, 128);
+
 /*
  * Executed as event handler at 500mS intervals.
  */
 static void TimerHandler(eventid_t id) {
 
   if (!(IO0PIN & 0x00018000)) { // Both buttons
-    TestThread(&COM1);
+    Thread *tp = chThdCreateStatic(waTestThread, sizeof(waTestThread),
+                                   NORMALPRIO, TestThread, &COM1);
+    chThdWait(tp);
     PlaySound(500, 100);
   }
   else {

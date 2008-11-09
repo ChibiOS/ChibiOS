@@ -28,21 +28,18 @@
  * Registers an Event Listener on an Event Source.
  * @param esp pointer to the  \p EventSource structure
  * @param elp pointer to the \p EventListener structure
- * @param eid numeric identifier assigned to the Event Listener. The identifier
- *            is used as index for the event callback function.
- *            The value must range between zero and the size, in bit, of the
- *            \p eventid_t type minus one.
- * @note Multiple Event Listeners can use the same event identifier, the
- *       listener will share the callback function.
+ * @param emask the mask of event flags to be pended to the thread when the
+ *              event source is broadcasted
+ * @note Multiple Event Listeners can specify the same bits to be pended.
  */
-void chEvtRegister(EventSource *esp, EventListener *elp, eventid_t eid) {
+void chEvtRegisterMask(EventSource *esp, EventListener *elp, eventmask_t emask) {
 
   chSysLock();
 
   elp->el_next = esp->es_next;
   esp->es_next = elp;
   elp->el_listener = currp;
-  elp->el_id = eid;
+  elp->el_mask = emask;
 
   chSysUnlock();
 }
@@ -132,14 +129,11 @@ void chEvtBroadcastI(EventSource *esp) {
   while (elp != (EventListener *)esp) {
     Thread *tp = elp->el_listener;
 
-    tp->p_epending |= EventMask(elp->el_id);
+    tp->p_epending |= elp->el_mask;
 
     /* Test on the AND/OR conditions wait states.*/
-    if ((tp->p_state == PRWTOREVT) &&
-        ((tp->p_epending & tp->p_ewmask) != 0))
-      chSchReadyI(tp)->p_rdymsg = RDY_OK;
-    else if ((tp->p_state == PRWTANDEVT) &&
-             ((tp->p_epending & tp->p_ewmask) == tp->p_ewmask))
+    if (((tp->p_state == PRWTOREVT) && ((tp->p_epending & tp->p_ewmask) != 0)) ||
+        ((tp->p_state == PRWTANDEVT) && ((tp->p_epending & tp->p_ewmask) == tp->p_ewmask)))
       chSchReadyI(tp)->p_rdymsg = RDY_OK;
 
     elp = elp->el_next;
@@ -234,7 +228,7 @@ eventmask_t chEvtWaitAll(eventmask_t ewmask) {
 
   if ((currp->p_epending & ewmask) != ewmask) {
     currp->p_ewmask = ewmask;
-    chSchGoSleepS(PRWTOREVT);
+    chSchGoSleepS(PRWTANDEVT);
   }
   currp->p_epending &= ~ewmask;
 
