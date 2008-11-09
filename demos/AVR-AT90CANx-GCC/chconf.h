@@ -55,6 +55,16 @@
  * the kernel.*/
 #define CH_USE_MUTEXES
 
+/** Configuration option: if specified then the Conditional Variables APIs are
+ *  included in the kernel.
+ * @note requires \p CH_USE_MUTEXES.*/
+#define CH_USE_CONDVARS
+
+/** Configuration option: if specified then the Conditional Variables APIs are
+ *  included in the kernel.
+ * @note requires \p CH_USE_CONDVARS and \p CH_USE_MUTEXES.*/
+#define CH_USE_CONDVARS_TIMEOUT
+
 /** Configuration option: if specified then the Events APIs are included in
  *  the kernel.*/
 #define CH_USE_EVENTS
