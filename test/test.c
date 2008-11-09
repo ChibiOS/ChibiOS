@@ -23,6 +23,7 @@
 #include "testrdy.h"
 #include "testsem.h"
 #include "testmtx.h"
+#include "testcond.h"
 #include "testmsg.h"
 #include "testevt.h"
 #include "testheap.h"
@@ -44,6 +45,10 @@ static const struct testcase *tests[] = {
   &testmtx1,
   &testmtx2,
   &testmtx3,
+#ifdef CH_USE_CONDVARS
+  &testcond1,
+  &testcond2,
+#endif
 #endif
 #ifdef CH_USE_MESSAGES
   &testmsg1,
