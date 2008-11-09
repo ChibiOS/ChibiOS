@@ -16,55 +16,48 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/*
+   Concepts and parts of this file are contributed by and Copyright (C) 2008
+   of Leon Woestenberg
+ */
 
 /**
- * @addtogroup Initialization
+ * @addtogroup Conditional Variables
  * @{
  */
 
-#ifndef _CH_H_
-#define _CH_H_
+#ifndef _CONDVARS_H_
+#define _CONDVARS_H_
 
-#define _CHIBIOS_RT_
+#if defined(CH_USE_CONDVARS) && defined(CH_USE_MUTEXES)
 
-#include <chconf.h>
-#include <chtypes.h>
-#include "lists.h"
-#include <chcore.h>
-#include "vt.h"
-#include "scheduler.h"
-#include "semaphores.h"
-#include "mutexes.h"
-#include "condvars.h"
-#include "events.h"
-#include "messages.h"
-#include "heap.h"
-#include "mempools.h"
-#include "threads.h"
-#include "inline.h"
-#include "queues.h"
-#include "serial.h"
-#include "debug.h"
-
-/*
- * Common values.
+/**
+ * CondVar structure.
  */
-#ifndef FALSE
-#define FALSE       0
-#endif
-#ifndef TRUE
-#define TRUE        (!FALSE)
-#endif
+typedef struct {
+  ThreadsQueue          c_queue;
+} CondVar;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chSysInit(void);
-  void chSysTimerHandlerI(void);
+  void chCondInit(CondVar *cp);
+  void chCondSignal(CondVar *cp);
+  void chCondSignalI(CondVar *cp);
+  void chCondBroadcast(CondVar *cp);
+  void chCondBroadcastI(CondVar *cp);
+  msg_t chCondWait(CondVar *cp);
+  msg_t chCondWaitS(CondVar *cp);
+#ifdef CH_USE_CONDVARS_TIMEOUT
+  msg_t chCondWaitTimeout(CondVar *cp, systime_t time);
+  msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time);
+#endif
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _CH_H_ */
+#endif /* defined(CH_USE_CONDVARS) && defined(CH_USE_MUTEXES) */
+
+#endif /* _CONDVARS_H_ */
 
 /** @} */
