@@ -137,7 +137,7 @@
 
 /** Configuration option: enforces the use of the C-runtime \p malloc() and
  *  \p free() functions as backend for the system heap allocator.*/
-#define CH_USE_MALLOC_HEAP
+//#define CH_USE_MALLOC_HEAP
 
 /** Configuration option: if specified then the memory pools allocator APIs
  *  are included in the kernel.*/
