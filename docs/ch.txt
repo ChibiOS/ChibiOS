@@ -13,7 +13,7 @@
  * <li>Easily portable.</li>
  * <li>Mixed programming model:</li>
  *   <ul>
- *   <li>Synchronous, using semaphores/mutexes and/or messages.</li>
+ *   <li>Synchronous, using semaphores/mutexes/condvars and/or messages.</li>
  *   <li>Asynchronous, using event sources.</li>
  *   <li>Mix of the above models, multiple threads listening to multiple event
  *       sources while serving message queues.</li>
@@ -32,6 +32,7 @@
  * <li>Unlimited number of virtual timers.</li>
  * <li>Unlimited number of semaphores.</li>
  * <li>Unlimited number of mutexes.</li>
+ * <li>Unlimited number of condvars.</li>
  * <li>Unlimited number of event sources.</li>
  * <li>Unlimited number of messages in queue.</li>
  * <li>Unlimited number of I/O queues.</li>

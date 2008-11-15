@@ -255,6 +255,7 @@ PREDEFINED             = __JUST_STUBS__ \
                          CH_USE_SEMAPHORES_TIMEOUT \
                          CH_USE_MUTEXES \
                          CH_USE_CONDVARS \
+                         CH_USE_CONDVARS_TIMEOUT \
                          CH_USE_EVENTS \
                          CH_USE_EVENTS_TIMEOUT \
                          CH_USE_EXIT_EVENT \
