@@ -29,13 +29,13 @@ static msg_t Thread1(void *arg) {
 
   while (TRUE) {
     IO0CLR = 0x00000800;
-    chThdSleep(200);
+    chThdSleepMilliseconds(200);
     IO0SET = 0x00000C00;
-    chThdSleep(800);
+    chThdSleepMilliseconds(800);
     IO0CLR = 0x00000400;
-    chThdSleep(200);
+    chThdSleepMilliseconds(200);
     IO0SET = 0x00000C00;
-    chThdSleep(800);
+    chThdSleepMilliseconds(800);
   }
   return 0;
 }
@@ -48,9 +48,9 @@ static msg_t Thread2(void *arg) {
 
   while (TRUE) {
     IO0CLR = 0x80000000;
-    chThdSleep(200);
+    chThdSleepMilliseconds(200);
     IO0SET = 0x80000000;
-    chThdSleep(300);
+    chThdSleepMilliseconds(300);
   }
   return 0;
 }
@@ -72,6 +72,6 @@ int main(int argc, char **argv) {
    * sleeping in a loop.
    */
   while (TRUE)
-    chThdSleep(1000);
+    chThdSleepMilliseconds(1000);
   return 0;
 }

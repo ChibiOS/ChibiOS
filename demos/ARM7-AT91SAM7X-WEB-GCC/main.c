@@ -33,9 +33,9 @@ static msg_t Thread1(void *arg) {
 
   while (TRUE) {
     AT91C_BASE_PIOB->PIO_SODR = PIOB_LCD_BL;            // LCD on.
-    chThdSleep(100);
+    chThdSleepMilliseconds(100);
     AT91C_BASE_PIOB->PIO_CODR = PIOB_LCD_BL;            // LCD off.
-    chThdSleep(900);
+    chThdSleepMilliseconds(900);
   }
   return 0;
 }
@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
    * Normal main() thread activity.
    */
   while (TRUE) {
-    chThdSleep(500);
+    chThdSleepMilliseconds(500);
     if (!(AT91C_BASE_PIOB->PIO_PDSR & PIOB_SW1))
       chFDDWrite(&COM1, (uint8_t *)"Hello World!\r\n", 14);
     if (!(AT91C_BASE_PIOB->PIO_PDSR & PIOB_SW2))

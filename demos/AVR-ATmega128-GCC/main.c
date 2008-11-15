@@ -34,7 +34,7 @@ static msg_t Thread1(void *arg) {
   while (TRUE) {
     if (!(PINA & PORTA_BUTTON2))
       PORTA ^= PORTA_RELAY;
-    chThdSleep(1000);
+    chThdSleepMilliseconds(1000);
   }
   return 0;
 }
@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
   /*
    * Event Timer initialization.
    */
-  evtInit(&evt, 500);                   /* Initializes an event timer object.   */
+  evtInit(&evt, MS2ST(500));            /* Initializes an event timer object.   */
   evtStart(&evt);                       /* Starts the event timer.              */
   chEvtRegister(&evt.et_es, &el0, 0);   /* Registers on the timer event source. */
 
@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   while(TRUE)
-    chEvtWait(ALL_EVENTS, handlers);
+    chEvtDispatch(handlers, chEvtWaitOne(ALL_EVENTS));
 
   return 0;
 }
