@@ -151,13 +151,13 @@ msg_t WebThread(void *p) {
    * Event sources setup.
    */
   chEvtRegister(&EMACFrameReceived, &el0, FRAME_RECEIVED_ID);
-  chEvtBroadcast(&EMACFrameReceived); /* In case some frames are already buffered */
+  chEvtPend(EVENT_MASK(FRAME_RECEIVED_ID)); /* In case some frames are already buffered */
 
-  evtInit(&evt1, CH_FREQUENCY / 2);
+  evtInit(&evt1, MS2ST(500));
   evtStart(&evt1);
   chEvtRegister(&evt1.et_es, &el1, PERIODIC_TIMER_ID);
 
-  evtInit(&evt2, CH_FREQUENCY * 10);
+  evtInit(&evt2, S2ST(10));
   evtStart(&evt2);
   chEvtRegister(&evt2.et_es, &el2, ARP_TIMER_ID);
 
@@ -176,7 +176,8 @@ msg_t WebThread(void *p) {
   uip_sethostaddr(ipaddr);
   httpd_init();
 
-  while (TRUE)
-    chEvtWait(ALL_EVENTS, evhndl);
+  while (TRUE) {
+    chEvtDispatch(evhndl, chEvtWaitOne(ALL_EVENTS));
+  }
   return 0;
 }

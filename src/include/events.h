@@ -52,8 +52,12 @@ typedef struct EventSource {
   EventListener     *es_next;
 } EventSource;
 
-/** Returns the event mask from the event identifier.*/
+/** Returns the event mask from the event identifier.
+ * @deprecated use EVENT_MASK() instead.*/
 #define EventMask(eid) (1 << (eid))
+
+/** Returns the event mask from the event identifier.*/
+#define EVENT_MASK(eid) (1 << (eid))
 
 /**
  * Initializes an Event Source.
@@ -85,6 +89,7 @@ extern "C" {
   eventmask_t chEvtPend(eventmask_t mask);
   void chEvtBroadcast(EventSource *esp);
   void chEvtBroadcastI(EventSource *esp);
+  void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask);
 #if defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENT_TIMEOUT)
   eventmask_t chEvtWaitOne(eventmask_t ewmask);
   eventmask_t chEvtWaitAny(eventmask_t ewmask);
@@ -115,7 +120,7 @@ extern "C" {
  * @note Multiple Event Listeners can use the same event identifier, the
  *       listener will share the callback function.
  */
-#define chEvtRegister(esp, elp, eid) chEvtRegisterMask(esp, elp, EventMask(eid))
+#define chEvtRegister(esp, elp, eid) chEvtRegisterMask(esp, elp, EVENT_MASK(eid))
 
 #if !defined(CH_OPTIMIZE_SPEED) && defined(CH_USE_EVENT_TIMEOUT)
 #define chEvtWaitOne(ewmask) chEvtWaitOneTimeout(ewmask, TIME_INFINITE)

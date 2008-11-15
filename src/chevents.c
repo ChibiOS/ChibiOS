@@ -142,22 +142,21 @@ void chEvtBroadcastI(EventSource *esp) {
 
 /**
  * Invokes the event handlers associated with a mask.
- * @param mask mask of the events that should be invoked by the function,
- *               \p ALL_EVENTS enables all the sources
+ * @param mask mask of the events to be dispatched
  * @param handlers an array of \p evhandler_t. The array must be
  *                 have indexes from zero up the higher registered event
- *                 identifier. The array can be \p NULL or contain \p NULL
- *                 elements (no callbacks specified).
+ *                 identifier.
  */
 void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask) {
-  eventid_t i;
-  eventmask_t m;
+  eventid_t eid;
 
-  i = 0, m = 1;
-  while ((mask & m) == 0) {
-    i += 1, m <<= 1;
-    mask &= ~m;
-    handlers[i](i);
+  eid = 0;
+  while (mask) {
+    if (mask & EVENT_MASK(eid)) {
+      mask &= ~EVENT_MASK(eid);
+      handlers[eid](eid);
+    }
+    eid++;
   }
 }
 
