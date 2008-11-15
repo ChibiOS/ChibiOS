@@ -169,7 +169,7 @@ void PendSVVector(void) {
   PUSH_CONTEXT(sp_thd);
 
   (otp = currp)->p_ctx.r13 = sp_thd;
-  (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
+  (currp = fifo_remove((void *)&rlist))->p_state = PRCURR;
   chSchReadyI(otp);
 #ifdef CH_USE_ROUNDROBIN
   /* set the round-robin time quantum */

@@ -98,6 +98,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Renamed the macro fifo_init() to queue_init() because it is used to init
   both FIFO queues and priority queues.
 - Fixes and improvements to the documentation.
+- Cleaned demo applications of old events code.
 
 *** 0.7.3 ***
 - FIX: Fixed a bug in chThdSleepUntil(), this API is no more a macro now.

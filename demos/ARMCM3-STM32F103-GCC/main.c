@@ -31,9 +31,9 @@ static msg_t Thread1(void *arg) {
 
   while (TRUE) {
     GPIOC->BRR = GPIOC_LED;
-    chThdSleep(500);
+    chThdSleepMilliseconds(500);
     GPIOC->BSRR = GPIOC_LED;
-    chThdSleep(500);
+    chThdSleepMilliseconds(500);
   }
   return 0;
 }
@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
   while (TRUE) {
     if (GPIOA->IDR & GPIOA_BUTTON)
       TestThread(&COM2);
-    chThdSleep(500);
+    chThdSleepMilliseconds(500);
   }
   return 0;
 }

@@ -1,5 +1,5 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 0.7.2
+Kernel:   ChibiOS/RT 0.8.0
 Compiler: GCC 4.3.2 (YAGARTO 28.09.2008)
 Options:  -Os -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
@@ -27,48 +27,61 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Test Case 7 (Mutexes, priority inheritance, complex case)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 8 (Messages, dispatch test)
+--- Test Case 8 (CondVar, signal test)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 9 (Heap, allocation and fragmentation test)
---- Size  : 27988 bytes, not fragmented
+--- Test Case 9 (CondVar, broadcast test)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 10 (Memory Pools, allocation and enqueuing test)
+--- Test Case 10 (Messages, dispatch test)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 11 (Dynamic APIs, threads creation from heap)
+--- Test Case 11 (Events, wait and broadcast)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 12 (Dynamic APIs, threads creation from memory pool)
+--- Test Case 12 (Heap, allocation and fragmentation test)
+--- Size  : 27644 bytes, not fragmented
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 13 (Benchmark, context switch #1, optimal)
---- Score : 98911 msgs/S, 197822 ctxswc/S
+--- Test Case 13 (Memory Pools, allocation and enqueuing test)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 14 (Benchmark, context switch #2, empty ready list)
---- Score : 83525 msgs/S, 167050 ctxswc/S
+--- Test Case 14 (Dynamic APIs, threads creation from heap)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 15 (Benchmark, context switch #3, 4 threads in ready list)
---- Score : 83526 msgs/S, 167052 ctxswc/S
+--- Test Case 15 (Dynamic APIs, threads creation from memory pool)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 16 (Benchmark, threads creation/termination, worst case)
---- Score : 70158 threads/S
+--- Test Case 16 (Benchmark, context switch #1, optimal)
+--- Score : 98924 msgs/S, 197848 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 17 (Benchmark, threads creation/termination, optimal)
---- Score : 100582 threads/S
+--- Test Case 17 (Benchmark, context switch #2, empty ready list)
+--- Score : 83531 msgs/S, 167062 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 18 (Benchmark, mass reschedulation, 5 threads)
---- Score : 28222 reschedulations/S, 169332 ctxswc/S
+--- Test Case 18 (Benchmark, context switch #3, 4 threads in ready list)
+--- Score : 83530 msgs/S, 167060 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 19 (Benchmark, I/O Queues throughput)
---- Score : 242376 bytes/S
+--- Test Case 19 (Benchmark, threads creation/termination, worst case)
+--- Score : 70471 threads/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 20 (Benchmark, threads creation/termination, optimal)
+--- Score : 101230 threads/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 21 (Benchmark, mass reschedulation, 5 threads)
+--- Score : 28157 reschedulations/S, 168942 ctxswc/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 22 (Benchmark, I/O Queues throughput)
+--- Score : 242396 bytes/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 23 (Benchmark, virtual timers set/reset)
+--- Score : 272272 timers/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 
