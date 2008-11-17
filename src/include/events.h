@@ -90,14 +90,14 @@ extern "C" {
   void chEvtBroadcast(EventSource *esp);
   void chEvtBroadcastI(EventSource *esp);
   void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask);
-#if defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENT_TIMEOUT)
+#if defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENTS_TIMEOUT)
   eventmask_t chEvtWaitOne(eventmask_t ewmask);
   eventmask_t chEvtWaitAny(eventmask_t ewmask);
   eventmask_t chEvtWaitAll(eventmask_t ewmask);
   eventid_t chEvtWait(eventmask_t ewmask,
                       const evhandler_t handlers[]);
 #endif
-#ifdef CH_USE_EVENT_TIMEOUT
+#ifdef CH_USE_EVENTS_TIMEOUT
   eventmask_t chEvtWaitOneTimeout(eventmask_t ewmask, systime_t time);
   eventmask_t chEvtWaitAnyTimeout(eventmask_t ewmask, systime_t time);
   eventmask_t chEvtWaitAllTimeout(eventmask_t ewmask, systime_t time);
@@ -122,7 +122,7 @@ extern "C" {
  */
 #define chEvtRegister(esp, elp, eid) chEvtRegisterMask(esp, elp, EVENT_MASK(eid))
 
-#if !defined(CH_OPTIMIZE_SPEED) && defined(CH_USE_EVENT_TIMEOUT)
+#if !defined(CH_OPTIMIZE_SPEED) && defined(CH_USE_EVENTS_TIMEOUT)
 #define chEvtWaitOne(ewmask) chEvtWaitOneTimeout(ewmask, TIME_INFINITE)
 #define chEvtWaitAny(ewmask) chEvtWaitAnyTimeout(ewmask, TIME_INFINITE)
 #define chEvtWaitAll(ewmask) chEvtWaitAllTimeout(ewmask, TIME_INFINITE)

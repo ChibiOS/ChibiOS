@@ -73,6 +73,11 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.8.1 ***
+- FIX: Fixed a regression in version 0.8.0, the configuration switch
+  CH_USE_EVENTS_TIMEOUT was redefined as CH_USE_EVENT_TIMEOUT and this broke
+  the code using events timeouts (the LPC2148 C++ demo).
+
 *** 0.8.0 ***
 - NEW: Added condvars mechanism on top of the mutexes subsystem.
 - NEW: Improved events subsystems, now it is also possible to use it just as

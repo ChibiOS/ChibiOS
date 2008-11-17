@@ -160,7 +160,7 @@ void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask) {
   }
 }
 
-#if defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENT_TIMEOUT)
+#if defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENTS_TIMEOUT)
 /**
  * A pending event among those specified in \p ewmask is selected, cleared and
  * its mask returned.
@@ -276,9 +276,9 @@ eventid_t chEvtWait(eventmask_t ewmask,
 
   return i;
 }
-#endif /* defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENT_TIMEOUT) */
+#endif /* defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENTS_TIMEOUT) */
 
-#ifdef CH_USE_EVENT_TIMEOUT
+#ifdef CH_USE_EVENTS_TIMEOUT
 /**
  * Waits for a single event.
  * A pending event among those specified in \p ewmask is selected, cleared and
@@ -409,7 +409,7 @@ eventid_t chEvtWaitTimeout(eventmask_t ewmask,
 
   return i;
 }
-#endif /* CH_USE_EVENT_TIMEOUT */
+#endif /* CH_USE_EVENTS_TIMEOUT */
 
 #endif /* CH_USE_EVENTS */
 
