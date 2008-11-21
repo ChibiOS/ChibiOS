@@ -73,6 +73,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.8.2 ***
+- FIX: Duplicated sections in the documentation removed.
+
 *** 0.8.1 ***
 - FIX: Fixed a regression in version 0.8.0, the configuration switch
   CH_USE_EVENTS_TIMEOUT was redefined as CH_USE_EVENT_TIMEOUT and this broke

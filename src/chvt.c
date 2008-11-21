@@ -18,7 +18,7 @@
 */
 
 /**
- * @addtogroup VirtualTimers
+ * @addtogroup Time
  * @{
  */
 
