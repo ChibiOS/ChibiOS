@@ -43,11 +43,10 @@ typedef struct {
 extern "C" {
 #endif
   void chPoolInit(MemoryPool *mp, size_t size);
+  void *chPoolAllocI(MemoryPool *mp);
   void *chPoolAlloc(MemoryPool *mp);
+  void chPoolFreeI(MemoryPool *mp, void *objp);
   void chPoolFree(MemoryPool *mp, void *objp);
-#ifdef CH_USE_HEAP
-  void chPoolRelease(MemoryPool *mp);
-#endif
 #ifdef __cplusplus
 }
 #endif

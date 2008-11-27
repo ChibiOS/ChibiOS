@@ -46,16 +46,28 @@ void chPoolInit(MemoryPool *mp, size_t size) {
  * @return The pointer to the allocated object.
  * @retval NULL if pool is empty.
  */
-void *chPoolAlloc(MemoryPool *mp) {
+void *chPoolAllocI(MemoryPool *mp) {
   void *objp;
 
-  chDbgAssert(mp != NULL, "chpools.c, chPoolAlloc()");
-
-  chSysLock();
+  chDbgAssert(mp != NULL, "chmempools.c, chPoolAllocI()");
 
   if ((objp = mp->mp_next) != NULL)
     mp->mp_next = mp->mp_next->ph_next;
 
+  return objp;
+}
+
+/**
+ * Allocates an object from a memory pool.
+ * @param mp pointer to a \p MemoryPool structure
+ * @return The pointer to the allocated object.
+ * @retval NULL if pool is empty.
+ */
+void *chPoolAlloc(MemoryPool *mp) {
+  void *objp;
+
+  chSysLock();
+  objp = chPoolAllocI(mp);
   chSysUnlock();
   return objp;
 }
@@ -67,17 +79,27 @@ void *chPoolAlloc(MemoryPool *mp) {
  * @note the object is assumed to be of the right size for the specified
  *       memory pool.
  */
-void chPoolFree(MemoryPool *mp, void *objp) {
+void chPoolFreeI(MemoryPool *mp, void *objp) {
   struct pool_header *php = objp;
 
   chDbgAssert((mp != NULL) && (objp != NULL),
-              "chpools.c, chPoolFree()");
-
-  chSysLock();
+              "chmempools.c, chPoolFreeI()");
 
   php->ph_next = mp->mp_next;
   mp->mp_next = php;
+}
 
+/**
+ * Releases (or adds) an object into (to) a memory pool.
+ * @param mp pointer to a \p MemoryPool structure
+ * @param objp the pointer to the object to be released or added
+ * @note the object is assumed to be of the right size for the specified
+ *       memory pool.
+ */
+void chPoolFree(MemoryPool *mp, void *objp) {
+
+  chSysLock();
+  chPoolFreeI(mp, objp);
   chSysUnlock();
 }
 

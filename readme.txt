@@ -75,6 +75,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 
 *** 0.8.2 ***
 - FIX: Duplicated sections in the documentation removed.
+- NEW: Added chPoolAllocI() and chPoolFreeI() APIs in order to allow the use
+  of memory pools from interrupt handlers and timer callbacks.
 
 *** 0.8.1 ***
 - FIX: Fixed a regression in version 0.8.0, the configuration switch
