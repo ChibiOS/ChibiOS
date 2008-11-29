@@ -49,11 +49,11 @@ static msg_t thread(void *p) {
 
 static void sem1_execute(void) {
 
-  threads[0] = chThdCreateStatic(wa[0], STKSIZE, chThdGetPriority()+5, thread, "A");
-  threads[1] = chThdCreateStatic(wa[1], STKSIZE, chThdGetPriority()+1, thread, "B");
-  threads[2] = chThdCreateStatic(wa[2], STKSIZE, chThdGetPriority()+3, thread, "C");
-  threads[3] = chThdCreateStatic(wa[3], STKSIZE, chThdGetPriority()+4, thread, "D");
-  threads[4] = chThdCreateStatic(wa[4], STKSIZE, chThdGetPriority()+2, thread, "E");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+5, thread, "A");
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()+1, thread, "B");
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()+3, thread, "C");
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()+4, thread, "D");
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()+2, thread, "E");
   chSemSignal(&sem1);
   chSemSignal(&sem1);
   chSemSignal(&sem1);

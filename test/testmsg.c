@@ -47,7 +47,7 @@ static msg_t thread(void *p) {
 static void msg1_execute(void) {
   msg_t msg;
 
-  threads[0] = chThdCreateStatic(wa[0], STKSIZE, chThdGetPriority()-1, thread, chThdSelf());
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread, chThdSelf());
   do {
     chMsgRelease(msg = chMsgWait());
     if (msg)

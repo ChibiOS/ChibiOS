@@ -85,7 +85,7 @@ Thread *chThdInit(void *workspace, size_t wsize,
   /* thread structure is layed out in the lower part of the thread workspace */
   Thread *tp = workspace;
 
-  chDbgAssert((wsize >= UserStackSize(0)) && (prio <= HIGHPRIO) &&
+  chDbgAssert((wsize >= THD_WA_SIZE(0)) && (prio <= HIGHPRIO) &&
               (workspace != NULL) && (pf != NULL),
               "chthreads.c, chThdInit()");
 #ifdef CH_USE_DEBUG

@@ -52,11 +52,11 @@ static void mtx1_execute(void) {
 
   tprio_t prio = chThdGetPriority(); // Bacause priority inheritance.
   chMtxLock(&m1);
-  threads[0] = chThdCreateStatic(wa[0], STKSIZE, prio+1, thread1, "E");
-  threads[1] = chThdCreateStatic(wa[1], STKSIZE, prio+2, thread1, "D");
-  threads[2] = chThdCreateStatic(wa[2], STKSIZE, prio+3, thread1, "C");
-  threads[3] = chThdCreateStatic(wa[3], STKSIZE, prio+4, thread1, "B");
-  threads[4] = chThdCreateStatic(wa[4], STKSIZE, prio+5, thread1, "A");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread1, "E");
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread1, "D");
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread1, "C");
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread1, "B");
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread1, "A");
   chMtxUnlock();
   test_wait_threads();
   test_assert(prio == chThdGetPriority(), "priority return failure");
@@ -117,9 +117,9 @@ static msg_t thread4(void *p) {
  */
 static void mtx2_execute(void) {
 
-  threads[0] = chThdCreateStatic(wa[0], STKSIZE, chThdGetPriority()-1, thread2, "A");
-  threads[1] = chThdCreateStatic(wa[1], STKSIZE, chThdGetPriority()-3, thread3, "C");
-  threads[2] = chThdCreateStatic(wa[2], STKSIZE, chThdGetPriority()-2, thread4, "B");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread2, "A");
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-3, thread3, "C");
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-2, thread4, "B");
   test_wait_threads();
   test_assert_sequence("ABC");
 }
@@ -206,11 +206,11 @@ static msg_t thread9(void *p) {
  */
 static void mtx3_execute(void) {
 
-  threads[0] = chThdCreateStatic(wa[0], STKSIZE, chThdGetPriority()-5, thread5, "E");
-  threads[1] = chThdCreateStatic(wa[1], STKSIZE, chThdGetPriority()-4, thread6, "D");
-  threads[2] = chThdCreateStatic(wa[2], STKSIZE, chThdGetPriority()-3, thread7, "C");
-  threads[3] = chThdCreateStatic(wa[3], STKSIZE, chThdGetPriority()-2, thread8, "B");
-  threads[4] = chThdCreateStatic(wa[4], STKSIZE, chThdGetPriority()-1, thread9, "A");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-5, thread5, "E");
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-4, thread6, "D");
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread7, "C");
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-2, thread8, "B");
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-1, thread9, "A");
   test_wait_threads();
   test_assert_sequence("ABCDE");
 }

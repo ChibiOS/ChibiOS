@@ -23,7 +23,7 @@
 #include "board.h"
 #include <sam7x_serial.h>
 
-static WorkingArea(waThread1, 64);
+static WORKING_AREA(waThread1, 64);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {

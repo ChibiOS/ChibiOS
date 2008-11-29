@@ -20,7 +20,15 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
+/**
+ * Macro defining the ARM7 architecture.
+ */
 #define CH_ARCHITECTURE_ARM7
+
+/*
+ * 32 bit stack alignment.
+ */
+typedef uint32_t stkalign_t;
 
 typedef void *regarm;
 
@@ -113,13 +121,22 @@ extern "C" {
 #else /* !THUMB */
 #define INT_REQUIRED_STACK 0
 #endif /* !THUMB */
-#define StackAlign(n) ((((n) - 1) | 3) + 1)
-#define UserStackSize(n) StackAlign(sizeof(Thread) +                    \
-                                    sizeof(struct intctx) +             \
-                                    sizeof(struct extctx) +             \
-                                    (n) +                               \
-                                    INT_REQUIRED_STACK)
-#define WorkingArea(s, n) uint32_t s[UserStackSize(n) >> 2];
+
+/*
+ * Enforces a 32 bit alignment for a stack area size value.
+ */
+#define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
+
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
+                                   sizeof(struct intctx) +              \
+                                   sizeof(struct extctx) +              \
+                                   (n) +                                \
+                                   INT_REQUIRED_STACK)
+
+/*
+ * Declares a 32bit aligned thread working area.
+ */
+#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n)];
 
 #ifdef THUMB
 #define chSysSwitchI chSysSwitchI_thumb
@@ -154,7 +171,7 @@ extern "C" {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _IdleThread(void *p) __attribute__((noreturn));
+  void _idle(void *p) __attribute__((weak, noreturn));
   void chSysHalt(void);
   void chSysSwitchI(Thread *otp, Thread *ntp);
   void chSysPuts(char *msg);

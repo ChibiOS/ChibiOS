@@ -77,6 +77,11 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Duplicated sections in the documentation removed.
 - NEW: Added chPoolAllocI() and chPoolFreeI() APIs in order to allow the use
   of memory pools from interrupt handlers and timer callbacks.
+- CHANGE: The macros WorkingArea(), UserStackSize() and StackAlign() are now
+  deprecated and will be removed in version 1.0.0. Use the new equivalents
+  WORKING_AREA(), THD_WA_SIZE() and STACK_ALIGN() instead.
+- CHANGE: Renamed the default idle thread function from _IdleThread() to
+          _idle().
 
 *** 0.8.1 ***
 - FIX: Fixed a regression in version 0.8.0, the configuration switch

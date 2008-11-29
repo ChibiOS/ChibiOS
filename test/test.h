@@ -29,7 +29,7 @@
 #else
 #define THREADS_STACK_SIZE      128
 #endif
-#define STKSIZE UserStackSize(THREADS_STACK_SIZE)
+#define WA_SIZE THD_WA_SIZE(THREADS_STACK_SIZE)
 
 struct testcase {
   char *(*gettest)(void);

@@ -33,7 +33,7 @@
  */
 void chSysInit(void) {
   static Thread mainthread;
-  static WorkingArea(waIdleThread, IDLE_THREAD_STACK_SIZE);
+  static WORKING_AREA(idle_wa, IDLE_THREAD_STACK_SIZE);
 
   chSchInit();
   chDbgInit();
@@ -54,8 +54,7 @@ void chSysInit(void) {
    * serve interrupts in its context while keeping the lowest energy saving
    * mode compatible with the system status.
    */
-  chThdCreateStatic(waIdleThread, sizeof(waIdleThread),
-                    IDLEPRIO, (tfunc_t)_IdleThread, NULL);
+  chThdCreateStatic(idle_wa, sizeof(idle_wa), IDLEPRIO, (tfunc_t)_idle, NULL);
 }
 
 /**

@@ -24,7 +24,7 @@
 /*
  * System idle thread loop.
  */
-void _IdleThread(void *p) {
+void _idle(void *p) {
 
   while (TRUE) {
 // Note, it is disabled because it causes trouble with the JTAG probe.

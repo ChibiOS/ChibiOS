@@ -53,11 +53,11 @@ static void cond1_execute(void) {
 
   // Bacause priority inheritance.
   tprio_t prio = chThdGetPriority();
-  threads[0] = chThdCreate(prio+1, 0, wa[0], STKSIZE, thread1, "E");
-  threads[1] = chThdCreate(prio+2, 0, wa[1], STKSIZE, thread1, "D");
-  threads[2] = chThdCreate(prio+3, 0, wa[2], STKSIZE, thread1, "C");
-  threads[3] = chThdCreate(prio+4, 0, wa[3], STKSIZE, thread1, "B");
-  threads[4] = chThdCreate(prio+5, 0, wa[4], STKSIZE, thread1, "A");
+  threads[0] = chThdCreate(prio+1, 0, wa[0], WA_SIZE, thread1, "E");
+  threads[1] = chThdCreate(prio+2, 0, wa[1], WA_SIZE, thread1, "D");
+  threads[2] = chThdCreate(prio+3, 0, wa[2], WA_SIZE, thread1, "C");
+  threads[3] = chThdCreate(prio+4, 0, wa[3], WA_SIZE, thread1, "B");
+  threads[4] = chThdCreate(prio+5, 0, wa[4], WA_SIZE, thread1, "A");
   test_assert(prio == chThdGetPriority(), "priority return failure");
   chCondSignal(&c1);
   chCondSignal(&c1);
@@ -84,11 +84,11 @@ static void cond2_execute(void) {
 
   // Bacause priority inheritance.
   tprio_t prio = chThdGetPriority();
-  threads[0] = chThdCreate(prio+1, 0, wa[0], STKSIZE, thread1, "E");
-  threads[1] = chThdCreate(prio+2, 0, wa[1], STKSIZE, thread1, "D");
-  threads[2] = chThdCreate(prio+3, 0, wa[2], STKSIZE, thread1, "C");
-  threads[3] = chThdCreate(prio+4, 0, wa[3], STKSIZE, thread1, "B");
-  threads[4] = chThdCreate(prio+5, 0, wa[4], STKSIZE, thread1, "A");
+  threads[0] = chThdCreate(prio+1, 0, wa[0], WA_SIZE, thread1, "E");
+  threads[1] = chThdCreate(prio+2, 0, wa[1], WA_SIZE, thread1, "D");
+  threads[2] = chThdCreate(prio+3, 0, wa[2], WA_SIZE, thread1, "C");
+  threads[3] = chThdCreate(prio+4, 0, wa[3], WA_SIZE, thread1, "B");
+  threads[4] = chThdCreate(prio+5, 0, wa[4], WA_SIZE, thread1, "A");
   test_assert(prio == chThdGetPriority(), "priority return failure");
   chCondBroadcast(&c1);
   test_wait_threads();

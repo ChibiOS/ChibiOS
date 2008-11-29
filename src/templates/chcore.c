@@ -35,8 +35,10 @@
  * put the processor in the lowest power mode capable to serve interrupts.
  * The priority is internally set to the minimum system value so that this
  * thread is executed only if there are no other ready threads in the system.
+ * @note Implementation should declare this function as a weak symbol in order
+ *       to allow applications to re-implement it.
  */
-void _IdleThread(void *p) {
+void _idle(void *p) {
 
   while (TRUE)
     ;
@@ -52,6 +54,12 @@ void chSysHalt(void) {
 
   while (TRUE)
     ;
+}
+
+/**
+ * Enables the interrupts, it is only invoked once into \p chSysInit().
+ */
+void chSysEnable(void) {
 }
 
 /**

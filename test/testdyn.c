@@ -48,9 +48,9 @@ static void dyn1_execute(void) {
   /* Test skipped if the heap is already fragmented. */
   if ((n = chHeapStatus(&sz)) == 1) {
     /* Starting threads from the heap. */
-    threads[0] = chThdCreateFromHeap(UserStackSize(THREADS_STACK_SIZE),
+    threads[0] = chThdCreateFromHeap(THD_WA_SIZE(THREADS_STACK_SIZE),
                                      prio-1, thread, "A");
-    threads[1] = chThdCreateFromHeap(UserStackSize(THREADS_STACK_SIZE),
+    threads[1] = chThdCreateFromHeap(THD_WA_SIZE(THREADS_STACK_SIZE),
                                      prio-2, thread, "B");
 
     test_assert((threads[0] != NULL) &&
@@ -88,7 +88,7 @@ static char *dyn2_gettest(void) {
 
 static void dyn2_setup(void) {
 
-  chPoolInit(&mp1, UserStackSize(THREADS_STACK_SIZE));
+  chPoolInit(&mp1, THD_WA_SIZE(THREADS_STACK_SIZE));
 }
 
 static void dyn2_teardown(void) {

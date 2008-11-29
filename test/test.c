@@ -83,11 +83,11 @@ static bool_t local_fail, global_fail;
 static char *failmsg;
 static char tokens_buffer[MAX_TOKENS];
 static char *tokp;
-static WorkingArea(waT0, THREADS_STACK_SIZE);
-static WorkingArea(waT1, THREADS_STACK_SIZE);
-static WorkingArea(waT2, THREADS_STACK_SIZE);
-static WorkingArea(waT3, THREADS_STACK_SIZE);
-static WorkingArea(waT4, THREADS_STACK_SIZE);
+static WORKING_AREA(waT0, THREADS_STACK_SIZE);
+static WORKING_AREA(waT1, THREADS_STACK_SIZE);
+static WORKING_AREA(waT2, THREADS_STACK_SIZE);
+static WORKING_AREA(waT3, THREADS_STACK_SIZE);
+static WORKING_AREA(waT4, THREADS_STACK_SIZE);
 
 void *wa[MAX_THREADS] = {waT0, waT1, waT2, waT3, waT4};
 Thread *threads[MAX_THREADS];

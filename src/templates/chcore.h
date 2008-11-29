@@ -31,6 +31,11 @@
 #define CH_ARCHITECTURE_XXX
 
 /**
+ * Base type for stack alignment.
+ */
+typedef uint8_t stkalign_t;
+
+/**
  * Interrupt saved context.
  */
 struct extctx {
@@ -59,38 +64,55 @@ typedef struct {
 #define IDLE_THREAD_STACK_SIZE 0
 
 /**
- * Per-thread stack overhead for interrupts servicing.
+ * Per-thread stack overhead for interrupts servicing, it is used in the
+ * calculation of the correct working area size.
  */
 #define INT_REQUIRED_STACK 0
 
 /**
- * Enforces a stack size alignment.
+ * Enforces a correct alignment for a stack area size value.
+ * @deprecated Use STACK_ALIGN() instead, this macro will be removed in
+ *             version 1.0.0.
  */
-#define StackAlign(n) (n)
+#define StackAlign(n) STACK_ALIGN(n)
 
 /**
- * Macro to be used when allocating stack spaces, it adds the system-specific
- * overhead.
+ * Enforces a correct alignment for a stack area size value.
  */
-#define UserStackSize(n) StackAlign(sizeof(Thread) +                    \
-                                    sizeof(struct intctx) +             \
-                                    sizeof(struct extctx) +             \
-                                    (n) + (INT_REQUIRED_STACK))
+#define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
+
+/**
+ * Computes the thread working area global size.
+ * @deprecated Use THD_WA_SIZE() instead, this macro will be removed in
+ *             version 1.0.0.
+ */
+#define UserStackSize(n) THD_WA_SIZE(n)
+
+ /**
+  * Computes the thread working area global size.
+  */
+#define THD_WA_SIZE(n) StackAlign(sizeof(Thread) +                      \
+                                  sizeof(struct intctx) +               \
+                                  sizeof(struct extctx) +               \
+                                  (n) + (INT_REQUIRED_STACK))
+
+/**
+ * Macro used to allocate a thread working area aligned as both position and
+ * size.
+ * @deprecated Use WORKING_AREA() instead, this macro will be removed in
+ *             version 1.0.0.
+ */
+#define WorkingArea(s, n) WORKING_AREA(s, n)
 
 /**
  * Macro used to allocate a thread working area aligned as both position and
  * size.
  */
-#define WorkingArea(s, n) uint8_t s[UserStackSize(n)];
-
-/**
- * Enables the interrupts, it is only invoked once into \p chSysInit().
- */
-#define chSysEnable()
+#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n)];
 
 /**
  * IRQ handler enter code.
- * @note Usually IRQ handlers function are also declared naked.
+ * @note Usually IRQ handlers functions are also declared naked.
  * @note On some architectures this macro can be empty.
  */
 #define chSysIRQEnterI()
@@ -98,7 +120,7 @@ typedef struct {
 /**
  * IRQ handler exit code.
  * @note Usually IRQ handlers function are also declared naked.
- * @note This macro must perform the final reschedulation by using
+ * @note This macro usually performs the final reschedulation by using
  *       \p chSchRescRequiredI() and \p chSchDoRescheduleI().
  */
 #define chSysIRQExitI()
@@ -106,8 +128,9 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _IdleThread(void *p);
+  void _idle(void *p);
   void chSysHalt(void);
+  void chSysEnable(void);
   void chSysLock(void);
   void chSysUnlock(void);
   void chSysSwitchI(Thread *otp, Thread *ntp);
