@@ -24,7 +24,7 @@
  * System idle thread loop.
  */
 __attribute__((weak))
-void _IdleThread(void *p) {
+void _idle(void *p) {
 
   while (TRUE) {
 #if ENABLE_WFI_IDLE != 0
@@ -60,11 +60,9 @@ void chSysHalt(void) {
 __attribute__((naked, weak))
 void threadstart(void) {
 
-  asm volatile ( \
-                "blx     r1                                     \n\t" \
+  asm volatile ("blx     r1                                     \n\t" \
                 "bl      chThdExit                              \n\t" \
-                "bl      chSysHalt                              \n\t" \
-               );
+                "bl      chSysHalt                              ");
 }
 
 /*

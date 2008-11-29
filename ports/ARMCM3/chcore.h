@@ -20,16 +20,27 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
-#define CH_ARCHITECTURE_ARMCM3
-
-typedef void *regarm;
-
 /*
  * Port-related configuration parameters.
  */
 #define BASEPRI_USER    0       /* User level BASEPRI, 0 = disabled.    */
 #define BASEPRI_KERNEL  0x10    /* BASEPRI level within kernel lock.    */
 #define ENABLE_WFI_IDLE 0       /* Enables the use of the WFI ins.      */
+
+/**
+ * Macro defining the ARM Cortex-M3 architecture.
+ */
+#define CH_ARCHITECTURE_ARMCM3
+
+/*
+ * 32 bit stack alignment.
+ */
+typedef uint32_t stkalign_t;
+
+/*
+ * Generic ARM register.
+ */
+typedef void *regarm_t;
 
 /*
  * Interrupt saved context, empty in this architecture.
@@ -41,26 +52,26 @@ struct extctx {
  * System saved context.
  */
 struct intctx {
-  regarm  basepri;
-  regarm  r4;
-  regarm  r5;
-  regarm  r6;
+  regarm_t      basepri;
+  regarm_t      r4;
+  regarm_t      r5;
+  regarm_t      r6;
 #ifndef CH_CURRP_REGISTER_CACHE
-  regarm  r7;
+  regarm_t      r7;
 #endif
-  regarm  r8;
-  regarm  r9;
-  regarm  r10;
-  regarm  r11;
-  regarm  lr_exc;
-  regarm  r0;
-  regarm  r1;
-  regarm  r2;
-  regarm  r3;
-  regarm  r12;
-  regarm  lr_thd;
-  regarm  pc;
-  regarm  xpsr;
+  regarm_t      r8;
+  regarm_t      r9;
+  regarm_t      r10;
+  regarm_t      r11;
+  regarm_t      lr_exc;
+  regarm_t      r0;
+  regarm_t      r1;
+  regarm_t      r2;
+  regarm_t      r3;
+  regarm_t      r12;
+  regarm_t      lr_thd;
+  regarm_t      pc;
+  regarm_t      xpsr;
 };
 
 /*
@@ -82,11 +93,11 @@ typedef struct {
                                      wsize -                            \
                                      sizeof(struct intctx));            \
   tp->p_ctx.r13->basepri = BASEPRI_USER;                                \
-  tp->p_ctx.r13->lr_exc = (regarm)0xFFFFFFFD;                           \
+  tp->p_ctx.r13->lr_exc = (regarm_t)0xFFFFFFFD;                         \
   tp->p_ctx.r13->r0 = arg;                                              \
   tp->p_ctx.r13->r1 = pf;                                               \
   tp->p_ctx.r13->pc = threadstart;                                      \
-  tp->p_ctx.r13->xpsr = (regarm)0x01000000;                             \
+  tp->p_ctx.r13->xpsr = (regarm_t)0x01000000;                           \
 }
 
 #define chSysLock() {                                                   \
@@ -108,13 +119,22 @@ typedef struct {
 }
 
 #define INT_REQUIRED_STACK 0
-#define StackAlign(n) ((((n) - 1) | 3) + 1)
-#define UserStackSize(n) StackAlign(sizeof(Thread) +                    \
-                                    sizeof(struct intctx) +             \
-                                    sizeof(struct extctx) +             \
-                                    (n) +                               \
-                                    INT_REQUIRED_STACK)
-#define WorkingArea(s, n) uint32_t s[UserStackSize(n) >> 2];
+
+/*
+ * Enforces a 32 bit alignment for a stack area size value.
+ */
+#define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
+#define StackAlign(n) STACK_ALIGN(n)
+
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
+                                   sizeof(struct intctx) +              \
+                                   sizeof(struct extctx) +              \
+                                   (n) +                                \
+                                   INT_REQUIRED_STACK)
+#define UserStackSize(n) THD_WA_SIZE(n)
+
+#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n)];
+#define WorkingArea(s, n) WORKING_AREA(s, n)
 
 /* called on each interrupt entry, currently nothing is done */
 #define chSysIRQEnterI()
@@ -125,10 +145,16 @@ typedef struct {
 }
 
 #define IDLE_THREAD_STACK_SIZE 0
-void _IdleThread(void *p) __attribute__((noreturn));
 
-void chSysHalt(void);
-void chSysPuts(char *msg);
-void threadstart(void);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void _idle(void *p) __attribute__((weak, noreturn));
+  void chSysHalt(void);
+  void chSysPuts(char *msg);
+  void threadstart(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _CHCORE_H_ */

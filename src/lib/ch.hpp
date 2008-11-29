@@ -187,7 +187,7 @@ namespace chibios_rt {
   template <int N>
   class EnhancedThread : public BaseThread {
   protected:
-    WorkingArea(wa, N);                         // Thread working area.
+    WORKING_AREA(wa, N);                        // Thread working area.
 
   public:
     const char *name;

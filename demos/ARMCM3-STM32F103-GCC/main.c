@@ -26,7 +26,7 @@
 /*
  * Red LEDs blinker thread, times are in milliseconds.
  */
-static WorkingArea(waThread1, 128);
+static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {

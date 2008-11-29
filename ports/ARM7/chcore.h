@@ -30,37 +30,40 @@
  */
 typedef uint32_t stkalign_t;
 
-typedef void *regarm;
+/*
+ * Generic ARM register.
+ */
+typedef void *regarm_t;
 
 /*
  * Interrupt saved context.
  */
 struct extctx {
-  regarm  spsr_irq;
-  regarm  lr_irq;
-  regarm  r0;
-  regarm  r1;
-  regarm  r2;
-  regarm  r3;
-  regarm  r12;
-  regarm  lr_usr;
+  regarm_t      spsr_irq;
+  regarm_t      lr_irq;
+  regarm_t      r0;
+  regarm_t      r1;
+  regarm_t      r2;
+  regarm_t      r3;
+  regarm_t      r12;
+  regarm_t      lr_usr;
 };
 
 /*
  * System saved context.
  */
 struct intctx {
-  regarm  r4;
-  regarm  r5;
-  regarm  r6;
+  regarm_t      r4;
+  regarm_t      r5;
+  regarm_t      r6;
 #ifndef CH_CURRP_REGISTER_CACHE
-  regarm  r7;
+  regarm_t      r7;
 #endif
-  regarm  r8;
-  regarm  r9;
-  regarm  r10;
-  regarm  r11;
-  regarm  lr;
+  regarm_t      r8;
+  regarm_t      r9;
+  regarm_t      r10;
+  regarm_t      r11;
+  regarm_t      lr;
 };
 
 /*
@@ -122,21 +125,18 @@ extern "C" {
 #define INT_REQUIRED_STACK 0
 #endif /* !THUMB */
 
-/*
- * Enforces a 32 bit alignment for a stack area size value.
- */
 #define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
+#define StackAlign(n) STACK_ALIGN(n)
 
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
                                    sizeof(struct intctx) +              \
                                    sizeof(struct extctx) +              \
                                    (n) +                                \
                                    INT_REQUIRED_STACK)
+#define UserStackSize(n) THD_WA_SIZE(n)
 
-/*
- * Declares a 32bit aligned thread working area.
- */
 #define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n)];
+#define WorkingArea(s, n) WORKING_AREA(s, n)
 
 #ifdef THUMB
 #define chSysSwitchI chSysSwitchI_thumb
