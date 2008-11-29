@@ -84,17 +84,17 @@ typedef struct {
 #define INT_REQUIRED_STACK 32
 
 #define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
-//#define StackAlign(n) STACK_ALIGN(n)
+#define StackAlign(n) STACK_ALIGN(n)
 
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
                                    sizeof(struct intctx) +              \
                                    sizeof(struct extctx) +              \
                                    (n) +                                \
                                    INT_REQUIRED_STACK)
-//#define UserStackSize(n) THD_WA_SIZE(n)
+#define UserStackSize(n) THD_WA_SIZE(n)
 
 #define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
-//#define WorkingArea(s, n) WORKING_AREA(s, n)
+#define WorkingArea(s, n) WORKING_AREA(s, n)
 
 #define chSysLock() asm volatile ("dint")
 #define chSysUnlock() asm volatile ("eint")
