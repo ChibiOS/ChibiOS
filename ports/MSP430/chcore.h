@@ -23,36 +23,47 @@
 #include <iomacros.h>
 #include <msp430/common.h>
 
+/*
+ * Macro defining the MSP430 architecture.
+ */
 #define CH_ARCHITECTURE_MSP430
 
-typedef void *regmsp;
+/*
+ * 16 bit stack alignment.
+ */
+typedef uint16_t stkalign_t;
+
+/*
+ * Generic MSP430 register.
+ */
+typedef void *regmsp_t;
 
 /*
  * Interrupt saved context.
  */
 struct extctx {
-  regmsp        r12;
-  regmsp        r13;
-  regmsp        r14;
-  regmsp        r15;
-  regmsp        sr;
-  regmsp        pc;
+  regmsp_t      r12;
+  regmsp_t      r13;
+  regmsp_t      r14;
+  regmsp_t      r15;
+  regmsp_t      sr;
+  regmsp_t      pc;
 };
 
 /*
  * System saved context.
  */
 struct intctx {
-  regmsp        r4;
-  regmsp        r5;
-  regmsp        r6;
-  regmsp        r7;
-  regmsp        r8;
-  regmsp        r9;
-  regmsp        r10;
-  regmsp        r11;
-//  regmsp        sr;
-  regmsp        pc;
+  regmsp_t      r4;
+  regmsp_t      r5;
+  regmsp_t      r6;
+  regmsp_t      r7;
+  regmsp_t      r8;
+  regmsp_t      r9;
+  regmsp_t      r10;
+  regmsp_t      r11;
+//  regmsp_t      sr;
+  regmsp_t      pc;
 };
 
 typedef struct {
@@ -71,12 +82,19 @@ typedef struct {
 #define IDLE_THREAD_STACK_SIZE 0
 
 #define INT_REQUIRED_STACK 32
-#define StackAlign(n) ((((n) - 1) | 1) + 1)
-#define UserStackSize(n) StackAlign(sizeof(Thread) +                    \
-                                    sizeof(struct intctx) +             \
-                                    sizeof(struct extctx) +             \
-                                    (n) + (INT_REQUIRED_STACK))
-#define WorkingArea(s, n) uint16_t s[UserStackSize(n >> 1)];
+
+#define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
+//#define StackAlign(n) STACK_ALIGN(n)
+
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
+                                   sizeof(struct intctx) +              \
+                                   sizeof(struct extctx) +              \
+                                   (n) +                                \
+                                   INT_REQUIRED_STACK)
+//#define UserStackSize(n) THD_WA_SIZE(n)
+
+#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
+//#define WorkingArea(s, n) WORKING_AREA(s, n)
 
 #define chSysLock() asm volatile ("dint")
 #define chSysUnlock() asm volatile ("eint")
@@ -91,7 +109,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _IdleThread(void *p);
+  void _idle(void *p) __attribute__((weak, noreturn));
   void chSysHalt(void);
   void chSysSwitchI(Thread *otp, Thread *ntp);
   void chSysPuts(char *msg);

@@ -27,7 +27,7 @@
 #define BASEPRI_KERNEL  0x10    /* BASEPRI level within kernel lock.    */
 #define ENABLE_WFI_IDLE 0       /* Enables the use of the WFI ins.      */
 
-/**
+/*
  * Macro defining the ARM Cortex-M3 architecture.
  */
 #define CH_ARCHITECTURE_ARMCM3

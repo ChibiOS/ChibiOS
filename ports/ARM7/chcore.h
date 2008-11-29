@@ -20,7 +20,7 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
-/**
+/*
  * Macro defining the ARM7 architecture.
  */
 #define CH_ARCHITECTURE_ARM7

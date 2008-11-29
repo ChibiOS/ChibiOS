@@ -25,7 +25,7 @@
  * The priority is internally set to the minimum system value so that this
  * thread is executed only if there are no other ready threads in the system.
  */
-void _IdleThread(void *p) {
+void _idle(void *p) {
 
   while (TRUE)
     ;
