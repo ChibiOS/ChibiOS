@@ -27,7 +27,7 @@
 
 void hwinit(void);
 
-static WorkingArea(waThread1, 32);
+static WORKING_AREA(waThread1, 32);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
