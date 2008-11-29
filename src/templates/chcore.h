@@ -108,7 +108,7 @@ typedef struct {
  * Macro used to allocate a thread working area aligned as both position and
  * size.
  */
-#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n)];
+#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
 
 /**
  * IRQ handler enter code.

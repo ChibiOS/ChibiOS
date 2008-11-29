@@ -133,7 +133,7 @@ typedef struct {
                                    INT_REQUIRED_STACK)
 #define UserStackSize(n) THD_WA_SIZE(n)
 
-#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n)];
+#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
 #define WorkingArea(s, n) WORKING_AREA(s, n)
 
 /* called on each interrupt entry, currently nothing is done */

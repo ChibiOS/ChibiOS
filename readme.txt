@@ -75,8 +75,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 
 *** 0.8.2 ***
 - FIX: Duplicated sections in the documentation removed.
-- FIX: Minor problem in Cortex-M3 port affecting chSysHalt() and chSysPuts()
-  functions when the kernel is compiled with G++.
+- FIX: Minor problem in Cortex-M3 and AVR ports when the kernel is compiled
+  using G++.
 - NEW: Added chPoolAllocI() and chPoolFreeI() APIs in order to allow the use
   of memory pools from interrupt handlers and timer callbacks.
 - CHANGE: The macros WorkingArea(), UserStackSize() and StackAlign() are now

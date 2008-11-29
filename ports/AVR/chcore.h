@@ -20,7 +20,15 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
+/**
+ * Macro defining the AVR architecture.
+ */
 #define CH_ARCHITECTURE_AVR
+
+/*
+ * 8 bit stack alignment.
+ */
+typedef uint8_t stkalign_t;
 
 /*
  * Interrupt saved context.
@@ -97,12 +105,19 @@ typedef struct {
 }
 
 #define INT_REQUIRED_STACK 8
-#define StackAlign(n) (n)
-#define UserStackSize(n) StackAlign(sizeof(Thread) +                    \
-                                    (sizeof(struct intctx) - 1) +       \
-                                    (sizeof(struct extctx) - 1) +       \
-                                    (n) + (INT_REQUIRED_STACK))
-#define WorkingArea(s, n) uint8_t s[UserStackSize(n)];
+
+#define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
+#define StackAlign(n) STACK_ALIGN(n)
+
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
+                                   (sizeof(struct intctx) - 1) +        \
+                                   (sizeof(struct extctx) - 1) +        \
+                                   (n) +                                \
+                                   INT_REQUIRED_STACK)
+#define UserStackSize(n) THD_WA_SIZE(n)
+
+#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
+#define WorkingArea(s, n) WORKING_AREA(s, n)
 
 #define chSysLock() asm volatile ("cli")
 
@@ -121,11 +136,17 @@ typedef struct {
 }
 
 #define IDLE_THREAD_STACK_SIZE 8
-void _IdleThread(void *p) __attribute__((noreturn));
 
-void chSysHalt(void) __attribute__((noreturn)) ;
-void chSysSwitchI(Thread *otp, Thread *ntp);
-void chSysPuts(char *msg);
-void threadstart(void) __attribute__((naked));
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void _idle(void *p) __attribute__((noreturn));
+  void chSysHalt(void) __attribute__((noreturn)) ;
+  void chSysSwitchI(Thread *otp, Thread *ntp);
+  void chSysPuts(char *msg);
+  void threadstart(void) __attribute__((naked));
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _CHCORE_H_ */

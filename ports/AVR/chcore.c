@@ -21,7 +21,7 @@
 
 #include <avr/io.h>
 
-void _IdleThread(void *p) {
+void _idle(void *p) {
 
   while (TRUE) {
     asm("sleep");
