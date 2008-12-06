@@ -30,16 +30,16 @@ __stacks_total_size__	= __und_stack_size__ + __abt_stack_size__ + __fiq_stack_si
 
 MEMORY
 {
-	flash : org = 0x00000000, len = 512k - 12k
-	ram : org = 0x40000200, len = 32k - 0x200 - 288
+    flash : org = 0x00000000, len = 512k - 12k
+    ram : org = 0x40000200, len = 32k - 0x200 - 288
 }
 
-__ram_start__		= ORIGIN(ram);
-__ram_size__		= LENGTH(ram);
-__ram_end__		= __ram_start__ + __ram_size__;
-__dma_start__		= 0x7FD00000;
-__dma_size__		= 8k;
-__dma_end__		= 0x7FD00000 + __dma_size__;
+__ram_start__       = ORIGIN(ram);
+__ram_size__        = LENGTH(ram);
+__ram_end__         = __ram_start__ + __ram_size__;
+__dma_start__       = 0x7FD00000;
+__dma_size__        = 8k;
+__dma_end__         = 0x7FD00000 + __dma_size__;
 
 SECTIONS
 {
@@ -47,46 +47,46 @@ SECTIONS
 
 	.text :
 	{
-		_text = .;
-                KEEP(*(vectors))
-                *(.text)
-		*(.text.*);
-		*(.rodata);
-		*(.rodata.*);
-		*(.glue_7t);
-		*(.glue_7);
-		*(.gcc*);
-		*(.ctors);
-		*(.dtors);
-		. = ALIGN(4);
-		_etext = .;
-	} > flash
+        _text = .;
+        KEEP(*(vectors))
+        *(.text)
+        *(.text.*);
+        *(.rodata);
+        *(.rodata.*);
+        *(.glue_7t);
+        *(.glue_7);
+        *(.gcc*);
+        *(.ctors);
+        *(.dtors);
+        . = ALIGN(4);
+        _etext = .;
+    } > flash
 
-	_textdata = _etext;
+    _textdata = _etext;
 
-	.data :
-	{
-		_data = .;
-		*(.data)
-		. = ALIGN(4);
-		*(.data.*)
-		. = ALIGN(4);
-		*(.ramtext)
-		. = ALIGN(4);
-		_edata = .;
-	} > ram AT > flash
+    .data :
+    {
+        _data = .;
+        *(.data)
+        . = ALIGN(4);
+        *(.data.*)
+        . = ALIGN(4);
+        *(.ramtext)
+        . = ALIGN(4);
+        _edata = .;
+    } > ram AT > flash
 
-	.bss :
-	{
-		_bss_start = .;
-		*(.bss)
-		. = ALIGN(4);
-		*(.bss.*)
-		. = ALIGN(4);
-		*(COMMON)
-		. = ALIGN(4);
-		_bss_end = .;
-	} > ram    
+    .bss :
+    {
+        _bss_start = .;
+        *(.bss)
+        . = ALIGN(4);
+        *(.bss.*)
+        . = ALIGN(4);
+        *(COMMON)
+        . = ALIGN(4);
+        _bss_end = .;
+    } > ram    
 }
 
 PROVIDE(end = .);
