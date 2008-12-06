@@ -18,7 +18,7 @@
 ./ext/                 - External libraries or other code not part of
                          ChibiOS/RT but used in the demo applications.
 ./test/                - Test code, used by some demos.
-./docs/Doxifile        - Doxigen project file.
+./docs/Doxyfile        - Doxygen project file.
 ./docs/html/index.html - ChibiOS/RT documentation (after running doxigen).
                          The documentation is also available on the project
                          web page: http://chibios.sourceforge.net/
@@ -74,11 +74,14 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.8.2 ***
+- FIX: Included the files that were missing from version 0.8.1 distribution.
 - FIX: Duplicated sections in the documentation removed.
 - FIX: Minor problem in Cortex-M3 and AVR ports when the kernel is compiled
   using G++.
 - NEW: Added chPoolAllocI() and chPoolFreeI() APIs in order to allow the use
   of memory pools from interrupt handlers and timer callbacks.
+- CHANGE: Simplified the code for chThdWait(), it is now both smaller and
+  faster. Added an important usage note to the documentation of this API.
 - CHANGE: The macros WorkingArea(), UserStackSize() and StackAlign() are now
   deprecated and will be removed in version 1.0.0. Use the new equivalents
   WORKING_AREA(), THD_WA_SIZE() and STACK_ALIGN() instead.

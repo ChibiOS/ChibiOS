@@ -40,7 +40,7 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
   tp->p_mtxlist = NULL;
 #endif
 #ifdef CH_USE_WAITEXIT
-  list_init(&tp->p_waiting);
+  tp->p_waiting = NULL;
 #endif
 #ifdef CH_USE_MESSAGES
   queue_init(&tp->p_msgqueue);
@@ -324,8 +324,10 @@ void chThdExit(msg_t msg) {
   tp->p_exitcode = msg;
   THREAD_EXT_EXIT(tp);
 #ifdef CH_USE_WAITEXIT
-  while (notempty(&tp->p_waiting))
-    chSchReadyI(list_remove(&tp->p_waiting));
+//  while (notempty(&tp->p_waiting))
+//    chSchReadyI(list_remove(&tp->p_waiting));
+  if (tp->p_waiting != NULL)
+    chSchReadyI(tp->p_waiting);
 #endif
 #ifdef CH_USE_EXIT_EVENT
   chEvtBroadcastI(&tp->p_exitesource);
@@ -354,14 +356,21 @@ void chThdExit(msg_t msg) {
  *       must not be used as parameter for further system calls.
  * @note The function is available only if the \p CH_USE_WAITEXIT
  *       option is enabled in \p chconf.h.
+ * @note Only one thread can be waiting for another thread at any time. You
+ *       should imagine the threads as having a reference counter that is set
+ *       to one when the thread is created, chThdWait() decreases the reference
+ *       and the memory is freed when the counter reaches zero. In the current
+ *       implementation there is no real reference counter in the thread
+ *       structure but it is a planned extension.
  */
 msg_t chThdWait(Thread *tp) {
   msg_t msg;
 
   chSysLock();
-  chDbgAssert((tp != NULL) && (tp != currp), "chthreads.c, chThdWait()");
+  chDbgAssert((tp != NULL) && (tp != currp) && (tp->p_waiting != NULL),
+              "chthreads.c, chThdWait()");
   if (tp->p_state != PREXIT) {
-    list_insert(currp, &tp->p_waiting);
+    tp->p_waiting = currp;
     chSchGoSleepS(PRWAIT);
   }
   msg = tp->p_exitcode;
@@ -369,12 +378,8 @@ msg_t chThdWait(Thread *tp) {
   chSysUnlock();
   return msg;
 #else /* CH_USE_DYNAMIC */
-  if (notempty(&tp->p_waiting)) {
-    chSysUnlock();
-    return msg;
-  }
 
-  /* This is the last thread waiting for termination, returning memory.*/
+  /* Returning memory.*/
   tmode_t mode = tp->p_flags & P_MEM_MODE_MASK;
   chSysUnlock();
 
