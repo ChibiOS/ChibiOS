@@ -1,5 +1,5 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 0.8.0
+Kernel:   ChibiOS/RT 0.8.2
 Compiler: GCC 4.3.2 (YAGARTO 28.09.2008)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
@@ -53,7 +53,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 16 (Benchmark, context switch #1, optimal)
---- Score : 144452 msgs/S, 288904 ctxswc/S
+--- Score : 144451 msgs/S, 288902 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 17 (Benchmark, context switch #2, empty ready list)
@@ -65,23 +65,23 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 19 (Benchmark, threads creation/termination, worst case)
---- Score : 86776 threads/S
+--- Score : 92663 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 20 (Benchmark, threads creation/termination, optimal)
---- Score : 119534 threads/S
+--- Score : 122600 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 21 (Benchmark, mass reschedulation, 5 threads)
---- Score : 36005 reschedulations/S, 216030 ctxswc/S
+--- Score : 36006 reschedulations/S, 216036 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 22 (Benchmark, I/O Queues throughput)
---- Score : 341232 bytes/S
+--- Score : 341236 bytes/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 23 (Benchmark, virtual timers set/reset)
---- Score : 309498 timers/S
+--- Score : 309496 timers/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 

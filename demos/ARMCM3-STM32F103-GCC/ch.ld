@@ -26,64 +26,64 @@ __stacks_total_size__	= __main_stack_size__ + __process_stack_size__;
 
 MEMORY
 {
-	flash : org = 0x08000000, len = 128k
-	ram : org = 0x20000000, len = 20k
+    flash : org = 0x08000000, len = 128k
+    ram : org = 0x20000000, len = 20k
 }
 
-__ram_start__		= ORIGIN(ram);
-__ram_size__		= LENGTH(ram);
-__ram_end__		= __ram_start__ + __ram_size__;
+__ram_start__       = ORIGIN(ram);
+__ram_size__        = LENGTH(ram);
+__ram_end__         = __ram_start__ + __ram_size__;
 
 SECTIONS
 {
-	. = 0;
+    . = 0;
 
-	.text :
-	{
-		_text = .;
-		KEEP(*(vectors));
-                *(.text)
-		*(.text.*);
-		*(.rodata);
-		*(.rodata.*);
-		*(.glue_7t);
-		*(.glue_7);
-		*(.gcc*);
-		*(.ctors);
-		*(.dtors);
-		. = ALIGN(4);
-		_etext = .;
-	} > flash
+    .text : ALIGN(16) SUBALIGN(16)
+    {
+        _text = .;
+        KEEP(*(vectors));
+        *(.text)
+        *(.text.*);
+        *(.rodata);
+        *(.rodata.*);
+        *(.glue_7t);
+        *(.glue_7);
+        *(.gcc*);
+        *(.ctors);
+        *(.dtors);
+        . = ALIGN(4);
+        _etext = .;
+    } > flash
 
-	_textdata = _etext;
+    _textdata = _etext;
 
-	.data :
-	{
-		_data = .;
-		*(.data)
-		. = ALIGN(4);
-		*(.data.*)
-		. = ALIGN(4);
-		*(.ramtext)
-		. = ALIGN(4);
-		_edata = .;
-	} > ram AT > flash
+    .data :
+    {
+        _data = .;
+        *(.data)
+        . = ALIGN(4);
+        *(.data.*)
+        . = ALIGN(4);
+        *(.ramtext)
+        . = ALIGN(4);
+        _edata = .;
+    } > ram AT > flash
 
-	.bss :
-	{
-		_bss_start = .;
-		*(.bss)
-		. = ALIGN(4);
-		*(.bss.*)
-		. = ALIGN(4);
-		*(COMMON)
-		. = ALIGN(4);
-		_bss_end = .;
-	} > ram    
+    .bss :
+    {
+        _bss_start = .;
+        *(.bss)
+        . = ALIGN(4);
+        *(.bss.*)
+        . = ALIGN(4);
+        *(COMMON)
+        . = ALIGN(4);
+        _bss_end = .;
+    } > ram    
 }
 
 PROVIDE(end = .);
-_end 			= .;
+_end            = .;
 
-__heap_base__		= _end;
-__heap_end__		= __ram_end__ - __stacks_total_size__;
+__heap_base__   = _end;
+__heap_end__    = __ram_end__ - __stacks_total_size__;

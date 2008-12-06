@@ -5,10 +5,6 @@ Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 ***************************************************************************
 
-*****************************
-*** ChibiOS/RT test suite ***
-*****************************
-
 ---------------------------------------------------------------------------
 --- Test Case 1 (Ready List, priority enqueuing test #1)
 --- Result: SUCCESS

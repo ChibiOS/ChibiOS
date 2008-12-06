@@ -45,7 +45,7 @@ SECTIONS
 {
 	. = 0;
 
-	.text :
+	.text : ALIGN(16) SUBALIGN(16)
 	{
         _text = .;
         KEEP(*(vectors))

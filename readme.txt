@@ -87,6 +87,14 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   WORKING_AREA(), THD_WA_SIZE() and STACK_ALIGN() instead.
 - CHANGE: Renamed the default idle thread function from _IdleThread() to
           _idle().
+- Added to the LPC2148 and STM32 load scripts the options "ALIGN(16)
+  SUBALIGN(16)" to the flash loading section in order to enforce the alignment
+  for both the code and read only data. This is done in order to obtain more
+  accurate timings from benchmarks, those families have 16 bytes
+  prefetch buffers and are very sensitive to alignment changes.
+  You can remove those options in order to save some flash space if accurate
+  response time is not on top of your priorities, it mainly depends on your
+  requirements.
 
 *** 0.8.1 ***
 - FIX: Fixed a regression in version 0.8.0, the configuration switch
