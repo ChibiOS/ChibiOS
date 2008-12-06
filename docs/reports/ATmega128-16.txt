@@ -1,0 +1,75 @@
+***************************************************************************
+Kernel:   ChibiOS/RT 0.7.3
+Compiler: GCC 4.3.0 (WinAVR 10.06.2008)
+Options:  -O2
+Settings: F_CPU=16000000
+***************************************************************************
+
+---------------------------------------------------------------------------
+--- Test Case 1 (Ready List, priority enqueuing test #1)
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 2 (Ready List, priority enqueuing test #2)
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 3 (Semaphores, FIFO enqueuing test)
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 4 (Semaphores, timeout test)
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 5 (Mutexes, priority enqueuing test)
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 6 (Mutexes, priority inheritance, simple case)
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 7 (Mutexes, priority inheritance, complex case)
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 8 (Messages, dispatch test)
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 9 (Heap, allocation and fragmentation test)
+--- Size  : 508 bytes, not fragmented
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 10 (Memory Pools, allocation and enqueuing test)
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 11 (Dynamic APIs, threads creation from heap)
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 12 (Dynamic APIs, threads creation from memory pool)
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 13 (Benchmark, context switch #1, optimal)
+--- Score : 30775 msgs/S, 61550 ctxswc/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 14 (Benchmark, context switch #2, empty ready list)
+--- Score : 24524 msgs/S, 49048 ctxswc/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 15 (Benchmark, context switch #3, 4 threads in ready list)
+--- Score : 24524 msgs/S, 49048 ctxswc/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 16 (Benchmark, threads creation/termination, worst case)
+--- Score : 18140 threads/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 17 (Benchmark, threads creation/termination, optimal)
+--- Score : 23645 threads/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 18 (Benchmark, mass reschedulation, 5 threads)
+--- Score : 7739 reschedulations/S, 46434 ctxswc/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 19 (Benchmark, I/O Queues throughput)
+--- Score : 84048 bytes/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+
+Final result: SUCCESS
