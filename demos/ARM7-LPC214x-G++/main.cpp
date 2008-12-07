@@ -139,7 +139,7 @@ int main(int argc, char **argv) {
   chEvtRegister(&evt.et_es, &el0, 0);   // Registers a listener on the source.
 
   /*
-   * Starts serveral instances of the SequencerThread class, each one operating
+   * Starts several instances of the SequencerThread class, each one operating
    * on a different LED.
    */
   SequencerThread blinker1(LED1_sequence);
@@ -150,7 +150,7 @@ int main(int argc, char **argv) {
    * Serves timer events.
    */
   while (true)
-    Event::Wait(ALL_EVENTS, evhndl);
+    Event::Dispatch(evhndl, Event::WaitOne(ALL_EVENTS));
 
   return 0;
 }

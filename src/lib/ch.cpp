@@ -39,14 +39,11 @@ namespace chibios_rt {
     chSysUnlock();
   }
 
-#ifdef CH_USE_SYSTEMTIME
   systime_t System::GetTime(void) {
 
     return chSysGetTime();
   }
-#endif /* CH_USE_SYSTEMTIME */
 
-#ifdef CH_USE_VIRTUAL_TIMERS
   /*------------------------------------------------------------------------*
    * chibios_rt::Timer                                                      *
    *------------------------------------------------------------------------*/
@@ -64,7 +61,6 @@ namespace chibios_rt {
 
     return chVTIsArmedI(&timer);
   }
-#endif /* CH_USE_VIRTUAL_TIMER */
 
   /*------------------------------------------------------------------------*
    * chibios_rt::BaseThread                                                 *
@@ -113,12 +109,10 @@ namespace chibios_rt {
     chThdSleep(n);
   }
 
-#ifdef CH_USE_SYSTEMTIME
   void BaseThread::SleepUntil(systime_t time) {
 
     chThdSleepUntil(time);
   }
-#endif /* CH_USE_SYSTEMTIME */
 
 #ifdef CH_USE_MESSAGES
   msg_t BaseThread::SendMessage(::Thread* tp, msg_t msg) {
@@ -224,6 +218,38 @@ namespace chibios_rt {
 
     chMtxUnlockAll();
   }
+
+#ifdef CH_USE_CONDVARS
+  /*------------------------------------------------------------------------*
+   * chibios_rt::CondVar                                                    *
+   *------------------------------------------------------------------------*/
+  CondVar::CondVar(void) {
+
+    chCondInit(&condvar);
+  }
+
+  void CondVar::Signal(void) {
+
+    chCondSignal(&condvar);
+  }
+
+  void CondVar::Broadcast(void) {
+
+    chCondBroadcast(&condvar);
+  }
+
+  msg_t CondVar::Wait(void) {
+
+    return chCondWait(&condvar);
+  }
+
+#ifdef CH_USE_CONDVARS_TIMEOUT
+  msg_t CondVar::WaitTimeout(systime_t time) {
+
+    return chCondWaitTimeout(&condvar, time);
+  }
+#endif /* CH_USE_CONDVARS_TIMEOUT */
+#endif /* CH_USE_CONDVARS */
 #endif /* CH_USE_MUTEXES */
 
 #ifdef CH_USE_EVENTS
@@ -240,32 +266,65 @@ namespace chibios_rt {
     chEvtRegister(&event,elp, eid);
   }
 
+  void Event::RegisterMask(EventListener *elp, eventmask_t emask) {
+
+    chEvtRegisterMask(&event,elp, emask);
+  }
+
   void Event::Unregister(EventListener *elp) {
 
     chEvtUnregister(&event, elp);
   }
 
-  void Event::Send(void) {
+  void Event::Broadcast(void) {
 
-    chEvtSend(&event);
+    chEvtBroadcast(&event);
   }
 
-  void Event::Clear(eventmask_t mask) {
+  eventmask_t Event::Clear(eventmask_t mask) {
 
-    chEvtClear(mask);
+    return chEvtClear(mask);
   }
 
-  eventid_t Event::Wait(eventmask_t ewmask, const evhandler_t handlers[]) {
+  eventmask_t Event::Pend(eventmask_t mask) {
 
-    return chEvtWait(ewmask, handlers);
+    return chEvtPend(mask);
+  }
+
+  void Event::Dispatch(const evhandler_t handlers[], eventmask_t mask) {
+
+    chEvtDispatch(handlers, mask);
+  }
+
+  eventmask_t Event::WaitOne(eventmask_t ewmask) {
+
+    return chEvtWaitOne(ewmask);
+  }
+
+  eventmask_t Event::WaitAny(eventmask_t ewmask) {
+
+    return chEvtWaitAny(ewmask);
+  }
+
+  eventmask_t Event::WaitAll(eventmask_t ewmask) {
+
+    return chEvtWaitAll(ewmask);
   }
 
 #ifdef CH_USE_EVENTS_TIMEOUT
-  eventid_t Event::WaitTimeout(eventmask_t ewmask,
-                               const evhandler_t handlers[],
-                               systime_t time) {
+  eventmask_t Event::WaitOneTimeout(eventmask_t ewmask, systime_t time) {
 
-    return chEvtWaitTimeout(ewmask, handlers, time);
+    return chEvtWaitOneTimeout(ewmask, time);
+  }
+
+  eventmask_t Event::WaitAnyTimeout(eventmask_t ewmask, systime_t time) {
+
+    return chEvtWaitAnyTimeout(ewmask, time);
+  }
+
+  eventmask_t Event::WaitAllTimeout(eventmask_t ewmask, systime_t time) {
+
+    return chEvtWaitAllTimeout(ewmask, time);
   }
 #endif /* CH_USE_EVENTS_TIMEOUT */
 #endif /* CH_USE_EVENTS */

@@ -73,6 +73,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 0.8.3 ***
+- Updated the C++ wrapper with the latest APIs changes and fixed some bugs.
+- Small fixes to the documentation.
+
 *** 0.8.2 ***
 - FIX: Included the files that were missing from version 0.8.1 distribution.
 - FIX: Duplicated sections in the documentation removed.
