@@ -89,7 +89,7 @@ eventmask_t chEvtClear(eventmask_t mask) {
 
 /**
  * Makes an events mask pending in the current thread, this is \b much faster than
- * using \p chEvtBreadcast().
+ * using \p chEvtBroadcast().
  * @param mask the events to be pended
  * @return The current pending events mask.
  */
@@ -167,7 +167,7 @@ void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask) {
  * @param ewmask mask of the events that the function should wait for,
  *               \p ALL_EVENTS enables all the events
  * @return The mask of the lowest id served and cleared event.
- * @note Only a single event is served in the function, the one with the
+ * @note One and only one event is served in the function, the one with the
  *       lowest event id. The function is meant to be invoked into a loop in
  *       order to serve all the pending events.<br>
  *       This means that Event Listeners with a lower event identifier have
@@ -287,8 +287,8 @@ eventid_t chEvtWait(eventmask_t ewmask,
  *               \p ALL_EVENTS enables all the events
  * @param time the number of ticks before the operation timouts
  * @return The mask of the lowest id served and cleared event.
- * @retval 0 if the specified timeout expired
- * @note Only a single event is served in the function, the one with the
+ * @retval 0 if the specified timeout expired.
+ * @note One and only one event is served in the function, the one with the
  *       lowest event id. The function is meant to be invoked into a loop in
  *       order to serve all the pending events.<br>
  *       This means that Event Listeners with a lower event identifier have
@@ -320,7 +320,7 @@ eventmask_t chEvtWaitOneTimeout(eventmask_t ewmask, systime_t time) {
  *               \p ALL_EVENTS enables all the events
  * @param time the number of ticks before the operation timouts
  * @return The mask of the served and cleared events.
- * @retval 0 if the specified timeout expired
+ * @retval 0 if the specified timeout expired.
  */
 eventmask_t chEvtWaitAnyTimeout(eventmask_t ewmask, systime_t time) {
   eventmask_t m;
@@ -346,7 +346,7 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t ewmask, systime_t time) {
  * @param ewmask mask of the event ids that the function should wait for
  * @param time the number of ticks before the operation timouts
  * @return The mask of the served and cleared events.
- * @retval 0 if the specified timeout expired
+ * @retval 0 if the specified timeout expired.
  */
 eventmask_t chEvtWaitAllTimeout(eventmask_t ewmask, systime_t time) {
 
