@@ -18,7 +18,7 @@
 */
 /*
    Concepts and parts of this file are contributed by and Copyright (C) 2008
-   of Leon Woestenberg
+   of Leon Woestenberg.
  */
 
 /**
