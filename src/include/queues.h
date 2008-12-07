@@ -29,15 +29,15 @@
 typedef void (*qnotify_t)(void);
 
 /** Returned by the queue functions if the operation is successful. */
-#define Q_OK        RDY_OK
+#define Q_OK            RDY_OK
 /** Returned by the queue functions if a timeout occurs. */
-#define Q_TIMEOUT   RDY_TIMEOUT
+#define Q_TIMEOUT       RDY_TIMEOUT
 /** Returned by the queue functions if the queue is reset. */
-#define Q_RESET     RDY_RESET
+#define Q_RESET         RDY_RESET
 /** Returned by the queue functions if the queue is empty. */
-#define Q_EMPTY     -3
+#define Q_EMPTY         -3
 /** Returned by the queue functions if the queue is full. */
-#define Q_FULL      -4
+#define Q_FULL          -4
 
 #ifdef CH_USE_QUEUES
 /**
@@ -46,17 +46,17 @@ typedef void (*qnotify_t)(void);
  */
 typedef struct {
   /** Pointer to the queue buffer. */
-  uint8_t           *q_buffer;
+  uint8_t               *q_buffer;
   /** Pointer to the first location after the buffer. */
-  uint8_t           *q_top;
+  uint8_t               *q_top;
   /** Write pointer. */
-  uint8_t           *q_wrptr;
+  uint8_t               *q_wrptr;
   /** Read pointer. */
-  uint8_t           *q_rdptr;
+  uint8_t               *q_rdptr;
   /** Counter semaphore. */
-  Semaphore         q_sem;
+  Semaphore             q_sem;
   /** Data notification callback. */
-  qnotify_t         q_notify;
+  qnotify_t             q_notify;
 } Queue;
 
 /** Returns the queue's buffer size. */
@@ -120,21 +120,21 @@ extern "C" {
  */
 typedef struct {
   /** Pointer to the queue buffer. */
-  uint8_t           *hdq_buffer;
+  uint8_t               *hdq_buffer;
   /** Pointer to the first location after the buffer. */
-  uint8_t           *hdq_top;
+  uint8_t               *hdq_top;
   /** Write pointer.*/
-  uint8_t           *hdq_wrptr;
+  uint8_t               *hdq_wrptr;
   /** Read pointer.*/
-  uint8_t           *hdq_rdptr;
+  uint8_t               *hdq_rdptr;
   /** Input counter semaphore. */
-  Semaphore         hdq_isem;
+  Semaphore             hdq_isem;
   /** Output counter semaphore. */
-  Semaphore         hdq_osem;
+  Semaphore             hdq_osem;
   /** Input data notification callback. */
-  qnotify_t         hdq_inotify;
+  qnotify_t             hdq_inotify;
   /** Output data notification callback. */
-  qnotify_t         hdq_onotify;
+  qnotify_t             hdq_onotify;
 } HalfDuplexQueue;
 
 /** Returns the queue's buffer size. */

@@ -122,32 +122,32 @@ struct Thread {
 };
 
 /** Thread state: Ready to run, waiting on the ready list.*/
-#define PRREADY     0
+#define PRREADY         0
 /** Thread state: Currently running. */
-#define PRCURR      1
+#define PRCURR          1
 /** Thread state: Thread created in suspended state. */
-#define PRSUSPENDED 2
+#define PRSUSPENDED     2
 /** Thread state: Waiting on a semaphore. */
-#define PRWTSEM     3
+#define PRWTSEM         3
 /** Thread state: Waiting on a mutex. */
-#define PRWTMTX     4
+#define PRWTMTX         4
 /** Thread state: Waiting in \p chThdSleep() or \p chThdSleepUntil(). */
-#define PRWTCOND    5
+#define PRWTCOND        5
 /** Thread state: Waiting in \p chCondWait(). */
-#define PRSLEEP     6
+#define PRSLEEP         6
 /** Thread state: Waiting in \p chThdWait(). */
-#define PRWAIT      7
+#define PRWAIT          7
 /** Thread state: Waiting in \p chEvtWaitOneTimeout() or
     \p chEvtWaitAnyTimeout(). */
-#define PRWTOREVT   8
+#define PRWTOREVT       8
 /** Thread state: Waiting in \p chEvtWaitAllTimeout(). */
-#define PRWTANDEVT  9
+#define PRWTANDEVT      9
 /** Thread state: Waiting in \p chMsgSend(). */
-#define PRSNDMSG    10
+#define PRSNDMSG        10
 /** Thread state: Waiting in \p chMsgWait(). */
-#define PRWTMSG     11
+#define PRWTMSG         11
 /** Thread state: After termination.*/
-#define PREXIT      12
+#define PREXIT          12
 
 /*
  * Various flags into the thread p_flags field.

@@ -26,31 +26,31 @@
 #define _SCHEDULER_H_
 
 /** Normal \p chSchReadyI() message. */
-#define RDY_OK      0
+#define RDY_OK          0
 /** Returned when the thread was made ready because of a timeout. */
-#define RDY_TIMEOUT -1
+#define RDY_TIMEOUT     -1
 /** Returned when the thread was made ready because of a reset. */
-#define RDY_RESET   -2
+#define RDY_RESET       -2
 
 /** Pseudo priority used by the ready list header, do not use.*/
-#define NOPRIO      0
+#define NOPRIO          0
 /** Idle thread priority.*/
-#define IDLEPRIO    1
+#define IDLEPRIO        1
 /** Lowest user priority.*/
-#define LOWPRIO     2
+#define LOWPRIO         2
 /** Normal user priority.*/
-#define NORMALPRIO  64
+#define NORMALPRIO      64
 /** Highest user priority.*/
-#define HIGHPRIO    127
+#define HIGHPRIO        127
 /** Greatest possible priority.*/
-#define ABSPRIO     255
+#define ABSPRIO         255
 
 /** Infinite time specification for all the syscalls with a timeout
     specification.*/
-#define TIME_INFINITE 0
+#define TIME_INFINITE   0
 
 /** The priority of the first thread on the given ready list. */
-#define firstprio(rlp)   ((rlp)->p_next->p_prio)
+#define firstprio(rlp)  ((rlp)->p_next->p_prio)
 
 /**
  * Ready list header.
@@ -58,9 +58,9 @@
  */
 typedef struct {
   /** Next \p Thread in the ready list.*/
-  Thread            *p_next;
+  Thread                *p_next;
   /** Previous \p Thread in the ready list.*/
-  Thread            *p_prev;
+  Thread                *p_prev;
   /* End of the fields shared with the ThreadsQueue structure. */
   /** The thread priority.*/
   tprio_t               r_prio;

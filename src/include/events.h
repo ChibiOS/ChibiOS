@@ -37,11 +37,11 @@ typedef struct EventListener EventListener;
  */
 struct EventListener {
   /** Next Event Listener registered on the Event Source.*/
-  EventListener     *el_next;
+  EventListener         *el_next;
   /** Thread interested in the Event Source.*/
-  Thread            *el_listener;
+  Thread                *el_listener;
   /** Event flags mask associated by the thread to the Event Source.*/
-  eventmask_t       el_mask;
+  eventmask_t           el_mask;
 };
 
 /**
@@ -49,12 +49,12 @@ struct EventListener {
  */
 typedef struct EventSource {
   /** First Event Listener registered on the Event Source.*/
-  EventListener     *es_next;
+  EventListener         *es_next;
 } EventSource;
 
 /** Returns the event mask from the event identifier.
  * @deprecated use EVENT_MASK() instead.*/
-#define EventMask(eid) (1 << (eid))
+#define EventMask(eid)  (1 << (eid))
 
 /** Returns the event mask from the event identifier.*/
 #define EVENT_MASK(eid) (1 << (eid))

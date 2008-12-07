@@ -31,13 +31,13 @@
  * Evaluates to TRUE if the thread has pending messages.
  */
 #define chMsgIsPendingI(tp) \
-                        ((tp)->p_msgqueue.p_next != (Thread *)&(tp)->p_msgqueue)
+        ((tp)->p_msgqueue.p_next != (Thread *)&(tp)->p_msgqueue)
 
 /**
  * Returns the first message in the queue.
  */
 #define chMsgGetI(tp) \
-                        ((tp)->p_msgqueue.p_next->p_msg)
+        ((tp)->p_msgqueue.p_next->p_msg)
 
 #ifdef __cplusplus
 extern "C" {

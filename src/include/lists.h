@@ -28,8 +28,8 @@
 typedef struct Thread Thread;
 
 /* Macros good with both ThreadsQueue and ThreadsList.*/
-#define isempty(p)     ((p)->p_next == (Thread *)(p))
-#define notempty(p)    ((p)->p_next != (Thread *)(p))
+#define isempty(p)      ((p)->p_next == (Thread *)(p))
+#define notempty(p)     ((p)->p_next != (Thread *)(p))
 
 /**
  * Generic threads queue header and element.
@@ -37,9 +37,9 @@ typedef struct Thread Thread;
  */
 typedef struct {
   /** First \p Thread in the queue, or \p ThreadQueue when empty. */
-  Thread            *p_next;
+  Thread                *p_next;
   /** Last \p Thread in the queue, or \p ThreadQueue when empty. */
-  Thread            *p_prev;
+  Thread                *p_prev;
 } ThreadsQueue;
 
 /**
@@ -47,14 +47,14 @@ typedef struct {
  */
 typedef struct {
   /** Last pushed \p Thread on the stack list, or \p ThreadList when empty. */
-  Thread            *p_next;
+  Thread                *p_next;
 } ThreadsList;
 
 /*
  * Threads Lists functions and macros.
  */
 #define queue_init(tqp) ((tqp)->p_next = (tqp)->p_prev = (Thread *)(tqp));
-#define list_init(tlp) ((tlp)->p_next = (Thread *)(tlp))
+#define list_init(tlp)  ((tlp)->p_next = (Thread *)(tlp))
 
 #ifndef CH_OPTIMIZE_SPEED
 

@@ -32,9 +32,9 @@
  */
 typedef struct {
   /** Queue of the threads sleeping on this Semaphore.*/
-  ThreadsQueue    s_queue;
+  ThreadsQueue          s_queue;
   /** The Semaphore counter.*/
-  cnt_t           s_cnt;
+  cnt_t                 s_cnt;
 } Semaphore;
 
 #ifdef __cplusplus
@@ -62,18 +62,18 @@ extern "C" {
  * Decreases the semaphore counter, this macro can be used when it is ensured
  * that the counter would not become negative.
  */
-#define chSemFastWaitS(sp) ((sp)->s_cnt--)
+#define chSemFastWaitS(sp)      ((sp)->s_cnt--)
 
 /**
  * Increases the semaphore counter, this macro can be used when the counter is
  * not negative.
  */
-#define chSemFastSignalI(sp) ((sp)->s_cnt++)
+#define chSemFastSignalI(sp)    ((sp)->s_cnt++)
 
 /**
  * Returns the semaphore counter current value.
  */
-#define chSemGetCounter(sp) ((sp)->s_cnt)
+#define chSemGetCounter(sp)     ((sp)->s_cnt)
 
 #endif /* CH_USE_SEMAPHORES */
 

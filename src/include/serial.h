@@ -26,19 +26,19 @@
 #define _SERIAL_H_
 
 /** No pending conditions.*/
-#define SD_NO_ERROR               0
+#define SD_NO_ERROR             0
 /** Connection happened.*/
-#define SD_CONNECTED              1
+#define SD_CONNECTED            1
 /** Disconnection happened.*/
-#define SD_DISCONNECTED           2
+#define SD_DISCONNECTED         2
 /** Parity error happened.*/
-#define SD_PARITY_ERROR           4
+#define SD_PARITY_ERROR         4
 /** Framing error happened.*/
-#define SD_FRAMING_ERROR          8
+#define SD_FRAMING_ERROR        8
 /** Overflow happened.*/
-#define SD_OVERRUN_ERROR          16
+#define SD_OVERRUN_ERROR        16
 /** Break detected.*/
-#define SD_BREAK_DETECTED         32
+#define SD_BREAK_DETECTED       32
 
 /** Serial Driver condition flags type.*/
 typedef uint16_t dflags_t;
@@ -52,24 +52,24 @@ typedef struct {
 
   /** Input queue. Incoming data can be read from this queue by using the
    *  queues APIs.*/
-  Queue             sd_iqueue;
+  Queue                 sd_iqueue;
   /** Data Available \p EventSource. This event is generated when some incoming
    *  data is inserted in the Input \p Queue.*/
-  EventSource       sd_ievent;
+  EventSource           sd_ievent;
 
   /** Output queue. Outgoing data can be written to this Output \p Queue by
    *   using the queues APIs.*/
-  Queue             sd_oqueue;
+  Queue                 sd_oqueue;
   /** Data Transmitted \p EventSource. This event is generated when the
    *  Output \p Queue is empty.*/
-  EventSource       sd_oevent;
+  EventSource           sd_oevent;
 
   /** I/O driver status flags. This field should not be read directly but
    *  the \p chFDDGetAndClearFlags() funtion should be used instead.*/
-  dflags_t          sd_flags;
+  dflags_t              sd_flags;
   /** Status Change \p EventSource. This event is generated when a
    *  condition flag was changed.*/
-  EventSource       sd_sevent;
+  EventSource           sd_sevent;
 } FullDuplexDriver;
 
 #ifdef __cplusplus
@@ -116,22 +116,21 @@ extern "C" {
 typedef struct {
 
   /** Data queue. Transmit/receive \p HalfDuplexQueue.*/
-  HalfDuplexQueue   sd_queue;
+  HalfDuplexQueue       sd_queue;
   /** Data Available \p EventSource. This event is generated when some
    *  incoming data is inserted in the receive queue.*/
-  EventSource       sd_ievent;
+  EventSource           sd_ievent;
   /** Data Transmitted \p EventSource. This event is generated when the
    *  transmission queue is empty and the driver can either transmit more
    *  data or enter receive mode.*/
-  EventSource       sd_oevent;
-
+  EventSource           sd_oevent;
   /** I/O driver status flags. This field should not be read directly but
    *  the \p chHDDGetAndClearFlags() funtion should be used
    *  instead.*/
-  dflags_t          sd_flags;
+  dflags_t              sd_flags;
   /** Status Change Event Source. This event is generated when a condition
    *  flag was changed.*/
-  EventSource       sd_sevent;
+  EventSource           sd_sevent;
 } HalfDuplexDriver;
 
 #ifdef __cplusplus

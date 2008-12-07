@@ -28,7 +28,7 @@
 #ifdef CH_USE_MEMPOOLS
 
 struct pool_header {
-  struct pool_header *ph_next;
+  struct pool_header    *ph_next;
 };
 
 typedef struct {
