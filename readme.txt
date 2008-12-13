@@ -74,6 +74,14 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.8.3 ***
+- FIX: The MinGW simulated demo now works again after breaking in 0.8.2
+  because the changes to the macro names.
+- FIX: Adjusted the test suite stack sizes for the MinGW simulated demo, now
+  the demo passes all the tests.
+- Renamed the MinGW demo main source from demo.c to main.c in order to follow
+  the pattern of all the other demos.
+- Added debug switches to the MinGW simulated demo, not it is possible to
+  debug the demo (and the kernel) inside Eclipse without a physical board.
 - Updated the C++ wrapper with the latest APIs changes and fixed some bugs.
 - Small fixes to the documentation.
 

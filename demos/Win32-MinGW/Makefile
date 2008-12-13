@@ -60,7 +60,7 @@ include ../../src/kernel.mk
 include ../../test/test.mk
 
 # List C source files here
-SRC  = chcore.c demo.c ../../ports/win32/simcom.c \
+SRC  = chcore.c main.c ../../ports/win32/simcom.c \
        ${KERNSRC} \
        ${TESTSRC}
 
@@ -77,7 +77,7 @@ ULIBDIR =
 ULIBS =
 
 # Define optimisation level here
-OPT = -Os -fomit-frame-pointer
+OPT = -ggdb -Os -fomit-frame-pointer
 
 #
 # End of user defines
