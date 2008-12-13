@@ -23,10 +23,10 @@
 #include <ch.h>
 
 static uint32_t wdguard;
-static WorkingArea(wdarea, 2048);
+static WORKING_AREA(wdarea, 2048);
 
 static uint32_t cdguard;
-static WorkingArea(cdarea, 2048);
+static WORKING_AREA(cdarea, 2048);
 static Thread *cdtp;
 
 static msg_t WatchdogThread(void *arg);
@@ -51,6 +51,7 @@ static msg_t WatchdogThread(void *arg) {
     if ((wdguard != 0xA51F2E3D) ||
         (cdguard != 0xA51F2E3D)) {
       printf("Halted by watchdog");
+      fflush(stdout);
       chSysHalt();
     }
     chThdSleep(50);
@@ -67,6 +68,7 @@ static msg_t ConsoleThread(void *arg) {
 
   while (!chThdShouldTerminate()) {
     printf((char *)chMsgWait());
+    fflush(stdout);
     chMsgRelease(RDY_OK);
   }
   return 0;
@@ -159,7 +161,7 @@ static msg_t ShellThread(void *arg) {
   FullDuplexDriver *sd = (FullDuplexDriver *)arg;
   char *lp, line[64];
   Thread *tp;
-  WorkingArea(tarea, 2048);
+  WORKING_AREA(tarea, 2048);
 
   chIQReset(&sd->sd_iqueue);
   chOQReset(&sd->sd_oqueue);
@@ -199,16 +201,16 @@ static msg_t ShellThread(void *arg) {
       else if (stricmp(lp, "hello") == 0) {
         if (checkend(sd))
           continue;
-        tp = chThdCreate(NORMALPRIO, 0, tarea, sizeof(tarea),
-                         HelloWorldThread, sd);
+        tp = chThdCreateStatic(tarea, sizeof(tarea),
+                               NORMALPRIO, HelloWorldThread, sd);
         if (chThdWait(tp))
           break;  // Lost connection while executing the hello thread.
       }
       else if (stricmp(lp, "test") == 0) {
         if (checkend(sd))
           continue;
-        tp = chThdCreate(NORMALPRIO, 0, tarea, sizeof(tarea),
-                         TestThread, arg);
+        tp = chThdCreateStatic(tarea, sizeof(tarea),
+                               NORMALPRIO, TestThread, arg);
         if (chThdWait(tp))
           break;  // Lost connection while executing the hello thread.
       }
@@ -221,7 +223,7 @@ static msg_t ShellThread(void *arg) {
   return 0;
 }
 
-static WorkingArea(s1area, 4096);
+static WORKING_AREA(s1area, 4096);
 static Thread *s1;
 EventListener s1tel;
 
@@ -235,8 +237,8 @@ static void COM1Handler(eventid_t id) {
   flags = chFDDGetAndClearFlags(&COM1);
   if ((flags & SD_CONNECTED) && (s1 == NULL)) {
     cprint("Init: connection on COM1\n");
-    s1 = chThdCreate(NORMALPRIO, P_SUSPENDED, s1area, sizeof(s1area),
-                     ShellThread, &COM1);
+    s1 = chThdInit(s1area, sizeof(s1area),
+                   NORMALPRIO, ShellThread, &COM1);
     chEvtRegister(chThdGetExitEventSource(s1), &s1tel, 0);
     chThdResume(s1);
   }
@@ -244,7 +246,7 @@ static void COM1Handler(eventid_t id) {
     chIQReset(&COM1.sd_iqueue);
 }
 
-static WorkingArea(s2area, 4096);
+static WORKING_AREA(s2area, 4096);
 static Thread *s2;
 EventListener s2tel;
 
@@ -258,8 +260,8 @@ static void COM2Handler(eventid_t id) {
   flags = chFDDGetAndClearFlags(&COM2);
   if ((flags & SD_CONNECTED) && (s2 == NULL)) {
     cprint("Init: connection on COM2\n");
-    s2 = chThdCreate(NORMALPRIO, P_SUSPENDED, s2area, sizeof(s1area),
-                     ShellThread, &COM2);
+    s2 = chThdInit(s2area, sizeof(s1area),
+                   NORMALPRIO, ShellThread, &COM2);
     chEvtRegister(chThdGetExitEventSource(s2), &s2tel, 1);
     chThdResume(s2);
   }
@@ -283,8 +285,8 @@ int main(void) {
   // Startup ChibiOS/RT.
   chSysInit();
 
-  chThdCreate(NORMALPRIO + 2, 0, wdarea, sizeof(wdarea), WatchdogThread, NULL);
-  cdtp = chThdCreate(NORMALPRIO + 1, 0, cdarea, sizeof(cdarea), ConsoleThread, NULL);
+  chThdCreateStatic(wdarea, sizeof(wdarea), NORMALPRIO + 2, WatchdogThread, NULL);
+  cdtp = chThdCreateStatic(cdarea, sizeof(cdarea), NORMALPRIO + 1, ConsoleThread, NULL);
 
   cprint("Console service started on COM1, COM2\n");
   cprint("  - Listening for connections on COM1\n");
@@ -294,7 +296,7 @@ int main(void) {
   chFDDGetAndClearFlags(&COM2);
   chEvtRegister(&COM2.sd_sevent, &c2fel, 1);
   while (!chThdShouldTerminate())
-    chEvtWait(ALL_EVENTS, fhandlers);
+    chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));
   chEvtUnregister(&COM2.sd_sevent, &c2fel); // Never invoked but this is an example...
   chEvtUnregister(&COM1.sd_sevent, &c1fel); // Never invoked but this is an example...
   return 0;

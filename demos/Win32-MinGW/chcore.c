@@ -65,6 +65,7 @@ void InitCore(void) {
 
   InitSimCom1();
   InitSimCom2();
+  fflush(stdout);
 }
 
 /*
