@@ -24,6 +24,16 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
+/*
+ * Unique macro for the implemented architecture.
+ */
+#define CH_ARCHITECTURE_WIN32SIM
+
+/*
+ * Base type for stack alignment.
+ */
+typedef uint32_t stkalign_t;
+
 typedef void *regx86;
 
 /*
@@ -65,17 +75,26 @@ typedef struct {
 #define chSysIRQExitI()
 
 #define INT_REQUIRED_STACK 0
-#define StackAlign(n) ((((n) - 1) | 3) + 1)
-#define UserStackSize(n) StackAlign(sizeof(Thread) +                    \
-                                    sizeof(void *) * 2 +                \
-                                    sizeof(struct intctx) +             \
-                                    (n) +                               \
-                                    INT_REQUIRED_STACK)
-#define WorkingArea(s, n) uint32_t s[UserStackSize(n) >> 2];
 
+#define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
+#define StackAlign(n) STACK_ALIGN(n)
+
+#define THD_WA_SIZE(n) StackAlign(sizeof(Thread) +                      \
+                                  sizeof(void *) * 2 +                  \
+                                  sizeof(struct intctx) +               \
+                                  (n) +                                 \
+                                  INT_REQUIRED_STACK)
+#define UserStackSize(n) THD_WA_SIZE(n)
+
+#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
+#define WorkingArea(s, n) WORKING_AREA(s, n)
+
+/*
+ * Stack size for the system idle thread.
+ */
 #define IDLE_THREAD_STACK_SIZE 16384
-msg_t _IdleThread(void *p);
 
+msg_t _idle(void *p);
 __attribute__((fastcall)) void chSysHalt(void);
 __attribute__((fastcall)) void chSysSwitchI(Thread *otp, Thread *ntp);
 __attribute__((fastcall)) void threadstart(void);
