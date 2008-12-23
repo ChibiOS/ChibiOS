@@ -266,6 +266,12 @@ extern "C" {
         chThdCreateStatic(workspace, wsize, prio, pf, NULL)
 
 /**
+ * Suspends the invoking thread for the specified time.
+ * @param time the delay in system ticks
+ */
+#define chThdSleepS(time) chSchGoSleepTimeoutS(PRSLEEP, time)
+
+/**
  * Delays the invoking thread for the specified number of seconds.
  * @note The specified time is rounded up to a value allowed by the real
  *       system clock.

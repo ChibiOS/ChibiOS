@@ -294,7 +294,7 @@ void chThdTerminate(Thread *tp) {
 void chThdSleep(systime_t time) {
 
   chSysLock();
-  chSchGoSleepTimeoutS(PRSLEEP, time);
+  chThdSleepS(time);
   chSysUnlock();
 }
 
@@ -307,7 +307,7 @@ void chThdSleepUntil(systime_t time) {
 
   chSysLock();
   if ((time -= chSysGetTime()) > 0)
-    chSchGoSleepTimeoutS(PRSLEEP, time);
+    chThdSleepS(time);
   chSysUnlock();
 }
 
