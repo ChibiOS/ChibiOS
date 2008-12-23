@@ -74,6 +74,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 0.8.3 ***
+- NEW: Introduced new API chThdSleepS() as a macro, no real changes in the
+       kernel code.
 - FIX: The MinGW simulated demo now works again after breaking in 0.8.2
   because the changes to the macro names.
 - FIX: Adjusted the test suite stack sizes for the MinGW simulated demo, now
@@ -90,8 +92,6 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Small fixes to the documentation.
 
 *** 0.8.2 ***
-- NEW: Introduced new API chThdSleepS() as a macro, no real changes in the
-       kernel code.
 - FIX: Included the files that were missing from version 0.8.1 distribution.
 - FIX: Duplicated sections in the documentation removed.
 - FIX: Minor problem in Cortex-M3 and AVR ports when the kernel is compiled
