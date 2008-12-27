@@ -20,3 +20,14 @@ See demo.c for details.
 ** Build Procedure **
 
 The demo was built using the MinGW toolchain.
+
+** Connect to the demo **
+
+In order to connect to the demo a telnet client is required. A good choice
+is PuTTY:
+
+http://www.putty.org/
+
+Host Name: 127.0.0.1
+Port: 29001 and/or 29002
+Connection Type: Raw

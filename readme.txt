@@ -73,6 +73,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.0.0 RC1 ***
+- Added usage note into the readme of the MinGW demo.
+
 *** 0.8.3 ***
 - NEW: Introduced new API chThdSleepS() as a macro, no real changes in the
        kernel code.
