@@ -266,7 +266,6 @@
  * Notes about the MSP430 port:
  * </p>
  * <ul>
- * <li>In the current version the MSP430 port is still untested.</li>
  * <li>The MSP430 does not have a dedicated interrupt stack, make sure to reserve
  *     enough stack space for interrupts in each thread stack. This can be done
  *     by modifying the \p INT_REQUIRED_STACK macro into \p ports/MSP430/chcore.h.</li>
