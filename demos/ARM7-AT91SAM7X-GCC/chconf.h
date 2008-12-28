@@ -84,18 +84,10 @@
  * @note requires \p CH_USE_MESSAGES.*/
 #define CH_USE_MESSAGES_EVENT
 
-/** Configuration option: If enabled then the threads have an option to serve
- *  messages by priority instead of FIFO order.
+/** Configuration option: If enabled then the threads serve messages by
+ *  priority instead of FIFO order.
  * @note requires \p CH_USE_MESSAGES.*/
 //#define CH_USE_MESSAGES_PRIORITY
-
-/** Configuration option: if specified then the
- *  \p chThdGetExitEventSource() function is included in the kernel.
- * @note requires \p CH_USE_MESSAGES.
- * @note requires \p CH_USE_EVENTS.
- * @deprecated \p THREAD_EXT_EXIT should be used, this functionality will be
- *             removed in version 1.0.0.*/
-#define CH_USE_EXIT_EVENT
 
 /** Configuration option: if specified then the I/O queues APIs are included
  *  in the kernel.*/

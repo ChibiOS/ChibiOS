@@ -59,7 +59,7 @@ static char *bmk1_gettest(void) {
 static void bmk1_execute(void) {
   uint32_t n;
 
-  threads[0] = chThdCreateFast(chThdGetPriority()-1, wa[0], WA_SIZE, thread1);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread1, NULL);
   n = msg_loop_test(threads[0]);
   chThdTerminate(threads[0]);
   test_wait_threads();
@@ -85,7 +85,7 @@ static char *bmk2_gettest(void) {
 static void bmk2_execute(void) {
   uint32_t n;
 
-  threads[0] = chThdCreateFast(chThdGetPriority()+1, wa[0], WA_SIZE, thread1);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread1, NULL);
   n = msg_loop_test(threads[0]);
   chThdTerminate(threads[0]);
   test_wait_threads();
@@ -116,11 +116,11 @@ static char *bmk3_gettest(void) {
 static void bmk3_execute(void) {
   uint32_t n;
 
-  threads[0] = chThdCreateFast(chThdGetPriority()+1, wa[0], WA_SIZE, thread1);
-  threads[1] = chThdCreateFast(chThdGetPriority()-2, wa[1], WA_SIZE, thread2);
-  threads[2] = chThdCreateFast(chThdGetPriority()-3, wa[2], WA_SIZE, thread2);
-  threads[3] = chThdCreateFast(chThdGetPriority()-4, wa[3], WA_SIZE, thread2);
-  threads[4] = chThdCreateFast(chThdGetPriority()-5, wa[4], WA_SIZE, thread2);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread1, NULL);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-2, thread2, NULL);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread2, NULL);
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-4, thread2, NULL);
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-5, thread2, NULL);
   n = msg_loop_test(threads[0]);
   chThdTerminate(threads[0]);
   test_wait_threads();
@@ -151,7 +151,7 @@ static void bmk4_execute(void) {
   test_wait_tick();
   test_start_timer(1000);
   do {
-    chThdWait(chThdCreateFast(prio, wap, WA_SIZE, thread2));
+    chThdWait(chThdCreateStatic(wap, WA_SIZE, prio, thread2, NULL));
     n++;
 #if defined(WIN32)
     ChkIntSources();
@@ -182,7 +182,7 @@ static void bmk5_execute(void) {
   test_wait_tick();
   test_start_timer(1000);
   do {
-    chThdCreateFast(prio, wap, WA_SIZE, thread2);
+    chThdCreateStatic(wap, WA_SIZE, prio, thread2, NULL);
     n++;
 #if defined(WIN32)
     ChkIntSources();
@@ -220,11 +220,11 @@ static void bmk6_setup(void) {
 static void bmk6_execute(void) {
   uint32_t n;
 
-  threads[0] = chThdCreateFast(chThdGetPriority()+1, wa[0], WA_SIZE, thread3);
-  threads[1] = chThdCreateFast(chThdGetPriority()+2, wa[1], WA_SIZE, thread3);
-  threads[2] = chThdCreateFast(chThdGetPriority()+3, wa[2], WA_SIZE, thread3);
-  threads[3] = chThdCreateFast(chThdGetPriority()+4, wa[3], WA_SIZE, thread3);
-  threads[4] = chThdCreateFast(chThdGetPriority()+5, wa[4], WA_SIZE, thread3);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread3, NULL);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()+2, thread3, NULL);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()+3, thread3, NULL);
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()+4, thread3, NULL);
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()+5, thread3, NULL);
 
   n = 0;
   test_wait_tick();

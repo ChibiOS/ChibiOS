@@ -182,39 +182,6 @@ Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
 #endif /* defined(CH_USE_DYNAMIC) && defined(CH_USE_WAITEXIT) && defined(CH_USE_MEMPOOLS) */
 
 /**
- * Creates a new thread.
- * @param prio the priority level for the new thread. Usually the threads are
- *             created with priority \p NORMALPRIO, priorities
- *             can range from \p LOWPRIO to \p HIGHPRIO.
- * @param mode the creation option flags for the thread. The following options
- *             can be OR'ed in this parameter:<br>
- *             <ul>
- *             <li>\p P_SUSPENDED, the thread is created in the
- *                 \p PRSUSPENDED state and a subsequent call to
- *                 \p chThdResume() will make it ready for
- *                 execution.</li>
- *             </ul>
- * @param workspace pointer to a working area dedicated to the thread stack
- * @param wsize size of the working area.
- * @param pf the thread function
- * @param arg an argument passed to the thread function. It can be \p NULL.
- * @return The pointer to the \p Thread structure allocated for the
- *         thread into the working space area.
- * @note A thread can terminate by calling \p chThdExit() or by simply
- *       returning from its main function.
- * @deprecated Please use \p chThdCreateStatic() or \p chThdInit() instead,
- *             this function will be removed in version 1.0.0.
- */
-Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
-                    size_t wsize, tfunc_t pf, void *arg) {
-
-  Thread *tp = chThdInit(workspace, wsize, prio, pf, arg);
-  if (mode & P_SUSPENDED)
-    return tp;
-  return chThdResume(tp);
-}
-
-/**
  * Changes the running thread priority, reschedules if necessary.
  *
  * @param newprio the new priority of the running thread
@@ -324,13 +291,8 @@ void chThdExit(msg_t msg) {
   tp->p_exitcode = msg;
   THREAD_EXT_EXIT(tp);
 #ifdef CH_USE_WAITEXIT
-//  while (notempty(&tp->p_waiting))
-//    chSchReadyI(list_remove(&tp->p_waiting));
   if (tp->p_waiting != NULL)
     chSchReadyI(tp->p_waiting);
-#endif
-#ifdef CH_USE_EXIT_EVENT
-  chEvtBroadcastI(&tp->p_exitesource);
 #endif
   chSchGoSleepS(PREXIT);
 }
