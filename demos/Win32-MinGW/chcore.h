@@ -77,17 +77,14 @@ typedef struct {
 #define INT_REQUIRED_STACK 0
 
 #define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
-#define StackAlign(n) STACK_ALIGN(n)
 
 #define THD_WA_SIZE(n) StackAlign(sizeof(Thread) +                      \
                                   sizeof(void *) * 2 +                  \
                                   sizeof(struct intctx) +               \
                                   (n) +                                 \
                                   INT_REQUIRED_STACK)
-#define UserStackSize(n) THD_WA_SIZE(n)
 
 #define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
-#define WorkingArea(s, n) WORKING_AREA(s, n)
 
 /*
  * Stack size for the system idle thread.

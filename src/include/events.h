@@ -52,10 +52,6 @@ typedef struct EventSource {
   EventListener         *es_next;
 } EventSource;
 
-/** Returns the event mask from the event identifier.
- * @deprecated use EVENT_MASK() instead.*/
-#define EventMask(eid)  (1 << (eid))
-
 /** Returns the event mask from the event identifier.*/
 #define EVENT_MASK(eid) (1 << (eid))
 
@@ -76,7 +72,6 @@ typedef struct EventSource {
 #define chEvtIsListening(esp) \
                 ((void *)(esp) != (void *)(esp)->es_next)
 
-
 /** Event Handler callback function.*/
 typedef void (*evhandler_t)(eventid_t);
 
@@ -94,16 +89,11 @@ extern "C" {
   eventmask_t chEvtWaitOne(eventmask_t ewmask);
   eventmask_t chEvtWaitAny(eventmask_t ewmask);
   eventmask_t chEvtWaitAll(eventmask_t ewmask);
-  eventid_t chEvtWait(eventmask_t ewmask,
-                      const evhandler_t handlers[]);
 #endif
 #ifdef CH_USE_EVENTS_TIMEOUT
   eventmask_t chEvtWaitOneTimeout(eventmask_t ewmask, systime_t time);
   eventmask_t chEvtWaitAnyTimeout(eventmask_t ewmask, systime_t time);
   eventmask_t chEvtWaitAllTimeout(eventmask_t ewmask, systime_t time);
-  eventid_t chEvtWaitTimeout(eventmask_t ewmask,
-                             const evhandler_t handlers[],
-                             systime_t time);
 #endif
 #ifdef __cplusplus
 }
@@ -126,14 +116,7 @@ extern "C" {
 #define chEvtWaitOne(ewmask) chEvtWaitOneTimeout(ewmask, TIME_INFINITE)
 #define chEvtWaitAny(ewmask) chEvtWaitAnyTimeout(ewmask, TIME_INFINITE)
 #define chEvtWaitAll(ewmask) chEvtWaitAllTimeout(ewmask, TIME_INFINITE)
-#define chEvtWait(ewmask, handlers) chEvtWaitTimeout(ewmask, handlers, TIME_INFINITE)
 #endif
-
-/*
- * Old function names, deprecated, will be removed in some next release.
- */
-#define chEvtSend chEvtBroadcast
-#define chEvtSendI chEvtBroadcastI
 
 #endif /* CH_USE_EVENTS */
 

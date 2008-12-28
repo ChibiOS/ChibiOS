@@ -71,22 +71,8 @@ typedef struct {
 
 /**
  * Enforces a correct alignment for a stack area size value.
- * @deprecated Use STACK_ALIGN() instead, this macro will be removed in
- *             version 1.0.0.
- */
-#define StackAlign(n) STACK_ALIGN(n)
-
-/**
- * Enforces a correct alignment for a stack area size value.
  */
 #define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
-
-/**
- * Computes the thread working area global size.
- * @deprecated Use THD_WA_SIZE() instead, this macro will be removed in
- *             version 1.0.0.
- */
-#define UserStackSize(n) THD_WA_SIZE(n)
 
  /**
   * Computes the thread working area global size.
@@ -95,14 +81,6 @@ typedef struct {
                                   sizeof(struct intctx) +               \
                                   sizeof(struct extctx) +               \
                                   (n) + (INT_REQUIRED_STACK))
-
-/**
- * Macro used to allocate a thread working area aligned as both position and
- * size.
- * @deprecated Use WORKING_AREA() instead, this macro will be removed in
- *             version 1.0.0.
- */
-#define WorkingArea(s, n) WORKING_AREA(s, n)
 
 /**
  * Macro used to allocate a thread working area aligned as both position and

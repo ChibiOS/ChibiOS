@@ -76,10 +76,13 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** 1.0.0 RC1 ***
 - FIX: Disabled the configuration option CH_USE_MESSAGES_PRIORITY from the
   MSP430 demo, the default for this option should be off.
-- Removed deprecated APIs: chThdCreate() and chThdCreateFast(), removed some
-  references to those APIs from the test suite.
+- Removed deprecated threads APIs: chThdCreate() and chThdCreateFast(), removed
+  some references to those APIs from the test suite.
+- Removed deprecated events APIs: chEvtWait(), chEvtWaitTimeout(), chEvtSend(),
+  chEvtSendI(), EventMask().
 - Removed deprecated configuration feature CH_USE_EXIT_EVENT and the related
   API chThdGetExitEventSource().
+- Removed deprecated macros: WorkingArea(), UserStackSize(), StackAlign().
 - Added usage note into the readme of the MinGW demo.
 
 *** 0.8.3 ***

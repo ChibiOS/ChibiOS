@@ -234,48 +234,6 @@ eventmask_t chEvtWaitAll(eventmask_t ewmask) {
   chSysUnlock();
   return ewmask;
 }
-
-/**
- * The function waits for an event and returns the event identifier, if an
- * event handler is specified then the handler is executed before returning.
- * @param ewmask mask of the events that should be served by the function,
- *               \p ALL_EVENTS enables all the sources
- * @param handlers an array of \p evhandler_t. The array must be
- *                 have indexes from zero up the higher registered event
- *                 identifier. The array can be \p NULL or contain \p NULL
- *                 elements (no callbacks specified).
- * @return The event identifier.
- * @note Only a single event is served in the function, the one with the
- *       lowest event id. The function is meant to be invoked into a loop so
- *       that all events are received and served.<br>
- *       This means that Event Listeners with a lower event identifier have
- *       an higher priority.
- * @deprecated Please use \p chEvtWaitOne() and \p chEvtDispatch() instead,
- *             this function will be removed in version 1.0.0.
- */
-eventid_t chEvtWait(eventmask_t ewmask,
-                    const evhandler_t handlers[]) {
-  eventid_t i;
-  eventmask_t m;
-
-  chSysLock();
-
-  if ((currp->p_epending & ewmask) == 0) {
-    currp->p_ewmask = ewmask;
-    chSchGoSleepS(PRWTOREVT);
-  }
-  i = 0, m = 1;
-  while ((currp->p_epending & ewmask & m) == 0)
-    i += 1, m <<= 1;
-  currp->p_epending &= ~m;
-
-  chSysUnlock();
-
-  if (handlers && handlers[i])
-    handlers[i](i);
-
-  return i;
-}
 #endif /* defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENTS_TIMEOUT) */
 
 #ifdef CH_USE_EVENTS_TIMEOUT
@@ -361,53 +319,6 @@ eventmask_t chEvtWaitAllTimeout(eventmask_t ewmask, systime_t time) {
 
   chSysUnlock();
   return ewmask;
-}
-
-/**
- * The function waits for an event or the specified timeout then returns the
- * event identifier, if an event handler is specified then the handler is
- * executed before returning.
- * @param ewmask mask of the events that should be served by the function,
- *               \p ALL_EVENTS enables all the sources
- * @param handlers an array of \p evhandler_t. The array must be
- *                 have indexes from zero up the higher registered event
- *                 identifier. The array can be NULL or contain NULL elements
- *                 (no callback specified).
- * @param time the number of ticks before the operation timouts
- * @return The event identifier.
- * @retval RDY_TIMEOUT if the specified timeout expired.
- * @note Only a single event is served in the function, the one with the
- *       lowest event id. The function is meant to be invoked into a loop so
- *       that all events are received and served.<br>
- *       This means that Event Listeners with a lower event identifier have
- *       an higher priority.
- * @deprecated Please use \p chEvtWaitOneTimeout() and \p chEvtDispatch()
- *             instead, this function will be removed in version 1.0.0.
- */
-eventid_t chEvtWaitTimeout(eventmask_t ewmask,
-                           const evhandler_t handlers[],
-                           systime_t time) {
-  eventid_t i;
-  eventmask_t m;
-
-  chSysLock();
-
-  if ((currp->p_epending & ewmask) == 0) {
-    currp->p_ewmask = ewmask;
-    if (chSchGoSleepTimeoutS(PRWTOREVT, time) < RDY_OK)
-      return RDY_TIMEOUT;
-  }
-  i = 0, m = 1;
-  while ((currp->p_epending & ewmask & m) == 0)
-    i += 1, m <<= 1;
-  currp->p_epending &= ~m;
-
-  chSysUnlock();
-
-  if (handlers && handlers[i])
-    handlers[i](i);
-
-  return i;
 }
 #endif /* CH_USE_EVENTS_TIMEOUT */
 

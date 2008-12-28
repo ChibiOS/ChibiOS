@@ -1,5 +1,5 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 0.8.2
+Kernel:   ChibiOS/RT 1.0.0 RC1
 Compiler: GCC 4.3.2 (YAGARTO 28.09.2008)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
@@ -40,7 +40,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 12 (Heap, allocation and fragmentation test)
---- Size  : 27788 bytes, not fragmented
+--- Size  : 27792 bytes, not fragmented
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 13 (Memory Pools, allocation and enqueuing test)
@@ -53,7 +53,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 16 (Benchmark, context switch #1, optimal)
---- Score : 144451 msgs/S, 288902 ctxswc/S
+--- Score : 144452 msgs/S, 288904 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 17 (Benchmark, context switch #2, empty ready list)
@@ -61,15 +61,15 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 18 (Benchmark, context switch #3, 4 threads in ready list)
---- Score : 111978 msgs/S, 223956 ctxswc/S
+--- Score : 111980 msgs/S, 223960 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 19 (Benchmark, threads creation/termination, worst case)
---- Score : 92663 threads/S
+--- Score : 99406 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 20 (Benchmark, threads creation/termination, optimal)
---- Score : 122600 threads/S
+--- Score : 134686 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 21 (Benchmark, mass reschedulation, 5 threads)
@@ -81,7 +81,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 23 (Benchmark, virtual timers set/reset)
---- Score : 309496 timers/S
+--- Score : 309498 timers/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 

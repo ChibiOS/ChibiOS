@@ -183,8 +183,6 @@ extern "C" {
   Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
                                     tfunc_t pf, void *arg);
 #endif
-  Thread *chThdCreate(tprio_t prio, tmode_t mode, void *workspace,
-                      size_t wsize, tfunc_t pf, void *arg);
   void chThdSetPriority(tprio_t newprio);
   Thread *chThdResume(Thread *tp);
   void chThdSuspend(Thread **tpp);
