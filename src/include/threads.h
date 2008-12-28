@@ -94,10 +94,6 @@ struct Thread {
   /** The list of the threads waiting for this thread termination. */
   Thread                *p_waiting;
 #endif
-#ifdef CH_USE_EXIT_EVENT
-  /** The thread termination \p EventSource. */
-  EventSource           p_exitesource;
-#endif
 #ifdef CH_USE_MESSAGES
   ThreadsQueue          p_msgqueue;
   msg_t                 p_msg;

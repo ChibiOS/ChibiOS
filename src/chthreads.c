@@ -48,9 +48,6 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
 #ifdef CH_USE_EVENTS
   tp->p_epending = 0;
 #endif
-#ifdef CH_USE_EXIT_EVENT
-  chEvtInit(&tp->p_exitesource);
-#endif
   THREAD_EXT_INIT(tp);
   return tp;
 }

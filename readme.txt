@@ -86,6 +86,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Added usage note into the readme of the MinGW demo.
 - Added usage notes for programmers to the ARM7 port documentation about
   interrupt handlers.
+- Fixes and improvements through the documentation.
 
 *** 0.8.3 ***
 - NEW: Introduced new API chThdSleepS() as a macro, no real changes in the

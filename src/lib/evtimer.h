@@ -27,7 +27,9 @@
 #ifndef _EVTIMER_H_
 #define _EVTIMER_H_
 
-
+/**
+ * Event timer structure.
+ */
 typedef struct {
   VirtualTimer  et_vt;
   EventSource   et_es;
@@ -45,10 +47,14 @@ extern "C" {
 
 /**
  * Initializes an \p EvTimer structure.
+ * @param etp the EvTimer structure to be initialized
+ * @param time the interval in system ticks
  */
-#define evtInit(etp, i) (chEvtInit(&(etp)->et_es), \
-                        (etp)->et_vt.vt_func = NULL, \
-                        (etp)->et_interval = (i))
+#define evtInit(etp, time) {                                            \
+  chEvtInit(&(etp)->et_es);                                             \
+  (etp)->et_vt.vt_func = NULL;                                          \
+  (etp)->et_interval = (time);                                          \
+}
 
 #endif /* _EVTIMER_H_ */
 
