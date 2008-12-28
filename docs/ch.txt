@@ -159,10 +159,33 @@
  *     architecture.</li>
  * <li>FIQ sources can preempt the kernel (by design) so it is not possible to
  *     invoke the kernel APIs from inside a FIQ handler.</li>
+ * <li>Interrupt handlers do not save function-saved registers so you need to
+ *     make sure your code saves them or does not use them (this happens
+ *     because in the ARM7 port all the OS interrupt handlers are declared
+ *     naked).<br>
+ *     Function-trashed registers (R0-R3,R12,LR,SR) are saved/restored by the
+ *     system macros \p chSysIRQEnterI() and \p chSysIRQExitI().<br>
+ *     The easiest way to ensure this is to just invoke a function from within
+ *     the interrupt handler, the function code will save all the required
+ *     registers.<br>
+ *     Example:
+ * @code
+ * __attribute__((naked, weak))
+ * void irq_handler(void) {
+ *   chSysIRQEnterI();
+ *
+ *   serve_interrupt();
+ *
+ *   VICVectAddr = 0; // This is LPC214x-specific.
+ *   chSysIRQExitI();
+ * }
+ * @endcode
+ *     This is not a bug but an implementation choice, this solution allows to
+ *     have interrupt handlers compiled in thumb mode without have to use an
+ *     interworking mode (the mode switch is hidden in the macros), this
+ *     greatly improves code efficiency and size. You can look at the serial
+ *     driver for real examples of interrupt handlers.</li>
  * </ul>
- * </p>
- * <p>
- * The ARM7 port is shared by multiple demos targeted to various implementations:
  * </p>
  * @ingroup Ports
  */
