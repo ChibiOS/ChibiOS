@@ -81,7 +81,11 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   MSP430 demo, the default for this option should be off.
 - FIX: Fixed a bug that prevented the THREAD_EXT_FIELDS to be compiled into
   the Thread structure.
-- FIX: Removed some references to deèrecated APIs from the test suite.
+- FIX: Removed some references to deprecated APIs from the test suite.
+- FIX: Set the INT_REQUIRED_STACK configuration value for the ARM7 and ARMCM3
+  ports to a safer 0x10, it was previously 0 (correct but trimmed to specific
+  compiler settings). Now it is possible to redefine that value externally
+  without have to edit ./port/ARM7/chcore.h.
 - Removed deprecated threads APIs: chThdCreate() and chThdCreateFast().
 - Removed deprecated events APIs: chEvtWait(), chEvtWaitTimeout(), chEvtSend(),
   chEvtSendI(), EventMask().
@@ -91,6 +95,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Added usage note into the readme of the MinGW demo.
 - Added usage notes for programmers to the ARM7 port documentation about
   interrupt handlers.
+- Port-specific settings added to the documentation.
 - Fixes and improvements through the documentation.
 
 *** 0.8.3 ***

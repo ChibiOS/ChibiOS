@@ -23,9 +23,17 @@
 /*
  * Port-related configuration parameters.
  */
+#ifndef BASEPRI_USER
 #define BASEPRI_USER    0       /* User level BASEPRI, 0 = disabled.    */
+#endif
+
+#ifndef BASEPRI_KERNEL
 #define BASEPRI_KERNEL  0x10    /* BASEPRI level within kernel lock.    */
+#endif
+
+#ifndef ENABLE_WFI_IDLE
 #define ENABLE_WFI_IDLE 0       /* Enables the use of the WFI ins.      */
+#endif
 
 /*
  * Macro defining the ARM Cortex-M3 architecture.
@@ -118,7 +126,9 @@ typedef struct {
   asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp));               \
 }
 
-#define INT_REQUIRED_STACK 0
+#ifndef INT_REQUIRED_STACK
+#define INT_REQUIRED_STACK 0x10
+#endif
 
 /*
  * Enforces a 32 bit alignment for a stack area size value.
