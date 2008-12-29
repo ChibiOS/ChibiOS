@@ -19,11 +19,10 @@
  *       sources while serving message queues.</li>
  *   </ul>
  * <li>PC simulator target included, the development can be done on the PC
- *     using MinGW or VS.
+ *     using MinGW.<br>
  *     Timers, I/O channels and other HW resources are simulated in a
  *     Win32 process and the application code does not need to be aware of it.
- *     MinGW and VS demos available and ready to go, use them as templates for
- *     your application.</li>
+ *     MinGW demo available.</li>
  * <li>Preemptive scheduling.</li>
  * <li>128 priority levels.</li>
  * <li>Multiple threads at the same priorily level allowed.</li>
@@ -65,7 +64,7 @@
  * ChibiOS/RT APIs are all named following this convention:
  * \a ch\<group\>\<action\>\<suffix\>().
  * The possible groups are: \a Sys, \a Sch, \a VT, \a Thd, \a Sem, \a Mtx,
- * \a Evt, \a Msg, \a IQ, \a OQ, \a HQ,\a FDD, \a HDD, \a Dbg.
+ * \a Evt, \a Msg, \a IQ, \a OQ, \a HQ,\a FDD, \a HDD, \a Dbg, \a Heap, \a Pool.
  * The suffix is not present for normal APIs but can be one of
  * the following: "I" for APIs meant to be invoked within the system mutex
  * zone, "S" for APIs only useable from within the system mutex zone but not
@@ -73,7 +72,7 @@
  * The APIs without suffix can be invoked only from the user code outsize the
  * system mutex zone and not from interrupt handlers unless differently
  * specified.<br>
- * Examples: \p chThdCreate(), \p chSemSignalI(), \p chIQGetTimeout().
+ * Examples: \p chThdCreateStatic(), \p chSemSignalI(), \p chIQGetTimeout().
  *
  * @section scheduling Scheduling
  * The strategy is very simple the currently ready thread with the highest
@@ -140,6 +139,21 @@
  * @defgroup ARM7 ARM7TDMI
  * @{
  * <p>
+ * The ARM7 port supports 3 modes:
+ * </p>
+ * <ul>
+ * <li>Pure ARM mode, this is the preferred mode for code speed. The code size
+ *     is larger however. This mode is enabled when all the modules are compiled
+ *     in ARM mode, see the Makefiles.</li>
+ * <li>Pure THUMB mode, this is the preferred mode for code size. In this mode
+ *     the execution speed is slower than the ARM mode. This mode is enabled
+ *     when all the modules are compiled in THUMB mode, see the Makefiles.</li>
+ * <li>Interworking mode, when in the sistem there are ARM modules mixed with
+ *     THUMB modules then the interworking compiler option is enabled. This is
+ *     usually the slowest mode and the code size is not as good as in pure
+ *     THUMB mode.</li>
+ * </ul>
+ * <p>
  * The ARM7 port makes some assumptions on the application code organization:
  * <ul>
  * <li>The \p main() function is invoked in system mode.</li>
@@ -158,7 +172,8 @@
  *     implementation, even if possible, is not really efficient in this
  *     architecture.</li>
  * <li>FIQ sources can preempt the kernel (by design) so it is not possible to
- *     invoke the kernel APIs from inside a FIQ handler.</li>
+ *     invoke the kernel APIs from inside a FIQ handler. FIQ handlers are not
+ *     affected by the kernel activity so there is not added jitter.</li>
  * <li>Interrupt handlers do not save function-saved registers so you need to
  *     make sure your code saves them or does not use them (this happens
  *     because in the ARM7 port all the OS interrupt handlers are declared
@@ -241,7 +256,9 @@
  *     0x00 (disabled).</li>
  * <li>The kernel raises its BASEPRI level to 0x10 in order to protect the
  *     system mutex zones. Note that exceptions with level 0x00 can preempt
- *     the kernel, such exception handlers cannot invoke kernel APIs directly.</li>
+ *     the kernel, such exception handlers cannot invoke kernel APIs directly.
+ *     It is possible to modify the priority levels by editing the
+ *     <b>./ports/ARMCM3/chcore.h</b> file.</li>
  * <li>Interrupt nesting and the other advanced NVIC features are supported.</li>
  * <li>The SVC instruction and vector, with parameter #0,  is internally used
  *     for commanded context switching.<br>
@@ -276,7 +293,8 @@
  * <ul>
  * <li>The AVR does not have a dedicated interrupt stack, make sure to reserve
  *     enough stack space for interrupts in each thread stack. This can be done
- *     by modifying the \p INT_REQUIRED_STACK macro into \p ports/AVR/chcore.h.</li>
+ *     by modifying the \p INT_REQUIRED_STACK macro into
+ *     <b>./ports/AVR/chcore.h</b>.</li>
  * </ul>
  * @ingroup Ports
  */
@@ -291,7 +309,8 @@
  * <ul>
  * <li>The MSP430 does not have a dedicated interrupt stack, make sure to reserve
  *     enough stack space for interrupts in each thread stack. This can be done
- *     by modifying the \p INT_REQUIRED_STACK macro into \p ports/MSP430/chcore.h.</li>
+ *     by modifying the \p INT_REQUIRED_STACK macro into
+ *     <b>./ports/MSP430/chcore.h</b>.</li>
  * </ul>
  * @ingroup Ports
  */

@@ -179,7 +179,7 @@ struct {                                                                \
   /* Add thread custom fields here.*/                                   \
 };
 
-/** User initialization code added to the \p chThdCreate() API.
+/** User initialization code added to the \p chThdInit() API.
  *  @note It is invoked from within \p chThdInit(). */
 #define THREAD_EXT_INIT(tp) {                                           \
   /* Add thread initialization code here.*/                             \
