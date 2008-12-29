@@ -119,11 +119,13 @@ extern "C" {
 #endif /* !REENTRANT_LOCKS */
 #endif /* THUMB */
 
+#ifndef INT_REQUIRED_STACK
 #ifdef THUMB
 #define INT_REQUIRED_STACK 0x10
 #else /* !THUMB */
-#define INT_REQUIRED_STACK 0
+#define INT_REQUIRED_STACK 0x10
 #endif /* !THUMB */
+#endif
 
 #define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
 
