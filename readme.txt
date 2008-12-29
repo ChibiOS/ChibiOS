@@ -74,6 +74,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 1.0.0 RC1 ***
+- NEW: Added new macros CH_KERNEL_VERSION set to "1.0.0 RC1", CH_KERNEL_MAJOR
+  set to 1, CH_KERNEL_MINOR set to 0, CH_KERNEL_PATCH set to 0.
+  The macros will be updated to reflect the actual kernel version number.
 - FIX: Disabled the configuration option CH_USE_MESSAGES_PRIORITY from the
   MSP430 demo, the default for this option should be off.
 - FIX: Fixed a bug that prevented the THREAD_EXT_FIELDS to be compiled into

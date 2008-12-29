@@ -25,7 +25,30 @@
 #ifndef _CH_H_
 #define _CH_H_
 
+/**
+ * ChibiOS/RT identification macro.
+ */
 #define _CHIBIOS_RT_
+
+/**
+ * Kernel version string.
+ */
+#define CH_KERNEL_VERSION       "1.0.0rc1"
+
+/**
+ * Kernel version major number.
+ */
+#define CH_KERNEL_MAJOR         1
+
+/**
+ * Kernel version minor number.
+ */
+#define CH_KERNEL_MINOR         0
+
+/**
+ * Kernel version patch number.
+ */
+#define CH_KERNEL_PATCH         0
 
 #include <chconf.h>
 #include <chtypes.h>
