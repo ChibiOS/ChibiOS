@@ -104,7 +104,9 @@ typedef struct {
   tp->p_ctx.sp->pch = (int)threadstart;                                 \
 }
 
-#define INT_REQUIRED_STACK 8
+#ifndef INT_REQUIRED_STACK
+#define INT_REQUIRED_STACK 32
+#endif
 
 #define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
 

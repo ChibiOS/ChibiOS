@@ -81,7 +81,9 @@ typedef struct {
 
 #define IDLE_THREAD_STACK_SIZE 0
 
+#ifndef INT_REQUIRED_STACK
 #define INT_REQUIRED_STACK 32
+#endif
 
 #define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
 

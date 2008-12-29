@@ -73,10 +73,12 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
-*** 1.0.0 RC1 ***
-- NEW: Added new macros CH_KERNEL_VERSION set to "1.0.0 RC1", CH_KERNEL_MAJOR
+*** 1.0.0rc1 ***
+- NEW: Added new macros CH_KERNEL_VERSION set to "1.0.0rc1", CH_KERNEL_MAJOR
   set to 1, CH_KERNEL_MINOR set to 0, CH_KERNEL_PATCH set to 0.
   The macros will be updated to reflect the actual kernel version number.
+- NEW: Made all the port-specific configuration settings externally
+  configurable, see the documentation.
 - FIX: Disabled the configuration option CH_USE_MESSAGES_PRIORITY from the
   MSP430 demo, the default for this option should be off.
 - FIX: Fixed a bug that prevented the THREAD_EXT_FIELDS to be compiled into
@@ -84,8 +86,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Removed some references to deprecated APIs from the test suite.
 - FIX: Set the INT_REQUIRED_STACK configuration value for the ARM7 and ARMCM3
   ports to a safer 0x10, it was previously 0 (correct but trimmed to specific
-  compiler settings). Now it is possible to redefine that value externally
-  without have to edit ./port/ARM7/chcore.h.
+  compiler settings).
+- FIX: Set the INT_REQUIRED_STACK configuration value for the AVR port to 32.
 - Removed deprecated threads APIs: chThdCreate() and chThdCreateFast().
 - Removed deprecated events APIs: chEvtWait(), chEvtWaitTimeout(), chEvtSend(),
   chEvtSendI(), EventMask().
