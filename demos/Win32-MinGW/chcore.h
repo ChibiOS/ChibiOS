@@ -78,11 +78,11 @@ typedef struct {
 
 #define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
 
-#define THD_WA_SIZE(n) StackAlign(sizeof(Thread) +                      \
-                                  sizeof(void *) * 2 +                  \
-                                  sizeof(struct intctx) +               \
-                                  (n) +                                 \
-                                  INT_REQUIRED_STACK)
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
+                                   sizeof(void *) * 2 +                 \
+                                   sizeof(struct intctx) +              \
+                                   (n) +                                \
+                                   INT_REQUIRED_STACK)
 
 #define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
 

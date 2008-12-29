@@ -172,19 +172,25 @@
 #define THREAD_EXT_FIELDS                                               \
 struct {                                                                \
   /* Add thread custom fields here.*/                                   \
+  /* The thread termination \p EventSource.*/                           \
+  EventSource       p_exitesource;                                      \
 };
 
 /** User initialization code added to the \p chThdCreate() API.
  *  @note It is invoked from within \p chThdInit(). */
 #define THREAD_EXT_INIT(tp) {                                           \
   /* Add thread initialization code here.*/                             \
+  chEvtInit(&tp->p_exitesource);                                        \
 }
 
 /** User finalization code added to the \p chThdExit() API.
  *  @note It is inserted into lock zone. */
 #define THREAD_EXT_EXIT(tp) {                                           \
   /* Add thread finalization code here.*/                               \
+  chEvtBroadcastI(&currp->p_exitesource);                               \
 }
+
+#define chThdGetExitEventSource(tp) (&(tp)->p_exitesource)
 
 #endif  /* _CHCONF_H_ */
 

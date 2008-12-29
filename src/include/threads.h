@@ -112,9 +112,8 @@ struct Thread {
   /** Memory Pool where the thread workspace is returned. */
   void                  *p_mpool;
 #endif
-#ifdef CH_USE_THREAD_EXT
+  /* Extra fields defined in chconf.h */
   THREAD_EXT_FIELDS
-#endif
 };
 
 /** Thread state: Ready to run, waiting on the ready list.*/
