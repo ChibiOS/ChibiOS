@@ -435,6 +435,25 @@
  * Non portable code.
  * @ingroup Kernel
  * @file chcore.c Non portable code.
+ * @file chcore.h Non portable macros and structures.
+ */
+/** @} */
+
+/**
+ * @defgroup Types Types
+ * @{
+ * System types and macros.
+ * @ingroup Kernel
+ * @file chtypes.h System types and code modifiers.
+ */
+/** @} */
+
+/**
+ * @defgroup Inline Inline
+ * @{
+ * System inline-able code.
+ * @ingroup Kernel
+ * @file inline.h Inline versions of some critical system routines.
  */
 /** @} */
 

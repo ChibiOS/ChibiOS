@@ -17,6 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @addtogroup Inline
+ * @{
+ */
+
 #ifndef _INLINE_H_
 #define _INLINE_H_
 
@@ -78,3 +83,5 @@ static INLINE Thread *list_remove(ThreadsList *tlp) {
 #endif /* CH_OPTIMIZE_SPEED */
 
 #endif  /* _INLINE_H_ */
+
+/** @} */

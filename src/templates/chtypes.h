@@ -18,7 +18,7 @@
 */
 
 /**
- * @addtogroup Core
+ * @addtogroup Types
  * @{
  */
 
