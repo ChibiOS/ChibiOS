@@ -79,7 +79,7 @@
  * priority is executed. If more than one thread with equal priority are
  * eligible for execution then they are executed in a round-robin way, the
  * CPU time slice constant is configurable. The ready list is a double linked
- * list of threads ordered by priority.
+ * list of threads ordered by priority.<br><br>
  * @image html readylist.png
  * Note that the currently running thread is not in the ready list, the list
  * only contains the threads ready to be executed but still actually waiting.
@@ -89,19 +89,26 @@
  * @image html states.png
  *
  * @section warea Thread Working Area
- * Each thread has its own stack, a Thread structure and a registers dump
- * structure. All the structures are allocated into a "Thread working area",
+ * Each thread has its own stack, a Thread structure and some preemption
+ * areas. All the structures are allocated into a "Thread working area",
  * a thread private heap, usually allocated in a char array declared in your
  * code, there is not a central threads table or list, this means you can
  * have as many threads you want as long you have enough available RAM
  * memory. The threads do not use any memory outside the allocated working
- * area.<br>
+ * area.<br><br>
  * @image html workspace.png
  * <br>
- * Note that the registers dump is only present when the Thread is not
- * running, the context switching is done by pushing the registers on the
- * stack of the switched-out thread and popping the registers of the
- * switched-in thread from its stack.
+ * Note that the preemption areas only present when the Thread is not
+ * running (switched out), the context switching is done by pushing the
+ * registers on the stack of the switched-out thread and popping the registers
+ * of the switched-in thread from its stack.
+ * The preemption areas can be divided in up to three structures:
+ * - External Context.
+ * - Interrupt Stack.
+ * - Internal Context.
+ *
+ * See the @ref Core documentation for details, the areas may change on
+ * the various ports and some structures may not be present (or be zero-sized).
  *
  * @section sysmutex System Mutex Zone
  * It is the code within the OS that cannot be preempted, this code is

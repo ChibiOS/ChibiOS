@@ -32,27 +32,39 @@
 
 /**
  * Base type for stack alignment.
+ * This type is used only for stack alignment reasons thus can be anything from
+ * a char to a double.
  */
 typedef uint8_t stkalign_t;
 
 /**
  * Interrupt saved context.
+ * This structure represents the stack frame saved during a preemption-capable
+ * interrupt handler.
  */
 struct extctx {
 };
 
 /**
  * System saved context.
+ * This structure represents the inner stack frame during a context switching.
  */
 struct intctx {
 };
 
+/**
+ * Platform dependent part of the @p Thread structure.
+ * This structure usually contains just the saved stack pointer defined as a
+ * pointer to a @p intctx structure.
+ */
 typedef struct {
   struct intctx *sp;
 } Context;
 
 /**
  * Platform dependent part of the \p chThdCreate() API.
+ * This code usually setup the context switching frame represented by a
+ * @p intctx structure.
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg)                        \
 {                                                                       \
@@ -60,12 +72,18 @@ typedef struct {
 
 /**
  * Stack size for the system idle thread.
+ * This size depends on the idle thread implementation, usually the idle
+ * thread should take no more space than those reserved
+ * by @p INT_REQUIRED_STACK.
  */
 #define IDLE_THREAD_STACK_SIZE 0
 
 /**
  * Per-thread stack overhead for interrupts servicing, it is used in the
  * calculation of the correct working area size.
+ * This value can be zero on those architecture where there is a separate
+ * interrupt stack and the stack space between @p intctx and @p extctx is
+ * known to be zero.
  */
 #define INT_REQUIRED_STACK 0
 

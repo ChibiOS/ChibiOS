@@ -15,10 +15,10 @@
    sodipodi:version="0.32"
    inkscape:version="0.45.1"
    version="1.0"
-   sodipodi:docbase="C:\Progetti\ChibiOS\homepage"
+   sodipodi:docbase="D:\Progetti\ChibiOS-RT\docs\img"
    sodipodi:docname="workspace.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="C:\Progetti\ChibiOS\homepage\workspace.png"
+   inkscape:export-filename="D:\Progetti\ChibiOS-RT\docs\img\workspace.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -82,9 +82,9 @@
      objecttolerance="1"
      guidetolerance="1"
      inkscape:window-width="993"
-     inkscape:window-height="870"
-     inkscape:window-x="139"
-     inkscape:window-y="66" />
+     inkscape:window-height="871"
+     inkscape:window-x="352"
+     inkscape:window-y="69" />
   <metadata
      id="metadata2165">
     <rdf:RDF>
@@ -149,37 +149,37 @@
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;stroke-miterlimit:4;stroke-dasharray:1,1;stroke-dashoffset:0;stroke-opacity:1"
-       d="M 110.44572,50.481444 C 249.51856,50.481444 249.51856,50.481444 249.51856,50.481444"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;stroke-miterlimit:4;stroke-dasharray:1, 1;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 110.5,74.5 C 249.57284,74.5 249.57284,74.5 249.57284,74.5"
        id="path3245" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1,1;stroke-dashoffset:0;stroke-opacity:1"
-       d="M 110.44572,80.481444 C 249.51856,80.481444 249.51856,80.481444 249.51856,80.481444"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1, 1;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 110.5,149.5 C 249.57284,149.5 249.57284,149.5 249.57284,149.5"
        id="path3247" />
     <flowRoot
        xml:space="preserve"
        id="flowRoot3249"
-       transform="translate(131.71875,-62.610866)"><flowRegion
+       transform="translate(125.4043,-62.808117)"><flowRegion
          id="flowRegion3251"><rect
            id="rect3253"
-           width="97.01046"
-           height="17.563538"
+           width="107.01046"
+           height="12.563538"
            x="2.9895365"
            y="332.43646" /></flowRegion><flowPara
          id="flowPara3255">Thread Structure</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot3257"
-       transform="translate(136.05664,-274.98977)"><flowRegion
+       transform="translate(133.58398,-197.80812)"><flowRegion
          id="flowRegion3259"><rect
            id="rect3261"
-           width="97.01046"
+           width="102.01046"
            height="17.563538"
            x="2.9895365"
            y="332.43646" /></flowRegion><flowPara
-         id="flowPara3263">Registers Dump</flowPara></flowRoot>    <flowRoot
+         id="flowPara3263">intctx Structure</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot3265"
-       transform="translate(141.71875,-307.61087)"><flowRegion
+       transform="translate(137.71094,-292.80812)"><flowRegion
          id="flowRegion3267"><rect
            id="rect3269"
            width="97.01046"
@@ -189,7 +189,7 @@
          id="flowPara3273">Thread Stack</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot3277"
-       transform="translate(0.4335938,-258.72805)"><flowRegion
+       transform="translate(1.2089844,-187.09523)"><flowRegion
          id="flowRegion3279"><rect
            id="rect3281"
            width="97.01046"
@@ -202,7 +202,7 @@
        id="path3487" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6978516px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow1Mend);stroke-opacity:1"
-       d="M 100.16177,81.570166 C 109.12769,81.570166 109.12769,81.570166 109.12769,81.570166"
+       d="M 100.34893,148.42983 C 109.31485,148.42983 109.31485,148.42983 109.31485,148.42983"
        id="path3489" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6978516px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow1Mend);stroke-opacity:1"
@@ -218,10 +218,10 @@
     <flowRoot
        xml:space="preserve"
        id="flowRoot2208"
-       transform="translate(122.00391,-93.728054)"><flowRegion
+       transform="translate(112.03516,-92.095227)"><flowRegion
          id="flowRegion2210"><rect
            id="rect2212"
-           width="117.01046"
+           width="132.01047"
            height="17.563538"
            x="2.9895365"
            y="332.43646" /></flowRegion><flowPara
@@ -239,5 +239,47 @@
            height="17.563538"
            x="2.9895365"
            y="332.43646" /></flowRegion><flowPara
-         id="flowPara2224">chThdLS()</flowPara></flowRoot>  </g>
+         id="flowPara2224">chThdLS()</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot2209"
+       transform="translate(2.3710937,-107.80812)"><flowRegion
+         id="flowRegion2211"><rect
+           id="rect2213"
+           width="97.01046"
+           height="17.563538"
+           x="2.9895365"
+           y="332.43646" /></flowRegion><flowPara
+         id="flowPara2215">Stack Limit</flowPara></flowRoot>    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6978516px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow1Mend);stroke-opacity:1"
+       d="M 100.16177,231.57017 C 109.12769,231.57017 109.12769,231.57017 109.12769,231.57017"
+       id="path2217" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1, 1;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 110.42716,125.5 C 249.5,125.5 249.5,125.5 249.5,125.5"
+       id="path2221" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1, 1;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 110.42716,100.5 C 249.5,100.5 249.5,100.5 249.5,100.5"
+       id="path2223" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot2225"
+       transform="translate(130.04492,-248.01905)"><flowRegion
+         id="flowRegion2227"><rect
+           id="rect2229"
+           width="102.01046"
+           height="17.563538"
+           x="2.9895365"
+           y="332.43646" /></flowRegion><flowPara
+         id="flowPara2231">extctx Structure</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot2235"
+       transform="translate(110.82227,-224.75538)"><flowRegion
+         id="flowRegion2237"><rect
+           id="rect2239"
+           width="137.01047"
+           height="17.563538"
+           x="2.9895365"
+           y="332.43646" /></flowRegion><flowPara
+         id="flowPara2241">INT_REQUIRED_STACK</flowPara></flowRoot>  </g>
 </svg>

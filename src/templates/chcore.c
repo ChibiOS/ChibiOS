@@ -88,12 +88,19 @@ void chSysUnlock(void) {
 }
 
 /**
- * Context switch.
+ * Performs a context switch.
+ * This is the most critical code in any port, this function is responsible
+ * for the context switch between 2 threads.
+ * @param otp the thread to be switched out
+ * @param ntp the thread to be switched in
+ * @note The implementation of this code affects <b>directly</b> the context
+ *       switch performance so optimize here as much as you can.
  */
 void chSysSwitchI(Thread *otp, Thread *ntp) {}
 
 /**
  * Prints a message on the system console (if any).
+ * @param msg the message to be printed on the system console
  */
 void chSysPuts(char *msg) {
 }
