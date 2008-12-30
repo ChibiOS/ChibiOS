@@ -20,9 +20,9 @@
 /*
  * ST32F103 memory setup.
  */
-__main_stack_size__	= 0x0200;
-__process_stack_size__	= 0x0100;
-__stacks_total_size__	= __main_stack_size__ + __process_stack_size__;
+__main_stack_size__     = 0x0200;
+__process_stack_size__  = 0x0100;
+__stacks_total_size__   = __main_stack_size__ + __process_stack_size__;
 
 MEMORY
 {
@@ -30,9 +30,9 @@ MEMORY
     ram : org = 0x20000000, len = 20k
 }
 
-__ram_start__       = ORIGIN(ram);
-__ram_size__        = LENGTH(ram);
-__ram_end__         = __ram_start__ + __ram_size__;
+__ram_start__           = ORIGIN(ram);
+__ram_size__            = LENGTH(ram);
+__ram_end__             = __ram_start__ + __ram_size__;
 
 SECTIONS
 {
