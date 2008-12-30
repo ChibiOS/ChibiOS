@@ -99,6 +99,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Added usage notes for programmers to the ARM7 port documentation about
   interrupt handlers.
 - Port-specific settings added to the documentation.
+- Added source browser to the documentation.
 - Fixes and improvements through the documentation.
 
 *** 0.8.3 ***
