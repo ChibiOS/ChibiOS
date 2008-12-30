@@ -68,6 +68,9 @@ namespace chibios_rt {
 
     /**
      * Starts the timer.
+     * @param time the time in system ticks
+     * @param vtfunc the timer callback function
+     * @param par the parameter for the callback function
      * @note It must be called with the interrupts disabled.
      * @note The associated function is invoked by an interrupt handler.
      */
@@ -177,6 +180,7 @@ namespace chibios_rt {
   /**
    * Enhanced threads template class. This class introduces thread names
    * and static working area allocation.
+   * @param N the working area size for the thread class
    */
   template <int N>
   class EnhancedThread : public BaseThread {
@@ -189,6 +193,8 @@ namespace chibios_rt {
     /**
      * Full constructor. It allows to set a priority level for the new thread
      * and specify the special option flags.
+     * @param tname the name to be assigned to the thread
+     * @param prio the priority to be assigned to the thread
      */
     EnhancedThread(const char *tname, tprio_t prio) :
           BaseThread(wa, sizeof wa, prio) {
@@ -200,6 +206,7 @@ namespace chibios_rt {
      * Simplified constructor, it allows to create a thread by simply
      * specifying a name. In is assumed \p NORMALPRIO as initial priority
      * and no special option flags.
+     * @param tname the name to be assigned to the thread
      */
     EnhancedThread(const char *tname) :
           BaseThread(wa, sizeof wa, NORMALPRIO) {

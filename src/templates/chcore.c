@@ -35,6 +35,7 @@
  * put the processor in the lowest power mode capable to serve interrupts.
  * The priority is internally set to the minimum system value so that this
  * thread is executed only if there are no other ready threads in the system.
+ * @param p the thread parameter, unused in this scenario
  * @note Implementation should declare this function as a weak symbol in order
  *       to allow applications to re-implement it.
  */
