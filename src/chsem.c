@@ -118,8 +118,8 @@ msg_t chSemWaitS(Semaphore *sp) {
  * @param time the number of ticks before the operation fails
  * @retval RDY_OK if the semaphore was signaled or not taken.
  * @retval RDY_RESET if the semaphore was reset using \p chSemReset().
- * @retval RDY_TIMEOUT if the semaphore was not signaled or reset within the specified
- *         timeout.
+ * @retval RDY_TIMEOUT if the semaphore was not signaled or reset within the
+ *         specified timeout.
  * @note The function is available only if the \p CH_USE_SEMAPHORES_TIMEOUT
  *       option is enabled in \p chconf.h.
  */

@@ -30,7 +30,7 @@
 /**
  * Semaphore structure.
  */
-typedef struct {
+typedef struct Semaphore {
   /** Queue of the threads sleeping on this Semaphore.*/
   ThreadsQueue          s_queue;
   /** The Semaphore counter.*/

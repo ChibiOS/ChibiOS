@@ -36,6 +36,8 @@ namespace chibios_rt {
   public:
     /**
      * ChibiOS/RT initialization.
+     * The system is initialized, the idle thread is spawned and the current
+     * instruction flow becomes the main thread with priority @p NORMALPRIO.
      */
     static void Init(void);
 
@@ -55,6 +57,7 @@ namespace chibios_rt {
 
     /**
      * Returns the system time as system ticks.
+     * @note the system tick time interval is implementation dependent.
      */
     static systime_t GetTime(void);
   };
@@ -64,7 +67,10 @@ namespace chibios_rt {
    */
   class Timer {
   public:
-    ::VirtualTimer timer;
+    /**
+     * Embedded @p VirtualTimer structure.
+     */
+    struct ::VirtualTimer timer;
 
     /**
      * Starts the timer.
@@ -84,7 +90,9 @@ namespace chibios_rt {
     void Reset();
 
     /**
-     * Returns true if the timer is armed.
+     * Returns the timer status.
+     * @retval TRUE The timer is armed.
+     * @retval FALSE The timer already fired its callback.
      */
     bool IsArmed(void);
   };
@@ -95,84 +103,111 @@ namespace chibios_rt {
    */
   class BaseThread {
   public:
+    /**
+     * Pointer to the system thread.
+     */
     ::Thread *thread_ref;
 
     /**
      * Thread constructor.
+     * The thread object is initialized and a system thread is started.
+     * @param workspace pointer to the workspace area
+     * @param wsize size of the workspace area
+     * @param prio thread priority
      */
     BaseThread(void *workspace, size_t wsize, tprio_t prio);
 
     /**
      * Thread exit.
+     * @param msg the exit message
      */
     static void Exit(msg_t msg);
 
 #ifdef CH_USE_WAITEXIT
     /**
      * Synchronization on Thread exit.
+     * @return the exit message from the thread
      */
     msg_t Wait(void);
 #endif /* CH_USE_WAITEXIT */
 
     /**
-     * Resumes thread.
+     * Resumes the thread.
+     * The thread encapsulated into the object is resumed.
      */
     void Resume(void);
 
     /**
      * Change thread priority.
+     * @param newprio the new priority level
      */
     static void SetPriority(tprio_t newprio);
 
     /**
      * Requests thread termination.
+     * A termination flag is pended on the thread, it is thread responsibility
+     * to detect it and exit.
      */
     void Terminate(void);
 
     /**
      * Suspends the thread execution for the specified number of system ticks.
+     * @param n the number of system ticks
      */
     static void Sleep(systime_t n);
 
     /**
      * Suspends the thread execution until the specified time arrives.
+     * @param time the system time
      */
     static void SleepUntil(systime_t time);
 
 #ifdef CH_USE_MESSAGES
     /**
      * Sends a message to the thread and returns the answer.
+     * @param tp the target thread
+     * @param msg the sent message
+     * @return The returned message.
      */
     static msg_t SendMessage(::Thread *tp, msg_t msg);
 
     /**
      * Sends a message to the thread and returns the answer.
+     * @param msg the sent message
+     * @return The returned message.
      */
     msg_t SendMessage(msg_t msg);
 
     /**
      * Waits for a message and returns it.
+     * @return The incoming message.
      */
     static msg_t WaitMessage(void);
 
     /**
      * Returns an enqueued message or \p NULL.
+     * @return The incoming message.
+     * @retval NULL No incoming message.
      */
     static msg_t GetMessage(void);
 
     /**
      * Releases the next message in queue with a reply.
+     * @param msg the answer message
      */
     static void ReleaseMessage(msg_t msg);
 
     /**
      * Returns true if there is at least one message in queue.
+     * @retval TRUE A message is waiting in queue.
+     * @retval FALSE A message is not waiting in queue.
      */
     static bool IsPendingMessage(void);
 #endif /* CH_USE_MESSAGES */
 
     /**
      * Thread body function.
+     * @return The exit message.
      */
     virtual msg_t Main(void);
   };
@@ -188,6 +223,9 @@ namespace chibios_rt {
     WORKING_AREA(wa, N);                        // Thread working area.
 
   public:
+    /**
+     * The thread name.
+     */
     const char *name;
 
     /**
@@ -221,38 +259,56 @@ namespace chibios_rt {
    */
   class Semaphore {
   public:
-    ::Semaphore sem;
+    /**
+     * Embedded @p Semaphore structure.
+     */
+    struct ::Semaphore sem;
 
     /**
      * Semaphore constructor.
+     * The embedded @p ::Semaphore structure is initialized.
+     * @param n the semaphore counter value, must be greater or equal to zero
      */
     Semaphore(cnt_t n);
 
     /**
-     * Resets a semaphore to a given positive value.
+     * Resets a semaphore.
+    * @param n the new semaphore counter value, must be greater or equal to zero
      */
     void Reset(cnt_t n);
 
     /**
      * Wait operation on the semaphore.
+     * @retval RDY_OK if the semaphore was signaled or not taken.
+     * @retval RDY_RESET if the semaphore was reset.
      */
     msg_t Wait(void);
 
 #ifdef CH_USE_SEMAPHORES_TIMEOUT
     /**
      * Wait operation on the semaphore with timeout.
+     * @param time the number of ticks before the operation fails
+     * @retval RDY_OK if the semaphore was signaled or not taken.
+     * @retval RDY_RESET if the semaphore was reset.
+     * @retval RDY_TIMEOUT if the semaphore was not signaled or reset within the
+     *         specified timeout.
      */
     msg_t WaitTimeout(systime_t time);
 #endif /* CH_USE_SEMAPHORES_TIMEOUT */
 
     /**
      * Signal operation on the semaphore.
+     * The semaphore is signaled, the next thread in queue, if any, is awakened.
      */
     void Signal(void);
 
 #ifdef CH_USE_SEMSW
     /**
      * Atomic signal and wait operations.
+     * @param ssem pointer to a \p Semaphore to be signaled
+     * @param wsem pointer to a \p Semaphore to be wait on
+     * @retval RDY_OK if the semaphore was signaled or not taken.
+     * @retval RDY_RESET if the semaphore was reset.
      */
     static msg_t SignalWait(Semaphore *ssem, Semaphore *wsem);
 #endif /* CH_USE_SEMSW */
@@ -265,51 +321,94 @@ namespace chibios_rt {
    */
   class Mutex {
   public:
-    ::Mutex mutex;
+    /**
+     * Embedded @p Mutex structure.
+     */
+    struct ::Mutex mutex;
 
     /**
      * Mutex constructor.
+     * The embedded @p ::Mutex structure is initialized.
      */
     Mutex(void);
 
     /**
      * Tries a lock operation on the mutex.
+     * @retval TRUE if the mutex was successfully acquired
+     * @retval FALSE if the lock attempt failed.
      */
     bool TryLock(void);
 
     /**
-     * Lock operation on the mutex.
+     * Locks the mutex.
+     * Performs a lock operation on the mutex, if the mutex is already locked
+     * then the thread enters the mutex priority queue and waits.
      */
     void Lock(void);
 
     /**
-     * Unlock operation on the most recently locked mutex.
+     * Unlocks the mutex.
+     * Performs an unlock operation on the mutex, the next waiting thread, if
+     * any, is resumed and locks the mutex.
      */
     static void Unlock(void);
 
     /**
      * Unlocks all the mutexes owned by the invoking thread.
+     * This operation is <b>MUCH MORE</b> efficient than releasing the mutexes
+     * one by one and not just because the call overhead, this function does not
+     * have any overhead related to the priority inheritance mechanism.
      */
     static void UnlockAll(void);
   };
 
 #ifdef CH_USE_CONDVARS
+  /**
+   * Class encapsulating a \p CondVar.
+   */
   class CondVar {
   public:
-    ::CondVar condvar;
+    /**
+     * Embedded @p CondVar structure.
+     */
+    struct ::CondVar condvar;
 
     /**
      * CondVar constructor.
+     * The embedded @p ::CondVar structure is initialized.
      */
     CondVar(void);
 
+    /**
+     * Signals the CondVar.
+     * The next thread waiting on the @p CondVar, if any, is awakened.
+     */
     void Signal(void);
 
+    /**
+     * Broadcasts the CondVar.
+     * All the threads waiting on the @p CondVar, if any, are awakened.
+     */
     void Broadcast(void);
 
+    /**
+     * Waits on the CondVar while releasing the controlling mutex.
+     * @return The wakep mode.
+     * @retval RDY_OK if the condvar was signaled using chCondSignal().
+     * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().
+     */
     msg_t Wait(void);
 
 #ifdef CH_USE_CONDVARS_TIMEOUT
+    /**
+     * Waits on the CondVar while releasing the controlling mutex.
+     * @param time the number of ticks before the operation fails
+     * @return The wakep mode.
+     * @retval RDY_OK if the condvar was signaled using chCondSignal().
+     * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().
+     * @retval RDY_TIMEOUT if the condvar was not signaled within the specified
+     *         timeout.
+     */
     msg_t WaitTimeout(systime_t time);
 #endif /* CH_USE_CONDVARS_TIMEOUT */
   };
@@ -322,10 +421,14 @@ namespace chibios_rt {
    */
   class Event {
   public:
-    EventSource event;
+    /**
+     * Embedded @p EventSource structure.
+     */
+    struct ::EventSource event;
 
     /**
      * Event constructor.
+     * The embedded @p ::EventSource structure is initialized.
      */
     Event(void);
 
@@ -346,12 +449,15 @@ namespace chibios_rt {
     void RegisterMask(EventListener *elp, eventmask_t emask);
 
     /**
-     * Unregisters a listener from the event source.
+     * Unregisters a listener.
+     * The specified listeners is no more signaled by the event source.
+     * @param elp the listener to be unregistered
      */
     void Unregister(EventListener *elp);
 
     /**
      * Broadcasts an event.
+     * All the listeners registered on the event source are signaled.
      */
     void Broadcast(void);
 
@@ -380,15 +486,10 @@ namespace chibios_rt {
     static void Dispatch(const evhandler_t handlers[], eventmask_t mask);
 
     /**
-     * Waits and dispatchs events.
-     */
-    static eventid_t Wait(eventmask_t ewmask, const evhandler_t handlers[]);
-
-    /**
-     * A pending event among those specified in \p ewmask is selected, cleared and
+     * A pending event among those specified in @p ewmask is selected, cleared and
      * its mask returned.
      * @param ewmask mask of the events that the function should wait for,
-     *               \p ALL_EVENTS enables all the events
+     *               @p ALL_EVENTS enables all the events
      * @return The mask of the lowest id served and cleared event.
      * @note One and only one event is served in the function, the one with the
      *       lowest event id. The function is meant to be invoked into a loop in
@@ -400,17 +501,17 @@ namespace chibios_rt {
 
     /**
      * Waits for any of the specified events.
-     * The function waits for any event among those specified in \p ewmask to
+     * The function waits for any event among those specified in @p ewmask to
      * become pending then the events are cleared and returned.
      * @param ewmask mask of the events that the function should wait for,
-     *               \p ALL_EVENTS enables all the events
+     *               @p ALL_EVENTS enables all the events
      * @return The mask of the served and cleared events.
      */
     static eventmask_t WaitAny(eventmask_t ewmask);
 
     /**
      * Waits for all the specified event flags then clears them.
-     * The function waits for all the events specified in \p ewmask to become
+     * The function waits for all the events specified in @p ewmask to become
      * pending then the events are cleared and returned.
      * @param ewmask mask of the event ids that the function should wait for
      * @return The mask of the served and cleared events.
@@ -420,10 +521,10 @@ namespace chibios_rt {
 #ifdef CH_USE_EVENTS_TIMEOUT
     /**
      * Waits for a single event.
-     * A pending event among those specified in \p ewmask is selected, cleared
+     * A pending event among those specified in @p ewmask is selected, cleared
      * and its mask returned.
      * @param ewmask mask of the events that the function should wait for,
-     *               \p ALL_EVENTS enables all the events
+     *               @p ALL_EVENTS enables all the events
      * @param time the number of ticks before the operation timouts
      * @return The mask of the lowest id served and cleared event.
      * @retval 0 if the specified timeout expired.
@@ -437,10 +538,10 @@ namespace chibios_rt {
 
     /**
      * Waits for any of the specified events.
-     * The function waits for any event among those specified in \p ewmask to
+     * The function waits for any event among those specified in @p ewmask to
      * become pending then the events are cleared and returned.
      * @param ewmask mask of the events that the function should wait for,
-     *               \p ALL_EVENTS enables all the events
+     *               @p ALL_EVENTS enables all the events
      * @param time the number of ticks before the operation timouts
      * @return The mask of the served and cleared events.
      * @retval 0 if the specified timeout expired.
@@ -449,7 +550,7 @@ namespace chibios_rt {
 
     /**
      * Waits for all the specified event flags then clears them.
-     * The function waits for all the events specified in \p ewmask to become
+     * The function waits for all the events specified in @p ewmask to become
      * pending then the events are cleared and returned.
      * @param ewmask mask of the event ids that the function should wait for
      * @param time the number of ticks before the operation timouts

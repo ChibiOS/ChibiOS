@@ -34,7 +34,7 @@
 /**
  * CondVar structure.
  */
-typedef struct {
+typedef struct CondVar {
   ThreadsQueue          c_queue;
 } CondVar;
 
