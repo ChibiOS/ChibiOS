@@ -46,7 +46,8 @@ ARMCM3-ST32F103-GCC    - ARM Cortex-M3 port. The demo targets the Olimex
 AVR-AVRmega128-GCC     - Port on AVRmega128. A special thanks to Vladimir for
                          the work done on the AVR port. The demo program
                          targets the Olimex AVR-MT-128 mini terminal board.
-AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not tested on hardware yet.
+AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not tested on hardware yet. It
+                         ran correctly in the simulator.
 MSP430-MSP430x1611-GCC - Port on Texas Instruments MSP430F1611, the demo
                          targets the Olimex MSP430-P1611 board.
 Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
