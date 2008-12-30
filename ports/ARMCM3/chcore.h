@@ -127,7 +127,7 @@ typedef struct {
 }
 
 #ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK 0x10
+#define INT_REQUIRED_STACK 0            /* NOTE: Always safe for this port. */
 #endif
 
 /*

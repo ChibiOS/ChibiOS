@@ -85,10 +85,11 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Fixed a bug that prevented the THREAD_EXT_FIELDS to be compiled into
   the Thread structure.
 - FIX: Removed some references to deprecated APIs from the test suite.
-- FIX: Set the INT_REQUIRED_STACK configuration value for the ARM7 and ARMCM3
-  ports to a safer 0x10, it was previously 0 (correct but trimmed to specific
-  compiler settings).
-- FIX: Set the INT_REQUIRED_STACK configuration value for the AVR port to 32.
+- FIX: Set the INT_REQUIRED_STACK configuration value for the ARM7 port to a
+  safer 0x10, it was previously 0 (correct but trimmed to specific compiler
+  settings).
+- FIX: Set the INT_REQUIRED_STACK configuration value for the AVR port to a 
+  safer 32.
 - FIX: Fixed the MinGW demo in order to not use any deprecated construct.
 - Removed deprecated threads APIs: chThdCreate() and chThdCreateFast().
 - Removed deprecated events APIs: chEvtWait(), chEvtWaitTimeout(), chEvtSend(),
