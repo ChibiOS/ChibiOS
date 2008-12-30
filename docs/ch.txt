@@ -311,14 +311,9 @@
  * <li>@p INT_REQUIRED_STACK, this value represent the amount of stack space used
  *     by an interrupt handler between the @p extctx and @p intctx
  *     structures.<br>
- *     In practice this value is the stack space used by the chSchDoReschedule()
- *     stack frame.<br>
- *     This value can be affected by a variety of external things like compiler
- *     version, compiler options, kernel settings (speed/size) and so on.<br>
- *     The default for this value is @p 0x10 which should be a safe value, you
- *     can trim this down by defining the macro externally. This would save
- *     some valuable RAM space for each thread present in the system.<br>
- *     The default value is set into <b>./ports/ARMCM3/chcore.h</b>.</li>
+ *     In the current implementation this value is guaranteed to be zero so
+ *     there is no need to modify this value unless changes are done at the
+ *     interrupts handling code.</li>
  * <li>@p BASEPRI_USER, this is the @p BASEPRI value for the user threads. The
  *     default value is @p 0 (disabled).<br>
  *     Usually there is no need to change this value, please refer to the
