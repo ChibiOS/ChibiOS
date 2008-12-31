@@ -19,7 +19,7 @@
                          ChibiOS/RT but used in the demo applications.
 ./test/                - Test code, used by some demos.
 ./docs/Doxyfile        - Doxygen project file.
-./docs/html/index.html - ChibiOS/RT documentation (after running doxigen).
+./docs/html/index.html - ChibiOS/RT documentation.
                          The documentation is also available on the project
                          web page: http://chibios.sourceforge.net/
 
@@ -95,7 +95,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Removed deprecated events APIs: chEvtWait(), chEvtWaitTimeout(), chEvtSend(),
   chEvtSendI(), EventMask().
 - Removed deprecated configuration feature CH_USE_EXIT_EVENT and the related
-  API chThdGetExitEventSource().
+  API chThdGetExitEventSource(). The feature can be reimplemented in user code
+  as shown by the MinGW demo.
 - Removed deprecated macros: WorkingArea(), UserStackSize(), StackAlign().
 - Added usage note into the readme of the MinGW demo.
 - Added usage notes for programmers to the ARM7 port documentation about
