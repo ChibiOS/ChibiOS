@@ -68,7 +68,7 @@ void chCondSignalI(CondVar *cp) {
 }
 
 /**
- * Signal all threads that are waiting on the condition variable.
+ * Signals all threads that are waiting on the condition variable.
  *
  * @param cp pointer to the \p CondVar structure
  */
@@ -83,7 +83,7 @@ void chCondBroadcast(CondVar *cp) {
 }
 
 /**
- * Signal all threads that are waiting on the condition variable.
+ * Signals all threads that are waiting on the condition variable.
  *
  * @param cp pointer to the \p CondVar structure
  * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
@@ -98,7 +98,7 @@ void chCondBroadcastI(CondVar *cp) {
 }
 
 /**
- * Wait on the condition variable releasing the mutex lock.
+ * Waits on the condition variable releasing the mutex lock.
  *
  * Releases the mutex, waits on the condition variable, and finally acquires
  * the mutex again. This is done atomically.
@@ -122,7 +122,7 @@ msg_t chCondWait(CondVar *cp) {
 }
 
 /**
- * Wait on the condition variable releasing the mutex lock.
+ * Waits on the condition variable releasing the mutex lock.
  *
  * Releases the mutex, waits on the condition variable, and finally acquires
  * the mutex again. This is done atomically.
@@ -152,7 +152,7 @@ msg_t chCondWaitS(CondVar *cp) {
 
 #ifdef CH_USE_CONDVARS_TIMEOUT
 /**
- * Wait on the condition variable releasing the mutex lock.
+ * Waits on the condition variable releasing the mutex lock.
  *
  * Releases the mutex, waits on the condition variable, and finally acquires
  * the mutex again. This is done atomically.
@@ -179,7 +179,7 @@ msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
 }
 
 /**
- * Wait on the condition variable releasing the mutex lock.
+ * Waits on the condition variable releasing the mutex lock.
  *
  * Releases the mutex, waits on the condition variable, and finally acquires
  * the mutex again. This is done atomically.

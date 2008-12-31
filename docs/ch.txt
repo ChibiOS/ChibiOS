@@ -98,16 +98,16 @@
  * area.<br><br>
  * @image html workspace.png
  * <br>
- * Note that the preemption areas only present when the Thread is not
+ * Note that the preemption area is only present when the thread is not
  * running (switched out), the context switching is done by pushing the
  * registers on the stack of the switched-out thread and popping the registers
  * of the switched-in thread from its stack.
- * The preemption areas can be divided in up to three structures:
- * - External Context.
- * - Interrupt Stack.
- * - Internal Context.
+ * The preemption area can be divided in up to three structures:
+ * - External context.
+ * - Interrupt stack.
+ * - Internal context.
  *
- * See the @ref Core documentation for details, the areas may change on
+ * See the @ref Core documentation for details, the area may change on
  * the various ports and some structures may not be present (or be zero-sized).
  *
  * @section sysmutex System Mutex Zone
@@ -264,7 +264,9 @@
  * The AT91SAM7X support includes:
  * <ul>
  * <li>Buffered, interrupt driven, serial driver.</li>
+ * <li>EMAC driver with MII support.</li>
  * <li>A demo supporting the kernel test suite.</li>
+ * <li>A Web server demo using the uIP TCP/IP stack.</li>
  * </ul>
  * </p>
  * @ingroup ARM7

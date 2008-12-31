@@ -64,7 +64,7 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
  * @return The return message from \p chMsgRelease().
  * @note This function assumes that the receiving thread is not sleeping into
  *       a \p chMsgWait(). The use case is that the server thread is waiting
- *       for both messages AND events while waiting into \p chEvtWait().
+ *       for both messages AND events while waiting into \p chEvtWaitXXX().
  */
 msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, EventSource *esp) {
 
@@ -139,8 +139,8 @@ msg_t chMsgGet(void) {
  *       queue else the result will be unpredictable (a crash most likely).
  *       Exiting from the \p chMsgWait() ensures you have at least one
  *       message in the queue so it is not a big deal.<br>
- *       The condition is not checked in order to make this code as fast as
- *       possible.
+ *       The condition is only tested in debug mode in order to make this code
+ *       as fast as possible.
  */
 void chMsgRelease(msg_t msg) {
 
