@@ -646,10 +646,10 @@
  * An unlimited number of Event Sources can exists in a system and each
  * thread can listen on an unlimited number of them.<br>
  * Note that the events can be asynchronously generated but are synchronously
- * served, a thread can serve event by calling the \p chEvtWait()
+ * served, a thread can serve event by calling a \p chEvtWaitXXX()
  * API. If an event is generated while a listening thread is not ready to
  * serve it then the event becomes "pending" and will be served as soon the
- * thread invokes the \p chEvtWait().<br>
+ * thread invokes a \p chEvtWaitXXX().<br>
  * In order to use the Event APIs the \p CH_USE_EVENTS option must be
  * specified in \p chconf.h.
  * @file events.h Events macros and structures.
