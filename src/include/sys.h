@@ -86,7 +86,7 @@
  *       syscall from an interrupt handler.
  * @note This API must be invoked exclusively from interrupt handlers.
  */
-#define chSysUnlockI() sys_disable_from_isr()
+#define chSysUnlockI() sys_enable_from_isr()
 
 #if defined(CH_USE_NESTED_LOCKS) || defined(_DOXYGEN_)
 /**
@@ -133,7 +133,7 @@
  * @note Usually IRQ handlers functions are also declared naked.
  * @note On some architectures this macro can be empty.
  */
-#define chSysIRQEnterI() sys_irq_prologue()
+#define chSysIRQEnterI() SYS_IRQ_PROLOGUE()
 
 /**
  * IRQ handler exit code.
@@ -141,7 +141,7 @@
  * @note This macro usually performs the final reschedulation by using
  *       \p chSchRescRequiredI() and \p chSchDoRescheduleI().
  */
-#define chSysIRQExitI() sys_irq_epilogue()
+#define chSysIRQExitI() SYS_IRQ_EPILOGUE()
 
 /**
  * Standard modifier for IRQ handler functions.

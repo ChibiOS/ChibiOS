@@ -26,21 +26,36 @@
 
 /*
  * This file is a template of the system driver functions provided by a port.
+ * Some of the following functions may be implemented as macros in chcore.h if
+ * the implementer decides there is an advantage in doing so, as example
+ * because performance concerns.
  */
 
-/**
- * This function implements the idle thread infinite loop. The function should
- * put the processor in the lowest power mode capable to serve interrupts.
- * The priority is internally set to the minimum system value so that this
- * thread is executed only if there are no other ready threads in the system.
- * @param p the thread parameter, unused in this scenario
- * @note Implementation should declare this function as a weak symbol in order
- *       to allow applications to re-implement it.
- */
-void _idle(void *p) {
+void sys_puts(char *msg) {
+}
 
-  while (TRUE)
-    ;
+void sys_switch(Thread *otp, Thread *ntp) {
+}
+
+void sys_enable(void) {
+}
+
+void sys_disable(void) {
+}
+
+void sys_disable_from_isr(void) {
+}
+
+void sys_enable_from_isr(void) {
+}
+
+void sys_wait_for_interrupt(void) {
+}
+
+void sys_halt(void) {
+
+  while(TRUE) {
+  }
 }
 
 /** @} */

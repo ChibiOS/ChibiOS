@@ -24,6 +24,24 @@
 
 #include <ch.h>
 
+static WORKING_AREA(idle_thread_wa, IDLE_THREAD_STACK_SIZE);
+
+/**
+ * This function implements the idle thread infinite loop. The function should
+ * put the processor in the lowest power mode capable to serve interrupts.
+ * The priority is internally set to the minimum system value so that this
+ * thread is executed only if there are no other ready threads in the system.
+ * @param p the thread parameter, unused in this scenario
+ * @note Implementation should declare this function as a weak symbol in order
+ *       to allow applications to re-implement it.
+ */
+static void idle_thread(void *p) {
+
+  while (TRUE) {
+    sys_wait_for_interrupt();
+  }
+}
+
 /**
  * ChibiOS/RT initialization. After executing this function the current
  * instructions stream becomes the main thread.
@@ -33,7 +51,6 @@
  */
 void chSysInit(void) {
   static Thread mainthread;
-  static WORKING_AREA(idle_wa, IDLE_THREAD_STACK_SIZE);
 
   chSchInit();
   chDbgInit();
@@ -54,7 +71,8 @@ void chSysInit(void) {
    * serve interrupts in its context while keeping the lowest energy saving
    * mode compatible with the system status.
    */
-  chThdCreateStatic(idle_wa, sizeof(idle_wa), IDLEPRIO, (tfunc_t)_idle, NULL);
+  chThdCreateStatic(idle_wa, sizeof(idle_thread_wa), IDLEPRIO,
+                    (tfunc_t)idle_thread, NULL);
 }
 
 /**
@@ -74,6 +92,16 @@ void chSysTimerHandlerI(void) {
     rlist.r_preempt--;
 #endif
   chVTDoTickI();
+}
+
+/**
+ * Abonormal system termination handler. Invoked by the ChibiOS/RT when an
+ * abnormal unrecoverable condition is met.
+ */
+void chSysHalt(void) {
+
+  chSysDisable();
+  sys_halt();
 }
 
 #if !defined(CH_OPTIMIZE_SPEED)
@@ -106,15 +134,5 @@ void chSysUnlock(void) {
   chSysUnlockInline();
 }
 #endif /* !CH_OPTIMIZE_SPEED */
-
-/**
- * Abonormal system termination handler. Invoked by the ChibiOS/RT when an
- * abnormal unrecoverable condition is met.
- */
-void chSysHalt(void) {
-
-  chSysDisable();
-  sys_halt();
-}
 
 /** @} */

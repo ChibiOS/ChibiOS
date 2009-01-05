@@ -106,10 +106,34 @@ typedef struct {
  */
 #define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
 
+/**
+ * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
+ * invoke system APIs.
+ */
+#define SYS_IRQ_PROLOGUE()
+
+/**
+ * IRQ epilogue code, inserted at the start of all IRQ handlers enabled to
+ * invoke system APIs.
+ */
+#define SYS_IRQ_EPILOGUE()
+
+/**
+ * IRQ handler function modifier.
+ */
+#define SYS_IRQ_HANDLER
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _idle(void *p);
+  void sys_puts(char *msg);
+  void sys_switch(Thread *otp, Thread *ntp);
+  void sys_enable(void);
+  void sys_disable(void);
+  void sys_disable_from_isr(void);
+  void sys_enable_from_isr(void);
+  void sys_wait_for_interrupt(void);
+  void sys_halt(void);
 #ifdef __cplusplus
 }
 #endif
