@@ -74,6 +74,18 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.1.0unstable ***
+- NEW: Better separation between the port code and the system APIs, now the an
+  architecture-specific "port driver" contains all the port related code.
+  Port functions are no more directly exposed as APIs to the user code.
+- NEW: Added an option for nested system locks/unlocks.
+- NEW: Improved the interrupt handlers related code. Now interrupts are
+  handled in a very similar way for every architecture. Added macros and
+  functions that hide the implementation details.
+
+*** 1.0.0rc2 ***
+- FIX: Removed unused variable "retaddr" from the Cortex-M3 port.
+
 *** 1.0.0rc1 ***
 - NEW: Added new macros CH_KERNEL_VERSION set to "1.0.0rc1", CH_KERNEL_MAJOR
   set to 1, CH_KERNEL_MINOR set to 0, CH_KERNEL_PATCH set to 0.
