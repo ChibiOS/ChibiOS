@@ -18,7 +18,7 @@
 */
 
 /**
- * @addtogroup Initialization
+ * @addtogroup System
  * @{
  */
 
@@ -82,7 +82,9 @@ void chSysTimerHandlerI(void) {
  * @note The use of system mutual exclusion zone is not recommended in
  *       the user code, it is a better idea to use the semaphores or mutexes
  *       instead.
- * @see CH_USE_NESTED_LOCKS
+ * @note The code of this API is may be inlined or not depending on the
+ *       @p CH_OPTIMIZE_SPEED setting.
+ * @see CH_USE_NESTED_LOCKS, chSysLockInline()
  */
 void chSysLock(void) {
 
@@ -94,7 +96,9 @@ void chSysLock(void) {
  * @note The use of system mutual exclusion zone is not recommended in
  *       the user code, it is a better idea to use the semaphores or mutexes
  *       instead.
- * @see CH_USE_NESTED_LOCKS
+ * @note The code of this API is may be inlined or not depending on the
+ *       @p CH_OPTIMIZE_SPEED setting.
+ * @see CH_USE_NESTED_LOCKS, chSysUnlockInline()
  */
 void chSysUnlock(void) {
 
@@ -102,5 +106,15 @@ void chSysUnlock(void) {
   chSysUnlockInline();
 }
 #endif /* !CH_OPTIMIZE_SPEED */
+
+/**
+ * Abonormal system termination handler. Invoked by the ChibiOS/RT when an
+ * abnormal unrecoverable condition is met.
+ */
+void chSysHalt(void) {
+
+  chSysDisable();
+  sys_halt();
+}
 
 /** @} */

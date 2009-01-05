@@ -25,9 +25,7 @@
 #include <ch.h>
 
 /*
- * This file is just a template, it contains the function prototypes and the
- * doxigen documentation. The implementation of the following functions is
- * architecture/compiler specific.
+ * This file is a template of the system driver functions provided by a port.
  */
 
 /**
@@ -43,66 +41,6 @@ void _idle(void *p) {
 
   while (TRUE)
     ;
-}
-
-/**
- * Abonormal system termination handler. Invoked by the ChibiOS/RT when an
- * abnormal unrecoverable condition is met.
- */
-void chSysHalt(void) {
-
-  chSysLock();
-
-  while (TRUE)
-    ;
-}
-
-/**
- * Enables the interrupts, it is only invoked once into \p chSysInit().
- */
-void chSysEnable(void) {
-}
-
-/**
- * Enters the ChibiOS/RT system mutual exclusion zone. The implementation is
- * architecture dependent, on single core systems usually this function usually
- * just disables the interrupts.
- * @note The code in the system mutual exclusion zone must be as light and
- *       fast as possible, the system performance is affected by this.
- * @note The use of system mutual exclusion zones are not recommended in
- *       the user code, it is a better idea to use the Semaphores instead.
- */
-void chSysLock(void) {
-}
-
-/**
- * Leaves the ChibiOS/RT system mutual exclusion zone. The implementation is
- * architecture dependent, on single core systems usually this function usually
- * just enables the interrupts.
- * @note The code in the system mutual exclusion zone must be as light and
- *       fast as possible, the system performance is affected by this.
- * @note The use of system mutual exclusion zones are not recommended in
- *       the user code, it is a better idea to use the Semaphores instead.
- */
-void chSysUnlock(void) {
-}
-
-/**
- * Performs a context switch.
- * This is the most critical code in any port, this function is responsible
- * for the context switch between 2 threads.
- * @param otp the thread to be switched out
- * @param ntp the thread to be switched in
- * @note The implementation of this code affects <b>directly</b> the context
- *       switch performance so optimize here as much as you can.
- */
-void chSysSwitchI(Thread *otp, Thread *ntp) {}
-
-/**
- * Prints a message on the system console (if any).
- * @param msg the message to be printed on the system console
- */
-void chSysPuts(char *msg) {
 }
 
 /** @} */

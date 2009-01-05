@@ -79,8 +79,6 @@ void SysTickVector(void) {
   chSysIRQExitI();
 }
 
-void *retaddr;
-
 /*
  * System invoked context switch.
  */

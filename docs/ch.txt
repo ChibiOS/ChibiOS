@@ -421,6 +421,7 @@
 /**
  * @defgroup Kernel Kernel
  * @{
+ * @file ch.h ChibiOS/RT main header file, it includes everything else.
  */
 /** @} */
 
@@ -462,12 +463,12 @@
 /** @} */
 
 /**
- * @defgroup Initialization Initialization
+ * @defgroup System System Management
  * @{
- * Initialization APIs and procedures.
+ * Initialization and system-related APIs and procedures.
  * @ingroup Kernel
- * @file ch.h ChibiOS/RT main include file, it includes everything else.
- * @file chinit.c ChibiOS/RT Initialization code.
+ * @file sys.h ChibiOS/RT system-related header file.
+ * @file chsys.c ChibiOS/RT system-related code.
  */
 /** @} */
 

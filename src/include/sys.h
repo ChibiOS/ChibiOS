@@ -18,14 +18,77 @@
 */
 
 /**
- * @addtogroup Core
+ * @addtogroup System
  * @{
  */
 
 #ifndef _SYS_H_
 #define _SYS_H_
 
-#if defined(CH_USE_REENTRANT_LOCKS) || defined(_DOXYGEN_)
+/**
+ * Prints a message on the system console (if any).
+ * @param msg the message to be printed on the system console
+ */
+#define chSysPuts(msg) sys_puts(msg)
+
+/**
+ * Performs a context switch.
+ * This is the most critical code in any port, this function is responsible
+ * for the context switch between 2 threads.
+ * @param otp the thread to be switched out
+ * @param ntp the thread to be switched in
+ * @note The implementation of this code affects <b>directly</b> the context
+ *       switch performance so optimize here as much as you can.
+ */
+#define chSysSwitchI(otp, ntp) sys_switch(otp, ntp)
+
+/**
+ * Lowers the system interrupt priority mask to user level.
+ * @note The implementation is architecture dependent, it may just enable the
+ *       interrupts.
+ * @note This API is normally invoked only from within @p chSysInit().
+ * @note The use of this API is <b>not</b> an alternative to @p chSysUnlock().
+ */
+#define chSysEnable() sys_enable()
+
+/**
+ * Raises the system interrupt priority mask to system level.
+ * @note The implementation is architecture dependent, it may just enable the
+ *       interrupts.
+ * @note This API should only be invoked from the main thread in order to stop
+ *       ChibiOS/RT, hardware de/re-initialization should follow. It would then
+ *       be possible to re-initialize ChibiOS/RT using @p chSysInit().
+ * @note The use of this API is <b>not</b> an alternative to @p chSysLock().
+ */
+#define chSysDisable() sys_disable()
+
+/**
+ * Enters the ChibiOS/RT system mutual exclusion zone from within an interrupt
+ * handler.
+ * @note This API may do nothing on some architectures, it is required because
+ *       on ports that support preemptable interrupt handlers it is required to
+ *       raise the interrupt mask to the same level of the system mutual
+ *       exclusion zone.<br>
+ *       It is good practice to invoke this API before invoking any I-class
+ *       syscall from an interrupt handler.
+ * @note This API must be invoked exclusively from interrupt handlers.
+ */
+#define chSysLockI() sys_disable_from_isr()
+
+/**
+ * Leaves the ChibiOS/RT system mutual exclusion zone from within an interrupt
+ * handler.
+ * @note This API may do nothing on some architectures, it is required because
+ *       on ports that support preemptable interrupt handlers it is required to
+ *       raise the interrupt mask to the same level of the system mutual
+ *       exclusion zone.<br>
+ *       It is good practice to invoke this API after invoking any I-class
+ *       syscall from an interrupt handler.
+ * @note This API must be invoked exclusively from interrupt handlers.
+ */
+#define chSysUnlockI() sys_disable_from_isr()
+
+#if defined(CH_USE_NESTED_LOCKS) || defined(_DOXYGEN_)
 /**
  * Enters the ChibiOS/RT system mutual exclusion zone.
  * @note The use of system mutual exclusion zone is not recommended in
@@ -57,11 +120,37 @@
   if (--currp->p_locks == 0)                                            \
     sys_enable();                                                       \
 }
-#else /* defined(CH_USE_REENTRANT_LOCKS) || defined(_DOXYGEN_) */
+
+#else /* defined(CH_USE_NESTED_LOCKS) || defined(_DOXYGEN_) */
+
 #define chSysLockInline() sys_disable()
 #define chSysUnlockInline() sys_enable()
-#endif /* !defined(CH_USE_REENTRANT_LOCKS) && !defined(_DOXYGEN_) */
 
+#endif /* !defined(CH_USE_NESTED_LOCKS) && !defined(_DOXYGEN_) */
+
+/**
+ * IRQ handler enter code.
+ * @note Usually IRQ handlers functions are also declared naked.
+ * @note On some architectures this macro can be empty.
+ */
+#define chSysIRQEnterI() sys_irq_prologue()
+
+/**
+ * IRQ handler exit code.
+ * @note Usually IRQ handlers function are also declared naked.
+ * @note This macro usually performs the final reschedulation by using
+ *       \p chSchRescRequiredI() and \p chSchDoRescheduleI().
+ */
+#define chSysIRQExitI() sys_irq_epilogue()
+
+/**
+ * Standard modifier for IRQ handler functions.
+ */
+#define CH_IRQ_HANDLER SYS_IRQ_HANDLER
+
+/*
+ * Inlined code when CH_OPTIMIZE_SPEED is defined.
+ */
 #if defined(CH_OPTIMIZE_SPEED)
 #define chSysLock() chSysLockInline()
 #define chSysUnlock chSysUnlockInline()
@@ -72,6 +161,11 @@ extern "C" {
 #endif
   void chSysInit(void);
   void chSysTimerHandlerI(void);
+  void chSysHalt(void);
+#if !defined(CH_OPTIMIZE_SPEED)
+  void chSysLock(void);
+  void chSysUnlock(void);
+#endif /* !defined(CH_OPTIMIZE_SPEED) */
 #ifdef __cplusplus
 }
 #endif

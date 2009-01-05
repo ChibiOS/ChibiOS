@@ -106,31 +106,10 @@ typedef struct {
  */
 #define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
 
-/**
- * IRQ handler enter code.
- * @note Usually IRQ handlers functions are also declared naked.
- * @note On some architectures this macro can be empty.
- */
-#define chSysIRQEnterI()
-
-/**
- * IRQ handler exit code.
- * @note Usually IRQ handlers function are also declared naked.
- * @note This macro usually performs the final reschedulation by using
- *       \p chSchRescRequiredI() and \p chSchDoRescheduleI().
- */
-#define chSysIRQExitI()
-
 #ifdef __cplusplus
 extern "C" {
 #endif
   void _idle(void *p);
-  void chSysHalt(void);
-  void chSysEnable(void);
-  void chSysLock(void);
-  void chSysUnlock(void);
-  void chSysSwitchI(Thread *otp, Thread *ntp);
-  void chSysPuts(char *msg);
 #ifdef __cplusplus
 }
 #endif
