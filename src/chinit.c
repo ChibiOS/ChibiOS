@@ -76,4 +76,31 @@ void chSysTimerHandlerI(void) {
   chVTDoTickI();
 }
 
+#if !defined(CH_OPTIMIZE_SPEED)
+/**
+ * Enters the ChibiOS/RT system mutual exclusion zone.
+ * @note The use of system mutual exclusion zone is not recommended in
+ *       the user code, it is a better idea to use the semaphores or mutexes
+ *       instead.
+ * @see CH_USE_NESTED_LOCKS
+ */
+void chSysLock(void) {
+
+  chSysLockInline();
+}
+
+/**
+ * Leaves the ChibiOS/RT system mutual exclusion zone.
+ * @note The use of system mutual exclusion zone is not recommended in
+ *       the user code, it is a better idea to use the semaphores or mutexes
+ *       instead.
+ * @see CH_USE_NESTED_LOCKS
+ */
+void chSysUnlock(void) {
+
+  chDbgAssert(currp->p_locks > 0, "chinit.c, chSysUnlock()");
+  chSysUnlockInline();
+}
+#endif /* !CH_OPTIMIZE_SPEED */
+
 /** @} */
