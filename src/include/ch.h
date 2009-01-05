@@ -54,6 +54,7 @@
 #include <chtypes.h>
 #include "lists.h"
 #include <chcore.h>
+#include "sys.h"
 #include "vt.h"
 #include "scheduler.h"
 #include "semaphores.h"
@@ -77,15 +78,6 @@
 #endif
 #ifndef TRUE
 #define TRUE        (!FALSE)
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void chSysInit(void);
-  void chSysTimerHandlerI(void);
-#ifdef __cplusplus
-}
 #endif
 
 #endif /* _CH_H_ */
