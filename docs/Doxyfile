@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING = UTF-8
 PROJECT_NAME = ChibiOS/RT
-PROJECT_NUMBER = "1.0.0rc1"
+PROJECT_NUMBER = "1.0.0rc2"
 OUTPUT_DIRECTORY = .
 CREATE_SUBDIRS = NO
 OUTPUT_LANGUAGE = English
@@ -16,7 +16,7 @@ ALWAYS_DETAILED_SEC = NO
 INLINE_INHERITED_MEMB = NO
 FULL_PATH_NAMES = NO
 STRIP_FROM_PATH = "C:/Documents and Settings/Administrator/"
-STRIP_FROM_INC_PATH = 
+STRIP_FROM_INC_PATH =
 SHORT_NAMES = NO
 JAVADOC_AUTOBRIEF = YES
 QT_AUTOBRIEF = NO
@@ -24,7 +24,7 @@ MULTILINE_CPP_IS_BRIEF = NO
 INHERIT_DOCS = NO
 SEPARATE_MEMBER_PAGES = NO
 TAB_SIZE = 2
-ALIASES = 
+ALIASES =
 OPTIMIZE_OUTPUT_FOR_C = YES
 OPTIMIZE_OUTPUT_JAVA = NO
 OPTIMIZE_FOR_FORTRAN = NO
@@ -63,14 +63,14 @@ GENERATE_TODOLIST = YES
 GENERATE_TESTLIST = YES
 GENERATE_BUGLIST = YES
 GENERATE_DEPRECATEDLIST = YES
-ENABLED_SECTIONS = 
+ENABLED_SECTIONS =
 MAX_INITIALIZER_LINES = 30
 SHOW_USED_FILES = NO
 SHOW_DIRECTORIES = NO
 SHOW_FILES = YES
 SHOW_NAMESPACES = YES
-FILE_VERSION_FILTER = 
-LAYOUT_FILE = 
+FILE_VERSION_FILTER =
+LAYOUT_FILE =
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
 #---------------------------------------------------------------------------
@@ -80,7 +80,7 @@ WARN_IF_UNDOCUMENTED = YES
 WARN_IF_DOC_ERROR = YES
 WARN_NO_PARAMDOC = YES
 WARN_FORMAT = "$file:$line: $text"
-WARN_LOGFILE = 
+WARN_LOGFILE =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
@@ -88,16 +88,16 @@ INPUT = ../src/include ../src/templates ../src ../docs/ch.txt ../src/lib
 INPUT_ENCODING = UTF-8
 FILE_PATTERNS = *.c *.cc *.cxx *.cpp *.c++ *.d *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.dox *.py *.ddf
 RECURSIVE = YES
-EXCLUDE = 
+EXCLUDE =
 EXCLUDE_SYMLINKS = NO
-EXCLUDE_PATTERNS = 
-EXCLUDE_SYMBOLS = 
-EXAMPLE_PATH = 
+EXCLUDE_PATTERNS =
+EXCLUDE_SYMBOLS =
+EXAMPLE_PATH =
 EXAMPLE_PATTERNS = *
 EXAMPLE_RECURSIVE = NO
 IMAGE_PATH = ./img
-INPUT_FILTER = 
-FILTER_PATTERNS = 
+INPUT_FILTER =
+FILTER_PATTERNS =
 FILTER_SOURCE_FILES = NO
 #---------------------------------------------------------------------------
 # configuration options related to source browsing
@@ -115,33 +115,33 @@ VERBATIM_HEADERS = NO
 #---------------------------------------------------------------------------
 ALPHABETICAL_INDEX = NO
 COLS_IN_ALPHA_INDEX = 5
-IGNORE_PREFIX = 
+IGNORE_PREFIX =
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output
 #---------------------------------------------------------------------------
 GENERATE_HTML = YES
 HTML_OUTPUT = html
 HTML_FILE_EXTENSION = .html
-HTML_HEADER = 
-HTML_FOOTER = 
-HTML_STYLESHEET = 
+HTML_HEADER =
+HTML_FOOTER =
+HTML_STYLESHEET =
 HTML_ALIGN_MEMBERS = YES
 HTML_DYNAMIC_SECTIONS = NO
 GENERATE_DOCSET = NO
 DOCSET_FEEDNAME = "Doxygen generated docs"
 DOCSET_BUNDLE_ID = org.doxygen.Project
 GENERATE_HTMLHELP = NO
-CHM_FILE = 
-HHC_LOCATION = 
+CHM_FILE =
+HHC_LOCATION =
 GENERATE_CHI = NO
-CHM_INDEX_ENCODING = 
+CHM_INDEX_ENCODING =
 BINARY_TOC = NO
 TOC_EXPAND = NO
 GENERATE_QHP = NO
-QCH_FILE = 
+QCH_FILE =
 QHP_NAMESPACE = org.doxygen.Project
 QHP_VIRTUAL_FOLDER = doc
-QHG_LOCATION = 
+QHG_LOCATION =
 DISABLE_INDEX = NO
 ENUM_VALUES_PER_LINE = 4
 GENERATE_TREEVIEW = YES
@@ -156,8 +156,8 @@ LATEX_CMD_NAME = latex
 MAKEINDEX_CMD_NAME = makeindex
 COMPACT_LATEX = NO
 PAPER_TYPE = a4wide
-EXTRA_PACKAGES = 
-LATEX_HEADER = 
+EXTRA_PACKAGES =
+LATEX_HEADER =
 PDF_HYPERLINKS = YES
 USE_PDFLATEX = YES
 LATEX_BATCHMODE = NO
@@ -169,8 +169,8 @@ GENERATE_RTF = NO
 RTF_OUTPUT = rtf
 COMPACT_RTF = NO
 RTF_HYPERLINKS = NO
-RTF_STYLESHEET_FILE = 
-RTF_EXTENSIONS_FILE = 
+RTF_STYLESHEET_FILE =
+RTF_EXTENSIONS_FILE =
 #---------------------------------------------------------------------------
 # configuration options related to the man page output
 #---------------------------------------------------------------------------
@@ -183,8 +183,8 @@ MAN_LINKS = NO
 #---------------------------------------------------------------------------
 GENERATE_XML = NO
 XML_OUTPUT = xml
-XML_SCHEMA = 
-XML_DTD = 
+XML_SCHEMA =
+XML_DTD =
 XML_PROGRAMLISTING = YES
 #---------------------------------------------------------------------------
 # configuration options for the AutoGen Definitions output
@@ -196,7 +196,7 @@ GENERATE_AUTOGEN_DEF = NO
 GENERATE_PERLMOD = NO
 PERLMOD_LATEX = NO
 PERLMOD_PRETTY = YES
-PERLMOD_MAKEVAR_PREFIX = 
+PERLMOD_MAKEVAR_PREFIX =
 #---------------------------------------------------------------------------
 # Configuration options related to the preprocessor
 #---------------------------------------------------------------------------
@@ -204,16 +204,16 @@ ENABLE_PREPROCESSING = YES
 MACRO_EXPANSION = NO
 EXPAND_ONLY_PREDEF = NO
 SEARCH_INCLUDES = YES
-INCLUDE_PATH = 
-INCLUDE_FILE_PATTERNS = 
+INCLUDE_PATH =
+INCLUDE_FILE_PATTERNS =
 PREDEFINED = __JUST_STUBS__ __DOXIGEN__ CH_USE_WAITEXIT CH_USE_SEMAPHORES CH_USE_SEMSW CH_USE_SEMAPHORES_TIMEOUT CH_USE_MUTEXES CH_USE_CONDVARS CH_USE_CONDVARS_TIMEOUT CH_USE_EVENTS CH_USE_EVENTS_TIMEOUT CH_USE_EXIT_EVENT CH_USE_QUEUES CH_USE_QUEUES_TIMEOUT CH_USE_QUEUES_HALFDUPLEX CH_USE_SERIAL_FULLDUPLEX CH_USE_SERIAL_HALFDUPLEX CH_USE_HEAP CH_USE_MEMPOOLS CH_USE_MESSAGES CH_USE_MESSAGES_EVENT CH_USE_MESSAGES_PRIORITY CH_USE_DEBUG CH_USE_TRACE CH_USE_DYNAMIC CH_USE_ROUNDROBIN
-EXPAND_AS_DEFINED = 
+EXPAND_AS_DEFINED =
 SKIP_FUNCTION_MACROS = YES
 #---------------------------------------------------------------------------
 # Configuration::additions related to external references
 #---------------------------------------------------------------------------
-TAGFILES = 
-GENERATE_TAGFILE = 
+TAGFILES =
+GENERATE_TAGFILE =
 ALLEXTERNALS = NO
 EXTERNAL_GROUPS = YES
 PERL_PATH = /usr/bin/perl
@@ -221,12 +221,12 @@ PERL_PATH = /usr/bin/perl
 # Configuration options related to the dot tool
 #---------------------------------------------------------------------------
 CLASS_DIAGRAMS = NO
-MSCGEN_PATH = 
+MSCGEN_PATH =
 HIDE_UNDOC_RELATIONS = YES
 HAVE_DOT = YES
 DOT_FONTNAME = FreeSans
 DOT_FONTSIZE = 8
-DOT_FONTPATH = 
+DOT_FONTPATH =
 CLASS_GRAPH = YES
 COLLABORATION_GRAPH = YES
 GROUP_GRAPHS = YES
@@ -239,8 +239,8 @@ CALLER_GRAPH = NO
 GRAPHICAL_HIERARCHY = YES
 DIRECTORY_GRAPH = NO
 DOT_IMAGE_FORMAT = png
-DOT_PATH = 
-DOTFILE_DIRS = 
+DOT_PATH =
+DOTFILE_DIRS =
 DOT_GRAPH_MAX_NODES = 20
 MAX_DOT_GRAPH_DEPTH = 3
 DOT_TRANSPARENT = YES
