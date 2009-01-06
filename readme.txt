@@ -75,13 +75,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 1.1.0unstable ***
-- NEW: Better separation between the port code and the system APIs, now the an
-  architecture-specific "port driver" contains all the port related code.
+- NEW: Better separation between the port code and the system APIs, now an
+  architecture-specific "driver" contains all the port related code.
   Port functions are no more directly exposed as APIs to the user code.
 - NEW: Added a configuration option to enable nested system locks/unlocks.
-  The kernel does not need this feature but some external libraries may need
-  it since other RTOSes require this. Enabling this feature increases the
-  memory footprint and decreases the performance, it is off by default.
 - NEW: Improved the interrupt handlers related code. Now interrupts are
   handled in a very similar way for every architecture. Added macros and
   functions that hide the implementation details.
