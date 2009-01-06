@@ -62,7 +62,7 @@ typedef struct {
 } Context;
 
 /**
- * Platform dependent part of the @p chThdCreate() API.
+ * Platform dependent part of the @p chThdInit() API.
  * This code usually setup the context switching frame represented by a
  * @p intctx structure.
  */

@@ -50,6 +50,9 @@ struct Thread {
   tmode_t               p_flags;
   /** Machine dependent processor context.*/
   Context               p_ctx;
+#ifdef CH_USE_NESTED_LOCKS
+  cnt_t                 p_locks;
+#endif
   /*
    * The following fields are merged in unions because they are all
    * state-specific fields. This trick saves some extra space for each
