@@ -55,9 +55,9 @@ static void SetError(uint16_t sr, FullDuplexDriver *com) {
     sts |= SD_FRAMING_ERROR;
   if (sr & SR_LBD)
     sts |= SD_BREAK_DETECTED;
-  chSysLock();
+  chSysLockI();
   chFDDAddFlagsI(com, sts);
-  chSysUnlock();
+  chSysUnlockI();
 }
 
 static void ServeInterrupt(USART_TypeDef *u, FullDuplexDriver *com) {
@@ -66,14 +66,14 @@ static void ServeInterrupt(USART_TypeDef *u, FullDuplexDriver *com) {
   if (sr & (SR_ORE | SR_FE | SR_PE | SR_LBD))
     SetError(sr, com);
   if (sr & SR_RXNE) {
-    chSysLock();
+    chSysLockI();
     chFDDIncomingDataI(com, u->DR);
-    chSysUnlock();
+    chSysUnlockI();
   }
   if (sr & SR_TXE) {
-    chSysLock();
+    chSysLockI();
     msg_t b = chFDDRequestDataI(com);
-    chSysUnlock();
+    chSysUnlockI();
     if (b < Q_OK)
       u->CR1 &= ~CR1_TXEIE;
     else

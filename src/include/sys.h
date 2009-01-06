@@ -153,7 +153,7 @@
  */
 #if defined(CH_OPTIMIZE_SPEED)
 #define chSysLock() chSysLockInline()
-#define chSysUnlock chSysUnlockInline()
+#define chSysUnlock() chSysUnlockInline()
 #endif /* defined(CH_OPTIMIZE_SPEED) */
 
 #ifdef __cplusplus

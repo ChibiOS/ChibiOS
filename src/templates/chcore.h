@@ -98,9 +98,9 @@ typedef struct {
  /**
   * Computes the thread working area global size.
   */
-#define THD_WA_SIZE(n) StackAlign(sizeof(Thread) +                      \
-                                  sizeof(struct intctx) +               \
-                                  sizeof(struct extctx) +               \
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
+                                   sizeof(struct intctx) +              \
+                                   sizeof(struct extctx) +              \
                                   (n) + (INT_REQUIRED_STACK))
 
 /**
