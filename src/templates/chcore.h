@@ -62,12 +62,11 @@ typedef struct {
 } Context;
 
 /**
- * Platform dependent part of the \p chThdCreate() API.
+ * Platform dependent part of the @p chThdCreate() API.
  * This code usually setup the context switching frame represented by a
  * @p intctx structure.
  */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg)                        \
-{                                                                       \
+#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
 }
 
 /**
@@ -76,7 +75,9 @@ typedef struct {
  * thread should take no more space than those reserved
  * by @p INT_REQUIRED_STACK.
  */
+#ifndef IDLE_THREAD_STACK_SIZE
 #define IDLE_THREAD_STACK_SIZE 0
+#endif
 
 /**
  * Per-thread stack overhead for interrupts servicing, it is used in the
@@ -85,7 +86,9 @@ typedef struct {
  * interrupt stack and the stack space between @p intctx and @p extctx is
  * known to be zero.
  */
+#ifndef INT_REQUIRED_STACK
 #define INT_REQUIRED_STACK 0
+#endif
 
 /**
  * Enforces a correct alignment for a stack area size value.
@@ -113,7 +116,7 @@ typedef struct {
 #define SYS_IRQ_PROLOGUE()
 
 /**
- * IRQ epilogue code, inserted at the start of all IRQ handlers enabled to
+ * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
  * invoke system APIs.
  */
 #define SYS_IRQ_EPILOGUE()

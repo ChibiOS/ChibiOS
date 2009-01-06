@@ -17,45 +17,37 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @addtogroup ARMCM3_CORE
+ * @{
+ */
+
 #include <ch.h>
 #include <nvic.h>
 
-/*
- * System idle thread loop.
+/**
+ * The default implementation of this function is void so no messages are
+ * actually printed.
+ * @note The function is declared as a weak symbol, it is possible to redefine
+ *       it in your application code.
+ * @param msg pointer to the message string
  */
 __attribute__((weak))
-void _idle(void *p) {
-
-  while (TRUE) {
-#if ENABLE_WFI_IDLE != 0
-    asm volatile ("wfi");
-#endif
-  }
+void sys_puts(char *msg) {
 }
 
-/*
- * System console message (not implemented).
- */
-__attribute__((weak))
-void chSysPuts(char *msg) {
-}
-
-/*
- * System halt.
- */
-__attribute__((naked, weak))
-void chSysHalt(void) {
+void sys_halt(void) {
 
   asm volatile ("cpsid   i");
-  while (TRUE) {
+  while(TRUE) {
   }
 }
 
-/*
+/**
  * Start a thread by invoking its work function.
- *
- * Start a thread by calling its work function. If the work function returns,
- * call chThdExit and chSysHalt.
+ * If the work function returns @p chThdExit() is automatically invoked. A call
+ * to @p chSysHalt() is added as failure check in the "impossible" case
+ * @p chThdExit() returns.
  */
 __attribute__((naked, weak))
 void threadstart(void) {
@@ -65,22 +57,22 @@ void threadstart(void) {
                 "bl      chSysHalt                              ");
 }
 
-/*
+/**
  * System Timer vector.
+ * This interrupt is used as system tick.
+ * @note The timer is initialized in the board setup code.
  */
 void SysTickVector(void) {
 
   chSysIRQEnterI();
-  chSysLock();
-
+  chSysLockI();
   chSysTimerHandlerI();
-
-  chSysUnlock();
+  chSysUnlockI();
   chSysIRQExitI();
 }
 
-/*
- * System invoked context switch.
+/**
+ * The SVC vector is used for commanded context switch.
  */
 __attribute__((naked))
 void SVCallVector(Thread *otp, Thread *ntp) {
@@ -146,7 +138,7 @@ void SVCallVector(Thread *otp, Thread *ntp) {
 }
 #endif
 
-/*
+/**
  * Preemption invoked context switch.
  */
 __attribute__((naked))
@@ -154,10 +146,10 @@ void PendSVVector(void) {
   Thread *otp;
   register struct intctx *sp_thd asm("r12");
 
-  chSysLock();
+  chSysLockI();
   asm volatile ("push    {lr}");
   if (!chSchRescRequiredI()) {
-    chSysUnlock();
+    chSysUnlockI();
     asm volatile ("pop     {pc}");
   }
   asm volatile ("pop     {lr}");
@@ -178,3 +170,5 @@ void PendSVVector(void) {
 
   POP_CONTEXT(sp_thd);
 }
+
+/** @} */
