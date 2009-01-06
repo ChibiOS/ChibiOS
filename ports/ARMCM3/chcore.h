@@ -186,9 +186,16 @@ typedef struct {
  */
 #define sys_enable_from_isr() sys_enable()
 
+#if ENABLE_WFI_IDLE != 0
+/**
+ * This port function is implemented as inlined code for performance reasons.
+ */
 #define sys_wait_for_interrupt() {                                      \
   asm volatile ("wfi");                                                 \
 }
+#else
+#define sys_wait_for_interrupt()
+#endif
 
 /**
  * This port function is implemented as inlined code for performance reasons.
