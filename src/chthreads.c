@@ -34,6 +34,9 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
   tp->p_flags = P_MEM_MODE_STATIC;
   tp->p_prio = prio;
   tp->p_state = PRSUSPENDED;
+#ifdef CH_USE_NESTED_LOCKS
+  tp->p_locks = 0;
+#endif
 #ifdef CH_USE_MUTEXES
   /* realprio is the thread's own, non-inherited, priority */
   tp->p_realprio = prio;

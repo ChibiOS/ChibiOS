@@ -39,7 +39,7 @@
  *  @p chSysUnlock() operations is allowed.<br>
  *  For performance and code size reasons the recommended setting is leave
  *  this option disabled.<br>
- *  You can use this option if you need to merge with ChibiOS/RT external
+ *  You can use this option if you need to merge ChibiOS/RT with external
  *  libraries that require nested lock/unlock operations.
  */
 #define CH_USE_NESTED_LOCKS
