@@ -95,10 +95,10 @@ typedef struct {
  /**
   * Computes the thread working area global size.
   */
-#define THD_WA_SIZE(n) StackAlign(sizeof(Thread) +                      \
-                                  sizeof(struct intctx) +               \
-                                  sizeof(struct extctx) +               \
-                                  (n) + (INT_REQUIRED_STACK))
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
+                                   sizeof(struct intctx) +              \
+                                   sizeof(struct extctx) +              \
+                                   (n) + (INT_REQUIRED_STACK))
 
 /**
  * Macro used to allocate a thread working area aligned as both position and
