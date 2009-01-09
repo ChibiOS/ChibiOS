@@ -39,7 +39,7 @@ void sys_puts(char *msg) {
 void sys_halt(void) {
 
   asm volatile ("cpsid   i");
-  while(TRUE) {
+  while (TRUE) {
   }
 }
 

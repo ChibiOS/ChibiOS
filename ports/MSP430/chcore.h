@@ -17,6 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @addtogroup MSP430_CORE
+ * @{
+ */
+
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
@@ -24,21 +29,28 @@
 #include <msp430/common.h>
 
 /*
+ * Port-related configuration parameters.
+ */
+#ifndef ENABLE_WFI_IDLE
+#define ENABLE_WFI_IDLE 0       /* Enables the use of the WFI ins.      */
+#endif
+
+/**
  * Macro defining the MSP430 architecture.
  */
 #define CH_ARCHITECTURE_MSP430
 
-/*
+/**
  * 16 bit stack alignment.
  */
 typedef uint16_t stkalign_t;
 
-/*
+/**
  * Generic MSP430 register.
  */
 typedef void *regmsp_t;
 
-/*
+/**
  * Interrupt saved context.
  */
 struct extctx {
@@ -50,8 +62,9 @@ struct extctx {
   regmsp_t      pc;
 };
 
-/*
+/**
  * System saved context.
+ * This structure represents the inner stack frame during a context switching.
  */
 struct intctx {
   regmsp_t      r4;
@@ -62,14 +75,21 @@ struct intctx {
   regmsp_t      r9;
   regmsp_t      r10;
   regmsp_t      r11;
-//  regmsp_t      sr;
   regmsp_t      pc;
 };
 
+/**
+ * Platform dependent part of the @p Thread structure.
+ * In the MSP430 port this structure just holds a pointer to the @p intctx
+ * structure representing the stack pointer at the time of the context switch.
+ */
 typedef struct {
   struct intctx *sp;
 } Context;
 
+/**
+ * Platform dependent part of the @p chThdInit() API.
+ */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
   tp->p_ctx.sp = (struct intctx *)((uint8_t *)workspace +               \
                                    wsize -                              \
@@ -79,42 +99,103 @@ typedef struct {
   tp->p_ctx.sp->pc = threadstart;                                       \
 }
 
+/**
+ * The default idle thread implementation requires no extra stack space in
+ * this port.
+ */
+#ifndef IDLE_THREAD_STACK_SIZE
 #define IDLE_THREAD_STACK_SIZE 0
+#endif
 
+/**
+ * Per-thread stack overhead for interrupts servicing, it is used in the
+ * calculation of the correct working area size. In this port the default is
+ * 32 bytes per thread.
+ */
 #ifndef INT_REQUIRED_STACK
 #define INT_REQUIRED_STACK 32
 #endif
 
+/**
+ * Enforces a correct alignment for a stack area size value.
+ */
 #define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
 
+ /**
+  * Computes the thread working area global size.
+  */
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
                                    sizeof(struct intctx) +              \
                                    sizeof(struct extctx) +              \
-                                   (n) +                                \
-                                   INT_REQUIRED_STACK)
+                                  (n) + (INT_REQUIRED_STACK))
 
+/**
+ * Macro used to allocate a thread working area aligned as both position and
+ * size.
+ */
 #define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
 
-#define chSysLock() asm volatile ("dint")
-#define chSysUnlock() asm volatile ("eint")
-#define chSysEnable() asm volatile ("eint")
+/**
+ * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
+ * invoke system APIs.
+ */
+#define SYS_IRQ_PROLOGUE()
 
-#define chSysIRQEnterI()
-#define chSysIRQExitI() {                                               \
-  if (chSchRescRequiredI())                                             \
-    chSchDoRescheduleI();                                               \
+/**
+ * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
+ * invoke system APIs.
+ */
+#define SYS_IRQ_EPILOGUE() {                                            \
+if (chSchRescRequiredI())                                               \
+  chSchDoRescheduleI();                                                 \
 }
+
+/**
+ * This port function is implemented as inlined code for performance reasons.
+ */
+#define sys_disable() asm volatile ("dint")
+
+/**
+ * This port function is implemented as inlined code for performance reasons.
+ */
+#define sys_enable() asm volatile ("eint")
+
+/**
+ * This port function is implemented as inlined code for performance reasons.
+ */
+#define sys_disable_from_isr() sys_disable()
+
+/**
+ * This port function is implemented as inlined code for performance reasons.
+ */
+#define sys_enable_from_isr() sys_enable()
+
+#if ENABLE_WFI_IDLE != 0
+/**
+ * This port function is implemented as inlined code for performance reasons.
+ */
+#define sys_wait_for_interrupt() {                                      \
+  asm volatile ("wfi");                                                 \
+}
+#else
+#define sys_wait_for_interrupt()
+#endif
+
+/**
+ * IRQ handler function modifier.
+ */
+#define SYS_IRQ_HANDLER
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _idle(void *p) __attribute__((weak, noreturn));
-  void chSysHalt(void);
-  void chSysSwitchI(Thread *otp, Thread *ntp);
-  void chSysPuts(char *msg);
-  void threadstart(void);
+  void sys_puts(char *msg);
+  void sys_switch(Thread *otp, Thread *ntp);
+  void sys_halt(void);
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* _CHCORE_H_ */
+
+/** @} */

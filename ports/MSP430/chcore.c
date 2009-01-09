@@ -17,70 +17,31 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @addtogroup MSP430_CORE
+ * @{
+ */
+
 #include <ch.h>
 
-/**
- * This function implements the idle thread infinite loop. The function should
- * put the processor in the lowest power mode capable to serve interrupts.
- * The priority is internally set to the minimum system value so that this
- * thread is executed only if there are no other ready threads in the system.
+/*
+ * This file is a template of the system driver functions provided by a port.
+ * Some of the following functions may be implemented as macros in chcore.h if
+ * the implementer decides that there is an advantage in doing so, as example
+ * because performance concerns.
  */
-void _idle(void *p) {
 
-  while (TRUE)
-    ;
+void sys_puts(char *msg) {
 }
 
-/**
- * Abonormal system termination handler. Invoked by the ChibiOS/RT when an
- * abnormal unrecoverable condition is met.
- */
-void chSysHalt(void) {
-
-  chSysLock();
-
-  while (TRUE)
-    ;
+void sys_switch(Thread *otp, Thread *ntp) {
 }
 
-/**
- * Context switch.
- */
-__attribute__((naked))
-void chSysSwitchI(Thread *otp, Thread *ntp) {
-  register struct intctx *sp asm("r1");
+void sys_halt(void) {
 
-  asm volatile ("push    r11                                    \n\t" \
-                "push    r10                                    \n\t" \
-                "push    r9                                     \n\t" \
-                "push    r8                                     \n\t" \
-                "push    r7                                     \n\t" \
-                "push    r6                                     \n\t" \
-                "push    r6                                     \n\t" \
-                "push    r4");
-  otp->p_ctx.sp = sp;
-  sp = ntp->p_ctx.sp;
-  asm volatile ("pop     r4                                     \n\t" \
-                "pop     r5                                     \n\t" \
-                "pop     r6                                     \n\t" \
-                "pop     r7                                     \n\t" \
-                "pop     r8                                     \n\t" \
-                "pop     r9                                     \n\t" \
-                "pop     r10                                    \n\t" \
-                "pop     r11                                    \n\t" \
-                "ret" : : "r" (sp));
+  sys_disable();
+  while (TRUE) {
+  }
 }
 
-/**
- * Prints a message on the system console (if any).
- */
-void chSysPuts(char *msg) {
-}
-
-void threadstart(void) {
-
-  asm volatile ("eint                                           \n\t" \
-                "mov     r11, r15                               \n\t" \
-                "call    r10                                    \n\t" \
-                "call    #chThdExit");
-}
+/** @} */
