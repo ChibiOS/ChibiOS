@@ -32,7 +32,7 @@
  * Port-related configuration parameters.
  */
 #ifndef ENABLE_WFI_IDLE
-#define ENABLE_WFI_IDLE 0       /* Enables the use of the WFI ins.      */
+#define ENABLE_WFI_IDLE 0
 #endif
 
 /**
@@ -151,7 +151,7 @@ if (chSchRescRequiredI())                                               \
 }
 
 /**
- * IRQ handler function modifier. Note it just aliases the WinMSP "interrupt"
+ * IRQ handler function modifier. Note, it just aliases the WinMSP "interrupt"
  * macro.
  */
 #define SYS_IRQ_HANDLER interrupt

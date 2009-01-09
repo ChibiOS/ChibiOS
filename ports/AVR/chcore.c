@@ -17,33 +17,40 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @addtogroup AVR_CORE
+ * @{
+ */
+
 #include <ch.h>
 
-#include <avr/io.h>
+/*
+ * This file is a template of the system driver functions provided by a port.
+ * Some of the following functions may be implemented as macros in chcore.h if
+ * the implementer decides that there is an advantage in doing so, as example
+ * because performance concerns.
+ */
 
-void _idle(void *p) {
-
-  while (TRUE) {
-    asm("sleep");
-  }
+/**
+ * The default implementation of this function is void so no messages are
+ * actually printed.
+ * @note The function is declared as a weak symbol, it is possible to redefine
+ *       it in your application code.
+ * @param msg pointer to the message string
+ */
+__attribute__((weak))
+void sys_puts(char *msg) {
 }
 
-/*
- * Threads start code.
+/**
+ * Performs a context switch between two threads.
+ * @param otp the thread to be switched out
+ * @param ntp the thread to be switched in
+ * @note The function is declared as a weak symbol, it is possible to redefine
+ *       it in your application code.
  */
-void threadstart(void) {
-
-  asm volatile ("sei");
-  asm volatile ("movw    r24, r4");
-  asm volatile ("movw    r30, r2");
-  asm volatile ("icall");
-  asm volatile ("call    chThdExit");
-}
-
-/*
- * Context switch.
- */
-void chSysSwitchI(Thread *otp, Thread *ntp) {
+__attribute__((naked, weak))
+void sys_switch(Thread *otp, Thread *ntp) {
 
   asm volatile ("push    r2");
   asm volatile ("push    r3");
@@ -101,21 +108,30 @@ void chSysSwitchI(Thread *otp, Thread *ntp) {
   asm volatile ("ret");
 }
 
-/*
- * System console message (not implemented).
+/**
+ * Disables the interrupts and halts the system.
+ * @note The function is declared as a weak symbol, it is possible to redefine
+ *       it in your application code.
  */
 __attribute__((weak))
-void chSysPuts(char *msg) {
+void sys_halt(void) {
+
+  sys_disable();
+  while (TRUE) {
+  }
 }
 
-/*
- * System halt.
+/**
+ * Start a thread by invoking its work function.
+ * If the work function returns @p chThdExit() is automatically invoked.
  */
-__attribute__((noreturn, weak))
-void chSysHalt(void) {
+void threadstart(void) {
 
-  chSysLock();
-
-  while (TRUE)
-    ;
+  asm volatile ("sei");
+  asm volatile ("movw    r24, r4");
+  asm volatile ("movw    r30, r2");
+  asm volatile ("icall");
+  asm volatile ("call    chThdExit");
 }
+
+/** @} */

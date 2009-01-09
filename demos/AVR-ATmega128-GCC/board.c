@@ -19,19 +19,18 @@
 
 #include <ch.h>
 
-#include <avr/io.h>
-#include <avr/interrupt.h>
-
 #include "board.h"
 #include "avr_serial.h"
 
-ISR(TIMER0_COMP_vect) {
+SYS_IRQ_HANDLER(TIMER0_COMP_vect) {
 
-  chSysIRQEnterI();
+  SYS_IRQ_PROLOGUE();
 
+  chSysLockI();
   chSysTimerHandlerI();
+  chSysUnlockI();
 
-  chSysIRQExitI();
+  SYS_IRQ_EPILOGUE();
 }
 
 /*

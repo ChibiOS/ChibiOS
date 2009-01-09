@@ -19,9 +19,6 @@
 
 #include <ch.h>
 
-#include <avr/io.h>
-#include <avr/interrupt.h>
-
 #include "avr_serial.h"
 
 static void SetError(uint8_t sra, FullDuplexDriver *com) {
@@ -33,7 +30,9 @@ static void SetError(uint8_t sra, FullDuplexDriver *com) {
     sts |= SD_PARITY_ERROR;
   if (sra & (1 << FE))
     sts |= SD_FRAMING_ERROR;
+  chSysLockI();
   chFDDAddFlagsI(com, sts);
+  chSysUnlockI();
 }
 
 #ifdef USE_AVR_USART0
@@ -41,30 +40,35 @@ FullDuplexDriver SER1;
 static uint8_t ib1[SERIAL_BUFFERS_SIZE];
 static uint8_t ob1[SERIAL_BUFFERS_SIZE];
 
-ISR(USART0_RX_vect) {
-  uint8_t sra = UCSR0A;
+SYS_IRQ_HANDLER(USART0_RX_vect) {
+  uint8_t sra;
 
-  chSysIRQEnterI();
+  SYS_IRQ_PROLOGUE();
 
+  sra = UCSR0A;
   if (sra & ((1 << DOR) | (1 << UPE) | (1 << FE)))
     SetError(sra, &SER1);
+  chSysLockI();
   chFDDIncomingDataI(&SER1, UDR0);
+  chSysUnlockI();
 
-  chSysIRQExitI();
+  SYS_IRQ_EPILOGUE();
 }
 
-ISR(USART0_UDRE_vect) {
+SYS_IRQ_HANDLER(USART0_UDRE_vect) {
   msg_t b;
 
-  chSysIRQEnterI();
+  SYS_IRQ_PROLOGUE();
 
+  chSysLockI();
   b = chFDDRequestDataI(&SER1);
+  chSysUnlockI();
   if (b < Q_OK)
     UCSR0B &= ~(1 << UDRIE);
   else
     UDR0 = b;
 
-  chSysIRQExitI();
+  SYS_IRQ_EPILOGUE();
 }
 
 /*
@@ -95,31 +99,35 @@ FullDuplexDriver SER2;
 static uint8_t ib2[SERIAL_BUFFERS_SIZE];
 static uint8_t ob2[SERIAL_BUFFERS_SIZE];
 
-ISR(USART1_RX_vect) {
+SYS_IRQ_HANDLER(USART1_RX_vect) {
+  uint8_t sra;
 
-  uint8_t sra = UCSR1A;
+  SYS_IRQ_PROLOGUE();
 
-  chSysIRQEnterI();
-
+  sra = UCSR1A;
   if (sra & ((1 << DOR) | (1 << UPE) | (1 << FE)))
     SetError(sra, &SER2);
+  chSysLockI();
   chFDDIncomingDataI(&SER2, UDR1);
+  chSysUnlockI();
 
-  chSysIRQExitI();
+  SYS_IRQ_EPILOGUE();
 }
 
-ISR(USART1_UDRE_vect) {
+SYS_IRQ_HANDLER(USART1_UDRE_vect) {
   msg_t b;
 
-  chSysIRQEnterI();
+  SYS_IRQ_PROLOGUE();
 
+  chSysLockI();
   b = chFDDRequestDataI(&SER2);
+  chSysUnlockI();
   if (b < Q_OK)
     UCSR1B &= ~(1 << UDRIE);
   else
     UDR1 = b;
 
-  chSysIRQExitI();
+  SYS_IRQ_EPILOGUE();
 }
 
 /*
