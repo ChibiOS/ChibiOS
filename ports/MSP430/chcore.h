@@ -193,6 +193,7 @@ extern "C" {
   void sys_puts(char *msg);
   void sys_switch(Thread *otp, Thread *ntp);
   void sys_halt(void);
+  void threadstart(void);
 #ifdef __cplusplus
 }
 #endif
