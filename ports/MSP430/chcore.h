@@ -151,6 +151,12 @@ if (chSchRescRequiredI())                                               \
 }
 
 /**
+ * IRQ handler function modifier. Note it just aliases the WinMSP "interrupt"
+ * macro.
+ */
+#define SYS_IRQ_HANDLER interrupt
+
+/**
  * This port function is implemented as inlined code for performance reasons.
  */
 #define sys_disable() asm volatile ("dint")
@@ -180,11 +186,6 @@ if (chSchRescRequiredI())                                               \
 #else
 #define sys_wait_for_interrupt()
 #endif
-
-/**
- * IRQ handler function modifier.
- */
-#define SYS_IRQ_HANDLER
 
 #ifdef __cplusplus
 extern "C" {
