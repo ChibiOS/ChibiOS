@@ -25,7 +25,7 @@
  *     MinGW demo available.</li>
  * <li>Preemptive scheduling.</li>
  * <li>128 priority levels.</li>
- * <li>Multiple threads at the same priorily level allowed.</li>
+ * <li>Multiple threads at the same priority level allowed.</li>
  * <li>Round robin scheduling for threads at the same priority level.</li>
  * <li>Unlimited number of threads.</li>
  * <li>Unlimited number of virtual timers.</li>
@@ -67,7 +67,7 @@
  * \a Evt, \a Msg, \a IQ, \a OQ, \a HQ,\a FDD, \a HDD, \a Dbg, \a Heap, \a Pool.
  * The suffix is not present for normal APIs but can be one of
  * the following: "I" for APIs meant to be invoked within the system mutex
- * zone, "S" for APIs only useable from within the system mutex zone but not
+ * zone, "S" for APIs only usable from within the system mutex zone but not
  * from interrupt handlers.<br>
  * The APIs without suffix can be invoked only from the user code outsize the
  * system mutex zone and not from interrupt handlers unless differently
@@ -155,7 +155,7 @@
  * <li>Pure THUMB mode, this is the preferred mode for code size. In this mode
  *     the execution speed is slower than the ARM mode. This mode is enabled
  *     when all the modules are compiled in THUMB mode, see the Makefiles.</li>
- * <li>Interworking mode, when in the sistem there are ARM modules mixed with
+ * <li>Interworking mode, when in the system there are ARM modules mixed with
  *     THUMB modules then the interworking compiler option is enabled. This is
  *     usually the slowest mode and the code size is not as good as in pure
  *     THUMB mode.</li>
@@ -690,9 +690,9 @@
  * threads).<br>
  * There are several kind of queues:<br>
  * <ul>
- * <li><b>Input queue</b>, monodirectional queue where the writer is the
+ * <li><b>Input queue</b>, unidirectional queue where the writer is the
  *     lower side and the reader is the upper side.</li>
- * <li><b>Output queue</b>, monodirectional queue where the writer is the
+ * <li><b>Output queue</b>, unidirectional queue where the writer is the
  *     upper side and the reader is the lower side.</li>
  * <li><b>Half duplex queue</b>, bidirectional queue where the buffer is shared
  *     between a receive and a transmit queues. This means that concurrent

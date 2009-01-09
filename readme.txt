@@ -9,12 +9,12 @@
 ./src/lib/             - ChibiOS/RT library code that can be included into
                          user applications but is not part of the core system.
                          The code in this directory is meant to be portable,
-                         generic and architecture indipendent.
+                         generic and architecture independent.
 ./src/templates/       - ChibiOS/RT non portable source templates, new ports
                          are started by copying the templates into a new
                          directory under ./demos/ and/or ./ports/.
 ./ports/               - Architecture specific portable files.
-./demos/               - Demo programs for specific archtectures/boards.
+./demos/               - Demo programs for specific architectures/boards.
 ./ext/                 - External libraries or other code not part of
                          ChibiOS/RT but used in the demo applications.
 ./test/                - Test code, used by some demos.
@@ -78,6 +78,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Removed unused variable "retaddr" from the Cortex-M3 port.
 - FIX: The macro THD_WA_SIZE was defined wrongly in the file
   ./src/templates/chcore.h.
+- Fixed some errors in the documentation.
 
 *** 1.0.0rc1 ***
 - NEW: Added new macros CH_KERNEL_VERSION set to "1.0.0rc1", CH_KERNEL_MAJOR
@@ -93,7 +94,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Set the INT_REQUIRED_STACK configuration value for the ARM7 port to a
   safer 0x10, it was previously 0 (correct but trimmed to specific compiler
   settings).
-- FIX: Set the INT_REQUIRED_STACK configuration value for the AVR port to a 
+- FIX: Set the INT_REQUIRED_STACK configuration value for the AVR port to a
   safer 32.
 - FIX: Fixed the MinGW demo in order to not use any deprecated construct.
 - Removed deprecated threads APIs: chThdCreate() and chThdCreateFast().
