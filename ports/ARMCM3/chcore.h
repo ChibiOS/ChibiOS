@@ -186,6 +186,13 @@ typedef struct {
  */
 #define sys_enable_from_isr() sys_enable()
 
+/**
+ * Disables all the interrupt sources, even those having a priority higher
+ * to the kernel.
+ * In the Cortex-M3 it raises the priority mask to level 0.
+ */
+#define sys_disable_all() asm volatile ("cpsid   i")
+
 #if ENABLE_WFI_IDLE != 0
 /**
  * This port function is implemented as inlined code for performance reasons.

@@ -95,7 +95,7 @@ bloop:
         movs    r0, #0
         mov     r1, r0
         bl      main
-        bl      chSysHalt
+        bl      sys_halt
 
 /*
  * Default early initialization code. It is declared weak in order to be
@@ -108,7 +108,7 @@ bloop:
 .weak hwinit0
 hwinit0:
         bx      lr
-        
+
 /*
  * Default late initialization code. It is declared weak in order to be
  * replaced by the real initialization code.

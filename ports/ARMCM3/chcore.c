@@ -36,25 +36,28 @@ __attribute__((weak))
 void sys_puts(char *msg) {
 }
 
+/**
+ * Halts the system.
+ * @note The function is declared as a weak symbol, it is possible to redefine
+ *       it in your application code.
+ */
+__attribute__((weak))
 void sys_halt(void) {
 
-  asm volatile ("cpsid   i");
+  sys_disable_all();
   while (TRUE) {
   }
 }
 
 /**
  * Start a thread by invoking its work function.
- * If the work function returns @p chThdExit() is automatically invoked. A call
- * to @p chSysHalt() is added as failure check in the "impossible" case
- * @p chThdExit() returns.
+ * If the work function returns @p chThdExit() is automatically invoked.
  */
 __attribute__((naked, weak))
 void threadstart(void) {
 
   asm volatile ("blx     r1                                     \n\t" \
-                "bl      chThdExit                              \n\t" \
-                "bl      chSysHalt                              ");
+                "bl      chThdExit");
 }
 
 /**

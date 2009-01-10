@@ -32,8 +32,9 @@
 #define chSysPuts(msg) sys_puts(msg)
 
 /**
- * Abonormal system termination handler. Invoked by the ChibiOS/RT when an
- * abnormal unrecoverable condition is met.
+ * Halts the system. This function is invoked by the operating system when an
+ * unrecoverable error is detected (as example because a programming error in
+ * the application code that triggers an assertion while in debug mode).
  */
 #define chSysHalt() sys_halt()
 
