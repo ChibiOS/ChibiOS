@@ -49,7 +49,7 @@ __attribute__((weak))
 void sys_wait_for_interrupt(void) {
 
 #if ENABLE_WFI_IDLE != 0
-  PCON = 1;
+  AT91C_BASE_SYS->PMC_SCDR = AT91C_PMC_PCK;
 #endif
 }
 
