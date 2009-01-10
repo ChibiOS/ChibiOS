@@ -28,8 +28,8 @@
 #include <iomacros.h>
 #include <msp430/common.h>
 
-/*
- * Port-related configuration parameters.
+/**
+ * If enabled allows the idle thread to enter a low power mode.
  */
 #ifndef ENABLE_WFI_IDLE
 #define ENABLE_WFI_IDLE 0

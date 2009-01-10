@@ -26,6 +26,13 @@
 #define _CHCORE_H_
 
 /**
+ * If enabled allows the idle thread to enter a low power mode.
+ */
+#ifndef ENABLE_WFI_IDLE
+#define ENABLE_WFI_IDLE 0
+#endif
+
+/**
  * Macro defining the ARM7 architecture.
  */
 #define CH_ARCHITECTURE_ARM7

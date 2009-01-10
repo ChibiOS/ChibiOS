@@ -48,7 +48,9 @@ void sys_puts(char *msg) {
 __attribute__((weak))
 void sys_wait_for_interrupt(void) {
 
+#if ENABLE_WFI_IDLE != 0
   PCON = 1;
+#endif
 }
 
 /**
