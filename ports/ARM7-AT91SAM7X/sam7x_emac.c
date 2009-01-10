@@ -126,9 +126,11 @@ static void ServeInterrupt(void) {
 
 CH_IRQ_HANDLER void EMACIrqHandler(void) {
 
-  chSysIRQEnterI();
+  CH_IRQ_PROLOGUE();
+
   ServeInterrupt();
-  chSysIRQExitI();
+
+  CH_IRQ_EPILOGUE();
 }
 
 /*

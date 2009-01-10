@@ -120,7 +120,9 @@ void chSysLock(void) {
  */
 void chSysUnlock(void) {
 
+#ifdef CH_USE_NESTED_LOCKS
   chDbgAssert(currp->p_locks > 0, "chinit.c, chSysUnlock()");
+#endif
   chSysUnlockInline();
 }
 #endif /* !CH_OPTIMIZE_SPEED */

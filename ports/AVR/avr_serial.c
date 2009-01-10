@@ -40,10 +40,10 @@ FullDuplexDriver SER1;
 static uint8_t ib1[SERIAL_BUFFERS_SIZE];
 static uint8_t ob1[SERIAL_BUFFERS_SIZE];
 
-SYS_IRQ_HANDLER(USART0_RX_vect) {
+CH_IRQ_HANDLER(USART0_RX_vect) {
   uint8_t sra;
 
-  SYS_IRQ_PROLOGUE();
+  CH_IRQ_PROLOGUE();
 
   sra = UCSR0A;
   if (sra & ((1 << DOR) | (1 << UPE) | (1 << FE)))
@@ -52,13 +52,13 @@ SYS_IRQ_HANDLER(USART0_RX_vect) {
   chFDDIncomingDataI(&SER1, UDR0);
   chSysUnlockI();
 
-  SYS_IRQ_EPILOGUE();
+  CH_IRQ_EPILOGUE();
 }
 
-SYS_IRQ_HANDLER(USART0_UDRE_vect) {
+CH_IRQ_HANDLER(USART0_UDRE_vect) {
   msg_t b;
 
-  SYS_IRQ_PROLOGUE();
+  CH_IRQ_PROLOGUE();
 
   chSysLockI();
   b = chFDDRequestDataI(&SER1);
@@ -68,7 +68,7 @@ SYS_IRQ_HANDLER(USART0_UDRE_vect) {
   else
     UDR0 = b;
 
-  SYS_IRQ_EPILOGUE();
+  CH_IRQ_EPILOGUE();
 }
 
 /*
@@ -99,10 +99,10 @@ FullDuplexDriver SER2;
 static uint8_t ib2[SERIAL_BUFFERS_SIZE];
 static uint8_t ob2[SERIAL_BUFFERS_SIZE];
 
-SYS_IRQ_HANDLER(USART1_RX_vect) {
+CH_IRQ_HANDLER(USART1_RX_vect) {
   uint8_t sra;
 
-  SYS_IRQ_PROLOGUE();
+  CH_IRQ_PROLOGUE();
 
   sra = UCSR1A;
   if (sra & ((1 << DOR) | (1 << UPE) | (1 << FE)))
@@ -111,13 +111,13 @@ SYS_IRQ_HANDLER(USART1_RX_vect) {
   chFDDIncomingDataI(&SER2, UDR1);
   chSysUnlockI();
 
-  SYS_IRQ_EPILOGUE();
+  CH_IRQ_EPILOGUE();
 }
 
-SYS_IRQ_HANDLER(USART1_UDRE_vect) {
+CH_IRQ_HANDLER(USART1_UDRE_vect) {
   msg_t b;
 
-  SYS_IRQ_PROLOGUE();
+  CH_IRQ_PROLOGUE();
 
   chSysLockI();
   b = chFDDRequestDataI(&SER2);
@@ -127,7 +127,7 @@ SYS_IRQ_HANDLER(USART1_UDRE_vect) {
   else
     UDR1 = b;
 
-  SYS_IRQ_EPILOGUE();
+  CH_IRQ_EPILOGUE();
 }
 
 /*

@@ -111,18 +111,22 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
 
 CH_IRQ_HANDLER void UART0IrqHandler(void) {
 
-  chSysIRQEnterI();
+  CH_IRQ_PROLOGUE();
+
   ServeInterrupt(U0Base, &COM1);
   VICVectAddr = 0;
-  chSysIRQExitI();
+
+  CH_IRQ_EPILOGUE();
 }
 
 CH_IRQ_HANDLER void UART1IrqHandler(void) {
 
-  chSysIRQEnterI();
+  CH_IRQ_PROLOGUE();
+
   ServeInterrupt(U1Base, &COM2);
   VICVectAddr = 0;
-  chSysIRQExitI();
+
+  CH_IRQ_EPILOGUE();
 }
 
 #ifdef FIFO_PRELOAD

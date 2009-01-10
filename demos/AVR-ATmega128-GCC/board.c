@@ -22,15 +22,15 @@
 #include "board.h"
 #include "avr_serial.h"
 
-SYS_IRQ_HANDLER(TIMER0_COMP_vect) {
+CH_IRQ_HANDLER(TIMER0_COMP_vect) {
 
-  SYS_IRQ_PROLOGUE();
+  CH_IRQ_PROLOGUE();
 
   chSysLockI();
   chSysTimerHandlerI();
   chSysUnlockI();
 
-  SYS_IRQ_EPILOGUE();
+  CH_IRQ_EPILOGUE();
 }
 
 /*

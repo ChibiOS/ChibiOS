@@ -148,7 +148,7 @@
  * @note Usually IRQ handlers functions are also declared naked.
  * @note On some architectures this macro can be empty.
  */
-#define chSysIRQEnterI() SYS_IRQ_PROLOGUE()
+#define CH_IRQ_PROLOGUE() SYS_IRQ_PROLOGUE()
 
 /**
  * IRQ handler exit code.
@@ -156,7 +156,7 @@
  * @note This macro usually performs the final reschedulation by using
  *       \p chSchRescRequiredI() and \p chSchDoRescheduleI().
  */
-#define chSysIRQExitI() SYS_IRQ_EPILOGUE()
+#define CH_IRQ_EPILOGUE() SYS_IRQ_EPILOGUE()
 
 /**
  * Standard modifier for IRQ handler functions.

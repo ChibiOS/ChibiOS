@@ -76,16 +76,20 @@ static void ServeInterrupt(AT91PS_USART u, FullDuplexDriver *com) {
 
 CH_IRQ_HANDLER void USART0IrqHandler(void) {
 
-  chSysIRQEnterI();
+  CH_IRQ_PROLOGUE();
+
   ServeInterrupt(AT91C_BASE_US0, &COM1);
-  chSysIRQExitI();
+
+  CH_IRQ_EPILOGUE();
 }
 
 CH_IRQ_HANDLER void USART1IrqHandler(void) {
 
-  chSysIRQEnterI();
+  CH_IRQ_PROLOGUE();
+
   ServeInterrupt(AT91C_BASE_US1, &COM2);
-  chSysIRQExitI();
+
+  CH_IRQ_EPILOGUE();
 }
 
 /*

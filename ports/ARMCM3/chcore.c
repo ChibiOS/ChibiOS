@@ -65,13 +65,15 @@ void threadstart(void) {
  * This interrupt is used as system tick.
  * @note The timer is initialized in the board setup code.
  */
-SYS_IRQ_HANDLER void SysTickVector(void) {
+CH_IRQ_HANDLER void SysTickVector(void) {
 
-  chSysIRQEnterI();
+  CH_IRQ_PROLOGUE();
+
   chSysLockI();
   chSysTimerHandlerI();
   chSysUnlockI();
-  chSysIRQExitI();
+
+  CH_IRQ_EPILOGUE();
 }
 
 /**

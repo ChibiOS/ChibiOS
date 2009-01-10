@@ -44,10 +44,10 @@ FullDuplexDriver COM1;
 static uint8_t ib1[SERIAL_BUFFERS_SIZE];
 static uint8_t ob1[SERIAL_BUFFERS_SIZE];
 
-SYS_IRQ_HANDLER(USART0TX_VECTOR) u0txirq(void) {
+CH_IRQ_HANDLER(USART0TX_VECTOR) u0txirq(void) {
   msg_t b;
 
-  SYS_IRQ_PROLOGUE();
+  CH_IRQ_PROLOGUE();
 
   chSysLockI();
   b = chFDDRequestDataI(&COM1);
@@ -57,13 +57,13 @@ SYS_IRQ_HANDLER(USART0TX_VECTOR) u0txirq(void) {
   else
     U0TXBUF = b;
 
-  SYS_IRQ_EPILOGUE();
+  CH_IRQ_EPILOGUE();
 }
 
-SYS_IRQ_HANDLER(USART0RX_VECTOR) u0rxirq(void) {
+CH_IRQ_HANDLER(USART0RX_VECTOR) u0rxirq(void) {
   uint8_t urctl;
 
-  SYS_IRQ_PROLOGUE();
+  CH_IRQ_PROLOGUE();
 
   if ((urctl = U0RCTL) & RXERR)
     SetError(urctl, &COM1);
@@ -71,7 +71,7 @@ SYS_IRQ_HANDLER(USART0RX_VECTOR) u0rxirq(void) {
   chFDDIncomingDataI(&COM1, U0RXBUF);
   chSysUnlockI();
 
-  SYS_IRQ_EPILOGUE();
+  CH_IRQ_EPILOGUE();
 }
 
 /*
@@ -116,10 +116,10 @@ FullDuplexDriver COM2;
 static uint8_t ib2[SERIAL_BUFFERS_SIZE];
 static uint8_t ob2[SERIAL_BUFFERS_SIZE];
 
-SYS_IRQ_HANDLER(USART1TX_VECTOR) u1txirq(void) {
+CH_IRQ_HANDLER(USART1TX_VECTOR) u1txirq(void) {
   msg_t b;
 
-  SYS_IRQ_PROLOGUE();
+  CH_IRQ_PROLOGUE();
 
   chSysLockI();
   b = chFDDRequestDataI(&COM2);
@@ -129,13 +129,13 @@ SYS_IRQ_HANDLER(USART1TX_VECTOR) u1txirq(void) {
   else
     U1TXBUF = b;
 
-  SYS_IRQ_EPILOGUE();
+  CH_IRQ_EPILOGUE();
 }
 
-SYS_IRQ_HANDLER(USART1RX_VECTOR) u1rxirq(void) {
+CH_IRQ_HANDLER(USART1RX_VECTOR) u1rxirq(void) {
   uint8_t urctl;
 
-  SYS_IRQ_PROLOGUE();
+  CH_IRQ_PROLOGUE();
 
   if ((urctl = U1RCTL) & RXERR)
     SetError(urctl, &COM2);
@@ -143,9 +143,8 @@ SYS_IRQ_HANDLER(USART1RX_VECTOR) u1rxirq(void) {
   chFDDIncomingDataI(&COM2, U1RXBUF);
   chSysUnlockI();
 
-  SYS_IRQ_EPILOGUE();
+  CH_IRQ_EPILOGUE();
 }
-
 
 /*
  * Invoked by the high driver when one or more bytes are inserted in the

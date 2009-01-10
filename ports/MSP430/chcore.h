@@ -176,10 +176,18 @@ if (chSchRescRequiredI())                                               \
  */
 #define sys_enable_from_isr()
 
-#if ENABLE_WFI_IDLE != 0
+/**
+ * Disables all the interrupt sources, even those having a priority higher
+ * to the kernel.
+ * In this port it is no different than sys_disable() because the simple
+ * interrupt handling
+ */
+#define sys_disable_all() sys_disable()
+
 /**
  * This port function is implemented as inlined code for performance reasons.
  */
+#if ENABLE_WFI_IDLE != 0
 #define sys_wait_for_interrupt() {                                      \
   asm volatile ("wfi");                                                 \
 }
