@@ -34,7 +34,6 @@ static msg_t ConsoleThread(void *arg);
 
 msg_t TestThread(void *p);
 
-void InitCore(void);
 extern FullDuplexDriver COM1, COM2;
 
 #define cprint(msg) chMsgSend(cdtp, (msg_t)msg)

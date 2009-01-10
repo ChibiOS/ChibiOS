@@ -120,7 +120,7 @@
  *       provide the \p __heap_base__ and \p __heap_end__ symbols.
  * @note requires \p CH_USE_HEAP.
  */
-#define CH_HEAP_SIZE 16384
+#define CH_HEAP_SIZE 0x20000
 
 /** Configuration option: enforces the use of the C-runtime \p malloc() and
  *  \p free() functions as backend for the system heap allocator.*/

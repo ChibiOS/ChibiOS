@@ -159,9 +159,10 @@ typedef struct {
 #define sys_enable_from_isr()
 
 /**
- * Does nothing in this simulator.
+ * In the simulator this does a polling pass on the simulated interrupt
+ * sources.
  */
-#define sys_wait_for_interrupt()
+#define sys_wait_for_interrupt() ChkIntSources()
 
 /**
  * IRQ handler function modifier.
@@ -174,6 +175,8 @@ extern "C" {
   __attribute__((fastcall)) void sys_puts(char *msg);
   __attribute__((fastcall)) void sys_switch(Thread *otp, Thread *ntp);
   __attribute__((fastcall)) void sys_halt(void);
+  void InitCore(void);
+  void ChkIntSources(void);
   void threadexit(void);
 #ifdef __cplusplus
 }
