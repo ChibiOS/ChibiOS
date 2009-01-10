@@ -123,7 +123,7 @@ bssloop:
         mov     r0, #0
         mov     r1, r0
         bl      main
-        bl      chSysHalt
+        bl      sys_halt
 #else
         add     r0, pc, #1
         bx      r0
@@ -132,7 +132,7 @@ bssloop:
         mov     r0, #0
         mov     r1, r0
         bl      main
-        bl      chSysHalt
+        bl      sys_halt
 .code 32
 #endif
 
@@ -177,7 +177,7 @@ FiqHandler:
 .thumb_func
 hwinit0:
         bx      lr
-        
+
 /*
  * Default late initialization code. It is declared weak in order to be
  * replaced by the real initialization code.
