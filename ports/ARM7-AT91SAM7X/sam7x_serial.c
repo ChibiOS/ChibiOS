@@ -42,18 +42,26 @@ static void SetError(AT91_REG csr, FullDuplexDriver *com) {
     sts |= SD_FRAMING_ERROR;
   if (csr & AT91C_US_RXBRK)
     sts |= SD_BREAK_DETECTED;
+  chSysLockI();
   chFDDAddFlagsI(com, sts);
+  chSysUnlockI();
 }
 
 /*
  * Serves the pending sources on the USART.
  */
+__attribute__((noinline))
 static void ServeInterrupt(AT91PS_USART u, FullDuplexDriver *com) {
 
-  if (u->US_CSR & AT91C_US_RXRDY)
+  if (u->US_CSR & AT91C_US_RXRDY) {
+    chSysLockI();
     chFDDIncomingDataI(com, u->US_RHR);
+    chSysUnlockI();
+  }
   if (u->US_CSR & AT91C_US_TXRDY) {
+    chSysLockI();
     msg_t b = chFDDRequestDataI(com);
+    chSysUnlockI();
     if (b < Q_OK)
       u->US_IDR = AT91C_US_TXRDY;
     else
@@ -66,23 +74,17 @@ static void ServeInterrupt(AT91PS_USART u, FullDuplexDriver *com) {
   AT91C_BASE_AIC->AIC_EOICR = 0;
 }
 
-__attribute__((naked, weak))
-void USART0IrqHandler(void) {
+CH_IRQ_HANDLER void USART0IrqHandler(void) {
 
   chSysIRQEnterI();
-
   ServeInterrupt(AT91C_BASE_US0, &COM1);
-
   chSysIRQExitI();
 }
 
-__attribute__((naked, weak))
-void USART1IrqHandler(void) {
+CH_IRQ_HANDLER void USART1IrqHandler(void) {
 
   chSysIRQEnterI();
-
   ServeInterrupt(AT91C_BASE_US1, &COM2);
-
   chSysIRQExitI();
 }
 
