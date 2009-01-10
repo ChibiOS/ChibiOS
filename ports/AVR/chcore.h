@@ -199,14 +199,14 @@ asm ("" : : : "r18", "r19", "r20", "r21", "r22", "r23", "r24",          \
 #define sys_enable() asm volatile ("sei")
 
 /**
- * This port function is implemented as inlined code for performance reasons.
+ * This function is empty in this port.
  */
-#define sys_disable_from_isr() sys_disable()
+#define sys_disable_from_isr()
 
 /**
- * This port function is implemented as inlined code for performance reasons.
+ * This function is empty in this port.
  */
-#define sys_enable_from_isr() sys_enable()
+#define sys_enable_from_isr()
 
 #if ENABLE_WFI_IDLE != 0
 /**

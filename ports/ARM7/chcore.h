@@ -17,26 +17,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @addtogroup ARM7_CORE
+ * @{
+ */
+
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
-/*
+/**
  * Macro defining the ARM7 architecture.
  */
 #define CH_ARCHITECTURE_ARM7
 
-/*
+/**
  * 32 bit stack alignment.
  */
 typedef uint32_t stkalign_t;
 
-/*
+/**
  * Generic ARM register.
  */
 typedef void *regarm_t;
 
-/*
+/**
  * Interrupt saved context.
+ * This structure represents the stack frame saved during a preemption-capable
+ * interrupt handler.
  */
 struct extctx {
   regarm_t      spsr_irq;
@@ -49,8 +56,9 @@ struct extctx {
   regarm_t      lr_usr;
 };
 
-/*
+/**
  * System saved context.
+ * This structure represents the inner stack frame during a context switching.
  */
 struct intctx {
   regarm_t      r4;
@@ -66,16 +74,17 @@ struct intctx {
   regarm_t      lr;
 };
 
-/*
- * Port dependent part of the Thread structure, you may add fields in
- * this structure.
+/**
+ * Platform dependent part of the @p Thread structure.
+ * In the ARM7 port this structure contains just the copy of the user mode
+ * stack pointer.
  */
 typedef struct {
   struct intctx *r13;
 } Context;
 
-/*
- * Platform dependent part of the \p chThdCreate() API.
+/**
+ * Platform dependent part of the @p chThdInit() API.
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
   tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +              \
@@ -86,97 +95,99 @@ typedef struct {
   tp->p_ctx.r13->lr = threadstart;                                      \
 }
 
-#ifdef THUMB
-#ifdef __cplusplus
-extern "C" {
+/**
+ * Stack size for the system idle thread.
+ */
+#ifndef IDLE_THREAD_STACK_SIZE
+#define IDLE_THREAD_STACK_SIZE 0
 #endif
-  uint32_t _lock(void);
-  void _unlock(uint32_t);
-  void _enable(void);
-#ifdef __cplusplus
-}
-#endif
-#ifdef REENTRANT_LOCKS
-#define chSysLock() uint32_t ps = _lock()
-#define chSysUnlock() _unlock(ps)
-#else
-#define chSysLock() _lock()
-#define chSysUnlock() _enable()
-#endif /* !REENTRANT_LOCKS */
-#define chSysEnable() _enable()
-#else /* !THUMB */
-#ifdef REENTRANT_LOCKS
-#define chSysLock()                                                     \
-  uint32_t ps;                                                          \
-  asm volatile ("mrs     %0, CPSR" : "=r" (ps) : );                     \
-  asm volatile ("msr     CPSR_c, #0x9F");
-#define chSysUnlock() asm volatile ("msr     CPSR_c, %0" : : "r" (ps))
-#define chSysEnable() asm volatile ("msr     CPSR_c, #0x1F")
-#else
-#define chSysLock() asm volatile ("msr     CPSR_c, #0x9F")
-#define chSysUnlock() asm volatile ("msr     CPSR_c, #0x1F")
-#define chSysEnable() asm volatile ("msr     CPSR_c, #0x1F")
-#endif /* !REENTRANT_LOCKS */
-#endif /* THUMB */
 
+/**
+ * Per-thread stack overhead for interrupts servicing, it is used in the
+ * calculation of the correct working area size.
+ * In this port 0x10 is a safe value, it can be reduced after careful generated
+ * code analysis.
+ */
 #ifndef INT_REQUIRED_STACK
-#ifdef THUMB
 #define INT_REQUIRED_STACK 0x10
-#else /* !THUMB */
-#define INT_REQUIRED_STACK 0x10
-#endif /* !THUMB */
 #endif
 
+/**
+ * Enforces a correct alignment for a stack area size value.
+ */
 #define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
 
+ /**
+  * Computes the thread working area global size.
+  */
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
                                    sizeof(struct intctx) +              \
                                    sizeof(struct extctx) +              \
-                                   (n) +                                \
-                                   INT_REQUIRED_STACK)
+                                  (n) + (INT_REQUIRED_STACK))
 
+/**
+ * Macro used to allocate a thread working area aligned as both position and
+ * size.
+ */
 #define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
 
+/**
+ * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
+ * invoke system APIs.
+ * @note This macro has a different implementation depending if compiled in
+ *       ARM or TUMB mode.
+ */
 #ifdef THUMB
-#define chSysSwitchI chSysSwitchI_thumb
-
-#define chSysIRQEnterI() {                                              \
-  asm(".code 32                                 \n\t"                   \
-      "stmfd    sp!, {r0-r3, r12, lr}           \n\t"                   \
-      "add      r0, pc, #1                      \n\t"                   \
-      "bx       r0                              \n\t"                   \
-      ".code 16                                 \n\t");                 \
+#define SYS_IRQ_PROLOGUE() {                                            \
+  asm volatile (".code 32                                 \n\t"         \
+                "stmfd    sp!, {r0-r3, r12, lr}           \n\t"         \
+                "add      r0, pc, #1                      \n\t"         \
+                "bx       r0                              \n\t"         \
+                ".code 16");                                            \
 }
-
-#define chSysIRQExitI() {                                               \
-  asm("ldr      r0, =IrqCommon                  \n\t"                   \
-      "bx       r0                              \n\t");                 \
-}
-#else /* !THUMB */
-#define chSysSwitchI chSysSwitchI_arm
-
-#define chSysIRQEnterI() {                                              \
-  asm("stmfd    sp!, {r0-r3, r12, lr}           \n\t");                 \
-}
-
-#define chSysIRQExitI() {                                               \
-  asm("b        IrqCommon                       \n\t");                 \
+#else /* THUMB */
+#define SYS_IRQ_PROLOGUE() {                                            \
+  asm volatile ("stmfd    sp!, {r0-r3, r12, lr}");                      \
 }
 #endif /* !THUMB */
 
-/* It requires zero bytes, but better be safe.*/
-#define IDLE_THREAD_STACK_SIZE 8
+/**
+ * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
+ * invoke system APIs.
+ * @note This macro has a different implementation depending if compiled in
+ *       ARM or TUMB mode.
+ */
+#ifdef THUMB
+#define SYS_IRQ_EPILOGUE() {                                            \
+  asm volatile ("ldr      r0, =IrqCommon                  \n\t"         \
+                "bx       r0");                                         \
+}
+#else /* THUMB */
+#define SYS_IRQ_EPILOGUE() {                                            \
+  asm volatile ("b        IrqCommon");                                  \
+}
+#endif /* !THUMB */
+
+/**
+ * IRQ handler function modifier.
+ */
+#define SYS_IRQ_HANDLER __attribute__((naked))
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _idle(void *p) __attribute__((weak, noreturn));
-  void chSysHalt(void);
-  void chSysSwitchI(Thread *otp, Thread *ntp);
-  void chSysPuts(char *msg);
-  void threadstart(void);
+  void sys_puts(char *msg);
+  void sys_switch(Thread *otp, Thread *ntp);
+  void sys_enable(void);
+  void sys_disable(void);
+  void sys_disable_from_isr(void);
+  void sys_enable_from_isr(void);
+  void sys_wait_for_interrupt(void);
+  void sys_halt(void);
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* _CHCORE_H_ */
+
+/** @} */
