@@ -135,7 +135,7 @@ typedef struct {
  * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
  * invoke system APIs.
  * @note This macro has a different implementation depending if compiled in
- *       ARM or TUMB mode.
+ *       ARM or THUMB mode.
  */
 #ifdef THUMB
 #define SYS_IRQ_PROLOGUE() {                                            \
@@ -155,7 +155,7 @@ typedef struct {
  * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
  * invoke system APIs.
  * @note This macro has a different implementation depending if compiled in
- *       ARM or TUMB mode.
+ *       ARM or THUMB mode.
  */
 #ifdef THUMB
 #define SYS_IRQ_EPILOGUE() {                                            \
@@ -173,17 +173,67 @@ typedef struct {
  */
 #define SYS_IRQ_HANDLER __attribute__((naked))
 
+/**
+ * Performs a context switch between two threads.
+ * @param otp the thread to be switched out
+ * @param ntp the thread to be switched in
+ * @note This macro has a different implementation depending if compiled in
+ *       ARM or THUMB mode.
+ * @note This macro assumes to be invoked in ARM system mode.
+ */
+#ifdef THUMB
+#define sys_switch(otp, ntp) _sys_switch_thumb(otp, ntp)
+#else /* THUMB */
+#define sys_switch(otp, ntp) _sys_switch_arm(otp, ntp)
+#endif /* !THUMB */
+
+/**
+ * In this port this macro disables the IRQ sources.
+ * @note This macro has a different implementation depending if compiled in
+ *       ARM or THUMB mode.
+ * @note This macro assumes to be invoked in ARM system mode.
+ */
+#ifdef THUMB
+#define sys_disable() asm volatile ("msr     CPSR_c, #0x9F")
+#else /* THUMB */
+#define sys_disable() _sys_disable_thumb()
+#endif /* !THUMB */
+
+/**
+ * This port function is implemented as inlined code for performance reasons.
+ * @note This macro has a different implementation depending if compiled in
+ *       ARM or THUMB mode.
+ * @note This macro assumes to be invoked in ARM system mode.
+ */
+#ifdef THUMB
+#define sys_enable() asm volatile ("msr     CPSR_c, #0x1F")
+#else /* THUMB */
+#define sys_enable() _sys_enable_thumb()
+#endif /* !THUMB */
+
+/**
+ * This function is empty in this port.
+ */
+#define sys_disable_from_isr()
+
+/**
+ * This function is empty in this port.
+ */
+#define sys_enable_from_isr()
+
 #ifdef __cplusplus
 extern "C" {
 #endif
   void sys_puts(char *msg);
-  void sys_switch(Thread *otp, Thread *ntp);
-  void sys_enable(void);
-  void sys_disable(void);
-  void sys_disable_from_isr(void);
-  void sys_enable_from_isr(void);
   void sys_wait_for_interrupt(void);
   void sys_halt(void);
+  void _sys_enable_thumb(void);
+  void _sys_disable_thumb(void);
+#ifdef THUMB
+  void _sys_switch_thumb(Thread *otp, Thread *ntp);
+#else /* THUMB */
+  void _sys_switch_arm(Thread *otp, Thread *ntp);
+#endif /* !THUMB */
 #ifdef __cplusplus
 }
 #endif
