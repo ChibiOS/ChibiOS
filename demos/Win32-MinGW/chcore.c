@@ -17,6 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <windows.h>
+#include <stdio.h>
+
+#undef CDECL
+
 /**
  * @addtogroup WIN32SIM_CORE
  * @{
@@ -24,20 +29,75 @@
 
 #include <ch.h>
 
+static LARGE_INTEGER nextcnt;
+static LARGE_INTEGER slice;
+
+void InitSimCom1(void);
+void InitSimCom2(void);
+BOOL Com1ConnInterruptSimCom(void);
+BOOL Com2ConnInterruptSimCom(void);
+BOOL Com1InInterruptSimCom(void);
+BOOL Com2InInterruptSimCom(void);
+BOOL Com1OutInterruptSimCom(void);
+BOOL Com2OutInterruptSimCom(void);
+
 /*
- * This file is a template of the system driver functions provided by a port.
- * Some of the following functions may be implemented as macros in chcore.h if
- * the implementer decides that there is an advantage in doing so, as example
- * because performance concerns.
+ * Simulated HW initialization.
  */
+void InitCore(void) {
+  WSADATA wsaData;
+
+  // Initialization.
+  if (WSAStartup(2, &wsaData) != 0) {
+    printf("Unable to locate a winsock DLL\n");
+    exit(1);
+  }
+
+  printf("Win32 ChibiOS/RT simulator\n\n");
+  printf("Thread structure %d bytes\n", sizeof(Thread));
+  if (!QueryPerformanceFrequency(&slice)) {
+    printf("QueryPerformanceFrequency() error");
+    exit(1);
+  }
+  printf("Core Frequency   %u Hz\n", (int)slice.LowPart);
+  slice.QuadPart /= CH_FREQUENCY;
+  QueryPerformanceCounter(&nextcnt);
+  nextcnt.QuadPart += slice.QuadPart;
+
+  InitSimCom1();
+  InitSimCom2();
+  fflush(stdout);
+}
+
+/*
+ * Interrupt simulation.
+ */
+void ChkIntSources(void) {
+  LARGE_INTEGER n;
+
+  if (Com1InInterruptSimCom()   || Com2InInterruptSimCom()  ||
+      Com1OutInterruptSimCom()  || Com2OutInterruptSimCom() ||
+      Com1ConnInterruptSimCom() || Com2ConnInterruptSimCom()) {
+    if (chSchRescRequiredI())
+      chSchDoRescheduleI();
+    return;
+  }
+
+  // Interrupt Timer simulation (10ms interval).
+  QueryPerformanceCounter(&n);
+  if (n.QuadPart > nextcnt.QuadPart) {
+    nextcnt.QuadPart += slice.QuadPart;
+    chSysTimerHandlerI();
+    if (chSchRescRequiredI())
+      chSchDoRescheduleI();
+  }
+}
 
 /**
  * Prints a message on the system console.
  * @param msg pointer to the message
- * @note The function is declared as a weak symbol, it is possible to redefine
- *       it in your application code.
  */
-__attribute__((weak))
+__attribute__((fastcall))
 void sys_puts(char *msg) {
 }
 
@@ -45,12 +105,10 @@ void sys_puts(char *msg) {
  * Performs a context switch between two threads.
  * @param otp the thread to be switched out
  * @param ntp the thread to be switched in
- * @note The function is declared as a weak symbol, it is possible to redefine
- *       it in your application code.
  */
-__attribute__((naked, weak))
+__attribute__((fastcall))
 void sys_switch(Thread *otp, Thread *ntp) {
-  register struct intctx *esp asm("esp");
+  register struct intctx volatile *esp asm("esp");
 
   asm volatile ("push    %ebp                                   \n\t" \
                 "push    %esi                                   \n\t" \
@@ -61,16 +119,13 @@ void sys_switch(Thread *otp, Thread *ntp) {
   asm volatile ("pop     %ebx                                   \n\t" \
                 "pop     %edi                                   \n\t" \
                 "pop     %esi                                   \n\t" \
-                "pop     %ebp                                   \n\t" \
-                "ret" : : "r" (esp));
+                "pop     %ebp");
 }
 
 /**
  * Halts the system. In this implementation it just exits the simulation.
- * @note The function is declared as a weak symbol, it is possible to redefine
- *       it in your application code.
  */
-__attribute__((weak))
+__attribute__((fastcall))
 void sys_halt(void) {
 
   exit(2);
@@ -78,15 +133,11 @@ void sys_halt(void) {
 
 /**
  * Threads return point, it just invokes @p chThdExit().
- * @note The function is declared as a weak symbol, it is possible to redefine
- *       it in your application code.
  */
-__attribute__((naked, weak))
 void threadexit(void) {
 
   asm volatile ("push    %eax                                   \n\t" \
                 "call    _chThdExit");
 }
 
-}
 /** @} */

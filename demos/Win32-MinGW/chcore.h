@@ -66,7 +66,7 @@ struct intctx {
  * pointer to a @p intctx structure.
  */
 typedef struct {
-  struct intctx *esp;
+  struct intctx volatile *esp;
 } Context;
 
 #define APUSH(p, a) (p) -= sizeof(void *), *(void **)(p) = (void*)(a)
