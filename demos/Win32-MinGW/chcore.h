@@ -139,6 +139,11 @@ typedef struct {
 #define SYS_IRQ_EPILOGUE()
 
 /**
+ * IRQ handler function modifier.
+ */
+#define SYS_IRQ_HANDLER
+
+/**
  * Does nothing in this simulator.
  */
 #define sys_disable()
@@ -159,15 +164,15 @@ typedef struct {
 #define sys_enable_from_isr()
 
 /**
+ * Does nothing in this simulator.
+ */
+#define sys_disable_all()
+
+/**
  * In the simulator this does a polling pass on the simulated interrupt
  * sources.
  */
 #define sys_wait_for_interrupt() ChkIntSources()
-
-/**
- * IRQ handler function modifier.
- */
-#define SYS_IRQ_HANDLER
 
 #ifdef __cplusplus
 extern "C" {
