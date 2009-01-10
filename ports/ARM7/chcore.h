@@ -92,7 +92,7 @@ typedef struct {
                                      sizeof(struct intctx));            \
   tp->p_ctx.r13->r4 = pf;                                               \
   tp->p_ctx.r13->r5 = arg;                                              \
-  tp->p_ctx.r13->lr = threadstart;                                      \
+  tp->p_ctx.r13->lr = _sys_thread_start;                                \
 }
 
 /**
@@ -159,12 +159,12 @@ typedef struct {
  */
 #ifdef THUMB
 #define SYS_IRQ_EPILOGUE() {                                            \
-  asm volatile ("ldr      r0, =IrqCommon                  \n\t"         \
+  asm volatile ("ldr      r0, =_sys_irq_common            \n\t"         \
                 "bx       r0");                                         \
 }
 #else /* THUMB */
 #define SYS_IRQ_EPILOGUE() {                                            \
-  asm volatile ("b        IrqCommon");                                  \
+  asm volatile ("b        _sys_irq_common");                            \
 }
 #endif /* !THUMB */
 
@@ -194,9 +194,9 @@ typedef struct {
  * @note This macro assumes to be invoked in ARM system mode.
  */
 #ifdef THUMB
-#define sys_disable() asm volatile ("msr     CPSR_c, #0x9F")
-#else /* THUMB */
 #define sys_disable() _sys_disable_thumb()
+#else /* THUMB */
+#define sys_disable() asm volatile ("msr     CPSR_c, #0x9F")
 #endif /* !THUMB */
 
 /**
@@ -206,9 +206,9 @@ typedef struct {
  * @note This macro assumes to be invoked in ARM system mode.
  */
 #ifdef THUMB
-#define sys_enable() asm volatile ("msr     CPSR_c, #0x1F")
-#else /* THUMB */
 #define sys_enable() _sys_enable_thumb()
+#else /* THUMB */
+#define sys_enable() asm volatile ("msr     CPSR_c, #0x1F")
 #endif /* !THUMB */
 
 /**
@@ -220,6 +220,23 @@ typedef struct {
  * This function is empty in this port.
  */
 #define sys_enable_from_isr()
+
+/**
+ * Disables all the interrupt sources, even those having a priority higher
+ * to the kernel.
+ * In the ARM7 port this code disables both IRQ and FIQ sources.
+ */
+#ifdef THUMB
+#define sys_disable_all() _sys_disable_all_thumb()
+#else /* THUMB */
+#define sys_disable_all() {                                             \
+  asm volatile ("mrs     r3, CPSR                         \n\t"         \
+                "orr     r3, #0x80                        \n\t"         \
+                "msr     CPSR_c, r3                       \n\t"         \
+                "orr     r3, #0x40                        \n\t"         \
+                "msr     CPSR_c, r3" : : : "r3");                       \
+}
+#endif /* !THUMB */
 
 #ifdef __cplusplus
 extern "C" {
@@ -234,6 +251,7 @@ extern "C" {
 #else /* THUMB */
   void _sys_switch_arm(Thread *otp, Thread *ntp);
 #endif /* !THUMB */
+  void _sys_thread_start(void);
 #ifdef __cplusplus
 }
 #endif

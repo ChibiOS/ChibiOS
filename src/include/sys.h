@@ -32,6 +32,12 @@
 #define chSysPuts(msg) sys_puts(msg)
 
 /**
+ * Abonormal system termination handler. Invoked by the ChibiOS/RT when an
+ * abnormal unrecoverable condition is met.
+ */
+#define chSysHalt() sys_halt()
+
+/**
  * Performs a context switch.
  * This is the most critical code in any port, this function is responsible
  * for the context switch between 2 threads.
@@ -53,7 +59,7 @@
 
 /**
  * Raises the system interrupt priority mask to system level.
- * @note The implementation is architecture dependent, it may just enable the
+ * @note The implementation is architecture dependent, it may just disable the
  *       interrupts.
  * @note This API should only be invoked from the main thread in order to stop
  *       ChibiOS/RT, hardware de/re-initialization should follow. It would then
@@ -61,6 +67,14 @@
  * @note The use of this API is <b>not</b> an alternative to @p chSysLock().
  */
 #define chSysDisable() sys_disable()
+
+/**
+ * Raises the system interrupt priority mask to the maximum level thus disabling
+ * any mask-able interrupt source..
+ * @note The implementation is architecture dependent, it may just disable the
+ *       interrupts or be exactly equivalent to @p chSysDisable().
+ */
+#define chSysDisableAll() sys_disable_all()
 
 /**
  * Enters the ChibiOS/RT system mutual exclusion zone from within an interrupt
@@ -161,7 +175,6 @@ extern "C" {
 #endif
   void chSysInit(void);
   void chSysTimerHandlerI(void);
-  void chSysHalt(void);
 #if !defined(CH_OPTIMIZE_SPEED)
   void chSysLock(void);
   void chSysUnlock(void);

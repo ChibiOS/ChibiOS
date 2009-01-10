@@ -17,38 +17,51 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @addtogroup ARM7_CORE
+ * @{
+ */
+
 #include <ch.h>
 
 #include "at91lib/AT91SAM7X256.h"
 
 /*
- * System idle thread loop.
+ * This file is a template of the system driver functions provided by a port.
+ * Some of the following functions may be implemented as macros in chcore.h if
+ * the implementer decides that there is an advantage in doing so, as example
+ * because performance concerns.
  */
-void _idle(void *p) {
 
+/**
+ * Prints a message on the system console.
+ * @param msg pointer to the message
+ */
+__attribute__((weak))
+void sys_puts(char *msg) {
+}
+
+/**
+ * Enters an architecture-dependent halt mode. The function is meant to return
+ * when an interrupt becomes pending.
+ */
+__attribute__((weak))
+void sys_wait_for_interrupt(void) {
+
+  PCON = 1;
+}
+
+/**
+ * Halts the system. This function is invoked by the operating system when an
+ * unrecoverable error is detected (as example because a programming error in
+ * the application code that triggers an assertion while in debug mode).
+ */
+__attribute__((weak))
+void sys_halt(void) {
+
+  sys_disable_all();
   while (TRUE) {
-// Note, it is disabled because it causes trouble with the JTAG probe.
-// Enable it in the final code only.
-//    PCON = 1;
   }
 }
 
-/*
- * System console message (not implemented).
- */
-void chSysPuts(char *msg) {
-}
-
-/*
- * System halt.
- */
-__attribute__((naked, weak))
-void chSysHalt(void) {
-
-#ifdef THUMB
-  asm volatile ("ldr      r0, =_halt16");
-  asm volatile ("bx       r0");
-#else
-  asm("b        _halt32");
-#endif
-}
+/** @} */

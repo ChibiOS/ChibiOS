@@ -94,16 +94,6 @@ void chSysTimerHandlerI(void) {
   chVTDoTickI();
 }
 
-/**
- * Abonormal system termination handler. Invoked by the ChibiOS/RT when an
- * abnormal unrecoverable condition is met.
- */
-void chSysHalt(void) {
-
-  chSysDisable();
-  sys_halt();
-}
-
 #if !defined(CH_OPTIMIZE_SPEED)
 /**
  * Enters the ChibiOS/RT system mutual exclusion zone.
