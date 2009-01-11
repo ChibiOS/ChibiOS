@@ -33,7 +33,7 @@
 /**
  * Kernel version string.
  */
-#define CH_KERNEL_VERSION       "1.0.0rc1"
+#define CH_KERNEL_VERSION       "1.0.0rc2"
 
 /**
  * Kernel version major number.
