@@ -143,6 +143,10 @@ typedef struct {
  * invoke system APIs.
  * @note This macro has a different implementation depending if compiled in
  *       ARM or THUMB mode.
+ * @note The THUMB implementation starts with ARM code because interrupt
+ *       vectors are always invoked in ARM mode regardless the bit 0
+ *       value. The switch in THUMB mode is done in the function prologue so
+ *       it is transparent to the user code.
  */
 #ifdef THUMB
 #define SYS_IRQ_PROLOGUE() {                                            \
