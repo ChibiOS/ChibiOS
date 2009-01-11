@@ -99,7 +99,7 @@ namespace chibios_rt {
 
   /**
    * Base class for a ChibiOS/RT thread, the thread body is the virtual
-   * function \p Main().
+   * function @p Main().
    */
   class BaseThread {
   public:
@@ -185,7 +185,7 @@ namespace chibios_rt {
     static msg_t WaitMessage(void);
 
     /**
-     * Returns an enqueued message or \p NULL.
+     * Returns an enqueued message or @p NULL.
      * @return The incoming message.
      * @retval NULL No incoming message.
      */
@@ -242,7 +242,7 @@ namespace chibios_rt {
 
     /**
      * Simplified constructor, it allows to create a thread by simply
-     * specifying a name. In is assumed \p NORMALPRIO as initial priority
+     * specifying a name. In is assumed @p NORMALPRIO as initial priority
      * and no special option flags.
      * @param tname the name to be assigned to the thread
      */
@@ -255,7 +255,7 @@ namespace chibios_rt {
 
 #ifdef CH_USE_SEMAPHORES
   /**
-   * Class encapsulating a \p Semaphore.
+   * Class encapsulating a @p Semaphore.
    */
   class Semaphore {
   public:
@@ -305,8 +305,8 @@ namespace chibios_rt {
 #ifdef CH_USE_SEMSW
     /**
      * Atomic signal and wait operations.
-     * @param ssem pointer to a \p Semaphore to be signaled
-     * @param wsem pointer to a \p Semaphore to be wait on
+     * @param ssem pointer to a @p Semaphore to be signaled
+     * @param wsem pointer to a @p Semaphore to be wait on
      * @retval RDY_OK if the semaphore was signaled or not taken.
      * @retval RDY_RESET if the semaphore was reset.
      */
@@ -317,7 +317,7 @@ namespace chibios_rt {
 
 #ifdef CH_USE_MUTEXES
   /**
-   * Class encapsulating a \p Mutex.
+   * Class encapsulating a @p Mutex.
    */
   class Mutex {
   public:
@@ -364,7 +364,7 @@ namespace chibios_rt {
 
 #ifdef CH_USE_CONDVARS
   /**
-   * Class encapsulating a \p CondVar.
+   * Class encapsulating a @p CondVar.
    */
   class CondVar {
   public:
@@ -417,7 +417,7 @@ namespace chibios_rt {
 
 #ifdef CH_USE_EVENTS
   /**
-   * Class encapsulating an \p EventSource.
+   * Class encapsulating an @p EventSource.
    */
   class Event {
   public:
@@ -434,14 +434,14 @@ namespace chibios_rt {
 
     /**
      * Registers a listener on the event source.
-     * @param elp pointer to the \p EventListener structure
+     * @param elp pointer to the @p EventListener structure
      * @param eid numeric identifier assigned to the Event Listener
      */
     void Register(EventListener *elp, eventid_t eid);
 
     /**
      * Registers an Event Listener on an Event Source.
-     * @param elp pointer to the \p EventListener structure
+     * @param elp pointer to the @p EventListener structure
      * @param emask the mask of event flags to be pended to the thread when the
      *              event source is broadcasted
      * @note Multiple Event Listeners can specify the same bits to be pended.
@@ -470,7 +470,7 @@ namespace chibios_rt {
 
     /**
      * Makes an events mask pending in the current thread, this is \b much
-     * faster than using \p Broadcast().
+     * faster than using @p Broadcast().
      * @param mask the events to be pended
      * @return The current pending events mask.
      */
@@ -479,7 +479,7 @@ namespace chibios_rt {
     /**
      * Invokes the event handlers associated with a mask.
      * @param mask mask of the events to be dispatched
-     * @param handlers an array of \p evhandler_t. The array must be
+     * @param handlers an array of @p evhandler_t. The array must be
      *                 have indexes from zero up the higher registered event
      *                 identifier.
      */

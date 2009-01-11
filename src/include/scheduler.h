@@ -25,7 +25,7 @@
 #ifndef _SCHEDULER_H_
 #define _SCHEDULER_H_
 
-/** Normal \p chSchReadyI() message. */
+/** Normal @p chSchReadyI() message. */
 #define RDY_OK          0
 /** Returned when the thread was made ready because of a timeout. */
 #define RDY_TIMEOUT     -1
@@ -57,9 +57,9 @@
  * @extends ThreadsQueue
  */
 typedef struct {
-  /** Next \p Thread in the ready list.*/
+  /** Next @p Thread in the ready list.*/
   Thread                *p_next;
-  /** Previous \p Thread in the ready list.*/
+  /** Previous @p Thread in the ready list.*/
   Thread                *p_prev;
   /* End of the fields shared with the ThreadsQueue structure. */
   /** The thread priority.*/

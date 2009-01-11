@@ -53,21 +53,21 @@ typedef struct {
   /** Input queue. Incoming data can be read from this queue by using the
    *  queues APIs.*/
   Queue                 sd_iqueue;
-  /** Data Available \p EventSource. This event is generated when some incoming
-   *  data is inserted in the Input \p Queue.*/
+  /** Data Available @p EventSource. This event is generated when some incoming
+   *  data is inserted in the Input @p Queue.*/
   EventSource           sd_ievent;
 
-  /** Output queue. Outgoing data can be written to this Output \p Queue by
+  /** Output queue. Outgoing data can be written to this Output @p Queue by
    *   using the queues APIs.*/
   Queue                 sd_oqueue;
-  /** Data Transmitted \p EventSource. This event is generated when the
-   *  Output \p Queue is empty.*/
+  /** Data Transmitted @p EventSource. This event is generated when the
+   *  Output @p Queue is empty.*/
   EventSource           sd_oevent;
 
   /** I/O driver status flags. This field should not be read directly but
-   *  the \p chFDDGetAndClearFlags() funtion should be used instead.*/
+   *  the @p chFDDGetAndClearFlags() funtion should be used instead.*/
   dflags_t              sd_flags;
-  /** Status Change \p EventSource. This event is generated when a
+  /** Status Change @p EventSource. This event is generated when a
    *  condition flag was changed.*/
   EventSource           sd_sevent;
 } FullDuplexDriver;
@@ -115,17 +115,17 @@ extern "C" {
  */
 typedef struct {
 
-  /** Data queue. Transmit/receive \p HalfDuplexQueue.*/
+  /** Data queue. Transmit/receive @p HalfDuplexQueue.*/
   HalfDuplexQueue       sd_queue;
-  /** Data Available \p EventSource. This event is generated when some
+  /** Data Available @p EventSource. This event is generated when some
    *  incoming data is inserted in the receive queue.*/
   EventSource           sd_ievent;
-  /** Data Transmitted \p EventSource. This event is generated when the
+  /** Data Transmitted @p EventSource. This event is generated when the
    *  transmission queue is empty and the driver can either transmit more
    *  data or enter receive mode.*/
   EventSource           sd_oevent;
   /** I/O driver status flags. This field should not be read directly but
-   *  the \p chHDDGetAndClearFlags() funtion should be used
+   *  the @p chHDDGetAndClearFlags() funtion should be used
    *  instead.*/
   dflags_t              sd_flags;
   /** Status Change Event Source. This event is generated when a condition

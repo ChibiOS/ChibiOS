@@ -46,7 +46,7 @@ extern "C" {
 #endif
 
 /**
- * Initializes an \p EvTimer structure.
+ * Initializes an @p EvTimer structure.
  * @param etp the EvTimer structure to be initialized
  * @param time the interval in system ticks
  */

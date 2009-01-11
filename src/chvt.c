@@ -39,7 +39,7 @@ void chVTInit(void) {
 
 /**
  * Enables a virtual timer.
- * @param vtp the \p VirtualTimer structure pointer
+ * @param vtp the @p VirtualTimer structure pointer
  * @param time the number of time ticks, the value zero is not allowed
  * @param vtfunc the timer callback function. After invoking the callback
  *               the timer is disabled and the structure can be disposed or
@@ -70,7 +70,7 @@ void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
 
 /**
  * Disables a Virtual Timer.
- * @param vtp the \p VirtualTimer structure pointer
+ * @param vtp the @p VirtualTimer structure pointer
  * @note It must be called with the interrupts disabled.
  * @note The timer MUST be active when this function is invoked.
  */

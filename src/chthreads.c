@@ -66,17 +66,17 @@ static void memfill(uint8_t *p, uint32_t n, uint8_t v) {
 /**
  * Initializes a new thread.
  * The new thread is initialized but not inserted in the ready list, the
- * initial state is \p PRSUSPENDED.
+ * initial state is @p PRSUSPENDED.
  * @param prio the priority level for the new thread. Usually the threads are
- *             created with priority \p NORMALPRIO, priorities
- *             can range from \p LOWPRIO to \p HIGHPRIO.
+ *             created with priority @p NORMALPRIO, priorities
+ *             can range from @p LOWPRIO to @p HIGHPRIO.
  * @param workspace pointer to a working area dedicated to the thread stack
  * @param wsize size of the working area.
  * @param pf the thread function
- * @param arg an argument passed to the thread function. It can be \p NULL.
- * @return The pointer to the \p Thread structure allocated for the
+ * @param arg an argument passed to the thread function. It can be @p NULL.
+ * @return The pointer to the @p Thread structure allocated for the
  *         thread into the working space area.
- * @note A thread can terminate by calling \p chThdExit() or by simply
+ * @note A thread can terminate by calling @p chThdExit() or by simply
  *       returning from its main function.
  * @note This function can be invoked from within an interrupt handler.
  */
@@ -100,13 +100,13 @@ Thread *chThdInit(void *workspace, size_t wsize,
  * @param workspace pointer to a working area dedicated to the thread stack
  * @param wsize size of the working area.
  * @param prio the priority level for the new thread. Usually the threads are
- *             created with priority \p NORMALPRIO, priorities
- *             can range from \p LOWPRIO to \p HIGHPRIO.
+ *             created with priority @p NORMALPRIO, priorities
+ *             can range from @p LOWPRIO to @p HIGHPRIO.
  * @param pf the thread function
- * @param arg an argument passed to the thread function. It can be \p NULL.
- * @return The pointer to the \p Thread structure allocated for the
+ * @param arg an argument passed to the thread function. It can be @p NULL.
+ * @return The pointer to the @p Thread structure allocated for the
  *         thread into the working space area.
- * @note A thread can terminate by calling \p chThdExit() or by simply
+ * @note A thread can terminate by calling @p chThdExit() or by simply
  *       returning from its main function.
  */
 Thread *chThdCreateStatic(void *workspace, size_t wsize,
@@ -120,20 +120,20 @@ Thread *chThdCreateStatic(void *workspace, size_t wsize,
  * Creates a new thread allocating the memory from the heap.
  * @param wsize size of the working area to be allocated
  * @param prio the priority level for the new thread. Usually the threads are
- *             created with priority \p NORMALPRIO, priorities
- *             can range from \p LOWPRIO to \p HIGHPRIO.
+ *             created with priority @p NORMALPRIO, priorities
+ *             can range from @p LOWPRIO to @p HIGHPRIO.
  * @param pf the thread function
- * @param arg an argument passed to the thread function. It can be \p NULL.
- * @return The pointer to the \p Thread structure allocated for the
+ * @param arg an argument passed to the thread function. It can be @p NULL.
+ * @return The pointer to the @p Thread structure allocated for the
  *         thread into the working space area.
  * @retval NULL if the memory cannot be allocated.
- * @note A thread can terminate by calling \p chThdExit() or by simply
+ * @note A thread can terminate by calling @p chThdExit() or by simply
  *       returning from its main function.
  * @note The memory allocated for the thread is not released when the thread
- *       terminates but when a \p chThdWait() is performed.
- * @note The function is available only if the \p CH_USE_DYNAMIC,
- *       \p CH_USE_HEAP and \p CH_USE_WAITEXIT options are enabled
- *       in \p chconf.h.
+ *       terminates but when a @p chThdWait() is performed.
+ * @note The function is available only if the @p CH_USE_DYNAMIC,
+ *       @p CH_USE_HEAP and @p CH_USE_WAITEXIT options are enabled
+ *       in @p chconf.h.
  */
 Thread *chThdCreateFromHeap(size_t wsize, tprio_t prio,
                             tfunc_t pf, void *arg) {
@@ -152,21 +152,21 @@ Thread *chThdCreateFromHeap(size_t wsize, tprio_t prio,
  * Creates a new thread allocating the memory from the specified Memory Pool.
  * @param mp the memory pool
  * @param prio the priority level for the new thread. Usually the threads are
- *             created with priority \p NORMALPRIO, priorities
- *             can range from \p LOWPRIO to \p HIGHPRIO.
+ *             created with priority @p NORMALPRIO, priorities
+ *             can range from @p LOWPRIO to @p HIGHPRIO.
  * @param pf the thread function
- * @param arg an argument passed to the thread function. It can be \p NULL.
- * @return The pointer to the \p Thread structure allocated for the
- *         thread into the working space area or \p NULL if the memory cannot
+ * @param arg an argument passed to the thread function. It can be @p NULL.
+ * @return The pointer to the @p Thread structure allocated for the
+ *         thread into the working space area or @p NULL if the memory cannot
  *         be allocated.
  * @retval NULL if the memory pool is empty.
- * @note A thread can terminate by calling \p chThdExit() or by simply
+ * @note A thread can terminate by calling @p chThdExit() or by simply
  *       returning from its main function.
  * @note The memory allocated for the thread is not released when the thread
- *       terminates but when a \p chThdWait() is performed.
- * @note The function is available only if the \p CH_USE_DYNAMIC,
- *       \p CH_USE_MEMPOOLS and \p CH_USE_WAITEXIT options are enabled
- *       in \p chconf.h.
+ *       terminates but when a @p chThdWait() is performed.
+ * @note The function is available only if the @p CH_USE_DYNAMIC,
+ *       @p CH_USE_MEMPOOLS and @p CH_USE_WAITEXIT options are enabled
+ *       in @p chconf.h.
  */
 Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
                                   tfunc_t pf, void *arg) {
@@ -210,9 +210,9 @@ void chThdSetPriority(tprio_t newprio) {
 /**
  * Suspends the invoking thread.
  *
- * @param tpp pointer to a \p Thread pointer, the \p Thread pointer is set
+ * @param tpp pointer to a @p Thread pointer, the @p Thread pointer is set
  *            to point to the suspended process before it enters the
- *            \p PRSUSPENDED state, it is set to \p NULL after it is resumed.
+ *            @p PRSUSPENDED state, it is set to @p NULL after it is resumed.
  *            This allows to implement a "test and resume" on the variable
  *            into interrupt handlers.
  */
@@ -244,8 +244,8 @@ Thread *chThdResume(Thread *tp) {
  * Requests a thread termination.
  * @param tp the pointer to the thread
  * @note The thread is not termitated but a termination request is added to
- *       its \p p_flags field. The thread can read this status by
- *       invoking \p chThdShouldTerminate() and then terminate cleanly.
+ *       its @p p_flags field. The thread can read this status by
+ *       invoking @p chThdShouldTerminate() and then terminate cleanly.
  */
 void chThdTerminate(Thread *tp) {
 
@@ -282,7 +282,7 @@ void chThdSleepUntil(systime_t time) {
  * Terminates the current thread by specifying an exit status code.
  *
  * @param msg the thread exit code. The code can be retrieved by using
- *            \p chThdWait().
+ *            @p chThdWait().
  */
 void chThdExit(msg_t msg) {
   Thread *tp = currp;
@@ -304,20 +304,20 @@ void chThdExit(msg_t msg) {
  * The memory used by the exited thread is handled in different ways depending
  * on the API that spawned the thread:
  * <ul>
- * <li>If the thread was spawned by \p chThdCreateStatic() or by \p chThdInit()
+ * <li>If the thread was spawned by @p chThdCreateStatic() or by @p chThdInit()
  *     then nothing happens and the thread working area is not released or
  *     modified in any way. This is the default, totally static, behavior.</li>
- * <li>If the thread was spawned by \p chThdCreateFromHeap() then the working
+ * <li>If the thread was spawned by @p chThdCreateFromHeap() then the working
  *     area is returned to the system heap.</li>
- * <li>If the thread was spawned by \p chThdCreateFromMemoryPool() then the
+ * <li>If the thread was spawned by @p chThdCreateFromMemoryPool() then the
  *     working area is returned to the owning memory pool.</li>
  * </ul>
  * @param tp the thread pointer
  * @return The exit code from the terminated thread
- * @note After invoking \p chThdWait() the thread pointer becomes invalid and
+ * @note After invoking @p chThdWait() the thread pointer becomes invalid and
  *       must not be used as parameter for further system calls.
- * @note The function is available only if the \p CH_USE_WAITEXIT
- *       option is enabled in \p chconf.h.
+ * @note The function is available only if the @p CH_USE_WAITEXIT
+ *       option is enabled in @p chconf.h.
  * @note Only one thread can be waiting for another thread at any time. You
  *       should imagine the threads as having a reference counter that is set
  *       to one when the thread is created, chThdWait() decreases the reference

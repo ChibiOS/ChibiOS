@@ -27,8 +27,8 @@
 #ifdef CH_USE_MUTEXES
 
 /**
- * Initializes s \p Mutex structure.
- * @param mp pointer to a \p Mutex structure
+ * Initializes s @p Mutex structure.
+ * @param mp pointer to a @p Mutex structure
  */
 void chMtxInit(Mutex *mp) {
 
@@ -38,7 +38,7 @@ void chMtxInit(Mutex *mp) {
 
 /**
  * Locks the specified mutex.
- * @param mp pointer to the \p Mutex structure
+ * @param mp pointer to the @p Mutex structure
  */
 void chMtxLock(Mutex *mp) {
 
@@ -52,8 +52,8 @@ void chMtxLock(Mutex *mp) {
 /**
  * Locks the specified mutex.
  *
- * @param mp pointer to the \p Mutex structure
- * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
+ * @param mp pointer to the @p Mutex structure
+ * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
  *       block.
  */
 void chMtxLockS(Mutex *mp) {
@@ -113,7 +113,7 @@ void chMtxLockS(Mutex *mp) {
  * Tries to lock a mutex. This function does not have any overhead related to
  * the priority inheritance mechanism because it does not try to enter a sleep
  * state on the mutex.
- * @param mp pointer to the \p Mutex structure
+ * @param mp pointer to the @p Mutex structure
  * @retval TRUE if the mutex was successfully acquired
  * @retval FALSE if the lock attempt failed.
  */
@@ -132,10 +132,10 @@ bool_t chMtxTryLock(Mutex *mp) {
  * Tries to lock a mutex. This function does not have any overhead related to
  * the priority inheritance mechanism because it does not try to enter a sleep
  * state on the mutex.
- * @param mp pointer to the \p Mutex structure
+ * @param mp pointer to the @p Mutex structure
  * @retval TRUE if the mutex was successfully acquired
  * @retval FALSE if the lock attempt failed.
- * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
+ * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
  *       block.
  */
 bool_t chMtxTryLockS(Mutex *mp) {
@@ -196,7 +196,7 @@ Mutex *chMtxUnlock(void) {
 /**
  * Unlocks the next owned mutex in reverse lock order.
  * @return The pointer to the unlocked mutex.
- * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
+ * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
  *       block.
  * @note This function does not reschedule internally.
  */

@@ -117,10 +117,10 @@ extern "C" {
 #define chVTIsArmedI(vtp) ((vtp)->vt_func != NULL)
 
 /**
- * Returns the number of system ticks since the \p chSysInit() invocation.
+ * Returns the number of system ticks since the @p chSysInit() invocation.
  * @return the system ticks number
  * @note The counter can reach its maximum and then returns to zero.
- * @note This function is designed to work with the \p chThdSleepUntil().
+ * @note This function is designed to work with the @p chThdSleepUntil().
  */
 #define chSysGetTime() (vtlist.vt_systime)
 

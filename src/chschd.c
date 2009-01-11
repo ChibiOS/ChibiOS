@@ -30,7 +30,7 @@ ReadyList rlist;
 
 /**
  * Scheduler initialization.
- * @note Internally invoked by the \p chSysInit().
+ * @note Internally invoked by the @p chSysInit().
  */
 void chSchInit(void) {
 
@@ -47,7 +47,7 @@ void chSchInit(void) {
  * @param tp the Thread to be made ready
  * @return The Thread pointer.
  * @note The function must be called in the system mutex zone.
- * @note The function does not reschedule, the \p chSchRescheduleS() should
+ * @note The function does not reschedule, the @p chSchRescheduleS() should
  *       be called soon after.
  * @note The function is not meant to be used in the user code directly.
  */
@@ -72,7 +72,7 @@ Thread *chSchReadyI(Thread *tp) {
 /**
  * Puts the current thread to sleep into the specified state, the next highest
  * priority thread becomes running. The threads states are described into
- * \p threads.h
+ * @p threads.h
  * @param newstate the new thread state
  * @note The function must be called in the system mutex zone.
  * @note The function is not meant to be used in the user code directly.
@@ -112,7 +112,7 @@ static void wakeup(void *p) {
  *
  * @param newstate the new thread state
  * @param time the number of ticks before the operation timeouts. the value
- *             zero (\p TIME_INFINITE) is allowed.
+ *             zero (@p TIME_INFINITE) is allowed.
  * @return The wakeup message.
  * @retval RDY_TIMEOUT if a timeout occurs.
  * @note The function must be called in the system mutex zone.
@@ -142,8 +142,8 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
  * @param msg message to the awakened thread
  * @note The function must be called in the system mutex zone.
  * @note The function is not meant to be used in the user code directly.
- * @note It is equivalent to a \p chSchReadyI() followed by a
- *       \p chSchRescheduleS() but much more efficient.
+ * @note It is equivalent to a @p chSchReadyI() followed by a
+ *       @p chSchRescheduleS() but much more efficient.
  */
 void chSchWakeupS(Thread *ntp, msg_t msg) {
   ntp->p_rdymsg = msg;
@@ -172,7 +172,7 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
 /**
  * Switch to the first thread on the runnable queue.
  *
- * @note It is intended to be called if \p chSchRescRequiredI() evaluates to \p TRUE.
+ * @note It is intended to be called if @p chSchRescRequiredI() evaluates to @p TRUE.
  */
 void chSchDoRescheduleI(void) {
 

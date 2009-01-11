@@ -39,7 +39,7 @@ static void tmrcb(void *p) {
 /**
  * Starts the timer, if the timer was already running then the function has
  * no effect.
- * @param etp pointer to an initialized \p EvTimer structure.
+ * @param etp pointer to an initialized @p EvTimer structure.
  */
 void evtStart(EvTimer *etp) {
 
@@ -54,7 +54,7 @@ void evtStart(EvTimer *etp) {
 /**
  * Stops the timer, if the timer was already stopped then the function has
  * no effect.
- * @param etp pointer to an initialized \p EvTimer structure.
+ * @param etp pointer to an initialized @p EvTimer structure.
  */
 void evtStop(EvTimer *etp) {
 

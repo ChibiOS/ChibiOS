@@ -57,16 +57,16 @@ typedef struct EventSource {
 
 /**
  * Initializes an Event Source.
- * @param esp pointer to the \p EventSource structure
+ * @param esp pointer to the @p EventSource structure
  * @note Can be called with interrupts disabled or enabled.
  */
 #define chEvtInit(esp) \
         ((esp)->es_next = (EventListener *)(void *)(esp))
 
 /**
- * Verifies if there is at least one \p EventListener registered on the
- * \p EventSource.
- * @param esp pointer to the \p EventSource structure
+ * Verifies if there is at least one @p EventListener registered on the
+ * @p EventSource.
+ * @param esp pointer to the @p EventSource structure
  * @note Can be called with interrupts disabled or enabled.
  */
 #define chEvtIsListening(esp) \
@@ -101,12 +101,12 @@ extern "C" {
 
 /**
  * Registers an Event Listener on an Event Source.
- * @param esp pointer to the  \p EventSource structure
- * @param elp pointer to the \p EventListener structure
+ * @param esp pointer to the  @p EventSource structure
+ * @param elp pointer to the @p EventListener structure
  * @param eid numeric identifier assigned to the Event Listener. The identifier
  *            is used as index for the event callback function.
  *            The value must range between zero and the size, in bit, of the
- *            \p eventid_t type minus one.
+ *            @p eventid_t type minus one.
  * @note Multiple Event Listeners can use the same event identifier, the
  *       listener will share the callback function.
  */

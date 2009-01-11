@@ -30,13 +30,13 @@
  * @extends ThreadsQueue
  * @note Not all the listed fields are always needed, by switching off some
  *       not needed ChibiOS/RT subsystems it is possible to save RAM space by
- *       shrinking the \p Thread structure.
+ *       shrinking the @p Thread structure.
  */
 struct Thread {
-  /** Next \p Thread in the threads list.*/
+  /** Next @p Thread in the threads list.*/
   Thread                *p_next;
   /* End of the fields shared with the ThreadsList structure. */
-  /** Previous \p Thread in the threads list.*/
+  /** Previous @p Thread in the threads list.*/
   Thread                *p_prev;
   /* End of the fields shared with the ThreadsQueue structure. */
   /** The thread priority.*/
@@ -59,28 +59,28 @@ struct Thread {
    * thread in the system.
    */
   union {
-    /** Thread wakeup code (only valid when exiting the \p PRREADY state).*/
+    /** Thread wakeup code (only valid when exiting the @p PRREADY state).*/
     msg_t               p_rdymsg;
-    /** The thread exit code (only while in \p PREXIT state).*/
+    /** The thread exit code (only while in @p PREXIT state).*/
     msg_t               p_exitcode;
 #ifdef CH_USE_SEMAPHORES
-    /** Semaphore where the thread is waiting on (only in \p PRWTSEM state).*/
+    /** Semaphore where the thread is waiting on (only in @p PRWTSEM state).*/
     Semaphore           *p_wtsemp;
 #endif
 #ifdef CH_USE_MUTEXES
-    /** Mutex where the thread is waiting on (only in \p PRWTMTX state).*/
+    /** Mutex where the thread is waiting on (only in @p PRWTMTX state).*/
     Mutex               *p_wtmtxp;
 #endif
 #ifdef CH_USE_CONDVARS
-    /** CondVar where the thread is waiting on (only in \p PRWTCOND state).*/
+    /** CondVar where the thread is waiting on (only in @p PRWTCOND state).*/
     CondVar             *p_wtcondp;
 #endif
 #ifdef CH_USE_MESSAGES
-    /** Destination thread for message send (only in \p PRSNDMSG state).*/
+    /** Destination thread for message send (only in @p PRSNDMSG state).*/
     Thread              *p_wtthdp;
 #endif
 #ifdef CH_USE_EVENTS
-    /** Enabled events mask (only while in \p PRWTOREVT or \p PRWTANDEVT
+    /** Enabled events mask (only while in @p PRWTOREVT or @p PRWTANDEVT
         states). */
     eventmask_t         p_ewmask;
 #endif
@@ -106,7 +106,7 @@ struct Thread {
   eventmask_t           p_epending;
 #endif
 #ifdef CH_USE_MUTEXES
-  /** List of mutexes owned by this thread, \p NULL terminated. */
+  /** List of mutexes owned by this thread, @p NULL terminated. */
   Mutex                 *p_mtxlist;
   /** Thread's own, non-inherited, priority. */
   tprio_t               p_realprio;
@@ -129,20 +129,20 @@ struct Thread {
 #define PRWTSEM         3
 /** Thread state: Waiting on a mutex. */
 #define PRWTMTX         4
-/** Thread state: Waiting in \p chThdSleep() or \p chThdSleepUntil(). */
+/** Thread state: Waiting in @p chThdSleep() or @p chThdSleepUntil(). */
 #define PRWTCOND        5
-/** Thread state: Waiting in \p chCondWait(). */
+/** Thread state: Waiting in @p chCondWait(). */
 #define PRSLEEP         6
-/** Thread state: Waiting in \p chThdWait(). */
+/** Thread state: Waiting in @p chThdWait(). */
 #define PRWAIT          7
-/** Thread state: Waiting in \p chEvtWaitOneTimeout() or
-    \p chEvtWaitAnyTimeout(). */
+/** Thread state: Waiting in @p chEvtWaitOneTimeout() or
+    @p chEvtWaitAnyTimeout(). */
 #define PRWTOREVT       8
-/** Thread state: Waiting in \p chEvtWaitAllTimeout(). */
+/** Thread state: Waiting in @p chEvtWaitAllTimeout(). */
 #define PRWTANDEVT      9
-/** Thread state: Waiting in \p chMsgSend(). */
+/** Thread state: Waiting in @p chMsgSend(). */
 #define PRSNDMSG        10
-/** Thread state: Waiting in \p chMsgWait(). */
+/** Thread state: Waiting in @p chMsgWait(). */
 #define PRWTMSG         11
 /** Thread state: After termination.*/
 #define PREXIT          12
@@ -195,16 +195,16 @@ extern "C" {
 }
 #endif
 
-/** Returns the pointer to the \p Thread currently in execution.*/
+/** Returns the pointer to the @p Thread currently in execution.*/
 #define chThdSelf() currp
 
 /** Returns the thread priority.*/
 #define chThdGetPriority() (currp->p_prio)
 
-/** Returns the pointer to the \p Thread local storage area, if any.*/
+/** Returns the pointer to the @p Thread local storage area, if any.*/
 #define chThdLS() (void *)(currp + 1)
 
-/** Verifies if the specified thread is in the \p PREXIT state.*/
+/** Verifies if the specified thread is in the @p PREXIT state.*/
 #define chThdTerminated(tp) ((tp)->p_state == PREXIT)
 
 /**
@@ -213,8 +213,8 @@ extern "C" {
 #define chThdShouldTerminate() (currp->p_flags & P_TERMINATE)
 
 /**
- * Resumes a thread created with the \p P_SUSPENDED option or suspended with
- * \p chThdSuspend().
+ * Resumes a thread created with the @p P_SUSPENDED option or suspended with
+ * @p chThdSuspend().
  * @param tp the pointer to the thread
  */
 #define chThdResumeI(tp) chSchReadyI(tp)

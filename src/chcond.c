@@ -31,8 +31,8 @@
 #if defined(CH_USE_CONDVARS) && defined(CH_USE_MUTEXES)
 
 /**
- * Initializes s \p CondVar structure.
- * @param cp pointer to a \p CondVar structure
+ * Initializes s @p CondVar structure.
+ * @param cp pointer to a @p CondVar structure
  */
 void chCondInit(CondVar *cp) {
 
@@ -42,7 +42,7 @@ void chCondInit(CondVar *cp) {
 /**
  * Signals one thread that is waiting on the condition variable.
  *
- * @param cp pointer to the \p CondVar structure
+ * @param cp pointer to the @p CondVar structure
  */
 void chCondSignal(CondVar *cp) {
 
@@ -57,8 +57,8 @@ void chCondSignal(CondVar *cp) {
 /**
  * Signals one thread that is waiting on the condition variable.
  *
- * @param cp pointer to the \p CondVar structure
- * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
+ * @param cp pointer to the @p CondVar structure
+ * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
  *       block.
  */
 void chCondSignalI(CondVar *cp) {
@@ -70,7 +70,7 @@ void chCondSignalI(CondVar *cp) {
 /**
  * Signals all threads that are waiting on the condition variable.
  *
- * @param cp pointer to the \p CondVar structure
+ * @param cp pointer to the @p CondVar structure
  */
 void chCondBroadcast(CondVar *cp) {
 
@@ -85,13 +85,13 @@ void chCondBroadcast(CondVar *cp) {
 /**
  * Signals all threads that are waiting on the condition variable.
  *
- * @param cp pointer to the \p CondVar structure
- * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
+ * @param cp pointer to the @p CondVar structure
+ * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
  */
 void chCondBroadcastI(CondVar *cp) {
 
   /* empties the condition variable queue and inserts all the Threads into the
-   * ready list in FIFO order. The wakeup message is set to \p RDY_RESET in
+   * ready list in FIFO order. The wakeup message is set to @p RDY_RESET in
    * order to make a chCondBroadcast() detectable from a chCondSignal(). */
   while (cp->c_queue.p_next != (void *)&cp->c_queue)
     chSchReadyI(fifo_remove(&cp->c_queue))->p_rdymsg = RDY_RESET;
@@ -105,7 +105,7 @@ void chCondBroadcastI(CondVar *cp) {
  *
  * The thread MUST already have locked the mutex when calling chCondWait().
  *
- * @param cp pointer to the \p CondVar structure
+ * @param cp pointer to the @p CondVar structure
  * @return The wakep mode.
  * @retval RDY_OK if the condvar was signaled using chCondSignal().
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().
@@ -129,11 +129,11 @@ msg_t chCondWait(CondVar *cp) {
  *
  * The thread MUST already have locked the mutex when calling chCondWait().
  *
- * @param cp pointer to the \p CondVar structure
+ * @param cp pointer to the @p CondVar structure
  * @return The wakep mode.
  * @retval RDY_OK if the condvar was signaled using chCondSignal().
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().
- * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
+ * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
  */
 msg_t chCondWaitS(CondVar *cp) {
   Mutex *mp;
@@ -159,7 +159,7 @@ msg_t chCondWaitS(CondVar *cp) {
  *
  * The thread MUST already have locked the mutex when calling chCondWait().
  *
- * @param cp pointer to the \p CondVar structure
+ * @param cp pointer to the @p CondVar structure
  * @param time the number of ticks before the operation fails
  * @return The wakep mode.
  * @retval RDY_OK if the condvar was signaled using chCondSignal().
@@ -186,14 +186,14 @@ msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
  *
  * The thread MUST already have locked the mutex when calling chCondWait().
  *
- * @param cp pointer to the \p CondVar structure
+ * @param cp pointer to the @p CondVar structure
  * @param time the number of ticks before the operation fails
  * @return The wakep mode.
  * @retval RDY_OK if the condvar was signaled using chCondSignal().
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().
  * @retval RDY_TIMEOUT if the condvar was not signaled within the specified
  *         timeout.
- * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
+ * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
  */
 msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time) {
   Mutex *mp;

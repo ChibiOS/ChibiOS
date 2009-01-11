@@ -45,9 +45,9 @@ static void idle_thread(void *p) {
 /**
  * ChibiOS/RT initialization. After executing this function the current
  * instructions stream becomes the main thread.
- * @note Interrupts should be still disabled when \p chSysInit() is invoked
+ * @note Interrupts should be still disabled when @p chSysInit() is invoked
  *       and are internally enabled.
- * @note The main thread is created with priority \p NORMALPRIO.
+ * @note The main thread is created with priority @p NORMALPRIO.
  */
 void chSysInit(void) {
   static Thread mainthread;
@@ -81,7 +81,7 @@ void chSysInit(void) {
  * it when the quantum is used up. Increments system time and manages the
  * timers.
  * @note The frequency of the timer determines the system tick granularity and,
- * together with the \p CH_TIME_QUANTUM macro, the round robin interval.
+ * together with the @p CH_TIME_QUANTUM macro, the round robin interval.
  */
 void chSysTimerHandlerI(void) {
 

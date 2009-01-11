@@ -33,9 +33,9 @@
 typedef struct Mutex {
   /** Queue of the threads sleeping on this Mutex.*/
   ThreadsQueue          m_queue;
-  /** Owner \p Thread pointer or \p NULL.*/
+  /** Owner @p Thread pointer or @p NULL.*/
   Thread                *m_owner;
-  /** Next \p Mutex into an owner-list, \p NULL if none.*/
+  /** Next @p Mutex into an owner-list, @p NULL if none.*/
   struct Mutex          *m_next;
 } Mutex;
 
@@ -55,7 +55,7 @@ extern "C" {
 #endif
 
 /**
- * Returns \p TRUE if the mutex queue contains at least a waiting thread.
+ * Returns @p TRUE if the mutex queue contains at least a waiting thread.
  */
 #define chMtxQueueNotEmptyS(mp) notempty(&(mp)->m_queue)
 

@@ -67,8 +67,8 @@ extern "C" {
  * with the specified message.
  * @param c the condition to be verified to be true
  * @param m the text message
- * @note The condition is tested only if the \p CH_USE_DEBUG switch is
- *       specified in \p chconf.h else the macro does nothing.
+ * @note The condition is tested only if the @p CH_USE_DEBUG switch is
+ *       specified in @p chconf.h else the macro does nothing.
  */
 #define chDbgAssert(c, m) {                                             \
   if (!(c))                                                             \
