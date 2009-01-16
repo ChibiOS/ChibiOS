@@ -32,30 +32,24 @@
  */
 
 /**
- * Prints a message on the system console.
- * @param msg pointer to the message
+ * Port-related initialization code.
+ * @note This function is usually empty.
  */
-void sys_puts(char *msg) {
+void sys_init(void){
 }
 
 /**
- * Performs a context switch between two threads.
- * @param otp the thread to be switched out
- * @param ntp the thread to be switched in
+ * Kernel-unlock action. Usually this function just disables interrupts but
+ * may perform more actions.
  */
-void sys_switch(Thread *otp, Thread *ntp) {
+void sys_lock(void) {
 }
 
 /**
- * Kernel-unlock action. Usually this function just enables interrupts.
+ * Kernel-unlock action. Usually this function just disables interrupts but
+ * may perform more actions.
  */
-void sys_enable(void) {
-}
-
-/**
- * Kernel-lock action. Usually this function just disables interrupts.
- */
-void sys_disable(void) {
+void sys_unlock(void) {
 }
 
 /**
@@ -63,7 +57,7 @@ void sys_disable(void) {
  * before invoking I-class APIs from interrupt handlers. The implementation
  * is architecture dependent, in its simplest form it is void.
  */
-void sys_disable_from_isr(void) {
+void sys_lock_from_isr(void) {
 }
 
 /**
@@ -71,7 +65,26 @@ void sys_disable_from_isr(void) {
  * after invoking I-class APIs from interrupt handlers. The implementation
  * is architecture dependent, in its simplest form it is void.
  */
-void sys_enable_from_isr(void) {
+void sys_unlock_from_isr(void) {
+}
+
+/**
+ * Disables all the interrupt sources.
+ * @note Of course non maskable interrupt sources are not included.
+ */
+void sys_disable_all() {
+}
+
+/**
+ * Disables the interrupt sources that are not supposed to preempt the kernel.
+ */
+void sys_disable(void) {
+}
+
+/**
+ * Enables all the interrupt sources.
+ */
+void sys_enable(void) {
 }
 
 /**
@@ -90,9 +103,24 @@ void sys_wait_for_interrupt(void) {
  */
 void sys_halt(void) {
 
-  sys_disable();
+  sys_disable_all();
   while (TRUE) {
   }
+}
+
+/**
+ * Performs a context switch between two threads.
+ * @param otp the thread to be switched out
+ * @param ntp the thread to be switched in
+ */
+void sys_switch(Thread *otp, Thread *ntp) {
+}
+
+/**
+ * Prints a message on the system console.
+ * @param msg pointer to the message
+ */
+void sys_puts(char *msg) {
 }
 
 /** @} */

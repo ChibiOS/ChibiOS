@@ -129,14 +129,18 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sys_puts(char *msg);
-  void sys_switch(Thread *otp, Thread *ntp);
-  void sys_enable(void);
+  void sys_init(void);
+  void sys_disable_all(void);
   void sys_disable(void);
+  void sys_enable(void);
+  void sys_lock(void);
+  void sys_unlock(void);
   void sys_disable_from_isr(void);
   void sys_enable_from_isr(void);
   void sys_wait_for_interrupt(void);
   void sys_halt(void);
+  void sys_switch(Thread *otp, Thread *ntp);
+  void sys_puts(char *msg);
 #ifdef __cplusplus
 }
 #endif

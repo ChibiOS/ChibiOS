@@ -50,36 +50,74 @@
 #define chSysSwitchI(otp, ntp) sys_switch(otp, ntp)
 
 /**
- * Lowers the system interrupt priority mask to user level.
- * @note The implementation is architecture dependent, it may just enable the
- *       interrupts.
- * @note This API is normally invoked only from within @p chSysInit().
- * @note The use of this API is <b>not</b> an alternative to @p chSysUnlock().
- */
-#define chSysEnable() sys_enable()
-
-/**
- * Raises the system interrupt priority mask to system level.
- * @note The implementation is architecture dependent, it may just disable the
- *       interrupts.
- * @note This API should only be invoked from the main thread in order to stop
- *       ChibiOS/RT, hardware de/re-initialization should follow. It would then
- *       be possible to re-initialize ChibiOS/RT using @p chSysInit().
- * @note The use of this API is <b>not</b> an alternative to @p chSysLock().
- */
-#define chSysDisable() sys_disable()
-
-/**
- * Raises the system interrupt priority mask to the maximum level thus disabling
- * any mask-able interrupt source..
+ * Raises the system interrupt priority mask to the maximum level.
+ * All the maskable interrupt sources are disabled regardless their hardware
+ * priority.
  * @note The implementation is architecture dependent, it may just disable the
  *       interrupts or be exactly equivalent to @p chSysDisable().
+ * @note Do not invoke this API from within a kernel lock.
  */
 #define chSysDisableAll() sys_disable_all()
 
 /**
- * Enters the ChibiOS/RT system mutual exclusion zone from within an interrupt
- * handler.
+ * Raises the system interrupt priority mask to system level.
+ * The interrupt sources that should not be able to preempt the kernel are
+ * disabled, interrupt sources with higher priority are still enabled.
+ * @note The implementation is architecture dependent, it may just disable the
+ *       interrupts.
+ * @note Do not invoke this API from within a kernel lock.
+ * @note This API is no replacement for @p chSysLock(), the @p chSysLock()
+ *       could do more than just disable the interrupts.
+ */
+#define chSysDisable() sys_disable()
+
+/**
+ * Lowers the system interrupt priority mask to user level.
+ * All the interrupt sources are enabled.
+ * @note The implementation is architecture dependent, it may just enable the
+ *       interrupts.
+ * @note Do not invoke this API from within a kernel lock.
+ * @note This API is no replacement for @p chSysUnlock(), the @p chSysUnlock()
+ *       could do more than just enable the interrupts.
+ */
+#define chSysEnable() sys_enable()
+
+/**
+ * Enters the kernel lock mode.
+ * @note The use of kernel lock mode is not recommended in the user code, it is
+ *       a better idea to use the semaphores or mutexes instead.
+ * @see CH_USE_NESTED_LOCKS
+ */
+#if defined(CH_USE_NESTED_LOCKS) || defined(__DOXYGEN__)
+#if defined(CH_OPTIMIZE_SPEED) || defined(__DOXYGEN__)
+#define chSysLock() {                                                   \
+  if (currp->p_locks++ == 0)                                            \
+    sys_lock();                                                         \
+}
+#endif /* defined(CH_OPTIMIZE_SPEED) */
+#else /* !defined(CH_USE_NESTED_LOCKS) */
+#define chSysLock() sys_lock()
+#endif /* !defined(CH_USE_NESTED_LOCKS) */
+
+/**
+ * Leaves the kernel lock mode.
+ * @note The use of kernel lock mode is not recommended in the user code, it is
+ *       a better idea to use the semaphores or mutexes instead.
+ * @see CH_USE_NESTED_LOCKS
+ */
+#if defined(CH_USE_NESTED_LOCKS) || defined(__DOXYGEN__)
+#if defined(CH_OPTIMIZE_SPEED) || defined(__DOXYGEN__)
+#define chSysUnlock() {                                                 \
+  if (--currp->p_locks == 0)                                            \
+    sys_unlock();                                                       \
+}
+#endif /* defined(CH_OPTIMIZE_SPEED) */
+#else /* !defined(CH_USE_NESTED_LOCKS) */
+#define chSysUnlock() sys_unlock()
+#endif /* !defined(CH_USE_NESTED_LOCKS) */
+
+/**
+ * Enters the kernel lock mode from within an interrupt handler.
  * @note This API may do nothing on some architectures, it is required because
  *       on ports that support preemptable interrupt handlers it is required to
  *       raise the interrupt mask to the same level of the system mutual
@@ -88,11 +126,10 @@
  *       syscall from an interrupt handler.
  * @note This API must be invoked exclusively from interrupt handlers.
  */
-#define chSysLockI() sys_disable_from_isr()
+#define chSysLockI() sys_lock_from_isr()
 
 /**
- * Leaves the ChibiOS/RT system mutual exclusion zone from within an interrupt
- * handler.
+ * Leaves the kernel lock mode from within an interrupt handler.
  * @note This API may do nothing on some architectures, it is required because
  *       on ports that support preemptable interrupt handlers it is required to
  *       raise the interrupt mask to the same level of the system mutual
@@ -101,47 +138,7 @@
  *       syscall from an interrupt handler.
  * @note This API must be invoked exclusively from interrupt handlers.
  */
-#define chSysUnlockI() sys_enable_from_isr()
-
-#if defined(CH_USE_NESTED_LOCKS) || defined(_DOXYGEN_)
-/**
- * Enters the ChibiOS/RT system mutual exclusion zone.
- * @note The use of system mutual exclusion zone is not recommended in
- *       the user code, it is a better idea to use the semaphores or mutexes
- *       instead.
- * @note The code of this API is always inlined regardless the
- *       @p CH_OPTIMIZE_SPEED setting. This function is meant to be used in
- *       places where the performance is always preferred.
- * @see CH_USE_NESTED_LOCKS
- */
-#define chSysLockInline() {                                             \
-  if (currp->p_locks == 0) {                                            \
-    currp->p_locks++;                                                   \
-    sys_disable();                                                      \
-  }                                                                     \
-}
-
-/**
- * Leaves the ChibiOS/RT system mutual exclusion zone.
- * @note The use of system mutual exclusion zone is not recommended in
- *       the user code, it is a better idea to use the semaphores or mutexes
- *       instead.
- * @note The code of this API is always inlined regardless the
- *       @p CH_OPTIMIZE_SPEED setting. This function is meant to be used in
- *       places where the performance is always preferred.
- * @see CH_USE_NESTED_LOCKS
- */
-#define chSysUnlockInline() {                                           \
-  if (--currp->p_locks == 0)                                            \
-    sys_enable();                                                       \
-}
-
-#else /* defined(CH_USE_NESTED_LOCKS) || defined(_DOXYGEN_) */
-
-#define chSysLockInline() sys_disable()
-#define chSysUnlockInline() sys_enable()
-
-#endif /* !defined(CH_USE_NESTED_LOCKS) && !defined(_DOXYGEN_) */
+#define chSysUnlockI() sys_unlock_from_isr()
 
 /**
  * IRQ handler enter code.
@@ -162,14 +159,6 @@
  * Standard modifier for IRQ handler functions.
  */
 #define CH_IRQ_HANDLER SYS_IRQ_HANDLER
-
-/*
- * Inlined code when CH_OPTIMIZE_SPEED is defined.
- */
-#if defined(CH_OPTIMIZE_SPEED)
-#define chSysLock() chSysLockInline()
-#define chSysUnlock() chSysUnlockInline()
-#endif /* defined(CH_OPTIMIZE_SPEED) */
 
 #ifdef __cplusplus
 extern "C" {

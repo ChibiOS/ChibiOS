@@ -80,11 +80,13 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   Port functions are no more directly exposed as APIs to the user code.
 - NEW: Added a configuration option to enable nested system locks/unlocks.
 - NEW: Improved the interrupt handlers related code. Now interrupts are
-  handled in a very similar way for every architecture.
+  handled in a very similar way in every architecture.
 - CHANGE: Renamed the macros chSysIRQEnter() and chSysIRQExit() in
   CH_IRQ_PROLOGUE() and CH_IRQ_EPILOGUE() in order to make very clear that
   those are not functions but inlined code. Also introduced a new macro
   CH_IRQ_HANDLER that should be used when declaring an interrupt handler.
+- Introduced the concept of interrupt classes, see the documentation.
+- Introduced the concept of system state, see the documentation.
 
 *** 1.0.0rc2 ***
 - FIX: Removed unused variable "retaddr" from the Cortex-M3 port.

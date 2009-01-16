@@ -62,17 +62,76 @@
  * @{
  * @section naming Naming Conventions
  * ChibiOS/RT APIs are all named following this convention:
- * \a ch\<group\>\<action\>\<suffix\>().
- * The possible groups are: \a Sys, \a Sch, \a VT, \a Thd, \a Sem, \a Mtx,
- * \a Evt, \a Msg, \a IQ, \a OQ, \a HQ,\a FDD, \a HDD, \a Dbg, \a Heap, \a Pool.
+ * @a ch\<group\>\<action\>\<suffix\>().
+ * The possible groups are: @a Sys, @a Sch, @a VT, @a Thd, @a Sem, @a Mtx,
+ * @a Cond, @a Evt, @a Msg, @a IQ, @a OQ, @a HQ, @a FDD, @a HDD, @a Dbg,
+ * @a Heap, @a Pool.
  * The suffix is not present for normal APIs but can be one of
- * the following: "I" for APIs meant to be invoked within the system mutex
- * zone, "S" for APIs only usable from within the system mutex zone but not
- * from interrupt handlers.<br>
- * The APIs without suffix can be invoked only from the user code outsize the
- * system mutex zone and not from interrupt handlers unless differently
- * specified.<br>
- * Examples: \p chThdCreateStatic(), \p chSemSignalI(), \p chIQGetTimeout().
+ * the following:
+ * - <b>"I"</b>, I-Class APIs are invokeable only from the I-Locked or S-Locked
+ *   states. See @ref system_states.
+ * - <b>"S"</b>, S-Class APIs are invokeable only from the S-Locked state. See
+ *   @ref system_states.
+ *
+ * The APIs without suffix can be invoked only from the user code in the Normal
+ * state unless differently specified.<br>
+ * Examples: @p chThdCreateStatic(), @p chSemSignalI(), @p chIQGetTimeout().
+ *
+ * @section interrupts Interrupt Classes
+ * In ChibiOS/RT there are three logical interrupt classes:
+ * - <b>Regular Interrupts</b>. Maskable interrupt sources that cannot
+ *   preempt the kernel code and are thus able to invoke operating system APIs
+ *   from within their handlers. The interrupt handlers belonging to this class
+ *   must be written following some rules. See the @ref System APIs group.
+ * - <b>Fast Interrupts</b>. Maskable interrupt sources with the ability
+ *   to preempt the kernel code and thus have a lower latency. Such sources are
+ *   not supported on all the architectures.<br>
+ *   Fast interrupts are not allowed to invoke any operating system API from
+ *   within their handlers. Fast interrupt sources may however pend a lower
+ *   priority regular interrupt where access to the operating system is
+ *   possible.
+ * - <b>Non Maskable Interrupts</b>. Non maskable interrupt sources are
+ *   totally out of the operating system control and have the lowest latency.
+ *   Such sources are not supported on all the architectures.
+ *
+ * The mapping of the above logical classes into physical interrupts priorities
+ * is, of course, port dependent. See the documentation of the various ports
+ * for details.
+ *
+ * @section system_states System States
+ * When using ChibiOS/RT the system can be in one of the following logical
+ * operating states:
+ * - <b>Initialization</b>. When the system is in this state all the maskable
+ *   interrupt sources are disabled. In this state it is not possible to use
+ *   any system API except @p chSysInit(). This state is entered after a
+ *   physical reset.
+ * - <b>All Disabled</b>. When the system is in this state both the maskable
+ *   regular and fast interrupt sources are disabled. In this state it is not
+ *   possible to use any system API except @p chSysDisable() or chSysEnable().
+ *   This state is entered using @p chSysDisableAll().
+ * - <b>Disabled</b>. In this state the fast interrupt sources are enabled but
+ *   the regular interrupt sources are not. In this state it is not possible
+ *   to use any system API except @p chSysDisableAll() or chSysEnable().
+ * - <b>Normal</b>. All the interrupt sources are enabled and the system APIs
+ *   are accessible, threads are running.
+ * - <b>S-Locked</b>. Kernel locked and regular interrupt sources disabled.
+ *   Fast interrupt sources are enabled. I-Class and S-Class APIs are
+ *   invokeable in this state.
+ * - <b>I-Locked</b>. Kernel locked and regular interrupt sources disabled.
+ *   I-Class and APIs are invokeable from this state.
+ * - <b>Serving Regular Interrupt</b>. No system APIs are accessible but it is
+ *   possible to switch to the I-Locked state using @p chSysLockI() and then
+ *   invoke any I-Class API.
+ * - <b>Serving Fast Interrupt</b>. No system APIs are accessible.
+ * - <b>Serving Non-Maskable Interrupt</b>. No systemAPIs are accessible.
+ * - <b>Halted</b>. All interrupt sources disabled and system stopped into an
+ *   infinite loop. This state can be reached if the debug mode is activated
+ *   <b>and</b> an error is detected <b>or</b> after explicitly invoking
+ *   @p chSysHalt().
+ *
+ * Note that the above state are just <b>Logical States</b> that can have no
+ * real machine state associated. The following diagram shows the possible
+ * transitions between the states:
  *
  * @section scheduling Scheduling
  * The strategy is very simple the currently ready thread with the highest
@@ -84,18 +143,38 @@
  * Note that the currently running thread is not in the ready list, the list
  * only contains the threads ready to be executed but still actually waiting.
  *
- * @section states Threads States Diagram
+ * @section thread_states Threads States
  * The image shows how threads can change their state in ChibiOS/RT.<br>
  * @image html states.png
+ *
+ * @section priority Priority Levels
+ * Priorities in ChibiOS/RT are a contiguous numerical range but the initial
+ * and final values are not enforced.<br>
+ * The following table describes the various priority boundaries (from lowest
+ *   to highest):
+ * - @p IDLEPRIO, this is the lowest priority level and is reserved for the
+ *   idle thread, no other threads should share this priority level. This is
+ *   the lowest numerical value of the priorities space.
+ * - @p LOWPRIO, the lowest priority level that can be assigned to an user
+ *   thread.
+ * - @p NORMALPRIO, this is the central priority level for user threads. It is
+ *   advisable to assign priorities to threads as values relative to
+ *   @p NORMALPRIO, as example NORMALPRIO-1 or NORMALPRIO+4, this ensures the
+ *   portability of code should the numerical range change in future
+ *   implementations.
+ * - @p HIGHPRIO, the highest priority level that can be assigned to an user
+ *   thread.
+ * - @p ABSPRO, absolute maximum software priority level, it can be higher than
+ *   @p HIGHPRIO but the numerical values above @p HIGHPRIO up to @p ABSPRIO
+ *   (inclusive) are reserved. This is the highest numerical value of the
+ *   priorities space.
  *
  * @section warea Thread Working Area
  * Each thread has its own stack, a Thread structure and some preemption
  * areas. All the structures are allocated into a "Thread working area",
- * a thread private heap, usually allocated in a char array declared in your
- * code, there is not a central threads table or list, this means you can
- * have as many threads you want as long you have enough available RAM
- * memory. The threads do not use any memory outside the allocated working
- * area.<br><br>
+ * a thread private heap, usually allocated in an array declared in your
+ * code. Threads do not use any memory outside the allocated working area
+ * except when accessing static shared data.<br><br>
  * @image html workspace.png
  * <br>
  * Note that the preemption area is only present when the thread is not
@@ -109,28 +188,6 @@
  *
  * See the @ref Core documentation for details, the area may change on
  * the various ports and some structures may not be present (or be zero-sized).
- *
- * @section sysmutex System Mutex Zone
- * It is the code within the OS that cannot be preempted, this code is
- * everything between the \p chSysLock() and \p chSysUnlock() API calls.
- * The implementation of the APIs in most cases just enables/disables the
- * interrupts. Of course the code in the system mutex zone must be as short
- * and efficient possible as it affects the RT performance of the whole
- * system. The worst case response time is affected by the longest code
- * path in the system mutex zone or interrupt handler.
- * @code
- * // User code, not critical, preemption possible.
- * chSysLock();
- * ...
- * // System critical code, preemption delayed.
- * ...
- * chSysUnlock();
- * // User code, preemption possible again.
- * @endcode
- * Applications usually do not need to put code into the system mutex zone
- * unless you are implementing device drivers or special synchronization
- * primitives, everything else can be implemented by using semaphores,
- * mutexes, messages or events.
  */
 /** @} */
 
@@ -163,7 +220,7 @@
  * <p>
  * The ARM7 port makes some assumptions on the application code organization:
  * <ul>
- * <li>The \p main() function is invoked in system mode.</li>
+ * <li>The @p main() function is invoked in system mode.</li>
  * <li>Each thread has a private user/system stack, the system has a single
  *     interrupt stack where all the interrupts are processed.</li>
  * <li>The threads are started in system mode.</li>
@@ -186,7 +243,7 @@
  *     because in the ARM7 port all the OS interrupt handlers are declared
  *     naked).<br>
  *     Function-trashed registers (R0-R3,R12,LR,SR) are saved/restored by the
- *     system macros \p chSysIRQEnterI() and \p chSysIRQExitI().<br>
+ *     system macros @p chSysIRQEnterI() and @p chSysIRQExitI().<br>
  *     The easiest way to ensure this is to just invoke a function from within
  *     the interrupt handler, the function code will save all the required
  *     registers.<br>
@@ -280,7 +337,7 @@
  * The ARM Cortex-M3 port is organized as follow:
  * </p>
  * <ul>
- * <li>The \p main() function is invoked in thread-privileged mode.</li>
+ * <li>The @p main() function is invoked in thread-privileged mode.</li>
  * <li>Each thread has a private process stack, the system has a single main
  *     stack where all the interrupts and exceptions are processed.</li>
  * <li>Only the 4 MSb of the priority level are used, the 4 LSb are assumed
@@ -359,7 +416,7 @@
  * <ul>
  * <li>The AVR does not have a dedicated interrupt stack, make sure to reserve
  *     enough stack space for interrupts in each thread stack. This can be done
- *     by modifying the \p INT_REQUIRED_STACK macro into
+ *     by modifying the @p INT_REQUIRED_STACK macro into
  *     <b>./ports/AVR/chcore.h</b>.</li>
  * </ul>
  * @ingroup Ports
@@ -393,7 +450,7 @@
  * <ul>
  * <li>The MSP430 does not have a dedicated interrupt stack, make sure to reserve
  *     enough stack space for interrupts in each thread stack. This can be done
- *     by modifying the \p INT_REQUIRED_STACK macro into
+ *     by modifying the @p INT_REQUIRED_STACK macro into
  *     <b>./ports/MSP430/chcore.h</b>.</li>
  * </ul>
  * @ingroup Ports
@@ -421,13 +478,14 @@
 /**
  * @defgroup Kernel Kernel
  * @{
+ * @file ch.h ChibiOS/RT main include file, it includes everything else.
  */
 /** @} */
 
 /**
  * @defgroup Config Configuration
  * @{
- * In \p chconf.h are defined the required subsystems for your application.
+ * In @p chconf.h are defined the required subsystems for your application.
  * @ingroup Kernel
  * @file chconf.h ChibiOS/RT configuration file.
  */
@@ -453,21 +511,22 @@
 /** @} */
 
 /**
+ * @defgroup System System Management
+ * @{
+ * Initialization, Locks, Interrupt Handling, Power Management, Abnormal
+ * Termination.
+ * @ingroup Kernel
+ * @file sys.h System related macros and structures.
+ * @file chsys.c System related code.
+ */
+/** @} */
+
+/**
  * @defgroup Inline Inline
  * @{
  * System inline-able code.
  * @ingroup Kernel
  * @file inline.h Inline versions of some critical system routines.
- */
-/** @} */
-
-/**
- * @defgroup Initialization Initialization
- * @{
- * Initialization APIs and procedures.
- * @ingroup Kernel
- * @file ch.h ChibiOS/RT main include file, it includes everything else.
- * @file chinit.c ChibiOS/RT Initialization code.
  */
 /** @} */
 
@@ -525,13 +584,13 @@
  * Heap Allocator related APIs.
  * <b>Operation mode</b><br><br>
  * The heap allocator implements a first-fit strategy and its APIs are
- * functionally equivalent to the usual \p malloc() and \p free(). The main
+ * functionally equivalent to the usual @p malloc() and @p free(). The main
  * difference is that the heap APIs are thread safe.<br>
- * By enabling the \p CH_USE_MALLOC_HEAP option the heap manager will use the
- * runtime-provided \p malloc() and \p free() as backend for the heap APIs
+ * By enabling the @p CH_USE_MALLOC_HEAP option the heap manager will use the
+ * runtime-provided @p malloc() and @p free() as backend for the heap APIs
  * instead of the system provided allocator.<br>
- * In order to use the heap APIs the \p CH_USE_HEAP option must be specified
- * in \p chconf.h.
+ * In order to use the heap APIs the @p CH_USE_HEAP option must be specified
+ * in @p chconf.h.
  * @file include/heap.h Heap macros and structures.
  * @file chheap.c Heap functions.
  */
@@ -544,8 +603,8 @@
  * <b>Operation mode</b><br><br>
  * The Memory Pools APIs allow to allocate/free fixed size objects in
  * <b>constant time</b> and reliably without memory fragmentation problems.<br>
- * In order to use the Time APIs the \p CH_USE_MEMPOOLS option must be
- * specified in \p chconf.h.
+ * In order to use the Time APIs the @p CH_USE_MEMPOOLS option must be
+ * specified in @p chconf.h.
  * @file include/mempools.h Memory Pools macros and structures.
  * @file chmempools.c Memory Pools functions.
  */
@@ -572,8 +631,8 @@
  * </ul>
  * Semaphores can be used as guards for mutual exclusion code zones but
  * also have other uses, queues guards and counters as example.<br>
- * In order to use the Semaphores APIs the \p CH_USE_SEMAPHORES
- * option must be specified in \p chconf.h.<br><br>
+ * In order to use the Semaphores APIs the @p CH_USE_SEMAPHORES
+ * option must be specified in @p chconf.h.<br><br>
  * @file semaphores.h Semaphores macros and structures.
  * @file chsem.c Semaphores code.
  */
@@ -596,8 +655,8 @@
  *     of the mutex.
  *   </li>
  * </ul>
- * In order to use the Event APIs the \p CH_USE_MUTEXES option must be
- * specified in \p chconf.h.<br>
+ * In order to use the Event APIs the @p CH_USE_MUTEXES option must be
+ * specified in @p chconf.h.<br>
  *
  * <b>Constraints</b><br><br>
  * In ChibiOS/RT the Unlock operations are always performed in Lock-reverse
@@ -625,10 +684,10 @@
  * Conditional Variables and threads synchronization.
  * <b>Operation mode</b><br><br>
  * The condition variable is a synchronization object meant to be used inside
- * a zone protected by a \p Mutex. Mutexes and CondVars together can implement
+ * a zone protected by a @p Mutex. Mutexes and CondVars together can implement
  * a Monitor construct.<br>
- * In order to use the Conditional Variables APIs the \p CH_USE_CONDVARS
- * option must be specified in \p chconf.h.<br><br>
+ * In order to use the Conditional Variables APIs the @p CH_USE_CONDVARS
+ * option must be specified in @p chconf.h.<br><br>
  * @file condvars.h Conditional Variables macros and structures.
  * @file chcond.c Conditional Variables code.
  */
@@ -646,12 +705,12 @@
  * An unlimited number of Event Sources can exists in a system and each
  * thread can listen on an unlimited number of them.<br>
  * Note that the events can be asynchronously generated but are synchronously
- * served, a thread can serve event by calling a \p chEvtWaitXXX()
+ * served, a thread can serve event by calling a @p chEvtWaitXXX()
  * API. If an event is generated while a listening thread is not ready to
  * serve it then the event becomes "pending" and will be served as soon the
- * thread invokes a \p chEvtWaitXXX().<br>
- * In order to use the Event APIs the \p CH_USE_EVENTS option must be
- * specified in \p chconf.h.
+ * thread invokes a @p chEvtWaitXXX().<br>
+ * In order to use the Event APIs the @p CH_USE_EVENTS option must be
+ * specified in @p chconf.h.
  * @file events.h Events macros and structures.
  * @file chevents.c Events functions.
  */
@@ -669,12 +728,12 @@
  * efficient.<br>
  * Messages are usually processed in FIFO order but it is possible to process
  * them in priority order by specifying CH_USE_MESSAGES_PRIORITY
- * in \p chconf.h.<br>
+ * in @p chconf.h.<br>
  * Threads do not need to allocate space for message queues, the mechanism
- * just requires two extra pointers in the \p Thread structure (the message
+ * just requires two extra pointers in the @p Thread structure (the message
  * queue header).<br>
- * In order to use the Messages APIs the \p CH_USE_MESSAGES option must be
- * specified in \p chconf.h.
+ * In order to use the Messages APIs the @p CH_USE_MESSAGES option must be
+ * specified in @p chconf.h.
  * @file messages.h	Messages macros and structures.
  * @file chmsg.c Messages functions.
  */
@@ -702,10 +761,10 @@
  *     operations can happen at the same time. Full duplex queues
  *     are implemented by pairing an input queue and an output queue together.
  * </ul>
- * In order to use the I/O queues the \p CH_USE_QUEUES option must
- * be specified in \p chconf.h.<br>
- * In order to use the half duplex queues the \p CH_USE_QUEUES_HALFDUPLEX
- * option must be specified in \p chconf.h.
+ * In order to use the I/O queues the @p CH_USE_QUEUES option must
+ * be specified in @p chconf.h.<br>
+ * In order to use the half duplex queues the @p CH_USE_QUEUES_HALFDUPLEX
+ * option must be specified in @p chconf.h.
  * @file queues.h I/O Queues macros and structures.
  * @file chqueues.c I/O Queues code.
  */
@@ -721,9 +780,9 @@
  * The  module also contains functions that make the implementation of the
  * interrupt service routines much easier.<br>
  * In order to use the serial full duplex driver the
- * \p CH_USE_SERIAL_FULLDUPLEX option must be specified in \p chconf.h.<br>
+ * @p CH_USE_SERIAL_FULLDUPLEX option must be specified in @p chconf.h.<br>
  * In order to use the serial half duplex driver the
- * \p CH_USE_SERIAL_HALFDUPLEX option must be specified in \p chconf.h.
+ * @p CH_USE_SERIAL_HALFDUPLEX option must be specified in @p chconf.h.
  * @file serial.h Serial Drivers macros and structures.
  * @file chserial.c Serial Drivers code.
  */

@@ -52,6 +52,7 @@ static void idle_thread(void *p) {
 void chSysInit(void) {
   static Thread mainthread;
 
+  sys_init();
   chSchInit();
   chDbgInit();
   chVTInit();
@@ -94,37 +95,20 @@ void chSysTimerHandlerI(void) {
   chVTDoTickI();
 }
 
-#if !defined(CH_OPTIMIZE_SPEED)
-/**
- * Enters the ChibiOS/RT system mutual exclusion zone.
- * @note The use of system mutual exclusion zone is not recommended in
- *       the user code, it is a better idea to use the semaphores or mutexes
- *       instead.
- * @note The code of this API is may be inlined or not depending on the
- *       @p CH_OPTIMIZE_SPEED setting.
- * @see CH_USE_NESTED_LOCKS, chSysLockInline()
- */
+#if defined(CH_USE_NESTED_LOCKS) && !defined(CH_OPTIMIZE_SPEED)
 void chSysLock(void) {
 
-  chSysLockInline();
+  chDbgAssert(currp->p_locks >= 0, "chinit.c, chSysLock()");
+  if (currp->p_locks++ == 0)
+    sys_lock();
 }
 
-/**
- * Leaves the ChibiOS/RT system mutual exclusion zone.
- * @note The use of system mutual exclusion zone is not recommended in
- *       the user code, it is a better idea to use the semaphores or mutexes
- *       instead.
- * @note The code of this API is may be inlined or not depending on the
- *       @p CH_OPTIMIZE_SPEED setting.
- * @see CH_USE_NESTED_LOCKS, chSysUnlockInline()
- */
 void chSysUnlock(void) {
 
-#ifdef CH_USE_NESTED_LOCKS
   chDbgAssert(currp->p_locks > 0, "chinit.c, chSysUnlock()");
-#endif
-  chSysUnlockInline();
+  if (--currp->p_locks == 0)
+    sys_unlock();
 }
-#endif /* !CH_OPTIMIZE_SPEED */
+#endif /* defined(CH_USE_NESTED_LOCKS) && !defined(CH_OPTIMIZE_SPEED) */
 
 /** @} */

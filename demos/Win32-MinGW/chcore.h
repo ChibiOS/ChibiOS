@@ -144,6 +144,16 @@ typedef struct {
 #define SYS_IRQ_HANDLER
 
 /**
+ * Simulator initialization.
+ */
+#define sys_init() InitCore()
+
+/**
+ * Does nothing in this simulator.
+ */
+#define sys_disable_all()
+
+/**
  * Does nothing in this simulator.
  */
 #define sys_disable()
@@ -156,17 +166,22 @@ typedef struct {
 /**
  * Does nothing in this simulator.
  */
-#define sys_disable_from_isr()
+#define sys_lock()
 
 /**
  * Does nothing in this simulator.
  */
-#define sys_enable_from_isr()
+#define sys_unlock()
 
 /**
  * Does nothing in this simulator.
  */
-#define sys_disable_all()
+#define sys_lock_from_isr()
+
+/**
+ * Does nothing in this simulator.
+ */
+#define sys_unlock_from_isr()
 
 /**
  * In the simulator this does a polling pass on the simulated interrupt
