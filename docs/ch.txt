@@ -135,8 +135,8 @@
  *   <b>and</b> an error is detected <b>or</b> after explicitly invoking
  *   @p chSysHalt().
  *
- * Note that the above state are just <b>Logical States</b> that can have no
- * real machine state associated on some architectures. The following diagram
+ * Note that the above state are just <b>Logical States</b> that may have no
+ * real associated machine state on some architectures. The following diagram
  * shows the possible transitions between the states:
  *
  * @dot
