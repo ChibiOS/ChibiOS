@@ -44,30 +44,8 @@
 .balign 16
 .code 16
 .thumb_func
-.global _sys_disable_thumb
-_sys_disable_thumb:
-        mov     r0, pc
-        bx      r0
-.code 32
-        msr     CPSR_c, #MODE_SYS | I_BIT
-        bx      lr
-
-.balign 16
-.code 16
-.thumb_func
-.global _sys_enable_thumb
-_sys_enable_thumb:
-        mov     r0, pc
-        bx      r0
-.code 32
-        msr     CPSR_c, #MODE_SYS
-        bx      lr
-
-.balign 16
-.code 16
-.thumb_func
-.global _sys_disable_all_thumb
-_sys_disable_all_thumb:
+.global _port_disable_all_thumb
+_port_disable_all_thumb:
         mov     r0, pc
         bx      r0
 .code 32
@@ -77,21 +55,48 @@ _sys_disable_all_thumb:
         orr     r0, #F_BIT
         msr     CPSR_c, r0
         bx      lr
+
+.balign 16
+.code 16
+.thumb_func
+.global _port_suspend_thumb
+_port_disable_thumb:
+.global _port_lock_thumb
+_port_lock_thumb:
+        mov     r0, pc
+        bx      r0
+.code 32
+        msr     CPSR_c, #MODE_SYS | I_BIT
+        bx      lr
+
+.balign 16
+.code 16
+.thumb_func
+.global _port_enable_thumb
+_port_enable_thumb:
+.global _port_unlock_thumb
+_port_unlock_thumb:
+        mov     r0, pc
+        bx      r0
+.code 32
+        msr     CPSR_c, #MODE_SYS
+        bx      lr
+
 #endif
 
 .balign 16
 #ifdef THUMB_PRESENT
 .code 16
 .thumb_func
-.global _sys_switch_thumb
-_sys_switch_thumb:
+.global _port_switch_thumb
+_port_switch_thumb:
         mov     r2, pc
         bx      r2
-        // Jumps into _sys_switch_arm in ARM mode
+        // Jumps into _port_switch_arm in ARM mode
 #endif
 .code 32
-.global _sys_switch_arm
-_sys_switch_arm:
+.global _port_switch_arm
+_port_switch_arm:
 #ifdef CH_CURRP_REGISTER_CACHE
         stmfd   sp!, {r4, r5, r6, r8, r9, r10, r11, lr}
         str     sp, [r0, #16]
@@ -145,16 +150,16 @@ _sys_switch_arm:
 #ifdef THUMB_NO_INTERWORKING
 .code 16
 .thumb_func
-.globl _sys_irq_common
-_sys_irq_common:
+.globl _port_irq_common
+_port_irq_common:
         bl      chSchRescRequiredI
         mov     lr, pc
         bx      lr
 .code 32
 #else /* !THUMB_NO_INTERWORKING */
 .code 32
-.globl _sys_irq_common
-_sys_irq_common:
+.globl _port_irq_common
+_port_irq_common:
         bl      chSchRescRequiredI
 #endif /* !THUMB_NO_INTERWORKING */
         cmp     r0, #0                          // Simply returns if a
@@ -200,8 +205,8 @@ _sys_irq_common:
  */
 .balign 16
 .code 32
-.globl _sys_thread_start
-_sys_thread_start:
+.globl _port_thread_start
+_port_thread_start:
         msr     CPSR_c, #MODE_SYS
 #ifndef THUMB_NO_INTERWORKING
         mov     r0, r5

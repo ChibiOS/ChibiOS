@@ -123,7 +123,7 @@ bssloop:
         mov     r0, #0
         mov     r1, r0
         bl      main
-        bl      sys_halt
+        bl      port_halt
 #else
         add     r0, pc, #1
         bx      r0
@@ -132,7 +132,7 @@ bssloop:
         mov     r0, #0
         mov     r1, r0
         bl      main
-        bl      sys_halt
+        bl      port_halt
 .code 32
 #endif
 

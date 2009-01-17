@@ -99,7 +99,7 @@ typedef struct {
                                      sizeof(struct intctx));            \
   tp->p_ctx.r13->r4 = pf;                                               \
   tp->p_ctx.r13->r5 = arg;                                              \
-  tp->p_ctx.r13->lr = _sys_thread_start;                                \
+  tp->p_ctx.r13->lr = _port_thread_start;                                \
 }
 
 /**
@@ -149,15 +149,15 @@ typedef struct {
  *       it is transparent to the user code.
  */
 #ifdef THUMB
-#define SYS_IRQ_PROLOGUE() {                                            \
-  asm volatile (".code 32                                 \n\t"         \
-                "stmfd    sp!, {r0-r3, r12, lr}           \n\t"         \
-                "add      r0, pc, #1                      \n\t"         \
-                "bx       r0                              \n\t"         \
+#define PORT_IRQ_PROLOGUE() {                                           \
+  asm volatile (".code 32                               \n\t"           \
+                "stmfd   sp!, {r0-r3, r12, lr}          \n\t"           \
+                "add     r0, pc, #1                     \n\t"           \
+                "bx      r0                             \n\t"           \
                 ".code 16");                                            \
 }
 #else /* THUMB */
-#define SYS_IRQ_PROLOGUE() {                                            \
+#define PORT_IRQ_PROLOGUE() {                                           \
   asm volatile ("stmfd    sp!, {r0-r3, r12, lr}");                      \
 }
 #endif /* !THUMB */
@@ -169,100 +169,115 @@ typedef struct {
  *       ARM or THUMB mode.
  */
 #ifdef THUMB
-#define SYS_IRQ_EPILOGUE() {                                            \
-  asm volatile ("ldr      r0, =_sys_irq_common            \n\t"         \
-                "bx       r0");                                         \
+#define PORT_IRQ_EPILOGUE() {                                           \
+  asm volatile ("ldr     r0, =_port_irq_common          \n\t"           \
+                "bx      r0");                                          \
 }
 #else /* THUMB */
-#define SYS_IRQ_EPILOGUE() {                                            \
-  asm volatile ("b        _sys_irq_common");                            \
+#define PORT_IRQ_EPILOGUE() {                                           \
+  asm volatile ("b       _port_irq_common");                            \
 }
 #endif /* !THUMB */
 
 /**
  * IRQ handler function modifier.
  */
-#define SYS_IRQ_HANDLER __attribute__((naked))
+#define PORT_IRQ_HANDLER __attribute__((naked))
+
+/**
+ * This function is empty in this port.
+ */
+#define port_init()
+
+/**
+ * Disables the IRQ sources and keeps the FIQ sources enabled.
+ */
+#ifdef THUMB
+#define port_lock() _port_lock_thumb()
+#else /* THUMB */
+#define port_lock() asm volatile ("msr     CPSR_c, #0x9F")
+#endif /* !THUMB */
+
+/**
+ * Enables both the IRQ and FIQ sources.
+ */
+#ifdef THUMB
+#define port_unlock() _port_unlock_thumb()
+#else /* THUMB */
+#define port_unlock() asm volatile ("msr     CPSR_c, #0x1F")
+#endif /* !THUMB */
+
+/**
+ * This function is empty in this port.
+ */
+#define port_lock_from_isr()
+
+/**
+ * This function is empty in this port.
+ */
+#define port_unlock_from_isr()
+
+/**
+ * Disables both the IRQ and FIQ sources.
+ */
+#ifdef THUMB
+#define port_disable() _port_disable_thumb()
+#else /* THUMB */
+#define port_disable() {                                                \
+  asm volatile ("mrs     r3, CPSR                       \n\t"           \
+                "orr     r3, #0x80                      \n\t"           \
+                "msr     CPSR_c, r3                     \n\t"           \
+                "orr     r3, #0x40                      \n\t"           \
+                "msr     CPSR_c, r3" : : : "r3");                       \
+}
+#endif /* !THUMB */
+
+/**
+ * Disables the IRQ sources and enables the FIQ sources.
+ */
+#ifdef THUMB
+#define port_suspend() _port_suspend_thumb()
+#else /* THUMB */
+#define port_suspend() asm volatile ("msr     CPSR_c, #0x9F")
+#endif /* !THUMB */
+
+/**
+ * Enables both the IRQ and FIQ sources.
+ */
+#ifdef THUMB
+#define port_enable() _port_enable_thumb()
+#else /* THUMB */
+#define port_enable() asm volatile ("msr     CPSR_c, #0x1F")
+#endif /* !THUMB */
 
 /**
  * Performs a context switch between two threads.
  * @param otp the thread to be switched out
  * @param ntp the thread to be switched in
- * @note This macro has a different implementation depending if compiled in
- *       ARM or THUMB mode.
- * @note This macro assumes to be invoked in ARM system mode.
  */
 #ifdef THUMB
-#define sys_switch(otp, ntp) _sys_switch_thumb(otp, ntp)
+#define port_switch(otp, ntp) _port_switch_thumb(otp, ntp)
 #else /* THUMB */
-#define sys_switch(otp, ntp) _sys_switch_arm(otp, ntp)
-#endif /* !THUMB */
-
-/**
- * In this port this macro disables the IRQ sources.
- * @note This macro has a different implementation depending if compiled in
- *       ARM or THUMB mode.
- * @note This macro assumes to be invoked in ARM system mode.
- */
-#ifdef THUMB
-#define sys_disable() _sys_disable_thumb()
-#else /* THUMB */
-#define sys_disable() asm volatile ("msr     CPSR_c, #0x9F")
-#endif /* !THUMB */
-
-/**
- * This port function is implemented as inlined code for performance reasons.
- * @note This macro has a different implementation depending if compiled in
- *       ARM or THUMB mode.
- * @note This macro assumes to be invoked in ARM system mode.
- */
-#ifdef THUMB
-#define sys_enable() _sys_enable_thumb()
-#else /* THUMB */
-#define sys_enable() asm volatile ("msr     CPSR_c, #0x1F")
-#endif /* !THUMB */
-
-/**
- * This function is empty in this port.
- */
-#define sys_disable_from_isr()
-
-/**
- * This function is empty in this port.
- */
-#define sys_enable_from_isr()
-
-/**
- * Disables all the interrupt sources, even those having a priority higher
- * to the kernel.
- * In the ARM7 port this code disables both IRQ and FIQ sources.
- */
-#ifdef THUMB
-#define sys_disable_all() _sys_disable_all_thumb()
-#else /* THUMB */
-#define sys_disable_all() {                                             \
-  asm volatile ("mrs     r3, CPSR                         \n\t"         \
-                "orr     r3, #0x80                        \n\t"         \
-                "msr     CPSR_c, r3                       \n\t"         \
-                "orr     r3, #0x40                        \n\t"         \
-                "msr     CPSR_c, r3" : : : "r3");                       \
-}
+#define port_switch(otp, ntp) _port_switch_arm(otp, ntp)
 #endif /* !THUMB */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sys_puts(char *msg);
-  void sys_wait_for_interrupt(void);
-  void sys_halt(void);
-  void _sys_enable_thumb(void);
-  void _sys_disable_thumb(void);
+  void port_puts(char *msg);
+  void port_wait_for_interrupt(void);
+  void port_halt(void);
 #ifdef THUMB
-  void _sys_switch_thumb(Thread *otp, Thread *ntp);
+  void _port_lock_thumb(void);
+  void _port_unlock_thumb(void);
+  void _port_disable_thumb(void);
+  void _port_suspend_thumb(void);
+  void _port_enable_thumb(void);
+  void _port_switch_thumb(Thread *otp, Thread *ntp);
 #else /* THUMB */
-  void _sys_switch_arm(Thread *otp, Thread *ntp);
+  void _port_switch_arm(Thread *otp, Thread *ntp);
 #endif /* !THUMB */
-  void _sys_thread_start(void);
+  void _port_thread_start(void);
 #ifdef __cplusplus
 }
 #endif

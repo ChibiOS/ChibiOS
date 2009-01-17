@@ -38,7 +38,7 @@
  * @param msg pointer to the message
  */
 __attribute__((weak))
-void sys_puts(char *msg) {
+void port_puts(char *msg) {
 }
 
 /**
@@ -46,7 +46,7 @@ void sys_puts(char *msg) {
  * when an interrupt becomes pending.
  */
 __attribute__((weak))
-void sys_wait_for_interrupt(void) {
+void port_wait_for_interrupt(void) {
 
 #if ENABLE_WFI_IDLE != 0
   PCON = 1;
@@ -57,9 +57,9 @@ void sys_wait_for_interrupt(void) {
  * Halts the system.
  */
 __attribute__((weak))
-void sys_halt(void) {
+void port_halt(void) {
 
-  sys_disable_all();
+  port_disable();
   while (TRUE) {
   }
 }

@@ -113,34 +113,34 @@ typedef struct {
  * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
  * invoke system APIs.
  */
-#define SYS_IRQ_PROLOGUE()
+#define PORT_IRQ_PROLOGUE()
 
 /**
  * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
  * invoke system APIs.
  */
-#define SYS_IRQ_EPILOGUE()
+#define PORT_IRQ_EPILOGUE()
 
 /**
  * IRQ handler function modifier.
  */
-#define SYS_IRQ_HANDLER
+#define PORT_IRQ_HANDLER
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sys_init(void);
-  void sys_disable(void);
-  void sys_suspend(void);
-  void sys_enable(void);
-  void sys_lock(void);
-  void sys_unlock(void);
-  void sys_disable_from_isr(void);
-  void sys_enable_from_isr(void);
-  void sys_wait_for_interrupt(void);
-  void sys_halt(void);
-  void sys_switch(Thread *otp, Thread *ntp);
-  void sys_puts(char *msg);
+  void port_init(void);
+  void port_lock(void);
+  void port_unlock(void);
+  void port_lock_from_isr(void);
+  void port_unlock_from_isr(void);
+  void port_disable(void);
+  void port_suspend(void);
+  void port_enable(void);
+  void port_wait_for_interrupt(void);
+  void port_halt(void);
+  void port_switch(Thread *otp, Thread *ntp);
+  void port_puts(char *msg);
 #ifdef __cplusplus
 }
 #endif

@@ -35,21 +35,21 @@
  * Port-related initialization code.
  * @note This function is usually empty.
  */
-void sys_init(void){
+void port_init(void){
 }
 
 /**
  * Kernel-unlock action. Usually this function just disables interrupts but
  * may perform more actions.
  */
-void sys_lock(void) {
+void port_lock(void) {
 }
 
 /**
  * Kernel-unlock action. Usually this function just disables interrupts but
  * may perform more actions.
  */
-void sys_unlock(void) {
+void port_unlock(void) {
 }
 
 /**
@@ -57,7 +57,7 @@ void sys_unlock(void) {
  * before invoking I-class APIs from interrupt handlers. The implementation
  * is architecture dependent, in its simplest form it is void.
  */
-void sys_lock_from_isr(void) {
+void port_lock_from_isr(void) {
 }
 
 /**
@@ -65,26 +65,26 @@ void sys_lock_from_isr(void) {
  * after invoking I-class APIs from interrupt handlers. The implementation
  * is architecture dependent, in its simplest form it is void.
  */
-void sys_unlock_from_isr(void) {
+void port_unlock_from_isr(void) {
 }
 
 /**
  * Disables all the interrupt sources.
  * @note Of course non maskable interrupt sources are not included.
  */
-void sys_disable() {
+void port_disable() {
 }
 
 /**
  * Disables the interrupt sources that are not supposed to preempt the kernel.
  */
-void sys_suspend(void) {
+void port_suspend(void) {
 }
 
 /**
  * Enables all the interrupt sources.
  */
-void sys_enable(void) {
+void port_enable(void) {
 }
 
 /**
@@ -93,7 +93,7 @@ void sys_enable(void) {
  * function but this will not take advantage of architecture-specific power
  * saving modes.
  */
-void sys_wait_for_interrupt(void) {
+void port_wait_for_interrupt(void) {
 }
 
 /**
@@ -101,9 +101,9 @@ void sys_wait_for_interrupt(void) {
  * unrecoverable error is detected (as example because a programming error in
  * the application code that triggers an assertion while in debug mode).
  */
-void sys_halt(void) {
+void port_halt(void) {
 
-  sys_disable_all();
+  port_disable_all();
   while (TRUE) {
   }
 }
@@ -113,14 +113,14 @@ void sys_halt(void) {
  * @param otp the thread to be switched out
  * @param ntp the thread to be switched in
  */
-void sys_switch(Thread *otp, Thread *ntp) {
+void port_switch(Thread *otp, Thread *ntp) {
 }
 
 /**
  * Prints a message on the system console.
  * @param msg pointer to the message
  */
-void sys_puts(char *msg) {
+void port_puts(char *msg) {
 }
 
 /** @} */

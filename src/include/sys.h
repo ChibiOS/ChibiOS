@@ -29,14 +29,14 @@
  * Prints a message on the system console (if any).
  * @param msg the message to be printed on the system console
  */
-#define chSysPuts(msg) sys_puts(msg)
+#define chSysPuts(msg) port_puts(msg)
 
 /**
  * Halts the system. This function is invoked by the operating system when an
  * unrecoverable error is detected (as example because a programming error in
  * the application code that triggers an assertion while in debug mode).
  */
-#define chSysHalt() sys_halt()
+#define chSysHalt() port_halt()
 
 /**
  * Performs a context switch.
@@ -47,7 +47,7 @@
  * @note The implementation of this code affects <b>directly</b> the context
  *       switch performance so optimize here as much as you can.
  */
-#define chSysSwitchI(otp, ntp) sys_switch(otp, ntp)
+#define chSysSwitchI(otp, ntp) port_switch(otp, ntp)
 
 /**
  * Raises the system interrupt priority mask to the maximum level.
@@ -57,7 +57,7 @@
  *       interrupts or be exactly equivalent to @p chSysDisable().
  * @note Do not invoke this API from within a kernel lock.
  */
-#define chSysDisable() sys_disable()
+#define chSysDisable() port_disable()
 
 /**
  * Raises the system interrupt priority mask to system level.
@@ -69,7 +69,7 @@
  * @note This API is no replacement for @p chSysLock(), the @p chSysLock()
  *       could do more than just disable the interrupts.
  */
-#define chSysSuspend() sys_suspend()
+#define chSysSuspend() port_suspend()
 
 /**
  * Lowers the system interrupt priority mask to user level.
@@ -80,7 +80,7 @@
  * @note This API is no replacement for @p chSysUnlock(), the @p chSysUnlock()
  *       could do more than just enable the interrupts.
  */
-#define chSysEnable() sys_enable()
+#define chSysEnable() port_enable()
 
 /**
  * Enters the kernel lock mode.
@@ -92,11 +92,11 @@
 #if defined(CH_OPTIMIZE_SPEED) || defined(__DOXYGEN__)
 #define chSysLock() {                                                   \
   if (currp->p_locks++ == 0)                                            \
-    sys_lock();                                                         \
+    port_lock();                                                         \
 }
 #endif /* defined(CH_OPTIMIZE_SPEED) */
 #else /* !defined(CH_USE_NESTED_LOCKS) */
-#define chSysLock() sys_lock()
+#define chSysLock() port_lock()
 #endif /* !defined(CH_USE_NESTED_LOCKS) */
 
 /**
@@ -109,11 +109,11 @@
 #if defined(CH_OPTIMIZE_SPEED) || defined(__DOXYGEN__)
 #define chSysUnlock() {                                                 \
   if (--currp->p_locks == 0)                                            \
-    sys_unlock();                                                       \
+    port_unlock();                                                       \
 }
 #endif /* defined(CH_OPTIMIZE_SPEED) */
 #else /* !defined(CH_USE_NESTED_LOCKS) */
-#define chSysUnlock() sys_unlock()
+#define chSysUnlock() port_unlock()
 #endif /* !defined(CH_USE_NESTED_LOCKS) */
 
 /**
@@ -126,7 +126,7 @@
  *       syscall from an interrupt handler.
  * @note This API must be invoked exclusively from interrupt handlers.
  */
-#define chSysLockI() sys_lock_from_isr()
+#define chSysLockI() port_lock_from_isr()
 
 /**
  * Leaves the kernel lock mode from within an interrupt handler.
@@ -138,14 +138,14 @@
  *       syscall from an interrupt handler.
  * @note This API must be invoked exclusively from interrupt handlers.
  */
-#define chSysUnlockI() sys_unlock_from_isr()
+#define chSysUnlockI() port_unlock_from_isr()
 
 /**
  * IRQ handler enter code.
  * @note Usually IRQ handlers functions are also declared naked.
  * @note On some architectures this macro can be empty.
  */
-#define CH_IRQ_PROLOGUE() SYS_IRQ_PROLOGUE()
+#define CH_IRQ_PROLOGUE() PORT_IRQ_PROLOGUE()
 
 /**
  * IRQ handler exit code.
@@ -153,12 +153,12 @@
  * @note This macro usually performs the final reschedulation by using
  *       @p chSchRescRequiredI() and @p chSchDoRescheduleI().
  */
-#define CH_IRQ_EPILOGUE() SYS_IRQ_EPILOGUE()
+#define CH_IRQ_EPILOGUE() PORT_IRQ_EPILOGUE()
 
 /**
  * Standard modifier for IRQ handler functions.
  */
-#define CH_IRQ_HANDLER SYS_IRQ_HANDLER
+#define CH_IRQ_HANDLER PORT_IRQ_HANDLER
 
 #ifdef __cplusplus
 extern "C" {

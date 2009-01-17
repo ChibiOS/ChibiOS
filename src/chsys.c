@@ -38,7 +38,7 @@ static WORKING_AREA(idle_thread_wa, IDLE_THREAD_STACK_SIZE);
 static void idle_thread(void *p) {
 
   while (TRUE) {
-    sys_wait_for_interrupt();
+    port_wait_for_interrupt();
   }
 }
 
@@ -52,7 +52,7 @@ static void idle_thread(void *p) {
 void chSysInit(void) {
   static Thread mainthread;
 
-  sys_init();
+  port_init();
   chSchInit();
   chDbgInit();
   chVTInit();
@@ -100,14 +100,14 @@ void chSysLock(void) {
 
   chDbgAssert(currp->p_locks >= 0, "chinit.c, chSysLock()");
   if (currp->p_locks++ == 0)
-    sys_lock();
+    port_lock();
 }
 
 void chSysUnlock(void) {
 
   chDbgAssert(currp->p_locks > 0, "chinit.c, chSysUnlock()");
   if (--currp->p_locks == 0)
-    sys_unlock();
+    port_unlock();
 }
 #endif /* defined(CH_USE_NESTED_LOCKS) && !defined(CH_OPTIMIZE_SPEED) */
 
