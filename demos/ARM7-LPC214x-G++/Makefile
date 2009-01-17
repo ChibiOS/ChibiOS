@@ -93,7 +93,7 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC = ../../ports/ARM7/crt0.s ../../ports/ARM7/chsysasm.s \
+ASMSRC = ../../ports/ARM7/crt0.s ../../ports/ARM7/chcoreasm.s \
          ../../ports/ARM7-LPC214x/vectors.s
 
 # List all user directories here
