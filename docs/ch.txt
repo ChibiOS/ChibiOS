@@ -105,16 +105,16 @@
  *   interrupt sources are disabled. In this state it is not possible to use
  *   any system API except @p chSysInit(). This state is entered after a
  *   physical reset.
+ * - <b>Normal</b>. All the interrupt sources are enabled and the system APIs
+ *   are accessible, threads are running.
+ * - <b>Suspended</b>. In this state the fast interrupt sources are enabled but
+ *   the regular interrupt sources are not. In this state it is not possible
+ *   to use any system API except @p chSysDisable() or @p chSysEnable() in
+ *   order to change state.
  * - <b>Disabled</b>. When the system is in this state both the maskable
  *   regular and fast interrupt sources are disabled. In this state it is not
  *   possible to use any system API except @p chSysSuspend() or
- *   @p chSysEnable().
- *   This state is entered using @p chSysDisable().
- * - <b>Suspended</b>. In this state the fast interrupt sources are enabled but
- *   the regular interrupt sources are not. In this state it is not possible
- *   to use any system API except @p chSysDisable() or @p chSysEnable().
- * - <b>Normal</b>. All the interrupt sources are enabled and the system APIs
- *   are accessible, threads are running.
+ *   @p chSysEnable() in order to change state.
  * - <b>Sleep</b>. Architecture-dependent low power mode, the idle thread
  *   goes in this state and waits for interrupts, after servicing the interrupt
  *   the Normal state is restored and the scheduler has a chance to reschedule.
@@ -128,7 +128,7 @@
  *   invoke any I-Class API. Interrupt handlers can be preemptable on some
  *   architectures thus is important to switch to I-Locked state before
  *   invoking system APIs.
- * - <b>Serving Fast Interrupt</b>. No system APIs are accessible.
+ * - <b>Serving Fast Interrupt</b>. System APIs are not accessible.
  * - <b>Serving Non-Maskable Interrupt</b>. System APIs are not accessible.
  * - <b>Halted</b>. All interrupt sources are disabled and system stopped into
  *   an infinite loop. This state can be reached if the debug mode is activated
