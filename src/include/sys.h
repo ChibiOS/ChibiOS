@@ -57,7 +57,7 @@
  *       interrupts or be exactly equivalent to @p chSysDisable().
  * @note Do not invoke this API from within a kernel lock.
  */
-#define chSysDisableAll() sys_disable_all()
+#define chSysDisable() sys_disable()
 
 /**
  * Raises the system interrupt priority mask to system level.
@@ -69,7 +69,7 @@
  * @note This API is no replacement for @p chSysLock(), the @p chSysLock()
  *       could do more than just disable the interrupts.
  */
-#define chSysDisable() sys_disable()
+#define chSysSuspend() sys_suspend()
 
 /**
  * Lowers the system interrupt priority mask to user level.

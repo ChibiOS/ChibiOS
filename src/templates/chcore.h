@@ -130,8 +130,8 @@ typedef struct {
 extern "C" {
 #endif
   void sys_init(void);
-  void sys_disable_all(void);
   void sys_disable(void);
+  void sys_suspend(void);
   void sys_enable(void);
   void sys_lock(void);
   void sys_unlock(void);

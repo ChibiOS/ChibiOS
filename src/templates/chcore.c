@@ -72,13 +72,13 @@ void sys_unlock_from_isr(void) {
  * Disables all the interrupt sources.
  * @note Of course non maskable interrupt sources are not included.
  */
-void sys_disable_all() {
+void sys_disable() {
 }
 
 /**
  * Disables the interrupt sources that are not supposed to preempt the kernel.
  */
-void sys_disable(void) {
+void sys_suspend(void) {
 }
 
 /**
