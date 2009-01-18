@@ -329,40 +329,6 @@
 /** @} */
 
 /**
- * @defgroup MSP430 MSP430
- * @{
- * <p>
- * Notes about the MSP430 port:
- * </p>
- * <ul>
- * <li>The MSP430 does not have a dedicated interrupt stack, make sure to reserve
- *     enough stack space for interrupts in each thread stack. This can be done
- *     by modifying the @p INT_REQUIRED_STACK macro into
- *     <b>./ports/MSP430/chcore.h</b>.</li>
- * </ul>
- * @ingroup Ports
- */
-/** @} */
-
-/**
- * @defgroup MSP430CONF Configuration Options
- * @{
- * <p>
- * The MSP430 port allows some architecture-specific configurations settings
- * that can be specified externally, as example on the compiler command line:
- * <ul>
- * <li>@p INT_REQUIRED_STACK, this value represent the amount of stack space
- *     used by the interrupt handlers.<br>
- *     The default for this value is @p 32, this space is allocated for each
- *     thread so be careful in order to not waste precious RAM space.<br>
- *     The default value is set into <b>./ports/MSP430/chcore.h</b>.</li>
- * </ul>
- * </p>
- * @ingroup MSP430
- */
-/** @} */
-
-/**
  * @defgroup Kernel Kernel
  * @{
  * @file ch.h ChibiOS/RT main include file, it includes everything else.
