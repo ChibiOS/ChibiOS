@@ -75,7 +75,7 @@ include ../../src/kernel.mk
 include ../../test/test.mk
 
 # List ARM-mode C source files here
-ACSRC = ../../ports/ARM7-LPC214x/chcore.c \
+ACSRC = ../../ports/ARM7/chcore.c \
         ../../ports/ARM7-LPC214x/vic.c  \
         ../../ports/ARM7-LPC214x/lpc214x_serial.c  \
        ${KERNSRC} \

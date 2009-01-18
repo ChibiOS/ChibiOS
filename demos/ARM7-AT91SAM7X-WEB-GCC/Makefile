@@ -78,7 +78,7 @@ USRC = ../../ext/uip-1.0/uip/uip_arp.c \
        ../../ext/uip-1.0/apps/webserver/httpd-cgi.c
 
 # List ARM-mode C source files here
-ASRC = ../../ports/ARM7-AT91SAM7X/chcore.c \
+ASRC = ../../ports/ARM7/chcore.c \
        ../../ports/ARM7-AT91SAM7X/sam7x_serial.c \
        ../../ports/ARM7-AT91SAM7X/sam7x_emac.c \
        ${KERNSRC} \

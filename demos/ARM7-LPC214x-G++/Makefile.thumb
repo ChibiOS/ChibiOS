@@ -81,7 +81,7 @@ ACSRC =
 ACPPSRC =
 
 # List THUMB-mode C sources here
-TCSRC = ../../ports/ARM7-LPC214x/chcore.c \
+TCSRC = ../../ports/ARM7/chcore.c \
         ../../ports/ARM7-LPC214x/vic.c  \
         ../../ports/ARM7-LPC214x/lpc214x_serial.c  \
        ${KERNSRC} \
