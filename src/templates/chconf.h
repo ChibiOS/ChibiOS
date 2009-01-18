@@ -35,9 +35,9 @@
  *  that this is not related to the compiler optimization options.*/
 #define CH_OPTIMIZE_SPEED
 
-/** Configuration option: If enabled then the used of nested @p chSysLock() /
+/** Configuration option: If enabled then the use of nested @p chSysLock() /
  *  @p chSysUnlock() operations is allowed.<br>
- *  For performance and code size reasons the recommended setting is leave
+ *  For performance and code size reasons the recommended setting is to leave
  *  this option disabled.<br>
  *  You can use this option if you need to merge ChibiOS/RT with external
  *  libraries that require nested lock/unlock operations.

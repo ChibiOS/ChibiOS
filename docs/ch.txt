@@ -445,8 +445,8 @@
  * @{
  * Non portable code.
  * @ingroup Kernel
- * @file templates/chcore.c Non portable code.
- * @file templates/chcore.h Non portable macros and structures.
+ * @file src/templates/chcore.c Non portable code template file.
+ * @file src/templates/chcore.h Non portable macros and structures template file.
  */
 /** @} */
 

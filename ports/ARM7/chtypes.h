@@ -17,6 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @addtogroup ARM7_CORE
+ * @{
+ */
+
 #ifndef _CHTYPES_H_
 #define _CHTYPES_H_
 
@@ -29,16 +34,16 @@
 #include <stdint.h>
 #endif
 
-typedef int32_t         bool_t;
-typedef uint8_t         tmode_t;
-typedef uint8_t         tstate_t;
-typedef uint16_t        tid_t;
-typedef uint32_t        tprio_t;
-typedef int32_t         msg_t;
-typedef int32_t         eventid_t;
-typedef uint32_t        eventmask_t;
-typedef uint32_t        systime_t;
-typedef int32_t         cnt_t;
+typedef int32_t         bool_t;         /**< Fast boolean type. */
+typedef uint8_t         tmode_t;        /**< Thread flags. */
+typedef uint8_t         tstate_t;       /**< Thread state. */
+typedef uint16_t        tid_t;          /**< Thread sequential Id. */
+typedef uint32_t        tprio_t;        /**< Thread priority. */
+typedef int32_t         msg_t;          /**< Inter-thread message. */
+typedef int32_t         eventid_t;      /**< Event Id. */
+typedef uint32_t        eventmask_t;    /**< Events mask. */
+typedef uint32_t        systime_t;      /**< System time. */
+typedef int32_t         cnt_t;          /**< Resources counter. */
 
 #define INLINE inline
 #define PACK_STRUCT_STRUCT __attribute__((packed))
@@ -46,3 +51,5 @@ typedef int32_t         cnt_t;
 #define PACK_STRUCT_END
 
 #endif /* _CHTYPES_H_ */
+
+/** @} */
