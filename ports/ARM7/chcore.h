@@ -220,6 +220,8 @@ typedef struct {
 
 /**
  * Disables both the IRQ and FIQ sources.
+ * @note Implements a workaround for spurious interrupts taken from the NXP
+ *       LPC214x datasheet.
  */
 #ifdef THUMB
 #define port_disable() _port_disable_thumb()
