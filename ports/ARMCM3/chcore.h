@@ -29,12 +29,16 @@
  * Port-related configuration parameters.
  */
 
-/** Enables the use of the WFI ins. */
+/**
+ * Enables the use of the WFI ins.
+ */
 #ifndef ENABLE_WFI_IDLE
 #define ENABLE_WFI_IDLE         0
 #endif
 
-/** BASEPRI user level, 0 = disabled. */
+/**
+ * BASEPRI user level, 0 = disabled.
+ */
 #ifndef BASEPRI_USER
 #define BASEPRI_USER            0
 #endif
@@ -59,7 +63,9 @@
 #define PRIORITY_SVCALL         (BASEPRI_KERNEL - 0x10)
 #endif
 
-/** SYSTICK handler priority. */
+/**
+ * SYSTICK handler priority.
+ */
 #ifndef PRIORITY_SYSTICK
 #define PRIORITY_SYSTICK        0x80
 #endif

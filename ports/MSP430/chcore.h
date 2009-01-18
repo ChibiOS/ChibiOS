@@ -139,68 +139,81 @@ typedef struct {
  * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
  * invoke system APIs.
  */
-#define SYS_IRQ_PROLOGUE()
+#define PORT_IRQ_PROLOGUE()
 
 /**
  * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
  * invoke system APIs.
  */
-#define SYS_IRQ_EPILOGUE() {                                            \
-if (chSchRescRequiredI())                                               \
-  chSchDoRescheduleI();                                                 \
+#define PORT_IRQ_EPILOGUE() {                                           \
+  if (chSchRescRequiredI())                                             \
+    chSchDoRescheduleI();                                               \
 }
 
 /**
  * IRQ handler function modifier. Note, it just aliases the WinMSP "interrupt"
  * macro.
  */
-#define SYS_IRQ_HANDLER interrupt
-
-/**
- * This port function is implemented as inlined code for performance reasons.
- */
-#define sys_disable() asm volatile ("dint")
-
-/**
- * This port function is implemented as inlined code for performance reasons.
- */
-#define sys_enable() asm volatile ("eint")
+#define PORT_IRQ_HANDLER interrupt
 
 /**
  * This function is empty in this port.
  */
-#define sys_disable_from_isr()
+#define port_init()
+
+/**
+ * Implemented as global interrupt disable.
+ */
+#define port_lock() asm volatile ("dint")
+
+/**
+ * Implemented as global interrupt enable.
+ */
+#define port_unlock() asm volatile ("eint")
 
 /**
  * This function is empty in this port.
  */
-#define sys_enable_from_isr()
+#define port_lock_from_isr()
 
 /**
- * Disables all the interrupt sources, even those having a priority higher
- * to the kernel.
- * In this port it is no different than sys_disable() because the simple
- * interrupt handling
+ * This function is empty in this port.
  */
-#define sys_disable_all() sys_disable()
+#define port_unlock_from_isr()
+
+/**
+ * Implemented as global interrupt disable.
+ */
+#define port_disable() asm volatile ("dint")
+
+/**
+ * Same as @p port_disable() in this port, there is no difference between the
+ * two states.
+ */
+#define port_suspend() asm volatile ("dint")
+
+/**
+ * Implemented as global interrupt enable.
+ */
+#define port_enable() asm volatile ("eint")
 
 /**
  * This port function is implemented as inlined code for performance reasons.
  */
 #if ENABLE_WFI_IDLE != 0
-#define sys_wait_for_interrupt() {                                      \
+#define port_wait_for_interrupt() {                                     \
   asm volatile ("wfi");                                                 \
 }
 #else
-#define sys_wait_for_interrupt()
+#define port_wait_for_interrupt()
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sys_puts(char *msg);
-  void sys_switch(Thread *otp, Thread *ntp);
-  void sys_halt(void);
+  void port_puts(char *msg);
+  void port_switch(Thread *otp, Thread *ntp);
+  void port_halt(void);
   void threadstart(void);
 #ifdef __cplusplus
 }
