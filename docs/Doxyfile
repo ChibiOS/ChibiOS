@@ -84,7 +84,7 @@ WARN_LOGFILE =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT = ../src/include ../src/templates ../src ../docs/ch.txt ../src/lib ../ports/ARM7 ../ports/ARMCM3 ../ports/MSP430 
+INPUT = ../src/include ../src/templates ../src ../docs/ch.txt ../src/lib ../ports/ARM7 ../ports/ARMCM3 ../ports/MSP430 ../ports/AVR 
 INPUT_ENCODING = UTF-8
 FILE_PATTERNS = *.c *.cc *.cxx *.cpp *.c++ *.d *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.dox *.py *.ddf
 RECURSIVE = YES

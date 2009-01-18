@@ -165,10 +165,10 @@ typedef struct {
 /**
  * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
  * invoke system APIs.
- * This code tricks the compiler to save the specified registers by "touching"
- * them.
+ * This code tricks the compiler to save all the specified registers by
+ * "touching" them.
  */
-#define SYS_IRQ_PROLOGUE() {                                            \
+#define PORT_IRQ_PROLOGUE() {                                            \
 asm ("" : : : "r18", "r19", "r20", "r21", "r22", "r23", "r24",          \
               "r25", "r26", "r27", "r30", "r31");                       \
 }
@@ -177,7 +177,7 @@ asm ("" : : : "r18", "r19", "r20", "r21", "r22", "r23", "r24",          \
  * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
  * invoke system APIs.
  */
-#define SYS_IRQ_EPILOGUE() {                                            \
+#define PORT_IRQ_EPILOGUE() {                                            \
   if (chSchRescRequiredI())                                             \
     chSchDoRescheduleI();                                               \
 }
@@ -186,53 +186,66 @@ asm ("" : : : "r18", "r19", "r20", "r21", "r22", "r23", "r24",          \
  * IRQ handler function modifier. Note, it just aliases the WinAVR "ISR"
  * macro.
  */
-#define SYS_IRQ_HANDLER ISR
-
-/**
- * This port function is implemented as inlined code for performance reasons.
- */
-#define sys_disable() asm volatile ("cli")
-
-/**
- * This port function is implemented as inlined code for performance reasons.
- */
-#define sys_enable() asm volatile ("sei")
+#define PORT_IRQ_HANDLER ISR
 
 /**
  * This function is empty in this port.
  */
-#define sys_disable_from_isr()
+#define port_init()
+
+/**
+ * Implemented as global interrupt disable.
+ */
+#define port_lock() asm volatile ("cli")
+
+/**
+ * Implemented as global interrupt enable.
+ */
+#define port_unlock() asm volatile ("sei")
 
 /**
  * This function is empty in this port.
  */
-#define sys_enable_from_isr()
+#define port_lock_from_isr()
 
 /**
- * Disables all the interrupt sources, even those having a priority higher
- * to the kernel.
- * In this port it is no different than sys_disable() because the simple
- * interrupt handling
+ * This function is empty in this port.
  */
-#define sys_disable_all() sys_disable()
+#define port_unlock_from_isr()
+
+/**
+ * Implemented as global interrupt disable.
+ */
+#define port_disable() asm volatile ("cli")
+
+/**
+ * Same as @p port_disable() in this port, there is no difference between the
+ * two states.
+ */
+#define port_suspend() asm volatile ("cli")
+
+/**
+ * Implemented as global interrupt enable.
+ */
+#define port_enable() asm volatile ("sei")
 
 /**
  * This port function is implemented as inlined code for performance reasons.
  */
 #if ENABLE_WFI_IDLE != 0
-#define sys_wait_for_interrupt() {                                      \
+#define port_wait_for_interrupt() {                                      \
   asm volatile ("sleep");                                               \
 }
 #else
-#define sys_wait_for_interrupt()
+#define port_wait_for_interrupt()
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sys_puts(char *msg);
-  void sys_switch(Thread *otp, Thread *ntp);
-  void sys_halt(void);
+  void port_puts(char *msg);
+  void port_switch(Thread *otp, Thread *ntp);
+  void port_halt(void);
   void threadstart(void);
 #ifdef __cplusplus
 }

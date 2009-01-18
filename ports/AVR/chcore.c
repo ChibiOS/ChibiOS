@@ -24,13 +24,6 @@
 
 #include <ch.h>
 
-/*
- * This file is a template of the system driver functions provided by a port.
- * Some of the following functions may be implemented as macros in chcore.h if
- * the implementer decides that there is an advantage in doing so, as example
- * because performance concerns.
- */
-
 /**
  * The default implementation of this function is void so no messages are
  * actually printed.
@@ -38,8 +31,10 @@
  *       it in your application code.
  * @param msg pointer to the message string
  */
+/** @cond never */
 __attribute__((weak))
-void sys_puts(char *msg) {
+/** @endcond */
+void port_puts(char *msg) {
 }
 
 /**
@@ -49,8 +44,10 @@ void sys_puts(char *msg) {
  * @note The function is declared as a weak symbol, it is possible to redefine
  *       it in your application code.
  */
+/** @cond never */
 __attribute__((naked, weak))
-void sys_switch(Thread *otp, Thread *ntp) {
+/** @endcond */
+void port_switch(Thread *otp, Thread *ntp) {
 
   asm volatile ("push    r2");
   asm volatile ("push    r3");
@@ -113,10 +110,12 @@ void sys_switch(Thread *otp, Thread *ntp) {
  * @note The function is declared as a weak symbol, it is possible to redefine
  *       it in your application code.
  */
+/** @cond never */
 __attribute__((weak))
-void sys_halt(void) {
+/** @endcond */
+void port_halt(void) {
 
-  sys_disable();
+  port_disable();
   while (TRUE) {
   }
 }
