@@ -28,14 +28,18 @@
  * Prints a message on the system console.
  * @param msg pointer to the message
  */
+/** @cond never */
 __attribute__((weak))
+/** @endcond */
 void port_puts(char *msg) {
 }
 
 /**
  * Halts the system.
  */
+/** @cond never */
 __attribute__((weak))
+/** @endcond */
 void port_halt(void) {
 
   port_disable();

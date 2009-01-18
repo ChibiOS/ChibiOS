@@ -105,7 +105,7 @@
 /** @} */
 
 /**
- * @defgroup ARM7CONF Configuration Options
+ * @defgroup ARM7_CONF Configuration Options
  * @{
  * @brief ARM7 specific configuration options.
  * @details The ARM7 port allows some architecture-specific configurations
@@ -133,7 +133,8 @@
  * @brief ARM7 specific port code, structures and macros.
  *
  * @ingroup ARM7
- * @file ports/ARM7/chcore.h Port related structures and macros.
  * @file ports/ARM7/chtypes.h Port types.
+ * @file ports/ARM7/chcore.h Port related structures and macros.
+ * @file ports/ARM7/chcore.c Port related code.
  */
 /** @} */

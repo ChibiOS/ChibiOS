@@ -85,8 +85,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   CH_IRQ_PROLOGUE() and CH_IRQ_EPILOGUE() in order to make very clear that
   those are not functions but inlined code. Also introduced a new macro
   CH_IRQ_HANDLER that should be used when declaring an interrupt handler.
+- Improved ARM7 and Cortex-M3 support.
 - Introduced the concept of interrupt classes, see the documentation.
-- Introduced the concept of system state, see the documentation.
+- Introduced the concept of system states, see the documentation.
 - Huge improvements to the ports documentation.
 
 *** 1.0.0rc2 ***

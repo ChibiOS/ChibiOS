@@ -28,16 +28,51 @@
 /*
  * Port-related configuration parameters.
  */
-#ifndef BASEPRI_USER
-#define BASEPRI_USER    0       /* User level BASEPRI, 0 = disabled.    */
-#endif
 
-#ifndef BASEPRI_KERNEL
-#define BASEPRI_KERNEL  0x10    /* BASEPRI level within kernel lock.    */
-#endif
-
+/** Enables the use of the WFI ins. */
 #ifndef ENABLE_WFI_IDLE
-#define ENABLE_WFI_IDLE 0       /* Enables the use of the WFI ins.      */
+#define ENABLE_WFI_IDLE         0
+#endif
+
+/** BASEPRI user level, 0 = disabled. */
+#ifndef BASEPRI_USER
+#define BASEPRI_USER            0
+#endif
+
+/**
+ * BASEPRI level within kernel lock.
+ * Priority levels higher than this one (lower values) are unaffected by
+ * the OS activity and can be classified as fast interrupt sources, see
+ * @ref interrupt_classes.
+ */
+#ifndef BASEPRI_KERNEL
+#define BASEPRI_KERNEL          0x40
+#endif
+
+/**
+ * SVCALL handler priority.
+ * @note This priority must always be one level above the @p BASEPRI_KERNEL
+ *       value.
+ * @note It is recommended to leave this priority level for this handler alone.
+ */
+#ifndef PRIORITY_SVCALL
+#define PRIORITY_SVCALL         (BASEPRI_KERNEL - 0x10)
+#endif
+
+/** SYSTICK handler priority. */
+#ifndef PRIORITY_SYSTICK
+#define PRIORITY_SYSTICK        0x80
+#endif
+
+/**
+ * PENDSV handler priority.
+ * @note It is recommended to leave this priority level for this handler alone.
+ * @note This is a reserved handler and its priority must always be the
+ *       lowest priority in the system in order to be always executed last
+ *       in the interrupt servicing chain.
+ */
+#ifndef PRIORITY_PENDSV
+#define PRIORITY_PENDSV         0xF0
 #endif
 
 /**
@@ -233,7 +268,7 @@ typedef struct {
 /**
  * This port function is implemented as inlined code for performance reasons.
  */
-#define port_switch(otp, ntp) {                                          \
+#define port_switch(otp, ntp) {                                         \
   register Thread *_otp asm ("r0") = (otp);                             \
   register Thread *_ntp asm ("r1") = (ntp);                             \
   asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp));               \

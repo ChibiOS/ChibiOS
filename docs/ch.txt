@@ -77,7 +77,7 @@
  * state unless differently specified.<br>
  * Examples: @p chThdCreateStatic(), @p chSemSignalI(), @p chIQGetTimeout().
  *
- * @section interrupts Interrupt Classes
+ * @section interrupt_classes Interrupt Classes
  * In ChibiOS/RT there are three logical interrupt classes:
  * - <b>Regular Interrupts</b>. Maskable interrupt sources that cannot
  *   preempt the kernel code and are thus able to invoke operating system APIs
@@ -277,68 +277,6 @@
  * </ul>
  * </p>
  * @ingroup ARM7
- */
-/** @} */
-
-/**
- * @defgroup ARMCM3 ARM Cortex-M3
- * @{
- * <p>
- * The ARM Cortex-M3 port is organized as follow:
- * </p>
- * <ul>
- * <li>The @p main() function is invoked in thread-privileged mode.</li>
- * <li>Each thread has a private process stack, the system has a single main
- *     stack where all the interrupts and exceptions are processed.</li>
- * <li>Only the 4 MSb of the priority level are used, the 4 LSb are assumed
- *     to be zero.</li>
- * <li>The threads are started in thread-privileged mode with BASEPRI level
- *     0x00 (disabled).</li>
- * <li>The kernel raises its BASEPRI level to 0x10 in order to protect the
- *     system mutex zones. Note that exceptions with level 0x00 can preempt
- *     the kernel, such exception handlers cannot invoke kernel APIs directly.
- *     It is possible to modify the priority levels by editing the
- *     <b>./ports/ARMCM3/chcore.h</b> file.</li>
- * <li>Interrupt nesting and the other advanced NVIC features are supported.</li>
- * <li>The SVC instruction and vector, with parameter #0,  is internally used
- *     for commanded context switching.<br>
- *     It is possible to share the SVC handler at the cost of slower context
- *     switching.</li>
- * <li>The PendSV vector is internally used for preemption context switching.</li>
- * </ul>
- * @ingroup Ports
- */
-/** @} */
-
-/**
- * @defgroup ARMCM3CONF Configuration Options
- * @{
- * <p>
- * The ARMCM3 port allows some architecture-specific configurations settings
- * that can be specified externally, as example on the compiler command line:
- * <ul>
- * <li>@p INT_REQUIRED_STACK, this value represent the amount of stack space used
- *     by an interrupt handler between the @p extctx and @p intctx
- *     structures.<br>
- *     In the current implementation this value is guaranteed to be zero so
- *     there is no need to modify this value unless changes are done at the
- *     interrupts handling code.</li>
- * <li>@p BASEPRI_USER, this is the @p BASEPRI value for the user threads. The
- *     default value is @p 0 (disabled).<br>
- *     Usually there is no need to change this value, please refer to the
- *     Cortex-M3 technical reference manual for a detailed description.</li>
- * <li>@p BASEPRI_KERNEL, this is the @p BASEPRI value for the kernel lock code.
- *     The default value is 0x10.<br>
- *     Code running at higher priority levels must not invoke any OS API.<br>
- *     Usually there is no need to change this value, please refer to the
- *     Cortex-M3 technical reference manual for a detailed description.</li>
- * <li>@p ENABLE_WFI_IDLE, if set to @p 1 enables the use of the @p wfi
- *     instruction from within the idle loop. This is defaulted to 0 because
- *     it can create problems with some debuggers. Setting this option to 1
- *     reduces the system power requirements.</li>
- * </ul>
- * </p>
- * @ingroup ARMCM3
  */
 /** @} */
 

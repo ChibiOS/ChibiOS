@@ -32,7 +32,9 @@
  *       it in your application code.
  * @param msg pointer to the message string
  */
+/** @cond never */
 __attribute__((weak))
+/** @endcond */
 void port_puts(char *msg) {
 }
 
@@ -41,7 +43,9 @@ void port_puts(char *msg) {
  * @note The function is declared as a weak symbol, it is possible to redefine
  *       it in your application code.
  */
+/** @cond never */
 __attribute__((weak))
+/** @endcond */
 void port_halt(void) {
 
   port_disable();
@@ -53,7 +57,9 @@ void port_halt(void) {
  * Start a thread by invoking its work function.
  * If the work function returns @p chThdExit() is automatically invoked.
  */
+/** @cond never */
 __attribute__((naked, weak))
+/** @endcond */
 void threadstart(void) {
 
   asm volatile ("blx     r1                                     \n\t" \
@@ -79,7 +85,9 @@ CH_IRQ_HANDLER void SysTickVector(void) {
 /**
  * The SVC vector is used for commanded context switch.
  */
+/** @cond never */
 __attribute__((naked))
+/** @endcond */
 void SVCallVector(Thread *otp, Thread *ntp) {
   /* { r0 = otp, r1 = ntp } */
   /* get the BASEPRI in r3 */
@@ -146,7 +154,9 @@ void SVCallVector(Thread *otp, Thread *ntp) {
 /**
  * Preemption invoked context switch.
  */
+/** @cond never */
 __attribute__((naked))
+/** @endcond */
 void PendSVVector(void) {
   Thread *otp;
   register struct intctx *sp_thd asm("r12");

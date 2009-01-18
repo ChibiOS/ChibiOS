@@ -20,6 +20,22 @@
 #ifndef _NVIC_H_
 #define _NVIC_H_
 
+/*
+ * System vector constants for @p NVICSetSystemHandlerPriority().
+ */
+#define HANDLER_MEM_MANAGE      0
+#define HANDLER_BUS_FAULT       1
+#define HANDLER_USAGE_FAULT     2
+#define HANDLER_RESERVED_3      3
+#define HANDLER_RESERVED_4      4
+#define HANDLER_RESERVED_5      5
+#define HANDLER_RESERVED_6      6
+#define HANDLER_SVCALL          7
+#define HANDLER_DEBUG_MONITOR   8
+#define HANDLER_RESERVED_9      9
+#define HANDLER_PENDSV          10
+#define HANDLER_SYSTICK         11
+
 typedef volatile unsigned char IOREG8;
 typedef volatile unsigned int IOREG32;
 
@@ -132,6 +148,7 @@ typedef struct {
 extern "C" {
 #endif
   void NVICEnableVector(uint32_t n, uint32_t prio);
+  void NVICSetSystemHandlerPriority(uint32_t handler, uint32_t prio);
 #ifdef __cplusplus
 }
 #endif
