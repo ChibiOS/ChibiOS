@@ -6,13 +6,13 @@ order to access directly the doxigen documentation.
 *** Documentation rebuild procedure ***
 
 The following software must be installed:
-- Doxigen 1.5.7.1 or later.
+- Doxygen 1.5.7.1 or later.
 - Graphviz 2.21 or later. The ./bin directory must be specified in the path in
-  order to make Graphviz accessible by doxigen.
+  order to make Graphviz accessible by Doxygen.
 
 Build procedure:
-- Run Doxiwizard.
-- Load ./docs/Doxifile from Doxiwizard.
+- Run Doxywizard.
+- Load ./docs/Doxyfile from Doxywizard.
 - Start.
 
 *** Doxygen usage rules ***
