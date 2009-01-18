@@ -31,6 +31,7 @@
 #ifndef ENABLE_WFI_IDLE
 #define ENABLE_WFI_IDLE 0
 #endif
+#include <wfi.h>
 
 /**
  * Macro defining the ARM7 architecture.
@@ -265,7 +266,6 @@ typedef struct {
 extern "C" {
 #endif
   void port_puts(char *msg);
-  void port_wait_for_interrupt(void);
   void port_halt(void);
 #ifdef THUMB
   void _port_lock_thumb(void);

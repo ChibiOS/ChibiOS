@@ -24,33 +24,12 @@
 
 #include <ch.h>
 
-#include "lpc214x.h"
-
-/*
- * This file is a template of the system driver functions provided by a port.
- * Some of the following functions may be implemented as macros in chcore.h if
- * the implementer decides that there is an advantage in doing so, as example
- * because performance concerns.
- */
-
 /**
  * Prints a message on the system console.
  * @param msg pointer to the message
  */
 __attribute__((weak))
 void port_puts(char *msg) {
-}
-
-/**
- * Enters an architecture-dependent halt mode. The function is meant to return
- * when an interrupt becomes pending.
- */
-__attribute__((weak))
-void port_wait_for_interrupt(void) {
-
-#if ENABLE_WFI_IDLE != 0
-  PCON = 1;
-#endif
 }
 
 /**
