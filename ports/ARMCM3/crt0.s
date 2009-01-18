@@ -95,7 +95,7 @@ bloop:
         movs    r0, #0
         mov     r1, r0
         bl      main
-        bl      sys_halt
+        bl      port_halt
 
 /*
  * Default early initialization code. It is declared weak in order to be

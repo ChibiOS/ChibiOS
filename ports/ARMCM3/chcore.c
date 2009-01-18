@@ -33,7 +33,7 @@
  * @param msg pointer to the message string
  */
 __attribute__((weak))
-void sys_puts(char *msg) {
+void port_puts(char *msg) {
 }
 
 /**
@@ -42,9 +42,9 @@ void sys_puts(char *msg) {
  *       it in your application code.
  */
 __attribute__((weak))
-void sys_halt(void) {
+void port_halt(void) {
 
-  sys_disable_all();
+  port_disable();
   while (TRUE) {
   }
 }

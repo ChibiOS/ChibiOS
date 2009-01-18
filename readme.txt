@@ -77,7 +77,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** 1.1.0unstable ***
 - NEW: Better separation between the port code and the system APIs, now an
   architecture-specific "driver" contains all the port related code.
-  Port functions are no more directly exposed as APIs to the user code.
+  Port functions/macros are no more directly exposed as APIs to the user code.
 - NEW: Added a configuration option to enable nested system locks/unlocks.
 - NEW: Improved the interrupt handlers related code. Now interrupts are
   handled in a very similar way in every architecture.
@@ -87,6 +87,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   CH_IRQ_HANDLER that should be used when declaring an interrupt handler.
 - Introduced the concept of interrupt classes, see the documentation.
 - Introduced the concept of system state, see the documentation.
+- Huge improvements to the ports documentation.
 
 *** 1.0.0rc2 ***
 - FIX: Removed unused variable "retaddr" from the Cortex-M3 port.

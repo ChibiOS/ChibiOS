@@ -150,79 +150,100 @@ typedef struct {
  * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
  * invoke system APIs.
  */
-#define SYS_IRQ_PROLOGUE()
+#define PORT_IRQ_PROLOGUE()
 
 /**
  * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
  * invoke system APIs.
  */
-#define SYS_IRQ_EPILOGUE() {                                            \
+#define PORT_IRQ_EPILOGUE() {                                            \
   SCB_ICSR = ICSR_PENDSVSET;                                            \
-}
-
-/**
- * This port function is implemented as inlined code for performance reasons.
- */
-#define sys_disable() {                                                 \
-  register uint32_t tmp asm ("r3") = BASEPRI_KERNEL;                    \
-  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
-}
-
-/**
- * This port function is implemented as inlined code for performance reasons.
- */
-#define sys_enable() {                                                  \
-  register uint32_t tmp asm ("r3") = BASEPRI_USER;                      \
-  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
-}
-
-/**
- * This port function is implemented as inlined code for performance reasons.
- */
-#define sys_disable_from_isr() sys_disable()
-
-/**
- * This port function is implemented as inlined code for performance reasons.
- */
-#define sys_enable_from_isr() sys_enable()
-
-/**
- * Disables all the interrupt sources, even those having a priority higher
- * to the kernel.
- * In the Cortex-M3 it raises the priority mask to level 0.
- */
-#define sys_disable_all() asm volatile ("cpsid   i")
-
-#if ENABLE_WFI_IDLE != 0
-/**
- * This port function is implemented as inlined code for performance reasons.
- */
-#define sys_wait_for_interrupt() {                                      \
-  asm volatile ("wfi");                                                 \
-}
-#else
-#define sys_wait_for_interrupt()
-#endif
-
-/**
- * This port function is implemented as inlined code for performance reasons.
- */
-#define sys_switch(otp, ntp) {                                          \
-  register Thread *_otp asm ("r0") = (otp);                             \
-  register Thread *_ntp asm ("r1") = (ntp);                             \
-  asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp));               \
 }
 
 /**
  * IRQ handler function modifier.
  */
-#define SYS_IRQ_HANDLER
+#define PORT_IRQ_HANDLER
+
+/**
+ * This function is empty in this port.
+ */
+#define port_init()
+
+/**
+ * Raises the base priority to kernel level.
+ */
+#define port_lock() {                                                   \
+  register uint32_t tmp asm ("r3") = BASEPRI_KERNEL;                    \
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
+}
+
+/**
+ * Lowers the base priority to user level.
+ */
+#define port_unlock() {                                                 \
+  register uint32_t tmp asm ("r3") = BASEPRI_USER;                      \
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
+}
+
+/**
+ * Same as @p port_lock() in this port.
+ */
+#define port_lock_from_isr() port_lock()
+
+/**
+ * Same as @p port_unlock() in this port.
+ */
+#define port_unlock_from_isr() port_unlock()
+
+/**
+ * Disables all the interrupt sources by raising the priority mask to level 0.
+ */
+#define port_disable() asm volatile ("cpsid   i")
+
+/**
+ * Raises/lowers the base priority to kernel level.
+ */
+#define port_suspend() {                                                \
+  register uint32_t tmp asm ("r3") = BASEPRI_KERNEL;                    \
+  asm volatile ("msr     BASEPRI, %0                    \n\t"           \
+                "cpsie   i" : : "r" (tmp));                             \
+}
+
+/**
+ * Lowers the base priority to user level.
+ */
+#define port_enable() {                                                 \
+  register uint32_t tmp asm ("r3") = BASEPRI_USER;                      \
+  asm volatile ("msr     BASEPRI, %0                    \n\t"           \
+                "cpsie   i" : : "r" (tmp));                             \
+}
+
+/**
+ * This port function is implemented as inlined code for performance reasons.
+ */
+#if (ENABLE_WFI_IDLE != 0) || defined(__DOXYGEN__)
+#define port_wait_for_interrupt() {                                     \
+  asm volatile ("wfi");                                                 \
+}
+#else
+#define port_wait_for_interrupt()
+#endif
+
+/**
+ * This port function is implemented as inlined code for performance reasons.
+ */
+#define port_switch(otp, ntp) {                                          \
+  register Thread *_otp asm ("r0") = (otp);                             \
+  register Thread *_ntp asm ("r1") = (ntp);                             \
+  asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp));               \
+}
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sys_puts(char *msg);
-  void sys_halt(void);
+  void port_puts(char *msg);
+  void port_halt(void);
   void threadstart(void);
 #ifdef __cplusplus
 }
