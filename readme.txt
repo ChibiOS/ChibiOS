@@ -85,6 +85,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Introduced the concept of interrupt classes, see the documentation.
 - Introduced the concept of system states, see the documentation.
 - Huge improvements to the ports documentation.
+- Articles and notes previously in the wiki now merged in the general
+  documentation, the wiki entries are obsolete and will be removed.
 
 *** 1.0.0rc2 ***
 - FIX: Removed unused variable "retaddr" from the Cortex-M3 port.

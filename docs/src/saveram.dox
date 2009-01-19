@@ -1,0 +1,66 @@
+/**
+ * @page article_saveram Saving RAM by declaring thread functions "noreturn"
+ * @{
+ * One of the problems, when writing embedded multi-threaded applications,
+ * is that the thread functions do save the registers in the function
+ * entry code even if the system does not require it, exiting such
+ * a function would terminate the thread so there is no need to preserve
+ * the register values. This can waste tens of bytes for each thread.<br>
+ * Consider the following code: 
+ * @code
+#include <ch.h>
+ 
+static WORKING_AREA(waMyThread, 64);
+ 
+static t_msg MyThread(void *arg) {
+ 
+  while (!chThdShoudTerminate()) {
+    /* Do thread inner work */
+  }
+  return 1;
+}
+ 
+main() {
+  chSysInit();
+  ...
+  chThdCreate(NORMALPRIO, 0, waMyThread, sizeof(waMyThread), MyThread, NULL);
+  ...
+  chSysPause();
+}
+ * @endcode
+ * The resulting ASM code for the thread function would be something like this:
+ * @code
+MyThread:
+        stmfd   sp!, {r4, r5, r6, lr}
+        ...
+        ldmfd   sp!, {r4, r5, r6, pc}
+ * @endcode
+ * Being that function a thread there is no need to save those registers, in
+ * embedded applications often the RAM is a scarce resource. That space can be
+ * saved by modifying the code as follow, using some advanced GCC extensions: 
+ * @code
+#include <ch.h>
+ 
+static BYTE8 waMyThread[UserStackSize(64)];
+ 
+__attribute__((noreturn)) void MyThread(void *arg) {
+ 
+  while (!chThdShoudTerminate()) {
+    /* Do thread inner work */
+  }
+  chThdExit(1);
+}
+ 
+main() {
+  chSysInit();
+  ...
+  chThdCreate(NORMALPRIO, 0, waMyThread, sizeof(waMyThread), (t_tfunc)MyThread, NULL);
+  ...
+  chSysPause();
+}
+ * @endcode
+ * This will make GCC believe that the function cannot return and there is no
+ * need to save registers. The code will be a bit less readable and less
+ * portable on other compilers however.
+ */
+/** @} */

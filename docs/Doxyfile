@@ -18,7 +18,7 @@ FULL_PATH_NAMES = NO
 STRIP_FROM_PATH = "C:/Documents and Settings/Administrator/"
 STRIP_FROM_INC_PATH = 
 SHORT_NAMES = NO
-JAVADOC_AUTOBRIEF = YES
+JAVADOC_AUTOBRIEF = NO
 QT_AUTOBRIEF = NO
 MULTILINE_CPP_IS_BRIEF = NO
 INHERIT_DOCS = NO
@@ -84,7 +84,7 @@ WARN_LOGFILE =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT = ../src/include ../src/templates ../src ../docs/ch.txt ../src/lib ../ports/ARM7 ../ports/ARM7-AT91SAM7X/port.dox ../ports/ARM7-LPC214x/port.dox ../ports/ARMCM3 ../ports/ARMCM3-STM32F103/port.dox ../ports/MSP430 ../ports/AVR 
+INPUT = ../src/include ../src/templates ../src ../docs/ch.txt ../docs/src ../src/lib ../ports/ARM7 ../ports/ARM7-AT91SAM7X/port.dox ../ports/ARM7-LPC214x/port.dox ../ports/ARMCM3 ../ports/ARMCM3-STM32F103/port.dox ../ports/MSP430 ../ports/AVR 
 INPUT_ENCODING = UTF-8
 FILE_PATTERNS = *.c *.cc *.cxx *.cpp *.c++ *.d *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.dox *.py *.ddf
 RECURSIVE = YES

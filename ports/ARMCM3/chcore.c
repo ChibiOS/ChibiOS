@@ -84,6 +84,8 @@ CH_IRQ_HANDLER void SysTickVector(void) {
 
 /**
  * The SVC vector is used for commanded context switch.
+ * @param otp the thread to be switched out
+ * @param ntp the thread to be switched it
  */
 /** @cond never */
 __attribute__((naked))

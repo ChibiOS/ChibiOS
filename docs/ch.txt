@@ -7,59 +7,57 @@
  * means small Real Time Operating System.
  * Source <a href="http://en.wikipedia.org/wiki/Chibi" target="_blank">Wikipedia</a>.
  * @section ch_features Features
- * <ul>
- * <li>Free software, GPL3 licensed.</li>
- * <li>Designed for realtime applications.</li>
- * <li>Easily portable.</li>
- * <li>Mixed programming model:</li>
- *   <ul>
- *   <li>Synchronous, using semaphores/mutexes/condvars and/or messages.</li>
- *   <li>Asynchronous, using event sources.</li>
- *   <li>Mix of the above models, multiple threads listening to multiple event
- *       sources while serving message queues.</li>
- *   </ul>
- * <li>PC simulator target included, the development can be done on the PC
+ * - Free software, GPL3 licensed.
+ * - Designed for realtime applications.
+ * - Easily portable.
+ * - Mixed programming model:
+ *   - Synchronous, using semaphores/mutexes/condvars and/or messages.
+ *   - Asynchronous, using event sources.
+ *   - Mix of the above models, multiple threads listening to multiple event
+ *     sources while serving message queues.
+ *   - PC simulator target included, the development can be done on the PC
  *     using MinGW.<br>
  *     Timers, I/O channels and other HW resources are simulated in a
  *     Win32 process and the application code does not need to be aware of it.
- *     MinGW demo available.</li>
- * <li>Preemptive scheduling.</li>
- * <li>128 priority levels.</li>
- * <li>Multiple threads at the same priority level allowed.</li>
- * <li>Round robin scheduling for threads at the same priority level.</li>
- * <li>Unlimited number of threads.</li>
- * <li>Unlimited number of virtual timers.</li>
- * <li>Unlimited number of semaphores.</li>
- * <li>Unlimited number of mutexes.</li>
- * <li>Unlimited number of condvars.</li>
- * <li>Unlimited number of event sources.</li>
- * <li>Unlimited number of messages in queue.</li>
- * <li>Unlimited number of I/O queues.</li>
- * <li>No static setup at compile time, there is no need to configure a maximum
- *     number of all the above resources.</li>
- * <li>No *need* for a memory allocator, all the kernel structures are static
- *     and declaratively allocated.</li>
- * <li>Threads, Semaphores, Event Sources, Virtual Timers creation/deletion at
- *     runtime.</li>
- * <li>Optional, thread safe, Heap Allocator subsystem.</li>
- * <li>Optional, thread safe, Memory Pools Allocator subsystem.</li>
- * <li>Blocking and non blocking I/O channels with timeout and events generation
- *     capability.</li>
- * <li>Minimal system requirements: about 8KiB ROM with all options enabled and
- *     speed optimizations on. The size can shrink under 2KiB by disabling the
- *     the unused subsystems and optimizing for size.</li>
- * <li>Small memory footprint, unused subsystems can be excluded by the
- *     memory image.</li>
- * <li>Almost totally written in C with little ASM code required for ports.</li>
- * </ul>
+ *     MinGW demo available.
+ * - Preemptive scheduling.
+ * - 128 priority levels.
+ * - Multiple threads at the same priority level allowed.
+ * - Round robin scheduling for threads at the same priority level.
+ * - Unlimited number of threads.
+ * - Unlimited number of virtual timers.
+ * - Unlimited number of semaphores.
+ * - Unlimited number of mutexes.
+ * - Unlimited number of condvars.
+ * - Unlimited number of event sources.
+ * - Unlimited number of messages in queue.
+ * - Unlimited number of I/O queues.
+ * - No static setup at compile time, there is no need to configure a maximum
+ *   number of all the above resources.
+ * - No *need* for a memory allocator, all the kernel structures are static
+ *   and declaratively allocated.
+ * - Threads, Semaphores, Event Sources, Virtual Timers creation/deletion at
+ *   runtime.
+ * - Optional, thread safe, Heap Allocator subsystem.
+ * - Optional, thread safe, Memory Pools Allocator subsystem.
+ * - Blocking and non blocking I/O channels with timeout and events generation
+ *   capability.
+ * - Minimal system requirements: about 8KiB ROM with all options enabled and
+ *   speed optimizations on. The size can shrink under 2KiB by disabling the
+ *   the unused subsystems and optimizing for size.
+ * - Small memory footprint, unused subsystems can be excluded by the
+ *   memory image.
+ * - Almost totally written in C with little ASM code required for ports.
  *
- * ChibiOS/RT architecture:<br><br>
- * @subpage Concepts
+ * Related pages:
+ * - @subpage Concepts
+ * - @subpage Articles
  */
 
 /**
  * @page Concepts Concepts
  * @{
+ * @brief ChibiOS/RT Concepts and Architecture
  * @section naming Naming Conventions
  * ChibiOS/RT APIs are all named following this convention:
  * @a ch\<group\>\<action\>\<suffix\>().
@@ -237,6 +235,16 @@
 /** @} */
 
 /**
+ * @page Articles Articles
+ * @{
+ * @brief ChibiOS/RT Articles and Code Examples
+ *
+ * - @subpage article_atomic
+ * - @subpage article_saveram
+ */
+/** @} */
+
+/**
  * @defgroup Ports Ports
  * @{
  * This section describes the technical details for the various supported
@@ -351,7 +359,7 @@
  * @defgroup Heap Heap
  * @{
  * Heap Allocator related APIs.
- * <b>Operation mode</b><br><br>
+ * <h2>Operation mode</h2>
  * The heap allocator implements a first-fit strategy and its APIs are
  * functionally equivalent to the usual @p malloc() and @p free(). The main
  * difference is that the heap APIs are thread safe.<br>
@@ -369,7 +377,7 @@
  * @defgroup MemoryPools Memory Pools
  * @{
  * Memory Pools related APIs.
- * <b>Operation mode</b><br><br>
+ * <h2>Operation mode</h2>
  * The Memory Pools APIs allow to allocate/free fixed size objects in
  * <b>constant time</b> and reliably without memory fragmentation problems.<br>
  * In order to use the Time APIs the @p CH_USE_MEMPOOLS option must be
@@ -383,21 +391,16 @@
  * @defgroup Semaphores Semaphores
  * @{
  * Semaphores and threads synchronization.
- * <b>Operation mode</b><br><br>
+ * <h2>Operation mode</h2>
  * A semaphore is a threads synchronization object, some operations
- * are defined on semaphores:<br>
- * <ul>
- *   <li><b>Signal</b>: The semaphore counter is increased and if the result
- *     is non-positive then a waiting thread is removed from the semaphore
- *     queue and made ready for execution.
- *   </li>
- *   <li><b>Wait</b>: The semaphore counter is decreased and if the result
- *     becomes negative the thread is queued in the semaphore and suspended.
- *   </li>
- *   <li><b>Reset</b>: The semaphore counter is reset to a non-negative value
- *     and all the threads in the queue are released.
- *   </li>
- * </ul>
+ * are defined on semaphores:
+ * - <b>Signal</b>: The semaphore counter is increased and if the result
+ *   is non-positive then a waiting thread is removed from the semaphore
+ *   queue and made ready for execution.
+ * - <b>Wait</b>: The semaphore counter is decreased and if the result
+ *   becomes negative the thread is queued in the semaphore and suspended.
+ * - <b>Reset</b>: The semaphore counter is reset to a non-negative value
+ *   and all the threads in the queue are released.
  * Semaphores can be used as guards for mutual exclusion code zones but
  * also have other uses, queues guards and counters as example.<br>
  * In order to use the Semaphores APIs the @p CH_USE_SEMAPHORES
@@ -411,30 +414,26 @@
  * @defgroup Mutexes Mutexes
  * @{
  * Mutexes and threads synchronization.
- * <b>Operation mode</b><br><br>
+ * <h2>Operation mode</h2>
  * A mutex is a threads synchronization object, some operations are defined
- * on mutexes:<br>
- * <ul>
- *   <li><b>Lock</b>: The mutex is checked, if the mutex is not owned by some
- *     other thread then it is locked else the current thread is queued on the
- *     mutex in a list ordered by priority.
- *   </li>
- *   <li><b>Unlock</b>: The mutex is released by the owner and the highest
- *     priority thread waiting in the queue, if any, is resumed and made owner
- *     of the mutex.
- *   </li>
- * </ul>
+ * on mutexes:
+ * - <b>Lock</b>: The mutex is checked, if the mutex is not owned by some
+ *   other thread then it is locked else the current thread is queued on the
+ *   mutex in a list ordered by priority.
+ * - <b>Unlock</b>: The mutex is released by the owner and the highest
+ *   priority thread waiting in the queue, if any, is resumed and made owner
+ *   of the mutex.
  * In order to use the Event APIs the @p CH_USE_MUTEXES option must be
  * specified in @p chconf.h.<br>
  *
- * <b>Constraints</b><br><br>
+ * <h2>Constraints</h2>
  * In ChibiOS/RT the Unlock operations are always performed in Lock-reverse
  * order. The Unlock API does not even have a parameter, the mutex to unlock
  * is taken from an internal stack of owned mutexes.
  * This both improves the performance and is required by the priority
  * inheritance mechanism.
  *
- * <b>The priority inversion problem</b><br><br>
+ * <h2>The priority inversion problem</h2>
  * The mutexes in ChibiOS/RT implements the <b>full</b> priority
  * inheritance mechanism in order handle the priority inversion problem.<br>
  * When a thread is queued on a mutex, any thread, directly or indirectly,
@@ -451,7 +450,7 @@
  * @defgroup CondVars Conditional Variables
  * @{
  * Conditional Variables and threads synchronization.
- * <b>Operation mode</b><br><br>
+ * <h2>Operation mode</h2>
  * The condition variable is a synchronization object meant to be used inside
  * a zone protected by a @p Mutex. Mutexes and CondVars together can implement
  * a Monitor construct.<br>
@@ -465,8 +464,8 @@
 /**
  * @defgroup Events Events
  * @{
- * Event Sources and Event Listeners.<br>
- * <b>Operation mode</b><br><br>
+ * Event Sources and Event Listeners.
+ * <h2>Operation mode</h2>
  * An Event Source is a special object that can be signaled by a thread or
  * an interrupt service routine. Signaling an Event Source has the effect
  * that all the threads registered on the Event Source will receive
@@ -488,8 +487,8 @@
 /**
  * @defgroup Messages Messages
  * @{
- * Synchronous Messages.<br>
- * <b>Operation Mode</b><br><br>
+ * Synchronous inter-thread Messages.
+ * <h2>Operation Mode</h2>
  * Messages are an easy to use and fast IPC mechanism, threads can both serve
  * messages and send messages to other threads, the mechanism allows data to
  * be carryed in both directions. Data is not copyed between the client and
@@ -517,19 +516,17 @@
  * routine) and an upper side (upper driver, accessed by the application
  * threads).<br>
  * There are several kind of queues:<br>
- * <ul>
- * <li><b>Input queue</b>, unidirectional queue where the writer is the
- *     lower side and the reader is the upper side.</li>
- * <li><b>Output queue</b>, unidirectional queue where the writer is the
- *     upper side and the reader is the lower side.</li>
- * <li><b>Half duplex queue</b>, bidirectional queue where the buffer is shared
- *     between a receive and a transmit queues. This means that concurrent
- *     buffered input and output operations are not possible, this is perfectly
- *     acceptable for a lot of applications however, as example an RS485 driver.
- * <li><b>Full duplex queue</b>, bidirectional queue where read and write
- *     operations can happen at the same time. Full duplex queues
- *     are implemented by pairing an input queue and an output queue together.
- * </ul>
+ * - <b>Input queue</b>, unidirectional queue where the writer is the
+ *   lower side and the reader is the upper side.
+ * - <b>Output queue</b>, unidirectional queue where the writer is the
+ *   upper side and the reader is the lower side.
+ * - <b>Half duplex queue</b>, bidirectional queue where the buffer is shared
+ *   between a receive and a transmit queues. This means that concurrent
+ *   buffered input and output operations are not possible, this is perfectly
+ *   acceptable for a lot of applications however, as example an RS485 driver.
+ * - <b>Full duplex queue</b>, bidirectional queue where read and write
+ *   operations can happen at the same time. Full duplex queues
+ *   are implemented by pairing an input queue and an output queue together.
  * In order to use the I/O queues the @p CH_USE_QUEUES option must
  * be specified in @p chconf.h.<br>
  * In order to use the half duplex queues the @p CH_USE_QUEUES_HALFDUPLEX
