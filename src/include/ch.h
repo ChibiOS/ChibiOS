@@ -18,7 +18,7 @@
 */
 
 /**
- * @addtogroup Initialization
+ * @addtogroup Kernel
  * @{
  */
 
