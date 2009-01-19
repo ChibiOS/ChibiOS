@@ -207,9 +207,9 @@ struct context {
 }
 
 /**
- * IRQ handler function modifier.
+ * IRQ handler function declaration.
  */
-#define PORT_IRQ_HANDLER
+#define PORT_IRQ_HANDLER(id) void id(void)
 
 /**
  * This function is empty in this port.

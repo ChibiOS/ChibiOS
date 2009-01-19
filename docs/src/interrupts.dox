@@ -1,0 +1,34 @@
+/**
+ * @page article_interrupts Writing interrupt handlers under ChibiOS/RT
+ * @{
+ * Since version 1.1.0 ChbiOS/RT offers a cross-platform system for writing
+ * interrupt handlers. Port-related and compiler-related details are
+ * encapsulated within standard system macros.<br>
+ * An interrupt handler assumes the following general form:
+ * @code
+CH_IRQ_HANDLER(myIRQ) {
+  CH_IRQ_PROLOGUE();
+  
+  // IRQ handling code, preemptable if the architecture supports it.
+  
+  chSysLockI();
+  // Invocation of some I-Class system API, never preemptable.
+  chSysUnlockI().
+  
+  // More IRQ handling code, again preemptable.
+
+  CH_IRQ_EPILOGUE();
+}
+ * @endcode
+ * Note that only interrupt handlers that have to invoke system I-Class APIs
+ * must be written in this form, handlers unrelated to the OS activity can
+ * omit the macros.
+ * Another note about the handler name "myIRQ", in some ports it must be a
+ * vector number rather than a function name, it could also be a name from
+ * within a predefined set, see the notes about the various ports.
+ * <h2>Important Notes</h2>
+ * - There is an important application note about ARM7 interrupt handlers,
+ *   please read about it in the ARM7 port section: @ref ARM7_IH
+ */
+/** @} */
+ 

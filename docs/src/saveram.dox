@@ -9,23 +9,21 @@
  * Consider the following code: 
  * @code
 #include <ch.h>
- 
+
 static WORKING_AREA(waMyThread, 64);
- 
+
 static t_msg MyThread(void *arg) {
- 
   while (!chThdShoudTerminate()) {
     /* Do thread inner work */
   }
   return 1;
 }
- 
+
 main() {
   chSysInit();
   ...
-  chThdCreate(NORMALPRIO, 0, waMyThread, sizeof(waMyThread), MyThread, NULL);
+  chThdCreateStatic(waMyThread, sizeof(waMyThread), NORMALPRIO, MyThread, NULL);
   ...
-  chSysPause();
 }
  * @endcode
  * The resulting ASM code for the thread function would be something like this:
@@ -40,23 +38,22 @@ MyThread:
  * saved by modifying the code as follow, using some advanced GCC extensions: 
  * @code
 #include <ch.h>
- 
-static BYTE8 waMyThread[UserStackSize(64)];
- 
-__attribute__((noreturn)) void MyThread(void *arg) {
- 
+
+static WORKING_AREA(waMyThread, 64);
+
+__attribute__((noreturn))
+static void MyThread(void *arg) {
   while (!chThdShoudTerminate()) {
     /* Do thread inner work */
   }
   chThdExit(1);
 }
- 
+
 main() {
   chSysInit();
   ...
-  chThdCreate(NORMALPRIO, 0, waMyThread, sizeof(waMyThread), (t_tfunc)MyThread, NULL);
+  chThdCreateStatic(waMyThread, sizeof(waMyThread), NORMALPRIO, MyThread, NULL);
   ...
-  chSysPause();
 }
  * @endcode
  * This will make GCC believe that the function cannot return and there is no

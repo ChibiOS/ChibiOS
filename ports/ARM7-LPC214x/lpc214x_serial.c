@@ -109,7 +109,7 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
   }
 }
 
-CH_IRQ_HANDLER void UART0IrqHandler(void) {
+CH_IRQ_HANDLER(UART0IrqHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -119,7 +119,7 @@ CH_IRQ_HANDLER void UART0IrqHandler(void) {
   CH_IRQ_EPILOGUE();
 }
 
-CH_IRQ_HANDLER void UART1IrqHandler(void) {
+CH_IRQ_HANDLER(UART1IrqHandler) {
 
   CH_IRQ_PROLOGUE();
 

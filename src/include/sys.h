@@ -156,9 +156,11 @@
 #define CH_IRQ_EPILOGUE() PORT_IRQ_EPILOGUE()
 
 /**
- * Standard modifier for IRQ handler functions.
+ * Standard IRQ handler declaration.
+ * @note @p id can be a function name or a vector number depending on the
+ *       port implementation.
  */
-#define CH_IRQ_HANDLER PORT_IRQ_HANDLER
+#define CH_IRQ_HANDLER(id) PORT_IRQ_HANDLER(id)
 
 #ifdef __cplusplus
 extern "C" {

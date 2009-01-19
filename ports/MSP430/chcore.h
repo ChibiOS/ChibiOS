@@ -155,10 +155,9 @@ struct context {
 }
 
 /**
- * IRQ handler function modifier. Note, it just aliases the WinMSP "interrupt"
- * macro.
+ * IRQ handler function modifier.
  */
-#define PORT_IRQ_HANDLER interrupt
+#define PORT_IRQ_HANDLER(id) interrupt void id(void)
 
 /**
  * This function is empty in this port.

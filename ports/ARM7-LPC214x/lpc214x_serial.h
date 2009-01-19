@@ -41,9 +41,9 @@
 extern "C" {
 #endif
   void InitSerial(int vector1, int vector2);
-  void UART0IrqHandler(void);
-  void UART1IrqHandler(void);
   void SetUARTI(UART *u, int speed, int lcr, int fcr);
+  CH_IRQ_HANDLER(UART0IrqHandler);
+  CH_IRQ_HANDLER(UART1IrqHandler);
 #ifdef __cplusplus
 }
 #endif

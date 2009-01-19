@@ -122,9 +122,11 @@ struct context {
 #define PORT_IRQ_EPILOGUE()
 
 /**
- * IRQ handler function modifier.
+ * IRQ handler function declaration.
+ * @note @p id can be a function name or a vector number depending on the
+ *       port implementation.
  */
-#define PORT_IRQ_HANDLER
+#define PORT_IRQ_HANDLER(id) void id(void)
 
 #ifdef __cplusplus
 extern "C" {

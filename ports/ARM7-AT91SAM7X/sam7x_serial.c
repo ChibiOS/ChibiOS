@@ -74,7 +74,7 @@ static void ServeInterrupt(AT91PS_USART u, FullDuplexDriver *com) {
   AT91C_BASE_AIC->AIC_EOICR = 0;
 }
 
-CH_IRQ_HANDLER void USART0IrqHandler(void) {
+CH_IRQ_HANDLER(USART0IrqHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -83,7 +83,7 @@ CH_IRQ_HANDLER void USART0IrqHandler(void) {
   CH_IRQ_EPILOGUE();
 }
 
-CH_IRQ_HANDLER void USART1IrqHandler(void) {
+CH_IRQ_HANDLER(USART1IrqHandler) {
 
   CH_IRQ_PROLOGUE();
 

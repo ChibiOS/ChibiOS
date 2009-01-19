@@ -188,10 +188,10 @@ asm ("" : : : "r18", "r19", "r20", "r21", "r22", "r23", "r24",          \
 }
 
 /**
- * IRQ handler function modifier. Note, it just aliases the WinAVR "ISR"
+ * IRQ handler function declaration. Note, it just aliases the WinAVR "ISR"
  * macro.
  */
-#define PORT_IRQ_HANDLER ISR
+#define PORT_IRQ_HANDLER(id) ISR(id)
 
 /**
  * This function is empty in this port.

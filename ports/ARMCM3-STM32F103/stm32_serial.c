@@ -85,7 +85,7 @@ static void ServeInterrupt(USART_TypeDef *u, FullDuplexDriver *com) {
 /*
  * USART1 IRQ service routine.
  */
-CH_IRQ_HANDLER void VectorD4(void) {
+CH_IRQ_HANDLER(VectorD4) {
 
   CH_IRQ_PROLOGUE();
 
@@ -108,7 +108,7 @@ static void OutNotify1(void) {
 /*
  * USART2 IRQ service routine.
  */
-CH_IRQ_HANDLER void VectorD8(void) {
+CH_IRQ_HANDLER(VectorD8) {
 
   CH_IRQ_PROLOGUE();
 
@@ -131,7 +131,7 @@ static void OutNotify2(void) {
 /*
  * USART3 IRQ service routine.
  */
-CH_IRQ_HANDLER void VectorDC(void) {
+CH_IRQ_HANDLER(VectorDC) {
 
   CH_IRQ_PROLOGUE();
 

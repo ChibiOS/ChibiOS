@@ -1,12 +1,14 @@
 /**
  * @mainpage ChibiOS/RT
  * @author Giovanni Di Sirio (gdisirio@users.sourceforge.net).
- * @section Chibi Chibi ?
- * It is the Japanese word for small as in small child. So ChibiOS/RT
- * @htmlonly (<span class="t_nihongo_kanji" xml:lang="ja" lang="ja">&#12385;&#12403;</span>OS/RT) \endhtmlonly
+ *
+ * <h2>Chibi ?</h2>
+ * I didn't want a serious name for this project. It is the Japanese word for
+ * small as in small child. So ChibiOS/RT
+ * @htmlonly (<span class="t_nihongo_kanji" xml:lang="ja" lang="ja">&#12385;&#12403;</span>OS/RT) @endhtmlonly
  * means small Real Time Operating System.
  * Source <a href="http://en.wikipedia.org/wiki/Chibi" target="_blank">Wikipedia</a>.
- * @section ch_features Features
+ * <h2>Features</h2>
  * - Free software, GPL3 licensed.
  * - Designed for realtime applications.
  * - Easily portable.
@@ -49,7 +51,7 @@
  *   memory image.
  * - Almost totally written in C with little ASM code required for ports.
  *
- * Related pages:
+ * <h2>Related pages</h2>
  * - @subpage Concepts
  * - @subpage Articles
  */
@@ -241,6 +243,7 @@
  *
  * - @subpage article_atomic
  * - @subpage article_saveram
+ * - @subpage article_interrupts
  */
 /** @} */
 
@@ -491,7 +494,7 @@
  * <h2>Operation Mode</h2>
  * Messages are an easy to use and fast IPC mechanism, threads can both serve
  * messages and send messages to other threads, the mechanism allows data to
- * be carryed in both directions. Data is not copyed between the client and
+ * be carried in both directions. Data is not copied between the client and
  * server threads but just a pointer passed so the exchange is very time
  * efficient.<br>
  * Messages are usually processed in FIFO order but it is possible to process

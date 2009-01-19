@@ -87,6 +87,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Huge improvements to the ports documentation.
 - Articles and notes previously in the wiki now merged in the general
   documentation, the wiki entries are obsolete and will be removed.
+- New application notes and articles added.
 
 *** 1.0.0rc2 ***
 - FIX: Removed unused variable "retaddr" from the Cortex-M3 port.

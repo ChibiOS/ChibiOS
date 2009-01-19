@@ -30,16 +30,8 @@
  
   chSemSignalI(&sem1);
   chSemSignalI(&sem2);
-  /*
-   * The "if" is required because the chSemWaitS() does not always internally
-   * reschedule.
-   */
-  if (chSemGetCounter(&sem3) <= 0)
-    chSemWaitS(&Sem3);
-  else {
-    chSemFastWaitS(&sem3);
-    chSchRescheduleS();
-  }
+  chSemWaitS(&Sem3);
+  chSchRescheduleS(); /* Because chSemWaitS() might not reschedule internally.*/
  
   chSysUnlock();
  * @endcode

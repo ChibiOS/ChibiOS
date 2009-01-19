@@ -85,7 +85,7 @@
  * registers.<br>
  * Example:
  * @code
- * CH_IRQ_HANDLER void irq_handler(void) {
+ * CH_IRQ_HANDLER(irq_handler) {
  *   CH_IRQ_PROLOGUE();
  *
  *   serve_interrupt();

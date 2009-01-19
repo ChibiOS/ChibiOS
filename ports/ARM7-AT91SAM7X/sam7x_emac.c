@@ -124,7 +124,7 @@ static void ServeInterrupt(void) {
   AT91C_BASE_AIC->AIC_EOICR = 0;
 }
 
-CH_IRQ_HANDLER void EMACIrqHandler(void) {
+CH_IRQ_HANDLER(EMACIrqHandler) {
 
   CH_IRQ_PROLOGUE();
 
