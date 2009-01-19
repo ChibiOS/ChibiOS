@@ -85,7 +85,7 @@ void hwinit(void) {
   InitSerial();
 }
 
-CH_IRQ_HANDLER(TIMERA0_VECTOR) tmr0irq(void) {
+CH_IRQ_HANDLER(TIMERA0_VECTOR) {
 
   CH_IRQ_PROLOGUE();
 

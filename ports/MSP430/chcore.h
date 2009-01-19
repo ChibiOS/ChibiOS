@@ -157,7 +157,7 @@ struct context {
 /**
  * IRQ handler function modifier.
  */
-#define PORT_IRQ_HANDLER(id) interrupt void id(void)
+#define PORT_IRQ_HANDLER(id) interrupt(id) _vect_##id(void)
 
 /**
  * This function is empty in this port.

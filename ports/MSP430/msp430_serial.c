@@ -44,7 +44,7 @@ FullDuplexDriver COM1;
 static uint8_t ib1[SERIAL_BUFFERS_SIZE];
 static uint8_t ob1[SERIAL_BUFFERS_SIZE];
 
-CH_IRQ_HANDLER(USART0TX_VECTOR) u0txirq(void) {
+CH_IRQ_HANDLER(USART0TX_VECTOR) {
   msg_t b;
 
   CH_IRQ_PROLOGUE();
@@ -60,7 +60,7 @@ CH_IRQ_HANDLER(USART0TX_VECTOR) u0txirq(void) {
   CH_IRQ_EPILOGUE();
 }
 
-CH_IRQ_HANDLER(USART0RX_VECTOR) u0rxirq(void) {
+CH_IRQ_HANDLER(USART0RX_VECTOR) {
   uint8_t urctl;
 
   CH_IRQ_PROLOGUE();
@@ -116,7 +116,7 @@ FullDuplexDriver COM2;
 static uint8_t ib2[SERIAL_BUFFERS_SIZE];
 static uint8_t ob2[SERIAL_BUFFERS_SIZE];
 
-CH_IRQ_HANDLER(USART1TX_VECTOR) u1txirq(void) {
+CH_IRQ_HANDLER(USART1TX_VECTOR) {
   msg_t b;
 
   CH_IRQ_PROLOGUE();
@@ -132,7 +132,7 @@ CH_IRQ_HANDLER(USART1TX_VECTOR) u1txirq(void) {
   CH_IRQ_EPILOGUE();
 }
 
-CH_IRQ_HANDLER(USART1RX_VECTOR) u1rxirq(void) {
+CH_IRQ_HANDLER(USART1RX_VECTOR) {
   uint8_t urctl;
 
   CH_IRQ_PROLOGUE();
