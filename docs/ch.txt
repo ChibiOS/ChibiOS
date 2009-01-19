@@ -664,7 +664,7 @@
  * <b>Operation Mode</b><br><br>
  * Messages are an easy to use and fast IPC mechanism, threads can both serve
  * messages and send messages to other threads, the mechanism allows data to
- * be carryed in both directions. Data is not copyed between the client and
+ * be carried in both directions. Data is not copied between the client and
  * server threads but just a pointer passed so the exchange is very time
  * efficient.<br>
  * Messages are usually processed in FIFO order but it is possible to process

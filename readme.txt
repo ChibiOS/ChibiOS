@@ -74,6 +74,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.0.0 ***
+- Fixed typos here and there.
+
 *** 1.0.0rc2 ***
 - FIX: Removed unused variable "retaddr" from the Cortex-M3 port.
 - FIX: The macro THD_WA_SIZE was defined wrongly in the file

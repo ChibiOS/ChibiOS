@@ -49,7 +49,7 @@ static void SYSIrqHandler(void) {
     (void) AT91C_BASE_PITC->PITC_PIVR;
     chSysTimerHandlerI();
   }
-  AT91C_BASE_AIC->AIC_EOICR = 0;                                        \
+  AT91C_BASE_AIC->AIC_EOICR = 0;
 
   chSysIRQExitI();
 }
