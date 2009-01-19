@@ -100,7 +100,7 @@ typedef struct {
                                      sizeof(struct intctx));            \
   tp->p_ctx.r13->r4 = pf;                                               \
   tp->p_ctx.r13->r5 = arg;                                              \
-  tp->p_ctx.r13->lr = _port_thread_start;                                \
+  tp->p_ctx.r13->lr = _port_thread_start;                               \
 }
 
 /**

@@ -245,56 +245,6 @@
 /** @} */
 
 /**
- * @defgroup LPC214x LPC214x Support
- * @{
- * <p>
- * The LPC214x support includes:
- * <ul>
- * <li>VIC support code.</li>
- * <li>Buffered, interrupt driven, serial driver.</li>
- * <li>SSP driver.</li>
- * <li>A MMC/SD demo driver.</li>
- * <li>A buzzer demo driver.</li>
- * <li>A minimal demo, useful as project template.</li>
- * <li>A demo supporting the kernel test suite.</li>
- * <li>A C++ demo supporting the kernel test suite.</li>
- * </ul>
- * </p>
- * @ingroup ARM7
- */
-/** @} */
-
-/**
- * @defgroup AT91SAM7X AT91SAM7X Support
- * @{
- * <p>
- * The AT91SAM7X support includes:
- * <ul>
- * <li>Buffered, interrupt driven, serial driver.</li>
- * <li>EMAC driver with MII support.</li>
- * <li>A demo supporting the kernel test suite.</li>
- * <li>A Web server demo using the uIP TCP/IP stack.</li>
- * </ul>
- * </p>
- * @ingroup ARM7
- */
-/** @} */
-
-/**
- * @defgroup STM32F103 STM32F103 Support
- * @{
- * <p>
- * The STM32F103 support includes:
- * <ul>
- * <li>Buffered, interrupt driven, serial driver.</li>
- * <li>A demo supporting the kernel test suite.</li>
- * </ul>
- * </p>
- * @ingroup ARMCM3
- */
-/** @} */
-
-/**
  * @defgroup Kernel Kernel
  * @{
  * @file ch.h ChibiOS/RT main include file, it includes everything else.
