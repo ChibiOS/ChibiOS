@@ -50,6 +50,7 @@ typedef uint16_t stkalign_t;
  */
 typedef void *regmsp_t;
 
+/** @cond never */
 /**
  * Interrupt saved context.
  */
@@ -61,9 +62,10 @@ struct extctx {
   regmsp_t      sr;
   regmsp_t      pc;
 };
+/** @endcond */
 
+/** @cond never */
 /**
- * System saved context.
  * This structure represents the inner stack frame during a context switching.
  */
 struct intctx {
@@ -77,15 +79,17 @@ struct intctx {
   regmsp_t      r11;
   regmsp_t      pc;
 };
+/** @endcond */
 
+/** @cond never */
 /**
- * Platform dependent part of the @p Thread structure.
  * In the MSP430 port this structure just holds a pointer to the @p intctx
  * structure representing the stack pointer at the time of the context switch.
  */
-typedef struct {
+struct context {
   struct intctx *sp;
-} Context;
+};
+/** @endcond */
 
 /**
  * Platform dependent part of the @p chThdInit() API.

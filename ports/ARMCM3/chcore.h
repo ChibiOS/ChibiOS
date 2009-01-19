@@ -96,14 +96,16 @@ typedef uint32_t stkalign_t;
  */
 typedef void *regarm_t;
 
+/** @cond never */
 /**
  * Interrupt saved context, empty in this architecture.
  */
 struct extctx {
 };
+/** @endcond */
 
+/** @cond never */
 /**
- * System saved context.
  * This structure represents the inner stack frame during a context switching.
  */
 struct intctx {
@@ -128,13 +130,16 @@ struct intctx {
   regarm_t      pc;
   regarm_t      xpsr;
 };
+/** @endcond */
 
+/** @cond never */
 /**
  * Cortex-M3 context structure.
  */
-typedef struct {
+struct context {
   struct intctx *r13;
-} Context;
+};
+/** @endcond */
 
 /**
  * Platform dependent part of the @p chThdInit() API.

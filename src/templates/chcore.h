@@ -57,9 +57,9 @@ struct intctx {
  * This structure usually contains just the saved stack pointer defined as a
  * pointer to a @p intctx structure.
  */
-typedef struct {
+struct context {
   struct intctx *sp;
-} Context;
+};
 
 /**
  * Platform dependent part of the @p chThdInit() API.

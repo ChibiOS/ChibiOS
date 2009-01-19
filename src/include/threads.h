@@ -49,7 +49,7 @@ struct Thread {
   /** Mode flags. */
   tmode_t               p_flags;
   /** Machine dependent processor context.*/
-  Context               p_ctx;
+  struct context        p_ctx;
 #ifdef CH_USE_NESTED_LOCKS
   cnt_t                 p_locks;
 #endif

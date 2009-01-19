@@ -45,6 +45,7 @@
  */
 typedef uint8_t stkalign_t;
 
+/** @cond never */
 /**
  * Interrupt saved context.
  * @note The field @p _next is not part of the context, it represents the
@@ -69,7 +70,9 @@ struct extctx {
   uint8_t       r0;
   uint16_t      pc;
 };
+/** @endcond */
 
+/** @cond never */
 /**
  * System saved context.
  * @note The field @p _next is not part of the context, it represents the
@@ -100,15 +103,17 @@ struct intctx {
   uint8_t       pcl;
   uint8_t       pch;
 };
+/** @endcond */
 
+/** @cond never */
 /**
- * Platform dependent part of the @p Thread structure.
  * In the AVR port this structure just holds a pointer to the @p intctx
  * structure representing the stack pointer at the time of the context switch.
  */
-typedef struct {
+struct context {
   struct intctx *sp;
-} Context;
+};
+/** @endcond */
 
 /**
  * Platform dependent part of the @p chThdInit() API.

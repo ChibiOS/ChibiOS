@@ -48,8 +48,8 @@ typedef uint32_t stkalign_t;
  */
 typedef void *regarm_t;
 
+/** @cond never */
 /**
- * Interrupt saved context.
  * This structure represents the stack frame saved during a preemption-capable
  * interrupt handler.
  */
@@ -63,9 +63,10 @@ struct extctx {
   regarm_t      r12;
   regarm_t      lr_usr;
 };
+/** @endcond */
 
+/** @cond never */
 /**
- * System saved context.
  * This structure represents the inner stack frame during a context switching.
  */
 struct intctx {
@@ -81,15 +82,17 @@ struct intctx {
   regarm_t      r11;
   regarm_t      lr;
 };
+/** @endcond */
 
+/** @cond never */
 /**
- * Platform dependent part of the @p Thread structure.
  * In the ARM7 port this structure contains just the copy of the user mode
  * stack pointer.
  */
-typedef struct {
+struct context {
   struct intctx *r13;
-} Context;
+};
+/** @endcond */
 
 /**
  * Platform dependent part of the @p chThdInit() API.
