@@ -27,7 +27,7 @@
 
 extern void FiqHandler(void);
 
-CH_IRQ_HANDLER static void SpuriousHandler(void) {
+static CH_IRQ_HANDLER(SpuriousHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -39,7 +39,7 @@ CH_IRQ_HANDLER static void SpuriousHandler(void) {
 /*
  * SYS IRQ handling here.
  */
-CH_IRQ_HANDLER static void SYSIrqHandler(void) {
+static CH_IRQ_HANDLER(SYSIrqHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -49,7 +49,7 @@ CH_IRQ_HANDLER static void SYSIrqHandler(void) {
     chSysTimerHandlerI();
     chSysUnlockI();
   }
-  AT91C_BASE_AIC->AIC_EOICR = 0;                                        \
+  AT91C_BASE_AIC->AIC_EOICR = 0;
 
   CH_IRQ_EPILOGUE();
 }

@@ -31,27 +31,29 @@
 /*
  * Non-vectored IRQs handling here.
  */
-CH_IRQ_HANDLER static void IrqHandler(void) {
+static CH_IRQ_HANDLER(IrqHandler) {
 
   CH_IRQ_PROLOGUE();
 
   /* nothing */
-  VICVectAddr = 0;
 
+  VICVectAddr = 0;
   CH_IRQ_EPILOGUE();
 }
 
 /*
  * Timer 0 IRQ handling here.
  */
-CH_IRQ_HANDLER static void T0IrqHandler(void) {
+static CH_IRQ_HANDLER(T0IrqHandler) {
 
   CH_IRQ_PROLOGUE();
-
   T0IR = 1;             /* Clear interrupt on match MR0. */
-  chSysTimerHandlerI();
-  VICVectAddr = 0;
 
+  chSysLockI();
+  chSysTimerHandlerI();
+  chSysUnlockI();
+
+  VICVectAddr = 0;
   CH_IRQ_EPILOGUE();
 }
 
