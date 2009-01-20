@@ -127,9 +127,9 @@ static msg_t HelloWorldThread(void *arg) {
     PrintLineFDD(sd, "Hello World\r\n");
     c = chFDDGetTimeout(sd, 333);
     switch (c) {
-    case -1:
+    case Q_TIMEOUT:
       continue;
-    case -2:
+    case Q_RESET:
       return 1;
     case 3:
       PrintLineFDD(sd, "^C\r\n");
