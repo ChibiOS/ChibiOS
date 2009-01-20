@@ -26,9 +26,10 @@
 
 #ifdef CH_USE_SERIAL_FULLDUPLEX
 /**
- * Initializes a generic full duplex driver. The HW dependent part of the
- * initialization has to be performed outside, usually in the hardware
- * initialization code.
+ * @brief Initializes a generic full duplex driver.
+ * @details The HW dependent part of the initialization has to be performed
+ * outside, usually in the hardware initialization code.
+ *
  * @param sd pointer to a @p FullDuplexDriver structure
  * @param ib pointer to a memory area allocated for the Input Queue buffer
  * @param isize size of the Input Queue buffer
@@ -52,8 +53,9 @@ void chFDDInit(FullDuplexDriver *sd,
 }
 
 /**
- * This function must be called from the input interrupt service routine in
- * order to enqueue incoming data and generate the related events.
+ * @brief Handles incoming data.
+ * @details This function must be called from the input interrupt service
+ * routine in order to enqueue incoming data and generate the related events.
  * @param sd pointer to a @p FullDuplexDriver structure
  * @param b the byte to be written in the driver's Input Queue
  */
@@ -66,8 +68,9 @@ void chFDDIncomingDataI(FullDuplexDriver *sd, uint8_t b) {
 }
 
 /**
- * Must be called from the output interrupt service routine in order to get
- * the next byte to be transmitted.
+ * @brief Handles outgoing data.
+ * @details Must be called from the output interrupt service routine in order
+ * to get the next byte to be transmitted.
  *
  * @param sd pointer to a @p FullDuplexDriver structure
  * @return The byte value read from the driver's output queue.
@@ -83,8 +86,10 @@ msg_t chFDDRequestDataI(FullDuplexDriver *sd) {
 }
 
 /**
- * Must be called from the I/O interrupt service routine in order to
+ * @brief Handles communication events/errors.
+ * @details Must be called from the I/O interrupt service routine in order to
  * notify I/O conditions as errors, signals change etc.
+ *
  * @param sd pointer to a @p FullDuplexDriver structure
  * @param mask condition flags to be added to the mask
  */
@@ -95,7 +100,8 @@ void chFDDAddFlagsI(FullDuplexDriver *sd, dflags_t mask) {
 }
 
 /**
- * This function returns and clears the errors mask associated to the driver.
+ * @brief Returns and clears the errors mask associated to the driver.
+ *
  * @param sd pointer to a @p FullDuplexDriver structure
  * @return The condition flags modified since last time this function was
  *         invoked.
@@ -111,9 +117,10 @@ dflags_t chFDDGetAndClearFlags(FullDuplexDriver *sd) {
 
 #ifdef CH_USE_SERIAL_HALFDUPLEX
 /**
- * Initializes a generic half duplex driver. The HW dependent part of the
- * initialization has to be performed outside, usually in the hardware
- * initialization code.
+ * @brief Initializes a generic half duplex driver.
+ * @details The HW dependent part of the initialization has to be performed
+ * outside, usually in the hardware initialization code.
+ *
  * @param sd pointer to a @p HalfDuplexDriver structure
  * @param b pointer to a memory area allocated for the queue buffer
  * @param size the buffer size
@@ -133,8 +140,9 @@ void chHDDInit(HalfDuplexDriver *sd, uint8_t *b, size_t size,
 }
 
 /**
- * This function must be called from the input interrupt service routine in
- * order to enqueue incoming data and generate the related events.
+ * @brief Handles incoming data.
+ * @details This function must be called from the input interrupt service
+ * routine in order to enqueue incoming data and generate the related events.
  * @param sd pointer to a @p FullDuplexDriver structure
  * @param b the byte to be written in the driver's input queue
  */
@@ -147,8 +155,9 @@ void chHDDIncomingDataI(HalfDuplexDriver *sd, uint8_t b) {
 }
 
 /**
- * Must be called from the output interrupt service routine in order to get
- * the next byte to be transmitted.
+ * @brief Handles outgoing data.
+ * @brief Must be called from the output interrupt service routine in order
+ * to get the next byte to be transmitted.
  *
  * @param sd pointer to a @p HalfDuplexDriver structure
  * @return The byte value read from the driver's output queue.
@@ -164,8 +173,10 @@ msg_t chHDDRequestDataI(HalfDuplexDriver *sd) {
 }
 
 /**
- * Must be called from the I/O interrupt service routine in order to
+ * @brief Handles communication events/errors.
+ * @details Must be called from the I/O interrupt service routine in order to
  * notify I/O conditions as errors, signals change etc.
+ *
  * @param sd pointer to a @p HalfDuplexDriver structure
  * @param mask condition flags to be added to the mask
  */
@@ -176,7 +187,8 @@ void chHDDAddFlagsI(HalfDuplexDriver *sd, dflags_t mask) {
 }
 
 /**
- * This function returns and clears the errors mask associated to the driver.
+ * @brief Returns and clears the errors mask associated to the driver.
+ *
  * @param sd pointer to a @p HalfDuplexDriver structure
  * @return The condition flags modified since last time this function was
  *         invoked.

@@ -27,10 +27,12 @@
 static WORKING_AREA(idle_thread_wa, IDLE_THREAD_STACK_SIZE);
 
 /**
- * This function implements the idle thread infinite loop. The function should
- * put the processor in the lowest power mode capable to serve interrupts.
+ * @brief This function implements the idle thread infinite loop.
+ * @details The function puts the processor in the lowest power mode capable
+ * to serve interrupts.<br>
  * The priority is internally set to the minimum system value so that this
  * thread is executed only if there are no other ready threads in the system.
+ *
  * @param p the thread parameter, unused in this scenario
  * @note Implementation should declare this function as a weak symbol in order
  *       to allow applications to re-implement it.
@@ -43,8 +45,10 @@ static void idle_thread(void *p) {
 }
 
 /**
- * ChibiOS/RT initialization. After executing this function the current
- * instructions stream becomes the main thread.
+ * @brief ChibiOS/RT initialization.
+ * @details After executing this function the current instructions stream
+ * becomes the main thread.
+ *
  * @note Interrupts should be still disabled when @p chSysInit() is invoked
  *       and are internally enabled.
  * @note The main thread is created with priority @p NORMALPRIO.
@@ -77,10 +81,10 @@ void chSysInit(void) {
 }
 
 /**
- * Handles time ticks for round robin preemption and timer increments.
- * Decrements the remaining time quantum of the running thread and preempts
- * it when the quantum is used up. Increments system time and manages the
- * timers.
+ * @brief Handles time ticks for round robin preemption and timer increments.
+ * @details Decrements the remaining time quantum of the running thread
+ * and preempts it when the quantum is used up. Increments system time and
+ * manages the timers.
  * @note The frequency of the timer determines the system tick granularity and,
  * together with the @p CH_TIME_QUANTUM macro, the round robin interval.
  */

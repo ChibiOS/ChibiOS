@@ -26,10 +26,13 @@
 
 #ifdef CH_USE_SEMAPHORES
 /**
- * Initializes a semaphore with the specified counter value.
+ * @brief Initializes a semaphore with the specified counter value.
+ *
  * @param sp pointer to a @p Semaphore structure
  * @param n initial value of the semaphore counter. Must be non-negative.
- * @note Can be called with interrupts disabled or enabled.
+ * @note This function can be invoked from within an interrupt handler even if
+ *       it is not an I-Class API because it does not touch any critical kernel
+ *       data structure.
  */
 void chSemInit(Semaphore *sp, cnt_t n) {
 
@@ -39,7 +42,8 @@ void chSemInit(Semaphore *sp, cnt_t n) {
 }
 
 /**
- * Performs a reset operation on the semaphore.
+ * @brief Performs a reset operation on the semaphore.
+ *
  * @param sp pointer to a @p Semaphore structure
  * @param n the new value of the semaphore counter. The value must be non-negative.
  * @note The released threads can recognize they were waked up by a reset
@@ -57,7 +61,8 @@ void chSemReset(Semaphore *sp, cnt_t n) {
 }
 
 /**
- * Performs a reset operation on the semaphore.
+ * @brief Performs a reset operation on the semaphore.
+ *
  * @param sp pointer to a @p Semaphore structure
  * @param n the new value of the semaphore counter. The value must be non-negative.
  * @note The released threads can recognize they were waked up by a reset
@@ -76,7 +81,8 @@ void chSemResetI(Semaphore *sp, cnt_t n) {
 }
 
 /**
- * Performs a wait operation on a semaphore.
+ * @brief Performs a wait operation on a semaphore.
+ *
  * @param sp pointer to a @p Semaphore structure
  * @retval RDY_OK if the semaphore was signaled or not taken.
  * @retval RDY_RESET if the semaphore was reset using @p chSemReset().
@@ -93,7 +99,8 @@ msg_t chSemWait(Semaphore *sp) {
 }
 
 /**
- * Performs a wait operation on a semaphore.
+ * @brief Performs a wait operation on a semaphore.
+ *
  * @param sp pointer to a @p Semaphore structure
  * @retval RDY_OK if the semaphore was signaled or not taken.
  * @retval RDY_RESET if the semaphore was reset using @p chSemReset().
@@ -113,7 +120,8 @@ msg_t chSemWaitS(Semaphore *sp) {
 
 #ifdef CH_USE_SEMAPHORES_TIMEOUT
 /**
- * Performs a wait operation on a semaphore with timeout specification.
+ * @brief Performs a wait operation on a semaphore with timeout specification.
+ *
  * @param sp pointer to a @p Semaphore structure
  * @param time the number of ticks before the operation fails
  * @retval RDY_OK if the semaphore was signaled or not taken.
@@ -135,7 +143,8 @@ msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
 }
 
 /**
- * Performs a wait operation on a semaphore with timeout specification.
+ * @brief Performs a wait operation on a semaphore with timeout specification.
+ *
  * @param sp pointer to a @p Semaphore structure
  * @param time the number of ticks before the operation fails
  * @retval RDY_OK if the semaphore was signaled or not taken.
@@ -157,7 +166,8 @@ msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
 #endif /* CH_USE_SEMAPHORES_TIMEOUT */
 
 /**
- * Performs a signal operation on a semaphore.
+ * @brief Performs a signal operation on a semaphore.
+ *
  * @param sp pointer to a @p Semaphore structure
  * @note The function is available only if the @p CH_USE_SEMAPHORES
  *       option is enabled in @p chconf.h.
@@ -173,7 +183,8 @@ void chSemSignal(Semaphore *sp) {
 }
 
 /**
- * Performs a signal operation on a semaphore.
+ * @brief Performs a signal operation on a semaphore.
+ *
  * @param sp pointer to a @p Semaphore structure
  * @note The function is available only if the @p CH_USE_SEMAPHORES
  *       option is enabled in @p chconf.h.
@@ -192,7 +203,8 @@ void chSemSignalI(Semaphore *sp) {
 
 #ifdef CH_USE_SEMSW
 /**
- * Performs atomic signal and wait operations on two semaphores.
+ * @brief Performs atomic signal and wait operations on two semaphores.
+ *
  * @param sps pointer to a @p Semaphore structure to be signaled
  * @param spw pointer to a @p Semaphore structure to be wait on
  * @retval RDY_OK if the semaphore was signaled or not taken.

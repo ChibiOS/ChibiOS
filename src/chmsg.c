@@ -25,8 +25,9 @@
 
 #ifdef CH_USE_MESSAGES
 /**
- * Sends a message to the specified thread. The client is stopped until the
- * server executes a @p chMsgRelease() after receiving the message.
+ * @brief Sends a message to the specified thread.
+ * @details The sender is stopped until the receiver executes a
+ * @p chMsgRelease()after receiving the message.
  *
  * @param tp the pointer to the thread
  * @param msg the message, it can be a pointer to a complex structure
@@ -54,9 +55,10 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
 
 #ifdef CH_USE_MESSAGES_EVENT
 /**
- * Sends a message to the specified thread and atomically triggers an event.
- * The client is stopped until the server executes a @p chMsgRelease()
- * after receiving the message.
+ * @brief Sends a message to the specified thread and atomically triggers
+ * an event.
+ * @details The sender is stopped until the receiver executes a
+ * @p chMsgRelease() after receiving the message.
  *
  * @param tp the pointer to the thread
  * @param msg the message, it can be a pointer to a complex structure
@@ -88,7 +90,7 @@ msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, EventSource *esp) {
 #endif
 
 /**
- * Suspends the thread and waits for an incoming message.
+ * @brief Suspends the thread and waits for an incoming message.
  *
  * @return The pointer to the message structure. Note, it is always the
  *         message associated to the thread on the top of the messages queue.
@@ -110,7 +112,7 @@ msg_t chMsgWait(void) {
 }
 
 /**
- * Returns the next message in the queue.
+ * @brief Returns the next message in the queue.
  *
  * @return The pointer to the message structure. Note, it is always the
  *         message associated to the thread on the top of the messages queue.
@@ -132,7 +134,7 @@ msg_t chMsgGet(void) {
 }
 
 /**
- * Releases the thread waiting on top of the messages queue.
+ * @brief Releases the thread waiting on top of the messages queue.
  *
  * @param msg the message returned to the message sender
  * @note You can call this function only if there is a message already in the

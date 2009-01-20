@@ -31,8 +31,12 @@
 #if defined(CH_USE_CONDVARS) && defined(CH_USE_MUTEXES)
 
 /**
- * Initializes s @p CondVar structure.
+ * @brief Initializes s @p CondVar structure.
+ *
  * @param cp pointer to a @p CondVar structure
+ * @note This function can be invoked from within an interrupt handler even if
+ *       it is not an I-Class API because it does not touch any critical kernel
+ *       data structure.
  */
 void chCondInit(CondVar *cp) {
 
@@ -40,7 +44,7 @@ void chCondInit(CondVar *cp) {
 }
 
 /**
- * Signals one thread that is waiting on the condition variable.
+ * @brief Signals one thread that is waiting on the condition variable.
  *
  * @param cp pointer to the @p CondVar structure
  */
@@ -55,11 +59,9 @@ void chCondSignal(CondVar *cp) {
 }
 
 /**
- * Signals one thread that is waiting on the condition variable.
+ * @brief Signals one thread that is waiting on the condition variable.
  *
  * @param cp pointer to the @p CondVar structure
- * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
- *       block.
  */
 void chCondSignalI(CondVar *cp) {
 
@@ -68,7 +70,7 @@ void chCondSignalI(CondVar *cp) {
 }
 
 /**
- * Signals all threads that are waiting on the condition variable.
+ * @brief Signals all threads that are waiting on the condition variable.
  *
  * @param cp pointer to the @p CondVar structure
  */
@@ -83,10 +85,9 @@ void chCondBroadcast(CondVar *cp) {
 }
 
 /**
- * Signals all threads that are waiting on the condition variable.
+ * @brief Signals all threads that are waiting on the condition variable.
  *
  * @param cp pointer to the @p CondVar structure
- * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
  */
 void chCondBroadcastI(CondVar *cp) {
 
@@ -98,17 +99,16 @@ void chCondBroadcastI(CondVar *cp) {
 }
 
 /**
- * Waits on the condition variable releasing the mutex lock.
- *
- * Releases the mutex, waits on the condition variable, and finally acquires
- * the mutex again. This is done atomically.
- *
- * The thread MUST already have locked the mutex when calling chCondWait().
+ * @brief Waits on the condition variable releasing the mutex lock.
+ * @details Releases the mutex, waits on the condition variable, and finally
+ * acquires the mutex again. This is done atomically.
  *
  * @param cp pointer to the @p CondVar structure
  * @return The wakep mode.
  * @retval RDY_OK if the condvar was signaled using chCondSignal().
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().
+ * @note  The thread MUST already have locked the mutex when calling
+ *        @p chCondWait().
  */
 msg_t chCondWait(CondVar *cp) {
   msg_t msg;
@@ -122,18 +122,16 @@ msg_t chCondWait(CondVar *cp) {
 }
 
 /**
- * Waits on the condition variable releasing the mutex lock.
- *
- * Releases the mutex, waits on the condition variable, and finally acquires
- * the mutex again. This is done atomically.
- *
- * The thread MUST already have locked the mutex when calling chCondWait().
+ * @brief Waits on the condition variable releasing the mutex lock.
+ * @details Releases the mutex, waits on the condition variable, and finally
+ * acquires the mutex again. This is done atomically.
  *
  * @param cp pointer to the @p CondVar structure
  * @return The wakep mode.
  * @retval RDY_OK if the condvar was signaled using chCondSignal().
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().
- * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
+ * @note  The thread MUST already have locked the mutex when calling
+ *        @p chCondWaitS().
  */
 msg_t chCondWaitS(CondVar *cp) {
   Mutex *mp;
@@ -152,12 +150,9 @@ msg_t chCondWaitS(CondVar *cp) {
 
 #ifdef CH_USE_CONDVARS_TIMEOUT
 /**
- * Waits on the condition variable releasing the mutex lock.
- *
- * Releases the mutex, waits on the condition variable, and finally acquires
- * the mutex again. This is done atomically.
- *
- * The thread MUST already have locked the mutex when calling chCondWait().
+ * @brief Waits on the condition variable releasing the mutex lock.
+ * @details Releases the mutex, waits on the condition variable, and finally
+ * acquires the mutex again. This is done atomically.
  *
  * @param cp pointer to the @p CondVar structure
  * @param time the number of ticks before the operation fails
@@ -166,6 +161,8 @@ msg_t chCondWaitS(CondVar *cp) {
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().
  * @retval RDY_TIMEOUT if the condvar was not signaled within the specified
  *         timeout.
+ * @note  The thread MUST already have locked the mutex when calling
+ *        @p chCondWaitTimeout().
  */
 msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
   msg_t msg;
@@ -179,12 +176,9 @@ msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
 }
 
 /**
- * Waits on the condition variable releasing the mutex lock.
- *
- * Releases the mutex, waits on the condition variable, and finally acquires
- * the mutex again. This is done atomically.
- *
- * The thread MUST already have locked the mutex when calling chCondWait().
+ * @brief Waits on the condition variable releasing the mutex lock.
+ * @details Releases the mutex, waits on the condition variable, and finally
+ * acquires the mutex again. This is done atomically.
  *
  * @param cp pointer to the @p CondVar structure
  * @param time the number of ticks before the operation fails
@@ -193,7 +187,8 @@ msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().
  * @retval RDY_TIMEOUT if the condvar was not signaled within the specified
  *         timeout.
- * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
+ * @note  The thread MUST already have locked the mutex when calling
+ *        @p chCondWaitTimeoutS().
  */
 msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time) {
   Mutex *mp;

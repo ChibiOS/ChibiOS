@@ -18,10 +18,8 @@
 */
 
 /**
- * @file evtimer.h
+ * @addtogroup event_timer
  * @{
- * Event Timer definitions.
- * @see evtimer.c
  */
 
 #ifndef _EVTIMER_H_
@@ -46,7 +44,8 @@ extern "C" {
 #endif
 
 /**
- * Initializes an @p EvTimer structure.
+ * @brief Initializes an @p EvTimer structure.
+ *
  * @param etp the EvTimer structure to be initialized
  * @param time the interval in system ticks
  */

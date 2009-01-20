@@ -63,9 +63,16 @@ typedef uint32_t        systime_t;
 /** Counter, recommended fastest signed.*/
 typedef int32_t         cnt_t;
 
+/** Inline function modifier. */
 #define INLINE      inline
+
+/** Packed structure modifier (within). */
 #define PACK_STRUCT_STRUCT __attribute__((packed))
+
+/** Packed structure modifier (before). */
 #define PACK_STRUCT_BEGIN
+
+/** Packed structure modifier (after). */
 #define PACK_STRUCT_END
 
 #endif /* _CHTYPES_H_ */

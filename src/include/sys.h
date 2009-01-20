@@ -26,22 +26,24 @@
 #define _SYS_H_
 
 /**
- * Prints a message on the system console (if any).
+ * @brief Prints a message on the system console (if any).
  * @param msg the message to be printed on the system console
  */
 #define chSysPuts(msg) port_puts(msg)
 
 /**
- * Halts the system. This function is invoked by the operating system when an
+ * @brief Halts the system.
+ * @details This function is invoked by the operating system when an
  * unrecoverable error is detected (as example because a programming error in
  * the application code that triggers an assertion while in debug mode).
  */
 #define chSysHalt() port_halt()
 
 /**
- * Performs a context switch.
- * This is the most critical code in any port, this function is responsible
- * for the context switch between 2 threads.
+ * @brief Performs a context switch.
+ * @details This is the most critical code in any port, this function
+ * is responsible for the context switch between 2 threads.
+ *
  * @param otp the thread to be switched out
  * @param ntp the thread to be switched in
  * @note The implementation of this code affects <b>directly</b> the context
@@ -50,9 +52,10 @@
 #define chSysSwitchI(otp, ntp) port_switch(otp, ntp)
 
 /**
- * Raises the system interrupt priority mask to the maximum level.
- * All the maskable interrupt sources are disabled regardless their hardware
- * priority.
+ * @brief Raises the system interrupt priority mask to the maximum level.
+ * @details All the maskable interrupt sources are disabled regardless their
+ * hardware priority.
+ *
  * @note The implementation is architecture dependent, it may just disable the
  *       interrupts or be exactly equivalent to @p chSysDisable().
  * @note Do not invoke this API from within a kernel lock.
@@ -60,9 +63,10 @@
 #define chSysDisable() port_disable()
 
 /**
- * Raises the system interrupt priority mask to system level.
- * The interrupt sources that should not be able to preempt the kernel are
- * disabled, interrupt sources with higher priority are still enabled.
+ * @brief Raises the system interrupt priority mask to system level.
+ * @details The interrupt sources that should not be able to preempt the kernel
+ * are disabled, interrupt sources with higher priority are still enabled.
+ *
  * @note The implementation is architecture dependent, it may just disable the
  *       interrupts.
  * @note Do not invoke this API from within a kernel lock.
@@ -72,8 +76,9 @@
 #define chSysSuspend() port_suspend()
 
 /**
- * Lowers the system interrupt priority mask to user level.
- * All the interrupt sources are enabled.
+ * @brief Lowers the system interrupt priority mask to user level.
+ * @details All the interrupt sources are enabled.
+ *
  * @note The implementation is architecture dependent, it may just enable the
  *       interrupts.
  * @note Do not invoke this API from within a kernel lock.
@@ -83,7 +88,8 @@
 #define chSysEnable() port_enable()
 
 /**
- * Enters the kernel lock mode.
+ * @brief Enters the kernel lock mode.
+ *
  * @note The use of kernel lock mode is not recommended in the user code, it is
  *       a better idea to use the semaphores or mutexes instead.
  * @see CH_USE_NESTED_LOCKS
@@ -100,7 +106,8 @@
 #endif /* !defined(CH_USE_NESTED_LOCKS) */
 
 /**
- * Leaves the kernel lock mode.
+ * @brief Leaves the kernel lock mode.
+ *
  * @note The use of kernel lock mode is not recommended in the user code, it is
  *       a better idea to use the semaphores or mutexes instead.
  * @see CH_USE_NESTED_LOCKS
@@ -117,7 +124,8 @@
 #endif /* !defined(CH_USE_NESTED_LOCKS) */
 
 /**
- * Enters the kernel lock mode from within an interrupt handler.
+ * @brief Enters the kernel lock mode from within an interrupt handler.
+ *
  * @note This API may do nothing on some architectures, it is required because
  *       on ports that support preemptable interrupt handlers it is required to
  *       raise the interrupt mask to the same level of the system mutual
@@ -129,7 +137,8 @@
 #define chSysLockI() port_lock_from_isr()
 
 /**
- * Leaves the kernel lock mode from within an interrupt handler.
+ * @brief Leaves the kernel lock mode from within an interrupt handler.
+ *
  * @note This API may do nothing on some architectures, it is required because
  *       on ports that support preemptable interrupt handlers it is required to
  *       raise the interrupt mask to the same level of the system mutual
@@ -141,14 +150,16 @@
 #define chSysUnlockI() port_unlock_from_isr()
 
 /**
- * IRQ handler enter code.
+ * @brief IRQ handler enter code.
+ *
  * @note Usually IRQ handlers functions are also declared naked.
  * @note On some architectures this macro can be empty.
  */
 #define CH_IRQ_PROLOGUE() PORT_IRQ_PROLOGUE()
 
 /**
- * IRQ handler exit code.
+ * @brief IRQ handler exit code.
+ *
  * @note Usually IRQ handlers function are also declared naked.
  * @note This macro usually performs the final reschedulation by using
  *       @p chSchRescRequiredI() and @p chSchDoRescheduleI().
@@ -156,7 +167,8 @@
 #define CH_IRQ_EPILOGUE() PORT_IRQ_EPILOGUE()
 
 /**
- * Standard IRQ handler declaration.
+ * @brief Standard IRQ handler declaration.
+ *
  * @note @p id can be a function name or a vector number depending on the
  *       port implementation.
  */

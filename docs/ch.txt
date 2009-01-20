@@ -66,15 +66,17 @@
  * The possible groups are: @a Sys, @a Sch, @a VT, @a Thd, @a Sem, @a Mtx,
  * @a Cond, @a Evt, @a Msg, @a IQ, @a OQ, @a HQ, @a FDD, @a HDD, @a Dbg,
  * @a Heap, @a Pool.
+ *
+ * @section api_suffixes API Names Suffixes
  * The suffix is not present for normal APIs but can be one of
  * the following:
- * - <b>"I"</b>, I-Class APIs are invokable only from the I-Locked or S-Locked
- *   states. See @ref system_states.
- * - <b>"S"</b>, S-Class APIs are invokable only from the S-Locked state. See
+ * - <b>None</b>, APIs without any suffix can be invoked only from the user
+ *   code in the <b>Normal</b> state unless differently specified. See
  *   @ref system_states.
- *
- * The APIs without suffix can be invoked only from the user code in the Normal
- * state unless differently specified.<br>
+ * - <b>"I"</b>, I-Class APIs are invokable only from the <b>I-Locked</b> or
+ *   <b>S-Locked</b> states. See @ref system_states.
+ * - <b>"S"</b>, S-Class APIs are invokable only from the <b>S-Locked</b>
+ *   state. See @ref system_states.
  * Examples: @p chThdCreateStatic(), @p chSemSignalI(), @p chIQGetTimeout().
  *
  * @section interrupt_classes Interrupt Classes
@@ -558,11 +560,42 @@
 /** @} */
 
 /**
+ * @defgroup utilities_library Utilities Library
+ * @{
+ * @brief Utilities Library.
+ * @details This is a collection of useful library code that is not part of
+ * the base kernel services.
+ * <h2>Notes</h2>
+ * The library code does not follow the same naming convention of the
+ * system APIs in order to make very clear that it is not "core" code.<br>
+ * The main difference is that library code is not formally  tested in the
+ * test suite but through usage in the various demo application.
+ */
+/** @} */
+
+/**
  * @defgroup CPlusPlusLibrary C++ Wrapper
  * @{
  * C++ wrapper module. This module allows to use the ChibiOS/RT functionalities
  * from C++ as classes and objects rather the traditional "C" APIs.
+ *
+ * @ingroup utilities_library
  * @file ch.hpp C++ wrapper classes and definitions.
  * @file ch.cpp C++ wrapper code.
  */
 /** @} */
+
+/**
+ * @defgroup event_timer Events Generator Timer
+ * @{
+ * @brief Event Generator Timer.
+ * @details This timer generates an event at regular intervals. The
+ * listening threads can use the event to perform time related activities.
+ * Multiple threads can listen to the same timer.
+ *
+ * @ingroup utilities_library
+ * @file evtimer.c Events Generator Timer code.
+ * @file evtimer.h Events Generator Timer structures and macros.
+ */
+/** @} */
+

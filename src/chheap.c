@@ -63,7 +63,8 @@ static struct {
 } heap;
 
 /**
- * Initializes the allocator subsystem.
+ * @brief Initializes the allocator subsystem.
+ *
  * @note It is internally invoked, this function should not normally be
  *       invoked from the user code.
  */
@@ -92,9 +93,11 @@ void chHeapInit(void) {
 }
 
 /**
- * Allocates a block of memory from the heap by using the first-fit algorithm.
- * The allocated block is guaranteed to be properly aligned for a pointer data
- * type.
+ * @brief Allocates a block of memory from the heap by using the first-fit
+ * algorithm.
+ * @details The allocated block is guaranteed to be properly aligned for a
+ * pointer data type.
+ *
  * @param size the size of the block to be allocated. Note that the allocated
  *             block may be a bit bigger than the requested size for alignment
  *             and fragmentation reasons.
@@ -142,7 +145,8 @@ void *chHeapAlloc(size_t size) {
                                    (p)->h_size)
 
 /**
- * Frees a previously allocated memory block.
+ * @brief Frees a previously allocated memory block.
+ *
  * @param p the memory block pointer
  */
 void chHeapFree(void *p) {
@@ -184,7 +188,8 @@ void chHeapFree(void *p) {
 }
 
 /**
- * Determines the heap status.
+ * @brief Reports the heap status.
+ *
  * @param sizep pointer to a variable that will receive the total fragmented
  *              free space
  * @return The number of fragments in the heap.

@@ -32,72 +32,79 @@
  */
 
 /**
- * Port-related initialization code.
+ * @brief Port-related initialization code.
+ *
  * @note This function is usually empty.
  */
 void port_init(void){
 }
 
 /**
- * Kernel-unlock action. Usually this function just disables interrupts but
- * may perform more actions.
+ * @brief Kernel-unlock action.
+ * @details Usually this function just disables interrupts but may perform more
+ * actions.
  */
 void port_lock(void) {
 }
 
 /**
- * Kernel-unlock action. Usually this function just disables interrupts but
- * may perform more actions.
+ * @brief Kernel-unlock action.
+ * @details Usually this function just disables interrupts but may perform more
+ * actions.
  */
 void port_unlock(void) {
 }
 
 /**
- * Kernel-lock action from an interrupt handler. This function is invoked
- * before invoking I-class APIs from interrupt handlers. The implementation
- * is architecture dependent, in its simplest form it is void.
+ * @brief Kernel-lock action from an interrupt handler.
+ * @details This function is invoked before invoking I-class APIs from
+ * interrupt handlers. The implementation is architecture dependent, in its
+ * simplest form it is void.
  */
 void port_lock_from_isr(void) {
 }
 
 /**
- * Kernel-unlock action from an interrupt handler. This function is invoked
- * after invoking I-class APIs from interrupt handlers. The implementation
- * is architecture dependent, in its simplest form it is void.
+ * @brief Kernel-unlock action from an interrupt handler.
+ * @details This function is invoked after invoking I-class APIs from interrupt
+ * handlers. The implementation is architecture dependent, in its simplest form
+ * it is void.
  */
 void port_unlock_from_isr(void) {
 }
 
 /**
- * Disables all the interrupt sources.
+ * @brief Disables all the interrupt sources.
+ *
  * @note Of course non maskable interrupt sources are not included.
  */
 void port_disable() {
 }
 
 /**
- * Disables the interrupt sources that are not supposed to preempt the kernel.
+ * @brief Disables the interrupt sources that are not supposed to preempt the kernel.
  */
 void port_suspend(void) {
 }
 
 /**
- * Enables all the interrupt sources.
+ * @brief Enables all the interrupt sources.
  */
 void port_enable(void) {
 }
 
 /**
- * Enters an architecture-dependent halt mode. The function is meant to return
- * when an interrupt becomes pending. The simplest implementation is an empty
- * function but this will not take advantage of architecture-specific power
- * saving modes.
+ * @brief Enters an architecture-dependent halt mode.
+ * @details The function is meant to return when an interrupt becomes pending.
+ * The simplest implementation is an empty function but this will not take
+ * advantage of architecture-specific power saving modes.
  */
 void port_wait_for_interrupt(void) {
 }
 
 /**
- * Halts the system. This function is invoked by the operating system when an
+ * @brief Halts the system.
+ * @details This function is invoked by the operating system when an
  * unrecoverable error is detected (as example because a programming error in
  * the application code that triggers an assertion while in debug mode).
  */
@@ -109,7 +116,8 @@ void port_halt(void) {
 }
 
 /**
- * Performs a context switch between two threads.
+ * @brief Performs a context switch between two threads.
+ *
  * @param otp the thread to be switched out
  * @param ntp the thread to be switched in
  */
@@ -117,7 +125,8 @@ void port_switch(Thread *otp, Thread *ntp) {
 }
 
 /**
- * Prints a message on the system console.
+ * @brief Prints a message on the system console.
+ *
  * @param msg pointer to the message
  */
 void port_puts(char *msg) {

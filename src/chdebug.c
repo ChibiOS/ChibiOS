@@ -24,7 +24,7 @@
 char *panicmsg;
 
 /**
- * Debug subsystem initialization.
+ * @brief Debug subsystem initialization.
  */
 void chDbgInit(void) {
 
@@ -35,7 +35,9 @@ void chDbgInit(void) {
 }
 
 /**
- * Prints a panic message on the console/debugger and then halts the system.
+ * @brief Prints a panic message on the console/debugger and then halts the
+ * system.
+ *
  * @param msg the pointer to the message string
  */
 void chDbgPanic(char *msg) {
@@ -48,12 +50,13 @@ void chDbgPanic(char *msg) {
 
 #ifdef CH_USE_TRACE
 /**
- * Public trace buffer.
+ * @brief Public trace buffer.
  */
 TraceBuffer dbgtb;
 
 /**
- * Inserts in the circular debug trace buffer a context switch record.
+ * @brief Inserts in the circular debug trace buffer a context switch record.
+ *
  * @param otp the thread being switched out
  * @param ntp the thread to be resumed
  */

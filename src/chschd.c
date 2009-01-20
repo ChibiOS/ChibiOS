@@ -29,7 +29,7 @@ ReadyList rlist;
 /** @endcond */
 
 /**
- * Scheduler initialization.
+ * @brief Scheduler initialization.
  * @note Internally invoked by the @p chSysInit().
  */
 void chSchInit(void) {
@@ -42,7 +42,7 @@ void chSchInit(void) {
 }
 
 /**
- * Inserts a thread in the Ready List.
+ * @brief Inserts a thread in the Ready List.
  *
  * @param tp the Thread to be made ready
  * @return The Thread pointer.
@@ -70,9 +70,10 @@ Thread *chSchReadyI(Thread *tp) {
 }
 
 /**
- * Puts the current thread to sleep into the specified state, the next highest
- * priority thread becomes running. The threads states are described into
- * @p threads.h
+ * @brief Puts the current thread to sleep into the specified state.
+ * @details The next highest priority thread becomes running. The threads
+ * states are described into @p threads.h.
+ *
  * @param newstate the new thread state
  * @note The function must be called in the system mutex zone.
  * @note The function is not meant to be used in the user code directly.
@@ -104,11 +105,9 @@ static void wakeup(void *p) {
 }
 
 /**
- * Puts the current thread to sleep.
- *
- * Puts the current thread to sleep into the specified state. The next highest
- * priority thread becomes running. The thread put to sleep is awakened after
- * the specified time has elapsed.
+ * @brief Puts the current thread to sleep into the specified state.
+ * @details The next highest priority thread becomes running. The thread put
+ * to sleep is awakened after the specified time has elapsed.
  *
  * @param newstate the new thread state
  * @param time the number of ticks before the operation timeouts. the value
@@ -134,10 +133,10 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
 }
 
 /**
- * Wakes up a thread.
+ * @brief Wakes up a thread.
+ * @details The thread is inserted into the ready list or immediately made
+ * running depending on its relative priority compared to the current thread.
  *
- * The thread is inserted into the ready list or immediately made running
- * depending on its relative priority compared to the current thread.
  * @param ntp the Thread to be made ready
  * @param msg message to the awakened thread
  * @note The function must be called in the system mutex zone.
@@ -170,7 +169,7 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
 }
 
 /**
- * Switch to the first thread on the runnable queue.
+ * @brief Switches to the first thread on the runnable queue.
  *
  * @note It is intended to be called if @p chSchRescRequiredI() evaluates to @p TRUE.
  */
@@ -190,10 +189,9 @@ void chSchDoRescheduleI(void) {
 }
 
 /**
- * Reschedule only if a higher priority thread is runnable.
- *
- * If a thread with a higher priority than the current thread is in the
- * ready list then make the higher priority thread running.
+ * @brief Performs a reschedulation if a higher priority thread is runnable.
+ * @details If a thread with a higher priority than the current thread is in
+ * the ready list then make the higher priority thread running.
  *
  * @note The function must be called in the system mutex zone.
  */
@@ -205,7 +203,7 @@ void chSchRescheduleS(void) {
 }
 
 /**
- * Evaluates if rescheduling is required.
+ * @brief Evaluates if a reschedulation is required.
  *
  * @retval TRUE if there is a thread that should go in running state.
  * @retval FALSE if a reschedulation is not required.
