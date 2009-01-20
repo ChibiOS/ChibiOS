@@ -77,7 +77,7 @@ ULIBDIR =
 ULIBS =
 
 # Define optimisation level here
-OPT = -ggdb -Os -fomit-frame-pointer
+OPT = -ggdb -O2 -fomit-frame-pointer
 
 #
 # End of user defines

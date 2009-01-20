@@ -98,7 +98,7 @@ void ChkIntSources(void) {
  * @param msg pointer to the message
  */
 __attribute__((fastcall))
-void sys_puts(char *msg) {
+void port_puts(char *msg) {
 }
 
 /**
@@ -107,7 +107,7 @@ void sys_puts(char *msg) {
  * @param ntp the thread to be switched in
  */
 __attribute__((fastcall))
-void sys_switch(Thread *otp, Thread *ntp) {
+void port_switch(Thread *otp, Thread *ntp) {
   register struct intctx volatile *esp asm("esp");
 
   asm volatile ("push    %ebp                                   \n\t" \
@@ -126,7 +126,7 @@ void sys_switch(Thread *otp, Thread *ntp) {
  * Halts the system. In this implementation it just exits the simulation.
  */
 __attribute__((fastcall))
-void sys_halt(void) {
+void port_halt(void) {
 
   exit(2);
 }

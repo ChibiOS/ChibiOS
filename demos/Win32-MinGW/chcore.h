@@ -65,9 +65,9 @@ struct intctx {
  * This structure usually contains just the saved stack pointer defined as a
  * pointer to a @p intctx structure.
  */
-typedef struct {
+struct context {
   struct intctx volatile *esp;
-} Context;
+};
 
 #define APUSH(p, a) (p) -= sizeof(void *), *(void **)(p) = (void*)(a)
 
@@ -130,71 +130,71 @@ typedef struct {
  * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
  * invoke system APIs.
  */
-#define SYS_IRQ_PROLOGUE()
+#define PORT_IRQ_PROLOGUE()
 
 /**
  * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
  * invoke system APIs.
  */
-#define SYS_IRQ_EPILOGUE()
+#define PORT_IRQ_EPILOGUE()
 
 /**
- * IRQ handler function modifier.
+ * IRQ handler function declaration.
  */
-#define SYS_IRQ_HANDLER
+#define PORT_IRQ_HANDLER(id) void id(void)
 
 /**
  * Simulator initialization.
  */
-#define sys_init() InitCore()
+#define port_init() InitCore()
 
 /**
  * Does nothing in this simulator.
  */
-#define sys_disable_all()
+#define port_lock()
 
 /**
  * Does nothing in this simulator.
  */
-#define sys_disable()
+#define port_unlock()
 
 /**
  * Does nothing in this simulator.
  */
-#define sys_enable()
+#define port_lock_from_isr()
 
 /**
  * Does nothing in this simulator.
  */
-#define sys_lock()
+#define port_unlock_from_isr()
 
 /**
  * Does nothing in this simulator.
  */
-#define sys_unlock()
+#define port_disable()
 
 /**
  * Does nothing in this simulator.
  */
-#define sys_lock_from_isr()
+#define port_suspend()
 
 /**
  * Does nothing in this simulator.
  */
-#define sys_unlock_from_isr()
+#define port_enable()
 
 /**
  * In the simulator this does a polling pass on the simulated interrupt
  * sources.
  */
-#define sys_wait_for_interrupt() ChkIntSources()
+#define port_wait_for_interrupt() ChkIntSources()
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  __attribute__((fastcall)) void sys_puts(char *msg);
-  __attribute__((fastcall)) void sys_switch(Thread *otp, Thread *ntp);
-  __attribute__((fastcall)) void sys_halt(void);
+  __attribute__((fastcall)) void port_puts(char *msg);
+  __attribute__((fastcall)) void port_switch(Thread *otp, Thread *ntp);
+  __attribute__((fastcall)) void port_halt(void);
   void InitCore(void);
   void ChkIntSources(void);
   void threadexit(void);
