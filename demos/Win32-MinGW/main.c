@@ -122,7 +122,7 @@ static msg_t HelloWorldThread(void *arg) {
   short c;
   FullDuplexDriver *sd = (FullDuplexDriver *)arg;
 
-  for (i = 0; i < 100; i++) {
+  for (i = 0; i < 10; i++) {
 
     PrintLineFDD(sd, "Hello World\r\n");
     c = chFDDGetTimeout(sd, 333);
