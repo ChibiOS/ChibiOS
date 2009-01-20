@@ -96,12 +96,20 @@ void chSchGoSleepS(tstate_t newstate) {
  * Timeout wakeup callback.
  */
 static void wakeup(void *p) {
+  Thread *tp = (Thread *)p;
 
+  switch (tp->p_state) {
 #ifdef CH_USE_SEMAPHORES
-  if (((Thread *)p)->p_state == PRWTSEM)
-    chSemFastSignalI(((Thread *)p)->p_wtsemp);
+  case PRWTSEM:
+    chSemFastSignalI(tp->p_wtsemp);
+    /* Falls into, intentional.*/
 #endif
-  chSchReadyI(p)->p_rdymsg = RDY_TIMEOUT;
+  case PRWTCOND:
+    chSchReadyI(dequeue(tp))->p_rdymsg = RDY_TIMEOUT;
+    break;
+  default:
+    chSchReadyI(tp)->p_rdymsg = RDY_TIMEOUT;
+  }
 }
 
 /**
