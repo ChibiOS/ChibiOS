@@ -40,8 +40,9 @@
  * @defgroup AVR_CONF Configuration Options
  * @{
  * @brief AVR Configuration Options.
- * The AVR port allows some architecture-specific configurations settings
- * that can be specified externally, as example on the compiler command line:
+ * @details The AVR port allows some architecture-specific configurations
+ * settingsthat can be specified externally, as example on the compiler
+ * command line:
  * - @p INT_REQUIRED_STACK, this value represent the amount of stack space
  *   used by the interrupt handlers.<br>
  *   The default for this value is @p 32, this space is allocated for each

@@ -68,8 +68,7 @@
  * @a Heap, @a Pool.
  *
  * @section api_suffixes API Names Suffixes
- * The suffix is not present for normal APIs but can be one of
- * the following:
+ * The suffix can be one of the following:
  * - <b>None</b>, APIs without any suffix can be invoked only from the user
  *   code in the <b>Normal</b> state unless differently specified. See
  *   @ref system_states.
@@ -84,10 +83,12 @@
  * - <b>Regular Interrupts</b>. Maskable interrupt sources that cannot
  *   preempt the kernel code and are thus able to invoke operating system APIs
  *   from within their handlers. The interrupt handlers belonging to this class
- *   must be written following some rules. See the @ref System APIs group.
+ *   must be written following some rules. See the @ref System APIs group and
+ *   @ref article_interrupts.
  * - <b>Fast Interrupts</b>. Maskable interrupt sources with the ability
- *   to preempt the kernel code and thus have a lower latency. Such sources are
- *   not supported on all the architectures.<br>
+ *   to preempt the kernel code and thus have a lower latency and are less
+ *   subject to jitter, see @ref article_jitter. Such sources are not
+ *   supported on all the architectures.<br>
  *   Fast interrupts are not allowed to invoke any operating system API from
  *   within their handlers. Fast interrupt sources may however pend a lower
  *   priority regular interrupt where access to the operating system is
@@ -239,9 +240,9 @@
  *
  * @section warea Thread Working Area
  * Each thread has its own stack, a Thread structure and some preemption
- * areas. All the structures are allocated into a "Thread working area",
- * a thread private heap, usually allocated in an array declared in your
- * code. Threads do not use any memory outside the allocated working area
+ * areas. All the structures are allocated into a "Thread Working Area",
+ * a thread private heap, usually statically declared in your code.
+ * Threads do not use any memory outside the allocated working area
  * except when accessing static shared data.<br><br>
  * @image html workspace.png
  * <br>
@@ -250,9 +251,9 @@
  * registers on the stack of the switched-out thread and popping the registers
  * of the switched-in thread from its stack.
  * The preemption area can be divided in up to three structures:
- * - External context.
- * - Interrupt stack.
- * - Internal context.
+ * - External Context.
+ * - Interrupt Stack.
+ * - Internal Context.
  *
  * See the @ref Core documentation for details, the area may change on
  * the various ports and some structures may not be present (or be zero-sized).
@@ -262,8 +263,7 @@
 /**
  * @page Articles Articles
  * @{
- * @brief ChibiOS/RT Articles and Code Examples
- *
+ * ChibiOS/RT Articles and Code Examples:
  * - @subpage article_atomic
  * - @subpage article_saveram
  * - @subpage article_interrupts

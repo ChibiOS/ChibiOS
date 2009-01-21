@@ -2,7 +2,7 @@
  * @defgroup AT91SAM7X AT91SAM7X Support
  * @{
  * @brief AT91SAM7X specific support.
- * The AT91SAM7X support includes:
+ * @details The AT91SAM7X support includes:
  * - Buffered, interrupt driven, serial driver.
  * - EMAC driver with MII support.
  * - A demo supporting the kernel test suite.

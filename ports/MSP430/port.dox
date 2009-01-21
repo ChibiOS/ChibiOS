@@ -39,8 +39,9 @@
  * @defgroup MSP430_CONF Configuration Options
  * @{
  * @brief MSP430 Configuration Options.
- * The MSP430 port allows some architecture-specific configurations settings
- * that can be specified externally, as example on the compiler command line:
+ * @details The MSP430 port allows some architecture-specific configurations
+ * settings that can be specified externally, as example on the compiler
+ * command line:
  * - @p INT_REQUIRED_STACK, this value represent the amount of stack space
  *   used by the interrupt handlers.<br>
  *   The default for this value is @p 32, this space is allocated for each

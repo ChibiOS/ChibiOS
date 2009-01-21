@@ -2,7 +2,7 @@
  * @defgroup LPC214x LPC214x Support
  * @{
  * @brief LPC214x specific support.
- * The LPC214x support includes:
+ * @details The LPC214x support includes:
  * - VIC support code.
  * - Buffered, interrupt driven, serial driver.
  * - SSP driver.
