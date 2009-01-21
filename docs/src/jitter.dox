@@ -1,17 +1,18 @@
 /**
- * @page article_jitter Minimizing Jitter
+ * @page article_jitter Response Time and Jitter
  * @{
- * Response time jitter is one of the more sneaky source of problems when
+ * Response time jitter is one of the most sneaky source of problems when
  * designing a real time system. When using a RTOS like ChibiOS/RT one must
  * be aware of what Jitter is and how it can affect the performance of the
  * system.<br>
  * A good place to start is this
  * <a href="http://en.wikipedia.org/wiki/Jitter">Wikipedia article</a>.
- * <h2>Jitter sources under ChibiOS/RT</h2>
+ *
+ * <h2>Jitter Sources</h2>
  * Under ChibiOS/RT (or any other similar RTOS) there are several jitter
  * possible sources:
- * -# Hardware interrupt latency.
- * -# Interrupt service time.
+ * -# Hardware interrupts latency.
+ * -# Interrupts service time and priority.
  * -# Kernel lock zones.
  * -# Higher priority threads activity.
  *
@@ -19,14 +20,13 @@
  * For each of the previously described jitter source there are possible
  * mitigation actions.
  *
- * <h3>Hardware interrupt latency</h3>
+ * <h3>Hardware interrupts latency</h3>
  * This parameter is pretty much fixed and a characteristic of the system.
  * Possible actions include higher clock speeds or switch to an hardware
  * architecture more efficient at interrupt handling, as example, the
- * ARM Cortex-M3 core present in the STM32 family is very efficient at
- * interrupt handling.
+ * ARM Cortex-M3 core present in the STM32 family is very efficient at that.
  *
- * <h3>Interrupt service time</h3>
+ * <h3>Interrupts service time and priority</h3>
  * This is the execution time of interrupt handlers, this time includes:
  * - Fixed handler overhead, as example registers stacking/unstacking.
  * - Interrupt specific service time, as example, in a serial driver, this is
