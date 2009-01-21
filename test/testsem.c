@@ -91,6 +91,8 @@ static void sem2_execute(void) {
   for (i = 0; i < 5; i++) {
     test_emit_token('A' + i);
     chSemWaitTimeout(&sem1, MS2ST(500));
+    test_assert(isempty(&sem1.s_queue), "queue not empty");
+    test_assert(&sem1.s_cnt != 0, "counter not zero");
   }
   test_assert(chSemGetCounter(&sem1) == 0, "non zero counter");
   test_assert_sequence("ABCDE");
