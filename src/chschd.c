@@ -110,6 +110,7 @@ static void wakeup(void *p) {
     /* Falls into, intentional. */
   default:
     chSchReadyI(tp)->p_rdymsg = RDY_TIMEOUT;
+  }
 }
 
 /**
