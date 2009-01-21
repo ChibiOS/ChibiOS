@@ -1,0 +1,42 @@
+/**
+ * @page article_timing Reliable timings using Threads
+ * @{
+ * One common task is to have threads do something at regular, scheduled,
+ * intervals.
+ * An obvious solution is to write something like this:
+ * @code
+msg_t my_thread(void *param) {
+
+  while (TRUE) {
+    do_something();
+    chThdSleepMilliseconds(1000);   /* Fixed interval */
+  }
+}
+ * @endcode
+ * This example works well assuming that @p do_something() execution time is
+ * well below the system tick period and that @p my_thread() is not preempted
+ * by other threads inserting long intervals.<br>
+ * If the above conditions are not satisfied you may have @p do_something()
+ * executed at irregular intevals, as example:<br><br>
+ * T0...T0+1000...T0+2002...T0+3002...T0+4005...etc.<br><br>
+ * Also note that the error increases over time and this kind of behavior can
+ * lead anomalies really hard to debug.
+ * <h2>A better solution</h2>
+ * It is possible to rewrite the above code using absolute deadlines rather
+ * than fixed intervals:
+ * @code
+msg_t my_thread(void *param) {
+
+  systick_t time = chSysGetTime();  /* T0 */
+  while (TRUE) {
+    time += MS2ST(1000);            /* Next deadline */
+    do_something();
+    chThdSleepUntil(time);
+  }
+}
+ * @endcode
+ * Using this code @p do_something() will always be executed at an absolute
+ * deadline time and the error will not accumulate over time regardless of
+ * the execution time and delays inserted by other threads.
+ */
+/** @} */

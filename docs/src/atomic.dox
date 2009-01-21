@@ -12,17 +12,13 @@
  
   chSemSignalI(&sem1);
   chSemSignalI(&sem2);
-  if (tp != NULL) {
-    chThdResumeI(tp);
-    tp = NULL;
-  }
   chSchRescheduleS();
  
   chSysUnlock();
  * @endcode
- * The above example performs a signal operation on two semaphores, optionally
- * resumes a thread, and performs a final reschedulation. The three operations
- * are performed atomically.<br>
+ * The above example performs a signal operation on two semaphores and
+ * performs a final reschedulation. The two operations are performed
+ * atomically.<br>
  * An hypotetical @p chSemSignalSignalWait() operation could be implemented as
  * follow:
  * @code

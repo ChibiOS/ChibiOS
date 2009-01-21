@@ -102,11 +102,13 @@ static void wakeup(void *p) {
 #ifdef CH_USE_SEMAPHORES
   case PRWTSEM:
     chSemFastSignalI(tp->p_wtsemp);
-    /* Falls into, intentional.*/
+    /* Falls into, intentional. */
 #endif
   case PRWTCOND:
-    chSchReadyI(dequeue(tp))->p_rdymsg = RDY_TIMEOUT;
-    break;
+  case PRWTMTX:
+    /* States requiring dequeuing. */
+    dequeue(tp);
+    /* Falls into, intentional. */
   default:
     chSchReadyI(tp)->p_rdymsg = RDY_TIMEOUT;
   }

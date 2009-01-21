@@ -94,7 +94,6 @@ static void sem2_execute(void) {
     test_assert(isempty(&sem1.s_queue), "queue not empty");
     test_assert(&sem1.s_cnt != 0, "counter not zero");
   }
-  test_assert(chSemGetCounter(&sem1) == 0, "non zero counter");
   test_assert_sequence("ABCDE");
   test_assert_time_window(target_time, target_time + ALLOWED_DELAY);
 }
