@@ -205,25 +205,6 @@ void chThdSetPriority(tprio_t newprio) {
 }
 
 /**
- * Suspends the invoking thread.
- *
- * @param tpp pointer to a \p Thread pointer, the \p Thread pointer is set
- *            to point to the suspended process before it enters the
- *            \p PRSUSPENDED state, it is set to \p NULL after it is resumed.
- *            This allows to implement a "test and resume" on the variable
- *            into interrupt handlers.
- */
-void chThdSuspend(Thread **tpp) {
-
-  chSysLock();
-  chDbgAssert(*tpp == NULL, "chthreads.c, chThdSuspend()");
-  *tpp = currp;
-  chSchGoSleepS(PRSUSPENDED);
-  *tpp = NULL;
-  chSysUnlock();
-}
-
-/**
  * Resumes a suspended thread.
  * @param tp the pointer to the thread
  * @return The pointer to the thread.

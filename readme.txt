@@ -74,8 +74,15 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
-*** 1.0.0 ***
+*** 1.0.0rc3 ***
+- FIX: Fixed a nasty regression to the timeout unified code that affected
+  some APIs since version 0.5.3. See the bug tracker for more details.
+- FIX: Removed the API chThdSuspend() there was a conceptual flaw and I want
+  to think about the whole concept again before introducing something similar
+  in future. Anyway, it is possible to replicate the functionality using
+  chSchGoSleepS().
 - Fixed typos here and there.
+- Updated the states diagram in the documentation.
 
 *** 1.0.0rc2 ***
 - FIX: Removed unused variable "retaddr" from the Cortex-M3 port.

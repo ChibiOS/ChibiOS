@@ -180,7 +180,6 @@ extern "C" {
 #endif
   void chThdSetPriority(tprio_t newprio);
   Thread *chThdResume(Thread *tp);
-  void chThdSuspend(Thread **tpp);
   void chThdTerminate(Thread *tp);
   void chThdSleep(systime_t time);
   void chThdSleepUntil(systime_t time);
