@@ -12,13 +12,14 @@
  
   chSemSignalI(&sem1);
   chSemSignalI(&sem2);
+  chMtxUnlock();
   chSchRescheduleS();
  
   chSysUnlock();
  * @endcode
- * The above example performs a signal operation on two semaphores and
- * performs a final reschedulation. The two operations are performed
- * atomically.<br>
+ * The above example performs a signal operation on two semaphores, unlocks the
+ * last aquired mutex and finally performs a reschedulation. All the operations
+ * are performed atomically.<br>
  * An hypotetical @p chSemSignalSignalWait() operation could be implemented as
  * follow:
  * @code
@@ -26,13 +27,14 @@
  
   chSemSignalI(&sem1);
   chSemSignalI(&sem2);
-  chSemWaitS(&Sem3);
-  chSchRescheduleS(); /* Because chSemWaitS() might not reschedule internally.*/
+  chSemWaitS(&Sem3);  /* May reschedule or not. */
+  chSchRescheduleS(); /* This one reschedules if necessary. */
  
   chSysUnlock();
  * @endcode
- * In general multiple I-Class APIs can be included and the block is terminated
- * by an S-Class API that performs a reschedulation. Optionally a
- * @p chSchRescheduleS() is present at the very end of the block.
+ * In general multiple I-Class and (non rescheduling) S-Class APIs can be
+ * included and the block is terminated by a rescheduling S-Class API.
+ * An extra @p chSchRescheduleS() can be present at the very end of the block,
+ * it only reschedules if a reschedulation is still required.
  */
 /** @} */
