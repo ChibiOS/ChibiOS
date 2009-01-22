@@ -26,7 +26,7 @@
 #define _EVTIMER_H_
 
 /**
- * Event timer structure.
+ * @brief Event timer structure.
  */
 typedef struct {
   VirtualTimer  et_vt;

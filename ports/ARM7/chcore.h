@@ -197,7 +197,10 @@ struct context {
  * Disables the IRQ sources and keeps the FIQ sources enabled.
  */
 #ifdef THUMB
-#define port_lock() _port_lock_thumb()
+//#define port_lock() _port_lock_thumb()
+#define port_lock() {                                                   \
+  asm volatile ("bl     _port_lock_thumb" : : : "r3", "lr");            \
+}
 #else /* THUMB */
 #define port_lock() asm volatile ("msr     CPSR_c, #0x9F")
 #endif /* !THUMB */
@@ -206,7 +209,10 @@ struct context {
  * Enables both the IRQ and FIQ sources.
  */
 #ifdef THUMB
-#define port_unlock() _port_unlock_thumb()
+//#define port_unlock() _port_unlock_thumb()
+#define port_unlock() {                                                 \
+  asm volatile ("bl     _port_unlock_thumb" : : : "r3", "lr");          \
+}
 #else /* THUMB */
 #define port_unlock() asm volatile ("msr     CPSR_c, #0x1F")
 #endif /* !THUMB */
@@ -227,7 +233,10 @@ struct context {
  *       LPC214x datasheet.
  */
 #ifdef THUMB
-#define port_disable() _port_disable_thumb()
+//#define port_disable() _port_disable_thumb()
+#define port_disable() {                                                \
+  asm volatile ("bl     _port_disable_thumb" : : : "r3", "lr");         \
+}
 #else /* THUMB */
 #define port_disable() {                                                \
   asm volatile ("mrs     r3, CPSR                       \n\t"           \
@@ -242,7 +251,9 @@ struct context {
  * Disables the IRQ sources and enables the FIQ sources.
  */
 #ifdef THUMB
-#define port_suspend() _port_suspend_thumb()
+#define port_suspend() {                                                \
+  asm volatile ("bl     _port_suspend_thumb" : : : "r3", "lr");         \
+}
 #else /* THUMB */
 #define port_suspend() asm volatile ("msr     CPSR_c, #0x9F")
 #endif /* !THUMB */
@@ -251,7 +262,9 @@ struct context {
  * Enables both the IRQ and FIQ sources.
  */
 #ifdef THUMB
-#define port_enable() _port_enable_thumb()
+#define port_enable() {                                                 \
+  asm volatile ("bl     _port_enable_thumb" : : : "r3", "lr");          \
+}
 #else /* THUMB */
 #define port_enable() asm volatile ("msr     CPSR_c, #0x1F")
 #endif /* !THUMB */
@@ -273,11 +286,6 @@ extern "C" {
   void port_puts(char *msg);
   void port_halt(void);
 #ifdef THUMB
-  void _port_lock_thumb(void);
-  void _port_unlock_thumb(void);
-  void _port_disable_thumb(void);
-  void _port_suspend_thumb(void);
-  void _port_enable_thumb(void);
   void _port_switch_thumb(Thread *otp, Thread *ntp);
 #else /* THUMB */
   void _port_switch_arm(Thread *otp, Thread *ntp);

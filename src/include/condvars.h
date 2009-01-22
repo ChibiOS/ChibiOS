@@ -32,7 +32,7 @@
 #if defined(CH_USE_CONDVARS) && defined(CH_USE_MUTEXES)
 
 /**
- * CondVar structure.
+ * @brief CondVar structure.
  */
 typedef struct CondVar {
   ThreadsQueue          c_queue;

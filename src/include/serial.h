@@ -46,7 +46,7 @@ typedef uint16_t dflags_t;
 #ifdef CH_USE_SERIAL_FULLDUPLEX
 
 /**
- * Full Duplex Serial Driver main structure.
+ * @brief Full Duplex Serial Driver main structure.
  */
 typedef struct {
 
@@ -111,7 +111,7 @@ extern "C" {
 #ifdef CH_USE_SERIAL_HALFDUPLEX
 
 /**
- * Full Duplex Serial Driver main structure.
+ * @brief Full Duplex Serial Driver main structure.
  */
 typedef struct {
 

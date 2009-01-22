@@ -28,7 +28,7 @@
 #ifdef CH_USE_SEMAPHORES
 
 /**
- * Semaphore structure.
+ * @brief Semaphore structure.
  */
 typedef struct Semaphore {
   /** Queue of the threads sleeping on this Semaphore.*/

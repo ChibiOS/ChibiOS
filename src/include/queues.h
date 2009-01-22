@@ -41,7 +41,8 @@ typedef void (*qnotify_t)(void);
 
 #ifdef CH_USE_QUEUES
 /**
- * I/O queue structure, it is used by both Input and Output Queues,
+ * @brief I/O queue structure.
+ * @details This structure is used by both Input and Output Queues,
  * the difference is on how the semaphore is initialized.
  */
 typedef struct {
@@ -116,7 +117,7 @@ extern "C" {
 
 #ifdef CH_USE_QUEUES_HALFDUPLEX
 /**
- * Half duplex queue structure.
+ * @brief Half duplex queue structure.
  */
 typedef struct {
   /** Pointer to the queue buffer. */

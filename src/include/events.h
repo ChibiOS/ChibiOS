@@ -33,7 +33,7 @@
 typedef struct EventListener EventListener;
 
 /**
- * Event Listener structure.
+ * @brief Event Listener structure.
  */
 struct EventListener {
   /** Next Event Listener registered on the Event Source.*/
@@ -45,7 +45,7 @@ struct EventListener {
 };
 
 /**
- * Event Source structure.
+ * @brief Event Source structure.
  */
 typedef struct EventSource {
   /** First Event Listener registered on the Event Source.*/

@@ -38,24 +38,25 @@
 typedef uint8_t stkalign_t;
 
 /**
- * Interrupt saved context.
- * This structure represents the stack frame saved during a preemption-capable
- * interrupt handler.
+ * @brief Interrupt saved context.
+ * @details This structure represents the stack frame saved during a
+ * preemption-capable interrupt handler.
  */
 struct extctx {
 };
 
 /**
- * System saved context.
- * This structure represents the inner stack frame during a context switching.
+ * @brief System saved context.
+ * @details This structure represents the inner stack frame during a context
+ * switching.
  */
 struct intctx {
 };
 
 /**
- * Platform dependent part of the @p Thread structure.
- * This structure usually contains just the saved stack pointer defined as a
- * pointer to a @p intctx structure.
+ * @brief Platform dependent part of the @p Thread structure.
+ * @details This structure usually contains just the saved stack pointer
+ * defined as a pointer to a @p intctx structure.
  */
 struct context {
   struct intctx *sp;

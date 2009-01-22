@@ -28,7 +28,7 @@
 #ifdef CH_USE_MUTEXES
 
 /**
- * Mutex structure.
+ * @brief Mutex structure.
  */
 typedef struct Mutex {
   /** Queue of the threads sleeping on this Mutex.*/

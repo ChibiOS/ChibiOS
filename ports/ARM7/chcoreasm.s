@@ -44,27 +44,28 @@
 .balign 16
 .code 16
 .thumb_func
-.global _port_disable_all_thumb
-_port_disable_all_thumb:
-        mov     r0, pc
-        bx      r0
+.global _port_disable_thumb
+_port_disable_thumb:
+        mov     r3, pc
+        bx      r3
 .code 32
-        mrs     r0, CPSR
-        orr     r0, #I_BIT
-        msr     CPSR_c, r0
-        orr     r0, #F_BIT
-        msr     CPSR_c, r0
+        mrs     r3, CPSR
+        orr     r3, #I_BIT
+        msr     CPSR_c, r3
+        orr     r3, #F_BIT
+        msr     CPSR_c, r3
         bx      lr
 
 .balign 16
 .code 16
 .thumb_func
 .global _port_suspend_thumb
-_port_disable_thumb:
+_port_suspend_thumb:
+.thumb_func
 .global _port_lock_thumb
 _port_lock_thumb:
-        mov     r0, pc
-        bx      r0
+        mov     r3, pc
+        bx      r3
 .code 32
         msr     CPSR_c, #MODE_SYS | I_BIT
         bx      lr
@@ -74,10 +75,11 @@ _port_lock_thumb:
 .thumb_func
 .global _port_enable_thumb
 _port_enable_thumb:
+.thumb_func
 .global _port_unlock_thumb
 _port_unlock_thumb:
-        mov     r0, pc
-        bx      r0
+        mov     r3, pc
+        bx      r3
 .code 32
         msr     CPSR_c, #MODE_SYS
         bx      lr

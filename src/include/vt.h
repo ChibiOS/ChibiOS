@@ -48,7 +48,7 @@ typedef void (*vtfunc_t)(void *);
 typedef struct VirtualTimer VirtualTimer;
 
 /**
- * Virtual Timer descriptor structure.
+ * @brief Virtual Timer descriptor structure.
  * @extends DeltaList
  */
 struct VirtualTimer {
@@ -66,7 +66,7 @@ struct VirtualTimer {
 };
 
 /**
- * Delta List header.
+ * @brief Virtual timers list header.
  * @note The delta list is implemented as a double link bidirectional list in
  *       order to make the unlink time constant, the reset of a virtual timer
  *       is often used in the code.

@@ -32,7 +32,7 @@ typedef struct Thread Thread;
 #define notempty(p)     ((p)->p_next != (Thread *)(p))
 
 /**
- * Generic threads queue header and element.
+ * @brief Generic threads queue header and element.
  * @extends ThreadsList
  */
 typedef struct {
@@ -43,17 +43,22 @@ typedef struct {
 } ThreadsQueue;
 
 /**
- * Generic threads single link list, it works like a stack.
+ * @brief Generic threads single link list.
+ * @details This list behaves like a stack.
  */
 typedef struct {
   /** Last pushed @p Thread on the stack list, or @p ThreadList when empty. */
   Thread                *p_next;
 } ThreadsList;
 
-/*
- * Threads Lists functions and macros.
+/**
+ * Queue initialization.
  */
 #define queue_init(tqp) ((tqp)->p_next = (tqp)->p_prev = (Thread *)(tqp));
+
+/**
+ * List initialization.
+ */
 #define list_init(tlp)  ((tlp)->p_next = (Thread *)(tlp))
 
 #ifndef CH_OPTIMIZE_SPEED

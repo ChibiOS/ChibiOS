@@ -53,7 +53,8 @@
 #define firstprio(rlp)  ((rlp)->p_next->p_prio)
 
 /**
- * Ready list header.
+ * @brief Ready list header.
+ *
  * @extends ThreadsQueue
  */
 typedef struct {

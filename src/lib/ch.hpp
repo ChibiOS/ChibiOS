@@ -281,12 +281,12 @@ namespace chibios_rt {
 
 #ifdef CH_USE_SEMAPHORES
   /**
-   * @brief Class encapsulating a @p Semaphore.
+   * @brief Class encapsulating a semaphore.
    */
   class Semaphore {
   public:
     /**
-     * @brief Embedded @p Semaphore structure.
+     * @brief Embedded @p ::Semaphore structure.
      */
     struct ::Semaphore sem;
 
@@ -349,12 +349,12 @@ namespace chibios_rt {
 
 #ifdef CH_USE_MUTEXES
   /**
-   * @brief Class encapsulating a @p Mutex.
+   * @brief Class encapsulating a mutex.
    */
   class Mutex {
   public:
     /**
-     * @brief Embedded @p Mutex structure.
+     * @brief Embedded @p ::Mutex structure.
      */
     struct ::Mutex mutex;
 
@@ -398,12 +398,12 @@ namespace chibios_rt {
 
 #ifdef CH_USE_CONDVARS
   /**
-   * @brief Class encapsulating a @p CondVar.
+   * @brief Class encapsulating a conditional variable.
    */
   class CondVar {
   public:
     /**
-     * @brief Embedded @p CondVar structure.
+     * @brief Embedded @p ::CondVar structure.
      */
     struct ::CondVar condvar;
 
@@ -453,12 +453,12 @@ namespace chibios_rt {
 
 #ifdef CH_USE_EVENTS
   /**
-   * @brief Class encapsulating an @p EventSource.
+   * @brief Class encapsulating an event source.
    */
   class Event {
   public:
     /**
-     * @brief Embedded @p EventSource structure.
+     * @brief Embedded @p ::EventSource structure.
      */
     struct ::EventSource event;
 
