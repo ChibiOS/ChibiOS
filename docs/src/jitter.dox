@@ -4,13 +4,25 @@
  * Response time jitter is one of the most sneaky source of problems when
  * designing a real time system. When using a RTOS like ChibiOS/RT one must
  * be aware of what the jitter is and how it can affect the performance of the
- * system.<br>
- * A good place to start is this
+ * system. A good place to start is this
  * <a href="http://en.wikipedia.org/wiki/Jitter">Wikipedia article</a>.
  *
+ * <h2>Interrupt handlers execution time</h2>
+ * The total execution time of an interrupt handler includes:
+ * - Hardware interrupts latency, this parameter is pretty much fixed and
+ *   characteristic of the system.
+ * - Fixed handler overhead, as example registers stacking/unstacking.
+ * - Interrupt specific handler code execution time, as example, in a serial
+ *   driver, this is the time used by the handler to transfer data from/to
+ *   the UART.
+ * - OS overhead. Any operating system requires to run some extra code
+ *   in interrupt handlers in order to handle correct preemption and Context
+ *   Switching.
+ *
  * <h2>Interrupt Response Time</h2>
- * This is the time from an interrupt event and the execution of the handler
- * code.
+ * The Interrupt Response Time is the time from an interrupt event and the
+ * execution of the handler code. Unfortunately this time is not constant
+ * in most cases, see the following graph:
  *
  * @dot
   digraph example {
@@ -20,28 +32,27 @@
       int [label="Interrupt"];
       busy [label="Busy"];
       served [label="Interrupt\nServed"];
-      int -> served [label="Not Busy"];
+      int -> served [label="Not Busy (minimum latency)"];
       int -> busy [label="Not Ready"];
-      busy -> busy [label="Still Busy\n(jitter)"];
+      busy -> busy [label="Still Busy\n(added latency)"];
       busy -> served [label="Finally Ready"];
  * @enddot
  *
- * <h3>Jitter Sources</h3>
  * In this scenario the jitter (busy state) is represented by the sum of:
- * - Higher or equal priority interrupt sources execution time combined.
+ * - Higher or equal priority interrupt handlers execution time combined.
  *   This time can go from zero to the maximum randomly. This value can be
  *   guaranteed to be zero only if the interrupt has the highest priority in
  *   the system.
- * - Highest execution time among lower priority sources. This value is zero
+ * - Highest execution time among lower priority handlers. This value is zero
  *   on those architectures (Cortex-M3 as example) where interrupt handlers
  *   can be preempted by higher priority sources.
  * - Longest time in a kernel lock zone that can delay interrupt servicing.
  *   This value is zero for fast interrupt sources, see @ref system_states.
  *
  * <h2>Threads Flyback Time</h2>
- * This is the time from an event, as example an interrupt, and the execution
- * of a thread supposed to handle the event. Imagine the following graph as the
- * continuation of the previous one.
+ * This is the time between an event, as example an interrupt, and the
+ * execution of the thread that will process it. Imagine the following
+ * graph as the continuation of the previous one.
  *
  * @dot
   digraph example {
@@ -51,13 +62,12 @@
       served [label="Interrupt\nServed"];
       busy [label="Busy"];
       thread [label="Thread\nAwakened"];
-      served -> busy [label="Not Highest Priority"];
-      busy -> busy [label="Other Threads\n(jitter)"];
+      served -> busy [label="Not highest Priority"];
+      busy -> busy [label="Higher priority Threads\n(added latency)"];
       busy -> thread [label="Highest Priority"];
-      served -> thread [label="Highest Priority"];
+      served -> thread [label="Highest Priority (minimum latency)"];
  * @enddot
  *
- * <h3>Jitter Sources</h3>
  * In this scenario all the jitter sources previously discussed are also
  * present and there is the added jitter caused by the activity of the
  * higher priority threads.
@@ -66,28 +76,14 @@
  * For each of the previously described jitter sources there are possible
  * mitigation actions.
  *
- * <h3>Hardware interrupts latency</h3>
- * This parameter is pretty much fixed and a characteristic of the system.
- * Possible actions include higher clock speeds or switch to an hardware
- * architecture more efficient at interrupt handling, as example, the
- * ARM Cortex-M3 core present in the STM32 family is very efficient at that.
- *
- * <h3>Interrupts service time</h3>
- * This is the execution time of interrupt handlers, this time includes:
- * - Fixed handler overhead, as example registers stacking/unstacking.
- * - Interrupt specific service time, as example, in a serial driver, this is
- *   the time used by the handler to transfer data from/to the UART.
- * - OS overhead. Any operating system requires to run some extra code
- *   in interrupt handlers in order to handle correct preemption and Context
- *   Switching.
- *
+ * <h3>Interrupt handlers optimization</h3>
  * An obvious mitigation action is to optimize the interrupt handler code as
  * much as possible for speed.<br>
  * Complex actions should never be performed in interrupt handlers.
  * An handler should serve the interrupt and wakeup a dedicated thread in order
  * to handle the bulk of the work.<br>
  * Another possible mitigation action is to evaluate if a specific interrupt
- * handler really needs to "speak" with the OS, if the handler uses full
+ * handler really needs to interact with the OS, if the handler uses full
  * stand-alone code then it is possible to remove the OS related overhead.<br>
  *
  * <h3>Kernel lock zones</h3>
@@ -95,7 +91,7 @@
  * (fully in simple architecture, to some extent in more advanced
  * microcontrollers) the interrupt sources. Because of this the kernel itself
  * is a jitter cause, a good OS design minimizes the jitter generated by the
- * kernel by both using adequate data structure, algorithms and good coding
+ * kernel by using adequate data structures, algorithms and coding
  * practices.<br>
  * A good OS design is not the whole story, some OS primitives may generate
  * more or less jitter depending on the system state, as example the maximum
@@ -104,9 +100,9 @@
  * time but others may have linear execution time or be even more complex.
  *
  * <h3>Higher priority threads activity</h3>
- * At thread level the response time is affected by the interrupt-related
- * jitter, as seen in the previous subsections, but also by the activity of
- * the higher priority threads and contention on protected resources.<br>
+ * At thread level, the response time is affected by the interrupt-related
+ * jitter but mainly by the activity of the higher priority threads and
+ * contention on protected resources.<br>
  * It is possible to improve the system overall response time and reduce jitter
  * by carefully assigning priorities to the various threads and carefully
  * designing mutual exclusion zones.<br>
