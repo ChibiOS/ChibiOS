@@ -7,8 +7,8 @@
  * @section ARMCM3_STATES Mapping of the System States in the ARM Cortex-M3 port
  * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM
  * Cortex-M3 port:
- * - <b>Initialization</b>. This state is represented by the startup code and
- *   the initialization code before @p chSysInit() is executed. It has not a
+ * - <b>Init</b>. This state is represented by the startup code and the
+ *   initialization code before @p chSysInit() is executed. It has not a
  *   special hardware state associated.
  * - <b>Normal</b>. This is the state the system has after executing
  *   @p chSysInit(). In this state the ARM Cortex-M3 has the BASEPRI register

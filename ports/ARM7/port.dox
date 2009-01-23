@@ -20,8 +20,8 @@
  * @section ARM7_STATES Mapping of the System States in the ARM7 port
  * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM7
  * port:
- * - <b>Initialization</b>. This state is represented by the startup code and
- *   the initialization code before @p chSysInit() is executed. It has not a
+ * - <b>Init</b>. This state is represented by the startup code and the
+ *   initialization code before @p chSysInit() is executed. It has not a
  *   special hardware state associated, usually the CPU goes through several
  *   hardware states during the startup phase.
  * - <b>Normal</b>. This is the state the system has after executing
