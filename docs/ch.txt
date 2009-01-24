@@ -181,7 +181,7 @@
       rankdir="LR";
       node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.75", height="0.75"];
       edge [fontname=Helvetica, fontsize=8];
-      any1 [label="Any State\nexcept\nDisabled\nand Init"];
+      any1 [label="Any State\nexcept *"];
       any2 [label="Any State"];
       sfi [label="SFI"];
       halt [label="Halted"];
@@ -196,6 +196,7 @@
       SNMI -> halt [label="NMI return"];
   }
  * @enddot
+ * @attention * except: <b>Init</b>, <b>Halt</b>, <b>SNMI</b>, <b>Disabled</b>.
  *
  * @section scheduling Scheduling
  * The strategy is very simple the currently ready thread with the highest
