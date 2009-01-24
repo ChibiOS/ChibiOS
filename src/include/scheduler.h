@@ -25,25 +25,19 @@
 #ifndef _SCHEDULER_H_
 #define _SCHEDULER_H_
 
-/** Normal @p chSchReadyI() message. */
+/** Default thread wakeup low level message. */
 #define RDY_OK          0
-/** Returned when the thread was made ready because of a timeout. */
+/** Low level message sent to a thread awakened by a timeout. */
 #define RDY_TIMEOUT     -1
-/** Returned when the thread was made ready because of a reset. */
+/** Low level message sent to a thread awakened by a reset operation. */
 #define RDY_RESET       -2
 
-/** Pseudo priority used by the ready list header, do not use.*/
-#define NOPRIO          0
-/** Idle thread priority.*/
-#define IDLEPRIO        1
-/** Lowest user priority.*/
-#define LOWPRIO         2
-/** Normal user priority.*/
-#define NORMALPRIO      64
-/** Highest user priority.*/
-#define HIGHPRIO        127
-/** Greatest possible priority.*/
-#define ABSPRIO         255
+#define NOPRIO          0               /**< Ready list header priority.*/
+#define IDLEPRIO        1               /**< Idle thread priority.*/
+#define LOWPRIO         2               /**< Lowest user priority.*/
+#define NORMALPRIO      64              /**< Normal user priority.*/
+#define HIGHPRIO        127             /**< Highest user priority.*/
+#define ABSPRIO         255             /**< Greatest possible priority.*/
 
 /** Infinite time specification for all the syscalls with a timeout
     specification.*/
