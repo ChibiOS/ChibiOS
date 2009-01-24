@@ -26,9 +26,9 @@ CH_IRQ_HANDLER(TIMER0_COMP_vect) {
 
   CH_IRQ_PROLOGUE();
 
-  chSysLockI();
+  chSysLockFromIsr();
   chSysTimerHandlerI();
-  chSysUnlockI();
+  chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
 }

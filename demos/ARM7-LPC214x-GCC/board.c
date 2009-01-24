@@ -49,9 +49,9 @@ static CH_IRQ_HANDLER(T0IrqHandler) {
   CH_IRQ_PROLOGUE();
   T0IR = 1;             /* Clear interrupt on match MR0. */
 
-  chSysLockI();
+  chSysLockFromIsr();
   chSysTimerHandlerI();
-  chSysUnlockI();
+  chSysUnlockFromIsr();
 
   VICVectAddr = 0;
   CH_IRQ_EPILOGUE();

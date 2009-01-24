@@ -34,9 +34,9 @@ static void SetError(uint8_t urctl, FullDuplexDriver *com) {
     sts |= SD_FRAMING_ERROR;
   if (urctl & BRK)
     sts |= SD_BREAK_DETECTED;
-  chSysLockI();
+  chSysLockFromIsr();
   chFDDAddFlagsI(com, sts);
-  chSysUnlockI();
+  chSysUnlockFromIsr();
 }
 
 #ifdef USE_MSP430_USART0
@@ -49,9 +49,9 @@ CH_IRQ_HANDLER(USART0TX_VECTOR) {
 
   CH_IRQ_PROLOGUE();
 
-  chSysLockI();
+  chSysLockFromIsr();
   b = chFDDRequestDataI(&COM1);
-  chSysUnlockI();
+  chSysUnlockFromIsr();
   if (b < Q_OK)
     U0IE &= ~UTXIE0;
   else
@@ -67,9 +67,9 @@ CH_IRQ_HANDLER(USART0RX_VECTOR) {
 
   if ((urctl = U0RCTL) & RXERR)
     SetError(urctl, &COM1);
-  chSysLockI();
+  chSysLockFromIsr();
   chFDDIncomingDataI(&COM1, U0RXBUF);
-  chSysUnlockI();
+  chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
 }
@@ -81,9 +81,9 @@ CH_IRQ_HANDLER(USART0RX_VECTOR) {
 static void OutNotify1(void) {
 
   if (!(U0IE & UTXIE0)) {
-    chSysLockI();
+    chSysLockFromIsr();
     U0TXBUF = (uint8_t)chFDDRequestDataI(&COM1);
-    chSysUnlockI();
+    chSysUnlockFromIsr();
     U0IE |= UTXIE0;
   }
 }
@@ -92,7 +92,7 @@ static void OutNotify1(void) {
  * USART setup, must be invoked with interrupts disabled.
  * NOTE: Does not reset I/O queues.
  */
-void SetUSART0I(uint16_t div, uint8_t mod, uint8_t ctl) {
+void SetUSART0(uint16_t div, uint8_t mod, uint8_t ctl) {
 
   U0CTL = SWRST;                /* Resets the USART, it should already be */
   /* USART init */
@@ -121,9 +121,9 @@ CH_IRQ_HANDLER(USART1TX_VECTOR) {
 
   CH_IRQ_PROLOGUE();
 
-  chSysLockI();
+  chSysLockFromIsr();
   b = chFDDRequestDataI(&COM2);
-  chSysUnlockI();
+  chSysUnlockFromIsr();
   if (b < Q_OK)
     U1IE &= ~UTXIE1;
   else
@@ -139,9 +139,9 @@ CH_IRQ_HANDLER(USART1RX_VECTOR) {
 
   if ((urctl = U1RCTL) & RXERR)
     SetError(urctl, &COM2);
-  chSysLockI();
+  chSysLockFromIsr();
   chFDDIncomingDataI(&COM2, U1RXBUF);
-  chSysUnlockI();
+  chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
 }
@@ -162,7 +162,7 @@ static void OutNotify2(void) {
  * USART setup, must be invoked with interrupts disabled.
  * NOTE: Does not reset I/O queues.
  */
-void SetUSART1I(uint16_t div, uint8_t mod, uint8_t ctl) {
+void SetUSART1(uint16_t div, uint8_t mod, uint8_t ctl) {
 
   U1CTL = SWRST;                /* Resets the USART, it should already be */
   /* USART init */
@@ -186,11 +186,11 @@ void InitSerial(void) {
   /* I/O queues setup.*/
 #ifdef USE_MSP430_USART0
   chFDDInit(&COM1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
-  SetUSART0I(UBR(38400), 0, CHAR);
+  SetUSART0(UBR(38400), 0, CHAR);
 #endif
 
 #ifdef USE_MSP430_USART1
   chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
-  SetUSART1I(UBR(38400), 0, CHAR);
+  SetUSART1(UBR(38400), 0, CHAR);
 #endif
 }

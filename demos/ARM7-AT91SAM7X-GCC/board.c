@@ -44,9 +44,9 @@ static CH_IRQ_HANDLER(SYSIrqHandler) {
 
   if (AT91C_BASE_PITC->PITC_PISR & AT91C_PITC_PITS) {
     (void) AT91C_BASE_PITC->PITC_PIVR;
-    chSysLockI();
+    chSysLockFromIsr();
     chSysTimerHandlerI();
-    chSysUnlockI();
+    chSysUnlockFromIsr();
   }
   AT91C_BASE_AIC->AIC_EOICR = 0;
 

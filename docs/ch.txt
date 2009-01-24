@@ -127,8 +127,8 @@
  * - <b>I-Locked</b>. Kernel locked and regular interrupt sources disabled.
  *   I-Class APIs are invokable from this state.
  * - <b>Serving Regular Interrupt</b>. No system APIs are accessible but it is
- *   possible to switch to the I-Locked state using @p chSysLockI() and then
- *   invoke any I-Class API. Interrupt handlers can be preemptable on some
+ *   possible to switch to the I-Locked state using @p chSysLockFromIsr() and
+ *   then invoke any I-Class API. Interrupt handlers can be preemptable on some
  *   architectures thus is important to switch to I-Locked state before
  *   invoking system APIs.
  * - <b>Serving Fast Interrupt</b>. System APIs are not accessible.
@@ -167,8 +167,8 @@
       slock -> ilock [label="Context Switch", dir="both"];
       norm -> sri [label="Regular IRQ", style="dotted"];
       sri -> norm [label="Regular IRQ return", fontname=Helvetica, fontsize=8];
-      sri -> ilock [label="chSysLockI()", constraint=false];
-      ilock -> sri [label="chSysUnlockI()", fontsize=8];
+      sri -> ilock [label="chSysLockFromIsr()", constraint=false];
+      ilock -> sri [label="chSysUnlockFromIsr()", fontsize=8];
       norm -> sleep [label="Idle Thread"];
       sleep -> sri [label="Regular IRQ", style="dotted"];
   }

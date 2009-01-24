@@ -42,9 +42,9 @@ static void SetError(AT91_REG csr, FullDuplexDriver *com) {
     sts |= SD_FRAMING_ERROR;
   if (csr & AT91C_US_RXBRK)
     sts |= SD_BREAK_DETECTED;
-  chSysLockI();
+  chSysLockFromIsr();
   chFDDAddFlagsI(com, sts);
-  chSysUnlockI();
+  chSysUnlockFromIsr();
 }
 
 /*
@@ -54,14 +54,14 @@ __attribute__((noinline))
 static void ServeInterrupt(AT91PS_USART u, FullDuplexDriver *com) {
 
   if (u->US_CSR & AT91C_US_RXRDY) {
-    chSysLockI();
+    chSysLockFromIsr();
     chFDDIncomingDataI(com, u->US_RHR);
-    chSysUnlockI();
+    chSysUnlockFromIsr();
   }
   if (u->US_CSR & AT91C_US_TXRDY) {
-    chSysLockI();
+    chSysLockFromIsr();
     msg_t b = chFDDRequestDataI(com);
-    chSysUnlockI();
+    chSysUnlockFromIsr();
     if (b < Q_OK)
       u->US_IDR = AT91C_US_TXRDY;
     else
@@ -114,7 +114,7 @@ static void OutNotify2(void) {
  * USART setup, must be invoked with interrupts disabled.
  * NOTE: Does not reset I/O queues.
  */
-void SetUSARTI(AT91PS_USART u, int speed, int mode) {
+void SetUSART(AT91PS_USART u, int speed, int mode) {
 
   /* Disables IRQ sources and stop operations.*/
   u->US_IDR = 0xFFFFFFFF;
@@ -169,14 +169,14 @@ void InitSerial(int prio0, int prio1) {
                   USART1IrqHandler);
   AIC_EnableIT(AT91C_ID_US1);
 
-  SetUSARTI(AT91C_BASE_US0, 38400, AT91C_US_USMODE_NORMAL |
-                                   AT91C_US_CLKS_CLOCK |
-                                   AT91C_US_CHRL_8_BITS |
-                                   AT91C_US_PAR_NONE |
-                                   AT91C_US_NBSTOP_1_BIT);
-  SetUSARTI(AT91C_BASE_US1, 38400, AT91C_US_USMODE_NORMAL |
-                                   AT91C_US_CLKS_CLOCK |
-                                   AT91C_US_CHRL_8_BITS |
-                                   AT91C_US_PAR_NONE |
-                                   AT91C_US_NBSTOP_1_BIT);
+  SetUSART(AT91C_BASE_US0, 38400, AT91C_US_USMODE_NORMAL |
+                                  AT91C_US_CLKS_CLOCK |
+                                  AT91C_US_CHRL_8_BITS |
+                                  AT91C_US_PAR_NONE |
+                                  AT91C_US_NBSTOP_1_BIT);
+  SetUSART(AT91C_BASE_US1, 38400, AT91C_US_USMODE_NORMAL |
+                                  AT91C_US_CLKS_CLOCK |
+                                  AT91C_US_CHRL_8_BITS |
+                                  AT91C_US_PAR_NONE |
+                                  AT91C_US_NBSTOP_1_BIT);
 }

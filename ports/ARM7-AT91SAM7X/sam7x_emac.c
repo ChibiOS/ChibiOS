@@ -106,18 +106,18 @@ static void ServeInterrupt(void) {
   if ((isr & AT91C_EMAC_RCOMP) || (rsr & RSR_BITS)) {
     if (rsr & AT91C_EMAC_REC) {
 //      received++;
-      chSysLockI();
+      chSysLockFromIsr();
       chEvtBroadcastI(&EMACFrameReceived);
-      chSysUnlockI();
+      chSysUnlockFromIsr();
     }
     AT91C_BASE_EMAC->EMAC_RSR = RSR_BITS;
   }
 
   if ((isr & AT91C_EMAC_TCOMP) || (tsr & TSR_BITS)) {
     if (tsr & AT91C_EMAC_COMP) {
-      chSysLockI();
+      chSysLockFromIsr();
       chEvtBroadcastI(&EMACFrameTransmitted);
-      chSysUnlockI();
+      chSysUnlockFromIsr();
     }
     AT91C_BASE_EMAC->EMAC_TSR = TSR_BITS;
   }

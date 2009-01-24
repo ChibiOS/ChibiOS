@@ -30,9 +30,9 @@ static void SetError(uint8_t sra, FullDuplexDriver *com) {
     sts |= SD_PARITY_ERROR;
   if (sra & (1 << FE))
     sts |= SD_FRAMING_ERROR;
-  chSysLockI();
+  chSysLockFromIsr();
   chFDDAddFlagsI(com, sts);
-  chSysUnlockI();
+  chSysUnlockFromIsr();
 }
 
 #ifdef USE_AVR_USART0
@@ -48,9 +48,9 @@ CH_IRQ_HANDLER(USART0_RX_vect) {
   sra = UCSR0A;
   if (sra & ((1 << DOR) | (1 << UPE) | (1 << FE)))
     SetError(sra, &SER1);
-  chSysLockI();
+  chSysLockFromIsr();
   chFDDIncomingDataI(&SER1, UDR0);
-  chSysUnlockI();
+  chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
 }
@@ -60,9 +60,9 @@ CH_IRQ_HANDLER(USART0_UDRE_vect) {
 
   CH_IRQ_PROLOGUE();
 
-  chSysLockI();
+  chSysLockFromIsr();
   b = chFDDRequestDataI(&SER1);
-  chSysUnlockI();
+  chSysUnlockFromIsr();
   if (b < Q_OK)
     UCSR0B &= ~(1 << UDRIE);
   else
@@ -107,9 +107,9 @@ CH_IRQ_HANDLER(USART1_RX_vect) {
   sra = UCSR1A;
   if (sra & ((1 << DOR) | (1 << UPE) | (1 << FE)))
     SetError(sra, &SER2);
-  chSysLockI();
+  chSysLockFromIsr();
   chFDDIncomingDataI(&SER2, UDR1);
-  chSysUnlockI();
+  chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
 }
@@ -119,9 +119,9 @@ CH_IRQ_HANDLER(USART1_UDRE_vect) {
 
   CH_IRQ_PROLOGUE();
 
-  chSysLockI();
+  chSysLockFromIsr();
   b = chFDDRequestDataI(&SER2);
-  chSysUnlockI();
+  chSysUnlockFromIsr();
   if (b < Q_OK)
     UCSR1B &= ~(1 << UDRIE);
   else
@@ -143,7 +143,7 @@ static void OutNotify2(void) {
  * USART setup, must be invoked with interrupts disabled.
  * NOTE: Does not reset I/O queues.
  */
-void SetUSART1I(uint16_t brr, uint8_t csrc) {
+void SetUSART1(uint16_t brr, uint8_t csrc) {
 
   UBRR1L = brr;
   UBRR1H = brr >> 8;
@@ -158,11 +158,11 @@ void InitSerial(void) {
 #ifdef USE_AVR_USART0
   /* I/O queues setup.*/
   chFDDInit(&SER1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
-  SetUSART0I(UBRR(38400), (1 << UCSZ1) | (1 << UCSZ0));
+  SetUSART0(UBRR(38400), (1 << UCSZ1) | (1 << UCSZ0));
 #endif
 
 #ifdef USE_AVR_USART1
   chFDDInit(&SER2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
-  SetUSART1I(UBRR(38400), (1 << UCSZ1) | (1 << UCSZ0));
+  SetUSART1(UBRR(38400), (1 << UCSZ1) | (1 << UCSZ0));
 #endif
 }

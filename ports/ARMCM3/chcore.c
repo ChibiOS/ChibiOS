@@ -75,9 +75,9 @@ CH_IRQ_HANDLER(SysTickVector) {
 
   CH_IRQ_PROLOGUE();
 
-  chSysLockI();
+  chSysLockFromIsr();
   chSysTimerHandlerI();
-  chSysUnlockI();
+  chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
 }
@@ -163,10 +163,10 @@ void PendSVVector(void) {
   Thread *otp;
   register struct intctx *sp_thd asm("r12");
 
-  chSysLockI();
+  chSysLockFromIsr();
   asm volatile ("push    {lr}");
   if (!chSchRescRequiredI()) {
-    chSysUnlockI();
+    chSysUnlockFromIsr();
     asm volatile ("pop     {pc}");
   }
   asm volatile ("pop     {lr}");

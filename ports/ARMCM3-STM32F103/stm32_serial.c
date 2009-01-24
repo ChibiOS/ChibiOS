@@ -55,9 +55,9 @@ static void SetError(uint16_t sr, FullDuplexDriver *com) {
     sts |= SD_FRAMING_ERROR;
   if (sr & SR_LBD)
     sts |= SD_BREAK_DETECTED;
-  chSysLockI();
+  chSysLockFromIsr();
   chFDDAddFlagsI(com, sts);
-  chSysUnlockI();
+  chSysUnlockFromIsr();
 }
 
 static void ServeInterrupt(USART_TypeDef *u, FullDuplexDriver *com) {
@@ -66,14 +66,14 @@ static void ServeInterrupt(USART_TypeDef *u, FullDuplexDriver *com) {
   if (sr & (SR_ORE | SR_FE | SR_PE | SR_LBD))
     SetError(sr, com);
   if (sr & SR_RXNE) {
-    chSysLockI();
+    chSysLockFromIsr();
     chFDDIncomingDataI(com, u->DR);
-    chSysUnlockI();
+    chSysUnlockFromIsr();
   }
   if (sr & SR_TXE) {
-    chSysLockI();
+    chSysLockFromIsr();
     msg_t b = chFDDRequestDataI(com);
-    chSysUnlockI();
+    chSysUnlockFromIsr();
     if (b < Q_OK)
       u->CR1 &= ~CR1_TXEIE;
     else
@@ -154,8 +154,8 @@ static void OutNotify3(void) {
  * USART setup, must be invoked with interrupts disabled.
  * NOTE: Does not reset I/O queues.
  */
-void SetUSARTI(USART_TypeDef *u, uint32_t speed, uint16_t cr1,
-               uint16_t cr2, uint16_t cr3) {
+void SetUSART(USART_TypeDef *u, uint32_t speed, uint16_t cr1,
+              uint16_t cr2, uint16_t cr3) {
 
   /*
    * Baud rate setting.
@@ -183,7 +183,7 @@ void InitSerial(uint32_t prio1, uint32_t prio2, uint32_t prio3) {
 #ifdef USE_USART1
   chFDDInit(&COM1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
   RCC->APB2ENR |= 0x00004000;
-  SetUSARTI(USART1, USART_BITRATE, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
+  SetUSART(USART1, USART_BITRATE, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
   GPIOA->CRH = (GPIOA->CRH & 0xFFFFF00F) | 0x000004B0;
   NVICEnableVector(USART1_IRQChannel, prio1);
 #endif
@@ -191,7 +191,7 @@ void InitSerial(uint32_t prio1, uint32_t prio2, uint32_t prio3) {
 #ifdef USE_USART2
   chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
   RCC->APB1ENR |= 0x00020000;
-  SetUSARTI(USART2, USART_BITRATE, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
+  SetUSART(USART2, USART_BITRATE, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
   GPIOA->CRL = (GPIOA->CRL & 0xFFFF00FF) | 0x00004B00;
   NVICEnableVector(USART2_IRQChannel, prio2);
 #endif
@@ -199,7 +199,7 @@ void InitSerial(uint32_t prio1, uint32_t prio2, uint32_t prio3) {
 #ifdef USE_USART3
   chFDDInit(&COM3, ib3, sizeof ib3, NULL, ob3, sizeof ob3, OutNotify3);
   RCC->APB1ENR |= 0x00040000;
-  SetUSARTI(USART3, USART_BITRATE, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
+  SetUSART(USART3, USART_BITRATE, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
   GPIOB->CRH = (GPIOB->CRH & 0xFFFF00FF) | 0x00004B00;
   NVICEnableVector(USART3_IRQChannel, prio3);
 #endif

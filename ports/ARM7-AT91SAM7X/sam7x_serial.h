@@ -30,7 +30,7 @@
 extern "C" {
 #endif
   void InitSerial(int prio0, int prio1);
-  void SetUSARTI(AT91PS_USART u, int speed, int mode);
+  void SetUSART(AT91PS_USART u, int speed, int mode);
   CH_IRQ_HANDLER(UART0IrqHandler);
   CH_IRQ_HANDLER(UART1IrqHandler);
 #ifdef __cplusplus

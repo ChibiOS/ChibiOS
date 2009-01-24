@@ -78,7 +78,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   Port functions/macros are no more directly exposed as APIs to the user code.
 - NEW: Added a configuration option to enable nested system locks/unlocks.
 - NEW: Improved the interrupt handlers related code. Now interrupts are
-  handled in a very similar way in every architecture.
+  handled in a very similar way in every architecture. See the "Concepts"
+  section and the "Writing interrupt handlers under ChibiOS/RT" article in the
+  documentation.
 - OPT: Improved ARM7 thumb port code, thanks to some GCC tricks involving
   registers usage now the kernel is much smaller, faster and most OS APIs
   use less RAM in stack frames (note, this is an ARM7 thumb mode specific

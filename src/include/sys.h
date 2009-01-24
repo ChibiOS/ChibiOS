@@ -134,7 +134,7 @@
  *       syscall from an interrupt handler.
  * @note This API must be invoked exclusively from interrupt handlers.
  */
-#define chSysLockI() port_lock_from_isr()
+#define chSysLockFromIsr() port_lock_from_isr()
 
 /**
  * @brief Leaves the kernel lock mode from within an interrupt handler.
@@ -147,7 +147,7 @@
  *       syscall from an interrupt handler.
  * @note This API must be invoked exclusively from interrupt handlers.
  */
-#define chSysUnlockI() port_unlock_from_isr()
+#define chSysUnlockFromIsr() port_unlock_from_isr()
 
 /**
  * @brief IRQ handler enter code.
@@ -179,10 +179,6 @@ extern "C" {
 #endif
   void chSysInit(void);
   void chSysTimerHandlerI(void);
-#if !defined(CH_OPTIMIZE_SPEED)
-  void chSysLock(void);
-  void chSysUnlock(void);
-#endif /* !defined(CH_OPTIMIZE_SPEED) */
 #ifdef __cplusplus
 }
 #endif

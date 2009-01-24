@@ -38,8 +38,8 @@
 extern "C" {
 #endif
   void InitSerial(void);
-  void SetUSART0I(uint16_t div, uint8_t mod, uint8_t ctl);
-  void SetUSART1I(uint16_t div, uint8_t mod, uint8_t ctl);
+  void SetUSART0(uint16_t div, uint8_t mod, uint8_t ctl);
+  void SetUSART1(uint16_t div, uint8_t mod, uint8_t ctl);
 #ifdef __cplusplus
 }
 #endif

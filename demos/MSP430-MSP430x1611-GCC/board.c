@@ -89,9 +89,9 @@ CH_IRQ_HANDLER(TIMERA0_VECTOR) {
 
   CH_IRQ_PROLOGUE();
 
-  chSysLockI();
+  chSysLockFromIsr();
   chSysTimerHandlerI();
-  chSysUnlockI();
+  chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
 }

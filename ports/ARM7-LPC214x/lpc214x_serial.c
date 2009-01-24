@@ -43,9 +43,9 @@ static void SetError(IOREG32 err, FullDuplexDriver *com) {
     sts |= SD_FRAMING_ERROR;
   if (err & LSR_BREAK)
     sts |= SD_BREAK_DETECTED;
-  chSysLockI();
+  chSysLockFromIsr();
   chFDDAddFlagsI(com, sts);
-  chSysUnlockI();
+  chSysUnlockFromIsr();
 }
 
 /*
@@ -66,36 +66,36 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
     case IIR_SRC_TIMEOUT:
     case IIR_SRC_RX:
       while (u->UART_LSR & LSR_RBR_FULL) {
-        chSysLockI();
+        chSysLockFromIsr();
         if (chIQPutI(&com->sd_iqueue, u->UART_RBR) < Q_OK)
            chFDDAddFlagsI(com, SD_OVERRUN_ERROR);
-        chSysUnlockI();
+        chSysUnlockFromIsr();
       }
-      chSysLockI();
+      chSysLockFromIsr();
       chEvtBroadcastI(&com->sd_ievent);
-      chSysUnlockI();
+      chSysUnlockFromIsr();
       break;
     case IIR_SRC_TX:
       {
 #ifdef FIFO_PRELOAD
         int i = FIFO_PRELOAD;
         do {
-          chSysLockI();
+          chSysLockFromIsr();
           msg_t b = chOQGetI(&com->sd_oqueue);
-          chSysUnlockI();
+          chSysUnlockFromIsr();
           if (b < Q_OK) {
             u->UART_IER &= ~IER_THRE;
-            chSysLockI();
+            chSysLockFromIsr();
             chEvtBroadcastI(&com->sd_oevent);
-            chSysUnlockI();
+            chSysUnlockFromIsr();
             break;
           }
           u->UART_THR = b;
         } while (--i);
 #else
-        chSysLockI();
+        chSysLockFromIsr();
         msg_t b = chFDDRequestDataI(com);
-        chSysUnlockI();
+        chSysUnlockFromIsr();
         if (b < Q_OK)
           u->UART_IER &= ~IER_THRE;
         else
@@ -135,13 +135,13 @@ static void preload(UART *u, FullDuplexDriver *com) {
   if (u->UART_LSR & LSR_THRE) {
     int i = FIFO_PRELOAD;
     do {
-      chSysLockI();
+      chSysLockFromIsr();
       msg_t b = chOQGetI(&com->sd_oqueue);
-      chSysUnlockI();
+      chSysUnlockFromIsr();
       if (b < Q_OK) {
-        chSysLockI();
+        chSysLockFromIsr();
         chEvtBroadcastI(&com->sd_oevent);
-        chSysUnlockI();
+        chSysUnlockFromIsr();
         return;
       }
       u->UART_THR = b;
@@ -163,9 +163,9 @@ static void OutNotify1(void) {
   UART *u = U0Base;
 
   if (u->UART_LSR & LSR_THRE) {
-    chSysLockI();
+    chSysLockFromIsr();
     u->UART_THR = chOQGetI(&COM1.sd_oqueue);
-    chSysUnlockI();
+    chSysUnlockFromIsr();
   }
   u->UART_IER |= IER_THRE;
 #endif
@@ -191,7 +191,7 @@ static void OutNotify2(void) {
 /*
  * UART setup, must be invoked with interrupts disabled.
  */
-void SetUARTI(UART *u, int speed, int lcr, int fcr) {
+void SetUART(UART *u, int speed, int lcr, int fcr) {
 
   int div = PCLK / (speed << 4);
   u->UART_LCR = lcr | LCR_DLAB;
@@ -216,10 +216,10 @@ void InitSerial(int vector1, int vector2) {
   PCONP = (PCONP & PCALL) | PCUART0 | PCUART1;
 
   chFDDInit(&COM1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
-  SetUARTI(U0Base, 38400, LCR_WL8 | LCR_STOP1 | LCR_NOPARITY, FCR_TRIGGER0);
+  SetUART(U0Base, 38400, LCR_WL8 | LCR_STOP1 | LCR_NOPARITY, FCR_TRIGGER0);
 
   chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
-  SetUARTI(U1Base, 38400, LCR_WL8 | LCR_STOP1 | LCR_NOPARITY, FCR_TRIGGER0);
+  SetUART(U1Base, 38400, LCR_WL8 | LCR_STOP1 | LCR_NOPARITY, FCR_TRIGGER0);
 
   VICIntEnable = INTMASK(SOURCE_UART0) | INTMASK(SOURCE_UART1);
 }

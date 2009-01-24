@@ -11,9 +11,9 @@ CH_IRQ_HANDLER(myIRQ) {
   
   // IRQ handling code, preemptable if the architecture supports it.
   
-  chSysLockI();
+  chSysLockFromIsr();
   // Invocation of some I-Class system APIs, never preemptable.
-  chSysUnlockI().
+  chSysUnlockFromIsr().
   
   // More IRQ handling code, again preemptable.
 
