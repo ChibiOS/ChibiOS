@@ -12,7 +12,7 @@
  
   chSemSignalI(&sem1);
   chSemSignalI(&sem2);
-  chMtxUnlock();
+  chMtxUnlockS();
   chSchRescheduleS();
  
   chSysUnlock();
