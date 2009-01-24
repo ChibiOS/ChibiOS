@@ -18,10 +18,12 @@
 ./ext/                 - External libraries or other code not part of
                          ChibiOS/RT but used in the demo applications.
 ./test/                - Test code, used by some demos.
+./docs/src             - Documentation sources.
 ./docs/Doxyfile        - Doxygen project file.
 ./docs/html/index.html - ChibiOS/RT documentation.
                          The documentation is also available on the project
                          web page: http://chibios.sourceforge.net/
+./docs/reports         - Test reports on the various targets.
 
 *****************************************************************************
 *** Current ports/demos                                                   ***
