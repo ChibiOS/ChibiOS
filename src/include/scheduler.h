@@ -61,10 +61,11 @@ typedef struct {
   tprio_t               r_prio;
   /* End of the fields shared with the Thread structure. */
 #ifdef CH_USE_ROUNDROBIN
+  /** Round robin counter.*/
   cnt_t                 r_preempt;
 #endif
 #ifndef CH_CURRP_REGISTER_CACHE
-  /** the currently running thread */
+  /** The currently running thread.*/
   Thread                *r_current;
 #endif
 } ReadyList;
