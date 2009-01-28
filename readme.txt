@@ -74,6 +74,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.0.0 ***
+- Renamed some occurrences of "Conditional Variable" in "Condition Variable" in
+  the documentation.
+
 *** 1.0.0rc3 ***
 - FIX: Fixed a nasty regression to the timeout unified code that affected
   some APIs since version 0.5.3. See the bug tracker for more details.

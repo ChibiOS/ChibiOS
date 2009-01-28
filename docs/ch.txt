@@ -662,17 +662,17 @@
 /** @} */
 
 /**
- * @defgroup CondVars Conditional Variables
+ * @defgroup CondVars Condition Variables
  * @{
- * Conditional Variables and threads synchronization.
+ * Condition Variables and threads synchronization.
  * <b>Operation mode</b><br><br>
  * The condition variable is a synchronization object meant to be used inside
  * a zone protected by a \p Mutex. Mutexes and CondVars together can implement
  * a Monitor construct.<br>
- * In order to use the Conditional Variables APIs the \p CH_USE_CONDVARS
+ * In order to use the Condition Variables APIs the \p CH_USE_CONDVARS
  * option must be specified in \p chconf.h.<br><br>
- * @file condvars.h Conditional Variables macros and structures.
- * @file chcond.c Conditional Variables code.
+ * @file condvars.h Condition Variables macros and structures.
+ * @file chcond.c Condition Variables code.
  */
 /** @} */
 
