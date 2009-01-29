@@ -158,7 +158,9 @@
     <flowRoot
        xml:space="preserve"
        id="flowRoot3188"
-       transform="translate(10.05033,-294.4214)"><flowRegion
+       transform="translate(10.05033,-294.4214)"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><flowRegion
          id="flowRegion3190"><rect
            id="rect3192"
            width="207.01047"
