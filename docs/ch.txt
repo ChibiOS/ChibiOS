@@ -27,6 +27,7 @@
  * @htmlonly (<span class="t_nihongo_kanji" xml:lang="ja" lang="ja">&#12385;&#12403;</span>OS/RT) @endhtmlonly
  * means small Real Time Operating System.
  * Source <a href="http://en.wikipedia.org/wiki/Chibi" target="_blank">Wikipedia</a>.
+ *
  * <h2>Features</h2>
  * - Free software, GPL3 licensed.
  * - Designed for realtime applications.
