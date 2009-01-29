@@ -57,6 +57,15 @@
        x2="348.78439"
        y2="341.00253"
        gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3224"
+       id="linearGradient2357"
+       gradientUnits="userSpaceOnUse"
+       x1="199.30756"
+       y1="341.00253"
+       x2="348.78439"
+       y2="341.00253" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -127,21 +136,7 @@
            height="17.563538"
            x="2.9895365"
            y="332.43646" /></flowRegion><flowPara
-         id="flowPara3196">Workspace top</flowPara></flowRoot>    <flowRoot
-       xml:space="preserve"
-       id="flowRoot3208"
-       transform="translate(-99.457031,-40.853054)"
-       style="fill:url(#linearGradient3230);fill-opacity:1"><flowRegion
-         id="flowRegion3210"
-         style="fill:url(#linearGradient3230);fill-opacity:1"><rect
-           id="rect3212"
-           width="139.31241"
-           height="50.822121"
-           x="99.850525"
-           y="299.55157"
-           style="fill:url(#linearGradient3230);fill-opacity:1" /></flowRegion><flowPara
-         id="flowPara3214"
-         style="fill:url(#linearGradient3230);fill-opacity:1">Thread Structure</flowPara></flowRoot>    <path
+         id="flowPara3196">Workspace top</flowPara></flowRoot>    <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1,1;stroke-dashoffset:0;stroke-opacity:1"
        d="M 109.94816,260.4823 C 249.5177,260.4823 249.5177,260.4823 249.5177,260.4823"
        id="path3243"
