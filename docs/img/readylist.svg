@@ -89,7 +89,7 @@
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="1.515"
      inkscape:cx="306.4941"
@@ -158,7 +158,9 @@
     <flowRoot
        xml:space="preserve"
        id="flowRoot3188"
-       transform="translate(10.05033,-293.30812)"><flowRegion
+       transform="translate(10.05033,-294.4214)"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><flowRegion
          id="flowRegion3190"><rect
            id="rect3192"
            width="207.01047"
