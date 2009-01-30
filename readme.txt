@@ -97,6 +97,14 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   documentation and updated, the wiki entries are obsolete and will be removed.
 - New application notes and articles added.
 
+*** 1.0.0 ***
+- License switch, added GPL exception, see exception.txt.
+- Full test cycle and test reports updated.
+- Renamed some occurrences of "Conditional Variable" in "Condition Variable" in
+  the documentation.
+- FIX: Fixed some images in the documentation because problems when seen in
+  Internet Explorer.
+
 *** 1.0.0rc3 ***
 - FIX: Fixed a nasty regression to the timeout unified code that affected
   some APIs since version 0.5.3. See the bug tracker for more details.
