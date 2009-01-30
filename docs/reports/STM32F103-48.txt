@@ -1,9 +1,13 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.0.0 RC1
+Kernel:   ChibiOS/RT 1.0.0 final
 Compiler: GCC 4.3.2 (YAGARTO 28.09.2008)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 ***************************************************************************
+
+*****************************
+*** ChibiOS/RT test suite ***
+*****************************
 
 ---------------------------------------------------------------------------
 --- Test Case 1 (Ready List, priority enqueuing test #1)
@@ -61,7 +65,7 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 18 (Benchmark, context switch #3, 4 threads in ready list)
---- Score : 134028 msgs/S, 268056 ctxswc/S
+--- Score : 134029 msgs/S, 268058 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 19 (Benchmark, threads creation/termination, worst case)
@@ -69,7 +73,7 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 20 (Benchmark, threads creation/termination, optimal)
---- Score : 151424 threads/S
+--- Score : 151423 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 21 (Benchmark, mass reschedulation, 5 threads)

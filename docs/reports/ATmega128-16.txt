@@ -1,5 +1,5 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.0.0 RC1
+Kernel:   ChibiOS/RT 1.0.0 final
 Compiler: GCC 4.3.0 (WinAVR 10.06.2008)
 Options:  -O2
 Settings: F_CPU=16000000
