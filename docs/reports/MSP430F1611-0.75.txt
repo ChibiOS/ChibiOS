@@ -1,5 +1,5 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.0.0 RC1
+Kernel:   ChibiOS/RT 1.0.0 final
 Compiler: GCC 3.2.3 (MSPGCC)
 Options:  -O2 -fomit-frame-pointer
 Settings: MCLK=DCOCLK 750Khz
@@ -65,7 +65,7 @@ Settings: MCLK=DCOCLK 750Khz
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 19 (Benchmark, threads creation/termination, worst case)
---- Score : 1311 threads/S
+--- Score : 1310 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 20 (Benchmark, threads creation/termination, optimal)

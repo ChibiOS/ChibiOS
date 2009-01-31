@@ -1,5 +1,5 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.0.0 RC1
+Kernel:   ChibiOS/RT 1.0.0 final
 Compiler: GCC 4.3.2 (YAGARTO 28.09.2008)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
@@ -40,7 +40,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 12 (Heap, allocation and fragmentation test)
---- Size  : 27792 bytes, not fragmented
+--- Size  : 27648 bytes, not fragmented
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 13 (Memory Pools, allocation and enqueuing test)
@@ -61,27 +61,27 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 18 (Benchmark, context switch #3, 4 threads in ready list)
---- Score : 111980 msgs/S, 223960 ctxswc/S
+--- Score : 111978 msgs/S, 223956 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 19 (Benchmark, threads creation/termination, worst case)
---- Score : 99406 threads/S
+--- Score : 99405 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 20 (Benchmark, threads creation/termination, optimal)
---- Score : 134686 threads/S
+--- Score : 134687 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 21 (Benchmark, mass reschedulation, 5 threads)
---- Score : 36006 reschedulations/S, 216036 ctxswc/S
+--- Score : 36005 reschedulations/S, 216030 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 22 (Benchmark, I/O Queues throughput)
---- Score : 341236 bytes/S
+--- Score : 341232 bytes/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 23 (Benchmark, virtual timers set/reset)
---- Score : 309498 timers/S
+--- Score : 309496 timers/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 
