@@ -72,8 +72,9 @@
  * - Almost totally written in C with little ASM code required for ports.
  *
  * <h2>Related pages</h2>
- * - @subpage Concepts
- * - @subpage Articles
+ * - @subpage concepts
+ * - @subpage lic_faq
+ * - @subpage articles
  */
 
 /**

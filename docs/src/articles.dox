@@ -18,7 +18,7 @@
 */
 
 /**
- * @page Articles Articles
+ * @page articles Articles
  * @{
  * ChibiOS/RT Articles and Code Examples:
  * - @subpage article_atomic
