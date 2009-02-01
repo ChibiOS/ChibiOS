@@ -31,10 +31,9 @@
  * @brief Semaphore structure.
  */
 typedef struct Semaphore {
-  /** Queue of the threads sleeping on this Semaphore.*/
-  ThreadsQueue          s_queue;
-  /** The Semaphore counter.*/
-  cnt_t                 s_cnt;
+  ThreadsQueue          s_queue;        /**< Queue of the threads sleeping on
+                                             this semaphore.*/
+  cnt_t                 s_cnt;          /**< The semaphore counter.*/
 } Semaphore;
 
 #ifdef __cplusplus

@@ -31,12 +31,12 @@
  * @brief Mutex structure.
  */
 typedef struct Mutex {
-  /** Queue of the threads sleeping on this Mutex.*/
-  ThreadsQueue          m_queue;
-  /** Owner @p Thread pointer or @p NULL.*/
-  Thread                *m_owner;
-  /** Next @p Mutex into an owner-list, @p NULL if none.*/
-  struct Mutex          *m_next;
+  ThreadsQueue          m_queue;        /**< Queue of the threads sleeping on
+                                             this Mutex.*/
+  Thread                *m_owner;       /**< Owner @p Thread pointer or
+                                             @p NULL.*/
+  struct Mutex          *m_next;        /**< Next @p Mutex into an owner-list
+                                             or @p NULL.*/
 } Mutex;
 
 #ifdef __cplusplus

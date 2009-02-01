@@ -36,17 +36,23 @@
  */
 #define MEM_FILL_PATTERN 0x55
 
+/**
+ * @brief Trace buffer record.
+ */
 typedef struct {
-  void                  *cse_wtobjp;
-  systime_t             cse_time;
-  uint16_t              cse_state: 4;
-  uint16_t              cse_tid: 12;
+  void                  *cse_wtobjp;    /**< Object where going to sleep.*/
+  systime_t             cse_time;       /**< Time of the switch event.*/
+  uint16_t              cse_state: 4;   /**< Switched out thread state.*/
+  uint16_t              cse_tid: 12;    /**< Switched in thdread id.*/
 } CtxSwcEvent;
 
+/**
+ * @brief Trace buffer header.
+ */
 typedef struct {
-  size_t                tb_size;
-  CtxSwcEvent           *tb_ptr;
-  CtxSwcEvent           tb_buffer[TRACE_BUFFER_SIZE];
+  unsigned              tb_size;        /**< Trace buffer size (records).*/
+  CtxSwcEvent           *tb_ptr;        /**< Pointer to the ring buffer front.*/
+  CtxSwcEvent           tb_buffer[TRACE_BUFFER_SIZE];   /**< Ring buffer.*/
 } TraceBuffer;
 
 extern CtxSwcEvent *dbgnext;

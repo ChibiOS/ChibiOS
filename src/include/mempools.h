@@ -27,16 +27,19 @@
 
 #ifdef CH_USE_MEMPOOLS
 
+/**
+ * @brief Memory pool free object header.
+ */
 struct pool_header {
   struct pool_header    *ph_next;
 };
 
+/**
+ * @brief Memory pool descriptor.
+ */
 typedef struct {
-  struct pool_header    *mp_next;
-  size_t                mp_object_size;
-#ifdef CH_USE_HEAP
-  bool_t                mp_grow;
-#endif /* CH_USE_HEAP */
+  struct pool_header    *mp_next;       /**< Pointer to the header.*/
+  size_t                mp_object_size; /**< Memory pool objects size.*/
 } MemoryPool;
 
 #ifdef __cplusplus

@@ -35,7 +35,7 @@
  * @brief CondVar structure.
  */
 typedef struct CondVar {
-  ThreadsQueue          c_queue;
+  ThreadsQueue          c_queue;        /**< CondVar threads queue.*/
 } CondVar;
 
 #ifdef __cplusplus

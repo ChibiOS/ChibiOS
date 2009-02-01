@@ -52,21 +52,18 @@
  * @extends ThreadsQueue
  */
 typedef struct {
-  /** Next @p Thread in the ready list.*/
-  Thread                *p_next;
-  /** Previous @p Thread in the ready list.*/
-  Thread                *p_prev;
+  Thread                *p_next;        /**< Next @p Thread in the ready list.*/
+  Thread                *p_prev;        /**< Previous @p Thread in the ready
+                                             list.*/
   /* End of the fields shared with the ThreadsQueue structure. */
-  /** The thread priority.*/
-  tprio_t               r_prio;
+  tprio_t               r_prio;         /**< This field must be initialized to
+                                             zero.*/
   /* End of the fields shared with the Thread structure. */
 #ifdef CH_USE_ROUNDROBIN
-  /** Round robin counter.*/
-  cnt_t                 r_preempt;
+  cnt_t                 r_preempt;      /**< Round robin counter.*/
 #endif
 #ifndef CH_CURRP_REGISTER_CACHE
-  /** The currently running thread.*/
-  Thread                *r_current;
+  Thread                *r_current;     /**< The currently running thread.*/
 #endif
 } ReadyList;
 

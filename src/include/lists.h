@@ -36,10 +36,10 @@ typedef struct Thread Thread;
  * @extends ThreadsList
  */
 typedef struct {
-  /** First @p Thread in the queue, or @p ThreadQueue when empty. */
-  Thread                *p_next;
-  /** Last @p Thread in the queue, or @p ThreadQueue when empty. */
-  Thread                *p_prev;
+  Thread                *p_next;        /**< First @p Thread in the queue, or
+                                             @p ThreadQueue when empty.*/
+  Thread                *p_prev;        /**< Last @p Thread in the queue, or
+                                             @p ThreadQueue when empty.*/
 } ThreadsQueue;
 
 /**
@@ -47,8 +47,8 @@ typedef struct {
  * @details This list behaves like a stack.
  */
 typedef struct {
-  /** Last pushed @p Thread on the stack list, or @p ThreadList when empty. */
-  Thread                *p_next;
+  Thread                *p_next;        /**< Last pushed @p Thread on the stack,
+                                             or @p ThreadList when empty.*/
 } ThreadsList;
 
 /**

@@ -36,20 +36,20 @@ typedef struct EventListener EventListener;
  * @brief Event Listener structure.
  */
 struct EventListener {
-  /** Next Event Listener registered on the Event Source.*/
-  EventListener         *el_next;
-  /** Thread interested in the Event Source.*/
-  Thread                *el_listener;
-  /** Event flags mask associated by the thread to the Event Source.*/
-  eventmask_t           el_mask;
+  EventListener         *el_next;       /**< Next Event Listener registered on
+                                             the Event Source.*/
+  Thread                *el_listener;   /**< Thread interested in the Event
+                                             Source.*/
+  eventmask_t           el_mask;        /**< Event flags mask associated by the
+                                             thread to the Event Source.*/
 };
 
 /**
  * @brief Event Source structure.
  */
 typedef struct EventSource {
-  /** First Event Listener registered on the Event Source.*/
-  EventListener         *es_next;
+  EventListener         *es_next;       /**< First Event Listener registered on
+                                             the Event Source.*/
 } EventSource;
 
 /** Returns the event mask from the event identifier.*/

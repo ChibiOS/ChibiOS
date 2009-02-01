@@ -37,7 +37,7 @@ struct Thread {
   Thread                *p_next;        /**< Next @p Thread in the threads
                                              list/queue.*/
   /* End of the fields shared with the ThreadsList structure. */
-  Thread                *p_prev;        /**< Previous @p Thread in the thread
+  Thread                *p_prev;        /**< Previous @p Thread in the threads
                                              queue.*/
   /* End of the fields shared with the ThreadsQueue structure. */
   tprio_t               p_prio;         /**< Thread priority.*/

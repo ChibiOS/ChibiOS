@@ -52,17 +52,14 @@ typedef struct VirtualTimer VirtualTimer;
  * @extends DeltaList
  */
 struct VirtualTimer {
-  /** Next timer in the delta list.*/
-  VirtualTimer          *vt_next;
-  /** Previous timer in the delta list.*/
-  VirtualTimer          *vt_prev;
-  /** Time delta before timeout.*/
-  systime_t             vt_time;
-  /** Timer callback function pointer. The pointer is reset to zero after
-      the callback is invoked.*/
-  vtfunc_t              vt_func;
-  /** Timer callback function parameter.*/
-  void                  *vt_par;
+  VirtualTimer          *vt_next;       /**< Next timer in the delta list.*/
+  VirtualTimer          *vt_prev;       /**< Previous timer in the delta list.*/
+  systime_t             vt_time;        /**< Time delta before timeout.*/
+  vtfunc_t              vt_func;        /**< Timer callback function pointer.
+                                             The pointer is reset to zero after
+                                             the callback is invoked.*/
+  void                  *vt_par;        /**< Timer callback function
+                                             parameter.*/
 };
 
 /**
@@ -72,14 +69,11 @@ struct VirtualTimer {
  *       is often used in the code.
  */
 typedef struct {
-  /** Next timer in the list (the one that will be triggered next).*/
-  VirtualTimer          *vt_next;
-  /** Last timer in the list.*/
-  VirtualTimer          *vt_prev;
-  /** Not used but it must be set to -1.*/
-  systime_t             vt_time;
-  /** System Time counter.*/
-  volatile systime_t    vt_systime;
+  VirtualTimer          *vt_next;       /**< Next timer in the delta list (the
+                                             one that will be triggered next).*/
+  VirtualTimer          *vt_prev;       /**< Last timer in the delta list.*/
+  systime_t             vt_time;        /**< Must be initialized to -1.*/
+  volatile systime_t    vt_systime;     /**< System Time counter.*/
 } VTList;
 
 extern VTList vtlist;
