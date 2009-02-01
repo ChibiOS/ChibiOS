@@ -32,7 +32,6 @@
 typedef int8_t          bool_t;
 typedef uint8_t         tmode_t;
 typedef uint8_t         tstate_t;
-typedef uint16_t        tid_t;
 typedef uint32_t        tprio_t;
 typedef int32_t         msg_t;
 typedef int32_t         eventid_t;

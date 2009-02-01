@@ -37,7 +37,6 @@
 typedef int16_t         bool_t;     /* Signed boolean. */
 typedef uint8_t         tmode_t;    /* Thread mode flags, uint8_t is ok. */
 typedef uint8_t         tstate_t;   /* Thread state, uint8_t is ok. */
-typedef uint16_t        tid_t;      /* Thread id. */
 typedef uint16_t        tprio_t;    /* Priority, use the fastest unsigned type. */
 typedef int16_t         msg_t;      /* Message, use signed pointer equivalent.*/
 typedef int16_t         eventid_t;  /* Event Id, use fastest signed.*/
