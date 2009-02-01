@@ -77,7 +77,7 @@
 #define CR_HSION_MASK           (0x1 << 0)
 #define CR_HSIRDY_MASK          (0x1 << 1)
 #define CR_HSITRIM_MASK         (0x1F << 3)
-#define   HSITRIM_RESET_BITS    (1 << 3)
+#define   HSITRIM_RESET_BITS    (0x10 << 3)
 #define CR_HSICAL_MASK          (0xFF << 8)
 #define CR_HSEON_MASK           (0x1 << 16)
 #define CR_HSERDY_MASK          (0x1 << 17)

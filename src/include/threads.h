@@ -159,7 +159,6 @@ struct Thread {
 #define P_MEM_MODE_HEAP         1       /* Thread memory mode: heap.    */
 #define P_MEM_MODE_MEMPOOL      2       /* Thread memory mode: mempool. */
 #define P_TERMINATE             4       /* Termination requested.       */
-#define P_SUSPENDED             8       /* Create suspended (old).      */
 
 /* Not an API, don't use into the application code.*/
 Thread *init_thread(Thread *tp, tprio_t prio);

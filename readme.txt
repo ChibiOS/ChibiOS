@@ -70,6 +70,11 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.0.1 ***
+- FIX: Modified the default value for the STM32 HSI setup it was 1, it should
+  be 0x10.
+- FIX: Removed an obsolete constant (P_SUSPENDED) from thread.h.
+
 *** 1.0.0 ***
 - License switch, added GPL exception, see exception.txt.
 - Full test cycle and test reports updated.
