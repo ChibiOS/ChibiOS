@@ -41,9 +41,6 @@ struct pool_header {
 typedef struct {
   struct pool_header    *mp_next;
   size_t                mp_object_size;
-#ifdef CH_USE_HEAP
-  bool_t                mp_grow;
-#endif /* CH_USE_HEAP */
 } MemoryPool;
 
 #ifdef __cplusplus
