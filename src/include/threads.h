@@ -34,23 +34,19 @@
  *       shrinking the @p Thread structure.
  */
 struct Thread {
-  /** Next @p Thread in the threads list.*/
-  Thread                *p_next;
+  Thread                *p_next;        /**< Next @p Thread in the threads
+                                             list/queue.*/
   /* End of the fields shared with the ThreadsList structure. */
-  /** Previous @p Thread in the threads list.*/
-  Thread                *p_prev;
+  Thread                *p_prev;        /**< Previous @p Thread in the thread
+                                             queue.*/
   /* End of the fields shared with the ThreadsQueue structure. */
-  /** The thread priority.*/
-  tprio_t               p_prio;
+  tprio_t               p_prio;         /**< Thread priority.*/
   /* End of the fields shared with the ReadyList structure. */
-  /** Current thread state.*/
-  tstate_t              p_state;
-  /** Mode flags. */
-  tmode_t               p_flags;
-  /** Machine dependent processor context.*/
-  struct context        p_ctx;
+  tstate_t              p_state;        /**< Current thread state.*/
+  tmode_t               p_flags;        /**< Various flags.*/
+  struct context        p_ctx;          /**< Processor context.*/
 #ifdef CH_USE_NESTED_LOCKS
-  cnt_t                 p_locks;
+  cnt_t                 p_locks;        /**< Number of nested locks.*/
 #endif
   /*
    * The following fields are merged in unions because they are all
@@ -58,61 +54,56 @@ struct Thread {
    * thread in the system.
    */
   union {
-    /** Thread wakeup code (only valid when exiting the @p PRREADY state).*/
-    msg_t               p_rdymsg;
-    /** The thread exit code (only while in @p PREXIT state).*/
-    msg_t               p_exitcode;
+    msg_t               p_rdymsg;       /**< Thread wakeup code.*/
+    msg_t               p_exitcode;     /**< The thread exit code
+                                             (@p PREXIT state).*/
 #ifdef CH_USE_SEMAPHORES
-    /** Semaphore where the thread is waiting on (only in @p PRWTSEM state).*/
-    Semaphore           *p_wtsemp;
+    Semaphore           *p_wtsemp;      /**< Semaphore where the thread is
+                                             waiting on (@p PRWTSEM state).*/
 #endif
 #ifdef CH_USE_MUTEXES
-    /** Mutex where the thread is waiting on (only in @p PRWTMTX state).*/
-    Mutex               *p_wtmtxp;
+    Mutex               *p_wtmtxp;      /**< Mutex where the thread is waiting
+                                             on (@p PRWTMTX state).*/
 #endif
 #ifdef CH_USE_CONDVARS
-    /** CondVar where the thread is waiting on (only in @p PRWTCOND state).*/
-    CondVar             *p_wtcondp;
+    CondVar             *p_wtcondp;     /**< CondVar where the thread is
+                                             waiting on (@p PRWTCOND state).*/
 #endif
 #ifdef CH_USE_MESSAGES
-    /** Destination thread for message send (only in @p PRSNDMSG state).*/
-    Thread              *p_wtthdp;
+    Thread              *p_wtthdp;      /**< Destination thread for message
+                                             send @p PRSNDMSG state).*/
 #endif
 #ifdef CH_USE_EVENTS
-    /** Enabled events mask (only while in @p PRWTOREVT or @p PRWTANDEVT
-        states). */
-    eventmask_t         p_ewmask;
+    eventmask_t         p_ewmask;       /**< Enabled events mask (@p PRWTOREVT
+                                             or @p PRWTANDEVT states).*/
 #endif
 #ifdef CH_USE_TRACE
-    /** Kernel object where the thread is waiting on. It is only valid when
-        the thread is some sleeping states.*/
-    void                *p_wtobjp;
+    void                *p_wtobjp;      /**< Generic kernel object pointer used
+                                             for opaque access.*/
 #endif
   };
   /*
    * Start of the optional fields.
    */
 #ifdef CH_USE_WAITEXIT
-  /** The list of the threads waiting for this thread termination. */
-  Thread                *p_waiting;
+  Thread                *p_waiting;     /**< Thread waiting for termination.*/
 #endif
 #ifdef CH_USE_MESSAGES
-  ThreadsQueue          p_msgqueue;
-  msg_t                 p_msg;
+  ThreadsQueue          p_msgqueue;     /**< Message queue.*/
+  msg_t                 p_msg;          /**< The message.*/
 #endif
 #ifdef CH_USE_EVENTS
-  /** Pending events mask. */
-  eventmask_t           p_epending;
+  eventmask_t           p_epending;     /**< Pending events mask.*/
 #endif
 #ifdef CH_USE_MUTEXES
-  /** List of mutexes owned by this thread, @p NULL terminated. */
-  Mutex                 *p_mtxlist;
-  /** Thread's own, non-inherited, priority. */
-  tprio_t               p_realprio;
+  Mutex                 *p_mtxlist;     /**< List of the mutexes owned by this
+                                             thread, @p NULL terminated.*/
+  tprio_t               p_realprio;     /**< Thread's own, non-inherited,
+                                             priority.*/
 #endif
 #if defined(CH_USE_DYNAMIC) && defined(CH_USE_MEMPOOLS)
-  /** Memory Pool where the thread workspace is returned. */
-  void                  *p_mpool;
+  void                  *p_mpool;       /**< Memory Pool where the thread
+                                             workspace is returned.*/
 #endif
   /* Extra fields defined in chconf.h */
   THREAD_EXT_FIELDS

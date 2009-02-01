@@ -86,9 +86,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   use less RAM in stack frames (note, this is an ARM7 thumb mode specific
   optimization).
 - CHANGE: Removed the field p_tid from the Thread structure and the related
-  code, this improved the thread creation scores (~2%) and saves some RAM,
-  the trace buffer field cse_tid is now populated with a simple hash of the
-  thread pointer.
+  code, this improved the thread creation scores (~2%) and saves some RAM.
+  The trace buffer field cse_tid is now populated with a simple hash of the
+  thread pointer as thread identifier.
 - CHANGE: Renamed the macros chSysIRQEnter() and chSysIRQExit() in
   CH_IRQ_PROLOGUE() and CH_IRQ_EPILOGUE() in order to make very clear that
   those are not functions but inlined code. Also introduced a new macro
