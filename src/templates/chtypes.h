@@ -42,9 +42,6 @@ typedef uint8_t         tmode_t;
 /** Thread state, uint8_t is ok. */
 typedef uint8_t         tstate_t;
 
-/** Thread id. */
-typedef uint16_t        tid_t;
-
 /** Priority, use the fastest unsigned type. */
 typedef uint32_t        tprio_t;
 
