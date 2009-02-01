@@ -85,6 +85,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   registers usage now the kernel is much smaller, faster and most OS APIs
   use less RAM in stack frames (note, this is an ARM7 thumb mode specific
   optimization).
+- CHANGE: Removed the field p_tid from the Thread structure and the related
+  code, this improved the thread creation scores (~2%) and saves some RAM,
+  the trace buffer field cse_tid is now populated with a simple hash of the
+  thread pointer.
 - CHANGE: Renamed the macros chSysIRQEnter() and chSysIRQExit() in
   CH_IRQ_PROLOGUE() and CH_IRQ_EPILOGUE() in order to make very clear that
   those are not functions but inlined code. Also introduced a new macro
@@ -96,6 +100,11 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Articles and notes previously in the wiki now merged in the general
   documentation and updated, the wiki entries are obsolete and will be removed.
 - New application notes and articles added.
+
+*** 1.0.1 ***
+- FIX: Modified the default value for the STM32 HSI setup it was 1, it should
+  be 0x10.
+- FIX: Removed an obsolete constant (P_SUSPENDED) from thread.h.
 
 *** 1.0.0 ***
 - License switch, added GPL exception, see exception.txt.

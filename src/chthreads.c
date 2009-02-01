@@ -28,9 +28,7 @@
  * Initializes a thread structure.
  */
 Thread *init_thread(Thread *tp, tprio_t prio) {
-  static tid_t nextid = 0;
 
-  tp->p_tid = nextid++;
   tp->p_flags = P_MEM_MODE_STATIC;
   tp->p_prio = prio;
   tp->p_state = PRSUSPENDED;
