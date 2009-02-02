@@ -36,7 +36,7 @@ msg_t my_thread(void *param) {
  * well below the system tick period and that @p my_thread() is not preempted
  * by other threads inserting long intervals.<br>
  * If the above conditions are not satisfied you may have @p do_something()
- * executed at irregular intevals, as example:<br><br>
+ * executed at irregular intervals, as example:<br><br>
  * T0...T0+1000...T0+2002...T0+3002...T0+4005...etc.<br><br>
  * Also note that the error increases over time and this kind of behavior can
  * lead anomalies really hard to debug.

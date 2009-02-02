@@ -39,8 +39,8 @@ CH_IRQ_HANDLER(myIRQ) {
   CH_IRQ_EPILOGUE();
 }
  * @endcode
- * Note that only interrupt handlers that have to invoke system I-Class APIs
- * must be written in this form, handlers unrelated to the OS activity can
+ * Note that only interrupt handlers that have to invoke system @ref I-Class
+ * APIs must be written in this form, handlers unrelated to the OS activity can
  * omit the macros.
  * Another note about the handler name "myIRQ", in some ports it must be a
  * vector number rather than a function name, it could also be a name from

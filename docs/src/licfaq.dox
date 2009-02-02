@@ -36,6 +36,10 @@
  *   application without have to release your source code under certains
  *   conditions. See the exception text under "Approved Interfaces" for
  *   details.
+ * - <b>Is the exception applicable to any ChibiOS/RT version ?</b><br>
+ *   The exception is valid only for ChibiOS/RT releases marked as @e stable.
+ *   Beta or unstable versions are covered by the GPL3 alone because are meant
+ *   for testing only.
  * - <b>I don't want to be bound by any of the above restriction, is this
  *   possible?</b><br>
  *   You may contact us about a commercial license.

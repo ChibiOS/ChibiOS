@@ -33,10 +33,10 @@
  * - <b>None</b>, APIs without any suffix can be invoked only from the user
  *   code in the <b>Normal</b> state unless differently specified. See
  *   @ref system_states.
- * - <b>"I"</b>, I-Class APIs are invokable only from the <b>I-Locked</b> or
- *   <b>S-Locked</b> states. See @ref system_states.
- * - <b>"S"</b>, S-Class APIs are invokable only from the <b>S-Locked</b>
- *   state. See @ref system_states.
+ * - @anchor I-Class <b>"I"</b>, I-Class APIs are invokable only from the
+ *   <b>I-Locked</b> or <b>S-Locked</b> states. See @ref system_states.
+ * - @anchor S-Class <b>"S"</b>, S-Class APIs are invokable only from the
+ *   <b>S-Locked</b> state. See @ref system_states.
  * Examples: @p chThdCreateStatic(), @p chSemSignalI(), @p chIQGetTimeout().
  *
  * @section interrupt_classes Interrupt Classes
@@ -83,14 +83,14 @@
  *   goes in this state and waits for interrupts, after servicing the interrupt
  *   the Normal state is restored and the scheduler has a chance to reschedule.
  * - <b>S-Locked</b>. Kernel locked and regular interrupt sources disabled.
- *   Fast interrupt sources are enabled. S-Class and I-Class APIs are
+ *   Fast interrupt sources are enabled. @ref S-Class and @ref I-Class APIs are
  *   invokable in this state.
  * - <b>I-Locked</b>. Kernel locked and regular interrupt sources disabled.
- *   I-Class APIs are invokable from this state.
+ *   @ref I-Class APIs are invokable from this state.
  * - <b>Serving Regular Interrupt</b>. No system APIs are accessible but it is
  *   possible to switch to the I-Locked state using @p chSysLockFromIsr() and
- *   then invoke any I-Class API. Interrupt handlers can be preemptable on some
- *   architectures thus is important to switch to I-Locked state before
+ *   then invoke any @ref I-Class API. Interrupt handlers can be preemptable on
+ *   some architectures thus is important to switch to I-Locked state before
  *   invoking system APIs.
  * - <b>Serving Fast Interrupt</b>. System APIs are not accessible.
  * - <b>Serving Non-Maskable Interrupt</b>. System APIs are not accessible.

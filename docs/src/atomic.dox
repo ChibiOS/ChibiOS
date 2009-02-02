@@ -51,9 +51,9 @@
  
   chSysUnlock();
  * @endcode
- * In general multiple I-Class and (non rescheduling) S-Class APIs can be
- * included and the block is terminated by a rescheduling S-Class API.
- * An extra @p chSchRescheduleS() can be present at the very end of the block,
- * it only reschedules if a reschedulation is still required.
+ * In general multiple @ref I-Class and (non rescheduling) @ref S-Class APIs
+ * can be included and the block is terminated by a rescheduling @ref S-Class
+ * API. An extra @p chSchRescheduleS() can be present at the very end of the
+ * block, it only reschedules if a reschedulation is still required.
  */
 /** @} */
