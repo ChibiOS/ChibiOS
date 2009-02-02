@@ -91,8 +91,8 @@ eventmask_t chEvtClear(eventmask_t mask) {
 }
 
 /**
- * @brief Makes an events mask pending in the current thread, this is \b much
- * faster than using @p chEvtBroadcast().
+ * @brief Pends a set of event flags on the current thread, this is \b much
+ * faster than using @p chEvtBroadcast() or @p chEvtSignal().
  *
  * @param mask the events to be pended
  * @return The current pending events mask.
@@ -105,6 +105,37 @@ eventmask_t chEvtPend(eventmask_t mask) {
 
   chSysUnlock();
   return mask;
+}
+
+/**
+ * @brief Pends a set of event flags on the specified @p Thread.
+ *
+ * @param tp the thread to be signaled
+ * @param mask the event flags set to be pended
+ */
+void chEvtSignal(Thread *tp, eventmask_t mask) {
+
+  chSysLock();
+
+  chEvtSignalI(tp, mask);
+
+  chSysUnlock();
+}
+
+/**
+ * @brief Pends a set of event flags on the specified @p Thread.
+ *
+ * @param tp the thread to be signaled
+ * @param mask the event flags set to be pended
+ */
+void chEvtSignalI(Thread *tp, eventmask_t mask) {
+
+  tp->p_epending |= mask;
+
+  /* Test on the AND/OR conditions wait states.*/
+  if (((tp->p_state == PRWTOREVT) && ((tp->p_epending & tp->p_ewmask) != 0)) ||
+      ((tp->p_state == PRWTANDEVT) && ((tp->p_epending & tp->p_ewmask) == tp->p_ewmask)))
+    chSchReadyI(tp)->p_rdymsg = RDY_OK;
 }
 
 /**
@@ -134,15 +165,7 @@ void chEvtBroadcastI(EventSource *esp) {
 
   elp = esp->es_next;
   while (elp != (EventListener *)esp) {
-    Thread *tp = elp->el_listener;
-
-    tp->p_epending |= elp->el_mask;
-
-    /* Test on the AND/OR conditions wait states.*/
-    if (((tp->p_state == PRWTOREVT) && ((tp->p_epending & tp->p_ewmask) != 0)) ||
-        ((tp->p_state == PRWTANDEVT) && ((tp->p_epending & tp->p_ewmask) == tp->p_ewmask)))
-      chSchReadyI(tp)->p_rdymsg = RDY_OK;
-
+    chEvtSignalI(elp->el_listener, elp->el_mask);
     elp = elp->el_next;
   }
 }

@@ -24,24 +24,27 @@
 #include <ch.h>
 
 #ifdef CH_USE_MESSAGES
+
+#ifdef CH_USE_MESSAGES_PRIORITY
+#define msg_insert(tp, qp) prio_insert(tp, qp)
+#else
+#define msg_insert(tp, qp) queue_insert(tp, qp)
+#endif
+
 /**
  * @brief Sends a message to the specified thread.
  * @details The sender is stopped until the receiver executes a
  * @p chMsgRelease()after receiving the message.
  *
  * @param tp the pointer to the thread
- * @param msg the message, it can be a pointer to a complex structure
+ * @param msg the message
  * @return The return message from @p chMsgRelease().
  */
 msg_t chMsgSend(Thread *tp, msg_t msg) {
 
   chSysLock();
 
-#ifdef CH_USE_MESSAGES_PRIORITY
-  prio_insert(currp, &tp->p_msgqueue);
-#else
-  queue_insert(currp, &tp->p_msgqueue);
-#endif
+  msg_insert(currp, &tp->p_msgqueue);
   currp->p_msg = msg;
   currp->p_wtthdp = tp;
   if (tp->p_state == PRWTMSG)
@@ -53,32 +56,29 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
   return msg;
 }
 
-#ifdef CH_USE_MESSAGES_EVENT
+#if defined(CH_USE_EVENTS) && defined(CH_USE_MESSAGES_EVENT)
 /**
- * @brief Sends a message to the specified thread and atomically triggers
- * an event.
+ * @brief Sends a message to the specified thread and atomically pends an
+ * events set.
  * @details The sender is stopped until the receiver executes a
  * @p chMsgRelease() after receiving the message.
  *
  * @param tp the pointer to the thread
- * @param msg the message, it can be a pointer to a complex structure
- * @param esp the event source to pulse while sending the message
+ * @param msg the message
+ * @param mask the event flags set to be pended
  * @return The return message from @p chMsgRelease().
  * @note This function assumes that the receiving thread is not sleeping into
  *       a @p chMsgWait(). The use case is that the server thread is waiting
  *       for both messages AND events while waiting into @p chEvtWaitXXX().
  */
-msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, EventSource *esp) {
+msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, eventmask_t mask) {
 
   chSysLock();
 
   chDbgAssert(tp->p_state != PRWTMSG, "chmsg.c, chMsgSendWithEvent()");
-#ifdef CH_USE_MESSAGES_PRIORITY
-  prio_insert(currp, &tp->p_msgqueue);
-#else
-  queue_insert(currp, &tp->p_msgqueue);
-#endif
-  chEvtBroadcastI(esp);
+
+  chEvtSignalI(tp, mask);
+  msg_insert(currp, &tp->p_msgqueue);
   currp->p_wtthdp = tp;
   currp->p_msg = msg;
   chSchGoSleepS(PRSNDMSG);
@@ -87,7 +87,7 @@ msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, EventSource *esp) {
   chSysUnlock();
   return msg;
 }
-#endif
+#endif /* defined(CH_USE_EVENTS) && defined(CH_USE_MESSAGES_EVENT) */
 
 /**
  * @brief Suspends the thread and waits for an incoming message.

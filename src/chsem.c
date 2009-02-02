@@ -25,6 +25,13 @@
 #include <ch.h>
 
 #ifdef CH_USE_SEMAPHORES
+
+#ifdef CH_USE_SEMAPHORES_PRIORITY
+#define sem_insert(tp, qp) prio_insert(tp, qp)
+#else
+#define sem_insert(tp, qp) queue_insert(tp, qp)
+#endif
+
 /**
  * @brief Initializes a semaphore with the specified counter value.
  *
@@ -110,7 +117,7 @@ msg_t chSemWait(Semaphore *sp) {
 msg_t chSemWaitS(Semaphore *sp) {
 
   if (--sp->s_cnt < 0) {
-    queue_insert(currp, &sp->s_queue);
+    sem_insert(currp, &sp->s_queue);
     currp->p_wtsemp = sp;
     chSchGoSleepS(PRWTSEM);
     return currp->p_rdymsg;
@@ -157,7 +164,7 @@ msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
 msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
 
   if (--sp->s_cnt < 0) {
-    queue_insert(currp, &sp->s_queue);
+    sem_insert(currp, &sp->s_queue);
     currp->p_wtsemp = sp;
     return chSchGoSleepTimeoutS(PRWTSEM, time);
   }
@@ -221,7 +228,7 @@ msg_t chSemSignalWait(Semaphore *sps, Semaphore *spw) {
     chSchReadyI(fifo_remove(&sps->s_queue))->p_rdymsg = RDY_OK;
 
   if (--spw->s_cnt < 0) {
-    queue_insert(currp, &spw->s_queue);
+    sem_insert(currp, &spw->s_queue);
     currp->p_wtsemp = spw;
     chSchGoSleepS(PRWTSEM);
     msg = currp->p_rdymsg;

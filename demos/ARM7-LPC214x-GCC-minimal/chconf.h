@@ -51,6 +51,11 @@
  *  in the kernel.*/
 #define CH_USE_SEMAPHORES
 
+/** Configuration option: If enabled then the threads are enqueued on semaphores
+ *  by priority rather than FIFO order.
+ *  @note requires @p CH_USE_SEMAPHORES.*/
+//#define CH_USE_SEMAPHORES_PRIORITY
+
 /** Configuration option: if specified then the Semaphores atomic Signal+Wait
  *  APIs are included in the kernel.*/
 //#define CH_USE_SEMSW

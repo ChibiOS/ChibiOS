@@ -47,8 +47,8 @@ extern "C" {
   msg_t chMsgGet(void);
   void chMsgRelease(msg_t msg);
 
-#ifdef CH_USE_MESSAGES_EVENT
-  msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, EventSource *esp);
+#if defined(CH_USE_EVENTS) && defined(CH_USE_MESSAGES_EVENT)
+  msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, eventmask_t mask);
 #endif
 #ifdef __cplusplus
 }

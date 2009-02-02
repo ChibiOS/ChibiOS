@@ -81,10 +81,18 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   handled in a very similar way in every architecture. See the "Concepts"
   section and the "Writing interrupt handlers under ChibiOS/RT" article in the
   documentation.
+- NEW: Added the chEvtSignal() and chEvtSignalI() APIs that allows direct
+  thread signaling, much more efficient that chEvtBroadcast() when the target
+  is a known single thread.
+- NEW: Added a configuration option that enables the priority enqueuing on
+  semaphores. It is defaulted to off because usually semaphores are used for
+  I/O related tasks without hard realtime requirements.
 - OPT: Improved ARM7 thumb port code, thanks to some GCC tricks involving
   registers usage now the kernel is much smaller, faster and most OS APIs
   use less RAM in stack frames (note, this is an ARM7 thumb mode specific
   optimization).
+- CHANGE: Modified the signature of the chMsgSendWithEvent() API, it now uses
+  a more efficient event signaling method.
 - CHANGE: Removed the field p_tid from the Thread structure and the related
   code, this improved the thread creation scores (~2%) and saves some RAM.
   The trace buffer field cse_tid is now populated with a simple hash of the

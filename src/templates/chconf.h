@@ -56,13 +56,18 @@
  *  in the kernel.*/
 #define CH_USE_SEMAPHORES
 
+/** Configuration option: If enabled then the threads are enqueued on semaphores
+ *  by priority rather than FIFO order.
+ *  @note requires @p CH_USE_SEMAPHORES.*/
+#define CH_USE_SEMAPHORES_PRIORITY
+
 /** Configuration option: if specified then the Semaphores atomic Signal+Wait
  *  APIs are included in the kernel.*/
 #define CH_USE_SEMSW
 
 /** Configuration option: if specified then the Semaphores with timeout APIs
  *  are included in the kernel.
- * @note requires @p CH_USE_SEMAPHORES.*/
+ *  @note requires @p CH_USE_SEMAPHORES.*/
 #define CH_USE_SEMAPHORES_TIMEOUT
 
 /** Configuration option: if specified then the Mutexes APIs are included in
@@ -71,12 +76,12 @@
 
 /** Configuration option: if specified then the Conditional Variables APIs are
  *  included in the kernel.
- * @note requires @p CH_USE_MUTEXES.*/
+ *  @note requires @p CH_USE_MUTEXES.*/
 #define CH_USE_CONDVARS
 
 /** Configuration option: if specified then the Conditional Variables APIs are
  *  included in the kernel.
- * @note requires @p CH_USE_CONDVARS and @p CH_USE_MUTEXES.*/
+ *  @note requires @p CH_USE_CONDVARS and @p CH_USE_MUTEXES.*/
 #define CH_USE_CONDVARS_TIMEOUT
 
 /** Configuration option: if specified then the Events APIs are included in
@@ -84,8 +89,8 @@
 #define CH_USE_EVENTS
 
 /** Configuration option: if specified then the @p chEvtWaitXXXTimeout()
- * functions are included in the kernel.
- * @note requires @p CH_USE_EVENTS.
+ *  functions are included in the kernel.
+ *  @note requires @p CH_USE_EVENTS.
  */
 #define CH_USE_EVENTS_TIMEOUT
 
@@ -95,12 +100,12 @@
 
 /** Configuration option: if specified then the @p chMsgSendWithEvent()
  *  function is included in the kernel.
- * @note requires @p CH_USE_MESSAGES.*/
+ *  @note requires @p CH_USE_MESSAGES.*/
 #define CH_USE_MESSAGES_EVENT
 
 /** Configuration option: If enabled then the threads serve messages by
  *  priority instead of FIFO order.
- * @note requires @p CH_USE_MESSAGES.*/
+ *  @note requires @p CH_USE_MESSAGES.*/
 #define CH_USE_MESSAGES_PRIORITY
 
 /** Configuration option: if specified then the I/O queues APIs are included
@@ -113,7 +118,7 @@
 
 /** Configuration option: if specified then the I/O queues with timeout
  *  APIs are included in the kernel.
- * @note requires @p CH_USE_SEMAPHORES_TIMEOUT.*/
+ *  @note requires @p CH_USE_SEMAPHORES_TIMEOUT.*/
 #define CH_USE_QUEUES_TIMEOUT
 
 /** Configuration option: if specified then the full duplex serial driver APIs
@@ -130,9 +135,9 @@
 
 /** Configuration option: Number of RAM bytes to use as system heap. If set to
  *  zero then the whole available RAM is used as system heap.
- * @note In order to use the whole RAM as system heap the linker script must
- *       provide the @p __heap_base__ and @p __heap_end__ symbols.
- * @note requires @p CH_USE_HEAP.
+ *  @note In order to use the whole RAM as system heap the linker script must
+ *        provide the @p __heap_base__ and @p __heap_end__ symbols.
+ *  @note requires @p CH_USE_HEAP.
  */
 #define CH_HEAP_SIZE 0
 
@@ -146,7 +151,7 @@
 
 /** Configuration option: if specified then the dynamic objects creation APIs
  *  are included in the kernel.
- * @note requires @p CH_USE_WAITEXIT.
+ *  @note requires @p CH_USE_WAITEXIT.
  */
 #define CH_USE_DYNAMIC
 

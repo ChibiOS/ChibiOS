@@ -82,6 +82,8 @@ extern "C" {
   void chEvtUnregister(EventSource *esp, EventListener *elp);
   eventmask_t chEvtClear(eventmask_t mask);
   eventmask_t chEvtPend(eventmask_t mask);
+  void chEvtSignal(Thread *tp, eventmask_t mask);
+  void chEvtSignalI(Thread *tp, eventmask_t mask);
   void chEvtBroadcast(EventSource *esp);
   void chEvtBroadcastI(EventSource *esp);
   void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask);
