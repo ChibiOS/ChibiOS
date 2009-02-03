@@ -75,7 +75,7 @@ extern ReadyList rlist;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chSchInit(void);
+  void scheduler_init(void);
   Thread *chSchReadyI(Thread *tp);
   void chSchGoSleepS(tstate_t newstate);
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time);

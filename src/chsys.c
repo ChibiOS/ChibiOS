@@ -57,17 +57,17 @@ void chSysInit(void) {
   static Thread mainthread;
 
   port_init();
-  chSchInit();
-  chDbgInit();
-  chVTInit();
+  scheduler_init();
+  debug_init();
+  vt_init();
 #ifdef CH_USE_HEAP
-  chHeapInit();
+  heap_init();
 #endif
+
   /*
    * Now this instructions flow becomes the main thread.
    */
   (currp = init_thread(&mainthread, NORMALPRIO))->p_state = PRCURR;
-
   chSysEnable();
 
   /*

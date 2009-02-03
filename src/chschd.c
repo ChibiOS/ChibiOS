@@ -32,7 +32,7 @@ ReadyList rlist;
  * @brief Scheduler initialization.
  * @note Internally invoked by the @p chSysInit().
  */
-void chSchInit(void) {
+void scheduler_init(void) {
 
   queue_init(&rlist);
   rlist.r_prio = NOPRIO;

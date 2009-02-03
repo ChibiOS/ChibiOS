@@ -26,7 +26,7 @@ char *panicmsg;
 /**
  * @brief Debug subsystem initialization.
  */
-void chDbgInit(void) {
+void debug_init(void) {
 
 #ifdef CH_USE_TRACE
   dbgtb.tb_size = TRACE_BUFFER_SIZE;

@@ -99,7 +99,7 @@ extern VTList vtlist;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chVTInit(void);
+  void vt_init(void);
   void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par);
   void chVTResetI(VirtualTimer *vtp);
   bool_t chSysInTimeWindow(systime_t start, systime_t end);

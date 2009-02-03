@@ -234,8 +234,13 @@
  *   becomes negative the thread is queued in the semaphore and suspended.
  * - <b>Reset</b>: The semaphore counter is reset to a non-negative value
  *   and all the threads in the queue are released.
- * Semaphores can be used as guards for mutual exclusion code zones but
- * also have other uses, queues guards and counters as example.<br>
+ *
+ * Semaphores can be used as guards for mutual exclusion code zones (note that
+ * mutexes are recommended for this kind of use) but also have other uses,
+ * queues guards and counters as example.<br>
+ * Semaphores usually use FIFO queues but it is possible to make them
+ * order threads by priority by specifying CH_USE_SEMAPHORES_PRIORITY in
+ * @p chconf.h.<br>
  * In order to use the Semaphores APIs the @p CH_USE_SEMAPHORES
  * option must be specified in @p chconf.h.<br><br>
  * @file semaphores.h Semaphores macros and structures.
@@ -256,6 +261,7 @@
  * - <b>Unlock</b>: The mutex is released by the owner and the highest
  *   priority thread waiting in the queue, if any, is resumed and made owner
  *   of the mutex.
+ *
  * In order to use the Event APIs the @p CH_USE_MUTEXES option must be
  * specified in @p chconf.h.<br>
  *
@@ -320,7 +326,7 @@
 /**
  * @defgroup Messages Messages
  * @{
- * Synchronous inter-thread Messages.
+ * Synchronous inter-thread messages.
  * <h2>Operation Mode</h2>
  * Messages are an easy to use and fast IPC mechanism, threads can both serve
  * messages and send messages to other threads, the mechanism allows data to
@@ -360,6 +366,7 @@
  * - <b>Full duplex queue</b>, bidirectional queue where read and write
  *   operations can happen at the same time. Full duplex queues
  *   are implemented by pairing an input queue and an output queue together.
+ *
  * In order to use the I/O queues the @p CH_USE_QUEUES option must
  * be specified in @p chconf.h.<br>
  * In order to use the half duplex queues the @p CH_USE_QUEUES_HALFDUPLEX
@@ -397,7 +404,7 @@
  * The library code does not follow the same naming convention of the
  * system APIs in order to make very clear that it is not "core" code.<br>
  * The main difference is that library code is not formally  tested in the
- * test suite but through usage in the various demo application.
+ * test suite but through usage in the various demo applications.
  */
 /** @} */
 

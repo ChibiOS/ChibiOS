@@ -31,7 +31,7 @@ VTList vtlist;
  *
  * @note Internal use only.
  */
-void chVTInit(void) {
+void vt_init(void) {
 
   vtlist.vt_next = vtlist.vt_prev = (void *)&vtlist;
   vtlist.vt_time = (systime_t)-1;

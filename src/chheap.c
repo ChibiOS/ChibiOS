@@ -65,10 +65,9 @@ static struct {
 /**
  * @brief Initializes the allocator subsystem.
  *
- * @note It is internally invoked, this function should not normally be
- *       invoked from the user code.
+ * @note Internal use only.
  */
-void chHeapInit(void) {
+void heap_init(void) {
   struct header *hp;
 
 #if CH_HEAP_SIZE == 0

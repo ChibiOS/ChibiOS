@@ -62,7 +62,7 @@ extern char *dbglastmsg;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chDbgInit(void);
+  void debug_init(void);
   void chDbgPanic(char *msg);
 #ifdef __cplusplus
 }
@@ -83,7 +83,7 @@ extern "C" {
 
 #else /* !CH_USE_DEBUG */
 
-#define chDbgInit()
+#define debug_init()
 #define chDbgPanic(msg) {}
 #define chDbgAssert(c, m) {(void)(c);}
 

@@ -28,7 +28,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chHeapInit(void);
+  void heap_init(void);
   void *chHeapAlloc(size_t size);
   void chHeapFree(void *p);
   size_t chHeapStatus(size_t *sizep);
