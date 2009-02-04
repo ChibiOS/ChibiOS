@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file src/templates/chcore.h
+ * @brief Port related template macros and structures.
  * @addtogroup Core
  * @{
  */

@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file chqueues.c
+ * @brief I/O Queues code.
  * @addtogroup IOQueues
  * @{
  */

@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file scheduler.h
+ * @brief Scheduler macros and structures.
  * @addtogroup Scheduler
  * @{
  */

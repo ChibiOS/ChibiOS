@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file evtimer.c
+ * @brief Events Generator Timer code.
  * @addtogroup event_timer
  * @{
  */

@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file events.h
+ * @brief Events macros and structures.
  * @addtogroup Events
  * @{
  */

@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file chsem.c
+ * @brief Semaphores code.
  * @addtogroup Semaphores
  * @{
  */

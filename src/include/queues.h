@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file queues.h I/O
+ * @brief Queues macros and structures.
  * @addtogroup IOQueues
  * @{
  */

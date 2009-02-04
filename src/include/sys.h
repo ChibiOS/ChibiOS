@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file sys.h
+ * @brief System related macros and structures.
  * @addtogroup System
  * @{
  */

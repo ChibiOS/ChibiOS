@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file ch.hpp
+ * @brief C++ wrapper classes and definitions.
  * @addtogroup CPlusPlusLibrary
  * @{
  */

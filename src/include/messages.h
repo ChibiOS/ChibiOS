@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file messages.h
+ * @brief Messages macros and structures.
  * @addtogroup Messages
  * @{
  */

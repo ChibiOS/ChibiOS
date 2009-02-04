@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file chthreads.c
+ * @brief Threads code.
  * @addtogroup Threads
  * @{
  */

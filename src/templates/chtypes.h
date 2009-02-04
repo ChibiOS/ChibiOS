@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file src/templates/chtypes.h
+ * @brief System types template.
  * @addtogroup Types
  * @{
  */

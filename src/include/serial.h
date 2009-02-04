@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file serial.h
+ * @brief Serial Drivers macros and structures.
  * @addtogroup Serial
  * @{
  */

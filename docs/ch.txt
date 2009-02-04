@@ -88,7 +88,6 @@
 /**
  * @defgroup Kernel Kernel
  * @{
- * @file ch.h ChibiOS/RT main include file, it includes everything else.
  */
 /** @} */
 
@@ -97,7 +96,6 @@
  * @{
  * In @p chconf.h are defined the required subsystems for your application.
  * @ingroup Kernel
- * @file chconf.h ChibiOS/RT configuration file.
  */
 /** @} */
 
@@ -106,8 +104,6 @@
  * @{
  * Non portable code templates.
  * @ingroup Kernel
- * @file src/templates/chcore.c Non portable code template file.
- * @file src/templates/chcore.h Non portable macros and structures template file.
  */
 /** @} */
 
@@ -116,7 +112,6 @@
  * @{
  * System types and macros.
  * @ingroup Kernel
- * @file templates/chtypes.h System types and code modifiers.
  */
 /** @} */
 
@@ -126,8 +121,6 @@
  * Initialization, Locks, Interrupt Handling, Power Management, Abnormal
  * Termination.
  * @ingroup Kernel
- * @file sys.h System related macros and structures.
- * @file chsys.c System related code.
  */
 /** @} */
 
@@ -136,7 +129,6 @@
  * @{
  * System inline-able code.
  * @ingroup Kernel
- * @file inline.h Inline versions of some critical system routines.
  */
 /** @} */
 
@@ -145,8 +137,6 @@
  * @{
  * Debug APIs and procedures.
  * @ingroup Kernel
- * @file debug.h Debug macros and structures.
- * @file chdebug.c ChibiOS/RT Debug code.
  */
 /** @} */
 
@@ -155,8 +145,6 @@
  * @{
  * ChibiOS/RT scheduler.
  * @ingroup Kernel
- * @file chschd.c Scheduler code.
- * @file scheduler.h Scheduler macros and structures.
  */
 /** @} */
 
@@ -165,8 +153,6 @@
  * @{
  * ChibiOS/RT thread lists and queues utilities.
  * @ingroup Kernel
- * @file chlists.c Lists and queues code.
- * @file lists.h Lists and queues macros and structures.
  */
 /** @} */
 
@@ -174,8 +160,6 @@
  * @defgroup Threads Threads
  * @{
  * Threads creation and termination APIs.
- * @file threads.h Threads structures, macros and functions.
- * @file chthreads.c Threads code.
  */
 /** @} */
 
@@ -183,8 +167,6 @@
  * @defgroup Time Time and Virtual Timers
  * @{
  * Time and Virtual Timers related APIs.
- * @file include/vt.h Time macros and structures.
- * @file chvt.c Time functions.
  */
 /** @} */
 
@@ -201,8 +183,6 @@
  * instead of the system provided allocator.<br>
  * In order to use the heap APIs the @p CH_USE_HEAP option must be specified
  * in @p chconf.h.
- * @file include/heap.h Heap macros and structures.
- * @file chheap.c Heap functions.
  */
 /** @} */
 
@@ -215,8 +195,6 @@
  * <b>constant time</b> and reliably without memory fragmentation problems.<br>
  * In order to use the Time APIs the @p CH_USE_MEMPOOLS option must be
  * specified in @p chconf.h.
- * @file include/mempools.h Memory Pools macros and structures.
- * @file chmempools.c Memory Pools functions.
  */
 /** @} */
 
@@ -243,8 +221,6 @@
  * @p chconf.h.<br>
  * In order to use the Semaphores APIs the @p CH_USE_SEMAPHORES
  * option must be specified in @p chconf.h.<br><br>
- * @file semaphores.h Semaphores macros and structures.
- * @file chsem.c Semaphores code.
  */
 /** @} */
 
@@ -280,8 +256,6 @@
  * priority was not already equal or higher). The mechanism works with any
  * number of nested mutexes and any number of involved threads. The algorithm
  * complexity (worst case) is N with N equal to the number of nested mutexes.
- * @file mutexes.h Mutexes macros and structures.
- * @file chmtx.c Mutexes functions.
  */
 /** @} */
 
@@ -295,8 +269,6 @@
  * a Monitor construct.<br>
  * In order to use the Condition Variables APIs the @p CH_USE_CONDVARS
  * option must be specified in @p chconf.h.<br><br>
- * @file condvars.h Condition Variables macros and structures.
- * @file chcond.c Condition Variables code.
  */
 /** @} */
 
@@ -318,8 +290,6 @@
  * thread invokes a @p chEvtWaitXXX().<br>
  * In order to use the Event APIs the @p CH_USE_EVENTS option must be
  * specified in @p chconf.h.
- * @file events.h Events macros and structures.
- * @file chevents.c Events functions.
  */
 /** @} */
 
@@ -341,8 +311,6 @@
  * queue header).<br>
  * In order to use the Messages APIs the @p CH_USE_MESSAGES option must be
  * specified in @p chconf.h.
- * @file messages.h	Messages macros and structures.
- * @file chmsg.c Messages functions.
  */
 /** @} */
 
@@ -371,8 +339,6 @@
  * be specified in @p chconf.h.<br>
  * In order to use the half duplex queues the @p CH_USE_QUEUES_HALFDUPLEX
  * option must be specified in @p chconf.h.
- * @file queues.h I/O Queues macros and structures.
- * @file chqueues.c I/O Queues code.
  */
 /** @} */
 
@@ -389,8 +355,6 @@
  * @p CH_USE_SERIAL_FULLDUPLEX option must be specified in @p chconf.h.<br>
  * In order to use the serial half duplex driver the
  * @p CH_USE_SERIAL_HALFDUPLEX option must be specified in @p chconf.h.
- * @file serial.h Serial Drivers macros and structures.
- * @file chserial.c Serial Drivers code.
  */
 /** @} */
 
@@ -415,8 +379,6 @@
  * from C++ as classes and objects rather the traditional "C" APIs.
  *
  * @ingroup utilities_library
- * @file ch.hpp C++ wrapper classes and definitions.
- * @file ch.cpp C++ wrapper code.
  */
 /** @} */
 
@@ -429,8 +391,6 @@
  * Multiple threads can listen to the same timer.
  *
  * @ingroup utilities_library
- * @file evtimer.c Events Generator Timer code.
- * @file evtimer.h Events Generator Timer structures and macros.
  */
 /** @} */
 

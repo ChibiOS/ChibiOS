@@ -73,6 +73,12 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 1.1.0unstable ***
+- FIX: Modified the default value for the STM32 HSI setup it was 1, it should
+  be 0x10 (backport in stable branch).
+- FIX: Removed an obsolete constant (P_SUSPENDED) from thread.h (backport in
+  stable branch).
+- FIX: Removed unused field mp_grow in the MemoryPool structure  (backport in
+  stable branch).
 - NEW: Better separation between the port code and the system APIs, now an
   architecture-specific "driver" contains all the port related code.
   Port functions/macros are no more directly exposed as APIs to the user code.
@@ -113,12 +119,6 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Removed the inclusion graph from the documentation because the little
   info they add and the size of all the images. It is possible to configure
   Doxygen to have them again (and more graph types).
-
-*** 1.0.1 ***
-- FIX: Modified the default value for the STM32 HSI setup it was 1, it should
-  be 0x10.
-- FIX: Removed an obsolete constant (P_SUSPENDED) from thread.h.
-- FIX: Removed unused field mp_grow in the MemoryPool structure.
 
 *** 1.0.0 ***
 - License switch, added GPL exception, see exception.txt.

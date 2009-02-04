@@ -18,9 +18,12 @@
 */
 
 /**
+ * @file chmsg.c
+ * @brief Messages code.
  * @addtogroup Messages
  * @{
  */
+
 #include <ch.h>
 
 #ifdef CH_USE_MESSAGES

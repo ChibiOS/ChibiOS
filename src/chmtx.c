@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file chmtx.c
+ * @brief Mutexes code.
  * @addtogroup Mutexes
  * @{
  */

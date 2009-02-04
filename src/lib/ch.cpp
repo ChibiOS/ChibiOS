@@ -16,6 +16,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/**
+ * @file ch.cpp
+ * @brief C++ wrapper code.
+ * @addtogroup CPlusPlusLibrary
+ * @{
+ */
 
 #include <ch.hpp>
 
@@ -329,3 +335,5 @@ namespace chibios_rt {
 #endif /* CH_USE_EVENTS_TIMEOUT */
 #endif /* CH_USE_EVENTS */
 }
+
+/** @} */

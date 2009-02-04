@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file chschd.c
+ * @brief Scheduler code.
  * @addtogroup Scheduler
  * @{
  */

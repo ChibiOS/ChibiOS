@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file mutexes.h
+ * @brief Mutexes macros and structures.
  * @addtogroup Mutexes
  * @{
  */

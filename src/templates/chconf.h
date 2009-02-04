@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file src/templates/chconf.h
+ * @brief Configuration file template.
  * @addtogroup Config
  * @{
  */

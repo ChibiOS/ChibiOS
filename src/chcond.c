@@ -22,6 +22,8 @@
  */
 
 /**
+ * @file chcond.c
+ * @brief Condition Variables code.
  * @addtogroup CondVars
  * @{
  */

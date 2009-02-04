@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file chvt.c
+ * @brief Time related code.
  * @addtogroup Time
  * @{
  */

@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file inline.h
+ * @brief Inline versions of some critical system routines.
  * @addtogroup Inline
  * @{
  */

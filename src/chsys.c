@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file chsys.c
+ * @brief System related code.
  * @addtogroup System
  * @{
  */

@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file vt.h
+ * @brief Time macros and structures.
  * @addtogroup Time
  * @{
  */

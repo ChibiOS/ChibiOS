@@ -17,6 +17,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file chdebug.c
+ * @brief ChibiOS/RT Debug code.
+ * @addtogroup CondVars
+ * @{
+ */
+
 #include <ch.h>
 
 #ifdef CH_USE_DEBUG
@@ -72,3 +79,5 @@ void chDbgTrace(Thread *otp, Thread *ntp) {
 #endif /* CH_USE_TRACE */
 
 #endif /* CH_USE_DEBUG */
+
+/** @} */

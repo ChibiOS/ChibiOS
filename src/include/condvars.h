@@ -22,6 +22,8 @@
  */
 
 /**
+ * @file condvars.h
+ * @brief Condition Variables macros and structures.
  * @addtogroup CondVars
  * @{
  */

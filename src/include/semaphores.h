@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file semaphores.h
+ * @brief Semaphores macros and structures.
  * @addtogroup Semaphores
  * @{
  */

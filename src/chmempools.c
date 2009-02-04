@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file chmempools.c
+ * @brief Memory Pools code.
  * @addtogroup MemoryPools
  * @{
  */

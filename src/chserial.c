@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file chserial.c
+ * @brief Serial Drivers code.
  * @addtogroup Serial
  * @{
  */

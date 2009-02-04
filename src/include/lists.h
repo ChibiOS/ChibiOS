@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file lists.h
+ * @brief Lists and queues macros and structures.
  * @addtogroup ThreadLists
  * @{
  */
