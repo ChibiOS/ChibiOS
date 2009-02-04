@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file ports/ARMCM3/chcore.c
+ * @brief ARM Cortex-M3 architecture port code.
  * @addtogroup ARMCM3_CORE
  * @{
  */

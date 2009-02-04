@@ -17,8 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
- * Generic ARM7 startup file for ChibiOS/RT.
+/**
+ * @file ports/ARM7/crt0.s
+ * @brief Generic ARM7 startup file for ChibiOS/RT.
+ * @addtogroup ARM7_CORE
+ * @{
  */
 
 .set    MODE_USR, 0x10
@@ -189,3 +192,5 @@ hwinit0:
 .thumb_func
 hwinit1:
         bx      lr
+
+/** @} */

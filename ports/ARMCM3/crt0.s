@@ -17,8 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
- * Generic ARM-CortexM3 startup file for ChibiOS/RT.
+/**
+ * @file ports/ARMCM3/crt0.s
+ * @brief Generic ARM Xortex-M3 startup file for ChibiOS/RT.
+ * @addtogroup ARMCM3_CORE
+ * @{
  */
 
 .set    CONTROL_MODE_PRIVILEGED, 0
@@ -111,3 +114,5 @@ hwinit0:
 .weak hwinit1
 hwinit1:
         bx      lr
+
+/** @} */

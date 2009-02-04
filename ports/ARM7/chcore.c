@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file ports/ARM7/chcore.c
+ * @brief ARM7 architecture port code.
  * @addtogroup ARM7_CORE
  * @{
  */

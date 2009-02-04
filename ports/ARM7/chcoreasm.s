@@ -17,8 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
- * ARM7 port system code.
+/**
+ * @file ports/ARM7/chcoreasm.s
+ * @brief ARM7 architecture port low level code.
+ * @addtogroup ARM7_CORE
+ * @{
  */
 
 #include <chconf.h>
@@ -225,3 +228,5 @@ _port_thread_start:
 jmpr4:
         bx      r4
 #endif /* !THUMB_NO_INTERWORKING */
+
+/** @} */

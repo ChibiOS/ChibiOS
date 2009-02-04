@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file ports/MSP430/chcore.h
+ * @brief MSP430 architecture port macros and structures.
  * @addtogroup MSP430_CORE
  * @{
  */

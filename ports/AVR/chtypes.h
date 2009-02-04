@@ -17,6 +17,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file ports/AVR/chtypes.h
+ * @brief AVR architecture port system types.
+ * @addtogroup AVR_CORE
+ * @{
+ */
+
 #ifndef _CHTYPES_H_
 #define _CHTYPES_H_
 
@@ -29,15 +36,15 @@
 #include <stdint.h>
 #endif
 
-typedef int8_t          bool_t;
-typedef uint8_t         tmode_t;
-typedef uint8_t         tstate_t;
-typedef uint8_t         tprio_t;
-typedef int16_t         msg_t;
-typedef uint8_t         eventid_t;
-typedef uint8_t         eventmask_t;
-typedef uint16_t        systime_t;
-typedef int8_t          cnt_t;
+typedef int8_t          bool_t;         /**< Fast boolean type. */
+typedef uint8_t         tmode_t;        /**< Thread flags. */
+typedef uint8_t         tstate_t;       /**< Thread state. */
+typedef uint8_t         tprio_t;        /**< Thread priority. */
+typedef int16_t         msg_t;          /**< Inter-thread message. */
+typedef uint8_t         eventid_t;      /**< Event Id. */
+typedef uint8_t         eventmask_t;    /**< Events mask. */
+typedef uint16_t        systime_t;      /**< System time. */
+typedef int8_t          cnt_t;          /**< Resources counter. */
 
 #define INLINE      inline
 #define PACK_STRUCT_STRUCT __attribute__((packed))
@@ -45,3 +52,5 @@ typedef int8_t          cnt_t;
 #define PACK_STRUCT_END
 
 #endif /* _CHTYPES_H_ */
+
+/** @} */

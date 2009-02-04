@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file ports/ARMCM3/chcore.h
+ * @brief ARM Cortex-M3 architecture port macros and structures.
  * @addtogroup ARMCM3_CORE
  * @{
  */
