@@ -19,10 +19,11 @@
 
 /**
  * @file ports/ARMCM3/crt0.s
- * @brief Generic ARM Xortex-M3 startup file for ChibiOS/RT.
+ * @brief Generic ARM Cortex-M3 startup file for ChibiOS/RT.
  * @addtogroup ARMCM3_CORE
  * @{
  */
+/** @cond never */
 
 .set    CONTROL_MODE_PRIVILEGED, 0
 .set    CONTROL_MODE_UNPRIVILEGED, 1
@@ -115,4 +116,5 @@ hwinit0:
 hwinit1:
         bx      lr
 
+/** @endcond */
 /** @} */

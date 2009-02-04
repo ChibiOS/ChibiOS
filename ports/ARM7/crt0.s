@@ -23,6 +23,7 @@
  * @addtogroup ARM7_CORE
  * @{
  */
+/** @cond never */
 
 .set    MODE_USR, 0x10
 .set    MODE_FIQ, 0x11
@@ -193,4 +194,5 @@ hwinit0:
 hwinit1:
         bx      lr
 
+/** @endcond */
 /** @} */

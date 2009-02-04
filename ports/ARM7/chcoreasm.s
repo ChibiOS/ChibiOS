@@ -23,6 +23,7 @@
  * @addtogroup ARM7_CORE
  * @{
  */
+/** @cond never */
 
 #include <chconf.h>
 
@@ -229,4 +230,5 @@ jmpr4:
         bx      r4
 #endif /* !THUMB_NO_INTERWORKING */
 
+/** @endcond */
 /** @} */

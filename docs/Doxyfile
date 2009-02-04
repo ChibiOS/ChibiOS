@@ -580,9 +580,12 @@ INPUT                  = ../src/include \
                          ../docs/src \
                          ../src/lib \
                          ../ports/ARM7 \
+                         ../ports/ARM7/crt0.s \
+                         ../ports/ARM7/chcoreasm.s \
                          ../ports/ARM7-AT91SAM7X/port.dox \
                          ../ports/ARM7-LPC214x/port.dox \
                          ../ports/ARMCM3 \
+                         ../ports/ARMCM3/crt0.s \
                          ../ports/ARMCM3-STM32F103/port.dox \
                          ../ports/MSP430 \
                          ../ports/AVR
