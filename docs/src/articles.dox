@@ -21,6 +21,7 @@
  * @page articles Articles
  * @{
  * ChibiOS/RT Articles and Code Examples:
+ * - @subpage article_portguide
  * - @subpage article_atomic
  * - @subpage article_saveram
  * - @subpage article_interrupts

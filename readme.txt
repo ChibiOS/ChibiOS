@@ -110,6 +110,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Articles and notes previously in the wiki now merged in the general
   documentation and updated, the wiki entries are obsolete and will be removed.
 - New application notes and articles added.
+- Removed the inclusion graph from the documentation because the little
+  info they add and the size of all the images. It is possible to configure
+  Doxygen to have them again (and more graph types).
 
 *** 1.0.1 ***
 - FIX: Modified the default value for the STM32 HSI setup it was 1, it should
