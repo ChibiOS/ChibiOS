@@ -128,7 +128,7 @@
 /** @} */
 
 /**
- * @defgroup ARM7_CORE ARM7 Core Implementation
+ * @defgroup ARM7_CORE Core Port Implementation
  * @{
  * @brief ARM7 specific port code, structures and macros.
  *

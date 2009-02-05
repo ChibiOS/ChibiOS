@@ -97,7 +97,7 @@
 /** @} */
 
 /**
- * @defgroup ARMCM3_CORE ARM Cortex-M3 Core Implementation
+ * @defgroup ARMCM3_CORE Core Port Implementation
  * @{
  * @brief ARM Cortex-M3 specific port code, structures and macros.
  *
