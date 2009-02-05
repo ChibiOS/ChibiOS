@@ -37,6 +37,7 @@
  *   <b>I-Locked</b> or <b>S-Locked</b> states. See @ref system_states.
  * - @anchor S-Class <b>"S"</b>, S-Class APIs are invokable only from the
  *   <b>S-Locked</b> state. See @ref system_states.
+ * .
  * Examples: @p chThdCreateStatic(), @p chSemSignalI(), @p chIQGetTimeout().
  *
  * @section interrupt_classes Interrupt Classes
@@ -57,7 +58,7 @@
  * - <b>Non Maskable Interrupts</b>. Non maskable interrupt sources are
  *   totally out of the operating system control and have the lowest latency.
  *   Such sources are not supported on all the architectures.
- *
+ * .
  * The mapping of the above logical classes into physical interrupts priorities
  * is, of course, port dependent. See the documentation of the various ports
  * for details.
@@ -98,7 +99,7 @@
  *   an infinite loop. This state can be reached if the debug mode is activated
  *   <b>and</b> an error is detected <b>or</b> after explicitly invoking
  *   @p chSysHalt().
- *
+ * .
  * Note that the above state are just <b>Logical States</b> that may have no
  * real associated machine state on some architectures. The following diagram
  * shows the possible transitions between the states:
@@ -216,7 +217,7 @@
  *   @p HIGHPRIO but the numerical values above @p HIGHPRIO up to @p ABSPRIO
  *   (inclusive) are reserved. This is the highest numerical value of the
  *   priorities space.
- *
+ * .
  * @section warea Thread Working Area
  * Each thread has its own stack, a Thread structure and some preemption
  * areas. All the structures are allocated into a "Thread Working Area",
@@ -233,7 +234,7 @@
  * - External Context.
  * - Interrupt Stack.
  * - Internal Context.
- *
+ * .
  * See the @ref Core documentation for details, the area may change on
  * the various ports and some structures may not be present (or be zero-sized).
  */

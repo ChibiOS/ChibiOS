@@ -48,6 +48,7 @@ CH_IRQ_HANDLER(myIRQ) {
  * <h2>Important Notes</h2>
  * - There is an important application note about ARM7 interrupt handlers,
  *   please read about it in the ARM7 port section: @ref ARM7_IH
+ * .
  */
 /** @} */
  

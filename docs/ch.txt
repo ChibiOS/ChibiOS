@@ -37,11 +37,11 @@
  *   - Asynchronous, using event sources.
  *   - Mix of the above models, multiple threads listening to multiple event
  *     sources while serving message queues.
- *   - PC simulator target included, the development can be done on the PC
- *     using MinGW.<br>
- *     Timers, I/O channels and other HW resources are simulated in a
- *     Win32 process and the application code does not need to be aware of it.
- *     MinGW demo available.
+ * - PC simulator target included, the development can be done on the PC
+ *   using MinGW.<br>
+ *   Timers, I/O channels and other HW resources are simulated in a
+ *   Win32 process and the application code does not need to be aware of it.
+ *   MinGW demo available.
  * - Preemptive scheduling.
  * - 128 priority levels.
  * - Multiple threads at the same priority level allowed.
@@ -70,11 +70,12 @@
  * - Small memory footprint, unused subsystems can be excluded by the
  *   memory image.
  * - Almost totally written in C with little ASM code required for ports.
- *
+ * .
  * <h2>Related pages</h2>
  * - @subpage lic_faq
  * - @subpage concepts
  * - @subpage articles
+ * .
  */
 
 /**
@@ -212,7 +213,7 @@
  *   becomes negative the thread is queued in the semaphore and suspended.
  * - <b>Reset</b>: The semaphore counter is reset to a non-negative value
  *   and all the threads in the queue are released.
- *
+ * .
  * Semaphores can be used as guards for mutual exclusion code zones (note that
  * mutexes are recommended for this kind of use) but also have other uses,
  * queues guards and counters as example.<br>
@@ -237,7 +238,7 @@
  * - <b>Unlock</b>: The mutex is released by the owner and the highest
  *   priority thread waiting in the queue, if any, is resumed and made owner
  *   of the mutex.
- *
+ * .
  * In order to use the Event APIs the @p CH_USE_MUTEXES option must be
  * specified in @p chconf.h.<br>
  *
@@ -334,7 +335,7 @@
  * - <b>Full duplex queue</b>, bidirectional queue where read and write
  *   operations can happen at the same time. Full duplex queues
  *   are implemented by pairing an input queue and an output queue together.
- *
+ * .
  * In order to use the I/O queues the @p CH_USE_QUEUES option must
  * be specified in @p chconf.h.<br>
  * In order to use the half duplex queues the @p CH_USE_QUEUES_HALFDUPLEX

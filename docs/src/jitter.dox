@@ -37,7 +37,7 @@
  * - OS overhead. Any operating system requires to run some extra code
  *   in interrupt handlers in order to handle correct preemption and Context
  *   Switching.
- *
+ * .
  * <h2>Interrupt Response Time</h2>
  * The Interrupt Response Time is the time from an interrupt event and the
  * execution of the handler code. Unfortunately this time is not constant
@@ -67,7 +67,7 @@
  *   can be preempted by higher priority sources.
  * - Longest time in a kernel lock zone that can delay interrupt servicing.
  *   This value is zero for fast interrupt sources, see @ref system_states.
- *
+ * .
  * <h2>Threads Flyback Time</h2>
  * This is the time between an event, as example an interrupt, and the
  * execution of the thread that will process it. Imagine the following

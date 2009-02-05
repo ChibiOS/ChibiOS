@@ -27,5 +27,6 @@
  * - @subpage article_interrupts
  * - @subpage article_jitter
  * - @subpage article_timing
+ * .
  */
 /** @} */
