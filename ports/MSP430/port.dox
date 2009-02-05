@@ -65,8 +65,16 @@
  * @brief MSP430 specific port code, structures and macros.
  *
  * @ingroup MSP430
- * @file ports/MSP430/chtypes.h Port types.
- * @file ports/MSP430/chcore.h Port related structures and macros.
- * @file ports/MSP430/chcore.c Port related code.
+ */
+/** @} */
+
+/**
+ * @defgroup MSP430_SERIAL USART Support
+ * @{
+ * @brief MSP430 USART support.
+ * @details The serial driver supports both the MSP430 USARTs in asynchronous
+ * mode.
+ *
+ * @ingroup MSP430_CORE
  */
 /** @} */

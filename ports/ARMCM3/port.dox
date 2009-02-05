@@ -106,7 +106,7 @@
 /** @} */
 
 /**
- * @defgroup ARMCM3_NVIC NVIC support
+ * @defgroup ARMCM3_NVIC NVIC Support
  * @{
  * @brief ARM Cortex-M3 NVIC support.
  *

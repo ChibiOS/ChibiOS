@@ -17,33 +17,64 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file ports/MSP430/msp430_serial.h
+ * @brief MSP430 Serial driver macros and structures.
+ * @addtogroup MSP430_SERIAL
+ * @{
+ */
+
 #ifndef _MSP430_SERIAL_H_
 #define _MSP430_SERIAL_H_
 
-/*
- * Configuration parameter, you can change the depth of the queue buffers
- * depending on the requirements of your application.
+/**
+ * @brief Serial buffers size.
+ * @details Configuration parameter, you can change the depth of the queue
+ * buffers depending on the requirements of your application.
+ * @note The default is 32 bytes for both the transmission and receive buffers.
  */
+#ifndef SERIAL_BUFFERS_SIZE
 #define SERIAL_BUFFERS_SIZE 32
+#endif
 
-#define USE_MSP430_USART0
-//#define USE_MSP430_USART1
+/**
+ * @brief USART0 driver enable switch.
+ * @details If set to @p TRUE the support for USART0 is included.
+ * @note The default is @p TRUE.
+ */
+#if !defined(USE_MSP430_USART0) || defined(__DOXYGEN__)
+#define USE_MSP430_USART0 TRUE
+#endif
 
-/*
- * Macro for baud rate computation.
+/**
+ * @brief USART1 driver enable switch.
+ * @details If set to @p TRUE the support for USART1 is included.
+ * @note The default is @p FALSE.
+ */
+#if !defined(USE_MSP430_USART1) || defined(__DOXYGEN__)
+#define USE_MSP430_USART1 FALSE
+#endif
+
+/**
+ * @brief Macro for baud rate computation.
+ * @note Make sure the final baud rate is within tolerance.
  */
 #define UBR(b) (SMCLK / (b))
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void InitSerial(void);
+  void msp430_serial_init(void);
   void SetUSART0(uint16_t div, uint8_t mod, uint8_t ctl);
   void SetUSART1(uint16_t div, uint8_t mod, uint8_t ctl);
 #ifdef __cplusplus
 }
 #endif
 
+/** @cond never*/
 extern FullDuplexDriver COM1, COM2;
+/** @endcond*/
 
 #endif /* _MSP430_SERIAL_H_ */
+
+/** @} */

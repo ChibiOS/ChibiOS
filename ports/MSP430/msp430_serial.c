@@ -17,6 +17,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file ports/MSP430/msp430_serial.c
+ * @brief MSP430 Serial driver code.
+ * @addtogroup MSP430_SERIAL
+ * @{
+ */
+
 #include <ch.h>
 #include <signal.h>
 
@@ -39,8 +46,11 @@ static void SetError(uint8_t urctl, FullDuplexDriver *com) {
   chSysUnlockFromIsr();
 }
 
-#ifdef USE_MSP430_USART0
+#if USE_MSP430_USART0 || defined(__DOXYGEN__)
+
+/** @brief USART0 serial driver identifier.*/
 FullDuplexDriver COM1;
+
 static uint8_t ib1[SERIAL_BUFFERS_SIZE];
 static uint8_t ob1[SERIAL_BUFFERS_SIZE];
 
@@ -88,9 +98,13 @@ static void OutNotify1(void) {
   }
 }
 
-/*
- * USART setup, must be invoked with interrupts disabled.
- * NOTE: Does not reset I/O queues.
+/**
+ * @brief USART0 setup.
+ * @details This function must be invoked with interrupts disabled.
+ * @param div The divider value as calculated by the @p UBR() macro.
+ * @param mod The value for the @p U0MCTL register.
+ * @param ctl The value for the @p U0CTL register.
+ * @note Does not reset the I/O queues.
  */
 void SetUSART0(uint16_t div, uint8_t mod, uint8_t ctl) {
 
@@ -111,8 +125,11 @@ void SetUSART0(uint16_t div, uint8_t mod, uint8_t ctl) {
 }
 #endif /* USE_MSP430_USART0 */
 
-#ifdef USE_MSP430_USART1
+#if USE_MSP430_USART1 || defined(__DOXYGEN__)
+
+/** @brief USART1 serial driver identifier.*/
 FullDuplexDriver COM2;
+
 static uint8_t ib2[SERIAL_BUFFERS_SIZE];
 static uint8_t ob2[SERIAL_BUFFERS_SIZE];
 
@@ -158,9 +175,13 @@ static void OutNotify2(void) {
   }
 }
 
-/*
- * USART setup, must be invoked with interrupts disabled.
- * NOTE: Does not reset I/O queues.
+/**
+ * @brief USART1 setup.
+ * @details This function must be invoked with interrupts disabled.
+ * @param div The divider value as calculated by the @p UBR() macro.
+ * @param mod The value for the @p U1MCTL register.
+ * @param ctl The value for the @p U1CTL register.
+ * @note Does not reset the I/O queues.
  */
 void SetUSART1(uint16_t div, uint8_t mod, uint8_t ctl) {
 
@@ -181,16 +202,22 @@ void SetUSART1(uint16_t div, uint8_t mod, uint8_t ctl) {
 }
 #endif
 
-void InitSerial(void) {
+/**
+ * @brief Serial driver initialization.
+ * @note The serial ports are initialized at @p 38400-8-N-1 by default.
+ */
+void msp430_serial_init(void) {
 
   /* I/O queues setup.*/
-#ifdef USE_MSP430_USART0
+#if USE_MSP430_USART0
   chFDDInit(&COM1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
   SetUSART0(UBR(38400), 0, CHAR);
 #endif
 
-#ifdef USE_MSP430_USART1
+#if USE_MSP430_USART1
   chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
   SetUSART1(UBR(38400), 0, CHAR);
 #endif
 }
+
+/** @} */
