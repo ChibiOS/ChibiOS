@@ -102,8 +102,14 @@
  * @brief ARM Cortex-M3 specific port code, structures and macros.
  *
  * @ingroup ARMCM3
- * @file ports/ARMCM3/chtypes.h Port types.
- * @file ports/ARMCM3/chcore.h Port related structures and macros.
- * @file ports/ARMCM3/chcore.c Port related code.
+ */
+/** @} */
+
+/**
+ * @defgroup ARMCM3_NVIC NVIC support
+ * @{
+ * @brief ARM Cortex-M3 NVIC support.
+ *
+ * @ingroup ARMCM3_CORE
  */
 /** @} */

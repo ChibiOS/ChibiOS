@@ -17,11 +17,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file ports/ARMCM3/nvic.c
+ * @brief Cortex-M3 NVIC support code.
+ * @addtogroup ARMCM3_NVIC
+ * @{
+ */
+
 #include <ch.h>
 #include <nvic.h>
 
 /**
- * Sets the priority of an interrupt handler and enables it.
+ * @brief Sets the priority of an interrupt handler and enables it.
+ *
  * @param n the interrupt number
  * @param prio the interrupt priority
  * @note The parameters are not tested for correctness.
@@ -34,7 +42,8 @@ void NVICEnableVector(uint32_t n, uint32_t prio) {
 }
 
 /**
- * Changes the priority of a system handler.
+ * @brief Changes the priority of a system handler.
+ *
  * @param handler the system handler number
  * @param prio the system handler priority
  * @note The parameters are not tested for correctness.
@@ -44,3 +53,5 @@ void NVICSetSystemHandlerPriority(uint32_t handler, uint32_t prio) {
 
   SCB_SHPR(handler >> 2) = (SCB_SHPR(handler >> 2) & ~(0xFF << sh)) | (prio << sh);
 }
+
+/** @} */
