@@ -50,7 +50,7 @@ static msg_t thread1(void *p) {
 
 static void mtx1_execute(void) {
 
-  tprio_t prio = chThdGetPriority(); // Bacause priority inheritance.
+  tprio_t prio = chThdGetPriority(); // Because priority inheritance.
   chMtxLock(&m1);
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread1, "E");
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread1, "D");
