@@ -140,7 +140,7 @@ CH_IRQ_HANDLER(EMACIrqHandler) {
 /*
  * EMAC subsystem initialization.
  */
-void sam7x_emac_init(int prio) {
+void emac_init(int prio) {
   int i;
 
   /*

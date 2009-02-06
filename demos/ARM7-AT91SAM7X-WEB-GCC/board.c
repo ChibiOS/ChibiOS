@@ -156,7 +156,7 @@ void hwinit1(void) {
   /*
    * Serial driver initialization, RTS/CTS pins enabled for USART0 only.
    */
-  sam7x_serial_init(AT91C_AIC_PRIOR_HIGHEST - 2, AT91C_AIC_PRIOR_HIGHEST - 2);
+  serial_init(AT91C_AIC_PRIOR_HIGHEST - 2, AT91C_AIC_PRIOR_HIGHEST - 2);
   AT91C_BASE_PIOA->PIO_PDR   = AT91C_PA3_RTS0 | AT91C_PA4_CTS0;
   AT91C_BASE_PIOA->PIO_ASR   = AT91C_PIO_PA3 | AT91C_PIO_PA4;
   AT91C_BASE_PIOA->PIO_PPUDR = AT91C_PIO_PA3 | AT91C_PIO_PA4;
@@ -164,7 +164,7 @@ void hwinit1(void) {
   /*
    * EMAC driver initialization.
    */
-  sam7x_emac_init(AT91C_AIC_PRIOR_HIGHEST - 3);
+  emac_init(AT91C_AIC_PRIOR_HIGHEST - 3);
 
   /*
    * ChibiOS/RT initialization.

@@ -126,14 +126,14 @@ static void OutNotify2(void) {
 #endif
 
 /**
- * @brief UART setup.
+ * @brief USART setup.
  * @param[in] u pointer to an UART I/O block
  * @param[in] speed serial port speed in bits per second
  * @param[in] mr the value for the @p MR register
  * @note Must be invoked with interrupts disabled.
  * @note Does not reset the I/O queues.
  */
-void sam7x_set_usart(AT91PS_USART u, int speed, int mr) {
+void usart_setup(AT91PS_USART u, int speed, int mr) {
 
   /* Disables IRQ sources and stop operations.*/
   u->US_IDR = 0xFFFFFFFF;
@@ -162,7 +162,7 @@ void sam7x_set_usart(AT91PS_USART u, int speed, int mr) {
  *       may have another use, enable them externally if needed.
  *       RX and TX pads are handled inside.
  */
-void sam7x_serial_init(int prio0, int prio1) {
+void serial_init(int prio0, int prio1) {
 
 #if USE_SAM7X_USART0 || defined(__DOXYGEN__)
   /* I/O queue setup.*/
@@ -184,12 +184,12 @@ void sam7x_serial_init(int prio0, int prio1) {
   AIC_EnableIT(AT91C_ID_US0);
 
   /* Default parameters.*/
-  sam7x_set_usart(AT91C_BASE_US0, SAM7X_USART_BITRATE,
-                  AT91C_US_USMODE_NORMAL |
-                  AT91C_US_CLKS_CLOCK |
-                  AT91C_US_CHRL_8_BITS |
-                  AT91C_US_PAR_NONE |
-                  AT91C_US_NBSTOP_1_BIT);
+  usart_setup(AT91C_BASE_US0, DEFAULT_USART_BITRATE,
+              AT91C_US_USMODE_NORMAL |
+              AT91C_US_CLKS_CLOCK |
+              AT91C_US_CHRL_8_BITS |
+              AT91C_US_PAR_NONE |
+              AT91C_US_NBSTOP_1_BIT);
 #endif
 
 #if USE_SAM7X_USART1 || defined(__DOXYGEN__)
@@ -212,12 +212,12 @@ void sam7x_serial_init(int prio0, int prio1) {
   AIC_EnableIT(AT91C_ID_US1);
 
   /* Default parameters.*/
-  sam7x_set_usart(AT91C_BASE_US1, SAM7X_USART_BITRATE,
-                  AT91C_US_USMODE_NORMAL |
-                  AT91C_US_CLKS_CLOCK |
-                  AT91C_US_CHRL_8_BITS |
-                  AT91C_US_PAR_NONE |
-                  AT91C_US_NBSTOP_1_BIT);
+  usart_setup(AT91C_BASE_US1, DEFAULT_USART_BITRATE,
+              AT91C_US_USMODE_NORMAL |
+              AT91C_US_CLKS_CLOCK |
+              AT91C_US_CHRL_8_BITS |
+              AT91C_US_PAR_NONE |
+              AT91C_US_NBSTOP_1_BIT);
 #endif
 }
 

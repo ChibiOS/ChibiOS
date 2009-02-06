@@ -102,8 +102,8 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
       break;
     case IIR_SRC_TX:
       {
-#if LPC214x_UART_FIFO_PRELOAD > 0
-        int i = LPC214x_UART_FIFO_PRELOAD;
+#if UART_FIFO_PRELOAD > 0
+        int i = UART_FIFO_PRELOAD;
         do {
           chSysLockFromIsr();
           msg_t b = chOQGetI(&com->sd_oqueue);
@@ -134,11 +134,11 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
   }
 }
 
-#if LPC214x_UART_FIFO_PRELOAD > 0
+#if UART_FIFO_PRELOAD > 0
 static void preload(UART *u, FullDuplexDriver *com) {
 
   if (u->UART_LSR & LSR_THRE) {
-    int i = LPC214x_UART_FIFO_PRELOAD;
+    int i = UART_FIFO_PRELOAD;
     do {
       chSysLockFromIsr();
       msg_t b = chOQGetI(&com->sd_oqueue);
@@ -168,7 +168,7 @@ CH_IRQ_HANDLER(UART0IrqHandler) {
 }
 
 static void OutNotify1(void) {
-#if LPC214x_UART_FIFO_PRELOAD > 0
+#if UART_FIFO_PRELOAD > 0
 
   preload(U0Base, &COM1);
 #else
@@ -196,7 +196,7 @@ CH_IRQ_HANDLER(UART1IrqHandler) {
 }
 
 static void OutNotify2(void) {
-#if LPC214x_UART_FIFO_PRELOAD > 0
+#if UART_FIFO_PRELOAD > 0
 
   preload(U1Base, &COM2);
 #else
@@ -218,7 +218,7 @@ static void OutNotify2(void) {
  * @note Must be invoked with interrupts disabled.
  * @note Does not reset the I/O queues.
  */
-void lpc2148x_set_uart(UART *u, int speed, int lcr, int fcr) {
+void uart_setup(UART *u, int speed, int lcr, int fcr) {
 
   int div = PCLK / (speed << 4);
   u->UART_LCR = lcr | LCR_DLAB;
@@ -240,16 +240,16 @@ void lpc2148x_set_uart(UART *u, int speed, int lcr, int fcr) {
  *       may have another use, enable them externally if needed.
  *       RX and TX pads are handled inside.
  */
-void lpc2148x_serial_init(int vector1, int vector2) {
+void serial_init(int vector1, int vector2) {
 
 #if USE_LPC214x_UART0
   SetVICVector(UART0IrqHandler, vector1, SOURCE_UART0);
   PCONP = (PCONP & PCALL) | PCUART0;
   chFDDInit(&COM1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
-  lpc2148x_set_uart(U0Base,
-                    LPC214x_UART_BITRATE,
-                    LCR_WL8 | LCR_STOP1 | LCR_NOPARITY,
-                    FCR_TRIGGER0);
+  uart_setup(U0Base,
+             DEFAULT_UART_BITRATE,
+             LCR_WL8 | LCR_STOP1 | LCR_NOPARITY,
+             FCR_TRIGGER0);
   VICIntEnable = INTMASK(SOURCE_UART0);
 #endif
 
@@ -257,10 +257,10 @@ void lpc2148x_serial_init(int vector1, int vector2) {
   SetVICVector(UART1IrqHandler, vector2, SOURCE_UART1);
   PCONP = (PCONP & PCALL) | PCUART1;
   chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
-  lpc2148x_set_uart(U1Base,
-                    LPC214x_UART_BITRATE,
-                    LCR_WL8 | LCR_STOP1 | LCR_NOPARITY,
-                    FCR_TRIGGER0);
+  uart_setup(U1Base,
+             DEFAULT_UART_BITRATE,
+             LCR_WL8 | LCR_STOP1 | LCR_NOPARITY,
+             FCR_TRIGGER0);
   VICIntEnable = INTMASK(SOURCE_UART0) | INTMASK(SOURCE_UART1);
 #endif
 }

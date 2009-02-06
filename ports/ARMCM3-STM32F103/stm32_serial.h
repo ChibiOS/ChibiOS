@@ -44,8 +44,8 @@
  * @note It is possible to use @p SetUSART() in order to change the working
  *       parameters at runtime.
  */
-#if !defined(STM32_USART_BITRATE) || defined(__DOXYGEN__)
-#define STM32_USART_BITRATE 38400
+#if !defined(DEFAULT_USART_BITRATE) || defined(__DOXYGEN__)
+#define DEFAULT_USART_BITRATE 38400
 #endif
 
 /**
@@ -145,9 +145,9 @@ extern FullDuplexDriver COM3;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void stm32_serial_init(uint32_t prio1, uint32_t prio2, uint32_t prio3);
-  void stm32_set_usart(USART_TypeDef *u, uint32_t speed, uint16_t cr1,
-                       uint16_t cr2, uint16_t cr3);
+  void serial_init(uint32_t prio1, uint32_t prio2, uint32_t prio3);
+  void usart_setup(USART_TypeDef *u, uint32_t speed, uint16_t cr1,
+                   uint16_t cr2, uint16_t cr3);
 #ifdef __cplusplus
 }
 #endif

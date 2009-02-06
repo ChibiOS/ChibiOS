@@ -30,7 +30,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void lpc214x_vic_init(void);
+  void vic_init(void);
   void SetVICVector(void *handler, int vector, int source);
 #ifdef __cplusplus
 }

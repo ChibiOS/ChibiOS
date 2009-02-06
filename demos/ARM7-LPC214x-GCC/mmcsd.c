@@ -167,7 +167,7 @@ bool_t mmcInit(void) {
   /*
    * Starting initialization with slow clock mode.
    */
-  lpc214x_ssp_setup(254, CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0), 0);
+  ssp_setup(254, CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0), 0);
 
   /*
    * SPI mode selection.
@@ -200,7 +200,7 @@ bool_t mmcInit(void) {
   /*
    * Full speed.
    */
-  lpc214x_ssp_setup(2, CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0), 0);
+  ssp_setup(2, CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0), 0);
   return FALSE;
 }
 

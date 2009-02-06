@@ -102,7 +102,7 @@ static void OutNotify1(void) {
  * @param ctl The value for the @p U0CTL register.
  * @note Does not reset the I/O queues.
  */
-void msp430_set_usart0(uint16_t div, uint8_t mod, uint8_t ctl) {
+void usart0_setup(uint16_t div, uint8_t mod, uint8_t ctl) {
 
   U0CTL = SWRST;                /* Resets the USART, it should already be */
   /* USART init */
@@ -176,7 +176,7 @@ static void OutNotify2(void) {
  * @note Must be invoked with interrupts disabled.
  * @note Does not reset the I/O queues.
  */
-void msp430_set_usart1(uint16_t div, uint8_t mod, uint8_t ctl) {
+void usart1_setup(uint16_t div, uint8_t mod, uint8_t ctl) {
 
   U1CTL = SWRST;                /* Resets the USART, it should already be */
   /* USART init */
@@ -199,17 +199,17 @@ void msp430_set_usart1(uint16_t div, uint8_t mod, uint8_t ctl) {
  * @brief Serial driver initialization.
  * @note The serial ports are initialized at @p 38400-8-N-1 by default.
  */
-void msp430_serial_init(void) {
+void serial_init(void) {
 
   /* I/O queues setup.*/
 #if USE_MSP430_USART0
   chFDDInit(&COM1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
-  msp430_set_usart0(UBR(38400), 0, CHAR);
+  usart0_setup(UBR(DEFAULT_USART_BITRATE), 0, CHAR);
 #endif
 
 #if USE_MSP430_USART1
   chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
-  msp430_set_usart1(UBR(38400), 0, CHAR);
+  usart1_setup(UBR(DEFAULT_USART_BITRATE), 0, CHAR);
 #endif
 }
 

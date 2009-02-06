@@ -32,7 +32,7 @@
  * @brief VIC Initialization.
  * @note Better reset everything in the VIC, it is a HUGE source of trouble.
  */
-void lpc214x_vic_init(void) {
+void vic_init(void) {
   int i;
 
   VIC *vic = VICBase;

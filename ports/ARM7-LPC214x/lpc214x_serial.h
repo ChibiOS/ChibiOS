@@ -44,8 +44,8 @@
  * @note It is possible to use @p SetUART() in order to change the working
  *       parameters at runtime.
  */
-#if !defined(LPC214x_UART_BITRATE) || defined(__DOXYGEN__)
-#define LPC214x_UART_BITRATE 38400
+#if !defined(DEFAULT_UART_BITRATE) || defined(__DOXYGEN__)
+#define DEFAULT_UART_BITRATE 38400
 #endif
 
 /**
@@ -60,8 +60,8 @@
  *       that will generate an interrupt for each output byte but is much
  *       smaller and simpler.
  */
-#if !defined(LPC214x_UART_FIFO_PRELOAD) || defined(__DOXYGEN__)
-#define LPC214x_UART_FIFO_PRELOAD 16
+#if !defined(UART_FIFO_PRELOAD) || defined(__DOXYGEN__)
+#define UART_FIFO_PRELOAD 16
 #endif
 
 /**
@@ -85,8 +85,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void lpc2148x_serial_init(int vector1, int vector2);
-  void SetUART(UART *u, int speed, int lcr, int fcr);
+  void serial_init(int vector1, int vector2);
+  void uart_setup(UART *u, int speed, int lcr, int fcr);
   CH_IRQ_HANDLER(UART0IrqHandler);
   CH_IRQ_HANDLER(UART1IrqHandler);
 #ifdef __cplusplus

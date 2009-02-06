@@ -104,7 +104,7 @@ void sspRW(uint8_t *in, uint8_t *out, size_t n) {
  * @param[in] cr0 the value for the @p CR0 register
  * @param[in] cr1 the value for the @p CR1 register
  */
-void lpc214x_ssp_setup(int cpsr, int cr0, int cr1) {
+void ssp_setup(int cpsr, int cr0, int cr1) {
 
   SSP *ssp = SSPBase;
   ssp->SSP_CR1 = 0;
@@ -116,13 +116,13 @@ void lpc214x_ssp_setup(int cpsr, int cr0, int cr1) {
 /**
  * @brief SSP subsystem initialization.
  */
-void lpc214x_ssp_init(void) {
+void ssp_init(void) {
 
   /* Enables the SPI1 clock */
   PCONP = (PCONP & PCALL) | PCSPI1;
 
   /* Clock = PCLK / 2 (fastest). */
-  lpc214x_ssp_setup(2, CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0), 0);
+  ssp_setup(2, CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0), 0);
 
 #if LPC214x_SSP_USE_MUTEX
   chSemInit(&me, 1);

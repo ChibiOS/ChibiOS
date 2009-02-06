@@ -41,8 +41,8 @@
 #ifdef __cplusplus
 }
 #endif
-  void lpc214x_ssp_init(void);
-  void lpc214x_ssp_setup(int cpsr, int cr0, int cr1);
+  void ssp_init(void);
+  void ssp_setup(int cpsr, int cr0, int cr1);
   void sspAcquireBus(void);
   void sspReleaseBus(void);
   void sspRW(uint8_t *in, uint8_t *out, size_t n);

@@ -82,7 +82,7 @@ void hwinit(void) {
   /*
    * Other subsystems.
    */
-  msp430_serial_init();
+  serial_init();
 }
 
 CH_IRQ_HANDLER(TIMERA0_VECTOR) {

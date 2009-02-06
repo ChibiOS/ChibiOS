@@ -38,6 +38,17 @@
 #endif
 
 /**
+ * @brief Default bit rate.
+ * @details Configuration parameter, at startup the UARTs are configured at
+ * this speed.
+ * @note It is possible to use @p SetUART() in order to change the working
+ *       parameters at runtime.
+ */
+#if !defined(DEFAULT_USART_BITRATE) || defined(__DOXYGEN__)
+#define DEFAULT_USART_BITRATE 38400
+#endif
+
+/**
  * @brief USART0 driver enable switch.
  * @details If set to @p TRUE the support for USART0 is included.
  * @note The default is @p TRUE.
@@ -64,9 +75,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void msp430_serial_init(void);
-  void msp430_set_usart0(uint16_t div, uint8_t mod, uint8_t ctl);
-  void msp430_set_usart1(uint16_t div, uint8_t mod, uint8_t ctl);
+  void serial_init(void);
+  void usart0_setup(uint16_t div, uint8_t mod, uint8_t ctl);
+  void usart1_setup(uint16_t div, uint8_t mod, uint8_t ctl);
 #ifdef __cplusplus
 }
 #endif

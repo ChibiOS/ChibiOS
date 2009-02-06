@@ -119,7 +119,7 @@ void hwinit1(void) {
   /*
    * Interrupt vectors assignment.
    */
-  lpc214x_vic_init();
+  vic_init();
   VICDefVectAddr = (IOREG32)IrqHandler;
 
   /*
@@ -137,8 +137,8 @@ void hwinit1(void) {
   /*
    * Other subsystems.
    */
-  lpc2148x_serial_init(1, 2);
-  lpc214x_ssp_init();
+  serial_init(1, 2);
+  ssp_init();
   InitMMC();
   InitBuzzer();
 

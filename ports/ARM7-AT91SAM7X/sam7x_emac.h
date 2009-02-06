@@ -76,7 +76,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sam7x_emac_init(int prio);
+  void emac_init(int prio);
   void EMACSetAddress(const uint8_t *eaddr);
   bool_t EMACGetLinkStatus(void);
   BufDescriptorEntry *EMACGetTransmitBuffer(void);
