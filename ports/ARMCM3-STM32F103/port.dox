@@ -9,3 +9,14 @@
  * @ingroup ARMCM3
  */
 /** @} */
+
+/**
+ * @defgroup STM32F103_SERIAL USART Support
+ * @{
+ * @brief USART peripherals support.
+ * @details The serial driver supports the STM32F103 USARTs in asynchronous
+ * mode.
+ *
+ * @ingroup STM32F103
+ */
+/** @} */

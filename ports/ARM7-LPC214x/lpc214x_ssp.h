@@ -17,21 +17,32 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file ports/ARM7-LPC214x/lpc214x_ssp.h
+ * @brief LPC214x SSP driver macros and structures.
+ * @addtogroup LPC214x_SSP
+ * @{
+ */
+
 #ifndef _LPC214x_SSP_H_
 #define _LPC214x_SSP_H_
 
-/*
- * Configuration parameter, if defined this macro enforces mutual exclusion
- * when invoking \p sspAcquireBus() and \p sspReleaseBus().
+/**
+ * @brief SSP bus mutual exclusion control.
+ * @details Configuration parameter, if defined this macro enforces mutual
+ * exclusion when invoking @p sspAcquireBus() and @p sspReleaseBus().
+ * @note The internally used synchronization mechanism is a @p Semaphore.
+ * @todo Make it use Mutexes or Semaphores like the Heap subsystem.
  */
-#define SSP_USE_MUTEX
+#if !defined(LPC214x_SSP_USE_MUTEX) || defined(__DOXYGEN__)
+#define LPC214x_SSP_USE_MUTEX TRUE
+#endif
 
 #ifdef __cplusplus
 }
 #endif
-  void InitSSP(void);
-  void SetSSP(int cpsr, int cr0, int cr1);
-
+  void lpc214x_ssp_init(void);
+  void lpc214x_ssp_setup(int cpsr, int cr0, int cr1);
   void sspAcquireBus(void);
   void sspReleaseBus(void);
   void sspRW(uint8_t *in, uint8_t *out, size_t n);
@@ -40,3 +51,5 @@
 #endif
 
 #endif /* _LPC214x_SSP_H_*/
+
+/** @} */

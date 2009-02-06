@@ -17,6 +17,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file ports/ARM7-LPC214x/lpc214x_serial.c
+ * @brief LPC214x Serial driver code.
+ * @addtogroup LPC214x_SERIAL
+ * @{
+ */
+
 #include <ch.h>
 
 #include "lpc214x.h"
@@ -24,14 +31,27 @@
 #include "lpc214x_serial.h"
 #include "board.h"
 
+#if USE_LPC214x_UART0 || defined(__DOXYGEN__)
+/** @brief UART0 serial driver identifier.*/
 FullDuplexDriver COM1;
+
 static uint8_t ib1[SERIAL_BUFFERS_SIZE];
 static uint8_t ob1[SERIAL_BUFFERS_SIZE];
+#endif
 
+#if USE_LPC214x_UART1 || defined(__DOXYGEN__)
+/** @brief UART1 serial driver identifier.*/
 FullDuplexDriver COM2;
+
 static uint8_t ib2[SERIAL_BUFFERS_SIZE];
 static uint8_t ob2[SERIAL_BUFFERS_SIZE];
+#endif
 
+/**
+ * @brief Error handling routine.
+ * @param[in] err UART LSR register value
+ * @param[in] com communication channel associated to the USART
+ */
 static void SetError(IOREG32 err, FullDuplexDriver *com) {
   dflags_t sts = 0;
 
@@ -48,11 +68,16 @@ static void SetError(IOREG32 err, FullDuplexDriver *com) {
   chSysUnlockFromIsr();
 }
 
-/*
- * Tries hard to clear all the pending interrupt sources, we dont want to
- * go through the whole ISR and have another interrupt soon after.
- */
+/** @cond never*/
 __attribute__((noinline))
+/** @endcond*/
+/**
+ * @brief Common IRQ handler.
+ * @param[in] u pointer to an UART I/O block
+ * @param[in] com communication channel associated to the UART
+ * @note Tries hard to clear all the pending interrupt sources, we dont want to
+ *       go through the whole ISR and have another interrupt soon after.
+ */
 static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
 
   while (TRUE) {
@@ -77,8 +102,8 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
       break;
     case IIR_SRC_TX:
       {
-#ifdef FIFO_PRELOAD
-        int i = FIFO_PRELOAD;
+#if LPC214x_UART_FIFO_PRELOAD > 0
+        int i = LPC214x_UART_FIFO_PRELOAD;
         do {
           chSysLockFromIsr();
           msg_t b = chOQGetI(&com->sd_oqueue);
@@ -109,31 +134,11 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
   }
 }
 
-CH_IRQ_HANDLER(UART0IrqHandler) {
-
-  CH_IRQ_PROLOGUE();
-
-  ServeInterrupt(U0Base, &COM1);
-  VICVectAddr = 0;
-
-  CH_IRQ_EPILOGUE();
-}
-
-CH_IRQ_HANDLER(UART1IrqHandler) {
-
-  CH_IRQ_PROLOGUE();
-
-  ServeInterrupt(U1Base, &COM2);
-  VICVectAddr = 0;
-
-  CH_IRQ_EPILOGUE();
-}
-
-#ifdef FIFO_PRELOAD
+#if LPC214x_UART_FIFO_PRELOAD > 0
 static void preload(UART *u, FullDuplexDriver *com) {
 
   if (u->UART_LSR & LSR_THRE) {
-    int i = FIFO_PRELOAD;
+    int i = LPC214x_UART_FIFO_PRELOAD;
     do {
       chSysLockFromIsr();
       msg_t b = chOQGetI(&com->sd_oqueue);
@@ -151,12 +156,25 @@ static void preload(UART *u, FullDuplexDriver *com) {
 }
 #endif
 
-/*
- * Invoked by the high driver when one or more bytes are inserted in the
- * output queue.
+#if USE_LPC214x_UART0 || defined(__DOXYGEN__)
+/**
+ * @brief UART0 IRQ service routine.
+ */
+CH_IRQ_HANDLER(UART0IrqHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  ServeInterrupt(U0Base, &COM1);
+  VICVectAddr = 0;
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief Output queue insertion notification from the high driver.
  */
 static void OutNotify1(void) {
-#ifdef FIFO_PRELOAD
+#if LPC214x_UART_FIFO_PRELOAD > 0
 
   preload(U0Base, &COM1);
 #else
@@ -170,13 +188,27 @@ static void OutNotify1(void) {
   u->UART_IER |= IER_THRE;
 #endif
 }
+#endif
 
-/*
- * Invoked by the high driver when one or more bytes are inserted in the
- * output queue.
+#if USE_LPC214x_UART1 || defined(__DOXYGEN__)
+/**
+ * @brief UART1 IRQ service routine.
+ */
+CH_IRQ_HANDLER(UART1IrqHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  ServeInterrupt(U1Base, &COM2);
+  VICVectAddr = 0;
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief Output queue insertion notification from the high driver.
  */
 static void OutNotify2(void) {
-#ifdef FIFO_PRELOAD
+#if LPC214x_UART_FIFO_PRELOAD > 0
 
   preload(U1Base, &COM2);
 #else
@@ -187,9 +219,15 @@ static void OutNotify2(void) {
   u->UART_IER |= IER_THRE;
 #endif
 }
+#endif
 
-/*
- * UART setup, must be invoked with interrupts disabled.
+/**
+ * @brief UART setup.
+ * @param[in] u pointer to an UART I/O block
+ * @param[in] speed serial port speed in bits per second
+ * @param[in] lcr the value for the @p LCR register
+ * @param[in] fcr the value for the @p FCR register
+ * @note Must be invoked with interrupts disabled.
  */
 void SetUART(UART *u, int speed, int lcr, int fcr) {
 
@@ -205,21 +243,37 @@ void SetUART(UART *u, int speed, int lcr, int fcr) {
   u->UART_IER = IER_RBR | IER_STATUS;
 }
 
-/*
- * Serial subsystem initialization.
+/**
+ * @brief Serial driver initialization.
+ * @param[in] vector1 IRC vector to be used for UART0
+ * @param[in] vector2 IRC vector to be used for UART1
+ * @note Handshake pads are not enabled inside this function because they
+ *       may have another use, enable them externally if needed.
+ *       RX and TX pads are handled inside.
  */
-void InitSerial(int vector1, int vector2) {
+void lpc2148x_serial_init(int vector1, int vector2) {
 
+#if USE_LPC214x_UART0
   SetVICVector(UART0IrqHandler, vector1, SOURCE_UART0);
-  SetVICVector(UART1IrqHandler, vector2, SOURCE_UART1);
-
-  PCONP = (PCONP & PCALL) | PCUART0 | PCUART1;
-
+  PCONP = (PCONP & PCALL) | PCUART0;
   chFDDInit(&COM1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
-  SetUART(U0Base, 38400, LCR_WL8 | LCR_STOP1 | LCR_NOPARITY, FCR_TRIGGER0);
+  SetUART(U0Base,
+          LPC214x_UART_BITRATE,
+          LCR_WL8 | LCR_STOP1 | LCR_NOPARITY,
+          FCR_TRIGGER0);
+  VICIntEnable = INTMASK(SOURCE_UART0);
+#endif
 
+#if USE_LPC214x_UART1
+  SetVICVector(UART1IrqHandler, vector2, SOURCE_UART1);
+  PCONP = (PCONP & PCALL) | PCUART1;
   chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
-  SetUART(U1Base, 38400, LCR_WL8 | LCR_STOP1 | LCR_NOPARITY, FCR_TRIGGER0);
-
+  SetUART(U1Base,
+          LPC214x_UART_BITRATE,
+          LCR_WL8 | LCR_STOP1 | LCR_NOPARITY,
+          FCR_TRIGGER0);
   VICIntEnable = INTMASK(SOURCE_UART0) | INTMASK(SOURCE_UART1);
+#endif
 }
+
+/** @} */

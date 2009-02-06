@@ -15,3 +15,32 @@
  * @ingroup ARM7
  */
 /** @} */
+
+/**
+ * @defgroup LPC214x_VIC VIC Support
+ * @{
+ * @brief VIC peripheral support.
+ *
+ * @ingroup LPC214x
+ */
+/** @} */
+
+/**
+ * @defgroup LPC214x_SERIAL UART Support
+ * @{
+ * @brief UART peripherals support.
+ * @details The serial driver supports the LPC214x UART peripherals.
+ *
+ * @ingroup LPC214x
+ */
+/** @} */
+
+/**
+ * @defgroup LPC214x_SSP SSP Support
+ * @{
+ * @brief SSP peripheral support.
+ * @details This SPI driver supports the LPC214x SSP peripheral.
+ *
+ * @ingroup LPC214x
+ */
+/** @} */

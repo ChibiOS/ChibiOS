@@ -231,7 +231,7 @@ static Semaphore        hsem;
 #error "The heap allocator requires mutexes or semaphores to be enabled"
 #endif
 
-void chHeapInit(void) {
+void heap_init(void) {
 
 #if defined(CH_USE_MUTEXES)
   chMtxInit(&hmtx);

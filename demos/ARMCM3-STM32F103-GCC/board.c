@@ -104,7 +104,7 @@ void hwinit1(void) {
   /*
    * Other subsystems initialization.
    */
-  InitSerial(0xC0, 0xC0, 0xC0);
+  stm32_serial_init(0xC0, 0xC0, 0xC0);
 
   /*
    * ChibiOS/RT initialization.

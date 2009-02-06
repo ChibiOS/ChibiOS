@@ -17,16 +17,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file ports/ARM7-LPC214x/vic.h
+ * @brief LPC214x VIC peripheral support code.
+ * @addtogroup LPC214x_VIC
+ * @{
+ */
+
 #ifndef _VIC_H_
 #define _VIC_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void InitVIC(void);
+  void lpc214x_vic_init(void);
   void SetVICVector(void *handler, int vector, int source);
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* _VIC_H_ */
+
+/** @} */

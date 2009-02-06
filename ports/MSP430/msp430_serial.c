@@ -178,9 +178,9 @@ static void OutNotify2(void) {
 /**
  * @brief USART1 setup.
  * @details This function must be invoked with interrupts disabled.
- * @param div The divider value as calculated by the @p UBR() macro.
- * @param mod The value for the @p U1MCTL register.
- * @param ctl The value for the @p U1CTL register.
+ * @param[in] div the divider value as calculated by the @p UBR() macro
+ * @param[in] mod the value for the @p U1MCTL register
+ * @param[in] ctl the value for the @p U1CTL register.
  * @note Does not reset the I/O queues.
  */
 void SetUSART1(uint16_t div, uint8_t mod, uint8_t ctl) {
