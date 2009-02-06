@@ -29,7 +29,7 @@
 
 /**
  * @brief SSP bus mutual exclusion control.
- * @details Configuration parameter, if defined this macro enforces mutual
+ * @details Configuration parameter, if set to @p TRUE enforces mutual
  * exclusion when invoking @p sspAcquireBus() and @p sspReleaseBus().
  * @note The internally used synchronization mechanism is a @p Semaphore.
  * @todo Make it use Mutexes or Semaphores like the Heap subsystem.

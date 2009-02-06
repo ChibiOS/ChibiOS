@@ -63,7 +63,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(USE_STM32_USART2) || defined(__DOXYGEN__)
-#define USE_STM32_USART2 1
+#define USE_STM32_USART2 TRUE
 #endif
 
 /**

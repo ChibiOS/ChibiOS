@@ -70,9 +70,9 @@
  * @note The default is @p TRUE .
  */
 #if !defined(USE_LPC214x_UART0) || defined(__DOXYGEN__)
-#define USE_LPC214x_UART0 TRUE 
+#define USE_LPC214x_UART0 TRUE
 #endif
- 
+
 /**
  * @brief UART1 driver enable switch.
  * @details If set to @p TRUE the support for USART2 is included.

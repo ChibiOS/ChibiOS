@@ -11,3 +11,13 @@
  * @ingroup ARM7
  */
 /** @} */
+
+/**
+ * @defgroup AT91SAM7X_SERIAL UART Support
+ * @{
+ * @brief USART peripherals support.
+ * @details The serial driver supports the AT91SAM7X USART peripherals.
+ *
+ * @ingroup AT91SAM7X
+ */
+/** @} */
