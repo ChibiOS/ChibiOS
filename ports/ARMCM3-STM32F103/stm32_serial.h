@@ -146,8 +146,8 @@ extern FullDuplexDriver COM3;
 extern "C" {
 #endif
   void stm32_serial_init(uint32_t prio1, uint32_t prio2, uint32_t prio3);
-  void SetUSART(USART_TypeDef *u, uint32_t speed, uint16_t cr1,
-                uint16_t cr2, uint16_t cr3);
+  void stm32_set_usart(USART_TypeDef *u, uint32_t speed, uint16_t cr1,
+                       uint16_t cr2, uint16_t cr3);
 #ifdef __cplusplus
 }
 #endif

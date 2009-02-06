@@ -70,7 +70,7 @@
 extern "C" {
 #endif
   void sam7x_serial_init(int prio0, int prio1);
-  void SetUSART(AT91PS_USART u, int speed, int mode);
+  void sam7x_set_usart(AT91PS_USART u, int speed, int mode);
   CH_IRQ_HANDLER(UART0IrqHandler);
   CH_IRQ_HANDLER(UART1IrqHandler);
 #ifdef __cplusplus

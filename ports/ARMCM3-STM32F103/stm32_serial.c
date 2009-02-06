@@ -194,7 +194,8 @@ void stm32_serial_init(uint32_t prio1, uint32_t prio2, uint32_t prio3) {
 #if USE_STM32_USART1
   chFDDInit(&COM1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
   RCC->APB2ENR |= 0x00004000;
-  SetUSART(USART1, STM32_USART_BITRATE, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
+  stm32_set_usart(USART1, STM32_USART_BITRATE, 0,
+                  CR2_STOP1_BITS | CR2_LINEN, 0);
   GPIOA->CRH = (GPIOA->CRH & 0xFFFFF00F) | 0x000004B0;
   NVICEnableVector(USART1_IRQChannel, prio1);
 #endif
@@ -202,7 +203,8 @@ void stm32_serial_init(uint32_t prio1, uint32_t prio2, uint32_t prio3) {
 #if USE_STM32_USART2
   chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
   RCC->APB1ENR |= 0x00020000;
-  SetUSART(USART2, STM32_USART_BITRATE, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
+  stm32_set_usart(USART2, STM32_USART_BITRATE, 0,
+                  CR2_STOP1_BITS | CR2_LINEN, 0);
   GPIOA->CRL = (GPIOA->CRL & 0xFFFF00FF) | 0x00004B00;
   NVICEnableVector(USART2_IRQChannel, prio2);
 #endif
@@ -210,7 +212,8 @@ void stm32_serial_init(uint32_t prio1, uint32_t prio2, uint32_t prio3) {
 #if USE_STM32_USART3
   chFDDInit(&COM3, ib3, sizeof ib3, NULL, ob3, sizeof ob3, OutNotify3);
   RCC->APB1ENR |= 0x00040000;
-  SetUSART(USART3, STM32_USART_BITRATE, 0, CR2_STOP1_BITS | CR2_LINEN, 0);
+  stm32_set_usart(USART3, STM32_USART_BITRATE, 0,
+                  CR2_STOP1_BITS | CR2_LINEN, 0);
   GPIOB->CRH = (GPIOB->CRH & 0xFFFF00FF) | 0x00004B00;
   NVICEnableVector(USART3_IRQChannel, prio3);
 #endif
