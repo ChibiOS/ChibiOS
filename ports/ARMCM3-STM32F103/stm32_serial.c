@@ -103,9 +103,6 @@ static void ServeInterrupt(USART_TypeDef *u, FullDuplexDriver *com) {
 }
 
 #if USE_STM32_USART1 || defined(__DOXYGEN__)
-/**
- * @brief USART1 IRQ service routine.
- */
 CH_IRQ_HANDLER(VectorD4) {
 
   CH_IRQ_PROLOGUE();
@@ -115,9 +112,6 @@ CH_IRQ_HANDLER(VectorD4) {
   CH_IRQ_EPILOGUE();
 }
 
-/**
- * @brief Output queue insertion notification from the high driver.
- */
 static void OutNotify1(void) {
 
   USART1->CR1 |= CR1_TXEIE;
@@ -125,9 +119,6 @@ static void OutNotify1(void) {
 #endif
 
 #if USE_STM32_USART2 || defined(__DOXYGEN__)
-/**
- * @brief USART2 IRQ service routine.
- */
 CH_IRQ_HANDLER(VectorD8) {
 
   CH_IRQ_PROLOGUE();
@@ -137,9 +128,6 @@ CH_IRQ_HANDLER(VectorD8) {
   CH_IRQ_EPILOGUE();
 }
 
-/**
- * @brief Output queue insertion notification from the high driver.
- */
 static void OutNotify2(void) {
 
   USART2->CR1 |= CR1_TXEIE;
@@ -147,9 +135,6 @@ static void OutNotify2(void) {
 #endif
 
 #if USE_STM32_USART3 || defined(__DOXYGEN__)
-/**
- * @brief USART3 IRQ service routine.
- */
 CH_IRQ_HANDLER(VectorDC) {
 
   CH_IRQ_PROLOGUE();
@@ -159,9 +144,6 @@ CH_IRQ_HANDLER(VectorDC) {
   CH_IRQ_EPILOGUE();
 }
 
-/**
- * @brief Output queue insertion notification from the high driver.
- */
 static void OutNotify3(void) {
 
   USART3->CR1 |= CR1_TXEIE;

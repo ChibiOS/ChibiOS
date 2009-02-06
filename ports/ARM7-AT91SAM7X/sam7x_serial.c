@@ -17,19 +17,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file ports/ARM7-AT91SAM7X/sam7x_serial.h
+ * @brief AT91SAM7X Serial driver macros and structures.
+ * @addtogroup AT91SAM7X_SERIAL
+ * @{
+ */
+
 #include <ch.h>
 
 #include "board.h"
 #include "sam7x_serial.h"
 #include "at91lib/aic.h"
 
+#if USE_SAM7X_USART0 || defined(__DOXYGEN__)
+/** @brief USART0 serial driver identifier.*/
 FullDuplexDriver COM1;
+
 static uint8_t ib1[SERIAL_BUFFERS_SIZE];
 static uint8_t ob1[SERIAL_BUFFERS_SIZE];
+#endif
 
+#if USE_SAM7X_USART1 || defined(__DOXYGEN__)
+/** @brief USART1 serial driver identifier.*/
 FullDuplexDriver COM2;
+
 static uint8_t ib2[SERIAL_BUFFERS_SIZE];
 static uint8_t ob2[SERIAL_BUFFERS_SIZE];
+#endif
 
 static void SetError(AT91_REG csr, FullDuplexDriver *com) {
   dflags_t sts = 0;
@@ -47,10 +62,14 @@ static void SetError(AT91_REG csr, FullDuplexDriver *com) {
   chSysUnlockFromIsr();
 }
 
-/*
- * Serves the pending sources on the USART.
- */
+/** @cond never*/
 __attribute__((noinline))
+/** @endcond*/
+/**
+ * @brief Common IRQ handler.
+ * @param[in] u pointer to an USART I/O block
+ * @param[in] com communication channel associated to the USART
+ */
 static void ServeInterrupt(AT91PS_USART u, FullDuplexDriver *com) {
 
   if (u->US_CSR & AT91C_US_RXRDY) {
@@ -74,6 +93,7 @@ static void ServeInterrupt(AT91PS_USART u, FullDuplexDriver *com) {
   AT91C_BASE_AIC->AIC_EOICR = 0;
 }
 
+#if USE_SAM7X_USART0 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(USART0IrqHandler) {
 
   CH_IRQ_PROLOGUE();
@@ -83,6 +103,13 @@ CH_IRQ_HANDLER(USART0IrqHandler) {
   CH_IRQ_EPILOGUE();
 }
 
+static void OutNotify1(void) {
+
+  AT91C_BASE_US0->US_IER = AT91C_US_TXRDY;
+}
+#endif
+
+#if USE_SAM7X_USART1 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(USART1IrqHandler) {
 
   CH_IRQ_PROLOGUE();
@@ -92,23 +119,11 @@ CH_IRQ_HANDLER(USART1IrqHandler) {
   CH_IRQ_EPILOGUE();
 }
 
-/*
- * Invoked by the high driver when one or more bytes are inserted in the
- * output queue.
- */
-static void OutNotify1(void) {
-
-  AT91C_BASE_US0->US_IER = AT91C_US_TXRDY;
-}
-
-/*
- * Invoked by the high driver when one or more bytes are inserted in the
- * output queue.
- */
 static void OutNotify2(void) {
 
   AT91C_BASE_US1->US_IER = AT91C_US_TXRDY;
 }
+#endif
 
 /*
  * USART setup, must be invoked with interrupts disabled.
@@ -180,3 +195,5 @@ void InitSerial(int prio0, int prio1) {
                                   AT91C_US_PAR_NONE |
                                   AT91C_US_NBSTOP_1_BIT);
 }
+
+/** @} */

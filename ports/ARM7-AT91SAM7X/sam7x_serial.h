@@ -44,26 +44,26 @@
  * @note It is possible to use @p SetUART() in order to change the working
  *       parameters at runtime.
  */
-#if !defined(AT91SAM7X_UART_BITRATE) || defined(__DOXYGEN__)
+#if !defined(SAM7X_UART_BITRATE) || defined(__DOXYGEN__)
 #define SAM7X_UART_BITRATE 38400
 #endif
 
 /**
  * @brief UART0 driver enable switch.
- * @details If set to 1 the support for USART1 is included.
- * @note The default is 1.
+ * @details If set to @p TRUE the support for USART1 is included.
+ * @note The default is @p TRUE.
  */
-#if !defined(USE_LPC214x_UART0) || defined(__DOXYGEN__)
-#define USE_SAM7X_USART0 1
+#if !defined(USE_SAM7X_USART0) || defined(__DOXYGEN__)
+#define USE_SAM7X_USART0 TRUE
 #endif
 
 /**
  * @brief UART1 driver enable switch.
- * @details If set to 1 the support for USART2 is included.
- * @note The default is 1.
+ * @details If set to @p TRUE the support for USART2 is included.
+ * @note The default is @p TRUE.
  */
-#if !defined(USE_LPC214x_UART1) || defined(__DOXYGEN__)
-#define USE_SAM7X_USART1 1
+#if !defined(USE_SAM7X_USART1) || defined(__DOXYGEN__)
+#define USE_SAM7X_USART1 TRUE
 #endif
 
 #ifdef __cplusplus

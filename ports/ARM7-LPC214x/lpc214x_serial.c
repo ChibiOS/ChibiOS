@@ -157,9 +157,6 @@ static void preload(UART *u, FullDuplexDriver *com) {
 #endif
 
 #if USE_LPC214x_UART0 || defined(__DOXYGEN__)
-/**
- * @brief UART0 IRQ service routine.
- */
 CH_IRQ_HANDLER(UART0IrqHandler) {
 
   CH_IRQ_PROLOGUE();
@@ -170,9 +167,6 @@ CH_IRQ_HANDLER(UART0IrqHandler) {
   CH_IRQ_EPILOGUE();
 }
 
-/**
- * @brief Output queue insertion notification from the high driver.
- */
 static void OutNotify1(void) {
 #if LPC214x_UART_FIFO_PRELOAD > 0
 
@@ -191,9 +185,6 @@ static void OutNotify1(void) {
 #endif
 
 #if USE_LPC214x_UART1 || defined(__DOXYGEN__)
-/**
- * @brief UART1 IRQ service routine.
- */
 CH_IRQ_HANDLER(UART1IrqHandler) {
 
   CH_IRQ_PROLOGUE();
@@ -204,9 +195,6 @@ CH_IRQ_HANDLER(UART1IrqHandler) {
   CH_IRQ_EPILOGUE();
 }
 
-/**
- * @brief Output queue insertion notification from the high driver.
- */
 static void OutNotify2(void) {
 #if LPC214x_UART_FIFO_PRELOAD > 0
 

@@ -84,10 +84,6 @@ CH_IRQ_HANDLER(USART0RX_VECTOR) {
   CH_IRQ_EPILOGUE();
 }
 
-/*
- * Invoked by the high driver when one or more bytes are inserted in the
- * output queue.
- */
 static void OutNotify1(void) {
 
   if (!(U0IE & UTXIE0)) {
@@ -163,10 +159,6 @@ CH_IRQ_HANDLER(USART1RX_VECTOR) {
   CH_IRQ_EPILOGUE();
 }
 
-/*
- * Invoked by the high driver when one or more bytes are inserted in the
- * output queue.
- */
 static void OutNotify2(void) {
 
   if (!(U1IE & UTXIE1)) {
