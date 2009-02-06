@@ -102,7 +102,7 @@ static void OutNotify1(void) {
  * @param ctl The value for the @p U0CTL register.
  * @note Does not reset the I/O queues.
  */
-void SetUSART0(uint16_t div, uint8_t mod, uint8_t ctl) {
+void msp430_set_usart0(uint16_t div, uint8_t mod, uint8_t ctl) {
 
   U0CTL = SWRST;                /* Resets the USART, it should already be */
   /* USART init */
@@ -176,7 +176,7 @@ static void OutNotify2(void) {
  * @note Must be invoked with interrupts disabled.
  * @note Does not reset the I/O queues.
  */
-void SetUSART1(uint16_t div, uint8_t mod, uint8_t ctl) {
+void msp430_set_usart1(uint16_t div, uint8_t mod, uint8_t ctl) {
 
   U1CTL = SWRST;                /* Resets the USART, it should already be */
   /* USART init */
@@ -204,12 +204,12 @@ void msp430_serial_init(void) {
   /* I/O queues setup.*/
 #if USE_MSP430_USART0
   chFDDInit(&COM1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
-  SetUSART0(UBR(38400), 0, CHAR);
+  msp430_set_usart0(UBR(38400), 0, CHAR);
 #endif
 
 #if USE_MSP430_USART1
   chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
-  SetUSART1(UBR(38400), 0, CHAR);
+  msp430_set_usart1(UBR(38400), 0, CHAR);
 #endif
 }
 

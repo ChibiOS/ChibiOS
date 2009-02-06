@@ -161,8 +161,8 @@ static void OutNotify3(void) {
  * @note Must be invoked with interrupts disabled.
  * @note Does not reset the I/O queues.
  */
-void SetUSART(USART_TypeDef *u, uint32_t speed, uint16_t cr1,
-              uint16_t cr2, uint16_t cr3) {
+void stm32_set_usart(USART_TypeDef *u, uint32_t speed, uint16_t cr1,
+                     uint16_t cr2, uint16_t cr3) {
 
   /*
    * Baud rate setting.

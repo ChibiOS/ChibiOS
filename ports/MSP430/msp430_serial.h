@@ -65,8 +65,8 @@
 extern "C" {
 #endif
   void msp430_serial_init(void);
-  void SetUSART0(uint16_t div, uint8_t mod, uint8_t ctl);
-  void SetUSART1(uint16_t div, uint8_t mod, uint8_t ctl);
+  void msp430_set_usart0(uint16_t div, uint8_t mod, uint8_t ctl);
+  void msp430_set_usart1(uint16_t div, uint8_t mod, uint8_t ctl);
 #ifdef __cplusplus
 }
 #endif

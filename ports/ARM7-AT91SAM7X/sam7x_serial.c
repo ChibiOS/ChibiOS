@@ -140,11 +140,11 @@ void sam7x_set_usart(AT91PS_USART u, int speed, int mr) {
   u->US_CR = AT91C_US_RSTRX | AT91C_US_RSTTX | AT91C_US_RSTSTA;
 
   /* New parameters setup.*/
-  if (mode & AT91C_US_OVER)
+  if (mr & AT91C_US_OVER)
     u->US_BRGR = MCK / (speed * 8);
   else
     u->US_BRGR = MCK / (speed * 16);
-  u->US_MR = mode;
+  u->US_MR = mr;
   u->US_RTOR = 0;
   u->US_TTGR = 0;
 

@@ -29,6 +29,8 @@
 #ifndef __STM32F10x_MAP_H
 #include "stm32lib/stm32f10x_map.h"
 #endif
+#define FALSE 0
+#define TRUE (!FALSE)
 
 #define BOARD_OLIMEX_STM32_P103
 
