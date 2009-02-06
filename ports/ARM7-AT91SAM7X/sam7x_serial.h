@@ -44,8 +44,8 @@
  * @note It is possible to use @p SetUART() in order to change the working
  *       parameters at runtime.
  */
-#if !defined(SAM7X_UART_BITRATE) || defined(__DOXYGEN__)
-#define SAM7X_UART_BITRATE 38400
+#if !defined(SAM7X_USART_BITRATE) || defined(__DOXYGEN__)
+#define SAM7X_USART_BITRATE 38400
 #endif
 
 /**
@@ -69,7 +69,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void InitSerial(int prio0, int prio1);
+  void sam7x_serial_init(int prio0, int prio1);
   void SetUSART(AT91PS_USART u, int speed, int mode);
   CH_IRQ_HANDLER(UART0IrqHandler);
   CH_IRQ_HANDLER(UART1IrqHandler);

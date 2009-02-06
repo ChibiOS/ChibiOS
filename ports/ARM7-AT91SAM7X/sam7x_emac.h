@@ -17,8 +17,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file ports/ARM7-AT91SAM7X/sam7x_emac.h
+ * @brief AT91SAM7X EMAC driver macros and structures.
+ * @addtogroup AT91SAM7X_EMAC
+ * @{
+ */
+
 #ifndef _SAM7X_EMAC_H_
 #define _SAM7X_EMAC_H_
+
+#define PHY_ADDRESS 1
+
+#define EMAC_RECEIVE_BUFFERS            24
+#define EMAC_RECEIVE_BUFFERS_SIZE       128
+#define EMAC_TRANSMIT_BUFFERS           2
+#define EMAC_TRANSMIT_BUFFERS_SIZE      1518
 
 typedef struct {
   uint32_t      w1;
@@ -62,7 +76,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void InitEMAC(int prio);
+  void sam7x_emac_init(int prio);
   void EMACSetAddress(const uint8_t *eaddr);
   bool_t EMACGetLinkStatus(void);
   BufDescriptorEntry *EMACGetTransmitBuffer(void);
@@ -75,3 +89,5 @@ extern "C" {
 extern EventSource EMACFrameTransmitted, EMACFrameReceived;
 
 #endif /* _SAM7X_EMAC_H_ */
+
+/** @} */

@@ -125,9 +125,13 @@ static void OutNotify2(void) {
 }
 #endif
 
-/*
- * USART setup, must be invoked with interrupts disabled.
- * NOTE: Does not reset I/O queues.
+/**
+ * @brief UART setup.
+ * @param[in] u pointer to an UART I/O block
+ * @param[in] speed serial port speed in bits per second
+ * @param[in] mode mode flags
+ * @note Must be invoked with interrupts disabled.
+ * @note Does not reset the I/O queues.
  */
 void SetUSART(AT91PS_USART u, int speed, int mode) {
 
@@ -150,50 +154,69 @@ void SetUSART(AT91PS_USART u, int speed, int mode) {
               AT91C_US_RXBRK;
 }
 
-/*
- * Serial subsystem initialization.
- * NOTE: Handshake pins are not switched to their function because they may have
- *       another use. Enable them externally if needed.
+/**
+ * @brief Serial driver initialization.
+ * @param[in] prio0 priority to be assigned to the USART1 IRQ
+ * @param[in] prio1 priority to be assigned to the USART2 IRQ
+ * @note Handshake pads are not enabled inside this function because they
+ *       may have another use, enable them externally if needed.
+ *       RX and TX pads are handled inside.
  */
-void InitSerial(int prio0, int prio1) {
+void sam7x_serial_init(int prio0, int prio1) {
 
-  /* I/O queues setup.*/
+#if USE_SAM7X_USART0 || defined(__DOXYGEN__)
+  /* I/O queue setup.*/
   chFDDInit(&COM1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
-  chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
 
   /* Switches the I/O pins to the peripheral function A, disables pullups.*/
-  AT91C_BASE_PIOA->PIO_PDR   = AT91C_PA0_RXD0 | AT91C_PA1_TXD0 |
-                               AT91C_PA5_RXD1 | AT91C_PA6_TXD1;
-  AT91C_BASE_PIOA->PIO_ASR   = AT91C_PIO_PA0 | AT91C_PIO_PA1 |
-                               AT91C_PIO_PA5 | AT91C_PIO_PA6;
-  AT91C_BASE_PIOA->PIO_PPUDR = AT91C_PIO_PA0 | AT91C_PIO_PA1 |
-                               AT91C_PIO_PA5 | AT91C_PIO_PA6;
+  AT91C_BASE_PIOA->PIO_PDR   = AT91C_PA0_RXD0 | AT91C_PA1_TXD0;
+  AT91C_BASE_PIOA->PIO_ASR   = AT91C_PIO_PA0 | AT91C_PIO_PA1;
+  AT91C_BASE_PIOA->PIO_PPUDR = AT91C_PIO_PA0 | AT91C_PIO_PA1;
 
   /* Starts the clock and clears possible sources of immediate interrupts.*/
-  AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_US0) | (1 << AT91C_ID_US1);
+  AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_US0);
   AT91C_BASE_US0->US_CR = AT91C_US_RSTRX | AT91C_US_RSTTX | AT91C_US_RSTSTA;
-  AT91C_BASE_US1->US_CR = AT91C_US_RSTRX | AT91C_US_RSTTX | AT91C_US_RSTSTA;
 
   /* Interrupts setup.*/
   AIC_ConfigureIT(AT91C_ID_US0,
                   AT91C_AIC_SRCTYPE_HIGH_LEVEL | prio0,
                   USART0IrqHandler);
   AIC_EnableIT(AT91C_ID_US0);
+
+  /* Default parameters.*/
+  SetUSART(AT91C_BASE_US0, SAM7X_USART_BITRATE, AT91C_US_USMODE_NORMAL |
+                                                AT91C_US_CLKS_CLOCK |
+                                                AT91C_US_CHRL_8_BITS |
+                                                AT91C_US_PAR_NONE |
+                                                AT91C_US_NBSTOP_1_BIT);
+#endif
+
+#if USE_SAM7X_USART1 || defined(__DOXYGEN__)
+  /* I/O queues setup.*/
+  chFDDInit(&COM2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
+
+  /* Switches the I/O pins to the peripheral function A, disables pullups.*/
+  AT91C_BASE_PIOA->PIO_PDR   = AT91C_PA5_RXD1 | AT91C_PA6_TXD1;
+  AT91C_BASE_PIOA->PIO_ASR   = AT91C_PIO_PA5 | AT91C_PIO_PA6;
+  AT91C_BASE_PIOA->PIO_PPUDR = AT91C_PIO_PA5 | AT91C_PIO_PA6;
+
+  /* Starts the clock and clears possible sources of immediate interrupts.*/
+  AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_US1);
+  AT91C_BASE_US1->US_CR = AT91C_US_RSTRX | AT91C_US_RSTTX | AT91C_US_RSTSTA;
+
+  /* Interrupts setup.*/
   AIC_ConfigureIT(AT91C_ID_US1,
                   AT91C_AIC_SRCTYPE_HIGH_LEVEL | prio1,
                   USART1IrqHandler);
   AIC_EnableIT(AT91C_ID_US1);
 
-  SetUSART(AT91C_BASE_US0, 38400, AT91C_US_USMODE_NORMAL |
-                                  AT91C_US_CLKS_CLOCK |
-                                  AT91C_US_CHRL_8_BITS |
-                                  AT91C_US_PAR_NONE |
-                                  AT91C_US_NBSTOP_1_BIT);
-  SetUSART(AT91C_BASE_US1, 38400, AT91C_US_USMODE_NORMAL |
-                                  AT91C_US_CLKS_CLOCK |
-                                  AT91C_US_CHRL_8_BITS |
-                                  AT91C_US_PAR_NONE |
-                                  AT91C_US_NBSTOP_1_BIT);
+  /* Default parameters.*/
+  SetUSART(AT91C_BASE_US1, SAM7X_USART_BITRATE, AT91C_US_USMODE_NORMAL |
+                                                AT91C_US_CLKS_CLOCK |
+                                                AT91C_US_CHRL_8_BITS |
+                                                AT91C_US_PAR_NONE |
+                                                AT91C_US_NBSTOP_1_BIT);
+#endif
 }
 
 /** @} */

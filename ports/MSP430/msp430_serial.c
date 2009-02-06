@@ -173,6 +173,7 @@ static void OutNotify2(void) {
  * @param[in] div the divider value as calculated by the @p UBR() macro
  * @param[in] mod the value for the @p U1MCTL register
  * @param[in] ctl the value for the @p U1CTL register.
+ * @note Must be invoked with interrupts disabled.
  * @note Does not reset the I/O queues.
  */
 void SetUSART1(uint16_t div, uint8_t mod, uint8_t ctl) {

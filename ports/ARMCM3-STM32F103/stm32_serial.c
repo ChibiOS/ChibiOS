@@ -158,6 +158,7 @@ static void OutNotify3(void) {
  * @param[in] cr1 the value for the @p CR1 register
  * @param[in] cr2 the value for the @p CR2 register
  * @param[in] cr3 the value for the @p CR3 register
+ * @note Must be invoked with interrupts disabled.
  * @note Does not reset the I/O queues.
  */
 void SetUSART(USART_TypeDef *u, uint32_t speed, uint16_t cr1,

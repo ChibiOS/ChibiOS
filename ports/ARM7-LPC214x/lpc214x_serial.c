@@ -216,6 +216,7 @@ static void OutNotify2(void) {
  * @param[in] lcr the value for the @p LCR register
  * @param[in] fcr the value for the @p FCR register
  * @note Must be invoked with interrupts disabled.
+ * @note Does not reset the I/O queues.
  */
 void SetUART(UART *u, int speed, int lcr, int fcr) {
 

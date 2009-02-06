@@ -21,3 +21,12 @@
  * @ingroup AT91SAM7X
  */
 /** @} */
+
+/**
+ * @defgroup AT91SAM7X_EMAC EMAC Support
+ * @{
+ * @brief EMAC peripheral support.
+ *
+ * @ingroup AT91SAM7X
+ */
+/** @} */

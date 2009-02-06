@@ -17,6 +17,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file ports/ARM7-AT91SAM7X/sam7x_emac.c
+ * @brief AT91SAM7X EMAC driver code.
+ * @addtogroup AT91SAM7X_EMAC
+ * @{
+ */
+
 #include <string.h>
 
 #include <ch.h>
@@ -26,13 +33,10 @@
 #include "mii.h"
 #include "at91lib/aic.h"
 
-#define EMAC_RECEIVE_BUFFERS            24
-#define EMAC_RECEIVE_BUFFERS_SIZE       128
-#define EMAC_TRANSMIT_BUFFERS           2
-#define EMAC_TRANSMIT_BUFFERS_SIZE      1518
-
 EventSource EMACFrameTransmitted;       /* A frame was transmitted.     */
 EventSource EMACFrameReceived;          /* A frame was received.        */
+
+#ifndef __DOXYGEN__
 //static int received;                    /* Buffered frames counter.     */
 static bool_t link_up;                  /* Last from EMACGetLinkStatus()*/
 
@@ -45,8 +49,8 @@ static BufDescriptorEntry *rxptr;
 static BufDescriptorEntry tent[EMAC_TRANSMIT_BUFFERS] __attribute__((aligned(8)));
 static uint8_t tbuffers[EMAC_TRANSMIT_BUFFERS * EMAC_TRANSMIT_BUFFERS_SIZE] __attribute__((aligned(8)));
 static BufDescriptorEntry *txptr;
+#endif
 
-#define PHY_ADDRESS 1
 #define AT91C_PB15_ERXDV AT91C_PB15_ERXDV_ECRSDV
 #define EMAC_PIN_MASK (AT91C_PB0_ETXCK_EREFCK | \
                        AT91C_PB1_ETXEN  | AT91C_PB2_ETX0   | \
@@ -136,7 +140,7 @@ CH_IRQ_HANDLER(EMACIrqHandler) {
 /*
  * EMAC subsystem initialization.
  */
-void InitEMAC(int prio) {
+void sam7x_emac_init(int prio) {
   int i;
 
   /*
@@ -408,3 +412,5 @@ restart:
   *sizep = size;
   return found && !overflow;
 }
+
+/** @} */
