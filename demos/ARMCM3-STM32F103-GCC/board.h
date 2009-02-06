@@ -20,11 +20,17 @@
 #ifndef _BOARD_H_
 #define _BOARD_H_
 
+/*
+ * Tricks required to make the TRUE/FALSE declaration inside the library
+ * compatible.
+ */
 #undef FALSE
 #undef TRUE
 #ifndef __STM32F10x_MAP_H
 #include "stm32lib/stm32f10x_map.h"
 #endif
+#define FALSE FALSE
+#define TRUE TRUE
 
 #define BOARD_OLIMEX_STM32_P103
 
