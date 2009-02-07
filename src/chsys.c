@@ -43,6 +43,7 @@ static void idle_thread(void *p) {
 
   while (TRUE) {
     port_wait_for_interrupt();
+    IDLE_LOOP_HOOK();
   }
 }
 
