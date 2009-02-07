@@ -64,7 +64,7 @@ typedef struct {
 #if CH_USE_ROUNDROBIN
   cnt_t                 r_preempt;      /**< Round robin counter.*/
 #endif
-#if !CH_CURRP_REGISTER_CACHE
+#ifndef CH_CURRP_REGISTER_CACHE
   Thread                *r_current;     /**< The currently running thread.*/
 #endif
 } ReadyList;
@@ -89,7 +89,7 @@ extern "C" {
 }
 #endif
 
-#if CH_CURRP_REGISTER_CACHE
+#ifdef CH_CURRP_REGISTER_CACHE
 register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
 #else
 #define currp rlist.r_current

@@ -18,6 +18,8 @@
 */
 
 /**
+ * @file src/templates/chconf.h
+ * @brief Configuration file template.
  * @addtogroup Config
  * @{
  */
@@ -25,171 +27,345 @@
 #ifndef _CHCONF_H_
 #define _CHCONF_H_
 
-/** Configuration option: if specified then time efficient rather than space
- *  efficient code is used when two possible implementations exist, note
- *  that this is not related to the compiler optimization options.*/
-#define CH_OPTIMIZE_SPEED
-
-/** Configuration option: if specified then the kernel performs the round
- *  robin scheduling algorithm on threads of equal priority. */
-#define CH_USE_ROUNDROBIN
-
-/** Configuration option: if specified then the \p chThdWait() function
- *  is included in the kernel.*/
-#define CH_USE_WAITEXIT
-
-/** Configuration option: if specified then the Semaphores APIs are included
- *  in the kernel.*/
-#define CH_USE_SEMAPHORES
-
-/** Configuration option: If enabled then the threads are enqueued on semaphores
- *  by priority rather than FIFO order.
- *  @note requires @p CH_USE_SEMAPHORES.*/
-//#define CH_USE_SEMAPHORES_PRIORITY
-
-/** Configuration option: if specified then the Semaphores atomic Signal+Wait
- *  APIs are included in the kernel.*/
-#define CH_USE_SEMSW
-
-/** Configuration option: if specified then the Semaphores with timeout APIs
- *  are included in the kernel.
- * @note requires \p CH_USE_SEMAPHORES.*/
-#define CH_USE_SEMAPHORES_TIMEOUT
-
-/** Configuration option: if specified then the Mutexes APIs are included in
- * the kernel.*/
-#define CH_USE_MUTEXES
-
-/** Configuration option: if specified then the Conditional Variables APIs are
- *  included in the kernel.
- * @note requires \p CH_USE_MUTEXES.*/
-#define CH_USE_CONDVARS
-
-/** Configuration option: if specified then the Conditional Variables APIs are
- *  included in the kernel.
- * @note requires \p CH_USE_CONDVARS and \p CH_USE_MUTEXES.*/
-#define CH_USE_CONDVARS_TIMEOUT
-
-/** Configuration option: if specified then the Events APIs are included in
- *  the kernel.*/
-#define CH_USE_EVENTS
-
-/** Configuration option: if specified then the \p chEvtWaitXXXTimeout()
- * functions are included in the kernel.
- * @note requires \p CH_USE_EVENTS.
+/**
+ * If specified then time efficient rather than space efficient code is used
+ * when two possible implementations exist.
+ * @note This is not related to the compiler optimization options.
+ * @note The default is @p TRUE.
  */
-#define CH_USE_EVENTS_TIMEOUT
+#ifndef CH_OPTIMIZE_SPEED
+#define CH_OPTIMIZE_SPEED               TRUE
+#endif
 
-/** Configuration option: if specified then the Synchronous Messages APIs are
- *  included in the kernel.*/
-#define CH_USE_MESSAGES
+/**
+ * If enabled then the use of nested @p chSysLock() / @p chSysUnlock()
+ * operations is allowed.<br>
+ * For performance and code size reasons the recommended setting is to leave
+ * this option disabled.<br>
+ * You can use this option if you need to merge ChibiOS/RT with external
+ * libraries that require nested lock/unlock operations.
+ * @note The default is @p FALSE.
+ */
+#ifndef CH_USE_NESTED_LOCKS
+#define CH_USE_NESTED_LOCKS             FALSE
+#endif
 
-/** Configuration option: if specified then the \p chMsgSendWithEvent()
- *  function is included in the kernel.
- * @note requires \p CH_USE_MESSAGES.*/
-#define CH_USE_MESSAGES_EVENT
+/**
+ * If specified then the kernel performs the round robin scheduling algorithm
+ * on threads of equal priority.
+ * @note The default is @p TRUE.
+ */
+#ifndef CH_USE_ROUNDROBIN
+#define CH_USE_ROUNDROBIN               TRUE
+#endif
 
-/** Configuration option: If enabled then the threads serve messages by
- *  priority instead of FIFO order.
- * @note requires \p CH_USE_MESSAGES.*/
-//#define CH_USE_MESSAGES_PRIORITY
+/**
+ * If specified then the @p chThdWait() function is included in the kernel.
+ * @note The default is @p TRUE.
+ */
+#ifndef CH_USE_WAITEXIT
+#define CH_USE_WAITEXIT                 TRUE
+#endif
 
-/** Configuration option: if specified then the I/O queues APIs are included
- *  in the kernel.*/
-#define CH_USE_QUEUES
+/**
+ * If specified then the Semaphores APIs are included in the kernel.
+ * @note The default is @p TRUE.
+ */
+#ifndef CH_USE_SEMAPHORES
+#define CH_USE_SEMAPHORES               TRUE
+#endif
 
-/** Configuration option: if specified then the halfduplex queue APIs are
- *  included in the kernel.*/
-#define CH_USE_QUEUES_HALFDUPLEX
+/**
+ * If enabled then the threads are enqueued on semaphores by priority rather
+ * than FIFO order.
+ * @note The default is @p FALSE. Enable this if you have special requirements.
+ * @note Requires @p CH_USE_SEMAPHORES.
+ */
+#ifndef CH_USE_SEMAPHORES_PRIORITY
+#define CH_USE_SEMAPHORES_PRIORITY      FALSE
+#endif
 
-/** Configuration option: if specified then the I/O queues with timeout
- *  APIs are included in the kernel.
- * @note requires \p CH_USE_SEMAPHORES_TIMEOUT.*/
-#define CH_USE_QUEUES_TIMEOUT
+/**
+ * If specified then the Semaphores the @p chSemWaitSignal() API is included
+ * in the kernel.
+ * @note The default is @p TRUE.
+ * @note Requires @p CH_USE_SEMAPHORES.
+ */
+#ifndef CH_USE_SEMSW
+#define CH_USE_SEMSW                    TRUE
+#endif
 
-/** Configuration option: if specified then the full duplex serial driver APIs
- *  are included in the kernel.*/
-#define CH_USE_SERIAL_FULLDUPLEX
+/**
+ * If specified then the Semaphores with timeout APIs are included in the
+ * kernel.
+ * @note The default is @p TRUE.
+ * @note Requires @p CH_USE_SEMAPHORES.
+ */
+#ifndef CH_USE_SEMAPHORES_TIMEOUT
+#define CH_USE_SEMAPHORES_TIMEOUT       TRUE
+#endif
 
-/** Configuration option: if specified then the half duplex serial driver APIs
- *  are included in the kernel.*/
-#define CH_USE_SERIAL_HALFDUPLEX
+/**
+ * If specified then the Mutexes APIs are included in the kernel.
+ * @note The default is @p TRUE.
+ */
+#ifndef CH_USE_MUTEXES
+#define CH_USE_MUTEXES                  TRUE
+#endif
 
-/** Configuration option: if specified then the memory heap allocator APIs
- *  are included in the kernel.*/
-#define CH_USE_HEAP
+/**
+ * If specified then the Conditional Variables APIs are included in the kernel.
+ * @note The default is @p TRUE.
+ * @note Requires @p CH_USE_MUTEXES.
+ */
+#ifndef CH_USE_CONDVARS
+#define CH_USE_CONDVARS                 TRUE
+#endif
 
-/** Configuration option: Number of RAM bytes to use as system heap. If set to
- *  zero then the whole available RAM is used as system heap.
+/**
+ * If specified then the Conditional Variables APIs are included in the kernel.
+ * @note The default is @p TRUE.
+ * @note Requires @p CH_USE_CONDVARS.
+ */
+#ifndef CH_USE_CONDVARS_TIMEOUT
+#define CH_USE_CONDVARS_TIMEOUT         TRUE
+#endif
+
+/**
+ * If specified then the Event flags APIs are included in the kernel.
+ * @note The default is @p TRUE.
+ */
+#ifndef CH_USE_EVENTS
+#define CH_USE_EVENTS                   TRUE
+#endif
+
+/**
+ * If specified then the @p chEvtWaitXXXTimeout() functions are included in
+ * the kernel.
+ * @note The default is @p TRUE.
+ * @note Requires @p CH_USE_EVENTS.
+ */
+#ifndef CH_USE_EVENTS_TIMEOUT
+#define CH_USE_EVENTS_TIMEOUT           TRUE
+#endif
+
+/**
+ * If specified then the Synchronous Messages APIs are included in the kernel.
+ * @note The default is @p TRUE.
+ */
+#ifndef CH_USE_MESSAGES
+#define CH_USE_MESSAGES                 TRUE
+#endif
+
+/**
+ * If specified then the @p chMsgSendWithEvent() function is included in the
+ * kernel.
+ * @note The default is @p TRUE.
+ * @note Requires @p CH_USE_MESSAGES and @p CH_USE_EVENTS.
+ */
+#ifndef CH_USE_MESSAGES_EVENT
+#define CH_USE_MESSAGES_EVENT           TRUE
+#endif
+
+/**
+ * If enabled then messages are served by priority rather than in FIFO order.
+ * @note The default is @p FALSE. Enable this if you have special requirements.
+ * @note Requires @p CH_USE_MESSAGES.
+ */
+#ifndef CH_USE_MESSAGES_PRIORITY
+#define CH_USE_MESSAGES_PRIORITY        FALSE
+#endif
+
+/**
+ * If specified then the I/O queues APIs are included in the kernel.
+ * @note The default is @p TRUE.
+ * @note Requires @p CH_USE_SEMAPHORES.
+ */
+#ifndef CH_USE_QUEUES
+#define CH_USE_QUEUES                   TRUE
+#endif
+
+/**
+ * If specified then the half duplex queues APIs are included in the kernel.
+ * @note The default is @p TRUE.
+ * @note Requires @p CH_USE_SEMAPHORES.
+ */
+#ifndef CH_USE_QUEUES_HALFDUPLEX
+#define CH_USE_QUEUES_HALFDUPLEX        TRUE
+#endif
+
+/**
+ * If specified then the I/O queues with timeout APIs are included in the
+ * kernel.
+ * @note The default is @p TRUE.
+ * @note Requires @p CH_USE_QUEUES and @p CH_USE_SEMAPHORES_TIMEOUT.
+ */
+#ifndef CH_USE_QUEUES_TIMEOUT
+#define CH_USE_QUEUES_TIMEOUT           TRUE
+#endif
+
+/**
+ * If specified then the full duplex serial driver APIs are included in the
+ * kernel.
+ * @note The default is @p TRUE.
+ * @note Requires @p CH_USE_QUEUES.
+ */
+#ifndef CH_USE_SERIAL_FULLDUPLEX
+#define CH_USE_SERIAL_FULLDUPLEX        TRUE
+#endif
+
+/**
+ * If specified then the half duplex serial driver APIs are included in the
+ * kernel.
+ * @note The default is @p TRUE.
+ * @note Requires @p CH_USE_QUEUES_HALFDUPLEX.
+ */
+#ifndef CH_USE_SERIAL_HALFDUPLEX
+#define CH_USE_SERIAL_HALFDUPLEX        TRUE
+#endif
+
+/**
+ * If specified then the memory heap allocator APIs are included in the kernel.
+ * @note The default is @p TRUE.
+ * @note Requires @p CH_USE_MUTEXES or @p CH_USE_SEMAPHORES.
+ * @note Mutexes are recommended.
+ */
+#ifndef CH_USE_HEAP
+#define CH_USE_HEAP                     TRUE
+#endif
+
+/**
+ * Number of RAM bytes to use as system heap. If set to zero then the whole
+ * available RAM is used as system heap.
  * @note In order to use the whole RAM as system heap the linker script must
- *       provide the \p __heap_base__ and \p __heap_end__ symbols.
- * @note requires \p CH_USE_HEAP.
+ *       provide the @p __heap_base__ and @p __heap_end__ symbols.
+ * @note Requires @p CH_USE_HEAP.
  */
-#define CH_HEAP_SIZE 0
+#ifndef CH_HEAP_SIZE
+#define CH_HEAP_SIZE                    512
+#endif
 
-/** Configuration option: enforces the use of the C-runtime \p malloc() and
- *  \p free() functions as backend for the system heap allocator.*/
-#define CH_USE_MALLOC_HEAP
-
-/** Configuration option: if specified then the memory pools allocator APIs
- *  are included in the kernel.*/
-#define CH_USE_MEMPOOLS
-
-/** Configuration option: if specified then the dynamic objects creation APIs
- *  are included in the kernel.
- * @note requires \p CH_USE_WAITEXIT.
+/**
+ * If enabled enforces the use of the C-runtime @p malloc() and @p free()
+ * functions as backend for the system heap allocator.
+ * @note The default is @p FALSE.
+ * @note Requires @p CH_USE_HEAP.
  */
-#define CH_USE_DYNAMIC
+#ifndef CH_USE_MALLOC_HEAP
+#define CH_USE_MALLOC_HEAP              FALSE
+#endif
 
-/** Configuration option: Frequency of the system timer that drives the system
- *  ticks. This also defines the system time unit.*/
-#define CH_FREQUENCY 1000
-
-/** Configuration option: This constant is the number of ticks allowed for the
- *  threads before preemption occurs. This option is only meaningful if the
- *  option \p CH_USE_ROUNDROBIN is also active.*/
-#define CH_TIME_QUANTUM 20
-
-/** Configuration option: Defines a CPU register to be used as storage for the
- *  global \p currp variable. Caching this variable in a register can greatly
- *  improve both space and time efficiency of the generated code. Another side
- *  effect is that one less register has to be saved during the context switch
- *  resulting in lower RAM usage and faster code.
- *  @note This option is only useable with the GCC compiler and is only useful
- *        on processors with many registers like ARM cores.
- *  @note If this option is enabled then ALL the libraries linked to the
- *        ChibiOS/RT code <b>must</b> be recompiled with the GCC option \p
- *        -ffixed-<reg>.
+/**
+ * If specified then the memory pools allocator APIs are included in the
+ * kernel.
+ * @note The default is @p TRUE.
  */
-//#define CH_CURRP_REGISTER_CACHE "r8"
+#ifndef CH_USE_MEMPOOLS
+#define CH_USE_MEMPOOLS                 TRUE
+#endif
 
-/** Configuration option: Includes basic debug support to the kernel.
- *  @note the debug support is port-dependent, it may be not present on some
+/**
+ * If specified then the dynamic threads creation APIs are included in the
+ * kernel.
+ * @note The default is @p TRUE.
+ * @note Requires @p CH_USE_WAITEXIT.
+ */
+#ifndef CH_USE_DYNAMIC
+#define CH_USE_DYNAMIC                  TRUE
+#endif
+
+/**
+ * Frequency of the system timer that drives the system ticks. This also
+ * defines the system tick time unit.
+ */
+#ifndef CH_FREQUENCY
+#define CH_FREQUENCY                    1000
+#endif
+
+/**
+ * This constant is the number of system ticks allowed for the threads before
+ * preemption occurs. This option is only meaningful if the option
+ * @p CH_USE_ROUNDROBIN is also active.
+ */
+#ifndef CH_TIME_QUANTUM
+#define CH_TIME_QUANTUM                 20
+#endif
+
+/**
+ * If enabled defines a CPU register to be used as storage for the global
+ * @p currp variable. Caching this variable in a register can greatly
+ * improve both space and time efficiency of the generated code. Another side
+ * effect is that one less register has to be saved during the context switch
+ * resulting in lower RAM usage and faster code.
+ * @note This option is only usable with the GCC compiler and is only useful
+ *       on processors with many registers like ARM cores.
+ * @note If this option is enabled then ALL the libraries linked to the
+ *       ChibiOS/RT code <b>must</b> be recompiled with the GCC option @p
+ *       -ffixed-@<reg@>.
+ * @note This option must be enabled in the Makefile, it is listed here for
+ *       documentation.
+ */
+#if defined(__DOXYGEN__)
+#define CH_CURRP_REGISTER_CACHE         "reg"
+#endif
+
+/**
+ * Debug option, if enableed includes basic debug support to the kernel.
+ * @note The debug support is port-dependent, it may be not present on some
  *       targets. In that case stub functions will be included.
+ * @note The default is @p FALSE.
  */
-//#define CH_USE_DEBUG
+#ifndef CH_USE_DEBUG
+#define CH_USE_DEBUG                    FALSE
+#endif
 
-/** Debug option: Includes the threads context switch tracing feature.
+/**
+ * Debug option, includes the threads context switch tracing feature.
+ * @note The default is @p FALSE.
  */
-//#define CH_USE_TRACE
+#ifndef CH_USE_TRACE
+#define CH_USE_TRACE                    FALSE
+#endif
 
-/** User fields added to the end of the \p Thread structure. */
+/**
+ * User fields added to the end of the @p Thread structure.
+ */
+#ifndef THREAD_EXT_FIELDS
 #define THREAD_EXT_FIELDS                                               \
 struct {                                                                \
   /* Add thread custom fields here.*/                                   \
 };
+#endif
 
-/** User initialization code added to the \p chThdCreate() API.
- *  @note It is invoked from within \p chThdInit(). */
+/**
+ * User initialization code added to the @p chThdInit() API.
+ * @note It is invoked from within @p chThdInit().
+ */
+#ifndef THREAD_EXT_INIT
 #define THREAD_EXT_INIT(tp) {                                           \
   /* Add thread initialization code here.*/                             \
 }
+#endif
 
-/** User finalization code added to the \p chThdExit() API.
- *  @note It is inserted into lock zone. */
+/**
+ * User finalization code added to the @p chThdExit() API.
+ * @note It is inserted into lock zone.
+ */
+#ifndef THREAD_EXT_EXIT
 #define THREAD_EXT_EXIT(tp) {                                           \
   /* Add thread finalization code here.*/                               \
 }
+#endif
+
+/**
+ * Code inserted inside the idle thread loop immediately after an interrupt
+ * resumed execution.
+ */
+#ifndef IDLE_LOOP_HOOK
+#define IDLE_LOOP_HOOK() {                                              \
+  /* Idle loop code here.*/                                             \
+}
+#endif
 
 #endif  /* _CHCONF_H_ */
 

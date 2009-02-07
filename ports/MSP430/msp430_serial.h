@@ -33,7 +33,7 @@
  * buffers depending on the requirements of your application.
  * @note The default is 32 bytes for both the transmission and receive buffers.
  */
-#ifndef SERIAL_BUFFERS_SIZE
+#if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
 #define SERIAL_BUFFERS_SIZE 32
 #endif
 

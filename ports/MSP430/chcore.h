@@ -204,7 +204,7 @@ struct context {
 
 /**
  * This port function is implemented as inlined code for performance reasons.
- * @note The port code does not define a low poer mode, this macro has to be
+ * @note The port code does not define a low power mode, this macro has to be
  *       defined externally. The default implementation is a "nop", not a
  *       real low power mode.
  */

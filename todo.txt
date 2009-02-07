@@ -2,7 +2,8 @@ After 1.0.0:
 - Update C++ wrapper (Heap, Pools).
 * Priority ordering option for semaphores.
 * chSysLock() and chSysUnlock() with counter (option).
-X OSEK-style chSysSuspendAll()/chSysResumeAll()/chSysEnable()/chSysDisable().
+* OSEK-style chSysSuspendAll()/chSysResumeAll()/chSysEnable()/chSysDisable(),
+  implemented this as the new Suspended and Disabled states in 1.1.
 - OSEK-style simple tasks within the idle thread.
 - Think to something for threads restart.
 X lwIP TCP/IP stack integration.
@@ -11,7 +12,7 @@ X lwIP TCP/IP stack integration.
 - Multiple debug levels.
 - Stack guard pages.
 * Idle loop hook macro.
-X Switch the configuration options to TRUE/FALSE rather than def/undef.
+* Switch the configuration options to TRUE/FALSE rather than def/undef.
 
 Ideas for 2.x.x:
 - Reference counter for threads, concept of detached threads, threads
