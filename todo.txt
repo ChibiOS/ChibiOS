@@ -1,0 +1,35 @@
+After 1.0.0:
+- Update C++ wrapper (Heap, Pools).
+* Priority ordering option for semaphores.
+* chSysLock() and chSysUnlock() with counter (option).
+X OSEK-style chSysSuspendAll()/chSysResumeAll()/chSysEnable()/chSysDisable().
+- OSEK-style simple tasks within the idle thread.
+- Think to something for threads restart.
+- lwIP TCP/IP stack integration.
+- Minimal optional C-runtime library (complete enough for lwIP).
+- Multiple heaps, disjoint heaps, heaps in heaps.
+- Multiple debug levels.
+- Stack guard pages.
+* Idle loop hook macro.
+- Switch the configuration options to TRUE/FALSE rather than def/undef.
+
+Ideas for 2.x.x:
+- Reference counter for threads, concept of detached threads, threads
+  management.
+- Think to the high resolution timers and tickless kernel.
+- Multicore support.
+
+Side projects:
+- ChibiOS Wizard.
+- OSEK layer.
+- Posix layer.
+- File System
+
+Lower priority:
+- More demos
+- More ARM ports
+- PIC24 port
+- Microblaze port
+- PowerPC port
+- Coldfire port
+- H8 port
