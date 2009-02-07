@@ -27,7 +27,7 @@
 #ifndef _MUTEXES_H_
 #define _MUTEXES_H_
 
-#ifdef CH_USE_MUTEXES
+#if CH_USE_MUTEXES
 
 /**
  * @brief Mutex structure.

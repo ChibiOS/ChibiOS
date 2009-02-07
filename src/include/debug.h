@@ -27,16 +27,21 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 
-#ifdef CH_USE_DEBUG
+#if CH_USE_DEBUG
 
+/**
+ * @brief Trace buffer entries.
+ */
 #ifndef TRACE_BUFFER_SIZE
 #define TRACE_BUFFER_SIZE 64
 #endif
 
 /**
- * Fill value for threads working area in debug mode.
+ * @brief Fill value for threads working area in debug mode.
  */
+#ifndef MEM_FILL_PATTERN
 #define MEM_FILL_PATTERN 0x55
+#endif
 
 /**
  * @brief Trace buffer record.
@@ -91,7 +96,7 @@ extern "C" {
 
 #endif /* CH_USE_DEBUG */
 
-#ifdef CH_USE_TRACE
+#if CH_USE_TRACE
 #ifdef __cplusplus
 extern "C" {
 #endif

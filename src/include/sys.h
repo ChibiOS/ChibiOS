@@ -96,16 +96,16 @@
  *       a better idea to use the semaphores or mutexes instead.
  * @see CH_USE_NESTED_LOCKS
  */
-#if defined(CH_USE_NESTED_LOCKS) || defined(__DOXYGEN__)
-#if defined(CH_OPTIMIZE_SPEED) || defined(__DOXYGEN__)
+#if CH_USE_NESTED_LOCKS || defined(__DOXYGEN__)
+#if CH_OPTIMIZE_SPEED || defined(__DOXYGEN__)
 #define chSysLock() {                                                   \
   if (currp->p_locks++ == 0)                                            \
-    port_lock();                                                         \
+    port_lock();                                                        \
 }
-#endif /* defined(CH_OPTIMIZE_SPEED) */
-#else /* !defined(CH_USE_NESTED_LOCKS) */
+#endif /* CH_OPTIMIZE_SPEED */
+#else /* !CH_USE_NESTED_LOCKS */
 #define chSysLock() port_lock()
-#endif /* !defined(CH_USE_NESTED_LOCKS) */
+#endif /* !CH_USE_NESTED_LOCKS */
 
 /**
  * @brief Leaves the kernel lock mode.
@@ -114,16 +114,16 @@
  *       a better idea to use the semaphores or mutexes instead.
  * @see CH_USE_NESTED_LOCKS
  */
-#if defined(CH_USE_NESTED_LOCKS) || defined(__DOXYGEN__)
-#if defined(CH_OPTIMIZE_SPEED) || defined(__DOXYGEN__)
+#if CH_USE_NESTED_LOCKS || defined(__DOXYGEN__)
+#if CH_OPTIMIZE_SPEED || defined(__DOXYGEN__)
 #define chSysUnlock() {                                                 \
   if (--currp->p_locks == 0)                                            \
-    port_unlock();                                                       \
+    port_unlock();                                                      \
 }
-#endif /* defined(CH_OPTIMIZE_SPEED) */
-#else /* !defined(CH_USE_NESTED_LOCKS) */
+#endif /* CH_OPTIMIZE_SPEED */
+#else /* !CH_USE_NESTED_LOCKS */
 #define chSysUnlock() port_unlock()
-#endif /* !defined(CH_USE_NESTED_LOCKS) */
+#endif /* !CH_USE_NESTED_LOCKS */
 
 /**
  * @brief Enters the kernel lock mode from within an interrupt handler.

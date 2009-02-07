@@ -26,7 +26,7 @@
 
 #include <ch.h>
 
-#ifdef CH_USE_MUTEXES
+#if CH_USE_MUTEXES
 
 /**
  * @brief Initializes s @p Mutex structure.
@@ -88,7 +88,7 @@ void chMtxLockS(Mutex *mp) {
         /* boost the owner of this mutex if needed */
         tp = tp->p_wtmtxp->m_owner;
         continue;
-#ifdef CH_USE_MESSAGES_PRIORITY
+#if CH_USE_MESSAGES_PRIORITY
       case PRSNDMSG:
         /* requeue tp with its new priority on (?) */
         prio_insert(dequeue(tp), &tp->p_wtthdp->p_msgqueue);

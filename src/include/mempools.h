@@ -27,7 +27,7 @@
 #ifndef _MEMPOOLS_H_
 #define _MEMPOOLS_H_
 
-#ifdef CH_USE_MEMPOOLS
+#if CH_USE_MEMPOOLS
 
 /**
  * @brief Memory pool free object header.

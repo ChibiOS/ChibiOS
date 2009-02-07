@@ -30,7 +30,7 @@
 
 #include <ch.h>
 
-#if defined(CH_USE_CONDVARS) && defined(CH_USE_MUTEXES)
+#if CH_USE_CONDVARS && CH_USE_MUTEXES
 
 /**
  * @brief Initializes s @p CondVar structure.
@@ -150,7 +150,7 @@ msg_t chCondWaitS(CondVar *cp) {
   return msg;                           /* returns the wakeup message */
 }
 
-#ifdef CH_USE_CONDVARS_TIMEOUT
+#if CH_USE_CONDVARS_TIMEOUT
 /**
  * @brief Waits on the condition variable releasing the mutex lock.
  * @details Releases the mutex, waits on the condition variable, and finally
@@ -208,6 +208,6 @@ msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time) {
 }
 #endif /* CH_USE_CONDVARS_TIMEOUT */
 
-#endif /* defined(CH_USE_CONDVARS) && defined(CH_USE_MUTEXES) */
+#endif /* CH_USE_CONDVARS && CH_USE_MUTEXES */
 
 /** @} */

@@ -63,7 +63,7 @@ typedef struct {
  */
 #define list_init(tlp)  ((tlp)->p_next = (Thread *)(tlp))
 
-#ifndef CH_OPTIMIZE_SPEED
+#if !CH_OPTIMIZE_SPEED
 
 #ifdef __cplusplus
 extern "C" {
@@ -79,7 +79,7 @@ extern "C" {
 }
 #endif
 
-#endif /* CH_OPTIMIZE_SPEED */
+#endif /* !CH_OPTIMIZE_SPEED */
 
 #endif  /* _LISTS_H_ */
 

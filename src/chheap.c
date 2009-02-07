@@ -26,9 +26,9 @@
 
 #include <ch.h>
 
-#ifdef CH_USE_HEAP
+#if CH_USE_HEAP
 
-#ifndef CH_USE_MALLOC_HEAP
+#if !CH_USE_MALLOC_HEAP
 
 #define MAGIC 0xF5A0
 #define ALIGN_TYPE      void *
@@ -45,11 +45,11 @@ struct header {
 
 static struct {
   struct header         free;   /* Guaranteed to be not adjacent to the heap */
-#if defined(CH_USE_MUTEXES)
+#if CH_USE_MUTEXES
 #define H_LOCK()        chMtxLock(&heap.hmtx)
 #define H_UNLOCK()      chMtxUnlock()
   Mutex                 hmtx;
-#elif defined(CH_USE_SEMAPHORES)
+#elif CH_USE_SEMAPHORES
 #define H_LOCK()        chSemWait(&heap.hsem)
 #define H_UNLOCK()      chSemSignal(&heap.hsem)
   Semaphore             hsem;
@@ -86,7 +86,7 @@ void heap_init(void) {
   hp->h_next = NULL;
   heap.free.h_next = hp;
   heap.free.h_size = 0;
-#if defined(CH_USE_MUTEXES)
+#if CH_USE_MUTEXES
   chMtxInit(&heap.hmtx);
 #else
   chSemInit(&heap.hsem, 1);
@@ -219,11 +219,11 @@ size_t chHeapStatus(size_t *sizep) {
 
 #include <stdlib.h>
 
-#if defined(CH_USE_MUTEXES)
+#if CH_USE_MUTEXES
 #define H_LOCK()        chMtxLock(&hmtx)
 #define H_UNLOCK()      chMtxLock(&hmtx)
 static Mutex            hmtx;
-#elif defined(CH_USE_SEMAPHORES)
+#elif CH_USE_SEMAPHORES
 #define H_LOCK()        chSemWait(&hsem)
 #define H_UNLOCK()      chSemSignal(&hsem)
 static Semaphore        hsem;
@@ -233,7 +233,7 @@ static Semaphore        hsem;
 
 void heap_init(void) {
 
-#if defined(CH_USE_MUTEXES)
+#if CH_USE_MUTEXES
   chMtxInit(&hmtx);
 #else
   chSemInit(&hsem, 1);

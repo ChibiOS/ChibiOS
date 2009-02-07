@@ -270,7 +270,7 @@ struct context {
 /**
  * This port function is implemented as inlined code for performance reasons.
  */
-#if (ENABLE_WFI_IDLE != 0) || defined(__DOXYGEN__)
+#if ENABLE_WFI_IDLE || defined(__DOXYGEN__)
 #define port_wait_for_interrupt() {                                     \
   asm volatile ("wfi");                                                 \
 }

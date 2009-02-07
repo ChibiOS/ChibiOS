@@ -47,7 +47,7 @@ struct Thread {
   tstate_t              p_state;        /**< Current thread state.*/
   tmode_t               p_flags;        /**< Various flags.*/
   struct context        p_ctx;          /**< Processor context.*/
-#ifdef CH_USE_NESTED_LOCKS
+#if CH_USE_NESTED_LOCKS
   cnt_t                 p_locks;        /**< Number of nested locks.*/
 #endif
   /*
@@ -59,27 +59,27 @@ struct Thread {
     msg_t               p_rdymsg;       /**< Thread wakeup code.*/
     msg_t               p_exitcode;     /**< The thread exit code
                                              (@p PREXIT state).*/
-#ifdef CH_USE_SEMAPHORES
+#if CH_USE_SEMAPHORES
     Semaphore           *p_wtsemp;      /**< Semaphore where the thread is
                                              waiting on (@p PRWTSEM state).*/
 #endif
-#ifdef CH_USE_MUTEXES
+#if CH_USE_MUTEXES
     Mutex               *p_wtmtxp;      /**< Mutex where the thread is waiting
                                              on (@p PRWTMTX state).*/
 #endif
-#ifdef CH_USE_CONDVARS
+#if CH_USE_CONDVARS
     CondVar             *p_wtcondp;     /**< CondVar where the thread is
                                              waiting on (@p PRWTCOND state).*/
 #endif
-#ifdef CH_USE_MESSAGES
+#if CH_USE_MESSAGES
     Thread              *p_wtthdp;      /**< Destination thread for message
                                              send @p PRSNDMSG state).*/
 #endif
-#ifdef CH_USE_EVENTS
+#if CH_USE_EVENTS
     eventmask_t         p_ewmask;       /**< Enabled events mask (@p PRWTOREVT
                                              or @p PRWTANDEVT states).*/
 #endif
-#ifdef CH_USE_TRACE
+#if CH_USE_TRACE
     void                *p_wtobjp;      /**< Generic kernel object pointer used
                                              for opaque access.*/
 #endif
@@ -87,23 +87,23 @@ struct Thread {
   /*
    * Start of the optional fields.
    */
-#ifdef CH_USE_WAITEXIT
+#if CH_USE_WAITEXIT
   Thread                *p_waiting;     /**< Thread waiting for termination.*/
 #endif
-#ifdef CH_USE_MESSAGES
+#if CH_USE_MESSAGES
   ThreadsQueue          p_msgqueue;     /**< Message queue.*/
   msg_t                 p_msg;          /**< The message.*/
 #endif
-#ifdef CH_USE_EVENTS
+#if CH_USE_EVENTS
   eventmask_t           p_epending;     /**< Pending events mask.*/
 #endif
-#ifdef CH_USE_MUTEXES
+#if CH_USE_MUTEXES
   Mutex                 *p_mtxlist;     /**< List of the mutexes owned by this
                                              thread, @p NULL terminated.*/
   tprio_t               p_realprio;     /**< Thread's own, non-inherited,
                                              priority.*/
 #endif
-#if defined(CH_USE_DYNAMIC) && defined(CH_USE_MEMPOOLS)
+#if CH_USE_DYNAMIC && CH_USE_MEMPOOLS
   void                  *p_mpool;       /**< Memory Pool where the thread
                                              workspace is returned.*/
 #endif
@@ -164,11 +164,11 @@ extern "C" {
                     tprio_t prio, tfunc_t pf, void *arg);
   Thread *chThdCreateStatic(void *workspace, size_t wsize,
                             tprio_t prio, tfunc_t pf, void *arg);
-#if defined(CH_USE_DYNAMIC) && defined(CH_USE_WAITEXIT) && defined(CH_USE_HEAP)
+#if CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_HEAP
   Thread *chThdCreateFromHeap(size_t wsize, tprio_t prio,
                               tfunc_t pf, void *arg);
 #endif
-#if defined(CH_USE_DYNAMIC) && defined(CH_USE_WAITEXIT) && defined(CH_USE_MEMPOOLS)
+#if CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_MEMPOOLS
   Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
                                     tfunc_t pf, void *arg);
 #endif
@@ -178,7 +178,7 @@ extern "C" {
   void chThdSleep(systime_t time);
   void chThdSleepUntil(systime_t time);
   void chThdExit(msg_t msg);
-#ifdef CH_USE_WAITEXIT
+#if CH_USE_WAITEXIT
   msg_t chThdWait(Thread *tp);
 #endif
 #ifdef __cplusplus

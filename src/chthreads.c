@@ -34,28 +34,28 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
   tp->p_flags = P_MEM_MODE_STATIC;
   tp->p_prio = prio;
   tp->p_state = PRSUSPENDED;
-#ifdef CH_USE_NESTED_LOCKS
+#if CH_USE_NESTED_LOCKS
   tp->p_locks = 0;
 #endif
-#ifdef CH_USE_MUTEXES
+#if CH_USE_MUTEXES
   /* realprio is the thread's own, non-inherited, priority */
   tp->p_realprio = prio;
   tp->p_mtxlist = NULL;
 #endif
-#ifdef CH_USE_WAITEXIT
+#if CH_USE_WAITEXIT
   tp->p_waiting = NULL;
 #endif
-#ifdef CH_USE_MESSAGES
+#if CH_USE_MESSAGES
   queue_init(&tp->p_msgqueue);
 #endif
-#ifdef CH_USE_EVENTS
+#if CH_USE_EVENTS
   tp->p_epending = 0;
 #endif
   THREAD_EXT_INIT(tp);
   return tp;
 }
 
-#ifdef CH_USE_DEBUG
+#if CH_USE_DEBUG
 static void memfill(uint8_t *p, uint32_t n, uint8_t v) {
 
   while (n)
@@ -91,7 +91,7 @@ Thread *chThdInit(void *workspace, size_t wsize,
   chDbgAssert((wsize >= THD_WA_SIZE(0)) && (prio <= HIGHPRIO) &&
               (workspace != NULL) && (pf != NULL),
               "chthreads.c, chThdInit()");
-#ifdef CH_USE_DEBUG
+#if CH_USE_DEBUG
   memfill(workspace, wsize, MEM_FILL_PATTERN);
 #endif
   SETUP_CONTEXT(workspace, wsize, pf, arg);
@@ -119,7 +119,7 @@ Thread *chThdCreateStatic(void *workspace, size_t wsize,
   return chThdResume(chThdInit(workspace, wsize, prio, pf, arg));
 }
 
-#if defined(CH_USE_DYNAMIC) && defined(CH_USE_WAITEXIT) && defined(CH_USE_HEAP)
+#if CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_HEAP
 /**
  * @brief Creates a new thread allocating the memory from the heap.
  *
@@ -150,9 +150,9 @@ Thread *chThdCreateFromHeap(size_t wsize, tprio_t prio,
   tp->p_flags = P_MEM_MODE_HEAP;
   return chThdResume(tp);
 }
-#endif /* defined(CH_USE_DYNAMIC) && defined(CH_USE_WAITEXIT) && defined(CH_USE_HEAP) */
+#endif /* CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_HEAP */
 
-#if defined(CH_USE_DYNAMIC) && defined(CH_USE_WAITEXIT) && defined(CH_USE_MEMPOOLS)
+#if CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_MEMPOOLS
 /**
  * @brief Creates a new thread allocating the memory from the specified Memory
  * Pool.
@@ -186,7 +186,7 @@ Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
   tp->p_mpool = mp;
   return chThdResume(tp);
 }
-#endif /* defined(CH_USE_DYNAMIC) && defined(CH_USE_WAITEXIT) && defined(CH_USE_MEMPOOLS) */
+#endif /* CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_MEMPOOLS */
 
 /**
  * @brief Changes the running thread priority then reschedules if necessary.
@@ -198,7 +198,7 @@ void chThdSetPriority(tprio_t newprio) {
   chDbgAssert(newprio <= HIGHPRIO, "chthreads.c, chThdSetPriority()");
   chSysLock();
 
-#ifdef CH_USE_MUTEXES
+#if CH_USE_MUTEXES
   if (currp->p_prio != currp->p_realprio) {
     if (newprio > currp->p_prio)
       currp->p_prio = newprio;
@@ -284,14 +284,14 @@ void chThdExit(msg_t msg) {
   chSysLock();
   tp->p_exitcode = msg;
   THREAD_EXT_EXIT(tp);
-#ifdef CH_USE_WAITEXIT
+#if CH_USE_WAITEXIT
   if (tp->p_waiting != NULL)
     chSchReadyI(tp->p_waiting);
 #endif
   chSchGoSleepS(PREXIT);
 }
 
-#ifdef CH_USE_WAITEXIT
+#if CH_USE_WAITEXIT
 /**
  * @brief Blocks the execution of the invoking thread until the specified
  * thread terminates then the exit code is returned.
@@ -329,7 +329,7 @@ msg_t chThdWait(Thread *tp) {
     chSchGoSleepS(PRWAIT);
   }
   msg = tp->p_exitcode;
-#ifndef CH_USE_DYNAMIC
+#if !CH_USE_DYNAMIC
   chSysUnlock();
   return msg;
 #else /* CH_USE_DYNAMIC */
@@ -339,12 +339,12 @@ msg_t chThdWait(Thread *tp) {
   chSysUnlock();
 
   switch (mode) {
-#ifdef CH_USE_HEAP
+#if CH_USE_HEAP
   case P_MEM_MODE_HEAP:
     chHeapFree(tp);
     break;
 #endif
-#ifdef CH_USE_MEMPOOLS
+#if CH_USE_MEMPOOLS
   case P_MEM_MODE_MEMPOOL:
     chPoolFree(tp->p_mpool, tp);
     break;

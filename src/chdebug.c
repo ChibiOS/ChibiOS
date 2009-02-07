@@ -26,7 +26,7 @@
 
 #include <ch.h>
 
-#ifdef CH_USE_DEBUG
+#if CH_USE_DEBUG
 
 char *panicmsg;
 
@@ -35,7 +35,7 @@ char *panicmsg;
  */
 void debug_init(void) {
 
-#ifdef CH_USE_TRACE
+#if CH_USE_TRACE
   dbgtb.tb_size = TRACE_BUFFER_SIZE;
   dbgtb.tb_ptr = &dbgtb.tb_buffer[0];
 #endif
@@ -55,7 +55,7 @@ void chDbgPanic(char *msg) {
   chSysHalt();
 }
 
-#ifdef CH_USE_TRACE
+#if CH_USE_TRACE
 /**
  * @brief Public trace buffer.
  */

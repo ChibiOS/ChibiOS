@@ -63,7 +63,7 @@ void chSysInit(void) {
   scheduler_init();
   debug_init();
   vt_init();
-#ifdef CH_USE_HEAP
+#if CH_USE_HEAP
   heap_init();
 #endif
 
@@ -93,7 +93,7 @@ void chSysInit(void) {
  */
 void chSysTimerHandlerI(void) {
 
-#ifdef CH_USE_ROUNDROBIN
+#if CH_USE_ROUNDROBIN
   /* running thread has not used up quantum yet? */
   if (rlist.r_preempt > 0)
     /* decrement remaining quantum */
@@ -102,7 +102,7 @@ void chSysTimerHandlerI(void) {
   chVTDoTickI();
 }
 
-#if defined(CH_USE_NESTED_LOCKS) && !defined(CH_OPTIMIZE_SPEED)
+#if CH_USE_NESTED_LOCKS && !CH_OPTIMIZE_SPEED
 void chSysLock(void) {
 
   chDbgAssert(currp->p_locks >= 0, "chinit.c, chSysLock()");
@@ -116,6 +116,6 @@ void chSysUnlock(void) {
   if (--currp->p_locks == 0)
     port_unlock();
 }
-#endif /* defined(CH_USE_NESTED_LOCKS) && !defined(CH_OPTIMIZE_SPEED) */
+#endif /* CH_USE_NESTED_LOCKS && !CH_OPTIMIZE_SPEED */
 
 /** @} */

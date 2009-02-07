@@ -45,7 +45,7 @@
 /** Serial Driver condition flags type.*/
 typedef uint16_t dflags_t;
 
-#ifdef CH_USE_SERIAL_FULLDUPLEX
+#if CH_USE_SERIAL_FULLDUPLEX
 
 /**
  * @brief Full Duplex Serial Driver main structure.
@@ -110,7 +110,7 @@ extern "C" {
 
 #endif /* CH_USE_SERIAL_FULLDUPLEX */
 
-#ifdef CH_USE_SERIAL_HALFDUPLEX
+#if CH_USE_SERIAL_HALFDUPLEX
 
 /**
  * @brief Full Duplex Serial Driver main structure.

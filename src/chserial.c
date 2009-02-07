@@ -26,7 +26,7 @@
 
 #include <ch.h>
 
-#ifdef CH_USE_SERIAL_FULLDUPLEX
+#if CH_USE_SERIAL_FULLDUPLEX
 /**
  * @brief Initializes a generic full duplex driver.
  * @details The HW dependent part of the initialization has to be performed
@@ -117,7 +117,7 @@ dflags_t chFDDGetAndClearFlags(FullDuplexDriver *sd) {
 }
 #endif /* CH_USE_SERIAL_FULLDUPLEX */
 
-#ifdef CH_USE_SERIAL_HALFDUPLEX
+#if CH_USE_SERIAL_HALFDUPLEX
 /**
  * @brief Initializes a generic half duplex driver.
  * @details The HW dependent part of the initialization has to be performed

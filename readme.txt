@@ -74,10 +74,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 
 *** 1.1.0unstable ***
 - FIX: Modified the default value for the STM32 HSI setup it was 1, it should
-  be 0x10 (backport in stable branch).
-- FIX: Removed an obsolete constant (P_SUSPENDED) from thread.h (backport in
+  be 0x10 (backported in stable branch).
+- FIX: Removed an obsolete constant (P_SUSPENDED) from thread.h (backported in
   stable branch).
-- FIX: Removed unused field mp_grow in the MemoryPool structure  (backport in
+- FIX: Removed unused field mp_grow in the MemoryPool structure  (backported in
   stable branch).
 - NEW: Better separation between the port code and the system APIs, now an
   architecture-specific "driver" contains all the port related code.
@@ -93,6 +93,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - NEW: Added a configuration option that enables the priority enqueuing on
   semaphores. It is defaulted to off because usually semaphores are used for
   I/O related tasks without hard realtime requirements.
+- NEW: Idle thread hook macro added to the configuration file.
 - OPT: Improved ARM7 thumb port code, thanks to some GCC tricks involving
   registers usage now the kernel is much smaller, faster and most OS APIs
   use less RAM in stack frames (note, this is an ARM7 thumb mode specific

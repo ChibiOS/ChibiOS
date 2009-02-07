@@ -178,11 +178,11 @@ void PendSVVector(void) {
   (otp = currp)->p_ctx.r13 = sp_thd;
   (currp = fifo_remove((void *)&rlist))->p_state = PRCURR;
   chSchReadyI(otp);
-#ifdef CH_USE_ROUNDROBIN
+#if CH_USE_ROUNDROBIN
   /* set the round-robin time quantum */
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-#ifdef CH_USE_TRACE
+#if CH_USE_TRACE
   chDbgTrace(otp, currp);
 #endif
   sp_thd = currp->p_ctx.r13;

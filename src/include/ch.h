@@ -52,6 +52,16 @@
  */
 #define CH_KERNEL_PATCH         0
 
+/*
+ * Common values.
+ */
+#ifndef FALSE
+#define FALSE       0
+#endif
+#ifndef TRUE
+#define TRUE        (!FALSE)
+#endif
+
 #include <chconf.h>
 #include <chtypes.h>
 #include "lists.h"
@@ -71,16 +81,6 @@
 #include "queues.h"
 #include "serial.h"
 #include "debug.h"
-
-/*
- * Common values.
- */
-#ifndef FALSE
-#define FALSE       0
-#endif
-#ifndef TRUE
-#define TRUE        (!FALSE)
-#endif
 
 #endif /* _CH_H_ */
 

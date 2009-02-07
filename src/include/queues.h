@@ -41,7 +41,7 @@ typedef void (*qnotify_t)(void);
 /** Returned by the queue functions if the queue is full. */
 #define Q_FULL          -4
 
-#ifdef CH_USE_QUEUES
+#if CH_USE_QUEUES
 /**
  * @brief I/O queue structure.
  * @details This structure is used by both Input and Output Queues,
@@ -94,7 +94,7 @@ extern "C" {
   msg_t chIQPutI(Queue *qp, uint8_t b);
   msg_t chIQGet(Queue *qp);
   size_t chIQRead(Queue *qp, uint8_t *buffer, size_t n);
-#ifdef CH_USE_QUEUES_TIMEOUT
+#if CH_USE_QUEUES_TIMEOUT
   msg_t chIQGetTimeout(Queue *qp, systime_t time);
 #endif
 
@@ -112,7 +112,7 @@ extern "C" {
 #endif
 #endif  /* CH_USE_QUEUES */
 
-#ifdef CH_USE_QUEUES_HALFDUPLEX
+#if CH_USE_QUEUES_HALFDUPLEX
 /**
  * @brief Half duplex queue structure.
  */
@@ -163,7 +163,7 @@ extern "C" {
   void chHDQPutTransmit(HalfDuplexQueue *qp, uint8_t b);
   msg_t chHDQGetTransmitI(HalfDuplexQueue *qp);
   msg_t chHDQPutReceiveI(HalfDuplexQueue *qp, uint8_t b);
-#ifdef CH_USE_QUEUES_TIMEOUT
+#if CH_USE_QUEUES_TIMEOUT
   msg_t chHDQGetReceiveTimeout(HalfDuplexQueue *qp, systime_t time);
 #endif
 #ifdef __cplusplus

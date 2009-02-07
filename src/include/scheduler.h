@@ -61,10 +61,10 @@ typedef struct {
   tprio_t               r_prio;         /**< This field must be initialized to
                                              zero.*/
   /* End of the fields shared with the Thread structure. */
-#ifdef CH_USE_ROUNDROBIN
+#if CH_USE_ROUNDROBIN
   cnt_t                 r_preempt;      /**< Round robin counter.*/
 #endif
-#ifndef CH_CURRP_REGISTER_CACHE
+#if !CH_CURRP_REGISTER_CACHE
   Thread                *r_current;     /**< The currently running thread.*/
 #endif
 } ReadyList;
@@ -89,7 +89,7 @@ extern "C" {
 }
 #endif
 
-#ifdef CH_CURRP_REGISTER_CACHE
+#if CH_CURRP_REGISTER_CACHE
 register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
 #else
 #define currp rlist.r_current

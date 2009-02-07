@@ -26,7 +26,7 @@
 
 #include <ch.h>
 
-#ifdef CH_USE_QUEUES
+#if CH_USE_QUEUES
 
 /**
  * @brief Initializes an input queue.
@@ -116,7 +116,7 @@ msg_t chIQGet(Queue *qp) {
   return b;
 }
 
-#if defined(CH_USE_QUEUES_TIMEOUT) && defined(CH_USE_SEMAPHORES_TIMEOUT)
+#if CH_USE_QUEUES_TIMEOUT && CH_USE_SEMAPHORES_TIMEOUT
 /**
  * @brief Gets a byte from the input queue.
  * @details If the queue is empty then the calling thread is suspended until
@@ -151,7 +151,7 @@ msg_t chIQGetTimeout(Queue *qp, systime_t time) {
   chSysUnlock();
   return b;
 }
-#endif /* defined(CH_USE_QUEUES_TIMEOUT) && defined(CH_USE_SEMAPHORES_TIMEOUT) */
+#endif /* (CH_USE_QUEUES_TIMEOUT && CH_USE_SEMAPHORES_TIMEOUT */
 
 /**
  * @brief Reads some data from the input queue into the specified buffer.
@@ -323,7 +323,7 @@ size_t chOQWrite(Queue *qp, uint8_t *buffer, size_t n) {
 }
 #endif  /* CH_USE_QUEUES */
 
-#ifdef CH_USE_QUEUES_HALFDUPLEX
+#if CH_USE_QUEUES_HALFDUPLEX
  /**
  * @brief Initializes an half duplex queue.
  *
@@ -380,7 +380,7 @@ msg_t chHDQGetReceive(HalfDuplexQueue *qp) {
   return b;
 }
 
-#if defined(CH_USE_QUEUES_TIMEOUT) && defined(CH_USE_SEMAPHORES_TIMEOUT)
+#if CH_USE_QUEUES_TIMEOUT && CH_USE_SEMAPHORES_TIMEOUT
 /**
  * @brief Reads a byte from the receive queue.
  * @details If the queue is empty or is in transmission mode then the invoking
@@ -418,7 +418,7 @@ msg_t chHDQGetReceiveTimeout(HalfDuplexQueue *qp, systime_t time) {
   chSysUnlock();
   return b;
 }
-#endif /* defined(CH_USE_QUEUES_TIMEOUT) && defined(CH_USE_SEMAPHORES_TIMEOUT) */
+#endif /* CH_USE_QUEUES_TIMEOUT && CH_USE_SEMAPHORES_TIMEOUT */
 
 /**
  * @brief Writes a byte into the transmit queue.

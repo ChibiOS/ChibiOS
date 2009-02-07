@@ -38,7 +38,7 @@ void scheduler_init(void) {
 
   queue_init(&rlist);
   rlist.r_prio = NOPRIO;
-#ifdef CH_USE_ROUNDROBIN
+#if CH_USE_ROUNDROBIN
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
 }
@@ -53,7 +53,7 @@ void scheduler_init(void) {
  *       be called soon after.
  * @note The function is not meant to be used in the user code directly.
  */
-#ifdef CH_OPTIMIZE_SPEED
+#if CH_OPTIMIZE_SPEED
 /* NOTE: it is inlined in this module only.*/
 INLINE Thread *chSchReadyI(Thread *tp) {
 #else
@@ -85,10 +85,10 @@ void chSchGoSleepS(tstate_t newstate) {
 
   (otp = currp)->p_state = newstate;
   (currp = fifo_remove((void *)&rlist))->p_state = PRCURR;
-#ifdef CH_USE_ROUNDROBIN
+#if CH_USE_ROUNDROBIN
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-#ifdef CH_USE_TRACE
+#if CH_USE_TRACE
   chDbgTrace(otp, currp);
 #endif
   chSysSwitchI(otp, currp);
@@ -101,7 +101,7 @@ static void wakeup(void *p) {
   Thread *tp = (Thread *)p;
 
   switch (tp->p_state) {
-#ifdef CH_USE_SEMAPHORES
+#if CH_USE_SEMAPHORES
   case PRWTSEM:
     chSemFastSignalI(tp->p_wtsemp);
     /* Falls into, intentional. */
@@ -168,10 +168,10 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
     chSchReadyI(otp);
     /* change the to-be-run thread to running state */
     (currp = ntp)->p_state = PRCURR;
-#ifdef CH_USE_ROUNDROBIN
+#if CH_USE_ROUNDROBIN
     rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-#ifdef CH_USE_TRACE
+#if CH_USE_TRACE
     /* trace the context switch */
     chDbgTrace(otp, ntp);
 #endif
@@ -191,10 +191,10 @@ void chSchDoRescheduleI(void) {
   /* pick the first thread from the ready queue and makes it current */
   (currp = fifo_remove((void *)&rlist))->p_state = PRCURR;
   chSchReadyI(otp);
-#ifdef CH_USE_ROUNDROBIN
+#if CH_USE_ROUNDROBIN
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-#ifdef CH_USE_TRACE
+#if CH_USE_TRACE
   chDbgTrace(otp, currp);
 #endif
   chSysSwitchI(otp, currp);
@@ -223,7 +223,7 @@ void chSchRescheduleS(void) {
 bool_t chSchRescRequiredI(void) {
   tprio_t p1 = firstprio(&rlist);
   tprio_t p2 = currp->p_prio;
-#ifdef CH_USE_ROUNDROBIN
+#if CH_USE_ROUNDROBIN
   /* If the running thread has not reached its time quantum, reschedule only
    * if the first thread on the ready queue has a higher priority.
    * Otherwise, if the running thread has used up its time quantum, reschedule

@@ -27,7 +27,7 @@
 #ifndef _MESSAGES_H_
 #define _MESSAGES_H_
 
-#ifdef CH_USE_MESSAGES
+#if CH_USE_MESSAGES
 
 /**
  * Evaluates to TRUE if the thread has pending messages.
@@ -49,7 +49,7 @@ extern "C" {
   msg_t chMsgGet(void);
   void chMsgRelease(msg_t msg);
 
-#if defined(CH_USE_EVENTS) && defined(CH_USE_MESSAGES_EVENT)
+#if CH_USE_EVENTS && CH_USE_MESSAGES_EVENT
   msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, eventmask_t mask);
 #endif
 #ifdef __cplusplus

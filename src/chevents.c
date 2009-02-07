@@ -25,7 +25,7 @@
  */
 #include <ch.h>
 
-#ifdef CH_USE_EVENTS
+#if CH_USE_EVENTS
 /**
  * @brief Registers an Event Listener on an Event Source.
  *
@@ -193,8 +193,7 @@ void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask) {
   }
 }
 
-#if defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENTS_TIMEOUT) || \
-    defined(__DOXIGEN__)
+#if CH_OPTIMIZE_SPEED || !CH_USE_EVENTS_TIMEOUT || defined(__DOXIGEN__)
 /**
  * @brief A pending event among those specified in @p ewmask is selected,
  * cleared and its mask returned.
@@ -271,9 +270,9 @@ eventmask_t chEvtWaitAll(eventmask_t ewmask) {
   chSysUnlock();
   return ewmask;
 }
-#endif /* defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENTS_TIMEOUT) */
+#endif /* CH_OPTIMIZE_SPEED || !CH_USE_EVENTS_TIMEOUT */
 
-#ifdef CH_USE_EVENTS_TIMEOUT
+#if CH_USE_EVENTS_TIMEOUT
 /**
  * @brief Waits for a single event.
  * @details A pending event among those specified in @p ewmask is selected,

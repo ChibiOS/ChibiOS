@@ -26,9 +26,9 @@
 
 #include <ch.h>
 
-#ifdef CH_USE_SEMAPHORES
+#if CH_USE_SEMAPHORES
 
-#ifdef CH_USE_SEMAPHORES_PRIORITY
+#if CH_USE_SEMAPHORES_PRIORITY
 #define sem_insert(tp, qp) prio_insert(tp, qp)
 #else
 #define sem_insert(tp, qp) queue_insert(tp, qp)
@@ -127,7 +127,7 @@ msg_t chSemWaitS(Semaphore *sp) {
   return RDY_OK;
 }
 
-#ifdef CH_USE_SEMAPHORES_TIMEOUT
+#if CH_USE_SEMAPHORES_TIMEOUT
 /**
  * @brief Performs a wait operation on a semaphore with timeout specification.
  *
@@ -210,7 +210,7 @@ void chSemSignalI(Semaphore *sp) {
   }
 }
 
-#ifdef CH_USE_SEMSW
+#if CH_USE_SEMSW
 /**
  * @brief Performs atomic signal and wait operations on two semaphores.
  *

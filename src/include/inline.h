@@ -32,7 +32,7 @@
  * Note: static inlined functions do not duplicate the code in every module
  *       this is true for GCC, not sure about other compilers.
  */
-#ifdef CH_OPTIMIZE_SPEED
+#if CH_OPTIMIZE_SPEED
 static INLINE void prio_insert(Thread *tp, ThreadsQueue *tqp) {
 
   Thread *cp = tqp->p_next;

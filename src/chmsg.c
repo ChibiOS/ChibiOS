@@ -26,9 +26,9 @@
 
 #include <ch.h>
 
-#ifdef CH_USE_MESSAGES
+#if CH_USE_MESSAGES
 
-#ifdef CH_USE_MESSAGES_PRIORITY
+#if CH_USE_MESSAGES_PRIORITY
 #define msg_insert(tp, qp) prio_insert(tp, qp)
 #else
 #define msg_insert(tp, qp) queue_insert(tp, qp)
@@ -59,7 +59,7 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
   return msg;
 }
 
-#if defined(CH_USE_EVENTS) && defined(CH_USE_MESSAGES_EVENT)
+#if CH_USE_EVENTS && CH_USE_MESSAGES_EVENT
 /**
  * @brief Sends a message to the specified thread and atomically pends an
  * events set.
@@ -90,7 +90,7 @@ msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, eventmask_t mask) {
   chSysUnlock();
   return msg;
 }
-#endif /* defined(CH_USE_EVENTS) && defined(CH_USE_MESSAGES_EVENT) */
+#endif /* CH_USE_EVENTS && CH_USE_MESSAGES_EVENT */
 
 /**
  * @brief Suspends the thread and waits for an incoming message.

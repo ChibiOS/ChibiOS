@@ -26,7 +26,7 @@
 
 #include <ch.h>
 
-#ifdef CH_USE_MEMPOOLS
+#if CH_USE_MEMPOOLS
 
 /**
  * @brief Initializes an empty memory pool.
