@@ -21,7 +21,7 @@
 
 #include "test.h"
 
-#ifdef CH_USE_SEMAPHORES
+#if CH_USE_SEMAPHORES
 
 #define ALLOWED_DELAY MS2ST(5)
 

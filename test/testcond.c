@@ -21,7 +21,7 @@
 
 #include "test.h"
 
-#if defined(CH_USE_CONDVARS) && defined(CH_USE_MUTEXES)
+#if CH_USE_CONDVARS && CH_USE_MUTEXES
 
 static Mutex m1;
 static CondVar c1;

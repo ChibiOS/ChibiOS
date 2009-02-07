@@ -37,35 +37,35 @@
 static const struct testcase *tests[] = {
   &testrdy1,
   &testrdy2,
-#ifdef CH_USE_SEMAPHORES
+#if CH_USE_SEMAPHORES
   &testsem1,
   &testsem2,
 #endif
-#ifdef CH_USE_MUTEXES
+#if CH_USE_MUTEXES
   &testmtx1,
   &testmtx2,
   &testmtx3,
-#ifdef CH_USE_CONDVARS
+#if CH_USE_CONDVARS
   &testcond1,
   &testcond2,
 #endif
 #endif
-#ifdef CH_USE_MESSAGES
+#if CH_USE_MESSAGES
   &testmsg1,
 #endif
-#ifdef CH_USE_EVENTS
+#if CH_USE_EVENTS
   &testevt1,
 #endif
-#ifdef CH_USE_HEAP
+#if CH_USE_HEAP
   &testheap1,
 #endif
-#ifdef CH_USE_MEMPOOLS
+#if CH_USE_MEMPOOLS
   &testpools1,
 #endif
-#if defined(CH_USE_DYNAMIC) && defined(CH_USE_HEAP)
+#if CH_USE_DYNAMIC && CH_USE_HEAP
   &testdyn1,
 #endif
-#if defined(CH_USE_DYNAMIC) && defined(CH_USE_MEMPOOLS)
+#if CH_USE_DYNAMIC && CH_USE_MEMPOOLS
   &testdyn2,
 #endif
   &testbmk1,

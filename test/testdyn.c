@@ -21,7 +21,7 @@
 
 #include "test.h"
 
-#ifdef CH_USE_DYNAMIC
+#if CH_USE_DYNAMIC
 
 static msg_t thread(void *p) {
 
@@ -29,7 +29,7 @@ static msg_t thread(void *p) {
   return 0;
 }
 
-#ifdef CH_USE_HEAP
+#if CH_USE_HEAP
 static char *dyn1_gettest(void) {
 
   return "Dynamic APIs, threads creation from heap";
@@ -78,7 +78,7 @@ const struct testcase testdyn1 = {
 };
 #endif /* CH_USE_HEAP */
 
-#ifdef CH_USE_MEMPOOLS
+#if CH_USE_MEMPOOLS
 static MemoryPool mp1;
 
 static char *dyn2_gettest(void) {

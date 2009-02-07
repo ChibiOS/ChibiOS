@@ -21,7 +21,7 @@
 
 #include "test.h"
 
-#ifdef CH_USE_MEMPOOLS
+#if CH_USE_MEMPOOLS
 
 static MemoryPool mp1;
 

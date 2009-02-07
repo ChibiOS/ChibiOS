@@ -21,7 +21,7 @@
 
 #include "test.h"
 
-#ifdef CH_USE_MUTEXES
+#if CH_USE_MUTEXES
 
 #define ALLOWED_DELAY 5
 

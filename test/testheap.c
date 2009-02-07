@@ -21,7 +21,7 @@
 
 #include "test.h"
 
-#ifdef CH_USE_HEAP
+#if CH_USE_HEAP
 
 #define SIZE 16
 

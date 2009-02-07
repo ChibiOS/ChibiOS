@@ -21,7 +21,7 @@
 
 #include "test.h"
 
-#ifdef CH_USE_EVENTS
+#if CH_USE_EVENTS
 
 #define ALLOWED_DELAY MS2ST(5)
 

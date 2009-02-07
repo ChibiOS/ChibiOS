@@ -135,7 +135,7 @@ namespace chibios_rt {
      */
     static void Exit(msg_t msg);
 
-#ifdef CH_USE_WAITEXIT
+#if CH_USE_WAITEXIT
     /**
      * @brief Synchronization on Thread exit.
      *
@@ -179,7 +179,7 @@ namespace chibios_rt {
      */
     static void SleepUntil(systime_t time);
 
-#ifdef CH_USE_MESSAGES
+#if CH_USE_MESSAGES
     /**
      * @brief Sends a message to the thread and returns the answer.
      *
@@ -281,7 +281,7 @@ namespace chibios_rt {
     }
   };
 
-#ifdef CH_USE_SEMAPHORES
+#if CH_USE_SEMAPHORES
   /**
    * @brief Class encapsulating a semaphore.
    */
@@ -315,7 +315,7 @@ namespace chibios_rt {
      */
     msg_t Wait(void);
 
-#ifdef CH_USE_SEMAPHORES_TIMEOUT
+#if CH_USE_SEMAPHORES_TIMEOUT
     /**
      * @brief Wait operation on the semaphore with timeout.
      *
@@ -335,7 +335,7 @@ namespace chibios_rt {
      */
     void Signal(void);
 
-#ifdef CH_USE_SEMSW
+#if CH_USE_SEMSW
     /**
      * @brief Atomic signal and wait operations.
      *
@@ -349,7 +349,7 @@ namespace chibios_rt {
   };
 #endif /* CH_USE_SEMAPHORES */
 
-#ifdef CH_USE_MUTEXES
+#if CH_USE_MUTEXES
   /**
    * @brief Class encapsulating a mutex.
    */
@@ -398,7 +398,7 @@ namespace chibios_rt {
     static void UnlockAll(void);
   };
 
-#ifdef CH_USE_CONDVARS
+#if CH_USE_CONDVARS
   /**
    * @brief Class encapsulating a conditional variable.
    */
@@ -436,7 +436,7 @@ namespace chibios_rt {
      */
     msg_t Wait(void);
 
-#ifdef CH_USE_CONDVARS_TIMEOUT
+#if CH_USE_CONDVARS_TIMEOUT
     /**
      * @brief Waits on the CondVar while releasing the controlling mutex.
      *
@@ -453,7 +453,7 @@ namespace chibios_rt {
 #endif /* CH_USE_CONDVARS */
 #endif /* CH_USE_MUTEXES */
 
-#ifdef CH_USE_EVENTS
+#if CH_USE_EVENTS
   /**
    * @brief Class encapsulating an event source.
    */
@@ -567,7 +567,7 @@ namespace chibios_rt {
      */
     static eventmask_t WaitAll(eventmask_t ewmask);
 
-#ifdef CH_USE_EVENTS_TIMEOUT
+#if CH_USE_EVENTS_TIMEOUT
     /**
      * @brief Waits for a single event.
      * @details A pending event among those specified in @p ewmask is selected,
