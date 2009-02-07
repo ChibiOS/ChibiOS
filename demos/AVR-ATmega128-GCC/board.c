@@ -82,5 +82,5 @@ void hwinit(void) {
   /*
    * Other initializations.
    */
-  InitSerial();
+  serial_init();
 }

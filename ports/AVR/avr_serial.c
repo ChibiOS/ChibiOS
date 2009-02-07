@@ -17,6 +17,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file ports/AVR/avr_serial.c
+ * @brief AVR Serial driver code.
+ * @addtogroup AVR_SERIAL
+ * @{
+ */
+
 #include <ch.h>
 
 #include "avr_serial.h"
@@ -35,8 +42,10 @@ static void SetError(uint8_t sra, FullDuplexDriver *com) {
   chSysUnlockFromIsr();
 }
 
-#ifdef USE_AVR_USART0
+#if USE_AVR_USART0 || defined(__DOXYGEN__)
+/** @brief USART0 serial driver identifier.*/
 FullDuplexDriver SER1;
+
 static uint8_t ib1[SERIAL_BUFFERS_SIZE];
 static uint8_t ob1[SERIAL_BUFFERS_SIZE];
 
@@ -71,20 +80,20 @@ CH_IRQ_HANDLER(USART0_UDRE_vect) {
   CH_IRQ_EPILOGUE();
 }
 
-/*
- * Invoked by the high driver when one or more bytes are inserted in the
- * output queue.
- */
 static void OutNotify1(void) {
 
   UCSR0B |= (1 << UDRIE);
 }
 
-/*
- * USART setup, must be invoked with interrupts disabled.
- * NOTE: Does not reset I/O queues.
+/**
+ * @brief USART0 setup.
+ * @details This function must be invoked with interrupts disabled.
+ * @param[in] brr the divider value as calculated by the @p UBRR() macro
+ * @param[in] csrc the value for the @p UCSR0C register
+ * @note Must be invoked with interrupts disabled.
+ * @note Does not reset the I/O queues.
  */
-void SetUSART0I(uint16_t brr, uint8_t csrc) {
+void usart0_setup(uint16_t brr, uint8_t csrc) {
 
   UBRR0L = brr;
   UBRR0H = brr >> 8;
@@ -94,8 +103,10 @@ void SetUSART0I(uint16_t brr, uint8_t csrc) {
 }
 #endif /* USE_AVR_USART0 */
 
-#ifdef USE_AVR_USART1
+#if USE_AVR_USART1 || defined(__DOXYGEN__)
+/** @brief USART1 serial driver identifier.*/
 FullDuplexDriver SER2;
+
 static uint8_t ib2[SERIAL_BUFFERS_SIZE];
 static uint8_t ob2[SERIAL_BUFFERS_SIZE];
 
@@ -130,20 +141,20 @@ CH_IRQ_HANDLER(USART1_UDRE_vect) {
   CH_IRQ_EPILOGUE();
 }
 
-/*
- * Invoked by the high driver when one or more bytes are inserted in the
- * output queue.
- */
 static void OutNotify2(void) {
 
   UCSR1B |= (1 << UDRIE);
 }
 
-/*
- * USART setup, must be invoked with interrupts disabled.
- * NOTE: Does not reset I/O queues.
+/**
+ * @brief USART1 setup.
+ * @details This function must be invoked with interrupts disabled.
+ * @param[in] brr the divider value as calculated by the @p UBRR() macro
+ * @param[in] csrc the value for the @p UCSR1C register
+ * @note Must be invoked with interrupts disabled.
+ * @note Does not reset the I/O queues.
  */
-void SetUSART1(uint16_t brr, uint8_t csrc) {
+void usart1_setup(uint16_t brr, uint8_t csrc) {
 
   UBRR1L = brr;
   UBRR1H = brr >> 8;
@@ -153,16 +164,22 @@ void SetUSART1(uint16_t brr, uint8_t csrc) {
 }
 #endif /* USE_AVR_USART1 */
 
-void InitSerial(void) {
+/**
+ * @brief Serial driver initialization.
+ * @note The serial ports are initialized at @p 38400-8-N-1 by default.
+ */
+void serial_init(void) {
 
-#ifdef USE_AVR_USART0
+#if USE_AVR_USART0
   /* I/O queues setup.*/
   chFDDInit(&SER1, ib1, sizeof ib1, NULL, ob1, sizeof ob1, OutNotify1);
-  SetUSART0(UBRR(38400), (1 << UCSZ1) | (1 << UCSZ0));
+  usart0_setup(UBRR(DEFAULT_USART_BITRATE), (1 << UCSZ1) | (1 << UCSZ0));
 #endif
 
-#ifdef USE_AVR_USART1
+#if USE_AVR_USART1
   chFDDInit(&SER2, ib2, sizeof ib2, NULL, ob2, sizeof ob2, OutNotify2);
-  SetUSART1(UBRR(38400), (1 << UCSZ1) | (1 << UCSZ0));
+  usart1_setup(UBRR(DEFAULT_USART_BITRATE), (1 << UCSZ1) | (1 << UCSZ0));
 #endif
 }
+
+/** @} */

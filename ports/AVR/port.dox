@@ -64,3 +64,23 @@
  * @file ports/AVR/chcore.c Port related code.
  */
 /** @} */
+
+/**
+ * @defgroup AVR_DRIVERS AVR Drivers
+ * @{
+ * @brief Device drivers included in the AVR support.
+ *
+ * @ingroup AVR
+ */
+/** @} */
+
+/**
+ * @defgroup AVR_SERIAL USART Support
+ * @{
+ * @brief USART support.
+ * @details The serial driver supports both the AVR USARTs in asynchronous
+ * mode.
+ *
+ * @ingroup AVR_DRIVERS
+ */
+/** @} */
