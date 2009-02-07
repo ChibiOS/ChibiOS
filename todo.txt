@@ -13,6 +13,7 @@ X lwIP TCP/IP stack integration.
 - Stack guard pages.
 * Idle loop hook macro.
 * Switch the configuration options to TRUE/FALSE rather than def/undef.
+- Abstract I/O channels rather than just serial ports.
 
 Ideas for 2.x.x:
 - Reference counter for threads, concept of detached threads, threads
