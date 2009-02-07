@@ -22,7 +22,7 @@ Ideas for 2.x.x:
 - Multicore support.
 
 Side projects:
-X ChibiOS Wizard, UML modeling and Chibi applications code and
+X ChibiOS Wizard, UML modeling and ChibiOS applications code and
   documentation generator.
 X OSEK layer.
 - Posix layer.
