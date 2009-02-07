@@ -5,7 +5,7 @@ After 1.0.0:
 X OSEK-style chSysSuspendAll()/chSysResumeAll()/chSysEnable()/chSysDisable().
 - OSEK-style simple tasks within the idle thread.
 - Think to something for threads restart.
-- lwIP TCP/IP stack integration.
+X lwIP TCP/IP stack integration.
 - Minimal optional C-runtime library (complete enough for lwIP).
 - Multiple heaps, disjoint heaps, heaps in heaps.
 - Multiple debug levels.

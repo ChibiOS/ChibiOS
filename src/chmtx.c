@@ -83,20 +83,26 @@ void chMtxLockS(Mutex *mp) {
       switch (tp->p_state) {
       /* thread tp is waiting on a mutex? */
       case PRWTMTX:
-        /* requeue tp with its new priority on the mutex wait queue */
+        /* Requeues tp with its new priority on the mutex wait queue. */
         prio_insert(dequeue(tp), &tp->p_wtmtxp->m_queue);
         /* boost the owner of this mutex if needed */
         tp = tp->p_wtmtxp->m_owner;
         continue;
+#if CH_USE_SEMAPHORES_PRIORITY
+      case PRWTSEM:
+        /* Requeues tp with its new priority on the semaphore queue. */
+        prio_insert(dequeue(tp), &tp->p_wtsemp->s_queue);
+        break;
+#endif
 #if CH_USE_MESSAGES_PRIORITY
       case PRSNDMSG:
-        /* requeue tp with its new priority on (?) */
+        /* Requeues tp with its new priority on the server thread queue. */
         prio_insert(dequeue(tp), &tp->p_wtthdp->p_msgqueue);
         break;
 #endif
       /* thread tp is ready? */
       case PRREADY:
-        /* requeue tp with its new priority on the ready list */
+        /* Requeue tp with its new priority on the ready list. */
         chSchReadyI(dequeue(tp));
       }
       break;
