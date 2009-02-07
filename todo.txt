@@ -11,7 +11,7 @@ X OSEK-style chSysSuspendAll()/chSysResumeAll()/chSysEnable()/chSysDisable().
 - Multiple debug levels.
 - Stack guard pages.
 * Idle loop hook macro.
-- Switch the configuration options to TRUE/FALSE rather than def/undef.
+X Switch the configuration options to TRUE/FALSE rather than def/undef.
 
 Ideas for 2.x.x:
 - Reference counter for threads, concept of detached threads, threads
@@ -20,10 +20,11 @@ Ideas for 2.x.x:
 - Multicore support.
 
 Side projects:
-- ChibiOS Wizard.
-- OSEK layer.
+X ChibiOS Wizard, UML modeling and Chibi applications code and
+  documentation generator.
+X OSEK layer.
 - Posix layer.
-- File System
+X File System
 
 Lower priority:
 - More demos
@@ -33,3 +34,7 @@ Lower priority:
 - PowerPC port
 - Coldfire port
 - H8 port
+
+- - Planned.
+X - In progress
+* - Done
