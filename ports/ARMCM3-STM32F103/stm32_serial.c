@@ -29,7 +29,7 @@
 #include "board.h"
 #include "nvic.h"
 #include "stm32_serial.h"
-#include "stm32lib/stm32f10x_nvic.h"
+#include "stm32f10x_nvic.h"
 
 #if USE_STM32_USART1 || defined(__DOXYGEN__)
 /** @brief USART1 serial driver identifier.*/
