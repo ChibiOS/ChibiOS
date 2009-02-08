@@ -83,7 +83,8 @@ ASMSRC = ../../ports/ARMCM3/crt0.s ../../ports/ARMCM3-STM32F103/vectors.s
 
 # List all user directories here
 UINCDIR = ../../src/include ../../src/lib ../../test \
-          ../../ports/ARMCM3 ../../ports/ARMCM3-STM32F103
+          ../../ports/ARMCM3 ../../ports/ARMCM3-STM32F103 \
+          ./stm32lib/inc
 
 # List the user directory to look for the libraries here
 ULIBDIR =
