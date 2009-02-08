@@ -79,6 +79,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   stable branch).
 - FIX: Removed unused field mp_grow in the MemoryPool structure  (backported in
   stable branch).
+- NEW: Added to the STM32 demo makefile an option to build ChibiOS/RT with the
+  full STM32 FWLib 2.03. **NOTE** that, except for the compile option, the
+  library is not used by the OS nor supported (backported in stable branch).
 - NEW: Better separation between the port code and the system APIs, now an
   architecture-specific "driver" contains all the port related code.
   Port functions/macros are no more directly exposed as APIs to the user code.
@@ -96,7 +99,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - NEW: Now the all the options in chconf.h and the various driver headers
   can be overridden externally, as example from within the Makefile.
   The options are no mode a simple define but a define with an assigned
-  TRUE/FALSE value within an #ifndef block. 
+  TRUE/FALSE value within an #ifndef block.
 - NEW: Idle thread hook macro added to the configuration file.
 - OPT: Improved ARM7 thumb port code, thanks to some GCC tricks involving
   registers usage now the kernel is much smaller, faster and most OS APIs
@@ -113,7 +116,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   those are not functions but inlined code. Also introduced a new macro
   CH_IRQ_HANDLER that should be used when declaring an interrupt handler.
   CHANGE: Renamed several internal initialization functions by removing the
-  "ch" prefix because could not be considered system APIs. 
+  "ch" prefix because could not be considered system APIs.
 - Improved ARM7 and Cortex-M3 support, new configuration options.
 - Introduced the concept of interrupt classes, see the documentation.
 - Introduced the concept of system states, see the documentation.
