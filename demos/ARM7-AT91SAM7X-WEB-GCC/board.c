@@ -25,7 +25,12 @@
 #include <sam7x_serial.h>
 #include <sam7x_emac.h>
 
-extern void FiqHandler(void);
+/*
+ * FIQ Handler, unused in this demo.
+ */
+__attribute__((interrupt("FIQ")))
+static void FiqHandler(void) {
+}
 
 static CH_IRQ_HANDLER(SpuriousHandler) {
 

@@ -34,7 +34,7 @@ _start:
         ldr     pc, [pc,#-0xF20]        /* AIC - AIC_FVR */
 
 _reset:
-        .word   ResetHandler
+        .word   ResetHandler            /* In crt0.s */
 _undefined:
         .word   UndHandler
 _swi:
@@ -46,3 +46,26 @@ _abort:
         .word   0
         .word   0
         .word   0
+
+.text
+.code 32
+.balign 4
+
+/*
+ * Default exceptions handlers. The handlers are declared weak in order to be
+ * replaced by the real handling code. Everything is defaulted to an infinite
+ * loop.
+ */
+.weak UndHandler
+UndHandler:
+
+.weak SwiHandler
+SwiHandler:
+
+.weak PrefetchHandler
+PrefetchHandler:
+
+.weak AbortHandler
+AbortHandler:
+
+.loop:  b       .loop

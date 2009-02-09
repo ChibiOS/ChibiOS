@@ -101,6 +101,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   The options are no mode a simple define but a define with an assigned
   TRUE/FALSE value within an #ifndef block.
 - NEW: Idle thread hook macro added to the configuration file.
+- NEW: Changed the ARM7 and Cortex-M3 startup files, now the action when
+  the main() function returns can be overridden by redefining the symbol
+  MainExitHandler.
 - OPT: Improved ARM7 thumb port code, thanks to some GCC tricks involving
   registers usage now the kernel is much smaller, faster and most OS APIs
   use less RAM in stack frames (note, this is an ARM7 thumb mode specific

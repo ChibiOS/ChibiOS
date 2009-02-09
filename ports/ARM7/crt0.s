@@ -119,16 +119,7 @@ bssloop:
         /*
          * Late initialization.
          */
-#ifndef THUMB_NO_INTERWORKING
-        bl      hwinit1
-        /*
-         * main(0, NULL).
-         */
-        mov     r0, #0
-        mov     r1, r0
-        bl      main
-        bl      port_halt
-#else
+#ifdef THUMB_NO_INTERWORKING
         add     r0, pc, #1
         bx      r0
 .code 16
@@ -136,39 +127,25 @@ bssloop:
         mov     r0, #0
         mov     r1, r0
         bl      main
-        bl      port_halt
+        ldr     r1, =MainExitHandler
+        bx      r1
 .code 32
+#else
+        bl      hwinit1
+        mov     r0, #0
+        mov     r1, r0
+        bl      main
+        b       MainExitHandler
 #endif
 
 /*
- * Default exceptions handlers. The handlers are declared weak in order to be
- * replaced by the real handling code.
+ * Default main function exit handler.
  */
-.weak UndHandler
-.globl UndHandler
-UndHandler:
+.weak MainExitHandler
+.globl MainExitHandler
+MainExitHandler:
 
-.weak SwiHandler
-.globl SwiHandler
-SwiHandler:
-
-.weak PrefetchHandler
-.globl PrefetchHandler
-PrefetchHandler:
-
-.weak AbortHandler
-.globl AbortHandler
-AbortHandler:
-
-.weak FiqHandler
-.globl FiqHandler
-FiqHandler:
-
-.loop: b        .loop
-
-#ifdef THUMB_NO_INTERWORKING
-.code 16
-#endif
+.loop:  b       .loop
 
 /*
  * Default early initialization code. It is declared weak in order to be
@@ -176,11 +153,14 @@ FiqHandler:
  * Early initialization is performed just after reset before BSS and DATA
  * segments initialization.
  */
-.global hwinit0
-.weak hwinit0
+#ifdef THUMB_NO_INTERWORKING
 .thumb_func
+.code 16
+#endif
+.weak hwinit0
 hwinit0:
         bx      lr
+.code 32
 
 /*
  * Default late initialization code. It is declared weak in order to be
@@ -188,11 +168,14 @@ hwinit0:
  * Late initialization is performed after BSS and DATA segments initialization
  * and before invoking the main() function.
  */
-.global hwinit1
-.weak hwinit1
+#ifdef THUMB_NO_INTERWORKING
 .thumb_func
+.code 16
+#endif
+.weak hwinit1
 hwinit1:
         bx      lr
+.code 32
 
 /** @endcond */
 /** @} */

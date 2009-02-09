@@ -86,11 +86,20 @@ bloop:
         isb
         /* Late initialization. */
         bl      hwinit1
-        /* main(0, NULL). */
         movs    r0, #0
         mov     r1, r0
         bl      main
-        bl      port_halt
+        b       MainExitHandler
+
+/*
+ * Default main exit code, just a loop.
+ * It is a weak symbol, the application code can redefine the behavior.
+ */
+.thumb_func
+.global MainExitHandler
+.weak MainExitHandler
+MainExitHandler:
+.loop:  b       .loop
 
 /*
  * Default early initialization code. It is declared weak in order to be

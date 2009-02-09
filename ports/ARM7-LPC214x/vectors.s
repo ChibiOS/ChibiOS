@@ -34,7 +34,7 @@ _start:
         ldr     pc, _fiq
 
 _reset:
-        .word   ResetHandler
+        .word   ResetHandler            /* In crt0.s */
 _undefined:
         .word   UndHandler
 _swi:
@@ -47,3 +47,25 @@ _fiq:
         .word   FiqHandler
         .word   0
         .word   0
+
+/*
+ * Default exceptions handlers. The handlers are declared weak in order to be
+ * replaced by the real handling code. Everything is defaulted to an infinite
+ * loop.
+ */
+.weak UndHandler
+UndHandler:
+
+.weak SwiHandler
+SwiHandler:
+
+.weak PrefetchHandler
+PrefetchHandler:
+
+.weak AbortHandler
+AbortHandler:
+
+.weak FiqHandler
+FiqHandler:
+
+.loop:  b       .loop

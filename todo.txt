@@ -11,6 +11,7 @@ X lwIP TCP/IP stack integration.
 - Multiple heaps, disjoint heaps, heaps in heaps.
 - Multiple debug levels.
 - Stack guard pages.
+- Threads profiling option.
 * Idle loop hook macro.
 * Switch the configuration options to TRUE/FALSE rather than def/undef.
 - Abstract I/O channels rather than just serial ports.

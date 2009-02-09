@@ -83,7 +83,7 @@
  *   Usually there is no need to change this value, please refer to the
  *   Cortex-M3 technical reference manual for a detailed description.
  * - @p BASEPRI_KERNEL, this is the @p BASEPRI value for the kernel lock code.
- *   The default value is 0x10.<br>
+ *   The default value is 0x40.<br>
  *   Code running at higher priority levels must not invoke any OS API.<br>
  *   Usually there is no need to change this value, please refer to the
  *   Cortex-M3 technical reference manual for a detailed description.
@@ -110,6 +110,6 @@
  * @{
  * @brief ARM Cortex-M3 NVIC support.
  *
- * @ingroup ARMCM3_CORE
+ * @ingroup ARMCM3
  */
 /** @} */
