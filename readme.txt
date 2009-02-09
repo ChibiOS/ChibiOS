@@ -123,7 +123,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - Improved ARM7 and Cortex-M3 support, new configuration options.
 - Introduced the concept of interrupt classes, see the documentation.
 - Introduced the concept of system states, see the documentation.
-- Huge improvements to the ports documentation.
+- Huge improvements to the documentation.
 - Articles and notes previously in the wiki now merged in the general
   documentation and updated, the wiki entries are obsolete and will be removed.
 - New application notes and articles added.
