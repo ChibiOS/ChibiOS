@@ -189,29 +189,34 @@ Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
 #endif /* CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_MEMPOOLS */
 
 /**
- * @brief Changes the running thread priority then reschedules if necessary.
+ * @brief Changes the running thread priority level then reschedules if
+ * necessary.
  *
- * @param newprio the new priority of the running thread
+ * @param newprio the new priority level of the running thread
+ * @return The old priority level.
+ * @note The function returns the real thread priority regardless of the
+ *       actual priority that could be higher than the real priority because
+ *       the priority inheritance mechanism.
  */
-void chThdSetPriority(tprio_t newprio) {
+tprio_t chThdSetPriority(tprio_t newprio) {
+  tprio_t oldprio;
 
   chDbgAssert(newprio <= HIGHPRIO, "chthreads.c, chThdSetPriority()");
   chSysLock();
 
 #if CH_USE_MUTEXES
-  if (currp->p_prio != currp->p_realprio) {
-    if (newprio > currp->p_prio)
-      currp->p_prio = newprio;
-  }
-  else
+  oldprio = currp->p_realprio;
+  if ((currp->p_prio == currp->p_realprio) || (newprio > currp->p_prio))
     currp->p_prio = newprio;
   currp->p_realprio = newprio;
 #else
+  oldprio = currp->p_prio;
   currp->p_prio = newprio;
 #endif
   chSchRescheduleS();
 
   chSysUnlock();
+  return oldprio;
 }
 
 /**

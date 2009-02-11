@@ -172,7 +172,7 @@ extern "C" {
   Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
                                     tfunc_t pf, void *arg);
 #endif
-  void chThdSetPriority(tprio_t newprio);
+  tprio_t chThdSetPriority(tprio_t newprio);
   Thread *chThdResume(Thread *tp);
   void chThdTerminate(Thread *tp);
   void chThdSleep(systime_t time);

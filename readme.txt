@@ -108,6 +108,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   registers usage now the kernel is much smaller, faster and most OS APIs
   use less RAM in stack frames (note, this is an ARM7 thumb mode specific
   optimization).
+- CHANGE: Now the API chThdSetPriority() returns the old priority instead
+  of void.
 - CHANGE: Modified the signature of the chMsgSendWithEvent() API, it now uses
   a more efficient event signaling method.
 - CHANGE: Removed the field p_tid from the Thread structure and the related

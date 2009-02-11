@@ -46,16 +46,10 @@
  * - 128 priority levels.
  * - Multiple threads at the same priority level allowed.
  * - Round robin scheduling for threads at the same priority level.
- * - Unlimited number of threads.
- * - Unlimited number of virtual timers.
- * - Unlimited number of semaphores.
- * - Unlimited number of mutexes.
- * - Unlimited number of condvars.
- * - Unlimited number of event sources.
- * - Unlimited number of messages in queue.
- * - Unlimited number of I/O queues.
+ * - Offers threads, virtual timers, semaphores, mutexes, condvars,
+ *   event flags, messages, I/O queues.
  * - No static setup at compile time, there is no need to configure a maximum
- *   number of all the above resources.
+ *   number of all the above objects.
  * - No *need* for a memory allocator, all the kernel structures are static
  *   and declaratively allocated.
  * - Threads, Semaphores, Event Sources, Virtual Timers creation/deletion at
@@ -73,6 +67,7 @@
  * .
  * <h2>Related pages</h2>
  * - @subpage lic_faq
+ * - @subpage goals
  * - @subpage concepts
  * - @subpage articles
  * .
