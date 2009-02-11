@@ -23,7 +23,7 @@
  * <h2>Another RTOS?</h2>
  * The first question to be answered is: there was really the need for YET
  * ANOTHER RTOS?<br>
- * My answer is yes because various reasons:
+ * There are several reasons:
  * - The ChibiOS/RT ancestor was created more than 15 years ago and while it
  *   had far less features than the current product it was complete and
  *   functioning. ChibiOS/RT is just a new (and silly) name given to
@@ -37,45 +37,48 @@
  * - I wanted another toy.
  * .
  * <h2>Why is it different?</h2>
- * In itself it implements ideas already seen in other projects but never
- * all together in a single FOSS project. There are some basic choices in
- * ChibiOS/RT (mostly derived by its ancestor):
+ * Well, there are some design choices that should be explained and contribute
+ * to make ChibiOS/RT a peculiar design. Nothing really new by itself but
+ * the whole is interesting:
  *
  * <h3>Static design</h3>
  * Everything in the kernel is static, nowhere memory is allocated or freed,
  * there are two allocator subsystems but those are options and not part of
  * core OS. Safety is something you design in, not something you can add later.
  *
- * <h3>No fixed size tables or structures</h3>
- * No tables to configure, no arrays that can be filled and overflow at
- * runtime. Everything without practical upper bounds (except for resource
- * limits and numerical upper bounds of course).
+ * <h3>No tables or other fixed structures</h3>
+ * The kernel has no internal tables, there is nothing that must be configured
+ * at design time or that can overflow at run time. No upper bounds, the
+ * internal structures are all dynamic even if all the objects are statically
+ * allocated. Things that are not there cannot go wrong and take no space.
  *
  * <h3>No error conditions and no error checks</h3>
- * All the API should not have error conditions, all the previous points are
+ * All the system APIs have no error conditions, all the previous points are
  * finalized to this objective. Everything you can invoke in the kernel is
  * designed to not fail unless you pass garbage as parameters, stray pointers
- * or such. Also the APIs are not slowed down by error checks, error checks
- * exists but only when the debug switch is activated.<br>
+ * as examples. The APIs are not slowed down by parameter checks,
+ * parameter checks (and consistency checks) do exists but only when the
+ * debug switch is activated.<br>
  * All the static core APIs always succeed if correct parameters are passed.
  *
  * <h3>Very simple APIs</h3>
  * Every API should have the parameters you would expect for that function, no
- * more no less. Each API should do a single thing with no options.
+ * more no less. Each API does a single thing with no options.
  *
- * <h3>Damn fast and compact</h3>
+ * <h3>Fast and compact</h3>
  * Note first "fast" then "compact", the focus is on speed and execution
  * efficiency rather than code size. This does not mean it is large, the OS
- * with all the subsystems activated is well below 8KiB (32bit ARM code, the
- * least space efficient) and can shrink down below 2KiB. It would be
+ * size with all the subsystems activated is well below 8KiB (32bit ARM code,
+ * the least space efficient) and can shrink down below 2KiB. It would be
  * possible to make something smaller but:
- * -# It would be pointless, it @a is already small.
+ * -# It would be pointless, it is already @a really small.
  * -# I would not sacrifice efficiency or features in order to save few bytes.
  * .
- * About the "fast" part, it is able to start/wait/exit more than <b>200,000
- * threads per second</b> on a 72MHz STM32 (Cortex-M3). The Context Switch just
- * takes <b>2.3 microseconds</b> on the same STM32. The numbers are not
- * pulled out of thin air, it is the output of the included test suite.
+ * About the "fast" part, the kernel is able to start/exit more than
+ * <b>200,000 threads per second</b> on a 72MHz STM32 (Cortex-M3).
+ * The Context Switch just takes <b>2.3 microseconds</b> on the same STM32.
+ * The numbers are not pulled out of thin air, it is the output of the
+ * included test suite.
  *
  * <h3>Tests and metrics</h3>
  * I think it is nice to know how an OS is tested and how it performs before

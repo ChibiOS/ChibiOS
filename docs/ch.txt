@@ -29,31 +29,24 @@
  * Source <a href="http://en.wikipedia.org/wiki/Chibi" target="_blank">Wikipedia</a>.
  *
  * <h2>Features</h2>
- * - Free software, GPL3 licensed.
+ * - Free software, GPL3 licensed. Stable releases include a exception clause
+ *   to the GPL.
  * - Designed for realtime applications.
  * - Easily portable.
- * - Mixed programming model:
- *   - Synchronous, using semaphores/mutexes/condvars and/or messages.
- *   - Asynchronous, using event sources.
- *   - Mix of the above models, multiple threads listening to multiple event
- *     sources while serving message queues.
- * - PC simulator target included, the development can be done on the PC
- *   using MinGW.<br>
- *   Timers, I/O channels and other HW resources are simulated in a
- *   Win32 process and the application code does not need to be aware of it.
- *   MinGW demo available.
  * - Preemptive scheduling.
- * - 128 priority levels.
- * - Multiple threads at the same priority level allowed.
+ * - 128 priority levels. Multiple threads at the same priority level allowed.
  * - Round robin scheduling for threads at the same priority level.
  * - Offers threads, virtual timers, semaphores, mutexes, condvars,
  *   event flags, messages, I/O queues.
  * - No static setup at compile time, there is no need to configure a maximum
  *   number of all the above objects.
+ * - PC simulator target included, the development can be done on the PC
+ *   using MinGW.<br>
+ *   Timers, I/O channels and other HW resources are simulated in a
+ *   Win32 process and the application code does not need to be aware of it.
+ *   MinGW demo available.
  * - No *need* for a memory allocator, all the kernel structures are static
  *   and declaratively allocated.
- * - Threads, Semaphores, Event Sources, Virtual Timers creation/deletion at
- *   runtime.
  * - Optional, thread safe, Heap Allocator subsystem.
  * - Optional, thread safe, Memory Pools Allocator subsystem.
  * - Blocking and non blocking I/O channels with timeout and events generation
@@ -61,8 +54,6 @@
  * - Minimal system requirements: about 8KiB ROM with all options enabled and
  *   speed optimizations on. The size can shrink under 2KiB by disabling the
  *   the unused subsystems and optimizing for size.
- * - Small memory footprint, unused subsystems can be excluded by the
- *   memory image.
  * - Almost totally written in C with little ASM code required for ports.
  * .
  * <h2>Related pages</h2>
