@@ -48,7 +48,7 @@
  *
  * <h3>No tables or other fixed structures</h3>
  * The kernel has no internal tables, there is nothing that must be configured
- * at design time or that can overflow at run time. No upper bounds, the
+ * at compile time or that can overflow at run time. No upper bounds, the
  * internal structures are all dynamic even if all the objects are statically
  * allocated. Things that are not there cannot go wrong and take no space.
  *
