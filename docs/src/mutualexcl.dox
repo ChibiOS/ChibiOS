@@ -93,11 +93,10 @@
  * - Semaphore queues are FIFO ordered by default, an option exist to make
  *   them priority ordered but this can impact I/O performance because
  *   semaphores are used in I/O queues.
- * - Semaphores do not implement the priority inheritance algorithm so the
- *   priority inversion problem is not mitigated.
+ * - Semaphores do not implement the Priority Inheritance algorithm.
  * .
  * <h3>When use Semaphores</h3>
- * - When you don't need queuing by priority nor the priority inheritance
+ * - When you don't need queuing by priority nor the Priority Inheritance
  *   algorithm.
  * - When RAM/ROM space is scarce.
  * .
@@ -116,7 +115,7 @@
  * <h2>Mutual exclusion by Mutexes</h2>
  * The mutexes, also known as binary semaphores (we choose to not use this
  * terminology to avoid confusion with counting semaphores), are the mechanism
- * intended as general solution for the mutual exclusion problem.
+ * intended as general solution for Mutual Exclusion.
  *
  * <h3>Advantages</h3>
  * - Mutexes implement the Priority Inheritance algorithm that is an important
@@ -154,8 +153,8 @@
  * - Almost free as code size, you need no semaphores nor mutexes.
  * - No RAM overhead.
  * - Fast execution, priority change is a quick operation under ChibiOS/RT.
- * - The priority ceiling protocol that can help mitigate the Priority
- *   Inversion problem.
+ * - The Priority Ceiling protocol can help mitigate potential Priority
+ *   Inversion problems.
  * .
  * <h3>Disadvantages</h3>
  * - Makes the design more complicated because priorities must be assigned to
@@ -207,7 +206,7 @@
  *   and server.
  * - Two context switches are required for each request to the server (but
  *   ChibiOSRT is very efficient at that).
- * - Requires a dedicated thread.
+ * - Requires a dedicated thread as server.
  * .
  */
 /** @} */
