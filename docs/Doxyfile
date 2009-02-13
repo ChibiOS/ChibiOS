@@ -1289,7 +1289,30 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator
 # instead of the = operator.
 
-PREDEFINED             = __DOXYGEN__
+PREDEFINED             = __DOXYGEN__ \
+                         CH_USE_WAITEXIT=1 \
+                         CH_USE_SEMAPHORES=1 \
+                         CH_USE_SEMSW=1 \
+                         CH_USE_SEMAPHORES_TIMEOUT=1 \
+                         CH_USE_MUTEXES=1 \
+                         CH_USE_CONDVARS=1 \
+                         CH_USE_CONDVARS_TIMEOUT=1 \
+                         CH_USE_EVENTS=1 \
+                         CH_USE_EVENTS_TIMEOUT=1 \
+                         CH_USE_EXIT_EVENT=1 \
+                         CH_USE_QUEUES=1 \
+                         CH_USE_QUEUES_TIMEOUT=1 \
+                         CH_USE_QUEUES_HALFDUPLEX=1 \
+                         CH_USE_SERIAL_FULLDUPLEX=1 \
+                         CH_USE_SERIAL_HALFDUPLEX=1 \
+                         CH_USE_HEAP=1 \
+                         CH_USE_MEMPOOLS=1 \
+                         CH_USE_MESSAGES=1 \
+                         CH_USE_MESSAGES_EVENT=1 \
+                         CH_USE_DEBUG=1 \
+                         CH_USE_TRACE=1 \
+                         CH_USE_DYNAMIC=1 \
+                         CH_USE_ROUNDROBIN=1
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
 # this tag can be used to specify a list of macro names that should be expanded.
