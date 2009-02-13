@@ -24,7 +24,8 @@
  * designing a real time system. When using a RTOS like ChibiOS/RT one must
  * be aware of what the jitter is and how it can affect the performance of the
  * system. A good place to start is this
- * <a href="http://en.wikipedia.org/wiki/Jitter">Wikipedia article</a>.
+ * <a href="http://en.wikipedia.org/wiki/Jitter" target="_blank">Wikipedia
+ * article</a>.
  *
  * <h2>Interrupt handlers execution time</h2>
  * The total execution time of an interrupt handler includes:
