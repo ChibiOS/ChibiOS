@@ -64,8 +64,8 @@
  * can report memory exhausted.
  *
  * <h3>Very simple APIs</h3>
- * Every API should have the parameters you would expect for that function, no
- * more no less. Each API does a single thing with no options.
+ * Each API should have the parameters you would expect for that function and
+ * do just one thing with no options.
  *
  * <h3>Fast and compact</h3>
  * Note, first "fast" then "compact", the focus is on speed and execution

@@ -4,17 +4,28 @@ After 1.0.0:
 * chSysLock() and chSysUnlock() with counter (option).
 * OSEK-style chSysSuspendAll()/chSysResumeAll()/chSysEnable()/chSysDisable(),
   implemented this as the new Suspended and Disabled states in 1.1.
-- OSEK-style simple tasks within the idle thread.
-- Think to something for threads restart.
 X lwIP TCP/IP stack integration.
-- Minimal optional C-runtime library (complete enough for lwIP).
-- Multiple heaps, disjoint heaps, heaps in heaps.
+  - "Wide Queues" or Mailboxes, lwIP requires them.
+- FatFS library integration and demo.
 - Multiple debug levels.
-- Stack guard pages.
-- Threads profiling option.
+  - Stack guard pages.
+  - Threads profiling option.
 * Idle loop hook macro.
 * Switch the configuration options to TRUE/FALSE rather than def/undef.
+- Threads Pools manager in the library.
+  - New chThdCreate() that takes just two parameters, a pointer to a thread
+    descriptor and the tread parameter. It could wrap the current variants
+    or just be an alternative.
+
+After 1.2.0:
+- Minimal optional C-runtime library (complete enough for lwIP).
+- OSEK-style simple tasks within the idle thread.
+- Think to something for threads restart.
+- Multiple heaps, disjoint heaps, heaps in heaps.
 - Abstract I/O channels rather than just serial ports.
+  - Move the serial drivers implementations in library al keep the I/O channel
+    interface as part of the kernel. Better keep the core as compact as
+    possible.
 
 Ideas for 2.x.x:
 - Reference counter for threads, concept of detached threads, threads
@@ -28,6 +39,7 @@ X ChibiOS Wizard, UML modeling and ChibiOS applications code and
 X OSEK layer.
 - Posix layer.
 X File System
+- Visual debugger interfaced to OpenOCD.
 
 Lower priority:
 - More demos

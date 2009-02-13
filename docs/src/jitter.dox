@@ -55,6 +55,7 @@
       int -> busy [label="Not Ready"];
       busy -> busy [label="Still Busy\n(added latency)"];
       busy -> served [label="Finally Ready"];
+  }
  * @enddot
  *
  * In this scenario the jitter (busy state) is represented by the sum of:
@@ -85,6 +86,7 @@
       busy -> busy [label="Higher priority Threads\n(added latency)"];
       busy -> thread [label="Highest Priority"];
       served -> thread [label="Highest Priority (minimum latency)"];
+  }
  * @enddot
  *
  * In this scenario all the jitter sources previously discussed are also
