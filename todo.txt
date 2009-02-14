@@ -1,4 +1,5 @@
 After 1.0.0:
+- Improve makefiles by adding an options head section and making it shared.
 - Update C++ wrapper (Heap, Pools).
 * Priority ordering option for semaphores.
 * chSysLock() and chSysUnlock() with counter (option).
