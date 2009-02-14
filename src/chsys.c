@@ -61,10 +61,12 @@ void chSysInit(void) {
 
   port_init();
   scheduler_init();
-  debug_init();
   vt_init();
 #if CH_USE_HEAP
   heap_init();
+#endif
+#if CH_DBG_ENABLE_TRACE
+  trace_init();
 #endif
 
   /*

@@ -73,14 +73,18 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 1.1.1unstable ***
-- FIX: fixed a small problem in the chcore.c template file.
+- FIX: Fixed a small problem in the chcore.c template file.
+- FIX: Fixed wrong assertions in chThdWait() and chHeapFree() (backported in
+  stable branch).
+- NEW: Mode flexible debug configuration options, removed the old CH_USE_DEBUG
+  and CH_USE_TRACE.
 
 *** 1.1.0unstable ***
 - FIX: Modified the default value for the STM32 HSI setup it was 1, it should
   be 0x10 (backported in stable branch).
 - FIX: Removed an obsolete constant (P_SUSPENDED) from thread.h (backported in
   stable branch).
-- FIX: Removed unused field mp_grow in the MemoryPool structure  (backported in
+- FIX: Removed unused field mp_grow in the MemoryPool structure (backported in
   stable branch).
 - NEW: Added to the STM32 demo makefile an option to build ChibiOS/RT with the
   full STM32 FWLib 2.03. **NOTE**, except for the makefile option, the

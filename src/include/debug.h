@@ -27,8 +27,6 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 
-#if CH_USE_DEBUG
-
 /**
  * @brief Trace buffer entries.
  */
@@ -62,25 +60,13 @@ typedef struct {
   CtxSwcEvent           tb_buffer[TRACE_BUFFER_SIZE];   /**< Ring buffer.*/
 } TraceBuffer;
 
-extern CtxSwcEvent *dbgnext;
-extern TraceBuffer dbgtb;
-extern char *dbglastmsg;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void debug_init(void);
-  void chDbgPanic(char *msg);
-#ifdef __cplusplus
-}
-#endif
-
+#if CH_DBG_ENABLE_ASSERTS
 /**
  * Condition assertion, if the condition check fails then the kernel panics
  * with the specified message.
  * @param c the condition to be verified to be true
  * @param m the text message
- * @note The condition is tested only if the @p CH_USE_DEBUG switch is
+ * @note The condition is tested only if the @p CH_DBG_ENABLE_ASSERTS switch is
  *       specified in @p chconf.h else the macro does nothing.
  */
 #define chDbgAssert(c, m) {                                             \
@@ -88,23 +74,27 @@ extern "C" {
     chDbgPanic(m);                                                      \
 }
 
-#else /* !CH_USE_DEBUG */
+#else /* !CH_DBG_ENABLE_ASSERTS */
 
-#define debug_init()
 #define chDbgPanic(msg) {}
 #define chDbgAssert(c, m) {(void)(c);}
 
-#endif /* CH_USE_DEBUG */
+#endif /* !CH_DBG_ENABLE_ASSERTS */
 
-#if CH_USE_TRACE
 #ifdef __cplusplus
 extern "C" {
 #endif
+#if CH_DBG_ENABLE_TRACE
+  extern TraceBuffer trace_buffer;
   void chDbgTrace(Thread *otp, Thread *ntp);
+#endif
+#if CH_DBG_ENABLE_ASSERTS
+  extern char *panic_msg;
+  void chDbgPanic(char *msg);
+#endif
 #ifdef __cplusplus
 }
 #endif
-#endif /* CH_USE_TRACE */
 
 #endif /* _DEBUG_H_ */
 

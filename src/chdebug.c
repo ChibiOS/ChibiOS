@@ -26,41 +26,20 @@
 
 #include <ch.h>
 
-#if CH_USE_DEBUG
-
-char *panicmsg;
-
-/**
- * @brief Debug subsystem initialization.
- */
-void debug_init(void) {
-
-#if CH_USE_TRACE
-  dbgtb.tb_size = TRACE_BUFFER_SIZE;
-  dbgtb.tb_ptr = &dbgtb.tb_buffer[0];
-#endif
-}
-
-/**
- * @brief Prints a panic message on the console/debugger and then halts the
- * system.
- *
- * @param msg the pointer to the message string
- */
-void chDbgPanic(char *msg) {
-
-  panicmsg = msg;
-  chSysPuts("PANIC: ");
-  chSysPuts(msg);
-  chSysHalt();
-}
-
-#if CH_USE_TRACE
+#if CH_DBG_ENABLE_TRACE
 /**
  * @brief Public trace buffer.
  */
-TraceBuffer dbgtb;
+TraceBuffer trace_buffer;
 
+/**
+ * @brief Trace circular buffer subsystem initialization.
+ */
+void trace_init(void) {
+
+  trace_buffer.tb_size = TRACE_BUFFER_SIZE;
+  trace_buffer.tb_ptr = &trace_buffer.tb_buffer[0];
+}
 /**
  * @brief Inserts in the circular debug trace buffer a context switch record.
  *
@@ -69,15 +48,35 @@ TraceBuffer dbgtb;
  */
 void chDbgTrace(Thread *otp, Thread *ntp) {
 
-  dbgtb.tb_ptr->cse_wtobjp = otp->p_wtobjp;
-  dbgtb.tb_ptr->cse_time = chSysGetTime();
-  dbgtb.tb_ptr->cse_state = otp->p_state;
-  dbgtb.tb_ptr->cse_tid = (unsigned)ntp >> 4;
-  if (++dbgtb.tb_ptr >= &dbgtb.tb_buffer[TRACE_BUFFER_SIZE])
-    dbgtb.tb_ptr = &dbgtb.tb_buffer[0];
+  trace_buffer.tb_ptr->cse_wtobjp = otp->p_wtobjp;
+  trace_buffer.tb_ptr->cse_time = chSysGetTime();
+  trace_buffer.tb_ptr->cse_state = otp->p_state;
+  trace_buffer.tb_ptr->cse_tid = (unsigned)ntp >> 4;
+  if (++trace_buffer.tb_ptr >= &trace_buffer.tb_buffer[TRACE_BUFFER_SIZE])
+    trace_buffer.tb_ptr = &trace_buffer.tb_buffer[0];
 }
-#endif /* CH_USE_TRACE */
+#endif /* CH_DBG_ENABLE_TRACE */
 
-#endif /* CH_USE_DEBUG */
+#if CH_DBG_ENABLE_ASSERTS
+/**
+ * @brief Pointer to the panic message.
+ * @details This pointer is meant to be accessed through the debugger, it is
+ * written once and then the system is halted.
+ */
+char *panic_msg;
+
+/**
+ * @brief Prints a panic message on the console and then halts the system.
+ *
+ * @param msg the pointer to the panic message string
+ */
+void chDbgPanic(char *msg) {
+
+  panic_msg = msg;
+  chSysPuts("PANIC: ");
+  chSysPuts(msg);
+  chSysHalt();
+}
+#endif /* CH_DBG_ENABLE_ASSERTS */
 
 /** @} */

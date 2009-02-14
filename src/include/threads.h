@@ -59,6 +59,8 @@ struct Thread {
     msg_t               p_rdymsg;       /**< Thread wakeup code.*/
     msg_t               p_exitcode;     /**< The thread exit code
                                              (@p PREXIT state).*/
+    void                *p_wtobjp;      /**< Generic kernel object pointer used
+                                             for opaque access.*/
 #if CH_USE_SEMAPHORES
     Semaphore           *p_wtsemp;      /**< Semaphore where the thread is
                                              waiting on (@p PRWTSEM state).*/
@@ -78,10 +80,6 @@ struct Thread {
 #if CH_USE_EVENTS
     eventmask_t         p_ewmask;       /**< Enabled events mask (@p PRWTOREVT
                                              or @p PRWTANDEVT states).*/
-#endif
-#if CH_USE_TRACE
-    void                *p_wtobjp;      /**< Generic kernel object pointer used
-                                             for opaque access.*/
 #endif
   };
   /*

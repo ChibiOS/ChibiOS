@@ -310,21 +310,30 @@
 #endif
 
 /**
- * Debug option, if enableed includes basic debug support to the kernel.
- * @note The debug support is port-dependent, it may be not present on some
- *       targets. In that case stub functions will be included.
+ * Debug option, if enabled all the assertions in the kernel code are
+ * activated. This includes function parameters checks and consistency
+ * checks inside the kernel.
  * @note The default is @p FALSE.
  */
-#ifndef CH_USE_DEBUG
-#define CH_USE_DEBUG                    FALSE
+#ifndef CH_DBG_ENABLE_ASSERTS
+#define CH_DBG_ENABLE_ASSERTS           FALSE
 #endif
 
 /**
- * Debug option, includes the threads context switch tracing feature.
+ * Debug option, if enabled the context switch circular trace buffer is
+ * activated.
  * @note The default is @p FALSE.
  */
-#ifndef CH_USE_TRACE
-#define CH_USE_TRACE                    FALSE
+#ifndef CH_DBG_ENABLE_TRACE
+#define CH_DBG_ENABLE_TRACE             FALSE
+#endif
+
+/**
+ * Debug option, if enabled the threads working area is filled with a byte
+ * pattern when a thread is created.
+ */
+#ifndef CH_DBG_FILL_THREADS
+#define CH_DBG_FILL_THREADS             FALSE
 #endif
 
 /**

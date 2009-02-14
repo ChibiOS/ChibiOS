@@ -88,7 +88,7 @@ void chSchGoSleepS(tstate_t newstate) {
 #if CH_USE_ROUNDROBIN
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-#if CH_USE_TRACE
+#if CH_DBG_ENABLE_TRACE
   chDbgTrace(otp, currp);
 #endif
   chSysSwitchI(otp, currp);
@@ -171,7 +171,7 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
 #if CH_USE_ROUNDROBIN
     rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-#if CH_USE_TRACE
+#if CH_DBG_ENABLE_TRACE
     /* trace the context switch */
     chDbgTrace(otp, ntp);
 #endif
@@ -194,7 +194,7 @@ void chSchDoRescheduleI(void) {
 #if CH_USE_ROUNDROBIN
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-#if CH_USE_TRACE
+#if CH_DBG_ENABLE_TRACE
   chDbgTrace(otp, currp);
 #endif
   chSysSwitchI(otp, currp);

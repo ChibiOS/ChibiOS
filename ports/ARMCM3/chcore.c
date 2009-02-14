@@ -182,7 +182,7 @@ void PendSVVector(void) {
   /* set the round-robin time quantum */
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-#if CH_USE_TRACE
+#if CH_DBG_ENABLE_TRACE
   chDbgTrace(otp, currp);
 #endif
   sp_thd = currp->p_ctx.r13;

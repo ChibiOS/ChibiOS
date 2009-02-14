@@ -55,7 +55,7 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
   return tp;
 }
 
-#if CH_USE_DEBUG
+#if CH_DBG_FILL_THREADS
 static void memfill(uint8_t *p, uint32_t n, uint8_t v) {
 
   while (n)
@@ -91,7 +91,7 @@ Thread *chThdInit(void *workspace, size_t wsize,
   chDbgAssert((wsize >= THD_WA_SIZE(0)) && (prio <= HIGHPRIO) &&
               (workspace != NULL) && (pf != NULL),
               "chthreads.c, chThdInit()");
-#if CH_USE_DEBUG
+#if CH_DBG_FILL_THREADS
   memfill(workspace, wsize, MEM_FILL_PATTERN);
 #endif
   SETUP_CONTEXT(workspace, wsize, pf, arg);
@@ -327,7 +327,7 @@ msg_t chThdWait(Thread *tp) {
   msg_t msg;
 
   chSysLock();
-  chDbgAssert((tp != NULL) && (tp != currp) && (tp->p_waiting != NULL),
+  chDbgAssert((tp != NULL) && (tp != currp) && (tp->p_waiting == NULL),
               "chthreads.c, chThdWait()");
   if (tp->p_state != PREXIT) {
     tp->p_waiting = currp;
