@@ -73,9 +73,11 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 1.1.1unstable ***
-- FIX: Fixed a small problem in the chcore.c template file.
+- FIX: Fixed a problem with some event APIs not showing in the documentation
+  (backported in stable branch).
 - FIX: Fixed wrong assertions in chThdWait() and chHeapFree() (backported in
   stable branch).
+- FIX: Fixed a small problem in the chcore.c template file.
 - NEW: Mode flexible debug configuration options, removed the old CH_USE_DEBUG
   and CH_USE_TRACE.
 

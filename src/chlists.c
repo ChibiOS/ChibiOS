@@ -25,7 +25,7 @@
  */
 #include <ch.h>
 
-#if !CH_OPTIMIZE_SPEED || defined(__DOXIGEN__)
+#if !CH_OPTIMIZE_SPEED || defined(__DOXYGEN__)
 /**
  * @brief Inserts a thread into a priority ordered queue.
  *
