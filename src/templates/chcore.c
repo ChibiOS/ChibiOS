@@ -112,7 +112,7 @@ void port_wait_for_interrupt(void) {
  */
 void port_halt(void) {
 
-  port_disable_all();
+  port_disable();
   while (TRUE) {
   }
 }

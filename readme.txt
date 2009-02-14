@@ -72,6 +72,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.1.1unstable ***
+- FIX: fixed a small problem in the chcore.c template file.
+
 *** 1.1.0unstable ***
 - FIX: Modified the default value for the STM32 HSI setup it was 1, it should
   be 0x10 (backported in stable branch).
