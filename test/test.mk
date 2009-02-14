@@ -3,3 +3,6 @@ TESTSRC = ../../test/test.c      ../../test/testrdy.c   ../../test/testsem.c \
           ../../test/testmtx.c   ../../test/testcond.c  ../../test/testmsg.c \
           ../../test/testevt.c   ../../test/testheap.c  ../../test/testpools.c \
           ../../test/testdyn.c   ../../test/testbmk.c
+
+# Required include directories
+TESTINC = ../../test

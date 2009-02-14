@@ -8,3 +8,6 @@ KERNSRC = ../../src/chsys.c    ../../src/chdebug.c \
           ../../src/chmsg.c    ../../src/chqueues.c \
           ../../src/chheap.c   ../../src/chmempools.c \
           ../../src/chserial.c
+
+# Required include directories
+KERNINC = ../../src/include
