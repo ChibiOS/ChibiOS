@@ -1,0 +1,209 @@
+#
+#       !!!! Do NOT edit this makefile with an editor which replace tabs by spaces !!!!
+#
+##############################################################################################
+#
+# On command line:
+#
+# make all = Create project
+#
+# make clean = Clean project files.
+#
+# To rebuild project do "make clean" and "make all".
+#
+
+##############################################################################################
+# OS, compiler and demo options
+
+# Compiler options here
+OPT = -O2 -ggdb -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
+
+# Enable this if you want the linker to remove unused code and data
+LINK_GC = yes
+
+# Enable this if you really want to use the STM FWLib. ChibiOS/RT does not
+# require it and does not support the library except for this Makefile option.
+USE_FWLIB = no
+
+# Enable register caching optimization. This option greatly improves both
+# code size and execution speed but is incompatible with libraries compiled
+# without the very same options. The register R7 becomes a global variable
+# and MUST NOT be used anywhere in the code.
+USE_CURRP_CACHING = no
+
+#
+# End of OS and demo options
+##############################################################################################
+
+##############################################################################################
+# Start of default section
+#
+
+#TRGT = arm-none-eabi-
+#TRGT = arm-eabi-
+TRGT = arm-elf-
+CC   = $(TRGT)gcc
+CP   = $(TRGT)objcopy
+AS   = $(TRGT)gcc -x assembler-with-cpp
+OD   = $(TRGT)objdump
+HEX  = $(CP) -O ihex
+BIN  = $(CP) -O binary
+
+MCU  = cortex-m3
+
+# List all default C defines here, like -D_DEBUG=1
+DDEFS =
+
+# List all default ASM defines here, like -D_DEBUG=1
+DADEFS =
+
+# List all default directories to look for include files here
+DINCDIR =
+
+# List the default directory to look for the libraries here
+DLIBDIR =
+
+# List all default libraries here
+DLIBS =
+
+#
+# End of default section
+##############################################################################################
+
+##############################################################################################
+# Start of user section
+#
+
+# Define project name here
+PROJECT = ch
+
+# Define linker script file here
+LDSCRIPT= ch.ld
+
+# List all user C define here, like -D_DEBUG=1
+UDEFS =
+
+# Define ASM defines here
+UADEFS =
+
+# Imported source files
+include ../../src/kernel.mk
+include ../../test/test.mk
+ifeq ($(USE_FWLIB),yes)
+include ./stm32lib/stm32lib.mk
+endif
+
+# List ARM-mode C source files here
+SRC = ../../ports/ARMCM3/chcore.c ../../ports/ARMCM3/nvic.c \
+      ../../ports/ARMCM3-STM32F103/stm32_serial.c \
+       ${KERNSRC} \
+       ${TESTSRC} \
+      ../../src/lib/evtimer.c \
+      board.c main.c
+
+ifeq ($(USE_FWLIB),yes)
+SRC += ${STM32SRC}
+endif
+
+# List ASM source files here
+ASMSRC = ../../ports/ARMCM3/crt0.s ../../ports/ARMCM3-STM32F103/vectors.s
+
+# List all user directories here
+UINCDIR = ../../src/include ../../src/lib ../../test \
+          ../../ports/ARMCM3 ../../ports/ARMCM3-STM32F103 \
+          ./stm32lib/inc
+
+# List the user directory to look for the libraries here
+ULIBDIR =
+
+# List all user libraries here
+ULIBS =
+
+# Define warning options here
+WARN = -Wall -Wstrict-prototypes
+
+#
+# End of user defines
+##############################################################################################
+
+ifeq ($(USE_CURRP_CACHING),yes)
+OPT += -ffixed-r7 -DCH_CURRP_REGISTER_CACHE='"r7"'
+endif
+
+ifeq ($(USE_FWLIB),yes)
+# The thing generates a lot of aliasing warnings, this disables an optimization
+# and the warning disappears, the code is a bit larger however.
+OPT += -fno-strict-aliasing
+endif
+
+ifeq ($(LINK_GC),yes)
+  OPT += -ffunction-sections -fdata-sections
+endif
+
+INCDIR  = $(patsubst %,-I%,$(DINCDIR) $(UINCDIR))
+LIBDIR  = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
+DEFS    = $(DDEFS) $(UDEFS)
+ADEFS   = $(DADEFS) $(UADEFS)
+COBJS   = $(SRC:.c=.o)
+ASMOBJS = $(ASMSRC:.s=.o)
+OBJS	= $(ASMOBJS) $(COBJS)
+LIBS    = $(DLIBS) $(ULIBS)
+MCFLAGS = -mcpu=$(MCU) -mthumb
+
+ODFLAGS	= -x --syms
+ASFLAGS = $(MCFLAGS) -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
+CPFLAGS = $(MCFLAGS) $(OPT) $(WARN) -Wa,-alms=$(<:.c=.lst) $(DEFS)
+ifeq ($(LINK_GC),yes)
+  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch,--gc-sections $(LIBDIR)
+else
+  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
+endif
+
+# Generate dependency information
+CPFLAGS += -MD -MP -MF .dep/$(@F).d
+
+#
+# Makefile rules
+#
+all: $(OBJS) $(PROJECT).elf $(PROJECT).hex $(PROJECT).bin $(PROJECT).dmp
+
+$(COBJS) : %.o : %.c
+	@echo
+	$(CC) -c $(CPFLAGS) -I . $(INCDIR) $< -o $@
+
+$(ASMOBJS) : %.o : %.s
+	@echo
+	$(AS) -c $(ASFLAGS) -I . $(INCDIR) $< -o $@
+
+%elf: $(OBJS)
+	@echo
+	$(CC) $(ASMOBJS) $(COBJS) $(LDFLAGS) $(LIBS) -o $@
+
+%hex: %elf
+	$(HEX) $< $@
+
+%bin: %elf
+	$(BIN) $< $@
+
+%dmp: %elf
+	$(OD) $(ODFLAGS) $< > $@
+
+clean:
+	-rm -f $(OBJS)
+	-rm -f $(PROJECT).elf
+	-rm -f $(PROJECT).dmp
+	-rm -f $(PROJECT).map
+	-rm -f $(PROJECT).hex
+	-rm -f $(PROJECT).bin
+	-rm -f $(SRC:.c=.c.bak)
+	-rm -f $(SRC:.c=.lst)
+	-rm -f $(ASMSRC:.s=.s.bak)
+	-rm -f $(ASMSRC:.s=.lst)
+	-rm -fR .dep
+
+#
+# Include the dependency files, should be the last of the makefile
+#
+-include $(shell mkdir .dep 2>/dev/null) $(wildcard .dep/*)
+
+# *** EOF ***
