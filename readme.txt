@@ -80,6 +80,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Removed an obsolete constant (P_SUSPENDED) from thread.h.
 - FIX: Removed unused field mp_grow in the MemoryPool structure.
 - FIX: Fixed wrong assertions in chThdWait() and chHeapFree().
+- FIX: Fixed a problem with some event APIs not showing in the documentation.
 
 *** 1.0.0 ***
 - License switch, added GPL exception, see exception.txt.

@@ -168,7 +168,7 @@ void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask) {
 }
 
 #if defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENTS_TIMEOUT) || \
-    defined(__DOXIGEN__)
+    defined(__DOXYGEN__)
 /**
  * A pending event among those specified in \p ewmask is selected, cleared and
  * its mask returned.

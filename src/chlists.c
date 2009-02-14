@@ -30,7 +30,7 @@
  */
 #include <ch.h>
 
-#if !defined(CH_OPTIMIZE_SPEED) || defined(__DOXIGEN__)
+#if !defined(CH_OPTIMIZE_SPEED) || defined(__DOXYGEN__)
 /**
  * Inserts a thread into a priority ordered queue.
  *
