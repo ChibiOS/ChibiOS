@@ -122,7 +122,7 @@ static void wakeup(void *p) {
  * to sleep is awakened after the specified time has elapsed.
  *
  * @param newstate the new thread state
- * @param time the number of ticks before the operation timeouts. the value
+ * @param time the number of ticks before the operation timeouts. The value
  *             zero (@p TIME_INFINITE) is allowed.
  * @return The wakeup message.
  * @retval RDY_TIMEOUT if a timeout occurs.
