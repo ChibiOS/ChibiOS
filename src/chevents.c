@@ -195,8 +195,9 @@ void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask) {
 
 #if CH_OPTIMIZE_SPEED || !CH_USE_EVENTS_TIMEOUT || defined(__DOXYGEN__)
 /**
- * @brief A pending event among those specified in @p ewmask is selected,
- * cleared and its mask returned.
+ * @brief Waits for exactly one of the specified events.
+ * @details The function waits for one event among those specified in
+ * @p ewmask to become pending then the event is cleared and returned.
  *
  * @param ewmask mask of the events that the function should wait for,
  *               @p ALL_EVENTS enables all the events
@@ -250,7 +251,7 @@ eventmask_t chEvtWaitAny(eventmask_t ewmask) {
 }
 
 /**
- * @brief Waits for all the specified event flags then clears them.
+ * @brief Waits for all the specified events.
  * @details The function waits for all the events specified in @p ewmask to
  * become pending then the events are cleared and returned.
  *
@@ -274,9 +275,9 @@ eventmask_t chEvtWaitAll(eventmask_t ewmask) {
 
 #if CH_USE_EVENTS_TIMEOUT
 /**
- * @brief Waits for a single event.
- * @details A pending event among those specified in @p ewmask is selected,
- * cleared and its mask returned.
+ * @brief Waits for exactly one of the specified events.
+ * @details The function waits for one event among those specified in
+ * @p ewmask to become pending then the event is cleared and returned.
  *
  * @param ewmask mask of the events that the function should wait for,
  *               @p ALL_EVENTS enables all the events
@@ -309,8 +310,8 @@ eventmask_t chEvtWaitOneTimeout(eventmask_t ewmask, systime_t time) {
 
 /**
  * @brief Waits for any of the specified events.
- * @details The function waits for any event among those specified in @p ewmask
- * to become pending then the events are cleared and returned.
+ * @details The function waits for any event among those specified in
+ * @p ewmask to become pending then the events are cleared and returned.
  *
  * @param ewmask mask of the events that the function should wait for,
  *               @p ALL_EVENTS enables all the events
@@ -336,7 +337,7 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t ewmask, systime_t time) {
 }
 
 /**
- * @brief Waits for all the specified event flags then clears them.
+ * @brief Waits for all the specified events.
  * @details The function waits for all the events specified in @p ewmask to
  * become pending then the events are cleared and returned.
  *
