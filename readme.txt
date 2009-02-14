@@ -80,8 +80,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Removed unused field mp_grow in the MemoryPool structure  (backported in
   stable branch).
 - NEW: Added to the STM32 demo makefile an option to build ChibiOS/RT with the
-  full STM32 FWLib 2.03. **NOTE** that, except for the compile option, the
-  library is not used by the OS nor supported (backported in stable branch).
+  full STM32 FWLib 2.03. **NOTE**, except for the makefile option, the
+  library is not used by the OS nor required (backported in stable branch).
 - NEW: Better separation between the port code and the system APIs, now an
   architecture-specific "driver" contains all the port related code.
   Port functions/macros are no more directly exposed as APIs to the user code.
