@@ -164,7 +164,7 @@ void chHeapFree(void *p) {
 
   while (TRUE) {
 
-    chDbgAssert((hp < qp) && (hp >= LIMIT(qp)), "chheap.c, chHeapFree() #2");
+    chDbgAssert((hp < qp) || (hp >= LIMIT(qp)), "chheap.c, chHeapFree() #2");
 
     if (((qp == &heap.free) || (hp > qp)) &&
         ((qp->h_next == NULL) || (hp < qp->h_next))) {

@@ -314,7 +314,7 @@ msg_t chThdWait(Thread *tp) {
   msg_t msg;
 
   chSysLock();
-  chDbgAssert((tp != NULL) && (tp != currp) && (tp->p_waiting != NULL),
+  chDbgAssert((tp != NULL) && (tp != currp) && (tp->p_waiting == NULL),
               "chthreads.c, chThdWait()");
   if (tp->p_state != PREXIT) {
     tp->p_waiting = currp;
