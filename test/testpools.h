@@ -20,6 +20,6 @@
 #ifndef _TESTPOOLS_H_
 #define _TESTPOOLS_H_
 
-extern const struct testcase testpools1;
+extern const struct testcase *patternpools[];
 
 #endif /* _TESTPOOLS_H_ */

@@ -20,7 +20,6 @@
 #ifndef _TESTCOND_H_
 #define _TESTCOND_H_
 
-extern const struct testcase testcond1;
-extern const struct testcase testcond2;
+extern const struct testcase *patterncond[];
 
 #endif /* _TESTCOND_H_ */

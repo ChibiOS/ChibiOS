@@ -30,12 +30,6 @@ static char *heap1_gettest(void) {
   return "Heap, allocation and fragmentation test";
 }
 
-static void heap1_setup(void) {
-}
-
-static void heap1_teardown(void) {
-}
-
 static void heap1_execute(void) {
   void *p1, *p2, *p3;
   size_t n, sz;
@@ -75,9 +69,19 @@ static void heap1_execute(void) {
 
 const struct testcase testheap1 = {
   heap1_gettest,
-  heap1_setup,
-  heap1_teardown,
+  NULL,
+  NULL,
   heap1_execute
 };
 
 #endif /* CH_USE_HEAP */
+
+/*
+ * Test sequence for heap pattern.
+ */
+const struct testcase *patternheap[] = {
+#if CH_USE_HEAP
+  &testheap1,
+#endif
+  NULL
+};

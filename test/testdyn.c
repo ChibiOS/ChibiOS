@@ -35,12 +35,6 @@ static char *dyn1_gettest(void) {
   return "Dynamic APIs, threads creation from heap";
 }
 
-static void dyn1_setup(void) {
-}
-
-static void dyn1_teardown(void) {
-}
-
 static void dyn1_execute(void) {
   size_t n, sz;
   tprio_t prio = chThdGetPriority();
@@ -72,8 +66,8 @@ static void dyn1_execute(void) {
 
 const struct testcase testdyn1 = {
   dyn1_gettest,
-  dyn1_setup,
-  dyn1_teardown,
+  NULL,
+  NULL,
   dyn1_execute
 };
 #endif /* CH_USE_HEAP */
@@ -89,9 +83,6 @@ static char *dyn2_gettest(void) {
 static void dyn2_setup(void) {
 
   chPoolInit(&mp1, THD_WA_SIZE(THREADS_STACK_SIZE));
-}
-
-static void dyn2_teardown(void) {
 }
 
 static void dyn2_execute(void) {
@@ -129,9 +120,24 @@ static void dyn2_execute(void) {
 const struct testcase testdyn2 = {
   dyn2_gettest,
   dyn2_setup,
-  dyn2_teardown,
+  NULL,
   dyn2_execute
 };
 #endif /* CH_USE_MEMPOOLS */
 
 #endif /* CH_USE_DYNAMIC */
+
+/*
+ * Test sequence for dynamic APIs pattern.
+ */
+const struct testcase *patterndyn[] = {
+#if CH_USE_DYNAMIC
+#if CH_USE_HEAP
+  &testdyn1,
+#endif
+#if CH_USE_MEMPOOLS
+  &testdyn2,
+#endif
+#endif
+  NULL
+};

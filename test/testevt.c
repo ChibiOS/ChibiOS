@@ -37,9 +37,6 @@ static void evt1_setup(void) {
   chEvtClear(ALL_EVENTS);
 }
 
-static void evt1_teardown(void) {
-}
-
 static msg_t thread(void *p) {
 
   chEvtBroadcast(&es1);
@@ -97,8 +94,18 @@ static void evt1_execute(void) {
 const struct testcase testevt1 = {
   evt1_gettest,
   evt1_setup,
-  evt1_teardown,
+  NULL,
   evt1_execute
 };
 
 #endif /* CH_USE_EVENTS */
+
+/*
+ * Test sequence for events pattern.
+ */
+const struct testcase *patternevt[] = {
+#if CH_USE_EVENTS
+  &testevt1,
+#endif
+  NULL
+};

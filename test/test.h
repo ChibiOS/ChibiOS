@@ -20,9 +20,16 @@
 #ifndef _TEST_H_
 #define _TEST_H_
 
+#ifndef DELAY_BETWEEN_TESTS
+#define DELAY_BETWEEN_TESTS     200
+#endif
+
+#ifndef TEST_NO_BENCHMARKS
+#define TEST_NO_BENCHMARKS      FALSE
+#endif
+
 #define MAX_THREADS             5
 #define MAX_TOKENS              16
-#define DELAY_BETWEEN_TESTS     200
 
 #if defined(CH_ARCHITECTURE_AVR) || defined(CH_ARCHITECTURE_MSP430)
 #define THREADS_STACK_SIZE      48

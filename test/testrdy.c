@@ -32,12 +32,6 @@ static char *rdy1_gettest(void) {
   return "Ready List, priority enqueuing test #1";
 }
 
-static void rdy1_setup(void) {
-}
-
-static void rdy1_teardown(void) {
-}
-
 static void rdy1_execute(void) {
 
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-5, thread, "E");
@@ -51,20 +45,14 @@ static void rdy1_execute(void) {
 
 const struct testcase testrdy1 = {
   rdy1_gettest,
-  rdy1_setup,
-  rdy1_teardown,
+  NULL,
+  NULL,
   rdy1_execute
 };
 
 static char *rdy2_gettest(void) {
 
   return "Ready List, priority enqueuing test #2";
-}
-
-static void rdy2_setup(void) {
-}
-
-static void rdy2_teardown(void) {
 }
 
 static void rdy2_execute(void) {
@@ -80,7 +68,16 @@ static void rdy2_execute(void) {
 
 const struct testcase testrdy2 = {
   rdy2_gettest,
-  rdy2_setup,
-  rdy2_teardown,
+  NULL,
+  NULL,
   rdy2_execute
+};
+
+/*
+ * Test sequence for ready list pattern.
+ */
+const struct testcase *patternrdy[] = {
+  &testrdy1,
+  &testrdy2,
+  NULL
 };

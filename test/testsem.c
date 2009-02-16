@@ -37,9 +37,6 @@ static void sem1_setup(void) {
   chSemInit(&sem1, 0);
 }
 
-static void sem1_teardown(void) {
-}
-
 static msg_t thread(void *p) {
 
   chSemWait(&sem1);
@@ -66,10 +63,11 @@ static void sem1_execute(void) {
 const struct testcase testsem1 = {
   sem1_gettest,
   sem1_setup,
-  sem1_teardown,
+  NULL,
   sem1_execute
 };
 
+#if CH_USE_SEMAPHORES_TIMEOUT
 static char *sem2_gettest(void) {
 
   return "Semaphores, timeout test";
@@ -78,9 +76,6 @@ static char *sem2_gettest(void) {
 static void sem2_setup(void) {
 
   chSemInit(&sem1, 0);
-}
-
-static void sem2_teardown(void) {
 }
 
 static void sem2_execute(void) {
@@ -101,8 +96,21 @@ static void sem2_execute(void) {
 const struct testcase testsem2 = {
   sem2_gettest,
   sem2_setup,
-  sem2_teardown,
+  NULL,
   sem2_execute
 };
-
+#endif /* CH_USE_SEMAPHORES_TIMEOUT */
 #endif /* CH_USE_SEMAPHORES */
+
+/*
+ * Test sequence for semaphores pattern.
+ */
+const struct testcase *patternsem[] = {
+#if CH_USE_SEMAPHORES
+  &testsem1,
+#if CH_USE_SEMAPHORES_TIMEOUT
+  &testsem2,
+#endif
+#endif
+  NULL
+};

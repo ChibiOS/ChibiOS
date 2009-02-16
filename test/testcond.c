@@ -37,9 +37,6 @@ static void cond1_setup(void) {
   chMtxInit(&m1);
 }
 
-static void cond1_teardown(void) {
-}
-
 static msg_t thread1(void *p) {
 
   chMtxLock(&m1);
@@ -71,7 +68,7 @@ static void cond1_execute(void) {
 const struct testcase testcond1 = {
   cond1_gettest,
   cond1_setup,
-  cond1_teardown,
+  NULL,
   cond1_execute
 };
 
@@ -97,9 +94,20 @@ static void cond2_execute(void) {
 
 const struct testcase testcond2 = {
   cond2_gettest,
-  cond1_setup,
-  cond1_teardown,
+  NULL,
+  NULL,
   cond2_execute
 };
 
-#endif /* defined(CH_USE_CONDVARS) && defined(CH_USE_MUTEXES) */
+#endif /* CH_USE_CONDVARS && CH_USE_MUTEXES */
+
+/*
+ * Test sequence for condvars pattern.
+ */
+const struct testcase *patterncond[] = {
+#if CH_USE_CONDVARS && CH_USE_MUTEXES
+  &testcond1,
+  &testcond2,
+#endif
+  NULL
+};

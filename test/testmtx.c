@@ -37,9 +37,6 @@ static void mtx1_setup(void) {
   chMtxInit(&m1);
 }
 
-static void mtx1_teardown(void) {
-}
-
 static msg_t thread1(void *p) {
 
   chMtxLock(&m1);
@@ -66,7 +63,7 @@ static void mtx1_execute(void) {
 const struct testcase testmtx1 = {
   mtx1_gettest,
   mtx1_setup,
-  mtx1_teardown,
+  NULL,
   mtx1_execute
 };
 
@@ -78,9 +75,6 @@ static char *mtx2_gettest(void) {
 static void mtx2_setup(void) {
 
   chMtxInit(&m1);
-}
-
-static void mtx2_teardown(void) {
 }
 
 static msg_t thread2(void *p) {
@@ -127,7 +121,7 @@ static void mtx2_execute(void) {
 const struct testcase testmtx2 = {
   mtx2_gettest,
   mtx2_setup,
-  mtx2_teardown,
+  NULL,
   mtx2_execute
 };
 
@@ -140,9 +134,6 @@ static void mtx3_setup(void) {
 
   chMtxInit(&m1);
   chMtxInit(&m2);
-}
-
-static void mtx3_teardown(void) {
 }
 
 static msg_t thread5(void *p) {
@@ -218,8 +209,20 @@ static void mtx3_execute(void) {
 const struct testcase testmtx3 = {
   mtx3_gettest,
   mtx3_setup,
-  mtx3_teardown,
+  NULL,
   mtx3_execute
 };
 
 #endif /* CH_USE_MUTEXES */
+
+/*
+ * Test sequence for mutexes pattern.
+ */
+const struct testcase *patternmtx[] = {
+#if CH_USE_MUTEXES
+  &testmtx1,
+  &testmtx2,
+  &testmtx3,
+#endif
+  NULL
+};

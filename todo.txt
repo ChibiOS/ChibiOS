@@ -5,12 +5,14 @@ After 1.0.0:
 * chSysLock() and chSysUnlock() with counter (option).
 * OSEK-style chSysSuspendAll()/chSysResumeAll()/chSysEnable()/chSysDisable(),
   implemented this as the new Suspended and Disabled states in 1.1.
-X lwIP TCP/IP stack integration.
+X lwIP TCP/IP stack integration and demo.
   - "Wide Queues" or Mailboxes, lwIP requires them.
-- FatFS library integration and demo.
+X FatFS library integration and demo.
 * Multiple debug switches.
   - Stack guard pages.
   - Threads profiling option.
+  - Objects registry.
+    Problem: fixed size? it goes against project policy.
 * Idle loop hook macro.
 * Switch the configuration options to TRUE/FALSE rather than def/undef.
 - Threads Pools manager in the library.

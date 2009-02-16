@@ -20,6 +20,6 @@
 #ifndef _TESTMTX_H_
 #define _TESTMTX_H_
 
-extern const struct testcase testmtx1, testmtx2, testmtx3;
+extern const struct testcase *patternmtx[];
 
 #endif /* _TESTMTX_H_ */

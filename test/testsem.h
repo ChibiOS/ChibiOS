@@ -20,6 +20,6 @@
 #ifndef _TESTSEM_H_
 #define _TESTSEM_H_
 
-extern const struct testcase testsem1, testsem2;
+extern const struct testcase *patternsem[];
 
 #endif /* _TESTSEM_H_ */

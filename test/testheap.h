@@ -20,6 +20,6 @@
 #ifndef _TESTHEAP_H_
 #define _TESTHEAP_H_
 
-extern const struct testcase testheap1;
+extern const struct testcase *patternheap[];
 
 #endif /* _TESTHEAP_H_ */

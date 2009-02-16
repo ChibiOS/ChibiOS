@@ -80,6 +80,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Fixed a small problem in the chcore.c template file.
 - NEW: Mode flexible debug configuration options, removed the old CH_USE_DEBUG
   and CH_USE_TRACE.
+- Improvements to the test suite, added a new level of indirection that allows
+  to make tests depend on the configuration options without have to put #ifs
+  into the test main module.
 
 *** 1.1.0unstable ***
 - FIX: Modified the default value for the STM32 HSI setup it was 1, it should

@@ -23,8 +23,6 @@
 
 static Semaphore sem1;
 
-static void empty(void) {}
-
 static msg_t thread1(void *p) {
   msg_t msg;
 
@@ -72,8 +70,8 @@ static void bmk1_execute(void) {
 
 const struct testcase testbmk1 = {
   bmk1_gettest,
-  empty,
-  empty,
+  NULL,
+  NULL,
   bmk1_execute
 };
 
@@ -98,8 +96,8 @@ static void bmk2_execute(void) {
 
 const struct testcase testbmk2 = {
   bmk2_gettest,
-  empty,
-  empty,
+  NULL,
+  NULL,
   bmk2_execute
 };
 
@@ -133,8 +131,8 @@ static void bmk3_execute(void) {
 
 const struct testcase testbmk3 = {
   bmk3_gettest,
-  empty,
-  empty,
+  NULL,
+  NULL,
   bmk3_execute
 };
 
@@ -164,8 +162,8 @@ static void bmk4_execute(void) {
 
 const struct testcase testbmk4 = {
   bmk4_gettest,
-  empty,
-  empty,
+  NULL,
+  NULL,
   bmk4_execute
 };
 
@@ -195,8 +193,8 @@ static void bmk5_execute(void) {
 
 const struct testcase testbmk5 = {
   bmk5_gettest,
-  empty,
-  empty,
+  NULL,
+  NULL,
   bmk5_execute
 };
 
@@ -250,7 +248,7 @@ static void bmk6_execute(void) {
 const struct testcase testbmk6 = {
   bmk6_gettest,
   bmk6_setup,
-  empty,
+  NULL,
   bmk6_execute
 };
 
@@ -288,8 +286,8 @@ static void bmk7_execute(void) {
 
 const struct testcase testbmk7 = {
   bmk7_gettest,
-  empty,
-  empty,
+  NULL,
+  NULL,
   bmk7_execute
 };
 
@@ -325,7 +323,24 @@ static void bmk8_execute(void) {
 
 const struct testcase testbmk8 = {
   bmk8_gettest,
-  empty,
-  empty,
+  NULL,
+  NULL,
   bmk8_execute
+};
+
+/*
+ * Test sequence for benchmarks pattern.
+ */
+const struct testcase *patternbmk[] = {
+#if TEST_NO_BENCHMARKS
+  &testbmk1,
+  &testbmk2,
+  &testbmk3,
+  &testbmk4,
+  &testbmk5,
+  &testbmk6,
+  &testbmk7,
+  &testbmk8,
+#endif
+  NULL
 };

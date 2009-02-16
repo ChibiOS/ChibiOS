@@ -35,9 +35,6 @@ static void pools1_setup(void) {
   chPoolInit(&mp1, THD_WA_SIZE(THREADS_STACK_SIZE));
 }
 
-static void pools1_teardown(void) {
-}
-
 static void pools1_execute(void) {
   int i;
 
@@ -56,8 +53,18 @@ static void pools1_execute(void) {
 const struct testcase testpools1 = {
   pools1_gettest,
   pools1_setup,
-  pools1_teardown,
+  NULL,
   pools1_execute
 };
 
 #endif /* CH_USE_MEMPOOLS */
+
+/*
+ * Test sequence for pools pattern.
+ */
+const struct testcase *patternpools[] = {
+#if CH_USE_MEMPOOLS
+  &testpools1,
+#endif
+  NULL
+};

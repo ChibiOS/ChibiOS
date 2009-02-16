@@ -32,50 +32,19 @@
 #include "testbmk.h"
 
 /*
- * Array of all the test cases.
+ * Array of all the test patterns.
  */
-static const struct testcase *tests[] = {
-  &testrdy1,
-  &testrdy2,
-#if CH_USE_SEMAPHORES
-  &testsem1,
-  &testsem2,
-#endif
-#if CH_USE_MUTEXES
-  &testmtx1,
-  &testmtx2,
-  &testmtx3,
-#if CH_USE_CONDVARS
-  &testcond1,
-  &testcond2,
-#endif
-#endif
-#if CH_USE_MESSAGES
-  &testmsg1,
-#endif
-#if CH_USE_EVENTS
-  &testevt1,
-#endif
-#if CH_USE_HEAP
-  &testheap1,
-#endif
-#if CH_USE_MEMPOOLS
-  &testpools1,
-#endif
-#if CH_USE_DYNAMIC && CH_USE_HEAP
-  &testdyn1,
-#endif
-#if CH_USE_DYNAMIC && CH_USE_MEMPOOLS
-  &testdyn2,
-#endif
-  &testbmk1,
-  &testbmk2,
-  &testbmk3,
-  &testbmk4,
-  &testbmk5,
-  &testbmk6,
-  &testbmk7,
-  &testbmk8,
+static const struct testcase **patterns[] = {
+  patternrdy,
+  patternsem,
+  patternmtx,
+  patterncond,
+  patternmsg,
+  patternevt,
+  patternheap,
+  patternpools,
+  patterndyn,
+  patternbmk,
   NULL
 };
 
@@ -248,13 +217,15 @@ static void execute_test(const struct testcase *tcp) {
   for (i = 0; i < MAX_THREADS; i++)
     threads[i] = NULL;
 
-  tcp->setup();
+  if (tcp->setup != NULL)
+    tcp->setup();
   tcp->execute();
-  tcp->teardown();
+  if (tcp->teardown != NULL)
+    tcp->teardown();
 }
 
 msg_t TestThread(void *p) {
-  int i;
+  int i, j;
 
   comp = p;
   test_println("");
@@ -265,29 +236,35 @@ msg_t TestThread(void *p) {
 
   global_fail = FALSE;
   i = 0;
-  while (tests[i]) {
+  while (patterns[i]) {
 #if DELAY_BETWEEN_TESTS > 0
-    chThdSleepMilliseconds(DELAY_BETWEEN_TESTS);
+      chThdSleepMilliseconds(DELAY_BETWEEN_TESTS);
 #endif
-    test_println("---------------------------------------------------------------------------");
-    test_print("--- Test Case ");
-    test_printn(i + 1);
-    test_print(" (");
-    test_print(tests[i]->gettest());
-    test_println(")");
-    execute_test(tests[i]);
-    if (local_fail) {
-      test_print("--- Result: FAIL (");
-      if (failmsg)
-        test_print(failmsg);
-      else {
-        test_print("sequence error: ");
-        print_tokens();
-      }
+      j = 0;
+      while (patterns[i][j]) {
+      test_println("---------------------------------------------------------------------------");
+      test_print("--- Test Case ");
+      test_printn(i + 1);
+      test_print(".");
+      test_printn(j + 1);
+      test_print(" (");
+      test_print(patterns[i][j]->gettest());
       test_println(")");
+      execute_test(patterns[i][j]);
+      if (local_fail) {
+        test_print("--- Result: FAIL (");
+        if (failmsg)
+          test_print(failmsg);
+        else {
+          test_print("sequence error: ");
+          print_tokens();
+        }
+        test_println(")");
+      }
+      else
+        test_println("--- Result: SUCCESS");
+      j++;
     }
-    else
-      test_println("--- Result: SUCCESS");
     i++;
   }
   test_println("---------------------------------------------------------------------------");
