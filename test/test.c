@@ -237,11 +237,11 @@ msg_t TestThread(void *p) {
   global_fail = FALSE;
   i = 0;
   while (patterns[i]) {
+    j = 0;
+    while (patterns[i][j]) {
 #if DELAY_BETWEEN_TESTS > 0
       chThdSleepMilliseconds(DELAY_BETWEEN_TESTS);
 #endif
-      j = 0;
-      while (patterns[i][j]) {
       test_println("---------------------------------------------------------------------------");
       test_print("--- Test Case ");
       test_printn(i + 1);

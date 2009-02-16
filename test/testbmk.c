@@ -332,7 +332,7 @@ const struct testcase testbmk8 = {
  * Test sequence for benchmarks pattern.
  */
 const struct testcase *patternbmk[] = {
-#if TEST_NO_BENCHMARKS
+#if !TEST_NO_BENCHMARKS
   &testbmk1,
   &testbmk2,
   &testbmk3,
