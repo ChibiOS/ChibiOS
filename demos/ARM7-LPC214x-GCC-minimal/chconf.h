@@ -67,7 +67,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(CH_USE_ROUNDROBIN) || defined(__DOXYGEN__)
-#define CH_USE_ROUNDROBIN               TRUE
+#define CH_USE_ROUNDROBIN               FALSE
 #endif
 
 /**
@@ -92,7 +92,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(CH_OPTIMIZE_SPEED) || defined(__DOXYGEN__)
-#define CH_OPTIMIZE_SPEED               TRUE
+#define CH_OPTIMIZE_SPEED               FALSE
 #endif
 
 /**
@@ -122,7 +122,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(CH_USE_WAITEXIT) || defined(__DOXYGEN__)
-#define CH_USE_WAITEXIT                 TRUE
+#define CH_USE_WAITEXIT                 FALSE
 #endif
 
 /**
@@ -130,7 +130,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(CH_USE_SEMAPHORES) || defined(__DOXYGEN__)
-#define CH_USE_SEMAPHORES               TRUE
+#define CH_USE_SEMAPHORES               FALSE
 #endif
 
 /**
@@ -150,7 +150,7 @@
  * @note Requires @p CH_USE_SEMAPHORES.
  */
 #if !defined(CH_USE_SEMSW) || defined(__DOXYGEN__)
-#define CH_USE_SEMSW                    TRUE
+#define CH_USE_SEMSW                    FALSE
 #endif
 
 /**
@@ -160,7 +160,7 @@
  * @note Requires @p CH_USE_SEMAPHORES.
  */
 #if !defined(CH_USE_SEMAPHORES_TIMEOUT) || defined(__DOXYGEN__)
-#define CH_USE_SEMAPHORES_TIMEOUT       TRUE
+#define CH_USE_SEMAPHORES_TIMEOUT       FALSE
 #endif
 
 /**
@@ -168,7 +168,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(CH_USE_MUTEXES) || defined(__DOXYGEN__)
-#define CH_USE_MUTEXES                  TRUE
+#define CH_USE_MUTEXES                  FALSE
 #endif
 
 /**
@@ -177,7 +177,7 @@
  * @note Requires @p CH_USE_MUTEXES.
  */
 #if !defined(CH_USE_CONDVARS) || defined(__DOXYGEN__)
-#define CH_USE_CONDVARS                 TRUE
+#define CH_USE_CONDVARS                 FALSE
 #endif
 
 /**
@@ -186,7 +186,7 @@
  * @note Requires @p CH_USE_CONDVARS.
  */
 #if !defined(CH_USE_CONDVARS_TIMEOUT) || defined(__DOXYGEN__)
-#define CH_USE_CONDVARS_TIMEOUT         TRUE
+#define CH_USE_CONDVARS_TIMEOUT         FALSE
 #endif
 
 /**
@@ -194,7 +194,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(CH_USE_EVENTS) || defined(__DOXYGEN__)
-#define CH_USE_EVENTS                   TRUE
+#define CH_USE_EVENTS                   FALSE
 #endif
 
 /**
@@ -204,7 +204,7 @@
  * @note Requires @p CH_USE_EVENTS.
  */
 #if !defined(CH_USE_EVENTS_TIMEOUT) || defined(__DOXYGEN__)
-#define CH_USE_EVENTS_TIMEOUT           TRUE
+#define CH_USE_EVENTS_TIMEOUT           FALSE
 #endif
 
 /**
@@ -212,7 +212,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(CH_USE_MESSAGES) || defined(__DOXYGEN__)
-#define CH_USE_MESSAGES                 TRUE
+#define CH_USE_MESSAGES                 FALSE
 #endif
 
 /**
@@ -222,7 +222,7 @@
  * @note Requires @p CH_USE_MESSAGES and @p CH_USE_EVENTS.
  */
 #if !defined(CH_USE_MESSAGES_EVENT) || defined(__DOXYGEN__)
-#define CH_USE_MESSAGES_EVENT           TRUE
+#define CH_USE_MESSAGES_EVENT           FALSE
 #endif
 
 /**
@@ -240,7 +240,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(CH_USE_MAILBOXES) || defined(__DOXYGEN__)
-#define CH_USE_MAILBOXES                TRUE
+#define CH_USE_MAILBOXES                FALSE
 #endif
 
 /**
@@ -249,7 +249,7 @@
  * @note Requires @p CH_USE_SEMAPHORES.
  */
 #if !defined(CH_USE_QUEUES) || defined(__DOXYGEN__)
-#define CH_USE_QUEUES                   TRUE
+#define CH_USE_QUEUES                   FALSE
 #endif
 
 /**
@@ -258,7 +258,7 @@
  * @note Requires @p CH_USE_SEMAPHORES.
  */
 #if !defined(CH_USE_QUEUES_HALFDUPLEX) || defined(__DOXYGEN__)
-#define CH_USE_QUEUES_HALFDUPLEX        TRUE
+#define CH_USE_QUEUES_HALFDUPLEX        FALSE
 #endif
 
 /**
@@ -268,7 +268,7 @@
  * @note Requires @p CH_USE_QUEUES and @p CH_USE_SEMAPHORES_TIMEOUT.
  */
 #if !defined(CH_USE_QUEUES_TIMEOUT) || defined(__DOXYGEN__)
-#define CH_USE_QUEUES_TIMEOUT           TRUE
+#define CH_USE_QUEUES_TIMEOUT           FALSE
 #endif
 
 /**
@@ -278,7 +278,7 @@
  * @note Requires @p CH_USE_QUEUES.
  */
 #if !defined(CH_USE_SERIAL_FULLDUPLEX) || defined(__DOXYGEN__)
-#define CH_USE_SERIAL_FULLDUPLEX        TRUE
+#define CH_USE_SERIAL_FULLDUPLEX        FALSE
 #endif
 
 /**
@@ -288,7 +288,7 @@
  * @note Requires @p CH_USE_QUEUES_HALFDUPLEX.
  */
 #if !defined(CH_USE_SERIAL_HALFDUPLEX) || defined(__DOXYGEN__)
-#define CH_USE_SERIAL_HALFDUPLEX        TRUE
+#define CH_USE_SERIAL_HALFDUPLEX        FALSE
 #endif
 
 /**
@@ -298,7 +298,7 @@
  * @note Mutexes are recommended.
  */
 #if !defined(CH_USE_HEAP) || defined(__DOXYGEN__)
-#define CH_USE_HEAP                     TRUE
+#define CH_USE_HEAP                     FALSE
 #endif
 
 /**
@@ -317,7 +317,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(CH_USE_MEMPOOLS) || defined(__DOXYGEN__)
-#define CH_USE_MEMPOOLS                 TRUE
+#define CH_USE_MEMPOOLS                 FALSE
 #endif
 
 /**
@@ -327,7 +327,7 @@
  * @note Requires @p CH_USE_WAITEXIT.
  */
 #if !defined(CH_USE_DYNAMIC) || defined(__DOXYGEN__)
-#define CH_USE_DYNAMIC                  TRUE
+#define CH_USE_DYNAMIC                  FALSE
 #endif
 
 /*===========================================================================*/
