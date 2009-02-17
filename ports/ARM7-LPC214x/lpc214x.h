@@ -84,25 +84,22 @@ typedef volatile unsigned int IOREG32;
 #define EXTPOLAR3               8
 
 typedef struct {
-  IOREG32       PLL0_CON;
-  IOREG32       PLL0_CFG;
-  IOREG32       PLL0_STAT;
-  IOREG32       PLL0_FEED;
-  IOREG32       PLL1_CON;
-  IOREG32       PLL1_CFG;
-  IOREG32       PLL1_STAT;
-  IOREG32       PLL1_FEED;
+  IOREG32       PLL_CON;
+  IOREG32       PLL_CFG;
+  IOREG32       PLL_STAT;
+  IOREG32       PLL_FEED;
 } PLL;
 
-#define PLLBase                 ((PLL *)0xE01FC080)
-#define PLL0CON                 (PLLBase->PLL0_CON)
-#define PLL0CFG                 (PLLBase->PLL0_CFG)
-#define PLL0STAT                (PLLBase->PLL0_STAT)
-#define PLL0FEED                (PLLBase->PLL0_FEED)
-#define PLL1CON                 (PLLBase->PLL1_CON)
-#define PLL1CFG                 (PLLBase->PLL1_CFG)
-#define PLL1STAT                (PLLBase->PLL1_STAT)
-#define PLL1FEED                (PLLBase->PLL1_FEED)
+#define PLL0Base                ((PLL *)0xE01FC080)
+#define PLL1Base                ((PLL *)0xE01FC0A0)
+#define PLL0CON                 (PLL0Base->PLL_CON)
+#define PLL0CFG                 (PLL0Base->PLL_CFG)
+#define PLL0STAT                (PLL0Base->PLL_STAT)
+#define PLL0FEED                (PLL0Base->PLL_FEED)
+#define PLL1CON                 (PLL1Base->PLL_CON)
+#define PLL1CFG                 (PLL1Base->PLL_CFG)
+#define PLL1STAT                (PLL1Base->PLL_STAT)
+#define PLL1FEED                (PLL1Base->PLL_FEED)
 
 /*
  * Pins.

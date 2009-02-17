@@ -73,13 +73,24 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 1.1.1unstable ***
+- FIX: Fixed a problem with a wrong declaration of the PLL structure in the
+  file lpc214x.h (backported in stable branch).
 - FIX: Fixed a problem with some event APIs not showing in the documentation
   (backported in stable branch).
 - FIX: Fixed wrong assertions in chThdWait() and chHeapFree() (backported in
   stable branch).
 - FIX: Fixed a small problem in the chcore.c template file.
 - NEW: Mode flexible debug configuration options, removed the old CH_USE_DEBUG
-  and CH_USE_TRACE.
+  and CH_USE_TRACE. Replaced with CH_DBG_ENABLE_ASSERTS, CH_DBG_ENABLE_TRACE
+  and CH_DBG_FILL_THREADS.
+- NEW: Added a debug option CH_DBG_THREADS_PROFILING for threads profiling.
+  A field into the Thread structure counts the consumed time. The information
+  is not used into the kernel, it is meant for debugging.
+- NEW: Added a debug option CH_DBG_ENABLE_STACK_CHECK for stack overflow
+  checking. The check is not performed in the kernel but in the port code.
+  Currently no ports implement it.
+- CHANGE: Changed the chSemFastWaitS() macro in chSemFastWaitI() and
+  chSemGetCounter() in chSemGetCounterI().
 - Improvements to the test suite, added a new level of indirection that allows
   to make tests depend on the configuration options without have to put #ifs
   into the test main module.
