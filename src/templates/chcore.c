@@ -119,9 +119,13 @@ void port_halt(void) {
 
 /**
  * @brief Performs a context switch between two threads.
+ * @details This is the most critical code in any port, this function
+ * is responsible for the context switch between 2 threads.
  *
  * @param otp the thread to be switched out
  * @param ntp the thread to be switched in
+ * @note The implementation of this code affects <b>directly</b> the context
+ *       switch performance so optimize here as much as you can.
  */
 void port_switch(Thread *otp, Thread *ntp) {
 }

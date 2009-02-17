@@ -37,6 +37,9 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
 #if CH_USE_NESTED_LOCKS
   tp->p_locks = 0;
 #endif
+#if CH_DBG_THREADS_PROFILING
+  tp->p_time = 0;
+#endif
 #if CH_USE_MUTEXES
   /* realprio is the thread's own, non-inherited, priority */
   tp->p_realprio = prio;

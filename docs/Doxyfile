@@ -1308,10 +1308,14 @@ PREDEFINED             = __DOXYGEN__ \
                          CH_USE_HEAP=1 \
                          CH_USE_MEMPOOLS=1 \
                          CH_USE_MESSAGES=1 \
+                         CH_USE_MAILBOXES=1 \
                          CH_USE_MESSAGES_EVENT=1 \
-                         CH_USE_DEBUG=1 \
-                         CH_USE_TRACE=1 \
                          CH_USE_DYNAMIC=1 \
+                         CH_DBG_ENABLE_ASSERTS=1 \
+                         CH_DBG_ENABLE_TRACE=1 \
+                         CH_DBG_ENABLE_STACK_CHECK=1 \
+                         CH_DBG_FILL_THREADS=1 \
+                         CH_DBG_THREADS_PROFILING=1 \
                          CH_USE_ROUNDROBIN=1
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then

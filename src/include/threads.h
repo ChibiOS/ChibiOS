@@ -50,6 +50,10 @@ struct Thread {
 #if CH_USE_NESTED_LOCKS
   cnt_t                 p_locks;        /**< Number of nested locks.*/
 #endif
+#if CH_DBG_THREADS_PROFILING
+  systime_t             p_time;         /**< Consumed time.
+                                             @note This field can overflow.*/
+#endif
   /*
    * The following fields are merged in unions because they are all
    * state-specific fields. This trick saves some extra space for each

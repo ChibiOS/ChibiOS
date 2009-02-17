@@ -74,6 +74,7 @@
 #include "condvars.h"
 #include "events.h"
 #include "messages.h"
+#include "mailboxes.h"
 #include "heap.h"
 #include "mempools.h"
 #include "threads.h"

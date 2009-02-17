@@ -281,15 +281,15 @@
 /** @} */
 
 /**
- * @defgroup Messages Messages
+ * @defgroup Messages Synchronous Messages
  * @{
  * Synchronous inter-thread messages.
  * <h2>Operation Mode</h2>
- * Messages are an easy to use and fast IPC mechanism, threads can both serve
- * messages and send messages to other threads, the mechanism allows data to
- * be carried in both directions. Data is not copied between the client and
- * server threads but just a pointer passed so the exchange is very time
- * efficient.<br>
+ * Synchronoud messages are an easy to use and fast IPC mechanism, threads
+ * can both serve messages and send messages to other threads, the mechanism
+ * allows data to be carried in both directions. Data is not copied between
+ * the client and server threads but just a pointer passed so the exchange
+ * is very time efficient.<br>
  * Messages are usually processed in FIFO order but it is possible to process
  * them in priority order by specifying CH_USE_MESSAGES_PRIORITY
  * in @p chconf.h.<br>
@@ -298,6 +298,30 @@
  * queue header).<br>
  * In order to use the Messages APIs the @p CH_USE_MESSAGES option must be
  * specified in @p chconf.h.
+ */
+/** @} */
+
+/**
+ * @defgroup Mailboxes Mailboxes
+ * @{
+ * Asynchronous messages.
+ * <h2>Operation mode</h2>
+ * A mailbox is an asynchronous communication mechanism.<br>
+ * The following operations are possible on a mailbox:
+ * - <b>Post</b>: Posts a message on the mailbox in FIFO order.
+ * - <b>Post Ahead</b>: Posts a message on the mailbox with high priority.
+ * - <b>Fetch</b>: A message is fetched from the mailbox and removed from
+ *   the queue.
+ * - <b>Reset</b>: The mailbox is emptied and all the stored messages lost.
+ * .
+ * A message is a variable of type msg_t that is guaranteed to have the
+ * same size of and be compatible with pointers (an explicit cast is needed).
+ * If larger messages need to be exchanged then a pointer to a structure can
+ * be posted in the mailbox but the posting side has no predefined way to
+ * know when the message has been processed. A possible approach is to
+ * allocate memory (from a memory pool as example) from the posting side and
+ * free it on the fetching side. Another approach is to set a "done" flag into
+ * the structure pointed by the message.
  */
 /** @} */
 

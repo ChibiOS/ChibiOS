@@ -63,7 +63,7 @@ extern "C" {
  * Decreases the semaphore counter, this macro can be used when it is ensured
  * that the counter would not become negative.
  */
-#define chSemFastWaitS(sp)      ((sp)->s_cnt--)
+#define chSemFastWaitI(sp)      ((sp)->s_cnt--)
 
 /**
  * Increases the semaphore counter, this macro can be used when the counter is
@@ -74,7 +74,7 @@ extern "C" {
 /**
  * Returns the semaphore counter current value.
  */
-#define chSemGetCounter(sp)     ((sp)->s_cnt)
+#define chSemGetCounterI(sp)     ((sp)->s_cnt)
 
 #endif /* CH_USE_SEMAPHORES */
 

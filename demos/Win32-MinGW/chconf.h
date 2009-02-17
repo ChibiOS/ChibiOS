@@ -239,8 +239,8 @@
  * in the kernel.
  * @note The default is @p TRUE.
  */
-#if !defined(CH_USE_MAILBOXESS) || defined(__DOXYGEN__)
-#define CH_USE_MAILBOXESS               TRUE
+#if !defined(CH_USE_MAILBOXES) || defined(__DOXYGEN__)
+#define CH_USE_MAILBOXES                TRUE
 #endif
 
 /**

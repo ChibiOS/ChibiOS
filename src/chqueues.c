@@ -177,7 +177,7 @@ size_t chIQRead(Queue *qp, uint8_t *buffer, size_t n) {
       chSysUnlock();
       break;
     }
-    chSemFastWaitS(&qp->q_sem);
+    chSemFastWaitI(&qp->q_sem);
     *buffer++ = *qp->q_rdptr++;
     if (qp->q_rdptr >= qp->q_top)
       qp->q_rdptr = qp->q_buffer;
@@ -302,7 +302,7 @@ size_t chOQWrite(Queue *qp, uint8_t *buffer, size_t n) {
       chSysUnlock();
       break;
     }
-    chSemFastWaitS(&qp->q_sem);
+    chSemFastWaitI(&qp->q_sem);
     *qp->q_wrptr++ = *buffer++;
     if (qp->q_wrptr >= qp->q_top)
       qp->q_wrptr = qp->q_buffer;

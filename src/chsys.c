@@ -101,6 +101,9 @@ void chSysTimerHandlerI(void) {
     /* decrement remaining quantum */
     rlist.r_preempt--;
 #endif
+#if CH_DBG_THREADS_PROFILING
+  currp->p_time++;
+#endif
   chVTDoTickI();
 }
 
