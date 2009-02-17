@@ -60,6 +60,7 @@ void chMBReset(Mailbox *mbp) {
   chSysUnlock();
 }
 
+#if CH_USE_SEMAPHORES_TIMEOUT
 /**
  * @brief Posts a message into a mailbox.
  * @details The invoking thread waits until a empty slot in the mailbox becomes
@@ -146,6 +147,7 @@ msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t timeout) {
   chSysUnlock();
   return rdymsg;
 }
+#endif /* CH_USE_SEMAPHORES_TIMEOUT */
 
 #endif /* CH_USE_MAILBOXES */
 
