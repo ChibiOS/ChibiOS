@@ -86,17 +86,17 @@ void hwinit0(void) {
    * PLL setup for Fosc=12MHz and CCLK=48MHz.
    * P=2 M=3.
    */
-  PLL *pll = PLLBase;
-  pll->PLL0_CFG  = 0x23;        /* P and M values. */
-  pll->PLL0_CON  = 0x1;         /* Enalbles the PLL 0. */
-  pll->PLL0_FEED = 0xAA;
-  pll->PLL0_FEED = 0x55;
-  while (!(pll->PLL0_STAT & 0x400))
+  PLL *pll = PLL0Base;
+  pll->PLL_CFG  = 0x23;         /* P and M values. */
+  pll->PLL_CON  = 0x1;          /* Enables the PLL 0. */
+  pll->PLL_FEED = 0xAA;
+  pll->PLL_FEED = 0x55;
+  while (!(pll->PLL_STAT & 0x400))
     ;                           /* Wait for PLL lock. */
 
-  pll->PLL0_CON  = 0x3;         /* Connects the PLL. */
-  pll->PLL0_FEED = 0xAA;
-  pll->PLL0_FEED = 0x55;
+  pll->PLL_CON  = 0x3;          /* Connects the PLL. */
+  pll->PLL_FEED = 0xAA;
+  pll->PLL_FEED = 0x55;
 
   /*
    * VPB setup.

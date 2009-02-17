@@ -75,6 +75,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 1.0.1 ***
+- FIX: Fixed a problem with a wrong declaration of the PLL structure in the
+  file lpc214x.h.
 - FIX: Modified the default value for the STM32 HSI setup it was 1, it should
   be 0x10.
 - FIX: Removed an obsolete constant (P_SUSPENDED) from thread.h.
