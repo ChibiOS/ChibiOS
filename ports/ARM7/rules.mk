@@ -37,6 +37,8 @@ LLIBDIR = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
 # Macros
 DEFS    = $(DDEFS) $(UDEFS)
 ADEFS   = $(DADEFS) $(UADEFS)
+
+# Libs
 LIBS    = $(DLIBS) $(ULIBS)
 
 # Various settings
@@ -106,7 +108,7 @@ $(ASMOBJS) : %.o : %.s
 
 %elf: $(OBJS)
 	@echo
-	$(LD) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS) $(LDFLAGS) $(LIBS) -o $@
+	$(LD) $(OBJS) $(LDFLAGS) $(LIBS) -o $@
 
 %hex: %elf
 	$(HEX) $< $@
