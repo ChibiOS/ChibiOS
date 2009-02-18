@@ -1,20 +1,86 @@
-#
-#       !!!! Do NOT edit this makefile with an editor which replace tabs by spaces !!!!
-#
-##############################################################################################
-#
-# On command line:
-#
-# make all = Create project
-#
-# make clean = Clean project files.
-#
-# To rebuild project do "make clean" and "make all".
+##############################################################################
+# Build global options
+# NOTE: Can be overridden externally.
 #
 
-##############################################################################################
-# Start of default section
+# Compiler options here.
+ifeq ($(USE_OPT),)
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -mabi=apcs-gnu 
+endif
+
+# Enable this if you want the linker to remove unused code and data
+ifeq ($(USE_LINK_GC),)
+  USE_LINK_GC = yes
+endif
+
+# If enabled, this option allows to compile the application in THUMB mode.
+ifeq ($(USE_THUMB),)
+  USE_THUMB = no
+endif
+
+# Enable register caching optimization (read documentation).
+ifeq ($(USE_CURRP_CACHING),)
+  USE_CURRP_CACHING = no
+endif
+
 #
+# Build global options
+##############################################################################
+
+##############################################################################
+# Project, sources and paths
+#
+
+# Define project name here
+PROJECT = ch
+
+# Define linker script file here
+LDSCRIPT= ch.ld
+
+# Imported source files
+include ../../src/kernel.mk
+include ../../test/test.mk
+
+# Sources that can be compiled in ARM or THUMB mode depending on the global
+# setting.
+SRC = ../../ports/ARM7/chcore.c \
+      ../../ports/ARM7-LPC214x/vic.c  \
+      ../../ports/ARM7-AT91SAM7X/sam7x_serial.c \
+      ${KERNSRC} \
+      ${TESTSRC} \
+      ../../src/lib/evtimer.c \
+      at91lib/aic.c \
+      board.c main.c
+
+# Sources to be compiled in ARM mode regardless of the global setting.
+# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
+#       option that results in lower performance and larger code size.
+ASRC =
+
+# Sources to be compiled in THUMB mode regardless of the global setting.
+# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
+#       option that results in lower performance and larger code size.
+TSRC =
+
+# List ASM source files here
+ASMSRC = ../../ports/ARM7/crt0.s \
+         ../../ports/ARM7-AT91SAM7X/vectors.s \
+         ../../ports/ARM7/chcoreasm.s
+
+INCDIR = $(KERNINC) $(TESTINC) \
+         ../../src/lib \
+         ../../ports/ARM7 \
+         ../../ports/ARM7-AT91SAM7X
+
+#
+# Project, sources and paths
+##############################################################################
+
+##############################################################################
+# Compiler settings
+#
+
+MCU  = arm7tdmi
 
 TRGT = arm-elf-
 CC   = $(TRGT)gcc
@@ -24,10 +90,22 @@ OD   = $(TRGT)objdump
 HEX  = $(CP) -O ihex
 BIN  = $(CP) -O binary
 
-MCU  = arm7tdmi
+# ARM-specific options here
+AOPT =
 
-# Enable this if you want the linker to remove unused code and data
-LINK_GC = yes
+# THUMB-specific options here
+TOPT = -mthumb -DTHUMB
+
+# Define warning options here
+WARN = -Wall -Wstrict-prototypes
+
+#
+# Compiler settings
+##############################################################################
+
+##############################################################################
+# Start of default section
+#
 
 # List all default C defines here, like -D_DEBUG=1
 DDEFS =
@@ -46,17 +124,11 @@ DLIBS =
 
 #
 # End of default section
-##############################################################################################
+##############################################################################
 
-##############################################################################################
+##############################################################################
 # Start of user section
 #
-
-# Define project name here
-PROJECT = ch
-
-# Define linker script file here
-LDSCRIPT= ch.ld
 
 # List all user C define here, like -D_DEBUG=1
 UDEFS =
@@ -64,31 +136,8 @@ UDEFS =
 # Define ASM defines here
 UADEFS =
 
-# Imported source files
-include ../../src/kernel.mk
-include ../../test/test.mk
-
-# List ARM-mode C source files here
-ASRC = ../../ports/ARM7/chcore.c \
-       ../../ports/ARM7-AT91SAM7X/sam7x_serial.c \
-       ${KERNSRC} \
-       ${TESTSRC} \
-       ../../src/lib/evtimer.c \
-       at91lib/aic.c \
-       board.c main.c
-
-# List THUMB-mode C sources here
-# NOTE: If any module is compiled in thumb mode then -mthumb-interwork is
-#       enabled for all modules and that lowers performance.
-TSRC =
-
-# List ASM source files here
-ASMSRC = ../../ports/ARM7/crt0.s ../../ports/ARM7/chcoreasm.s \
-         ../../ports/ARM7-AT91SAM7X/vectors.s
-
 # List all user directories here
-UINCDIR = ../../src/include ../../src/lib ../../test \
-          ../../ports/ARM7 ../../ports/ARM7-AT91SAM7X
+UINCDIR =
 
 # List the user directory to look for the libraries here
 ULIBDIR =
@@ -96,123 +145,8 @@ ULIBDIR =
 # List all user libraries here
 ULIBS =
 
-# ARM-specific options here
-AOPT =
-
-# THUMB-specific options here
-TOPT = -mthumb -D THUMB
-
-# Common options here
-# NOTE: -ffixed-r7 is only needed if you enabled CH_CURRP_REGISTER_CACHE in
-#       chconf.h.
-# NOTE: -falign-functions=16 may improve the performance, not always, but
-#       increases the code size.
-OPT = -O2 -ggdb -fomit-frame-pointer -mabi=apcs-gnu
-#OPT += -ffixed-r7
-#OPT += -falign-functions=16
-
-# Define warning options here
-WARN = -Wall -Wstrict-prototypes
-
 #
 # End of user defines
-##############################################################################################
+##############################################################################
 
-ifeq ($(LINK_GC),yes)
-  OPT += -ffunction-sections -fdata-sections
-endif
-
-INCDIR  = $(patsubst %,-I%,$(DINCDIR) $(UINCDIR))
-LIBDIR  = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
-DEFS    = $(DDEFS) $(UDEFS)
-ADEFS   = $(DADEFS) $(UADEFS)
-AOBJS   = $(ASRC:.c=.o)
-TOBJS   = $(TSRC:.c=.o)
-OBJS	= $(ASMOBJS) $(AOBJS) $(TOBJS)
-ASMOBJS = $(ASMSRC:.s=.o)
-LIBS    = $(DLIBS) $(ULIBS)
-MCFLAGS = -mcpu=$(MCU)
-
-ODFLAGS	= -x --syms
-ASFLAGS = $(MCFLAGS) -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
-CPFLAGS = $(MCFLAGS) $(OPT) $(WARN) -Wa,-alms=$(<:.c=.lst) $(DEFS)
-ifeq ($(LINK_GC),yes)
-  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch,--gc-sections $(LIBDIR)
-else
-  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
-endif
-
-# Thumb interwork enabled only if needed because it kills performance.
-ifneq ($(TSRC),)
-  CPFLAGS += -D THUMB_PRESENT
-  ASFLAGS += -D THUMB_PRESENT
-  ifneq ($(ASRC),)
-    # Mixed ARM and THUMB case.
-    CPFLAGS += -mthumb-interwork
-    LDFLAGS += -mthumb-interwork
-  else
-    # Pure THUMB case, THUMB C code cannot be called by ARM asm code directly.
-    CPFLAGS += -mno-thumb-interwork -D THUMB_NO_INTERWORKING
-    LDFLAGS += -mno-thumb-interwork -mthumb
-    ASFLAGS += -D THUMB_NO_INTERWORKING
-  endif
-else
-  CPFLAGS += -mno-thumb-interwork
-  LDFLAGS += -mno-thumb-interwork
-endif
-
-# Generate dependency information
-CPFLAGS += -MD -MP -MF .dep/$(@F).d
-
-#
-# Makefile rules
-#
-
-all: $(OBJS) $(PROJECT).elf $(PROJECT).hex $(PROJECT).bin $(PROJECT).dmp
-
-$(AOBJS) : %.o : %.c
-	@echo
-	$(CC) -c $(CPFLAGS) $(AOPT) -I . $(INCDIR) $< -o $@
-
-$(TOBJS) : %.o : %.c
-	@echo
-	$(CC) -c $(CPFLAGS) $(TOPT) -I . $(INCDIR) $< -o $@
-
-$(ASMOBJS) : %.o : %.s
-	@echo
-	$(AS) -c $(ASFLAGS) -I . $(INCDIR) $< -o $@
-
-%elf: $(OBJS)
-	@echo
-	$(CC) $(ASMOBJS) $(AOBJS) $(TOBJS) $(LDFLAGS) $(LIBS) -o $@
-
-%hex: %elf
-	$(HEX) $< $@
-
-%bin: %elf
-	$(BIN) $< $@
-
-%dmp: %elf
-	$(OD) $(ODFLAGS) $< > $@
-
-clean:
-	-rm -f $(OBJS)
-	-rm -f $(PROJECT).elf
-	-rm -f $(PROJECT).dmp
-	-rm -f $(PROJECT).map
-	-rm -f $(PROJECT).hex
-	-rm -f $(PROJECT).bin
-	-rm -f $(ASRC:.c=.c.bak)
-	-rm -f $(ASRC:.c=.lst)
-	-rm -f $(TSRC:.c=.c.bak)
-	-rm -f $(TSRC:.c=.lst)
-	-rm -f $(ASMSRC:.s=.s.bak)
-	-rm -f $(ASMSRC:.s=.lst)
-	-rm -fR .dep
-
-#
-# Include the dependency files, should be the last of the makefile
-#
--include $(shell mkdir .dep 2>/dev/null) $(wildcard .dep/*)
-
-# *** EOF ***
+include ../../ports/ARM7/rules.mk
