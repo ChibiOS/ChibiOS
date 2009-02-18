@@ -90,6 +90,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - NEW: Added a debug option CH_DBG_ENABLE_STACK_CHECK for stack overflow
   checking. The check is not performed in the kernel but in the port code.
   Currently no ports implement it.
+- NEW: Unified makefiles for ARM7 and ARMCM3 projects, the new makefiles
+  share a common part making them easier to maintain.
 - CHANGE: Changed the chSemFastWaitS() macro in chSemFastWaitI() and
   chSemGetCounter() in chSemGetCounterI().
 - Improvements to the test suite, added a new level of indirection that allows

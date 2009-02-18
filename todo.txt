@@ -1,5 +1,11 @@
+Status:
+? = Not sure if worth the effort or useful at all.
+- = Planned.
+X = In progress, some work done.
+* = Done.
+
 After 1.0.0:
-X Improve makefiles by adding an options head section and making it shared.
+* Improved makefiles with settings section and shared common part.
 * Queues macros should not refer to the semaphore counters directly.
 * Priority ordering option for semaphores.
 * chSysLock() and chSysUnlock() with counter (option).
@@ -7,6 +13,8 @@ X Improve makefiles by adding an options head section and making it shared.
   implemented this as the new Suspended and Disabled states in 1.1.
 * Mailboxes subsystem (lwIP requires them).
 * Multiple debug switches.
+  - Split asserts from parameters checks.
+  - Add checks to all APIs.
   X Stack checks option.
   * Threads profiling option.
 * Idle loop hook macro.
@@ -19,8 +27,8 @@ After 1.2.0:
     or just be an alternative.
 - Minimal optional C-runtime library (complete enough for lwIP).
 - OSEK-style simple tasks within the idle thread.
-- Think to something for threads restart.
-- Multiple heaps, disjoint heaps, heaps in heaps.
+? Think to something for threads restart.
+? Multiple heaps, disjoint heaps, heaps in heaps.
 - Abstract I/O channels rather than just serial ports.
   - Move the serial drivers implementations in library al keep the I/O channel
     interface as part of the kernel. Better keep the core as compact as
@@ -41,18 +49,14 @@ X ChibiOS Wizard, UML modeling and ChibiOS applications code and
 X OSEK layer.
 - Posix layer.
 X File System
-- Visual debugger interfaced to OpenOCD.
-  - Objects registry.
+- Visual debugger/monitor interfaced through OpenOCD.
+  - Objects registry in the kernel.
 
 Lower priority:
 - More demos
 - More ARM ports
-- PIC24 port
+? PIC24 port
 - Microblaze port
 - PowerPC port
-- Coldfire port
-- H8 port
-
-- - Planned.
-X - In progress
-* - Done
+? Coldfire port
+? H8 port
