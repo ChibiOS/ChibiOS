@@ -1,20 +1,104 @@
-#
-#       !!!! Do NOT edit this makefile with an editor which replace tabs by spaces !!!!
-#
-##############################################################################################
-#
-# On command line:
-#
-# make all = Create project
-#
-# make clean = Clean project files.
-#
-# To rebuild project do "make clean" and "make all".
+##############################################################################
+# Build global options
+# NOTE: Can be overridden externally.
 #
 
-##############################################################################################
-# Start of default section
+# Compiler options here.
+ifeq ($(USE_OPT),)
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
+endif
+
+# C++ specific options here (added to USE_OPT).
+ifeq ($(USE_CPPOPT),)
+  USE_CPPOPT = -fno-rtti
+endif
+
+# Enable this if you want the linker to remove unused code and data
+ifeq ($(USE_LINK_GC),)
+  USE_LINK_GC = yes
+endif
+
+# If enabled, this option allows to compile the application in THUMB mode.
+ifeq ($(USE_THUMB),)
+  USE_THUMB = no
+endif
+
+# Enable register caching optimization (read documentation).
+ifeq ($(USE_CURRP_CACHING),)
+  USE_CURRP_CACHING = no
+endif
+
 #
+# Build global options
+##############################################################################
+
+##############################################################################
+# Project, sources and paths
+#
+
+# Define project name here
+PROJECT = ch
+
+# Define linker script file here
+LDSCRIPT= ch.ld
+
+# Imported source files
+include ../../src/kernel.mk
+include ../../test/test.mk
+
+# C sources that can be compiled in ARM or THUMB mode depending on the global
+# setting.
+CSRC = ../../ports/ARM7/chcore.c \
+       ../../ports/ARM7-LPC214x/vic.c  \
+       ../../ports/ARM7-LPC214x/lpc214x_serial.c  \
+       ${KERNSRC} \
+       ${TESTSRC} \
+       ../../src/lib/evtimer.c \
+       board.c
+
+# C++ sources that can be compiled in ARM or THUMB mode depending on the global
+# setting.
+CPPSRC = ../../src/lib/ch.cpp main.cpp
+
+# C sources to be compiled in ARM mode regardless of the global setting.
+# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
+#       option that results in lower performance and larger code size.
+ACSRC =
+
+# C++ sources to be compiled in ARM mode regardless of the global setting.
+# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
+#       option that results in lower performance and larger code size.
+ACPPSRC =
+
+# C sources to be compiled in THUMB mode regardless of the global setting.
+# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
+#       option that results in lower performance and larger code size.
+TCSRC =
+
+# C sources to be compiled in THUMB mode regardless of the global setting.
+# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
+#       option that results in lower performance and larger code size.
+TCPPSRC =
+
+# List ASM source files here
+ASMSRC = ../../ports/ARM7/crt0.s \
+         ../../ports/ARM7-LPC214x/vectors.s \
+         ../../ports/ARM7/chcoreasm.s
+
+INCDIR = $(KERNINC) $(TESTINC) \
+         ../../src/lib \
+         ../../ports/ARM7 \
+         ../../ports/ARM7-LPC214x
+
+#
+# Project, sources and paths
+##############################################################################
+
+##############################################################################
+# Compiler settings
+#
+
+MCU  = arm7tdmi
 
 TRGT = arm-elf-
 CC   = $(TRGT)gcc
@@ -30,10 +114,25 @@ OD   = $(TRGT)objdump
 HEX  = $(CP) -O ihex
 BIN  = $(CP) -O binary
 
-MCU  = arm7tdmi
+# ARM-specific options here
+AOPT =
 
-# Enable this if you want the linker to remove unused code and data
-LINK_GC = yes
+# THUMB-specific options here
+TOPT = -mthumb -DTHUMB
+
+# Define C warning options here
+CWARN = -Wall -Wstrict-prototypes
+
+# Define C++ warning options here
+CPPWARN = -Wall
+
+#
+# Compiler settings
+##############################################################################
+
+##############################################################################
+# Start of default section
+#
 
 # List all default C defines here, like -D_DEBUG=1
 DDEFS =
@@ -52,17 +151,11 @@ DLIBS =
 
 #
 # End of default section
-##############################################################################################
+##############################################################################
 
-##############################################################################################
+##############################################################################
 # Start of user section
 #
-
-# Define project name here
-PROJECT = ch
-
-# Define linker script file here
-LDSCRIPT= ch.ld
 
 # List all user C define here, like -D_DEBUG=1
 UDEFS =
@@ -70,35 +163,8 @@ UDEFS =
 # Define ASM defines here
 UADEFS =
 
-# Imported source files
-include ../../src/kernel.mk
-include ../../test/test.mk
-
-# List ARM-mode C source files here
-ACSRC = ../../ports/ARM7/chcore.c \
-        ../../ports/ARM7-LPC214x/vic.c  \
-        ../../ports/ARM7-LPC214x/lpc214x_serial.c  \
-       ${KERNSRC} \
-       ${TESTSRC} \
-        ../../src/lib/evtimer.c \
-        board.c
-
-# List ARM-mode C++ source files here
-ACPPSRC = ../../src/lib/ch.cpp main.cpp
-
-# List THUMB-mode C sources here
-TCSRC =
-
-# List THUMB-mode C++ source files here
-TCPPSRC =
-
-# List ASM source files here
-ASMSRC = ../../ports/ARM7/crt0.s ../../ports/ARM7/chcoreasm.s \
-         ../../ports/ARM7-LPC214x/vectors.s
-
 # List all user directories here
-UINCDIR = ../../src/include ../../src/lib ../../test \
-          ../../ports/ARM7 ../../ports/ARM7-LPC214x
+UINCDIR =
 
 # List the user directory to look for the libraries here
 ULIBDIR =
@@ -106,151 +172,8 @@ ULIBDIR =
 # List all user libraries here
 ULIBS =
 
-# ARM-specific options here
-AOPT =
-
-# THUMB-specific options here
-TOPT = -mthumb -D THUMB
-
-# Common options here
-# NOTE: -ffixed-r7 is only needed if you enabled CH_CURRP_REGISTER_CACHE in
-#       chconf.h.
-# NOTE: -falign-functions=16 may improve the performance, not always, but
-#       increases the code size.
-OPT = -O2 -ggdb -fomit-frame-pointer -mabi=apcs-gnu
-#OPT += -ffixed-r7
-OPT += -falign-functions=16
-
-# C++ specific options here
-# NOTE: -fno-rtti saves a LOT of code space, remove it only if you really need
-#       RTTI.
-CPPOPT = -fno-rtti
-
-# Define warning options here
-WARN = -Wall
-
 #
 # End of user defines
-##############################################################################################
+##############################################################################
 
-ifeq ($(LINK_GC),yes)
-  OPT += -ffunction-sections -fdata-sections
-endif
-
-INCDIR   = $(patsubst %,-I%,$(DINCDIR) $(UINCDIR))
-LIBDIR   = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
-DEFS     = $(DDEFS) $(UDEFS)
-ADEFS    = $(DADEFS) $(UADEFS)
-ASRC	 = $(ACSRC)$(ACPPSRC)
-TSRC	 = $(TCSRC)$(TCPPSRC)
-SRC	 = $(ASRC)$(TSRC)
-ACOBJS   = $(ACSRC:.c=.o)
-ACPPOBJS = $(ACPPSRC:.cpp=.o)
-TCOBJS   = $(TCSRC:.c=.o)
-TCPPOBJS = $(TCPPSRC:.cpp=.o)
-ASMOBJS  = $(ASMSRC:.s=.o)
-OBJS	 = $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS)
-LIBS     = $(DLIBS) $(ULIBS)
-MCFLAGS  = -mcpu=$(MCU)
-
-ODFLAGS  = -x --syms
-ASFLAGS  = $(MCFLAGS) -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
-CFLAGS   = $(MCFLAGS) $(OPT) $(WARN) -Wa,-alms=$(<:.c=.lst) $(DEFS)
-CPPFLAGS = $(MCFLAGS) $(OPT) $(CPPOPT) $(WARN) -Wa,-alms=$(<:.cpp=.lst) $(DEFS)
-ifeq ($(LINK_GC),yes)
-  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch,--gc-sections $(LIBDIR)
-else
-  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
-endif
-
-# Thumb interwork enabled only if needed because it kills performance.
-ifneq ($(TSRC),)
-  CFLAGS += -D THUMB_PRESENT
-  CPPFLAGS += -D THUMB_PRESENT
-  ASFLAGS += -D THUMB_PRESENT
-  ifneq ($(ASRC),)
-    # Mixed ARM and THUMB case.
-    CFLAGS += -mthumb-interwork
-    CPPFLAGS += -mthumb-interwork
-    LDFLAGS += -mthumb-interwork
-  else
-    # Pure THUMB case, THUMB C code cannot be called by ARM asm code directly.
-    CFLAGS += -mno-thumb-interwork -D THUMB_NO_INTERWORKING
-    CPPFLAGS += -mno-thumb-interwork -D THUMB_NO_INTERWORKING
-    LDFLAGS += -mno-thumb-interwork -mthumb
-    ASFLAGS += -D THUMB_NO_INTERWORKING
-  endif
-else
-  CPFLAGS += -mno-thumb-interwork
-  CPPFLAGS += -mno-thumb-interwork
-  LDFLAGS += -mno-thumb-interwork
-endif
-
-# Generate dependency information
-CFLAGS += -MD -MP -MF .dep/$(@F).d
-CPPFLAGS += -MD -MP -MF .dep/$(@F).d
-
-#
-# Makefile rules
-#
-
-all: $(OBJS) $(PROJECT).elf $(PROJECT).hex $(PROJECT).bin $(PROJECT).dmp
-
-$(ACPPOBJS) : %.o : %.cpp
-	@echo
-	$(CPPC) -c $(CPPFLAGS) $(AOPT) -I . $(INCDIR) $< -o $@
-
-$(TCPPOBJS) : %.o : %.cpp
-	@echo
-	$(CPPC) -c $(CPPFLAGS) $(TOPT) -I . $(INCDIR) $< -o $@
-
-$(ACOBJS) : %.o : %.c
-	@echo
-	$(CC) -c $(CFLAGS) $(AOPT) -I . $(INCDIR) $< -o $@
-
-$(TCOBJS) : %.o : %.c
-	@echo
-	$(CC) -c $(CFLAGS) $(TOPT) -I . $(INCDIR) $< -o $@
-
-$(ASMOBJS) : %.o : %.s
-	@echo
-	$(AS) -c $(ASFLAGS) -I . $(INCDIR) $< -o $@
-
-%elf: $(OBJS)
-	@echo
-	$(LD) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS) $(LDFLAGS) $(LIBS) -o $@
-
-%hex: %elf
-	$(HEX) $< $@
-
-%bin: %elf
-	$(BIN) $< $@
-
-%dmp: %elf
-	$(OD) $(ODFLAGS) $< > $@
-
-clean:
-	-rm -f $(OBJS)
-	-rm -f $(PROJECT).elf
-	-rm -f $(PROJECT).dmp
-	-rm -f $(PROJECT).map
-	-rm -f $(PROJECT).hex
-	-rm -f $(PROJECT).bin
-	-rm -f $(ACSRC:.c=.c.bak)
-	-rm -f $(ACSRC:.c=.lst)
-	-rm -f $(TCSRC:.c=.c.bak)
-	-rm -f $(TCSRC:.c=.lst)
-	-rm -f $(ACPPSRC:.cpp=.c.bak)
-	-rm -f $(ACPPSRC:.cpp=.lst)
-	-rm -f $(TCPPSRC:.cpp=.c.bak)
-	-rm -f $(TCPPSRC:.cpp=.lst)
-	-rm -f $(ASMSRC:.s=.s.bak)
-	-rm -f $(ASMSRC:.s=.lst)
-	-rm -fR .dep
-
-#
-# Include the dependency files, should be the last of the makefile
-#
--include $(shell mkdir .dep 2>/dev/null) $(wildcard .dep/*)
-
-# *** EOF ***
+include ../../ports/ARM7/rules.mk
