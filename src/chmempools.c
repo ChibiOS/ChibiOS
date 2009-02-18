@@ -41,7 +41,7 @@
 void chPoolInit(MemoryPool *mp, size_t size) {
 
   chDbgAssert((mp != NULL) && (size >= sizeof(void *)),
-              "chpools.c, chPoolFree()");
+              "chpools.c, chPoolInit()");
 
   mp->mp_next = NULL;
   mp->mp_object_size = size;
