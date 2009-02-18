@@ -55,7 +55,7 @@ static void cond1_execute(void) {
   threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread1, "C");
   threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread1, "B");
   threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread1, "A");
-  test_assert(prio == chThdGetPriority(), "priority return failure");
+  test_assert(prio == chThdGetPriority(), "#1"); /* Priority return failure.*/
   chCondSignal(&c1);
   chCondSignal(&c1);
   chCondSignal(&c1);
@@ -86,7 +86,7 @@ static void cond2_execute(void) {
   threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread1, "C");
   threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread1, "B");
   threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread1, "A");
-  test_assert(prio == chThdGetPriority(), "priority return failure");
+  test_assert(prio == chThdGetPriority(), "#1"); /* Priority return failure.*/
   chCondBroadcast(&c1);
   test_wait_threads();
   test_assert_sequence("ABCDE");

@@ -52,15 +52,15 @@ static void dyn1_execute(void) {
                 (threads[2] == NULL) &&
                 (threads[3] == NULL) &&
                 (threads[4] == NULL),
-                "thread creation failed");
+                "#1"); /* Thread creation failed.*/
 
     /* Claiming the memory from terminated threads. */
     test_wait_threads();
     test_assert_sequence("AB");
 
     /* Heap status checked again.*/
-    test_assert(chHeapStatus(&n) == 1, "heap fragmented");
-    test_assert(n == sz, "heap size changed");
+    test_assert(chHeapStatus(&n) == 1, "#2"); /* Heap fragmented.*/
+    test_assert(n == sz, "#3"); /* Heap size changed.*/
   }
 }
 
@@ -105,7 +105,7 @@ static void dyn2_execute(void) {
               (threads[2] != NULL) &&
               (threads[3] != NULL) &&
               (threads[4] != NULL),
-              "thread creation failed");
+              "#1"); /* Thread creation failed.*/
 
   /* Claiming the memory from terminated threads. */
   test_wait_threads();
@@ -113,8 +113,8 @@ static void dyn2_execute(void) {
 
   /* Now the pool must be full again. */
   for (i = 0; i < 5; i++)
-    test_assert(chPoolAlloc(&mp1) != NULL, "pool list empty");
-  test_assert(chPoolAlloc(&mp1) == NULL, "pool list not empty");
+    test_assert(chPoolAlloc(&mp1) != NULL, "#2"); /* Pool list empty.*/
+  test_assert(chPoolAlloc(&mp1) == NULL, "#3"); /* Pool list not empty.*/
 }
 
 const struct testcase testdyn2 = {

@@ -25,6 +25,7 @@
 #include "testmtx.h"
 #include "testcond.h"
 #include "testmsg.h"
+#include "testmbox.h"
 #include "testevt.h"
 #include "testheap.h"
 #include "testpools.h"
@@ -40,6 +41,7 @@ static const struct testcase **patterns[] = {
   patternmtx,
   patterncond,
   patternmsg,
+  patternmbox,
   patternevt,
   patternheap,
   patternpools,

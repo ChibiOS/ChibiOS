@@ -58,29 +58,27 @@ typedef struct {
 } Queue;
 
 /** Returns the queue's buffer size. */
-#define chQSize(q) \
-        ((q)->q_top - (q)->q_buffer)
+#define chQSize(q) ((q)->q_top - (q)->q_buffer)
 
-/** Returns the used space if used on an Input Queue and the empty space if
- *  used on an Output Queue. */
-#define chQSpace(q) \
-        ((q)->q_sem.s_cnt)
+/**
+ * Returns the used space if used on an Input Queue and the empty space if
+ * used on an Output Queue.
+ * @note The returned value can be less than zero when there are waiting
+ *       threads on the internal semaphore.
+ */
+#define chQSpace(q) chSemGetCounterI(&(q)->q_sem)
 
 /** Evaluates to TRUE if the specified Input Queue is empty. */
-#define chIQIsEmpty(q) \
-        (chQSpace(q) <= 0)
+#define chIQIsEmpty(q) (chQSpace(q) <= 0)
 
 /** Evaluates to TRUE if the specified Input Queue is full. */
-#define chIQIsFull(q) \
-        (chQSpace(q) >= chQSize(q))
+#define chIQIsFull(q) (chQSpace(q) >= chQSize(q))
 
 /** Evaluates to TRUE if the specified Output Queue is empty. */
-#define chOQIsEmpty(q) \
-        (chQSpace(q) >= chQSize(q))
+#define chOQIsEmpty(q) (chQSpace(q) >= chQSize(q))
 
 /** Evaluates to TRUE if the specified Output Queue is full. */
-#define chOQIsFull(q) \
-        (chQSpace(q) <= 0)
+#define chOQIsFull(q) (chQSpace(q) <= 0)
 
 #ifdef __cplusplus
 extern "C" {
@@ -131,28 +129,30 @@ typedef struct {
 } HalfDuplexQueue;
 
 /** Returns the queue's buffer size. */
-#define chHDQSize(q) \
-        ((q)->hdq_top - (q)->hdq_buffer)
+#define chHDQSize(q) ((q)->hdq_top - (q)->hdq_buffer)
 
-/** Returns the queue space when in transmission mode. */
-#define chHDQEmptySpace(q) \
-        ((q)->hdq_osem.s_cnt)
+/**
+ * Returns the queue space when in transmission mode.
+ * @note The returned value can be less than zero when there are waiting
+ *       threads on the internal semaphore.
+ */
+#define chHDQEmptySpace(q) chSemGetCounterI(&(q)->hdq_osem)
 
-/** Returns the number of the bytes in the queue when in receive mode. */
-#define chHDQFilledSpace(q) \
-        ((q)->hdq_isem.s_cnt)
+/**
+ * Returns the number of the bytes in the queue when in receive mode.
+ * @note The returned value can be less than zero when there are waiting
+ *       threads on the internal semaphore.
+ */
+#define chHDQFilledSpace(q) chSemGetCounterI(&(q)->hdq_isem)
 
 /** Evaluates to TRUE if the queue is in transmit mode. */
-#define chHDQIsTransmitting(q) \
-        (chHDQEmptySpace(q) < chHDQSize(q))
+#define chHDQIsTransmitting(q) (chHDQEmptySpace(q) < chHDQSize(q))
 
 /** Evaluates to TRUE if the queue is in receive mode. */
-#define chHDQIsReceiving(q) \
-        (chHDQEmptySpaceQ(q) >= chHDQSize(q))
+#define chHDQIsReceiving(q) (chHDQEmptySpaceQ(q) >= chHDQSize(q))
 
 /** Evaluates to TRUE if the receive queue is full. */
-#define chHDQIsFullReceive(q) \
-        (chHDQFilledSpace(q) >= chHDQSize(q))
+#define chHDQIsFullReceive(q) (chHDQFilledSpace(q) >= chHDQSize(q))
 
 #ifdef __cplusplus
 extern "C" {

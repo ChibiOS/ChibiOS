@@ -44,10 +44,10 @@ static void pools1_execute(void) {
 
   /* Empting the pool again. */
   for (i = 0; i < MAX_THREADS; i++)
-    test_assert(chPoolAlloc(&mp1) != NULL, "pool list empty");
+    test_assert(chPoolAlloc(&mp1) != NULL, "#1"); /* Pool list empty.*/
 
   /* Now must be empty. */
-  test_assert(chPoolAlloc(&mp1) == NULL, "pool list not empty");
+  test_assert(chPoolAlloc(&mp1) == NULL, "#2"); /* Pool list not empty.*/
 }
 
 const struct testcase testpools1 = {

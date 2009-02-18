@@ -52,22 +52,33 @@ extern "C" {
 #endif
 
 /**
- * Verifies if the mailbox has space for an immediate message.
+ * Returns the mailbox buffer size.
+ * @param[in] mbp the pointer to an initialized Mailbox object
+ */
+#define chMBSize(mbp)                                                   \
+        ((mbp)->mb_top - (mbp)->mb_buffer)
+
+/**
+ * Returns the free space into the mailbox.
  * @param[in] mbp the pointer to an initialized Mailbox object
  * @return The number of empty message slots.
  * @note Can be invoked in any system state but if invoked out of a locked
  *       state then the returned value may change after reading.
+ * @note The returned value can be less than zero when there are waiting
+ *       threads on the internal semaphore.
  */
-#define chMBHasSpace(mbp) chSemGetCounterI(&(mbp)->mb_emptysem)
+#define chMBGetEmpty(mbp) chSemGetCounterI(&(mbp)->mb_emptysem)
 
 /**
- * Verifies if the mailbox has incoming messages.
+ * Returns the number of messages into the mailbox.
  * @param[in] mbp the pointer to an initialized Mailbox object
  * @return The number of queued messages.
  * @note Can be invoked in any system state but if invoked out of a locked
  *       state then the returned value may change after reading.
+ * @note The returned value can be less than zero when there are waiting
+ *       threads on the internal semaphore.
  */
-#define chMBContainsMessages(mbp) chSemGetCounterI(&(mbp)->mb_fullsem)
+#define chMBGetFull(mbp) chSemGetCounterI(&(mbp)->mb_fullsem)
 
 /**
  * Returns the next message in the queue without removing it.

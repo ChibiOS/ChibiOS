@@ -1,27 +1,22 @@
 After 1.0.0:
 X Improve makefiles by adding an options head section and making it shared.
-- Update C++ wrapper (Heap, Pools).
+* Queues macros should not refer to the semaphore counters directly.
 * Priority ordering option for semaphores.
 * chSysLock() and chSysUnlock() with counter (option).
 * OSEK-style chSysSuspendAll()/chSysResumeAll()/chSysEnable()/chSysDisable(),
   implemented this as the new Suspended and Disabled states in 1.1.
-X lwIP TCP/IP stack integration and demo.
-  X "Wide Queues" or Mailboxes, lwIP requires them.
-X FatFS library integration and demo.
+* Mailboxes subsystem (lwIP requires them).
 * Multiple debug switches.
   X Stack checks option.
   * Threads profiling option.
-  - Objects registry.
 * Idle loop hook macro.
 * Switch the configuration options to TRUE/FALSE rather than def/undef.
+
+After 1.2.0:
 - Threads Pools manager in the library.
   - New chThdCreate() that takes just two parameters, a pointer to a thread
     descriptor and the tread parameter. It could wrap the current variants
     or just be an alternative.
-- Fix the names of the Queues macros, also do not refer to the semaphore
-  counters directly.
-
-After 1.2.0:
 - Minimal optional C-runtime library (complete enough for lwIP).
 - OSEK-style simple tasks within the idle thread.
 - Think to something for threads restart.
@@ -30,6 +25,7 @@ After 1.2.0:
   - Move the serial drivers implementations in library al keep the I/O channel
     interface as part of the kernel. Better keep the core as compact as
     possible.
+- Update C++ wrapper (Heap, Pools, Mailboxes and any new feature).
 
 Ideas for 2.x.x:
 - Reference counter for threads, concept of detached threads, threads
@@ -38,12 +34,15 @@ Ideas for 2.x.x:
 - Multicore support.
 
 Side projects:
+X lwIP TCP/IP stack integration and demo.
+X FatFS library integration and demo.
 X ChibiOS Wizard, UML modeling and ChibiOS applications code and
   documentation generator.
 X OSEK layer.
 - Posix layer.
 X File System
 - Visual debugger interfaced to OpenOCD.
+  - Objects registry.
 
 Lower priority:
 - More demos

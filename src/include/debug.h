@@ -86,6 +86,7 @@ extern "C" {
 #endif
 #if CH_DBG_ENABLE_TRACE
   extern TraceBuffer trace_buffer;
+  void trace_init(void);
   void chDbgTrace(Thread *otp, Thread *ntp);
 #endif
 #if CH_DBG_ENABLE_ASSERTS

@@ -80,6 +80,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Fixed wrong assertions in chThdWait() and chHeapFree() (backported in
   stable branch).
 - FIX: Fixed a small problem in the chcore.c template file.
+- NEW: Mailboxes (asynchronous messages) subsystem and test cases added.
 - NEW: Mode flexible debug configuration options, removed the old CH_USE_DEBUG
   and CH_USE_TRACE. Replaced with CH_DBG_ENABLE_ASSERTS, CH_DBG_ENABLE_TRACE
   and CH_DBG_FILL_THREADS.

@@ -47,7 +47,7 @@ static void heap1_execute(void) {
     chHeapFree(p1);               /* Does not merge */
     chHeapFree(p2);               /* Merges backward */
     chHeapFree(p3);               /* Merges both sides */
-    test_assert(chHeapStatus(&n) == 1, "heap fragmented #1");
+    test_assert(chHeapStatus(&n) == 1, "#1"); /* Heap fragmented.*/
 
     /* Reverse order */
     p1 = chHeapAlloc(SIZE);
@@ -56,9 +56,9 @@ static void heap1_execute(void) {
     chHeapFree(p3);               /* Merges forward */
     chHeapFree(p2);               /* Merges forward */
     chHeapFree(p1);               /* Merges forward */
-    test_assert(chHeapStatus(&n) == 1, "heap fragmented #2");
+    test_assert(chHeapStatus(&n) == 1, "#2"); /* Heap fragmented.*/
 
-    test_assert(n == sz, "heap size changed");
+    test_assert(n == sz, "#3"); /* Heap size changed.*/
   }
   else {
     test_print("--- Size  : ");
