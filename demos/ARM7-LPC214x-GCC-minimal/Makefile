@@ -8,6 +8,11 @@ ifeq ($(USE_OPT),)
   USE_OPT = -O2 -ggdb -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 endif
 
+# C++ specific options here (added to USE_OPT).
+ifeq ($(USE_CPPOPT),)
+  USE_CPPOPT = -fno-rtti
+endif
+
 # Enable this if you want the linker to remove unused code and data
 ifeq ($(USE_LINK_GC),)
   USE_LINK_GC = yes
@@ -41,22 +46,36 @@ LDSCRIPT= ch.ld
 include ../../src/kernel.mk
 #include ../../test/test.mk
 
-# Sources that can be compiled in ARM or THUMB mode depending on the global
+# C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-SRC = ../../ports/ARM7/chcore.c \
-      ../../ports/ARM7-LPC214x/vic.c  \
-      ${KERNSRC} \
-      board.c main.c
+CSRC = ../../ports/ARM7/chcore.c \
+       ../../ports/ARM7-LPC214x/vic.c  \
+       ${KERNSRC} \
+       board.c main.c
 
-# Sources to be compiled in ARM mode regardless of the global setting.
+# C++ sources that can be compiled in ARM or THUMB mode depending on the global
+# setting.
+CPPSRC =
+
+# C sources to be compiled in ARM mode regardless of the global setting.
 # NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
 #       option that results in lower performance and larger code size.
-ASRC =
+ACSRC =
 
-# Sources to be compiled in THUMB mode regardless of the global setting.
+# C++ sources to be compiled in ARM mode regardless of the global setting.
 # NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
 #       option that results in lower performance and larger code size.
-TSRC =
+ACPPSRC =
+
+# C sources to be compiled in THUMB mode regardless of the global setting.
+# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
+#       option that results in lower performance and larger code size.
+TCSRC =
+
+# C sources to be compiled in THUMB mode regardless of the global setting.
+# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
+#       option that results in lower performance and larger code size.
+TCPPSRC =
 
 # List ASM source files here
 ASMSRC = ../../ports/ARM7/crt0.s \
@@ -80,6 +99,12 @@ MCU  = arm7tdmi
 
 TRGT = arm-elf-
 CC   = $(TRGT)gcc
+CPPC = $(TRGT)g++
+# Enable loading with g++ only if you need C++ runtime support.
+# NOTE: You can use C++ even without C++ support if you are careful. C++
+#       runtime support makes code size explode.
+LD   = $(TRGT)gcc
+#LD   = $(TRGT)g++
 CP   = $(TRGT)objcopy
 AS   = $(TRGT)gcc -x assembler-with-cpp
 OD   = $(TRGT)objdump
@@ -92,8 +117,11 @@ AOPT =
 # THUMB-specific options here
 TOPT = -mthumb -DTHUMB
 
-# Define warning options here
-WARN = -Wall -Wstrict-prototypes
+# Define C warning options here
+CWARN = -Wall -Wstrict-prototypes
+
+# Define C++ warning options here
+CPPWARN = -Wall
 
 #
 # Compiler settings
