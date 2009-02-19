@@ -59,20 +59,23 @@ ifneq ($(TSRC),)
   CPPFLAGS += -DTHUMB_PRESENT
   ASFLAGS += -DTHUMB_PRESENT
   ifneq ($(ASRC),)
-    # Mixed ARM and THUMB case.
+    # Mixed ARM and THUMB mode.
     CFLAGS += -mthumb-interwork
     CPPFLAGS += -mthumb-interwork
+    ASFLAGS += -mthumb-interwork
     LDFLAGS += -mthumb-interwork
   else
-    # Pure THUMB case, THUMB C code cannot be called by ARM asm code directly.
+    # Pure THUMB mode, THUMB C code cannot be called by ARM asm code directly.
     CFLAGS += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING
     CPPFLAGS += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING
+    ASFLAGS += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING -mthumb
     LDFLAGS += -mno-thumb-interwork -mthumb
-    ASFLAGS += -DTHUMB_NO_INTERWORKING
   endif
 else
+  # Pure ARM mode
   CPFLAGS += -mno-thumb-interwork
   CPPFLAGS += -mno-thumb-interwork
+  ASFLAGS += -mno-thumb-interwork
   LDFLAGS += -mno-thumb-interwork
 endif
 
@@ -121,21 +124,8 @@ $(ASMOBJS) : %.o : %.s
 
 clean:
 	-rm -f $(OBJS)
-	-rm -f $(PROJECT).elf
-	-rm -f $(PROJECT).dmp
-	-rm -f $(PROJECT).map
-	-rm -f $(PROJECT).hex
-	-rm -f $(PROJECT).bin
-	-rm -f $(ACSRC:.c=.c.bak)
-	-rm -f $(ACSRC:.c=.lst)
-	-rm -f $(TCSRC:.c=.c.bak)
-	-rm -f $(TCSRC:.c=.lst)
-	-rm -f $(ACPPSRC:.cpp=.c.bak)
-	-rm -f $(ACPPSRC:.cpp=.lst)
-	-rm -f $(TCPPSRC:.cpp=.c.bak)
-	-rm -f $(TCPPSRC:.cpp=.lst)
-	-rm -f $(ASMSRC:.s=.s.bak)
-	-rm -f $(ASMSRC:.s=.lst)
+	-rm -f $(ACSRC:.c=.lst) $(TCSRC:.c=.lst) $(ACPPSRC:.cpp=.lst) $(TCPPSRC:.cpp=.lst) $(ASMSRC:.s=.lst)
+	-rm -f $(PROJECT).elf $(PROJECT).dmp $(PROJECT).map $(PROJECT).hex $(PROJECT).bin
 	-rm -fR .dep
 
 #

@@ -8,9 +8,19 @@ ifeq ($(USE_OPT),)
   USE_OPT = -O2 -ggdb -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 endif
 
+# C++ specific options here (added to USE_OPT).
+ifeq ($(USE_CPPOPT),)
+  USE_CPPOPT = -fno-rtti
+endif
+
 # Enable this if you want the linker to remove unused code and data
-ifeq ($(LINK_GC),)
+ifeq ($(USE_LINK_GC),)
   USE_LINK_GC = yes
+endif
+
+# If enabled, this option allows to compile the application in THUMB mode.
+ifeq ($(USE_THUMB),)
+  USE_THUMB = yes
 endif
 
 # Enable register caching optimization (read documentation).
@@ -18,13 +28,21 @@ ifeq ($(USE_CURRP_CACHING),)
   USE_CURRP_CACHING = no
 endif
 
+#
+# Build global options
+##############################################################################
+
+##############################################################################
+# Architecture or project specific options
+#
+
 # Enable this if you really want to use the STM FWLib.
 ifeq ($(USE_FWLIB),)
   USE_FWLIB = no
 endif
 
 #
-# Build global options
+# Architecture or project specific options
 ##############################################################################
 
 ##############################################################################
@@ -41,15 +59,39 @@ LDSCRIPT= ch.ld
 include ../../src/kernel.mk
 include ../../test/test.mk
 
-# Sources that can be compiled in ARM or THUMB mode depending on the global
+# C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-SRC = ../../ports/ARMCM3/chcore.c \
-      ../../ports/ARMCM3/nvic.c \
-      ../../ports/ARMCM3-STM32F103/stm32_serial.c \
-      ${KERNSRC} \
-      ${TESTSRC} \
-      ../../src/lib/evtimer.c \
-      board.c main.c
+CSRC = ../../ports/ARMCM3/chcore.c \
+       ../../ports/ARMCM3/nvic.c \
+       ../../ports/ARMCM3-STM32F103/stm32_serial.c \
+       ${KERNSRC} \
+       ${TESTSRC} \
+       ../../src/lib/evtimer.c \
+       board.c main.c
+
+# C++ sources that can be compiled in ARM or THUMB mode depending on the global
+# setting.
+CPPSRC = ../../src/lib/ch.cpp
+
+# C sources to be compiled in ARM mode regardless of the global setting.
+# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
+#       option that results in lower performance and larger code size.
+ACSRC =
+
+# C++ sources to be compiled in ARM mode regardless of the global setting.
+# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
+#       option that results in lower performance and larger code size.
+ACPPSRC =
+
+# C sources to be compiled in THUMB mode regardless of the global setting.
+# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
+#       option that results in lower performance and larger code size.
+TCSRC =
+
+# C sources to be compiled in THUMB mode regardless of the global setting.
+# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
+#       option that results in lower performance and larger code size.
+TCPPSRC =
 
 # List ASM source files here
 ASMSRC =  ../../ports/ARMCM3/crt0.s \
@@ -60,6 +102,7 @@ INCDIR = $(KERNINC) $(TESTINC) \
          ../../ports/ARMCM3 \
          ../../ports/ARMCM3-STM32F103 \
          ./stm32lib/inc
+
 #
 # Project, sources and paths
 ##############################################################################
@@ -70,18 +113,31 @@ INCDIR = $(KERNINC) $(TESTINC) \
 
 MCU  = cortex-m3
 
-#TRGT = arm-none-eabi-
-#TRGT = arm-eabi-
 TRGT = arm-elf-
 CC   = $(TRGT)gcc
+CPPC = $(TRGT)g++
+# Enable loading with g++ only if you need C++ runtime support.
+# NOTE: You can use C++ even without C++ support if you are careful. C++
+#       runtime support makes code size explode.
+LD   = $(TRGT)gcc
+#LD   = $(TRGT)g++
 CP   = $(TRGT)objcopy
 AS   = $(TRGT)gcc -x assembler-with-cpp
 OD   = $(TRGT)objdump
 HEX  = $(CP) -O ihex
 BIN  = $(CP) -O binary
 
-# Define warning options here
-WARN = -Wall -Wstrict-prototypes
+# ARM-specific options here
+AOPT =
+
+# THUMB-specific options here
+TOPT = -mthumb -DTHUMB
+
+# Define C warning options here
+CWARN = -Wall -Wstrict-prototypes
+
+# Define C++ warning options here
+CPPWARN = -Wall
 
 #
 # Compiler settings
@@ -114,12 +170,6 @@ DLIBS =
 # Start of user section
 #
 
-# Define project name here
-PROJECT = ch
-
-# Define linker script file here
-LDSCRIPT= ch.ld
-
 # List all user C define here, like -D_DEBUG=1
 UDEFS =
 
@@ -139,4 +189,12 @@ ULIBS =
 # End of user defines
 ##############################################################################
 
-include ../../ports/ARMCM3/rules.mk
+ifeq ($(USE_FWLIB),yes)
+  include ./stm32lib/stm32lib.mk
+  CSRC += ${STM32SRC}
+  # The thing generates a lot of aliasing warnings, this disables an
+  # optimization and the warning disappears, the code is a bit larger however.
+  USE_OPT += -fno-strict-aliasing
+endif
+
+include ../../ports/ARM/rules.mk

@@ -177,4 +177,4 @@ ULIBS =
 # End of user defines
 ##############################################################################
 
-include ../../ports/ARM7/rules.mk
+include ../../ports/ARM/rules.mk
