@@ -91,7 +91,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   checking. The check is not performed in the kernel but in the port code.
   Currently no ports implement it.
 - NEW: Unified makefiles for ARM7 and ARMCM3 projects, the new makefiles
-  share a common part making them easier to maintain.
+  share a common part making them easier to maintain. Also reorganized the
+  demo-specific part of the makefile, now it is easier to configure and the
+  option can be overriden from outside.
 - CHANGE: Changed the chSemFastWaitS() macro in chSemFastWaitI() and
   chSemGetCounter() in chSemGetCounterI().
 - Improvements to the test suite, added a new level of indirection that allows
