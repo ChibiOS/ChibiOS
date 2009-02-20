@@ -115,7 +115,7 @@ typedef struct {
 #define INT_REQUIRED_STACK 32
 #endif
 
-#define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
+#define STACK_ALIGN(n) ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
 
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
                                    (sizeof(struct intctx) - 1) +        \
