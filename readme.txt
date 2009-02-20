@@ -73,6 +73,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 1.1.1unstable ***
+- FIX: Fixed a problem into the STACK_ALIGN() macro (backported in stable
+  branch).
 - FIX: Fixed a problem with a wrong declaration of the PLL structure in the
   file lpc214x.h (backported in stable branch).
 - FIX: Fixed a problem with some event APIs not showing in the documentation
