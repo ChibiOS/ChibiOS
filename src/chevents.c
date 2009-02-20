@@ -37,13 +37,13 @@
  */
 void chEvtRegisterMask(EventSource *esp, EventListener *elp, eventmask_t emask) {
 
-  chSysLock();
+  chDbgCheck((esp != NULL) && (elp != NULL), "chEvtRegisterMask");
 
+  chSysLock();
   elp->el_next = esp->es_next;
   esp->es_next = elp;
   elp->el_listener = currp;
   elp->el_mask = emask;
-
   chSysUnlock();
 }
 
@@ -59,10 +59,12 @@ void chEvtRegisterMask(EventSource *esp, EventListener *elp, eventmask_t emask) 
  *       found on top of the list).
  */
 void chEvtUnregister(EventSource *esp, EventListener *elp) {
-  EventListener *p = (EventListener *)esp;
+  EventListener *p;
 
+  chDbgCheck((esp != NULL) && (elp != NULL), "chEvtUnregister");
+
+  p = (EventListener *)esp;
   chSysLock();
-
   while (p->el_next != (EventListener *)esp) {
     if (p->el_next == elp) {
       p->el_next = elp->el_next;
@@ -70,7 +72,6 @@ void chEvtUnregister(EventSource *esp, EventListener *elp) {
     }
     p = p->el_next;
   }
-
   chSysUnlock();
 }
 
@@ -117,10 +118,10 @@ eventmask_t chEvtPend(eventmask_t mask) {
  */
 void chEvtSignal(Thread *tp, eventmask_t mask) {
 
+  chDbgCheck(tp != NULL, "chEvtSignal");
+
   chSysLock();
-
   chEvtSignalI(tp, mask);
-
   chSysUnlock();
 }
 
@@ -132,8 +133,9 @@ void chEvtSignal(Thread *tp, eventmask_t mask) {
  */
 void chEvtSignalI(Thread *tp, eventmask_t mask) {
 
-  tp->p_epending |= mask;
+  chDbgCheck(tp != NULL, "chEvtSignalI");
 
+  tp->p_epending |= mask;
   /* Test on the AND/OR conditions wait states.*/
   if (((tp->p_state == PRWTOREVT) && ((tp->p_epending & tp->p_ewmask) != 0)) ||
       ((tp->p_state == PRWTANDEVT) && ((tp->p_epending & tp->p_ewmask) == tp->p_ewmask)))
@@ -149,10 +151,8 @@ void chEvtSignalI(Thread *tp, eventmask_t mask) {
 void chEvtBroadcast(EventSource *esp) {
 
   chSysLock();
-
   chEvtBroadcastI(esp);
   chSchRescheduleS();
-
   chSysUnlock();
 }
 
@@ -164,6 +164,8 @@ void chEvtBroadcast(EventSource *esp) {
  */
 void chEvtBroadcastI(EventSource *esp) {
   EventListener *elp;
+
+  chDbgCheck(esp != NULL, "chEvtBroadcastI");
 
   elp = esp->es_next;
   while (elp != (EventListener *)esp) {
@@ -183,9 +185,14 @@ void chEvtBroadcastI(EventSource *esp) {
 void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask) {
   eventid_t eid;
 
+  chDbgCheck(handlers != NULL, "chEvtDispatch");
+
   eid = 0;
   while (mask) {
     if (mask & EVENT_MASK(eid)) {
+      chDbgAssert(handlers[eid] != NULL,
+                  "chEvtDispatch(), #1",
+                  "null handler");
       mask &= ~EVENT_MASK(eid);
       handlers[eid](eid);
     }

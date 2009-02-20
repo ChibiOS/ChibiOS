@@ -58,7 +58,7 @@ void chDbgTrace(Thread *otp, Thread *ntp) {
 }
 #endif /* CH_DBG_ENABLE_TRACE */
 
-#if CH_DBG_ENABLE_ASSERTS
+#if CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK
 /**
  * @brief Pointer to the panic message.
  * @details This pointer is meant to be accessed through the debugger, it is
@@ -74,10 +74,8 @@ char *panic_msg;
 void chDbgPanic(char *msg) {
 
   panic_msg = msg;
-  chSysPuts("PANIC: ");
-  chSysPuts(msg);
   chSysHalt();
 }
-#endif /* CH_DBG_ENABLE_ASSERTS */
+#endif /* CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK */
 
 /** @} */

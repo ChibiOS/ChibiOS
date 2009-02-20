@@ -38,6 +38,8 @@
  */
 void chMtxInit(Mutex *mp) {
 
+  chDbgCheck(mp != NULL, "chMtxInit");
+
   queue_init(&mp->m_queue);
   mp->m_owner = NULL;
 }
@@ -64,6 +66,9 @@ void chMtxLock(Mutex *mp) {
  *       block.
  */
 void chMtxLockS(Mutex *mp) {
+
+  chDbgCheck(mp != NULL, "chMtxLockS");
+
   /* the mutex is already locked? */
   if (mp->m_owner != NULL) {
     /*
@@ -112,7 +117,7 @@ void chMtxLockS(Mutex *mp) {
     /* thread remembers the mutex where it is waiting on */
     currp->p_wtmtxp = mp;
     chSchGoSleepS(PRWTMTX);
-    chDbgAssert(mp->m_owner == NULL, "chmtx.c, chMtxLockS()");
+    chDbgAssert(mp->m_owner == NULL, "chMtxLockS(), #1", "still owned");
   }
   /*
    * The mutex is now inserted in the owned mutexes list.
@@ -156,6 +161,8 @@ bool_t chMtxTryLock(Mutex *mp) {
  */
 bool_t chMtxTryLockS(Mutex *mp) {
 
+  chDbgCheck(mp != NULL, "chMtxTryLockS");
+
   if (mp->m_owner != NULL)
     return FALSE;
   mp->m_owner = currp;
@@ -173,10 +180,12 @@ Mutex *chMtxUnlock(void) {
   Mutex *ump, *mp;
 
   chSysLock();
-
-  chDbgAssert((currp->p_mtxlist != NULL) && (currp->p_mtxlist->m_owner == currp),
-              "chmtx.c, chMtxUnlock()");
-
+  chDbgAssert(currp->p_mtxlist != NULL,
+              "chMtxUnlock(), #1",
+              "owned mutexes list empty");
+  chDbgAssert(currp->p_mtxlist->m_owner == currp,
+              "chMtxUnlock(), #2",
+              "ownership failure");
   /* remove the top Mutex from the Threads's owned mutexes list */
   ump = currp->p_mtxlist;
   currp->p_mtxlist = ump->m_next;
@@ -221,8 +230,12 @@ Mutex *chMtxUnlock(void) {
 Mutex *chMtxUnlockS(void) {
   Mutex *ump, *mp;
 
-  chDbgAssert((currp->p_mtxlist != NULL) && (currp->p_mtxlist->m_owner == currp),
-              "chmtx.c, chMtxUnlockS()");
+  chDbgAssert(currp->p_mtxlist != NULL,
+              "chMtxUnlockS(), #1",
+              "owned mutexes list empty");
+  chDbgAssert(currp->p_mtxlist->m_owner == currp,
+              "chMtxUnlockS(), #2",
+              "ownership failure");
 
   /*
    * Removes the top Mutex from the owned mutexes list and marks it as not owned.
@@ -261,7 +274,6 @@ Mutex *chMtxUnlockS(void) {
 void chMtxUnlockAll(void) {
 
   chSysLock();
-
   if (currp->p_mtxlist != NULL) {
     do {
       Mutex *mp = currp->p_mtxlist;
@@ -273,7 +285,6 @@ void chMtxUnlockAll(void) {
     currp->p_prio = currp->p_realprio;
     chSchRescheduleS();
   }
-
   chSysUnlock();
 }
 

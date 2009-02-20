@@ -46,6 +46,9 @@ void chFDDInit(FullDuplexDriver *sd,
                uint8_t *ib, size_t isize, qnotify_t inotify,
                uint8_t *ob, size_t osize, qnotify_t onotify) {
 
+  chDbgCheck((sd != NULL) && (ib != NULL) && (ob != NULL) &&
+             (isize > 0) && (osize > 0), "chFDDInit");
+
   chIQInit(&sd->sd_iqueue, ib, isize, inotify);
   chEvtInit(&sd->sd_ievent);
   chOQInit(&sd->sd_oqueue, ob, osize, onotify);
@@ -133,6 +136,8 @@ dflags_t chFDDGetAndClearFlags(FullDuplexDriver *sd) {
  */
 void chHDDInit(HalfDuplexDriver *sd, uint8_t *b, size_t size,
                qnotify_t inotify, qnotify_t onotify) {
+
+  chDbgCheck((sd != NULL) && (b != NULL) && (size > 0), "chHDDInit");
 
   chHDQInit(&sd->sd_queue, b, size, inotify, onotify);
   chEvtInit(&sd->sd_ievent);

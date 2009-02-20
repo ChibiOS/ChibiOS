@@ -42,6 +42,8 @@
  */
 void chCondInit(CondVar *cp) {
 
+  chDbgCheck(cp != NULL, "chCondInit");
+
   queue_init(&cp->c_queue);
 }
 
@@ -52,11 +54,11 @@ void chCondInit(CondVar *cp) {
  */
 void chCondSignal(CondVar *cp) {
 
-  chSysLock();
+  chDbgCheck(cp != NULL, "chCondSignal");
 
+  chSysLock();
   if (notempty(&cp->c_queue))                           /* any thread ? */
     chSchWakeupS(fifo_remove(&cp->c_queue), RDY_OK);
-
   chSysUnlock();
 }
 
@@ -66,6 +68,8 @@ void chCondSignal(CondVar *cp) {
  * @param cp pointer to the @p CondVar structure
  */
 void chCondSignalI(CondVar *cp) {
+
+  chDbgCheck(cp != NULL, "chCondSignalI");
 
   if (notempty(&cp->c_queue))                           /* any thread ? */
     chSchReadyI(fifo_remove(&cp->c_queue))->p_rdymsg = RDY_OK;
@@ -79,10 +83,8 @@ void chCondSignalI(CondVar *cp) {
 void chCondBroadcast(CondVar *cp) {
 
   chSysLock();
-
   chCondBroadcastI(cp);
   chSchRescheduleS();
-
   chSysUnlock();
 }
 
@@ -92,6 +94,8 @@ void chCondBroadcast(CondVar *cp) {
  * @param cp pointer to the @p CondVar structure
  */
 void chCondBroadcastI(CondVar *cp) {
+
+  chDbgCheck(cp != NULL, "chCondBroadcastI");
 
   /* empties the condition variable queue and inserts all the Threads into the
    * ready list in FIFO order. The wakeup message is set to @p RDY_RESET in
@@ -116,9 +120,7 @@ msg_t chCondWait(CondVar *cp) {
   msg_t msg;
 
   chSysLock();
-
   msg = chCondWaitS(cp);
-
   chSysUnlock();
   return msg;
 }
@@ -139,7 +141,10 @@ msg_t chCondWaitS(CondVar *cp) {
   Mutex *mp;
   msg_t msg;
 
-  chDbgAssert(currp->p_mtxlist != NULL, "chcond.c, chCondWaitS()");
+  chDbgCheck(cp != NULL, "chCondWaitS");
+  chDbgAssert(currp->p_mtxlist != NULL,
+              "chCondWaitS(), #1",
+              "not owning a mutex");
 
   mp = chMtxUnlockS();                  /* unlocks the condvar mutex */
   prio_insert(currp, &cp->c_queue);     /* enters the condvar queue */
@@ -170,9 +175,7 @@ msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
   msg_t msg;
 
   chSysLock();
-
   msg = chCondWaitTimeoutS(cp, time);
-
   chSysUnlock();
   return msg;
 }
@@ -196,7 +199,10 @@ msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time) {
   Mutex *mp;
   msg_t msg;
 
-  chDbgAssert(currp->p_mtxlist != NULL, "chcond.c, chCondWaitS()");
+  chDbgCheck(cp != NULL, "chCondWaitTimeoutS");
+  chDbgAssert(currp->p_mtxlist != NULL,
+              "chCondWaitTimeoutS(), #1",
+              "not owning a mutex");
 
   mp = chMtxUnlockS();                  /* unlocks the condvar mutex */
   prio_insert(currp, &cp->c_queue);     /* enters the condvar queue */

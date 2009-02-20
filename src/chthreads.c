@@ -91,9 +91,9 @@ Thread *chThdInit(void *workspace, size_t wsize,
   /* thread structure is layed out in the lower part of the thread workspace */
   Thread *tp = workspace;
 
-  chDbgAssert((wsize >= THD_WA_SIZE(0)) && (prio <= HIGHPRIO) &&
-              (workspace != NULL) && (pf != NULL),
-              "chthreads.c, chThdInit()");
+  chDbgCheck((workspace != NULL) && (wsize >= THD_WA_SIZE(0)) &&
+             (prio <= HIGHPRIO) && (pf != NULL),
+             "chThdInit");
 #if CH_DBG_FILL_THREADS
   memfill(workspace, wsize, MEM_FILL_PATTERN);
 #endif
@@ -181,6 +181,8 @@ Thread *chThdCreateFromHeap(size_t wsize, tprio_t prio,
 Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
                                   tfunc_t pf, void *arg) {
 
+  chDbgCheck(mp != NULL, "chThdCreateFromMemoryPool");
+
   void *workspace = chPoolAlloc(mp);
   if (workspace == NULL)
     return NULL;
@@ -204,9 +206,10 @@ Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
 tprio_t chThdSetPriority(tprio_t newprio) {
   tprio_t oldprio;
 
-  chDbgAssert(newprio <= HIGHPRIO, "chthreads.c, chThdSetPriority()");
-  chSysLock();
+  chDbgCheck((newprio >= LOWPRIO) && (newprio <= HIGHPRIO),
+              "chThdSetPriority");
 
+  chSysLock();
 #if CH_USE_MUTEXES
   oldprio = currp->p_realprio;
   if ((currp->p_prio == currp->p_realprio) || (newprio > currp->p_prio))
@@ -217,7 +220,6 @@ tprio_t chThdSetPriority(tprio_t newprio) {
   currp->p_prio = newprio;
 #endif
   chSchRescheduleS();
-
   chSysUnlock();
   return oldprio;
 }
@@ -233,7 +235,9 @@ tprio_t chThdSetPriority(tprio_t newprio) {
 Thread *chThdResume(Thread *tp) {
 
   chSysLock();
-  chDbgAssert(tp->p_state == PRSUSPENDED, "chthreads.c, chThdResume()");
+  chDbgAssert(tp->p_state == PRSUSPENDED,
+              "chThdResume(), #1",
+              "thread not in PRSUSPENDED state");
   chSchWakeupS(tp, RDY_OK);
   chSysUnlock();
   return tp;
@@ -329,9 +333,13 @@ void chThdExit(msg_t msg) {
 msg_t chThdWait(Thread *tp) {
   msg_t msg;
 
+  chDbgCheck(tp != NULL, "chThdWait");
+
   chSysLock();
-  chDbgAssert((tp != NULL) && (tp != currp) && (tp->p_waiting == NULL),
-              "chthreads.c, chThdWait()");
+
+  chDbgAssert(tp != currp, "chThdWait(), #1", "waiting self");
+  chDbgAssert(tp->p_waiting == NULL, "chThdWait(), #2", "some other thread waiting");
+
   if (tp->p_state != PREXIT) {
     tp->p_waiting = currp;
     chSchGoSleepS(PRWAIT);

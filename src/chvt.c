@@ -55,7 +55,7 @@ void vt_init(void) {
 void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
   VirtualTimer *p;
 
-  chDbgAssert(time != 0, "chvt.c, chVTSetI()");
+  chDbgCheck((vtp != NULL) && (time != 0) && (vtfunc != NULL), "chVTSetI");
 
   vtp->vt_par = par;
   vtp->vt_func = vtfunc;
@@ -79,6 +79,10 @@ void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
  * @note The timer MUST be active when this function is invoked.
  */
 void chVTResetI(VirtualTimer *vtp) {
+
+  chDbgCheck(vtp != NULL, "chVTResetI");
+  chDbgAssert(vtp->vt_func != NULL, "chVTResetI(), #1",
+              "timer already triggered");
 
   if (vtp->vt_next != (void *)&vtlist)
     vtp->vt_next->vt_time += vtp->vt_time;

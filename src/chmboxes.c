@@ -27,7 +27,6 @@
 #include <ch.h>
 
 #if CH_USE_MAILBOXES
-
 /**
  * @brief Initializes a Mailbox object.
  *
@@ -36,6 +35,8 @@
  * @param[in] n the buffer size as number of @p msg_t
  */
 void chMBInit(Mailbox *mbp, msg_t *buf, cnt_t n) {
+
+  chDbgCheck((mbp != NULL) && (buf != NULL) && (n > 0), "chMBInit");
 
   mbp->mb_buffer = mbp->mb_wrptr = mbp->mb_rdptr = buf;
   mbp->mb_top = &buf[n];
@@ -51,6 +52,8 @@ void chMBInit(Mailbox *mbp, msg_t *buf, cnt_t n) {
  * @param[in] mbp the pointer to an initialized Mailbox object
  */
 void chMBReset(Mailbox *mbp) {
+
+  chDbgCheck(mbp != NULL, "chMBReset");
 
   chSysLock();
   mbp->mb_wrptr = mbp->mb_rdptr = mbp->mb_buffer;
@@ -76,6 +79,8 @@ void chMBReset(Mailbox *mbp) {
  */
 msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t timeout) {
   msg_t rdymsg;
+
+  chDbgCheck(mbp != NULL, "chMBPost");
 
   chSysLock();
   rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, timeout);
@@ -106,6 +111,8 @@ msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t timeout) {
 msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t timeout) {
   msg_t rdymsg;
 
+  chDbgCheck(mbp != NULL, "chMBPostAhead");
+
   chSysLock();
   rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, timeout);
   if (rdymsg == RDY_OK) {
@@ -134,6 +141,8 @@ msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t timeout) {
  */
 msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t timeout) {
   msg_t rdymsg;
+
+  chDbgCheck((mbp != NULL) && (msgp != NULL), "chMBFetch");
 
   chSysLock();
   rdymsg = chSemWaitTimeoutS(&mbp->mb_fullsem, timeout);

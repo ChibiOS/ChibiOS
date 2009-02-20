@@ -153,16 +153,20 @@ void *chHeapAlloc(size_t size) {
 void chHeapFree(void *p) {
   struct header *qp, *hp;
 
+  chDbgCheck(p != NULL, "chHeapFree");
+
   hp = (struct header *)p - 1;
-
-  chDbgAssert(hp->h_magic == MAGIC, "chheap.c, chHeapFree() #1");
-
+  chDbgAssert(hp->h_magic == MAGIC,
+              "chHeapFree(), #1",
+              "it is not magic");
   qp = &heap.free;
   H_LOCK();
 
   while (TRUE) {
 
-    chDbgAssert((hp < qp) || (hp >= LIMIT(qp)), "chheap.c, chHeapFree() #2");
+    chDbgAssert((hp < qp) || (hp >= LIMIT(qp)),
+                "chHeapFree(), #2",
+                "within free block");
 
     if (((qp == &heap.free) || (hp > qp)) &&
         ((qp->h_next == NULL) || (hp < qp->h_next))) {
@@ -244,19 +248,17 @@ void *chHeapAlloc(size_t size) {
   void *p;
 
   H_LOCK();
-
   p = malloc(size);
-
   H_UNLOCK();
   return p;
 }
 
 void chHeapFree(void *p) {
 
+  chDbgCheck(p != NULL, "chHeapFree");
+
   H_LOCK();
-
   free(p);
-
   H_UNLOCK();
 }
 

@@ -178,7 +178,7 @@ struct context {
 /**
  * Enforces a correct alignment for a stack area size value.
  */
-#define STACK_ALIGN(n) ((((n) - 1) | sizeof(stkalign_t)) + 1)
+#define STACK_ALIGN(n) ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
 
 /**
  * Computes the thread working area global size.
@@ -281,11 +281,23 @@ struct context {
 /**
  * This port function is implemented as inlined code for performance reasons.
  */
+#if CH_DBG_ENABLE_STACK_CHECK
+#define port_switch(otp, ntp) {                                         \
+  register Thread *_otp asm ("r0") = (otp);                             \
+  register Thread *_ntp asm ("r1") = (ntp);                             \
+  register char *sp asm ("sp");                                         \
+  if (sp - sizeof(struct intctx) - sizeof(Thread) < (char *)_otp)       \
+    asm volatile ("movs    r0, #0                               \n\t"   \
+                  "b       chDbgPanic");                                \
+  asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp));               \
+}
+#else /* !CH_DBG_ENABLE_STACK_CHECK */
 #define port_switch(otp, ntp) {                                         \
   register Thread *_otp asm ("r0") = (otp);                             \
   register Thread *_ntp asm ("r1") = (ntp);                             \
   asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp));               \
 }
+#endif /* !CH_DBG_ENABLE_STACK_CHECK */
 
 #ifdef __cplusplus
 extern "C" {

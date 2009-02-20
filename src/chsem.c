@@ -45,7 +45,8 @@
  */
 void chSemInit(Semaphore *sp, cnt_t n) {
 
-  chDbgAssert(n >= 0, "chsem.c, chSemInit()");
+  chDbgCheck((sp != NULL) && (n >= 0), "chSemInit");
+
   queue_init(&sp->s_queue);
   sp->s_cnt = n;
 }
@@ -62,10 +63,8 @@ void chSemInit(Semaphore *sp, cnt_t n) {
 void chSemReset(Semaphore *sp, cnt_t n) {
 
   chSysLock();
-
   chSemResetI(sp, n);
   chSchRescheduleS();
-
   chSysUnlock();
 }
 
@@ -82,7 +81,8 @@ void chSemReset(Semaphore *sp, cnt_t n) {
 void chSemResetI(Semaphore *sp, cnt_t n) {
   cnt_t cnt;
 
-  chDbgAssert(n >= 0, "chsem.c, chSemResetI()");
+  chDbgCheck((sp != NULL) && (n >= 0), "chSemResetI");
+
   cnt = sp->s_cnt;
   sp->s_cnt = n;
   while (cnt++ < 0)
@@ -100,9 +100,7 @@ msg_t chSemWait(Semaphore *sp) {
   msg_t msg;
 
   chSysLock();
-
   msg = chSemWaitS(sp);
-
   chSysUnlock();
   return msg;
 }
@@ -117,6 +115,8 @@ msg_t chSemWait(Semaphore *sp) {
  * @note This function cannot be called by an interrupt handler.
  */
 msg_t chSemWaitS(Semaphore *sp) {
+
+  chDbgCheck(sp != NULL, "chSemWaitS");
 
   if (--sp->s_cnt < 0) {
     sem_insert(currp, &sp->s_queue);
@@ -144,9 +144,7 @@ msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
   msg_t msg;
 
   chSysLock();
-
   msg = chSemWaitTimeoutS(sp, time);
-
   chSysUnlock();
   return msg;
 }
@@ -164,6 +162,8 @@ msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
  *       option is enabled in @p chconf.h.
  */
 msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
+
+  chDbgCheck(sp != NULL, "chSemWaitTimeoutS");
 
   if (--sp->s_cnt < 0) {
     sem_insert(currp, &sp->s_queue);
@@ -183,11 +183,11 @@ msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
  */
 void chSemSignal(Semaphore *sp) {
 
-  chSysLock();
+  chDbgCheck(sp != NULL, "chSemSignal");
 
+  chSysLock();
   if (sp->s_cnt++ < 0)
     chSchWakeupS(fifo_remove(&sp->s_queue), RDY_OK);
-
   chSysUnlock();
 }
 
@@ -200,6 +200,8 @@ void chSemSignal(Semaphore *sp) {
  * @note This function does not reschedule.
  */
 void chSemSignalI(Semaphore *sp) {
+
+  chDbgCheck(sp != NULL, "chSemSignalI");
 
   if (sp->s_cnt++ < 0) {
     /* NOTE: It is done this way in order to allow a tail call on
@@ -224,11 +226,11 @@ void chSemSignalI(Semaphore *sp) {
 msg_t chSemSignalWait(Semaphore *sps, Semaphore *spw) {
   msg_t msg;
 
-  chSysLock();
+  chDbgCheck((sps != NULL) && (spw != NULL), "chSemSignalWait");
 
+  chSysLock();
   if (sps->s_cnt++ < 0)
     chSchReadyI(fifo_remove(&sps->s_queue))->p_rdymsg = RDY_OK;
-
   if (--spw->s_cnt < 0) {
     sem_insert(currp, &spw->s_queue);
     currp->p_wtsemp = spw;
@@ -239,7 +241,6 @@ msg_t chSemSignalWait(Semaphore *sps, Semaphore *spw) {
     chSchRescheduleS();
     msg = RDY_OK;
   }
-
   chSysUnlock();
   return msg;
 }

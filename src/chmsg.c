@@ -45,8 +45,9 @@
  */
 msg_t chMsgSend(Thread *tp, msg_t msg) {
 
-  chSysLock();
+  chDbgCheck(tp != NULL, "chMsgSend");
 
+  chSysLock();
   msg_insert(currp, &tp->p_msgqueue);
   currp->p_msg = msg;
   currp->p_wtthdp = tp;
@@ -54,7 +55,6 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
     chSchReadyI(tp);
   chSchGoSleepS(PRSNDMSG);
   msg = currp->p_rdymsg;
-
   chSysUnlock();
   return msg;
 }
@@ -76,17 +76,18 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
  */
 msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, eventmask_t mask) {
 
+  chDbgCheck(tp != NULL, "chMsgSendWithEvent");
+
   chSysLock();
-
-  chDbgAssert(tp->p_state != PRWTMSG, "chmsg.c, chMsgSendWithEvent()");
-
+  chDbgAssert(tp->p_state != PRWTMSG,
+              "chMsgSendWithEvent(), #1",
+              "waiting for messages not events");
   chEvtSignalI(tp, mask);
   msg_insert(currp, &tp->p_msgqueue);
   currp->p_wtthdp = tp;
   currp->p_msg = msg;
   chSchGoSleepS(PRSNDMSG);
   msg = currp->p_rdymsg;
-
   chSysUnlock();
   return msg;
 }
@@ -105,11 +106,9 @@ msg_t chMsgWait(void) {
   msg_t msg;
 
   chSysLock();
-
   if (!chMsgIsPendingI(currp))
     chSchGoSleepS(PRWTMSG);
   msg = chMsgGetI(currp);
-
   chSysUnlock();
   return msg;
 }
@@ -129,9 +128,7 @@ msg_t chMsgGet(void) {
   msg_t msg;
 
   chSysLock();
-
   msg = chMsgIsPendingI(currp) ? chMsgGetI(currp) : (msg_t)NULL;
-
   chSysUnlock();
   return msg;
 }
@@ -150,10 +147,10 @@ msg_t chMsgGet(void) {
 void chMsgRelease(msg_t msg) {
 
   chSysLock();
-
-  chDbgAssert(chMsgIsPendingI(currp), "chmsg.c, chMsgRelease()");
+  chDbgAssert(chMsgIsPendingI(currp),
+              "chMsgRelease(), #1",
+              "no message pending");
   chSchWakeupS(fifo_remove(&currp->p_msgqueue), msg);
-
   chSysUnlock();
 }
 

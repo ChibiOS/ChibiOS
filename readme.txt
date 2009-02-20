@@ -82,14 +82,14 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Fixed a small problem in the chcore.c template file.
 - NEW: Mailboxes (asynchronous messages) subsystem and test cases added.
 - NEW: Mode flexible debug configuration options, removed the old CH_USE_DEBUG
-  and CH_USE_TRACE. Replaced with CH_DBG_ENABLE_ASSERTS, CH_DBG_ENABLE_TRACE
-  and CH_DBG_FILL_THREADS.
+  and CH_USE_TRACE. Replaced with CH_DBG_ENABLE_CHECKS, SCH_DBG_ENABLE_ASSERTS,
+  CH_DBG_ENABLE_TRACE  and CH_DBG_FILL_THREADS.
 - NEW: Added a debug option CH_DBG_THREADS_PROFILING for threads profiling.
   A field into the Thread structure counts the consumed time. The information
   is not used into the kernel, it is meant for debugging.
 - NEW: Added a debug option CH_DBG_ENABLE_STACK_CHECK for stack overflow
   checking. The check is not performed in the kernel but in the port code.
-  Currently no ports implement it.
+  Currently no port implements it.
 - NEW: Unified makefiles for ARM7 and ARMCM3 projects, the new makefiles
   share a common part making them easier to maintain. Also reorganized the
   demo-specific part of the makefile, now it is easier to configure and the

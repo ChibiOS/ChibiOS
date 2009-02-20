@@ -60,26 +60,52 @@ typedef struct {
   CtxSwcEvent           tb_buffer[TRACE_BUFFER_SIZE];   /**< Ring buffer.*/
 } TraceBuffer;
 
+#define __QUOTE_THIS(p) #p
+
+#if CH_DBG_ENABLE_CHECKS
+/**
+ * Function parameter check, if the condition check fails then the kernel
+ * panics.
+ * @param c the condition to be verified to be true
+ * @param m the undecorated function name
+ * @note The condition is tested only if the @p CH_DBG_ENABLE_CHECKS switch is
+ *       specified in @p chconf.h else the macro does nothing.
+ */
+#define chDbgCheck(c, func) {                                           \
+  if (!(c))                                                             \
+    chDbgPanic(__QUOTE_THIS(func)"(), line "__QUOTE_THIS(__LINE__));    \
+}
+#else /* !CH_DBG_ENABLE_CHECKS */
+#define chDbgCheck(c, func) {                                           \
+  (void)(c), (void)__QUOTE_THIS(func)"(), line "__QUOTE_THIS(__LINE__); \
+}
+#endif /* !CH_DBG_ENABLE_CHECKS */
+
 #if CH_DBG_ENABLE_ASSERTS
 /**
  * Condition assertion, if the condition check fails then the kernel panics
  * with the specified message.
  * @param c the condition to be verified to be true
  * @param m the text message
+ * @param r a remark string
  * @note The condition is tested only if the @p CH_DBG_ENABLE_ASSERTS switch is
  *       specified in @p chconf.h else the macro does nothing.
+ * @note The convention for the message is the following:<br>
+ *       @<function_name@>(), #@<assert_number@>
+ * @note The remark string is not currently used except for putting a comment
+ *       in the code about the assert.
  */
-#define chDbgAssert(c, m) {                                             \
+#define chDbgAssert(c, m, r) {                                          \
   if (!(c))                                                             \
     chDbgPanic(m);                                                      \
 }
-
 #else /* !CH_DBG_ENABLE_ASSERTS */
-
-#define chDbgPanic(msg) {}
-#define chDbgAssert(c, m) {(void)(c);}
-
+#define chDbgAssert(c, m, r) {(void)(c);}
 #endif /* !CH_DBG_ENABLE_ASSERTS */
+
+#if !(CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK)
+#define chDbgPanic(msg) {}
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -89,7 +115,7 @@ extern "C" {
   void trace_init(void);
   void chDbgTrace(Thread *otp, Thread *ntp);
 #endif
-#if CH_DBG_ENABLE_ASSERTS
+#if CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK
   extern char *panic_msg;
   void chDbgPanic(char *msg);
 #endif

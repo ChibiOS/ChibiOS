@@ -335,9 +335,18 @@
 /*===========================================================================*/
 
 /**
- * Debug option, if enabled all the assertions in the kernel code are
- * activated. This includes function parameters checks and consistency
- * checks inside the kernel.
+ * Debug option, if enabled then the checks on the API functions input
+ * parameters are activated.
+ * @note The default is @p FALSE.
+ */
+#if !defined(CH_DBG_ENABLE_CHECKS) || defined(__DOXYGEN__)
+#define CH_DBG_ENABLE_CHECKS            FALSE
+#endif
+
+/**
+ * Debug option, if enabled then all the assertions in the kernel code are
+ * activated. This includes consistency checks inside the kernel, runtime
+ * anomalies and port-defined checks.
  * @note The default is @p FALSE.
  */
 #if !defined(CH_DBG_ENABLE_ASSERTS) || defined(__DOXYGEN__)

@@ -162,7 +162,7 @@ struct context {
                 "bx      r0                             \n\t"           \
                 ".code 16");                                            \
 }
-#else /* THUMB */
+#else /* !THUMB */
 #define PORT_IRQ_PROLOGUE() {                                           \
   asm volatile ("stmfd    sp!, {r0-r3, r12, lr}");                      \
 }
@@ -179,7 +179,7 @@ struct context {
   asm volatile ("ldr     r0, =_port_irq_common          \n\t"           \
                 "bx      r0");                                          \
 }
-#else /* THUMB */
+#else /* !THUMB */
 #define PORT_IRQ_EPILOGUE() {                                           \
   asm volatile ("b       _port_irq_common");                            \
 }
@@ -203,7 +203,7 @@ struct context {
 #define port_lock() {                                                   \
   asm volatile ("bl     _port_lock_thumb" : : : "r3", "lr");            \
 }
-#else /* THUMB */
+#else /* !THUMB */
 #define port_lock() asm volatile ("msr     CPSR_c, #0x9F")
 #endif /* !THUMB */
 
@@ -215,7 +215,7 @@ struct context {
 #define port_unlock() {                                                 \
   asm volatile ("bl     _port_unlock_thumb" : : : "r3", "lr");          \
 }
-#else /* THUMB */
+#else /* !THUMB */
 #define port_unlock() asm volatile ("msr     CPSR_c, #0x1F")
 #endif /* !THUMB */
 
@@ -239,7 +239,7 @@ struct context {
 #define port_disable() {                                                \
   asm volatile ("bl     _port_disable_thumb" : : : "r3", "lr");         \
 }
-#else /* THUMB */
+#else /* !THUMB */
 #define port_disable() {                                                \
   asm volatile ("mrs     r3, CPSR                       \n\t"           \
                 "orr     r3, #0x80                      \n\t"           \
@@ -256,7 +256,7 @@ struct context {
 #define port_suspend() {                                                \
   asm volatile ("bl     _port_suspend_thumb" : : : "r3", "lr");         \
 }
-#else /* THUMB */
+#else /* !THUMB */
 #define port_suspend() asm volatile ("msr     CPSR_c, #0x9F")
 #endif /* !THUMB */
 
@@ -267,7 +267,7 @@ struct context {
 #define port_enable() {                                                 \
   asm volatile ("bl     _port_enable_thumb" : : : "r3", "lr");          \
 }
-#else /* THUMB */
+#else /* !THUMB */
 #define port_enable() asm volatile ("msr     CPSR_c, #0x1F")
 #endif /* !THUMB */
 
@@ -278,7 +278,7 @@ struct context {
  */
 #ifdef THUMB
 #define port_switch(otp, ntp) _port_switch_thumb(otp, ntp)
-#else /* THUMB */
+#else /* !THUMB */
 #define port_switch(otp, ntp) _port_switch_arm(otp, ntp)
 #endif /* !THUMB */
 
@@ -289,7 +289,7 @@ extern "C" {
   void port_halt(void);
 #ifdef THUMB
   void _port_switch_thumb(Thread *otp, Thread *ntp);
-#else /* THUMB */
+#else /* !THUMB */
   void _port_switch_arm(Thread *otp, Thread *ntp);
 #endif /* !THUMB */
   void _port_thread_start(void);
