@@ -277,9 +277,34 @@ struct context {
  * @param ntp the thread to be switched in
  */
 #ifdef THUMB
+#if CH_DBG_ENABLE_STACK_CHECK
+#define port_switch(otp, ntp) {                                         \
+  register Thread *_otp asm ("r0") = (otp);                             \
+  register Thread *_ntp asm ("r1") = (ntp);                             \
+  register char *sp asm ("sp");                                         \
+  if (sp - sizeof(struct intctx) - sizeof(Thread) < (char *)_otp)       \
+    asm volatile ("mov     r0, #0                               \n\t"   \
+                  "ldr     r1, =chDbgPanic                      \n\t"   \
+                  "bx      r1");                                        \
+    _port_switch_thumb(_otp, _ntp);                                     \
+}
+#else /* !CH_DBG_ENABLE_STACK_CHECK */
 #define port_switch(otp, ntp) _port_switch_thumb(otp, ntp)
+#endif /* !CH_DBG_ENABLE_STACK_CHECK */
 #else /* !THUMB */
+#if CH_DBG_ENABLE_STACK_CHECK
+#define port_switch(otp, ntp) {                                         \
+  register Thread *_otp asm ("r0") = (otp);                             \
+  register Thread *_ntp asm ("r1") = (ntp);                             \
+  register char *sp asm ("sp");                                         \
+  if (sp - sizeof(struct intctx) - sizeof(Thread) < (char *)_otp)       \
+    asm volatile ("mov     r0, #0                               \n\t"   \
+                  "b       chDbgPanic");                                \
+  _port_switch_arm(_otp, _ntp);                                         \
+}
+#else /* !CH_DBG_ENABLE_STACK_CHECK */
 #define port_switch(otp, ntp) _port_switch_arm(otp, ntp)
+#endif /* !CH_DBG_ENABLE_STACK_CHECK */
 #endif /* !THUMB */
 
 #ifdef __cplusplus

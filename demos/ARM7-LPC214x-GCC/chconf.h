@@ -368,7 +368,7 @@
  *       may not be implemented at all.
  */
 #if !defined(CH_DBG_ENABLE_STACK_CHECK) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_STACK_CHECK       FALSE
+#define CH_DBG_ENABLE_STACK_CHECK       TRUE
 #endif
 
 /**
@@ -376,7 +376,7 @@
  * pattern when a thread is created.
  */
 #if !defined(CH_DBG_FILL_THREADS) || defined(__DOXYGEN__)
-#define CH_DBG_FILL_THREADS             FALSE
+#define CH_DBG_FILL_THREADS             TRUE
 #endif
 
 /**
