@@ -57,10 +57,6 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Plans                                                                 ***
 *****************************************************************************
 
-- NEW: Added to the STM32 demo makefile an option to build ChibiOS/RT with the
-  full STM32 FWLib 2.03.
-  Note that, except for the compile option, the library is not used by the
-  OS nor supported.
 - Evaluate other architectures for a possible ChibiOS/RT port. An important
   selection parameter will be the availability of FOSS toolchains. Currently
   we are evaluating the MicroBlaze.
@@ -75,6 +71,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 
 *** 1.0.1 ***
+- NEW: Added to the STM32 demo makefile an option to build ChibiOS/RT with the
+  full STM32 FWLib 2.03.
+  Note that, except for the compile option, the library is not used by the
+  OS nor supported.
 - FIX: Fixed a problem into the STACK_ALIGN() macro.
 - FIX: Fixed a problem with a wrong declaration of the PLL structure in the
   file lpc214x.h.

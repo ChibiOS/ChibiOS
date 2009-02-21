@@ -1,13 +1,9 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.0.0 final
+Kernel:   ChibiOS/RT 1.0.1 final
 Compiler: GCC 4.3.2 (YAGARTO 28.09.2008)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 ***************************************************************************
-
-*****************************
-*** ChibiOS/RT test suite ***
-*****************************
 
 ---------------------------------------------------------------------------
 --- Test Case 1 (Ready List, priority enqueuing test #1)
@@ -44,7 +40,7 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 12 (Heap, allocation and fragmentation test)
---- Size  : 17284 bytes, not fragmented
+--- Size  : 17292 bytes, not fragmented
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 13 (Memory Pools, allocation and enqueuing test)
@@ -73,7 +69,7 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 20 (Benchmark, threads creation/termination, optimal)
---- Score : 151423 threads/S
+--- Score : 151424 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 21 (Benchmark, mass reschedulation, 5 threads)
