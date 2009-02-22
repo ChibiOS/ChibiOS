@@ -28,19 +28,6 @@
 #include <nvic.h>
 
 /**
- * The default implementation of this function is void so no messages are
- * actually printed.
- * @note The function is declared as a weak symbol, it is possible to redefine
- *       it in your application code.
- * @param msg pointer to the message string
- */
-/** @cond never */
-__attribute__((weak))
-/** @endcond */
-void port_puts(char *msg) {
-}
-
-/**
  * Halts the system.
  * @note The function is declared as a weak symbol, it is possible to redefine
  *       it in your application code.

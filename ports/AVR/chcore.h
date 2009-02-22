@@ -250,7 +250,6 @@ asm ("" : : : "r18", "r19", "r20", "r21", "r22", "r23", "r24",          \
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void port_puts(char *msg);
   void port_switch(Thread *otp, Thread *ntp);
   void port_halt(void);
   void threadstart(void);

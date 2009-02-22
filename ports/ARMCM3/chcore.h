@@ -302,7 +302,6 @@ struct context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void port_puts(char *msg);
   void port_halt(void);
   void threadstart(void);
 #ifdef __cplusplus

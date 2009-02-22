@@ -145,7 +145,6 @@ extern "C" {
   void port_wait_for_interrupt(void);
   void port_halt(void);
   void port_switch(Thread *otp, Thread *ntp);
-  void port_puts(char *msg);
 #ifdef __cplusplus
 }
 #endif

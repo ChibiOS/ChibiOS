@@ -130,12 +130,4 @@ void port_halt(void) {
 void port_switch(Thread *otp, Thread *ntp) {
 }
 
-/**
- * @brief Prints a message on the system console.
- *
- * @param msg pointer to the message
- */
-void port_puts(char *msg) {
-}
-
 /** @} */

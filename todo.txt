@@ -15,12 +15,11 @@ After 1.0.0:
 * Multiple debug switches.
   * Split asserts from parameters checks.
   * Add checks to all APIs.
-  X Stack checks option.
+  * Stack checks option.
   * Threads profiling option.
 * Idle loop hook macro.
 * Switch the configuration options to TRUE/FALSE rather than def/undef.
 X Remove port_puts() from all the ports.
-- Look into the wrong mutex assert.
 
 After 1.2.0:
 - Threads Pools manager in the library.

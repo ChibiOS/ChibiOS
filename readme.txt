@@ -98,6 +98,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   option can be overriden from outside.
 - CHANGE: Changed the chSemFastWaitS() macro in chSemFastWaitI() and
   chSemGetCounter() in chSemGetCounterI().
+- CHANGE: Removed the port_puts() function from the port templates. It was not
+  implemented on all ports.
 - Improvements to the test suite, added a new level of indirection that allows
   to make tests depend on the configuration options without have to put #ifs
   into the test main module.

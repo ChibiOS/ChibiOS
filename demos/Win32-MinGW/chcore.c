@@ -94,14 +94,6 @@ void ChkIntSources(void) {
 }
 
 /**
- * Prints a message on the system console.
- * @param msg pointer to the message
- */
-__attribute__((fastcall))
-void port_puts(char *msg) {
-}
-
-/**
  * Performs a context switch between two threads.
  * @param otp the thread to be switched out
  * @param ntp the thread to be switched in

@@ -221,7 +221,6 @@ struct context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void port_puts(char *msg);
   void port_switch(Thread *otp, Thread *ntp);
   void port_halt(void);
   void threadstart(void);

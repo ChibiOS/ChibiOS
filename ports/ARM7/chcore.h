@@ -310,7 +310,6 @@ struct context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void port_puts(char *msg);
   void port_halt(void);
 #ifdef THUMB
   void _port_switch_thumb(Thread *otp, Thread *ntp);
