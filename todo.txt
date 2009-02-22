@@ -9,8 +9,8 @@ After 1.0.0:
 * Queues macros should not refer to the semaphore counters directly.
 * Priority ordering option for semaphores.
 * chSysLock() and chSysUnlock() with counter (option).
-* OSEK-style chSysSuspendAll()/chSysResumeAll()/chSysEnable()/chSysDisable(),
-  implemented this as the new Suspended and Disabled states in 1.1.
+* OSEK-style chSysSuspendAll()/chSysResumeAll()/chSysEnable()/chSysDisable()
+  (implemented this as the new Suspended and Disabled states in 1.1).
 * Mailboxes subsystem (lwIP requires them).
 * Multiple debug switches.
   * Split asserts from parameters checks.
@@ -19,7 +19,7 @@ After 1.0.0:
   * Threads profiling option.
 * Idle loop hook macro.
 * Switch the configuration options to TRUE/FALSE rather than def/undef.
-X Remove port_puts() from all the ports.
+* Remove port_puts() from all the ports.
 
 After 1.2.0:
 - Threads Pools manager in the library.

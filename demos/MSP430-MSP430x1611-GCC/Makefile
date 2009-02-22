@@ -1,30 +1,102 @@
-#
-#       !!!! Do NOT edit this makefile with an editor which replace tabs by spaces !!!!
-#
-##############################################################################################
-#
-# On command line:
-#
-# make all = Create project
-#
-# make clean = Clean project files.
-#
-# To rebuild project do "make clean" and "make all".
+##############################################################################
+# Build global options
+# NOTE: Can be overridden externally.
 #
 
-##############################################################################################
-# Start of default section
+# Compiler options here.
+ifeq ($(USE_OPT),)
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer
+endif
+
+# C++ specific options here (added to USE_OPT).
+ifeq ($(USE_CPPOPT),)
+  USE_CPPOPT = -fno-rtti
+endif
+
+# Enable this if you want the linker to remove unused code and data
+ifeq ($(USE_LINK_GC),)
+  USE_LINK_GC = no
+endif
+
+# Enable register caching optimization (read documentation).
+# Option not tested on MSP430, DO NOT USE.
+ifeq ($(USE_CURRP_CACHING),)
+  USE_CURRP_CACHING = no
+endif
+
 #
+# Build global options
+##############################################################################
+
+##############################################################################
+# Project, sources and paths
+#
+
+# Define project name here
+PROJECT = ch
+
+# Define linker script file here
+LDSCRIPT= mspgcc/msp430x1611.x
+
+# Imported source files
+include ../../src/kernel.mk
+include ../../test/test.mk
+
+# C sources here.
+CSRC = ../../ports/MSP430/chcore.c \
+       ../../ports/MSP430/msp430_serial.c \
+       ${KERNSRC} \
+       ${TESTSRC} \
+       ../../src/lib/evtimer.c \
+       board.c main.c
+
+# C++ sources here.
+CPPSRC =
+
+# List ASM source files here
+ASMSRC =
+
+INCDIR = $(KERNINC) $(TESTINC) \
+         ../../src/lib \
+         ../../ports/MSP430
+
+#
+# Project, sources and paths
+##############################################################################
+
+##############################################################################
+# Compiler settings
+#
+
+MCU  = msp430x1611
 
 TRGT = msp430-
 CC   = $(TRGT)gcc
+CPPC = $(TRGT)g++
+# Enable loading with g++ only if you need C++ runtime support.
+# NOTE: You can use C++ even without C++ support if you are careful. C++
+#       runtime support makes code size explode.
+LD   = $(TRGT)gcc
+#LD   = $(TRGT)g++
 CP   = $(TRGT)objcopy
 AS   = $(TRGT)gcc -x assembler-with-cpp
 OD   = $(TRGT)objdump
 HEX  = $(CP) -O ihex
 BIN  = $(CP) -O binary
 
-MCU  = msp430x1611
+# Define C warning options here
+CWARN = -Wall -Wstrict-prototypes
+
+# Define C++ warning options here
+CPPWARN = -Wall
+
+#
+# Compiler settings
+##############################################################################
+
+##############################################################################
+# Start of default section
+#
 
 # List all default C defines here, like -D_DEBUG=1
 DDEFS =
@@ -43,17 +115,11 @@ DLIBS =
 
 #
 # End of default section
-##############################################################################################
+##############################################################################
 
-##############################################################################################
+##############################################################################
 # Start of user section
 #
-
-# Define project name here
-PROJECT = ch
-
-# Define linker script file here
-LDSCRIPT= mspgcc/msp430x1611.x
 
 # List all user C define here, like -D_DEBUG=1
 UDEFS =
@@ -61,23 +127,8 @@ UDEFS =
 # Define ASM defines here
 UADEFS =
 
-# Imported source files
-include ../../src/kernel.mk
-include ../../test/test.mk
-
-# List ARM-mode C source files here
-SRC = ../../ports/MSP430/chcore.c \
-      ../../ports/MSP430/msp430_serial.c \
-       ${KERNSRC} \
-       ${TESTSRC} \
-      ../../src/lib/evtimer.c \
-      board.c main.c
-
-# List ASM source files here
-ASMSRC =
-
 # List all user directories here
-UINCDIR = ../../src/include ../../src/lib ../../test ../../ports/MSP430
+UINCDIR =
 
 # List the user directory to look for the libraries here
 ULIBDIR =
@@ -85,79 +136,8 @@ ULIBDIR =
 # List all user libraries here
 ULIBS =
 
-# Common options here
-# NOTE: -ffixed-r7 is only needed if you enabled CH_CURRP_REGISTER_CACHE in
-#       chconf.h.
-OPT = -O2 -ggdb -fomit-frame-pointer
-#OPT += -ffixed-r7
-
-# Define warning options here
-WARN = -Wall -Wstrict-prototypes
-
 #
 # End of user defines
-##############################################################################################
+##############################################################################
 
-INCDIR  = $(patsubst %,-I%,$(DINCDIR) $(UINCDIR))
-LIBDIR  = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
-DEFS    = $(DDEFS) $(UDEFS)
-ADEFS   = $(DADEFS) $(UADEFS)
-COBJS   = $(SRC:.c=.o)
-ASMOBJS = $(ASMSRC:.s=.o)
-OBJS	= $(ASMOBJS) $(COBJS)
-LIBS    = $(DLIBS) $(ULIBS)
-MCFLAGS = -mmcu=$(MCU)
-
-ASFLAGS = $(MCFLAGS) -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
-CPFLAGS = $(MCFLAGS) $(OPT) $(WARN) -Wa,-alms=$(<:.c=.lst) $(DEFS)
-LDFLAGS = $(MCFLAGS) -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
-ODFLAGS	= -x --syms
-
-# Generate dependency information
-CPFLAGS += -MD -MP -MF .dep/$(@F).d
-
-#
-# Makefile rules
-#
-all: $(OBJS) $(PROJECT).elf $(PROJECT).hex $(PROJECT).bin $(PROJECT).dmp
-
-$(COBJS) : %.o : %.c
-	@echo
-	$(CC) -c $(CPFLAGS) -I . $(INCDIR) $< -o $@
-
-$(ASMOBJS) : %.o : %.s
-	@echo
-	$(AS) -c $(ASFLAGS) -I . $(INCDIR) $< -o $@
-
-%elf: $(OBJS)
-	@echo
-	$(CC) $(ASMOBJS) $(COBJS) $(LDFLAGS) $(LIBS) -o $@
-
-%hex: %elf
-	$(HEX) $< $@
-
-%bin: %elf
-	$(BIN) $< $@
-
-%dmp: %elf
-	$(OD) $(ODFLAGS) $< > $@
-
-clean:
-	-rm -f $(OBJS)
-	-rm -f $(PROJECT).elf
-	-rm -f $(PROJECT).dmp
-	-rm -f $(PROJECT).map
-	-rm -f $(PROJECT).hex
-	-rm -f $(PROJECT).bin
-	-rm -f $(SRC:.c=.c.bak)
-	-rm -f $(SRC:.c=.lst)
-	-rm -f $(ASMSRC:.s=.s.bak)
-	-rm -f $(ASMSRC:.s=.lst)
-	-rm -fR .dep
-
-#
-# Include the dependency files, should be the last of the makefile
-#
--include $(shell mkdir .dep 2>/dev/null) $(wildcard .dep/*)
-
-# *** EOF ***
+include ../../ports/MSP430/rules.mk
