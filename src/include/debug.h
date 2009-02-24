@@ -35,10 +35,21 @@
 #endif
 
 /**
- * @brief Fill value for threads working area in debug mode.
+ * @brief Fill value for thread stack area in debug mode.
  */
-#ifndef MEM_FILL_PATTERN
-#define MEM_FILL_PATTERN 0x55
+#ifndef STACK_FILL_VALUE
+#define STACK_FILL_VALUE 0x55
+#endif
+
+/**
+ * @brief Fill value for thread area in debug mode.
+ * @note The chosen default value is 0xFF in order to make evident which
+ *       thread fields were not initialized when inspecting the memory with
+ *       a debugger. A uninitialized field is not an error in itself but it
+ *       better to know it.
+ */
+#ifndef THREAD_FILL_VALUE
+#define THREAD_FILL_VALUE 0xFF
 #endif
 
 /**

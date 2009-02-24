@@ -17,11 +17,17 @@ After 1.0.0:
   * Add checks to all APIs.
   * Stack checks option.
   * Threads profiling option.
+  - Registers clearing on thread start.
 * Idle loop hook macro.
 * Switch the configuration options to TRUE/FALSE rather than def/undef.
 * Remove port_puts() from all the ports.
+- Stack sizes article into the documentation.
+- Find out and document main stack settings in MSP430 and AVR runtimes.
 
 After 1.2.0:
+X Abstract I/O channels rather than just serial ports.
+  - Move the serial drivers implementations in library. Better keep the core
+    as compact as possible.
 - Threads Pools manager in the library.
   - New chThdCreate() that takes just two parameters, a pointer to a thread
     descriptor and the tread parameter. It could wrap the current variants
@@ -30,11 +36,8 @@ After 1.2.0:
 - OSEK-style simple tasks within the idle thread.
 ? Think to something for threads restart.
 ? Multiple heaps, disjoint heaps, heaps in heaps.
-- Abstract I/O channels rather than just serial ports.
-  - Move the serial drivers implementations in library al keep the I/O channel
-    interface as part of the kernel. Better keep the core as compact as
-    possible.
 - Update C++ wrapper (Heap, Pools, Mailboxes and any new feature).
+- Think about making threads return void.
 
 Ideas for 2.x.x:
 - Reference counter for threads, concept of detached threads, threads

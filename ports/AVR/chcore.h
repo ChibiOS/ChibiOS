@@ -175,16 +175,16 @@ struct context {
  * This code tricks the compiler to save all the specified registers by
  * "touching" them.
  */
-#define PORT_IRQ_PROLOGUE() {                                            \
-asm ("" : : : "r18", "r19", "r20", "r21", "r22", "r23", "r24",          \
-              "r25", "r26", "r27", "r30", "r31");                       \
+#define PORT_IRQ_PROLOGUE() {                                           \
+  asm ("" : : : "r18", "r19", "r20", "r21", "r22", "r23", "r24",        \
+                "r25", "r26", "r27", "r30", "r31");                     \
 }
 
 /**
  * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
  * invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() {                                            \
+#define PORT_IRQ_EPILOGUE() {                                           \
   if (chSchRescRequiredI())                                             \
     chSchDoRescheduleI();                                               \
 }
@@ -240,7 +240,7 @@ asm ("" : : : "r18", "r19", "r20", "r21", "r22", "r23", "r24",          \
  * This port function is implemented as inlined code for performance reasons.
  */
 #if ENABLE_WFI_IDLE != 0
-#define port_wait_for_interrupt() {                                      \
+#define port_wait_for_interrupt() {                                     \
   asm volatile ("sleep");                                               \
 }
 #else

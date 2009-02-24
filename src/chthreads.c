@@ -59,10 +59,10 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
 }
 
 #if CH_DBG_FILL_THREADS
-static void memfill(uint8_t *p, uint32_t n, uint8_t v) {
+static void memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
 
-  while (n)
-    *p++ = v, n--;
+  while (startp < endp)
+    *startp++ = v;
 }
 #endif
 
@@ -95,7 +95,12 @@ Thread *chThdInit(void *workspace, size_t wsize,
              (prio <= HIGHPRIO) && (pf != NULL),
              "chThdInit");
 #if CH_DBG_FILL_THREADS
-  memfill(workspace, wsize, MEM_FILL_PATTERN);
+  memfill(workspace,
+		  (uint8_t)workspace + sizeof(Thread),
+		  THREAD_FILL_VALUE);
+  memfill((uint8_t)workspace + sizeof(Thread),
+		  (uint8_t)workspace + wsize
+		  STACK_FILL_VALUE);
 #endif
   SETUP_CONTEXT(workspace, wsize, pf, arg);
   return init_thread(tp, prio);
