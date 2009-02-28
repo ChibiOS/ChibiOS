@@ -102,7 +102,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   implemented on all ports.
 - Improvements to the test suite, added a new level of indirection that allows
   to make tests depend on the configuration options without have to put #ifs
-  into the test main module.
+  into the test main module. New benchmarks about semaphores and mutexes.
 
 *** 1.1.0unstable ***
 - FIX: Modified the default value for the STM32 HSI setup it was 1, it should

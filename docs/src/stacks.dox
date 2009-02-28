@@ -33,7 +33,8 @@
  *   stack. This is an important feature in a multithreaded environment,
  *   without a dedicated interrupt stack each thread has to reserve
  *   enough space, for interrupts servicing, within its own stack. This space,
- *   multiplied by the total threads number, can be a significant RAM waste.
+ *   multiplied by the total threads number, can amount to a significant RAM
+ *   overhead.
  * - <b>Thread Stack</b>, each thread has a dedicated stack for its own
  *   execution and context switch.
  * - <b>Other Stacks</b>, some architectures (ARM) can have other stacks but
@@ -46,7 +47,7 @@
  * Assign too much space to a stack wastes RAM, assign too little space
  * leads to crashes or, worst scenario, hard to track instability.
  *
- * <h2>Assign the correct size</h2>
+ * <h2>Assigning the correct size</h2>
  * You may try to examine the asm listings in order to calculate the exact
  * stack requirements but this requires much time, experience and patience.<br>
  * An alternative way is to use an interactive method. Follow this procedure
@@ -78,7 +79,7 @@
  * .
  * <h2>Final Notes</h2>
  * Some useful info:
- * - Stack overflows are the most common source of problems during development,
+ * - Stack overflows are the most common problems source during development,
  *   when in trouble with crashes or anomalous behaviors always first verify
  *   stack sizes.
  * - The required stack size can, and very often does change when changing

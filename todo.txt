@@ -21,8 +21,9 @@ After 1.0.0:
 * Idle loop hook macro.
 * Switch the configuration options to TRUE/FALSE rather than def/undef.
 * Remove port_puts() from all the ports.
-- Stack sizes article into the documentation.
+* Stack sizes article into the documentation.
 - Find out and document main stack settings in MSP430 and AVR runtimes.
+- Logo...
 
 After 1.2.0:
 X Abstract I/O channels rather than just serial ports.

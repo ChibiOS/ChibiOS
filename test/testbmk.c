@@ -22,6 +22,7 @@
 #include "test.h"
 
 static Semaphore sem1;
+static Mutex mtx1;
 
 static msg_t thread1(void *p) {
   msg_t msg;
@@ -328,6 +329,90 @@ const struct testcase testbmk8 = {
   bmk8_execute
 };
 
+static char *bmk9_gettest(void) {
+
+  return "Benchmark, semaphores wait/signal";
+}
+
+static void bmk9_setup(void) {
+
+  chSemInit(&sem1, 1);
+}
+
+static void bmk9_execute(void) {
+  uint32_t n = 0;
+
+  test_wait_tick();
+  test_start_timer(1000);
+  do {
+    chSemWait(&sem1);
+    chSemSignal(&sem1);
+    chSemWait(&sem1);
+    chSemSignal(&sem1);
+    chSemWait(&sem1);
+    chSemSignal(&sem1);
+    chSemWait(&sem1);
+    chSemSignal(&sem1);
+    n++;
+#if defined(WIN32)
+    ChkIntSources();
+#endif
+  } while (!test_timer_done);
+  test_print("--- Score : ");
+  test_printn(n * 4);
+  test_println(" wait+signal/S");
+}
+
+const struct testcase testbmk9 = {
+  bmk9_gettest,
+  bmk9_setup,
+  NULL,
+  bmk9_execute
+};
+
+#if CH_USE_MUTEXES
+static char *bmk10_gettest(void) {
+
+  return "Benchmark, mutexes lock/unlock";
+}
+
+static void bmk10_setup(void) {
+
+  chMtxInit(&mtx1);
+}
+
+static void bmk10_execute(void) {
+  uint32_t n = 0;
+
+  test_wait_tick();
+  test_start_timer(1000);
+  do {
+    chMtxLock(&mtx1);
+    chMtxUnlock();
+    chMtxLock(&mtx1);
+    chMtxUnlock();
+    chMtxLock(&mtx1);
+    chMtxUnlock();
+    chMtxLock(&mtx1);
+    chMtxUnlock();
+    n++;
+#if defined(WIN32)
+    ChkIntSources();
+#endif
+  } while (!test_timer_done);
+  test_print("--- Score : ");
+  test_printn(n * 4);
+  test_println(" lock+unlock/S");
+}
+
+const struct testcase testbmk10 = {
+  bmk10_gettest,
+  bmk10_setup,
+  NULL,
+  bmk10_execute
+};
+#endif
+
 /*
  * Test sequence for benchmarks pattern.
  */
@@ -341,6 +426,10 @@ const struct testcase *patternbmk[] = {
   &testbmk6,
   &testbmk7,
   &testbmk8,
+  &testbmk9,
+#if CH_USE_MUTEXES
+  &testbmk10,
+#endif
 #endif
   NULL
 };
