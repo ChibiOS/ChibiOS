@@ -103,7 +103,7 @@ const struct testcase testevt1 = {
 /*
  * Test sequence for events pattern.
  */
-const struct testcase *patternevt[] = {
+const struct testcase * const patternevt[] = {
 #if CH_USE_EVENTS
   &testevt1,
 #endif

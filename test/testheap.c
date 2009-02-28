@@ -79,7 +79,7 @@ const struct testcase testheap1 = {
 /*
  * Test sequence for heap pattern.
  */
-const struct testcase *patternheap[] = {
+const struct testcase * const patternheap[] = {
 #if CH_USE_HEAP
   &testheap1,
 #endif

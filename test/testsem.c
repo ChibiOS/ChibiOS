@@ -105,7 +105,7 @@ const struct testcase testsem2 = {
 /*
  * Test sequence for semaphores pattern.
  */
-const struct testcase *patternsem[] = {
+const struct testcase * const patternsem[] = {
 #if CH_USE_SEMAPHORES
   &testsem1,
 #if CH_USE_SEMAPHORES_TIMEOUT

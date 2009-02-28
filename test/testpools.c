@@ -62,7 +62,7 @@ const struct testcase testpools1 = {
 /*
  * Test sequence for pools pattern.
  */
-const struct testcase *patternpools[] = {
+const struct testcase * const patternpools[] = {
 #if CH_USE_MEMPOOLS
   &testpools1,
 #endif

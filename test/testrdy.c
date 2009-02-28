@@ -76,7 +76,7 @@ const struct testcase testrdy2 = {
 /*
  * Test sequence for ready list pattern.
  */
-const struct testcase *patternrdy[] = {
+const struct testcase * const patternrdy[] = {
   &testrdy1,
   &testrdy2,
   NULL

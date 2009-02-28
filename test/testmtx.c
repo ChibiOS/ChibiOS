@@ -218,7 +218,7 @@ const struct testcase testmtx3 = {
 /*
  * Test sequence for mutexes pattern.
  */
-const struct testcase *patternmtx[] = {
+const struct testcase * const patternmtx[] = {
 #if CH_USE_MUTEXES
   &testmtx1,
   &testmtx2,

@@ -416,7 +416,7 @@ const struct testcase testbmk10 = {
 /*
  * Test sequence for benchmarks pattern.
  */
-const struct testcase *patternbmk[] = {
+const struct testcase * const patternbmk[] = {
 #if !TEST_NO_BENCHMARKS
   &testbmk1,
   &testbmk2,

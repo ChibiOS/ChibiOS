@@ -130,7 +130,7 @@ const struct testcase testdyn2 = {
 /*
  * Test sequence for dynamic APIs pattern.
  */
-const struct testcase *patterndyn[] = {
+const struct testcase * const patterndyn[] = {
 #if CH_USE_DYNAMIC
 #if CH_USE_HEAP
   &testdyn1,

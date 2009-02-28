@@ -65,7 +65,7 @@ const struct testcase testmsg1 = {
 /*
  * Test sequence for messages pattern.
  */
-const struct testcase *patternmsg[] = {
+const struct testcase * const patternmsg[] = {
 #if CH_USE_MESSAGES
   &testmsg1,
 #endif

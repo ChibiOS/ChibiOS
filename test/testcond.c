@@ -104,7 +104,7 @@ const struct testcase testcond2 = {
 /*
  * Test sequence for condvars pattern.
  */
-const struct testcase *patterncond[] = {
+const struct testcase * const patterncond[] = {
 #if CH_USE_CONDVARS && CH_USE_MUTEXES
   &testcond1,
   &testcond2,

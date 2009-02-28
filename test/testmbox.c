@@ -93,7 +93,7 @@ const struct testcase testmbox1 = {
 /*
  * Test sequence for mailboxes pattern.
  */
-const struct testcase *patternmbox[] = {
+const struct testcase * const patternmbox[] = {
 #if CH_USE_MAILBOXES && CH_USE_SEMAPHORES_TIMEOUT
   &testmbox1,
 #endif
