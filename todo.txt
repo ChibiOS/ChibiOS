@@ -41,9 +41,11 @@ X Abstract I/O channels rather than just serial ports.
 - Think about making threads return void.
 
 Ideas for 2.x.x:
+- High resolution timers and tickless kernel.
 - Reference counter for threads, concept of detached threads, threads
   management.
-- Think to the high resolution timers and tickless kernel.
+
+Ideas for 3.x.x:
 - Multicore support.
 
 Side projects:
