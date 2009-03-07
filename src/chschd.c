@@ -100,6 +100,7 @@ void chSchGoSleepS(tstate_t newstate) {
 static void wakeup(void *p) {
   Thread *tp = (Thread *)p;
 
+#if CH_USE_SEMAPHORES || CH_USE_MUTEXES || CH_USE_CONDVARS
   switch (tp->p_state) {
 #if CH_USE_SEMAPHORES
   case PRWTSEM:
@@ -110,10 +111,9 @@ static void wakeup(void *p) {
   case PRWTMTX:
     /* States requiring dequeuing. */
     dequeue(tp);
-    /* Falls into, intentional. */
-  default:
-    chSchReadyI(tp)->p_rdymsg = RDY_TIMEOUT;
   }
+#endif
+  chSchReadyI(tp)->p_rdymsg = RDY_TIMEOUT;
 }
 
 /**

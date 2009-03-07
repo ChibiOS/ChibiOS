@@ -123,7 +123,7 @@ msg_t chIQGet(Queue *qp) {
  * a byte arrives in the queue or the specified time expires.
  *
  * @param qp pointer to a @p Queue structure
- * @param time the number of ticks before the operation timouts
+ * @param time the number of ticks before the operation timeouts
  * @return A byte value from the queue.
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the queue was reset.
