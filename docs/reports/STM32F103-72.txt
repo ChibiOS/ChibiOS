@@ -1,87 +1,98 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.1.0 unstable
+Kernel:   ChibiOS/RT 1.1.1 unstable
 Compiler: GCC 4.3.2 (YAGARTO 28.09.2008)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 ***************************************************************************
 
 ---------------------------------------------------------------------------
---- Test Case 1 (Ready List, priority enqueuing test #1)
+--- Test Case 1.1 (Ready List, priority enqueuing test #1)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 2 (Ready List, priority enqueuing test #2)
+--- Test Case 1.2 (Ready List, priority enqueuing test #2)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 3 (Semaphores, FIFO enqueuing test)
+--- Test Case 2.1 (Semaphores, FIFO enqueuing test)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 4 (Semaphores, timeout test)
+--- Test Case 2.2 (Semaphores, timeout test)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 5 (Mutexes, priority enqueuing test)
+--- Test Case 3.1 (Mutexes, priority enqueuing test)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 6 (Mutexes, priority inheritance, simple case)
+--- Test Case 3.2 (Mutexes, priority inheritance, simple case)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 7 (Mutexes, priority inheritance, complex case)
+--- Test Case 3.3 (Mutexes, priority inheritance, complex case)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 8 (CondVar, signal test)
+--- Test Case 4.1 (CondVar, signal test)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 9 (CondVar, broadcast test)
+--- Test Case 4.2 (CondVar, broadcast test)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 10 (Messages, dispatch test)
+--- Test Case 5.1 (Messages, dispatch test)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 11 (Events, wait and broadcast)
+--- Test Case 6.1 (Mailboxes, queuing and timeouts)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 12 (Heap, allocation and fragmentation test)
---- Size  : 17296 bytes, not fragmented
+--- Test Case 7.1 (Events, wait and broadcast)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 13 (Memory Pools, allocation and enqueuing test)
+--- Test Case 8.1 (Heap, allocation and fragmentation test)
+--- Size  : 17220 bytes, not fragmented
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 14 (Dynamic APIs, threads creation from heap)
+--- Test Case 9.1 (Memory Pools, allocation and enqueuing test)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 15 (Dynamic APIs, threads creation from memory pool)
+--- Test Case 10.1 (Dynamic APIs, threads creation from heap)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 16 (Benchmark, context switch #1, optimal)
---- Score : 216993 msgs/S, 433986 ctxswc/S
+--- Test Case 10.2 (Dynamic APIs, threads creation from memory pool)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 17 (Benchmark, context switch #2, empty ready list)
---- Score : 178662 msgs/S, 357324 ctxswc/S
+--- Test Case 11.1 (Benchmark, context switch #1, optimal)
+--- Score : 216992 msgs/S, 433984 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 18 (Benchmark, context switch #3, 4 threads in ready list)
---- Score : 178662 msgs/S, 357324 ctxswc/S
+--- Test Case 11.2 (Benchmark, context switch #2, empty ready list)
+--- Score : 178663 msgs/S, 357326 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 19 (Benchmark, threads creation/termination, worst case)
---- Score : 164734 threads/S
+--- Test Case 11.3 (Benchmark, context switch #3, 4 threads in ready list)
+--- Score : 178663 msgs/S, 357326 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 20 (Benchmark, threads creation/termination, optimal)
---- Score : 210634 threads/S
+--- Test Case 11.4 (Benchmark, threads creation/termination, worst case)
+--- Score : 164735 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 21 (Benchmark, mass reschedulation, 5 threads)
+--- Test Case 11.5 (Benchmark, threads creation/termination, optimal)
+--- Score : 210633 threads/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 11.6 (Benchmark, mass reschedulation, 5 threads)
 --- Score : 55552 reschedulations/S, 333312 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 22 (Benchmark, I/O Queues throughput)
---- Score : 489476 bytes/S
+--- Test Case 11.7 (Benchmark, I/O Queues throughput)
+--- Score : 489472 bytes/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
---- Test Case 23 (Benchmark, virtual timers set/reset)
---- Score : 647106 timers/S
+--- Test Case 11.8 (Benchmark, virtual timers set/reset)
+--- Score : 647110 timers/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 11.9 (Benchmark, semaphores wait/signal)
+--- Score : 823324 wait+signal/S
+--- Result: SUCCESS
+---------------------------------------------------------------------------
+--- Test Case 11.10 (Benchmark, mutexes lock/unlock)
+--- Score : 601124 lock+unlock/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 

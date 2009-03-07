@@ -41,9 +41,13 @@
 #define HIGHPRIO        127             /**< Highest user priority.*/
 #define ABSPRIO         255             /**< Greatest possible priority.*/
 
+/** Zero time specification for all the syscalls with a timeout
+    specification.*/
+#define TIME_ZERO   ((systime_t)0)
+
 /** Infinite time specification for all the syscalls with a timeout
     specification.*/
-#define TIME_INFINITE   0
+#define TIME_INFINITE   ((systime_t)-1)
 
 /** The priority of the first thread on the given ready list. */
 #define firstprio(rlp)  ((rlp)->p_next->p_prio)
