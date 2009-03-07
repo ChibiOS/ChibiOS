@@ -27,7 +27,7 @@
 #ifndef _MAILBOXES_H_
 #define _MAILBOXES_H_
 
-#if CH_USE_MAILBOXES
+#if CH_USE_MAILBOXES && CH_USE_SEMAPHORES_TIMEOUT
 
 typedef struct {
   msg_t                 *mb_buffer;     /**< Pointer to the mailbox buffer.*/
@@ -45,8 +45,11 @@ extern "C" {
   void chMBInit(Mailbox *mbp, msg_t *buf, cnt_t n);
   void chMBReset(Mailbox *mbp);
   msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t timeout);
+  msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t timeout);
   msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t timeout);
+  msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t timeout);
   msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t timeout);
+  msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t timeout);
 #ifdef __cplusplus
 }
 #endif
@@ -88,7 +91,7 @@ extern "C" {
  */
 #define chMBPeek(mbp) (*(mbp)->mb_rdptr)
 
-#endif /* CH_USE_MAILBOXES */
+#endif /* CH_USE_MAILBOXES && CH_USE_SEMAPHORES_TIMEOUT */
 
 #endif /* _MAILBOXES_H_ */
 

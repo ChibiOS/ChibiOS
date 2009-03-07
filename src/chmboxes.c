@@ -26,7 +26,7 @@
 
 #include <ch.h>
 
-#if CH_USE_MAILBOXES
+#if CH_USE_MAILBOXES && CH_USE_SEMAPHORES_TIMEOUT
 /**
  * @brief Initializes a Mailbox object.
  *
@@ -63,7 +63,6 @@ void chMBReset(Mailbox *mbp) {
   chSysUnlock();
 }
 
-#if CH_USE_SEMAPHORES_TIMEOUT
 /**
  * @brief Posts a message into a mailbox.
  * @details The invoking thread waits until a empty slot in the mailbox becomes
@@ -80,9 +79,30 @@ void chMBReset(Mailbox *mbp) {
 msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t timeout) {
   msg_t rdymsg;
 
-  chDbgCheck(mbp != NULL, "chMBPost");
-
   chSysLock();
+  rdymsg = chMBPostS(mbp, msg, timeout);
+  chSysUnlock();
+  return rdymsg;
+}
+
+/**
+ * @brief Posts a message into a mailbox.
+ * @details The invoking thread waits until a empty slot in the mailbox becomes
+ *          available or the specified time runs out.
+ *
+ * @param[in] mbp the pointer to an initialized Mailbox object
+ * @param[in] msg the message to be posted on the mailbox
+ * @param[in] timeout the number of ticks before the operation fails
+ * @return The operation status.
+ * @retval RDY_OK if the message was correctly posted.
+ * @retval RDY_RESET if the mailbox was reset while waiting.
+ * @retval RDY_TIMEOUT if the operation timed out.
+ */
+msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t timeout) {
+  msg_t rdymsg;
+
+  chDbgCheck(mbp != NULL, "chMBPostS");
+
   rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, timeout);
   if (rdymsg == RDY_OK) {
     *mbp->mb_wrptr++ = msg;
@@ -91,7 +111,6 @@ msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t timeout) {
     chSemSignalI(&mbp->mb_fullsem);
     chSchRescheduleS();
   }
-  chSysUnlock();
   return rdymsg;
 }
 
@@ -111,9 +130,30 @@ msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t timeout) {
 msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t timeout) {
   msg_t rdymsg;
 
-  chDbgCheck(mbp != NULL, "chMBPostAhead");
-
   chSysLock();
+  rdymsg = chMBPostAheadS(mbp, msg, timeout);
+  chSysUnlock();
+  return rdymsg;
+}
+
+/**
+ * @brief Posts an high priority message into a mailbox.
+ * @details The invoking thread waits until a empty slot in the mailbox becomes
+ *          available or the specified time runs out.
+ *
+ * @param[in] mbp the pointer to an initialized Mailbox object
+ * @param[in] msg the message to be posted on the mailbox
+ * @param[in] timeout the number of ticks before the operation timeouts
+ * @return The operation status.
+ * @retval RDY_OK if the message was correctly posted.
+ * @retval RDY_RESET if the mailbox was reset while waiting.
+ * @retval RDY_TIMEOUT if the operation timed out.
+ */
+msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t timeout) {
+  msg_t rdymsg;
+
+  chDbgCheck(mbp != NULL, "chMBPostAheadS");
+
   rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, timeout);
   if (rdymsg == RDY_OK) {
     if (--mbp->mb_rdptr < mbp->mb_buffer)
@@ -122,7 +162,6 @@ msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t timeout) {
     chSemSignalI(&mbp->mb_fullsem);
     chSchRescheduleS();
   }
-  chSysUnlock();
   return rdymsg;
 }
 
@@ -142,9 +181,30 @@ msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t timeout) {
 msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t timeout) {
   msg_t rdymsg;
 
-  chDbgCheck((mbp != NULL) && (msgp != NULL), "chMBFetch");
-
   chSysLock();
+  rdymsg = chMBFetchS(mbp, msgp, timeout);
+  chSysUnlock();
+  return rdymsg;
+}
+
+/**
+ * @brief Retrieves a message from a mailbox.
+ * @details The invoking thread waits until a message is posted in the mailbox
+ *          or the specified time runs out.
+ *
+ * @param[in] mbp the pointer to an initialized Mailbox object
+ * @param[out] msgp pointer to a message variable for the received message
+ * @param[in] timeout the number of ticks before the operation timeouts
+ * @return The operation status.
+ * @retval RDY_OK if a message was correctly fetched.
+ * @retval RDY_RESET if the mailbox was reset while waiting.
+ * @retval RDY_TIMEOUT if the operation timed out.
+ */
+msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t timeout) {
+  msg_t rdymsg;
+
+  chDbgCheck((mbp != NULL) && (msgp != NULL), "chMBFetchS");
+
   rdymsg = chSemWaitTimeoutS(&mbp->mb_fullsem, timeout);
   if (rdymsg == RDY_OK) {
     *msgp = *mbp->mb_rdptr++;
@@ -153,11 +213,8 @@ msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t timeout) {
     chSemSignalI(&mbp->mb_emptysem);
     chSchRescheduleS();
   }
-  chSysUnlock();
   return rdymsg;
 }
-#endif /* CH_USE_SEMAPHORES_TIMEOUT */
-
-#endif /* CH_USE_MAILBOXES */
+#endif /* CH_USE_MAILBOXES && CH_USE_SEMAPHORES_TIMEOUT */
 
 /** @} */
