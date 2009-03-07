@@ -56,8 +56,8 @@ void vt_init(void) {
 void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
   VirtualTimer *p;
 
-  chDbgCheck((vtp != NULL) && (time != TIME_ZERO) &&
-             (time != TIME_INFINITE) && (vtfunc != NULL), "chVTSetI");
+  chDbgCheck((vtp != NULL) && (vtfunc != NULL) &&
+             (time != TIME_ZERO) && (time != TIME_INFINITE), "chVTSetI");
 
   vtp->vt_par = par;
   vtp->vt_func = vtfunc;

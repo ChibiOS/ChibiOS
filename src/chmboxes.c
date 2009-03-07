@@ -70,17 +70,21 @@ void chMBReset(Mailbox *mbp) {
  *
  * @param[in] mbp the pointer to an initialized Mailbox object
  * @param[in] msg the message to be posted on the mailbox
- * @param[in] timeout the number of ticks before the operation fails
+ * @param[in] time the number of ticks before the operation timeouts,
+ *                 the following special values are allowed:
+ *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_INFINITE no timeout.
+ *                 .
  * @return The operation status.
  * @retval RDY_OK if the message was correctly posted.
  * @retval RDY_RESET if the mailbox was reset while waiting.
  * @retval RDY_TIMEOUT if the operation timed out.
  */
-msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t timeout) {
+msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
 
   chSysLock();
-  rdymsg = chMBPostS(mbp, msg, timeout);
+  rdymsg = chMBPostS(mbp, msg, time);
   chSysUnlock();
   return rdymsg;
 }
@@ -92,18 +96,22 @@ msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t timeout) {
  *
  * @param[in] mbp the pointer to an initialized Mailbox object
  * @param[in] msg the message to be posted on the mailbox
- * @param[in] timeout the number of ticks before the operation fails
+ * @param[in] time the number of ticks before the operation timeouts,
+ *                 the following special values are allowed:
+ *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_INFINITE no timeout.
+ *                 .
  * @return The operation status.
  * @retval RDY_OK if the message was correctly posted.
  * @retval RDY_RESET if the mailbox was reset while waiting.
  * @retval RDY_TIMEOUT if the operation timed out.
  */
-msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t timeout) {
+msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
 
   chDbgCheck(mbp != NULL, "chMBPostS");
 
-  rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, timeout);
+  rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, time);
   if (rdymsg == RDY_OK) {
     *mbp->mb_wrptr++ = msg;
     if (mbp->mb_wrptr >= mbp->mb_top)
@@ -121,17 +129,21 @@ msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t timeout) {
  *
  * @param[in] mbp the pointer to an initialized Mailbox object
  * @param[in] msg the message to be posted on the mailbox
- * @param[in] timeout the number of ticks before the operation timeouts
+ * @param[in] time the number of ticks before the operation timeouts,
+ *                 the following special values are allowed:
+ *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_INFINITE no timeout.
+ *                 .
  * @return The operation status.
  * @retval RDY_OK if the message was correctly posted.
  * @retval RDY_RESET if the mailbox was reset while waiting.
  * @retval RDY_TIMEOUT if the operation timed out.
  */
-msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t timeout) {
+msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
 
   chSysLock();
-  rdymsg = chMBPostAheadS(mbp, msg, timeout);
+  rdymsg = chMBPostAheadS(mbp, msg, time);
   chSysUnlock();
   return rdymsg;
 }
@@ -143,18 +155,22 @@ msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t timeout) {
  *
  * @param[in] mbp the pointer to an initialized Mailbox object
  * @param[in] msg the message to be posted on the mailbox
- * @param[in] timeout the number of ticks before the operation timeouts
+ * @param[in] time the number of ticks before the operation timeouts,
+ *                 the following special values are allowed:
+ *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_INFINITE no timeout.
+ *                 .
  * @return The operation status.
  * @retval RDY_OK if the message was correctly posted.
  * @retval RDY_RESET if the mailbox was reset while waiting.
  * @retval RDY_TIMEOUT if the operation timed out.
  */
-msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t timeout) {
+msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
 
   chDbgCheck(mbp != NULL, "chMBPostAheadS");
 
-  rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, timeout);
+  rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, time);
   if (rdymsg == RDY_OK) {
     if (--mbp->mb_rdptr < mbp->mb_buffer)
       mbp->mb_rdptr = mbp->mb_top - 1;
@@ -172,17 +188,21 @@ msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t timeout) {
  *
  * @param[in] mbp the pointer to an initialized Mailbox object
  * @param[out] msgp pointer to a message variable for the received message
- * @param[in] timeout the number of ticks before the operation timeouts
+ * @param[in] time the number of ticks before the operation timeouts,
+ *                 the following special values are allowed:
+ *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_INFINITE no timeout.
+ *                 .
  * @return The operation status.
  * @retval RDY_OK if a message was correctly fetched.
  * @retval RDY_RESET if the mailbox was reset while waiting.
  * @retval RDY_TIMEOUT if the operation timed out.
  */
-msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t timeout) {
+msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t time) {
   msg_t rdymsg;
 
   chSysLock();
-  rdymsg = chMBFetchS(mbp, msgp, timeout);
+  rdymsg = chMBFetchS(mbp, msgp, time);
   chSysUnlock();
   return rdymsg;
 }
@@ -194,18 +214,22 @@ msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t timeout) {
  *
  * @param[in] mbp the pointer to an initialized Mailbox object
  * @param[out] msgp pointer to a message variable for the received message
- * @param[in] timeout the number of ticks before the operation timeouts
+ * @param[in] time the number of ticks before the operation timeouts,
+ *                 the following special values are allowed:
+ *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_INFINITE no timeout.
+ *                 .
  * @return The operation status.
  * @retval RDY_OK if a message was correctly fetched.
  * @retval RDY_RESET if the mailbox was reset while waiting.
  * @retval RDY_TIMEOUT if the operation timed out.
  */
-msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t timeout) {
+msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t time) {
   msg_t rdymsg;
 
   chDbgCheck((mbp != NULL) && (msgp != NULL), "chMBFetchS");
 
-  rdymsg = chSemWaitTimeoutS(&mbp->mb_fullsem, timeout);
+  rdymsg = chSemWaitTimeoutS(&mbp->mb_fullsem, time);
   if (rdymsg == RDY_OK) {
     *msgp = *mbp->mb_rdptr++;
     if (mbp->mb_rdptr >= mbp->mb_top)

@@ -35,7 +35,7 @@
 /**
  * @brief Initializes s @p CondVar structure.
  *
- * @param cp pointer to a @p CondVar structure
+ * @param[out] cp pointer to a @p CondVar structure
  * @note This function can be invoked from within an interrupt handler even if
  *       it is not an I-Class API because it does not touch any critical kernel
  *       data structure.
@@ -50,7 +50,7 @@ void chCondInit(CondVar *cp) {
 /**
  * @brief Signals one thread that is waiting on the condition variable.
  *
- * @param cp pointer to the @p CondVar structure
+ * @param[in] cp pointer to the @p CondVar structure
  */
 void chCondSignal(CondVar *cp) {
 
@@ -65,7 +65,7 @@ void chCondSignal(CondVar *cp) {
 /**
  * @brief Signals one thread that is waiting on the condition variable.
  *
- * @param cp pointer to the @p CondVar structure
+ * @param[in] cp pointer to the @p CondVar structure
  */
 void chCondSignalI(CondVar *cp) {
 
@@ -78,7 +78,7 @@ void chCondSignalI(CondVar *cp) {
 /**
  * @brief Signals all threads that are waiting on the condition variable.
  *
- * @param cp pointer to the @p CondVar structure
+ * @param[in] cp pointer to the @p CondVar structure
  */
 void chCondBroadcast(CondVar *cp) {
 
@@ -91,7 +91,7 @@ void chCondBroadcast(CondVar *cp) {
 /**
  * @brief Signals all threads that are waiting on the condition variable.
  *
- * @param cp pointer to the @p CondVar structure
+ * @param[in] cp pointer to the @p CondVar structure
  */
 void chCondBroadcastI(CondVar *cp) {
 
@@ -107,9 +107,9 @@ void chCondBroadcastI(CondVar *cp) {
 /**
  * @brief Waits on the condition variable releasing the mutex lock.
  * @details Releases the mutex, waits on the condition variable, and finally
- * acquires the mutex again. This is done atomically.
+ *          acquires the mutex again. This is done atomically.
  *
- * @param cp pointer to the @p CondVar structure
+ * @param[in] cp pointer to the @p CondVar structure
  * @return The wakep mode.
  * @retval RDY_OK if the condvar was signaled using chCondSignal().
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().
@@ -128,9 +128,9 @@ msg_t chCondWait(CondVar *cp) {
 /**
  * @brief Waits on the condition variable releasing the mutex lock.
  * @details Releases the mutex, waits on the condition variable, and finally
- * acquires the mutex again. This is done atomically.
+ *          acquires the mutex again. This is done atomically.
  *
- * @param cp pointer to the @p CondVar structure
+ * @param[in] cp pointer to the @p CondVar structure
  * @return The wakep mode.
  * @retval RDY_OK if the condvar was signaled using chCondSignal().
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().
@@ -159,13 +159,13 @@ msg_t chCondWaitS(CondVar *cp) {
 /**
  * @brief Waits on the condition variable releasing the mutex lock.
  * @details Releases the mutex, waits on the condition variable, and finally
- * acquires the mutex again. This is done atomically.
+ *          acquires the mutex again. This is done atomically.
  *
- * @param cp pointer to the @p CondVar structure
- * @param time the number of ticks before the operation timeouts,
- *             the following special values are allowed:
- *             - @a TIME_ZERO immediate timeout.
- *             - @a TIME_INFINITE no timeout.
+ * @param[in] cp pointer to the @p CondVar structure
+ * @param[in] time the number of ticks before the operation timeouts,
+ *                 the special value @p TIME_INFINITE is allowed.
+ *                 It is not possible to specify zero (@p TIME_ZERO) as timeout
+ *                 specification.
  * @return The wakep mode.
  * @retval RDY_OK if the condvar was signaled using chCondSignal().
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().
@@ -186,13 +186,13 @@ msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
 /**
  * @brief Waits on the condition variable releasing the mutex lock.
  * @details Releases the mutex, waits on the condition variable, and finally
- * acquires the mutex again. This is done atomically.
+ *          acquires the mutex again. This is done atomically.
  *
- * @param cp pointer to the @p CondVar structure
- * @param time the number of ticks before the operation timeouts,
- *             the following special values are allowed:
- *             - @a TIME_ZERO immediate timeout.
- *             - @a TIME_INFINITE no timeout.
+ * @param[in] cp pointer to the @p CondVar structure
+ * @param[in] time the number of ticks before the operation timeouts,
+ *                 the special value @p TIME_INFINITE is allowed.
+ *                 It is not possible to specify zero (@p TIME_ZERO) as timeout
+ *                 specification.
  * @return The wakep mode.
  * @retval RDY_OK if the condvar was signaled using chCondSignal().
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().

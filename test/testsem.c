@@ -81,13 +81,18 @@ static void sem2_setup(void) {
 static void sem2_execute(void) {
   int i;
   systime_t target_time;
+  msg_t msg;
+
+  msg= chSemWaitTimeout(&sem1, TIME_ZERO);
+  test_assert(msg == RDY_TIMEOUT, "#1");
 
   target_time = chSysGetTime() + MS2ST(5 * 500);
   for (i = 0; i < 5; i++) {
     test_emit_token('A' + i);
-    chSemWaitTimeout(&sem1, MS2ST(500));
-    test_assert(isempty(&sem1.s_queue), "#1");    /* Queue not empty */
-    test_assert(&sem1.s_cnt != 0, "#2");          /* Counter not zero */
+    msg = chSemWaitTimeout(&sem1, MS2ST(500));
+    test_assert(msg == RDY_TIMEOUT, "#2");
+    test_assert(isempty(&sem1.s_queue), "#3");    /* Queue not empty */
+    test_assert(&sem1.s_cnt != 0, "#4");          /* Counter not zero */
   }
   test_assert_sequence("ABCDE");
   test_assert_time_window(target_time, target_time + ALLOWED_DELAY);

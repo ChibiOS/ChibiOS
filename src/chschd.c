@@ -46,7 +46,7 @@ void scheduler_init(void) {
 /**
  * @brief Inserts a thread in the Ready List.
  *
- * @param tp the Thread to be made ready
+ * @param[in] tp the Thread to be made ready
  * @return The Thread pointer.
  * @note The function must be called in the system mutex zone.
  * @note The function does not reschedule, the @p chSchRescheduleS() should
@@ -74,7 +74,7 @@ Thread *chSchReadyI(Thread *tp) {
 /**
  * @brief Puts the current thread to sleep into the specified state.
  * @details The next highest priority thread becomes running. The threads
- * states are described into @p threads.h.
+ *          states are described into @p threads.h.
  *
  * @param newstate the new thread state
  * @note The function must be called in the system mutex zone.
@@ -119,13 +119,13 @@ static void wakeup(void *p) {
 /**
  * @brief Puts the current thread to sleep into the specified state.
  * @details The next highest priority thread becomes running. The thread put
- * to sleep is awakened after the specified time has elapsed.
+ *          to sleep is awakened after the specified time has elapsed.
  *
- * @param newstate the new thread state
- * @param time the number of ticks before the operation timeouts,
- *             the following special values are allowed:
- *             - @a TIME_ZERO immediate timeout.
- *             - @a TIME_INFINITE no timeout.
+ * @param[in] newstate the new thread state
+ * @param[in] time the number of ticks before the operation timeouts,
+ *                 the special value @p TIME_INFINITE is allowed.
+ *                 It is not possible to specify zero (@p TIME_ZERO) as timeout
+ *                 specification.
  * @return The wakeup message.
  * @retval RDY_TIMEOUT if a timeout occurs.
  * @note The function must be called in the system mutex zone.
@@ -133,10 +133,6 @@ static void wakeup(void *p) {
  */
 msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
 
-  if (TIME_ZERO == time) {
-    chSchRescheduleS();
-    return RDY_OK;
-  }
   if (TIME_INFINITE != time) {
     VirtualTimer vt;
 
@@ -153,10 +149,11 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
 /**
  * @brief Wakes up a thread.
  * @details The thread is inserted into the ready list or immediately made
- * running depending on its relative priority compared to the current thread.
+ *          running depending on its relative priority compared to the current
+ *          thread.
  *
- * @param ntp the Thread to be made ready
- * @param msg message to the awakened thread
+ * @param[in] ntp the Thread to be made ready
+ * @param[in] msg message to the awakened thread
  * @note The function must be called in the system mutex zone.
  * @note The function is not meant to be used in the user code directly.
  * @note It is equivalent to a @p chSchReadyI() followed by a
@@ -209,7 +206,7 @@ void chSchDoRescheduleI(void) {
 /**
  * @brief Performs a reschedulation if a higher priority thread is runnable.
  * @details If a thread with a higher priority than the current thread is in
- * the ready list then make the higher priority thread running.
+ *          the ready list then make the higher priority thread running.
  *
  * @note The function must be called in the system mutex zone.
  */

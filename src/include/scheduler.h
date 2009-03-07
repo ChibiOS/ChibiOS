@@ -41,12 +41,18 @@
 #define HIGHPRIO        127             /**< Highest user priority.*/
 #define ABSPRIO         255             /**< Greatest possible priority.*/
 
-/** Zero time specification for all the syscalls with a timeout
-    specification.*/
+/**
+ * Zero time specification for some syscalls with a timeout
+ * specification.
+ * @note Not all functions accept @p TIME_ZERO as timeout parameter, see the
+ *       specific documentation.
+ */
 #define TIME_ZERO   ((systime_t)0)
 
-/** Infinite time specification for all the syscalls with a timeout
-    specification.*/
+/**
+ * Infinite time specification for all the syscalls with a timeout
+ * specification.
+ */
 #define TIME_INFINITE   ((systime_t)-1)
 
 /** The priority of the first thread on the given ready list. */
