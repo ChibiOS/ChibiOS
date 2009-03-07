@@ -162,7 +162,10 @@ msg_t chCondWaitS(CondVar *cp) {
  * acquires the mutex again. This is done atomically.
  *
  * @param cp pointer to the @p CondVar structure
- * @param time the number of ticks before the operation fails
+ * @param time the number of ticks before the operation timeouts,
+ *             the following special values are allowed:
+ *             - @a TIME_ZERO immediate timeout.
+ *             - @a TIME_INFINITE no timeout.
  * @return The wakep mode.
  * @retval RDY_OK if the condvar was signaled using chCondSignal().
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().
@@ -186,7 +189,10 @@ msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
  * acquires the mutex again. This is done atomically.
  *
  * @param cp pointer to the @p CondVar structure
- * @param time the number of ticks before the operation fails
+ * @param time the number of ticks before the operation timeouts,
+ *             the following special values are allowed:
+ *             - @a TIME_ZERO immediate timeout.
+ *             - @a TIME_INFINITE no timeout.
  * @return The wakep mode.
  * @retval RDY_OK if the condvar was signaled using chCondSignal().
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().

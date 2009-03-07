@@ -132,7 +132,10 @@ msg_t chSemWaitS(Semaphore *sp) {
  * @brief Performs a wait operation on a semaphore with timeout specification.
  *
  * @param sp pointer to a @p Semaphore structure
- * @param time the number of ticks before the operation fails
+ * @param time the number of ticks before the operation timeouts,
+ *             the following special values are allowed:
+ *             - @a TIME_ZERO immediate timeout.
+ *             - @a TIME_INFINITE no timeout.
  * @retval RDY_OK if the semaphore was signaled or not taken.
  * @retval RDY_RESET if the semaphore was reset using @p chSemReset().
  * @retval RDY_TIMEOUT if the semaphore was not signaled or reset within the

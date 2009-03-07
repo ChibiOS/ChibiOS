@@ -122,10 +122,10 @@ static void wakeup(void *p) {
  * to sleep is awakened after the specified time has elapsed.
  *
  * @param newstate the new thread state
- * @param time the number of ticks before the operation timeouts. The
- *             following special values are allowed:
- *             - @p TIME_ZERO immediate timeout.
- *             - @p TIME_INFINITE no timeout.
+ * @param time the number of ticks before the operation timeouts,
+ *             the following special values are allowed:
+ *             - @a TIME_ZERO immediate timeout.
+ *             - @a TIME_INFINITE no timeout.
  * @return The wakeup message.
  * @retval RDY_TIMEOUT if a timeout occurs.
  * @note The function must be called in the system mutex zone.
@@ -133,8 +133,10 @@ static void wakeup(void *p) {
  */
 msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
 
-  if (TIME_ZERO == time)
+  if (TIME_ZERO == time) {
+    chSchRescheduleS();
     return RDY_OK;
+  }
   if (TIME_INFINITE != time) {
     VirtualTimer vt;
 

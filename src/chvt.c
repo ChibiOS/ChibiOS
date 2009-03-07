@@ -44,7 +44,8 @@ void vt_init(void) {
  * @brief Enables a virtual timer.
  *
  * @param vtp the @p VirtualTimer structure pointer
- * @param time the number of time ticks, the value zero is not allowed
+ * @param time the number of time ticks, the values @p TIME_ZERO and
+ *             @p TIME_INFINITE are not allowed
  * @param vtfunc the timer callback function. After invoking the callback
  *               the timer is disabled and the structure can be disposed or
  *               reused.
@@ -55,7 +56,8 @@ void vt_init(void) {
 void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
   VirtualTimer *p;
 
-  chDbgCheck((vtp != NULL) && (time != 0) && (vtfunc != NULL), "chVTSetI");
+  chDbgCheck((vtp != NULL) && (time != TIME_ZERO) &&
+             (time != TIME_INFINITE) && (vtfunc != NULL), "chVTSetI");
 
   vtp->vt_par = par;
   vtp->vt_func = vtfunc;

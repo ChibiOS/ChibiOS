@@ -288,7 +288,10 @@ eventmask_t chEvtWaitAll(eventmask_t ewmask) {
  *
  * @param ewmask mask of the events that the function should wait for,
  *               @p ALL_EVENTS enables all the events
- * @param time the number of ticks before the operation timouts
+ * @param time the number of ticks before the operation timeouts,
+ *             the following special values are allowed:
+ *             - @a TIME_ZERO immediate timeout.
+ *             - @a TIME_INFINITE no timeout.
  * @return The mask of the lowest id served and cleared event.
  * @retval 0 if the specified timeout expired.
  * @note One and only one event is served in the function, the one with the
@@ -322,7 +325,10 @@ eventmask_t chEvtWaitOneTimeout(eventmask_t ewmask, systime_t time) {
  *
  * @param ewmask mask of the events that the function should wait for,
  *               @p ALL_EVENTS enables all the events
- * @param time the number of ticks before the operation timouts
+ * @param time the number of ticks before the operation timeouts,
+ *             the following special values are allowed:
+ *             - @a TIME_ZERO immediate timeout.
+ *             - @a TIME_INFINITE no timeout.
  * @return The mask of the served and cleared events.
  * @retval 0 if the specified timeout expired.
  */
@@ -349,7 +355,10 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t ewmask, systime_t time) {
  * become pending then the events are cleared and returned.
  *
  * @param ewmask mask of the event ids that the function should wait for
- * @param time the number of ticks before the operation timouts
+ * @param time the number of ticks before the operation timeouts
+ *             the following special values are allowed:
+ *             - @a TIME_ZERO immediate timeout.
+ *             - @a TIME_INFINITE no timeout.
  * @return The mask of the served and cleared events.
  * @retval 0 if the specified timeout expired.
  */
