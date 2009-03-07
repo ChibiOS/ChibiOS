@@ -83,7 +83,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   stable branch).
 - FIX: Fixed a small problem in the chcore.c template file.
 - NEW: Mailboxes (asynchronous messages) subsystem and test cases added.
-- NEW: Now all the APIs with a timeout specification accept the constant
+- NEW: Most APIs with a timeout specification now accept the constant
   TIME_ZERO (0) that triggers an immediate timeout when trying to enter a sleep
   state. Note that the previous constant TIME_INFINITE now has value -1
   instead of zero.
