@@ -72,6 +72,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.1.2unstable ***
+- FIX: Removed unused chSysPuts() macro (bug 2672678).
+- Added architecture diagram to the documentation.
+
 *** 1.1.1unstable ***
 - FIX: Fixed a problem into the STACK_ALIGN() macro (backported in stable
   branch).
