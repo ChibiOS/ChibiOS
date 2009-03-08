@@ -28,12 +28,6 @@
 #define _SYS_H_
 
 /**
- * @brief Prints a message on the system console (if any).
- * @param msg the message to be printed on the system console
- */
-#define chSysPuts(msg) port_puts(msg)
-
-/**
  * @brief Halts the system.
  * @details This function is invoked by the operating system when an
  * unrecoverable error is detected (as example because a programming error in
