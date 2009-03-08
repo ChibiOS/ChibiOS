@@ -84,9 +84,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Fixed a small problem in the chcore.c template file.
 - NEW: Mailboxes (asynchronous messages) subsystem and test cases added.
 - NEW: Most APIs with a timeout specification now accept the constant
-  TIME_ZERO (0) that triggers an immediate timeout when trying to enter a sleep
-  state. Note that the previous constant TIME_INFINITE now has value -1
-  instead of zero.
+  TIME_IMMEDIATE (-1) that triggers an immediate timeout when trying to enter
+  a sleep state.
 - NEW: Mode flexible debug configuration options, removed the old CH_USE_DEBUG
   and CH_USE_TRACE. Replaced with CH_DBG_ENABLE_CHECKS, SCH_DBG_ENABLE_ASSERTS,
   CH_DBG_ENABLE_TRACE  and CH_DBG_FILL_THREADS.
@@ -99,7 +98,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - NEW: Unified makefiles for ARM7, ARMCM3 MSP430 projects, the new makefiles
   share a common part making them easier to maintain. Also reorganized the
   demo-specific part of the makefile, now it is easier to configure and the
-  option can be overriden from outside.
+  option can be overridden from outside.
 - CHANGE: Changed the chSemFastWaitS() macro in chSemFastWaitI() and
   chSemGetCounter() in chSemGetCounterI().
 - CHANGE: Removed the port_puts() function from the port templates. It was not

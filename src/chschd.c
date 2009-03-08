@@ -125,6 +125,7 @@ static void wakeup(void *p) {
  * @param[in] time the number of ticks before the operation timeouts,
  *                 the special value @p TIME_INFINITE is allowed.
  *                 It is not possible to specify @p TIME_IMMEDIATE as timeout
+ *                 specification, it is interpreted as a normal time
  *                 specification.
  * @return The wakeup message.
  * @retval RDY_TIMEOUT if a timeout occurs.

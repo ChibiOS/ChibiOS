@@ -37,7 +37,7 @@
  * - 128 priority levels. Multiple threads at the same priority level allowed.
  * - Round robin scheduling for threads at the same priority level.
  * - Offers threads, virtual timers, semaphores, mutexes, condvars,
- *   event flags, messages, I/O queues.
+ *   event flags, messages, mailboxes, I/O queues.
  * - No static setup at compile time, there is no need to configure a maximum
  *   number of all the above objects.
  * - PC simulator target included, the development can be done on the PC
