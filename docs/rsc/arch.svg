@@ -71,7 +71,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="2.5"
      inkscape:cx="381.19461"
-     inkscape:cy="372.32275"
+     inkscape:cy="184.85357"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      inkscape:window-width="1150"
@@ -102,7 +102,8 @@
      inkscape:groupmode="layer"
      id="layer1">
     <g
-       id="g4793">
+       id="g4793"
+       transform="translate(0.5385284,49.997253)">
       <rect
          y="912.36493"
          x="199.46147"
@@ -122,24 +123,24 @@
            sodipodi:role="line">Hardware</tspan></text>
     </g>
     <g
-       id="g4757">
+       id="g3242">
       <rect
-         y="862.96753"
-         x="200.00717"
-         height="29.387463"
-         width="350.00034"
+         y="862.96045"
+         x="200.00009"
+         height="29.401625"
+         width="339.99271"
          id="rect3162"
          style="fill:#afdde9;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <text
          id="text3164"
-         y="882.20642"
-         x="348.92041"
+         y="880.0741"
+         x="304.2749"
          style="font-size:11px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
          xml:space="preserve"><tspan
-           y="882.20642"
-           x="348.92041"
-           id="tspan3166"
-           sodipodi:role="line">Port Code</tspan></text>
+           id="tspan2259"
+           y="880.0741"
+           x="304.2749"
+           sodipodi:role="line">System Abstraction Layer</tspan></text>
     </g>
     <g
        id="g4684"
@@ -351,8 +352,9 @@
        id="g4785">
       <path
          id="path4775"
-         d="M 200,582.36218 L 200,527.36218 L 590,527.36218 L 590,892.36218 L 560,892.36218 L 560,582.36218 L 200,582.36218 z "
-         style="fill:#d5d5ff;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+         d="M 200,582.36218 L 200,527.36218 L 590,527.36218 L 590,942.36218 L 560,942.36218 L 560,582.36218 L 200,582.36218 z "
+         style="fill:#d5d5ff;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         sodipodi:nodetypes="ccccccc" />
       <text
          id="text4781"
          y="557.36218"
@@ -466,7 +468,7 @@
        inkscape:connector-type="polyline" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Mend);stroke-opacity:1"
-       d="M 575,892.76218 L 574.8,912.36218"
+       d="M 575,942.76218 L 574.8,962.36218"
        id="path4840"
        inkscape:connector-type="polyline" />
     <path
@@ -478,6 +480,36 @@
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:none;stroke-opacity:1;marker-start:url(#Arrow2Mstart)"
        d="M 490.2,792.76218 L 490,812.36218"
        id="path4844"
+       inkscape:connector-type="polyline" />
+    <g
+       id="g2251">
+      <rect
+         y="912.47473"
+         x="200.5"
+         height="29.387463"
+         width="350.00034"
+         id="rect2240"
+         style="fill:#ccffaa;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <text
+         id="text2242"
+         y="931.71362"
+         x="349.41324"
+         style="font-size:11px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="931.71362"
+           x="349.41324"
+           id="tspan2244"
+           sodipodi:role="line">Port Code</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Mend);stroke-opacity:1"
+       d="M 375.2,942.36218 L 375,961.96218"
+       id="path2246"
+       inkscape:connector-type="polyline" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Mend)"
+       d="M 560,877.36218 L 540,877.56218"
+       id="path3247"
        inkscape:connector-type="polyline" />
   </g>
 </svg>
