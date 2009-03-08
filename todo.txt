@@ -22,6 +22,8 @@ After 1.0.0:
 * Remove port_puts() from all the ports.
 * Stack sizes article into the documentation.
 * Logo...
+- Code examples into the documentation.
+- Architecture diagrams.
 
 After 1.2.0:
 X Abstract I/O channels rather than just serial ports.
