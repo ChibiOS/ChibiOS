@@ -18,9 +18,19 @@
 */
 
 /**
- * @page concepts Concepts
+ * @page concepts Concepts and Architecture
  * @{
  * @brief ChibiOS/RT Concepts and Architecture
+ * - @ref naming
+ * - @ref api_suffixes
+ * - @ref interrupt_classes
+ * - @ref system_states
+ * - @ref scheduling
+ * - @ref thread_states
+ * - @ref priority
+ * - @ref warea
+ * - @ref architecture
+ * .
  * @section naming Naming Conventions
  * ChibiOS/RT APIs are all named following this convention:
  * @a ch\<group\>\<action\>\<suffix\>().
@@ -218,7 +228,7 @@
  *   (inclusive) are reserved. This is the highest numerical value of the
  *   priorities space.
  * .
- * @section warea Thread Working Area
+ * @section warea Threads Working Area
  * Each thread has its own stack, a Thread structure and some preemption
  * areas. All the structures are allocated into a "Thread Working Area",
  * a thread private heap, usually statically declared in your code.
@@ -237,5 +247,18 @@
  * .
  * See the @ref Core documentation for details, the area may change on
  * the various ports and some structures may not be present (or be zero-sized).
+ *
+ * @section architecture Architectural Diagram
+ * The following diagram shows the relationships among the hardware, the
+ * various ChibiOS/RT subsystems and the application code.
+ * <br><br>
+ * @image html arch.png
+ * <br>
+ * In this diagram the device drivers are at the same level of the application
+ * code because both have access to the system services and can directly
+ * access the hardware.<br>
+ * Of course it is possible to create in the application architecture several
+ * extra layers, this is just not part of the kernel architecture but part of
+ * the overall system design.
  */
 /** @} */
