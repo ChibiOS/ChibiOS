@@ -164,8 +164,9 @@ msg_t chCondWaitS(CondVar *cp) {
  * @param[in] cp pointer to the @p CondVar structure
  * @param[in] time the number of ticks before the operation timeouts,
  *                 the special value @p TIME_INFINITE is allowed.
- *                 It is not possible to specify zero (@p TIME_ZERO) as timeout
- *                 specification.
+ *                 It is not possible to specify zero @p TIME_IMMEDIATE
+ *                 as timeout specification because it would make no sense
+ *                 in this function.
  * @return The wakep mode.
  * @retval RDY_OK if the condvar was signaled using chCondSignal().
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().
@@ -191,8 +192,9 @@ msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
  * @param[in] cp pointer to the @p CondVar structure
  * @param[in] time the number of ticks before the operation timeouts,
  *                 the special value @p TIME_INFINITE is allowed.
- *                 It is not possible to specify zero (@p TIME_ZERO) as timeout
- *                 specification.
+ *                 It is not possible to specify zero @p TIME_IMMEDIATE
+ *                 as timeout specification because it would make no sense
+ *                 in this function.
  * @return The wakep mode.
  * @retval RDY_OK if the condvar was signaled using chCondSignal().
  * @retval RDY_RESET if the condvar was signaled using chCondBroadcast().

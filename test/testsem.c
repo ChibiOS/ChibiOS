@@ -83,7 +83,7 @@ static void sem2_execute(void) {
   systime_t target_time;
   msg_t msg;
 
-  msg= chSemWaitTimeout(&sem1, TIME_ZERO);
+  msg= chSemWaitTimeout(&sem1, TIME_IMMEDIATE);
   test_assert(msg == RDY_TIMEOUT, "#1");
 
   target_time = chSysGetTime() + MS2ST(5 * 500);

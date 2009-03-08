@@ -134,7 +134,7 @@ msg_t chSemWaitS(Semaphore *sp) {
  * @param[in] sp pointer to a @p Semaphore structure
  * @param[in] time the number of ticks before the operation timeouts,
  *             the following special values are allowed:
- *             - @a TIME_ZERO immediate timeout.
+ *             - @a TIME_IMMEDIATE immediate timeout.
  *             - @a TIME_INFINITE no timeout.
  * @retval RDY_OK if the semaphore was signaled or not taken.
  * @retval RDY_RESET if the semaphore was reset using @p chSemReset().
@@ -158,7 +158,7 @@ msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
  * @param[in] sp pointer to a @p Semaphore structure
  * @param[in] time the number of ticks before the operation timeouts,
  *                 the following special values are allowed:
- *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_IMMEDIATE immediate timeout.
  *                 - @a TIME_INFINITE no timeout.
  *                 .
  * @retval RDY_OK if the semaphore was signaled or not taken.
@@ -173,7 +173,7 @@ msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
   chDbgCheck(sp != NULL, "chSemWaitTimeoutS");
 
   if (--sp->s_cnt < 0) {
-    if (TIME_ZERO == time)
+    if (TIME_IMMEDIATE == time)
       return RDY_TIMEOUT;
     sem_insert(currp, &sp->s_queue);
     currp->p_wtsemp = sp;

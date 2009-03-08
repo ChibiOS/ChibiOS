@@ -44,16 +44,16 @@
 /**
  * Zero time specification for some syscalls with a timeout
  * specification.
- * @note Not all functions accept @p TIME_ZERO as timeout parameter, see the
- *       specific documentation.
+ * @note Not all functions accept @p TIME_IMMEDIATE as timeout parameter,
+ *       see the specific function documentation.
  */
-#define TIME_ZERO   ((systime_t)0)
+#define TIME_IMMEDIATE  ((systime_t)-1)
 
 /**
  * Infinite time specification for all the syscalls with a timeout
  * specification.
  */
-#define TIME_INFINITE   ((systime_t)-1)
+#define TIME_INFINITE   ((systime_t)0)
 
 /** The priority of the first thread on the given ready list. */
 #define firstprio(rlp)  ((rlp)->p_next->p_prio)

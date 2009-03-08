@@ -72,7 +72,7 @@ void chMBReset(Mailbox *mbp) {
  * @param[in] msg the message to be posted on the mailbox
  * @param[in] time the number of ticks before the operation timeouts,
  *                 the following special values are allowed:
- *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_IMMEDIATE immediate timeout.
  *                 - @a TIME_INFINITE no timeout.
  *                 .
  * @return The operation status.
@@ -98,7 +98,7 @@ msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t time) {
  * @param[in] msg the message to be posted on the mailbox
  * @param[in] time the number of ticks before the operation timeouts,
  *                 the following special values are allowed:
- *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_IMMEDIATE immediate timeout.
  *                 - @a TIME_INFINITE no timeout.
  *                 .
  * @return The operation status.
@@ -131,7 +131,7 @@ msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t time) {
  * @param[in] msg the message to be posted on the mailbox
  * @param[in] time the number of ticks before the operation timeouts,
  *                 the following special values are allowed:
- *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_IMMEDIATE immediate timeout.
  *                 - @a TIME_INFINITE no timeout.
  *                 .
  * @return The operation status.
@@ -157,7 +157,7 @@ msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t time) {
  * @param[in] msg the message to be posted on the mailbox
  * @param[in] time the number of ticks before the operation timeouts,
  *                 the following special values are allowed:
- *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_IMMEDIATE immediate timeout.
  *                 - @a TIME_INFINITE no timeout.
  *                 .
  * @return The operation status.
@@ -190,7 +190,7 @@ msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t time) {
  * @param[out] msgp pointer to a message variable for the received message
  * @param[in] time the number of ticks before the operation timeouts,
  *                 the following special values are allowed:
- *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_IMMEDIATE immediate timeout.
  *                 - @a TIME_INFINITE no timeout.
  *                 .
  * @return The operation status.
@@ -216,7 +216,7 @@ msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t time) {
  * @param[out] msgp pointer to a message variable for the received message
  * @param[in] time the number of ticks before the operation timeouts,
  *                 the following special values are allowed:
- *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_IMMEDIATE immediate timeout.
  *                 - @a TIME_INFINITE no timeout.
  *                 .
  * @return The operation status.

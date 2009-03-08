@@ -43,13 +43,15 @@ void vt_init(void) {
 /**
  * @brief Enables a virtual timer.
  *
- * @param vtp the @p VirtualTimer structure pointer
- * @param time the number of time ticks, the values @p TIME_ZERO and
- *             @p TIME_INFINITE are not allowed
- * @param vtfunc the timer callback function. After invoking the callback
- *               the timer is disabled and the structure can be disposed or
- *               reused.
- * @param par a parameter that will be passed to the callback function
+ * @param[out] vtp the @p VirtualTimer structure pointer
+ * @param[in] time the number of time ticks, the value @p TIME_INFINITE is not
+ *                 allowed. The value @p TIME_IMMEDIATE is allowed but
+ *                 interpreted as a normal time specification not as an
+ *                 immediate timeout specification.
+ * @param[in] vtfunc the timer callback function. After invoking the callback
+ *                   the timer is disabled and the structure can be disposed or
+ *                   reused.
+ * @param[in] par a parameter that will be passed to the callback function
  * @note The associated function is invoked by an interrupt handler within
  *       the I-Locked state, see @ref system_states.
  */
@@ -57,7 +59,7 @@ void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
   VirtualTimer *p;
 
   chDbgCheck((vtp != NULL) && (vtfunc != NULL) &&
-             (time != TIME_ZERO) && (time != TIME_INFINITE), "chVTSetI");
+             (time != TIME_IMMEDIATE) && (time != TIME_INFINITE), "chVTSetI");
 
   vtp->vt_par = par;
   vtp->vt_func = vtfunc;
@@ -77,7 +79,7 @@ void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
 /**
  * @brief Disables a Virtual Timer.
  *
- * @param vtp the @p VirtualTimer structure pointer
+ * @param[in] vtp the @p VirtualTimer structure pointer
  * @note The timer MUST be active when this function is invoked.
  */
 void chVTResetI(VirtualTimer *vtp) {
@@ -96,8 +98,10 @@ void chVTResetI(VirtualTimer *vtp) {
 /**
  * @brief Checks if the current system time is within the specified time window.
  *
- * @param start the start of the time window (inclusive)
- * @param end the end of the time window (non inclusive)
+ * @param[in] start the start of the time window (inclusive)
+ * @param[in] end the end of the time window (non inclusive)
+ * @retval TRUE current time within the specified time window.
+ * @retval FALSE current time not within the specified time window.
  */
 bool_t chSysInTimeWindow(systime_t start, systime_t end) {
 

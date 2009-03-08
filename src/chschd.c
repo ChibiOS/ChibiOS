@@ -124,7 +124,7 @@ static void wakeup(void *p) {
  * @param[in] newstate the new thread state
  * @param[in] time the number of ticks before the operation timeouts,
  *                 the special value @p TIME_INFINITE is allowed.
- *                 It is not possible to specify zero (@p TIME_ZERO) as timeout
+ *                 It is not possible to specify @p TIME_IMMEDIATE as timeout
  *                 specification.
  * @return The wakeup message.
  * @retval RDY_TIMEOUT if a timeout occurs.

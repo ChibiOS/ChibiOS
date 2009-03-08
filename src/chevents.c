@@ -290,7 +290,7 @@ eventmask_t chEvtWaitAll(eventmask_t ewmask) {
  *                   @p ALL_EVENTS enables all the events
  * @param[in] time the number of ticks before the operation timeouts,
  *                 the following special values are allowed:
- *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_IMMEDIATE immediate timeout.
  *                 - @a TIME_INFINITE no timeout.
  *                 .
  * @return The mask of the lowest id served and cleared event.
@@ -307,7 +307,7 @@ eventmask_t chEvtWaitOneTimeout(eventmask_t ewmask, systime_t time) {
   chSysLock();
 
   if ((m = (currp->p_epending & ewmask)) == 0) {
-    if (TIME_ZERO == time)
+    if (TIME_IMMEDIATE == time)
       return (eventmask_t)0;
     currp->p_ewmask = ewmask;
     if (chSchGoSleepTimeoutS(PRWTOREVT, time) < RDY_OK)
@@ -331,7 +331,7 @@ eventmask_t chEvtWaitOneTimeout(eventmask_t ewmask, systime_t time) {
  *                   @p ALL_EVENTS enables all the events
  * @param[in] time the number of ticks before the operation timeouts,
  *                 the following special values are allowed:
- *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_IMMEDIATE immediate timeout.
  *                 - @a TIME_INFINITE no timeout.
  *                 .
  * @return The mask of the served and cleared events.
@@ -343,7 +343,7 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t ewmask, systime_t time) {
   chSysLock();
 
   if ((m = (currp->p_epending & ewmask)) == 0) {
-    if (TIME_ZERO == time)
+    if (TIME_IMMEDIATE == time)
       return (eventmask_t)0;
     currp->p_ewmask = ewmask;
     if (chSchGoSleepTimeoutS(PRWTOREVT, time) < RDY_OK)
@@ -364,7 +364,7 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t ewmask, systime_t time) {
  * @param[in] ewmask mask of the event ids that the function should wait for
  * @param[in] time the number of ticks before the operation timeouts,
  *                 the following special values are allowed:
- *                 - @a TIME_ZERO immediate timeout.
+ *                 - @a TIME_IMMEDIATE immediate timeout.
  *                 - @a TIME_INFINITE no timeout.
  *                 .
  * @return The mask of the served and cleared events.
@@ -375,7 +375,7 @@ eventmask_t chEvtWaitAllTimeout(eventmask_t ewmask, systime_t time) {
   chSysLock();
 
   if ((currp->p_epending & ewmask) != ewmask) {
-    if (TIME_ZERO == time)
+    if (TIME_IMMEDIATE == time)
       return (eventmask_t)0;
     currp->p_ewmask = ewmask;
     if (chSchGoSleepTimeoutS(PRWTANDEVT, time) < RDY_OK)
