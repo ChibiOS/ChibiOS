@@ -26,6 +26,7 @@
 #define ALLOWED_DELAY 5
 
 static Mutex m1, m2;
+static CondVar c1;
 
 static char *mtx1_gettest(void) {
 
@@ -213,6 +214,133 @@ const struct testcase testmtx3 = {
   mtx3_execute
 };
 
+#if CH_USE_CONDVARS
+static char *mtx4_gettest(void) {
+
+  return "CondVar, signal test";
+}
+
+static void mtx4_setup(void) {
+
+  chCondInit(&c1);
+  chMtxInit(&m1);
+}
+
+static msg_t thread10(void *p) {
+
+  chMtxLock(&m1);
+  chCondWait(&c1);
+  test_emit_token(*(char *)p);
+  chMtxUnlock();
+  return 0;
+}
+
+static void mtx4_execute(void) {
+
+  tprio_t prio = chThdGetPriority();
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread10, "E");
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread10, "D");
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread10, "C");
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread10, "B");
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread10, "A");
+  chCondSignal(&c1);
+  chCondSignal(&c1);
+  chCondSignal(&c1);
+  chCondSignal(&c1);
+  chCondSignal(&c1);
+  test_wait_threads();
+  test_assert_sequence("ABCDE");
+}
+
+const struct testcase testmtx4 = {
+  mtx4_gettest,
+  mtx4_setup,
+  NULL,
+  mtx4_execute
+};
+
+static char *mtx5_gettest(void) {
+
+  return "CondVar, broadcast test";
+}
+
+static void mtx5_setup(void) {
+
+  chCondInit(&c1);
+  chMtxInit(&m1);
+}
+
+static void mtx5_execute(void) {
+
+  // Bacause priority inheritance.
+  tprio_t prio = chThdGetPriority();
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread10, "E");
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread10, "D");
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread10, "C");
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread10, "B");
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread10, "A");
+  chCondBroadcast(&c1);
+  test_wait_threads();
+  test_assert_sequence("ABCDE");
+}
+
+const struct testcase testmtx5 = {
+  mtx5_gettest,
+  mtx5_setup,
+  NULL,
+  mtx5_execute
+};
+
+static char *mtx6_gettest(void) {
+
+  return "CondVar, inheritance boost test";
+}
+
+static void mtx6_setup(void) {
+
+  chCondInit(&c1);
+  chMtxInit(&m1);
+  chMtxInit(&m2);
+}
+
+static msg_t thread11(void *p) {
+
+  chMtxLock(&m2);
+  chMtxLock(&m1);
+  chCondWait(&c1);
+  test_emit_token(*(char *)p);
+  chMtxUnlock();
+  chMtxUnlock();
+  return 0;
+}
+
+static msg_t thread12(void *p) {
+
+  chMtxLock(&m2);
+  test_emit_token(*(char *)p);
+  chMtxUnlock();
+  return 0;
+}
+
+static void mtx6_execute(void) {
+
+  tprio_t prio = chThdGetPriority();
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread11, "A");
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread10, "C");
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread12, "B");
+  chCondSignal(&c1);
+  chCondSignal(&c1);
+  test_wait_threads();
+  test_assert_sequence("ABC");
+}
+
+const struct testcase testmtx6 = {
+  mtx6_gettest,
+  mtx6_setup,
+  NULL,
+  mtx6_execute
+};
+#endif /* CH_USE_CONDVARS */
 #endif /* CH_USE_MUTEXES */
 
 /*
@@ -223,6 +351,11 @@ const struct testcase * const patternmtx[] = {
   &testmtx1,
   &testmtx2,
   &testmtx3,
+#if CH_USE_CONDVARS
+  &testmtx4,
+  &testmtx5,
+  &testmtx6,
+#endif
 #endif
   NULL
 };

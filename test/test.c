@@ -23,7 +23,6 @@
 #include "testrdy.h"
 #include "testsem.h"
 #include "testmtx.h"
-#include "testcond.h"
 #include "testmsg.h"
 #include "testmbox.h"
 #include "testevt.h"
@@ -39,7 +38,6 @@ static const struct testcase **patterns[] = {
   patternrdy,
   patternsem,
   patternmtx,
-  patterncond,
   patternmsg,
   patternmbox,
   patternevt,
