@@ -40,7 +40,7 @@
 /**
  * Kernel version string.
  */
-#define CH_KERNEL_VERSION       "1.0.1"
+#define CH_KERNEL_VERSION       "1.0.2"
 
 /**
  * Kernel version major number.
@@ -55,7 +55,7 @@
 /**
  * Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         1
+#define CH_KERNEL_PATCH         2
 
 #include <chconf.h>
 #include <chtypes.h>

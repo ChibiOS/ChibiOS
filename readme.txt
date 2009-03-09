@@ -4,6 +4,7 @@
 
 ./readme.txt           - This file.
 ./license.txt          - GPL3 license file.
+./exception.txt        - GPL3 exception file.
 ./src/                 - ChibiOS/RT portable kernel source files.
 ./src/include/         - ChibiOS/RT include files.
 ./src/lib/             - ChibiOS/RT library code that can be included into
@@ -69,6 +70,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *****************************************************************************
 *** Releases                                                              ***
 *****************************************************************************
+
+*** 1.0.2 ***
+- FIX: Fixed priority inheritance problem with condvars (bug 2674756).
+- Replaced ./docs/index.html with a direct shortcut to the documentation.
 
 *** 1.0.1 ***
 - NEW: Added to the STM32 demo makefile an option to build ChibiOS/RT with the
