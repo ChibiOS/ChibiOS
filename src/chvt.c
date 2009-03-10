@@ -102,12 +102,14 @@ void chVTResetI(VirtualTimer *vtp) {
  * @param[in] end the end of the time window (non inclusive)
  * @retval TRUE current time within the specified time window.
  * @retval FALSE current time not within the specified time window.
+ * @note When start==end then the function returns always true because the
+ *       whole time range is specified.
  */
 bool_t chTimeIsWithin(systime_t start, systime_t end) {
 
   systime_t time = chTimeNow();
-  return end >= start ? (time >= start) && (time < end) :
-                        (time >= start) || (time < end);
+  return end > start ? (time >= start) && (time < end) :
+                       (time >= start) || (time < end);
 }
 
 /** @} */

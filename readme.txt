@@ -75,6 +75,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** 1.1.2unstable ***
 - FIX: Fixed priority inheritance problem with condvars (bug 2674756) and
   added a specific test case to the test suite (backported in stable branch).
+- FIX: Fixed a problem in time ranges (bug 2680425)(backported in stable
+  branch).
 - FIX: Fixed a wrong parameter check in chVTSetI() (bug 2679155).
 - FIX: Build error with options CH_USE_NESTED_LOCKS && !CH_OPTIMIZE_SPEED
   (bug 2678928).
