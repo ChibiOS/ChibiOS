@@ -46,7 +46,7 @@ msg_t my_thread(void *param) {
  * @code
 msg_t my_thread(void *param) {
 
-  systick_t time = chSysGetTime();  /* T0 */
+  systick_t time = chTimeNow();     /* T0 */
   while (TRUE) {
     time += MS2ST(1000);            /* Next deadline */
     do_something();

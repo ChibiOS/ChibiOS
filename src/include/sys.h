@@ -171,6 +171,10 @@ extern "C" {
 #endif
   void chSysInit(void);
   void chSysTimerHandlerI(void);
+#if CH_USE_NESTED_LOCKS && !CH_OPTIMIZE_SPEED
+  void chSysLock(void);
+  void chSysUnlock(void);
+#endif /* CH_USE_NESTED_LOCKS && !CH_OPTIMIZE_SPEED */
 #ifdef __cplusplus
 }
 #endif

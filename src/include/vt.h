@@ -104,7 +104,7 @@ extern "C" {
   void vt_init(void);
   void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par);
   void chVTResetI(VirtualTimer *vtp);
-  bool_t chSysInTimeWindow(systime_t start, systime_t end);
+  bool_t chTimeIsWithin(systime_t start, systime_t end);
 #ifdef __cplusplus
 }
 #endif
@@ -118,8 +118,20 @@ extern "C" {
  * @note The counter can reach its maximum and then returns to zero.
  * @note This function is designed to work with the @p chThdSleepUntil().
  */
-#define chSysGetTime() (vtlist.vt_systime)
+#define chTimeNow() (vtlist.vt_systime)
 
+/**
+ * Provided for backward compatibility.
+ * @deprecated Will be removed in 1.2.0.
+ */
+#define chSysGetTime() chTimeNow()
+
+/**
+ * Provided for backward compatibility.
+ * @deprecated Will be removed in 1.2.0.
+ */
+#define chSysInTimeWindow(start, end) chTimeIsWithin(start, end)
+ 
 #endif /* _VT_H_ */
 
 /** @} */

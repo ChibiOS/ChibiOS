@@ -77,7 +77,7 @@ static void evt1_execute(void) {
   chEvtInit(&es2);
   chEvtRegisterMask(&es1, &el1, 1);
   chEvtRegisterMask(&es2, &el2, 4);
-  target_time = chSysGetTime() + MS2ST(50);
+  target_time = chTimeNow() + MS2ST(50);
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread, "A");
   m = chEvtWaitAll(5);
   test_assert_time_window(target_time, target_time + ALLOWED_DELAY);

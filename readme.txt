@@ -75,7 +75,13 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** 1.1.2unstable ***
 - FIX: Fixed priority inheritance problem with condvars (bug 2674756) and
   added a specific test case to the test suite (backported in stable branch).
+- FIX: Fixed a wrong parameter check in chVTSetI() (bug 2679155).
+- FIX: Build error with options CH_USE_NESTED_LOCKS && !CH_OPTIMIZE_SPEED
+  (bug 2678928).
 - FIX: Removed unused chSysPuts() macro (bug 2672678).
+- FIX: Renamed function chSysInTimeWindow() as chTimeIsWithin() and renamed
+  the macro chSysGetTime() in chTimeNow(), the old names are still recognized
+  but marked as deprecated (fixes the bug 2678953 but goes a bit further).
 - Removed testcond.c|h and moved the test cases into testmtx.c. Mutexes and
   condvars have to be tested together.
 - Added architecture diagram to the documentation.

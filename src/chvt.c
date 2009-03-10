@@ -19,7 +19,7 @@
 
 /**
  * @file chvt.c
- * @brief Time related code.
+ * @brief Time and Virtual Timers related code.
  * @addtogroup Time
  * @{
  */
@@ -58,8 +58,8 @@ void vt_init(void) {
 void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
   VirtualTimer *p;
 
-  chDbgCheck((vtp != NULL) && (vtfunc != NULL) &&
-             (time != TIME_IMMEDIATE) && (time != TIME_INFINITE), "chVTSetI");
+  chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (time != TIME_INFINITE),
+             "chVTSetI");
 
   vtp->vt_par = par;
   vtp->vt_func = vtfunc;
@@ -103,9 +103,9 @@ void chVTResetI(VirtualTimer *vtp) {
  * @retval TRUE current time within the specified time window.
  * @retval FALSE current time not within the specified time window.
  */
-bool_t chSysInTimeWindow(systime_t start, systime_t end) {
+bool_t chTimeIsWithin(systime_t start, systime_t end) {
 
-  systime_t time = chSysGetTime();
+  systime_t time = chTimeNow();
   return end >= start ? (time >= start) && (time < end) :
                         (time >= start) || (time < end);
 }

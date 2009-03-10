@@ -146,7 +146,7 @@ bool_t _test_assert_sequence(char *expected) {
 
 bool_t _test_assert_time_window(systime_t start, systime_t end) {
 
-  return _test_assert(chSysInTimeWindow(start, end), "time window error");
+  return _test_assert(chTimeIsWithin(start, end), "time window error");
 }
 
 /*
@@ -171,8 +171,8 @@ void test_wait_threads(void) {
 void test_cpu_pulse(unsigned ms) {
 
   systime_t duration = MS2ST(ms);
-  systime_t start = chSysGetTime();
-  while (chSysInTimeWindow(start, start + duration)) {
+  systime_t start = chTimeNow();
+  while (chTimeIsWithin(start, start + duration)) {
 #if defined(WIN32)
     ChkIntSources();
 #endif
@@ -182,7 +182,7 @@ void test_cpu_pulse(unsigned ms) {
 systime_t test_wait_tick(void) {
 
   chThdSleep(1);
-  return chSysGetTime();
+  return chTimeNow();
 }
 
 /*

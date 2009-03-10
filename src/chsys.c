@@ -110,14 +110,18 @@ void chSysTimerHandlerI(void) {
 #if CH_USE_NESTED_LOCKS && !CH_OPTIMIZE_SPEED
 void chSysLock(void) {
 
-  chDbgAssert(currp->p_locks >= 0, "chinit.c, chSysLock()");
+  chDbgAssert(currp->p_locks >= 0,
+              "chSysLock(), #1",
+              "negative nesting counter");
   if (currp->p_locks++ == 0)
     port_lock();
 }
 
 void chSysUnlock(void) {
 
-  chDbgAssert(currp->p_locks > 0, "chinit.c, chSysUnlock()");
+  chDbgAssert(currp->p_locks > 0,
+              "chSysUnlock(), #1",
+              "non-positive nesting counter");
   if (--currp->p_locks == 0)
     port_unlock();
 }

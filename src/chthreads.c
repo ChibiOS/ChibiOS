@@ -290,7 +290,7 @@ void chThdSleep(systime_t time) {
 void chThdSleepUntil(systime_t time) {
 
   chSysLock();
-  if ((time -= chSysGetTime()) > 0)
+  if ((time -= chTimeNow()) > 0)
     chThdSleepS(time);
   chSysUnlock();
 }

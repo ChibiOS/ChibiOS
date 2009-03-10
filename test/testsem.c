@@ -86,7 +86,7 @@ static void sem2_execute(void) {
   msg= chSemWaitTimeout(&sem1, TIME_IMMEDIATE);
   test_assert(msg == RDY_TIMEOUT, "#1");
 
-  target_time = chSysGetTime() + MS2ST(5 * 500);
+  target_time = chTimeNow() + MS2ST(5 * 500);
   for (i = 0; i < 5; i++) {
     test_emit_token('A' + i);
     msg = chSemWaitTimeout(&sem1, MS2ST(500));

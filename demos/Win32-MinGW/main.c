@@ -194,7 +194,7 @@ static msg_t ShellThread(void *arg) {
       else if (stricmp(lp, "time") == 0) {
         if (checkend(sd))
           continue;
-        sprintf(line, "Time: %d\r\n", chSysGetTime());
+        sprintf(line, "Time: %d\r\n", chTimeNow());
         PrintLineFDD(sd, line);
       }
       else if (stricmp(lp, "hello") == 0) {
