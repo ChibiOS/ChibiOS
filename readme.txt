@@ -73,6 +73,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 
 *** 1.0.2 ***
 - FIX: Fixed priority inheritance problem with condvars (bug 2674756).
+- FIX: Fixed a problem in time ranges (bug 2680425).
 - Replaced ./docs/index.html with a direct shortcut to the documentation.
 
 *** 1.0.1 ***
