@@ -73,10 +73,8 @@ static void memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
  *
  * @param[out] workspace pointer to a working area dedicated to the thread
  *                       stack
- * @param[in] wsize size of the working area.
- * @param[in] prio the priority level for the new thread. Usually the threads
- *                 are created with priority @p NORMALPRIO, priorities
- *                 can range from @p LOWPRIO to @p HIGHPRIO.
+ * @param[in] wsize size of the working area
+ * @param[in] prio the priority level for the new thread
  * @param[in] pf the thread function
  * @param[in] arg an argument passed to the thread function. It can be @p NULL.
  * @return The pointer to the @p Thread structure allocated for the
@@ -112,10 +110,8 @@ Thread *chThdInit(void *workspace, size_t wsize,
  *
  * @param[out] workspace pointer to a working area dedicated to the thread
  *                       stack
- * @param[in] wsize size of the working area.
- * @param[in] prio the priority level for the new thread. Usually the threads
- *             are created with priority @p NORMALPRIO, priorities
- *             can range from @p LOWPRIO to @p HIGHPRIO.
+ * @param[in] wsize size of the working area
+ * @param[in] prio the priority level for the new thread
  * @param[in] pf the thread function
  * @param[in] arg an argument passed to the thread function. It can be @p NULL.
  * @return The pointer to the @p Thread structure allocated for the
@@ -134,9 +130,7 @@ Thread *chThdCreateStatic(void *workspace, size_t wsize,
  * @brief Creates a new thread allocating the memory from the heap.
  *
  * @param[in] wsize size of the working area to be allocated
- * @param[in] prio the priority level for the new thread. Usually the threads
- *                 are created with priority @p NORMALPRIO, priorities
- *                 can range from @p LOWPRIO to @p HIGHPRIO.
+ * @param[in] prio the priority level for the new thread
  * @param[in] pf the thread function
  * @param[in] arg an argument passed to the thread function. It can be @p NULL.
  * @return The pointer to the @p Thread structure allocated for the
@@ -168,9 +162,7 @@ Thread *chThdCreateFromHeap(size_t wsize, tprio_t prio,
  *        Pool.
  *
  * @param[in] mp the memory pool
- * @param[in] prio the priority level for the new thread. Usually the threads
- *                 are created with priority @p NORMALPRIO, priorities
- *                 can range from @p LOWPRIO to @p HIGHPRIO.
+ * @param[in] prio the priority level for the new thread
  * @param[in] pf the thread function
  * @param[in] arg an argument passed to the thread function. It can be @p NULL.
  * @return The pointer to the @p Thread structure allocated for the
@@ -207,7 +199,7 @@ Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
  * @param[in] newprio the new priority level of the running thread
  * @return The old priority level.
  * @note The function returns the real thread priority regardless of the
- *       actual priority that could be higher than the real priority because
+ *       current priority that could be higher than the real priority because
  *       the priority inheritance mechanism.
  */
 tprio_t chThdSetPriority(tprio_t newprio) {
@@ -268,13 +260,18 @@ void chThdTerminate(Thread *tp) {
 /**
  * @brief Suspends the invoking thread for the specified time.
  *
- * @param[in] time the delay in system ticks, the values @p TIME_IMMEDIATE and
- *                 @p TIME_INFINITE are not allowed
+ * @param[in] time the delay in system ticks, the special values are handled as
+ *                 follow:
+ *                 - @a TIME_INFINITE the thread enters an infinite sleep
+ *                   state.
+ *                 - @a TIME_IMMEDIATE this value is accepted but interpreted
+ *                   as a normal time specification not as an immediate timeout
+ *                   specification.
+ *                 .
  */
 void chThdSleep(systime_t time) {
 
-  chDbgCheck((time != TIME_IMMEDIATE) && (time != TIME_INFINITE),
-             "chThdSleep");
+  chDbgCheck(time != TIME_INFINITE, "chThdSleep");
 
   chSysLock();
   chThdSleepS(time);

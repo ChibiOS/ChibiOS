@@ -190,35 +190,54 @@ extern "C" {
 /** Returns the pointer to the @p Thread currently in execution.*/
 #define chThdSelf() currp
 
-/** Returns the thread priority.*/
+/** Returns the current thread priority.*/
 #define chThdGetPriority() (currp->p_prio)
 
 /** Returns the pointer to the @p Thread local storage area, if any.*/
 #define chThdLS() (void *)(currp + 1)
 
-/** Verifies if the specified thread is in the @p PREXIT state.*/
+/**
+ * Verifies if the specified thread is in the @p PREXIT state.
+ *
+ * @param[in] tp the pointer to the thread
+ * @retval TRUE thread terminated.
+ * @retval FALSE thread not terminated.
+ */
 #define chThdTerminated(tp) ((tp)->p_state == PREXIT)
 
 /**
  * Verifies if the current thread has a termination request pending.
+ *
+ * @retval TRUE termination request pended.
+ * @retval FALSE termination request not pended.
  */
 #define chThdShouldTerminate() (currp->p_flags & P_TERMINATE)
 
 /**
- * Resumes a thread created with the @p P_SUSPENDED option or suspended with
- * @p chThdSuspend().
- * @param tp the pointer to the thread
+ * Resumes a thread created with @p chThdInit().
+ *
+ * @param[in] tp the pointer to the thread
  */
 #define chThdResumeI(tp) chSchReadyI(tp)
 
 /**
  * Suspends the invoking thread for the specified time.
- * @param time the delay in system ticks
+ *
+ * @param[in] time the delay in system ticks, the special values are handled as
+ *                 follow:
+ *                 - @a TIME_INFINITE the thread enters an infinite sleep
+ *                   state.
+ *                 - @a TIME_IMMEDIATE this value is accepted but interpreted
+ *                   as a normal time specification not as an immediate timeout
+ *                   specification.
+ *                 .
  */
 #define chThdSleepS(time) chSchGoSleepTimeoutS(PRSLEEP, time)
 
 /**
  * Delays the invoking thread for the specified number of seconds.
+ *
+ * @param[in] sec the time in seconds
  * @note The specified time is rounded up to a value allowed by the real
  *       system clock.
  * @note The maximum specified value is implementation dependent.
@@ -227,6 +246,8 @@ extern "C" {
 
 /**
  * Delays the invoking thread for the specified number of milliseconds.
+ *
+ * @param[in] msec the time in milliseconds
  * @note The specified time is rounded up to a value allowed by the real
  *       system clock.
  * @note The maximum specified value is implementation dependent.
@@ -235,6 +256,8 @@ extern "C" {
 
 /**
  * Delays the invoking thread for the specified number of microseconds.
+ *
+ * @param[in] usec the time in microseconds
  * @note The specified time is rounded up to a value allowed by the real
  *       system clock.
  * @note The maximum specified value is implementation dependent.

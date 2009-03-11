@@ -122,11 +122,15 @@ static void wakeup(void *p) {
  *          to sleep is awakened after the specified time has elapsed.
  *
  * @param[in] newstate the new thread state
- * @param[in] time the number of ticks before the operation timeouts,
- *                 the special value @p TIME_INFINITE is allowed.
- *                 It is not possible to specify @p TIME_IMMEDIATE as timeout
- *                 specification, it is interpreted as a normal time
- *                 specification.
+ * @param[in] time the number of ticks before the operation timeouts, the
+ *                 special values are handled as follow:
+ *                 - @a TIME_INFINITE the thread enters an infinite sleep
+ *                   state, this is equivalent to invoking @p chSchGoSleepS()
+ *                   but, of course, less efficient.
+ *                 - @a TIME_IMMEDIATE this value is accepted but interpreted
+ *                   as a normal time specification not as an immediate timeout
+ *                   specification.
+ *                 .
  * @return The wakeup message.
  * @retval RDY_TIMEOUT if a timeout occurs.
  * @note The function must be called in the system mutex zone.

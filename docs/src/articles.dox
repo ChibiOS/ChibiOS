@@ -29,6 +29,7 @@
  * - @subpage article_jitter
  * - @subpage article_timing
  * - @subpage article_portguide
+ * - @subpage article_design
  * .
  */
 /** @} */

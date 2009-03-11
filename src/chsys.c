@@ -75,7 +75,6 @@ void chSysInit(void) {
   chSysEnable();
 
   /*
-   * The idle thread is created using the port-provided implementation.
    * This thread has the lowest priority in the system, its role is just to
    * serve interrupts in its context while keeping the lowest energy saving
    * mode compatible with the system status.
