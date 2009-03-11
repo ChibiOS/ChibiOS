@@ -44,8 +44,8 @@ void trace_init(void) {
 /**
  * @brief Inserts in the circular debug trace buffer a context switch record.
  *
- * @param otp the thread being switched out
- * @param ntp the thread to be resumed
+ * @param[in] otp the thread being switched out
+ * @param[in] ntp the thread to be resumed
  */
 void chDbgTrace(Thread *otp, Thread *ntp) {
 
@@ -62,14 +62,14 @@ void chDbgTrace(Thread *otp, Thread *ntp) {
 /**
  * @brief Pointer to the panic message.
  * @details This pointer is meant to be accessed through the debugger, it is
- * written once and then the system is halted.
+ *          written once and then the system is halted.
  */
 char *panic_msg;
 
 /**
  * @brief Prints a panic message on the console and then halts the system.
  *
- * @param msg the pointer to the panic message string
+ * @param[in] msg the pointer to the panic message string
  */
 void chDbgPanic(char *msg) {
 

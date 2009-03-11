@@ -76,7 +76,7 @@ Thread *chSchReadyI(Thread *tp) {
  * @details The next highest priority thread becomes running. The threads
  *          states are described into @p threads.h.
  *
- * @param newstate the new thread state
+ * @param[in] newstate the new thread state
  * @note The function must be called in the system mutex zone.
  * @note The function is not meant to be used in the user code directly.
  */

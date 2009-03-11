@@ -37,10 +37,10 @@
 /**
  * @brief Sends a message to the specified thread.
  * @details The sender is stopped until the receiver executes a
- * @p chMsgRelease()after receiving the message.
+ *          @p chMsgRelease()after receiving the message.
  *
- * @param tp the pointer to the thread
- * @param msg the message
+ * @param[in] tp the pointer to the thread
+ * @param[in] msg the message
  * @return The return message from @p chMsgRelease().
  */
 msg_t chMsgSend(Thread *tp, msg_t msg) {
@@ -62,13 +62,13 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
 #if CH_USE_EVENTS && CH_USE_MESSAGES_EVENT
 /**
  * @brief Sends a message to the specified thread and atomically pends an
- * events set.
+ *        events set.
  * @details The sender is stopped until the receiver executes a
- * @p chMsgRelease() after receiving the message.
+ *          @p chMsgRelease() after receiving the message.
  *
- * @param tp the pointer to the thread
- * @param msg the message
- * @param mask the event flags set to be pended
+ * @param[in] tp the pointer to the thread
+ * @param[in] msg the message
+ * @param[in] mask the event flags set to be pended
  * @return The return message from @p chMsgRelease().
  * @note This function assumes that the receiving thread is not sleeping into
  *       a @p chMsgWait(). The use case is that the server thread is waiting
@@ -136,7 +136,7 @@ msg_t chMsgGet(void) {
 /**
  * @brief Releases the thread waiting on top of the messages queue.
  *
- * @param msg the message returned to the message sender
+ * @param[in] msg the message returned to the message sender
  * @note You can call this function only if there is a message already in the
  *       queue else the result will be unpredictable (a crash most likely).
  *       Exiting from the @p chMsgWait() ensures you have at least one

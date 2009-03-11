@@ -31,7 +31,7 @@
 /**
  * @brief Initializes s @p Mutex structure.
  *
- * @param mp pointer to a @p Mutex structure
+ * @param[out] mp pointer to a @p Mutex structure
  * @note This function can be invoked from within an interrupt handler even if
  *       it is not an I-Class API because it does not touch any critical kernel
  *       data structure.
@@ -47,7 +47,7 @@ void chMtxInit(Mutex *mp) {
 /**
  * @brief Locks the specified mutex.
  *
- * @param mp pointer to the @p Mutex structure
+ * @param[in] mp pointer to the @p Mutex structure
  */
 void chMtxLock(Mutex *mp) {
 
@@ -61,7 +61,7 @@ void chMtxLock(Mutex *mp) {
 /**
  * @brief Locks the specified mutex.
  *
- * @param mp pointer to the @p Mutex structure
+ * @param[in] mp pointer to the @p Mutex structure
  * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
  *       block.
  */
@@ -136,10 +136,10 @@ void chMtxLockS(Mutex *mp) {
 /**
  * @brief Tries to lock a mutex.
  * @details This function does not have any overhead related to
- * the priority inheritance mechanism because it does not try to enter a sleep
- * state on the mutex.
+ *          the priority inheritance mechanism because it does not try to
+ *          enter a sleep state on the mutex.
  *
- * @param mp pointer to the @p Mutex structure
+ * @param[in] mp pointer to the @p Mutex structure
  * @retval TRUE if the mutex was successfully acquired
  * @retval FALSE if the lock attempt failed.
  */
@@ -157,9 +157,9 @@ bool_t chMtxTryLock(Mutex *mp) {
 /**
  * @brief Tries to lock a mutex.
  * @details This function does not have any overhead related to
- * the priority inheritance mechanism because it does not try to enter a sleep
- * state on the mutex.
- * @param mp pointer to the @p Mutex structure
+ *          the priority inheritance mechanism because it does not try to
+ *          enter a sleep state on the mutex.
+ * @param[in] mp pointer to the @p Mutex structure
  * @retval TRUE if the mutex was successfully acquired
  * @retval FALSE if the lock attempt failed.
  * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
@@ -273,9 +273,9 @@ Mutex *chMtxUnlockS(void) {
 /**
  * @brief Unlocks all the mutexes owned by the invoking thread.
  * @details This function is <b>MUCH MORE</b> efficient than releasing the
- * mutexes one by one and not just because the call overhead, this function
- * does not have any overhead related to the priority inheritance mechanism
- * too.
+ *          mutexes one by one and not just because the call overhead,
+ *          this function does not have any overhead related to the priority
+ *          inheritance mechanism.
  */
 void chMtxUnlockAll(void) {
 

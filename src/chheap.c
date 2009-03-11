@@ -95,13 +95,13 @@ void heap_init(void) {
 
 /**
  * @brief Allocates a block of memory from the heap by using the first-fit
- * algorithm.
+ *        algorithm.
  * @details The allocated block is guaranteed to be properly aligned for a
- * pointer data type.
+ *          pointer data type.
  *
- * @param size the size of the block to be allocated. Note that the allocated
- *             block may be a bit bigger than the requested size for alignment
- *             and fragmentation reasons.
+ * @param[in] size the size of the block to be allocated. Note that the
+ *                 allocated block may be a bit bigger than the requested
+ *                 size for alignment and fragmentation reasons.
  * @return A pointer to the allocated block.
  * @retval NULL if the block cannot be allocated.
  */
@@ -148,7 +148,7 @@ void *chHeapAlloc(size_t size) {
 /**
  * @brief Frees a previously allocated memory block.
  *
- * @param p the memory block pointer
+ * @param[in] p the memory block pointer
  */
 void chHeapFree(void *p) {
   struct header *qp, *hp;
@@ -195,8 +195,8 @@ void chHeapFree(void *p) {
 /**
  * @brief Reports the heap status.
  *
- * @param sizep pointer to a variable that will receive the total fragmented
- *              free space
+ * @param[in] sizep pointer to a variable that will receive the total
+ *                  fragmented free space
  * @return The number of fragments in the heap.
  * @note This function is meant to be used in the test suite, it should not be
  *       really useful for the application code.
