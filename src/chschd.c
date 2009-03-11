@@ -32,6 +32,7 @@ ReadyList rlist;
 
 /**
  * @brief Scheduler initialization.
+ *
  * @note Internally invoked by the @p chSysInit().
  */
 void scheduler_init(void) {
@@ -48,10 +49,8 @@ void scheduler_init(void) {
  *
  * @param[in] tp the Thread to be made ready
  * @return The Thread pointer.
- * @note The function must be called in the system mutex zone.
  * @note The function does not reschedule, the @p chSchRescheduleS() should
  *       be called soon after.
- * @note The function is not meant to be used in the user code directly.
  */
 #if CH_OPTIMIZE_SPEED
 /* NOTE: it is inlined in this module only.*/
@@ -77,8 +76,6 @@ Thread *chSchReadyI(Thread *tp) {
  *          states are described into @p threads.h.
  *
  * @param[in] newstate the new thread state
- * @note The function must be called in the system mutex zone.
- * @note The function is not meant to be used in the user code directly.
  */
 void chSchGoSleepS(tstate_t newstate) {
   Thread *otp;
@@ -133,8 +130,6 @@ static void wakeup(void *p) {
  *                 .
  * @return The wakeup message.
  * @retval RDY_TIMEOUT if a timeout occurs.
- * @note The function must be called in the system mutex zone.
- * @note The function is not meant to be used in the user code directly.
  */
 msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
 
@@ -159,8 +154,6 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
  *
  * @param[in] ntp the Thread to be made ready
  * @param[in] msg message to the awakened thread
- * @note The function must be called in the system mutex zone.
- * @note The function is not meant to be used in the user code directly.
  * @note It is equivalent to a @p chSchReadyI() followed by a
  *       @p chSchRescheduleS() but much more efficient.
  */
@@ -191,7 +184,8 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
 /**
  * @brief Switches to the first thread on the runnable queue.
  *
- * @note It is intended to be called if @p chSchRescRequiredI() evaluates to @p TRUE.
+ * @note It is intended to be called if @p chSchRescRequiredI() evaluates to
+ *       @p TRUE.
  */
 void chSchDoRescheduleI(void) {
 
@@ -212,8 +206,6 @@ void chSchDoRescheduleI(void) {
  * @brief Performs a reschedulation if a higher priority thread is runnable.
  * @details If a thread with a higher priority than the current thread is in
  *          the ready list then make the higher priority thread running.
- *
- * @note The function must be called in the system mutex zone.
  */
 void chSchRescheduleS(void) {
   /* first thread in the runnable queue has higher priority than the running

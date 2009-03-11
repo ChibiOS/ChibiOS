@@ -94,12 +94,12 @@ Thread *chThdInit(void *workspace, size_t wsize,
              (prio <= HIGHPRIO) && (pf != NULL),
              "chThdInit");
 #if CH_DBG_FILL_THREADS
-  memfill(workspace,
-		  (uint8_t)workspace + sizeof(Thread),
-		  THREAD_FILL_VALUE);
-  memfill((uint8_t)workspace + sizeof(Thread),
-		  (uint8_t)workspace + wsize
-		  STACK_FILL_VALUE);
+  memfill((uint8_t *)workspace,
+          (uint8_t *)workspace + sizeof(Thread),
+          THREAD_FILL_VALUE);
+  memfill((uint8_t *)workspace + sizeof(Thread),
+          (uint8_t *)workspace + wsize,
+          STACK_FILL_VALUE);
 #endif
   SETUP_CONTEXT(workspace, wsize, pf, arg);
   return init_thread(tp, prio);

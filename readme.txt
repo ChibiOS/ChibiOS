@@ -77,6 +77,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   added a specific test case to the test suite (backported in stable branch).
 - FIX: Fixed a problem in time ranges (bug 2680425)(backported in stable
   branch).
+- FIX: Build error with option CH_DBG_FILL_THREADS (bug 2683965).
 - FIX: Fixed a wrong parameter check in chVTSetI() and chThdSleep()
   (bug 2679155).
 - FIX: Build error with options CH_USE_NESTED_LOCKS && !CH_OPTIMIZE_SPEED
