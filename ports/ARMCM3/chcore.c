@@ -43,19 +43,6 @@ void port_halt(void) {
 }
 
 /**
- * Start a thread by invoking its work function.
- * If the work function returns @p chThdExit() is automatically invoked.
- */
-/** @cond never */
-__attribute__((naked, weak))
-/** @endcond */
-void threadstart(void) {
-
-  asm volatile ("blx     r1                                     \n\t" \
-                "bl      chThdExit");
-}
-
-/**
  * System Timer vector.
  * This interrupt is used as system tick.
  * @note The timer is initialized in the board setup code.

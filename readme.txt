@@ -87,6 +87,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   the macro chSysGetTime() in chTimeNow(), the old names are still recognized
   but marked as deprecated (fixes the bug 2678953 but goes a bit further by
   introducing a new API category "Time").
+- OPT: Small optimization to the Cortex-M3 port code, improved thread
+  related performance scores and smaller code.
 - Removed testcond.c|h and moved the test cases into testmtx.c. Mutexes and
   condvars have to be tested together.
 - Added architecture diagram to the documentation.

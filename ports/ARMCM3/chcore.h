@@ -155,8 +155,8 @@ struct context {
   tp->p_ctx.r13->basepri = BASEPRI_USER;                                \
   tp->p_ctx.r13->lr_exc = (regarm_t)0xFFFFFFFD;                         \
   tp->p_ctx.r13->r0 = arg;                                              \
-  tp->p_ctx.r13->r1 = pf;                                               \
-  tp->p_ctx.r13->pc = threadstart;                                      \
+  tp->p_ctx.r13->lr_thd = chThdExit;                                    \
+  tp->p_ctx.r13->pc = pf;                                               \
   tp->p_ctx.r13->xpsr = (regarm_t)0x01000000;                           \
 }
 
@@ -303,7 +303,6 @@ struct context {
 extern "C" {
 #endif
   void port_halt(void);
-  void threadstart(void);
 #ifdef __cplusplus
 }
 #endif
