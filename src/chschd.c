@@ -52,6 +52,7 @@ void scheduler_init(void) {
  * @note The function does not reschedule, the @p chSchRescheduleS() should
  *       be called soon after.
  */
+#if 0
 #if CH_OPTIMIZE_SPEED
 /* NOTE: it is inlined in this module only.*/
 INLINE Thread *chSchReadyI(Thread *tp) {
@@ -69,6 +70,28 @@ Thread *chSchReadyI(Thread *tp) {
   tp->p_prev->p_next = cp->p_prev = tp;
   return tp;
 }
+#endif
+
+#if 1
+#if CH_OPTIMIZE_SPEED
+/* NOTE: it is inlined in this module only.*/
+INLINE Thread *chSchReadyI(Thread *tp) {
+#else
+Thread *chSchReadyI(Thread *tp) {
+#endif
+  Thread *cp;
+
+  tp->p_state = PRREADY;
+  cp = (void *)&rlist;
+  do {
+    cp = cp->p_next;
+  } while (cp->p_prio >= tp->p_prio);
+  /* Insertion on p_prev.*/
+  tp->p_prev = (tp->p_next = cp)->p_prev;
+  tp->p_prev->p_next = cp->p_prev = tp;
+  return tp;
+}
+#endif
 
 /**
  * @brief Puts the current thread to sleep into the specified state.
@@ -104,8 +127,12 @@ static void wakeup(void *p) {
     chSemFastSignalI(tp->p_wtsemp);
     /* Falls into, intentional. */
 #endif
-  case PRWTCOND:
+#if CH_USE_MUTEXES
   case PRWTMTX:
+#endif
+#if CH_USE_CONDVARS
+  case PRWTCOND:
+#endif
     /* States requiring dequeuing. */
     dequeue(tp);
   }
