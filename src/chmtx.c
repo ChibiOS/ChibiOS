@@ -88,7 +88,7 @@ void chMtxLockS(Mutex *mp) {
         /* boost the owner of this mutex if needed */
         tp = tp->p_wtmtxp->m_owner;
         continue;
-#if CH_USE_CONDVARS
+#ifdef CH_USE_CONDVARS
       case PRWTCOND:
         /* Requeues tp with its new priority on the condvar queue. */
         prio_insert(dequeue(tp), &tp->p_wtcondp->c_queue);
