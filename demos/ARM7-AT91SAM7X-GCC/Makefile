@@ -50,7 +50,6 @@ include ../../test/test.mk
 # setting.
 CSRC = ../../ports/ARM7/chcore.c \
        ../../ports/ARM7-AT91SAM7X/sam7x_serial.c \
-       ../../ports/ARM7-AT91SAM7X/sam7x_emac.c \
        ${KERNSRC} \
        ${TESTSRC} \
        at91lib/aic.c \
