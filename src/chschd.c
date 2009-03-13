@@ -52,27 +52,6 @@ void scheduler_init(void) {
  * @note The function does not reschedule, the @p chSchRescheduleS() should
  *       be called soon after.
  */
-#if 0
-#if CH_OPTIMIZE_SPEED
-/* NOTE: it is inlined in this module only.*/
-INLINE Thread *chSchReadyI(Thread *tp) {
-#else
-Thread *chSchReadyI(Thread *tp) {
-#endif
-  Thread *cp;
-
-  tp->p_state = PRREADY;
-  cp = rlist.p_next;
-  while (cp->p_prio >= tp->p_prio)
-    cp = cp->p_next;
-  /* Insertion on p_prev.*/
-  tp->p_prev = (tp->p_next = cp)->p_prev;
-  tp->p_prev->p_next = cp->p_prev = tp;
-  return tp;
-}
-#endif
-
-#if 1
 #if CH_OPTIMIZE_SPEED
 /* NOTE: it is inlined in this module only.*/
 INLINE Thread *chSchReadyI(Thread *tp) {
@@ -91,7 +70,6 @@ Thread *chSchReadyI(Thread *tp) {
   tp->p_prev->p_next = cp->p_prev = tp;
   return tp;
 }
-#endif
 
 /**
  * @brief Puts the current thread to sleep into the specified state.
