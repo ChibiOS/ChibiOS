@@ -221,18 +221,30 @@ struct context {
 /**
  * Raises the base priority to kernel level.
  */
+#if CH_OPTIMIZE_SPEED
 #define port_lock() {                                                   \
   register uint32_t tmp asm ("r3") = BASEPRI_KERNEL;                    \
   asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
 }
+#else
+#define port_lock() {                                                   \
+  asm volatile ("bl     _port_lock" : : : "r3", "lr");                  \
+}
+#endif
 
 /**
  * Lowers the base priority to user level.
  */
+#if CH_OPTIMIZE_SPEED
 #define port_unlock() {                                                 \
   register uint32_t tmp asm ("r3") = BASEPRI_USER;                      \
   asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
 }
+#else
+#define port_unlock() {                                                 \
+  asm volatile ("bl     _port_unlock" : : : "r3", "lr");                \
+}
+#endif
 
 /**
  * Same as @p port_lock() in this port.
@@ -303,6 +315,10 @@ struct context {
 extern "C" {
 #endif
   void port_halt(void);
+#if !CH_OPTIMIZE_SPEED
+  void _port_lock(void);
+  void _port_unlock(void);
+#endif
 #ifdef __cplusplus
 }
 #endif

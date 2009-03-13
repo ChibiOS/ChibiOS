@@ -42,6 +42,18 @@ void port_halt(void) {
   }
 }
 
+#if !CH_OPTIMIZE_SPEED
+void _port_lock(void) {
+  register uint32_t tmp asm ("r3") = BASEPRI_KERNEL;
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));
+}
+
+void _port_unlock(void) {
+  register uint32_t tmp asm ("r3") = BASEPRI_USER;
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));
+}
+#endif
+
 /**
  * System Timer vector.
  * This interrupt is used as system tick.

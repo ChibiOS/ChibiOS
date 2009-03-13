@@ -87,8 +87,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   the macro chSysGetTime() in chTimeNow(), the old names are still recognized
   but marked as deprecated (fixes the bug 2678953 but goes a bit further by
   introducing a new API category "Time").
-- OPT: Small optimization to the Cortex-M3 port code, improved thread
+- OPT: Small optimization to the Cortex-M3 thread startup code, improved thread
   related performance scores and smaller code.
+- OPT: Alternative implementations for port_lock() and port_unlock() when
+  CH_OPTIMIZE_SPEED is FALSE, huge space savings.
 - OPT: Improved ready list and priority ordered lists code, saved some tens
   of bytes here and there in the kernel.
 - Modified the test thread function to return the global test result flag.
