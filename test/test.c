@@ -275,5 +275,5 @@ msg_t TestThread(void *p) {
   else
     test_println("SUCCESS");
 
-  return 0;
+  return (msg_t)global_fail;
 }

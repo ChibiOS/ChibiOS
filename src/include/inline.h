@@ -35,10 +35,10 @@
 #if CH_OPTIMIZE_SPEED
 static INLINE void prio_insert(Thread *tp, ThreadsQueue *tqp) {
 
-  Thread *cp = tqp->p_next;
-  while ((cp != (Thread *)tqp) && (cp->p_prio >= tp->p_prio))
+  Thread *cp = (Thread *)tqp;
+  do {
     cp = cp->p_next;
-  /* Insertion on p_prev.*/
+  } while ((cp != (Thread *)tqp) && (cp->p_prio >= tp->p_prio));
   tp->p_prev = (tp->p_next = cp)->p_prev;
   tp->p_prev->p_next = cp->p_prev = tp;
 }

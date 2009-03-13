@@ -38,11 +38,12 @@
 void prio_insert(Thread *tp, ThreadsQueue *tqp) {
 
   /* cp iterates over the queue */
-  Thread *cp = tqp->p_next;
-  /* not end of queue? and cp has equal or higher priority than tp? */
-  while ((cp != (Thread *)tqp) && (cp->p_prio >= tp->p_prio))
+  Thread *cp = (Thread *)tqp;
+  do {
     /* iterate to next thread in queue */
     cp = cp->p_next;
+    /* not end of queue? and cp has equal or higher priority than tp? */
+  } while ((cp != (Thread *)tqp) && (cp->p_prio >= tp->p_prio));
   /* insert before cp, point tp to next and prev in queue */
   tp->p_prev = (tp->p_next = cp)->p_prev;
   /* make prev point to tp, and cp point back to tp */

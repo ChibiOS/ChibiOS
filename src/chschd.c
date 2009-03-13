@@ -61,7 +61,7 @@ Thread *chSchReadyI(Thread *tp) {
   Thread *cp;
 
   tp->p_state = PRREADY;
-  cp = (void *)&rlist;
+  cp = (Thread *)&rlist;
   do {
     cp = cp->p_next;
   } while (cp->p_prio >= tp->p_prio);

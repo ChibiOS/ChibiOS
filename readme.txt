@@ -89,6 +89,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   introducing a new API category "Time").
 - OPT: Small optimization to the Cortex-M3 port code, improved thread
   related performance scores and smaller code.
+- OPT: Improved ready list and priority ordered lists code, saved some tens
+  of bytes here and there in the kernel.
+- Modified the test thread function to return the global test result flag.
 - Removed testcond.c|h and moved the test cases into testmtx.c. Mutexes and
   condvars have to be tested together.
 - Added architecture diagram to the documentation.

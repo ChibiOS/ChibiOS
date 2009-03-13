@@ -39,6 +39,7 @@ X Abstract I/O channels rather than just serial ports.
 ? Multiple heaps, disjoint heaps, heaps in heaps.
 - Update C++ wrapper (Heap, Pools, Mailboxes and any new feature).
 - Think about making threads return void.
+- Add tests documentation to the general documentation via doxygen.
 
 Ideas for 2.x.x:
 - High resolution timers and tickless kernel.
