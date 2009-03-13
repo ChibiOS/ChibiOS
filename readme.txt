@@ -87,6 +87,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   the macro chSysGetTime() in chTimeNow(), the old names are still recognized
   but marked as deprecated (fixes the bug 2678953 but goes a bit further by
   introducing a new API category "Time").
+- FIX: Fixed makefile problems in the AT91SAM7X256 and STM32 demos (bugs
+  2686347 and 2686451).
+- FIX: Fixed AT91SAM7X256 EMAC driver (bug 2686349).
 - OPT: Small optimization to the Cortex-M3 thread startup code, improved thread
   related performance scores and smaller code.
 - OPT: Alternative implementations for port_lock() and port_unlock() when
