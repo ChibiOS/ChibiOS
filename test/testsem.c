@@ -27,10 +27,9 @@
 
 static Semaphore sem1;
 
-#if !CH_USE_SEMAPHORES_PRIORITY
 static char *sem1_gettest(void) {
 
-  return "Semaphores, FIFO enqueuing test";
+  return "Semaphores, enqueuing test";
 }
 
 static void sem1_setup(void) {
@@ -58,7 +57,11 @@ static void sem1_execute(void) {
   chSemSignal(&sem1);
   chSemSignal(&sem1);
   test_wait_threads();
+#if CH_USE_SEMAPHORES_PRIORITY
+  test_assert_sequence("ADCEB");
+#else
   test_assert_sequence("ABCDE");
+#endif
 }
 
 const struct testcase testsem1 = {
@@ -67,7 +70,6 @@ const struct testcase testsem1 = {
   NULL,
   sem1_execute
 };
-#endif /* CH_USE_SEMAPHORES_PRIORITY */
 
 #if CH_USE_SEMAPHORES_TIMEOUT
 static char *sem2_gettest(void) {
@@ -114,9 +116,7 @@ const struct testcase testsem2 = {
  */
 const struct testcase * const patternsem[] = {
 #if CH_USE_SEMAPHORES
-#if !CH_USE_SEMAPHORES_PRIORITY
   &testsem1,
-#endif
 #if CH_USE_SEMAPHORES_TIMEOUT
   &testsem2,
 #endif
