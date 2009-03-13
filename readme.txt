@@ -92,10 +92,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Fixed AT91SAM7X256 EMAC driver (bug 2686349).
 - OPT: Small optimization to the Cortex-M3 thread startup code, improved thread
   related performance scores and smaller code.
-- OPT: Alternative implementations for port_lock() and port_unlock() when
-  CH_OPTIMIZE_SPEED is FALSE, huge space savings.
-- OPT: Improved ready list and priority ordered lists code, saved some tens
-  of bytes here and there in the kernel.
+- OPT: Alternative, non-inlined and more compact, implementations for
+  port_lock() and port_unlock() in the Cortex-M3 port when CH_OPTIMIZE_SPEED
+  is FALSE.
+- OPT: Improved ready list and priority ordered lists code, some space saved.
 - Modified the test thread function to return the global test result flag.
 - Removed testcond.c|h and moved the test cases into testmtx.c. Mutexes and
   condvars have to be tested together.
