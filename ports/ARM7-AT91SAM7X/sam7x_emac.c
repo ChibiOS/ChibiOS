@@ -318,7 +318,9 @@ BufDescriptorEntry *EMACGetTransmitBuffer(void) {
  */
 void EMACTransmit(BufDescriptorEntry *cptr, size_t size) {
 
-  chDbgAssert(size <= EMAC_TRANSMIT_BUFFERS_SIZE, "sam7x_emac.c, EMACTransmit");
+  chDbgAssert(size <= EMAC_TRANSMIT_BUFFERS_SIZE,
+              "EMACTransmit(), #1",
+              "unexpected size");
 
   chSysLock();
   if (cptr < &tent[EMAC_TRANSMIT_BUFFERS - 1])
@@ -397,7 +399,7 @@ restart:
     }
 
     if (!overflow) {
-      chDbgAssert(segsize <= 128, "sam7x_emac.c, EMACReceive()")
+      chDbgAssert(segsize <= 128, "EMACReceive(), #1", "");
       memcpy(p, (void *)(rxptr->w1 & W1_R_ADDRESS_MASK), segsize);
       p += segsize;
       size += segsize;
