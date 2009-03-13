@@ -102,6 +102,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   branch).
 - FIX: Fixed a problem with a wrong declaration of the PLL structure in the
   file lpc214x.h (backported in stable branch).
+- FIX: Removed EMAC driver from the AT91SAM7X256 demo makefile (bug 2686347).
+- FIX: Removed C++ wrapper from the STM32 demo makefile (bug 2686451).
 - FIX: Fixed a problem with some event APIs not showing in the documentation
   (backported in stable branch).
 - FIX: Fixed wrong assertions in chThdWait() and chHeapFree() (backported in
