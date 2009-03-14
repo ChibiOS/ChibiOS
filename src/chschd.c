@@ -86,9 +86,7 @@ void chSchGoSleepS(tstate_t newstate) {
 #if CH_USE_ROUNDROBIN
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-#if CH_DBG_ENABLE_TRACE
   chDbgTrace(otp, currp);
-#endif
   chSysSwitchI(otp, currp);
 }
 
@@ -163,25 +161,22 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
  *       @p chSchRescheduleS() but much more efficient.
  */
 void chSchWakeupS(Thread *ntp, msg_t msg) {
+
   ntp->p_rdymsg = msg;
+  /* If the waken thread has a not-greater priority than the current
+   * one then it is just inserted in the ready list else it made
+   * running immediately and the invoking thread goes in the ready
+   * list instead.*/
   if (ntp->p_prio <= currp->p_prio)
-    /* the woken thread has equal or lower priority than the running thread */
     chSchReadyI(ntp);
   else {
-    /* the woken thread has higher priority than the running thread and thus
-     * preempts the currently running thread. */
     Thread *otp = currp;
     chSchReadyI(otp);
-    /* change the to-be-run thread to running state */
     (currp = ntp)->p_state = PRCURR;
 #if CH_USE_ROUNDROBIN
     rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-#if CH_DBG_ENABLE_TRACE
-    /* trace the context switch */
     chDbgTrace(otp, ntp);
-#endif
-    /* switch the thread context */
     chSysSwitchI(otp, ntp);
   }
 }
@@ -201,9 +196,7 @@ void chSchDoRescheduleI(void) {
 #if CH_USE_ROUNDROBIN
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-#if CH_DBG_ENABLE_TRACE
   chDbgTrace(otp, currp);
-#endif
   chSysSwitchI(otp, currp);
 }
 
@@ -221,6 +214,8 @@ void chSchRescheduleS(void) {
 
 /**
  * @brief Evaluates if a reschedulation is required.
+ * @details The decision is taken by comparing the relative priorities and
+ *          depending on the state of the round robin timeout counter.
  *
  * @retval TRUE if there is a thread that should go in running state.
  * @retval FALSE if a reschedulation is not required.
@@ -232,10 +227,11 @@ bool_t chSchRescRequiredI(void) {
   /* If the running thread has not reached its time quantum, reschedule only
    * if the first thread on the ready queue has a higher priority.
    * Otherwise, if the running thread has used up its time quantum, reschedule
-   * if the first thread on the ready queue has equal or higher priority.
-   */
+   * if the first thread on the ready queue has equal or higher priority.*/
   return rlist.r_preempt ? p1 > p2 : p1 >= p2;
 #else
+  /* If the round robin feature is not enabled then performs a simpler
+   * comparison.*/
   return p1 > p2;
 #endif
 }

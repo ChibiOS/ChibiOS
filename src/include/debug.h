@@ -118,6 +118,12 @@ typedef struct {
 #define chDbgPanic(msg) {}
 #endif
 
+#if !CH_DBG_ENABLE_TRACE
+/* When the trace feature is disabled this function is replaced by an empty
+ * macro.*/
+#define chDbgTrace(otp, ntp) {}
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
