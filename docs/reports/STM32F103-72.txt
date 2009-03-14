@@ -1,5 +1,5 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.0.1 final
+Kernel:   ChibiOS/RT 1.0.2 final
 Compiler: GCC 4.3.2 (YAGARTO 28.09.2008)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: SYSCLK=72, ACR=0x12 (2 wait states)

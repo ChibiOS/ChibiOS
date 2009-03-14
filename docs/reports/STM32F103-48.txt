@@ -1,5 +1,5 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.0.1 final
+Kernel:   ChibiOS/RT 1.0.2 final
 Compiler: GCC 4.3.2 (YAGARTO 28.09.2008)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: SYSCLK=48, ACR=0x11 (1 wait state)
@@ -77,7 +77,7 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 22 (Benchmark, I/O Queues throughput)
---- Score : 377572 bytes/S
+--- Score : 377568 bytes/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 23 (Benchmark, virtual timers set/reset)
