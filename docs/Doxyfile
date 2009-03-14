@@ -1311,6 +1311,7 @@ PREDEFINED             = __DOXYGEN__ \
                          CH_USE_MESSAGES_EVENT=1 \
                          CH_USE_DYNAMIC=1 \
                          CH_DBG_ENABLE_ASSERTS=1 \
+                         CH_DBG_ENABLE_CHECKS=1 \
                          CH_DBG_ENABLE_TRACE=1 \
                          CH_DBG_ENABLE_STACK_CHECK=1 \
                          CH_DBG_FILL_THREADS=1 \

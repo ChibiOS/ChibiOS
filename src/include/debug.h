@@ -78,7 +78,7 @@ typedef struct {
  * Function parameter check, if the condition check fails then the kernel
  * panics.
  * @param c the condition to be verified to be true
- * @param m the undecorated function name
+ * @param func the undecorated function name
  * @note The condition is tested only if the @p CH_DBG_ENABLE_CHECKS switch is
  *       specified in @p chconf.h else the macro does nothing.
  */
@@ -115,6 +115,8 @@ typedef struct {
 #endif /* !CH_DBG_ENABLE_ASSERTS */
 
 #if !(CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK)
+/* When the debug features are disabled this function is replaced by an empty
+ * macro.*/
 #define chDbgPanic(msg) {}
 #endif
 
