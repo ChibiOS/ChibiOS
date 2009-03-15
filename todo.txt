@@ -23,7 +23,6 @@ After 1.0.0:
 * Stack sizes article into the documentation.
 * Logo...
 * Architecture diagram.
-- Code examples into the documentation.
 
 After 1.2.0:
 X Abstract I/O channels rather than just serial ports.
@@ -40,6 +39,7 @@ X Abstract I/O channels rather than just serial ports.
 - Update C++ wrapper (Heap, Pools, Mailboxes and any new feature).
 - Think about making threads return void.
 - Add tests documentation to the general documentation via doxygen.
+- Code examples into the documentation.
 
 Ideas for 2.x.x:
 - High resolution timers and tickless kernel.

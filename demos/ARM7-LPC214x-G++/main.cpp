@@ -108,7 +108,7 @@ protected:
   }
 
 public:
-  SequencerThread(const seqop_t *sequence) : EnhancedThread<64>("sequencer") {
+  SequencerThread(const seqop_t *sequence) : EnhancedThread<128>("sequencer") {
 
     base = curr = sequence;
   }
