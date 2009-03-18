@@ -45,7 +45,7 @@ void trace_init(void) {
  * @brief Inserts in the circular debug trace buffer a context switch record.
  *
  * @param[in] otp the thread being switched out
- * @param[in] ntp the thread to be resumed
+ * @param[in] ntp the thread to be switched in
  */
 void chDbgTrace(Thread *otp, Thread *ntp) {
 

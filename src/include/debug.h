@@ -126,22 +126,23 @@ typedef struct {
 #define chDbgTrace(otp, ntp) {}
 #endif
 
+#if !defined(__DOXYGEN__)
 #ifdef __cplusplus
 extern "C" {
 #endif
-#if !defined(__DOXYGEN__) && CH_DBG_ENABLE_TRACE
+#if CH_DBG_ENABLE_TRACE
   extern TraceBuffer trace_buffer;
   void trace_init(void);
   void chDbgTrace(Thread *otp, Thread *ntp);
 #endif
-#if !defined(__DOXYGEN__) && \
-    (CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK)
+#if CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK
   extern char *panic_msg;
   void chDbgPanic(char *msg);
 #endif
 #ifdef __cplusplus
 }
 #endif
+#endif /* !defined(__DOXYGEN__) */
 
 #endif /* _DEBUG_H_ */
 
