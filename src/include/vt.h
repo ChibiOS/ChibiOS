@@ -123,15 +123,17 @@ extern "C" {
 /**
  * Provided for backward compatibility.
  * @deprecated Will be removed in 1.2.0.
+ * @see chTimeNow()
  */
 #define chSysGetTime() chTimeNow()
 
 /**
  * Provided for backward compatibility.
  * @deprecated Will be removed in 1.2.0.
+ * @see chTimeIsWithin()
  */
 #define chSysInTimeWindow(start, end) chTimeIsWithin(start, end)
- 
+
 #endif /* _VT_H_ */
 
 /** @} */

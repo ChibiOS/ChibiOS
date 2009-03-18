@@ -90,6 +90,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Fixed makefile problems in the AT91SAM7X256 and STM32 demos (bugs
   2686347 and 2686451).
 - FIX: Fixed AT91SAM7X256 EMAC driver (bug 2686349).
+- FIX: Fixed small some errors in the documentation (bug 2692510).
 - OPT: Small optimization to the Cortex-M3 thread startup code, improved thread
   related performance scores and smaller code.
 - OPT: Alternative, non-inlined and more compact, implementations for

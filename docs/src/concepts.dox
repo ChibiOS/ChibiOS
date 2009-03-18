@@ -62,7 +62,7 @@
  *   subject to jitter, see @ref article_jitter. Such sources are not
  *   supported on all the architectures.<br>
  *   Fast interrupts are not allowed to invoke any operating system API from
- *   within their handlers. Fast interrupt sources may however pend a lower
+ *   within their handlers. Fast interrupt sources may, however, pend a lower
  *   priority regular interrupt where access to the operating system is
  *   possible.
  * - <b>Non Maskable Interrupts</b>. Non maskable interrupt sources are
@@ -110,7 +110,7 @@
  *   <b>and</b> an error is detected <b>or</b> after explicitly invoking
  *   @p chSysHalt().
  * .
- * Note that the above state are just <b>Logical States</b> that may have no
+ * Note that the above states are just <b>Logical States</b> that may have no
  * real associated machine state on some architectures. The following diagram
  * shows the possible transitions between the states:
  *
