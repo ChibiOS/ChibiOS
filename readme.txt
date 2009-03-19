@@ -96,7 +96,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - OPT: Alternative, non-inlined and more compact, implementations for
   port_lock() and port_unlock() in the Cortex-M3 port when CH_OPTIMIZE_SPEED
   is FALSE.
-- OPT: Improved ready list and priority ordered lists code, some space saved.
+- OPT: Improved ready list and priority ordered lists code, some space saved,
+  better context switch performance.
 - Modified the test thread function to return the global test result flag.
 - Removed testcond.c|h and moved the test cases into testmtx.c. Mutexes and
   condvars have to be tested together.
