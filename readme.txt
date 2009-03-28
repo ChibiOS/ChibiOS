@@ -72,6 +72,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.1.3unstable ***
+- FIX: Fixed makefile demo in STM32 demo, this bug was reported fixed in
+  version 1.1.2 but it was still there (bug 2686451).
+
 *** 1.1.2unstable ***
 - FIX: Fixed priority inheritance problem with condvars (bug 2674756) and
   added a specific test case to the test suite (backported in stable branch).
