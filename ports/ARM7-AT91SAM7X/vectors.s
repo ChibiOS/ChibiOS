@@ -68,4 +68,7 @@ PrefetchHandler:
 .weak AbortHandler
 AbortHandler:
 
+.weak FiqHandler
+FiqHandler:
+
 .loop:  b       .loop

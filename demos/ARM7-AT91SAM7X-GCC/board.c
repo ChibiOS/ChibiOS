@@ -25,11 +25,9 @@
 #include <sam7x_serial.h>
 
 /*
- * FIQ Handler, unused in this demo.
+ * FIQ Handler weak symbol defined in vectors.s.
  */
-__attribute__((interrupt("FIQ")))
-static void FiqHandler(void) {
-}
+void FiqHandler(void);
 
 static CH_IRQ_HANDLER(SpuriousHandler) {
 

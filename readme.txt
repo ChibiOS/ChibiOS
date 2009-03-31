@@ -76,6 +76,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Fixed makefile in STM32 demo, this bug was reported fixed in
   version 1.1.2 but it was still there (bug 2686451).
 - FIX: Fixed makefile in MSP430 demo (bug 2700690).
+- FIX: Fixed thumb mode build error in AT91SAM7X demos (bug 2700695).
 
 *** 1.1.2unstable ***
 - FIX: Fixed priority inheritance problem with condvars (bug 2674756) and
