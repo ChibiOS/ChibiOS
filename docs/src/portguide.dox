@@ -1,0 +1,114 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006-2007 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @page article_portguide Porting ChibiOS/RT for Dummies
+ * @{
+ * Porting the operating system on a new platform is one of the most common
+ * tasks. The difficulty can range from easy to very difficult depending
+ * on several factors.<br>
+ * We can divide in problem in several classes of progressively increasing
+ * difficulty:
+ * - @ref port_board
+ * - @ref port_family
+ * - @ref port_chip
+ * - @ref port_core
+ * .
+ * Another kind of port type is porting to another compiler and this is an
+ * added complexity level on the above classes. The kernel itself is portable
+ * but the port-specific code usually contains compiler specific extensions to
+ * the C language and the asm files syntax is almost never compatible.
+ *
+ * @section port_board Porting the OS to a new board
+ * This is the easiest port type, the scenario is that the specific
+ * microcontroller is already supported and a demo exists. This scenario also
+ * applies when porting the OS on a custom hardware using a supported
+ * microcontroller. This task can be easily performed with the following
+ * steps:
+ * -# Create a new directory under the ChibiOS/RT installation directory:
+ *    <code>./projects/<i>@<my_app_name@></i></code>
+ * -# Copy the microcontroller demo code under the newly created directory.
+ * -# Customize the demo. Usually there are only four files that need to
+ *    be modified:
+ *   - @p board.h This file contains the I/O pins setup for the uC, it
+ *     may also contain other board-dependent settings, as example, clock and
+ *     PLL settings. Customize this file depending on your target hardware.
+ *   - @p board.c This file contains the initialization code, it is possible
+ *     you just need to customize @p board.h and not this file. If you have
+ *     some hardware specific initialization code then put it here.
+ *   - @p Makefile You may edit this file in order to remove the test related
+ *     sources and/or add you application source files.
+ *   - @p main.c It contains the demo simple code, clean it and write your
+ *     own @p main() function here, use this file just as a template.
+ * -# Compile your application and debug.
+ * .
+ * @section port_family Porting the OS to a closely related microcontroller
+ * In this scenario all the above steps are required but an analysis must
+ * be performed to evaluate the differences between from the supported micro
+ * and the target micro. Often the micros just differ for the memory area
+ * sizes and a change to the linker script is enough (the file is usually
+ * named @p ch.ld). Chips having more or less peripherals, everything else
+ * being the same or compatible are not a problem also as long the timer and
+ * the serial peripherals used by the port do not change.<br>
+ * If there are differences in the internal peripherals, as example non
+ * compatible interrupt controllers (this happens in the LPC2000 family)
+ * or differences in UARTS, timers etc then the port falls in the following
+ * category.
+ *
+ * @section port_chip Porting the OS to another microcontroller using the same core
+ * This kind of port is required when a target microcontroller has the same
+ * core (a common example: ARM7) of a supported microcontroller but has
+ * differences in the internal peripherals.<br>
+ * If this is your case proceed as follow:
+ * -# Create a new directory under @p ./ports and name it as follow:
+ *    <code><i>@<arch@></i>-<i>@<chip@></i>[-<i>@<compiler@></i>]</code>
+ *    The compiler part can be omitted if the port uses GCC (our default).
+ *    Examples: @p ARM7-LPC236x or @p ARMCM3-STM32F103-IAR
+ * -# Copy into the newly created directory the most closely related existing
+ *    chip port.
+ * -# Rename the files in order to reflect the name of the new chip.
+ * -# Work out the differences in the drivers.
+ * -# Edit the documentation file @p port.dox, this is required if you want
+ *    to regenerate this documentation including your work.
+ * .
+ * Usually this kind of port just requires a serial driver (and those are very
+ * similar each other) and some code for the interrupt controller (this one
+ * can be part of the core port, as example the Cortex-M3 has this as standard
+ * part of the core).<br>
+ * When the chip port is completed created your application as seen in the
+ * previous sections.
+ *
+ * @section port_core Porting the OS to a whole new architecture
+ * This is the hardest scenario, the time required by core ports depends
+ * strongly by the target architecture complexity and the level of support you
+ * need for the architecture specific features.<br>
+ * As a reference, the MSP430 port took me 2 hours and it worked at the first
+ * run, it can be a reference for simple architectures, the ARM Cortex-M3 was
+ * painful instead, the architecture enforces you to implement things in a very
+ * specific way and I spent 2 week to go through all the documentation and
+ * figure out the correct way to implement the port (you can see that the
+ * preemption context switch is done in a very peculiar way because the
+ * exceptions architecture).<br>
+ * One thing is sure, port an OS to a new architecture is not an easy task and
+ * if you have the required experience for such an effort then probably you
+ * don't need any advice from me. Just follow the directory patterns and fill
+ * the OS template files, the hardest part is decide the correct and efficient
+ * way to implement the context switching.
+ */
+/** @} */
