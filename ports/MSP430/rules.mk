@@ -75,7 +75,7 @@ $(ASMOBJS) : %.o : %.s
 
 clean:
 	-rm -f $(OBJS)
-	-rm -f $(ACSRC:.c=.lst) $(TCSRC:.c=.lst) $(ACPPSRC:.cpp=.lst) $(TCPPSRC:.cpp=.lst) $(ASMSRC:.s=.lst)
+	-rm -f $(CSRC:.c=.lst) $(CPPSRC:.cpp=.lst) $(ASMSRC:.s=.lst)
 	-rm -f $(PROJECT).elf $(PROJECT).dmp $(PROJECT).map $(PROJECT).hex $(PROJECT).bin
 	-rm -fR .dep
 
