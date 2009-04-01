@@ -85,8 +85,9 @@ void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
 void chVTResetI(VirtualTimer *vtp) {
 
   chDbgCheck(vtp != NULL, "chVTResetI");
-  chDbgAssert(vtp->vt_func != NULL, "chVTResetI(), #1",
-              "timer already triggered");
+  chDbgAssert(vtp->vt_func != NULL,
+              "chVTResetI(), #1",
+              "timer not set or already triggered");
 
   if (vtp->vt_next != (void *)&vtlist)
     vtp->vt_next->vt_time += vtp->vt_time;
