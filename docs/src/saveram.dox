@@ -71,7 +71,8 @@ static void MyThread(void *arg) {
 main() {
   chSysInit();
   ...
-  chThdCreateStatic(waMyThread, sizeof(waMyThread), NORMALPRIO, MyThread, NULL);
+  chThdCreateStatic(waMyThread, sizeof(waMyThread), NORMALPRIO,
+                    (tfunc_t)MyThread, NULL);
   ...
 }
  * @endcode

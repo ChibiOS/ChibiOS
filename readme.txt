@@ -72,6 +72,11 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.2.0 ***
+- Added license exception text to the 1.2.0 branch.
+- Full test cycle and test reports updated.
+- Small fixes to the documentation.
+
 *** 1.1.3unstable ***
 - FIX: Fixed makefile in STM32 demo, this bug was reported fixed in
   version 1.1.2 but it was still there (bug 2686451).
