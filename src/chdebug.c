@@ -50,7 +50,7 @@ void trace_init(void) {
 void chDbgTrace(Thread *otp, Thread *ntp) {
 
   trace_buffer.tb_ptr->cse_wtobjp = otp->p_wtobjp;
-  trace_buffer.tb_ptr->cse_time = chSysGetTime();
+  trace_buffer.tb_ptr->cse_time = chTimeNow();
   trace_buffer.tb_ptr->cse_state = otp->p_state;
   trace_buffer.tb_ptr->cse_tid = (unsigned)ntp >> 4;
   if (++trace_buffer.tb_ptr >= &trace_buffer.tb_buffer[TRACE_BUFFER_SIZE])
