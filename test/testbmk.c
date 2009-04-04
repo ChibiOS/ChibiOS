@@ -22,7 +22,9 @@
 #include "test.h"
 
 static Semaphore sem1;
+#if CH_USE_MUTEXES
 static Mutex mtx1;
+#endif
 
 static msg_t thread1(void *p) {
   msg_t msg;
