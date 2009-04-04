@@ -74,6 +74,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 
 *** 1.2.0 ***
 - Added license exception text to the 1.2.0 branch.
+- FIX: Fixed serious AVR regression (bug 2731578).
+- FIX: Fixed build failure when CH_USE_MUTEXES=FALSE (bug 2730706).
+- FIX: Removed reference to an obsolete function (bug 2731661).
 - Full test cycle and test reports updated.
 - Small fixes to the documentation.
 
