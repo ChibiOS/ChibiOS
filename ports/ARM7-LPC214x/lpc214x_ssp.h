@@ -32,7 +32,6 @@
  * @details Configuration parameter, if set to @p TRUE enforces mutual
  * exclusion when invoking @p sspAcquireBus() and @p sspReleaseBus().
  * @note The internally used synchronization mechanism is a @p Semaphore.
- * @todo Make it use Mutexes or Semaphores like the Heap subsystem.
  */
 #if !defined(LPC214x_SSP_USE_MUTEX) || defined(__DOXYGEN__)
 #define LPC214x_SSP_USE_MUTEX TRUE
