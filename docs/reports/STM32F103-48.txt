@@ -1,5 +1,5 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.1.2 unstable
+Kernel:   ChibiOS/RT 1.2.0 stable
 Compiler: GCC 4.3.2 (YAGARTO 28.09.2008)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: SYSCLK=48, ACR=0x11 (1 wait state)
@@ -59,7 +59,7 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.1 (Benchmark, context switch #1, optimal)
---- Score : 161113 msgs/S, 322226 ctxswc/S
+--- Score : 161114 msgs/S, 322228 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.2 (Benchmark, context switch #2, empty ready list)
