@@ -25,6 +25,7 @@ After 1.0.0:
 * Architecture diagram.
 
 After 1.2.0:
+- Dedicated syscalls.c support for newlib users.
 X Abstract I/O channels rather than just serial ports.
   - Move the serial drivers implementations in library. Better keep the core
     as compact as possible.
