@@ -13,6 +13,7 @@ X Abstract I/O channels rather than just serial ports.
   - New chThdCreate() that takes just two parameters, a pointer to a thread
     descriptor and the tread parameter. It could wrap the current variants
     or just be an alternative.
+- Objects registry in the kernel.
 - Minimal optional C-runtime library (complete enough for lwIP).
 - OSEK-style simple tasks within the idle thread.
 ? Think to something for threads restart.
@@ -39,7 +40,6 @@ X OSEK layer.
 - Posix layer.
 X File System
 - Visual debugger/monitor interfaced through OpenOCD.
-  - Objects registry in the kernel.
 
 Lower priority:
 - More demos
