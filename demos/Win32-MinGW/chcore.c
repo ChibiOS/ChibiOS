@@ -98,20 +98,21 @@ void ChkIntSources(void) {
  * @param otp the thread to be switched out
  * @param ntp the thread to be switched in
  */
-__attribute__((fastcall))
-void port_switch(Thread *otp, Thread *ntp) {
-  register struct intctx volatile *esp asm("esp");
-
-  asm volatile ("push    %ebp                                   \n\t" \
+__attribute__((used))
+static void __dummy(Thread *otp, Thread *ntp) {
+  asm volatile (".globl @port_switch@8                          \n\t" \
+               "@port_switch@8:                                 \n\t" \
+                "push    %ebp                                   \n\t" \
                 "push    %esi                                   \n\t" \
                 "push    %edi                                   \n\t" \
-                "push    %ebx");
-  otp->p_ctx.esp = esp;
-  esp = ntp->p_ctx.esp;
-  asm volatile ("pop     %ebx                                   \n\t" \
+                "push    %ebx                                   \n\t" \
+                "movl    %esp, 16(%ecx)                         \n\t" \
+                "movl    16(%edx), %esp                         \n\t" \
+                "pop     %ebx                                   \n\t" \
                 "pop     %edi                                   \n\t" \
                 "pop     %esi                                   \n\t" \
-                "pop     %ebp");
+                "pop     %ebp                                   \n\t" \
+                "ret");
 }
 
 /**
