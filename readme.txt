@@ -60,6 +60,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.2.1 ***
+- FIX: Fixed regression in MinGW demo (bug 2745153).
+
 *** 1.2.0 ***
 - Full test cycle and test reports updated.
 - NEW: Better separation between the port code and the system APIs, now an
