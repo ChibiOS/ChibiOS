@@ -76,8 +76,6 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** 1.3.0 ***
 - FIX: Fixed regression in MinGW demo (bug 2745153)(backported in stable
   branch).
-- NEW: Added "debug" and "gcov" targets to the MinGW demo Makefile. The new
-  targets allow to calculate the code coverage.
 
 *** 1.2.0 ***
 - Added license exception text to the 1.2.0 branch.

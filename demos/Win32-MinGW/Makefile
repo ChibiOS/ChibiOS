@@ -19,7 +19,6 @@
 TRGT = mingw32-
 CC   = $(TRGT)gcc
 AS   = $(TRGT)gcc -x assembler-with-cpp
-COV  = gcov
 
 # List all default C defines here, like -D_DEBUG=1
 DDEFS =
@@ -66,7 +65,7 @@ SRC  = chcore.c main.c ../../ports/win32/simcom.c \
        ${TESTSRC}
 
 # List ASM source files here
-ASRC = 
+ASRC =
 
 # List all user directories here
 UINCDIR = ../../src/include
@@ -79,9 +78,6 @@ ULIBS =
 
 # Define optimisation level here
 OPT = -ggdb -O2 -fomit-frame-pointer
-
-# Debug target options here
-DOPT = -ggdb -O0 -fomit-frame-pointer -fprofile-arcs -ftest-coverage
 
 #
 # End of user defines
@@ -98,21 +94,15 @@ LIBS    = $(DLIBS) $(ULIBS)
 LDFLAGS = -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
 ASFLAGS = -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
 CPFLAGS = $(OPT) -Wall -Wstrict-prototypes -fverbose-asm -Wa,-alms=$(<:.c=.lst) $(DEFS)
-DCPFLAGS = $(DOPT) -Wall -Wstrict-prototypes -fverbose-asm -Wa,-alms=$(<:.c=.lst) $(DEFS)
 
 # Generate dependency information
 CPFLAGS += -MD -MP -MF .dep/$(@F).d
-DCPFLAGS += -MD -MP -MF .dep/$(@F).d
 
 #
 # makefile rules
 #
 
 all: $(OBJS) $(PROJECT).exe
-
-debug: $(OBJS) $(PROJECT).exe
-CPFLAGS = $(DCPFLAGS)
-LDFLAGS += -lgcov
 
 %o : %c
 	$(CC) -c $(CPFLAGS) -I . $(INCDIR) $< -o $@
@@ -134,12 +124,9 @@ clean:
 	-rm -f $(PROJECT).map
 	-rm -f $(SRC:.c=.c.bak)
 	-rm -f $(SRC:.c=.lst)
-	-rm -f $(SRC:.c=.gcno)
-	-rm -f $(SRC:.c=.gcda)
 	-rm -f $(ASRC:.s=.s.bak)
 	-rm -f $(ASRC:.s=.lst)
 	-rm -fR .dep
-	-rm -fR gcov
 
 #
 # Include the dependency files, should be the last of the makefile
