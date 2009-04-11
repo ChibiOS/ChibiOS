@@ -130,13 +130,13 @@ struct context {
  * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
  * invoke system APIs.
  */
-#define PORT_IRQ_PROLOGUE()
+#define PORT_IRQ_PROLOGUE() asm volatile ("nop")
 
 /**
  * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
  * invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE()
+#define PORT_IRQ_EPILOGUE() asm volatile ("nop")
 
 /**
  * IRQ handler function declaration.
@@ -151,37 +151,37 @@ struct context {
 /**
  * Does nothing in this simulator.
  */
-#define port_lock()
+#define port_lock() asm volatile ("nop")
 
 /**
  * Does nothing in this simulator.
  */
-#define port_unlock()
+#define port_unlock() asm volatile ("nop")
 
 /**
  * Does nothing in this simulator.
  */
-#define port_lock_from_isr()
+#define port_lock_from_isr() asm volatile ("nop")
 
 /**
  * Does nothing in this simulator.
  */
-#define port_unlock_from_isr()
+#define port_unlock_from_isr() asm volatile ("nop")
 
 /**
  * Does nothing in this simulator.
  */
-#define port_disable()
+#define port_disable() asm volatile ("nop")
 
 /**
  * Does nothing in this simulator.
  */
-#define port_suspend()
+#define port_suspend() asm volatile ("nop")
 
 /**
  * Does nothing in this simulator.
  */
-#define port_enable()
+#define port_enable() asm volatile ("nop")
 
 /**
  * In the simulator this does a polling pass on the simulated interrupt
