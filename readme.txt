@@ -17,7 +17,8 @@
 ./demos/               - Demo programs for specific architectures/boards.
 ./ext/                 - External libraries or other code not part of
                          ChibiOS/RT but used in the demo applications.
-./test/                - Test code, used by some demos.
+./test/                - Test suite code.
+./test/coverage        - Code coverage test application.
 ./docs/src             - Documentation sources.
 ./docs/rsc             - Documentation resources.
 ./docs/Doxyfile        - Doxygen project file.
@@ -76,6 +77,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** 1.3.0 ***
 - FIX: Fixed regression in MinGW demo (bug 2745153)(backported in stable
   branch).
+- NEW: Added a code coverage analysis application under ./tests/coverage.
+  Currently the test suite explicitly covers about 74% of the kernel code,
+  it is not bad as a starting point.
 
 *** 1.2.0 ***
 - Added license exception text to the 1.2.0 branch.
