@@ -118,7 +118,7 @@ all: $(OBJS) $(PROJECT).exe
 gcov:
 	-mkdir gcov
 	$(COV) -u $(subst /,\,$(KERNSRC))
-	-mv *.gcov ./gcov
+	-mv -f *.gcov ./gcov
 
 .PHONY: clean
 clean:
@@ -132,7 +132,6 @@ clean:
 	-rm -f $(ASRC:.s=.s.bak)
 	-rm -f $(ASRC:.s=.lst)
 	-rm -fR .dep
-	-rm -fR gcov
 
 #
 # Include the dependency files, should be the last of the makefile
