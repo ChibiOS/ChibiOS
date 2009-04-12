@@ -104,34 +104,6 @@ Thread *dequeue(Thread *tp) {
   tp->p_next->p_prev = tp->p_prev;
   return tp;
 }
-
-/**
- * @brief Pushes a Thread on top of a stack list.
- *
- * @param[in] tp the pointer to the thread to be inserted in the list
- * @param[in] tlp the pointer to the threads list header
- * @note This function is @b not an API.
- */
-void list_insert(Thread *tp, ThreadsList *tlp) {
-
-  tp->p_next = tlp->p_next;
-  tlp->p_next = tp;
-}
-
-/**
- * @brief Pops a Thread from the top of a stack list and returns it.
- *
- * @param[in] tlp the pointer to the threads list header
- * @return The removed thread pointer.
- * @note The list must be non-empty before calling this function.
- * @note This function is @b not an API.
- */
-Thread *list_remove(ThreadsList *tlp) {
-
-  Thread *tp = tlp->p_next;
-  tlp->p_next = tp->p_next;
-  return tp;
-}
 #endif /* CH_OPTIMIZE_SPEED */
 
 /** @} */
