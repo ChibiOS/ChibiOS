@@ -174,8 +174,10 @@ msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
   chDbgCheck(sp != NULL, "chSemWaitTimeoutS");
 
   if (--sp->s_cnt < 0) {
-    if (TIME_IMMEDIATE == time)
+    if (TIME_IMMEDIATE == time) {
+      sp->s_cnt++;
       return RDY_TIMEOUT;
+    }
     sem_insert(currp, &sp->s_queue);
     currp->p_wtsemp = sp;
     return chSchGoSleepTimeoutS(PRWTSEM, time);
