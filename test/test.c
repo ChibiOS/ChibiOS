@@ -164,8 +164,10 @@ void test_wait_threads(void) {
   int i;
 
   for (i = 0; i < MAX_THREADS; i++)
-    if (threads[i])
+    if (threads[i] != NULL) {
       chThdWait(threads[i]);
+      threads[i] = NULL;
+    }
 }
 
 void test_cpu_pulse(unsigned ms) {
@@ -222,6 +224,8 @@ static void execute_test(const struct testcase *tcp) {
   tcp->execute();
   if (tcp->teardown != NULL)
     tcp->teardown();
+
+  test_wait_threads();
 }
 
 msg_t TestThread(void *p) {
