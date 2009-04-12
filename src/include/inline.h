@@ -69,19 +69,6 @@ static INLINE Thread *dequeue(Thread *tp) {
   tp->p_next->p_prev = tp->p_prev;
   return tp;
 }
-
-static INLINE void list_insert(Thread *tp, ThreadsList *tlp) {
-
-  tp->p_next = tlp->p_next;
-  tlp->p_next = tp;
-}
-
-static INLINE Thread *list_remove(ThreadsList *tlp) {
-
-  Thread *tp = tlp->p_next;
-  tlp->p_next = tp->p_next;
-  return tp;
-}
 #endif /* CH_OPTIMIZE_SPEED */
 
 #endif  /* _INLINE_H_ */
