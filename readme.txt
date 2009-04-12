@@ -84,8 +84,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Removed usused list functions (bug 2755230)(backported in stable
   branch).
 - NEW: Added a code coverage analysis application under ./tests/coverage.
-- Added more test cases in order to improve code coverage (it was 74% in
-  version 1.2.0).
+- Added more test cases in order to improve the test suite code coverage (it
+  was 74% in version 1.2.0).
 
 *** 1.2.0 ***
 - Added license exception text to the 1.2.0 branch.

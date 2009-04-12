@@ -361,11 +361,14 @@ static void mtx6_execute(void) {
   threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread10, "C");
   threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread10, "B");
   threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread10, "A");
-  chCondSignal(&c1);
-  chCondSignal(&c1);
-  chCondSignal(&c1);
-  chCondSignal(&c1);
-  chCondSignal(&c1);
+  chSysLock();
+  chCondSignalI(&c1);
+  chCondSignalI(&c1);
+  chCondSignalI(&c1);
+  chCondSignalI(&c1);
+  chCondSignalI(&c1);
+  chSchRescheduleS();
+  chSysUnlock();
   test_wait_threads();
   test_assert_sequence("ABCDE");
 }
@@ -425,7 +428,7 @@ static msg_t thread11(void *p) {
 
   chMtxLock(&m2);
   chMtxLock(&m1);
-  chCondWait(&c1);
+  chCondWaitTimeout(&c1, TIME_INFINITE);
   test_emit_token(*(char *)p);
   chMtxUnlock();
   chMtxUnlock();
