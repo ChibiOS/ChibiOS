@@ -79,6 +79,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   branch).
 - FIX: Fixed problem with the timeout constant TIME_IMMEDIATE, added a
   specific test in the test suite (bug 2755170)(backported in stable branch).
+- FIX: Fixed a problem in semaphores test case #2 (bug  2755195)(backported
+  in stable branch).
 - NEW: Added a code coverage analysis application under ./tests/coverage.
   Currently the test suite explicitly covers about 74% of the kernel code,
   it is not bad as a starting point.
