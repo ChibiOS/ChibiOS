@@ -264,6 +264,27 @@ static void mtx4_execute(void) {
   chMtxUnlockAll();
   test_assert(chThdGetPriority() == p, "#7");
   test_wait_threads();
+
+  /* Test repeated in order to cover chMtxUnlockS().*/
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, p1, thread13, "D");
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, p2, thread14, "C");
+  chMtxLock(&m2);
+  test_assert(chThdGetPriority() == p, "#8");
+  chThdSleepMilliseconds(100);
+  test_assert(chThdGetPriority() == p1, "#9");
+  chMtxLock(&m1);
+  test_assert(chThdGetPriority() == p1, "#10");
+  chThdSleepMilliseconds(100);
+  test_assert(chThdGetPriority() == p2, "#11");
+  chSysLock();
+  chMtxUnlockS();
+  chSysUnlock();
+  test_assert(chThdGetPriority() == p1, "#12");
+  chThdSleepMilliseconds(100);
+  test_assert(chThdGetPriority() == p1, "#13");
+  chMtxUnlockAll();
+  test_assert(chThdGetPriority() == p, "#14");
+  test_wait_threads();
 }
 
 const struct testcase testmtx4 = {
