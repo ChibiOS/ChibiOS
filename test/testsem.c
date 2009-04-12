@@ -37,7 +37,7 @@ static void sem1_setup(void) {
   chSemInit(&sem1, 0);
 }
 
-static msg_t thread(void *p) {
+static msg_t thread1(void *p) {
 
   chSemWait(&sem1);
   test_emit_token(*(char *)p);
@@ -46,11 +46,11 @@ static msg_t thread(void *p) {
 
 static void sem1_execute(void) {
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+5, thread, "A");
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()+1, thread, "B");
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()+3, thread, "C");
-  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()+4, thread, "D");
-  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()+2, thread, "E");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+5, thread1, "A");
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()+1, thread1, "B");
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()+3, thread1, "C");
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()+4, thread1, "D");
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()+2, thread1, "E");
   chSemSignal(&sem1);
   chSemSignal(&sem1);
   chSemSignal(&sem1);
@@ -82,21 +82,46 @@ static void sem2_setup(void) {
   chSemInit(&sem1, 0);
 }
 
+static msg_t thread2(void *p) {
+
+  chThdSleepMilliseconds(50);
+  chSemSignal(&sem1);
+  return 0;
+}
+
 static void sem2_execute(void) {
   int i;
   systime_t target_time;
   msg_t msg;
 
-  msg= chSemWaitTimeout(&sem1, TIME_IMMEDIATE);
+  /*
+   * Testing special case TIME_IMMEDIATE.
+   */
+  msg = chSemWaitTimeout(&sem1, TIME_IMMEDIATE);
   test_assert(msg == RDY_TIMEOUT, "#1");
+  test_assert(isempty(&sem1.s_queue), "#2");            /* Queue not empty */
+  test_assert(sem1.s_cnt == 0, "#3");                   /* Counter not zero */
 
+  /*
+   * Testing not timeout condition.
+   */
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread2, "A");
+  msg = chSemWaitTimeout(&sem1, MS2ST(500));
+  test_wait_threads();
+  test_assert(msg == RDY_OK, "#4");
+  test_assert(isempty(&sem1.s_queue), "#5");            /* Queue not empty */
+  test_assert(sem1.s_cnt == 0, "#6");                   /* Counter not zero */
+
+  /*
+   * Testing timeout condition.
+   */
   target_time = chTimeNow() + MS2ST(5 * 500);
   for (i = 0; i < 5; i++) {
     test_emit_token('A' + i);
     msg = chSemWaitTimeout(&sem1, MS2ST(500));
-    test_assert(msg == RDY_TIMEOUT, "#2");
-    test_assert(isempty(&sem1.s_queue), "#3");    /* Queue not empty */
-    test_assert(&sem1.s_cnt != 0, "#4");          /* Counter not zero */
+    test_assert(msg == RDY_TIMEOUT, "#7");
+    test_assert(isempty(&sem1.s_queue), "#8");          /* Queue not empty */
+    test_assert(sem1.s_cnt == 0, "#9");                 /* Counter not zero */
   }
   test_assert_sequence("ABCDE");
   test_assert_time_window(target_time, target_time + ALLOWED_DELAY);

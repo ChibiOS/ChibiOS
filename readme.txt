@@ -63,6 +63,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** 1.2.1 ***
 - FIX: Fixed regression in MinGW demo (bug 2745153).
 - FIX: Fixed problem with the timeout constant TIME_IMMEDIATE (bug 2755170).
+- FIX: Fixed a problem in semaphores test case #2 (bug  2755195).
 
 *** 1.2.0 ***
 - Full test cycle and test reports updated.
