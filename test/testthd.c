@@ -27,12 +27,12 @@ static msg_t thread(void *p) {
   return 0;
 }
 
-static char *rdy1_gettest(void) {
+static char *thd1_gettest(void) {
 
-  return "Ready List, priority enqueuing test #1";
+  return "Threads, enqueuing test #1";
 }
 
-static void rdy1_execute(void) {
+static void thd1_execute(void) {
 
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-5, thread, "E");
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-4, thread, "D");
@@ -43,19 +43,19 @@ static void rdy1_execute(void) {
   test_assert_sequence("ABCDE");
 }
 
-const struct testcase testrdy1 = {
-  rdy1_gettest,
+const struct testcase testthd1 = {
+  thd1_gettest,
   NULL,
   NULL,
-  rdy1_execute
+  thd1_execute
 };
 
-static char *rdy2_gettest(void) {
+static char *thd2_gettest(void) {
 
-  return "Ready List, priority enqueuing test #2";
+  return "Threads, enqueuing test #2";
 }
 
-static void rdy2_execute(void) {
+static void thd2_execute(void) {
 
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-4, thread, "D");
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-5, thread, "E");
@@ -66,18 +66,80 @@ static void rdy2_execute(void) {
   test_assert_sequence("ABCDE");
 }
 
-const struct testcase testrdy2 = {
-  rdy2_gettest,
+const struct testcase testthd2 = {
+  thd2_gettest,
   NULL,
   NULL,
-  rdy2_execute
+  thd2_execute
+};
+
+static char *thd3_gettest(void) {
+
+  return "Threads, priority change";
+}
+
+static void thd3_execute(void) {
+  tprio_t prio, p1;
+
+  prio = chThdGetPriority();
+  p1 = chThdSetPriority(prio + 1);
+  test_assert(p1 == prio, "#1");
+  test_assert(chThdGetPriority() == prio + 1, "#2");
+  p1 = chThdSetPriority(p1);
+  test_assert(p1 == prio + 1, "#3");
+  test_assert(chThdGetPriority() == prio, "#4");
+}
+
+const struct testcase testthd3 = {
+  thd3_gettest,
+  NULL,
+  NULL,
+  thd3_execute
+};
+
+static char *thd4_gettest(void) {
+
+  return "Threads, delays";
+}
+
+static void thd4_execute(void) {
+  systime_t time;
+
+  /* Timeouts in microseconds.*/
+  time = chTimeNow();
+  chThdSleepMicroseconds(100000);
+  test_assert(chTimeIsWithin(time + US2ST(100000), time + US2ST(100000) + 1), "#1");
+
+  /* Timeouts in milliseconds.*/
+  time = chTimeNow();
+  chThdSleepMilliseconds(100);
+  test_assert(chTimeIsWithin(time + MS2ST(100), time + MS2ST(100) + 1), "#2");
+
+  /* Timeouts in seconds.*/
+  time = chTimeNow();
+  chThdSleepSeconds(1);
+  test_assert(chTimeIsWithin(time + S2ST(1), time + S2ST(1) + 1), "#3");
+
+  /* Absolute timelines.*/
+  time = chTimeNow() + MS2ST(100);
+  chThdSleepUntil(time);
+  test_assert(chTimeIsWithin(time, time + 1), "#4");
+}
+
+const struct testcase testthd4 = {
+  thd4_gettest,
+  NULL,
+  NULL,
+  thd4_execute
 };
 
 /*
  * Test sequence for ready list pattern.
  */
-const struct testcase * const patternrdy[] = {
-  &testrdy1,
-  &testrdy2,
+const struct testcase * const patternthd[] = {
+  &testthd1,
+  &testthd2,
+  &testthd3,
+  &testthd4,
   NULL
 };

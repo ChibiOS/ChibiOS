@@ -20,6 +20,6 @@
 #ifndef _TESTRDY_H_
 #define _TESTRDY_H_
 
-extern const struct testcase *patternrdy[];
+extern const struct testcase *patternthd[];
 
 #endif /* _TESTRDY_H_ */

@@ -20,7 +20,7 @@
 #include <ch.h>
 
 #include "test.h"
-#include "testrdy.h"
+#include "testthd.h"
 #include "testsem.h"
 #include "testmtx.h"
 #include "testmsg.h"
@@ -35,7 +35,7 @@
  * Array of all the test patterns.
  */
 static const struct testcase **patterns[] = {
-  patternrdy,
+  patternthd,
   patternsem,
   patternmtx,
   patternmsg,
