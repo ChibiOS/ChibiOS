@@ -86,6 +86,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - NEW: Added a code coverage analysis application under ./tests/coverage.
 - Added more test cases in order to improve the test suite code coverage (it
   was 74% in version 1.2.0).
+- Added a new "naked" context switch benchmark that better defines the
+  real context switch time, for the STM32 the context switch is performed
+  under 1.48uS.
 
 *** 1.2.0 ***
 - Added license exception text to the 1.2.0 branch.
