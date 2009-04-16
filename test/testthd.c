@@ -88,6 +88,31 @@ static void thd3_execute(void) {
   p1 = chThdSetPriority(p1);
   test_assert(p1 == prio + 1, "#3");
   test_assert(chThdGetPriority() == prio, "#4");
+
+#if CH_USE_MUTEXES
+  /* Simulates a priority boost situation (p_prio > p_realprio).*/
+  chSysLock();
+  chThdSelf()->p_prio += 2;
+  chSysUnlock();
+  test_assert(chThdGetPriority() == prio + 2, "#5");
+  
+  /* Tries to raise but below the boost level. */
+  p1 = chThdSetPriority(prio + 1);
+  test_assert(p1 == prio, "#6");
+  test_assert(chThdSelf()->p_prio == prio + 2, "#7");
+  test_assert(chThdSelf()->p_realprio == prio + 1, "#8");
+
+  /* Tries to raise above the boost level. */
+  p1 = chThdSetPriority(prio + 3);
+  test_assert(p1 == prio + 1, "#9");
+  test_assert(chThdSelf()->p_prio == prio + 3, "#10");
+  test_assert(chThdSelf()->p_realprio == prio + 3, "#11");
+
+  chSysLock();
+  chThdSelf()->p_prio = prio;
+  chThdSelf()->p_realprio = prio;
+  chSysUnlock();
+#endif
 }
 
 const struct testcase testthd3 = {
