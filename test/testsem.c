@@ -85,7 +85,10 @@ static void sem2_setup(void) {
 static msg_t thread2(void *p) {
 
   chThdSleepMilliseconds(50);
-  chSemSignal(&sem1);
+  chSysLock();
+  chSemSignalI(&sem1); /* For coverage reasons */
+  chSchRescheduleS();
+  chSysUnlock();
   return 0;
 }
 
@@ -115,6 +118,7 @@ static void sem2_execute(void) {
   /*
    * Testing timeout condition.
    */
+  test_wait_tick();
   target_time = chTimeNow() + MS2ST(5 * 500);
   for (i = 0; i < 5; i++) {
     test_emit_token('A' + i);
@@ -134,6 +138,44 @@ const struct testcase testsem2 = {
   sem2_execute
 };
 #endif /* CH_USE_SEMAPHORES_TIMEOUT */
+
+#if CH_USE_SEMSW
+static char *sem3_gettest(void) {
+
+  return "Semaphores, atomic signal-wait";
+}
+
+static void sem3_setup(void) {
+
+  chSemInit(&sem1, 0);
+}
+
+static msg_t thread3(void *p) {
+
+  chSemWait(&sem1);
+  chSemSignal(&sem1);
+  return 0;
+}
+
+static void sem3_execute(void) {
+
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread3, "A");
+  chSemSignalWait(&sem1, &sem1);
+  test_assert(isempty(&sem1.s_queue), "#1");            /* Queue not empty */
+  test_assert(sem1.s_cnt == 0, "#2");                   /* Counter not zero */
+
+  chSemSignalWait(&sem1, &sem1);
+  test_assert(isempty(&sem1.s_queue), "#3");            /* Queue not empty */
+  test_assert(sem1.s_cnt == 0, "#4");                   /* Counter not zero */
+}
+
+const struct testcase testsem3 = {
+  sem3_gettest,
+  sem3_setup,
+  NULL,
+  sem3_execute
+};
+#endif /* CH_USE_SEMSW */
 #endif /* CH_USE_SEMAPHORES */
 
 /*
@@ -144,6 +186,9 @@ const struct testcase * const patternsem[] = {
   &testsem1,
 #if CH_USE_SEMAPHORES_TIMEOUT
   &testsem2,
+#endif
+#if CH_USE_SEMSW
+  &testsem3,
 #endif
 #endif
   NULL

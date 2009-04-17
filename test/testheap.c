@@ -44,21 +44,38 @@ static void heap1_execute(void) {
     p1 = chHeapAlloc(SIZE);
     p2 = chHeapAlloc(SIZE);
     p3 = chHeapAlloc(SIZE);
-    chHeapFree(p1);               /* Does not merge */
-    chHeapFree(p2);               /* Merges backward */
-    chHeapFree(p3);               /* Merges both sides */
+    chHeapFree(p1);                           /* Does not merge */
+    chHeapFree(p2);                           /* Merges backward */
+    chHeapFree(p3);                           /* Merges both sides */
     test_assert(chHeapStatus(&n) == 1, "#1"); /* Heap fragmented.*/
 
     /* Reverse order */
     p1 = chHeapAlloc(SIZE);
     p2 = chHeapAlloc(SIZE);
     p3 = chHeapAlloc(SIZE);
-    chHeapFree(p3);               /* Merges forward */
-    chHeapFree(p2);               /* Merges forward */
-    chHeapFree(p1);               /* Merges forward */
+    chHeapFree(p3);                           /* Merges forward */
+    chHeapFree(p2);                           /* Merges forward */
+    chHeapFree(p1);                           /* Merges forward */
     test_assert(chHeapStatus(&n) == 1, "#2"); /* Heap fragmented.*/
 
-    test_assert(n == sz, "#3"); /* Heap size changed.*/
+    /* Small fragments handling */
+    p1 = chHeapAlloc(SIZE + 1);
+    p2 = chHeapAlloc(SIZE);
+    chHeapFree(p1);
+    test_assert(chHeapStatus(&n) == 2, "#3"); /* Heap must contain 2 blocks.*/
+    p1 = chHeapAlloc(SIZE);
+    test_assert(chHeapStatus(&n) == 1, "#4"); /* Heap fragmented.*/
+    chHeapFree(p2);
+    chHeapFree(p1);
+
+    /* Allocate all handling */
+    (void)chHeapStatus(&n);
+    p1 = chHeapAlloc(n);
+    test_assert(chHeapStatus(&n) == 0, "#5"); /* Heap must be empty.*/
+    chHeapFree(p1);
+
+    test_assert(chHeapStatus(&n) == 1, "#6"); /* Heap fragmented.*/
+    test_assert(n == sz, "#7");               /* Heap size changed.*/
   }
   else {
     test_print("--- Size  : ");

@@ -130,25 +130,27 @@ static char *thd4_gettest(void) {
 static void thd4_execute(void) {
   systime_t time;
 
+  test_wait_tick();
+
   /* Timeouts in microseconds.*/
   time = chTimeNow();
   chThdSleepMicroseconds(100000);
-  test_assert(chTimeIsWithin(time + US2ST(100000), time + US2ST(100000) + 1), "#1");
+  test_assert_time_window(time + US2ST(100000), time + US2ST(100000) + 1);
 
   /* Timeouts in milliseconds.*/
   time = chTimeNow();
   chThdSleepMilliseconds(100);
-  test_assert(chTimeIsWithin(time + MS2ST(100), time + MS2ST(100) + 1), "#2");
+  test_assert_time_window(time + MS2ST(100), time + MS2ST(100) + 1);
 
   /* Timeouts in seconds.*/
   time = chTimeNow();
   chThdSleepSeconds(1);
-  test_assert(chTimeIsWithin(time + S2ST(1), time + S2ST(1) + 1), "#3");
+  test_assert_time_window(time + S2ST(1), time + S2ST(1) + 1);
 
   /* Absolute timelines.*/
   time = chTimeNow() + MS2ST(100);
   chThdSleepUntil(time);
-  test_assert(chTimeIsWithin(time, time + 1), "#4");
+  test_assert_time_window(time, time + 1);
 }
 
 const struct testcase testthd4 = {
