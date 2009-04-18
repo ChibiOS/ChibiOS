@@ -1,107 +1,28 @@
-/**
- * @defgroup ARM7 ARM7TDMI
- * @{
- * @details The ARM7 architecture is quite complex for a microcontroller and
- * some explanations are required about the port choices.
- *
- * @section ARM7_NOTES The ARM7 modes
- * The ARM7 port supports three modes:
- * - Pure ARM mode, this is the preferred mode for code speed. The code size
- *   is larger however. This mode is enabled when all the modules are compiled
- *   in ARM mode, see the Makefiles.
- * - Pure THUMB mode, this is the preferred mode for code size. In this mode
- *   the execution speed is slower than the ARM mode. This mode is enabled
- *   when all the modules are compiled in THUMB mode, see the Makefiles.
- * - Interworking mode, when in the system there are ARM modules mixed with
- *   THUMB modules then the interworking compiler option is enabled. This is
- *   usually the slowest mode and the code size is not as good as in pure
- *   THUMB mode.
- *
- * @section ARM7_STATES Mapping of the System States in the ARM7 port
- * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM7
- * port:
- * - <b>Init</b>. This state is represented by the startup code and the
- *   initialization code before @p chSysInit() is executed. It has not a
- *   special hardware state associated, usually the CPU goes through several
- *   hardware states during the startup phase.
- * - <b>Normal</b>. This is the state the system has after executing
- *   @p chSysInit(). In this state the ARM7TDMI has both the interrupt sources
- *   (IRQ and FIQ) enabled and is running in ARM System Mode.
- * - <b>Suspended</b>. In this state the IRQ sources are disabled but the FIQ
- *   sources are served, the core is running in ARM System Mode.
- * - <b>Disabled</b>. Both the IRQ and FIQ sources are disabled, the core is
- *   running in ARM System Mode.
- * - <b>Sleep</b>. The ARM7 code does not have any built-in low power mode but
- *   there are clock stop modes implemented in custom ways by the various
- *   silicon vendors. This state is implemented in each microcontroller support
- *   code in a different way, the core is running (or freezed...) in ARM
- *   System Mode.
- * - <b>S-Locked</b>. IRQ sources disabled, core running in ARM System Mode.
- * - <b>I-Locked</b>. IRQ sources disabled, core running in ARM IRQ Mode. Note
- *   that this state is not different from the SRI state in this port, the
- *   @p chSysLockI() and @p chSysUnlockI() APIs do nothing (still use them in
- *   order to formally change state because this may change).
- * - <b>Serving Regular Interrupt</b>. IRQ sources disabled, core running in
- *   ARM IRQ Mode. See also the I-Locked state.
- * - <b>Serving Fast Interrupt</b>. IRQ and FIQ sources disabled, core running
- *   in ARM FIQ Mode.
- * - <b>Serving Non-Maskable Interrupt</b>. There are no asynchronous NMI
- *   sources in ARM7 architecture but synchronous SVC, ABT and UND exception
- *   handlers can be seen as belonging to this category.
- * - <b>Halted</b>. Implemented as an infinite loop after disabling both IRQ
- *   and FIQ sources. The ARM state is whatever the processor was running when
- *   @p chSysHalt() was invoked.
- * 
- * @section ARM7_NOTES The ARM7 port notes
- * The ARM7 port makes some assumptions on the application code organization:
- * - The @p main() function is invoked in system mode.
- * - Each thread has a private user/system stack, the system has a single
- *   interrupt stack where all the interrupts are processed.
- * - The threads are started in system mode.
- * - The threads code can run in system mode or user mode, however the
- *   code running in user mode cannot invoke the ChibiOS/RT APIs directly
- *   because privileged instructions are used inside.<br>
- *   The kernel APIs can be eventually invoked by using a SWI entry point
- *   that handles the switch in system mode and the return in user mode.
- * - Other modes are not preempt-able because the system code assumes the
- *   threads running in system mode. When running in supervisor or other
- *   modes make sure that the interrupts are globally disabled.
- * - Interrupts nesting is not supported in the ARM7 code because their
- *   implementation, even if possible, is not really efficient in this
- *   architecture.
- * - FIQ sources can preempt the kernel (by design) so it is not possible to
- *   invoke the kernel APIs from inside a FIQ handler. FIQ handlers are not
- *   affected by the kernel activity so there is not added jitter.
- *
- * @section ARM7_IH ARM7 Interrupt Handlers
- * ARM7 Interrupt handlers do not save function-saved registers so you need to
- * make sure your code saves them or does not use them (this happens
- * because in the ARM7 port all the OS interrupt handler functions are declared
- * naked).<br>
- * Function-trashed registers (R0-R3, R12, LR, SR) are saved/restored by the
- * system macros @p CH_IRQ_PROLOGUE() and @p CH_IRQ_EPILOGUE().<br>
- * The easiest way to ensure this is to just invoke a normal function from
- * within the interrupt handler, the function code will save all the required
- * registers.<br>
- * Example:
- * @code
- * CH_IRQ_HANDLER(irq_handler) {
- *   CH_IRQ_PROLOGUE();
- *
- *   serve_interrupt();
- *
- *   VICVectAddr = 0; // This is LPC214x-specific.
- *   CH_IRQ_EPILOGUE();
- * }
- * @endcode
- * This is not a bug but an implementation choice, this solution allows to
- * have interrupt handlers compiled in thumb mode without have to use an
- * interworking mode (the mode switch is hidden in the macros), this
- * greatly improves code efficiency and size. You can look at the serial
- * driver for real examples of interrupt handlers.
- *
- * @ingroup Ports
- */
+/*
+    ChibiOS/RT - Copyright (C) 2009 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+                                      ---
+
+    A special exception to the GPL can be applied should you wish to distribute
+    a combined work that includes ChibiOS/RT, without being obliged to provide
+    the source code for any proprietary components. See the file exception.txt
+    for full details of how and when the exception can be applied.
+*/
 /** @} */
 
 /**
