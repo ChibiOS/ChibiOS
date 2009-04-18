@@ -1,6 +1,6 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.2.0 stable
-Compiler: GCC 4.3.2 (YAGARTO 28.09.2008)
+Kernel:   ChibiOS/RT 1.2.1 stable
+Compiler: GCC 4.3.3 (YAGARTO 29.03.2009)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 ***************************************************************************
@@ -63,7 +63,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.2 (Benchmark, context switch #2, empty ready list)
---- Score : 174751 msgs/S, 349502 ctxswc/S
+--- Score : 174752 msgs/S, 349504 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.3 (Benchmark, context switch #3, 4 threads in ready list)
@@ -95,7 +95,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.10 (Benchmark, mutexes lock/unlock)
---- Score : 601124 lock+unlock/S
+--- Score : 601120 lock+unlock/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 

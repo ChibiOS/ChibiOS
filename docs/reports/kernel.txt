@@ -1,132 +1,132 @@
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
+Compiler : arm-elf-gcc (GCC) 4.3.3
 Options  : -O2 -mthumb
 Kernel Size = 6048
 
 Platform : ARM Cortex-M3
 OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
+Compiler : arm-elf-gcc (GCC) 4.3.3
 Options  : -O2 -mthumb
+Kernel Size = 1232
+
+Platform : ARM Cortex-M3
+OS Setup : Full kernel
+Compiler : arm-elf-gcc (GCC) 4.3.3
+Options  : -Os -mthumb
+Kernel Size = 5808
+
+Platform : ARM Cortex-M3
+OS Setup : Minimal kernel
+Compiler : arm-elf-gcc (GCC) 4.3.3
+Options  : -Os -mthumb
 Kernel Size = 1248
 
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
-Options  : -Os -mthumb
-Kernel Size = 5792
-
-Platform : ARM Cortex-M3
-OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
-Options  : -Os -mthumb
-Kernel Size = 1264
-
-Platform : ARM Cortex-M3
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
+Compiler : arm-elf-gcc (GCC) 4.3.3
 Options  : -Os -mthumb -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\"
 Kernel Size = 5456
 
 Platform : ARM Cortex-M3
 OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
+Compiler : arm-elf-gcc (GCC) 4.3.3
 Options  : -Os -mthumb -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\"
-Kernel Size = 1216
+Kernel Size = 1200
 
 Platform : ARM7TDMI (ARM mode)
 OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
+Compiler : arm-elf-gcc (GCC) 4.3.3
 Options  : -O2
-Kernel Size = 8704
+Kernel Size = 8720
 
 Platform : ARM7TDMI (ARM mode)
 OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
+Compiler : arm-elf-gcc (GCC) 4.3.3
 Options  : -O2
-Kernel Size = 1904
-
-Platform : ARM7TDMI (ARM mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
-Options  : -Os
-Kernel Size = 8320
-
-Platform : ARM7TDMI (ARM mode)
-OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
-Options  : -Os
 Kernel Size = 1856
 
 Platform : ARM7TDMI (ARM mode)
 OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
-Options  : -Os -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\"
-Kernel Size = 7856
+Compiler : arm-elf-gcc (GCC) 4.3.3
+Options  : -Os
+Kernel Size = 8336
 
 Platform : ARM7TDMI (ARM mode)
 OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
+Compiler : arm-elf-gcc (GCC) 4.3.3
+Options  : -Os
+Kernel Size = 1824
+
+Platform : ARM7TDMI (ARM mode)
+OS Setup : Full kernel
+Compiler : arm-elf-gcc (GCC) 4.3.3
 Options  : -Os -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\"
-Kernel Size = 1808
+Kernel Size = 7872
+
+Platform : ARM7TDMI (ARM mode)
+OS Setup : Minimal kernel
+Compiler : arm-elf-gcc (GCC) 4.3.3
+Options  : -Os -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\"
+Kernel Size = 1776
 
 Platform : ARM7TDMI (THUMB mode)
 OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
+Compiler : arm-elf-gcc (GCC) 4.3.3
 Options  : -O2 -mthumb -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
 Kernel Size = 5680
 
 Platform : ARM7TDMI (THUMB mode)
 OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
+Compiler : arm-elf-gcc (GCC) 4.3.3
 Options  : -O2 -mthumb -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 1328
+Kernel Size = 1312
 
 Platform : ARM7TDMI (THUMB mode)
 OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
+Compiler : arm-elf-gcc (GCC) 4.3.3
 Options  : -Os -mthumb -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
 Kernel Size = 5536
 
 Platform : ARM7TDMI (THUMB mode)
 OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
+Compiler : arm-elf-gcc (GCC) 4.3.3
 Options  : -Os -mthumb -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 1312
+Kernel Size = 1280
 
 Platform : ARM7TDMI (THUMB mode)
 OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
+Compiler : arm-elf-gcc (GCC) 4.3.3
 Options  : -Os -mthumb -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\" -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 5184
+Kernel Size = 5200
 
 Platform : ARM7TDMI (THUMB mode)
 OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.3.2
+Compiler : arm-elf-gcc (GCC) 4.3.3
 Options  : -Os -mthumb -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\" -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 1248
+Kernel Size = 1216
 
 Platform : MSP430
 OS Setup : Full kernel
 Compiler : msp430-gcc (GCC) 3.2.3
 Options  : -O2
+Kernel Size = 6108
+
+Platform : MSP430
+OS Setup : Minimal kernel
+Compiler : msp430-gcc (GCC) 3.2.3
+Options  : -O2
+Kernel Size = 1068
+
+Platform : MSP430
+OS Setup : Full kernel
+Compiler : msp430-gcc (GCC) 3.2.3
+Options  : -Os
 Kernel Size = 6092
 
 Platform : MSP430
 OS Setup : Minimal kernel
 Compiler : msp430-gcc (GCC) 3.2.3
-Options  : -O2
-Kernel Size = 1084
-
-Platform : MSP430
-OS Setup : Full kernel
-Compiler : msp430-gcc (GCC) 3.2.3
 Options  : -Os
-Kernel Size = 6076
-
-Platform : MSP430
-OS Setup : Minimal kernel
-Compiler : msp430-gcc (GCC) 3.2.3
-Options  : -Os
-Kernel Size = 1084
+Kernel Size = 1068
 

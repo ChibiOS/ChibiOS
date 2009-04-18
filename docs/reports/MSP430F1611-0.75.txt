@@ -1,5 +1,5 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.2.0 stable
+Kernel:   ChibiOS/RT 1.2.1 stable
 Compiler: GCC 3.2.3 (MSPGCC)
 Options:  -O2 -fomit-frame-pointer
 Settings: MCLK=DCOCLK 750Khz

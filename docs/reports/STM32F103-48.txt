@@ -1,6 +1,6 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.2.0 stable
-Compiler: GCC 4.3.2 (YAGARTO 28.09.2008)
+Kernel:   ChibiOS/RT 1.2.1 stable
+Compiler: GCC 4.3.3 (YAGARTO 29.03.2009)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 ***************************************************************************
@@ -59,7 +59,7 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.1 (Benchmark, context switch #1, optimal)
---- Score : 161114 msgs/S, 322228 ctxswc/S
+--- Score : 161113 msgs/S, 322226 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.2 (Benchmark, context switch #2, empty ready list)
@@ -71,7 +71,7 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.4 (Benchmark, threads creation/termination, worst case)
---- Score : 123333 threads/S
+--- Score : 123331 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.5 (Benchmark, threads creation/termination, optimal)
@@ -87,7 +87,7 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.8 (Benchmark, virtual timers set/reset)
---- Score : 525902 timers/S
+--- Score : 525900 timers/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.9 (Benchmark, semaphores wait/signal)
@@ -95,7 +95,7 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.10 (Benchmark, mutexes lock/unlock)
---- Score : 489620 lock+unlock/S
+--- Score : 489616 lock+unlock/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.2.0 stable
-Compiler: GCC 4.3.2 (YAGARTO 28.09.2008)
+Kernel:   ChibiOS/RT 1.2.1 stable
+Compiler: GCC 4.3.3 (YAGARTO 29.03.2009)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu
 Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 ***************************************************************************
@@ -95,7 +95,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.10 (Benchmark, mutexes lock/unlock)
---- Score : 322036 lock+unlock/S
+--- Score : 322032 lock+unlock/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 

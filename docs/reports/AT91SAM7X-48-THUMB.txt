@@ -1,6 +1,6 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.2.0 stable
-Compiler: GCC 4.3.2 (YAGARTO 28.09.2008)
+Kernel:   ChibiOS/RT 1.2.1 stable
+Compiler: GCC 4.3.3 (YAGARTO 29.03.2009)
 Options:  -Os -fomit-frame-pointer -mabi=apcs-gnu
 Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 ***************************************************************************
@@ -59,7 +59,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.1 (Benchmark, context switch #1, optimal)
---- Score : 103067 msgs/S, 206134 ctxswc/S
+--- Score : 103066 msgs/S, 206132 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.2 (Benchmark, context switch #2, empty ready list)
@@ -87,7 +87,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.8 (Benchmark, virtual timers set/reset)
---- Score : 323190 timers/S
+--- Score : 323186 timers/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.9 (Benchmark, semaphores wait/signal)
@@ -100,3 +100,4 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 ---------------------------------------------------------------------------
 
 Final result: SUCCESS
+
