@@ -1,3 +1,22 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006-2007 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /**
  * @defgroup ARM7 ARM7TDMI
  * @{
@@ -51,7 +70,7 @@
  * - <b>Halted</b>. Implemented as an infinite loop after disabling both IRQ
  *   and FIQ sources. The ARM state is whatever the processor was running when
  *   @p chSysHalt() was invoked.
- * 
+ *
  * @section ARM7_NOTES The ARM7 port notes
  * The ARM7 port makes some assumptions on the application code organization:
  * - The @p main() function is invoked in system mode.
