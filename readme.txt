@@ -67,6 +67,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Removed usused list functions (bug 2755230).
 - FIX: Added the exception notes into the source headers (bug 2772129).
 - FIX: Added license notice to several files (bug 2772160).
+- FIX: Fixed problem in the C++ wrapper (bug 2772237).
 
 *** 1.2.0 ***
 - Full test cycle and test reports updated.
