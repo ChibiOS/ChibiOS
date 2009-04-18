@@ -23,6 +23,49 @@
     the source code for any proprietary components. See the file exception.txt
     for full details of how and when the exception can be applied.
 */
+
+/**
+ * @defgroup MSP430 MSP430
+ * @{
+ * @details MSP430 port details. This section how the ChibiOS/RT features are
+ * implemented on this architecture.
+ *
+ * @section MSP430_STATES Mapping of the System States in the MSP430 port
+ * The ChibiOS/RT logical @ref system_states are mapped as follow in the MSP430
+ * port:
+ * - <b>Init</b>. This state is represented by the startup code and the
+ *   initialization code before @p chSysInit() is executed. It has not a
+ *   special hardware state associated.
+ * - <b>Normal</b>. This is the state the system has after executing
+ *   @p chSysInit(). Interrupts are enabled.
+ * - <b>Suspended</b>. Interrupts are disabled.
+ * - <b>Disabled</b>. Interrupts are enabled. This state is equivalent to the
+ *   Suspended state because there are no fast interrupts in this architecture.
+ * - <b>Sleep</b>. Not yet implemented.
+ * - <b>S-Locked</b>. Interrupts are disabled.
+ * - <b>I-Locked</b>. This state is equivalent to the SRI state, the
+ *   @p chSysLockI() and @p chSysUnlockI() APIs do nothing (still use them in
+ *   order to formally change state because this may change).
+ * - <b>Serving Regular Interrupt</b>. Normal interrupt service code.
+ * - <b>Serving Fast Interrupt</b>. Not present in this architecture.
+ * - <b>Serving Non-Maskable Interrupt</b>. The MSP430 has several non
+ *   maskable interrupt sources that can be associated to this state.
+ * - <b>Halted</b>. Implemented as an infinite loop with interrupts disabled.
+ *
+ * @section MSP430_NOTES The MSP430 port notes
+ * - The MSP430 does not have a dedicated interrupt stack, make sure to reserve
+ *     enough stack space for interrupts in each thread stack. This can be done
+ *     by modifying the @p INT_REQUIRED_STACK macro into
+ *     <b>./ports/MSP430/chcore.h</b>.
+ * - The state of the hardware multiplier is not saved in the thread context,
+ *   make sure to use it in <b>Suspended</b> state (interrupts masked).
+ * - The port code does not define the switch to a low power mode for the
+ *   idle thread because the MSP430 has several low power modes. You can
+ *   select the proper low power mode for you application by defining the
+ *   macro @p port_wait_for_interrupt().
+ *
+ * @ingroup Ports
+ */
 /** @} */
 
 /**

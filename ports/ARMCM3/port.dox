@@ -23,6 +23,72 @@
     the source code for any proprietary components. See the file exception.txt
     for full details of how and when the exception can be applied.
 */
+
+/**
+ * @defgroup ARMCM3 ARM Cortex-M3
+ * @{
+ * @details The ARM Cortex-M3 architecture is quite complex for a
+ *  microcontroller and some explanations are required about the port choices.
+ *
+ * @section ARMCM3_STATES Mapping of the System States in the ARM Cortex-M3 port
+ * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM
+ * Cortex-M3 port:
+ * - <b>Init</b>. This state is represented by the startup code and the
+ *   initialization code before @p chSysInit() is executed. It has not a
+ *   special hardware state associated.
+ * - <b>Normal</b>. This is the state the system has after executing
+ *   @p chSysInit(). In this state the ARM Cortex-M3 has the BASEPRI register
+ *   set at @p BASEPRI_USER level, interrupts are not masked. The processor
+ *   is running in thread-privileged mode.
+ * - <b>Suspended</b>. In this state the interrupt sources are not globally
+ *   masked but the BASEPRI register is set to @p BASEPRI_KERNEL thus masking
+ *   any interrupt source with lower or equal priority. The processor
+ *   is running in thread-privileged mode.
+ * - <b>Disabled</b>. Interrupt sources are globally masked. The processor
+ *   is running in thread-privileged mode.
+ * - <b>Sleep</b>. This state is entered with the execution of the specific
+ *   instruction @p <b>wfi</b>.
+ * - <b>S-Locked</b>. In this state the interrupt sources are not globally
+ *   masked but the BASEPRI register is set to @p BASEPRI_KERNEL thus masking
+ *   any interrupt source with lower or equal priority. The processor
+ *   is running in thread-privileged mode.
+ * - <b>I-Locked</b>. In this state the interrupt sources are not globally
+ *   masked but the BASEPRI register is set to @p BASEPRI_KERNEL thus masking
+ *   any interrupt source with lower or equal priority. The processor
+ *   is running in exception-privileged mode.
+ * - <b>Serving Regular Interrupt</b>. In this state the interrupt sources are
+ *   not globally masked but only interrupts with higher priority can preempt
+ *   the current handler. The processor is running in exception-privileged mode.
+ * - <b>Serving Fast Interrupt</b>. It is basically the same of the SRI state
+ *   but it is not possible to switch to the I-Locked state because fast
+ *   interrupts can preempt the kernel critical zone.
+ * - <b>Serving Non-Maskable Interrupt</b>. The Cortex-M3 has a specific
+ *   asynchronous NMI vector and several synchronous fault vectors that can
+ *   be considered to be in this category.
+ * - <b>Halted</b>. Implemented as an infinite loop after globally masking all
+ *   the maskable interrupt sources. The ARM state is whatever the processor
+ *   was running when @p chSysHalt() was invoked.
+ *
+ * @section ARMCM3_NOTES The ARM Cortex-M3 port notes
+ * The ARM Cortex-M3 port is organized as follow:
+ * - The @p main() function is invoked in thread-privileged mode.
+ * - Each thread has a private process stack, the system has a single main
+ *   stack where all the interrupts and exceptions are processed.
+ * - Only the 4 MSb of the priority level are used, the 4 LSb are assumed
+ *   to be zero.
+ * - The threads are started in thread-privileged mode with BASEPRI level
+ *   0x00 (disabled).
+ * - The kernel raises its BASEPRI level to @p BASEPRI_KERNEL in order to
+ *   protect the kernel data structures.
+ * - Interrupt nesting and the other advanced NVIC features are supported.
+ * - The SVC instruction and vector, with parameter #0,  is internally used
+ *   for commanded context switching.<br>
+ *   It is possible to share the SVC handler at the cost of slower context
+ *   switching.
+ * - The PendSV vector is internally used for preemption context switching.
+ *
+ * @ingroup Ports
+ */
 /** @} */
 
 /**

@@ -23,6 +23,43 @@
     the source code for any proprietary components. See the file exception.txt
     for full details of how and when the exception can be applied.
 */
+
+/**
+ * @defgroup AVR MegaAVR
+ * @{
+ * @details AVR port details. This section how the ChibiOS/RT features are
+ * implemented on this architecture.
+ *
+ * @section AVR_STATES Mapping of the System States in the AVR port
+ * The ChibiOS/RT logical @ref system_states are mapped as follow in the AVR
+ * port:
+ * - <b>Init</b>. This state is represented by the startup code and the
+ *   initialization code before @p chSysInit() is executed. It has not a
+ *   special hardware state associated.
+ * - <b>Normal</b>. This is the state the system has after executing
+ *   @p chSysInit(). Interrupts are enabled.
+ * - <b>Suspended</b>. Interrupts are disabled.
+ * - <b>Disabled</b>. Interrupts are enabled. This state is equivalent to the
+ *   Suspended state because there are no fast interrupts in this architecture.
+ * - <b>Sleep</b>. This state is entered with the execution of the specific
+ *   instruction @p <b>sleep</b>.
+ * - <b>S-Locked</b>. Interrupts are disabled.
+ * - <b>I-Locked</b>. This state is equivalent to the SRI state, the
+ *   @p chSysLockI() and @p chSysUnlockI() APIs do nothing (still use them in
+ *   order to formally change state because this may change).
+ * - <b>Serving Regular Interrupt</b>. Normal interrupt service code.
+ * - <b>Serving Fast Interrupt</b>. Not present in this architecture.
+ * - <b>Serving Non-Maskable Interrupt</b>. Not present in this architecture.
+ * - <b>Halted</b>. Implemented as an infinite loop with interrupts disabled.
+ *
+ * @section AVR_NOTES The AVR port notes
+ * - The AVR does not have a dedicated interrupt stack, make sure to reserve
+ *   enough stack space for interrupts in each thread stack. This can be done
+ *   by modifying the @p INT_REQUIRED_STACK macro into
+ *   <b>./ports/AVR/chcore.h</b>.
+ *
+ * @ingroup Ports
+ */
 /** @} */
 
 /**
