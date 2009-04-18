@@ -47,7 +47,7 @@ namespace chibios_rt {
 
   systime_t System::GetTime(void) {
 
-    return chSysGetTime();
+    return chTimeNow();
   }
 
   /*------------------------------------------------------------------------*
