@@ -216,16 +216,6 @@
 #endif
 
 /**
- * If specified then the @p chMsgSendWithEvent() function is included in the
- * kernel.
- * @note The default is @p TRUE.
- * @note Requires @p CH_USE_MESSAGES and @p CH_USE_EVENTS.
- */
-#if !defined(CH_USE_MESSAGES_EVENT) || defined(__DOXYGEN__)
-#define CH_USE_MESSAGES_EVENT           FALSE
-#endif
-
-/**
  * If enabled then messages are served by priority rather than in FIFO order.
  * @note The default is @p FALSE. Enable this if you have special requirements.
  * @note Requires @p CH_USE_MESSAGES.
