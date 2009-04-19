@@ -25,32 +25,49 @@
 
 static char *msg1_gettest(void) {
 
-  return "Messages, dispatch test";
+  return "Messages, loop";
 }
 
 static msg_t thread(void *p) {
-  msg_t msg;
-  int i;
 
-  for (i = 0; i < 5; i++) {
-    msg = chMsgSend(p, 'A' + i);
-    test_emit_token(msg);
-  }
-  chMsgSend(p, 0);
+  chMsgSend(p, 'A');
+  chMsgSend(p, 'B');
+  chMsgSend(p, 'C');
+  chMsgSend(p, 'D');
   return 0;
 }
 
 static void msg1_execute(void) {
   msg_t msg;
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread, chThdSelf());
-  do {
-    chMsgRelease(msg = chMsgWait());
-    if (msg)
-      test_emit_token(msg);
-  } while (msg);
-  test_wait_threads();
-  test_assert_sequence("AABBCCDDEE");
+  /*
+   * Testing the whole messages loop.
+   */
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() + 1,
+                                 thread, chThdSelf());
+  chMsgRelease(msg = chMsgWait());
+  test_emit_token(msg);
+  chMsgRelease(msg = chMsgWait());
+  test_emit_token(msg);
+  chMsgRelease(msg = chMsgWait());
+  test_emit_token(msg);
+  test_assert_sequence("ABC");
+
+  /*
+   * Testing message fetch using chMsgGet().
+   * Note, the following is valid because the sender has higher priority than
+   * the receiver.
+   */
+  msg = chMsgGet();
+  test_assert(msg != 0, "#1");
+  chMsgRelease(0);
+  test_assert(msg == 'D', "#2");
+
+  /*
+   * Must not have pending messages.
+   */
+  msg = chMsgGet();
+  test_assert(msg == 0, "#3");
 }
 
 const struct testcase testmsg1 = {
