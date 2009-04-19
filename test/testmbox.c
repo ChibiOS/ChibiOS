@@ -43,10 +43,14 @@ static void mbox1_execute(void) {
   msg_t msg1, msg2;
   unsigned i;
 
-  /* Testing initial space.*/
+  /*
+   * Testing initial space.
+   */
   test_assert(chMBGetEmpty(&mb1) == MB_SIZE, "#1");
 
-  /* Testing enqueuing.*/
+  /*
+   * Testing enqueuing and backward circularity.
+   */
   for (i = 0; i < MB_SIZE - 1; i++) {
     msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
     test_assert(msg1 == RDY_OK, "#2");
@@ -54,16 +58,22 @@ static void mbox1_execute(void) {
   msg1 = chMBPostAhead(&mb1, 'A', TIME_INFINITE);
   test_assert(msg1 == RDY_OK, "#3");
 
-  /* Testing post timeout.*/
+  /*
+   * Testing post timeout.
+   */
   msg1 = chMBPost(&mb1, 'X', 1);
   test_assert(msg1 == RDY_TIMEOUT, "#4");
 
-  /* Testing final conditions.*/
+  /*
+   * Testing final conditions.
+   */
   test_assert(chMBGetEmpty(&mb1) == 0, "#5");
   test_assert(chMBGetFull(&mb1) == MB_SIZE, "#6");
   test_assert(mb1.mb_rdptr == mb1.mb_wrptr, "#7");
 
-  /* Testing dequeuing.*/
+  /*
+   * Testing dequeuing.
+   */
   for (i = 0; i < MB_SIZE; i++) {
   msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
     test_assert(msg1 == RDY_OK, "#8");
@@ -71,14 +81,41 @@ static void mbox1_execute(void) {
   }
   test_assert_sequence("ABCDE");
 
-  /* Testing fetch timeout.*/
-  msg1 = chMBFetch(&mb1, &msg2, 1);
-  test_assert(msg1 == RDY_TIMEOUT, "#9");
+  /*
+   * Testing buffer circularity.
+   */
+  msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+  test_assert(msg1 == RDY_OK, "#9");
+  msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+  test_assert(msg1 == RDY_OK, "#10");
+  test_assert(mb1.mb_buffer == mb1.mb_wrptr, "#11");
+  test_assert(mb1.mb_buffer == mb1.mb_rdptr, "#12");
 
-  /* Testing final conditions.*/
-  test_assert(chMBGetEmpty(&mb1) == MB_SIZE, "#10");
-  test_assert(chMBGetFull(&mb1) == 0, "#11");
-  test_assert(mb1.mb_rdptr == mb1.mb_wrptr, "#12");
+  /*
+   * Testing fetch timeout.
+   */
+  msg1 = chMBFetch(&mb1, &msg2, 1);
+  test_assert(msg1 == RDY_TIMEOUT, "#13");
+
+  /*
+   * Testing final conditions.
+   */
+  test_assert(chMBGetEmpty(&mb1) == MB_SIZE, "#14");
+  test_assert(chMBGetFull(&mb1) == 0, "#15");
+  test_assert(mb1.mb_rdptr == mb1.mb_wrptr, "#16");
+
+  /*
+   * Testing reset.
+   */
+  chMBReset(&mb1);
+
+  /*
+   * Re-testing final conditions.
+   */
+  test_assert(chMBGetEmpty(&mb1) == MB_SIZE, "#17");
+  test_assert(chMBGetFull(&mb1) == 0, "#18");
+  test_assert(mb1.mb_rdptr == mb1.mb_wrptr, "#19");
+  test_assert(mb1.mb_buffer == mb1.mb_wrptr, "#20");
 }
 
 const struct testcase testmbox1 = {
