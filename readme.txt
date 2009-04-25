@@ -60,6 +60,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.2.2 ***
+- FIX: Fixed macro in test.h (bug 2781176).
+
 *** 1.2.1 ***
 - FIX: Fixed regression in MinGW demo (bug 2745153).
 - FIX: Fixed problem with the timeout constant TIME_IMMEDIATE (bug 2755170).

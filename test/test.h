@@ -79,7 +79,7 @@ extern "C" {
 #endif
 
 #define test_fail(msg) {                                                \
-  test_fail(msg);                                                       \
+  _test_fail(msg);                                                      \
   return;                                                               \
 }
 
