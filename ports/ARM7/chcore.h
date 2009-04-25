@@ -41,6 +41,11 @@
 #define CH_ARCHITECTURE_ARM7
 
 /**
+ * Name of the implemented architecture.
+ */
+#define CH_ARCHITECTURE_NAME "ARM7TDMI"
+
+/**
  * 32 bit stack alignment.
  */
 typedef uint32_t stkalign_t;

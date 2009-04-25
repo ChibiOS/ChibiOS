@@ -43,6 +43,11 @@
 #define CH_ARCHITECTURE_AVR
 
 /**
+ * Name of the implemented architecture.
+ */
+#define CH_ARCHITECTURE_NAME "AVR"
+
+/**
  * 8 bit stack alignment.
  */
 typedef uint8_t stkalign_t;

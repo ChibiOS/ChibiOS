@@ -33,6 +33,11 @@
 #define CH_ARCHITECTURE_XXX
 
 /**
+ * Name of the implemented architecture.
+ */
+#define CH_ARCHITECTURE_NAME ""
+
+/**
  * Base type for stack alignment.
  * This type is used only for stack alignment reasons thus can be anything from
  * a char to a double.

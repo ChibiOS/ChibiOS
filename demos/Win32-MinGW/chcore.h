@@ -31,6 +31,11 @@
 #define CH_ARCHITECTURE_WIN32SIM
 
 /**
+ * Name of the implemented architecture.
+ */
+#define CH_ARCHITECTURE_NAME "WIN32 Simulator"
+
+/**
  * 32 bit stack alignment.
  */
 typedef uint32_t stkalign_t;

@@ -228,14 +228,26 @@ static void execute_test(const struct testcase *tcp) {
   test_wait_threads();
 }
 
+static void print_line(void) {
+  unsigned i;
+
+  for (i = 0; i < 76; i++)
+    chFDDPut(comp, '-');
+  chFDDPut(comp, '\r');
+  chFDDPut(comp, '\n');
+}
+
 msg_t TestThread(void *p) {
   int i, j;
 
   comp = p;
   test_println("");
-  test_println("*****************************");
-  test_println("*** ChibiOS/RT test suite ***");
-  test_println("*****************************");
+  test_println("*** ChibiOS/RT test suite");
+  test_println("***");
+  test_print("*** Kernel:       ");
+  test_println(CH_KERNEL_VERSION);
+  test_print("*** Architecture: ");
+  test_println(CH_ARCHITECTURE_NAME);
   test_println("");
 
   global_fail = FALSE;
@@ -246,7 +258,7 @@ msg_t TestThread(void *p) {
 #if DELAY_BETWEEN_TESTS > 0
       chThdSleepMilliseconds(DELAY_BETWEEN_TESTS);
 #endif
-      test_println("---------------------------------------------------------------------------");
+      print_line();
       test_print("--- Test Case ");
       test_printn(i + 1);
       test_print(".");
@@ -268,7 +280,7 @@ msg_t TestThread(void *p) {
     }
     i++;
   }
-  test_println("---------------------------------------------------------------------------");
+  print_line();
   test_println("");
   test_print("Final result: ");
   if (global_fail)

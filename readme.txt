@@ -93,6 +93,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - NEW: Added a new "naked" context switch benchmark that better defines the
   real context switch time, previous benchmarks introduced too much overhead
   to the measurement. The STM32 performs the context switch in under 1.48uS.
+- NEW: Added architecture name strings to the port code.
 - CHANGE: Removed the chMsgSendWithEvent() function. It is rarely used and
   the functionality can be re-created with a compound atomic operation. Also
   removed the CH_USE_MESSAGES_EVENT configuration option.

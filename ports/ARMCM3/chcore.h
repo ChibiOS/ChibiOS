@@ -89,6 +89,11 @@
 #define CH_ARCHITECTURE_ARMCM3
 
 /**
+ * Name of the implemented architecture.
+ */
+#define CH_ARCHITECTURE_NAME "ARM Cortex-M3"
+
+/**
  * 32 bit stack alignment.
  */
 typedef uint32_t stkalign_t;
