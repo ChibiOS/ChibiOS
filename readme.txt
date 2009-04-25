@@ -87,6 +87,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   stable branch).
 - FIX: Found new instances of the obsolete function chSysGetTime() in the
   C++ wrapper and in the WEB demo (bug 2772237)(backported in stable branch).
+- FIX: Fixed macro in test.h (bug 2781176)(backported in stable branch).
 - NEW: Added a code coverage analysis application under ./tests/coverage.
 - NEW: Added more test cases in order to improve the test suite code coverage
   (it was 74% in version 1.2.0).

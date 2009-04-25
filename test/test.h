@@ -72,7 +72,7 @@ extern "C" {
 #endif
 
 #define test_fail(point) {                                              \
-  test_fail(point);                                                     \
+  _test_fail(point);                                                     \
   return;                                                               \
 }
 
