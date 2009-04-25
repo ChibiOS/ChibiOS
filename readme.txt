@@ -96,6 +96,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - CHANGE: Removed the chMsgSendWithEvent() function. It is rarely used and
   the functionality can be re-created with a compound atomic operation. Also
   removed the CH_USE_MESSAGES_EVENT configuration option.
+- CHANGE: Modified the test suite assertions in order to save RAM on the AVR
+  targets. The test suit now uses much less string space.
 
 *** 1.2.0 ***
 - Added license exception text to the 1.2.0 branch.

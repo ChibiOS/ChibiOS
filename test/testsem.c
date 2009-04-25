@@ -58,9 +58,9 @@ static void sem1_execute(void) {
   chSemSignal(&sem1);
   test_wait_threads();
 #if CH_USE_SEMAPHORES_PRIORITY
-  test_assert_sequence("ADCEB");
+  test_assert_sequence(1, "ADCEB");
 #else
-  test_assert_sequence("ABCDE");
+  test_assert_sequence(1, "ABCDE");
 #endif
 }
 
@@ -101,19 +101,20 @@ static void sem2_execute(void) {
    * Testing special case TIME_IMMEDIATE.
    */
   msg = chSemWaitTimeout(&sem1, TIME_IMMEDIATE);
-  test_assert(msg == RDY_TIMEOUT, "#1");
-  test_assert(isempty(&sem1.s_queue), "#2");            /* Queue not empty */
-  test_assert(sem1.s_cnt == 0, "#3");                   /* Counter not zero */
+  test_assert(1, msg == RDY_TIMEOUT, "wrong wake-up message");
+  test_assert(2, isempty(&sem1.s_queue), "queue not empty");
+  test_assert(3, sem1.s_cnt == 0, "counter not zero");
 
   /*
    * Testing not timeout condition.
    */
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread2, "A");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
+                                 thread2, "A");
   msg = chSemWaitTimeout(&sem1, MS2ST(500));
   test_wait_threads();
-  test_assert(msg == RDY_OK, "#4");
-  test_assert(isempty(&sem1.s_queue), "#5");            /* Queue not empty */
-  test_assert(sem1.s_cnt == 0, "#6");                   /* Counter not zero */
+  test_assert(4, msg == RDY_OK, "wrong wake-up message");
+  test_assert(5, isempty(&sem1.s_queue), "queue not empty");
+  test_assert(6, sem1.s_cnt == 0, "counter not zero");
 
   /*
    * Testing timeout condition.
@@ -123,12 +124,12 @@ static void sem2_execute(void) {
   for (i = 0; i < 5; i++) {
     test_emit_token('A' + i);
     msg = chSemWaitTimeout(&sem1, MS2ST(500));
-    test_assert(msg == RDY_TIMEOUT, "#7");
-    test_assert(isempty(&sem1.s_queue), "#8");          /* Queue not empty */
-    test_assert(sem1.s_cnt == 0, "#9");                 /* Counter not zero */
+    test_assert(7, msg == RDY_TIMEOUT, "wrong wake-up message");
+    test_assert(8, isempty(&sem1.s_queue), "queue not empty");
+    test_assert(9, sem1.s_cnt == 0, "counter not zero");
   }
-  test_assert_sequence("ABCDE");
-  test_assert_time_window(target_time, target_time + ALLOWED_DELAY);
+  test_assert_sequence(10, "ABCDE");
+  test_assert_time_window(11, target_time, target_time + ALLOWED_DELAY);
 }
 
 const struct testcase testsem2 = {
@@ -161,12 +162,12 @@ static void sem3_execute(void) {
 
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread3, "A");
   chSemSignalWait(&sem1, &sem1);
-  test_assert(isempty(&sem1.s_queue), "#1");            /* Queue not empty */
-  test_assert(sem1.s_cnt == 0, "#2");                   /* Counter not zero */
+  test_assert(1, isempty(&sem1.s_queue), "queue not empty");
+  test_assert(2, sem1.s_cnt == 0, "counter not zero");
 
   chSemSignalWait(&sem1, &sem1);
-  test_assert(isempty(&sem1.s_queue), "#3");            /* Queue not empty */
-  test_assert(sem1.s_cnt == 0, "#4");                   /* Counter not zero */
+  test_assert(3, isempty(&sem1.s_queue), "queue not empty");
+  test_assert(4, sem1.s_cnt == 0, "counter not zero");
 }
 
 const struct testcase testsem3 = {

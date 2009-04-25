@@ -57,8 +57,8 @@ static void mtx1_execute(void) {
   threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread1, "A");
   chMtxUnlock();
   test_wait_threads();
-  test_assert(prio == chThdGetPriority(), "#1"); /* Priority return failure.*/
-  test_assert_sequence("ABCDE");
+  test_assert(1, prio == chThdGetPriority(), "wrong priority level");
+  test_assert_sequence(2, "ABCDE");
 }
 
 const struct testcase testmtx1 = {
@@ -116,7 +116,7 @@ static void mtx2_execute(void) {
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-3, thread3, "C");
   threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-2, thread4, "B");
   test_wait_threads();
-  test_assert_sequence("ABC");
+  test_assert_sequence(1, "ABC");
 }
 
 const struct testcase testmtx2 = {
@@ -204,7 +204,7 @@ static void mtx3_execute(void) {
   threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-2, thread8, "B");
   threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-1, thread9, "A");
   test_wait_threads();
-  test_assert_sequence("ABCDE");
+  test_assert_sequence(1, "ABCDE");
 }
 
 const struct testcase testmtx3 = {
@@ -250,40 +250,40 @@ static void mtx4_execute(void) {
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, p1, thread13, "B");
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, p2, thread14, "A");
   chMtxLock(&m2);
-  test_assert(chThdGetPriority() == p, "#1");
+  test_assert(1, chThdGetPriority() == p, "wrong priority level");
   chThdSleepMilliseconds(100);
-  test_assert(chThdGetPriority() == p1, "#2");
+  test_assert(2, chThdGetPriority() == p1, "wrong priority level");
   chMtxLock(&m1);
-  test_assert(chThdGetPriority() == p1, "#3");
+  test_assert(3, chThdGetPriority() == p1, "wrong priority level");
   chThdSleepMilliseconds(100);
-  test_assert(chThdGetPriority() == p2, "#4");
+  test_assert(4, chThdGetPriority() == p2, "wrong priority level");
   chMtxUnlock();
-  test_assert(chThdGetPriority() == p1, "#5");
+  test_assert(5, chThdGetPriority() == p1, "wrong priority level");
   chThdSleepMilliseconds(100);
-  test_assert(chThdGetPriority() == p1, "#6");
+  test_assert(6, chThdGetPriority() == p1, "wrong priority level");
   chMtxUnlockAll();
-  test_assert(chThdGetPriority() == p, "#7");
+  test_assert(7, chThdGetPriority() == p, "wrong priority level");
   test_wait_threads();
 
   /* Test repeated in order to cover chMtxUnlockS().*/
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, p1, thread13, "D");
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, p2, thread14, "C");
   chMtxLock(&m2);
-  test_assert(chThdGetPriority() == p, "#8");
+  test_assert(8, chThdGetPriority() == p, "wrong priority level");
   chThdSleepMilliseconds(100);
-  test_assert(chThdGetPriority() == p1, "#9");
+  test_assert(9, chThdGetPriority() == p1, "wrong priority level");
   chMtxLock(&m1);
-  test_assert(chThdGetPriority() == p1, "#10");
+  test_assert(10, chThdGetPriority() == p1, "wrong priority level");
   chThdSleepMilliseconds(100);
-  test_assert(chThdGetPriority() == p2, "#11");
+  test_assert(11, chThdGetPriority() == p2, "wrong priority level");
   chSysLock();
   chMtxUnlockS();
   chSysUnlock();
-  test_assert(chThdGetPriority() == p1, "#12");
+  test_assert(12, chThdGetPriority() == p1, "wrong priority level");
   chThdSleepMilliseconds(100);
-  test_assert(chThdGetPriority() == p1, "#13");
+  test_assert(13, chThdGetPriority() == p1, "wrong priority level");
   chMtxUnlockAll();
-  test_assert(chThdGetPriority() == p, "#14");
+  test_assert(14, chThdGetPriority() == p, "wrong priority level");
   test_wait_threads();
 }
 
@@ -311,18 +311,18 @@ static void mtx5_execute(void) {
   prio = chThdGetPriority();
 
   b = chMtxTryLock(&m1);
-  test_assert(b, "#1");
+  test_assert(1, b, "already locked");
 
   b = chMtxTryLock(&m1);
-  test_assert(!b, "#2");
+  test_assert(2, !b, "not locked");
 
   chSysLock();
   chMtxUnlockS();
   chSysUnlock();
 
-  test_assert(isempty(&m1.m_queue), "#3");            /* Queue not empty */
-  test_assert(m1.m_owner == NULL, "#4");              /* Owned */
-  test_assert(chThdGetPriority() == prio, "#5");
+  test_assert(3, isempty(&m1.m_queue), "queue not empty");
+  test_assert(4, m1.m_owner == NULL, "still owned");
+  test_assert(5, chThdGetPriority() == prio, "wrong priority level");
 }
 
 const struct testcase testmtx5 = {
@@ -370,7 +370,7 @@ static void mtx6_execute(void) {
   chSchRescheduleS();
   chSysUnlock();
   test_wait_threads();
-  test_assert_sequence("ABCDE");
+  test_assert_sequence(1, "ABCDE");
 }
 
 const struct testcase testmtx6 = {
@@ -402,7 +402,7 @@ static void mtx7_execute(void) {
   threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread10, "A");
   chCondBroadcast(&c1);
   test_wait_threads();
-  test_assert_sequence("ABCDE");
+  test_assert_sequence(1, "ABCDE");
 }
 
 const struct testcase testmtx7 = {
@@ -452,7 +452,7 @@ static void mtx8_execute(void) {
   chCondSignal(&c1);
   chCondSignal(&c1);
   test_wait_threads();
-  test_assert_sequence("ABC");
+  test_assert_sequence(1, "ABC");
 }
 
 const struct testcase testmtx8 = {

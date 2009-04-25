@@ -51,7 +51,7 @@ static void msg1_execute(void) {
   test_emit_token(msg);
   chMsgRelease(msg = chMsgWait());
   test_emit_token(msg);
-  test_assert_sequence("ABC");
+  test_assert_sequence(1, "ABC");
 
   /*
    * Testing message fetch using chMsgGet().
@@ -59,15 +59,15 @@ static void msg1_execute(void) {
    * the receiver.
    */
   msg = chMsgGet();
-  test_assert(msg != 0, "#1");
+  test_assert(1, msg != 0, "no message");
   chMsgRelease(0);
-  test_assert(msg == 'D', "#2");
+  test_assert(2, msg == 'D', "wrong message");
 
   /*
    * Must not have pending messages.
    */
   msg = chMsgGet();
-  test_assert(msg == 0, "#3");
+  test_assert(3, msg == 0, "unknown message");
 }
 
 const struct testcase testmsg1 = {

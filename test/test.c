@@ -49,7 +49,7 @@ static const struct testcase **patterns[] = {
 };
 
 static bool_t local_fail, global_fail;
-static char *failmsg;
+static unsigned failpoint;
 static char tokens_buffer[MAX_TOKENS];
 static char *tokp;
 static WORKING_AREA(waT0, THREADS_STACK_SIZE);
@@ -118,35 +118,35 @@ void test_emit_token(char token) {
 /*
  * Assertions.
  */
-bool_t _test_fail(char * msg) {
+bool_t _test_fail(unsigned point) {
 
   local_fail = TRUE;
   global_fail = TRUE;
-  failmsg = msg;
+  failpoint = point;
   return TRUE;
 }
 
-bool_t _test_assert(bool_t condition, char * msg) {
+bool_t _test_assert(unsigned point, bool_t condition) {
 
   if (!condition)
-    return _test_fail(msg);
+    return _test_fail(point);
   return FALSE;
 }
 
-bool_t _test_assert_sequence(char *expected) {
+bool_t _test_assert_sequence(unsigned point, char *expected) {
   char *cp = tokens_buffer;
   while (cp < tokp) {
     if (*cp++ != *expected++)
-     return _test_fail(NULL);
+     return _test_fail(point);
   }
   if (*expected)
-    return _test_fail(NULL);
+    return _test_fail(point);
   return FALSE;
 }
 
-bool_t _test_assert_time_window(systime_t start, systime_t end) {
+bool_t _test_assert_time_window(unsigned point, systime_t start, systime_t end) {
 
-  return _test_assert(chTimeIsWithin(start, end), "time window error");
+  return _test_assert(point, chTimeIsWithin(start, end));
 }
 
 /*
@@ -256,14 +256,11 @@ msg_t TestThread(void *p) {
       test_println(")");
       execute_test(patterns[i][j]);
       if (local_fail) {
-        test_print("--- Result: FAIL (");
-        if (failmsg)
-          test_print(failmsg);
-        else {
-          test_print("sequence error: ");
-          print_tokens();
-        }
-        test_println(")");
+        test_print("--- Result: FAIL (#");
+        test_printn(failpoint);
+        test_print(" [");
+        print_tokens();
+        test_println("])");
       }
       else
         test_println("--- Result: SUCCESS");

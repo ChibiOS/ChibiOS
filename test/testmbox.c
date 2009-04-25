@@ -46,63 +46,63 @@ static void mbox1_execute(void) {
   /*
    * Testing initial space.
    */
-  test_assert(chMBGetEmpty(&mb1) == MB_SIZE, "#1");
+  test_assert(1, chMBGetEmpty(&mb1) == MB_SIZE, "wrong size");
 
   /*
    * Testing enqueuing and backward circularity.
    */
   for (i = 0; i < MB_SIZE - 1; i++) {
     msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
-    test_assert(msg1 == RDY_OK, "#2");
+    test_assert(2, msg1 == RDY_OK, "wrong wake-up message");
   }
   msg1 = chMBPostAhead(&mb1, 'A', TIME_INFINITE);
-  test_assert(msg1 == RDY_OK, "#3");
+  test_assert(3, msg1 == RDY_OK, "wrong wake-up message");
 
   /*
    * Testing post timeout.
    */
   msg1 = chMBPost(&mb1, 'X', 1);
-  test_assert(msg1 == RDY_TIMEOUT, "#4");
+  test_assert(4, msg1 == RDY_TIMEOUT, "wrong wake-up message");
 
   /*
    * Testing final conditions.
    */
-  test_assert(chMBGetEmpty(&mb1) == 0, "#5");
-  test_assert(chMBGetFull(&mb1) == MB_SIZE, "#6");
-  test_assert(mb1.mb_rdptr == mb1.mb_wrptr, "#7");
+  test_assert(5, chMBGetEmpty(&mb1) == 0, "still empty");
+  test_assert(6, chMBGetFull(&mb1) == MB_SIZE, "not full");
+  test_assert(7, mb1.mb_rdptr == mb1.mb_wrptr, "pointers not aligned");
 
   /*
    * Testing dequeuing.
    */
   for (i = 0; i < MB_SIZE; i++) {
   msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
-    test_assert(msg1 == RDY_OK, "#8");
+    test_assert(8, msg1 == RDY_OK, "wrong wake-up message");
     test_emit_token(msg2);
   }
-  test_assert_sequence("ABCDE");
+  test_assert_sequence(9, "ABCDE");
 
   /*
    * Testing buffer circularity.
    */
   msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
-  test_assert(msg1 == RDY_OK, "#9");
+  test_assert(10, msg1 == RDY_OK, "wrong wake-up message");
   msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
-  test_assert(msg1 == RDY_OK, "#10");
-  test_assert(mb1.mb_buffer == mb1.mb_wrptr, "#11");
-  test_assert(mb1.mb_buffer == mb1.mb_rdptr, "#12");
+  test_assert(11, msg1 == RDY_OK, "wrong wake-up message");
+  test_assert(12, mb1.mb_buffer == mb1.mb_wrptr, "write pointer not aligned to base");
+  test_assert(13, mb1.mb_buffer == mb1.mb_rdptr, "read pointer not aligned to base");
 
   /*
    * Testing fetch timeout.
    */
   msg1 = chMBFetch(&mb1, &msg2, 1);
-  test_assert(msg1 == RDY_TIMEOUT, "#13");
+  test_assert(14, msg1 == RDY_TIMEOUT, "wrong wake-up message");
 
   /*
    * Testing final conditions.
    */
-  test_assert(chMBGetEmpty(&mb1) == MB_SIZE, "#14");
-  test_assert(chMBGetFull(&mb1) == 0, "#15");
-  test_assert(mb1.mb_rdptr == mb1.mb_wrptr, "#16");
+  test_assert(15, chMBGetEmpty(&mb1) == MB_SIZE, "not empty");
+  test_assert(16, chMBGetFull(&mb1) == 0, "still full");
+  test_assert(17, mb1.mb_rdptr == mb1.mb_wrptr, "pointers not aligned");
 
   /*
    * Testing reset.
@@ -112,10 +112,10 @@ static void mbox1_execute(void) {
   /*
    * Re-testing final conditions.
    */
-  test_assert(chMBGetEmpty(&mb1) == MB_SIZE, "#17");
-  test_assert(chMBGetFull(&mb1) == 0, "#18");
-  test_assert(mb1.mb_rdptr == mb1.mb_wrptr, "#19");
-  test_assert(mb1.mb_buffer == mb1.mb_wrptr, "#20");
+  test_assert(18, chMBGetEmpty(&mb1) == MB_SIZE, "not empty");
+  test_assert(19, chMBGetFull(&mb1) == 0, "still full");
+  test_assert(20, mb1.mb_buffer == mb1.mb_wrptr, "write pointer not aligned to base");
+  test_assert(21, mb1.mb_buffer == mb1.mb_rdptr, "read pointer not aligned to base");
 }
 
 const struct testcase testmbox1 = {

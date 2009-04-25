@@ -51,17 +51,17 @@ static void evt1_execute(void) {
   chEvtInit(&es1);
   chEvtRegisterMask(&es1, &el1, 1);
   chEvtRegisterMask(&es1, &el2, 2);
-  test_assert(chEvtIsListening(&es1), "#1"); /* Must not be empty */
+  test_assert(1, chEvtIsListening(&es1), "no listener");
   chEvtUnregister(&es1, &el1);
-  test_assert(chEvtIsListening(&es1), "#2"); /* Must not be empty */
+  test_assert(2, chEvtIsListening(&es1), "no listener");
   chEvtUnregister(&es1, &el2);
-  test_assert(!chEvtIsListening(&es1), "#3"); /* Stuck listener.*/
+  test_assert(3, !chEvtIsListening(&es1), "stuck listener");
 
   /*
    * Testing chEvtDispatch().
    */
   chEvtDispatch(evhndl, 7);
-  test_assert_sequence("ABC");
+  test_assert_sequence(4, "ABC");
 }
 
 const struct testcase testevt1 = {
@@ -106,12 +106,12 @@ static void evt2_execute(void) {
    */
   chEvtPend(5);
   m = chEvtWaitOne(ALL_EVENTS);
-  test_assert(m == 1, "#1"); /* Single bit error.*/
+  test_assert(1, m == 1, "single event error");
   m = chEvtWaitOne(ALL_EVENTS);
-  test_assert(m == 4, "#2"); /* Single bit error.*/
+  test_assert(2, m == 4, "single event error");
   m = chEvtClear(0);
-  test_assert(m == 0, "#3"); /* Stuck bit.*/
-  
+  test_assert(3, m == 0, "stuck event");
+
   /*
    * Test on chEvtWaitOne() with wait.
    */
@@ -120,10 +120,10 @@ static void evt2_execute(void) {
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
                                  thread1, chThdSelf());
   m = chEvtWaitOne(ALL_EVENTS);
-  test_assert_time_window(target_time, target_time + ALLOWED_DELAY);
-  test_assert(m == 1, "#5"); /* Single bit error.*/
+  test_assert_time_window(4, target_time, target_time + ALLOWED_DELAY);
+  test_assert(5, m == 1, "single event error");
   m = chEvtClear(0);
-  test_assert(m == 0, "#6"); /* Stuck bit.*/
+  test_assert(6, m == 0, "stuck event");
   test_wait_threads();
 
   /*
@@ -131,9 +131,9 @@ static void evt2_execute(void) {
    */
   chEvtPend(5);
   m = chEvtWaitAny(ALL_EVENTS);
-  test_assert(m == 5, "#7"); /* Unexpected pending bit.*/
+  test_assert(7, m == 5, "unexpected pending bit");
   m = chEvtClear(0);
-  test_assert(m == 0, "#8"); /* Stuck bit.*/
+  test_assert(8, m == 0, "stuck event");
 
   /*
    * Test on chEvtWaitAny() with wait.
@@ -143,10 +143,10 @@ static void evt2_execute(void) {
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
                                  thread1, chThdSelf());
   m = chEvtWaitAny(ALL_EVENTS);
-  test_assert_time_window(target_time, target_time + ALLOWED_DELAY);
-  test_assert(m == 1, "#9"); /* Single bit error.*/
+  test_assert_time_window(9, target_time, target_time + ALLOWED_DELAY);
+  test_assert(10, m == 1, "single event error");
   m = chEvtClear(0);
-  test_assert(m == 0, "#10"); /* Stuck bit.*/
+  test_assert(11, m == 0, "stuck event");
   test_wait_threads();
 
   /*
@@ -161,14 +161,14 @@ static void evt2_execute(void) {
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
                                  thread2, "A");
   m = chEvtWaitAll(5);
-  test_assert_time_window(target_time, target_time + ALLOWED_DELAY);
+  test_assert_time_window(12, target_time, target_time + ALLOWED_DELAY);
   m = chEvtClear(0);
-  test_assert(m == 0, "#11"); /* Stuck event.*/
+  test_assert(13, m == 0, "stuck event");
   test_wait_threads();
   chEvtUnregister(&es1, &el1);
   chEvtUnregister(&es2, &el2);
-  test_assert(!chEvtIsListening(&es1), "#12"); /* Stuck listener.*/
-  test_assert(!chEvtIsListening(&es2), "#13"); /* Stuck listener.*/
+  test_assert(14, !chEvtIsListening(&es1), "stuck listener");
+  test_assert(15, !chEvtIsListening(&es2), "stuck listener");
 }
 
 const struct testcase testevt2 = {
@@ -196,17 +196,17 @@ static void evt3_execute(void) {
    * Tests various timeout situations.
    */
   m = chEvtWaitOneTimeout(ALL_EVENTS, TIME_IMMEDIATE);
-  test_assert(m == 0, "#1");
+  test_assert(1, m == 0, "spurious event");
   m = chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE);
-  test_assert(m == 0, "#2");
+  test_assert(2, m == 0, "spurious event");
   m = chEvtWaitAllTimeout(ALL_EVENTS, TIME_IMMEDIATE);
-  test_assert(m == 0, "#3");
+  test_assert(3, m == 0, "spurious event");
   m = chEvtWaitOneTimeout(ALL_EVENTS, 10);
-  test_assert(m == 0, "#4");
+  test_assert(4, m == 0, "spurious event");
   m = chEvtWaitAnyTimeout(ALL_EVENTS, 10);
-  test_assert(m == 0, "#5");
+  test_assert(5, m == 0, "spurious event");
   m = chEvtWaitAllTimeout(ALL_EVENTS, 10);
-  test_assert(m == 0, "#6");
+  test_assert(6, m == 0, "spurious event");
 #endif
 }
 

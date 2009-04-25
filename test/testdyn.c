@@ -49,20 +49,20 @@ static void dyn1_execute(void) {
     threads[2] = chThdCreateFromHeap(THD_WA_SIZE(0x10000000),
                                      prio-3, thread, "C");
 
-    test_assert((threads[0] != NULL) &&
-                (threads[1] != NULL) &&
-                (threads[2] == NULL) &&
-                (threads[3] == NULL) &&
-                (threads[4] == NULL),
-                "#1"); /* Thread creation failed.*/
+    test_assert(1, (threads[0] != NULL) &&
+                   (threads[1] != NULL) &&
+                   (threads[2] == NULL) &&
+                   (threads[3] == NULL) &&
+                   (threads[4] == NULL),
+                   "thread creation failed");
 
     /* Claiming the memory from terminated threads. */
     test_wait_threads();
-    test_assert_sequence("AB");
+    test_assert_sequence(2, "AB");
 
     /* Heap status checked again.*/
-    test_assert(chHeapStatus(&n) == 1, "#2"); /* Heap fragmented.*/
-    test_assert(n == sz, "#3"); /* Heap size changed.*/
+    test_assert(3, chHeapStatus(&n) == 1, "heap fragmented");
+    test_assert(4, n == sz, "heap size changed");
   }
 }
 
@@ -102,21 +102,21 @@ static void dyn2_execute(void) {
   threads[3] = chThdCreateFromMemoryPool(&mp1, prio-4, thread, "D");
   threads[4] = chThdCreateFromMemoryPool(&mp1, prio-5, thread, "E");
 
-  test_assert((threads[0] != NULL) &&
-              (threads[1] != NULL) &&
-              (threads[2] != NULL) &&
-              (threads[3] != NULL) &&
-              (threads[4] == NULL),
-              "#1"); /* Thread creation failed.*/
+  test_assert(1, (threads[0] != NULL) &&
+                 (threads[1] != NULL) &&
+                 (threads[2] != NULL) &&
+                 (threads[3] != NULL) &&
+                 (threads[4] == NULL),
+                 "thread creation failed");
 
   /* Claiming the memory from terminated threads. */
   test_wait_threads();
-  test_assert_sequence("ABCD");
+  test_assert_sequence(2, "ABCD");
 
   /* Now the pool must be full again. */
   for (i = 0; i < 4; i++)
-    test_assert(chPoolAlloc(&mp1) != NULL, "#2"); /* Pool list empty.*/
-  test_assert(chPoolAlloc(&mp1) == NULL, "#3"); /* Pool list not empty.*/
+    test_assert(3, chPoolAlloc(&mp1) != NULL, "pool list empty");
+  test_assert(4, chPoolAlloc(&mp1) == NULL, "pool list not empty");
 }
 
 const struct testcase testdyn2 = {
