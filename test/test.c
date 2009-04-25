@@ -268,7 +268,7 @@ msg_t TestThread(void *p) {
       test_println(")");
       execute_test(patterns[i][j]);
       if (local_fail) {
-        test_print("--- Result: FAIL (#");
+        test_print("--- Result: FAILURE (#");
         test_printn(failpoint);
         test_print(" [");
         print_tokens();
@@ -284,7 +284,7 @@ msg_t TestThread(void *p) {
   test_println("");
   test_print("Final result: ");
   if (global_fail)
-    test_println("FAIL");
+    test_println("FAILURE");
   else
     test_println("SUCCESS");
 
