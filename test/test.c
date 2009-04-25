@@ -248,6 +248,10 @@ msg_t TestThread(void *p) {
   test_println(CH_KERNEL_VERSION);
   test_print("*** Architecture: ");
   test_println(CH_ARCHITECTURE_NAME);
+#ifdef __GNUC__
+  test_print("*** GCC Version:  ");
+  test_println(__VERSION__);
+#endif
   test_println("");
 
   global_fail = FALSE;
