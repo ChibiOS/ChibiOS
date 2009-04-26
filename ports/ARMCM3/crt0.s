@@ -40,6 +40,7 @@
  */
 .thumb_func
 .global ResetHandler
+.weak ResetHandler
 ResetHandler:
         /* Interrupts globally masked. */
         cpsid   i
@@ -51,8 +52,6 @@ ResetHandler:
         sub     r0, r0, r1
         /* { r0  = main stack low address } */
         msr     PSP, r0
-//        ldr     r1, =__process_stack_size__
-//        sub     r0, r0, r1
         /* Early initialization. */
         bl      hwinit0
         /*
