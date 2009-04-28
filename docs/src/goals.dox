@@ -57,7 +57,7 @@
  * finalized to this objective. Everything you can invoke in the kernel is
  * designed to not fail unless you pass garbage as parameters, stray pointers
  * as examples. The APIs are not slowed down by parameter checks,
- * parameter checks (and consistency checks) do exists but only when the
+ * parameter checks (and consistency checks) do exist but only when the
  * debug switch is activated.<br>
  * All the static core APIs always succeed if correct parameters are passed.
  * Exception to this are the optional allocators APIs that, of course,
