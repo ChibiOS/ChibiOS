@@ -92,9 +92,11 @@ Thread *lifo_remove(ThreadsQueue *tqp) {
 }
 
 /**
- * @brief Removes a Thread from a FIFO list and returns it.
+ * @brief Removes a Thread from a queue and returns it.
+ * @details The thread is removed from the queue regardless of its relative
+ *          position and regardless the used insertion method.
  *
- * @param[in] tp the pointer to the thread to be removed from the list
+ * @param[in] tp the pointer to the thread to be removed from the queue
  * @return The removed thread pointer.
  * @note This function is @b not an API.
  */

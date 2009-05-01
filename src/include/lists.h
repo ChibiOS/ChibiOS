@@ -34,7 +34,7 @@ typedef struct Thread Thread;
 #define notempty(p)     ((p)->p_next != (Thread *)(p))
 
 /**
- * @brief Generic threads queue header and element.
+ * @brief Generic threads bidirectional linked list header and element.
  * @extends ThreadsList
  */
 typedef struct {
@@ -45,7 +45,7 @@ typedef struct {
 } ThreadsQueue;
 
 /**
- * @brief Generic threads single link list.
+ * @brief Generic threads single linked list.
  * @details This list behaves like a stack.
  */
 typedef struct {
