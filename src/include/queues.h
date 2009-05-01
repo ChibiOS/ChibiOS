@@ -90,17 +90,13 @@ typedef GenericQueue InputQueue;
 /** Evaluates to @p TRUE if the specified Input Queue is full. */
 #define chIQIsFull(q) (chQSpace(q) >= chQSize(q))
 
-/**
- * @brief Input queue read.
- * @details This function reads a byte value from an input queue. If the queue
- *          is empty then the calling thread is suspended until a byte arrives
- *          in the queue.
- *
- * @param[in] iqp pointer to an @p InputQueue structure
- * @return A byte value from the queue or:
- * @retval Q_RESET if the queue was reset.
+#if CH_USE_SEMAPHORES_TIMEOUT
+/*
+ * When semaphores timeout is available this API is implemented as a
+ * special case of the more general chIQGetTimeout().
  */
 #define chIQGet(iqp) chIQGetTimeout(iqp, TIME_INFINITE)
+#endif
 
 /**
  * @brief Output queue structure.
@@ -120,19 +116,13 @@ typedef GenericQueue OutputQueue;
 /** Evaluates to @p TRUE if the specified Output Queue is full. */
 #define chOQIsFull(q) (chQSpace(q) <= 0)
 
-/**
- * @brief Output queue write.
- * @details This function writes a byte value to an output queue. If the queue
- *          is full then the calling thread is suspended until there is space
- *          in the queue.
- *
- * @param[in] oqp pointer to an @p OutputQueue structure
- * @param[in] b the byte value to be written in the queue
- * @return The operation status:
- * @retval Q_OK if the operation succeeded.
- * @retval Q_RESET if the queue was reset.
+#if CH_USE_SEMAPHORES_TIMEOUT
+/*
+ * When semaphores timeout is available this API is implemented as a
+ * special case of the more general chOQPutTimeout().
  */
 #define chOQPut(oqp, b) chOQPutTimeout(oqp, b, TIME_INFINITE)
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -140,10 +130,17 @@ extern "C" {
   void chIQInit(InputQueue *qp, uint8_t *buffer, size_t size, qnotify_t inotify);
   void chIQResetI(InputQueue *qp);
   msg_t chIQPutI(InputQueue *qp, uint8_t b);
+#if !CH_USE_SEMAPHORES_TIMEOUT
+  msg_t chIQGet(InputQueue *qp);
+#endif
   msg_t chIQGetTimeout(InputQueue *qp, systime_t timeout);
   size_t chIQRead(InputQueue *qp, uint8_t *buffer, size_t n);
+
   void chOQInit(OutputQueue *queue, uint8_t *buffer, size_t size, qnotify_t onotify);
   void chOQResetI(OutputQueue *queue);
+#if !CH_USE_SEMAPHORES_TIMEOUT
+  msg_t chOQPut(OutputQueue *queue, uint8_t b);
+#endif
   msg_t chOQPutTimeout(OutputQueue *queue, uint8_t b, systime_t timeout);
   msg_t chOQGetI(OutputQueue *queue);
   size_t chOQWrite(OutputQueue *queue, uint8_t *buffer, size_t n);

@@ -90,8 +90,41 @@ msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
   return Q_OK;
 }
 
+#if !CH_USE_SEMAPHORES_TIMEOUT || defined(__DOXYGEN__)
 /**
  * @brief Input queue read.
+ * @details This function reads a byte value from an input queue. If the queue
+ *          is empty then the calling thread is suspended until a byte arrives
+ *          in the queue.
+ *
+ * @param[in] iqp pointer to an @p InputQueue structure
+ * @return A byte value from the queue or:
+ * @retval Q_RESET if the queue was reset.
+ */
+msg_t chIQGet(InputQueue *iqp) {
+  uint8_t b;
+  msg_t msg;
+
+  chSysLock();
+  if ((msg = chSemWaitS(&iqp->q_sem)) < RDY_OK) {
+    chSysUnlock();
+    return msg;
+  }
+  b = *iqp->q_rdptr++;
+  if (iqp->q_rdptr >= iqp->q_top)
+    iqp->q_rdptr = iqp->q_buffer;
+
+  if (iqp->q_notify)
+    iqp->q_notify();
+
+  chSysUnlock();
+  return b;
+}
+#endif /* !CH_USE_SEMAPHORES_TIMEOUT */
+
+#if CH_USE_SEMAPHORES_TIMEOUT || defined(__DOXYGEN__)
+/**
+ * @brief Input queue read with timeout.
  * @details This function reads a byte value from an input queue. If the queue
  *          is empty then the calling thread is suspended until a byte arrives
  *          in the queue or a timeout occurs.
@@ -106,29 +139,18 @@ msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the queue was reset.
  *
- * @note The @p time parameter is only meaningful if the
- *       @p CH_USE_SEMAPHORES_TIMEOUT kernel option is activated,
- *       otherwise only the @p TIME_INFINITE value is accepted.
+ * @note The function is only available when the @p CH_USE_SEMAPHORES_TIMEOUT
+ *       kernel option is activated,
  */
 msg_t chIQGetTimeout(InputQueue *iqp, systime_t timeout) {
   uint8_t b;
   msg_t msg;
 
-#if CH_USE_SEMAPHORES_TIMEOUT
   chSysLock();
   if ((msg = chSemWaitTimeoutS(&iqp->q_sem, timeout)) < RDY_OK) {
     chSysUnlock();
     return msg;
   }
-#else
-  chDbgCheck(timeout == TIME_INFINITE, "chIQGetTimeout");
-
-  chSysLock();
-  if ((msg = chSemWaitS(&iqp->q_sem)) < RDY_OK) {
-    chSysUnlock();
-    return msg;
-  }
-#endif
   b = *iqp->q_rdptr++;
   if (iqp->q_rdptr >= iqp->q_top)
     iqp->q_rdptr = iqp->q_buffer;
@@ -139,6 +161,7 @@ msg_t chIQGetTimeout(InputQueue *iqp, systime_t timeout) {
   chSysUnlock();
   return b;
 }
+#endif /* CH_USE_SEMAPHORES_TIMEOUT */
 
 /**
  * @brief Non-blocking read.
@@ -218,45 +241,27 @@ void chOQResetI(OutputQueue *oqp) {
   chSemResetI(&oqp->q_sem, (cnt_t)(oqp->q_top - oqp->q_buffer));
 }
 
+#if !CH_USE_SEMAPHORES_TIMEOUT || defined(__DOXYGEN__)
 /**
  * @brief Output queue write.
  * @details This function writes a byte value to an output queue. If the queue
  *          is full then the calling thread is suspended until there is space
- *          in the queue or a timeout occurs.
+ *          in the queue.
  *
  * @param[in] oqp pointer to an @p OutputQueue structure
- * @param[in] timeout the number of ticks before the operation timeouts,
- *             the following special values are allowed:
- *             - @a TIME_IMMEDIATE immediate timeout.
- *             - @a TIME_INFINITE no timeout.
- *             .
+ * @param[in] b the byte value to be written in the queue
  * @return The operation status:
  * @retval Q_OK if the operation succeeded.
- * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the queue was reset.
- *
- * @note The @p time parameter is only meaningful if the
- *       @p CH_USE_SEMAPHORES_TIMEOUT kernel option is activated,
- *       otherwise only the @p TIME_INFINITE value is accepted.
  */
-msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t timeout) {
+msg_t chOQPut(OutputQueue *oqp, uint8_t b) {
   msg_t msg;
-
-#if CH_USE_SEMAPHORES_TIMEOUT
-  chSysLock();
-  if ((msg = chSemWaitTimeoutS(&oqp->q_sem, timeout)) < RDY_OK) {
-    chSysUnlock();
-    return msg;
-  }
-#else
-  chDbgCheck(timeout == TIME_INFINITE, "chOQPutTimeout");
 
   chSysLock();
   if ((msg = chSemWaitS(&oqp->q_sem)) < RDY_OK) {
     chSysUnlock();
     return msg;
   }
-#endif
   *oqp->q_wrptr++ = b;
   if (oqp->q_wrptr >= oqp->q_top)
     oqp->q_wrptr = oqp->q_buffer;
@@ -267,6 +272,49 @@ msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t timeout) {
   chSysUnlock();
   return Q_OK;
 }
+#endif /* !CH_USE_SEMAPHORES_TIMEOUT */
+
+#if CH_USE_SEMAPHORES_TIMEOUT || defined(__DOXYGEN__)
+/**
+ * @brief Output queue write with timeout.
+ * @details This function writes a byte value to an output queue. If the queue
+ *          is full then the calling thread is suspended until there is space
+ *          in the queue or a timeout occurs.
+ *
+ * @param[in] oqp pointer to an @p OutputQueue structure
+ * @param[in] b the byte value to be written in the queue
+ * @param[in] timeout the number of ticks before the operation timeouts,
+ *             the following special values are allowed:
+ *             - @a TIME_IMMEDIATE immediate timeout.
+ *             - @a TIME_INFINITE no timeout.
+ *             .
+ * @return The operation status:
+ * @retval Q_OK if the operation succeeded.
+ * @retval Q_TIMEOUT if the specified time expired.
+ * @retval Q_RESET if the queue was reset.
+ *
+ * @note The function is only available when the @p CH_USE_SEMAPHORES_TIMEOUT
+ *       kernel option is activated,
+ */
+msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t timeout) {
+  msg_t msg;
+
+  chSysLock();
+  if ((msg = chSemWaitTimeoutS(&oqp->q_sem, timeout)) < RDY_OK) {
+    chSysUnlock();
+    return msg;
+  }
+  *oqp->q_wrptr++ = b;
+  if (oqp->q_wrptr >= oqp->q_top)
+    oqp->q_wrptr = oqp->q_buffer;
+
+  if (oqp->q_notify)
+    oqp->q_notify();
+
+  chSysUnlock();
+  return Q_OK;
+}
+#endif /* CH_USE_SEMAPHORES_TIMEOUT */
 
 /**
  * @brief Output queue read.
@@ -289,19 +337,6 @@ msg_t chOQGetI(OutputQueue *oqp) {
   return b;
 }
 
-/**
- * @brief Writes some data from the specified buffer into the queue.
- * @details The function is non-blocking and can return zero if the queue is
- *          full.
- *
- * @param[in] qp pointer to a @p Queue structure
- * @param[in] buffer the data buffer
- * @param[in] n the maximum amount of data to be written
- * @return The number of written bytes.
- * @note This function is the upper side endpoint of the output queue.
- * @note The function is not atomic, if you need atomicity it is suggested
- *       to use a semaphore for mutual exclusion.
- */
 /**
  * @brief Non-blocking write.
  * @details The function writes data from a buffer to an output queue. The
