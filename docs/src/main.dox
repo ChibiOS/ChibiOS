@@ -338,18 +338,12 @@
  *   lower side and the reader is the upper side.
  * - <b>Output queue</b>, unidirectional queue where the writer is the
  *   upper side and the reader is the lower side.
- * - <b>Half duplex queue</b>, bidirectional queue where the buffer is shared
- *   between a receive and a transmit queues. This means that concurrent
- *   buffered input and output operations are not possible, this is perfectly
- *   acceptable for a lot of applications however, as example an RS485 driver.
  * - <b>Full duplex queue</b>, bidirectional queue where read and write
  *   operations can happen at the same time. Full duplex queues
  *   are implemented by pairing an input queue and an output queue together.
  * .
  * In order to use the I/O queues the @p CH_USE_QUEUES option must
  * be specified in @p chconf.h.<br>
- * In order to use the half duplex queues the @p CH_USE_QUEUES_HALFDUPLEX
- * option must be specified in @p chconf.h.
  */
 /** @} */
 
