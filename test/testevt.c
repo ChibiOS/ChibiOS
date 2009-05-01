@@ -207,7 +207,6 @@ static void evt3_execute(void) {
   test_assert(5, m == 0, "spurious event");
   m = chEvtWaitAllTimeout(ALL_EVENTS, 10);
   test_assert(6, m == 0, "spurious event");
-#endif
 }
 
 const struct testcase testevt3 = {
@@ -216,8 +215,7 @@ const struct testcase testevt3 = {
   NULL,
   evt3_execute
 };
-
-#endif /* CH_USE_EVENTS */
+#endif /* CH_USE_EVENTS_TIMEOUT */
 
 /*
  * Test sequence for events pattern.
@@ -232,3 +230,5 @@ const struct testcase * const patternevt[] = {
 #endif
   NULL
 };
+
+#endif /* CH_USE_EVENTS */

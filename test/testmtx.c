@@ -428,7 +428,11 @@ static msg_t thread11(void *p) {
 
   chMtxLock(&m2);
   chMtxLock(&m1);
+#if CH_USE_CONDVARS_TIMEOUT
   chCondWaitTimeout(&c1, TIME_INFINITE);
+#else
+  chCondWait(&c1);
+#endif
   test_emit_token(*(char *)p);
   chMtxUnlock();
   chMtxUnlock();
