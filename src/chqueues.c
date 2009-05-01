@@ -33,250 +33,259 @@
  * @details A Semaphore is internally initialized and works as a counter of
  *          the bytes contained in the queue.
  *
- * @param[out] qp pointer to a @p Queue structure
+ * @param[out] iqp pointer to an @p InputQueue structure
  * @param[in] buffer pointer to a memory area allocated as queue buffer
  * @param[in] size size of the queue buffer
  * @param[in] inotify pointer to a callback function that is invoked when
- *                    some data is read from the Queue. The value can be
-*                     @p NULL.
+ *                    some data is read from the queue. The value can be
+ *                    @p NULL.
+ *
+ * @note The callback is invoked from within the S-Locked system state,
+ *       see @ref system_states.
  */
-void chIQInit(Queue *qp, uint8_t *buffer, size_t size, qnotify_t inotify) {
+void chIQInit(InputQueue *iqp, uint8_t *buffer,
+              size_t size, qnotify_t inotify) {
 
-  qp->q_buffer = qp->q_rdptr = qp->q_wrptr = buffer;
-  qp->q_top = buffer + size;
-  chSemInit(&qp->q_sem, 0);
-  qp->q_notify = inotify;
+  iqp->q_buffer = iqp->q_rdptr = iqp->q_wrptr = buffer;
+  iqp->q_top = buffer + size;
+  chSemInit(&iqp->q_sem, 0);
+  iqp->q_notify = inotify;
 }
 
 /**
  * @brief Resets an input queue.
- * @details All the data is lost and the waiting threads resumed.
+ * @details All the data in the input queue is erased and lost, any waiting
+ *          thread is resumed with status @p Q_RESET.
  *
- * @param[in] qp pointer to a @p Queue structure
+ * @param[in] iqp pointer to an @p InputQueue structure
+ *
+ * @note A reset operation can be used by a low level driver in order to obtain
+ *       immediate attention from the high level layers.
  */
-void chIQReset(Queue *qp) {
+void chIQResetI(InputQueue *iqp) {
 
-  chSysLock();
-
-  qp->q_rdptr = qp->q_wrptr = qp->q_buffer;
-  chSemResetI(&qp->q_sem, 0);
-
-  chSysUnlock();
+  iqp->q_rdptr = iqp->q_wrptr = iqp->q_buffer;
+  chSemResetI(&iqp->q_sem, 0);
 }
 
 /**
- * @brief Inserts a byte into an input queue.
+ * @brief Input queue write.
+ * @details A byte value is written into the low end of an input queue.
  *
- * @param[in] qp pointer to a @p Queue structure
- * @param[in] b the byte value to be written
- * @retval Q_OK if the operation is successful.
- * @retval Q_FULL if the queue is full.
- * @note This function is the lower side endpoint of the Input Queue.
- * @note This function must be called with interrupts disabled or from an
- *       interrupt handler.
+ * @param[in] iqp pointer to an @p InputQueue structure
+ * @param[in] b the byte value to be written in the queue
+ * @return The operation status, it can be one of:
+ * @retval Q_OK if the operation has been completed with success.
+ * @retval Q_FULL if the queue is full and the operation cannot be completed.
  */
-msg_t chIQPutI(Queue *qp, uint8_t b) {
+msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
 
-  if (chIQIsFull(qp))
+  if (chIQIsFull(iqp))
     return Q_FULL;
 
-  *qp->q_wrptr++ = b;
-  if (qp->q_wrptr >= qp->q_top)
-    qp->q_wrptr = qp->q_buffer;
-  chSemSignalI(&qp->q_sem);
+  *iqp->q_wrptr++ = b;
+  if (iqp->q_wrptr >= iqp->q_top)
+    iqp->q_wrptr = iqp->q_buffer;
+  chSemSignalI(&iqp->q_sem);
   return Q_OK;
 }
 
 /**
- * @brief Gets a byte from the input queue.
- * @details If the queue is empty then the calling thread is suspended until
- *          a byte arrives in the queue.
+ * @brief Input queue read.
+ * @details This function reads a byte value from an input queue. If the queue
+ *          is empty then the calling thread is suspended until a byte arrives
+ *          in the queue or a timeout occurs.
  *
- * @param[in] qp pointer to a @p Queue structure
- * @return A byte value from the queue.
- * @retval Q_RESET if the queue was reset.
- */
-msg_t chIQGet(Queue *qp) {
-  uint8_t b;
-
-  chSysLock();
-
-  if (chSemWaitS(&qp->q_sem) < RDY_OK) {
-
-    chSysUnlock();
-    return Q_RESET;
-  }
-  b = *qp->q_rdptr++;
-  if (qp->q_rdptr >= qp->q_top)
-    qp->q_rdptr = qp->q_buffer;
-
-  if (qp->q_notify)
-    qp->q_notify();
-
-  chSysUnlock();
-  return b;
-}
-
-#if CH_USE_QUEUES_TIMEOUT && CH_USE_SEMAPHORES_TIMEOUT
-/**
- * @brief Gets a byte from the input queue.
- * @details If the queue is empty then the calling thread is suspended until
- *          a byte arrives in the queue or the specified time expires.
- *
- * @param[in] qp pointer to a @p Queue structure
- * @param[in] time the number of ticks before the operation timeouts
- * @return A byte value from the queue.
+ * @param[in] iqp pointer to an @p InputQueue structure
+ * @param[in] timeout the number of ticks before the operation timeouts,
+ *             the following special values are allowed:
+ *             - @a TIME_IMMEDIATE immediate timeout.
+ *             - @a TIME_INFINITE no timeout.
+ *             .
+ * @return A byte value from the queue or:
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the queue was reset.
- * @note The function is available only if the @p CH_USE_QUEUES_TIMEOUT and
- *       @p CH_USE_SEMAPHORES_TIMEOUT options are enabled in @p chconf.h.
+ *
+ * @note The @p time parameter is only meaningful if the
+ *       @p CH_USE_SEMAPHORES_TIMEOUT kernel option is activated,
+ *       otherwise only the @p TIME_INFINITE value is accepted.
  */
-msg_t chIQGetTimeout(Queue *qp, systime_t time) {
+msg_t chIQGetTimeout(InputQueue *iqp, systime_t timeout) {
   uint8_t b;
   msg_t msg;
 
+#if CH_USE_SEMAPHORES_TIMEOUT
   chSysLock();
-
-  if ((msg = chSemWaitTimeoutS(&qp->q_sem, time)) < RDY_OK) {
-
+  if ((msg = chSemWaitTimeoutS(&iqp->q_sem, timeout)) < RDY_OK) {
     chSysUnlock();
     return msg;
   }
-  b = *qp->q_rdptr++;
-  if (qp->q_rdptr >= qp->q_top)
-    qp->q_rdptr = qp->q_buffer;
+#else
+  chDbgCheck(timeout == TIME_INFINITE, "chIQGetTimeout");
 
-  if (qp->q_notify)
-    qp->q_notify();
+  chSysLock();
+  if ((msg = chSemWaitS(&iqp->q_sem)) < RDY_OK) {
+    chSysUnlock();
+    return msg;
+  }
+#endif
+  b = *iqp->q_rdptr++;
+  if (iqp->q_rdptr >= iqp->q_top)
+    iqp->q_rdptr = iqp->q_buffer;
+
+  if (iqp->q_notify)
+    iqp->q_notify();
 
   chSysUnlock();
   return b;
 }
-#endif /* (CH_USE_QUEUES_TIMEOUT && CH_USE_SEMAPHORES_TIMEOUT */
 
 /**
- * @brief Reads some data from the input queue into the specified buffer.
- * @details The function is non-blocking and can return zero if the queue is
+ * @brief Non-blocking read.
+ * @details The function reads data from an input queue into a buffer. The
+ *          transfer is non-blocking and can return zero if the queue is
  *          empty.
  *
- * @param[in] qp pointer to a @p Queue structure
- * @param[out] buffer the data buffer
- * @param[in] n the maximum amount of data to be read
- * @return The number of bytes read.
- * @note This function is the upper side endpoint of the input queue.
+ * @param[in] iqp pointer to an @p InputQueue structure
+ * @param[out] buffer pointer to the buffer where the input data is copied
+ * @param[in] n the maximum amount of data to be transferred
+ * @return The number of bytes transferred.
+ *
  * @note The function is not atomic, if you need atomicity it is suggested
- *       to use a semaphore for mutual exclusion.
+ *       to use a semaphore or a mutex for mutual exclusion.
  */
-size_t chIQRead(Queue *qp, uint8_t *buffer, size_t n) {
-
+size_t chIQRead(InputQueue *iqp, uint8_t *buffer, size_t n) {
   size_t r = 0;
+
   while (n--) {
     chSysLock();
-
-    if (chIQIsEmpty(qp)) {
-
+    if (chIQIsEmpty(iqp)) {
       chSysUnlock();
       break;
     }
-    chSemFastWaitI(&qp->q_sem);
-    *buffer++ = *qp->q_rdptr++;
-    if (qp->q_rdptr >= qp->q_top)
-      qp->q_rdptr = qp->q_buffer;
-
+    chSemFastWaitI(&iqp->q_sem);
+    *buffer++ = *iqp->q_rdptr++;
+    if (iqp->q_rdptr >= iqp->q_top)
+      iqp->q_rdptr = iqp->q_buffer;
     chSysUnlock();
     r++;
   }
-
-  if (r && qp->q_notify) {
+  if (r && iqp->q_notify) {
     chSysLock();
-
-    qp->q_notify();
-
+    iqp->q_notify();
     chSysUnlock();
   }
-
   return r;
 }
 
 /**
  * @brief Initializes an output queue.
- * @details A Semaphore is internally initialized and works as a counter of the
- *          free bytes in the queue.
+ * @details A Semaphore is internally initialized and works as a counter of
+ *          the free bytes in the queue.
  *
- * @param[out] qp pointer to a @p Queue structure
+ * @param[out] oqp pointer to an @p OutputQueue structure
  * @param[in] buffer pointer to a memory area allocated as queue buffer
  * @param[in] size size of the queue buffer
  * @param[in] onotify pointer to a callback function that is invoked when
- *                    some data is written in the Queue. The value can be
+ *                    some data is written to the queue. The value can be
  *                    @p NULL.
+ *
+ * @note The callback is invoked from within the S-Locked system state,
+ *       see @ref system_states.
  */
-void chOQInit(Queue *qp, uint8_t *buffer, size_t size, qnotify_t onotify) {
+void chOQInit(OutputQueue *oqp, uint8_t *buffer,
+              size_t size, qnotify_t onotify) {
 
-  qp->q_buffer = qp->q_rdptr = qp->q_wrptr = buffer;
-  qp->q_top = buffer + size;
-  chSemInit(&qp->q_sem, size);
-  qp->q_notify = onotify;
+  oqp->q_buffer = oqp->q_rdptr = oqp->q_wrptr = buffer;
+  oqp->q_top = buffer + size;
+  chSemInit(&oqp->q_sem, size);
+  oqp->q_notify = onotify;
 }
 
 /**
- * @brief Resets an Output Queue.
- * @details All the data is lost and the waiting threads resumed.
+ * @brief Resets an output queue.
+ * @details All the data in the output queue is erased and lost, any waiting
+ *          thread is resumed with status @p Q_RESET.
  *
- * @param[in] qp pointer to a @p Queue structure
+ * @param[in] oqp pointer to an @p OutputQueue structure
+ *
+ * @note A reset operation can be used by a low level driver in order to obtain
+ *       immediate attention from the high level layers.
  */
-void chOQReset(Queue *qp) {
+void chOQResetI(OutputQueue *oqp) {
+
+  oqp->q_rdptr = oqp->q_wrptr = oqp->q_buffer;
+  chSemResetI(&oqp->q_sem, (cnt_t)(oqp->q_top - oqp->q_buffer));
+}
+
+/**
+ * @brief Output queue write.
+ * @details This function writes a byte value to an output queue. If the queue
+ *          is full then the calling thread is suspended until there is space
+ *          in the queue or a timeout occurs.
+ *
+ * @param[in] oqp pointer to an @p OutputQueue structure
+ * @param[in] timeout the number of ticks before the operation timeouts,
+ *             the following special values are allowed:
+ *             - @a TIME_IMMEDIATE immediate timeout.
+ *             - @a TIME_INFINITE no timeout.
+ *             .
+ * @return The operation status:
+ * @retval Q_OK if the operation succeeded.
+ * @retval Q_TIMEOUT if the specified time expired.
+ * @retval Q_RESET if the queue was reset.
+ *
+ * @note The @p time parameter is only meaningful if the
+ *       @p CH_USE_SEMAPHORES_TIMEOUT kernel option is activated,
+ *       otherwise only the @p TIME_INFINITE value is accepted.
+ */
+msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t timeout) {
+  msg_t msg;
+
+#if CH_USE_SEMAPHORES_TIMEOUT
+  chSysLock();
+  if ((msg = chSemWaitTimeoutS(&oqp->q_sem, timeout)) < RDY_OK) {
+    chSysUnlock();
+    return msg;
+  }
+#else
+  chDbgCheck(timeout == TIME_INFINITE, "chOQPutTimeout");
 
   chSysLock();
+  if ((msg = chSemWaitS(&oqp->q_sem)) < RDY_OK) {
+    chSysUnlock();
+    return msg;
+  }
+#endif
+  *oqp->q_wrptr++ = b;
+  if (oqp->q_wrptr >= oqp->q_top)
+    oqp->q_wrptr = oqp->q_buffer;
 
-  qp->q_rdptr = qp->q_wrptr = qp->q_buffer;
-  chSemResetI(&qp->q_sem, (cnt_t)(qp->q_top - qp->q_buffer));
+  if (oqp->q_notify)
+    oqp->q_notify();
 
   chSysUnlock();
+  return Q_OK;
 }
 
 /**
- * @brief Inserts a byte in the output queue.
- * @details If the queue is full then the thread is suspended until the queue
- *          has free space available.
+ * @brief Output queue read.
+ * @details A byte value is read from the low end of an output queue.
  *
- * @param[in] qp pointer to a @p Queue structure
- * @param[in] b the byte value to be written
- */
-void chOQPut(Queue *qp, uint8_t b) {
-
-  chSysLock();
-
-  chSemWaitS(&qp->q_sem);
-  *qp->q_wrptr++ = b;
-  if (qp->q_wrptr >= qp->q_top)
-    qp->q_wrptr = qp->q_buffer;
-
-  if (qp->q_notify)
-    qp->q_notify();
-
-  chSysUnlock();
-}
-
-/**
- * @brief Gets a byte from an output queue.
- *
- * @param[in] qp pointer to a @p Queue structure
- * @return The byte value from the queue.
+ * @param[in] oqp pointer to an @p OutputQueue structure
+ * @return The byte value from the queue or:
  * @retval Q_EMPTY if the queue is empty.
- * @note This function is the lower side endpoint of the output queue.
- * @note This function must be called with interrupts disabled or from an
- *       interrupt handler.
  */
-msg_t chOQGetI(Queue *qp) {
+msg_t chOQGetI(OutputQueue *oqp) {
   uint8_t b;
 
-  if (chOQIsEmpty(qp))
+  if (chOQIsEmpty(oqp))
     return Q_EMPTY;
 
-  b = *qp->q_rdptr++;
-  if (qp->q_rdptr >= qp->q_top)
-    qp->q_rdptr = qp->q_buffer;
-  chSemSignalI(&qp->q_sem);
+  b = *oqp->q_rdptr++;
+  if (oqp->q_rdptr >= oqp->q_top)
+    oqp->q_rdptr = oqp->q_buffer;
+  chSemSignalI(&oqp->q_sem);
   return b;
 }
 
@@ -293,218 +302,43 @@ msg_t chOQGetI(Queue *qp) {
  * @note The function is not atomic, if you need atomicity it is suggested
  *       to use a semaphore for mutual exclusion.
  */
-size_t chOQWrite(Queue *qp, uint8_t *buffer, size_t n) {
+/**
+ * @brief Non-blocking write.
+ * @details The function writes data from a buffer to an output queue. The
+ *          transfer is non-blocking and can return zero if the queue is
+ *          already full.
+ *
+ * @param[in] oqp pointer to an @p OutputQueue structure
+ * @param[out] buffer pointer to the buffer where the output data is stored
+ * @param[in] n the maximum amount of data to be transferred
+ * @return The number of bytes transferred.
+ *
+ * @note The function is not atomic, if you need atomicity it is suggested
+ *       to use a semaphore or a mutex for mutual exclusion.
+ */
+size_t chOQWrite(OutputQueue *oqp, uint8_t *buffer, size_t n) {
 
   size_t w = 0;
   while (n--) {
     chSysLock();
-
-    if (chOQIsFull(qp)) {
-
+    if (chOQIsFull(oqp)) {
       chSysUnlock();
       break;
     }
-    chSemFastWaitI(&qp->q_sem);
-    *qp->q_wrptr++ = *buffer++;
-    if (qp->q_wrptr >= qp->q_top)
-      qp->q_wrptr = qp->q_buffer;
-
+    chSemFastWaitI(&oqp->q_sem);
+    *oqp->q_wrptr++ = *buffer++;
+    if (oqp->q_wrptr >= oqp->q_top)
+      oqp->q_wrptr = oqp->q_buffer;
     chSysUnlock();
     w++;
   }
-
-  if (w && qp->q_notify) {
+  if (w && oqp->q_notify) {
     chSysLock();
-
-    qp->q_notify();
-
+    oqp->q_notify();
     chSysUnlock();
   }
-
   return w;
 }
 #endif  /* CH_USE_QUEUES */
-
-#if CH_USE_QUEUES_HALFDUPLEX
- /**
- * @brief Initializes an half duplex queue.
- *
- * @param[out] qp pointer to the @p HalfDuplexQueue structure
- * @param[in] buffer pointer to a memory area allocated as buffer for the queue
- * @param[in] size the size of the queue buffer
- * @param[in] inotify pointer to a callback function that is invoked when
- *                    some data is read from the queue. The value can be
- *                    @p NULL.
- * @param[in] onotify pointer to a callback function that is invoked when
- *                    some data is written to the queue. The value can be
- *                    @p NULL.
- */
-void chHDQInit(HalfDuplexQueue *qp, uint8_t *buffer, size_t size,
-               qnotify_t inotify, qnotify_t onotify) {
-
-  qp->hdq_buffer = qp->hdq_rdptr = qp->hdq_wrptr = buffer;
-  qp->hdq_top = buffer + size;
-  chSemInit(&qp->hdq_isem, 0);
-  chSemInit(&qp->hdq_osem, size);
-  qp->hdq_inotify = inotify;
-  qp->hdq_onotify = onotify;
-}
-
-/**
- * @brief Reads a byte from the receive queue.
- * @details If the queue is empty or is in transmission mode then the invoking
- *          thread is suspended.
- *
- * @param[in] qp pointer to a @p HalfDuplexQueue structure
- * @return The byte value.
- * @retval Q_RESET if the queue was reset.
- */
-msg_t chHDQGetReceive(HalfDuplexQueue *qp) {
-  uint8_t b;
-
-  chSysLock();
-
-  if (chSemWaitS(&qp->hdq_isem) < RDY_OK) {
-
-    chSysUnlock();
-    return Q_RESET;
-  }
-  /*
-   * NOTE: The semaphore can be signaled only if the queue is in
-   *       receive mode.
-   */
-  b = *qp->hdq_rdptr++;
-  if (qp->hdq_rdptr >= qp->hdq_top)
-    qp->hdq_rdptr = qp->hdq_buffer;
-
-  if (qp->hdq_inotify)
-    qp->hdq_inotify();
-
-  chSysUnlock();
-  return b;
-}
-
-#if CH_USE_QUEUES_TIMEOUT && CH_USE_SEMAPHORES_TIMEOUT
-/**
- * @brief Reads a byte from the receive queue.
- * @details If the queue is empty or is in transmission mode then the invoking
- *          thread is suspended.
- *
- * @param[in] qp pointer to a @p HalfDuplexQueue structure
- * @param[in] time the number of ticks before the operation timouts
- * @return The byte value.
- * @retval Q_TIMEOUT if a timeout occurs.
- * @note The function is available only if the @p CH_USE_QUEUES_TIMEOUT and
- *       @p CH_USE_SEMAPHORES_TIMEOUT options are enabled in @p chconf.h.
- */
-msg_t chHDQGetReceiveTimeout(HalfDuplexQueue *qp, systime_t time) {
-  uint8_t b;
-  msg_t msg;
-
-  chSysLock();
-
-  if ((msg = chSemWaitTimeoutS(&qp->hdq_isem, time)) < RDY_OK) {
-
-    chSysUnlock();
-    return msg;
-  }
-  /*
-   * NOTE: The semaphore can be signaled only if the queue is in
-   *       receive mode.
-   */
-  b = *qp->hdq_rdptr++;
-  if (qp->hdq_rdptr >= qp->hdq_top)
-    qp->hdq_rdptr = qp->hdq_buffer;
-
-  if (qp->hdq_inotify)
-    qp->hdq_inotify();
-
-  chSysUnlock();
-  return b;
-}
-#endif /* CH_USE_QUEUES_TIMEOUT && CH_USE_SEMAPHORES_TIMEOUT */
-
-/**
- * @brief Writes a byte into the transmit queue.
- * @details If the buffer contains unread input data then the the buffer is
- *          cleared and the queue goes in transmission mode.
- *
- * @param[in] qp pointer to a @p HalfDuplexQueue structure
- * @param[in] b the byte value to be written
- */
-void chHDQPutTransmit(HalfDuplexQueue *qp, uint8_t b) {
-
-  chSysLock();
-
-  /*
-   * Transmission mode requires that all the unread data must be destroyed.
-   */
-  if (qp->hdq_isem.s_cnt > 0) {
-    qp->hdq_isem.s_cnt = 0;
-    qp->hdq_rdptr = qp->hdq_wrptr = qp->hdq_buffer;
-  }
-
-  /*
-   * Goes in transmission mode.
-   */
-  chSemWaitS(&qp->hdq_osem);
-  *qp->hdq_wrptr++ = b;
-  if (qp->hdq_wrptr >= qp->hdq_top)
-    qp->hdq_wrptr = qp->hdq_buffer;
-
-  if (qp->hdq_onotify)
-    qp->hdq_onotify();
-
-  chSysUnlock();
-}
-
-/**
- * @brief Gets a byte from the transmit queue.
- *
- * @param[in] qp pointer to a @p HalfDuplexQueue structure
- * @return The byte value.
- * @retval Q_EMPTY if the transmit queue is empty (not in transmission mode).
- * @note This function must be called with interrupts disabled or from an
- *       interrupt handler.
- */
-msg_t chHDQGetTransmitI(HalfDuplexQueue *qp) {
-  uint8_t b;
-
-  if (!chHDQIsTransmitting(qp))
-    return Q_EMPTY;
-
-  b = *qp->hdq_rdptr++;
-  if (qp->hdq_rdptr >= qp->hdq_top)
-    qp->hdq_rdptr = qp->hdq_buffer;
-  chSemSignalI(&qp->hdq_osem);
-  return b;
-}
-
-/**
- * @brief Writes a byte into the receive queue.
- * @details If the queue is in transmission mode then the byte is lost.
- *
- * @param[in] qp pointer to a @p HalfDuplexQueue structure
- * @param[in] b the byte value to be written
- * @retval Q_OK if the operation is successful.
- * @retval Q_FULL if the driver is in transmit mode or the receive queue is full.
- * @note This function must be called with interrupts disabled or from an
- *       interrupt handler.
- */
-msg_t chHDQPutReceiveI(HalfDuplexQueue *qp, uint8_t b) {
-
-  if (chHDQIsTransmitting(qp))
-    return Q_FULL;
-
-  if (chHDQIsFullReceive(qp))
-    return Q_FULL;
-
-  *qp->hdq_wrptr++ = b;
-  if (qp->hdq_wrptr >= qp->hdq_top)
-    qp->hdq_wrptr = qp->hdq_buffer;
-  chSemSignalI(&qp->hdq_isem);
-  return Q_OK;
-}
-#endif /* CH_USE_QUEUES_HALFDUPLEX */
 
 /** @} */

@@ -54,14 +54,14 @@ typedef struct {
 
   /** Input queue. Incoming data can be read from this queue by using the
    *  queues APIs.*/
-  Queue                 sd_iqueue;
+  InputQueue            sd_iqueue;
   /** Data Available @p EventSource. This event is generated when some incoming
    *  data is inserted in the Input @p Queue.*/
   EventSource           sd_ievent;
 
   /** Output queue. Outgoing data can be written to this Output @p Queue by
    *   using the queues APIs.*/
-  Queue                 sd_oqueue;
+  OutputQueue           sd_oqueue;
   /** Data Transmitted @p EventSource. This event is generated when the
    *  Output @p Queue is empty.*/
   EventSource           sd_oevent;
@@ -109,58 +109,6 @@ extern "C" {
         chOQPut(&(sd)->sd_oqueue, b)
 
 #endif /* CH_USE_SERIAL_FULLDUPLEX */
-
-#if CH_USE_SERIAL_HALFDUPLEX
-
-/**
- * @brief Full Duplex Serial Driver main structure.
- */
-typedef struct {
-
-  /** Data queue. Transmit/receive @p HalfDuplexQueue.*/
-  HalfDuplexQueue       sd_queue;
-  /** Data Available @p EventSource. This event is generated when some
-   *  incoming data is inserted in the receive queue.*/
-  EventSource           sd_ievent;
-  /** Data Transmitted @p EventSource. This event is generated when the
-   *  transmission queue is empty and the driver can either transmit more
-   *  data or enter receive mode.*/
-  EventSource           sd_oevent;
-  /** I/O driver status flags. This field should not be read directly but
-   *  the @p chHDDGetAndClearFlags() funtion should be used
-   *  instead.*/
-  dflags_t              sd_flags;
-  /** Status Change Event Source. This event is generated when a condition
-   *  flag was changed.*/
-  EventSource           sd_sevent;
-} HalfDuplexDriver;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void chHDDInit(HalfDuplexDriver *sd, uint8_t *b, size_t size,
-                qnotify_t inotify, qnotify_t onotify);
-  void chHDDIncomingDataI(HalfDuplexDriver *sd, uint8_t b);
-  msg_t chHDDRequestDataI(HalfDuplexDriver *sd);
-  void chHDDAddFlagsI(HalfDuplexDriver *sd, dflags_t mask);
-  dflags_t chHDDGetAndClearFlags(HalfDuplexDriver *sd);
-#ifdef __cplusplus
-}
-#endif
-
-/** @see chHDQGetReceive()*/
-#define chHDDGetReceive(sd) \
-        chHDQGetReceive(&(sd)->sd_queue)
-
-/** @see chHDQGetReceiveTimeout()*/
-#define chHDDGetReceiveTimeout(sd, t) \
-        chHDQGetReceiveTimeout(&(sd)->sd_queue, t)
-
-/** @see chHDQPutTransmit()*/
-#define chHDDPutTransmit(sd, b) \
-        chHDQPutTransmit(&(sd)->sd_queue, b)
-
-#endif /* CH_USE_SERIAL_HALFDUPLEX */
 
 #endif /* _SERIAL_H_ */
 

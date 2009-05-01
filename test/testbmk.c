@@ -318,7 +318,7 @@ static char *bmk8_gettest(void) {
 
 static void bmk8_execute(void) {
   static uint8_t ib[16];
-  static Queue iq;
+  static InputQueue iq;
 
   chIQInit(&iq, ib, sizeof(ib), NULL);
   uint32_t n = 0;
