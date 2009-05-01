@@ -43,9 +43,4 @@ X File System
 
 Lower priority:
 - More demos
-- More ARM ports
-? PIC24 port
-- Microblaze port
-- PowerPC port
-? Coldfire port
-? H8 port
+- More ports

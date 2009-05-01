@@ -58,19 +58,6 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
                          MinGW version.
 
 *****************************************************************************
-*** Plans                                                                 ***
-*****************************************************************************
-
-- Evaluate other architectures for a possible ChibiOS/RT port. An important
-  selection parameter will be the availability of FOSS toolchains. Currently
-  we are evaluating the MicroBlaze.
-- Creation of a reduced ChibiOS/RT kernel targeted to lesser 8bit micros and
-  educational purposes, the name will probably be ChibiOS/SX, we are still
-  discussing it.
-- File System implementation as side project. Basic requirements: Thread safe,
-  concurrent accesses, proper buffers cache.
-
-*****************************************************************************
 *** Releases                                                              ***
 *****************************************************************************
 
@@ -99,7 +86,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   the functionality can be re-created with a compound atomic operation. Also
   removed the CH_USE_MESSAGES_EVENT configuration option.
 - CHANGE: Modified the test suite assertions in order to save RAM on the AVR
-  targets. The test suit now uses much less string space.
+  targets. The test suite now uses much less string space.
 
 *** 1.2.0 ***
 - Added license exception text to the 1.2.0 branch.
