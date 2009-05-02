@@ -48,72 +48,6 @@
 typedef uint8_t dflags_t;
 
 /**
- * @brief @p GenericSerialDriver specific methods.
- */
-struct _generic_serial_driver_methods {
-};
-
-/**
- * @brief @p GenericSerialDriver specific data.
- */
-struct _generic_serial_driver_data {
-  /**
-   * Status Change @p EventSource. This event is generated when one or more
-   * condition flags change.
-   */
-  EventSource           sevent;
-  /**
-   * I/O driver status flags.
-   */
-  dflags_t              flags;
-};
-
-/**
- * @brief @p GenericSerialDriver virtual methods table.
- */
-struct GenericSerialDriverVMT {
-  /**
-   * @p BaseChannel class inherited methods.
-   */
-  struct _base_channel_methods m0;
-  /**
-   * @p BaseAsynchronousChannel class inherited methods.
-   */
-  struct _base_asynchronous_channel_methods m1;
-  /**
-   * @p GenericSerialDriver specific methods.
-   */
-  struct _generic_serial_driver_methods m2;
-};
-
-/**
- * @extends BaseAsynchronousChannel
- *
- * @brief Generic serial driver class.
- * @details This class extends @p BaseAsynchronousChannel by adding handling for
- *          serial error events.
- */
-typedef struct {
-  /**
-   * Virtual Methods Table.
-   */
-  const struct GenericSerialDriverVMT *vmt;
-  /**
-   * @p BaseChannel class inherited data.
-   */
-  struct _base_channel_data d0;
-  /**
-   * @p BaseAsynchronousChannel class inherited data.
-   */
-  struct _base_asynchronous_channel_data d1;
-  /**
-   * @p GenericSerialDriver specific data.
-   */
-  struct _generic_serial_driver_data d2;
-} GenericSerialDriver;
-
-
-/**
  * @brief @p FullDuplexDriver specific methods.
  */
 struct _full_duplex_driver_methods {
@@ -133,6 +67,15 @@ struct _full_duplex_driver_data {
    * using the queues APIs.
    */
   OutputQueue           oqueue;
+  /**
+   * Status Change @p EventSource. This event is generated when one or more
+   * condition flags change.
+   */
+  EventSource           sevent;
+  /**
+   * I/O driver status flags.
+   */
+  dflags_t              flags;
 };
 
 /**
@@ -148,13 +91,9 @@ struct FullDuplexDriverVMT {
    */
   struct _base_asynchronous_channel_methods m1;
   /**
-   * @p GenericSerialDriver specific methods.
-   */
-  struct _generic_serial_driver_methods m2;
-  /**
    * @p FullDuplexDriver specific methods.
    */
-  struct _full_duplex_driver_methods m3;
+  struct _full_duplex_driver_methods m2;
 };
 
 /**
@@ -178,13 +117,9 @@ typedef struct {
    */
   struct _base_asynchronous_channel_data d1;
   /**
-   * @p GenericSerialDriver inherited data.
-   */
-  struct _generic_serial_driver_data d2;
-  /**
    * @p FullDuplexDriver specific data.
    */
-  struct _full_duplex_driver_data d3;
+  struct _full_duplex_driver_data d2;
 } FullDuplexDriver;
 
 #ifdef __cplusplus
@@ -201,25 +136,61 @@ extern "C" {
 }
 #endif
 
-/** @see chIQRead()*/
-#define chFDDRead(sd, b, n) \
-        chIQRead(&(sd)->sd_iqueue, b, n)
+/**
+ * @brief Direct blocking write to a @p FullDuplexDriver.
+ * @details This function bypasses the indirect access to the channel and
+ *          writes directly on the output queue. This is faster but cannot
+ *          be used to write to different channels implementations.
+ * @see chIOPut()
+ */
+#define chFDDPut(sd, b) chOQPut(&(sd)->d2.oqueue, b)
 
-/** @see chOQWrite()*/
-#define chFDDWrite(sd, b, n) \
-        chOQWrite(&(sd)->sd_oqueue, b, n)
+/**
+ * @brief Direct blocking write on a @p FullDuplexDriver with timeout
+ *        specification.
+ * @details This function bypasses the indirect access to the channel and
+ *          writes directly on the output queue. This is faster but cannot
+ *          be used to write to different channels implementations.
+ * @see chIOPutTimeout()
+ */
+#define chFDDPutTimeout(sd, b, t) chOQPutTimeout(&(sd)->d2.iqueue, b, t)
 
-/** @see chIQGet()*/
-#define chFDDGet(sd) \
-        chIQGet(&(sd)->sd_iqueue)
+/**
+ * @brief Direct blocking read from a @p FullDuplexDriver.
+ * @details This function bypasses the indirect access to the channel and
+ *          reads directly from the input queue. This is faster but cannot
+ *          be used to read from different channels implementations.
+ * @see chIOGet()
+ */
+#define chFDDGet(sd) chIQGet(&(sd)->d2.iqueue)
 
-/** @see chIQGetTimeout()*/
-#define chFDDGetTimeout(sd, t) \
-        chIQGetTimeout(&(sd)->sd_iqueue, t)
+/**
+ * @brief Direct blocking read from a @p FullDuplexDriver with timeout
+ *        specification.
+ * @details This function bypasses the indirect access to the channel and
+ *          reads directly from the input queue. This is faster but cannot
+ *          be used to read from different channels implementations.
+ * @see chIOGetTimeout()
+ */
+#define chFDDGetTimeout(sd, t) chIQGetTimeout(&(sd)->d2.iqueue, t)
 
-/** @see chOQPut()*/
-#define chFDDPut(sd, b) \
-        chOQPut(&(sd)->sd_oqueue, b)
+/**
+ * @brief Direct non-blocking write to a @p FullDuplexDriver.
+ * @details This function bypasses the indirect access to the channel and
+ *          writes directly to the output queue. This is faster but cannot
+ *          be used to write from different channels implementations.
+ * @see chIOWrite()
+ */
+#define chFDDWrite(sd, b, n) chOQWrite(&(sd)->d2.oqueue, b, n)
+
+/**
+ * @brief Direct non-blocking read on a @p FullDuplexDriver.
+ * @details This function bypasses the indirect access to the channel and
+ *          reads directly from the input queue. This is faster but cannot
+ *          be used to read from different channels implementations.
+ * @see chIORead()
+ */
+#define chFDDRead(sd, b, n) chIQRead(&(sd)->d2.iqueue, b, n)
 
 #endif /* CH_USE_SERIAL_FULLDUPLEX */
 

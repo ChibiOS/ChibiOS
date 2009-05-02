@@ -30,28 +30,27 @@
 
 static msg_t put(void *instance, uint8_t b, systime_t timeout) {
 
-  return chOQPutTimeout(&((FullDuplexDriver *)instance)->d3.oqueue, b, timeout);
+  return chOQPutTimeout(&((FullDuplexDriver *)instance)->d2.oqueue, b, timeout);
 }
 
 static msg_t get(void *instance, systime_t timeout) {
 
-  return chIQGetTimeout(&((FullDuplexDriver *)instance)->d3.iqueue, timeout);
+  return chIQGetTimeout(&((FullDuplexDriver *)instance)->d2.iqueue, timeout);
 }
 
 static size_t write(void *instance, uint8_t *buffer, size_t n) {
 
-  return chOQWrite(&((FullDuplexDriver *)instance)->d3.oqueue, buffer, n);
+  return chOQWrite(&((FullDuplexDriver *)instance)->d2.oqueue, buffer, n);
 }
 
 static size_t read(void *instance, uint8_t *buffer, size_t n) {
 
-  return chIQRead(&((FullDuplexDriver *)instance)->d3.iqueue, buffer, n);
+  return chIQRead(&((FullDuplexDriver *)instance)->d2.iqueue, buffer, n);
 }
 
 static const struct FullDuplexDriverVMT vmt = {
   {put, get},
   {write, read},
-  {},
   {}
 };
 
@@ -84,8 +83,8 @@ void chFDDInit(FullDuplexDriver *sd,
   chEvtInit(&sd->d1.oevent);
   chEvtInit(&sd->d2.sevent);
   sd->d2.flags = SD_NO_ERROR;
-  chIQInit(&sd->d3.iqueue, ib, isize, inotify);
-  chOQInit(&sd->d3.oqueue, ob, osize, onotify);
+  chIQInit(&sd->d2.iqueue, ib, isize, inotify);
+  chOQInit(&sd->d2.oqueue, ob, osize, onotify);
 }
 
 /**
@@ -98,7 +97,7 @@ void chFDDInit(FullDuplexDriver *sd,
  */
 void chFDDIncomingDataI(FullDuplexDriver *sd, uint8_t b) {
 
-  if (chIQPutI(&sd->d3.iqueue, b) < Q_OK)
+  if (chIQPutI(&sd->d2.iqueue, b) < Q_OK)
     chFDDAddFlagsI(sd, SD_OVERRUN_ERROR);
   else
     chEvtBroadcastI(&sd->d1.ievent);
@@ -116,7 +115,7 @@ void chFDDIncomingDataI(FullDuplexDriver *sd, uint8_t b) {
  */
 msg_t chFDDRequestDataI(FullDuplexDriver *sd) {
 
-  msg_t b = chOQGetI(&sd->d3.oqueue);
+  msg_t b = chOQGetI(&sd->d2.oqueue);
   if (b < Q_OK)
     chEvtBroadcastI(&sd->d1.oevent);
   return b;
