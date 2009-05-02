@@ -80,6 +80,7 @@
 #include "threads.h"
 #include "inline.h"
 #include "queues.h"
+#include "channels.h"
 #include "serial.h"
 #include "debug.h"
 

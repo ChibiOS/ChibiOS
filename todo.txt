@@ -5,6 +5,7 @@ X = In progress, some work done.
 * = Done.
 
 After 1.2.0:
+- Remove any instance of unnamed structures/unions.
 - Dedicated syscalls.c support for newlib users.
 X Abstract I/O channels rather than just serial ports.
   - Move the serial drivers implementations in library. Better keep the core
