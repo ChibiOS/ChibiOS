@@ -28,11 +28,21 @@
 #define _CHANNELS_H_
 
 /**
- * @brief Virtual methods table for base channels.
+ * @brief Base channels methods.
  */
-struct _base_channel_vmt {
+struct _base_channel_methods {
   /**
-   * Channel synchronous put method.
+   * @brief Channel synchronous put method.
+   * @param[in] b the byte value to be written in the queue
+   * @param[in] timeout the number of ticks before the operation timeouts,
+   *             the following special values are allowed:
+   *             - @a TIME_IMMEDIATE immediate timeout.
+   *             - @a TIME_INFINITE no timeout.
+   *             .
+   * @return The operation status:
+   * @retval Q_OK if the operation succeeded.
+   * @retval Q_TIMEOUT if the specified time expired.
+   * @retval Q_RESET if the queue was reset.
    */
   msg_t (*put)(void *instance, uint8_t b, systime_t timeout);
   /**
@@ -50,6 +60,13 @@ struct _base_channel_data {
 };
 
 /**
+ * @brief Virtual methods table for base channels.
+ */
+struct _base_channel_vmt {
+  struct _base_channel_methods m0;              /**< Class methods. */
+};
+
+/**
  * @brief Base channel class.
  * @details This class represents a generic, synchronous, byte-wide,
  *          I/O channel.
@@ -63,15 +80,7 @@ typedef struct {
 /**
  * @brief Virtual methods table for base asynchronous channels.
  */
-struct _base_asynchronous_channel_vmt {
-  /**
-   * Channel synchronous put method.
-   */
-  msg_t (*put)(void *instance, uint8_t b, systime_t timeout);
-  /**
-   * Channel synchronous get method.
-   */
-  msg_t (*get)(void *instance, systime_t timeout);
+struct _base_asynchronous_channel_methods {
   /**
    * Channel asynchronous write method.
    */
@@ -97,6 +106,15 @@ struct _base_asynchronous_channel_data {
    */
   EventSource           oevent;
 };
+
+/**
+ * @brief Virtual methods table for base asynchronous channels.
+ */
+struct _base_asynchronous_channel_vmt {
+  struct _base_channel_methods m0;              /**< Super class methods. */
+  struct _base_asynchronous_channel_methods m1; /**< Class methods. */
+};
+
 
 /**
  * @extends BaseChannel
