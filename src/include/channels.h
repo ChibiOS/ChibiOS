@@ -28,7 +28,7 @@
 #define _CHANNELS_H_
 
 /**
- * @brief Base channels methods.
+ * @brief @p BaseChannel specific methods.
  */
 struct _base_channel_methods {
   /**
@@ -44,7 +44,7 @@ struct _base_channel_methods {
 };
 
 /**
- * @brief Base channels data.
+ * @brief @p BaseChannel specific data.
  * @note It is empty because @p BaseChannel is only an interface without
  *       implementation.
  */
@@ -52,10 +52,13 @@ struct _base_channel_data {
 };
 
 /**
- * @brief Virtual methods table for base channels.
+ * @brief @p BaseChannel virtual methods table.
  */
-struct _base_channel_vmt {
-  struct _base_channel_methods m0;              /**< Class methods. */
+struct BaseChannelVMT {
+  /**
+   * @p BaseChannel class specific methods.
+   */
+  struct _base_channel_methods m0;
 };
 
 /**
@@ -63,8 +66,14 @@ struct _base_channel_vmt {
  * @details This class represents a generic, byte-wide, I/O channel.
  */
 typedef struct {
-  struct _base_channel_vmt *vmt;                /**< Virtual Methods Table. */
-  struct _base_channel_data d0;                 /**< Class data. */
+  /**
+   * Virtual Methods Table.
+   */
+  const struct BaseChannelVMT *vmt;
+  /**
+   * @p BaseChannel class specific data.
+   */
+  struct _base_channel_data d0;
 } BaseChannel;
 
 /**
@@ -129,7 +138,7 @@ typedef struct {
 
 #if CH_USE_EVENTS
 /**
- * @brief Virtual methods table for base asynchronous channels.
+ * @brief @p BaseAsynchronousChannel specific methods.
  */
 struct _base_asynchronous_channel_methods {
   /**
@@ -145,7 +154,7 @@ struct _base_asynchronous_channel_methods {
 };
 
 /**
- * @brief Base asynchronous channels data.
+ * @brief @p BaseAsynchronousChannel specific data.
  */
 struct _base_asynchronous_channel_data {
   /**
@@ -161,11 +170,17 @@ struct _base_asynchronous_channel_data {
 };
 
 /**
- * @brief Virtual methods table for base asynchronous channels.
+ * @brief @p BaseAsynchronousChannel virtual methods table.
  */
-struct _base_asynchronous_channel_vmt {
-  struct _base_channel_methods m0;              /**< Super class methods. */
-  struct _base_asynchronous_channel_methods m1; /**< Class methods. */
+struct BaseAsynchronousChannelVMT {
+  /**
+   * @p BaseChannel class inherited methods.
+   */
+  struct _base_channel_methods m0;
+  /**
+   * @p BaseAsynchronousChannel class specific methods.
+   */
+  struct _base_asynchronous_channel_methods m1;
 };
 
 /**
@@ -176,9 +191,18 @@ struct _base_asynchronous_channel_vmt {
  *          asynchronous I/O in an event-driven environment.
  */
 typedef struct {
-  struct _base_asynchronous_channel_vmt *vmt;   /**< Virtual Methods Table. */
-  struct _base_channel_data d0;                 /**< Super class data. */
-  struct _base_asynchronous_channel_data d1;    /**< Class data. */
+  /**
+   * Virtual Methods Table.
+   */
+  const struct BaseAsynchronousChannelVMT *vmt;
+  /**
+   * @p BaseChannel class inherited data.
+   */
+  struct _base_channel_data d0;
+  /**
+   * @p BaseAsynchronousChannel class specific data.
+   */
+  struct _base_asynchronous_channel_data d1;
 } BaseAsynchronousChannel;
 
 /**

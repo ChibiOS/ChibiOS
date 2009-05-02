@@ -27,6 +27,34 @@
 #include <ch.h>
 
 #if CH_USE_SERIAL_FULLDUPLEX
+
+static msg_t put(void *instance, uint8_t b, systime_t timeout) {
+
+  return chOQPutTimeout(&((FullDuplexDriver *)instance)->d3.oqueue, b, timeout);
+}
+
+static msg_t get(void *instance, systime_t timeout) {
+
+  return chIQGetTimeout(&((FullDuplexDriver *)instance)->d3.iqueue, timeout);
+}
+
+static size_t write(void *instance, uint8_t *buffer, size_t n) {
+
+  return chOQWrite(&((FullDuplexDriver *)instance)->d3.oqueue, buffer, n);
+}
+
+static size_t read(void *instance, uint8_t *buffer, size_t n) {
+
+  return chIQRead(&((FullDuplexDriver *)instance)->d3.iqueue, buffer, n);
+}
+
+static const struct FullDuplexDriverVMT vmt = {
+  {put, get},
+  {write, read},
+  {},
+  {}
+};
+
 /**
  * @brief Initializes a generic full duplex driver.
  * @details The HW dependent part of the initialization has to be performed
@@ -51,6 +79,7 @@ void chFDDInit(FullDuplexDriver *sd,
   chDbgCheck((sd != NULL) && (ib != NULL) && (ob != NULL) &&
              (isize > 0) && (osize > 0), "chFDDInit");
 
+  sd->vmt = &vmt;
   chEvtInit(&sd->d1.ievent);
   chEvtInit(&sd->d1.oevent);
   chEvtInit(&sd->d2.sevent);

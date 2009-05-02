@@ -63,8 +63,7 @@ struct _generic_serial_driver_data {
    */
   EventSource           sevent;
   /**
-   * I/O driver status flags. This field should not be read directly but
-   * the @p () function should be used instead.
+   * I/O driver status flags.
    */
   dflags_t              flags;
 };
@@ -72,7 +71,7 @@ struct _generic_serial_driver_data {
 /**
  * @brief @p GenericSerialDriver virtual methods table.
  */
-struct _generic_serial_driver_vmt {
+struct GenericSerialDriverVMT {
   /**
    * @p BaseChannel class inherited methods.
    */
@@ -98,7 +97,7 @@ typedef struct {
   /**
    * Virtual Methods Table.
    */
-  struct _generic_serial_driver_vmt *vmt;
+  const struct GenericSerialDriverVMT *vmt;
   /**
    * @p BaseChannel class inherited data.
    */
@@ -139,7 +138,7 @@ struct _full_duplex_driver_data {
 /**
  * @brief @p FullDuplexDriver virtual methods table.
  */
-struct _full_duplex_driver_vmt {
+struct FullDuplexDriverVMT {
   /**
    * @p BaseChannel class inherited methods.
    */
@@ -169,7 +168,7 @@ typedef struct {
   /**
    * Virtual Methods Table.
    */
-  struct _full_duplex_driver_vmt *vmt;
+  const struct FullDuplexDriverVMT *vmt;
   /**
    * @p BaseChannel class inherited data.
    */
@@ -179,7 +178,7 @@ typedef struct {
    */
   struct _base_asynchronous_channel_data d1;
   /**
-   * @p GenericSerialDriver specific data.
+   * @p GenericSerialDriver inherited data.
    */
   struct _generic_serial_driver_data d2;
   /**
