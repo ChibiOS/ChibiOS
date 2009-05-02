@@ -64,33 +64,33 @@ Thread *threads[MAX_THREADS];
 /*
  * Console output.
  */
-static FullDuplexDriver *comp;
+static BaseChannel *chp;
 
 void test_printn(uint32_t n) {
   char buf[16], *p;
 
   if (!n)
-    chIOPut(comp, '0');
+    chIOPut(chp, '0');
   else {
     p = buf;
     while (n)
       *p++ = (n % 10) + '0', n /= 10;
     while (p > buf)
-      chIOPut(comp, *--p);
+      chIOPut(chp, *--p);
   }
 }
 
 void test_print(char *msgp) {
 
   while (*msgp)
-    chIOPut(comp, *msgp++);
+    chIOPut(chp, *msgp++);
 }
 
 void test_println(char *msgp) {
 
   test_print(msgp);
-  chIOPut(comp, '\r');
-  chIOPut(comp, '\n');
+  chIOPut(chp, '\r');
+  chIOPut(chp, '\n');
 }
 
 /*
@@ -105,7 +105,7 @@ static void print_tokens(void) {
   char *cp = tokens_buffer;
 
   while (cp < tokp)
-    chIOPut(comp, *cp++);
+    chIOPut(chp, *cp++);
 }
 
 void test_emit_token(char token) {
@@ -232,15 +232,15 @@ static void print_line(void) {
   unsigned i;
 
   for (i = 0; i < 76; i++)
-    chIOPut(comp, '-');
-  chIOPut(comp, '\r');
-  chIOPut(comp, '\n');
+    chIOPut(chp, '-');
+  chIOPut(chp, '\r');
+  chIOPut(chp, '\n');
 }
 
 msg_t TestThread(void *p) {
   int i, j;
 
-  comp = p;
+  chp = p;
   test_println("");
   test_println("*** ChibiOS/RT test suite");
   test_println("***");
