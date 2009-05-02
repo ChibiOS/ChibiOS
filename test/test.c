@@ -70,27 +70,27 @@ void test_printn(uint32_t n) {
   char buf[16], *p;
 
   if (!n)
-    chFDDPut(comp, '0');
+    chIOPut(comp, '0');
   else {
     p = buf;
     while (n)
       *p++ = (n % 10) + '0', n /= 10;
     while (p > buf)
-      chFDDPut(comp, *--p);
+      chIOPut(comp, *--p);
   }
 }
 
 void test_print(char *msgp) {
 
   while (*msgp)
-    chFDDPut(comp, *msgp++);
+    chIOPut(comp, *msgp++);
 }
 
 void test_println(char *msgp) {
 
   test_print(msgp);
-  chFDDPut(comp, '\r');
-  chFDDPut(comp, '\n');
+  chIOPut(comp, '\r');
+  chIOPut(comp, '\n');
 }
 
 /*
@@ -105,7 +105,7 @@ static void print_tokens(void) {
   char *cp = tokens_buffer;
 
   while (cp < tokp)
-    chFDDPut(comp, *cp++);
+    chIOPut(comp, *cp++);
 }
 
 void test_emit_token(char token) {
@@ -232,9 +232,9 @@ static void print_line(void) {
   unsigned i;
 
   for (i = 0; i < 76; i++)
-    chFDDPut(comp, '-');
-  chFDDPut(comp, '\r');
-  chFDDPut(comp, '\n');
+    chIOPut(comp, '-');
+  chIOPut(comp, '\r');
+  chIOPut(comp, '\n');
 }
 
 msg_t TestThread(void *p) {

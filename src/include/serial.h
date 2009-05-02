@@ -128,12 +128,12 @@ struct _full_duplex_driver_data {
    * Input queue, incoming data can be read from this input queue by
    * using the queues APIs.
    */
-  InputQueue            sd_iqueue;
+  InputQueue            iqueue;
   /**
    * Output queue, outgoing data can be written to this output queue by
    * using the queues APIs.
    */
-  OutputQueue           sd_oqueue;
+  OutputQueue           oqueue;
 };
 
 /**
@@ -169,7 +169,7 @@ typedef struct {
   /**
    * Virtual Methods Table.
    */
-  struct _generic_serial_driver_vmt *vmt;
+  struct _full_duplex_driver_vmt *vmt;
   /**
    * @p BaseChannel class inherited data.
    */
@@ -186,33 +186,6 @@ typedef struct {
    * @p FullDuplexDriver specific data.
    */
   struct _full_duplex_driver_data d3;
-} FullDuplexDriver_;
-
-/**
- * @brief Full Duplex Serial Driver main structure.
- */
-typedef struct {
-
-  /** Input queue. Incoming data can be read from this queue by using the
-   *  queues APIs.*/
-  InputQueue            sd_iqueue;
-  /** Data Available @p EventSource. This event is generated when some incoming
-   *  data is inserted in the Input @p Queue.*/
-  EventSource           sd_ievent;
-
-  /** Output queue. Outgoing data can be written to this Output @p Queue by
-   *   using the queues APIs.*/
-  OutputQueue           sd_oqueue;
-  /** Data Transmitted @p EventSource. This event is generated when the
-   *  Output @p Queue is empty.*/
-  EventSource           sd_oevent;
-
-  /** I/O driver status flags. This field should not be read directly but
-   *  the @p chFDDGetAndClearFlags() funtion should be used instead.*/
-  dflags_t              sd_flags;
-  /** Status Change @p EventSource. This event is generated when a
-   *  condition flag was changed.*/
-  EventSource           sd_sevent;
 } FullDuplexDriver;
 
 #ifdef __cplusplus

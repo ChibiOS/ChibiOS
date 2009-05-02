@@ -78,7 +78,7 @@ typedef struct {
  * @retval Q_OK if the operation succeeded.
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOPut(ip, b) ((ip)->vmt.m0->put(ip, b, TIME_INFINITE))
+#define chIOPut(ip, b) ((ip)->vmt->m0.put(ip, b, TIME_INFINITE))
 
 /**
  * @brief Channel blocking byte write with timeout.
@@ -97,7 +97,7 @@ typedef struct {
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOPutTimeout(ip, b, timeout) ((ip)->vmt.m0->put(ip, b, timeout))
+#define chIOPutTimeout(ip, b, timeout) ((ip)->vmt->m0.put(ip, b, timeout))
 
 /**
  * @brief Channel blocking byte read.
@@ -108,7 +108,7 @@ typedef struct {
  * @return A byte value from the queue or:
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOGet(ip) ((ip)->vmt.m0->put(ip, TIME_INFINITE))
+#define chIOGet(ip) ((ip)->vmt->m0.put(ip, TIME_INFINITE))
 
 /**
  * @brief Channel blocking byte read with timeout.
@@ -125,7 +125,7 @@ typedef struct {
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOGetTimeout(ip, timeout) ((ip)->vmt.m0->put(ip, timeout))
+#define chIOGetTimeout(ip, timeout) ((ip)->vmt->m0.put(ip, timeout))
 
 #if CH_USE_EVENTS
 /**
@@ -192,7 +192,7 @@ typedef struct {
  * @param[in] n the maximum amount of data to be transferred
  * @return The number of bytes transferred.
  */
-#define chIOWrite(ip, bp, n) ((ip)->vmt.m1->write(ip, bp, n))
+#define chIOWrite(ip, bp, n) ((ip)->vmt->m1.write(ip, bp, n))
 
 /**
  * @brief Channel non-blocking read.
@@ -205,7 +205,7 @@ typedef struct {
  * @param[in] n the maximum amount of data to be transferred
  * @return The number of bytes transferred.
  */
-#define chIORead(ip, bp, n) ((ip)->vmt.m1->read(ip, bp, n))
+#define chIORead(ip, bp, n) ((ip)->vmt->m1.read(ip, bp, n))
 
 #endif /* CH_USE_EVENTS */
 

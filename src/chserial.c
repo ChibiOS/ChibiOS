@@ -51,12 +51,12 @@ void chFDDInit(FullDuplexDriver *sd,
   chDbgCheck((sd != NULL) && (ib != NULL) && (ob != NULL) &&
              (isize > 0) && (osize > 0), "chFDDInit");
 
-  chIQInit(&sd->sd_iqueue, ib, isize, inotify);
-  chEvtInit(&sd->sd_ievent);
-  chOQInit(&sd->sd_oqueue, ob, osize, onotify);
-  chEvtInit(&sd->sd_oevent);
-  chEvtInit(&sd->sd_sevent);
-  sd->sd_flags = SD_NO_ERROR;
+  chEvtInit(&sd->d1.ievent);
+  chEvtInit(&sd->d1.oevent);
+  chEvtInit(&sd->d2.sevent);
+  sd->d2.flags = SD_NO_ERROR;
+  chIQInit(&sd->d3.iqueue, ib, isize, inotify);
+  chOQInit(&sd->d3.oqueue, ob, osize, onotify);
 }
 
 /**
@@ -69,10 +69,10 @@ void chFDDInit(FullDuplexDriver *sd,
  */
 void chFDDIncomingDataI(FullDuplexDriver *sd, uint8_t b) {
 
-  if (chIQPutI(&sd->sd_iqueue, b) < Q_OK)
+  if (chIQPutI(&sd->d3.iqueue, b) < Q_OK)
     chFDDAddFlagsI(sd, SD_OVERRUN_ERROR);
   else
-    chEvtBroadcastI(&sd->sd_ievent);
+    chEvtBroadcastI(&sd->d1.ievent);
 }
 
 /**
@@ -87,9 +87,9 @@ void chFDDIncomingDataI(FullDuplexDriver *sd, uint8_t b) {
  */
 msg_t chFDDRequestDataI(FullDuplexDriver *sd) {
 
-  msg_t b = chOQGetI(&sd->sd_oqueue);
+  msg_t b = chOQGetI(&sd->d3.oqueue);
   if (b < Q_OK)
-    chEvtBroadcastI(&sd->sd_oevent);
+    chEvtBroadcastI(&sd->d1.oevent);
   return b;
 }
 
@@ -103,8 +103,8 @@ msg_t chFDDRequestDataI(FullDuplexDriver *sd) {
  */
 void chFDDAddFlagsI(FullDuplexDriver *sd, dflags_t mask) {
 
-  sd->sd_flags |= mask;
-  chEvtBroadcastI(&sd->sd_sevent);
+  sd->d2.flags |= mask;
+  chEvtBroadcastI(&sd->d2.sevent);
 }
 
 /**
@@ -117,8 +117,8 @@ void chFDDAddFlagsI(FullDuplexDriver *sd, dflags_t mask) {
 dflags_t chFDDGetAndClearFlags(FullDuplexDriver *sd) {
   dflags_t mask;
 
-  mask = sd->sd_flags;
-  sd->sd_flags = SD_NO_ERROR;
+  mask = sd->d2.flags;
+  sd->d2.flags = SD_NO_ERROR;
   return mask;
 }
 #endif /* CH_USE_SERIAL_FULLDUPLEX */
