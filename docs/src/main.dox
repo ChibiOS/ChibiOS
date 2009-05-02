@@ -66,100 +66,76 @@
 
 /**
  * @defgroup Ports Ports
- * @{
  * This section describes the technical details for the various supported
  * ChibiOS/RT ports.
  */
-/** @} */
 
 /**
  * @defgroup Kernel Kernel
- * @{
+ * Kernel related subsystems,
  */
-/** @} */
 
 /**
  * @defgroup Config Configuration
- * @{
  * In @p chconf.h are defined the required subsystems for your application.
  * @ingroup Kernel
  */
-/** @} */
 
 /**
  * @defgroup Core Generic Port Code Templates
- * @{
  * Non portable code templates.
  * @ingroup Kernel
  */
-/** @} */
 
 /**
  * @defgroup Types Types
- * @{
  * System types and macros.
  * @ingroup Kernel
  */
-/** @} */
 
 /**
  * @defgroup System System Management
- * @{
  * Initialization, Locks, Interrupt Handling, Power Management, Abnormal
  * Termination.
  * @ingroup Kernel
  */
-/** @} */
 
 /**
  * @defgroup Inline Inline
- * @{
  * System inline-able code.
  * @ingroup Kernel
  */
-/** @} */
 
 /**
  * @defgroup Debug Debug
- * @{
  * Debug APIs and procedures.
  * @ingroup Kernel
  */
-/** @} */
 
 /**
  * @defgroup Scheduler Scheduler
- * @{
  * ChibiOS/RT scheduler.
  * @ingroup Kernel
  */
-/** @} */
 
 /**
  * @defgroup ThreadLists Thread Lists and Queues
- * @{
  * ChibiOS/RT thread lists and queues utilities.
  * @ingroup Kernel
  */
-/** @} */
 
 /**
  * @defgroup Threads Threads
- * @{
  * Threads creation and termination APIs.
  */
-/** @} */
 
 /**
  * @defgroup Time Time and Virtual Timers
- * @{
  * Time and Virtual Timers related APIs.
  */
-/** @} */
 
 /**
  * @defgroup Heap Heap
- * @{
  * Heap Allocator related APIs.
  * <h2>Operation mode</h2>
  * The heap allocator implements a first-fit strategy and its APIs are
@@ -171,11 +147,9 @@
  * In order to use the heap APIs the @p CH_USE_HEAP option must be specified
  * in @p chconf.h.
  */
-/** @} */
 
 /**
  * @defgroup MemoryPools Memory Pools
- * @{
  * Memory Pools related APIs.
  * <h2>Operation mode</h2>
  * The Memory Pools APIs allow to allocate/free fixed size objects in
@@ -183,11 +157,9 @@
  * In order to use the Time APIs the @p CH_USE_MEMPOOLS option must be
  * specified in @p chconf.h.
  */
-/** @} */
 
 /**
  * @defgroup Semaphores Semaphores
- * @{
  * Semaphores and threads synchronization.
  * <h2>Operation mode</h2>
  * A semaphore is a threads synchronization object, some operations
@@ -209,11 +181,9 @@
  * In order to use the Semaphores APIs the @p CH_USE_SEMAPHORES
  * option must be specified in @p chconf.h.<br><br>
  */
-/** @} */
 
 /**
  * @defgroup Mutexes Mutexes
- * @{
  * Mutexes and threads synchronization.
  * <h2>Operation mode</h2>
  * A mutex is a threads synchronization object, some operations are defined
@@ -244,11 +214,9 @@
  * number of nested mutexes and any number of involved threads. The algorithm
  * complexity (worst case) is N with N equal to the number of nested mutexes.
  */
-/** @} */
 
 /**
  * @defgroup CondVars Condition Variables
- * @{
  * Condition Variables and threads synchronization.
  * <h2>Operation mode</h2>
  * The condition variable is a synchronization object meant to be used inside
@@ -257,11 +225,9 @@
  * In order to use the Condition Variables APIs the @p CH_USE_CONDVARS
  * option must be specified in @p chconf.h.<br><br>
  */
-/** @} */
 
 /**
  * @defgroup Events Events
- * @{
  * Event Sources and Event Listeners.
  * <h2>Operation mode</h2>
  * An Event Source is a special object that can be signaled by a thread or
@@ -278,11 +244,9 @@
  * In order to use the Event APIs the @p CH_USE_EVENTS option must be
  * specified in @p chconf.h.
  */
-/** @} */
 
 /**
  * @defgroup Messages Synchronous Messages
- * @{
  * Synchronous inter-thread messages.
  * <h2>Operation Mode</h2>
  * Synchronoud messages are an easy to use and fast IPC mechanism, threads
@@ -299,11 +263,9 @@
  * In order to use the Messages APIs the @p CH_USE_MESSAGES option must be
  * specified in @p chconf.h.
  */
-/** @} */
 
 /**
  * @defgroup Mailboxes Mailboxes
- * @{
  * Asynchronous messages.
  * <h2>Operation mode</h2>
  * A mailbox is an asynchronous communication mechanism.<br>
@@ -323,11 +285,9 @@
  * free it on the fetching side. Another approach is to set a "done" flag into
  * the structure pointed by the message.
  */
-/** @} */
 
 /**
- * @defgroup IOQueues I/O Queues
- * @{
+ * @defgroup IOQueues Physical I/O Queues
  * ChibiOS/RT supports several kinds of queues. The queues are mostly used
  * in serial-like device drivers. The device drivers are usually designed to
  * have a lower side (lower driver, it is usually an interrupt service
@@ -345,11 +305,22 @@
  * In order to use the I/O queues the @p CH_USE_QUEUES option must
  * be specified in @p chconf.h.<br>
  */
-/** @} */
 
 /**
+ * @defgroup Channels Abstract I/O Channels
+ * This module defines an abstract interface for I/O channels. Note that
+ * no code is present, I/O channels are just abstract classes-like structures,
+ * you should look at the systems as to a set of abstract C++ classes (even if
+ * implemented in C). Specific device drivers can use/extend the interfaces
+ * and implement them.<br>
+ * This system has the advantage to make the access to the device drivers
+ * independent from the implementation logic. As example, an I/O channel
+ * interface can hide the access to a serial driver, to a networking socket
+ * and so on.
+ */
+ 
+/**
  * @defgroup Serial Serial Drivers
- * @{
  * This module implements a generic full duplex serial driver and a generic
  * half duplex serial driver. It uses the I/O Queues for communication between
  * the upper and the lower driver and events to notify the application about
@@ -361,11 +332,9 @@
  * In order to use the serial half duplex driver the
  * @p CH_USE_SERIAL_HALFDUPLEX option must be specified in @p chconf.h.
  */
-/** @} */
 
 /**
  * @defgroup utilities_library Utilities Library
- * @{
  * @brief Utilities Library.
  * @details This is a collection of useful library code that is not part of
  * the base kernel services.
@@ -375,21 +344,18 @@
  * The main difference is that library code is not formally  tested in the
  * test suite but through usage in the various demo applications.
  */
-/** @} */
 
 /**
  * @defgroup CPlusPlusLibrary C++ Wrapper
- * @{
- * C++ wrapper module. This module allows to use the ChibiOS/RT functionalities
+ * @brief C++ wrapper module.
+ * @details This module allows to use the ChibiOS/RT functionalities
  * from C++ as classes and objects rather the traditional "C" APIs.
  *
  * @ingroup utilities_library
  */
-/** @} */
 
 /**
  * @defgroup event_timer Events Generator Timer
- * @{
  * @brief Event Generator Timer.
  * @details This timer generates an event at regular intervals. The
  * listening threads can use the event to perform time related activities.
@@ -397,5 +363,4 @@
  *
  * @ingroup utilities_library
  */
-/** @} */
 

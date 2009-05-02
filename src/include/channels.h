@@ -54,7 +54,7 @@ struct _base_channel_data {
  * @details This class represents a generic, synchronous, byte-wide,
  *          I/O channel.
  */
-typedef struct _base_channel {
+typedef struct {
   struct _base_channel_vmt *vmt;                /**< Virtual Methods Table. */
   struct _base_channel_data d0;                 /**< Class data. */
 } BaseChannel;
