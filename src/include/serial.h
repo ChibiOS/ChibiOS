@@ -27,6 +27,8 @@
 #ifndef _SERIAL_H_
 #define _SERIAL_H_
 
+#if CH_USE_SERIAL_FULLDUPLEX
+
 /** No pending conditions.*/
 #define SD_NO_ERROR             0
 /** Connection happened.*/
@@ -43,9 +45,148 @@
 #define SD_BREAK_DETECTED       32
 
 /** Serial Driver condition flags type.*/
-typedef uint16_t dflags_t;
+typedef uint8_t dflags_t;
 
-#if CH_USE_SERIAL_FULLDUPLEX
+/**
+ * @brief @p GenericSerialDriver specific methods.
+ */
+struct _generic_serial_driver_methods {
+};
+
+/**
+ * @brief @p GenericSerialDriver specific data.
+ */
+struct _generic_serial_driver_data {
+  /**
+   * Status Change @p EventSource. This event is generated when one or more
+   * condition flags change.
+   */
+  EventSource           sevent;
+  /**
+   * I/O driver status flags. This field should not be read directly but
+   * the @p () function should be used instead.
+   */
+  dflags_t              flags;
+};
+
+/**
+ * @brief @p GenericSerialDriver virtual methods table.
+ */
+struct _generic_serial_driver_vmt {
+  /**
+   * @p BaseChannel class inherited methods.
+   */
+  struct _base_channel_methods m0;
+  /**
+   * @p BaseAsynchronousChannel class inherited methods.
+   */
+  struct _base_asynchronous_channel_methods m1;
+  /**
+   * @p GenericSerialDriver specific methods.
+   */
+  struct _generic_serial_driver_methods m2;
+};
+
+/**
+ * @extends BaseAsynchronousChannel
+ *
+ * @brief Generic serial driver class.
+ * @details This class extends @p BaseAsynchronousChannel by adding handling for
+ *          serial error events.
+ */
+typedef struct {
+  /**
+   * Virtual Methods Table.
+   */
+  struct _generic_serial_driver_vmt *vmt;
+  /**
+   * @p BaseChannel class inherited data.
+   */
+  struct _base_channel_data d0;
+  /**
+   * @p BaseAsynchronousChannel class inherited data.
+   */
+  struct _base_asynchronous_channel_data d1;
+  /**
+   * @p GenericSerialDriver specific data.
+   */
+  struct _generic_serial_driver_data d2;
+} GenericSerialDriver;
+
+
+/**
+ * @brief @p FullDuplexDriver specific methods.
+ */
+struct _full_duplex_driver_methods {
+};
+
+/**
+ * @brief @p FullDuplexDriver specific data.
+ */
+struct _full_duplex_driver_data {
+  /**
+   * Input queue, incoming data can be read from this input queue by
+   * using the queues APIs.
+   */
+  InputQueue            sd_iqueue;
+  /**
+   * Output queue, outgoing data can be written to this output queue by
+   * using the queues APIs.
+   */
+  OutputQueue           sd_oqueue;
+};
+
+/**
+ * @brief @p FullDuplexDriver virtual methods table.
+ */
+struct _full_duplex_driver_vmt {
+  /**
+   * @p BaseChannel class inherited methods.
+   */
+  struct _base_channel_methods m0;
+  /**
+   * @p BaseAsynchronousChannel class inherited methods.
+   */
+  struct _base_asynchronous_channel_methods m1;
+  /**
+   * @p GenericSerialDriver specific methods.
+   */
+  struct _generic_serial_driver_methods m2;
+  /**
+   * @p FullDuplexDriver specific methods.
+   */
+  struct _full_duplex_driver_methods m3;
+};
+
+/**
+ * @extends GenericSerialDriver
+ *
+ * @brief Full duplex serial driver class.
+ * @details This class extends @p GenericSerialDriver by adding physical I/O
+ *          queues.
+ */
+typedef struct {
+  /**
+   * Virtual Methods Table.
+   */
+  struct _generic_serial_driver_vmt *vmt;
+  /**
+   * @p BaseChannel class inherited data.
+   */
+  struct _base_channel_data d0;
+  /**
+   * @p BaseAsynchronousChannel class inherited data.
+   */
+  struct _base_asynchronous_channel_data d1;
+  /**
+   * @p GenericSerialDriver specific data.
+   */
+  struct _generic_serial_driver_data d2;
+  /**
+   * @p FullDuplexDriver specific data.
+   */
+  struct _full_duplex_driver_data d3;
+} FullDuplexDriver_;
 
 /**
  * @brief Full Duplex Serial Driver main structure.
