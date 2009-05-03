@@ -32,6 +32,16 @@
  */
 struct _base_channel_methods {
   /**
+   * @brief Channel output check.
+   * @see chIOPutWouldBlock()
+   */
+  bool_t (*putwouldblock)(void *instance);
+  /**
+   * @brief Channel input check.
+   * @see chIOGetWouldBlock()
+   */
+  bool_t (*getwouldblock)(void *instance);
+  /**
    * @brief Channel put method with timeout specification.
    * @see chIOPut()
    */
@@ -75,6 +85,30 @@ typedef struct {
    */
   struct _base_channel_data d0;
 } BaseChannel;
+
+/**
+ * @brief Channel output check.
+ * @details This function verifies if a subsequent @p chIOPut() would block.
+ *
+ * @param[in] ip pointer to a @p BaseChannel or derived class
+ * @return The output queue status:
+ * @retval FALSE if the output queue has space and would not block a write
+ *         operation.
+ * @retval TRUE if the output queue is full and would block a write operation.
+ */
+#define chIOPutWouldBlock(ip) ((ip)->vmt->m0.putwouldblock(ip))
+
+/**
+ * @brief Channel input check.
+ * @details This function verifies if a subsequent @p chIOGett() would block.
+ *
+ * @param[in] ip pointer to a @p BaseChannel or derived class
+ * @return The input queue status:
+ * @retval FALSE if the input queue contains data and would not block a read
+ *         operation.
+ * @retval TRUE if the input queue is empty and would block a read operation.
+ */
+#define chIOGetWouldBlock(ip) ((ip)->vmt->m0.getwouldblock(ip))
 
 /**
  * @brief Channel blocking byte write.

@@ -28,6 +28,20 @@
 
 #if CH_USE_SERIAL_FULLDUPLEX
 
+/*
+ * Interface implementation, the following functions just invoke the equivalent
+ * queue-level function or macro.
+ */
+static bool_t putwouldblock(void *instance) {
+
+  return chOQIsFull(&((FullDuplexDriver *)instance)->d2.oqueue);
+}
+
+static bool_t getwouldblock(void *instance) {
+
+  return chIQIsEmpty(&((FullDuplexDriver *)instance)->d2.iqueue);
+}
+
 static msg_t put(void *instance, uint8_t b, systime_t timeout) {
 
   return chOQPutTimeout(&((FullDuplexDriver *)instance)->d2.oqueue, b, timeout);
@@ -49,7 +63,7 @@ static size_t read(void *instance, uint8_t *buffer, size_t n) {
 }
 
 static const struct FullDuplexDriverVMT vmt = {
-  {put, get},
+  {putwouldblock, getwouldblock, put, get},
   {write, read},
   {}
 };

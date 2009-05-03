@@ -75,6 +75,15 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Found new instances of the obsolete function chSysGetTime() in the
   C++ wrapper and in the WEB demo (bug 2772237)(backported in stable branch).
 - FIX: Fixed macro in test.h (bug 2781176)(backported in stable branch).
+- NEW: Abstract I/O Channels mechanism introduced. This mechanism allows to
+  access I/O resources through a standard interface and hides implementation
+  details. The existing FullDuplexDrivers were modified to offer a standard
+  channel interface to the applications.
+- NEW: The I/O queues code was improved, now there are 2 separate structures:
+  InputQueue and OutputQueue. There are some changes in the queue APIs
+  in order to make them more symmetrical and functional. Improved the queues
+  documentation. Some of the changes were needed in order to support the new
+  channels mechanism as a backend for queued serial drivers.
 - NEW: Added a code coverage analysis application under ./tests/coverage.
 - NEW: Added more test cases in order to improve the test suite code coverage
   (it was 74% in version 1.2.0).
@@ -82,10 +91,6 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   real context switch time, previous benchmarks introduced too much overhead
   to the measurement. The STM32 performs the context switch in under 1.48uS.
 - NEW: Added architecture name strings to the port code.
-- NEW: The I/O queues code was improved, now there are 2 separate structures:
-  InputQueue and Output queues. There are some changes int the queue APIs
-  in order to make them more symmetrical and functional. Improved the queues
-  documentation.
 - CHANGE: Removed the half duplex queues and half duplex serial drivers because
   it was never extensively tested. The code is still available but not as part
   of the kernel.

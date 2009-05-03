@@ -137,6 +137,24 @@ extern "C" {
 #endif
 
 /**
+ * @brief Direct output check on a @p FullDuplexDriver.
+ * @details This function bypasses the indirect access to the channel and
+ *          checks directly the output queue. This is faster but cannot
+ *          be used to check different channels implementations.
+ * @see chIOPutWouldBlock()
+ */
+#define chFDDPutWouldBlock(sd) chOQIsFull(&(sd)->d2.oqueue)
+
+/**
+ * @brief Direct input check on a @p FullDuplexDriver.
+ * @details This function bypasses the indirect access to the channel and
+ *          checks directly the input queue. This is faster but cannot
+ *          be used to check different channels implementations.
+ * @see chIOGetWouldBlock()
+ */
+#define chFDDGetWouldBlock(sd) chIQIsEmpty(&(sd)->d2.iqueue)
+
+/**
  * @brief Direct blocking write to a @p FullDuplexDriver.
  * @details This function bypasses the indirect access to the channel and
  *          writes directly on the output queue. This is faster but cannot

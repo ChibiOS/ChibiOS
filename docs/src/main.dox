@@ -313,7 +313,7 @@
  * you should look at the systems as to a set of abstract C++ classes (even if
  * implemented in C). Specific device drivers can use/extend the interfaces
  * and implement them.<br>
- * This system has the advantage to make the access to the device drivers
+ * This system has the advantage to make the access to channels
  * independent from the implementation logic. As example, an I/O channel
  * interface can hide the access to a serial driver, to a networking socket
  * and so on.
