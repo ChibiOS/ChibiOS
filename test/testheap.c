@@ -67,15 +67,26 @@ static void heap1_execute(void) {
     test_assert(4, chHeapStatus(&n) == 1, "heap fragmented");
     chHeapFree(p2);
     chHeapFree(p1);
+    test_assert(5, chHeapStatus(&n) == 1, "heap fragmented");
+
+    /* Skip fragment handling */
+    p1 = chHeapAlloc(SIZE);
+    p2 = chHeapAlloc(SIZE);
+    chHeapFree(p1);
+    test_assert(6, chHeapStatus(&n) == 2, "invalid state");
+    p1 = chHeapAlloc(SIZE * 2);                 /* Skips first fragment */
+    chHeapFree(p1);
+    chHeapFree(p2);
+    test_assert(7, chHeapStatus(&n) == 1, "heap fragmented");
 
     /* Allocate all handling */
     (void)chHeapStatus(&n);
     p1 = chHeapAlloc(n);
-    test_assert(5, chHeapStatus(&n) == 0, "not empty");
+    test_assert(8, chHeapStatus(&n) == 0, "not empty");
     chHeapFree(p1);
 
-    test_assert(6, chHeapStatus(&n) == 1, "heap fragmented");
-    test_assert(7, n == sz, "size changed");
+    test_assert(9, chHeapStatus(&n) == 1, "heap fragmented");
+    test_assert(10, n == sz, "size changed");
   }
   else {
     test_print("--- Size  : ");
