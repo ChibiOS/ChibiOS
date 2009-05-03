@@ -77,7 +77,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Fixed macro in test.h (bug 2781176)(backported in stable branch).
 - NEW: Abstract I/O Channels mechanism introduced. This mechanism allows to
   access I/O resources through a standard interface and hides implementation
-  details. The existing FullDuplexDrivers were modified to offer a standard
+  details. The existing serial drivers were modified to offer a standard
   channel interface to the applications.
 - NEW: The I/O queues code was improved, now there are 2 separate structures:
   InputQueue and OutputQueue. There are some changes in the queue APIs
