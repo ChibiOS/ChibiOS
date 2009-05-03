@@ -97,7 +97,7 @@ struct FullDuplexDriverVMT {
 };
 
 /**
- * @extends GenericSerialDriver
+ * @extends BaseAsynchronousChannel
  *
  * @brief Full duplex serial driver class.
  * @details This class extends @p GenericSerialDriver by adding physical I/O
