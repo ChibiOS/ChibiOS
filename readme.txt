@@ -84,9 +84,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   in order to make them more symmetrical and functional. Improved the queues
   documentation. Some of the changes were needed in order to support the new
   channels mechanism as a backend for queued serial drivers.
+- NEW: Added test cases for the improved queues.
 - NEW: Added a code coverage analysis application under ./tests/coverage.
 - NEW: Added more test cases in order to improve the test suite code coverage
-  (it was 74% in version 1.2.0).
+  (it was 74% in version 1.2.0, it is now close to 100%).
 - NEW: Added a new "naked" context switch benchmark that better defines the
   real context switch time, previous benchmarks introduced too much overhead
   to the measurement. The STM32 performs the context switch in under 1.48uS.
