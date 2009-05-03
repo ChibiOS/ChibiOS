@@ -37,6 +37,7 @@ static char *dyn1_gettest(void) {
 
 static void dyn1_execute(void) {
   size_t n, sz;
+  void *p1;
   tprio_t prio = chThdGetPriority();
 
   /* Test skipped if the heap is already fragmented. */
@@ -46,8 +47,12 @@ static void dyn1_execute(void) {
                                      prio-1, thread, "A");
     threads[1] = chThdCreateFromHeap(THD_WA_SIZE(THREADS_STACK_SIZE),
                                      prio-2, thread, "B");
-    threads[2] = chThdCreateFromHeap(THD_WA_SIZE(0x10000000),
+    /* Allocating the whole heap in order to make the thread creation fail.*/
+    (void)chHeapStatus(&n);
+    p1 = chHeapAlloc(n);
+    threads[2] = chThdCreateFromHeap(THD_WA_SIZE(THREADS_STACK_SIZE),
                                      prio-3, thread, "C");
+    chHeapFree(p1);
 
     test_assert(1, (threads[0] != NULL) &&
                    (threads[1] != NULL) &&
