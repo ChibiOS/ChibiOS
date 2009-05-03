@@ -83,7 +83,7 @@ static bool_t GetLineFDD(FullDuplexDriver *sd, char *line, int size) {
   char *p = line;
 
   while (TRUE) {
-    short c = chIQGet(&sd->sd_iqueue);
+    short c = chIQGet(&sd->d2.iqueue);
     if (c < 0)
       return TRUE;
     if (c == 4) {
@@ -162,8 +162,10 @@ static msg_t ShellThread(void *arg) {
   Thread *tp;
   WORKING_AREA(tarea, 2048);
 
-  chIQReset(&sd->sd_iqueue);
-  chOQReset(&sd->sd_oqueue);
+  chSysLock();
+  chIQResetI(&sd->d2.iqueue);
+  chOQResetI(&sd->d2.oqueue);
+  chSysUnlock();
   PrintLineFDD(sd, "ChibiOS/RT Command Shell\r\n\n");
   while (TRUE) {
     PrintLineFDD(sd, "ch> ");
@@ -241,8 +243,11 @@ static void COM1Handler(eventid_t id) {
     chEvtRegister(chThdGetExitEventSource(s1), &s1tel, 0);
     chThdResume(s1);
   }
-  if ((flags & SD_DISCONNECTED) && (s1 != NULL))
-    chIQReset(&COM1.sd_iqueue);
+  if ((flags & SD_DISCONNECTED) && (s1 != NULL)) {
+    chSysLock();
+    chIQResetI(&COM1.d2.iqueue);
+    chSysUnlock();
+  }
 }
 
 static WORKING_AREA(s2area, 4096);
@@ -264,8 +269,11 @@ static void COM2Handler(eventid_t id) {
     chEvtRegister(chThdGetExitEventSource(s2), &s2tel, 1);
     chThdResume(s2);
   }
-  if ((flags & SD_DISCONNECTED) && (s2 != NULL))
-    chIQReset(&COM2.sd_iqueue);
+  if ((flags & SD_DISCONNECTED) && (s2 != NULL)) {
+    chSysLock();
+    chIQResetI(&COM2.d2.iqueue);
+    chSysUnlock();
+  }
 }
 
 static evhandler_t fhandlers[2] = {
@@ -288,13 +296,13 @@ int main(void) {
   cprint("Console service started on COM1, COM2\n");
   cprint("  - Listening for connections on COM1\n");
   chFDDGetAndClearFlags(&COM1);
-  chEvtRegister(&COM1.sd_sevent, &c1fel, 0);
+  chEvtRegister(&COM1.d2.sevent, &c1fel, 0);
   cprint("  - Listening for connections on COM2\n");
   chFDDGetAndClearFlags(&COM2);
-  chEvtRegister(&COM2.sd_sevent, &c2fel, 1);
+  chEvtRegister(&COM2.d2.sevent, &c2fel, 1);
   while (!chThdShouldTerminate())
     chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));
-  chEvtUnregister(&COM2.sd_sevent, &c2fel); // Never invoked but this is an example...
-  chEvtUnregister(&COM1.sd_sevent, &c1fel); // Never invoked but this is an example...
+  chEvtUnregister(&COM2.d2.sevent, &c2fel); // Never invoked but this is an example...
+  chEvtUnregister(&COM1.d2.sevent, &c1fel); // Never invoked but this is an example...
   return 0;
 }

@@ -92,12 +92,12 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
     case IIR_SRC_RX:
       while (u->UART_LSR & LSR_RBR_FULL) {
         chSysLockFromIsr();
-        if (chIQPutI(&com->sd_iqueue, u->UART_RBR) < Q_OK)
+        if (chIQPutI(&com->d2.iqueue, u->UART_RBR) < Q_OK)
            chFDDAddFlagsI(com, SD_OVERRUN_ERROR);
         chSysUnlockFromIsr();
       }
       chSysLockFromIsr();
-      chEvtBroadcastI(&com->sd_ievent);
+      chEvtBroadcastI(&com->d1.ievent);
       chSysUnlockFromIsr();
       break;
     case IIR_SRC_TX:
@@ -106,12 +106,12 @@ static void ServeInterrupt(UART *u, FullDuplexDriver *com) {
         int i = UART_FIFO_PRELOAD;
         do {
           chSysLockFromIsr();
-          msg_t b = chOQGetI(&com->sd_oqueue);
+          msg_t b = chOQGetI(&com->d2.oqueue);
           chSysUnlockFromIsr();
           if (b < Q_OK) {
             u->UART_IER &= ~IER_THRE;
             chSysLockFromIsr();
-            chEvtBroadcastI(&com->sd_oevent);
+            chEvtBroadcastI(&com->d1.oevent);
             chSysUnlockFromIsr();
             break;
           }
@@ -141,11 +141,11 @@ static void preload(UART *u, FullDuplexDriver *com) {
     int i = UART_FIFO_PRELOAD;
     do {
       chSysLockFromIsr();
-      msg_t b = chOQGetI(&com->sd_oqueue);
+      msg_t b = chOQGetI(&com->d2.oqueue);
       chSysUnlockFromIsr();
       if (b < Q_OK) {
         chSysLockFromIsr();
-        chEvtBroadcastI(&com->sd_oevent);
+        chEvtBroadcastI(&com->d1.oevent);
         chSysUnlockFromIsr();
         return;
       }

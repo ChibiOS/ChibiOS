@@ -7,8 +7,8 @@ X = In progress, some work done.
 After 1.2.0:
 - Remove any instance of unnamed structures/unions.
 - Dedicated syscalls.c support for newlib users.
-X Abstract I/O channels rather than just serial ports.
-  - Move the serial drivers implementations in library. Better keep the core
+* Abstract I/O channels rather than just serial ports.
+  ? Move the serial drivers implementations in library. Better keep the core
     as compact as possible.
 - Threads Pools manager in the library.
   - New chThdCreate() that takes just two parameters, a pointer to a thread
