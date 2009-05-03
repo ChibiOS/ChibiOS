@@ -258,12 +258,32 @@ typedef struct {
  *          transfer is non-blocking and can return zero if the channel has
  *          no data immediately available.
  *
- * @param[in] ip pointer to a @p BaseChannel or derived class
+ * @param[in] ip pointer to a @p BaseAsynchronousChannel or derived class
  * @param[out] bp pointer to the buffer where the input data is copied
  * @param[in] n the maximum amount of data to be transferred
  * @return The number of bytes transferred.
  */
 #define chIORead(ip, bp, n) ((ip)->vmt->m1.read(ip, bp, n))
+
+/**
+ * @brief Returns the write event source.
+ * @details The write event source is broadcasted when the channel is ready
+ *          for write operations. This usually happens when the internal
+ *          output queue becomes empty.
+ * @param[in] ip pointer to a @p BaseAsynchronousChannel or derived class
+ * @return A pointer to an @p EventSource object.
+ */
+#define chIOGetWriteEventSource(ip) (&((ip)->vmt->d1.oevent))
+
+/**
+ * @brief Returns the read event source.
+ * @details The read event source is broadcasted when the channel is ready
+ *          for read operations. This usually happens when the internal
+ *          input queue becomes non-empty.
+ * @param[in] ip pointer to a @p BaseAsynchronousChannel or derived class
+ * @return A pointer to an @p EventSource object.
+ */
+#define chIOGetReadEventSource(ip) (&((ip)->vmt->d1.ievent))
 
 #endif /* CH_USE_EVENTS */
 
