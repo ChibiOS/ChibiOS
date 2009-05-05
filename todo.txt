@@ -5,24 +5,25 @@ X = In progress, some work done.
 * = Done.
 
 After 1.2.0:
-- Remove any instance of unnamed structures/unions.
-- Dedicated syscalls.c support for newlib users.
 * Abstract I/O channels rather than just serial ports.
   ? Move the serial drivers implementations in library. Better keep the core
     as compact as possible.
+- Static object initializers.
+- Remove any instance of unnamed structures/unions.
+- Objects registry in the kernel.
+- OSEK-style simple tasks within the idle thread.
+- Add tests documentation to the general documentation via doxygen.
+- Code examples into the documentation.
+- Dedicated syscalls.c support for newlib users.
 - Threads Pools manager in the library.
   - New chThdCreate() that takes just two parameters, a pointer to a thread
     descriptor and the tread parameter. It could wrap the current variants
     or just be an alternative.
-- Objects registry in the kernel.
 - Minimal optional C-runtime library (complete enough for lwIP).
-- OSEK-style simple tasks within the idle thread.
 ? Think to something for threads restart.
 ? Multiple heaps, disjoint heaps, heaps in heaps.
 - Update C++ wrapper (Heap, Pools, Mailboxes and any new feature).
 - Think about making threads return void.
-- Add tests documentation to the general documentation via doxygen.
-- Code examples into the documentation.
 
 Ideas for 2.x.x:
 - High resolution timers and tickless kernel.
