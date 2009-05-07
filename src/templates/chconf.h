@@ -228,6 +228,7 @@
  * If specified then the Asynchronous Messages (Mailboxes) APIs are included
  * in the kernel.
  * @note The default is @p TRUE.
+ * @note Requires @p CH_USE_SEMAPHORES.
  */
 #if !defined(CH_USE_MAILBOXES) || defined(__DOXYGEN__)
 #define CH_USE_MAILBOXES                TRUE

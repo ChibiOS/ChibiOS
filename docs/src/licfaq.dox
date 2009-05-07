@@ -19,7 +19,6 @@
 
 /**
  * @page lic_faq License and F.A.Q.
- * @{
  * ChibiOS/RT is a <a href="http://www.gnu.org/licenses" target="_top">
  * GPL3</a>-licensed product but it offers a linking exception in its stable
  * releases.<br>
@@ -89,5 +88,4 @@ Program code and other code used in conjunction with the Program except the
 Non-GPL Code covered by this exception.
  *
  */
-/** @} */
  

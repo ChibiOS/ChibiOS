@@ -19,7 +19,6 @@
 
 /**
  * @page articles Articles
- * @{
  * ChibiOS/RT Articles and Code Examples:
  * - @subpage article_stacks
  * - @subpage article_mutual_exclusion
@@ -32,4 +31,3 @@
  * - @subpage article_design
  * .
  */
-/** @} */

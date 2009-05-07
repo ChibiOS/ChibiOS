@@ -19,7 +19,6 @@
 
 /**
  * @page article_saveram Saving RAM by declaring thread functions "noreturn"
- * @{
  * One of the problems, when writing embedded multi-threaded applications,
  * is that the thread functions do save the registers in the function
  * entry code even if the system does not require it, exiting such
@@ -80,4 +79,3 @@ main() {
  * need to save registers. The code will be a bit less readable and less
  * portable on other compilers however.
  */
-/** @} */

@@ -19,7 +19,6 @@
 
 /**
  * @page article_portguide Porting ChibiOS/RT for Dummies
- * @{
  * Porting the operating system on a new platform is one of the most common
  * tasks. The difficulty can range from easy to very difficult depending
  * on several factors.<br>
@@ -111,4 +110,3 @@
  * the OS template files, the hardest part is decide the correct and efficient
  * way to implement the context switching.
  */
-/** @} */

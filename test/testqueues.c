@@ -21,10 +21,51 @@
 
 #include "test.h"
 
+/**
+ * @page test_queues I/O Queues test
+ *
+ * <h2>Description</h2>
+ * This module implements the test sequence for the @ref IOQueues subsystem.
+ * The tests are performed by inserting and removing data from queues and by
+ * checking both the queues status and the correct sequence of the extracted
+ * data.
+ *
+ * <h2>Objective</h2>
+ * Objective of the test module is to cover 100% of the @ref IOQueues code
+ * as a necessary step in order to assess its readyness.<br>
+ * Note that the @ref IOQueues subsystem depends on the @ref Semaphores
+ * subsystem that has to met its testing objectives as well.
+ *
+ * <h2>Preconditions</h2>
+ * The module requires the following kernel options:
+ * - @p CH_USE_QUEUES (and dependent options)
+ * .
+ * In case of the required options are not enabled some or all tests may be
+ * skipped.
+ *
+ * <h2>Waivers</h2>
+ * None.
+ *
+ * <h2>Test Cases</h2>
+ * - @subpage test_queues_001
+ * - @subpage test_queues_002
+ * .
+ * @file testqueues.c
+ * @file testqueues.h
+ */
+
 #if CH_USE_QUEUES
 
 #define TEST_QUEUES_SIZE 4
 
+/**
+ * @page test_queues_001 Input Queues functionality and APIs
+ *
+ * <h2>Description</h2>
+ * This test case tests sysnchronos and asynchronous operations on an
+ * @p InputQueue object including timeouts. The queue state must remain
+ * consistent through the whole test.
+ */
 static void notify(void) {}
 
 static char *queues1_gettest(void) {
@@ -81,6 +122,14 @@ const struct testcase testqueues1 = {
   queues1_execute
 };
 
+/**
+ * @page test_queues_002 Output Queues functionality and APIs
+ *
+ * <h2>Description</h2>
+ * This test case tests sysnchronos and asynchronous operations on an
+ * @p OutputQueue object including timeouts. The queue state must remain
+ * consistent through the whole test.
+ */
 static char *queues2_gettest(void) {
 
   return "Queues, output queues";

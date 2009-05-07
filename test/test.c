@@ -30,6 +30,7 @@
 #include "testpools.h"
 #include "testdyn.h"
 #include "testqueues.h"
+#include "testserial.h"
 #include "testbmk.h"
 
 /*
@@ -46,6 +47,7 @@ static const struct testcase **patterns[] = {
   patternpools,
   patterndyn,
   patternqueues,
+  patternserial,
   patternbmk,
   NULL
 };

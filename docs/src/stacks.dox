@@ -19,7 +19,6 @@
 
 /**
  * @page article_stacks Stacks and stack sizes
- * @{
  * In a RTOS like ChibiOS/RT there are several dedicated stacks, each stack
  * has a dedicated RAM space that must have a correctly sized assigned area.
  * <h2>The stacks</h2>
@@ -104,4 +103,3 @@
  *   end of your development cycle.
  * .
  */
-/** @} */

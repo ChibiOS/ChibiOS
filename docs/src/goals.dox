@@ -19,7 +19,6 @@
 
 /**
  * @page goals Project Goals
- * @{
  * <h2>Another RTOS?</h2>
  * The first question to be answered is: there was really the need for YET
  * ANOTHER RTOS?<br>
@@ -87,4 +86,3 @@
  * code is released as well, all the included demos are capable of executing
  * the test suite and the OS benchmarks.
  */
-/** @} */

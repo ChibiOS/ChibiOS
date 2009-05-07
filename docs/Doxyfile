@@ -573,10 +573,11 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = ../src/include \
+INPUT                  = ../docs/src \
+                         ../src/include \
                          ../src/templates \
                          ../src \
-                         ../docs/src \
+                         ../test \
                          ../src/lib \
                          ../ports/ARM7 \
                          ../ports/ARM7/crt0.s \
@@ -637,7 +638,7 @@ FILE_PATTERNS          = *.c \
 # should be searched for input files as well. Possible values are YES and NO.
 # If left blank NO is used.
 
-RECURSIVE              = YES
+RECURSIVE              = NO
 
 # The EXCLUDE tag can be used to specify files and/or directories that should
 # excluded from the INPUT source files. This way you can easily exclude a
@@ -1298,17 +1299,12 @@ PREDEFINED             = __DOXYGEN__ \
                          CH_USE_CONDVARS_TIMEOUT=1 \
                          CH_USE_EVENTS=1 \
                          CH_USE_EVENTS_TIMEOUT=1 \
-                         CH_USE_EXIT_EVENT=1 \
                          CH_USE_QUEUES=1 \
-                         CH_USE_QUEUES_TIMEOUT=1 \
-                         CH_USE_QUEUES_HALFDUPLEX=1 \
                          CH_USE_SERIAL_FULLDUPLEX=1 \
-                         CH_USE_SERIAL_HALFDUPLEX=1 \
                          CH_USE_HEAP=1 \
                          CH_USE_MEMPOOLS=1 \
                          CH_USE_MESSAGES=1 \
                          CH_USE_MAILBOXES=1 \
-                         CH_USE_MESSAGES_EVENT=1 \
                          CH_USE_DYNAMIC=1 \
                          CH_DBG_ENABLE_ASSERTS=1 \
                          CH_DBG_ENABLE_CHECKS=1 \

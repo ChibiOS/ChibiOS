@@ -19,7 +19,6 @@
 
 /**
  * @page article_design Designing an embedded application
- * @{
  * ChibiOS/RT offers a variety of mechanisms and primitives, often it is
  * better to focus on a single approach for the system design and use only
  * part of the available subsystems.<br>
@@ -109,4 +108,3 @@
  * it. The OS is a toolbox that offers a lot of tools but you don't have
  * to use them all necessarily.
  */
-/** @} */

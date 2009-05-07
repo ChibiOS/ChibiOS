@@ -19,7 +19,6 @@
 
 /**
  * @page article_timing Reliable timings using Threads
- * @{
  * One common task is to have threads do something at regular, scheduled,
  * intervals.
  * An obvious solution is to write something like this:
@@ -58,4 +57,3 @@ msg_t my_thread(void *param) {
  * deadline time and the error will not accumulate over time regardless of
  * the execution time and delays inserted by other threads.
  */
-/** @} */

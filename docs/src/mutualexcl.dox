@@ -19,7 +19,6 @@
 
 /**
  * @page article_mutual_exclusion Mutual Exclusion guide
- * @{
  * The most common problem when writing multithreaded code is the
  * synchronization on the shared resources/services.<br>
  * ChibiOS/RT offers a rich variety of mechanisms that apparently solve the
@@ -209,4 +208,3 @@
  * - Requires a dedicated thread as server.
  * .
  */
-/** @} */

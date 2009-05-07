@@ -21,6 +21,47 @@
 
 #include "test.h"
 
+/**
+ * @page test_threads Threads and Scheduler test
+ *
+ * <h2>Description</h2>
+ * This module implements the test sequence for the @ref Scheduler,
+ * @ref Threads and @ref Time subsystems.<br>
+ * Note that the tests on those subsystems are formally required but most of
+ * their functionality is already demostrated because the test suite itself
+ * depends on them, anyway doublecheck is good.
+ *
+ * <h2>Objective</h2>
+ * Objective of the test module is to cover 100% of the subsystems code
+ * as a necessary step in order to assess their readyness.<br>
+ *
+ * <h2>Preconditions</h2>
+ * None.
+ *
+ * <h2>Waivers</h2>
+ * - The @p chThdExit() API is not code 100% covered because it cannot return.
+ *   It must work this way by design.
+ * .
+ * <h2>Test Cases</h2>
+ * - @subpage test_threads_001
+ * - @subpage test_threads_002
+ * - @subpage test_threads_003
+ * - @subpage test_threads_004
+ * .
+ * @file testthd.c
+ * @file testthd.h
+ */
+
+/**
+ * @page test_threads_001 Ready List functionality #1
+ *
+ * <h2>Description</h2>
+ * Five threads, with increasing priority, are enqueued in the ready list
+ * and atomically executed.<br>
+ * The test expects the threads to perform their operations in increasing
+ * priority order redardless of the initial order.
+ */
+
 static msg_t thread(void *p) {
 
   test_emit_token(*(char *)p);
@@ -50,6 +91,16 @@ const struct testcase testthd1 = {
   thd1_execute
 };
 
+/**
+ * @page test_threads_002 Ready List functionality #2
+ *
+ * <h2>Description</h2>
+ * Five threads, with pseudo-random priority, are enqueued in the ready list
+ * and atomically executed.<br>
+ * The test expects the threads to perform their operations in increasing
+ * priority order redardless of the initial order.
+ */
+
 static char *thd2_gettest(void) {
 
   return "Threads, enqueuing test #2";
@@ -72,6 +123,16 @@ const struct testcase testthd2 = {
   NULL,
   thd2_execute
 };
+
+/**
+ * @page test_threads_003 Threads priority change test
+ *
+ * <h2>Description</h2>
+ * A series of priority changes are performed on the current thread in order
+ * to verify that the priority change happens as expected.<br>
+ * If the @p CH_USE_MUTEXES option is enabled then the priority changes are
+ * also tested under priority inheritance boosted priority state.
+ */
 
 static char *thd3_gettest(void) {
 
@@ -133,6 +194,14 @@ const struct testcase testthd3 = {
   thd3_execute
 };
 
+/**
+ * @page test_threads_004 Threads delays test
+ *
+ * <h2>Description</h2>
+ * Delay APIs and associated macros are tested, the invoking thread is verified
+ * to wake up at the exact expected time.
+ */
+
 static char *thd4_gettest(void) {
 
   return "Threads, delays";
@@ -172,7 +241,7 @@ const struct testcase testthd4 = {
 };
 
 /*
- * Test sequence for ready list pattern.
+ * Test sequence for threads patterns.
  */
 const struct testcase * const patternthd[] = {
   &testthd1,

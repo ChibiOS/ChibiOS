@@ -19,7 +19,6 @@
 
 /**
  * @page article_atomic Invoking multiple primitives as a single atomic operation
- * @{
  * It is often necessary to invoke multiple operations involving a
  * reschedulation as a single atomic operation.<br>
  * ChibiOS/RT already implements APIs that perform complex operations, as
@@ -56,4 +55,3 @@
  * API. An extra @p chSchRescheduleS() can be present at the very end of the
  * block, it only reschedules if a reschedulation is still required.
  */
-/** @} */

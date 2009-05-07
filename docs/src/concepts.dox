@@ -19,7 +19,6 @@
 
 /**
  * @page concepts Concepts and Architecture
- * @{
  * @brief ChibiOS/RT Concepts and Architecture
  * - @ref naming
  * - @ref api_suffixes
@@ -261,4 +260,3 @@
  * extra layers, this is just not part of the kernel architecture but part of
  * the overall system design.
  */
-/** @} */

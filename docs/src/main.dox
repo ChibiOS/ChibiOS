@@ -65,6 +65,27 @@
  */
 
 /**
+ * @page TEST_SUITE Tests Description
+ * <h2>Descriptions</h2>
+ * Most of the ChibiOS/RT demos link a set of software modules (test suite) in
+ * order to verify the proper working of the kernel, the port and the demo
+ * itself.<br>
+ * Each Test Module performs a series of tests on a specified subbsystem or
+ * subsystems and can report a failure/success status and/or a performance
+ * index as the test suite output.<br>
+ * The test suite is usually activated in the demo applications by pressing a
+ * button on the target board, see the readme into the various demos
+ * directories. The test suite output is usually sent through a serial port and
+ * can be examined by using a terminal emulator program.
+ *
+ * <h2>Test Modules</h2>
+ * - @subpage test_threads
+ * - @subpage test_queues
+ * - @subpage test_serial
+ * .
+ */
+
+/**
  * @defgroup Ports Ports
  * This section describes the technical details for the various supported
  * ChibiOS/RT ports.
