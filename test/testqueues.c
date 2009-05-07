@@ -51,7 +51,9 @@
  * - @subpage test_queues_002
  * .
  * @file testqueues.c
+ * @brief I/O Queues test source file
  * @file testqueues.h
+ * @brief I/O Queues test header file
  */
 
 #if CH_USE_QUEUES

@@ -21,6 +21,44 @@
 
 #include "test.h"
 
+/**
+ * @page test_benchmarks Kernel Benchmarks
+ *
+ * <h2>Description</h2>
+ * This module implements a series of system benchmarks. The benchmarks are
+ * useful as a stress test and as a reference when comparing ChibiOS/RT
+ * with similar systems.
+ *
+ * <h2>Objective</h2>
+ * Objective of the test module is to provide a performance index for the
+ * most critical system subsystems. The performance numbers allow to
+ * discover performance regressions between successive ChibiOS/RT releases.
+ *
+ * <h2>Preconditions</h2>
+ * None.
+ *
+ * <h2>Waivers</h2>
+ * Not applicable.
+ *
+ * <h2>Test Cases</h2>
+ * - @subpage test_benchmarks_001
+ * - @subpage test_benchmarks_002
+ * - @subpage test_benchmarks_003
+ * - @subpage test_benchmarks_004
+ * - @subpage test_benchmarks_005
+ * - @subpage test_benchmarks_006
+ * - @subpage test_benchmarks_007
+ * - @subpage test_benchmarks_008
+ * - @subpage test_benchmarks_009
+ * - @subpage test_benchmarks_010
+ * - @subpage test_benchmarks_011
+ * .
+ * @file testbmk.c Kernel Benchmarks
+ * @brief Kernel Benchmarks source file
+ * @file testbmk.h
+ * @brief Kernel Benchmarks header file
+ */
+
 static Semaphore sem1;
 #if CH_USE_MUTEXES
 static Mutex mtx1;
@@ -52,9 +90,18 @@ static unsigned int msg_loop_test(Thread *tp) {
   return n;
 }
 
+/**
+ * @page test_benchmarks_001 Messages performance #1
+ *
+ * <h2>Description</h2>
+ * A message server thread is created with a lower priority than the client
+ * thread, the messages throughput per second is measured and the result
+ * printed in the output log.
+ */
+
 static char *bmk1_gettest(void) {
 
-  return "Benchmark, context switch #1, optimal";
+  return "Benchmark, messages, immediate wakeup";
 }
 
 static void bmk1_execute(void) {
@@ -78,9 +125,18 @@ const struct testcase testbmk1 = {
   bmk1_execute
 };
 
+/**
+ * @page test_benchmarks_002 Messages performance #2
+ *
+ * <h2>Description</h2>
+ * A message server thread is created with an higher priority than the client
+ * thread, the messages throughput per second is measured and the result
+ * printed in the output log.
+ */
+
 static char *bmk2_gettest(void) {
 
-  return "Benchmark, context switch #2, empty ready list";
+  return "Benchmark, messages, late wakeup";
 }
 
 static void bmk2_execute(void) {
@@ -109,9 +165,19 @@ static msg_t thread2(void *p) {
   return (msg_t)p;
 }
 
+/**
+ * @page test_benchmarks_003 Messages performance #3
+ *
+ * <h2>Description</h2>
+ * A message server thread is created with an higher priority than the client
+ * thread, four lower priority threads crowd the ready list, the messages
+ * throughput per second is measured while the ready list and the result
+ * printed in the output log.
+ */
+
 static char *bmk3_gettest(void) {
 
-  return "Benchmark, context switch #3, 4 threads in ready list";
+  return "Benchmark, messages, 4 threads in ready list";
 }
 
 static void bmk3_execute(void) {
@@ -139,9 +205,19 @@ const struct testcase testbmk3 = {
   bmk3_execute
 };
 
+/**
+ * @page test_benchmarks_004 Context Switch performance
+ *
+ * <h2>Description</h2>
+ * A thread is created that just performs a @p chSchGoSleepS() into a loop,
+ * the thread is awakened as fast is possible by the tester thread.<br>
+ * The Context Switch performance is calculated by measuring the number of
+ * interactions after a second of continuous operations.
+ */
+
 static char *bmk4_gettest(void) {
 
-  return "Benchmark, context switch #4, naked";
+  return "Benchmark, context switch";
 }
 
 msg_t thread4(void *p) {
@@ -195,9 +271,20 @@ const struct testcase testbmk4 = {
   bmk4_execute
 };
 
+/**
+ * @page test_benchmarks_005 Threads performance, full cycle
+ *
+ * <h2>Description</h2>
+ * Threads are continuously created and terminated into a loop. A full
+ * @p chThdCreateStatic() / @p chThdExit() / @p chThdWait() cycle is performed
+ * in each interaction.<br>
+ * The performance is calculated by measuring the number of interactions after
+ * a second of continuous operations.
+ */
+
 static char *bmk5_gettest(void) {
 
-  return "Benchmark, threads creation/termination, worst case";
+  return "Benchmark, threads, full cycle";
 }
 
 static void bmk5_execute(void) {
@@ -226,9 +313,22 @@ const struct testcase testbmk5 = {
   bmk5_execute
 };
 
+/**
+ * @page test_benchmarks_006 Threads performance, create/exit only
+ *
+ * <h2>Description</h2>
+ * Threads are continuously created and terminated into a loop. A partial
+ * @p chThdCreateStatic() / @p chThdExit() cycle is performed in each
+ * interaction, the @p chThdWait() is not necessary because the thread is
+ * created at an higher priority so there is no need to wait for it to
+ * terminate.<br>
+ * The performance is calculated by measuring the number of interactions after
+ * a second of continuous operations.
+ */
+
 static char *bmk6_gettest(void) {
 
-  return "Benchmark, threads creation/termination, optimal";
+  return "Benchmark, threads, create only";
 }
 
 static void bmk6_execute(void) {
@@ -257,6 +357,17 @@ const struct testcase testbmk6 = {
   bmk6_execute
 };
 
+/**
+ * @page test_benchmarks_007 Mass reschedulation performance
+ *
+ * <h2>Description</h2>
+ * Five threads are created and atomically reschedulated by resetting the
+ * semaphore where they are waiting on. The operation is performed into a
+ * continuous loop.<br>
+ * The performance is calculated by measuring the number of interactions after
+ * a second of continuous operations.
+ */
+
 static msg_t thread3(void *p) {
 
   while (!chThdShouldTerminate())
@@ -277,11 +388,11 @@ static void bmk7_setup(void) {
 static void bmk7_execute(void) {
   uint32_t n;
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread3, NULL);
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()+2, thread3, NULL);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+5, thread3, NULL);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()+4, thread3, NULL);
   threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()+3, thread3, NULL);
-  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()+4, thread3, NULL);
-  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()+5, thread3, NULL);
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()+2, thread3, NULL);
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()+1, thread3, NULL);
 
   n = 0;
   test_wait_tick();
@@ -310,6 +421,16 @@ const struct testcase testbmk7 = {
   NULL,
   bmk7_execute
 };
+
+/**
+ * @page test_benchmarks_008 I/O Queues throughput
+ *
+ * <h2>Description</h2>
+ * Four bytes are written and then read from an @p InputQueue into a continuous
+ * loop.<br>
+ * The performance is calculated by measuring the number of interactions after
+ * a second of continuous operations.
+ */
 
 static char *bmk8_gettest(void) {
 
@@ -350,6 +471,15 @@ const struct testcase testbmk8 = {
   bmk8_execute
 };
 
+/**
+ * @page test_benchmarks_009 Virtual Timers set/reset performance
+ *
+ * <h2>Description</h2>
+ * A virtual timer is set and immediately reset into a continuous loop.<br>
+ * The performance is calculated by measuring the number of interactions after
+ * a second of continuous operations.
+ */
+
 static char *bmk9_gettest(void) {
 
   return "Benchmark, virtual timers set/reset";
@@ -386,6 +516,16 @@ const struct testcase testbmk9 = {
   NULL,
   bmk9_execute
 };
+
+/**
+ * @page test_benchmarks_010 Semaphores wait/signal performance
+ *
+ * <h2>Description</h2>
+ * A counting semaphore is taken/released into a continuous loop, no Context
+ * Switch happens because the counter is always non negative.<br>
+ * The performance is calculated by measuring the number of interactions after
+ * a second of continuous operations.
+ */
 
 static char *bmk10_gettest(void) {
 
@@ -429,6 +569,16 @@ const struct testcase testbmk10 = {
 };
 
 #if CH_USE_MUTEXES
+/**
+ * @page test_benchmarks_011 Mutexes lock/unlock performance
+ *
+ * <h2>Description</h2>
+ * A mutex is locked/unlocked into a continuous loop, no Context Switch happens
+ * because there are no other threads asking for the mutex.<br>
+ * The performance is calculated by measuring the number of interactions after
+ * a second of continuous operations.
+ */
+
 static char *bmk11_gettest(void) {
 
   return "Benchmark, mutexes lock/unlock";

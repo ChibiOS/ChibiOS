@@ -33,7 +33,7 @@
  *
  * <h2>Objective</h2>
  * Objective of the test module is to cover 100% of the subsystems code
- * as a necessary step in order to assess their readyness.<br>
+ * as a necessary step in order to assess their readyness.
  *
  * <h2>Preconditions</h2>
  * None.
@@ -49,7 +49,9 @@
  * - @subpage test_threads_004
  * .
  * @file testthd.c
+ * @brief Threads and Scheduler test source file
  * @file testthd.h
+ * @brief Threads and Scheduler test header file
  */
 
 /**
@@ -59,7 +61,7 @@
  * Five threads, with increasing priority, are enqueued in the ready list
  * and atomically executed.<br>
  * The test expects the threads to perform their operations in increasing
- * priority order redardless of the initial order.
+ * priority order regardless of the initial order.
  */
 
 static msg_t thread(void *p) {
@@ -98,7 +100,7 @@ const struct testcase testthd1 = {
  * Five threads, with pseudo-random priority, are enqueued in the ready list
  * and atomically executed.<br>
  * The test expects the threads to perform their operations in increasing
- * priority order redardless of the initial order.
+ * priority order regardless of the initial order.
  */
 
 static char *thd2_gettest(void) {

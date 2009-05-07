@@ -47,7 +47,9 @@
  * None.
  *
  * @file testserial.c
+ * @brief Kernel Serial Driver test source file
  * @file testserial.h
+ * @brief Kernel Serial Driver test header file
  */
 
 #if CH_USE_SERIAL_FULLDUPLEX
@@ -59,7 +61,7 @@
  */
 const struct testcase * const patternserial[] = {
 #if CH_USE_SERIAL_FULLDUPLEX
-  &testserial1,
+//  &testserial1,
 #endif
   NULL
 };

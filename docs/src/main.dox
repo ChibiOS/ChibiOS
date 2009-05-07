@@ -61,16 +61,17 @@
  * - @subpage goals
  * - @subpage concepts
  * - @subpage articles
+ * - @subpage testsuite
  * .
  */
 
 /**
- * @page TEST_SUITE Tests Description
- * <h2>Descriptions</h2>
+ * @page testsuite Tests Suite
+ * <h2>Description</h2>
  * Most of the ChibiOS/RT demos link a set of software modules (test suite) in
  * order to verify the proper working of the kernel, the port and the demo
  * itself.<br>
- * Each Test Module performs a series of tests on a specified subbsystem or
+ * Each Test Module performs a series of tests on a specified subsystem or
  * subsystems and can report a failure/success status and/or a performance
  * index as the test suite output.<br>
  * The test suite is usually activated in the demo applications by pressing a
@@ -82,6 +83,7 @@
  * - @subpage test_threads
  * - @subpage test_queues
  * - @subpage test_serial
+ * - @subpage test_benchmarks
  * .
  */
 
