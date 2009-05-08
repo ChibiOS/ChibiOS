@@ -21,7 +21,42 @@
 
 #include "test.h"
 
+/**
+ * @page test_msg Messages test
+ *
+ * <h2>Description</h2>
+ * This module implements the test sequence for the @ref Messages subsystem.
+ *
+ * <h2>Objective</h2>
+ * Objective of the test module is to cover 100% of the @ref Messages
+ * subsystem code as a necessary step in order to assess its readyness.
+ *
+ * <h2>Preconditions</h2>
+ * The module requires the following kernel options:
+ * - @p CH_USE_MESSAGES
+ * .
+ * In case some of the required options are not enabled then some or all tests
+ * may be skipped.
+ *
+ * <h2>Test Cases</h2>
+ * - @subpage test_msg_001
+ * .
+ * @file testmsg.c
+ * @brief Messages test source file
+ * @file testmsg.h
+ * @brief Messages header file
+ */
+
 #if CH_USE_MESSAGES
+
+/**
+ * @page test_msg_001 Messages Server loop
+ *
+ * <h2>Description</h2>
+ * A thread is spawned that sends four messages back to the tester thread.<br>
+ * The test expect to receive the messages in the correct sequence and to
+ * not find a fifth message waiting.
+ */
 
 static char *msg1_gettest(void) {
 

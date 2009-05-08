@@ -22,7 +22,7 @@
 #include "test.h"
 
 /**
- * @page test_serial Serial Driver test
+ * @page test_serial Serial Drivers test
  *
  * <h2>Description</h2>
  * This module implements the test sequence for the @ref Serial subsystem.
@@ -40,11 +40,8 @@
  * The module requires the following kernel options:
  * - @p CH_USE_SERIAL_FULLDUPLEX (and dependent options)
  * .
- * In case of the required options are not enabled some or all tests may be
- * skipped.
- *
- * <h2>Waivers</h2>
- * None.
+ * In case some of the required options are not enabled then some or all tests
+ * may be skipped.
  *
  * @file testserial.c
  * @brief Kernel Serial Driver test source file

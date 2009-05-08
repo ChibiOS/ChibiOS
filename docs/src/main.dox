@@ -81,8 +81,13 @@
  *
  * <h2>Test Modules</h2>
  * - @subpage test_threads
+ * - @subpage test_dynamic
+ * - @subpage test_msg
+ * - @subpage test_events
+ * - @subpage test_mbox
  * - @subpage test_queues
  * - @subpage test_serial
+ * - @subpage test_heap
  * - @subpage test_benchmarks
  * .
  */

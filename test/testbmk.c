@@ -37,9 +37,6 @@
  * <h2>Preconditions</h2>
  * None.
  *
- * <h2>Waivers</h2>
- * Not applicable.
- *
  * <h2>Test Cases</h2>
  * - @subpage test_benchmarks_001
  * - @subpage test_benchmarks_002

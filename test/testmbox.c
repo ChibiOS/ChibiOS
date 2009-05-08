@@ -21,6 +21,33 @@
 
 #include "test.h"
 
+/**
+ * @page test_mbox Mailboxes test
+ *
+ * <h2>Description</h2>
+ * This module implements the test sequence for the @ref Mailboxes subsystem.
+ *
+ * <h2>Objective</h2>
+ * Objective of the test module is to cover 100% of the @ref Mailboxes
+ * subsystem code as a necessary step in order to assess its readyness.
+ *
+ * <h2>Preconditions</h2>
+ * The module requires the following kernel options:
+ * - @p CH_USE_MAILBOXES
+ * - @p CH_USE_SEMAPHORES_TIMEOUT
+ * .
+ * In case some of the required options are not enabled then some or all tests
+ * may be skipped.
+ *
+ * <h2>Test Cases</h2>
+ * - @subpage test_mbox_001
+ * .
+ * @file testmbox.c
+ * @brief Mailboxes test source file
+ * @file testmbox.h
+ * @brief Mailboxes header file
+ */
+
 #if CH_USE_MAILBOXES && CH_USE_SEMAPHORES_TIMEOUT
 
 #define ALLOWED_DELAY MS2ST(5)
@@ -28,6 +55,15 @@
 
 static msg_t mb1_buf[MB_SIZE];
 static Mailbox mb1;
+
+/**
+ * @page test_mbox_001 Queuing and timeouts
+ *
+ * <h2>Description</h2>
+ * Messages are posted/fetched from a mailbox in carefully designed sequences
+ * in order to stimulate all the possible code paths inside the mailbox.<br>
+ * The test expects to find a consistent mailbox status after each operation.
+ */
 
 static char *mbox1_gettest(void) {
 

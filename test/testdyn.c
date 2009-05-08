@@ -21,7 +21,48 @@
 
 #include "test.h"
 
+/**
+ * @page test_dynamic Dynamic Thread APIs test
+ *
+ * <h2>Description</h2>
+ * This module implements the test sequence for the dynamic thread creation
+ * APIs.
+ *
+ * <h2>Objective</h2>
+ * Objective of the test module is to cover 100% of the dynamic APIs code
+ * as a necessary step in order to assess their readyness.
+ *
+ * <h2>Preconditions</h2>
+ * The module requires the following kernel options:
+ * - @p CH_USE_DYNAMIC
+ * - @p CH_USE_HEAP
+ * - @p CH_USE_MEMPOOLS
+ * .
+ * In case some of the required options are not enabled then some or all tests
+ * may be skipped.
+ *
+ * <h2>Test Cases</h2>
+ * - @subpage test_dynamic_001
+ * - @subpage test_dynamic_002
+ * .
+ * @file testdyn.c
+ * @brief Dynamic thread APIs test source file
+ * @file testdyn.h
+ * @brief Dynamic thread APIs test header file
+ */
+
 #if CH_USE_DYNAMIC
+
+/**
+ * @page test_dynamic_001 Threads creation from Memory Heap
+ *
+ * <h2>Description</h2>
+ * Two threads are started by allocating the memory from the Memory Heap then
+ * the remaining heap space is arbitrarily allocated and a third tread startup
+ * is attempted.<br>
+ * The test expects the first two threads to successfully start and the last
+ * one to fail.
+ */
 
 static msg_t thread(void *p) {
 
@@ -80,6 +121,16 @@ const struct testcase testdyn1 = {
 #endif /* CH_USE_HEAP */
 
 #if CH_USE_MEMPOOLS
+/**
+ * @page test_dynamic_002 Threads creation from Memory Pool
+ *
+ * <h2>Description</h2>
+ * Five thread creation are attempted from a pool containing only four
+ * elements.<br>
+ * The test expects the first four threads to successfully start and the last
+ * one to fail.
+ */
+
 static MemoryPool mp1;
 
 static char *dyn2_gettest(void) {

@@ -40,11 +40,8 @@
  * The module requires the following kernel options:
  * - @p CH_USE_QUEUES (and dependent options)
  * .
- * In case of the required options are not enabled some or all tests may be
- * skipped.
- *
- * <h2>Waivers</h2>
- * None.
+ * In case some of the required options are not enabled then some or all tests
+ * may be skipped.
  *
  * <h2>Test Cases</h2>
  * - @subpage test_queues_001

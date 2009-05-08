@@ -21,11 +21,53 @@
 
 #include "test.h"
 
+/**
+ * @page test_events Events test
+ *
+ * <h2>Description</h2>
+ * This module implements the test sequence for the @ref Events subsystem.
+ *
+ * <h2>Objective</h2>
+ * Objective of the test module is to cover 100% of the @ref Events subsystem
+ * code as a necessary step in order to assess its readyness.
+ *
+ * <h2>Preconditions</h2>
+ * The module requires the following kernel options:
+ * - @p CH_USE_EVENTS
+ * - @p CH_USE_EVENTS_TIMEOUT
+ * .
+ * In case some of the required options are not enabled then some or all tests
+ * may be skipped.
+ *
+ * <h2>Test Cases</h2>
+ * - @subpage test_events_001
+ * - @subpage test_events_002
+ * - @subpage test_events_003
+ * .
+ * @file testevt.c
+ * @brief Events test source file
+ * @file testevt.h
+ * @brief Events test header file
+ */
+
 #if CH_USE_EVENTS
 
 #define ALLOWED_DELAY MS2ST(5)
 
 static EventSource es1, es2;
+
+/**
+ * @page test_events_001 Events registration and dispatch
+ *
+ * <h2>Description</h2>
+ * Two event listeners are registered on an event source and then unregistered
+ * in the same order.<br>
+ * The test expects that the even source has listeners after the registrations
+ * and after the first unregistration, then, after the second unegistration,
+ * the test expects no more listeners.<br>
+ * In the second part the test dispatches three event flags and verifies that
+ * the associated event handlers are invoked in LSb-first order.
+ */
 
 static char *evt1_gettest(void) {
 
@@ -70,6 +112,20 @@ const struct testcase testevt1 = {
   NULL,
   evt1_execute
 };
+
+/**
+ * @page test_events_002 Events wait and broadcast
+ *
+ * <h2>Description</h2>
+ * In this test the following APIs are indipently tested by starting threads
+ * that signal/broadcast events after fixed delays:
+ * - @p chEvtWaitOne()
+ * - @p chEvtWaitAny()
+ * - @p chEvtWaitAll()
+ * .
+ * After each test phase the test verifies that the events have been served at
+ * the expected time and that there are no stuck event flags.
+ */
 
 static char *evt2_gettest(void) {
 
@@ -179,6 +235,21 @@ const struct testcase testevt2 = {
 };
 
 #if CH_USE_EVENTS_TIMEOUT
+/**
+ * @page test_events_003 Events timeout
+ *
+ * <h2>Description</h2>
+ * In this test the following APIs are let to timeout twice: immediatly and
+ * after 10ms:
+ * In this test the following APIs are indipently tested by starting threads
+ * that broadcast events after fixed delays:
+ * - @p chEvtWaitOneTimeout()
+ * - @p chEvtWaitAnyTimeout()
+ * - @p chEvtWaitAllTimeout()
+ * .
+ * After each test phase the test verifies that there are no stuck event flags.
+ */
+
 static char *evt3_gettest(void) {
 
   return "Events, timeouts";

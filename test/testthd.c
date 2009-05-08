@@ -38,10 +38,6 @@
  * <h2>Preconditions</h2>
  * None.
  *
- * <h2>Waivers</h2>
- * - The @p chThdExit() API is not code 100% covered because it cannot return.
- *   It must work this way by design.
- * .
  * <h2>Test Cases</h2>
  * - @subpage test_threads_001
  * - @subpage test_threads_002
@@ -49,9 +45,9 @@
  * - @subpage test_threads_004
  * .
  * @file testthd.c
- * @brief Threads and Scheduler test source file
+ * @brief Threads and @ref Scheduler test source file
  * @file testthd.h
- * @brief Threads and Scheduler test header file
+ * @brief Threads and @ref Scheduler test header file
  */
 
 /**

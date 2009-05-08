@@ -21,9 +21,46 @@
 
 #include "test.h"
 
+/**
+ * @page test_heap Memory Heap test
+ *
+ * <h2>Description</h2>
+ * This module implements the test sequence for the @ref Heap subsystem.
+ *
+ * <h2>Objective</h2>
+ * Objective of the test module is to cover 100% of the @ref Heap subsystem
+ * code as a necessary step in order to assess its readyness.
+ *
+ * <h2>Preconditions</h2>
+ * The module requires the following kernel options:
+ * - @p CH_USE_HEAP
+ * .
+ * In case some of the required options are not enabled then some or all tests
+ * may be skipped.
+ *
+ * <h2>Test Cases</h2>
+ * - @subpage test_heap_001
+ * .
+ * @file testheap.c
+ * @brief Heap test source file
+ * @file testevt.h
+ * @brief Heap header file
+ */
+
 #if CH_USE_HEAP
 
 #define SIZE 16
+
+/**
+ * @page test_heap_001 Allocation and fragmentation test
+ *
+ * <h2>Description</h2>
+ * Series of allocations/deallocations are performed in carefully designed
+ * sequences in order to stimulate all the possible code paths inside the
+ * allocator.<br>
+ * The test expects to find the heap back to the initial status after each
+ * sequence.
+ */
 
 static char *heap1_gettest(void) {
 
