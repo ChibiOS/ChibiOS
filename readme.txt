@@ -161,6 +161,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   (backported in stable branch).
 - FIX: Fixed wrong assertions in chThdWait() and chHeapFree() (backported in
   stable branch).
+- FIX: Fixed @file tag in sam7x_serial.c (bug 2788573) (backported in stable
+  branch).
 - FIX: Fixed a small problem in the chcore.c template file.
 - NEW: Mailboxes (asynchronous messages) subsystem and test cases added.
 - NEW: Most APIs with a timeout specification now accept the constant
