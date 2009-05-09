@@ -25,8 +25,8 @@
 */
 
 /**
- * @file ports/ARM7-AT91SAM7X/sam7x_serial.h
- * @brief AT91SAM7X Serial driver macros and structures.
+ * @file ports/ARM7-AT91SAM7X/sam7x_serial.c
+ * @brief AT91SAM7X Serial driver code.
  * @addtogroup AT91SAM7X_SERIAL
  * @{
  */
