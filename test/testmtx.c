@@ -54,9 +54,9 @@
  * - @subpage test_mtx_008
  * .
  * @file testmtx.c
- * @brief @ref Mutexes and @ref CondVars test source file
+ * @brief Mutexes and CondVars test source file
  * @file testmtx.h
- * @brief @ref Mutexes and @ref CondVars test header file
+ * @brief Mutexes and CondVars test header file
  */
 
 #if CH_USE_MUTEXES
@@ -115,6 +115,7 @@ const struct testcase testmtx1 = {
   mtx1_execute
 };
 
+#if CH_DBG_THREADS_PROFILING
 /**
  * @page test_mtx_002 Priority inheritance, simple case
  *
@@ -122,9 +123,9 @@ const struct testcase testmtx1 = {
  * Three threads are involved in the classic priority inversion scenario, a
  * medium priority thread tries to starve an high priority thread by
  * blocking a low priority thread into a mutex lock zone.<br>
- * The test expects the threads to perform their operations in increasing
- * priority order by rearranging their priorities in order to avoid the
- * priority inversion trap.
+ * The test expects the threads to reach their goal in increasing priority
+ * order by rearranging their priorities in order to avoid the priority
+ * inversion trap.
  *
  * <h2>Scenario</h2>
  * This weird looking diagram should explain what happens in the test case:
@@ -134,14 +135,13 @@ const struct testcase testmtx1 = {
  *    1 ..................++++++++++++------------------++++++++++++G.........
  *    2  .............................AL..........++++++AUG...................
  *                                    ^           ^
- *
  * Legend:
  *   0..2 - Priority levels
  *   +++  - Running
  *   ---  - Ready
  *   ...  - Waiting
- *   AL   - Lock operation on mutex A
- *   AUn  - Unlock operation on mutex A with priority going to level 'n'
+ *   xL   - Lock operation on mutex 'x'
+ *   xUn  - Unlock operation on mutex 'x' with priority returning to level 'n'
  *   G    - Goal
  *   ^    - Priority transition (boost or return).
  * @endcode
@@ -194,8 +194,8 @@ static void mtx2_execute(void) {
   test_wait_tick();
   time = chTimeNow();
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread2H, 0);
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-3, thread2L, 0);
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-2, thread2M, 0);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-2, thread2M, 0);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread2L, 0);
   test_wait_threads();
   test_assert_sequence(1, "ABC");
   test_assert_time_window(2, time + MS2ST(100), time + MS2ST(100) + ALLOWED_DELAY);
@@ -221,22 +221,20 @@ const struct testcase testmtx2 = {
  * <h2>Scenario</h2>
  * This weird looking diagram should explain what happens in the test case:
  * @code
- * Time ---->
- *         0     10    20        30   40    50
- *    0 +++BL++------------------2++++------4+++++BU0--------------------------
- *    1 .......++AL++--2+++++++++BL.........4.....++++++++BU4++++AU1-----------
- *    2 .............++AL............................................------++AU
- *    3 ..............................++++-------------------------------++....
- *    4 ..................................++AL...................++++AU++......
- *                                    ^              ^
- *
+ * Time ----> 0     10    20    30    40    50    60    70    80    90    100   110
+ *    0 ......BL++++------------2+++++------4+++++BU0---------------------------G.....
+ *    1 ............AL++++2+++++BL----------4-----++++++BU4+++AU1---------------G.....
+ *    2 ..................AL----------------------------------------------++++++AUG...
+ *    3 ..............................+++++++-----------------------++++++G...........
+ *    4 ....................................AL................++++++AUG...............
+ *                        ^     ^           ^     ^     ^     ^
  * Legend:
  *   0..2 - Priority levels
  *   +++  - Running
  *   ---  - Ready
  *   ...  - Waiting
- *   AL   - Lock operation on mutex A
- *   AUn  - Unlock operation on mutex A with priority going to level 'n'
+ *   xL   - Lock operation on mutex 'x'
+ *   xUn  - Unlock operation on mutex 'x' with priority returning to level 'n'
  *   ^    - Priority transition (boost or return).
  * @endcode
  */
@@ -247,78 +245,79 @@ static char *mtx3_gettest(void) {
 
 static void mtx3_setup(void) {
 
-  chMtxInit(&m1);
-  chMtxInit(&m2);
+  chMtxInit(&m1); // Mutex B
+  chMtxInit(&m2); // Mutex A
 }
 
-static msg_t thread5(void *p) {
+/* Lowest priority thread */
+static msg_t thread3LL(void *p) {
 
   chMtxLock(&m1);
-  test_cpu_pulse(50);
+  test_cpu_pulse(30);
   chMtxUnlock();
-  test_emit_token(*(char *)p);
+  test_emit_token('E');
   return 0;
 }
 
-static msg_t thread6(void *p) {
+/* Low priority thread */
+static msg_t thread3L(void *p) {
 
   chThdSleepMilliseconds(10);
   chMtxLock(&m2);
   test_cpu_pulse(20);
   chMtxLock(&m1);
-  test_cpu_pulse(50);
+  test_cpu_pulse(10);
   chMtxUnlock();
-  test_cpu_pulse(20);
+  test_cpu_pulse(10);
   chMtxUnlock();
-  test_emit_token(*(char *)p);
+  test_emit_token('D');
   return 0;
 }
 
-static msg_t thread7(void *p) {
+/* Medium priority thread */
+static msg_t thread3M(void *p) {
 
   chThdSleepMilliseconds(20);
   chMtxLock(&m2);
-  test_cpu_pulse(50);
+  test_cpu_pulse(10);
   chMtxUnlock();
-  test_emit_token(*(char *)p);
+  test_emit_token('C');
   return 0;
 }
 
-static msg_t thread8(void *p) {
+/* High priority thread */
+static msg_t thread3H(void *p) {
 
   chThdSleepMilliseconds(40);
-  test_cpu_pulse(200);
-  test_emit_token(*(char *)p);
+  test_cpu_pulse(20);
+  test_emit_token('B');
   return 0;
 }
 
-static msg_t thread9(void *p) {
+/* Highest priority thread */
+static msg_t thread3HH(void *p) {
 
   chThdSleepMilliseconds(50);
   chMtxLock(&m2);
-  test_cpu_pulse(50);
+  test_cpu_pulse(10);
   chMtxUnlock();
-  test_emit_token(*(char *)p);
+  test_emit_token('A');
   return 0;
 }
 
-/*
- * Time    0     10    20        30   40    50
- *    0 +++BL++------------------2++++------4+++++BU0--------------------------
- *    1 .......++AL++--2+++++++++BL.........4.....++++++++BU4++++AU1-----------
- *    2 .............++AL............................................------++AU
- *    3 ..............................++++-------------------------------++....
- *    4 ..................................++AL...................++++AU++......
- */
 static void mtx3_execute(void) {
+  systime_t time;
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-5, thread5, "E");
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-4, thread6, "D");
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread7, "C");
-  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-2, thread8, "B");
-  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-1, thread9, "A");
+  test_wait_tick();
+  time = chTimeNow();
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-5, thread3LL, 0);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-4, thread3L, 0);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread3M, 0);
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-2, thread3H, 0);
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-1, thread3HH, 0);
   test_wait_threads();
   test_assert_sequence(1, "ABCDE");
+  test_assert_time_window(2, time + MS2ST(110), time + MS2ST(110) + ALLOWED_DELAY);
 }
 
 const struct testcase testmtx3 = {
@@ -327,7 +326,17 @@ const struct testcase testmtx3 = {
   NULL,
   mtx3_execute
 };
+#endif /* CH_DBG_THREADS_PROFILING */
 
+/**
+ * @page test_mtx_004 Priority return verification
+ *
+ * <h2>Description</h2>
+ * Two threads are spawned that try to lock the mutexes locked by the tester
+ * thread with precise timing.<br>
+ * The test expects that the priority changes caused by the priority
+ * inheritance algorithm happen at the right moment and with the right values.
+ */
 static char *mtx4_gettest(void) {
 
   return "Mutexes, priority return";
@@ -339,7 +348,7 @@ static void mtx4_setup(void) {
   chMtxInit(&m2);
 }
 
-static msg_t thread13(void *p) {
+static msg_t thread4a(void *p) {
 
   chThdSleepMilliseconds(50);
   chMtxLock(&m2);
@@ -347,7 +356,7 @@ static msg_t thread13(void *p) {
   return 0;
 }
 
-static msg_t thread14(void *p) {
+static msg_t thread4b(void *p) {
 
   chThdSleepMilliseconds(150);
   chMtxLock(&m1);
@@ -361,8 +370,8 @@ static void mtx4_execute(void) {
   p = chThdGetPriority();
   p1 = p + 1;
   p2 = p + 2;
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, p1, thread13, "B");
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, p2, thread14, "A");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, p1, thread4a, "B");
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, p2, thread4b, "A");
   chMtxLock(&m2);
   test_assert(1, chThdGetPriority() == p, "wrong priority level");
   chThdSleepMilliseconds(100);
@@ -380,8 +389,8 @@ static void mtx4_execute(void) {
   test_wait_threads();
 
   /* Test repeated in order to cover chMtxUnlockS().*/
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, p1, thread13, "D");
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, p2, thread14, "C");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, p1, thread4a, "D");
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, p2, thread4b, "C");
   chMtxLock(&m2);
   test_assert(8, chThdGetPriority() == p, "wrong priority level");
   chThdSleepMilliseconds(100);
@@ -408,9 +417,18 @@ const struct testcase testmtx4 = {
   mtx4_execute
 };
 
+/**
+ * @page test_mtx_005 Mutex status
+ *
+ * <h2>Description</h2>
+ * Various tests on the mutex structure status after performing some lock and
+ * unlock operations.<br>
+ * The test expects that the internal mutex status is consistent after each
+ * operation.
+ */
 static char *mtx5_gettest(void) {
 
-  return "Mutexes, coverage";
+  return "Mutexes, status";
 }
 
 static void mtx5_setup(void) {
@@ -447,6 +465,16 @@ const struct testcase testmtx5 = {
 };
 
 #if CH_USE_CONDVARS
+/**
+ * @page test_mtx_006 Signal test
+ *
+ * <h2>Description</h2>
+ * Five threads take a mutex and then enter a conditional variable queue, the
+ * tester thread then proceeds to signal the conditional variable five times
+ * atomically.<br>
+ * The test expects the threads to reach their goal in increasing priority
+ * order regardless of the initial order.
+ */
 static char *mtx6_gettest(void) {
 
   return "CondVar, signal test";
@@ -494,6 +522,15 @@ const struct testcase testmtx6 = {
   mtx6_execute
 };
 
+/**
+ * @page test_mtx_007 Broadcast test
+ *
+ * <h2>Description</h2>
+ * Five threads take a mutex and then enter a conditional variable queue, the
+ * tester thread then proceeds to broadcast the conditional variable.<br>
+ * The test expects the threads to reach their goal in increasing priority
+ * order regardless of the initial order.
+ */
 static char *mtx7_gettest(void) {
 
   return "CondVar, broadcast test";
@@ -526,9 +563,18 @@ const struct testcase testmtx7 = {
   mtx7_execute
 };
 
+/**
+ * @page test_mtx_008 Priority Inheritance boost test
+ *
+ * <h2>Description</h2>
+ * Five threads take a mutex and then enter a conditional variable queue, the
+ * tester thread then proceeds to broadcast the conditional variable.<br>
+ * The test expects the threads to reach their goal in increasing priority
+ * order regardless of the initial order.
+ */
 static char *mtx8_gettest(void) {
 
-  return "CondVar, inheritance boost test";
+  return "CondVar, boost test";
 }
 
 static void mtx8_setup(void) {
@@ -588,8 +634,10 @@ const struct testcase testmtx8 = {
 const struct testcase * const patternmtx[] = {
 #if CH_USE_MUTEXES
   &testmtx1,
+#if CH_DBG_THREADS_PROFILING
   &testmtx2,
   &testmtx3,
+#endif
   &testmtx4,
   &testmtx5,
 #if CH_USE_CONDVARS

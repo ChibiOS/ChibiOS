@@ -44,9 +44,9 @@
  * may be skipped.
  *
  * @file testserial.c
- * @brief Kernel Serial Driver test source file
+ * @brief Serial Driver test source file
  * @file testserial.h
- * @brief Kernel Serial Driver test header file
+ * @brief Serial Driver test header file
  */
 
 #if CH_USE_SERIAL_FULLDUPLEX

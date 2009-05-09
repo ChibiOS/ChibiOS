@@ -45,9 +45,9 @@
  * - @subpage test_threads_004
  * .
  * @file testthd.c
- * @brief Threads and @ref Scheduler test source file
+ * @brief Threads and Scheduler test source file
  * @file testthd.h
- * @brief Threads and @ref Scheduler test header file
+ * @brief Threads and Scheduler test header file
  */
 
 /**

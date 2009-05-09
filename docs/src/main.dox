@@ -66,7 +66,7 @@
  */
 
 /**
- * @page testsuite Tests Suite
+ * @page testsuite Test Suite
  * <h2>Description</h2>
  * Most of the ChibiOS/RT demos link a set of software modules (test suite) in
  * order to verify the proper working of the kernel, the port and the demo
