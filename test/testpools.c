@@ -21,13 +21,48 @@
 
 #include "test.h"
 
+/**
+ * @page test_pools Memory Pools test
+ *
+ * <h2>Description</h2>
+ * This module implements the test sequence for the @ref MemoryPools subsystem.
+ *
+ * <h2>Objective</h2>
+ * Objective of the test module is to cover 100% of the @ref MemoryPools
+ * code as a necessary step in order to assess its maturity level.<br>
+ *
+ * <h2>Preconditions</h2>
+ * The module requires the following kernel options:
+ * - @p CH_USE_MEMPOOLS
+ * .
+ * In case some of the required options are not enabled then some or all tests
+ * may be skipped.
+ *
+ * <h2>Test Cases</h2>
+ * - @subpage test_pools_001
+ * .
+ * @file testpools.c
+ * @brief Memory Pools test source file
+ * @file testpools.h
+ * @brief Memory Pools test header file
+ */
+
 #if CH_USE_MEMPOOLS
 
 static MemoryPool mp1;
 
+/**
+ * @page test_pools_001 Allocation and enqueuing test
+ *
+ * <h2>Description</h2>
+ * Five memory blocks are added to a memory pool then removed.<br>
+ * The test expects to find the pool queue in the proper status after each
+ * operation.
+ */
+
 static char *pools1_gettest(void) {
 
-  return "Memory Pools, allocation and enqueuing test";
+  return "Memory Pools, queue/dequeue";
 }
 
 static void pools1_setup(void) {

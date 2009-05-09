@@ -466,7 +466,7 @@ const struct testcase testmtx5 = {
 
 #if CH_USE_CONDVARS
 /**
- * @page test_mtx_006 Signal test
+ * @page test_mtx_006 Condition Variable signal test
  *
  * <h2>Description</h2>
  * Five threads take a mutex and then enter a conditional variable queue, the
@@ -523,7 +523,7 @@ const struct testcase testmtx6 = {
 };
 
 /**
- * @page test_mtx_007 Broadcast test
+ * @page test_mtx_007 Condition Variable broadcast test
  *
  * <h2>Description</h2>
  * Five threads take a mutex and then enter a conditional variable queue, the
@@ -564,7 +564,7 @@ const struct testcase testmtx7 = {
 };
 
 /**
- * @page test_mtx_008 Priority Inheritance boost test
+ * @page test_mtx_008 Condition Variable priority boost test
  *
  * <h2>Description</h2>
  * This test case verifies the priority boost of a thread waiting on a

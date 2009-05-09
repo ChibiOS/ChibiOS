@@ -21,15 +21,53 @@
 
 #include "test.h"
 
+/**
+ * @page test_sem Semaphores test
+ *
+ * <h2>Description</h2>
+ * This module implements the test sequence for the @ref Semaphores subsystem.
+ *
+ * <h2>Objective</h2>
+ * Objective of the test module is to cover 100% of the @ref Semaphores
+ * code as a necessary step in order to assess its maturity level.<br>
+ *
+ * <h2>Preconditions</h2>
+ * The module requires the following kernel options:
+ * - @p CH_USE_SEMAPHORES
+ * .
+ * In case some of the required options are not enabled then some or all tests
+ * may be skipped.
+ *
+ * <h2>Test Cases</h2>
+ * - @subpage test_sem_001
+ * - @subpage test_sem_002
+ * - @subpage test_sem_003
+ * .
+ * @file testsem.c
+ * @brief Semaphores test source file
+ * @file testsem.h
+ * @brief Semaphores test header file
+ */
+
 #if CH_USE_SEMAPHORES
 
 #define ALLOWED_DELAY MS2ST(5)
 
 static Semaphore sem1;
 
+/**
+ * @page test_sem_001 Enqueuing test
+ *
+ * <h2>Description</h2>
+ * Five threads with randomized priorities are enqueued to a semaphore then
+ * awakened one at time.<br>
+ * The test expects that the threads reach their goal in FIFO order or
+ * priority order depending on the CH_USE_SEMAPHORES_PRIORITY configuration
+ * setting.
+ */
 static char *sem1_gettest(void) {
 
-  return "Semaphores, enqueuing test";
+  return "Semaphores, enqueuing";
 }
 
 static void sem1_setup(void) {
@@ -64,6 +102,16 @@ static void sem1_execute(void) {
 #endif
 }
 
+/**
+ * @page test_sem_002 Timeout test
+ *
+ * <h2>Description</h2>
+ * The three possible semaphore waiting modes (do not wait, wait with timeout,
+ * wait without timeout) are explored.<br>
+ * The test expects that the semaphore wait function returns the correct value
+ * in each of the above scenario and that the semaphore structure status is
+ * correct after each operation.
+ */
 const struct testcase testsem1 = {
   sem1_gettest,
   sem1_setup,
@@ -73,7 +121,7 @@ const struct testcase testsem1 = {
 
 static char *sem2_gettest(void) {
 
-  return "Semaphores, timeout test";
+  return "Semaphores, timeout";
 }
 
 static void sem2_setup(void) {
@@ -108,7 +156,7 @@ static void sem2_execute(void) {
    * Testing not timeout condition.
    */
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
-                                 thread2, "A");
+                                 thread2, 0);
   msg = chSemWaitTimeout(&sem1, MS2ST(500));
   test_wait_threads();
   test_assert(4, msg == RDY_OK, "wrong wake-up message");
@@ -139,6 +187,18 @@ const struct testcase testsem2 = {
 };
 
 #if CH_USE_SEMSW
+/**
+ * @page test_sem_003 Atomic signal-wait test
+ *
+ * <h2>Description</h2>
+ * This test case explicitly address the @p chSemWaitSignal() function. A
+ * thread is created that performs a wait and a signal operations.
+ * The tester thread is awakened from an atomic wait/signal operation.<br>
+ * The test expects that the semaphore wait function returns the correct value
+ * in each of the above scenario and that the semaphore structure status is
+ * correct after each operation.
+ */
+
 static char *sem3_gettest(void) {
 
   return "Semaphores, atomic signal-wait";
@@ -158,7 +218,7 @@ static msg_t thread3(void *p) {
 
 static void sem3_execute(void) {
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread3, "A");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread3, 0);
   chSemSignalWait(&sem1, &sem1);
   test_assert(1, isempty(&sem1.s_queue), "queue not empty");
   test_assert(2, sem1.s_cnt == 0, "counter not zero");

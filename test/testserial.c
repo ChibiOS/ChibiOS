@@ -38,7 +38,7 @@
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:
- * - @p CH_USE_SERIAL_FULLDUPLEX (and dependent options)
+ * - @p CH_USE_SERIAL_FULLDUPLEX
  * .
  * In case some of the required options are not enabled then some or all tests
  * may be skipped.

@@ -83,12 +83,14 @@
  * - @subpage test_threads
  * - @subpage test_dynamic
  * - @subpage test_msg
+ * - @subpage test_sem
  * - @subpage test_mtx
  * - @subpage test_events
  * - @subpage test_mbox
  * - @subpage test_queues
  * - @subpage test_serial
  * - @subpage test_heap
+ * - @subpage test_pools
  * - @subpage test_benchmarks
  * .
  */
