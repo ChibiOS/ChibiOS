@@ -567,10 +567,9 @@ const struct testcase testmtx7 = {
  * @page test_mtx_008 Priority Inheritance boost test
  *
  * <h2>Description</h2>
- * Five threads take a mutex and then enter a conditional variable queue, the
- * tester thread then proceeds to broadcast the conditional variable.<br>
- * The test expects the threads to reach their goal in increasing priority
- * order regardless of the initial order.
+ * This test case verifies the priority boost of a thread waiting on a
+ * conditional variable queue. It tests this very specific situation in order
+ * to complete the code coverage.
  */
 static char *mtx8_gettest(void) {
 
