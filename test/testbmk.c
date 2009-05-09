@@ -98,7 +98,7 @@ static unsigned int msg_loop_test(Thread *tp) {
 
 static char *bmk1_gettest(void) {
 
-  return "Benchmark, messages throughput";
+  return "Benchmark, messages #1";
 }
 
 static void bmk1_execute(void) {
@@ -133,7 +133,7 @@ const struct testcase testbmk1 = {
 
 static char *bmk2_gettest(void) {
 
-  return "Benchmark, messages, empty RL";
+  return "Benchmark, messages #2";
 }
 
 static void bmk2_execute(void) {
@@ -174,7 +174,7 @@ static msg_t thread2(void *p) {
 
 static char *bmk3_gettest(void) {
 
-  return "Benchmark, messages, 4 in RL";
+  return "Benchmark, messages #3";
 }
 
 static void bmk3_execute(void) {
