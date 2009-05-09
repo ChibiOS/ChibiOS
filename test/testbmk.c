@@ -98,7 +98,7 @@ static unsigned int msg_loop_test(Thread *tp) {
 
 static char *bmk1_gettest(void) {
 
-  return "Benchmark, messages, immediate wakeup";
+  return "Benchmark, messages throughput";
 }
 
 static void bmk1_execute(void) {
@@ -133,7 +133,7 @@ const struct testcase testbmk1 = {
 
 static char *bmk2_gettest(void) {
 
-  return "Benchmark, messages, late wakeup";
+  return "Benchmark, messages, empty RL";
 }
 
 static void bmk2_execute(void) {
@@ -174,7 +174,7 @@ static msg_t thread2(void *p) {
 
 static char *bmk3_gettest(void) {
 
-  return "Benchmark, messages, 4 threads in ready list";
+  return "Benchmark, messages, 4 in RL";
 }
 
 static void bmk3_execute(void) {
@@ -255,9 +255,7 @@ static void bmk4_execute(void) {
 
   test_wait_threads();
   test_print("--- Score : ");
-  test_printn(n);
-  test_print(" msgs/S, ");
-  test_printn(n << 1);
+  test_printn(n * 2);
   test_println(" ctxswc/S");
 }
 
