@@ -79,6 +79,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   branch).
 - FIX: Fixed test_cpu_pulse() incorrect behavior (bug 2789383)(backported in
   stable branch).
+- FIX: Fixed missing volatile modifier for p_time field in Thread structure
+  (bug 2789501)(backported in stable branch).
 - NEW: Abstract I/O Channels mechanism introduced. This mechanism allows to
   access I/O resources through a standard interface and hides implementation
   details. The existing serial drivers were modified to offer a standard
@@ -178,7 +180,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   a sleep state.
 - NEW: Mode flexible debug configuration options, removed the old CH_USE_DEBUG
   and CH_USE_TRACE. Replaced with CH_DBG_ENABLE_CHECKS, SCH_DBG_ENABLE_ASSERTS,
-  CH_DBG_ENABLE_TRACE  and CH_DBG_FILL_THREADS.
+  CH_DBG_ENABLE_TRACE and CH_DBG_FILL_THREADS.
 - NEW: Added a debug option CH_DBG_THREADS_PROFILING for threads profiling.
   A field into the Thread structure counts the consumed time. The information
   is not used into the kernel, it is meant for debugging.
