@@ -58,7 +58,7 @@ struct Thread {
   cnt_t                 p_locks;        /**< Number of nested locks.*/
 #endif
 #if CH_DBG_THREADS_PROFILING
-  systime_t             p_time;         /**< Consumed time.
+  volatile systime_t    p_time;         /**< Consumed time.
                                              @note This field can overflow.*/
 #endif
   /*

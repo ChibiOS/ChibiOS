@@ -178,13 +178,18 @@ void test_wait_threads(void) {
 
 #if CH_DBG_THREADS_PROFILING
 void test_cpu_pulse(unsigned duration) {
+  systime_t start, end, now;
 
-  systime_t end = chThdSelf()->p_time + MS2ST(duration);
-  while (chThdSelf()->p_time < end) {
+  start = chThdSelf()->p_time;
+  end = start + MS2ST(duration);
+  do {
+    now = chThdSelf()->p_time;
 #if defined(WIN32)
     ChkIntSources();
 #endif
   }
+  while (end > start ? (now >= start) && (now < end) :
+                       (now >= start) || (now < end));
 }
 #endif
 
