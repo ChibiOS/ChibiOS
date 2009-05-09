@@ -71,7 +71,6 @@ const struct testcase testsem1 = {
   sem1_execute
 };
 
-#if CH_USE_SEMAPHORES_TIMEOUT
 static char *sem2_gettest(void) {
 
   return "Semaphores, timeout test";
@@ -138,7 +137,6 @@ const struct testcase testsem2 = {
   NULL,
   sem2_execute
 };
-#endif /* CH_USE_SEMAPHORES_TIMEOUT */
 
 #if CH_USE_SEMSW
 static char *sem3_gettest(void) {
@@ -185,9 +183,7 @@ const struct testcase testsem3 = {
 const struct testcase * const patternsem[] = {
 #if CH_USE_SEMAPHORES
   &testsem1,
-#if CH_USE_SEMAPHORES_TIMEOUT
   &testsem2,
-#endif
 #if CH_USE_SEMSW
   &testsem3,
 #endif

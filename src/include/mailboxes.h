@@ -27,7 +27,7 @@
 #ifndef _MAILBOXES_H_
 #define _MAILBOXES_H_
 
-#if CH_USE_MAILBOXES && CH_USE_SEMAPHORES_TIMEOUT
+#if CH_USE_MAILBOXES
 
 typedef struct {
   msg_t                 *mb_buffer;     /**< Pointer to the mailbox buffer.*/
@@ -91,7 +91,7 @@ extern "C" {
  */
 #define chMBPeek(mbp) (*(mbp)->mb_rdptr)
 
-#endif /* CH_USE_MAILBOXES && CH_USE_SEMAPHORES_TIMEOUT */
+#endif /* CH_USE_MAILBOXES */
 
 #endif /* _MAILBOXES_H_ */
 

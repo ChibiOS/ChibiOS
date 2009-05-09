@@ -26,7 +26,7 @@
 
 #include <ch.h>
 
-#if CH_USE_MAILBOXES && CH_USE_SEMAPHORES_TIMEOUT
+#if CH_USE_MAILBOXES
 /**
  * @brief Initializes a Mailbox object.
  *
@@ -239,6 +239,6 @@ msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t time) {
   }
   return rdymsg;
 }
-#endif /* CH_USE_MAILBOXES && CH_USE_SEMAPHORES_TIMEOUT */
+#endif /* CH_USE_MAILBOXES */
 
 /** @} */

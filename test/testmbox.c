@@ -37,7 +37,6 @@
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:
  * - @p CH_USE_MAILBOXES
- * - @p CH_USE_SEMAPHORES_TIMEOUT
  * .
  * In case some of the required options are not enabled then some or all tests
  * may be skipped.
@@ -51,7 +50,7 @@
  * @brief Mailboxes header file
  */
 
-#if CH_USE_MAILBOXES && CH_USE_SEMAPHORES_TIMEOUT
+#if CH_USE_MAILBOXES
 
 #define ALLOWED_DELAY MS2ST(5)
 #define MB_SIZE 5
@@ -164,13 +163,13 @@ const struct testcase testmbox1 = {
   mbox1_execute
 };
 
-#endif /* CH_USE_MAILBOXES && CH_USE_SEMAPHORES_TIMEOUT */
+#endif /* CH_USE_MAILBOXES */
 
 /*
  * Test sequence for mailboxes pattern.
  */
 const struct testcase * const patternmbox[] = {
-#if CH_USE_MAILBOXES && CH_USE_SEMAPHORES_TIMEOUT
+#if CH_USE_MAILBOXES
   &testmbox1,
 #endif
   NULL

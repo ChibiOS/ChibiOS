@@ -154,16 +154,6 @@
 #endif
 
 /**
- * If specified then the Semaphores with timeout APIs are included in the
- * kernel.
- * @note The default is @p TRUE.
- * @note Requires @p CH_USE_SEMAPHORES.
- */
-#if !defined(CH_USE_SEMAPHORES_TIMEOUT) || defined(__DOXYGEN__)
-#define CH_USE_SEMAPHORES_TIMEOUT       TRUE
-#endif
-
-/**
  * If specified then the Mutexes APIs are included in the kernel.
  * @note The default is @p TRUE.
  */

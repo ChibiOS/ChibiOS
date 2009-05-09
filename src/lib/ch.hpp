@@ -315,7 +315,6 @@ namespace chibios_rt {
      */
     msg_t Wait(void);
 
-#if CH_USE_SEMAPHORES_TIMEOUT
     /**
      * @brief Wait operation on the semaphore with timeout.
      *
@@ -326,7 +325,6 @@ namespace chibios_rt {
      *         specified timeout.
      */
     msg_t WaitTimeout(systime_t time);
-#endif /* CH_USE_SEMAPHORES_TIMEOUT */
 
     /**
      * @brief Signal operation on the semaphore.

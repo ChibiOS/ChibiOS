@@ -127,7 +127,6 @@ msg_t chSemWaitS(Semaphore *sp) {
   return RDY_OK;
 }
 
-#if CH_USE_SEMAPHORES_TIMEOUT
 /**
  * @brief Performs a wait operation on a semaphore with timeout specification.
  *
@@ -141,8 +140,6 @@ msg_t chSemWaitS(Semaphore *sp) {
  * @retval RDY_RESET if the semaphore was reset using @p chSemReset().
  * @retval RDY_TIMEOUT if the semaphore was not signaled or reset within the
  *         specified timeout.
- * @note The function is available only if the @p CH_USE_SEMAPHORES_TIMEOUT
- *       option is enabled in @p chconf.h.
  */
 msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
   msg_t msg;
@@ -166,8 +163,6 @@ msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
  * @retval RDY_RESET if the semaphore was reset using @p chSemReset().
  * @retval RDY_TIMEOUT if the semaphore was not signaled or reset within the specified
  *         timeout.
- * @note The function is available only if the @p CH_USE_SEMAPHORES_TIMEOUT
- *       option is enabled in @p chconf.h.
  */
 msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
 
@@ -184,7 +179,6 @@ msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
   }
   return RDY_OK;
 }
-#endif /* CH_USE_SEMAPHORES_TIMEOUT */
 
 /**
  * @brief Performs a signal operation on a semaphore.

@@ -104,8 +104,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   removed the CH_USE_MESSAGES_EVENT configuration option.
 - CHANGE: Modified the test suite assertions in order to save RAM on the AVR
   targets. The test suite now uses much less string space.
-- CHANGE: Removed the CH_USE_SERIAL_HALFDUPLEX, CH_USE_QUEUES_TIMEOUT and
-  CH_USE_QUEUES_HALFDUPLEX configuration options.
+- CHANGE: Removed the CH_USE_SERIAL_HALFDUPLEX, CH_USE_QUEUES_TIMEOUT,
+  CH_USE_QUEUES_HALFDUPLEX, CH_USE_SEMAPHORES_TIMEOUT configuration options.
+- CHANGE: Made CH_DBG_THREADS_PROFILING default to TRUE in all demos because
+  the changes to the function test_cpu_pulse().
 
 *** 1.2.0 ***
 - Added license exception text to the 1.2.0 branch.

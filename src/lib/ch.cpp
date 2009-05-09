@@ -176,12 +176,10 @@ namespace chibios_rt {
     return chSemWait(&sem);
   }
 
-#if CH_USE_SEMAPHORES_TIMEOUT
   msg_t Semaphore::WaitTimeout(systime_t time) {
 
     return chSemWaitTimeout(&sem, time);
   }
-#endif /* CH_USE_SEMAPHORES_TIMEOUT */
 
   void Semaphore::Signal(void) {
 

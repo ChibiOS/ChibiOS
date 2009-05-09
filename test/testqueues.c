@@ -108,10 +108,8 @@ static void queues1_execute(void) {
   chIQResetI(&iq);
   test_assert(8, chIQIsEmpty(&iq), "still full");
 
-#if CH_USE_SEMAPHORES_TIMEOUT
   /* Timeout */
   test_assert(9, chIQGetTimeout(&iq, 10) == Q_TIMEOUT, "wrong timeout return");
-#endif
 }
 
 const struct testcase testqueues1 = {
@@ -165,13 +163,11 @@ static void queues2_execute(void) {
   chOQResetI(&oq);
   test_assert(8, chOQIsEmpty(&oq), "still full");
 
-#if CH_USE_SEMAPHORES_TIMEOUT
   /* Timeout */
   for (i = 0; i < TEST_QUEUES_SIZE; i++)
     chOQPut(&oq, 'A' + i);
   test_assert(9, chOQIsFull(&oq), "still has space");
   test_assert(10, chOQPutTimeout(&oq, 0, 10) == Q_TIMEOUT, "wrong timeout return");
-#endif
 }
 
 const struct testcase testqueues2 = {

@@ -46,10 +46,8 @@ extern "C" {
   void chSemResetI(Semaphore *sp, cnt_t n);
   msg_t chSemWait(Semaphore *sp);
   msg_t chSemWaitS(Semaphore *sp);
-#if CH_USE_SEMAPHORES_TIMEOUT
   msg_t chSemWaitTimeout(Semaphore *sp, systime_t time);
   msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time);
-#endif
   void chSemSignal(Semaphore *sp);
   void chSemSignalI(Semaphore *sp);
 #if CH_USE_SEMSW
