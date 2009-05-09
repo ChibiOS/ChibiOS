@@ -176,16 +176,17 @@ void test_wait_threads(void) {
       chThdWait(threads[i]);
 }
 
-void test_cpu_pulse(unsigned ms) {
+#if CH_DBG_THREADS_PROFILING
+void test_cpu_pulse(unsigned duration) {
 
-  systime_t duration = MS2ST(ms);
-  systime_t start = chTimeNow();
-  while (chTimeIsWithin(start, start + duration)) {
+  systime_t end = chThdSelf()->p_time + MS2ST(duration);
+  while (chThdSelf()->p_time < end) {
 #if defined(WIN32)
     ChkIntSources();
 #endif
   }
 }
+#endif
 
 systime_t test_wait_tick(void) {
 

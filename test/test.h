@@ -69,8 +69,10 @@ extern "C" {
   void test_terminate_threads(void);
   void test_wait_threads(void);
   systime_t test_wait_tick(void);
-  void test_cpu_pulse(unsigned ms);
   void test_start_timer(unsigned ms);
+#if CH_DBG_THREADS_PROFILING
+  void test_cpu_pulse(unsigned duration);
+#endif
 #if defined(WIN32)
   void ChkIntSources(void);
 #endif

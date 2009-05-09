@@ -75,6 +75,7 @@ const struct testcase testmtx1 = {
   mtx1_execute
 };
 
+#if CH_DBG_THREADS_PROFILING
 static char *mtx2_gettest(void) {
 
   return "Mutexes, priority inheritance, simple case";
@@ -85,45 +86,54 @@ static void mtx2_setup(void) {
   chMtxInit(&m1);
 }
 
-static msg_t thread2(void *p) {
+/* Low priority thread */
+static msg_t thread2L(void *p) {
 
-  chThdSleepMilliseconds(10);
   chMtxLock(&m1);
+  test_cpu_pulse(40);
   chMtxUnlock();
-  test_emit_token(*(char *)p);
+  test_cpu_pulse(10);
+  test_emit_token('C');
   return 0;
 }
 
-static msg_t thread3(void *p) {
-
-  chMtxLock(&m1);
-  chThdSleepMilliseconds(40);
-  chMtxUnlock();
-  test_emit_token(*(char *)p);
-  return 0;
-}
-
-static msg_t thread4(void *p) {
+/* Medium priority thread */
+static msg_t thread2M(void *p) {
 
   chThdSleepMilliseconds(20);
-  test_cpu_pulse(50);
-  test_emit_token(*(char *)p);
+  test_cpu_pulse(40);
+  test_emit_token('B');
+  return 0;
+}
+
+/* High priority thread */
+static msg_t thread2H(void *p) {
+
+  chThdSleepMilliseconds(40);
+  chMtxLock(&m1);
+  test_cpu_pulse(10);
+  chMtxUnlock();
+  test_emit_token('A');
   return 0;
 }
 
 /*
- * Time
- *    0 ++++++++++++++++++AL+....2++++++++++++++AU0------------------------------
- *    1 .....................++--------------------------------------------------
- *    2 .......................++AL.............+++++++++AU++++++++++++++++++++++
+ * Time ----> 0     10    20    30    40    50    60    70    80    90    100
+ *    0 ......AL++++++++++............2+++++++++++AU0---------------++++++G...
+ *    1 ..................++++++++++++------------------++++++++++++G.........
+ *    2  .............................AL..........++++++AUG...................
  */
 static void mtx2_execute(void) {
+  systime_t time;
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread2, "A");
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-3, thread3, "C");
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-2, thread4, "B");
+  test_wait_tick();
+  time = chTimeNow();
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread2H, 0);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-2, thread2M, 0);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread2L, 0);
   test_wait_threads();
-  test_assert_sequence("ABC");
+  test_assert_sequence(1, "ABC");
+  test_assert_time_window(2, time + MS2ST(100), time + MS2ST(100) + ALLOWED_DELAY);
 }
 
 const struct testcase testmtx2 = {
@@ -140,78 +150,87 @@ static char *mtx3_gettest(void) {
 
 static void mtx3_setup(void) {
 
-  chMtxInit(&m1);
-  chMtxInit(&m2);
+  chMtxInit(&m1); // Mutex B
+  chMtxInit(&m2); // Mutex A
 }
 
-static msg_t thread5(void *p) {
+/* Lowest priority thread */
+static msg_t thread3LL(void *p) {
 
   chMtxLock(&m1);
-  test_cpu_pulse(50);
+  test_cpu_pulse(30);
   chMtxUnlock();
-  test_emit_token(*(char *)p);
+  test_emit_token('E');
   return 0;
 }
 
-static msg_t thread6(void *p) {
+/* Low priority thread */
+static msg_t thread3L(void *p) {
 
   chThdSleepMilliseconds(10);
   chMtxLock(&m2);
   test_cpu_pulse(20);
   chMtxLock(&m1);
-  test_cpu_pulse(50);
+  test_cpu_pulse(10);
   chMtxUnlock();
-  test_cpu_pulse(20);
+  test_cpu_pulse(10);
   chMtxUnlock();
-  test_emit_token(*(char *)p);
+  test_emit_token('D');
   return 0;
 }
 
-static msg_t thread7(void *p) {
+/* Medium priority thread */
+static msg_t thread3M(void *p) {
 
   chThdSleepMilliseconds(20);
   chMtxLock(&m2);
-  test_cpu_pulse(50);
+  test_cpu_pulse(10);
   chMtxUnlock();
-  test_emit_token(*(char *)p);
+  test_emit_token('C');
   return 0;
 }
 
-static msg_t thread8(void *p) {
+/* High priority thread */
+static msg_t thread3H(void *p) {
 
   chThdSleepMilliseconds(40);
-  test_cpu_pulse(200);
-  test_emit_token(*(char *)p);
+  test_cpu_pulse(20);
+  test_emit_token('B');
   return 0;
 }
 
-static msg_t thread9(void *p) {
+/* Highest priority thread */
+static msg_t thread3HH(void *p) {
 
   chThdSleepMilliseconds(50);
   chMtxLock(&m2);
-  test_cpu_pulse(50);
+  test_cpu_pulse(10);
   chMtxUnlock();
-  test_emit_token(*(char *)p);
+  test_emit_token('A');
   return 0;
 }
 
 /*
- * Time    0     10    20        30   40    50
- *    0 +++BL++------------------2++++------4+++++BU0--------------------------
- *    1 .......++AL++--2+++++++++BL.........4.....++++++++BU4++++AU1-----------
- *    2 .............++AL............................................------++AU
- *    3 ..............................++++-------------------------------++....
- *    4 ..................................++AL...................++++AU++......
+ * Time ----> 0     10    20    30    40    50    60    70    80    90    100   110
+ *    0 ......BL++++------------2+++++------4+++++BU0---------------------------G.....
+ *    1 ............AL++++2+++++BL----------4-----++++++BU4+++AU1---------------G.....
+ *    2 ..................AL----------------------------------------------++++++AUG...
+ *    3 ..............................+++++++-----------------------++++++G...........
+ *    4 ....................................AL................++++++AUG...............
  */
 static void mtx3_execute(void) {
+  systime_t time;
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-5, thread5, "E");
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-4, thread6, "D");
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread7, "C");
-  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-2, thread8, "B");
-  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-1, thread9, "A");
+  test_wait_tick();
+  time = chTimeNow();
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-5, thread3LL, 0);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-4, thread3L, 0);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread3M, 0);
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-2, thread3H, 0);
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-1, thread3HH, 0);
   test_wait_threads();
-  test_assert_sequence("ABCDE");
+  test_assert_sequence(1, "ABCDE");
+  test_assert_time_window(2, time + MS2ST(110), time + MS2ST(110) + ALLOWED_DELAY);
 }
 
 const struct testcase testmtx3 = {
@@ -220,6 +239,7 @@ const struct testcase testmtx3 = {
   NULL,
   mtx3_execute
 };
+#endif /* CH_DBG_THREADS_PROFILING */
 
 #if CH_USE_CONDVARS
 static char *mtx4_gettest(void) {
