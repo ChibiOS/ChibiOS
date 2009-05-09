@@ -63,6 +63,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** 1.2.2 ***
 - FIX: Fixed macro in test.h (bug 2781176).
 - FIX: Fixed @file tag in sam7x_serial.c (bug 2788573).
+- FIX: Fixed sequence assertion in test.c (bug 2789377).
 
 *** 1.2.1 ***
 - FIX: Fixed regression in MinGW demo (bug 2745153).

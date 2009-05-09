@@ -148,6 +148,7 @@ bool_t _test_assert_sequence(char *expected) {
   }
   if (*expected)
     return _test_fail(NULL);
+  clear_tokens();
   return FALSE;
 }
 
