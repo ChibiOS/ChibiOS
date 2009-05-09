@@ -83,6 +83,7 @@
  * - @subpage test_threads
  * - @subpage test_dynamic
  * - @subpage test_msg
+ * - @subpage test_mtx
  * - @subpage test_events
  * - @subpage test_mbox
  * - @subpage test_queues
@@ -230,8 +231,8 @@
  * In ChibiOS/RT the Unlock operations are always performed in Lock-reverse
  * order. The Unlock API does not even have a parameter, the mutex to unlock
  * is taken from an internal stack of owned mutexes.
- * This both improves the performance and is required by the priority
- * inheritance mechanism.
+ * This both improves the performance and is required by an efficient
+ * implementation of the priority inheritance mechanism.
  *
  * <h2>The priority inversion problem</h2>
  * The mutexes in ChibiOS/RT implements the <b>full</b> priority

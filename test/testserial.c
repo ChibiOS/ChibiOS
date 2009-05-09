@@ -32,7 +32,7 @@
  *
  * <h2>Objective</h2>
  * Objective of the test module is to cover 100% of the @ref Serial code
- * as a necessary step in order to assess its readyness.<br>
+ * as a necessary step in order to assess its maturity level.<br>
  * Note that the @ref Serial subsystem depends on the @ref Semaphores and
  * @ref Events subsystems that have to met their testing objectives as well.
  *

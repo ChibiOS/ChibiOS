@@ -29,7 +29,10 @@
  *
  * <h2>Objective</h2>
  * Objective of the test module is to cover 100% of the @ref Mailboxes
- * subsystem code as a necessary step in order to assess its readyness.
+ * subsystem code as a necessary step in order to assess its maturity
+ * level.<br>
+ * Note that the @ref Mailboxes subsystem depends on the @ref Semaphores
+ * subsystem that has to met its testing objectives as well.
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:

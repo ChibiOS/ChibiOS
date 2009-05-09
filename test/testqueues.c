@@ -32,7 +32,7 @@
  *
  * <h2>Objective</h2>
  * Objective of the test module is to cover 100% of the @ref IOQueues code
- * as a necessary step in order to assess its readyness.<br>
+ * as a necessary step in order to assess its maturity level.<br>
  * Note that the @ref IOQueues subsystem depends on the @ref Semaphores
  * subsystem that has to met its testing objectives as well.
  *

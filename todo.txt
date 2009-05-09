@@ -8,11 +8,11 @@ After 1.2.0:
 * Abstract I/O channels rather than just serial ports.
   ? Move the serial drivers implementations in library. Better keep the core
     as compact as possible.
+X Add tests documentation to the general documentation via doxygen.
 - Static object initializers.
 - Remove any instance of unnamed structures/unions.
 - Objects registry in the kernel.
 - OSEK-style simple tasks within the idle thread.
-- Add tests documentation to the general documentation via doxygen.
 - Code examples into the documentation.
 - Dedicated syscalls.c support for newlib users.
 - Threads Pools manager in the library.

@@ -75,6 +75,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Found new instances of the obsolete function chSysGetTime() in the
   C++ wrapper and in the WEB demo (bug 2772237)(backported in stable branch).
 - FIX: Fixed macro in test.h (bug 2781176)(backported in stable branch).
+- FIX: Fixed sequence assertion in test.c (bug 2789377)(backported in stable
+  branch).
 - NEW: Abstract I/O Channels mechanism introduced. This mechanism allows to
   access I/O resources through a standard interface and hides implementation
   details. The existing serial drivers were modified to offer a standard

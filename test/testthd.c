@@ -28,12 +28,12 @@
  * This module implements the test sequence for the @ref Scheduler,
  * @ref Threads and @ref Time subsystems.<br>
  * Note that the tests on those subsystems are formally required but most of
- * their functionality is already demostrated because the test suite itself
- * depends on them, anyway doublecheck is good.
+ * their functionality is already demonstrated because the test suite itself
+ * depends on them, anyway double check is good.
  *
  * <h2>Objective</h2>
  * Objective of the test module is to cover 100% of the subsystems code
- * as a necessary step in order to assess their readyness.
+ * as a necessary step in order to assess their maturity level.
  *
  * <h2>Preconditions</h2>
  * None.

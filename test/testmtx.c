@@ -21,6 +21,44 @@
 
 #include "test.h"
 
+/**
+ * @page test_mtx Mutexes test
+ *
+ * <h2>Description</h2>
+ * This module implements the test sequence for the @ref Mutexes and
+ * @ref CondVars subsystems.<br>
+ * Tests on those subsystems are particularly critical because the system-wide
+ * implications of the Priority Inheritance mechanism.
+ *
+ * <h2>Objective</h2>
+ * Objective of the test module is to cover 100% of the subsystem code
+ * as a necessary step in order to assess their maturity level.
+ *
+ * <h2>Preconditions</h2>
+ * The module requires the following kernel options:
+ * - @p CH_USE_MUTEXES
+ * - @p CH_USE_CONDVARS
+ * - @p CH_DBG_THREADS_PROFILING
+ * .
+ * In case some of the required options are not enabled then some or all tests
+ * may be skipped.
+ *
+ * <h2>Test Cases</h2>
+ * - @subpage test_mtx_001
+ * - @subpage test_mtx_002
+ * - @subpage test_mtx_003
+ * - @subpage test_mtx_004
+ * - @subpage test_mtx_005
+ * - @subpage test_mtx_006
+ * - @subpage test_mtx_007
+ * - @subpage test_mtx_008
+ * .
+ * @file testmtx.c
+ * @brief @ref Mutexes and @ref CondVars test source file
+ * @file testmtx.h
+ * @brief @ref Mutexes and @ref CondVars test header file
+ */
+
 #if CH_USE_MUTEXES
 
 #define ALLOWED_DELAY 5
@@ -28,6 +66,15 @@
 static Mutex m1, m2;
 static CondVar c1;
 
+/**
+ * @page test_mtx_001 Priority enqueuing test
+ *
+ * <h2>Description</h2>
+ * Five threads, with increasing priority, are enqueued on a locked mutex then
+ * the mutex is unlocked.<br>
+ * The test expects the threads to perform their operations in increasing
+ * priority order regardless of the initial order.
+ */
 static char *mtx1_gettest(void) {
 
   return "Mutexes, priority enqueuing test";
@@ -68,6 +115,38 @@ const struct testcase testmtx1 = {
   mtx1_execute
 };
 
+/**
+ * @page test_mtx_002 Priority inheritance, simple case
+ *
+ * <h2>Description</h2>
+ * Three threads are involved in the classic priority inversion scenario, a
+ * medium priority thread tries to starve an high priority thread by
+ * blocking a low priority thread into a mutex lock zone.<br>
+ * The test expects the threads to perform their operations in increasing
+ * priority order by rearranging their priorities in order to avoid the
+ * priority inversion trap.
+ *
+ * <h2>Scenario</h2>
+ * This weird looking diagram should explain what happens in the test case:
+ * @code
+ * Time ----> 0     10    20    30    40    50    60    70    80    90    100
+ *    0 ......AL++++++++++............2+++++++++++AU0---------------++++++G...
+ *    1 ..................++++++++++++------------------++++++++++++G.........
+ *    2  .............................AL..........++++++AUG...................
+ *                                    ^           ^
+ *
+ * Legend:
+ *   0..2 - Priority levels
+ *   +++  - Running
+ *   ---  - Ready
+ *   ...  - Waiting
+ *   AL   - Lock operation on mutex A
+ *   AUn  - Unlock operation on mutex A with priority going to level 'n'
+ *   G    - Goal
+ *   ^    - Priority transition (boost or return).
+ * @endcode
+ */
+
 static char *mtx2_gettest(void) {
 
   return "Mutexes, priority inheritance, simple case";
@@ -78,45 +157,48 @@ static void mtx2_setup(void) {
   chMtxInit(&m1);
 }
 
-static msg_t thread2(void *p) {
+/* Low priority thread */
+static msg_t thread2L(void *p) {
 
-  chThdSleepMilliseconds(10);
   chMtxLock(&m1);
+  test_cpu_pulse(40);
   chMtxUnlock();
-  test_emit_token(*(char *)p);
+  test_cpu_pulse(10);
+  test_emit_token('C');
   return 0;
 }
 
-static msg_t thread3(void *p) {
-
-  chMtxLock(&m1);
-  chThdSleepMilliseconds(40);
-  chMtxUnlock();
-  test_emit_token(*(char *)p);
-  return 0;
-}
-
-static msg_t thread4(void *p) {
+/* Medium priority thread */
+static msg_t thread2M(void *p) {
 
   chThdSleepMilliseconds(20);
-  test_cpu_pulse(50);
-  test_emit_token(*(char *)p);
+  test_cpu_pulse(40);
+  test_emit_token('B');
   return 0;
 }
 
-/*
- * Time
- *    0 ++++++++++++++++++AL+....2++++++++++++++AU0------------------------------
- *    1 .....................++--------------------------------------------------
- *    2 .......................++AL.............+++++++++AU++++++++++++++++++++++
- */
-static void mtx2_execute(void) {
+/* High priority thread */
+static msg_t thread2H(void *p) {
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread2, "A");
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-3, thread3, "C");
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-2, thread4, "B");
+  chThdSleepMilliseconds(40);
+  chMtxLock(&m1);
+  test_cpu_pulse(10);
+  chMtxUnlock();
+  test_emit_token('A');
+  return 0;
+}
+
+static void mtx2_execute(void) {
+  systime_t time;
+
+  test_wait_tick();
+  time = chTimeNow();
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread2H, 0);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-3, thread2L, 0);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-2, thread2M, 0);
   test_wait_threads();
   test_assert_sequence(1, "ABC");
+  test_assert_time_window(2, time + MS2ST(100), time + MS2ST(100) + ALLOWED_DELAY);
 }
 
 const struct testcase testmtx2 = {
@@ -126,6 +208,38 @@ const struct testcase testmtx2 = {
   mtx2_execute
 };
 
+/**
+ * @page test_mtx_003 Priority inheritance, complex case
+ *
+ * <h2>Description</h2>
+ * Five threads are involved in the complex priority inversion scenario,
+ * please refer to the diagram below for the complete scenario.<br>
+ * The test expects the threads to perform their operations in increasing
+ * priority order by rearranging their priorities in order to avoid the
+ * priority inversion trap.
+ *
+ * <h2>Scenario</h2>
+ * This weird looking diagram should explain what happens in the test case:
+ * @code
+ * Time ---->
+ *         0     10    20        30   40    50
+ *    0 +++BL++------------------2++++------4+++++BU0--------------------------
+ *    1 .......++AL++--2+++++++++BL.........4.....++++++++BU4++++AU1-----------
+ *    2 .............++AL............................................------++AU
+ *    3 ..............................++++-------------------------------++....
+ *    4 ..................................++AL...................++++AU++......
+ *                                    ^              ^
+ *
+ * Legend:
+ *   0..2 - Priority levels
+ *   +++  - Running
+ *   ---  - Ready
+ *   ...  - Waiting
+ *   AL   - Lock operation on mutex A
+ *   AUn  - Unlock operation on mutex A with priority going to level 'n'
+ *   ^    - Priority transition (boost or return).
+ * @endcode
+ */
 static char *mtx3_gettest(void) {
 
   return "Mutexes, priority inheritance, complex case";
