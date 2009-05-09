@@ -65,6 +65,9 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - FIX: Fixed @file tag in sam7x_serial.c (bug 2788573).
 - FIX: Fixed sequence assertion in test.c (bug 2789377).
 - FIX: Fixed test_cpu_pulse() incorrect behavior (bug 2789383).
+- CHANGE: Made the option CH_DBG_THREADS_PROFILING default to TRUE because it
+  is now required in order to execute the whole test suite. Note that this
+  option is very light so there is no real overhead in the system.
 
 *** 1.2.1 ***
 - FIX: Fixed regression in MinGW demo (bug 2745153).

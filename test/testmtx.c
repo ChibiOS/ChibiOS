@@ -132,8 +132,8 @@ static void mtx2_execute(void) {
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-2, thread2M, 0);
   threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread2L, 0);
   test_wait_threads();
-  test_assert_sequence(1, "ABC");
-  test_assert_time_window(2, time + MS2ST(100), time + MS2ST(100) + ALLOWED_DELAY);
+  test_assert_sequence("ABC");
+  test_assert_time_window(time + MS2ST(100), time + MS2ST(100) + ALLOWED_DELAY);
 }
 
 const struct testcase testmtx2 = {
@@ -229,8 +229,8 @@ static void mtx3_execute(void) {
   threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-2, thread3H, 0);
   threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-1, thread3HH, 0);
   test_wait_threads();
-  test_assert_sequence(1, "ABCDE");
-  test_assert_time_window(2, time + MS2ST(110), time + MS2ST(110) + ALLOWED_DELAY);
+  test_assert_sequence("ABCDE");
+  test_assert_time_window(time + MS2ST(110), time + MS2ST(110) + ALLOWED_DELAY);
 }
 
 const struct testcase testmtx3 = {
@@ -376,8 +376,10 @@ const struct testcase testmtx6 = {
 const struct testcase * const patternmtx[] = {
 #if CH_USE_MUTEXES
   &testmtx1,
+#if CH_DBG_THREADS_PROFILING
   &testmtx2,
   &testmtx3,
+#endif
 #if CH_USE_CONDVARS
   &testmtx4,
   &testmtx5,

@@ -391,7 +391,7 @@
  * counts the system ticks occurred while executing the thread.
  */
 #if !defined(CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
-#define CH_DBG_THREADS_PROFILING        FALSE
+#define CH_DBG_THREADS_PROFILING        TRUE
 #endif
 
 /*===========================================================================*/
