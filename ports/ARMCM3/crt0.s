@@ -47,6 +47,7 @@
  */
 .thumb_func
 .global ResetHandler
+.weak ResetHandler
 ResetHandler:
         /* Interrupts globally masked. */
         cpsid   i

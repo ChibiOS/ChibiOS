@@ -70,6 +70,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - CHANGE: Made the option CH_DBG_THREADS_PROFILING default to TRUE because it
   is now required in order to execute the whole test suite. Note that this
   option is very light so there is no real overhead in the system.
+- Added a (harmless) workaround to the Cortex-M3 startup file in order to
+  make the RIDE7 demo compile on an unmodified distribution.
 
 *** 1.2.1 ***
 - FIX: Fixed regression in MinGW demo (bug 2745153).
