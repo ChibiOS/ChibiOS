@@ -151,7 +151,7 @@ typedef struct {
  * @return A byte value from the queue or:
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOGet(ip) ((ip)->vmt->m0.put(ip, TIME_INFINITE))
+#define chIOGet(ip) ((ip)->vmt->m0.get(ip, TIME_INFINITE))
 
 /**
  * @brief Channel blocking byte read with timeout.
@@ -168,7 +168,7 @@ typedef struct {
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOGetTimeout(ip, timeout) ((ip)->vmt->m0.put(ip, timeout))
+#define chIOGetTimeout(ip, timeout) ((ip)->vmt->m0.get(ip, timeout))
 
 #if CH_USE_EVENTS
 /**

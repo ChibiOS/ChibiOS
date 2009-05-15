@@ -51,6 +51,105 @@
 
 #if CH_USE_SERIAL_FULLDUPLEX
 
+#define TEST_QUEUES_SIZE 8
+
+static FullDuplexDriver fdd;
+
+/* Loopback thread, it simulates a low level driver. The thread terminates by
+   sending a zero through the loopback driver.*/
+static msg_t thread1(void *p) {
+
+  while (TRUE) {
+    chEvtWaitAny(1);
+    chSysLock();
+    while (TRUE) {
+      msg_t b = chFDDRequestDataI(&fdd);
+      if (b < Q_OK)
+        break;
+      if (b == 0) {
+        chSchRescheduleS();
+        chSysUnlock();
+        return 0;
+      }
+      chFDDIncomingDataI(&fdd, (uint8_t)b);
+      chSchRescheduleS();
+    }
+    chSysUnlock();
+  }
+}
+
+static void infy(void) {}
+
+static void onfy(void) {
+
+  chEvtSignalI(threads[0], 1);
+  chSchRescheduleS();
+}
+
+/**
+ * @page test_serial_001 Loopback test
+ *
+ * <h2>Description</h2>
+ * A sequence of characters are sent to the loopback driver and read back. The
+ * test is performed twice using both the direct APIs and the channels API
+ * implementations.<br>
+ * The test expects to read all the characters back and in the correct
+ * sequence.
+ */
+
+static char *serial1_gettest(void) {
+
+  return "Serial driver, loopback";
+}
+
+static void serial1_setup(void) {
+
+  chFDDInit(&fdd, wa[3], 8, infy, wa[4], 8, onfy);
+}
+
+static void serial1_execute(void) {
+  unsigned i;
+  msg_t b;
+
+  /* Loopback test using the direct APIs.*/
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() + 1,
+                                 thread1, 0);
+  for (i = 0; i < 4; i++) {
+    chFDDPut(&fdd, 'A' + i);
+    b = chFDDGetTimeout(&fdd, S2ST(1));
+    if (b < Q_OK)
+      break;
+    test_emit_token(b);
+  }
+  chFDDPut(&fdd, 0);
+  test_assert_sequence(1, "ABCD");
+  test_assert(2, chFDDPutWouldBlock(&fdd) == FALSE, "output would block");
+  test_assert(3, chFDDGetWouldBlock(&fdd) == TRUE, "input would not block");
+  test_wait_threads();
+
+  /* Loopback test using the channel APIs.*/
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() + 1,
+                                 thread1, 0);
+  for (i = 0; i < 4; i++) {
+    chIOPut(&fdd, 'A' + i);
+    b = chIOGetTimeout(&fdd, S2ST(1));
+    if (b < Q_OK)
+      break;
+    test_emit_token(b);
+  }
+  chIOPut(&fdd, 0);
+  test_assert_sequence(4, "ABCD");
+  test_assert(5, chIOPutWouldBlock(&fdd) == FALSE, "output would block");
+  test_assert(6, chIOGetWouldBlock(&fdd) == TRUE, "input would not block");
+  test_wait_threads();
+}
+
+const struct testcase testserial1 = {
+  serial1_gettest,
+  serial1_setup,
+  NULL,
+  serial1_execute
+};
 #endif /* CH_USE_SERIAL_FULLDUPLEX */
 
 /*
@@ -58,7 +157,7 @@
  */
 const struct testcase * const patternserial[] = {
 #if CH_USE_SERIAL_FULLDUPLEX
-//  &testserial1,
+  &testserial1,
 #endif
   NULL
 };
