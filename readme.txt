@@ -84,16 +84,16 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 - NEW: Abstract I/O Channels mechanism introduced. This mechanism allows to
   access I/O resources through a standard interface and hides implementation
   details. The existing serial drivers were modified to offer a standard
-  channel interface to the applications.
+  channel interface to the applications (the old APIs are retained as macros).
 - NEW: The I/O queues code was improved, now there are 2 separate structures:
   InputQueue and OutputQueue. There are some changes in the queue APIs
   in order to make them more symmetrical and functional. Improved the queues
   documentation. Some of the changes were needed in order to support the new
   channels mechanism as a backend for queued serial drivers.
-- NEW: Added test cases for the improved queues.
-- NEW: Added a code coverage analysis application under ./tests/coverage.
 - NEW: Added more test cases in order to improve the test suite code coverage
   (it was 74% in version 1.2.0, it is now close to 100%).
+- NEW: Added test cases for the improved queues and serial drivers.
+- NEW: Added a code coverage analysis application under ./tests/coverage.
 - NEW: Added the test suite documentation to the general documentation.
 - NEW: Added a new "naked" context switch benchmark that better defines the
   real context switch time, previous benchmarks introduced too much overhead

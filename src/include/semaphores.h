@@ -58,6 +58,24 @@ extern "C" {
 #endif
 
 /**
+ * @brief Data part of a static semaphore initializer.
+ * @details This macro should be used when statically initializing a semaphore
+ *          that is part of a bigger structure.
+ * @param name the name of the semaphore variable
+ * @param n the counter initial value, this value must be non-negative
+ */
+#define _SEMAPHORE_DATA(name, n) {_THREADSQUEUE_DATA(name.s_queue), n}
+
+/**
+ * @brief Static semaphore initializer.
+ * @details Statically initialized semaphores require no explicit initialization
+ *          using @p chSemInit().
+ * @param name the name of the semaphore variable
+ * @param n the counter initial value, this value must be non-negative
+ */
+#define SEMAPHORE_DECL(name, n) Semaphore name = _SEMAPHORE_DATA(name, n)
+
+/**
  * Decreases the semaphore counter, this macro can be used when it is ensured
  * that the counter would not become negative.
  */
@@ -72,7 +90,7 @@ extern "C" {
 /**
  * Returns the semaphore counter current value.
  */
-#define chSemGetCounterI(sp)     ((sp)->s_cnt)
+#define chSemGetCounterI(sp)    ((sp)->s_cnt)
 
 #endif /* CH_USE_SEMAPHORES */
 

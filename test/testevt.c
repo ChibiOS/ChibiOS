@@ -54,7 +54,13 @@
 
 #define ALLOWED_DELAY MS2ST(5)
 
-static EventSource es1, es2;
+/*
+ * Note, the static initializers are not really required because the
+ * variables are explicitly initialized in each test case. It is done in order
+ * to test the macros.
+ */
+static EVENTSOURCE_DECL(es1);
+static EVENTSOURCE_DECL(es2);
 
 /**
  * @page test_events_001 Events registration and dispatch

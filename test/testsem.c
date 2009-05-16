@@ -53,7 +53,12 @@
 
 #define ALLOWED_DELAY MS2ST(5)
 
-static Semaphore sem1;
+/*
+ * Note, the static initializers are not really required because the
+ * variables are explicitly initialized in each test case. It is done in order
+ * to test the macros.
+ */
+static SEMAPHORE_DECL(sem1, 0);
 
 /**
  * @page test_sem_001 Enqueuing test

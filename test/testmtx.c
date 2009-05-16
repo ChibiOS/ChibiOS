@@ -63,8 +63,14 @@
 
 #define ALLOWED_DELAY 5
 
-static Mutex m1, m2;
-static CondVar c1;
+/*
+ * Note, the static initializers are not really required because the
+ * variables are explicitly initialized in each test case. It is done in order
+ * to test the macros.
+ */
+static MUTEX_DECL(m1);
+static MUTEX_DECL(m2);
+static CONDVAR_DECL(c1);
 
 /**
  * @page test_mtx_001 Priority enqueuing test

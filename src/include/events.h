@@ -104,6 +104,22 @@ extern "C" {
 #endif
 
 /**
+ * @brief Data part of a static event source initializer.
+ * @details This macro should be used when statically initializing an event
+ *          source that is part of a bigger structure.
+ * @param name the name of the event source variable
+ */
+#define _EVENTSOURCE_DATA(name) {(EventListener *)&name}
+
+/**
+ * @brief Static event source initializer.
+ * @details Statically initialized event sources require no explicit
+ *          initialization using @p chEvtInit().
+ * @param name the name of the event source variable
+ */
+#define EVENTSOURCE_DECL(name) EventSource name = _EVENTSOURCE_DATA(name)
+
+/**
  * Registers an Event Listener on an Event Source.
  * @param esp pointer to the  @p EventSource structure
  * @param elp pointer to the @p EventListener structure
