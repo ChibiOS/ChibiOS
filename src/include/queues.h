@@ -112,10 +112,10 @@ typedef GenericQueue InputQueue;
  * @param inotify input notification callback pointer
  */
 #define _INPUTQUEUE_DATA(name, buffer, size, inotify) {                 \
-  buffer,                                                               \
-  buffer + size,                                                        \
-  buffer,                                                               \
-  buffer,                                                               \
+  (uint8_t *)(buffer),                                                  \
+  (uint8_t *)(buffer) + size,                                           \
+  (uint8_t *)(buffer),                                                  \
+  (uint8_t *)(buffer),                                                  \
   _SEMAPHORE_DATA(name.q_sem, 0),                                       \
   inotify                                                               \
 }
@@ -174,10 +174,10 @@ typedef GenericQueue OutputQueue;
  * @param onotify output notification callback pointer
  */
 #define _OUTPUTQUEUE_DATA(name, buffer, size, onotify) {                \
-  buffer,                                                               \
-  buffer + size,                                                        \
-  buffer,                                                               \
-  buffer,                                                               \
+  (uint8_t *)(buffer),                                                  \
+  (uint8_t *)(buffer) + size,                                           \
+  (uint8_t *)(buffer),                                                  \
+  (uint8_t *)(buffer),                                                  \
   _SEMAPHORE_DATA(name.q_sem, size),                                    \
   onotify                                                               \
 }

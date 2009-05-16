@@ -90,6 +90,10 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   in order to make them more symmetrical and functional. Improved the queues
   documentation. Some of the changes were needed in order to support the new
   channels mechanism as a backend for queued serial drivers.
+- NEW: Static initializers macros introduced for most kernel objects. The
+  static initializers allow to not have to chXXXInit() any object and save some
+  code space. The initialization functions are retained in order to allow
+  initialization of dynamic objects and re-initializations.
 - NEW: Added more test cases in order to improve the test suite code coverage
   (it was 74% in version 1.2.0, it is now close to 100%).
 - NEW: Added test cases for the improved queues and serial drivers.

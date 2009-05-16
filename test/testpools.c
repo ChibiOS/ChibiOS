@@ -49,7 +49,7 @@
 
 #if CH_USE_MEMPOOLS
 
-static MemoryPool mp1;
+static MEMORYPOOL_DECL(mp1, THD_WA_SIZE(THREADS_STACK_SIZE));
 
 /**
  * @page test_pools_001 Allocation and enqueuing test

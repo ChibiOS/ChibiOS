@@ -91,6 +91,34 @@ extern "C" {
  */
 #define chMBPeek(mbp) (*(mbp)->mb_rdptr)
 
+/**
+ * @brief Data part of a static mailbox initializer.
+ * @details This macro should be used when statically initializing a
+ *          mailbox that is part of a bigger structure.
+ * @param name the name of the mailbox variable
+ * @param buffer pointer to the mailbox buffer area
+ * @param size size of the mailbox buffer area
+ */
+#define _MAILBOX_DATA(name, buffer, size) {                             \
+  (msg_t *)(buffer),                                                    \
+  (msg_t *)(buffer) + size,                                             \
+  (msg_t *)(buffer),                                                    \
+  (msg_t *)(buffer),                                                    \
+  _SEMAPHORE_DATA(name.mb_fullsem, 0),                                  \
+  _SEMAPHORE_DATA(name.mb_emptysem, size),                              \
+}
+
+/**
+ * @brief Static mailbox initializer.
+ * @details Statically initialized mailboxes require no explicit
+ *          initialization using @p chMBInit().
+ * @param name the name of the mailbox variable
+ * @param buffer pointer to the mailbox buffer area
+ * @param size size of the mailbox buffer area
+ */
+#define MAILBOX_DECL(name, buffer, size)                                \
+  Mailbox name = _MAILBOX_DATA(name, buffer, size)
+
 #endif /* CH_USE_MAILBOXES */
 
 #endif /* _MAILBOXES_H_ */

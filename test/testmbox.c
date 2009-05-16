@@ -55,8 +55,12 @@
 #define ALLOWED_DELAY MS2ST(5)
 #define MB_SIZE 5
 
-static msg_t mb1_buf[MB_SIZE];
-static Mailbox mb1;
+/*
+ * Note, the static initializers are not really required because the
+ * variables are explicitly initialized in each test case. It is done in order
+ * to test the macros.
+ */
+static MAILBOX_DECL(mb1, waT0, MB_SIZE);
 
 /**
  * @page test_mbox_001 Queuing and timeouts
@@ -74,7 +78,7 @@ static char *mbox1_gettest(void) {
 
 static void mbox1_setup(void) {
 
-  chMBInit(&mb1, mb1_buf, MB_SIZE);
+  chMBInit(&mb1, (msg_t *)waT0, MB_SIZE);
 }
 
 static void mbox1_execute(void) {
