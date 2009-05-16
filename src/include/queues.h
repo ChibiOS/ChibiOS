@@ -103,6 +103,36 @@ typedef GenericQueue InputQueue;
 #define chIQGet(iqp) chIQGetTimeout(iqp, TIME_INFINITE)
 
 /**
+ * @brief Data part of a static input queue initializer.
+ * @details This macro should be used when statically initializing an
+ *          input queue that is part of a bigger structure.
+ * @param name the name of the input queue variable
+ * @param buffer pointer to the queue buffer area
+ * @param size size of the queue buffer area
+ * @param inotify input notification callback pointer
+ */
+#define _INPUTQUEUE_DATA(name, buffer, size, inotify) {                 \
+  buffer,                                                               \
+  buffer + size,                                                        \
+  buffer,                                                               \
+  buffer,                                                               \
+  _SEMAPHORE_DATA(name.q_sem, 0),                                       \
+  inotify                                                               \
+}
+
+/**
+ * @brief Static input queue initializer.
+ * @details Statically initialized input queues require no explicit
+ *          initialization using @p chIQInit().
+ * @param name the name of the input queue variable
+ * @param buffer pointer to the queue buffer area
+ * @param size size of the queue buffer area
+ * @param inotify input notification callback pointer
+ */
+#define INPUTQUEUE_DECL(name, buffer, size, inotify)                    \
+  InputQueue name = _INPUTQUEUE_DATA(name, buffer, size, inotify)
+
+/**
  * @brief Output queue structure.
  * @details This structure represents a generic asymmetrical output queue.
  *          Reading from the queue is non-blocking and can be performed from
@@ -133,6 +163,36 @@ typedef GenericQueue OutputQueue;
  * @retval Q_RESET if the queue was reset.
  */
 #define chOQPut(oqp, b) chOQPutTimeout(oqp, b, TIME_INFINITE)
+
+/**
+ * @brief Data part of a static output queue initializer.
+ * @details This macro should be used when statically initializing an
+ *          output queue that is part of a bigger structure.
+ * @param name the name of the output queue variable.
+ * @param buffer pointer to the queue buffer area
+ * @param size size of the queue buffer area
+ * @param onotify output notification callback pointer
+ */
+#define _OUTPUTQUEUE_DATA(name, buffer, size, onotify) {                \
+  buffer,                                                               \
+  buffer + size,                                                        \
+  buffer,                                                               \
+  buffer,                                                               \
+  _SEMAPHORE_DATA(name.q_sem, size),                                    \
+  onotify                                                               \
+}
+
+/**
+ * @brief Static output queue initializer.
+ * @details Statically initialized output queues require no explicit
+ *          initialization using @p chOQInit().
+ * @param name the name of the output queue variable
+ * @param buffer pointer to the queue buffer area
+ * @param size size of the queue buffer area
+ * @param onotify output notification callback pointer
+ */
+#define OUTPUTQUEUE_DECL(name, buffer, size, onotify)                   \
+  InputQueue name = _OUTPUTQUEUE_DATA(name, buffer, size, onotify)
 
 #ifdef __cplusplus
 extern "C" {

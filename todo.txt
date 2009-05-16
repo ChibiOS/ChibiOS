@@ -9,7 +9,7 @@ After 1.2.0:
   ? Move the serial drivers implementations in library. Better keep the core
     as compact as possible.
 * Add tests documentation to the general documentation via doxygen.
-X Static object initializers.
+* Static object initializers.
 - Remove any instance of unnamed structures/unions.
 - Objects registry in the kernel.
 - OSEK-style simple tasks within the idle thread.

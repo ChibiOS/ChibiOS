@@ -57,6 +57,16 @@
 
 #define TEST_QUEUES_SIZE 4
 
+static void notify(void) {}
+
+/*
+ * Note, the static initializers are not really required because the
+ * variables are explicitly initialized in each test case. It is done in order
+ * to test the macros.
+ */
+static INPUTQUEUE_DECL(iq, (uint8_t *)waT0, TEST_QUEUES_SIZE, notify);
+static OUTPUTQUEUE_DECL(oq, (uint8_t *)waT0, TEST_QUEUES_SIZE, notify);
+
 /**
  * @page test_queues_001 Input Queues functionality and APIs
  *
@@ -65,18 +75,19 @@
  * @p InputQueue object including timeouts. The queue state must remain
  * consistent through the whole test.
  */
-static void notify(void) {}
 
 static char *queues1_gettest(void) {
 
   return "Queues, input queues";
 }
 
-static void queues1_execute(void) {
-  InputQueue iq;
-  unsigned i;
+static void queues1_setup(void) {
 
   chIQInit(&iq, wa[0], TEST_QUEUES_SIZE, notify);
+}
+
+static void queues1_execute(void) {
+  unsigned i;
 
   /* Initial empty state */
   test_assert(1, chIQIsEmpty(&iq), "not empty");
@@ -114,7 +125,7 @@ static void queues1_execute(void) {
 
 const struct testcase testqueues1 = {
   queues1_gettest,
-  NULL,
+  queues1_setup,
   NULL,
   queues1_execute
 };
@@ -132,11 +143,13 @@ static char *queues2_gettest(void) {
   return "Queues, output queues";
 }
 
-static void queues2_execute(void) {
-  OutputQueue oq;
-  unsigned i;
+static void queues2_setup(void) {
 
   chOQInit(&oq, wa[0], TEST_QUEUES_SIZE, notify);
+}
+
+static void queues2_execute(void) {
+  unsigned i;
 
   /* Initial empty state */
   test_assert(1, chOQIsEmpty(&oq), "not empty");
@@ -172,7 +185,7 @@ static void queues2_execute(void) {
 
 const struct testcase testqueues2 = {
   queues2_gettest,
-  NULL,
+  queues2_setup,
   NULL,
   queues2_execute
 };
