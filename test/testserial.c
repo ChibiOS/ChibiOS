@@ -43,6 +43,10 @@
  * In case some of the required options are not enabled then some or all tests
  * may be skipped.
  *
+ *
+ * <h2>Test Cases</h2>
+ * - @subpage test_serial_001
+ * .
  * @file testserial.c
  * @brief Serial Driver test source file
  * @file testserial.h
