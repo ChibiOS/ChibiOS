@@ -93,7 +93,7 @@ static void onfy(void) {
 }
 
 /**
- * @page test_serial_001 Synchronous loopback test
+ * @page test_serial_001 Synchronous loopback
  *
  * <h2>Description</h2>
  * A sequence of characters are sent to the loopback driver and read back. The
@@ -160,7 +160,7 @@ const struct testcase testserial1 = {
 };
 
 /**
- * @page test_serial_002 Asynchronous loopback test
+ * @page test_serial_002 Asynchronous loopback
  *
  * <h2>Description</h2>
  * A sequence of characters are sent to the loopback driver using the
