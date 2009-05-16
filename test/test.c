@@ -57,14 +57,25 @@ static unsigned failpoint;
 static char tokens_buffer[MAX_TOKENS];
 static char *tokp;
 
+/*
+ * Static working areas, the following areas can be used for threads or
+ * used as temporary buffers.
+ */
 WORKING_AREA(waT0, THREADS_STACK_SIZE);
 WORKING_AREA(waT1, THREADS_STACK_SIZE);
 WORKING_AREA(waT2, THREADS_STACK_SIZE);
 WORKING_AREA(waT3, THREADS_STACK_SIZE);
 WORKING_AREA(waT4, THREADS_STACK_SIZE);
 
-void *wa[MAX_THREADS] = {waT0, waT1, waT2, waT3, waT4};
+/*
+ * Pointers to the spawned threads.
+ */
 Thread *threads[MAX_THREADS];
+
+/*
+ * Pointers to the working areas.
+ */
+void * const wa[5] = {waT0, waT1, waT2, waT3, waT4};
 
 /*
  * Console output.

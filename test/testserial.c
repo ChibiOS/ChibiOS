@@ -196,7 +196,7 @@ static void serial2_execute(void) {
   dflags_t flags;
 
   /* Asynchronous test using the direct APIs.*/
-  n = chFDDWrite(&fdd, "ABCDEFGH", TEST_QUEUES_SIZE);
+  n = chFDDWrite(&fdd, (uint8_t *)"ABCDEFGH", TEST_QUEUES_SIZE);
   test_assert(1, n == TEST_QUEUES_SIZE, "unexpected write condition");
   n = chFDDRead(&fdd, wa[1], TEST_QUEUES_SIZE);
   test_assert(2, n == TEST_QUEUES_SIZE, "unexpected read condition");
@@ -206,7 +206,7 @@ static void serial2_execute(void) {
   test_assert(4, flags == 0, "unexpected error condition");
 
   /* Input overflow testing.*/
-  n = chFDDWrite(&fdd, "ABCDEFGH", TEST_QUEUES_SIZE);
+  n = chFDDWrite(&fdd, (uint8_t *)"ABCDEFGH", TEST_QUEUES_SIZE);
   test_assert(5, n == TEST_QUEUES_SIZE, "unexpected write condition");
   /* The following operation will fail to loopback because the input queue
    * is full.*/
@@ -217,7 +217,7 @@ static void serial2_execute(void) {
   test_assert(7, n == TEST_QUEUES_SIZE, "unexpected read condition");
 
   /* Asynchronous test using the channel APIs.*/
-  n = chIOWrite(&fdd, "ABCDEFGH", TEST_QUEUES_SIZE);
+  n = chIOWrite(&fdd, (uint8_t *)"ABCDEFGH", TEST_QUEUES_SIZE);
   test_assert(8, n == TEST_QUEUES_SIZE, "unexpected write condition");
   n = chIORead(&fdd, wa[1], TEST_QUEUES_SIZE);
   test_assert(9, n == TEST_QUEUES_SIZE, "unexpected read condition");
