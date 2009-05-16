@@ -139,7 +139,7 @@ const struct testcase testmtx1 = {
  *   0..2 - Priority levels
  *   +++  - Running
  *   ---  - Ready
- *   ...  - Waiting
+ *   ...  - Waiting or Terminated
  *   xL   - Lock operation on mutex 'x'
  *   xUn  - Unlock operation on mutex 'x' with priority returning to level 'n'
  *   G    - Goal
@@ -229,10 +229,10 @@ const struct testcase testmtx2 = {
  *    4 ....................................AL................++++++AUG...............
  *                        ^     ^           ^     ^     ^     ^
  * Legend:
- *   0..2 - Priority levels
+ *   0..4 - Priority levels
  *   +++  - Running
  *   ---  - Ready
- *   ...  - Waiting
+ *   ...  - Waiting or Terminated
  *   xL   - Lock operation on mutex 'x'
  *   xUn  - Unlock operation on mutex 'x' with priority returning to level 'n'
  *   ^    - Priority transition (boost or return).

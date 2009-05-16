@@ -22,7 +22,7 @@
 #include "test.h"
 
 /**
- * @page test_dynamic Dynamic Thread APIs test
+ * @page test_dynamic Dynamic APIs test
  *
  * <h2>Description</h2>
  * This module implements the test sequence for the dynamic thread creation

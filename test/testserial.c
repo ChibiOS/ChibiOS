@@ -28,7 +28,8 @@
  * This module implements the test sequence for the @ref Serial subsystem.
  * The tests are performed on a loopback software serial driver where a
  * dedicated thread echoes back in the input queue the data read from the
- * output queue at a fixed rate.
+ * output queue at a fixed rate. The test module also tests implicitly the
+ * channels code.
  *
  * <h2>Objective</h2>
  * Objective of the test module is to cover 100% of the @ref Serial code
@@ -46,6 +47,7 @@
  *
  * <h2>Test Cases</h2>
  * - @subpage test_serial_001
+ * - @subpage test_serial_002
  * .
  * @file testserial.c
  * @brief Serial Driver test source file
@@ -91,7 +93,7 @@ static void onfy(void) {
 }
 
 /**
- * @page test_serial_001 Loopback test
+ * @page test_serial_001 Synchronous loopback test
  *
  * <h2>Description</h2>
  * A sequence of characters are sent to the loopback driver and read back. The
@@ -103,12 +105,22 @@ static void onfy(void) {
 
 static char *serial1_gettest(void) {
 
-  return "Serial driver, loopback";
+  return "Serial driver, synchronous";
 }
 
 static void serial1_setup(void) {
 
+  /* Initializes the loopback driver.*/
   chFDDInit(&fdd, wa[3], 8, infy, wa[4], 8, onfy);
+  /* Starts the loopback thread.*/
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() + 1,
+                                 thread1, 0);
+}
+
+static void serial1_teardown(void) {
+
+  /* Terminates the loopback thread.*/
+  chFDDPut(&fdd, 0);
 }
 
 static void serial1_execute(void) {
@@ -116,8 +128,6 @@ static void serial1_execute(void) {
   msg_t b;
 
   /* Loopback test using the direct APIs.*/
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() + 1,
-                                 thread1, 0);
   for (i = 0; i < 4; i++) {
     chFDDPut(&fdd, 'A' + i);
     b = chFDDGetTimeout(&fdd, S2ST(1));
@@ -125,15 +135,11 @@ static void serial1_execute(void) {
       break;
     test_emit_token(b);
   }
-  chFDDPut(&fdd, 0);
   test_assert_sequence(1, "ABCD");
   test_assert(2, chFDDPutWouldBlock(&fdd) == FALSE, "output would block");
   test_assert(3, chFDDGetWouldBlock(&fdd) == TRUE, "input would not block");
-  test_wait_threads();
 
   /* Loopback test using the channel APIs.*/
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() + 1,
-                                 thread1, 0);
   for (i = 0; i < 4; i++) {
     chIOPut(&fdd, 'A' + i);
     b = chIOGetTimeout(&fdd, S2ST(1));
@@ -141,18 +147,89 @@ static void serial1_execute(void) {
       break;
     test_emit_token(b);
   }
-  chIOPut(&fdd, 0);
   test_assert_sequence(4, "ABCD");
   test_assert(5, chIOPutWouldBlock(&fdd) == FALSE, "output would block");
   test_assert(6, chIOGetWouldBlock(&fdd) == TRUE, "input would not block");
-  test_wait_threads();
 }
 
 const struct testcase testserial1 = {
   serial1_gettest,
   serial1_setup,
-  NULL,
+  serial1_teardown,
   serial1_execute
+};
+
+/**
+ * @page test_serial_002 Asynchronous loopback test
+ *
+ * <h2>Description</h2>
+ * A sequence of characters are sent to the loopback driver using the
+ * asynchronous APIs and then read back. The test is performed twice using
+ * both the direct APIs and the channels API. An input queue overflow test
+ * is performed too.<br>
+ * The test expects that the queues are filled and emptied as expected and that
+ * the overflow error condition is reported when expected.
+ */
+
+static char *serial2_gettest(void) {
+
+  return "Serial driver, asynchronous";
+}
+
+static void serial2_setup(void) {
+
+  /* Initializes the loopback driver.*/
+  chFDDInit(&fdd, wa[3], 8, infy, wa[4], 8, onfy);
+  /* Starts the loopback thread.*/
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() + 1,
+                                 thread1, 0);
+}
+
+static void serial2_teardown(void) {
+
+  /* Terminates the loopback thread.*/
+  chFDDPut(&fdd, 0);
+}
+
+static void serial2_execute(void) {
+  size_t n;
+  dflags_t flags;
+
+  /* Asynchronous test using the direct APIs.*/
+  n = chFDDWrite(&fdd, "ABCDEFGH", TEST_QUEUES_SIZE);
+  test_assert(1, n == TEST_QUEUES_SIZE, "unexpected write condition");
+  n = chFDDRead(&fdd, wa[1], TEST_QUEUES_SIZE);
+  test_assert(2, n == TEST_QUEUES_SIZE, "unexpected read condition");
+  test_assert(2, chFDDPutWouldBlock(&fdd) == FALSE, "output would block");
+  test_assert(3, chFDDGetWouldBlock(&fdd) == TRUE, "input would not block");
+  flags = chFDDGetAndClearFlags(&fdd);
+  test_assert(4, flags == 0, "unexpected error condition");
+
+  /* Input overflow testing.*/
+  n = chFDDWrite(&fdd, "ABCDEFGH", TEST_QUEUES_SIZE);
+  test_assert(5, n == TEST_QUEUES_SIZE, "unexpected write condition");
+  /* The following operation will fail to loopback because the input queue
+   * is full.*/
+  chFDDPut(&fdd, 'Z');
+  flags = chFDDGetAndClearFlags(&fdd);
+  test_assert(6, flags == SD_OVERRUN_ERROR, "unexpected error condition");
+  n = chFDDRead(&fdd, wa[1], TEST_QUEUES_SIZE);
+  test_assert(7, n == TEST_QUEUES_SIZE, "unexpected read condition");
+
+  /* Asynchronous test using the channel APIs.*/
+  n = chIOWrite(&fdd, "ABCDEFGH", TEST_QUEUES_SIZE);
+  test_assert(8, n == TEST_QUEUES_SIZE, "unexpected write condition");
+  n = chIORead(&fdd, wa[1], TEST_QUEUES_SIZE);
+  test_assert(9, n == TEST_QUEUES_SIZE, "unexpected read condition");
+  test_assert(10, chIOPutWouldBlock(&fdd) == FALSE, "output would block");
+  test_assert(11, chIOGetWouldBlock(&fdd) == TRUE, "input would not block");
+}
+
+const struct testcase testserial2 = {
+  serial2_gettest,
+  serial2_setup,
+  serial2_teardown,
+  serial2_execute
 };
 #endif /* CH_USE_SERIAL_FULLDUPLEX */
 
@@ -162,6 +239,7 @@ const struct testcase testserial1 = {
 const struct testcase * const patternserial[] = {
 #if CH_USE_SERIAL_FULLDUPLEX
   &testserial1,
+  &testserial2,
 #endif
   NULL
 };
