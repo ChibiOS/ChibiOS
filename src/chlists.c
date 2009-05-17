@@ -19,7 +19,7 @@
 
 /**
  * @file chlists.c
- * @brief Lists and queues code.
+ * @brief Thread queues/lists code.
  * @addtogroup ThreadLists
  * @{
  */

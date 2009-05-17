@@ -19,7 +19,7 @@
 
 /**
  * @file lists.h
- * @brief Lists and queues macros and structures.
+ * @brief Thread queues/lists macros and structures.
  * @addtogroup ThreadLists
  * @{
  */

@@ -81,6 +81,8 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   stable branch).
 - FIX: Fixed missing volatile modifier for p_time field in Thread structure
   (bug 2789501)(backported in stable branch).
+- FIX: Fixed C99-style variable declarations (bug 2792919)(backported in
+  stable branch).
 - NEW: Abstract I/O Channels mechanism introduced. This mechanism allows to
   access I/O resources through a standard interface and hides implementation
   details. The existing serial drivers were modified to offer a standard
