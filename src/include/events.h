@@ -29,9 +29,6 @@
 
 #if CH_USE_EVENTS
 
-/** All events allowed mask.*/
-#define ALL_EVENTS -1
-
 typedef struct EventListener EventListener;
 
 /**
@@ -54,8 +51,40 @@ typedef struct EventSource {
                                              the Event Source.*/
 } EventSource;
 
+/**
+ * @brief Data part of a static event source initializer.
+ * @details This macro should be used when statically initializing an event
+ *          source that is part of a bigger structure.
+ * @param name the name of the event source variable
+ */
+#define _EVENTSOURCE_DATA(name) {(void *)(&name)}
+
+/**
+ * @brief Static event source initializer.
+ * @details Statically initialized event sources require no explicit
+ *          initialization using @p chEvtInit().
+ * @param name the name of the event source variable
+ */
+#define EVENTSOURCE_DECL(name) EventSource name = _EVENTSOURCE_DATA(name)
+
+/** All events allowed mask.*/
+#define ALL_EVENTS -1
+
 /** Returns the event mask from the event identifier.*/
 #define EVENT_MASK(eid) (1 << (eid))
+
+/**
+ * Registers an Event Listener on an Event Source.
+ * @param esp pointer to the  @p EventSource structure
+ * @param elp pointer to the @p EventListener structure
+ * @param eid numeric identifier assigned to the Event Listener. The identifier
+ *            is used as index for the event callback function.
+ *            The value must range between zero and the size, in bit, of the
+ *            @p eventid_t type minus one.
+ * @note Multiple Event Listeners can use the same event identifier, the
+ *       listener will share the callback function.
+ */
+#define chEvtRegister(esp, elp, eid) chEvtRegisterMask(esp, elp, EVENT_MASK(eid))
 
 /**
  * Initializes an Event Source.
@@ -102,35 +131,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-/**
- * @brief Data part of a static event source initializer.
- * @details This macro should be used when statically initializing an event
- *          source that is part of a bigger structure.
- * @param name the name of the event source variable
- */
-#define _EVENTSOURCE_DATA(name) {(EventListener *)&name}
-
-/**
- * @brief Static event source initializer.
- * @details Statically initialized event sources require no explicit
- *          initialization using @p chEvtInit().
- * @param name the name of the event source variable
- */
-#define EVENTSOURCE_DECL(name) EventSource name = _EVENTSOURCE_DATA(name)
-
-/**
- * Registers an Event Listener on an Event Source.
- * @param esp pointer to the  @p EventSource structure
- * @param elp pointer to the @p EventListener structure
- * @param eid numeric identifier assigned to the Event Listener. The identifier
- *            is used as index for the event callback function.
- *            The value must range between zero and the size, in bit, of the
- *            @p eventid_t type minus one.
- * @note Multiple Event Listeners can use the same event identifier, the
- *       listener will share the callback function.
- */
-#define chEvtRegister(esp, elp, eid) chEvtRegisterMask(esp, elp, EVENT_MASK(eid))
 
 #if !CH_OPTIMIZE_SPEED && CH_USE_EVENTS_TIMEOUT
 #define chEvtWaitOne(ewmask) chEvtWaitOneTimeout(ewmask, TIME_INFINITE)
