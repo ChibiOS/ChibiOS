@@ -10,9 +10,6 @@ After 1.2.0:
     as compact as possible.
 * Add tests documentation to the general documentation via doxygen.
 * Static object initializers.
-- New chThdCreate() that takes just two parameters, a pointer to a thread
-  descriptor and the thread parameter. It could wrap the current variants
-  or just be an alternative.
 - Remove any instance of unnamed structures/unions.
 - Objects registry in the kernel.
 - OSEK-style simple tasks within the idle thread.
