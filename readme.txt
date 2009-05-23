@@ -56,6 +56,8 @@ MSP430-MSP430x1611-GCC - Port on Texas Instruments MSP430F1611, the demo
                          targets the Olimex MSP430-P1611 board.
 Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
                          MinGW version.
+GNU-Linux-GCC          - ChibiOS/RT simulator for x86 Linux systems, it is
+                         still work in progress but already running.
 
 *****************************************************************************
 *** Releases                                                              ***
@@ -106,6 +108,7 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
   to the measurement. The STM32 performs the context switch in under 1.48uS.
 - NEW: Improved priority inheritance test cases.
 - NEW: Added architecture name strings to the port code.
+- NEW: Linux x86 simulator demo added. It is still work in progress.
 - CHANGE: Removed the half duplex queues and half duplex serial drivers because
   it was never extensively tested. The code is still available but not as part
   of the kernel.
