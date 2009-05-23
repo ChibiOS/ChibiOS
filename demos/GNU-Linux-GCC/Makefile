@@ -16,9 +16,9 @@
 # Start of default section
 #
 
-TRGT = i686-pc-cygwin-
-CC   = $(TRGT)gcc-4
-AS   = $(TRGT)gcc-4 -x assembler-with-cpp
+TRGT =
+CC   = $(TRGT)gcc
+AS   = $(TRGT)gcc -x assembler-with-cpp
 
 # List all default C defines here, like -D_DEBUG=1
 DDEFS =
@@ -102,7 +102,7 @@ CPFLAGS += -MD -MP -MF .dep/$(@F).d
 # makefile rules
 #
 
-all: $(OBJS) $(PROJECT).exe
+all: $(OBJS) $(PROJECT)
 
 %o : %c
 	$(CC) -c $(CPFLAGS) -I . $(INCDIR) $< -o $@
@@ -110,7 +110,7 @@ all: $(OBJS) $(PROJECT).exe
 %o : %s
 	$(AS) -c $(ASFLAGS) $< -o $@
 
-%exe: $(OBJS)
+$(PROJECT): $(OBJS)
 	$(CC) $(OBJS) $(LDFLAGS) $(LIBS) -o $@
 
 gcov:
@@ -120,7 +120,7 @@ gcov:
 
 clean:
 	-rm -f $(OBJS)
-	-rm -f $(PROJECT).exe
+	-rm -f $(PROJECT)
 	-rm -f $(PROJECT).map
 	-rm -f $(SRC:.c=.c.bak)
 	-rm -f $(SRC:.c=.lst)

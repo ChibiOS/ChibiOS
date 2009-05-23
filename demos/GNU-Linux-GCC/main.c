@@ -26,7 +26,7 @@ static msg_t Thread1(void *arg) {
 
   while (TRUE) {
     chThdSleepMilliseconds(1000);
-    printf("Hello World!");
+    printf("-\n");
   }
   return 0;
 }

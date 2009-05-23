@@ -21,6 +21,7 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <stdio.h>
 
 /**
  * @addtogroup LINUXSIM_CORE
@@ -71,8 +72,8 @@ void ChkIntSources(void) {
  */
 __attribute__((used))
 static void __dummy(Thread *otp, Thread *ntp) {
-  asm volatile (".globl @port_switch@8                          \n\t" \
-                "@port_switch@8:                                \n\t" \
+  asm volatile (".globl port_switch                             \n\t" \
+                "port_switch:                                   \n\t" \
                 "push    %ebp                                   \n\t" \
                 "push    %esi                                   \n\t" \
                 "push    %edi                                   \n\t" \
@@ -101,7 +102,7 @@ void port_halt(void) {
 void threadexit(void) {
 
   asm volatile ("push    %eax                                   \n\t" \
-                "call    _chThdExit");
+                "call    chThdExit");
 }
 
 /** @} */

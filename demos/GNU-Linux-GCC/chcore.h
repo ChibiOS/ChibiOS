@@ -106,7 +106,7 @@ struct context {
  * calculation of the correct working area size.
  */
 #ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK 0x40000
+#define INT_REQUIRED_STACK 0x8000
 #endif
 
 /**
