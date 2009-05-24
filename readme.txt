@@ -127,6 +127,9 @@ GNU-Linux-GCC          - ChibiOS/RT simulator for x86 Linux systems, it is
   CH_USE_QUEUES_HALFDUPLEX, CH_USE_SEMAPHORES_TIMEOUT configuration options.
 - CHANGE: Made CH_DBG_THREADS_PROFILING default to TRUE in all demos because
   the changes to the function test_cpu_pulse().
+- CHANGE: Increased main stack size to 1KiB for all the ARMx demos, 2KiB for
+  the C++ LPC2148 demo. This should make things easier for unexperienced
+  users.
 
 *** 1.2.0 ***
 - Added license exception text to the 1.2.0 branch.
