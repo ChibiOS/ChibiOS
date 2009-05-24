@@ -171,7 +171,7 @@ static void evt2_execute(void) {
   test_assert(1, m == 1, "single event error");
   m = chEvtWaitOne(ALL_EVENTS);
   test_assert(2, m == 4, "single event error");
-  m = chEvtClear(0);
+  m = chEvtClear(ALL_EVENTS);
   test_assert(3, m == 0, "stuck event");
 
   /*
@@ -184,7 +184,7 @@ static void evt2_execute(void) {
   m = chEvtWaitOne(ALL_EVENTS);
   test_assert_time_window(4, target_time, target_time + ALLOWED_DELAY);
   test_assert(5, m == 1, "single event error");
-  m = chEvtClear(0);
+  m = chEvtClear(ALL_EVENTS);
   test_assert(6, m == 0, "stuck event");
   test_wait_threads();
 
@@ -194,7 +194,7 @@ static void evt2_execute(void) {
   chEvtPend(5);
   m = chEvtWaitAny(ALL_EVENTS);
   test_assert(7, m == 5, "unexpected pending bit");
-  m = chEvtClear(0);
+  m = chEvtClear(ALL_EVENTS);
   test_assert(8, m == 0, "stuck event");
 
   /*
@@ -207,7 +207,7 @@ static void evt2_execute(void) {
   m = chEvtWaitAny(ALL_EVENTS);
   test_assert_time_window(9, target_time, target_time + ALLOWED_DELAY);
   test_assert(10, m == 1, "single event error");
-  m = chEvtClear(0);
+  m = chEvtClear(ALL_EVENTS);
   test_assert(11, m == 0, "stuck event");
   test_wait_threads();
 
@@ -224,7 +224,7 @@ static void evt2_execute(void) {
                                  thread2, "A");
   m = chEvtWaitAll(5);
   test_assert_time_window(12, target_time, target_time + ALLOWED_DELAY);
-  m = chEvtClear(0);
+  m = chEvtClear(ALL_EVENTS);
   test_assert(13, m == 0, "stuck event");
   test_wait_threads();
   chEvtUnregister(&es1, &el1);

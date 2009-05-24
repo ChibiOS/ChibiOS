@@ -80,7 +80,7 @@ static const seqop_t LED3_sequence[] =
  * Any sequencer is just an instance of this class, all the details are
  * totally encapsulated and hidden to the application level.
  */
-class SequencerThread : EnhancedThread<128> {
+class SequencerThread : public EnhancedThread<128> {
 private:
   const seqop_t *base, *curr;                   // Thread local variables.
 
@@ -115,12 +115,30 @@ public:
 };
 
 /*
+ * Tester thread class. This thread executes the test suite.
+ */
+class TesterThread : public EnhancedThread<128> {
+
+protected:
+  virtual msg_t Main(void) {
+
+    return TestThread(&COM1);
+  }
+
+public:
+  TesterThread(void) : EnhancedThread<128>("tester") {
+  }
+};
+
+/*
  * Executed as an event handler at 500mS intervals.
  */
 static void TimerHandler(eventid_t id) {
 
-  if (!(IO0PIN & 0x00018000))   // Both buttons
-    TestThread(&COM1);
+  if (!(IO0PIN & 0x00018000)) { // Both buttons
+    TesterThread tester;
+    tester.Wait();
+  };
 }
 
 /*

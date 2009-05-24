@@ -85,6 +85,12 @@ GNU-Linux-GCC          - ChibiOS/RT simulator for x86 Linux systems, it is
   (bug 2789501)(backported in stable branch).
 - FIX: Fixed C99-style variable declarations (bug 2792919)(backported in
   stable branch).
+- FIX: Fixed instance of obsolete CH_USE_TERMINATE option in the C++ wrapper
+  (bug 2796065)(backported in stable branch).
+- FIX: Insufficient stack allocated to the C++ LPC2148 demo (bug 2796069)
+  (backported in stable branch).
+- FIX: Fixed errors in events test case (bug 2796081)(backported in stable
+  branch).
 - NEW: Abstract I/O Channels mechanism introduced. This mechanism allows to
   access I/O resources through a standard interface and hides implementation
   details. The existing serial drivers were modified to offer a standard
