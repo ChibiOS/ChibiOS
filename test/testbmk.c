@@ -209,7 +209,7 @@ const struct testcase testbmk3 = {
  * A thread is created that just performs a @p chSchGoSleepS() into a loop,
  * the thread is awakened as fast is possible by the tester thread.<br>
  * The Context Switch performance is calculated by measuring the number of
- * interactions after a second of continuous operations.
+ * iterations after a second of continuous operations.
  */
 
 static char *bmk4_gettest(void) {
@@ -272,8 +272,8 @@ const struct testcase testbmk4 = {
  * <h2>Description</h2>
  * Threads are continuously created and terminated into a loop. A full
  * @p chThdCreateStatic() / @p chThdExit() / @p chThdWait() cycle is performed
- * in each interaction.<br>
- * The performance is calculated by measuring the number of interactions after
+ * in each iteration.<br>
+ * The performance is calculated by measuring the number of iterations after
  * a second of continuous operations.
  */
 
@@ -314,10 +314,10 @@ const struct testcase testbmk5 = {
  * <h2>Description</h2>
  * Threads are continuously created and terminated into a loop. A partial
  * @p chThdCreateStatic() / @p chThdExit() cycle is performed in each
- * interaction, the @p chThdWait() is not necessary because the thread is
+ * iteration, the @p chThdWait() is not necessary because the thread is
  * created at an higher priority so there is no need to wait for it to
  * terminate.<br>
- * The performance is calculated by measuring the number of interactions after
+ * The performance is calculated by measuring the number of iterations after
  * a second of continuous operations.
  */
 
@@ -359,7 +359,7 @@ const struct testcase testbmk6 = {
  * Five threads are created and atomically reschedulated by resetting the
  * semaphore where they are waiting on. The operation is performed into a
  * continuous loop.<br>
- * The performance is calculated by measuring the number of interactions after
+ * The performance is calculated by measuring the number of iterations after
  * a second of continuous operations.
  */
 
@@ -423,7 +423,7 @@ const struct testcase testbmk7 = {
  * <h2>Description</h2>
  * Four bytes are written and then read from an @p InputQueue into a continuous
  * loop.<br>
- * The performance is calculated by measuring the number of interactions after
+ * The performance is calculated by measuring the number of iterations after
  * a second of continuous operations.
  */
 
@@ -471,7 +471,7 @@ const struct testcase testbmk8 = {
  *
  * <h2>Description</h2>
  * A virtual timer is set and immediately reset into a continuous loop.<br>
- * The performance is calculated by measuring the number of interactions after
+ * The performance is calculated by measuring the number of iterations after
  * a second of continuous operations.
  */
 
@@ -518,7 +518,7 @@ const struct testcase testbmk9 = {
  * <h2>Description</h2>
  * A counting semaphore is taken/released into a continuous loop, no Context
  * Switch happens because the counter is always non negative.<br>
- * The performance is calculated by measuring the number of interactions after
+ * The performance is calculated by measuring the number of iterations after
  * a second of continuous operations.
  */
 
@@ -570,7 +570,7 @@ const struct testcase testbmk10 = {
  * <h2>Description</h2>
  * A mutex is locked/unlocked into a continuous loop, no Context Switch happens
  * because there are no other threads asking for the mutex.<br>
- * The performance is calculated by measuring the number of interactions after
+ * The performance is calculated by measuring the number of iterations after
  * a second of continuous operations.
  */
 
