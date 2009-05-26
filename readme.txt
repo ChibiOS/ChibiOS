@@ -63,6 +63,9 @@ GNU-Linux-GCC          - ChibiOS/RT simulator for x86 Linux systems, it is
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.3.1 ***
+- Documentation fixes.
+
 *** 1.3.0 ***
 - FIX: Fixed regression in MinGW demo (bug 2745153)(backported in stable
   branch).
