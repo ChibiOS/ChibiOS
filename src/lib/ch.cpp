@@ -110,12 +110,10 @@ namespace chibios_rt {
     chThdResume(thread_ref);
   }
 
-#if CH_USE_TERMINATE
   void BaseThread::Terminate(void) {
 
     chThdTerminate(thread_ref);
   }
-#endif /* CH_USE_TERMINATE */
 
   void BaseThread::Sleep(systime_t n) {
 

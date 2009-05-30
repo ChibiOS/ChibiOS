@@ -169,12 +169,12 @@ typedef msg_t (*tfunc_t)(void *);
 #ifdef __cplusplus
 extern "C" {
 #endif
-  Thread *chThdInit(void *workspace, size_t wsize,
+  Thread *chThdInit(void *wsp, size_t size,
                     tprio_t prio, tfunc_t pf, void *arg);
-  Thread *chThdCreateStatic(void *workspace, size_t wsize,
+  Thread *chThdCreateStatic(void *wsp, size_t size,
                             tprio_t prio, tfunc_t pf, void *arg);
 #if CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_HEAP
-  Thread *chThdCreateFromHeap(size_t wsize, tprio_t prio,
+  Thread *chThdCreateFromHeap(size_t size, tprio_t prio,
                               tfunc_t pf, void *arg);
 #endif
 #if CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_MEMPOOLS

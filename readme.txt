@@ -60,6 +60,16 @@ Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.2.3 ***
+- FIX: Fixed C99-style variable declarations (bug 2792919).
+- FIX: Fixed instance of obsolete CH_USE_TERMINATE option in the C++ wrapper
+  (bug 2796065).
+- FIX: Insufficient stack allocated to the C++ LPC2148 demo (bug 2796069).
+- FIX: Fixed errors in events test case (bug 2796081).
+- CHANGE: Increased main stack size to 1KiB for all the ARMx demos, 2KiB for
+  the C++ LPC2148 demo. This should make things easier for unexperienced
+  users.
+
 *** 1.2.2 ***
 - FIX: Fixed macro in test.h (bug 2781176).
 - FIX: Fixed @file tag in sam7x_serial.c (bug 2788573).

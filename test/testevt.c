@@ -65,7 +65,7 @@ static void evt1_execute(void) {
   test_assert(m == 1, "#1"); /* Single bit error.*/
   m = chEvtWaitOne(ALL_EVENTS);
   test_assert(m == 4, "#2"); /* Single bit error.*/
-  m = chEvtClear(0);
+  m = chEvtClear(ALL_EVENTS);
   test_assert(m == 0, "#3"); /* Stuck event.*/
 
   /*
@@ -74,7 +74,7 @@ static void evt1_execute(void) {
   chEvtPend(5);
   m = chEvtWaitAny(ALL_EVENTS);
   test_assert(m == 5, "#4"); /* Unexpected pending.*/
-  m = chEvtClear(0);
+  m = chEvtClear(ALL_EVENTS);
   test_assert(m == 0, "#5"); /* Stuck event.*/
 
   /*
@@ -88,7 +88,7 @@ static void evt1_execute(void) {
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread, "A");
   m = chEvtWaitAll(5);
   test_assert_time_window(target_time, target_time + ALLOWED_DELAY);
-  m = chEvtClear(0);
+  m = chEvtClear(ALL_EVENTS);
   test_assert(m == 0, "#6"); /* Stuck event.*/
 
   test_wait_threads();

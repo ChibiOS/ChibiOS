@@ -78,8 +78,7 @@ static void memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
  * @details The new thread is initialized but not inserted in the ready list,
  *          the initial state is @p PRSUSPENDED.
  *
- * @param[out] workspace pointer to a working area dedicated to the thread
- *                       stack
+ * @param[out] wsp pointer to a working area dedicated to the thread stack
  * @param[in] wsize size of the working area
  * @param[in] prio the priority level for the new thread
  * @param[in] pf the thread function
@@ -92,32 +91,28 @@ static void memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
  *       it is not an I-Class API because it does not touch any critical kernel
  *       data structure.
  */
-Thread *chThdInit(void *workspace, size_t wsize,
-                  tprio_t prio, tfunc_t pf, void *arg) {
-  /* thread structure is layed out in the lower part of the thread workspace */
-  Thread *tp = workspace;
+Thread *chThdInit(void *wsp, size_t size, tprio_t prio, tfunc_t pf, void *arg) {
+  /* Thread structure is layed out in the lower part of the thread workspace */
+  Thread *tp = wsp;
 
-  chDbgCheck((workspace != NULL) && (wsize >= THD_WA_SIZE(0)) &&
+  chDbgCheck((wsp != NULL) && (size >= THD_WA_SIZE(0)) &&
              (prio <= HIGHPRIO) && (pf != NULL),
              "chThdInit");
 #if CH_DBG_FILL_THREADS
-  memfill((uint8_t *)workspace,
-          (uint8_t *)workspace + sizeof(Thread),
-          THREAD_FILL_VALUE);
-  memfill((uint8_t *)workspace + sizeof(Thread),
-          (uint8_t *)workspace + wsize,
-          STACK_FILL_VALUE);
+  memfill((uint8_t *)wsp, (uint8_t *)wsp + sizeof(Thread), THREAD_FILL_VALUE);
+  memfill((uint8_t *)wsp + sizeof(Thread),
+          (uint8_t *)wsp + size, STACK_FILL_VALUE);
 #endif
-  SETUP_CONTEXT(workspace, wsize, pf, arg);
+  SETUP_CONTEXT(wsp, size, pf, arg);
   return init_thread(tp, prio);
 }
 
 /**
  * @brief Creates a new thread into a static memory area.
  *
- * @param[out] workspace pointer to a working area dedicated to the thread
+ * @param[out] wsp pointer to a working area dedicated to the thread
  *                       stack
- * @param[in] wsize size of the working area
+ * @param[in] size size of the working area
  * @param[in] prio the priority level for the new thread
  * @param[in] pf the thread function
  * @param[in] arg an argument passed to the thread function. It can be @p NULL.
@@ -126,17 +121,17 @@ Thread *chThdInit(void *workspace, size_t wsize,
  * @note A thread can terminate by calling @p chThdExit() or by simply
  *       returning from its main function.
  */
-Thread *chThdCreateStatic(void *workspace, size_t wsize,
+Thread *chThdCreateStatic(void *wsp, size_t size,
                           tprio_t prio, tfunc_t pf, void *arg) {
 
-  return chThdResume(chThdInit(workspace, wsize, prio, pf, arg));
+  return chThdResume(chThdInit(wsp, size, prio, pf, arg));
 }
 
 #if CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_HEAP
 /**
  * @brief Creates a new thread allocating the memory from the heap.
  *
- * @param[in] wsize size of the working area to be allocated
+ * @param[in] size size of the working area to be allocated
  * @param[in] prio the priority level for the new thread
  * @param[in] pf the thread function
  * @param[in] arg an argument passed to the thread function. It can be @p NULL.
@@ -151,13 +146,14 @@ Thread *chThdCreateStatic(void *workspace, size_t wsize,
  *       @p CH_USE_HEAP and @p CH_USE_WAITEXIT options are enabled
  *       in @p chconf.h.
  */
-Thread *chThdCreateFromHeap(size_t wsize, tprio_t prio,
-                            tfunc_t pf, void *arg) {
+Thread *chThdCreateFromHeap(size_t size, tprio_t prio, tfunc_t pf, void *arg) {
+  void *wsp;
+  Thread *tp;
 
-  void *workspace = chHeapAlloc(wsize);
-  if (workspace == NULL)
+  wsp = chHeapAlloc(size);
+  if (wsp == NULL)
     return NULL;
-  Thread *tp = chThdInit(workspace, wsize, prio, pf, arg);
+  tp = chThdInit(wsp, size, prio, pf, arg);
   tp->p_flags = P_MEM_MODE_HEAP;
   return chThdResume(tp);
 }
@@ -186,13 +182,15 @@ Thread *chThdCreateFromHeap(size_t wsize, tprio_t prio,
  */
 Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
                                   tfunc_t pf, void *arg) {
+  void *wsp;
+  Thread *tp;
 
   chDbgCheck(mp != NULL, "chThdCreateFromMemoryPool");
 
-  void *workspace = chPoolAlloc(mp);
-  if (workspace == NULL)
+  wsp = chPoolAlloc(mp);
+  if (wsp == NULL)
     return NULL;
-  Thread *tp = chThdInit(workspace, mp->mp_object_size, prio, pf, arg);
+  tp = chThdInit(wsp, mp->mp_object_size, prio, pf, arg);
   tp->p_flags = P_MEM_MODE_MEMPOOL;
   tp->p_mpool = mp;
   return chThdResume(tp);
