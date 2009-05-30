@@ -65,6 +65,8 @@ GNU-Linux-GCC          - ChibiOS/RT simulator for x86 Linux systems, it is
 
 *** 1.3.1 ***
 - Documentation fixes.
+- Changed the STM32 demo stack sizes, it was incorrectly adjusted in version
+  1.3.0 but it did not create problems (not a bug).
 
 *** 1.3.0 ***
 - FIX: Fixed regression in MinGW demo (bug 2745153)(backported in stable
