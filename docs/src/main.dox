@@ -355,6 +355,69 @@
  */
 
 /**
+ * @defgroup IOPorts Abstract I/O Ports
+ * @brief Abstract digital I/O ports.
+ * @details This module defines an abstract interface for digital I/O ports.
+ * Note that no code is present, I/O ports are just a set of macros that must
+ * be implemented by a low level I/O port driver.<br>
+ * Currently the I/O ports interface does not handle physical port programming
+ * like direction, pull up/down resistors etc. The interface only allows input
+ * and output operations but this may change in future releases.
+ * This system has the advantage to make the access to I/O ports platform
+ * independent from the implementation logic.
+ *
+ * <h2>Implementation Rules</h2>
+ * In implementing an I/O port low level driver there are some rules that
+ * should be respected.
+ *
+ * <h3>Write on input pads</h3>
+ * The behavior is not specified but there are implementations better than
+ * others, this is the list of possible implementations, preferred options
+ * are on top:
+ * -# The written value is not actually output but latched, should the pads
+ *    be reprogrammed as outputs the value would be in effect.
+ * -# The write operation is ignored.
+ * -# The write operation has side effects, as example disabling/enabling
+ *    pull up/down resistors or changing the pad direction. This scenario is
+ *    discouraged, please try to avoid this scenario.
+ * .
+ * <h3>Read from output pads</h3>
+ * The behavior is not specified but there are implementations better than
+ * others, this is the list of possible implementations, preferred options
+ * are on top:
+ * -# The actual pads states are read (not the output latch).
+ * -# The output latch value is read (regardless of the actual pads states).
+ * -# Unspecified, please try to avoid this scenario.
+ * .
+ * <h3>Writing unused or unimplemented port bits</h3>
+ * The behavior is not specified.
+ *
+ * <h3>Reading from unused or unimplemented port bits</h3>
+ * The behavior is not specified.
+ *
+ * <h3>Reading or writing on pins associated to other functionalities</h3>
+ * The behavior is not specified.
+ *
+ * @ingroup IO
+ */
+
+/**
+ * @defgroup Channels Abstract I/O Channels
+ * @brief Abstract I/O Channels.
+ * @details This module defines an abstract interface for I/O channels. Note
+ * that no code is present, I/O channels are just abstract classes-like
+ * structures, you should look at the systems as to a set of abstract C++
+ * classes (even if written in C). Specific device drivers can use/extend
+ * the interfaces and implement them.<br>
+ * This system has the advantage to make the access to channels
+ * independent from the implementation logic. As example, an I/O channel
+ * interface can hide the access to a serial driver, to a networking socket
+ * and so on.
+ *
+ * @ingroup IO
+ */
+ 
+/**
  * @defgroup IOQueues I/O Queues
  * @brief I/O queues.
  * @details ChibiOS/RT supports several kinds of queues. The queues are mostly
@@ -373,24 +436,10 @@
  * .
  * In order to use the I/O queues the @p CH_USE_QUEUES option must
  * be specified in @p chconf.h.<br>
+ *
  * @ingroup IO
  */
 
-/**
- * @defgroup Channels Abstract I/O Channels
- * @brief Abstract I/O Channels.
- * @details This module defines an abstract interface for I/O channels. Note
- * that no code is present, I/O channels are just abstract classes-like
- * structures, you should look at the systems as to a set of abstract C++
- * classes (even if written in C). Specific device drivers can use/extend
- * the interfaces and implement them.<br>
- * This system has the advantage to make the access to channels
- * independent from the implementation logic. As example, an I/O channel
- * interface can hide the access to a serial driver, to a networking socket
- * and so on.
- * @ingroup IO
- */
- 
 /**
  * @defgroup Serial Serial Drivers
  * @brief Generic Serial Drivers.
@@ -403,6 +452,7 @@
  * interrupt service routines much easier.<br>
  * In order to use the serial full duplex driver the
  * @p CH_USE_SERIAL_FULLDUPLEX option must be specified in @p chconf.h.
+ *
  * @ingroup IO
  */
 
