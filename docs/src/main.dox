@@ -397,8 +397,7 @@
  * The  module also contains functions that make the implementation of the
  * interrupt service routines much easier.<br>
  * In order to use the serial full duplex driver the
- * @p CH_USE_SERIAL_FULLDUPLEX option must be specified in @p chconf.h.<br>
- * In order to use the serial half duplex driver the
+ * @p CH_USE_SERIAL_FULLDUPLEX option must be specified in @p chconf.h.
  */
 
 /**
