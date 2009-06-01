@@ -402,6 +402,15 @@
  */
 
 /**
+ * @defgroup IOPortsLLD I/O Ports Low Level Driver
+ * @brief Digital I/O ports low level driver template.
+ * @details This file is a template for an I/O port low level driver. This
+ * file implements the prysical layer of an I/O port driver.
+ *
+ * @ingroup IOPorts
+ */
+
+/**
  * @defgroup Channels Abstract I/O Channels
  * @brief Abstract I/O Channels.
  * @details This module defines an abstract interface for I/O channels. Note

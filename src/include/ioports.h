@@ -70,9 +70,9 @@ typedef struct {
  * @brief Writes a bits mask on a I/O port.
  *
  * @param[in] port the port identifier
- * @param[in] value the value to be written on the specified port
+ * @param[in] bits the bits to be written on the specified port
  */
-#define chPortWrite(port, value) ioport_write_lld(port, value)
+#define chPortWrite(port, bits) ioport_write_lld(port, bits)
 
 /**
  * @brief Reads an I/O port.
@@ -86,50 +86,50 @@ typedef struct {
  * @brief Sets a bits mask on a I/O port.
  *
  * @param[in] port the port identifier
- * @param[in] mask the mask to be ORed on the specified port
+ * @param[in] bits the bits to be ORed on the specified port
  *
  * @note The operation is not guaranteed to be atomic on all the architectures,
  *       for atomicity and/or portability reasons you may need to enclose port
  *       I/O operations between @p chSysLock() and @p chSysUnlock().
  */
-#define chPortSet(port, mask) ioport_set_lld(port, mask)
+#define chPortSet(port, bits) ioport_set_lld(port, bits)
 
 /**
  * @brief Clears a bits mask on a I/O port.
  *
  * @param[in] port the port identifier
- * @param[in] mask the mask to be cleared on the specified port
+ * @param[in] bits the bits to be cleared on the specified port
  *
  * @note The operation is not guaranteed to be atomic on all the architectures,
  *       for atomicity and/or portability reasons you may need to enclose port
  *       I/O operations between @p chSysLock() and @p chSysUnlock().
  */
-#define chPortClear(port, mask) ioport_clear_lld(port mask)
+#define chPortClear(port, bits) ioport_clear_lld(port, bits)
 
 /**
  * @brief Toggles a bits mask on a I/O port.
  *
  * @param[in] port the port identifier
- * @param[in] mask the mask to be XORed on the specified port
+ * @param[in] bits the bits to be XORed on the specified port
  *
  * @note The operation is not guaranteed to be atomic on all the architectures,
  *       for atomicity and/or portability reasons you may need to enclose port
  *       I/O operations between @p chSysLock() and @p chSysUnlock().
  */
-#define chPortToggle(port, mask) ioport_clear_lld(port mask)
+#define chPortToggle(port, bits) ioport_clear_lld(port, bits)
 
 /**
  * @brief Writes a value on an I/O bus.
  *
  * @param[in] bus the I/O bus
- * @param[in] value the value to be written on the I/O bus. Values exceeding
- *            the bus width are masked so most significant bits may be lost.
+ * @param[in] bits the bits to be written on the I/O bus. Values exceeding
+ *            the bus width are masked so most significant bits are lost.
  *
  * @note The operation is not guaranteed to be atomic on all the architectures,
  *       for atomicity and/or portability reasons you may need to enclose port
  *       I/O operations between @p chSysLock() and @p chSysUnlock().
  */
-#define chPortWriteBus(bus, value) ioport_writebus_lld(bus, value)
+#define chPortWriteBus(bus, bits) ioport_writebus_lld(bus, bits)
 
 /**
  * @brief Reads a value from an I/O bus.
