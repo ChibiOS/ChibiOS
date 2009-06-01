@@ -123,7 +123,7 @@ typedef uint32_t ioportid_t;
 /**
  * @brief Writes a value on an I/O bus.
  *
- * @param[in] bus the I/O bus
+ * @param[in] bus the I/O bus, pointer to a @p IOBus structure
  * @param[in] bits the bits to be written on the I/O bus. Values exceeding
  *            the bus width are masked so most significant bits are lost.
  *
@@ -135,7 +135,7 @@ typedef uint32_t ioportid_t;
 /**
  * @brief Reads a value from an I/O bus.
  *
- * @param[in] bus the I/O bus
+ * @param[in] bus the I/O bus, pointer to a @p IOBus structure
  * @return the bus bits
  *
  * @note This function is not meant to be invoked directly by the application

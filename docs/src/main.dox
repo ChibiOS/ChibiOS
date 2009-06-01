@@ -359,7 +359,7 @@
  * @brief Abstract digital I/O ports.
  * @details This module defines an abstract interface for digital I/O ports.
  * Note that no code is present, I/O ports are just a set of macros that must
- * be implemented by a low level I/O port driver.<br>
+ * be implemented by an @ref IOPortsLLD.<br>
  * Currently the I/O ports interface does not handle physical port programming
  * like direction, pull up/down resistors etc. The interface only allows input
  * and output operations but this may change in future releases.
@@ -367,10 +367,10 @@
  * independent from the implementation logic.
  *
  * <h2>Implementation Rules</h2>
- * In implementing an I/O port low level driver there are some rules that
+ * In implementing an @ref IOPortsLLD there are some rules/behaviors that
  * should be respected.
  *
- * <h3>Write on input pads</h3>
+ * <h3>Writing on input pads</h3>
  * The behavior is not specified but there are implementations better than
  * others, this is the list of possible implementations, preferred options
  * are on top:
@@ -381,7 +381,7 @@
  *    pull up/down resistors or changing the pad direction. This scenario is
  *    discouraged, please try to avoid this scenario.
  * .
- * <h3>Read from output pads</h3>
+ * <h3>Reading from output pads</h3>
  * The behavior is not specified but there are implementations better than
  * others, this is the list of possible implementations, preferred options
  * are on top:

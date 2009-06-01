@@ -60,7 +60,7 @@ typedef struct {
   /** Port identifier. */
   ioportid_t            bus_portid;
   /** Mask of the I/O lines that form the bus. The lines must be contiguous.
-   *  The mask must be pre-shifted and also defines the bus size. */
+   *  The mask must be pre-shifted and also defines the bus width. */
   ioportmask_t          bus_mask;
   /** Offset, within the port, of the least significant bit of the bus. */
   uint_fast8_t          bus_offset;
@@ -121,7 +121,7 @@ typedef struct {
 /**
  * @brief Writes a value on an I/O bus.
  *
- * @param[in] bus the I/O bus
+ * @param[in] bus the I/O bus, pointer to a @p IOBus structure
  * @param[in] bits the bits to be written on the I/O bus. Values exceeding
  *            the bus width are masked so most significant bits are lost.
  *
@@ -134,7 +134,7 @@ typedef struct {
 /**
  * @brief Reads a value from an I/O bus.
  *
- * @param[in] bus the I/O bus
+ * @param[in] bus the I/O bus, pointer to a @p IOBus structure
  * @return the bus bits
  *
  * @note The operation is not guaranteed to be atomic on all the architectures,
