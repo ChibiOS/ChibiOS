@@ -113,8 +113,11 @@
  */
 
 /**
- * @defgroup Core Generic Port Code Templates
- * Non portable code templates.
+ * @defgroup Core Port Code Templates
+ * Non portable code templates. The function and the macros defined under this
+ * section are the non portable part of the kernel.
+ * @note The port code is not an API, the applications should not invoke it
+ *       directly, use the equivalent system API instead.
  * @ingroup Kernel
  */
 
@@ -132,14 +135,14 @@
  */
 
 /**
- * @defgroup Debug Debug
+ * @defgroup Debug Debug Support
  * Debug APIs and procedures.
  * @ingroup Kernel
  */
 
 /**
- * @defgroup Scheduler Scheduler
- * ChibiOS/RT scheduler.
+ * @defgroup Scheduler Low Level Scheduler
+ * ChibiOS/RT scheduler APIs and macros.
  * @ingroup Kernel
  */
 
@@ -151,12 +154,19 @@
 
 /**
  * @defgroup Threads Threads
- * Threads creation and termination APIs.
+ * Threads related APIs.
+ * @ingroup Kernel
  */
 
 /**
  * @defgroup Time Time and Virtual Timers
  * Time and Virtual Timers related APIs.
+ * @ingroup Kernel
+ */
+
+/**
+ * @defgroup Memory Memory Management
+ * Memory Management services.
  */
 
 /**
@@ -171,6 +181,7 @@
  * instead of the system provided allocator.<br>
  * In order to use the heap APIs the @p CH_USE_HEAP option must be specified
  * in @p chconf.h.
+ * @ingroup Memory
  */
 
 /**
@@ -181,6 +192,12 @@
  * <b>constant time</b> and reliably without memory fragmentation problems.<br>
  * In order to use the Time APIs the @p CH_USE_MEMPOOLS option must be
  * specified in @p chconf.h.
+ * @ingroup Memory
+ */
+
+/**
+ * @defgroup Synchronization Synchronization
+ * Synchronization services.
  */
 
 /**
@@ -205,6 +222,7 @@
  * @p chconf.h.<br>
  * In order to use the Semaphores APIs the @p CH_USE_SEMAPHORES
  * option must be specified in @p chconf.h.<br><br>
+ * @ingroup Synchronization
  */
 
 /**
@@ -238,6 +256,7 @@
  * priority was not already equal or higher). The mechanism works with any
  * number of nested mutexes and any number of involved threads. The algorithm
  * complexity (worst case) is N with N equal to the number of nested mutexes.
+ * @ingroup Synchronization
  */
 
 /**
@@ -249,6 +268,7 @@
  * a Monitor construct.<br>
  * In order to use the Condition Variables APIs the @p CH_USE_CONDVARS
  * option must be specified in @p chconf.h.<br><br>
+ * @ingroup Synchronization
  */
 
 /**
@@ -268,6 +288,7 @@
  * thread invokes a @p chEvtWaitXXX().<br>
  * In order to use the Event APIs the @p CH_USE_EVENTS option must be
  * specified in @p chconf.h.
+ * @ingroup Synchronization
  */
 
 /**
@@ -287,6 +308,7 @@
  * queue header).<br>
  * In order to use the Messages APIs the @p CH_USE_MESSAGES option must be
  * specified in @p chconf.h.
+ * @ingroup Synchronization
  */
 
 /**
@@ -309,6 +331,12 @@
  * allocate memory (from a memory pool as example) from the posting side and
  * free it on the fetching side. Another approach is to set a "done" flag into
  * the structure pointed by the message.
+ * @ingroup Synchronization
+ */
+
+/**
+ * @defgroup IO I/O Support
+ * I/O related services.
  */
 
 /**
@@ -329,6 +357,7 @@
  * .
  * In order to use the I/O queues the @p CH_USE_QUEUES option must
  * be specified in @p chconf.h.<br>
+ * @ingroup IO
  */
 
 /**
@@ -342,6 +371,7 @@
  * independent from the implementation logic. As example, an I/O channel
  * interface can hide the access to a serial driver, to a networking socket
  * and so on.
+ * @ingroup IO
  */
  
 /**
@@ -356,6 +386,7 @@
  * @p CH_USE_SERIAL_FULLDUPLEX option must be specified in @p chconf.h.<br>
  * In order to use the serial half duplex driver the
  * @p CH_USE_SERIAL_HALFDUPLEX option must be specified in @p chconf.h.
+ * @ingroup IO
  */
 
 /**
@@ -380,8 +411,8 @@
  */
 
 /**
- * @defgroup event_timer Events Generator Timer
- * @brief Event Generator Timer.
+ * @defgroup event_timer Periodic Events Timer
+ * @brief Periodic Event Timer.
  * @details This timer generates an event at regular intervals. The
  * listening threads can use the event to perform time related activities.
  * Multiple threads can listen to the same timer.
