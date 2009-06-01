@@ -350,10 +350,11 @@
  */
 
 /**
- * @defgroup IOQueues Physical I/O Queues
- * ChibiOS/RT supports several kinds of queues. The queues are mostly used
- * in serial-like device drivers. The device drivers are usually designed to
- * have a lower side (lower driver, it is usually an interrupt service
+ * @defgroup IOQueues I/O Queues
+ * @brief I/O queues.
+ * @details ChibiOS/RT supports several kinds of queues. The queues are mostly
+ * used in serial-like device drivers. The device drivers are usually designed
+ * to have a lower side (lower driver, it is usually an interrupt service
  * routine) and an upper side (upper driver, accessed by the application
  * threads).<br>
  * There are several kind of queues:<br>
@@ -372,11 +373,12 @@
 
 /**
  * @defgroup Channels Abstract I/O Channels
- * This module defines an abstract interface for I/O channels. Note that
- * no code is present, I/O channels are just abstract classes-like structures,
- * you should look at the systems as to a set of abstract C++ classes (even if
- * implemented in C). Specific device drivers can use/extend the interfaces
- * and implement them.<br>
+ * @brief Abstract I/O Channels.
+ * @details This module defines an abstract interface for I/O channels. Note
+ * that no code is present, I/O channels are just abstract classes-like
+ * structures, you should look at the systems as to a set of abstract C++
+ * classes (even if implemented in C). Specific device drivers can use/extend
+ * the interfaces and implement them.<br>
  * This system has the advantage to make the access to channels
  * independent from the implementation logic. As example, an I/O channel
  * interface can hide the access to a serial driver, to a networking socket
@@ -386,10 +388,12 @@
  
 /**
  * @defgroup Serial Serial Drivers
- * This module implements a generic full duplex serial driver and a generic
- * half duplex serial driver. It uses the I/O Queues for communication between
- * the upper and the lower driver and events to notify the application about
- * incoming data, outcoming data and other I/O events.
+ * @brief Generic Serial Drivers.
+ * @details This module implements a generic full duplex serial driver. The
+ * driver implements a @p FullDuplexDriver interface and uses I/O Queues for
+ * communication between the upper and the lower driver. Event flags are used
+ * to notify the application about incoming data, outgoing data and other I/O
+ * events.<br>
  * The  module also contains functions that make the implementation of the
  * interrupt service routines much easier.<br>
  * In order to use the serial full duplex driver the
