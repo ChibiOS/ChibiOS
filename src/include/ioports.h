@@ -70,7 +70,7 @@ typedef struct {
  * @brief Writes a bits mask on a I/O port.
  *
  * @param[in] port the port identifier
- * @param[in] mask the mask to be written on the specified port
+ * @param[in] value the value to be written on the specified port
  */
 #define chPortWrite(port, value) ioport_write_lld(port, value)
 
@@ -78,6 +78,7 @@ typedef struct {
  * @brief Reads an I/O port.
  *
  * @param[in] port the port identifier
+ * @return the port bits
  */
 #define chPortRead(port) ioport_read_lld(port)
 
@@ -134,6 +135,7 @@ typedef struct {
  * @brief Reads a value from an I/O bus.
  *
  * @param[in] bus the I/O bus
+ * @return the bus bits
  *
  * @note The operation is not guaranteed to be atomic on all the architectures,
  *       for atomicity and/or portability reasons you may need to enclose port

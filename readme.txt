@@ -66,6 +66,10 @@ GNU-Linux-GCC          - ChibiOS/RT simulator for x86 Linux systems, it is
 *** 1.3.1 ***
 - FIX: Removed mention of an obsolete option from the documentation (bug
   2799507).
+- NEW: Abstract digital I/O ports driver, this driver defines a common
+  interface for digital I/O operations, this should help to create more
+  portable applications and, in general, make easier to work with ChibiOS/RT
+  on multiple architectures.
 - Documentation section reorganization and fixes.
 - Changed the STM32 demo stack sizes, it was incorrectly adjusted in version
   1.3.0 but it did not create problems (not a bug).
