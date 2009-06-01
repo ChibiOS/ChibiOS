@@ -382,7 +382,7 @@
  * @details This module defines an abstract interface for I/O channels. Note
  * that no code is present, I/O channels are just abstract classes-like
  * structures, you should look at the systems as to a set of abstract C++
- * classes (even if implemented in C). Specific device drivers can use/extend
+ * classes (even if written in C). Specific device drivers can use/extend
  * the interfaces and implement them.<br>
  * This system has the advantage to make the access to channels
  * independent from the implementation logic. As example, an I/O channel
