@@ -43,7 +43,7 @@
  * .
  * @file testheap.c
  * @brief Heap test source file
- * @file testevt.h
+ * @file testheap.h
  * @brief Heap header file
  */
 

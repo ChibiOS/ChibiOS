@@ -20,6 +20,11 @@
 #ifndef _INLINE_H_
 #define _INLINE_H_
 
+/**
+ * @file inline.h
+ * @brief Kernel inlined functions.
+ */
+
 /*
  * Inlined functions if CH_OPTIMIZE_SPEED is enabled.
  * Note: static inlined functions do not duplicate the code in every module
