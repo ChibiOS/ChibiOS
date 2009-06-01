@@ -346,7 +346,12 @@
 
 /**
  * @defgroup IO I/O Support
- * I/O related services.
+ * @brief I/O related services.
+ * @details This section contains the I/O related services. Note that no
+ * specific drivers are documented here, all the listed modules are abstract
+ * interfaces or kernel APIs that the device drivers should implement/use.<br>
+ * The use of common I/O interfaces allow for a certain degree of portability
+ * for the ChibiOS/RT application among very different MCUs.
  */
 
 /**
@@ -398,6 +403,7 @@
  * interrupt service routines much easier.<br>
  * In order to use the serial full duplex driver the
  * @p CH_USE_SERIAL_FULLDUPLEX option must be specified in @p chconf.h.
+ * @ingroup IO
  */
 
 /**
