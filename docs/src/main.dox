@@ -360,11 +360,14 @@
  * @details This module defines an abstract interface for digital I/O ports.
  * Note that no code is present, I/O ports are just a set of macros that must
  * be implemented by an @ref IOPortsLLD.<br>
+ * This system has the advantage to make the access to I/O ports platform
+ * independent from the implementation logic.<br>
  * Currently the I/O ports interface does not handle physical port programming
  * like direction, pull up/down resistors etc. The interface only allows input
- * and output operations but this may change in future releases.
- * This system has the advantage to make the access to I/O ports platform
- * independent from the implementation logic.
+ * and output operations but this may change in future releases.<br>
+ * Note that the @ref IOPortsLLD may also offer non standard macro and
+ * functions in order to support specific features but, of course, the use of
+ * such interfaces would not be portable.
  *
  * <h2>Implementation Rules</h2>
  * In implementing an @ref IOPortsLLD there are some rules/behaviors that
