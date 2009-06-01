@@ -132,12 +132,6 @@
  */
 
 /**
- * @defgroup Inline Inline
- * System inline-able code.
- * @ingroup Kernel
- */
-
-/**
  * @defgroup Debug Debug
  * Debug APIs and procedures.
  * @ingroup Kernel
