@@ -116,7 +116,7 @@ typedef struct {
  *       for atomicity and/or portability reasons you may need to enclose port
  *       I/O operations between @p chSysLock() and @p chSysUnlock().
  */
-#define chPortToggle(port, bits) ioport_clear_lld(port, bits)
+#define chPortToggle(port, bits) ioport_toggle_lld(port, bits)
 
 /**
  * @brief Writes a value on an I/O bus.

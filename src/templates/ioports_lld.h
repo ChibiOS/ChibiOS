@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ioports_lld.h
+ * @file src/templates/ioports_lld.h
  * @brief I/O ports low level driver
  * @addtogroup IOPortsLLD
  * @{
@@ -118,7 +118,7 @@ typedef uint32_t ioportid_t;
  * @note This function is not meant to be invoked directly by the application
  *       code.
  */
-#define ioport_clear_lld(port, bits)
+#define ioport_toggle_lld(port, bits)
 
 /**
  * @brief Writes a value on an I/O bus.
