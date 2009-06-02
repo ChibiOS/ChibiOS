@@ -103,10 +103,11 @@ void hwinit0(void) {
   PINSEL0 = VAL_PINSEL0;
   PINSEL1 = VAL_PINSEL1;
   PINSEL2 = VAL_PINSEL2;
-  IO0DIR = VAL_FIO0DIR;
-  IO0SET = 0xFFFFFFFF;
-  IO1DIR = VAL_FIO1DIR;
-  IO1SET = 0xFFFFFFFF;
+  ioport_init_lld();
+  ioport_lpc214x_set_direction_lld(IOPORT_A, VAL_FIO0DIR);
+  ioport_write_lld(IOPORT_A, 0xFFFFFFFF);
+  ioport_lpc214x_set_direction_lld(IOPORT_B, VAL_FIO1DIR);
+  ioport_write_lld(IOPORT_B, 0xFFFFFFFF);
 }
 
 /*

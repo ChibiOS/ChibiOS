@@ -21,6 +21,7 @@
  * @defgroup STM32F103 STM32F103 Support
  * @brief STM32F103 specific support.
  * @details The STM32F103 support includes:
+ * - I/O ports driver.
  * - Buffered, interrupt driven, serial driver.
  * - A demo supporting the kernel test suite.
  * .

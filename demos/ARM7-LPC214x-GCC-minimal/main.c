@@ -19,7 +19,7 @@
 
 #include <ch.h>
 
-#include "lpc214x.h"
+#include "board.h"
 
 /*
  * Red LEDs blinker thread, times are in milliseconds.
@@ -28,13 +28,13 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    IO0CLR = 0x00000800;
+    chPortClear(IOPORT_A, PA_LED2);
     chThdSleepMilliseconds(200);
-    IO0SET = 0x00000C00;
+    chPortSet(IOPORT_A, PA_LED1 | PA_LED2);
     chThdSleepMilliseconds(800);
-    IO0CLR = 0x00000400;
+    chPortClear(IOPORT_A, PA_LED1);
     chThdSleepMilliseconds(200);
-    IO0SET = 0x00000C00;
+    chPortSet(IOPORT_A, PA_LED1 | PA_LED2);
     chThdSleepMilliseconds(800);
   }
   return 0;
@@ -47,9 +47,9 @@ static WORKING_AREA(waThread2, 128);
 static msg_t Thread2(void *arg) {
 
   while (TRUE) {
-    IO0CLR = 0x80000000;
+    chPortClear(IOPORT_A, PA_LEDUSB);
     chThdSleepMilliseconds(200);
-    IO0SET = 0x80000000;
+    chPortSet(IOPORT_A, PA_LEDUSB);
     chThdSleepMilliseconds(300);
   }
   return 0;

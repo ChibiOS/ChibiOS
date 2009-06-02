@@ -19,7 +19,7 @@
 
 #include <ch.h>
 
-#include "lpc214x.h"
+#include "board.h"
 #include "lpc214x_ssp.h"
 
 #include "mmcsd.h"
@@ -42,7 +42,7 @@ void InitMMC(void) {
 void tmrfunc(void *par) {
 
   if (cnt) {
-    if (!(IO1PIN & (1 << 25))) {
+    if (!(chPortRead(IOPORT_B) & PB_CP1)) {
       if (!--cnt)
         chEvtBroadcastI(&MMCInsertEventSource);
     }
@@ -50,7 +50,7 @@ void tmrfunc(void *par) {
       cnt = POLLING_INTERVAL;
   }
   else {
-    if (IO1PIN & (1 << 25)) {
+    if (chPortRead(IOPORT_B) & PB_CP1) {
       cnt = POLLING_INTERVAL;
       chEvtBroadcastI(&MMCRemoveEventSource);
     }

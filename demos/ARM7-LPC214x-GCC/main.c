@@ -20,7 +20,7 @@
 #include <ch.h>
 #include <test.h>
 
-#include "lpc214x.h"
+#include "board.h"
 #include "lpc214x_serial.h"
 #include "mmcsd.h"
 #include "buzzer.h"
@@ -33,13 +33,13 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    IO0CLR = 0x00000800;
+    chPortClear(IOPORT_A, PA_LED2);
     chThdSleepMilliseconds(200);
-    IO0SET = 0x00000C00;
+    chPortSet(IOPORT_A, PA_LED1 | PA_LED2);
     chThdSleepMilliseconds(800);
-    IO0CLR = 0x00000400;
+    chPortClear(IOPORT_A, PA_LED1);
     chThdSleepMilliseconds(200);
-    IO0SET = 0x00000C00;
+    chPortSet(IOPORT_A, PA_LED1 | PA_LED2);
     chThdSleepMilliseconds(800);
   }
   return 0;
@@ -52,9 +52,9 @@ static WORKING_AREA(waThread2, 128);
 static msg_t Thread2(void *arg) {
 
   while (TRUE) {
-    IO0CLR = 0x80000000;
+    chPortClear(IOPORT_A, PA_LEDUSB);
     chThdSleepMilliseconds(200);
-    IO0SET = 0x80000000;
+    chPortSet(IOPORT_A, PA_LEDUSB);
     chThdSleepMilliseconds(300);
   }
   return 0;
@@ -67,16 +67,16 @@ static WORKING_AREA(waTestThread, 128);
  */
 static void TimerHandler(eventid_t id) {
 
-  if (!(IO0PIN & 0x00018000)) { // Both buttons
+  if (!(chPortRead(IOPORT_A) & (PA_BUTTON1 | PA_BUTTON2))) {
     Thread *tp = chThdCreateStatic(waTestThread, sizeof(waTestThread),
                                    NORMALPRIO, TestThread, &COM1);
     chThdWait(tp);
     PlaySound(500, MS2ST(100));
   }
   else {
-    if (!(IO0PIN & 0x00008000)) // Button 1
+    if (!(chPortRead(IOPORT_A) & PA_BUTTON1))
       PlaySound(1000, MS2ST(100));
-    if (!(IO0PIN & 0x00010000)) { // Button 2
+    if (!(chPortRead(IOPORT_A) & PA_BUTTON2)) {
       chFDDWrite(&COM1, (uint8_t *)"Hello World!\r\n", 14);
       PlaySound(2000, MS2ST(100));
     }
@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
    * If a button is pressed during the reset then the blinking leds threads
    * are not started in order to make accurate benchmarks.
    */
-  if ((IO0PIN & 0x00018000) == 0x00018000) {
+  if (chPortRead(IOPORT_A) && (PA_BUTTON1 | PA_BUTTON2) == (PA_BUTTON1 | PA_BUTTON2)) {
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
     chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
   }

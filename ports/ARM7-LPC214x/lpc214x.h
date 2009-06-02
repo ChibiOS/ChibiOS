@@ -17,6 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file lpc214x.h
+ * @brief LPC214x register definitions
+ */
+
 #ifndef _LPC214X_H_
 #define _LPC214X_H_
 
