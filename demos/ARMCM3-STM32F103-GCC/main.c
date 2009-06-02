@@ -21,7 +21,6 @@
 #include <test.h>
 
 #include "board.h"
-#include "ioports.h"
 #include "stm32_serial.h"
 
 /*

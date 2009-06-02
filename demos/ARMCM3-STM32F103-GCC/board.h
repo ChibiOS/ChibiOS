@@ -32,6 +32,13 @@
 #define FALSE 0
 #define TRUE (!FALSE)
 
+/*
+ * This module requires the port driver.
+ */
+#ifndef _IOPORTS_LLD_H_
+#include "ioports.h"
+#endif
+
 #define BOARD_OLIMEX_STM32_P103
 
 /*
