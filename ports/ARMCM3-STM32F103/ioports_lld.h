@@ -111,7 +111,7 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief GPIO ports subsystem initialization.
  * @details Ports A-D enabled, AFIO enabled.
  */
-#define ioport_init() {                                                 \
+#define ioport_init_lld() {                                             \
   RCC->APB2ENR |= RCC_APB2ENR_AFIOEN | RCC_APB2ENR_IOPAEN |             \
                   RCC_APB2ENR_IOPBEN | RCC_APB2ENR_IOPCEN |             \
                   RCC_APB2ENR_IOPDEN;                                   \
@@ -200,6 +200,16 @@ typedef GPIO_TypeDef * ioportid_t;
  */
 #define ioport_readbus_lld(bus) \
   (((bus)->bus_portid->IDR & (bus)->bus_mask) >> (bus)->bus_offset)
+
+/**
+ * @brief GPIO port setup.
+ * @details This function initializes a GPIO port, note that this functionality
+ *          is STM32 specific and non portable.
+ */
+#define ioport_stm32_setup_lld(port, crh, crl) {                        \
+  (port)->CRH = (crh);                                                  \
+  (port)->CRL = (crl);                                                  \
+}
 
 #endif /* _IOPORTS_LLD_H_ */
 

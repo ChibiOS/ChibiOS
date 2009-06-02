@@ -59,24 +59,23 @@ void hwinit0(void) {
     ;
 
   /*
-   * I/O ports initialization as specified in board.h.
+   * I/O ports initialization as specified in board.h. Note that being this
+   * a low level initialization routine it is OK to invoke directly the
+   * low level port functions.
    */
-  ioport_init();
-  GPIOA->CRL = VAL_GPIOACRL;
-  GPIOA->CRH = VAL_GPIOACRH;
-  GPIOA->ODR = VAL_GPIOAODR;
+  ioport_init_lld();
 
-  GPIOB->CRL = VAL_GPIOBCRL;
-  GPIOB->CRH = VAL_GPIOBCRH;
-  GPIOB->ODR = VAL_GPIOBODR;
+  ioport_stm32_setup_lld(IOPORT_A, VAL_GPIOACRH, VAL_GPIOACRL);
+  ioport_write_lld(IOPORT_A, VAL_GPIOAODR);
 
-  GPIOC->CRL = VAL_GPIOCCRL;
-  GPIOC->CRH = VAL_GPIOCCRH;
-  GPIOC->ODR = VAL_GPIOCODR;
+  ioport_stm32_setup_lld(IOPORT_B, VAL_GPIOBCRH, VAL_GPIOBCRL);
+  ioport_write_lld(IOPORT_B, VAL_GPIOBODR);
 
-  GPIOD->CRL = VAL_GPIODCRL;
-  GPIOD->CRH = VAL_GPIODCRH;
-  GPIOD->ODR = VAL_GPIODODR;
+  ioport_stm32_setup_lld(IOPORT_C, VAL_GPIOCCRH, VAL_GPIOCCRL);
+  ioport_write_lld(IOPORT_C, VAL_GPIOCODR);
+
+  ioport_stm32_setup_lld(IOPORT_D, VAL_GPIODCRH, VAL_GPIODCRL);
+  ioport_write_lld(IOPORT_D, VAL_GPIODODR);
 }
 
 /*

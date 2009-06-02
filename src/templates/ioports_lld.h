@@ -71,7 +71,7 @@ typedef uint32_t ioportid_t;
  * @note This function is not invoked by a system API, it should be invoked
  *       from the system initialization code.
  */
-#define ioport_init()
+#define ioport_init_lld()
 
 /**
  * @brief Writes a bits mask on a I/O port.
