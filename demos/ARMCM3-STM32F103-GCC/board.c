@@ -61,7 +61,7 @@ void hwinit0(void) {
   /*
    * I/O ports initialization as specified in board.h.
    */
-  RCC->APB2ENR = 0x0000003D;    // Ports A-D enabled, AFIO enabled.
+  ioport_init();
   GPIOA->CRL = VAL_GPIOACRL;
   GPIOA->CRH = VAL_GPIOACRH;
   GPIOA->ODR = VAL_GPIOAODR;

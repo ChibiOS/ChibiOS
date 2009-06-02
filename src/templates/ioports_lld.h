@@ -66,6 +66,14 @@ typedef uint32_t ioportid_t;
 /*===========================================================================*/
 
 /**
+ * @brief I/O ports subsystem initialization.
+ *
+ * @note This function is not invoked by a system API, it should be invoked
+ *       from the system initialization code.
+ */
+#define ioport_init()
+
+/**
  * @brief Writes a bits mask on a I/O port.
  *
  * @param[in] port the port identifier

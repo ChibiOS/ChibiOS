@@ -108,6 +108,16 @@ typedef GPIO_TypeDef * ioportid_t;
 /*===========================================================================*/
 
 /**
+ * @brief GPIO ports subsystem initialization.
+ * @details Ports A-D enabled, AFIO enabled.
+ */
+#define ioport_init() {                                                 \
+  RCC->APB2ENR |= RCC_APB2ENR_AFIOEN | RCC_APB2ENR_IOPAEN |             \
+                  RCC_APB2ENR_IOPBEN | RCC_APB2ENR_IOPCEN |             \
+                  RCC_APB2ENR_IOPDEN;                                   \
+}
+
+/**
  * @brief Writes a bits mask on a I/O port.
  *
  * @param[in] port the port identifier
