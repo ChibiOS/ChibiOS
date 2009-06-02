@@ -27,8 +27,16 @@
 #ifndef _IOPORTS_LLD_H_
 #define _IOPORTS_LLD_H_
 
+/*
+ * Tricks required to make the TRUE/FALSE declaration inside the library
+ * compatible.
+ */
 #ifndef __STM32F10x_MAP_H
+#undef FALSE
+#undef TRUE
 #include "stm32f10x_map.h"
+#define FALSE 0
+#define TRUE (!FALSE)
 #endif
 
 /*===========================================================================*/

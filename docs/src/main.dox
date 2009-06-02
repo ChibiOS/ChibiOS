@@ -403,7 +403,7 @@
  *
  * <h2>Usage</h2>
  * The use of I/O ports requires the inclusion of the header file @p ioports.h,
- * this file is not automatically included @o ch.h like the other header
+ * this file is not automatically included @p ch.h like the other header
  * files.
  *
  * @ingroup IO

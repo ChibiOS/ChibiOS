@@ -24,13 +24,13 @@
  * Tricks required to make the TRUE/FALSE declaration inside the library
  * compatible.
  */
+#ifndef __STM32F10x_MAP_H
 #undef FALSE
 #undef TRUE
-#ifndef __STM32F10x_MAP_H
 #include "stm32f10x_map.h"
-#endif
 #define FALSE 0
 #define TRUE (!FALSE)
+#endif
 
 /*
  * This module requires the port driver.

@@ -19,7 +19,7 @@
 
 /**
  * @file src/templates/ioports_lld.h
- * @brief I/O ports low level driver
+ * @brief I/O ports low level driver template
  * @addtogroup IOPortsLLD
  * @{
  */
