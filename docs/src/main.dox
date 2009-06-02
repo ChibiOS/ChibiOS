@@ -401,6 +401,11 @@
  * <h3>Reading or writing on pins associated to other functionalities</h3>
  * The behavior is not specified.
  *
+ * <h2>Usage</h2>
+ * The use of I/O ports requires the inclusion of the header file @p ioports.h,
+ * this file is not automatically included @o ch.h like the other header
+ * files.
+ *
  * @ingroup IO
  */
 

@@ -123,13 +123,13 @@
 /*
  * IO pins assignments.
  */
-#define GPIOA_BUTTON    (1 << 0)
+#define GPIOA_BUTTON    IOPORT_BIT(0)
 
-#define GPIOC_MMCWP     (1 << 6)
-#define GPIOC_MMCCP     (1 << 7)
-#define GPIOC_CANCNTL   (1 << 10)
-#define GPIOC_DISC      (1 << 11)
-#define GPIOC_LED       (1 << 12)
+#define GPIOC_MMCWP     IOPORT_BIT(6)
+#define GPIOC_MMCCP     IOPORT_BIT(7)
+#define GPIOC_CANCNTL   IOPORT_BIT(10)
+#define GPIOC_DISC      IOPORT_BIT(11)
+#define GPIOC_LED       IOPORT_BIT(12)
 
 /*
  * All inputs with pullups unless otherwise specified.

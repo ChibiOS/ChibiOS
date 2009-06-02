@@ -21,6 +21,7 @@
 #include <test.h>
 
 #include "board.h"
+#include "ioports.h"
 #include "stm32_serial.h"
 
 /*
@@ -30,9 +31,9 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    GPIOC->BRR = GPIOC_LED;
+    chPortClear(IOPORT_C, GPIOC_LED);
     chThdSleepMilliseconds(500);
-    GPIOC->BSRR = GPIOC_LED;
+    chPortSet(IOPORT_C, GPIOC_LED);
     chThdSleepMilliseconds(500);
   }
   return 0;
@@ -54,7 +55,7 @@ int main(int argc, char **argv) {
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
-    if (GPIOA->IDR & GPIOA_BUTTON)
+    if (chPortRead(IOPORT_A) & GPIOA_BUTTON)
       TestThread(&COM2);
     chThdSleepMilliseconds(500);
   }
