@@ -57,6 +57,7 @@
  * - Direct read of input pads regardless of the pad setting.
  * .
  * The only non atomic operations are bit toggling and bus writing.
+ *
  * @ingroup LPC214x
  */
 

@@ -20,7 +20,7 @@
 /**
  * @file ports/ARM-LPC214x/ioports_lld.h
  * @brief LPC214x FIO low level driver
- * @addtogroup LPC214X_IOPORTS
+ * @addtogroup LPC214x_IOPORTS
  * @{
  */
 

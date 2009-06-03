@@ -71,16 +71,30 @@ typedef struct {
  *
  * @param[in] port the port identifier
  * @param[in] bits the bits to be written on the specified port
+ *
+ * @note The default implementation does nothing except computing the
+ *       parameters eventual side effects.
  */
+#if !defined(ioport_write_lld) || defined(__DOXYGEN__)
+#define chPortWrite(port, bits) ((void)(port), (void)(bits))
+#else
 #define chPortWrite(port, bits) ioport_write_lld(port, bits)
+#endif
 
 /**
  * @brief Reads an I/O port.
  *
  * @param[in] port the port identifier
  * @return the port bits
+ *
+ * @note The default implementation always return zero and computes the
+ *       parameter eventual side effects.
  */
+#if !defined(ioport_read_lld) || defined(__DOXYGEN__)
+#define chPortRead(port) ((void)(port), 0)
+#else
 #define chPortRead(port) ioport_read_lld(port)
+#endif
 
 /**
  * @brief Sets a bits mask on a I/O port.
@@ -91,8 +105,18 @@ typedef struct {
  * @note The operation is not guaranteed to be atomic on all the architectures,
  *       for atomicity and/or portability reasons you may need to enclose port
  *       I/O operations between @p chSysLock() and @p chSysUnlock().
+ * @note The default implementation is non atomical and not necessarily
+ *       optimal. Low level drivers may  optimize the function by using
+ *       specific hardware or coding.
  */
+#if !defined(ioport_set_lld) || defined(__DOXYGEN__)
+#define chPortSet(port, bits) {                                         \
+  ioport_t p = (port);                                                  \
+  chPortWrite(p, chPortRead(p) | (bits));                               \
+}
+#else
 #define chPortSet(port, bits) ioport_set_lld(port, bits)
+#endif
 
 /**
  * @brief Clears a bits mask on a I/O port.
@@ -103,8 +127,18 @@ typedef struct {
  * @note The operation is not guaranteed to be atomic on all the architectures,
  *       for atomicity and/or portability reasons you may need to enclose port
  *       I/O operations between @p chSysLock() and @p chSysUnlock().
+ * @note The default implementation is non atomical and not necessarily
+ *       optimal. Low level drivers may  optimize the function by using
+ *       specific hardware or coding.
  */
+#if !defined(ioport_clear_lld) || defined(__DOXYGEN__)
+#define chPortClear(port, bits) {                                       \
+  ioport_t p = (port);                                                  \
+  chPortWrite(p, chPortRead(p) & ~(bits));                              \
+}
+#else
 #define chPortClear(port, bits) ioport_clear_lld(port, bits)
+#endif
 
 /**
  * @brief Toggles a bits mask on a I/O port.
@@ -115,8 +149,18 @@ typedef struct {
  * @note The operation is not guaranteed to be atomic on all the architectures,
  *       for atomicity and/or portability reasons you may need to enclose port
  *       I/O operations between @p chSysLock() and @p chSysUnlock().
+ * @note The default implementation is non atomical and not necessarily
+ *       optimal. Low level drivers may  optimize the function by using
+ *       specific hardware or coding.
  */
+#if !defined(ioport_toggle_lld) || defined(__DOXYGEN__)
+#define chPortToggle(port, bits) {                                      \
+  ioport_t p = (port);                                                  \
+  chPortWrite(p, chPortRead(p) ^ (bits));                               \
+}
+#else
 #define chPortToggle(port, bits) ioport_toggle_lld(port, bits)
+#endif
 
 /**
  * @brief Writes a value on an I/O bus.
@@ -128,8 +172,19 @@ typedef struct {
  * @note The operation is not guaranteed to be atomic on all the architectures,
  *       for atomicity and/or portability reasons you may need to enclose port
  *       I/O operations between @p chSysLock() and @p chSysUnlock().
+ * @note The default implementation is non atomical and not necessarily
+ *       optimal. Low level drivers may  optimize the function by using
+ *       specific hardware or coding.
  */
+#if !defined(ioport_writebus_lld) || defined(__DOXYGEN__)
+#define chPortWriteBus(bus, bits) {                                     \
+  IOBus *b = (bus);                                                     \
+  chPortWrite(b->bus_port, (chPortRead(b->bus_port) & ~b->bus_mask) |   \
+                            (((bits) << b->bus_offset) & b->bus_mask)); \
+}
+#else
 #define chPortWriteBus(bus, bits) ioport_writebus_lld(bus, bits)
+#endif
 
 /**
  * @brief Reads a value from an I/O bus.
@@ -140,8 +195,17 @@ typedef struct {
  * @note The operation is not guaranteed to be atomic on all the architectures,
  *       for atomicity and/or portability reasons you may need to enclose port
  *       I/O operations between @p chSysLock() and @p chSysUnlock().
+ * @note The default implementation not necessarily optimal. Low level drivers
+ *       may  optimize the function by using specific hardware or coding.
+ * @note The default implementation evaluates the parameter three times, be
+ *       careful with side effects.
  */
+#if !defined(ioport_readbus_lld) || defined(__DOXYGEN__)
+#define chPortReadBus(bus) \
+  ((chPortRead((bus)->bus_port) >> (bus)->bus_offset) & (bus)->bus_mask)
+#else
 #define chPortReadBus(bus) ioport_readbus_lld(bus)
+#endif
 
 #endif /* _IOPORTS_H_ */
 

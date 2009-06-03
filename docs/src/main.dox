@@ -358,10 +358,14 @@
  * @defgroup IOPorts Abstract I/O Ports
  * @brief Abstract digital I/O ports.
  * @details This module defines an abstract interface for digital I/O ports.
- * Note that no code is present, I/O ports are just a set of macros that must
- * be implemented by an @ref IOPortsLLD.<br>
- * This system has the advantage to make the access to I/O ports platform
- * independent from the implementation logic.<br>
+ * Note that I/O ports functions are just a set of macros. The macros
+ * have default software implementation that can be redefined by an
+ * @ref IOPortsLLD if the target hardware supports special features like, as
+ * example, atomic bit set/reset/masking. Please refer to the documentation
+ * of the low level drivers for each port.<br>
+ * This abstraction system has the advantage to make the access to the I/O
+ * ports platform independent and still be optimized for the specific
+ * architecture.<br>
  * Currently the I/O ports interface does not handle physical port programming
  * like direction, pull up/down resistors etc. The interface only allows input
  * and output operations but this may change in future releases.<br>
