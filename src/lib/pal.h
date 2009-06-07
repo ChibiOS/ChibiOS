@@ -32,6 +32,16 @@
 #endif
 
 /**
+ * @brief Logical low state.
+ */
+#define PAL_LOW 0
+
+/**
+ * @brief Logical high state.
+ */
+#define PAL_HIGH 1
+
+/**
  * @brief Port bit helper macro.
  * @details This macro calculates the mask of a bit within a port.
  *
@@ -241,7 +251,7 @@ typedef struct {
  *
  * @param[in] port the port identifier
  * @param[in] pad the pad number within the port
- * @param[out] value the logical value, the value must be @p 0 or @p 1
+ * @param[out] bit the logical value, the value must be @p 0 or @p 1
  *
  * @note The operation is not guaranteed to be atomic on all the architectures,
  *       for atomicity and/or portability reasons you may need to enclose port
@@ -253,12 +263,12 @@ typedef struct {
  *       @p palWritePort().
  */
 #if !defined(pal_lld_writepad) || defined(__DOXYGEN__)
-#define palWritePad(port, pad, value) {                                 \
+#define palWritePad(port, pad, bit) {                                   \
   palWritePort(port, (palReadLatch(port) & ~PAL_PORT_BIT(pad)) |        \
-                     (((value) & 1) << pad));                           \
+                     (((bit) & 1) << pad));                             \
 }
 #else
-#define palWritePad(port, pad, value) pal_lld_writepad(port, pad, value)
+#define palWritePad(port, pad, bit) pal_lld_writepad(port, pad, bit)
 #endif
 
 /**

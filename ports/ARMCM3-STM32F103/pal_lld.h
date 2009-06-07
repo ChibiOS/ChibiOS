@@ -198,8 +198,8 @@ typedef GPIO_TypeDef * ioportid_t;
  *       code.
  */
 #define pal_lld_writegroup(port, mask, offset, bits) {                  \
-  (bus)->bus_portid->BSRR = ((~(bits) & (mask)) << (16 + (offset))) |   \
-                            ((bits) & (mask)) << (offset);              \
+  (port)->BSRR = ((~(bits) & (mask)) << (16 + (offset))) |              \
+                 (((bits) & (mask)) << (offset));                       \
 }
 
 /**
@@ -207,15 +207,12 @@ typedef GPIO_TypeDef * ioportid_t;
  *
  * @param[in] port the port identifier
  * @param[in] pad the pad number within the port
- * @param[out] value the logical value, the value must be @p 0 or @p 1
+ * @param[out] bit the logical value, the value must be @p 0 or @p 1
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
  */
-#define pal_lld_writepad(port, pad, value) {                            \
-  (bus)->bus_portid->BSRR = (((~(value) & 1) << ((pad) + 16)) |         \
-                            ((((value) & 1) << (pad)));                 \
-}
+#define pal_lld_writepad(port, pad, bit) pal_lld_writegroup(port, 1, pad, bit)
 
 /**
  * @brief GPIO port setup.
