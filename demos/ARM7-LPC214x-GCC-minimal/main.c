@@ -18,6 +18,7 @@
 */
 
 #include <ch.h>
+#include <pal.h>
 
 #include "board.h"
 
@@ -28,13 +29,13 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    chPortClear(IOPORT_A, PA_LED2);
+    palClearPort(IOPORT_A, PAL_PORT_BIT(PA_LED2));
     chThdSleepMilliseconds(200);
-    chPortSet(IOPORT_A, PA_LED1 | PA_LED2);
+    palSetPort(IOPORT_A, PAL_PORT_BIT(PA_LED1) | PAL_PORT_BIT(PA_LED2));
     chThdSleepMilliseconds(800);
-    chPortClear(IOPORT_A, PA_LED1);
+    palClearPort(IOPORT_A, PAL_PORT_BIT(PA_LED1));
     chThdSleepMilliseconds(200);
-    chPortSet(IOPORT_A, PA_LED1 | PA_LED2);
+    palSetPort(IOPORT_A, PAL_PORT_BIT(PA_LED1) | PAL_PORT_BIT(PA_LED2));
     chThdSleepMilliseconds(800);
   }
   return 0;
@@ -47,9 +48,9 @@ static WORKING_AREA(waThread2, 128);
 static msg_t Thread2(void *arg) {
 
   while (TRUE) {
-    chPortClear(IOPORT_A, PA_LEDUSB);
+    palClearPad(IOPORT_A, PA_LEDUSB);
     chThdSleepMilliseconds(200);
-    chPortSet(IOPORT_A, PA_LEDUSB);
+    palSetPad(IOPORT_A, PA_LEDUSB);
     chThdSleepMilliseconds(300);
   }
   return 0;
