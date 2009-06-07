@@ -55,6 +55,7 @@ CSRC = ../../ports/ARM7/chcore.c \
        ${KERNSRC} \
        ${TESTSRC} \
        ../../src/lib/evtimer.c \
+       ../../src/lib/pal.c \
        board.c buzzer.c mmcsd.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global

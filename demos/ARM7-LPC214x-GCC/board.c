@@ -18,6 +18,7 @@
 */
 
 #include <ch.h>
+#include <pal.h>
 
 #include "lpc214x.h"
 #include "vic.h"
@@ -103,11 +104,11 @@ void hwinit0(void) {
   PINSEL0 = VAL_PINSEL0;
   PINSEL1 = VAL_PINSEL1;
   PINSEL2 = VAL_PINSEL2;
-  ioport_init_lld();
-  ioport_lpc214x_set_direction_lld(IOPORT_A, VAL_FIO0DIR);
-  ioport_write_lld(IOPORT_A, 0xFFFFFFFF);
-  ioport_lpc214x_set_direction_lld(IOPORT_B, VAL_FIO1DIR);
-  ioport_write_lld(IOPORT_B, 0xFFFFFFFF);
+  palInit();
+  pal_lld_lpc214x_set_direction(IOPORT_A, VAL_FIO0DIR);
+  palWritePort(IOPORT_A, 0xFFFFFFFF);
+  pal_lld_lpc214x_set_direction(IOPORT_B, VAL_FIO1DIR);
+  palWritePort(IOPORT_B, 0xFFFFFFFF);
 }
 
 /*

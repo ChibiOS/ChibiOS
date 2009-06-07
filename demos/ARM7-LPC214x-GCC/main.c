@@ -18,6 +18,7 @@
 */
 
 #include <ch.h>
+#include <pal.h>
 #include <test.h>
 
 #include "board.h"
@@ -26,6 +27,8 @@
 #include "buzzer.h"
 #include "evtimer.h"
 
+#define BOTH_BUTTONS (PAL_PORT_BIT(PA_BUTTON1) | PAL_PORT_BIT(PA_BUTTON2))
+
 /*
  * Red LEDs blinker thread, times are in milliseconds.
  */
@@ -33,13 +36,13 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    chPortClear(IOPORT_A, PA_LED2);
+    palClearPort(IOPORT_A, PAL_PORT_BIT(PA_LED2));
     chThdSleepMilliseconds(200);
-    chPortSet(IOPORT_A, PA_LED1 | PA_LED2);
+    palSetPort(IOPORT_A, PAL_PORT_BIT(PA_LED1) | PAL_PORT_BIT(PA_LED2));
     chThdSleepMilliseconds(800);
-    chPortClear(IOPORT_A, PA_LED1);
+    palClearPort(IOPORT_A, PAL_PORT_BIT(PA_LED1));
     chThdSleepMilliseconds(200);
-    chPortSet(IOPORT_A, PA_LED1 | PA_LED2);
+    palSetPort(IOPORT_A, PAL_PORT_BIT(PA_LED1) | PAL_PORT_BIT(PA_LED2));
     chThdSleepMilliseconds(800);
   }
   return 0;
@@ -52,9 +55,9 @@ static WORKING_AREA(waThread2, 128);
 static msg_t Thread2(void *arg) {
 
   while (TRUE) {
-    chPortClear(IOPORT_A, PA_LEDUSB);
+    palClearPad(IOPORT_A, PA_LEDUSB);
     chThdSleepMilliseconds(200);
-    chPortSet(IOPORT_A, PA_LEDUSB);
+    palSetPad(IOPORT_A, PA_LEDUSB);
     chThdSleepMilliseconds(300);
   }
   return 0;
@@ -67,16 +70,16 @@ static WORKING_AREA(waTestThread, 128);
  */
 static void TimerHandler(eventid_t id) {
 
-  if (!(chPortRead(IOPORT_A) & (PA_BUTTON1 | PA_BUTTON2))) {
+  if (!(palReadPort(IOPORT_A) & BOTH_BUTTONS)) {
     Thread *tp = chThdCreateStatic(waTestThread, sizeof(waTestThread),
                                    NORMALPRIO, TestThread, &COM1);
     chThdWait(tp);
     PlaySound(500, MS2ST(100));
   }
   else {
-    if (!(chPortRead(IOPORT_A) & PA_BUTTON1))
+    if (!palReadPad(IOPORT_A, PA_BUTTON1))
       PlaySound(1000, MS2ST(100));
-    if (!(chPortRead(IOPORT_A) & PA_BUTTON2)) {
+    if (!palReadPad(IOPORT_A, PA_BUTTON2)) {
       chFDDWrite(&COM1, (uint8_t *)"Hello World!\r\n", 14);
       PlaySound(2000, MS2ST(100));
     }
@@ -129,7 +132,7 @@ int main(int argc, char **argv) {
    * If a button is pressed during the reset then the blinking leds threads
    * are not started in order to make accurate benchmarks.
    */
-  if (chPortRead(IOPORT_A) && (PA_BUTTON1 | PA_BUTTON2) == (PA_BUTTON1 | PA_BUTTON2)) {
+  if ((palReadPort(IOPORT_A) & BOTH_BUTTONS) == BOTH_BUTTONS) {
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
     chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
   }

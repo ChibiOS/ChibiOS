@@ -24,10 +24,6 @@
 #include "lpc214x.h"
 #endif
 
-#ifndef _IOPORTS_LLD_H_
-#include "ioports.h"
-#endif
-
 #define BOARD_OLIMEX_LCP_P2148
 
 /*
@@ -69,17 +65,17 @@
 #define VAL_FIO0DIR 0xB0703C00
 #define VAL_FIO1DIR 0x00000000
 
-#define PA_LED1         IOPORT_BIT(10)
-#define PA_LED2         IOPORT_BIT(11)
-#define PA_BUZZ1        IOPORT_BIT(12)
-#define PA_BUZZ2        IOPORT_BIT(13)
-#define PA_BSL          IOPORT_BIT(14)
-#define PA_BUTTON1      IOPORT_BIT(15)
-#define PA_BUTTON2      IOPORT_BIT(16)
-#define PA_SSEL1        IOPORT_BIT(20)
-#define PA_LEDUSB       IOPORT_BIT(31)
+#define PA_LED1         10
+#define PA_LED2         11
+#define PA_BUZZ1        12
+#define PA_BUZZ2        13
+#define PA_BSL          14
+#define PA_BUTTON1      15
+#define PA_BUTTON2      16
+#define PA_SSEL1        20
+#define PA_LEDUSB       31
 
-#define PB_WP1          IOPORT_BIT(24)
-#define PB_CP1          IOPORT_BIT(25)
+#define PB_WP1          24
+#define PB_CP1          25
 
 #endif /* _BOARD_H_ */

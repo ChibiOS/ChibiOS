@@ -165,37 +165,6 @@
  */
 
 /**
- * @defgroup Memory Memory Management
- * Memory Management services.
- */
-
-/**
- * @defgroup Heap Heap
- * Heap Allocator related APIs.
- * <h2>Operation mode</h2>
- * The heap allocator implements a first-fit strategy and its APIs are
- * functionally equivalent to the usual @p malloc() and @p free(). The main
- * difference is that the heap APIs are thread safe.<br>
- * By enabling the @p CH_USE_MALLOC_HEAP option the heap manager will use the
- * runtime-provided @p malloc() and @p free() as backend for the heap APIs
- * instead of the system provided allocator.<br>
- * In order to use the heap APIs the @p CH_USE_HEAP option must be specified
- * in @p chconf.h.
- * @ingroup Memory
- */
-
-/**
- * @defgroup MemoryPools Memory Pools
- * Memory Pools related APIs.
- * <h2>Operation mode</h2>
- * The Memory Pools APIs allow to allocate/free fixed size objects in
- * <b>constant time</b> and reliably without memory fragmentation problems.<br>
- * In order to use the Time APIs the @p CH_USE_MEMPOOLS option must be
- * specified in @p chconf.h.
- * @ingroup Memory
- */
-
-/**
  * @defgroup Synchronization Synchronization
  * Synchronization services.
  */
@@ -342,6 +311,37 @@
  * free it on the fetching side. Another approach is to set a "done" flag into
  * the structure pointed by the message.
  * @ingroup Synchronization
+ */
+
+/**
+ * @defgroup Memory Memory Management
+ * Memory Management services.
+ */
+
+/**
+ * @defgroup Heap Heap
+ * Heap Allocator related APIs.
+ * <h2>Operation mode</h2>
+ * The heap allocator implements a first-fit strategy and its APIs are
+ * functionally equivalent to the usual @p malloc() and @p free(). The main
+ * difference is that the heap APIs are thread safe.<br>
+ * By enabling the @p CH_USE_MALLOC_HEAP option the heap manager will use the
+ * runtime-provided @p malloc() and @p free() as backend for the heap APIs
+ * instead of the system provided allocator.<br>
+ * In order to use the heap APIs the @p CH_USE_HEAP option must be specified
+ * in @p chconf.h.
+ * @ingroup Memory
+ */
+
+/**
+ * @defgroup MemoryPools Memory Pools
+ * Memory Pools related APIs.
+ * <h2>Operation mode</h2>
+ * The Memory Pools APIs allow to allocate/free fixed size objects in
+ * <b>constant time</b> and reliably without memory fragmentation problems.<br>
+ * In order to use the Time APIs the @p CH_USE_MEMPOOLS option must be
+ * specified in @p chconf.h.
+ * @ingroup Memory
  */
 
 /**

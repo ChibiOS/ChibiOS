@@ -18,13 +18,15 @@
 */
 
 #include <ch.hpp>
-#include <ioports.h>
+#include <pal.h>
 
 #include <evtimer.h>
 #include <test.h>
 
 #include <board.h>
 #include <lpc214x_serial.h>
+
+#define BOTH_BUTTONS (PAL_PORT_BIT(PA_BUTTON1) | PAL_PORT_BIT(PA_BUTTON2))
 
 using namespace chibios_rt;
 
@@ -48,9 +50,9 @@ typedef struct {
 // Flashing sequence for LED1.
 static const seqop_t LED1_sequence[] =
 {
-  {BITCLEAR, PA_LED1},
+  {BITCLEAR, PAL_PORT_BIT(PA_LED1)},
   {SLEEP,    200},
-  {BITSET,   PA_LED1},
+  {BITSET,   PAL_PORT_BIT(PA_LED1)},
   {SLEEP,    1800},
   {GOTO,     0}
 };
@@ -59,9 +61,9 @@ static const seqop_t LED1_sequence[] =
 static const seqop_t LED2_sequence[] =
 {
   {SLEEP,    1000},
-  {BITCLEAR, PA_LED2},
+  {BITCLEAR, PAL_PORT_BIT(PA_LED2)},
   {SLEEP,    200},
-  {BITSET,   PA_LED2},
+  {BITSET,   PAL_PORT_BIT(PA_LED2)},
   {SLEEP,    1800},
   {GOTO,     1}
 };
@@ -69,9 +71,9 @@ static const seqop_t LED2_sequence[] =
 // Flashing sequence for LED3.
 static const seqop_t LED3_sequence[] =
 {
-  {BITCLEAR, PA_LEDUSB},
+  {BITCLEAR, PAL_PORT_BIT(PA_LEDUSB)},
   {SLEEP,    200},
-  {BITSET,   PA_LEDUSB},
+  {BITSET,   PAL_PORT_BIT(PA_LEDUSB)},
   {SLEEP,    300},
   {GOTO,     0}
 };
@@ -98,10 +100,10 @@ protected:
       case STOP:
         return 0;
       case BITCLEAR:
-        chPortClear(IOPORT_A, curr->value);
+        palClearPort(IOPORT_A, curr->value);
         break;
       case BITSET:
-        chPortSet(IOPORT_A, curr->value);
+        palSetPort(IOPORT_A, curr->value);
         break;
       }
       curr++;
@@ -136,7 +138,7 @@ public:
  */
 static void TimerHandler(eventid_t id) {
 
-  if (!(chPortRead(IOPORT_A) & (PA_BUTTON1 | PA_BUTTON2))) { // Both buttons
+  if (!(palReadPort(IOPORT_A) & BOTH_BUTTONS)) { // Both buttons
     TesterThread tester;
     tester.Wait();
   };

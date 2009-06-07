@@ -25,7 +25,7 @@
  */
 
 #include <ch.h>
-#include <ioports.h>
+#include <pal.h>
 
 #include "lpc214x.h"
 #include "lpc214x_ssp.h"
@@ -44,7 +44,7 @@ void sspAcquireBus(void) {
 #if LPC214x_SSP_USE_MUTEX
   chSemWait(&me);
 #endif
-  chPortClear(IOPORT_A, (1 << 20));
+  palClearPad(IOPORT_A, 20);
 }
 
 /**
@@ -54,7 +54,7 @@ void sspAcquireBus(void) {
  */
 void sspReleaseBus(void) {
 
-  chPortSet(IOPORT_A, (1 << 20));
+  palClearPad(IOPORT_A, 20);
 #if LPC214x_SSP_USE_MUTEX
   chSemSignal(&me);
 #endif

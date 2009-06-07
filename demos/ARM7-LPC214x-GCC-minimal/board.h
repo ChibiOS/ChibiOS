@@ -73,8 +73,9 @@
 #define PA_BUTTON1      15
 #define PA_BUTTON2      16
 #define PA_SSEL1        20
-#define PA_WP1          24
-#define PA_CP1          25
 #define PA_LEDUSB       31
+
+#define PB_WP1          24
+#define PB_CP1          25
 
 #endif /* _BOARD_H_ */
