@@ -239,7 +239,6 @@ typedef struct {
  * @param[in] offset the group bit offset within the port
  * @param[in] bits the bits to be written. Values exceeding the group width
  *            are masked.
- * @return The group logical states.
  */
 #if !defined(pal_lld_writegroup) || defined(__DOXYGEN__)
 #define palWriteGroup(port, mask, offset, bits) {                       \

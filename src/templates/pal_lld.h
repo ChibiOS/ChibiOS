@@ -171,7 +171,6 @@ typedef uint32_t ioportid_t;
  * @param[in] offset the group bit offset within the port
  * @param[in] bits the bits to be written. Values exceeding the group width
  *            are masked.
- * @return The group logical states.
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.

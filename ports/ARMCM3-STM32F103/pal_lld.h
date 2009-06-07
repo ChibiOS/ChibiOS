@@ -132,7 +132,7 @@ typedef GPIO_TypeDef * ioportid_t;
 
 /**
  * @brief Reads the output latch.
- * @details This function is implemented by reading the GPIO oDR register, the
+ * @details This function is implemented by reading the GPIO ODR register, the
  *          implementation has no side effects.
  *
  * @param[in] port the port identifier
@@ -192,7 +192,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @param[in] offset the group bit offset within the port
  * @param[in] bits the bits to be written. Values exceeding the group width
  *            are masked.
- * @return The group logical states.
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
