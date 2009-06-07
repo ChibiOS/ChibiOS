@@ -18,14 +18,14 @@
 */
 
 /**
- * @file ports/ARMCM3-STM32F103/ioports_lld.h
+ * @file ports/ARMCM3-STM32F103/pal_lld.h
  * @brief STM32 GPIO low level driver
- * @addtogroup STM32F103_IOPORTS
+ * @addtogroup STM32F103_PAL
  * @{
  */
 
-#ifndef _IOPORTS_LLD_H_
-#define _IOPORTS_LLD_H_
+#ifndef _PAL_LLD_H_
+#define _PAL_LLD_H_
 
 /*
  * Tricks required to make the TRUE/FALSE declaration inside the library
@@ -46,7 +46,7 @@
 /**
  * @brief Width, in bits, of an I/O port.
  */
-#define IOPORTS_WIDTH 16
+#define PAL_IOPORTS_WIDTH 16
 
 /**
  * @brief Digital I/O port sized unsigned type.
@@ -111,25 +111,16 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief GPIO ports subsystem initialization.
  * @details Ports A-D enabled, AFIO enabled.
  */
-#define ioport_init_lld() {                                             \
+#define pal_lld_init() {                                                \
   RCC->APB2ENR |= RCC_APB2ENR_AFIOEN | RCC_APB2ENR_IOPAEN |             \
                   RCC_APB2ENR_IOPBEN | RCC_APB2ENR_IOPCEN |             \
                   RCC_APB2ENR_IOPDEN;                                   \
 }
 
 /**
- * @brief Writes a bits mask on a I/O port.
- *
- * @param[in] port the port identifier
- * @param[in] bits the bits to be written on the specified port
- *
- * @note This function is not meant to be invoked directly by the application
- *       code.
- */
-#define ioport_write_lld(port, bits) ((port)->ODR = (bits))
-
-/**
  * @brief Reads an I/O port.
+ * @details This function is implemented by reading the GPIO IDR register, the
+ *          implementation has no side effects.
  *
  * @param[in] port the port identifier
  * @return the port bits
@@ -137,10 +128,38 @@ typedef GPIO_TypeDef * ioportid_t;
  * @note This function is not meant to be invoked directly by the application
  *       code.
  */
-#define ioport_read_lld(port) ((port)->IDR)
+#define pal_lld_readport(port) ((port)->IDR)
+
+/**
+ * @brief Reads the output latch.
+ * @details This function is implemented by reading the GPIO oDR register, the
+ *          implementation has no side effects.
+ *
+ * @param[in] port the port identifier
+ * @return The latched logical states.
+ *
+ * @note This function is not meant to be invoked directly by the application
+ *       code.
+ */
+#define pal_lld_readlatch(port) ((port)->ODR)
+
+/**
+ * @brief Writes on a I/O port.
+ * @details This function is implemented by writing the GPIO ODR register, the
+ *          implementation has no side effects.
+ *
+ * @param[in] port the port identifier
+ * @param[in] bits the bits to be written on the specified port
+ *
+ * @note This function is not meant to be invoked directly by the application
+ *       code.
+ */
+#define pal_lld_writeport(port, bits) ((port)->ODR = (bits))
 
 /**
  * @brief Sets a bits mask on a I/O port.
+ * @details This function is implemented by writing the GPIO BSRR register, the
+ *          implementation has no side effects.
  *
  * @param[in] port the port identifier
  * @param[in] bits the bits to be ORed on the specified port
@@ -148,10 +167,12 @@ typedef GPIO_TypeDef * ioportid_t;
  * @note This function is not meant to be invoked directly by the application
  *       code.
  */
-#define ioport_set_lld(port, bits) ((port)->BSRR = (bits))
+#define pal_lld_setport(port, bits) ((port)->BSRR = (bits))
 
 /**
  * @brief Clears a bits mask on a I/O port.
+ * @details This function is implemented by writing the GPIO BRR register, the
+ *          implementation has no side effects.
  *
  * @param[in] port the port identifier
  * @param[in] bits the bits to be cleared on the specified port
@@ -159,58 +180,54 @@ typedef GPIO_TypeDef * ioportid_t;
  * @note This function is not meant to be invoked directly by the application
  *       code.
  */
-#define ioport_clear_lld(port, bits) ((port)->BRR = (bits))
+#define pal_lld_clearport(port, bits) ((port)->BRR = (bits))
 
 /**
- * @brief Toggles a bits mask on a I/O port.
+ * @brief Writes a group of bits.
+ * @details This function is implemented by writing the GPIO BSRR register, the
+ *          implementation has no side effects.
  *
  * @param[in] port the port identifier
- * @param[in] bits the bits to be XORed on the specified port
+ * @param[in] mask the group mask
+ * @param[in] offset the group bit offset within the port
+ * @param[in] bits the bits to be written. Values exceeding the group width
+ *            are masked.
+ * @return The group logical states.
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
  */
-#define ioport_toggle_lld(port, bits) ((port)->ODR ^= (bits))
-
-/**
- * @brief Writes a value on an I/O bus.
- *
- * @param[in] bus the I/O bus, pointer to a @p IOBus structure
- * @param[in] bits the bits to be written on the I/O bus. Values exceeding
- *            the bus width are masked so most significant bits are lost.
- *
- * @note This function is not meant to be invoked directly by the application
- *       code.
- */
-#define ioport_writebus_lld(bus, bits) {                                \
-  (bus)->bus_portid->BSRR = ((((~(bits)) << (bus)->bus_offset) &        \
-                             (bus)->bus_mask) << 16) |                  \
-                            (((bits) << (bus)->bus_offset) &            \
-                             (bus)->bus_mask);                          \
+#define pal_lld_writegroup(port, mask, offset, bits) {                  \
+  (bus)->bus_portid->BSRR = ((~(bits) & (mask)) << (16 + (offset))) |   \
+                            ((bits) & (mask)) << (offset);              \
 }
 
 /**
- * @brief Reads a value from an I/O bus.
+ * @brief Writes a logical state on an output pad.
  *
- * @param[in] bus the I/O bus, pointer to a @p IOBus structure
- * @return the bus bits
+ * @param[in] port the port identifier
+ * @param[in] pad the pad number within the port
+ * @param[out] value the logical value, the value must be @p 0 or @p 1
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
  */
-#define ioport_readbus_lld(bus) \
-  (((bus)->bus_portid->IDR & (bus)->bus_mask) >> (bus)->bus_offset)
+#define pal_lld_writepad(port, pad, value) {                            \
+  (bus)->bus_portid->BSRR = (((~(value) & 1) << ((pad) + 16)) |         \
+                            ((((value) & 1) << (pad)));                 \
+}
 
 /**
  * @brief GPIO port setup.
  * @details This function initializes a GPIO port, note that this functionality
- *          is STM32 specific and non portable.
+ *          is STM32 specific and non portable. It does not have a
+ *          corresponding PAL API.
  */
-#define ioport_stm32_setup_lld(port, crh, crl) {                        \
+#define pal_lld_stm32_setup(port, crh, crl) {                           \
   (port)->CRH = (crh);                                                  \
   (port)->CRL = (crl);                                                  \
 }
 
-#endif /* _IOPORTS_LLD_H_ */
+#endif /* _PAL_LLD_H_ */
 
 /** @} */

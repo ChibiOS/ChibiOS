@@ -29,12 +29,12 @@
  */
 
 /**
- * @defgroup STM32F103_IOPORTS I/O Ports Support
+ * @defgroup STM32F103_PAL I/O Ports Support
  * @brief I/O Ports peripherals support.
  * @details This module supports the STM32F103 GPIO controller. The STM32
  * controller is very flexible and allows to implement all the recommended
  * behaviors for the I/O port driver. It supports the following features (see
- * @ref IOPorts):
+ * @ref PAL):
  * - 16 bits wide ports.
  * - Atomic set/reset functions.
  * - Atomic set+reset function (atomic bus operations).

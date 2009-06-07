@@ -355,26 +355,25 @@
  */
 
 /**
- * @defgroup IOPorts Abstract I/O Ports
- * @brief Abstract digital I/O ports.
+ * @defgroup PAL I/O Ports Abstraction Layer (PAL)
+ * @brief I/O Ports Abstraction Layer
  * @details This module defines an abstract interface for digital I/O ports.
  * Note that I/O ports functions are just a set of macros. The macros
- * have default software implementation that can be redefined by an
- * @ref IOPortsLLD if the target hardware supports special features like, as
- * example, atomic bit set/reset/masking. Please refer to the documentation
- * of the low level drivers for each port.<br>
- * This abstraction system has the advantage to make the access to the I/O
- * ports platform independent and still be optimized for the specific
- * architecture.<br>
+ * have default software implementations that can be redefined in a
+ * @ref PAL_LLD if the target hardware supports special features like, as
+ * example, atomic bit set/reset/masking. Please refer to the ports specific
+ * documentation for details.<br>
+ * The @ref PAL has the advantage to make the access to the I/O ports platform
+ * independent and still be optimized for the specific architectures.<br>
  * Currently the I/O ports interface does not handle physical port programming
  * like direction, pull up/down resistors etc. The interface only allows input
  * and output operations but this may change in future releases.<br>
- * Note that the @ref IOPortsLLD may also offer non standard macro and
- * functions in order to support specific features but, of course, the use of
- * such interfaces would not be portable.
+ * Note that the @ref PAL_LLD may also offer non standard macro and functions
+ * in order to support specific features but, of course, the use of such
+ * interfaces would not be portable.
  *
  * <h2>Implementation Rules</h2>
- * In implementing an @ref IOPortsLLD there are some rules/behaviors that
+ * In implementing an @ref PAL_LLD there are some rules/behaviors that
  * should be respected.
  *
  * <h3>Writing on input pads</h3>
@@ -406,7 +405,7 @@
  * The behavior is not specified.
  *
  * <h2>Usage</h2>
- * The use of I/O ports requires the inclusion of the header file @p ioports.h,
+ * The use of I/O ports requires the inclusion of the header file @p pal.h,
  * this file is not automatically included @p ch.h like the other header
  * files.
  *
@@ -414,12 +413,12 @@
  */
 
 /**
- * @defgroup IOPortsLLD I/O Ports Low Level Driver
- * @brief Digital I/O ports low level driver template.
+ * @defgroup PAL_LLD PAL Low Level Driver
+ * @brief @ref PAL low level driver template.
  * @details This file is a template for an I/O port low level driver. This
- * file implements the prysical layer of an I/O port driver.
+ * file implements the physical layer of an I/O port driver.
  *
- * @ingroup IOPorts
+ * @ingroup PAL
  */
 
 /**

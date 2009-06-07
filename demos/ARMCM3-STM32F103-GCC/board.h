@@ -33,15 +33,6 @@
 #endif
 
 /*
- * This module requires the port driver.
- */
-#ifndef _IOPORTS_LLD_H_
-#include "ioports.h"
-#endif
-
-#define BOARD_OLIMEX_STM32_P103
-
-/*
  * Uncomment this if you want a 48MHz system clock, else it will be 72MHz.
  */
 //#define SYSCLK_48
@@ -130,13 +121,13 @@
 /*
  * IO pins assignments.
  */
-#define GPIOA_BUTTON    IOPORT_BIT(0)
+#define GPIOA_BUTTON    0
 
-#define GPIOC_MMCWP     IOPORT_BIT(6)
-#define GPIOC_MMCCP     IOPORT_BIT(7)
-#define GPIOC_CANCNTL   IOPORT_BIT(10)
-#define GPIOC_DISC      IOPORT_BIT(11)
-#define GPIOC_LED       IOPORT_BIT(12)
+#define GPIOC_MMCWP     6
+#define GPIOC_MMCCP     7
+#define GPIOC_CANCNTL   10
+#define GPIOC_DISC      11
+#define GPIOC_LED       12
 
 /*
  * All inputs with pullups unless otherwise specified.

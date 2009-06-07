@@ -18,6 +18,7 @@
 */
 
 #include <ch.h>
+#include <pal.h>
 #include <nvic.h>
 
 #include "board.h"
@@ -59,23 +60,21 @@ void hwinit0(void) {
     ;
 
   /*
-   * I/O ports initialization as specified in board.h. Note that being this
-   * a low level initialization routine it is OK to invoke directly the
-   * low level port functions.
+   * I/O ports initialization as specified in board.h.
    */
-  ioport_init_lld();
+  palInit();
 
-  ioport_stm32_setup_lld(IOPORT_A, VAL_GPIOACRH, VAL_GPIOACRL);
-  ioport_write_lld(IOPORT_A, VAL_GPIOAODR);
+  pal_lld_stm32_setup(IOPORT_A, VAL_GPIOACRH, VAL_GPIOACRL);
+  palWritePort(IOPORT_A, VAL_GPIOAODR);
 
-  ioport_stm32_setup_lld(IOPORT_B, VAL_GPIOBCRH, VAL_GPIOBCRL);
-  ioport_write_lld(IOPORT_B, VAL_GPIOBODR);
+  pal_lld_stm32_setup(IOPORT_B, VAL_GPIOBCRH, VAL_GPIOBCRL);
+  palWritePort(IOPORT_B, VAL_GPIOBODR);
 
-  ioport_stm32_setup_lld(IOPORT_C, VAL_GPIOCCRH, VAL_GPIOCCRL);
-  ioport_write_lld(IOPORT_C, VAL_GPIOCODR);
+  pal_lld_stm32_setup(IOPORT_C, VAL_GPIOCCRH, VAL_GPIOCCRL);
+  palWritePort(IOPORT_C, VAL_GPIOCODR);
 
-  ioport_stm32_setup_lld(IOPORT_D, VAL_GPIODCRH, VAL_GPIODCRL);
-  ioport_write_lld(IOPORT_D, VAL_GPIODODR);
+  pal_lld_stm32_setup(IOPORT_D, VAL_GPIODCRH, VAL_GPIODCRL);
+  palWritePort(IOPORT_D, VAL_GPIODODR);
 }
 
 /*

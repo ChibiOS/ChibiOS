@@ -18,6 +18,7 @@
 */
 
 #include <ch.h>
+#include <pal.h>
 #include <test.h>
 
 #include "board.h"
@@ -30,9 +31,9 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    chPortClear(IOPORT_C, GPIOC_LED);
+    palClearPad(IOPORT_C, GPIOC_LED);
     chThdSleepMilliseconds(500);
-    chPortSet(IOPORT_C, GPIOC_LED);
+    palSetPad(IOPORT_C, GPIOC_LED);
     chThdSleepMilliseconds(500);
   }
   return 0;
@@ -54,7 +55,7 @@ int main(int argc, char **argv) {
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
-    if (chPortRead(IOPORT_A) & GPIOA_BUTTON)
+    if (palReadPad(IOPORT_A, GPIOA_BUTTON))
       TestThread(&COM2);
     chThdSleepMilliseconds(500);
   }
