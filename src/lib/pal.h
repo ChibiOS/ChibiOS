@@ -55,7 +55,7 @@
  * @brief Bits group mask helper.
  * @details This macro calculates the mask of a bits group.
  *
- * @param[in] the group width
+ * @param[in] width the group width
  * @return The group mask.
  */
 #define PAL_GROUP_MASK(width) ((ioportmask_t)(1 << (width)) - 1)
