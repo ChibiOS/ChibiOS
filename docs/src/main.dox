@@ -358,7 +358,7 @@
  * @defgroup PAL I/O Ports Abstraction Layer (PAL)
  * @brief I/O Ports Abstraction Layer
  * @details This module defines an abstract interface for digital I/O ports.
- * Note that I/O ports functions are just a set of macros. The macros
+ * Note that most I/O ports functions are just macros. The macros
  * have default software implementations that can be redefined in a
  * @ref PAL_LLD if the target hardware supports special features like, as
  * example, atomic bit set/reset/masking. Please refer to the ports specific
