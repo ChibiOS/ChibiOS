@@ -24,6 +24,9 @@
  * @{
  */
 
+#include <ch.h>
+#include <pal.h>
+
 /**
  * @brief Read from an I/O bus.
  *
@@ -42,7 +45,7 @@ ioportmask_t palReadBus(IOBus *bus) {
   chDbgCheck((bus != NULL) &&
              (bus->bus_offset > PAL_IOPORTS_WIDTH), "palReadBus");
 
-  return palReadGroup(bus->bus_port, bus->bus_mask, bus->bus_offset);
+  return palReadGroup(bus->bus_portid, bus->bus_mask, bus->bus_offset);
 }
 
 /**
@@ -64,7 +67,7 @@ void palWriteBus(IOBus *bus, ioportmask_t bits) {
   chDbgCheck((bus != NULL) &&
              (bus->bus_offset > PAL_IOPORTS_WIDTH), "palWriteBus");
 
-  palWriteBus(bus->bus_port, bus->bus_mask, bus->bus_offset, bits);
+  palWriteGroup(bus->bus_portid, bus->bus_mask, bus->bus_offset, bits);
 }
 
 /** @} */

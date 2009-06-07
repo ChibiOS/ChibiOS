@@ -61,6 +61,30 @@
 #define PAL_GROUP_MASK(width) ((ioportmask_t)(1 << (width)) - 1)
 
 /**
+ * @brief Data part of a static I/O bus initializer.
+ * @details This macro should be used when statically initializing an I/O bus
+ *          that is part of a bigger structure.
+ *
+ * @param name the name of the IOBus variable
+ * @param port the I/O port descriptor
+ * @param width the bus width in bits
+ * @param offset the bus bit offset within the port
+ */
+#define _IOBUS_DATA(name, port, width, offset) \
+  {port, PAL_GROUP_MASK(width), offset}
+
+/**
+ * @brief Static I/O bus initializer.
+ *
+ * @param name the name of the IOBus variable
+ * @param port the I/O port descriptor
+ * @param width the bus width in bits
+ * @param offset the bus bit offset within the port
+ */
+#define IOBUS_DECL(name, port, width, offset)                           \
+  IOBus name = _IOBUS_DATA(name, port, width, offset)
+
+/**
  * @brief I/O bus descriptor.
  * @details This structure describes a group of contiguous digital I/O lines
  *          that have to be handled as bus.
