@@ -26,10 +26,9 @@
 
 /**
  * @file evtimer.c
+ * @brief Events Generator Timer code.
+ * @addtogroup event_timer
  * @{
- * Event Timer, this timer generates an event at regular intervals. The
- * listening threads can use the event to perform time related activities.
- * Multiple threads can listen to the same timer.
  */
 
 #include <ch.h>
@@ -44,9 +43,10 @@ static void tmrcb(void *p) {
 }
 
 /**
- * Starts the timer, if the timer was already running then the function has
- * no effect.
- * @param etp pointer to an initialized \p EvTimer structure.
+ * @brief Starts the timer
+ * @details If the timer was already running then the function has no effect.
+ *
+ * @param etp pointer to an initialized @p EvTimer structure.
  */
 void evtStart(EvTimer *etp) {
 
@@ -59,9 +59,10 @@ void evtStart(EvTimer *etp) {
 }
 
 /**
- * Stops the timer, if the timer was already stopped then the function has
- * no effect.
- * @param etp pointer to an initialized \p EvTimer structure.
+ * @brief Stops the timer.
+ * @details If the timer was already stopped then the function has no effect.
+ *
+ * @param etp pointer to an initialized @p EvTimer structure.
  */
 void evtStop(EvTimer *etp) {
 

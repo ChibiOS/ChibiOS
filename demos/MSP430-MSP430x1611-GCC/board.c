@@ -89,12 +89,16 @@ void hwinit(void) {
   /*
    * Other subsystems.
    */
-  InitSerial();
+  serial_init();
 }
 
-interrupt(TIMERA0_VECTOR) tmr0irq(void) {
+CH_IRQ_HANDLER(TIMERA0_VECTOR) {
 
-  chSysIRQEnterI();
+  CH_IRQ_PROLOGUE();
+
+  chSysLockFromIsr();
   chSysTimerHandlerI();
-  chSysIRQExitI();
+  chSysUnlockFromIsr();
+
+  CH_IRQ_EPILOGUE();
 }

@@ -28,7 +28,7 @@
 
 #include "test.h"
 
-#ifdef CH_USE_EVENTS
+#if CH_USE_EVENTS
 
 #define ALLOWED_DELAY MS2ST(5)
 
@@ -42,9 +42,6 @@ static char *evt1_gettest(void) {
 static void evt1_setup(void) {
 
   chEvtClear(ALL_EVENTS);
-}
-
-static void evt1_teardown(void) {
 }
 
 static msg_t thread(void *p) {
@@ -65,20 +62,20 @@ static void evt1_execute(void) {
    */
   chEvtPend(5);
   m = chEvtWaitOne(ALL_EVENTS);
-  test_assert(m == 1, "chEvtWaitOne() error");
+  test_assert(m == 1, "#1"); /* Single bit error.*/
   m = chEvtWaitOne(ALL_EVENTS);
-  test_assert(m == 4, "chEvtWaitOne() error");
-  m = chEvtClear(0);
-  test_assert(m == 0, "stuck event");
+  test_assert(m == 4, "#2"); /* Single bit error.*/
+  m = chEvtClear(ALL_EVENTS);
+  test_assert(m == 0, "#3"); /* Stuck event.*/
 
   /*
    * Test on chEvtWaitAny().
    */
   chEvtPend(5);
   m = chEvtWaitAny(ALL_EVENTS);
-  test_assert(m == 5, "chEvtWaitAny() error");
-  m = chEvtClear(0);
-  test_assert(m == 0, "stuck event");
+  test_assert(m == 5, "#4"); /* Unexpected pending.*/
+  m = chEvtClear(ALL_EVENTS);
+  test_assert(m == 0, "#5"); /* Stuck event.*/
 
   /*
    * Test on chEvtWaitAll(), chEvtRegisterMask() and chEvtUnregister().
@@ -87,25 +84,35 @@ static void evt1_execute(void) {
   chEvtInit(&es2);
   chEvtRegisterMask(&es1, &el1, 1);
   chEvtRegisterMask(&es2, &el2, 4);
-  target_time = chSysGetTime() + MS2ST(50);
+  target_time = chTimeNow() + MS2ST(50);
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread, "A");
   m = chEvtWaitAll(5);
   test_assert_time_window(target_time, target_time + ALLOWED_DELAY);
-  m = chEvtClear(0);
-  test_assert(m == 0, "stuck event");
+  m = chEvtClear(ALL_EVENTS);
+  test_assert(m == 0, "#6"); /* Stuck event.*/
 
   test_wait_threads();
   chEvtUnregister(&es1, &el1);
   chEvtUnregister(&es2, &el2);
-  test_assert(!chEvtIsListening(&es1), "stuck listener");
-  test_assert(!chEvtIsListening(&es2), "stuck listener");
+  test_assert(!chEvtIsListening(&es1), "#7"); /* Stuck listener.*/
+  test_assert(!chEvtIsListening(&es2), "#8"); /* Stuck listener.*/
 }
 
 const struct testcase testevt1 = {
   evt1_gettest,
   evt1_setup,
-  evt1_teardown,
+  NULL,
   evt1_execute
 };
 
 #endif /* CH_USE_EVENTS */
+
+/*
+ * Test sequence for events pattern.
+ */
+const struct testcase * const patternevt[] = {
+#if CH_USE_EVENTS
+  &testevt1,
+#endif
+  NULL
+};

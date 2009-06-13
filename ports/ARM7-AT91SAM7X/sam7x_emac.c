@@ -24,6 +24,13 @@
     for full details of how and when the exception can be applied.
 */
 
+/**
+ * @file ports/ARM7-AT91SAM7X/sam7x_emac.c
+ * @brief AT91SAM7X EMAC driver code.
+ * @addtogroup AT91SAM7X_EMAC
+ * @{
+ */
+
 #include <string.h>
 
 #include <ch.h>
@@ -33,13 +40,10 @@
 #include "mii.h"
 #include "at91lib/aic.h"
 
-#define EMAC_RECEIVE_BUFFERS            24
-#define EMAC_RECEIVE_BUFFERS_SIZE       128
-#define EMAC_TRANSMIT_BUFFERS           2
-#define EMAC_TRANSMIT_BUFFERS_SIZE      1518
-
 EventSource EMACFrameTransmitted;       /* A frame was transmitted.     */
 EventSource EMACFrameReceived;          /* A frame was received.        */
+
+#ifndef __DOXYGEN__
 //static int received;                    /* Buffered frames counter.     */
 static bool_t link_up;                  /* Last from EMACGetLinkStatus()*/
 
@@ -52,8 +56,8 @@ static BufDescriptorEntry *rxptr;
 static BufDescriptorEntry tent[EMAC_TRANSMIT_BUFFERS] __attribute__((aligned(8)));
 static uint8_t tbuffers[EMAC_TRANSMIT_BUFFERS * EMAC_TRANSMIT_BUFFERS_SIZE] __attribute__((aligned(8)));
 static BufDescriptorEntry *txptr;
+#endif
 
-#define PHY_ADDRESS 1
 #define AT91C_PB15_ERXDV AT91C_PB15_ERXDV_ECRSDV
 #define EMAC_PIN_MASK (AT91C_PB0_ETXCK_EREFCK | \
                        AT91C_PB1_ETXEN  | AT91C_PB2_ETX0   | \
@@ -113,31 +117,37 @@ static void ServeInterrupt(void) {
   if ((isr & AT91C_EMAC_RCOMP) || (rsr & RSR_BITS)) {
     if (rsr & AT91C_EMAC_REC) {
 //      received++;
+      chSysLockFromIsr();
       chEvtBroadcastI(&EMACFrameReceived);
+      chSysUnlockFromIsr();
     }
     AT91C_BASE_EMAC->EMAC_RSR = RSR_BITS;
   }
 
   if ((isr & AT91C_EMAC_TCOMP) || (tsr & TSR_BITS)) {
-    if (tsr & AT91C_EMAC_COMP)
+    if (tsr & AT91C_EMAC_COMP) {
+      chSysLockFromIsr();
       chEvtBroadcastI(&EMACFrameTransmitted);
+      chSysUnlockFromIsr();
+    }
     AT91C_BASE_EMAC->EMAC_TSR = TSR_BITS;
   }
   AT91C_BASE_AIC->AIC_EOICR = 0;
 }
 
-__attribute__((naked))
-void EMACIrqHandler(void) {
+CH_IRQ_HANDLER(EMACIrqHandler) {
 
-  chSysIRQEnterI();
+  CH_IRQ_PROLOGUE();
+
   ServeInterrupt();
-  chSysIRQExitI();
+
+  CH_IRQ_EPILOGUE();
 }
 
 /*
  * EMAC subsystem initialization.
  */
-void InitEMAC(int prio) {
+void emac_init(int prio) {
   int i;
 
   /*
@@ -315,7 +325,9 @@ BufDescriptorEntry *EMACGetTransmitBuffer(void) {
  */
 void EMACTransmit(BufDescriptorEntry *cptr, size_t size) {
 
-  chDbgAssert(size <= EMAC_TRANSMIT_BUFFERS_SIZE, "sam7x_emac.c, EMACTransmit");
+  chDbgAssert(size <= EMAC_TRANSMIT_BUFFERS_SIZE,
+              "EMACTransmit(), #1",
+              "unexpected size");
 
   chSysLock();
   if (cptr < &tent[EMAC_TRANSMIT_BUFFERS - 1])
@@ -394,7 +406,7 @@ restart:
     }
 
     if (!overflow) {
-      chDbgAssert(segsize <= 128, "sam7x_emac.c, EMACReceive()")
+      chDbgAssert(segsize <= 128, "EMACReceive(), #1", "");
       memcpy(p, (void *)(rxptr->w1 & W1_R_ADDRESS_MASK), segsize);
       p += segsize;
       size += segsize;
@@ -409,3 +421,5 @@ restart:
   *sizep = size;
   return found && !overflow;
 }
+
+/** @} */

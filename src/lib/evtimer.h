@@ -26,16 +26,16 @@
 
 /**
  * @file evtimer.h
+ * @brief Events Generator Timer structures and macros.
+ * @addtogroup event_timer
  * @{
- * Event Timer definitions.
- * @see evtimer.c
  */
 
 #ifndef _EVTIMER_H_
 #define _EVTIMER_H_
 
 /**
- * Event timer structure.
+ * @brief Event timer structure.
  */
 typedef struct {
   VirtualTimer  et_vt;
@@ -53,7 +53,8 @@ extern "C" {
 #endif
 
 /**
- * Initializes an \p EvTimer structure.
+ * @brief Initializes an @p EvTimer structure.
+ *
  * @param etp the EvTimer structure to be initialized
  * @param time the interval in system ticks
  */

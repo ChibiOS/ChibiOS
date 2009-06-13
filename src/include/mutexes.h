@@ -25,6 +25,8 @@
 */
 
 /**
+ * @file mutexes.h
+ * @brief Mutexes macros and structures.
  * @addtogroup Mutexes
  * @{
  */
@@ -32,18 +34,18 @@
 #ifndef _MUTEXES_H_
 #define _MUTEXES_H_
 
-#ifdef CH_USE_MUTEXES
+#if CH_USE_MUTEXES
 
 /**
- * Mutex structure.
+ * @brief Mutex structure.
  */
 typedef struct Mutex {
-  /** Queue of the threads sleeping on this Mutex.*/
-  ThreadsQueue          m_queue;
-  /** Owner \p Thread pointer or \p NULL.*/
-  Thread                *m_owner;
-  /** Next \p Mutex into an owner-list, \p NULL if none.*/
-  struct Mutex          *m_next;
+  ThreadsQueue          m_queue;        /**< Queue of the threads sleeping on
+                                             this Mutex.*/
+  Thread                *m_owner;       /**< Owner @p Thread pointer or
+                                             @p NULL.*/
+  struct Mutex          *m_next;        /**< Next @p Mutex into an owner-list
+                                             or @p NULL.*/
 } Mutex;
 
 #ifdef __cplusplus
@@ -62,7 +64,7 @@ extern "C" {
 #endif
 
 /**
- * Returns \p TRUE if the mutex queue contains at least a waiting thread.
+ * Returns @p TRUE if the mutex queue contains at least a waiting thread.
  */
 #define chMtxQueueNotEmptyS(mp) notempty(&(mp)->m_queue)
 

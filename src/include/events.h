@@ -25,6 +25,8 @@
 */
 
 /**
+ * @file events.h
+ * @brief Events macros and structures.
  * @addtogroup Events
  * @{
  */
@@ -32,7 +34,7 @@
 #ifndef _EVENTS_H_
 #define _EVENTS_H_
 
-#ifdef CH_USE_EVENTS
+#if CH_USE_EVENTS
 
 /** All events allowed mask.*/
 #define ALL_EVENTS -1
@@ -40,23 +42,23 @@
 typedef struct EventListener EventListener;
 
 /**
- * Event Listener structure.
+ * @brief Event Listener structure.
  */
 struct EventListener {
-  /** Next Event Listener registered on the Event Source.*/
-  EventListener         *el_next;
-  /** Thread interested in the Event Source.*/
-  Thread                *el_listener;
-  /** Event flags mask associated by the thread to the Event Source.*/
-  eventmask_t           el_mask;
+  EventListener         *el_next;       /**< Next Event Listener registered on
+                                             the Event Source.*/
+  Thread                *el_listener;   /**< Thread interested in the Event
+                                             Source.*/
+  eventmask_t           el_mask;        /**< Event flags mask associated by the
+                                             thread to the Event Source.*/
 };
 
 /**
- * Event Source structure.
+ * @brief Event Source structure.
  */
 typedef struct EventSource {
-  /** First Event Listener registered on the Event Source.*/
-  EventListener         *es_next;
+  EventListener         *es_next;       /**< First Event Listener registered on
+                                             the Event Source.*/
 } EventSource;
 
 /** Returns the event mask from the event identifier.*/
@@ -64,16 +66,16 @@ typedef struct EventSource {
 
 /**
  * Initializes an Event Source.
- * @param esp pointer to the \p EventSource structure
+ * @param esp pointer to the @p EventSource structure
  * @note Can be called with interrupts disabled or enabled.
  */
 #define chEvtInit(esp) \
         ((esp)->es_next = (EventListener *)(void *)(esp))
 
 /**
- * Verifies if there is at least one \p EventListener registered on the
- * \p EventSource.
- * @param esp pointer to the \p EventSource structure
+ * Verifies if there is at least one @p EventListener registered on the
+ * @p EventSource.
+ * @param esp pointer to the @p EventSource structure
  * @note Can be called with interrupts disabled or enabled.
  */
 #define chEvtIsListening(esp) \
@@ -89,15 +91,17 @@ extern "C" {
   void chEvtUnregister(EventSource *esp, EventListener *elp);
   eventmask_t chEvtClear(eventmask_t mask);
   eventmask_t chEvtPend(eventmask_t mask);
+  void chEvtSignal(Thread *tp, eventmask_t mask);
+  void chEvtSignalI(Thread *tp, eventmask_t mask);
   void chEvtBroadcast(EventSource *esp);
   void chEvtBroadcastI(EventSource *esp);
   void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask);
-#if defined(CH_OPTIMIZE_SPEED) || !defined(CH_USE_EVENTS_TIMEOUT)
+#if CH_OPTIMIZE_SPEED || !CH_USE_EVENTS_TIMEOUT
   eventmask_t chEvtWaitOne(eventmask_t ewmask);
   eventmask_t chEvtWaitAny(eventmask_t ewmask);
   eventmask_t chEvtWaitAll(eventmask_t ewmask);
 #endif
-#ifdef CH_USE_EVENTS_TIMEOUT
+#if CH_USE_EVENTS_TIMEOUT
   eventmask_t chEvtWaitOneTimeout(eventmask_t ewmask, systime_t time);
   eventmask_t chEvtWaitAnyTimeout(eventmask_t ewmask, systime_t time);
   eventmask_t chEvtWaitAllTimeout(eventmask_t ewmask, systime_t time);
@@ -108,18 +112,18 @@ extern "C" {
 
 /**
  * Registers an Event Listener on an Event Source.
- * @param esp pointer to the  \p EventSource structure
- * @param elp pointer to the \p EventListener structure
+ * @param esp pointer to the  @p EventSource structure
+ * @param elp pointer to the @p EventListener structure
  * @param eid numeric identifier assigned to the Event Listener. The identifier
  *            is used as index for the event callback function.
  *            The value must range between zero and the size, in bit, of the
- *            \p eventid_t type minus one.
+ *            @p eventid_t type minus one.
  * @note Multiple Event Listeners can use the same event identifier, the
  *       listener will share the callback function.
  */
 #define chEvtRegister(esp, elp, eid) chEvtRegisterMask(esp, elp, EVENT_MASK(eid))
 
-#if !defined(CH_OPTIMIZE_SPEED) && defined(CH_USE_EVENTS_TIMEOUT)
+#if !CH_OPTIMIZE_SPEED && CH_USE_EVENTS_TIMEOUT
 #define chEvtWaitOne(ewmask) chEvtWaitOneTimeout(ewmask, TIME_INFINITE)
 #define chEvtWaitAny(ewmask) chEvtWaitAnyTimeout(ewmask, TIME_INFINITE)
 #define chEvtWaitAll(ewmask) chEvtWaitAllTimeout(ewmask, TIME_INFINITE)

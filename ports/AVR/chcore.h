@@ -24,21 +24,41 @@
     for full details of how and when the exception can be applied.
 */
 
+/**
+ * @file ports/AVR/chcore.h
+ * @brief AVR architecture port macros and structures.
+ * @addtogroup AVR_CORE
+ * @{
+ */
+
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
-/*
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+/**
+ * If enabled allows the idle thread to enter a low power mode.
+ */
+#ifndef ENABLE_WFI_IDLE
+#define ENABLE_WFI_IDLE 0
+#endif
+
+/**
  * Macro defining the AVR architecture.
  */
 #define CH_ARCHITECTURE_AVR
 
-/*
+/**
  * 8 bit stack alignment.
  */
 typedef uint8_t stkalign_t;
 
-/*
+/** @cond never */
+/**
  * Interrupt saved context.
+ * @note The field @p _next is not part of the context, it represents the
+ *       offset of the structure relative to the stack pointer.
  */
 struct extctx {
   uint8_t       _next;
@@ -59,9 +79,13 @@ struct extctx {
   uint8_t       r0;
   uint16_t      pc;
 };
+/** @endcond */
 
-/*
+/** @cond never */
+/**
  * System saved context.
+ * @note The field @p _next is not part of the context, it represents the
+ *       offset of the structure relative to the stack pointer.
  */
 struct intctx {
   uint8_t       _next;
@@ -88,21 +112,26 @@ struct intctx {
   uint8_t       pcl;
   uint8_t       pch;
 };
+/** @endcond */
 
-/*
- * Port dependent part of the Thread structure, you may add fields in
- * this structure.
+/** @cond never */
+/**
+ * In the AVR port this structure just holds a pointer to the @p intctx
+ * structure representing the stack pointer at the time of the context switch.
  */
-typedef struct {
+struct context {
   struct intctx *sp;
-} Context;
+};
+/** @endcond */
 
 /**
- * Platform dependent part of the \p chThdCreate() API.
+ * Platform dependent part of the @p chThdInit() API.
+ * This code usually setup the context switching frame represented by a
+ * @p intctx structure.
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
-  tp->p_ctx.sp = (struct intctx*)((uint8_t *)workspace + wsize - 1 -    \
-                                  (sizeof(struct intctx) - 1));         \
+  tp->p_ctx.sp = (struct intctx*)((uint8_t *)workspace + wsize  -       \
+                                  sizeof(struct intctx));               \
   tp->p_ctx.sp->r2  = (int)pf;                                          \
   tp->p_ctx.sp->r3  = (int)pf >> 8;                                     \
   tp->p_ctx.sp->r4  = (int)arg;                                         \
@@ -111,48 +140,130 @@ typedef struct {
   tp->p_ctx.sp->pch = (int)threadstart;                                 \
 }
 
+/**
+ * The default idle thread implementation requires no extra stack space in
+ * this port.
+ */
+#ifndef IDLE_THREAD_STACK_SIZE
+#define IDLE_THREAD_STACK_SIZE 8
+#endif
+
+/**
+ * Per-thread stack overhead for interrupts servicing, it is used in the
+ * calculation of the correct working area size. In this port the default is
+ * 32 bytes per thread.
+ */
 #ifndef INT_REQUIRED_STACK
 #define INT_REQUIRED_STACK 32
 #endif
 
+/**
+ * Enforces a correct alignment for a stack area size value.
+ */
 #define STACK_ALIGN(n) ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
 
+/**
+ * Computes the thread working area global size.
+ */
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
                                    (sizeof(struct intctx) - 1) +        \
                                    (sizeof(struct extctx) - 1) +        \
-                                   (n) +                                \
-                                   INT_REQUIRED_STACK)
+                                   (n) + (INT_REQUIRED_STACK))
 
+/**
+ * Macro used to allocate a thread working area aligned as both position and
+ * size.
+ */
 #define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
 
-#define chSysLock() asm volatile ("cli")
-
-#define chSysUnlock() asm volatile ("sei")
-
-#define chSysEnable() asm volatile ("sei")
-
-#define chSysIRQEnterI()                                                \
+/**
+ * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
+ * invoke system APIs.
+ * This code tricks the compiler to save all the specified registers by
+ * "touching" them.
+ */
+#define PORT_IRQ_PROLOGUE() {                                           \
   asm ("" : : : "r18", "r19", "r20", "r21", "r22", "r23", "r24",        \
-                "r25", "r26", "r27", "r30", "r31");
+                "r25", "r26", "r27", "r30", "r31");                     \
+}
 
-
-#define chSysIRQExitI() {                                               \
+/**
+ * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
+ * invoke system APIs.
+ */
+#define PORT_IRQ_EPILOGUE() {                                           \
   if (chSchRescRequiredI())                                             \
     chSchDoRescheduleI();                                               \
 }
 
-#define IDLE_THREAD_STACK_SIZE 8
+/**
+ * IRQ handler function declaration. Note, it just aliases the WinAVR "ISR"
+ * macro.
+ */
+#define PORT_IRQ_HANDLER(id) ISR(id)
+
+/**
+ * This function is empty in this port.
+ */
+#define port_init()
+
+/**
+ * Implemented as global interrupt disable.
+ */
+#define port_lock() asm volatile ("cli")
+
+/**
+ * Implemented as global interrupt enable.
+ */
+#define port_unlock() asm volatile ("sei")
+
+/**
+ * This function is empty in this port.
+ */
+#define port_lock_from_isr()
+
+/**
+ * This function is empty in this port.
+ */
+#define port_unlock_from_isr()
+
+/**
+ * Implemented as global interrupt disable.
+ */
+#define port_disable() asm volatile ("cli")
+
+/**
+ * Same as @p port_disable() in this port, there is no difference between the
+ * two states.
+ */
+#define port_suspend() asm volatile ("cli")
+
+/**
+ * Implemented as global interrupt enable.
+ */
+#define port_enable() asm volatile ("sei")
+
+/**
+ * This port function is implemented as inlined code for performance reasons.
+ */
+#if ENABLE_WFI_IDLE != 0
+#define port_wait_for_interrupt() {                                     \
+  asm volatile ("sleep");                                               \
+}
+#else
+#define port_wait_for_interrupt()
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _idle(void *p) __attribute__((noreturn));
-  void chSysHalt(void) __attribute__((noreturn)) ;
-  void chSysSwitchI(Thread *otp, Thread *ntp);
-  void chSysPuts(char *msg);
-  void threadstart(void) __attribute__((naked));
+  void port_switch(Thread *otp, Thread *ntp);
+  void port_halt(void);
+  void threadstart(void);
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* _CHCORE_H_ */
+
+/** @} */

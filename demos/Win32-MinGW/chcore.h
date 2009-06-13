@@ -24,27 +24,40 @@
     for full details of how and when the exception can be applied.
 */
 
-/*
- * Core file for MingGW32 demo project.
+/**
+ * @addtogroup WIN32SIM_CORE
+ * @{
  */
 
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
-/*
- * Unique macro for the implemented architecture.
+/**
+ * Macro defining the a simulated architecture into Win32.
  */
 #define CH_ARCHITECTURE_WIN32SIM
 
-/*
- * Base type for stack alignment.
+/**
+ * 32 bit stack alignment.
  */
 typedef uint32_t stkalign_t;
 
+/**
+ * Generic x86 register.
+ */
 typedef void *regx86;
 
-/*
- * Stack saved context.
+/**
+ * Interrupt saved context.
+ * This structure represents the stack frame saved during a preemption-capable
+ * interrupt handler.
+ */
+struct extctx {
+};
+
+/**
+ * System saved context.
+ * @note In this demo the floating point registers are not saved.
  */
 struct intctx {
   regx86  ebx;
@@ -54,17 +67,26 @@ struct intctx {
   regx86  eip;
 };
 
-typedef struct {
-  struct intctx *esp;
-} Context;
+/**
+ * Platform dependent part of the @p Thread structure.
+ * This structure usually contains just the saved stack pointer defined as a
+ * pointer to a @p intctx structure.
+ */
+struct context {
+  struct intctx volatile *esp;
+};
 
 #define APUSH(p, a) (p) -= sizeof(void *), *(void **)(p) = (void*)(a)
 
-#define SETUP_CONTEXT(workspace, wsize, pf, arg)                        \
-{                                                                       \
+/**
+ * Platform dependent part of the @p chThdInit() API.
+ * This code usually setup the context switching frame represented by a
+ * @p intctx structure.
+ */
+#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
   uint8_t *esp = (uint8_t *)workspace + wsize;                          \
   APUSH(esp, arg);                                                      \
-  APUSH(esp, threadstart);                                              \
+  APUSH(esp, threadexit);                                               \
   esp -= sizeof(struct intctx);                                         \
   ((struct intctx *)esp)->eip = pf;                                     \
   ((struct intctx *)esp)->ebx = 0;                                      \
@@ -74,33 +96,118 @@ typedef struct {
   tp->p_ctx.esp = (struct intctx *)esp;                                 \
 }
 
-#define chSysLock()
-#define chSysUnlock()
-#define chSysEnable()
-#define chSysPuts(msg) {}
-#define chSysIRQEnterI()
-#define chSysIRQExitI()
+/**
+ * Stack size for the system idle thread.
+ */
+#ifndef IDLE_THREAD_STACK_SIZE
+#define IDLE_THREAD_STACK_SIZE 256
+#endif
 
-#define INT_REQUIRED_STACK 0
+/**
+ * Per-thread stack overhead for interrupts servicing, it is used in the
+ * calculation of the correct working area size.
+ * It requires stack space because the simulated "interrupt handlers" invoke
+ * Win32 APIs inside so it better have a lot of space.
+ */
+#ifndef INT_REQUIRED_STACK
+#define INT_REQUIRED_STACK 16384
+#endif
 
+/**
+ * Enforces a correct alignment for a stack area size value.
+ */
 #define STACK_ALIGN(n) ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
 
+ /**
+  * Computes the thread working area global size.
+  */
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
                                    sizeof(void *) * 2 +                 \
                                    sizeof(struct intctx) +              \
-                                   (n) +                                \
-                                   INT_REQUIRED_STACK)
+                                   sizeof(struct extctx) +              \
+                                  (n) + (INT_REQUIRED_STACK))
 
+/**
+ * Macro used to allocate a thread working area aligned as both position and
+ * size.
+ */
 #define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
 
-/*
- * Stack size for the system idle thread.
+/**
+ * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
+ * invoke system APIs.
  */
-#define IDLE_THREAD_STACK_SIZE 16384
+#define PORT_IRQ_PROLOGUE()
 
-msg_t _idle(void *p);
-__attribute__((fastcall)) void chSysHalt(void);
-__attribute__((fastcall)) void chSysSwitchI(Thread *otp, Thread *ntp);
-__attribute__((fastcall)) void threadstart(void);
+/**
+ * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
+ * invoke system APIs.
+ */
+#define PORT_IRQ_EPILOGUE()
+
+/**
+ * IRQ handler function declaration.
+ */
+#define PORT_IRQ_HANDLER(id) void id(void)
+
+/**
+ * Simulator initialization.
+ */
+#define port_init() InitCore()
+
+/**
+ * Does nothing in this simulator.
+ */
+#define port_lock()
+
+/**
+ * Does nothing in this simulator.
+ */
+#define port_unlock()
+
+/**
+ * Does nothing in this simulator.
+ */
+#define port_lock_from_isr()
+
+/**
+ * Does nothing in this simulator.
+ */
+#define port_unlock_from_isr()
+
+/**
+ * Does nothing in this simulator.
+ */
+#define port_disable()
+
+/**
+ * Does nothing in this simulator.
+ */
+#define port_suspend()
+
+/**
+ * Does nothing in this simulator.
+ */
+#define port_enable()
+
+/**
+ * In the simulator this does a polling pass on the simulated interrupt
+ * sources.
+ */
+#define port_wait_for_interrupt() ChkIntSources()
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  __attribute__((fastcall)) void port_switch(Thread *otp, Thread *ntp);
+  __attribute__((fastcall)) void port_halt(void);
+  void InitCore(void);
+  void ChkIntSources(void);
+  void threadexit(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _CHCORE_H_ */
+
+/** @} */

@@ -24,14 +24,15 @@
     for full details of how and when the exception can be applied.
 */
 
-/*
- * Core file for MingGW32 demo project.
- */
-
 #include <windows.h>
 #include <stdio.h>
 
 #undef CDECL
+
+/**
+ * @addtogroup WIN32SIM_CORE
+ * @{
+ */
 
 #include <ch.h>
 
@@ -99,16 +100,44 @@ void ChkIntSources(void) {
   }
 }
 
-msg_t _idle(void *p) {
-
-  while (TRUE) {
-
-    ChkIntSources();
-    Sleep(0);
-  }
+/**
+ * Performs a context switch between two threads.
+ * @param otp the thread to be switched out
+ * @param ntp the thread to be switched in
+ */
+__attribute__((used))
+static void __dummy(Thread *otp, Thread *ntp) {
+  asm volatile (".globl @port_switch@8                          \n\t" \
+               "@port_switch@8:                                 \n\t" \
+                "push    %ebp                                   \n\t" \
+                "push    %esi                                   \n\t" \
+                "push    %edi                                   \n\t" \
+                "push    %ebx                                   \n\t" \
+                "movl    %esp, 16(%ecx)                         \n\t" \
+                "movl    16(%edx), %esp                         \n\t" \
+                "pop     %ebx                                   \n\t" \
+                "pop     %edi                                   \n\t" \
+                "pop     %esi                                   \n\t" \
+                "pop     %ebp                                   \n\t" \
+                "ret");
 }
 
-__attribute__((fastcall)) void chSysHalt(void) {
+/**
+ * Halts the system. In this implementation it just exits the simulation.
+ */
+__attribute__((fastcall))
+void port_halt(void) {
 
   exit(2);
 }
+
+/**
+ * Threads return point, it just invokes @p chThdExit().
+ */
+void threadexit(void) {
+
+  asm volatile ("push    %eax                                   \n\t" \
+                "call    _chThdExit");
+}
+
+/** @} */

@@ -25,6 +25,8 @@
 */
 
 /**
+ * @file src/templates/chtypes.h
+ * @brief System types template.
  * @addtogroup Types
  * @{
  */
@@ -49,9 +51,6 @@ typedef uint8_t         tmode_t;
 /** Thread state, uint8_t is ok. */
 typedef uint8_t         tstate_t;
 
-/** Thread id. */
-typedef uint16_t        tid_t;
-
 /** Priority, use the fastest unsigned type. */
 typedef uint32_t        tprio_t;
 
@@ -70,9 +69,16 @@ typedef uint32_t        systime_t;
 /** Counter, recommended fastest signed.*/
 typedef int32_t         cnt_t;
 
+/** Inline function modifier. */
 #define INLINE      inline
+
+/** Packed structure modifier (within). */
 #define PACK_STRUCT_STRUCT __attribute__((packed))
+
+/** Packed structure modifier (before). */
 #define PACK_STRUCT_BEGIN
+
+/** Packed structure modifier (after). */
 #define PACK_STRUCT_END
 
 #endif /* _CHTYPES_H_ */

@@ -25,6 +25,8 @@
 */
 
 /**
+ * @file queues.h I/O
+ * @brief Queues macros and structures.
  * @addtogroup IOQueues
  * @{
  */
@@ -46,50 +48,44 @@ typedef void (*qnotify_t)(void);
 /** Returned by the queue functions if the queue is full. */
 #define Q_FULL          -4
 
-#ifdef CH_USE_QUEUES
+#if CH_USE_QUEUES
 /**
- * I/O queue structure, it is used by both Input and Output Queues,
+ * @brief I/O queue structure.
+ * @details This structure is used by both Input and Output Queues,
  * the difference is on how the semaphore is initialized.
  */
 typedef struct {
-  /** Pointer to the queue buffer. */
-  uint8_t               *q_buffer;
-  /** Pointer to the first location after the buffer. */
-  uint8_t               *q_top;
-  /** Write pointer. */
-  uint8_t               *q_wrptr;
-  /** Read pointer. */
-  uint8_t               *q_rdptr;
-  /** Counter semaphore. */
-  Semaphore             q_sem;
-  /** Data notification callback. */
-  qnotify_t             q_notify;
+  uint8_t               *q_buffer;      /**< Pointer to the queue buffer.*/
+  uint8_t               *q_top;         /**< Pointer to the first location
+                                             after the buffer.*/
+  uint8_t               *q_wrptr;       /**< Write pointer.*/
+  uint8_t               *q_rdptr;       /**< Read pointer.*/
+  Semaphore             q_sem;          /**< Counter @p Semaphore.*/
+  qnotify_t             q_notify;       /**< Data notification callback.*/
 } Queue;
 
 /** Returns the queue's buffer size. */
-#define chQSize(q) \
-        ((q)->q_top - (q)->q_buffer)
+#define chQSize(q) ((q)->q_top - (q)->q_buffer)
 
-/** Returns the used space if used on an Input Queue and the empty space if
- *  used on an Output Queue. */
-#define chQSpace(q) \
-        ((q)->q_sem.s_cnt)
+/**
+ * Returns the used space if used on an Input Queue and the empty space if
+ * used on an Output Queue.
+ * @note The returned value can be less than zero when there are waiting
+ *       threads on the internal semaphore.
+ */
+#define chQSpace(q) chSemGetCounterI(&(q)->q_sem)
 
 /** Evaluates to TRUE if the specified Input Queue is empty. */
-#define chIQIsEmpty(q) \
-        (chQSpace(q) <= 0)
+#define chIQIsEmpty(q) (chQSpace(q) <= 0)
 
 /** Evaluates to TRUE if the specified Input Queue is full. */
-#define chIQIsFull(q) \
-        (chQSpace(q) >= chQSize(q))
+#define chIQIsFull(q) (chQSpace(q) >= chQSize(q))
 
 /** Evaluates to TRUE if the specified Output Queue is empty. */
-#define chOQIsEmpty(q) \
-        (chQSpace(q) >= chQSize(q))
+#define chOQIsEmpty(q) (chQSpace(q) >= chQSize(q))
 
 /** Evaluates to TRUE if the specified Output Queue is full. */
-#define chOQIsFull(q) \
-        (chQSpace(q) <= 0)
+#define chOQIsFull(q) (chQSpace(q) <= 0)
 
 #ifdef __cplusplus
 extern "C" {
@@ -103,7 +99,7 @@ extern "C" {
   msg_t chIQPutI(Queue *qp, uint8_t b);
   msg_t chIQGet(Queue *qp);
   size_t chIQRead(Queue *qp, uint8_t *buffer, size_t n);
-#ifdef CH_USE_QUEUES_TIMEOUT
+#if CH_USE_QUEUES_TIMEOUT
   msg_t chIQGetTimeout(Queue *qp, systime_t time);
 #endif
 
@@ -121,52 +117,49 @@ extern "C" {
 #endif
 #endif  /* CH_USE_QUEUES */
 
-#ifdef CH_USE_QUEUES_HALFDUPLEX
+#if CH_USE_QUEUES_HALFDUPLEX
 /**
- * Half duplex queue structure.
+ * @brief Half duplex queue structure.
  */
 typedef struct {
-  /** Pointer to the queue buffer. */
-  uint8_t               *hdq_buffer;
-  /** Pointer to the first location after the buffer. */
-  uint8_t               *hdq_top;
-  /** Write pointer.*/
-  uint8_t               *hdq_wrptr;
-  /** Read pointer.*/
-  uint8_t               *hdq_rdptr;
-  /** Input counter semaphore. */
-  Semaphore             hdq_isem;
-  /** Output counter semaphore. */
-  Semaphore             hdq_osem;
-  /** Input data notification callback. */
-  qnotify_t             hdq_inotify;
-  /** Output data notification callback. */
-  qnotify_t             hdq_onotify;
+  uint8_t               *hdq_buffer;    /**< Pointer to the queue buffer.*/
+  uint8_t               *hdq_top;       /**< Pointer to the first location
+                                             after the buffer. */
+  uint8_t               *hdq_wrptr;     /**< Write pointer.*/
+  uint8_t               *hdq_rdptr;     /**< Read pointer.*/
+  Semaphore             hdq_isem;       /**< Input counter @p Semaphore.*/
+  Semaphore             hdq_osem;       /**< Output counter @p Semaphore.*/
+  qnotify_t             hdq_inotify;    /**< Input data notification
+                                             callback.*/
+  qnotify_t             hdq_onotify;    /**< Output data notification
+                                             callback.*/
 } HalfDuplexQueue;
 
 /** Returns the queue's buffer size. */
-#define chHDQSize(q) \
-        ((q)->hdq_top - (q)->hdq_buffer)
+#define chHDQSize(q) ((q)->hdq_top - (q)->hdq_buffer)
 
-/** Returns the queue space when in transmission mode. */
-#define chHDQEmptySpace(q) \
-        ((q)->hdq_osem.s_cnt)
+/**
+ * Returns the queue space when in transmission mode.
+ * @note The returned value can be less than zero when there are waiting
+ *       threads on the internal semaphore.
+ */
+#define chHDQEmptySpace(q) chSemGetCounterI(&(q)->hdq_osem)
 
-/** Returns the number of the bytes in the queue when in receive mode. */
-#define chHDQFilledSpace(q) \
-        ((q)->hdq_isem.s_cnt)
+/**
+ * Returns the number of the bytes in the queue when in receive mode.
+ * @note The returned value can be less than zero when there are waiting
+ *       threads on the internal semaphore.
+ */
+#define chHDQFilledSpace(q) chSemGetCounterI(&(q)->hdq_isem)
 
 /** Evaluates to TRUE if the queue is in transmit mode. */
-#define chHDQIsTransmitting(q) \
-        (chHDQEmptySpace(q) < chHDQSize(q))
+#define chHDQIsTransmitting(q) (chHDQEmptySpace(q) < chHDQSize(q))
 
 /** Evaluates to TRUE if the queue is in receive mode. */
-#define chHDQIsReceiving(q) \
-        (chHDQEmptySpaceQ(q) >= chHDQSize(q))
+#define chHDQIsReceiving(q) (chHDQEmptySpaceQ(q) >= chHDQSize(q))
 
 /** Evaluates to TRUE if the receive queue is full. */
-#define chHDQIsFullReceive(q) \
-        (chHDQFilledSpace(q) >= chHDQSize(q))
+#define chHDQIsFullReceive(q) (chHDQFilledSpace(q) >= chHDQSize(q))
 
 #ifdef __cplusplus
 extern "C" {
@@ -177,7 +170,7 @@ extern "C" {
   void chHDQPutTransmit(HalfDuplexQueue *qp, uint8_t b);
   msg_t chHDQGetTransmitI(HalfDuplexQueue *qp);
   msg_t chHDQPutReceiveI(HalfDuplexQueue *qp, uint8_t b);
-#ifdef CH_USE_QUEUES_TIMEOUT
+#if CH_USE_QUEUES_TIMEOUT
   msg_t chHDQGetReceiveTimeout(HalfDuplexQueue *qp, systime_t time);
 #endif
 #ifdef __cplusplus

@@ -25,7 +25,9 @@
 */
 
 /**
- * @addtogroup Initialization
+ * @file ch.h
+ * @brief ChibiOS/RT main include file, it includes everything else.
+ * @addtogroup Kernel
  * @{
  */
 
@@ -40,7 +42,7 @@
 /**
  * Kernel version string.
  */
-#define CH_KERNEL_VERSION       "1.0.2"
+#define CH_KERNEL_VERSION       "1.2.3"
 
 /**
  * Kernel version major number.
@@ -50,31 +52,12 @@
 /**
  * Kernel version minor number.
  */
-#define CH_KERNEL_MINOR         0
+#define CH_KERNEL_MINOR         2
 
 /**
  * Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         2
-
-#include <chconf.h>
-#include <chtypes.h>
-#include "lists.h"
-#include <chcore.h>
-#include "vt.h"
-#include "scheduler.h"
-#include "semaphores.h"
-#include "mutexes.h"
-#include "condvars.h"
-#include "events.h"
-#include "messages.h"
-#include "heap.h"
-#include "mempools.h"
-#include "threads.h"
-#include "inline.h"
-#include "queues.h"
-#include "serial.h"
-#include "debug.h"
+#define CH_KERNEL_PATCH         3
 
 /*
  * Common values.
@@ -86,14 +69,26 @@
 #define TRUE        (!FALSE)
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void chSysInit(void);
-  void chSysTimerHandlerI(void);
-#ifdef __cplusplus
-}
-#endif
+#include <chconf.h>
+#include <chtypes.h>
+#include "lists.h"
+#include <chcore.h>
+#include "sys.h"
+#include "vt.h"
+#include "scheduler.h"
+#include "semaphores.h"
+#include "mutexes.h"
+#include "condvars.h"
+#include "events.h"
+#include "messages.h"
+#include "mailboxes.h"
+#include "heap.h"
+#include "mempools.h"
+#include "threads.h"
+#include "inline.h"
+#include "queues.h"
+#include "serial.h"
+#include "debug.h"
 
 #endif /* _CH_H_ */
 

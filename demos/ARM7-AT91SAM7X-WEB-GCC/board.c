@@ -32,33 +32,36 @@
 #include <sam7x_serial.h>
 #include <sam7x_emac.h>
 
-extern void FiqHandler(void);
+/*
+ * FIQ Handler weak symbol defined in vectors.s.
+ */
+void FiqHandler(void);
 
-__attribute__((naked))
-static void SpuriousHandler(void) {
+static CH_IRQ_HANDLER(SpuriousHandler) {
 
-  chSysIRQEnterI();
+  CH_IRQ_PROLOGUE();
 
   AT91C_BASE_AIC->AIC_EOICR = 0;
 
-  chSysIRQExitI();
+  CH_IRQ_EPILOGUE();
 }
 
 /*
  * SYS IRQ handling here.
  */
-__attribute__((naked))
-static void SYSIrqHandler(void) {
+static CH_IRQ_HANDLER(SYSIrqHandler) {
 
-  chSysIRQEnterI();
+  CH_IRQ_PROLOGUE();
 
   if (AT91C_BASE_PITC->PITC_PISR & AT91C_PITC_PITS) {
     (void) AT91C_BASE_PITC->PITC_PIVR;
+    chSysLockFromIsr();
     chSysTimerHandlerI();
+    chSysUnlockFromIsr();
   }
   AT91C_BASE_AIC->AIC_EOICR = 0;
 
-  chSysIRQExitI();
+  CH_IRQ_EPILOGUE();
 }
 
 /*
@@ -163,7 +166,7 @@ void hwinit1(void) {
   /*
    * Serial driver initialization, RTS/CTS pins enabled for USART0 only.
    */
-  InitSerial(AT91C_AIC_PRIOR_HIGHEST - 2, AT91C_AIC_PRIOR_HIGHEST - 2);
+  serial_init(AT91C_AIC_PRIOR_HIGHEST - 2, AT91C_AIC_PRIOR_HIGHEST - 2);
   AT91C_BASE_PIOA->PIO_PDR   = AT91C_PA3_RTS0 | AT91C_PA4_CTS0;
   AT91C_BASE_PIOA->PIO_ASR   = AT91C_PIO_PA3 | AT91C_PIO_PA4;
   AT91C_BASE_PIOA->PIO_PPUDR = AT91C_PIO_PA3 | AT91C_PIO_PA4;
@@ -171,7 +174,7 @@ void hwinit1(void) {
   /*
    * EMAC driver initialization.
    */
-  InitEMAC(AT91C_AIC_PRIOR_HIGHEST - 3);
+  emac_init(AT91C_AIC_PRIOR_HIGHEST - 3);
 
   /*
    * ChibiOS/RT initialization.

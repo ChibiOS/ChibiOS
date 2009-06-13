@@ -38,30 +38,30 @@
 /*
  * Non-vectored IRQs handling here.
  */
-__attribute__((naked))
-static void IrqHandler(void) {
+static CH_IRQ_HANDLER(IrqHandler) {
 
-  chSysIRQEnterI();
+  CH_IRQ_PROLOGUE();
 
   /* nothing */
-  VICVectAddr = 0;
 
-  chSysIRQExitI();
+  VICVectAddr = 0;
+  CH_IRQ_EPILOGUE();
 }
 
 /*
  * Timer 0 IRQ handling here.
  */
-__attribute__((naked))
-static void T0IrqHandler(void) {
+static CH_IRQ_HANDLER(T0IrqHandler) {
 
-  chSysIRQEnterI();
-
+  CH_IRQ_PROLOGUE();
   T0IR = 1;             /* Clear interrupt on match MR0. */
-  chSysTimerHandlerI();
-  VICVectAddr = 0;
 
-  chSysIRQExitI();
+  chSysLockFromIsr();
+  chSysTimerHandlerI();
+  chSysUnlockFromIsr();
+
+  VICVectAddr = 0;
+  CH_IRQ_EPILOGUE();
 }
 
 /*
@@ -126,7 +126,7 @@ void hwinit1(void) {
   /*
    * Interrupt vectors assignment.
    */
-  InitVIC();
+  vic_init();
   VICDefVectAddr = (IOREG32)IrqHandler;
 
   /*
@@ -144,8 +144,8 @@ void hwinit1(void) {
   /*
    * Other subsystems.
    */
-  InitSerial(1, 2);
-//  InitSSP();
+  serial_init(1, 2);
+//  ssp_init();
 //  InitMMC();
 //  InitBuzzer();
 

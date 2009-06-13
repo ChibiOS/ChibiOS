@@ -24,9 +24,13 @@
     for full details of how and when the exception can be applied.
 */
 
-/*
- * Generic ARM-CortexM3 startup file for ChibiOS/RT.
+/**
+ * @file ports/ARMCM3/crt0.s
+ * @brief Generic ARM Cortex-M3 startup file for ChibiOS/RT.
+ * @addtogroup ARMCM3_CORE
+ * @{
  */
+/** @cond never */
 
 .set    CONTROL_MODE_PRIVILEGED, 0
 .set    CONTROL_MODE_UNPRIVILEGED, 1
@@ -43,7 +47,10 @@
  */
 .thumb_func
 .global ResetHandler
+.weak ResetHandler
 ResetHandler:
+        /* Interrupts globally masked. */
+        cpsid   i
         /*
          * Stack pointers initialization.
          */
@@ -54,9 +61,7 @@ ResetHandler:
         msr     PSP, r0
 //        ldr     r1, =__process_stack_size__
 //        sub     r0, r0, r1
-        /*
-         * Early initialization.
-         */
+        /* Early initialization. */
         bl      hwinit0
         /*
          * Data initialization.
@@ -83,26 +88,26 @@ bloop:
         itt     lo
         strlo   r0, [r1], #4
         blo     bloop
-        /*
-         * Switches to the Process Stack and disables the interrupts globally.
-         */
+        /* Switches to the Process Stack. */
         movs    r0, #CONTROL_MODE_PRIVILEGED | CONTROL_USE_PSP
         msr     CONTROL, r0
         isb
-        movs    r0, #0x10
-        msr     BASEPRI, r0
-        cpsie   i
-        /*
-         * Late initialization.
-         */
+        /* Late initialization. */
         bl      hwinit1
-        /*
-         * main(0, NULL).
-         */
         movs    r0, #0
         mov     r1, r0
         bl      main
-        bl      chSysHalt
+        b       MainExitHandler
+
+/*
+ * Default main exit code, just a loop.
+ * It is a weak symbol, the application code can redefine the behavior.
+ */
+.thumb_func
+.global MainExitHandler
+.weak MainExitHandler
+MainExitHandler:
+.loop:  b       .loop
 
 /*
  * Default early initialization code. It is declared weak in order to be
@@ -127,3 +132,6 @@ hwinit0:
 .weak hwinit1
 hwinit1:
         bx      lr
+
+/** @endcond */
+/** @} */

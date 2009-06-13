@@ -87,7 +87,7 @@ static const seqop_t LED3_sequence[] =
  * Any sequencer is just an instance of this class, all the details are
  * totally encapsulated and hidden to the application level.
  */
-class SequencerThread : EnhancedThread<64> {
+class SequencerThread : EnhancedThread<128> {
 private:
   const seqop_t *base, *curr;                   // Thread local variables.
 
@@ -115,7 +115,7 @@ protected:
   }
 
 public:
-  SequencerThread(const seqop_t *sequence) : EnhancedThread<64>("sequencer") {
+  SequencerThread(const seqop_t *sequence) : EnhancedThread<128>("sequencer") {
 
     base = curr = sequence;
   }

@@ -25,6 +25,8 @@
 */
 
 /**
+ * @file scheduler.h
+ * @brief Scheduler macros and structures.
  * @addtogroup Scheduler
  * @{
  */
@@ -32,52 +34,55 @@
 #ifndef _SCHEDULER_H_
 #define _SCHEDULER_H_
 
-/** Normal \p chSchReadyI() message. */
+/** Default thread wakeup low level message. */
 #define RDY_OK          0
-/** Returned when the thread was made ready because of a timeout. */
+/** Low level message sent to a thread awakened by a timeout. */
 #define RDY_TIMEOUT     -1
-/** Returned when the thread was made ready because of a reset. */
+/** Low level message sent to a thread awakened by a reset operation. */
 #define RDY_RESET       -2
 
-/** Pseudo priority used by the ready list header, do not use.*/
-#define NOPRIO          0
-/** Idle thread priority.*/
-#define IDLEPRIO        1
-/** Lowest user priority.*/
-#define LOWPRIO         2
-/** Normal user priority.*/
-#define NORMALPRIO      64
-/** Highest user priority.*/
-#define HIGHPRIO        127
-/** Greatest possible priority.*/
-#define ABSPRIO         255
+#define NOPRIO          0               /**< Ready list header priority.*/
+#define IDLEPRIO        1               /**< Idle thread priority.*/
+#define LOWPRIO         2               /**< Lowest user priority.*/
+#define NORMALPRIO      64              /**< Normal user priority.*/
+#define HIGHPRIO        127             /**< Highest user priority.*/
+#define ABSPRIO         255             /**< Greatest possible priority.*/
 
-/** Infinite time specification for all the syscalls with a timeout
-    specification.*/
-#define TIME_INFINITE   0
+/**
+ * Zero time specification for some syscalls with a timeout
+ * specification.
+ * @note Not all functions accept @p TIME_IMMEDIATE as timeout parameter,
+ *       see the specific function documentation.
+ */
+#define TIME_IMMEDIATE  ((systime_t)-1)
+
+/**
+ * Infinite time specification for all the syscalls with a timeout
+ * specification.
+ */
+#define TIME_INFINITE   ((systime_t)0)
 
 /** The priority of the first thread on the given ready list. */
 #define firstprio(rlp)  ((rlp)->p_next->p_prio)
 
 /**
- * Ready list header.
+ * @brief Ready list header.
+ *
  * @extends ThreadsQueue
  */
 typedef struct {
-  /** Next \p Thread in the ready list.*/
-  Thread                *p_next;
-  /** Previous \p Thread in the ready list.*/
-  Thread                *p_prev;
+  Thread                *p_next;        /**< Next @p Thread in the ready list.*/
+  Thread                *p_prev;        /**< Previous @p Thread in the ready
+                                             list.*/
   /* End of the fields shared with the ThreadsQueue structure. */
-  /** The thread priority.*/
-  tprio_t               r_prio;
+  tprio_t               r_prio;         /**< This field must be initialized to
+                                             zero.*/
   /* End of the fields shared with the Thread structure. */
-#ifdef CH_USE_ROUNDROBIN
-  cnt_t                 r_preempt;
+#if CH_USE_ROUNDROBIN
+  cnt_t                 r_preempt;      /**< Round robin counter.*/
 #endif
 #ifndef CH_CURRP_REGISTER_CACHE
-  /** the currently running thread */
-  Thread                *r_current;
+  Thread                *r_current;     /**< The currently running thread.*/
 #endif
 } ReadyList;
 
@@ -89,7 +94,7 @@ extern ReadyList rlist;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chSchInit(void);
+  void scheduler_init(void);
   Thread *chSchReadyI(Thread *tp);
   void chSchGoSleepS(tstate_t newstate);
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time);

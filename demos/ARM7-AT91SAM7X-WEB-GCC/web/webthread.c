@@ -90,7 +90,7 @@ void clock_init(void) {}
 
 clock_time_t clock_time( void )
 {
-  return chSysGetTime();
+  return chTimeNow();
 }
 
 /*

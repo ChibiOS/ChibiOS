@@ -24,16 +24,25 @@
     for full details of how and when the exception can be applied.
 */
 
+/**
+ * @file ports/ARM7-LPC214x/vic.h
+ * @brief LPC214x VIC peripheral support code.
+ * @addtogroup LPC214x_VIC
+ * @{
+ */
+
 #ifndef _VIC_H_
 #define _VIC_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void InitVIC(void);
+  void vic_init(void);
   void SetVICVector(void *handler, int vector, int source);
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* _VIC_H_ */
+
+/** @} */

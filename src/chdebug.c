@@ -24,55 +24,65 @@
     for full details of how and when the exception can be applied.
 */
 
+/**
+ * @file chdebug.c
+ * @brief ChibiOS/RT Debug code.
+ * @addtogroup Debug
+ * @{
+ */
+
 #include <ch.h>
 
-#ifdef CH_USE_DEBUG
-
-char *panicmsg;
+#if CH_DBG_ENABLE_TRACE
+/**
+ * @brief Public trace buffer.
+ */
+TraceBuffer trace_buffer;
 
 /**
- * Debug subsystem initialization.
+ * @brief Trace circular buffer subsystem initialization.
  */
-void chDbgInit(void) {
+void trace_init(void) {
 
-#ifdef CH_USE_TRACE
-  dbgtb.tb_size = TRACE_BUFFER_SIZE;
-  dbgtb.tb_ptr = &dbgtb.tb_buffer[0];
-#endif
+  trace_buffer.tb_size = TRACE_BUFFER_SIZE;
+  trace_buffer.tb_ptr = &trace_buffer.tb_buffer[0];
 }
 
 /**
- * Prints a panic message on the console/debugger and then halts the system.
- * @param msg the pointer to the message string
- */
-void chDbgPanic(char *msg) {
-
-  panicmsg = msg;
-  chSysPuts("PANIC: ");
-  chSysPuts(msg);
-  chSysHalt();
-}
-
-#ifdef CH_USE_TRACE
-/**
- * Public trace buffer.
- */
-TraceBuffer dbgtb;
-
-/**
- * Inserts in the circular debug trace buffer a context switch record.
- * @param otp the thread being switched out
- * @param ntp the thread to be resumed
+ * @brief Inserts in the circular debug trace buffer a context switch record.
+ *
+ * @param[in] otp the thread being switched out
+ * @param[in] ntp the thread to be switched in
  */
 void chDbgTrace(Thread *otp, Thread *ntp) {
 
-  dbgtb.tb_ptr->cse_wtobjp = otp->p_wtobjp;
-  dbgtb.tb_ptr->cse_time = chSysGetTime();
-  dbgtb.tb_ptr->cse_state = otp->p_state;
-  dbgtb.tb_ptr->cse_tid = ntp->p_tid;
-  if (++dbgtb.tb_ptr >= &dbgtb.tb_buffer[TRACE_BUFFER_SIZE])
-    dbgtb.tb_ptr = &dbgtb.tb_buffer[0];
+  trace_buffer.tb_ptr->cse_wtobjp = otp->p_wtobjp;
+  trace_buffer.tb_ptr->cse_time = chTimeNow();
+  trace_buffer.tb_ptr->cse_state = otp->p_state;
+  trace_buffer.tb_ptr->cse_tid = (unsigned)ntp >> 4;
+  if (++trace_buffer.tb_ptr >= &trace_buffer.tb_buffer[TRACE_BUFFER_SIZE])
+    trace_buffer.tb_ptr = &trace_buffer.tb_buffer[0];
 }
-#endif /* CH_USE_TRACE */
+#endif /* CH_DBG_ENABLE_TRACE */
 
-#endif /* CH_USE_DEBUG */
+#if CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK
+/**
+ * @brief Pointer to the panic message.
+ * @details This pointer is meant to be accessed through the debugger, it is
+ *          written once and then the system is halted.
+ */
+char *panic_msg;
+
+/**
+ * @brief Prints a panic message on the console and then halts the system.
+ *
+ * @param[in] msg the pointer to the panic message string
+ */
+void chDbgPanic(char *msg) {
+
+  panic_msg = msg;
+  chSysHalt();
+}
+#endif /* CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK */
+
+/** @} */

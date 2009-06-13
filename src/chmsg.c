@@ -25,105 +25,109 @@
 */
 
 /**
+ * @file chmsg.c
+ * @brief Messages code.
  * @addtogroup Messages
  * @{
  */
+
 #include <ch.h>
 
-#ifdef CH_USE_MESSAGES
+#if CH_USE_MESSAGES
+
+#if CH_USE_MESSAGES_PRIORITY
+#define msg_insert(tp, qp) prio_insert(tp, qp)
+#else
+#define msg_insert(tp, qp) queue_insert(tp, qp)
+#endif
+
 /**
- * Sends a message to the specified thread. The client is stopped until the
- * server executes a \p chMsgRelease() after receiving the message.
+ * @brief Sends a message to the specified thread.
+ * @details The sender is stopped until the receiver executes a
+ *          @p chMsgRelease()after receiving the message.
  *
- * @param tp the pointer to the thread
- * @param msg the message, it can be a pointer to a complex structure
- * @return The return message from \p chMsgRelease().
+ * @param[in] tp the pointer to the thread
+ * @param[in] msg the message
+ * @return The return message from @p chMsgRelease().
  */
 msg_t chMsgSend(Thread *tp, msg_t msg) {
 
-  chSysLock();
+  chDbgCheck(tp != NULL, "chMsgSend");
 
-#ifdef CH_USE_MESSAGES_PRIORITY
-  prio_insert(currp, &tp->p_msgqueue);
-#else
-  queue_insert(currp, &tp->p_msgqueue);
-#endif
+  chSysLock();
+  msg_insert(currp, &tp->p_msgqueue);
   currp->p_msg = msg;
   currp->p_wtthdp = tp;
   if (tp->p_state == PRWTMSG)
     chSchReadyI(tp);
   chSchGoSleepS(PRSNDMSG);
   msg = currp->p_rdymsg;
-
   chSysUnlock();
   return msg;
 }
 
-#ifdef CH_USE_MESSAGES_EVENT
+#if CH_USE_EVENTS && CH_USE_MESSAGES_EVENT
 /**
- * Sends a message to the specified thread and atomically triggers an event.
- * The client is stopped until the server executes a \p chMsgRelease()
- * after receiving the message.
+ * @brief Sends a message to the specified thread and atomically pends an
+ *        events set.
+ * @details The sender is stopped until the receiver executes a
+ *          @p chMsgRelease() after receiving the message.
  *
- * @param tp the pointer to the thread
- * @param msg the message, it can be a pointer to a complex structure
- * @param esp the event source to pulse while sending the message
- * @return The return message from \p chMsgRelease().
+ * @param[in] tp the pointer to the thread
+ * @param[in] msg the message
+ * @param[in] mask the event flags set to be pended
+ * @return The return message from @p chMsgRelease().
  * @note This function assumes that the receiving thread is not sleeping into
- *       a \p chMsgWait(). The use case is that the server thread is waiting
- *       for both messages AND events while waiting into \p chEvtWaitXXX().
+ *       a @p chMsgWait(). The use case is that the server thread is waiting
+ *       for both messages AND events while waiting into @p chEvtWaitXXX().
  */
-msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, EventSource *esp) {
+msg_t chMsgSendWithEvent(Thread *tp, msg_t msg, eventmask_t mask) {
+
+  chDbgCheck(tp != NULL, "chMsgSendWithEvent");
 
   chSysLock();
-
-  chDbgAssert(tp->p_state != PRWTMSG, "chmsg.c, chMsgSendWithEvent()");
-#ifdef CH_USE_MESSAGES_PRIORITY
-  prio_insert(currp, &tp->p_msgqueue);
-#else
-  queue_insert(currp, &tp->p_msgqueue);
-#endif
-  chEvtBroadcastI(esp);
+  chDbgAssert(tp->p_state != PRWTMSG,
+              "chMsgSendWithEvent(), #1",
+              "waiting for messages not events");
+  chEvtSignalI(tp, mask);
+  msg_insert(currp, &tp->p_msgqueue);
   currp->p_wtthdp = tp;
   currp->p_msg = msg;
   chSchGoSleepS(PRSNDMSG);
   msg = currp->p_rdymsg;
-
   chSysUnlock();
   return msg;
 }
-#endif
+#endif /* CH_USE_EVENTS && CH_USE_MESSAGES_EVENT */
 
 /**
- * Suspends the thread and waits for an incoming message.
+ * @brief Suspends the thread and waits for an incoming message.
  *
  * @return The pointer to the message structure. Note, it is always the
  *         message associated to the thread on the top of the messages queue.
  * @note You can assume that the data contained in the message is stable until
- *       you invoke \p chMsgRelease() because the sending thread is
+ *       you invoke @p chMsgRelease() because the sending thread is
  *       suspended until then.
  */
 msg_t chMsgWait(void) {
   msg_t msg;
 
   chSysLock();
-
   if (!chMsgIsPendingI(currp))
     chSchGoSleepS(PRWTMSG);
   msg = chMsgGetI(currp);
-
   chSysUnlock();
   return msg;
 }
 
 /**
- * Returns the next message in the queue.
+ * @brief Returns the next message in the queue.
  *
  * @return The pointer to the message structure. Note, it is always the
  *         message associated to the thread on the top of the messages queue.
- *         If the queue is empty then \p NULL is returned.
+ *         If the queue is empty then @p NULL is returned.
  * @note You can assume that the data pointed by the message is stable until
- *       you invoke \p chMsgRelease() because the sending thread is
+ *       you invoke @p chMsgRelease() because the sending thread is
  *       suspended until then. Always remember that the message data is not
  *       copied between the sender and the receiver, just a pointer is passed.
  */
@@ -131,20 +135,18 @@ msg_t chMsgGet(void) {
   msg_t msg;
 
   chSysLock();
-
   msg = chMsgIsPendingI(currp) ? chMsgGetI(currp) : (msg_t)NULL;
-
   chSysUnlock();
   return msg;
 }
 
 /**
- * Releases the thread waiting on top of the messages queue.
+ * @brief Releases the thread waiting on top of the messages queue.
  *
- * @param msg the message returned to the message sender
+ * @param[in] msg the message returned to the message sender
  * @note You can call this function only if there is a message already in the
  *       queue else the result will be unpredictable (a crash most likely).
- *       Exiting from the \p chMsgWait() ensures you have at least one
+ *       Exiting from the @p chMsgWait() ensures you have at least one
  *       message in the queue so it is not a big deal.<br>
  *       The condition is only tested in debug mode in order to make this code
  *       as fast as possible.
@@ -152,10 +154,10 @@ msg_t chMsgGet(void) {
 void chMsgRelease(msg_t msg) {
 
   chSysLock();
-
-  chDbgAssert(chMsgIsPendingI(currp), "chmsg.c, chMsgRelease()");
+  chDbgAssert(chMsgIsPendingI(currp),
+              "chMsgRelease(), #1",
+              "no message pending");
   chSchWakeupS(fifo_remove(&currp->p_msgqueue), msg);
-
   chSysUnlock();
 }
 

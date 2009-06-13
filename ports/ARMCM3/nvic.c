@@ -24,12 +24,41 @@
     for full details of how and when the exception can be applied.
 */
 
+/**
+ * @file ports/ARMCM3/nvic.c
+ * @brief Cortex-M3 NVIC support code.
+ * @addtogroup ARMCM3_NVIC
+ * @{
+ */
+
 #include <ch.h>
 #include <nvic.h>
 
+/**
+ * @brief Sets the priority of an interrupt handler and enables it.
+ *
+ * @param n the interrupt number
+ * @param prio the interrupt priority
+ * @note The parameters are not tested for correctness.
+ */
 void NVICEnableVector(uint32_t n, uint32_t prio) {
-  int sh = (n & 3) << 3;
+  unsigned sh = (n & 3) << 3;
 
   NVIC_IPR(n >> 2) = (NVIC_IPR(n >> 2) & ~(0xFF << sh)) | (prio << sh);
   NVIC_ISER(n >> 5) = 1 << (n & 0x1F);
 }
+
+/**
+ * @brief Changes the priority of a system handler.
+ *
+ * @param handler the system handler number
+ * @param prio the system handler priority
+ * @note The parameters are not tested for correctness.
+ */
+void NVICSetSystemHandlerPriority(uint32_t handler, uint32_t prio) {
+  unsigned sh = (handler & 3) * 8;
+
+  SCB_SHPR(handler >> 2) = (SCB_SHPR(handler >> 2) & ~(0xFF << sh)) | (prio << sh);
+}
+
+/** @} */

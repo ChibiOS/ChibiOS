@@ -28,15 +28,11 @@
 
 #include "test.h"
 
+#if CH_USE_MESSAGES
+
 static char *msg1_gettest(void) {
 
   return "Messages, dispatch test";
-}
-
-static void msg1_setup(void) {
-}
-
-static void msg1_teardown(void) {
 }
 
 static msg_t thread(void *p) {
@@ -66,7 +62,19 @@ static void msg1_execute(void) {
 
 const struct testcase testmsg1 = {
   msg1_gettest,
-  msg1_setup,
-  msg1_teardown,
+  NULL,
+  NULL,
   msg1_execute
+};
+
+#endif /* CH_USE_MESSAGES */
+
+/*
+ * Test sequence for messages pattern.
+ */
+const struct testcase * const patternmsg[] = {
+#if CH_USE_MESSAGES
+  &testmsg1,
+#endif
+  NULL
 };

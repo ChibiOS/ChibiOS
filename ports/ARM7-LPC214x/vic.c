@@ -24,15 +24,22 @@
     for full details of how and when the exception can be applied.
 */
 
+/**
+ * @file ports/ARM7-LPC214x/vic.c
+ * @brief LPC214x VIC peripheral support code.
+ * @addtogroup LPC214x_VIC
+ * @{
+ */
+
 #include <ch.h>
 
 #include "lpc214x.h"
 
-/*
- * VIC Initialization.
- * NOTE: Better reset everything in the VIC, it is a HUGE source of trouble.
+/**
+ * @brief VIC Initialization.
+ * @note Better reset everything in the VIC, it is a HUGE source of trouble.
  */
-void InitVIC(void) {
+void vic_init(void) {
   int i;
 
   VIC *vic = VICBase;
@@ -46,8 +53,12 @@ void InitVIC(void) {
   }
 }
 
-/*
- * Set a vector for an interrupt source, the vector is enabled too.
+/**
+ * @brief Initializes a VIC vector.
+ * @details Set a vector for an interrupt source and enables it.
+ * @param[in] handler the pointer to the IRQ service routine
+ * @param[in] vector the vector number
+ * @param[in] source the IRQ source to be associated to the vector
  */
 void SetVICVector(void *handler, int vector, int source) {
 
@@ -55,3 +66,5 @@ void SetVICVector(void *handler, int vector, int source) {
   vicp->VIC_VectAddrs[vector] = (IOREG32)handler;
   vicp->VIC_VectCntls[vector] = (IOREG32)(source | 0x20);
 }
+
+/** @} */

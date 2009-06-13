@@ -24,38 +24,19 @@
     for full details of how and when the exception can be applied.
 */
 
-#include <ch.h>
+#ifndef _WFI_H_
+#define _WFI_H_
 
 #include "at91lib/AT91SAM7X256.h"
 
-/*
- * System idle thread loop.
- */
-void _idle(void *p) {
-
-  while (TRUE) {
-// Note, it is disabled because it causes trouble with the JTAG probe.
-// Enable it in the final code only.
-//    PCON = 1;
-  }
+#ifndef port_wait_for_interrupt
+#if ENABLE_WFI_IDLE != 0
+#define port_wait_for_interrupt() {                                     \
+  AT91C_BASE_SYS->PMC_SCDR = AT91C_PMC_PCK;                             \
 }
-
-/*
- * System console message (not implemented).
- */
-void chSysPuts(char *msg) {
-}
-
-/*
- * System halt.
- */
-__attribute__((naked, weak))
-void chSysHalt(void) {
-
-#ifdef THUMB
-  asm volatile ("ldr      r0, =_halt16");
-  asm volatile ("bx       r0");
 #else
-  asm("b        _halt32");
+#define port_wait_for_interrupt()
 #endif
-}
+#endif
+
+#endif /* _WFI_H_ */

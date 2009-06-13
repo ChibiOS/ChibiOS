@@ -25,6 +25,8 @@
 */
 
 /**
+ * @file vt.h
+ * @brief Time macros and structures.
  * @addtogroup Time
  * @{
  */
@@ -55,38 +57,32 @@ typedef void (*vtfunc_t)(void *);
 typedef struct VirtualTimer VirtualTimer;
 
 /**
- * Virtual Timer descriptor structure.
+ * @brief Virtual Timer descriptor structure.
  * @extends DeltaList
  */
 struct VirtualTimer {
-  /** Next timer in the delta list.*/
-  VirtualTimer          *vt_next;
-  /** Previous timer in the delta list.*/
-  VirtualTimer          *vt_prev;
-  /** Time delta before timeout.*/
-  systime_t             vt_time;
-  /** Timer callback function pointer. The pointer is reset to zero after
-      the callback is invoked.*/
-  vtfunc_t              vt_func;
-  /** Timer callback function parameter.*/
-  void                  *vt_par;
+  VirtualTimer          *vt_next;       /**< Next timer in the delta list.*/
+  VirtualTimer          *vt_prev;       /**< Previous timer in the delta list.*/
+  systime_t             vt_time;        /**< Time delta before timeout.*/
+  vtfunc_t              vt_func;        /**< Timer callback function pointer.
+                                             The pointer is reset to zero after
+                                             the callback is invoked.*/
+  void                  *vt_par;        /**< Timer callback function
+                                             parameter.*/
 };
 
 /**
- * Delta List header.
+ * @brief Virtual timers list header.
  * @note The delta list is implemented as a double link bidirectional list in
  *       order to make the unlink time constant, the reset of a virtual timer
  *       is often used in the code.
  */
 typedef struct {
-  /** Next timer in the list (the one that will be triggered next).*/
-  VirtualTimer          *vt_next;
-  /** Last timer in the list.*/
-  VirtualTimer          *vt_prev;
-  /** Not used but it must be set to -1.*/
-  systime_t             vt_time;
-  /** System Time counter.*/
-  volatile systime_t    vt_systime;
+  VirtualTimer          *vt_next;       /**< Next timer in the delta list (the
+                                             one that will be triggered next).*/
+  VirtualTimer          *vt_prev;       /**< Last timer in the delta list.*/
+  systime_t             vt_time;        /**< Must be initialized to -1.*/
+  volatile systime_t    vt_systime;     /**< System Time counter.*/
 } VTList;
 
 extern VTList vtlist;
@@ -112,10 +108,10 @@ extern VTList vtlist;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chVTInit(void);
+  void vt_init(void);
   void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par);
   void chVTResetI(VirtualTimer *vtp);
-  bool_t chSysInTimeWindow(systime_t start, systime_t end);
+  bool_t chTimeIsWithin(systime_t start, systime_t end);
 #ifdef __cplusplus
 }
 #endif
@@ -124,12 +120,12 @@ extern "C" {
 #define chVTIsArmedI(vtp) ((vtp)->vt_func != NULL)
 
 /**
- * Returns the number of system ticks since the \p chSysInit() invocation.
+ * Returns the number of system ticks since the @p chSysInit() invocation.
  * @return the system ticks number
  * @note The counter can reach its maximum and then returns to zero.
- * @note This function is designed to work with the \p chThdSleepUntil().
+ * @note This function is designed to work with the @p chThdSleepUntil().
  */
-#define chSysGetTime() (vtlist.vt_systime)
+#define chTimeNow() (vtlist.vt_systime)
 
 #endif /* _VT_H_ */
 

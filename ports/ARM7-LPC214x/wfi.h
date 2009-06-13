@@ -24,10 +24,19 @@
     for full details of how and when the exception can be applied.
 */
 
-#ifndef _TESTCOND_H_
-#define _TESTCOND_H_
+#ifndef _WFI_H_
+#define _WFI_H_
 
-extern const struct testcase testcond1;
-extern const struct testcase testcond2;
+#include "lpc214x.h"
 
-#endif /* _TESTCOND_H_ */
+#ifndef port_wait_for_interrupt
+#if ENABLE_WFI_IDLE != 0
+#define port_wait_for_interrupt() {                                     \
+  PCON = 1;                                                             \
+}
+#else
+#define port_wait_for_interrupt()
+#endif
+#endif
+
+#endif /* _WFI_H_ */

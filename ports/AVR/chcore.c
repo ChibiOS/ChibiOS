@@ -24,33 +24,26 @@
     for full details of how and when the exception can be applied.
 */
 
+/**
+ * @file ports/AVR/chcore.c
+ * @brief AVR architecture port code.
+ * @addtogroup AVR_CORE
+ * @{
+ */
+
 #include <ch.h>
 
-#include <avr/io.h>
-
-void _idle(void *p) {
-
-  while (TRUE) {
-    asm("sleep");
-  }
-}
-
-/*
- * Threads start code.
+/**
+ * Performs a context switch between two threads.
+ * @param otp the thread to be switched out
+ * @param ntp the thread to be switched in
+ * @note The function is declared as a weak symbol, it is possible to redefine
+ *       it in your application code.
  */
-void threadstart(void) {
-
-  asm volatile ("sei");
-  asm volatile ("movw    r24, r4");
-  asm volatile ("movw    r30, r2");
-  asm volatile ("icall");
-  asm volatile ("call    chThdExit");
-}
-
-/*
- * Context switch.
- */
-void chSysSwitchI(Thread *otp, Thread *ntp) {
+/** @cond never */
+__attribute__((naked, weak))
+/** @endcond */
+void port_switch(Thread *otp, Thread *ntp) {
 
   asm volatile ("push    r2");
   asm volatile ("push    r3");
@@ -75,14 +68,14 @@ void chSysSwitchI(Thread *otp, Thread *ntp) {
 
   asm volatile ("movw    r30, r24");
   asm volatile ("in      r0, 0x3d");
-  asm volatile ("std     Z+8, r0");
+  asm volatile ("std     Z+7, r0");
   asm volatile ("in      r0, 0x3e");
-  asm volatile ("std     Z+9, r0");
+  asm volatile ("std     Z+8, r0");
 
   asm volatile ("movw    r30, r22");
-  asm volatile ("ldd     r0, Z+8");
+  asm volatile ("ldd     r0, Z+7");
   asm volatile ("out     0x3d, r0");
-  asm volatile ("ldd     r0, Z+9");
+  asm volatile ("ldd     r0, Z+8");
   asm volatile ("out     0x3e, r0");
 
   asm volatile ("pop     r29");
@@ -108,21 +101,32 @@ void chSysSwitchI(Thread *otp, Thread *ntp) {
   asm volatile ("ret");
 }
 
-/*
- * System console message (not implemented).
+/**
+ * Disables the interrupts and halts the system.
+ * @note The function is declared as a weak symbol, it is possible to redefine
+ *       it in your application code.
  */
+/** @cond never */
 __attribute__((weak))
-void chSysPuts(char *msg) {
+/** @endcond */
+void port_halt(void) {
+
+  port_disable();
+  while (TRUE) {
+  }
 }
 
-/*
- * System halt.
+/**
+ * Start a thread by invoking its work function.
+ * If the work function returns @p chThdExit() is automatically invoked.
  */
-__attribute__((noreturn, weak))
-void chSysHalt(void) {
+void threadstart(void) {
 
-  chSysLock();
-
-  while (TRUE)
-    ;
+  asm volatile ("sei");
+  asm volatile ("movw    r24, r4");
+  asm volatile ("movw    r30, r2");
+  asm volatile ("icall");
+  asm volatile ("call    chThdExit");
 }
+
+/** @} */

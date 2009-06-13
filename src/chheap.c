@@ -25,15 +25,17 @@
 */
 
 /**
+ * @file chheap.c
+ * @brief Heap code.
  * @addtogroup Heap
  * @{
  */
 
 #include <ch.h>
 
-#ifdef CH_USE_HEAP
+#if CH_USE_HEAP
 
-#ifndef CH_USE_MALLOC_HEAP
+#if !CH_USE_MALLOC_HEAP
 
 #define MAGIC 0xF5A0
 #define ALIGN_TYPE      void *
@@ -50,11 +52,11 @@ struct header {
 
 static struct {
   struct header         free;   /* Guaranteed to be not adjacent to the heap */
-#if defined(CH_USE_MUTEXES)
+#if CH_USE_MUTEXES
 #define H_LOCK()        chMtxLock(&heap.hmtx)
 #define H_UNLOCK()      chMtxUnlock()
   Mutex                 hmtx;
-#elif defined(CH_USE_SEMAPHORES)
+#elif CH_USE_SEMAPHORES
 #define H_LOCK()        chSemWait(&heap.hsem)
 #define H_UNLOCK()      chSemSignal(&heap.hsem)
   Semaphore             hsem;
@@ -70,11 +72,11 @@ static struct {
 } heap;
 
 /**
- * Initializes the allocator subsystem.
- * @note It is internally invoked, this function should not normally be
- *       invoked from the user code.
+ * @brief Initializes the allocator subsystem.
+ *
+ * @note Internal use only.
  */
-void chHeapInit(void) {
+void heap_init(void) {
   struct header *hp;
 
 #if CH_HEAP_SIZE == 0
@@ -91,7 +93,7 @@ void chHeapInit(void) {
   hp->h_next = NULL;
   heap.free.h_next = hp;
   heap.free.h_size = 0;
-#if defined(CH_USE_MUTEXES)
+#if CH_USE_MUTEXES
   chMtxInit(&heap.hmtx);
 #else
   chSemInit(&heap.hsem, 1);
@@ -99,12 +101,14 @@ void chHeapInit(void) {
 }
 
 /**
- * Allocates a block of memory from the heap by using the first-fit algorithm.
- * The allocated block is guaranteed to be properly aligned for a pointer data
- * type.
- * @param size the size of the block to be allocated. Note that the allocated
- *             block may be a bit bigger than the requested size for alignment
- *             and fragmentation reasons.
+ * @brief Allocates a block of memory from the heap by using the first-fit
+ *        algorithm.
+ * @details The allocated block is guaranteed to be properly aligned for a
+ *          pointer data type.
+ *
+ * @param[in] size the size of the block to be allocated. Note that the
+ *                 allocated block may be a bit bigger than the requested
+ *                 size for alignment and fragmentation reasons.
  * @return A pointer to the allocated block.
  * @retval NULL if the block cannot be allocated.
  */
@@ -149,22 +153,27 @@ void *chHeapAlloc(size_t size) {
                                    (p)->h_size)
 
 /**
- * Frees a previously allocated memory block.
- * @param p the memory block pointer
+ * @brief Frees a previously allocated memory block.
+ *
+ * @param[in] p the memory block pointer
  */
 void chHeapFree(void *p) {
   struct header *qp, *hp;
 
+  chDbgCheck(p != NULL, "chHeapFree");
+
   hp = (struct header *)p - 1;
-
-  chDbgAssert(hp->h_magic == MAGIC, "chheap.c, chHeapFree() #1");
-
+  chDbgAssert(hp->h_magic == MAGIC,
+              "chHeapFree(), #1",
+              "it is not magic");
   qp = &heap.free;
   H_LOCK();
 
   while (TRUE) {
 
-    chDbgAssert((hp < qp) || (hp >= LIMIT(qp)), "chheap.c, chHeapFree() #2");
+    chDbgAssert((hp < qp) || (hp >= LIMIT(qp)),
+                "chHeapFree(), #2",
+                "within free block");
 
     if (((qp == &heap.free) || (hp > qp)) &&
         ((qp->h_next == NULL) || (hp < qp->h_next))) {
@@ -191,13 +200,14 @@ void chHeapFree(void *p) {
 }
 
 /**
- * Determines the heap status.
- * @param sizep pointer to a variable that will receive the total fragmented
- *              free space
+ * @brief Reports the heap status.
+ *
+ * @param[in] sizep pointer to a variable that will receive the total
+ *                  fragmented free space
  * @return The number of fragments in the heap.
  * @note This function is meant to be used in the test suite, it should not be
  *       really useful for the application code.
- * @note This function is not implemented when the \p CH_USE_MALLOC_HEAP
+ * @note This function is not implemented when the @p CH_USE_MALLOC_HEAP
  *       configuration option is used (it always returns zero).
  */
 size_t chHeapStatus(size_t *sizep) {
@@ -220,11 +230,11 @@ size_t chHeapStatus(size_t *sizep) {
 
 #include <stdlib.h>
 
-#if defined(CH_USE_MUTEXES)
+#if CH_USE_MUTEXES
 #define H_LOCK()        chMtxLock(&hmtx)
 #define H_UNLOCK()      chMtxLock(&hmtx)
 static Mutex            hmtx;
-#elif defined(CH_USE_SEMAPHORES)
+#elif CH_USE_SEMAPHORES
 #define H_LOCK()        chSemWait(&hsem)
 #define H_UNLOCK()      chSemSignal(&hsem)
 static Semaphore        hsem;
@@ -232,9 +242,9 @@ static Semaphore        hsem;
 #error "The heap allocator requires mutexes or semaphores to be enabled"
 #endif
 
-void chHeapInit(void) {
+void heap_init(void) {
 
-#if defined(CH_USE_MUTEXES)
+#if CH_USE_MUTEXES
   chMtxInit(&hmtx);
 #else
   chSemInit(&hsem, 1);
@@ -245,19 +255,17 @@ void *chHeapAlloc(size_t size) {
   void *p;
 
   H_LOCK();
-
   p = malloc(size);
-
   H_UNLOCK();
   return p;
 }
 
 void chHeapFree(void *p) {
 
+  chDbgCheck(p != NULL, "chHeapFree");
+
   H_LOCK();
-
   free(p);
-
   H_UNLOCK();
 }
 

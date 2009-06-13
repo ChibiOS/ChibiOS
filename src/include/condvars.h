@@ -29,6 +29,8 @@
  */
 
 /**
+ * @file condvars.h
+ * @brief Condition Variables macros and structures.
  * @addtogroup CondVars
  * @{
  */
@@ -36,13 +38,13 @@
 #ifndef _CONDVARS_H_
 #define _CONDVARS_H_
 
-#if defined(CH_USE_CONDVARS) && defined(CH_USE_MUTEXES)
+#if CH_USE_CONDVARS && CH_USE_MUTEXES
 
 /**
- * CondVar structure.
+ * @brief CondVar structure.
  */
 typedef struct CondVar {
-  ThreadsQueue          c_queue;
+  ThreadsQueue          c_queue;        /**< CondVar threads queue.*/
 } CondVar;
 
 #ifdef __cplusplus
@@ -55,7 +57,7 @@ extern "C" {
   void chCondBroadcastI(CondVar *cp);
   msg_t chCondWait(CondVar *cp);
   msg_t chCondWaitS(CondVar *cp);
-#ifdef CH_USE_CONDVARS_TIMEOUT
+#if CH_USE_CONDVARS_TIMEOUT
   msg_t chCondWaitTimeout(CondVar *cp, systime_t time);
   msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time);
 #endif
@@ -63,7 +65,7 @@ extern "C" {
 }
 #endif
 
-#endif /* defined(CH_USE_CONDVARS) && defined(CH_USE_MUTEXES) */
+#endif /* CH_USE_CONDVARS && CH_USE_MUTEXES */
 
 #endif /* _CONDVARS_H_ */
 

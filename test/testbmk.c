@@ -29,8 +29,9 @@
 #include "test.h"
 
 static Semaphore sem1;
-
-static void empty(void) {}
+#if CH_USE_MUTEXES
+static Mutex mtx1;
+#endif
 
 static msg_t thread1(void *p) {
   msg_t msg;
@@ -79,8 +80,8 @@ static void bmk1_execute(void) {
 
 const struct testcase testbmk1 = {
   bmk1_gettest,
-  empty,
-  empty,
+  NULL,
+  NULL,
   bmk1_execute
 };
 
@@ -105,8 +106,8 @@ static void bmk2_execute(void) {
 
 const struct testcase testbmk2 = {
   bmk2_gettest,
-  empty,
-  empty,
+  NULL,
+  NULL,
   bmk2_execute
 };
 
@@ -140,8 +141,8 @@ static void bmk3_execute(void) {
 
 const struct testcase testbmk3 = {
   bmk3_gettest,
-  empty,
-  empty,
+  NULL,
+  NULL,
   bmk3_execute
 };
 
@@ -171,8 +172,8 @@ static void bmk4_execute(void) {
 
 const struct testcase testbmk4 = {
   bmk4_gettest,
-  empty,
-  empty,
+  NULL,
+  NULL,
   bmk4_execute
 };
 
@@ -202,8 +203,8 @@ static void bmk5_execute(void) {
 
 const struct testcase testbmk5 = {
   bmk5_gettest,
-  empty,
-  empty,
+  NULL,
+  NULL,
   bmk5_execute
 };
 
@@ -257,7 +258,7 @@ static void bmk6_execute(void) {
 const struct testcase testbmk6 = {
   bmk6_gettest,
   bmk6_setup,
-  empty,
+  NULL,
   bmk6_execute
 };
 
@@ -295,8 +296,8 @@ static void bmk7_execute(void) {
 
 const struct testcase testbmk7 = {
   bmk7_gettest,
-  empty,
-  empty,
+  NULL,
+  NULL,
   bmk7_execute
 };
 
@@ -332,7 +333,112 @@ static void bmk8_execute(void) {
 
 const struct testcase testbmk8 = {
   bmk8_gettest,
-  empty,
-  empty,
+  NULL,
+  NULL,
   bmk8_execute
+};
+
+static char *bmk9_gettest(void) {
+
+  return "Benchmark, semaphores wait/signal";
+}
+
+static void bmk9_setup(void) {
+
+  chSemInit(&sem1, 1);
+}
+
+static void bmk9_execute(void) {
+  uint32_t n = 0;
+
+  test_wait_tick();
+  test_start_timer(1000);
+  do {
+    chSemWait(&sem1);
+    chSemSignal(&sem1);
+    chSemWait(&sem1);
+    chSemSignal(&sem1);
+    chSemWait(&sem1);
+    chSemSignal(&sem1);
+    chSemWait(&sem1);
+    chSemSignal(&sem1);
+    n++;
+#if defined(WIN32)
+    ChkIntSources();
+#endif
+  } while (!test_timer_done);
+  test_print("--- Score : ");
+  test_printn(n * 4);
+  test_println(" wait+signal/S");
+}
+
+const struct testcase testbmk9 = {
+  bmk9_gettest,
+  bmk9_setup,
+  NULL,
+  bmk9_execute
+};
+
+#if CH_USE_MUTEXES
+static char *bmk10_gettest(void) {
+
+  return "Benchmark, mutexes lock/unlock";
+}
+
+static void bmk10_setup(void) {
+
+  chMtxInit(&mtx1);
+}
+
+static void bmk10_execute(void) {
+  uint32_t n = 0;
+
+  test_wait_tick();
+  test_start_timer(1000);
+  do {
+    chMtxLock(&mtx1);
+    chMtxUnlock();
+    chMtxLock(&mtx1);
+    chMtxUnlock();
+    chMtxLock(&mtx1);
+    chMtxUnlock();
+    chMtxLock(&mtx1);
+    chMtxUnlock();
+    n++;
+#if defined(WIN32)
+    ChkIntSources();
+#endif
+  } while (!test_timer_done);
+  test_print("--- Score : ");
+  test_printn(n * 4);
+  test_println(" lock+unlock/S");
+}
+
+const struct testcase testbmk10 = {
+  bmk10_gettest,
+  bmk10_setup,
+  NULL,
+  bmk10_execute
+};
+#endif
+
+/*
+ * Test sequence for benchmarks pattern.
+ */
+const struct testcase * const patternbmk[] = {
+#if !TEST_NO_BENCHMARKS
+  &testbmk1,
+  &testbmk2,
+  &testbmk3,
+  &testbmk4,
+  &testbmk5,
+  &testbmk6,
+  &testbmk7,
+  &testbmk8,
+  &testbmk9,
+#if CH_USE_MUTEXES
+  &testbmk10,
+#endif
+#endif
+  NULL
 };

@@ -25,27 +25,36 @@
 */
 
 /**
+ * @file chmtx.c
+ * @brief Mutexes code.
  * @addtogroup Mutexes
  * @{
  */
 
 #include <ch.h>
 
-#ifdef CH_USE_MUTEXES
+#if CH_USE_MUTEXES
 
 /**
- * Initializes s \p Mutex structure.
- * @param mp pointer to a \p Mutex structure
+ * @brief Initializes s @p Mutex structure.
+ *
+ * @param[out] mp pointer to a @p Mutex structure
+ * @note This function can be invoked from within an interrupt handler even if
+ *       it is not an I-Class API because it does not touch any critical kernel
+ *       data structure.
  */
 void chMtxInit(Mutex *mp) {
+
+  chDbgCheck(mp != NULL, "chMtxInit");
 
   queue_init(&mp->m_queue);
   mp->m_owner = NULL;
 }
 
 /**
- * Locks the specified mutex.
- * @param mp pointer to the \p Mutex structure
+ * @brief Locks the specified mutex.
+ *
+ * @param[in] mp pointer to the @p Mutex structure
  */
 void chMtxLock(Mutex *mp) {
 
@@ -57,13 +66,16 @@ void chMtxLock(Mutex *mp) {
 }
 
 /**
- * Locks the specified mutex.
+ * @brief Locks the specified mutex.
  *
- * @param mp pointer to the \p Mutex structure
- * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
+ * @param[in] mp pointer to the @p Mutex structure
+ * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
  *       block.
  */
 void chMtxLockS(Mutex *mp) {
+
+  chDbgCheck(mp != NULL, "chMtxLockS");
+
   /* the mutex is already locked? */
   if (mp->m_owner != NULL) {
     /*
@@ -83,26 +95,32 @@ void chMtxLockS(Mutex *mp) {
       switch (tp->p_state) {
       /* thread tp is waiting on a mutex? */
       case PRWTMTX:
-        /* requeue tp with its new priority on the mutex wait queue */
+        /* Requeues tp with its new priority on the mutex wait queue. */
         prio_insert(dequeue(tp), &tp->p_wtmtxp->m_queue);
         /* boost the owner of this mutex if needed */
         tp = tp->p_wtmtxp->m_owner;
         continue;
-#ifdef CH_USE_CONDVARS
+#if CH_USE_CONDVARS
       case PRWTCOND:
         /* Requeues tp with its new priority on the condvar queue. */
         prio_insert(dequeue(tp), &tp->p_wtcondp->c_queue);
         break;
 #endif
-#ifdef CH_USE_MESSAGES_PRIORITY
+#if CH_USE_SEMAPHORES_PRIORITY
+      case PRWTSEM:
+        /* Requeues tp with its new priority on the semaphore queue. */
+        prio_insert(dequeue(tp), &tp->p_wtsemp->s_queue);
+        break;
+#endif
+#if CH_USE_MESSAGES_PRIORITY
       case PRSNDMSG:
-        /* requeue tp with its new priority on (?) */
+        /* Requeues tp with its new priority on the server thread queue. */
         prio_insert(dequeue(tp), &tp->p_wtthdp->p_msgqueue);
         break;
 #endif
       /* thread tp is ready? */
       case PRREADY:
-        /* requeue tp with its new priority on the ready list */
+        /* Requeue tp with its new priority on the ready list. */
         chSchReadyI(dequeue(tp));
       }
       break;
@@ -112,7 +130,7 @@ void chMtxLockS(Mutex *mp) {
     /* thread remembers the mutex where it is waiting on */
     currp->p_wtmtxp = mp;
     chSchGoSleepS(PRWTMTX);
-    chDbgAssert(mp->m_owner == NULL, "chmtx.c, chMtxLockS()");
+    chDbgAssert(mp->m_owner == NULL, "chMtxLockS(), #1", "still owned");
   }
   /*
    * The mutex is now inserted in the owned mutexes list.
@@ -123,10 +141,12 @@ void chMtxLockS(Mutex *mp) {
 }
 
 /**
- * Tries to lock a mutex. This function does not have any overhead related to
- * the priority inheritance mechanism because it does not try to enter a sleep
- * state on the mutex.
- * @param mp pointer to the \p Mutex structure
+ * @brief Tries to lock a mutex.
+ * @details This function does not have any overhead related to
+ *          the priority inheritance mechanism because it does not try to
+ *          enter a sleep state on the mutex.
+ *
+ * @param[in] mp pointer to the @p Mutex structure
  * @retval TRUE if the mutex was successfully acquired
  * @retval FALSE if the lock attempt failed.
  */
@@ -142,16 +162,19 @@ bool_t chMtxTryLock(Mutex *mp) {
 }
 
 /**
- * Tries to lock a mutex. This function does not have any overhead related to
- * the priority inheritance mechanism because it does not try to enter a sleep
- * state on the mutex.
- * @param mp pointer to the \p Mutex structure
+ * @brief Tries to lock a mutex.
+ * @details This function does not have any overhead related to
+ *          the priority inheritance mechanism because it does not try to
+ *          enter a sleep state on the mutex.
+ * @param[in] mp pointer to the @p Mutex structure
  * @retval TRUE if the mutex was successfully acquired
  * @retval FALSE if the lock attempt failed.
- * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
+ * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
  *       block.
  */
 bool_t chMtxTryLockS(Mutex *mp) {
+
+  chDbgCheck(mp != NULL, "chMtxTryLockS");
 
   if (mp->m_owner != NULL)
     return FALSE;
@@ -162,17 +185,20 @@ bool_t chMtxTryLockS(Mutex *mp) {
 }
 
 /**
- * Unlocks the next owned mutex in reverse lock order.
+ * @brief Unlocks the next owned mutex in reverse lock order.
+ *
  * @return The pointer to the unlocked mutex.
  */
 Mutex *chMtxUnlock(void) {
   Mutex *ump, *mp;
 
   chSysLock();
-
-  chDbgAssert((currp->p_mtxlist != NULL) && (currp->p_mtxlist->m_owner == currp),
-              "chmtx.c, chMtxUnlock()");
-
+  chDbgAssert(currp->p_mtxlist != NULL,
+              "chMtxUnlock(), #1",
+              "owned mutexes list empty");
+  chDbgAssert(currp->p_mtxlist->m_owner == currp,
+              "chMtxUnlock(), #2",
+              "ownership failure");
   /* remove the top Mutex from the Threads's owned mutexes list */
   ump = currp->p_mtxlist;
   currp->p_mtxlist = ump->m_next;
@@ -207,17 +233,22 @@ Mutex *chMtxUnlock(void) {
 }
 
 /**
- * Unlocks the next owned mutex in reverse lock order.
+ * @brief Unlocks the next owned mutex in reverse lock order.
+ *
  * @return The pointer to the unlocked mutex.
- * @note This function must be called within a \p chSysLock() / \p chSysUnlock()
+ * @note This function must be called within a @p chSysLock() / @p chSysUnlock()
  *       block.
  * @note This function does not reschedule internally.
  */
 Mutex *chMtxUnlockS(void) {
   Mutex *ump, *mp;
 
-  chDbgAssert((currp->p_mtxlist != NULL) && (currp->p_mtxlist->m_owner == currp),
-              "chmtx.c, chMtxUnlockS()");
+  chDbgAssert(currp->p_mtxlist != NULL,
+              "chMtxUnlockS(), #1",
+              "owned mutexes list empty");
+  chDbgAssert(currp->p_mtxlist->m_owner == currp,
+              "chMtxUnlockS(), #2",
+              "ownership failure");
 
   /*
    * Removes the top Mutex from the owned mutexes list and marks it as not owned.
@@ -247,15 +278,15 @@ Mutex *chMtxUnlockS(void) {
 }
 
 /**
- * Unlocks all the mutexes owned by the invoking thread, this is <b>MUCH MORE</b>
- * efficient than releasing the mutexes one by one and not just because the
- * call overhead, this function does not have any overhead related to the
- * priority inheritance mechanism.
+ * @brief Unlocks all the mutexes owned by the invoking thread.
+ * @details This function is <b>MUCH MORE</b> efficient than releasing the
+ *          mutexes one by one and not just because the call overhead,
+ *          this function does not have any overhead related to the priority
+ *          inheritance mechanism.
  */
 void chMtxUnlockAll(void) {
 
   chSysLock();
-
   if (currp->p_mtxlist != NULL) {
     do {
       Mutex *mp = currp->p_mtxlist;
@@ -267,7 +298,6 @@ void chMtxUnlockAll(void) {
     currp->p_prio = currp->p_realprio;
     chSchRescheduleS();
   }
-
   chSysUnlock();
 }
 

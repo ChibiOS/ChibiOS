@@ -24,37 +24,26 @@
     for full details of how and when the exception can be applied.
 */
 
+/**
+ * @file ports/MSP430/chcore.c
+ * @brief MSP430 architecture port code.
+ * @addtogroup MSP430_CORE
+ * @{
+ */
+
 #include <ch.h>
 
 /**
- * This function implements the idle thread infinite loop. The function should
- * put the processor in the lowest power mode capable to serve interrupts.
- * The priority is internally set to the minimum system value so that this
- * thread is executed only if there are no other ready threads in the system.
+ * Performs a context switch between two threads.
+ * @param otp the thread to be switched out
+ * @param ntp the thread to be switched in
+ * @note The function is declared as a weak symbol, it is possible to redefine
+ *       it in your application code.
  */
-void _idle(void *p) {
-
-  while (TRUE)
-    ;
-}
-
-/**
- * Abonormal system termination handler. Invoked by the ChibiOS/RT when an
- * abnormal unrecoverable condition is met.
- */
-void chSysHalt(void) {
-
-  chSysLock();
-
-  while (TRUE)
-    ;
-}
-
-/**
- * Context switch.
- */
-__attribute__((naked))
-void chSysSwitchI(Thread *otp, Thread *ntp) {
+/** @cond never */
+__attribute__((naked, weak))
+/** @endcond */
+void port_switch(Thread *otp, Thread *ntp) {
   register struct intctx *sp asm("r1");
 
   asm volatile ("push    r11                                    \n\t" \
@@ -79,11 +68,24 @@ void chSysSwitchI(Thread *otp, Thread *ntp) {
 }
 
 /**
- * Prints a message on the system console (if any).
+ * Disables the interrupts and halts the system.
+ * @note The function is declared as a weak symbol, it is possible to redefine
+ *       it in your application code.
  */
-void chSysPuts(char *msg) {
+/** @cond never */
+__attribute__((weak))
+/** @endcond */
+void port_halt(void) {
+
+  port_disable();
+  while (TRUE) {
+  }
 }
 
+/**
+ * Start a thread by invoking its work function.
+ * If the work function returns @p chThdExit() is automatically invoked.
+ */
 void threadstart(void) {
 
   asm volatile ("eint                                           \n\t" \
@@ -91,3 +93,5 @@ void threadstart(void) {
                 "call    r10                                    \n\t" \
                 "call    #chThdExit");
 }
+
+/** @} */

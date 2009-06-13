@@ -24,27 +24,25 @@
     for full details of how and when the exception can be applied.
 */
 
-.text
+/**
+ * @defgroup STM32F103 STM32F103 Support
+ * @{
+ * @brief STM32F103 specific support.
+ * @details The STM32F103 support includes:
+ * - Buffered, interrupt driven, serial driver.
+ * - A demo supporting the kernel test suite.
+ *
+ * @ingroup ARMCM3
+ */
+/** @} */
 
-.p2align 4,,15
-.globl @chSysSwitchI@8
-@chSysSwitchI@8:
-        # Switch out
-        push    %ebp
-        push    %esi
-        push    %edi
-        push    %ebx
-        movl    %esp,16(%ecx)
-        # Switch in
-        movl    16(%edx),%esp
-        pop     %ebx
-        pop     %edi
-        pop     %esi
-        pop     %ebp
-        ret
-
-.p2align 4,,15
-.globl @threadstart@0
-@threadstart@0:
-        push    %eax
-        call    _chThdExit
+/**
+ * @defgroup STM32F103_SERIAL USART Support
+ * @{
+ * @brief USART peripherals support.
+ * @details The serial driver supports the STM32F103 USARTs in asynchronous
+ * mode.
+ *
+ * @ingroup STM32F103
+ */
+/** @} */

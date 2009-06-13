@@ -24,38 +24,35 @@
     for full details of how and when the exception can be applied.
 */
 
-#include <ch.h>
-
-#include "lpc214x.h"
-
-/*
- * System idle thread loop.
+/**
+ * @defgroup AT91SAM7X AT91SAM7X Support
+ * @{
+ * @brief AT91SAM7X specific support.
+ * @details The AT91SAM7X support includes:
+ * - Buffered, interrupt driven, serial driver.
+ * - EMAC driver with MII support.
+ * - A demo supporting the kernel test suite.
+ * - A Web server demo using the uIP TCP/IP stack.
+ *
+ * @ingroup ARM7
  */
-void _idle(void *p) {
+/** @} */
 
-  while (TRUE) {
-// Note, it is disabled because it causes trouble with the JTAG probe.
-// Enable it in the final code only.
-//    PCON = 1;
-  }
-}
-
-/*
- * System console message (not implemented).
+/**
+ * @defgroup AT91SAM7X_SERIAL USART Support
+ * @{
+ * @brief USART peripherals support.
+ * @details The serial driver supports the AT91SAM7X USART peripherals.
+ *
+ * @ingroup AT91SAM7X
  */
-void chSysPuts(char *msg) {
-}
+/** @} */
 
-/*
- * System halt.
+/**
+ * @defgroup AT91SAM7X_EMAC EMAC Support
+ * @{
+ * @brief EMAC peripheral support.
+ *
+ * @ingroup AT91SAM7X
  */
-__attribute__((naked, weak))
-void chSysHalt(void) {
-
-#ifdef THUMB
-  asm volatile ("ldr      r0, =_halt16");
-  asm volatile ("bx       r0");
-#else
-  asm volatile ("b        _halt32");
-#endif
-}
+/** @} */

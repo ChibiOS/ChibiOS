@@ -25,6 +25,8 @@
 */
 
 /**
+ * @file lists.h
+ * @brief Lists and queues macros and structures.
  * @addtogroup ThreadLists
  * @{
  */
@@ -39,31 +41,36 @@ typedef struct Thread Thread;
 #define notempty(p)     ((p)->p_next != (Thread *)(p))
 
 /**
- * Generic threads queue header and element.
+ * @brief Generic threads queue header and element.
  * @extends ThreadsList
  */
 typedef struct {
-  /** First \p Thread in the queue, or \p ThreadQueue when empty. */
-  Thread                *p_next;
-  /** Last \p Thread in the queue, or \p ThreadQueue when empty. */
-  Thread                *p_prev;
+  Thread                *p_next;        /**< First @p Thread in the queue, or
+                                             @p ThreadQueue when empty.*/
+  Thread                *p_prev;        /**< Last @p Thread in the queue, or
+                                             @p ThreadQueue when empty.*/
 } ThreadsQueue;
 
 /**
- * Generic threads single link list, it works like a stack.
+ * @brief Generic threads single link list.
+ * @details This list behaves like a stack.
  */
 typedef struct {
-  /** Last pushed \p Thread on the stack list, or \p ThreadList when empty. */
-  Thread                *p_next;
+  Thread                *p_next;        /**< Last pushed @p Thread on the stack,
+                                             or @p ThreadList when empty.*/
 } ThreadsList;
 
-/*
- * Threads Lists functions and macros.
+/**
+ * Queue initialization.
  */
 #define queue_init(tqp) ((tqp)->p_next = (tqp)->p_prev = (Thread *)(tqp));
+
+/**
+ * List initialization.
+ */
 #define list_init(tlp)  ((tlp)->p_next = (Thread *)(tlp))
 
-#ifndef CH_OPTIMIZE_SPEED
+#if !CH_OPTIMIZE_SPEED
 
 #ifdef __cplusplus
 extern "C" {
@@ -79,7 +86,7 @@ extern "C" {
 }
 #endif
 
-#endif /* CH_OPTIMIZE_SPEED */
+#endif /* !CH_OPTIMIZE_SPEED */
 
 #endif  /* _LISTS_H_ */
 

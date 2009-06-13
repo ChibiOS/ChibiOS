@@ -1,0 +1,61 @@
+/*
+    ChibiOS/RT - Copyright (C) 2009 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+                                      ---
+
+    A special exception to the GPL can be applied should you wish to distribute
+    a combined work that includes ChibiOS/RT, without being obliged to provide
+    the source code for any proprietary components. See the file exception.txt
+    for full details of how and when the exception can be applied.
+*/
+
+/**
+ * @page article_interrupts Writing interrupt handlers under ChibiOS/RT
+ * @{
+ * Since version 1.1.0 ChibiOS/RT offers a cross-platform method for writing
+ * interrupt handlers. Port-related and compiler-related details are
+ * encapsulated within standard system macros.<br>
+ * An interrupt handler assumes the following general form:
+ * @code
+CH_IRQ_HANDLER(myIRQ) {
+  CH_IRQ_PROLOGUE();
+  
+  // IRQ handling code, preemptable if the architecture supports it.
+  
+  chSysLockFromIsr();
+  // Invocation of some I-Class system APIs, never preemptable.
+  chSysUnlockFromIsr().
+  
+  // More IRQ handling code, again preemptable.
+
+  CH_IRQ_EPILOGUE();
+}
+ * @endcode
+ * Note that only interrupt handlers that have to invoke system @ref I-Class
+ * APIs must be written in this form, handlers unrelated to the OS activity can
+ * omit the macros.
+ * Another note about the handler name "myIRQ", in some ports it must be a
+ * vector number rather than a function name, it could also be a name from
+ * within a predefined set, see the notes about the various ports.
+ * <h2>Important Notes</h2>
+ * - There is an important application note about ARM7 interrupt handlers,
+ *   please read about it in the ARM7 port section: @ref ARM7_IH
+ * .
+ */
+/** @} */
+ 

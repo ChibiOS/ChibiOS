@@ -25,6 +25,8 @@
 */
 
 /**
+ * @file mempools.h
+ * @brief Memory Pools macros and structures.
  * @addtogroup MemoryPools
  * @{
  */
@@ -32,15 +34,21 @@
 #ifndef _MEMPOOLS_H_
 #define _MEMPOOLS_H_
 
-#ifdef CH_USE_MEMPOOLS
+#if CH_USE_MEMPOOLS
 
+/**
+ * @brief Memory pool free object header.
+ */
 struct pool_header {
   struct pool_header    *ph_next;
 };
 
+/**
+ * @brief Memory pool descriptor.
+ */
 typedef struct {
-  struct pool_header    *mp_next;
-  size_t                mp_object_size;
+  struct pool_header    *mp_next;       /**< Pointer to the header.*/
+  size_t                mp_object_size; /**< Memory pool objects size.*/
 } MemoryPool;
 
 #ifdef __cplusplus

@@ -24,9 +24,13 @@
     for full details of how and when the exception can be applied.
 */
 
-/*
- * ARM7 port system code.
+/**
+ * @file ports/ARM7/chcoreasm.s
+ * @brief ARM7 architecture port low level code.
+ * @addtogroup ARM7_CORE
+ * @{
  */
+/** @cond never */
 
 #include <chconf.h>
 
@@ -51,51 +55,61 @@
 .balign 16
 .code 16
 .thumb_func
-.global _lock
-_lock:
-        mov     r0, pc
-        bx      r0
+.global _port_disable_thumb
+_port_disable_thumb:
+        mov     r3, pc
+        bx      r3
 .code 32
-        mrs     r0, CPSR
+        mrs     r3, CPSR
+        orr     r3, #I_BIT
+        msr     CPSR_c, r3
+        orr     r3, #F_BIT
+        msr     CPSR_c, r3
+        bx      lr
+
+.balign 16
+.code 16
+.thumb_func
+.global _port_suspend_thumb
+_port_suspend_thumb:
+.thumb_func
+.global _port_lock_thumb
+_port_lock_thumb:
+        mov     r3, pc
+        bx      r3
+.code 32
         msr     CPSR_c, #MODE_SYS | I_BIT
         bx      lr
 
 .balign 16
 .code 16
 .thumb_func
-.global _unlock
-_unlock:
-        mov     r1, pc
-        bx      r1
-.code 32
-        msr     CPSR_c, r0
-        bx      lr
-
-.balign 16
-.code 16
+.global _port_enable_thumb
+_port_enable_thumb:
 .thumb_func
-.global _enable
-_enable:
-        mov     r0, pc
-        bx      r0
+.global _port_unlock_thumb
+_port_unlock_thumb:
+        mov     r3, pc
+        bx      r3
 .code 32
         msr     CPSR_c, #MODE_SYS
         bx      lr
+
 #endif
 
 .balign 16
 #ifdef THUMB_PRESENT
 .code 16
 .thumb_func
-.global chSysSwitchI_thumb
-chSysSwitchI_thumb:
+.global _port_switch_thumb
+_port_switch_thumb:
         mov     r2, pc
         bx      r2
-        // Jumps into chSysSwitchI in ARM mode
+        // Jumps into _port_switch_arm in ARM mode
 #endif
 .code 32
-.global chSysSwitchI_arm
-chSysSwitchI_arm:
+.global _port_switch_arm
+_port_switch_arm:
 #ifdef CH_CURRP_REGISTER_CACHE
         stmfd   sp!, {r4, r5, r6, r8, r9, r10, r11, lr}
         str     sp, [r0, #16]
@@ -149,16 +163,16 @@ chSysSwitchI_arm:
 #ifdef THUMB_NO_INTERWORKING
 .code 16
 .thumb_func
-.globl IrqCommon
-IrqCommon:
+.globl _port_irq_common
+_port_irq_common:
         bl      chSchRescRequiredI
         mov     lr, pc
         bx      lr
 .code 32
 #else /* !THUMB_NO_INTERWORKING */
 .code 32
-.globl IrqCommon
-IrqCommon:
+.globl _port_irq_common
+_port_irq_common:
         bl      chSchRescRequiredI
 #endif /* !THUMB_NO_INTERWORKING */
         cmp     r0, #0                          // Simply returns if a
@@ -204,8 +218,8 @@ IrqCommon:
  */
 .balign 16
 .code 32
-.globl threadstart
-threadstart:
+.globl _port_thread_start
+_port_thread_start:
         msr     CPSR_c, #MODE_SYS
 #ifndef THUMB_NO_INTERWORKING
         mov     r0, r5
@@ -223,22 +237,5 @@ jmpr4:
         bx      r4
 #endif /* !THUMB_NO_INTERWORKING */
 
-/*
- * System stop code.
- */
-.code 16
-.p2align 2,,
-.thumb_func
-.weak _halt16
-.globl _halt16
-_halt16:
-       mov      r0, pc
-       bx       r0
-.code 32
-.weak _halt32
-.globl _halt32
-_halt32:
-       mrs      r0, CPSR
-       orr      r0, #I_BIT | F_BIT
-       msr      CPSR_c, r0
-.loop: b        .loop
+/** @endcond */
+/** @} */

@@ -24,72 +24,67 @@
     for full details of how and when the exception can be applied.
 */
 
+/**
+ * @file ports/ARMCM3/chcore.c
+ * @brief ARM Cortex-M3 architecture port code.
+ * @addtogroup ARMCM3_CORE
+ * @{
+ */
+
 #include <ch.h>
 #include <nvic.h>
 
-/*
- * System idle thread loop.
+/**
+ * Halts the system.
+ * @note The function is declared as a weak symbol, it is possible to redefine
+ *       it in your application code.
  */
+/** @cond never */
 __attribute__((weak))
-void _idle(void *p) {
+/** @endcond */
+void port_halt(void) {
 
+  port_disable();
   while (TRUE) {
-#if ENABLE_WFI_IDLE != 0
-    asm volatile ("wfi");
+  }
+}
+
+#if !CH_OPTIMIZE_SPEED
+void _port_lock(void) {
+  register uint32_t tmp asm ("r3") = BASEPRI_KERNEL;
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));
+}
+
+void _port_unlock(void) {
+  register uint32_t tmp asm ("r3") = BASEPRI_USER;
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));
+}
 #endif
-  }
-}
 
-/*
- * System console message (not implemented).
- */
-__attribute__((weak))
-void chSysPuts(char *msg) {
-}
-
-/*
- * System halt.
- */
-__attribute__((naked, weak))
-void chSysHalt(void) {
-
-  asm volatile ("cpsid   i");
-  while (TRUE) {
-  }
-}
-
-/*
- * Start a thread by invoking its work function.
- *
- * Start a thread by calling its work function. If the work function returns,
- * call chThdExit and chSysHalt.
- */
-__attribute__((naked, weak))
-void threadstart(void) {
-
-  asm volatile ("blx     r1                                     \n\t" \
-                "bl      chThdExit                              \n\t" \
-                "bl      chSysHalt                              ");
-}
-
-/*
+/**
  * System Timer vector.
+ * This interrupt is used as system tick.
+ * @note The timer is initialized in the board setup code.
  */
-void SysTickVector(void) {
+CH_IRQ_HANDLER(SysTickVector) {
 
-  chSysIRQEnterI();
-  chSysLock();
+  CH_IRQ_PROLOGUE();
 
+  chSysLockFromIsr();
   chSysTimerHandlerI();
+  chSysUnlockFromIsr();
 
-  chSysUnlock();
-  chSysIRQExitI();
+  CH_IRQ_EPILOGUE();
 }
 
-/*
- * System invoked context switch.
+/**
+ * The SVC vector is used for commanded context switch.
+ * @param otp the thread to be switched out
+ * @param ntp the thread to be switched it
  */
+/** @cond never */
 __attribute__((naked))
+/** @endcond */
 void SVCallVector(Thread *otp, Thread *ntp) {
   /* { r0 = otp, r1 = ntp } */
   /* get the BASEPRI in r3 */
@@ -153,18 +148,20 @@ void SVCallVector(Thread *otp, Thread *ntp) {
 }
 #endif
 
-/*
+/**
  * Preemption invoked context switch.
  */
+/** @cond never */
 __attribute__((naked))
+/** @endcond */
 void PendSVVector(void) {
   Thread *otp;
   register struct intctx *sp_thd asm("r12");
 
-  chSysLock();
+  chSysLockFromIsr();
   asm volatile ("push    {lr}");
   if (!chSchRescRequiredI()) {
-    chSysUnlock();
+    chSysUnlockFromIsr();
     asm volatile ("pop     {pc}");
   }
   asm volatile ("pop     {lr}");
@@ -174,14 +171,14 @@ void PendSVVector(void) {
   (otp = currp)->p_ctx.r13 = sp_thd;
   (currp = fifo_remove((void *)&rlist))->p_state = PRCURR;
   chSchReadyI(otp);
-#ifdef CH_USE_ROUNDROBIN
+#if CH_USE_ROUNDROBIN
   /* set the round-robin time quantum */
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-#ifdef CH_USE_TRACE
   chDbgTrace(otp, currp);
-#endif
   sp_thd = currp->p_ctx.r13;
 
   POP_CONTEXT(sp_thd);
 }
+
+/** @} */
