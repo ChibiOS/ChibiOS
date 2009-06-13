@@ -79,7 +79,7 @@ static void memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
  *          the initial state is @p PRSUSPENDED.
  *
  * @param[out] wsp pointer to a working area dedicated to the thread stack
- * @param[in] wsize size of the working area
+ * @param[in] size size of the working area
  * @param[in] prio the priority level for the new thread
  * @param[in] pf the thread function
  * @param[in] arg an argument passed to the thread function. It can be @p NULL.
