@@ -65,7 +65,7 @@ static BufDescriptorEntry *txptr;
 
 #define PHY_LATCHED_PINS (AT91C_PB4_ECRS   | AT91C_PB5_ERX0  | AT91C_PB6_ERX1  | \
                           AT91C_PB7_ERXER  | AT91C_PB13_ERX2 | AT91C_PB14_ERX3 | \
-                          AT91C_PB15_ERXDV | AT91C_PB16_ECOL | PIOB_PHY_IRQ)
+                          AT91C_PB15_ERXDV | AT91C_PB16_ECOL | PIOB_PHY_IRQ_MASK)
 
 /*
  * PHY utilities.
@@ -177,9 +177,9 @@ void emac_init(int prio) {
   /*
    * PHY power control.
    */
-  AT91C_BASE_PIOB->PIO_OER = PIOB_PHY_PD;       // Becomes an output.
-  AT91C_BASE_PIOB->PIO_PPUDR = PIOB_PHY_PD;     // Default pullup disabled.
-  AT91C_BASE_PIOB->PIO_SODR = PIOB_PHY_PD;      // Output to high level.
+  AT91C_BASE_PIOB->PIO_OER = PIOB_PHY_PD_MASK;       // Becomes an output.
+  AT91C_BASE_PIOB->PIO_PPUDR = PIOB_PHY_PD_MASK;     // Default pullup disabled.
+  AT91C_BASE_PIOB->PIO_SODR = PIOB_PHY_PD_MASK;      // Output to high level.
 
   /*
    * PHY reset by pulsing the NRST pin.

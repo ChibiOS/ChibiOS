@@ -101,9 +101,6 @@ void hwinit0(void) {
    * PIO initialization.
    */
   palInit();
-/*  AT91C_BASE_PMC->PMC_PCER   = (1 << AT91C_ID_PIOA) | (1 << AT91C_ID_PIOB);
-  AT91C_BASE_PIOA->PIO_PER   = 0xFFFFFFFF;
-  AT91C_BASE_PIOB->PIO_PER   = 0xFFFFFFFF;*/
 }
 
 /*

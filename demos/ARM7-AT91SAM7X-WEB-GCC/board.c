@@ -18,6 +18,7 @@
 */
 
 #include <ch.h>
+#include <pal.h>
 
 #include "board.h"
 #include "at91lib/aic.h"
@@ -98,11 +99,9 @@ void hwinit0(void) {
     ;
 
   /*
-   * I/O setup, enable clocks, initially all pins are inputs with pullups.
+   * PIO initialization.
    */
-  AT91C_BASE_PMC->PMC_PCER   = (1 << AT91C_ID_PIOA) | (1 << AT91C_ID_PIOB);
-  AT91C_BASE_PIOA->PIO_PER   = 0xFFFFFFFF;
-  AT91C_BASE_PIOB->PIO_PER   = 0xFFFFFFFF;
+  palInit();
 }
 
 /*
@@ -127,24 +126,25 @@ void hwinit1(void) {
   /*
    * LCD pins setup.
    */
-  AT91C_BASE_PIOB->PIO_CODR   = PIOB_LCD_BL;    // Set to low.
-  AT91C_BASE_PIOB->PIO_OER    = PIOB_LCD_BL;    // Configure as output.
-  AT91C_BASE_PIOB->PIO_PPUDR  = PIOB_LCD_BL;    // Disable internal pullup resistor.
+  palClearPad(IOPORT_B, PIOB_LCD_BL);
+  AT91C_BASE_PIOB->PIO_OER    = PIOB_LCD_BL_MASK;    // Configure as output.
+  AT91C_BASE_PIOB->PIO_PPUDR  = PIOB_LCD_BL_MASK;    // Disable internal pullup resistor.
 
-  AT91C_BASE_PIOA->PIO_SODR   = PIOA_LCD_RESET; // Set to high.
-  AT91C_BASE_PIOA->PIO_OER    = PIOA_LCD_RESET; // Configure as output.
-  AT91C_BASE_PIOA->PIO_PPUDR  = PIOA_LCD_RESET; // Disable internal pullup resistor.
+  palSetPad(IOPORT_A, PIOA_LCD_RESET);
+  AT91C_BASE_PIOA->PIO_OER    = PIOA_LCD_RESET_MASK; // Configure as output.
+  AT91C_BASE_PIOA->PIO_PPUDR  = PIOA_LCD_RESET_MASK; // Disable internal pullup resistor.
 
   /*
    * Joystick and buttons, disable pullups, already inputs.
    */
-  AT91C_BASE_PIOA->PIO_PPUDR = PIOA_B1 | PIOA_B2 | PIOA_B3 | PIOA_B4 | PIOA_B5;
-  AT91C_BASE_PIOB->PIO_PPUDR = PIOB_SW1 | PIOB_SW2;
+  AT91C_BASE_PIOA->PIO_PPUDR = PIOA_B1_MASK | PIOA_B2_MASK | PIOA_B3_MASK |
+                               PIOA_B4_MASK | PIOA_B5_MASK;
+  AT91C_BASE_PIOB->PIO_PPUDR = PIOB_SW1_MASK | PIOB_SW2_MASK;
 
   /*
    * MMC/SD slot, disable pullups, already inputs.
    */
-  AT91C_BASE_SYS->PIOB_PPUDR = PIOB_MMC_WP | PIOB_MMC_CP;
+  AT91C_BASE_SYS->PIOB_PPUDR = PIOB_MMC_WP_MASK | PIOB_MMC_CP_MASK;
 
   /*
    * PIT Initialization.

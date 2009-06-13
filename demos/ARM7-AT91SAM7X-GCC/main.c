@@ -18,6 +18,7 @@
 */
 
 #include <ch.h>
+#include <pal.h>
 #include <test.h>
 
 #include "board.h"
@@ -27,9 +28,9 @@ static WORKING_AREA(waThread1, 64);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    AT91C_BASE_PIOB->PIO_SODR = PIOB_LCD_BL;            // LCD on.
+    palSetPad(IOPORT_B, PIOB_LCD_BL);
     chThdSleepMilliseconds(100);
-    AT91C_BASE_PIOB->PIO_CODR = PIOB_LCD_BL;            // LCD off.
+    palClearPad(IOPORT_B, PIOB_LCD_BL);
     chThdSleepMilliseconds(900);
   }
   return 0;
@@ -51,9 +52,9 @@ int main(int argc, char **argv) {
    */
   while (TRUE) {
     chThdSleepMilliseconds(500);
-    if (!(AT91C_BASE_PIOB->PIO_PDSR & PIOB_SW1))
+    if (!palReadPad(IOPORT_B, PIOB_SW1))
       chFDDWrite(&COM1, (uint8_t *)"Hello World!\r\n", 14);
-    if (!(AT91C_BASE_PIOB->PIO_PDSR & PIOB_SW2))
+    if (!palReadPad(IOPORT_B, PIOB_SW2))
       TestThread(&COM1);
   }
 
