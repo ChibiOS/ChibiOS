@@ -1,5 +1,5 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.2.2 stable
+Kernel:   ChibiOS/RT 1.2.3 stable
 Compiler: GCC 4.3.3 (YAGARTO 29.03.2009)
 Options:  -Os -fomit-frame-pointer -mabi=apcs-gnu
 Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
@@ -46,7 +46,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 7.1 (Heap, allocation and fragmentation test)
---- Size  : 62228 bytes, not fragmented
+--- Size  : 61460 bytes, not fragmented
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 8.1 (Memory Pools, allocation and enqueuing test)
@@ -100,4 +100,3 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 ---------------------------------------------------------------------------
 
 Final result: SUCCESS
-

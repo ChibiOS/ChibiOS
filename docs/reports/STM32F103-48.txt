@@ -1,5 +1,5 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.2.2 stable
+Kernel:   ChibiOS/RT 1.2.3 stable
 Compiler: GCC 4.3.3 (YAGARTO 29.03.2009)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: SYSCLK=48, ACR=0x11 (1 wait state)
@@ -46,7 +46,7 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 7.1 (Heap, allocation and fragmentation test)
---- Size  : 17204 bytes, not fragmented
+--- Size  : 16436 bytes, not fragmented
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 8.1 (Memory Pools, allocation and enqueuing test)
@@ -95,7 +95,7 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.10 (Benchmark, mutexes lock/unlock)
---- Score : 489544 lock+unlock/S
+--- Score : 489548 lock+unlock/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 
