@@ -73,8 +73,8 @@ Thread *chSchReadyI(Thread *tp) {
 
 /**
  * @brief Puts the current thread to sleep into the specified state.
- * @details The next highest priority thread becomes running. The threads
- *          states are described into @p threads.h.
+ * @details The thread goes into a sleeping state. The @ref thread_states are
+ *          described into @p threads.h.
  *
  * @param[in] newstate the new thread state
  */
@@ -117,9 +117,12 @@ static void wakeup(void *p) {
 }
 
 /**
- * @brief Puts the current thread to sleep into the specified state.
- * @details The next highest priority thread becomes running. The thread put
- *          to sleep is awakened after the specified time has elapsed.
+ * @brief Puts the current thread to sleep into the specified state with
+ *        timeout specification.
+ * @details The thread goes into a sleeping state, if it is not awakened
+ *          explicitly within the specified timeout then it is forcibly
+ *          awakened with a @p RDY_TIMEOUT low level message. The @ref
+ *          thread_states are described into @p threads.h.
  *
  * @param[in] newstate the new thread state
  * @param[in] time the number of ticks before the operation timeouts, the

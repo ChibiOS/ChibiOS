@@ -168,7 +168,7 @@ typedef struct {
  */
 #if !defined(pal_lld_setport) || defined(__DOXYGEN__)
 #define palSetPort(port, bits) {                                        \
-  palWritePort(port, palReadLatch(p) | (bits));                         \
+  palWritePort(port, palReadLatch(port) | (bits));                      \
 }
 #else
 #define palSetPort(port, bits) pal_lld_setport(port, bits)
@@ -189,7 +189,7 @@ typedef struct {
  */
 #if !defined(pal_lld_clearport) || defined(__DOXYGEN__)
 #define palClearPort(port, bits) {                                      \
-  palWritePort(port, palReadLatch(p) & ~(bits));                        \
+  palWritePort(port, palReadLatch(port) & ~(bits));                     \
 }
 #else
 #define palClearPort(port, bits) pal_lld_clearport(port, bits)
