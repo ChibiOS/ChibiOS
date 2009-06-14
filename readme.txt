@@ -70,7 +70,7 @@ GNU-Linux-GCC          - ChibiOS/RT simulator for x86 Linux systems, it is
   interface for digital I/O operations, this should help to create more
   portable applications and, in general, make easier to work with ChibiOS/RT
   on multiple architectures.
-- NEW: Port drivers for STM32, LPC214x, AT91SAM7X and MSP430 cleaned up the
+- NEW: Port drivers for STM32, LPC214x, AT91SAM7X and MSP430, cleaned up the
   initialization code in board.c. All the demos now use PAL for I/O. AVR is
   not supported because its "sparse" registers layout, it would not be
   efficient enough for my taste.
