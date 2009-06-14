@@ -19,7 +19,6 @@
 
 /**
  * @defgroup MSP430 MSP430
- * @{
  * @details MSP430 port details. This section how the ChibiOS/RT features are
  * implemented on this architecture.
  *
@@ -59,11 +58,9 @@
  *
  * @ingroup Ports
  */
-/** @} */
 
 /**
  * @defgroup MSP430_CONF Configuration Options
- * @{
  * @brief MSP430 Configuration Options.
  * @details The MSP430 port allows some architecture-specific configurations
  * settings that can be specified externally, as example on the compiler
@@ -76,33 +73,41 @@
  *
  * @ingroup MSP430
  */
-/** @} */
 
 /**
  * @defgroup MSP430_CORE Core Port Implementation
- * @{
  * @brief MSP430 specific port code, structures and macros.
  *
  * @ingroup MSP430
  */
-/** @} */
 
 /**
  * @defgroup MSP430_DRIVERS MSP430 Drivers
- * @{
  * @brief Device drivers included in the MSP430 support.
  *
  * @ingroup MSP430
  */
-/** @} */
+
+/**
+ * @defgroup MSP430_PAL I/O Ports Support
+ * @brief I/O Ports peripherals support.
+ * @details This module supports the MSP430 Digital I/O controller. The
+ * controller supports the following features (see @ref PAL):
+ * - 8 bits wide ports.
+ * - Atomic set/reset/toggle functions because special MSP430 instruction set.
+ * - Output latched regardless of the pad setting.
+ * - Direct read of input pads regardless of the pad setting.
+ * .
+ * The only non atomic operations are bus/group writing.
+ *
+ * @ingroup MSP430_DRIVERS
+ */
 
 /**
  * @defgroup MSP430_SERIAL USART Support
- * @{
  * @brief USART support.
  * @details The serial driver supports both the MSP430 USARTs in asynchronous
  * mode.
  *
  * @ingroup MSP430_DRIVERS
  */
-/** @} */

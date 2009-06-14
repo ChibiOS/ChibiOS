@@ -177,8 +177,7 @@ typedef FIO * ioportid_t;
 
 /**
  * @brief FIO port setup.
- * @details This function initializes a FIO port, note that this functionality
- *          is LPC214x specific and non portable.
+ * @details This function programs the pins direction within a port.
  */
 #define pal_lld_lpc214x_set_direction(port, dir) {                      \
   (port)->FIO_DIR = (dir);                                              \

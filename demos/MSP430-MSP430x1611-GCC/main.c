@@ -18,6 +18,7 @@
 */
 
 #include <ch.h>
+#include <pal.h>
 #include <test.h>
 
 #include "board.h"
@@ -30,9 +31,9 @@ static WORKING_AREA(waThread1, 64);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    P6OUT |= P6_O_LED;
+    palSetPad(IOPORT_F, P6_O_LED);
     chThdSleepMilliseconds(500);
-    P6OUT &= ~P6_O_LED;
+    palClearPad(IOPORT_F, P6_O_LED);
     chThdSleepMilliseconds(500);
   }
   return 0;
@@ -64,7 +65,7 @@ int main(int argc, char **argv) {
    * sleeping in a loop.
    */
   while (TRUE) {
-    if (!(P6IN & P6_I_BUTTON))
+    if (!palReadPad(IOPORT_F, P6_I_BUTTON))
       TestThread(&COM1);
     chThdSleepMilliseconds(500);
   }

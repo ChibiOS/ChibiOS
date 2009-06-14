@@ -58,40 +58,44 @@
 #endif
 
 /*
- * Pin definitionsfor the Olimex MSP430-P1611 board.
+ * Pin definitions for the Olimex MSP430-P1611 board.
  */
-#define P3_O_TXD0       (1 << 4)
-#define P3_I_RXD0       (1 << 5)
-#define P6_O_LED        (1 << 0)
-#define P6_I_BUTTON     (1 << 1)
+#define P3_O_TXD0               4
+#define P3_O_TXD0_MASK          (1 << P3_O_TXD0)
+#define P3_I_RXD0               5
+#define P3_I_RXD0_MASK          (1 << P3_I_RXD0)
+#define P6_O_LED                0
+#define P6_O_LED_MASK           (1 << P6_O_LED)
+#define P6_I_BUTTON             1
+#define P6_I_BUTTON_MASK        (1 << P6_I_BUTTON)
 
 /*
  * Initial I/O ports settings.
  */
 #define VAL_P1OUT       0x00
 #define VAL_P1DIR       0xFF
-#define VAL_P1SEL       0x00
 
 #define VAL_P2OUT       0x00
 #define VAL_P2DIR       0xFF
-#define VAL_P2SEL       0x00
 
-#define VAL_P3OUT       P3_O_TXD0
-#define VAL_P3DIR       ~P3_I_RXD0
-#define VAL_P3SEL       0x00
+#define VAL_P3OUT       P3_O_TXD0_MASK
+#define VAL_P3DIR       ~P3_I_RXD0_MASK
 
 #define VAL_P4OUT       0x00
 #define VAL_P4DIR       0xFF
-#define VAL_P4SEL       0x00
 
 #define VAL_P5OUT       0x00
 #define VAL_P5DIR       0xFF
-#define VAL_P5SEL       0x00
 
-#define VAL_P6OUT       P6_O_LED
-#define VAL_P6DIR       ~P6_I_BUTTON
-#define VAL_P6SEL       0x00
+#define VAL_P6OUT       P6_O_LED_MASK
+#define VAL_P6DIR       ~P6_I_BUTTON_MASK
 
-void hwinit(void);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void hwinit(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _BOARD_H_ */

@@ -19,7 +19,6 @@
 
 /**
  * @defgroup LPC214x LPC214x Support
- * @{
  * @brief LPC214x specific support.
  * @details The LPC214x support includes:
  * - VIC support code.
@@ -34,16 +33,13 @@
  *
  * @ingroup ARM7
  */
-/** @} */
 
 /**
  * @defgroup LPC214x_VIC VIC Support
- * @{
  * @brief VIC peripheral support.
  *
  * @ingroup LPC214x
  */
-/** @} */
 
 /**
  * @defgroup LPC214x_PAL I/O Ports Support
@@ -52,7 +48,6 @@
  * supports the following features (see @ref PAL):
  * - 32 bits wide ports.
  * - Atomic set/reset functions.
- * - Atomic set+reset function (atomic bus operations).
  * - Output latched regardless of the pad setting.
  * - Direct read of input pads regardless of the pad setting.
  * .
@@ -63,20 +58,16 @@
 
 /**
  * @defgroup LPC214x_SERIAL UART Support
- * @{
  * @brief UART peripherals support.
  * @details The serial driver supports the LPC214x UART peripherals.
  *
  * @ingroup LPC214x
  */
-/** @} */
 
 /**
  * @defgroup LPC214x_SSP SSP Support
- * @{
  * @brief SSP peripheral support.
  * @details This SPI driver supports the LPC214x SSP peripheral.
  *
  * @ingroup LPC214x
  */
-/** @} */

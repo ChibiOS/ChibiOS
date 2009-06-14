@@ -19,7 +19,6 @@
 
 /**
  * @defgroup ARMCM3 ARM Cortex-M3
- * @{
  * @details The ARM Cortex-M3 architecture is quite complex for a
  *  microcontroller and some explanations are required about the port choices.
  *
@@ -82,11 +81,9 @@
  *
  * @ingroup Ports
  */
-/** @} */
 
 /**
  * @defgroup ARMCM3_CONF Configuration Options
- * @{
  * @brief ARM Cortex-M3 Configuration Options.
  * @details The ARMCM3 port allows some architecture-specific configurations
  * settings that can be specified externally, as example on the compiler
@@ -113,20 +110,16 @@
  *
  * @ingroup ARMCM3
  */
-/** @} */
 
 /**
  * @defgroup ARMCM3_CORE Core Port Implementation
- * @{
  * @brief ARM Cortex-M3 specific port code, structures and macros.
  *
  * @ingroup ARMCM3
  */
-/** @} */
 
 /**
  * @defgroup ARMCM3_STARTUP Startup Support
- * @{
  * @brief ARM Cortex-M3 startup code support.
  * @details ChibiOS/RT provides its own generic startup file for the ARM
  * Cortex-M3 port.
@@ -168,13 +161,10 @@
  * @ingroup ARMCM3
  * @file ports/ARMCM3/crt0.s Startup code.
  */
-/** @} */
 
 /**
  * @defgroup ARMCM3_NVIC NVIC Support
- * @{
  * @brief ARM Cortex-M3 NVIC support.
  *
  * @ingroup ARMCM3
  */
-/** @} */

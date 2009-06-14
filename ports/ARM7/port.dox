@@ -19,7 +19,6 @@
 
 /**
  * @defgroup ARM7 ARM7TDMI
- * @{
  * @details The ARM7 architecture is quite complex for a microcontroller and
  * some explanations are required about the port choices.
  *
@@ -121,11 +120,9 @@
  *
  * @ingroup Ports
  */
-/** @} */
 
 /**
  * @defgroup ARM7_CONF Configuration Options
- * @{
  * @brief ARM7 specific configuration options.
  * @details The ARM7 port allows some architecture-specific configurations
  * settings that can be specified externally, as example on the compiler
@@ -144,11 +141,9 @@
  *
  * @ingroup ARM7
  */
-/** @} */
 
 /**
  * @defgroup ARM7_CORE Core Port Implementation
- * @{
  * @brief ARM7 specific port code, structures and macros.
  *
  * @ingroup ARM7
@@ -156,11 +151,9 @@
  * @file ports/ARM7/chcore.h Port related structures and macros.
  * @file ports/ARM7/chcore.c Port related code.
  */
-/** @} */
 
 /**
  * @defgroup ARM7_STARTUP Startup Support
- * @{
  * @brief ARM7 startup code support.
  * @details ChibiOS/RT provides its own generic startup file for the ARM7 port.
  * Of course it is not mandatory to use it but care should be taken about the
@@ -205,4 +198,3 @@
  * @ingroup ARM7
  * @file ports/ARM7/crt0.s Startup code.
  */
-/** @} */
