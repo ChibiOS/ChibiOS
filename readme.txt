@@ -66,12 +66,14 @@ GNU-Linux-GCC          - ChibiOS/RT simulator for x86 Linux systems, it is
 *** 1.3.1 ***
 - FIX: Removed mention of an obsolete option from the documentation (bug
   2799507).
-- NEW: Abstract digital I/O ports driver, this driver defines a common
+- NEW: Abstract digital I/O ports driver (PAL), this driver defines a common
   interface for digital I/O operations, this should help to create more
   portable applications and, in general, make easier to work with ChibiOS/RT
   on multiple architectures.
 - NEW: Port drivers for STM32, LPC214x, AT91SAM7X and MSP430 cleaned up the
-  initialization code in board.c to use the port driver macros.
+  initialization code in board.c. All the demos now use PAL for I/O. AVR is
+  not supported because its "sparse" registers layout, it would not be
+  efficient enough for my taste.
 - Documentation section reorganization and fixes.
 - Changed the STM32 demo stack sizes, it was incorrectly adjusted in version
   1.3.0 but it did not create problems (not a bug).
