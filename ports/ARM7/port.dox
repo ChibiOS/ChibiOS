@@ -34,7 +34,7 @@
  *   THUMB modules then the interworking compiler option is enabled. This is
  *   usually the slowest mode and the code size is not as good as in pure
  *   THUMB mode.
- *
+ * .
  * @section ARM7_STATES Mapping of the System States in the ARM7 port
  * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM7
  * port:
@@ -69,7 +69,7 @@
  * - <b>Halted</b>. Implemented as an infinite loop after disabling both IRQ
  *   and FIQ sources. The ARM state is whatever the processor was running when
  *   @p chSysHalt() was invoked.
- *
+ * .
  * @section ARM7_NOTES The ARM7 port notes
  * The ARM7 port makes some assumptions on the application code organization:
  * - The @p main() function is invoked in system mode.
@@ -90,7 +90,7 @@
  * - FIQ sources can preempt the kernel (by design) so it is not possible to
  *   invoke the kernel APIs from inside a FIQ handler. FIQ handlers are not
  *   affected by the kernel activity so there is not added jitter.
- *
+ * .
  * @section ARM7_IH ARM7 Interrupt Handlers
  * ARM7 Interrupt handlers do not save function-saved registers so you need to
  * make sure your code saves them or does not use them (this happens
@@ -138,7 +138,7 @@
  *   can trim this down by defining the macro externally. This would save
  *   some valuable RAM space for each thread present in the system.<br>
  *   The default value is set into <b>./ports/ARM7/chcore.h</b>.
- *
+ * .
  * @ingroup ARM7
  */
 

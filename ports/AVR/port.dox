@@ -19,7 +19,6 @@
 
 /**
  * @defgroup AVR MegaAVR
- * @{
  * @details AVR port details. This section how the ChibiOS/RT features are
  * implemented on this architecture.
  *
@@ -44,20 +43,18 @@
  * - <b>Serving Fast Interrupt</b>. Not present in this architecture.
  * - <b>Serving Non-Maskable Interrupt</b>. Not present in this architecture.
  * - <b>Halted</b>. Implemented as an infinite loop with interrupts disabled.
- *
+ * .
  * @section AVR_NOTES The AVR port notes
  * - The AVR does not have a dedicated interrupt stack, make sure to reserve
  *   enough stack space for interrupts in each thread stack. This can be done
  *   by modifying the @p INT_REQUIRED_STACK macro into
  *   <b>./ports/AVR/chcore.h</b>.
- *
+ * .
  * @ingroup Ports
  */
-/** @} */
 
 /**
  * @defgroup AVR_CONF Configuration Options
- * @{
  * @brief AVR Configuration Options.
  * @details The AVR port allows some architecture-specific configurations
  * settingsthat can be specified externally, as example on the compiler
@@ -67,14 +64,12 @@
  *   The default for this value is @p 32, this space is allocated for each
  *   thread so be careful in order to not waste precious RAM space.<br>
  *   The default value is set into <b>./ports/AVR/chcore.h</b>.
- *
+ * .
  * @ingroup AVR
  */
-/** @} */
 
 /**
  * @defgroup AVR_CORE AVR Core Implementation
- * @{
  * @brief AVR specific port code, structures and macros.
  *
  * @ingroup AVR
@@ -82,24 +77,19 @@
  * @file ports/AVR/chcore.h Port related structures and macros.
  * @file ports/AVR/chcore.c Port related code.
  */
-/** @} */
 
 /**
  * @defgroup AVR_DRIVERS AVR Drivers
- * @{
  * @brief Device drivers included in the AVR support.
  *
  * @ingroup AVR
  */
-/** @} */
 
 /**
  * @defgroup AVR_SERIAL USART Support
- * @{
  * @brief USART support.
  * @details The serial driver supports both the AVR USARTs in asynchronous
  * mode.
  *
  * @ingroup AVR_DRIVERS
  */
-/** @} */

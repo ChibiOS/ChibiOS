@@ -30,7 +30,7 @@
  * - A minimal demo, useful as project template.
  * - A demo supporting the kernel test suite.
  * - A C++ demo supporting the kernel test suite.
- *
+ * .
  * @ingroup ARM7
  */
 

@@ -43,7 +43,7 @@
  * - <b>Serving Non-Maskable Interrupt</b>. The MSP430 has several non
  *   maskable interrupt sources that can be associated to this state.
  * - <b>Halted</b>. Implemented as an infinite loop with interrupts disabled.
- *
+ * .
  * @section MSP430_NOTES The MSP430 port notes
  * - The MSP430 does not have a dedicated interrupt stack, make sure to reserve
  *     enough stack space for interrupts in each thread stack. This can be done
@@ -55,7 +55,7 @@
  *   idle thread because the MSP430 has several low power modes. You can
  *   select the proper low power mode for you application by defining the
  *   macro @p port_wait_for_interrupt().
- *
+ * .
  * @ingroup Ports
  */
 
@@ -70,7 +70,7 @@
  *   The default for this value is @p 32, this space is allocated for each
  *   thread so be careful in order to not waste precious RAM space.<br>
  *   The default value is set into <b>./ports/MSP430/chcore.h</b>.
- *
+ * .
  * @ingroup MSP430
  */
 

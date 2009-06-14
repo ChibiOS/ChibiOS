@@ -25,7 +25,7 @@
  * - EMAC driver with MII support.
  * - A demo supporting the kernel test suite.
  * - A Web server demo using the uIP TCP/IP stack.
- *
+ * .
  * @ingroup ARM7
  */
 

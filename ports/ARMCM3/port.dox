@@ -60,7 +60,7 @@
  * - <b>Halted</b>. Implemented as an infinite loop after globally masking all
  *   the maskable interrupt sources. The ARM state is whatever the processor
  *   was running when @p chSysHalt() was invoked.
- *
+ * .
  * @section ARMCM3_NOTES The ARM Cortex-M3 port notes
  * The ARM Cortex-M3 port is organized as follow:
  * - The @p main() function is invoked in thread-privileged mode.
@@ -78,7 +78,7 @@
  *   It is possible to share the SVC handler at the cost of slower context
  *   switching.
  * - The PendSV vector is internally used for preemption context switching.
- *
+ * .
  * @ingroup Ports
  */
 
@@ -107,7 +107,7 @@
  *   instruction from within the idle loop. This is defaulted to 0 because
  *   it can create problems with some debuggers. Setting this option to 1
  *   reduces the system power requirements.
- *
+ * .
  * @ingroup ARMCM3
  */
 
