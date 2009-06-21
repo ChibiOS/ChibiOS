@@ -88,7 +88,7 @@ void palSetBusMode(IOBus *bus, uint_fast8_t mode) {
   chDbgCheck((bus != NULL) &&
              (bus->bus_offset > PAL_IOPORTS_WIDTH), "palSetBusMode");
 
-  palSetMode(bus->bus_portid, bus->bus_mask, mode);
+  palSetGroupMode(bus->bus_portid, bus->bus_mask, mode);
 }
 
 /** @} */
