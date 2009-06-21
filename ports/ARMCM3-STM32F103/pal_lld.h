@@ -19,7 +19,7 @@
 
 /**
  * @file ports/ARMCM3-STM32F103/pal_lld.h
- * @brief STM32 GPIO low level driver
+ * @brief STM32 GPIO low level driver header
  * @addtogroup STM32F103_PAL
  * @{
  */
@@ -35,6 +35,7 @@
 #undef FALSE
 #undef TRUE
 #include "stm32f10x_map.h"
+#include "stm32f10x_rcc.h"
 #define FALSE 0
 #define TRUE (!FALSE)
 #endif
@@ -44,9 +45,65 @@
 /*===========================================================================*/
 
 /**
+ * @brief GPIO port setup info.
+ */
+typedef struct {
+  /** Initial value for ODR register.*/
+  uint32_t      odr;
+  /** Initial value for CRL register.*/
+  uint32_t      crl;
+  /** Initial value for CRH register.*/
+  uint32_t      crh;
+} stm32_gpio_setup_t;
+
+/**
+ * @brief STM32 GPIO static initializer.
+ * @details An instance of this structure must be passed to @p palInit() at
+ *          system startup time in order to initialized the digital I/O
+ *          subsystem. This represents only the initial setup, specific pads
+ *          or whole ports can be reprogrammed at later time.
+ */
+typedef struct {
+#if defined(_GPIOA) || defined(__DOXYGEN__)
+  /** @brief Port A setup data.*/
+  stm32_gpio_setup_t    PAData;
+#endif
+#if defined(_GPIOB) || defined(__DOXYGEN__)
+  /** @brief Port B setup data.*/
+  stm32_gpio_setup_t    PBData;
+#endif
+#if defined(_GPIOC) || defined(__DOXYGEN__)
+  /** @brief Port C setup data.*/
+  stm32_gpio_setup_t    PCData;
+#endif
+#if defined(_GPIOD) || defined(__DOXYGEN__)
+  /** @brief Port D setup data.*/
+  stm32_gpio_setup_t    PDData;
+#endif
+#if defined(_GPIOE) || defined(__DOXYGEN__)
+  /** @brief Port E setup data.*/
+  stm32_gpio_setup_t    PEData;
+#endif
+#if defined(_GPIOF) || defined(__DOXYGEN__)
+  /** @brief Port F setup data.*/
+  stm32_gpio_setup_t    PFData;
+#endif
+#if defined(_GPIOG) || defined(__DOXYGEN__)
+  /** @brief Port G setup data.*/
+  stm32_gpio_setup_t    PGData;
+#endif
+} STM32GPIOConfig;
+
+/**
  * @brief Width, in bits, of an I/O port.
  */
 #define PAL_IOPORTS_WIDTH 16
+
+/**
+ * @brief Whole port mask.
+ * @brief This macro specifies all the valid bits into a port.
+ */
+#define PAL_WHOLE_PORT ((ioportmask_t)0xFFFF)
 
 /**
  * @brief Digital I/O port sized unsigned type.
@@ -75,31 +132,45 @@ typedef GPIO_TypeDef * ioportid_t;
 #endif
 
 /**
- * @brief GPIO port A identifier.
+ * @brief GPIO port B identifier.
  */
 #if defined(_GPIOB) || defined(__DOXYGEN__)
 #define IOPORT_B        GPIOB
 #endif
 
 /**
- * @brief GPIO port A identifier.
+ * @brief GPIO port C identifier.
  */
 #if defined(_GPIOC) || defined(__DOXYGEN__)
 #define IOPORT_C        GPIOC
 #endif
 
 /**
- * @brief GPIO port A identifier.
+ * @brief GPIO port D identifier.
  */
 #if defined(_GPIOD) || defined(__DOXYGEN__)
 #define IOPORT_D        GPIOD
 #endif
 
 /**
- * @brief GPIO port A identifier.
+ * @brief GPIO port E identifier.
  */
 #if defined(_GPIOE) || defined(__DOXYGEN__)
 #define IOPORT_E        GPIOE
+#endif
+
+/**
+ * @brief GPIO port F identifier.
+ */
+#if defined(_GPIOF) || defined(__DOXYGEN__)
+#define IOPORT_F        GPIOF
+#endif
+
+/**
+ * @brief GPIO port G identifier.
+ */
+#if defined(_GPIOG) || defined(__DOXYGEN__)
+#define IOPORT_G        GPIOG
 #endif
 
 /*===========================================================================*/
@@ -109,13 +180,8 @@ typedef GPIO_TypeDef * ioportid_t;
 
 /**
  * @brief GPIO ports subsystem initialization.
- * @details Ports A-D enabled, AFIO enabled.
  */
-#define pal_lld_init() {                                                \
-  RCC->APB2ENR |= RCC_APB2ENR_AFIOEN | RCC_APB2ENR_IOPAEN |             \
-                  RCC_APB2ENR_IOPBEN | RCC_APB2ENR_IOPCEN |             \
-                  RCC_APB2ENR_IOPDEN;                                   \
-}
+#define pal_lld_init(config) _pal_lld_init(config)
 
 /**
  * @brief Reads an I/O port.
@@ -153,6 +219,9 @@ typedef GPIO_TypeDef * ioportid_t;
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
+ * @note Writing on pads programmed as pull-up or pull-down has the side
+ *       effect to modify the resistor setting because the output latched data
+ *       is used for the resistor selection.
  */
 #define pal_lld_writeport(port, bits) ((port)->ODR = (bits))
 
@@ -166,6 +235,9 @@ typedef GPIO_TypeDef * ioportid_t;
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
+ * @note Writing on pads programmed as pull-up or pull-down has the side
+ *       effect to modify the resistor setting because the output latched data
+ *       is used for the resistor selection.
  */
 #define pal_lld_setport(port, bits) ((port)->BSRR = (bits))
 
@@ -179,6 +251,9 @@ typedef GPIO_TypeDef * ioportid_t;
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
+ * @note Writing on pads programmed as pull-up or pull-down has the side
+ *       effect to modify the resistor setting because the output latched data
+ *       is used for the resistor selection.
  */
 #define pal_lld_clearport(port, bits) ((port)->BRR = (bits))
 
@@ -195,11 +270,32 @@ typedef GPIO_TypeDef * ioportid_t;
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
+ * @note Writing on pads programmed as pull-up or pull-down has the side
+ *       effect to modify the resistor setting because the output latched data
+ *       is used for the resistor selection.
  */
 #define pal_lld_writegroup(port, mask, offset, bits) {                  \
   (port)->BSRR = ((~(bits) & (mask)) << (16 + (offset))) |              \
                  (((bits) & (mask)) << (offset));                       \
 }
+
+/**
+ * @brief Pads group mode setup.
+ * @details This function programs a pads group belonging to the same port
+ *          with the specified mode.
+ *
+ * @param[in] port the port identifier
+ * @param[in] mask the group mask
+ * @param[in] mode the mode
+ *
+ * @note This function is not meant to be invoked directly by the application
+ *       code.
+ * @note Writing on pads programmed as pull-up or pull-down has the side
+ *       effect to modify the resistor setting because the output latched data
+ *       is used for the resistor selection.
+ */
+#define pal_lld_setgroupmode(port, mask, mode) \
+  _pal_lld_setgroupmode(port, mask, mode)
 
 /**
  * @brief Writes a logical state on an output pad.
@@ -210,19 +306,22 @@ typedef GPIO_TypeDef * ioportid_t;
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
+ * @note Writing on pads programmed as pull-up or pull-down has the side
+ *       effect to modify the resistor setting because the output latched data
+ *       is used for the resistor selection.
  */
 #define pal_lld_writepad(port, pad, bit) pal_lld_writegroup(port, 1, pad, bit)
 
-/**
- * @brief GPIO port setup.
- * @details This function initializes a GPIO port, note that this functionality
- *          is STM32 specific and non portable. It does not have a
- *          corresponding PAL API.
- */
-#define pal_lld_stm32_setup(port, crh, crl) {                           \
-  (port)->CRH = (crh);                                                  \
-  (port)->CRL = (crl);                                                  \
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void _pal_lld_init(const STM32GPIOConfig *config);
+  void _pal_lld_setgroupmode(ioportid_t port,
+                             ioportmask_t mask,
+                             uint_fast8_t mode);
+#ifdef __cplusplus
 }
+#endif
 
 #endif /* _PAL_LLD_H_ */
 

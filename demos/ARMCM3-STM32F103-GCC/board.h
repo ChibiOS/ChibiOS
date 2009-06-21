@@ -28,6 +28,7 @@
 #undef FALSE
 #undef TRUE
 #include "stm32f10x_map.h"
+#include "stm32f10x_rcc.h"
 #define FALSE 0
 #define TRUE (!FALSE)
 #endif
@@ -121,31 +122,31 @@
 /*
  * IO pins assignments.
  */
-#define GPIOA_BUTTON    0
+#define GPIOA_BUTTON            0
 
-#define GPIOC_MMCWP     6
-#define GPIOC_MMCCP     7
-#define GPIOC_CANCNTL   10
-#define GPIOC_DISC      11
-#define GPIOC_LED       12
+#define GPIOC_MMCWP             6
+#define GPIOC_MMCCP             7
+#define GPIOC_CANCNTL           10
+#define GPIOC_DISC              11
+#define GPIOC_LED               12
 
 /*
  * All inputs with pullups unless otherwise specified.
  */
-#define VAL_GPIOACRL    0x88888884      // PA0:FI
-#define VAL_GPIOACRH    0x88888888
-#define VAL_GPIOAODR    0xFFFFFFFF
+#define VAL_GPIOACRL            0x88888884      // PA0:FI
+#define VAL_GPIOACRH            0x88888888
+#define VAL_GPIOAODR            0xFFFFFFFF
 
-#define VAL_GPIOBCRL    0x88883888      // PB3:PP
-#define VAL_GPIOBCRH    0x88888888
-#define VAL_GPIOBODR    0xFFFFFFFF
+#define VAL_GPIOBCRL            0x88883888      // PB3:PP
+#define VAL_GPIOBCRH            0x88888888
+#define VAL_GPIOBODR            0xFFFFFFFF
 
-#define VAL_GPIOCCRL    0x44888888      // PC6,PC7:FI
-#define VAL_GPIOCCRH    0x88833888      // PC11,PC12:PP
-#define VAL_GPIOCODR    0xFFFFFFFF
+#define VAL_GPIOCCRL            0x44888888      // PC6,PC7:FI
+#define VAL_GPIOCCRH            0x88833888      // PC11,PC12:PP
+#define VAL_GPIOCODR            0xFFFFFFFF
 
-#define VAL_GPIODCRL    0x88888844      // PD0,PD1:FI
-#define VAL_GPIODCRH    0x88888888
-#define VAL_GPIODODR    0xFFFFFFFF
+#define VAL_GPIODCRL            0x88888844      // PD0,PD1:FI
+#define VAL_GPIODCRH            0x88888888
+#define VAL_GPIODODR            0xFFFFFFFF
 
 #endif /* _BOARD_H_ */

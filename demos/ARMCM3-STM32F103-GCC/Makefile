@@ -64,6 +64,7 @@ include ../../test/test.mk
 CSRC = ../../ports/ARMCM3/chcore.c \
        ../../ports/ARMCM3/nvic.c \
        ../../ports/ARMCM3-STM32F103/stm32_serial.c \
+       ../../ports/ARMCM3-STM32F103/pal_lld.c \
        ${KERNSRC} \
        ${TESTSRC} \
        ../../src/lib/pal.c \

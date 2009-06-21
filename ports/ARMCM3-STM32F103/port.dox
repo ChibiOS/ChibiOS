@@ -31,17 +31,22 @@
 /**
  * @defgroup STM32F103_PAL I/O Ports Support
  * @brief I/O Ports peripherals support.
- * @details This module supports the STM32F103 GPIO controller. The STM32
- * controller is very flexible and allows to implement all the recommended
- * behaviors for the I/O port driver. It supports the following features (see
- * @ref PAL):
+ * @details This module supports the STM32F103 GPIO controller. The controller
+ * supports the following features (see @ref PAL):
  * - 16 bits wide ports.
  * - Atomic set/reset functions.
  * - Atomic set+reset function (atomic bus operations).
  * - Output latched regardless of the pad setting.
  * - Direct read of input pads regardless of the pad setting.
  * .
- * The only non atomic operation is bit toggling.
+ * <h2>Undesiderable Behavior</h2>
+ * Some GPIO features are less than optimal:
+ * - Pad/group/port toggling operations are not atomic.
+ * - Pad/group mode setup is not atomic.
+ * - Writing on pads/groups/ports programmed as input with pull-up/down
+ *   resistor can change the resistor setting because the output latch is
+ *   used for resistor selection.
+ * .
  * @ingroup STM32F103
  */
 

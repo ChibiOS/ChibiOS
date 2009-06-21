@@ -25,6 +25,17 @@
 #include "stm32_serial.h"
 
 /*
+ * Digital I/O ports static configuration as defined in @p board.h.
+ */
+static const STM32GPIOConfig config =
+{
+ {VAL_GPIOAODR, VAL_GPIOACRL, VAL_GPIOACRH},
+ {VAL_GPIOBODR, VAL_GPIOBCRL, VAL_GPIOBCRH},
+ {VAL_GPIOCODR, VAL_GPIOCCRL, VAL_GPIOCCRH},
+ {VAL_GPIODODR, VAL_GPIODCRL, VAL_GPIODCRH},
+};
+
+/*
  * Early initialization code.
  * This initialization is performed just after reset before BSS and DATA
  * segments initialization.
@@ -62,19 +73,7 @@ void hwinit0(void) {
   /*
    * I/O ports initialization as specified in board.h.
    */
-  palInit();
-
-  pal_lld_stm32_setup(IOPORT_A, VAL_GPIOACRH, VAL_GPIOACRL);
-  palWritePort(IOPORT_A, VAL_GPIOAODR);
-
-  pal_lld_stm32_setup(IOPORT_B, VAL_GPIOBCRH, VAL_GPIOBCRL);
-  palWritePort(IOPORT_B, VAL_GPIOBODR);
-
-  pal_lld_stm32_setup(IOPORT_C, VAL_GPIOCCRH, VAL_GPIOCCRL);
-  palWritePort(IOPORT_C, VAL_GPIOCODR);
-
-  pal_lld_stm32_setup(IOPORT_D, VAL_GPIODCRH, VAL_GPIODCRL);
-  palWritePort(IOPORT_D, VAL_GPIODODR);
+  palInit(&config);
 }
 
 /*
