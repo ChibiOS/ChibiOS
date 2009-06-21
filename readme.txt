@@ -75,7 +75,7 @@ GNU-Linux-GCC          - ChibiOS/RT simulator for x86 Linux systems, it is
   not supported because its "sparse" registers layout, it would not be
   efficient enough for my taste.
 - Modified the STM32 demo to use the bit definitions in the ST header file,
-  removed the bit definitions in board.h.
+  removed the bit definitions in board.h and stm32_serial.h.
 - Documentation section reorganization and fixes.
 - Changed the STM32 demo stack sizes, it was incorrectly adjusted in version
   1.3.0 but it did not create problems (not a bug).
