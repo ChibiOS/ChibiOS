@@ -30,7 +30,7 @@
 /**
  * @brief MSP430 I/O ports configuration.
  *
- * @param[in] the MSP430 ports configuration
+ * @param[in] config the MSP430 ports configuration
  *
  * @note The @p PxIFG, @p PxIE and @p PxSEL registers are cleared. @p PxOUT
  *       and @p PxDIR are configured as specified.

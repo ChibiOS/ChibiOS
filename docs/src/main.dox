@@ -365,12 +365,10 @@
  * documentation for details.<br>
  * The @ref PAL has the advantage to make the access to the I/O ports platform
  * independent and still be optimized for the specific architectures.<br>
- * Currently the I/O ports interface does not handle physical port programming
- * like direction, pull up/down resistors etc. The interface only allows input
- * and output operations but this may change in future releases.<br>
  * Note that the @ref PAL_LLD may also offer non standard macro and functions
  * in order to support specific features but, of course, the use of such
- * interfaces would not be portable.
+ * interfaces would not be portable. Such interfaces shall be marked with
+ * the architecture name inside the function names.
  *
  * <h2>Implementation Rules</h2>
  * In implementing an @ref PAL_LLD there are some rules/behaviors that

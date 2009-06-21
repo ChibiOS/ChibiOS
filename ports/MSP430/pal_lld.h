@@ -212,7 +212,7 @@ typedef union __ioport * ioportid_t;
  * @brief Low level PAL subsystem initialization.
  * @details In MSP430 programs all the ports as input.
  *
- * @param[in] the MSP430 ports configuration
+ * @param[in] config the MSP430 ports configuration
  */
 #define pal_lld_init(config) _pal_lld_init(config)
 

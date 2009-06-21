@@ -32,6 +32,25 @@
 /*===========================================================================*/
 
 /**
+ * @brief Generic I/O ports static initializer.
+ * @details An instance of this structure must be passed to @p palInit() at
+ *          system startup time in order to initialized the digital I/O
+ *          subsystem. This represents only the initial setup, specific pads
+ *          or whole ports can be reprogrammed at later time.
+ *
+ * @note This structure content is architecture dependent. The nome should be
+ *       changed to include the architecture name following this pattern:<br>
+ *       - <ARCH><CELL>Config.
+ *       .
+ *       As example:<br>
+ *       - MSP430DIOConfig.
+ *       .
+ */
+typedef struct {
+
+} GenericConfig;
+
+/**
  * @brief Width, in bits, of an I/O port.
  */
 #define PAL_IOPORTS_WIDTH 32
@@ -73,8 +92,10 @@ typedef uint32_t ioportid_t;
 
 /**
  * @brief Low level PAL subsystem initialization.
+ *
+ * @param[in] config the architecture-dependent ports configuration
  */
-#define pal_lld_init()
+#define pal_lld_init(config)
 
 /**
  * @brief Reads the physical I/O port states.
