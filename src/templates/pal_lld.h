@@ -40,7 +40,7 @@
  *
  * @note This structure content is architecture dependent. The nome should be
  *       changed to include the architecture name following this pattern:<br>
- *       - <ARCH><CELL>Config.
+ *       - [ARCH][CELL]Config.
  *       .
  *       As example:<br>
  *       - MSP430DIOConfig.
