@@ -64,10 +64,10 @@ union __ioport {
 /**
  * @brief Setup registers common to all the MSP430 ports.
  */
-struct port_setup_t {
+typedef struct  {
   ioregister_t  out;
   ioregister_t  dir;
-};
+} msp430_dio_setup_t;
 
 /**
  * @brief MSP430 I/O ports static initializer.
@@ -81,37 +81,37 @@ typedef struct {
     defined(__MSP430_HAS_PORT1_R__) ||                                  \
     defined(__DOXYGEN__)
   /** @brief Port 1 setup data.*/
-  struct port_setup_t   P1Data;
+  msp430_dio_setup_t    P1Data;
 #endif
 #if defined(__MSP430_HAS_PORT2__) ||                                    \
     defined(__MSP430_HAS_PORT2_R__) ||                                  \
     defined(__DOXYGEN__)
   /** @brief Port 2 setup data.*/
-  struct port_setup_t   P2Data;
+  msp430_dio_setup_t    P2Data;
 #endif
 #if defined(__MSP430_HAS_PORT3__) ||                                    \
     defined(__MSP430_HAS_PORT3_R__) ||                                  \
     defined(__DOXYGEN__)
   /** @brief Port 3 setup data.*/
-  struct port_setup_t   P3Data;
+  msp430_dio_setup_t    P3Data;
 #endif
 #if defined(__MSP430_HAS_PORT4__) ||                                    \
     defined(__MSP430_HAS_PORT4_R__) ||                                  \
     defined(__DOXYGEN__)
   /** @brief Port 4 setup data.*/
-  struct port_setup_t   P4Data;
+  msp430_dio_setup_t    P4Data;
 #endif
 #if defined(__MSP430_HAS_PORT5__) ||                                    \
     defined(__MSP430_HAS_PORT5_R__) ||                                  \
     defined(__DOXYGEN__)
   /** @brief Port 5 setup data.*/
-  struct port_setup_t   P5Data;
+  msp430_dio_setup_t    P5Data;
 #endif
 #if defined(__MSP430_HAS_PORT6__) ||                                    \
     defined(__MSP430_HAS_PORT6_R__) ||                                  \
     defined(__DOXYGEN__)
   /** @brief Port 6 setup data.*/
-  struct port_setup_t   P6Data;
+  msp430_dio_setup_t    P6Data;
 #endif
 } MSP430DIOConfig;
 
@@ -280,7 +280,9 @@ typedef union __ioport * ioportid_t;
 extern "C" {
 #endif
   void _pal_lld_init(const MSP430DIOConfig *config);
-  void _pal_lld_setgroupmode(ioportid_t port, ioportmask_t mask, uint_fast8_t mode);
+  void _pal_lld_setgroupmode(ioportid_t port,
+                             ioportmask_t mask,
+                             uint_fast8_t mode);
 #ifdef __cplusplus
 }
 #endif
