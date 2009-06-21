@@ -26,16 +26,16 @@
 #include "msp430_serial.h"
 
 /*
- * Digital I/O ports static configuration.
+ * Digital I/O ports static configuration as defined in @p board.h.
  */
 static const MSP430DIOConfig config =
 {
- {VAL_P1OUT, VAL_P1DIR},
- {VAL_P2OUT, VAL_P2DIR},
- {VAL_P3OUT, VAL_P3DIR},
- {VAL_P4OUT, VAL_P4DIR},
- {VAL_P5OUT, VAL_P5DIR},
- {VAL_P6OUT, VAL_P6DIR},
+  {VAL_P1OUT, VAL_P1DIR},
+  {VAL_P2OUT, VAL_P2DIR},
+  {VAL_P3OUT, VAL_P3DIR},
+  {VAL_P4OUT, VAL_P4DIR},
+  {VAL_P5OUT, VAL_P5DIR},
+  {VAL_P6OUT, VAL_P6DIR},
 };
 
 /*

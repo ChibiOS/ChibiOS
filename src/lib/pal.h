@@ -296,6 +296,24 @@ typedef struct {
   pal_lld_writegroup(port, mask, offset, bits)
 #endif
 
+
+/**
+ * @brief Pads group mode setup.
+ * @details This function programs a pads group belonging to the same port
+ *          with the specified mode.
+ *
+ * @param[in] port the port identifier
+ * @param[in] mask the group mask
+ * @param[in] mode the setup mode
+ *
+ * @note Programming an unknown or unsupported mode is silently ignored.
+ */
+#if !defined(pal_lld_setgroupmode) || defined(__DOXYGEN__)
+#define palSetGroupMode(port, mask, mode)
+#else
+#define palSetGroupMode(port, mask, mode) pal_lld_setgroupmode(port, mask, mode)
+#endif
+
 /**
  * @brief Reads an input pad logical state.
  *
@@ -400,21 +418,24 @@ typedef struct {
 #define palTogglePad(port, pad) pal_lld_togglepad(port, pad)
 #endif
 
+
 /**
- * @brief Pads mode setup.
- * @details This function programs a pads group belonging to the same port
- *          with the specified mode.
+ * @brief Pad mode setup.
+ * @details This function programs a pad with the specified mode.
  *
  * @param[in] port the port identifier
- * @param[in] mask the group mask
+ * @param[in] pad the pad number within the port
  * @param[in] mode the setup mode
  *
+ * @note The default implementation not necessarily optimal. Low level drivers
+ *       may  optimize the function by using specific hardware or coding.
  * @note Programming an unknown or unsupported mode is silently ignored.
  */
-#if !defined(pal_lld_setmode) || defined(__DOXYGEN__)
-#define palSetMode(port, mask, mode)
+#if !defined(pal_lld_setpadmode) || defined(__DOXYGEN__)
+#define palSetPadMode(port, pad, mode)                                  \
+  palSetGroupMode(port, PAL_PORT_BIT(pad), mode)
 #else
-#define palSetMode(port, mask, mode) pal_lld_setmode(port, mask, mode)
+#define palSetPadMode(port, pad, mode) pal_lld_setpadmode(port, pad, mode)
 #endif
 
 #ifdef __cplusplus

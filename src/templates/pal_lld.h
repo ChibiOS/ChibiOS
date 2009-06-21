@@ -187,6 +187,21 @@ typedef uint32_t ioportid_t;
 #define pal_lld_writegroup(port, mask, offset, bits)
 
 /**
+ * @brief Pads group mode setup.
+ * @details This function programs a pads group belonging to the same port
+ *          with the specified mode.
+ *
+ * @param[in] port the port identifier
+ * @param[in] mask the group mask
+ * @param[in] mode the mode
+ *
+ * @note This function is not meant to be invoked directly by the application
+ *       code.
+ * @note Programming an unknown or unsupported mode is silently ignored.
+ */
+#define pal_lld_setgroupmode(port, mask, mode)
+
+/**
  * @brief Reads a logical state from an I/O pad.
  *
  * @param[in] port the port identifier
@@ -261,18 +276,32 @@ typedef uint32_t ioportid_t;
 #define pal_lld_togglepad(port, pad)
 
 /**
- * @brief Pads mode setup.
- * @details This function programs a pads group belonging to the same port
- *          with the specified mode.
+ * @brief Pad mode setup.
+ * @details This function programs a pad with the specified mode.
  *
  * @param[in] port the port identifier
- * @param[in] mask the group mask
- * @param[in] mode the setup mode
+ * @param[in] pad the pad number within the port
+ * @param[in] mode the mode
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
+ * @note The @ref PAL provides a default software implementation of this
+ *       functionality, implement this function if can optimize it by using
+ *       special hardware functionalities or special coding.
+ * @note Programming an unknown or unsupported mode is silently ignored.
  */
-#define pal_lld_setmode(port, mask, mode)
+#define pal_lld_setpadmode(port, pad, mode)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  ioportmask_t palReadBus(IOBus *bus);
+  void palWriteBus(IOBus *bus, ioportmask_t bits);
+  void palSetBusMode(IOBus *bus, uint_fast8_t mode);
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif /* _PAL_LLD_H_ */
 

@@ -85,7 +85,7 @@ void _pal_lld_init(const MSP430DIOConfig *config) {
  *
  * @param[in] port the port identifier
  * @param[in] mask the group mask
- * @param[in] mode the setup mode
+ * @param[in] mode the mode
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
@@ -95,7 +95,9 @@ void _pal_lld_init(const MSP430DIOConfig *config) {
  * @note This function does not alter the @p PxSEL registers. Alternate
  *       functions setup must be handled by device-specific code.
  */
-void _pal_lld_setmode(ioportid_t port, ioportmask_t mask, uint_fast8_t mode) {
+void _pal_lld_setgroupmode(ioportid_t port,
+                           ioportmask_t mask,
+                           uint_fast8_t mode) {
 
   switch (mode) {
   case PAL_MODE_RESET:

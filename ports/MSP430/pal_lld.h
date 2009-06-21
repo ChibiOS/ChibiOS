@@ -258,13 +258,13 @@ typedef union __ioport * ioportid_t;
 }
 
 /**
- * @brief Pads mode setup.
+ * @brief Pads group mode setup.
  * @details This function programs a pads group belonging to the same port
  *          with the specified mode.
  *
  * @param[in] port the port identifier
  * @param[in] mask the group mask
- * @param[in] mode the setup mode
+ * @param[in] mode the mode
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
@@ -273,13 +273,14 @@ typedef union __ioport * ioportid_t;
  * @note This function does not alter the @p PxSEL registers. Alternate
  *       functions setup must be handled by device-specific code.
  */
-#define pal_lld_setmode(port, mask, mode) _pal_lld_setmode(port, mask, mode)
+#define pal_lld_setgroupmode(port, mask, mode) \
+  _pal_lld_setgroupmode(port, mask, mode)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void _pal_lld_init(const MSP430DIOConfig *config);
-  void _pal_lld_setmode(ioportid_t port, ioportmask_t mask, uint_fast8_t mode);
+  void _pal_lld_setgroupmode(ioportid_t port, ioportmask_t mask, uint_fast8_t mode);
 #ifdef __cplusplus
 }
 #endif

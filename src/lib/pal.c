@@ -70,6 +70,19 @@ void palWriteBus(IOBus *bus, ioportmask_t bits) {
   palWriteGroup(bus->bus_portid, bus->bus_mask, bus->bus_offset, bits);
 }
 
+/**
+ * @brief Programs a bus with the specified mode.
+ *
+ * @param[in] bus the I/O bus, pointer to a @p IOBus structure
+ * @param[in] mode the mode
+ *
+ * @note The operation is not guaranteed to be atomic on all the architectures,
+ *       for atomicity and/or portability reasons you may need to enclose port
+ *       I/O operations between @p chSysLock() and @p chSysUnlock().
+ * @note The default implementation is non atomic and not necessarily
+ *       optimal. Low level drivers may  optimize the function by using
+ *       specific hardware or coding.
+ */
 void palSetBusMode(IOBus *bus, uint_fast8_t mode) {
 
   chDbgCheck((bus != NULL) &&
