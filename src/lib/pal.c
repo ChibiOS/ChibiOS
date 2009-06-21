@@ -70,4 +70,12 @@ void palWriteBus(IOBus *bus, ioportmask_t bits) {
   palWriteGroup(bus->bus_portid, bus->bus_mask, bus->bus_offset, bits);
 }
 
+void palSetBusMode(IOBus *bus, uint_fast8_t mode) {
+
+  chDbgCheck((bus != NULL) &&
+             (bus->bus_offset > PAL_IOPORTS_WIDTH), "palSetBusMode");
+
+  palSetMode(bus->bus_portid, bus->bus_mask, mode);
+}
+
 /** @} */

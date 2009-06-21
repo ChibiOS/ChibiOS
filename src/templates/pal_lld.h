@@ -37,6 +37,12 @@
 #define PAL_IOPORTS_WIDTH 32
 
 /**
+ * @brief Whole port mask.
+ * @brief This macro specifies all the valid bits into a port.
+ */
+#define PAL_WHOLE_PORT ((ioportmask_t)0xFFFFFFFF)
+
+/**
  * @brief Digital I/O port sized unsigned type.
  */
 typedef uint32_t ioportmask_t;
@@ -253,6 +259,20 @@ typedef uint32_t ioportid_t;
  *       special hardware functionalities or special coding.
  */
 #define pal_lld_togglepad(port, pad)
+
+/**
+ * @brief Pads mode setup.
+ * @details This function programs a pads group belonging to the same port
+ *          with the specified mode.
+ *
+ * @param[in] port the port identifier
+ * @param[in] mask the group mask
+ * @param[in] mode the setup mode
+ *
+ * @note This function is not meant to be invoked directly by the application
+ *       code.
+ */
+#define pal_lld_setmode(port, mask, mode)
 
 #endif /* _PAL_LLD_H_ */
 

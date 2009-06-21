@@ -26,6 +26,19 @@
 #include "msp430_serial.h"
 
 /*
+ * Digital I/O ports static configuration.
+ */
+static const MSP430DIOConfig config =
+{
+ {VAL_P1OUT, VAL_P1DIR},
+ {VAL_P2OUT, VAL_P2DIR},
+ {VAL_P3OUT, VAL_P3DIR},
+ {VAL_P4OUT, VAL_P4DIR},
+ {VAL_P5OUT, VAL_P5DIR},
+ {VAL_P6OUT, VAL_P6DIR},
+};
+
+/*
  * Hardware initialization goes here.
  * NOTE: Interrupts are still disabled.
  */
@@ -47,27 +60,9 @@ void hwinit(void) {
   BCSCTL2 = VAL_BCSCTL2;
 
   /*
-   * I/O ports initialization. PxSEL registers are assumed to be cleared after
-   * the reset.
+   * I/O ports initialization.
    */
-  palInit();
-  palWritePort(IOPORT_A, VAL_P1OUT);
-  pal_lld_msp430_set_direction(IOPORT_A, VAL_P1DIR);
-
-  palWritePort(IOPORT_B, VAL_P2OUT);
-  pal_lld_msp430_set_direction(IOPORT_B, VAL_P2DIR);
-
-  palWritePort(IOPORT_C, VAL_P3OUT);
-  pal_lld_msp430_set_direction(IOPORT_C, VAL_P3DIR);
-
-  palWritePort(IOPORT_D, VAL_P4OUT);
-  pal_lld_msp430_set_direction(IOPORT_D, VAL_P4DIR);
-
-  palWritePort(IOPORT_E, VAL_P5OUT);
-  pal_lld_msp430_set_direction(IOPORT_E, VAL_P5DIR);
-
-  palWritePort(IOPORT_F, VAL_P6OUT);
-  pal_lld_msp430_set_direction(IOPORT_F, VAL_P6DIR);
+  palInit(&config);
 
   /*
    * Timer 0 setup, uses SMCLK as source.

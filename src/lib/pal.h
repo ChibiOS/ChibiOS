@@ -27,6 +27,48 @@
 #ifndef _PAL_H_
 #define _PAL_H_
 
+/**
+ * @brief After reset state.
+ * @details The state itself is not specified and is architecture dependent,
+ *          it is guaranteed to be equal to the after-reset state. It is
+ *          usually an input state.
+ */
+#define PAL_MODE_RESET                  0
+
+/**
+ * @brief Safe state for <b>unconnected</b> pads.
+ * @details The state itself is not specified and is architecture dependent,
+ *          it may be mapped on @p PAL_MODE_INPUT_PULLUP,
+ *          @p PAL_MODE_INPUT_PULLDOWN or @p PAL_MODE_OUTPUT_PUSHPULL as
+ *          example.
+ */
+#define PAL_MODE_UNCONNECTED            1
+
+/**
+ * @brief Regular input high-Z pad.
+ */
+#define PAL_MODE_INPUT                  2
+
+/**
+ * @brief Input pad with weak pull up resistor.
+ */
+#define PAL_MODE_INPUT_PULLUP           3
+
+/**
+ * @brief Input pad with weak pull down resistor.
+ */
+#define PAL_MODE_INPUT_PULLDOWN         4
+
+/**
+ * @brief Push-pull output pad.
+ */
+#define PAL_MODE_OUTPUT_PUSHPULL        5
+
+/**
+ * @brief Open-drain output pad.
+ */
+#define PAL_MODE_OUTPUT_OPENDRAIN       6
+
 #ifndef _PAL_LLD_H_
 #include "pal_lld.h"
 #endif
@@ -70,7 +112,7 @@
  * @param width the bus width in bits
  * @param offset the bus bit offset within the port
  */
-#define _IOBUS_DATA(name, port, width, offset) \
+#define _IOBUS_DATA(name, port, width, offset)                          \
   {port, PAL_GROUP_MASK(width), offset}
 
 /**
@@ -103,8 +145,12 @@ typedef struct {
 
 /**
  * @brief PAL subsystem initialization.
+ *
+ * @param[in] config pointer to an architecture specific configuration
+ *            structure. This structure is defined in the low level driver
+ *            header.
  */
-#define palInit() pal_lld_init()
+#define palInit(config) pal_lld_init(config)
 
 /**
  * @brief Reads the physical I/O port states.
@@ -354,11 +400,29 @@ typedef struct {
 #define palTogglePad(port, pad) pal_lld_togglepad(port, pad)
 #endif
 
+/**
+ * @brief Pads mode setup.
+ * @details This function programs a pads group belonging to the same port
+ *          with the specified mode.
+ *
+ * @param[in] port the port identifier
+ * @param[in] mask the group mask
+ * @param[in] mode the setup mode
+ *
+ * @note Programming an unknown or unsupported mode is silently ignored.
+ */
+#if !defined(pal_lld_setmode) || defined(__DOXYGEN__)
+#define palSetMode(port, mask, mode)
+#else
+#define palSetMode(port, mask, mode) pal_lld_setmode(port, mask, mode)
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
   ioportmask_t palReadBus(IOBus *bus);
   void palWriteBus(IOBus *bus, ioportmask_t bits);
+  void palSetBusMode(IOBus *bus, uint_fast8_t mode);
 #ifdef __cplusplus
 }
 #endif
