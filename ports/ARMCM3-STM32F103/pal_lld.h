@@ -35,7 +35,6 @@
 #undef FALSE
 #undef TRUE
 #include "stm32f10x_map.h"
-#include "stm32f10x_rcc.h"
 #define FALSE 0
 #define TRUE (!FALSE)
 #endif

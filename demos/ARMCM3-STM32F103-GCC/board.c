@@ -46,28 +46,29 @@ void hwinit0(void) {
    * Clocks and PLL initialization.
    */
   // HSI setup.
-  RCC->CR = HSITRIM_RESET_BITS | CR_HSION_MASK;
-  while (!(RCC->CR & CR_HSIRDY_MASK))
+  RCC->CR = RCC_CR_HSITRIM_RESET_BITS | RCC_CR_HSION;
+  while (!(RCC->CR & RCC_CR_HSIRDY))
     ;                           // Waits until HSI stable, it should already be.
   // HSE setup.
-  RCC->CR |= CR_HSEON_MASK;
-  while (!(RCC->CR & CR_HSERDY_MASK))
+  RCC->CR |= RCC_CR_HSEON;
+  while (!(RCC->CR & RCC_CR_HSERDY))
     ;                           // Waits until HSE stable.
   // PLL setup.
-  RCC->CFGR = PLLSRC_HSE_BITS | PLLPREBITS | PLLMULBITS;
-  RCC->CR |= CR_PLLON_MASK;
-  while (!(RCC->CR & CR_PLLRDY_MASK))
+  RCC->CFGR = RCC_CFGR_PLLSRC_HSE_BITS | PLLPREBITS | PLLMULBITS;
+  RCC->CR |= RCC_CR_PLLON;
+  while (!(RCC->CR & RCC_CR_PLLRDY))
     ;                           // Waits until PLL stable.
   // Clock sources.
-  RCC->CFGR |= HPRE_DIV1_BITS | PPRE1_DIV2_BITS | PPRE2_DIV2_BITS |
-               ADCPRE_DIV8_BITS | USBPREBITS | MCO_DISABLED_BITS;
+  RCC->CFGR |= RCC_CFGR_HPRE_DIV1   | RCC_CFGR_PPRE1_DIV2  |
+               RCC_CFGR_PPRE2_DIV2  | RCC_CFGR_ADCPRE_DIV8 |
+               RCC_CFGR_MCO_NOCLOCK | USBPREBITS;
 
   /*
    * Flash setup and final clock selection.
    */
   FLASH->ACR = FLASHBITS;       // Flash wait states depending on clock.
-  RCC->CFGR |= SW_PLL_BITS;     // Switches on the PLL clock.
-  while ((RCC->CFGR & CFGR_SWS_MASK) != SWS_PLL_BITS)
+  RCC->CFGR |= RCC_CFGR_SW_PLL; // Switches on the PLL clock.
+  while ((RCC->CFGR & RCC_CFGR_SW) != RCC_CFGR_SW_PLL)
     ;
 
   /*

@@ -74,6 +74,8 @@ GNU-Linux-GCC          - ChibiOS/RT simulator for x86 Linux systems, it is
   initialization code in board.c. All the demos now use PAL for I/O. AVR is
   not supported because its "sparse" registers layout, it would not be
   efficient enough for my taste.
+- Modified the STM32 demo to use the bit definitions in the ST header file,
+  removed the bit definitions in board.h.
 - Documentation section reorganization and fixes.
 - Changed the STM32 demo stack sizes, it was incorrectly adjusted in version
   1.3.0 but it did not create problems (not a bug).
