@@ -178,9 +178,8 @@ void chEvtBroadcastI(EventSource *esp) {
  * @brief Invokes the event handlers associated with a mask.
  *
  * @param[in] mask mask of the events to be dispatched
- * @param[in] handlers an array of @p evhandler_t. The array must be
- *                     have indexes from zero up the higher registered event
- *                     identifier.
+ * @param[in] handlers an array of @p evhandler_t. The array must have size
+ *                     equal to the number of bits in eventmask_t.
  */
 void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask) {
   eventid_t eid;
