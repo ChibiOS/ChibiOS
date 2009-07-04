@@ -39,7 +39,18 @@
  * - Output latched regardless of the pad setting.
  * - Direct read of input pads regardless of the pad setting.
  * .
- * <h2>Undesiderable Behavior</h2>
+ * <h2>Supported Setup Modes</h2>
+ * - @p PAL_MODE_RESET.
+ * - @p PAL_MODE_UNCONNECTED.
+ * - @p PAL_MODE_INPUT.
+ * - @p PAL_MODE_INPUT_PULLUP.
+ * - @p PAL_MODE_INPUT_PULLDOWN.
+ * - @p PAL_MODE_OUTPUT_PUSHPULL.
+ * - @p PAL_MODE_OUTPUT_OPENDRAIN.
+ * .
+ * Any attempt to setup an invalid mode is ignored.
+ *
+ * <h2>Suboptimal Behavior</h2>
  * Some GPIO features are less than optimal:
  * - Pad/group/port toggling operations are not atomic.
  * - Pad/group mode setup is not atomic.
