@@ -64,6 +64,8 @@
 #define VAL_PINSEL2 0x00000004
 #define VAL_FIO0DIR 0xB0703C00
 #define VAL_FIO1DIR 0x00000000
+#define VAL_FIO0PIN 0x00000000
+#define VAL_FIO1PIN 0x00000000
 
 #define PA_LED1         10
 #define PA_LED2         11

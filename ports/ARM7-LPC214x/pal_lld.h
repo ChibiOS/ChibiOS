@@ -44,6 +44,16 @@
 /*===========================================================================*/
 
 /**
+ * @brief FIO port setup info.
+ */
+typedef struct {
+  /** Initial value for FIO_PIN register.*/
+  uint32_t      pin;
+  /** Initial value for FIO_DIR register.*/
+  uint32_t      dir;
+} lpc214x_fio_setup_t;
+
+/**
  * @brief LPC214x FIO static initializer.
  * @details An instance of this structure must be passed to @p palInit() at
  *          system startup time in order to initialized the digital I/O
@@ -51,10 +61,16 @@
  *          or whole ports can be reprogrammed at later time.
  */
 typedef struct {
+  /** @brief PINSEL0 initial value.*/
+  uint32_t              pinsel0;
+  /** @brief PINSEL1 initial value.*/
+  uint32_t              pinsel1;
+  /** @brief PINSEL2 initial value.*/
+  uint32_t              pinsel2;
   /** @brief Port 0 setup data.*/
-  ioportmask_t          P0Data;
+  lpc214x_fio_setup_t   P0Data;
   /** @brief Port 1 setup data.*/
-  ioportmask_t          P1Data;
+  lpc214x_fio_setup_t   P1Data;
 } LPC214xFIOConfig;
 
 /**
@@ -95,9 +111,7 @@ typedef FIO * ioportid_t;
  * @brief FIO subsystem initialization.
  * @details Enables the access through the fast registers.
  */
-#define pal_lld_init() {                                                \
-  SCS = 3;                                                              \
-}
+#define pal_lld_init(config) _pal_lld_init(config)
 
 /**
  * @brief Reads an I/O port.
@@ -184,6 +198,25 @@ typedef FIO * ioportid_t;
   (port)->FIO_PIN = (bits) << (offset);                                 \
   (port)->FIO_MASK = 0;                                                 \
 }
+
+/**
+ * @brief Pads group mode setup.
+ * @details This function programs a pads group belonging to the same port
+ *          with the specified mode.
+ *
+ * @param[in] port the port identifier
+ * @param[in] mask the group mask
+ * @param[in] mode the mode
+ *
+ * @note This function is not meant to be invoked directly by the application
+ *       code.
+ * @note @p PAL_MODE_UNCONNECTED is implemented as output as recommended by
+ *       the MSP430x1xx Family User's Guide.
+ * @note This function does not alter the @p PxSEL registers. Alternate
+ *       functions setup must be handled by device-specific code.
+ */
+#define pal_lld_setgroupmode(port, mask, mode) \
+  _pal_lld_setgroupmode(port, mask, mode)
 
 /**
  * @brief Writes a logical state on an output pad.

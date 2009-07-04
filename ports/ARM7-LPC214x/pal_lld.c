@@ -29,11 +29,28 @@
 
 /**
  * @brief LPC214x I/O ports configuration.
- * @details Ports A-D clocks enabled, AFIO clock enabled.
+ * @details .
  *
  * @param[in] config the LPC214x ports configuration
  */
 void _pal_lld_init(const LPC214xFIOConfig *config) {
+
+  /* Enables the access through the fast registers.*/
+  SCS = 3;
+
+  /* I/O pads initial assignment, device drivers may change this setup at a
+   * later time.*/
+  PINSEL0 = config->pinsel0;
+  PINSEL1 = config->pinsel1;
+  PINSEL2 = config->pinsel2;
+
+  /* I/O pads direction initial setting.*/
+  FIO0Base->FIO_MASK = 0;
+  FIO0Base->FIO_PIN = config->P0Data.pin;
+  FIO0Base->FIO_DIR = config->P0Data.dir;
+  FIO1Base->FIO_MASK = 0;
+  FIO1Base->FIO_PIN = config->P1Data.pin;
+  FIO1Base->FIO_DIR = config->P1Data.dir;
 }
 
 /**
