@@ -19,7 +19,7 @@
 
 /**
  * @file ports/ARM7-LPC214x/pal_lld.h
- * @brief LPC214x FIO low level driver
+ * @brief LPC214x FIO low level driver header
  * @addtogroup LPC214x_PAL
  * @{
  */
@@ -32,8 +32,30 @@
 #endif
 
 /*===========================================================================*/
+/* Unsupported modes and specific modes                                      */
+/*===========================================================================*/
+
+#undef PAL_MODE_INPUT_PULLUP
+#undef PAL_MODE_INPUT_PULLDOWN
+#undef PAL_MODE_OUTPUT_OPENDRAIN
+
+/*===========================================================================*/
 /* I/O Ports Types and constants.                                            */
 /*===========================================================================*/
+
+/**
+ * @brief LPC214x FIO static initializer.
+ * @details An instance of this structure must be passed to @p palInit() at
+ *          system startup time in order to initialized the digital I/O
+ *          subsystem. This represents only the initial setup, specific pads
+ *          or whole ports can be reprogrammed at later time.
+ */
+typedef struct {
+  /** @brief Port 0 setup data.*/
+  ioportmask_t          P0Data;
+  /** @brief Port 1 setup data.*/
+  ioportmask_t          P1Data;
+} LPC214xFIOConfig;
 
 /**
  * @brief Width, in bits, of an I/O port.
@@ -182,6 +204,17 @@ typedef FIO * ioportid_t;
 #define pal_lld_lpc214x_set_direction(port, dir) {                      \
   (port)->FIO_DIR = (dir);                                              \
 }
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void _pal_lld_init(const LPC214xFIOConfig *config);
+  void _pal_lld_setgroupmode(ioportid_t port,
+                             ioportmask_t mask,
+                             uint_fast8_t mode);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _PAL_LLD_H_ */
 

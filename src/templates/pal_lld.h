@@ -28,6 +28,10 @@
 #define _PAL_LLD_H_
 
 /*===========================================================================*/
+/* Unsupported modes and specific modes                                      */
+/*===========================================================================*/
+
+/*===========================================================================*/
 /* I/O Ports Types and constants.                                            */
 /*===========================================================================*/
 
@@ -312,17 +316,6 @@ typedef uint32_t ioportid_t;
  * @note Programming an unknown or unsupported mode is silently ignored.
  */
 #define pal_lld_setpadmode(port, pad, mode)
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-  ioportmask_t palReadBus(IOBus *bus);
-  void palWriteBus(IOBus *bus, ioportmask_t bits);
-  void palSetBusMode(IOBus *bus, uint_fast8_t mode);
-#ifdef __cplusplus
-}
-#endif
-
 
 #endif /* _PAL_LLD_H_ */
 
