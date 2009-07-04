@@ -50,6 +50,7 @@ include ../../test/test.mk
 # setting.
 CSRC = ../../ports/ARM7/chcore.c \
        ../../ports/ARM7-LPC214x/vic.c  \
+       ../../ports/ARM7-LPC214x/pal_lld.c  \
        ../../ports/ARM7-LPC214x/lpc214x_serial.c  \
        ../../ports/ARM7-LPC214x/lpc214x_ssp.c  \
        ${KERNSRC} \

@@ -29,7 +29,7 @@
 
 /**
  * @brief LPC214x I/O ports configuration.
- * @details .
+ * @details FIO units and PINSEL registers initialization.
  *
  * @param[in] config the LPC214x ports configuration
  */
@@ -64,14 +64,26 @@ void _pal_lld_init(const LPC214xFIOConfig *config) {
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
- * @note @p PAL_MODE_UNCONNECTED is implemented as push pull output.
- * @note Writing on pads programmed as pull-up or pull-down has the side
- *       effect to modify the resistor setting because the output latched data
- *       is used for the resistor selection.
+ * @note @p PAL_MODE_UNCONNECTED is implemented as push pull output with high
+ *       state.
+ * @note This function does not alter the @p PINSELx registers. Alternate
+ *       functions setup must be handled by device-specific code.
  */
 void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,
                            uint_fast8_t mode) {
+
+  switch (mode) {
+  case PAL_MODE_RESET:
+  case PAL_MODE_INPUT:
+    port->FIO_DIR &= ~mask;
+    break;
+  case PAL_MODE_UNCONNECTED:
+    port->FIO_PIN |= mask;
+  case PAL_MODE_OUTPUT_PUSHPULL:
+    port->FIO_DIR |= mask;
+    break;
+  }
 }
 
 /** @} */

@@ -51,8 +51,18 @@
  * - Output latched regardless of the pad setting.
  * - Direct read of input pads regardless of the pad setting.
  * .
- * The only non atomic operations are bit toggling and bus/group writing.
+ * <h2>Supported Setup Modes</h2>
+ * - @p PAL_MODE_RESET.
+ * - @p PAL_MODE_UNCONNECTED.
+ * - @p PAL_MODE_INPUT.
+ * - @p PAL_MODE_OUTPUT_PUSHPULL.
+ * .
+ * Any attempt to setup an invalid mode is ignored.
  *
+ * <h2>Suboptimal Behavior</h2>
+ * - Pad/port toggling operations are not atomic.
+ * - Pad/group mode setup is not atomic.
+ * .
  * @ingroup LPC214x
  */
 

@@ -59,6 +59,18 @@ static CH_IRQ_HANDLER(T0IrqHandler) {
 }
 
 /*
+ * Digital I/O ports static configuration as defined in @p board.h.
+ */
+static const LPC214xFIOConfig config =
+{
+  VAL_PINSEL0,
+  VAL_PINSEL1,
+  VAL_PINSEL2,
+  {VAL_FIO0PIN, VAL_FIO0DIR},
+  {VAL_FIO1PIN, VAL_FIO1DIR}
+};
+
+/*
  * Early initialization code.
  * This initialization is performed just after reset before BSS and DATA
  * segments initialization.
@@ -101,14 +113,7 @@ void hwinit0(void) {
   /*
    * I/O pins configuration.
    */
-  PINSEL0 = VAL_PINSEL0;
-  PINSEL1 = VAL_PINSEL1;
-  PINSEL2 = VAL_PINSEL2;
-  palInit();
-  pal_lld_lpc214x_set_direction(IOPORT_A, VAL_FIO0DIR);
-  palWritePort(IOPORT_A, 0xFFFFFFFF);
-  pal_lld_lpc214x_set_direction(IOPORT_B, VAL_FIO1DIR);
-  palWritePort(IOPORT_B, 0xFFFFFFFF);
+  palInit(&config);
 }
 
 /*

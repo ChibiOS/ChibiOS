@@ -27,9 +27,7 @@
 #ifndef _PAL_LLD_H_
 #define _PAL_LLD_H_
 
-#ifndef _LPC214X_H_
 #include "lpc214x.h"
-#endif
 
 /*===========================================================================*/
 /* Unsupported modes and specific modes                                      */
@@ -210,9 +208,9 @@ typedef FIO * ioportid_t;
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
- * @note @p PAL_MODE_UNCONNECTED is implemented as output as recommended by
- *       the MSP430x1xx Family User's Guide.
- * @note This function does not alter the @p PxSEL registers. Alternate
+ * @note @p PAL_MODE_UNCONNECTED is implemented as push pull output with high
+ *       state.
+ * @note This function does not alter the @p PINSELx registers. Alternate
  *       functions setup must be handled by device-specific code.
  */
 #define pal_lld_setgroupmode(port, mask, mode) \

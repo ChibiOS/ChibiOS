@@ -113,14 +113,7 @@ void hwinit0(void) {
   /*
    * I/O pins configuration.
    */
-//  PINSEL0 = VAL_PINSEL0;
-//  PINSEL1 = VAL_PINSEL1;
-//  PINSEL2 = VAL_PINSEL2;
   palInit(&config);
-//  pal_lld_lpc214x_set_direction(IOPORT_A, VAL_FIO0DIR);
-//  palWritePort(IOPORT_A, 0xFFFFFFFF);
-//  pal_lld_lpc214x_set_direction(IOPORT_B, VAL_FIO1DIR);
-//  palWritePort(IOPORT_B, 0xFFFFFFFF);
 }
 
 /*

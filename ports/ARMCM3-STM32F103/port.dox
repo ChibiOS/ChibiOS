@@ -52,7 +52,7 @@
  *
  * <h2>Suboptimal Behavior</h2>
  * Some GPIO features are less than optimal:
- * - Pad/group/port toggling operations are not atomic.
+ * - Pad/port toggling operations are not atomic.
  * - Pad/group mode setup is not atomic.
  * - Writing on pads/groups/ports programmed as input with pull-up/down
  *   resistor can change the resistor setting because the output latch is
