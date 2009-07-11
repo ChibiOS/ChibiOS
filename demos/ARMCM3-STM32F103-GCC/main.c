@@ -24,8 +24,6 @@
 #include "board.h"
 #include "stm32_serial.h"
 
-static IOBUS_DECL(LedBus, IOPORT_C, 1, GPIOC_LED);
-
 /*
  * Red LEDs blinker thread, times are in milliseconds.
  */
@@ -36,30 +34,6 @@ static msg_t Thread1(void *arg) {
     palClearPad(IOPORT_C, GPIOC_LED);
     chThdSleepMilliseconds(500);
     palSetPad(IOPORT_C, GPIOC_LED);
-    chThdSleepMilliseconds(500);
-    palTogglePad(IOPORT_C, GPIOC_LED);
-    chThdSleepMilliseconds(500);
-    palTogglePad(IOPORT_C, GPIOC_LED);
-    chThdSleepMilliseconds(500);
-    palWritePad(IOPORT_C, GPIOC_LED, PAL_LOW);
-    chThdSleepMilliseconds(500);
-    palWritePad(IOPORT_C, GPIOC_LED, PAL_HIGH);
-    chThdSleepMilliseconds(500);
-    palWriteGroup(IOPORT_C, 1, GPIOC_LED, PAL_LOW);
-    chThdSleepMilliseconds(500);
-    palWriteGroup(IOPORT_C, 1, GPIOC_LED, PAL_HIGH);
-    chThdSleepMilliseconds(500);
-    palClearPort(IOPORT_C, PAL_PORT_BIT(GPIOC_LED));
-    chThdSleepMilliseconds(500);
-    palSetPort(IOPORT_C, PAL_PORT_BIT(GPIOC_LED));
-    chThdSleepMilliseconds(500);
-    palTogglePort(IOPORT_C, PAL_PORT_BIT(GPIOC_LED));
-    chThdSleepMilliseconds(500);
-    palTogglePort(IOPORT_C, PAL_PORT_BIT(GPIOC_LED));
-    chThdSleepMilliseconds(500);
-    palWriteBus(&LedBus, PAL_LOW);
-    chThdSleepMilliseconds(500);
-    palWriteBus(&LedBus, PAL_HIGH);
     chThdSleepMilliseconds(500);
   }
   return 0;
