@@ -58,6 +58,15 @@ static CH_IRQ_HANDLER(SYSIrqHandler) {
 }
 
 /*
+ * Digital I/O ports static configuration as defined in @p board.h.
+ */
+static const AT91SAM7XPIOConfig config =
+{
+  {VAL_PIOA_ODSR, VAL_PIOA_OSR, VAL_PIOA_PUSR},
+  {VAL_PIOB_ODSR, VAL_PIOB_OSR, VAL_PIOB_PUSR}
+};
+
+/*
  * Early initialization code.
  * This initialization is performed just after reset before BSS and DATA
  * segments initialization.
@@ -100,7 +109,7 @@ void hwinit0(void) {
   /*
    * PIO initialization.
    */
-  palInit();
+  palInit(&config);
 }
 
 /*
@@ -126,24 +135,26 @@ void hwinit1(void) {
    * LCD pins setup.
    */
   palClearPad(IOPORT_B, PIOB_LCD_BL);
-  AT91C_BASE_PIOB->PIO_OER    = PIOB_LCD_BL_MASK;    // Configure as output.
-  AT91C_BASE_PIOB->PIO_PPUDR  = PIOB_LCD_BL_MASK;    // Disable internal pullup resistor.
+  palSetPadMode(IOPORT_B, PIOB_LCD_BL, PAL_MODE_OUTPUT_PUSHPULL);
 
   palSetPad(IOPORT_A, PIOA_LCD_RESET);
-  AT91C_BASE_PIOA->PIO_OER    = PIOA_LCD_RESET_MASK; // Configure as output.
-  AT91C_BASE_PIOA->PIO_PPUDR  = PIOA_LCD_RESET_MASK; // Disable internal pullup resistor.
+  palSetPadMode(IOPORT_A, PIOA_LCD_RESET, PAL_MODE_OUTPUT_PUSHPULL);
 
   /*
-   * Joystick and buttons, disable pullups, already inputs.
+   * Joystick and buttons setup.
    */
-  AT91C_BASE_PIOA->PIO_PPUDR = PIOA_B1_MASK | PIOA_B2_MASK | PIOA_B3_MASK |
-                               PIOA_B4_MASK | PIOA_B5_MASK;
-  AT91C_BASE_PIOB->PIO_PPUDR = PIOB_SW1_MASK | PIOB_SW2_MASK;
+  palSetGroupMode(IOPORT_A,
+                  PIOA_B1_MASK | PIOA_B2_MASK | PIOA_B3_MASK |
+                  PIOA_B4_MASK | PIOA_B5_MASK,
+                  PAL_MODE_INPUT);
+  palSetGroupMode(IOPORT_B, PIOB_SW1_MASK | PIOB_SW2_MASK, PAL_MODE_INPUT);
 
   /*
-   * MMC/SD slot, disable pullups, already inputs.
+   * MMC/SD slot setup.
    */
-  AT91C_BASE_SYS->PIOB_PPUDR = PIOB_MMC_WP_MASK | PIOB_MMC_CP_MASK;
+  palSetGroupMode(IOPORT_B,
+                  PIOB_MMC_WP_MASK | PIOB_MMC_CP_MASK,
+                  PAL_MODE_INPUT);
 
   /*
    * PIT Initialization.

@@ -20,14 +20,23 @@
 #ifndef _BOARD_H_
 #define _BOARD_H_
 
-#ifndef AT91SAM7X256_H
 #include "at91lib/AT91SAM7X256.h"
-#endif
 
 #define BOARD_OLIMEX_SAM7_EX256
 
 #define CLK             18432000
 #define MCK             48054857
+
+/*
+ * Initial I/O setup.
+ */
+#define VAL_PIOA_ODSR           0x00000000      /* Output data. */
+#define VAL_PIOA_OSR            0x00000000      /* Direction. */
+#define VAL_PIOA_PUSR           0xFFFFFFFF      /* Pull-up. */
+
+#define VAL_PIOB_ODSR           0x00000000      /* Output data. */
+#define VAL_PIOB_OSR            0x00000000      /* Direction. */
+#define VAL_PIOB_PUSR           0xFFFFFFFF      /* Pull-up. */
 
 /*
  * I/O definitions.

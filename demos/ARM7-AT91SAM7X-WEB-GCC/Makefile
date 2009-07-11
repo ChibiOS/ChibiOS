@@ -58,6 +58,7 @@ USRC = ../../ext/uip-1.0/uip/uip_arp.c \
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = ../../ports/ARM7/chcore.c \
+       ../../ports/ARM7-AT91SAM7X/pal_lld.c \
        ../../ports/ARM7-AT91SAM7X/sam7x_serial.c \
        ../../ports/ARM7-AT91SAM7X/sam7x_emac.c \
        ${KERNSRC} \

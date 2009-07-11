@@ -19,7 +19,7 @@
 
 /**
  * @file ports/ARM7-AT91SAM7X/pal_lld.h
- * @brief AT91SAM7X PIO low level driver
+ * @brief AT91SAM7X PIO low level driver header
  * @addtogroup AT91SAM7X_PAL
  * @{
  */
@@ -27,13 +27,43 @@
 #ifndef _PAL_LLD_H_
 #define _PAL_LLD_H_
 
-#ifndef AT91SAM7X256_H
 #include "at91lib/AT91SAM7X256.h"
-#endif
+
+/*===========================================================================*/
+/* Unsupported modes and specific modes                                      */
+/*===========================================================================*/
+
+#undef PAL_MODE_INPUT_PULLDOWN
 
 /*===========================================================================*/
 /* I/O Ports Types and constants.                                            */
 /*===========================================================================*/
+
+/**
+ * @brief PIO port setup info.
+ */
+typedef struct {
+  /** Initial value for ODSR register (data).*/
+  uint32_t      odsr;
+  /** Initial value for OSR register (direction).*/
+  uint32_t      osr;
+  /** Initial value for PUSR register (Pull-ups).*/
+  uint32_t      pusr;
+} at91sam7x_pio_setup_t;
+
+/**
+ * @brief AT91SAM7X PIO static initializer.
+ * @details An instance of this structure must be passed to @p palInit() at
+ *          system startup time in order to initialized the digital I/O
+ *          subsystem. This represents only the initial setup, specific pads
+ *          or whole ports can be reprogrammed at later time.
+ */
+typedef struct {
+  /** @brief Port 0 setup data.*/
+  at91sam7x_pio_setup_t P0Data;
+  /** @brief Port 1 setup data.*/
+  at91sam7x_pio_setup_t P1Data;
+} AT91SAM7XPIOConfig;
 
 /**
  * @brief Width, in bits, of an I/O port.
@@ -74,18 +104,8 @@ typedef AT91PS_PIO ioportid_t;
 
 /**
  * @brief Low level PAL subsystem initialization.
- * @details Clocks are enabled and both PIO ports are reset to a known state
- *          and all pads are enabled a digital I/Os.
- *
- * @note The other PIO registers are not modified, the PIOs are supposed to
- *       have just been reset. The PIO_PSR is cleared because its status
- *       after the reset is not very clear in the documentation.
  */
-#define pal_lld_init() {                                                \
-  AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_PIOA) | (1 << AT91C_ID_PIOB); \
-  AT91C_BASE_PIOA->PIO_PER  = 0xFFFFFFFF;                               \
-  AT91C_BASE_PIOB->PIO_PER  = 0xFFFFFFFF;                               \
-}
+#define pal_lld_init(config) _pal_lld_init(config)
 
 /**
  * @brief Reads the physical I/O port states.
@@ -181,6 +201,23 @@ typedef AT91PS_PIO ioportid_t;
 }
 
 /**
+ * @brief Pads group mode setup.
+ * @details This function programs a pads group belonging to the same port
+ *          with the specified mode.
+ *
+ * @param[in] port the port identifier
+ * @param[in] mask the group mask
+ * @param[in] mode the mode
+ *
+ * @note This function is not meant to be invoked directly by the application
+ *       code.
+ * @note @p PAL_MODE_UNCONNECTED is implemented as push pull output with high
+ *       state.
+ */
+#define pal_lld_setgroupmode(port, mask, mode) \
+  _pal_lld_setgroupmode(port, mask, mode)
+
+/**
  * @brief Writes a logical state on an output pad.
  *
  * @param[in] port the port identifier
@@ -191,6 +228,17 @@ typedef AT91PS_PIO ioportid_t;
  *       code.
  */
 #define pal_lld_writepad(port, pad, bit) pal_lld_writegroup(port, 1, pad, bit)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void _pal_lld_init(const AT91SAM7XPIOConfig *config);
+  void _pal_lld_setgroupmode(ioportid_t port,
+                             ioportmask_t mask,
+                             uint_fast8_t mode);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _PAL_LLD_H_ */
 
