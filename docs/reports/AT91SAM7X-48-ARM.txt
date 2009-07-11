@@ -5,7 +5,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.3.0unstable
+*** Kernel:       1.3.1unstable
 *** Architecture: ARM7TDMI
 *** GCC Version:  4.3.3
 
@@ -71,7 +71,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 7.1 (Heap, allocation and fragmentation test)
---- Size  : 62112 bytes, not fragmented
+--- Size  : 61344 bytes, not fragmented
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.1 (Memory Pools, queue/dequeue)
@@ -96,7 +96,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Benchmark, messages #1)
---- Score : 115476 msgs/S, 230952 ctxswc/S
+--- Score : 115475 msgs/S, 230950 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Benchmark, messages #2)
@@ -112,7 +112,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Benchmark, threads, full cycle)
---- Score : 79015 threads/S
+--- Score : 79016 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Benchmark, threads, create only)
