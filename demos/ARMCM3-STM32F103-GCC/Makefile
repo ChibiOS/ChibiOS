@@ -196,9 +196,7 @@ ULIBS =
 ifeq ($(USE_FWLIB),yes)
   include ./stm32lib/stm32lib.mk
   CSRC += ${STM32SRC}
-  # The thing generates a lot of aliasing warnings, this disables an
-  # optimization and the warning disappears, the code is a bit larger however.
-  USE_OPT += -fno-strict-aliasing
+  USE_OPT += -DUSE_STDPERIPH_DRIVER
 endif
 
 include ../../ports/ARM/rules.mk

@@ -12,14 +12,11 @@ STM32SRC = stm32lib/src/stm32f10x_adc.c \
            stm32lib/src/stm32f10x_gpio.c \
            stm32lib/src/stm32f10x_i2c.c \
            stm32lib/src/stm32f10x_iwdg.c \
-           stm32lib/src/stm32f10x_lib.c \
-           stm32lib/src/stm32f10x_nvic.c \
            stm32lib/src/stm32f10x_pwr.c \
            stm32lib/src/stm32f10x_rcc.c \
            stm32lib/src/stm32f10x_rtc.c \
            stm32lib/src/stm32f10x_sdio.c \
            stm32lib/src/stm32f10x_spi.c \
-           stm32lib/src/stm32f10x_systick.c \
            stm32lib/src/stm32f10x_tim.c \
            stm32lib/src/stm32f10x_usart.c \
            stm32lib/src/stm32f10x_wwdg.c
