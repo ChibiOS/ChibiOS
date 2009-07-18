@@ -31,10 +31,10 @@
  * Tricks required to make the TRUE/FALSE declaration inside the library
  * compatible.
  */
-#ifndef __STM32F10x_MAP_H
+#ifndef __STM32F10x_H
 #undef FALSE
 #undef TRUE
-#include "stm32f10x_map.h"
+#include <stm32f10x.h>
 #define FALSE 0
 #define TRUE (!FALSE)
 #endif
@@ -63,31 +63,21 @@ typedef struct {
  *          or whole ports can be reprogrammed at later time.
  */
 typedef struct {
-#if defined(_GPIOA) || defined(__DOXYGEN__)
   /** @brief Port A setup data.*/
   stm32_gpio_setup_t    PAData;
-#endif
-#if defined(_GPIOB) || defined(__DOXYGEN__)
   /** @brief Port B setup data.*/
   stm32_gpio_setup_t    PBData;
-#endif
-#if defined(_GPIOC) || defined(__DOXYGEN__)
   /** @brief Port C setup data.*/
   stm32_gpio_setup_t    PCData;
-#endif
-#if defined(_GPIOD) || defined(__DOXYGEN__)
   /** @brief Port D setup data.*/
   stm32_gpio_setup_t    PDData;
-#endif
-#if defined(_GPIOE) || defined(__DOXYGEN__)
+#if !defined(STM32F10X_LD) || defined(__DOXYGEN__)
   /** @brief Port E setup data.*/
   stm32_gpio_setup_t    PEData;
 #endif
-#if defined(_GPIOF) || defined(__DOXYGEN__)
+#if defined(STM32F10X_HD) || defined(__DOXYGEN__)
   /** @brief Port F setup data.*/
   stm32_gpio_setup_t    PFData;
-#endif
-#if defined(_GPIOG) || defined(__DOXYGEN__)
   /** @brief Port G setup data.*/
   stm32_gpio_setup_t    PGData;
 #endif
@@ -126,49 +116,39 @@ typedef GPIO_TypeDef * ioportid_t;
 /**
  * @brief GPIO port A identifier.
  */
-#if defined(_GPIOA) || defined(__DOXYGEN__)
 #define IOPORT_A        GPIOA
-#endif
 
 /**
  * @brief GPIO port B identifier.
  */
-#if defined(_GPIOB) || defined(__DOXYGEN__)
 #define IOPORT_B        GPIOB
-#endif
 
 /**
  * @brief GPIO port C identifier.
  */
-#if defined(_GPIOC) || defined(__DOXYGEN__)
 #define IOPORT_C        GPIOC
-#endif
 
 /**
  * @brief GPIO port D identifier.
  */
-#if defined(_GPIOD) || defined(__DOXYGEN__)
 #define IOPORT_D        GPIOD
-#endif
 
 /**
  * @brief GPIO port E identifier.
  */
-#if defined(_GPIOE) || defined(__DOXYGEN__)
+#if !defined(STM32F10X_LD) || defined(__DOXYGEN__)
 #define IOPORT_E        GPIOE
 #endif
 
 /**
  * @brief GPIO port F identifier.
  */
-#if defined(_GPIOF) || defined(__DOXYGEN__)
+#if defined(STM32F10X_HD) || defined(__DOXYGEN__)
 #define IOPORT_F        GPIOF
-#endif
 
 /**
  * @brief GPIO port G identifier.
  */
-#if defined(_GPIOG) || defined(__DOXYGEN__)
 #define IOPORT_G        GPIOG
 #endif
 

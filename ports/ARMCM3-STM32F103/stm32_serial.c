@@ -29,7 +29,6 @@
 #include "board.h"
 #include "nvic.h"
 #include "stm32_serial.h"
-#include "stm32f10x_nvic.h"
 
 #if USE_STM32_USART1 || defined(__DOXYGEN__)
 /** @brief USART1 serial driver identifier.*/
@@ -198,7 +197,7 @@ void serial_init(uint32_t prio1, uint32_t prio2, uint32_t prio3) {
   usart_setup(USART1, DEFAULT_USART_BITRATE, 0,
               USART_CR2_STOP1_BITS | USART_CR2_LINEN, 0);
   GPIOA->CRH = (GPIOA->CRH & 0xFFFFF00F) | 0x000004B0;
-  NVICEnableVector(USART1_IRQChannel, prio1);
+  NVICEnableVector(USART1_IRQn, prio1);
 #endif
 
 #if USE_STM32_USART2
@@ -207,7 +206,7 @@ void serial_init(uint32_t prio1, uint32_t prio2, uint32_t prio3) {
   usart_setup(USART2, DEFAULT_USART_BITRATE, 0,
               USART_CR2_STOP1_BITS | USART_CR2_LINEN, 0);
   GPIOA->CRL = (GPIOA->CRL & 0xFFFF00FF) | 0x00004B00;
-  NVICEnableVector(USART2_IRQChannel, prio2);
+  NVICEnableVector(USART2_IRQn, prio2);
 #endif
 
 #if USE_STM32_USART3
@@ -216,7 +215,7 @@ void serial_init(uint32_t prio1, uint32_t prio2, uint32_t prio3) {
   usart_setup(USART3, DEFAULT_USART_BITRATE, 0,
               USART_CR2_STOP1_BITS | USART_CR2_LINEN, 0);
   GPIOB->CRH = (GPIOB->CRH & 0xFFFF00FF) | 0x00004B00;
-  NVICEnableVector(USART3_IRQChannel, prio3);
+  NVICEnableVector(USART3_IRQn, prio3);
 #endif
 }
 
