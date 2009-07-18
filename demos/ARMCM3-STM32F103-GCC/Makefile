@@ -61,7 +61,8 @@ include ../../test/test.mk
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = ../../ports/ARMCM3/chcore.c \
+CSRC = ../../ports/ARMCM3/cmsis/core_cm3.c \
+       ../../ports/ARMCM3/chcore.c \
        ../../ports/ARMCM3/nvic.c \
        ../../ports/ARMCM3-STM32F103/stm32_serial.c \
        ../../ports/ARMCM3-STM32F103/pal_lld.c \
@@ -102,6 +103,7 @@ ASMSRC =  ../../ports/ARMCM3/crt0.s \
 INCDIR = $(KERNINC) $(TESTINC) \
          ../../src/lib \
          ../../ports/ARMCM3 \
+         ../../ports/ARMCM3/cmsis \
          ../../ports/ARMCM3-STM32F103 \
          ./stm32lib/inc
 

@@ -24,6 +24,8 @@
 #include "board.h"
 #include "stm32_serial.h"
 
+#define AIRCR_VECTKEY           0x05FA0000
+
 /*
  * Digital I/O ports static configuration as defined in @p board.h.
  */
@@ -86,8 +88,9 @@ void hwinit1(void) {
 
   /*
    * NVIC/SCB initialization.
+   * Note: PRIGROUP 4:0 (4:4).
    */
-  SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0x3); // PRIGROUP 4:0 (4:4).
+  SCB->AIRCR = AIRCR_VECTKEY | SCB_AIRCR_PRIGROUP_0 | SCB_AIRCR_PRIGROUP_1;
   NVICSetSystemHandlerPriority(HANDLER_SVCALL, PRIORITY_SVCALL);
   NVICSetSystemHandlerPriority(HANDLER_SYSTICK, PRIORITY_SYSTICK);
   NVICSetSystemHandlerPriority(HANDLER_PENDSV, PRIORITY_PENDSV);
@@ -95,9 +98,9 @@ void hwinit1(void) {
   /*
    * SysTick initialization.
    */
-  ST_RVR = SYSCLK / (8000000 / CH_FREQUENCY) - 1;
-  ST_CVR = 0;
-  ST_CSR = ENABLE_ON_BITS | TICKINT_ENABLED_BITS | CLKSOURCE_EXT_BITS;
+  SysTick->LOAD = SYSCLK / (8000000 / CH_FREQUENCY) - 1;
+  SysTick->VAL = 0;
+  SysTick->CTRL = SysTick_CTRL_ENABLE | SysTick_CTRL_TICKINT;
 
   /*
    * Other subsystems initialization.
