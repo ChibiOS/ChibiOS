@@ -69,7 +69,8 @@ GNU-Linux-GCC          - ChibiOS/RT simulator for x86 Linux systems, it is
   is available to the applications. The CMSIS files were patched in order
   to correct some warnings.
 - NEW: Updated the STM32 port to use the newest ST firmware library files
-  (version 3.1.0).
+  (version 3.1.0). Note that now the ST drivers are included in the STM32
+  demo.
 
 *** 1.3.1 ***
 - FIX: Removed mention of an obsolete option from the documentation (bug
