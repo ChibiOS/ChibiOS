@@ -111,4 +111,8 @@
 #define VAL_GPIODCRH            0x88888888
 #define VAL_GPIODODR            0xFFFFFFFF
 
+#define VAL_GPIOECRL            0x88888888
+#define VAL_GPIOECRH            0x88888888
+#define VAL_GPIOEODR            0xFFFFFFFF
+
 #endif /* _BOARD_H_ */
