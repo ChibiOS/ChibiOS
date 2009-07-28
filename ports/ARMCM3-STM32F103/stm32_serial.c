@@ -113,7 +113,7 @@ CH_IRQ_HANDLER(VectorD4) {
 
 static void OutNotify1(void) {
 
-  USART1->CR1 |= CR1_TXEIE;
+  USART1->CR1 |= USART_CR1_TXEIE;
 }
 #endif
 
@@ -145,7 +145,7 @@ CH_IRQ_HANDLER(VectorDC) {
 
 static void OutNotify3(void) {
 
-  USART3->CR1 |= CR1_TXEIE;
+  USART3->CR1 |= USART_CR1_TXEIE;
 }
 #endif
 
