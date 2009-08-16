@@ -57,19 +57,21 @@ UDEFS =
 UADEFS =
 
 # Imported source files
-include ../../src/kernel.mk
+include ../../os/kernel/kernel.mk
 include ../../test/test.mk
 
 # List C source files here
-SRC  = chcore.c main.c simcom.c \
-       ${KERNSRC} \
-       ${TESTSRC}
+SRC  = ${KERNSRC} \
+       ${TESTSRC} \
+       chcore.c \
+       simcom.c \
+       main.c
 
 # List ASM source files here
 ASRC =
 
 # List all user directories here
-UINCDIR = ../../src/include ../../test
+UINCDIR = $(KERNINC) $(TESTINC)
 
 # List the user directory to look for the libraries here
 ULIBDIR =

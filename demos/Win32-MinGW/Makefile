@@ -47,7 +47,7 @@ DLIBS = -lws2_32
 PROJECT = ch
 
 # Define linker script file here
-LDSCRIPT=
+LDSCRIPT =
 
 # List all user C define here, like -D_DEBUG=1
 UDEFS =
@@ -56,19 +56,21 @@ UDEFS =
 UADEFS =
 
 # Imported source files
-include ../../src/kernel.mk
+include ../../os/kernel/kernel.mk
 include ../../test/test.mk
 
 # List C source files here
-SRC  = chcore.c main.c ../../ports/win32/simcom.c \
-       ${KERNSRC} \
-       ${TESTSRC}
+SRC  = ${KERNSRC} \
+       ${TESTSRC} \
+       chcore.c \
+       ../../os/ports/GCC/win32/simcom.c \
+       main.c
 
 # List ASM source files here
 ASRC =
 
 # List all user directories here
-UINCDIR = ../../src/include
+UINCDIR = $(KERNINC) $(TESTINC)
 
 # List the user directory to look for the libraries here
 ULIBDIR =

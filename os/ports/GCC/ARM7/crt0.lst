@@ -1,0 +1,218 @@
+GAS LISTING /cygdrive/c/DOCUME~1/Giovanni/IMPOST~1/Temp/ccgRWKd6.s 			page 1
+
+
+   1               	# 1 "../../os/ports/GCC/ARM7/crt0.s"
+   2               	# 1 "<built-in>"
+   1               	/*
+   0               	
+   0               	
+   2               	    ChibiOS/RT - Copyright (C) 2006-2007 Giovanni Di Sirio.
+   3               	
+   4               	    This file is part of ChibiOS/RT.
+   5               	
+   6               	    ChibiOS/RT is free software; you can redistribute it and/or modify
+   7               	    it under the terms of the GNU General Public License as published by
+   8               	    the Free Software Foundation; either version 3 of the License, or
+   9               	    (at your option) any later version.
+  10               	
+  11               	    ChibiOS/RT is distributed in the hope that it will be useful,
+  12               	    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  13               	    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  14               	    GNU General Public License for more details.
+  15               	
+  16               	    You should have received a copy of the GNU General Public License
+  17               	    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  18               	*/
+  19               	
+  20               	/**
+  21               	 * @file ports/ARM7/crt0.s
+  22               	 * @brief Generic ARM7 startup file for ChibiOS/RT.
+  23               	 * @addtogroup ARM7_CORE
+  24               	 * @{
+  25               	 */
+  26               	/** @cond never */
+  27               	
+  28               	.set    MODE_USR, 0x10
+  29               	.set    MODE_FIQ, 0x11
+  30               	.set    MODE_IRQ, 0x12
+  31               	.set    MODE_SVC, 0x13
+  32               	.set    MODE_ABT, 0x17
+  33               	.set    MODE_UND, 0x1B
+  34               	.set    MODE_SYS, 0x1F
+  35               	
+  36               	.equ    I_BIT, 0x80
+  37               	.equ    F_BIT, 0x40
+  38               	
+  39               	.text
+  40               	.code 32
+  41               	.balign 4
+  42               	
+  43               	/*
+  44               	 * Reset handler.
+  45               	 */
+  46               	.global ResetHandler
+  47               	ResetHandler:
+  48               	        /*
+  49               	         * Stack pointers initialization.
+  50               	         */
+  51               	        ldr     r0, =__ram_end__
+  52               	        /* Undefined */
+  53               	        msr     CPSR_c, #MODE_UND | I_BIT | F_BIT
+GAS LISTING /cygdrive/c/DOCUME~1/Giovanni/IMPOST~1/Temp/ccgRWKd6.s 			page 2
+
+
+  54 ???? 1040 0000 	        mov     sp, r0
+  55               	        ldr     r1, =__und_stack_size__
+  56 ???? 0080      	        sub     r0, r0, r1
+  57               	        /* Abort */
+  58               	        msr     CPSR_c, #MODE_ABT | I_BIT | F_BIT
+  59 ???? 1040 0000 	        mov     sp, r0
+  60               	        ldr     r1, =__abt_stack_size__
+  61 ???? 0080      	        sub     r0, r0, r1
+  62               	        /* FIQ */
+  63               	        msr     CPSR_c, #MODE_FIQ | I_BIT | F_BIT
+  64 ???? 1040 0000 	        mov     sp, r0
+  65               	        ldr     r1, =__fiq_stack_size__
+  66 ???? 0080      	        sub     r0, r0, r1
+  67               	        /* IRQ */
+  68               	        msr     CPSR_c, #MODE_IRQ | I_BIT | F_BIT
+  69 ???? 1040 0000 	        mov     sp, r0
+  70               	        ldr     r1, =__irq_stack_size__
+  71 ???? 0080      	        sub     r0, r0, r1
+  72               	        /* Supervisor */
+  73               	        msr     CPSR_c, #MODE_SVC | I_BIT | F_BIT
+  74 ???? 1040 0000 	        mov     sp, r0
+  75               	        ldr     r1, =__svc_stack_size__
+  76 ???? 0080      	        sub     r0, r0, r1
+  77               	        /* System */
+  78               	        msr     CPSR_c, #MODE_SYS | I_BIT | F_BIT
+  79 ???? 1040 0000 	        mov     sp, r0
+  80               	//        ldr     r1, =__sys_stack_size__
+  81               	//        sub     r0, r0, r1
+  82               	        /*
+  83               	         * Early initialization.
+  84               	         */
+  85               	#ifndef THUMB_NO_INTERWORKING
+  86               	        bl      hwinit0
+  87               	#else
+  88               	        add     r0, pc, #1
+  89               	        bx      r0
+  90               	.code 16
+  91               	        bl      hwinit0
+  92               	        mov     r0, pc
+  93               	        bx      r0
+  94               	.code 32
+  95               	#endif
+  96               	        /*
+  97               	         * Data initialization.
+  98               	         * NOTE: It assumes that the DATA size is a multiple of 4.
+  99               	         */
+ 100               	        ldr     r1, =_textdata
+ 101               	        ldr     r2, =_data
+ 102               	        ldr     r3, =_edata
+ 103               	dataloop:
+ 104 ???? 0392      	        cmp     r2, r3
+ 105               	        ldrlo   r0, [r1], #4
+ 106               	        strlo   r0, [r2], #4
+ 107               	        blo     dataloop
+ 108               	        /*
+ 109               	         * BSS initialization.
+ 110               	         * NOTE: It assumes that the BSS size is a multiple of 4.
+GAS LISTING /cygdrive/c/DOCUME~1/Giovanni/IMPOST~1/Temp/ccgRWKd6.s 			page 3
+
+
+ 111               	         */
+ 112 ???? 0340      	        mov     r0, #0
+ 113               	        ldr     r1, =_bss_start
+ 114               	        ldr     r2, =_bss_end
+ 115               	bssloop:
+ 116 ???? 0291      	        cmp     r1, r2
+ 117               	        strlo   r0, [r1], #4
+ 118               	        blo     bssloop
+ 119               	        /*
+ 120               	         * Late initialization.
+ 121               	         */
+ 122               	#ifdef THUMB_NO_INTERWORKING
+ 123               	        add     r0, pc, #1
+ 124               	        bx      r0
+ 125               	.code 16
+ 126               	        bl      hwinit1
+ 127               	        mov     r0, #0
+ 128               	        mov     r1, r0
+ 129               	        bl      main
+ 130               	        ldr     r1, =MainExitHandler
+ 131               	        bx      r1
+ 132               	.code 32
+ 133               	#else
+ 134               	        bl      hwinit1
+ 135 ???? 0340      	        mov     r0, #0
+ 136 ???? 0041      	        mov     r1, r0
+ 137               	        bl      main
+ 138               	        b       MainExitHandler
+ 139               	#endif
+ 140               	
+ 141               	/*
+ 142               	 * Default main function exit handler.
+ 143               	 */
+ 144               	.weak MainExitHandler
+ 145               	.globl MainExitHandler
+ 146               	MainExitHandler:
+ 147               	
+ 148               	.loop:  b       .loop
+ 149               	
+ 150               	/*
+ 151               	 * Default early initialization code. It is declared weak in order to be
+ 152               	 * replaced by the real initialization code.
+ 153               	 * Early initialization is performed just after reset before BSS and DATA
+ 154               	 * segments initialization.
+ 155               	 */
+ 156               	#ifdef THUMB_NO_INTERWORKING
+ 157               	.thumb_func
+ 158               	.code 16
+ 159               	#endif
+ 160               	.weak hwinit0
+ 161               	hwinit0:
+ 162               	        bx      lr
+ 163               	.code 32
+ 164               	
+ 165               	/*
+ 166               	 * Default late initialization code. It is declared weak in order to be
+ 167               	 * replaced by the real initialization code.
+GAS LISTING /cygdrive/c/DOCUME~1/Giovanni/IMPOST~1/Temp/ccgRWKd6.s 			page 4
+
+
+ 168               	 * Late initialization is performed after BSS and DATA segments initialization
+ 169               	 * and before invoking the main() function.
+ 170               	 */
+ 171               	#ifdef THUMB_NO_INTERWORKING
+ 172               	.thumb_func
+ 173               	.code 16
+ 174               	#endif
+ 175               	.weak hwinit1
+ 176               	hwinit1:
+ 177               	        bx      lr
+ 178               	.code 32
+GAS LISTING /cygdrive/c/DOCUME~1/Giovanni/IMPOST~1/Temp/ccgRWKd6.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 ../../os/ports/GCC/ARM7/crt0.s
+../../os/ports/GCC/ARM7/crt0.s:28     *ABS*:00000010 MODE_USR
+../../os/ports/GCC/ARM7/crt0.s:29     *ABS*:00000011 MODE_FIQ
+../../os/ports/GCC/ARM7/crt0.s:30     *ABS*:00000012 MODE_IRQ
+../../os/ports/GCC/ARM7/crt0.s:31     *ABS*:00000013 MODE_SVC
+../../os/ports/GCC/ARM7/crt0.s:32     *ABS*:00000017 MODE_ABT
+../../os/ports/GCC/ARM7/crt0.s:33     *ABS*:0000001b MODE_UND
+../../os/ports/GCC/ARM7/crt0.s:34     *ABS*:0000001f MODE_SYS
+../../os/ports/GCC/ARM7/crt0.s:36     *ABS*:00000080 I_BIT
+../../os/ports/GCC/ARM7/crt0.s:37     *ABS*:00000040 F_BIT
+../../os/ports/GCC/ARM7/crt0.s:47     .text:00000000 ResetHandler
+../../os/ports/GCC/ARM7/crt0.s:103    .text:00000000 dataloop
+../../os/ports/GCC/ARM7/crt0.s:115    .text:00000000 bssloop
+../../os/ports/GCC/ARM7/crt0.s:146    .text:00000000 MainExitHandler
+../../os/ports/GCC/ARM7/crt0.s:148    .text:00000000 .loop
+../../os/ports/GCC/ARM7/crt0.s:161    .text:00000000 hwinit0
+../../os/ports/GCC/ARM7/crt0.s:176    .text:00000000 hwinit1
+
+UNDEFINED SYMBOLS
+sp

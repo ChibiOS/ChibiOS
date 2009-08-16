@@ -43,7 +43,8 @@ PROJECT = ch
 LDSCRIPT= ch.ld
 
 # Imported source files
-include ../../src/kernel.mk
+include ../../os/ports/GCC/ARM7/port.mk
+include ../../os/kernel/kernel.mk
 include ../../test/test.mk
 
 # List of the required uIP source files.
@@ -57,14 +58,15 @@ USRC = ../../ext/uip-1.0/uip/uip_arp.c \
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = ../../ports/ARM7/chcore.c \
-       ../../ports/ARM7-AT91SAM7X/pal_lld.c \
-       ../../ports/ARM7-AT91SAM7X/sam7x_serial.c \
-       ../../ports/ARM7-AT91SAM7X/sam7x_emac.c \
+CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
        ${USRC} \
-       ../../src/lib/evtimer.c \
+       ../../os/io/pal.c \
+       ../../os/ports/GCC/ARM7/AT91SAM7X/pal_lld.c \
+       ../../os/ports/GCC/ARM7/AT91SAM7X/sam7x_serial.c \
+       ../../os/ports/GCC/ARM7/AT91SAM7X/sam7x_emac.c \
+       ../../os/various/evtimer.c \
        at91lib/aic.c \
        web/webthread.c \
        board.c main.c
@@ -94,14 +96,13 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC = ../../ports/ARM7/crt0.s \
-         ../../ports/ARM7-AT91SAM7X/vectors.s \
-         ../../ports/ARM7/chcoreasm.s
+ASMSRC = $(PORTASM) \
+         ../../os/ports/GCC/ARM7/AT91SAM7X/vectors.s
 
-INCDIR = $(KERNINC) $(TESTINC) \
-         ../../src/lib \
-         ../../ports/ARM7 \
-         ../../ports/ARM7-AT91SAM7X \
+INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
+         ../../os/io \
+         ../../os/ports/GCC/ARM7/AT91SAM7X \
+         ../../os/various \
          ./web ../../ext/uip-1.0/uip ../../ext/uip-1.0/apps/webserver
 
 #
@@ -190,4 +191,4 @@ ULIBS =
 # End of user defines
 ##############################################################################
 
-include ../../ports/ARM/rules.mk
+include ../../os/ports/GCC/ARM/rules.mk

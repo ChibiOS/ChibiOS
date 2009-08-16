@@ -1,0 +1,48 @@
+   1               		.file	"chcore.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.global __do_copy_data
+   9               		.global __do_clear_bss
+  17               	.Ltext0:
+  18               		.weak	port_halt
+  20               	port_halt:
+  21               	.LFB7:
+  22               	.LM1:
+  23 ???? 3F92      		push r3
+  24               	/* prologue: function */
+  25               	/* frame size = 0 */
+  26               	.LM2:
+  27               	/* #APP */
+  28               	 ;  37 "../../os/ports/GCC/ARM7/chcore.c" 1
+  29               		mrs     r3, CPSR                       
+  30               		orr     r3, #0x80                      
+  31               		msr     CPSR_c, r3                     
+  32               		orr     r3, #0x40                      
+  33               		msr     CPSR_c, r3
+  34               	 ;  0 "" 2
+  35               	/* #NOAPP */
+  36               	.L2:
+  37 ???? 00C0      		rjmp .L2
+  38               	.LFE7:
+  64               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 chcore.c
+C:\DOCUME~1\Giovanni\IMPOST~1\Temp/ccjonuJz.s:2      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Giovanni\IMPOST~1\Temp/ccjonuJz.s:3      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Giovanni\IMPOST~1\Temp/ccjonuJz.s:4      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Giovanni\IMPOST~1\Temp/ccjonuJz.s:5      *ABS*:00000034 __CCP__
+C:\DOCUME~1\Giovanni\IMPOST~1\Temp/ccjonuJz.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Giovanni\IMPOST~1\Temp/ccjonuJz.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Giovanni\IMPOST~1\Temp/ccjonuJz.s:20     .text:00000000 port_halt
+C:\DOCUME~1\Giovanni\IMPOST~1\Temp/ccjonuJz.s:39     .text:00000000 L0
+C:\DOCUME~1\Giovanni\IMPOST~1\Temp/ccjonuJz.s:265    .debug_line:00000000 L0
+C:\DOCUME~1\Giovanni\IMPOST~1\Temp/ccjonuJz.s:265    .debug_line:0000001d L0
+C:\DOCUME~1\Giovanni\IMPOST~1\Temp/ccjonuJz.s:265    .debug_line:0000001d L0
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss

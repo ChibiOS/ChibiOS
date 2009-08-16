@@ -56,20 +56,19 @@ PROJECT = ch
 LDSCRIPT= ch.ld
 
 # Imported source files
-include ../../src/kernel.mk
+include ../../os/ports/GCC/ARMCM3/port.mk
+include ../../os/kernel/kernel.mk
 include ../../test/test.mk
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = ../../ports/ARMCM3/cmsis/core_cm3.c \
-       ../../ports/ARMCM3/chcore.c \
-       ../../ports/ARMCM3/nvic.c \
-       ../../ports/ARMCM3-STM32F103/stm32_serial.c \
-       ../../ports/ARMCM3-STM32F103/pal_lld.c \
+CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
-       ../../src/lib/pal.c \
-       ../../src/lib/evtimer.c \
+       ../../os/io/pal.c \
+       ../../os/ports/GCC/ARMCM3/STM32F103/pal_lld.c \
+       ../../os/ports/GCC/ARMCM3/STM32F103/stm32_serial.c \
+       ../../os/various/evtimer.c \
        board.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -97,14 +96,13 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC =  ../../ports/ARMCM3/crt0.s \
-          ../../ports/ARMCM3-STM32F103/vectors.s
+ASMSRC = $(PORTASM) \
+         ../../ports/ARMCM3-STM32F103/vectors.s
 
-INCDIR = $(KERNINC) $(TESTINC) \
-         ../../src/lib \
-         ../../ports/ARMCM3 \
-         ../../ports/ARMCM3/cmsis \
-         ../../ports/ARMCM3-STM32F103 \
+INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
+         ../../os/io \
+         ../../os/ports/GCC/ARMCM3/STM32F103 \
+         ../../os/various \
          ./stm32lib/inc
 
 #
@@ -199,4 +197,4 @@ ifeq ($(USE_FWLIB),yes)
   USE_OPT += -DUSE_STDPERIPH_DRIVER
 endif
 
-include ../../ports/ARM/rules.mk
+include ../../os/ports/GCC/ARM/rules.mk

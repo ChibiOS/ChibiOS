@@ -40,23 +40,24 @@ endif
 PROJECT = ch
 
 # Define linker script file here
-LDSCRIPT= ch.ld
+LDSCRIPT = ch.ld
 
 # Imported source files
-include ../../src/kernel.mk
+include ../../os/ports/GCC/ARM7/port.mk
+include ../../os/kernel/kernel.mk
 include ../../test/test.mk
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = ../../ports/ARM7/chcore.c \
-       ../../ports/ARM7-LPC214x/vic.c  \
-       ../../ports/ARM7-LPC214x/pal_lld.c  \
-       ../../ports/ARM7-LPC214x/lpc214x_serial.c  \
-       ../../ports/ARM7-LPC214x/lpc214x_ssp.c  \
+CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
-       ../../src/lib/evtimer.c \
-       ../../src/lib/pal.c \
+       ../../os/io/pal.c \
+       ../../os/ports/GCC//ARM7/LPC214x/vic.c  \
+       ../../os/ports/GCC/ARM7/LPC214x/pal_lld.c \
+       ../../os/ports/GCC/ARM7/LPC214x/lpc214x_serial.c \
+       ../../os/ports/GCC/ARM7/LPC214x/lpc214x_ssp.c \
+       ../../os/various/evtimer.c \
        board.c buzzer.c mmcsd.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -84,14 +85,13 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC = ../../ports/ARM7/crt0.s \
-         ../../ports/ARM7-LPC214x/vectors.s \
-         ../../ports/ARM7/chcoreasm.s
+ASMSRC = $(PORTASM) \
+         ../../os/ports/GCC/ARM7/LPC214x/vectors.s
 
-INCDIR = $(KERNINC) $(TESTINC) \
-         ../../src/lib \
-         ../../ports/ARM7 \
-         ../../ports/ARM7-LPC214x
+INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
+         ../../os/io \
+         ../../os/ports/GCC/ARM7/LPC214x \
+         ../../os/various
 
 #
 # Project, sources and paths
@@ -179,4 +179,4 @@ ULIBS =
 # End of user defines
 ##############################################################################
 
-include ../../ports/ARM/rules.mk
+include ../../os/ports/GCC/ARM/rules.mk
