@@ -66,8 +66,9 @@ CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
        ../../os/io/pal.c \
+       ../../os/io/serial.c \
        ../../os/ports/GCC/ARMCM3/STM32F103/pal_lld.c \
-       ../../os/ports/GCC/ARMCM3/STM32F103/stm32_serial.c \
+       ../../os/ports/GCC/ARMCM3/STM32F103/serial_lld.c \
        ../../os/various/evtimer.c \
        board.c main.c
 

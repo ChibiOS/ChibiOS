@@ -50,22 +50,6 @@ typedef struct _SerialDriver SerialDriver;
  * @brief @p SerialDriver specific methods.
  */
 struct _serial_driver_methods {
-  /**
-   * @brief Configures and starts the driver.
-   *
-   * @param[in] ip pointer to a @p SerialDriver or derived class
-   * @param[in] config The configuration record.
-   */
-  void (*start)(void *ip, const SerialDriverConfig *config);
-
-  /**
-   * @brief Stops the driver.
-   * @Details Any thread waiting on the driver's queues will be awakened with
-   *          the message @p Q_RESET.
-   *
-   * @param[in] ip pointer to a @p SerialDriver or derived class
-   */
-  void (*stop)(void *ip);
 };
 
 /**
@@ -115,11 +99,13 @@ struct _SerialDriver {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sdInit(SerialDriver *sd, qnotify_t inotify, qnotify_t onotify);
-  void sdIncomingDataI(SerialDriver *sd, uint8_t b);
-  msg_t sdRequestDataI(SerialDriver *sd);
-  void sdAddFlagsI(SerialDriver *sd, sdflags_t mask);
-  sdflags_t sdGetAndClearFlags(SerialDriver *sd);
+  void sdInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify);
+  void sdStart(SerialDriver *sdp, const SerialDriverConfig *config);
+  void sdStop(SerialDriver *sdp);
+  void sdIncomingDataI(SerialDriver *sdp, uint8_t b);
+  msg_t sdRequestDataI(SerialDriver *sdp);
+  void sdAddFlagsI(SerialDriver *sdp, sdflags_t mask);
+  sdflags_t sdGetAndClearFlags(SerialDriver *sdp);
 #ifdef __cplusplus
 }
 #endif
@@ -131,7 +117,7 @@ extern "C" {
  *          be used to check different channels implementations.
  * @see chIOPutWouldBlock()
  */
-#define sdPutWouldBlock(sd) chOQIsFull(&(sd)->d2.oqueue)
+#define sdPutWouldBlock(sdp) chOQIsFull(&(sdp)->d2.oqueue)
 
 /**
  * @brief Direct input check on a @p SerialDriver.
@@ -140,7 +126,7 @@ extern "C" {
  *          be used to check different channels implementations.
  * @see chIOGetWouldBlock()
  */
-#define sdGetWouldBlock(sd) chIQIsEmpty(&(sd)->d2.iqueue)
+#define sdGetWouldBlock(sdp) chIQIsEmpty(&(sdp)->d2.iqueue)
 
 /**
  * @brief Direct blocking write to a @p SerialDriver.
@@ -149,7 +135,7 @@ extern "C" {
  *          be used to write to different channels implementations.
  * @see chIOPut()
  */
-#define sdPut(sd, b) chOQPut(&(sd)->d2.oqueue, b)
+#define sdPut(sdp, b) chOQPut(&(sdp)->d2.oqueue, b)
 
 /**
  * @brief Direct blocking write on a @p SerialDriver with timeout
@@ -159,7 +145,7 @@ extern "C" {
  *          be used to write to different channels implementations.
  * @see chIOPutTimeout()
  */
-#define sdPutTimeout(sd, b, t) chOQPutTimeout(&(sd)->d2.iqueue, b, t)
+#define sdPutTimeout(sdp, b, t) chOQPutTimeout(&(sdp)->d2.iqueue, b, t)
 
 /**
  * @brief Direct blocking read from a @p SerialDriver.
@@ -168,7 +154,7 @@ extern "C" {
  *          be used to read from different channels implementations.
  * @see chIOGet()
  */
-#define sdGet(sd) chIQGet(&(sd)->d2.iqueue)
+#define sdGet(sdp) chIQGet(&(sdp)->d2.iqueue)
 
 /**
  * @brief Direct blocking read from a @p SerialDriver with timeout
@@ -178,7 +164,7 @@ extern "C" {
  *          be used to read from different channels implementations.
  * @see chIOGetTimeout()
  */
-#define sdGetTimeout(sd, t) chIQGetTimeout(&(sd)->d2.iqueue, t)
+#define sdGetTimeout(sdp, t) chIQGetTimeout(&(sdp)->d2.iqueue, t)
 
 /**
  * @brief Direct non-blocking write to a @p SerialDriver.
@@ -187,7 +173,7 @@ extern "C" {
  *          be used to write from different channels implementations.
  * @see chIOWrite()
  */
-#define sdWrite(sd, b, n) chOQWrite(&(sd)->d2.oqueue, b, n)
+#define sdWrite(sdp, b, n) chOQWrite(&(sdp)->d2.oqueue, b, n)
 
 /**
  * @brief Direct non-blocking read on a @p SerialDriver.
@@ -196,7 +182,7 @@ extern "C" {
  *          be used to read from different channels implementations.
  * @see chIORead()
  */
-#define sdRead(sd, b, n) chIQRead(&(sd)->d2.iqueue, b, n)
+#define sdRead(sdp, b, n) chIQRead(&(sdp)->d2.iqueue, b, n)
 
 #endif /* _SERIAL_H_ */
 

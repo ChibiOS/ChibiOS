@@ -45,6 +45,15 @@ SerialDriver COM2;
 SerialDriver COM3;
 #endif
 
+/** @brief Driver default configuration.*/
+static const SerialDriverConfig default_config =
+{
+  38400,
+  0,
+  USART_CR2_STOP1_BITS | USART_CR2_LINEN,
+  0
+};
+
 /*===========================================================================*/
 /* Low Level Driver local functions.                                         */
 /*===========================================================================*/
@@ -222,9 +231,14 @@ void sd_lld_init(void) {
  * @brief Low level serial driver configuration and (re)start.
  *
  * @param[in] sdp pointer to a @p SerialDriver object
- * @param[in] config the architecture-dependent serial driver configuration
+ * @param[in] config the architecture-dependent serial driver configuration.
+ *                   If this parameter is set to @p NULL then a default
+ *                   configuration is used.
  */
 void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
+
+  if (config == NULL)
+    config = &default_config;
 
 #if USE_STM32_USART1
   if (&COM1 == sdp) {

@@ -61,36 +61,10 @@ static size_t read(void *ip, uint8_t *buffer, size_t n) {
   return chIQRead(&((SerialDriver *)ip)->d2.iqueue, buffer, n);
 }
 
-static void start(void *ip, const SerialDriverConfig *config) {
-  SerialDriver *sdp = (SerialDriver *)ip;
-
-  chSysLock();
-  sd_lld_start(sdp, config);
-  chSysUnlock();
-}
-
-/**
- * @brief Stops the driver.
- * @Details Any thread waiting on the driver's queues will be awakened with
- *          the message @p Q_RESET.
- *
- * @param sd The @p SerialDriver to be stopped.
- */
-static void stop(void *ip) {
-  SerialDriver *sdp = (SerialDriver *)ip;
-
-  chSysLock();
-  sd_lld_stop(sdp);
-  chOQResetI(&sdp->d2.oqueue);
-  chIQResetI(&sdp->d2.iqueue);
-  chSchRescheduleS();
-  chSysUnlock();
-}
-
 static const struct SerialDriverVMT vmt = {
   {putwouldblock, getwouldblock, put, get},
   {write, read},
-  {start, stop}
+  {}
 };
 
 /**
@@ -112,8 +86,6 @@ static const struct SerialDriverVMT vmt = {
  */
 void sdInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
 
-  chDbgCheck(sdp != NULL, "sdInit");
-
   sdp->vmt = &vmt;
   chEvtInit(&sdp->d1.ievent);
   chEvtInit(&sdp->d1.oevent);
@@ -121,6 +93,38 @@ void sdInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
   sdp->d2.flags = SD_NO_ERROR;
   chIQInit(&sdp->d2.iqueue, sdp->d2.ib, SERIAL_BUFFERS_SIZE, inotify);
   chOQInit(&sdp->d2.oqueue, sdp->d2.ob, SERIAL_BUFFERS_SIZE, onotify);
+}
+
+/**
+ * @brief Configures and starts the driver.
+ *
+ * @param[in] ip pointer to a @p SerialDriver or derived class
+ * @param[in] config the architecture-dependent serial driver configuration.
+ *                   If this parameter is set to @p NULL then a default
+ *                   configuration is used.
+ */
+void sdStart(SerialDriver *sdp, const SerialDriverConfig *config) {
+
+  chSysLock();
+  sd_lld_start(sdp, config);
+  chSysUnlock();
+}
+
+/**
+ * @brief Stops the driver.
+ * @Details Any thread waiting on the driver's queues will be awakened with
+ *          the message @p Q_RESET.
+ *
+ * @param[in] ip pointer to a @p SerialDriver or derived class
+ */
+void sdStop(SerialDriver *sdp) {
+
+  chSysLock();
+  sd_lld_stop(sdp);
+  chOQResetI(&sdp->d2.oqueue);
+  chIQResetI(&sdp->d2.iqueue);
+  chSchRescheduleS();
+  chSysUnlock();
 }
 
 /**

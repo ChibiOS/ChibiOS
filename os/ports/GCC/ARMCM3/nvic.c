@@ -32,6 +32,7 @@
  *
  * @param n the interrupt number
  * @param prio the interrupt priority
+ *
  * @note The parameters are not tested for correctness.
  */
 void NVICEnableVector(uint32_t n, uint32_t prio) {
@@ -39,6 +40,20 @@ void NVICEnableVector(uint32_t n, uint32_t prio) {
 
   NVIC_IPR(n >> 2) = (NVIC_IPR(n >> 2) & ~(0xFF << sh)) | (prio << sh);
   NVIC_ISER(n >> 5) = 1 << (n & 0x1F);
+}
+
+/**
+ * @brief Disables an interrupt handler.
+ *
+ * @param n the interrupt number
+ *
+ * @note The parameters are not tested for correctness.
+ */
+void NVICDisableVector(uint32_t n) {
+  unsigned sh = (n & 3) << 3;
+
+  NVIC_ICER(n >> 5) = 1 << (n & 0x1F);
+  NVIC_IPR(n >> 2) = NVIC_IPR(n >> 2) & ~(0xFF << sh);
 }
 
 /**

@@ -64,7 +64,11 @@ GNU-Linux-GCC          - ChibiOS/RT simulator for x86 Linux systems, it is
 *****************************************************************************
 
 *** 1.3.2 ***
-- NEW: Reorganized and rationalized the distribution three.
+- NEW: Reorganized and rationalized the distribution tree.
+- NEW: Enhanced serial driver. The driver now supports speed change at runtime
+  and low power stop mode.
+- NEW: Serial driver removed from the kernel and added to the I/O subsystems
+  together with PAL.
 - NEW: Added standard CMSIS 1.2.0 support to the Cortex-M3 port. The kernel
   does not use it (the OS uses its own optimized code) but the functionality
   is available to the applications. The CMSIS files were patched in order
@@ -72,6 +76,8 @@ GNU-Linux-GCC          - ChibiOS/RT simulator for x86 Linux systems, it is
 - NEW: Updated the STM32 port to use the newest ST firmware library files
   (version 3.1.0). Note that now the ST drivers are included in the STM32
   demo directory.
+- CHANGE: Removed the CH_USE_SERIAL_FULLDUPLEX configuration option because
+  the serial driver is no more part of the kernel.
 
 *** 1.3.1 ***
 - FIX: Removed mention of an obsolete option from the documentation (bug

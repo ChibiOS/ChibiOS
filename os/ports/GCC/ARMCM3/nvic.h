@@ -180,6 +180,7 @@ typedef struct {
 extern "C" {
 #endif
   void NVICEnableVector(uint32_t n, uint32_t prio);
+  void NVICDisableVector(uint32_t n);
   void NVICSetSystemHandlerPriority(uint32_t handler, uint32_t prio);
 #ifdef __cplusplus
 }

@@ -22,7 +22,7 @@
 #include <test.h>
 
 #include "board.h"
-#include "stm32_serial.h"
+#include "serial.h"
 
 /*
  * Red LEDs blinker thread, times are in milliseconds.
@@ -44,6 +44,11 @@ static msg_t Thread1(void *arg) {
  * on entry.
  */
 int main(int argc, char **argv) {
+
+  /*
+   * Activates the communication port 2 using the driver default configuration.
+   */
+  sdStart(&COM2, NULL);
 
   /*
    * Creates the blinker thread.

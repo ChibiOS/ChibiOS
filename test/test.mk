@@ -4,8 +4,7 @@ TESTSRC = ../../test/test.c       ../../test/testthd.c \
           ../../test/testmsg.c    ../../test/testmbox.c \
           ../../test/testevt.c    ../../test/testheap.c \
           ../../test/testpools.c  ../../test/testdyn.c \
-          ../../test/testqueues.c ../../test/testserial.c \
-          ../../test/testbmk.c
+          ../../test/testqueues.c ../../test/testbmk.c
 
 # Required include directories
 TESTINC = ../../test

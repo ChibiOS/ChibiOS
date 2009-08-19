@@ -26,6 +26,10 @@
 
 #include <ch.h>
 
+/** @brief Driver default configuration.*/
+static const SerialDriverConfig default_config = {
+};
+
 /*===========================================================================*/
 /* Low Level Driver local functions.                                         */
 /*===========================================================================*/
@@ -49,9 +53,14 @@ void sd_lld_init(void) {
  * @brief Low level serial driver configuration and (re)start.
  *
  * @param[in] sdp pointer to a @p SerialDriver object
- * @param[in] config the architecture-dependent serial driver configuration
+ * @param[in] config the architecture-dependent serial driver configuration.
+ *                   If this parameter is set to @p NULL then a default
+ *                   configuration is used.
  */
 void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
+
+  if (config == NULL)
+    config = &default_config;
 
 }
 

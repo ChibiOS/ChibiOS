@@ -22,14 +22,14 @@
 #include <nvic.h>
 
 #include "board.h"
-#include "stm32_serial.h"
+#include "serial.h"
 
 #define AIRCR_VECTKEY           0x05FA0000
 
 /*
  * Digital I/O ports static configuration as defined in @p board.h.
  */
-static const STM32GPIOConfig config =
+static const STM32GPIOConfig pal_config =
 {
   {VAL_GPIOAODR, VAL_GPIOACRL, VAL_GPIOACRH},
   {VAL_GPIOBODR, VAL_GPIOBCRL, VAL_GPIOBCRH},
@@ -83,7 +83,7 @@ void hwinit0(void) {
   /*
    * I/O ports initialization as specified in board.h.
    */
-  palInit(&config);
+  palInit(&pal_config);
 }
 
 /*
@@ -112,7 +112,7 @@ void hwinit1(void) {
   /*
    * Other subsystems initialization.
    */
-  serial_init(0xC0, 0xC0, 0xC0);
+  sd_lld_init();
 
   /*
    * ChibiOS/RT initialization.
