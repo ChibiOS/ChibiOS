@@ -81,7 +81,6 @@
 #include "inline.h"
 #include "queues.h"
 #include "channels.h"
-#include "serial.h"
 #include "debug.h"
 
 #endif /* _CH_H_ */
