@@ -234,16 +234,6 @@
 #endif
 
 /**
- * If specified then the full duplex serial driver APIs are included in the
- * kernel.
- * @note The default is @p TRUE.
- * @note Requires @p CH_USE_QUEUES and @p CH_USE_EVENTS.
- */
-#if !defined(CH_USE_SERIAL_FULLDUPLEX) || defined(__DOXYGEN__)
-#define CH_USE_SERIAL_FULLDUPLEX        TRUE
-#endif
-
-/**
  * If specified then the memory heap allocator APIs are included in the kernel.
  * @note The default is @p TRUE.
  * @note Requires @p CH_USE_MUTEXES or @p CH_USE_SEMAPHORES.
