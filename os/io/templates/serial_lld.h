@@ -77,10 +77,6 @@ struct _serial_driver_data {
   uint8_t               ob[SERIAL_BUFFERS_SIZE];
 };
 
-/*===========================================================================*/
-/* I/O Ports Types and constants.                                            */
-/*===========================================================================*/
-
 /**
  * @brief Generic Serial Driver static initializer.
  * @details An instance of this structure must be passed to @p sdStart()
@@ -95,28 +91,14 @@ typedef struct {
 } SerialDriverConfig;
 
 /*===========================================================================*/
-/* Implementation, some of the following macros could be implemented as      */
-/* real functions, if so please put them in the file serial_lld.c.           */
+/* External declarations.                                                    */
 /*===========================================================================*/
-
-/**
- * @brief Low level serial driver configuration and (re)start.
- *
- * @param[in] sd pointer to a @p SerialDriver object
- * @param[in] config the architecture-dependent serial driver configuration
- */
-#define sd_lld_start(sd, config)
-
-/**
- * @brief Low level serial driver stop.
- *
- * @param[in] sd pointer to a @p SerialDriver object
- */
-#define sd_lld_stop(sd)
 
 #ifdef __cplusplus
 extern "C" {
   void sd_lld_init(void);
+  void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config);
+  void sd_lld_stop(SerialDriver *sdp);
 #endif
 #ifdef __cplusplus
 }

@@ -42,42 +42,30 @@
 /** Break detected.*/
 #define SD_BREAK_DETECTED       32
 
+typedef struct _SerialDriver SerialDriver;
+
 #include "serial_lld.h"
 
-/** Serial Driver condition flags type.*/
-typedef uint8_t sdflags_t;
-
 /**
- * @brief @p FullDuplexDriver specific methods.
+ * @brief @p SerialDriver specific methods.
  */
 struct _serial_driver_methods {
-  void (*start)(SerialDriver *sd, const SerialDriverConfig *config);
-  void (*stop)(SerialDriver *sd);
-};
+  /**
+   * @brief Configures and starts the driver.
+   *
+   * @param[in] ip pointer to a @p SerialDriver or derived class
+   * @param[in] config The configuration record.
+   */
+  void (*start)(void *ip, const SerialDriverConfig *config);
 
-/**
- * @brief @p SerialDriver specific data.
- */
-struct _serial_driver_data {
   /**
-   * Input queue, incoming data can be read from this input queue by
-   * using the queues APIs.
+   * @brief Stops the driver.
+   * @Details Any thread waiting on the driver's queues will be awakened with
+   *          the message @p Q_RESET.
+   *
+   * @param[in] ip pointer to a @p SerialDriver or derived class
    */
-  InputQueue            iqueue;
-  /**
-   * Output queue, outgoing data can be written to this output queue by
-   * using the queues APIs.
-   */
-  OutputQueue           oqueue;
-  /**
-   * Status Change @p EventSource. This event is generated when one or more
-   * condition flags change.
-   */
-  EventSource           sevent;
-  /**
-   * I/O driver status flags.
-   */
-  sdflags_t             flags;
+  void (*stop)(void *ip);
 };
 
 /**
@@ -105,7 +93,7 @@ struct SerialDriverVMT {
  * @details This class extends @p BaseAsynchronousChannel by adding physical
  *          I/O queues.
  */
-typedef struct {
+struct _SerialDriver {
   /**
    * Virtual Methods Table.
    */
@@ -122,14 +110,12 @@ typedef struct {
    * @p SerialDriver specific data.
    */
   struct _serial_driver_data d2;
-} SerialDriver;
+};
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sdInit(SerialDriver *sd,
-              uint8_t *ib, size_t isize, qnotify_t inotify,
-              uint8_t *ob, size_t osize, qnotify_t onotify);
+  void sdInit(SerialDriver *sd, qnotify_t inotify, qnotify_t onotify);
   void sdIncomingDataI(SerialDriver *sd, uint8_t b);
   msg_t sdRequestDataI(SerialDriver *sd);
   void sdAddFlagsI(SerialDriver *sd, sdflags_t mask);

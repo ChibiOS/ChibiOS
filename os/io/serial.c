@@ -25,47 +25,72 @@
  */
 
 #include <ch.h>
-
-#if CH_USE_SERIAL_FULLDUPLEX
+#include <serial.h>
 
 /*
  * Interface implementation, the following functions just invoke the equivalent
  * queue-level function or macro.
  */
-static bool_t putwouldblock(void *instance) {
+static bool_t putwouldblock(void *ip) {
 
-  return chOQIsFull(&((FullDuplexDriver *)instance)->d2.oqueue);
+  return chOQIsFull(&((SerialDriver *)ip)->d2.oqueue);
 }
 
-static bool_t getwouldblock(void *instance) {
+static bool_t getwouldblock(void *ip) {
 
-  return chIQIsEmpty(&((FullDuplexDriver *)instance)->d2.iqueue);
+  return chIQIsEmpty(&((SerialDriver *)ip)->d2.iqueue);
 }
 
-static msg_t put(void *instance, uint8_t b, systime_t timeout) {
+static msg_t put(void *ip, uint8_t b, systime_t timeout) {
 
-  return chOQPutTimeout(&((FullDuplexDriver *)instance)->d2.oqueue, b, timeout);
+  return chOQPutTimeout(&((SerialDriver *)ip)->d2.oqueue, b, timeout);
 }
 
-static msg_t get(void *instance, systime_t timeout) {
+static msg_t get(void *ip, systime_t timeout) {
 
-  return chIQGetTimeout(&((FullDuplexDriver *)instance)->d2.iqueue, timeout);
+  return chIQGetTimeout(&((SerialDriver *)ip)->d2.iqueue, timeout);
 }
 
-static size_t write(void *instance, uint8_t *buffer, size_t n) {
+static size_t write(void *ip, uint8_t *buffer, size_t n) {
 
-  return chOQWrite(&((FullDuplexDriver *)instance)->d2.oqueue, buffer, n);
+  return chOQWrite(&((SerialDriver *)ip)->d2.oqueue, buffer, n);
 }
 
-static size_t read(void *instance, uint8_t *buffer, size_t n) {
+static size_t read(void *ip, uint8_t *buffer, size_t n) {
 
-  return chIQRead(&((FullDuplexDriver *)instance)->d2.iqueue, buffer, n);
+  return chIQRead(&((SerialDriver *)ip)->d2.iqueue, buffer, n);
 }
 
-static const struct FullDuplexDriverVMT vmt = {
+static void start(void *ip, const SerialDriverConfig *config) {
+  SerialDriver *sdp = (SerialDriver *)ip;
+
+  chSysLock();
+  sd_lld_start(sdp, config);
+  chSysUnlock();
+}
+
+/**
+ * @brief Stops the driver.
+ * @Details Any thread waiting on the driver's queues will be awakened with
+ *          the message @p Q_RESET.
+ *
+ * @param sd The @p SerialDriver to be stopped.
+ */
+static void stop(void *ip) {
+  SerialDriver *sdp = (SerialDriver *)ip;
+
+  chSysLock();
+  sd_lld_stop(sdp);
+  chOQResetI(&sdp->d2.oqueue);
+  chIQResetI(&sdp->d2.iqueue);
+  chSchRescheduleS();
+  chSysUnlock();
+}
+
+static const struct SerialDriverVMT vmt = {
   {putwouldblock, getwouldblock, put, get},
   {write, read},
-  {}
+  {start, stop}
 };
 
 /**
@@ -73,7 +98,7 @@ static const struct FullDuplexDriverVMT vmt = {
  * @details The HW dependent part of the initialization has to be performed
  *          outside, usually in the hardware initialization code.
  *
- * @param[out] sd pointer to a @p FullDuplexDriver structure
+ * @param[out] sd pointer to a @p SerialDriver structure
  * @param[in] ib pointer to a memory area allocated for the Input Queue buffer
  * @param[in] isize size of the Input Queue buffer
  * @param[in] inotify pointer to a callback function that is invoked when
@@ -85,20 +110,17 @@ static const struct FullDuplexDriverVMT vmt = {
  *                    some data is written in the Queue. The value can be
  *                    @p NULL.
  */
-void chFDDInit(FullDuplexDriver *sd,
-               uint8_t *ib, size_t isize, qnotify_t inotify,
-               uint8_t *ob, size_t osize, qnotify_t onotify) {
+void sdInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
 
-  chDbgCheck((sd != NULL) && (ib != NULL) && (ob != NULL) &&
-             (isize > 0) && (osize > 0), "chFDDInit");
+  chDbgCheck(sdp != NULL, "sdInit");
 
-  sd->vmt = &vmt;
-  chEvtInit(&sd->d1.ievent);
-  chEvtInit(&sd->d1.oevent);
-  chEvtInit(&sd->d2.sevent);
-  sd->d2.flags = SD_NO_ERROR;
-  chIQInit(&sd->d2.iqueue, ib, isize, inotify);
-  chOQInit(&sd->d2.oqueue, ob, osize, onotify);
+  sdp->vmt = &vmt;
+  chEvtInit(&sdp->d1.ievent);
+  chEvtInit(&sdp->d1.oevent);
+  chEvtInit(&sdp->d2.sevent);
+  sdp->d2.flags = SD_NO_ERROR;
+  chIQInit(&sdp->d2.iqueue, sdp->d2.ib, SERIAL_BUFFERS_SIZE, inotify);
+  chOQInit(&sdp->d2.oqueue, sdp->d2.ob, SERIAL_BUFFERS_SIZE, onotify);
 }
 
 /**
@@ -106,13 +128,13 @@ void chFDDInit(FullDuplexDriver *sd,
  * @details This function must be called from the input interrupt service
  *          routine in order to enqueue incoming data and generate the
  *          related events.
- * @param[in] sd pointer to a @p FullDuplexDriver structure
+ * @param[in] sd pointer to a @p SerialDriver structure
  * @param[in] b the byte to be written in the driver's Input Queue
  */
-void sdIncomingDataI(FullDuplexDriver *sd, uint8_t b) {
+void sdIncomingDataI(SerialDriver *sd, uint8_t b) {
 
   if (chIQPutI(&sd->d2.iqueue, b) < Q_OK)
-    chFDDAddFlagsI(sd, SD_OVERRUN_ERROR);
+    sdAddFlagsI(sd, SD_OVERRUN_ERROR);
   else
     chEvtBroadcastI(&sd->d1.ievent);
 }
@@ -122,12 +144,12 @@ void sdIncomingDataI(FullDuplexDriver *sd, uint8_t b) {
  * @details Must be called from the output interrupt service routine in order
  *          to get the next byte to be transmitted.
  *
- * @param[in] sd pointer to a @p FullDuplexDriver structure
+ * @param[in] sd pointer to a @p SerialDriver structure
  * @return The byte value read from the driver's output queue.
  * @retval Q_EMPTY if the queue is empty (the lower driver usually disables
  *                 the interrupt source when this happens).
  */
-msg_t sdRequestDataI(FullDuplexDriver *sd) {
+msg_t sdRequestDataI(SerialDriver *sd) {
 
   msg_t b = chOQGetI(&sd->d2.oqueue);
   if (b < Q_OK)
@@ -140,10 +162,10 @@ msg_t sdRequestDataI(FullDuplexDriver *sd) {
  * @details Must be called from the I/O interrupt service routine in order to
  *          notify I/O conditions as errors, signals change etc.
  *
- * @param[in] sd pointer to a @p FullDuplexDriver structure
+ * @param[in] sd pointer to a @p SerialDriver structure
  * @param[in] mask condition flags to be added to the mask
  */
-void sdAddFlagsI(FullDuplexDriver *sd, dflags_t mask) {
+void sdAddFlagsI(SerialDriver *sd, sdflags_t mask) {
 
   sd->d2.flags |= mask;
   chEvtBroadcastI(&sd->d2.sevent);
@@ -152,17 +174,16 @@ void sdAddFlagsI(FullDuplexDriver *sd, dflags_t mask) {
 /**
  * @brief Returns and clears the errors mask associated to the driver.
  *
- * @param[in] sd pointer to a @p FullDuplexDriver structure
+ * @param[in] sd pointer to a @p SerialDriver structure
  * @return The condition flags modified since last time this function was
  *         invoked.
  */
-dflags_t sdGetAndClearFlags(FullDuplexDriver *sd) {
-  dflags_t mask;
+sdflags_t sdGetAndClearFlags(SerialDriver *sd) {
+  sdflags_t mask;
 
   mask = sd->d2.flags;
   sd->d2.flags = SD_NO_ERROR;
   return mask;
 }
-#endif /* CH_USE_SERIAL_FULLDUPLEX */
 
 /** @} */
