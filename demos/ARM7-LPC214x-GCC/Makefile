@@ -92,7 +92,8 @@ ASMSRC = $(PORTASM) \
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          ../../os/io \
          ../../os/io/platforms/LPC214x \
-         ../../os/various
+         ../../os/various \
+         ../../os/ports/GCC/ARM7/LPC214x
 
 #
 # Project, sources and paths
