@@ -67,8 +67,8 @@ CSRC = ${PORTSRC} \
        ${TESTSRC} \
        ../../os/io/pal.c \
        ../../os/io/serial.c \
-       ../../os/ports/GCC/ARMCM3/STM32F103/pal_lld.c \
-       ../../os/ports/GCC/ARMCM3/STM32F103/serial_lld.c \
+       ../../os/io/platforms/STM32F103/pal_lld.c \
+       ../../os/io/platforms/STM32F103/serial_lld.c \
        ../../os/various/evtimer.c \
        board.c main.c
 
@@ -102,7 +102,7 @@ ASMSRC = $(PORTASM) \
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          ../../os/io \
-         ../../os/ports/GCC/ARMCM3/STM32F103 \
+         ../../os/io/platforms/STM32F103 \
          ../../os/various \
          ./stm32lib/inc
 

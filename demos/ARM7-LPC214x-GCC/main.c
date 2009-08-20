@@ -19,10 +19,10 @@
 
 #include <ch.h>
 #include <pal.h>
+#include <serial.h>
 #include <test.h>
 
 #include "board.h"
-#include "lpc214x_serial.h"
 #include "mmcsd.h"
 #include "buzzer.h"
 #include "evtimer.h"
@@ -80,7 +80,7 @@ static void TimerHandler(eventid_t id) {
     if (!palReadPad(IOPORT_A, PA_BUTTON1))
       PlaySound(1000, MS2ST(100));
     if (!palReadPad(IOPORT_A, PA_BUTTON2)) {
-      chFDDWrite(&COM1, (uint8_t *)"Hello World!\r\n", 14);
+      sdWrite(&COM1, (uint8_t *)"Hello World!\r\n", 14);
       PlaySound(2000, MS2ST(100));
     }
   }
@@ -127,6 +127,11 @@ int main(int argc, char **argv) {
   };
   static EvTimer evt;
   struct EventListener el0, el1, el2;
+
+  /*
+   * Activates the communication port 1 using the driver default configuration.
+   */
+  sdStart(&COM1, NULL);
 
   /*
    * If a button is pressed during the reset then the blinking leds threads

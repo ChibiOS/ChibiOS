@@ -53,10 +53,11 @@ CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
        ../../os/io/pal.c \
-       ../../os/ports/GCC//ARM7/LPC214x/vic.c  \
-       ../../os/ports/GCC/ARM7/LPC214x/pal_lld.c \
-       ../../os/ports/GCC/ARM7/LPC214x/lpc214x_serial.c \
-       ../../os/ports/GCC/ARM7/LPC214x/lpc214x_ssp.c \
+       ../../os/io/serial.c \
+       ../../os/io/platforms/LPC214x/pal_lld.c \
+       ../../os/io/platforms/LPC214x/serial_lld.c \
+       ../../os/io/platforms/LPC214x/vic.c  \
+       ../../os/io/platforms/LPC214x/lpc214x_ssp.c \
        ../../os/various/evtimer.c \
        board.c buzzer.c mmcsd.c main.c
 
@@ -90,7 +91,7 @@ ASMSRC = $(PORTASM) \
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          ../../os/io \
-         ../../os/ports/GCC/ARM7/LPC214x \
+         ../../os/io/platforms/LPC214x \
          ../../os/various
 
 #

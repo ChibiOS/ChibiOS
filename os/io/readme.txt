@@ -1,3 +1,4 @@
-ChibiOS/RT I/O abstraction code, available modules:
-- PAL, digital I/O ports abstraction layer.
-- serial, abstract serial communication port using channels and events.
+ChibiOS/RT I/O abstraction layer, available drivers:
+- PAL. Digital I/O ports abstraction layer.
+- Serial. Buffered, interrupt driven, serial communication driver using OS
+  queues, channels and events.

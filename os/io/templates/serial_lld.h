@@ -18,7 +18,7 @@
 */
 
 /**
- * @file os/io/templates/serial_lld.h
+ * @file templates/serial_lld.h
  * @brief Serial Driver subsystem low level driver header template
  * @addtogroup SERIAL_LLD
  * @{
@@ -96,10 +96,10 @@ typedef struct {
 
 #ifdef __cplusplus
 extern "C" {
+#endif
   void sd_lld_init(void);
   void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config);
   void sd_lld_stop(SerialDriver *sdp);
-#endif
 #ifdef __cplusplus
 }
 #endif

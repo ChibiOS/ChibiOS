@@ -18,13 +18,14 @@
 */
 
 /**
- * @file os/io/templates/serial_lld.c
+ * @file templates/serial_lld.c
  * @brief Serial Driver subsystem low level driver source template
  * @addtogroup SERIAL_LLD
  * @{
  */
 
 #include <ch.h>
+#include <serial.h>
 
 /** @brief Driver default configuration.*/
 static const SerialDriverConfig default_config = {

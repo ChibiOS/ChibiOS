@@ -65,7 +65,7 @@ static const SerialDriverConfig default_config =
  * @param[in] u pointer to an USART I/O block
  * @param[in] config the architecture-dependent serial driver configuration
  */
-static void usart_init(USART_TypeDef *u, const SerialDriverConfig* config) {
+static void usart_init(USART_TypeDef *u, const SerialDriverConfig *config) {
 
   /*
    * Baud rate setting.

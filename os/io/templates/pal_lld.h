@@ -18,7 +18,7 @@
 */
 
 /**
- * @file os/io/templates/pal_lld.h
+ * @file templates/pal_lld.h
  * @brief PAL subsystem low level driver header template
  * @addtogroup PAL_LLD
  * @{
