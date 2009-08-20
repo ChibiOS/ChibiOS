@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/ARM7-LPC214x/pal_lld.h
+ * @file os/ports/GCC/ARM7/LPC214x/pal_lld.h
  * @brief LPC214x FIO low level driver header
  * @addtogroup LPC214x_PAL
  * @{

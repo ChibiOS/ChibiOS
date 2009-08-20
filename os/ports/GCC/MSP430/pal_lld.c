@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/MSP430/pal_lld.c
+ * @file os/ports/GCC/MSP430/pal_lld.c
  * @brief MSP430 Digital I/O low level driver code
  * @addtogroup MSP430_PAL
  * @{
