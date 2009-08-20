@@ -18,8 +18,8 @@
 */
 
 /**
- * @file src/templates/pal_lld.h
- * @brief PAL subsystem low level driver template
+ * @file os/io/templates/pal_lld.h
+ * @brief PAL subsystem low level driver header template
  * @addtogroup PAL_LLD
  * @{
  */
@@ -91,7 +91,7 @@ typedef uint32_t ioportid_t;
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */
-/* functions, if so please put them in a file named pal_lld.c.               */
+/* functions, if so please put them in pal_lld.c.                            */
 /*===========================================================================*/
 
 /**

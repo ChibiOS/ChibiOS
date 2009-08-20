@@ -112,7 +112,7 @@ void hwinit1(void) {
   /*
    * Other subsystems initialization.
    */
-  sd_lld_init();
+  sdInit();
 
   /*
    * ChibiOS/RT initialization.

@@ -68,7 +68,15 @@ static const struct SerialDriverVMT vmt = {
 };
 
 /**
- * @brief Initializes a generic full duplex driver.
+ * @brief Serial Driver initialization.
+ */
+void sdInit(void) {
+
+  sd_lld_init();
+}
+
+/**
+ * @brief Initializes a generic full duplex driver object.
  * @details The HW dependent part of the initialization has to be performed
  *          outside, usually in the hardware initialization code.
  *
@@ -84,7 +92,7 @@ static const struct SerialDriverVMT vmt = {
  *                    some data is written in the Queue. The value can be
  *                    @p NULL.
  */
-void sdInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
+void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
 
   sdp->vmt = &vmt;
   chEvtInit(&sdp->d1.ievent);

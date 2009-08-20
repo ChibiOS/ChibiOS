@@ -99,7 +99,8 @@ struct _SerialDriver {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sdInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify);
+  void sdInit(void);
+  void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify);
   void sdStart(SerialDriver *sdp, const SerialDriverConfig *config);
   void sdStop(SerialDriver *sdp);
   void sdIncomingDataI(SerialDriver *sdp, uint8_t b);

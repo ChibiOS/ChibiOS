@@ -212,17 +212,17 @@ CH_IRQ_HANDLER(VectorDC) {
 void sd_lld_init(void) {
 
 #if USE_STM32_USART1
-  sdInit(&COM1, NULL, notify1);
+  sdObjectInit(&COM1, NULL, notify1);
   GPIOA->CRH = (GPIOA->CRH & 0xFFFFF00F) | 0x000004B0;
 #endif
 
 #if USE_STM32_USART2
-  sdInit(&COM2, NULL, notify2);
+  sdObjectInit(&COM2, NULL, notify2);
   GPIOA->CRL = (GPIOA->CRL & 0xFFFF00FF) | 0x00004B00;
 #endif
 
 #if USE_STM32_USART3
-  sdInit(&COM3, NULL, notify3);
+  sdObjectInit(&COM3, NULL, notify3);
   GPIOB->CRH = (GPIOB->CRH & 0xFFFF00FF) | 0x00004B00;
 #endif
 }
