@@ -189,7 +189,6 @@ extern SerialDriver COM2;
 #if USE_STM32_USART3
 extern SerialDriver COM3;
 #endif
-/** @endcond*/
 
 #ifdef __cplusplus
 extern "C" {
@@ -200,6 +199,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+/** @endcond*/
 
 #endif /* _SERIAL_LLD_H_ */
 

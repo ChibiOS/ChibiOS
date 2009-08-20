@@ -162,7 +162,6 @@ extern SerialDriver COM1;
 #if USE_LPC214x_UART1
 extern SerialDriver COM2;
 #endif
-/** @endcond*/
 
 #ifdef __cplusplus
 extern "C" {
@@ -173,6 +172,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+/** @endcond*/
 
 #endif /* _SERIAL_LLD_H_ */
 
