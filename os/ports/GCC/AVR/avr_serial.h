@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/AVR/avr_serial.h
+ * @file AVR/avr_serial.h
  * @brief AVR Serial driver macros and structures.
  * @addtogroup AVR_SERIAL
  * @{

@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/ARMCM3/nvic.h
+ * @file ARMCM3/nvic.h
  * @brief Cortex-M3 NVIC support macros and structures.
  * @addtogroup ARMCM3_NVIC
  * @{

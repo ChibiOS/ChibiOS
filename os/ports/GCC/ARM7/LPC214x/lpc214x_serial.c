@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/ARM7-LPC214x/lpc214x_serial.c
+ * @file LPC214x/lpc214x_serial.c
  * @brief LPC214x Serial driver code.
  * @addtogroup LPC214x_SERIAL
  * @{

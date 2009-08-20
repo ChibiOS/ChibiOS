@@ -574,21 +574,23 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = ../docs/src \
-                         ../src/include \
-                         ../src/templates \
-                         ../src \
-                         ../test \
-                         ../src/lib \
-                         ../ports/ARM7 \
-                         ../ports/ARM7/crt0.s \
-                         ../ports/ARM7/chcoreasm.s \
-                         ../ports/ARM7-AT91SAM7X \
-                         ../ports/ARM7-LPC214x \
-                         ../ports/ARMCM3 \
-                         ../ports/ARMCM3/crt0.s \
-                         ../ports/ARMCM3-STM32F103 \
-                         ../ports/MSP430 \
-                         ../ports/AVR
+                         ../os/kernel/include \
+                         ../os/kernel/src \
+                         ../os/ports/templates \
+                         ../os/ports/GCC/ARM7 \
+                         ../os/ports/GCC/ARM7/crt0.s \
+                         ../os/ports/GCC/ARM7/chcoreasm.s \
+                         ../os/ports/GCC/ARM7/AT91SAM7X \
+                         ../os/ports/GCC/ARM7/LPC214x \
+                         ../os/ports/GCC/ARMCM3 \
+                         ../os/ports/GCC/ARMCM3/crt0.s \
+                         ../os/ports/GCC/ARMCM3/STM32F103 \
+                         ../os/ports/GCC/MSP430 \
+                         ../os/ports/GCC/AVR \
+                         ../os/io \
+                         ../os/io/templates \
+                         ../os/various \
+                         ../test
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is

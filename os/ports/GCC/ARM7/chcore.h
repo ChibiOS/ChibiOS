@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/ARM7/chcore.h
+ * @file ARM7/chcore.h
  * @brief ARM7 architecture port macros and structures.
  * @addtogroup ARM7_CORE
  * @{

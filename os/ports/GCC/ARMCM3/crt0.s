@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/ARMCM3/crt0.s
+ * @file ARMCM3/crt0.s
  * @brief Generic ARM Cortex-M3 startup file for ChibiOS/RT.
  * @addtogroup ARMCM3_CORE
  * @{

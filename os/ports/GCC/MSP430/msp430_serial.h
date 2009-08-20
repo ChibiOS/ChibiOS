@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/MSP430/msp430_serial.h
+ * @file MSP430/msp430_serial.h
  * @brief MSP430 Serial driver macros and structures.
  * @addtogroup MSP430_SERIAL
  * @{

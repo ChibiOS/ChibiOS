@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/AVR/chtypes.h
+ * @file AVR/chtypes.h
  * @brief AVR architecture port system types.
  * @addtogroup AVR_CORE
  * @{

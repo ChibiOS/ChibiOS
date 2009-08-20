@@ -18,9 +18,9 @@
 */
 
 /**
- * @file os/io/templates/serial_lld.h
- * @brief Serial Driver subsystem low level driver header template
- * @addtogroup SERIAL_LLD
+ * @file STM32F103/serial_lld.h
+ * @brief STM32F103 low level serial driver header
+ * @addtogroup STM32F103_SERIAL
  * @{
  */
 

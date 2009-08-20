@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/ARM7-LPC214x/lpc214x_ssp.h
+ * @file LPC214x/lpc214x_ssp.h
  * @brief LPC214x SSP driver macros and structures.
  * @addtogroup LPC214x_SSP
  * @{

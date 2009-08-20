@@ -159,7 +159,7 @@
  * - @p _bss_end BSS end location +1.
  * .
  * @ingroup ARMCM3
- * @file ports/ARMCM3/crt0.s Startup code.
+ * @file ARMCM3/crt0.s Startup code.
  */
 
 /**

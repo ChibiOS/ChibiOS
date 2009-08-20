@@ -88,7 +88,6 @@
  * - @subpage test_events
  * - @subpage test_mbox
  * - @subpage test_queues
- * - @subpage test_serial
  * - @subpage test_heap
  * - @subpage test_pools
  * - @subpage test_benchmarks
@@ -347,11 +346,33 @@
 /**
  * @defgroup IO I/O Support
  * @brief I/O related services.
- * @details This section contains the I/O related services. Note that no
- * specific drivers are documented here, all the listed modules are abstract
- * interfaces or kernel APIs that the device drivers should implement/use.<br>
- * The use of common I/O interfaces allow for a certain degree of portability
- * for the ChibiOS/RT application among very different MCUs.
+ * @details This section contains the I/O related services.
+ *
+ * The I/O subsystem is a collection of device driver poertable interfaces and
+ * platform dependent implementations.<br>
+ * Under ChibiOS/RT a device driver is split in two layers:
+ * - High Level Device Driver (<b>HLD</b>). This layer contains the definitions
+ *   of the driver's APIs and the platform independent part of the driver.<br>
+ *   An HLD is composed by two files:
+ *   - @<driver@>.c, the high level implementation file. This file must be
+ *     included in the Makefile in order to use the driver.
+ *   - @<driver@>.h, the high level header file. This file must be included
+ *     by the application code in order to access the driver's APIs.
+ *   .
+ * - Low Level Device Driver (<b>LLD</b>). This layer contains the platform
+ *   dependent part of the driver.<br>
+ *   A LLD is composed by two files:
+ *   - @<driver@>_lld.c, the low level implementation file. This file must be
+ *     included in the Makefile in order to use the driver.
+ *   - @<driver@>_lld.h, the high level header file. This file is implicitly
+ *     included by the HLD header file.
+ *   .
+ * .
+ * <h2>Available Device Drivers</h2>
+ * The I/O subsystem currently includes support for:
+ * - @ref PAL.
+ * - @ref SERIAL.
+ * .
  */
 
 /**
@@ -413,8 +434,7 @@
 /**
  * @defgroup PAL_LLD PAL Low Level Driver
  * @brief @ref PAL low level driver template.
- * @details This file is a template for an I/O port low level driver. This
- * file implements the physical layer of an I/O port driver.
+ * @details This file is a template for an I/O port low level driver.
  *
  * @ingroup PAL
  */
@@ -459,19 +479,25 @@
  */
 
 /**
- * @defgroup Serial Serial Drivers
+ * @defgroup SERIAL Serial Driver
  * @brief Generic Serial Drivers.
  * @details This module implements a generic full duplex serial driver. The
- * driver implements a @p FullDuplexDriver interface and uses I/O Queues for
+ * driver implements a @p SerialDriver interface and uses I/O Queues for
  * communication between the upper and the lower driver. Event flags are used
  * to notify the application about incoming data, outgoing data and other I/O
  * events.<br>
  * The  module also contains functions that make the implementation of the
  * interrupt service routines much easier.<br>
- * In order to use the serial full duplex driver the
- * @p CH_USE_SERIAL_FULLDUPLEX option must be specified in @p chconf.h.
  *
  * @ingroup IO
+ */
+
+/**
+ * @defgroup SERIAL_LLD Serial Low Level Driver
+ * @brief @ref SERIAL low level driver template.
+ * @details This file is a template for a serial low level driver.
+ *
+ * @ingroup SERIAL
  */
 
 /**

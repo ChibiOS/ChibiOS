@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/AVR/chcore.h
+ * @file AVR/chcore.h
  * @brief AVR architecture port macros and structures.
  * @addtogroup AVR_CORE
  * @{

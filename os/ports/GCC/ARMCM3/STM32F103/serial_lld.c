@@ -18,9 +18,9 @@
 */
 
 /**
- * @file os/io/templates/serial_lld.c
- * @brief Serial Driver subsystem low level driver source template
- * @addtogroup SERIAL_LLD
+ * @file STM32F103/serial_lld.c
+ * @brief STM32F103 low level serial driver code
+ * @addtogroup STM32F103_SERIAL
  * @{
  */
 
@@ -271,7 +271,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
  * @details De-initializes the USART, stops the associated clock, resets the
  *          interrupt vector.
  *
- * @param[in] sd pointer to a @p SerialDriver object
+ * @param[in] sdp pointer to a @p SerialDriver object
  */
 void sd_lld_stop(SerialDriver *sdp) {
 

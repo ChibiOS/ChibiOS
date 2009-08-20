@@ -147,9 +147,9 @@
  * @brief ARM7 specific port code, structures and macros.
  *
  * @ingroup ARM7
- * @file ports/ARM7/chtypes.h Port types.
- * @file ports/ARM7/chcore.h Port related structures and macros.
- * @file ports/ARM7/chcore.c Port related code.
+ * @file ARM7/chtypes.h Port types.
+ * @file ARM7/chcore.h Port related structures and macros.
+ * @file ARM7/chcore.c Port related code.
  */
 
 /**
@@ -196,5 +196,5 @@
  * - @p _bss_end BSS end location +1.
  * .
  * @ingroup ARM7
- * @file ports/ARM7/crt0.s Startup code.
+ * @file ARM7/crt0.s Startup code.
  */

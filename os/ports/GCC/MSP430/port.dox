@@ -79,6 +79,9 @@
  * @brief MSP430 specific port code, structures and macros.
  *
  * @ingroup MSP430
+ * @file MSP430/chtypes.h Port types.
+ * @file MSP430/chcore.h Port related structures and macros.
+ * @file MSP430/chcore.c Port related code.
  */
 
 /**

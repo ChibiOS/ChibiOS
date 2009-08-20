@@ -69,7 +69,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
  * @details De-initializes the USART, stops the associated clock, resets the
  *          interrupt vector.
  *
- * @param[in] sd pointer to a @p SerialDriver object
+ * @param[in] sdp pointer to a @p SerialDriver object
  */
 void sd_lld_stop(SerialDriver *sdp) {
 

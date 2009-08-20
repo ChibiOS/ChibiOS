@@ -80,14 +80,10 @@ void sdInit(void) {
  * @details The HW dependent part of the initialization has to be performed
  *          outside, usually in the hardware initialization code.
  *
- * @param[out] sd pointer to a @p SerialDriver structure
- * @param[in] ib pointer to a memory area allocated for the Input Queue buffer
- * @param[in] isize size of the Input Queue buffer
+ * @param[out] sdp pointer to a @p SerialDriver structure
  * @param[in] inotify pointer to a callback function that is invoked when
  *                    some data is read from the Queue. The value can be
  *                    @p NULL.
- * @param[in] ob pointer to a memory area allocated for the Output Queue buffer
- * @param[in] osize size of the Output Queue buffer
  * @param[in] onotify pointer to a callback function that is invoked when
  *                    some data is written in the Queue. The value can be
  *                    @p NULL.
@@ -106,7 +102,7 @@ void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
 /**
  * @brief Configures and starts the driver.
  *
- * @param[in] ip pointer to a @p SerialDriver or derived class
+ * @param[in] sdp pointer to a @p SerialDriver object
  * @param[in] config the architecture-dependent serial driver configuration.
  *                   If this parameter is set to @p NULL then a default
  *                   configuration is used.
@@ -120,10 +116,10 @@ void sdStart(SerialDriver *sdp, const SerialDriverConfig *config) {
 
 /**
  * @brief Stops the driver.
- * @Details Any thread waiting on the driver's queues will be awakened with
+ * @details Any thread waiting on the driver's queues will be awakened with
  *          the message @p Q_RESET.
  *
- * @param[in] ip pointer to a @p SerialDriver or derived class
+ * @param[in] sdp pointer to a @p SerialDrive object
  */
 void sdStop(SerialDriver *sdp) {
 

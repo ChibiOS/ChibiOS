@@ -73,9 +73,9 @@
  * @brief AVR specific port code, structures and macros.
  *
  * @ingroup AVR
- * @file ports/AVR/chtypes.h Port types.
- * @file ports/AVR/chcore.h Port related structures and macros.
- * @file ports/AVR/chcore.c Port related code.
+ * @file AVR/chtypes.h Port types.
+ * @file AVR/chcore.h Port related structures and macros.
+ * @file AVR/chcore.c Port related code.
  */
 
 /**

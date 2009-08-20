@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/ARMCM3-STM32F103/stm32_can.c
+ * @file STM32F103/stm32_can.c
  * @brief STM32 CAN driver code
  * @addtogroup STM32F103_CAN
  * @{

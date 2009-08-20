@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/MSP430/chcore.c
+ * @file MSP430/chcore.c
  * @brief MSP430 architecture port code.
  * @addtogroup MSP430_CORE
  * @{

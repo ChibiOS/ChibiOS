@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/ARM7/crt0.s
+ * @file ARM7/crt0.s
  * @brief Generic ARM7 startup file for ChibiOS/RT.
  * @addtogroup ARM7_CORE
  * @{

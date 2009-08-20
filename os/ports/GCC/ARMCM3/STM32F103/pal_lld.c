@@ -18,7 +18,7 @@
 */
 
 /**
- * @file os/ports/GCC/ARMCM3/STM32F103/pal_lld.c
+ * @file STM32F103/pal_lld.c
  * @brief STM32 GPIO low level driver code
  * @addtogroup STM32F103_PAL
  * @{

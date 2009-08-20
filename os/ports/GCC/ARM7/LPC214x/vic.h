@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/ARM7-LPC214x/vic.h
+ * @file LPC214x/vic.h
  * @brief LPC214x VIC peripheral support code.
  * @addtogroup LPC214x_VIC
  * @{

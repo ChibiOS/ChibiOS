@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/MSP430/msp430_serial.c
+ * @file MSP430/msp430_serial.c
  * @brief MSP430 Serial driver code.
  * @addtogroup MSP430_SERIAL
  * @{

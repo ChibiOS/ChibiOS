@@ -18,7 +18,7 @@
 */
 
 /**
- * @file ports/AVR/avr_serial.c
+ * @file AVR/avr_serial.c
  * @brief AVR Serial driver code.
  * @addtogroup AVR_SERIAL
  * @{
