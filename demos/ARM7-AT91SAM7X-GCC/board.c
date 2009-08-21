@@ -19,11 +19,10 @@
 
 #include <ch.h>
 #include <pal.h>
+#include <serial.h>
 
 #include "board.h"
 #include "at91lib/aic.h"
-
-#include <sam7x_serial.h>
 
 /*
  * FIQ Handler weak symbol defined in vectors.s.
@@ -169,7 +168,7 @@ void hwinit1(void) {
   /*
    * Serial driver initialization, RTS/CTS pins enabled for USART0 only.
    */
-  serial_init(AT91C_AIC_PRIOR_HIGHEST - 2, AT91C_AIC_PRIOR_HIGHEST - 2);
+  sdInit();
   AT91C_BASE_PIOA->PIO_PDR   = AT91C_PA3_RTS0 | AT91C_PA4_CTS0;
   AT91C_BASE_PIOA->PIO_ASR   = AT91C_PIO_PA3 | AT91C_PIO_PA4;
   AT91C_BASE_PIOA->PIO_PPUDR = AT91C_PIO_PA3 | AT91C_PIO_PA4;

@@ -53,8 +53,9 @@ CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
        ../../os/io/pal.c \
-       ../../os/ports/GCC/ARM7/AT91SAM7X/pal_lld.c \
-       ../../os/ports/GCC/ARM7/AT91SAM7X/sam7x_serial.c \
+       ../../os/io/serial.c \
+       ../../os/io/platforms/AT91SAM7X/pal_lld.c \
+       ../../os/io/platforms/AT91SAM7X/serial_lld.c \
        at91lib/aic.c \
        board.c main.c
 
@@ -88,8 +89,9 @@ ASMSRC = $(PORTASM) \
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          ../../os/io \
-         ../../os/ports/GCC/ARM7/AT91SAM7X \
-         ../../os/various
+         ../../os/io/platforms/AT91SAM7X \
+         ../../os/various \
+         ../../os/ports/GCC/ARM7/AT91SAM7X
 
 #
 # Project, sources and paths

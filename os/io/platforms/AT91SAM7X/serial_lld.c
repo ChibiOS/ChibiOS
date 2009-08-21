@@ -29,8 +29,21 @@
 
 #include "at91lib/aic.h"
 
+#if USE_SAM7X_USART0 || defined(__DOXYGEN__)
+/** @brief USART0 serial driver identifier.*/
+SerialDriver COM1;
+#endif
+
+#if USE_SAM7X_USART1 || defined(__DOXYGEN__)
+/** @brief USART1 serial driver identifier.*/
+SerialDriver COM2;
+#endif
+
 /** @brief Driver default configuration.*/
 static const SerialDriverConfig default_config = {
+  38400,
+  AT91C_US_USMODE_NORMAL | AT91C_US_CLKS_CLOCK |
+  AT91C_US_CHRL_8_BITS | AT91C_US_PAR_NONE | AT91C_US_NBSTOP_1_BIT
 };
 
 /*===========================================================================*/
@@ -69,12 +82,105 @@ void usart_init(AT91PS_USART u, const SerialDriverConfig *config) {
  */
 void usart_deinit(AT91PS_USART u) {
 
+  /* Disables IRQ sources and stop operations.*/
+  u->US_IDR = 0xFFFFFFFF;
+  u->US_CR = AT91C_US_RSTRX | AT91C_US_RSTTX | AT91C_US_RSTSTA;
+  u->US_MR = 0;
+  u->US_RTOR = 0;
+  u->US_TTGR = 0;
 }
 
+/**
+ * @brief Error handling routine.
+ * @param[in] err USART CSR register value
+ * @param[in] sdp communication channel associated to the USART
+ */
+static void set_error(AT91_REG csr, SerialDriver *sdp) {
+  sdflags_t sts = 0;
+
+  if (csr & AT91C_US_OVRE)
+    sts |= SD_OVERRUN_ERROR;
+  if (csr & AT91C_US_PARE)
+    sts |= SD_PARITY_ERROR;
+  if (csr & AT91C_US_FRAME)
+    sts |= SD_FRAMING_ERROR;
+  if (csr & AT91C_US_RXBRK)
+    sts |= SD_BREAK_DETECTED;
+  chSysLockFromIsr();
+  sdAddFlagsI(sdp, sts);
+  chSysUnlockFromIsr();
+}
+
+#if defined(__GNU__)
+__attribute__((noinline))
+#endif
+/**
+ * @brief Common IRQ handler.
+ * @param[in] u pointer to an USART I/O block
+ * @param[in] com communication channel associated to the USART
+ */
+static void serve_interrupt(AT91PS_USART u, SerialDriver *sdp) {
+
+  if (u->US_CSR & AT91C_US_RXRDY) {
+    chSysLockFromIsr();
+    sdIncomingDataI(sdp, u->US_RHR);
+    chSysUnlockFromIsr();
+  }
+  if (u->US_CSR & AT91C_US_TXRDY) {
+    chSysLockFromIsr();
+    msg_t b = sdRequestDataI(sdp);
+    chSysUnlockFromIsr();
+    if (b < Q_OK)
+      u->US_IDR = AT91C_US_TXRDY;
+    else
+      u->US_THR = b;
+  }
+  if (u->US_CSR & (AT91C_US_OVRE | AT91C_US_FRAME | AT91C_US_PARE | AT91C_US_RXBRK)) {
+    set_error(u->US_CSR, sdp);
+    u->US_CR = AT91C_US_RSTSTA;
+  }
+  AT91C_BASE_AIC->AIC_EOICR = 0;
+}
+
+#if USE_SAM7X_USART0 || defined(__DOXYGEN__)
+static void notify1(void) {
+
+  AT91C_BASE_US0->US_IER = AT91C_US_TXRDY;
+}
+#endif
+
+#if USE_SAM7X_USART1 || defined(__DOXYGEN__)
+static void notify2(void) {
+
+  AT91C_BASE_US1->US_IER = AT91C_US_TXRDY;
+}
+#endif
 
 /*===========================================================================*/
 /* Low Level Driver interrupt handlers.                                      */
 /*===========================================================================*/
+
+#if USE_SAM7X_USART0 || defined(__DOXYGEN__)
+CH_IRQ_HANDLER(USART0IrqHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  serve_interrupt(AT91C_BASE_US0, &COM1);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+#if USE_SAM7X_USART1 || defined(__DOXYGEN__)
+CH_IRQ_HANDLER(USART1IrqHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  serve_interrupt(AT91C_BASE_US1, &COM2);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
 
 /*===========================================================================*/
 /* Low Level Driver exported functions.                                      */
@@ -85,6 +191,25 @@ void usart_deinit(AT91PS_USART u) {
  */
 void sd_lld_init(void) {
 
+#if USE_SAM7X_USART0
+  sdObjectInit(&COM1, NULL, notify1);
+  AT91C_BASE_PIOA->PIO_PDR   = AT91C_PA0_RXD0 | AT91C_PA1_TXD0;
+  AT91C_BASE_PIOA->PIO_ASR   = AT91C_PIO_PA0 | AT91C_PIO_PA1;
+  AT91C_BASE_PIOA->PIO_PPUDR = AT91C_PIO_PA0 | AT91C_PIO_PA1;
+  AIC_ConfigureIT(AT91C_ID_US0,
+                  AT91C_AIC_SRCTYPE_HIGH_LEVEL | SAM7X_USART0_PRIORITY,
+                  USART0IrqHandler);
+#endif
+
+#if USE_SAM7X_USART1
+  sdObjectInit(&COM2, NULL, notify2);
+  AT91C_BASE_PIOA->PIO_PDR   = AT91C_PA5_RXD1 | AT91C_PA6_TXD1;
+  AT91C_BASE_PIOA->PIO_ASR   = AT91C_PIO_PA5 | AT91C_PIO_PA6;
+  AT91C_BASE_PIOA->PIO_PPUDR = AT91C_PIO_PA5 | AT91C_PIO_PA6;
+  AIC_ConfigureIT(AT91C_ID_US1,
+                  AT91C_AIC_SRCTYPE_HIGH_LEVEL | SAM7X_USART1_PRIORITY,
+                  USART1IrqHandler);
+#endif
 }
 
 /**
@@ -100,6 +225,28 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
   if (config == NULL)
     config = &default_config;
 
+#if USE_SAM7X_USART0
+  if (&COM1 == sdp) {
+    /* Starts the clock and clears possible sources of immediate interrupts.*/
+    AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_US0);
+    /* USART initialization.*/
+    usart_init(AT91C_BASE_US0, config);
+    /* Enables associated interrupt vector.*/
+    AIC_EnableIT(AT91C_ID_US0);
+    return;
+  }
+#endif
+#if USE_SAM7X_USART1
+  if (&COM2 == sdp) {
+    /* Starts the clock and clears possible sources of immediate interrupts.*/
+    AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_US1);
+    /* USART initialization.*/
+    usart_init(AT91C_BASE_US1, config);
+    /* Enables associated interrupt vector.*/
+    AIC_EnableIT(AT91C_ID_US1);
+    return;
+  }
+#endif
 }
 
 /**
@@ -111,6 +258,22 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
  */
 void sd_lld_stop(SerialDriver *sdp) {
 
+#if USE_LPC214x_UART1
+  if (&COM1 == sdp) {
+    usart_deinit(AT91C_BASE_US0);
+    AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_US0);
+    AIC_DisableIT(AT91C_ID_US0);
+    return;
+  }
+#endif
+#if USE_LPC214x_UART2
+  if (&COM2 == sdp) {
+    usart_deinit(AT91C_BASE_US1);
+    AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_US1);
+    AIC_DisableIT(AT91C_ID_US1);
+    return;
+  }
+#endif
 }
 
 /** @} */

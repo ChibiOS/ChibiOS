@@ -59,6 +59,20 @@
 #define USE_SAM7X_USART1 TRUE
 #endif
 
+/**
+ * @brief UART1 interrupt priority level setting.
+ */
+#if !defined(SAM7X_USART0_PRIORITY) || defined(__DOXYGEN__)
+#define SAM7X_USART0_PRIORITY (AT91C_AIC_PRIOR_HIGHEST - 2)
+#endif
+
+/**
+ * @brief UART2 interrupt priority level setting.
+ */
+#if !defined(SAM7X_USART1_PRIORITY) || defined(__DOXYGEN__)
+#define SAM7X_USART1_PRIORITY (AT91C_AIC_PRIOR_HIGHEST - 2)
+#endif
+
 /*===========================================================================*/
 /* Unsupported event flags and custom events.                                */
 /*===========================================================================*/
@@ -124,11 +138,11 @@ typedef struct {
 /*===========================================================================*/
 
 /** @cond never*/
-#if !defined(USE_SAM7X_USART0)
-extern FullDuplexDriver COM1;
+#if defined(USE_SAM7X_USART0)
+extern SerialDriver COM1;
 #endif
-#if !defined(USE_SAM7X_USART1)
-extern FullDuplexDriver COM2;
+#if defined(USE_SAM7X_USART1)
+extern SerialDriver COM2;
 #endif
 
 #ifdef __cplusplus
