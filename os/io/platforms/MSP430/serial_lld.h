@@ -18,9 +18,9 @@
 */
 
 /**
- * @file AT91SAM7X/serial_lld.h
- * @brief AT91SAM7X low level serial driver header
- * @addtogroup AT91SAM7X_SERIAL
+ * @file templates/serial_lld.h
+ * @brief Serial Driver subsystem low level driver header template
+ * @addtogroup SERIAL_LLD
  * @{
  */
 
@@ -35,42 +35,37 @@
  * @brief Serial buffers size.
  * @details Configuration parameter, you can change the depth of the queue
  * buffers depending on the requirements of your application.
- * @note The default is 128 bytes for both the transmission and receive buffers.
+ * @note The default is 32 bytes for both the transmission and receive buffers.
  */
 #if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define SERIAL_BUFFERS_SIZE 128
+#define SERIAL_BUFFERS_SIZE 32
 #endif
 
 /**
- * @brief UART0 driver enable switch.
+ * @brief Default bit rate.
+ * @details Configuration parameter, at startup the UARTs are configured at
+ * this speed.
+ */
+#if !defined(DEFAULT_USART_BITRATE) || defined(__DOXYGEN__)
+#define DEFAULT_USART_BITRATE 38400
+#endif
+
+/**
+ * @brief USART0 driver enable switch.
+ * @details If set to @p TRUE the support for USART0 is included.
+ * @note The default is @p TRUE.
+ */
+#if !defined(USE_MSP430_USART0) || defined(__DOXYGEN__)
+#define USE_MSP430_USART0 TRUE
+#endif
+
+/**
+ * @brief USART1 driver enable switch.
  * @details If set to @p TRUE the support for USART1 is included.
- * @note The default is @p TRUE.
+ * @note The default is @p FALSE.
  */
-#if !defined(USE_SAM7X_USART0) || defined(__DOXYGEN__)
-#define USE_SAM7X_USART0 TRUE
-#endif
-
-/**
- * @brief UART1 driver enable switch.
- * @details If set to @p TRUE the support for USART2 is included.
- * @note The default is @p TRUE.
- */
-#if !defined(USE_SAM7X_USART1) || defined(__DOXYGEN__)
-#define USE_SAM7X_USART1 TRUE
-#endif
-
-/**
- * @brief UART1 interrupt priority level setting.
- */
-#if !defined(SAM7X_USART0_PRIORITY) || defined(__DOXYGEN__)
-#define SAM7X_USART0_PRIORITY (AT91C_AIC_PRIOR_HIGHEST - 2)
-#endif
-
-/**
- * @brief UART2 interrupt priority level setting.
- */
-#if !defined(SAM7X_USART1_PRIORITY) || defined(__DOXYGEN__)
-#define SAM7X_USART1_PRIORITY (AT91C_AIC_PRIOR_HIGHEST - 2)
+#if !defined(USE_MSP430_USART1) || defined(__DOXYGEN__)
+#define USE_MSP430_USART1 FALSE
 #endif
 
 /*===========================================================================*/
@@ -84,7 +79,7 @@
 /**
  * Serial Driver condition flags type.
  */
-typedef uint32_t sdflags_t;
+typedef uint8_t sdflags_t;
 
 /**
  * @brief @p SerialDriver specific data.
@@ -120,6 +115,12 @@ struct _serial_driver_data {
 };
 
 /**
+ * @brief Macro for baud rate computation.
+ * @note Make sure the final baud rate is within tolerance.
+ */
+#define UBR(b) (SMCLK / (b))
+
+/**
  * @brief Generic Serial Driver static initializer.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
@@ -129,8 +130,9 @@ struct _serial_driver_data {
  *       initializers.
  */
 typedef struct {
-  uint32_t              speed;
-  uint32_t              mr;
+  uint16_t              div;
+  uint8_t               mod;
+  uint8_t               ctl;
 } SerialDriverConfig;
 
 /*===========================================================================*/
@@ -138,10 +140,10 @@ typedef struct {
 /*===========================================================================*/
 
 /** @cond never*/
-#if USE_SAM7X_USART0
+#if USE_MSP430_USART0
 extern SerialDriver COM1;
 #endif
-#if USE_SAM7X_USART1
+#if USE_MSP430_USART1
 extern SerialDriver COM2;
 #endif
 

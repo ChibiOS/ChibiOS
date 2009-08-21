@@ -48,8 +48,9 @@ CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
        ../../os/io/pal.c \
-       ../../os/ports/GCC/MSP430/pal_lld.c \
-       ../../os/ports/GCC/MSP430/msp430_serial.c \
+       ../../os/io/serial.c \
+       ../../os/io/platforms/MSP430/pal_lld.c \
+       ../../os/io/platforms/MSP430/serial_lld.c \
        ../../os/various/evtimer.c \
        board.c main.c
 
@@ -61,6 +62,7 @@ ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          ../../os/io \
+         ../../os/io/platforms/MSP430 \
          ../../os/various
 
 #

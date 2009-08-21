@@ -19,10 +19,10 @@
 
 #include <ch.h>
 #include <pal.h>
+#include <serial.h>
 #include <test.h>
 
 #include "board.h"
-#include "msp430_serial.h"
 
 /*
  * Red LEDs blinker thread, times are in milliseconds.
@@ -48,6 +48,11 @@ int main(int argc, char **argv) {
    * Hardware initialization, see board.c.
    */
   hwinit();
+
+  /*
+   * Activates the communication port 1 using the driver default configuration.
+   */
+  sdStart(&COM1, NULL);
 
   /*
    * The main() function becomes a thread here then the interrupts are

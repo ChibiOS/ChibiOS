@@ -19,11 +19,11 @@
 
 #include <ch.h>
 #include <pal.h>
+#include <serial.h>
 
 #include <signal.h>
 
 #include "board.h"
-#include "msp430_serial.h"
 
 /*
  * Digital I/O ports static configuration as defined in @p board.h.
@@ -75,7 +75,7 @@ void hwinit(void) {
   /*
    * Other subsystems.
    */
-  serial_init();
+  sdInit();
 }
 
 CH_IRQ_HANDLER(TIMERA0_VECTOR) {
