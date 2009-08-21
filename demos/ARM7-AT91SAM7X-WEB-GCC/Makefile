@@ -63,11 +63,12 @@ CSRC = ${PORTSRC} \
        ${TESTSRC} \
        ${USRC} \
        ../../os/io/pal.c \
-       ../../os/ports/GCC/ARM7/AT91SAM7X/pal_lld.c \
-       ../../os/ports/GCC/ARM7/AT91SAM7X/sam7x_serial.c \
-       ../../os/ports/GCC/ARM7/AT91SAM7X/sam7x_emac.c \
+       ../../os/io/serial.c \
+       ../../os/io/platforms/AT91SAM7X/pal_lld.c \
+       ../../os/io/platforms/AT91SAM7X/serial_lld.c \
+       ../../os/io/platforms/AT91SAM7X/sam7x_emac.c \
+       ../../os/io/platforms/AT91SAM7X/at91lib/aic.c \
        ../../os/various/evtimer.c \
-       at91lib/aic.c \
        web/webthread.c \
        board.c main.c
 
@@ -101,8 +102,9 @@ ASMSRC = $(PORTASM) \
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          ../../os/io \
-         ../../os/ports/GCC/ARM7/AT91SAM7X \
+         ../../os/io/platforms/AT91SAM7X \
          ../../os/various \
+         ../../os/ports/GCC/ARM7/AT91SAM7X \
          ./web ../../ext/uip-1.0/uip ../../ext/uip-1.0/apps/webserver
 
 #

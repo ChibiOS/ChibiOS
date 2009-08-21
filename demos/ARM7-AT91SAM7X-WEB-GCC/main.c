@@ -20,10 +20,10 @@
 #include <ch.h>
 #include <pal.h>
 #include <test.h>
+#include <serial.h>
+#include <sam7x_emac.h>
 
 #include "board.h"
-#include <sam7x_serial.h>
-#include <sam7x_emac.h>
 
 #include "web/webthread.h"
 
@@ -48,6 +48,11 @@ static msg_t Thread1(void *arg) {
 int main(int argc, char **argv) {
 
   /*
+   * Activates the communication port 1 using the driver default configuration.
+   */
+  sdStart(&COM1, NULL);
+
+  /*
    * Creates the blinker and web server threads.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
@@ -59,7 +64,7 @@ int main(int argc, char **argv) {
   while (TRUE) {
     chThdSleepMilliseconds(500);
     if (!palReadPad(IOPORT_B, PIOB_SW1))
-      chFDDWrite(&COM1, (uint8_t *)"Hello World!\r\n", 14);
+      sdWrite(&COM1, (uint8_t *)"Hello World!\r\n", 14);
     if (!palReadPad(IOPORT_B, PIOB_SW2))
       TestThread(&COM1);
   }
