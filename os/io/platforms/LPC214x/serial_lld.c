@@ -58,7 +58,7 @@ static const SerialDriverConfig default_config = {
  */
 void uart_init(UART *u, const SerialDriverConfig *config) {
 
-  uint32_t div = PCLK / (config->baud_rate << 4);
+  uint32_t div = PCLK / (config->speed << 4);
   u->UART_LCR = config->lcr | LCR_DLAB;
   u->UART_DLL = div;
   u->UART_DLM = div >> 8;

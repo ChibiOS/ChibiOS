@@ -18,33 +18,21 @@
 */
 
 /**
- * @file STM32F103/serial_lld.h
- * @brief STM32F103 low level serial driver header
- * @addtogroup STM32F103_SERIAL
+ * @file AT91SAM7X/serial_lld.h
+ * @brief AT91SAM7X low level serial driver header
+ * @addtogroup AT91SAM7X_SERIAL
  * @{
  */
 
 #ifndef _SERIAL_LLD_H_
 #define _SERIAL_LLD_H_
 
-/*
- * Tricks required to make the TRUE/FALSE declaration inside the library
- * compatible.
- */
-#ifndef __STM32F10x_H
-#undef FALSE
-#undef TRUE
-#include <stm32f10x.h>
-#define FALSE 0
-#define TRUE (!FALSE)
-#endif
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
 /**
- * @brief Serial buffers size setting.
+ * @brief Serial buffers size.
  * @details Configuration parameter, you can change the depth of the queue
  * buffers depending on the requirements of your application.
  * @note The default is 128 bytes for both the transmission and receive buffers.
@@ -54,70 +42,29 @@
 #endif
 
 /**
- * @brief USART1 driver enable switch.
+ * @brief UART0 driver enable switch.
  * @details If set to @p TRUE the support for USART1 is included.
- * @note The default is @p FALSE.
+ * @note The default is @p TRUE.
  */
-#if !defined(USE_STM32_USART1) || defined(__DOXYGEN__)
-#define USE_STM32_USART1 FALSE
+#if !defined(USE_SAM7X_USART0) || defined(__DOXYGEN__)
+#define USE_SAM7X_USART0 TRUE
 #endif
 
 /**
- * @brief USART2 driver enable switch.
+ * @brief UART1 driver enable switch.
  * @details If set to @p TRUE the support for USART2 is included.
  * @note The default is @p TRUE.
  */
-#if !defined(USE_STM32_USART2) || defined(__DOXYGEN__)
-#define USE_STM32_USART2 TRUE
-#endif
-
-/**
- * @brief USART3 driver enable switch.
- * @details If set to @p TRUE the support for USART3 is included.
- * @note The default is @p FALSE.
- */
-#if !defined(USE_STM32_USART3) || defined(__DOXYGEN__)
-#define USE_STM32_USART3 FALSE
-#endif
-
-/**
- * @brief USART1 interrupt priority level setting.
- * @note @p BASEPRI_KERNEL >= @p STM32_USART1_PRIORITY > @p PRIORITY_PENDSV.
- */
-#if !defined(STM32_USART1_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_USART1_PRIORITY   0xC0
-#endif
-
-/**
- * @brief USART2 interrupt priority level setting.
- * @note @p BASEPRI_KERNEL >= @p STM32_USART2_PRIORITY > @p PRIORITY_PENDSV.
- */
-#if !defined(STM32_USART2_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_USART2_PRIORITY   0xC0
-#endif
-
-/**
- * @brief USART3 interrupt priority level setting.
- * @note @p BASEPRI_KERNEL >= @p STM32_USART3_PRIORITY > @p PRIORITY_PENDSV.
- */
-#if !defined(STM32_USART3_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_USART3_PRIORITY   0xC0
+#if !defined(USE_SAM7X_USART1) || defined(__DOXYGEN__)
+#define USE_SAM7X_USART1 TRUE
 #endif
 
 /*===========================================================================*/
-/* Driver macros.                                                            */
+/* Unsupported event flags and custom events.                                */
 /*===========================================================================*/
 
-/*
- * Extra USARTs definitions here (missing from the ST header file).
- */
-#define USART_CR2_STOP1_BITS    (0 << 12)   /**< @brief CR2 1 stop bit value.*/
-#define USART_CR2_STOP0P5_BITS  (1 << 12)   /**< @brief CR2 0.5 stop bit value.*/
-#define USART_CR2_STOP2_BITS    (2 << 12)   /**< @brief CR2 2 stop bit value.*/
-#define USART_CR2_STOP1P5_BITS  (3 << 12)   /**< @brief CR2 1.5 stop bit value.*/
-
 /*===========================================================================*/
-/* Driver data structures.                                                   */
+/* Driver data structures and types.                                         */
 /*===========================================================================*/
 
 /**
@@ -168,11 +115,8 @@ struct _serial_driver_data {
  *       initializers.
  */
 typedef struct {
-
   uint32_t              speed;
-  uint16_t              cr1;
-  uint16_t              cr2;
-  uint16_t              cr3;
+  uint32_t              mr;
 } SerialDriverConfig;
 
 /*===========================================================================*/
@@ -180,14 +124,11 @@ typedef struct {
 /*===========================================================================*/
 
 /** @cond never*/
-#if USE_STM32_USART1
-extern SerialDriver COM1;
+#if !defined(USE_SAM7X_USART0)
+extern FullDuplexDriver COM1;
 #endif
-#if USE_STM32_USART2
-extern SerialDriver COM2;
-#endif
-#if USE_STM32_USART3
-extern SerialDriver COM3;
+#if !defined(USE_SAM7X_USART1)
+extern FullDuplexDriver COM2;
 #endif
 
 #ifdef __cplusplus

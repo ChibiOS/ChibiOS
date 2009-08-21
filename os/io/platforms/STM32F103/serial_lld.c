@@ -71,9 +71,9 @@ static void usart_init(USART_TypeDef *u, const SerialDriverConfig *config) {
    * Baud rate setting.
    */
   if (u == USART1)
-    u->BRR = APB2CLK / config->baud_rate;
+    u->BRR = APB2CLK / config->speed;
   else
-    u->BRR = APB1CLK / config->baud_rate;
+    u->BRR = APB1CLK / config->speed;
 
   /*
    * Note that some bits are enforced.
