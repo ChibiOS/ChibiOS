@@ -19,12 +19,11 @@
 
 #include <ch.hpp>
 #include <pal.h>
-
-#include <evtimer.h>
+#include <serial.h>
 #include <test.h>
+#include <evtimer.h>
 
-#include <board.h>
-#include <lpc214x_serial.h>
+#include "board.h"
 
 #define BOTH_BUTTONS (PAL_PORT_BIT(PA_BUTTON1) | PAL_PORT_BIT(PA_BUTTON2))
 
@@ -154,6 +153,11 @@ int main(int argc, char **argv) {
   };
   static EvTimer evt;
   struct EventListener el0;
+
+  /*
+   * Activates the communication port 1 using the driver default configuration.
+   */
+  sdStart(&COM1, NULL);
 
   evtInit(&evt, 500);                   // Initializes an event timer.
   evtStart(&evt);                       // Starts the event timer.

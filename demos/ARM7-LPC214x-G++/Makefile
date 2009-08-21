@@ -53,15 +53,16 @@ CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
        ../../os/io/pal.c \
-       ../../os/ports/GCC//ARM7/LPC214x/vic.c  \
-       ../../os/ports/GCC/ARM7/LPC214x/pal_lld.c \
-       ../../os/ports/GCC/ARM7/LPC214x/lpc214x_serial.c \
+       ../../os/io/serial.c \
+       ../../os/io/platforms/LPC214x/pal_lld.c \
+       ../../os/io/platforms/LPC214x/serial_lld.c \
+       ../../os/io/platforms/LPC214x/vic.c  \
        ../../os/various/evtimer.c \
        board.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CPPSRC = ../../src/lib/ch.cpp main.cpp
+CPPSRC = ../../os/various/ch.cpp main.cpp
 
 # C sources to be compiled in ARM mode regardless of the global setting.
 # NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
@@ -89,8 +90,9 @@ ASMSRC = $(PORTASM) \
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          ../../os/io \
-         ../../os/ports/GCC/ARM7/LPC214x \
-         ../../os/various
+         ../../os/io/platforms/LPC214x \
+         ../../os/various \
+         ../../os/ports/GCC/ARM7/LPC214x
 
 #
 # Project, sources and paths

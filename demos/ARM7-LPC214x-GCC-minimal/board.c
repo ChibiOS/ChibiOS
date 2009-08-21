@@ -144,7 +144,7 @@ void hwinit1(void) {
   /*
    * Other subsystems.
    */
-//  serial_init(1, 2);
+//  sdInit();
 //  ssp_init();
 //  InitMMC();
 //  InitBuzzer();
