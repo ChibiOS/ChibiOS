@@ -146,7 +146,7 @@ struct _serial_driver_data {
  *       initializers.
  */
 typedef struct {
-  uint32_t              baud_rate;
+  uint32_t              speed;
   uint32_t              lcr;
   uint32_t              fcr;
 } SerialDriverConfig;

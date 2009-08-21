@@ -89,7 +89,7 @@ void uart_deinit(UART *u) {
 /**
  * @brief Error handling routine.
  * @param[in] err UART LSR register value
- * @param[in] sdp communication channel associated to the USART
+ * @param[in] sdp communication channel associated to the UART
  */
 static void set_error(IOREG32 err, SerialDriver *sdp) {
   sdflags_t sts = 0;
@@ -309,7 +309,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
 
 /**
  * @brief Low level serial driver stop.
- * @details De-initializes the USART, stops the associated clock, resets the
+ * @details De-initializes the UART, stops the associated clock, resets the
  *          interrupt vector.
  *
  * @param[in] sdp pointer to a @p SerialDriver object
