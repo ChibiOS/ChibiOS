@@ -53,7 +53,7 @@ endif
 PROJECT = ch
 
 # Define linker script file here
-LDSCRIPT= ch.ld
+LDSCRIPT = ch.ld
 
 # Imported source files
 include ../../os/ports/GCC/ARMCM3/port.mk
@@ -116,7 +116,7 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
 
 MCU  = cortex-m3
 
-TRGT = arm-elf-
+TRGT = arm-none-eabi-
 CC   = $(TRGT)gcc
 CPPC = $(TRGT)g++
 # Enable loading with g++ only if you need C++ runtime support.
