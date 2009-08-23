@@ -53,7 +53,7 @@ endif
 PROJECT = ch
 
 # Define linker script file here
-LDSCRIPT = ch.ld
+LDSCRIPT= ch.ld
 
 # Imported source files
 include ../../os/ports/GCC/ARMCM3/port.mk
@@ -71,6 +71,7 @@ CSRC = ${PORTSRC} \
        ../../os/io/platforms/STM32F103/serial_lld.c \
        ../../os/various/evtimer.c \
        board.c main.c
+
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -116,7 +117,7 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
 
 MCU  = cortex-m3
 
-TRGT = arm-none-eabi-
+TRGT = arm-elf-
 CC   = $(TRGT)gcc
 CPPC = $(TRGT)g++
 # Enable loading with g++ only if you need C++ runtime support.
