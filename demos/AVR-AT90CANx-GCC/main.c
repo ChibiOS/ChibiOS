@@ -18,8 +18,8 @@
 */
 
 #include <ch.h>
+#include <serial.h>
 #include <evtimer.h>
-#include <avr_serial.h>
 
 #include <avr/io.h>
 
@@ -41,7 +41,7 @@ static void TimerHandler(eventid_t id) {
   msg_t TestThread(void *p);
 
   if (!(PORTE & PORTE_BUTTON))
-    TestThread(&SER2);
+    TestThread(&SD2);
 }
 
 int main(int argc, char **argv) {
@@ -58,6 +58,11 @@ int main(int argc, char **argv) {
    * enabled and ChibiOS/RT goes live.
    */
   chSysInit();
+
+  /*
+   * Activates the serial driver 2 using the driver default configuration.
+   */
+  sdStart(&SD2, NULL);
 
   /*
    * Event Timer initialization.

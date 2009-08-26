@@ -18,9 +18,9 @@
 */
 
 #include <ch.h>
+#include <serial.h>
 
 #include "board.h"
-#include "avr_serial.h"
 
 CH_IRQ_HANDLER(TIMER0_COMP_vect) {
 
@@ -82,5 +82,5 @@ void hwinit(void) {
   /*
    * Other initializations.
    */
-  serial_init();
+  sdInit();
 }

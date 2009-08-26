@@ -89,7 +89,8 @@ include ../../test/test.mk
 SRC = ${PORTSRC} \
       ${KERNSRC} \
       ${TESTSRC} \
-      ../../os/ports/GCC/AVR/avr_serial.c \
+      ../../os/io/serial.c \
+      ../../os/io/platforms/AVR/serial_lld.c \
       ../../os/various/evtimer.c \
       board.c main.c
 
@@ -125,7 +126,10 @@ DEBUG = dwarf-2
 #     Each directory must be seperated by a space.
 #     Use forward slashes for directory separators.
 #     For a directory that has spaces, enclose it in quotes.
-EXTRAINCDIRS = $(PORTINC) $(KERNINC) $(TESTINC)e ../../os/various
+EXTRAINCDIRS = $(PORTINC) $(KERNINC) $(TESTINC) \
+               ../../os/io \
+               ../../os/io/platforms/AVR \
+               ../../os/various
 
 
 # Compiler flag to set the C Standard level.
