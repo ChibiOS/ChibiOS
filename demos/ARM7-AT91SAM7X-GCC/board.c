@@ -133,25 +133,25 @@ void hwinit1(void) {
   /*
    * LCD pins setup.
    */
-  palClearPad(IOPORT_B, PIOB_LCD_BL);
-  palSetPadMode(IOPORT_B, PIOB_LCD_BL, PAL_MODE_OUTPUT_PUSHPULL);
+  palClearPad(IOPORT2, PIOB_LCD_BL);
+  palSetPadMode(IOPORT2, PIOB_LCD_BL, PAL_MODE_OUTPUT_PUSHPULL);
 
-  palSetPad(IOPORT_A, PIOA_LCD_RESET);
-  palSetPadMode(IOPORT_A, PIOA_LCD_RESET, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetPad(IOPORT1, PIOA_LCD_RESET);
+  palSetPadMode(IOPORT1, PIOA_LCD_RESET, PAL_MODE_OUTPUT_PUSHPULL);
 
   /*
    * Joystick and buttons setup.
    */
-  palSetGroupMode(IOPORT_A,
+  palSetGroupMode(IOPORT1,
                   PIOA_B1_MASK | PIOA_B2_MASK | PIOA_B3_MASK |
                   PIOA_B4_MASK | PIOA_B5_MASK,
                   PAL_MODE_INPUT);
-  palSetGroupMode(IOPORT_B, PIOB_SW1_MASK | PIOB_SW2_MASK, PAL_MODE_INPUT);
+  palSetGroupMode(IOPORT2, PIOB_SW1_MASK | PIOB_SW2_MASK, PAL_MODE_INPUT);
 
   /*
    * MMC/SD slot setup.
    */
-  palSetGroupMode(IOPORT_B,
+  palSetGroupMode(IOPORT2,
                   PIOB_MMC_WP_MASK | PIOB_MMC_CP_MASK,
                   PAL_MODE_INPUT);
 

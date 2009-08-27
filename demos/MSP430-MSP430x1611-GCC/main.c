@@ -31,9 +31,9 @@ static WORKING_AREA(waThread1, 64);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    palSetPad(IOPORT_F, P6_O_LED);
+    palSetPad(IOPORT6, P6_O_LED);
     chThdSleepMilliseconds(500);
-    palClearPad(IOPORT_F, P6_O_LED);
+    palClearPad(IOPORT6, P6_O_LED);
     chThdSleepMilliseconds(500);
   }
   return 0;
@@ -50,9 +50,9 @@ int main(int argc, char **argv) {
   hwinit();
 
   /*
-   * Activates the communication port 1 using the driver default configuration.
+   * Activates the serial driver 2 using the driver default configuration.
    */
-  sdStart(&COM1, NULL);
+  sdStart(&SD1, NULL);
 
   /*
    * The main() function becomes a thread here then the interrupts are
@@ -70,8 +70,8 @@ int main(int argc, char **argv) {
    * sleeping in a loop.
    */
   while (TRUE) {
-    if (!palReadPad(IOPORT_F, P6_I_BUTTON))
-      TestThread(&COM1);
+    if (!palReadPad(IOPORT6, P6_I_BUTTON))
+      TestThread(&SD1);
     chThdSleepMilliseconds(500);
   }
   return 0;

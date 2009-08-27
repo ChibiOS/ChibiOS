@@ -150,7 +150,7 @@ typedef union __ioport * ioportid_t;
 #if defined(__MSP430_HAS_PORT1__) ||                                    \
     defined(__MSP430_HAS_PORT1_R__) ||                                  \
     defined(__DOXYGEN__)
-#define IOPORT_A        ((ioportid_t)0x0020)
+#define IOPORT1         ((ioportid_t)0x0020)
 #endif
 
 /**
@@ -160,7 +160,7 @@ typedef union __ioport * ioportid_t;
 #if defined(__MSP430_HAS_PORT2__) ||                                    \
     defined(__MSP430_HAS_PORT2_R__) ||                                  \
     defined(__DOXYGEN__)
-#define IOPORT_B        ((ioportid_t)0x0028)
+#define IOPORT2         ((ioportid_t)0x0028)
 #endif
 
 /**
@@ -170,7 +170,7 @@ typedef union __ioport * ioportid_t;
 #if defined(__MSP430_HAS_PORT3__) ||                                    \
     defined(__MSP430_HAS_PORT3_R__) ||                                  \
     defined(__DOXYGEN__)
-#define IOPORT_C        ((ioportid_t)0x0018)
+#define IOPORT3         ((ioportid_t)0x0018)
 #endif
 
 /**
@@ -180,7 +180,7 @@ typedef union __ioport * ioportid_t;
 #if defined(__MSP430_HAS_PORT4__) ||                                    \
     defined(__MSP430_HAS_PORT4_R__) ||                                  \
     defined(__DOXYGEN__)
-#define IOPORT_D        ((ioportid_t)0x001c)
+#define IOPORT4         ((ioportid_t)0x001c)
 #endif
 
 /**
@@ -190,7 +190,7 @@ typedef union __ioport * ioportid_t;
 #if defined(__MSP430_HAS_PORT5__) ||                                    \
     defined(__MSP430_HAS_PORT5_R__) ||                                  \
     defined(__DOXYGEN__)
-#define IOPORT_E        ((ioportid_t)0x0030)
+#define IOPORT5         ((ioportid_t)0x0030)
 #endif
 
 /**
@@ -200,7 +200,7 @@ typedef union __ioport * ioportid_t;
 #if defined(__MSP430_HAS_PORT6__) ||                                    \
     defined(__MSP430_HAS_PORT6_R__) ||                                  \
     defined(__DOXYGEN__)
-#define IOPORT_F        ((ioportid_t)0x0034)
+#define IOPORT6         ((ioportid_t)0x0034)
 #endif
 
 /*===========================================================================*/

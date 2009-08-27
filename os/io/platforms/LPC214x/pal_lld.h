@@ -93,12 +93,12 @@ typedef FIO * ioportid_t;
 /**
  * @brief FIO port 0 identifier.
  */
-#define IOPORT_A        FIO0Base
+#define IOPORT1        FIO0Base
 
 /**
  * @brief FIO port 1 identifier.
  */
-#define IOPORT_B        FIO1Base
+#define IOPORT2        FIO1Base
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */

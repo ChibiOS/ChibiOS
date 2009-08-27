@@ -32,17 +32,17 @@
 
 #if USE_STM32_USART1 || defined(__DOXYGEN__)
 /** @brief USART1 serial driver identifier.*/
-SerialDriver COM1;
+SerialDriver SD1;
 #endif
 
 #if USE_STM32_USART2 || defined(__DOXYGEN__)
 /** @brief USART2 serial driver identifier.*/
-SerialDriver COM2;
+SerialDriver SD2;
 #endif
 
 #if USE_STM32_USART3 || defined(__DOXYGEN__)
 /** @brief USART3 serial driver identifier.*/
-SerialDriver COM3;
+SerialDriver SD3;
 #endif
 
 /** @brief Driver default configuration.*/
@@ -174,7 +174,7 @@ CH_IRQ_HANDLER(VectorD4) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(USART1, &COM1);
+  serve_interrupt(USART1, &SD1);
 
   CH_IRQ_EPILOGUE();
 }
@@ -185,7 +185,7 @@ CH_IRQ_HANDLER(VectorD8) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(USART2, &COM2);
+  serve_interrupt(USART2, &SD2);
 
   CH_IRQ_EPILOGUE();
 }
@@ -196,7 +196,7 @@ CH_IRQ_HANDLER(VectorDC) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(USART3, &COM3);
+  serve_interrupt(USART3, &SD3);
 
   CH_IRQ_EPILOGUE();
 }
@@ -212,17 +212,17 @@ CH_IRQ_HANDLER(VectorDC) {
 void sd_lld_init(void) {
 
 #if USE_STM32_USART1
-  sdObjectInit(&COM1, NULL, notify1);
+  sdObjectInit(&SD1, NULL, notify1);
   GPIOA->CRH = (GPIOA->CRH & 0xFFFFF00F) | 0x000004B0;
 #endif
 
 #if USE_STM32_USART2
-  sdObjectInit(&COM2, NULL, notify2);
+  sdObjectInit(&SD2, NULL, notify2);
   GPIOA->CRL = (GPIOA->CRL & 0xFFFF00FF) | 0x00004B00;
 #endif
 
 #if USE_STM32_USART3
-  sdObjectInit(&COM3, NULL, notify3);
+  sdObjectInit(&SD3, NULL, notify3);
   GPIOB->CRH = (GPIOB->CRH & 0xFFFF00FF) | 0x00004B00;
 #endif
 }
@@ -241,7 +241,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
     config = &default_config;
 
 #if USE_STM32_USART1
-  if (&COM1 == sdp) {
+  if (&SD1 == sdp) {
     RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
     usart_init(USART1, config);
     NVICEnableVector(USART1_IRQn, STM32_USART1_PRIORITY);
@@ -249,7 +249,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
   }
 #endif
 #if USE_STM32_USART2
-  if (&COM2 == sdp) {
+  if (&SD2 == sdp) {
     RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
     usart_init(USART2, config);
     NVICEnableVector(USART2_IRQn, STM32_USART2_PRIORITY);
@@ -257,7 +257,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
   }
 #endif
 #if USE_STM32_USART3
-  if (&COM3 == sdp) {
+  if (&SD3 == sdp) {
     RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
     usart_init(USART3, config);
     NVICEnableVector(USART3_IRQn, STM32_USART3_PRIORITY);
@@ -276,7 +276,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
 void sd_lld_stop(SerialDriver *sdp) {
 
 #if USE_STM32_USART1
-  if (&COM1 == sdp) {
+  if (&SD1 == sdp) {
     usart_deinit(USART1);
     RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
     NVICDisableVector(USART1_IRQn);
@@ -284,7 +284,7 @@ void sd_lld_stop(SerialDriver *sdp) {
   }
 #endif
 #if USE_STM32_USART2
-  if (&COM2 == sdp) {
+  if (&SD2 == sdp) {
     usart_deinit(USART2);
     RCC->APB1ENR &= ~RCC_APB1ENR_USART2EN;
     NVICDisableVector(USART2_IRQn);
@@ -292,7 +292,7 @@ void sd_lld_stop(SerialDriver *sdp) {
   }
 #endif
 #if USE_STM32_USART3
-  if (&COM3 == sdp) {
+  if (&SD3 == sdp) {
     usart_deinit(USART3);
     RCC->APB1ENR &= ~RCC_APB1ENR_USART3EN;
     NVICDisableVector(USART3_IRQn);

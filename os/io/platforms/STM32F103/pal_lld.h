@@ -116,40 +116,40 @@ typedef GPIO_TypeDef * ioportid_t;
 /**
  * @brief GPIO port A identifier.
  */
-#define IOPORT_A        GPIOA
+#define IOPORT1         GPIOA
 
 /**
  * @brief GPIO port B identifier.
  */
-#define IOPORT_B        GPIOB
+#define IOPORT2         GPIOB
 
 /**
  * @brief GPIO port C identifier.
  */
-#define IOPORT_C        GPIOC
+#define IOPORT3         GPIOC
 
 /**
  * @brief GPIO port D identifier.
  */
-#define IOPORT_D        GPIOD
+#define IOPORT4         GPIOD
 
 /**
  * @brief GPIO port E identifier.
  */
 #if !defined(STM32F10X_LD) || defined(__DOXYGEN__)
-#define IOPORT_E        GPIOE
+#define IOPORT5         GPIOE
 #endif
 
 /**
  * @brief GPIO port F identifier.
  */
 #if defined(STM32F10X_HD) || defined(__DOXYGEN__)
-#define IOPORT_F        GPIOF
+#define IOPORT6         GPIOF
 
 /**
  * @brief GPIO port G identifier.
  */
-#define IOPORT_G        GPIOG
+#define IOPORT7         GPIOG
 #endif
 
 /*===========================================================================*/

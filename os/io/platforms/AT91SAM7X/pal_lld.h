@@ -90,12 +90,12 @@ typedef AT91PS_PIO ioportid_t;
 /**
  * @brief PIO port A identifier.
  */
-#define IOPORT_A        AT91C_BASE_PIOA
+#define IOPORT1         AT91C_BASE_PIOA
 
 /**
  * @brief PIO port B identifier.
  */
-#define IOPORT_B        AT91C_BASE_PIOB
+#define IOPORT2         AT91C_BASE_PIOB
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */

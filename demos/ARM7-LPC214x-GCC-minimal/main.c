@@ -29,13 +29,13 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    palClearPort(IOPORT_A, PAL_PORT_BIT(PA_LED2));
+    palClearPort(IOPORT1, PAL_PORT_BIT(PA_LED2));
     chThdSleepMilliseconds(200);
-    palSetPort(IOPORT_A, PAL_PORT_BIT(PA_LED1) | PAL_PORT_BIT(PA_LED2));
+    palSetPort(IOPORT1, PAL_PORT_BIT(PA_LED1) | PAL_PORT_BIT(PA_LED2));
     chThdSleepMilliseconds(800);
-    palClearPort(IOPORT_A, PAL_PORT_BIT(PA_LED1));
+    palClearPort(IOPORT1, PAL_PORT_BIT(PA_LED1));
     chThdSleepMilliseconds(200);
-    palSetPort(IOPORT_A, PAL_PORT_BIT(PA_LED1) | PAL_PORT_BIT(PA_LED2));
+    palSetPort(IOPORT1, PAL_PORT_BIT(PA_LED1) | PAL_PORT_BIT(PA_LED2));
     chThdSleepMilliseconds(800);
   }
   return 0;
@@ -48,9 +48,9 @@ static WORKING_AREA(waThread2, 128);
 static msg_t Thread2(void *arg) {
 
   while (TRUE) {
-    palClearPad(IOPORT_A, PA_LEDUSB);
+    palClearPad(IOPORT1, PA_LEDUSB);
     chThdSleepMilliseconds(200);
-    palSetPad(IOPORT_A, PA_LEDUSB);
+    palSetPad(IOPORT1, PA_LEDUSB);
     chThdSleepMilliseconds(300);
   }
   return 0;

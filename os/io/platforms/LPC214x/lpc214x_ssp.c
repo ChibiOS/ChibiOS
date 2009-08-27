@@ -44,7 +44,7 @@ void sspAcquireBus(void) {
 #if LPC214x_SSP_USE_MUTEX
   chSemWait(&me);
 #endif
-  palClearPad(IOPORT_A, 20);
+  palClearPad(IOPORT1, 20);
 }
 
 /**
@@ -54,7 +54,7 @@ void sspAcquireBus(void) {
  */
 void sspReleaseBus(void) {
 
-  palClearPad(IOPORT_A, 20);
+  palClearPad(IOPORT1, 20);
 #if LPC214x_SSP_USE_MUTEX
   chSemSignal(&me);
 #endif

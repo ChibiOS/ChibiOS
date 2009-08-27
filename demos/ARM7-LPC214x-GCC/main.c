@@ -36,13 +36,13 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    palClearPort(IOPORT_A, PAL_PORT_BIT(PA_LED2));
+    palClearPort(IOPORT1, PAL_PORT_BIT(PA_LED2));
     chThdSleepMilliseconds(200);
-    palSetPort(IOPORT_A, PAL_PORT_BIT(PA_LED1) | PAL_PORT_BIT(PA_LED2));
+    palSetPort(IOPORT1, PAL_PORT_BIT(PA_LED1) | PAL_PORT_BIT(PA_LED2));
     chThdSleepMilliseconds(800);
-    palClearPort(IOPORT_A, PAL_PORT_BIT(PA_LED1));
+    palClearPort(IOPORT1, PAL_PORT_BIT(PA_LED1));
     chThdSleepMilliseconds(200);
-    palSetPort(IOPORT_A, PAL_PORT_BIT(PA_LED1) | PAL_PORT_BIT(PA_LED2));
+    palSetPort(IOPORT1, PAL_PORT_BIT(PA_LED1) | PAL_PORT_BIT(PA_LED2));
     chThdSleepMilliseconds(800);
   }
   return 0;
@@ -55,9 +55,9 @@ static WORKING_AREA(waThread2, 128);
 static msg_t Thread2(void *arg) {
 
   while (TRUE) {
-    palClearPad(IOPORT_A, PA_LEDUSB);
+    palClearPad(IOPORT1, PA_LEDUSB);
     chThdSleepMilliseconds(200);
-    palSetPad(IOPORT_A, PA_LEDUSB);
+    palSetPad(IOPORT1, PA_LEDUSB);
     chThdSleepMilliseconds(300);
   }
   return 0;
@@ -70,17 +70,17 @@ static WORKING_AREA(waTestThread, 128);
  */
 static void TimerHandler(eventid_t id) {
 
-  if (!(palReadPort(IOPORT_A) & BOTH_BUTTONS)) {
+  if (!(palReadPort(IOPORT1) & BOTH_BUTTONS)) {
     Thread *tp = chThdCreateStatic(waTestThread, sizeof(waTestThread),
-                                   NORMALPRIO, TestThread, &COM1);
+                                   NORMALPRIO, TestThread, &SD1);
     chThdWait(tp);
     PlaySound(500, MS2ST(100));
   }
   else {
-    if (!palReadPad(IOPORT_A, PA_BUTTON1))
+    if (!palReadPad(IOPORT1, PA_BUTTON1))
       PlaySound(1000, MS2ST(100));
-    if (!palReadPad(IOPORT_A, PA_BUTTON2)) {
-      sdWrite(&COM1, (uint8_t *)"Hello World!\r\n", 14);
+    if (!palReadPad(IOPORT1, PA_BUTTON2)) {
+      sdWrite(&SD1, (uint8_t *)"Hello World!\r\n", 14);
       PlaySound(2000, MS2ST(100));
     }
   }
@@ -129,15 +129,15 @@ int main(int argc, char **argv) {
   struct EventListener el0, el1, el2;
 
   /*
-   * Activates the communication port 1 using the driver default configuration.
+   * Activates the serial driver 2 using the driver default configuration.
    */
-  sdStart(&COM1, NULL);
+  sdStart(&SD1, NULL);
 
   /*
    * If a button is pressed during the reset then the blinking leds threads
    * are not started in order to make accurate benchmarks.
    */
-  if ((palReadPort(IOPORT_A) & BOTH_BUTTONS) == BOTH_BUTTONS) {
+  if ((palReadPort(IOPORT1) & BOTH_BUTTONS) == BOTH_BUTTONS) {
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
     chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
   }

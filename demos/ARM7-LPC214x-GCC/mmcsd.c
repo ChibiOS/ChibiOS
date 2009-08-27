@@ -43,7 +43,7 @@ void InitMMC(void) {
 void tmrfunc(void *par) {
 
   if (cnt) {
-    if (!palReadPad(IOPORT_B, PB_CP1)) {
+    if (!palReadPad(IOPORT2, PB_CP1)) {
       if (!--cnt)
         chEvtBroadcastI(&MMCInsertEventSource);
     }
@@ -51,7 +51,7 @@ void tmrfunc(void *par) {
       cnt = POLLING_INTERVAL;
   }
   else {
-    if (palReadPad(IOPORT_B, PB_CP1)) {
+    if (palReadPad(IOPORT2, PB_CP1)) {
       cnt = POLLING_INTERVAL;
       chEvtBroadcastI(&MMCRemoveEventSource);
     }

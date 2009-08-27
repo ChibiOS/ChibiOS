@@ -33,11 +33,11 @@
 
 #if USE_MSP430_USART0 || defined(__DOXYGEN__)
 /** @brief USART0 serial driver identifier.*/
-SerialDriver COM1;
+SerialDriver SD1;
 #endif
 #if USE_MSP430_USART1 || defined(__DOXYGEN__)
 /** @brief USART1 serial driver identifier.*/
-SerialDriver COM2;
+SerialDriver SD2;
 #endif
 
 /** @brief Driver default configuration.*/
@@ -72,7 +72,7 @@ static void notify1(void) {
 
   if (!(U0IE & UTXIE0)) {
     chSysLockFromIsr();
-    U0TXBUF = (uint8_t)sdRequestDataI(&COM1);
+    U0TXBUF = (uint8_t)sdRequestDataI(&SD1);
     chSysUnlockFromIsr();
     U0IE |= UTXIE0;
   }
@@ -113,7 +113,7 @@ void usart0_deinit(void) {
 static void notify2(void) {
 
   if (!(U1IE & UTXIE1)) {
-    U1TXBUF = (uint8_t)sdRequestDataI(&COM2);
+    U1TXBUF = (uint8_t)sdRequestDataI(&SD2);
     U1IE |= UTXIE1;
   }
 }
@@ -160,7 +160,7 @@ CH_IRQ_HANDLER(USART0TX_VECTOR) {
   CH_IRQ_PROLOGUE();
 
   chSysLockFromIsr();
-  b = sdRequestDataI(&COM1);
+  b = sdRequestDataI(&SD1);
   chSysUnlockFromIsr();
   if (b < Q_OK)
     U0IE &= ~UTXIE0;
@@ -176,9 +176,9 @@ CH_IRQ_HANDLER(USART0RX_VECTOR) {
   CH_IRQ_PROLOGUE();
 
   if ((urctl = U0RCTL) & RXERR)
-    set_error(urctl, &COM1);
+    set_error(urctl, &SD1);
   chSysLockFromIsr();
-  sdIncomingDataI(&COM1, U0RXBUF);
+  sdIncomingDataI(&SD1, U0RXBUF);
   chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
@@ -192,7 +192,7 @@ CH_IRQ_HANDLER(USART1TX_VECTOR) {
   CH_IRQ_PROLOGUE();
 
   chSysLockFromIsr();
-  b = sdRequestDataI(&COM2);
+  b = sdRequestDataI(&SD2);
   chSysUnlockFromIsr();
   if (b < Q_OK)
     U1IE &= ~UTXIE1;
@@ -208,9 +208,9 @@ CH_IRQ_HANDLER(USART1RX_VECTOR) {
   CH_IRQ_PROLOGUE();
 
   if ((urctl = U1RCTL) & RXERR)
-    set_error(urctl, &COM2);
+    set_error(urctl, &SD2);
   chSysLockFromIsr();
-  sdIncomingDataI(&COM2, U1RXBUF);
+  sdIncomingDataI(&SD2, U1RXBUF);
   chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
@@ -227,13 +227,13 @@ CH_IRQ_HANDLER(USART1RX_VECTOR) {
 void sd_lld_init(void) {
 
 #if USE_MSP430_USART0
-  sdObjectInit(&COM1, NULL, notify1);
+  sdObjectInit(&SD1, NULL, notify1);
   /* I/O pins for USART0.*/
   P3SEL |= BV(4) + BV(5);
 #endif
 
 #if USE_MSP430_USART1
-  sdObjectInit(&COM2, NULL, notify2);
+  sdObjectInit(&SD2, NULL, notify2);
   /* I/O pins for USART1.*/
   P3SEL |= BV(6) + BV(7);
 #endif
@@ -253,13 +253,13 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
     config = &default_config;
 
 #if USE_MSP430_USART0
-  if (&COM1 == sdp) {
+  if (&SD1 == sdp) {
     usart0_init(config);
     return;
   }
 #endif
 #if USE_MSP430_USART1
-  if (&COM2 == sdp) {
+  if (&SD2 == sdp) {
     usart1_init(config);
     return;
   }
@@ -276,13 +276,13 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
 void sd_lld_stop(SerialDriver *sdp) {
 
 #if USE_MSP430_USART0
-  if (&COM1 == sdp) {
+  if (&SD1 == sdp) {
     usart0_deinit();
     return;
   }
 #endif
 #if USE_MSP430_USART1
-  if (&COM2 == sdp) {
+  if (&SD2 == sdp) {
     usart1_deinit();
     return;
   }

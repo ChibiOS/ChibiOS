@@ -32,12 +32,12 @@
 
 #if USE_LPC214x_UART0 || defined(__DOXYGEN__)
 /** @brief UART0 serial driver identifier.*/
-SerialDriver COM1;
+SerialDriver SD1;
 #endif
 
 #if USE_LPC214x_UART1 || defined(__DOXYGEN__)
 /** @brief UART1 serial driver identifier.*/
-SerialDriver COM2;
+SerialDriver SD2;
 #endif
 
 /** @brief Driver default configuration.*/
@@ -199,13 +199,13 @@ static void preload(UART *u, SerialDriver *sdp) {
 static void notify1(void) {
 #if UART_FIFO_PRELOAD > 0
 
-  preload(U0Base, &COM1);
+  preload(U0Base, &SD1);
 #else
   UART *u = U0Base;
 
   if (u->UART_LSR & LSR_THRE) {
     chSysLockFromIsr();
-    u->UART_THR = chOQGetI(&COM1.sd_oqueue);
+    u->UART_THR = chOQGetI(&SD1.sd_oqueue);
     chSysUnlockFromIsr();
   }
   u->UART_IER |= IER_THRE;
@@ -217,12 +217,12 @@ static void notify1(void) {
 static void notify2(void) {
 #if UART_FIFO_PRELOAD > 0
 
-  preload(U1Base, &COM2);
+  preload(U1Base, &SD2);
 #else
   UART *u = U1Base;
 
   if (u->UART_LSR & LSR_THRE)
-    u->UART_THR = chOQGetI(&COM2.sd_oqueue);
+    u->UART_THR = chOQGetI(&SD2.sd_oqueue);
   u->UART_IER |= IER_THRE;
 #endif
 }
@@ -237,7 +237,7 @@ CH_IRQ_HANDLER(UART0IrqHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(U0Base, &COM1);
+  serve_interrupt(U0Base, &SD1);
   VICVectAddr = 0;
 
   CH_IRQ_EPILOGUE();
@@ -249,7 +249,7 @@ CH_IRQ_HANDLER(UART1IrqHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(U1Base, &COM2);
+  serve_interrupt(U1Base, &SD2);
   VICVectAddr = 0;
 
   CH_IRQ_EPILOGUE();
@@ -267,11 +267,11 @@ CH_IRQ_HANDLER(UART1IrqHandler) {
 void sd_lld_init(void) {
 
 #if USE_LPC214x_UART0
-  sdObjectInit(&COM1, NULL, notify1);
+  sdObjectInit(&SD1, NULL, notify1);
   SetVICVector(UART0IrqHandler, LPC214x_UART1_PRIORITY, SOURCE_UART0);
 #endif
 #if USE_LPC214x_UART1
-  sdObjectInit(&COM2, NULL, notify2);
+  sdObjectInit(&SD2, NULL, notify2);
   SetVICVector(UART1IrqHandler, LPC214x_UART2_PRIORITY, SOURCE_UART1);
 #endif
 }
@@ -290,7 +290,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
     config = &default_config;
 
 #if USE_LPC214x_UART1
-  if (&COM1 == sdp) {
+  if (&SD1 == sdp) {
     PCONP = (PCONP & PCALL) | PCUART0;
     uart_init(U0Base, config);
     VICIntEnable = INTMASK(SOURCE_UART0);
@@ -298,7 +298,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
   }
 #endif
 #if USE_LPC214x_UART2
-  if (&COM2 == sdp) {
+  if (&SD2 == sdp) {
     PCONP = (PCONP & PCALL) | PCUART1;
     uart_init(U1Base, config);
     VICIntEnable = INTMASK(SOURCE_UART1);
@@ -317,7 +317,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
 void sd_lld_stop(SerialDriver *sdp) {
 
 #if USE_LPC214x_UART1
-  if (&COM1 == sdp) {
+  if (&SD1 == sdp) {
     uart_deinit(U0Base);
     PCONP = (PCONP & PCALL) & ~PCUART0;
     VICIntEnClear = INTMASK(SOURCE_UART0);
@@ -325,7 +325,7 @@ void sd_lld_stop(SerialDriver *sdp) {
   }
 #endif
 #if USE_LPC214x_UART2
-  if (&COM2 == sdp) {
+  if (&SD2 == sdp) {
     uart_deinit(U1Base);
     PCONP = (PCONP & PCALL) & ~PCUART1;
     VICIntEnClear = INTMASK(SOURCE_UART1);

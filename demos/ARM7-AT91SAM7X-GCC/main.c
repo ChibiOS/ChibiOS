@@ -28,9 +28,9 @@ static WORKING_AREA(waThread1, 64);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    palSetPad(IOPORT_B, PIOB_LCD_BL);
+    palSetPad(IOPORT2, PIOB_LCD_BL);
     chThdSleepMilliseconds(100);
-    palClearPad(IOPORT_B, PIOB_LCD_BL);
+    palClearPad(IOPORT2, PIOB_LCD_BL);
     chThdSleepMilliseconds(900);
   }
   return 0;
@@ -43,9 +43,9 @@ static msg_t Thread1(void *arg) {
 int main(int argc, char **argv) {
 
   /*
-   * Activates the communication port 1 using the driver default configuration.
+   * Activates the serial driver 1 using the driver default configuration.
    */
-  sdStart(&COM1, NULL);
+  sdStart(&SD1, NULL);
 
   /*
    * Creates the blinker thread.
@@ -57,10 +57,10 @@ int main(int argc, char **argv) {
    */
   while (TRUE) {
     chThdSleepMilliseconds(500);
-    if (!palReadPad(IOPORT_B, PIOB_SW1))
-      sdWrite(&COM1, (uint8_t *)"Hello World!\r\n", 14);
-    if (!palReadPad(IOPORT_B, PIOB_SW2))
-      TestThread(&COM1);
+    if (!palReadPad(IOPORT2, PIOB_SW1))
+      sdWrite(&SD1, (uint8_t *)"Hello World!\r\n", 14);
+    if (!palReadPad(IOPORT2, PIOB_SW2))
+      TestThread(&SD1);
   }
 
   return 0;

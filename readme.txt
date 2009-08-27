@@ -17,6 +17,9 @@
   demo directory.
 - CHANGE: Removed the CH_USE_SERIAL_FULLDUPLEX configuration option because
   the serial driver is no more part of the kernel.
+- CHANGE: Reorganized the PAL and Serial identifiers now IOPORT1..N and
+  SD1..N rather than IOPORT_A..Z and COM1..N, some of the old names were
+  conflicting with some AVR libraries.
 
 *** 1.3.1 ***
 - FIX: Removed mention of an obsolete option from the documentation (bug

@@ -141,10 +141,10 @@ typedef struct {
 
 /** @cond never*/
 #if USE_MSP430_USART0
-extern SerialDriver COM1;
+extern SerialDriver SD1;
 #endif
 #if USE_MSP430_USART1
-extern SerialDriver COM2;
+extern SerialDriver SD2;
 #endif
 
 #ifdef __cplusplus

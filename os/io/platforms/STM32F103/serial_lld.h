@@ -181,13 +181,13 @@ typedef struct {
 
 /** @cond never*/
 #if USE_STM32_USART1
-extern SerialDriver COM1;
+extern SerialDriver SD1;
 #endif
 #if USE_STM32_USART2
-extern SerialDriver COM2;
+extern SerialDriver SD2;
 #endif
 #if USE_STM32_USART3
-extern SerialDriver COM3;
+extern SerialDriver SD3;
 #endif
 
 #ifdef __cplusplus

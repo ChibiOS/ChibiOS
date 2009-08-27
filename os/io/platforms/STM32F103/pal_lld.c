@@ -72,30 +72,30 @@ void _pal_lld_init(const STM32GPIOConfig *config) {
   RCC->APB2RSTR = APB2_RST_MASK;
   RCC->APB2RSTR = 0;
 
-  IOPORT_A->ODR = config->PAData.odr;
-  IOPORT_A->CRH = config->PAData.crh;
-  IOPORT_A->CRL = config->PAData.crl;
-  IOPORT_B->ODR = config->PBData.odr;
-  IOPORT_B->CRH = config->PBData.crh;
-  IOPORT_B->CRL = config->PBData.crl;
-  IOPORT_C->ODR = config->PCData.odr;
-  IOPORT_C->CRH = config->PCData.crh;
-  IOPORT_C->CRL = config->PCData.crl;
-  IOPORT_D->ODR = config->PDData.odr;
-  IOPORT_D->CRH = config->PDData.crh;
-  IOPORT_D->CRL = config->PDData.crl;
+  IOPORT1->ODR = config->PAData.odr;
+  IOPORT1->CRH = config->PAData.crh;
+  IOPORT1->CRL = config->PAData.crl;
+  IOPORT2->ODR = config->PBData.odr;
+  IOPORT2->CRH = config->PBData.crh;
+  IOPORT2->CRL = config->PBData.crl;
+  IOPORT3->ODR = config->PCData.odr;
+  IOPORT3->CRH = config->PCData.crh;
+  IOPORT3->CRL = config->PCData.crl;
+  IOPORT4->ODR = config->PDData.odr;
+  IOPORT4->CRH = config->PDData.crh;
+  IOPORT4->CRL = config->PDData.crl;
 #if !defined(STM32F10X_LD) || defined(__DOXYGEN__)
-  IOPORT_E->ODR = config->PEData.odr;
-  IOPORT_E->CRH = config->PEData.crh;
-  IOPORT_E->CRL = config->PEData.crl;
+  IOPORT5->ODR = config->PEData.odr;
+  IOPORT5->CRH = config->PEData.crh;
+  IOPORT5->CRL = config->PEData.crl;
 #endif
 #if defined(STM32F10X_HD) || defined(__DOXYGEN__)
-  IOPORT_F->ODR = config->PFData.odr;
-  IOPORT_F->CRH = config->PFData.crh;
-  IOPORT_F->CRL = config->PFData.crl;
-  IOPORT_G->ODR = config->PGData.odr;
-  IOPORT_G->CRH = config->PGData.crh;
-  IOPORT_G->CRL = config->PGData.crl;
+  IOPORT6->ODR = config->PFData.odr;
+  IOPORT6->CRH = config->PFData.crh;
+  IOPORT6->CRL = config->PFData.crl;
+  IOPORT7->ODR = config->PGData.odr;
+  IOPORT7->CRH = config->PGData.crh;
+  IOPORT7->CRL = config->PGData.crl;
 #endif
 }
 

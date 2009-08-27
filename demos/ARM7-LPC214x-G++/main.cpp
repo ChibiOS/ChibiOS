@@ -99,10 +99,10 @@ protected:
       case STOP:
         return 0;
       case BITCLEAR:
-        palClearPort(IOPORT_A, curr->value);
+        palClearPort(IOPORT1, curr->value);
         break;
       case BITSET:
-        palSetPort(IOPORT_A, curr->value);
+        palSetPort(IOPORT1, curr->value);
         break;
       }
       curr++;
@@ -124,7 +124,7 @@ class TesterThread : public EnhancedThread<128> {
 protected:
   virtual msg_t Main(void) {
 
-    return TestThread(&COM1);
+    return TestThread(&SD1);
   }
 
 public:
@@ -137,7 +137,7 @@ public:
  */
 static void TimerHandler(eventid_t id) {
 
-  if (!(palReadPort(IOPORT_A) & BOTH_BUTTONS)) { // Both buttons
+  if (!(palReadPort(IOPORT1) & BOTH_BUTTONS)) { // Both buttons
     TesterThread tester;
     tester.Wait();
   };
@@ -155,9 +155,9 @@ int main(int argc, char **argv) {
   struct EventListener el0;
 
   /*
-   * Activates the communication port 1 using the driver default configuration.
+   * Activates the serial driver 2 using the driver default configuration.
    */
-  sdStart(&COM1, NULL);
+  sdStart(&SD1, NULL);
 
   evtInit(&evt, 500);                   // Initializes an event timer.
   evtStart(&evt);                       // Starts the event timer.

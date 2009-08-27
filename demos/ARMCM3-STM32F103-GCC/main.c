@@ -31,9 +31,9 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    palClearPad(IOPORT_C, GPIOC_LED);
+    palClearPad(IOPORT3, GPIOC_LED);
     chThdSleepMilliseconds(500);
-    palSetPad(IOPORT_C, GPIOC_LED);
+    palSetPad(IOPORT3, GPIOC_LED);
     chThdSleepMilliseconds(500);
   }
   return 0;
@@ -46,9 +46,9 @@ static msg_t Thread1(void *arg) {
 int main(int argc, char **argv) {
 
   /*
-   * Activates the communication port 2 using the driver default configuration.
+   * Activates the serial driver 2 using the driver default configuration.
    */
-  sdStart(&COM2, NULL);
+  sdStart(&SD2, NULL);
 
   /*
    * Creates the blinker thread.
@@ -60,8 +60,8 @@ int main(int argc, char **argv) {
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
-    if (palReadPad(IOPORT_A, GPIOA_BUTTON))
-      TestThread(&COM2);
+    if (palReadPad(IOPORT1, GPIOA_BUTTON))
+      TestThread(&SD2);
     chThdSleepMilliseconds(500);
   }
   return 0;

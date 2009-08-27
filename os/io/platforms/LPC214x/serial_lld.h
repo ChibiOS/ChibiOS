@@ -156,10 +156,10 @@ typedef struct {
 
 /** @cond never*/
 #if USE_LPC214x_UART0
-extern SerialDriver COM1;
+extern SerialDriver SD1;
 #endif
 #if USE_LPC214x_UART1
-extern SerialDriver COM2;
+extern SerialDriver SD2;
 #endif
 
 #ifdef __cplusplus

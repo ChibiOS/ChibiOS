@@ -87,7 +87,7 @@ typedef uint32_t ioportid_t;
  * @details Low level drivers can define multiple ports, it is suggested to
  *          use this naming convention.
  */
-#define IOPORT_A        0
+#define IOPORT1         0
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */
