@@ -55,7 +55,7 @@ static const SerialDriverConfig default_config = {
 /*===========================================================================*/
 
 static void set_error(uint8_t sra, SerialDriver *sdp) {
-  dflags_t sts = 0;
+  sdflags_t sts = 0;
 
   if (sra & (1 << DOR))
     sts |= SD_OVERRUN_ERROR;
@@ -78,7 +78,7 @@ static void notify1(void) {
  * @brief USART0 initialization.
  * @param[in] config the architecture-dependent serial driver configuration
  */
-void usart0_init(SerialDriverConfig *config) {
+void usart0_init(const SerialDriverConfig *config) {
 
   UBRR0L = config->brr;
   UBRR0H = config->brr >> 8;
@@ -108,7 +108,7 @@ static void notify2(void) {
  * @brief USART1 initialization.
  * @param[in] config the architecture-dependent serial driver configuration
  */
-void usart1_init(SerialDriverConfig *config) {
+void usart1_init(const SerialDriverConfig *config) {
 
   UBRR1L = config->brr;
   UBRR1H = config->brr >> 8;
@@ -140,9 +140,9 @@ CH_IRQ_HANDLER(USART0_RX_vect) {
 
   sra = UCSR0A;
   if (sra & ((1 << DOR) | (1 << UPE) | (1 << FE)))
-    set_error(sra, &SER1);
+    set_error(sra, &SD1);
   chSysLockFromIsr();
-  sdIncomingDataI(&SER1, UDR0);
+  sdIncomingDataI(&SD1, UDR0);
   chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
@@ -173,9 +173,9 @@ CH_IRQ_HANDLER(USART1_RX_vect) {
 
   sra = UCSR1A;
   if (sra & ((1 << DOR) | (1 << UPE) | (1 << FE)))
-    set_error(sra, &SER2);
+    set_error(sra, &SD2);
   chSysLockFromIsr();
-  sdIncomingDataI(&SER2, UDR1);
+  sdIncomingDataI(&SD2, UDR1);
   chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
@@ -187,7 +187,7 @@ CH_IRQ_HANDLER(USART1_UDRE_vect) {
   CH_IRQ_PROLOGUE();
 
   chSysLockFromIsr();
-  b = sdRequestDataI(&SER2);
+  b = sdRequestDataI(&SD2);
   chSysUnlockFromIsr();
   if (b < Q_OK)
     UCSR1B &= ~(1 << UDRIE);
@@ -207,11 +207,11 @@ CH_IRQ_HANDLER(USART1_UDRE_vect) {
  */
 void sd_lld_init(void) {
 
-#if USE_MSP430_USART0
-  sdObjectInit(&COM1, NULL, notify1);
+#if USE_AVR_USART0
+  sdObjectInit(&SD1, NULL, notify1);
 #endif
-#if USE_MSP430_USART1
-  sdObjectInit(&COM2, NULL, notify2);
+#if USE_AVR_USART1
+  sdObjectInit(&SD2, NULL, notify2);
 #endif
 }
 

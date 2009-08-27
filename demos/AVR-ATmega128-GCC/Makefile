@@ -92,7 +92,7 @@ SRC = ${PORTSRC} \
       ../../os/io/serial.c \
       ../../os/io/platforms/AVR/serial_lld.c \
       ../../os/various/evtimer.c \
-      board.c main.c
+      lcd.c board.c main.c
 
 
 # List C++ source files here. (C dependencies are automatically generated.)
