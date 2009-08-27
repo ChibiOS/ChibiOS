@@ -18,9 +18,9 @@
 */
 
 /**
- * @file templates/serial_lld.c
- * @brief Serial Driver subsystem low level driver source template
- * @addtogroup SERIAL_LLD
+ * @file MSP430/serial_lld.c
+ * @brief MSP430 low level serial driver code
+ * @addtogroup MSP430_SERIAL
  * @{
  */
 

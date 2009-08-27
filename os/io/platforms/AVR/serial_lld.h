@@ -18,9 +18,9 @@
 */
 
 /**
- * @file templates/serial_lld.h
- * @brief Serial Driver subsystem low level driver header template
- * @addtogroup SERIAL_LLD
+ * @file AVR/serial_lld.h
+ * @brief AVR low level serial driver header
+ * @addtogroup AVR_SERIAL
  * @{
  */
 
