@@ -376,6 +376,45 @@
  */
 
 /**
+ * @defgroup Channels I/O Abstract Channels
+ * @brief Abstract I/O Channels.
+ * @details This module defines an abstract interface for I/O channels. Note
+ * that no code is present, I/O channels are just abstract classes-like
+ * structures, you should look at the systems as to a set of abstract C++
+ * classes (even if written in C). Specific device drivers can use/extend
+ * the interfaces and implement them.<br>
+ * This system has the advantage to make the access to channels
+ * independent from the implementation logic. As example, an I/O channel
+ * interface can hide the access to a serial driver, to a networking socket
+ * and so on.
+ *
+ * @ingroup IO
+ */
+ 
+/**
+ * @defgroup IOQueues I/O Queues
+ * @brief I/O queues.
+ * @details ChibiOS/RT supports several kinds of queues. The queues are mostly
+ * used in serial-like device drivers. The device drivers are usually designed
+ * to have a lower side (lower driver, it is usually an interrupt service
+ * routine) and an upper side (upper driver, accessed by the application
+ * threads).<br>
+ * There are several kind of queues:<br>
+ * - <b>Input queue</b>, unidirectional queue where the writer is the
+ *   lower side and the reader is the upper side.
+ * - <b>Output queue</b>, unidirectional queue where the writer is the
+ *   upper side and the reader is the lower side.
+ * - <b>Full duplex queue</b>, bidirectional queue where read and write
+ *   operations can happen at the same time. Full duplex queues
+ *   are implemented by pairing an input queue and an output queue together.
+ * .
+ * In order to use the I/O queues the @p CH_USE_QUEUES option must
+ * be specified in @p chconf.h.<br>
+ *
+ * @ingroup IO
+ */
+
+/**
  * @defgroup PAL I/O Ports Abstraction Layer (PAL)
  * @brief I/O Ports Abstraction Layer
  * @details This module defines an abstract interface for digital I/O ports.
@@ -437,45 +476,6 @@
  * @details This file is a template for an I/O port low level driver.
  *
  * @ingroup PAL
- */
-
-/**
- * @defgroup Channels Abstract I/O Channels
- * @brief Abstract I/O Channels.
- * @details This module defines an abstract interface for I/O channels. Note
- * that no code is present, I/O channels are just abstract classes-like
- * structures, you should look at the systems as to a set of abstract C++
- * classes (even if written in C). Specific device drivers can use/extend
- * the interfaces and implement them.<br>
- * This system has the advantage to make the access to channels
- * independent from the implementation logic. As example, an I/O channel
- * interface can hide the access to a serial driver, to a networking socket
- * and so on.
- *
- * @ingroup IO
- */
- 
-/**
- * @defgroup IOQueues I/O Queues
- * @brief I/O queues.
- * @details ChibiOS/RT supports several kinds of queues. The queues are mostly
- * used in serial-like device drivers. The device drivers are usually designed
- * to have a lower side (lower driver, it is usually an interrupt service
- * routine) and an upper side (upper driver, accessed by the application
- * threads).<br>
- * There are several kind of queues:<br>
- * - <b>Input queue</b>, unidirectional queue where the writer is the
- *   lower side and the reader is the upper side.
- * - <b>Output queue</b>, unidirectional queue where the writer is the
- *   upper side and the reader is the lower side.
- * - <b>Full duplex queue</b>, bidirectional queue where read and write
- *   operations can happen at the same time. Full duplex queues
- *   are implemented by pairing an input queue and an output queue together.
- * .
- * In order to use the I/O queues the @p CH_USE_QUEUES option must
- * be specified in @p chconf.h.<br>
- *
- * @ingroup IO
  */
 
 /**

@@ -18,7 +18,7 @@
 */
 
 /**
- * @file os/ports/GCC/ARM7/AT91SAM7X/pal_lld.c
+ * @file AT91SAM7X/pal_lld.c
  * @brief AT91SAM7X PIO low level driver code
  * @addtogroup AT91SAM7X_PAL
  * @{
