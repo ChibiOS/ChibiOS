@@ -37,7 +37,7 @@ ReadyList rlist;
  */
 void scheduler_init(void) {
 
-  queue_init(&rlist);
+  queue_init(&rlist.r_queue);
   rlist.r_prio = NOPRIO;
 #if CH_USE_ROUNDROBIN
   rlist.r_preempt = CH_TIME_QUANTUM;
@@ -82,7 +82,7 @@ void chSchGoSleepS(tstate_t newstate) {
   Thread *otp;
 
   (otp = currp)->p_state = newstate;
-  (currp = fifo_remove((void *)&rlist))->p_state = PRCURR;
+  (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
 #if CH_USE_ROUNDROBIN
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
@@ -194,7 +194,7 @@ void chSchDoRescheduleI(void) {
 
   Thread *otp = currp;
   /* pick the first thread from the ready queue and makes it current */
-  (currp = fifo_remove((void *)&rlist))->p_state = PRCURR;
+  (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
   chSchReadyI(otp);
 #if CH_USE_ROUNDROBIN
   rlist.r_preempt = CH_TIME_QUANTUM;
@@ -211,7 +211,7 @@ void chSchDoRescheduleI(void) {
 void chSchRescheduleS(void) {
   /* first thread in the runnable queue has higher priority than the running
    * thread? */
-  if (firstprio(&rlist) > currp->p_prio)
+  if (firstprio(&rlist.r_queue) > currp->p_prio)
     chSchDoRescheduleI();
 }
 
@@ -224,7 +224,7 @@ void chSchRescheduleS(void) {
  * @retval FALSE if a reschedulation is not required.
  */
 bool_t chSchRescRequiredI(void) {
-  tprio_t p1 = firstprio(&rlist);
+  tprio_t p1 = firstprio(&rlist.r_queue);
   tprio_t p2 = currp->p_prio;
 #if CH_USE_ROUNDROBIN
   /* If the running thread has not reached its time quantum, reschedule only
