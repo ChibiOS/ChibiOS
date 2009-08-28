@@ -3,6 +3,10 @@
 *****************************************************************************
 
 *** 1.3.2 ***
+- FIX: Modified linker scripts for GCC 4.4.x (bug 2846302).
+- FIX: Fixed the CH_OPTIMIZE_SPEED option in the CM3 port (bug 2846278).
+- FIX: Fixed GCC 4.4.x related problems in CM3 port (bug 2846162).
+- FIX: Fixed LPC214x UART problem (bug 2841088).
 - NEW: Reorganized and rationalized the distribution tree.
 - NEW: Enhanced serial driver. The driver now supports speed change at runtime
   and low power stop mode.
