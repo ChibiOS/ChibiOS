@@ -30,8 +30,8 @@ __stacks_total_size__	= __und_stack_size__ + __abt_stack_size__ + __fiq_stack_si
 
 MEMORY
 {
-	flash : org = 0x100000, len = 256k
-	ram : org = 0x200020, len = 64k - 0x20
+    flash : org = 0x100000, len = 256k
+    ram : org = 0x200020, len = 64k - 0x20
 }
 
 __ram_start__		= ORIGIN(ram);
@@ -42,49 +42,53 @@ SECTIONS
 {
 	. = 0;
 
-	.text :
+	.text : ALIGN(16) SUBALIGN(16)
 	{
-		_text = .;
-		KEEP(*(vectors));
-                *(.text)
-		*(.text.*);
-		*(.rodata);
-		*(.rodata.*);
-		*(.glue_7t);
-		*(.glue_7);
-		*(.gcc*);
-		*(.ctors);
-		*(.dtors);
-		. = ALIGN(4);
-		_etext = .;
-	} > flash
+        _text = .;
+        KEEP(*(vectors))
+        *(.text)
+        *(.text.*);
+        *(.rodata);
+        *(.rodata.*);
+        *(.glue_7t);
+        *(.glue_7);
+        *(.gcc*);
+        *(.ctors);
+        *(.dtors);
+        . = ALIGN(4);
+        _etext = .;
+    } > flash
 
-	_textdata = _etext;
+    _textdata = _etext;
 
-	.data :
-	{
-		_data = .;
-		_data = .;
-		*(.data)
-		. = ALIGN(4);
-		*(.data.*)
-		. = ALIGN(4);
-		*(.ramtext)
-		. = ALIGN(4);
-		_edata = .;
-	} > ram AT > flash
+    .data :
+    {
+        _data = .;
+        *(.data)
+        . = ALIGN(4);
+        *(.data.*)
+        . = ALIGN(4);
+        *(.ramtext)
+        . = ALIGN(4);
+        _edata = .;
+    } > ram AT > flash
 
-	.bss :
-	{
-		_bss_start = .;
-		*(.bss)
-		. = ALIGN(4);
-		*(.bss.*)
-		. = ALIGN(4);
-		*(COMMON)
-		. = ALIGN(4);
-		_bss_end = .;
-	} > ram    
+    .bss :
+    {
+        _bss_start = .;
+        *(.bss)
+        . = ALIGN(4);
+        *(.bss.*)
+        . = ALIGN(4);
+        *(COMMON)
+        . = ALIGN(4);
+        _bss_end = .;
+    } > ram    
+    
+    /DISCARD/ :
+    {
+        *(.eh_*)
+    }
 }
 
 PROVIDE(end = .);
