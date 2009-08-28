@@ -64,7 +64,7 @@
  * @extends ThreadsQueue
  */
 typedef struct {
-  ThreadsQueue          r_queue;        /**< Next @p Threads queue.*/
+  ThreadsQueue          r_queue;        /**< Threads queue.*/
   tprio_t               r_prio;         /**< This field must be initialized to
                                              zero.*/
   /* End of the fields shared with the Thread structure.*/
