@@ -233,7 +233,7 @@ struct context {
 }
 #else
 #define port_lock() {                                                   \
-  asm volatile ("bl     _port_lock" : : : "r3", "lr");                  \
+  asm volatile ("bl      _port_lock" : : : "r3", "lr");                 \
 }
 #endif
 
@@ -247,7 +247,7 @@ struct context {
 }
 #else
 #define port_unlock() {                                                 \
-  asm volatile ("bl     _port_unlock" : : : "r3", "lr");                \
+  asm volatile ("bl      _port_unlock" : : : "r3", "lr");               \
 }
 #endif
 
