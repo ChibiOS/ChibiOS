@@ -138,19 +138,18 @@ static void wakeup(void *p) {
  * @retval RDY_TIMEOUT if a timeout occurs.
  */
 msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
-  Thread *tp = currp;
 
   if (TIME_INFINITE != time) {
     VirtualTimer vt;
 
-    chVTSetI(&vt, time, wakeup, tp);
+    chVTSetI(&vt, time, wakeup, currp);
     chSchGoSleepS(newstate);
     if (chVTIsArmedI(&vt))
       chVTResetI(&vt);
   }
   else
     chSchGoSleepS(newstate);
-  return tp->p_rdymsg;
+  return currp->p_rdymsg;
 }
 
 /**
