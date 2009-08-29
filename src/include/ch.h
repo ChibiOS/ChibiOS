@@ -42,7 +42,7 @@
 /**
  * Kernel version string.
  */
-#define CH_KERNEL_VERSION       "1.2.3"
+#define CH_KERNEL_VERSION       "1.2.4"
 
 /**
  * Kernel version major number.
@@ -57,7 +57,7 @@
 /**
  * Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         3
+#define CH_KERNEL_PATCH         4
 
 /*
  * Common values.
