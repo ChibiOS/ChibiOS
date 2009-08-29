@@ -1,6 +1,6 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.2.3 stable
-Compiler: GCC 4.3.3 (YAGARTO 29.03.2009)
+Kernel:   ChibiOS/RT 1.2.4 stable
+Compiler: GCC 4.4.1 (YAGARTO 17.08.2009)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 ***************************************************************************
@@ -59,31 +59,31 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.1 (Benchmark, context switch #1, optimal)
---- Score : 161087 msgs/S, 322174 ctxswc/S
+--- Score : 161628 msgs/S, 323256 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.2 (Benchmark, context switch #2, empty ready list)
---- Score : 132896 msgs/S, 265792 ctxswc/S
+--- Score : 135928 msgs/S, 271856 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.3 (Benchmark, context switch #3, 4 threads in ready list)
---- Score : 132896 msgs/S, 265792 ctxswc/S
+--- Score : 135928 msgs/S, 271856 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.4 (Benchmark, threads creation/termination, worst case)
---- Score : 122995 threads/S
+--- Score : 127249 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.5 (Benchmark, threads creation/termination, optimal)
---- Score : 158419 threads/S
+--- Score : 162741 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.6 (Benchmark, mass reschedulation, 5 threads)
---- Score : 41861 reschedulations/S, 251166 ctxswc/S
+--- Score : 43418 reschedulations/S, 260508 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.7 (Benchmark, I/O Queues throughput)
---- Score : 377512 bytes/S
+--- Score : 377328 bytes/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.8 (Benchmark, virtual timers set/reset)
@@ -91,11 +91,11 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.9 (Benchmark, semaphores wait/signal)
---- Score : 676356 wait+signal/S
+--- Score : 686040 wait+signal/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.10 (Benchmark, mutexes lock/unlock)
---- Score : 489548 lock+unlock/S
+--- Score : 474956 lock+unlock/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 

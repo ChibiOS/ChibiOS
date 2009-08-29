@@ -1,6 +1,6 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.2.3 stable
-Compiler: GCC 4.3.3 (YAGARTO 29.03.2009)
+Kernel:   ChibiOS/RT 1.2.4 stable
+Compiler: GCC 4.4.1 (YAGARTO 17.08.2009)
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 ***************************************************************************
@@ -59,31 +59,31 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.1 (Benchmark, context switch #1, optimal)
---- Score : 145302 msgs/S, 290604 ctxswc/S
+--- Score : 146190 msgs/S, 292380 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.2 (Benchmark, context switch #2, empty ready list)
---- Score : 112484 msgs/S, 224968 ctxswc/S
+--- Score : 115473 msgs/S, 230946 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.3 (Benchmark, context switch #3, 4 threads in ready list)
---- Score : 112483 msgs/S, 224966 ctxswc/S
+--- Score : 115472 msgs/S, 230944 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.4 (Benchmark, threads creation/termination, worst case)
---- Score : 103031 threads/S
+--- Score : 108403 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.5 (Benchmark, threads creation/termination, optimal)
---- Score : 141435 threads/S
+--- Score : 152246 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.6 (Benchmark, mass reschedulation, 5 threads)
---- Score : 36162 reschedulations/S, 216972 ctxswc/S
+--- Score : 36493 reschedulations/S, 218958 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.7 (Benchmark, I/O Queues throughput)
---- Score : 341164 bytes/S
+--- Score : 343620 bytes/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.8 (Benchmark, virtual timers set/reset)
@@ -95,7 +95,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.10 (Benchmark, mutexes lock/unlock)
---- Score : 386324 lock+unlock/S
+--- Score : 380188 lock+unlock/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 
