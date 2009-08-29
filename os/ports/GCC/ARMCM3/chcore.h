@@ -306,7 +306,7 @@ struct context {
   if (sp - sizeof(struct intctx) - sizeof(Thread) < (char *)_otp)       \
     asm volatile ("movs    r0, #0                               \n\t"   \
                   "b       chDbgPanic");                                \
-    asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");  \
+  asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");    \
 }
 #else /* !CH_DBG_ENABLE_STACK_CHECK */
 #define port_switch(otp, ntp) {                                         \
