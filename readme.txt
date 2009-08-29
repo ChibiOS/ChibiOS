@@ -1,64 +1,12 @@
 *****************************************************************************
-*** Directories structure                                                 ***
-*****************************************************************************
-
-./readme.txt           - This file.
-./license.txt          - GPL3 license file.
-./src/                 - ChibiOS/RT portable kernel source files.
-./src/include/         - ChibiOS/RT include files.
-./src/lib/             - ChibiOS/RT library code that can be included into
-                         user applications but is not part of the core system.
-                         The code in this directory is meant to be portable,
-                         generic and architecture independent.
-./src/templates/       - ChibiOS/RT non portable source templates, new ports
-                         are started by copying the templates into a new
-                         directory under ./demos/ and/or ./ports/.
-./ports/               - Architecture specific portable files.
-./demos/               - Demo programs for specific architectures/boards.
-./ext/                 - External libraries or other code not part of
-                         ChibiOS/RT but used in the demo applications.
-./test/                - Test code, used by some demos.
-./docs/src             - Documentation sources.
-./docs/rsc             - Documentation resources.
-./docs/Doxyfile        - Doxygen project file.
-./docs/index.html      - ChibiOS/RT documentation.
-                         The documentation is also available on the project
-                         web page: http://chibios.sourceforge.net/
-./docs/reports         - Test reports on the various targets.
-
-*****************************************************************************
-*** Current ports/demos                                                   ***
-*****************************************************************************
-Current ports under ./demos:
-
-ARM7-LPC214x-GCC       - ChibiOS/RT port for ARM7 LPC2148, the demo targets
-                         the Olimex LPC-P2148 board. This port can be easily
-                         modified for any processor into the LPC2000 family or
-                         other boards. The demo can be compiled using YAGARTO
-                         or any other GCC-based ARM toolchain. Full demo.
-ARM7-LPC214x-GCC-min   - Minimal demo for LPC214X.
-ARM7-LPC214x-G++       - Yet another LPC214X demo but this one is done using
-                         G++ in order to provide a C++ template project to the
-                         ChibiOS/RT users.
-ARM7-AT91SAM7X-GCC     - Port for Atmel AT91SAM7X256. The demo program targets
-                         the Olimex SAM7-EX256 board.
-ARM7-AT91SAM7X-WEB-GCC - Port for Atmel AT91SAM7X256. The web demo program
-                         targets the Olimex SAM7-EX256 board.
-ARMCM3-ST32F103-GCC    - ARM Cortex-M3 port. The demo targets the Olimex
-                         STM32-P103 board.
-AVR-AVRmega128-GCC     - Port on AVRmega128. A special thanks to Vladimir for
-                         the work done on the AVR port. The demo program
-                         targets the Olimex AVR-MT-128 mini terminal board.
-AVR-AT90CANx-GCC       - Port on AVR AT90CAN128, not tested on hardware yet. It
-                         ran correctly in the simulator.
-MSP430-MSP430x1611-GCC - Port on Texas Instruments MSP430F1611, the demo
-                         targets the Olimex MSP430-P1611 board.
-Win32-MinGW            - ChibiOS/RT simulator and demo into a WIN32 process,
-                         MinGW version.
-
-*****************************************************************************
 *** Releases                                                              ***
 *****************************************************************************
+
+*** 1.2.4 ***
+- FIX: Modified linker scripts for GCC 4.4.x (bug 2846302).
+- FIX: Fixed the CH_OPTIMIZE_SPEED option in the CM3 port (bug 2846278).
+- FIX: Fixed GCC 4.4.x related problems in CM3 port (bug 2846162).
+- FIX: Fixed LPC214x UART problem (bug 2841088).
 
 *** 1.2.3 ***
 - FIX: Fixed C99-style variable declarations (bug 2792919).
