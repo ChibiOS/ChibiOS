@@ -1,5 +1,5 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.2.3 stable
+Kernel:   ChibiOS/RT 1.2.4 stable
 Compiler: GCC 3.2.3 (MSPGCC)
 Options:  -O2 -fomit-frame-pointer
 Settings: MCLK=DCOCLK 750Khz
@@ -63,7 +63,7 @@ Settings: MCLK=DCOCLK 750Khz
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.2 (Benchmark, context switch #2, empty ready list)
---- Score : 1602 msgs/S, 3204 ctxswc/S
+--- Score : 1603 msgs/S, 3206 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.3 (Benchmark, context switch #3, 4 threads in ready list)
@@ -75,7 +75,7 @@ Settings: MCLK=DCOCLK 750Khz
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.5 (Benchmark, threads creation/termination, optimal)
---- Score : 1699 threads/S
+--- Score : 1698 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.6 (Benchmark, mass reschedulation, 5 threads)
@@ -87,7 +87,7 @@ Settings: MCLK=DCOCLK 750Khz
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.8 (Benchmark, virtual timers set/reset)
---- Score : 5626 timers/S
+--- Score : 5628 timers/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.9 (Benchmark, semaphores wait/signal)

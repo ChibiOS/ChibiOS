@@ -1,6 +1,6 @@
 ***************************************************************************
-Kernel:   ChibiOS/RT 1.2.3 stable
-Compiler: GCC 4.3.3 (YAGARTO 29.03.2009)
+Kernel:   ChibiOS/RT 1.2.4 stable
+Compiler: GCC 4.4.1 (YAGARTO 17.08.2009)
 Options:  -Os -fomit-frame-pointer -mabi=apcs-gnu
 Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 ***************************************************************************
@@ -59,27 +59,27 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.1 (Benchmark, context switch #1, optimal)
---- Score : 103045 msgs/S, 206090 ctxswc/S
+--- Score : 104855 msgs/S, 209710 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.2 (Benchmark, context switch #2, empty ready list)
---- Score : 85382 msgs/S, 170764 ctxswc/S
+--- Score : 86464 msgs/S, 172928 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.3 (Benchmark, context switch #3, 4 threads in ready list)
---- Score : 85382 msgs/S, 170764 ctxswc/S
+--- Score : 86464 msgs/S, 172928 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.4 (Benchmark, threads creation/termination, worst case)
---- Score : 82154 threads/S
+--- Score : 85230 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.5 (Benchmark, threads creation/termination, optimal)
---- Score : 112237 threads/S
+--- Score : 117478 threads/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.6 (Benchmark, mass reschedulation, 5 threads)
---- Score : 27977 reschedulations/S, 167862 ctxswc/S
+--- Score : 28614 reschedulations/S, 171684 ctxswc/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.7 (Benchmark, I/O Queues throughput)
@@ -87,15 +87,15 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.8 (Benchmark, virtual timers set/reset)
---- Score : 323122 timers/S
+--- Score : 323124 timers/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.9 (Benchmark, semaphores wait/signal)
---- Score : 367152 wait+signal/S
+--- Score : 364360 wait+signal/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 --- Test Case 10.10 (Benchmark, mutexes lock/unlock)
---- Score : 263848 lock+unlock/S
+--- Score : 262400 lock+unlock/S
 --- Result: SUCCESS
 ---------------------------------------------------------------------------
 
