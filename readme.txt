@@ -3,6 +3,7 @@
 *****************************************************************************
 
 *** 1.2.4 ***
+- FIX: Fixed GCC 4.4.x aliasing warnings (bug 2846336).
 - FIX: Modified linker scripts for GCC 4.4.x (bug 2846302).
 - FIX: Fixed the CH_OPTIMIZE_SPEED option in the CM3 port (bug 2846278).
 - FIX: Fixed GCC 4.4.x related problems in CM3 port (bug 2846162).

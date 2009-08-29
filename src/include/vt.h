@@ -96,7 +96,8 @@ extern VTList vtlist;
     while (!(vtp = vtlist.vt_next)->vt_time) {                          \
       vtfunc_t fn = vtp->vt_func;                                       \
       vtp->vt_func = NULL;                                              \
-      (vtp->vt_next->vt_prev = (void *)&vtlist)->vt_next = vtp->vt_next;\
+      vtp->vt_next->vt_prev = (void *)&vtlist;                          \
+      (&vtlist)->vt_next = vtp->vt_next;                                \
       fn(vtp->vt_par);                                                  \
     }                                                                   \
   }                                                                     \
