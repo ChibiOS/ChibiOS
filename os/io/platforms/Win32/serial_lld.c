@@ -30,11 +30,11 @@
 #include <ch.h>
 #include <serial.h>
 
-/** @brief USART0 serial driver identifier.*/
+/** @brief Serial driver 1 identifier.*/
 #if USE_WIN32_SERIAL1 || defined(__DOXYGEN__)
 SerialDriver SD1;
 #endif
-/** @brief USART1 serial driver identifier.*/
+/** @brief Serial driver 2 identifier.*/
 #if USE_WIN32_SERIAL2 || defined(__DOXYGEN__)
 SerialDriver SD2;
 #endif

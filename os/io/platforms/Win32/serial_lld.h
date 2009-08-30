@@ -142,7 +142,6 @@ struct _serial_driver_data {
  *       initializers.
  */
 typedef struct {
-  uint16_t              port;
 } SerialDriverConfig;
 
 /*===========================================================================*/
