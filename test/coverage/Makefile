@@ -63,15 +63,14 @@ include ../../test/test.mk
 # List C source files here
 SRC  = ${KERNSRC} \
        ${TESTSRC} \
-       chcore.c \
-       simcom.c \
-       main.c
+       ../../os/io/serial.c \
+       chcore.c serial_lld.c main.c
 
 # List ASM source files here
 ASRC =
 
 # List all user directories here
-UINCDIR = $(KERNINC) $(TESTINC)
+UINCDIR = $(KERNINC) $(TESTINC) ../../os/io
 
 # List the user directory to look for the libraries here
 ULIBDIR =

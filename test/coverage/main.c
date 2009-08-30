@@ -17,14 +17,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <windows.h>
 #include <string.h>
 #include <stdio.h>
 
 #include <ch.h>
+#include <serial.h>
 #include <test.h>
-
-extern FullDuplexDriver COM1;
 
 /*
  * Simulator main.
@@ -33,8 +31,10 @@ int main(int argc, char *argv[]) {
   msg_t result;
 
   chSysInit();
-  result = TestThread(&COM1);
-  chThdSleepMilliseconds(1); /* Gives time to flush COM1 output queue */
+  sdStart(&SD1, NULL);
+
+  result = TestThread(&SD1);
+  chThdSleepMilliseconds(1); /* Gives time to flush SD1 output queue */
   fflush(stdout);
   if (result)
     exit(1);

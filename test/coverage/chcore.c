@@ -20,22 +20,16 @@
 #include <windows.h>
 #include <stdio.h>
 
-#undef CDECL
-
 /**
  * @addtogroup WIN32SIM_CORE
  * @{
  */
 
 #include <ch.h>
+#include <serial.h>
 
 static LARGE_INTEGER nextcnt;
 static LARGE_INTEGER slice;
-
-void init_simcom1(void);
-bool_t com1_conn_chkint(void);
-bool_t com1_in_chkint(void);
-bool_t com1_out_chkint(void);
 
 /*
  * Simulated HW initialization.
@@ -53,7 +47,7 @@ void InitCore(void) {
   QueryPerformanceCounter(&nextcnt);
   nextcnt.QuadPart += slice.QuadPart;
 
-  init_simcom1();
+  sdInit();
 
   fflush(stdout);
 }
@@ -65,7 +59,7 @@ void ChkIntSources(void) {
   LARGE_INTEGER n;
   bool_t rflag = FALSE;
 
-  if (com1_conn_chkint() || com1_in_chkint() || com1_out_chkint()) {
+  if (sd_lld_interrupt_pending()) {
     if (chSchRescRequiredI())
       rflag = TRUE;
   }
