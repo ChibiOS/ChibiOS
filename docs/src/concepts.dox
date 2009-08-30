@@ -34,7 +34,7 @@
  * ChibiOS/RT APIs are all named following this convention:
  * @a ch\<group\>\<action\>\<suffix\>().
  * The possible groups are: @a Sys, @a Sch, @a Time, @a VT, @a Thd, @a Sem,
- * @a Mtx, @a Cond, @a Evt, @a Msg, @a IQ, @a OQ, @a IO, @a FDD, @a Dbg,
+ * @a Mtx, @a Cond, @a Evt, @a Msg, @a IQ, @a OQ, @a IO, @a Dbg,
  * @a Heap, @a Pool.
  *
  * @section api_suffixes API Names Suffixes
