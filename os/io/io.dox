@@ -107,7 +107,7 @@
  */
 
 /**
- * @defgroup PAL_LLD PAL Low Level Driver Template
+ * @defgroup PAL_LLD PAL Low Level Driver
  * @brief @ref PAL low level driver template.
  * @details This file is a template for an I/O port low level driver.
  *
@@ -129,7 +129,7 @@
  */
 
 /**
- * @defgroup SERIAL_LLD Serial Low Level Driver Template
+ * @defgroup SERIAL_LLD Serial Low Level Driver
  * @brief @ref SERIAL low level driver template.
  * @details This file is a template for a serial low level driver.
  *
