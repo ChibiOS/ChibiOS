@@ -18,9 +18,9 @@
 */
 
 /**
- * @file STM32F103/stm32_can.h
+ * @file STM32/stm32_can.h
  * @brief STM32 CAN driver header file
- * @addtogroup STM32F103_CAN
+ * @addtogroup STM32_CAN
  * @{
  */
 

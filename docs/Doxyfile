@@ -592,7 +592,7 @@ INPUT                  = ../docs/src \
                          ../os/io/platforms/AVR \
                          ../os/io/platforms/LPC214x \
                          ../os/io/platforms/MSP430 \
-                         ../os/io/platforms/STM32F103 \
+                         ../os/io/platforms/STM32 \
                          ../os/various \
                          ../test
 

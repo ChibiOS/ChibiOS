@@ -67,8 +67,8 @@ CSRC = ${PORTSRC} \
        ${TESTSRC} \
        ../../os/io/pal.c \
        ../../os/io/serial.c \
-       ../../os/io/platforms/STM32F103/pal_lld.c \
-       ../../os/io/platforms/STM32F103/serial_lld.c \
+       ../../os/io/platforms/STM32/pal_lld.c \
+       ../../os/io/platforms/STM32/serial_lld.c \
        ../../os/various/evtimer.c \
        board.c main.c
 
@@ -99,11 +99,11 @@ TCPPSRC =
 
 # List ASM source files here
 ASMSRC = $(PORTASM) \
-         ../../ports/ARMCM3-STM32F103/vectors.s
+         ../../os/ports/GCC/ARMCM3/STM32F103/vectors.s
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          ../../os/io \
-         ../../os/io/platforms/STM32F103 \
+         ../../os/io/platforms/STM32 \
          ../../os/various \
          ./stm32lib/inc
 
