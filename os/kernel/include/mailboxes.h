@@ -20,7 +20,7 @@
 /**
  * @file mailboxes.h
  * @brief Mailboxes macros and structures.
- * @addtogroup Mailboxes
+ * @addtogroup mailboxes
  * @{
  */
 

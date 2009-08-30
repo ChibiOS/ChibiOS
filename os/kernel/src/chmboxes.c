@@ -20,7 +20,7 @@
 /**
  * @file chmboxes.c
  * @brief Mailboxes code.
- * @addtogroup Mailboxes
+ * @addtogroup mailboxes
  * @{
  */
 

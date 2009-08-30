@@ -20,7 +20,7 @@
 /**
  * @file debug.h
  * @brief Debug macros and structures.
- * @addtogroup Debug
+ * @addtogroup debug
  * @{
  */
 

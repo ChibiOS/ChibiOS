@@ -20,7 +20,7 @@
 /**
  * @file chlists.c
  * @brief Thread queues/lists code.
- * @addtogroup ThreadLists
+ * @addtogroup internals
  * @{
  */
 #include <ch.h>

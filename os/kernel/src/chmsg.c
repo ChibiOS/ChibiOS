@@ -20,7 +20,7 @@
 /**
  * @file chmsg.c
  * @brief Messages code.
- * @addtogroup Messages
+ * @addtogroup messages
  * @{
  */
 

@@ -20,7 +20,7 @@
 /**
  * @file heap.h
  * @brief Heap macros and structures.
- * @addtogroup Heap
+ * @addtogroup heap
  * @{
  */
 

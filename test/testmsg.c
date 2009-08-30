@@ -25,11 +25,11 @@
  * @page test_msg Messages test
  *
  * <h2>Description</h2>
- * This module implements the test sequence for the @ref Messages subsystem.
+ * This module implements the test sequence for the @ref messages subsystem.
  *
  * <h2>Objective</h2>
- * Objective of the test module is to cover 100% of the @ref Messages
- * subsystem code as a necessary step in order to assess its maturity level.
+ * Objective of the test module is to cover 100% of the @ref messages
+ * subsystem code.
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:

@@ -20,7 +20,7 @@
 /**
  * @file ch.h
  * @brief ChibiOS/RT main include file, it includes everything else.
- * @addtogroup Kernel
+ * @addtogroup kernel_info
  * @{
  */
 

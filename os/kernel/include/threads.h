@@ -20,7 +20,7 @@
 /**
  * @file threads.h
  * @brief Threads macros and structures.
- * @addtogroup Threads
+ * @addtogroup threads
  * @{
  */
 

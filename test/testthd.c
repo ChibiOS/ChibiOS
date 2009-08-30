@@ -25,15 +25,14 @@
  * @page test_threads Threads and Scheduler test
  *
  * <h2>Description</h2>
- * This module implements the test sequence for the @ref Scheduler,
- * @ref Threads and @ref Time subsystems.<br>
+ * This module implements the test sequence for the @ref scheduler,
+ * @ref threads and @ref time subsystems.<br>
  * Note that the tests on those subsystems are formally required but most of
  * their functionality is already demonstrated because the test suite itself
  * depends on them, anyway double check is good.
  *
  * <h2>Objective</h2>
- * Objective of the test module is to cover 100% of the subsystems code
- * as a necessary step in order to assess their maturity level.
+ * Objective of the test module is to cover 100% of the subsystems code.
  *
  * <h2>Preconditions</h2>
  * None.

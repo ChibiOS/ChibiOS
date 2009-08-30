@@ -25,11 +25,10 @@
  * @page test_pools Memory Pools test
  *
  * <h2>Description</h2>
- * This module implements the test sequence for the @ref MemoryPools subsystem.
+ * This module implements the test sequence for the @ref pools subsystem.
  *
  * <h2>Objective</h2>
- * Objective of the test module is to cover 100% of the @ref MemoryPools
- * code as a necessary step in order to assess its maturity level.<br>
+ * Objective of the test module is to cover 100% of the @ref pools code.
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:

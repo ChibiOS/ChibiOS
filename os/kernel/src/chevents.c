@@ -20,7 +20,7 @@
 /**
  * @file chevents.c
  * @brief Events code.
- * @addtogroup Events
+ * @addtogroup events
  * @{
  */
 #include <ch.h>

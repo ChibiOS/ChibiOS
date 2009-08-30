@@ -20,7 +20,7 @@
 /**
  * @file chheap.c
  * @brief Heap code.
- * @addtogroup Heap
+ * @addtogroup heap
  * @{
  */
 

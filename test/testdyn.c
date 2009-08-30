@@ -29,8 +29,7 @@
  * APIs.
  *
  * <h2>Objective</h2>
- * Objective of the test module is to cover 100% of the dynamic APIs code
- * as a necessary step in order to assess their maturity.
+ * Objective of the test module is to cover 100% of the dynamic APIs code.
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:

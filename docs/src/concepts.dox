@@ -54,7 +54,7 @@
  * - <b>Regular Interrupts</b>. Maskable interrupt sources that cannot
  *   preempt the kernel code and are thus able to invoke operating system APIs
  *   from within their handlers. The interrupt handlers belonging to this class
- *   must be written following some rules. See the @ref System APIs group and
+ *   must be written following some rules. See the @ref system APIs group and
  *   @ref article_interrupts.
  * - <b>Fast Interrupts</b>. Maskable interrupt sources with the ability
  *   to preempt the kernel code and thus have a lower latency and are less
@@ -244,7 +244,7 @@
  * - Interrupt Stack.
  * - Internal Context.
  * .
- * See the @ref Core documentation for details, the area may change on
+ * See the @ref core documentation for details, the area may change on
  * the various ports and some structures may not be present (or be zero-sized).
  *
  * @section architecture Architectural Diagram

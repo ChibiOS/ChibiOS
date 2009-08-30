@@ -22,7 +22,7 @@
 
 /**
  * @file inline.h
- * @brief Kernel inlined functions.
+ * @brief kernel inlined functions.
  */
 
 /*

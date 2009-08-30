@@ -25,11 +25,10 @@
  * @page test_heap Memory Heap test
  *
  * <h2>Description</h2>
- * This module implements the test sequence for the @ref Heap subsystem.
+ * This module implements the test sequence for the @ref heap subsystem.
  *
  * <h2>Objective</h2>
- * Objective of the test module is to cover 100% of the @ref Heap subsystem
- * code as a necessary step in order to assess its maturity level.
+ * Objective of the test module is to cover 100% of the @ref heap subsystem.
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:

@@ -20,7 +20,7 @@
 /**
  * @file chdebug.c
  * @brief ChibiOS/RT Debug code.
- * @addtogroup Debug
+ * @addtogroup debug
  * @{
  */
 

@@ -25,11 +25,10 @@
  * @page test_sem Semaphores test
  *
  * <h2>Description</h2>
- * This module implements the test sequence for the @ref Semaphores subsystem.
+ * This module implements the test sequence for the @ref semaphores subsystem.
  *
  * <h2>Objective</h2>
- * Objective of the test module is to cover 100% of the @ref Semaphores
- * code as a necessary step in order to assess its maturity level.<br>
+ * Objective of the test module is to cover 100% of the @ref semaphores code.
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:

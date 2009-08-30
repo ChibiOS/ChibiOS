@@ -25,15 +25,14 @@
  * @page test_queues I/O Queues test
  *
  * <h2>Description</h2>
- * This module implements the test sequence for the @ref IOQueues subsystem.
+ * This module implements the test sequence for the @ref io_queues subsystem.
  * The tests are performed by inserting and removing data from queues and by
  * checking both the queues status and the correct sequence of the extracted
  * data.
  *
  * <h2>Objective</h2>
- * Objective of the test module is to cover 100% of the @ref IOQueues code
- * as a necessary step in order to assess its maturity level.<br>
- * Note that the @ref IOQueues subsystem depends on the @ref Semaphores
+ * Objective of the test module is to cover 100% of the @ref io_queues code.<br>
+ * Note that the @ref io_queues subsystem depends on the @ref semaphores
  * subsystem that has to met its testing objectives as well.
  *
  * <h2>Preconditions</h2>

@@ -20,7 +20,7 @@
 /**
  * @file chvt.c
  * @brief Time and Virtual Timers related code.
- * @addtogroup Time
+ * @addtogroup time
  * @{
  */
 

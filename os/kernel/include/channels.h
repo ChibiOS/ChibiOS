@@ -20,7 +20,7 @@
 /**
  * @file channels.h
  * @brief I/O channels
- * @addtogroup Channels
+ * @addtogroup io_channels
  * @{
  */
 

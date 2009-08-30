@@ -574,9 +574,10 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = ../docs/src \
+                         ../os/kernel \
                          ../os/kernel/include \
                          ../os/kernel/src \
-                         ../os/ports/templates \
+                         ../os/kernel/templates \
                          ../os/ports/GCC/ARM7 \
                          ../os/ports/GCC/ARM7/crt0.s \
                          ../os/ports/GCC/ARM7/chcoreasm.s \

@@ -25,14 +25,13 @@
  * @page test_mtx Mutexes test
  *
  * <h2>Description</h2>
- * This module implements the test sequence for the @ref Mutexes and
- * @ref CondVars subsystems.<br>
+ * This module implements the test sequence for the @ref mutexes and
+ * @ref condvars subsystems.<br>
  * Tests on those subsystems are particularly critical because the system-wide
  * implications of the Priority Inheritance mechanism.
  *
  * <h2>Objective</h2>
- * Objective of the test module is to cover 100% of the subsystem code
- * as a necessary step in order to assess their maturity level.
+ * Objective of the test module is to cover 100% of the subsystems code.
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:

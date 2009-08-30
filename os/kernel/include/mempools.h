@@ -20,7 +20,7 @@
 /**
  * @file mempools.h
  * @brief Memory Pools macros and structures.
- * @addtogroup MemoryPools
+ * @addtogroup pools
  * @{
  */
 
