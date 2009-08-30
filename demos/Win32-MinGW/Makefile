@@ -63,14 +63,17 @@ include ../../test/test.mk
 SRC  = ${KERNSRC} \
        ${TESTSRC} \
        chcore.c \
-       ../../os/ports/GCC/win32/simcom.c \
+       ../../os/io/serial.c \
+       ../../os/io/platforms/Win32/serial_lld.c \
        main.c
 
 # List ASM source files here
 ASRC =
 
 # List all user directories here
-UINCDIR = $(KERNINC) $(TESTINC)
+UINCDIR = $(KERNINC) $(TESTINC) \
+          ../../os/io \
+          ../../os/io/platforms/Win32
 
 # List the user directory to look for the libraries here
 ULIBDIR =

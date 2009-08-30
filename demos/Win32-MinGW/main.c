@@ -21,6 +21,7 @@
 #include <stdio.h>
 
 #include <ch.h>
+#include <serial.h>
 
 static uint32_t wdguard;
 static WORKING_AREA(wdarea, 2048);
@@ -33,8 +34,6 @@ static msg_t WatchdogThread(void *arg);
 static msg_t ConsoleThread(void *arg);
 
 msg_t TestThread(void *p);
-
-extern FullDuplexDriver COM1, COM2;
 
 #define cprint(msg) chMsgSend(cdtp, (msg_t)msg)
 
@@ -73,13 +72,13 @@ static msg_t ConsoleThread(void *arg) {
   return 0;
 }
 
-static void PrintLineFDD(FullDuplexDriver *sd, char *msg) {
+static void PrintLineSD(SerialDriver *sd, char *msg) {
 
   while (*msg)
-    chFDDPut(sd, *msg++);
+    sdPut(sd, *msg++);
 }
 
-static bool_t GetLineFDD(FullDuplexDriver *sd, char *line, int size) {
+static bool_t GetLineFDD(SerialDriver *sd, char *line, int size) {
   char *p = line;
 
   while (TRUE) {
@@ -87,27 +86,27 @@ static bool_t GetLineFDD(FullDuplexDriver *sd, char *line, int size) {
     if (c < 0)
       return TRUE;
     if (c == 4) {
-      PrintLineFDD(sd, "^D\r\n");
+      PrintLineSD(sd, "^D\r\n");
       return TRUE;
     }
     if (c == 8) {
       if (p != line) {
-        chFDDPut(sd, (uint8_t)c);
-        chFDDPut(sd, 0x20);
-        chFDDPut(sd, (uint8_t)c);
+        sdPut(sd, (uint8_t)c);
+        sdPut(sd, 0x20);
+        sdPut(sd, (uint8_t)c);
         p--;
       }
       continue;
     }
     if (c == '\r') {
-      PrintLineFDD(sd, "\r\n");
+      PrintLineSD(sd, "\r\n");
       *p = 0;
       return FALSE;
     }
     if (c < 0x20)
       continue;
     if (p < line + size - 1) {
-      chFDDPut(sd, (uint8_t)c);
+      sdPut(sd, (uint8_t)c);
       *p++ = (uint8_t)c;
     }
   }
@@ -120,19 +119,19 @@ static bool_t GetLineFDD(FullDuplexDriver *sd, char *line, int size) {
 static msg_t HelloWorldThread(void *arg) {
   int i;
   short c;
-  FullDuplexDriver *sd = (FullDuplexDriver *)arg;
+  SerialDriver *sd = (SerialDriver *)arg;
 
   for (i = 0; i < 10; i++) {
 
-    PrintLineFDD(sd, "Hello World\r\n");
-    c = chFDDGetTimeout(sd, 333);
+    PrintLineSD(sd, "Hello World\r\n");
+    c = sdGetTimeout(sd, 333);
     switch (c) {
     case Q_TIMEOUT:
       continue;
     case Q_RESET:
       return 1;
     case 3:
-      PrintLineFDD(sd, "^C\r\n");
+      PrintLineSD(sd, "^C\r\n");
       return 0;
     default:
       chThdSleep(333);
@@ -141,12 +140,12 @@ static msg_t HelloWorldThread(void *arg) {
   return 0;
 }
 
-static bool_t checkend(FullDuplexDriver *sd) {
+static bool_t checkend(SerialDriver *sd) {
 
   char * lp = strtok(NULL, " \009"); /* It is not thread safe but this is a demo.*/
   if (lp) {
-    PrintLineFDD(sd, lp);
-    PrintLineFDD(sd, " ?\r\n");
+    PrintLineSD(sd, lp);
+    PrintLineSD(sd, " ?\r\n");
     return TRUE;
   }
   return FALSE;
@@ -157,7 +156,7 @@ static bool_t checkend(FullDuplexDriver *sd) {
  * standard input and output. It recognizes few simple commands.
  */
 static msg_t ShellThread(void *arg) {
-  FullDuplexDriver *sd = (FullDuplexDriver *)arg;
+  SerialDriver *sd = (SerialDriver *)arg;
   char *lp, line[64];
   Thread *tp;
   WORKING_AREA(tarea, 2048);
@@ -166,11 +165,11 @@ static msg_t ShellThread(void *arg) {
   chIQResetI(&sd->d2.iqueue);
   chOQResetI(&sd->d2.oqueue);
   chSysUnlock();
-  PrintLineFDD(sd, "ChibiOS/RT Command Shell\r\n\n");
+  PrintLineSD(sd, "ChibiOS/RT Command Shell\r\n\n");
   while (TRUE) {
-    PrintLineFDD(sd, "ch> ");
+    PrintLineSD(sd, "ch> ");
     if (GetLineFDD(sd, line, sizeof(line))) {
-      PrintLineFDD(sd, "\nlogout");
+      PrintLineSD(sd, "\nlogout");
       break;
     }
     lp = strtok(line, " \009"); // Note: not thread safe but it is just a demo.
@@ -180,24 +179,24 @@ static msg_t ShellThread(void *arg) {
           (stricmp(lp, "?") == 0)) {
         if (checkend(sd))
           continue;
-        PrintLineFDD(sd, "Commands:\r\n");
-        PrintLineFDD(sd, "  help,h,? - This help\r\n");
-        PrintLineFDD(sd, "  exit     - Logout from ChibiOS/RT\r\n");
-        PrintLineFDD(sd, "  time     - Prints the system timer value\r\n");
-        PrintLineFDD(sd, "  hello    - Runs the Hello World demo thread\r\n");
-        PrintLineFDD(sd, "  test     - Runs the System Test thread\r\n");
+        PrintLineSD(sd, "Commands:\r\n");
+        PrintLineSD(sd, "  help,h,? - This help\r\n");
+        PrintLineSD(sd, "  exit     - Logout from ChibiOS/RT\r\n");
+        PrintLineSD(sd, "  time     - Prints the system timer value\r\n");
+        PrintLineSD(sd, "  hello    - Runs the Hello World demo thread\r\n");
+        PrintLineSD(sd, "  test     - Runs the System Test thread\r\n");
       }
       else if (stricmp(lp, "exit") == 0) {
         if (checkend(sd))
           continue;
-        PrintLineFDD(sd, "\nlogout");
+        PrintLineSD(sd, "\nlogout");
         break;
       }
       else if (stricmp(lp, "time") == 0) {
         if (checkend(sd))
           continue;
         sprintf(line, "Time: %d\r\n", chTimeNow());
-        PrintLineFDD(sd, line);
+        PrintLineSD(sd, line);
       }
       else if (stricmp(lp, "hello") == 0) {
         if (checkend(sd))
@@ -216,8 +215,8 @@ static msg_t ShellThread(void *arg) {
           break;  // Lost connection while executing the hello thread.
       }
       else {
-        PrintLineFDD(sd, lp);
-        PrintLineFDD(sd, " ?\r\n");
+        PrintLineSD(sd, lp);
+        PrintLineSD(sd, " ?\r\n");
       }
     }
   }
@@ -229,23 +228,23 @@ static Thread *s1;
 EventListener s1tel;
 
 static void COM1Handler(eventid_t id) {
-  dflags_t flags;
+  sdflags_t flags;
 
   if (s1 && chThdTerminated(s1)) {
     s1 = NULL;
-    cprint("Init: disconnection on COM1\n");
+    cprint("Init: disconnection on SD1\n");
   }
-  flags = chFDDGetAndClearFlags(&COM1);
+  flags = sdGetAndClearFlags(&SD1);
   if ((flags & SD_CONNECTED) && (s1 == NULL)) {
-    cprint("Init: connection on COM1\n");
+    cprint("Init: connection on SD1\n");
     s1 = chThdInit(s1area, sizeof(s1area),
-                   NORMALPRIO, ShellThread, &COM1);
+                   NORMALPRIO, ShellThread, &SD1);
     chEvtRegister(chThdGetExitEventSource(s1), &s1tel, 0);
     chThdResume(s1);
   }
   if ((flags & SD_DISCONNECTED) && (s1 != NULL)) {
     chSysLock();
-    chIQResetI(&COM1.d2.iqueue);
+    chIQResetI(&SD1.d2.iqueue);
     chSysUnlock();
   }
 }
@@ -255,23 +254,23 @@ static Thread *s2;
 EventListener s2tel;
 
 static void COM2Handler(eventid_t id) {
-  dflags_t flags;
+  sdflags_t flags;
 
   if (s2 && chThdTerminated(s2)) {
     s2 = NULL;
-    cprint("Init: disconnection on COM2\n");
+    cprint("Init: disconnection on SD2\n");
   }
-  flags = chFDDGetAndClearFlags(&COM2);
+  flags = sdGetAndClearFlags(&SD2);
   if ((flags & SD_CONNECTED) && (s2 == NULL)) {
-    cprint("Init: connection on COM2\n");
+    cprint("Init: connection on SD2\n");
     s2 = chThdInit(s2area, sizeof(s1area),
-                   NORMALPRIO, ShellThread, &COM2);
+                   NORMALPRIO, ShellThread, &SD2);
     chEvtRegister(chThdGetExitEventSource(s2), &s2tel, 1);
     chThdResume(s2);
   }
   if ((flags & SD_DISCONNECTED) && (s2 != NULL)) {
     chSysLock();
-    chIQResetI(&COM2.d2.iqueue);
+    chIQResetI(&SD2.d2.iqueue);
     chSysUnlock();
   }
 }
@@ -290,19 +289,22 @@ int main(void) {
   // Startup ChibiOS/RT.
   chSysInit();
 
+  sdStart(&SD1, NULL);
+  sdStart(&SD2, NULL);
+
   chThdCreateStatic(wdarea, sizeof(wdarea), NORMALPRIO + 2, WatchdogThread, NULL);
   cdtp = chThdCreateStatic(cdarea, sizeof(cdarea), NORMALPRIO + 1, ConsoleThread, NULL);
 
-  cprint("Console service started on COM1, COM2\n");
-  cprint("  - Listening for connections on COM1\n");
-  chFDDGetAndClearFlags(&COM1);
-  chEvtRegister(&COM1.d2.sevent, &c1fel, 0);
-  cprint("  - Listening for connections on COM2\n");
-  chFDDGetAndClearFlags(&COM2);
-  chEvtRegister(&COM2.d2.sevent, &c2fel, 1);
+  cprint("Console service started on SD1, SD2\n");
+  cprint("  - Listening for connections on SD1\n");
+  sdGetAndClearFlags(&SD1);
+  chEvtRegister(&SD1.d2.sevent, &c1fel, 0);
+  cprint("  - Listening for connections on SD2\n");
+  sdGetAndClearFlags(&SD2);
+  chEvtRegister(&SD2.d2.sevent, &c2fel, 1);
   while (!chThdShouldTerminate())
     chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));
-  chEvtUnregister(&COM2.d2.sevent, &c2fel); // Never invoked but this is an example...
-  chEvtUnregister(&COM1.d2.sevent, &c1fel); // Never invoked but this is an example...
+  chEvtUnregister(&SD1.d2.sevent, &c2fel); // Never invoked but this is an example...
+  chEvtUnregister(&SD2.d2.sevent, &c1fel); // Never invoked but this is an example...
   return 0;
 }

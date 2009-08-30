@@ -28,18 +28,10 @@
  */
 
 #include <ch.h>
+#include <serial.h>
 
 static LARGE_INTEGER nextcnt;
 static LARGE_INTEGER slice;
-
-void InitSimCom1(void);
-void InitSimCom2(void);
-BOOL Com1ConnInterruptSimCom(void);
-BOOL Com2ConnInterruptSimCom(void);
-BOOL Com1InInterruptSimCom(void);
-BOOL Com2InInterruptSimCom(void);
-BOOL Com1OutInterruptSimCom(void);
-BOOL Com2OutInterruptSimCom(void);
 
 /*
  * Simulated HW initialization.
@@ -64,8 +56,7 @@ void InitCore(void) {
   QueryPerformanceCounter(&nextcnt);
   nextcnt.QuadPart += slice.QuadPart;
 
-  InitSimCom1();
-  InitSimCom2();
+  sdInit();
   fflush(stdout);
 }
 
@@ -75,9 +66,7 @@ void InitCore(void) {
 void ChkIntSources(void) {
   LARGE_INTEGER n;
 
-  if (Com1InInterruptSimCom()   || Com2InInterruptSimCom()  ||
-      Com1OutInterruptSimCom()  || Com2OutInterruptSimCom() ||
-      Com1ConnInterruptSimCom() || Com2ConnInterruptSimCom()) {
+  if (sd_lld_interrupt_pending()) {
     if (chSchRescRequiredI())
       chSchDoRescheduleI();
     return;
