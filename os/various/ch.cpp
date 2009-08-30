@@ -19,7 +19,7 @@
 /**
  * @file ch.cpp
  * @brief C++ wrapper code.
- * @addtogroup CPlusPlusLibrary
+ * @addtogroup cpp_library
  * @{
  */
 

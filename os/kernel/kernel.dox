@@ -1,0 +1,320 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006-2007 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @defgroup kernel Kernel
+ * The kernel is the portable part of ChibiOS/RT, this section documents the
+ * various kernel subsystems.
+ */
+
+/**
+ * @defgroup kernel_info Version Numbers and Identification
+ * Kernel related settings and hooks.
+ * @ingroup kernel
+ */
+
+/**
+ * @defgroup config Configuration
+ * Kernel related settings and hooks.
+ * @ingroup kernel
+ */
+
+/**
+ * @defgroup types Types
+ * System types and macros.
+ * @ingroup kernel
+ */
+
+/**
+ * @defgroup base Base Kernel Services
+ * Base kernel services, the base subsystems are always included in the
+ * OS builds.
+ * @ingroup kernel
+ */
+
+/**
+ * @defgroup system System Management
+ * Initialization, Locks, Interrupt Handling, Power Management, Abnormal
+ * Termination.
+ * @ingroup base
+ */
+
+/**
+ * @defgroup time Time and Virtual Timers
+ * Time and Virtual Timers related APIs.
+ * @ingroup base
+ */
+
+/**
+ * @defgroup scheduler Scheduler
+ * ChibiOS/RT scheduler APIs and macros.
+ * @ingroup base
+ */
+
+/**
+ * @defgroup threads Threads
+ * Threads related APIs.
+ * @ingroup base
+ */
+
+/**
+ * @defgroup synchronization Synchronization
+ * Synchronization services.
+ * @ingroup kernel
+ */
+
+/**
+ * @defgroup semaphores Semaphores
+ * Semaphores and threads synchronization.
+ * <h2>Operation mode</h2>
+ * A semaphore is a threads synchronization object, some operations
+ * are defined on semaphores:
+ * - <b>Signal</b>: The semaphore counter is increased and if the result
+ *   is non-positive then a waiting thread is removed from the semaphore
+ *   queue and made ready for execution.
+ * - <b>Wait</b>: The semaphore counter is decreased and if the result
+ *   becomes negative the thread is queued in the semaphore and suspended.
+ * - <b>Reset</b>: The semaphore counter is reset to a non-negative value
+ *   and all the threads in the queue are released.
+ * .
+ * Semaphores can be used as guards for mutual exclusion code zones (note that
+ * mutexes are recommended for this kind of use) but also have other uses,
+ * queues guards and counters as example.<br>
+ * Semaphores usually use FIFO queues but it is possible to make them
+ * order threads by priority by specifying CH_USE_SEMAPHORES_PRIORITY in
+ * @p chconf.h.<br>
+ * In order to use the Semaphores APIs the @p CH_USE_SEMAPHORES
+ * option must be specified in @p chconf.h.<br><br>
+ * @ingroup synchronization
+ */
+
+/**
+ * @defgroup mutexes Mutexes
+ * Mutexes and threads synchronization.
+ * <h2>Operation mode</h2>
+ * A mutex is a threads synchronization object, some operations are defined
+ * on mutexes:
+ * - <b>Lock</b>: The mutex is checked, if the mutex is not owned by some
+ *   other thread then it is locked else the current thread is queued on the
+ *   mutex in a list ordered by priority.
+ * - <b>Unlock</b>: The mutex is released by the owner and the highest
+ *   priority thread waiting in the queue, if any, is resumed and made owner
+ *   of the mutex.
+ * .
+ * In order to use the Event APIs the @p CH_USE_MUTEXES option must be
+ * specified in @p chconf.h.<br>
+ *
+ * <h2>Constraints</h2>
+ * In ChibiOS/RT the Unlock operations are always performed in Lock-reverse
+ * order. The Unlock API does not even have a parameter, the mutex to unlock
+ * is taken from an internal stack of owned mutexes.
+ * This both improves the performance and is required by an efficient
+ * implementation of the priority inheritance mechanism.
+ *
+ * <h2>The priority inversion problem</h2>
+ * The mutexes in ChibiOS/RT implements the <b>full</b> priority
+ * inheritance mechanism in order handle the priority inversion problem.<br>
+ * When a thread is queued on a mutex, any thread, directly or indirectly,
+ * holding the mutex gains the same priority of the waiting thread (if their
+ * priority was not already equal or higher). The mechanism works with any
+ * number of nested mutexes and any number of involved threads. The algorithm
+ * complexity (worst case) is N with N equal to the number of nested mutexes.
+ * @ingroup synchronization
+ */
+
+/**
+ * @defgroup condvars Condition Variables
+ * Condition Variables and threads synchronization.
+ * <h2>Operation mode</h2>
+ * The condition variable is a synchronization object meant to be used inside
+ * a zone protected by a @p Mutex. Mutexes and CondVars together can implement
+ * a Monitor construct.<br>
+ * In order to use the Condition Variables APIs the @p CH_USE_CONDVARS
+ * option must be specified in @p chconf.h.<br><br>
+ * @ingroup synchronization
+ */
+
+/**
+ * @defgroup events Event Flags
+ * @brief Event Flags, Event Sources and Event Listeners.
+ * <h2>Operation mode</h2>
+ * Each thread has a mask of pending event flags inside its Thread structure.
+ * Several operations are defined:
+ * - <b>Wait</b>, the invoking thread goes to sleep until a certain AND/OR
+ *   combination of event flags becomes pending.
+ * - <b>Clear</b>, a mask of event flags is cleared from the pending events
+ *   mask, the cleared event flags mask is returned (only the flags that were
+     actually pending and then cleared).
+ * - <b>Signal</b>, an event mask is directly ORed to the mask of the signaled
+ *   thread.
+ * - <b>Broadcast</b>, each thread registered on an Event Source is signaled
+ *   with the event flags specified in its Event Listener.
+ * - <b>Dispatch</b>, an events mask is scanned and for each bit set to one
+ *   an associated handler function is invoked. Bit masks are scanned from bit
+ *   zero upward.
+ * .
+ * An Event Source is a special object that can be "broadcasted" by a thread or
+ * an interrupt service routine. Broadcasting an Event Source has the effect
+ * that all the threads registered on the Event Source will be signaled with
+ * and events mask.<br>
+ * An unlimited number of Event Sources can exists in a system and each
+ * thread can listen on an unlimited number of them.<br><br>
+ * In order to use the Event APIs the @p CH_USE_EVENTS option must be
+ * specified in @p chconf.h.
+ * @ingroup synchronization
+ */
+
+/**
+ * @defgroup messages Synchronous Messages
+ * Synchronous inter-thread messages.
+ * <h2>Operation Mode</h2>
+ * Synchronous messages are an easy to use and fast IPC mechanism, threads
+ * can both serve messages and send messages to other threads, the mechanism
+ * allows data to be carried in both directions. Data is not copied between
+ * the client and server threads but just a pointer passed so the exchange
+ * is very time efficient.<br>
+ * Messages are usually processed in FIFO order but it is possible to process
+ * them in priority order by specifying CH_USE_MESSAGES_PRIORITY
+ * in @p chconf.h.<br>
+ * Threads do not need to allocate space for message queues, the mechanism
+ * just requires two extra pointers in the @p Thread structure (the message
+ * queue header).<br>
+ * In order to use the Messages APIs the @p CH_USE_MESSAGES option must be
+ * specified in @p chconf.h.
+ * @ingroup synchronization
+ */
+
+/**
+ * @defgroup mailboxes Mailboxes
+ * Asynchronous messages.
+ * <h2>Operation mode</h2>
+ * A mailbox is an asynchronous communication mechanism.<br>
+ * The following operations are possible on a mailbox:
+ * - <b>Post</b>: Posts a message on the mailbox in FIFO order.
+ * - <b>Post Ahead</b>: Posts a message on the mailbox with high priority.
+ * - <b>Fetch</b>: A message is fetched from the mailbox and removed from
+ *   the queue.
+ * - <b>Reset</b>: The mailbox is emptied and all the stored messages lost.
+ * .
+ * A message is a variable of type msg_t that is guaranteed to have the
+ * same size of and be compatible with pointers (an explicit cast is needed).
+ * If larger messages need to be exchanged then a pointer to a structure can
+ * be posted in the mailbox but the posting side has no predefined way to
+ * know when the message has been processed. A possible approach is to
+ * allocate memory (from a memory pool as example) from the posting side and
+ * free it on the fetching side. Another approach is to set a "done" flag into
+ * the structure pointed by the message.
+ * @ingroup synchronization
+ */
+
+/**
+ * @defgroup memory Memory Management
+ * Memory Management services.
+ * @ingroup kernel
+ */
+
+/**
+ * @defgroup heap Heap
+ * Heap Allocator related APIs.
+ * <h2>Operation mode</h2>
+ * The heap allocator implements a first-fit strategy and its APIs are
+ * functionally equivalent to the usual @p malloc() and @p free(). The main
+ * difference is that the heap APIs are thread safe.<br>
+ * By enabling the @p CH_USE_MALLOC_HEAP option the heap manager will use the
+ * runtime-provided @p malloc() and @p free() as backend for the heap APIs
+ * instead of the system provided allocator.<br>
+ * In order to use the heap APIs the @p CH_USE_HEAP option must be specified
+ * in @p chconf.h.
+ * @ingroup memory
+ */
+
+/**
+ * @defgroup pools Memory Pools
+ * Memory Pools related APIs.
+ * <h2>Operation mode</h2>
+ * The Memory Pools APIs allow to allocate/free fixed size objects in
+ * <b>constant time</b> and reliably without memory fragmentation problems.<br>
+ * In order to use the Time APIs the @p CH_USE_MEMPOOLS option must be
+ * specified in @p chconf.h.
+ * @ingroup memory
+ */
+
+ /**
+ * @defgroup io_support I/O Support
+ * I/O related services.
+ * @ingroup kernel
+ */
+
+/**
+ * @defgroup io_channels I/O Abstract Channels
+ * @brief Abstract I/O Channels.
+ * @details This module defines an abstract interface for I/O channels. Note
+ * that no code is present, I/O channels are just abstract classes-like
+ * structures, you should look at the systems as to a set of abstract C++
+ * classes (even if written in C). Specific device drivers can use/extend
+ * the interfaces and implement them.<br>
+ * This system has the advantage to make the access to channels
+ * independent from the implementation logic. As example, an I/O channel
+ * interface can hide the access to a serial driver, to a networking socket
+ * and so on.
+ *
+ * @ingroup io_support
+ */
+ 
+/**
+ * @defgroup io_queues I/O Queues
+ * @brief I/O queues.
+ * @details ChibiOS/RT supports several kinds of queues. The queues are mostly
+ * used in serial-like device drivers. The device drivers are usually designed
+ * to have a lower side (lower driver, it is usually an interrupt service
+ * routine) and an upper side (upper driver, accessed by the application
+ * threads).<br>
+ * There are several kind of queues:<br>
+ * - <b>Input queue</b>, unidirectional queue where the writer is the
+ *   lower side and the reader is the upper side.
+ * - <b>Output queue</b>, unidirectional queue where the writer is the
+ *   upper side and the reader is the lower side.
+ * - <b>Full duplex queue</b>, bidirectional queue where read and write
+ *   operations can happen at the same time. Full duplex queues
+ *   are implemented by pairing an input queue and an output queue together.
+ * .
+ * In order to use the I/O queues the @p CH_USE_QUEUES option must
+ * be specified in @p chconf.h.<br>
+ *
+ * @ingroup io_support
+ */
+
+/**
+ * @defgroup debug Debug
+ * Debug APIs and procedures.
+ * @ingroup kernel
+ */
+
+/**
+ * @defgroup core Port Templates
+ * Non portable code templates.
+ * @ingroup kernel
+ */
+
+/**
+ * @defgroup internals Internals
+ * Internal details, not APIs.
+ * @ingroup kernel
+ */
+ 
