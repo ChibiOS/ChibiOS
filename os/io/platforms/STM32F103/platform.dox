@@ -18,9 +18,9 @@
 */
 
 /**
- * @defgroup STM32F103 STM32F103 Support
- * @brief STM32F103 specific support.
- * @details The STM32F103 support includes:
+ * @defgroup STM32 STM32 Support
+ * @brief STM32 specific support.
+ * @details The STM32 support includes:
  * - I/O ports driver.
  * - Buffered, interrupt driven, serial driver.
  * - A demo supporting the kernel test suite.
@@ -29,9 +29,9 @@
  */
 
 /**
- * @defgroup STM32F103_PAL I/O Ports Support
+ * @defgroup STM32_PAL STM32 I/O Ports Support
  * @brief I/O Ports peripherals support.
- * @details This module supports the STM32F103 GPIO controller. The controller
+ * @details This module supports the STM3 GPIO controller. The controller
  * supports the following features (see @ref PAL):
  * - 16 bits wide ports.
  * - Atomic set/reset functions.
@@ -58,15 +58,15 @@
  *   resistor can change the resistor setting because the output latch is
  *   used for resistor selection.
  * .
- * @ingroup STM32F103
+ * @ingroup STM32
  */
 
 /**
- * @defgroup STM32F103_SERIAL USART Support
+ * @defgroup STM32_SERIAL STM32 USART Support
  * @brief USART peripherals support.
- * @details The serial driver supports the STM32F103 USARTs in asynchronous
+ * @details The serial driver supports the STM32 USARTs in asynchronous
  * mode.
  *
- * @ingroup STM32F103
+ * @ingroup STM32
  */
  

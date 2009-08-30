@@ -18,9 +18,9 @@
 */
 
 /**
- * @file STM32F103/serial_lld.c
- * @brief STM32F103 low level serial driver code
- * @addtogroup STM32F103_SERIAL
+ * @file STM32/serial_lld.c
+ * @brief STM32 low level serial driver code
+ * @addtogroup STM32_SERIAL
  * @{
  */
 

@@ -120,13 +120,9 @@ struct _serial_driver_data {
 };
 
 /**
- * @brief Generic Serial Driver static initializer.
+ * @brief AT91SAM7X Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
- *
- * @note This structure content is architecture dependent, each driver
- *       implementation defines its own version and the custom static
- *       initializers.
  */
 typedef struct {
   uint32_t              speed;

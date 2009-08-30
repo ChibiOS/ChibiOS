@@ -124,13 +124,9 @@ struct _serial_driver_data {
 #define UBRR(b) ((F_CPU / (b << 4)) - 1)
 
 /**
- * @brief Generic Serial Driver static initializer.
+ * @brief AVR Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
- *
- * @note This structure content is architecture dependent, each driver
- *       implementation defines its own version and the custom static
- *       initializers.
  */
 typedef struct {
   uint16_t              brr;

@@ -18,7 +18,7 @@
 */
 
 /**
- * @defgroup utilities_library Utilities Library
+ * @defgroup various Various
  * @brief Utilities Library.
  * @details This is a collection of useful library code that is not part of
  * the base kernel services.
@@ -35,7 +35,7 @@
  * @details This module allows to use the ChibiOS/RT functionalities
  * from C++ as classes and objects rather the traditional "C" APIs.
  *
- * @ingroup utilities_library
+ * @ingroup various
  */
 
 /**
@@ -45,5 +45,5 @@
  * listening threads can use the event to perform time related activities.
  * Multiple threads can listen to the same timer.
  *
- * @ingroup utilities_library
+ * @ingroup various
  */

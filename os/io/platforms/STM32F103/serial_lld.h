@@ -18,9 +18,9 @@
 */
 
 /**
- * @file STM32F103/serial_lld.h
- * @brief STM32F103 low level serial driver header
- * @addtogroup STM32F103_SERIAL
+ * @file STM32/serial_lld.h
+ * @brief STM32 low level serial driver header
+ * @addtogroup STM32_SERIAL
  * @{
  */
 
@@ -159,7 +159,7 @@ struct _serial_driver_data {
 };
 
 /**
- * @brief Generic Serial Driver static initializer.
+ * @brief STM32 Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
  *

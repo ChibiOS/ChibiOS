@@ -42,7 +42,7 @@
  */
 
 /**
- * @defgroup LPC214x_PAL I/O Ports Support
+ * @defgroup LPC214x_PAL LPC214x I/O Ports Support
  * @brief I/O Ports peripherals support.
  * @details This module supports the LPC214x FIO controller. The controller
  * supports the following features (see @ref PAL):
@@ -67,7 +67,7 @@
  */
 
 /**
- * @defgroup LPC214x_SERIAL UART Support
+ * @defgroup LPC214x_SERIAL LPC214x UART Support
  * @brief UART peripherals support.
  * @details The serial driver supports the LPC214x UART peripherals.
  *
@@ -75,7 +75,7 @@
  */
 
 /**
- * @defgroup LPC214x_SSP SSP Support
+ * @defgroup LPC214x_SSP LPC214x SSP Support
  * @brief SSP peripheral support.
  * @details This SPI driver supports the LPC214x SSP peripheral.
  *

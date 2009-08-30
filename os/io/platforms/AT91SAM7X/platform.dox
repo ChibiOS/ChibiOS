@@ -30,7 +30,7 @@
  */
 
 /**
- * @defgroup AT91SAM7X_PAL I/O Ports Support
+ * @defgroup AT91SAM7X_PAL AT91SAM7X I/O Ports Support
  * @brief I/O Ports peripherals support.
  * @details This module supports the AT91SAM7X PIO controller. The controller
  * supports the following features (see @ref PAL):
@@ -58,7 +58,7 @@
  */
 
 /**
- * @defgroup AT91SAM7X_SERIAL USART Support
+ * @defgroup AT91SAM7X_SERIAL AT91SAM7X USART Support
  * @brief USART peripherals support.
  * @details The serial driver supports the AT91SAM7X USART peripherals.
  *
@@ -66,7 +66,7 @@
  */
 
 /**
- * @defgroup AT91SAM7X_EMAC EMAC Support
+ * @defgroup AT91SAM7X_EMAC AT91SAM7X EMAC Support
  * @brief EMAC peripheral support.
  *
  * @ingroup AT91SAM7X

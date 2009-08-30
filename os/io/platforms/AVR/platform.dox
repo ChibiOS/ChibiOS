@@ -25,7 +25,7 @@
  */
 
 /**
- * @defgroup AVR_SERIAL USART Support
+ * @defgroup AVR_SERIAL AVR USART Support
  * @brief USART support.
  * @details The serial driver supports both the AVR USARTs in asynchronous
  * mode.

@@ -1,0 +1,137 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006-2007 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+/**
+ * @defgroup IO I/O
+ * @brief I/O related services.
+ * @details This section contains the I/O related services.
+ *
+ * The I/O subsystem is a collection of device driver poertable interfaces and
+ * platform dependent implementations.<br>
+ * Under ChibiOS/RT a device driver is split in two layers:
+ * - High Level Device Driver (<b>HLD</b>). This layer contains the definitions
+ *   of the driver's APIs and the platform independent part of the driver.<br>
+ *   An HLD is composed by two files:
+ *   - @<driver@>.c, the high level implementation file. This file must be
+ *     included in the Makefile in order to use the driver.
+ *   - @<driver@>.h, the high level header file. This file must be included
+ *     by the application code in order to access the driver's APIs.
+ *   .
+ * - Low Level Device Driver (<b>LLD</b>). This layer contains the platform
+ *   dependent part of the driver.<br>
+ *   A LLD is composed by two files:
+ *   - @<driver@>_lld.c, the low level implementation file. This file must be
+ *     included in the Makefile in order to use the driver.
+ *   - @<driver@>_lld.h, the high level header file. This file is implicitly
+ *     included by the HLD header file.
+ *   .
+ * .
+ * <h2>Available Device Drivers</h2>
+ * The I/O subsystem currently includes support for:
+ * - @ref PAL.
+ * - @ref SERIAL.
+ * .
+ */
+
+/**
+ * @defgroup PAL Ports Abstraction Layer (PAL)
+ * @brief I/O Ports Abstraction Layer
+ * @details This module defines an abstract interface for digital I/O ports.
+ * Note that most I/O ports functions are just macros. The macros
+ * have default software implementations that can be redefined in a
+ * @ref PAL_LLD if the target hardware supports special features like, as
+ * example, atomic bit set/reset/masking. Please refer to the ports specific
+ * documentation for details.<br>
+ * The @ref PAL has the advantage to make the access to the I/O ports platform
+ * independent and still be optimized for the specific architectures.<br>
+ * Note that the @ref PAL_LLD may also offer non standard macro and functions
+ * in order to support specific features but, of course, the use of such
+ * interfaces would not be portable. Such interfaces shall be marked with
+ * the architecture name inside the function names.
+ *
+ * <h2>Implementation Rules</h2>
+ * In implementing an @ref PAL_LLD there are some rules/behaviors that
+ * should be respected.
+ *
+ * <h3>Writing on input pads</h3>
+ * The behavior is not specified but there are implementations better than
+ * others, this is the list of possible implementations, preferred options
+ * are on top:
+ * -# The written value is not actually output but latched, should the pads
+ *    be reprogrammed as outputs the value would be in effect.
+ * -# The write operation is ignored.
+ * -# The write operation has side effects, as example disabling/enabling
+ *    pull up/down resistors or changing the pad direction. This scenario is
+ *    discouraged, please try to avoid this scenario.
+ * .
+ * <h3>Reading from output pads</h3>
+ * The behavior is not specified but there are implementations better than
+ * others, this is the list of possible implementations, preferred options
+ * are on top:
+ * -# The actual pads states are read (not the output latch).
+ * -# The output latch value is read (regardless of the actual pads states).
+ * -# Unspecified, please try to avoid this scenario.
+ * .
+ * <h3>Writing unused or unimplemented port bits</h3>
+ * The behavior is not specified.
+ *
+ * <h3>Reading from unused or unimplemented port bits</h3>
+ * The behavior is not specified.
+ *
+ * <h3>Reading or writing on pins associated to other functionalities</h3>
+ * The behavior is not specified.
+ *
+ * <h2>Usage</h2>
+ * The use of I/O ports requires the inclusion of the header file @p pal.h,
+ * this file is not automatically included @p ch.h like the other header
+ * files.
+ *
+ * @ingroup IO
+ */
+
+/**
+ * @defgroup PAL_LLD PAL Low Level Driver template
+ * @brief @ref PAL low level driver template.
+ * @details This file is a template for an I/O port low level driver.
+ *
+ * @ingroup PAL
+ */
+
+/**
+ * @defgroup SERIAL Serial Driver
+ * @brief Generic Serial Drivers.
+ * @details This module implements a generic full duplex serial driver. The
+ * driver implements a @p SerialDriver interface and uses I/O Queues for
+ * communication between the upper and the lower driver. Event flags are used
+ * to notify the application about incoming data, outgoing data and other I/O
+ * events.<br>
+ * The  module also contains functions that make the implementation of the
+ * interrupt service routines much easier.<br>
+ *
+ * @ingroup IO
+ */
+
+/**
+ * @defgroup SERIAL_LLD Serial Low Level Driver template
+ * @brief @ref SERIAL low level driver template.
+ * @details This file is a template for a serial low level driver.
+ *
+ * @ingroup SERIAL
+ */

@@ -25,7 +25,7 @@
  */
 
 /**
- * @defgroup MSP430_PAL I/O Ports Support
+ * @defgroup MSP430_PAL MSP430 I/O Ports Support
  * @brief I/O Ports peripherals support.
  * @details This module supports the MSP430 Digital I/O controller. The
  * controller supports the following features (see @ref PAL):
@@ -51,7 +51,7 @@
  */
 
 /**
- * @defgroup MSP430_SERIAL USART Support
+ * @defgroup MSP430_SERIAL MSP430 USART Support
  * @brief USART support.
  * @details The serial driver supports both the MSP430 USARTs in asynchronous
  * mode.
