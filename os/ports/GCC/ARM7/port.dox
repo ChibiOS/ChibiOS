@@ -118,7 +118,7 @@
  * greatly improves code efficiency and size. You can look at the serial
  * driver for real examples of interrupt handlers.
  *
- * @ingroup Ports
+ * @ingroup ports
  */
 
 /**

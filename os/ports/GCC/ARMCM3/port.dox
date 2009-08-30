@@ -79,7 +79,7 @@
  *   switching.
  * - The PendSV vector is internally used for preemption context switching.
  * .
- * @ingroup Ports
+ * @ingroup ports
  */
 
 /**
