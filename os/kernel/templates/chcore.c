@@ -42,7 +42,7 @@ void port_init(void){
 }
 
 /**
- * @brief Kernel-unlock action.
+ * @brief Kernel-lock action.
  * @details Usually this function just disables interrupts but may perform more
  * actions.
  */
