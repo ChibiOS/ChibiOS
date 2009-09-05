@@ -418,7 +418,66 @@ const struct testcase testbmk7 = {
 };
 
 /**
- * @page test_benchmarks_008 I/O Queues throughput
+ * @page test_benchmarks_009 I/O Round-Robin voluntary rescedulation.
+ *
+ * <h2>Description</h2>
+ * Five threads are created at equal priority, each thread just increases a
+ * variable and yields.<br>
+ * The performance is calculated by measuring the number of iterations after
+ * a second of continuous operations.
+ */
+
+#if CH_USE_ROUNDROBIN
+static msg_t thread8(void *p) {
+
+  do {
+    chThdYield();
+    chThdYield();
+    chThdYield();
+    chThdYield();
+    (*(uint32_t *)p) += 4;
+  } while(!chThdShouldTerminate());
+  return 0;
+}
+
+static char *bmk8_gettest(void) {
+
+  return "Benchmark, round robin context switching";
+}
+
+static void bmk8_execute(void) {
+  uint32_t n;
+
+  n = 0;
+  test_wait_tick();
+
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread8, (void *)&n);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-1, thread8, (void *)&n);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-1, thread8, (void *)&n);
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-1, thread8, (void *)&n);
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-1, thread8, (void *)&n);
+
+  chThdSleepSeconds(1);
+  test_terminate_threads();
+  test_wait_threads();
+
+  test_print("--- Score : ");
+  test_printn(n);
+  test_print(" reschedulations/S, ");
+  test_printn(n);
+  test_println(" ctxswc/S");
+}
+
+const struct testcase testbmk8 = {
+  bmk8_gettest,
+  NULL,
+  NULL,
+  bmk8_execute
+};
+#endif
+
+/**
+ * @page test_benchmarks_009 I/O Queues throughput
  *
  * <h2>Description</h2>
  * Four bytes are written and then read from an @p InputQueue into a continuous
@@ -427,12 +486,12 @@ const struct testcase testbmk7 = {
  * a second of continuous operations.
  */
 
-static char *bmk8_gettest(void) {
+static char *bmk9_gettest(void) {
 
   return "Benchmark, I/O Queues throughput";
 }
 
-static void bmk8_execute(void) {
+static void bmk9_execute(void) {
   static uint8_t ib[16];
   static InputQueue iq;
 
@@ -459,15 +518,15 @@ static void bmk8_execute(void) {
   test_println(" bytes/S");
 }
 
-const struct testcase testbmk8 = {
-  bmk8_gettest,
+const struct testcase testbmk9 = {
+  bmk9_gettest,
   NULL,
   NULL,
-  bmk8_execute
+  bmk9_execute
 };
 
 /**
- * @page test_benchmarks_009 Virtual Timers set/reset performance
+ * @page test_benchmarks_010 Virtual Timers set/reset performance
  *
  * <h2>Description</h2>
  * A virtual timer is set and immediately reset into a continuous loop.<br>
@@ -475,14 +534,14 @@ const struct testcase testbmk8 = {
  * a second of continuous operations.
  */
 
-static char *bmk9_gettest(void) {
+static char *bmk10_gettest(void) {
 
   return "Benchmark, virtual timers set/reset";
 }
 
 static void tmo(void *param) {}
 
-static void bmk9_execute(void) {
+static void bmk10_execute(void) {
   static VirtualTimer vt1, vt2;
   uint32_t n = 0;
 
@@ -505,15 +564,15 @@ static void bmk9_execute(void) {
   test_println(" timers/S");
 }
 
-const struct testcase testbmk9 = {
-  bmk9_gettest,
+const struct testcase testbmk10 = {
+  bmk10_gettest,
   NULL,
   NULL,
-  bmk9_execute
+  bmk10_execute
 };
 
 /**
- * @page test_benchmarks_010 Semaphores wait/signal performance
+ * @page test_benchmarks_011 Semaphores wait/signal performance
  *
  * <h2>Description</h2>
  * A counting semaphore is taken/released into a continuous loop, no Context
@@ -522,17 +581,17 @@ const struct testcase testbmk9 = {
  * a second of continuous operations.
  */
 
-static char *bmk10_gettest(void) {
+static char *bmk11_gettest(void) {
 
   return "Benchmark, semaphores wait/signal";
 }
 
-static void bmk10_setup(void) {
+static void bmk11_setup(void) {
 
   chSemInit(&sem1, 1);
 }
 
-static void bmk10_execute(void) {
+static void bmk11_execute(void) {
   uint32_t n = 0;
 
   test_wait_tick();
@@ -556,16 +615,16 @@ static void bmk10_execute(void) {
   test_println(" wait+signal/S");
 }
 
-const struct testcase testbmk10 = {
-  bmk10_gettest,
-  bmk10_setup,
+const struct testcase testbmk11 = {
+  bmk11_gettest,
+  bmk11_setup,
   NULL,
-  bmk10_execute
+  bmk11_execute
 };
 
 #if CH_USE_MUTEXES
 /**
- * @page test_benchmarks_011 Mutexes lock/unlock performance
+ * @page test_benchmarks_012 Mutexes lock/unlock performance
  *
  * <h2>Description</h2>
  * A mutex is locked/unlocked into a continuous loop, no Context Switch happens
@@ -574,17 +633,17 @@ const struct testcase testbmk10 = {
  * a second of continuous operations.
  */
 
-static char *bmk11_gettest(void) {
+static char *bmk12_gettest(void) {
 
   return "Benchmark, mutexes lock/unlock";
 }
 
-static void bmk11_setup(void) {
+static void bmk12_setup(void) {
 
   chMtxInit(&mtx1);
 }
 
-static void bmk11_execute(void) {
+static void bmk12_execute(void) {
   uint32_t n = 0;
 
   test_wait_tick();
@@ -608,11 +667,11 @@ static void bmk11_execute(void) {
   test_println(" lock+unlock/S");
 }
 
-const struct testcase testbmk11 = {
-  bmk11_gettest,
-  bmk11_setup,
+const struct testcase testbmk12 = {
+  bmk12_gettest,
+  bmk12_setup,
   NULL,
-  bmk11_execute
+  bmk12_execute
 };
 #endif
 
@@ -628,11 +687,14 @@ const struct testcase * const patternbmk[] = {
   &testbmk5,
   &testbmk6,
   &testbmk7,
+#if CH_USE_ROUNDROBIN
   &testbmk8,
+#endif
   &testbmk9,
   &testbmk10,
-#if CH_USE_MUTEXES
   &testbmk11,
+#if CH_USE_MUTEXES
+  &testbmk12,
 #endif
 #endif
   NULL

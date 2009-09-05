@@ -78,6 +78,12 @@ typedef struct {
 
 extern ReadyList rlist;
 
+#ifdef CH_CURRP_REGISTER_CACHE
+register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
+#else
+#define currp rlist.r_current
+#endif
+
 /*
  * Scheduler APIs.
  */
@@ -96,11 +102,19 @@ extern "C" {
 }
 #endif
 
-#ifdef CH_CURRP_REGISTER_CACHE
-register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
-#else
-#define currp rlist.r_current
-#endif
+/**
+ * @brief Determines if yielding is possible.
+ * @details This function returns @p TRUE if there is a ready thread with
+ *          equal or higher priority.
+ */
+#define chSchCanYieldS() (firstprio(&rlist.r_queue) >= currp->p_prio)
+
+/**
+ * @brief Determines if the current thread must reschedule.
+ * @details This function returns @p TRUE if there is a ready thread with
+ *          higher priority.
+ */
+#define chSchMustRescheduleS() (firstprio(&rlist.r_queue) >= currp->p_prio)
 
 #endif /* _SCHEDULER_H_ */
 

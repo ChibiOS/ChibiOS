@@ -183,6 +183,9 @@ extern "C" {
 #if CH_USE_WAITEXIT
   msg_t chThdWait(Thread *tp);
 #endif
+#if CH_USE_ROUNDROBIN
+  void chThdYield(void);
+#endif
 #ifdef __cplusplus
 }
 #endif

@@ -211,7 +211,7 @@ void chSchDoRescheduleI(void) {
 void chSchRescheduleS(void) {
   /* first thread in the runnable queue has higher priority than the running
    * thread? */
-  if (firstprio(&rlist.r_queue) > currp->p_prio)
+  if (chSchMustRescheduleS())
     chSchDoRescheduleI();
 }
 
