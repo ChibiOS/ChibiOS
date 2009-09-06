@@ -179,13 +179,6 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
 #if CH_USE_ROUNDROBIN
     rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-#if 0
-    /* Shortcut for when the round robin scheduling is not enabled.*/
-    otp->p_state = PRREADY;
-    /* Direct insertion on top of the ready list, no scanning.*/
-    otp->p_next = rlist.r_queue.p_next->p_next;
-    otp->p_next->p_prev = rlist.r_queue.p_next = otp;
-#endif
     (currp = ntp)->p_state = PRCURR;
     chDbgTrace(otp, ntp);
     chSysSwitchI(otp, ntp);
