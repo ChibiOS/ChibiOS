@@ -162,6 +162,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
  * @param[in] msg message to the awakened thread
  * @note It is equivalent to a @p chSchReadyI() followed by a
  *       @p chSchRescheduleS() but much more efficient.
+ * @note The function assumes that the current thread has the highest priority
  */
 void chSchWakeupS(Thread *ntp, msg_t msg) {
 
@@ -175,10 +176,17 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
   else {
     Thread *otp = currp;
     chSchReadyI(otp);
-    (currp = ntp)->p_state = PRCURR;
 #if CH_USE_ROUNDROBIN
     rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
+#if 0
+    /* Shortcut for when the round robin scheduling is not enabled.*/
+    otp->p_state = PRREADY;
+    /* Direct insertion on top of the ready list, no scanning.*/
+    otp->p_next = rlist.r_queue.p_next->p_next;
+    otp->p_next->p_prev = rlist.r_queue.p_next = otp;
+#endif
+    (currp = ntp)->p_state = PRCURR;
     chDbgTrace(otp, ntp);
     chSysSwitchI(otp, ntp);
   }

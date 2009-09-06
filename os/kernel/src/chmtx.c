@@ -69,7 +69,7 @@ void chMtxLockS(Mutex *mp) {
 
   chDbgCheck(mp != NULL, "chMtxLockS");
 
-  /* the mutex is already locked? */
+  /* Ia the mutex already locked? */
   if (mp->m_owner != NULL) {
     /*
      * Priority inheritance protocol; explores the thread-mutex dependencies
@@ -77,50 +77,47 @@ void chMtxLockS(Mutex *mp) {
      * of the running thread requesting the mutex.
      */
     Thread *tp = mp->m_owner;
-    /* { tp is the thread currently owning the mutex } */
-    /* the running thread has higher priority than tp? */
+    /* {tp is the thread currently owning the mutex} */
+    /* Has the running thread higher priority than tp? */
     while (tp->p_prio < currp->p_prio) {
-      /* make priority of thread tp match the running thread's priority */
+      /* Make priority of thread tp match the running thread's priority.*/
       tp->p_prio = currp->p_prio;
       /*
        * The following states need priority queues reordering.
        */
       switch (tp->p_state) {
-      /* thread tp is waiting on a mutex? */
       case PRWTMTX:
-        /* Requeues tp with its new priority on the mutex wait queue. */
+        /* Re-enqueues tp with its new priority on the mutex wait queue.*/
         prio_insert(dequeue(tp), &tp->p_wtmtxp->m_queue);
-        /* boost the owner of this mutex if needed */
+        /* Boost the owner of this mutex if needed.*/
         tp = tp->p_wtmtxp->m_owner;
         continue;
 #if CH_USE_CONDVARS
       case PRWTCOND:
-        /* Requeues tp with its new priority on the condvar queue. */
+        /* Re-enqueues tp with its new priority on the condvar queue.*/
         prio_insert(dequeue(tp), &tp->p_wtcondp->c_queue);
         break;
 #endif
 #if CH_USE_SEMAPHORES_PRIORITY
       case PRWTSEM:
-        /* Requeues tp with its new priority on the semaphore queue. */
+        /* Re-enqueues tp with its new priority on the semaphore queue.*/
         prio_insert(dequeue(tp), &tp->p_wtsemp->s_queue);
         break;
 #endif
 #if CH_USE_MESSAGES_PRIORITY
       case PRSNDMSG:
-        /* Requeues tp with its new priority on the server thread queue. */
+        /* Re-enqueues  tp with its new priority on the server thread queue.*/
         prio_insert(dequeue(tp), &tp->p_wtthdp->p_msgqueue);
         break;
 #endif
-      /* thread tp is ready? */
       case PRREADY:
-        /* Requeue tp with its new priority on the ready list. */
+        /* Re-enqueues  tp with its new priority on the ready list.*/
         chSchReadyI(dequeue(tp));
       }
       break;
     }
-    /* sleep on the mutex */
+    /* Sleep on the mutex.*/
     prio_insert(currp, &mp->m_queue);
-    /* thread remembers the mutex where it is waiting on */
     currp->p_wtmtxp = mp;
     chSchGoSleepS(PRWTMTX);
     chDbgAssert(mp->m_owner == NULL, "chMtxLockS(), #1", "still owned");
@@ -201,24 +198,24 @@ Mutex *chMtxUnlock(void) {
    * If a thread is waiting on the mutex then the hard part begins.
    */
   if (chMtxQueueNotEmptyS(ump)) {
-    /* get the highest priority thread waiting for the unlocked mutex */
+    /* Get the highest priority thread waiting for the unlocked mutex.*/
     Thread *tp = fifo_remove(&ump->m_queue);
     /*
      * Recalculates the optimal thread priority by scanning the owned mutexes list.
      */
     tprio_t newprio = currp->p_realprio;
-    /* iterate mp over all the (other) mutexes the current thread still owns */
+    /* Iterate mp over all the (other) mutexes the current thread still owns.*/
     mp = currp->p_mtxlist;
     while (mp != NULL) {
-      /* mutex mp has a higher priority thread pending? */
+      /* Has the mutex mp a higher priority thread pending? */
       if (chMtxQueueNotEmptyS(mp) && (mp->m_queue.p_next->p_prio > newprio))
-        /* boost current thread's priority to waiting thread */
+        /* Boost the recalculated thread's priority to waiting thread.*/
         newprio = mp->m_queue.p_next->p_prio;
       mp = mp->m_next;
     }
-    /* (possibly) boost the priority of the current thread */
+    /* Possibly restores the priority of the current thread.*/
     currp->p_prio = newprio;
-    /* awaken the highest priority thread waiting for the unlocked mutex */
+    /* Awaken the highest priority thread waiting for the unlocked mutex.*/
     chSchWakeupS(tp, RDY_OK);
   }
   chSysUnlock();
