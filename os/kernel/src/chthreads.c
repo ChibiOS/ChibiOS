@@ -299,8 +299,7 @@ void chThdSleepUntil(systime_t time) {
 void chThdYield(void) {
 
   chSysLock();
-  if (chSchCanYieldS())
-    chSchDoRescheduleI();
+  chSchDoYieldS();
   chSysUnlock();
 }
 #endif /* CH_USE_ROUNDROBIN */

@@ -12,7 +12,7 @@
 - FIX: Fixed GCC 4.4.x related problems in CM3 port (bug 2846162).(backported
   in stable branch)
 - FIX: Fixed LPC214x UART problem (bug 2841088)(backported in stable branch).
-- NEW: Added new API chThdYield().
+- NEW: Added new APIs chSchDoYieldS() abd chThdYield().
 - MEW: Added new benchmark about round robin rescheduling.
 - NEW: Reorganized and rationalized the distribution tree and the
   documentation.

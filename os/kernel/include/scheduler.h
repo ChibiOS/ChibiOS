@@ -98,6 +98,9 @@ extern "C" {
   void chSchDoRescheduleI(void);
   void chSchRescheduleS(void);
   bool_t chSchRescRequiredI(void);
+#if CH_USE_ROUNDROBIN
+  void chSchDoYieldS(void);
+#endif
 #ifdef __cplusplus
 }
 #endif

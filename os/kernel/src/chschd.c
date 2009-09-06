@@ -61,7 +61,7 @@ Thread *chSchReadyI(Thread *tp) {
   Thread *cp;
 
   tp->p_state = PRREADY;
-  cp = (Thread *)&rlist;
+  cp = (Thread *)&rlist.r_queue;
   do {
     cp = cp->p_next;
   } while (cp->p_prio >= tp->p_prio);
@@ -70,6 +70,22 @@ Thread *chSchReadyI(Thread *tp) {
   tp->p_prev->p_next = cp->p_prev = tp;
   return tp;
 }
+
+#if 0
+INLINE Thread *chSchReadyReverseI(Thread *tp) {
+  Thread *cp;
+
+  tp->p_state = PRREADY;
+  cp = (Thread *)&rlist.r_queue;
+  do {
+    cp = cp->p_prev;
+  } while ((cp->p_prio < tp->p_prio) && (cp->p_prio < tp->p_prio));
+  /* Insertion on p_next.*/
+  tp->p_next = (tp->p_prev = cp)->p_next;
+  tp->p_next->p_prev = cp->p_next = tp;
+  return tp;
+}
+#endif
 
 /**
  * @brief Puts the current thread to sleep into the specified state.
@@ -109,7 +125,7 @@ static void wakeup(void *p) {
 #if CH_USE_CONDVARS
   case PRWTCOND:
 #endif
-    /* States requiring dequeuing. */
+    /* States requiring dequeuing.*/
     dequeue(tp);
   }
 #endif
@@ -193,7 +209,7 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
 void chSchDoRescheduleI(void) {
 
   Thread *otp = currp;
-  /* pick the first thread from the ready queue and makes it current */
+  /* Pick the first thread from the ready queue and makes it current.*/
   (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
   chSchReadyI(otp);
 #if CH_USE_ROUNDROBIN
@@ -209,8 +225,8 @@ void chSchDoRescheduleI(void) {
  *          the ready list then make the higher priority thread running.
  */
 void chSchRescheduleS(void) {
-  /* first thread in the runnable queue has higher priority than the running
-   * thread? */
+  /* First thread in the runnable queue has higher priority than the running
+   * thread?.*/
   if (chSchMustRescheduleS())
     chSchDoRescheduleI();
 }
@@ -238,5 +254,34 @@ bool_t chSchRescRequiredI(void) {
   return p1 > p2;
 #endif
 }
+
+#if CH_USE_ROUNDROBIN
+void chSchDoYieldS(void) {
+
+  if (chSchCanYieldS()) {
+    Thread *cp = (Thread *)&rlist.r_queue;
+    Thread *otp = currp;
+
+    /*
+     * Note, the following insertion code works because we know that on the
+     * ready list there is at least one thread with priority equal or higher
+     * than the current one.
+     */
+    otp->p_state = PRREADY;
+    do {
+      cp = cp->p_prev;
+    } while (cp->p_prio < otp->p_prio);
+    /* Insertion on p_next.*/
+    otp->p_next = (otp->p_prev = cp)->p_next;
+    otp->p_next->p_prev = cp->p_next = otp;
+
+    /* Pick the first thread from the ready queue and makes it current.*/
+    (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
+    rlist.r_preempt = CH_TIME_QUANTUM;
+    chDbgTrace(otp, currp);
+    chSysSwitchI(otp, currp);
+  }
+}
+#endif /* CH_USE_ROUNDROBIN */
 
 /** @} */
