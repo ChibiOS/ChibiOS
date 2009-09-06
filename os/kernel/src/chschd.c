@@ -71,22 +71,6 @@ Thread *chSchReadyI(Thread *tp) {
   return tp;
 }
 
-#if 0
-INLINE Thread *chSchReadyReverseI(Thread *tp) {
-  Thread *cp;
-
-  tp->p_state = PRREADY;
-  cp = (Thread *)&rlist.r_queue;
-  do {
-    cp = cp->p_prev;
-  } while ((cp->p_prio < tp->p_prio) && (cp->p_prio < tp->p_prio));
-  /* Insertion on p_next.*/
-  tp->p_next = (tp->p_prev = cp)->p_next;
-  tp->p_next->p_prev = cp->p_next = tp;
-  return tp;
-}
-#endif
-
 /**
  * @brief Puts the current thread to sleep into the specified state.
  * @details The thread goes into a sleeping state. The @ref thread_states are
