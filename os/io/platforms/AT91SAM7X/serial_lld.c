@@ -55,7 +55,7 @@ static const SerialDriverConfig default_config = {
  * @param[in] u pointer to an USART I/O block
  * @param[in] config the architecture-dependent serial driver configuration
  */
-void usart_init(AT91PS_USART u, const SerialDriverConfig *config) {
+static void usart_init(AT91PS_USART u, const SerialDriverConfig *config) {
 
   /* Disables IRQ sources and stop operations.*/
   u->US_IDR = 0xFFFFFFFF;
@@ -80,7 +80,7 @@ void usart_init(AT91PS_USART u, const SerialDriverConfig *config) {
  * @brief USART de-initialization.
  * @param[in] u pointer to an USART I/O block
  */
-void usart_deinit(AT91PS_USART u) {
+static void usart_deinit(AT91PS_USART u) {
 
   /* Disables IRQ sources and stop operations.*/
   u->US_IDR = 0xFFFFFFFF;

@@ -82,7 +82,7 @@ static void notify1(void) {
  * @brief USART0 initialization.
  * @param[in] config the architecture-dependent serial driver configuration
  */
-void usart0_init(const SerialDriverConfig *config) {
+static void usart0_init(const SerialDriverConfig *config) {
 
   U0CTL = SWRST;                /* Resets the USART, it should already be.*/
   /* USART init */
@@ -102,7 +102,7 @@ void usart0_init(const SerialDriverConfig *config) {
 /**
  * @brief USART0 de-initialization.
  */
-void usart0_deinit(void) {
+static void usart0_deinit(void) {
 
   U0IE &= ~URXIE0;
   U0CTL = SWRST;
@@ -122,7 +122,7 @@ static void notify2(void) {
  * @brief USART1 initialization.
  * @param[in] config the architecture-dependent serial driver configuration
  */
-void usart1_init(const SerialDriverConfig *config) {
+static void usart1_init(const SerialDriverConfig *config) {
 
   U1CTL = SWRST;                /* Resets the USART, it should already be.*/
   /* USART init.*/
@@ -142,7 +142,7 @@ void usart1_init(const SerialDriverConfig *config) {
 /**
  * @brief USART1 de-initialization.
  */
-void usart1_deinit(void) {
+static void usart1_deinit(void) {
 
   U1IE &= ~URXIE0;
   U1CTL = SWRST;

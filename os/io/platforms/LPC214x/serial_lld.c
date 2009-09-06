@@ -56,7 +56,7 @@ static const SerialDriverConfig default_config = {
  * @param[in] u pointer to an UART I/O block
  * @param[in] config the architecture-dependent serial driver configuration
  */
-void uart_init(UART *u, const SerialDriverConfig *config) {
+static void uart_init(UART *u, const SerialDriverConfig *config) {
 
   uint32_t div = PCLK / (config->speed << 4);
   u->UART_LCR = config->lcr | LCR_DLAB;
@@ -74,7 +74,7 @@ void uart_init(UART *u, const SerialDriverConfig *config) {
  * @brief UART de-initialization.
  * @param[in] u pointer to an UART I/O block
  */
-void uart_deinit(UART *u) {
+static void uart_deinit(UART *u) {
 
   u->UART_DLL = 1;
   u->UART_DLM = 0;

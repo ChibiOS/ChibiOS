@@ -78,7 +78,7 @@ static void notify1(void) {
  * @brief USART0 initialization.
  * @param[in] config the architecture-dependent serial driver configuration
  */
-void usart0_init(const SerialDriverConfig *config) {
+static void usart0_init(const SerialDriverConfig *config) {
 
   UBRR0L = config->brr;
   UBRR0H = config->brr >> 8;
@@ -90,7 +90,7 @@ void usart0_init(const SerialDriverConfig *config) {
 /**
  * @brief USART0 de-initialization.
  */
-void usart0_deinit(void) {
+static void usart0_deinit(void) {
 
   UCSR0A = 0;
   UCSR0B = 0;
@@ -108,7 +108,7 @@ static void notify2(void) {
  * @brief USART1 initialization.
  * @param[in] config the architecture-dependent serial driver configuration
  */
-void usart1_init(const SerialDriverConfig *config) {
+static void usart1_init(const SerialDriverConfig *config) {
 
   UBRR1L = config->brr;
   UBRR1H = config->brr >> 8;
@@ -120,7 +120,7 @@ void usart1_init(const SerialDriverConfig *config) {
 /**
  * @brief USART1 de-initialization.
  */
-void usart1_deinit(void) {
+static void usart1_deinit(void) {
 
   UCSR1A = 0;
   UCSR1B = 0;

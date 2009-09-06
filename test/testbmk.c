@@ -49,6 +49,7 @@
  * - @subpage test_benchmarks_009
  * - @subpage test_benchmarks_010
  * - @subpage test_benchmarks_011
+ * - @subpage test_benchmarks_012
  * .
  * @file testbmk.c Kernel Benchmarks
  * @brief Kernel Benchmarks source file
@@ -418,7 +419,7 @@ const struct testcase testbmk7 = {
 };
 
 /**
- * @page test_benchmarks_009 I/O Round-Robin voluntary rescedulation.
+ * @page test_benchmarks_008 I/O Round-Robin voluntary reschedulation.
  *
  * <h2>Description</h2>
  * Five threads are created at equal priority, each thread just increases a
