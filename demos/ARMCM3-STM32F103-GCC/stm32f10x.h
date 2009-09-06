@@ -46,9 +46,9 @@
 
 #if !defined (STM32F10X_LD) && !defined (STM32F10X_MD) && !defined (STM32F10X_HD) && !defined (STM32F10X_CL)
   /* #define STM32F10X_LD */   /*!< STM32F10X_LD: STM32 Low density devices */
-  /* #define STM32F10X_MD */   /*!< STM32F10X_MD: STM32 Medium density devices */
+  #define STM32F10X_MD   /*!< STM32F10X_MD: STM32 Medium density devices */
   /* #define STM32F10X_HD */   /*!< STM32F10X_HD: STM32 High density devices */
-  #define STM32F10X_CL   /*!< STM32F10X_CL: STM32 Connectivity line devices */
+  /* #define STM32F10X_CL */   /*!< STM32F10X_CL: STM32 Connectivity line devices */
 #endif
 /*  Tip: To avoid modifying this file each time you need to switch between these
         devices, you can define the device in your toolchain compiler preprocessor.
