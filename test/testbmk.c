@@ -50,6 +50,7 @@
  * - @subpage test_benchmarks_010
  * - @subpage test_benchmarks_011
  * - @subpage test_benchmarks_012
+ * - @subpage test_benchmarks_013
  * .
  * @file testbmk.c Kernel Benchmarks
  * @brief Kernel Benchmarks source file
@@ -676,6 +677,71 @@ const struct testcase testbmk12 = {
 };
 #endif
 
+/**
+ * @page test_benchmarks_013 RAM Footprint
+ *
+ * <h2>Description</h2>
+ * The memory size of the various kernel objects is printed.
+ */
+
+static char *bmk13_gettest(void) {
+
+  return "Benchmark, RAM footprint";
+}
+
+static void bmk13_execute(void) {
+
+  test_print("--- System: ");
+  test_printn(sizeof(ReadyList) + sizeof(VTList) + IDLE_THREAD_STACK_SIZE +
+              (sizeof(Thread) + sizeof(struct intctx) + sizeof(struct extctx) +
+               INT_REQUIRED_STACK) * 2);
+  test_println(" bytes");
+  test_print("--- Thread: ");
+  test_printn(sizeof(Thread));
+  test_println(" bytes");
+  test_print("--- Timer : ");
+  test_printn(sizeof(VirtualTimer));
+  test_println(" bytes");
+  test_print("--- Semaph: ");
+  test_printn(sizeof(Semaphore));
+  test_println(" bytes");
+#if CH_USE_EVENTS
+  test_print("--- EventS: ");
+  test_printn(sizeof(EventSource));
+  test_println(" bytes");
+  test_print("--- EventL: ");
+  test_printn(sizeof(EventListener));
+  test_println(" bytes");
+#endif
+#if CH_USE_MUTEXES
+  test_print("--- Mutex : ");
+  test_printn(sizeof(Mutex));
+  test_println(" bytes");
+#endif
+#if CH_USE_CONDVARS
+  test_print("--- CondV.: ");
+  test_printn(sizeof(CondVar));
+  test_println(" bytes");
+#endif
+#if CH_USE_QUEUES
+  test_print("--- Queue : ");
+  test_printn(sizeof(GenericQueue));
+  test_println(" bytes");
+#endif
+#if CH_USE_MAILBOXES
+  test_print("--- MailB.: ");
+  test_printn(sizeof(Mailbox));
+  test_println(" bytes");
+#endif
+}
+
+const struct testcase testbmk13 = {
+  bmk13_gettest,
+  NULL,
+  NULL,
+  bmk13_execute
+};
+
 /*
  * Test sequence for benchmarks pattern.
  */
@@ -697,6 +763,7 @@ const struct testcase * const patternbmk[] = {
 #if CH_USE_MUTEXES
   &testbmk12,
 #endif
+  &testbmk13,
 #endif
   NULL
 };
