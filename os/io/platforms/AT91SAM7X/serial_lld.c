@@ -258,7 +258,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
  */
 void sd_lld_stop(SerialDriver *sdp) {
 
-#if USE_LPC214x_UART1
+#if USE_SAM7X_USART0
   if (&SD1 == sdp) {
     usart_deinit(AT91C_BASE_US0);
     AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_US0);
@@ -266,7 +266,7 @@ void sd_lld_stop(SerialDriver *sdp) {
     return;
   }
 #endif
-#if USE_LPC214x_UART2
+#if USE_SAM7X_USART1
   if (&SD2 == sdp) {
     usart_deinit(AT91C_BASE_US1);
     AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_US1);
