@@ -60,7 +60,7 @@ void ChkIntSources(void) {
   bool_t rflag = FALSE;
 
   if (sd_lld_interrupt_pending()) {
-    if (chSchRescRequiredI())
+    if (chSchIsRescRequiredExI())
       rflag = TRUE;
   }
 
@@ -69,7 +69,7 @@ void ChkIntSources(void) {
   if (n.QuadPart > nextcnt.QuadPart) {
     nextcnt.QuadPart += slice.QuadPart;
     chSysTimerHandlerI();
-    if (chSchRescRequiredI())
+    if (chSchIsRescRequiredExI())
       rflag = TRUE;
   }
 

@@ -61,7 +61,7 @@ void ChkIntSources(void) {
     pending = FALSE;
   }
 
-  if (chSchRescRequiredI())
+  if (chSchIsRescRequiredExI())
     chSchDoRescheduleI();
 }
 

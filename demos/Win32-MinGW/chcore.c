@@ -67,7 +67,7 @@ void ChkIntSources(void) {
   LARGE_INTEGER n;
 
   if (sd_lld_interrupt_pending()) {
-    if (chSchRescRequiredI())
+    if (chSchIsRescRequiredExI())
       chSchDoRescheduleI();
     return;
   }
@@ -77,7 +77,7 @@ void ChkIntSources(void) {
   if (n.QuadPart > nextcnt.QuadPart) {
     nextcnt.QuadPart += slice.QuadPart;
     chSysTimerHandlerI();
-    if (chSchRescRequiredI())
+    if (chSchIsRescRequiredExI())
       chSchDoRescheduleI();
   }
 }
