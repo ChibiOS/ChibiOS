@@ -211,7 +211,7 @@ struct context {
  */
 #define PORT_IRQ_EPILOGUE() {                                           \
   chSysLockFromIsr();                                                   \
-  if (chSchRescRequiredI())                                             \
+  if (chSchIsRescRequiredI())                                           \
     SCB_ICSR = ICSR_PENDSVSET;                                          \
   chSysUnlockFromIsr();                                                 \
 }

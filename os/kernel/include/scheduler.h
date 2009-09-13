@@ -97,7 +97,7 @@ extern "C" {
   void chSchWakeupS(Thread *tp, msg_t msg);
   void chSchDoRescheduleI(void);
   void chSchRescheduleS(void);
-  bool_t chSchRescRequiredI(void);
+  bool_t chSchIsRescRequiredExI(void);
 #if CH_USE_ROUNDROBIN
   void chSchDoYieldS(void);
 #endif
@@ -117,7 +117,7 @@ extern "C" {
  * @details This function returns @p TRUE if there is a ready thread with
  *          higher priority.
  */
-#define chSchMustRescheduleS() (firstprio(&rlist.r_queue) > currp->p_prio)
+#define chSchIsRescRequiredI() (firstprio(&rlist.r_queue) > currp->p_prio)
 
 #endif /* _SCHEDULER_H_ */
 

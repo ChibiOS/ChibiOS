@@ -211,7 +211,7 @@ void chSchDoRescheduleI(void) {
  */
 void chSchRescheduleS(void) {
 
-  if (chSchMustRescheduleS())
+  if (chSchIsRescRequiredI())
     chSchDoRescheduleI();
 }
 
@@ -222,8 +222,11 @@ void chSchRescheduleS(void) {
  *
  * @retval TRUE if there is a thread that should go in running state.
  * @retval FALSE if a reschedulation is not required.
+ *
+ * @note This function is meant to be used in the timer interrupt handler
+ *       where @p chVTDoTickI() is invoked.
  */
-bool_t chSchRescRequiredI(void) {
+bool_t chSchIsRescRequiredExI(void) {
   tprio_t p1 = firstprio(&rlist.r_queue);
   tprio_t p2 = currp->p_prio;
 #if CH_USE_ROUNDROBIN

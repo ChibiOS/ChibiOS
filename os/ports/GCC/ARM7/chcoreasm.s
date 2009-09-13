@@ -166,7 +166,7 @@ _port_irq_common:
 .code 32
 .globl _port_irq_common
 _port_irq_common:
-        bl      chSchRescRequiredI
+        bl      chSchIsRescRequiredExI
 #endif /* !THUMB_NO_INTERWORKING */
         cmp     r0, #0                          // Simply returns if a
         ldmeqfd sp!, {r0-r3, r12, lr}           // reschedule is not

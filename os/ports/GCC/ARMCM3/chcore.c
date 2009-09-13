@@ -61,13 +61,11 @@ void _port_unlock(void) {
  */
 CH_IRQ_HANDLER(SysTickVector) {
 
-  CH_IRQ_PROLOGUE();
-
   chSysLockFromIsr();
   chSysTimerHandlerI();
+  if (chSchIsRescRequiredExI())
+    SCB_ICSR = ICSR_PENDSVSET;
   chSysUnlockFromIsr();
-
-  CH_IRQ_EPILOGUE();
 }
 
 /**

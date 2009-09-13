@@ -145,4 +145,4 @@ ULIBS =
 # End of user defines
 ##############################################################################
 
-include ../../ports/MSP430/rules.mk
+include ../../os/ports/GCC/MSP430/rules.mk

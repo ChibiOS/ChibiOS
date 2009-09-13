@@ -190,7 +190,7 @@ struct context {
  * invoke system APIs.
  */
 #define PORT_IRQ_EPILOGUE() {                                           \
-  if (chSchRescRequiredI())                                             \
+  if (chSchIsRescRequiredExI())                                         \
     chSchDoRescheduleI();                                               \
 }
 
