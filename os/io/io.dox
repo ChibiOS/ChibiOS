@@ -23,7 +23,7 @@
  * @brief I/O related services.
  * @details This section contains the I/O related services.
  *
- * The I/O subsystem is a collection of device driver poertable interfaces and
+ * The I/O subsystem is a collection of device driver portable interfaces and
  * platform dependent implementations.<br>
  * Under ChibiOS/RT a device driver is split in two layers:
  * - High Level Device Driver (<b>HLD</b>). This layer contains the definitions
