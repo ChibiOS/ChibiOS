@@ -28,7 +28,7 @@
 #include <nvic.h>
 
 /**
- * Halts the system.
+ * @brief Halts the system.
  * @note The function is declared as a weak symbol, it is possible to redefine
  *       it in your application code.
  */
@@ -55,11 +55,11 @@ void _port_unlock(void) {
 #endif
 
 /**
- * System Timer vector.
- * This interrupt is used as system tick.
+ * @brief System Timer vector.
+ * @details This interrupt is used as system tick.
  * @note The timer is initialized in the board setup code.
  */
-CH_IRQ_HANDLER(SysTickVector) {
+void SysTickVector(void) {
 
   chSysLockFromIsr();
   chSysTimerHandlerI();
@@ -69,7 +69,9 @@ CH_IRQ_HANDLER(SysTickVector) {
 }
 
 /**
- * The SVC vector is used for commanded context switch.
+ * @brief SVC vector.
+ * @details The SVC vector is used for commanded context switch.
+ *
  * @param otp the thread to be switched out
  * @param ntp the thread to be switched it
  */
@@ -140,7 +142,7 @@ void SVCallVector(Thread *otp, Thread *ntp) {
 #endif
 
 /**
- * Preemption invoked context switch.
+ * @brief Preemption code.
  */
 /** @cond never */
 __attribute__((naked))
