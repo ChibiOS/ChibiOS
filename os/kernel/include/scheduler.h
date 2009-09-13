@@ -117,7 +117,7 @@ extern "C" {
  * @details This function returns @p TRUE if there is a ready thread with
  *          higher priority.
  */
-#define chSchMustRescheduleS() (firstprio(&rlist.r_queue) >= currp->p_prio)
+#define chSchMustRescheduleS() (firstprio(&rlist.r_queue) > currp->p_prio)
 
 #endif /* _SCHEDULER_H_ */
 

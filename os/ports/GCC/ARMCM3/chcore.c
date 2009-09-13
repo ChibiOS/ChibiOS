@@ -151,13 +151,7 @@ void PendSVVector(void) {
   Thread *otp;
   register struct intctx *sp_thd asm("r12");
 
-  asm volatile ("push    {lr}");
   chSysLockFromIsr();
-  if (!chSchRescRequiredI()) {
-    chSysUnlockFromIsr();
-    asm volatile ("pop     {pc}");
-  }
-  asm volatile ("pop     {lr}");
 
   PUSH_CONTEXT(sp_thd);
 

@@ -210,8 +210,7 @@ void chSchDoRescheduleI(void) {
  *          the ready list then make the higher priority thread running.
  */
 void chSchRescheduleS(void) {
-  /* First thread in the runnable queue has higher priority than the running
-   * thread?.*/
+
   if (chSchMustRescheduleS())
     chSchDoRescheduleI();
 }

@@ -209,8 +209,11 @@ struct context {
  * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
  * invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() {                                            \
-  SCB_ICSR = ICSR_PENDSVSET;                                            \
+#define PORT_IRQ_EPILOGUE() {                                           \
+  chSysLockFromIsr();                                                   \
+  if (chSchRescRequiredI())                                             \
+    SCB_ICSR = ICSR_PENDSVSET;                                          \
+  chSysUnlockFromIsr();                                                 \
 }
 
 /**

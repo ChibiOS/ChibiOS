@@ -12,6 +12,8 @@
 - FIX: Fixed GCC 4.4.x related problems in CM3 port (bug 2846162)(backported
   in stable branch).
 - FIX: Fixed LPC214x UART problem (bug 2841088)(backported in stable branch).
+- NEW: Improved the Cortex-M3 preemption code, now less interrupt-related
+  jitter is generated and all benchmarks scores improved a bit.
 - NEW: Added new APIs chSchDoYieldS() and chThdYield().
 - MEW: Added new benchmark about RAM footprint.
 - MEW: Added new benchmark about round robin rescheduling.
