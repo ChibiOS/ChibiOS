@@ -69,15 +69,15 @@
  * <h3>Fast and compact</h3>
  * Note, first "fast" then "compact", the focus is on speed and execution
  * efficiency and then on code size. This does not mean that the OS is large,
- * the kernel size with all the subsystems activated is around <b>5.3KiB</b>
+ * the kernel size with all the subsystems activated is around <b>5.2KiB</b>
  * and can shrink down around to <b>1.2Kib</b> in a minimal configuration
  * (STM32, Cortex-M3). It would be possible to make something even smaller but:
  * -# It would be pointless, it is already @a really small.
  * -# I would not trade efficiency or features in order to save few bytes.
  * .
  * About the "fast" part, the kernel is able to start/exit more than
- * <b>200,000 threads per second</b> on a 72MHz STM32.
- * The Context Switch takes <b>2.3 microseconds</b> on the same STM32.
+ * <b>220,000 threads per second</b> on a 72MHz STM32.
+ * The Context Switch takes <b>1.41 microseconds</b> on the same STM32.
  *
  * <h3>Tests and metrics</h3>
  * I think it is nice to know how an OS is tested and how it performs before
