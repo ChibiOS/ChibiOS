@@ -158,7 +158,7 @@ _port_switch_arm:
 .thumb_func
 .globl _port_irq_common
 _port_irq_common:
-        bl      chSchRescRequiredI
+        bl      chSchIsRescRequiredExI
         mov     lr, pc
         bx      lr
 .code 32
