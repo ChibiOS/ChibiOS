@@ -31,6 +31,9 @@
 - NEW: Updated the STM32 port to use the newest ST firmware library files
   (version 3.1.0). Note that now the ST drivers are included in the STM32
   demo directory.
+- NEW: Improved makefiles and makefile fragments, now the paths are not fixed,
+  the fragments can be included also from projects outside the ChibiOS/RT files
+  structure by simply defining the variable ${CHIBIOS}.
 - CHANGE: Removed the CH_USE_SERIAL_FULLDUPLEX configuration option because
   the serial driver is no more part of the kernel.
 - CHANGE: Reorganized the PAL and Serial identifiers now IOPORT1..N and

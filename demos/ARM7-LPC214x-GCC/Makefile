@@ -43,22 +43,23 @@ PROJECT = ch
 LDSCRIPT = ch.ld
 
 # Imported source files
-include ../../os/ports/GCC/ARM7/port.mk
-include ../../os/kernel/kernel.mk
-include ../../test/test.mk
+CHIBIOS = ../..
+include ${CHIBIOS}/os/ports/GCC/ARM7/port.mk
+include ${CHIBIOS}/os/kernel/kernel.mk
+include ${CHIBIOS}/test/test.mk
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
-       ../../os/io/pal.c \
-       ../../os/io/serial.c \
-       ../../os/io/platforms/LPC214x/pal_lld.c \
-       ../../os/io/platforms/LPC214x/serial_lld.c \
-       ../../os/io/platforms/LPC214x/vic.c  \
-       ../../os/io/platforms/LPC214x/lpc214x_ssp.c \
-       ../../os/various/evtimer.c \
+       ${CHIBIOS}/os/io/pal.c \
+       ${CHIBIOS}/os/io/serial.c \
+       ${CHIBIOS}/os/io/platforms/LPC214x/pal_lld.c \
+       ${CHIBIOS}/os/io/platforms/LPC214x/serial_lld.c \
+       ${CHIBIOS}/os/io/platforms/LPC214x/vic.c  \
+       ${CHIBIOS}/os/io/platforms/LPC214x/lpc214x_ssp.c \
+       ${CHIBIOS}/os/various/evtimer.c \
        board.c buzzer.c mmcsd.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -87,13 +88,13 @@ TCPPSRC =
 
 # List ASM source files here
 ASMSRC = $(PORTASM) \
-         ../../os/ports/GCC/ARM7/LPC214x/vectors.s
+         ${CHIBIOS}/os/ports/GCC/ARM7/LPC214x/vectors.s
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         ../../os/io \
-         ../../os/io/platforms/LPC214x \
-         ../../os/various \
-         ../../os/ports/GCC/ARM7/LPC214x
+         ${CHIBIOS}/os/io \
+         ${CHIBIOS}/os/io/platforms/LPC214x \
+         ${CHIBIOS}/os/various \
+         ${CHIBIOS}/os/ports/GCC/ARM7/LPC214x
 
 #
 # Project, sources and paths
@@ -181,4 +182,4 @@ ULIBS =
 # End of user defines
 ##############################################################################
 
-include ../../os/ports/GCC/ARM/rules.mk
+include ${CHIBIOS}/os/ports/GCC/ARM/rules.mk

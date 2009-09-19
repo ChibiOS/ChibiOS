@@ -57,20 +57,21 @@ UDEFS =
 UADEFS =
 
 # Imported source files
-include ../../os/kernel/kernel.mk
-include ../../test/test.mk
+CHIBIOS = ../..
+include ${CHIBIOS}/os/kernel/kernel.mk
+include ${CHIBIOS}/test/test.mk
 
 # List C source files here
 SRC  = ${KERNSRC} \
        ${TESTSRC} \
-       ../../os/io/serial.c \
+       ${CHIBIOS}/os/io/serial.c \
        chcore.c serial_lld.c main.c
 
 # List ASM source files here
 ASRC =
 
 # List all user directories here
-UINCDIR = $(KERNINC) $(TESTINC) ../../os/io
+UINCDIR = $(KERNINC) $(TESTINC) ${CHIBIOS}/os/io
 
 # List the user directory to look for the libraries here
 ULIBDIR =

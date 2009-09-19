@@ -56,20 +56,21 @@ PROJECT = ch
 LDSCRIPT= ch.ld
 
 # Imported source files
-include ../../os/ports/GCC/ARMCM3/port.mk
-include ../../os/kernel/kernel.mk
-include ../../test/test.mk
+CHIBIOS = ../..
+include ${CHIBIOS}/os/ports/GCC/ARMCM3/port.mk
+include ${CHIBIOS}/os/kernel/kernel.mk
+include ${CHIBIOS}/test/test.mk
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
-       ../../os/io/pal.c \
-       ../../os/io/serial.c \
-       ../../os/io/platforms/STM32/pal_lld.c \
-       ../../os/io/platforms/STM32/serial_lld.c \
-       ../../os/various/evtimer.c \
+       ${CHIBIOS}/os/io/pal.c \
+       ${CHIBIOS}/os/io/serial.c \
+       ${CHIBIOS}/os/io/platforms/STM32/pal_lld.c \
+       ${CHIBIOS}/os/io/platforms/STM32/serial_lld.c \
+       ${CHIBIOS}/os/various/evtimer.c \
        board.c main.c
 
 
@@ -99,12 +100,12 @@ TCPPSRC =
 
 # List ASM source files here
 ASMSRC = $(PORTASM) \
-         ../../os/ports/GCC/ARMCM3/STM32F103/vectors.s
+         ${CHIBIOS}/os/ports/GCC/ARMCM3/STM32F103/vectors.s
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         ../../os/io \
-         ../../os/io/platforms/STM32 \
-         ../../os/various \
+         ${CHIBIOS}/os/io \
+         ${CHIBIOS}/os/io/platforms/STM32 \
+         ${CHIBIOS}/os/various \
          ./stm32lib/inc
 
 #
@@ -199,4 +200,4 @@ ifeq ($(USE_FWLIB),yes)
   USE_OPT += -DUSE_STDPERIPH_DRIVER
 endif
 
-include ../../os/ports/GCC/ARM/rules.mk
+include ${CHIBIOS}/os/ports/GCC/ARM/rules.mk

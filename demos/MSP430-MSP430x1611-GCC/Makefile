@@ -39,19 +39,20 @@ PROJECT = ch
 LDSCRIPT = mspgcc/msp430x1611.x
 
 # Imported source files
-include ../../os/ports/GCC/MSP430/port.mk
-include ../../os/kernel/kernel.mk
-include ../../test/test.mk
+CHIBIOS = ../..
+include ${CHIBIOS}/os/ports/GCC/MSP430/port.mk
+include ${CHIBIOS}/os/kernel/kernel.mk
+include ${CHIBIOS}/test/test.mk
 
 # C sources here.
 CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
-       ../../os/io/pal.c \
-       ../../os/io/serial.c \
-       ../../os/io/platforms/MSP430/pal_lld.c \
-       ../../os/io/platforms/MSP430/serial_lld.c \
-       ../../os/various/evtimer.c \
+       ${CHIBIOS}/os/io/pal.c \
+       ${CHIBIOS}/os/io/serial.c \
+       ${CHIBIOS}/os/io/platforms/MSP430/pal_lld.c \
+       ${CHIBIOS}/os/io/platforms/MSP430/serial_lld.c \
+       ${CHIBIOS}/os/various/evtimer.c \
        board.c main.c
 
 # C++ sources here.
@@ -61,9 +62,9 @@ CPPSRC =
 ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         ../../os/io \
-         ../../os/io/platforms/MSP430 \
-         ../../os/various
+         ${CHIBIOS}/os/io \
+         ${CHIBIOS}/os/io/platforms/MSP430 \
+         ${CHIBIOS}/os/various
 
 #
 # Project, sources and paths
@@ -145,4 +146,4 @@ ULIBS =
 # End of user defines
 ##############################################################################
 
-include ../../os/ports/GCC/MSP430/rules.mk
+include ${CHIBIOS}/os/ports/GCC/MSP430/rules.mk

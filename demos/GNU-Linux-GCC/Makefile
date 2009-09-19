@@ -56,8 +56,9 @@ UDEFS =
 UADEFS =
 
 # Imported source files
-include ../../src/kernel.mk
-include ../../test/test.mk
+CHIBIOS = ../..
+include ${CHIBIOS}/src/kernel.mk
+include ${CHIBIOS}/test/test.mk
 
 # List C source files here
 SRC  = chcore.c main.c \
@@ -68,7 +69,7 @@ SRC  = chcore.c main.c \
 ASRC =
 
 # List all user directories here
-UINCDIR = ../../src/include
+UINCDIR = ${CHIBIOS}/src/include
 
 # List the user directory to look for the libraries here
 ULIBDIR =
