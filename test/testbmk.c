@@ -438,6 +438,9 @@ static msg_t thread8(void *p) {
     chThdYield();
     chThdYield();
     (*(uint32_t *)p) += 4;
+#if defined(WIN32)
+    ChkIntSources();
+#endif
   } while(!chThdShouldTerminate());
   return 0;
 }
