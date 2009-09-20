@@ -75,16 +75,21 @@
  * core (a common example: ARM7) of a supported microcontroller but has
  * differences in the internal peripherals.<br>
  * If this is your case proceed as follow:
- * -# Create a new directory under @p ./ports and name it as follow:
- *    <code><i>@<arch@></i>-<i>@<chip@></i>[-<i>@<compiler@></i>]</code>
- *    The compiler part can be omitted if the port uses GCC (our default).
- *    Examples: @p ARM7-LPC236x or @p ARMCM3-STM32F103-IAR
+ * -# Create a new directory under @p <code>./os/io/platforms</code> and
+ *    name it with the microcontroller name (or family name).<br>
+ *    In case of the ARM-based microcontroller you also need to create a
+ *    equally named directory under
+ *    @p <code>./os/ports/<i>@<compiler@></i>/<i>@<arch@></i></code> and
+ *    put there the microcontroller related files such as the vectors table,
+ *    see the existing ports as example.
  * -# Copy into the newly created directory the most closely related existing
- *    chip port.
- * -# Rename the files in order to reflect the name of the new chip.
- * -# Work out the differences in the drivers.
- * -# Edit the documentation file @p port.dox, this is required if you want
- *    to regenerate this documentation including your work.
+ *    chip port or the naked template files from
+ *    @p <code>./os/io/templates</code>.
+ * -# Work out the differences in the drivers or implement them if you started
+ *    from the templates.
+ * -# Edit/create the documentation file @p <code>platform.dox</code>, this
+ *    is required if you want to regenerate this documentation including
+ *    your work.
  * .
  * Usually this kind of port just requires a serial driver (and those are very
  * similar each other) and some code for the interrupt controller (this one
