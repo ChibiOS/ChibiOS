@@ -88,8 +88,10 @@ u32_t sys_arch_sem_wait(sys_sem_t sem, u32_t timeout) {
 
   chSysLock();
   time = chTimeNow();
-  chSemWaitTimeoutS(sem, (systime_t)timeout);
-  time = chTimeNow() - time;
+  if (chSemWaitTimeoutS(sem, (systime_t)timeout) != RDY_OK)
+    time = SYS_ARCH_TIMEOUT;
+  else
+    time = chTimeNow() - time;
   chSysUnlock();
   return time;
 }
@@ -120,17 +122,23 @@ err_t sys_mbox_trypost(sys_mbox_t mbox, void *msg) {
 }
 
 u32_t sys_arch_mbox_fetch(sys_mbox_t mbox, void **msg, u32_t timeout) {
+  systime_t time;
 
-  if (chMBFetchS(mbox, (msg_t *)msg, (systime_t)timeout) == RDY_TIMEOUT)
-    return ERR_MEM;
-  return ERR_OK;
+  chSysLock();
+  time = chTimeNow();
+  if (chMBFetchS(mbox, (msg_t *)msg, (systime_t)timeout) != RDY_OK)
+    time = SYS_ARCH_TIMEOUT;
+  else
+    time = chTimeNow() - time;
+  chSysUnlock();
+  return time;
 }
 
 u32_t sys_arch_mbox_tryfetch(sys_mbox_t mbox, void **msg) {
 
-  if (chMBFetchS(mbox, (msg_t *)msg, TIME_IMMEDIATE) == RDY_TIMEOUT)
-    return ERR_MEM;
-  return ERR_OK;
+  if (chMBFetch(mbox, (msg_t *)msg, TIME_IMMEDIATE) == RDY_TIMEOUT)
+    return SYS_MBOX_EMPTY;
+  return 0;
 }
 
 struct sys_timeouts *sys_arch_timeouts(void) {
