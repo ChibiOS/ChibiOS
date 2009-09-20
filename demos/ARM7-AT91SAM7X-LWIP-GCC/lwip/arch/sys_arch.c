@@ -59,11 +59,8 @@
 #include "arch/cc.h"
 #include "arch/sys_arch.h"
 
-static unsigned cnt;
-
 void sys_init(void) {
 
-  cnt = 0;
 }
 
 sys_sem_t sys_sem_new(u8_t count) {
