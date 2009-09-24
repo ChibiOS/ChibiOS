@@ -59,9 +59,7 @@ extern "C" {
   void mac_lld_stop(void);
   MACTransmitDescriptor *max_lld_get_transmit_descriptor(void);
   void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp);
-  void mac_lld_add_transmit_data(MACTransmitDescriptor *tdp,
-                                 uint8_t *buf,
-                                 size_t size);
+  uint8_t *mac_lld_get_transmit_buffer(MACTransmitDescriptor *tdp);
 #ifdef __cplusplus
 }
 #endif

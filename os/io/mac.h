@@ -29,6 +29,22 @@
 
 #include "mac_lld.h"
 
+/**
+ * @brief Returns the buffer associated to a @p MACTransmitDescriptor.
+ *
+ * @param[in] tdp the pointer to the @p MACTransmitDescriptor structure
+ * @return The pointer to the transmit buffer.
+ */
+#define macGetTransmitBuffer(tdp) mac_lld_get_transmit_buffer(tdp)
+
+/**
+ * @brief Returns the buffer associated to a @p MACReceiveDescriptor.
+ *
+ * @param[in] rdp the pointer to the @p MACReceiveDescriptor structure
+ * @return The pointer to the receive buffer.
+ */
+#define macGetReceiveBuffer(rdp) mac_lld_get_receive_buffer(rdp)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -36,7 +52,7 @@ extern "C" {
   void macSetAddress(uint8_t *p);
   void macStart(void);
   void macStop(void);
-  MACTransmissionDescriptor *macGetTransmitDescriptor(systime_t time);
+  MACTransmissionDescriptor *macWaitTransmitDescriptor(systime_t time);
   void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp);
   void macAddTransmitData(MACTransmitDescriptor *tdp,
                           uint8_t *buf,

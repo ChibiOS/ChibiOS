@@ -63,7 +63,7 @@ void mac_lld_stop(void) {
 }
 
 /**
- * @brief Allocates a transmission descriptor.
+ * @brief Returns a transmission descriptor.
  * @details One of the available transmission descriptors is locked and
  *          returned.
  *
@@ -86,15 +86,45 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
 }
 
 /**
- * @brief Enqueues data to a @p MACTransmitDescriptor.
+ * @brief Returns the buffer associated to a @p MACTransmitDescriptor.
  *
  * @param[in] tdp the pointer to the @p MACTransmitDescriptor structure
- * @param buf pointer to the data buffer
- * @param size size of the data to be enqueued
+ * @return The pointer to the transmit buffer.
  */
-void mac_lld_add_transmit_data(MACTransmitDescriptor *tdp,
-                               uint8_t *buf,
-                               size_t size) {
+uint8_t *mac_lld_get_transmit_buffer(MACTransmitDescriptor *tdp) {
+
+}
+
+/**
+ * @brief Returns a received frame.
+ *
+ * @return A pointer to a @p MACReceiveDescriptor structure or @p NULL if
+ *         the operation timed out, the driver went in stop mode or some
+ *         transient error happened.
+ */
+MACReceiveDescriptor *max_lld_get_receive_descriptor(void) {
+
+  return NULL;
+}
+
+/**
+ * @brief Releases a receive descriptor.
+ * @details The descriptor and its buffer is made available for more incoming
+ *          frames.
+ *
+ * @param[in] rdp the pointer to the @p MACReceiveDescriptor structure
+ */
+void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
+
+}
+
+/**
+ * @brief Returns the buffer associated to a @p MACTransmitDescriptor.
+ *
+ * @param[in] tdp the pointer to the @p MACTransmitDescriptor structure
+ * @return The pointer to the transmit buffer.
+ */
+uint8_t *mac_lld_get_receive_buffer(MACReceiveDescriptor *rdp) {
 
 }
 

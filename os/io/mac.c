@@ -30,7 +30,7 @@
 /**
  * @brief Transmit descriptors counter semaphore.
  */
-static Semaphore tdsem;
+static Semaphore tdsem, rdsem;
 
 /**
  * @brief MAC Driver initialization.
@@ -38,6 +38,7 @@ static Semaphore tdsem;
 void macInit(void) {
 
   chSemInit(&tdsem, MAC_TRANSMIT_DESCRIPTORS);
+  chSemInit(&rdsem, 0);
   mac_lld_init();
 }
 
@@ -71,6 +72,7 @@ void macStop(void) {
 
   max_lld_stop();
   chSemReset(&tdsem, MAC_TRANSMIT_DESCRIPTORS);
+  chSemReset(&rdsem, 0);
 }
 
 /**
@@ -80,14 +82,14 @@ void macStop(void) {
  *          invoking thread is queued until one is freed.
  *
  * @param[in] time the number of ticks before the operation timeouts,
- *             the following special values are allowed:
- *             - @a TIME_IMMEDIATE immediate timeout.
- *             - @a TIME_INFINITE no timeout.
- *             .
+ *            the following special values are allowed:
+ *            - @a TIME_IMMEDIATE immediate timeout.
+ *            - @a TIME_INFINITE no timeout.
+ *            .
  * @return A pointer to a @p MACTransmitDescriptor structure or @p NULL if
  *         the operation timed out or the driver went in stop mode.
  */
-MACTransmitDescriptor *macGetTransmitDescriptor(systime_t time) {
+MACTransmitDescriptor *macWaitTransmitDescriptor(systime_t time) {
   MACTransmitDescriptor *tdp;
 
   chSysLock();
@@ -109,25 +111,48 @@ MACTransmitDescriptor *macGetTransmitDescriptor(systime_t time) {
  */
 void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp) {
 
-  chSysLock();
-
   mac_lld_release_transmit_descriptor(tdp);
-
-  chSysUnlock();
 }
 
 /**
- * @brief Enqueues data to a @p MACTransmitDescriptor.
+ * @brief Waits for a received frame.
+ * @details Stops until a frame is received and buffered. If a frame is
+ *          not immediately available then the invoking thread is queued
+ *          until one is received.
  *
- * @param[in] tdp the pointer to the @p MACTransmitDescriptor structure
- * @param buf pointer to the data buffer
- * @param size size of the data to be enqueued
+ * @param[in] time the number of ticks before the operation timeouts,
+ *            the following special values are allowed:
+ *            - @a TIME_IMMEDIATE immediate timeout.
+ *            - @a TIME_INFINITE no timeout.
+ *            .
+ * @return A pointer to a @p MACReceiveDescriptor structure or @p NULL if
+ *         the operation timed out, the driver went in stop mode or some
+ *         transient error happened.
  */
-void macAddTransmitData(MACTransmitDescriptor *tdp,
-                        uint8_t *buf,
-                        size_t size) {
+MACReceiveDescriptor *macWaitReceiveDescriptor(systime_t time) {
+  MACReceiveDescriptor *rdp;
 
-  mac_lld_add_transmit_data(tdp, buf, size);
+  chSysLock();
+
+  if (chSemWaitTimeoutS(&rdsem, time) == RDY_OK)
+    rdp = max_lld_get_receive_descriptor();
+  else
+    rdp = NULL;
+
+  chSysUnlock();
+  return rdp;
+}
+
+/**
+ * @brief Releases a receive descriptor.
+ * @details The descriptor and its buffer is made available for more incoming
+ *          frames.
+ *
+ * @param[in] rdp the pointer to the @p MACReceiveDescriptor structure
+ */
+void macReleaseTransmitDescriptor(MACReceiveDescriptor *rdp) {
+
+  mac_lld_release_receive_descriptor(rdp);
 }
 
 /** @} */
