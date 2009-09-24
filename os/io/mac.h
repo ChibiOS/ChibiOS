@@ -18,7 +18,7 @@
 */
 
 /**
- * @file serial.h
+ * @file mac.h
  * @brief MAC Driver macros and structures.
  * @addtogroup MAC
  * @{
@@ -27,10 +27,20 @@
 #ifndef _MAC_H_
 #define _MAC_H_
 
+#include "mac_lld.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
   void macInit(void);
+  void macSetAddress(uint8_t *p);
+  void macStart(void);
+  void macStop(void);
+  MACTransmissionDescriptor *macGetTransmitDescriptor(systime_t time);
+  void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp);
+  void macAddTransmitData(MACTransmitDescriptor *tdp,
+                          uint8_t *buf,
+                          size_t size);
 #ifdef __cplusplus
 }
 #endif
