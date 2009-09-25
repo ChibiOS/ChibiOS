@@ -31,6 +31,30 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief PHY manufacturer and model.
+ */
+#if !defined(PHY_HARDWARE) || defined(__DOXYGEN__)
+#define PHY_HARDWARE            PHY_MICREL_KS8721
+#endif
+
+/*===========================================================================*/
+/* PHY specific constants.                                                   */
+/*===========================================================================*/
+
+#define PHY_MICREL_KS8721       0
+
+#define PHY_ADDRESS             1
+
+/**
+ * @brief Pins latched by the PHY at reset.
+ */
+#define PHY_LATCHED_PINS        (AT91C_PB4_ECRS   | AT91C_PB5_ERX0  | \
+                                 AT91C_PB6_ERX1   | AT91C_PB7_ERXER | \
+                                 AT91C_PB13_ERX2  | AT91C_PB14_ERX3 | \
+                                 AT91C_PB15_ERXDV | AT91C_PB16_ECOL | \
+                                 AT91C_PIO_PB26)
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/

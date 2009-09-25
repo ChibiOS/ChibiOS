@@ -28,6 +28,8 @@
 #include <mac.h>
 #include <phy.h>
 
+#include "mii.h"
+
 /**
  * @brief Low level PHY initialization.
  */
@@ -42,6 +44,36 @@ void phy_lld_init(void) {
  */
 void phy_lld_reset(MACDriver *macp) {
 
+  /*
+   * Disables the pullups on all the pins that are latched on reset by the PHY.
+   * The status latched into the PHY is:
+   *   PHYADDR  = 00001
+   *   PCS_LPBK = 0 (disabled)
+   *   ISOLATE  = 0 (disabled)
+   *   RMIISEL  = 0 (MII mode)
+   *   RMIIBTB  = 0 (BTB mode disabled)
+   *   SPEED    = 1 (100mbps)
+   *   DUPLEX   = 1 (full duplex)
+   *   ANEG_EN  = 1 (auto negotiation enabled)
+   */
+  AT91C_BASE_PIOB->PIO_PPUDR = PHY_LATCHED_PINS;
+
+#ifdef PIOB_PHY_PD_MASK
+  /*
+   * PHY power control.
+   */
+  AT91C_BASE_PIOB->PIO_OER = PIOB_PHY_PD_MASK;       // Becomes an output.
+  AT91C_BASE_PIOB->PIO_PPUDR = PIOB_PHY_PD_MASK;     // Default pullup disabled.
+  AT91C_BASE_PIOB->PIO_SODR = PIOB_PHY_PD_MASK;      // Output to high level.
+#endif
+
+  /*
+   * PHY reset by pulsing the NRST pin.
+   */
+  AT91C_BASE_RSTC->RSTC_RMR = 0xA5000100;
+  AT91C_BASE_RSTC->RSTC_RCR = 0xA5000000 | AT91C_RSTC_EXTRST;
+  while (!(AT91C_BASE_RSTC->RSTC_RSR & AT91C_RSTC_NRSTL))
+    ;
 }
 
 /**
@@ -53,7 +85,14 @@ void phy_lld_reset(MACDriver *macp) {
  */
 phyreg_t phy_lld_get(MACDriver *macp, phyaddr_t addr) {
 
-  return 0;
+  AT91C_BASE_EMAC->EMAC_MAN = (0b01 << 30) |            /* SOF */
+                              (0b10 << 28) |            /* RW */
+                              (PHY_ADDRESS << 23) |     /* PHYA */
+                              (addr << 18) |            /* REGA */
+                              (0b10 << 16);             /* CODE */
+  while (!( AT91C_BASE_EMAC->EMAC_NSR & AT91C_EMAC_IDLE))
+    ;
+  return (phyreg_t)(AT91C_BASE_EMAC->EMAC_MAN & 0xFFFF);
 }
 
 /**
@@ -65,6 +104,14 @@ phyreg_t phy_lld_get(MACDriver *macp, phyaddr_t addr) {
  */
 void phy_lld_put(MACDriver *macp, phyaddr_t addr, phyreg_t value) {
 
+  AT91C_BASE_EMAC->EMAC_MAN = (0b01 << 30) |            /* SOF */
+                              (0b01 << 28) |            /* RW */
+                              (PHY_ADDRESS << 23) |     /* PHYA */
+                              (addr << 18) |            /* REGA */
+                              (0b10 << 16) |            /* CODE */
+                              value;
+  while (!( AT91C_BASE_EMAC->EMAC_NSR & AT91C_EMAC_IDLE))
+    ;
 }
 
 /** @} */

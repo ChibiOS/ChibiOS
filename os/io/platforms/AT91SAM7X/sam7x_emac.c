@@ -219,8 +219,8 @@ void emac_init(int prio) {
    * PHY detection and settings.
    */
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_MPE;
-  if ((phy_get(MII_PHYSID1) != (MII_MICREL_ID >> 16)) ||
-      ((phy_get(MII_PHYSID2) & 0xFFF0) != (MII_MICREL_ID & 0xFFF0)))
+  if ((phy_get(MII_PHYSID1) != (MII_KS8721_ID >> 16)) ||
+      ((phy_get(MII_PHYSID2) & 0xFFF0) != (MII_KS8721_ID & 0xFFF0)))
     chSysHalt();
 
   /*
