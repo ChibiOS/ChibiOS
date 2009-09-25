@@ -304,7 +304,7 @@ BufDescriptorEntry *EMACGetTransmitBuffer(void) {
   if (!(cptr->w2 & W2_T_USED) ||
        (cptr->w2 & W2_T_LOCKED)) {
     chSysUnlock();
-    return FALSE;
+    return NULL;
   }
   cptr->w2 |= W2_T_LOCKED;        /* Locks the buffer while copying.*/
   if (++txptr >= &tent[EMAC_TRANSMIT_BUFFERS])
