@@ -18,14 +18,53 @@
 */
 
 /**
- * @file phy.c
- * @brief PHY Driver code.
- * @addtogroup PHY
+ * @file templates/mac_lld.c
+ * @brief MAC Driver subsystem low level driver source template
+ * @addtogroup MAC_LLD
  * @{
  */
 
 #include <ch.h>
 #include <mac.h>
 #include <phy.h>
+
+/**
+ * @brief Low level PHY initialization.
+ */
+void phy_lld_init(void) {
+
+}
+
+/**
+ * Resets a PHY device.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
+ */
+void phy_lld_reset(MACDriver *macp) {
+
+}
+
+/**
+ * @brief Reads a PHY register.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
+ * @param addr the register address
+ * @return The register value.
+ */
+phyreg_t phy_lld_get(MACDriver *macp, phyaddr_t addr) {
+
+  return 0;
+}
+
+/**
+ * @brief Writes a PHY register.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
+ * @param addr the register address
+ * @param value the new register value
+ */
+void phy_lld_put(MACDriver *macp, phyaddr_t addr, phyreg_t value) {
+
+}
 
 /** @} */

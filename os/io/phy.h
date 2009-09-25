@@ -31,27 +31,34 @@
 #include "phy_lld.h"
 
 /**
- * @brief Type of a PHY register value.
+ * @brief PHY Driver initialization.
  */
-typedef uint16_t phyreg_t;
+#define phyInit() phy_lld_init()
 
 /**
- * @brief Type of a PHY register address.
+ * Resets a PHY device.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
  */
-typedef uint8_t phyaddr_t;
+#define phyReset(macp) phy_lld_reset(macp)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void phyInit(void);
-  void phyReset(MACDriver *macp);
-  void phyStart(MACDriver *macp);
-  void phyStop(MACDriver *macp);
-  phyreg_t phyGet(MACDriver *macp, phyaddr_t addr);
-  void phyPut(MACDriver *macp, phyaddr_t addr, phyreg_t value);
-#ifdef __cplusplus
-}
-#endif
+/**
+ * @brief Reads a PHY register.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
+ * @param addr the register address
+ * @return The register value.
+ */
+#define phyGet(macp, addr) phy_lld_get(macp, addr)
+
+/**
+ * @brief Writes a PHY register.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
+ * @param addr the register address
+ * @param value the new register value
+ */
+#define phyPut(macp, addr, value) phy_lld_put(macp, addr, value)
 
 #endif /* _PHY_H_ */
 

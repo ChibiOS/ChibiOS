@@ -25,7 +25,7 @@
  */
 
 #include <ch.h>
-#include <mac_lld.h>
+#include <mac.h>
 
 /**
  * @brief Low level MAC initialization.
