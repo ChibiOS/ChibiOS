@@ -42,6 +42,9 @@
 /** Break detected.*/
 #define SD_BREAK_DETECTED       32
 
+/**
+ * @brief Structure representing a serial driver.
+ */
 typedef struct _SerialDriver SerialDriver;
 
 #include "serial_lld.h"

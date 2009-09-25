@@ -42,10 +42,23 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief Structure representing a MAC driver.
+ */
+typedef struct {
+
+} MACDriver;
+
+/**
+ * @brief Structure representing a transmission descriptor.
+ */
 typedef struct {
 
 } MACTransmitDescriptor;
 
+/**
+ * @brief Structure representing a receive descriptor.
+ */
 typedef struct {
 
 } MACReceiveDescriptor;
@@ -58,14 +71,16 @@ typedef struct {
 extern "C" {
 #endif
   void mac_lld_init(void);
-  void mac_lld_set_address(uint8_t *p);
-  void mac_lld_start(void);
-  void mac_lld_stop(void);
-  MACTransmitDescriptor *max_lld_get_transmit_descriptor(void);
-  void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp);
+  void mac_lld_set_address(MACDriver *macp, uint8_t *p);
+  void mac_lld_start(MACDriver *macp);
+  void mac_lld_stop(MACDriver *macp);
+  MACTransmitDescriptor *max_lld_get_transmit_descriptor(MACDriver *macp);
+  void mac_lld_release_transmit_descriptor(MACDriver *macp,
+                                           MACTransmitDescriptor *tdp);
   uint8_t *mac_lld_get_transmit_buffer(MACTransmitDescriptor *tdp);
-  MACReceiveDescriptor *max_lld_get_receive_descriptor(void);
-  void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp);
+  MACReceiveDescriptor *max_lld_get_receive_descriptor(MACDriver *macp);
+  void mac_lld_release_receive_descriptor(MACDriver *macp,
+                                          MACReceiveDescriptor *rdp);
   uint8_t *mac_lld_get_receive_buffer(MACReceiveDescriptor *rdp);
 #ifdef __cplusplus
 }

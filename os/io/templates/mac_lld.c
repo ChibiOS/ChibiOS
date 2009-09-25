@@ -37,6 +37,7 @@ void mac_lld_init(void) {
 /**
  * @brief Low level MAC address setup.
  *
+ * @param[in] macp pointer to the @p MACDriver object
  * @param[in] p pointer to a six bytes buffer containing the MAC address. If
  *            this parameter is set to @p NULL then a system default MAC is
  *            used.
@@ -44,21 +45,25 @@ void mac_lld_init(void) {
  * @note This function should be invoked after the @p macInit() and before
  *       @p macStart() else the result is unspecified (performed or ignored).
  */
-void mac_lld_set_address(uint8_t *p) {
+void mac_lld_set_address(MACDriver *macp, uint8_t *p) {
 
 }
 
 /**
  * @brief Starts the I/O activity and enters a low power mode.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
  */
-void mac_lld_start(void) {
+void mac_lld_start(MACDriver *macp) {
 
 }
 
 /**
  * @brief Stops the I/O activity.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
  */
-void mac_lld_stop(void) {
+void mac_lld_stop(MACDriver *macp) {
 
 }
 
@@ -67,10 +72,11 @@ void mac_lld_stop(void) {
  * @details One of the available transmission descriptors is locked and
  *          returned.
  *
+ * @param[in] macp pointer to the @p MACDriver object
  * @return A pointer to a @p MACTransmitDescriptor structure or @p NULL if
  *         a descriptor is not available or the driver went in stop mode.
  */
-MACTransmitDescriptor *max_lld_get_transmit_descriptor(void) {
+MACTransmitDescriptor *max_lld_get_transmit_descriptor(MACDriver *macp) {
 
   return NULL;
 }
@@ -79,9 +85,11 @@ MACTransmitDescriptor *max_lld_get_transmit_descriptor(void) {
  * @brief Releases a transmit descriptor and starts the transmission of the
  *        enqueued data as a single frame.
  *
+ * @param[in] macp pointer to the @p MACDriver object
  * @param[in] tdp the pointer to the @p MACTransmitDescriptor structure
  */
-void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
+void mac_lld_release_transmit_descriptor(MACDriver *macp,
+                                         MACTransmitDescriptor *tdp) {
 
 }
 
@@ -99,11 +107,12 @@ uint8_t *mac_lld_get_transmit_buffer(MACTransmitDescriptor *tdp) {
 /**
  * @brief Returns a received frame.
  *
+ * @param[in] macp pointer to the @p MACDriver object
  * @return A pointer to a @p MACReceiveDescriptor structure or @p NULL if
  *         the operation timed out, the driver went in stop mode or some
  *         transient error happened.
  */
-MACReceiveDescriptor *max_lld_get_receive_descriptor(void) {
+MACReceiveDescriptor *max_lld_get_receive_descriptor(MACDriver *macp) {
 
   return NULL;
 }
@@ -113,9 +122,11 @@ MACReceiveDescriptor *max_lld_get_receive_descriptor(void) {
  * @details The descriptor and its buffer is made available for more incoming
  *          frames.
  *
+ * @param[in] macp pointer to the @p MACDriver object
  * @param[in] rdp the pointer to the @p MACReceiveDescriptor structure
  */
-void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
+void mac_lld_release_receive_descriptor(MACDriver *macp,
+                                        MACReceiveDescriptor *rdp) {
 
 }
 
@@ -127,6 +138,7 @@ void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
  */
 uint8_t *mac_lld_get_receive_buffer(MACReceiveDescriptor *rdp) {
 
+  return NULL;
 }
 
 /** @} */

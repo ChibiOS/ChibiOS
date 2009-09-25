@@ -49,14 +49,17 @@
 extern "C" {
 #endif
   void macInit(void);
-  void macSetAddress(uint8_t *p);
-  void macStart(void);
-  void macStop(void);
-  MACTransmitDescriptor *macWaitTransmitDescriptor(systime_t time);
-  void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp);
-  void macAddTransmitData(MACTransmitDescriptor *tdp,
-                          uint8_t *buf,
-                          size_t size);
+  void macSetAddress(MACDriver *macp, uint8_t *p);
+  void macStart(MACDriver *macp);
+  void macStop(MACDriver *macp);
+  MACTransmitDescriptor *macWaitTransmitDescriptor(MACDriver *macp,
+                                                   systime_t time);
+  void macReleaseTransmitDescriptor(MACDriver *macp,
+                                    MACTransmitDescriptor *tdp);
+  MACReceiveDescriptor *macWaitReceiveDescriptor(MACDriver *macp,
+                                                 systime_t time);
+  void macReleaseReceiveDescriptor(MACDriver *macp,
+                                   MACReceiveDescriptor *rdp);
 #ifdef __cplusplus
 }
 #endif
