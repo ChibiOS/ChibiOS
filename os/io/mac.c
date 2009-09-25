@@ -28,11 +28,6 @@
 #include <mac.h>
 
 /**
- * @brief Interface status.
- */
-static enum {ifStopped = 0, ifStarted} state;
-
-/**
  * @brief Transmit descriptors counter semaphore.
  */
 static Semaphore tdsem, rdsem;
@@ -42,10 +37,19 @@ static Semaphore tdsem, rdsem;
  */
 void macInit(void) {
 
-  chSemInit(&tdsem, MAC_TRANSMIT_DESCRIPTORS);
-  chSemInit(&rdsem, 0);
-  state = ifStopped;
   mac_lld_init();
+}
+
+/**
+ * @brief Initialize the standard part of a @p MACDriver structure.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
+ */
+void macObjectInit(MACDriver *macp) {
+
+  chSemInit(&macp->md_tdsem, MAC_TRANSMIT_DESCRIPTORS);
+  chSemInit(&macp->md_rdsem, 0);
+  macp->md_state = ifStopped;
 }
 
 /**
@@ -61,7 +65,7 @@ void macInit(void) {
  */
 void macSetAddress(MACDriver *macp, uint8_t *p) {
 
-  if (state == ifStopped)
+  if (macp->md_state == ifStopped)
     mac_lld_set_address(macp, p);
 }
 
@@ -74,11 +78,11 @@ void macSetAddress(MACDriver *macp, uint8_t *p) {
 void macStart(MACDriver *macp) {
 
   chSysLock();
-  if (state == ifStarted) {
+  if (macp->md_state == ifStarted) {
     chSysUnlock();
     return;
   }
-  state = ifStarted;
+  macp->md_state = ifStarted;
   chSysUnlock();
   mac_lld_start(macp);
 }
@@ -91,13 +95,13 @@ void macStart(MACDriver *macp) {
 void macStop(MACDriver *macp) {
 
   chSysLock();
-  if (state == ifStopped) {
+  if (macp->md_state == ifStopped) {
     chSysUnlock();
     return;
   }
-  state = ifStopped;
-  chSemResetI(&tdsem, MAC_TRANSMIT_DESCRIPTORS);
-  chSemResetI(&rdsem, 0);
+  macp->md_state = ifStopped;
+  chSemResetI(&macp->md_tdsem, MAC_TRANSMIT_DESCRIPTORS);
+  chSemResetI(&macp->md_rdsem, 0);
   chSchRescheduleS();
   chSysUnlock();
   mac_lld_stop(macp);
@@ -124,7 +128,8 @@ MACTransmitDescriptor *macWaitTransmitDescriptor(MACDriver *macp,
 
   chSysLock();
 
-  if ((state == ifStopped) || (chSemWaitTimeoutS(&tdsem, time) != RDY_OK))
+  if ((macp->md_state == ifStopped) ||
+      (chSemWaitTimeoutS(&tdsem, time) != RDY_OK))
     tdp = NULL;
   else
     tdp = max_lld_get_transmit_descriptor(macp);
@@ -143,7 +148,7 @@ MACTransmitDescriptor *macWaitTransmitDescriptor(MACDriver *macp,
 void macReleaseTransmitDescriptor(MACDriver *macp,
                                   MACTransmitDescriptor *tdp) {
 
-  if (state == ifStarted)
+  if (macp->md_state == ifStarted)
     mac_lld_release_transmit_descriptor(macp, tdp);
 }
 
@@ -169,7 +174,8 @@ MACReceiveDescriptor *macWaitReceiveDescriptor(MACDriver *macp,
 
   chSysLock();
 
-  if ((state == ifStopped) || (chSemWaitTimeoutS(&rdsem, time) != RDY_OK))
+  if ((macp->md_state == ifStopped) ||
+      (chSemWaitTimeoutS(&rdsem, time) != RDY_OK))
     rdp = NULL;
   else
     rdp = max_lld_get_receive_descriptor(macp);
@@ -189,7 +195,7 @@ MACReceiveDescriptor *macWaitReceiveDescriptor(MACDriver *macp,
 void macReleaseReceiveDescriptor(MACDriver *macp,
                                  MACReceiveDescriptor *rdp) {
 
-  if (state == ifStarted)
+  if (macp->md_state == ifStarted)
     mac_lld_release_receive_descriptor(macp, rdp);
 }
 

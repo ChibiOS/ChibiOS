@@ -25,6 +25,85 @@
  */
 
 #include <ch.h>
+#include <mac.h>
 #include <phy.h>
+
+/**
+ * @brief Interface status.
+ */
+static enum {ifStopped = 0, ifStarted} state;
+
+/**
+ * @brief PHY Driver initialization.
+ */
+void phyInit(void) {
+
+  state = ifStopped;
+}
+
+/**
+ * Initializes a PHY device.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
+ */
+void phyReset(MACDriver *macp) {
+
+}
+
+/**
+ * @brief Puts the PHY device in active mode.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
+ */
+void phyStart(MACDriver *macp) {
+
+  chSysLock();
+  if (state == ifStarted) {
+    chSysUnlock();
+    return;
+  }
+  state = ifStarted;
+  chSysUnlock();
+  phy_lld_start(macp);
+}
+
+/**
+ * @brief Puts the PHY device in a low power mode.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
+ */
+void phyStop(MACDriver *macp) {
+
+  chSysLock();
+  if (state == ifStopped) {
+    chSysUnlock();
+    return;
+  }
+  state = ifStopped;
+  chSysUnlock();
+  phy_lld_stop(macp);
+}
+
+/**
+ * @brief Reads a PHY register.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
+ * @param addr the register address
+ * @return The register value.
+ */
+phyreg_t phyGet(MACDriver *macp, phyaddr_t addr) {
+
+}
+
+/**
+ * @brief Writes a PHY register.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
+ * @param addr the register address
+ * @param value the new register value
+ */
+void phyPut(MACDriver *macp, phyaddr_t addr, phyreg_t value) {
+
+}
 
 /** @} */

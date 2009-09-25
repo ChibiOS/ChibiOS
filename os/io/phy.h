@@ -27,12 +27,28 @@
 #ifndef _PHY_H_
 #define _PHY_H_
 
+#include "mac_lld.h"
 #include "phy_lld.h"
+
+/**
+ * @brief Type of a PHY register value.
+ */
+typedef uint16_t phyreg_t;
+
+/**
+ * @brief Type of a PHY register address.
+ */
+typedef uint8_t phyaddr_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void phyInit(void);
+  void phyReset(MACDriver *macp);
+  void phyStart(MACDriver *macp);
+  void phyStop(MACDriver *macp);
+  phyreg_t phyGet(MACDriver *macp, phyaddr_t addr);
+  void phyPut(MACDriver *macp, phyaddr_t addr, phyreg_t value);
 #ifdef __cplusplus
 }
 #endif
