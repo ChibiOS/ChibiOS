@@ -93,6 +93,7 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
  */
 uint8_t *mac_lld_get_transmit_buffer(MACTransmitDescriptor *tdp) {
 
+  return NULL;
 }
 
 /**

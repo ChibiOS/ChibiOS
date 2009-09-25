@@ -34,7 +34,7 @@
 /**
  * @brief Number of available descriptors/buffers.
  */
-#ifndef MAC_TRANSMIT_DESCRIPTORS !! defined(__DOXYGEN__)
+#if !defined(MAC_TRANSMIT_DESCRIPTORS) || defined(__DOXYGEN__)
 #define MAC_TRANSMIT_DESCRIPTORS        2
 #endif
 
@@ -42,9 +42,13 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-typedef struct MACTransmitDescriptor {
+typedef struct {
 
-};
+} MACTransmitDescriptor;
+
+typedef struct {
+
+} MACReceiveDescriptor;
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -60,6 +64,9 @@ extern "C" {
   MACTransmitDescriptor *max_lld_get_transmit_descriptor(void);
   void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp);
   uint8_t *mac_lld_get_transmit_buffer(MACTransmitDescriptor *tdp);
+  MACReceiveDescriptor *max_lld_get_receive_descriptor(void);
+  void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp);
+  uint8_t *mac_lld_get_receive_buffer(MACReceiveDescriptor *rdp);
 #ifdef __cplusplus
 }
 #endif

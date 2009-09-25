@@ -28,6 +28,11 @@
 #include <mac.h>
 
 /**
+ * @brief Interface status.
+ */
+static enum {ifStopped = 0, ifStarted} state;
+
+/**
  * @brief Transmit descriptors counter semaphore.
  */
 static Semaphore tdsem, rdsem;
@@ -39,6 +44,7 @@ void macInit(void) {
 
   chSemInit(&tdsem, MAC_TRANSMIT_DESCRIPTORS);
   chSemInit(&rdsem, 0);
+  state = ifStopped;
   mac_lld_init();
 }
 
@@ -62,6 +68,13 @@ void macSetAddress(uint8_t *p) {
  */
 void macStart(void) {
 
+  chSysLock();
+  if (state == ifStarted) {
+    chSysUnlock();
+    return;
+  }
+  state = ifStarted;
+  chSysUnlock();
   mac_lld_start();
 }
 
@@ -70,9 +83,17 @@ void macStart(void) {
  */
 void macStop(void) {
 
-  max_lld_stop();
-  chSemReset(&tdsem, MAC_TRANSMIT_DESCRIPTORS);
-  chSemReset(&rdsem, 0);
+  chSysLock();
+  if (state == ifStopped) {
+    chSysUnlock();
+    return;
+  }
+  state = ifStopped;
+  chSemResetI(&tdsem, MAC_TRANSMIT_DESCRIPTORS);
+  chSemResetI(&rdsem, 0);
+  chSchRescheduleS();
+  chSysUnlock();
+  mac_lld_stop();
 }
 
 /**
@@ -94,10 +115,10 @@ MACTransmitDescriptor *macWaitTransmitDescriptor(systime_t time) {
 
   chSysLock();
 
-  if (chSemWaitTimeoutS(&tdsem, time) == RDY_OK)
-    tdp = max_lld_get_transmit_descriptor();
-  else
+  if ((state == ifStopped) || (chSemWaitTimeoutS(&tdsem, time) != RDY_OK))
     tdp = NULL;
+  else
+    tdp = max_lld_get_transmit_descriptor();
 
   chSysUnlock();
   return tdp;
@@ -111,7 +132,8 @@ MACTransmitDescriptor *macWaitTransmitDescriptor(systime_t time) {
  */
 void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp) {
 
-  mac_lld_release_transmit_descriptor(tdp);
+  if (state == ifStarted)
+    mac_lld_release_transmit_descriptor(tdp);
 }
 
 /**
@@ -134,10 +156,10 @@ MACReceiveDescriptor *macWaitReceiveDescriptor(systime_t time) {
 
   chSysLock();
 
-  if (chSemWaitTimeoutS(&rdsem, time) == RDY_OK)
-    rdp = max_lld_get_receive_descriptor();
-  else
+  if ((state == ifStopped) || (chSemWaitTimeoutS(&rdsem, time) != RDY_OK))
     rdp = NULL;
+  else
+    rdp = max_lld_get_receive_descriptor();
 
   chSysUnlock();
   return rdp;
@@ -150,9 +172,10 @@ MACReceiveDescriptor *macWaitReceiveDescriptor(systime_t time) {
  *
  * @param[in] rdp the pointer to the @p MACReceiveDescriptor structure
  */
-void macReleaseTransmitDescriptor(MACReceiveDescriptor *rdp) {
+void macReleaseReceiveDescriptor(MACReceiveDescriptor *rdp) {
 
-  mac_lld_release_receive_descriptor(rdp);
+  if (state == ifStarted)
+    mac_lld_release_receive_descriptor(rdp);
 }
 
 /** @} */

@@ -52,7 +52,7 @@ extern "C" {
   void macSetAddress(uint8_t *p);
   void macStart(void);
   void macStop(void);
-  MACTransmissionDescriptor *macWaitTransmitDescriptor(systime_t time);
+  MACTransmitDescriptor *macWaitTransmitDescriptor(systime_t time);
   void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp);
   void macAddTransmitData(MACTransmitDescriptor *tdp,
                           uint8_t *buf,
