@@ -65,7 +65,7 @@ void macObjectInit(MACDriver *macp) {
  * @note This function must be invoked only with the driver in the stopped
  *       state. If invoked on an active interface then it is ignored.
  */
-void macSetAddress(MACDriver *macp, uint8_t *p) {
+void macSetAddress(MACDriver *macp, const uint8_t *p) {
 
   mac_lld_set_address(macp, p);
 }
@@ -91,8 +91,8 @@ MACTransmitDescriptor *macWaitTransmitDescriptor(MACDriver *macp,
                                                  systime_t time) {
   MACTransmitDescriptor *tdp;
 
-  while ((time > 0) &&
-         (tdp = max_lld_get_transmit_descriptor(macp, size)) == NULL) {
+  while (((tdp = max_lld_get_transmit_descriptor(macp, size)) == NULL) &&
+         (time > 0)) {
     chSysLock();
     systime_t now = chTimeNow();
     if (chSemWaitTimeoutS(&tdsem, time) == RDY_TIMEOUT) {
@@ -140,8 +140,8 @@ MACReceiveDescriptor *macWaitReceiveDescriptor(MACDriver *macp,
                                                systime_t time) {
   MACReceiveDescriptor *rdp;
 
-  while ((time > 0) &&
-         (rdp = max_lld_get_receive_descriptor(macp, szp)) == NULL) {
+  while (((rdp = max_lld_get_receive_descriptor(macp, szp)) == NULL) &&
+         (time > 0)) {
     chSysLock();
     systime_t now = chTimeNow();
     if (chSemWaitTimeoutS(&rdsem, time) == RDY_TIMEOUT) {

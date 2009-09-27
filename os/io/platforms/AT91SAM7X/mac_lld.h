@@ -134,7 +134,7 @@ extern MACDriver MAC1;
 extern "C" {
 #endif
   void mac_lld_init(void);
-  void mac_lld_set_address(MACDriver *macp, uint8_t *p);
+  void mac_lld_set_address(MACDriver *macp, const uint8_t *p);
   MACTransmitDescriptor *max_lld_get_transmit_descriptor(MACDriver *macp,
                                                          size_t size);
   void mac_lld_release_transmit_descriptor(MACDriver *macp,

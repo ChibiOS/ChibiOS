@@ -120,6 +120,7 @@ CH_IRQ_HANDLER(irq_handler) {
 void mac_lld_init(void) {
   unsigned i;
 
+  phyInit();
   macObjectInit(&MAC1);
 
   /*
@@ -183,6 +184,7 @@ void mac_lld_init(void) {
   /*
    * Interrupt configuration.
    */
+  AT91C_BASE_EMAC->EMAC_IER = AT91C_EMAC_RCOMP | AT91C_EMAC_TCOMP;
   AIC_ConfigureIT(AT91C_ID_EMAC,
                   AT91C_AIC_SRCTYPE_INT_HIGH_LEVEL | EMAC_INTERRUPT_PRIORITY,
                   irq_handler);
@@ -198,7 +200,7 @@ void mac_lld_init(void) {
  *            used. The MAC address must be aligned with the most significant
  *            byte first.
  */
-void mac_lld_set_address(MACDriver *macp, uint8_t *p) {
+void mac_lld_set_address(MACDriver *macp, const uint8_t *p) {
 
   AT91C_BASE_EMAC->EMAC_SA1L = (AT91_REG)((p[2] << 24) | (p[3] << 16) |
                                           (p[4] << 8) | p[5]);

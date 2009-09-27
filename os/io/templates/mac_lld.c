@@ -42,7 +42,7 @@ void mac_lld_init(void) {
  *            this parameter is set to @p NULL then a system default MAC is
  *            used.
  */
-void mac_lld_set_address(MACDriver *macp, uint8_t *p) {
+void mac_lld_set_address(MACDriver *macp, const uint8_t *p) {
 
 }
 

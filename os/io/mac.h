@@ -60,7 +60,7 @@ extern "C" {
 #endif
   void macInit(void);
   void macObjectInit(MACDriver *macp);
-  void macSetAddress(MACDriver *macp, uint8_t *p);
+  void macSetAddress(MACDriver *macp, const uint8_t *p);
   void macStart(MACDriver *macp);
   void macStop(MACDriver *macp);
   MACTransmitDescriptor *macWaitTransmitDescriptor(MACDriver *macp,
