@@ -49,7 +49,6 @@ void macObjectInit(MACDriver *macp) {
 
   chSemInit(&macp->md_tdsem, MAC_TRANSMIT_DESCRIPTORS);
   chSemInit(&macp->md_rdsem, 0);
-  macp->md_state = ifStopped;
 }
 
 /**
@@ -65,46 +64,7 @@ void macObjectInit(MACDriver *macp) {
  */
 void macSetAddress(MACDriver *macp, uint8_t *p) {
 
-  if (macp->md_state == ifStopped)
-    mac_lld_set_address(macp, p);
-}
-
-/**
- * @brief Startsthe I/O activity and enters a low power mode.
- *
- * @param[in] macp pointer to the @p MACDriver object
- *
- */
-void macStart(MACDriver *macp) {
-
-  chSysLock();
-  if (macp->md_state == ifStarted) {
-    chSysUnlock();
-    return;
-  }
-  macp->md_state = ifStarted;
-  chSysUnlock();
-  mac_lld_start(macp);
-}
-
-/**
- * @brief Stops the I/O activity.
- *
- * @param[in] macp pointer to the @p MACDriver object
- */
-void macStop(MACDriver *macp) {
-
-  chSysLock();
-  if (macp->md_state == ifStopped) {
-    chSysUnlock();
-    return;
-  }
-  macp->md_state = ifStopped;
-  chSemResetI(&macp->md_tdsem, MAC_TRANSMIT_DESCRIPTORS);
-  chSemResetI(&macp->md_rdsem, 0);
-  chSchRescheduleS();
-  chSysUnlock();
-  mac_lld_stop(macp);
+  mac_lld_set_address(macp, p);
 }
 
 /**
@@ -114,25 +74,26 @@ void macStop(MACDriver *macp) {
  *          invoking thread is queued until one is freed.
  *
  * @param[in] macp pointer to the @p MACDriver object
+ * @param[in] size size of the frame to be transmitted
  * @param[in] time the number of ticks before the operation timeouts,
  *            the following special values are allowed:
  *            - @a TIME_IMMEDIATE immediate timeout.
  *            - @a TIME_INFINITE no timeout.
  *            .
  * @return A pointer to a @p MACTransmitDescriptor structure or @p NULL if
- *         the operation timed out or the driver went in stop mode.
+ *         the operation timed out.
  */
 MACTransmitDescriptor *macWaitTransmitDescriptor(MACDriver *macp,
+                                                 size_t size,
                                                  systime_t time) {
   MACTransmitDescriptor *tdp;
 
   chSysLock();
 
-  if ((macp->md_state == ifStopped) ||
-      (chSemWaitTimeoutS(&tdsem, time) != RDY_OK))
+  if (chSemWaitTimeoutS(&tdsem, time) != RDY_OK)
     tdp = NULL;
   else
-    tdp = max_lld_get_transmit_descriptor(macp);
+    tdp = max_lld_get_transmit_descriptor(macp, size);
 
   chSysUnlock();
   return tdp;
@@ -148,8 +109,7 @@ MACTransmitDescriptor *macWaitTransmitDescriptor(MACDriver *macp,
 void macReleaseTransmitDescriptor(MACDriver *macp,
                                   MACTransmitDescriptor *tdp) {
 
-  if (macp->md_state == ifStarted)
-    mac_lld_release_transmit_descriptor(macp, tdp);
+  mac_lld_release_transmit_descriptor(macp, tdp);
 }
 
 /**
@@ -159,26 +119,26 @@ void macReleaseTransmitDescriptor(MACDriver *macp,
  *          until one is received.
  *
  * @param[in] macp pointer to the @p MACDriver object
+ * @param[out szp size of the received frame
  * @param[in] time the number of ticks before the operation timeouts,
  *            the following special values are allowed:
  *            - @a TIME_IMMEDIATE immediate timeout.
  *            - @a TIME_INFINITE no timeout.
  *            .
  * @return A pointer to a @p MACReceiveDescriptor structure or @p NULL if
- *         the operation timed out, the driver went in stop mode or some
- *         transient error happened.
+ *         the operation timed out or some transient error happened.
  */
 MACReceiveDescriptor *macWaitReceiveDescriptor(MACDriver *macp,
+                                               size_t *szp,
                                                systime_t time) {
   MACReceiveDescriptor *rdp;
 
   chSysLock();
 
-  if ((macp->md_state == ifStopped) ||
-      (chSemWaitTimeoutS(&rdsem, time) != RDY_OK))
+  if (chSemWaitTimeoutS(&rdsem, time) != RDY_OK)
     rdp = NULL;
   else
-    rdp = max_lld_get_receive_descriptor(macp);
+    rdp = max_lld_get_receive_descriptor(macp, szp);
 
   chSysUnlock();
   return rdp;
@@ -195,8 +155,7 @@ MACReceiveDescriptor *macWaitReceiveDescriptor(MACDriver *macp,
 void macReleaseReceiveDescriptor(MACDriver *macp,
                                  MACReceiveDescriptor *rdp) {
 
-  if (macp->md_state == ifStarted)
-    mac_lld_release_receive_descriptor(macp, rdp);
+  mac_lld_release_receive_descriptor(macp, rdp);
 }
 
 /** @} */

@@ -46,8 +46,6 @@
  * @brief Structure representing a MAC driver.
  */
 typedef struct {
-  enum {ifStopped = 0,
-        ifStarted}      md_state;       /**< @brief Interface status.*/
   Semaphore             md_tdsem;       /**< Transmit semaphore.*/
   Semaphore             md_rdsem;       /**< Receive semaphore.*/
 } MACDriver;
@@ -75,13 +73,13 @@ extern "C" {
 #endif
   void mac_lld_init(void);
   void mac_lld_set_address(MACDriver *macp, uint8_t *p);
-  void mac_lld_start(MACDriver *macp);
-  void mac_lld_stop(MACDriver *macp);
-  MACTransmitDescriptor *max_lld_get_transmit_descriptor(MACDriver *macp);
+  MACTransmitDescriptor *max_lld_get_transmit_descriptor(MACDriver *macp,
+                                                         size_t size);
   void mac_lld_release_transmit_descriptor(MACDriver *macp,
                                            MACTransmitDescriptor *tdp);
   uint8_t *mac_lld_get_transmit_buffer(MACTransmitDescriptor *tdp);
-  MACReceiveDescriptor *max_lld_get_receive_descriptor(MACDriver *macp);
+  MACReceiveDescriptor *max_lld_get_receive_descriptor(MACDriver *macp,
+                                                       size_t *szp);
   void mac_lld_release_receive_descriptor(MACDriver *macp,
                                           MACReceiveDescriptor *rdp);
   uint8_t *mac_lld_get_receive_buffer(MACReceiveDescriptor *rdp);

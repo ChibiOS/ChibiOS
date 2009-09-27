@@ -41,29 +41,8 @@ void mac_lld_init(void) {
  * @param[in] p pointer to a six bytes buffer containing the MAC address. If
  *            this parameter is set to @p NULL then a system default MAC is
  *            used.
- *
- * @note This function should be invoked after the @p macInit() and before
- *       @p macStart() else the result is unspecified (performed or ignored).
  */
 void mac_lld_set_address(MACDriver *macp, uint8_t *p) {
-
-}
-
-/**
- * @brief Starts the I/O activity and enters a low power mode.
- *
- * @param[in] macp pointer to the @p MACDriver object
- */
-void mac_lld_start(MACDriver *macp) {
-
-}
-
-/**
- * @brief Stops the I/O activity.
- *
- * @param[in] macp pointer to the @p MACDriver object
- */
-void mac_lld_stop(MACDriver *macp) {
 
 }
 
@@ -73,10 +52,12 @@ void mac_lld_stop(MACDriver *macp) {
  *          returned.
  *
  * @param[in] macp pointer to the @p MACDriver object
+ * @param[in] size size of the frame to be transmitted
  * @return A pointer to a @p MACTransmitDescriptor structure or @p NULL if
- *         a descriptor is not available or the driver went in stop mode.
+ *         a descriptor is not available.
  */
-MACTransmitDescriptor *max_lld_get_transmit_descriptor(MACDriver *macp) {
+MACTransmitDescriptor *max_lld_get_transmit_descriptor(MACDriver *macp,
+                                                       size_t size) {
 
   return NULL;
 }
@@ -108,11 +89,12 @@ uint8_t *mac_lld_get_transmit_buffer(MACTransmitDescriptor *tdp) {
  * @brief Returns a received frame.
  *
  * @param[in] macp pointer to the @p MACDriver object
+ * @param[out szp size of the received frame
  * @return A pointer to a @p MACReceiveDescriptor structure or @p NULL if
- *         the operation timed out, the driver went in stop mode or some
- *         transient error happened.
+ *         the operation timed out or some transient error happened.
  */
-MACReceiveDescriptor *max_lld_get_receive_descriptor(MACDriver *macp) {
+MACReceiveDescriptor *max_lld_get_receive_descriptor(MACDriver *macp,
+                                                     size_t *szp) {
 
   return NULL;
 }

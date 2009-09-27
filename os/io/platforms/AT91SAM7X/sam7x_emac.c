@@ -155,7 +155,7 @@ void emac_init(int prio) {
   rxptr = rent;
   for (i = 0; i < EMAC_TRANSMIT_BUFFERS; i++) {
     tent[i].w1 = (uint32_t)&tbuffers[i * EMAC_TRANSMIT_BUFFERS_SIZE];
-    tent[i].w2 = EMAC_TRANSMIT_BUFFERS_SIZE | W2_T_USED;
+    tent[i].w2 = EMAC_TRANSMIT_BUFFERS_SIZE | W2_T_LAST_BUFFER | W2_T_USED;
   }
   tent[EMAC_TRANSMIT_BUFFERS - 1].w2 |= W2_T_WRAP;
   txptr = tent;

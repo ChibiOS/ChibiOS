@@ -54,10 +54,12 @@ extern "C" {
   void macStart(MACDriver *macp);
   void macStop(MACDriver *macp);
   MACTransmitDescriptor *macWaitTransmitDescriptor(MACDriver *macp,
+                                                   size_t size,
                                                    systime_t time);
   void macReleaseTransmitDescriptor(MACDriver *macp,
                                     MACTransmitDescriptor *tdp);
   MACReceiveDescriptor *macWaitReceiveDescriptor(MACDriver *macp,
+                                                 size_t *szp,
                                                  systime_t time);
   void macReleaseReceiveDescriptor(MACDriver *macp,
                                    MACReceiveDescriptor *rdp);

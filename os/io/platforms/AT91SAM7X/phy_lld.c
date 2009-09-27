@@ -38,7 +38,7 @@ void phy_lld_init(void) {
 }
 
 /**
- * Resets a PHY device.
+ * @brief Resets a PHY device.
  *
  * @param[in] macp pointer to the @p MACDriver object
  */
