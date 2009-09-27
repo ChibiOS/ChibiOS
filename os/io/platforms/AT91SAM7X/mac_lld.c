@@ -84,7 +84,7 @@ static void serve_interrupt(void) {
       chSysLockFromIsr();
       chSemResetI(&MAC1.md_rdsem, 0);
 #if CH_USE_EVENTS
-      chEvtBroadcast(&MAC1.md_rdevent);
+      chEvtBroadcastI(&MAC1.md_rdevent);
 #endif
       chSysUnlockFromIsr();
     }
@@ -202,9 +202,9 @@ void mac_lld_init(void) {
  */
 void mac_lld_set_address(MACDriver *macp, const uint8_t *p) {
 
-  AT91C_BASE_EMAC->EMAC_SA1L = (AT91_REG)((p[2] << 24) | (p[3] << 16) |
-                                          (p[4] << 8) | p[5]);
-  AT91C_BASE_EMAC->EMAC_SA1H = (AT91_REG)((p[0] << 8) | p[1]);
+  AT91C_BASE_EMAC->EMAC_SA1L = (AT91_REG)((p[3] << 24) | (p[2] << 16) |
+                                          (p[1] << 8) | p[0]);
+  AT91C_BASE_EMAC->EMAC_SA1H = (AT91_REG)((p[5] << 8) | p[4]);
 }
 
 /**

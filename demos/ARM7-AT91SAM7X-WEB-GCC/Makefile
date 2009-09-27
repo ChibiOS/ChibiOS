@@ -65,13 +65,17 @@ CSRC = ${PORTSRC} \
        ${USRC} \
        ${CHIBIOS}/os/io/pal.c \
        ${CHIBIOS}/os/io/serial.c \
+       ${CHIBIOS}/os/io/phy.c \
+       ${CHIBIOS}/os/io/mac.c \
        ${CHIBIOS}/os/io/platforms/AT91SAM7X/pal_lld.c \
        ${CHIBIOS}/os/io/platforms/AT91SAM7X/serial_lld.c \
-       ${CHIBIOS}/os/io/platforms/AT91SAM7X/sam7x_emac.c \
+       ${CHIBIOS}/os/io/platforms/AT91SAM7X/phy_lld.c \
+       ${CHIBIOS}/os/io/platforms/AT91SAM7X/mac_lld.c \
        ${CHIBIOS}/os/io/platforms/AT91SAM7X/at91lib/aic.c \
        ${CHIBIOS}/os/various/evtimer.c \
        web/webthread.c \
        board.c main.c
+#       ${CHIBIOS}/os/io/platforms/AT91SAM7X/sam7x_emac.c \
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
