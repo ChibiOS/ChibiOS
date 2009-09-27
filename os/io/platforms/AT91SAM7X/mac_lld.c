@@ -82,7 +82,10 @@ static void serve_interrupt(void) {
   if ((isr & AT91C_EMAC_RCOMP) || (rsr & RSR_BITS)) {
     if (rsr & AT91C_EMAC_REC) {
       chSysLockFromIsr();
-      chSemSignalI(&MAC1.md_rdsem);
+      chSemResetI(&MAC1.md_rdsem, 0);
+#if CH_USE_EVENTS
+      chEvtBroadcast(&MAC1.md_rdevent);
+#endif
       chSysUnlockFromIsr();
     }
     AT91C_BASE_EMAC->EMAC_RSR = RSR_BITS;
@@ -91,7 +94,7 @@ static void serve_interrupt(void) {
   if ((isr & AT91C_EMAC_TCOMP) || (tsr & TSR_BITS)) {
     if (tsr & AT91C_EMAC_COMP) {
       chSysLockFromIsr();
-      chSemSignalI(&MAC1.md_tdsem);
+      chSemResetI(&MAC1.md_tdsem, 0);
       chSysUnlockFromIsr();
     }
     AT91C_BASE_EMAC->EMAC_TSR = TSR_BITS;

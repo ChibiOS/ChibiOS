@@ -45,6 +45,16 @@
  */
 #define macGetReceiveBuffer(rdp) mac_lld_get_receive_buffer(rdp)
 
+/**
+ * @bief Returns the received frames event source.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
+ * @return The pointer to the @p EventSource structure.
+ */
+#if CH_USE_EVENTS || defined(__DOXYGEN__)
+#define macGetReceiveEventSource(macp)  (&(macp)->md_rdevent)
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

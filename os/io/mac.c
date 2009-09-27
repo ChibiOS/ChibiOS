@@ -47,8 +47,11 @@ void macInit(void) {
  */
 void macObjectInit(MACDriver *macp) {
 
-  chSemInit(&macp->md_tdsem, MAC_TRANSMIT_DESCRIPTORS);
+  chSemInit(&macp->md_tdsem, 0);
   chSemInit(&macp->md_rdsem, 0);
+#if CH_USE_EVENTS
+  chEvtInit(&macp->md_rdevent);
+#endif
 }
 
 /**
@@ -88,14 +91,18 @@ MACTransmitDescriptor *macWaitTransmitDescriptor(MACDriver *macp,
                                                  systime_t time) {
   MACTransmitDescriptor *tdp;
 
-  chSysLock();
-
-  if (chSemWaitTimeoutS(&tdsem, time) != RDY_OK)
-    tdp = NULL;
-  else
-    tdp = max_lld_get_transmit_descriptor(macp, size);
-
-  chSysUnlock();
+  while ((time > 0) &&
+         (tdp = max_lld_get_transmit_descriptor(macp, size)) == NULL) {
+    chSysLock();
+    systime_t now = chTimeNow();
+    if (chSemWaitTimeoutS(&tdsem, time) == RDY_TIMEOUT) {
+      tdp = NULL;
+      break;
+    }
+    if (time != TIME_INFINITE)
+      time -= (chTimeNow() - now);
+    chSysUnlock();
+  }
   return tdp;
 }
 
@@ -133,14 +140,18 @@ MACReceiveDescriptor *macWaitReceiveDescriptor(MACDriver *macp,
                                                systime_t time) {
   MACReceiveDescriptor *rdp;
 
-  chSysLock();
-
-  if (chSemWaitTimeoutS(&rdsem, time) != RDY_OK)
-    rdp = NULL;
-  else
-    rdp = max_lld_get_receive_descriptor(macp, szp);
-
-  chSysUnlock();
+  while ((time > 0) &&
+         (rdp = max_lld_get_receive_descriptor(macp, szp)) == NULL) {
+    chSysLock();
+    systime_t now = chTimeNow();
+    if (chSemWaitTimeoutS(&rdsem, time) == RDY_TIMEOUT) {
+     rdp = NULL;
+      break;
+    }
+    if (time != TIME_INFINITE)
+      time -= (chTimeNow() - now);
+    chSysUnlock();
+  }
   return rdp;
 }
 

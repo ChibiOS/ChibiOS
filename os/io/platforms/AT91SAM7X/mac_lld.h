@@ -100,6 +100,9 @@
 typedef struct {
   Semaphore             md_tdsem;       /**< Transmit semaphore.*/
   Semaphore             md_rdsem;       /**< Receive semaphore.*/
+#if CH_USE_EVENTS
+  EventSource           md_rdevent;     /**< Receive event source.*/
+#endif
 } MACDriver;
 
 /**
