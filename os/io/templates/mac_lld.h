@@ -86,6 +86,7 @@ extern "C" {
   void mac_lld_release_receive_descriptor(MACDriver *macp,
                                           MACReceiveDescriptor *rdp);
   uint8_t *mac_lld_get_receive_buffer(MACReceiveDescriptor *rdp);
+  bool_t mac_lld_poll_link_status(MACDriver *macp);
 #ifdef __cplusplus
 }
 #endif

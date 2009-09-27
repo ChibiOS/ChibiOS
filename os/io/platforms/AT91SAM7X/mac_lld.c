@@ -379,4 +379,43 @@ uint8_t *mac_lld_get_receive_buffer(MACReceiveDescriptor *rdp) {
   return (uint8_t *)(rdp->w1 & W1_R_ADDRESS_MASK);
 }
 
+/**
+ * @brief Updates and returns the link status.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
+ * @return The link status.
+ * @retval TRUE if the link is active.
+ * @retval FALSE if the link is down.
+ */
+bool_t mac_lld_poll_link_status(MACDriver *macp) {
+  uint32_t ncfgr, bmsr, bmcr, lpa;
+
+  AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_MPE;
+  (void)phyGet(macp, MII_BMSR);
+  bmsr = phyGet(macp, MII_BMSR);
+  if (!(bmsr & BMSR_LSTATUS)) {
+    AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
+    return link_up = FALSE;
+  }
+
+  ncfgr = AT91C_BASE_EMAC->EMAC_NCFGR & ~(AT91C_EMAC_SPD | AT91C_EMAC_FD);
+  bmcr = phyGet(macp, MII_BMCR);
+  if (bmcr & BMCR_ANENABLE) {
+    lpa = phyGet(macp, MII_LPA);
+    if (lpa & (LPA_100HALF | LPA_100FULL | LPA_100BASE4))
+      ncfgr |= AT91C_EMAC_SPD;
+    if (lpa & (LPA_10FULL | LPA_100FULL))
+      ncfgr |= AT91C_EMAC_FD;
+  }
+  else {
+    if (bmcr & BMCR_SPEED100)
+      ncfgr |= AT91C_EMAC_SPD;
+    if (bmcr & BMCR_FULLDPLX)
+      ncfgr |= AT91C_EMAC_FD;
+  }
+  AT91C_BASE_EMAC->EMAC_NCFGR = ncfgr;
+  AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
+  return link_up = TRUE;
+}
+
 /** @} */

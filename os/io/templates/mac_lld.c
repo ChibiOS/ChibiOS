@@ -123,4 +123,17 @@ uint8_t *mac_lld_get_receive_buffer(MACReceiveDescriptor *rdp) {
   return NULL;
 }
 
+/**
+ * @brief Updates and returns the link status.
+ *
+ * @param[in] macp pointer to the @p MACDriver object
+ * @return The link status.
+ * @retval TRUE if the link is active.
+ * @retval FALSE if the link is down.
+ */
+bool_t mac_lld_poll_link_status(MACDriver *macp) {
+
+  return FALSE;
+}
+
 /** @} */
