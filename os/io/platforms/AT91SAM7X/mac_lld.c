@@ -269,7 +269,7 @@ void mac_lld_release_transmit_descriptor(MACDriver *macp,
  */
 uint8_t *mac_lld_get_transmit_buffer(MACTransmitDescriptor *tdp) {
 
-  return NULL;
+  return (uint8_t *)(tdp->w1 & W1_T_ADDRESS_MASK);
 }
 
 /**
@@ -307,7 +307,7 @@ void mac_lld_release_receive_descriptor(MACDriver *macp,
  */
 uint8_t *mac_lld_get_receive_buffer(MACReceiveDescriptor *rdp) {
 
-  return NULL;
+  return (uint8_t *)(rdp->w1 & W1_R_ADDRESS_MASK);
 }
 
 /** @} */

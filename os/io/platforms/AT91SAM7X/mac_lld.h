@@ -76,6 +76,8 @@
 #define W2_R_MULTICAST_MATCH    0x40000000
 #define W2_R_BROADCAST_DETECTED 0x80000000
 
+#define W1_T_ADDRESS_MASK       0xFFFFFFFF
+
 #define W2_T_LENGTH_MASK        0x000007FF
 #define W2_T_LOCKED             0x00000800 /* Not an EMAC flag, used by the driver */
 #define W2_T_RFU1               0x00003000
