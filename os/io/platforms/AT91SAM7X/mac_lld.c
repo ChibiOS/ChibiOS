@@ -282,7 +282,65 @@ uint8_t *mac_lld_get_transmit_buffer(MACTransmitDescriptor *tdp) {
  */
 MACReceiveDescriptor *max_lld_get_receive_descriptor(MACDriver *macp,
                                                      size_t *szp) {
+  unsigned n;
+  MACReceiveDescriptor *rdp;
 
+  n = EMAC_RECEIVE_BUFFERS;
+
+  /*
+   * Skips unused buffers, if any.
+   */
+skip:
+  while ((n > 0) && !(rxptr->w1 & W1_R_OWNERSHIP)) {
+    if (++rxptr >= &rd[EMAC_RECEIVE_BUFFERS])
+      rxptr = rd;
+    n--;
+  }
+
+  /*
+   * Skips fragments, if any, cleaning them up.
+   */
+  while ((n > 0) && (rxptr->w1 & W1_R_OWNERSHIP) &&
+                    !(rxptr->w2 & W2_R_FRAME_START)) {
+    rxptr->w1 &= ~W1_R_OWNERSHIP;
+    if (++rxptr >= &rd[EMAC_RECEIVE_BUFFERS])
+      rxptr = rd;
+    n--;
+  }
+
+  /*
+   * Now compute the total frame size skipping eventual incomplete frames
+   * or holes...
+   */
+restart:
+  rdp = rxptr;
+  while (n > 0) {
+    if (!(rxptr->w1 & W1_R_OWNERSHIP))
+      goto skip;        /* Empty buffer for some reason... */
+
+    /*
+     * End Of Frame found.
+     */
+    if (rxptr->w2 & W2_R_FRAME_END) {
+      *szp = rxptr->w2 & W2_T_LENGTH_MASK;
+      return rdp;
+    }
+
+    if ((rdp != rxptr) && (rxptr->w2 & W2_R_FRAME_START)) {
+      /* Found another start... cleaning up the incomplete frame.*/
+      do {
+        rdp->w1 &= ~W1_R_OWNERSHIP;
+        if (++rdp >= &rd[EMAC_RECEIVE_BUFFERS])
+          rdp = rd;
+      }
+      while (rdp != rxptr);
+      goto restart;     /* Another start buffer for some reason... */
+    }
+
+    if (++rxptr >= &rd[EMAC_RECEIVE_BUFFERS])
+      rxptr = rd;
+    n--;
+  }
   return NULL;
 }
 
@@ -297,6 +355,14 @@ MACReceiveDescriptor *max_lld_get_receive_descriptor(MACDriver *macp,
 void mac_lld_release_receive_descriptor(MACDriver *macp,
                                         MACReceiveDescriptor *rdp) {
 
+  unsigned n = EMAC_RECEIVE_BUFFERS;
+  do {
+    rdp->w1 &= ~W1_R_OWNERSHIP;
+    if (++rdp >= &rd[EMAC_RECEIVE_BUFFERS])
+      rdp = rd;
+    n--;
+  }
+  while ((n > 0) || !(rxptr->w2 & W2_R_FRAME_END));
 }
 
 /**
