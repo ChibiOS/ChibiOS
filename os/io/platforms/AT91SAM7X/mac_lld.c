@@ -388,9 +388,11 @@ size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
     uint8_t *src = (uint8_t *)(rdp->rd_physdesc->w1 & W1_R_ADDRESS_MASK) +
                    rdp->rd_offset;
     uint8_t *limit = &rb[EMAC_RECEIVE_DESCRIPTORS * EMAC_RECEIVE_BUFFERS_SIZE];
+    if (src >= limit)
+      src -= EMAC_RECEIVE_DESCRIPTORS * EMAC_RECEIVE_BUFFERS_SIZE;
     if (src + size > limit ) {
       memcpy(buf, src, (size_t)(limit - src));
-      memcpy(buf, rb, (size_t)(src + size - limit));
+      memcpy(buf + (size_t)(limit - src), rb, size - (size_t)(limit - src));
     }
     else
       memcpy(buf, src, size);
