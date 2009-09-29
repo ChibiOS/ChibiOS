@@ -52,75 +52,85 @@ void mac_lld_set_address(MACDriver *macp, const uint8_t *p) {
  *          returned.
  *
  * @param[in] macp pointer to the @p MACDriver object
- * @param[in] size size of the frame to be transmitted
- * @return A pointer to a @p MACTransmitDescriptor structure or @p NULL if
- *         a descriptor is not available.
+ * @param[out] tdp pointer to a @p MACTransmitDescriptor structure
+ * @return The operation status.
+ * @retval RDY_OK the descriptor was obtained.
+ * @retval RDY_TIMEOUT descriptor not available.
  */
-MACTransmitDescriptor *max_lld_get_transmit_descriptor(MACDriver *macp,
-                                                       size_t size) {
+msg_t max_lld_get_transmit_descriptor(MACDriver *macp,
+                                      MACTransmitDescriptor *tdp) {
 
-  return NULL;
+  return RDY_OK;
+}
+
+/**
+ * @brief Writes to a transmit descriptor's stream.
+ *
+ * @param[in] tdp pointer to a @p MACTransmitDescriptor structure
+ * @param[in] buf pointer to the buffer cointaining the data to be written
+ * @param[in] size number of bytes to be written
+ * @return The number of bytes written into the descriptor's stream, this
+ *         value can be less than the amount specified in the parameter
+ *         @p size if the maximum frame size is reached.
+ */
+size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
+                                         uint8_t *buf,
+                                         size_t size) {
+
+  return 0;
 }
 
 /**
  * @brief Releases a transmit descriptor and starts the transmission of the
  *        enqueued data as a single frame.
  *
- * @param[in] macp pointer to the @p MACDriver object
  * @param[in] tdp the pointer to the @p MACTransmitDescriptor structure
  */
-void mac_lld_release_transmit_descriptor(MACDriver *macp,
-                                         MACTransmitDescriptor *tdp) {
+void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
 
 }
 
 /**
- * @brief Returns the buffer associated to a @p MACTransmitDescriptor.
+ * @brief Returns a receive descriptor.
  *
- * @param[in] tdp the pointer to the @p MACTransmitDescriptor structure
- * @return The pointer to the transmit buffer.
+ * @param[in] macp pointer to the @p MACDriver object
+ * @param[out] rdp pointer to a @p MACReceiveDescriptor structure
+ * @return The operation status.
+ * @retval RDY_OK the descriptor was obtained.
+ * @retval RDY_TIMEOUT descriptor not available.
  */
-uint8_t *mac_lld_get_transmit_buffer(MACTransmitDescriptor *tdp) {
+msg_t max_lld_get_receive_descriptor(MACDriver *macp,
+                                     MACReceiveDescriptor *rdp) {
 
-  return NULL;
+  return RDY_OK;
 }
 
 /**
- * @brief Returns a received frame.
+ * @brief Reads from a receive descriptor's stream.
  *
- * @param[in] macp pointer to the @p MACDriver object
- * @param[out szp size of the received frame
- * @return A pointer to a @p MACReceiveDescriptor structure or @p NULL if
- *         the operation timed out or some transient error happened.
+ * @param[in] rdp pointer to a @p MACReceiveDescriptor structure
+ * @param[in] buf pointer to the buffer that will receive the read data
+ * @param[in] size number of bytes to be read
+ * @return The number of bytes read from the descriptor's stream, this
+ *         value can be less than the amount specified in the parameter
+ *         @p size if there are no more bytes to read.
  */
-MACReceiveDescriptor *max_lld_get_receive_descriptor(MACDriver *macp,
-                                                     size_t *szp) {
+size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
+                                         uint8_t *buf,
+                                         size_t size) {
 
-  return NULL;
+  return 0;
 }
 
 /**
  * @brief Releases a receive descriptor.
- * @details The descriptor and its buffer is made available for more incoming
+ * @details The descriptor and its buffer are made available for more incoming
  *          frames.
  *
- * @param[in] macp pointer to the @p MACDriver object
  * @param[in] rdp the pointer to the @p MACReceiveDescriptor structure
  */
-void mac_lld_release_receive_descriptor(MACDriver *macp,
-                                        MACReceiveDescriptor *rdp) {
+void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
 
-}
-
-/**
- * @brief Returns the buffer associated to a @p MACTransmitDescriptor.
- *
- * @param[in] tdp the pointer to the @p MACTransmitDescriptor structure
- * @return The pointer to the transmit buffer.
- */
-uint8_t *mac_lld_get_receive_buffer(MACReceiveDescriptor *rdp) {
-
-  return NULL;
 }
 
 /**

@@ -32,14 +32,28 @@
 /*===========================================================================*/
 
 /**
- * @brief Number of available descriptors/buffers.
+ * @brief Number of available transmit buffers.
  */
-#if !defined(MAC_TRANSMIT_DESCRIPTORS) || defined(__DOXYGEN__)
-#define MAC_TRANSMIT_DESCRIPTORS        2
+#if !defined(MAC_TRANSMIT_BUFFERS) || defined(__DOXYGEN__)
+#define MAC_TRANSMIT_BUFFERS            2
+#endif
+
+/**
+ * @brief Number of available receive buffers.
+ */
+#if !defined(MAC_RECEIVE_BUFFERS) || defined(__DOXYGEN__)
+#define MAC_RECEIVE_BUFFERS             2
+#endif
+
+/**
+ * @brief Maximum supported frame size.
+ */
+#if !defined(MAC_BUFFERS_SIZE) || defined(__DOXYGEN__)
+#define MAC_BUFFERS_SIZE                1518
 #endif
 
 /*===========================================================================*/
-/* EMAC specific constants and settings.                                     */
+/* EMAC specific settings.                                                   */
 /*===========================================================================*/
 
 /**
@@ -49,10 +63,16 @@
 #define EMAC_INTERRUPT_PRIORITY         (AT91C_AIC_PRIOR_HIGHEST - 3)
 #endif
 
-#define EMAC_RECEIVE_BUFFERS            24
+/*===========================================================================*/
+/* EMAC specific constants.                                                  */
+/*===========================================================================*/
+
 #define EMAC_RECEIVE_BUFFERS_SIZE       128     /* Do not modify */
-#define EMAC_TRANSMIT_BUFFERS           MAC_TRANSMIT_DESCRIPTORS
-#define EMAC_TRANSMIT_BUFFERS_SIZE      1518
+#define EMAC_TRANSMIT_BUFFERS_SIZE      MAC_BUFFERS_SIZE
+#define EMAC_RECEIVE_DESCRIPTORS                                            \
+    (((((MAC_BUFFERS_SIZE - 1) | (EMAC_RECEIVE_BUFFERS_SIZE - 1)) + 1)      \
+      / EMAC_RECEIVE_BUFFERS_SIZE) * MAC_RECEIVE_BUFFERS)
+#define EMAC_TRANSMIT_DESCRIPTORS       MAC_TRANSMIT_BUFFERS
 
 #define W1_R_OWNERSHIP          0x00000001
 #define W1_R_WRAP               0x00000002
@@ -95,32 +115,46 @@
 /*===========================================================================*/
 
 /**
+ * @brief Structure representing a buffer physical descriptor.
+ * @note It represents both descriptor types.
+ */
+typedef struct {
+  uint32_t              w1;
+  uint32_t              w2;
+} EMACDescriptor;
+
+/**
  * @brief Structure representing a MAC driver.
  */
 typedef struct {
-  Semaphore             md_tdsem;       /**< Transmit semaphore.*/
-  Semaphore             md_rdsem;       /**< Receive semaphore.*/
+  Semaphore             md_tdsem;       /**< Transmit semaphore.        */
+  Semaphore             md_rdsem;       /**< Receive semaphore.         */
 #if CH_USE_EVENTS
-  EventSource           md_rdevent;     /**< Receive event source.*/
+  EventSource           md_rdevent;     /**< Receive event source.      */
 #endif
+  /* End of the mandatory fields.*/
 } MACDriver;
 
 /**
- * @brief Structure representing a transmission descriptor.
+ * @brief Structure representing a transmit descriptor.
  */
 typedef struct {
-
-  uint32_t      w1;
-  uint32_t      w2;
+  size_t                td_offset;      /**< Current write offset.      */
+  size_t                td_size;        /**< Available space size.      */
+  /* End of the mandatory fields.*/
+  EMACDescriptor        *td_physdesc;   /**< Pointer to the physical
+                                             descriptor.                */
 } MACTransmitDescriptor;
 
 /**
  * @brief Structure representing a receive descriptor.
  */
 typedef struct {
-
-  uint32_t      w1;
-  uint32_t      w2;
+  size_t                rd_offset;      /**< Current read offset.       */
+  size_t                rd_size;        /**< Available data size.       */
+  /* End of the mandatory fields.*/
+  EMACDescriptor        *rd_physdesc;   /**< Pointer to the first descriptor
+                                             of the buffers chain.      */
 } MACReceiveDescriptor;
 
 /*===========================================================================*/
@@ -128,23 +162,25 @@ typedef struct {
 /*===========================================================================*/
 
 /** @cond never*/
-extern MACDriver MAC1;
+extern MACDriver ETH1;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void mac_lld_init(void);
   void mac_lld_set_address(MACDriver *macp, const uint8_t *p);
-  MACTransmitDescriptor *max_lld_get_transmit_descriptor(MACDriver *macp,
-                                                         size_t size);
-  void mac_lld_release_transmit_descriptor(MACDriver *macp,
-                                           MACTransmitDescriptor *tdp);
-  uint8_t *mac_lld_get_transmit_buffer(MACTransmitDescriptor *tdp);
-  MACReceiveDescriptor *max_lld_get_receive_descriptor(MACDriver *macp,
-                                                       size_t *szp);
-  void mac_lld_release_receive_descriptor(MACDriver *macp,
-                                          MACReceiveDescriptor *rdp);
-  uint8_t *mac_lld_get_receive_buffer(MACReceiveDescriptor *rdp);
+  msg_t max_lld_get_transmit_descriptor(MACDriver *macp,
+                                        MACTransmitDescriptor *tdp);
+  size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
+                                           uint8_t *buf,
+                                           size_t size);
+  void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp);
+  msg_t max_lld_get_receive_descriptor(MACDriver *macp,
+                                       MACReceiveDescriptor *rdp);
+  size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
+                                         uint8_t *buf,
+                                         size_t size);
+  void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp);
   bool_t mac_lld_poll_link_status(MACDriver *macp);
 #ifdef __cplusplus
 }

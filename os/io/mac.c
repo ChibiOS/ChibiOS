@@ -77,33 +77,32 @@ void macSetAddress(MACDriver *macp, const uint8_t *p) {
  *          invoking thread is queued until one is freed.
  *
  * @param[in] macp pointer to the @p MACDriver object
- * @param[in] size size of the frame to be transmitted
+ * @param[out] tdp pointer to a @p MACTransmitDescriptor structure
  * @param[in] time the number of ticks before the operation timeouts,
  *            the following special values are allowed:
  *            - @a TIME_IMMEDIATE immediate timeout.
  *            - @a TIME_INFINITE no timeout.
  *            .
- * @return A pointer to a @p MACTransmitDescriptor structure or @p NULL if
- *         the operation timed out.
+ * @return The operation status.
+ * @retval RDY_OK the descriptor was obtained.
+ * @retval RDY_TIMEOUT the operation timed out, descriptor not initialized.
  */
-MACTransmitDescriptor *macWaitTransmitDescriptor(MACDriver *macp,
-                                                 size_t size,
-                                                 systime_t time) {
-  MACTransmitDescriptor *tdp;
+msg_t macWaitTransmitDescriptor(MACDriver *macp,
+                                MACTransmitDescriptor *tdp,
+                                systime_t time) {
+  msg_t msg;
 
-  while (((tdp = max_lld_get_transmit_descriptor(macp, size)) == NULL) &&
+  while (((msg = max_lld_get_transmit_descriptor(macp, tdp)) != RDY_OK) &&
          (time > 0)) {
     chSysLock();
     systime_t now = chTimeNow();
-    if (chSemWaitTimeoutS(&tdsem, time) == RDY_TIMEOUT) {
-      tdp = NULL;
+    if ((msg = chSemWaitTimeoutS(&tdsem, time)) == RDY_TIMEOUT)
       break;
-    }
     if (time != TIME_INFINITE)
       time -= (chTimeNow() - now);
     chSysUnlock();
   }
-  return tdp;
+  return msg;
 }
 
 /**
@@ -113,10 +112,9 @@ MACTransmitDescriptor *macWaitTransmitDescriptor(MACDriver *macp,
  * @param[in] macp pointer to the @p MACDriver object
  * @param[in] tdp the pointer to the @p MACTransmitDescriptor structure
  */
-void macReleaseTransmitDescriptor(MACDriver *macp,
-                                  MACTransmitDescriptor *tdp) {
+void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp) {
 
-  mac_lld_release_transmit_descriptor(macp, tdp);
+  mac_lld_release_transmit_descriptor(tdp);
 }
 
 /**
@@ -126,47 +124,45 @@ void macReleaseTransmitDescriptor(MACDriver *macp,
  *          until one is received.
  *
  * @param[in] macp pointer to the @p MACDriver object
- * @param[out szp size of the received frame
+ * @param[out] rdp pointer to a @p MACReceiveDescriptor structure
  * @param[in] time the number of ticks before the operation timeouts,
  *            the following special values are allowed:
  *            - @a TIME_IMMEDIATE immediate timeout.
  *            - @a TIME_INFINITE no timeout.
  *            .
- * @return A pointer to a @p MACReceiveDescriptor structure or @p NULL if
- *         the operation timed out or some transient error happened.
+ * @return The operation status.
+ * @retval RDY_OK the descriptor was obtained.
+ * @retval RDY_TIMEOUT the operation timed out, descriptor not initialized.
  */
-MACReceiveDescriptor *macWaitReceiveDescriptor(MACDriver *macp,
-                                               size_t *szp,
-                                               systime_t time) {
-  MACReceiveDescriptor *rdp;
+msg_t macWaitReceiveDescriptor(MACDriver *macp,
+                               MACReceiveDescriptor *rdp,
+                               systime_t time) {
+  msg_t msg;
 
-  while (((rdp = max_lld_get_receive_descriptor(macp, szp)) == NULL) &&
+  while (((msg = max_lld_get_receive_descriptor(macp, rdp)) != RDY_OK) &&
          (time > 0)) {
     chSysLock();
     systime_t now = chTimeNow();
-    if (chSemWaitTimeoutS(&rdsem, time) == RDY_TIMEOUT) {
-     rdp = NULL;
+    if ((msg = chSemWaitTimeoutS(&rdsem, time)) == RDY_TIMEOUT)
       break;
-    }
     if (time != TIME_INFINITE)
       time -= (chTimeNow() - now);
     chSysUnlock();
   }
-  return rdp;
+  return msg;
 }
 
 /**
  * @brief Releases a receive descriptor.
- * @details The descriptor and its buffer is made available for more incoming
+ * @details The descriptor and its buffer are made available for more incoming
  *          frames.
  *
  * @param[in] macp pointer to the @p MACDriver object
  * @param[in] rdp the pointer to the @p MACReceiveDescriptor structure
  */
-void macReleaseReceiveDescriptor(MACDriver *macp,
-                                 MACReceiveDescriptor *rdp) {
+void macReleaseReceiveDescriptor(MACReceiveDescriptor *rdp) {
 
-  mac_lld_release_receive_descriptor(macp, rdp);
+  mac_lld_release_receive_descriptor(rdp);
 }
 
 /**

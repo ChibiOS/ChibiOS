@@ -30,23 +30,7 @@
 #include "mac_lld.h"
 
 /**
- * @brief Returns the buffer associated to a @p MACTransmitDescriptor.
- *
- * @param[in] tdp the pointer to the @p MACTransmitDescriptor structure
- * @return The pointer to the transmit buffer.
- */
-#define macGetTransmitBuffer(tdp) mac_lld_get_transmit_buffer(tdp)
-
-/**
- * @brief Returns the buffer associated to a @p MACReceiveDescriptor.
- *
- * @param[in] rdp the pointer to the @p MACReceiveDescriptor structure
- * @return The pointer to the receive buffer.
- */
-#define macGetReceiveBuffer(rdp) mac_lld_get_receive_buffer(rdp)
-
-/**
- * @bief Returns the received frames event source.
+ * @brief Returns the received frames event source.
  *
  * @param[in] macp pointer to the @p MACDriver object
  * @return The pointer to the @p EventSource structure.
@@ -55,24 +39,46 @@
 #define macGetReceiveEventSource(macp)  (&(macp)->md_rdevent)
 #endif
 
+/**
+ * @brief Writes to a transmit descriptor's stream.
+ *
+ * @param[in] tdp pointer to a @p MACTransmitDescriptor structure
+ * @param[in] buf pointer to the buffer containing the data to be written
+ * @param[in] size number of bytes to be written
+ * @return The number of bytes written into the descriptor's stream, this
+ *         value can be less than the amount specified in the parameter
+ *         @p size if the maximum frame size is reached.
+ */
+#define macWriteTransmitDescriptor(tdp, buf, size)                          \
+    mac_lld_write_transmit_descriptor(tdp, buf, size)
+
+/**
+ * @brief Reads from a receive descriptor's stream.
+ *
+ * @param[in] rdp pointer to a @p MACReceiveDescriptor structure
+ * @param[in] buf pointer to the buffer that will receive the read data
+ * @param[in] size number of bytes to be read
+ * @return The number of bytes read from the descriptor's stream, this
+ *         value can be less than the amount specified in the parameter
+ *         @p size if there are no more bytes to read.
+ */
+#define macReadReceiveDescriptor(rdp, buf, size)                            \
+    mac_lld_read_receive_descriptor(rdp, buf, size)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
   void macInit(void);
   void macObjectInit(MACDriver *macp);
   void macSetAddress(MACDriver *macp, const uint8_t *p);
-  void macStart(MACDriver *macp);
-  void macStop(MACDriver *macp);
-  MACTransmitDescriptor *macWaitTransmitDescriptor(MACDriver *macp,
-                                                   size_t size,
-                                                   systime_t time);
-  void macReleaseTransmitDescriptor(MACDriver *macp,
-                                    MACTransmitDescriptor *tdp);
-  MACReceiveDescriptor *macWaitReceiveDescriptor(MACDriver *macp,
-                                                 size_t *szp,
-                                                 systime_t time);
-  void macReleaseReceiveDescriptor(MACDriver *macp,
-                                   MACReceiveDescriptor *rdp);
+  msg_t macWaitTransmitDescriptor(MACDriver *macp,
+                                  MACTransmitDescriptor *tdp,
+                                  systime_t time);
+  void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp);
+  msg_t macWaitReceiveDescriptor(MACDriver *macp,
+                                 MACReceiveDescriptor *rdp,
+                                 systime_t time);
+  void macReleaseReceiveDescriptor(MACReceiveDescriptor *rdp);
   bool_t macPollLinkStatus(MACDriver *macp);
 #ifdef __cplusplus
 }

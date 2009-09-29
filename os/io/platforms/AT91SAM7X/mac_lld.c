@@ -24,6 +24,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include <ch.h>
 #include <mac.h>
 #include <phy.h>
@@ -32,9 +34,9 @@
 #include "at91lib/aic.h"
 
 /**
- * @brief EMAC object.
+ * @brief Ethernet driver 1.
  */
-MACDriver MAC1;
+MACDriver ETH1;
 
 #define EMAC_PIN_MASK (AT91C_PB0_ETXCK_EREFCK  | AT91C_PB1_ETXEN         | \
                        AT91C_PB2_ETX0          | AT91C_PB3_ETX1          | \
@@ -56,13 +58,16 @@ static bool_t link_up;
 
 static uint8_t default_mac[] = {0xAA, 0x55, 0x13, 0x37, 0x01, 0x10};
 
-static MACReceiveDescriptor rd[EMAC_RECEIVE_BUFFERS] __attribute__((aligned(8)));
-static uint8_t rb[EMAC_RECEIVE_BUFFERS * EMAC_RECEIVE_BUFFERS_SIZE] __attribute__((aligned(8)));
-static MACReceiveDescriptor *rxptr;
-
-static MACTransmitDescriptor td[EMAC_TRANSMIT_BUFFERS] __attribute__((aligned(8)));
-static uint8_t tb[EMAC_TRANSMIT_BUFFERS * EMAC_TRANSMIT_BUFFERS_SIZE] __attribute__((aligned(8)));
-static MACTransmitDescriptor *txptr;
+static EMACDescriptor *rxptr;
+static EMACDescriptor *txptr;
+static EMACDescriptor rd[EMAC_RECEIVE_DESCRIPTORS]
+    __attribute__((aligned(8)));
+static EMACDescriptor td[EMAC_TRANSMIT_DESCRIPTORS]
+    __attribute__((aligned(8)));
+static uint8_t rb[EMAC_RECEIVE_DESCRIPTORS * EMAC_RECEIVE_BUFFERS_SIZE]
+    __attribute__((aligned(8)));
+static uint8_t tb[EMAC_TRANSMIT_DESCRIPTORS * EMAC_TRANSMIT_BUFFERS_SIZE]
+    __attribute__((aligned(8)));
 #endif
 
 /**
@@ -82,9 +87,9 @@ static void serve_interrupt(void) {
   if ((isr & AT91C_EMAC_RCOMP) || (rsr & RSR_BITS)) {
     if (rsr & AT91C_EMAC_REC) {
       chSysLockFromIsr();
-      chSemResetI(&MAC1.md_rdsem, 0);
+      chSemResetI(&ETH1.md_rdsem, 0);
 #if CH_USE_EVENTS
-      chEvtBroadcastI(&MAC1.md_rdevent);
+      chEvtBroadcastI(&ETH1.md_rdevent);
 #endif
       chSysUnlockFromIsr();
     }
@@ -94,7 +99,7 @@ static void serve_interrupt(void) {
   if ((isr & AT91C_EMAC_TCOMP) || (tsr & TSR_BITS)) {
     if (tsr & AT91C_EMAC_COMP) {
       chSysLockFromIsr();
-      chSemResetI(&MAC1.md_tdsem, 0);
+      chSemResetI(&ETH1.md_tdsem, 0);
       chSysUnlockFromIsr();
     }
     AT91C_BASE_EMAC->EMAC_TSR = TSR_BITS;
@@ -121,28 +126,28 @@ void mac_lld_init(void) {
   unsigned i;
 
   phyInit();
-  macObjectInit(&MAC1);
+  macObjectInit(&ETH1);
 
   /*
    * Buffers initialization.
    */
-  for (i = 0; i < EMAC_RECEIVE_BUFFERS; i++) {
+  for (i = 0; i < EMAC_RECEIVE_DESCRIPTORS; i++) {
     rd[i].w1 = (uint32_t)&rb[i * EMAC_RECEIVE_BUFFERS_SIZE];
     rd[i].w2 = 0;
   }
-  rd[EMAC_RECEIVE_BUFFERS - 1].w1 |= W1_R_WRAP;
+  rd[EMAC_RECEIVE_DESCRIPTORS - 1].w1 |= W1_R_WRAP;
   rxptr = rd;
-  for (i = 0; i < EMAC_TRANSMIT_BUFFERS; i++) {
+  for (i = 0; i < EMAC_TRANSMIT_DESCRIPTORS; i++) {
     td[i].w1 = (uint32_t)&tb[i * EMAC_TRANSMIT_BUFFERS_SIZE];
     td[i].w2 = EMAC_TRANSMIT_BUFFERS_SIZE | W2_T_LAST_BUFFER | W2_T_USED;
   }
-  td[EMAC_TRANSMIT_BUFFERS - 1].w2 |= W2_T_WRAP;
+  td[EMAC_TRANSMIT_DESCRIPTORS - 1].w2 |= W2_T_WRAP;
   txptr = td;
 
   /*
    * Associated PHY initialization.
    */
-  phyReset(&MAC1);
+  phyReset(&ETH1);
 
   /*
    * EMAC pins setup and clock enable. Note, PB18 is not included because it is
@@ -168,15 +173,15 @@ void mac_lld_init(void) {
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TE |
                                AT91C_EMAC_RE |
                                AT91C_EMAC_CLRSTAT;/* Initial NCR settings.*/
-  mac_lld_set_address(&MAC1, default_mac);
+  mac_lld_set_address(&ETH1, default_mac);
 
 #if PHY_HARDWARE == PHY_MICREL_KS8721
   /*
    * PHY device identification.
    */
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_MPE;
-  if ((phyGet(&MAC1, MII_PHYSID1) != (MII_KS8721_ID >> 16)) ||
-      ((phyGet(&MAC1, MII_PHYSID2) & 0xFFF0) != (MII_KS8721_ID & 0xFFF0)))
+  if ((phyGet(&ETH1, MII_PHYSID1) != (MII_KS8721_ID >> 16)) ||
+      ((phyGet(&ETH1, MII_PHYSID2) & 0xFFF0) != (MII_KS8721_ID & 0xFFF0)))
     chSysHalt();
   AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
 #endif
@@ -213,91 +218,104 @@ void mac_lld_set_address(MACDriver *macp, const uint8_t *p) {
  *          returned.
  *
  * @param[in] macp pointer to the @p MACDriver object
- * @param[in] size size of the frame to be transmitted
- * @return A pointer to a @p MACTransmitDescriptor structure or @p NULL if
- *         a descriptor is not available.
+ * @param[out] tdp pointer to a @p MACTransmitDescriptor structure
+ * @return The operation status.
+ * @retval RDY_OK the descriptor was obtained.
+ * @retval RDY_TIMEOUT descriptor not available.
  */
-MACTransmitDescriptor *max_lld_get_transmit_descriptor(MACDriver *macp,
-                                                       size_t size) {
-  MACTransmitDescriptor *tdp;
-
-  chDbgAssert(size <= EMAC_TRANSMIT_BUFFERS_SIZE,
-              "max_lld_get_transmit_descriptor(), #1",
-              "unexpected size");
+msg_t max_lld_get_transmit_descriptor(MACDriver *macp,
+                                      MACTransmitDescriptor *tdp) {
+  EMACDescriptor *edp;
 
   if (!link_up)
-    return NULL;
+    return RDY_TIMEOUT;
 
   chSysLock();
-  tdp = txptr;
-  chDbgAssert((tdp->w2 & W2_T_USED) && !(tdp->w2 & W2_T_LOCKED),
-              "max_lld_get_transmit_descriptor(), #2", "buffer not available");
-  if (!(tdp->w2 & W2_T_USED) || (tdp->w2 & W2_T_LOCKED)) {
+  edp = txptr;
+  if (!(edp->w2 & W2_T_USED) || (edp->w2 & W2_T_LOCKED)) {
     chSysUnlock();
-    return NULL;
+    return RDY_TIMEOUT;
   }
   /*
    * Set the buffer size and configuration, the buffer is also marked
    * as locked.
    */
-  tdp->w2 = size | W2_T_LOCKED | W2_T_USED | W2_T_LAST_BUFFER;
-  if (++txptr >= &td[EMAC_TRANSMIT_BUFFERS]) {
-    tdp->w2 |= W2_T_WRAP;
+  if (++txptr >= &td[EMAC_TRANSMIT_DESCRIPTORS]) {
+    edp->w2 = W2_T_LOCKED | W2_T_USED | W2_T_LAST_BUFFER | W2_T_WRAP;
     txptr = td;
   }
+  else
+    edp->w2 = W2_T_LOCKED | W2_T_USED | W2_T_LAST_BUFFER;
   chSysUnlock();
-  return tdp;
+  tdp->td_offset = 0;
+  tdp->td_size = EMAC_TRANSMIT_BUFFERS_SIZE;
+  tdp->td_physdesc = edp;
+  return RDY_OK;
+}
+
+/**
+ * @brief Writes to a transmit descriptor's stream.
+ *
+ * @param[in] tdp pointer to a @p MACTransmitDescriptor structure
+ * @param[in] buf pointer to the buffer cointaining the data to be written
+ * @param[in] size number of bytes to be written
+ * @return The number of bytes written into the descriptor's stream, this
+ *         value can be less than the amount specified in the parameter
+ *         @p size if the maximum frame size is reached.
+ */
+size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
+                                         uint8_t *buf,
+                                         size_t size) {
+
+  if (size > tdp->td_size - tdp->td_offset)
+    size = tdp->td_size - tdp->td_offset;
+  if (size > 0) {
+    memcpy((uint8_t *)(tdp->td_physdesc->w1 & W1_T_ADDRESS_MASK) +
+                      tdp->td_offset,
+           buf, size);
+    tdp->td_offset += size;
+  }
+  return size;
 }
 
 /**
  * @brief Releases a transmit descriptor and starts the transmission of the
  *        enqueued data as a single frame.
  *
- * @param[in] macp pointer to the @p MACDriver object
  * @param[in] tdp the pointer to the @p MACTransmitDescriptor structure
- * @param[in]
  */
-void mac_lld_release_transmit_descriptor(MACDriver *macp,
-                                         MACTransmitDescriptor *tdp) {
+void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
 
   chSysLock();
-  tdp->w2 &= ~(W2_T_LOCKED | W2_T_USED);
+  tdp->td_physdesc->w2 = (tdp->td_physdesc->w2 &
+                          ~(W2_T_LOCKED | W2_T_USED | W2_T_LENGTH_MASK)) |
+                         tdp->td_offset;
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TSTART;
   chSysUnlock();
 }
 
 /**
- * @brief Returns the buffer associated to a @p MACTransmitDescriptor.
- *
- * @param[in] tdp the pointer to the @p MACTransmitDescriptor structure
- * @return The pointer to the transmit buffer.
- */
-uint8_t *mac_lld_get_transmit_buffer(MACTransmitDescriptor *tdp) {
-
-  return (uint8_t *)(tdp->w1 & W1_T_ADDRESS_MASK);
-}
-
-/**
- * @brief Returns a received frame.
+ * @brief Returns a receive descriptor.
  *
  * @param[in] macp pointer to the @p MACDriver object
- * @param[out szp size of the received frame
- * @return A pointer to a @p MACReceiveDescriptor structure or @p NULL if
- *         the operation timed out or some transient error happened.
+ * @param[out] rdp pointer to a @p MACReceiveDescriptor structure
+ * @return The operation status.
+ * @retval RDY_OK the descriptor was obtained.
+ * @retval RDY_TIMEOUT descriptor not available.
  */
-MACReceiveDescriptor *max_lld_get_receive_descriptor(MACDriver *macp,
-                                                     size_t *szp) {
+msg_t max_lld_get_receive_descriptor(MACDriver *macp,
+                                     MACReceiveDescriptor *rdp) {
   unsigned n;
-  MACReceiveDescriptor *rdp;
+  EMACDescriptor *edp;
 
-  n = EMAC_RECEIVE_BUFFERS;
+  n = EMAC_RECEIVE_DESCRIPTORS;
 
   /*
    * Skips unused buffers, if any.
    */
 skip:
   while ((n > 0) && !(rxptr->w1 & W1_R_OWNERSHIP)) {
-    if (++rxptr >= &rd[EMAC_RECEIVE_BUFFERS])
+    if (++rxptr >= &rd[EMAC_RECEIVE_DESCRIPTORS])
       rxptr = rd;
     n--;
   }
@@ -308,7 +326,7 @@ skip:
   while ((n > 0) && (rxptr->w1 & W1_R_OWNERSHIP) &&
                     !(rxptr->w2 & W2_R_FRAME_START)) {
     rxptr->w1 &= ~W1_R_OWNERSHIP;
-    if (++rxptr >= &rd[EMAC_RECEIVE_BUFFERS])
+    if (++rxptr >= &rd[EMAC_RECEIVE_DESCRIPTORS])
       rxptr = rd;
     n--;
   }
@@ -318,7 +336,7 @@ skip:
    * or holes...
    */
 restart:
-  rdp = rxptr;
+  edp = rxptr;
   while (n > 0) {
     if (!(rxptr->w1 & W1_R_OWNERSHIP))
       goto skip;        /* Empty buffer for some reason... */
@@ -327,58 +345,88 @@ restart:
      * End Of Frame found.
      */
     if (rxptr->w2 & W2_R_FRAME_END) {
-      *szp = rxptr->w2 & W2_T_LENGTH_MASK;
-      return rdp;
+      rdp->rd_offset = 0;
+      rdp->rd_size = rxptr->w2 & W2_T_LENGTH_MASK;
+      rdp->rd_physdesc = edp;
+      return RDY_OK;
     }
 
-    if ((rdp != rxptr) && (rxptr->w2 & W2_R_FRAME_START)) {
+    if ((edp != rxptr) && (rxptr->w2 & W2_R_FRAME_START)) {
       /* Found another start... cleaning up the incomplete frame.*/
       do {
-        rdp->w1 &= ~W1_R_OWNERSHIP;
-        if (++rdp >= &rd[EMAC_RECEIVE_BUFFERS])
-          rdp = rd;
+        edp->w1 &= ~W1_R_OWNERSHIP;
+        if (++edp >= &rd[EMAC_RECEIVE_DESCRIPTORS])
+          edp = rd;
       }
-      while (rdp != rxptr);
+      while (edp != rxptr);
       goto restart;     /* Another start buffer for some reason... */
     }
 
-    if (++rxptr >= &rd[EMAC_RECEIVE_BUFFERS])
+    if (++rxptr >= &rd[EMAC_RECEIVE_DESCRIPTORS])
       rxptr = rd;
     n--;
   }
-  return NULL;
+  return RDY_TIMEOUT;
+}
+
+/**
+ * @brief Reads from a receive descriptor's stream.
+ *
+ * @param[in] rdp pointer to a @p MACReceiveDescriptor structure
+ * @param[in] buf pointer to the buffer that will receive the read data
+ * @param[in] size number of bytes to be read
+ * @return The number of bytes read from the descriptor's stream, this
+ *         value can be less than the amount specified in the parameter
+ *         @p size if there are no more bytes to read.
+ */
+size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
+                                         uint8_t *buf,
+                                         size_t size) {
+  if (size > rdp->rd_size - rdp->rd_offset)
+    size = rdp->rd_size - rdp->rd_offset;
+  if (size > 0) {
+    uint8_t *src = (uint8_t *)(rdp->rd_physdesc->w1 & W1_R_ADDRESS_MASK) +
+                   rdp->rd_offset;
+    uint8_t *limit = &rb[EMAC_RECEIVE_DESCRIPTORS * EMAC_RECEIVE_BUFFERS_SIZE];
+    if (src + size > limit ) {
+      memcpy(buf, src, (size_t)(limit - src));
+      memcpy(buf, rb, (size_t)(src + size - limit));
+    }
+    else
+      memcpy(buf, src, size);
+    rdp->rd_offset += size;
+  }
+  return size;
 }
 
 /**
  * @brief Releases a receive descriptor.
- * @details The descriptor and its buffer is made available for more incoming
+ * @details The descriptor and its buffer are made available for more incoming
  *          frames.
  *
- * @param[in] macp pointer to the @p MACDriver object
  * @param[in] rdp the pointer to the @p MACReceiveDescriptor structure
  */
-void mac_lld_release_receive_descriptor(MACDriver *macp,
-                                        MACReceiveDescriptor *rdp) {
+void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
+  bool_t done;
+  EMACDescriptor *edp = rdp->rd_physdesc;
 
-  unsigned n = EMAC_RECEIVE_BUFFERS;
+  unsigned n = EMAC_RECEIVE_DESCRIPTORS;
   do {
-    rdp->w1 &= ~W1_R_OWNERSHIP;
-    if (++rdp >= &rd[EMAC_RECEIVE_BUFFERS])
-      rdp = rd;
+    done = ((edp->w2 & W2_R_FRAME_END) != 0);
+    chDbgAssert(edp->w1 & W1_R_OWNERSHIP,
+                "mac_lld_release_receive_descriptor(), #1",
+                "found not owned descriptor");
+    edp->w1 &= ~(W1_R_OWNERSHIP | W2_R_FRAME_START | W2_R_FRAME_END);
+    if (++edp >= &rd[EMAC_RECEIVE_DESCRIPTORS])
+      edp = rd;
     n--;
   }
-  while ((n > 0) || !(rxptr->w2 & W2_R_FRAME_END));
-}
-
-/**
- * @brief Returns the buffer associated to a @p MACTransmitDescriptor.
- *
- * @param[in] tdp the pointer to the @p MACTransmitDescriptor structure
- * @return The pointer to the transmit buffer.
- */
-uint8_t *mac_lld_get_receive_buffer(MACReceiveDescriptor *rdp) {
-
-  return (uint8_t *)(rdp->w1 & W1_R_ADDRESS_MASK);
+  while ((n > 0) && !done);
+  /*
+   * Make rxptr point to the descriptor where the next frame will most
+   * likely appear.
+   */
+  rxptr = edp;
 }
 
 /**

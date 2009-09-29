@@ -47,21 +47,18 @@ static const struct uip_eth_addr macaddr = {
  */
 static void network_device_send(void) {
   int i;
-  MACTransmitDescriptor *tdp;
+  MACTransmitDescriptor td;
 
   for (i = 0; i < SEND_RETRY_MAX; i++) {
-    if ((tdp = macWaitTransmitDescriptor(&MAC1, uip_len, TIME_IMMEDIATE)) != NULL) {
-      uint8_t *bp = macGetTransmitBuffer(tdp);
-
+    if (macWaitTransmitDescriptor(&ETH1, &td, TIME_IMMEDIATE) == RDY_OK) {
       if(uip_len <= UIP_LLH_LEN + UIP_TCPIP_HLEN)
-        memcpy(bp, &uip_buf[0], uip_len);
+        macWriteTransmitDescriptor(&td, uip_buf, uip_len);
       else {
-        memcpy(bp, &uip_buf[0], UIP_LLH_LEN + UIP_TCPIP_HLEN);
-        memcpy(bp + UIP_LLH_LEN + UIP_TCPIP_HLEN,
-               uip_appdata,
-               uip_len - (UIP_LLH_LEN + UIP_TCPIP_HLEN));
+        macWriteTransmitDescriptor(&td, uip_buf, UIP_LLH_LEN + UIP_TCPIP_HLEN);
+        macWriteTransmitDescriptor(&td, uip_appdata,
+                                   uip_len - (UIP_LLH_LEN + UIP_TCPIP_HLEN));
       }
-      macReleaseTransmitDescriptor(&MAC1, tdp);
+      macReleaseTransmitDescriptor(&td);
       return;
     }
     chThdSleep(SEND_RETRY_INTERVAL);
@@ -73,15 +70,14 @@ static void network_device_send(void) {
  * uIP receive function wrapping the EMAC function.
  */
 static size_t network_device_read(void) {
-  MACReceiveDescriptor *rdp;
+  MACReceiveDescriptor rd;
   size_t size;
-  uint8_t *bp;
 
-  if ((rdp = macWaitReceiveDescriptor(&MAC1, &size, TIME_IMMEDIATE)) == NULL)
+  if (macWaitReceiveDescriptor(&ETH1, &rd, TIME_IMMEDIATE) != RDY_OK)
     return 0;
-  bp = macGetReceiveBuffer(rdp);
-  memcpy(&uip_buf[0], bp, size);
-  macReleaseReceiveDescriptor(&MAC1, rdp);
+  size = rd.rd_size;
+  macReadReceiveDescriptor(&rd, uip_buf, size);
+  macReleaseReceiveDescriptor(&rd);
   return size;
 }
 
@@ -113,7 +109,7 @@ static void PeriodicTimerHandler(eventid_t id) {
 static void ARPTimerHandler(eventid_t id) {
 
   uip_arp_timer();
-  (void)macPollLinkStatus(&MAC1);
+  (void)macPollLinkStatus(&ETH1);
 }
 
 /*
@@ -156,7 +152,7 @@ msg_t WebThread(void *p) {
   /*
    * Event sources setup.
    */
-  chEvtRegister(macGetReceiveEventSource(&MAC1), &el0, FRAME_RECEIVED_ID);
+  chEvtRegister(macGetReceiveEventSource(&ETH1), &el0, FRAME_RECEIVED_ID);
   chEvtPend(EVENT_MASK(FRAME_RECEIVED_ID)); /* In case some frames are already buffered */
 
   evtInit(&evt1, MS2ST(500));
@@ -170,8 +166,8 @@ msg_t WebThread(void *p) {
   /*
    * EMAC settings.
    */
-  macSetAddress(&MAC1, &macaddr.addr[0]);
-  (void)macPollLinkStatus(&MAC1);
+  macSetAddress(&ETH1, &macaddr.addr[0]);
+  (void)macPollLinkStatus(&ETH1);
 
   /*
    * uIP initialization.
