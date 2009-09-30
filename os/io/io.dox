@@ -159,7 +159,7 @@
  * @details This module implements a generic interface for MII (Media
  *          Independent Interface) drivers.
  *          The MII/RMII/GMII/RGMII/SGMII buses are standard interfaces meant
- *          to connect a @ref MAC block to a PHY transceiver.<br>
+ *          to connect a MAC block to a PHY transceiver.<br>
  *          A @ref MII is usually used from within a @ref MAC and is not
  *          meant to be used directly from the application code.
  *

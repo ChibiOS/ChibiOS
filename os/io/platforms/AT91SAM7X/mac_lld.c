@@ -18,9 +18,9 @@
 */
 
 /**
- * @file templates/mac_lld.c
- * @brief MAC Driver subsystem low level driver source template
- * @addtogroup MAC_LLD
+ * @file AT91SAM7X/mac_lld.c
+ * @brief AT91SAM7X low level MAC driver code
+ * @addtogroup AT91SAM7X_MAC
  * @{
  */
 
