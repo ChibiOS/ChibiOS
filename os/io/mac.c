@@ -109,7 +109,6 @@ msg_t macWaitTransmitDescriptor(MACDriver *macp,
  * @brief Releases a transmit descriptor and starts the transmission of the
  *        enqueued data as a single frame.
  *
- * @param[in] macp pointer to the @p MACDriver object
  * @param[in] tdp the pointer to the @p MACTransmitDescriptor structure
  */
 void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp) {
@@ -157,7 +156,6 @@ msg_t macWaitReceiveDescriptor(MACDriver *macp,
  * @details The descriptor and its buffer are made available for more incoming
  *          frames.
  *
- * @param[in] macp pointer to the @p MACDriver object
  * @param[in] rdp the pointer to the @p MACReceiveDescriptor structure
  */
 void macReleaseReceiveDescriptor(MACReceiveDescriptor *rdp) {

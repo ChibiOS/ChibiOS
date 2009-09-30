@@ -28,9 +28,8 @@
 
 #include <ch.h>
 #include <mac.h>
-#include <phy.h>
+#include <mii.h>
 
-#include "mii.h"
 #include "at91lib/aic.h"
 
 /**
@@ -125,7 +124,7 @@ CH_IRQ_HANDLER(irq_handler) {
 void mac_lld_init(void) {
   unsigned i;
 
-  phyInit();
+  miiInit();
   macObjectInit(&ETH1);
 
   /*
@@ -147,7 +146,7 @@ void mac_lld_init(void) {
   /*
    * Associated PHY initialization.
    */
-  phyReset(&ETH1);
+  miiReset(&ETH1);
 
   /*
    * EMAC pins setup and clock enable. Note, PB18 is not included because it is
@@ -180,8 +179,8 @@ void mac_lld_init(void) {
    * PHY device identification.
    */
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_MPE;
-  if ((phyGet(&ETH1, MII_PHYSID1) != (MII_KS8721_ID >> 16)) ||
-      ((phyGet(&ETH1, MII_PHYSID2) & 0xFFF0) != (MII_KS8721_ID & 0xFFF0)))
+  if ((miiGet(&ETH1, MII_PHYSID1) != (MII_KS8721_ID >> 16)) ||
+      ((miiGet(&ETH1, MII_PHYSID2) & 0xFFF0) != (MII_KS8721_ID & 0xFFF0)))
     chSysHalt();
   AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
 #endif
@@ -443,17 +442,17 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
   uint32_t ncfgr, bmsr, bmcr, lpa;
 
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_MPE;
-  (void)phyGet(macp, MII_BMSR);
-  bmsr = phyGet(macp, MII_BMSR);
+  (void)miiGet(macp, MII_BMSR);
+  bmsr = miiGet(macp, MII_BMSR);
   if (!(bmsr & BMSR_LSTATUS)) {
     AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
     return link_up = FALSE;
   }
 
   ncfgr = AT91C_BASE_EMAC->EMAC_NCFGR & ~(AT91C_EMAC_SPD | AT91C_EMAC_FD);
-  bmcr = phyGet(macp, MII_BMCR);
+  bmcr = miiGet(macp, MII_BMCR);
   if (bmcr & BMCR_ANENABLE) {
-    lpa = phyGet(macp, MII_LPA);
+    lpa = miiGet(macp, MII_LPA);
     if (lpa & (LPA_100HALF | LPA_100FULL | LPA_100BASE4))
       ncfgr |= AT91C_EMAC_SPD;
     if (lpa & (LPA_10FULL | LPA_100FULL))

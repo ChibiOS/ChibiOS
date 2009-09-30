@@ -17,7 +17,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 /**
  * @defgroup IO I/O
  * @brief I/O related services.
@@ -47,6 +46,7 @@
  * The I/O subsystem currently includes support for:
  * - @ref PAL.
  * - @ref SERIAL.
+ * - @ref MAC
  * .
  */
 
@@ -123,7 +123,7 @@
  * to notify the application about incoming data, outgoing data and other I/O
  * events.<br>
  * The  module also contains functions that make the implementation of the
- * interrupt service routines much easier.<br>
+ * interrupt service routines much easier.
  *
  * @ingroup IO
  */
@@ -135,3 +135,42 @@
  *
  * @ingroup SERIAL
  */
+
+/**
+ * @defgroup MAC MAC Driver
+ * @brief Generic MAC driver.
+ * @details This module implements a generic interface for MAC (Media
+ *          Access Control) drivers, as example Ethernet controllers.
+ *
+ * @ingroup IO
+ */
+
+/**
+ * @defgroup MAC_LLD MAC Low Level Driver
+ * @brief @ref MAC low level driver template.
+ * @details This file is a template for a MAC low level driver.
+ *
+ * @ingroup MAC
+ */
+
+/**
+ * @defgroup MII MII Driver
+ * @brief Generic MII driver.
+ * @details This module implements a generic interface for MII (Media
+ *          Independent Interface) drivers.
+ *          The MII/RMII/GMII/RGMII/SGMII buses are standard interfaces meant
+ *          to connect a @ref MAC block to a PHY transceiver.<br>
+ *          A @ref MII is usually used from within a @ref MAC and is not
+ *          meant to be used directly from the application code.
+ *
+ * @ingroup IO
+ */
+
+/**
+ * @defgroup MII_LLD MII Low Level Driver
+ * @brief @ref MII low level driver template.
+ * @details This file is a template for a MII low level driver.
+ *
+ * @ingroup MII
+ */
+ 
