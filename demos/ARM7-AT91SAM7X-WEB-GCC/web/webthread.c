@@ -33,8 +33,7 @@
 #define IPADDR2  1
 #define IPADDR3  20
 
-#define SEND_RETRY_MAX 10
-#define SEND_RETRY_INTERVAL 2
+#define SEND_TIMEOUT 50
 
 static const struct uip_eth_addr macaddr = {
   {0xC2, 0xAF, 0x51, 0x03, 0xCF, 0x46}
@@ -46,22 +45,17 @@ static const struct uip_eth_addr macaddr = {
  * uIP send function wrapping the EMAC functions.
  */
 static void network_device_send(void) {
-  int i;
   MACTransmitDescriptor td;
 
-  for (i = 0; i < SEND_RETRY_MAX; i++) {
-    if (macWaitTransmitDescriptor(&ETH1, &td, TIME_IMMEDIATE) == RDY_OK) {
-      if(uip_len <= UIP_LLH_LEN + UIP_TCPIP_HLEN)
-        macWriteTransmitDescriptor(&td, uip_buf, uip_len);
-      else {
-        macWriteTransmitDescriptor(&td, uip_buf, UIP_LLH_LEN + UIP_TCPIP_HLEN);
-        macWriteTransmitDescriptor(&td, uip_appdata,
-                                   uip_len - (UIP_LLH_LEN + UIP_TCPIP_HLEN));
-      }
-      macReleaseTransmitDescriptor(&td);
-      return;
+  if (macWaitTransmitDescriptor(&ETH1, &td, MS2ST(SEND_TIMEOUT)) == RDY_OK) {
+    if(uip_len <= UIP_LLH_LEN + UIP_TCPIP_HLEN)
+      macWriteTransmitDescriptor(&td, uip_buf, uip_len);
+    else {
+      macWriteTransmitDescriptor(&td, uip_buf, UIP_LLH_LEN + UIP_TCPIP_HLEN);
+      macWriteTransmitDescriptor(&td, uip_appdata,
+                                 uip_len - (UIP_LLH_LEN + UIP_TCPIP_HLEN));
     }
-    chThdSleep(SEND_RETRY_INTERVAL);
+    macReleaseTransmitDescriptor(&td);
   }
   /* Dropped... */
 }

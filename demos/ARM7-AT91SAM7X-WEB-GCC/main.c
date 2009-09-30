@@ -21,7 +21,6 @@
 #include <pal.h>
 #include <test.h>
 #include <serial.h>
-#include <sam7x_emac.h>
 
 #include "board.h"
 
