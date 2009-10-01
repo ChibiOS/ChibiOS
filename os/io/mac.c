@@ -28,11 +28,6 @@
 #include <mac.h>
 
 /**
- * @brief Transmit descriptors counter semaphore.
- */
-static Semaphore tdsem, rdsem;
-
-/**
  * @brief MAC Driver initialization.
  */
 void macInit(void) {
@@ -96,7 +91,7 @@ msg_t macWaitTransmitDescriptor(MACDriver *macp,
          (time > 0)) {
     chSysLock();
     systime_t now = chTimeNow();
-    if ((msg = chSemWaitTimeoutS(&tdsem, time)) == RDY_TIMEOUT)
+    if ((msg = chSemWaitTimeoutS(&macp->md_tdsem, time)) == RDY_TIMEOUT)
       break;
     if (time != TIME_INFINITE)
       time -= (chTimeNow() - now);
@@ -142,7 +137,7 @@ msg_t macWaitReceiveDescriptor(MACDriver *macp,
          (time > 0)) {
     chSysLock();
     systime_t now = chTimeNow();
-    if ((msg = chSemWaitTimeoutS(&rdsem, time)) == RDY_TIMEOUT)
+    if ((msg = chSemWaitTimeoutS(&macp->md_rdsem, time)) == RDY_TIMEOUT)
       break;
     if (time != TIME_INFINITE)
       time -= (chTimeNow() - now);
