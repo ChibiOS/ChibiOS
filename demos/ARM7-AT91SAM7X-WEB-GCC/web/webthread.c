@@ -102,8 +102,8 @@ static void PeriodicTimerHandler(eventid_t id) {
  */
 static void ARPTimerHandler(eventid_t id) {
 
-  uip_arp_timer();
   (void)macPollLinkStatus(&ETH1);
+  uip_arp_timer();
 }
 
 /*

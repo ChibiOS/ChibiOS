@@ -294,6 +294,19 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
 }
 
 /**
+ * @brief Cleans an incomplete frame.
+ * @param from the start position of the incomplete frame
+ */
+static void cleanup(EMACDescriptor *from) {
+
+  while (from != rxptr) {
+    from->w1 &= ~W1_R_OWNERSHIP;
+    if (++from >= &rd[EMAC_RECEIVE_DESCRIPTORS])
+      from = rd;
+  }
+}
+
+/**
  * @brief Returns a receive descriptor.
  *
  * @param[in] macp pointer to the @p MACDriver object
@@ -337,9 +350,11 @@ skip:
 restart:
   edp = rxptr;
   while (n > 0) {
-    if (!(rxptr->w1 & W1_R_OWNERSHIP))
-      goto skip;        /* Empty buffer for some reason... */
-
+    if (!(rxptr->w1 & W1_R_OWNERSHIP)) {
+      /* Empty buffer for some reason... cleaning up the incomplete frame.*/
+      cleanup(edp);
+      goto skip;
+    }
     /*
      * End Of Frame found.
      */
@@ -352,12 +367,7 @@ restart:
 
     if ((edp != rxptr) && (rxptr->w2 & W2_R_FRAME_START)) {
       /* Found another start... cleaning up the incomplete frame.*/
-      do {
-        edp->w1 &= ~W1_R_OWNERSHIP;
-        if (++edp >= &rd[EMAC_RECEIVE_DESCRIPTORS])
-          edp = rd;
-      }
-      while (edp != rxptr);
+      cleanup(edp);
       goto restart;     /* Another start buffer for some reason... */
     }
 
