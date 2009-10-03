@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
    * Creates the blinker and web server threads.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-  chThdCreateStatic(waWebThread, sizeof(waWebThread), NORMALPRIO - 1, WebThread, NULL);
+  chThdCreateStatic(waWebThread, sizeof(waWebThread), LOWPRIO, WebThread, NULL);
 
   /*
    * Normal main() thread activity.
