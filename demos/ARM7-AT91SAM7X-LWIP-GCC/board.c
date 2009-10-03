@@ -20,6 +20,7 @@
 #include <ch.h>
 #include <pal.h>
 #include <serial.h>
+#include <mac.h>
 
 #include "board.h"
 #include "at91lib/aic.h"
@@ -172,6 +173,11 @@ void hwinit1(void) {
   AT91C_BASE_PIOA->PIO_PDR   = AT91C_PA3_RTS0 | AT91C_PA4_CTS0;
   AT91C_BASE_PIOA->PIO_ASR   = AT91C_PIO_PA3 | AT91C_PIO_PA4;
   AT91C_BASE_PIOA->PIO_PPUDR = AT91C_PIO_PA3 | AT91C_PIO_PA4;
+
+  /*
+   * EMAC driver initialization.
+   */
+  macInit();
 
   /*
    * ChibiOS/RT initialization.
