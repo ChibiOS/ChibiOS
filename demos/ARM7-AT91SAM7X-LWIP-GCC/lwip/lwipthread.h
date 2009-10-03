@@ -44,7 +44,7 @@
 
 /** @brief MAC thread stack size. */
 #if !defined(LWIP_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
-#define LWIP_THREAD_STACK_SIZE  256
+#define LWIP_THREAD_STACK_SIZE  512
 #endif
 
 /** @brief Transmission timeout. */
@@ -97,9 +97,12 @@
 #define LWIP_IFNAME1            's'
 #endif
 
+extern WORKING_AREA(wa_lwip_thread, LWIP_THREAD_STACK_SIZE);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+  msg_t lwip_thread(void *p);
 #ifdef __cplusplus
 }
 #endif

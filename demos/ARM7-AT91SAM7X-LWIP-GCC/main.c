@@ -23,15 +23,16 @@
 #include <test.h>
 
 #include "board.h"
+#include "lwipthread.h"
 
 static WORKING_AREA(waThread1, 64);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    palSetPad(IOPORT2, PIOB_LCD_BL);
-    chThdSleepMilliseconds(100);
     palClearPad(IOPORT2, PIOB_LCD_BL);
     chThdSleepMilliseconds(900);
+    palSetPad(IOPORT2, PIOB_LCD_BL);
+    chThdSleepMilliseconds(100);
   }
   return 0;
 }
@@ -51,6 +52,12 @@ int main(int argc, char **argv) {
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+
+  /*
+   * Creates the LWIP threads.
+   */
+  chThdCreateStatic(wa_lwip_thread, LWIP_THREAD_STACK_SIZE, LOWPRIO,
+                    lwip_thread, NULL);
 
   /*
    * Normal main() thread activity.

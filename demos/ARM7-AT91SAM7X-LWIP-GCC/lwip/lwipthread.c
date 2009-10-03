@@ -79,6 +79,11 @@
 #define PERIODIC_TIMER_ID       1
 #define FRAME_RECEIVED_ID       2
 
+/**
+ * Stack area for the LWIP-MAC thread.
+ */
+WORKING_AREA(wa_lwip_thread, LWIP_THREAD_STACK_SIZE);
+
 /*
  * Initialization.
  */

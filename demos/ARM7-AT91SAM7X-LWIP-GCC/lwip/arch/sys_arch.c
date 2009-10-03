@@ -66,14 +66,14 @@ void sys_init(void) {
 
 sys_sem_t sys_sem_new(u8_t count) {
 
-  sys_sem_t sem = mem_malloc(sizeof(Semaphore));
+  sys_sem_t sem = chHeapAlloc(sizeof(Semaphore));
   chSemInit(sem, (cnt_t)count);
   return sem;
 }
 
 void sys_sem_free(sys_sem_t sem) {
 
-  mem_free(sem);
+  chHeapFree(sem);
 }
 
 void sys_sem_signal(sys_sem_t sem) {
@@ -97,14 +97,14 @@ u32_t sys_arch_sem_wait(sys_sem_t sem, u32_t timeout) {
 sys_mbox_t sys_mbox_new(int size) {
   sys_mbox_t mbox;
 
-  mbox = mem_malloc(sizeof(Mailbox) + sizeof(msg_t) * size);
+  mbox = chHeapAlloc(sizeof(Mailbox) + sizeof(msg_t) * size);
   chMBInit(mbox, (void *)(mbox + 1), size);
   return mbox;
 }
 
 void sys_mbox_free(sys_mbox_t mbox) {
 
-  mem_free(mbox);
+  chHeapFree(mbox);
 }
 
 void sys_mbox_post(sys_mbox_t mbox, void *msg) {
@@ -141,13 +141,13 @@ u32_t sys_arch_mbox_tryfetch(sys_mbox_t mbox, void **msg) {
 
 struct sys_timeouts *sys_arch_timeouts(void) {
 
-  return (struct sys_timeouts *)&currp->p_timeouts;
+  return (struct sys_timeouts *)currp->p_lwipspace;
 }
 
 sys_thread_t sys_thread_new(char *name, void (* thread)(void *arg),
                             void *arg, int stacksize, int prio) {
   size_t wsz = THD_WA_SIZE(stacksize);
-  void *wsp = mem_malloc(wsz);
+  void *wsp = chHeapAlloc(wsz);
   if (wsp == NULL)
     return NULL;
   return (sys_thread_t)chThdCreateStatic(wsp, wsz, prio, (tfunc_t)thread, arg);
