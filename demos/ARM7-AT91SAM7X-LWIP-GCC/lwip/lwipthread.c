@@ -272,9 +272,9 @@ msg_t lwip_thread(void *p) {
         case ETHTYPE_PPPOE:
 #endif /* PPPOE_SUPPORT */
           /* full packet send to tcpip_thread to process */
-          if (thisif.input(p, &thisif) != ERR_OK) {
-            LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_input: IP input error\n"));
-          }
+          if (thisif.input(p, &thisif) == ERR_OK)
+            break;
+          LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_input: IP input error\n"));
         default:
           pbuf_free(p);
         }
