@@ -1001,7 +1001,7 @@
  * sys_thread_new() when the thread is created.
  */
 #ifndef TCPIP_THREAD_STACKSIZE
-#define TCPIP_THREAD_STACKSIZE          256
+#define TCPIP_THREAD_STACKSIZE          1024
 #endif
 
 /**
@@ -1035,7 +1035,7 @@
  * sys_thread_new() when the thread is created.
  */
 #ifndef SLIPIF_THREAD_STACKSIZE
-#define SLIPIF_THREAD_STACKSIZE         512
+#define SLIPIF_THREAD_STACKSIZE         1024
 #endif
 
 /**
@@ -1060,7 +1060,7 @@
  * sys_thread_new() when the thread is created.
  */
 #ifndef PPP_THREAD_STACKSIZE
-#define PPP_THREAD_STACKSIZE            512
+#define PPP_THREAD_STACKSIZE            1024
 #endif
 
 /**
@@ -1085,7 +1085,7 @@
  * sys_thread_new() when the thread is created.
  */
 #ifndef DEFAULT_THREAD_STACKSIZE
-#define DEFAULT_THREAD_STACKSIZE        512
+#define DEFAULT_THREAD_STACKSIZE        1024
 #endif
 
 /**
