@@ -57,11 +57,11 @@
 #define __SYS_ARCH_H__
 
 typedef Semaphore *     sys_sem_t;
-typedef void *          sys_mbox_t;
+typedef Mailbox *       sys_mbox_t;
 typedef Thread *        sys_thread_t;
 typedef int             sys_prot_t;
 
-#define SYS_MBOX_NULL   (void *)0
+#define SYS_MBOX_NULL   (Mailbox *)0
 #define SYS_THREAD_NULL (Thread *)0
 #define SYS_SEM_NULL    (Semaphore *)0
 

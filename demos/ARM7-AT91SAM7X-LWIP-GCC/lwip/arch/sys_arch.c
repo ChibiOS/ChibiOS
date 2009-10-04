@@ -98,7 +98,7 @@ sys_mbox_t sys_mbox_new(int size) {
   sys_mbox_t mbox;
 
   mbox = chHeapAlloc(sizeof(Mailbox) + sizeof(msg_t) * size);
-  chMBInit(mbox, (void *)(mbox + 1), size);
+  chMBInit(mbox, (void *)(((uint8_t *)mbox) + sizeof(Mailbox)), size);
   return mbox;
 }
 

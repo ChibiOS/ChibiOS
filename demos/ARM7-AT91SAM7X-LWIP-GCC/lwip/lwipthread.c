@@ -274,13 +274,9 @@ msg_t lwip_thread(void *p) {
           /* full packet send to tcpip_thread to process */
           if (thisif.input(p, &thisif) != ERR_OK) {
             LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_input: IP input error\n"));
-            pbuf_free(p);
-            p = NULL;
           }
-          break;
         default:
           pbuf_free(p);
-          break;
         }
       }
     }
