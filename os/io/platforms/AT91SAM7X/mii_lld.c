@@ -25,8 +25,8 @@
  */
 
 #include <ch.h>
-#include <mac.h>
 #include <mii.h>
+#include <mac.h>
 
 /**
  * @brief Low level MII driver initialization.
@@ -62,8 +62,12 @@ void mii_lld_reset(MACDriver *macp) {
    */
   AT91C_BASE_PIOB->PIO_OER = PIOB_PHY_PD_MASK;       // Becomes an output.
   AT91C_BASE_PIOB->PIO_PPUDR = PIOB_PHY_PD_MASK;     // Default pullup disabled.
+#if (PHY_HARDWARE == PHY_DAVICOM_9161)
+  AT91C_BASE_PIOB->PIO_CODR = PIOB_PHY_PD_MASK;      // Output to low level.
+#else
   AT91C_BASE_PIOB->PIO_SODR = PIOB_PHY_PD_MASK;      // Output to high level.
 #endif
+#endif // PIOB_PHY_PD_MASK
 
   /*
    * PHY reset by pulsing the NRST pin.

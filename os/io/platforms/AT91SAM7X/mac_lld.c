@@ -174,16 +174,14 @@ void mac_lld_init(void) {
                                AT91C_EMAC_CLRSTAT;/* Initial NCR settings.*/
   mac_lld_set_address(&ETH1, default_mac);
 
-#if PHY_HARDWARE == PHY_MICREL_KS8721
   /*
    * PHY device identification.
    */
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_MPE;
-  if ((miiGet(&ETH1, MII_PHYSID1) != (MII_KS8721_ID >> 16)) ||
-      ((miiGet(&ETH1, MII_PHYSID2) & 0xFFF0) != (MII_KS8721_ID & 0xFFF0)))
+  if ((miiGet(&ETH1, MII_PHYSID1) != (PHY_ID >> 16)) ||
+      ((miiGet(&ETH1, MII_PHYSID2) & 0xFFF0) != (PHY_ID & 0xFFF0)))
     chSysHalt();
   AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
-#endif
 
   /*
    * Interrupt configuration.
