@@ -8,6 +8,10 @@ Before 1.4.0:
 * Abstract I/O channels rather than just serial ports.
 * Add tests documentation to the general documentation via doxygen.
 * Static object initializers.
+- Add a central memory manager offering a sbrk()-like API.
+- Make the heap allocator feed memory chunks from the memory manager.
+- Add to the pools allocator an API to add N, non-returnable, blocks from
+  the memory manager.
 - Modify the heap allocator to offer a sbrk()-like API, required for newlib.
 - Dedicated syscalls.c support for newlib users.
 - Abstract streams interface.
