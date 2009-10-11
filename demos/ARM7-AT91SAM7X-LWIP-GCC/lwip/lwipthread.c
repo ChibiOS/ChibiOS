@@ -92,12 +92,12 @@ static void low_level_init(struct netif *netif) {
   netif->hwaddr_len = ETHARP_HWADDR_LEN;
 
   /* set MAC hardware address */
-  netif->hwaddr[0] = 0xC2;
+/*  netif->hwaddr[0] = 0xC2;
   netif->hwaddr[1] = 0xAF;
   netif->hwaddr[2] = 0x51;
   netif->hwaddr[3] = 0x03;
   netif->hwaddr[4] = 0xCF;
-  netif->hwaddr[5] = 0x46;
+  netif->hwaddr[5] = 0x46;*/
 
   /* maximum transfer unit */
   netif->mtu = 1500;
@@ -246,17 +246,23 @@ msg_t lwip_thread(void *p) {
 
       for (i = 0; i < 6; i++)
         thisif.hwaddr[i] = opts->macaddress[i];
-      macSetAddress(&ETH1, thisif.hwaddr);
     }
     ip.addr = opts->address;
     gateway.addr = opts->gateway;
     netmask.addr = opts->netmask;
   }
   else {
+    thisif.hwaddr[0] = LWIP_ETHADDR_0;
+    thisif.hwaddr[1] = LWIP_ETHADDR_1;
+    thisif.hwaddr[2] = LWIP_ETHADDR_2;
+    thisif.hwaddr[3] = LWIP_ETHADDR_3;
+    thisif.hwaddr[4] = LWIP_ETHADDR_4;
+    thisif.hwaddr[5] = LWIP_ETHADDR_5;
     LWIP_IPADDR(&ip);
     LWIP_GATEWAY(&gateway);
     LWIP_NETMASK(&netmask);
   }
+  macSetAddress(&ETH1, thisif.hwaddr);
   netif_add(&thisif, &ip, &netmask, &gateway, NULL, ethernetif_init, tcpip_input);
 
   netif_set_default(&thisif);

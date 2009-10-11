@@ -68,27 +68,27 @@
 #endif
 
 /** @brief MAC Address byte 1. */
-#if !defined(LWIP_ETHADDR_0) || defined(__DOXYGEN__)
+#if !defined(LWIP_ETHADDR_1) || defined(__DOXYGEN__)
 #define LWIP_ETHADDR_1          0xAF
 #endif
 
 /** @brief MAC Address byte 2. */
-#if !defined(LWIP_ETHADDR_0) || defined(__DOXYGEN__)
+#if !defined(LWIP_ETHADDR_2) || defined(__DOXYGEN__)
 #define LWIP_ETHADDR_2          0x51
 #endif
 
 /** @brief MAC Address byte 3. */
-#if !defined(LWIP_ETHADDR_0) || defined(__DOXYGEN__)
+#if !defined(LWIP_ETHADDR_3) || defined(__DOXYGEN__)
 #define LWIP_ETHADDR_3          0x03
 #endif
 
 /** @brief MAC Address byte 4. */
-#if !defined(LWIP_ETHADDR_0) || defined(__DOXYGEN__)
+#if !defined(LWIP_ETHADDR_4) || defined(__DOXYGEN__)
 #define LWIP_ETHADDR_4          0xCF
 #endif
 
 /** @brief MAC Address byte 5. */
-#if !defined(LWIP_ETHADDR_0) || defined(__DOXYGEN__)
+#if !defined(LWIP_ETHADDR_5) || defined(__DOXYGEN__)
 #define LWIP_ETHADDR_5          0x46
 #endif
 
