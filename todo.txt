@@ -4,23 +4,24 @@ Status:
 X = In progress, some work done.
 * = Done.
 
-After 1.2.0:
+Before 1.4.0:
 * Abstract I/O channels rather than just serial ports.
-  ? Move the serial drivers implementations in library. Better keep the core
-    as compact as possible.
 * Add tests documentation to the general documentation via doxygen.
 * Static object initializers.
+- Modify the heap allocator to offer a sbrk()-like API, required for newlib.
+- Dedicated syscalls.c support for newlib users.
+- Abstract streams interface.
+
+After 1.4.x
 - Remove any instance of unnamed structures/unions.
 - Objects registry in the kernel.
 - OSEK-style simple tasks within the idle thread.
 - Code examples into the documentation.
-- Dedicated syscalls.c support for newlib users.
 - Threads Pools manager in the library.
-- Minimal optional C-runtime library (complete enough for lwIP).
+? Minimal optional C-runtime library (complete enough for lwIP).
 ? Think to something for threads restart.
 ? Multiple heaps, disjoint heaps, heaps in heaps.
 - Update C++ wrapper (Heap, Pools, Mailboxes and any new feature).
-- Think about making threads return void.
 
 Ideas for 2.x.x:
 - High resolution timers and tickless kernel.
@@ -31,7 +32,7 @@ Ideas for 3.x.x:
 - Multicore support.
 
 Side projects:
-X lwIP TCP/IP stack integration and demo.
+* lwIP TCP/IP stack integration and demo.
 X FatFS library integration and demo.
 X ChibiOS Wizard, UML modeling and ChibiOS applications code and
   documentation generator.
