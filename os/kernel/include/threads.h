@@ -267,6 +267,6 @@ extern "C" {
  */
 #define chThdSleepMicroseconds(usec) chThdSleep(US2ST(usec))
 
-#endif  /* _THREADS_H_ */
+#endif /* _THREADS_H_ */
 
 /** @} */

@@ -38,6 +38,6 @@ extern "C" {
 }
 #endif
 
-#endif  /* _HEAP_H_ */
+#endif /* _HEAP_H_ */
 
 /** @} */

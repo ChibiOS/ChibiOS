@@ -69,4 +69,4 @@ static INLINE Thread *dequeue(Thread *tp) {
 }
 #endif /* CH_OPTIMIZE_SPEED */
 
-#endif  /* _INLINE_H_ */
+#endif /* _INLINE_H_ */

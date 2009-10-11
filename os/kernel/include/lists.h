@@ -87,6 +87,6 @@ extern "C" {
 
 #endif /* !CH_OPTIMIZE_SPEED */
 
-#endif  /* _LISTS_H_ */
+#endif /* _LISTS_H_ */
 
 /** @} */

@@ -211,7 +211,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-#endif  /* CH_USE_QUEUES */
+#endif /* CH_USE_QUEUES */
 
 #endif /* _QUEUES_H_ */
 
