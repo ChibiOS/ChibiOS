@@ -23,7 +23,8 @@
 #include <test.h>
 
 #include "board.h"
-#include "lwipthread.h"
+#include "lwip\lwipthread.h"
+#include "web\web.h"
 
 static WORKING_AREA(waThread1, 64);
 static msg_t Thread1(void *arg) {
@@ -54,10 +55,16 @@ int main(int argc, char **argv) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
-   * Creates the LWIP threads.
+   * Creates the LWIP threads (it changes priority internally).
    */
-  chThdCreateStatic(wa_lwip_thread, LWIP_THREAD_STACK_SIZE, LOWPRIO,
+  chThdCreateStatic(wa_lwip_thread, LWIP_THREAD_STACK_SIZE, NORMALPRIO + 1,
                     lwip_thread, NULL);
+
+  /*
+   * Creates the HTTP thread (it changes priority internally).
+   */
+  chThdCreateStatic(wa_http_server, sizeof(wa_http_server), NORMALPRIO + 1,
+                    http_server, NULL);
 
   /*
    * Normal main() thread activity.

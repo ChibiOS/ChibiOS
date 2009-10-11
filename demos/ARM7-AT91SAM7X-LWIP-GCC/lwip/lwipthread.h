@@ -27,6 +27,11 @@
 #ifndef _LWIPTHREAD_H_
 #define _LWIPTHREAD_H_
 
+/** @brief MAC thread priority.*/
+#ifndef LWIP_THREAD_PRIORITY
+#define LWIP_THREAD_PRIORITY    LOWPRIO
+#endif
+
 /** @brief IP Address. */
 #if !defined(LWIP_IPADDR) || defined(__DOXYGEN__)
 #define LWIP_IPADDR(p)          IP4_ADDR(p, 192, 168, 1, 20)

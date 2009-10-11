@@ -6,6 +6,7 @@
 - NEW: New MAC and MII driver models and implementations for the AT91SAM7X.
   Removed the old EMAC driver, updated the uIP WEB demo to use the new
   driver model.
+- NEW: Added a simple lwIP demo (web server) for the AT91SAM7X.
 
 *** 1.3.2 ***
 - FIX: Fixed GCC 4.4.x aliasing warnings (bug 2846336)(backported in stable

@@ -70,6 +70,7 @@ CSRC = ${PORTSRC} \
        ${LWAPISRC} \
        ./lwip/arch/sys_arch.c \
        ./lwip/lwipthread.c \
+       ./web/web.c \
        board.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
