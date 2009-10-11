@@ -102,6 +102,16 @@
 #define LWIP_IFNAME1            's'
 #endif
 
+/**
+ * @brief Runtime TCP/IP settings.
+ */
+struct lwipthread_opts {
+  uint8_t       *macaddress;
+  uint32_t      address;
+  uint32_t      netmask;
+  uint32_t      gateway;
+};
+
 extern WORKING_AREA(wa_lwip_thread, LWIP_THREAD_STACK_SIZE);
 
 #ifdef __cplusplus

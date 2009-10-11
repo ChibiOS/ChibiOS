@@ -220,7 +220,7 @@ static err_t ethernetif_init(struct netif *netif) {
 /**
  * @brief LWIP handling thread.
  *
- * @param[in] p not used
+ * @param[in] p pointer to a @p lwipthread_opts structure or @p NULL
  * @return The function does not return.
  */
 msg_t lwip_thread(void *p) {
@@ -238,10 +238,25 @@ msg_t lwip_thread(void *p) {
   ip_init();
   tcpip_init(NULL, NULL);
 
-  /* TCP/IP parameters.*/
-  LWIP_IPADDR(&ip);
-  LWIP_GATEWAY(&gateway);
-  LWIP_NETMASK(&netmask);
+  /* TCP/IP parameters, runtime or compile time.*/
+  if (p) {
+    struct lwipthread_opts *opts = p;
+    if (opts->macaddress) {
+      unsigned i;
+
+      for (i = 0; i < 6; i++)
+        thisif.hwaddr[i] = opts->macaddress[i];
+      macSetAddress(&ETH1, thisif.hwaddr);
+    }
+    ip.addr = opts->address;
+    gateway.addr = opts->gateway;
+    netmask.addr = opts->netmask;
+  }
+  else {
+    LWIP_IPADDR(&ip);
+    LWIP_GATEWAY(&gateway);
+    LWIP_NETMASK(&netmask);
+  }
   netif_add(&thisif, &ip, &netmask, &gateway, NULL, ethernetif_init, tcpip_input);
 
   netif_set_default(&thisif);
