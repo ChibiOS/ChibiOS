@@ -271,7 +271,7 @@
  * (requires NO_SYS==0)
  */
 #ifndef MEMP_NUM_SYS_TIMEOUT
-#define MEMP_NUM_SYS_TIMEOUT            3
+#define MEMP_NUM_SYS_TIMEOUT            (4 + LWIP_DHCP + LWIP_DNS)
 #endif
 
 /**

@@ -91,14 +91,6 @@ static void low_level_init(struct netif *netif) {
   /* set MAC hardware address length */
   netif->hwaddr_len = ETHARP_HWADDR_LEN;
 
-  /* set MAC hardware address */
-/*  netif->hwaddr[0] = 0xC2;
-  netif->hwaddr[1] = 0xAF;
-  netif->hwaddr[2] = 0x51;
-  netif->hwaddr[3] = 0x03;
-  netif->hwaddr[4] = 0xCF;
-  netif->hwaddr[5] = 0x46;*/
-
   /* maximum transfer unit */
   netif->mtu = 1500;
 
@@ -107,7 +99,6 @@ static void low_level_init(struct netif *netif) {
   netif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
 
   /* Do whatever else is needed to initialize interface. */
-  macSetAddress(&ETH1, netif->hwaddr);
 }
 
 /*
@@ -241,12 +232,10 @@ msg_t lwip_thread(void *p) {
   /* TCP/IP parameters, runtime or compile time.*/
   if (p) {
     struct lwipthread_opts *opts = p;
-    if (opts->macaddress) {
-      unsigned i;
+    unsigned i;
 
-      for (i = 0; i < 6; i++)
-        thisif.hwaddr[i] = opts->macaddress[i];
-    }
+    for (i = 0; i < 6; i++)
+      thisif.hwaddr[i] = opts->macaddress[i];
     ip.addr = opts->address;
     gateway.addr = opts->gateway;
     netmask.addr = opts->netmask;
