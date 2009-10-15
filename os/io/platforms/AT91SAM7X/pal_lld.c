@@ -40,8 +40,8 @@ void _pal_lld_init(const AT91SAM7XPIOConfig *config) {
   /*
    * PIOA setup.
    */
-  AT91C_BASE_PIOA->PIO_OER  = config->P0Data.pusr;      /* Pull-up as spec.*/
-  AT91C_BASE_PIOA->PIO_ODR  = ~config->P0Data.pusr;
+  AT91C_BASE_PIOA->PIO_PPUER  = config->P0Data.pusr;    /* Pull-up as spec.*/
+  AT91C_BASE_PIOA->PIO_PPUDR  = ~config->P0Data.pusr;
   AT91C_BASE_PIOA->PIO_PER  = 0xFFFFFFFF;               /* PIO enabled.*/
   AT91C_BASE_PIOA->PIO_ODSR = config->P0Data.odsr;      /* Data as specified.*/
   AT91C_BASE_PIOA->PIO_OER  = config->P0Data.osr;       /* Dir. as specified.*/
@@ -55,8 +55,8 @@ void _pal_lld_init(const AT91SAM7XPIOConfig *config) {
   /*
    * PIOB setup.
    */
-  AT91C_BASE_PIOB->PIO_OER  = config->P0Data.pusr;      /* Pull-up as spec.*/
-  AT91C_BASE_PIOB->PIO_ODR  = ~config->P0Data.pusr;
+  AT91C_BASE_PIOB->PIO_PPUER  = config->P0Data.pusr;    /* Pull-up as spec.*/
+  AT91C_BASE_PIOB->PIO_PPUDR  = ~config->P0Data.pusr;
   AT91C_BASE_PIOB->PIO_PER  = 0xFFFFFFFF;               /* PIO enabled.*/
   AT91C_BASE_PIOB->PIO_ODSR = config->P1Data.odsr;      /* Data as specified.*/
   AT91C_BASE_PIOB->PIO_OER  = config->P1Data.osr;       /* Dir. as specified.*/
