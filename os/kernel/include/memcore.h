@@ -18,21 +18,28 @@
 */
 
 /**
- * @file mem.h
- * @brief Low level memory manager macros and structures.
- * @addtogroup coremem
+ * @file memcore.h
+ * @brief Core memory manager macros and structures.
+ * @addtogroup memcore
  * @{
  */
 
-#ifndef _MEM_H_
-#define _MEM_H_
+#ifndef _MEMCORE_H_
+#define _MEMCORE_H_
 
-#if CH_USE_COREMEM
+#if CH_USE_MEMCORE
 
 /**
  * @brief Memory alignment type.
  */
 typedef void *align_t;
+
+/**
+ * @brief Memory get function.
+ * @note This type must be assignment compatible with the @p chMemAlloc()
+ *       function.
+ */
+typedef void *(*memgetfunc_t)(size_t size);
 
 /**
  * @brief Alignment mask constant.
@@ -42,20 +49,26 @@ typedef void *align_t;
 /**
  * @brief Alignment helper macro.
  */
-#define MEM_ALIGN_SIZE(p)   (((size_t)(p) + ALIGN_MASK) & ~ALIGN_MASK)
+#define MEM_ALIGN_SIZE(p)   (((size_t)(p) + MEM_ALIGN_MASK) & ~MEM_ALIGN_MASK)
+
+/**
+ * @brief Returns whatever a pointer or memory size is aligned to
+ *        the type @p align_t.
+ */
+#define MEM_IS_ALIGNED(p)   (((size_t)(p) & MEM_ALIGN_MASK) == 0)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void mem_init(void);
-  void *chMemAlloc(size_t size);
-  void *chMemAllocI(size_t size);
+  void core_init(void);
+  void *chCoreAlloc(size_t size);
+  void *chCoreAllocI(size_t size);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* CH_USE_COREMEM */
+#endif /* CH_USE_MEMCORE */
 
-#endif /* _MEM_H_ */
+#endif /* _MEMCORE_H_ */
 
 /** @} */

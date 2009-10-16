@@ -167,8 +167,8 @@ extern "C" {
   Thread *chThdCreateStatic(void *wsp, size_t size,
                             tprio_t prio, tfunc_t pf, void *arg);
 #if CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_HEAP
-  Thread *chThdCreateFromHeap(size_t size, tprio_t prio,
-                              tfunc_t pf, void *arg);
+  Thread *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
+                              tprio_t prio, tfunc_t pf, void *arg);
 #endif
 #if CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_MEMPOOLS
   Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,

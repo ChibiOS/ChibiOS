@@ -61,6 +61,9 @@ void chSysInit(void) {
   port_init();
   scheduler_init();
   vt_init();
+#if CH_USE_MEMCORE
+  core_init();
+#endif
 #if CH_USE_HEAP
   heap_init();
 #endif

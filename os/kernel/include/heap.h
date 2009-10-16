@@ -27,16 +27,59 @@
 #ifndef _HEAP_H_
 #define _HEAP_H_
 
+#if CH_USE_HEAP
+
+/*
+ * Module dependancies check.
+ */
+#if !CH_USE_MEMCORE && !CH_USE_MALLOC_HEAP
+#error "CH_USE_HEAP requires CH_USE_MEM"
+#endif
+
+#if !CH_USE_MUTEXES && !CH_USE_SEMAPHORES
+#error "CH_USE_HEAP requires CH_USE_MUTEXES and/or CH_USE_SEMAPHORES"
+#endif
+
+typedef struct memory_heap MemoryHeap;
+
+/**
+ * @brief Memory heap block header.
+ */
+struct heap_header {
+  union {
+    struct heap_header  *h_next;    /**< @brief Next block in free list.    */
+    MemoryHeap          *h_heap;    /**< @brief Block owner heap.           */
+  };
+  size_t                h_size;     /**< @brief Size of the memory block.   */
+};
+
+/**
+ * @brief Structure describing a memory heap.
+ */
+struct memory_heap {
+  memgetfunc_t          h_provider; /**< @brief Memory blocks provider for
+                                                this heap.                  */
+  struct heap_header    h_free;     /**< @brief Free blocks list header.    */
+#if CH_USE_MUTEXES
+  Mutex                 h_mtx;      /**< @brief Heap access mutex.          */
+#else
+  Semaphore             h_sem;      /**< @brief Heap access semaphore.      */
+#endif
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
   void heap_init(void);
-  void *chHeapAlloc(size_t size);
+  void chHeapInit(MemoryHeap *heapp, void *buf, size_t size);
+  void *chHeapAlloc(MemoryHeap *heapp, size_t size);
   void chHeapFree(void *p);
-  size_t chHeapStatus(size_t *sizep);
+  size_t chHeapStatus(MemoryHeap *heapp, size_t *sizep);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CH_USE_HEAP */
 
 #endif /* _HEAP_H_ */
 

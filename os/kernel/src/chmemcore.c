@@ -18,33 +18,38 @@
 */
 
 /**
- * @file chmem.c
- * @brief Low level memory manager code.
- * @addtogroup coremem
+ * @file chmemcore.c
+ * @brief Core memory manager code.
+ * @addtogroup memcore
  * @{
  */
 
 #include <ch.h>
 
-#if CH_USE_COREMEM
+#if CH_USE_MEMCORE
 
-#if CH_COREMEM_SIZE == 0
+#if CH_MEMCORE_SIZE == 0
   extern align_t __heap_base__;
   extern align_t __heap_end__;
 #else
-align_t buffer[ALIGN_SIZE(CH_MEM_SIZE) / sizeof(align_t)];
+align_t buffer[ALIGN_SIZE(CH_MEMCORE_SIZE) / sizeof(align_t)];
 #endif
 
 static align_t *nextmem;
 static align_t *endmem;
 
-void mem_init(void) {
-#if CH_COREMEM_SIZE == 0
+/**
+ * @brief Low level memory manager initialization.
+ *
+ * @note Internal use only.
+ */
+void core_init(void) {
+#if CH_MEMCORE_SIZE == 0
   nextmem = &__heap_base__;
   endmem = &__heap_end__;
 #else
   nextmem = &buffer[0];
-  endmem = &buffer[ALIGN_SIZE(CH_MEM_SIZE) / sizeof(align_t)];
+  endmem = &buffer[ALIGN_SIZE(CH_MEMCORE_SIZE) / sizeof(align_t)];
 #endif
 }
 
@@ -81,7 +86,7 @@ void *chCoreAlloc(size_t size) {
 void *chCoreAllocI(size_t size) {
   void *p;
 
-  size = ALIGN_SIZE(size);
+  size = MEM_ALIGN_SIZE(size);
   if (nextmem + size > endmem)
     return NULL;
   p = nextmem;
@@ -89,6 +94,6 @@ void *chCoreAllocI(size_t size) {
   return p;
 }
 
-#endif /* CH_USE_COREMEM */
+#endif /* CH_USE_MEMCORE */
 
 /** @} */

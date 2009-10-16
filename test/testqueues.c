@@ -63,8 +63,8 @@ static void notify(void) {}
  * variables are explicitly initialized in each test case. It is done in order
  * to test the macros.
  */
-static INPUTQUEUE_DECL(iq, waT0, TEST_QUEUES_SIZE, notify);
-static OUTPUTQUEUE_DECL(oq, waT0, TEST_QUEUES_SIZE, notify);
+static INPUTQUEUE_DECL(iq, test.waT0, TEST_QUEUES_SIZE, notify);
+static OUTPUTQUEUE_DECL(oq, test.waT1, TEST_QUEUES_SIZE, notify);
 
 /**
  * @page test_queues_001 Input Queues functionality and APIs

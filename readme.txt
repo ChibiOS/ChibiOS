@@ -7,6 +7,15 @@
   Removed the old EMAC driver, updated the uIP WEB demo to use the new
   driver model.
 - NEW: Added a simple lwIP demo (web server) for the AT91SAM7X.
+- NEW: Centralized memory heap manager. This simple allocator implements a
+  sbrk()-like API: chCoreAlloc(). The other allocators now use this manager
+  in order to get memory blocks.
+- NEW: The heap allocator has been modified, now it is possible to have
+  multiple heaps. The default heap gets its memory from the new heap manager.
+- CHANGE: Because the changes in the allocators some API prototypes changed:
+  chHeapAlloc(), chHeapStatus(), chThdCreateFromHeap().
+- CHANGE: Because the changes in the allocators some configuration options
+  changed, see the template chconf.h file.
 - CHANGE: renamed ./demos/ARM7-AT91SAM7X-WEB-GCC in ARM7-AT91SAM7X-UIP-GCC.
 
 *** 1.3.2 ***

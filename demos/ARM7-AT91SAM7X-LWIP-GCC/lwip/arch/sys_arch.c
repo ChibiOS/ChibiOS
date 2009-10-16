@@ -66,7 +66,7 @@ void sys_init(void) {
 
 sys_sem_t sys_sem_new(u8_t count) {
 
-  sys_sem_t sem = chHeapAlloc(sizeof(Semaphore));
+  sys_sem_t sem = chHeapAlloc(NULL, sizeof(Semaphore));
   chSemInit(sem, (cnt_t)count);
   return sem;
 }
@@ -97,7 +97,7 @@ u32_t sys_arch_sem_wait(sys_sem_t sem, u32_t timeout) {
 sys_mbox_t sys_mbox_new(int size) {
   sys_mbox_t mbox;
 
-  mbox = chHeapAlloc(sizeof(Mailbox) + sizeof(msg_t) * size);
+  mbox = chHeapAlloc(NULL, sizeof(Mailbox) + sizeof(msg_t) * size);
   chMBInit(mbox, (void *)(((uint8_t *)mbox) + sizeof(Mailbox)), size);
   return mbox;
 }
@@ -147,7 +147,7 @@ struct sys_timeouts *sys_arch_timeouts(void) {
 sys_thread_t sys_thread_new(char *name, void (* thread)(void *arg),
                             void *arg, int stacksize, int prio) {
   size_t wsz = THD_WA_SIZE(stacksize);
-  void *wsp = chHeapAlloc(wsz);
+  void *wsp = chCoreAlloc(wsz);
   if (wsp == NULL)
     return NULL;
   return (sys_thread_t)chThdCreateStatic(wsp, wsz, prio, (tfunc_t)thread, arg);

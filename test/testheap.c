@@ -50,6 +50,8 @@
 
 #define SIZE 16
 
+static MemoryHeap test_heap;
+
 /**
  * @page test_heap_001 Allocation and fragmentation test
  *
@@ -66,74 +68,73 @@ static char *heap1_gettest(void) {
   return "Heap, allocation and fragmentation test";
 }
 
+static void heap1_setup(void) {
+
+  chHeapInit(&test_heap, test.buffer, sizeof(union test_buffers));
+}
+
 static void heap1_execute(void) {
   void *p1, *p2, *p3;
   size_t n, sz;
 
   /* Test skipped if the heap is already fragmented. */
-  if ((n = chHeapStatus(&sz)) == 1) {
-    test_print("--- Size  : ");
-    test_printn(sz);
-    test_println(" bytes, not fragmented");
+  (void)chHeapStatus(&test_heap, &sz);
+  test_print("--- Size  : ");
+  test_printn(sz);
+  test_println(" bytes");
 
-    /* Same order */
-    p1 = chHeapAlloc(SIZE);
-    p2 = chHeapAlloc(SIZE);
-    p3 = chHeapAlloc(SIZE);
-    chHeapFree(p1);                           /* Does not merge */
-    chHeapFree(p2);                           /* Merges backward */
-    chHeapFree(p3);                           /* Merges both sides */
-    test_assert(1, chHeapStatus(&n) == 1, "heap fragmented");
+  /* Same order */
+  p1 = chHeapAlloc(&test_heap, SIZE);
+  p2 = chHeapAlloc(&test_heap, SIZE);
+  p3 = chHeapAlloc(&test_heap, SIZE);
+  chHeapFree(p1);                               /* Does not merge */
+  chHeapFree(p2);                               /* Merges backward */
+  chHeapFree(p3);                               /* Merges both sides */
+  test_assert(1, chHeapStatus(&test_heap, &n) == 1, "heap fragmented");
 
-    /* Reverse order */
-    p1 = chHeapAlloc(SIZE);
-    p2 = chHeapAlloc(SIZE);
-    p3 = chHeapAlloc(SIZE);
-    chHeapFree(p3);                           /* Merges forward */
-    chHeapFree(p2);                           /* Merges forward */
-    chHeapFree(p1);                           /* Merges forward */
-    test_assert(2, chHeapStatus(&n) == 1, "heap fragmented");
+  /* Reverse order */
+  p1 = chHeapAlloc(&test_heap, SIZE);
+  p2 = chHeapAlloc(&test_heap, SIZE);
+  p3 = chHeapAlloc(&test_heap, SIZE);
+  chHeapFree(p3);                               /* Merges forward */
+  chHeapFree(p2);                               /* Merges forward */
+  chHeapFree(p1);                               /* Merges forward */
+  test_assert(2, chHeapStatus(&test_heap, &n) == 1, "heap fragmented");
 
-    /* Small fragments handling */
-    p1 = chHeapAlloc(SIZE + 1);
-    p2 = chHeapAlloc(SIZE);
-    chHeapFree(p1);
-    test_assert(3, chHeapStatus(&n) == 2, "invalid state");
-    p1 = chHeapAlloc(SIZE);
-    test_assert(4, chHeapStatus(&n) == 1, "heap fragmented");
-    chHeapFree(p2);
-    chHeapFree(p1);
-    test_assert(5, chHeapStatus(&n) == 1, "heap fragmented");
+  /* Small fragments handling */
+  p1 = chHeapAlloc(&test_heap, SIZE + 1);
+  p2 = chHeapAlloc(&test_heap, SIZE);
+  chHeapFree(p1);
+  test_assert(3, chHeapStatus(&test_heap, &n) == 2, "invalid state");
+  p1 = chHeapAlloc(&test_heap, SIZE);
+  test_assert(4, chHeapStatus(&test_heap, &n) == 1, "heap fragmented");
+  chHeapFree(p2);
+  chHeapFree(p1);
+  test_assert(5, chHeapStatus(&test_heap, &n) == 1, "heap fragmented");
 
-    /* Skip fragment handling */
-    p1 = chHeapAlloc(SIZE);
-    p2 = chHeapAlloc(SIZE);
-    chHeapFree(p1);
-    test_assert(6, chHeapStatus(&n) == 2, "invalid state");
-    p1 = chHeapAlloc(SIZE * 2);                 /* Skips first fragment */
-    chHeapFree(p1);
-    chHeapFree(p2);
-    test_assert(7, chHeapStatus(&n) == 1, "heap fragmented");
+  /* Skip fragment handling */
+  p1 = chHeapAlloc(&test_heap, SIZE);
+  p2 = chHeapAlloc(&test_heap, SIZE);
+  chHeapFree(p1);
+  test_assert(6, chHeapStatus(&test_heap, &n) == 2, "invalid state");
+  p1 = chHeapAlloc(&test_heap, SIZE * 2);       /* Skips first fragment */
+  chHeapFree(p1);
+  chHeapFree(p2);
+  test_assert(7, chHeapStatus(&test_heap, &n) == 1, "heap fragmented");
 
-    /* Allocate all handling */
-    (void)chHeapStatus(&n);
-    p1 = chHeapAlloc(n);
-    test_assert(8, chHeapStatus(&n) == 0, "not empty");
-    chHeapFree(p1);
+  /* Allocate all handling */
+  (void)chHeapStatus(&test_heap, &n);
+  p1 = chHeapAlloc(&test_heap, n);
+  test_assert(8, chHeapStatus(&test_heap, &n) == 0, "not empty");
+  chHeapFree(p1);
 
-    test_assert(9, chHeapStatus(&n) == 1, "heap fragmented");
-    test_assert(10, n == sz, "size changed");
-  }
-  else {
-    test_print("--- Size  : ");
-    test_printn(sz);
-    test_println(" bytes, fragmented, test skipped");
-  }
+  test_assert(9, chHeapStatus(&test_heap, &n) == 1, "heap fragmented");
+  test_assert(10, n == sz, "size changed");
 }
 
 const struct testcase testheap1 = {
   heap1_gettest,
-  NULL,
+  heap1_setup,
   NULL,
   heap1_execute
 };

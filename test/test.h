@@ -47,6 +47,17 @@ struct testcase {
   void (*execute)(void);
 };
 
+union test_buffers {
+  struct {
+    WORKING_AREA(waT0, THREADS_STACK_SIZE);
+    WORKING_AREA(waT1, THREADS_STACK_SIZE);
+    WORKING_AREA(waT2, THREADS_STACK_SIZE);
+    WORKING_AREA(waT3, THREADS_STACK_SIZE);
+    WORKING_AREA(waT4, THREADS_STACK_SIZE);
+  };
+  uint8_t buffer[WA_SIZE * 5];
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -94,11 +105,7 @@ extern "C" {
 }
 
 extern Thread *threads[MAX_THREADS];
-extern WORKING_AREA(waT0, THREADS_STACK_SIZE);
-extern WORKING_AREA(waT1, THREADS_STACK_SIZE);
-extern WORKING_AREA(waT2, THREADS_STACK_SIZE);
-extern WORKING_AREA(waT3, THREADS_STACK_SIZE);
-extern WORKING_AREA(waT4, THREADS_STACK_SIZE);
+extern union test_buffers test;
 extern void * const wa[];
 extern bool_t test_timer_done;
 

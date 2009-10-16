@@ -70,9 +70,17 @@ static msg_t thread(void *p) {
 }
 
 #if CH_USE_HEAP
+
+static MemoryHeap heap1;
+
 static char *dyn1_gettest(void) {
 
   return "Dynamic APIs, threads creation from heap";
+}
+
+static void dyn1_setup(void) {
+
+  chHeapInit(&heap1, test.buffer, sizeof(union test_buffers));
 }
 
 static void dyn1_execute(void) {
@@ -80,40 +88,38 @@ static void dyn1_execute(void) {
   void *p1;
   tprio_t prio = chThdGetPriority();
 
-  /* Test skipped if the heap is already fragmented. */
-  if ((n = chHeapStatus(&sz)) == 1) {
-    /* Starting threads from the heap. */
-    threads[0] = chThdCreateFromHeap(THD_WA_SIZE(THREADS_STACK_SIZE),
-                                     prio-1, thread, "A");
-    threads[1] = chThdCreateFromHeap(THD_WA_SIZE(THREADS_STACK_SIZE),
-                                     prio-2, thread, "B");
-    /* Allocating the whole heap in order to make the thread creation fail.*/
-    (void)chHeapStatus(&n);
-    p1 = chHeapAlloc(n);
-    threads[2] = chThdCreateFromHeap(THD_WA_SIZE(THREADS_STACK_SIZE),
-                                     prio-3, thread, "C");
-    chHeapFree(p1);
+  (void)chHeapStatus(&heap1, &sz);
+  /* Starting threads from the heap. */
+  threads[0] = chThdCreateFromHeap(&heap1, THD_WA_SIZE(THREADS_STACK_SIZE),
+                                   prio-1, thread, "A");
+  threads[1] = chThdCreateFromHeap(&heap1, THD_WA_SIZE(THREADS_STACK_SIZE),
+                                   prio-2, thread, "B");
+  /* Allocating the whole heap in order to make the thread creation fail.*/
+  (void)chHeapStatus(&heap1, &n);
+  p1 = chHeapAlloc(&heap1, n);
+  threads[2] = chThdCreateFromHeap(&heap1, THD_WA_SIZE(THREADS_STACK_SIZE),
+                                   prio-3, thread, "C");
+  chHeapFree(p1);
 
-    test_assert(1, (threads[0] != NULL) &&
-                   (threads[1] != NULL) &&
-                   (threads[2] == NULL) &&
-                   (threads[3] == NULL) &&
-                   (threads[4] == NULL),
-                   "thread creation failed");
+  test_assert(1, (threads[0] != NULL) &&
+                 (threads[1] != NULL) &&
+                 (threads[2] == NULL) &&
+                 (threads[3] == NULL) &&
+                 (threads[4] == NULL),
+                 "thread creation failed");
 
-    /* Claiming the memory from terminated threads. */
-    test_wait_threads();
-    test_assert_sequence(2, "AB");
+  /* Claiming the memory from terminated threads. */
+  test_wait_threads();
+  test_assert_sequence(2, "AB");
 
-    /* Heap status checked again.*/
-    test_assert(3, chHeapStatus(&n) == 1, "heap fragmented");
-    test_assert(4, n == sz, "heap size changed");
-  }
+  /* Heap status checked again.*/
+  test_assert(3, chHeapStatus(&heap1, &n) == 1, "heap fragmented");
+  test_assert(4, n == sz, "heap size changed");
 }
 
 const struct testcase testdyn1 = {
   dyn1_gettest,
-  NULL,
+  dyn1_setup,
   NULL,
   dyn1_execute
 };

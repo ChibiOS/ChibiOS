@@ -75,6 +75,7 @@
 #include "events.h"
 #include "messages.h"
 #include "mailboxes.h"
+#include "memcore.h"
 #include "heap.h"
 #include "mempools.h"
 #include "threads.h"
