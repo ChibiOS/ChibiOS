@@ -88,6 +88,7 @@ clock_time_t clock_time( void )
 static void PeriodicTimerHandler(eventid_t id) {
   int i;
 
+  (void)id;
   for (i = 0; i < UIP_CONNS; i++) {
     uip_periodic(i);
     if (uip_len > 0) {
@@ -102,6 +103,7 @@ static void PeriodicTimerHandler(eventid_t id) {
  */
 static void ARPTimerHandler(eventid_t id) {
 
+  (void)id;
   (void)macPollLinkStatus(&ETH1);
   uip_arp_timer();
 }
@@ -111,6 +113,7 @@ static void ARPTimerHandler(eventid_t id) {
  */
 static void FrameReceivedHandler(eventid_t id) {
 
+  (void)id;
   while ((uip_len = network_device_read()) > 0) {
     if (BUF->type == HTONS(UIP_ETHTYPE_IP)) {
       uip_arp_ipin();
@@ -142,6 +145,8 @@ msg_t WebThread(void *p) {
   EvTimer evt1, evt2;
   EventListener el0, el1, el2;
   uip_ipaddr_t ipaddr;
+
+  (void)p;
 
   /*
    * Event sources setup.

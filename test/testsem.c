@@ -135,6 +135,7 @@ static void sem2_setup(void) {
 
 static msg_t thread2(void *p) {
 
+  (void)p;
   chThdSleepMilliseconds(50);
   chSysLock();
   chSemSignalI(&sem1); /* For coverage reasons */
@@ -215,6 +216,7 @@ static void sem3_setup(void) {
 
 static msg_t thread3(void *p) {
 
+  (void)p;
   chSemWait(&sem1);
   chSemSignal(&sem1);
   return 0;

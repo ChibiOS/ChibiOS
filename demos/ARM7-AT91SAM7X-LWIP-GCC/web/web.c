@@ -39,8 +39,8 @@
 
 #if LWIP_NETCONN
 
-const static char http_html_hdr[] = "HTTP/1.1 200 OK\r\nContent-type: text/html\r\n\r\n";
-const static char http_index_html[] = "<html><head><title>Congrats!</title></head><body><h1>Welcome to our lwIP HTTP server!</h1><p>This is a small test page.</body></html>";
+static const char http_html_hdr[] = "HTTP/1.1 200 OK\r\nContent-type: text/html\r\n\r\n";
+static const char http_index_html[] = "<html><head><title>Congrats!</title></head><body><h1>Welcome to our lwIP HTTP server!</h1><p>This is a small test page.</body></html>";
 
 static void http_server_serve(struct netconn *conn) {
   struct netbuf *inbuf;
@@ -91,6 +91,8 @@ WORKING_AREA(wa_http_server, WEB_THREAD_STACK_SIZE);
  */
 msg_t http_server(void *p) {
   struct netconn *conn, *newconn;
+
+  (void)p;
 
   /* Create a new TCP connection handle */
   conn = netconn_new(NETCONN_TCP);

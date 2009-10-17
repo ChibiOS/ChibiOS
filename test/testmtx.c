@@ -165,6 +165,7 @@ static void mtx2_setup(void) {
 /* Low priority thread */
 static msg_t thread2L(void *p) {
 
+  (void)p;
   chMtxLock(&m1);
   test_cpu_pulse(40);
   chMtxUnlock();
@@ -176,6 +177,7 @@ static msg_t thread2L(void *p) {
 /* Medium priority thread */
 static msg_t thread2M(void *p) {
 
+  (void)p;
   chThdSleepMilliseconds(20);
   test_cpu_pulse(40);
   test_emit_token('B');
@@ -185,6 +187,7 @@ static msg_t thread2M(void *p) {
 /* High priority thread */
 static msg_t thread2H(void *p) {
 
+  (void)p;
   chThdSleepMilliseconds(40);
   chMtxLock(&m1);
   test_cpu_pulse(10);
@@ -257,6 +260,7 @@ static void mtx3_setup(void) {
 /* Lowest priority thread */
 static msg_t thread3LL(void *p) {
 
+  (void)p;
   chMtxLock(&m1);
   test_cpu_pulse(30);
   chMtxUnlock();
@@ -267,6 +271,7 @@ static msg_t thread3LL(void *p) {
 /* Low priority thread */
 static msg_t thread3L(void *p) {
 
+  (void)p;
   chThdSleepMilliseconds(10);
   chMtxLock(&m2);
   test_cpu_pulse(20);
@@ -282,6 +287,7 @@ static msg_t thread3L(void *p) {
 /* Medium priority thread */
 static msg_t thread3M(void *p) {
 
+  (void)p;
   chThdSleepMilliseconds(20);
   chMtxLock(&m2);
   test_cpu_pulse(10);
@@ -293,6 +299,7 @@ static msg_t thread3M(void *p) {
 /* High priority thread */
 static msg_t thread3H(void *p) {
 
+  (void)p;
   chThdSleepMilliseconds(40);
   test_cpu_pulse(20);
   test_emit_token('B');
@@ -302,6 +309,7 @@ static msg_t thread3H(void *p) {
 /* Highest priority thread */
 static msg_t thread3HH(void *p) {
 
+  (void)p;
   chThdSleepMilliseconds(50);
   chMtxLock(&m2);
   test_cpu_pulse(10);
@@ -355,6 +363,7 @@ static void mtx4_setup(void) {
 
 static msg_t thread4a(void *p) {
 
+  (void)p;
   chThdSleepMilliseconds(50);
   chMtxLock(&m2);
   chMtxUnlock();
@@ -363,6 +372,7 @@ static msg_t thread4a(void *p) {
 
 static msg_t thread4b(void *p) {
 
+  (void)p;
   chThdSleepMilliseconds(150);
   chMtxLock(&m1);
   chMtxUnlock();

@@ -56,7 +56,11 @@ typedef struct {
  * @param name the name of the memory pool variable
  * @param size size of the memory pool contained objects
  */
-#define _MEMORYPOOL_DATA(name, size) {NULL, size}
+#if CH_USE_MEMCORE || defined(__DOXYGEN__)
+#define _MEMORYPOOL_DATA(name, size) {NULL, MEM_ALIGN_SIZE(size), FALSE}
+#else
+#define _MEMORYPOOL_DATA(name, size) {NULL, MEM_ALIGN_SIZE(size)}
+#endif
 
 /**
  * @brief Static memory pool initializer.

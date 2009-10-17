@@ -211,6 +211,7 @@ static VirtualTimer vt;
 bool_t test_timer_done;
 
 static void tmr(void *p) {
+  (void)p;
 
   test_timer_done = TRUE;
 }

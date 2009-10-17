@@ -146,6 +146,7 @@ struct sys_timeouts *sys_arch_timeouts(void) {
 
 sys_thread_t sys_thread_new(char *name, void (* thread)(void *arg),
                             void *arg, int stacksize, int prio) {
+  (void)name;
   size_t wsz = THD_WA_SIZE(stacksize);
   void *wsp = chCoreAlloc(wsz);
   if (wsp == NULL)
@@ -161,5 +162,6 @@ sys_prot_t sys_arch_protect(void) {
 
 void sys_arch_unprotect(sys_prot_t pval) {
 
+  (void)pval;
   chSysUnlock();
 }

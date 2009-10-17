@@ -108,6 +108,7 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p) {
   struct pbuf *q;
   MACTransmitDescriptor td;
 
+  (void)netif;
   if (macWaitTransmitDescriptor(&ETH1, &td, MS2ST(LWIP_SEND_TIMEOUT)) != RDY_OK)
     return ERR_TIMEOUT;
 
@@ -138,6 +139,7 @@ static struct pbuf *low_level_input(struct netif *netif) {
   struct pbuf *p, *q;
   u16_t len;
 
+  (void)netif;
   if (macWaitReceiveDescriptor(&ETH1, &rd, TIME_IMMEDIATE) == RDY_OK) {
     len = (u16_t)rd.rd_size;
 

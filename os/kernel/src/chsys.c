@@ -40,6 +40,7 @@ static WORKING_AREA(idle_thread_wa, IDLE_THREAD_STACK_SIZE);
  */
 static void idle_thread(void *p) {
 
+  (void)p;
   while (TRUE) {
     port_wait_for_interrupt();
     IDLE_LOOP_HOOK();

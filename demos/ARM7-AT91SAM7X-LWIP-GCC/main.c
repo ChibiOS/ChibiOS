@@ -29,6 +29,7 @@
 static WORKING_AREA(waThread1, 64);
 static msg_t Thread1(void *arg) {
 
+  (void)arg;
   while (TRUE) {
     palClearPad(IOPORT2, PIOB_LCD_BL);
     chThdSleepMilliseconds(900);
@@ -43,6 +44,9 @@ static msg_t Thread1(void *arg) {
  * on entry.
  */
 int main(int argc, char **argv) {
+
+  (void)argc;
+  (void)argv;
 
   /*
    * Activates the serial driver 1 using the driver default configuration.

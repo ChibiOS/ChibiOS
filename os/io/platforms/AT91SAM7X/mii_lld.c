@@ -42,6 +42,8 @@ void mii_lld_init(void) {
  */
 void mii_lld_reset(MACDriver *macp) {
 
+  (void)macp;
+
   /*
    * Disables the pullups on all the pins that are latched on reset by the PHY.
    * The status latched into the PHY is:
@@ -87,6 +89,7 @@ void mii_lld_reset(MACDriver *macp) {
  */
 phyreg_t mii_lld_get(MACDriver *macp, phyaddr_t addr) {
 
+  (void)macp;
   AT91C_BASE_EMAC->EMAC_MAN = (0b01 << 30) |            /* SOF */
                               (0b10 << 28) |            /* RW */
                               (PHY_ADDRESS << 23) |     /* PHYA */
@@ -106,6 +109,7 @@ phyreg_t mii_lld_get(MACDriver *macp, phyaddr_t addr) {
  */
 void mii_lld_put(MACDriver *macp, phyaddr_t addr, phyreg_t value) {
 
+  (void)macp;
   AT91C_BASE_EMAC->EMAC_MAN = (0b01 << 30) |            /* SOF */
                               (0b01 << 28) |            /* RW */
                               (PHY_ADDRESS << 23) |     /* PHYA */

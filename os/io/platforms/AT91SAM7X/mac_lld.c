@@ -204,6 +204,7 @@ void mac_lld_init(void) {
  */
 void mac_lld_set_address(MACDriver *macp, const uint8_t *p) {
 
+  (void)macp;
   AT91C_BASE_EMAC->EMAC_SA1L = (AT91_REG)((p[3] << 24) | (p[2] << 16) |
                                           (p[1] << 8) | p[0]);
   AT91C_BASE_EMAC->EMAC_SA1H = (AT91_REG)((p[5] << 8) | p[4]);
@@ -223,6 +224,8 @@ void mac_lld_set_address(MACDriver *macp, const uint8_t *p) {
 msg_t max_lld_get_transmit_descriptor(MACDriver *macp,
                                       MACTransmitDescriptor *tdp) {
   EMACDescriptor *edp;
+
+  (void)macp;
 
   if (!link_up)
     return RDY_TIMEOUT;
@@ -318,6 +321,7 @@ msg_t max_lld_get_receive_descriptor(MACDriver *macp,
   unsigned n;
   EMACDescriptor *edp;
 
+  (void)macp;
   n = EMAC_RECEIVE_DESCRIPTORS;
 
   /*

@@ -84,9 +84,9 @@ static void evt1_setup(void) {
   chEvtClear(ALL_EVENTS);
 }
 
-static void h1(eventid_t id) {test_emit_token('A');}
-static void h2(eventid_t id) {test_emit_token('B');}
-static void h3(eventid_t id) {test_emit_token('C');}
+static void h1(eventid_t id) {(void)id;test_emit_token('A');}
+static void h2(eventid_t id) {(void)id;test_emit_token('B');}
+static void h3(eventid_t id) {(void)id;test_emit_token('C');}
 static const evhandler_t evhndl[] = {h1, h2, h3};
 
 static void evt1_execute(void) {
@@ -151,6 +151,7 @@ static msg_t thread1(void *p) {
 
 static msg_t thread2(void *p) {
 
+  (void)p;
   chEvtBroadcast(&es1);
   chThdSleepMilliseconds(50);
   chEvtBroadcast(&es2);
