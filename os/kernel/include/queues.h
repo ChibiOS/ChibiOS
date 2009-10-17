@@ -27,6 +27,13 @@
 #ifndef _QUEUES_H_
 #define _QUEUES_H_
 
+/*
+ * Module dependancies check.
+ */
+#if !CH_USE_SEMAPHORES
+#error "CH_USE_QUEUES requires CH_USE_SEMAPHORES"
+#endif
+
 /** Queue notification callback type. */
 typedef void (*qnotify_t)(void);
 

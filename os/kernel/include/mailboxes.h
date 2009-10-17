@@ -29,6 +29,13 @@
 
 #if CH_USE_MAILBOXES
 
+/*
+ * Module dependancies check.
+ */
+#if !CH_USE_SEMAPHORES
+#error "CH_USE_MAILBOXES requires CH_USE_SEMAPHORES"
+#endif
+
 typedef struct {
   msg_t                 *mb_buffer;     /**< Pointer to the mailbox buffer.*/
   msg_t                 *mb_top;        /**< Pointer to the first location

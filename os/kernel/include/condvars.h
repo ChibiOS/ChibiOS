@@ -31,7 +31,14 @@
 #ifndef _CONDVARS_H_
 #define _CONDVARS_H_
 
-#if CH_USE_CONDVARS && CH_USE_MUTEXES
+#if CH_USE_CONDVARS
+
+/*
+ * Module dependancies check.
+ */
+#if !CH_USE_MUTEXES
+#error "CH_USE_CONDVARS requires CH_USE_MUTEXES"
+#endif
 
 /**
  * @brief CondVar structure.
@@ -73,7 +80,7 @@ extern "C" {
  */
 #define CONDVAR_DECL(name) CondVar name = _CONDVAR_DATA(name)
 
-#endif /* CH_USE_CONDVARS && CH_USE_MUTEXES */
+#endif /* CH_USE_CONDVARS */
 
 #endif /* _CONDVARS_H_ */
 
