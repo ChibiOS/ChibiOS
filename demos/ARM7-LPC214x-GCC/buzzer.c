@@ -58,9 +58,8 @@ void InitBuzzer(void) {
 }
 
 static void stop(void *p) {
-  TC *tc = T1Base;
 
-  StopCounter(tc);
+  StopCounter((TC *)p);
   chEvtBroadcastI(&BuzzerSilentEventSource);
 }
 
@@ -77,7 +76,7 @@ void PlaySound(int freq, systime_t duration) {
 
   tc->TC_MR0 = tc->TC_MR1 = (PCLK / (freq * 2));
   StartCounter(tc);
-  chVTSetI(&bvt, duration, stop, NULL);
+  chVTSetI(&bvt, duration, stop, tc);
 
   chSysUnlock();
 }

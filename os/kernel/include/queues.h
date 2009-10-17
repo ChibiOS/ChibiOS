@@ -27,6 +27,8 @@
 #ifndef _QUEUES_H_
 #define _QUEUES_H_
 
+#if CH_USE_QUEUES
+
 /*
  * Module dependancies check.
  */
@@ -48,7 +50,6 @@ typedef void (*qnotify_t)(void);
 /** Returned by the queue functions if the queue is full. */
 #define Q_FULL          -4
 
-#if CH_USE_QUEUES
 /**
  * @brief Generic I/O queue structure.
  * @details This structure represents a generic Input or Output asymmetrical

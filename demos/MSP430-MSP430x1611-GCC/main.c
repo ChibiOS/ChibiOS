@@ -30,6 +30,7 @@
 static WORKING_AREA(waThread1, 64);
 static msg_t Thread1(void *arg) {
 
+  (void)arg;
   while (TRUE) {
     palSetPad(IOPORT6, P6_O_LED);
     chThdSleepMilliseconds(500);
@@ -43,6 +44,9 @@ static msg_t Thread1(void *arg) {
  * Entry point, the interrupts are disabled on entry.
  */
 int main(int argc, char **argv) {
+
+  (void)argc;
+  (void)argv;
 
   /*
    * Hardware initialization, see board.c.

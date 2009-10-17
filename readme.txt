@@ -20,6 +20,8 @@
 - CHANGE: Because the changes in the allocators some configuration options
   changed, see the template chconf.h file.
 - CHANGE: renamed ./demos/ARM7-AT91SAM7X-WEB-GCC in ARM7-AT91SAM7X-UIP-GCC.
+- FIX: Added the most restrictive GCC warning option to the makefiles (-Wextra)
+  and fixed some warnings in the code, mostly unused function parameters.
 
 *** 1.3.2 ***
 - FIX: Fixed GCC 4.4.x aliasing warnings (bug 2846336)(backported in stable

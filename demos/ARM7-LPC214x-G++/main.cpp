@@ -137,6 +137,7 @@ public:
  */
 static void TimerHandler(eventid_t id) {
 
+  (void)id;
   if (!(palReadPort(IOPORT1) & BOTH_BUTTONS)) { // Both buttons
     TesterThread tester;
     tester.Wait();
@@ -153,6 +154,9 @@ int main(int argc, char **argv) {
   };
   static EvTimer evt;
   struct EventListener el0;
+
+  (void)argc;
+  (void)argv;
 
   /*
    * Activates the serial driver 2 using the driver default configuration.

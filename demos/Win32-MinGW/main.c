@@ -42,10 +42,11 @@ msg_t TestThread(void *p);
  * areas. The system is halted if something is wrong.
  */
 static msg_t WatchdogThread(void *arg) {
+
+  (void)arg;
   wdguard = 0xA51F2E3D;
   cdguard = 0xA51F2E3D;
   while (TRUE) {
-
     if ((wdguard != 0xA51F2E3D) ||
         (cdguard != 0xA51F2E3D)) {
       printf("Halted by watchdog");
@@ -64,6 +65,7 @@ static msg_t WatchdogThread(void *arg) {
  */
 static msg_t ConsoleThread(void *arg) {
 
+  (void)arg;
   while (!chThdShouldTerminate()) {
     printf((char *)chMsgWait());
     fflush(stdout);
@@ -230,6 +232,7 @@ EventListener s1tel;
 static void COM1Handler(eventid_t id) {
   sdflags_t flags;
 
+  (void)id;
   if (s1 && chThdTerminated(s1)) {
     s1 = NULL;
     cprint("Init: disconnection on SD1\n");
@@ -256,6 +259,7 @@ EventListener s2tel;
 static void COM2Handler(eventid_t id) {
   sdflags_t flags;
 
+  (void)id;
   if (s2 && chThdTerminated(s2)) {
     s2 = NULL;
     cprint("Init: disconnection on SD2\n");

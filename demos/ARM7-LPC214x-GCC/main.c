@@ -35,6 +35,7 @@
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
+  (void)arg;
   while (TRUE) {
     palClearPort(IOPORT1, PAL_PORT_BIT(PA_LED2));
     chThdSleepMilliseconds(200);
@@ -54,6 +55,7 @@ static msg_t Thread1(void *arg) {
 static WORKING_AREA(waThread2, 128);
 static msg_t Thread2(void *arg) {
 
+  (void)arg;
   while (TRUE) {
     palClearPad(IOPORT1, PA_LEDUSB);
     chThdSleepMilliseconds(200);
@@ -70,6 +72,7 @@ static WORKING_AREA(waTestThread, 128);
  */
 static void TimerHandler(eventid_t id) {
 
+  (void)id;
   if (!(palReadPort(IOPORT1) & BOTH_BUTTONS)) {
     Thread *tp = chThdCreateStatic(waTestThread, sizeof(waTestThread),
                                    NORMALPRIO, TestThread, &SD1);
@@ -94,6 +97,7 @@ static void InsertHandler(eventid_t id) {
   static uint8_t rwbuf[512];
   MMCCSD data;
 
+  (void)id;
   PlaySoundWait(1000, MS2ST(100));
   PlaySoundWait(2000, MS2ST(100));
   if (mmcInit())
@@ -111,6 +115,7 @@ static void InsertHandler(eventid_t id) {
  */
 static void RemoveHandler(eventid_t id) {
 
+  (void)id;
   PlaySoundWait(2000, MS2ST(100));
   PlaySoundWait(1000, MS2ST(100));
 }
@@ -127,6 +132,9 @@ int main(int argc, char **argv) {
   };
   static EvTimer evt;
   struct EventListener el0, el1, el2;
+
+  (void)argc;
+  (void)argv;
 
   /*
    * Activates the serial driver 2 using the driver default configuration.

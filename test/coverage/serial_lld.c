@@ -92,6 +92,7 @@ void sd_lld_init(void) {
  */
 void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
 
+  (void)sdp;
   if (config == NULL)
     config = &default_config;
 
@@ -106,6 +107,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
  */
 void sd_lld_stop(SerialDriver *sdp) {
 
+  (void)sdp;
 }
 
 bool_t sd_lld_interrupt_pending(void) {

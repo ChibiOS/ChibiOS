@@ -89,8 +89,9 @@ void ChkIntSources(void) {
  */
 __attribute__((used))
 static void __dummy(Thread *otp, Thread *ntp) {
+  (void)otp; (void)ntp;
   asm volatile (".globl @port_switch@8                          \n\t" \
-               "@port_switch@8:                                 \n\t" \
+                "@port_switch@8:                                \n\t" \
                 "push    %ebp                                   \n\t" \
                 "push    %esi                                   \n\t" \
                 "push    %edi                                   \n\t" \

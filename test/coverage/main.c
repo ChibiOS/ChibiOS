@@ -30,6 +30,9 @@
 int main(int argc, char *argv[]) {
   msg_t result;
 
+  (void)argc;
+  (void)argv;
+
   chSysInit();
   sdStart(&SD1, NULL);
 

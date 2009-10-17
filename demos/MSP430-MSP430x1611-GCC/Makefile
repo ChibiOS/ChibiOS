@@ -91,10 +91,10 @@ HEX  = $(CP) -O ihex
 BIN  = $(CP) -O binary
 
 # Define C warning options here
-CWARN = -Wall -Wstrict-prototypes
+CWARN = -Wall -Wextra -Wstrict-prototypes
 
 # Define C++ warning options here
-CPPWARN = -Wall
+CPPWARN = -Wall -Wextra
 
 #
 # Compiler settings

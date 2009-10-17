@@ -42,6 +42,7 @@ void InitMMC(void) {
 
 void tmrfunc(void *par) {
 
+  (void)par;
   if (cnt) {
     if (!palReadPad(IOPORT2, PB_CP1)) {
       if (!--cnt)
