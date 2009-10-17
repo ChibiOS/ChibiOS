@@ -58,7 +58,7 @@
 #endif
 
 /** @brief Link speed. */
-#if !defined(LWIP_SEND_TIMEOUT) || defined(__DOXYGEN__)
+#if !defined(LWIP_LINK_SPEED) || defined(__DOXYGEN__)
 #define LWIP_LINK_SPEED         100000000
 #endif
 
