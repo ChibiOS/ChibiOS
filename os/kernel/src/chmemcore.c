@@ -32,7 +32,7 @@
   extern align_t __heap_base__;
   extern align_t __heap_end__;
 #else
-align_t buffer[ALIGN_SIZE(CH_MEMCORE_SIZE) / sizeof(align_t)];
+align_t buffer[MEM_ALIGN_SIZE(CH_MEMCORE_SIZE) / sizeof(align_t)];
 #endif
 
 static align_t *nextmem;
@@ -49,7 +49,7 @@ void core_init(void) {
   endmem = &__heap_end__;
 #else
   nextmem = &buffer[0];
-  endmem = &buffer[ALIGN_SIZE(CH_MEMCORE_SIZE) / sizeof(align_t)];
+  endmem = &buffer[MEM_ALIGN_SIZE(CH_MEMCORE_SIZE) / sizeof(align_t)];
 #endif
 }
 
