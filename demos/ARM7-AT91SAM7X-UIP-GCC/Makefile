@@ -72,6 +72,7 @@ CSRC = ${PORTSRC} \
        ${CHIBIOS}/os/io/platforms/AT91SAM7X/mii_lld.c \
        ${CHIBIOS}/os/io/platforms/AT91SAM7X/mac_lld.c \
        ${CHIBIOS}/os/io/platforms/AT91SAM7X/at91lib/aic.c \
+       ${CHIBIOS}/os/various/syscalls.c \
        ${CHIBIOS}/os/various/evtimer.c \
        web/webthread.c \
        board.c main.c

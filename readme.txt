@@ -15,6 +15,9 @@
   manager.
 - NEW: Added a "hungry" mode to the memory pools allocator, when enabled, this
   mode makes a memory pool to feed memory from the core memory manager.
+- NEW: Added newlib interface file syscalls.c under ./os/various for use with
+  the newest YAGARTO releases. The file provides bindings between the C
+  runtime and the core memory manager.
 - CHANGE: Because the changes in the allocators some API prototypes changed:
   chHeapAlloc(), chHeapStatus(), chThdCreateFromHeap().
 - CHANGE: Because the changes in the allocators some configuration options
