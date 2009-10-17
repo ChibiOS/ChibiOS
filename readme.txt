@@ -21,7 +21,7 @@
 - CHANGE: Because the changes in the allocators some API prototypes changed:
   chHeapAlloc(), chHeapStatus(), chThdCreateFromHeap().
 - CHANGE: Because the changes in the allocators some configuration options
-  changed, see the template chconf.h file.
+  changed and some were removed, see the new template chconf.h file.
 - CHANGE: renamed ./demos/ARM7-AT91SAM7X-WEB-GCC in ARM7-AT91SAM7X-UIP-GCC.
 - FIX: Added the most restrictive GCC warning option to the makefiles (-Wextra)
   and fixed some warnings in the code, mostly unused function parameters.

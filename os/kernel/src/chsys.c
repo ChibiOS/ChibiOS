@@ -98,7 +98,7 @@ void chSysInit(void) {
  */
 void chSysTimerHandlerI(void) {
 
-#if CH_USE_ROUNDROBIN
+#if CH_TIME_QUANTUM > 0
   /* running thread has not used up quantum yet? */
   if (rlist.r_preempt > 0)
     /* decrement remaining quantum */

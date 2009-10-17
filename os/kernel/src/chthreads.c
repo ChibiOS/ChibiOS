@@ -293,7 +293,6 @@ void chThdSleepUntil(systime_t time) {
   chSysUnlock();
 }
 
-#if CH_USE_ROUNDROBIN
 /**
  * @brief Yields the time slot.
  * @details Yields the CPU control to the next thread in the ready list with
@@ -305,7 +304,6 @@ void chThdYield(void) {
   chSchDoYieldS();
   chSysUnlock();
 }
-#endif /* CH_USE_ROUNDROBIN */
 
 /**
  * @brief Terminates the current thread by specifying an exit status code.

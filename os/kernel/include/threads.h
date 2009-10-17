@@ -179,12 +179,10 @@ extern "C" {
   void chThdTerminate(Thread *tp);
   void chThdSleep(systime_t time);
   void chThdSleepUntil(systime_t time);
+  void chThdYield(void);
   void chThdExit(msg_t msg);
 #if CH_USE_WAITEXIT
   msg_t chThdWait(Thread *tp);
-#endif
-#if CH_USE_ROUNDROBIN
-  void chThdYield(void);
 #endif
 #ifdef __cplusplus
 }

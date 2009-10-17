@@ -432,7 +432,6 @@ const struct testcase testbmk7 = {
  * a second of continuous operations.
  */
 
-#if CH_USE_ROUNDROBIN
 static msg_t thread8(void *p) {
 
   do {
@@ -482,7 +481,6 @@ const struct testcase testbmk8 = {
   NULL,
   bmk8_execute
 };
-#endif
 
 /**
  * @page test_benchmarks_009 I/O Queues throughput
@@ -760,9 +758,7 @@ const struct testcase * const patternbmk[] = {
   &testbmk5,
   &testbmk6,
   &testbmk7,
-#if CH_USE_ROUNDROBIN
   &testbmk8,
-#endif
   &testbmk9,
   &testbmk10,
   &testbmk11,
