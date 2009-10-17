@@ -7,11 +7,13 @@
   Removed the old EMAC driver, updated the uIP WEB demo to use the new
   driver model.
 - NEW: Added a simple lwIP demo (web server) for the AT91SAM7X.
-- NEW: Centralized memory heap manager. This simple allocator implements a
+- NEW: Centralized core memory manager. This simple allocator implements a
   sbrk()-like API: chCoreAlloc(). The other allocators now use this manager
   in order to get memory blocks.
 - NEW: The heap allocator has been modified, now it is possible to have
   multiple heaps. The default heap gets its memory from the new heap manager.
+- NEW: Added a "hungry" mode to the memory pools allocator, when enabled, this
+  mode makes a memory pool to feed memory from the core memory manager.
 - CHANGE: Because the changes in the allocators some API prototypes changed:
   chHeapAlloc(), chHeapStatus(), chThdCreateFromHeap().
 - CHANGE: Because the changes in the allocators some configuration options

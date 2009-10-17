@@ -27,8 +27,6 @@
 #ifndef _MEMCORE_H_
 #define _MEMCORE_H_
 
-#if CH_USE_MEMCORE
-
 /**
  * @brief Memory alignment type.
  */
@@ -56,6 +54,8 @@ typedef void *(*memgetfunc_t)(size_t size);
  *        the type @p align_t.
  */
 #define MEM_IS_ALIGNED(p)   (((size_t)(p) & MEM_ALIGN_MASK) == 0)
+
+#if CH_USE_MEMCORE
 
 #ifdef __cplusplus
 extern "C" {

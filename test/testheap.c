@@ -85,7 +85,7 @@ static void heap1_execute(void) {
   p1 = chHeapAlloc(NULL, SIZE);
   test_assert(1, p1 != NULL, "allocation failed");
   chHeapFree(p1);
-  p1 = chHeapAlloc(NULL, 0x1000000);
+  p1 = chHeapAlloc(NULL, (size_t)-256);
   test_assert(2, p1 == NULL, "allocation not failed");
 
   /* Initial local heap state.*/

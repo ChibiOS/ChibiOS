@@ -60,7 +60,7 @@ void core_init(void) {
  *          <code>sizeof(align_t)</code>.
  *
  *
- * @param[in] the size of the block to be allocated
+ * @param[in] size the size of the block to be allocated
  * @return A pointer to the allocated memory block.
  * @retval NULL allocation failed, core memory exhausted.
  */
@@ -79,7 +79,7 @@ void *chCoreAlloc(size_t size) {
  *          type @p align_t so it is not possible to allocate less than
  *          <code>sizeof(align_t)</code>.
  *
- * @param[in] the size of the block to be allocated.
+ * @param[in] size the size of the block to be allocated.
  * @return A pointer to the allocated memory block.
  * @retval NULL allocation failed, core memory exhausted.
  */

@@ -32,14 +32,20 @@
  *
  * @param[out] mp pointer to a @p MemoryPool structure
  * @param[in] size the size of the objects contained in this memory pool,
- *                 the minimum accepted size is the size of a pointer to void
+ *                 the minimum accepted size is the size of a pointer to void.
+ *
+ * @note The size is internally aligned to be a multiple of the @p align_t
+ *       type size.
  */
 void chPoolInit(MemoryPool *mp, size_t size) {
 
   chDbgCheck((mp != NULL) && (size >= sizeof(void *)), "chPoolInit");
 
   mp->mp_next = NULL;
-  mp->mp_object_size = size;
+  mp->mp_object_size = MEM_ALIGN_SIZE(size);
+#if CH_USE_MEMCORE
+  mp->mp_usecore = FALSE;
+#endif
 }
 
 /**
@@ -56,7 +62,10 @@ void *chPoolAllocI(MemoryPool *mp) {
 
   if ((objp = mp->mp_next) != NULL)
     mp->mp_next = mp->mp_next->ph_next;
-
+#if CH_USE_MEMCORE
+  else if (mp->mp_usecore)
+    objp = chCoreAllocI(mp->mp_object_size);
+#endif
   return objp;
 }
 
@@ -81,13 +90,17 @@ void *chPoolAlloc(MemoryPool *mp) {
  *
  * @param[in] mp pointer to a @p MemoryPool structure
  * @param[in] objp the pointer to the object to be released or added
- * @note the object is assumed to be of the right size for the specified
+ *
+ * @note The object is assumed to be of the right size for the specified
  *       memory pool.
+ * @note The object is assumed to be memory aligned to the size of @p align_t
+ *       type.
  */
 void chPoolFreeI(MemoryPool *mp, void *objp) {
   struct pool_header *php = objp;
 
-  chDbgCheck((mp != NULL) && (objp != NULL), "chPoolFreeI");
+  chDbgCheck((mp != NULL) && (objp != NULL) && MEM_IS_ALIGNED(objp),
+             "chPoolFreeI");
 
   php->ph_next = mp->mp_next;
   mp->mp_next = php;

@@ -47,6 +47,7 @@ struct testcase {
   void (*execute)(void);
 };
 
+#ifndef __DOXYGEN__
 union test_buffers {
   struct {
     WORKING_AREA(waT0, THREADS_STACK_SIZE);
@@ -57,6 +58,7 @@ union test_buffers {
   };
   uint8_t buffer[WA_SIZE * 5];
 };
+#endif
 
 #ifdef __cplusplus
 extern "C" {
