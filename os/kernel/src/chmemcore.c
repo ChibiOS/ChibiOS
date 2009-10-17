@@ -87,7 +87,7 @@ void *chCoreAllocI(size_t size) {
   void *p;
 
   size = MEM_ALIGN_SIZE(size);
-  if (nextmem + size > endmem)
+  if ((size_t)((uint8_t *)endmem - (uint8_t *)nextmem) < size)
     return NULL;
   p = nextmem;
   nextmem += size;

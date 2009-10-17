@@ -1,0 +1,63 @@
+File `../../os/kernel/src/chsys.c'
+Lines executed:100.00% of 25
+../../os/kernel/src/chsys.c:creating `chsys.c.gcov'
+
+File `../../os/kernel/src/chdebug.c'
+Lines executed:76.92% of 13
+../../os/kernel/src/chdebug.c:creating `chdebug.c.gcov'
+
+File `../../os/kernel/src/chlists.c'
+Lines executed:100.00% of 22
+../../os/kernel/src/chlists.c:creating `chlists.c.gcov'
+
+File `../../os/kernel/src/chvt.c'
+Lines executed:100.00% of 29
+../../os/kernel/src/chvt.c:creating `chvt.c.gcov'
+
+File `../../os/kernel/src/chschd.c'
+Lines executed:100.00% of 56
+../../os/kernel/src/chschd.c:creating `chschd.c.gcov'
+
+File `../../os/kernel/src/chthreads.c'
+Lines executed:100.00% of 100
+../../os/kernel/src/chthreads.c:creating `chthreads.c.gcov'
+
+File `../../os/kernel/src/chsem.c'
+Lines executed:100.00% of 73
+../../os/kernel/src/chsem.c:creating `chsem.c.gcov'
+
+File `../../os/kernel/src/chmtx.c'
+Lines executed:100.00% of 94
+../../os/kernel/src/chmtx.c:creating `chmtx.c.gcov'
+
+File `../../os/kernel/src/chcond.c'
+Lines executed:100.00% of 58
+../../os/kernel/src/chcond.c:creating `chcond.c.gcov'
+
+File `../../os/kernel/src/chevents.c'
+Lines executed:100.00% of 101
+../../os/kernel/src/chevents.c:creating `chevents.c.gcov'
+
+File `../../os/kernel/src/chmsg.c'
+Lines executed:100.00% of 31
+../../os/kernel/src/chmsg.c:creating `chmsg.c.gcov'
+
+File `../../os/kernel/src/chmboxes.c'
+Lines executed:100.00% of 65
+../../os/kernel/src/chmboxes.c:creating `chmboxes.c.gcov'
+
+File `../../os/kernel/src/chqueues.c'
+Lines executed:100.00% of 96
+../../os/kernel/src/chqueues.c:creating `chqueues.c.gcov'
+
+File `../../os/kernel/src/chmemcore.c'
+Lines executed:100.00% of 17
+../../os/kernel/src/chmemcore.c:creating `chmemcore.c.gcov'
+
+File `../../os/kernel/src/chheap.c'
+Lines executed:100.00% of 79
+../../os/kernel/src/chheap.c:creating `chheap.c.gcov'
+
+File `../../os/kernel/src/chmempools.c'
+Lines executed:100.00% of 25
+../../os/kernel/src/chmempools.c:creating `chmempools.c.gcov'
