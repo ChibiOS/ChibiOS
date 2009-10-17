@@ -239,7 +239,7 @@
  * allocators such as:
  * - C-Runtime allocator.
  * - Heap allocator (see @ref heaps).
- * - @ref Memory pools allocator (see @ref pools).
+ * - Memory pools allocator (see @ref pools).
  * .
  * By having a centralized memory provider the various allocators can coexist
  * and share the main memory.<br>
