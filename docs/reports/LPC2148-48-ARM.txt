@@ -5,7 +5,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.3.2unstable
+*** Kernel:       1.3.3unstable
 *** Architecture: ARM7TDMI
 *** GCC Version:  4.4.1
 
@@ -71,7 +71,6 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 7.1 (Heap, allocation and fragmentation test)
---- Size  : 26676 bytes, not fragmented
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.1 (Memory Pools, queue/dequeue)
@@ -106,11 +105,11 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 107671 threads/S
+--- Score : 107672 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 150334 threads/S
+--- Score : 150332 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedulation, 5 threads)
@@ -118,23 +117,23 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 340836 reschedulations/S, 340836 ctxswc/S
+--- Score : 340840 reschedulations/S, 340840 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 357104 bytes/S
+--- Score : 357096 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
 --- Score : 309452 timers/S
 --- Result: SUCCESS
---- Result: SUCCESS
+----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
 --- Score : 622892 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 380196 lock+unlock/S
+--- Score : 380192 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)

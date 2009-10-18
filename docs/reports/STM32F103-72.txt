@@ -5,7 +5,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.3.2unstable
+*** Kernel:       1.3.3unstable
 *** Architecture: ARM Cortex-M3
 *** GCC Version:  4.4.1
 
@@ -71,7 +71,6 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 7.1 (Heap, allocation and fragmentation test)
---- Size  : 16408 bytes, not fragmented
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.1 (Memory Pools, queue/dequeue)
