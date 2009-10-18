@@ -141,12 +141,12 @@
  *       not belonging to the bus.
  */
 typedef struct {
-  /** Port identifier. */
+  /** Port identifier.*/
   ioportid_t            bus_portid;
   /** Bus mask aligned to port bit 0. The bus mask implicitly define the bus
-   *  width. */
+      width. A logical AND is performed on the bus data.*/
   ioportmask_t          bus_mask;
-  /** Offset, within the port, of the least significant bit of the bus. */
+  /** Offset, within the port, of the least significant bit of the bus.*/
   uint_fast8_t          bus_offset;
 } IOBus;
 
@@ -273,7 +273,8 @@ typedef struct {
  * @brief Reads a group of bits.
  *
  * @param[in] port the port identifier
- * @param[in] mask the group mask
+ * @param[in] mask the group mask, a logical AND is performed on the input
+ *            data
  * @param[in] offset the group bit offset within the port
  * @return The group logical states.
  */
@@ -288,7 +289,8 @@ typedef struct {
  * @brief Writes a group of bits.
  *
  * @param[in] port the port identifier
- * @param[in] mask the group mask
+ * @param[in] mask the group mask, a logical AND is performed on the output
+ *            data
  * @param[in] offset the group bit offset within the port
  * @param[in] bits the bits to be written. Values exceeding the group width
  *            are masked.

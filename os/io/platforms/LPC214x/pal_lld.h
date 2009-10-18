@@ -183,7 +183,8 @@ typedef FIO * ioportid_t;
  *          accesses.
  *
  * @param[in] port the port identifier
- * @param[in] mask the group mask
+ * @param[in] mask the group mask, a logical AND is performed on the output
+ *            data
  * @param[in] offset the group bit offset within the port
  * @param[in] bits the bits to be written. Values exceeding the group width
  *            are masked.
@@ -192,7 +193,7 @@ typedef FIO * ioportid_t;
  *       code.
  */
 #define pal_lld_writegroup(port, mask, offset, bits) {                  \
-  (port)->FIO_MASK = (mask) << (offset);                                \
+  (port)->FIO_MASK = ~((mask) << (offset));                             \
   (port)->FIO_PIN = (bits) << (offset);                                 \
   (port)->FIO_MASK = 0;                                                 \
 }

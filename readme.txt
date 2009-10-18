@@ -3,6 +3,8 @@
 *****************************************************************************
 
 *** 1.3.3 ***
+- FIX: Fixed bug in the LPC2148 PAL driver (bug 2881380).
+- FIX: Fixed bug in the AT91SAM7X PAL driver (bug 2879933).
 - NEW: New MAC and MII driver models and implementations for the AT91SAM7X.
   Removed the old EMAC driver, updated the uIP WEB demo to use the new
   driver model.
