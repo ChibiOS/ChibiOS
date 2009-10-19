@@ -51,8 +51,7 @@
 /**
  * @brief Pins latched by the PHY at reset.
  */
-#if (PHY_HARDWARE == PHY_MICREL_KS8721)
-
+#if PHY_HARDWARE == PHY_MICREL_KS8721
 #define PHY_ADDRESS             1
 #define PHY_ID                  MII_KS8721_ID
 #define PHY_LATCHED_PINS        (AT91C_PB4_ECRS          | AT91C_PB5_ERX0  | \
@@ -60,15 +59,15 @@
                                  AT91C_PB13_ERX2         | AT91C_PB14_ERX3 | \
                                  AT91C_PB15_ERXDV_ECRSDV | AT91C_PB16_ECOL | \
                                  AT91C_PIO_PB26)
-#elif (PHY_HARDWARE == PHY_DAVICOM_9161)
 
+#elif PHY_HARDWARE == PHY_DAVICOM_9161
 #define PHY_ADDRESS             0
 #define PHY_ID                  MII_DM9161_ID
-#define PHY_LATCHED_PINS        (AT91C_PB4_ECRS          | AT91C_PB5_ERX0  | \
-                                 AT91C_PB6_ERX1          | AT91C_PB7_ERXER | \
-                                 AT91C_PB13_ERX2         | AT91C_PB14_ERX3 | \
-                                 AT91C_PB15_ERXDV_ECRSDV | AT91C_PB16_ECOL | \
-                                 AT91C_PB17_ERXCK)
+#define PHY_LATCHED_PINS        (AT91C_PB0_ETXCK_EREFCK  | AT91C_PB4_ECRS          | \
+                                 AT91C_PB5_ERX0          | AT91C_PB6_ERX1          | \
+                                 AT91C_PB7_ERXER         | AT91C_PB13_ERX2         | \
+                                 AT91C_PB14_ERX3         | AT91C_PB15_ERXDV_ECRSDV | \
+                                 AT91C_PB16_ECOL         | AT91C_PB17_ERXCK)
 #endif /* PHY_HARDWARE */
 
 /*===========================================================================*/

@@ -46,15 +46,6 @@ void mii_lld_reset(MACDriver *macp) {
 
   /*
    * Disables the pullups on all the pins that are latched on reset by the PHY.
-   * The status latched into the PHY is:
-   *   PHYADDR  = 00001
-   *   PCS_LPBK = 0 (disabled)
-   *   ISOLATE  = 0 (disabled)
-   *   RMIISEL  = 0 (MII mode)
-   *   RMIIBTB  = 0 (BTB mode disabled)
-   *   SPEED    = 1 (100mbps)
-   *   DUPLEX   = 1 (full duplex)
-   *   ANEG_EN  = 1 (auto negotiation enabled)
    */
   AT91C_BASE_PIOB->PIO_PPUDR = PHY_LATCHED_PINS;
 
