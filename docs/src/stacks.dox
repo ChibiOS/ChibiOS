@@ -54,7 +54,9 @@
  * - Enable the following debug options in the kernel:
  *   - @p CH_DBG_ENABLE_STACK_CHECK, this enables a stack check before any
  *        context switch. This option halts the system in @p chSysHalt() just
- *        before a stack overflow happens.
+ *        before a stack overflow happens. The halt condition is caused by
+ *        a stack overflow when the global variable @p panic_msg is set to
+ *        @p NULL, normally it would point to a panic message.
  *   - @p CH_DBG_FILL_THREADS, this option fills the threads working area
  *     with an easily recognizable pattern (0x55).
  * - Assign a large and safe size to the thread stack, as example 256 bytes

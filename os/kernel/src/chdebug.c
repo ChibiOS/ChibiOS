@@ -62,7 +62,8 @@ void chDbgTrace(Thread *otp, Thread *ntp) {
 /**
  * @brief Pointer to the panic message.
  * @details This pointer is meant to be accessed through the debugger, it is
- *          written once and then the system is halted.
+ *          written once and then the system is halted. This variable can be
+ *          set to @p NULL if the halt is caused by a stack overflow.
  */
 char *panic_msg;
 

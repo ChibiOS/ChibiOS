@@ -18,7 +18,7 @@
 */
 
 /**
- * @page articles Articles
+ * @page articles Articles and Code Samples
  * ChibiOS/RT Articles and Code Examples:
  * - @subpage article_stacks
  * - @subpage article_mutual_exclusion
@@ -29,5 +29,6 @@
  * - @subpage article_timing
  * - @subpage article_portguide
  * - @subpage article_design
+ * - @subpage article_create_thread
  * .
  */

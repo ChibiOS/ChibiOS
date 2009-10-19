@@ -377,6 +377,8 @@
  * @note The default is @p FALSE.
  * @note The stack check is performed in a architecture/port dependent way. It
  *       may not be implemented or some ports.
+ * @note The default failure mode is to halt the system with the global
+ *       @p panic_msg variable set to @p NULL.
  */
 #if !defined(CH_DBG_ENABLE_STACK_CHECK) || defined(__DOXYGEN__)
 #define CH_DBG_ENABLE_STACK_CHECK       FALSE
