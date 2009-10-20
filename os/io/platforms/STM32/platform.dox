@@ -1,0 +1,72 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006-2007 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @defgroup STM32 STM32 Support
+ * @brief STM32 specific support.
+ * @details The STM32 support includes:
+ * - I/O ports driver.
+ * - Buffered, interrupt driven, serial driver.
+ * - A demo supporting the kernel test suite.
+ * .
+ * @ingroup ARMCM3
+ */
+
+/**
+ * @defgroup STM32_PAL STM32 I/O Ports Support
+ * @brief I/O Ports peripherals support.
+ * @details This module supports the STM3 GPIO controller. The controller
+ * supports the following features (see @ref PAL):
+ * - 16 bits wide ports.
+ * - Atomic set/reset functions.
+ * - Atomic set+reset function (atomic bus operations).
+ * - Output latched regardless of the pad setting.
+ * - Direct read of input pads regardless of the pad setting.
+ * .
+ * <h2>Supported Setup Modes</h2>
+ * - @p PAL_MODE_RESET.
+ * - @p PAL_MODE_UNCONNECTED.
+ * - @p PAL_MODE_INPUT.
+ * - @p PAL_MODE_INPUT_PULLUP.
+ * - @p PAL_MODE_INPUT_PULLDOWN.
+ * - @p PAL_MODE_OUTPUT_PUSHPULL.
+ * - @p PAL_MODE_OUTPUT_OPENDRAIN.
+ * .
+ * Any attempt to setup an invalid mode is ignored.
+ *
+ * <h2>Suboptimal Behavior</h2>
+ * Some GPIO features are less than optimal:
+ * - Pad/port toggling operations are not atomic.
+ * - Pad/group mode setup is not atomic.
+ * - Writing on pads/groups/ports programmed as input with pull-up/down
+ *   resistor can change the resistor setting because the output latch is
+ *   used for resistor selection.
+ * .
+ * @ingroup STM32
+ */
+
+/**
+ * @defgroup STM32_SERIAL STM32 USART Support
+ * @brief USART peripherals support.
+ * @details The serial driver supports the STM32 USARTs in asynchronous
+ * mode.
+ *
+ * @ingroup STM32
+ */
+ 
