@@ -1,5 +1,5 @@
 File `../../os/kernel/src/chsys.c'
-Lines executed:100.00% of 25
+Lines executed:100.00% of 28
 ../../os/kernel/src/chsys.c:creating `chsys.c.gcov'
 
 File `../../os/kernel/src/chdebug.c'
@@ -15,11 +15,11 @@ Lines executed:100.00% of 29
 ../../os/kernel/src/chvt.c:creating `chvt.c.gcov'
 
 File `../../os/kernel/src/chschd.c'
-Lines executed:100.00% of 56
+Lines executed:100.00% of 74
 ../../os/kernel/src/chschd.c:creating `chschd.c.gcov'
 
 File `../../os/kernel/src/chthreads.c'
-Lines executed:100.00% of 100
+Lines executed:100.00% of 104
 ../../os/kernel/src/chthreads.c:creating `chthreads.c.gcov'
 
 File `../../os/kernel/src/chsem.c'
@@ -59,5 +59,5 @@ Lines executed:100.00% of 79
 ../../os/kernel/src/chheap.c:creating `chheap.c.gcov'
 
 File `../../os/kernel/src/chmempools.c'
-Lines executed:100.00% of 25
+Lines executed:96.43% of 28
 ../../os/kernel/src/chmempools.c:creating `chmempools.c.gcov'
