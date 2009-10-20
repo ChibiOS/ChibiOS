@@ -34,6 +34,7 @@ typedef void *align_t;
 
 /**
  * @brief Memory get function.
+ *
  * @note This type must be assignment compatible with the @p chMemAlloc()
  *       function.
  */

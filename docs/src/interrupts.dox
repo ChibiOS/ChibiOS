@@ -18,7 +18,7 @@
 */
 
 /**
- * @page article_interrupts Writing interrupt handlers under ChibiOS/RT
+ * @page article_interrupts How to write interrupt handlers
  * Since version 1.1.0 ChibiOS/RT offers a cross-platform method for writing
  * interrupt handlers. Port-related and compiler-related details are
  * encapsulated within standard system macros.<br>

@@ -19,8 +19,8 @@
 
 /**
  * @file heap.h
- * @brief Heap macros and structures.
- * @addtogroup heap
+ * @brief Heaps macros and structures.
+ * @addtogroup heaps
  * @{
  */
 

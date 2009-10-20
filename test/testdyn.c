@@ -145,7 +145,7 @@ static char *dyn2_gettest(void) {
 
 static void dyn2_setup(void) {
 
-  chPoolInit(&mp1, THD_WA_SIZE(THREADS_STACK_SIZE));
+  chPoolInit(&mp1, THD_WA_SIZE(THREADS_STACK_SIZE), NULL);
 }
 
 static void dyn2_execute(void) {

@@ -15,8 +15,8 @@
 - NEW: The heap allocator has been modified, now it is possible to have
   multiple heaps. The default heap gets its memory from the new core memory
   manager.
-- NEW: Added a "hungry" mode to the memory pools allocator, when enabled, this
-  mode makes a memory pool to feed memory from the core memory manager.
+- NEW: Now memory pools can optionally get new objects automatically from the
+  core memory manager.
 - NEW: Added newlib interface file syscalls.c under ./os/various for use with
   the newest YAGARTO releases. The file provides bindings between the C
   runtime and the core memory manager.

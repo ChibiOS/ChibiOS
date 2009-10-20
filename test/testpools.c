@@ -48,7 +48,7 @@
 
 #if CH_USE_MEMPOOLS
 
-static MEMORYPOOL_DECL(mp1, THD_WA_SIZE(THREADS_STACK_SIZE));
+static MEMORYPOOL_DECL(mp1, THD_WA_SIZE(THREADS_STACK_SIZE), NULL);
 
 /**
  * @page test_pools_001 Allocation and enqueuing test
@@ -66,7 +66,7 @@ static char *pools1_gettest(void) {
 
 static void pools1_setup(void) {
 
-  chPoolInit(&mp1, THD_WA_SIZE(THREADS_STACK_SIZE));
+  chPoolInit(&mp1, THD_WA_SIZE(THREADS_STACK_SIZE), NULL);
 }
 
 static void pools1_execute(void) {
