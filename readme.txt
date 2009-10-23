@@ -2,6 +2,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.3.4 ***
+- NEW: New SPI (master) driver model.
+
 *** 1.3.3 ***
 - FIX: Fixed bug in the LPC2148 PAL driver (bug 2881380).
 - FIX: Fixed bug in the AT91SAM7X PAL driver (bug 2879933).
