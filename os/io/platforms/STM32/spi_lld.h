@@ -41,7 +41,7 @@
 
 /**
  * @brief SPI1 driver enable switch.
- * @details If set to @p TRUE the support for SPI is included.
+ * @details If set to @p TRUE the support for SPI1 is included.
  * @note The default is @p TRUE.
  */
 #if !defined(USE_STM32_SPI1) || defined(__DOXYGEN__)
@@ -49,12 +49,32 @@
 #endif
 
 /**
- * @brief SPI1 driver enable switch.
- * @details If set to @p TRUE the support for SPI is included.
+ * @brief SPI2 driver enable switch.
+ * @details If set to @p TRUE the support for SPI2 is included.
  * @note The default is @p TRUE.
  */
 #if !defined(USE_STM32_SPI2) || defined(__DOXYGEN__)
 #define USE_STM32_SPI2              TRUE
+#endif
+
+/**
+ * @brief SPI1 DMA priority (0..3).
+ * @note The priority level is used for both the TX and RX DMA channels but
+ *       because of the channels ordering the RX channel has always priority
+ *       over the TX channel.
+ */
+#if !defined(SPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define SPI1_DMA_PRIORITY           2
+#endif
+
+/**
+ * @brief SPI2 DMA priority (0..3).
+ * @note The priority level is used for both the TX and RX DMA channels but
+ *       because of the channels ordering the RX channel has always priority
+ *       over the TX channel.
+ */
+#if !defined(SPI2_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define SPI2_DMA_PRIORITY           2
 #endif
 
 /*===========================================================================*/
@@ -65,9 +85,9 @@
  * @brief Driver state machine possible states.
  */
 typedef enum {
-  SPI_UNINIT = 0,
-  SPI_IDLE = 1,
-  SPI_ACTIVE = 2
+  SPI_UNINIT = 0,//!< SPI_UNINIT
+  SPI_IDLE = 1,  //!< SPI_IDLE
+  SPI_ACTIVE = 2 //!< SPI_ACTIVE
 } spistate_t;
 
 /**
@@ -128,6 +148,10 @@ typedef struct {
    * @brief Pointer to the transmit DMA channel registers block.
    */
   DMA_Channel_TypeDef   *spd_dmatx;
+  /**
+   * @brief DMA priority bit mask.
+   */
+  uint32_t              spd_dmaprio;
 } SPIDriver;
 
 /*===========================================================================*/

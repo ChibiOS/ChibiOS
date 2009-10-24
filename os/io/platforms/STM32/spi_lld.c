@@ -40,6 +40,36 @@ SPIDriver SPID1;
 SPIDriver SPID2;
 #endif
 
+/*===========================================================================*/
+/* Low Level Driver local functions.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Low Level Driver interrupt handlers.                                      */
+/*===========================================================================*/
+
+#if USE_STM32_SPI1 || defined(__DOXYGEN__)
+CH_IRQ_HANDLER(Vector70) {
+
+  CH_IRQ_PROLOGUE();
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+#if USE_STM32_SPI2 || defined(__DOXYGEN__)
+CH_IRQ_HANDLER(Vector78) {
+
+  CH_IRQ_PROLOGUE();
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+/*===========================================================================*/
+/* Low Level Driver exported functions.                                      */
+/*===========================================================================*/
+
 /**
  * @brief Low level SPI driver initialization.
  */
@@ -47,18 +77,20 @@ void spi_lld_init(void) {
 
 #if USE_STM32_SPI1
   spiObjectInit(&SPID1);
-  SPID1.spd_spi = SPI1;
-  SPID1.spd_dmarx = DMA1_Channel2;
-  SPID1.spd_dmatx = DMA1_Channel3;
+  SPID1.spd_spi     = SPI1;
+  SPID1.spd_dmarx   = DMA1_Channel2;
+  SPID1.spd_dmatx   = DMA1_Channel3;
+  SPID1.spd_dmaprio = SPI1_DMA_PRIORITY << 12;
   RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
   GPIOA->CRH = (GPIOA->CRH & 0x000FFFFF) | 0xB4B00000;
 #endif
 
 #if USE_STM32_SPI2
   spiObjectInit(&SPID2);
-  SPID2.spd_spi = SPI2;
-  SPID2.spd_dmarx = DMA1_Channel4;
-  SPID2.spd_dmatx = DMA1_Channel5;
+  SPID2.spd_spi     = SPI2;
+  SPID2.spd_dmarx   = DMA1_Channel4;
+  SPID2.spd_dmatx   = DMA1_Channel5;
+  SPID2.spd_dmaprio = SPI2_DMA_PRIORITY << 12;
   RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
   GPIOB->CRL = (GPIOB->CRL & 0x000FFFFF) | 0xB4B00000;
 #endif
@@ -114,6 +146,15 @@ void spi_lld_unselect(SPIDriver *spip) {
  */
 void spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
 
+  /*
+   * DMA setup.
+   */
+  spip->spd_dmarx->CNDTR = (uint32_t)n;
+  spip->spd_dmarx->CPAR  = (uint32_t)&spip->spd_spi->DR;
+  spip->spd_dmarx->CMAR  = (uint32_t)rxbuf;
+  spip->spd_dmarx->CCR   = spip->spd_dmaprio |
+                           DMA_CCR1_MSIZE_0 | DMA_CCR1_MSIZE_0 |
+                           DMA_CCR1_MINC | DMA_CCR1_TEIE | DMA_CCR1_TCIE;
 }
 
 /** @} */
