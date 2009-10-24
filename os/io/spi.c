@@ -68,7 +68,7 @@ void spiSetup(SPIDriver *spip, const SPIConfig *config) {
 }
 
 /**
- * @brief Asserts the chip select signal and prepares for transfers.
+ * @brief Asserts the slave select signal and prepares for transfers.
  *
  * @param[in] spip pointer to the @p SPIDriver object
  */
@@ -86,7 +86,7 @@ void spiSelect(SPIDriver *spip) {
 }
 
 /**
- * @brief De-asserts the chip select signal.
+ * @brief De-asserts the slave select signal.
  * @details The previously selected peripheral is unselected.
  *
  * @param[in] spip pointer to the @p SPIDriver object

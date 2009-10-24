@@ -27,6 +27,8 @@
 #ifndef _SPI_LLD_H_
 #define _SPI_LLD_H_
 
+#include <pal.h>
+
 #undef FALSE
 #undef TRUE
 #include <stm32f10x.h>
@@ -77,6 +79,18 @@ typedef struct {
    */
   cnt_t                 spc_clkpulses;
   /* End of the mandatory fields.*/
+  /**
+   * @brief The chip select line port.
+   */
+  ioportid_t            spc_ssport;
+  /**
+   * @brief The chip select line pad number.
+   */
+  uint16_t              spc_sspad;
+  /**
+   * @brief SPI initialization data.
+   */
+  uint16_t              spc_cr1;
 } SPIConfig;
 
 /**
@@ -102,8 +116,17 @@ typedef struct {
    */
   const SPIConfig       *spd_config;
   /* End of the mandatory fields.*/
+  /**
+   * @brief Pointer to the SPIx registers block.
+   */
   SPI_TypeDef           *spd_spi;
+  /**
+   * @brief Pointer to the receive DMA channel registers block.
+   */
   DMA_Channel_TypeDef   *spd_dmarx;
+  /**
+   * @brief Pointer to the transmit DMA channel registers block.
+   */
   DMA_Channel_TypeDef   *spd_dmatx;
 } SPIDriver;
 

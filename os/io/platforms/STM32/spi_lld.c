@@ -71,25 +71,28 @@ void spi_lld_init(void) {
  */
 void spi_lld_setup(SPIDriver *spip) {
 
+  spip->spd_spi->CR1 = spip->spd_config->spc_cr1;
 }
 
 /**
- * @brief Asserts the chip select signal and prepares for transfers.
+ * @brief Asserts the slave select signal and prepares for transfers.
  *
  * @param[in] spip pointer to the @p SPIDriver object
  */
 void spi_lld_select(SPIDriver *spip) {
 
+  palClearPad(spip->spd_config->spc_ssport, spip->spd_config->spc_sspad);
 }
 
 /**
- * @brief De-asserts the chip select signal.
+ * @brief De-asserts the slave select signal.
  * @details The previously selected peripheral is unselected.
  *
  * @param[in] spip pointer to the @p SPIDriver object
  */
 void spi_lld_unselect(SPIDriver *spip) {
 
+  palSetPad(spip->spd_config->spc_ssport, spip->spd_config->spc_sspad);
 }
 
 /**
