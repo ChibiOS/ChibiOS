@@ -27,17 +27,6 @@
 #include <ch.h>
 #include <spi.h>
 
-/*
- * The following macros are used to enforce a correct sequence of operations
- * when the OS asserts are enabled. The overhead is removed when not in debug
- * mode.
- */
-#ifdef CH_DBG_ENABLE_ASSERTS
-#define SPI_SET_STATE(spip, sts) (spip)->spd_state = (sts)
-#else
-#define SPI_SET_STATE(spip, sts)
-#endif
-
 /**
  * @brief SPI Driver initialization.
  */
@@ -53,7 +42,7 @@ void spiInit(void) {
  */
 void spiObjectInit(SPIDriver *spip) {
 
-  SPI_SET_STATE(spip, SPI_IDLE);
+  spip->spd_state = SPI_IDLE;
 #if CH_USE_MUTEXES
   chMtxInit(&spip->spd_mutex);
 #elif CH_USE_SEMAPHORES
@@ -80,10 +69,8 @@ void spiSetup(SPIDriver *spip, const SPIConfig *config) {
 
 /**
  * @brief Asserts the chip select signal and prepares for transfers.
- * @details The SPI bus is configured and a peripheral selected.
  *
  * @param[in] spip pointer to the @p SPIDriver object
- * @param config pointer to the @p SPIConfig object
  */
 void spiSelect(SPIDriver *spip) {
 
@@ -94,7 +81,7 @@ void spiSelect(SPIDriver *spip) {
               "not idle");
 
   spi_lld_select(spip);
-  SPI_SET_STATE(spip, SPI_ACTIVE);
+  spip->spd_state = SPI_ACTIVE;
   chSysUnlock();
 }
 
@@ -113,7 +100,7 @@ void spiUnselect(SPIDriver *spip) {
               "not locked");
 
   spi_lld_unselect(spip);
-  SPI_SET_STATE(spip, SPI_IDLE);
+  spip->spd_state = SPI_IDLE;
   chSysUnlock();
 }
 
@@ -174,6 +161,7 @@ void spiAcquireBus(SPIDriver *spip) {
 void spiReleaseBus(SPIDriver *spip) {
 
 #if CH_USE_MUTEXES
+  (void)spip;
   chMtxUnlock();
 #elif CH_USE_SEMAPHORES
   chSemSignal(&spip->spd_semaphore);
