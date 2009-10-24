@@ -50,9 +50,9 @@
  * @brief Driver state machine possible states.
  */
 typedef enum {
-  SPI_UNINIT = 0,//!< SPI_UNINIT
-  SPI_IDLE = 1,  //!< SPI_IDLE
-  SPI_ACTIVE = 2 //!< SPI_ACTIVE
+  SPI_UNINIT = 0,
+  SPI_IDLE = 1,
+  SPI_ACTIVE = 2
 } spistate_t;
 
 /**
@@ -85,7 +85,7 @@ typedef struct {
 #endif
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
   /**
-   * Current configuration data.
+   * @brief Current configuration data.
    */
   const SPIConfig       *spd_config;
   /* End of the mandatory fields.*/

@@ -24,13 +24,11 @@
  * Tricks required to make the TRUE/FALSE declaration inside the library
  * compatible.
  */
-#ifndef __STM32F10x_H
 #undef FALSE
 #undef TRUE
 #include <stm32f10x.h>
 #define FALSE 0
 #define TRUE (!FALSE)
-#endif
 
 /*
  * Uncomment this if you want a 48MHz system clock, else it will be 72MHz.

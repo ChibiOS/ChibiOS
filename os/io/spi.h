@@ -27,6 +27,17 @@
 #ifndef _SPI_H_
 #define _SPI_H_
 
+/**
+ * @brief Enables the mutual exclusion APIs on the SPI bus.
+ */
+#if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define SPI_USE_MUTUAL_EXCLUSION    TRUE
+#endif
+
+#if SPI_USE_MUTUAL_EXCLUSION && !CH_USE_MUTEXES && !CH_USE_SEMAPHORES
+#error "SPI_USE_MUTUAL_EXCLUSION requires CH_USE_MUTEXES and/or CH_USE_SEMAPHORES"
+#endif
+
 #include "spi_lld.h"
 
 #ifdef __cplusplus

@@ -27,11 +27,41 @@
 #include <ch.h>
 #include <spi.h>
 
+#include "nvic.h"
+#include "board.h"
+
+#if USE_STM32_SPI1 || defined(__DOXYGEN__)
+/** @brief SPI1 driver identifier.*/
+SPIDriver SPID1;
+#endif
+
+#if USE_STM32_SPI2 || defined(__DOXYGEN__)
+/** @brief SPI2 driver identifier.*/
+SPIDriver SPID2;
+#endif
+
 /**
  * @brief Low level SPI driver initialization.
  */
 void spi_lld_init(void) {
 
+#if USE_STM32_SPI1
+  spiObjectInit(&SPID1);
+  SPID1.spd_spi = SPI1;
+  SPID1.spd_dmarx = DMA1_Channel2;
+  SPID1.spd_dmatx = DMA1_Channel3;
+  RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
+  GPIOA->CRH = (GPIOA->CRH & 0x000FFFFF) | 0xB4B00000;
+#endif
+
+#if USE_STM32_SPI2
+  spiObjectInit(&SPID2);
+  SPID2.spd_spi = SPI2;
+  SPID2.spd_dmarx = DMA1_Channel4;
+  SPID2.spd_dmatx = DMA1_Channel5;
+  RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
+  GPIOB->CRL = (GPIOB->CRL & 0x000FFFFF) | 0xB4B00000;
+#endif
 }
 
 /**

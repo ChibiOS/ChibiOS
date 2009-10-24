@@ -27,19 +27,32 @@
 #ifndef _SPI_LLD_H_
 #define _SPI_LLD_H_
 
+#undef FALSE
+#undef TRUE
+#include <stm32f10x.h>
+#define FALSE 0
+#define TRUE (!FALSE)
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
 /**
- * @brief Enables the mutual exclusion APIs on the SPI bus.
+ * @brief SPI1 driver enable switch.
+ * @details If set to @p TRUE the support for SPI is included.
+ * @note The default is @p TRUE.
  */
-#if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define SPI_USE_MUTUAL_EXCLUSION    TRUE
+#if !defined(USE_STM32_SPI1) || defined(__DOXYGEN__)
+#define USE_STM32_SPI1              TRUE
 #endif
 
-#if SPI_USE_MUTUAL_EXCLUSION && !CH_USE_MUTEXES && !CH_USE_SEMAPHORES
-#error "SPI_USE_MUTUAL_EXCLUSION requires CH_USE_MUTEXES and/or CH_USE_SEMAPHORES"
+/**
+ * @brief SPI1 driver enable switch.
+ * @details If set to @p TRUE the support for SPI is included.
+ * @note The default is @p TRUE.
+ */
+#if !defined(USE_STM32_SPI2) || defined(__DOXYGEN__)
+#define USE_STM32_SPI2              TRUE
 #endif
 
 /*===========================================================================*/
@@ -50,9 +63,9 @@
  * @brief Driver state machine possible states.
  */
 typedef enum {
-  SPI_UNINIT = 0,//!< SPI_UNINIT
-  SPI_IDLE = 1,  //!< SPI_IDLE
-  SPI_ACTIVE = 2 //!< SPI_ACTIVE
+  SPI_UNINIT = 0,
+  SPI_IDLE = 1,
+  SPI_ACTIVE = 2
 } spistate_t;
 
 /**
@@ -85,15 +98,27 @@ typedef struct {
 #endif
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
   /**
-   * Current configuration data.
+   * @brief Current configuration data.
    */
   const SPIConfig       *spd_config;
   /* End of the mandatory fields.*/
+  SPI_TypeDef           *spd_spi;
+  DMA_Channel_TypeDef   *spd_dmarx;
+  DMA_Channel_TypeDef   *spd_dmatx;
 } SPIDriver;
 
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+/** @cond never*/
+#if USE_STM32_SPI1
+extern SPIDriver SPID1;
+#endif
+
+#if USE_STM32_SPI2
+extern SPIDriver SPID2;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -106,6 +131,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+/** @endcond*/
 
 #endif /* _SPI_LLD_H_ */
 
