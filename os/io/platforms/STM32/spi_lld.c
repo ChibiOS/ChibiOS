@@ -103,7 +103,31 @@ void spi_lld_init(void) {
  */
 void spi_lld_setup(SPIDriver *spip) {
 
+  /* SPI setup.*/
   spip->spd_spi->CR1 = spip->spd_config->spc_cr1;
+
+  /* DMA setup.*/
+  if ((spip->spd_config->spc_cr1 & SPI_CR1_DFF) != 0) {
+    /* Prepares for 16 bits transfer.*/
+    spip->spd_dmarx->CCR = spip->spd_dmaprio |
+                           DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0 |
+                           DMA_CCR1_MINC |
+                           DMA_CCR1_TEIE | DMA_CCR1_TCIE;
+    spip->spd_dmatx->CCR = spip->spd_dmaprio |
+                           DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0 |
+                           DMA_CCR1_MINC | DMA_CCR1_DIR |
+                           DMA_CCR1_TEIE | DMA_CCR1_TCIE;
+  }
+  else {
+    /* Prepares for 8 bits transfer.*/
+    spip->spd_dmarx->CCR = spip->spd_dmaprio | DMA_CCR1_MINC |
+                           DMA_CCR1_TEIE | DMA_CCR1_TCIE;
+    spip->spd_dmatx->CCR = spip->spd_dmaprio |
+                           DMA_CCR1_MINC | DMA_CCR1_DIR |
+                           DMA_CCR1_TEIE | DMA_CCR1_TCIE;
+  }
+  spip->spd_dmarx->CPAR  = (uint32_t)&spip->spd_spi->DR;
+  spip->spd_dmatx->CPAR  = (uint32_t)&spip->spd_spi->DR;
 }
 
 /**
@@ -146,15 +170,11 @@ void spi_lld_unselect(SPIDriver *spip) {
  */
 void spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
 
-  /*
-   * DMA setup.
-   */
+  /* DMA setup.*/
   spip->spd_dmarx->CNDTR = (uint32_t)n;
-  spip->spd_dmarx->CPAR  = (uint32_t)&spip->spd_spi->DR;
+  spip->spd_dmatx->CNDTR = (uint32_t)n;
   spip->spd_dmarx->CMAR  = (uint32_t)rxbuf;
-  spip->spd_dmarx->CCR   = spip->spd_dmaprio |
-                           DMA_CCR1_MSIZE_0 | DMA_CCR1_MSIZE_0 |
-                           DMA_CCR1_MINC | DMA_CCR1_TEIE | DMA_CCR1_TCIE;
+  spip->spd_dmatx->CMAR  = (uint32_t)txbuf;
 }
 
 /** @} */
