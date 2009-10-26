@@ -58,7 +58,7 @@
 #endif
 
 /**
- * @brief SPI1 DMA priority (0..3).
+ * @brief SPI1 DMA priority (0..3|lowest..highest).
  * @note The priority level is used for both the TX and RX DMA channels but
  *       because of the channels ordering the RX channel has always priority
  *       over the TX channel.
@@ -68,7 +68,7 @@
 #endif
 
 /**
- * @brief SPI2 DMA priority (0..3).
+ * @brief SPI2 DMA priority (0..3|lowest..highest).
  * @note The priority level is used for both the TX and RX DMA channels but
  *       because of the channels ordering the RX channel has always priority
  *       over the TX channel.
@@ -97,7 +97,7 @@ typedef struct {
   /**
    * @brief Clock pulses to be generated after initialization.
    */
-  cnt_t                 spc_clkpulses;
+  cnt_t                 spc_initcnt;
   /* End of the mandatory fields.*/
   /**
    * @brief The chip select line port.
@@ -137,6 +137,10 @@ typedef struct {
   const SPIConfig       *spd_config;
   /* End of the mandatory fields.*/
   /**
+   * @brief Thread waiting for I/O completion.
+   */
+  Thread                *spd_thread;
+  /**
    * @brief Pointer to the SPIx registers block.
    */
   SPI_TypeDef           *spd_spi;
@@ -174,7 +178,9 @@ extern "C" {
   void spi_lld_setup(SPIDriver *spip);
   void spi_lld_select(SPIDriver *spip);
   void spi_lld_unselect(SPIDriver *spip);
-  void spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf);
+  msg_t spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf);
+  msg_t spi_lld_send(SPIDriver *spip, size_t n, void *txbuf);
+  msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf);
 #ifdef __cplusplus
 }
 #endif

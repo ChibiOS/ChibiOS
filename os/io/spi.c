@@ -59,6 +59,7 @@ void spiObjectInit(SPIDriver *spip) {
  */
 void spiSetup(SPIDriver *spip, const SPIConfig *config) {
 
+  chDbgCheck((spip != NULL) && (config != NULL), "spiSetup");
   chDbgAssert(spip->spd_state == SPI_IDLE,
               "spiSetup(), #1",
               "not idle");
@@ -73,6 +74,8 @@ void spiSetup(SPIDriver *spip, const SPIConfig *config) {
  * @param[in] spip pointer to the @p SPIDriver object
  */
 void spiSelect(SPIDriver *spip) {
+
+  chDbgCheck(spip != NULL, "spiSelect");
 
   chSysLock();
 
@@ -92,6 +95,8 @@ void spiSelect(SPIDriver *spip) {
  * @param[in] spip pointer to the @p SPIDriver object
  */
 void spiUnselect(SPIDriver *spip) {
+
+  chDbgCheck(spip != NULL, "spiUnselect");
 
   chSysLock();
 
@@ -121,13 +126,63 @@ void spiUnselect(SPIDriver *spip) {
  *              data sizes below or equal to 8 bits else it is organized as
  *              an uint16_t array.
  */
-void spiExchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
+msg_t spiExchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
 
+  chDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL) && (txbuf != NULL),
+             "spiExchange");
   chDbgAssert(spip->spd_state == SPI_ACTIVE,
               "spiExchange(), #1",
               "not active");
 
-  spi_lld_exchange(spip, n, rxbuf, txbuf);
+  return spi_lld_exchange(spip, n, rxbuf, txbuf);
+}
+
+/**
+ * @brief Sends data ever the SPI bus.
+ *
+ * @param[in] spip pointer to the @p SPIDriver object
+ * @param n number of words to send
+ * @param txbuf the pointer to the transmit buffer
+ * @return The operation status is returned.
+ * @retval RDY_OK operation complete.
+ * @retval RDY_RESET hardware failure.
+ *
+ * @note The buffers are organized as uint8_t arrays for data sizes below or
+ *       equal to 8 bits else it is organized as uint16_t arrays.
+ */
+msg_t spiSend(SPIDriver *spip, size_t n, void *txbuf) {
+
+  chDbgCheck((spip != NULL) && (n > 0) && (txbuf != NULL),
+             "spiSend");
+  chDbgAssert(spip->spd_state == SPI_ACTIVE,
+              "spiSend(), #1",
+              "not active");
+
+  return spi_lld_send(spip, n, txbuf);
+}
+
+/**
+ * @brief Receives data from the SPI bus.
+ *
+ * @param[in] spip pointer to the @p SPIDriver object
+ * @param n number of words to receive
+ * @param rxbuf the pointer to the receive buffer
+ * @return The operation status is returned.
+ * @retval RDY_OK operation complete.
+ * @retval RDY_RESET hardware failure.
+ *
+ * @note The buffers are organized as uint8_t arrays for data sizes below or
+ *       equal to 8 bits else it is organized as uint16_t arrays.
+ */
+msg_t spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
+
+  chDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL),
+             "spiReceive");
+  chDbgAssert(spip->spd_state == SPI_ACTIVE,
+              "spiReceive(), #1",
+              "not active");
+
+  return spi_lld_receive(spip, n, rxbuf);
 }
 
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
@@ -142,6 +197,8 @@ void spiExchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
  *       option is set to @p TRUE.
  */
 void spiAcquireBus(SPIDriver *spip) {
+
+  chDbgCheck(spip != NULL, "spiAcquireBus");
 
 #if CH_USE_MUTEXES
   chMtxLock(&spip->spd_mutex);
@@ -159,6 +216,8 @@ void spiAcquireBus(SPIDriver *spip) {
  *       option is set to @p TRUE.
  */
 void spiReleaseBus(SPIDriver *spip) {
+
+  chDbgCheck(spip != NULL, "spiReleaseBus");
 
 #if CH_USE_MUTEXES
   (void)spip;

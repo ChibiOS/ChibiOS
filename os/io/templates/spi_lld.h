@@ -62,7 +62,7 @@ typedef struct {
   /**
    * @brief Clock pulses to be generated after initialization.
    */
-  cnt_t                 spc_clkpulses;
+  cnt_t                 spc_initcnt;
   /* End of the mandatory fields.*/
 } SPIConfig;
 
@@ -102,7 +102,9 @@ extern "C" {
   void spi_lld_setup(SPIDriver *spip);
   void spi_lld_select(SPIDriver *spip);
   void spi_lld_unselect(SPIDriver *spip);
-  void spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf);
+  msg_t spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf);
+  msg_t spi_lld_send(SPIDriver *spip, size_t n, void *txbuf);
+  msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf);
 #ifdef __cplusplus
 }
 #endif

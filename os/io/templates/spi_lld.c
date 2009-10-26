@@ -79,19 +79,51 @@ void spi_lld_unselect(SPIDriver *spip) {
  * @details This function performs a simultaneous transmit/receive operation.
  *
  * @param[in] spip pointer to the @p SPIDriver object
- * @param n number of words to be exchanged
- * @param rxbuf the pointer to the receive buffer, if @p NULL is specified then
- *              the input data is discarded.
- *              Note that the buffer is organized as an uint8_t array for
- *              data sizes below or equal to 8 bits else it is organized as
- *              an uint16_t array.
- * @param txbuf the pointer to the transmit buffer, if @p NULL is specified all
- *              ones are transmitted.
- *              Note that the buffer is organized as an uint8_t array for
- *              data sizes below or equal to 8 bits else it is organized as
- *              an uint16_t array.
+ * @param n number of words to exchange
+ * @param rxbuf the pointer to the receive buffer
+ * @param txbuf the pointer to the transmit buffer
+ * @return The operation status is returned.
+ * @retval RDY_OK operation complete.
+ * @retval RDY_RESET hardware failure.
+ *
+ * @note The buffers are organized as uint8_t arrays for data sizes below or
+ *       equal to 8 bits else it is organized as uint16_t arrays.
  */
-void spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
+msg_t spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
+
+}
+
+/**
+ * @brief Sends data ever the SPI bus.
+ *
+ * @param[in] spip pointer to the @p SPIDriver object
+ * @param n number of words to send
+ * @param txbuf the pointer to the transmit buffer
+ * @return The operation status is returned.
+ * @retval RDY_OK operation complete.
+ * @retval RDY_RESET hardware failure.
+ *
+ * @note The buffers are organized as uint8_t arrays for data sizes below or
+ *       equal to 8 bits else it is organized as uint16_t arrays.
+ */
+msg_t spi_lld_send(SPIDriver *spip, size_t n, void *txbuf) {
+
+}
+
+/**
+ * @brief Receives data from the SPI bus.
+ *
+ * @param[in] spip pointer to the @p SPIDriver object
+ * @param n number of words to receive
+ * @param rxbuf the pointer to the receive buffer
+ * @return The operation status is returned.
+ * @retval RDY_OK operation complete.
+ * @retval RDY_RESET hardware failure.
+ *
+ * @note The buffers are organized as uint8_t arrays for data sizes below or
+ *       equal to 8 bits else it is organized as uint16_t arrays.
+ */
+msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
 }
 
