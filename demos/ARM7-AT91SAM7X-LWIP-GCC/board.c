@@ -124,6 +124,7 @@ void hwinit1(void) {
    * Default AIC setup, the device drivers will modify it as needed.
    */
   AT91C_BASE_AIC->AIC_ICCR = 0xFFFFFFFF;
+  AT91C_BASE_AIC->AIC_IDCR = 0xFFFFFFFF;
   AT91C_BASE_AIC->AIC_SVR[0] = (AT91_REG)FiqHandler;
   for (i = 1; i < 31; i++) {
     AT91C_BASE_AIC->AIC_SVR[i] = (AT91_REG)NULL;

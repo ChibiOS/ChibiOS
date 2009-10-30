@@ -42,7 +42,7 @@ void spiInit(void) {
  */
 void spiObjectInit(SPIDriver *spip) {
 
-  spip->spd_state = SPI_IDLE;
+  spip->spd_state = SPI_STOP;
 #if CH_USE_MUTEXES
   chMtxInit(&spip->spd_mutex);
 #elif CH_USE_SEMAPHORES
@@ -52,20 +52,37 @@ void spiObjectInit(SPIDriver *spip) {
 }
 
 /**
- * @brief Configures the SPI bus.
+ * @brief Configures and activates the SPI peripheral.
  *
  * @param[in] spip pointer to the @p SPIDriver object
  * @param config pointer to the @p SPIConfig object
  */
-void spiSetup(SPIDriver *spip, const SPIConfig *config) {
+void spiStart(SPIDriver *spip, const SPIConfig *config) {
 
-  chDbgCheck((spip != NULL) && (config != NULL), "spiSetup");
-  chDbgAssert(spip->spd_state == SPI_IDLE,
-              "spiSetup(), #1",
-              "not idle");
+  chDbgCheck((spip != NULL) && (config != NULL), "spiStart");
+  chDbgAssert((spip->spd_state == SPI_STOP) || (spip->spd_state == SPI_READY),
+              "spiStart(), #1",
+              "invalid state");
 
   spip->spd_config = config;
-  spi_lld_setup(spip);
+  spi_lld_start(spip);
+  spip->spd_state = SPI_READY;
+}
+
+/**
+ * @brief Deactivates the SPI peripheral.
+ *
+ * @param[in] spip pointer to the @p SPIDriver object
+ */
+void spiStop(SPIDriver *spip) {
+
+  chDbgCheck(spip != NULL, "spiStop");
+  chDbgAssert((spip->spd_state == SPI_STOP) || (spip->spd_state == SPI_READY),
+              "spiStop(), #1",
+              "invalid state");
+
+  spi_lld_stop(spip);
+  spip->spd_state = SPI_STOP;
 }
 
 /**
@@ -77,19 +94,16 @@ void spiSelect(SPIDriver *spip) {
 
   chDbgCheck(spip != NULL, "spiSelect");
 
-  chSysLock();
-
-  chDbgAssert(spip->spd_state == SPI_IDLE,
+  chDbgAssert(spip->spd_state == SPI_READY,
               "spiSelect(), #1",
               "not idle");
 
   spi_lld_select(spip);
   spip->spd_state = SPI_ACTIVE;
-  chSysUnlock();
 }
 
 /**
- * @brief De-asserts the slave select signal.
+ * @brief Deasserts the slave select signal.
  * @details The previously selected peripheral is unselected.
  *
  * @param[in] spip pointer to the @p SPIDriver object
@@ -98,15 +112,12 @@ void spiUnselect(SPIDriver *spip) {
 
   chDbgCheck(spip != NULL, "spiUnselect");
 
-  chSysLock();
-
   chDbgAssert(spip->spd_state == SPI_ACTIVE,
               "spiUnselect(), #1",
               "not locked");
 
   spi_lld_unselect(spip);
-  spip->spd_state = SPI_IDLE;
-  chSysUnlock();
+  spip->spd_state = SPI_READY;
 }
 
 /**

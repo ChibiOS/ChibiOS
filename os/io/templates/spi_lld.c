@@ -47,11 +47,24 @@ void spi_lld_init(void) {
 }
 
 /**
- * @brief Low level SPI bus setup.
+ * @brief Configures and activates the SPI peripheral.
  *
  * @param[in] spip pointer to the @p SPIDriver object
  */
-void spi_lld_setup(SPIDriver *spip) {
+void spi_lld_start(SPIDriver *spip) {
+
+  if (spip->spd_state == SPI_STOP) {
+    /* Clock activation.*/
+  }
+  /* Configuration.*/
+}
+
+/**
+ * @brief Deactivates the SPI peripheral.
+ *
+ * @param[in] spip pointer to the @p SPIDriver object
+ */
+void spi_lld_stop(SPIDriver *spip) {
 
 }
 
@@ -65,7 +78,7 @@ void spi_lld_select(SPIDriver *spip) {
 }
 
 /**
- * @brief De-asserts the slave select signal.
+ * @brief Deasserts the slave select signal.
  * @details The previously selected peripheral is unselected.
  *
  * @param[in] spip pointer to the @p SPIDriver object

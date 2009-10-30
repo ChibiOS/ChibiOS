@@ -179,7 +179,6 @@ void spi_lld_init(void) {
   SPID1.spd_dmarx   = DMA1_Channel2;
   SPID1.spd_dmatx   = DMA1_Channel3;
   SPID1.spd_dmaprio = SPI1_DMA_PRIORITY << 12;
-  RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
   GPIOA->CRH = (GPIOA->CRH & 0x000FFFFF) | 0xB4B00000;
 #endif
 
@@ -190,17 +189,30 @@ void spi_lld_init(void) {
   SPID2.spd_dmarx   = DMA1_Channel4;
   SPID2.spd_dmatx   = DMA1_Channel5;
   SPID2.spd_dmaprio = SPI2_DMA_PRIORITY << 12;
-  RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
   GPIOB->CRL = (GPIOB->CRL & 0x000FFFFF) | 0xB4B00000;
 #endif
 }
 
 /**
- * @brief Low level SPI bus setup.
+ * @brief Configures and activates the SPI peripheral.
  *
  * @param[in] spip pointer to the @p SPIDriver object
  */
-void spi_lld_setup(SPIDriver *spip) {
+void spi_lld_start(SPIDriver *spip) {
+
+  /* If in stopped state then enables the SPI clock.*/
+  if (spip->spd_state == SPI_STOP) {
+#if USE_STM32_SPI1
+    if (&SPID1 == spip) {
+      RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
+    }
+#endif
+#if USE_STM32_SPI2
+    if (&SPID2 == spip) {
+      RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
+    }
+#endif
+  }
 
   /* SPI setup.*/
   spip->spd_spi->CR1 = spip->spd_config->spc_cr1 | SPI_CR1_MSTR;
@@ -226,6 +238,28 @@ void spi_lld_setup(SPIDriver *spip) {
 }
 
 /**
+ * @brief Deactivates the SPI peripheral.
+ *
+ * @param[in] spip pointer to the @p SPIDriver object
+ */
+void spi_lld_stop(SPIDriver *spip) {
+
+  /* If in ready state then disables the SPI clock.*/
+  if (spip->spd_state == SPI_READY) {
+#if USE_STM32_SPI1
+    if (&SPID1 == spip) {
+      RCC->APB2ENR &= ~RCC_APB2ENR_SPI1EN;
+    }
+#endif
+#if USE_STM32_SPI2
+    if (&SPID2 == spip) {
+      RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN;
+    }
+#endif
+  }
+}
+
+/**
  * @brief Asserts the slave select signal and prepares for transfers.
  *
  * @param[in] spip pointer to the @p SPIDriver object
@@ -236,7 +270,7 @@ void spi_lld_select(SPIDriver *spip) {
 }
 
 /**
- * @brief De-asserts the slave select signal.
+ * @brief Deasserts the slave select signal.
  * @details The previously selected peripheral is unselected.
  *
  * @param[in] spip pointer to the @p SPIDriver object

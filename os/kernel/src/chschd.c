@@ -268,7 +268,9 @@ void chSchDoYieldS(void) {
 
     /* Pick the first thread from the ready queue and makes it current.*/
     (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
+#if CH_TIME_QUANTUM > 0
     rlist.r_preempt = CH_TIME_QUANTUM;
+#endif
     chDbgTrace(otp, currp);
     chSysSwitchI(otp, currp);
   }

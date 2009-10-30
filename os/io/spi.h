@@ -38,6 +38,16 @@
 #error "SPI_USE_MUTUAL_EXCLUSION requires CH_USE_MUTEXES and/or CH_USE_SEMAPHORES"
 #endif
 
+/**
+ * @brief Driver state machine possible states.
+ */
+typedef enum {
+  SPI_UNINIT = 0,                           /**< @brief Not initialized.    */
+  SPI_STOP = 1,                             /**< @brief Stopped.            */
+  SPI_READY = 2,                            /**< @brief Ready.              */
+  SPI_ACTIVE = 3                            /**< @brief Slave selected.     */
+} spistate_t;
+
 #include "spi_lld.h"
 
 #ifdef __cplusplus
@@ -45,7 +55,8 @@ extern "C" {
 #endif
   void spiInit(void);
   void spiObjectInit(SPIDriver *spip);
-  void spiSetup(SPIDriver *spip, const SPIConfig *config);
+  void spiStart(SPIDriver *spip, const SPIConfig *config);
+  void spiStop(SPIDriver *spip);
   void spiSelect(SPIDriver *spip);
   void spiUnselect(SPIDriver *spip);
   msg_t spiExchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf);

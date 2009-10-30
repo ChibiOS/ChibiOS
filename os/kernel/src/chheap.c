@@ -255,7 +255,7 @@ size_t chHeapStatus(MemoryHeap *heapp, size_t *sizep) {
 
 #if CH_USE_MUTEXES
 #define H_LOCK()        chMtxLock(&hmtx)
-#define H_UNLOCK()      chMtxLock(&hmtx)
+#define H_UNLOCK()      chMtxUnock()
 static Mutex            hmtx;
 #elif CH_USE_SEMAPHORES
 #define H_LOCK()        chSemWait(&hsem)

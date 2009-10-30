@@ -47,15 +47,6 @@
 /*===========================================================================*/
 
 /**
- * @brief Driver state machine possible states.
- */
-typedef enum {
-  SPI_UNINIT = 0,
-  SPI_IDLE = 1,
-  SPI_ACTIVE = 2
-} spistate_t;
-
-/**
  * @brief Driver configuration structure.
  */
 typedef struct {
@@ -99,7 +90,8 @@ typedef struct {
 extern "C" {
 #endif
   void spi_lld_init(void);
-  void spi_lld_setup(SPIDriver *spip);
+  void spi_lld_start(SPIDriver *spip);
+  void spi_lld_stop(SPIDriver *spip);
   void spi_lld_select(SPIDriver *spip);
   void spi_lld_unselect(SPIDriver *spip);
   msg_t spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf);
