@@ -26,9 +26,8 @@
 
 #include <ch.h>
 #include <spi.h>
-
-#include "nvic.h"
-#include "board.h"
+#include <stm32_dma.h>
+#include <nvic.h>
 
 #if USE_STM32_SPI1 || defined(__DOXYGEN__)
 /** @brief SPI1 driver identifier.*/
@@ -200,15 +199,17 @@ void spi_lld_init(void) {
  */
 void spi_lld_start(SPIDriver *spip) {
 
-  /* If in stopped state then enables the SPI clock.*/
+  /* If in stopped state then enables the SPI and DMA clocks.*/
   if (spip->spd_state == SPI_STOP) {
 #if USE_STM32_SPI1
     if (&SPID1 == spip) {
+      dmaEnable(DMA1_ID);
       RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
     }
 #endif
 #if USE_STM32_SPI2
     if (&SPID2 == spip) {
+      dmaEnable(DMA1_ID);
       RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
     }
 #endif
@@ -248,11 +249,13 @@ void spi_lld_stop(SPIDriver *spip) {
   if (spip->spd_state == SPI_READY) {
 #if USE_STM32_SPI1
     if (&SPID1 == spip) {
+      dmaDisable(DMA1_ID);
       RCC->APB2ENR &= ~RCC_APB2ENR_SPI1EN;
     }
 #endif
 #if USE_STM32_SPI2
     if (&SPID2 == spip) {
+      dmaDisable(DMA1_ID);
       RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN;
     }
 #endif
