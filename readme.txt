@@ -3,6 +3,8 @@
 *****************************************************************************
 
 *** 1.3.4 ***
+- FIX: Fixed problem with ARM-CM3 context switch when compiled at level
+  -O0 (bug 2890382).
 - FIX: Fixed wrong conditional in chschd.c (bug 2888836).
 - FIX: Fixed wrong macro in chheap.c (bug 2888833).
 - FIX: Fixed AIC initialization in AT91SAM7X support (bug 2888583).

@@ -92,22 +92,22 @@ void SVCallVector(Thread *otp, Thread *ntp) {
   asm volatile ("mrs     r3, BASEPRI                            \n\t" \
                 "mrs     r12, PSP                               \n\t" \
                 "stmdb   r12!, {r3-r6,r8-r11, lr}               \n\t" \
-                "str     r12, [%0, #16]                         \n\t" \
-                "ldr     r12, [%1, #16]                         \n\t" \
+                "str     r12, [r0, #16]                         \n\t" \
+                "ldr     r12, [r1, #16]                         \n\t" \
                 "ldmia   r12!, {r3-r6,r8-r11, lr}               \n\t" \
                 "msr     PSP, r12                               \n\t" \
                 "msr     BASEPRI, r3                            \n\t" \
-                "bx      lr" : : "r" (otp), "r" (ntp));
+                "bx      lr                                     ");
 #else
   asm volatile ("mrs     r3, BASEPRI                            \n\t" \
                 "mrs     r12, PSP                               \n\t" \
                 "stmdb   r12!, {r3-r11, lr}                     \n\t" \
-                "str     r12, [%0, #16]                         \n\t" \
-                "ldr     r12, [%1, #16]                         \n\t" \
+                "str     r12, [r0, #16]                         \n\t" \
+                "ldr     r12, [r1, #16]                         \n\t" \
                 "ldmia   r12!, {r3-r11, lr}                     \n\t" \
                 "msr     PSP, r12                               \n\t" \
                 "msr     BASEPRI, r3                            \n\t" \
-                "bx      lr" : : "r" (otp), "r" (ntp));
+                "bx      lr                                     ");
 #endif
 }
 

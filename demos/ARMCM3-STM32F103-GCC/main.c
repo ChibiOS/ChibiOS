@@ -19,15 +19,16 @@
 
 #include <ch.h>
 #include <pal.h>
+#include <serial.h>
+#include <spi.h>
 #include <test.h>
 
 #include "board.h"
-#include "serial.h"
 
 /*
  * Red LEDs blinker thread, times are in milliseconds.
  */
-static WORKING_AREA(waThread1, 128);
+static WORKING_AREA(waThread1, 512);
 static msg_t Thread1(void *arg) {
 
   (void)arg;
@@ -39,6 +40,10 @@ static msg_t Thread1(void *arg) {
   }
   return 0;
 }
+
+static SPIConfig spicfg = {
+  16, IOPORT1, 4, 0
+};
 
 /*
  * Entry point, note, the main() function is already a thread in the system
@@ -58,6 +63,11 @@ int main(int argc, char **argv) {
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+
+  palSetPadMode(IOPORT1, 4, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetPad(IOPORT1, 4);
+  spiStart(&SPID1, &spicfg);
+  spiStop(&SPID1);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
