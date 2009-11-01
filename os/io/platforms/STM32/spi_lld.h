@@ -64,7 +64,7 @@
  *       over the TX channel.
  */
 #if !defined(SPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define SPI1_DMA_PRIORITY           2
+#define STM32_SPI1_DMA_PRIORITY     2
 #endif
 
 /**
@@ -74,7 +74,23 @@
  *       over the TX channel.
  */
 #if !defined(SPI2_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define SPI2_DMA_PRIORITY           2
+#define STM32_SPI2_DMA_PRIORITY     2
+#endif
+
+/**
+ * @brief SPI1 interrupt priority level setting.
+ * @note @p BASEPRI_KERNEL >= @p STM32_SPI1_IRQ_PRIORITY > @p PRIORITY_PENDSV.
+ */
+#if !defined(STM32_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI1_IRQ_PRIORITY     0xB0
+#endif
+
+/**
+ * @brief SPI2 interrupt priority level setting.
+ * @note @p BASEPRI_KERNEL >= @p STM32_SPI2_IRQ_PRIORITY > @p PRIORITY_PENDSV.
+ */
+#if !defined(STM32_SPI2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI2_IRQ_PRIORITY     0xB0
 #endif
 
 /*===========================================================================*/

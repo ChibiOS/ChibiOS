@@ -26,9 +26,8 @@
 
 #include <ch.h>
 #include <serial.h>
-
-#include "nvic.h"
-#include "board.h"
+#include <nvic.h>
+#include <board.h>
 
 #if USE_STM32_USART1 || defined(__DOXYGEN__)
 /** @brief USART1 serial driver identifier.*/

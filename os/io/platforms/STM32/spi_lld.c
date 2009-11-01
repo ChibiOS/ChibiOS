@@ -55,7 +55,9 @@ static void spi_stop(SPIDriver *spip, msg_t msg) {
   /* Stops SPI operations.*/
   spip->spd_spi->CR1 &= ~SPI_CR1_SPE;
 
+  chSysLockFromIsr();
   chSchReadyI(spip->spd_thread)->p_msg = msg;
+  chSysUnlockFromIsr();
 }
 
 static void dma_start(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
@@ -75,6 +77,10 @@ static void dma_start(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
   spip->spd_dmatx->CMAR = (uint32_t)txbuf;
   spip->spd_dmatx->CNDTR = (uint32_t)n;
   spip->spd_dmatx->CCR |= ccr;
+
+  /* DMAs start.*/
+  spip->spd_dmarx->CCR |= DMA_CCR1_EN;
+  spip->spd_dmatx->CCR |= DMA_CCR1_EN;
 }
 
 static msg_t spi_start_wait(SPIDriver *spip) {
@@ -177,7 +183,7 @@ void spi_lld_init(void) {
   SPID1.spd_spi     = SPI1;
   SPID1.spd_dmarx   = DMA1_Channel2;
   SPID1.spd_dmatx   = DMA1_Channel3;
-  SPID1.spd_dmaprio = SPI1_DMA_PRIORITY << 12;
+  SPID1.spd_dmaprio = STM32_SPI1_DMA_PRIORITY << 12;
   GPIOA->CRH = (GPIOA->CRH & 0x000FFFFF) | 0xB4B00000;
 #endif
 
@@ -187,7 +193,7 @@ void spi_lld_init(void) {
   SPID2.spd_spi     = SPI2;
   SPID2.spd_dmarx   = DMA1_Channel4;
   SPID2.spd_dmatx   = DMA1_Channel5;
-  SPID2.spd_dmaprio = SPI2_DMA_PRIORITY << 12;
+  SPID2.spd_dmaprio = STM32_SPI2_DMA_PRIORITY << 12;
   GPIOB->CRL = (GPIOB->CRL & 0x000FFFFF) | 0xB4B00000;
 #endif
 }
@@ -203,12 +209,16 @@ void spi_lld_start(SPIDriver *spip) {
   if (spip->spd_state == SPI_STOP) {
 #if USE_STM32_SPI1
     if (&SPID1 == spip) {
+      NVICEnableVector(DMA1_Channel2_IRQn, STM32_SPI1_IRQ_PRIORITY);
+      NVICEnableVector(DMA1_Channel3_IRQn, STM32_SPI1_IRQ_PRIORITY);
       dmaEnable(DMA1_ID);
       RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
     }
 #endif
 #if USE_STM32_SPI2
     if (&SPID2 == spip) {
+      NVICEnableVector(DMA1_Channel4_IRQn, STM32_SPI2_IRQ_PRIORITY);
+      NVICEnableVector(DMA1_Channel5_IRQn, STM32_SPI2_IRQ_PRIORITY);
       dmaEnable(DMA1_ID);
       RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
     }
@@ -220,18 +230,16 @@ void spi_lld_start(SPIDriver *spip) {
   spip->spd_spi->CR2 = SPI_CR2_SSOE | SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
 
   /* DMA setup.*/
-  spip->spd_dmarx->CPAR  = (uint32_t)&spip->spd_spi->DR;
-  spip->spd_dmatx->CPAR  = (uint32_t)&spip->spd_spi->DR;
+  spip->spd_dmarx->CPAR = (uint32_t)&spip->spd_spi->DR;
+  spip->spd_dmatx->CPAR = (uint32_t)&spip->spd_spi->DR;
 
   /*
    * If specified in the configuration then emits a pulses train on
    * the SPI clock line without asserting any slave.
    */
   if (spip->spd_config->spc_initcnt > 0) {
-    spip->spd_dmarx->CCR = DMA_CCR1_TCIE |
-                           DMA_CCR1_TEIE | DMA_CCR1_EN;
-    spip->spd_dmatx->CCR = DMA_CCR1_DIR  |
-                           DMA_CCR1_TEIE | DMA_CCR1_EN;
+    spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_TEIE;
+    spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_TEIE;
     dma_start(spip, (size_t)spip->spd_config->spc_initcnt,
               &dummyrx, &dummytx);
     (void) spi_start_wait(spip);
@@ -249,12 +257,16 @@ void spi_lld_stop(SPIDriver *spip) {
   if (spip->spd_state == SPI_READY) {
 #if USE_STM32_SPI1
     if (&SPID1 == spip) {
+      NVICDisableVector(DMA1_Channel2_IRQn);
+      NVICDisableVector(DMA1_Channel3_IRQn);
       dmaDisable(DMA1_ID);
       RCC->APB2ENR &= ~RCC_APB2ENR_SPI1EN;
     }
 #endif
 #if USE_STM32_SPI2
     if (&SPID2 == spip) {
+      NVICDisableVector(DMA1_Channel4_IRQn);
+      NVICDisableVector(DMA1_Channel5_IRQn);
       dmaDisable(DMA1_ID);
       RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN;
     }
