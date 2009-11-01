@@ -45,11 +45,8 @@ static cnt_t dmacnt2;
 void dmaInit(void) {
 
   dmacnt1 = 0;
-  DMA1->IFCR = 0x0FFFFFFF;
-
 #if defined(STM32F10X_HD) || defined (STM32F10X_CL)
   dmacnt2 = 0;
-  DMA2->IFCR = 0x0FFFFFFF;
 #endif
 }
 
@@ -62,13 +59,17 @@ void dmaEnable(uint32_t dma) {
 
   switch (dma) {
   case DMA1_ID:
-    if (dmacnt1++ == 0)
+    if (dmacnt1++ == 0) {
       RCC->AHBENR |= RCC_AHBENR_DMA1EN;
+      DMA1->IFCR = 0x0FFFFFFF;
+    }
     break;
 #if defined(STM32F10X_HD) || defined (STM32F10X_CL)
   case DMA2_ID:
-    if (dmacnt2++ == 0)
+    if (dmacnt2++ == 0) {
       RCC->AHBENR |= RCC_AHBENR_DMA2EN;
+      DMA2->IFCR = 0x0FFFFFFF;
+    }
     break;
 #endif
   }

@@ -3,6 +3,9 @@
 *****************************************************************************
 
 *** 1.3.4 ***
+- FIX: Fixed wrong conditional in chschd.c (bug 2888836).
+- FIX: Fixed wrong macro in chheap.c (bug 2888833).
+- FIX: Fixed AIC initialization in AT91SAM7X support (bug 2888583).
 - NEW: New SPI (master) driver model.
 - NEW: SPI driver for STM32 implementing the new SPI driver model.
 
