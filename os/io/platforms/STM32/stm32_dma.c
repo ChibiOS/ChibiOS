@@ -28,6 +28,12 @@
 
 #include "stm32_dma.h"
 
+#undef FALSE
+#undef TRUE
+#include <stm32f10x.h>
+#define FALSE 0
+#define TRUE (!FALSE)
+
 static cnt_t dmacnt1;
 #if defined(STM32F10X_HD) || defined (STM32F10X_CL)
 static cnt_t dmacnt2;
@@ -39,8 +45,11 @@ static cnt_t dmacnt2;
 void dmaInit(void) {
 
   dmacnt1 = 0;
+  DMA1->IFCR = 0x0FFFFFFF;
+
 #if defined(STM32F10X_HD) || defined (STM32F10X_CL)
   dmacnt2 = 0;
+  DMA2->IFCR = 0x0FFFFFFF;
 #endif
 }
 

@@ -4,6 +4,7 @@
 
 *** 1.3.4 ***
 - NEW: New SPI (master) driver model.
+- NEW: SPI driver for STM32 implementing the new SPI driver model.
 
 *** 1.3.3 ***
 - FIX: Fixed bug in the LPC2148 PAL driver (bug 2881380).

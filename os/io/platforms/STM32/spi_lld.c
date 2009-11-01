@@ -88,6 +88,7 @@ static msg_t spi_start_wait(SPIDriver *spip) {
 
   chSysLock();
   spip->spd_spi->CR1 |= SPI_CR1_SPE;    /* SPI enable.*/
+
   spip->spd_thread = currp;
   chSchGoSleepS(PRSUSPENDED);           /* Wait for completion event.*/
   spip->spd_thread = NULL;
@@ -312,10 +313,8 @@ void spi_lld_unselect(SPIDriver *spip) {
  */
 msg_t spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
 
-  spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_MINC |
-                         DMA_CCR1_TEIE | DMA_CCR1_EN;
-  spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_MINC |
-                         DMA_CCR1_TEIE | DMA_CCR1_EN;
+  spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_MINC | DMA_CCR1_TEIE;
+  spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_MINC | DMA_CCR1_TEIE;
   dma_start(spip, n, rxbuf, txbuf);
   return spi_start_wait(spip);
 }
@@ -335,10 +334,8 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
  */
 msg_t spi_lld_send(SPIDriver *spip, size_t n, void *txbuf) {
 
-  spip->spd_dmarx->CCR = DMA_CCR1_TCIE |
-                         DMA_CCR1_TEIE | DMA_CCR1_EN;
-  spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_MINC |
-                         DMA_CCR1_TEIE | DMA_CCR1_EN;
+  spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_TEIE;
+  spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_MINC | DMA_CCR1_TEIE;
   dma_start(spip, n, &dummyrx, txbuf);
   return spi_start_wait(spip);
 }
@@ -358,10 +355,8 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, void *txbuf) {
  */
 msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
-  spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_MINC |
-                         DMA_CCR1_TEIE | DMA_CCR1_EN;
-  spip->spd_dmatx->CCR = DMA_CCR1_DIR  |
-                         DMA_CCR1_TEIE | DMA_CCR1_EN;
+  spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_MINC | DMA_CCR1_TEIE;
+  spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_TEIE;
   dma_start(spip, n, rxbuf, &dummytx);
   return spi_start_wait(spip);
 }
