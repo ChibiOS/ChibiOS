@@ -88,6 +88,8 @@ void SVCallVector(Thread *otp, Thread *ntp) {
   /* pop the registers from the PSP stack */
   /* set the PSP from r12 */
   /* set the BASEPRI from R3 */
+  (void)otp;
+  (void)ntp;
 #ifdef CH_CURRP_REGISTER_CACHE
   asm volatile ("mrs     r3, BASEPRI                            \n\t" \
                 "mrs     r12, PSP                               \n\t" \

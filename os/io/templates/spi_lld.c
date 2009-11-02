@@ -92,9 +92,13 @@ void spi_lld_unselect(SPIDriver *spip) {
  * @details This function performs a simultaneous transmit/receive operation.
  *
  * @param[in] spip pointer to the @p SPIDriver object
- * @param n number of words to exchange
- * @param rxbuf the pointer to the receive buffer
- * @param txbuf the pointer to the transmit buffer
+ * @param[in] n number of words to exchange
+ * @param[in] txbuf the pointer to the transmit buffer. Note that the buffer is
+ *                  organized as an uint8_t array for data sizes below or equal
+ *                  to 8 bits else it is organized as an uint16_t array.
+ * @param[out] rxbuf the pointer to the receive buffer. Note that the buffer is
+ *                   organized as an uint8_t array for data sizes below or equal
+ *                   to 8 bits else it is organized as an uint16_t array.
  * @return The operation status is returned.
  * @retval RDY_OK operation complete.
  * @retval RDY_RESET hardware failure.
@@ -110,8 +114,10 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
  * @brief Sends data ever the SPI bus.
  *
  * @param[in] spip pointer to the @p SPIDriver object
- * @param n number of words to send
- * @param txbuf the pointer to the transmit buffer
+ * @param[in] n number of words to send
+ * @param[in] txbuf the pointer to the transmit buffer. Note that the buffer is
+ *                  organized as an uint8_t array for data sizes below or equal
+ *                  to 8 bits else it is organized as an uint16_t array.
  * @return The operation status is returned.
  * @retval RDY_OK operation complete.
  * @retval RDY_RESET hardware failure.
@@ -127,8 +133,10 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, void *txbuf) {
  * @brief Receives data from the SPI bus.
  *
  * @param[in] spip pointer to the @p SPIDriver object
- * @param n number of words to receive
- * @param rxbuf the pointer to the receive buffer
+ * @param[in] n number of words to receive
+ * @param[out] rxbuf the pointer to the receive buffer. Note that the buffer is
+ *                   organized as an uint8_t array for data sizes below or equal
+ *                   to 8 bits else it is organized as an uint16_t array.
  * @return The operation status is returned.
  * @retval RDY_OK operation complete.
  * @retval RDY_RESET hardware failure.

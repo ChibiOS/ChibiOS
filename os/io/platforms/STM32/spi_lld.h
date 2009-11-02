@@ -186,7 +186,7 @@ extern "C" {
   void spi_lld_stop(SPIDriver *spip);
   void spi_lld_select(SPIDriver *spip);
   void spi_lld_unselect(SPIDriver *spip);
-  msg_t spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf);
+  msg_t spi_lld_exchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf);
   msg_t spi_lld_send(SPIDriver *spip, size_t n, void *txbuf);
   msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf);
 #ifdef __cplusplus
