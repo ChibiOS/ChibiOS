@@ -27,6 +27,10 @@
 #ifndef _ADC_H_
 #define _ADC_H_
 
+#if !CH_USE_SEMAPHORES
+#error "ADC driver requires CH_USE_SEMAPHORES"
+#endif
+
 /**
  * @brief Driver state machine possible states.
  */
@@ -46,6 +50,11 @@ extern "C" {
   void adcObjectInit(ADCDriver *adcp);
   void adcStart(ADCDriver *adcp, const ADCDriver *config);
   void adcStop(ADCDriver *adcp);
+  bool_t adcStartConversion(ADCDriver *adcp,
+                            ADCConversionGroup *grpp,
+                            void *samples);
+  void adcStopConversion(ADCDriver *adcp);
+  msg_t adcWaitConversion(ADCDriver *adcp, systme_t timeout);
 #ifdef __cplusplus
 }
 #endif

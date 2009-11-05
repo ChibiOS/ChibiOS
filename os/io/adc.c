@@ -44,6 +44,7 @@ void adcObjectInit(ADCDriver *adcp) {
 
   adcp->adc_state = ADC_STOP;
   adcp->adc_config = NULL;
+  chSemInit(&adcp->adc_sem, 0);
 }
 
 /**
@@ -132,7 +133,7 @@ void adcStopConversion(ADCDriver *adcp) {
               "adcStopConversion(), #1",
               "invalid state");
 
-  adc_lld_start_conversion(adcp, grpp, samples);
+  adc_lld_stop_conversion(adcp);
   adcp->adc_state = ADC_READY;
 
   chSysUnlock();
