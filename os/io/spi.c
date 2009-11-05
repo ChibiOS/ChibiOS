@@ -55,7 +55,7 @@ void spiObjectInit(SPIDriver *spip) {
  * @brief Configures and activates the SPI peripheral.
  *
  * @param[in] spip pointer to the @p SPIDriver object
- * @param config pointer to the @p SPIConfig object
+ * @param[in] config pointer to the @p SPIConfig object
  */
 void spiStart(SPIDriver *spip, const SPIConfig *config) {
 

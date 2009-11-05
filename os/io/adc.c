@@ -50,7 +50,7 @@ void adcObjectInit(ADCDriver *adcp) {
  * @brief Configures and activates the ADC peripheral.
  *
  * @param[in] adcp pointer to the @p ADCDriver object
- * @param config pointer to the @p ADCConfig object
+ * @param[in] config pointer to the @p ADCConfig object
  */
 void adcStart(ADCDriver *adcp, const ADCConfig *config) {
 
@@ -78,6 +78,97 @@ void adcStop(ADCDriver *adcp) {
 
   adc_lld_stop(adcp);
   adcp->spd_state = ADC_STOP;
+}
+
+/**
+ * @brief Starts an ADC conversion.
+ *
+ * @param[in] adcp pointer to the @p ADCDriver object
+ * @param[in] grpp pointer to a @p ADCConversionGroup object
+ * @param[out] samples pointer to the samples buffer
+ * @return The operation status.
+ * @retval FALSE the conversion has been started.
+ * @retval TRUE the driver is busy, conversion not started.
+ */
+bool_t adcStartConversion(ADCDriver *adcp,
+                          ADCConversionGroup *grpp,
+                          void *samples) {
+
+  chDbgCheck((adcp != NULL) && (grpp != NULL) && (samples != NULL),
+             "adcStartConversion");
+
+  chSysLock();
+
+  chDbgAssert((adcp->adc_state == ADC_READY) ||
+              (adcp->adc_state == ADC_RUNNING),
+              "adcStartConversion(), #1",
+              "invalid state");
+
+  if (adcp->adc_state == ADC_RUNNING) {
+    chSysUnlock();
+    return TRUE;
+  }
+
+  adc_lld_start_conversion(adcp, grpp, samples);
+  adcp->adc_state = ADC_RUNNING;
+
+  chSysUnlock();
+  return FALSE;
+}
+
+/**
+ * @brief Stops an ongoing conversion.
+ *
+ * @param[in] adcp pointer to the @p ADCDriver object
+ */
+void adcStopConversion(ADCDriver *adcp) {
+
+  chDbgCheck(adcp != NULL, "adcStopConversion");
+
+  chSysLock();
+
+  chDbgAssert((adcp->adc_state == ADC_READY) ||
+              (adcp->adc_state == ADC_RUNNING),
+              "adcStopConversion(), #1",
+              "invalid state");
+
+  adc_lld_start_conversion(adcp, grpp, samples);
+  adcp->adc_state = ADC_READY;
+
+  chSysUnlock();
+}
+
+/**
+ * @brief Waits for completion.
+ *
+ * @param[in] adcp pointer to the @p ADCDriver object
+ * @param[in] timeout the number of ticks before the operation timeouts,
+ *                    the following special values are allowed:
+ *                    - @a TIME_IMMEDIATE immediate timeout.
+ *                    - @a TIME_INFINITE no timeout.
+ *                    .
+ * @return The operation result.
+ * @retval RDY_OK conversion not running.
+ * @retval RDY_RESET conversion finished.
+ * @retval RDY_TIMEOUT conversion not finished within the specified time.
+ */
+msg_t adcWaitConversion(ADCDriver *adcp, systme_t timeout) {
+  msg_t msg;
+
+  chSysLock();
+
+  chDbgAssert((adcp->adc_state == ADC_READY) ||
+              (adcp->adc_state == ADC_RUNNING),
+              "adcWaitConversion(), #1",
+              "invalid state");
+
+  if (adcp->adc_state == ADC_RUNNING)
+    msg = chSemWaitTimeoutS(&adcp->adc_sem, timeout);
+  else
+    msg = RDY_OK;
+
+  chSysUnlock();
+  return msg;
 }
 
 /** @} */
