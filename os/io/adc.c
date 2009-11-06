@@ -87,15 +87,24 @@ void adcStop(ADCDriver *adcp) {
  * @param[in] adcp pointer to the @p ADCDriver object
  * @param[in] grpp pointer to a @p ADCConversionGroup object
  * @param[out] samples pointer to the samples buffer
+ * @param[in] depth buffer depth (matrix rows number). The buffer depth must
+ *                  be one or an even number.
  * @return The operation status.
  * @retval FALSE the conversion has been started.
  * @retval TRUE the driver is busy, conversion not started.
+ *
+ * @note The buffer is organized as a matrix of M*N elements where M is the
+ *       channels number configured into the conversion group and N is the
+ *       buffer depth. The samples are sequentially written into the buffer
+ *       with no gaps.
  */
 bool_t adcStartConversion(ADCDriver *adcp,
                           ADCConversionGroup *grpp,
-                          void *samples) {
+                          void *samples,
+                          size_t depth) {
 
-  chDbgCheck((adcp != NULL) && (grpp != NULL) && (samples != NULL),
+  chDbgCheck((adcp != NULL) && (grpp != NULL) && (samples != NULL) &&
+             ((depth == 1) || ((depth & 1) == 0)),
              "adcStartConversion");
 
   chSysLock();
@@ -149,12 +158,10 @@ void adcStopConversion(ADCDriver *adcp) {
  *                    - @a TIME_INFINITE no timeout.
  *                    .
  * @return The operation result.
- * @retval RDY_OK conversion not running.
- * @retval RDY_RESET conversion finished.
+ * @retval RDY_OK conversion finished (or not started).
  * @retval RDY_TIMEOUT conversion not finished within the specified time.
  */
 msg_t adcWaitConversion(ADCDriver *adcp, systme_t timeout) {
-  msg_t msg;
 
   chSysLock();
 
@@ -163,13 +170,14 @@ msg_t adcWaitConversion(ADCDriver *adcp, systme_t timeout) {
               "adcWaitConversion(), #1",
               "invalid state");
 
-  if (adcp->adc_state == ADC_RUNNING)
-    msg = chSemWaitTimeoutS(&adcp->adc_sem, timeout);
-  else
-    msg = RDY_OK;
-
+  if (adcp->adc_state == ADC_RUNNING) {
+    if (chSemWaitTimeoutS(&adcp->adc_sem, timeout) == RDY_TIMEOUT) {
+      chSysUnlock();
+      return RDY_TIMEOUT;
+    }
+  }
   chSysUnlock();
-  return msg;
+  return RDY_OK;
 }
 
 /** @} */

@@ -32,8 +32,83 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
+/**
+ * @brief Linear buffering mode.
+ * @details In the linear buffering mode the buffer is filled one time and
+ *          then the operation automatically stops.
+ */
+#define ADC_GROUP_BUFFER_LINEAR     0
+
+/**
+ * @brief Circular buffering mode.
+ * @details In the circular buffering mode the buffer is filled one time and
+ *          then the operation automatically starts again.
+ */
+#define ADC_GROUP_BUFFER_CIRCULAR   1
+
+/*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief ADC sample data type.
+ */
+typedef uint16_t adcsample_t;
+
+/**
+ * @brief Channels number in a conversion group.
+ */
+typedef uint16_t adc_channels_num_t;
+
+/**
+ * @brief Samples buffer depth.
+ */
+typedef uint16_t adc_buffer_depth_t;
+
+/**
+ * @brief ADC notification callback type.
+ * @param[in] buffer pointer to the most recent samples data
+ * @param[in] n number of buffer rows available starting from @p buffer
+ */
+typedef void (*adccallback_t)(adcsample_t *buffer,
+                              adc_buffer_depth_t n);
+
+/**
+ * @brief Conversion group configuration structure.
+ * @details This implementation-dependent structure describes a conversion
+ *          operation.
+ */
+typedef struct {
+  /**
+   * @brief Group mode flags.
+   */
+  uint_least8_t         acg_mode;
+
+  /**
+   * @brief Number of the analog channels belonging to the conversion group.
+   */
+  adc_channels_num_t    acg_num_channels;
+
+  /**
+   * @brief Samples buffer depth.
+   * @note The buffer depth must be an even number or one. The 50% callback
+   *       behavior for buffers with odd depth is unspecified.
+   */
+  adc_buffer_depth_t    acg_buffer_depth;
+
+  /**
+   * @brief Data streaming callback.
+   * @details This callback is invoked  at 50% and 100% buffer fill level in
+   *          order to allow realtime processing of the conversion results
+   *          when the circular buffer mode is selected.
+   * @note The 50% callback is only invoked if @p acg_num_samples is greater
+   *       than 1.
+   */
+  adccallback_t         acg_callback;
+} ADCConversionGroup;
 
 /**
  * @brief Driver configuration structure.
@@ -43,7 +118,7 @@ typedef struct {
 } ADCConfig;
 
 /**
- * @brief Structure representing a MAC driver.
+ * @brief Structure representing an ADC driver.
  */
 typedef struct {
   /**

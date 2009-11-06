@@ -58,7 +58,7 @@ typedef struct {
 } SPIConfig;
 
 /**
- * @brief Structure representing a MAC driver.
+ * @brief Structure representing a SPI driver.
  */
 typedef struct {
   /**
