@@ -60,13 +60,15 @@ void spiObjectInit(SPIDriver *spip) {
 void spiStart(SPIDriver *spip, const SPIConfig *config) {
 
   chDbgCheck((spip != NULL) && (config != NULL), "spiStart");
+
+  chSysLock();
   chDbgAssert((spip->spd_state == SPI_STOP) || (spip->spd_state == SPI_READY),
               "spiStart(), #1",
               "invalid state");
-
   spip->spd_config = config;
   spi_lld_start(spip);
   spip->spd_state = SPI_READY;
+  chSysUnlock();
 }
 
 /**
@@ -77,12 +79,14 @@ void spiStart(SPIDriver *spip, const SPIConfig *config) {
 void spiStop(SPIDriver *spip) {
 
   chDbgCheck(spip != NULL, "spiStop");
+
+  chSysLock();
   chDbgAssert((spip->spd_state == SPI_STOP) || (spip->spd_state == SPI_READY),
               "spiStop(), #1",
               "invalid state");
-
   spi_lld_stop(spip);
   spip->spd_state = SPI_STOP;
+  chSysUnlock();
 }
 
 /**
@@ -94,12 +98,13 @@ void spiSelect(SPIDriver *spip) {
 
   chDbgCheck(spip != NULL, "spiSelect");
 
+  chSysLock();
   chDbgAssert(spip->spd_state == SPI_READY,
               "spiSelect(), #1",
               "not idle");
-
   spi_lld_select(spip);
   spip->spd_state = SPI_ACTIVE;
+  chSysUnlock();
 }
 
 /**
@@ -112,12 +117,13 @@ void spiUnselect(SPIDriver *spip) {
 
   chDbgCheck(spip != NULL, "spiUnselect");
 
+  chSysLock();
   chDbgAssert(spip->spd_state == SPI_ACTIVE,
               "spiUnselect(), #1",
               "not locked");
-
   spi_lld_unselect(spip);
   spip->spd_state = SPI_READY;
+  chSysUnlock();
 }
 
 /**

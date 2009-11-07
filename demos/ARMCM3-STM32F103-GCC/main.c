@@ -41,13 +41,6 @@ static msg_t Thread1(void *arg) {
   return 0;
 }
 
-static SPIConfig spicfg = {
-  16, IOPORT1, 4, 0
-};
-
-static uint8_t txbuf[8] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
-static uint8_t rxbuf[8];
-
 /*
  * Entry point, note, the main() function is already a thread in the system
  * on entry.
@@ -66,14 +59,6 @@ int main(int argc, char **argv) {
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-
-  palSetPadMode(IOPORT1, 4, PAL_MODE_OUTPUT_PUSHPULL);
-  palSetPad(IOPORT1, 4);
-  spiStart(&SPID1, &spicfg);
-  spiSelect(&SPID1);
-  spiExchange(&SPID1, 8, txbuf, rxbuf);
-  spiUnselect(&SPID1);
-  spiStop(&SPID1);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
