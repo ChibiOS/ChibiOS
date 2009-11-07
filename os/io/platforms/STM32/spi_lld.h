@@ -18,9 +18,9 @@
 */
 
 /**
- * @file templates/spi_lld.h
- * @brief SPI Driver subsystem low level driver header template
- * @addtogroup SPI_LLD
+ * @file STM32/spi_lld.h
+ * @brief STM32 SPI subsystem low level driver header
+ * @addtogroup STM32_SPI
  * @{
  */
 

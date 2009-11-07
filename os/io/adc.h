@@ -48,13 +48,15 @@ extern "C" {
 #endif
   void adcInit(void);
   void adcObjectInit(ADCDriver *adcp);
-  void adcStart(ADCDriver *adcp, const ADCDriver *config);
+  void adcStart(ADCDriver *adcp, const ADCConfig *config);
   void adcStop(ADCDriver *adcp);
   bool_t adcStartConversion(ADCDriver *adcp,
                             ADCConversionGroup *grpp,
-                            void *samples);
+                            void *samples,
+                            size_t depth,
+                            adccallback_t callback);
   void adcStopConversion(ADCDriver *adcp);
-  msg_t adcWaitConversion(ADCDriver *adcp, systme_t timeout);
+  msg_t adcWaitConversion(ADCDriver *adcp, systime_t timeout);
 #ifdef __cplusplus
 }
 #endif

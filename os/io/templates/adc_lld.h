@@ -35,20 +35,6 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @brief Linear buffering mode.
- * @details In the linear buffering mode the buffer is filled one time and
- *          then the operation automatically stops.
- */
-#define ADC_GROUP_BUFFER_LINEAR     0
-
-/**
- * @brief Circular buffering mode.
- * @details In the circular buffering mode the buffer is filled one time and
- *          then the operation automatically starts again.
- */
-#define ADC_GROUP_BUFFER_CIRCULAR   1
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -83,31 +69,9 @@ typedef void (*adccallback_t)(adcsample_t *buffer,
  */
 typedef struct {
   /**
-   * @brief Group mode flags.
-   */
-  uint_least8_t         acg_mode;
-
-  /**
    * @brief Number of the analog channels belonging to the conversion group.
    */
   adc_channels_num_t    acg_num_channels;
-
-  /**
-   * @brief Samples buffer depth.
-   * @note The buffer depth must be an even number or one. The 50% callback
-   *       behavior for buffers with odd depth is unspecified.
-   */
-  adc_buffer_depth_t    acg_buffer_depth;
-
-  /**
-   * @brief Data streaming callback.
-   * @details This callback is invoked  at 50% and 100% buffer fill level in
-   *          order to allow realtime processing of the conversion results
-   *          when the circular buffer mode is selected.
-   * @note The 50% callback is only invoked if @p acg_num_samples is greater
-   *       than 1.
-   */
-  adccallback_t         acg_callback;
 } ADCConversionGroup;
 
 /**
@@ -148,7 +112,9 @@ extern "C" {
   void adc_lld_stop(ADCDriver *adcp);
   void adc_lld_start_conversion(ADCDriver *adcp,
                                 ADCConversionGroup *grpp,
-                                void *samples);
+                                void *samples,
+                                size_t depth,
+                                adccallback_t callback);
   void adc_lld_stop_conversion(ADCDriver *adcp);
 #ifdef __cplusplus
 }

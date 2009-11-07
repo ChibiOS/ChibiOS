@@ -23,6 +23,8 @@
  * @details The STM32 support includes:
  * - I/O ports driver.
  * - Buffered, interrupt driven, serial driver.
+ * - DMA capable, high performance, SPI driver.
+ * - DMA capable, high performance, ADC driver.
  * - A demo supporting the kernel test suite.
  * .
  * @ingroup ARMCM3
@@ -65,7 +67,34 @@
  * @defgroup STM32_SERIAL STM32 USART Support
  * @brief USART peripherals support.
  * @details The serial driver supports the STM32 USARTs in asynchronous
- * mode.
+ *           mode.
+ *
+ * @ingroup STM32
+ */
+
+/**
+ * @defgroup STM32_DMA STM32 DMA Support
+ * @brief DMA support.
+ * @details The DMA help driver allows to stop the DMA clock when no other
+ *          drivers require its services.
+ *
+ * @ingroup STM32
+ */
+
+/**
+ * @defgroup STM32_SPI STM32 SPI Support
+ * @brief SPI peripherals support.
+ * @details The serial driver supports the STM32 SPIs using DMA channels for
+ *          improved performance.
+ *
+ * @ingroup STM32
+ */
+
+/**
+ * @defgroup STM32_ADC STM32 ADC Support
+ * @brief ADC peripherals support.
+ * @details The serial driver supports the STM32 ADCs using DMA channels for
+ *          improved performance.
  *
  * @ingroup STM32
  */

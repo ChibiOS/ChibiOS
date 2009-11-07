@@ -10,6 +10,7 @@
 - FIX: Fixed AIC initialization in AT91SAM7X support (bug 2888583).
 - NEW: New SPI (master) driver model.
 - NEW: SPI driver for STM32 implementing the new SPI driver model.
+- NEW: New ADC (streaming capable) driver model.
 
 *** 1.3.3 ***
 - FIX: Fixed bug in the LPC2148 PAL driver (bug 2881380).
