@@ -27,14 +27,47 @@
 #ifndef _MMC_SPI_H_
 #define _MMC_SPI_H_
 
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/**
+ * @brief Number of positive insertion queries before generating the
+ *        insertion event.
+ */
+#if !defined(MMC_POLLING_INTERVAL) || defined(__DOXYGEN__)
+#define MMC_POLLING_INTERVAL    10
+#endif
+
+/**
+ * @brief Interval, in milliseconds, between insertion queries.
+ */
+#if !defined(MMC_POLLING_DELAY) || defined(__DOXYGEN__)
+#define MMC_POLLING_DELAY       10
+#endif
+
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
+
 /**
  * @brief Driver state machine possible states.
  */
 typedef enum {
   MMC_UNINIT = 0,                           /**< @brief Not initialized.    */
   MMC_STOP = 1,                             /**< @brief Stopped.            */
-  MMC_READY = 2                             /**< @brief Ready.              */
+  MMC_WAIT = 2,                             /**< @brief Waiting card.       */
+  MMC_INSERTED = 3,                         /**< @brief Card inserted.      */
+  MMC_READY = 4,                            /**< @brief Card ready.         */
+  MMC_RUNNING = 5                           /**< @brief Reading or writing. */
 } mmcstate_t;
+
+/**
+ * @brief Function used to query some hardware status bits.
+ *
+ * @return The status.
+ */
+typedef bool_t (*mmcquery_t)(void);
 
 /**
  * @brief Driver configuration structure.
@@ -75,14 +108,27 @@ typedef struct {
    * @brief Insertion status query function.
    */
   mmcquery_t            mmc_is_inserted;
+  /**
+   * @brief Card insertion event source.
+   */
+  EventSource           mmc_inserted_event;
+  /**
+   * @brief Card removal event source.
+   */
+  EventSource           mmc_removed_event;
+  /**
+   * @brief MMC insertion polling timer.
+   */
+  VirtualTimer          mmc_vt;
+  /**
+   * @brief Insertion counter.
+   */
+  uint_fast8_t          mmc_cnt;
 } MMCDriver;
 
-/**
- * @brief Function used to query some hardware status bits.
- *
- * @return The status.
- */
-typedef bool_t (*mmcquery_t)(void);
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #ifdef __cplusplus
 extern "C" {

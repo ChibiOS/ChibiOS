@@ -28,6 +28,37 @@
 #include <spi.h>
 #include <mmc_spi.h>
 
+/*===========================================================================*/
+/* Driver local functions.                                                   */
+/*===========================================================================*/
+
+void tmrfunc(void *p) {
+  MMCDriver *mmcp = p;
+
+  if (mmcp->mmc_cnt > 0) {
+    if (mmcp->mmc_is_inserted()) {
+      if (--mmcp->mmc_cnt == 0) {
+        mmcp->mmc_state = MMC_INSERTED;
+        chEvtBroadcastI(&mmcp->mmc_inserted_event);
+      }
+    }
+    else
+      mmcp->mmc_cnt = MMC_POLLING_INTERVAL;
+  }
+  else {
+    if (!mmcp->mmc_is_inserted()) {
+      mmcp->mmc_state = MMC_WAIT;
+      mmcp->mmc_cnt = MMC_POLLING_INTERVAL;
+      chEvtBroadcastI(&mmcp->mmc_removed_event);
+    }
+  }
+  chVTSetI(&mmcp->mmc_vt, MS2ST(MMC_POLLING_DELAY), tmrfunc, mmcp);
+}
+
+/*===========================================================================*/
+/* Driver exported functions.                                                */
+/*===========================================================================*/
+
 /**
  * @brief MMC over SPI driver initialization.
  */
@@ -51,6 +82,8 @@ void mmcObjectInit(MMCDriver *mmcp, SPIDriver *spip,
   mmcp->mmc_hscfg = hscfg;
   mmcp->mmc_is_protected = is_protected;
   mmcp->mmc_is_inserted = is_inserted;
+  chEvtInit(&mmcp->mmc_inserted_event);
+  chEvtInit(&mmcp->mmc_removed_event);
 }
 
 /**
@@ -64,11 +97,11 @@ void mmcStart(MMCDriver *mmcp, const MMCConfig *config) {
   chDbgCheck((mmcp != NULL) && (config != NULL), "mmcStart");
 
   chSysLock();
-  chDbgAssert((mmcp->mmc_state == MMC_STOP) || (mmcp->mmc_state == MMC_READY),
-              "mmcStart(), #1",
-              "invalid state");
+  chDbgAssert(mmcp->mmc_state == MMC_STOP, "mmcStart(), #1", "invalid state");
   mmcp->mmc_config = config;
-  mmcp->mmc_state = MMC_READY;
+  mmcp->mmc_state = MMC_WAIT;
+  mmcp->mmc_cnt = MMC_POLLING_INTERVAL;
+  chVTSetI(&mmcp->mmc_vt, MS2ST(MMC_POLLING_DELAY), tmrfunc, mmcp);
   chSysUnlock();
 }
 
@@ -82,10 +115,14 @@ void mmcStop(MMCDriver *mmcp) {
   chDbgCheck(mmcp != NULL, "mmcStop");
 
   chSysLock();
-  chDbgAssert((mmcp->mmc_state == MMC_STOP) || (mmcp->mmc_state == MMC_READY),
+  chDbgAssert((mmcp->mmc_state != MMC_UNINIT) &&
+              (mmcp->mmc_state != MMC_RUNNING),
               "mmcStop(), #1",
               "invalid state");
-  mmcp->mmc_state = MMC_STOP;
+  if (mmcp->mmc_state == MMC_READY) {
+    mmcp->mmc_state = MMC_STOP;
+    chVTResetI(&mmcp->mmc_vt);
+  }
   chSysUnlock();
 }
 
