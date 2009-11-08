@@ -32,6 +32,18 @@
 /*===========================================================================*/
 
 /**
+ * @brief Delays insertions.
+ * @details If enabled this options inserts delays into the MMC waiting
+ *          routines releasing some extra CPU time for the threads with
+ *          lower priority, this may slow down the driver a bit however.
+ *          This option is recommended also if the SPI driver does not
+ *          use a DMA channel and heavily loads the CPU.
+ */
+#if !defined(MMC_NICE_WAITING) || defined(__DOXYGEN__)
+#define MMC_NICE_WAITING        TRUE
+#endif
+
+/**
  * @brief Number of positive insertion queries before generating the
  *        insertion event.
  */
@@ -47,6 +59,23 @@
 #endif
 
 /*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
+#define MMC_CMD0_RETRY          10
+#define MMC_CMD1_RETRY          100
+#define MMC_WAIT_DATA           10000
+
+#define MMC_CMDGOIDLE           0
+#define MMC_CMDINIT             1
+#define MMC_CMDREADCSD          9
+#define MMC_CMDSTOP             12
+#define MMC_CMDREAD             17
+#define MMC_CMDREADMULTIPLE     18
+#define MMC_CMDWRITE            24
+#define MMC_CMDWRITEMULTIPLE    25
+
+/*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
@@ -54,12 +83,12 @@
  * @brief Driver state machine possible states.
  */
 typedef enum {
-  MMC_UNINIT = 0,                           /**< @brief Not initialized.    */
-  MMC_STOP = 1,                             /**< @brief Stopped.            */
-  MMC_WAIT = 2,                             /**< @brief Waiting card.       */
-  MMC_INSERTED = 3,                         /**< @brief Card inserted.      */
-  MMC_READY = 4,                            /**< @brief Card ready.         */
-  MMC_RUNNING = 5                           /**< @brief Reading or writing. */
+  MMC_UNINIT = 0,                           /**< @brief Not initialized.    *///!< MMC_UNINIT
+  MMC_STOP = 1,                             /**< @brief Stopped.            *///!< MMC_STOP
+  MMC_WAIT = 2,                             /**< @brief Waiting card.       *///!< MMC_WAIT
+  MMC_INSERTED = 3,                         /**< @brief Card inserted.      *///!< MMC_INSERTED
+  MMC_READY = 4,                            /**< @brief Card ready.         *///!< MMC_READY
+  MMC_RUNNING = 5                           /**< @brief Reading or writing. *///!< MMC_RUNNING
 } mmcstate_t;
 
 /**
@@ -139,6 +168,7 @@ extern "C" {
                      mmcquery_t is_protected, mmcquery_t is_inserted);
   void mmcStart(MMCDriver *mmcp, const MMCConfig *config);
   void mmcStop(MMCDriver *mmcp);
+  bool_t mmcOpen(MMCDriver *mmcp);
 #ifdef __cplusplus
 }
 #endif
