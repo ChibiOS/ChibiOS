@@ -83,12 +83,12 @@
  * @brief Driver state machine possible states.
  */
 typedef enum {
-  MMC_UNINIT = 0,                           /**< @brief Not initialized.    *///!< MMC_UNINIT
-  MMC_STOP = 1,                             /**< @brief Stopped.            *///!< MMC_STOP
-  MMC_WAIT = 2,                             /**< @brief Waiting card.       *///!< MMC_WAIT
-  MMC_INSERTED = 3,                         /**< @brief Card inserted.      *///!< MMC_INSERTED
-  MMC_READY = 4,                            /**< @brief Card ready.         *///!< MMC_READY
-  MMC_RUNNING = 5                           /**< @brief Reading or writing. *///!< MMC_RUNNING
+  MMC_UNINIT = 0,                           /**< @brief Not initialized.    */
+  MMC_STOP = 1,                             /**< @brief Stopped.            */
+  MMC_WAIT = 2,                             /**< @brief Waiting card.       */
+  MMC_INSERTED = 3,                         /**< @brief Card inserted.      */
+  MMC_READY = 4,                            /**< @brief Card ready.         */
+  MMC_RUNNING = 5                           /**< @brief Reading or writing. */
 } mmcstate_t;
 
 /**
@@ -168,7 +168,10 @@ extern "C" {
                      mmcquery_t is_protected, mmcquery_t is_inserted);
   void mmcStart(MMCDriver *mmcp, const MMCConfig *config);
   void mmcStop(MMCDriver *mmcp);
-  bool_t mmcOpen(MMCDriver *mmcp);
+  bool_t mmcConnect(MMCDriver *mmcp);
+  bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk);
+  bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer);
+  bool_t mmcStopSequentialRead(MMCDriver *mmcp);
 #ifdef __cplusplus
 }
 #endif

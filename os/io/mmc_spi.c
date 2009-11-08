@@ -237,9 +237,9 @@ void mmcStop(MMCDriver *mmcp) {
   if (mmcp->mmc_state != MMC_STOP) {
     mmcp->mmc_state = MMC_STOP;
     chVTResetI(&mmcp->mmc_vt);
-    spiStop(mmcp->mmc_spip);
   }
   chSysUnlock();
+  spiStop(mmcp->mmc_spip);
 }
 
 /**
@@ -257,37 +257,143 @@ void mmcStop(MMCDriver *mmcp) {
  *                      in the @p MMC_READY state.
  * @retval TRUE         the operation failed.
  */
-bool_t mmcOpen(MMCDriver *mmcp) {
+bool_t mmcConnect(MMCDriver *mmcp) {
   unsigned i;
 
-  /* Slow clock mode and 128 clock pulses.*/
-  spiStart(mmcp->mmc_spip, mmcp->mmc_lscfg);
+  chDbgCheck(mmcp != NULL, "mmcConnect");
 
-  /* SPI mode selection.*/
-  i = 0;
-  while (TRUE) {
-    if (send_command(mmcp, MMC_CMDGOIDLE, 0) == 0x01)
-      break;
-    if (++i >= MMC_CMD0_RETRY)
-      return TRUE;
-    chThdSleepMilliseconds(10);
+  chDbgAssert((mmcp->mmc_state != MMC_UNINIT) &&
+              (mmcp->mmc_state != MMC_STOP),
+              "mmcConnect(), #1",
+              "invalid state");
+
+  if (mmcp->mmc_state == MMC_INSERTED) {
+    /* Slow clock mode and 128 clock pulses.*/
+    spiStart(mmcp->mmc_spip, mmcp->mmc_lscfg);
+
+    /* SPI mode selection.*/
+    i = 0;
+    while (TRUE) {
+      if (send_command(mmcp, MMC_CMDGOIDLE, 0) == 0x01)
+        break;
+      if (++i >= MMC_CMD0_RETRY)
+        return TRUE;
+      chThdSleepMilliseconds(10);
+    }
+
+    /* Initialization. */
+    i = 0;
+    while (TRUE) {
+      uint8_t b = send_command(mmcp, MMC_CMDINIT, 0);
+      if (b == 0x00)
+        break;
+      if (b != 0x01)
+        return TRUE;
+      if (++i >= MMC_CMD1_RETRY)
+        return TRUE;
+      chThdSleepMilliseconds(10);
+    }
+
+    /* Initialization complete, full speed. */
+    spiStart(mmcp->mmc_spip, mmcp->mmc_hscfg);
+    mmcp->mmc_state = MMC_READY;
+    return FALSE;
   }
+  if (mmcp->mmc_state == MMC_READY)
+    return FALSE;
+  /* Any other state is invalid.*/
+  return TRUE;
+}
 
-  /* Initialization. */
-  i = 0;
-  while (TRUE) {
-    uint8_t b = send_command(mmcp, MMC_CMDINIT, 0);
-    if (b == 0x00)
-      break;
-    if (b != 0x01)
-      return TRUE;
-    if (++i >= MMC_CMD1_RETRY)
-      return TRUE;
-    chThdSleepMilliseconds(10);
+/**
+ * @brief Starts a sequential read.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ * @param[in] startblk  first block to read
+ *
+ * @return The operation status.
+ * @retval FALSE        the operation was successful.
+ * @retval TRUE         the operation failed.
+ */
+bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
+
+  chDbgCheck(mmcp != NULL, "mmcStartSequentialRead");
+
+  chSysLock();
+  if (mmcp->mmc_state != MMC_READY) {
+    chSysUnlock();
+    return TRUE;
   }
+  mmcp->mmc_state = MMC_RUNNING;
+  chSysUnlock();
 
-  /* Initialization complete, full speed. */
-  spiStart(mmcp->mmc_spip, mmcp->mmc_hscfg);
+  spiSelect(mmcp->mmc_spip);
+  send_hdr(mmcp, MMC_CMDREADMULTIPLE, startblk << 9);
+  if (recvr1() != 0x00) {
+    spiUnselect(mmcp->mmc_spip);
+    chSysLock();
+    if (mmcp->mmc_state == MMC_RUNNING)
+      mmcp->mmc_state = MMC_READY;
+    chSysUnlock();
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * @brief Reads a block within a sequential read operation.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ * @param[out] buffer   pointer to the read buffer
+ *
+ * @return The operation status.
+ * @retval FALSE        the operation was successful.
+ * @retval TRUE         the operation failed.
+ */
+bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
+  int i;
+  uint8_t ignored[2];
+
+  chDbgCheck((mmcp != NULL) && (buffer != NULL), "mmcSequentialRead");
+
+  if (mmcp->mmc_state != MMC_RUNNING)
+    return TRUE;
+
+  for (i = 0; i < MMC_WAIT_DATA; i++) {
+    spiReceive(mmcp->mmc_spip, 1, buf);
+    if (buf[0] == 0xFE) {
+      spiReceive(mmcp->mmc_spip, 512, buf);
+      /* CRC ignored. */
+      spiReceive(mmcp->mmc_spip, 2, ignored);
+      return FALSE;
+    }
+  }
+  /* Timeout.*/
+  spiUnselect(mmcp->mmc_spip);
+  chSysLock();
+  if (mmcp->mmc_state == MMC_RUNNING)
+    mmcp->mmc_state = MMC_READY;
+  chSysUnlock();
+  return TRUE;
+}
+
+/**
+ * @brief Stops a sequential read gracefully.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ *
+ * @return The operation status.
+ * @retval FALSE        the operation was successful.
+ * @retval TRUE         the operation failed.
+ */
+bool_t mmcStopSequentialRead(MMCDriver *mmcp) {
+
+  chDbgCheck(mmcp != NULL, "mmcStopSequentialRead");
+
+  if (mmcp->mmc_state != MMC_RUNNING)
+    return TRUE;
+
+  mmcp->mmc_state = MMC_READY;
   return FALSE;
 }
 
