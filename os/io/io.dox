@@ -150,7 +150,7 @@
       stop  [label="SPI_STOP\nLow Power"];
       ready [label="SPI_READY\nClock Enabled"];
       active [label="SPI_ACTIVE\nBus Active"];
-      uninit -> stop [label="spiInit()"];
+      uninit -> stop [label="spiObjectInit()"];
       stop -> ready [label="spiStart()"];
       ready -> ready [label="spiStart()"];
       ready -> stop [label="spiStop()"];
@@ -190,7 +190,7 @@
       stop  [label="ADC_STOP\nLow Power"];
       ready [label="ADC_READY\nClock Enabled"];
       running [label="ADC_RUNNING\nConverting"];
-      uninit -> stop [label="adcInit()"];
+      uninit -> stop [label="adcObjectInit()"];
       stop -> ready [label="adcStart()"];
       ready -> ready [label="adcStart()"];
       ready -> stop [label="adcStop()"];
