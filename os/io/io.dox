@@ -156,7 +156,9 @@
       ready -> stop [label="spiStop()"];
       stop -> stop [label="spiStop()"];
       ready -> active [label="spiSelect()"];
+      active -> active [label="spiSelect()"];
       active -> ready [label="spiUnselect()"];
+      ready -> ready [label="spiUnselect()"];
       active -> active [label="spiExchange()\nspiSend()\nspiReceive()"];
   }
  * @enddot

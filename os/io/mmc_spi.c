@@ -184,7 +184,14 @@ void mmcInit(void) {
 /**
  * @brief Initializes an instance.
  *
- * @param[in] mmcp      pointer to the @p MMCDriver object
+ * @param[in] mmcp          pointer to the @p MMCDriver object
+ * @param[in] spip          pointer to the SPI driver to be used as interface
+ * @param[in] lscfg         low speed configuration for the SPI driver
+ * @param[in] hscfg         high speed configuration for the SPI driver
+ * @param[in] is_protected  function that returns the card write protection
+ *                          setting
+ * @param[in] is_inserted   function that returns the card insertion sensor
+ *                          status
  */
 void mmcObjectInit(MMCDriver *mmcp, SPIDriver *spip,
                    const SPIConfig *lscfg, const SPIConfig *hscfg,

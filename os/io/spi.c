@@ -99,7 +99,8 @@ void spiSelect(SPIDriver *spip) {
   chDbgCheck(spip != NULL, "spiSelect");
 
   chSysLock();
-  chDbgAssert(spip->spd_state == SPI_READY,
+  chDbgAssert((spip->spd_state == SPI_READY) ||
+              (spip->spd_state == SPI_ACTIVE),
               "spiSelect(), #1",
               "not idle");
   spi_lld_select(spip);
@@ -118,7 +119,8 @@ void spiUnselect(SPIDriver *spip) {
   chDbgCheck(spip != NULL, "spiUnselect");
 
   chSysLock();
-  chDbgAssert(spip->spd_state == SPI_ACTIVE,
+  chDbgAssert((spip->spd_state == SPI_READY) ||
+              (spip->spd_state == SPI_ACTIVE),
               "spiUnselect(), #1",
               "not locked");
   spi_lld_unselect(spip);
