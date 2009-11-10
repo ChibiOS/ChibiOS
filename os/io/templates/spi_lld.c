@@ -112,7 +112,8 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
  */
-void spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
+void spi_lld_exchange(SPIDriver *spip, size_t n,
+                      const void *txbuf, void *rxbuf) {
 
 }
 
@@ -126,7 +127,7 @@ void spi_lld_exchange(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
  */
-void spi_lld_send(SPIDriver *spip, size_t n, void *txbuf) {
+void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
 }
 

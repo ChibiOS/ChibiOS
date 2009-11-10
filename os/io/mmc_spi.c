@@ -372,6 +372,8 @@ bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
  * @retval TRUE         the operation failed.
  */
 bool_t mmcStopSequentialRead(MMCDriver *mmcp) {
+  static const uint8_t stopcmd[] = {0x40 | MMC_CMDSTOP, 0, 0, 0, 0, 1, 0xFF};
+  bool_t result;
 
   chDbgCheck(mmcp != NULL, "mmcStopSequentialRead");
 
@@ -382,11 +384,15 @@ bool_t mmcStopSequentialRead(MMCDriver *mmcp) {
   }
   chSysUnlock();
 
+  spiSend(mmcp->mmc_spip, sizeof(stopcmd), stopcmd);
+  result = recvr1(mmcp) != 0x00;
+  spiUnselect(mmcp->mmc_spip);
+
   chSysLock();
   if (mmcp->mmc_state == MMC_READING)
     mmcp->mmc_state = MMC_READY;
   chSysUnlock();
-  return FALSE;
+  return result;
 }
 
 /** @} */

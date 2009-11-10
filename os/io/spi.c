@@ -159,7 +159,7 @@ void spiIgnore(SPIDriver *spip, size_t n) {
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
  */
-void spiExchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf) {
+void spiExchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf) {
 
   chDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL) && (txbuf != NULL),
              "spiExchange");
@@ -180,7 +180,7 @@ void spiExchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf) {
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
  */
-void spiSend(SPIDriver *spip, size_t n, void *txbuf) {
+void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
 
   chDbgCheck((spip != NULL) && (n > 0) && (txbuf != NULL),
              "spiSend");

@@ -61,7 +61,7 @@ static void spi_stop(SPIDriver *spip) {
 }
 
 static void spi_start_wait(SPIDriver *spip, size_t n,
-                           void *rxbuf, void *txbuf) {
+                           const void *txbuf, void *rxbuf) {
   uint32_t ccr;
 
   /* Common DMA setup.*/
@@ -294,7 +294,7 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
 
   spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_TEIE;
   spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_TEIE;
-  spi_start_wait(spip, n, &dummyrx, &dummytx);
+  spi_start_wait(spip, n, &dummytx, &dummyrx);
 }
 
 /**
@@ -309,11 +309,12 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
  */
-void spi_lld_exchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf) {
+void spi_lld_exchange(SPIDriver *spip, size_t n,
+                      const void *txbuf, void *rxbuf) {
 
   spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_MINC | DMA_CCR1_TEIE;
   spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_MINC | DMA_CCR1_TEIE;
-  spi_start_wait(spip, n, rxbuf, txbuf);
+  spi_start_wait(spip, n, txbuf, rxbuf);
 }
 
 /**
@@ -326,11 +327,11 @@ void spi_lld_exchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf) {
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
  */
-void spi_lld_send(SPIDriver *spip, size_t n, void *txbuf) {
+void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
   spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_TEIE;
   spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_MINC | DMA_CCR1_TEIE;
-  spi_start_wait(spip, n, &dummyrx, txbuf);
+  spi_start_wait(spip, n, txbuf, &dummyrx);
 }
 
 /**
@@ -347,7 +348,7 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_MINC | DMA_CCR1_TEIE;
   spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_TEIE;
-  spi_start_wait(spip, n, rxbuf, &dummytx);
+  spi_start_wait(spip, n, &dummytx, rxbuf);
 }
 
 /** @} */

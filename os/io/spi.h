@@ -60,8 +60,8 @@ extern "C" {
   void spiSelect(SPIDriver *spip);
   void spiUnselect(SPIDriver *spip);
   void spiIgnore(SPIDriver *spip, size_t n);
-  void spiExchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf);
-  void spiSend(SPIDriver *spip, size_t n, void *txbuf);
+  void spiExchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf);
+  void spiSend(SPIDriver *spip, size_t n, const void *txbuf);
   void spiReceive(SPIDriver *spip, size_t n, void *rxbuf);
 #if SPI_USE_MUTUAL_EXCLUSION
   void spiAcquireBus(SPIDriver *spip);
