@@ -395,4 +395,96 @@ bool_t mmcStopSequentialRead(MMCDriver *mmcp) {
   return result;
 }
 
+/**
+ * @brief Starts a sequential write.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ * @param[in] startblk  first block to write
+ *
+ * @return The operation status.
+ * @retval FALSE        the operation was successful.
+ * @retval TRUE         the operation failed.
+ */
+bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk) {
+
+  chDbgCheck(mmcp != NULL, "mmcStartSequentialWrite");
+
+  chSysLock();
+  if (mmcp->mmc_state != MMC_READY) {
+    chSysUnlock();
+    return TRUE;
+  }
+  mmcp->mmc_state = MMC_WRITING;
+  chSysUnlock();
+
+  spiSelect(mmcp->mmc_spip);
+  send_hdr(mmcp, MMC_CMDWRITEMULTIPLE, startblk << 9);
+  if (recvr1(mmcp) != 0x00) {
+    spiUnselect(mmcp->mmc_spip);
+    chSysLock();
+    if (mmcp->mmc_state == MMC_READING)
+      mmcp->mmc_state = MMC_READY;
+    chSysUnlock();
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * @brief Writes a block within a sequential write operation.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ * @param[out] buffer   pointer to the write buffer
+ *
+ * @return The operation status.
+ * @retval FALSE        the operation was successful.
+ * @retval TRUE         the operation failed.
+ */
+bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
+
+  chDbgCheck((mmcp != NULL) && (buffer != NULL), "mmcSequentialRead");
+
+  chSysLock();
+  if (mmcp->mmc_state != MMC_WRITING) {
+    chSysUnlock();
+    return TRUE;
+  }
+  chSysUnlock();
+
+  /**/
+
+  return TRUE;
+}
+
+/**
+ * @brief Stops a sequential write gracefully.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ *
+ * @return The operation status.
+ * @retval FALSE        the operation was successful.
+ * @retval TRUE         the operation failed.
+ */
+bool_t mmcStopSequentialWrite(MMCDriver *mmcp) {
+  static const uint8_t stop[] = {0xFD, 0xFF};
+
+  chDbgCheck(mmcp != NULL, "mmcStopSequentialWrite");
+
+  chSysLock();
+  if (mmcp->mmc_state != MMC_WRITING) {
+    chSysUnlock();
+    return TRUE;
+  }
+  chSysUnlock();
+
+  spiSend(mmcp->mmc_spip, sizeof(stop), stop);
+  spiUnselect(mmcp->mmc_spip);
+
+  chSysLock();
+  if (mmcp->mmc_state == MMC_WRITING)
+    mmcp->mmc_state = MMC_READY;
+  chSysUnlock();
+  return TRUE;
+}
+
 /** @} */
