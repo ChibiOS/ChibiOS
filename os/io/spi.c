@@ -136,19 +136,15 @@ void spiUnselect(SPIDriver *spip) {
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
- *
- * @return The operation status is returned.
- * @retval RDY_OK       operation complete.
- * @retval RDY_RESET    hardware failure.
  */
-msg_t spiIgnore(SPIDriver *spip, size_t n) {
+void spiIgnore(SPIDriver *spip, size_t n) {
 
   chDbgCheck((spip != NULL) && (n > 0), "spiIgnore");
   chDbgAssert((spip->spd_state == SPI_READY) || (spip->spd_state == SPI_ACTIVE),
               "spiIgnore(), #1",
               "not active");
 
-  return spi_lld_ignore(spip, n);
+  spi_lld_ignore(spip, n);
 }
 
 /**
@@ -160,14 +156,10 @@ msg_t spiIgnore(SPIDriver *spip, size_t n) {
  * @param[in] txbuf     the pointer to the transmit buffer
  * @param[out] rxbuf    the pointer to the receive buffer
  *
- * @return The operation status is returned.
- * @retval RDY_OK       operation complete.
- * @retval RDY_RESET    hardware failure.
- *
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
  */
-msg_t spiExchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf) {
+void spiExchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf) {
 
   chDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL) && (txbuf != NULL),
              "spiExchange");
@@ -175,7 +167,7 @@ msg_t spiExchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf) {
               "spiExchange(), #1",
               "not active");
 
-  return spi_lld_exchange(spip, n, txbuf, rxbuf);
+  spi_lld_exchange(spip, n, txbuf, rxbuf);
 }
 
 /**
@@ -185,14 +177,10 @@ msg_t spiExchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf) {
  * @param[in] n         number of words to send
  * @param[in] txbuf     the pointer to the transmit buffer
  *
- * @return The operation status is returned.
- * @retval RDY_OK       operation complete.
- * @retval RDY_RESET    hardware failure.
- *
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
  */
-msg_t spiSend(SPIDriver *spip, size_t n, void *txbuf) {
+void spiSend(SPIDriver *spip, size_t n, void *txbuf) {
 
   chDbgCheck((spip != NULL) && (n > 0) && (txbuf != NULL),
              "spiSend");
@@ -200,7 +188,7 @@ msg_t spiSend(SPIDriver *spip, size_t n, void *txbuf) {
               "spiSend(), #1",
               "not active");
 
-  return spi_lld_send(spip, n, txbuf);
+  spi_lld_send(spip, n, txbuf);
 }
 
 /**
@@ -210,14 +198,10 @@ msg_t spiSend(SPIDriver *spip, size_t n, void *txbuf) {
  * @param[in] n         number of words to receive
  * @param[out] rxbuf    the pointer to the receive buffer
  *
- * @return The operation status is returned.
- * @retval RDY_OK       operation complete.
- * @retval RDY_RESET    hardware failure.
- *
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
  */
-msg_t spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
+void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   chDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL),
              "spiReceive");
@@ -225,7 +209,7 @@ msg_t spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
               "spiReceive(), #1",
               "not active");
 
-  return spi_lld_receive(spip, n, rxbuf);
+  spi_lld_receive(spip, n, rxbuf);
 }
 
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)

@@ -158,6 +158,10 @@ typedef struct {
    * @brief DMA priority bit mask.
    */
   uint32_t              spd_dmaprio;
+  /**
+   * @brief DMA error event.
+   */
+  EventSource           spd_dmaerror;
 } SPIDriver;
 
 /*===========================================================================*/
@@ -181,10 +185,10 @@ extern "C" {
   void spi_lld_stop(SPIDriver *spip);
   void spi_lld_select(SPIDriver *spip);
   void spi_lld_unselect(SPIDriver *spip);
-  msg_t spi_lld_ignore(SPIDriver *spip, size_t n);
-  msg_t spi_lld_exchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf);
-  msg_t spi_lld_send(SPIDriver *spip, size_t n, void *txbuf);
-  msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf);
+  void spi_lld_ignore(SPIDriver *spip, size_t n);
+  void spi_lld_exchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf);
+  void spi_lld_send(SPIDriver *spip, size_t n, void *txbuf);
+  void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf);
 #ifdef __cplusplus
 }
 #endif

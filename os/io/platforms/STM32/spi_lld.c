@@ -46,7 +46,7 @@ static uint16_t dummytx;
 /* Low Level Driver local functions.                                         */
 /*===========================================================================*/
 
-static void spi_stop(SPIDriver *spip, msg_t msg) {
+static void spi_stop(SPIDriver *spip) {
 
   /* Stops RX and TX DMA channels.*/
   spip->spd_dmarx->CCR = 0;
@@ -56,11 +56,12 @@ static void spi_stop(SPIDriver *spip, msg_t msg) {
   spip->spd_spi->CR1 &= ~SPI_CR1_SPE;
 
   chSysLockFromIsr();
-  chSchReadyI(spip->spd_thread)->p_msg = msg;
+  chSchReadyI(spip->spd_thread);
   chSysUnlockFromIsr();
 }
 
-static void dma_start(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
+static void spi_start_wait(SPIDriver *spip, size_t n,
+                           void *rxbuf, void *txbuf) {
   uint32_t ccr;
 
   /* Common DMA setup.*/
@@ -81,20 +82,16 @@ static void dma_start(SPIDriver *spip, size_t n, void *rxbuf, void *txbuf) {
   /* DMAs start.*/
   spip->spd_dmarx->CCR |= DMA_CCR1_EN;
   spip->spd_dmatx->CCR |= DMA_CCR1_EN;
-}
 
-static msg_t spi_start_wait(SPIDriver *spip) {
-  msg_t msg;
-
+  /* SPI enable.*/
   chSysLock();
-  spip->spd_spi->CR1 |= SPI_CR1_SPE;    /* SPI enable.*/
+  spip->spd_spi->CR1 |= SPI_CR1_SPE;
 
+  /* Wait for completion event.*/
   spip->spd_thread = currp;
-  chSchGoSleepS(PRSUSPENDED);           /* Wait for completion event.*/
+  chSchGoSleepS(PRSUSPENDED);
   spip->spd_thread = NULL;
-  msg = currp->p_rdymsg;
   chSysUnlock();
-  return msg;
 }
 
 /*===========================================================================*/
@@ -109,10 +106,9 @@ CH_IRQ_HANDLER(Vector70) {
 
   CH_IRQ_PROLOGUE();
 
-  if ((DMA1->ISR & DMA_ISR_TCIF2) != 0)
-    spi_stop(&SPID1, RDY_OK);
-  else
-    spi_stop(&SPID1, RDY_RESET);
+  spi_stop(&SPID1);
+  if ((DMA1->ISR & DMA_ISR_TEIF2) != 0)
+    chEvtBroadcastI(&SPID1.spd_dmaerror);
   DMA1->IFCR |= DMA_IFCR_CGIF2  | DMA_IFCR_CTCIF2 |
                 DMA_IFCR_CHTIF2 | DMA_IFCR_CTEIF2;
 
@@ -126,7 +122,7 @@ CH_IRQ_HANDLER(Vector74) {
 
   CH_IRQ_PROLOGUE();
 
-  spi_stop(&SPID1, RDY_RESET);
+  chEvtBroadcastI(&SPID1.spd_dmaerror);
   DMA1->IFCR |= DMA_IFCR_CGIF3  | DMA_IFCR_CTCIF3 |
                 DMA_IFCR_CHTIF3 | DMA_IFCR_CTEIF3;
 
@@ -142,10 +138,9 @@ CH_IRQ_HANDLER(Vector78) {
 
   CH_IRQ_PROLOGUE();
 
-  if ((DMA1->ISR & DMA_ISR_TCIF2) != 0)
-    spi_stop(&SPID2, RDY_OK);
-  else
-    spi_stop(&SPID2, RDY_RESET);
+  spi_stop(&SPID2);
+  if ((DMA1->ISR & DMA_ISR_TEIF4) != 0)
+    chEvtBroadcastI(&SPID2.spd_dmaerror);
   DMA2->IFCR |= DMA_IFCR_CGIF4  | DMA_IFCR_CTCIF4 |
                 DMA_IFCR_CHTIF4 | DMA_IFCR_CTEIF4;
 
@@ -159,7 +154,7 @@ CH_IRQ_HANDLER(Vector7C) {
 
   CH_IRQ_PROLOGUE();
 
-  spi_stop(&SPID2, RDY_RESET);
+  chEvtBroadcastI(&SPID2.spd_dmaerror);
   DMA2->IFCR |= DMA_IFCR_CGIF5  | DMA_IFCR_CTCIF5 |
                 DMA_IFCR_CHTIF5 | DMA_IFCR_CTEIF5;
 
@@ -185,6 +180,7 @@ void spi_lld_init(void) {
   SPID1.spd_dmarx   = DMA1_Channel2;
   SPID1.spd_dmatx   = DMA1_Channel3;
   SPID1.spd_dmaprio = STM32_SPI1_DMA_PRIORITY << 12;
+  chEvtInit(&SPID1.spd_dmaerror);
   GPIOA->CRL = (GPIOA->CRL & 0x000FFFFF) | 0xB4B00000;
 #endif
 
@@ -195,6 +191,7 @@ void spi_lld_init(void) {
   SPID2.spd_dmarx   = DMA1_Channel4;
   SPID2.spd_dmatx   = DMA1_Channel5;
   SPID2.spd_dmaprio = STM32_SPI2_DMA_PRIORITY << 12;
+  chEvtInit(&SPID2.spd_dmaerror);
   GPIOB->CRH = (GPIOB->CRH & 0x000FFFFF) | 0xB4B00000;
 #endif
 }
@@ -292,17 +289,12 @@ void spi_lld_unselect(SPIDriver *spip) {
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
- *
- * @return The operation status is returned.
- * @retval RDY_OK       operation complete.
- * @retval RDY_RESET    hardware failure.
  */
-msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
+void spi_lld_ignore(SPIDriver *spip, size_t n) {
 
   spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_TEIE;
   spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_TEIE;
-  dma_start(spip, n, &dummyrx, &dummytx);
-  return spi_start_wait(spip);
+  spi_start_wait(spip, n, &dummyrx, &dummytx);
 }
 
 /**
@@ -314,19 +306,14 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
  * @param[in] txbuf     the pointer to the transmit buffer
  * @param[out] rxbuf    the pointer to the receive buffer
  *
- * @return The operation status is returned.
- * @retval RDY_OK       operation complete.
- * @retval RDY_RESET    hardware failure.
- *
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
  */
-msg_t spi_lld_exchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf) {
+void spi_lld_exchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf) {
 
   spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_MINC | DMA_CCR1_TEIE;
   spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_MINC | DMA_CCR1_TEIE;
-  dma_start(spip, n, rxbuf, txbuf);
-  return spi_start_wait(spip);
+  spi_start_wait(spip, n, rxbuf, txbuf);
 }
 
 /**
@@ -336,19 +323,14 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf) {
  * @param[in] n         number of words to send
  * @param[in] txbuf     the pointer to the transmit buffer
  *
- * @return The operation status is returned.
- * @retval RDY_OK       operation complete.
- * @retval RDY_RESET    hardware failure.
- *
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
  */
-msg_t spi_lld_send(SPIDriver *spip, size_t n, void *txbuf) {
+void spi_lld_send(SPIDriver *spip, size_t n, void *txbuf) {
 
   spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_TEIE;
   spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_MINC | DMA_CCR1_TEIE;
-  dma_start(spip, n, &dummyrx, txbuf);
-  return spi_start_wait(spip);
+  spi_start_wait(spip, n, &dummyrx, txbuf);
 }
 
 /**
@@ -358,19 +340,14 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, void *txbuf) {
  * @param[in] n         number of words to receive
  * @param[out] rxbuf    the pointer to the receive buffer
  *
- * @return The operation status is returned.
- * @retval RDY_OK       operation complete.
- * @retval RDY_RESET    hardware failure.
- *
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
  */
-msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
+void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_MINC | DMA_CCR1_TEIE;
   spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_TEIE;
-  dma_start(spip, n, rxbuf, &dummytx);
-  return spi_start_wait(spip);
+  spi_start_wait(spip, n, rxbuf, &dummytx);
 }
 
 /** @} */

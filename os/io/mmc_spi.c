@@ -143,32 +143,6 @@ static uint8_t send_command(MMCDriver *mmcp, uint8_t cmd, uint32_t arg) {
   return r1;
 }
 
-/**
- * @brief Receives a 512 bytes block and ignores 2 CRC bytes.
- *
- * @param[in] mmcp      pointer to the @p MMCDriver object
- * @param[out] buf      pointer to the buffer
- *
- * @return The operation status.
- * @retval FALSE        the operation was successful.
- * @retval TRUE         the operation timed out.
- */
-static bool_t get_data(MMCDriver *mmcp, uint8_t *buf) {
-  int i;
-
-  for (i = 0; i < MMC_WAIT_DATA; i++) {
-    spiReceive(mmcp->mmc_spip, 1, buf);
-    if (buf[0] == 0xFE) {
-      spiReceive(mmcp->mmc_spip, 512, buf);
-      /* CRC ignored. */
-      spiIgnore(mmcp->mmc_spip, 2);
-      return FALSE;
-    }
-  }
-  /* Timeout.*/
-  return TRUE;
-}
-
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -337,7 +311,7 @@ bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
 
   spiSelect(mmcp->mmc_spip);
   send_hdr(mmcp, MMC_CMDREADMULTIPLE, startblk << 9);
-  if (recvr1() != 0x00) {
+  if (recvr1(mmcp) != 0x00) {
     spiUnselect(mmcp->mmc_spip);
     chSysLock();
     if (mmcp->mmc_state == MMC_READING)
@@ -371,9 +345,9 @@ bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
   chSysUnlock();
 
   for (i = 0; i < MMC_WAIT_DATA; i++) {
-    spiReceive(mmcp->mmc_spip, 1, buf);
-    if (buf[0] == 0xFE) {
-      spiReceive(mmcp->mmc_spip, 512, buf);
+    spiReceive(mmcp->mmc_spip, 1, buffer);
+    if (buffer[0] == 0xFE) {
+      spiReceive(mmcp->mmc_spip, 512, buffer);
       /* CRC ignored. */
       spiIgnore(mmcp->mmc_spip, 2);
       return FALSE;
