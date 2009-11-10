@@ -59,6 +59,7 @@ extern "C" {
   void spiStop(SPIDriver *spip);
   void spiSelect(SPIDriver *spip);
   void spiUnselect(SPIDriver *spip);
+  msg_t spiIgnore(SPIDriver *spip, size_t n);
   msg_t spiExchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf);
   msg_t spiSend(SPIDriver *spip, size_t n, void *txbuf);
   msg_t spiReceive(SPIDriver *spip, size_t n, void *rxbuf);

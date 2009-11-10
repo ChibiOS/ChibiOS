@@ -38,7 +38,7 @@ void spiInit(void) {
 /**
  * @brief Initializes the standard part of a @p SPIDriver structure.
  *
- * @param[in] spip pointer to the @p SPIDriver object
+ * @param[in] spip      pointer to the @p SPIDriver object
  */
 void spiObjectInit(SPIDriver *spip) {
 
@@ -54,8 +54,8 @@ void spiObjectInit(SPIDriver *spip) {
 /**
  * @brief Configures and activates the SPI peripheral.
  *
- * @param[in] spip pointer to the @p SPIDriver object
- * @param[in] config pointer to the @p SPIConfig object
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] config    pointer to the @p SPIConfig object
  */
 void spiStart(SPIDriver *spip, const SPIConfig *config) {
 
@@ -74,7 +74,7 @@ void spiStart(SPIDriver *spip, const SPIConfig *config) {
 /**
  * @brief Deactivates the SPI peripheral.
  *
- * @param[in] spip pointer to the @p SPIDriver object
+ * @param[in] spip      pointer to the @p SPIDriver object
  */
 void spiStop(SPIDriver *spip) {
 
@@ -92,7 +92,7 @@ void spiStop(SPIDriver *spip) {
 /**
  * @brief Asserts the slave select signal and prepares for transfers.
  *
- * @param[in] spip pointer to the @p SPIDriver object
+ * @param[in] spip      pointer to the @p SPIDriver object
  */
 void spiSelect(SPIDriver *spip) {
 
@@ -112,7 +112,7 @@ void spiSelect(SPIDriver *spip) {
  * @brief Deasserts the slave select signal.
  * @details The previously selected peripheral is unselected.
  *
- * @param[in] spip pointer to the @p SPIDriver object
+ * @param[in] spip      pointer to the @p SPIDriver object
  */
 void spiUnselect(SPIDriver *spip) {
 
@@ -129,17 +129,43 @@ void spiUnselect(SPIDriver *spip) {
 }
 
 /**
+ * @brief Ignores data on the SPI bus.
+ * @details This function transmits a series of idle words on the SPI bus and
+ *          ignores the received data. This function can be invoked even
+ *          when a slave select signal has not been yet asserted.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to be ignored
+ *
+ * @return The operation status is returned.
+ * @retval RDY_OK       operation complete.
+ * @retval RDY_RESET    hardware failure.
+ */
+msg_t spiIgnore(SPIDriver *spip, size_t n) {
+
+  chDbgCheck((spip != NULL) && (n > 0), "spiIgnore");
+  chDbgAssert((spip->spd_state == SPI_READY) || (spip->spd_state == SPI_ACTIVE),
+              "spiIgnore(), #1",
+              "not active");
+
+  return spi_lld_ignore(spip, n);
+}
+
+/**
  * @brief Exchanges data on the SPI bus.
  * @details This function performs a simultaneous transmit/receive operation.
  *
- * @param[in] spip pointer to the @p SPIDriver object
- * @param[in] n number of words to be exchanged
- * @param[in] txbuf the pointer to the transmit buffer. Note that the buffer is
- *                  organized as an uint8_t array for data sizes below or equal
- *                  to 8 bits else it is organized as an uint16_t array.
- * @param[out] rxbuf the pointer to the receive buffer. Note that the buffer is
- *                   organized as an uint8_t array for data sizes below or equal
- *                   to 8 bits else it is organized as an uint16_t array.
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to be exchanged
+ * @param[in] txbuf     the pointer to the transmit buffer
+ * @param[out] rxbuf    the pointer to the receive buffer
+ *
+ * @return The operation status is returned.
+ * @retval RDY_OK       operation complete.
+ * @retval RDY_RESET    hardware failure.
+ *
+ * @note The buffers are organized as uint8_t arrays for data sizes below or
+ *       equal to 8 bits else it is organized as uint16_t arrays.
  */
 msg_t spiExchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf) {
 
@@ -155,14 +181,13 @@ msg_t spiExchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf) {
 /**
  * @brief Sends data ever the SPI bus.
  *
- * @param[in] spip pointer to the @p SPIDriver object
- * @param[in] n number of words to send
- * @param[in] txbuf the pointer to the transmit buffer. Note that the buffer is
- *                  organized as an uint8_t array for data sizes below or equal
- *                  to 8 bits else it is organized as an uint16_t array.
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to send
+ * @param[in] txbuf     the pointer to the transmit buffer
+ *
  * @return The operation status is returned.
- * @retval RDY_OK operation complete.
- * @retval RDY_RESET hardware failure.
+ * @retval RDY_OK       operation complete.
+ * @retval RDY_RESET    hardware failure.
  *
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
@@ -181,14 +206,13 @@ msg_t spiSend(SPIDriver *spip, size_t n, void *txbuf) {
 /**
  * @brief Receives data from the SPI bus.
  *
- * @param[in] spip pointer to the @p SPIDriver object
- * @param[in] n number of words to receive
- * @param[out] rxbuf the pointer to the receive buffer. Note that the buffer is
- *                   organized as an uint8_t array for data sizes below or equal
- *                   to 8 bits else it is organized as an uint16_t array.
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to receive
+ * @param[out] rxbuf    the pointer to the receive buffer
+ *
  * @return The operation status is returned.
- * @retval RDY_OK operation complete.
- * @retval RDY_RESET hardware failure.
+ * @retval RDY_OK       operation complete.
+ * @retval RDY_RESET    hardware failure.
  *
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
@@ -210,7 +234,7 @@ msg_t spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
  * @details This function tries to gain ownership to the SPI bus, if the bus
  *          is already being used then the invoking thread is queued.
  *
- * @param[in] spip pointer to the @p SPIDriver object
+ * @param[in] spip      pointer to the @p SPIDriver object
  *
  * @note This function is only available when the @p SPI_USE_MUTUAL_EXCLUSION
  *       option is set to @p TRUE.
@@ -229,7 +253,7 @@ void spiAcquireBus(SPIDriver *spip) {
 /**
  * @brief Releases exclusive access to the SPI bus.
  *
- * @param[in] spip pointer to the @p SPIDriver object
+ * @param[in] spip      pointer to the @p SPIDriver object
  *
  * @note This function is only available when the @p SPI_USE_MUTUAL_EXCLUSION
  *       option is set to @p TRUE.

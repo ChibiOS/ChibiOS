@@ -153,13 +153,14 @@
       uninit -> stop [label="spiObjectInit()"];
       stop -> ready [label="spiStart()"];
       ready -> ready [label="spiStart()"];
+      ready -> ready [label="spiIgnore()"];
       ready -> stop [label="spiStop()"];
       stop -> stop [label="spiStop()"];
       ready -> active [label="spiSelect()"];
       active -> active [label="spiSelect()"];
       active -> ready [label="spiUnselect()"];
       ready -> ready [label="spiUnselect()"];
-      active -> active [label="spiExchange()\nspiSend()\nspiReceive()"];
+      active -> active [label="spiIgnore()\nspiExchange()\nspiSend()\nspiReceive()"];
   }
  * @enddot
  *

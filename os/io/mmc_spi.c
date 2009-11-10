@@ -155,14 +155,13 @@ static uint8_t send_command(MMCDriver *mmcp, uint8_t cmd, uint32_t arg) {
  */
 static bool_t get_data(MMCDriver *mmcp, uint8_t *buf) {
   int i;
-  uint8_t ignored[2];
 
   for (i = 0; i < MMC_WAIT_DATA; i++) {
     spiReceive(mmcp->mmc_spip, 1, buf);
     if (buf[0] == 0xFE) {
       spiReceive(mmcp->mmc_spip, 512, buf);
       /* CRC ignored. */
-      spiReceive(mmcp->mmc_spip, 2, ignored);
+      spiIgnore(mmcp->mmc_spip, 2);
       return FALSE;
     }
   }
@@ -228,7 +227,7 @@ void mmcStart(MMCDriver *mmcp, const MMCConfig *config) {
 }
 
 /**
- * @brief Deactivates the MMC peripheral.
+ * @brief Disables the MMC peripheral.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
  */
@@ -238,7 +237,8 @@ void mmcStop(MMCDriver *mmcp) {
 
   chSysLock();
   chDbgAssert((mmcp->mmc_state != MMC_UNINIT) &&
-              (mmcp->mmc_state != MMC_RUNNING),
+              (mmcp->mmc_state != MMC_READING) &&
+              (mmcp->mmc_state != MMC_WRITING),
               "mmcStop(), #1",
               "invalid state");
   if (mmcp->mmc_state != MMC_STOP) {
@@ -277,6 +277,7 @@ bool_t mmcConnect(MMCDriver *mmcp) {
   if (mmcp->mmc_state == MMC_INSERTED) {
     /* Slow clock mode and 128 clock pulses.*/
     spiStart(mmcp->mmc_spip, mmcp->mmc_lscfg);
+    spiIgnore(mmcp->mmc_spip, 16);
 
     /* SPI mode selection.*/
     i = 0;
@@ -331,7 +332,7 @@ bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
     chSysUnlock();
     return TRUE;
   }
-  mmcp->mmc_state = MMC_RUNNING;
+  mmcp->mmc_state = MMC_READING;
   chSysUnlock();
 
   spiSelect(mmcp->mmc_spip);
@@ -339,7 +340,7 @@ bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
   if (recvr1() != 0x00) {
     spiUnselect(mmcp->mmc_spip);
     chSysLock();
-    if (mmcp->mmc_state == MMC_RUNNING)
+    if (mmcp->mmc_state == MMC_READING)
       mmcp->mmc_state = MMC_READY;
     chSysUnlock();
     return TRUE;
@@ -359,26 +360,29 @@ bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
  */
 bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
   int i;
-  uint8_t ignored[2];
 
   chDbgCheck((mmcp != NULL) && (buffer != NULL), "mmcSequentialRead");
 
-  if (mmcp->mmc_state != MMC_RUNNING)
+  chSysLock();
+  if (mmcp->mmc_state != MMC_READING) {
+    chSysUnlock();
     return TRUE;
+  }
+  chSysUnlock();
 
   for (i = 0; i < MMC_WAIT_DATA; i++) {
     spiReceive(mmcp->mmc_spip, 1, buf);
     if (buf[0] == 0xFE) {
       spiReceive(mmcp->mmc_spip, 512, buf);
       /* CRC ignored. */
-      spiReceive(mmcp->mmc_spip, 2, ignored);
+      spiIgnore(mmcp->mmc_spip, 2);
       return FALSE;
     }
   }
   /* Timeout.*/
   spiUnselect(mmcp->mmc_spip);
   chSysLock();
-  if (mmcp->mmc_state == MMC_RUNNING)
+  if (mmcp->mmc_state == MMC_READING)
     mmcp->mmc_state = MMC_READY;
   chSysUnlock();
   return TRUE;
@@ -397,10 +401,17 @@ bool_t mmcStopSequentialRead(MMCDriver *mmcp) {
 
   chDbgCheck(mmcp != NULL, "mmcStopSequentialRead");
 
-  if (mmcp->mmc_state != MMC_RUNNING)
+  chSysLock();
+  if (mmcp->mmc_state != MMC_READING) {
+    chSysUnlock();
     return TRUE;
+  }
+  chSysUnlock();
 
-  mmcp->mmc_state = MMC_READY;
+  chSysLock();
+  if (mmcp->mmc_state == MMC_READING)
+    mmcp->mmc_state = MMC_READY;
+  chSysUnlock();
   return FALSE;
 }
 

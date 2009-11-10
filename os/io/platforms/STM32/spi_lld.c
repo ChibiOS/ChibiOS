@@ -202,7 +202,7 @@ void spi_lld_init(void) {
 /**
  * @brief Configures and activates the SPI peripheral.
  *
- * @param[in] spip pointer to the @p SPIDriver object
+ * @param[in] spip      pointer to the @p SPIDriver object
  */
 void spi_lld_start(SPIDriver *spip) {
 
@@ -233,24 +233,12 @@ void spi_lld_start(SPIDriver *spip) {
   /* DMA setup.*/
   spip->spd_dmarx->CPAR = (uint32_t)&spip->spd_spi->DR;
   spip->spd_dmatx->CPAR = (uint32_t)&spip->spd_spi->DR;
-
-  /*
-   * If specified in the configuration then emits a pulses train on
-   * the SPI clock line without asserting any slave.
-   */
-  if (spip->spd_config->spc_initcnt > 0) {
-    spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_TEIE;
-    spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_TEIE;
-    dma_start(spip, (size_t)spip->spd_config->spc_initcnt,
-              &dummyrx, &dummytx);
-    (void) spi_start_wait(spip);
-  }
 }
 
 /**
  * @brief Deactivates the SPI peripheral.
  *
- * @param[in] spip pointer to the @p SPIDriver object
+ * @param[in] spip      pointer to the @p SPIDriver object
  */
 void spi_lld_stop(SPIDriver *spip) {
 
@@ -278,7 +266,7 @@ void spi_lld_stop(SPIDriver *spip) {
 /**
  * @brief Asserts the slave select signal and prepares for transfers.
  *
- * @param[in] spip pointer to the @p SPIDriver object
+ * @param[in] spip      pointer to the @p SPIDriver object
  */
 void spi_lld_select(SPIDriver *spip) {
 
@@ -289,7 +277,7 @@ void spi_lld_select(SPIDriver *spip) {
  * @brief Deasserts the slave select signal.
  * @details The previously selected peripheral is unselected.
  *
- * @param[in] spip pointer to the @p SPIDriver object
+ * @param[in] spip      pointer to the @p SPIDriver object
  */
 void spi_lld_unselect(SPIDriver *spip) {
 
@@ -297,20 +285,38 @@ void spi_lld_unselect(SPIDriver *spip) {
 }
 
 /**
+ * @brief Ignores data on the SPI bus.
+ * @details This function transmits a series of idle words on the SPI bus and
+ *          ignores the received data. This function can be invoked even
+ *          when a slave select signal has not been yet asserted.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to be ignored
+ *
+ * @return The operation status is returned.
+ * @retval RDY_OK       operation complete.
+ * @retval RDY_RESET    hardware failure.
+ */
+msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
+
+  spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_TEIE;
+  spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_TEIE;
+  dma_start(spip, n, &dummyrx, &dummytx);
+  return spi_start_wait(spip);
+}
+
+/**
  * @brief Exchanges data on the SPI bus.
  * @details This function performs a simultaneous transmit/receive operation.
  *
- * @param[in] spip pointer to the @p SPIDriver object
- * @param[in] n number of words to exchange
- * @param[in] txbuf the pointer to the transmit buffer. Note that the buffer is
- *                  organized as an uint8_t array for data sizes below or equal
- *                  to 8 bits else it is organized as an uint16_t array.
- * @param[out] rxbuf the pointer to the receive buffer. Note that the buffer is
- *                   organized as an uint8_t array for data sizes below or equal
- *                   to 8 bits else it is organized as an uint16_t array.
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to be exchanged
+ * @param[in] txbuf     the pointer to the transmit buffer
+ * @param[out] rxbuf    the pointer to the receive buffer
+ *
  * @return The operation status is returned.
- * @retval RDY_OK operation complete.
- * @retval RDY_RESET hardware failure.
+ * @retval RDY_OK       operation complete.
+ * @retval RDY_RESET    hardware failure.
  *
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
@@ -326,14 +332,13 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n, void *txbuf, void *rxbuf) {
 /**
  * @brief Sends data ever the SPI bus.
  *
- * @param[in] spip pointer to the @p SPIDriver object
- * @param[in] n number of words to send
- * @param[in] txbuf the pointer to the transmit buffer. Note that the buffer is
- *                  organized as an uint8_t array for data sizes below or equal
- *                  to 8 bits else it is organized as an uint16_t array.
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to send
+ * @param[in] txbuf     the pointer to the transmit buffer
+ *
  * @return The operation status is returned.
- * @retval RDY_OK operation complete.
- * @retval RDY_RESET hardware failure.
+ * @retval RDY_OK       operation complete.
+ * @retval RDY_RESET    hardware failure.
  *
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.
@@ -349,14 +354,13 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, void *txbuf) {
 /**
  * @brief Receives data from the SPI bus.
  *
- * @param[in] spip pointer to the @p SPIDriver object
- * @param[in] n number of words to receive
- * @param[out] rxbuf the pointer to the receive buffer. Note that the buffer is
- *                   organized as an uint8_t array for data sizes below or equal
- *                   to 8 bits else it is organized as an uint16_t array.
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to receive
+ * @param[out] rxbuf    the pointer to the receive buffer
+ *
  * @return The operation status is returned.
- * @retval RDY_OK operation complete.
- * @retval RDY_RESET hardware failure.
+ * @retval RDY_OK       operation complete.
+ * @retval RDY_RESET    hardware failure.
  *
  * @note The buffers are organized as uint8_t arrays for data sizes below or
  *       equal to 8 bits else it is organized as uint16_t arrays.

@@ -88,7 +88,8 @@ typedef enum {
   MMC_WAIT = 2,                             /**< @brief Waiting card.       */
   MMC_INSERTED = 3,                         /**< @brief Card inserted.      */
   MMC_READY = 4,                            /**< @brief Card ready.         */
-  MMC_RUNNING = 5                           /**< @brief Reading or writing. */
+  MMC_READING = 5,                          /**< @brief Reading.            */
+  MMC_WRITING = 6                           /**< @brief Writing.            */
 } mmcstate_t;
 
 /**
