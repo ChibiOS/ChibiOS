@@ -11,6 +11,8 @@
 - NEW: New SPI (master) driver model.
 - NEW: SPI driver for STM32 implementing the new SPI driver model.
 - NEW: New ADC (streaming capable) driver model.
+- CHANGE: Moved the STM32 firmware library under ./ext, this way there is no
+  need to duplicate it in each demo program.
 
 *** 1.3.3 ***
 - FIX: Fixed bug in the LPC2148 PAL driver (bug 2881380).

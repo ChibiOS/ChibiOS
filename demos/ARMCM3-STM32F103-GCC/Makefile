@@ -38,7 +38,7 @@ endif
 
 # Enable this if you really want to use the STM FWLib.
 ifeq ($(USE_FWLIB),)
-  USE_FWLIB = yes
+  USE_FWLIB = no
 endif
 
 #

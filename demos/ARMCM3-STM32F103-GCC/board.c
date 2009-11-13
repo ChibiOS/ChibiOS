@@ -20,8 +20,6 @@
 #include <ch.h>
 #include <pal.h>
 #include <serial.h>
-#include <spi.h>
-#include <stm32_dma.h>
 #include <nvic.h>
 
 #include "board.h"
@@ -114,9 +112,7 @@ void hwinit1(void) {
   /*
    * Other subsystems initialization.
    */
-  dmaInit();
   sdInit();
-  spiInit();
 
   /*
    * ChibiOS/RT initialization.
