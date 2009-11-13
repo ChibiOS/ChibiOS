@@ -38,7 +38,7 @@ endif
 
 # Enable this if you really want to use the STM FWLib.
 ifeq ($(USE_FWLIB),)
-  USE_FWLIB = no
+  USE_FWLIB = yes
 endif
 
 #
@@ -69,13 +69,13 @@ CSRC = ${PORTSRC} \
        ${CHIBIOS}/os/io/pal.c \
        ${CHIBIOS}/os/io/serial.c \
        ${CHIBIOS}/os/io/spi.c \
+       ${CHIBIOS}/os/io/mmc_spi.c \
        ${CHIBIOS}/os/io/platforms/STM32/pal_lld.c \
        ${CHIBIOS}/os/io/platforms/STM32/serial_lld.c \
        ${CHIBIOS}/os/io/platforms/STM32/spi_lld.c \
        ${CHIBIOS}/os/io/platforms/STM32/stm32_dma.c \
        ${CHIBIOS}/os/various/evtimer.c \
        board.c main.c
-
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -108,8 +108,7 @@ ASMSRC = $(PORTASM) \
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          ${CHIBIOS}/os/io \
          ${CHIBIOS}/os/io/platforms/STM32 \
-         ${CHIBIOS}/os/various \
-         ./stm32lib/inc
+         ${CHIBIOS}/os/various
 
 #
 # Project, sources and paths
@@ -198,8 +197,9 @@ ULIBS =
 ##############################################################################
 
 ifeq ($(USE_FWLIB),yes)
-  include ./stm32lib/stm32lib.mk
+  include ${CHIBIOS}/ext/stm32lib/stm32lib.mk
   CSRC += ${STM32SRC}
+  INCDIR += ${STM32INC}
   USE_OPT += -DUSE_STDPERIPH_DRIVER
 endif
 
