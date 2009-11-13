@@ -11,10 +11,16 @@ The currently included items are:
 
 1. uip-1.0, a minimal TCP/IP implementation: http://www.sics.se/~adam/uip/
 2. lwip-1.3.1, lightweight TCP/IP stack: http://savannah.nongnu.org/projects/lwip/
-   
+3. STM32 firmware library 3.1.2 (partial) the full download is available from
+   http://www.st.com
+
 The above files are included packed as downloaded from the original repository
 and without any modification, in order to use the libraries unpack them
-under ./ext.
+under ./ext as:
+
+./ext/uip-1.0
+./ext/lwip
+./ext/stm32lib
 
 Some patches are also present:
 
