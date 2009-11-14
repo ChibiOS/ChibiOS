@@ -13,6 +13,8 @@
 - NEW: New ADC (streaming capable) driver model.
 - CHANGE: Moved the STM32 firmware library under ./ext, this way there is no
   need to duplicate it in each demo program.
+- CHANGE: Moved the file stm32f10x.h from the demos to the platforms support
+  directory.
 
 *** 1.3.3 ***
 - FIX: Fixed bug in the LPC2148 PAL driver (bug 2881380).
