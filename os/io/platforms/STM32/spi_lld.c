@@ -141,7 +141,7 @@ CH_IRQ_HANDLER(Vector78) {
   spi_stop(&SPID2);
   if ((DMA1->ISR & DMA_ISR_TEIF4) != 0)
     chEvtBroadcastI(&SPID2.spd_dmaerror);
-  DMA2->IFCR |= DMA_IFCR_CGIF4  | DMA_IFCR_CTCIF4 |
+  DMA1->IFCR |= DMA_IFCR_CGIF4  | DMA_IFCR_CTCIF4 |
                 DMA_IFCR_CHTIF4 | DMA_IFCR_CTEIF4;
 
   CH_IRQ_EPILOGUE();
@@ -155,7 +155,7 @@ CH_IRQ_HANDLER(Vector7C) {
   CH_IRQ_PROLOGUE();
 
   chEvtBroadcastI(&SPID2.spd_dmaerror);
-  DMA2->IFCR |= DMA_IFCR_CGIF5  | DMA_IFCR_CTCIF5 |
+  DMA1->IFCR |= DMA_IFCR_CGIF5  | DMA_IFCR_CTCIF5 |
                 DMA_IFCR_CHTIF5 | DMA_IFCR_CTEIF5;
 
   CH_IRQ_EPILOGUE();
