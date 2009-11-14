@@ -12,6 +12,9 @@
 - NEW: New SPI (master) driver model.
 - NEW: SPI driver for STM32 implementing the new SPI driver model.
 - NEW: New ADC (streaming capable) driver model.
+- NEW: Generic MMC (over SPI) driver.
+- NEW: Added a STM32 demo that integrates the MMC driver and the FatFs
+  file system.
 - CHANGE: Moved the STM32 firmware library under ./ext, this way there is no
   need to duplicate it in each demo program.
 - CHANGE: Moved the file stm32f10x.h from the demos to the platforms support

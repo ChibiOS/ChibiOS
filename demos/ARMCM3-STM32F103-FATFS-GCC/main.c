@@ -105,6 +105,8 @@ static void TimerHandler(eventid_t id) {
  */
 static void InsertHandler(eventid_t id) {
   FRESULT err;
+  uint32_t clusters;
+  FATFS *fsp;
 
   (void)id;
   /*
@@ -113,6 +115,11 @@ static void InsertHandler(eventid_t id) {
   if (mmcConnect(&MMCD1))
     return;
   err = f_mount(0, &MMC_FS);
+  if (err != FR_OK) {
+    mmcDisconnect(&MMCD1);
+    return;
+  }
+  err = f_getfree("/", &clusters, &fsp);
   if (err != FR_OK) {
     mmcDisconnect(&MMCD1);
     return;
