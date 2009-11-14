@@ -143,6 +143,26 @@ static uint8_t send_command(MMCDriver *mmcp, uint8_t cmd, uint32_t arg) {
   return r1;
 }
 
+/**
+ * @brief Waits that the card reaches an idle state.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ */
+static void sync(MMCDriver *mmcp) {
+  uint8_t buf[1];
+
+  spiSelect(mmcp->mmc_spip);
+  while (TRUE) {
+    spiReceive(mmcp->mmc_spip, 1, buf);
+    if (buf[0] == 0xFF)
+      break;
+#ifdef MMC_NICE_WAITING
+    chThdSleep(1);      /* Trying to be nice with the other threads.*/
+#endif
+  }
+  spiUnselect(mmcp->mmc_spip);
+}
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -302,6 +322,38 @@ bool_t mmcConnect(MMCDriver *mmcp) {
 }
 
 /**
+ * @brief Brings the driver in a state safe for card removal.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ * @return The operation status.
+ * @retval FALSE        the operation was successful and the driver is now
+ *                      in the @p MMC_INSERTED state.
+ * @retval TRUE         the operation failed.
+ */
+bool_t mmcDisconnect(MMCDriver *mmcp) {
+
+  chDbgCheck(mmcp != NULL, "mmcConnect");
+
+  chDbgAssert((mmcp->mmc_state != MMC_UNINIT) &&
+              (mmcp->mmc_state != MMC_STOP),
+              "mmcDisconnect(), #1",
+              "invalid state");
+  switch (mmcp->mmc_state) {
+  case MMC_READY:
+    /* Wait for the pending write operations to complete.*/
+    sync(mmcp);
+    chSysLock();
+    if (mmcp->mmc_state == MMC_READY)
+      mmcp->mmc_state = MMC_INSERTED;
+    chSysUnlock();
+  case MMC_INSERTED:
+    return FALSE;
+  default:
+    return TRUE;
+  }
+}
+
+/**
  * @brief Starts a sequential read.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
@@ -455,6 +507,8 @@ bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk) {
  * @retval TRUE         the operation failed.
  */
 bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
+  static const uint8_t start[] = {0xFF, 0xFC};
+  uint8_t b[1];
 
   chDbgCheck((mmcp != NULL) && (buffer != NULL), "mmcSequentialRead");
 
@@ -465,8 +519,19 @@ bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
   }
   chSysUnlock();
 
-  /**/
+  spiSend(mmcp->mmc_spip, sizeof(start), start);    /* Data prologue.       */
+  spiSend(mmcp->mmc_spip, MMC_BLOCK_SIZE, buffer);  /* Data.                */
+  spiIgnore(mmcp->mmc_spip, 2);                     /* CRC ignored.         */
+  spiReceive(mmcp->mmc_spip, 1, b);
+  if ((b[0] & 0x1F) == 0x05)
+    return FALSE;
 
+  /* Error.*/
+  spiUnselect(mmcp->mmc_spip);
+  chSysLock();
+  if (mmcp->mmc_state == MMC_WRITING)
+    mmcp->mmc_state = MMC_READY;
+  chSysUnlock();
   return TRUE;
 }
 

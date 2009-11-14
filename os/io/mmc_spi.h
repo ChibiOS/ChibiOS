@@ -178,6 +178,7 @@ extern "C" {
   void mmcStart(MMCDriver *mmcp, const MMCConfig *config);
   void mmcStop(MMCDriver *mmcp);
   bool_t mmcConnect(MMCDriver *mmcp);
+  bool_t mmcDisconnect(MMCDriver *mmcp);
   bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk);
   bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer);
   bool_t mmcStopSequentialRead(MMCDriver *mmcp);
