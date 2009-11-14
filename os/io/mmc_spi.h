@@ -192,6 +192,9 @@ extern "C" {
   bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk);
   bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer);
   bool_t mmcStopSequentialRead(MMCDriver *mmcp);
+  bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk);
+  bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer);
+  bool_t mmcStopSequentialWrite(MMCDriver *mmcp);
 #ifdef __cplusplus
 }
 #endif
