@@ -301,7 +301,7 @@ bool_t mmcConnect(MMCDriver *mmcp) {
     spiStart(mmcp->mmc_spip, mmcp->mmc_hscfg);
 
     /* Setting block size.*/
-    if (send_command(mmcp, MMC_CMDSETBLOCKLEN, MMC_BLOCK_SIZE) != 0x00)
+    if (send_command(mmcp, MMC_CMDSETBLOCKLEN, MMC_SECTOR_SIZE) != 0x00)
       return TRUE;
 
     /* Transition to MMC_READY state (if not extracted).*/
@@ -376,7 +376,7 @@ bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
   chSysUnlock();
 
   spiSelect(mmcp->mmc_spip);
-  send_hdr(mmcp, MMC_CMDREADMULTIPLE, startblk * MMC_BLOCK_SIZE);
+  send_hdr(mmcp, MMC_CMDREADMULTIPLE, startblk * MMC_SECTOR_SIZE);
   if (recvr1(mmcp) != 0x00) {
     spiUnselect(mmcp->mmc_spip);
     chSysLock();
@@ -413,7 +413,7 @@ bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
   for (i = 0; i < MMC_WAIT_DATA; i++) {
     spiReceive(mmcp->mmc_spip, 1, buffer);
     if (buffer[0] == 0xFE) {
-      spiReceive(mmcp->mmc_spip, MMC_BLOCK_SIZE, buffer);
+      spiReceive(mmcp->mmc_spip, MMC_SECTOR_SIZE, buffer);
       /* CRC ignored. */
       spiIgnore(mmcp->mmc_spip, 2);
       return FALSE;
@@ -484,7 +484,7 @@ bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk) {
   chSysUnlock();
 
   spiSelect(mmcp->mmc_spip);
-  send_hdr(mmcp, MMC_CMDWRITEMULTIPLE, startblk * MMC_BLOCK_SIZE);
+  send_hdr(mmcp, MMC_CMDWRITEMULTIPLE, startblk * MMC_SECTOR_SIZE);
   if (recvr1(mmcp) != 0x00) {
     spiUnselect(mmcp->mmc_spip);
     chSysLock();
@@ -520,7 +520,7 @@ bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
   chSysUnlock();
 
   spiSend(mmcp->mmc_spip, sizeof(start), start);    /* Data prologue.       */
-  spiSend(mmcp->mmc_spip, MMC_BLOCK_SIZE, buffer);  /* Data.                */
+  spiSend(mmcp->mmc_spip, MMC_SECTOR_SIZE, buffer); /* Data.                */
   spiIgnore(mmcp->mmc_spip, 2);                     /* CRC ignored.         */
   spiReceive(mmcp->mmc_spip, 1, b);
   if ((b[0] & 0x1F) == 0x05)

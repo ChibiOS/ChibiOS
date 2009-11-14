@@ -34,8 +34,8 @@
 /**
  * @brief Block size for MMC transfers.
  */
-#if !defined(MMC_BLOCK_SIZE) || defined(__DOXYGEN__)
-#define MMC_BLOCK_SIZE          512
+#if !defined(MMC_SECTOR_SIZE) || defined(__DOXYGEN__)
+#define MMC_SECTOR_SIZE         512
 #endif
 
 /**
@@ -167,6 +167,16 @@ typedef struct {
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+/**
+ * @brief Returns the driver state.
+ */
+#define mmcGetDriverState(mmcp) ((mmcp)->mmc_state)
+
+/**
+ * @brief Returns the write protect status.
+ */
+#define mmcIsWriteProtected(mmcp) ((mmcp)->mmc_is_protected())
 
 #ifdef __cplusplus
 extern "C" {
