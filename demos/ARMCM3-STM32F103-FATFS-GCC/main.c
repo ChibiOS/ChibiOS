@@ -44,7 +44,7 @@ static SPIConfig ls_spicfg = {
 /*
  * MMC driver instance.
  */
-static MMCDriver MMCD1;
+MMCDriver MMCD1;
 
 /*
  * MMC configuration (empty).

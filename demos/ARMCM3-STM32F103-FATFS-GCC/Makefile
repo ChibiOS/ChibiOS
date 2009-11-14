@@ -60,12 +60,14 @@ CHIBIOS = ../..
 include ${CHIBIOS}/os/ports/GCC/ARMCM3/port.mk
 include ${CHIBIOS}/os/kernel/kernel.mk
 include ${CHIBIOS}/test/test.mk
+include ${CHIBIOS}/ext/fatfs/fatfs.mk
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
+       ${FATFSSRC} \
        ${CHIBIOS}/os/io/pal.c \
        ${CHIBIOS}/os/io/serial.c \
        ${CHIBIOS}/os/io/spi.c \
@@ -108,7 +110,8 @@ ASMSRC = $(PORTASM) \
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          ${CHIBIOS}/os/io \
          ${CHIBIOS}/os/io/platforms/STM32 \
-         ${CHIBIOS}/os/various
+         ${CHIBIOS}/os/various \
+         $(FATFSINC)
 
 #
 # Project, sources and paths
