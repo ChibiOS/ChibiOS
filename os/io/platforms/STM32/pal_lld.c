@@ -141,15 +141,15 @@ void _pal_lld_setgroupmode(ioportid_t port,
     mh <<= 4;
     crl <<= 4;
     crh <<= 4;
-    if ((mask & 1) == 0)
+    if ((mask & 0x0080) == 0)
       ml |= 0xf;
     else
       crl |= cfg;
-    if ((mask & 0x10000) == 0)
+    if ((mask & 0x8000) == 0)
       mh |= 0xf;
     else
       crh |= cfg;
-    mask >>= 1;
+    mask <<= 1;
   }
   port->CRH = (port->CRH & mh) | crh;
   port->CRL = (port->CRL & ml) | crl;

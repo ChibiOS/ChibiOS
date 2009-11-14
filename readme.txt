@@ -3,6 +3,7 @@
 *****************************************************************************
 
 *** 1.3.4 ***
+- FIX: Fixed bug in STM32 PAL port driver (bug 2897636).
 - FIX: Fixed problem with ARM-CM3 context switch when compiled at level
   -O0 (bug 2890382).
 - FIX: Fixed wrong conditional in chschd.c (bug 2888836).
