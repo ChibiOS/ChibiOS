@@ -58,7 +58,7 @@ static const MMCConfig mmc_cfg = {};
  */
 static bool_t mmc_is_inserted(void) {
 
-  return (bool_t)palReadPad(IOPORT3, GPIOC_MMCCP);
+  return palReadPad(IOPORT3, GPIOC_MMCCP);
 }
 
 /*
@@ -66,7 +66,7 @@ static bool_t mmc_is_inserted(void) {
  */
 static bool_t mmc_is_protected(void) {
 
-  return (bool_t)palReadPad(IOPORT3, GPIOC_MMCWP);
+  return !palReadPad(IOPORT3, GPIOC_MMCWP);
 }
 
 /**
