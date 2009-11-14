@@ -32,6 +32,13 @@
 /*===========================================================================*/
 
 /**
+ * @brief Block size for MMC transfers.
+ */
+#if !defined(MMC_BLOCK_SIZE) || defined(__DOXYGEN__)
+#define MMC_BLOCK_SIZE          512
+#endif
+
+/**
  * @brief Delays insertions.
  * @details If enabled this options inserts delays into the MMC waiting
  *          routines releasing some extra CPU time for the threads with
@@ -70,6 +77,7 @@
 #define MMC_CMDINIT             1
 #define MMC_CMDREADCSD          9
 #define MMC_CMDSTOP             12
+#define MMC_CMDSETBLOCKLEN      16
 #define MMC_CMDREAD             17
 #define MMC_CMDREADMULTIPLE     18
 #define MMC_CMDWRITE            24
