@@ -25,6 +25,8 @@
 #include <evtimer.h>
 #include <test.h>
 
+#include <ff.h>
+
 #include "board.h"
 
 /*
@@ -67,6 +69,11 @@ static bool_t mmc_is_protected(void) {
   return (bool_t)palReadPad(IOPORT3, GPIOC_MMCWP);
 }
 
+/**
+ * @brief FS object.
+ */
+FATFS MMC_FS;
+
 /*
  * Red LEDs blinker thread, times are in milliseconds.
  */
@@ -97,9 +104,19 @@ static void TimerHandler(eventid_t id) {
  * MMC card insertion event.
  */
 static void InsertHandler(eventid_t id) {
+  FRESULT err;
 
   (void)id;
-  mmcConnect(&MMCD1);
+  /*
+   * On insertion MMC initialization and FS mount.
+   */
+  if (mmcConnect(&MMCD1))
+    return;
+  err = f_mount(0, &MMC_FS);
+  if (err != FR_OK) {
+    mmcDisconnect(&MMCD1);
+    return;
+  }
 }
 
 /*
@@ -145,8 +162,6 @@ int main(int argc, char **argv) {
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-
-//  spiStop(&SPID1);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
