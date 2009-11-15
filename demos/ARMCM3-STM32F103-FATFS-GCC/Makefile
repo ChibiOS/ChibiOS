@@ -77,6 +77,7 @@ CSRC = ${PORTSRC} \
        ${CHIBIOS}/os/io/platforms/STM32/spi_lld.c \
        ${CHIBIOS}/os/io/platforms/STM32/stm32_dma.c \
        ${CHIBIOS}/os/various/evtimer.c \
+       ${CHIBIOS}/os/various/syscalls.c \
        board.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -158,7 +159,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all default C defines here, like -D_DEBUG=1
-DDEFS =
+DDEFS = -DSTDOUT_SD=SD2 -DSTDIN_SD=SD2
 
 # List all default ASM defines here, like -D_DEBUG=1
 DADEFS =

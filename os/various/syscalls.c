@@ -63,18 +63,31 @@
 #include <sys/types.h>
 
 #include <ch.h>
+#if defined(STDOUT_SD) || defined(STDIN_SD)
+#include <serial.h>
+#endif
 
 /***************************************************************************/
 
 int _read_r(struct _reent *r, int file, char * ptr, int len)
 {
   (void)r;
+#if defined(STDIN_SD)
+  if (!len || (file != 0)) {
+    errno = EINVAL;
+    return -1;
+  }
+  *ptr++ = chIOGet(&STDOUT_SD);
+  if (--len > 0)
+    len = chIORead(&STDOUT_SD, (uint8_t *)ptr, (size_t)len);
+  return len;
+#else
   (void)file;
   (void)ptr;
   (void)len;
-
   errno = EINVAL;
   return -1;
+#endif
 }
 
 /***************************************************************************/
@@ -93,10 +106,20 @@ int _lseek_r(struct _reent *r, int file, int ptr, int dir)
 
 int _write_r(struct _reent *r, int file, char * ptr, int len)
 {
+  int n;
+
   (void)r;
   (void)file;
   (void)ptr;
-
+#if defined(STDOUT_SD)
+  if (file != 1) {
+    errno = EINVAL;
+    return -1;
+  }
+  n = len;
+  while (n--)
+    chIOPut(&STDOUT_SD, *ptr++);
+#endif
   return len;
 }
 

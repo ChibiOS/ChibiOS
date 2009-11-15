@@ -27,52 +27,41 @@
 
 #include <ff.h>
 
+#include <stdio.h>
+#include <string.h>
+
 #include "board.h"
-
-/*
- * Maximum speed SPI configuration (18MHz, CPHA=0, CPOL=0, MSb first).
- */
-static SPIConfig hs_spicfg = {
-  IOPORT2, GPIOB_SPI2NSS, 0
-};
-
-/*
- * Low speed SPI configuration (281.250KHz, CPHA=0, CPOL=0, MSb first).
- */
-static SPIConfig ls_spicfg = {
-  IOPORT2, GPIOB_SPI2NSS, SPI_CR1_BR_2 | SPI_CR1_BR_1
-};
-
-/*
- * MMC driver instance.
- */
-MMCDriver MMCD1;
-
-/*
- * MMC configuration (empty).
- */
-static const MMCConfig mmc_cfg = {};
-
-/*
- * Card insertion verification.
- */
-static bool_t mmc_is_inserted(void) {
-
-  return palReadPad(IOPORT3, GPIOC_MMCCP);
-}
-
-/*
- * Card protection verification.
- */
-static bool_t mmc_is_protected(void) {
-
-  return !palReadPad(IOPORT3, GPIOC_MMCWP);
-}
 
 /**
  * @brief FS object.
  */
 FATFS MMC_FS;
+
+/**
+ * MMC driver instance.
+ */
+MMCDriver MMCD1;
+
+/* FS mounted and ready.*/
+static bool_t fs_ready = FALSE;
+
+/* Maximum speed SPI configuration (18MHz, CPHA=0, CPOL=0, MSb first).*/
+static SPIConfig hs_spicfg = {IOPORT2, GPIOB_SPI2NSS, 0};
+
+/* Low speed SPI configuration (281.250KHz, CPHA=0, CPOL=0, MSb first).*/
+static SPIConfig ls_spicfg = {IOPORT2, GPIOB_SPI2NSS, SPI_CR1_BR_2 | SPI_CR1_BR_1};
+
+/* MMC configuration (empty).*/
+static const MMCConfig mmc_cfg = {};
+
+/* Card insertion verification.*/
+static bool_t mmc_is_inserted(void) {return palReadPad(IOPORT3, GPIOC_MMCCP);}
+
+/* Card protection verification.*/
+static bool_t mmc_is_protected(void) {return !palReadPad(IOPORT3, GPIOC_MMCWP);}
+
+/* Generic large buffer.*/
+uint8_t fbuff[1024];
 
 /*
  * Red LEDs blinker thread, times are in milliseconds.
@@ -90,14 +79,65 @@ static msg_t Thread1(void *arg) {
   return 0;
 }
 
+static FRESULT scan_files(char *path)
+{
+  FRESULT res;
+  FILINFO fno;
+  DIR dir;
+  int i;
+  char *fn;
+
+  res = f_opendir(&dir, path);
+  if (res == FR_OK) {
+    i = strlen(path);
+    for (;;) {
+      res = f_readdir(&dir, &fno);
+      if (res != FR_OK || fno.fname[0] == 0)
+        break;
+      if (fno.fname[0] == '.')
+        continue;
+      fn = fno.fname;
+      if (fno.fattrib & AM_DIR) {
+        siprintf(&path[i], "/%s", fn);
+        res = scan_files(path);
+        if (res != FR_OK)
+          break;
+        path[i] = 0;
+      }
+      else {
+        iprintf("%s/%s\r\n", path, fn);
+      }
+    }
+  }
+  return res;
+}
+
 /*
  * Executed as event handler at 500mS intervals.
  */
 static void TimerHandler(eventid_t id) {
 
   (void)id;
-  if (palReadPad(IOPORT1, GPIOA_BUTTON))
-    TestThread(&SD2);
+  if (palReadPad(IOPORT1, GPIOA_BUTTON)) {
+    if (fs_ready) {
+      FRESULT err;
+      uint32_t clusters;
+      FATFS *fsp;
+
+      err = f_getfree("/", &clusters, &fsp);
+      if (err != FR_OK) {
+        iprintf("FS: f_getfree() failed\r\n");
+        return;
+      }
+      iprintf("FS: %lu free clusters, %u sectors per cluster, %lu bytes free\r\n",
+              clusters, MMC_FS.csize,
+              clusters * (uint32_t)MMC_FS.csize * (uint32_t)MMC_SECTOR_SIZE);
+      fbuff[0] = 0;
+      scan_files((char *)fbuff);
+    }
+    else
+      TestThread(&SD2);
+  }
 }
 
 /*
@@ -105,25 +145,27 @@ static void TimerHandler(eventid_t id) {
  */
 static void InsertHandler(eventid_t id) {
   FRESULT err;
-  uint32_t clusters;
-  FATFS *fsp;
 
   (void)id;
+  iprintf("MMC: inserted\r\n");
   /*
    * On insertion MMC initialization and FS mount.
    */
-  if (mmcConnect(&MMCD1))
+  iprintf("MMC: initialization ");
+  if (mmcConnect(&MMCD1)) {
+    iprintf("failed\r\n");
     return;
+  }
+  iprintf("ok\r\n");
+  iprintf("FS: mount ");
   err = f_mount(0, &MMC_FS);
   if (err != FR_OK) {
+    iprintf("failed\r\n");
     mmcDisconnect(&MMCD1);
     return;
   }
-  err = f_getfree("/", &clusters, &fsp);
-  if (err != FR_OK) {
-    mmcDisconnect(&MMCD1);
-    return;
-  }
+  fs_ready = TRUE;
+  iprintf("ok\r\n");
 }
 
 /*
@@ -132,6 +174,8 @@ static void InsertHandler(eventid_t id) {
 static void RemoveHandler(eventid_t id) {
 
   (void)id;
+  iprintf("MMC: removed\r\n");
+  fs_ready = FALSE;
 }
 
 /*

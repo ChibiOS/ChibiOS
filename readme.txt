@@ -15,6 +15,9 @@
 - NEW: Generic MMC (over SPI) driver.
 - NEW: Added a STM32 demo that integrates the MMC driver and the FatFs
   file system.
+- NEW: Implemented I/O redirection on a serial driver into syscalls.c, now
+  it is possible (but not recommended) to use printf()/scanf() etc. An usage
+  example is in the new MMC/FatFs demo. Note the extra -D... into the Makefile.
 - CHANGE: Moved the STM32 firmware library under ./ext, this way there is no
   need to duplicate it in each demo program.
 - CHANGE: Moved the file stm32f10x.h from the demos to the platforms support

@@ -8,9 +8,12 @@ The demo will on an Olimex STM32-P103 board.
 
 ** The Demo **
 
-The demo flashes the board LED using a thread, by pressing the button located
-on the board the test procedure is activated with output on the serial port
-COM2 (USART2).
+This demo shows how to integrate the FatFs file system and use the SPI and MMC
+drivers.
+The demo flashes the board LED using a thread and monitors the MMC slot for
+a card insertion. By pressing the button located on the board while a card is
+inserted a directory dump on the serial port is performed, if a card is not
+inserted then the test procedure is activated.
 
 ** Build Procedure **
 
