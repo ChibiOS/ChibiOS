@@ -66,12 +66,6 @@ typedef struct {
    * @brief Number of the analog channels belonging to the conversion group.
    */
   adc_channels_num_t    acg_num_channels;
-} ADCConversionGroup;
-
-/**
- * @brief Driver configuration structure.
- */
-typedef struct {
   /**
    * @brief ADC CR1 register initialization data.
    */
@@ -100,6 +94,12 @@ typedef struct {
    * @brief ADC SQR3 register initialization data.
    */
   uint32_t              ac_sqr3;
+} ADCConversionGroup;
+
+/**
+ * @brief Driver configuration structure.
+ */
+typedef struct {
 } ADCConfig;
 
 /**
