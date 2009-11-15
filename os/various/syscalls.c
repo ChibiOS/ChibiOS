@@ -54,6 +54,7 @@
 *  28.03.09  mifi       First Version, based on the original syscall.c from
 *                       newlib version 1.17.0
 *  17.08.09  gdisirio   Modified the file for use under ChibiOS/RT
+*  15.11.09  gdisirio   Added read and write handling
 ****************************************************************************/
 
 #include <stdlib.h>
