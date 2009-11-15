@@ -276,28 +276,29 @@
       wait [label="MMC_WAIT\nWaiting Card"];
       inserted [label="MMC_INSERTED\nCard Inserted"];
       ready [label="MMC_READY\nCard Ready"];
-      reading [label="MMC_RUNNING\nReading"];
-      writing [label="MMC_RUNNING\nWriting"];
+      reading [label="MMC_READING\nReading"];
+      writing [label="MMC_WRITING\nWriting"];
 
       uninit -> stop [label="mmcObjectInit()"];
       stop -> wait [label="mmcStart()", constraint=false];
-      wait -> inserted [label="Insertion"];
-      inserted -> ready [label="mmcConnect()"];
+      wait -> inserted [label="insertion (inserted event)"];
       inserted -> inserted [label="mmcDisconnect()"];
+      inserted -> ready [label="mmcConnect()"];
+      ready -> ready [label="mmcConnect()"];
       ready -> inserted [label="mmcDisconnect()"];
       ready -> reading [label="mmcStartSequentialRead()"];
       reading -> reading [label="mmcSequentialRead()"];
       reading -> ready [label="mmcStopSequentialRead()"];
-      reading -> ready [label="Error"];
+      reading -> ready [label="read error"];
       ready -> writing [label="mmcStartSequentialWrite()"];
       writing -> writing [label="mmcSequentialWrite()"];
       writing -> ready [label="mmcStopSequentialWrite()"];
-      writing -> ready [label="Error"];
+      writing -> ready [label="write error"];
 
-      inserted -> wait [label="Removal"];
-      ready -> wait [label="Removal"];
-      reading -> wait [label="Removal"];
-      writing -> wait [label="Removal"];
+      inserted -> wait [label="removal (removed event)"];
+      ready -> wait [label="removal (removed event)"];
+      reading -> wait [label="removal (removed event)"];
+      writing -> wait [label="removal (removed event)"];
 
       any -> stop2 [label="mmcStop()"];
   }

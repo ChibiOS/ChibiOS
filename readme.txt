@@ -2,6 +2,8 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.3.5 ***
+
 *** 1.3.4 ***
 - FIX: Fixed bug in STM32 PAL port driver (bug 2897636).
 - FIX: Fixed problem with ARM-CM3 context switch when compiled at level
