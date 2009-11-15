@@ -26,6 +26,7 @@
  * - DMA capable, high performance, SPI driver.
  * - DMA capable, high performance, ADC driver.
  * - A demo supporting the kernel test suite.
+ * - A demo that demonstrate the FatFs use with the MMC driver.
  * .
  * @ingroup ARMCM3
  */
