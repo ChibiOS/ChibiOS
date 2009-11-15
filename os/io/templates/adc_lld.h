@@ -82,15 +82,15 @@ typedef struct {
   /**
    * @brief Driver state.
    */
-  adcstate_t            adc_state;
+  adcstate_t            ad_state;
   /**
    * @brief Current configuration data.
    */
-  const ADCConfig       *adc_config;
+  const ADCConfig       *ad_config;
   /**
    * @brief Semaphore for completion synchronization.
    */
-  Semaphore             adc_sem;
+  Semaphore             ac_sem;
   /* End of the mandatory fields.*/
 } ADCDriver;
 

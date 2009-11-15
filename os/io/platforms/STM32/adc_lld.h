@@ -72,7 +72,34 @@ typedef struct {
  * @brief Driver configuration structure.
  */
 typedef struct {
-
+  /**
+   * @brief ADC CR1 register initialization data.
+   */
+  uint32_t              ac_cr1;
+  /**
+   * @brief ADC CR2 register initialization data.
+   */
+  uint32_t              ac_cr2;
+  /**
+   * @brief ADC SMPR1 register initialization data.
+   */
+  uint32_t              ac_smpr1;
+  /**
+   * @brief ADC SMPR2 register initialization data.
+   */
+  uint32_t              ac_smpr2;
+  /**
+   * @brief ADC SQR1 register initialization data.
+   */
+  uint32_t              ac_sqr1;
+  /**
+   * @brief ADC SQR2 register initialization data.
+   */
+  uint32_t              ac_sqr2;
+  /**
+   * @brief ADC SQR3 register initialization data.
+   */
+  uint32_t              ac_sqr3;
 } ADCConfig;
 
 /**
@@ -82,15 +109,15 @@ typedef struct {
   /**
    * @brief Driver state.
    */
-  adcstate_t            adc_state;
+  adcstate_t            ad_state;
   /**
    * @brief Current configuration data.
    */
-  const ADCConfig       *adc_config;
+  const ADCConfig       *ad_config;
   /**
    * @brief Semaphore for completion synchronization.
    */
-  Semaphore             adc_sem;
+  Semaphore             ad_sem;
   /* End of the mandatory fields.*/
 } ADCDriver;
 
