@@ -76,7 +76,7 @@
 /**
  * @defgroup STM32_DMA STM32 DMA Support
  * @brief DMA support.
- * @details The DMA help driver allows to stop the DMA clock when no other
+ * @details The DMA helper driver allows to stop the DMA clock when no other
  *          drivers require its services.
  *
  * @ingroup STM32
