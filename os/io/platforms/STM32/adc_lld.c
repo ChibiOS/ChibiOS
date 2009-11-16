@@ -53,7 +53,6 @@ void adc_lld_init(void) {
 
 #if USE_STM32_ADC1
   adcObjectInit(&ADCD1);
-  DMA1_Channel1->CPAR = (uint32_t)ADC1->DR;
   ADCD1.ad_adc = ADC1;
   ADCD1.ad_dma = DMA1_Channel1;
 #endif
@@ -72,6 +71,7 @@ void adc_lld_start(ADCDriver *adcp) {
     if (&ADCD1 == adcp) {
       NVICEnableVector(DMA1_Channel1_IRQn, STM32_ADC1_IRQ_PRIORITY);
       dmaEnable(DMA1_ID);
+      DMA1_Channel1->CPAR = (uint32_t)&ADC1->DR;
       RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
     }
 #endif
