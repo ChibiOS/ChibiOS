@@ -82,7 +82,7 @@
  * @note @p BASEPRI_KERNEL >= @p STM32_SPI1_IRQ_PRIORITY > @p PRIORITY_PENDSV.
  */
 #if !defined(STM32_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI1_IRQ_PRIORITY     0xB0
+#define STM32_SPI1_IRQ_PRIORITY     0x60
 #endif
 
 /**
@@ -90,7 +90,7 @@
  * @note @p BASEPRI_KERNEL >= @p STM32_SPI2_IRQ_PRIORITY > @p PRIORITY_PENDSV.
  */
 #if !defined(STM32_SPI2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI2_IRQ_PRIORITY     0xB0
+#define STM32_SPI2_IRQ_PRIORITY     0x60
 #endif
 
 /*===========================================================================*/

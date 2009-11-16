@@ -26,6 +26,13 @@
 
 #include <ch.h>
 #include <adc.h>
+#include <stm32_dma.h>
+#include <nvic.h>
+
+#if USE_STM32_ADC1 || defined(__DOXYGEN__)
+/** @brief ADC1 driver identifier.*/
+ADCDriver ADCD1;
+#endif
 
 /*===========================================================================*/
 /* Low Level Driver local functions.                                         */
@@ -44,6 +51,12 @@
  */
 void adc_lld_init(void) {
 
+#if USE_STM32_ADC1
+  adcObjectInit(&ADCD1);
+  DMA1_Channel1->CPAR = (uint32_t)ADC1->DR;
+  ADCD1.ad_adc = ADC1;
+  ADCD1.ad_dma = DMA1_Channel1;
+#endif
 }
 
 /**
@@ -53,10 +66,16 @@ void adc_lld_init(void) {
  */
 void adc_lld_start(ADCDriver *adcp) {
 
-  if (adcp->adc_state == ADC_STOP) {
-    /* Clock activation.*/
+  /* If in stopped state then enables the ADC and DMA clocks.*/
+  if (adcp->ad_state == ADC_STOP) {
+#if USE_STM32_ADC1
+    if (&ADCD1 == adcp) {
+      NVICEnableVector(DMA1_Channel1_IRQn, STM32_ADC1_IRQ_PRIORITY);
+      dmaEnable(DMA1_ID);
+      RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
+    }
+#endif
   }
-  /* Configuration.*/
 }
 
 /**
@@ -66,6 +85,16 @@ void adc_lld_start(ADCDriver *adcp) {
  */
 void adc_lld_stop(ADCDriver *adcp) {
 
+  /* If in ready state then disables the SPI clock.*/
+  if (adcp->ad_state == ADC_READY) {
+#if USE_STM32_ADC1
+    if (&ADCD1 == adcp) {
+      NVICDisableVector(DMA1_Channel1_IRQn);
+      dmaDisable(DMA1_ID);
+      RCC->APB2ENR &= ~RCC_APB2ENR_ADC1EN;
+    }
+#endif
+  }
 }
 
 /**

@@ -890,21 +890,21 @@ DOCSET_BUNDLE_ID       = org.doxygen.Project
 # Microsoft HTML help workshop to generate a compiled HTML help file (.chm)
 # of the generated HTML documentation.
 
-GENERATE_HTMLHELP      = NO
+GENERATE_HTMLHELP      = YES
 
 # If the GENERATE_HTMLHELP tag is set to YES, the CHM_FILE tag can
 # be used to specify the file name of the resulting .chm file. You
 # can add a path in front of the file if the result should not be
 # written to the html output directory.
 
-CHM_FILE               =
+CHM_FILE               = ../ChibiOS_RT.chm
 
 # If the GENERATE_HTMLHELP tag is set to YES, the HHC_LOCATION tag can
 # be used to specify the location (absolute path including file name) of
 # the HTML help compiler (hhc.exe). If non-empty doxygen will try to run
 # the HTML help compiler on the generated index.hhp.
 
-HHC_LOCATION           =
+HHC_LOCATION           = "\"C:/Program Files/HTML Help Workshop/hhc.exe\""
 
 # If the GENERATE_HTMLHELP tag is set to YES, the GENERATE_CHI flag
 # controls if a separate .chi index file is generated (YES) or that

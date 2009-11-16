@@ -27,9 +27,40 @@
 #ifndef _ADC_LLD_H_
 #define _ADC_LLD_H_
 
+#undef FALSE
+#undef TRUE
+#include <stm32f10x.h>
+#define FALSE 0
+#define TRUE (!FALSE)
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief ADC1 driver enable switch.
+ * @details If set to @p TRUE the support for ADC1 is included.
+ * @note The default is @p TRUE.
+ */
+#if !defined(USE_STM32_ADC1) || defined(__DOXYGEN__)
+#define USE_STM32_ADC1              TRUE
+#endif
+
+/**
+ * @brief ADC1 DMA priority (0..3|lowest..highest).
+ */
+#if !defined(ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define ADC1_DMA_PRIORITY           1
+#endif
+
+/**
+ * @brief ADC1 interrupt priority level setting.
+ * @note @p BASEPRI_KERNEL >= @p STM32_ADC1_IRQ_PRIORITY > @p PRIORITY_PENDSV.
+ */
+#if !defined(STM32_ADC1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC1_IRQ_PRIORITY     0x70
+#endif
+
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -69,31 +100,31 @@ typedef struct {
   /**
    * @brief ADC CR1 register initialization data.
    */
-  uint32_t              ac_cr1;
+  uint32_t              acg_cr1;
   /**
    * @brief ADC CR2 register initialization data.
    */
-  uint32_t              ac_cr2;
+  uint32_t              acg_cr2;
   /**
    * @brief ADC SMPR1 register initialization data.
    */
-  uint32_t              ac_smpr1;
+  uint32_t              acg_smpr1;
   /**
    * @brief ADC SMPR2 register initialization data.
    */
-  uint32_t              ac_smpr2;
+  uint32_t              acg_smpr2;
   /**
    * @brief ADC SQR1 register initialization data.
    */
-  uint32_t              ac_sqr1;
+  uint32_t              acg_sqr1;
   /**
    * @brief ADC SQR2 register initialization data.
    */
-  uint32_t              ac_sqr2;
+  uint32_t              acg_sqr2;
   /**
    * @brief ADC SQR3 register initialization data.
    */
-  uint32_t              ac_sqr3;
+  uint32_t              acg_sqr3;
 } ADCConversionGroup;
 
 /**
@@ -119,6 +150,14 @@ typedef struct {
    */
   Semaphore             ad_sem;
   /* End of the mandatory fields.*/
+  /**
+   * @brief Pointer to the ADCx registers block.
+   */
+  ADC_TypeDef           *ad_adc;
+  /**
+   * @brief Pointer to the DMA channel registers block.
+   */
+  DMA_Channel_TypeDef   *ad_dma;
 } ADCDriver;
 
 /*===========================================================================*/

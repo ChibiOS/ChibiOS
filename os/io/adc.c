@@ -42,9 +42,9 @@ void adcInit(void) {
  */
 void adcObjectInit(ADCDriver *adcp) {
 
-  adcp->adc_state = ADC_STOP;
-  adcp->adc_config = NULL;
-  chSemInit(&adcp->adc_sem, 0);
+  adcp->ad_state = ADC_STOP;
+  adcp->ad_config = NULL;
+  chSemInit(&adcp->ad_sem, 0);
 }
 
 /**
@@ -58,12 +58,12 @@ void adcStart(ADCDriver *adcp, const ADCConfig *config) {
   chDbgCheck((adcp != NULL) && (config != NULL), "adcStart");
 
   chSysLock();
-  chDbgAssert((adcp->adc_state == ADC_STOP) || (adcp->adc_state == ADC_READY),
+  chDbgAssert((adcp->ad_state == ADC_STOP) || (adcp->ad_state == ADC_READY),
               "adcStart(), #1",
               "invalid state");
-  adcp->adc_config = config;
+  adcp->ad_config = config;
   adc_lld_start(adcp);
-  adcp->adc_state = ADC_READY;
+  adcp->ad_state = ADC_READY;
   chSysUnlock();
 }
 
@@ -77,11 +77,11 @@ void adcStop(ADCDriver *adcp) {
   chDbgCheck(adcp != NULL, "adcStop");
 
   chSysLock();
-  chDbgAssert((adcp->adc_state == ADC_STOP) || (adcp->adc_state == ADC_READY),
+  chDbgAssert((adcp->ad_state == ADC_STOP) || (adcp->ad_state == ADC_READY),
               "adcStop(), #1",
               "invalid state");
   adc_lld_stop(adcp);
-  adcp->adc_state = ADC_STOP;
+  adcp->ad_state = ADC_STOP;
   chSysUnlock();
 }
 
@@ -127,16 +127,16 @@ bool_t adcStartConversion(ADCDriver *adcp,
              "adcStartConversion");
 
   chSysLock();
-  chDbgAssert((adcp->adc_state == ADC_READY) ||
-              (adcp->adc_state == ADC_RUNNING),
+  chDbgAssert((adcp->ad_state == ADC_READY) ||
+              (adcp->ad_state == ADC_RUNNING),
               "adcStartConversion(), #1",
               "invalid state");
-  if (adcp->adc_state == ADC_RUNNING) {
+  if (adcp->ad_state == ADC_RUNNING) {
     chSysUnlock();
     return TRUE;
   }
   adc_lld_start_conversion(adcp, grpp, samples, depth, callback);
-  adcp->adc_state = ADC_RUNNING;
+  adcp->ad_state = ADC_RUNNING;
   chSysUnlock();
   return FALSE;
 }
@@ -151,12 +151,12 @@ void adcStopConversion(ADCDriver *adcp) {
   chDbgCheck(adcp != NULL, "adcStopConversion");
 
   chSysLock();
-  chDbgAssert((adcp->adc_state == ADC_READY) ||
-              (adcp->adc_state == ADC_RUNNING),
+  chDbgAssert((adcp->ad_state == ADC_READY) ||
+              (adcp->ad_state == ADC_RUNNING),
               "adcStopConversion(), #1",
               "invalid state");
   adc_lld_stop_conversion(adcp);
-  adcp->adc_state = ADC_READY;
+  adcp->ad_state = ADC_READY;
   chSysUnlock();
 }
 
@@ -176,12 +176,12 @@ void adcStopConversion(ADCDriver *adcp) {
 msg_t adcWaitConversion(ADCDriver *adcp, systime_t timeout) {
 
   chSysLock();
-  chDbgAssert((adcp->adc_state == ADC_READY) ||
-              (adcp->adc_state == ADC_RUNNING),
+  chDbgAssert((adcp->ad_state == ADC_READY) ||
+              (adcp->ad_state == ADC_RUNNING),
               "adcWaitConversion(), #1",
               "invalid state");
-  if (adcp->adc_state == ADC_RUNNING) {
-    if (chSemWaitTimeoutS(&adcp->adc_sem, timeout) == RDY_TIMEOUT) {
+  if (adcp->ad_state == ADC_RUNNING) {
+    if (chSemWaitTimeoutS(&adcp->ad_sem, timeout) == RDY_TIMEOUT) {
       chSysUnlock();
       return RDY_TIMEOUT;
     }
