@@ -42,6 +42,26 @@ ADCDriver ADCD1;
 /* Low Level Driver interrupt handlers.                                      */
 /*===========================================================================*/
 
+#if USE_STM32_ADC1 || defined(__DOXYGEN__)
+/**
+ * @brief ADC1 DMA interrupt handler (channel 1).
+ */
+CH_IRQ_HANDLER(Vector6C) {
+
+  CH_IRQ_PROLOGUE();
+
+  if ((DMA1->ISR & DMA_ISR_TEIF1) != 0)
+    chEvtBroadcastI(&ADCD1.ad_dmaerror);
+  else {
+    /* */
+  }
+  DMA1->IFCR |= DMA_IFCR_CGIF1  | DMA_IFCR_CTCIF1 |
+                DMA_IFCR_CHTIF1 | DMA_IFCR_CTEIF1;
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
 /*===========================================================================*/
 /* Low Level Driver exported functions.                                      */
 /*===========================================================================*/
@@ -55,6 +75,8 @@ void adc_lld_init(void) {
   adcObjectInit(&ADCD1);
   ADCD1.ad_adc = ADC1;
   ADCD1.ad_dma = DMA1_Channel1;
+  ADCD1.ad_dmaprio = STM32_ADC1_DMA_PRIORITY << 12;
+  chEvtInit(&ADCD1.ad_dmaerror);
 #endif
 }
 
@@ -72,9 +94,25 @@ void adc_lld_start(ADCDriver *adcp) {
       NVICEnableVector(DMA1_Channel1_IRQn, STM32_ADC1_IRQ_PRIORITY);
       dmaEnable(DMA1_ID);
       DMA1_Channel1->CPAR = (uint32_t)&ADC1->DR;
+/*      RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_ADCPRE) |
+                  adcp->ad_config->ac_prescaler;*/
       RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
     }
 #endif
+
+    /* ADC activation.*/
+    adcp->ad_adc->CR1 = 0;
+    adcp->ad_adc->CR2 = ADC_CR2_ADON;
+
+    /* Reset calibration just to be safe.*/
+    adcp->ad_adc->CR2 |= ADC_CR2_RSTCAL;
+    while ((adcp->ad_adc->CR2 & ADC_CR2_RSTCAL) != 0)
+      ;
+
+    /* Calibration.*/
+    adcp->ad_adc->CR2 |= ADC_CR2_CAL;
+    while ((adcp->ad_adc->CR2 & ADC_CR2_CAL) != 0)
+      ;
   }
 }
 
@@ -89,8 +127,11 @@ void adc_lld_stop(ADCDriver *adcp) {
   if (adcp->ad_state == ADC_READY) {
 #if USE_STM32_ADC1
     if (&ADCD1 == adcp) {
+      ADC1->CR1 = 0;
+      ADC1->CR2 = 0;
       NVICDisableVector(DMA1_Channel1_IRQn);
       dmaDisable(DMA1_ID);
+/*      RCC->CFGR &= ~RCC_CFGR_ADCPRE;*/
       RCC->APB2ENR &= ~RCC_APB2ENR_ADC1EN;
     }
 #endif
@@ -99,29 +140,12 @@ void adc_lld_stop(ADCDriver *adcp) {
 
 /**
  * @brief Starts an ADC conversion.
- * @details Starts a conversion operation, there are two kind of conversion
- *          modes:
- *          - <b>LINEAR</b>, this mode is activated when the @p callback
- *            parameter is set to @p NULL, in this mode the buffer is filled
- *            once and then the conversion stops automatically.
- *          - <b>CIRCULAR</b>, when a callback function is defined the
- *            conversion never stops and the buffer is filled circularly.
- *            During the conversion the callback function is invoked when
- *            the buffer is 50% filled and when the buffer is 100% filled,
- *            this way is possible to process the conversion stream in real
- *            time. This kind of conversion can only be stopped by explicitly
- *            invoking @p adcStopConversion().
- *          .
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @param[in] grpp      pointer to a @p ADCConversionGroup object
  * @param[out] samples  pointer to the samples buffer
  * @param[in] depth     buffer depth (matrix rows number). The buffer depth
  *                      must be one or an even number.
- * @param[in] callback  pointer to the conversion callback function
- * @return The operation status.
- * @retval FALSE        the conversion has been started.
- * @retval TRUE         the driver is busy, conversion not started.
  *
  * @note The buffer is organized as a matrix of M*N elements where M is the
  *       channels number configured into the conversion group and N is the
@@ -131,9 +155,31 @@ void adc_lld_stop(ADCDriver *adcp) {
 void adc_lld_start_conversion(ADCDriver *adcp,
                               ADCConversionGroup *grpp,
                               void *samples,
-                              size_t depth,
-                              adccallback_t callback) {
+                              size_t depth) {
 
+  /* DMA setup.*/
+  adcp->ad_dma->CMAR  = (uint32_t)samples;
+  if (depth > 1) {
+    adcp->ad_dma->CNDTR = (uint32_t)grpp->acg_num_channels * (uint32_t)depth;
+    adcp->ad_dma->CCR = adcp->ad_dmaprio |
+                        DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0 | DMA_CCR1_MINC |
+                        DMA_CCR1_TCIE | DMA_CCR1_TEIE | DMA_CCR1_HTIE;
+  }
+  else {
+    adcp->ad_dma->CNDTR = (uint32_t)grpp->acg_num_channels;
+    adcp->ad_dma->CCR = adcp->ad_dmaprio |
+                        DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0 | DMA_CCR1_MINC |
+                        DMA_CCR1_TCIE | DMA_CCR1_TEIE;
+  }
+
+  /* ADC setup.*/
+  adcp->ad_adc->SMPR1 = grpp->acg_smpr1;
+  adcp->ad_adc->SMPR2 = grpp->acg_smpr2;
+  adcp->ad_adc->SQR1  = grpp->acg_sqr1;
+  adcp->ad_adc->SQR2  = grpp->acg_sqr2;
+  adcp->ad_adc->SQR3  = grpp->acg_sqr3;
+  adcp->ad_adc->CR1   = grpp->acg_cr1 | ADC_CR1_SCAN;
+  adcp->ad_adc->CR2   = grpp->acg_cr2 | ADC_CR2_DMA | ADC_CR2_ADON;
 }
 
 /**
@@ -143,6 +189,8 @@ void adc_lld_start_conversion(ADCDriver *adcp,
  */
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 
+  adcp->ad_adc->CR2 &= ~(ADC_CR2_SWSTART | ADC_CR2_EXTTRIG);
+  adcp->ad_dma->CCR = 0;
 }
 
 /** @} */

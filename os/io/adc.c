@@ -44,6 +44,7 @@ void adcObjectInit(ADCDriver *adcp) {
 
   adcp->ad_state = ADC_STOP;
   adcp->ad_config = NULL;
+  adcp->ad_callback = NULL;
   chSemInit(&adcp->ad_sem, 0);
 }
 
@@ -135,7 +136,8 @@ bool_t adcStartConversion(ADCDriver *adcp,
     chSysUnlock();
     return TRUE;
   }
-  adc_lld_start_conversion(adcp, grpp, samples, depth, callback);
+  adcp->ad_callback = callback;
+  adc_lld_start_conversion(adcp, grpp, samples, depth);
   adcp->ad_state = ADC_RUNNING;
   chSysUnlock();
   return FALSE;

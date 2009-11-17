@@ -49,8 +49,8 @@
 /**
  * @brief ADC1 DMA priority (0..3|lowest..highest).
  */
-#if !defined(ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define ADC1_DMA_PRIORITY           1
+#if !defined(STM32_ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC1_DMA_PRIORITY     1
 #endif
 
 /**
@@ -60,7 +60,6 @@
 #if !defined(STM32_ADC1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_ADC1_IRQ_PRIORITY     0x70
 #endif
-
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -99,10 +98,15 @@ typedef struct {
   adc_channels_num_t    acg_num_channels;
   /**
    * @brief ADC CR1 register initialization data.
+   * @note All the required bits must be defined into this field except
+   *       @p ADC_CR1_SCAN that is enforced inside the driver.
    */
   uint32_t              acg_cr1;
   /**
    * @brief ADC CR2 register initialization data.
+   * @note All the required bits must be defined into this field except
+   *       @p ADC_CR2_DMA and @p ADC_CR2_ADON that are enforced inside the
+   *       driver.
    */
   uint32_t              acg_cr2;
   /**
@@ -131,6 +135,13 @@ typedef struct {
  * @brief Driver configuration structure.
  */
 typedef struct {
+  /* * <----------
+   * @brief ADC prescaler setting.
+   * @note This field can assume one of the following values:
+   *       @p RCC_CFGR_ADCPRE_DIV2, @p RCC_CFGR_ADCPRE_DIV4,
+   *       @p RCC_CFGR_ADCPRE_DIV6, @p RCC_CFGR_ADCPRE_DIV8.
+   */
+/*  uint32_t              ac_prescaler;*/
 } ADCConfig;
 
 /**
@@ -149,6 +160,10 @@ typedef struct {
    * @brief Semaphore for completion synchronization.
    */
   Semaphore             ad_sem;
+  /**
+   * @brief Current callback function or @p NULL.
+   */
+  adccallback_t         ad_callback;
   /* End of the mandatory fields.*/
   /**
    * @brief Pointer to the ADCx registers block.
@@ -158,6 +173,14 @@ typedef struct {
    * @brief Pointer to the DMA channel registers block.
    */
   DMA_Channel_TypeDef   *ad_dma;
+  /**
+   * @brief DMA priority bit mask.
+   */
+  uint32_t              ad_dmaprio;
+  /**
+   * @brief DMA error event.
+   */
+  EventSource           ad_dmaerror;
 } ADCDriver;
 
 /*===========================================================================*/
@@ -173,8 +196,7 @@ extern "C" {
   void adc_lld_start_conversion(ADCDriver *adcp,
                                 ADCConversionGroup *grpp,
                                 void *samples,
-                                size_t depth,
-                                adccallback_t callback);
+                                size_t depth);
   void adc_lld_stop_conversion(ADCDriver *adcp);
 #ifdef __cplusplus
 }

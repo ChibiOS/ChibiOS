@@ -91,6 +91,10 @@ typedef struct {
    * @brief Semaphore for completion synchronization.
    */
   Semaphore             ac_sem;
+  /**
+   * @brief Current callback function or @p NULL.
+   */
+  adccallback_t         ad_callback;
   /* End of the mandatory fields.*/
 } ADCDriver;
 
@@ -107,8 +111,7 @@ extern "C" {
   void adc_lld_start_conversion(ADCDriver *adcp,
                                 ADCConversionGroup *grpp,
                                 void *samples,
-                                size_t depth,
-                                adccallback_t callback);
+                                size_t depth);
   void adc_lld_stop_conversion(ADCDriver *adcp);
 #ifdef __cplusplus
 }
