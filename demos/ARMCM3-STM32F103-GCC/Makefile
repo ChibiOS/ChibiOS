@@ -68,13 +68,8 @@ CSRC = ${PORTSRC} \
        ${TESTSRC} \
        ${CHIBIOS}/os/io/pal.c \
        ${CHIBIOS}/os/io/serial.c \
-       ${CHIBIOS}/os/io/adc.c \
-       ${CHIBIOS}/os/io/spi.c \
-       ${CHIBIOS}/os/io/mmc_spi.c \
        ${CHIBIOS}/os/io/platforms/STM32/pal_lld.c \
        ${CHIBIOS}/os/io/platforms/STM32/serial_lld.c \
-       ${CHIBIOS}/os/io/platforms/STM32/adc_lld.c \
-       ${CHIBIOS}/os/io/platforms/STM32/spi_lld.c \
        ${CHIBIOS}/os/io/platforms/STM32/stm32_dma.c \
        ${CHIBIOS}/os/various/evtimer.c \
        board.c main.c
