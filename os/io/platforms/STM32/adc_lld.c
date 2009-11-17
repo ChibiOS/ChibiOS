@@ -51,7 +51,7 @@ CH_IRQ_HANDLER(Vector6C) {
   CH_IRQ_PROLOGUE();
 
   if ((DMA1->ISR & DMA_ISR_TEIF1) != 0)
-    chEvtBroadcastI(&ADCD1.ad_dmaerror);
+    STM32_ADC1_DMA_ERROR_HOOK();
   else {
     /* */
   }
@@ -76,7 +76,6 @@ void adc_lld_init(void) {
   ADCD1.ad_adc = ADC1;
   ADCD1.ad_dma = DMA1_Channel1;
   ADCD1.ad_dmaprio = STM32_ADC1_DMA_PRIORITY << 12;
-  chEvtInit(&ADCD1.ad_dmaerror);
 #endif
 }
 

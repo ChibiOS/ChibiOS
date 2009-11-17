@@ -61,6 +61,13 @@
 #define STM32_ADC1_IRQ_PRIORITY     0x70
 #endif
 
+/**
+ * @brief ADC1 DMA error hook.
+ */
+#if !defined(STM32_ADC1_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_ADC1_DMA_ERROR_HOOK() chSysHalt()
+#endif
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -177,10 +184,6 @@ typedef struct {
    * @brief DMA priority bit mask.
    */
   uint32_t              ad_dmaprio;
-  /**
-   * @brief DMA error event.
-   */
-  EventSource           ad_dmaerror;
 } ADCDriver;
 
 /*===========================================================================*/

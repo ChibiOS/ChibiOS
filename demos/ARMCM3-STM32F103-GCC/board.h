@@ -83,6 +83,9 @@
  * IO pins assignments.
  */
 #define GPIOA_BUTTON            0
+#define GPIOA_SPI1NSS           4
+
+#define GPIOB_SPI2NSS           12
 
 #define GPIOC_MMCWP             6
 #define GPIOC_MMCCP             7
