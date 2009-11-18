@@ -207,17 +207,17 @@ void spi_lld_start(SPIDriver *spip) {
   if (spip->spd_state == SPI_STOP) {
 #if USE_STM32_SPI1
     if (&SPID1 == spip) {
+      dmaEnable(DMA1_ID);
       NVICEnableVector(DMA1_Channel2_IRQn, STM32_SPI1_IRQ_PRIORITY);
       NVICEnableVector(DMA1_Channel3_IRQn, STM32_SPI1_IRQ_PRIORITY);
-      dmaEnable(DMA1_ID);
       RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
     }
 #endif
 #if USE_STM32_SPI2
     if (&SPID2 == spip) {
+      dmaEnable(DMA1_ID);
       NVICEnableVector(DMA1_Channel4_IRQn, STM32_SPI2_IRQ_PRIORITY);
       NVICEnableVector(DMA1_Channel5_IRQn, STM32_SPI2_IRQ_PRIORITY);
-      dmaEnable(DMA1_ID);
       RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
     }
 #endif

@@ -3,6 +3,8 @@
 *****************************************************************************
 
 *** 1.3.5 ***
+- CHANGE: In the Cortex-M3 port, modified the NVICEnableVector() function
+  to make it clear pending interrupts.
 
 *** 1.3.4 ***
 - FIX: Fixed bug in STM32 PAL port driver (bug 2897636).

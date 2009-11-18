@@ -39,6 +39,7 @@ void NVICEnableVector(uint32_t n, uint32_t prio) {
   unsigned sh = (n & 3) << 3;
 
   NVIC_IPR(n >> 2) = (NVIC_IPR(n >> 2) & ~(0xFF << sh)) | (prio << sh);
+  NVIC_ICPR(n >> 5) = 1 << (n & 0x1F);
   NVIC_ISER(n >> 5) = 1 << (n & 0x1F);
 }
 
