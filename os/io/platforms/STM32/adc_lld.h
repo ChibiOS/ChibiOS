@@ -63,6 +63,8 @@
 
 /**
  * @brief ADC1 DMA error hook.
+ * @note The default action for DMA errors is a system halt because DMA error
+ *       can only happen because programming errors.
  */
 #if !defined(STM32_ADC1_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
 #define STM32_ADC1_DMA_ERROR_HOOK() chSysHalt()
@@ -99,6 +101,11 @@ typedef void (*adccallback_t)(adcsample_t *buffer, size_t n);
  *          operation.
  */
 typedef struct {
+  /**
+   * @brief Enables the circular buffer mode for the group.
+   */
+  bool_t                acg_circular;
+  /* End of the mandatory fields.*/
   /**
    * @brief Number of the analog channels belonging to the conversion group.
    */
@@ -140,6 +147,7 @@ typedef struct {
 
 /**
  * @brief Driver configuration structure.
+ * @note It could be empty on some architectures.
  */
 typedef struct {
   /* * <----------
@@ -164,13 +172,25 @@ typedef struct {
    */
   const ADCConfig       *ad_config;
   /**
-   * @brief Semaphore for completion synchronization.
+   * @brief Synchronization semaphore.
    */
   Semaphore             ad_sem;
   /**
    * @brief Current callback function or @p NULL.
    */
   adccallback_t         ad_callback;
+  /**
+   * @brief Current samples buffer pointer or @p NULL.
+   */
+  adcsample_t           *ad_samples;
+  /**
+   * @brief Current samples buffer depth or @p 0.
+   */
+  size_t                ad_depth;
+  /**
+   * @brief Current conversion group pointer or @p NULL.
+   */
+  ADCConversionGroup    *ad_grpp;
   /* End of the mandatory fields.*/
   /**
    * @brief Pointer to the ADCx registers block.
@@ -190,20 +210,19 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+/** @cond never*/
 #ifdef __cplusplus
 extern "C" {
 #endif
   void adc_lld_init(void);
   void adc_lld_start(ADCDriver *adcp);
   void adc_lld_stop(ADCDriver *adcp);
-  void adc_lld_start_conversion(ADCDriver *adcp,
-                                ADCConversionGroup *grpp,
-                                void *samples,
-                                size_t depth);
+  void adc_lld_start_conversion(ADCDriver *adcp);
   void adc_lld_stop_conversion(ADCDriver *adcp);
 #ifdef __cplusplus
 }
 #endif
+/** @endcond*/
 
 #endif /* _ADC_LLD_H_ */
 

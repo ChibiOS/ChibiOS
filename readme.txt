@@ -3,8 +3,13 @@
 *****************************************************************************
 
 *** 1.3.5 ***
+- NEW: STM32 ADC driver implementation with DMA support.
+- CHANGE: In the STM32 drivers now the DMA errors are handled by hook macros
+  rather than by events. The default action is to halt the system but users
+  are able to override this and define custom handling.
 - CHANGE: In the Cortex-M3 port, modified the NVICEnableVector() function
   to make it clear pending interrupts.
+- CHANGE: Minor changes to the ADC driver model.
 
 *** 1.3.4 ***
 - FIX: Fixed bug in STM32 PAL port driver (bug 2897636).

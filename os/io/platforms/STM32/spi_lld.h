@@ -93,6 +93,24 @@
 #define STM32_SPI2_IRQ_PRIORITY     0x60
 #endif
 
+/**
+ * @brief SPI1 DMA error hook.
+ * @note The default action for DMA errors is a system halt because DMA error
+ *       can only happen because programming errors.
+ */
+#if !defined(STM32_SPI1_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_SPI1_DMA_ERROR_HOOK() chSysHalt()
+#endif
+
+/**
+ * @brief SPI2 DMA error hook.
+ * @note The default action for DMA errors is a system halt because DMA error
+ *       can only happen because programming errors.
+ */
+#if !defined(STM32_SPI2_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_SPI2_DMA_ERROR_HOOK() chSysHalt()
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -158,10 +176,6 @@ typedef struct {
    * @brief DMA priority bit mask.
    */
   uint32_t              spd_dmaprio;
-  /**
-   * @brief DMA error event.
-   */
-  EventSource           spd_dmaerror;
 } SPIDriver;
 
 /*===========================================================================*/

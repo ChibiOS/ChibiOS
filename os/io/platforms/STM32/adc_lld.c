@@ -29,10 +29,18 @@
 #include <stm32_dma.h>
 #include <nvic.h>
 
+/*===========================================================================*/
+/* Low Level Driver exported variables.                                      */
+/*===========================================================================*/
+
 #if USE_STM32_ADC1 || defined(__DOXYGEN__)
 /** @brief ADC1 driver identifier.*/
 ADCDriver ADCD1;
 #endif
+
+/*===========================================================================*/
+/* Low Level Driver local variables.                                         */
+/*===========================================================================*/
 
 /*===========================================================================*/
 /* Low Level Driver local functions.                                         */
@@ -47,13 +55,43 @@ ADCDriver ADCD1;
  * @brief ADC1 DMA interrupt handler (channel 1).
  */
 CH_IRQ_HANDLER(Vector6C) {
+  uint32_t isr;
 
   CH_IRQ_PROLOGUE();
 
-  if ((DMA1->ISR & DMA_ISR_TEIF1) != 0)
+  isr = DMA1->ISR;
+  if ((isr & DMA_ISR_HTIF1) != 0) {
+    /* Half transfer processing.*/
+    if (ADCD1.ad_callback != NULL) {
+      /* Invokes the callback passing the 1st half of the buffer.*/
+      ADCD1.ad_callback(ADCD1.ad_samples, ADCD1.ad_depth / 2);
+    }
+  }
+  if ((isr & DMA_ISR_TCIF1) != 0) {
+    /* Transfer complete processing.*/
+    if (!ADCD1.ad_grpp->acg_circular) {
+      /* End conversion.*/
+      adc_lld_stop_conversion(&ADCD1);
+      ADCD1.ad_grpp  = NULL;
+      ADCD1.ad_state = ADC_READY;
+      chSemResetI(&ADCD1.ad_sem, 0);
+    }
+    /* Callback handling.*/
+    if (ADCD1.ad_callback != NULL) {
+      if (ADCD1.ad_depth > 1) {
+        /* Invokes the callback passing the 2nd half of the buffer.*/
+        size_t half = ADCD1.ad_depth / 2;
+        ADCD1.ad_callback(ADCD1.ad_samples + half, half);
+      }
+      else {
+        /* Invokes the callback passing the while buffer.*/
+        ADCD1.ad_callback(ADCD1.ad_samples, ADCD1.ad_depth);
+      }
+    }
+  }
+  if ((isr & DMA_ISR_TEIF1) != 0) {
+    /* DMA error processing.*/
     STM32_ADC1_DMA_ERROR_HOOK();
-  else {
-    /* */
   }
   DMA1->IFCR |= DMA_IFCR_CGIF1  | DMA_IFCR_CTCIF1 |
                 DMA_IFCR_CHTIF1 | DMA_IFCR_CTEIF1;
@@ -72,10 +110,28 @@ CH_IRQ_HANDLER(Vector6C) {
 void adc_lld_init(void) {
 
 #if USE_STM32_ADC1
+  /* Driver initialization.*/
   adcObjectInit(&ADCD1);
   ADCD1.ad_adc = ADC1;
   ADCD1.ad_dma = DMA1_Channel1;
   ADCD1.ad_dmaprio = STM32_ADC1_DMA_PRIORITY << 12;
+
+  /* Temporary activation.*/
+  ADC1->CR1 = 0;
+  ADC1->CR2 = ADC_CR2_ADON;
+
+  /* Reset calibration just to be safe.*/
+  ADC1->CR2 = ADC_CR2_ADON | ADC_CR2_RSTCAL;
+  while ((ADC1->CR2 & ADC_CR2_RSTCAL) != 0)
+    ;
+
+  /* Calibration.*/
+  ADC1->CR2 = ADC_CR2_ADON | ADC_CR2_CAL;
+  while ((ADC1->CR2 & ADC_CR2_CAL) != 0)
+    ;
+
+  /* Return the ADC in low power mode.*/
+  ADC1->CR2 = 0;
 #endif
 }
 
@@ -90,8 +146,8 @@ void adc_lld_start(ADCDriver *adcp) {
   if (adcp->ad_state == ADC_STOP) {
 #if USE_STM32_ADC1
     if (&ADCD1 == adcp) {
+      dmaEnable(DMA1_ID);   /* NOTE: Must be enabled before the IRQs.*/
       NVICEnableVector(DMA1_Channel1_IRQn, STM32_ADC1_IRQ_PRIORITY);
-      dmaEnable(DMA1_ID);
       DMA1_Channel1->CPAR = (uint32_t)&ADC1->DR;
 /*      RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_ADCPRE) |
                   adcp->ad_config->ac_prescaler;*/
@@ -99,19 +155,10 @@ void adc_lld_start(ADCDriver *adcp) {
     }
 #endif
 
-    /* ADC activation.*/
-    adcp->ad_adc->CR1 = 0;
+    /* ADC activation, the calibration procedure has already been performed
+       during initialization.*/
+    adcp->ad_adc->CR1 = ADC_CR1_SCAN;
     adcp->ad_adc->CR2 = ADC_CR2_ADON;
-
-    /* Reset calibration just to be safe.*/
-    adcp->ad_adc->CR2 |= ADC_CR2_RSTCAL;
-    while ((adcp->ad_adc->CR2 & ADC_CR2_RSTCAL) != 0)
-      ;
-
-    /* Calibration.*/
-    adcp->ad_adc->CR2 |= ADC_CR2_CAL;
-    while ((adcp->ad_adc->CR2 & ADC_CR2_CAL) != 0)
-      ;
   }
 }
 
@@ -130,7 +177,6 @@ void adc_lld_stop(ADCDriver *adcp) {
       ADC1->CR2 = 0;
       NVICDisableVector(DMA1_Channel1_IRQn);
       dmaDisable(DMA1_ID);
-/*      RCC->CFGR &= ~RCC_CFGR_ADCPRE;*/
       RCC->APB2ENR &= ~RCC_APB2ENR_ADC1EN;
     }
 #endif
@@ -141,35 +187,27 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @brief Starts an ADC conversion.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
- * @param[in] grpp      pointer to a @p ADCConversionGroup object
- * @param[out] samples  pointer to the samples buffer
- * @param[in] depth     buffer depth (matrix rows number). The buffer depth
- *                      must be one or an even number.
- *
- * @note The buffer is organized as a matrix of M*N elements where M is the
- *       channels number configured into the conversion group and N is the
- *       buffer depth. The samples are sequentially written into the buffer
- *       with no gaps.
  */
-void adc_lld_start_conversion(ADCDriver *adcp,
-                              ADCConversionGroup *grpp,
-                              void *samples,
-                              size_t depth) {
+void adc_lld_start_conversion(ADCDriver *adcp) {
+  uint32_t ccr, n;
+  ADCConversionGroup *grpp = adcp->ad_grpp;
 
   /* DMA setup.*/
-  adcp->ad_dma->CMAR  = (uint32_t)samples;
-  if (depth > 1) {
-    adcp->ad_dma->CNDTR = (uint32_t)grpp->acg_num_channels * (uint32_t)depth;
-    adcp->ad_dma->CCR = adcp->ad_dmaprio |
-                        DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0 | DMA_CCR1_MINC |
-                        DMA_CCR1_TCIE | DMA_CCR1_TEIE | DMA_CCR1_HTIE;
+  adcp->ad_dma->CMAR  = (uint32_t)adcp->ad_samples;
+  ccr = adcp->ad_dmaprio | DMA_CCR1_EN   | DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0 |
+                           DMA_CCR1_MINC | DMA_CCR1_TCIE    | DMA_CCR1_TEIE;
+  if (grpp->acg_circular)
+    ccr |= DMA_CCR1_CIRC;
+  if (adcp->ad_depth > 1) {
+    /* If the buffer depth is greater than one then the half transfer interrupt
+       interrupt is enabled in order to allows streaming processing.*/
+    ccr |= DMA_CCR1_HTIE;
+    n = (uint32_t)grpp->acg_num_channels * (uint32_t)adcp->ad_depth;
   }
-  else {
-    adcp->ad_dma->CNDTR = (uint32_t)grpp->acg_num_channels;
-    adcp->ad_dma->CCR = adcp->ad_dmaprio |
-                        DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0 | DMA_CCR1_MINC |
-                        DMA_CCR1_TCIE | DMA_CCR1_TEIE;
-  }
+  else
+    n = (uint32_t)grpp->acg_num_channels;
+  adcp->ad_dma->CNDTR = n;
+  adcp->ad_dma->CCR = ccr;
 
   /* ADC setup.*/
   adcp->ad_adc->SMPR1 = grpp->acg_smpr1;

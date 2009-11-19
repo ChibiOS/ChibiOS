@@ -34,10 +34,18 @@
 SPIDriver SPID1;
 #endif
 
+/*===========================================================================*/
+/* Low Level Driver exported variables.                                      */
+/*===========================================================================*/
+
 #if USE_STM32_SPI2 || defined(__DOXYGEN__)
 /** @brief SPI2 driver identifier.*/
 SPIDriver SPID2;
 #endif
+
+/*===========================================================================*/
+/* Low Level Driver local variables.                                         */
+/*===========================================================================*/
 
 static uint16_t dummyrx;
 static uint16_t dummytx;
@@ -107,8 +115,9 @@ CH_IRQ_HANDLER(Vector70) {
   CH_IRQ_PROLOGUE();
 
   spi_stop(&SPID1);
-  if ((DMA1->ISR & DMA_ISR_TEIF2) != 0)
-    chEvtBroadcastI(&SPID1.spd_dmaerror);
+  if ((DMA1->ISR & DMA_ISR_TEIF2) != 0) {
+    STM32_SPI1_DMA_ERROR_HOOK();
+  }
   DMA1->IFCR |= DMA_IFCR_CGIF2  | DMA_IFCR_CTCIF2 |
                 DMA_IFCR_CHTIF2 | DMA_IFCR_CTEIF2;
 
@@ -122,7 +131,7 @@ CH_IRQ_HANDLER(Vector74) {
 
   CH_IRQ_PROLOGUE();
 
-  chEvtBroadcastI(&SPID1.spd_dmaerror);
+  STM32_SPI1_DMA_ERROR_HOOK();
   DMA1->IFCR |= DMA_IFCR_CGIF3  | DMA_IFCR_CTCIF3 |
                 DMA_IFCR_CHTIF3 | DMA_IFCR_CTEIF3;
 
@@ -139,8 +148,9 @@ CH_IRQ_HANDLER(Vector78) {
   CH_IRQ_PROLOGUE();
 
   spi_stop(&SPID2);
-  if ((DMA1->ISR & DMA_ISR_TEIF4) != 0)
-    chEvtBroadcastI(&SPID2.spd_dmaerror);
+  if ((DMA1->ISR & DMA_ISR_TEIF4) != 0) {
+    STM32_SPI2_DMA_ERROR_HOOK();
+  }
   DMA1->IFCR |= DMA_IFCR_CGIF4  | DMA_IFCR_CTCIF4 |
                 DMA_IFCR_CHTIF4 | DMA_IFCR_CTEIF4;
 
@@ -154,7 +164,7 @@ CH_IRQ_HANDLER(Vector7C) {
 
   CH_IRQ_PROLOGUE();
 
-  chEvtBroadcastI(&SPID2.spd_dmaerror);
+  STM32_SPI2_DMA_ERROR_HOOK();
   DMA1->IFCR |= DMA_IFCR_CGIF5  | DMA_IFCR_CTCIF5 |
                 DMA_IFCR_CHTIF5 | DMA_IFCR_CTEIF5;
 
@@ -180,7 +190,6 @@ void spi_lld_init(void) {
   SPID1.spd_dmarx   = DMA1_Channel2;
   SPID1.spd_dmatx   = DMA1_Channel3;
   SPID1.spd_dmaprio = STM32_SPI1_DMA_PRIORITY << 12;
-  chEvtInit(&SPID1.spd_dmaerror);
   GPIOA->CRL = (GPIOA->CRL & 0x000FFFFF) | 0xB4B00000;
 #endif
 
@@ -191,7 +200,6 @@ void spi_lld_init(void) {
   SPID2.spd_dmarx   = DMA1_Channel4;
   SPID2.spd_dmatx   = DMA1_Channel5;
   SPID2.spd_dmaprio = STM32_SPI2_DMA_PRIORITY << 12;
-  chEvtInit(&SPID2.spd_dmaerror);
   GPIOB->CRH = (GPIOB->CRH & 0x000FFFFF) | 0xB4B00000;
 #endif
 }
@@ -207,7 +215,7 @@ void spi_lld_start(SPIDriver *spip) {
   if (spip->spd_state == SPI_STOP) {
 #if USE_STM32_SPI1
     if (&SPID1 == spip) {
-      dmaEnable(DMA1_ID);
+      dmaEnable(DMA1_ID);   /* NOTE: Must be enabled before the IRQs.*/
       NVICEnableVector(DMA1_Channel2_IRQn, STM32_SPI1_IRQ_PRIORITY);
       NVICEnableVector(DMA1_Channel3_IRQn, STM32_SPI1_IRQ_PRIORITY);
       RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
@@ -215,7 +223,7 @@ void spi_lld_start(SPIDriver *spip) {
 #endif
 #if USE_STM32_SPI2
     if (&SPID2 == spip) {
-      dmaEnable(DMA1_ID);
+      dmaEnable(DMA1_ID);   /* NOTE: Must be enabled before the IRQs.*/
       NVICEnableVector(DMA1_Channel4_IRQn, STM32_SPI2_IRQ_PRIORITY);
       NVICEnableVector(DMA1_Channel5_IRQn, STM32_SPI2_IRQ_PRIORITY);
       RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;

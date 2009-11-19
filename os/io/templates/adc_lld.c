@@ -28,6 +28,14 @@
 #include <adc.h>
 
 /*===========================================================================*/
+/* Low Level Driver exported variables.                                      */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Low Level Driver local variables.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
 /* Low Level Driver local functions.                                         */
 /*===========================================================================*/
 
@@ -49,7 +57,7 @@ void adc_lld_init(void) {
 /**
  * @brief Configures and activates the ADC peripheral.
  *
- * @param[in] adcp      pointer to the @p ADCDriver object
+ * @param[in] adcp pointer to the @p ADCDriver object
  */
 void adc_lld_start(ADCDriver *adcp) {
 
@@ -62,7 +70,7 @@ void adc_lld_start(ADCDriver *adcp) {
 /**
  * @brief Deactivates the ADC peripheral.
  *
- * @param[in] adcp      pointer to the @p ADCDriver object
+ * @param[in] adcp pointer to the @p ADCDriver object
  */
 void adc_lld_stop(ADCDriver *adcp) {
 
@@ -71,28 +79,16 @@ void adc_lld_stop(ADCDriver *adcp) {
 /**
  * @brief Starts an ADC conversion.
  *
- * @param[in] adcp      pointer to the @p ADCDriver object
- * @param[in] grpp      pointer to a @p ADCConversionGroup object
- * @param[out] samples  pointer to the samples buffer
- * @param[in] depth     buffer depth (matrix rows number). The buffer depth
- *                      must be one or an even number.
- *
- * @note The buffer is organized as a matrix of M*N elements where M is the
- *       channels number configured into the conversion group and N is the
- *       buffer depth. The samples are sequentially written into the buffer
- *       with no gaps.
+ * @param[in] adcp pointer to the @p ADCDriver object
  */
-void adc_lld_start_conversion(ADCDriver *adcp,
-                              ADCConversionGroup *grpp,
-                              void *samples,
-                              size_t depth) {
+void adc_lld_start_conversion(ADCDriver *adcp) {
 
 }
 
 /**
  * @brief Stops an ongoing conversion.
  *
- * @param[in] adcp      pointer to the @p ADCDriver object
+ * @param[in] adcp pointer to the @p ADCDriver object
  */
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 

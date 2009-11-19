@@ -38,7 +38,7 @@ typedef enum {
   ADC_UNINIT = 0,                           /**< @brief Not initialized.    */
   ADC_STOP = 1,                             /**< @brief Stopped.            */
   ADC_READY = 2,                            /**< @brief Ready.              */
-  ADC_RUNNING = 3                           /**< @brief Conversion complete.*/
+  ADC_RUNNING = 3                           /**< @brief Conversion running. */
 } adcstate_t;
 
 #include "adc_lld.h"
@@ -52,7 +52,7 @@ extern "C" {
   void adcStop(ADCDriver *adcp);
   bool_t adcStartConversion(ADCDriver *adcp,
                             ADCConversionGroup *grpp,
-                            void *samples,
+                            adcsample_t *samples,
                             size_t depth,
                             adccallback_t callback);
   void adcStopConversion(ADCDriver *adcp);

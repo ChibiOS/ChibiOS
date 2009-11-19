@@ -42,9 +42,12 @@ void adcInit(void) {
  */
 void adcObjectInit(ADCDriver *adcp) {
 
-  adcp->ad_state = ADC_STOP;
-  adcp->ad_config = NULL;
+  adcp->ad_state    = ADC_STOP;
+  adcp->ad_config   = NULL;
   adcp->ad_callback = NULL;
+  adcp->ad_samples  = NULL;
+  adcp->ad_depth    = 0;
+  adcp->ad_grpp     = NULL;
   chSemInit(&adcp->ad_sem, 0);
 }
 
@@ -119,7 +122,7 @@ void adcStop(ADCDriver *adcp) {
  */
 bool_t adcStartConversion(ADCDriver *adcp,
                           ADCConversionGroup *grpp,
-                          void *samples,
+                          adcsample_t *samples,
                           size_t depth,
                           adccallback_t callback) {
 
@@ -137,7 +140,10 @@ bool_t adcStartConversion(ADCDriver *adcp,
     return TRUE;
   }
   adcp->ad_callback = callback;
-  adc_lld_start_conversion(adcp, grpp, samples, depth);
+  adcp->ad_samples  = samples;
+  adcp->ad_depth    = depth;
+  adcp->ad_grpp     = grpp;
+  adc_lld_start_conversion(adcp);
   adcp->ad_state = ADC_RUNNING;
   chSysUnlock();
   return FALSE;
@@ -157,8 +163,11 @@ void adcStopConversion(ADCDriver *adcp) {
               (adcp->ad_state == ADC_RUNNING),
               "adcStopConversion(), #1",
               "invalid state");
-  adc_lld_stop_conversion(adcp);
-  adcp->ad_state = ADC_READY;
+  if (adcp->ad_state == ADC_RUNNING) {
+    adc_lld_stop_conversion(adcp);
+    adcp->ad_grpp  = NULL;
+    adcp->ad_state = ADC_READY;
+  }
   chSysUnlock();
 }
 
