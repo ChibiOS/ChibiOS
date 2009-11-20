@@ -124,6 +124,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
     4,          /* PAL_MODE_INPUT */
     8,          /* PAL_MODE_INPUT_PULLUP */
     8,          /* PAL_MODE_INPUT_PULLDOWN */
+    0,          /* PAL_MODE_INPUT_ANALOG */
     3,          /* PAL_MODE_OUTPUT_PUSHPULL, 50MHz.*/
     7,          /* PAL_MODE_OUTPUT_OPENDRAIN, 50MHz.*/
   };

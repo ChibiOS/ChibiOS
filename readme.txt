@@ -3,6 +3,7 @@
 *****************************************************************************
 
 *** 1.3.5 ***
+- FIX: Fixed some problems in the MMC_SPI driver (bugs 2901084 and 2901172).
 - NEW: STM32 ADC driver implementation with DMA support.
 - CHANGE: In the STM32 drivers now the DMA errors are handled by hook macros
   rather than by events. The default action is to halt the system but users

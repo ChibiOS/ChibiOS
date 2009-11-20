@@ -67,14 +67,19 @@
 #define PAL_MODE_INPUT_PULLDOWN         4
 
 /**
+ * @brief Analog input mode.
+ */
+#define PAL_MODE_INPUT_ANALOG           5
+
+/**
  * @brief Push-pull output pad.
  */
-#define PAL_MODE_OUTPUT_PUSHPULL        5
+#define PAL_MODE_OUTPUT_PUSHPULL        6
 
 /**
  * @brief Open-drain output pad.
  */
-#define PAL_MODE_OUTPUT_OPENDRAIN       6
+#define PAL_MODE_OUTPUT_OPENDRAIN       7
 
 #ifndef _PAL_LLD_H_
 #include "pal_lld.h"

@@ -488,7 +488,7 @@ bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk) {
   if (recvr1(mmcp) != 0x00) {
     spiUnselect(mmcp->mmc_spip);
     chSysLock();
-    if (mmcp->mmc_state == MMC_READING)
+    if (mmcp->mmc_state == MMC_WRITING)
       mmcp->mmc_state = MMC_READY;
     chSysUnlock();
     return TRUE;
@@ -560,8 +560,11 @@ bool_t mmcStopSequentialWrite(MMCDriver *mmcp) {
   spiUnselect(mmcp->mmc_spip);
 
   chSysLock();
-  if (mmcp->mmc_state == MMC_WRITING)
+  if (mmcp->mmc_state == MMC_WRITING) {
     mmcp->mmc_state = MMC_READY;
+    chSysUnlock();
+    return FALSE;
+  }
   chSysUnlock();
   return TRUE;
 }
