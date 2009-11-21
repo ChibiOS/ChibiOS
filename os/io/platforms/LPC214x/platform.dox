@@ -55,6 +55,7 @@
  * - @p PAL_MODE_RESET.
  * - @p PAL_MODE_UNCONNECTED.
  * - @p PAL_MODE_INPUT.
+ * - @p PAL_MODE_INPUT_ANALOG (same as @p PAL_MODE_INPUT).
  * - @p PAL_MODE_OUTPUT_PUSHPULL.
  * .
  * Any attempt to setup an invalid mode is ignored.

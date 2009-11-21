@@ -95,6 +95,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
     port->PIO_ODR = mask;
     break;
   case PAL_MODE_INPUT:
+  case PAL_MODE_INPUT_ANALOG:
     port->PIO_PPUDR = mask;
     port->PIO_ODR = mask;
     break;

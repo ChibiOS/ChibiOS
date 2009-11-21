@@ -35,6 +35,7 @@
 
 #undef PAL_MODE_INPUT_PULLUP
 #undef PAL_MODE_INPUT_PULLDOWN
+#undef PAL_MODE_INPUT_ANALOG
 #undef PAL_MODE_OUTPUT_OPENDRAIN
 
 /*===========================================================================*/
