@@ -63,9 +63,14 @@ typedef void (*adccallback_t)(adcsample_t *buffer, size_t n);
  */
 typedef struct {
   /**
+   * @brief Enables the circular buffer mode for the group.
+   */
+  bool_t                acg_circular;
+  /**
    * @brief Number of the analog channels belonging to the conversion group.
    */
   adc_channels_num_t    acg_num_channels;
+  /* End of the mandatory fields.*/
 } ADCConversionGroup;
 
 /**

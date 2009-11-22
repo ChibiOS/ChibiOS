@@ -74,6 +74,46 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+#define ADC_CHANNEL_IN0         0   /**< @brief External analog input 0.    */
+#define ADC_CHANNEL_IN1         1   /**< @brief External analog input 1.    */
+#define ADC_CHANNEL_IN2         2   /**< @brief External analog input 2.    */
+#define ADC_CHANNEL_IN3         3   /**< @brief External analog input 3.    */
+#define ADC_CHANNEL_IN4         4   /**< @brief External analog input 4.    */
+#define ADC_CHANNEL_IN5         5   /**< @brief External analog input 5.    */
+#define ADC_CHANNEL_IN6         6   /**< @brief External analog input 6.    */
+#define ADC_CHANNEL_IN7         7   /**< @brief External analog input 7.    */
+#define ADC_CHANNEL_IN8         8   /**< @brief External analog input 8.    */
+#define ADC_CHANNEL_IN9         9   /**< @brief External analog input 9.    */
+#define ADC_CHANNEL_IN10        10  /**< @brief External analog input 10.   */
+#define ADC_CHANNEL_IN11        11  /**< @brief External analog input 11.   */
+#define ADC_CHANNEL_IN12        12  /**< @brief External analog input 12.   */
+#define ADC_CHANNEL_IN13        13  /**< @brief External analog input 13.   */
+#define ADC_CHANNEL_IN14        14  /**< @brief External analog input 14.   */
+#define ADC_CHANNEL_IN15        15  /**< @brief External analog input 15.   */
+#define ADC_CHANNEL_SENSOR      16  /**< @brief Internal temp. sensor.      */
+#define ADC_CHANNEL_VREFINT     17  /**< @brief Internal reference.         */
+
+#define ADC_SQR1_NUM_CH(n)      (n << 20)
+
+#define ADC_SQR3_SQ0_N(n)       (n << 0)
+#define ADC_SQR3_SQ1_N(n)       (n << 5)
+#define ADC_SQR3_SQ2_N(n)       (n << 10)
+#define ADC_SQR3_SQ3_N(n)       (n << 15)
+#define ADC_SQR3_SQ4_N(n)       (n << 20)
+#define ADC_SQR3_SQ5_N(n)       (n << 25)
+
+#define ADC_SQR2_SQ6_N(n)       (n << 0)
+#define ADC_SQR2_SQ7_N(n)       (n << 5)
+#define ADC_SQR2_SQ8_N(n)       (n << 10)
+#define ADC_SQR2_SQ9_N(n)       (n << 15)
+#define ADC_SQR2_SQ10_N(n)      (n << 20)
+#define ADC_SQR2_SQ11_N(n)      (n << 25)
+
+#define ADC_SQR1_SQ13_N(n)      (n << 0)
+#define ADC_SQR1_SQ14_N(n)      (n << 5)
+#define ADC_SQR1_SQ15_N(n)      (n << 10)
+#define ADC_SQR1_SQ16_N(n)      (n << 15)
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -105,11 +145,11 @@ typedef struct {
    * @brief Enables the circular buffer mode for the group.
    */
   bool_t                acg_circular;
-  /* End of the mandatory fields.*/
   /**
    * @brief Number of the analog channels belonging to the conversion group.
    */
   adc_channels_num_t    acg_num_channels;
+  /* End of the mandatory fields.*/
   /**
    * @brief ADC CR1 register initialization data.
    * @note All the required bits must be defined into this field except
@@ -211,6 +251,10 @@ typedef struct {
 /*===========================================================================*/
 
 /** @cond never*/
+#if USE_STM32_ADC1
+ADCDriver ADCD1;
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
