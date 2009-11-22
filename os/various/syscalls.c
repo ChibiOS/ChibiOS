@@ -75,7 +75,7 @@ int _read_r(struct _reent *r, int file, char * ptr, int len)
   (void)r;
 #if defined(STDIN_SD)
   if (!len || (file != 0)) {
-    errno = EINVAL;
+    __errno_r(r) = EINVAL;
     return -1;
   }
   *ptr++ = chIOGet(&STDOUT_SD);
@@ -86,7 +86,7 @@ int _read_r(struct _reent *r, int file, char * ptr, int len)
   (void)file;
   (void)ptr;
   (void)len;
-  errno = EINVAL;
+  __errno_r(r) = EINVAL;
   return -1;
 #endif
 }
@@ -114,7 +114,7 @@ int _write_r(struct _reent *r, int file, char * ptr, int len)
   (void)ptr;
 #if defined(STDOUT_SD)
   if (file != 1) {
-    errno = EINVAL;
+    __errno_r(r) = EINVAL;
     return -1;
   }
   n = len;
@@ -145,7 +145,7 @@ caddr_t _sbrk_r(struct _reent *r, int incr)
   (void)r;
   p = chCoreAlloc((size_t)incr);
   if (p == NULL) {
-    errno = ENOMEM;
+    __errno_r(r) = ENOMEM;
     return (caddr_t)-1;
   }
   return (caddr_t)p;
