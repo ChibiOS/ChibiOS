@@ -117,6 +117,7 @@ void adc_lld_init(void) {
   ADCD1.ad_dmaprio = STM32_ADC1_DMA_PRIORITY << 12;
 
   /* Temporary activation.*/
+  RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
   ADC1->CR1 = 0;
   ADC1->CR2 = ADC_CR2_ADON;
 
@@ -132,6 +133,7 @@ void adc_lld_init(void) {
 
   /* Return the ADC in low power mode.*/
   ADC1->CR2 = 0;
+  RCC->APB2ENR &= ~RCC_APB2ENR_ADC1EN;
 #endif
 }
 
@@ -149,8 +151,6 @@ void adc_lld_start(ADCDriver *adcp) {
       dmaEnable(DMA1_ID);   /* NOTE: Must be enabled before the IRQs.*/
       NVICEnableVector(DMA1_Channel1_IRQn, STM32_ADC1_IRQ_PRIORITY);
       DMA1_Channel1->CPAR = (uint32_t)&ADC1->DR;
-/*      RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_ADCPRE) |
-                  adcp->ad_config->ac_prescaler;*/
       RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
     }
 #endif
