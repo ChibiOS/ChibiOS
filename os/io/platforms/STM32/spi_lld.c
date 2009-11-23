@@ -29,14 +29,14 @@
 #include <stm32_dma.h>
 #include <nvic.h>
 
+/*===========================================================================*/
+/* Low Level Driver exported variables.                                      */
+/*===========================================================================*/
+
 #if USE_STM32_SPI1 || defined(__DOXYGEN__)
 /** @brief SPI1 driver identifier.*/
 SPIDriver SPID1;
 #endif
-
-/*===========================================================================*/
-/* Low Level Driver exported variables.                                      */
-/*===========================================================================*/
 
 #if USE_STM32_SPI2 || defined(__DOXYGEN__)
 /** @brief SPI2 driver identifier.*/

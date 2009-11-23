@@ -121,7 +121,7 @@ void adcStop(ADCDriver *adcp) {
  *       with no gaps.
  */
 bool_t adcStartConversion(ADCDriver *adcp,
-                          ADCConversionGroup *grpp,
+                          const ADCConversionGroup *grpp,
                           adcsample_t *samples,
                           size_t depth,
                           adccallback_t callback) {

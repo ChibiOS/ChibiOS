@@ -51,7 +51,7 @@ extern "C" {
   void adcStart(ADCDriver *adcp, const ADCConfig *config);
   void adcStop(ADCDriver *adcp);
   bool_t adcStartConversion(ADCDriver *adcp,
-                            ADCConversionGroup *grpp,
+                            const ADCConversionGroup *grpp,
                             adcsample_t *samples,
                             size_t depth,
                             adccallback_t callback);

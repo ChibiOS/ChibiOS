@@ -65,11 +65,11 @@ typedef struct {
   /**
    * @brief Enables the circular buffer mode for the group.
    */
-  bool_t                acg_circular;
+  bool_t                    acg_circular;
   /**
    * @brief Number of the analog channels belonging to the conversion group.
    */
-  adc_channels_num_t    acg_num_channels;
+  adc_channels_num_t        acg_num_channels;
   /* End of the mandatory fields.*/
 } ADCConversionGroup;
 
@@ -88,31 +88,31 @@ typedef struct {
   /**
    * @brief Driver state.
    */
-  adcstate_t            ad_state;
+  adcstate_t                ad_state;
   /**
    * @brief Current configuration data.
    */
-  const ADCConfig       *ad_config;
+  const ADCConfig           *ad_config;
   /**
    * @brief Synchronization semaphore.
    */
-  Semaphore             ad_sem;
+  Semaphore                 ad_sem;
   /**
    * @brief Current callback function or @p NULL.
    */
-  adccallback_t         ad_callback;
+  adccallback_t             ad_callback;
   /**
    * @brief Current samples buffer pointer or @p NULL.
    */
-  adcsample_t           *ad_samples;
+  adcsample_t               *ad_samples;
   /**
    * @brief Current samples buffer depth or @p 0.
    */
-  size_t                ad_depth;
+  size_t                    ad_depth;
   /**
    * @brief Current conversion group pointer or @p NULL.
    */
-  ADCConversionGroup    *ad_grpp;
+  const ADCConversionGroup  *ad_grpp;
   /* End of the mandatory fields.*/
 } ADCDriver;
 

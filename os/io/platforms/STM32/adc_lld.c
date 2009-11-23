@@ -190,7 +190,7 @@ void adc_lld_stop(ADCDriver *adcp) {
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
   uint32_t ccr, n;
-  ADCConversionGroup *grpp = adcp->ad_grpp;
+  const ADCConversionGroup *grpp = adcp->ad_grpp;
 
   /* DMA setup.*/
   adcp->ad_dma->CMAR  = (uint32_t)adcp->ad_samples;
