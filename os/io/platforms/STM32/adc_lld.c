@@ -217,6 +217,9 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   adcp->ad_adc->SQR3  = grpp->acg_sqr3;
   adcp->ad_adc->CR1   = grpp->acg_cr1 | ADC_CR1_SCAN;
   adcp->ad_adc->CR2   = grpp->acg_cr2 | ADC_CR2_DMA | ADC_CR2_ADON;
+
+  /* ADC start.*/
+  adcp->ad_adc->CR2  |= ADC_CR2_SWSTART | ADC_CR2_EXTTRIG;
 }
 
 /**
@@ -226,7 +229,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
  */
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 
-  adcp->ad_adc->CR2 &= ~(ADC_CR2_SWSTART | ADC_CR2_EXTTRIG);
+  adcp->ad_adc->CR2 = ADC_CR2_ADON;
   adcp->ad_dma->CCR = 0;
 }
 
