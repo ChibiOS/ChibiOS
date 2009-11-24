@@ -74,6 +74,9 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+#define ADC_CR2_EXTSEL_SRC(n)   (n << 17)   /**< @brief Trigger source.     */
+#define ADC_CR2_EXTSEL_SWSTART  (7 << 17)   /**< @brief Software trigger.   */
+
 #define ADC_CHANNEL_IN0         0   /**< @brief External analog input 0.    */
 #define ADC_CHANNEL_IN1         1   /**< @brief External analog input 1.    */
 #define ADC_CHANNEL_IN2         2   /**< @brief External analog input 2.    */
@@ -90,7 +93,7 @@
 #define ADC_CHANNEL_IN13        13  /**< @brief External analog input 13.   */
 #define ADC_CHANNEL_IN14        14  /**< @brief External analog input 14.   */
 #define ADC_CHANNEL_IN15        15  /**< @brief External analog input 15.   */
-#define ADC_CHANNEL_SENSOR      16  /**< @brief Internal temp. sensor.      */
+#define ADC_CHANNEL_SENSOR      16  /**< @brief Internal temperature sensor.*/
 #define ADC_CHANNEL_VREFINT     17  /**< @brief Internal reference.         */
 
 #define ADC_SQR1_NUM_CH(n)      (n << 20)

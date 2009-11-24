@@ -46,7 +46,11 @@
  * The I/O subsystem currently includes support for:
  * - @ref PAL.
  * - @ref SERIAL.
- * - @ref MAC
+ * - @ref SPI.
+ * - @ref ADC.
+ * - @ref MAC.
+ * - @ref MII.
+ * - @ref MMC.
  * .
  */
 
