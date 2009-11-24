@@ -1,5 +1,15 @@
 # ARM7 common makefile scripts and rules.
 
+# Output
+OUTFILES = $(BUILDDIR)/$(PROJECT).elf $(BUILDDIR)/$(PROJECT).hex $(BUILDDIR)/$(PROJECT).bin $(BUILDDIR)/$(PROJECT).map $(BUILDDIR)/$(PROJECT).dmp
+ifeq ($(BUILDDIR),)
+  BUILDDIR = .
+  CLEANDIR =
+else
+  CLEANDIR = $(BUILDDIR)
+endif
+ENSUREBUILDDIR = $(shell test -d $(BUILDDIR) || mkdir $(BUILDDIR))
+
 # Automatic compiler options
 OPT = $(USE_OPT)
 CPPOPT = $(USE_CPPOPT)
@@ -48,9 +58,9 @@ ASFLAGS = $(MCFLAGS) -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
 CFLAGS   = $(MCFLAGS) $(OPT) $(CWARN) -Wa,-alms=$(<:.c=.lst) $(DEFS)
 CPPFLAGS = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(<:.cpp=.lst) $(DEFS)
 ifeq ($(LINK_GC),yes)
-  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch,--gc-sections $(LLIBDIR)
+  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--gc-sections $(LLIBDIR)
 else
-  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LLIBDIR)
+  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch $(LLIBDIR)
 endif
 
 # Thumb interwork enabled only if needed because it kills performance.
@@ -87,7 +97,7 @@ CPPFLAGS += -MD -MP -MF .dep/$(@F).d
 # Makefile rules
 #
 
-all: $(OBJS) $(PROJECT).elf $(PROJECT).hex $(PROJECT).bin $(PROJECT).dmp
+all: $(ENSUREBUILDDIR) $(OBJS) $(OUTFILES)
 
 $(ACPPOBJS) : %.o : %.cpp
 	@echo
@@ -125,8 +135,8 @@ $(ASMOBJS) : %.o : %.s
 clean:
 	-rm -f $(OBJS)
 	-rm -f $(ACSRC:.c=.lst) $(TCSRC:.c=.lst) $(ACPPSRC:.cpp=.lst) $(TCPPSRC:.cpp=.lst) $(ASMSRC:.s=.lst)
-	-rm -f $(PROJECT).elf $(PROJECT).dmp $(PROJECT).map $(PROJECT).hex $(PROJECT).bin
-	-rm -fR .dep
+	-rm -f $(OUTFILES)
+	-rm -fR .dep $(CLEANDIR)
 
 #
 # Include the dependency files, should be the last of the makefile
