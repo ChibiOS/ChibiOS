@@ -1,7 +1,7 @@
 # ARM7 common makefile scripts and rules.
 
 # Output
-OUTFILES = $(BUILDDIR)/$(PROJECT).elf $(BUILDDIR)/$(PROJECT).hex $(BUILDDIR)/$(PROJECT).bin $(BUILDDIR)/$(PROJECT).map $(BUILDDIR)/$(PROJECT).dmp
+OUTFILES = $(BUILDDIR)/$(PROJECT).elf $(BUILDDIR)/$(PROJECT).hex $(BUILDDIR)/$(PROJECT).bin $(BUILDDIR)/$(PROJECT).dmp
 ifeq ($(BUILDDIR),)
   BUILDDIR = .
   CLEANDIR =
@@ -135,7 +135,7 @@ $(ASMOBJS) : %.o : %.s
 clean:
 	-rm -f $(OBJS)
 	-rm -f $(ACSRC:.c=.lst) $(TCSRC:.c=.lst) $(ACPPSRC:.cpp=.lst) $(TCPPSRC:.cpp=.lst) $(ASMSRC:.s=.lst)
-	-rm -f $(OUTFILES)
+	-rm -f $(OUTFILES) $(BUILDDIR)/$(PROJECT).map
 	-rm -fR .dep $(CLEANDIR)
 
 #
