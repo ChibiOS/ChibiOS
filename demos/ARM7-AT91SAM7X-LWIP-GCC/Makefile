@@ -58,11 +58,11 @@ CSRC = ${PORTSRC} \
        ${CHIBIOS}/os/io/serial.c \
        ${CHIBIOS}/os/io/mii.c \
        ${CHIBIOS}/os/io/mac.c \
-       ${CHIBIOS}/os/io/platforms/AT91SAM7X/pal_lld.c \
-       ${CHIBIOS}/os/io/platforms/AT91SAM7X/serial_lld.c \
-       ${CHIBIOS}/os/io/platforms/AT91SAM7X/mii_lld.c \
-       ${CHIBIOS}/os/io/platforms/AT91SAM7X/mac_lld.c \
-       ${CHIBIOS}/os/io/platforms/AT91SAM7X/at91lib/aic.c \
+       ${CHIBIOS}/os/io/platforms/AT91SAM7/pal_lld.c \
+       ${CHIBIOS}/os/io/platforms/AT91SAM7/serial_lld.c \
+       ${CHIBIOS}/os/io/platforms/AT91SAM7/mii_lld.c \
+       ${CHIBIOS}/os/io/platforms/AT91SAM7/mac_lld.c \
+       ${CHIBIOS}/os/io/platforms/AT91SAM7/at91lib/aic.c \
        ${CHIBIOS}/os/various/evtimer.c \
        ${LWNETIFSRC} \
        ${LWCORESRC} \
@@ -99,13 +99,13 @@ TCPPSRC =
 
 # List ASM source files here
 ASMSRC = $(PORTASM) \
-         ${CHIBIOS}/os/ports/GCC/ARM7/AT91SAM7X/vectors.s
+         ${CHIBIOS}/os/ports/GCC/ARM7/AT91SAM7/vectors.s
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) $(LWINC) \
          ${CHIBIOS}/os/io \
-         ${CHIBIOS}/os/io/platforms/AT91SAM7X \
+         ${CHIBIOS}/os/io/platforms/AT91SAM7 \
          ${CHIBIOS}/os/various \
-         ${CHIBIOS}/os/ports/GCC/ARM7/AT91SAM7X \
+         ${CHIBIOS}/os/ports/GCC/ARM7/AT91SAM7 \
          ./lwip
 
 #

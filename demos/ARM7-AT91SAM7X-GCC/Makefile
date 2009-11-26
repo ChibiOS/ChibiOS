@@ -55,9 +55,9 @@ CSRC = ${PORTSRC} \
        ${TESTSRC} \
        ${CHIBIOS}/os/io/pal.c \
        ${CHIBIOS}/os/io/serial.c \
-       ${CHIBIOS}/os/io/platforms/AT91SAM7X/pal_lld.c \
-       ${CHIBIOS}/os/io/platforms/AT91SAM7X/serial_lld.c \
-       ${CHIBIOS}/os/io/platforms/AT91SAM7X/at91lib/aic.c \
+       ${CHIBIOS}/os/io/platforms/AT91SAM7/pal_lld.c \
+       ${CHIBIOS}/os/io/platforms/AT91SAM7/serial_lld.c \
+       ${CHIBIOS}/os/io/platforms/AT91SAM7/at91lib/aic.c \
        board.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -86,13 +86,13 @@ TCPPSRC =
 
 # List ASM source files here
 ASMSRC = $(PORTASM) \
-         ${CHIBIOS}/os/ports/GCC/ARM7/AT91SAM7X/vectors.s
+         ${CHIBIOS}/os/ports/GCC/ARM7/AT91SAM7/vectors.s
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          ${CHIBIOS}/os/io \
-         ${CHIBIOS}/os/io/platforms/AT91SAM7X \
+         ${CHIBIOS}/os/io/platforms/AT91SAM7 \
          ${CHIBIOS}/os/various \
-         ${CHIBIOS}/os/ports/GCC/ARM7/AT91SAM7X
+         ${CHIBIOS}/os/ports/GCC/ARM7/AT91SAM7
 
 #
 # Project, sources and paths
