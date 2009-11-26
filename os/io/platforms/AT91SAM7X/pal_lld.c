@@ -27,15 +27,21 @@
 #include <ch.h>
 #include <pal.h>
 
+#include "board.h"
+
 /**
- * @brief AT91SAM7X I/O ports configuration.
+ * @brief AT91SAM7 I/O ports configuration.
  * @details PIO registers initialization.
  *
- * @param[in] config the AT91SAM7X ports configuration
+ * @param[in] config the AT91SAM7 ports configuration
  */
-void _pal_lld_init(const AT91SAM7XPIOConfig *config) {
+void _pal_lld_init(const AT91SAM7PIOConfig *config) {
 
-  AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_PIOA) | (1 << AT91C_ID_PIOB);
+  unsigned int ports = (1 << AT91C_ID_PIOA);
+#if defined(SAM7X128) || defined(SAM7X256) || defined(SAM7X512)
+  ports |= (1 << AT91C_ID_PIOB);
+#endif
+  AT91C_BASE_PMC->PMC_PCER = ports;
 
   /*
    * PIOA setup.
@@ -55,8 +61,9 @@ void _pal_lld_init(const AT91SAM7XPIOConfig *config) {
   /*
    * PIOB setup.
    */
-  AT91C_BASE_PIOB->PIO_PPUER  = config->P0Data.pusr;    /* Pull-up as spec.*/
-  AT91C_BASE_PIOB->PIO_PPUDR  = ~config->P0Data.pusr;
+#if defined(SAM7X128) || defined(SAM7X256) || defined(SAM7X512)
+  AT91C_BASE_PIOB->PIO_PPUER  = config->P1Data.pusr;    /* Pull-up as spec.*/
+  AT91C_BASE_PIOB->PIO_PPUDR  = ~config->P1Data.pusr;
   AT91C_BASE_PIOB->PIO_PER  = 0xFFFFFFFF;               /* PIO enabled.*/
   AT91C_BASE_PIOB->PIO_ODSR = config->P1Data.odsr;      /* Data as specified.*/
   AT91C_BASE_PIOB->PIO_OER  = config->P1Data.osr;       /* Dir. as specified.*/
@@ -66,6 +73,7 @@ void _pal_lld_init(const AT91SAM7XPIOConfig *config) {
   AT91C_BASE_PIOB->PIO_MDDR = 0xFFFFFFFF;               /* Push Pull drive.*/
   AT91C_BASE_PIOB->PIO_ASR  = 0xFFFFFFFF;               /* Peripheral A.*/
   AT91C_BASE_PIOB->PIO_OWER = 0xFFFFFFFF;               /* Write enabled.*/
+#endif
 }
 
 /**

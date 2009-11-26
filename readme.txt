@@ -5,6 +5,8 @@
 *** 1.3.5 ***
 - FIX: Fixed some problems in the MMC_SPI driver (bugs 2901084 and 2901172).
 - NEW: STM32 ADC driver implementation with DMA support.
+- NEW: Added AT91SAM7S support and support for all the memory sizes in
+  both AT91SAM7S and AT91SAM7X families.
 - CHANGE: In the STM32 drivers now the DMA errors are handled by hook macros
   rather than by events. The default action is to halt the system but users
   are able to override this and define custom handling.

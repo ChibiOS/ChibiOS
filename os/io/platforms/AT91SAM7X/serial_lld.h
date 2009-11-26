@@ -46,8 +46,8 @@
  * @details If set to @p TRUE the support for USART1 is included.
  * @note The default is @p TRUE.
  */
-#if !defined(USE_SAM7X_USART0) || defined(__DOXYGEN__)
-#define USE_SAM7X_USART0 TRUE
+#if !defined(USE_SAM7_USART0) || defined(__DOXYGEN__)
+#define USE_SAM7_USART0 TRUE
 #endif
 
 /**
@@ -55,22 +55,22 @@
  * @details If set to @p TRUE the support for USART2 is included.
  * @note The default is @p TRUE.
  */
-#if !defined(USE_SAM7X_USART1) || defined(__DOXYGEN__)
-#define USE_SAM7X_USART1 TRUE
+#if !defined(USE_SAM7_USART1) || defined(__DOXYGEN__)
+#define USE_SAM7_USART1 TRUE
 #endif
 
 /**
  * @brief UART1 interrupt priority level setting.
  */
-#if !defined(SAM7X_USART0_PRIORITY) || defined(__DOXYGEN__)
-#define SAM7X_USART0_PRIORITY (AT91C_AIC_PRIOR_HIGHEST - 2)
+#if !defined(SAM7_USART0_PRIORITY) || defined(__DOXYGEN__)
+#define SAM7_USART0_PRIORITY (AT91C_AIC_PRIOR_HIGHEST - 2)
 #endif
 
 /**
  * @brief UART2 interrupt priority level setting.
  */
-#if !defined(SAM7X_USART1_PRIORITY) || defined(__DOXYGEN__)
-#define SAM7X_USART1_PRIORITY (AT91C_AIC_PRIOR_HIGHEST - 2)
+#if !defined(SAM7_USART1_PRIORITY) || defined(__DOXYGEN__)
+#define SAM7_USART1_PRIORITY (AT91C_AIC_PRIOR_HIGHEST - 2)
 #endif
 
 /*===========================================================================*/
@@ -134,10 +134,10 @@ typedef struct {
 /*===========================================================================*/
 
 /** @cond never*/
-#if USE_SAM7X_USART0
+#if USE_SAM7_USART0
 extern SerialDriver SD1;
 #endif
-#if USE_SAM7X_USART1
+#if USE_SAM7_USART1
 extern SerialDriver SD2;
 #endif
 

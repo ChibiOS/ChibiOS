@@ -27,7 +27,7 @@
 #ifndef _PAL_LLD_H_
 #define _PAL_LLD_H_
 
-#include "at91lib/AT91SAM7X256.h"
+#include "board.h"
 
 /*===========================================================================*/
 /* Unsupported modes and specific modes                                      */
@@ -49,10 +49,10 @@ typedef struct {
   uint32_t      osr;
   /** Initial value for PUSR register (Pull-ups).*/
   uint32_t      pusr;
-} at91sam7x_pio_setup_t;
+} at91sam7_pio_setup_t;
 
 /**
- * @brief AT91SAM7X PIO static initializer.
+ * @brief AT91SAM7 PIO static initializer.
  * @details An instance of this structure must be passed to @p palInit() at
  *          system startup time in order to initialized the digital I/O
  *          subsystem. This represents only the initial setup, specific pads
@@ -60,10 +60,13 @@ typedef struct {
  */
 typedef struct {
   /** @brief Port 0 setup data.*/
-  at91sam7x_pio_setup_t P0Data;
+  at91sam7_pio_setup_t P0Data;
+#if defined(SAM7X128) || defined(SAM7X256) || defined(SAM7X512) ||          \
+    defined(__DOXYGEN__)
   /** @brief Port 1 setup data.*/
-  at91sam7x_pio_setup_t P1Data;
-} AT91SAM7XPIOConfig;
+  at91sam7_pio_setup_t P1Data;
+#endif
+} AT91SAM7PIOConfig;
 
 /**
  * @brief Width, in bits, of an I/O port.
@@ -95,7 +98,10 @@ typedef AT91PS_PIO ioportid_t;
 /**
  * @brief PIO port B identifier.
  */
+#if defined(SAM7X128) || defined(SAM7X256) || defined(SAM7X512) ||          \
+    defined(__DOXYGEN__)
 #define IOPORT2         AT91C_BASE_PIOB
+#endif
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */
@@ -232,7 +238,7 @@ typedef AT91PS_PIO ioportid_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _pal_lld_init(const AT91SAM7XPIOConfig *config);
+  void _pal_lld_init(const AT91SAM7PIOConfig *config);
   void _pal_lld_setgroupmode(ioportid_t port,
                              ioportmask_t mask,
                              uint_fast8_t mode);

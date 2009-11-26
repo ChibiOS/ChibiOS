@@ -20,7 +20,14 @@
 #ifndef _BOARD_H_
 #define _BOARD_H_
 
-#include "at91lib/AT91SAM7X256.h"
+/*
+ * Select your platform by modifying the following line.
+ */
+#if !defined(SAM7_PLATFORM)
+#define SAM7_PLATFORM   SAM7X256
+#endif
+
+#include "at91sam7.h"
 
 #define BOARD_OLIMEX_SAM7_EX256
 

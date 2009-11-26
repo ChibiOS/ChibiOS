@@ -61,10 +61,12 @@ static CH_IRQ_HANDLER(SYSIrqHandler) {
 /*
  * Digital I/O ports static configuration as defined in @p board.h.
  */
-static const AT91SAM7XPIOConfig config =
+static const AT91SAM7PIOConfig config =
 {
   {VAL_PIOA_ODSR, VAL_PIOA_OSR, VAL_PIOA_PUSR},
+#if defined(SAM7X128) || defined(SAM7X256) || defined(SAM7X512)
   {VAL_PIOB_ODSR, VAL_PIOB_OSR, VAL_PIOB_PUSR}
+#endif
 };
 
 /*

@@ -27,7 +27,6 @@
 #ifndef _MII_LLD_H_
 #define _MII_LLD_H_
 
-#include <mii.h>
 #include "board.h"
 
 /*===========================================================================*/

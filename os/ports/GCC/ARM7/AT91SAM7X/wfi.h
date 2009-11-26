@@ -20,7 +20,7 @@
 #ifndef _WFI_H_
 #define _WFI_H_
 
-#include "at91lib/AT91SAM7X256.h"
+#include "board.h"
 
 #ifndef port_wait_for_interrupt
 #if ENABLE_WFI_IDLE != 0
