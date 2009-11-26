@@ -98,8 +98,8 @@ void canStop(CANDriver *canp) {
  *          queue is full then the invoking thread is queued.
  * @note Trying to transmit while in sleep mode simply enqueues the thread.
  *
- * @param canp[in]      pointer to the @p CANDriver object
- * @param cfp[in]       pointer to the CAN frame to be transmitted
+ * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] cfp       pointer to the CAN frame to be transmitted
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
@@ -136,8 +136,8 @@ msg_t canTransmit(CANDriver *canp, const CANFrame *cfp, systime_t timeout) {
  * @details The function waits until a frame is received.
  * @note Trying to receive while in sleep mode simply enqueues the thread.
  *
- * @param canp[in]      pointer to the @p CANDriver object
- * @param cfp[out]      pointer to the buffer where the CAN frame is copied
+ * @param[in] canp      pointer to the @p CANDriver object
+ * @param[out] cfp      pointer to the buffer where the CAN frame is copied
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
@@ -173,7 +173,7 @@ msg_t canReceive(CANDriver *canp, CANFrame *cfp, systime_t timeout) {
 /**
  * @brief Enters the sleep mode.
  *
- * @param canp[in]      pointer to the @p CANDriver object
+ * @param[in] canp      pointer to the @p CANDriver object
  */
 void canSleep(CANDriver *canp) {
 
@@ -197,7 +197,7 @@ void canSleep(CANDriver *canp) {
  * @note The sleep mode is supposed to be usually exited automatically by an
  *       hardware event.
  *
- * @param canp[in]      pointer to the @p CANDriver object
+ * @param[in] canp      pointer to the @p CANDriver object
  */
 void canWakeup(CANDriver *canp) {
 

@@ -18,9 +18,9 @@
 */
 
 /**
- * @file AT91SAM7X/serial_lld.h
- * @brief AT91SAM7X low level serial driver header
- * @addtogroup AT91SAM7X_SERIAL
+ * @file AT91SAM7/serial_lld.h
+ * @brief AT91SAM7 low level serial driver header
+ * @addtogroup AT91SAM7_SERIAL
  * @{
  */
 
@@ -120,7 +120,7 @@ struct _serial_driver_data {
 };
 
 /**
- * @brief AT91SAM7X Serial Driver configuration structure.
+ * @brief AT91SAM7 Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
  */

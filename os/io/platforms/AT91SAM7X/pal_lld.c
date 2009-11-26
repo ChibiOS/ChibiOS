@@ -18,9 +18,9 @@
 */
 
 /**
- * @file AT91SAM7X/pal_lld.c
- * @brief AT91SAM7X PIO low level driver code
- * @addtogroup AT91SAM7X_PAL
+ * @file AT91SAM7/pal_lld.c
+ * @brief AT91SAM7 PIO low level driver code
+ * @addtogroup AT91SAM7_PAL
  * @{
  */
 

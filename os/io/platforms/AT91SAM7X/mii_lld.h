@@ -18,9 +18,9 @@
 */
 
 /**
- * @file AT91SAM7X/mii_lld.h
- * @brief AT91SAM7X low level MII driver header
- * @addtogroup AT91SAM7X_MII
+ * @file AT91SAM7/mii_lld.h
+ * @brief AT91SAM7 low level MII driver header
+ * @addtogroup AT91SAM7_MII
  * @{
  */
 

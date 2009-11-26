@@ -50,7 +50,7 @@
  * - @ref ADC.
  * - @ref MAC.
  * - @ref MII.
- * - @ref MMC.
+ * - @ref MMC_SPI.
  * .
  */
 

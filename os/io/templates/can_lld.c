@@ -93,8 +93,8 @@ bool_t can_lld_can_transmit(CANDriver *canp) {
 /**
  * @brief Inserts a frame into the transmit queue.
  *
- * @param canp[in]      pointer to the @p CANDriver object
- * @param cfp[in]       pointer to the CAN frame to be transmitted
+ * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] cfp       pointer to the CAN frame to be transmitted
  *
  * @return The operation status.
  * @retval RDY_OK frame transmitted.
@@ -121,8 +121,8 @@ bool_t can_lld_can_receive(CANDriver *canp) {
 /**
  * @brief Receives a frame from the input queue.
  *
- * @param canp[in]      pointer to the @p CANDriver object
- * @param cfp[out]      pointer to the buffer where the CAN frame is copied
+ * @param[in] canp      pointer to the @p CANDriver object
+ * @param[out] cfp      pointer to the buffer where the CAN frame is copied
  *
  * @return The operation status.
  * @retval RDY_OK frame received.
@@ -136,7 +136,7 @@ msg_t can_lld_receive(CANDriver *canp, CANFrame *cfp) {
 /**
  * @brief Enters the sleep mode.
  *
- * @param canp[in]      pointer to the @p CANDriver object
+ * @param[in] canp      pointer to the @p CANDriver object
  */
 void can_lld_sleep(CANDriver *canp) {
 
@@ -145,7 +145,7 @@ void can_lld_sleep(CANDriver *canp) {
 /**
  * @brief Enforces leaving the sleep mode.
  *
- * @param canp[in]      pointer to the @p CANDriver object
+ * @param[in] canp      pointer to the @p CANDriver object
  */
 void can_lld_wakeup(CANDriver *canp) {
 

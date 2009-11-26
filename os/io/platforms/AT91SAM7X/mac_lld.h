@@ -18,9 +18,9 @@
 */
 
 /**
- * @file AT91SAM7X/mac_lld.h
- * @brief AT91SAM7X low level MAC driver header
- * @addtogroup AT91SAM7X_MAC
+ * @file AT91SAM7/mac_lld.h
+ * @brief AT91SAM7 low level MAC driver header
+ * @addtogroup AT91SAM7_MAC
  * @{
  */
 
