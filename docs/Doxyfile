@@ -588,7 +588,7 @@ INPUT                  = ../docs/src \
                          ../os/ports/GCC/AVR \
                          ../os/io \
                          ../os/io/templates \
-                         ../os/io/platforms/AT91SAM7X \
+                         ../os/io/platforms/AT91SAM7 \
                          ../os/io/platforms/AVR \
                          ../os/io/platforms/LPC214x \
                          ../os/io/platforms/MSP430 \
