@@ -57,6 +57,8 @@ LDSCRIPT= ch.ld
 
 # Imported source files
 CHIBIOS = ../..
+include ${CHIBIOS}/os/hal/hal.mk
+include ${CHIBIOS}/os/hal/platforms/STM32/platform.mk
 include ${CHIBIOS}/os/ports/GCC/ARMCM3/port.mk
 include ${CHIBIOS}/os/kernel/kernel.mk
 include ${CHIBIOS}/test/test.mk
@@ -66,12 +68,10 @@ include ${CHIBIOS}/test/test.mk
 CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
-       ${CHIBIOS}/os/io/pal.c \
-       ${CHIBIOS}/os/io/serial.c \
-       ${CHIBIOS}/os/io/platforms/STM32/pal_lld.c \
-       ${CHIBIOS}/os/io/platforms/STM32/serial_lld.c \
-       ${CHIBIOS}/os/io/platforms/STM32/stm32_dma.c \
+       ${HALSRC} \
+       ${PLATFORMSRC} \
        ${CHIBIOS}/os/various/evtimer.c \
+       ${CHIBIOS}/os/various/syscalls.c \
        board.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -102,9 +102,7 @@ TCPPSRC =
 ASMSRC = $(PORTASM) \
          ${CHIBIOS}/os/ports/GCC/ARMCM3/STM32F103/vectors.s
 
-INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         ${CHIBIOS}/os/io \
-         ${CHIBIOS}/os/io/platforms/STM32 \
+INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) $(HALINC) $(PLATFORMINC) \
          ${CHIBIOS}/os/various
 
 #
