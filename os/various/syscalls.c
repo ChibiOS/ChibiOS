@@ -107,7 +107,9 @@ int _lseek_r(struct _reent *r, int file, int ptr, int dir)
 
 int _write_r(struct _reent *r, int file, char * ptr, int len)
 {
+#if defined(STDOUT_SD)
   int n;
+#endif
 
   (void)r;
   (void)file;

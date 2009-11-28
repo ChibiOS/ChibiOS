@@ -26,7 +26,6 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "nvic.h"
 
 #if CH_HAL_USE_SERIAL
 

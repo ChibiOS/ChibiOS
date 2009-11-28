@@ -1,0 +1,81 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006-2007 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @file templates/xxx_lld.h
+ * @brief XXX Driver subsystem low level driver header template
+ * @addtogroup XXX_LLD
+ * @{
+ */
+
+#ifndef _XXX_LLD_H_
+#define _XXX_LLD_H_
+
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
+
+/**
+ * @brief Driver configuration structure.
+ * @note It could be empty on some architectures.
+ */
+typedef struct {
+
+} XXXConfig;
+
+/**
+ * @brief Structure representing an XXX driver.
+ */
+typedef struct {
+  /**
+   * @brief Driver state.
+   */
+  xxxstate_t                xxx_state;
+  /**
+   * @brief Current configuration data.
+   */
+  const XXXConfig           *xxx_config;
+  /* End of the mandatory fields.*/
+} XXXDriver;
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void xxx_lld_init(void);
+  void xxx_lld_start(XXXDriver *xxxp);
+  void xxx_lld_stop(XXXDriver *xxxp);
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _XXX_LLD_H_ */
+
+/** @} */

@@ -27,7 +27,12 @@
 #include "ch.h"
 #include "hal.h"
 
+/**
+ * @brief HAL initialization.
+ */
 void halInit(void) {
+
+  hal_lld_init();
 
 #if CH_HAL_USE_PAL
   palInit(&pal_default_config);

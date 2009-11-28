@@ -26,8 +26,6 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "nvic.h"
-#include "stm32_dma.h"
 
 #if CH_HAL_USE_SPI
 

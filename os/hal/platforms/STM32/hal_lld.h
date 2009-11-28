@@ -18,42 +18,44 @@
 */
 
 /**
- * @file hal.h
- * @brief HAL subsystem header.
- * @addtogroup HAL
+ * @file templates/hal_lld.h
+ * @brief HAL subsystem low level driver header template
+ * @addtogroup HAL_LLD
  * @{
  */
 
-#ifndef _HAL_H_
-#define _HAL_H_
+#ifndef _HAL_LLD_H_
+#define _HAL_LLD_H_
 
-#include "halconf.h"
-#include "board.h"
+#include "nvic.h"
+#include "stm32_dma.h"
 
-#include "hal_lld.h"
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
 
-#include "pal.h"
-#include "adc.h"
-#include "can.h"
-#include "mac.h"
-#include "serial.h"
-#include "spi.h"
-#include "mmc_spi.h"
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
 
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern const STM32GPIOConfig pal_default_config;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void halInit(void);
+  void hal_lld_init(void);
+  void stm32_clock_init(void);
+  void stm32_nvic_init(void);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _HAL_H_ */
+#endif /* _HAL_LLD_H_ */
 
 /** @} */

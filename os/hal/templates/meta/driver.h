@@ -18,42 +18,37 @@
 */
 
 /**
- * @file hal.h
- * @brief HAL subsystem header.
- * @addtogroup HAL
+ * @file xxx.h
+ * @brief XXX Driver macros and structures.
+ * @addtogroup XXX
  * @{
  */
 
-#ifndef _HAL_H_
-#define _HAL_H_
+#ifndef _XXX_H_
+#define _XXX_H_
 
-#include "halconf.h"
-#include "board.h"
+/**
+ * @brief Driver state machine possible states.
+ */
+typedef enum {
+  XXX_UNINIT = 0,                           /**< @brief Not initialized.    */
+  XXX_STOP = 1,                             /**< @brief Stopped.            */
+  XXX_READY = 2,                            /**< @brief Ready.              */
+} xxxstate_t;
 
-#include "hal_lld.h"
-
-#include "pal.h"
-#include "adc.h"
-#include "can.h"
-#include "mac.h"
-#include "serial.h"
-#include "spi.h"
-#include "mmc_spi.h"
-
-/*===========================================================================*/
-/* External declarations.                                                    */
-/*===========================================================================*/
-
-extern const STM32GPIOConfig pal_default_config;
+#include "xxx_lld.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void halInit(void);
+  void xxxInit(void);
+  void xxxObjectInit(XXXDriver *xxxp);
+  void xxxStart(XXXDriver *xxxp, const XXXConfig *config);
+  void xxxStop(XXXDriver *xxxp);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _HAL_H_ */
+#endif /* _XXX_H_ */
 
 /** @} */
