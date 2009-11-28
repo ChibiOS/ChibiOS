@@ -57,6 +57,8 @@ LDSCRIPT= ch.ld
 
 # Imported source files
 CHIBIOS = ../..
+include ${CHIBIOS}/os/hal/hal.mk
+include ${CHIBIOS}/os/hal/platforms/STM32/platform.mk
 include ${CHIBIOS}/os/ports/GCC/ARMCM3/port.mk
 include ${CHIBIOS}/os/kernel/kernel.mk
 include ${CHIBIOS}/test/test.mk
@@ -67,15 +69,9 @@ include ${CHIBIOS}/ext/fatfs/fatfs.mk
 CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
+       ${HALSRC} \
+       ${PLATFORMSRC} \
        ${FATFSSRC} \
-       ${CHIBIOS}/os/io/pal.c \
-       ${CHIBIOS}/os/io/serial.c \
-       ${CHIBIOS}/os/io/spi.c \
-       ${CHIBIOS}/os/io/mmc_spi.c \
-       ${CHIBIOS}/os/io/platforms/STM32/pal_lld.c \
-       ${CHIBIOS}/os/io/platforms/STM32/serial_lld.c \
-       ${CHIBIOS}/os/io/platforms/STM32/spi_lld.c \
-       ${CHIBIOS}/os/io/platforms/STM32/stm32_dma.c \
        ${CHIBIOS}/os/various/evtimer.c \
        ${CHIBIOS}/os/various/syscalls.c \
        board.c main.c
@@ -108,11 +104,9 @@ TCPPSRC =
 ASMSRC = $(PORTASM) \
          ${CHIBIOS}/os/ports/GCC/ARMCM3/STM32F103/vectors.s
 
-INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         ${CHIBIOS}/os/io \
-         ${CHIBIOS}/os/io/platforms/STM32 \
-         ${CHIBIOS}/os/various \
-         $(FATFSINC)
+INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) $(HALINC) $(PLATFORMINC) \
+         $(FATFSINC) \
+         ${CHIBIOS}/os/various
 
 #
 # Project, sources and paths
@@ -159,7 +153,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all default C defines here, like -D_DEBUG=1
-DDEFS = -DSTDOUT_SD=SD2 -DSTDIN_SD=SD2
+DDEFS =
 
 # List all default ASM defines here, like -D_DEBUG=1
 DADEFS =
