@@ -75,7 +75,7 @@ CH_IRQ_HANDLER(Vector6C) {
       /* End conversion.*/
       adc_lld_stop_conversion(&ADCD1);
       ADCD1.ad_grpp  = NULL;
-      ADCD1.ad_state = ADC_READY;
+      ADCD1.ad_state = ADC_COMPLETE;
       chSysLockFromIsr();
       chSemResetI(&ADCD1.ad_sem, 0);
       chSysUnlockFromIsr();

@@ -134,7 +134,8 @@ bool_t adcStartConversion(ADCDriver *adcp,
 
   chSysLock();
   chDbgAssert((adcp->ad_state == ADC_READY) ||
-              (adcp->ad_state == ADC_RUNNING),
+              (adcp->ad_state == ADC_RUNNING) ||
+              (adcp->ad_state == ADC_COMPLETE),
               "adcStartConversion(), #1",
               "invalid state");
   if (adcp->ad_state == ADC_RUNNING) {
@@ -162,7 +163,8 @@ void adcStopConversion(ADCDriver *adcp) {
 
   chSysLock();
   chDbgAssert((adcp->ad_state == ADC_READY) ||
-              (adcp->ad_state == ADC_RUNNING),
+              (adcp->ad_state == ADC_RUNNING) ||
+              (adcp->ad_state == ADC_COMPLETE),
               "adcStopConversion(), #1",
               "invalid state");
   if (adcp->ad_state == ADC_RUNNING) {
@@ -172,11 +174,15 @@ void adcStopConversion(ADCDriver *adcp) {
     chSemResetI(&adcp->ad_sem, 0);
     chSchRescheduleS();
   }
+  else
+    adcp->ad_state = ADC_READY;
   chSysUnlock();
 }
 
 /**
  * @brief Waits for completion.
+ * @details If the conversion is not completed or not yet started then the
+ *          invoking thread waits for a conversion completion event.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @param[in] timeout   the number of ticks before the operation timeouts,
@@ -185,17 +191,18 @@ void adcStopConversion(ADCDriver *adcp) {
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return The operation result.
- * @retval RDY_OK conversion finished (or not started).
+ * @retval RDY_OK conversion finished.
  * @retval RDY_TIMEOUT conversion not finished within the specified time.
  */
 msg_t adcWaitConversion(ADCDriver *adcp, systime_t timeout) {
 
   chSysLock();
   chDbgAssert((adcp->ad_state == ADC_READY) ||
-              (adcp->ad_state == ADC_RUNNING),
+              (adcp->ad_state == ADC_RUNNING) ||
+              (adcp->ad_state == ADC_COMPLETE),
               "adcWaitConversion(), #1",
               "invalid state");
-  if (adcp->ad_state == ADC_RUNNING) {
+  if (adcp->ad_state != ADC_COMPLETE) {
     if (chSemWaitTimeoutS(&adcp->ad_sem, timeout) == RDY_TIMEOUT) {
       chSysUnlock();
       return RDY_TIMEOUT;

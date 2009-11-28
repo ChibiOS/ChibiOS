@@ -40,7 +40,8 @@ typedef enum {
   ADC_UNINIT = 0,                           /**< @brief Not initialized.    */
   ADC_STOP = 1,                             /**< @brief Stopped.            */
   ADC_READY = 2,                            /**< @brief Ready.              */
-  ADC_RUNNING = 3                           /**< @brief Conversion running. */
+  ADC_RUNNING = 3,                          /**< @brief Conversion running. */
+  ADC_COMPLETE = 4                          /**< @brief Conversion complete.*/
 } adcstate_t;
 
 #include "adc_lld.h"
