@@ -63,9 +63,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <ch.h>
+#include "ch.h"
 #if defined(STDOUT_SD) || defined(STDIN_SD)
-#include <serial.h>
+#include "hal.h"
 #endif
 
 /***************************************************************************/
