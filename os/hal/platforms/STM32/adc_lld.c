@@ -60,6 +60,8 @@ CH_IRQ_HANDLER(Vector6C) {
   CH_IRQ_PROLOGUE();
 
   isr = DMA1->ISR;
+  DMA1->IFCR |= DMA_IFCR_CGIF1  | DMA_IFCR_CTCIF1 |
+                DMA_IFCR_CHTIF1 | DMA_IFCR_CTEIF1;
   if ((isr & DMA_ISR_HTIF1) != 0) {
     /* Half transfer processing.*/
     if (ADCD1.ad_callback != NULL) {
@@ -74,7 +76,9 @@ CH_IRQ_HANDLER(Vector6C) {
       adc_lld_stop_conversion(&ADCD1);
       ADCD1.ad_grpp  = NULL;
       ADCD1.ad_state = ADC_READY;
+      chSysLockFromIsr();
       chSemResetI(&ADCD1.ad_sem, 0);
+      chSysUnlockFromIsr();
     }
     /* Callback handling.*/
     if (ADCD1.ad_callback != NULL) {
@@ -84,7 +88,7 @@ CH_IRQ_HANDLER(Vector6C) {
         ADCD1.ad_callback(ADCD1.ad_samples + half, half);
       }
       else {
-        /* Invokes the callback passing the while buffer.*/
+        /* Invokes the callback passing the whole buffer.*/
         ADCD1.ad_callback(ADCD1.ad_samples, ADCD1.ad_depth);
       }
     }
@@ -93,8 +97,6 @@ CH_IRQ_HANDLER(Vector6C) {
     /* DMA error processing.*/
     STM32_ADC1_DMA_ERROR_HOOK();
   }
-  DMA1->IFCR |= DMA_IFCR_CGIF1  | DMA_IFCR_CTCIF1 |
-                DMA_IFCR_CHTIF1 | DMA_IFCR_CTEIF1;
 
   CH_IRQ_EPILOGUE();
 }
