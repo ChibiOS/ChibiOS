@@ -19,14 +19,15 @@
 
 /**
  * @file mmc_spi.c
- * @brief MMC over SPI driver code
+ * @brief MMC over SPI driver code.
  * @addtogroup MMC_SPI
  * @{
  */
 
-#include <ch.h>
-#include <spi.h>
-#include <mmc_spi.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_MMC_SPI
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -568,5 +569,7 @@ bool_t mmcStopSequentialWrite(MMCDriver *mmcp) {
   chSysUnlock();
   return TRUE;
 }
+
+#endif /* CH_HAL_USE_MMC_SPI */
 
 /** @} */
