@@ -24,10 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <pal.h>
+#include "ch.h"
+#include "hal.h"
 
-#include "board.h"
+#if CH_HAL_USE_PAL || defined(__DOXYGEN__)
 
 /**
  * @brief AT91SAM7 I/O ports configuration.
@@ -37,9 +37,9 @@
  */
 void _pal_lld_init(const AT91SAM7PIOConfig *config) {
 
-  unsigned int ports = (1 << AT91C_ID_PIOA);
+  uint32_t ports = (1 << AT91C_ID_PIOA);
 #if (SAM7_PLATFORM == SAM7X128) || (SAM7_PLATFORM == SAM7X256) || \
-    (SAM7_PLATFORM == SAM7X256)
+    (SAM7_PLATFORM == SAM7X512)
   ports |= (1 << AT91C_ID_PIOB);
 #endif
   AT91C_BASE_PMC->PMC_PCER = ports;
@@ -63,7 +63,7 @@ void _pal_lld_init(const AT91SAM7PIOConfig *config) {
    * PIOB setup.
    */
 #if (SAM7_PLATFORM == SAM7X128) || (SAM7_PLATFORM == SAM7X256) || \
-    (SAM7_PLATFORM == SAM7X256)
+    (SAM7_PLATFORM == SAM7X512)
   AT91C_BASE_PIOB->PIO_PPUER  = config->P1Data.pusr;    /* Pull-up as spec.*/
   AT91C_BASE_PIOB->PIO_PPUDR  = ~config->P1Data.pusr;
   AT91C_BASE_PIOB->PIO_PER  = 0xFFFFFFFF;               /* PIO enabled.*/
@@ -123,5 +123,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
     port->PIO_MDER = mask;
   }
 }
+
+#endif /* CH_HAL_USE_PAL */
 
 /** @} */

@@ -26,11 +26,10 @@
 
 #include <string.h>
 
-#include <ch.h>
-#include <mac.h>
-#include <mii.h>
+#include "ch.h"
+#include "mac.h"
 
-#include "at91lib/aic.h"
+#if CH_HAL_USE_MAC || defined(__DOXYGEN__)
 
 /**
  * @brief Ethernet driver 1.
@@ -480,5 +479,7 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
   AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
   return link_up = TRUE;
 }
+
+#endif /* CH_HAL_USE_MAC */
 
 /** @} */

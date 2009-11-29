@@ -27,7 +27,7 @@
 #ifndef _PAL_LLD_H_
 #define _PAL_LLD_H_
 
-#include "board.h"
+#if CH_HAL_USE_PAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Unsupported modes and specific modes                                      */
@@ -62,7 +62,7 @@ typedef struct {
   /** @brief Port 0 setup data.*/
   at91sam7_pio_setup_t P0Data;
 #if (SAM7_PLATFORM == SAM7X128) || (SAM7_PLATFORM == SAM7X256) || \
-    (SAM7_PLATFORM == SAM7X256) || defined(__DOXYGEN__)
+    (SAM7_PLATFORM == SAM7X512) || defined(__DOXYGEN__)
   /** @brief Port 1 setup data.*/
   at91sam7_pio_setup_t P1Data;
 #endif
@@ -99,7 +99,7 @@ typedef AT91PS_PIO ioportid_t;
  * @brief PIO port B identifier.
  */
 #if (SAM7_PLATFORM == SAM7X128) || (SAM7_PLATFORM == SAM7X256) || \
-    (SAM7_PLATFORM == SAM7X256) || defined(__DOXYGEN__)
+    (SAM7_PLATFORM == SAM7X512) || defined(__DOXYGEN__)
 #define IOPORT2         AT91C_BASE_PIOB
 #endif
 
@@ -235,6 +235,8 @@ typedef AT91PS_PIO ioportid_t;
  */
 #define pal_lld_writepad(port, pad, bit) pal_lld_writegroup(port, 1, pad, bit)
 
+extern const AT91SAM7PIOConfig pal_default_config;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -245,6 +247,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CH_HAL_USE_PAL */
 
 #endif /* _PAL_LLD_H_ */
 

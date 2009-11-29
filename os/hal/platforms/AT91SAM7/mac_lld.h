@@ -27,6 +27,8 @@
 #ifndef _MAC_LLD_H_
 #define _MAC_LLD_H_
 
+#if CH_HAL_USE_MAC || defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -186,6 +188,8 @@ extern "C" {
 }
 #endif
 /** @endcond*/
+
+#endif /* CH_HAL_USE_MAC */
 
 #endif /* _MAC_LLD_H_ */
 

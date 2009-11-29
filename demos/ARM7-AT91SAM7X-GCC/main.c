@@ -17,12 +17,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ch.h>
-#include <pal.h>
-#include <serial.h>
-#include <test.h>
-
-#include "board.h"
+#include "ch.h"
+#include "hal.h"
+#include "test.h"
 
 static WORKING_AREA(waThread1, 64);
 static msg_t Thread1(void *p) {

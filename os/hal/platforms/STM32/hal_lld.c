@@ -24,8 +24,8 @@
  * @{
  */
 
-#include <ch.h>
-#include <hal.h>
+#include "ch.h"
+#include "hal.h"
 
 #define AIRCR_VECTKEY           0x05FA0000
 

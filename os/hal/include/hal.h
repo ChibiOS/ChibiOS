@@ -44,8 +44,6 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern const STM32GPIOConfig pal_default_config;
-
 #ifdef __cplusplus
 extern "C" {
 #endif

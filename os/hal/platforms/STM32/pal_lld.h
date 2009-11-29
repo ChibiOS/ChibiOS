@@ -281,6 +281,8 @@ typedef GPIO_TypeDef * ioportid_t;
  */
 #define pal_lld_writepad(port, pad, bit) pal_lld_writegroup(port, 1, pad, bit)
 
+extern const STM32GPIOConfig pal_default_config;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

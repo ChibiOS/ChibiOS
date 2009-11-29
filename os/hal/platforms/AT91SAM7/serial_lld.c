@@ -24,11 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <serial.h>
+#include "ch.h"
+#include "hal.h"
 
-#include "at91lib/aic.h"
-#include "at91sam7.h"
+#if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
 #if SAM7_PLATFORM == SAM7S256
 
@@ -294,5 +293,7 @@ void sd_lld_stop(SerialDriver *sdp) {
   }
 #endif
 }
+
+#endif /* CH_HAL_USE_SPI */
 
 /** @} */
