@@ -27,6 +27,8 @@
 #ifndef _CAN_LLD_H_
 #define _CAN_LLD_H_
 
+#if CH_HAL_USE_CAN
+
 /**
  * @brief This switch defines whether the driver implementation supports
  *        a low power switch mode with automatic an wakeup feature.
@@ -59,11 +61,27 @@
 /*===========================================================================*/
 
 /**
+ * @brief CAN frame.
+ * @note Accessing the frame data as word16 or word32 is not portable because
+ *       machine data endianness, it can be still useful for a quick filling.
+ */
+typedef struct {
+  uint8_t                   cf_DLC:4;       /**< @brief Data length.        */
+  uint8_t                   cf_IDE:1;       /**< @brief Identifier type.    */
+  uint8_t                   cf_RTR:1;       /**< @brief Frame type.         */
+  uint32_t                  cf_id;          /**< @brief Frame identifier.   */
+  union {
+    uint8_t                 cf_data8[8];    /**< @brief Frame data.         */
+    uint16_t                cf_data16[4];   /**< @brief Frame data.         */
+    uint32_t                cf_data32[2];   /**< @brief Frame data.         */
+  };
+} CANFrame;
+
+/**
  * @brief Driver configuration structure.
  * @note It could be empty on some architectures.
  */
 typedef struct {
-
 } CANConfig;
 
 /**
@@ -94,7 +112,7 @@ typedef struct {
    * @brief One or more transmission slots become available.
    */
   EventSource               can_txempty_event;
-#if CAN_USE_SLEEP_MODE || defined __DOXYGEN__)
+#if CAN_USE_SLEEP_MODE || defined (__DOXYGEN__)
   /**
    * @brief Entering sleep state event.
    */
@@ -128,6 +146,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CH_HAL_USE_CAN */
 
 #endif /* _CAN_LLD_H_ */
 

@@ -27,6 +27,8 @@
 #ifndef _PAL_LLD_H_
 #define _PAL_LLD_H_
 
+#if CH_HAL_USE_PAL
+
 /*===========================================================================*/
 /* Unsupported modes and specific modes                                      */
 /*===========================================================================*/
@@ -316,6 +318,8 @@ typedef uint32_t ioportid_t;
  * @note Programming an unknown or unsupported mode is silently ignored.
  */
 #define pal_lld_setpadmode(port, pad, mode)
+
+#endif /* CH_HAL_USE_PAL */
 
 #endif /* _PAL_LLD_H_ */
 

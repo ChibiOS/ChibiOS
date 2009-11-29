@@ -24,8 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <adc.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_ADC
 
 /*===========================================================================*/
 /* Low Level Driver exported variables.                                      */
@@ -93,5 +95,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 
 }
+
+#endif /* CH_HAL_USE_ADC */
 
 /** @} */

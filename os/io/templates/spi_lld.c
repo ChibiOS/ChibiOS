@@ -24,8 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <spi.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_SPI
 
 /*===========================================================================*/
 /* Low Level Driver exported variables.                                      */
@@ -152,5 +154,7 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
 }
+
+#endif /* CH_HAL_USE_SPI */
 
 /** @} */

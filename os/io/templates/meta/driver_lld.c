@@ -18,16 +18,14 @@
 */
 
 /**
- * @file templates/pal_lld.c
- * @brief PAL subsystem low level driver template
- * @addtogroup PAL_LLD
+ * @file templates/xxx_lld.c
+ * @brief XXX Driver subsystem low level driver source template
+ * @addtogroup XXX_LLD
  * @{
  */
 
-#include "ch.h"
-#include "hal.h"
-
-#if CH_HAL_USE_PAL
+#include <ch.h>
+#include <xxx.h>
 
 /*===========================================================================*/
 /* Low Level Driver exported variables.                                      */
@@ -49,6 +47,33 @@
 /* Low Level Driver exported functions.                                      */
 /*===========================================================================*/
 
-#endif /* CH_HAL_USE_PAL */
+/**
+ * @brief Low level XXX driver initialization.
+ */
+void xxx_lld_init(void) {
+
+}
+
+/**
+ * @brief Configures and activates the XXX peripheral.
+ *
+ * @param[in] xxxp pointer to the @p XXXDriver object
+ */
+void xxx_lld_start(XXXDriver *xxxp) {
+
+  if (xxxp->xxx_state == XXX_STOP) {
+    /* Clock activation.*/
+  }
+  /* Configuration.*/
+}
+
+/**
+ * @brief Deactivates the XXX peripheral.
+ *
+ * @param[in] xxxp pointer to the @p XXXDriver object
+ */
+void xxx_lld_stop(XXXDriver *xxxp) {
+
+}
 
 /** @} */

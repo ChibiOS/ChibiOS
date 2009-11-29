@@ -24,8 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <serial.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_SERIAL
 
 /** @brief Driver default configuration.*/
 static const SerialDriverConfig default_config = {
@@ -83,5 +85,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
 void sd_lld_stop(SerialDriver *sdp) {
 
 }
+
+#endif /* CH_HAL_USE_SERIAL */
 
 /** @} */

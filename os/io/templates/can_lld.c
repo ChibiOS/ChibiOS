@@ -24,8 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <can.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_CAN
 
 /*===========================================================================*/
 /* Low Level Driver exported variables.                                      */
@@ -87,7 +89,7 @@ void can_lld_stop(CANDriver *canp) {
  */
 bool_t can_lld_can_transmit(CANDriver *canp) {
 
-  return false;
+  return FALSE;
 }
 
 /**
@@ -115,7 +117,7 @@ msg_t can_lld_transmit(CANDriver *canp, const CANFrame *cfp) {
  */
 bool_t can_lld_can_receive(CANDriver *canp) {
 
-  return false;
+  return FALSE;
 }
 
 /**
@@ -151,5 +153,7 @@ void can_lld_wakeup(CANDriver *canp) {
 
 }
 #endif /* CAN_USE_SLEEP_MODE */
+
+#endif /* CH_HAL_USE_CAN */
 
 /** @} */

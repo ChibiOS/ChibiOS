@@ -18,16 +18,14 @@
 */
 
 /**
- * @file templates/pal_lld.c
- * @brief PAL subsystem low level driver template
- * @addtogroup PAL_LLD
+ * @file templates/hal_lld.c
+ * @brief HAL Driver subsystem low level driver source template
+ * @addtogroup HAL_LLD
  * @{
  */
 
-#include "ch.h"
-#include "hal.h"
-
-#if CH_HAL_USE_PAL
+#include <ch.h>
+#include <hal.h>
 
 /*===========================================================================*/
 /* Low Level Driver exported variables.                                      */
@@ -49,6 +47,11 @@
 /* Low Level Driver exported functions.                                      */
 /*===========================================================================*/
 
-#endif /* CH_HAL_USE_PAL */
+/**
+ * @brief Low level HAL driver initialization.
+ */
+void hal_lld_init(void) {
+
+}
 
 /** @} */

@@ -24,8 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <mac.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_MAC
 
 /**
  * @brief Low level MAC initialization.
@@ -145,5 +147,7 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
 
   return FALSE;
 }
+
+#endif /* CH_HAL_USE_MAC */
 
 /** @} */

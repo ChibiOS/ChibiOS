@@ -27,6 +27,8 @@
 #ifndef _SPI_LLD_H_
 #define _SPI_LLD_H_
 
+#if CH_HAL_USE_SPI
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -98,6 +100,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CH_HAL_USE_SPI */
 
 #endif /* _SPI_LLD_H_ */
 

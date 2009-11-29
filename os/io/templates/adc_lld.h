@@ -27,6 +27,8 @@
 #ifndef _ADC_LLD_H_
 #define _ADC_LLD_H_
 
+#if CH_HAL_USE_ADC
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -131,6 +133,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CH_HAL_USE_ADC */
 
 #endif /* _ADC_LLD_H_ */
 

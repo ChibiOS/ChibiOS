@@ -27,6 +27,8 @@
 #ifndef _MAC_LLD_H_
 #define _MAC_LLD_H_
 
+#if CH_HAL_USE_MAC
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -111,6 +113,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CH_HAL_USE_MAC */
 
 #endif /* _MAC_LLD_H_ */
 
