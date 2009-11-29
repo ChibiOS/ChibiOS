@@ -24,14 +24,14 @@
  * @{
  */
 
-#include <ch.h>
-#include <mac.h>
-#include <mii.h>
+#include "ch.h"
+#include "mac.h"
+#include "mii.h"
 
 /*
- * Currently there is no code, everything is done in the header, you may 
+ * Currently there is no code, everything is done in the header, you may
  * omit this file from the project but this may change in future releases.
  * The file is here because the driver's naming pattern.
  */
- 
+
 /** @} */

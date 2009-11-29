@@ -27,6 +27,8 @@
 #ifndef _ADC_H_
 #define _ADC_H_
 
+#if CH_HAL_USE_ADC
+
 #if !CH_USE_SEMAPHORES
 #error "ADC driver requires CH_USE_SEMAPHORES"
 #endif
@@ -38,7 +40,8 @@ typedef enum {
   ADC_UNINIT = 0,                           /**< @brief Not initialized.    */
   ADC_STOP = 1,                             /**< @brief Stopped.            */
   ADC_READY = 2,                            /**< @brief Ready.              */
-  ADC_RUNNING = 3                           /**< @brief Conversion running. */
+  ADC_RUNNING = 3,                          /**< @brief Conversion running. */
+  ADC_COMPLETE = 4                          /**< @brief Conversion complete.*/
 } adcstate_t;
 
 #include "adc_lld.h"
@@ -60,6 +63,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CH_HAL_USE_ADC */
 
 #endif /* _ADC_H_ */
 

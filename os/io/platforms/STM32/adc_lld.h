@@ -27,11 +27,7 @@
 #ifndef _ADC_LLD_H_
 #define _ADC_LLD_H_
 
-#undef FALSE
-#undef TRUE
-#include <stm32f10x.h>
-#define FALSE 0
-#define TRUE (!FALSE)
+#if CH_HAL_USE_ADC
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -74,7 +70,7 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-#define ADC_CR2_EXTSEL_SRC(n)   (n << 17)   /**< @brief Trigger source.     */
+#define ADC_CR2_EXTSEL_SRC(n)   ((n) << 17) /**< @brief Trigger source.     */
 #define ADC_CR2_EXTSEL_SWSTART  (7 << 17)   /**< @brief Software trigger.   */
 
 #define ADC_CHANNEL_IN0         0   /**< @brief External analog input 0.    */
@@ -96,26 +92,26 @@
 #define ADC_CHANNEL_SENSOR      16  /**< @brief Internal temperature sensor.*/
 #define ADC_CHANNEL_VREFINT     17  /**< @brief Internal reference.         */
 
-#define ADC_SQR1_NUM_CH(n)      (n << 20)
+#define ADC_SQR1_NUM_CH(n)      (((n) - 1) << 20)
 
-#define ADC_SQR3_SQ0_N(n)       (n << 0)
-#define ADC_SQR3_SQ1_N(n)       (n << 5)
-#define ADC_SQR3_SQ2_N(n)       (n << 10)
-#define ADC_SQR3_SQ3_N(n)       (n << 15)
-#define ADC_SQR3_SQ4_N(n)       (n << 20)
-#define ADC_SQR3_SQ5_N(n)       (n << 25)
+#define ADC_SQR3_SQ0_N(n)       ((n) << 0)
+#define ADC_SQR3_SQ1_N(n)       ((n) << 5)
+#define ADC_SQR3_SQ2_N(n)       ((n) << 10)
+#define ADC_SQR3_SQ3_N(n)       ((n) << 15)
+#define ADC_SQR3_SQ4_N(n)       ((n) << 20)
+#define ADC_SQR3_SQ5_N(n)       ((n) << 25)
 
-#define ADC_SQR2_SQ6_N(n)       (n << 0)
-#define ADC_SQR2_SQ7_N(n)       (n << 5)
-#define ADC_SQR2_SQ8_N(n)       (n << 10)
-#define ADC_SQR2_SQ9_N(n)       (n << 15)
-#define ADC_SQR2_SQ10_N(n)      (n << 20)
-#define ADC_SQR2_SQ11_N(n)      (n << 25)
+#define ADC_SQR2_SQ6_N(n)       ((n) << 0)
+#define ADC_SQR2_SQ7_N(n)       ((n) << 5)
+#define ADC_SQR2_SQ8_N(n)       ((n) << 10)
+#define ADC_SQR2_SQ9_N(n)       ((n) << 15)
+#define ADC_SQR2_SQ10_N(n)      ((n) << 20)
+#define ADC_SQR2_SQ11_N(n)      ((n) << 25)
 
-#define ADC_SQR1_SQ13_N(n)      (n << 0)
-#define ADC_SQR1_SQ14_N(n)      (n << 5)
-#define ADC_SQR1_SQ15_N(n)      (n << 10)
-#define ADC_SQR1_SQ16_N(n)      (n << 15)
+#define ADC_SQR1_SQ13_N(n)      ((n) << 0)
+#define ADC_SQR1_SQ14_N(n)      ((n) << 5)
+#define ADC_SQR1_SQ15_N(n)      ((n) << 10)
+#define ADC_SQR1_SQ16_N(n)      ((n) << 15)
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -270,6 +266,8 @@ extern "C" {
 }
 #endif
 /** @endcond*/
+
+#endif /* CH_HAL_USE_ADC */
 
 #endif /* _ADC_LLD_H_ */
 

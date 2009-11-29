@@ -19,13 +19,15 @@
 
 /**
  * @file mmc_spi.h
- * @brief MMC over SPI driver header
+ * @brief MMC over SPI driver header.
  * @addtogroup MMC_SPI
  * @{
  */
 
 #ifndef _MMC_SPI_H_
 #define _MMC_SPI_H_
+
+#if CH_HAL_USE_MMC_SPI
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -198,6 +200,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CH_HAL_USE_MMC_SPI */
 
 #endif /* _MMC_SPI_H_ */
 

@@ -24,8 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <spi.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_SPI
 
 /**
  * @brief SPI Driver initialization.
@@ -254,5 +256,7 @@ void spiReleaseBus(SPIDriver *spip) {
 #endif
 }
 #endif /*SPI_USE_MUTUAL_EXCLUSION */
+
+#endif /* CH_HAL_USE_SPI */
 
 /** @} */

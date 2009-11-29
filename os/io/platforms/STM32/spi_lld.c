@@ -24,10 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <spi.h>
-#include <stm32_dma.h>
-#include <nvic.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_SPI
 
 /*===========================================================================*/
 /* Low Level Driver exported variables.                                      */
@@ -184,6 +184,8 @@ void spi_lld_init(void) {
   dummytx = 0xFFFF;
 
 #if USE_STM32_SPI1
+  RCC->APB2RSTR     = RCC_APB2RSTR_SPI1RST;
+  RCC->APB2RSTR     = 0;
   spiObjectInit(&SPID1);
   SPID1.spd_thread  = NULL;
   SPID1.spd_spi     = SPI1;
@@ -194,6 +196,8 @@ void spi_lld_init(void) {
 #endif
 
 #if USE_STM32_SPI2
+  RCC->APB1RSTR     = RCC_APB1RSTR_SPI2RST;
+  RCC->APB1RSTR     = 0;
   spiObjectInit(&SPID2);
   SPID2.spd_thread  = NULL;
   SPID2.spd_spi     = SPI2;
@@ -358,5 +362,7 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_TEIE;
   spi_start_wait(spip, n, &dummytx, rxbuf);
 }
+
+#endif /* CH_HAL_USE_SPI */
 
 /** @} */

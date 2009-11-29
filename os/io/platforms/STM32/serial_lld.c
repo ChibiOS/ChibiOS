@@ -24,10 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <serial.h>
-#include <nvic.h>
-#include <board.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_SERIAL
 
 #if USE_STM32_USART1 || defined(__DOXYGEN__)
 /** @brief USART1 serial driver identifier.*/
@@ -299,5 +299,7 @@ void sd_lld_stop(SerialDriver *sdp) {
   }
 #endif
 }
+
+#endif /* CH_HAL_USE_SERIAL */
 
 /** @} */

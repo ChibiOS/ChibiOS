@@ -24,8 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <pal.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_PAL
 
 /**
  * @brief Read from an I/O bus.
@@ -90,5 +92,7 @@ void palSetBusMode(IOBus *bus, uint_fast8_t mode) {
 
   palSetGroupMode(bus->bus_portid, bus->bus_mask, mode);
 }
+
+#endif /* CH_HAL_USE_PAL */
 
 /** @} */

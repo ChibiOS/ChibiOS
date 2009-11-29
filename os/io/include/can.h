@@ -27,6 +27,8 @@
 #ifndef _CAN_H_
 #define _CAN_H_
 
+#if CH_HAL_USE_CAN
+
 /**
  * @brief Driver state machine possible states.
  */
@@ -55,6 +57,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CH_HAL_USE_CAN */
 
 #endif /* _CAN_H_ */
 

@@ -27,12 +27,6 @@
 #ifndef _STM32_DMA_H_
 #define _STM32_DMA_H_
 
-#undef FALSE
-#undef TRUE
-#include <stm32f10x.h>
-#define FALSE 0
-#define TRUE (!FALSE)
-
 /** @brief DMA1 identifier.*/
 #define DMA1_ID 0
 

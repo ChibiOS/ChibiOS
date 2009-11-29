@@ -24,8 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <mac.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_MAC
 
 /**
  * @brief MAC Driver initialization.
@@ -170,5 +172,7 @@ bool_t macPollLinkStatus(MACDriver *macp) {
 
   return mac_lld_poll_link_status(macp);
 }
+
+#endif /* CH_HAL_USE_MAC */
 
 /** @} */

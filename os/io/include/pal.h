@@ -27,6 +27,8 @@
 #ifndef _PAL_H_
 #define _PAL_H_
 
+#if CH_HAL_USE_PAL
+
 /**
  * @brief Bits in a mode word dedicated as mode selector.
  * @details The other bits are not defined and may be used as device-specific
@@ -81,9 +83,7 @@
  */
 #define PAL_MODE_OUTPUT_OPENDRAIN       7
 
-#ifndef _PAL_LLD_H_
 #include "pal_lld.h"
-#endif
 
 /**
  * @brief Logical low state.
@@ -463,5 +463,7 @@ extern "C" {
 #endif
 
 #endif /* _PAL_H_ */
+
+#endif /* CH_HAL_USE_PAL */
 
 /** @} */

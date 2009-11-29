@@ -27,6 +27,8 @@
 #ifndef _SERIAL_H_
 #define _SERIAL_H_
 
+#if CH_HAL_USE_SERIAL
+
 /** No pending conditions.*/
 #define SD_NO_ERROR             0
 /** Connection happened.*/
@@ -187,6 +189,8 @@ extern "C" {
  * @see chIORead()
  */
 #define sdRead(sdp, b, n) chIQRead(&(sdp)->d2.iqueue, b, n)
+
+#endif /* CH_HAL_USE_SERIAL */
 
 #endif /* _SERIAL_H_ */
 

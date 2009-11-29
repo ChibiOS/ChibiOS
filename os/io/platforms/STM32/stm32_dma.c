@@ -24,15 +24,8 @@
  * @{
  */
 
-#include <ch.h>
-
-#include "stm32_dma.h"
-
-#undef FALSE
-#undef TRUE
-#include <stm32f10x.h>
-#define FALSE 0
-#define TRUE (!FALSE)
+#include "ch.h"
+#include "hal.h"
 
 static cnt_t dmacnt1;
 #if defined(STM32F10X_HD) || defined (STM32F10X_CL)

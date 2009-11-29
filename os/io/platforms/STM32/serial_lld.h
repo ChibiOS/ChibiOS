@@ -27,11 +27,7 @@
 #ifndef _SERIAL_LLD_H_
 #define _SERIAL_LLD_H_
 
-#undef FALSE
-#undef TRUE
-#include <stm32f10x.h>
-#define FALSE 0
-#define TRUE (!FALSE)
+#if CH_HAL_USE_SERIAL
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -194,6 +190,8 @@ extern "C" {
 }
 #endif
 /** @endcond*/
+
+#endif /* CH_HAL_USE_SERIAL */
 
 #endif /* _SERIAL_LLD_H_ */
 

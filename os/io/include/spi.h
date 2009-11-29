@@ -27,6 +27,8 @@
 #ifndef _SPI_H_
 #define _SPI_H_
 
+#if CH_HAL_USE_SPI
+
 /**
  * @brief Enables the mutual exclusion APIs on the SPI bus.
  */
@@ -70,6 +72,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CH_HAL_USE_SPI */
 
 #endif /* _SPI_H_ */
 

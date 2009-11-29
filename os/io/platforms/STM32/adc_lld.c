@@ -24,10 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <adc.h>
-#include <stm32_dma.h>
-#include <nvic.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_ADC
 
 /*===========================================================================*/
 /* Low Level Driver exported variables.                                      */
@@ -60,6 +60,8 @@ CH_IRQ_HANDLER(Vector6C) {
   CH_IRQ_PROLOGUE();
 
   isr = DMA1->ISR;
+  DMA1->IFCR |= DMA_IFCR_CGIF1  | DMA_IFCR_CTCIF1 |
+                DMA_IFCR_CHTIF1 | DMA_IFCR_CTEIF1;
   if ((isr & DMA_ISR_HTIF1) != 0) {
     /* Half transfer processing.*/
     if (ADCD1.ad_callback != NULL) {
@@ -73,8 +75,10 @@ CH_IRQ_HANDLER(Vector6C) {
       /* End conversion.*/
       adc_lld_stop_conversion(&ADCD1);
       ADCD1.ad_grpp  = NULL;
-      ADCD1.ad_state = ADC_READY;
+      ADCD1.ad_state = ADC_COMPLETE;
+      chSysLockFromIsr();
       chSemResetI(&ADCD1.ad_sem, 0);
+      chSysUnlockFromIsr();
     }
     /* Callback handling.*/
     if (ADCD1.ad_callback != NULL) {
@@ -84,7 +88,7 @@ CH_IRQ_HANDLER(Vector6C) {
         ADCD1.ad_callback(ADCD1.ad_samples + half, half);
       }
       else {
-        /* Invokes the callback passing the while buffer.*/
+        /* Invokes the callback passing the whole buffer.*/
         ADCD1.ad_callback(ADCD1.ad_samples, ADCD1.ad_depth);
       }
     }
@@ -93,8 +97,6 @@ CH_IRQ_HANDLER(Vector6C) {
     /* DMA error processing.*/
     STM32_ADC1_DMA_ERROR_HOOK();
   }
-  DMA1->IFCR |= DMA_IFCR_CGIF1  | DMA_IFCR_CTCIF1 |
-                DMA_IFCR_CHTIF1 | DMA_IFCR_CTEIF1;
 
   CH_IRQ_EPILOGUE();
 }
@@ -110,6 +112,10 @@ CH_IRQ_HANDLER(Vector6C) {
 void adc_lld_init(void) {
 
 #if USE_STM32_ADC1
+  /* ADC reset, ensures reset state in order to avoid truouble with JTAGs.*/
+  RCC->APB2RSTR = RCC_APB2RSTR_ADC1RST;
+  RCC->APB2RSTR = 0;
+
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
   ADCD1.ad_adc = ADC1;
@@ -169,7 +175,7 @@ void adc_lld_start(ADCDriver *adcp) {
  */
 void adc_lld_stop(ADCDriver *adcp) {
 
-  /* If in ready state then disables the SPI clock.*/
+  /* If in ready state then disables the ADC clock.*/
   if (adcp->ad_state == ADC_READY) {
 #if USE_STM32_ADC1
     if (&ADCD1 == adcp) {
@@ -232,5 +238,7 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
   adcp->ad_adc->CR2 = ADC_CR2_ADON;
   adcp->ad_dma->CCR = 0;
 }
+
+#endif /* CH_HAL_USE_ADC */
 
 /** @} */

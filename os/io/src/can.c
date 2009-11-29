@@ -24,8 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <can.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_CAN
 
 /**
  * @brief CAN Driver initialization.
@@ -44,8 +46,8 @@ void canObjectInit(CANDriver *canp) {
 
   canp->can_state    = CAN_STOP;
   canp->can_config   = NULL;
-  chSemInit(&canp->can_txsem);
-  chSemInit(&canp->can_rxsem);
+  chSemInit(&canp->can_txsem, 0);
+  chSemInit(&canp->can_rxsem, 0);
   chEvtInit(&canp->can_rxfull_event);
   chEvtInit(&canp->can_txempty_event);
 #if CAN_USE_SLEEP_MODE
@@ -183,7 +185,7 @@ void canSleep(CANDriver *canp) {
   chDbgAssert((canp->can_state == CAN_READY) || (canp->can_state == CAN_SLEEP),
               "canSleep(), #1",
               "invalid state");
-  if (canp->can_state = CAN_READY) {
+  if (canp->can_state == CAN_READY) {
     can_lld_sleep(canp);
     canp->can_state = CAN_SLEEP;
     chEvtBroadcastI(&canp->can_sleep_event);
@@ -207,7 +209,7 @@ void canWakeup(CANDriver *canp) {
   chDbgAssert((canp->can_state == CAN_READY) || (canp->can_state == CAN_SLEEP),
               "canWakeup(), #1",
               "invalid state");
-  if (canp->can_state = CAN_SLEEP) {
+  if (canp->can_state == CAN_SLEEP) {
     can_lld_wakeup(canp);
     canp->can_state = CAN_READY;
     chEvtBroadcastI(&canp->can_wakeup_event);
@@ -216,5 +218,7 @@ void canWakeup(CANDriver *canp) {
   chSysUnlock();
 }
 #endif /* CAN_USE_SLEEP_MODE */
+
+#endif /* CH_HAL_USE_CAN */
 
 /** @} */

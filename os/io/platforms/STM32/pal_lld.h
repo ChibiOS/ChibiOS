@@ -27,11 +27,7 @@
 #ifndef _PAL_LLD_H_
 #define _PAL_LLD_H_
 
-#undef FALSE
-#undef TRUE
-#include <stm32f10x.h>
-#define FALSE 0
-#define TRUE (!FALSE)
+#if CH_HAL_USE_PAL
 
 /*===========================================================================*/
 /* I/O Ports Types and constants.                                            */
@@ -295,6 +291,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CH_HAL_USE_PAL */
 
 #endif /* _PAL_LLD_H_ */
 

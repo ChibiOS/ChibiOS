@@ -24,8 +24,10 @@
  * @{
  */
 
-#include <ch.h>
-#include <serial.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_SERIAL
 
 /*
  * Interface implementation, the following functions just invoke the equivalent
@@ -193,5 +195,7 @@ sdflags_t sdGetAndClearFlags(SerialDriver *sd) {
   sd->d2.flags = SD_NO_ERROR;
   return mask;
 }
+
+#endif /* CH_HAL_USE_SERIAL */
 
 /** @} */

@@ -27,13 +27,7 @@
 #ifndef _SPI_LLD_H_
 #define _SPI_LLD_H_
 
-#include <pal.h>
-
-#undef FALSE
-#undef TRUE
-#include <stm32f10x.h>
-#define FALSE 0
-#define TRUE (!FALSE)
+#if CH_HAL_USE_SPI
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -208,6 +202,8 @@ extern "C" {
 }
 #endif
 /** @endcond*/
+
+#endif /* CH_HAL_USE_SPI */
 
 #endif /* _SPI_LLD_H_ */
 
