@@ -72,6 +72,17 @@ const STM32GPIOConfig pal_default_config =
  */
 void hal_lld_init(void) {
 
+  /* Note: PRIGROUP 4:0 (4:4).*/
+  SCB->AIRCR = AIRCR_VECTKEY | SCB_AIRCR_PRIGROUP_0 | SCB_AIRCR_PRIGROUP_1;
+  NVICSetSystemHandlerPriority(HANDLER_SVCALL, PRIORITY_SVCALL);
+  NVICSetSystemHandlerPriority(HANDLER_SYSTICK, PRIORITY_SYSTICK);
+  NVICSetSystemHandlerPriority(HANDLER_PENDSV, PRIORITY_PENDSV);
+
+  /* Systick initialization.*/
+  SysTick->LOAD = SYSCLK / (8000000 / CH_FREQUENCY) - 1;
+  SysTick->VAL = 0;
+  SysTick->CTRL = SysTick_CTRL_ENABLE | SysTick_CTRL_TICKINT;
+
 #if CH_HAL_USE_ADC || CH_HAL_USE_SPI
   dmaInit();
 #endif
@@ -106,23 +117,6 @@ void stm32_clock_init(void) {
   RCC->CFGR |= RCC_CFGR_SW_PLL; /* Switches the PLL clock ON.               */
   while ((RCC->CFGR & RCC_CFGR_SW) != RCC_CFGR_SW_PLL)
     ;
-}
-
-/**
- * @brief STM32 NVIC/SCB/SYSTICK initialization.
- * @note All the involved constants come from the file @p board.h.
- */
-void stm32_nvic_init(void) {
-
-  /* Note: PRIGROUP 4:0 (4:4).*/
-  SCB->AIRCR = AIRCR_VECTKEY | SCB_AIRCR_PRIGROUP_0 | SCB_AIRCR_PRIGROUP_1;
-  NVICSetSystemHandlerPriority(HANDLER_SVCALL, PRIORITY_SVCALL);
-  NVICSetSystemHandlerPriority(HANDLER_SYSTICK, PRIORITY_SYSTICK);
-  NVICSetSystemHandlerPriority(HANDLER_PENDSV, PRIORITY_PENDSV);
-
-  SysTick->LOAD = SYSCLK / (8000000 / CH_FREQUENCY) - 1;
-  SysTick->VAL = 0;
-  SysTick->CTRL = SysTick_CTRL_ENABLE | SysTick_CTRL_TICKINT;
 }
 
 /** @} */

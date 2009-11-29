@@ -38,11 +38,6 @@ void hwinit0(void) {
 void hwinit1(void) {
 
   /*
-   * NVIC/SCB initialization.
-   */
-  stm32_nvic_init();
-
-  /*
    * HAL initialization.
    */
   halInit();

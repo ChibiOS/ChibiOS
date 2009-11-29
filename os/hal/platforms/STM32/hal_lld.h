@@ -61,7 +61,6 @@ extern "C" {
 #endif
   void hal_lld_init(void);
   void stm32_clock_init(void);
-  void stm32_nvic_init(void);
 #ifdef __cplusplus
 }
 #endif
