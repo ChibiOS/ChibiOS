@@ -27,7 +27,7 @@
 #ifndef _PAL_H_
 #define _PAL_H_
 
-#if CH_HAL_USE_PAL
+#if CH_HAL_USE_PAL || defined(__DOXYGEN__)
 
 /**
  * @brief Bits in a mode word dedicated as mode selector.

@@ -27,7 +27,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_SERIAL
+#if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
 #if USE_STM32_USART1 || defined(__DOXYGEN__)
 /** @brief USART1 serial driver identifier.*/

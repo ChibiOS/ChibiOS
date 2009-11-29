@@ -27,7 +27,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_SERIAL
+#if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
 /*
  * Interface implementation, the following functions just invoke the equivalent

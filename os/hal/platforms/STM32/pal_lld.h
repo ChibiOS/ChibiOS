@@ -27,7 +27,7 @@
 #ifndef _PAL_LLD_H_
 #define _PAL_LLD_H_
 
-#if CH_HAL_USE_PAL
+#if CH_HAL_USE_PAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* I/O Ports Types and constants.                                            */

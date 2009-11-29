@@ -27,7 +27,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_MAC
+#if CH_HAL_USE_MAC || defined(__DOXYGEN__)
 
 /**
  * @brief Low level MAC initialization.

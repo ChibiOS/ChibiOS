@@ -27,7 +27,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_SPI
+#if CH_HAL_USE_SPI || defined(__DOXYGEN__)
 
 /**
  * @brief SPI Driver initialization.

@@ -27,7 +27,7 @@
 #ifndef _ADC_H_
 #define _ADC_H_
 
-#if CH_HAL_USE_ADC
+#if CH_HAL_USE_ADC || defined(__DOXYGEN__)
 
 #if !CH_USE_SEMAPHORES
 #error "ADC driver requires CH_USE_SEMAPHORES"

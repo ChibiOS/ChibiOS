@@ -27,7 +27,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_MMC_SPI
+#if CH_HAL_USE_MMC_SPI || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */

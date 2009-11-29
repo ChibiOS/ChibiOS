@@ -27,7 +27,7 @@
 #ifndef _SPI_H_
 #define _SPI_H_
 
-#if CH_HAL_USE_SPI
+#if CH_HAL_USE_SPI || defined(__DOXYGEN__)
 
 /**
  * @brief Enables the mutual exclusion APIs on the SPI bus.

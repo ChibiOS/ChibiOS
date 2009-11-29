@@ -27,7 +27,7 @@
 #ifndef _MAC_H_
 #define _MAC_H_
 
-#if CH_HAL_USE_MAC
+#if CH_HAL_USE_MAC || defined(__DOXYGEN__)
 
 #include "mac_lld.h"
 

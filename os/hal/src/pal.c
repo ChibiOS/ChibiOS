@@ -27,7 +27,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_PAL
+#if CH_HAL_USE_PAL || defined(__DOXYGEN__)
 
 /**
  * @brief Read from an I/O bus.

@@ -27,7 +27,7 @@
 #ifndef _MMC_SPI_H_
 #define _MMC_SPI_H_
 
-#if CH_HAL_USE_MMC_SPI
+#if CH_HAL_USE_MMC_SPI || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

@@ -27,7 +27,7 @@
 #ifndef _CAN_H_
 #define _CAN_H_
 
-#if CH_HAL_USE_CAN
+#if CH_HAL_USE_CAN || defined(__DOXYGEN__)
 
 /**
  * @brief Driver state machine possible states.

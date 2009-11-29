@@ -27,7 +27,7 @@
 #ifndef _SPI_LLD_H_
 #define _SPI_LLD_H_
 
-#if CH_HAL_USE_SPI
+#if CH_HAL_USE_SPI || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

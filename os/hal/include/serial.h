@@ -27,7 +27,7 @@
 #ifndef _SERIAL_H_
 #define _SERIAL_H_
 
-#if CH_HAL_USE_SERIAL
+#if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
 /** No pending conditions.*/
 #define SD_NO_ERROR             0

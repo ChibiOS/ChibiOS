@@ -27,7 +27,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_CAN
+#if CH_HAL_USE_CAN || defined(__DOXYGEN__)
 
 /**
  * @brief CAN Driver initialization.
