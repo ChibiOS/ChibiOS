@@ -52,7 +52,6 @@
  * - @ref ADC.
  * - @ref CAN.
  * - @ref MAC.
- * - @ref MII.
  * - @ref MMC_SPI.
  * - @ref SPI.
  * .
@@ -310,27 +309,6 @@
  * @ingroup MAC
  */
 
-/**
- * @defgroup MII MII Driver
- * @brief Generic MII driver.
- * @details This module implements a generic interface for MII (Media
- *          Independent Interface) drivers.
- *          The MII/RMII/GMII/RGMII/SGMII buses are standard interfaces meant
- *          to connect a MAC block to a PHY transceiver.<br>
- *          A @ref MII is usually used from within a @ref MAC and is not
- *          meant to be used directly from the application code.
- *
- * @ingroup IO
- */
-
-/**
- * @defgroup MII_LLD MII Low Level Driver
- * @brief @ref MII low level driver template.
- * @details This file is a template for a MII low level driver.
- *
- * @ingroup MII
- */
- 
 /**
  * @defgroup MMC_SPI MMC over SPI Driver
  * @brief Generic MMC driver.

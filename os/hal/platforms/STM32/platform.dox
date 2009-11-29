@@ -32,6 +32,13 @@
  */
 
 /**
+ * @defgroup STM32_HAL STM32 HAL Support
+ * @brief HAL support.
+ *
+ * @ingroup STM32
+ */
+
+/**
  * @defgroup STM32_PAL STM32 I/O Ports Support
  * @brief I/O Ports peripherals support.
  * @details This module supports the STM3 GPIO controller. The controller
@@ -84,18 +91,26 @@
  */
 
 /**
- * @defgroup STM32_SPI STM32 SPI Support
- * @brief SPI peripherals support.
- * @details The serial driver supports the STM32 SPIs using DMA channels for
+ * @defgroup STM32_ADC STM32 ADC Support
+ * @brief ADC peripherals support.
+ * @details The serial driver supports the STM32 ADCs using DMA channels for
  *          improved performance.
  *
  * @ingroup STM32
  */
 
 /**
- * @defgroup STM32_ADC STM32 ADC Support
- * @brief ADC peripherals support.
- * @details The serial driver supports the STM32 ADCs using DMA channels for
+ * @defgroup STM32_CAN STM32 CAN Support
+ * @brief CAN peripheral support.
+ * @details The CAN driver supports the STM32 bxCAN unit.
+ *
+ * @ingroup STM32
+ */
+
+/**
+ * @defgroup STM32_SPI STM32 SPI Support
+ * @brief SPI peripherals support.
+ * @details The serial driver supports the STM32 SPIs using DMA channels for
  *          improved performance.
  *
  * @ingroup STM32

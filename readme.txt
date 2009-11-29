@@ -4,6 +4,10 @@
 
 *** 1.3.5 ***
 - FIX: Fixed some problems in the MMC_SPI driver (bugs 2901084 and 2901172).
+- NEW: Unified the initialization of the various drivers from a single HAL
+  driver. The single drivers can be enabled or disabled from a HAL
+  configuration file halconf.h.
+- NEW: New CAN driver model.
 - NEW: STM32 ADC driver implementation with DMA support.
 - NEW: Added AT91SAM7S support and support for all the memory sizes in
   both AT91SAM7S and AT91SAM7X families.
