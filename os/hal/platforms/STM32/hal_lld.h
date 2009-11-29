@@ -27,6 +27,16 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
+/*
+ * Tricks required to make the TRUE/FALSE declaration inside the library
+ * compatible.
+ */
+#undef FALSE
+#undef TRUE
+#include <stm32f10x.h>
+#define FALSE 0
+#define TRUE (!FALSE)
+
 #include "nvic.h"
 #include "stm32_dma.h"
 
