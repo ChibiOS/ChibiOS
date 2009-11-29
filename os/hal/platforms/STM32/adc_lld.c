@@ -161,10 +161,10 @@ void adc_lld_start(ADCDriver *adcp) {
     }
 #endif
 
-    /* ADC activation, the calibration procedure has already been performed
+    /* ADC setup, the calibration procedure has already been performed
        during initialization.*/
     adcp->ad_adc->CR1 = ADC_CR1_SCAN;
-    adcp->ad_adc->CR2 = ADC_CR2_ADON;
+    adcp->ad_adc->CR2 = 0;
   }
 }
 
@@ -235,8 +235,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
  */
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 
-  adcp->ad_adc->CR2 = ADC_CR2_ADON;
   adcp->ad_dma->CCR = 0;
+  adcp->ad_adc->CR2 = 0;
 }
 
 #endif /* CH_HAL_USE_ADC */
