@@ -27,6 +27,8 @@
 #ifndef _AT91SAM7_MII_H_
 #define _AT91SAM7_MII_H_
 
+#if CH_HAL_USE_MAC || defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -95,6 +97,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CH_HAL_USE_MAC */
 
 #endif /* _AT91SAM7_MII_H_ */
 

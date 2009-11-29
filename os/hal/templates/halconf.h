@@ -56,13 +56,6 @@
 #endif
 
 /**
- * @brief Enables the MII subsystem.
- */
-#if !defined(CH_HAL_USE_MII) || defined(__DOXYGEN__)
-#define CH_HAL_USE_MII                  TRUE
-#endif
-
-/**
  * @brief Enables the SERIAL subsystem.
  */
 #if !defined(CH_HAL_USE_SERIAL) || defined(__DOXYGEN__)

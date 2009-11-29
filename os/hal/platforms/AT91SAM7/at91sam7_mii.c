@@ -26,8 +26,9 @@
 
 #include "ch.h"
 #include "hal.h"
-
 #include "at91sam7_mii.h"
+
+#if CH_HAL_USE_MAC || defined(__DOXYGEN__)
 
 /**
  * @brief Low level MII driver initialization.
@@ -111,5 +112,7 @@ void miiPut(MACDriver *macp, phyaddr_t addr, phyreg_t value) {
   while (!( AT91C_BASE_EMAC->EMAC_NSR & AT91C_EMAC_IDLE))
     ;
 }
+
+#endif /* CH_HAL_USE_MAC */
 
 /** @} */
