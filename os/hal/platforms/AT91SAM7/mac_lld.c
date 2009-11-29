@@ -27,7 +27,8 @@
 #include <string.h>
 
 #include "ch.h"
-#include "mac.h"
+#include "hal.h"
+#include "mii.h"
 
 #if CH_HAL_USE_MAC || defined(__DOXYGEN__)
 

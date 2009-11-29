@@ -24,9 +24,9 @@
  * @{
  */
 
-#include <ch.h>
-#include <mii.h>
-#include <mac.h>
+#include "ch.h"
+#include "hal.h"
+#include "mii.h"
 
 /**
  * @brief Low level MII driver initialization.
