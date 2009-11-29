@@ -18,14 +18,14 @@
 */
 
 /**
- * @file AT91SAM7/mii_lld.h
+ * @file AT91SAM7/at91sam7_mii.h
  * @brief AT91SAM7 low level MII driver header
  * @addtogroup AT91SAM7_MII
  * @{
  */
 
-#ifndef _MII_LLD_H_
-#define _MII_LLD_H_
+#ifndef _AT91SAM7_MII_H_
+#define _AT91SAM7_MII_H_
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -88,14 +88,14 @@ typedef uint8_t phyaddr_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void mii_lld_init(void);
-  void mii_lld_reset(MACDriver *macp);
-  phyreg_t mii_lld_get(MACDriver *macp, phyaddr_t addr);
-  void mii_lld_put(MACDriver *macp, phyaddr_t addr, phyreg_t value);
+  void miiInit(void);
+  void miiReset(MACDriver *macp);
+  phyreg_t miiGet(MACDriver *macp, phyaddr_t addr);
+  void miiPut(MACDriver *macp, phyaddr_t addr, phyreg_t value);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _MII_LLD_H_ */
+#endif /* _AT91SAM7_MII_H_ */
 
 /** @} */

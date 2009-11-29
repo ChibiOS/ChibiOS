@@ -32,9 +32,6 @@
 #ifndef _MII_H_
 #define _MII_H_
 
-#include "mac_lld.h"
-#include "mii_lld.h"
-
 /*
  * Generic MII registers. Note, not all registers are present on all PHY
  * devices and some extra registers may be present.
@@ -185,36 +182,7 @@
 #define MII_AM79C875_ID   0x00225540
 #define MII_KS8721_ID     0x00221610
 
-/**
- * @brief MII Driver initialization.
- */
-#define miiInit() mii_lld_init()
 
-/**
- * Resets a MII device.
- *
- * @param[in] macp pointer to the @p MACDriver object
- */
-#define miiReset(macp) mii_lld_reset(macp)
-
-/**
- * @brief Reads a MII register.
- *
- * @param[in] macp pointer to the @p MACDriver object
- * @param addr the register address
- * @return The register value.
- */
-#define miiGet(macp, addr) mii_lld_get(macp, addr)
-
-/**
- * @brief Writes a MII register.
- *
- * @param[in] macp pointer to the @p MACDriver object
- * @param addr the register address
- * @param value the new register value
- */
-#define miiPut(macp, addr, value) mii_lld_put(macp, addr, value)
-
-#endif /**< _MII_H_ */
+#endif /* _MII_H_ */
 
 /** @} */

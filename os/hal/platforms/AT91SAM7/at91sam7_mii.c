@@ -18,7 +18,7 @@
 */
 
 /**
- * @file AT91SAM7/mii_lld.c
+ * @file AT91SAM7/at91sam7_mii.c
  * @brief AT91SAM7 low level MII driver code
  * @addtogroup AT91SAM7_MII
  * @{
@@ -26,12 +26,13 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "mii.h"
+
+#include "at91sam7_mii.h"
 
 /**
  * @brief Low level MII driver initialization.
  */
-void mii_lld_init(void) {
+void miiInit(void) {
 
 }
 
@@ -40,7 +41,7 @@ void mii_lld_init(void) {
  *
  * @param[in] macp pointer to the @p MACDriver object
  */
-void mii_lld_reset(MACDriver *macp) {
+void miiReset(MACDriver *macp) {
 
   (void)macp;
 
@@ -78,7 +79,7 @@ void mii_lld_reset(MACDriver *macp) {
  * @param addr the register address
  * @return The register value.
  */
-phyreg_t mii_lld_get(MACDriver *macp, phyaddr_t addr) {
+phyreg_t miiGet(MACDriver *macp, phyaddr_t addr) {
 
   (void)macp;
   AT91C_BASE_EMAC->EMAC_MAN = (0b01 << 30) |            /* SOF */
@@ -98,7 +99,7 @@ phyreg_t mii_lld_get(MACDriver *macp, phyaddr_t addr) {
  * @param addr the register address
  * @param value the new register value
  */
-void mii_lld_put(MACDriver *macp, phyaddr_t addr, phyreg_t value) {
+void miiPut(MACDriver *macp, phyaddr_t addr, phyreg_t value) {
 
   (void)macp;
   AT91C_BASE_EMAC->EMAC_MAN = (0b01 << 30) |            /* SOF */

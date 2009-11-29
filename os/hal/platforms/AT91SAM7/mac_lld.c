@@ -30,6 +30,8 @@
 #include "hal.h"
 #include "mii.h"
 
+#include "at91sam7_mii.h"
+
 #if CH_HAL_USE_MAC || defined(__DOXYGEN__)
 
 /**
