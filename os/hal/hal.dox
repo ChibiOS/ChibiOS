@@ -266,6 +266,20 @@
       rankdir="LR";
       node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.8", height="0.8"];
       edge [fontname=Helvetica, fontsize=8];
+      uninit [label="CAN_UNINIT", style="bold"];
+      stop  [label="CAN_STOP\nLow Power"];
+      ready [label="CAN_READY\nClock Enabled"];
+      sleep [label="CAN_SLEEP\nLow Power"];
+      uninit -> stop [label="canObjectInit()"];
+      stop -> stop [label="canStop()"];
+      stop -> ready [label="canStart()"];
+      ready -> stop [label="canStop()"];
+      ready -> ready [label="canReceive()\ncanTransmit()"];
+      ready -> ready [label="canStart()"];
+      ready -> sleep [label="canSleep()"];
+      sleep -> sleep [label="canSleep()"];
+      sleep -> ready [label="canWakeup()"];
+      sleep -> ready [label="wakeup event"];
   }
  * @enddot
  *
