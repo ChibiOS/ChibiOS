@@ -17,12 +17,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ch.h>
-#include <pal.h>
-#include <test.h>
-#include <serial.h>
-
-#include "board.h"
+#include "ch.h"
+#include "hal.h"
+#include "test.h"
 
 #include "web/webthread.h"
 

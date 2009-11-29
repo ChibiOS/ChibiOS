@@ -19,14 +19,14 @@
 
 #include <string.h>
 
-#include <ch.h>
-#include <evtimer.h>
-#include <mac.h>
+#include "ch.h"
+#include "hal.h"
+#include "evtimer.h"
 
-#include <uip.h>
-#include <uip_arp.h>
-#include <httpd.h>
-#include <clock-arch.h>
+#include "uip.h"
+#include "uip_arp.h"
+#include "httpd.h"
+#include "clock-arch.h"
 
 #define IPADDR0  192
 #define IPADDR1  168

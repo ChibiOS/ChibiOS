@@ -44,6 +44,8 @@ LDSCRIPT= ch.ld
 
 # Imported source files
 CHIBIOS = ../..
+include ${CHIBIOS}/os/hal/hal.mk
+include ${CHIBIOS}/os/hal/platforms/AT91SAM7/platform.mk
 include ${CHIBIOS}/os/ports/GCC/ARM7/port.mk
 include ${CHIBIOS}/os/kernel/kernel.mk
 include ${CHIBIOS}/test/test.mk
@@ -62,16 +64,9 @@ USRC = ${CHIBIOS}/ext/uip-1.0/uip/uip_arp.c \
 CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
+       ${HALSRC} \
+       ${PLATFORMSRC} \
        ${USRC} \
-       ${CHIBIOS}/os/io/pal.c \
-       ${CHIBIOS}/os/io/serial.c \
-       ${CHIBIOS}/os/io/mii.c \
-       ${CHIBIOS}/os/io/mac.c \
-       ${CHIBIOS}/os/io/platforms/AT91SAM7/pal_lld.c \
-       ${CHIBIOS}/os/io/platforms/AT91SAM7/serial_lld.c \
-       ${CHIBIOS}/os/io/platforms/AT91SAM7/mii_lld.c \
-       ${CHIBIOS}/os/io/platforms/AT91SAM7/mac_lld.c \
-       ${CHIBIOS}/os/io/platforms/AT91SAM7/at91lib/aic.c \
        ${CHIBIOS}/os/various/syscalls.c \
        ${CHIBIOS}/os/various/evtimer.c \
        web/webthread.c \
@@ -106,9 +101,7 @@ TCPPSRC =
 ASMSRC = $(PORTASM) \
          ${CHIBIOS}/os/ports/GCC/ARM7/AT91SAM7/vectors.s
 
-INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         ${CHIBIOS}/os/io \
-         ${CHIBIOS}/os/io/platforms/AT91SAM7 \
+INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) $(HALINC) $(PLATFORMINC) $(LWINC)  \
          ${CHIBIOS}/os/various \
          ${CHIBIOS}/os/ports/GCC/ARM7/AT91SAM7 \
          ./web ${CHIBIOS}/ext/uip-1.0/uip ${CHIBIOS}/ext/uip-1.0/apps/webserver
