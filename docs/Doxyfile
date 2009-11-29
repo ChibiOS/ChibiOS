@@ -586,13 +586,15 @@ INPUT                  = ../docs/src \
                          ../os/ports/GCC/ARMCM3/crt0.s \
                          ../os/ports/GCC/MSP430 \
                          ../os/ports/GCC/AVR \
-                         ../os/io \
-                         ../os/io/templates \
-                         ../os/io/platforms/AT91SAM7 \
-                         ../os/io/platforms/AVR \
-                         ../os/io/platforms/LPC214x \
-                         ../os/io/platforms/MSP430 \
-                         ../os/io/platforms/STM32 \
+                         ../os/hal \
+                         ../os/hal/include \
+                         ../os/hal/src \
+                         ../os/hal/templates \
+                         ../os/hal/platforms/AT91SAM7 \
+                         ../os/hal/platforms/AVR \
+                         ../os/hal/platforms/LPC214x \
+                         ../os/hal/platforms/MSP430 \
+                         ../os/hal/platforms/STM32 \
                          ../os/various \
                          ../test
 
@@ -650,7 +652,7 @@ RECURSIVE              = NO
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = ../os/io/platforms/STM32/stm32f10x.h
+EXCLUDE                = ../os/hal/platforms/STM32/stm32f10x.h
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix filesystem feature) are excluded

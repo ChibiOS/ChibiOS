@@ -18,9 +18,9 @@
 */
 
 /**
- * @file templates/hal_lld.h
- * @brief HAL subsystem low level driver header template
- * @addtogroup HAL_LLD
+ * @file STM32/hal_lld.h
+ * @brief STM32 HAL subsystem low level driver header
+ * @addtogroup STM32_HAL
  * @{
  */
 

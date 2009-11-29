@@ -1,1 +1,1 @@
-ChibiOS/RT portable HAL code
+ChibiOS/RT HAL code

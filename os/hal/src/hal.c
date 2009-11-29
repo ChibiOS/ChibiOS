@@ -56,3 +56,5 @@ void halInit(void) {
   mmcInit();
 #endif
 }
+
+/** @} */

@@ -20,7 +20,7 @@
 /**
  * @file templates/halconf.h
  * @brief HAL configuration header.
- * @addtogroup HAL
+ * @addtogroup HAL_CONF
  * @{
  */
 

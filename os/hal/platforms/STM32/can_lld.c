@@ -18,9 +18,9 @@
 */
 
 /**
- * @file templates/can_lld.c
- * @brief CAN Driver subsystem low level driver source template
- * @addtogroup CAN_LLD
+ * @file STM32/can_lld.c
+ * @brief STM32 CAN subsystem low level driver source
+ * @addtogroup STM32_CAN
  * @{
  */
 
