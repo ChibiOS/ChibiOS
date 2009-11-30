@@ -44,7 +44,10 @@ static CH_IRQ_HANDLER(SYSIrqHandler) {
  * segments initialization.
  */
 void hwinit0(void) {
-
+  
+  /* Watchdog disabled.*/
+  AT91C_BASE_WDTC->WDTC_WDMR = AT91C_WDTC_WDDIS;
+  
   at91sam7_clock_init();
 }
 

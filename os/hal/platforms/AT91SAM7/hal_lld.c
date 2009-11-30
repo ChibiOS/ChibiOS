@@ -100,9 +100,6 @@ void at91sam7_clock_init(void) {
   /* Flash Memory: 1 wait state, about 50 cycles in a microsecond.*/
   AT91C_BASE_MC->MC_FMR = (AT91C_MC_FMCN & (50 << 16)) | AT91C_MC_FWS_1FWS;
 
-  /* Watchdog disabled.*/
-  AT91C_BASE_WDTC->WDTC_WDMR = AT91C_WDTC_WDDIS;
-
   /* Enables the main oscillator and waits 56 slow cycles as startup time.*/
   AT91C_BASE_PMC->PMC_MOR = (AT91C_CKGR_OSCOUNT & (7 << 8)) | AT91C_CKGR_MOSCEN;
   while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MOSCS))
@@ -112,6 +109,7 @@ void at91sam7_clock_init(void) {
      PLLfreq = 96109714 Hz (rounded).*/
   AT91C_BASE_PMC->PMC_PLLR = (AT91C_CKGR_DIV & 14) |
                              (AT91C_CKGR_PLLCOUNT & (10 << 8)) |
+                             (AT91SAM7_USBDIV) |
                              (AT91C_CKGR_MUL & (72 << 16));
   while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_LOCK))
     ;

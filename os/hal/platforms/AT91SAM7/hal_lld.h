@@ -41,6 +41,13 @@
 #define AT91SAM7_SPURIOUS_HANDLER_HOOK()
 #endif
 
+/**
+ * @brief Default divider for the USB clock - half the PLL clock.
+ */
+#if !defined(AT91SAM7_USBDIV) || defined(__DOXYGEN__)
+#define AT91SAM7_USBDIV AT91C_CKGR_USBDIV_1
+#endif
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
