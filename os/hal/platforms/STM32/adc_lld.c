@@ -33,8 +33,8 @@
 /* Low Level Driver exported variables.                                      */
 /*===========================================================================*/
 
-#if USE_STM32_ADC1 || defined(__DOXYGEN__)
 /** @brief ADC1 driver identifier.*/
+#if USE_STM32_ADC1 || defined(__DOXYGEN__)
 ADCDriver ADCD1;
 #endif
 

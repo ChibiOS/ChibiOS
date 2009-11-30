@@ -251,7 +251,7 @@ typedef struct {
 
 /** @cond never*/
 #if USE_STM32_ADC1
-ADCDriver ADCD1;
+extern ADCDriver ADCD1;
 #endif
 
 #ifdef __cplusplus

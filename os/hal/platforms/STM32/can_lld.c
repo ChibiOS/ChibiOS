@@ -33,6 +33,11 @@
 /* Low Level Driver exported variables.                                      */
 /*===========================================================================*/
 
+/** @brief ADC1 driver identifier.*/
+#if USE_STM32_CAN1 || defined(__DOXYGEN__)
+CANDriver CAND1;
+#endif
+
 /*===========================================================================*/
 /* Low Level Driver local variables.                                         */
 /*===========================================================================*/
@@ -44,6 +49,62 @@
 /*===========================================================================*/
 /* Low Level Driver interrupt handlers.                                      */
 /*===========================================================================*/
+
+/*
+ * CAN1 TX interrupt handler.
+ */
+CH_IRQ_HANDLER(Vector8C) {
+
+  CH_IRQ_PROLOGUE();
+
+  /* No more events until a message is transmitted.*/
+  CAN1->IER &= ~CAN_IER_TMEIE;
+  chEvtBroadcastI(&CAND1.cd_txempty_event);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/*
+ * CAN1 RX0 interrupt handler.
+ */
+CH_IRQ_HANDLER(Vector90) {
+
+  CH_IRQ_PROLOGUE();
+
+  /* No more events until the incoming messages queues are emptied.*/
+  CAN1->IER &= ~(CAN_IER_FMPIE0 | CAN_IER_FMPIE1);
+  chEvtBroadcastI(&CAND1.cd_rxfull_event);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/*
+ * CAN1 RX1 interrupt handler.
+ */
+CH_IRQ_HANDLER(Vector94) {
+
+  CH_IRQ_PROLOGUE();
+
+  /* No more events until the incoming messages queues are emptied.*/
+  CAN1->IER &= ~(CAN_IER_FMPIE0 | CAN_IER_FMPIE1);
+  chEvtBroadcastI(&CAND1.cd_rxfull_event);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/*
+ * CAN1 SCE interrupt handler.
+ */
+CH_IRQ_HANDLER(Vector98) {
+
+  CH_IRQ_PROLOGUE();
+
+  canAddFlagsI(&CAND1, 1);
+  chEvtBroadcastI(&CAND1.cd_error_event);
+  CAN1->MSR = CAN_MSR_ERRI;
+
+  CH_IRQ_EPILOGUE();
+}
 
 /*===========================================================================*/
 /* Low Level Driver exported functions.                                      */
@@ -63,7 +124,7 @@ void can_lld_init(void) {
  */
 void can_lld_start(CANDriver *canp) {
 
-  if (canp->can_state == CAN_STOP) {
+  if (canp->cd_state == CAN_STOP) {
     /* Clock activation.*/
   }
   /* Configuration.*/

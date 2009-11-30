@@ -41,6 +41,14 @@ typedef enum {
 
 #include "can_lld.h"
 
+/**
+ * @brief Adds some flags to the CAN status mask.
+ *
+ * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] mask      flags to be added to the status mask
+ */
+#define canAddFlagsI(canp, mask) ((canp)->cd_status |= (mask))
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -50,6 +58,7 @@ extern "C" {
   void canStop(CANDriver *canp);
   msg_t canTransmit(CANDriver *canp, const CANFrame *cfp, systime_t timeout);
   msg_t canReceive(CANDriver *canp, CANFrame *cfp, systime_t timeout);
+  canstatus_t canGetAndClearFlags(CANDriver *canp);
 #if CAN_USE_SLEEP_MODE
   void canSleep(CANDriver *canp);
   void canWakeup(CANDriver *canp);

@@ -44,15 +44,15 @@ void canInit(void) {
  */
 void canObjectInit(CANDriver *canp) {
 
-  canp->can_state    = CAN_STOP;
-  canp->can_config   = NULL;
-  chSemInit(&canp->can_txsem, 0);
-  chSemInit(&canp->can_rxsem, 0);
-  chEvtInit(&canp->can_rxfull_event);
-  chEvtInit(&canp->can_txempty_event);
+  canp->cd_state    = CAN_STOP;
+  canp->cd_config   = NULL;
+  chSemInit(&canp->cd_txsem, 0);
+  chSemInit(&canp->cd_rxsem, 0);
+  chEvtInit(&canp->cd_rxfull_event);
+  chEvtInit(&canp->cd_txempty_event);
 #if CAN_USE_SLEEP_MODE
-  chEvtInit(&canp->can_sleep_event);
-  chEvtInit(&canp->can_wakeup_event);
+  chEvtInit(&canp->cd_sleep_event);
+  chEvtInit(&canp->cd_wakeup_event);
 #endif /* CAN_USE_SLEEP_MODE */
 }
 
@@ -67,12 +67,12 @@ void canStart(CANDriver *canp, const CANConfig *config) {
   chDbgCheck((canp != NULL) && (config != NULL), "canStart");
 
   chSysLock();
-  chDbgAssert((canp->can_state == CAN_STOP) || (canp->can_state == CAN_READY),
+  chDbgAssert((canp->cd_state == CAN_STOP) || (canp->cd_state == CAN_READY),
               "canStart(), #1",
               "invalid state");
-  canp->can_config = config;
+  canp->cd_config = config;
   can_lld_start(canp);
-  canp->can_state = CAN_READY;
+  canp->cd_state = CAN_READY;
   chSysUnlock();
 }
 
@@ -86,11 +86,11 @@ void canStop(CANDriver *canp) {
   chDbgCheck(canp != NULL, "canStop");
 
   chSysLock();
-  chDbgAssert((canp->can_state == CAN_STOP) || (canp->can_state == CAN_READY),
+  chDbgAssert((canp->cd_state == CAN_STOP) || (canp->cd_state == CAN_READY),
               "canStop(), #1",
               "invalid state");
   can_lld_stop(canp);
-  canp->can_state = CAN_STOP;
+  canp->cd_state = CAN_STOP;
   chSysUnlock();
 }
 
@@ -118,11 +118,11 @@ msg_t canTransmit(CANDriver *canp, const CANFrame *cfp, systime_t timeout) {
   chDbgCheck((canp != NULL) && (cfp != NULL), "canTransmit");
 
   chSysLock();
-  chDbgAssert((canp->can_state == CAN_READY) || (canp->can_state == CAN_SLEEP),
+  chDbgAssert((canp->cd_state == CAN_READY) || (canp->cd_state == CAN_SLEEP),
               "canTransmit(), #1",
               "invalid state");
-  if ((canp->can_state == CAN_SLEEP) || !can_lld_can_transmit(canp)) {
-    msg = chSemWaitTimeoutS(&canp->can_txsem, timeout);
+  if ((canp->cd_state == CAN_SLEEP) || !can_lld_can_transmit(canp)) {
+    msg = chSemWaitTimeoutS(&canp->cd_txsem, timeout);
     if (msg != RDY_OK) {
       chSysUnlock();
       return msg;
@@ -156,11 +156,11 @@ msg_t canReceive(CANDriver *canp, CANFrame *cfp, systime_t timeout) {
   chDbgCheck((canp != NULL) && (cfp != NULL), "canReceive");
 
   chSysLock();
-  chDbgAssert((canp->can_state == CAN_READY) || (canp->can_state == CAN_SLEEP),
+  chDbgAssert((canp->cd_state == CAN_READY) || (canp->cd_state == CAN_SLEEP),
               "canReceive(), #1",
               "invalid state");
-  if ((canp->can_state == CAN_SLEEP) || !can_lld_can_receive(canp)) {
-    msg = chSemWaitTimeoutS(&canp->can_rxsem, timeout);
+  if ((canp->cd_state == CAN_SLEEP) || !can_lld_can_receive(canp)) {
+    msg = chSemWaitTimeoutS(&canp->cd_rxsem, timeout);
     if (msg != RDY_OK) {
       chSysUnlock();
       return msg;
@@ -169,6 +169,23 @@ msg_t canReceive(CANDriver *canp, CANFrame *cfp, systime_t timeout) {
   msg = can_lld_receive(canp, cfp);
   chSysUnlock();
   return msg;
+}
+
+/**
+ * @brief Returns the current status mask and clears it.
+ *
+ * @param[in] canp      pointer to the @p CANDriver object
+ *
+ * @return The status flags mask.
+ */
+canstatus_t canGetAndClearFlags(CANDriver *canp) {
+  canstatus_t status;
+
+  chSysLock();
+  status = canp->cd_status;
+  canp->cd_status = 0;
+  chSysUnlock();
+  return status;
 }
 
 #if CAN_USE_SLEEP_MODE || defined(__DOXYGEN__)
@@ -182,13 +199,13 @@ void canSleep(CANDriver *canp) {
   chDbgCheck(canp != NULL, "canSleep");
 
   chSysLock();
-  chDbgAssert((canp->can_state == CAN_READY) || (canp->can_state == CAN_SLEEP),
+  chDbgAssert((canp->cd_state == CAN_READY) || (canp->cd_state == CAN_SLEEP),
               "canSleep(), #1",
               "invalid state");
-  if (canp->can_state == CAN_READY) {
+  if (canp->cd_state == CAN_READY) {
     can_lld_sleep(canp);
-    canp->can_state = CAN_SLEEP;
-    chEvtBroadcastI(&canp->can_sleep_event);
+    canp->cd_state = CAN_SLEEP;
+    chEvtBroadcastI(&canp->cd_sleep_event);
     chSchRescheduleS();
   }
   chSysUnlock();
@@ -206,13 +223,13 @@ void canWakeup(CANDriver *canp) {
   chDbgCheck(canp != NULL, "canWakeup");
 
   chSysLock();
-  chDbgAssert((canp->can_state == CAN_READY) || (canp->can_state == CAN_SLEEP),
+  chDbgAssert((canp->cd_state == CAN_READY) || (canp->cd_state == CAN_SLEEP),
               "canWakeup(), #1",
               "invalid state");
-  if (canp->can_state == CAN_SLEEP) {
+  if (canp->cd_state == CAN_SLEEP) {
     can_lld_wakeup(canp);
-    canp->can_state = CAN_READY;
-    chEvtBroadcastI(&canp->can_wakeup_event);
+    canp->cd_state = CAN_READY;
+    chEvtBroadcastI(&canp->cd_wakeup_event);
     chSchRescheduleS();
   }
   chSysUnlock();

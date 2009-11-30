@@ -61,6 +61,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief CAN status flags.
+ */
+typedef uint32_t canstatus_t;
+
+/**
  * @brief CAN frame.
  * @note Accessing the frame data as word16 or word32 is not portable because
  *       machine data endianness, it can be still useful for a quick filling.
@@ -91,36 +96,44 @@ typedef struct {
   /**
    * @brief Driver state.
    */
-  canstate_t                can_state;
+  canstate_t                cd_state;
   /**
    * @brief Current configuration data.
    */
-  const CANConfig           *can_config;
+  const CANConfig           *cd_config;
   /**
    * @brief Transmission queue semaphore.
    */
-  Semaphore                 can_txsem;
+  Semaphore                 cd_txsem;
   /**
    * @brief Receive queue semaphore.
    */
-  Semaphore                 can_rxsem;
+  Semaphore                 cd_rxsem;
   /**
    * @brief One or more frames become available.
    */
-  EventSource               can_rxfull_event;
+  EventSource               cd_rxfull_event;
   /**
    * @brief One or more transmission slots become available.
    */
-  EventSource               can_txempty_event;
+  EventSource               cd_txempty_event;
+  /**
+   * @brief A CAN bus error happened.
+   */
+  EventSource               cd_error_event;
+  /**
+   * @brief Error flags set when an error event is broadcasted.
+   */
+  canstatus_t               cd_status;
 #if CAN_USE_SLEEP_MODE || defined (__DOXYGEN__)
   /**
    * @brief Entering sleep state event.
    */
-  EventSource               can_sleep_event;
+  EventSource               cd_sleep_event;
   /**
    * @brief Exiting sleep state event.
    */
-  EventSource               can_wakeup_event;
+  EventSource               cd_wakeup_event;
 #endif /* CAN_USE_SLEEP_MODE */
   /* End of the mandatory fields.*/
 } CANDriver;
