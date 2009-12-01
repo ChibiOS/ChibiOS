@@ -112,7 +112,7 @@ CH_IRQ_HANDLER(Vector6C) {
 void adc_lld_init(void) {
 
 #if USE_STM32_ADC1
-  /* ADC reset, ensures reset state in order to avoid truouble with JTAGs.*/
+  /* ADC reset, ensures reset state in order to avoid trouble with JTAGs.*/
   RCC->APB2RSTR = RCC_APB2RSTR_ADC1RST;
   RCC->APB2RSTR = 0;
 

@@ -30,6 +30,27 @@
 #if CH_HAL_USE_CAN || defined(__DOXYGEN__)
 
 /**
+ * @brief Errors rate warning.
+ */
+#define CAN_LIMIT_WARNING       1
+/**
+ * @brief Errors rate error.
+ */
+#define CAN_LIMIT_ERROR         2
+/**
+ * @brief Bus off condition reached.
+ */
+#define CAN_BUS_OFF_ERROR       4
+/**
+ * @brief Framing error of some kind on the CAN bus.
+ */
+#define CAN_FRAMING_ERROR       8
+/**
+ * @brief Overflow in receive queue.
+ */
+#define CAN_OVERFLOW_ERROR      16
+
+/**
  * @brief Driver state machine possible states.
  */
 typedef enum {

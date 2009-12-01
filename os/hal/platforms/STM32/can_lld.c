@@ -68,12 +68,24 @@ CH_IRQ_HANDLER(Vector8C) {
  * CAN1 RX0 interrupt handler.
  */
 CH_IRQ_HANDLER(Vector90) {
+  uint32_t rf0r;
 
   CH_IRQ_PROLOGUE();
 
-  /* No more events until the incoming messages queues are emptied.*/
-  CAN1->IER &= ~(CAN_IER_FMPIE0 | CAN_IER_FMPIE1);
-  chEvtBroadcastI(&CAND1.cd_rxfull_event);
+  rf0r = CAN1->RF0R;
+  chSysLockFromIsr();
+  if ((rf0r & CAN_RF0R_FMP0) > 0) {
+    /* No more receive events until the queue 0 has been emptied.*/
+    CAN1->IER &= ~CAN_IER_FMPIE0;
+    chEvtBroadcastI(&CAND1.cd_rxfull_event);
+  }
+  if ((rf0r & CAN_RF0R_FOVR0) > 0) {
+    /* Overflow events handling.*/
+    CAN1->RF0R = CAN_RF0R_FOVR0;
+    canAddFlagsI(&CAND1, CAN_OVERFLOW_ERROR);
+    chEvtBroadcastI(&CAND1.cd_error_event);
+  }
+  chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
 }
@@ -85,9 +97,7 @@ CH_IRQ_HANDLER(Vector94) {
 
   CH_IRQ_PROLOGUE();
 
-  /* No more events until the incoming messages queues are emptied.*/
-  CAN1->IER &= ~(CAN_IER_FMPIE0 | CAN_IER_FMPIE1);
-  chEvtBroadcastI(&CAND1.cd_rxfull_event);
+  chSysHalt(); /* Not supported (yet).*/
 
   CH_IRQ_EPILOGUE();
 }
@@ -96,12 +106,32 @@ CH_IRQ_HANDLER(Vector94) {
  * CAN1 SCE interrupt handler.
  */
 CH_IRQ_HANDLER(Vector98) {
+  uint32_t msr;
 
   CH_IRQ_PROLOGUE();
 
-  canAddFlagsI(&CAND1, 1);
-  chEvtBroadcastI(&CAND1.cd_error_event);
-  CAN1->MSR = CAN_MSR_ERRI;
+  msr = CAN1->MSR;
+  CAN1->MSR = CAN_MSR_ERRI | CAN_MSR_WKUI | CAN_MSR_SLAKI;
+  /* Wakeup event.*/
+  if (msr & CAN_MSR_WKUI) {
+    chSysLockFromIsr();
+    chEvtBroadcastI(&CAND1.cd_wakeup_event);
+    chSysUnlockFromIsr();
+  }
+  /* Error event.*/
+  if (msr & CAN_MSR_ERRI) {
+    canstatus_t flags;
+    uint32_t esr = CAN1->ESR;
+
+    CAN1->ESR &= ~CAN_ESR_LEC;
+    flags = (canstatus_t)(esr & 7);
+    if ((esr & CAN_ESR_LEC) > 0)
+      flags |= CAN_FRAMING_ERROR;
+    chSysLockFromIsr();
+    canAddFlagsI(&CAND1, flags);
+    chEvtBroadcastI(&CAND1.cd_error_event);
+    chSysUnlockFromIsr();
+  }
 
   CH_IRQ_EPILOGUE();
 }
@@ -115,6 +145,15 @@ CH_IRQ_HANDLER(Vector98) {
  */
 void can_lld_init(void) {
 
+#if USE_STM32_CAN1
+  /* CAN reset, ensures reset state in order to avoid trouble with JTAGs.*/
+  RCC->APB1RSTR = RCC_APB1RSTR_CAN1RST;
+  RCC->APB1RSTR = 0;
+
+  /* Driver initialization.*/
+  canObjectInit(&CAND1);
+  CAND1.cd_can = CAN1;
+#endif
 }
 
 /**
@@ -126,8 +165,23 @@ void can_lld_start(CANDriver *canp) {
 
   if (canp->cd_state == CAN_STOP) {
     /* Clock activation.*/
+#if USE_STM32_CAN1
+    if (&CAND1 == canp) {
+      NVICEnableVector(USB_HP_CAN1_TX_IRQn, STM32_CAN1_IRQ_PRIORITY);
+      NVICEnableVector(USB_LP_CAN1_RX0_IRQn, STM32_CAN1_IRQ_PRIORITY);
+      NVICEnableVector(CAN1_RX1_IRQn, STM32_CAN1_IRQ_PRIORITY);
+      NVICEnableVector(CAN1_SCE_IRQn, STM32_CAN1_IRQ_PRIORITY);
+      RCC->APB1ENR |= RCC_APB1ENR_CAN1EN;
+    }
+#endif
   }
   /* Configuration.*/
+  canp->cd_can->MCR = canp->cd_config->cc_mcr;
+  canp->cd_can->BTR = canp->cd_config->cc_btr;
+  canp->cd_can->IER = CAN_IER_TMEIE  | CAN_IER_FMPIE0 | CAN_IER_FMPIE1 |
+                      CAN_IER_WKUIE  | CAN_IER_ERRIE  | CAN_IER_LECIE  |
+                      CAN_IER_BOFIE  | CAN_IER_EPVIE  | CAN_IER_EWGIE  |
+                      CAN_IER_FOVIE0 | CAN_IER_FOVIE1;
 }
 
 /**
@@ -137,6 +191,21 @@ void can_lld_start(CANDriver *canp) {
  */
 void can_lld_stop(CANDriver *canp) {
 
+  /* If in ready state then disables the CAN clock.*/
+  if (canp->cd_state == CAN_READY) {
+#if USE_STM32_CAN1
+    if (&CAND1 == canp) {
+      CAN1->MCR = 0x00010002;                   /* Register reset value.    */
+      CAN1->BTR = 0x01230000;                   /* Register reset value.    */
+      CAN1->IER = 0x00000000;                   /* All sources disabled.    */
+      NVICDisableVector(USB_HP_CAN1_TX_IRQn);
+      NVICDisableVector(USB_LP_CAN1_RX0_IRQn);
+      NVICDisableVector(CAN1_RX1_IRQn);
+      NVICDisableVector(CAN1_SCE_IRQn);
+      RCC->APB1ENR &= ~RCC_APB1ENR_CAN1EN;
+    }
+#endif
+  }
 }
 
 /**

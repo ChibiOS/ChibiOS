@@ -40,12 +40,20 @@
 /*===========================================================================*/
 
 /**
- * @brief ADC1 driver enable switch.
+ * @brief CAN1 driver enable switch.
  * @details If set to @p TRUE the support for ADC1 is included.
  * @note The default is @p TRUE.
  */
 #if !defined(USE_STM32_CAN1) || defined(__DOXYGEN__)
 #define USE_STM32_CAN1              TRUE
+#endif
+
+/**
+ * @brief CAN1 interrupt priority level setting.
+ * @note @p BASEPRI_KERNEL >= @p STM32_SPI1_IRQ_PRIORITY > @p PRIORITY_PENDSV.
+ */
+#if !defined(STM32_CAN1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_CAN1_IRQ_PRIORITY     0xB0
 #endif
 
 /**
@@ -159,7 +167,7 @@ typedef struct {
   /**
    * @brief Pointer to the CAN registers.
    */
-  CAN_TypeDef               *cd_canp;
+  CAN_TypeDef               *cd_can;
 } CANDriver;
 
 /*===========================================================================*/

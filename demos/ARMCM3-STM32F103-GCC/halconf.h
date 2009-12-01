@@ -45,7 +45,7 @@
  * @brief Enables the CAN subsystem.
  */
 #if !defined(CH_HAL_USE_CAN) || defined(__DOXYGEN__)
-#define CH_HAL_USE_CAN                  FALSE
+#define CH_HAL_USE_CAN                  TRUE
 #endif
 
 /**

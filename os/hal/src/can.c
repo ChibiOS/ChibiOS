@@ -50,6 +50,8 @@ void canObjectInit(CANDriver *canp) {
   chSemInit(&canp->cd_rxsem, 0);
   chEvtInit(&canp->cd_rxfull_event);
   chEvtInit(&canp->cd_txempty_event);
+  chEvtInit(&canp->cd_error_event);
+  canp->cd_status = 0;
 #if CAN_USE_SLEEP_MODE
   chEvtInit(&canp->cd_sleep_event);
   chEvtInit(&canp->cd_wakeup_event);
@@ -90,7 +92,8 @@ void canStop(CANDriver *canp) {
               "canStop(), #1",
               "invalid state");
   can_lld_stop(canp);
-  canp->cd_state = CAN_STOP;
+  canp->cd_state  = CAN_STOP;
+  canp->cd_status = 0;
   chSysUnlock();
 }
 
