@@ -29,11 +29,15 @@
 
 #if CH_HAL_USE_CAN || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
 /**
  * @brief This switch defines whether the driver implementation supports
  *        a low power switch mode with automatic an wakeup feature.
  */
-#define CAN_SUPPORTS_SLEEP  TRUE
+#define CAN_SUPPORTS_SLEEP          TRUE
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -70,10 +74,6 @@
 #endif /* !CAN_SUPPORTS_SLEEP */
 
 /*===========================================================================*/
-/* Driver constants.                                                         */
-/*===========================================================================*/
-
-/*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
@@ -100,6 +100,39 @@ typedef struct {
 } CANFrame;
 
 /**
+ * @brief CAN filter.
+ * @note Refer to the STM32 reference manual for info about filters.
+ */
+typedef struct {
+  /**
+   * @brief Filter mode.
+   * @note This bit represent the CAN_FM1R register bit associated to this
+   *       filter (0=mask mode, 1=list mode).
+   */
+  uint32_t                  cf_mode:1;
+  /**
+   * @brief Filter sclae.
+   * @note This bit represent the CAN_FS1R register bit associated to this
+   *       filter (0=16 bits mode, 1=32 bits mode).
+   */
+  uint32_t                  cf_scale:1;
+  /**
+   * @brief Filter mode.
+   * @note This bit represent the CAN_FFA1R register bit associated to this
+   *       filter, must be set to zero in this version of the driver.
+   */
+  uint32_t                  cf_assignment:1;
+  /**
+   * @brief Filter register 1 (identifier).
+   */
+  uint32_t                  cf_register1;
+  /**
+   * @brief Filter register 2 (mask/identifier depending on cf_mode=0/1).
+   */
+  uint32_t                  cf_register2;
+} CANFilter;
+
+/**
  * @brief Driver configuration structure.
  */
 typedef struct {
@@ -115,6 +148,18 @@ typedef struct {
    *       their status in this field.
    */
   uint32_t                  cc_btr;
+  /**
+   * @brief Number of elements into the filters array.
+   * @note By setting this field to zero a default filter is enabled that
+   *       allows all frames, this should be adequate  for simple applications.
+   */
+  uint32_t                  cc_num;
+  /**
+   * @brief Pointer to an array of @p CANFilter structures.
+   * @note This field can be set to @p NULL if the field @p cc_num is set to
+   *       zero.
+   */
+  const CANFilter           *cc_filters;
 } CANConfig;
 
 /**
@@ -139,6 +184,11 @@ typedef struct {
   Semaphore                 cd_rxsem;
   /**
    * @brief One or more frames become available.
+   * @note After broadcasting this event it will not be broadcasted again
+   *       until the received frames queue has been completely emptied. It
+   *       is <b>not</b> broadcasted for each received frame. It is
+   *       responsibility of the application to empty the queue by repeatedly
+   *       invoking @p chReceive() when listening to this event.
    */
   EventSource               cd_rxfull_event;
   /**

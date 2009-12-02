@@ -56,8 +56,9 @@
 typedef enum {
   CAN_UNINIT = 0,                           /**< @brief Not initialized.    */
   CAN_STOP = 1,                             /**< @brief Stopped.            */
-  CAN_READY = 2,                            /**< @brief Ready.              */
-  CAN_SLEEP = 3                             /**< @brief Sleep state.        */
+  CAN_STARTING = 2,                         /**< @brief Starting.           */
+  CAN_READY = 3,                            /**< @brief Ready.              */
+  CAN_SLEEP = 4                             /**< @brief Sleep state.        */
 } canstate_t;
 
 #include "can_lld.h"

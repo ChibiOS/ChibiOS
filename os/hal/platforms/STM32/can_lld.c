@@ -163,21 +163,25 @@ void can_lld_init(void) {
  */
 void can_lld_start(CANDriver *canp) {
 
-  if (canp->cd_state == CAN_STOP) {
-    /* Clock activation.*/
+  /* Clock activation.*/
 #if USE_STM32_CAN1
-    if (&CAND1 == canp) {
-      NVICEnableVector(USB_HP_CAN1_TX_IRQn, STM32_CAN1_IRQ_PRIORITY);
-      NVICEnableVector(USB_LP_CAN1_RX0_IRQn, STM32_CAN1_IRQ_PRIORITY);
-      NVICEnableVector(CAN1_RX1_IRQn, STM32_CAN1_IRQ_PRIORITY);
-      NVICEnableVector(CAN1_SCE_IRQn, STM32_CAN1_IRQ_PRIORITY);
-      RCC->APB1ENR |= RCC_APB1ENR_CAN1EN;
-    }
-#endif
+  if (&CAND1 == canp) {
+    NVICEnableVector(USB_HP_CAN1_TX_IRQn, STM32_CAN1_IRQ_PRIORITY);
+    NVICEnableVector(USB_LP_CAN1_RX0_IRQn, STM32_CAN1_IRQ_PRIORITY);
+    NVICEnableVector(CAN1_RX1_IRQn, STM32_CAN1_IRQ_PRIORITY);
+    NVICEnableVector(CAN1_SCE_IRQn, STM32_CAN1_IRQ_PRIORITY);
+    RCC->APB1ENR |= RCC_APB1ENR_CAN1EN;
   }
-  /* Configuration.*/
-  canp->cd_can->MCR = canp->cd_config->cc_mcr;
+#endif
+
+  /* Entering initialization mode. */
+  canp->cd_state = CAN_STARTING;
+  canp->cd_can->MCR = CAN_MCR_INRQ;
+  while ((canp->cd_can->MSR & CAN_MSR_INAK) == 0)
+    chThdSleepS(1);
+  /* Initialization.*/
   canp->cd_can->BTR = canp->cd_config->cc_btr;
+  canp->cd_can->MCR = canp->cd_config->cc_mcr;
   canp->cd_can->IER = CAN_IER_TMEIE  | CAN_IER_FMPIE0 | CAN_IER_FMPIE1 |
                       CAN_IER_WKUIE  | CAN_IER_ERRIE  | CAN_IER_LECIE  |
                       CAN_IER_BOFIE  | CAN_IER_EPVIE  | CAN_IER_EWGIE  |
@@ -196,7 +200,6 @@ void can_lld_stop(CANDriver *canp) {
 #if USE_STM32_CAN1
     if (&CAND1 == canp) {
       CAN1->MCR = 0x00010002;                   /* Register reset value.    */
-      CAN1->BTR = 0x01230000;                   /* Register reset value.    */
       CAN1->IER = 0x00000000;                   /* All sources disabled.    */
       NVICDisableVector(USB_HP_CAN1_TX_IRQn);
       NVICDisableVector(USB_LP_CAN1_RX0_IRQn);

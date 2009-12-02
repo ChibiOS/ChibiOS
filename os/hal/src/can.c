@@ -69,12 +69,18 @@ void canStart(CANDriver *canp, const CANConfig *config) {
   chDbgCheck((canp != NULL) && (config != NULL), "canStart");
 
   chSysLock();
-  chDbgAssert((canp->cd_state == CAN_STOP) || (canp->cd_state == CAN_READY),
+  chDbgAssert((canp->cd_state == CAN_STOP) ||
+              (canp->cd_state == CAN_STARTING) ||
+              (canp->cd_state == CAN_READY),
               "canStart(), #1",
               "invalid state");
-  canp->cd_config = config;
-  can_lld_start(canp);
-  canp->cd_state = CAN_READY;
+  while (canp->cd_state == CAN_STARTING)
+    chThdSleepS(1);
+  if (canp->cd_state == CAN_STOP) {
+    canp->cd_config = config;
+    can_lld_start(canp);
+    canp->cd_state = CAN_READY;
+  }
   chSysUnlock();
 }
 
@@ -145,12 +151,15 @@ msg_t canTransmit(CANDriver *canp, const CANFrame *cfp, systime_t timeout) {
  * @param[out] cfp      pointer to the buffer where the CAN frame is copied
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_IMMEDIATE immediate timeout (useful in an
+ *                        event driven scenario where a thread never blocks
+ *                        for I/O).
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return The operation result.
  * @retval RDY_OK a frame has been received and placed in the buffer.
- * @retval RDY_TIMEOUT operation not finished within the specified time.
+ * @retval RDY_TIMEOUT operation not finished within the specified time or
+ *         frame not immediately available if invoked using @p TIME_IMMEDIATE.
  * @retval RDY_RESET driver stopped while waiting.
  */
 msg_t canReceive(CANDriver *canp, CANFrame *cfp, systime_t timeout) {
