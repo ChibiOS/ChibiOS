@@ -19,7 +19,7 @@
 
 /**
  * @file STM32/hal_lld.h
- * @brief STM32 HAL subsystem low level driver header
+ * @brief STM32 HAL subsystem low level driver header.
  * @addtogroup STM32_HAL
  * @{
  */
@@ -33,7 +33,7 @@
  */
 #undef FALSE
 #undef TRUE
-#include <stm32f10x.h>
+#include "stm32f10x.h"
 #define FALSE 0
 #define TRUE (!FALSE)
 

@@ -24,8 +24,8 @@
  * @{
  */
 
-#include <ch.h>
-#include <pal.h>
+#include "ch.h"
+#include "hal.h"
 
 /**
  * @brief MSP430 I/O ports configuration.

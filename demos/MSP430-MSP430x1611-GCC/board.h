@@ -20,8 +20,6 @@
 #ifndef _BOARD_H_
 #define _BOARD_H_
 
-#include <msp430x16x.h>
-
 /*
  * Clock settings.
  */

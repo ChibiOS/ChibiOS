@@ -40,6 +40,8 @@ LDSCRIPT = mspgcc/msp430x1611.x
 
 # Imported source files
 CHIBIOS = ../..
+include ${CHIBIOS}/os/hal/hal.mk
+include ${CHIBIOS}/os/hal/platforms/MSP430/platform.mk
 include ${CHIBIOS}/os/ports/GCC/MSP430/port.mk
 include ${CHIBIOS}/os/kernel/kernel.mk
 include ${CHIBIOS}/test/test.mk
@@ -48,10 +50,8 @@ include ${CHIBIOS}/test/test.mk
 CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
-       ${CHIBIOS}/os/io/pal.c \
-       ${CHIBIOS}/os/io/serial.c \
-       ${CHIBIOS}/os/io/platforms/MSP430/pal_lld.c \
-       ${CHIBIOS}/os/io/platforms/MSP430/serial_lld.c \
+       ${HALSRC} \
+       ${PLATFORMSRC} \
        ${CHIBIOS}/os/various/evtimer.c \
        board.c main.c
 
@@ -61,9 +61,7 @@ CPPSRC =
 # List ASM source files here
 ASMSRC = $(PORTASM)
 
-INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         ${CHIBIOS}/os/io \
-         ${CHIBIOS}/os/io/platforms/MSP430 \
+INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) $(HALINC) $(PLATFORMINC) \
          ${CHIBIOS}/os/various
 
 #

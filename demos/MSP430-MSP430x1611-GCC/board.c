@@ -17,66 +17,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ch.h>
-#include <pal.h>
-#include <serial.h>
-
 #include <signal.h>
 
-#include "board.h"
-
-/*
- * Digital I/O ports static configuration as defined in @p board.h.
- */
-static const MSP430DIOConfig config =
-{
-  {VAL_P1OUT, VAL_P1DIR},
-  {VAL_P2OUT, VAL_P2DIR},
-  {VAL_P3OUT, VAL_P3DIR},
-  {VAL_P4OUT, VAL_P4DIR},
-  {VAL_P5OUT, VAL_P5DIR},
-  {VAL_P6OUT, VAL_P6DIR},
-};
-
-/*
- * Hardware initialization goes here.
- * NOTE: Interrupts are still disabled.
- */
-void hwinit(void) {
-
-  /*
-   * Clock sources setup.
-   */
-  DCOCTL  = VAL_DCOCTL;
-  BCSCTL1 = VAL_BCSCTL1;
-#if defined(MSP_USE_XT2CLK)
-  do {
-    int i;
-    IFG1 &= ~OFIFG;
-     for (i = 255; i > 0; i--)
-       asm("nop");
-  } while (IFG1 & OFIFG);
-#endif
-  BCSCTL2 = VAL_BCSCTL2;
-
-  /*
-   * I/O ports initialization.
-   */
-  palInit(&config);
-
-  /*
-   * Timer 0 setup, uses SMCLK as source.
-   */
-  TACCR0 = SMCLK / 4 / CH_FREQUENCY - 1;/* Counter limit.               */
-  TACTL = TACLR;                        /* Clean start.                 */
-  TACTL = TASSEL_2 | ID_2 | MC_1;       /* Src=SMCLK, ID=4, cmp=TACCR0. */
-  TACCTL0 = CCIE;                       /* Interrupt on compare.        */
-
-  /*
-   * Other subsystems.
-   */
-  sdInit();
-}
+#include "ch.h"
+#include "hal.h"
 
 CH_IRQ_HANDLER(TIMERA0_VECTOR) {
 
@@ -87,4 +31,24 @@ CH_IRQ_HANDLER(TIMERA0_VECTOR) {
   chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
+}
+
+/*
+ * Hardware initialization goes here.
+ * NOTE: Interrupts are still disabled.
+ */
+void hwinit(void) {
+
+  /*
+   * HAL initialization.
+   */
+  halInit();
+
+  /*
+   * Timer 0 setup, uses SMCLK as source.
+   */
+  TACCR0 = SMCLK / 4 / CH_FREQUENCY - 1;/* Counter limit.               */
+  TACTL = TACLR;                        /* Clean start.                 */
+  TACTL = TASSEL_2 | ID_2 | MC_1;       /* Src=SMCLK, ID=4, cmp=TACCR0. */
+  TACCTL0 = CCIE;                       /* Interrupt on compare.        */
 }

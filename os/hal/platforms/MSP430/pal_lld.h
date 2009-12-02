@@ -277,6 +277,8 @@ typedef union __ioport * ioportid_t;
 #define pal_lld_setgroupmode(port, mask, mode) \
   _pal_lld_setgroupmode(port, mask, mode)
 
+extern const MSP430DIOConfig pal_default_config;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

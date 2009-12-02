@@ -24,8 +24,8 @@
  * @{
  */
 
-#include <ch.h>
-#include <hal.h>
+#include "ch.h"
+#include "hal.h"
 
 /*===========================================================================*/
 /* Low Level Driver exported variables.                                      */
