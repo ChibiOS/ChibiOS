@@ -179,9 +179,53 @@ void can_lld_start(CANDriver *canp) {
   canp->cd_can->MCR = CAN_MCR_INRQ;
   while ((canp->cd_can->MSR & CAN_MSR_INAK) == 0)
     chThdSleepS(1);
-  /* Initialization.*/
+  /* BTR initialization.*/
   canp->cd_can->BTR = canp->cd_config->cc_btr;
+  /* MCR initialization.*/
   canp->cd_can->MCR = canp->cd_config->cc_mcr;
+  /* Filters initialization.*/
+  canp->cd_can->FMR |= CAN_FMR_FINIT;
+  if (canp->cd_config->cc_num > 0) {
+    uint32_t i, fmask;
+    CAN_FilterRegister_TypeDef *cfp;
+
+    canp->cd_can->FA1R = 0;
+    canp->cd_can->FM1R = 0;
+    canp->cd_can->FS1R = 0;
+    canp->cd_can->FFA1R = 0;
+    cfp = canp->cd_can->sFilterRegister;
+    fmask = 1;
+    for (i = 0; i < CAN_MAX_FILTERS; i++) {
+      if (i < canp->cd_config->cc_num) {
+        if (canp->cd_config->cc_filters[i].cf_mode)
+          canp->cd_can->FM1R |= fmask;
+        if (canp->cd_config->cc_filters[i].cf_scale)
+          canp->cd_can->FS1R |= fmask;
+        if (canp->cd_config->cc_filters[i].cf_assignment)
+          canp->cd_can->FFA1R |= fmask;
+        cfp->FR1 = canp->cd_config->cc_filters[i].cf_register1;
+        cfp->FR2 = canp->cd_config->cc_filters[i].cf_register2;
+        canp->cd_can->FA1R |= fmask;
+      }
+      else {
+        cfp->FR1 = 0;
+        cfp->FR2 = 0;
+      }
+      cfp++;
+      fmask <<= 1;
+    }
+  }
+  else {
+    /* Setup a default filter.*/
+    canp->cd_can->sFilterRegister[0].FR1 = 0;
+    canp->cd_can->sFilterRegister[0].FR2 = 0;
+    canp->cd_can->FM1R = 0;
+    canp->cd_can->FFA1R = 0;
+    canp->cd_can->FS1R = 1;
+    canp->cd_can->FA1R = 1;
+  }
+  canp->cd_can->FMR &= ~CAN_FMR_FINIT;
+  /* Interrupt sources initialization.*/
   canp->cd_can->IER = CAN_IER_TMEIE  | CAN_IER_FMPIE0 | CAN_IER_FMPIE1 |
                       CAN_IER_WKUIE  | CAN_IER_ERRIE  | CAN_IER_LECIE  |
                       CAN_IER_BOFIE  | CAN_IER_EPVIE  | CAN_IER_EWGIE  |
@@ -222,7 +266,7 @@ void can_lld_stop(CANDriver *canp) {
  */
 bool_t can_lld_can_transmit(CANDriver *canp) {
 
-  return FALSE;
+  return (canp->cd_can->TSR & CAN_TSR_TME) != 0;
 }
 
 /**
@@ -230,13 +274,8 @@ bool_t can_lld_can_transmit(CANDriver *canp) {
  *
  * @param[in] canp      pointer to the @p CANDriver object
  * @param[in] cfp       pointer to the CAN frame to be transmitted
- *
- * @return The operation status.
- * @retval RDY_OK frame transmitted.
  */
-msg_t can_lld_transmit(CANDriver *canp, const CANFrame *cfp) {
-
-  return RDY_OK;
+void can_lld_transmit(CANDriver *canp, const CANTxFrame *ctfp) {
 }
 
 /**
@@ -250,7 +289,7 @@ msg_t can_lld_transmit(CANDriver *canp, const CANFrame *cfp) {
  */
 bool_t can_lld_can_receive(CANDriver *canp) {
 
-  return FALSE;
+  return (canp->cd_can->RF0R & CAN_RF0R_FMP0) > 0;
 }
 
 /**
@@ -258,13 +297,26 @@ bool_t can_lld_can_receive(CANDriver *canp) {
  *
  * @param[in] canp      pointer to the @p CANDriver object
  * @param[out] cfp      pointer to the buffer where the CAN frame is copied
- *
- * @return The operation status.
- * @retval RDY_OK frame received.
  */
-msg_t can_lld_receive(CANDriver *canp, CANFrame *cfp) {
+void can_lld_receive(CANDriver *canp, CANRxFrame *crfp) {
+  uint32_t r;
 
-  return RDY_OK;
+  /* Fetches the message.*/
+  r = canp->cd_can->sFIFOMailBox[0].RDTR;
+  crfp->cf_DLC = r & CAN_RDT0R_DLC;
+  crfp->cf_FMI = (uint8_t)(r >> 8);
+  crfp->cf_TIME = (uint16_t)(r >> 16);
+  r = canp->cd_can->sFIFOMailBox[0].RIR;
+  crfp->cf_RTR = r & CAN_RI0R_RTR;
+  crfp->cf_IDE = r & CAN_RI0R_IDE;
+  if (crfp->cf_IDE)
+    crfp->cf_ID = r >> 3;
+  else
+    crfp->cf_ID = r >> 24;
+  crfp->cf_data32[0] = canp->cd_can->sFIFOMailBox[0].RDLR;
+  crfp->cf_data32[1] = canp->cd_can->sFIFOMailBox[0].RDHR;
+  /* Releases the mailbox.*/
+  canp->cd_can->RF0R |= CAN_RF0R_RFOM0;
 }
 
 #if CAN_USE_SLEEP_MODE || defined(__DOXYGEN__)
@@ -275,6 +327,7 @@ msg_t can_lld_receive(CANDriver *canp, CANFrame *cfp) {
  */
 void can_lld_sleep(CANDriver *canp) {
 
+  (void)canp;
 }
 
 /**
@@ -284,6 +337,7 @@ void can_lld_sleep(CANDriver *canp) {
  */
 void can_lld_wakeup(CANDriver *canp) {
 
+  (void)canp;
 }
 #endif /* CAN_USE_SLEEP_MODE */
 

@@ -110,7 +110,7 @@ void canStop(CANDriver *canp) {
  * @note Trying to transmit while in sleep mode simply enqueues the thread.
  *
  * @param[in] canp      pointer to the @p CANDriver object
- * @param[in] cfp       pointer to the CAN frame to be transmitted
+ * @param[in] ctfp       pointer to the CAN frame to be transmitted
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
@@ -121,25 +121,24 @@ void canStop(CANDriver *canp) {
  * @retval RDY_TIMEOUT operation not finished within the specified time.
  * @retval RDY_RESET driver stopped while waiting.
  */
-msg_t canTransmit(CANDriver *canp, const CANFrame *cfp, systime_t timeout) {
-  msg_t msg;
+msg_t canTransmit(CANDriver *canp, const CANTxFrame *ctfp, systime_t timeout) {
 
-  chDbgCheck((canp != NULL) && (cfp != NULL), "canTransmit");
+  chDbgCheck((canp != NULL) && (ctfp != NULL), "canTransmit");
 
   chSysLock();
   chDbgAssert((canp->cd_state == CAN_READY) || (canp->cd_state == CAN_SLEEP),
               "canTransmit(), #1",
               "invalid state");
   if ((canp->cd_state == CAN_SLEEP) || !can_lld_can_transmit(canp)) {
-    msg = chSemWaitTimeoutS(&canp->cd_txsem, timeout);
+    msg_t msg = chSemWaitTimeoutS(&canp->cd_txsem, timeout);
     if (msg != RDY_OK) {
       chSysUnlock();
       return msg;
     }
   }
-  msg = can_lld_transmit(canp, cfp);
+  can_lld_transmit(canp, ctfp);
   chSysUnlock();
-  return msg;
+  return RDY_OK;
 }
 
 /**
@@ -162,25 +161,24 @@ msg_t canTransmit(CANDriver *canp, const CANFrame *cfp, systime_t timeout) {
  *         frame not immediately available if invoked using @p TIME_IMMEDIATE.
  * @retval RDY_RESET driver stopped while waiting.
  */
-msg_t canReceive(CANDriver *canp, CANFrame *cfp, systime_t timeout) {
-  msg_t msg;
+msg_t canReceive(CANDriver *canp, CANRxFrame *crfp, systime_t timeout) {
 
-  chDbgCheck((canp != NULL) && (cfp != NULL), "canReceive");
+  chDbgCheck((canp != NULL) && (crfp != NULL), "canReceive");
 
   chSysLock();
   chDbgAssert((canp->cd_state == CAN_READY) || (canp->cd_state == CAN_SLEEP),
               "canReceive(), #1",
               "invalid state");
   if ((canp->cd_state == CAN_SLEEP) || !can_lld_can_receive(canp)) {
-    msg = chSemWaitTimeoutS(&canp->cd_rxsem, timeout);
+    msg_t msg = chSemWaitTimeoutS(&canp->cd_rxsem, timeout);
     if (msg != RDY_OK) {
       chSysUnlock();
       return msg;
     }
   }
-  msg = can_lld_receive(canp, cfp);
+  can_lld_receive(canp, crfp);
   chSysUnlock();
-  return msg;
+  return RDY_OK;
 }
 
 /**

@@ -39,6 +39,15 @@
  */
 #define CAN_SUPPORTS_SLEEP          TRUE
 
+/**
+ * @brief Manimum number of CAN filters.
+ */
+#if defined(STM32F10X_CL) || defined(__DOXYGEN__)
+#define CAN_MAX_FILTERS             28
+#else
+#define CAN_MAX_FILTERS             14
+#endif
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -83,21 +92,40 @@
 typedef uint32_t canstatus_t;
 
 /**
- * @brief CAN frame.
+ * @brief CAN transmission frame.
  * @note Accessing the frame data as word16 or word32 is not portable because
  *       machine data endianness, it can be still useful for a quick filling.
  */
 typedef struct {
   uint8_t                   cf_DLC:4;       /**< @brief Data length.        */
-  uint8_t                   cf_IDE:1;       /**< @brief Identifier type.    */
   uint8_t                   cf_RTR:1;       /**< @brief Frame type.         */
-  uint32_t                  cf_id;          /**< @brief Frame identifier.   */
+  uint8_t                   cf_IDE:1;       /**< @brief Identifier type.    */
+  uint32_t                  cf_ID;          /**< @brief Frame identifier.   */
   union {
     uint8_t                 cf_data8[8];    /**< @brief Frame data.         */
     uint16_t                cf_data16[4];   /**< @brief Frame data.         */
     uint32_t                cf_data32[2];   /**< @brief Frame data.         */
   };
-} CANFrame;
+} CANTxFrame;
+
+/**
+ * @brief CAN received frame.
+ * @note Accessing the frame data as word16 or word32 is not portable because
+ *       machine data endianness, it can be still useful for a quick filling.
+ */
+typedef struct {
+  uint16_t                  cf_TIME;        /**< @brief Time stamp.         */
+  uint8_t                   cf_FMI;         /**< @brief Filter id.          */
+  uint8_t                   cf_DLC:4;       /**< @brief Data length.        */
+  uint8_t                   cf_RTR:1;       /**< @brief Frame type.         */
+  uint8_t                   cf_IDE:1;       /**< @brief Identifier type.    */
+  uint32_t                  cf_ID;          /**< @brief Frame identifier.   */
+  union {
+    uint8_t                 cf_data8[8];    /**< @brief Frame data.         */
+    uint16_t                cf_data16[4];   /**< @brief Frame data.         */
+    uint32_t                cf_data32[2];   /**< @brief Frame data.         */
+  };
+} CANRxFrame;
 
 /**
  * @brief CAN filter.
@@ -236,9 +264,9 @@ extern "C" {
   void can_lld_start(CANDriver *canp);
   void can_lld_stop(CANDriver *canp);
   bool_t can_lld_can_transmit(CANDriver *canp);
-  msg_t can_lld_transmit(CANDriver *canp, const CANFrame *cfp);
+  void can_lld_transmit(CANDriver *canp, const CANTxFrame *crfp);
   bool_t can_lld_can_receive(CANDriver *canp);
-  msg_t can_lld_receive(CANDriver *canp, CANFrame *cfp);
+  void can_lld_receive(CANDriver *canp, CANRxFrame *ctfp);
 #if CAN_USE_SLEEP_MODE
   void can_lld_sleep(CANDriver *canp);
   void can_lld_wakeup(CANDriver *canp);
