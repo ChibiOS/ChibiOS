@@ -213,6 +213,10 @@ void can_lld_start(CANDriver *canp) {
       }
       cfp++;
       fmask <<= 1;
+      /* Gives a chance for preemption since this is a rather long loop.*/
+      chSysUnlock();
+      chThdYield();
+      chSysLock();
     }
   }
   else {
@@ -239,7 +243,7 @@ void can_lld_start(CANDriver *canp) {
  */
 void can_lld_stop(CANDriver *canp) {
 
-  /* If in ready state then disables the CAN clock.*/
+  /* If in ready state then disables the CAN peripheral.*/
   if (canp->cd_state == CAN_READY) {
 #if USE_STM32_CAN1
     if (&CAND1 == canp) {
@@ -273,9 +277,31 @@ bool_t can_lld_can_transmit(CANDriver *canp) {
  * @brief Inserts a frame into the transmit queue.
  *
  * @param[in] canp      pointer to the @p CANDriver object
- * @param[in] cfp       pointer to the CAN frame to be transmitted
+ * @param[in] ctfp      pointer to the CAN frame to be transmitted
  */
 void can_lld_transmit(CANDriver *canp, const CANTxFrame *ctfp) {
+  uint32_t tir;
+  CAN_TxMailBox_TypeDef *tmbp;
+
+  /* Pointer to a free transmission mailbox.*/
+  tmbp = &canp->cd_can->sTxMailBox[(canp->cd_can->TSR & CAN_TSR_CODE) >> 24];
+
+  /* Preparing the message.*/
+  if (ctfp->cf_IDE)
+    tir = ((uint32_t)ctfp->cf_EID << 3) |
+          ((uint32_t)ctfp->cf_IDE << 2) |
+          ((uint32_t)ctfp->cf_RTR << 1);
+  else
+    tir = ((uint32_t)ctfp->cf_SID << 24) |
+          ((uint32_t)ctfp->cf_IDE << 2) |
+          ((uint32_t)ctfp->cf_RTR << 1);
+  tmbp->TDTR = ctfp->cf_DLC;
+  tmbp->TDLR = ctfp->cf_data32[0];
+  tmbp->TDHR = ctfp->cf_data32[1];
+  tmbp->TIR = tir | CAN_TI0R_TXRQ;
+
+  /* Re-enables the interrupt in order to generate events again.*/
+  canp->cd_can->IER |= CAN_IER_TMEIE;
 }
 
 /**
@@ -296,7 +322,7 @@ bool_t can_lld_can_receive(CANDriver *canp) {
  * @brief Receives a frame from the input queue.
  *
  * @param[in] canp      pointer to the @p CANDriver object
- * @param[out] cfp      pointer to the buffer where the CAN frame is copied
+ * @param[out] crfp     pointer to the buffer where the CAN frame is copied
  */
 void can_lld_receive(CANDriver *canp, CANRxFrame *crfp) {
   uint32_t r;
@@ -310,13 +336,19 @@ void can_lld_receive(CANDriver *canp, CANRxFrame *crfp) {
   crfp->cf_RTR = r & CAN_RI0R_RTR;
   crfp->cf_IDE = r & CAN_RI0R_IDE;
   if (crfp->cf_IDE)
-    crfp->cf_ID = r >> 3;
+    crfp->cf_EID = r >> 3;
   else
-    crfp->cf_ID = r >> 24;
+    crfp->cf_SID = r >> 24;
   crfp->cf_data32[0] = canp->cd_can->sFIFOMailBox[0].RDLR;
   crfp->cf_data32[1] = canp->cd_can->sFIFOMailBox[0].RDHR;
+
   /* Releases the mailbox.*/
   canp->cd_can->RF0R |= CAN_RF0R_RFOM0;
+
+  /* If the queue is empty re-enables the interrupt in order to generate
+     events again.*/
+  if ((canp->cd_can->RF0R & CAN_RF0R_FMP0) == 0)
+    canp->cd_can->IER |= CAN_IER_FMPIE0;
 }
 
 #if CAN_USE_SLEEP_MODE || defined(__DOXYGEN__)
@@ -327,7 +359,7 @@ void can_lld_receive(CANDriver *canp, CANRxFrame *crfp) {
  */
 void can_lld_sleep(CANDriver *canp) {
 
-  (void)canp;
+  canp->cd_can->MCR |= CAN_MCR_SLEEP;
 }
 
 /**
@@ -337,7 +369,7 @@ void can_lld_sleep(CANDriver *canp) {
  */
 void can_lld_wakeup(CANDriver *canp) {
 
-  (void)canp;
+  canp->cd_can->MCR &= ~CAN_MCR_SLEEP;
 }
 #endif /* CAN_USE_SLEEP_MODE */
 

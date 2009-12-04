@@ -29,6 +29,10 @@
 
 #if CH_HAL_USE_CAN || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
 /**
  * @brief This switch defines whether the driver implementation supports
  *        a low power switch mode with automatic an wakeup feature.
@@ -53,10 +57,6 @@
 #endif /* !CAN_SUPPORTS_SLEEP */
 
 /*===========================================================================*/
-/* Driver constants.                                                         */
-/*===========================================================================*/
-
-/*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
@@ -66,21 +66,63 @@
 typedef uint32_t canstatus_t;
 
 /**
- * @brief CAN frame.
+ * @brief CAN transmission frame.
  * @note Accessing the frame data as word16 or word32 is not portable because
  *       machine data endianness, it can be still useful for a quick filling.
  */
 typedef struct {
-  uint8_t                   cf_DLC:4;       /**< @brief Data length.        */
-  uint8_t                   cf_IDE:1;       /**< @brief Identifier type.    */
-  uint8_t                   cf_RTR:1;       /**< @brief Frame type.         */
-  uint32_t                  cf_id;          /**< @brief Frame identifier.   */
+  struct {
+    uint8_t                 cf_DLC:4;       /**< @brief Data length.        */
+    uint8_t                 cf_RTR:1;       /**< @brief Frame type.         */
+    uint8_t                 cf_IDE:1;       /**< @brief Identifier type.    */
+  };
+  union {
+    struct {
+      uint32_t              cf_SID:11;      /**< @brief Standard identifier.*/
+    };
+    struct {
+      uint32_t              cf_EID:29;      /**< @brief Extended identifier.*/
+    };
+  };
   union {
     uint8_t                 cf_data8[8];    /**< @brief Frame data.         */
     uint16_t                cf_data16[4];   /**< @brief Frame data.         */
     uint32_t                cf_data32[2];   /**< @brief Frame data.         */
   };
-} CANFrame;
+} CANTxFrame;
+
+/**
+ * @brief CAN received frame.
+ * @note Accessing the frame data as word16 or word32 is not portable because
+ *       machine data endianness, it can be still useful for a quick filling.
+ */
+typedef struct {
+  struct {
+    uint8_t                 cf_DLC:4;       /**< @brief Data length.        */
+    uint8_t                 cf_RTR:1;       /**< @brief Frame type.         */
+    uint8_t                 cf_IDE:1;       /**< @brief Identifier type.    */
+  };
+  union {
+    struct {
+      uint32_t              cf_SID:11;      /**< @brief Standard identifier.*/
+    };
+    struct {
+      uint32_t              cf_EID:29;      /**< @brief Extended identifier.*/
+    };
+  };
+  union {
+    uint8_t                 cf_data8[8];    /**< @brief Frame data.         */
+    uint16_t                cf_data16[4];   /**< @brief Frame data.         */
+    uint32_t                cf_data32[2];   /**< @brief Frame data.         */
+  };
+} CANRxFrame;
+
+/**
+ * @brief CAN filter.
+ * @note It could not be present on some architectures.
+ */
+typedef struct {
+} CANFilter;
 
 /**
  * @brief Driver configuration structure.
@@ -111,6 +153,12 @@ typedef struct {
   Semaphore                 cd_rxsem;
   /**
    * @brief One or more frames become available.
+   * @note After broadcasting this event it will not be broadcasted again
+   *       until the received frames queue has been completely emptied. It
+   *       is <b>not</b> broadcasted for each received frame. It is
+   *       responsibility of the application to empty the queue by repeatedly
+   *       invoking @p chReceive() when listening to this event. This behavior
+   *       minimizes the interrupt served by the system because CAN traffic.
    */
   EventSource               cd_rxfull_event;
   /**
@@ -149,9 +197,9 @@ extern "C" {
   void can_lld_start(CANDriver *canp);
   void can_lld_stop(CANDriver *canp);
   bool_t can_lld_can_transmit(CANDriver *canp);
-  msg_t can_lld_transmit(CANDriver *canp, const CANFrame *cfp);
+  void can_lld_transmit(CANDriver *canp, const CANTxFrame *crfp);
   bool_t can_lld_can_receive(CANDriver *canp);
-  msg_t can_lld_receive(CANDriver *canp, CANFrame *cfp);
+  void can_lld_receive(CANDriver *canp, CANRxFrame *ctfp);
 #if CAN_USE_SLEEP_MODE
   void can_lld_sleep(CANDriver *canp);
   void can_lld_wakeup(CANDriver *canp);

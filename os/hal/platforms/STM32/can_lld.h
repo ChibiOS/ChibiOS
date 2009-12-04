@@ -97,10 +97,19 @@ typedef uint32_t canstatus_t;
  *       machine data endianness, it can be still useful for a quick filling.
  */
 typedef struct {
-  uint8_t                   cf_DLC:4;       /**< @brief Data length.        */
-  uint8_t                   cf_RTR:1;       /**< @brief Frame type.         */
-  uint8_t                   cf_IDE:1;       /**< @brief Identifier type.    */
-  uint32_t                  cf_ID;          /**< @brief Frame identifier.   */
+  struct {
+    uint8_t                 cf_DLC:4;       /**< @brief Data length.        */
+    uint8_t                 cf_RTR:1;       /**< @brief Frame type.         */
+    uint8_t                 cf_IDE:1;       /**< @brief Identifier type.    */
+  };
+  union {
+    struct {
+      uint32_t              cf_SID:11;      /**< @brief Standard identifier.*/
+    };
+    struct {
+      uint32_t              cf_EID:29;      /**< @brief Extended identifier.*/
+    };
+  };
   union {
     uint8_t                 cf_data8[8];    /**< @brief Frame data.         */
     uint16_t                cf_data16[4];   /**< @brief Frame data.         */
@@ -114,12 +123,23 @@ typedef struct {
  *       machine data endianness, it can be still useful for a quick filling.
  */
 typedef struct {
-  uint16_t                  cf_TIME;        /**< @brief Time stamp.         */
-  uint8_t                   cf_FMI;         /**< @brief Filter id.          */
-  uint8_t                   cf_DLC:4;       /**< @brief Data length.        */
-  uint8_t                   cf_RTR:1;       /**< @brief Frame type.         */
-  uint8_t                   cf_IDE:1;       /**< @brief Identifier type.    */
-  uint32_t                  cf_ID;          /**< @brief Frame identifier.   */
+  struct {
+    uint8_t                 cf_FMI;         /**< @brief Filter id.          */
+    uint16_t                cf_TIME;        /**< @brief Time stamp.         */
+  };
+  struct {
+    uint8_t                 cf_DLC:4;       /**< @brief Data length.        */
+    uint8_t                 cf_RTR:1;       /**< @brief Frame type.         */
+    uint8_t                 cf_IDE:1;       /**< @brief Identifier type.    */
+  };
+  union {
+    struct {
+      uint32_t              cf_SID:11;      /**< @brief Standard identifier.*/
+    };
+    struct {
+      uint32_t              cf_EID:29;      /**< @brief Extended identifier.*/
+    };
+  };
   union {
     uint8_t                 cf_data8[8];    /**< @brief Frame data.         */
     uint16_t                cf_data16[4];   /**< @brief Frame data.         */
@@ -216,7 +236,8 @@ typedef struct {
    *       until the received frames queue has been completely emptied. It
    *       is <b>not</b> broadcasted for each received frame. It is
    *       responsibility of the application to empty the queue by repeatedly
-   *       invoking @p chReceive() when listening to this event.
+   *       invoking @p chReceive() when listening to this event. This behavior
+   *       minimizes the interrupt served by the system because CAN traffic.
    */
   EventSource               cd_rxfull_event;
   /**

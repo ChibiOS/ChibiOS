@@ -63,10 +63,6 @@ void can_lld_init(void) {
  */
 void can_lld_start(CANDriver *canp) {
 
-  if (canp->can_state == CAN_STOP) {
-    /* Clock activation.*/
-  }
-  /* Configuration.*/
 }
 
 /**
@@ -76,7 +72,12 @@ void can_lld_start(CANDriver *canp) {
  */
 void can_lld_stop(CANDriver *canp) {
 
+  /* If in ready state then disables the CAN peripheral.*/
+  if (canp->cd_state == CAN_READY) {
+
+  }
 }
+
 
 /**
  * @brief Determines whether a frame can be transmitted.
@@ -96,14 +97,10 @@ bool_t can_lld_can_transmit(CANDriver *canp) {
  * @brief Inserts a frame into the transmit queue.
  *
  * @param[in] canp      pointer to the @p CANDriver object
- * @param[in] cfp       pointer to the CAN frame to be transmitted
- *
- * @return The operation status.
- * @retval RDY_OK frame transmitted.
+ * @param[in] ctfp      pointer to the CAN frame to be transmitted
  */
-msg_t can_lld_transmit(CANDriver *canp, const CANFrame *cfp) {
+void can_lld_transmit(CANDriver *canp, const CANTxFrame *ctfp) {
 
-  return RDY_OK;
 }
 
 /**
@@ -124,14 +121,10 @@ bool_t can_lld_can_receive(CANDriver *canp) {
  * @brief Receives a frame from the input queue.
  *
  * @param[in] canp      pointer to the @p CANDriver object
- * @param[out] cfp      pointer to the buffer where the CAN frame is copied
- *
- * @return The operation status.
- * @retval RDY_OK frame received.
+ * @param[out] crfp     pointer to the buffer where the CAN frame is copied
  */
-msg_t can_lld_receive(CANDriver *canp, CANFrame *cfp) {
+void can_lld_receive(CANDriver *canp, CANRxFrame *crfp) {
 
-  return RDY_OK;
 }
 
 #if CAN_USE_SLEEP_MODE || defined(__DOXYGEN__)
