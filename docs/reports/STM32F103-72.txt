@@ -5,9 +5,9 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.3.3unstable
+*** Kernel:       1.3.5unstable
 *** Architecture: ARM Cortex-M3
-*** GCC Version:  4.4.1
+*** GCC Version:  4.4.2
 
 ----------------------------------------------------------------------------
 --- Test Case 1.1 (Threads, enqueuing test #1)

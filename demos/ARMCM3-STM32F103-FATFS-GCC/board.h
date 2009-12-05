@@ -21,53 +21,11 @@
 #define _BOARD_H_
 
 /*
- * Uncomment this if you want a 48MHz system clock, else it will be 72MHz.
- */
-//#define SYSCLK_48
-
-/*
- * NOTES: PLLPRE can be 1 or 2, PLLMUL can be 2..16.
+ * Board frequencies.
  */
 #define LSECLK          32768
 #define HSECLK          8000000
 #define HSICLK          8000000
-#define PLLPRE          1
-#ifdef SYSCLK_48
-  #define PLLMUL        6
-#else
-  #define PLLMUL        9
-#endif
-#define PLLCLK          ((HSECLK / PLLPRE) * PLLMUL)
-#define SYSCLK          PLLCLK
-#define APB1CLK         (SYSCLK / 2)
-#define APB2CLK         (SYSCLK / 2)
-#define AHB1CLK         (SYSCLK / 1)
-
-/*
- * Values derived from the clock settings.
- */
-#define PLLPREBITS      ((PLLPRE - 1) << 17)
-#define PLLMULBITS      ((PLLMUL - 2) << 18)
-#ifdef SYSCLK_48
-  #define USBPREBITS    RCC_CFGR_USBPRE_DIV1_BITS
-  #define FLASHBITS     0x00000011
-#else
-  #define USBPREBITS    RCC_CFGR_USBPRE_DIV1P5_BITS
-  #define FLASHBITS     0x00000012
-#endif
-
-/*
- * Extra definitions for RCC_CR register (missing from the ST header file).
- */
-#define RCC_CR_HSITRIM_RESET_BITS       (0x10 << 3)
-
-/*
- * Extra definitions for RCC_CFGR register (missing from the ST header file).
- */
-#define RCC_CFGR_PLLSRC_HSI_BITS        (0 << 16)
-#define RCC_CFGR_PLLSRC_HSE_BITS        (1 << 16)
-#define RCC_CFGR_USBPRE_DIV1P5_BITS     (0 << 22)
-#define RCC_CFGR_USBPRE_DIV1_BITS       (1 << 22)
 
 /*
  * IO pins assignments.

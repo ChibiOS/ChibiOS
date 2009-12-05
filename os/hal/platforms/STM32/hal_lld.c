@@ -95,7 +95,7 @@ void hal_lld_init(void) {
 void stm32_clock_init(void) {
 
   /* HSI setup.*/
-  RCC->CR = RCC_CR_HSITRIM_RESET_BITS | RCC_CR_HSION;
+  RCC->CR = 0x00000083;         /* Reset value, HSI ON.                     */
   while (!(RCC->CR & RCC_CR_HSIRDY))
     ;                           /* Waits until HSI stable.                  */
   /* HSE setup.*/
@@ -103,7 +103,7 @@ void stm32_clock_init(void) {
   while (!(RCC->CR & RCC_CR_HSERDY))
     ;                           /* Waits until HSE stable.                  */
   /* PLL setup.*/
-  RCC->CFGR = RCC_CFGR_PLLSRC_HSE_BITS | PLLPREBITS | PLLMULBITS;
+  RCC->CFGR = RCC_CFGR_PLLSRC | PLLPREBITS | PLLMULBITS;
   RCC->CR |= RCC_CR_PLLON;
   while (!(RCC->CR & RCC_CR_PLLRDY))
     ;                           /* Waits until PLL stable.                  */

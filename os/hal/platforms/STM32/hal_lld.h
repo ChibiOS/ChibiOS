@@ -41,12 +41,54 @@
 #include "stm32_dma.h"
 
 /*===========================================================================*/
-/* Driver pre-compile time settings.                                         */
+/* Driver constants.                                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Driver constants.                                                         */
+/* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief System clock setting.
+ * @note Only 48MHz and 72MHz are currently supported.
+ */
+#if !defined(STM32_SYSCLK) || defined(__DOXYGEN__)
+#define STM32_SYSCLK                72
+#endif
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*
+ * NOTES: PLLPRE can be 1 or 2, PLLMUL can be 2..16.
+ */
+#define PLLPRE                      1
+#if STM32_SYSCLK == 48
+  #define PLLMUL                    6
+#elif STM32_SYSCLK == 72
+  #define PLLMUL                    9
+#else
+#error "unsupported STM32_SYSCLK setting"
+#endif
+#define PLLCLK                      ((HSECLK / PLLPRE) * PLLMUL)
+#define SYSCLK                      PLLCLK
+#define APB1CLK                     (SYSCLK / 2)
+#define APB2CLK                     (SYSCLK / 2)
+#define AHB1CLK                     (SYSCLK / 1)
+
+/*
+ * Values derived from the clock settings.
+ */
+#define PLLPREBITS                  ((PLLPRE - 1) << 17)
+#define PLLMULBITS                  ((PLLMUL - 2) << 18)
+#if STM32_SYSCLK == 48
+  #define USBPREBITS                RCC_CFGR_USBPRE
+  #define FLASHBITS                 0x00000011
+#elif STM32_SYSCLK == 72
+  #define USBPREBITS                0
+  #define FLASHBITS                 0x00000012
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

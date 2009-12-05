@@ -51,6 +51,10 @@
 #define MSP430_USE_CLOCK            MSP430_CLOCK_SOURCE_XT2CLK
 #endif
 
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
 /*
  * Calculating the derived clock constants.
  */
