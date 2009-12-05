@@ -21,39 +21,11 @@
 #define _BOARD_H_
 
 /*
- * Clock settings.
+ * Clock constants.
  */
-//#define MSP_USE_XT2CLK
-#define MSP_USE_DCOCLK
-
-#if defined(MSP_USE_XT2CLK) && defined(MSP_USE_DCOCLK)
-#error "Define MSP_USE_XT2CLK or MSP_USE_DCOCLK, not both"
-#endif
-
 #define LFXT1CLK        32768
 #define XT2CLK          8000000
 #define DCOCLK          750000
-
-#define ACLK            LFXT1CLK
-#if defined(MSP_USE_XT2CLK)
-#define MCLK            XT2CLK
-#define SMCLK           (XT2CLK / 8)
-#elif defined(MSP_USE_DCOCLK)
-#define MCLK            DCOCLK
-#define SMCLK           DCOCLK
-#else
-#error "Default clock source not selected"
-#endif
-
-#define VAL_DCOCTL      (DCO0 | DCO1)
-#if defined(MSP_USE_XT2CLK)
-#define VAL_BCSCTL1     (RSEL2)
-#define VAL_BCSCTL2     (SELM_2 | DIVM_0 | DIVS_3 | SELS)
-#endif
-#if defined(MSP_USE_DCOCLK)
-#define VAL_BCSCTL1     (XT2OFF | RSEL2)
-#define VAL_BCSCTL2     (SELM_0 | DIVM_0 | DIVS_0)
-#endif
 
 /*
  * Pin definitions for the Olimex MSP430-P1611 board.

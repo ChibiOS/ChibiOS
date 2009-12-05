@@ -13,6 +13,8 @@
   both AT91SAM7S and AT91SAM7X families.
 - NEW: Extended the support to all the SAM7X and SAM7S devices thanks to
   code contributed by Liam Staskawicz.
+- NEW: Added test report for MSP430 running off the external high speed
+  oscillator.
 - CHANGE: Removed the MII from the standard drivers, now it is part of the
   AT91SAM7 support, the header mii.h is still part of the HAL.
 - CHANGE: In the STM32 drivers now the DMA errors are handled by hook macros
