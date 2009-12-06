@@ -29,6 +29,15 @@
 
 #if CH_HAL_USE_CAN || defined(__DOXYGEN__)
 
+/*
+ * The following macros from the ST header file are replaced with better
+ * equivalents.
+ */
+#undef CAN_BTR_BRP
+#undef CAN_BTR_TS1
+#undef CAN_BTR_TS2
+#undef CAN_BTR_SJW
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -47,6 +56,17 @@
 #else
 #define CAN_MAX_FILTERS             14
 #endif
+
+#define CAN_BTR_BRP(n)              (n)         /**< @brief BRP field macro.*/
+#define CAN_BTR_TS1(n)              ((n) << 16) /**< @brief TS1 field macro.*/
+#define CAN_BTR_TS2(n)              ((n) << 20) /**< @brief TS2 field macro.*/
+#define CAN_BTR_SJW(n)              ((n) << 24) /**< @brief SJW field macro.*/
+
+#define CAN_IDE_STD                 0           /**< @brief Standard id.    */
+#define CAN_IDE_EXT                 1           /**< @brief Extended id.    */
+
+#define CAN_RTR_DATA                0           /**< @brief Data frame.     */
+#define CAN_RTR_REMOTE              1           /**< @brief Remote frame.   */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

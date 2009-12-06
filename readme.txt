@@ -9,12 +9,14 @@
   configuration file halconf.h.
 - NEW: New CAN driver model.
 - NEW: STM32 ADC driver implementation with DMA support.
+- NEW: STM32 CAN driver implementation.
 - NEW: Added AT91SAM7S support and support for all the memory sizes in
   both AT91SAM7S and AT91SAM7X families.
 - NEW: Extended the support to all the SAM7X and SAM7S devices thanks to
   code contributed by Liam Staskawicz.
 - NEW: Added test report for MSP430 running off the external high speed
   oscillator.
+- NEW: HAL stress test for STM32 added, the demo located under ./testio/STM32.
 - CHANGE: Removed the MII from the standard drivers, now it is part of the
   AT91SAM7 support, the header mii.h is still part of the HAL.
 - CHANGE: In the STM32 drivers now the DMA errors are handled by hook macros

@@ -58,7 +58,7 @@ CH_IRQ_HANDLER(Vector8C) {
   CH_IRQ_PROLOGUE();
 
   /* No more events until a message is transmitted.*/
-  CAN1->IER &= ~CAN_IER_TMEIE;
+  CAN1->TSR = CAN_TSR_RQCP0 | CAN_TSR_RQCP1 | CAN_TSR_RQCP2;
   chEvtBroadcastI(&CAND1.cd_txempty_event);
 
   CH_IRQ_EPILOGUE();
@@ -299,9 +299,6 @@ void can_lld_transmit(CANDriver *canp, const CANTxFrame *ctfp) {
   tmbp->TDLR = ctfp->cf_data32[0];
   tmbp->TDHR = ctfp->cf_data32[1];
   tmbp->TIR = tir | CAN_TI0R_TXRQ;
-
-  /* Re-enables the interrupt in order to generate events again.*/
-  canp->cd_can->IER |= CAN_IER_TMEIE;
 }
 
 /**
