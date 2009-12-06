@@ -59,6 +59,8 @@ CH_IRQ_HANDLER(Vector8C) {
 
   /* No more events until a message is transmitted.*/
   CAN1->TSR = CAN_TSR_RQCP0 | CAN_TSR_RQCP1 | CAN_TSR_RQCP2;
+  while (chSemGetCounterI(&CAND1.cd_txsem) < 0)
+    chSemSignalI(&CAND1.cd_txsem);
   chEvtBroadcastI(&CAND1.cd_txempty_event);
 
   CH_IRQ_EPILOGUE();
@@ -77,6 +79,8 @@ CH_IRQ_HANDLER(Vector90) {
   if ((rf0r & CAN_RF0R_FMP0) > 0) {
     /* No more receive events until the queue 0 has been emptied.*/
     CAN1->IER &= ~CAN_IER_FMPIE0;
+    while (chSemGetCounterI(&CAND1.cd_rxsem) < 0)
+      chSemSignalI(&CAND1.cd_rxsem);
     chEvtBroadcastI(&CAND1.cd_rxfull_event);
   }
   if ((rf0r & CAN_RF0R_FOVR0) > 0) {

@@ -98,6 +98,9 @@ void canStop(CANDriver *canp) {
               "canStop(), #1",
               "invalid state");
   can_lld_stop(canp);
+  chSemResetI(&canp->cd_rxsem, 0);
+  chSemResetI(&canp->cd_txsem, 0);
+  chSchRescheduleS();
   canp->cd_state  = CAN_STOP;
   canp->cd_status = 0;
   chSysUnlock();
@@ -129,7 +132,7 @@ msg_t canTransmit(CANDriver *canp, const CANTxFrame *ctfp, systime_t timeout) {
   chDbgAssert((canp->cd_state == CAN_READY) || (canp->cd_state == CAN_SLEEP),
               "canTransmit(), #1",
               "invalid state");
-  if ((canp->cd_state == CAN_SLEEP) || !can_lld_can_transmit(canp)) {
+  while ((canp->cd_state == CAN_SLEEP) || !can_lld_can_transmit(canp)) {
     msg_t msg = chSemWaitTimeoutS(&canp->cd_txsem, timeout);
     if (msg != RDY_OK) {
       chSysUnlock();
@@ -169,7 +172,7 @@ msg_t canReceive(CANDriver *canp, CANRxFrame *crfp, systime_t timeout) {
   chDbgAssert((canp->cd_state == CAN_READY) || (canp->cd_state == CAN_SLEEP),
               "canReceive(), #1",
               "invalid state");
-  if ((canp->cd_state == CAN_SLEEP) || !can_lld_can_receive(canp)) {
+  while ((canp->cd_state == CAN_SLEEP) || !can_lld_can_receive(canp)) {
     msg_t msg = chSemWaitTimeoutS(&canp->cd_rxsem, timeout);
     if (msg != RDY_OK) {
       chSysUnlock();
