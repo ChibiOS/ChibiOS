@@ -59,9 +59,11 @@ CH_IRQ_HANDLER(Vector8C) {
 
   /* No more events until a message is transmitted.*/
   CAN1->TSR = CAN_TSR_RQCP0 | CAN_TSR_RQCP1 | CAN_TSR_RQCP2;
+  chSysLockFromIsr();
   while (chSemGetCounterI(&CAND1.cd_txsem) < 0)
     chSemSignalI(&CAND1.cd_txsem);
   chEvtBroadcastI(&CAND1.cd_txempty_event);
+  chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
 }
@@ -75,21 +77,23 @@ CH_IRQ_HANDLER(Vector90) {
   CH_IRQ_PROLOGUE();
 
   rf0r = CAN1->RF0R;
-  chSysLockFromIsr();
   if ((rf0r & CAN_RF0R_FMP0) > 0) {
     /* No more receive events until the queue 0 has been emptied.*/
     CAN1->IER &= ~CAN_IER_FMPIE0;
+    chSysLockFromIsr();
     while (chSemGetCounterI(&CAND1.cd_rxsem) < 0)
       chSemSignalI(&CAND1.cd_rxsem);
     chEvtBroadcastI(&CAND1.cd_rxfull_event);
+    chSysUnlockFromIsr();
   }
   if ((rf0r & CAN_RF0R_FOVR0) > 0) {
     /* Overflow events handling.*/
     CAN1->RF0R = CAN_RF0R_FOVR0;
     canAddFlagsI(&CAND1, CAN_OVERFLOW_ERROR);
+    chSysLockFromIsr();
     chEvtBroadcastI(&CAND1.cd_error_event);
+    chSysUnlockFromIsr();
   }
-  chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
 }

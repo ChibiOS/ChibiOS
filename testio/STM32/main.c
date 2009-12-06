@@ -56,6 +56,7 @@ static void adccallback(adcsample_t *buffer, size_t n) {
     ny += n;
   }
 }
+
 static WORKING_AREA(adc_continuous_wa, 256);
 static msg_t adc_continuous_thread(void *p){
 
@@ -91,6 +92,7 @@ static msg_t can_rx(void *p) {
       palTogglePad(IOPORT3, GPIOC_LED);
     }
   }
+  chEvtUnregister(&CAND1.cd_rxfull_event, &el);
   return 0;
 }
 
@@ -99,16 +101,16 @@ static msg_t can_tx(void * p) {
   CANTxFrame txmsg;
 
   (void)p;
-  txmsg.cf_IDE = CAN_IDE_STD;
+  txmsg.cf_IDE = CAN_IDE_EXT;
   txmsg.cf_EID = 0x01234567;
   txmsg.cf_RTR = CAN_RTR_DATA;
   txmsg.cf_DLC = 8;
   txmsg.cf_data32[0] = 0x55AA55AA;
-  txmsg.cf_data32[0] = 0x00FF00FF;
+  txmsg.cf_data32[1] = 0x00FF00FF;
 
   while (!chThdShouldTerminate()) {
-    canTransmit(&CAND1, &txmsg, TIME_INFINITE);
-    chThdSleepMilliseconds(50);
+    canTransmit(&CAND1, &txmsg, MS2ST(100));
+/*    chThdSleepMilliseconds(5);*/
   }
   return 0;
 }
