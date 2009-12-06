@@ -292,13 +292,10 @@ void can_lld_transmit(CANDriver *canp, const CANTxFrame *ctfp) {
 
   /* Preparing the message.*/
   if (ctfp->cf_IDE)
-    tir = ((uint32_t)ctfp->cf_EID << 3) |
-          ((uint32_t)ctfp->cf_IDE << 2) |
-          ((uint32_t)ctfp->cf_RTR << 1);
+    tir = ((uint32_t)ctfp->cf_EID << 3) | ((uint32_t)ctfp->cf_RTR << 1) |
+          CAN_TI0R_IDE;
   else
-    tir = ((uint32_t)ctfp->cf_SID << 24) |
-          ((uint32_t)ctfp->cf_IDE << 2) |
-          ((uint32_t)ctfp->cf_RTR << 1);
+    tir = ((uint32_t)ctfp->cf_SID << 21) | ((uint32_t)ctfp->cf_RTR << 1);
   tmbp->TDTR = ctfp->cf_DLC;
   tmbp->TDLR = ctfp->cf_data32[0];
   tmbp->TDHR = ctfp->cf_data32[1];
@@ -329,22 +326,22 @@ void can_lld_receive(CANDriver *canp, CANRxFrame *crfp) {
   uint32_t r;
 
   /* Fetches the message.*/
+  r = canp->cd_can->sFIFOMailBox[0].RIR;
+  crfp->cf_RTR = (r & CAN_RI0R_RTR) >> 1;
+  crfp->cf_IDE = (r & CAN_RI0R_IDE) >> 2;
+  if (crfp->cf_IDE)
+    crfp->cf_EID = r >> 3;
+  else
+    crfp->cf_SID = r >> 21;
   r = canp->cd_can->sFIFOMailBox[0].RDTR;
   crfp->cf_DLC = r & CAN_RDT0R_DLC;
   crfp->cf_FMI = (uint8_t)(r >> 8);
   crfp->cf_TIME = (uint16_t)(r >> 16);
-  r = canp->cd_can->sFIFOMailBox[0].RIR;
-  crfp->cf_RTR = r & CAN_RI0R_RTR;
-  crfp->cf_IDE = r & CAN_RI0R_IDE;
-  if (crfp->cf_IDE)
-    crfp->cf_EID = r >> 3;
-  else
-    crfp->cf_SID = r >> 24;
   crfp->cf_data32[0] = canp->cd_can->sFIFOMailBox[0].RDLR;
   crfp->cf_data32[1] = canp->cd_can->sFIFOMailBox[0].RDHR;
 
   /* Releases the mailbox.*/
-  canp->cd_can->RF0R |= CAN_RF0R_RFOM0;
+  canp->cd_can->RF0R = CAN_RF0R_RFOM0;
 
   /* If the queue is empty re-enables the interrupt in order to generate
      events again.*/
