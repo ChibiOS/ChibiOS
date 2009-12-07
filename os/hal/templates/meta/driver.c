@@ -24,8 +24,8 @@
  * @{
  */
 
-#include <ch.h>
-#include <xxx.h>
+#include "ch.h"
+#include "hal.h"
 
 /**
  * @brief XXX Driver initialization.

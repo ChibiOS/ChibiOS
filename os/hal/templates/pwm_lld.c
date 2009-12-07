@@ -18,9 +18,9 @@
 */
 
 /**
- * @file templates/xxx_lld.c
- * @brief XXX Driver subsystem low level driver source template
- * @addtogroup XXX_LLD
+ * @file templates/pwm_lld.c
+ * @brief PWM Driver subsystem low level driver source template
+ * @addtogroup PWM_LLD
  * @{
  */
 
@@ -48,31 +48,31 @@
 /*===========================================================================*/
 
 /**
- * @brief Low level XXX driver initialization.
+ * @brief Low level PWM driver initialization.
  */
-void xxx_lld_init(void) {
+void pwm_lld_init(void) {
 
 }
 
 /**
- * @brief Configures and activates the XXX peripheral.
+ * @brief Configures and activates the PWM peripheral.
  *
- * @param[in] xxxp pointer to the @p XXXDriver object
+ * @param[in] pwmp pointer to the @p PWMDriver object
  */
-void xxx_lld_start(XXXDriver *xxxp) {
+void pwm_lld_start(PWMDriver *pwmp) {
 
-  if (xxxp->xxx_state == XXX_STOP) {
+  if (pwmp->pwm_state == PWM_STOP) {
     /* Clock activation.*/
   }
   /* Configuration.*/
 }
 
 /**
- * @brief Deactivates the XXX peripheral.
+ * @brief Deactivates the PWM peripheral.
  *
- * @param[in] xxxp pointer to the @p XXXDriver object
+ * @param[in] pwmp pointer to the @p PWMDriver object
  */
-void xxx_lld_stop(XXXDriver *xxxp) {
+void pwm_lld_stop(PWMDriver *pwmp) {
 
 }
 

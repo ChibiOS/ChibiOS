@@ -29,6 +29,10 @@
 
 #if CH_HAL_USE_MMC_SPI || defined(__DOXYGEN__)
 
+#if !CH_USE_EVENTS
+#error "MMC_SPI driver requires CH_USE_EVENTS"
+#endif
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/

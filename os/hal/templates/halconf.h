@@ -56,6 +56,13 @@
 #endif
 
 /**
+ * @brief Enables the PWM subsystem.
+ */
+#if !defined(CH_HAL_USE_PWM) || defined(__DOXYGEN__)
+#define CH_HAL_USE_PWM                  TRUE
+#endif
+
+/**
  * @brief Enables the SERIAL subsystem.
  */
 #if !defined(CH_HAL_USE_SERIAL) || defined(__DOXYGEN__)

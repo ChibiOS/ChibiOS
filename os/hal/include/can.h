@@ -29,6 +29,10 @@
 
 #if CH_HAL_USE_CAN || defined(__DOXYGEN__)
 
+#if !CH_USE_SEMAPHORES
+#error "CAN driver requires CH_USE_SEMAPHORES"
+#endif
+
 /**
  * @brief Errors rate warning.
  */
