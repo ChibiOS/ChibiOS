@@ -19,7 +19,7 @@
 
 /**
  * @file AT91SAM7/hal_lld.h
- * @brief AT91SAM7 HAL subsystem low level driver header
+ * @brief AT91SAM7 HAL subsystem low level driver header.
  * @addtogroup AT91SAM7_HAL
  * @{
  */

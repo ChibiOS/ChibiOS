@@ -150,7 +150,7 @@ msg_t canTransmit(CANDriver *canp, const CANTxFrame *ctfp, systime_t timeout) {
  * @note Trying to receive while in sleep mode simply enqueues the thread.
  *
  * @param[in] canp      pointer to the @p CANDriver object
- * @param[out] cfp      pointer to the buffer where the CAN frame is copied
+ * @param[out] crfp     pointer to the buffer where the CAN frame is copied
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout (useful in an

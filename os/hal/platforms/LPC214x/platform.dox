@@ -42,6 +42,13 @@
  */
 
 /**
+ * @defgroup LPC214x_HAL LPC214x HAL Support
+ * @brief HAL support.
+ *
+ * @ingroup LPC214x
+ */
+
+/**
  * @defgroup LPC214x_PAL LPC214x I/O Ports Support
  * @brief I/O Ports peripherals support.
  * @details This module supports the LPC214x FIO controller. The controller

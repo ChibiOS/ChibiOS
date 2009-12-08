@@ -18,9 +18,9 @@
 */
 
 /**
- * @file templates/hal_lld.h
- * @brief HAL subsystem low level driver header template
- * @addtogroup HAL_LLD
+ * @file LPC214x/hal_lld.h
+ * @brief LPC214x HAL subsystem low level driver HEADER.
+ * @addtogroup LPC214x_HAL
  * @{
  */
 
