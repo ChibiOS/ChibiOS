@@ -156,12 +156,12 @@ struct context {
 /**
  * Does nothing in this simulator.
  */
-#define port_lock()
+#define port_lock() asm volatile("nop")
 
 /**
  * Does nothing in this simulator.
  */
-#define port_unlock()
+#define port_unlock() asm volatile("nop")
 
 /**
  * Does nothing in this simulator.
