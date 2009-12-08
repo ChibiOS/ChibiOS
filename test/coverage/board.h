@@ -17,31 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _CHTYPES_H_
-#define _CHTYPES_H_
+#ifndef _BOARD_H_
+#define _BOARD_H_
 
-#define __need_NULL
-#define __need_size_t
-#define __need_ptrdiff_t
-#include <stddef.h>
-
-#if !defined(_STDINT_H) && !defined(__STDINT_H_)
-#include <stdint.h>
-#endif
-
-typedef int8_t          bool_t;
-typedef uint8_t         tmode_t;
-typedef uint8_t         tstate_t;
-typedef uint32_t        tprio_t;
-typedef int32_t         msg_t;
-typedef int32_t         eventid_t;
-typedef uint32_t        eventmask_t;
-typedef uint32_t        systime_t;
-typedef int32_t         cnt_t;
-
-#define INLINE      inline
-#define PACK_STRUCT_STRUCT __attribute__((packed))
-#define PACK_STRUCT_BEGIN
-#define PACK_STRUCT_END
-
-#endif /* _CHTYPES_H_ */
+#endif /* _BOARD_H_ */

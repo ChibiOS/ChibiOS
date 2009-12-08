@@ -17,30 +17,61 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string.h>
+/**
+ * @file console.c
+ * @brief Simulator console driver code.
+ * @{
+ */
+
 #include <stdio.h>
 
 #include "ch.h"
-#include "hal.h"
-#include "test.h"
 #include "console.h"
 
-/*
- * Simulator main.
+/**
+ * @brief Console driver 1.
  */
-int main(int argc, char *argv[]) {
-  msg_t result;
+BaseChannel CD1;
 
-  (void)argc;
-  (void)argv;
+/*
+ * Interface implementation, the following functions just invoke the equivalent
+ * queue-level function or macro.
+ */
+static bool_t putwouldblock(void *ip) {
 
-  halInit();
-  conInit();
-  chSysInit();
-
-  result = TestThread(&CD1);
-  if (result)
-    exit(1);
-  else
-    exit(0);
+  (void)ip;
+  return FALSE;
 }
+
+static bool_t getwouldblock(void *ip) {
+
+  (void)ip;
+  return FALSE; /******************************/
+}
+
+static msg_t put(void *ip, uint8_t b, systime_t timeout) {
+
+  (void)ip;
+  (void)timeout;
+  fputc(b, stdout);
+  fflush(stdout);
+  return RDY_OK;
+}
+
+static msg_t get(void *ip, systime_t timeout) {
+
+  (void)ip;
+  (void)timeout;
+  return 0;
+}
+
+static const struct BaseChannelVMT vmt = {
+  {putwouldblock, getwouldblock, put, get}
+};
+
+void conInit(void) {
+
+  CD1.vmt = &vmt;
+}
+
+/** @} */

@@ -27,6 +27,8 @@
 #include "ch.h"
 #include "hal.h"
 
+#if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
+
 /** @brief Serial driver 1 identifier.*/
 #if USE_WIN32_SERIAL1 || defined(__DOXYGEN__)
 SerialDriver SD1;
@@ -247,5 +249,7 @@ bool_t sd_lld_interrupt_pending(void) {
          inint(&SD1)   || inint(&SD2)   ||
          outint(&SD1)  || outint(&SD2);
 }
+
+#endif /* CH_HAL_USE_SERIAL */
 
 /** @} */

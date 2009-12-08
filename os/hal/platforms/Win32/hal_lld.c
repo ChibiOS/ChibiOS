@@ -81,11 +81,13 @@ void hal_lld_init(void) {
 void ChkIntSources(void) {
   LARGE_INTEGER n;
 
+#if CH_HAL_USE_SERIAL
   if (sd_lld_interrupt_pending()) {
     if (chSchIsRescRequiredExI())
       chSchDoRescheduleI();
     return;
   }
+#endif
 
   // Interrupt Timer simulation (10ms interval).
   QueryPerformanceCounter(&n);

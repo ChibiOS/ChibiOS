@@ -17,30 +17,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string.h>
-#include <stdio.h>
-
-#include "ch.h"
-#include "hal.h"
-#include "test.h"
-#include "console.h"
-
-/*
- * Simulator main.
+/**
+ * @file console.h
+ * @brief Simulator console driver header.
+ * @{
  */
-int main(int argc, char *argv[]) {
-  msg_t result;
 
-  (void)argc;
-  (void)argv;
+#ifndef _CONSOLE_H_
+#define _CONSOLE_H_
 
-  halInit();
-  conInit();
-  chSysInit();
+extern BaseChannel CD1;
 
-  result = TestThread(&CD1);
-  if (result)
-    exit(1);
-  else
-    exit(0);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void conInit(void);
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* _CONSOLE_H_ */
+
+/** @} */
