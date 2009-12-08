@@ -19,7 +19,7 @@
 
 /**
  * @file LPC214x/serial_lld.c
- * @brief LPC214x low level serial driver code
+ * @brief LPC214x low level serial driver code.
  * @addtogroup LPC214x_SERIAL
  * @{
  */

@@ -19,7 +19,7 @@
 
 /**
  * @file templates/can_lld.h
- * @brief CAN Driver subsystem low level driver header template
+ * @brief CAN Driver subsystem low level driver header template.
  * @addtogroup CAN_LLD
  * @{
  */

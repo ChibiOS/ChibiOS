@@ -23,7 +23,7 @@
  * @addtogroup internals
  * @{
  */
-#include <ch.h>
+#include "ch.h"
 
 #if !CH_OPTIMIZE_SPEED || defined(__DOXYGEN__)
 /**

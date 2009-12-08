@@ -24,7 +24,7 @@
  * @{
  */
 
-#include <ch.h>
+#include "ch.h"
 
 /*
  * This file is a template of the system driver functions provided by a port.

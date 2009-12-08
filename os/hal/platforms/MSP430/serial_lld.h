@@ -19,7 +19,7 @@
 
 /**
  * @file MSP430/serial_lld.h
- * @brief MSP430 low level serial driver header
+ * @brief MSP430 low level serial driver header.
  * @addtogroup MSP430_SERIAL
  * @{
  */

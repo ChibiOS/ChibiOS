@@ -24,7 +24,7 @@
  * @{
  */
 
-#include <ch.h>
+#include "ch.h"
 
 static WORKING_AREA(idle_thread_wa, IDLE_THREAD_STACK_SIZE);
 

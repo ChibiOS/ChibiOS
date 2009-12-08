@@ -24,7 +24,7 @@
  * @{
  */
 
-#include <ch.h>
+#include "ch.h"
 
 #if CH_USE_MUTEXES
 

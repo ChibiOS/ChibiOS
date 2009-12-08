@@ -19,7 +19,7 @@
 
 /**
  * @file templates/spi_lld.h
- * @brief SPI Driver subsystem low level driver header template
+ * @brief SPI Driver subsystem low level driver header template.
  * @addtogroup SPI_LLD
  * @{
  */

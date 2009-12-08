@@ -19,7 +19,7 @@
 
 /**
  * @file STM32/spi_lld.h
- * @brief STM32 SPI subsystem low level driver header
+ * @brief STM32 SPI subsystem low level driver header.
  * @addtogroup STM32_SPI
  * @{
  */

@@ -19,7 +19,7 @@
 
 /**
  * @file pal.h
- * @brief I/O Ports Abstraction Layer macros, types and structures
+ * @brief I/O Ports Abstraction Layer macros, types and structures.
  * @addtogroup PAL
  * @{
  */

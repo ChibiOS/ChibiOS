@@ -24,8 +24,8 @@
  * @{
  */
 
-#include <ch.h>
-#include <nvic.h>
+#include "ch.h"
+#include "nvic.h"
 
 /**
  * @brief Halts the system.

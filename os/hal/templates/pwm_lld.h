@@ -19,7 +19,7 @@
 
 /**
  * @file templates/pwm_lld.h
- * @brief PWM Driver subsystem low level driver header template
+ * @brief PWM Driver subsystem low level driver header template.
  * @addtogroup PWM_LLD
  * @{
  */

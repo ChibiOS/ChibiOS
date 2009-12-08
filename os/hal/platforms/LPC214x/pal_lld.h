@@ -19,7 +19,7 @@
 
 /**
  * @file LPC214x/pal_lld.h
- * @brief LPC214x FIO low level driver header
+ * @brief LPC214x FIO low level driver header.
  * @addtogroup LPC214x_PAL
  * @{
  */

@@ -24,7 +24,7 @@
  * @{
  */
 
-#include <ch.h>
+#include "ch.h"
 
 /**
  * Performs a context switch between two threads.

@@ -19,7 +19,7 @@
 
 /**
  * @file STM32/adc_lld.c
- * @brief STM32 ADC subsystem low level driver source
+ * @brief STM32 ADC subsystem low level driver source.
  * @addtogroup STM32_ADC
  * @{
  */

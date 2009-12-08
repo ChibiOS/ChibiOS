@@ -46,14 +46,14 @@
  * @brief Enables the ADC subsystem.
  */
 #if !defined(CH_HAL_USE_ADC) || defined(__DOXYGEN__)
-#define CH_HAL_USE_ADC                  TRUE
+#define CH_HAL_USE_ADC                  FALSE
 #endif
 
 /**
  * @brief Enables the CAN subsystem.
  */
 #if !defined(CH_HAL_USE_CAN) || defined(__DOXYGEN__)
-#define CH_HAL_USE_CAN                  TRUE
+#define CH_HAL_USE_CAN                  FALSE
 #endif
 
 /**
@@ -81,14 +81,14 @@
  * @brief Enables the SPI subsystem.
  */
 #if !defined(CH_HAL_USE_SPI) || defined(__DOXYGEN__)
-#define CH_HAL_USE_SPI                  TRUE
+#define CH_HAL_USE_SPI                  FALSE
 #endif
 
 /**
  * @brief Enables the MMC_SPI subsystem.
  */
 #if !defined(CH_HAL_USE_MMC_SPI) || defined(__DOXYGEN__)
-#define CH_HAL_USE_MMC_SPI              TRUE
+#define CH_HAL_USE_MMC_SPI              FALSE
 #endif
 
 #endif /* _HALCONF_H_ */

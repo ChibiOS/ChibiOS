@@ -19,7 +19,7 @@
 
 /**
  * @file MSP430/pal_lld.c
- * @brief MSP430 Digital I/O low level driver code
+ * @brief MSP430 Digital I/O low level driver code.
  * @addtogroup MSP430_PAL
  * @{
  */

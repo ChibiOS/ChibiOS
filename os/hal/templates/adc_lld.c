@@ -19,7 +19,7 @@
 
 /**
  * @file templates/adc_lld.c
- * @brief ADC Driver subsystem low level driver source template
+ * @brief ADC Driver subsystem low level driver source template.
  * @addtogroup ADC_LLD
  * @{
  */

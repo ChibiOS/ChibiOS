@@ -19,7 +19,7 @@
 
 /**
  * @file AT91SAM7/at91sam7_mii.c
- * @brief AT91SAM7 low level MII driver code
+ * @brief AT91SAM7 low level MII driver code.
  * @addtogroup AT91SAM7_MII
  * @{
  */

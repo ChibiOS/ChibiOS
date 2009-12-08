@@ -23,7 +23,7 @@
  * @{
  */
 
-#include <ch.hpp>
+#include "ch.hpp"
 
 namespace chibios_rt {
 

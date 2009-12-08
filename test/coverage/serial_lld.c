@@ -27,8 +27,8 @@
 #include <windows.h>
 #include <stdio.h>
 
-#include <ch.h>
-#include <serial.h>
+#include "ch.h"
+#include "hal.h"
 
 /** @brief Test serial driver identifier.*/
 SerialDriver SD1;

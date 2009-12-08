@@ -17,8 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ch.h>
-
+#include "ch.h"
 #include "test.h"
 
 /**

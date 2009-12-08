@@ -20,9 +20,9 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <ch.h>
-#include <serial.h>
-#include <test.h>
+#include "ch.h"
+#include "hal.h"
+#include "test.h"
 
 /*
  * Simulator main.

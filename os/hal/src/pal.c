@@ -19,7 +19,7 @@
 
 /**
  * @file pal.c
- * @brief I/O Ports Abstraction Layer code
+ * @brief I/O Ports Abstraction Layer code.
  * @addtogroup PAL
  * @{
  */

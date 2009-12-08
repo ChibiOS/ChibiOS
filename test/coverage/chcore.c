@@ -25,8 +25,8 @@
  * @{
  */
 
-#include <ch.h>
-#include <serial.h>
+#include "ch.h"
+#include "hal.h"
 
 static LARGE_INTEGER nextcnt;
 static LARGE_INTEGER slice;

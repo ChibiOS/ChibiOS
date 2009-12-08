@@ -19,7 +19,7 @@
 
 /**
  * @file templates/pal_lld.c
- * @brief PAL subsystem low level driver template
+ * @brief PAL subsystem low level driver template.
  * @addtogroup PAL_LLD
  * @{
  */

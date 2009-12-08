@@ -24,7 +24,7 @@
  * @{
  */
 
-#include <ch.h>
+#include "ch.h"
 
 /** @cond never */
 ReadyList rlist;

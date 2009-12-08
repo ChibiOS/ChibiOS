@@ -18,9 +18,9 @@
 */
 
 /**
- * @file templates/pwm_lld.h
- * @brief PWM Driver subsystem low level driver header template
- * @addtogroup PWM_LLD
+ * @file STM32/pwm_lld.h
+ * @brief STM32 PWM subsystem low level driver header.
+ * @addtogroup STM32_PWM
  * @{
  */
 

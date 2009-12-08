@@ -24,8 +24,7 @@
  * @{
  */
 
-#include <ch.h>
-
+#include "ch.h"
 #include "evtimer.h"
 
 static void tmrcb(void *p) {

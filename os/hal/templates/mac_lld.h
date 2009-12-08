@@ -19,7 +19,7 @@
 
 /**
  * @file templates/mac_lld.h
- * @brief MAC Driver subsystem low level driver header template
+ * @brief MAC Driver subsystem low level driver header template.
  * @addtogroup MAC_LLD
  * @{
  */

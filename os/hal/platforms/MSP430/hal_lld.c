@@ -19,7 +19,7 @@
 
 /**
  * @file MSP430/hal_lld.c
- * @brief MSP430 HAL subsystem low level driver source
+ * @brief MSP430 HAL subsystem low level driver source.
  * @addtogroup MSP430_HAL
  * @{
  */
