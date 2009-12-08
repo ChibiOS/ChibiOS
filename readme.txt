@@ -15,7 +15,8 @@
   both AT91SAM7S and AT91SAM7X families.
 - NEW: Extended the support to all the SAM7X and SAM7S devices thanks to
   code contributed by Liam Staskawicz.
-- NEW: Added test report for MSP430 running off the external high speed
+- NEW: Improvements to the AT91SAM7 startup code contributed by Liam.
+- NEW: Added test report for MSP430 running from the external high speed
   oscillator.
 - NEW: HAL stress test for STM32 added, the demo located under ./testio/STM32.
 - CHANGE: Removed the MII from the standard drivers, now it is part of the
