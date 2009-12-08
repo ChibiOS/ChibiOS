@@ -24,10 +24,10 @@
  * The driver also generates an event when the sound is done and the buzzer
  * goes silent.
  */
-#include <ch.h>
 
-#include "lpc214x.h"
-#include "board.h"
+#include "ch.h"
+#include "hal.h"
+
 #include "buzzer.h"
 
 EventSource BuzzerSilentEventSource;

@@ -24,7 +24,7 @@
  * @{
  */
 
-#include "ch.h""
+#include "ch.h"
 #include "hal.h"
 
 #include "lpc214x_ssp.h"

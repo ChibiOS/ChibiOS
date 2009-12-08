@@ -17,12 +17,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ch.h>
-#include <pal.h>
+#include "ch.h"
+#include "hal.h"
 
-#include "board.h"
 #include "lpc214x_ssp.h"
-
 #include "mmcsd.h"
 
 EventSource MMCInsertEventSource, MMCRemoveEventSource;

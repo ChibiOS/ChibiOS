@@ -17,16 +17,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ch.h>
-#include <pal.h>
-#include <serial.h>
+#include "ch.h"
+#include "hal.h"
 
-#include "vic.h"
 #include "lpc214x_ssp.h"
-
-#include "board.h"
 #include "mmcsd.h"
 #include "buzzer.h"
+
+#define VAL_TC0_PRESCALER 0
 
 /*
  * Timer 0 IRQ handling here.
@@ -43,18 +41,6 @@ static CH_IRQ_HANDLER(T0IrqHandler) {
   VICVectAddr = 0;
   CH_IRQ_EPILOGUE();
 }
-
-/*
- * Digital I/O ports static configuration as defined in @p board.h.
- */
-static const LPC214xFIOConfig config =
-{
-  VAL_PINSEL0,
-  VAL_PINSEL1,
-  VAL_PINSEL2,
-  {VAL_FIO0PIN, VAL_FIO0DIR},
-  {VAL_FIO1PIN, VAL_FIO1DIR}
-};
 
 /*
  * Early initialization code.

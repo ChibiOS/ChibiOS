@@ -57,7 +57,7 @@ CSRC = ${PORTSRC} \
        ${TESTSRC} \
        ${HALSRC} \
        ${PLATFORMSRC} \
-       ${CHIBIOS}/os/io/platforms/LPC214x/lpc214x_ssp.c \
+       ${CHIBIOS}/os/hal/platforms/LPC214x/lpc214x_ssp.c \
        ${CHIBIOS}/os/various/evtimer.c \
        board.c buzzer.c mmcsd.c main.c
 

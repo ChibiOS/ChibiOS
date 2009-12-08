@@ -20,8 +20,6 @@
 #ifndef _BOARD_H_
 #define _BOARD_H_
 
-#include "lpc214x.h"
-
 #define BOARD_OLIMEX_LCP_P2148
 
 /*
@@ -31,8 +29,6 @@
 #define FOSC 12000000
 #define CCLK 48000000
 #define PCLK 12000000
-
-#define VAL_TC0_PRESCALER 0
 
 /*
  * Pins configuration for Olimex LPC-P2148.
