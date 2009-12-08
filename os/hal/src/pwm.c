@@ -27,6 +27,8 @@
 #include "ch.h"
 #include "hal.h"
 
+#if CH_HAL_USE_PWM || defined(__DOXYGEN__)
+
 /**
  * @brief PWM Driver initialization.
  */
@@ -147,5 +149,7 @@ void pwmDisableChannel(PWMDriver *pwmp, pwmchannel_t channel) {
   pwm_lld_disable_channel(pwmp, channel);
   chSysUnlock();
 }
+
+#endif /* CH_HAL_USE_PWM */
 
 /** @} */

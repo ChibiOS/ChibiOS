@@ -35,8 +35,9 @@
 /* Low Level Driver local variables.                                         */
 /*===========================================================================*/
 
-/*
- * Digital I/O ports static configuration as defined in @p board.h.
+/**
+ * @brief PAL setup.
+ * @details Digital I/O ports static configuration as defined in @p board.h.
  */
 const AT91SAM7PIOConfig pal_default_config =
 {

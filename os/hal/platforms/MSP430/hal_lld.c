@@ -31,8 +31,9 @@
 /* Low Level Driver exported variables.                                      */
 /*===========================================================================*/
 
-/*
- * Digital I/O ports static configuration as defined in @p board.h.
+/**
+ * @brief PAL setup.
+ * @details Digital I/O ports static configuration as defined in @p board.h.
  */
 const MSP430DIOConfig pal_default_config =
 {

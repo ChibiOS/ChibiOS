@@ -31,12 +31,19 @@
 #include "vic.h"
 
 /*===========================================================================*/
-/* Driver pre-compile time settings.                                         */
+/* Driver constants.                                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Driver constants.                                                         */
+/* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief Default action for the non vectored IRQ handler, nothing.
+ */
+#if !defined(LPC214x_NON_VECTORED_IRQ_HOOK) || defined(__DOXYGEN__)
+#define LPC214x_NON_VECTORED_IRQ_HOOK()
+#endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -54,6 +61,7 @@
 extern "C" {
 #endif
   void hal_lld_init(void);
+  void lpc214x_clock_init(void);
 #ifdef __cplusplus
 }
 #endif
