@@ -27,7 +27,7 @@
 #ifndef _PWM_H_
 #define _PWM_H_
 
-#if CH_HAL_USEPWM || defined(__DOXYGEN__)
+#if CH_HAL_USE_PWM || defined(__DOXYGEN__)
 
 /**
  * @brief Driver state machine possible states.
@@ -84,7 +84,7 @@ extern "C" {
 }
 #endif
 
-#endif /* CH_HAL_USEPWM */
+#endif /* CH_HAL_USE_PWM */
 
 #endif /* _PWM_H_ */
 
