@@ -27,6 +27,8 @@
 #include "ch.h"
 #include "hal.h"
 
+#if CH_HAL_USE_PWM || defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Low Level Driver exported variables.                                      */
 /*===========================================================================*/
@@ -129,5 +131,7 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
 void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
 
 }
+
+#endif /* CH_HAL_USE_PWM */
 
 /** @} */

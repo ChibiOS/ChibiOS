@@ -27,6 +27,8 @@
 #include "ch.h"
 #include "hal.h"
 
+#if CH_HAL_USE_XXX || defined(__DOXYGEN__)
+
 /**
  * @brief XXX Driver initialization.
  */
@@ -83,5 +85,7 @@ void xxxStop(XXXDriver *xxxp) {
   xxxp->xxx_state = XXX_STOP;
   chSysUnlock();
 }
+
+#endif /* CH_HAL_USE_XXX */
 
 /** @} */

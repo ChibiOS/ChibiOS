@@ -27,6 +27,8 @@
 #ifndef _PWM_LLD_H_
 #define _PWM_LLD_H_
 
+#if CH_HAL_USE_PWM || defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -99,6 +101,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CH_HAL_USE_PWM */
 
 #endif /* _PWM_LLD_H_ */
 

@@ -27,6 +27,8 @@
 #include "ch.h"
 #include "hal.h"
 
+#if CH_HAL_USE_XXX || defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Low Level Driver exported variables.                                      */
 /*===========================================================================*/
@@ -75,5 +77,7 @@ void xxx_lld_start(XXXDriver *xxxp) {
 void xxx_lld_stop(XXXDriver *xxxp) {
 
 }
+
+#endif /* CH_HAL_USE_XXX */
 
 /** @} */
