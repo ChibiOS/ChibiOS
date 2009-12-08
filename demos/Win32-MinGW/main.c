@@ -290,7 +290,14 @@ static evhandler_t fhandlers[2] = {
 int main(void) {
   EventListener c1fel, c2fel;
 
-  // Startup ChibiOS/RT.
+  /*
+   * HAL initialization.
+   */
+  halInit();
+
+  /*
+   * ChibiOS/RT initialization.
+   */
   chSysInit();
 
   sdStart(&SD1, NULL);
