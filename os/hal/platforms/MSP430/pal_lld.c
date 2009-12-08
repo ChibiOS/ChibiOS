@@ -27,6 +27,8 @@
 #include "ch.h"
 #include "hal.h"
 
+#if CH_HAL_USE_PAL || defined(__DOXYGEN__)
+
 /**
  * @brief MSP430 I/O ports configuration.
  *
@@ -111,5 +113,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
     break;
   }
 }
+
+#endif /* CH_HAL_USE_PAL */
 
 /** @} */

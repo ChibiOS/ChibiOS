@@ -27,7 +27,7 @@
 #ifndef _PAL_LLD_H_
 #define _PAL_LLD_H_
 
-#include <msp430x16x.h>
+#if CH_HAL_USE_PAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Unsupported modes and specific modes                                      */
@@ -291,5 +291,7 @@ extern "C" {
 #endif
 
 #endif /* _PAL_LLD_H_ */
+
+#endif /* CH_HAL_USE_PAL */
 
 /** @} */
