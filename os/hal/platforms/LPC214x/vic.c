@@ -24,9 +24,7 @@
  * @{
  */
 
-#include <ch.h>
-
-#include "lpc214x.h"
+#include "ch.h"
 
 /**
  * @brief VIC Initialization.

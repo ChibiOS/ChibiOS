@@ -73,7 +73,7 @@ typedef struct  {
 /**
  * @brief MSP430 I/O ports static initializer.
  * @details An instance of this structure must be passed to @p palInit() at
- *          system startup time in order to initialized the digital I/O
+ *          system startup time in order to initialize the digital I/O
  *          subsystem. This represents only the initial setup, specific pads
  *          or whole ports can be reprogrammed at later time.
  */

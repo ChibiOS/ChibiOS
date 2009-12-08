@@ -24,11 +24,8 @@
  * @{
  */
 
-#include <ch.h>
-#include <serial.h>
-
-#include "board.h"
-#include "vic.h"
+#include "ch.h"
+#include "hal.h"
 
 #if USE_LPC214x_UART0 || defined(__DOXYGEN__)
 /** @brief UART0 serial driver identifier.*/

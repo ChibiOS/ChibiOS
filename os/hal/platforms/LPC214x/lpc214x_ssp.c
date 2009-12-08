@@ -24,10 +24,9 @@
  * @{
  */
 
-#include <ch.h>
-#include <pal.h>
+#include "ch.h""
+#include "hal.h"
 
-#include "lpc214x.h"
 #include "lpc214x_ssp.h"
 
 #if LPC214x_SSP_USE_MUTEX

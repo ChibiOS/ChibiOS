@@ -27,8 +27,6 @@
 #ifndef _PAL_LLD_H_
 #define _PAL_LLD_H_
 
-#include "lpc214x.h"
-
 /*===========================================================================*/
 /* Unsupported modes and specific modes                                      */
 /*===========================================================================*/
@@ -54,7 +52,7 @@ typedef struct {
 /**
  * @brief LPC214x FIO static initializer.
  * @details An instance of this structure must be passed to @p palInit() at
- *          system startup time in order to initialized the digital I/O
+ *          system startup time in order to initialize the digital I/O
  *          subsystem. This represents only the initial setup, specific pads
  *          or whole ports can be reprogrammed at later time.
  */
@@ -236,6 +234,8 @@ typedef FIO * ioportid_t;
 #define pal_lld_lpc214x_set_direction(port, dir) {                      \
   (port)->FIO_DIR = (dir);                                              \
 }
+
+extern const LPC214xFIOConfig pal_default_config;
 
 #ifdef __cplusplus
 extern "C" {

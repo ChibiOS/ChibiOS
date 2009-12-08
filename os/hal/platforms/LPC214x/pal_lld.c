@@ -24,8 +24,8 @@
  * @{
  */
 
-#include <ch.h>
-#include <pal.h>
+#include "ch.h"
+#include "hal.h"
 
 /**
  * @brief LPC214x I/O ports configuration.
