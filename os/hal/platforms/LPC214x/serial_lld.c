@@ -27,6 +27,8 @@
 #include "ch.h"
 #include "hal.h"
 
+#if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
+
 #if USE_LPC214x_UART0 || defined(__DOXYGEN__)
 /** @brief UART0 serial driver identifier.*/
 SerialDriver SD1;
@@ -330,5 +332,7 @@ void sd_lld_stop(SerialDriver *sdp) {
   }
 #endif
 }
+
+#endif /* CH_HAL_USE_SERIAL */
 
 /** @} */

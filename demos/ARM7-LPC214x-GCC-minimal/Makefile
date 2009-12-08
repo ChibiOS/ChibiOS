@@ -44,6 +44,8 @@ LDSCRIPT = ch.ld
 
 # Imported source files
 CHIBIOS = ../..
+include ${CHIBIOS}/os/hal/hal.mk
+include ${CHIBIOS}/os/hal/platforms/LPC214x/platform.mk
 include ${CHIBIOS}/os/ports/GCC/ARM7/port.mk
 include ${CHIBIOS}/os/kernel/kernel.mk
 #include ${CHIBIOS}/test/test.mk
@@ -53,9 +55,8 @@ include ${CHIBIOS}/os/kernel/kernel.mk
 CSRC = ${PORTSRC} \
        ${KERNSRC} \
        ${TESTSRC} \
-       ${CHIBIOS}/os/io/pal.c \
-       ${CHIBIOS}/os/io/platforms/LPC214x/pal_lld.c \
-       ${CHIBIOS}/os/io/platforms/LPC214x/vic.c  \
+       ${HALSRC} \
+       ${PLATFORMSRC} \
        board.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -86,9 +87,7 @@ TCPPSRC =
 ASMSRC = $(PORTASM) \
          ${CHIBIOS}/os/ports/GCC/ARM7/LPC214x/vectors.s
 
-INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         ${CHIBIOS}/os/io \
-         ${CHIBIOS}/os/io/platforms/LPC214x \
+INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) $(HALINC) $(PLATFORMINC) \
          ${CHIBIOS}/os/various \
          ${CHIBIOS}/os/ports/GCC/ARM7/LPC214x
 

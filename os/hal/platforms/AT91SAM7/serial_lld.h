@@ -154,7 +154,7 @@ extern "C" {
 #endif
 /** @endcond*/
 
-#endif /* CH_HAL_USE_SPI */
+#endif /* CH_HAL_USE_SERIAL */
 
 #endif /* _SERIAL_LLD_H_ */
 

@@ -27,6 +27,8 @@
 #ifndef _PAL_LLD_H_
 #define _PAL_LLD_H_
 
+#if CH_HAL_USE_PAL || defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Unsupported modes and specific modes                                      */
 /*===========================================================================*/
@@ -247,6 +249,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CH_HAL_USE_PAL */
 
 #endif /* _PAL_LLD_H_ */
 

@@ -27,6 +27,8 @@
 #ifndef _SERIAL_LLD_H_
 #define _SERIAL_LLD_H_
 
+#if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -168,6 +170,8 @@ extern "C" {
 }
 #endif
 /** @endcond*/
+
+#endif /* CH_HAL_USE_SERIAL */
 
 #endif /* _SERIAL_LLD_H_ */
 

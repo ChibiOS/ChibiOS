@@ -27,6 +27,8 @@
 #include "ch.h"
 #include "hal.h"
 
+#if CH_HAL_USE_PAL || defined(__DOXYGEN__)
+
 /**
  * @brief LPC214x I/O ports configuration.
  * @details FIO units and PINSEL registers initialization.
@@ -85,5 +87,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
     break;
   }
 }
+
+#endif /* CH_HAL_USE_PAL */
 
 /** @} */

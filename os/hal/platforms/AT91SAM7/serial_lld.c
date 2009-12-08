@@ -294,6 +294,6 @@ void sd_lld_stop(SerialDriver *sdp) {
 #endif
 }
 
-#endif /* CH_HAL_USE_SPI */
+#endif /* CH_HAL_USE_SERIAL */
 
 /** @} */

@@ -17,13 +17,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ch.hpp>
-#include <pal.h>
-#include <serial.h>
-#include <test.h>
-#include <evtimer.h>
-
-#include "board.h"
+#include "ch.hpp"
+#include "hal.h"
+#include "test.h"
+#include "evtimer.h"
 
 #define BOTH_BUTTONS (PAL_PORT_BIT(PA_BUTTON1) | PAL_PORT_BIT(PA_BUTTON2))
 
