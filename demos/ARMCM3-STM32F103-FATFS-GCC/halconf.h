@@ -20,8 +20,16 @@
 /**
  * @file templates/halconf.h
  * @brief HAL configuration header.
- * @addtogroup HAL
+ * @addtogroup HAL_CONF
  * @{
+ */
+
+/*
+ * HAL configuration file, this file allows to enable or disable the various
+ * device drivers from your application. You may also use this file in order
+ * to change the device drivers settings found in the low level drivers
+ * headers, just define here the new settings and those will override the
+ * defaults defined in the LLD headers.
  */
 
 #ifndef _HALCONF_H_
@@ -53,6 +61,13 @@
  */
 #if !defined(CH_HAL_USE_MAC) || defined(__DOXYGEN__)
 #define CH_HAL_USE_MAC                  FALSE
+#endif
+
+/**
+ * @brief Enables the PWM subsystem.
+ */
+#if !defined(CH_HAL_USE_PWM) || defined(__DOXYGEN__)
+#define CH_HAL_USE_PWM                  FALSE
 #endif
 
 /**
