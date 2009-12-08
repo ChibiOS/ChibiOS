@@ -105,6 +105,12 @@
 #define PORTE_BUZZ1             (1 << 4)
 #define PORTE_BUZZ2             (1 << 5)
 
-void hwinit(void);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void hwinit(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _BOARD_H_ */

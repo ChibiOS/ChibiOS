@@ -18,45 +18,40 @@
 */
 
 /**
- * @file templates/hal_lld.h
- * @brief HAL subsystem low level driver header template
- * @addtogroup HAL_LLD
+ * @file AVR/hal_lld.c
+ * @brief AVR HAL subsystem low level driver code.
+ * @addtogroup AVR_HAL
  * @{
  */
 
-#ifndef _HAL_LLD_H_
-#define _HAL_LLD_H_
-
-#include "avr/io.h"
+#include "ch.h"
+#include "hal.h"
 
 /*===========================================================================*/
-/* Driver constants.                                                         */
+/* Low Level Driver exported variables.                                      */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Driver pre-compile time settings.                                         */
+/* Low Level Driver local variables.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Derived constants and error checks.                                       */
+/* Low Level Driver local functions.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Driver data structures and types.                                         */
+/* Low Level Driver interrupt handlers.                                      */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* External declarations.                                                    */
+/* Low Level Driver exported functions.                                      */
 /*===========================================================================*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void hal_lld_init(void);
-#ifdef __cplusplus
+/**
+ * @brief Low level HAL driver initialization.
+ */
+void hal_lld_init(void) {
+
 }
-#endif
-
-#endif /* _HAL_LLD_H_ */
 
 /** @} */

@@ -17,16 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ch.h>
-#include <serial.h>
-#include <evtimer.h>
+#include "ch.h"
+#include "hal.h"
+#include "evtimer.h"
 
-#include <avr/io.h>
-
-#include "board.h"
 #include "lcd.h"
-
-void hwinit(void);
 
 static WORKING_AREA(waThread1, 32);
 static msg_t Thread1(void *arg) {

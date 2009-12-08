@@ -81,6 +81,12 @@
 #define PORTE_LED               (1 << 4)
 #define PORTE_BUTTON            (1 << 5)
 
-void hwinit(void);
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void hwinit(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _BOARD_H_ */

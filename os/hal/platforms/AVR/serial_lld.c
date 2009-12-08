@@ -19,13 +19,15 @@
 
 /**
  * @file AVR/serial_lld.c
- * @brief AVR low level serial driver code
+ * @brief AVR low level serial driver code.
  * @addtogroup AVR_SERIAL
  * @{
  */
 
-#include <ch.h>
-#include <serial.h>
+#include "ch.h"
+#include "hal.h"
+
+#if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
 #if USE_AVR_USART0 || defined(__DOXYGEN__)
 /**
@@ -252,5 +254,7 @@ void sd_lld_stop(SerialDriver *sdp) {
   usart1_deinit();
 #endif
 }
+
+#endif /* CH_HAL_USE_SERIAL */
 
 /** @} */

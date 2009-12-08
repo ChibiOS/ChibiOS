@@ -18,16 +18,14 @@
 */
 
 /**
- * @file templates/hal_lld.h
- * @brief HAL subsystem low level driver header template
- * @addtogroup HAL_LLD
+ * @file AVR/hal_lld.h
+ * @brief AVR HAL subsystem low level driver header.
+ * @addtogroup AVR_HAL
  * @{
  */
 
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
-
-#include "avr/io.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */

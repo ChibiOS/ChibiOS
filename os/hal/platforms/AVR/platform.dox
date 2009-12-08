@@ -25,6 +25,13 @@
  */
 
 /**
+ * @defgroup AVR_HAL AVR HAL Support
+ * @brief HAL support.
+ *
+ * @ingroup AVR_DRIVERS
+ */
+
+/**
  * @defgroup AVR_SERIAL AVR USART Support
  * @brief USART support.
  * @details The serial driver supports both the AVR USARTs in asynchronous

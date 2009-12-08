@@ -17,10 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ch.h>
-#include <serial.h>
-
-#include "board.h"
+#include "ch.h"
+#include "hal.h"
 
 CH_IRQ_HANDLER(TIMER0_COMP_vect) {
 
@@ -71,16 +69,16 @@ void hwinit(void) {
   /*
    * Timer 0 setup.
    */
-  TCCR0  = (1 << WGM01) | (0 << WGM00) |                // CTC mode.
-           (0 << COM01) | (0 << COM00) |                // OC0A disabled (normal I/O).
-           (1 << CS02)  | (0 << CS01)  | (0 << CS00);   // CLK/64 clock source.
+  TCCR0  = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.        */
+           (0 << COM01) | (0 << COM00) |                /* OC0A disabled.   */
+           (1 << CS02)  | (0 << CS01)  | (0 << CS00);   /* CLK/64 clock.    */
   OCR0   = F_CPU / 64 / CH_FREQUENCY - 1;
-  TCNT0  = 0;                                           // Reset counter.
-  TIFR   = (1 << OCF0);                                 // Reset pending (if any).
-  TIMSK  = (1 << OCIE0);                                // Interrupt on compare.
+  TCNT0  = 0;                                           /* Reset counter.   */
+  TIFR   = (1 << OCF0);                                 /* Reset pending.   */
+  TIMSK  = (1 << OCIE0);                                /* IRQ on compare.  */
 
   /*
-   * Other initializations.
+   * HAL initialization.
    */
-  sdInit();
+  halInit();
 }

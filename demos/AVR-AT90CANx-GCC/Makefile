@@ -81,6 +81,8 @@ OBJDIR = .
 
 # Imported source files
 CHIBIOS = ../..
+include ${CHIBIOS}/os/hal/hal.mk
+include ${CHIBIOS}/os/hal/platforms/AVR/platform.mk
 include ${CHIBIOS}/os/ports/GCC/AVR/port.mk
 include ${CHIBIOS}/os/kernel/kernel.mk
 include ${CHIBIOS}/test/test.mk
@@ -90,8 +92,8 @@ include ${CHIBIOS}/test/test.mk
 SRC = ${PORTSRC} \
       ${KERNSRC} \
       ${TESTSRC} \
-      ${CHIBIOS}/os/io/serial.c \
-      ${CHIBIOS}/os/io/platforms/AVR/serial_lld.c \
+      ${HALSRC} \
+      ${PLATFORMSRC} \
       ${CHIBIOS}/os/various/evtimer.c \
       board.c main.c
 
@@ -127,9 +129,7 @@ DEBUG = dwarf-2
 #     Each directory must be seperated by a space.
 #     Use forward slashes for directory separators.
 #     For a directory that has spaces, enclose it in quotes.
-EXTRAINCDIRS = $(PORTINC) $(KERNINC) $(TESTINC) \
-               ${CHIBIOS}/os/io \
-               ${CHIBIOS}/os/io/platforms/AVR \
+EXTRAINCDIRS = $(PORTINC) $(KERNINC) $(TESTINC) $(HALINC) $(PLATFORMINC) \
                ${CHIBIOS}/os/various
 
 
