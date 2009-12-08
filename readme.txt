@@ -8,6 +8,7 @@
   driver. The single drivers can be enabled or disabled from a HAL
   configuration file halconf.h.
 - NEW: New CAN driver model.
+- NEW: New PWM driver model.
 - NEW: STM32 ADC driver implementation with DMA support.
 - NEW: STM32 CAN driver implementation.
 - NEW: Added AT91SAM7S support and support for all the memory sizes in

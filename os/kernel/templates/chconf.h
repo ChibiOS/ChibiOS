@@ -44,10 +44,12 @@
  * @brief Round robin interval.
  * @details This constant is the number of system ticks allowed for the
  *          threads before preemption occurs. Setting this value to zero
- *          disables the round robin mechanism.
+ *          disables the preemption for threads with equal priority and the
+ *          round robin becomes cooperative. Note that higher priority
+ *          threads can still preempt, the kernel is always preemptive.
  *
- * @note Disabling round robin makes the kernel more compact and generally
- *       faster but forbids multiple threads at the same priority level.
+ * @note Disabling the round robin preemption makes the kernel more compact
+ *       and generally faster.
  */
 #if !defined(CH_TIME_QUANTUM) || defined(__DOXYGEN__)
 #define CH_TIME_QUANTUM                 20

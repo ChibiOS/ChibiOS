@@ -24,6 +24,14 @@
  * @{
  */
 
+/*
+ * HAL configuration file, this file allows to enable or disable the various
+ * device drivers from your application. You may also use this file in order
+ * to change the device drivers settings found in the low level drivers
+ * headers, just define here the new settings and those will override the
+ * defaults defined in the LLD headers.
+ */
+
 #ifndef _HALCONF_H_
 #define _HALCONF_H_
 

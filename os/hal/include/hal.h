@@ -36,6 +36,7 @@
 #include "adc.h"
 #include "can.h"
 #include "mac.h"
+#include "pwm.h"
 #include "serial.h"
 #include "spi.h"
 #include "mmc_spi.h"

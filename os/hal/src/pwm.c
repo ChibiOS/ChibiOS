@@ -43,7 +43,7 @@ void pwmInit(void) {
 void pwmObjectInit(PWMDriver *pwmp) {
 
   pwmp->pd_state    = PWM_STOP;
-  pwmp->pwm_config   = NULL;
+  pwmp->pd_config   = NULL;
 }
 
 /**
@@ -130,7 +130,8 @@ void pwmEnableChannel(PWMDriver *pwmp,
 
 /**
  * @brief Disables a PWM channel.
- * @details The channel output line is returned to its idle state and disabled.
+ * @details The channel is disabled and its output line returned to the
+ *          idle state.
  *
  * @param[in] pwmp      pointer to the @p PWMDriver object
  * @param[in] channel   PWM channel identifier
