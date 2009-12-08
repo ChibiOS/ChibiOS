@@ -97,6 +97,12 @@ void hal_lld_init(void) {
  */
 void at91sam7_clock_init(void) {
 
+  /* wait for reset */
+  while((AT91C_BASE_RSTC->RSTC_RSR & (AT91C_RSTC_SRCMP | AT91C_RSTC_NRSTL)) != AT91C_RSTC_NRSTL)
+    ;
+  /* enable reset */
+  AT91C_BASE_RSTC->RSTC_RMR = ((0xA5 << 24) | AT91C_RSTC_URSTEN);
+
   /* Flash Memory: 1 wait state, about 50 cycles in a microsecond.*/
   AT91C_BASE_MC->MC_FMR = (AT91C_MC_FMCN & (50 << 16)) | AT91C_MC_FWS_1FWS;
 
