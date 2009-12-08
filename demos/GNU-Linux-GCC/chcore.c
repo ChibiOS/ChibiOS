@@ -28,7 +28,7 @@
  * @{
  */
 
-#include <ch.h>
+#include "ch.h"
 
 static struct itimerval tempo;
 static bool_t pending = FALSE;

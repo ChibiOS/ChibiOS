@@ -20,8 +20,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <ch.h>
-#include <serial.h>
+#include "ch.h"
+#include "hal.h"
 
 static uint32_t wdguard;
 static WORKING_AREA(wdarea, 2048);

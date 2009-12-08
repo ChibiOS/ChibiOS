@@ -29,7 +29,7 @@
  * @{
  */
 
-#include <ch.h>
+#include "ch.h"
 
 #include "lwip/opt.h"
 #include "lwip/arch.h"

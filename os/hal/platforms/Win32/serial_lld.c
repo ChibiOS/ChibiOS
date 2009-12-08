@@ -27,8 +27,8 @@
 #include <windows.h>
 #include <stdio.h>
 
-#include <ch.h>
-#include <serial.h>
+#include "ch.h"
+#include "hal.h"
 
 /** @brief Serial driver 1 identifier.*/
 #if USE_WIN32_SERIAL1 || defined(__DOXYGEN__)

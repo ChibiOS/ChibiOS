@@ -19,7 +19,7 @@
 
 #include <stdio.h>
 
-#include <ch.h>
+#include "ch.h"
 
 static WORKING_AREA(waThread1, 2048);
 static msg_t Thread1(void *arg) {
