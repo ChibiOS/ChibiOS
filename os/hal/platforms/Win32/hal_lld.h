@@ -18,14 +18,17 @@
 */
 
 /**
- * @file templates/hal_lld.h
- * @brief HAL subsystem low level driver header template.
- * @addtogroup HAL_LLD
+ * @file Win32/hal_lld.h
+ * @brief WIN32 simulator HAL subsystem low level driver header.
+ * @addtogroup WIN32_HAL
  * @{
  */
 
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
+
+#include <windows.h>
+#include <stdio.h>
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -51,6 +54,7 @@
 extern "C" {
 #endif
   void hal_lld_init(void);
+  void ChkIntSources(void);
 #ifdef __cplusplus
 }
 #endif
