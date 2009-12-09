@@ -33,10 +33,6 @@
  */
 BaseChannel CD1;
 
-/*
- * Interface implementation, the following functions just invoke the equivalent
- * queue-level function or macro.
- */
 static bool_t putwouldblock(void *ip) {
 
   (void)ip;
@@ -46,7 +42,7 @@ static bool_t putwouldblock(void *ip) {
 static bool_t getwouldblock(void *ip) {
 
   (void)ip;
-  return FALSE; /******************************/
+  return TRUE;
 }
 
 static msg_t put(void *ip, uint8_t b, systime_t timeout) {
@@ -62,7 +58,7 @@ static msg_t get(void *ip, systime_t timeout) {
 
   (void)ip;
   (void)timeout;
-  return 0;
+  return fgetc(stdin);
 }
 
 static const struct BaseChannelVMT vmt = {
