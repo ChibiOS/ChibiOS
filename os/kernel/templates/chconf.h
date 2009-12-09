@@ -279,7 +279,7 @@
  *
  * @note The default is @p TRUE.
  */
-#if !defined(CH_USE_HEAP) || defined(__DOXYGEN__)
+#if !defined(CH_USE_MEMCORE) || defined(__DOXYGEN__)
 #define CH_USE_MEMCORE                  TRUE
 #endif
 
