@@ -80,7 +80,7 @@
  * @note Requires @p CH_USE_COREMEM.
  */
 #if !defined(CH_MEMCORE_SIZE) || defined(__DOXYGEN__)
-#define CH_MEMCORE_SIZE                 0x40000
+#define CH_MEMCORE_SIZE                 0x20000
 #endif
 
 /*===========================================================================*/
@@ -419,8 +419,6 @@
 #define THREAD_EXT_FIELDS                                               \
 struct {                                                                \
   /* Add threads custom fields here.*/                                  \
-  /* The thread termination \p EventSource.*/                           \
-  EventSource       p_exitesource;                                      \
 };
 #endif
 
@@ -434,7 +432,6 @@ struct {                                                                \
 #if !defined(THREAD_EXT_INIT) || defined(__DOXYGEN__)
 #define THREAD_EXT_INIT(tp) {                                           \
   /* Add threads initialization code here.*/                            \
-  chEvtInit(&tp->p_exitesource);                                        \
 }
 #endif
 
@@ -449,7 +446,6 @@ struct {                                                                \
 #if !defined(THREAD_EXT_EXIT) || defined(__DOXYGEN__)
 #define THREAD_EXT_EXIT(tp) {                                           \
   /* Add threads finalization code here.*/                              \
-  chEvtBroadcastI(&currp->p_exitesource);                               \
 }
 #endif
 

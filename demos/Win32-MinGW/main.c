@@ -42,8 +42,11 @@ void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
   }
   tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriority(),
                            TestThread, chp);
+  if (tp == NULL) {
+    shellPrintLine(chp, "out of memory");
+    return;
+  }
   chThdWait(tp);
-//  TestThread(chp);
 }
 
 static const ShellCommand commands[] = {
