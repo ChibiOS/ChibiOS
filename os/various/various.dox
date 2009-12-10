@@ -47,3 +47,13 @@
  *
  * @ingroup various
  */
+
+/**
+ * @defgroup SHELL Command Shell
+ * @brief Small extendible command line shell.
+ * @details This module implements a generic extendible command line interface.
+ * The CLI just requires an I/O channel (@p BaseChannel), more commands can be
+ * added to the shell using the configuration structure.
+ *
+ * @ingroup various
+ */
