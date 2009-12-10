@@ -35,7 +35,7 @@
 #endif
 
 /**
- * @brief Shell maximum input line length.
+ * @brief Shell maximum arguments per command.
  */
 #if !defined(SHELL_MAX_ARGUMENTS) || defined(__DOXYGEN__)
 #define SHELL_MAX_ARGUMENTS         4

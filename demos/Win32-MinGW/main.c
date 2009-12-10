@@ -24,6 +24,7 @@
 
 #define SHELL_WA_SIZE       THD_WA_SIZE(4096)
 #define CONSOLE_WA_SIZE     THD_WA_SIZE(4096)
+#define TEST_WA_SIZE        THD_WA_SIZE(4096)
 
 #define cprint(msg) chMsgSend(cdtp, (msg_t)msg)
 
@@ -31,14 +32,33 @@ static Thread *cdtp;
 static Thread *shelltp1;
 static Thread *shelltp2;
 
+void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
+  Thread *tp;
+
+  (void)argv;
+  if (argc > 0) {
+    shellPrintLine(chp, "Usage: test");
+    return;
+  }
+  tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriority(),
+                           TestThread, chp);
+  chThdWait(tp);
+//  TestThread(chp);
+}
+
+static const ShellCommand commands[] = {
+  {"test", cmd_test},
+  {NULL, NULL}
+};
+
 static const ShellConfig shell_cfg1 = {
   (BaseChannel *)&SD1,
-  NULL
+  commands
 };
 
 static const ShellConfig shell_cfg2 = {
   (BaseChannel *)&SD2,
-  NULL
+  commands
 };
 
 /*
