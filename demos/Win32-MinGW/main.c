@@ -91,6 +91,7 @@ static void termination_handler(eventid_t id) {
   if (shelltp1 && chThdTerminated(shelltp1)) {
     chThdWait(shelltp1);
     shelltp1 = NULL;
+    chThdSleepMilliseconds(10);
     cprint("Init: shell on SD1 terminated\n");
     chSysLock();
     chOQResetI(&SD1.d2.oqueue);
@@ -99,6 +100,7 @@ static void termination_handler(eventid_t id) {
   if (shelltp2 && chThdTerminated(shelltp2)) {
     chThdWait(shelltp2);
     shelltp2 = NULL;
+    chThdSleepMilliseconds(10);
     cprint("Init: shell on SD2 terminated\n");
     chSysLock();
     chOQResetI(&SD2.d2.oqueue);
