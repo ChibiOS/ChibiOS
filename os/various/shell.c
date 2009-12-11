@@ -129,7 +129,7 @@ static bool_t cmdexec(const ShellCommand *scp, BaseChannel *chp,
 /**
  * @brief Shell thread function.
  *
- * @param[in] p pointer to an @p BaseChannel object
+ * @param[in] p pointer to a @p BaseChannel object
  * @return Termination reason.
  * @retval RDY_OK terminated by command.
  * @retval RDY_RESET terminated by reset condition on the I/O channel.
@@ -200,7 +200,7 @@ void shellInit(void) {
 /**
  * @brief Spawns a new shell.
  *
- * @param[in] chp pointer to an @p BaseChannel object
+ * @param[in] scp pointer to a @p ShellConfig object
  * @param[in] size size of the shell working area to be allocated
  * @param[in] prio the priority level for the new shell
  *
@@ -215,7 +215,7 @@ Thread *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio) {
 /**
  * @brief Prints a string.
  *
- * @param[in] chp pointer to an @p BaseChannel object
+ * @param[in] chp pointer to a @p BaseChannel object
  * @param[in] msg pointer to the string
  */
 void shellPrint(BaseChannel *chp, const char *msg) {
@@ -227,7 +227,7 @@ void shellPrint(BaseChannel *chp, const char *msg) {
 /**
  * @brief Prints a string with a final newline.
  *
- * @param[in] chp pointer to an @p BaseChannel object
+ * @param[in] chp pointer to a @p BaseChannel object
  * @param[in] msg pointer to the string
  */
 void shellPrintLine(BaseChannel *chp, const char *msg) {
@@ -239,7 +239,7 @@ void shellPrintLine(BaseChannel *chp, const char *msg) {
 /**
  * @brief Reads a whole line from the input channel.
  *
- * @param[in] chp pointer to an @p BaseChannel object
+ * @param[in] chp pointer to a @p BaseChannel object
  * @param[in] line pointer to the line buffer
  * @param[in] size buffer maximum length
  *
