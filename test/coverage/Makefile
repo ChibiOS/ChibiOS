@@ -70,7 +70,8 @@ SRC  = ${PORTSRC} \
        ${TESTSRC} \
        ${HALSRC} \
        ${PLATFORMSRC} \
-       console.c main.c
+       ${CHIBIOS}/os/hal/platforms/Win32/console.c \
+       main.c
 
 # List ASM source files here
 ASRC =
