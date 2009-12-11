@@ -29,6 +29,11 @@
 
 #if CH_HAL_USE_PWM || defined(__DOXYGEN__)
 
+/** @brief PWM1 driver identifier.*/
+#if defined(USE_STM32_PWM1) || defined(__DOXYGEN__)
+PWMDriver PWMD1;
+#endif
+
 /*===========================================================================*/
 /* Low Level Driver exported variables.                                      */
 /*===========================================================================*/
@@ -54,6 +59,15 @@
  */
 void pwm_lld_init(void) {
 
+#if USE_STM32_PWM1
+  /* TIM1 reset, ensures reset state in order to avoid trouble with JTAGs.*/
+  RCC->APB2RSTR = RCC_APB2RSTR_TIM1RST;
+  RCC->APB2RSTR = 0;
+
+  /* Driver initialization.*/
+  pwmObjectInit(&PWMD1);
+#endif
+
 }
 
 /**
@@ -65,6 +79,12 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
   if (pwmp->pd_state == PWM_STOP) {
     /* Clock activation.*/
+#if USE_STM32_PWM1
+    if (&PWMD1 == pwmp) {
+      NVICEnableVector(TIM1_CC_IRQn, STM32_PWM1_IRQ_PRIORITY);
+      RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+    }
+#endif
   }
   /* Configuration.*/
 }
@@ -76,6 +96,15 @@ void pwm_lld_start(PWMDriver *pwmp) {
  */
 void pwm_lld_stop(PWMDriver *pwmp) {
 
+  /* If in ready state then disables the PWM clock.*/
+  if (pwmp->pd_state == PWM_READY) {
+#if USE_STM32_PWM1
+    if (&PWMD1 == pwmp) {
+      NVICDisableVector(TIM1_CC_IRQn);
+      RCC->APB2ENR &= ~RCC_APB2ENR_TIM1EN;
+    }
+#endif
+  }
 }
 
 /**
@@ -105,6 +134,14 @@ bool_t pwm_lld_is_enabled(PWMDriver *pwmp, pwmchannel_t channel) {
 void pwm_lld_set_callback(PWMDriver *pwmp, pwmchannel_t channel,
                           pwmedge_t edge, pwmcallback_t callback) {
 
+  if (edge == PWM_NONE) {
+    /* Callback disable.*/
+    pwmp->pd_callbacks[channel] = NULL;
+  }
+  else {
+    /* Callback enable.*/
+    pwmp->pd_callbacks[channel] = callback;
+  }
 }
 
 /**

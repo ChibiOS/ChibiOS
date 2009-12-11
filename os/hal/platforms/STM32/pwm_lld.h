@@ -33,15 +33,30 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief Number of PWM channels per PWM driver.
+ */
+#define PWM_CHANNELS                4
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
 /**
- * @brief Number of PWM channels per PWM driver.
+ * @brief PWM1 driver enable switch.
+ * @details If set to @p TRUE the support for PWM1 is included.
+ * @note The default is @p TRUE.
  */
-#if !defined(PWM_CHANNELS) || defined(__DOXYGEN__)
-#define PWM_CHANNELS        1
+#if !defined(USE_STM32_PWM1) || defined(__DOXYGEN__)
+#define USE_STM32_PWM1              TRUE
+#endif
+
+/**
+ * @brief PWM1 interrupt priority level setting.
+ * @note @p BASEPRI_KERNEL >= @p STM32_PWM1_IRQ_PRIORITY > @p PRIORITY_PENDSV.
+ */
+#if !defined(STM32_PWM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM1_IRQ_PRIORITY     0x80
 #endif
 
 /*===========================================================================*/
@@ -79,11 +94,24 @@ typedef struct {
    */
   const PWMConfig           *pd_config;
   /* End of the mandatory fields.*/
+  /**
+   * @brief Bit mask of the enabled channels.
+   */
+  uint32_t                  pd_enabled_channels;
+  /**
+   * @brief Callback pointers.
+   */
+  pwmcallback_t             pd_callbacks[PWM_CHANNELS];
 } PWMDriver;
 
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+/** @cond never*/
+#if defined(USE_STM32_PWM1)
+extern PWMDriver PWMD1;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -101,6 +129,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+/** @endcond*/
 
 #endif /* CH_HAL_USE_PWM */
 
