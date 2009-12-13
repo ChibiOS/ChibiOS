@@ -2,6 +2,8 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.3.6 ***
+
 *** 1.3.5 ***
 - FIX: Fixed problem with memory core allocator (bug 2912528).
 - FIX: Fixed problem with CH_USE_MEMCORE option (bug 2912522).

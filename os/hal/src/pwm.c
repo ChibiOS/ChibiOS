@@ -40,7 +40,7 @@ void pwmInit(void) {
 /**
  * @brief Initializes the standard part of a @p PWMDriver structure.
  *
- * @param[in] pwmp      pointer to the @p PWMDriver object
+ * @param[in] pwmp      pointer to a @p PWMDriver object
  */
 void pwmObjectInit(PWMDriver *pwmp) {
 
@@ -51,8 +51,8 @@ void pwmObjectInit(PWMDriver *pwmp) {
 /**
  * @brief Configures and activates the PWM peripheral.
  *
- * @param[in] pwmp      pointer to the @p PWMDriver object
- * @param[in] config    pointer to the @p PWMConfig object
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] config    pointer to a @p PWMConfig object
  */
 void pwmStart(PWMDriver *pwmp, const PWMConfig *config) {
 
@@ -71,7 +71,7 @@ void pwmStart(PWMDriver *pwmp, const PWMConfig *config) {
 /**
  * @brief Deactivates the PWM peripheral.
  *
- * @param[in] pwmp      pointer to the @p PWMDriver object
+ * @param[in] pwmp      pointer to a @p PWMDriver object
  */
 void pwmStop(PWMDriver *pwmp) {
 
@@ -87,32 +87,31 @@ void pwmStop(PWMDriver *pwmp) {
 }
 
 /**
- * @brief Enables a callback mode for the specified PWM channel.
- * @details The callback mode must be set before starting a PWM channel.
+ * @brief Setups a PWM channel.
  *
- * @param[in] pwmp      pointer to the @p PWMDriver object
+ * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] channel   PWM channel identifier
- * @param[in] edge      output edge mode
- * @param[in] callback  the callback function
+ * @param[in] pccp      pointer to a @p PWMChannelConfig object
  */
-void pwmSetCallback(PWMDriver *pwmp, pwmchannel_t channel,
-                    pwmedge_t edge, pwmcallback_t callback) {
+void pwmSetupChannel(PWMDriver *pwmp, pwmchannel_t channel,
+                     const PWMChannelConfig *pccp) {
 
-  chDbgCheck((pwmp != NULL) && (channel < PWM_CHANNELS),
-             "pwmSetCallback");
+  chDbgCheck((pwmp != NULL) && (channel < PWM_CHANNELS) && (pccp != NULL),
+             "pwmSetupChannel");
 
   chSysLock();
   chDbgAssert((pwmp->pd_state == PWM_READY) &&
               !pwm_lld_is_enabled(pwmp, channel),
-              "pwmSetCallback(), #1", "invalid state");
-  pwm_lld_set_callback(pwmp, channel, edge, callback);
+              "pwmSetupChannel(), #1", "invalid state");
+  pwmp->pd_channel_configs[channel] = pccp;
+  pwm_lld_setup_channel(pwmp, channel);
   chSysUnlock();
 }
 
 /**
  * @brief Enables a PWM channel.
  *
- * @param[in] pwmp      pointer to the @p PWMDriver object
+ * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] channel   PWM channel identifier
  * @param[in] width     PWM pulse width as clock pulses number
  */
@@ -135,7 +134,7 @@ void pwmEnableChannel(PWMDriver *pwmp,
  * @details The channel is disabled and its output line returned to the
  *          idle state.
  *
- * @param[in] pwmp      pointer to the @p PWMDriver object
+ * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] channel   PWM channel identifier
  */
 void pwmDisableChannel(PWMDriver *pwmp, pwmchannel_t channel) {
