@@ -78,7 +78,13 @@ typedef uint16_t pwmcnt_t;
  * @note It could be empty on some architectures.
  */
 typedef struct {
-
+  /**
+   * @brief Periodic callback pointer.
+   * @details This callback is invoked on PWM counter reset. If set to
+   * @p NULL then the callback is disabled.
+   */
+  pwmcallback_t             pc_callback;
+  /* End of the mandatory fields.*/
 } PWMConfig;
 
 /**
@@ -91,11 +97,9 @@ typedef struct {
    */
   pwmmode_t                 pcc_mode;
   /**
-   * @brief Channel callback edges.
-   */
-  pwmedge_t                 pcc_edge;
-  /**
    * @brief Channel callback pointer.
+   * @details This callback is invoked on the channel compare event. If set to
+   * @p NULL then the callback is disabled.
    */
   pwmcallback_t             pcc_callback;
   /* End of the mandatory fields.*/
