@@ -85,6 +85,24 @@ typedef struct {
    */
   pwmcallback_t             pc_callback;
   /* End of the mandatory fields.*/
+  /**
+   * @brief TIM PSC (pre-scaler) register initialization data.
+   */
+  uint16_t                  pc_psc;
+  /**
+   * @brief TIM ARR (auto-reload) register initialization data.
+   */
+  uint16_t                  pc_arr;
+  /**
+   * @brief TIM CR1 register initialization data.
+   * @note The value of this field should normally be equal to zero.
+   */
+  uint16_t                  pc_cr1;
+  /**
+   * @brief TIM CR2 register initialization data.
+   * @note The value of this field should normally be equal to zero.
+   */
+  uint16_t                  pc_cr2;
 } PWMConfig;
 
 /**
@@ -126,6 +144,10 @@ typedef struct {
    * @brief Bit mask of the enabled channels.
    */
   uint32_t                  pd_enabled_channels;
+  /**
+   * @brief Pointer to the TIMx registers block.
+   */
+  TIM_TypeDef               *pd_tim;
 } PWMDriver;
 
 /*===========================================================================*/
