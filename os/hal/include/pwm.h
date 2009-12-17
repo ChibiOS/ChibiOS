@@ -62,8 +62,6 @@ extern "C" {
   void pwmObjectInit(PWMDriver *pwmp);
   void pwmStart(PWMDriver *pwmp, const PWMConfig *config);
   void pwmStop(PWMDriver *pwmp);
-  void pwmSetupChannel(PWMDriver *pwmp, pwmchannel_t channel,
-                       const PWMChannelConfig *pccp);
   void pwmEnableChannel(PWMDriver *pwmp,
                         pwmchannel_t channel,
                         pwmcnt_t width);

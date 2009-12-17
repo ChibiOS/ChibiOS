@@ -87,31 +87,6 @@ void pwmStop(PWMDriver *pwmp) {
 }
 
 /**
- * @brief Setups a PWM channel.
- * @details Associates a configuration to a PWM channel, this operation is
- *          required before a channel can be enabled using
- *          @p pwmEnableChannel().
- *
- * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier
- * @param[in] pccp      pointer to a @p PWMChannelConfig object
- */
-void pwmSetupChannel(PWMDriver *pwmp, pwmchannel_t channel,
-                     const PWMChannelConfig *pccp) {
-
-  chDbgCheck((pwmp != NULL) && (channel < PWM_CHANNELS) && (pccp != NULL),
-             "pwmSetupChannel");
-
-  chSysLock();
-  chDbgAssert((pwmp->pd_state == PWM_READY) &&
-              !pwm_lld_is_enabled(pwmp, channel),
-              "pwmSetupChannel(), #1", "invalid state");
-  pwmp->pd_channel_configs[channel] = pccp;
-  pwm_lld_setup_channel(pwmp, channel);
-  chSysUnlock();
-}
-
-/**
  * @brief Enables a PWM channel.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
@@ -126,8 +101,7 @@ void pwmEnableChannel(PWMDriver *pwmp,
              "pwmEnableChannel");
 
   chSysLock();
-  chDbgAssert((pwmp->pd_state == PWM_READY) &&
-              (pwmp->pd_channel_configs[channel] != NULL),
+  chDbgAssert(pwmp->pd_state == PWM_READY,
               "pwmEnableChannel(), #1", "invalid state");
   pwm_lld_enable_channel(pwmp, channel, width);
   chSysUnlock();
@@ -147,8 +121,7 @@ void pwmDisableChannel(PWMDriver *pwmp, pwmchannel_t channel) {
              "pwmEnableChannel");
 
   chSysLock();
-  chDbgAssert((pwmp->pd_state == PWM_READY) &&
-              (pwmp->pd_channel_configs[channel] != NULL),
+  chDbgAssert(pwmp->pd_state == PWM_READY,
               "pwmDisableChannel(), #1", "invalid state");
   pwm_lld_disable_channel(pwmp, channel);
   chSysUnlock();

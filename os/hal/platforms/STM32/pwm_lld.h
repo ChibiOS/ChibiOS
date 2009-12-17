@@ -74,44 +74,12 @@ typedef uint8_t pwmchannel_t;
 typedef uint16_t pwmcnt_t;
 
 /**
- * @brief PWM driver configuration structure.
- * @note It could be empty on some architectures.
- */
-typedef struct {
-  /**
-   * @brief Periodic callback pointer.
-   * @details This callback is invoked on PWM counter reset. If set to
-   * @p NULL then the callback is disabled.
-   */
-  pwmcallback_t             pc_callback;
-  /* End of the mandatory fields.*/
-  /**
-   * @brief TIM PSC (pre-scaler) register initialization data.
-   */
-  uint16_t                  pc_psc;
-  /**
-   * @brief TIM ARR (auto-reload) register initialization data.
-   */
-  uint16_t                  pc_arr;
-  /**
-   * @brief TIM CR1 register initialization data.
-   * @note The value of this field should normally be equal to zero.
-   */
-  uint16_t                  pc_cr1;
-  /**
-   * @brief TIM CR2 register initialization data.
-   * @note The value of this field should normally be equal to zero.
-   */
-  uint16_t                  pc_cr2;
-} PWMConfig;
-
-/**
  * @brief PWM driver channel configuration structure.
  * @note It could be empty on some architectures.
  */
 typedef struct {
   /**
-   * @brief Channel idle logic level.
+   * @brief Channel active logic level.
    */
   pwmmode_t                 pcc_mode;
   /**
@@ -122,6 +90,37 @@ typedef struct {
   pwmcallback_t             pcc_callback;
   /* End of the mandatory fields.*/
 } PWMChannelConfig;
+
+/**
+ * @brief PWM driver configuration structure.
+ * @note It could be empty on some architectures.
+ */
+typedef struct {
+  /**
+   * @brief Periodic callback pointer.
+   * @details This callback is invoked on PWM counter reset. If set to
+   * @p NULL then the callback is disabled.
+   */
+  pwmcallback_t             pc_callback;
+  /**
+   * @brief Channels configurations.
+   */
+  PWMChannelConfig          pc_channels[PWM_CHANNELS];
+  /* End of the mandatory fields.*/
+  /**
+   * @brief TIM PSC (pre-scaler) register initialization data.
+   */
+  uint16_t                  pc_psc;
+  /**
+   * @brief TIM ARR (auto-reload) register initialization data.
+   */
+  uint16_t                  pc_arr;
+  /**
+   * @brief TIM CR2 register initialization data.
+   * @note The value of this field should normally be equal to zero.
+   */
+  uint16_t                  pc_cr2;
+} PWMConfig;
 
 /**
  * @brief Structure representing a PWM driver.
@@ -135,10 +134,6 @@ typedef struct {
    * @brief Current driver configuration data.
    */
   const PWMConfig           *pd_config;
-  /**
-   * @brief Current channel configurations.
-   */
-  const PWMChannelConfig    *pd_channel_configs[PWM_CHANNELS];
   /* End of the mandatory fields.*/
   /**
    * @brief Bit mask of the enabled channels.
@@ -165,8 +160,6 @@ extern "C" {
   void pwm_lld_init(void);
   void pwm_lld_start(PWMDriver *pwmp);
   void pwm_lld_stop(PWMDriver *pwmp);
-  bool_t pwm_lld_is_enabled(PWMDriver *pwmp, pwmchannel_t channel);
-  void pwm_lld_setup_channel(PWMDriver *pwmp, pwmchannel_t channel);
   void pwm_lld_enable_channel(PWMDriver *pwmp,
                               pwmchannel_t channel,
                               pwmcnt_t width);
