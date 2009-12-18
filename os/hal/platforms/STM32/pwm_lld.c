@@ -78,6 +78,7 @@ CH_IRQ_HANDLER(VectorA4) {
 
   CH_IRQ_PROLOGUE();
 
+  TIM1->SR = ~TIM_SR_UIF;
   PWMD1.pd_config->pc_callback();
 
   CH_IRQ_EPILOGUE();
@@ -95,7 +96,7 @@ CH_IRQ_HANDLER(VectorAC) {
   CH_IRQ_PROLOGUE();
 
   sr = TIM1->SR;
-  TIM1->SR &= ~(TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC3IF | TIM_SR_CC4IF);
+  TIM1->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC3IF | TIM_SR_CC4IF);
   if ((sr & TIM_SR_CC1IF) != 0)
     PWMD1.pd_config->pc_channels[0].pcc_callback();
   if ((sr & TIM_SR_CC2IF) != 0)

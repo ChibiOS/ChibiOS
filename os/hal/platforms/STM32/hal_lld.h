@@ -76,6 +76,8 @@
 #define APB1CLK                     (SYSCLK / 2)
 #define APB2CLK                     (SYSCLK / 2)
 #define AHB1CLK                     (SYSCLK / 1)
+#define TIMCLK2                     (APB2CLK * 2)
+#define TIMCLK1                     (APB1CLK * 2)
 
 /*
  * Values derived from the clock settings.
