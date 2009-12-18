@@ -46,6 +46,9 @@ void halInit(void) {
 #if CH_HAL_USE_MAC
   macInit();
 #endif
+#if CH_HAL_USE_PWM
+  pwmInit();
+#endif
 #if CH_HAL_USE_SERIAL
   sdInit();
 #endif
