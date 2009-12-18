@@ -57,25 +57,25 @@ LDSCRIPT= ch.ld
 
 # Imported source files
 CHIBIOS = ../..
-include ${CHIBIOS}/boards/OLIMEX_STM32_P103/board.mk
-include ${CHIBIOS}/os/hal/platforms/STM32/platform.mk
-include ${CHIBIOS}/os/hal/hal.mk
-include ${CHIBIOS}/os/ports/GCC/ARMCM3/port.mk
-include ${CHIBIOS}/os/kernel/kernel.mk
-include ${CHIBIOS}/test/test.mk
-include ${CHIBIOS}/ext/fatfs/fatfs.mk
+include $(CHIBIOS)/boards/OLIMEX_STM32_P103/board.mk
+include $(CHIBIOS)/os/hal/platforms/STM32/platform.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/ports/GCC/ARMCM3/port.mk
+include $(CHIBIOS)/os/kernel/kernel.mk
+include $(CHIBIOS)/test/test.mk
+include $(CHIBIOS)/ext/fatfs/fatfs.mk
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = ${PORTSRC} \
-       ${KERNSRC} \
-       ${TESTSRC} \
-       ${HALSRC} \
-       ${PLATFORMSRC} \
-       ${BOARDSRC} \
-       ${FATFSSRC} \
-       ${CHIBIOS}/os/various/evtimer.c \
-       ${CHIBIOS}/os/various/syscalls.c \
+CSRC = $(PORTSRC) \
+       $(KERNSRC) \
+       $(TESTSRC) \
+       $(HALSRC) \
+       $(PLATFORMSRC) \
+       $(BOARDSRC) \
+       $(FATFSSRC) \
+       $(CHIBIOS)/os/various/evtimer.c \
+       $(CHIBIOS)/os/various/syscalls.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -104,12 +104,12 @@ TCPPSRC =
 
 # List ASM source files here
 ASMSRC = $(PORTASM) \
-         ${CHIBIOS}/os/ports/GCC/ARMCM3/STM32F103/vectors.s
+         $(CHIBIOS)/os/ports/GCC/ARMCM3/STM32F103/vectors.s
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         $(HALINC) $(PLATFORMINC) ${BOARDINC} \
+         $(HALINC) $(PLATFORMINC) $(BOARDINC) \
          $(FATFSINC) \
-         ${CHIBIOS}/os/various
+         $(CHIBIOS)/os/various
 
 #
 # Project, sources and paths
@@ -198,10 +198,10 @@ ULIBS =
 ##############################################################################
 
 ifeq ($(USE_FWLIB),yes)
-  include ${CHIBIOS}/ext/stm32lib/stm32lib.mk
-  CSRC += ${STM32SRC}
-  INCDIR += ${STM32INC}
+  include $(CHIBIOS)/ext/stm32lib/stm32lib.mk
+  CSRC += $(STM32SRC)
+  INCDIR += $(STM32INC)
   USE_OPT += -DUSE_STDPERIPH_DRIVER
 endif
 
-include ${CHIBIOS}/os/ports/GCC/ARM/rules.mk
+include $(CHIBIOS)/os/ports/GCC/ARM/rules.mk
