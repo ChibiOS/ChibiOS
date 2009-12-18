@@ -57,8 +57,9 @@ LDSCRIPT= ch.ld
 
 # Imported source files
 CHIBIOS = ../..
-include ${CHIBIOS}/os/hal/hal.mk
+include ${CHIBIOS}/boards/OLIMEX_STM32_P103/board.mk
 include ${CHIBIOS}/os/hal/platforms/STM32/platform.mk
+include ${CHIBIOS}/os/hal/hal.mk
 include ${CHIBIOS}/os/ports/GCC/ARMCM3/port.mk
 include ${CHIBIOS}/os/kernel/kernel.mk
 include ${CHIBIOS}/test/test.mk
@@ -71,10 +72,11 @@ CSRC = ${PORTSRC} \
        ${TESTSRC} \
        ${HALSRC} \
        ${PLATFORMSRC} \
+       ${BOARDSRC} \
        ${FATFSSRC} \
        ${CHIBIOS}/os/various/evtimer.c \
        ${CHIBIOS}/os/various/syscalls.c \
-       board.c main.c
+       main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -104,7 +106,8 @@ TCPPSRC =
 ASMSRC = $(PORTASM) \
          ${CHIBIOS}/os/ports/GCC/ARMCM3/STM32F103/vectors.s
 
-INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) $(HALINC) $(PLATFORMINC) \
+INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
+         $(HALINC) $(PLATFORMINC) ${BOARDINC} \
          $(FATFSINC) \
          ${CHIBIOS}/os/various
 
