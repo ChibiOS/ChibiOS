@@ -40,20 +40,22 @@ LDSCRIPT = mspgcc/msp430x1611.x
 
 # Imported source files
 CHIBIOS = ../..
-include ${CHIBIOS}/os/hal/hal.mk
-include ${CHIBIOS}/os/hal/platforms/MSP430/platform.mk
-include ${CHIBIOS}/os/ports/GCC/MSP430/port.mk
-include ${CHIBIOS}/os/kernel/kernel.mk
-include ${CHIBIOS}/test/test.mk
+include $(CHIBIOS)/boards/OLIMEX_MSP430_P1611/board.mk
+include $(CHIBIOS)/os/hal/platforms/MSP430/platform.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/ports/GCC/MSP430/port.mk
+include $(CHIBIOS)/os/kernel/kernel.mk
+include $(CHIBIOS)/test/test.mk
 
 # C sources here.
-CSRC = ${PORTSRC} \
-       ${KERNSRC} \
-       ${TESTSRC} \
-       ${HALSRC} \
-       ${PLATFORMSRC} \
-       ${CHIBIOS}/os/various/evtimer.c \
-       board.c main.c
+CSRC = $(PORTSRC) \
+       $(KERNSRC) \
+       $(TESTSRC) \
+       $(HALSRC) \
+       $(PLATFORMSRC) \
+       $(BOARDSRC) \
+       $(CHIBIOS)/os/various/evtimer.c \
+       main.c
 
 # C++ sources here.
 CPPSRC =
@@ -61,8 +63,9 @@ CPPSRC =
 # List ASM source files here
 ASMSRC = $(PORTASM)
 
-INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) $(HALINC) $(PLATFORMINC) \
-         ${CHIBIOS}/os/various
+INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
+         $(HALINC) $(PLATFORMINC) $(BOARDINC) \
+         $(CHIBIOS)/os/various
 
 #
 # Project, sources and paths
@@ -144,4 +147,4 @@ ULIBS =
 # End of user defines
 ##############################################################################
 
-include ${CHIBIOS}/os/ports/GCC/MSP430/rules.mk
+include $(CHIBIOS)/os/ports/GCC/MSP430/rules.mk
