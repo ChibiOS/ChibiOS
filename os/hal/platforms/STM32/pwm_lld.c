@@ -268,33 +268,33 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
       pwmp->pd_tim->CCMR1 = (pwmp->pd_tim->CCMR1 & 0xFF00) |
                             TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2 |
                             TIM_CCMR1_OC1PE;
+      pwmp->pd_tim->SR = ~TIM_SR_CC1IF;
       pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[0].pcc_callback == NULL
                             ? 0 : TIM_DIER_CC1IE;
-      pwmp->pd_tim->SR = ~TIM_SR_CC1IF;
       break;
     case 1:
       pwmp->pd_tim->CCMR1 = (pwmp->pd_tim->CCMR1 & 0x00FF) |
                             TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2 |
                             TIM_CCMR1_OC2PE;
+      pwmp->pd_tim->SR = ~TIM_SR_CC2IF;
       pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[1].pcc_callback == NULL
                             ? 0 : TIM_DIER_CC2IE;
-      pwmp->pd_tim->SR = ~TIM_SR_CC2IF;
       break;
     case 2:
       pwmp->pd_tim->CCMR2 = (pwmp->pd_tim->CCMR2 & 0xFF00) |
                             TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2 |
                             TIM_CCMR2_OC3PE;
+      pwmp->pd_tim->SR = ~TIM_SR_CC3IF;
       pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[2].pcc_callback == NULL
                             ? 0 : TIM_DIER_CC3IE;
-      pwmp->pd_tim->SR = ~TIM_SR_CC3IF;
       break;
     case 3:
       pwmp->pd_tim->CCMR2 = (pwmp->pd_tim->CCMR2 & 0x00FF) |
                             TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2 |
                             TIM_CCMR2_OC4PE;
+      pwmp->pd_tim->SR = ~TIM_SR_CC4IF;
       pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[3].pcc_callback == NULL
                             ? 0 : TIM_DIER_CC4IE;
-      pwmp->pd_tim->SR = ~TIM_SR_CC4IF;
       break;
     }
   }
@@ -316,25 +316,21 @@ void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
     pwmp->pd_tim->CCR1 = 0;
     pwmp->pd_tim->CCMR1 = pwmp->pd_tim->CCMR1 & 0xFF00;
     pwmp->pd_tim->DIER &= ~TIM_DIER_CC1IE;
-    pwmp->pd_tim->SR = ~TIM_SR_CC1IF;
     break;
   case 1:
     pwmp->pd_tim->CCR2 = 0;
     pwmp->pd_tim->CCMR1 = pwmp->pd_tim->CCMR1 & 0x00FF;
     pwmp->pd_tim->DIER &= ~TIM_DIER_CC2IE;
-    pwmp->pd_tim->SR = ~TIM_SR_CC2IF;
     break;
   case 2:
     pwmp->pd_tim->CCR3 = 0;
     pwmp->pd_tim->CCMR2 = pwmp->pd_tim->CCMR2 & 0xFF00;
     pwmp->pd_tim->DIER &= ~TIM_DIER_CC3IE;
-    pwmp->pd_tim->SR = ~TIM_SR_CC3IF;
     break;
   case 3:
     pwmp->pd_tim->CCR4 = 0;
     pwmp->pd_tim->CCMR2 = pwmp->pd_tim->CCMR2 & 0x00FF;
     pwmp->pd_tim->DIER &= ~TIM_DIER_CC4IE;
-    pwmp->pd_tim->SR = ~TIM_SR_CC4IF;
     break;
   }
 }
