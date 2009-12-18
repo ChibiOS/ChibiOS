@@ -34,6 +34,16 @@
 /*===========================================================================*/
 
 /**
+ * @brief STM32 specific alternate push-pull output mode.
+ */
+#define PAL_MODE_STM32_ALTERNATE_PUSHPULL   16
+
+/**
+ * @brief STM32 specific alternate open-drain output mode.
+ */
+#define PAL_MODE_STM32_ALTERNATE_OPENDRAIN  17
+
+/**
  * @brief GPIO port setup info.
  */
 typedef struct {

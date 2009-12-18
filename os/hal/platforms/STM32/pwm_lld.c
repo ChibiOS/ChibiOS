@@ -95,7 +95,7 @@ CH_IRQ_HANDLER(VectorAC) {
 
   CH_IRQ_PROLOGUE();
 
-  sr = TIM1->SR;
+  sr = TIM1->SR & TIM1->DIER;
   TIM1->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC3IF | TIM_SR_CC4IF);
   if ((sr & TIM_SR_CC1IF) != 0)
     PWMD1.pd_config->pc_channels[0].pcc_callback();
@@ -160,19 +160,45 @@ void pwm_lld_start(PWMDriver *pwmp) {
   pwmp->pd_tim->PSC  = pwmp->pd_config->pc_psc;
   pwmp->pd_tim->CNT  = 0;
   pwmp->pd_tim->ARR  = pwmp->pd_config->pc_arr;
-  ccer = TIM_CCER_CC1E | TIM_CCER_CC2E | TIM_CCER_CC3E | TIM_CCER_CC4E;
-  if (pwmp->pd_config->pc_channels[0].pcc_mode == PWM_ACTIVE_LOW)
+  /* Output enables and polarities setup.*/
+  ccer = 0;
+  switch (pwmp->pd_config->pc_channels[0].pcc_mode) {
+  case PWM_OUTPUT_ACTIVE_LOW:
     ccer |= TIM_CCER_CC1P;
-  if (pwmp->pd_config->pc_channels[1].pcc_mode == PWM_ACTIVE_LOW)
+  case PWM_OUTPUT_ACTIVE_HIGH:
+    ccer |= TIM_CCER_CC1E;
+  default:
+    ;
+  }
+  switch (pwmp->pd_config->pc_channels[1].pcc_mode) {
+  case PWM_OUTPUT_ACTIVE_LOW:
     ccer |= TIM_CCER_CC2P;
-  if (pwmp->pd_config->pc_channels[2].pcc_mode == PWM_ACTIVE_LOW)
+  case PWM_OUTPUT_ACTIVE_HIGH:
+    ccer |= TIM_CCER_CC2E;
+  default:
+    ;
+  }
+  switch (pwmp->pd_config->pc_channels[2].pcc_mode) {
+  case PWM_OUTPUT_ACTIVE_LOW:
     ccer |= TIM_CCER_CC3P;
-  if (pwmp->pd_config->pc_channels[3].pcc_mode == PWM_ACTIVE_LOW)
+  case PWM_OUTPUT_ACTIVE_HIGH:
+    ccer |= TIM_CCER_CC3E;
+  default:
+    ;
+  }
+  switch (pwmp->pd_config->pc_channels[3].pcc_mode) {
+  case PWM_OUTPUT_ACTIVE_LOW:
     ccer |= TIM_CCER_CC4P;
+  case PWM_OUTPUT_ACTIVE_HIGH:
+    ccer |= TIM_CCER_CC4E;
+  default:
+    ;
+  }
   pwmp->pd_tim->CCER = ccer;
   pwmp->pd_tim->EGR  = TIM_EGR_UG;          /* Update event.                */
   pwmp->pd_tim->SR   = 0;                   /* Clear pending IRQs.          */
   pwmp->pd_tim->DIER = pwmp->pd_config->pc_callback == NULL ? 0 : TIM_DIER_UIE;
+  pwmp->pd_tim->BDTR = TIM_BDTR_MOE;
   pwmp->pd_tim->CR1  = TIM_CR1_ARPE | TIM_CR1_URS |
                        TIM_CR1_CEN;         /* Timer configured and started.*/
 }
@@ -187,6 +213,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
   if (pwmp->pd_state == PWM_READY) {
     stop_channels(pwmp);
     pwmp->pd_tim->CR1 = 0;
+    pwmp->pd_tim->BDTR = 0;
     pwmp->pd_tim->DIER = 0;
 
 #if USE_STM32_PWM1

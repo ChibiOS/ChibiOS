@@ -3,6 +3,13 @@
 *****************************************************************************
 
 *** 1.3.6 ***
+- FIX: Fixed missing STM32 PWM low level driver error in platform.mk by
+  adding the driver files (bug 2913560).
+- NEW: STM32 PWM driver implementation.
+- NEW: Added custom mode settings to the STM32 PAL driver:
+  - PAL_MODE_STM32_ALTERNATE_PUSHPULL
+  - PAL_MODE_STM32_ALTERNATE_OPENDRAIN
+- CHANGE: Changes to the PWM driver model, made it simpler.
 
 *** 1.3.5 ***
 - FIX: Fixed problem with memory core allocator (bug 2912528).

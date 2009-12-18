@@ -42,8 +42,10 @@ typedef enum {
  * @brief PWM logic mode.
  */
 typedef enum {
-  PWM_ACTIVE_HIGH = 0,                  /**< @brief Idle is logic level 0.  */
-  PWM_ACTIVE_LOW = 1                    /**< @brief Idle is logic level 1.  */
+  PWM_OUTPUT_DISABLED = 0,              /**< @brief Output not driven, callback
+                                                    only.                   */
+  PWM_OUTPUT_ACTIVE_HIGH = 1,           /**< @brief Idle is logic level 0.  */
+  PWM_OUTPUT_ACTIVE_LOW = 2             /**< @brief Idle is logic level 1.  */
 } pwmmode_t;
 
 /**
