@@ -10,6 +10,9 @@
   - PAL_MODE_STM32_ALTERNATE_PUSHPULL
   - PAL_MODE_STM32_ALTERNATE_OPENDRAIN
 - CHANGE: Changes to the PWM driver model, made it simpler.
+- CHANGE: The STM32 device drivers now no more configure the I/O pins on
+  initialization. Pins mush be configured in board.h, the change was required
+  in order to support the STM32 AFIO remapping feature.
 
 *** 1.3.5 ***
 - FIX: Fixed problem with memory core allocator (bug 2912528).
