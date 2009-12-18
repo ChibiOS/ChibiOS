@@ -192,7 +192,6 @@ void spi_lld_init(void) {
   SPID1.spd_dmarx   = DMA1_Channel2;
   SPID1.spd_dmatx   = DMA1_Channel3;
   SPID1.spd_dmaprio = STM32_SPI1_DMA_PRIORITY << 12;
-  GPIOA->CRL = (GPIOA->CRL & 0x000FFFFF) | 0xB4B00000;
 #endif
 
 #if USE_STM32_SPI2
@@ -204,7 +203,6 @@ void spi_lld_init(void) {
   SPID2.spd_dmarx   = DMA1_Channel4;
   SPID2.spd_dmatx   = DMA1_Channel5;
   SPID2.spd_dmaprio = STM32_SPI2_DMA_PRIORITY << 12;
-  GPIOB->CRH = (GPIOB->CRH & 0x000FFFFF) | 0xB4B00000;
 #endif
 }
 
