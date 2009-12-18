@@ -20,6 +20,13 @@
 #ifndef _BOARD_H_
 #define _BOARD_H_
 
+/*
+ * Setup for the Olimex LCP-P2148 proto board.
+ */
+
+/*
+ * Board identifier.
+ */
 #define BOARD_OLIMEX_AVR_CAN
 
 /*

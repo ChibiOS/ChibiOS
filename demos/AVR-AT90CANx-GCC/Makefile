@@ -81,21 +81,23 @@ OBJDIR = .
 
 # Imported source files
 CHIBIOS = ../..
-include ${CHIBIOS}/os/hal/hal.mk
-include ${CHIBIOS}/os/hal/platforms/AVR/platform.mk
-include ${CHIBIOS}/os/ports/GCC/AVR/port.mk
-include ${CHIBIOS}/os/kernel/kernel.mk
-include ${CHIBIOS}/test/test.mk
+include $(CHIBIOS)/boards/OLIMEX_AVR_CAN/board.mk
+include $(CHIBIOS)/os/hal/platforms/AVR/platform.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/ports/GCC/AVR/port.mk
+include $(CHIBIOS)/os/kernel/kernel.mk
+include $(CHIBIOS)/test/test.mk
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = ${PORTSRC} \
-      ${KERNSRC} \
-      ${TESTSRC} \
-      ${HALSRC} \
-      ${PLATFORMSRC} \
-      ${CHIBIOS}/os/various/evtimer.c \
-      board.c main.c
+SRC = $(PORTSRC) \
+      $(KERNSRC) \
+      $(TESTSRC) \
+      $(HALSRC) \
+      $(PLATFORMSRC) \
+      $(BOARDSRC) \
+      $(CHIBIOS)/os/various/evtimer.c \
+      main.c
 
 
 # List C++ source files here. (C dependencies are automatically generated.)
@@ -129,8 +131,9 @@ DEBUG = dwarf-2
 #     Each directory must be seperated by a space.
 #     Use forward slashes for directory separators.
 #     For a directory that has spaces, enclose it in quotes.
-EXTRAINCDIRS = $(PORTINC) $(KERNINC) $(TESTINC) $(HALINC) $(PLATFORMINC) \
-               ${CHIBIOS}/os/various
+EXTRAINCDIRS = $(PORTINC) $(KERNINC) $(TESTINC) \
+               $(HALINC) $(PLATFORMINC) $(BOARDINC) \
+               $(CHIBIOS)/os/various
 
 
 # Compiler flag to set the C Standard level.

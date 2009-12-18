@@ -9,9 +9,11 @@
 - NEW: Added custom mode settings to the STM32 PAL driver:
   - PAL_MODE_STM32_ALTERNATE_PUSHPULL
   - PAL_MODE_STM32_ALTERNATE_OPENDRAIN
+- NEW: Included all the board-specific files into a new directories structure
+  under ./boards, this allows to not duplicate the board files into each demo.
 - CHANGE: Changes to the PWM driver model, made it simpler.
 - CHANGE: The STM32 device drivers now no more configure the I/O pins on
-  initialization. Pins mush be configured in board.h, the change was required
+  initialization. Pins must be configured in board.h, the change was required
   in order to support the STM32 AFIO remapping feature.
 
 *** 1.3.5 ***
