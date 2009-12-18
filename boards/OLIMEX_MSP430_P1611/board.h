@@ -21,6 +21,15 @@
 #define _BOARD_H_
 
 /*
+ * Setup for the Olimex MSP430-P1611 proto board.
+ */
+
+/*
+ * Board identifier.
+ */
+#define BOARD_OLIMEX_MSP430_P1611
+
+/*
  * Clock constants.
  */
 #define LFXT1CLK        32768
