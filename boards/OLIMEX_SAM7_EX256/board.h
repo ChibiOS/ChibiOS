@@ -21,6 +21,15 @@
 #define _BOARD_H_
 
 /*
+ * Setup for the Olimex SAM7-EX256 development board.
+ */
+
+/*
+ * Board identifier.
+ */
+#define BOARD_OLIMEX_SAM7_EX256
+
+/*
  * Select your platform by modifying the following line.
  */
 #if !defined(SAM7_PLATFORM)
@@ -28,8 +37,6 @@
 #endif
 
 #include "at91sam7.h"
-
-#define BOARD_OLIMEX_SAM7_EX256
 
 #define CLK             18432000
 #define MCK             48054857
