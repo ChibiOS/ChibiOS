@@ -30,43 +30,6 @@
 #if CH_HAL_USE_ADC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
-/* Driver pre-compile time settings.                                         */
-/*===========================================================================*/
-
-/**
- * @brief ADC1 driver enable switch.
- * @details If set to @p TRUE the support for ADC1 is included.
- * @note The default is @p TRUE.
- */
-#if !defined(USE_STM32_ADC1) || defined(__DOXYGEN__)
-#define USE_STM32_ADC1              TRUE
-#endif
-
-/**
- * @brief ADC1 DMA priority (0..3|lowest..highest).
- */
-#if !defined(STM32_ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC1_DMA_PRIORITY     1
-#endif
-
-/**
- * @brief ADC1 interrupt priority level setting.
- * @note @p BASEPRI_KERNEL >= @p STM32_ADC1_IRQ_PRIORITY > @p PRIORITY_PENDSV.
- */
-#if !defined(STM32_ADC1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC1_IRQ_PRIORITY     0x70
-#endif
-
-/**
- * @brief ADC1 DMA error hook.
- * @note The default action for DMA errors is a system halt because DMA error
- *       can only happen because programming errors.
- */
-#if !defined(STM32_ADC1_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_ADC1_DMA_ERROR_HOOK() chSysHalt()
-#endif
-
-/*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
@@ -112,6 +75,51 @@
 #define ADC_SQR1_SQ14_N(n)      ((n) << 5)
 #define ADC_SQR1_SQ15_N(n)      ((n) << 10)
 #define ADC_SQR1_SQ16_N(n)      ((n) << 15)
+
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/**
+ * @brief ADC1 driver enable switch.
+ * @details If set to @p TRUE the support for ADC1 is included.
+ * @note The default is @p TRUE.
+ */
+#if !defined(USE_STM32_ADC1) || defined(__DOXYGEN__)
+#define USE_STM32_ADC1              TRUE
+#endif
+
+/**
+ * @brief ADC1 DMA priority (0..3|lowest..highest).
+ */
+#if !defined(STM32_ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC1_DMA_PRIORITY     1
+#endif
+
+/**
+ * @brief ADC1 interrupt priority level setting.
+ * @note @p BASEPRI_KERNEL >= @p STM32_ADC1_IRQ_PRIORITY > @p PRIORITY_PENDSV.
+ */
+#if !defined(STM32_ADC1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC1_IRQ_PRIORITY     0x70
+#endif
+
+/**
+ * @brief ADC1 DMA error hook.
+ * @note The default action for DMA errors is a system halt because DMA error
+ *       can only happen because programming errors.
+ */
+#if !defined(STM32_ADC1_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_ADC1_DMA_ERROR_HOOK() chSysHalt()
+#endif
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+#if !CH_USE_SEMAPHORES
+#error "the ADC driver requires CH_USE_SEMAPHORES"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

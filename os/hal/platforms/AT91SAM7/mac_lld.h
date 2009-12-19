@@ -54,15 +54,19 @@
 #define MAC_BUFFERS_SIZE                1518
 #endif
 
-/*===========================================================================*/
-/* EMAC specific settings.                                                   */
-/*===========================================================================*/
-
 /**
  * @brief Interrupt priority level for the EMAC device.
  */
 #if !defined(EMAC_INTERRUPT_PRIORITY) || defined(__DOXYGEN__)
 #define EMAC_INTERRUPT_PRIORITY         (AT91C_AIC_PRIOR_HIGHEST - 3)
+#endif
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+#if !CH_USE_SEMAPHORES || !CH_USE_EVENTS
+#error "the MAC driver requires CH_USE_SEMAPHORES and CH_USE_EVENTS"
 #endif
 
 /*===========================================================================*/

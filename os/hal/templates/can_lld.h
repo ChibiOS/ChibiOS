@@ -57,6 +57,14 @@
 #endif /* !CAN_SUPPORTS_SLEEP */
 
 /*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+#if !CH_USE_SEMAPHORES || !CH_USE_EVENTS
+#error "the ADC driver requires CH_USE_SEMAPHORES and CH_USE_EVENTS"
+#endif
+
+/*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
