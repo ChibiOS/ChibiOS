@@ -25,8 +25,9 @@
 #ifndef _LPC214X_H_
 #define _LPC214X_H_
 
-typedef volatile unsigned char IOREG8;
-typedef volatile unsigned int IOREG32;
+typedef volatile uint8_t IOREG8;
+typedef volatile uint16_t IOREG16;
+typedef volatile uint32_t IOREG32;
 
 /*
  * System.
