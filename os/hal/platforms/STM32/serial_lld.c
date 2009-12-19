@@ -29,6 +29,10 @@
 
 #if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Low Level Driver exported variables.                                      */
+/*===========================================================================*/
+
 #if USE_STM32_USART1 || defined(__DOXYGEN__)
 /** @brief USART1 serial driver identifier.*/
 SerialDriver SD1;
@@ -43,6 +47,10 @@ SerialDriver SD2;
 /** @brief USART3 serial driver identifier.*/
 SerialDriver SD3;
 #endif
+
+/*===========================================================================*/
+/* Low Level Driver local variables.                                         */
+/*===========================================================================*/
 
 /** @brief Driver default configuration.*/
 static const SerialDriverConfig default_config =

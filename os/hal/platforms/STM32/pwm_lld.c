@@ -29,14 +29,41 @@
 
 #if CH_HAL_USE_PWM || defined(__DOXYGEN__)
 
-/** @brief PWM1 driver identifier.*/
+/*===========================================================================*/
+/* Low Level Driver exported variables.                                      */
+/*===========================================================================*/
+
+/**
+ * @brief PWM1 driver identifier.
+ * @note The driver PWM1 allocates the complex timer TIM1 when enabled.
+ */
 #if defined(USE_STM32_PWM1) || defined(__DOXYGEN__)
 PWMDriver PWMD1;
 #endif
 
-/*===========================================================================*/
-/* Low Level Driver exported variables.                                      */
-/*===========================================================================*/
+/**
+ * @brief PWM2 driver identifier.
+ * @note The driver PWM2 allocates the timer TIM2 when enabled.
+ */
+#if defined(USE_STM32_PWM2) || defined(__DOXYGEN__)
+PWMDriver PWMD2;
+#endif
+
+/**
+ * @brief PWM3 driver identifier.
+ * @note The driver PWM3 allocates the timer TIM3 when enabled.
+ */
+#if defined(USE_STM32_PWM3) || defined(__DOXYGEN__)
+PWMDriver PWMD3;
+#endif
+
+/**
+ * @brief PWM4 driver identifier.
+ * @note The driver PWM4 allocates the timer TIM4 when enabled.
+ */
+#if defined(USE_STM32_PWM4) || defined(__DOXYGEN__)
+PWMDriver PWMD4;
+#endif
 
 /*===========================================================================*/
 /* Low Level Driver local variables.                                         */
@@ -61,6 +88,30 @@ void stop_channels(PWMDriver *pwmp) {
   pwmp->pd_tim->CCR4 = 0;                   /* Comparator 4 disabled.       */
   pwmp->pd_tim->CCMR1 = 0;                  /* Channels 1 and 2 frozen.     */
   pwmp->pd_tim->CCMR2 = 0;                  /* Channels 3 and 4 frozen.     */
+}
+
+/**
+ * @brief Common TIM2...TIM4 IRQ handler.
+ * @note It is assumed that the various sources are only activated if the
+ *       associated callback pointer is not equal to @p NULL in order to not
+ *       perform an extra check in a potentially critical interrupt handler.
+ */
+static void serve_interrupt(PWMDriver *pwmp) {
+  uint16_t sr;
+
+  sr = pwmp->pd_tim->SR & pwmp->pd_tim->DIER;
+  pwmp->pd_tim->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC3IF |
+                       TIM_SR_CC4IF | TIM_SR_UIF);
+  if ((sr & TIM_SR_CC1IF) != 0)
+    pwmp->pd_config->pc_channels[0].pcc_callback();
+  if ((sr & TIM_SR_CC2IF) != 0)
+    pwmp->pd_config->pc_channels[1].pcc_callback();
+  if ((sr & TIM_SR_CC3IF) != 0)
+    pwmp->pd_config->pc_channels[2].pcc_callback();
+  if ((sr & TIM_SR_CC4IF) != 0)
+    pwmp->pd_config->pc_channels[3].pcc_callback();
+  if ((sr & TIM_SR_UIF) != 0)
+    pwmp->pd_config->pc_callback();
 }
 
 /*===========================================================================*/
@@ -110,6 +161,48 @@ CH_IRQ_HANDLER(VectorAC) {
 }
 #endif /* USE_STM32_PWM1 */
 
+#if USE_STM32_PWM2
+/**
+ * @brief TIM2 interrupt handler.
+ */
+CH_IRQ_HANDLER(VectorB0) {
+
+  CH_IRQ_PROLOGUE();
+
+  serve_interrupt(&PWMD2);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* USE_STM32_PWM2 */
+
+#if USE_STM32_PWM3
+/**
+ * @brief TIM3 interrupt handler.
+ */
+CH_IRQ_HANDLER(VectorB4) {
+
+  CH_IRQ_PROLOGUE();
+
+  serve_interrupt(&PWMD3);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* USE_STM32_PWM3 */
+
+#if USE_STM32_PWM4
+/**
+ * @brief TIM4 interrupt handler.
+ */
+CH_IRQ_HANDLER(VectorB8) {
+
+  CH_IRQ_PROLOGUE();
+
+  serve_interrupt(&PWMD4);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* USE_STM32_PWM4 */
+
 /*===========================================================================*/
 /* Low Level Driver exported functions.                                      */
 /*===========================================================================*/
@@ -130,6 +223,38 @@ void pwm_lld_init(void) {
   PWMD1.pd_tim = TIM1;
 #endif
 
+#if USE_STM32_PWM2
+  /* TIM2 reset, ensures reset state in order to avoid trouble with JTAGs.*/
+  RCC->APB1RSTR = RCC_APB1RSTR_TIM2RST;
+  RCC->APB1RSTR = 0;
+
+  /* Driver initialization.*/
+  pwmObjectInit(&PWMD2);
+  PWMD2.pd_enabled_channels = 0;
+  PWMD2.pd_tim = TIM2;
+#endif
+
+#if USE_STM32_PWM3
+  /* TIM2 reset, ensures reset state in order to avoid trouble with JTAGs.*/
+  RCC->APB1RSTR = RCC_APB1RSTR_TIM3RST;
+  RCC->APB1RSTR = 0;
+
+  /* Driver initialization.*/
+  pwmObjectInit(&PWMD3);
+  PWMD3.pd_enabled_channels = 0;
+  PWMD3.pd_tim = TIM3;
+#endif
+
+#if USE_STM32_PWM4
+  /* TIM2 reset, ensures reset state in order to avoid trouble with JTAGs.*/
+  RCC->APB1RSTR = RCC_APB1RSTR_TIM4RST;
+  RCC->APB1RSTR = 0;
+
+  /* Driver initialization.*/
+  pwmObjectInit(&PWMD4);
+  PWMD4.pd_enabled_channels = 0;
+  PWMD4.pd_tim = TIM4;
+#endif
 }
 
 /**
@@ -147,6 +272,24 @@ void pwm_lld_start(PWMDriver *pwmp) {
       NVICEnableVector(TIM1_UP_IRQn, STM32_PWM1_IRQ_PRIORITY);
       NVICEnableVector(TIM1_CC_IRQn, STM32_PWM1_IRQ_PRIORITY);
       RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+    }
+#endif
+#if USE_STM32_PWM2
+    if (&PWMD2 == pwmp) {
+      NVICEnableVector(TIM2_IRQn, STM32_PWM2_IRQ_PRIORITY);
+      RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+    }
+#endif
+#if USE_STM32_PWM3
+    if (&PWMD3 == pwmp) {
+      NVICEnableVector(TIM3_IRQn, STM32_PWM3_IRQ_PRIORITY);
+      RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+    }
+#endif
+#if USE_STM32_PWM4
+    if (&PWMD4 == pwmp) {
+      NVICEnableVector(TIM4_IRQn, STM32_PWM4_IRQ_PRIORITY);
+      RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
     }
 #endif
   }
@@ -221,6 +364,24 @@ void pwm_lld_stop(PWMDriver *pwmp) {
       NVICDisableVector(TIM1_UP_IRQn);
       NVICDisableVector(TIM1_CC_IRQn);
       RCC->APB2ENR &= ~RCC_APB2ENR_TIM1EN;
+    }
+#endif
+#if USE_STM32_PWM2
+    if (&PWMD2 == pwmp) {
+      NVICDisableVector(TIM2_IRQn);
+      RCC->APB1ENR &= ~RCC_APB1ENR_TIM2EN;
+    }
+#endif
+#if USE_STM32_PWM3
+    if (&PWMD3 == pwmp) {
+      NVICDisableVector(TIM3_IRQn);
+      RCC->APB1ENR &= ~RCC_APB1ENR_TIM3EN;
+    }
+#endif
+#if USE_STM32_PWM2
+    if (&PWMD4 == pwmp) {
+      NVICDisableVector(TIM4_IRQn);
+      RCC->APB1ENR &= ~RCC_APB1ENR_TIM4EN;
     }
 #endif
   }

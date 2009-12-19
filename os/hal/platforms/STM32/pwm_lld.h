@@ -52,11 +52,70 @@
 #endif
 
 /**
+ * @brief PWM2 driver enable switch.
+ * @details If set to @p TRUE the support for PWM2 is included.
+ * @note The default is @p TRUE.
+ */
+#if !defined(USE_STM32_PWM2) || defined(__DOXYGEN__)
+#define USE_STM32_PWM2              TRUE
+#endif
+
+/**
+ * @brief PWM3 driver enable switch.
+ * @details If set to @p TRUE the support for PWM3 is included.
+ * @note The default is @p TRUE.
+ */
+#if !defined(USE_STM32_PWM3) || defined(__DOXYGEN__)
+#define USE_STM32_PWM3              TRUE
+#endif
+
+/**
+ * @brief PWM4 driver enable switch.
+ * @details If set to @p TRUE the support for PWM4 is included.
+ * @note The default is @p TRUE.
+ */
+#if !defined(USE_STM32_PWM4) || defined(__DOXYGEN__)
+#define USE_STM32_PWM4              TRUE
+#endif
+
+/**
  * @brief PWM1 interrupt priority level setting.
  * @note @p BASEPRI_KERNEL >= @p STM32_PWM1_IRQ_PRIORITY > @p PRIORITY_PENDSV.
  */
 #if !defined(STM32_PWM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM1_IRQ_PRIORITY     0x80
+#endif
+
+/**
+ * @brief PWM2 interrupt priority level setting.
+ * @note @p BASEPRI_KERNEL >= @p STM32_PWM2_IRQ_PRIORITY > @p PRIORITY_PENDSV.
+ */
+#if !defined(STM32_PWM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM2_IRQ_PRIORITY     0x80
+#endif
+
+/**
+ * @brief PWM3 interrupt priority level setting.
+ * @note @p BASEPRI_KERNEL >= @p STM32_PWM3_IRQ_PRIORITY > @p PRIORITY_PENDSV.
+ */
+#if !defined(STM32_PWM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM3_IRQ_PRIORITY     0x80
+#endif
+
+/**
+ * @brief PWM4 interrupt priority level setting.
+ * @note @p BASEPRI_KERNEL >= @p STM32_PWM4_IRQ_PRIORITY > @p PRIORITY_PENDSV.
+ */
+#if !defined(STM32_PWM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM4_IRQ_PRIORITY     0x80
+#endif
+
+/*===========================================================================*/
+/* Configuration checks.                                                     */
+/*===========================================================================*/
+
+#if USE_STM32_PWM4 && defined(STM32F10X_LD)
+#error "TIM4 not present in low density STM32 devices"
 #endif
 
 /*===========================================================================*/
@@ -152,6 +211,18 @@ typedef struct {
 /** @cond never*/
 #if defined(USE_STM32_PWM1)
 extern PWMDriver PWMD1;
+#endif
+
+#if defined(USE_STM32_PWM2)
+extern PWMDriver PWMD2;
+#endif
+
+#if defined(USE_STM32_PWM3)
+extern PWMDriver PWMD3;
+#endif
+
+#if defined(USE_STM32_PWM4)
+extern PWMDriver PWMD4;
 #endif
 
 #ifdef __cplusplus
