@@ -44,6 +44,7 @@
  *  P0  P0  P0  P0  P0  P0  RXD TXD SSE MOS MIS SCK SDA SCL RXD TXD
  *  15  14  13  12  11  10  1   1   L0  I0  O0  0   0   0   0   0
  *  00  00  00  00  00  00  01  01  01  01  01  01  01  01  01  01
+ * FIO0DIR (15...0)
  *  IN  IN  OUT OUT OUT OUT --  --  --  --  --  --  --  --  --  --
  *  0   0   1   1   1   1   0   0   0   0   0   0   0   0   0   0
  *
@@ -51,20 +52,19 @@
  *  P0  AD  P0  P0  --  --  AO  --  VB  P0  P0  P0  MOS MIS SCK P0
  *  31  03  29  28  --  --  UT  --  US  22  21  20  I1  O1  1   16
  *  00  01  00  00  00  00  10  00  01  00  00  00  10  10  10  00
+ * FIO0DIR (31...16)
  *  OUT --  OUT OUT --  --  --  --  --  OUT OUT OUT --  --  --  IN
  *  1   0   1   1   0   0   0   0   0   1   1   1   0   0   0   0
  *
- * PINSEL2
- *  --  --  --  --  --  --  --  --  --  --  --  --  --  --  GP  DBG --
- *  --  --  --  --  --  --  --  --  --  --  --  --  --  --  IO      --
- *  00  00  00  00  00  00  00  00  00  00  00  00  00  00  0   1   00
- *  --  --  --  --  --  --  --  --  --  --  --  --  --  --  IN  --  --
+ * FIO1DIR (31...16)
+ *  --  --  --  --  --  IN  IN  OUT OUT OUT OUT OUT OUT OUT OUT OUT
+ *  0   0   0   0   0   0   0   1   1   1   1   1   1   1   1   1
  */
 #define VAL_PINSEL0 0x00055555
 #define VAL_PINSEL1 0x100840A8
-#define VAL_PINSEL2 0x00000004
+#define VAL_PINSEL2 0x00000004  /* Do not modify */
 #define VAL_FIO0DIR 0xB0703C00
-#define VAL_FIO1DIR 0x00000000
+#define VAL_FIO1DIR 0x01FF0000
 #define VAL_FIO0PIN 0xFFFFFFFF
 #define VAL_FIO1PIN 0xFFFFFFFF
 
