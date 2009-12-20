@@ -59,8 +59,9 @@ CSRC = $(PORTSRC) \
        $(TESTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
-       $(BOARDSRC) \
        $(FATFSSRC) \
+       $(BOARDSRC) \
+       ${BOARDPATH}/buzzer.c \
        $(CHIBIOS)/os/various/evtimer.c \
        $(CHIBIOS)/os/various/syscalls.c \
        main.c
