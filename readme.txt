@@ -8,6 +8,8 @@
 - NEW: STM32 PWM driver implementation.
 - NEW: LPC214x SPI driver implementation (SSP only, polled mode, no IRQ), this
   driver replaces the old, not HAL compatible, SSP driver.
+- NEW: LPC214x FatFS demo added, LPC214x minimal demo removed, LPC214x "normal"
+  demo reduced to work like all the other generic demos.
 - NEW: Added custom mode settings to the STM32 PAL driver:
   - PAL_MODE_STM32_ALTERNATE_PUSHPULL
   - PAL_MODE_STM32_ALTERNATE_OPENDRAIN
@@ -17,6 +19,8 @@
 - CHANGE: The STM32 device drivers now no more configure the I/O pins on
   initialization. Pins must be configured in board.h, the change was required
   in order to support the STM32 AFIO remapping feature.
+- CHANGE: Removed the mmcsd.c driver, it is replaced by the generic MMC_SPI
+  driver present into the HAL.
 
 *** 1.3.5 ***
 - FIX: Fixed problem with memory core allocator (bug 2912528).

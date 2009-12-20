@@ -55,20 +55,23 @@ SPIDriver SPID1;
  * @param[out] rxbuf    the pointer to the receive buffer or @p NULL
  */
 void rw8(size_t n, const uint8_t *txbuf, uint8_t *rxbuf) {
+  size_t ntx = n;
 
   while (n > 0) {
-    if (SSPBase->SSP_SR & SR_RNE) {
+    uint32_t sr = SSPBase->SSP_SR;
+    if (sr & SR_RNE) {
       uint8_t w = SSPBase->SSP_DR;
       if (rxbuf != NULL)
         *rxbuf++ = w;
       n--;
       continue; /* Priority over transmission. */
     }
-    if (SSPBase->SSP_SR & SR_TNF) {
+    if ((ntx > 0) && (sr & SR_TNF)) {
       if (txbuf != NULL)
         SSPBase->SSP_DR = *txbuf++;
       else
-        SSPBase->SSP_DR = 0xFF;
+        SSPBase->SSP_DR = 0xFFFFFFFF;
+      ntx--;
     }
   }
 }
@@ -104,6 +107,9 @@ void spi_lld_start(SPIDriver *spip) {
   }
   /* Configuration.*/
   SSPBase->SSP_CR1  = 0;
+  /* Emptying the receive FIFO, it happens to not be empty while debugging.*/
+  while (SSPBase->SSP_SR & SR_RNE)
+    (void) SSPBase->SSP_DR;
   SSPBase->SSP_CR0  = spip->spd_config->spc_cr0;
   SSPBase->SSP_CPSR = spip->spd_config->spc_cpsr;
   SSPBase->SSP_CR1  = spip->spd_config->spc_cr1 | CR1_SSE;
