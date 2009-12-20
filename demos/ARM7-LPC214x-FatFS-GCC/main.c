@@ -24,6 +24,7 @@
 #include "hal.h"
 #include "test.h"
 #include "evtimer.h"
+#include "buzzer.h"
 
 #include "ff.h"
 
@@ -172,6 +173,7 @@ static void TimerHandler(eventid_t id) {
     Thread *tp = chThdCreateStatic(waTestThread, sizeof(waTestThread),
                                    NORMALPRIO, TestThread, &SD1);
     chThdWait(tp);
+    buzzPlay(500, MS2ST(100));
   }
 }
 
@@ -182,6 +184,8 @@ static void InsertHandler(eventid_t id) {
   FRESULT err;
 
   (void)id;
+  buzzPlayWait(1000, MS2ST(100));
+  buzzPlayWait(2000, MS2ST(100));
   iprintf("MMC: inserted\r\n");
   /*
    * On insertion MMC initialization and FS mount.
@@ -201,6 +205,7 @@ static void InsertHandler(eventid_t id) {
   }
   fs_ready = TRUE;
   iprintf("ok\r\n");
+  buzzPlay(440, MS2ST(200));
 }
 
 /*
@@ -211,6 +216,8 @@ static void RemoveHandler(eventid_t id) {
   (void)id;
   iprintf("MMC: removed\r\n");
   fs_ready = FALSE;
+  buzzPlayWait(2000, MS2ST(100));
+  buzzPlayWait(1000, MS2ST(100));
 }
 
 /*
@@ -233,6 +240,11 @@ int main(int argc, char **argv) {
    * Activates the serial driver 2 using the driver default configuration.
    */
   sdStart(&SD1, NULL);
+
+  /*
+   * Buzzer driver initialization.
+   */
+  buzzInit();
 
   /*
    * Initializes the MMC driver to work with SPI2.
