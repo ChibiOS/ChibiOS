@@ -11,9 +11,10 @@ Before 1.4.0:
 * Add a central memory manager offering a sbrk()-like API.
 * Make the heap allocator feed memory chunks from the memory manager.
 * Dedicated syscalls.c support for newlib users.
-- Abstract streams interface.
+* HAL and common device drivers.
 
 After 1.4.x
+- Abstract streams interface.
 - Remove any instance of unnamed structures/unions.
 - Objects registry in the kernel.
 - OSEK-style simple tasks within the idle thread.
@@ -34,7 +35,7 @@ Ideas for 3.x.x:
 
 Side projects:
 * lwIP TCP/IP stack integration and demo.
-X FatFS library integration and demo.
+* FatFS library integration and demo.
 X ChibiOS Wizard, UML modeling and ChibiOS applications code and
   documentation generator.
 X OSEK layer.
