@@ -21,6 +21,8 @@
   in order to support the STM32 AFIO remapping feature.
 - CHANGE: Removed the mmcsd.c driver, it is replaced by the generic MMC_SPI
   driver present into the HAL.
+- CHANGE: Updated the GPL exception text in the documentation, this should be
+  the final text for the stable version 1.4.x.
 
 *** 1.3.5 ***
 - FIX: Fixed problem with memory core allocator (bug 2912528).
