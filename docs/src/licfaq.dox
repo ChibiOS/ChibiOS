@@ -33,8 +33,18 @@
  * - <b>Am I forced to release the source code of my product?</b><br>
  *   The exception to the GPL allows you to use ChibiOS/RT in your commercial
  *   application without have to release your source code under certains
- *   conditions. See the exception text under "Approved Interfaces" for
+ *   conditions. See the @ref exception_text under "Approved Interfaces" for
  *   details.
+ * - <b>What I have to contribute back?</b><br>
+ *   In general you have to offer changes done on existing files (where
+ *   allowed) or new developments done using the OS template files. As example:
+ *   - Ports to new architectures because a new port uses copyrighted OS
+ *     template files.
+ *   - New, HAL-style, device drivers because device drivers use copyrighted
+ *     template files.
+ *   - Improvements on modifiable OS code as described in the
+ *     "approved interfaces" section of the @ref exception_text.
+ *   .
  * - <b>Is the exception applicable to any ChibiOS/RT version ?</b><br>
  *   The exception is valid only for ChibiOS/RT releases marked as @e stable.
  *   Beta or unstable versions are covered by the GPL3 alone because are meant
@@ -45,7 +55,7 @@
  * .
  * @section exception_text GPL Exception Text
 
-<center><b>GPL Exception Text</b></center>
+<center><b>GPL Exception Text for ChibiOS/RT 1.4.x</b></center>
 
   In addition, as a special exception, the copyright holder of ChibiOS/RT,
 gives You the additional right to link the unmodified code of this Program with
@@ -62,23 +72,41 @@ in this paragraph.
       recipient request it.
    -# The combined work is not itself an RTOS, scheduler, kernel or related
       product.
-   -# The combined work is not itself a library intended for linking into
-      other software applications.
+   -# The combined work is not itself a binary library intended for linking
+      into other software applications.
+   .
 
 <center><b>The Approved Interfaces</b></center>
 
    -# The files of Non-GPL Code may include the unmodified ChibiOS/RT
-      distribution header files contained in ./src/include and ./src/lib
+      distribution header files contained under:
+        - ./os/kernel/include
+        - ./os/hal/include
+        - ./os/hal/platforms
+        - ./os/various
+        .
       without causing the resulting work to be covered by the GNU General
       Public License.
    -# The files of Non-GPL Code may link to the unmodified ChibiOS/RT
-      distribution files contained under ./src and ./src/lib without
-      causing the resulting work to be covered by the GNU General Public
-      License.
+      distribution files contained under:
+        - ./os/kernel/src
+        - ./os/hal/sec
+        - ./os/hal/platforms
+        - ./os/various
+        .
+      without causing the resulting work to be covered by the GNU General
+      Public License.
    -# The files of Non-GPL Code may link to, or include, the modified or
-      unmodified ChibiOS/RT distribution files contained under ./src/templates
-      and ./ports and ./demos without causing the resulting work to be
-      covered by the GNU General Public License.
+      unmodified ChibiOS/RT distribution files contained under:
+        - ./os/kernel/templates
+        - ./os/hal/templates
+        - ./os/ports
+        - ./boards
+        - ./demos
+        .
+      without causing the resulting work to be covered by the GNU General
+      Public License.
+   .
 
   Only the copyright holder of ChibiOS/RT may make changes or additions to the
 list of Approved Interfaces.
