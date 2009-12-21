@@ -24,12 +24,10 @@
  * - VIC support code.
  * - I/O ports driver.
  * - Buffered, interrupt driven, serial driver.
- * - SSP driver.
- * - A MMC/SD demo driver.
- * - A timer driven buzzer demo driver.
- * - A minimal demo, useful as project template.
+ * - SPI driver.
  * - A demo supporting the kernel test suite.
  * - A C++ demo supporting the kernel test suite.
+ * - A demo integrating ChibiOS/RT with FatFS.
  * .
  * @ingroup ARM7
  */
@@ -83,9 +81,10 @@
  */
 
 /**
- * @defgroup LPC214x_SSP LPC214x SSP Support
+ * @defgroup LPC214x_SPI LPC214x SPI Support
  * @brief SSP peripheral support.
- * @details This SPI driver supports the LPC214x SSP peripheral.
+ * @details The SPI driver supports the LPC214x SSP, the driver works in
+ * polling mode.
  *
  * @ingroup LPC214x
  */

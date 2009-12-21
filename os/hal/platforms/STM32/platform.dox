@@ -93,7 +93,7 @@
 /**
  * @defgroup STM32_ADC STM32 ADC Support
  * @brief ADC peripherals support.
- * @details The serial driver supports the STM32 ADCs using DMA channels for
+ * @details The ADC driver supports the STM32 ADCs using DMA channels for
  *          improved performance.
  *
  * @ingroup STM32
@@ -107,10 +107,19 @@
  * @ingroup STM32
  */
 
+
+/**
+ * @defgroup STM32_PWM STM32 PWM Support
+ * @brief TIMx peripherals as PWM generators support.
+ * @details The PWM driver supports the STM32 TIMx units as PWM generators.
+ *
+ * @ingroup STM32
+ */
+
 /**
  * @defgroup STM32_SPI STM32 SPI Support
  * @brief SPI peripherals support.
- * @details The serial driver supports the STM32 SPIs using DMA channels for
+ * @details The SPI driver supports the STM32 SPIs using DMA channels for
  *          improved performance.
  *
  * @ingroup STM32
