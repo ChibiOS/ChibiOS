@@ -39,6 +39,7 @@
  */
 EventSource shell_terminated;
 
+#if defined(WIN32)
 /*
  * MinGW does not seem to have this function...
  */
@@ -58,6 +59,7 @@ static char *strtok_r(char *str, const char *delim, char **saveptr) {
 
   return *token ? token : NULL;
 }
+#endif
 
 static void usage(BaseChannel *chp, char *p) {
 
