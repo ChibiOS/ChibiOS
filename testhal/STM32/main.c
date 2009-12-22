@@ -210,6 +210,7 @@ int main(int argc, char **argv) {
       chThdTerminate(spitp);
       chThdWait(spitp);
 #endif
+      chThdSleepMilliseconds(500);
       TestThread(&SD2);
       chThdSleepMilliseconds(500);
       chSysHalt();
