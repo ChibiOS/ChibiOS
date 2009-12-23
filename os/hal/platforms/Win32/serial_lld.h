@@ -19,7 +19,7 @@
 
 /**
  * @file Win32/serial_lld.h
- * @brief Win32 low level simulated serial driver header
+ * @brief Win32 low level simulated serial driver header.
  * @addtogroup WIN32_SERIAL
  * @{
  */

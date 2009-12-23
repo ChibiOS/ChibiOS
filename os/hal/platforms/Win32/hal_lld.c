@@ -18,9 +18,9 @@
 */
 
 /**
- * @file templates/hal_lld.c
- * @brief HAL Driver subsystem low level driver source template.
- * @addtogroup HAL_LLD
+ * @file Win32/hal_lld.c
+ * @brief Win32 HAL subsystem low level driver code.
+ * @addtogroup WIN32_HAL
  * @{
  */
 
