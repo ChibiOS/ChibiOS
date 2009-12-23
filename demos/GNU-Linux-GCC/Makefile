@@ -16,12 +16,12 @@
 # Start of default section
 #
 
-TRGT =
+TRGT = 
 CC   = $(TRGT)gcc
 AS   = $(TRGT)gcc -x assembler-with-cpp
 
 # List all default C defines here, like -D_DEBUG=1
-DDEFS =
+DDEFS = -DSHELL_USE_IPRINTF=FALSE
 
 # List all default ASM defines here, like -D_DEBUG=1
 DADEFS =
@@ -47,7 +47,7 @@ DLIBS =
 PROJECT = ch
 
 # Define linker script file here
-LDSCRIPT=
+LDSCRIPT =
 
 # List all user C define here, like -D_DEBUG=1
 UDEFS =
@@ -57,19 +57,27 @@ UADEFS =
 
 # Imported source files
 CHIBIOS = ../..
-include ${CHIBIOS}/src/kernel.mk
+include ${CHIBIOS}/os/hal/hal.mk
+include ${CHIBIOS}/os/hal/platforms/Linux/platform.mk
+include ${CHIBIOS}/os/ports/GCC/SIMIA32/port.mk
+include ${CHIBIOS}/os/kernel/kernel.mk
 include ${CHIBIOS}/test/test.mk
 
 # List C source files here
-SRC  = chcore.c main.c \
+SRC  = ${PORTSRC} \
        ${KERNSRC} \
-       ${TESTSRC}
+       ${TESTSRC} \
+       ${HALSRC} \
+       ${PLATFORMSRC} \
+       ${CHIBIOS}/os/various/shell.c \
+       main.c
 
 # List ASM source files here
 ASRC =
 
 # List all user directories here
-UINCDIR = ${CHIBIOS}/src/include
+UINCDIR = $(PORTINC) $(KERNINC) $(TESTINC) $(HALINC) $(PLATFORMINC) \
+          ${CHIBIOS}/os/various
 
 # List the user directory to look for the libraries here
 ULIBDIR =
@@ -94,7 +102,7 @@ LIBS    = $(DLIBS) $(ULIBS)
 
 LDFLAGS = -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
 ASFLAGS = -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
-CPFLAGS = $(OPT) -Wall -Wstrict-prototypes -fverbose-asm -Wa,-alms=$(<:.c=.lst) $(DEFS)
+CPFLAGS = $(OPT) -Wall -Wextra -Wstrict-prototypes -fverbose-asm -Wa,-alms=$(<:.c=.lst) $(DEFS)
 
 # Generate dependency information
 CPFLAGS += -MD -MP -MF .dep/$(@F).d
@@ -119,7 +127,7 @@ gcov:
 	$(COV) -u $(subst /,\,$(SRC))
 	-mv *.gcov ./gcov
 
-clean:
+clean:                                      
 	-rm -f $(OBJS)
 	-rm -f $(PROJECT)
 	-rm -f $(PROJECT).map

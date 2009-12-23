@@ -37,7 +37,7 @@
  *          setting also defines the system tick time unit.
  */
 #if !defined(CH_FREQUENCY) || defined(__DOXYGEN__)
-#define CH_FREQUENCY                    100
+#define CH_FREQUENCY                    1000
 #endif
 
 /**
@@ -80,7 +80,7 @@
  * @note Requires @p CH_USE_COREMEM.
  */
 #if !defined(CH_MEMCORE_SIZE) || defined(__DOXYGEN__)
-#define CH_MEMCORE_SIZE                 0
+#define CH_MEMCORE_SIZE                 0x20000
 #endif
 
 /*===========================================================================*/
@@ -458,6 +458,8 @@ struct {                                                                \
   /* Idle loop code here.*/                                             \
 }
 #endif
+
+#define chThdGetExitEventSource(tp) (&(tp)->p_exitesource)
 
 #endif  /* _CHCONF_H_ */
 
