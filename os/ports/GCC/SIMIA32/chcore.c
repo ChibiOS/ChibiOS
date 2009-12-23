@@ -22,6 +22,8 @@
  * @{
  */
 
+#include <stdlib.h>
+
 #include "ch.h"
 #include "hal.h"
 
@@ -33,9 +35,14 @@
 __attribute__((used))
 static void __dummy(Thread *otp, Thread *ntp) {
   (void)otp; (void)ntp;
+#if defined(WIN32)
   asm volatile (".globl @port_switch@8                          \n\t" \
-                "@port_switch@8:                                \n\t" \
-                "push    %ebp                                   \n\t" \
+                "@port_switch@8:");
+#else
+  asm volatile (".globl port_switch                             \n\t" \
+                "port_switch:");
+#endif
+  asm volatile ("push    %ebp                                   \n\t" \
                 "push    %esi                                   \n\t" \
                 "push    %edi                                   \n\t" \
                 "push    %ebx                                   \n\t" \
@@ -62,8 +69,13 @@ void port_halt(void) {
  */
 void threadexit(void) {
 
+#if defined(WIN32)
   asm volatile ("push    %eax                                   \n\t" \
                 "call    _chThdExit");
+#else
+  asm volatile ("push    %eax                                   \n\t" \
+                "call    chThdExit");
+#endif
 }
 
 /** @} */
