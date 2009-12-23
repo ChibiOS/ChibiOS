@@ -119,7 +119,7 @@ static bool_t cmdexec(const ShellCommand *scp, BaseChannel *chp,
                       char *name, int argc, char *argv[]) {
 
   while (scp->sc_name != NULL) {
-    if (strcmpi(scp->sc_name, name) == 0) {
+    if (strcasecmp(scp->sc_name, name) == 0) {
       scp->sc_function(chp, argc, argv);
       return FALSE;
     }
@@ -165,12 +165,12 @@ static msg_t shell_thread(void *p) {
     }
     args[n] = NULL;
     if (cmd != NULL) {
-      if (strcmpi(cmd, "exit") == 0) {
+      if (strcasecmp(cmd, "exit") == 0) {
         if (n > 0)
           usage(chp, "exit");
         break;
       }
-      else if (strcmpi(cmd, "help") == 0) {
+      else if (strcasecmp(cmd, "help") == 0) {
         if (n > 0)
           usage(chp, "help");
         shellPrint(chp, "Commands: help exit ");
