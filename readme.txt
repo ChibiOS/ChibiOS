@@ -5,7 +5,7 @@
 *** 1.3.6 ***
 - FIX: Fixed missing STM32 PWM low level driver error in platform.mk by
   adding the driver files (bug 2913560).
-- NEW: The Linux simulator now works again and also supports the serial
+- NEW: The Linux simulator now works again, also supports the serial
   drivers over TCP/IP and has a command line interface like the Win32
   simulator.
 - NEW: STM32 PWM driver implementation.
