@@ -60,6 +60,8 @@ static struct timeval tick = {0, 1000000 / CH_FREQUENCY};
 void hal_lld_init(void) {
 
   puts("Win32 ChibiOS/RT simulator (Linux)\n");
+  gettimeofday(&nextcnt, NULL);
+  timeradd(&nextcnt, &tick, &nextcnt);
 }
 
 /**
@@ -77,7 +79,7 @@ void ChkIntSources(void) {
 #endif
 
   gettimeofday(&tv, NULL);
-  if (timercmp(&nextcnt, &tv, <)) {
+  if (timercmp(&tv, &nextcnt, >=)) {
     timeradd(&nextcnt, &tick, &nextcnt);
     chSysTimerHandlerI();
     if (chSchIsRescRequiredExI())
