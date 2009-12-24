@@ -81,7 +81,7 @@ static unsigned int msg_loop_test(Thread *tp) {
   do {
     (void)chMsgSend(tp, 1);
     n++;
-#if defined(WIN32)
+#if defined(SIMULATOR)
     ChkIntSources();
 #endif
   } while (!test_timer_done);
@@ -248,7 +248,7 @@ static void bmk4_execute(void) {
     chSchWakeupS(tp, RDY_OK);
     chSysUnlock();
     n += 4;
-#if defined(WIN32)
+#if defined(SIMULATOR)
     ChkIntSources();
 #endif
   } while (!test_timer_done);
@@ -295,7 +295,7 @@ static void bmk5_execute(void) {
   do {
     chThdWait(chThdCreateStatic(wap, WA_SIZE, prio, thread2, NULL));
     n++;
-#if defined(WIN32)
+#if defined(SIMULATOR)
     ChkIntSources();
 #endif
   } while (!test_timer_done);
@@ -339,7 +339,7 @@ static void bmk6_execute(void) {
   do {
     chThdCreateStatic(wap, WA_SIZE, prio, thread2, NULL);
     n++;
-#if defined(WIN32)
+#if defined(SIMULATOR)
     ChkIntSources();
 #endif
   } while (!test_timer_done);
@@ -399,7 +399,7 @@ static void bmk7_execute(void) {
   do {
     chSemReset(&sem1, 0);
     n++;
-#if defined(WIN32)
+#if defined(SIMULATOR)
     ChkIntSources();
 #endif
   } while (!test_timer_done);
@@ -439,7 +439,7 @@ static msg_t thread8(void *p) {
     chThdYield();
     chThdYield();
     (*(uint32_t *)p) += 4;
-#if defined(WIN32)
+#if defined(SIMULATOR)
     ChkIntSources();
 #endif
   } while(!chThdShouldTerminate());
@@ -514,7 +514,7 @@ static void bmk9_execute(void) {
     (void)chIQGet(&iq);
     (void)chIQGet(&iq);
     n++;
-#if defined(WIN32)
+#if defined(SIMULATOR)
     ChkIntSources();
 #endif
   } while (!test_timer_done);
@@ -560,7 +560,7 @@ static void bmk10_execute(void) {
     chVTResetI(&vt2);
     chSysUnlock();
     n++;
-#if defined(WIN32)
+#if defined(SIMULATOR)
     ChkIntSources();
 #endif
   } while (!test_timer_done);
@@ -611,7 +611,7 @@ static void bmk11_execute(void) {
     chSemWait(&sem1);
     chSemSignal(&sem1);
     n++;
-#if defined(WIN32)
+#if defined(SIMULATOR)
     ChkIntSources();
 #endif
   } while (!test_timer_done);
@@ -663,7 +663,7 @@ static void bmk12_execute(void) {
     chMtxLock(&mtx1);
     chMtxUnlock();
     n++;
-#if defined(WIN32)
+#if defined(SIMULATOR)
     ChkIntSources();
 #endif
   } while (!test_timer_done);
