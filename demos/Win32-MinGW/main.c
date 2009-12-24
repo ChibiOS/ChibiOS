@@ -26,7 +26,7 @@
 #define CONSOLE_WA_SIZE     THD_WA_SIZE(4096)
 #define TEST_WA_SIZE        THD_WA_SIZE(4096)
 
-#define cprint(msg) chMsgSend(cdtp, (msg_t)msg)
+#define cputs(msg) chMsgSend(cdtp, (msg_t)msg)
 
 static Thread *cdtp;
 static Thread *shelltp1;
@@ -73,7 +73,7 @@ static msg_t console_thread(void *arg) {
 
   (void)arg;
   while (!chThdShouldTerminate()) {
-    printf((char *)chMsgWait());
+    puts((char *)chMsgWait());
     fflush(stdout);
     chMsgRelease(RDY_OK);
   }
@@ -92,7 +92,7 @@ static void termination_handler(eventid_t id) {
     chThdWait(shelltp1);
     shelltp1 = NULL;
     chThdSleepMilliseconds(10);
-    cprint("Init: shell on SD1 terminated\n");
+    cputs("Init: shell on SD1 terminated");
     chSysLock();
     chOQResetI(&SD1.d2.oqueue);
     chSysUnlock();
@@ -101,7 +101,7 @@ static void termination_handler(eventid_t id) {
     chThdWait(shelltp2);
     shelltp2 = NULL;
     chThdSleepMilliseconds(10);
-    cprint("Init: shell on SD2 terminated\n");
+    cputs("Init: shell on SD2 terminated");
     chSysLock();
     chOQResetI(&SD2.d2.oqueue);
     chSysUnlock();
@@ -119,11 +119,11 @@ static void sd1_handler(eventid_t id) {
   (void)id;
   flags = sdGetAndClearFlags(&SD1);
   if ((flags & SD_CONNECTED) && (shelltp1 == NULL)) {
-    cprint("Init: connection on SD1\n");
+    cputs("Init: connection on SD1");
     shelltp1 = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO + 1);
   }
   if (flags & SD_DISCONNECTED) {
-    cprint("Init: disconnection on SD1\n");
+    cputs("Init: disconnection on SD1");
     chSysLock();
     chIQResetI(&SD1.d2.iqueue);
     chSysUnlock();
@@ -141,11 +141,11 @@ static void sd2_handler(eventid_t id) {
   (void)id;
   flags = sdGetAndClearFlags(&SD2);
   if ((flags & SD_CONNECTED) && (shelltp2 == NULL)) {
-    cprint("Init: connection on SD2\n");
+    cputs("Init: connection on SD2");
     shelltp2 = shellCreate(&shell_cfg2, SHELL_WA_SIZE, NORMALPRIO + 10);
   }
   if (flags & SD_DISCONNECTED) {
-    cprint("Init: disconnection on SD2\n");
+    cputs("Init: disconnection on SD2");
     chSysLock();
     chIQResetI(&SD2.d2.iqueue);
     chSysUnlock();
@@ -195,11 +195,11 @@ int main(void) {
   /*
    * Initializing connection/disconnection events.
    */
-  cprint("Shell service started on SD1, SD2\n");
-  cprint("  - Listening for connections on SD1\n");
+  cputs("Shell service started on SD1, SD2");
+  cputs("  - Listening for connections on SD1");
   (void) sdGetAndClearFlags(&SD1);
   chEvtRegister(&SD1.d2.sevent, &sd1fel, 1);
-  cprint("  - Listening for connections on SD2\n");
+  cputs("  - Listening for connections on SD2");
   (void) sdGetAndClearFlags(&SD2);
   chEvtRegister(&SD2.d2.sevent, &sd2fel, 2);
 
