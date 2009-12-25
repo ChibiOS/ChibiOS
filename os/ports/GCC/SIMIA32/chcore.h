@@ -26,14 +26,14 @@
 #define _CHCORE_H_
 
 /**
- * Macro defining the a simulated architecture into Win32.
+ * Macro defining the a simulated architecture into x86.
  */
-#define CH_ARCHITECTURE_WIN32SIM
+#define CH_ARCHITECTURE_SIMIA32
 
 /**
  * Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME "WIN32 Simulator"
+#define CH_ARCHITECTURE_NAME "x86 Simulator"
 
 /**
  * 32 bit stack alignment.
@@ -104,8 +104,8 @@ struct context {
 /**
  * Per-thread stack overhead for interrupts servicing, it is used in the
  * calculation of the correct working area size.
- * It requires stack space because the simulated "interrupt handlers" invoke
- * Win32 APIs inside so it better have a lot of space.
+ * It requires stack space because the simulated "interrupt handlers" can
+ * invoke host library functions inside so it better have a lot of space.
  */
 #ifndef INT_REQUIRED_STACK
 #define INT_REQUIRED_STACK 16384

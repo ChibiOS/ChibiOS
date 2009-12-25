@@ -2,6 +2,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.3.7 ***
+- FIX: Fixed Linux simulator startup message (bug 2921012).
+
 *** 1.3.6 ***
 - FIX: Fixed missing STM32 PWM low level driver error in platform.mk by
   adding the driver files (bug 2913560).

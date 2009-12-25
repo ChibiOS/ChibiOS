@@ -62,12 +62,11 @@ void hal_lld_init(void) {
     exit(1);
   }
 
-  printf("Win32 ChibiOS/RT simulator\n\n");
+  printf("ChibiOS/RT simulator (Win32)\n");
   if (!QueryPerformanceFrequency(&slice)) {
     printf("QueryPerformanceFrequency() error");
     exit(1);
   }
-  printf("Core Frequency   %u Hz\n", (int)slice.LowPart);
   slice.QuadPart /= CH_FREQUENCY;
   QueryPerformanceCounter(&nextcnt);
   nextcnt.QuadPart += slice.QuadPart;

@@ -12,6 +12,7 @@ Before 1.4.0:
 * Make the heap allocator feed memory chunks from the memory manager.
 * Dedicated syscalls.c support for newlib users.
 * HAL and common device drivers.
+* Multiple heaps, disjoint heaps, heaps in heaps.
 
 After 1.4.x
 - Abstract streams interface.
@@ -22,7 +23,6 @@ After 1.4.x
 - Threads Pools manager in the library.
 ? Minimal optional C-runtime library (complete enough for lwIP).
 ? Think to something for threads restart.
-? Multiple heaps, disjoint heaps, heaps in heaps.
 - Update C++ wrapper (Heap, Pools, Mailboxes and any new feature).
 
 Ideas for 2.x.x:
