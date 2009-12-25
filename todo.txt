@@ -15,7 +15,9 @@ Before 1.4.0:
 * Multiple heaps, disjoint heaps, heaps in heaps.
 
 After 1.4.x
-- Abstract streams interface.
+- I2C device driver class support.
+- USB device support.
+- Abstract streams interface (for MAC and USB endpoints).
 - Remove any instance of unnamed structures/unions.
 - Objects registry in the kernel.
 - OSEK-style simple tasks within the idle thread.
