@@ -22,7 +22,7 @@ AS   = $(TRGT)gcc -x assembler-with-cpp
 COV  = gcov
 
 # List all default C defines here, like -D_DEBUG=1
-DDEFS =
+DDEFS = -DSIMULATOR
 
 # List all default ASM defines here, like -D_DEBUG=1
 DADEFS =

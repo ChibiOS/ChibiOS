@@ -3,6 +3,7 @@
 *****************************************************************************
 
 *** 1.3.7 ***
+- FIX: Fixed coverage tool hanging during execution (bug 2921120).
 - FIX: Fixed Linux simulator startup message (bug 2921012).
 
 *** 1.3.6 ***
