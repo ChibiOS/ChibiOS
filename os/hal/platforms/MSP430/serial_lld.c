@@ -31,6 +31,10 @@
 
 #if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Driver exported variables.                                                */
+/*===========================================================================*/
+
 #if USE_MSP430_USART0 || defined(__DOXYGEN__)
 /** @brief USART0 serial driver identifier.*/
 SerialDriver SD1;
@@ -40,6 +44,10 @@ SerialDriver SD1;
 SerialDriver SD2;
 #endif
 
+/*===========================================================================*/
+/* Driver local variables.                                                   */
+/*===========================================================================*/
+
 /** @brief Driver default configuration.*/
 static const SerialDriverConfig default_config = {
   UBR(DEFAULT_USART_BITRATE),
@@ -48,7 +56,7 @@ static const SerialDriverConfig default_config = {
 };
 
 /*===========================================================================*/
-/* Low Level Driver local functions.                                         */
+/* Driver local functions.                                                   */
 /*===========================================================================*/
 
 static void set_error(uint8_t urctl, SerialDriver *sdp) {
@@ -150,7 +158,7 @@ static void usart1_deinit(void) {
 #endif /* USE_MSP430_USART1 */
 
 /*===========================================================================*/
-/* Low Level Driver interrupt handlers.                                      */
+/* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
 #if USE_MSP430_USART0 || defined(__DOXYGEN__)
@@ -218,7 +226,7 @@ CH_IRQ_HANDLER(USART1RX_VECTOR) {
 #endif /* USE_MSP430_USART1 */
 
 /*===========================================================================*/
-/* Low Level Driver exported functions.                                      */
+/* Driver exported functions.                                                */
 /*===========================================================================*/
 
 /**

@@ -30,6 +30,10 @@
 #if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
@@ -40,7 +44,7 @@
  * @note The default is 32 bytes for both the transmission and receive buffers.
  */
 #if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define SERIAL_BUFFERS_SIZE 32
+#define SERIAL_BUFFERS_SIZE         32
 #endif
 
 /**
@@ -49,7 +53,7 @@
  * this speed.
  */
 #if !defined(DEFAULT_USART_BITRATE) || defined(__DOXYGEN__)
-#define DEFAULT_USART_BITRATE 38400
+#define DEFAULT_USART_BITRATE       38400
 #endif
 
 /**
@@ -58,7 +62,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(USE_MSP430_USART0) || defined(__DOXYGEN__)
-#define USE_MSP430_USART0 TRUE
+#define USE_MSP430_USART0           TRUE
 #endif
 
 /**
@@ -67,11 +71,11 @@
  * @note The default is @p FALSE.
  */
 #if !defined(USE_MSP430_USART1) || defined(__DOXYGEN__)
-#define USE_MSP430_USART1 FALSE
+#define USE_MSP430_USART1           FALSE
 #endif
 
 /*===========================================================================*/
-/* Unsupported event flags and custom events.                                */
+/* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 /*===========================================================================*/
@@ -117,12 +121,6 @@ struct _serial_driver_data {
 };
 
 /**
- * @brief Macro for baud rate computation.
- * @note Make sure the final baud rate is within tolerance.
- */
-#define UBR(b) (SMCLK / (b))
-
-/**
  * @brief MSP430 Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
@@ -132,6 +130,16 @@ typedef struct {
   uint8_t               mod;
   uint8_t               ctl;
 } SerialDriverConfig;
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
+
+/**
+ * @brief Macro for baud rate computation.
+ * @note Make sure the final baud rate is within tolerance.
+ */
+#define UBR(b) (SMCLK / (b))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
