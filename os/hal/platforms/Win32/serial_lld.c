@@ -29,6 +29,10 @@
 
 #if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Driver exported variables.                                                */
+/*===========================================================================*/
+
 /** @brief Serial driver 1 identifier.*/
 #if USE_WIN32_SERIAL1 || defined(__DOXYGEN__)
 SerialDriver SD1;
@@ -38,6 +42,10 @@ SerialDriver SD1;
 SerialDriver SD2;
 #endif
 
+/*===========================================================================*/
+/* Driver local variables.                                                   */
+/*===========================================================================*/
+
 /** @brief Driver default configuration.*/
 static const SerialDriverConfig default_config = {
 };
@@ -45,7 +53,7 @@ static const SerialDriverConfig default_config = {
 static u_long nb = 1;
 
 /*===========================================================================*/
-/* Low Level Driver local functions.                                         */
+/* Driver local functions.                                                   */
 /*===========================================================================*/
 
 static void init(SerialDriver *sdp, uint16_t port) {
@@ -180,11 +188,11 @@ static bool_t outint(SerialDriver *sdp) {
 }
 
 /*===========================================================================*/
-/* Low Level Driver interrupt handlers.                                      */
+/* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Low Level Driver exported functions.                                      */
+/* Driver exported functions.                                                */
 /*===========================================================================*/
 
 /**
