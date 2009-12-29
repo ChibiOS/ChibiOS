@@ -18,9 +18,9 @@
 */
 
 /**
- * @file templates/spi_lld.h
- * @brief SPI Driver subsystem low level driver header template.
- * @addtogroup SPI_LLD
+ * @file LPC214x/spi_lld.h
+ * @brief LPC214x low level SPI driver header.
+ * @addtogroup LPC214x_SPI
  * @{
  */
 
@@ -115,6 +115,10 @@ typedef struct {
   const SPIConfig       *spd_config;
   /* End of the mandatory fields.*/
 } SPIDriver;
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -29,6 +29,10 @@
 
 #if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Driver exported variables.                                                */
+/*===========================================================================*/
+
 #if USE_LPC214x_UART0 || defined(__DOXYGEN__)
 /** @brief UART0 serial driver identifier.*/
 SerialDriver SD1;
@@ -39,6 +43,10 @@ SerialDriver SD1;
 SerialDriver SD2;
 #endif
 
+/*===========================================================================*/
+/* Driver local variables.                                                   */
+/*===========================================================================*/
+
 /** @brief Driver default configuration.*/
 static const SerialDriverConfig default_config = {
   38400,
@@ -47,7 +55,7 @@ static const SerialDriverConfig default_config = {
 };
 
 /*===========================================================================*/
-/* Low Level Driver local functions.                                         */
+/* Driver local functions.                                                   */
 /*===========================================================================*/
 
 /**
@@ -228,7 +236,7 @@ static void notify2(void) {
 #endif
 
 /*===========================================================================*/
-/* Low Level Driver interrupt handlers.                                      */
+/* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
 #if USE_LPC214x_UART0 || defined(__DOXYGEN__)
@@ -257,7 +265,7 @@ CH_IRQ_HANDLER(UART1IrqHandler) {
 
 
 /*===========================================================================*/
-/* Low Level Driver exported functions.                                      */
+/* Driver exported functions.                                                */
 /*===========================================================================*/
 
 /**

@@ -18,9 +18,9 @@
 */
 
 /**
- * @file templates/spi_lld.c
- * @brief SPI Driver subsystem low level driver source template.
- * @addtogroup SPI_LLD
+ * @file LPC214x/spi_lld.c
+ * @brief LPC214x low level SPI driver code.
+ * @addtogroup LPC214x_SPI
  * @{
  */
 
@@ -30,7 +30,7 @@
 #if CH_HAL_USE_SPI || defined(__DOXYGEN__)
 
 /*===========================================================================*/
-/* Low Level Driver exported variables.                                      */
+/* Driver exported variables.                                                */
 /*===========================================================================*/
 
 #if USE_LPC214x_SPI1 || defined(__DOXYGEN__)
@@ -39,11 +39,11 @@ SPIDriver SPID1;
 #endif
 
 /*===========================================================================*/
-/* Low Level Driver local variables.                                         */
+/* Driver local variables.                                                   */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Low Level Driver local functions.                                         */
+/* Driver local functions.                                                   */
 /*===========================================================================*/
 
 /**
@@ -77,11 +77,11 @@ void rw8(size_t n, const uint8_t *txbuf, uint8_t *rxbuf) {
 }
 
 /*===========================================================================*/
-/* Low Level Driver interrupt handlers.                                      */
+/* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Low Level Driver exported functions.                                      */
+/* Driver exported functions.                                                */
 /*===========================================================================*/
 
 /**

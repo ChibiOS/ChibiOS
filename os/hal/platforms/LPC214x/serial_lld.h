@@ -30,6 +30,10 @@
 #if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
@@ -56,7 +60,7 @@
  *       smaller and simpler.
  */
 #if !defined(UART_FIFO_PRELOAD) || defined(__DOXYGEN__)
-#define UART_FIFO_PRELOAD 16
+#define UART_FIFO_PRELOAD       16
 #endif
 
 /**
@@ -65,7 +69,7 @@
  * @note The default is @p TRUE .
  */
 #if !defined(USE_LPC214x_UART0) || defined(__DOXYGEN__)
-#define USE_LPC214x_UART0 TRUE
+#define USE_LPC214x_UART0       TRUE
 #endif
 
 /**
@@ -74,7 +78,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(USE_LPC214x_UART1) || defined(__DOXYGEN__)
-#define USE_LPC214x_UART1 TRUE
+#define USE_LPC214x_UART1       TRUE
 #endif
 
 /**
@@ -92,7 +96,7 @@
 #endif
 
 /*===========================================================================*/
-/* Unsupported event flags and custom events.                                */
+/* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 /*===========================================================================*/
@@ -147,6 +151,10 @@ typedef struct {
   uint32_t              lcr;
   uint32_t              fcr;
 } SerialDriverConfig;
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
 
 /*===========================================================================*/
 /* External declarations.                                                    */
