@@ -29,31 +29,42 @@
 
 #if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
-#if USE_AVR_USART0 || defined(__DOXYGEN__)
+/*===========================================================================*/
+/* Driver exported variables.                                                */
+/*===========================================================================*/
+
 /**
  * @brief USART0 serial driver identifier.
  * @note The name does not follow the convention used in the other ports
  *       (COMn) because a name conflict with the AVR headers.
  */
+#if USE_AVR_USART0 || defined(__DOXYGEN__)
 SerialDriver SD1;
 #endif
-#if USE_AVR_USART1 || defined(__DOXYGEN__)
+
 /**
  * @brief USART1 serial driver identifier.
  * @note The name does not follow the convention used in the other ports
  *       (COMn) because a name conflict with the AVR headers.
  */
+#if USE_AVR_USART1 || defined(__DOXYGEN__)
 SerialDriver SD2;
 #endif
 
-/** @brief Driver default configuration.*/
+/*===========================================================================*/
+/* Driver local variables.                                                   */
+/*===========================================================================*/
+
+/**
+ * @brief Driver default configuration.
+ */
 static const SerialDriverConfig default_config = {
   UBRR(DEFAULT_USART_BITRATE),
   (1 << UCSZ1) | (1 << UCSZ0)
 };
 
 /*===========================================================================*/
-/* Low Level Driver local functions.                                         */
+/* Driver local functions.                                                   */
 /*===========================================================================*/
 
 static void set_error(uint8_t sra, SerialDriver *sdp) {
@@ -131,7 +142,7 @@ static void usart1_deinit(void) {
 #endif
 
 /*===========================================================================*/
-/* Low Level Driver interrupt handlers.                                      */
+/* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
 #if USE_AVR_USART0 || defined(__DOXYGEN__)
@@ -201,7 +212,7 @@ CH_IRQ_HANDLER(USART1_UDRE_vect) {
 #endif /* USE_AVR_USART1 */
 
 /*===========================================================================*/
-/* Low Level Driver exported functions.                                      */
+/* Driver exported functions.                                                */
 /*===========================================================================*/
 
 /**

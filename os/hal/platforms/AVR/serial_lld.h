@@ -30,6 +30,10 @@
 #if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
@@ -74,7 +78,7 @@
 #endif
 
 /*===========================================================================*/
-/* Unsupported event flags and custom events.                                */
+/* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 /*===========================================================================*/
@@ -120,12 +124,6 @@ struct _serial_driver_data {
 };
 
 /**
- * @brief Macro for baud rate computation.
- * @note Make sure the final baud rate is within tolerance.
- */
-#define UBRR(b) ((F_CPU / (b << 4)) - 1)
-
-/**
  * @brief AVR Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
@@ -134,6 +132,16 @@ typedef struct {
   uint16_t              brr;
   uint8_t               csrc;
 } SerialDriverConfig;
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
+
+/**
+ * @brief Macro for baud rate computation.
+ * @note Make sure the final baud rate is within tolerance.
+ */
+#define UBRR(b) ((F_CPU / (b << 4)) - 1)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
