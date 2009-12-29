@@ -29,6 +29,10 @@
 
 #if CH_HAL_USE_CAN || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
 /*
  * The following macros from the ST header file are replaced with better
  * equivalents.
@@ -38,10 +42,6 @@
 #undef CAN_BTR_TS2
 #undef CAN_BTR_SJW
 
-/*===========================================================================*/
-/* Driver constants.                                                         */
-/*===========================================================================*/
-
 /**
  * @brief This switch defines whether the driver implementation supports
  *        a low power switch mode with automatic an wakeup feature.
@@ -49,7 +49,7 @@
 #define CAN_SUPPORTS_SLEEP          TRUE
 
 /**
- * @brief Manimum number of CAN filters.
+ * @brief Minimum number of CAN filters.
  */
 #if defined(STM32F10X_CL) || defined(__DOXYGEN__)
 #define CAN_MAX_FILTERS             28
@@ -105,10 +105,6 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#if !CH_USE_SEMAPHORES || !CH_USE_EVENTS
-#error "the ADC driver requires CH_USE_SEMAPHORES and CH_USE_EVENTS"
-#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -296,6 +292,10 @@ typedef struct {
    */
   CAN_TypeDef               *cd_can;
 } CANDriver;
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
 
 /*===========================================================================*/
 /* External declarations.                                                    */

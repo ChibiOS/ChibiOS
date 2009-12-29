@@ -30,6 +30,10 @@
 #if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
@@ -40,7 +44,7 @@
  * @note The default is 128 bytes for both the transmission and receive buffers.
  */
 #if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define SERIAL_BUFFERS_SIZE 128
+#define SERIAL_BUFFERS_SIZE         128
 #endif
 
 /**
@@ -49,7 +53,7 @@
  * @note The default is @p FALSE.
  */
 #if !defined(USE_STM32_USART1) || defined(__DOXYGEN__)
-#define USE_STM32_USART1 FALSE
+#define USE_STM32_USART1            FALSE
 #endif
 
 /**
@@ -58,7 +62,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(USE_STM32_USART2) || defined(__DOXYGEN__)
-#define USE_STM32_USART2 TRUE
+#define USE_STM32_USART2            TRUE
 #endif
 
 /**
@@ -67,7 +71,7 @@
  * @note The default is @p FALSE.
  */
 #if !defined(USE_STM32_USART3) || defined(__DOXYGEN__)
-#define USE_STM32_USART3 FALSE
+#define USE_STM32_USART3            FALSE
 #endif
 
 /**
@@ -75,7 +79,7 @@
  * @note @p BASEPRI_KERNEL >= @p STM32_USART1_PRIORITY > @p PRIORITY_PENDSV.
  */
 #if !defined(STM32_USART1_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_USART1_PRIORITY   0xC0
+#define STM32_USART1_PRIORITY       0xC0
 #endif
 
 /**
@@ -83,7 +87,7 @@
  * @note @p BASEPRI_KERNEL >= @p STM32_USART2_PRIORITY > @p PRIORITY_PENDSV.
  */
 #if !defined(STM32_USART2_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_USART2_PRIORITY   0xC0
+#define STM32_USART2_PRIORITY       0xC0
 #endif
 
 /**
@@ -91,20 +95,12 @@
  * @note @p BASEPRI_KERNEL >= @p STM32_USART3_PRIORITY > @p PRIORITY_PENDSV.
  */
 #if !defined(STM32_USART3_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_USART3_PRIORITY   0xC0
+#define STM32_USART3_PRIORITY       0xC0
 #endif
 
 /*===========================================================================*/
-/* Driver macros.                                                            */
+/* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-/*
- * Extra USARTs definitions here (missing from the ST header file).
- */
-#define USART_CR2_STOP1_BITS    (0 << 12)   /**< @brief CR2 1 stop bit value.*/
-#define USART_CR2_STOP0P5_BITS  (1 << 12)   /**< @brief CR2 0.5 stop bit value.*/
-#define USART_CR2_STOP2_BITS    (2 << 12)   /**< @brief CR2 2 stop bit value.*/
-#define USART_CR2_STOP1P5_BITS  (3 << 12)   /**< @brief CR2 1.5 stop bit value.*/
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -164,6 +160,18 @@ typedef struct {
   uint16_t              cr2;
   uint16_t              cr3;
 } SerialDriverConfig;
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
+
+/*
+ * Extra USARTs definitions here (missing from the ST header file).
+ */
+#define USART_CR2_STOP1_BITS    (0 << 12)   /**< @brief CR2 1 stop bit value.*/
+#define USART_CR2_STOP0P5_BITS  (1 << 12)   /**< @brief CR2 0.5 stop bit value.*/
+#define USART_CR2_STOP2_BITS    (2 << 12)   /**< @brief CR2 2 stop bit value.*/
+#define USART_CR2_STOP1P5_BITS  (3 << 12)   /**< @brief CR2 1.5 stop bit value.*/
 
 /*===========================================================================*/
 /* External declarations.                                                    */

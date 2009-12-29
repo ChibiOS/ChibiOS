@@ -62,8 +62,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_USE_SEMAPHORES
-#error "CAN driver requires CH_USE_SEMAPHORES"
+#if !CH_USE_SEMAPHORES || !CH_USE_EVENTS
+#error "the ADC driver requires CH_USE_SEMAPHORES and CH_USE_EVENTS"
 #endif
 
 /*===========================================================================*/

@@ -30,28 +30,28 @@
 #if CH_HAL_USE_SPI || defined(__DOXYGEN__)
 
 /*===========================================================================*/
-/* Low Level Driver exported variables.                                      */
+/* Driver exported variables.                                                */
 /*===========================================================================*/
 
-#if USE_STM32_SPI1 || defined(__DOXYGEN__)
 /** @brief SPI1 driver identifier.*/
+#if USE_STM32_SPI1 || defined(__DOXYGEN__)
 SPIDriver SPID1;
 #endif
 
-#if USE_STM32_SPI2 || defined(__DOXYGEN__)
 /** @brief SPI2 driver identifier.*/
+#if USE_STM32_SPI2 || defined(__DOXYGEN__)
 SPIDriver SPID2;
 #endif
 
 /*===========================================================================*/
-/* Low Level Driver local variables.                                         */
+/* Driver local variables.                                                   */
 /*===========================================================================*/
 
 static uint16_t dummyrx;
 static uint16_t dummytx;
 
 /*===========================================================================*/
-/* Low Level Driver local functions.                                         */
+/* Driver local functions.                                                   */
 /*===========================================================================*/
 
 static void spi_stop(SPIDriver *spip) {
@@ -103,7 +103,7 @@ static void spi_start_wait(SPIDriver *spip, size_t n,
 }
 
 /*===========================================================================*/
-/* Low Level Driver interrupt handlers.                                      */
+/* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
 #if USE_STM32_SPI1 || defined(__DOXYGEN__)
@@ -173,7 +173,7 @@ CH_IRQ_HANDLER(Vector7C) {
 #endif
 
 /*===========================================================================*/
-/* Low Level Driver exported functions.                                      */
+/* Driver exported functions.                                                */
 /*===========================================================================*/
 
 /**

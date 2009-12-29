@@ -30,26 +30,26 @@
 #if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
-/* Low Level Driver exported variables.                                      */
+/* Driver exported variables.                                                */
 /*===========================================================================*/
 
-#if USE_STM32_USART1 || defined(__DOXYGEN__)
 /** @brief USART1 serial driver identifier.*/
+#if USE_STM32_USART1 || defined(__DOXYGEN__)
 SerialDriver SD1;
 #endif
 
-#if USE_STM32_USART2 || defined(__DOXYGEN__)
 /** @brief USART2 serial driver identifier.*/
+#if USE_STM32_USART2 || defined(__DOXYGEN__)
 SerialDriver SD2;
 #endif
 
-#if USE_STM32_USART3 || defined(__DOXYGEN__)
 /** @brief USART3 serial driver identifier.*/
+#if USE_STM32_USART3 || defined(__DOXYGEN__)
 SerialDriver SD3;
 #endif
 
 /*===========================================================================*/
-/* Low Level Driver local variables.                                         */
+/* Driver local variables.                                                   */
 /*===========================================================================*/
 
 /** @brief Driver default configuration.*/
@@ -62,7 +62,7 @@ static const SerialDriverConfig default_config =
 };
 
 /*===========================================================================*/
-/* Low Level Driver local functions.                                         */
+/* Driver local functions.                                                   */
 /*===========================================================================*/
 
 /**
@@ -173,7 +173,7 @@ static void notify3(void) {
 #endif
 
 /*===========================================================================*/
-/* Low Level Driver interrupt handlers.                                      */
+/* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
 #if USE_STM32_USART1 || defined(__DOXYGEN__)
@@ -210,7 +210,7 @@ CH_IRQ_HANDLER(VectorDC) {
 #endif
 
 /*===========================================================================*/
-/* Low Level Driver exported functions.                                      */
+/* Driver exported functions.                                                */
 /*===========================================================================*/
 
 /**
