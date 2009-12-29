@@ -30,47 +30,7 @@
 #if CH_HAL_USE_MAC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
-/* Driver pre-compile time settings.                                         */
-/*===========================================================================*/
-
-/**
- * @brief Number of available transmit buffers.
- */
-#if !defined(MAC_TRANSMIT_BUFFERS) || defined(__DOXYGEN__)
-#define MAC_TRANSMIT_BUFFERS            2
-#endif
-
-/**
- * @brief Number of available receive buffers.
- */
-#if !defined(MAC_RECEIVE_BUFFERS) || defined(__DOXYGEN__)
-#define MAC_RECEIVE_BUFFERS             2
-#endif
-
-/**
- * @brief Maximum supported frame size.
- */
-#if !defined(MAC_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define MAC_BUFFERS_SIZE                1518
-#endif
-
-/**
- * @brief Interrupt priority level for the EMAC device.
- */
-#if !defined(EMAC_INTERRUPT_PRIORITY) || defined(__DOXYGEN__)
-#define EMAC_INTERRUPT_PRIORITY         (AT91C_AIC_PRIOR_HIGHEST - 3)
-#endif
-
-/*===========================================================================*/
-/* Derived constants and error checks.                                       */
-/*===========================================================================*/
-
-#if !CH_USE_SEMAPHORES || !CH_USE_EVENTS
-#error "the MAC driver requires CH_USE_SEMAPHORES and CH_USE_EVENTS"
-#endif
-
-/*===========================================================================*/
-/* EMAC specific constants.                                                  */
+/* Driver constants.                                                         */
 /*===========================================================================*/
 
 #define EMAC_RECEIVE_BUFFERS_SIZE       128     /* Do not modify */
@@ -115,6 +75,46 @@
 #define W2_T_RETRY_LIMIT_EXC    0x20000000
 #define W2_T_WRAP               0x40000000
 #define W2_T_USED               0x80000000
+
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/**
+ * @brief Number of available transmit buffers.
+ */
+#if !defined(MAC_TRANSMIT_BUFFERS) || defined(__DOXYGEN__)
+#define MAC_TRANSMIT_BUFFERS            2
+#endif
+
+/**
+ * @brief Number of available receive buffers.
+ */
+#if !defined(MAC_RECEIVE_BUFFERS) || defined(__DOXYGEN__)
+#define MAC_RECEIVE_BUFFERS             2
+#endif
+
+/**
+ * @brief Maximum supported frame size.
+ */
+#if !defined(MAC_BUFFERS_SIZE) || defined(__DOXYGEN__)
+#define MAC_BUFFERS_SIZE                1518
+#endif
+
+/**
+ * @brief Interrupt priority level for the EMAC device.
+ */
+#if !defined(EMAC_INTERRUPT_PRIORITY) || defined(__DOXYGEN__)
+#define EMAC_INTERRUPT_PRIORITY         (AT91C_AIC_PRIOR_HIGHEST - 3)
+#endif
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+#if !CH_USE_SEMAPHORES || !CH_USE_EVENTS
+#error "the MAC driver requires CH_USE_SEMAPHORES and CH_USE_EVENTS"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -162,6 +162,10 @@ typedef struct {
   EMACDescriptor        *rd_physdesc;   /**< Pointer to the first descriptor
                                              of the buffers chain.      */
 } MACReceiveDescriptor;
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -33,11 +33,6 @@
 
 #if CH_HAL_USE_MAC || defined(__DOXYGEN__)
 
-/**
- * @brief Ethernet driver 1.
- */
-MACDriver ETH1;
-
 #define EMAC_PIN_MASK (AT91C_PB0_ETXCK_EREFCK  | AT91C_PB1_ETXEN         | \
                        AT91C_PB2_ETX0          | AT91C_PB3_ETX1          | \
                        AT91C_PB4_ECRS          | AT91C_PB5_ERX0          | \
@@ -52,6 +47,19 @@ MACDriver ETH1;
 
 #define TSR_BITS (AT91C_EMAC_UBR | AT91C_EMAC_COL | AT91C_EMAC_RLES | \
                   AT91C_EMAC_BEX | AT91C_EMAC_COMP | AT91C_EMAC_UND)
+
+/*===========================================================================*/
+/* Driver exported variables.                                                */
+/*===========================================================================*/
+
+/**
+ * @brief Ethernet driver 1.
+ */
+MACDriver ETH1;
+
+/*===========================================================================*/
+/* Driver local variables.                                                   */
+/*===========================================================================*/
 
 #ifndef __DOXYGEN__
 static bool_t link_up;
@@ -69,6 +77,10 @@ static uint8_t rb[EMAC_RECEIVE_DESCRIPTORS * EMAC_RECEIVE_BUFFERS_SIZE]
 static uint8_t tb[EMAC_TRANSMIT_DESCRIPTORS * EMAC_TRANSMIT_BUFFERS_SIZE]
     __attribute__((aligned(8)));
 #endif
+
+/*===========================================================================*/
+/* Driver local functions.                                                   */
+/*===========================================================================*/
 
 /**
  * @brief IRQ handler.
@@ -108,6 +120,23 @@ static void serve_interrupt(void) {
 }
 
 /**
+ * @brief Cleans an incomplete frame.
+ * @param from the start position of the incomplete frame
+ */
+static void cleanup(EMACDescriptor *from) {
+
+  while (from != rxptr) {
+    from->w1 &= ~W1_R_OWNERSHIP;
+    if (++from >= &rd[EMAC_RECEIVE_DESCRIPTORS])
+      from = rd;
+  }
+}
+
+/*===========================================================================*/
+/* Driver interrupt handlers.                                                */
+/*===========================================================================*/
+
+/**
  * @brief EMAC IRQ veneer handler.
  */
 CH_IRQ_HANDLER(irq_handler) {
@@ -118,6 +147,10 @@ CH_IRQ_HANDLER(irq_handler) {
 
   CH_IRQ_EPILOGUE();
 }
+
+/*===========================================================================*/
+/* Driver exported functions.                                                */
+/*===========================================================================*/
 
 /**
  * @brief Low level MAC initialization.
@@ -293,19 +326,6 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
                          tdp->td_offset;
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TSTART;
   chSysUnlock();
-}
-
-/**
- * @brief Cleans an incomplete frame.
- * @param from the start position of the incomplete frame
- */
-static void cleanup(EMACDescriptor *from) {
-
-  while (from != rxptr) {
-    from->w1 &= ~W1_R_OWNERSHIP;
-    if (++from >= &rd[EMAC_RECEIVE_DESCRIPTORS])
-      from = rd;
-  }
 }
 
 /**

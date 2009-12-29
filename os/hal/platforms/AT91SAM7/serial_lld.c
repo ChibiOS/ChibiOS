@@ -47,6 +47,10 @@
 #error "serial lines not defined for this SAM7 version"
 #endif
 
+/*===========================================================================*/
+/* Driver exported variables.                                                */
+/*===========================================================================*/
+
 #if USE_SAM7_USART0 || defined(__DOXYGEN__)
 /** @brief USART0 serial driver identifier.*/
 SerialDriver SD1;
@@ -57,6 +61,10 @@ SerialDriver SD1;
 SerialDriver SD2;
 #endif
 
+/*===========================================================================*/
+/* Driver local variables.                                                   */
+/*===========================================================================*/
+
 /** @brief Driver default configuration.*/
 static const SerialDriverConfig default_config = {
   38400,
@@ -65,7 +73,7 @@ static const SerialDriverConfig default_config = {
 };
 
 /*===========================================================================*/
-/* Low Level Driver local functions.                                         */
+/* Driver local functions.                                                   */
 /*===========================================================================*/
 
 /**
@@ -175,7 +183,7 @@ static void notify2(void) {
 #endif
 
 /*===========================================================================*/
-/* Low Level Driver interrupt handlers.                                      */
+/* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
 #if USE_SAM7_USART0 || defined(__DOXYGEN__)
@@ -201,7 +209,7 @@ CH_IRQ_HANDLER(USART1IrqHandler) {
 #endif
 
 /*===========================================================================*/
-/* Low Level Driver exported functions.                                      */
+/* Driver exported functions.                                                */
 /*===========================================================================*/
 
 /**
