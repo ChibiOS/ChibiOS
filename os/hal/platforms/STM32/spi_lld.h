@@ -38,13 +38,6 @@
 /*===========================================================================*/
 
 /**
- * @brief Enables the mutual exclusion APIs on the SPI bus.
- */
-#if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define SPI_USE_MUTUAL_EXCLUSION    TRUE
-#endif
-
-/**
  * @brief SPI1 driver enable switch.
  * @details If set to @p TRUE the support for SPI1 is included.
  * @note The default is @p TRUE.
@@ -119,10 +112,6 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#if SPI_USE_MUTUAL_EXCLUSION && !CH_USE_MUTEXES && !CH_USE_SEMAPHORES
-#error "SPI_USE_MUTUAL_EXCLUSION requires CH_USE_MUTEXES and/or CH_USE_SEMAPHORES"
-#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

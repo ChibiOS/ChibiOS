@@ -29,6 +29,10 @@
 
 #if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
 /** No pending conditions.*/
 #define SD_NO_ERROR             0
 /** Connection happened.*/
@@ -43,6 +47,18 @@
 #define SD_OVERRUN_ERROR        16
 /** Break detected.*/
 #define SD_BREAK_DETECTED       32
+
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
 
 /**
  * @brief Structure representing a serial driver.
@@ -101,20 +117,9 @@ struct _SerialDriver {
   struct _serial_driver_data d2;
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void sdInit(void);
-  void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify);
-  void sdStart(SerialDriver *sdp, const SerialDriverConfig *config);
-  void sdStop(SerialDriver *sdp);
-  void sdIncomingDataI(SerialDriver *sdp, uint8_t b);
-  msg_t sdRequestDataI(SerialDriver *sdp);
-  void sdAddFlagsI(SerialDriver *sdp, sdflags_t mask);
-  sdflags_t sdGetAndClearFlags(SerialDriver *sdp);
-#ifdef __cplusplus
-}
-#endif
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
 
 /**
  * @brief Direct output check on a @p SerialDriver.
@@ -189,6 +194,25 @@ extern "C" {
  * @see chIORead()
  */
 #define sdRead(sdp, b, n) chIQRead(&(sdp)->d2.iqueue, b, n)
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void sdInit(void);
+  void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify);
+  void sdStart(SerialDriver *sdp, const SerialDriverConfig *config);
+  void sdStop(SerialDriver *sdp);
+  void sdIncomingDataI(SerialDriver *sdp, uint8_t b);
+  msg_t sdRequestDataI(SerialDriver *sdp);
+  void sdAddFlagsI(SerialDriver *sdp, sdflags_t mask);
+  sdflags_t sdGetAndClearFlags(SerialDriver *sdp);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* CH_HAL_USE_SERIAL */
 

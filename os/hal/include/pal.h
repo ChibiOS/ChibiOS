@@ -29,6 +29,10 @@
 
 #if CH_HAL_USE_PAL || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
 /**
  * @brief Bits in a mode word dedicated as mode selector.
  * @details The other bits are not defined and may be used as device-specific
@@ -83,8 +87,6 @@
  */
 #define PAL_MODE_OUTPUT_OPENDRAIN       7
 
-#include "pal_lld.h"
-
 /**
  * @brief Logical low state.
  */
@@ -94,6 +96,41 @@
  * @brief Logical high state.
  */
 #define PAL_HIGH 1
+
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
+
+#include "pal_lld.h"
+
+/**
+ * @brief I/O bus descriptor.
+ * @details This structure describes a group of contiguous digital I/O lines
+ *          that have to be handled as bus.
+ * @note I/O operations on a bus do not affect I/O lines on the same port but
+ *       not belonging to the bus.
+ */
+typedef struct {
+  /** Port identifier.*/
+  ioportid_t            bus_portid;
+  /** Bus mask aligned to port bit 0. The bus mask implicitly define the bus
+      width. A logical AND is performed on the bus data.*/
+  ioportmask_t          bus_mask;
+  /** Offset, within the port, of the least significant bit of the bus.*/
+  uint_fast8_t          bus_offset;
+} IOBus;
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
 
 /**
  * @brief Port bit helper macro.
@@ -137,23 +174,6 @@
  */
 #define IOBUS_DECL(name, port, width, offset)                           \
   IOBus name = _IOBUS_DATA(name, port, width, offset)
-
-/**
- * @brief I/O bus descriptor.
- * @details This structure describes a group of contiguous digital I/O lines
- *          that have to be handled as bus.
- * @note I/O operations on a bus do not affect I/O lines on the same port but
- *       not belonging to the bus.
- */
-typedef struct {
-  /** Port identifier.*/
-  ioportid_t            bus_portid;
-  /** Bus mask aligned to port bit 0. The bus mask implicitly define the bus
-      width. A logical AND is performed on the bus data.*/
-  ioportmask_t          bus_mask;
-  /** Offset, within the port, of the least significant bit of the bus.*/
-  uint_fast8_t          bus_offset;
-} IOBus;
 
 /**
  * @brief PAL subsystem initialization.
@@ -451,6 +471,10 @@ typedef struct {
 #else
 #define palSetPadMode(port, pad, mode) pal_lld_setpadmode(port, pad, mode)
 #endif
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #ifdef __cplusplus
 extern "C" {

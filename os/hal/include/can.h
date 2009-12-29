@@ -29,9 +29,9 @@
 
 #if CH_HAL_USE_CAN || defined(__DOXYGEN__)
 
-#if !CH_USE_SEMAPHORES
-#error "CAN driver requires CH_USE_SEMAPHORES"
-#endif
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
 
 /**
  * @brief Errors rate warning.
@@ -54,6 +54,22 @@
  */
 #define CAN_OVERFLOW_ERROR      16
 
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+#if !CH_USE_SEMAPHORES
+#error "CAN driver requires CH_USE_SEMAPHORES"
+#endif
+
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
+
 /**
  * @brief Driver state machine possible states.
  */
@@ -67,6 +83,10 @@ typedef enum {
 
 #include "can_lld.h"
 
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
+
 /**
  * @brief Adds some flags to the CAN status mask.
  *
@@ -74,6 +94,10 @@ typedef enum {
  * @param[in] mask      flags to be added to the status mask
  */
 #define canAddFlagsI(canp, mask) ((canp)->cd_status |= (mask))
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #ifdef __cplusplus
 extern "C" {

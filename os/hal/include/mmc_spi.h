@@ -29,9 +29,23 @@
 
 #if CH_HAL_USE_MMC_SPI || defined(__DOXYGEN__)
 
-#if !CH_USE_EVENTS
-#error "MMC_SPI driver requires CH_USE_EVENTS"
-#endif
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
+#define MMC_CMD0_RETRY          10
+#define MMC_CMD1_RETRY          100
+#define MMC_WAIT_DATA           10000
+
+#define MMC_CMDGOIDLE           0
+#define MMC_CMDINIT             1
+#define MMC_CMDREADCSD          9
+#define MMC_CMDSTOP             12
+#define MMC_CMDSETBLOCKLEN      16
+#define MMC_CMDREAD             17
+#define MMC_CMDREADMULTIPLE     18
+#define MMC_CMDWRITE            24
+#define MMC_CMDWRITEMULTIPLE    25
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -72,22 +86,12 @@
 #endif
 
 /*===========================================================================*/
-/* Driver constants.                                                         */
+/* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#define MMC_CMD0_RETRY          10
-#define MMC_CMD1_RETRY          100
-#define MMC_WAIT_DATA           10000
-
-#define MMC_CMDGOIDLE           0
-#define MMC_CMDINIT             1
-#define MMC_CMDREADCSD          9
-#define MMC_CMDSTOP             12
-#define MMC_CMDSETBLOCKLEN      16
-#define MMC_CMDREAD             17
-#define MMC_CMDREADMULTIPLE     18
-#define MMC_CMDWRITE            24
-#define MMC_CMDWRITEMULTIPLE    25
+#if !CH_USE_EVENTS
+#error "MMC_SPI driver requires CH_USE_EVENTS"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -171,7 +175,7 @@ typedef struct {
 } MMCDriver;
 
 /*===========================================================================*/
-/* External declarations.                                                    */
+/* Driver macros.                                                            */
 /*===========================================================================*/
 
 /**
@@ -183,6 +187,10 @@ typedef struct {
  * @brief Returns the write protect status.
  */
 #define mmcIsWriteProtected(mmcp) ((mmcp)->mmc_is_protected())
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #ifdef __cplusplus
 extern "C" {
