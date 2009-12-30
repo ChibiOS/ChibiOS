@@ -25,7 +25,7 @@
 
 /**
  * @defgroup kernel_info Version Numbers and Identification
- * Kernel related settings and hooks.
+ * Kernel related info.
  * @ingroup kernel
  */
 
@@ -97,7 +97,7 @@
  * mutexes are recommended for this kind of use) but also have other uses,
  * queues guards and counters as example.<br>
  * Semaphores usually use FIFO queues but it is possible to make them
- * order threads by priority by specifying CH_USE_SEMAPHORES_PRIORITY in
+ * order threads by priority by specifying @p CH_USE_SEMAPHORES_PRIORITY in
  * @p chconf.h.<br>
  * In order to use the Semaphores APIs the @p CH_USE_SEMAPHORES
  * option must be specified in @p chconf.h.<br><br>

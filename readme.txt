@@ -9,6 +9,7 @@
 - FIX: Fixed section separators comments into the HAL-related files. Now all
   the files should use the same style.
 - NEW: Improved HAL configuration file.
+- Documentation fixes and improvements.
 
 *** 1.3.6 ***
 - FIX: Fixed missing STM32 PWM low level driver error in platform.mk by

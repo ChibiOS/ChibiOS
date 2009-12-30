@@ -40,21 +40,22 @@
  *   event flags, messages, mailboxes, I/O queues.
  * - No static setup at compile time, there is no need to configure a maximum
  *   number of all the above objects.
- * - PC simulator target included, the development can be done on the PC
- *   using MinGW.<br>
+ * - PC simulator target included, the development can be done on a PC
+ *   under Linux or Windows.<br>
  *   Timers, I/O channels and other HW resources are simulated in a
  *   Win32 process and the application code does not need to be aware of it.
- *   MinGW demo available.
  * - No *need* for a memory allocator, all the kernel structures are static
  *   and declaratively allocated.
  * - Optional, thread safe, Heap Allocator subsystem.
  * - Optional, thread safe, Memory Pools Allocator subsystem.
  * - Blocking and non blocking I/O channels with timeout and events generation
  *   capability.
- * - Minimal system requirements: about 8KiB ROM with all options enabled and
+ * - Minimal system requirements: about 6KiB ROM with all options enabled and
  *   speed optimizations on. The size can shrink under 2KiB by disabling the
  *   the unused subsystems and optimizing for size.
  * - Almost totally written in C with little ASM code required for ports.
+ * - Optional Hardware Abstraction Layer (HAL) with support for many device
+ *   driver models and device driver implementations.
  * .
  * <h2>Related pages</h2>
  * - @subpage lic_faq

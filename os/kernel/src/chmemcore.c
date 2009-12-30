@@ -50,7 +50,7 @@ void core_init(void) {
 }
 
 /**
- * @brief Allocates a block of memory.
+ * @brief Allocates a memory block.
  * @details The size of the returned block is aligned to the alignment
  *          type @p align_t so it is not possible to allocate less than
  *          <code>sizeof(align_t)</code>.
@@ -70,7 +70,7 @@ void *chCoreAlloc(size_t size) {
 }
 
 /**
- * @brief Allocates a block of memory.
+ * @brief Allocates a memory block.
  * @details The size of the returned block is aligned to the alignment
  *          type @p align_t so it is not possible to allocate less than
  *          <code>sizeof(align_t)</code>.

@@ -175,7 +175,7 @@ void chEvtBroadcastI(EventSource *esp) {
 }
 
 /**
- * @brief Invokes the event handlers associated with a mask.
+ * @brief Invokes the event handlers associated to an event flags mask.
  *
  * @param[in] mask mask of the events to be dispatched
  * @param[in] handlers an array of @p evhandler_t. The array must have size
