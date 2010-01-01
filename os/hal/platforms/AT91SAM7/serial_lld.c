@@ -266,7 +266,6 @@ void sd_lld_start(SerialDriver *sdp) {
       AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_US0);
       /* Enables associated interrupt vector.*/
       AIC_EnableIT(AT91C_ID_US0);
-      return;
     }
 #endif
 #if USE_SAM7_USART1
@@ -275,7 +274,6 @@ void sd_lld_start(SerialDriver *sdp) {
       AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_US1);
       /* Enables associated interrupt vector.*/
       AIC_EnableIT(AT91C_ID_US1);
-      return;
     }
 #endif
   }

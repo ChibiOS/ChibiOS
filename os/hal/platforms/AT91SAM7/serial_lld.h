@@ -78,7 +78,7 @@
 /*===========================================================================*/
 
 /**
- * Serial Driver condition flags type.
+ * @brief Serial Driver condition flags type.
  */
 typedef uint32_t sdflags_t;
 

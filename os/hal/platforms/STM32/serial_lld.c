@@ -264,21 +264,18 @@ void sd_lld_start(SerialDriver *sdp) {
     if (&SD1 == sdp) {
       RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
       NVICEnableVector(USART1_IRQn, STM32_USART1_PRIORITY);
-      return;
     }
 #endif
 #if USE_STM32_USART2
     if (&SD2 == sdp) {
       RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
       NVICEnableVector(USART2_IRQn, STM32_USART2_PRIORITY);
-      return;
     }
 #endif
 #if USE_STM32_USART3
     if (&SD3 == sdp) {
       RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
       NVICEnableVector(USART3_IRQn, STM32_USART3_PRIORITY);
-      return;
     }
 #endif
   }

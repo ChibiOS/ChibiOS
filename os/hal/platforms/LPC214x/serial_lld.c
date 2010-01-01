@@ -48,7 +48,7 @@ SerialDriver SD2;
 /*===========================================================================*/
 
 /** @brief Driver default configuration.*/
-static const SerialDriverConfig default_config = {
+static const SerialConfig default_config = {
   38400,
   LCR_WL8 | LCR_STOP1 | LCR_NOPARITY,
   FCR_TRIGGER0
@@ -60,17 +60,18 @@ static const SerialDriverConfig default_config = {
 
 /**
  * @brief UART initialization.
- * @param[in] u pointer to an UART I/O block
- * @param[in] config the architecture-dependent serial driver configuration
+ *
+ * @param[in] sdp communication channel associated to the UART
  */
-static void uart_init(UART *u, const SerialDriverConfig *config) {
+static void uart_init(SerialDriver *sdp) {
+  UART *u = sdp->sd.uart;
 
-  uint32_t div = PCLK / (config->speed << 4);
-  u->UART_LCR = config->lcr | LCR_DLAB;
+  uint32_t div = PCLK / (sdp->sd.config->sc_speed << 4);
+  u->UART_LCR = sdp->sd.config->sc_lcr | LCR_DLAB;
   u->UART_DLL = div;
   u->UART_DLM = div >> 8;
-  u->UART_LCR = config->lcr;
-  u->UART_FCR = FCR_ENABLE | FCR_RXRESET | FCR_TXRESET | config->fcr;
+  u->UART_LCR = sdp->sd.config->sc_lcr;
+  u->UART_FCR = FCR_ENABLE | FCR_RXRESET | FCR_TXRESET | sdp->sd.config->sc_fcr;
   u->UART_ACR = 0;
   u->UART_FDR = 0x10;
   u->UART_TER = TER_ENABLE;
@@ -79,6 +80,7 @@ static void uart_init(UART *u, const SerialDriverConfig *config) {
 
 /**
  * @brief UART de-initialization.
+ *
  * @param[in] u pointer to an UART I/O block
  */
 static void uart_deinit(UART *u) {
@@ -95,10 +97,11 @@ static void uart_deinit(UART *u) {
 
 /**
  * @brief Error handling routine.
- * @param[in] err UART LSR register value
+ *
  * @param[in] sdp communication channel associated to the UART
+ * @param[in] err UART LSR register value
  */
-static void set_error(IOREG32 err, SerialDriver *sdp) {
+static void set_error(SerialDriver *sdp, IOREG32 err) {
   sdflags_t sts = 0;
 
   if (err & LSR_OVERRUN)
@@ -124,55 +127,59 @@ __attribute__((noinline))
  * @note Tries hard to clear all the pending interrupt sources, we dont want to
  *       go through the whole ISR and have another interrupt soon after.
  */
-static void serve_interrupt(UART *u, SerialDriver *sdp) {
+static void serve_interrupt(SerialDriver *sdp) {
+  UART *u = sdp->sd.uart;
 
   while (TRUE) {
+    int i;
 
     switch (u->UART_IIR & IIR_SRC_MASK) {
     case IIR_SRC_NONE:
       return;
     case IIR_SRC_ERROR:
-      set_error(u->UART_LSR, sdp);
+      set_error(sdp, u->UART_LSR);
       break;
     case IIR_SRC_TIMEOUT:
     case IIR_SRC_RX:
+      chSysLockFromIsr();
+      if (chIQIsEmpty(&sdp->sd.iqueue))
+        chEvtBroadcastI(&sdp->bac.ievent);
+      chSysUnlockFromIsr();
       while (u->UART_LSR & LSR_RBR_FULL) {
         chSysLockFromIsr();
-        if (chIQPutI(&sdp->d2.iqueue, u->UART_RBR) < Q_OK)
+        if (chIQPutI(&sdp->sd.iqueue, u->UART_RBR) < Q_OK)
            sdAddFlagsI(sdp, SD_OVERRUN_ERROR);
         chSysUnlockFromIsr();
       }
-      chSysLockFromIsr();
-      chEvtBroadcastI(&sdp->d1.ievent);
-      chSysUnlockFromIsr();
       break;
     case IIR_SRC_TX:
-      {
 #if UART_FIFO_PRELOAD > 0
-        int i = UART_FIFO_PRELOAD;
-        do {
-          chSysLockFromIsr();
-          msg_t b = chOQGetI(&sdp->d2.oqueue);
-          chSysUnlockFromIsr();
-          if (b < Q_OK) {
-            u->UART_IER &= ~IER_THRE;
-            chSysLockFromIsr();
-            chEvtBroadcastI(&sdp->d1.oevent);
-            chSysUnlockFromIsr();
-            break;
-          }
-          u->UART_THR = b;
-        } while (--i);
-#else
+      i = UART_FIFO_PRELOAD;
+      do {
+        msg_t b;
+
         chSysLockFromIsr();
-        msg_t b = sdRequestDataI(sdp);
+        b = chOQGetI(&sdp->sd.oqueue);
         chSysUnlockFromIsr();
-        if (b < Q_OK)
+        if (b < Q_OK) {
           u->UART_IER &= ~IER_THRE;
-        else
-          u->UART_THR = b;
+          chSysLockFromIsr();
+          chEvtBroadcastI(&sdp->bac.oevent);
+          chSysUnlockFromIsr();
+          break;
+        }
+        u->UART_THR = b;
+      } while (--i);
+#else
+      chSysLockFromIsr();
+      msg_t b = sdRequestDataI(sdp);
+      chSysUnlockFromIsr();
+      if (b < Q_OK)
+        u->UART_IER &= ~IER_THRE;
+      else
+        u->UART_THR = b;
 #endif
-      }
+      break;
     default:
       (void) u->UART_THR;
       (void) u->UART_RBR;
@@ -181,17 +188,18 @@ static void serve_interrupt(UART *u, SerialDriver *sdp) {
 }
 
 #if UART_FIFO_PRELOAD > 0
-static void preload(UART *u, SerialDriver *sdp) {
+static void preload(SerialDriver *sdp) {
+  UART *u = sdp->sd.uart;
 
   if (u->UART_LSR & LSR_THRE) {
     int i = UART_FIFO_PRELOAD;
     do {
       chSysLockFromIsr();
-      msg_t b = chOQGetI(&sdp->d2.oqueue);
+      msg_t b = chOQGetI(&sdp->sd.oqueue);
       chSysUnlockFromIsr();
       if (b < Q_OK) {
         chSysLockFromIsr();
-        chEvtBroadcastI(&sdp->d1.oevent);
+        chEvtBroadcastI(&sdp->bac.oevent);
         chSysUnlockFromIsr();
         return;
       }
@@ -206,7 +214,7 @@ static void preload(UART *u, SerialDriver *sdp) {
 static void notify1(void) {
 #if UART_FIFO_PRELOAD > 0
 
-  preload(U0Base, &SD1);
+  preload(&SD1);
 #else
   UART *u = U0Base;
 
@@ -224,7 +232,7 @@ static void notify1(void) {
 static void notify2(void) {
 #if UART_FIFO_PRELOAD > 0
 
-  preload(U1Base, &SD2);
+  preload(&SD2);
 #else
   UART *u = U1Base;
 
@@ -244,7 +252,7 @@ CH_IRQ_HANDLER(UART0IrqHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(U0Base, &SD1);
+  serve_interrupt(&SD1);
   VICVectAddr = 0;
 
   CH_IRQ_EPILOGUE();
@@ -256,7 +264,7 @@ CH_IRQ_HANDLER(UART1IrqHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(U1Base, &SD2);
+  serve_interrupt(&SD2);
   VICVectAddr = 0;
 
   CH_IRQ_EPILOGUE();
@@ -275,10 +283,12 @@ void sd_lld_init(void) {
 
 #if USE_LPC214x_UART0
   sdObjectInit(&SD1, NULL, notify1);
+  SD1.sd.uart = U0Base;
   SetVICVector(UART0IrqHandler, LPC214x_UART1_PRIORITY, SOURCE_UART0);
 #endif
 #if USE_LPC214x_UART1
   sdObjectInit(&SD2, NULL, notify2);
+  SD2.sd.uart = U1Base;
   SetVICVector(UART1IrqHandler, LPC214x_UART2_PRIORITY, SOURCE_UART1);
 #endif
 }
@@ -287,31 +297,27 @@ void sd_lld_init(void) {
  * @brief Low level serial driver configuration and (re)start.
  *
  * @param[in] sdp pointer to a @p SerialDriver object
- * @param[in] config the architecture-dependent serial driver configuration.
- *                   If this parameter is set to @p NULL then a default
- *                   configuration is used.
  */
-void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
+void sd_lld_start(SerialDriver *sdp) {
 
-  if (config == NULL)
-    config = &default_config;
+  if (sdp->sd.config == NULL)
+    sdp->sd.config = &default_config;
 
+  if (sdp->sd.state == SD_STOP) {
 #if USE_LPC214x_UART1
-  if (&SD1 == sdp) {
-    PCONP = (PCONP & PCALL) | PCUART0;
-    uart_init(U0Base, config);
-    VICIntEnable = INTMASK(SOURCE_UART0);
-    return;
-  }
+    if (&SD1 == sdp) {
+      PCONP = (PCONP & PCALL) | PCUART0;
+      VICIntEnable = INTMASK(SOURCE_UART0);
+    }
 #endif
 #if USE_LPC214x_UART2
-  if (&SD2 == sdp) {
-    PCONP = (PCONP & PCALL) | PCUART1;
-    uart_init(U1Base, config);
-    VICIntEnable = INTMASK(SOURCE_UART1);
-    return;
-  }
+    if (&SD2 == sdp) {
+      PCONP = (PCONP & PCALL) | PCUART1;
+      VICIntEnable = INTMASK(SOURCE_UART1);
+    }
 #endif
+  }
+  uart_init(sdp);
 }
 
 /**
@@ -323,22 +329,23 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
  */
 void sd_lld_stop(SerialDriver *sdp) {
 
+  if (sdp->sd.state == SD_READY) {
+    uart_deinit(sdp->sd.uart);
 #if USE_LPC214x_UART1
-  if (&SD1 == sdp) {
-    uart_deinit(U0Base);
-    PCONP = (PCONP & PCALL) & ~PCUART0;
-    VICIntEnClear = INTMASK(SOURCE_UART0);
-    return;
-  }
+    if (&SD1 == sdp) {
+      PCONP = (PCONP & PCALL) & ~PCUART0;
+      VICIntEnClear = INTMASK(SOURCE_UART0);
+      return;
+    }
 #endif
 #if USE_LPC214x_UART2
-  if (&SD2 == sdp) {
-    uart_deinit(U1Base);
-    PCONP = (PCONP & PCALL) & ~PCUART1;
-    VICIntEnClear = INTMASK(SOURCE_UART1);
-    return;
-  }
+    if (&SD2 == sdp) {
+      PCONP = (PCONP & PCALL) & ~PCUART1;
+      VICIntEnClear = INTMASK(SOURCE_UART1);
+      return;
+    }
 #endif
+  }
 }
 
 #endif /* CH_HAL_USE_SERIAL */

@@ -43,7 +43,7 @@
  * @note The default is @p FALSE.
  */
 #if !defined(USE_STM32_USART1) || defined(__DOXYGEN__)
-#define USE_STM32_USART1            FALSE
+#define USE_STM32_USART1            TRUE
 #endif
 
 /**
@@ -61,7 +61,7 @@
  * @note The default is @p FALSE.
  */
 #if !defined(USE_STM32_USART3) || defined(__DOXYGEN__)
-#define USE_STM32_USART3            FALSE
+#define USE_STM32_USART3            TRUE
 #endif
 
 /**
@@ -97,7 +97,7 @@
 /*===========================================================================*/
 
 /**
- * Serial Driver condition flags type.
+ * @brief Serial Driver condition flags type.
  */
 typedef uint32_t sdflags_t;
 

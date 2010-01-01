@@ -58,7 +58,7 @@ SerialDriver SD2;
 /**
  * @brief Driver default configuration.
  */
-static const SerialDriverConfig default_config = {
+static const SerialConfig default_config = {
   UBRR(DEFAULT_USART_BITRATE),
   (1 << UCSZ1) | (1 << UCSZ0)
 };
@@ -91,13 +91,13 @@ static void notify1(void) {
  * @brief USART0 initialization.
  * @param[in] config the architecture-dependent serial driver configuration
  */
-static void usart0_init(const SerialDriverConfig *config) {
+static void usart0_init(const SerialConfig *config) {
 
-  UBRR0L = config->brr;
-  UBRR0H = config->brr >> 8;
+  UBRR0L = config->sc_brr;
+  UBRR0H = config->sc_brr >> 8;
   UCSR0A = 0;
   UCSR0B = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
-  UCSR0C = config->csrc;
+  UCSR0C = config->sc_csrc;
 }
 
 /**
@@ -121,13 +121,13 @@ static void notify2(void) {
  * @brief USART1 initialization.
  * @param[in] config the architecture-dependent serial driver configuration
  */
-static void usart1_init(const SerialDriverConfig *config) {
+static void usart1_init(const SerialConfig *config) {
 
-  UBRR1L = config->brr;
-  UBRR1H = config->brr >> 8;
+  UBRR1L = config->sc_brr;
+  UBRR1H = config->sc_brr >> 8;
   UCSR1A = 0;
   UCSR1B = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
-  UCSR1C = config->csrc;
+  UCSR1C = config->sc_csrc;
 }
 
 /**
@@ -232,20 +232,19 @@ void sd_lld_init(void) {
  * @brief Low level serial driver configuration and (re)start.
  *
  * @param[in] sdp pointer to a @p SerialDriver object
- * @param[in] config the architecture-dependent serial driver configuration.
- *                   If this parameter is set to @p NULL then a default
- *                   configuration is used.
  */
-void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
+void sd_lld_start(SerialDriver *sdp) {
 
-  if (config == NULL)
-    config = &default_config;
+  if (sdp->sd.config == NULL)
+    sdp->sd.config = &default_config;
 
 #if USE_AVR_USART0
-  usart0_init(config);
+  if (&SD1 == sdp)
+    usart0_init(sdp->sd.config);
 #endif
 #if USE_AVR_USART1
-  usart1_init(config);
+  if (&SD2 == sdp)
+    usart1_init(sdp->sd.config);
 #endif
 }
 
@@ -259,10 +258,12 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
 void sd_lld_stop(SerialDriver *sdp) {
 
 #if USE_AVR_USART0
-  usart0_deinit();
+  if (&SD1 == sdp)
+    usart0_deinit();
 #endif
 #if USE_AVR_USART1
-  usart1_deinit();
+  if (&SD2 == sdp)
+    usart1_deinit();
 #endif
 }
 
