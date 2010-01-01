@@ -9,6 +9,10 @@
 - FIX: Fixed section separators comments into the HAL-related files. Now all
   the files should use the same style.
 - NEW: Improved HAL configuration file.
+- NEW: Serial driver model improvements, added states management and checks,
+  added a new SD_NOISE_ERROR error event.
+- NEW: Readability improvements to the channels code.
+- NEW: Improvements and optimizations to the STM32 serial driver.
 - Documentation fixes and improvements.
 
 *** 1.3.6 ***

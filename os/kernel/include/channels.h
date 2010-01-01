@@ -68,7 +68,7 @@ struct BaseChannelVMT {
   /**
    * @p BaseChannel class specific methods.
    */
-  struct _base_channel_methods m0;
+  struct _base_channel_methods bc;
 };
 
 /**
@@ -83,7 +83,7 @@ typedef struct {
   /**
    * @p BaseChannel class specific data.
    */
-  struct _base_channel_data d0;
+  struct _base_channel_data bc;
 } BaseChannel;
 
 /**
@@ -96,7 +96,7 @@ typedef struct {
  *         operation.
  * @retval TRUE if the output queue is full and would block a write operation.
  */
-#define chIOPutWouldBlock(ip) ((ip)->vmt->m0.putwouldblock(ip))
+#define chIOPutWouldBlock(ip) ((ip)->vmt->bc.putwouldblock(ip))
 
 /**
  * @brief Channel input check.
@@ -108,7 +108,7 @@ typedef struct {
  *         operation.
  * @retval TRUE if the input queue is empty and would block a read operation.
  */
-#define chIOGetWouldBlock(ip) ((ip)->vmt->m0.getwouldblock(ip))
+#define chIOGetWouldBlock(ip) ((ip)->vmt->bc.getwouldblock(ip))
 
 /**
  * @brief Channel blocking byte write.
@@ -121,7 +121,7 @@ typedef struct {
  * @retval Q_OK if the operation succeeded.
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOPut(ip, b) ((ip)->vmt->m0.put(ip, b, TIME_INFINITE))
+#define chIOPut(ip, b) ((ip)->vmt->bc.put(ip, b, TIME_INFINITE))
 
 /**
  * @brief Channel blocking byte write with timeout.
@@ -140,7 +140,7 @@ typedef struct {
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOPutTimeout(ip, b, timeout) ((ip)->vmt->m0.put(ip, b, timeout))
+#define chIOPutTimeout(ip, b, timeout) ((ip)->vmt->bc.put(ip, b, timeout))
 
 /**
  * @brief Channel blocking byte read.
@@ -151,7 +151,7 @@ typedef struct {
  * @return A byte value from the queue or:
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOGet(ip) ((ip)->vmt->m0.get(ip, TIME_INFINITE))
+#define chIOGet(ip) ((ip)->vmt->bc.get(ip, TIME_INFINITE))
 
 /**
  * @brief Channel blocking byte read with timeout.
@@ -168,7 +168,7 @@ typedef struct {
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOGetTimeout(ip, timeout) ((ip)->vmt->m0.get(ip, timeout))
+#define chIOGetTimeout(ip, timeout) ((ip)->vmt->bc.get(ip, timeout))
 
 #if CH_USE_EVENTS
 /**
@@ -210,11 +210,11 @@ struct BaseAsynchronousChannelVMT {
   /**
    * @p BaseChannel class inherited methods.
    */
-  struct _base_channel_methods m0;
+  struct _base_channel_methods bc;
   /**
    * @p BaseAsynchronousChannel class specific methods.
    */
-  struct _base_asynchronous_channel_methods m1;
+  struct _base_asynchronous_channel_methods bac;
 };
 
 /**
@@ -232,11 +232,11 @@ typedef struct {
   /**
    * @p BaseChannel class inherited data.
    */
-  struct _base_channel_data d0;
+  struct _base_channel_data bc;
   /**
    * @p BaseAsynchronousChannel class specific data.
    */
-  struct _base_asynchronous_channel_data d1;
+  struct _base_asynchronous_channel_data bac;
 } BaseAsynchronousChannel;
 
 /**
@@ -250,7 +250,7 @@ typedef struct {
  * @param[in] n the maximum amount of data to be transferred
  * @return The number of bytes transferred.
  */
-#define chIOWrite(ip, bp, n) ((ip)->vmt->m1.write(ip, bp, n))
+#define chIOWrite(ip, bp, n) ((ip)->vmt->bac.write(ip, bp, n))
 
 /**
  * @brief Channel non-blocking read.
@@ -263,7 +263,7 @@ typedef struct {
  * @param[in] n the maximum amount of data to be transferred
  * @return The number of bytes transferred.
  */
-#define chIORead(ip, bp, n) ((ip)->vmt->m1.read(ip, bp, n))
+#define chIORead(ip, bp, n) ((ip)->vmt->bac.read(ip, bp, n))
 
 /**
  * @brief Returns the write event source.
@@ -273,7 +273,7 @@ typedef struct {
  * @param[in] ip pointer to a @p BaseAsynchronousChannel or derived class
  * @return A pointer to an @p EventSource object.
  */
-#define chIOGetWriteEventSource(ip) (&((ip)->vmt->d1.oevent))
+#define chIOGetWriteEventSource(ip) (&((ip)->vmt->bac.oevent))
 
 /**
  * @brief Returns the read event source.
@@ -283,7 +283,7 @@ typedef struct {
  * @param[in] ip pointer to a @p BaseAsynchronousChannel or derived class
  * @return A pointer to an @p EventSource object.
  */
-#define chIOGetReadEventSource(ip) (&((ip)->vmt->d1.ievent))
+#define chIOGetReadEventSource(ip) (&((ip)->vmt->bac.ievent))
 
 #endif /* CH_USE_EVENTS */
 

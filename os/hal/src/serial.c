@@ -47,32 +47,32 @@
  */
 static bool_t putwouldblock(void *ip) {
 
-  return chOQIsFull(&((SerialDriver *)ip)->d2.oqueue);
+  return chOQIsFull(&((SerialDriver *)ip)->sd.oqueue);
 }
 
 static bool_t getwouldblock(void *ip) {
 
-  return chIQIsEmpty(&((SerialDriver *)ip)->d2.iqueue);
+  return chIQIsEmpty(&((SerialDriver *)ip)->sd.iqueue);
 }
 
 static msg_t put(void *ip, uint8_t b, systime_t timeout) {
 
-  return chOQPutTimeout(&((SerialDriver *)ip)->d2.oqueue, b, timeout);
+  return chOQPutTimeout(&((SerialDriver *)ip)->sd.oqueue, b, timeout);
 }
 
 static msg_t get(void *ip, systime_t timeout) {
 
-  return chIQGetTimeout(&((SerialDriver *)ip)->d2.iqueue, timeout);
+  return chIQGetTimeout(&((SerialDriver *)ip)->sd.iqueue, timeout);
 }
 
 static size_t write(void *ip, uint8_t *buffer, size_t n) {
 
-  return chOQWrite(&((SerialDriver *)ip)->d2.oqueue, buffer, n);
+  return chOQWrite(&((SerialDriver *)ip)->sd.oqueue, buffer, n);
 }
 
 static size_t read(void *ip, uint8_t *buffer, size_t n) {
 
-  return chIQRead(&((SerialDriver *)ip)->d2.iqueue, buffer, n);
+  return chIQRead(&((SerialDriver *)ip)->sd.iqueue, buffer, n);
 }
 
 static const struct SerialDriverVMT vmt = {
@@ -109,12 +109,13 @@ void sdInit(void) {
 void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
 
   sdp->vmt = &vmt;
-  chEvtInit(&sdp->d1.ievent);
-  chEvtInit(&sdp->d1.oevent);
-  chEvtInit(&sdp->d2.sevent);
-  sdp->d2.flags = SD_NO_ERROR;
-  chIQInit(&sdp->d2.iqueue, sdp->d2.ib, SERIAL_BUFFERS_SIZE, inotify);
-  chOQInit(&sdp->d2.oqueue, sdp->d2.ob, SERIAL_BUFFERS_SIZE, onotify);
+  chEvtInit(&sdp->bac.ievent);
+  chEvtInit(&sdp->bac.oevent);
+  chEvtInit(&sdp->sd.sevent);
+  sdp->sd.flags = SD_NO_ERROR;
+  chIQInit(&sdp->sd.iqueue, sdp->sd.ib, SERIAL_BUFFERS_SIZE, inotify);
+  chOQInit(&sdp->sd.oqueue, sdp->sd.ob, SERIAL_BUFFERS_SIZE, onotify);
+  sdp->sd.state = SD_STOP;
 }
 
 /**
@@ -125,10 +126,17 @@ void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
  *                   If this parameter is set to @p NULL then a default
  *                   configuration is used.
  */
-void sdStart(SerialDriver *sdp, const SerialDriverConfig *config) {
+void sdStart(SerialDriver *sdp, const SerialConfig *config) {
+
+  chDbgCheck((sdp != NULL) && (config != NULL), "sdStart");
 
   chSysLock();
-  sd_lld_start(sdp, config);
+  chDbgAssert((sdp->sd.state == SD_STOP) || (sdp->sd.state == SD_READY),
+              "sdStart(), #1",
+              "invalid state");
+  sdp->sd.config = config;
+  sd_lld_start(sdp);
+  sdp->sd.state = SD_READY;
   chSysUnlock();
 }
 
@@ -141,10 +149,16 @@ void sdStart(SerialDriver *sdp, const SerialDriverConfig *config) {
  */
 void sdStop(SerialDriver *sdp) {
 
+  chDbgCheck(sdp != NULL, "sdStop");
+
   chSysLock();
+  chDbgAssert((sdp->sd.state == SD_STOP) || (sdp->sd.state == SD_READY),
+              "sdStop(), #1",
+              "invalid state");
   sd_lld_stop(sdp);
-  chOQResetI(&sdp->d2.oqueue);
-  chIQResetI(&sdp->d2.iqueue);
+  sdp->sd.state = SD_STOP;
+  chOQResetI(&sdp->sd.oqueue);
+  chIQResetI(&sdp->sd.iqueue);
   chSchRescheduleS();
   chSysUnlock();
 }
@@ -154,32 +168,45 @@ void sdStop(SerialDriver *sdp) {
  * @details This function must be called from the input interrupt service
  *          routine in order to enqueue incoming data and generate the
  *          related events.
- * @param[in] sd pointer to a @p SerialDriver structure
+ * @note The incoming data event is only generated when the input queue
+ *       becomes non-empty.
+ * @note In order to gain some performance it is suggested to not use
+ *       this function directly but copy this code directly into the
+ *       interrupt service routine.
+ *
+ * @param[in] sdp pointer to a @p SerialDriver structure
  * @param[in] b the byte to be written in the driver's Input Queue
  */
-void sdIncomingDataI(SerialDriver *sd, uint8_t b) {
+void sdIncomingDataI(SerialDriver *sdp, uint8_t b) {
 
-  if (chIQPutI(&sd->d2.iqueue, b) < Q_OK)
-    sdAddFlagsI(sd, SD_OVERRUN_ERROR);
-  else
-    chEvtBroadcastI(&sd->d1.ievent);
+  chDbgCheck(sdp != NULL, "sdIncomingDataI");
+
+  if (chIQIsEmpty(&sdp->sd.iqueue))
+    chEvtBroadcastI(&sdp->bac.ievent);
+  if (chIQPutI(&sdp->sd.iqueue, b) < Q_OK)
+    sdAddFlagsI(sdp, SD_OVERRUN_ERROR);
 }
 
 /**
  * @brief Handles outgoing data.
  * @details Must be called from the output interrupt service routine in order
  *          to get the next byte to be transmitted.
+ * @note In order to gain some performance it is suggested to not use
+ *       this function directly but copy this code directly into the
+ *       interrupt service routine.
  *
- * @param[in] sd pointer to a @p SerialDriver structure
+ * @param[in] sdp pointer to a @p SerialDriver structure
  * @return The byte value read from the driver's output queue.
  * @retval Q_EMPTY if the queue is empty (the lower driver usually disables
  *                 the interrupt source when this happens).
  */
-msg_t sdRequestDataI(SerialDriver *sd) {
+msg_t sdRequestDataI(SerialDriver *sdp) {
 
-  msg_t b = chOQGetI(&sd->d2.oqueue);
+  chDbgCheck(sdp != NULL, "sdRequestDataI");
+
+  msg_t b = chOQGetI(&sdp->sd.oqueue);
   if (b < Q_OK)
-    chEvtBroadcastI(&sd->d1.oevent);
+    chEvtBroadcastI(&sdp->bac.oevent);
   return b;
 }
 
@@ -188,27 +215,31 @@ msg_t sdRequestDataI(SerialDriver *sd) {
  * @details Must be called from the I/O interrupt service routine in order to
  *          notify I/O conditions as errors, signals change etc.
  *
- * @param[in] sd pointer to a @p SerialDriver structure
+ * @param[in] sdp pointer to a @p SerialDriver structure
  * @param[in] mask condition flags to be added to the mask
  */
-void sdAddFlagsI(SerialDriver *sd, sdflags_t mask) {
+void sdAddFlagsI(SerialDriver *sdp, sdflags_t mask) {
 
-  sd->d2.flags |= mask;
-  chEvtBroadcastI(&sd->d2.sevent);
+  chDbgCheck(sdp != NULL, "sdAddFlagsI");
+
+  sdp->sd.flags |= mask;
+  chEvtBroadcastI(&sdp->sd.sevent);
 }
 
 /**
  * @brief Returns and clears the errors mask associated to the driver.
  *
- * @param[in] sd pointer to a @p SerialDriver structure
+ * @param[in] sdp pointer to a @p SerialDriver structure
  * @return The condition flags modified since last time this function was
  *         invoked.
  */
-sdflags_t sdGetAndClearFlags(SerialDriver *sd) {
+sdflags_t sdGetAndClearFlags(SerialDriver *sdp) {
   sdflags_t mask;
 
-  mask = sd->d2.flags;
-  sd->d2.flags = SD_NO_ERROR;
+  chDbgCheck(sdp != NULL, "sdGetAndClearFlags");
+
+  mask = sdp->sd.flags;
+  sdp->sd.flags = SD_NO_ERROR;
   return mask;
 }
 

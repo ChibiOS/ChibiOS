@@ -66,7 +66,7 @@ SerialDriver SD2;
 /*===========================================================================*/
 
 /** @brief Driver default configuration.*/
-static const SerialDriverConfig default_config = {
+static const SerialConfig default_config = {
   38400,
   AT91C_US_USMODE_NORMAL | AT91C_US_CLKS_CLOCK |
   AT91C_US_CHRL_8_BITS | AT91C_US_PAR_NONE | AT91C_US_NBSTOP_1_BIT
@@ -78,21 +78,22 @@ static const SerialDriverConfig default_config = {
 
 /**
  * @brief USART initialization.
- * @param[in] u pointer to an USART I/O block
- * @param[in] config the architecture-dependent serial driver configuration
+ *
+ * @param[in] sdp communication channel associated to the USART
  */
-static void usart_init(AT91PS_USART u, const SerialDriverConfig *config) {
+static void usart_init(SerialDriver *sdp) {
+  AT91PS_USART u = sdp->sd.usart;
 
   /* Disables IRQ sources and stop operations.*/
   u->US_IDR = 0xFFFFFFFF;
   u->US_CR = AT91C_US_RSTRX | AT91C_US_RSTTX | AT91C_US_RSTSTA;
 
   /* New parameters setup.*/
-  if (config->mr & AT91C_US_OVER)
-    u->US_BRGR = MCK / (config->speed * 8);
+  if (sdp->sd.config->sc_mr & AT91C_US_OVER)
+    u->US_BRGR = MCK / (sdp->sd.config->sc_speed * 8);
   else
-    u->US_BRGR = MCK / (config->speed * 16);
-  u->US_MR = config->mr;
+    u->US_BRGR = MCK / (sdp->sd.config->sc_speed * 16);
+  u->US_MR = sdp->sd.config->sc_mr;
   u->US_RTOR = 0;
   u->US_TTGR = 0;
 
@@ -121,7 +122,7 @@ static void usart_deinit(AT91PS_USART u) {
  * @param[in] err USART CSR register value
  * @param[in] sdp communication channel associated to the USART
  */
-static void set_error(AT91_REG csr, SerialDriver *sdp) {
+static void set_error(SerialDriver *sdp, AT91_REG csr) {
   sdflags_t sts = 0;
 
   if (csr & AT91C_US_OVRE)
@@ -142,27 +143,35 @@ __attribute__((noinline))
 #endif
 /**
  * @brief Common IRQ handler.
- * @param[in] u pointer to an USART I/O block
- * @param[in] com communication channel associated to the USART
+ *
+ * @param[in] sdp communication channel associated to the USART
  */
-static void serve_interrupt(AT91PS_USART u, SerialDriver *sdp) {
+static void serve_interrupt(SerialDriver *sdp) {
+  uint32_t csr;
+  AT91PS_USART u = sdp->sd.usart;
 
-  if (u->US_CSR & AT91C_US_RXRDY) {
+  csr = u->US_CSR;
+  if (csr & AT91C_US_RXRDY) {
     chSysLockFromIsr();
     sdIncomingDataI(sdp, u->US_RHR);
     chSysUnlockFromIsr();
   }
-  if (u->US_CSR & AT91C_US_TXRDY) {
+  if ((u->US_IMR & AT91C_US_TXRDY) && (csr & AT91C_US_TXRDY)) {
+    msg_t b;
+
     chSysLockFromIsr();
-    msg_t b = sdRequestDataI(sdp);
-    chSysUnlockFromIsr();
-    if (b < Q_OK)
+    b = chOQGetI(&sdp->sd.oqueue);
+    if (b < Q_OK) {
+      chEvtBroadcastI(&sdp->bac.oevent);
       u->US_IDR = AT91C_US_TXRDY;
+    }
     else
       u->US_THR = b;
+    chSysUnlockFromIsr();
   }
-  if (u->US_CSR & (AT91C_US_OVRE | AT91C_US_FRAME | AT91C_US_PARE | AT91C_US_RXBRK)) {
-    set_error(u->US_CSR, sdp);
+  csr &= (AT91C_US_OVRE | AT91C_US_FRAME | AT91C_US_PARE | AT91C_US_RXBRK);
+  if (csr != 0) {
+    set_error(sdp, csr);
     u->US_CR = AT91C_US_RSTSTA;
   }
   AT91C_BASE_AIC->AIC_EOICR = 0;
@@ -191,7 +200,7 @@ CH_IRQ_HANDLER(USART0IrqHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(AT91C_BASE_US0, &SD1);
+  serve_interrupt(&SD1);
 
   CH_IRQ_EPILOGUE();
 }
@@ -202,7 +211,7 @@ CH_IRQ_HANDLER(USART1IrqHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(AT91C_BASE_US1, &SD2);
+  serve_interrupt(&SD2);
 
   CH_IRQ_EPILOGUE();
 }
@@ -219,6 +228,7 @@ void sd_lld_init(void) {
 
 #if USE_SAM7_USART0
   sdObjectInit(&SD1, NULL, notify1);
+  SD1.sd.usart = AT91C_BASE_US0;
   AT91C_BASE_PIOA->PIO_PDR   = SAM7_USART0_RX | SAM7_USART0_TX;
   AT91C_BASE_PIOA->PIO_ASR   = SAM7_USART0_RX | SAM7_USART0_TX;
   AT91C_BASE_PIOA->PIO_PPUDR = SAM7_USART0_RX | SAM7_USART0_TX;
@@ -229,6 +239,7 @@ void sd_lld_init(void) {
 
 #if USE_SAM7_USART1
   sdObjectInit(&SD2, NULL, notify2);
+  SD2.sd.usart = AT91C_BASE_US1;
   AT91C_BASE_PIOA->PIO_PDR   = SAM7_USART1_RX | SAM7_USART1_TX;
   AT91C_BASE_PIOA->PIO_ASR   = SAM7_USART1_RX | SAM7_USART1_TX;
   AT91C_BASE_PIOA->PIO_PPUDR = SAM7_USART1_RX | SAM7_USART1_TX;
@@ -242,37 +253,33 @@ void sd_lld_init(void) {
  * @brief Low level serial driver configuration and (re)start.
  *
  * @param[in] sdp pointer to a @p SerialDriver object
- * @param[in] config the architecture-dependent serial driver configuration.
- *                   If this parameter is set to @p NULL then a default
- *                   configuration is used.
  */
-void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
+void sd_lld_start(SerialDriver *sdp) {
 
-  if (config == NULL)
-    config = &default_config;
+  if (sdp->sd.config == NULL)
+    sdp->sd.config = &default_config;
 
+  if (sdp->sd.state == SD_STOP) {
 #if USE_SAM7_USART0
-  if (&SD1 == sdp) {
-    /* Starts the clock and clears possible sources of immediate interrupts.*/
-    AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_US0);
-    /* USART initialization.*/
-    usart_init(AT91C_BASE_US0, config);
-    /* Enables associated interrupt vector.*/
-    AIC_EnableIT(AT91C_ID_US0);
-    return;
-  }
+    if (&SD1 == sdp) {
+      /* Starts the clock and clears possible sources of immediate interrupts.*/
+      AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_US0);
+      /* Enables associated interrupt vector.*/
+      AIC_EnableIT(AT91C_ID_US0);
+      return;
+    }
 #endif
 #if USE_SAM7_USART1
-  if (&SD2 == sdp) {
-    /* Starts the clock and clears possible sources of immediate interrupts.*/
-    AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_US1);
-    /* USART initialization.*/
-    usart_init(AT91C_BASE_US1, config);
-    /* Enables associated interrupt vector.*/
-    AIC_EnableIT(AT91C_ID_US1);
-    return;
-  }
+    if (&SD2 == sdp) {
+      /* Starts the clock and clears possible sources of immediate interrupts.*/
+      AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_US1);
+      /* Enables associated interrupt vector.*/
+      AIC_EnableIT(AT91C_ID_US1);
+      return;
+    }
 #endif
+  }
+  usart_init(sdp);
 }
 
 /**
@@ -284,22 +291,23 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
  */
 void sd_lld_stop(SerialDriver *sdp) {
 
+  if (sdp->sd.state == SD_READY) {
+    usart_deinit(sdp->sd.usart);
 #if USE_SAM7_USART0
-  if (&SD1 == sdp) {
-    usart_deinit(AT91C_BASE_US0);
-    AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_US0);
-    AIC_DisableIT(AT91C_ID_US0);
-    return;
-  }
+    if (&SD1 == sdp) {
+      AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_US0);
+      AIC_DisableIT(AT91C_ID_US0);
+      return;
+    }
 #endif
 #if USE_SAM7_USART1
-  if (&SD2 == sdp) {
-    usart_deinit(AT91C_BASE_US1);
-    AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_US1);
-    AIC_DisableIT(AT91C_ID_US1);
-    return;
-  }
+    if (&SD2 == sdp) {
+      AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_US1);
+      AIC_DisableIT(AT91C_ID_US1);
+      return;
+    }
 #endif
+  }
 }
 
 #endif /* CH_HAL_USE_SERIAL */

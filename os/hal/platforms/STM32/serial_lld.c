@@ -53,7 +53,7 @@ SerialDriver SD3;
 /*===========================================================================*/
 
 /** @brief Driver default configuration.*/
-static const SerialDriverConfig default_config =
+static const SerialConfig default_config =
 {
   38400,
   0,
@@ -69,26 +69,29 @@ static const SerialDriverConfig default_config =
  * @brief USART initialization.
  * @details This function must be invoked with interrupts disabled.
  *
- * @param[in] u pointer to an USART I/O block
- * @param[in] config the architecture-dependent serial driver configuration
+ * @param[in] sdp pointer to a @p SerialDriver object
  */
-static void usart_init(USART_TypeDef *u, const SerialDriverConfig *config) {
+static void usart_init(SerialDriver *sdp) {
+  USART_TypeDef *u = sdp->sd.usart;
 
   /*
    * Baud rate setting.
    */
-  if (u == USART1)
-    u->BRR = APB2CLK / config->speed;
+  if (sdp->sd.usart == USART1)
+    u->BRR = APB2CLK / sdp->sd.config->sc_speed;
   else
-    u->BRR = APB1CLK / config->speed;
+    u->BRR = APB1CLK / sdp->sd.config->sc_speed;
 
   /*
    * Note that some bits are enforced.
    */
-  u->CR1 = config->cr1 | USART_CR1_UE | USART_CR1_PEIE | USART_CR1_RXNEIE |
-                         USART_CR1_TE | USART_CR1_RE;
-  u->CR2 = config->cr2;
-  u->CR3 = config->cr3 | USART_CR3_EIE;
+  u->CR1 = sdp->sd.config->sc_cr1 | USART_CR1_UE | USART_CR1_PEIE |
+                                    USART_CR1_RXNEIE | USART_CR1_TE |
+                                    USART_CR1_RE;
+  u->CR2 = sdp->sd.config->sc_cr2 | USART_CR2_LBDIE;
+  u->CR3 = sdp->sd.config->sc_cr3 | USART_CR3_EIE;
+  (void)u->SR;  /* SR reset step 1.*/
+  (void)u->DR;  /* SR reset step 2.*/
 }
 
 /**
@@ -106,10 +109,11 @@ static void usart_deinit(USART_TypeDef *u) {
 
 /**
  * @brief Error handling routine.
+ *
+ * @param[in] sdp pointer to a @p SerialDriver object
  * @param[in] sr USART SR register value
- * @param[in] com communication channel associated to the USART
  */
-static void set_error(uint16_t sr, SerialDriver *sdp) {
+static void set_error(SerialDriver *sdp, uint16_t sr) {
   sdflags_t sts = 0;
 
   if (sr & USART_SR_ORE)
@@ -118,6 +122,8 @@ static void set_error(uint16_t sr, SerialDriver *sdp) {
     sts |= SD_PARITY_ERROR;
   if (sr & USART_SR_FE)
     sts |= SD_FRAMING_ERROR;
+  if (sr & USART_SR_NE)
+    sts |= SD_NOISE_ERROR;
   if (sr & USART_SR_LBD)
     sts |= SD_BREAK_DETECTED;
   chSysLockFromIsr();
@@ -127,27 +133,36 @@ static void set_error(uint16_t sr, SerialDriver *sdp) {
 
 /**
  * @brief Common IRQ handler.
- * @param[in] u pointer to an USART I/O block
- * @param[in] com communication channel associated to the USART
+ *
+ * @param[in] sdp communication channel associated to the USART
  */
-static void serve_interrupt(USART_TypeDef *u, SerialDriver *sdp) {
-  uint16_t sr = u->SR;
+static void serve_interrupt(SerialDriver *sdp) {
+  USART_TypeDef *u = sdp->sd.usart;
+  uint16_t cr1 = u->CR1;
+  uint16_t sr = u->SR;  /* SR reset step 1.*/
+  uint16_t dr = u->DR;  /* SR reset step 2.*/
 
-  if (sr & (USART_SR_ORE | USART_SR_FE | USART_SR_PE | USART_SR_LBD))
-    set_error(sr, sdp);
+  if (sr & (USART_SR_LBD | USART_SR_ORE | USART_SR_NE |
+            USART_SR_FE  | USART_SR_PE)) {
+    set_error(sdp, sr);
+    u->SR = 0;    /* Clears the LBD bit in the SR.*/
+  }
   if (sr & USART_SR_RXNE) {
     chSysLockFromIsr();
-    sdIncomingDataI(sdp, u->DR);
+    sdIncomingDataI(sdp, (uint8_t)dr);
     chSysUnlockFromIsr();
   }
-  if (sr & USART_SR_TXE) {
+  if ((cr1 & USART_CR1_TXEIE) && (sr & USART_SR_TXE)) {
+    msg_t b;
     chSysLockFromIsr();
-    msg_t b = sdRequestDataI(sdp);
-    chSysUnlockFromIsr();
-    if (b < Q_OK)
-      u->CR1 &= ~USART_CR1_TXEIE;
+    b = chOQGetI(&sdp->sd.oqueue);
+    if (b < Q_OK) {
+      chEvtBroadcastI(&sdp->bac.oevent);
+      u->CR1 = cr1 & ~USART_CR1_TXEIE;
+    }
     else
       u->DR = b;
+    chSysUnlockFromIsr();
   }
 }
 
@@ -181,7 +196,7 @@ CH_IRQ_HANDLER(VectorD4) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(USART1, &SD1);
+  serve_interrupt(&SD1);
 
   CH_IRQ_EPILOGUE();
 }
@@ -192,7 +207,7 @@ CH_IRQ_HANDLER(VectorD8) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(USART2, &SD2);
+  serve_interrupt(&SD2);
 
   CH_IRQ_EPILOGUE();
 }
@@ -203,7 +218,7 @@ CH_IRQ_HANDLER(VectorDC) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(USART3, &SD3);
+  serve_interrupt(&SD3);
 
   CH_IRQ_EPILOGUE();
 }
@@ -220,14 +235,17 @@ void sd_lld_init(void) {
 
 #if USE_STM32_USART1
   sdObjectInit(&SD1, NULL, notify1);
+  SD1.sd.usart = USART1;
 #endif
 
 #if USE_STM32_USART2
   sdObjectInit(&SD2, NULL, notify2);
+  SD2.sd.usart = USART2;
 #endif
 
 #if USE_STM32_USART3
   sdObjectInit(&SD3, NULL, notify3);
+  SD3.sd.usart = USART3;
 #endif
 }
 
@@ -235,39 +253,36 @@ void sd_lld_init(void) {
  * @brief Low level serial driver configuration and (re)start.
  *
  * @param[in] sdp pointer to a @p SerialDriver object
- * @param[in] config the architecture-dependent serial driver configuration.
- *                   If this parameter is set to @p NULL then a default
- *                   configuration is used.
  */
-void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
+void sd_lld_start(SerialDriver *sdp) {
 
-  if (config == NULL)
-    config = &default_config;
+  if (sdp->sd.config == NULL)
+    sdp->sd.config = &default_config;
 
+  if (sdp->sd.state == SD_STOP) {
 #if USE_STM32_USART1
-  if (&SD1 == sdp) {
-    RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
-    usart_init(USART1, config);
-    NVICEnableVector(USART1_IRQn, STM32_USART1_PRIORITY);
-    return;
-  }
+    if (&SD1 == sdp) {
+      RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+      NVICEnableVector(USART1_IRQn, STM32_USART1_PRIORITY);
+      return;
+    }
 #endif
 #if USE_STM32_USART2
-  if (&SD2 == sdp) {
-    RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
-    usart_init(USART2, config);
-    NVICEnableVector(USART2_IRQn, STM32_USART2_PRIORITY);
-    return;
-  }
+    if (&SD2 == sdp) {
+      RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+      NVICEnableVector(USART2_IRQn, STM32_USART2_PRIORITY);
+      return;
+    }
 #endif
 #if USE_STM32_USART3
-  if (&SD3 == sdp) {
-    RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
-    usart_init(USART3, config);
-    NVICEnableVector(USART3_IRQn, STM32_USART3_PRIORITY);
-    return;
-  }
+    if (&SD3 == sdp) {
+      RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
+      NVICEnableVector(USART3_IRQn, STM32_USART3_PRIORITY);
+      return;
+    }
 #endif
+  }
+  usart_init(sdp);
 }
 
 /**
@@ -279,30 +294,30 @@ void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
  */
 void sd_lld_stop(SerialDriver *sdp) {
 
+  if (sdp->sd.state == SD_READY) {
+    usart_deinit(sdp->sd.usart);
 #if USE_STM32_USART1
-  if (&SD1 == sdp) {
-    usart_deinit(USART1);
-    RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
-    NVICDisableVector(USART1_IRQn);
-    return;
-  }
+    if (&SD1 == sdp) {
+      RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
+      NVICDisableVector(USART1_IRQn);
+      return;
+    }
 #endif
 #if USE_STM32_USART2
-  if (&SD2 == sdp) {
-    usart_deinit(USART2);
-    RCC->APB1ENR &= ~RCC_APB1ENR_USART2EN;
-    NVICDisableVector(USART2_IRQn);
-    return;
-  }
+    if (&SD2 == sdp) {
+      RCC->APB1ENR &= ~RCC_APB1ENR_USART2EN;
+      NVICDisableVector(USART2_IRQn);
+      return;
+    }
 #endif
 #if USE_STM32_USART3
-  if (&SD3 == sdp) {
-    usart_deinit(USART3);
-    RCC->APB1ENR &= ~RCC_APB1ENR_USART3EN;
-    NVICDisableVector(USART3_IRQn);
-    return;
-  }
+    if (&SD3 == sdp) {
+      RCC->APB1ENR &= ~RCC_APB1ENR_USART3EN;
+      NVICDisableVector(USART3_IRQn);
+      return;
+    }
 #endif
+  }
 }
 
 #endif /* CH_HAL_USE_SERIAL */
