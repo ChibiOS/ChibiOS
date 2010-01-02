@@ -54,7 +54,7 @@ SerialDriver SD2;
 /*===========================================================================*/
 
 /** @brief Driver default configuration.*/
-static const SerialDriverConfig default_config = {
+static const SerialConfig default_config = {
 };
 
 static u_long nb = 1;
@@ -68,18 +68,18 @@ static void init(SerialDriver *sdp, uint16_t port) {
   struct protoent *prtp;
 
   if ((prtp = getprotobyname("tcp")) == NULL) {
-    printf("%s: Error mapping protocol name to protocol number\n", sdp->d2.com_name);
+    printf("%s: Error mapping protocol name to protocol number\n", sdp->sd.com_name);
     goto abort;
   }
 
-  sdp->d2.com_listen = socket(PF_INET, SOCK_STREAM, prtp->p_proto);
-  if (sdp->d2.com_listen == INVALID_SOCKET) {
-    printf("%s: Error creating simulator socket\n", sdp->d2.com_name);
+  sdp->sd.com_listen = socket(PF_INET, SOCK_STREAM, prtp->p_proto);
+  if (sdp->sd.com_listen == INVALID_SOCKET) {
+    printf("%s: Error creating simulator socket\n", sdp->sd.com_name);
     goto abort;
   }
 
-  if (ioctl(sdp->d2.com_listen, FIONBIO, &nb) != 0) {
-    printf("%s: Unable to setup non blocking mode on socket\n", sdp->d2.com_name);
+  if (ioctl(sdp->sd.com_listen, FIONBIO, &nb) != 0) {
+    printf("%s: Unable to setup non blocking mode on socket\n", sdp->sd.com_name);
     goto abort;
   }
 
@@ -87,35 +87,35 @@ static void init(SerialDriver *sdp, uint16_t port) {
   sad.sin_family = AF_INET;
   sad.sin_addr.s_addr = INADDR_ANY;
   sad.sin_port = htons(port);
-  if (bind(sdp->d2.com_listen, (struct sockaddr *)&sad, sizeof(sad))) {
-    printf("%s: Error binding socket\n", sdp->d2.com_name);
+  if (bind(sdp->sd.com_listen, (struct sockaddr *)&sad, sizeof(sad))) {
+    printf("%s: Error binding socket\n", sdp->sd.com_name);
     goto abort;
   }
 
-  if (listen(sdp->d2.com_listen, 1) != 0) {
-    printf("%s: Error listening socket\n", sdp->d2.com_name);
+  if (listen(sdp->sd.com_listen, 1) != 0) {
+    printf("%s: Error listening socket\n", sdp->sd.com_name);
     goto abort;
   }
-  printf("Full Duplex Channel %s listening on port %d\n", sdp->d2.com_name, port);
+  printf("Full Duplex Channel %s listening on port %d\n", sdp->sd.com_name, port);
   return;
 
 abort:
-  if (sdp->d2.com_listen != INVALID_SOCKET)
-    close(sdp->d2.com_listen);
+  if (sdp->sd.com_listen != INVALID_SOCKET)
+    close(sdp->sd.com_listen);
   exit(1);
 }
 
 static bool_t connint(SerialDriver *sdp) {
 
-  if (sdp->d2.com_data == INVALID_SOCKET) {
+  if (sdp->sd.com_data == INVALID_SOCKET) {
     struct sockaddr addr;
     socklen_t addrlen = sizeof(addr);
 
-    if ((sdp->d2.com_data = accept(sdp->d2.com_listen, &addr, &addrlen)) == INVALID_SOCKET)
+    if ((sdp->sd.com_data = accept(sdp->sd.com_listen, &addr, &addrlen)) == INVALID_SOCKET)
       return FALSE;
 
-    if (ioctl(sdp->d2.com_data, FIONBIO, &nb) != 0) {
-      printf("%s: Unable to setup non blocking mode on data socket\n", sdp->d2.com_name);
+    if (ioctl(sdp->sd.com_data, FIONBIO, &nb) != 0) {
+      printf("%s: Unable to setup non blocking mode on data socket\n", sdp->sd.com_name);
       goto abort;
     }
     sdAddFlagsI(sdp, SD_CONNECTED);
@@ -123,34 +123,34 @@ static bool_t connint(SerialDriver *sdp) {
   }
   return FALSE;
 abort:
-  if (sdp->d2.com_listen != INVALID_SOCKET)
-    close(sdp->d2.com_listen);
-  if (sdp->d2.com_data != INVALID_SOCKET)
-    close(sdp->d2.com_data);
+  if (sdp->sd.com_listen != INVALID_SOCKET)
+    close(sdp->sd.com_listen);
+  if (sdp->sd.com_data != INVALID_SOCKET)
+    close(sdp->sd.com_data);
   exit(1);
 }
 
 static bool_t inint(SerialDriver *sdp) {
 
-  if (sdp->d2.com_data != INVALID_SOCKET) {
+  if (sdp->sd.com_data != INVALID_SOCKET) {
     int i;
     uint8_t data[32];
 
     /*
      * Input.
      */
-    int n = recv(sdp->d2.com_data, data, sizeof(data), 0);
+    int n = recv(sdp->sd.com_data, data, sizeof(data), 0);
     switch (n) {
     case 0:
-      close(sdp->d2.com_data);
-      sdp->d2.com_data = INVALID_SOCKET;
+      close(sdp->sd.com_data);
+      sdp->sd.com_data = INVALID_SOCKET;
       sdAddFlagsI(sdp, SD_DISCONNECTED);
       return FALSE;
     case INVALID_SOCKET:
       if (errno == EWOULDBLOCK)
         return FALSE;
-      close(sdp->d2.com_data);
-      sdp->d2.com_data = INVALID_SOCKET;
+      close(sdp->sd.com_data);
+      sdp->sd.com_data = INVALID_SOCKET;
       return FALSE;
     }
     for (i = 0; i < n; i++)
@@ -162,7 +162,7 @@ static bool_t inint(SerialDriver *sdp) {
 
 static bool_t outint(SerialDriver *sdp) {
 
-  if (sdp->d2.com_data != INVALID_SOCKET) {
+  if (sdp->sd.com_data != INVALID_SOCKET) {
     int n;
     uint8_t data[1];
 
@@ -173,18 +173,18 @@ static bool_t outint(SerialDriver *sdp) {
     if (n < 0)
       return FALSE;
     data[0] = (uint8_t)n;
-    n = send(sdp->d2.com_data, data, sizeof(data), 0);
+    n = send(sdp->sd.com_data, data, sizeof(data), 0);
     switch (n) {
     case 0:
-      close(sdp->d2.com_data);
-      sdp->d2.com_data = INVALID_SOCKET;
+      close(sdp->sd.com_data);
+      sdp->sd.com_data = INVALID_SOCKET;
       sdAddFlagsI(sdp, SD_DISCONNECTED);
       return FALSE;
     case INVALID_SOCKET:
       if (errno == EWOULDBLOCK)
         return FALSE;
-      close(sdp->d2.com_data);
-      sdp->d2.com_data = INVALID_SOCKET;
+      close(sdp->sd.com_data);
+      sdp->sd.com_data = INVALID_SOCKET;
       return FALSE;
     }
     return TRUE;
@@ -207,16 +207,16 @@ void sd_lld_init(void) {
 
 #if USE_SIM_SERIAL1
   sdObjectInit(&SD1, NULL, NULL);
-  SD1.d2.com_listen = INVALID_SOCKET;
-  SD1.d2.com_data = INVALID_SOCKET;
-  SD1.d2.com_name = "SD1";
+  SD1.sd.com_listen = INVALID_SOCKET;
+  SD1.sd.com_data = INVALID_SOCKET;
+  SD1.sd.com_name = "SD1";
 #endif
 
 #if USE_SIM_SERIAL2
   sdObjectInit(&SD2, NULL, NULL);
-  SD2.d2.com_listen = INVALID_SOCKET;
-  SD2.d2.com_data = INVALID_SOCKET;
-  SD2.d2.com_name = "SD2";
+  SD2.sd.com_listen = INVALID_SOCKET;
+  SD2.sd.com_data = INVALID_SOCKET;
+  SD2.sd.com_name = "SD2";
 #endif
 }
 
@@ -224,14 +224,11 @@ void sd_lld_init(void) {
  * @brief Low level serial driver configuration and (re)start.
  *
  * @param[in] sdp pointer to a @p SerialDriver object
- * @param[in] config the architecture-dependent serial driver configuration.
- *                   If this parameter is set to @p NULL then a default
- *                   configuration is used.
  */
-void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
+void sd_lld_start(SerialDriver *sdp) {
 
-  if (config == NULL)
-    config = &default_config;
+  if (sdp->sd.config == NULL)
+    sdp->sd.config = &default_config;
 
 #if USE_SIM_SERIAL1
   if (sdp == &SD1)
