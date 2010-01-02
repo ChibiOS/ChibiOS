@@ -43,7 +43,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(USE_SAM7_USART0) || defined(__DOXYGEN__)
-#define USE_SAM7_USART0 TRUE
+#define USE_SAM7_USART0             TRUE
 #endif
 
 /**
@@ -52,21 +52,21 @@
  * @note The default is @p TRUE.
  */
 #if !defined(USE_SAM7_USART1) || defined(__DOXYGEN__)
-#define USE_SAM7_USART1 TRUE
+#define USE_SAM7_USART1             TRUE
 #endif
 
 /**
  * @brief UART1 interrupt priority level setting.
  */
 #if !defined(SAM7_USART0_PRIORITY) || defined(__DOXYGEN__)
-#define SAM7_USART0_PRIORITY (AT91C_AIC_PRIOR_HIGHEST - 2)
+#define SAM7_USART0_PRIORITY        (AT91C_AIC_PRIOR_HIGHEST - 2)
 #endif
 
 /**
  * @brief UART2 interrupt priority level setting.
  */
 #if !defined(SAM7_USART1_PRIORITY) || defined(__DOXYGEN__)
-#define SAM7_USART1_PRIORITY (AT91C_AIC_PRIOR_HIGHEST - 2)
+#define SAM7_USART1_PRIORITY        (AT91C_AIC_PRIOR_HIGHEST - 2)
 #endif
 
 /*===========================================================================*/

@@ -9,6 +9,8 @@
 - FIX: Fixed section separators comments into the HAL-related files. Now all
   the files should use the same style.
 - NEW: Improved HAL configuration file.
+- NEW: Introduced a new, per-project, MCU configuration file mcuconf.h that
+  contains all the drivers related settings.
 - NEW: Readability improvements to the channels code.
 - NEW: Serial driver model improvements, added states management and checks,
   added a new SD_NOISE_ERROR error event.

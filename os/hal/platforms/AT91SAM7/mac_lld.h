@@ -84,28 +84,28 @@
  * @brief Number of available transmit buffers.
  */
 #if !defined(MAC_TRANSMIT_BUFFERS) || defined(__DOXYGEN__)
-#define MAC_TRANSMIT_BUFFERS            2
+#define MAC_TRANSMIT_BUFFERS        2
 #endif
 
 /**
  * @brief Number of available receive buffers.
  */
 #if !defined(MAC_RECEIVE_BUFFERS) || defined(__DOXYGEN__)
-#define MAC_RECEIVE_BUFFERS             2
+#define MAC_RECEIVE_BUFFERS         2
 #endif
 
 /**
  * @brief Maximum supported frame size.
  */
 #if !defined(MAC_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define MAC_BUFFERS_SIZE                1518
+#define MAC_BUFFERS_SIZE            1518
 #endif
 
 /**
  * @brief Interrupt priority level for the EMAC device.
  */
 #if !defined(EMAC_INTERRUPT_PRIORITY) || defined(__DOXYGEN__)
-#define EMAC_INTERRUPT_PRIORITY         (AT91C_AIC_PRIOR_HIGHEST - 3)
+#define EMAC_INTERRUPT_PRIORITY     (AT91C_AIC_PRIOR_HIGHEST - 3)
 #endif
 
 /*===========================================================================*/

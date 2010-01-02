@@ -38,7 +38,7 @@
  * settings file. This file can be used to include platform specific
  * header files or to override the low level drivers settings.
  */
-/*#include "mcuconf.h"*/
+#include "mcuconf.h"
 
 /*===========================================================================*/
 /* PAL driver related settings.                                              */
@@ -48,7 +48,7 @@
  * @brief Enables the PAL subsystem.
  */
 #if !defined(CH_HAL_USE_PAL) || defined(__DOXYGEN__)
-#define CH_HAL_USE_PAL                  FALSE
+#define CH_HAL_USE_PAL              TRUE
 #endif
 
 /*===========================================================================*/
@@ -59,7 +59,7 @@
  * @brief Enables the ADC subsystem.
  */
 #if !defined(CH_HAL_USE_ADC) || defined(__DOXYGEN__)
-#define CH_HAL_USE_ADC                  FALSE
+#define CH_HAL_USE_ADC              FALSE
 #endif
 
 /*===========================================================================*/
@@ -70,7 +70,7 @@
  * @brief Enables the CAN subsystem.
  */
 #if !defined(CH_HAL_USE_CAN) || defined(__DOXYGEN__)
-#define CH_HAL_USE_CAN                  FALSE
+#define CH_HAL_USE_CAN              FALSE
 #endif
 
 /*===========================================================================*/
@@ -81,7 +81,7 @@
  * @brief Enables the MAC subsystem.
  */
 #if !defined(CH_HAL_USE_MAC) || defined(__DOXYGEN__)
-#define CH_HAL_USE_MAC                  FALSE
+#define CH_HAL_USE_MAC              FALSE
 #endif
 
 /*===========================================================================*/
@@ -92,7 +92,7 @@
  * @brief Enables the PWM subsystem.
  */
 #if !defined(CH_HAL_USE_PWM) || defined(__DOXYGEN__)
-#define CH_HAL_USE_PWM                  FALSE
+#define CH_HAL_USE_PWM              FALSE
 #endif
 
 /*===========================================================================*/
@@ -103,8 +103,14 @@
  * @brief Enables the SERIAL subsystem.
  */
 #if !defined(CH_HAL_USE_SERIAL) || defined(__DOXYGEN__)
-#define CH_HAL_USE_SERIAL               TRUE
+#define CH_HAL_USE_SERIAL           TRUE
 #endif
+
+/*
+ * Default SERIAL settings overrides (uncomment to override).
+ */
+/*#define SERIAL_DEFAULT_BITRATE      38400*/
+/*#define SERIAL_BUFFERS_SIZE         64*/
 
 /*===========================================================================*/
 /* SPI driver related settings.                                              */
@@ -114,13 +120,13 @@
  * @brief Enables the SPI subsystem.
  */
 #if !defined(CH_HAL_USE_SPI) || defined(__DOXYGEN__)
-#define CH_HAL_USE_SPI                  FALSE
+#define CH_HAL_USE_SPI              FALSE
 #endif
 
 /*
  * Default SPI settings overrides (uncomment to override).
  */
-/*#define SPI_USE_MUTUAL_EXCLUSION        TRUE*/
+/*#define SPI_USE_MUTUAL_EXCLUSION    TRUE*/
 
 /*===========================================================================*/
 /* MMC_SPI driver related settings.                                          */
@@ -130,16 +136,16 @@
  * @brief Enables the MMC_SPI subsystem.
  */
 #if !defined(CH_HAL_USE_MMC_SPI) || defined(__DOXYGEN__)
-#define CH_HAL_USE_MMC_SPI              FALSE
+#define CH_HAL_USE_MMC_SPI          FALSE
 #endif
 
 /*
  * Default MMC_SPI settings overrides (uncomment to override).
  */
-/*#define MMC_SECTOR_SIZE                 512*/
-/*#define MMC_NICE_WAITING                TRUE*/
-/*#define MMC_POLLING_INTERVAL            10*/
-/*#define MMC_POLLING_DELAY               10*/
+/*#define MMC_SECTOR_SIZE             512*/
+/*#define MMC_NICE_WAITING            TRUE*/
+/*#define MMC_POLLING_INTERVAL        10*/
+/*#define MMC_POLLING_DELAY           10*/
 
 #endif /* _HALCONF_H_ */
 

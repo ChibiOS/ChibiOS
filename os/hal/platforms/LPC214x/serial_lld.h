@@ -38,6 +38,24 @@
 /*===========================================================================*/
 
 /**
+ * @brief UART0 driver enable switch.
+ * @details If set to @p TRUE the support for USART1 is included.
+ * @note The default is @p TRUE .
+ */
+#if !defined(USE_LPC214x_UART0) || defined(__DOXYGEN__)
+#define USE_LPC214x_UART0           TRUE
+#endif
+
+/**
+ * @brief UART1 driver enable switch.
+ * @details If set to @p TRUE the support for USART2 is included.
+ * @note The default is @p TRUE.
+ */
+#if !defined(USE_LPC214x_UART1) || defined(__DOXYGEN__)
+#define USE_LPC214x_UART1           TRUE
+#endif
+
+/**
  * @brief FIFO preload parameter.
  * @details Configuration parameter, this values defines how many bytes are
  * preloaded in the HW transmit FIFO for each interrupt, the maximum value is
@@ -50,39 +68,21 @@
  *       smaller and simpler.
  */
 #if !defined(UART_FIFO_PRELOAD) || defined(__DOXYGEN__)
-#define UART_FIFO_PRELOAD       16
-#endif
-
-/**
- * @brief UART0 driver enable switch.
- * @details If set to @p TRUE the support for USART1 is included.
- * @note The default is @p TRUE .
- */
-#if !defined(USE_LPC214x_UART0) || defined(__DOXYGEN__)
-#define USE_LPC214x_UART0       TRUE
-#endif
-
-/**
- * @brief UART1 driver enable switch.
- * @details If set to @p TRUE the support for USART2 is included.
- * @note The default is @p TRUE.
- */
-#if !defined(USE_LPC214x_UART1) || defined(__DOXYGEN__)
-#define USE_LPC214x_UART1       TRUE
+#define LPC214x_UART_FIFO_PRELOAD   16
 #endif
 
 /**
  * @brief UART1 interrupt priority level setting.
  */
 #if !defined(LPC214x_UART1_PRIORITY) || defined(__DOXYGEN__)
-#define LPC214x_UART1_PRIORITY  1
+#define LPC214x_UART1_PRIORITY      1
 #endif
 
 /**
  * @brief UART2 interrupt priority level setting.
  */
 #if !defined(LPC214x_UART2_PRIORITY) || defined(__DOXYGEN__)
-#define LPC214x_UART2_PRIORITY   2
+#define LPC214x_UART2_PRIORITY      2
 #endif
 
 /*===========================================================================*/

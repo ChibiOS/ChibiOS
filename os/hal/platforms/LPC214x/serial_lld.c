@@ -131,8 +131,6 @@ static void serve_interrupt(SerialDriver *sdp) {
   UART *u = sdp->sd.uart;
 
   while (TRUE) {
-    int i;
-
     switch (u->UART_IIR & IIR_SRC_MASK) {
     case IIR_SRC_NONE:
       return;
@@ -153,32 +151,34 @@ static void serve_interrupt(SerialDriver *sdp) {
       }
       break;
     case IIR_SRC_TX:
-#if UART_FIFO_PRELOAD > 0
-      i = UART_FIFO_PRELOAD;
-      do {
-        msg_t b;
+      {
+#if LPC214x_UART_FIFO_PRELOAD > 0
+        int i = LPC214x_UART_FIFO_PRELOAD;
+        do {
+          msg_t b;
 
-        chSysLockFromIsr();
-        b = chOQGetI(&sdp->sd.oqueue);
-        chSysUnlockFromIsr();
-        if (b < Q_OK) {
-          u->UART_IER &= ~IER_THRE;
           chSysLockFromIsr();
-          chEvtBroadcastI(&sdp->bac.oevent);
+          b = chOQGetI(&sdp->sd.oqueue);
           chSysUnlockFromIsr();
-          break;
-        }
-        u->UART_THR = b;
-      } while (--i);
+          if (b < Q_OK) {
+            u->UART_IER &= ~IER_THRE;
+            chSysLockFromIsr();
+            chEvtBroadcastI(&sdp->bac.oevent);
+            chSysUnlockFromIsr();
+            break;
+          }
+          u->UART_THR = b;
+        } while (--i);
 #else
-      chSysLockFromIsr();
-      msg_t b = sdRequestDataI(sdp);
-      chSysUnlockFromIsr();
-      if (b < Q_OK)
-        u->UART_IER &= ~IER_THRE;
-      else
-        u->UART_THR = b;
+        chSysLockFromIsr();
+        msg_t b = sdRequestDataI(sdp);
+        chSysUnlockFromIsr();
+        if (b < Q_OK)
+          u->UART_IER &= ~IER_THRE;
+        else
+          u->UART_THR = b;
 #endif
+      }
       break;
     default:
       (void) u->UART_THR;
@@ -187,12 +187,12 @@ static void serve_interrupt(SerialDriver *sdp) {
   }
 }
 
-#if UART_FIFO_PRELOAD > 0
+#if LPC214x_UART_FIFO_PRELOAD > 0
 static void preload(SerialDriver *sdp) {
   UART *u = sdp->sd.uart;
 
   if (u->UART_LSR & LSR_THRE) {
-    int i = UART_FIFO_PRELOAD;
+    int i = LPC214x_UART_FIFO_PRELOAD;
     do {
       chSysLockFromIsr();
       msg_t b = chOQGetI(&sdp->sd.oqueue);
@@ -212,7 +212,7 @@ static void preload(SerialDriver *sdp) {
 
 #if USE_LPC214x_UART0 || defined(__DOXYGEN__)
 static void notify1(void) {
-#if UART_FIFO_PRELOAD > 0
+#if LPC214x_UART_FIFO_PRELOAD > 0
 
   preload(&SD1);
 #else
@@ -220,7 +220,7 @@ static void notify1(void) {
 
   if (u->UART_LSR & LSR_THRE) {
     chSysLockFromIsr();
-    u->UART_THR = chOQGetI(&SD1.sd_oqueue);
+    u->UART_THR = chOQGetI(&SD1.sd.oqueue);
     chSysUnlockFromIsr();
   }
   u->UART_IER |= IER_THRE;
@@ -230,14 +230,14 @@ static void notify1(void) {
 
 #if USE_LPC214x_UART1 || defined(__DOXYGEN__)
 static void notify2(void) {
-#if UART_FIFO_PRELOAD > 0
+#if LPC214x_UART_FIFO_PRELOAD > 0
 
   preload(&SD2);
 #else
   UART *u = U1Base;
 
   if (u->UART_LSR & LSR_THRE)
-    u->UART_THR = chOQGetI(&SD2.sd_oqueue);
+    u->UART_THR = chOQGetI(&SD2.sd.oqueue);
   u->UART_IER |= IER_THRE;
 #endif
 }
