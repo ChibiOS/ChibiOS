@@ -110,15 +110,15 @@ struct SerialDriverVMT {
   /**
    * @p BaseChannel class inherited methods.
    */
-  struct _base_channel_methods m0;
+  struct _base_channel_methods bc;
   /**
    * @p BaseAsynchronousChannel class inherited methods.
    */
-  struct _base_asynchronous_channel_methods m1;
+  struct _base_asynchronous_channel_methods bac;
   /**
    * @p SerialDriver specific methods.
    */
-  struct _serial_driver_methods m2;
+  struct _serial_driver_methods sd;
 };
 
 /**
