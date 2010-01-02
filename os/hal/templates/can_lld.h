@@ -60,8 +60,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_USE_SEMAPHORES || !CH_USE_EVENTS
-#error "the ADC driver requires CH_USE_SEMAPHORES and CH_USE_EVENTS"
+#if CAN_USE_SLEEP_MODE && !CAN_SUPPORTS_SLEEP
+#error "CAN sleep mode not supported in this architecture"
 #endif
 
 /*===========================================================================*/

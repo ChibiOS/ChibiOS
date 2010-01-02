@@ -51,39 +51,6 @@
 typedef uint8_t sdflags_t;
 
 /**
- * @brief @p SerialDriver specific data.
- */
-struct _serial_driver_data {
-  /**
-   * Input queue, incoming data can be read from this input queue by
-   * using the queues APIs.
-   */
-  InputQueue            iqueue;
-  /**
-   * Output queue, outgoing data can be written to this output queue by
-   * using the queues APIs.
-   */
-  OutputQueue           oqueue;
-  /**
-   * Status Change @p EventSource. This event is generated when one or more
-   * condition flags change.
-   */
-  EventSource           sevent;
-  /**
-   * I/O driver status flags.
-   */
-  sdflags_t             flags;
-  /**
-   * Input circular buffer.
-   */
-  uint8_t               ib[SERIAL_BUFFERS_SIZE];
-  /**
-   * Output circular buffer.
-   */
-  uint8_t               ob[SERIAL_BUFFERS_SIZE];
-};
-
-/**
  * @brief Generic Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
@@ -94,7 +61,49 @@ struct _serial_driver_data {
  */
 typedef struct {
 
-} SerialDriverConfig;
+} SerialConfig;
+
+/**
+ * @brief @p SerialDriver specific data.
+ */
+struct _serial_driver_data {
+  /**
+   * @brief Driver state.
+   */
+  sdstate_t                 state;
+  /**
+   * @brief Current configuration data.
+   */
+  const SerialConfig        *config;
+  /**
+   * @brief Input queue, incoming data can be read from this input queue by
+   *        using the queues APIs.
+   */
+  InputQueue                iqueue;
+  /**
+   * @brief Output queue, outgoing data can be written to this output queue by
+   *        using the queues APIs.
+   */
+  OutputQueue               oqueue;
+  /**
+   * @brief Status Change @p EventSource. This event is generated when one or
+   *        more condition flags change.
+   */
+  EventSource               sevent;
+  /**
+   * @brief I/O driver status flags.
+   */
+  sdflags_t                 flags;
+  /**
+   * @brief Input circular buffer.
+   */
+  uint8_t                   ib[SERIAL_BUFFERS_SIZE];
+  /**
+   * @brief Output circular buffer.
+   */
+  uint8_t                   ob[SERIAL_BUFFERS_SIZE];
+  /* End of the mandatory fields.*/
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -108,7 +117,7 @@ typedef struct {
 extern "C" {
 #endif
   void sd_lld_init(void);
-  void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config);
+  void sd_lld_start(SerialDriver *sdp);
   void sd_lld_stop(SerialDriver *sdp);
 #ifdef __cplusplus
 }

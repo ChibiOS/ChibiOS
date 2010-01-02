@@ -90,6 +90,7 @@ static void stop_channels(PWMDriver *pwmp) {
   pwmp->pd_tim->CCMR2 = 0;                  /* Channels 3 and 4 frozen.     */
 }
 
+#if USE_STM32_PWM2 || USE_STM32_PWM3 || USE_STM32_PWM4 || defined(__DOXYGEN__)
 /**
  * @brief Common TIM2...TIM4 IRQ handler.
  * @note It is assumed that the various sources are only activated if the
@@ -113,6 +114,7 @@ static void serve_interrupt(PWMDriver *pwmp) {
   if ((sr & TIM_SR_UIF) != 0)
     pwmp->pd_config->pc_callback();
 }
+#endif /* USE_STM32_PWM2 || USE_STM32_PWM3 || USE_STM32_PWM4 */
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */

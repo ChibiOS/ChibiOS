@@ -38,7 +38,7 @@
  * settings file. This file can be used to include platform specific
  * header files or to override the low level drivers settings.
  */
-#include "mcuconf.h"
+/*#include "mcuconf.h"*/
 
 /*===========================================================================*/
 /* PAL driver related settings.                                              */

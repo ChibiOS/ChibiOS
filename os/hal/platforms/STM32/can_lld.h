@@ -93,6 +93,10 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if CAN_USE_SLEEP_MODE && !CAN_SUPPORTS_SLEEP
+#error "CAN sleep mode not supported in this architecture"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/

@@ -36,23 +36,23 @@
 /**
  * @brief Errors rate warning.
  */
-#define CAN_LIMIT_WARNING       1
+#define CAN_LIMIT_WARNING           1
 /**
  * @brief Errors rate error.
  */
-#define CAN_LIMIT_ERROR         2
+#define CAN_LIMIT_ERROR             2
 /**
  * @brief Bus off condition reached.
  */
-#define CAN_BUS_OFF_ERROR       4
+#define CAN_BUS_OFF_ERROR           4
 /**
  * @brief Framing error of some kind on the CAN bus.
  */
-#define CAN_FRAMING_ERROR       8
+#define CAN_FRAMING_ERROR           8
 /**
  * @brief Overflow in receive queue.
  */
-#define CAN_OVERFLOW_ERROR      16
+#define CAN_OVERFLOW_ERROR          16
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -60,23 +60,15 @@
 
 /**
  * @brief Sleep mode related APIs inclusion switch.
- * @note This switch is enforced to @p FALSE if the driver implementation
- *       does not support the sleep mode.
  */
-#if CAN_SUPPORTS_SLEEP || defined(__DOXYGEN__)
-#if !defined(CAN_USE_SLEEP_MODE) || defined(__DOXYGEN__)
 #define CAN_USE_SLEEP_MODE          TRUE
-#endif
-#else /* !CAN_SUPPORTS_SLEEP */
-#define CAN_USE_SLEEP_MODE          FALSE
-#endif /* !CAN_SUPPORTS_SLEEP */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 #if !CH_USE_SEMAPHORES || !CH_USE_EVENTS
-#error "the ADC driver requires CH_USE_SEMAPHORES and CH_USE_EVENTS"
+#error "CAN driver requires CH_USE_SEMAPHORES and CH_USE_EVENTS"
 #endif
 
 /*===========================================================================*/
