@@ -239,12 +239,16 @@ void sd_lld_start(SerialDriver *sdp) {
     sdp->sd.config = &default_config;
 
 #if USE_AVR_USART0
-  if (&SD1 == sdp)
+  if (&SD1 == sdp) {
     usart0_init(sdp->sd.config);
+    return;
+  }
 #endif
 #if USE_AVR_USART1
-  if (&SD2 == sdp)
+  if (&SD2 == sdp) {
     usart1_init(sdp->sd.config);
+    return;
+  }
 #endif
 }
 

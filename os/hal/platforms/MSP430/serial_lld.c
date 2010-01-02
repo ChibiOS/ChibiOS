@@ -49,8 +49,8 @@ SerialDriver SD2;
 /*===========================================================================*/
 
 /** @brief Driver default configuration.*/
-static const SerialDriverConfig default_config = {
-  UBR(DEFAULT_USART_BITRATE),
+static const SerialConfig default_config = {
+  UBR(SERIAL_DEFAULT_BITRATE),
   0,
   CHAR
 };
@@ -59,7 +59,7 @@ static const SerialDriverConfig default_config = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static void set_error(uint8_t urctl, SerialDriver *sdp) {
+static void set_error(SerialDriver *sdp, uint8_t urctl) {
   sdflags_t sts = 0;
 
   if (urctl & OE)
@@ -88,23 +88,24 @@ static void notify1(void) {
 
 /**
  * @brief USART0 initialization.
+ *
  * @param[in] config the architecture-dependent serial driver configuration
  */
-static void usart0_init(const SerialDriverConfig *config) {
+static void usart0_init(const SerialConfig *config) {
 
-  U0CTL = SWRST;                /* Resets the USART, it should already be.*/
+  U0CTL = SWRST;                            /* Resets the USART.            */
   /* USART init */
-  U0TCTL = SSEL0 | SSEL1;       /* SMCLK as clock source.*/
-  U0MCTL = config->mod;         /* Modulator.*/
-  U0BR1 = (uint8_t)(config->div >> 8);  /* Divider high.*/
-  U0BR0 = (uint8_t)(config->div >> 0);  /* Divider low.*/
+  U0TCTL = SSEL0 | SSEL1;                   /* SMCLK as clock source.       */
+  U0MCTL = config->sc_mod;                  /* Modulator.                   */
+  U0BR1 = (uint8_t)(config->sc_div >> 8);   /* Divider high.                */
+  U0BR0 = (uint8_t)(config->sc_div >> 0);   /* Divider low.                 */
   /* Clear USART status.*/
   (void)U0RXBUF;
   U0RCTL = 0;
   /* USART enable.*/
-  U0ME |= UTXE0 + URXE0;        /* Enables the USART.*/
-  U0CTL = config->ctl & ~SWRST; /* Various settings, clears reset state.*/
-  U0IE |= URXIE0;               /* Enables RX interrupt.*/
+  U0ME |= UTXE0 + URXE0;                    /* Enables the USART.           */
+  U0CTL = config->sc_ctl & ~SWRST;          /* Various settings.            */
+  U0IE |= URXIE0;                           /* Enables RX interrupt.        */
 }
 
 /**
@@ -128,23 +129,24 @@ static void notify2(void) {
 
 /**
  * @brief USART1 initialization.
+ *
  * @param[in] config the architecture-dependent serial driver configuration
  */
-static void usart1_init(const SerialDriverConfig *config) {
+static void usart1_init(const SerialConfig *config) {
 
-  U1CTL = SWRST;                /* Resets the USART, it should already be.*/
+  U1CTL = SWRST;                            /* Resets the USART.            */
   /* USART init.*/
-  U1TCTL = SSEL0 | SSEL1;       /* SMCLK as clock source.*/
-  U1MCTL = config->mod;         /* Modulator.*/
-  U1BR1 = (uint8_t)(config->div >> 8);  /* Divider high.*/
-  U1BR0 = (uint8_t)(config->div >> 0);  /* Divider low.*/
+  U1TCTL = SSEL0 | SSEL1;                   /* SMCLK as clock source.       */
+  U1MCTL = config->sc_mod;                  /* Modulator.                   */
+  U1BR1 = (uint8_t)(config->sc_div >> 8);   /* Divider high.                */
+  U1BR0 = (uint8_t)(config->sc_div >> 0);   /* Divider low.                 */
   /* Clear USART status.*/
   (void)U0RXBUF;
   U1RCTL = 0;
   /* USART enable.*/
-  U1ME |= UTXE0 + URXE0;        /* Enables the USART.*/
-  U1CTL = config->ctl & ~SWRST; /* Various settings, clears reset state.*/
-  U1IE |= URXIE0;               /* Enables RX interrupt.*/
+  U1ME |= UTXE0 + URXE0;                    /* Enables the USART.           */
+  U1CTL = config->sc_ctl & ~SWRST;          /* Various settings.            */
+  U1IE |= URXIE0;                           /* Enables RX interrupt.        */
 }
 
 /**
@@ -184,7 +186,7 @@ CH_IRQ_HANDLER(USART0RX_VECTOR) {
   CH_IRQ_PROLOGUE();
 
   if ((urctl = U0RCTL) & RXERR)
-    set_error(urctl, &SD1);
+    set_error(&SD1, urctl);
   chSysLockFromIsr();
   sdIncomingDataI(&SD1, U0RXBUF);
   chSysUnlockFromIsr();
@@ -216,7 +218,7 @@ CH_IRQ_HANDLER(USART1RX_VECTOR) {
   CH_IRQ_PROLOGUE();
 
   if ((urctl = U1RCTL) & RXERR)
-    set_error(urctl, &SD2);
+    set_error(&SD2, urctl);
   chSysLockFromIsr();
   sdIncomingDataI(&SD2, U1RXBUF);
   chSysUnlockFromIsr();
@@ -251,24 +253,21 @@ void sd_lld_init(void) {
  * @brief Low level serial driver configuration and (re)start.
  *
  * @param[in] sdp pointer to a @p SerialDriver object
- * @param[in] config the architecture-dependent serial driver configuration.
- *                   If this parameter is set to @p NULL then a default
- *                   configuration is used.
  */
-void sd_lld_start(SerialDriver *sdp, const SerialDriverConfig *config) {
+void sd_lld_start(SerialDriver *sdp) {
 
-  if (config == NULL)
-    config = &default_config;
+  if (sdp->sd.config == NULL)
+    sdp->sd.config = &default_config;
 
 #if USE_MSP430_USART0
   if (&SD1 == sdp) {
-    usart0_init(config);
+    usart0_init(sdp->sd.config);
     return;
   }
 #endif
 #if USE_MSP430_USART1
   if (&SD2 == sdp) {
-    usart1_init(config);
+    usart1_init(sdp->sd.config);
     return;
   }
 #endif

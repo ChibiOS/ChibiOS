@@ -55,13 +55,22 @@
 /*===========================================================================*/
 
 /**
+ * @brief Default bit rate.
+ * @details Configuration parameter, this is the baud rate selected for the
+ *          default configuration.
+ */
+#if !defined(DEFAULT_USART_BITRATE) || defined(__DOXYGEN__)
+#define SERIAL_DEFAULT_BITRATE      38400
+#endif
+
+/**
  * @brief Serial buffers size.
  * @details Configuration parameter, you can change the depth of the queue
  *          buffers depending on the requirements of your application.
  * @note The default is 64 bytes for both the transmission and receive buffers.
  */
 #if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define SERIAL_BUFFERS_SIZE 128
+#define SERIAL_BUFFERS_SIZE         64
 #endif
 
 /*===========================================================================*/
