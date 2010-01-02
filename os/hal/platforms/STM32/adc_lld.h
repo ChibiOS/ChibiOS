@@ -72,7 +72,7 @@
  * @brief ADC1 DMA priority (0..3|lowest..highest).
  */
 #if !defined(STM32_ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC1_DMA_PRIORITY     1
+#define STM32_ADC1_DMA_PRIORITY     3
 #endif
 
 /**
@@ -80,7 +80,7 @@
  * @note @p BASEPRI_KERNEL >= @p STM32_ADC1_IRQ_PRIORITY > @p PRIORITY_PENDSV.
  */
 #if !defined(STM32_ADC1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC1_IRQ_PRIORITY     0x70
+#define STM32_ADC1_IRQ_PRIORITY     0x50
 #endif
 
 /**

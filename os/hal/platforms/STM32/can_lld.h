@@ -89,19 +89,6 @@
 #define STM32_CAN1_IRQ_PRIORITY     0xB0
 #endif
 
-/**
- * @brief Sleep mode related APIs inclusion switch.
- * @note This switch is enforced to @p FALSE if the driver implementation
- *       does not support the sleep mode.
- */
-#if CAN_SUPPORTS_SLEEP || defined(__DOXYGEN__)
-#if !defined(CAN_USE_SLEEP_MODE) || defined(__DOXYGEN__)
-#define CAN_USE_SLEEP_MODE  TRUE
-#endif
-#else /* !CAN_SUPPORTS_SLEEP */
-#define CAN_USE_SLEEP_MODE  FALSE
-#endif /* !CAN_SUPPORTS_SLEEP */
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/

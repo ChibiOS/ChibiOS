@@ -83,7 +83,7 @@
  * @note @p BASEPRI_KERNEL >= @p STM32_PWM1_IRQ_PRIORITY > @p PRIORITY_PENDSV.
  */
 #if !defined(STM32_PWM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM1_IRQ_PRIORITY     0x80
+#define STM32_PWM1_IRQ_PRIORITY     0x70
 #endif
 
 /**
@@ -91,7 +91,7 @@
  * @note @p BASEPRI_KERNEL >= @p STM32_PWM2_IRQ_PRIORITY > @p PRIORITY_PENDSV.
  */
 #if !defined(STM32_PWM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM2_IRQ_PRIORITY     0x80
+#define STM32_PWM2_IRQ_PRIORITY     0x70
 #endif
 
 /**
@@ -99,7 +99,7 @@
  * @note @p BASEPRI_KERNEL >= @p STM32_PWM3_IRQ_PRIORITY > @p PRIORITY_PENDSV.
  */
 #if !defined(STM32_PWM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM3_IRQ_PRIORITY     0x80
+#define STM32_PWM3_IRQ_PRIORITY     0x70
 #endif
 
 /**
