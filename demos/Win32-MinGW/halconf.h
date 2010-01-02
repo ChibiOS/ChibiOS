@@ -48,7 +48,7 @@
  * @brief Enables the PAL subsystem.
  */
 #if !defined(CH_HAL_USE_PAL) || defined(__DOXYGEN__)
-#define CH_HAL_USE_PAL              TRUE
+#define CH_HAL_USE_PAL              FALSE
 #endif
 
 /*===========================================================================*/

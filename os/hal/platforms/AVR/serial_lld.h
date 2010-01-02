@@ -38,24 +38,12 @@
 /*===========================================================================*/
 
 /**
- * @brief Default bit rate.
- * @details Configuration parameter, at startup the UARTs are configured at
- * this speed.
- * @note It is possible to use @p SetUART() in order to change the working
- *       parameters at runtime.
- */
-#if !defined(DEFAULT_USART_BITRATE) || defined(__DOXYGEN__)
-#define DEFAULT_USART_BITRATE 38400
-#endif
-
-
-/**
  * @brief USART0 driver enable switch.
  * @details If set to @p TRUE the support for USART0 is included.
  * @note The default is @p FALSE.
  */
 #if !defined(USE_AVR_USART0) || defined(__DOXYGEN__)
-#define USE_AVR_USART0 FALSE
+#define USE_AVR_USART0              TRUE
 #endif
 
 /**
@@ -64,7 +52,7 @@
  * @note The default is @p TRUE.
  */
 #if !defined(USE_AVR_USART1) || defined(__DOXYGEN__)
-#define USE_AVR_USART1 TRUE
+#define USE_AVR_USART1              TRUE
 #endif
 
 /*===========================================================================*/

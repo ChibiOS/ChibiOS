@@ -49,7 +49,7 @@ SerialDriver SD2;
 
 /** @brief Driver default configuration.*/
 static const SerialConfig default_config = {
-  38400,
+  SERIAL_DEFAULT_BITRATE,
   LCR_WL8 | LCR_STOP1 | LCR_NOPARITY,
   FCR_TRIGGER0
 };

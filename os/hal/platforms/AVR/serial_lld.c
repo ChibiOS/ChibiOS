@@ -59,7 +59,7 @@ SerialDriver SD2;
  * @brief Driver default configuration.
  */
 static const SerialConfig default_config = {
-  UBRR(DEFAULT_USART_BITRATE),
+  UBRR(SERIAL_DEFAULT_BITRATE),
   (1 << UCSZ1) | (1 << UCSZ0)
 };
 
