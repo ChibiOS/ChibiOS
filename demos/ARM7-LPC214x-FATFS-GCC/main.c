@@ -262,7 +262,7 @@ int main(int argc, char **argv) {
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and listed for events.
+   * sleeping in a loop and listen for events.
    */
   evtInit(&evt, MS2ST(500));            /* Initializes an event timer object.   */
   evtStart(&evt);                       /* Starts the event timer.              */
