@@ -277,9 +277,6 @@ msg_t TestThread(void *p) {
   while (patterns[i]) {
     j = 0;
     while (patterns[i][j]) {
-#if DELAY_BETWEEN_TESTS > 0
-      chThdSleepMilliseconds(DELAY_BETWEEN_TESTS);
-#endif
       print_line();
       test_print("--- Test Case ");
       test_printn(i + 1);
@@ -288,6 +285,9 @@ msg_t TestThread(void *p) {
       test_print(" (");
       test_print(patterns[i][j]->gettest());
       test_println(")");
+#if DELAY_BETWEEN_TESTS > 0
+      chThdSleepMilliseconds(DELAY_BETWEEN_TESTS);
+#endif
       execute_test(patterns[i][j]);
       if (local_fail) {
         test_print("--- Result: FAILURE (#");

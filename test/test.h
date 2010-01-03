@@ -33,7 +33,7 @@
 
 #if defined(CH_ARCHITECTURE_AVR) || defined(CH_ARCHITECTURE_MSP430)
 #define THREADS_STACK_SIZE      48
-#elif defined(CH_ARCHITECTURE_WIN32SIM)
+#elif defined(CH_ARCHITECTURE_SIMIA32)
 #define THREADS_STACK_SIZE      512
 #else
 #define THREADS_STACK_SIZE      128
