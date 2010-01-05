@@ -89,8 +89,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_USE_EVENTS
-#error "MMC_SPI driver requires CH_USE_EVENTS"
+#if !CH_HAL_USE_SPI || !CH_USE_EVENTS
+#error "MMC_SPI driver requires CH_HAL_USE_SPI and CH_USE_EVENTS"
 #endif
 
 /*===========================================================================*/

@@ -77,6 +77,10 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if !CH_USE_QUEUES && !CH_USE_EVENTS
+#error "Serial Driver requires CH_USE_QUEUES and CH_USE_EVENTS"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
