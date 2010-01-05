@@ -30,7 +30,7 @@
 #if CH_USE_QUEUES
 
 /*
- * Module dependancies check.
+ * Module dependencies check.
  */
 #if !CH_USE_SEMAPHORES
 #error "CH_USE_QUEUES requires CH_USE_SEMAPHORES"

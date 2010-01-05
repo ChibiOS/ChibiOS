@@ -34,7 +34,7 @@
 #if CH_USE_CONDVARS
 
 /*
- * Module dependancies check.
+ * Module dependencies check.
  */
 #if !CH_USE_MUTEXES
 #error "CH_USE_CONDVARS requires CH_USE_MUTEXES"

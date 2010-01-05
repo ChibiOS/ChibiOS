@@ -30,7 +30,7 @@
 #if CH_USE_HEAP
 
 /*
- * Module dependancies check.
+ * Module dependencies check.
  */
 #if !CH_USE_MEMCORE && !CH_USE_MALLOC_HEAP
 #error "CH_USE_HEAP requires CH_USE_MEM"

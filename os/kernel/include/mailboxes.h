@@ -30,7 +30,7 @@
 #if CH_USE_MAILBOXES
 
 /*
- * Module dependancies check.
+ * Module dependencies check.
  */
 #if !CH_USE_SEMAPHORES
 #error "CH_USE_MAILBOXES requires CH_USE_SEMAPHORES"
