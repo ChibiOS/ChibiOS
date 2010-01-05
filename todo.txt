@@ -5,6 +5,7 @@ X = In progress, some work done.
 * = Done.
 
 Before 1.4.0:
+* Abstract streams interface (for MAC, USB endpoints, files, sockets etc).
 * Abstract I/O channels rather than just serial ports.
 * Add tests documentation to the general documentation via doxygen.
 * Static object initializers.
@@ -17,15 +18,16 @@ Before 1.4.0:
 After 1.4.x
 - I2C device driver class support.
 - USB device support.
-- Abstract streams interface (for MAC and USB endpoints).
-- Remove any instance of unnamed structures/unions.
+- MAC driver revision in order to support copy-less operations, this will
+  require changes to lwIP or a new TCP/IP stack however.
 - Objects registry in the kernel.
 - OSEK-style simple tasks within the idle thread.
 - Code examples into the documentation.
+- Update C++ wrapper (Heap, Pools, Mailboxes and any new feature).
 - Threads Pools manager in the library.
 ? Minimal optional C-runtime library (complete enough for lwIP).
 ? Think to something for threads restart.
-- Update C++ wrapper (Heap, Pools, Mailboxes and any new feature).
+? Remove any instance of unnamed structures/unions.
 
 Ideas for 2.x.x:
 - High resolution timers and tickless kernel.
@@ -40,7 +42,7 @@ Side projects:
 * FatFS library integration and demo.
 X ChibiOS Wizard, UML modeling and ChibiOS applications code and
   documentation generator.
-X OSEK layer.
+? OSEK layer.
 - Posix layer.
 X File System
 - Visual debugger/monitor interfaced through OpenOCD.
@@ -48,3 +50,4 @@ X File System
 Lower priority:
 - More demos
 - More ports
+- More compilers.

@@ -81,6 +81,7 @@
 #include "threads.h"
 #include "inline.h"
 #include "queues.h"
+#include "streams.h"
 #include "channels.h"
 #include "debug.h"
 

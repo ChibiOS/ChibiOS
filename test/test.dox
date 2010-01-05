@@ -18,20 +18,52 @@
 */
 
 /**
- * @page testsuite Test Suite
+ * @page testsuite Testing Strategy
  * <h2>Description</h2>
  * Most of the ChibiOS/RT demos link a set of software modules (test suite) in
  * order to verify the proper working of the kernel, the port and the demo
- * itself.<br>
- * Each Test Module performs a series of tests on a specified subsystem or
+ * itself.
+ *
+ * <h2>Strategy by Components</h2>
+ * The OS components are tested in various modes depending on their importance:
+ * - <b>Kernel</b>. The kernel code is subject to rigorous testing. The test
+ *   suite aims to test <b>all</b> the kernel code and reach a code coverage
+ *   as close to 100% as possible. In addition to the code coverage, the kernel
+ *   code is tested for <b>functionality</b> and benchmarked for <b>speed</b>
+ *   and <b>size</b> before each stable release. In addition to the code
+ *   coverage and functional testing a <b>batch compilation test</b> is
+ *   performed before each release, the kernel is compiled by alternatively
+ *   enabling and disabling all the various configuration options, the
+ *   kernel code is expected to compile without errors nor warnings and
+ *   execute the test suite without failures (a specific simulator is used
+ *   for this execution test, it is done automatically by a script because
+ *   the entire sequence can require hours).<br>
+ *   All the tests results are included as reports in the OS distribution
+ *   under @p ./docs/reports.
+ * - <b>Ports</b>. The port code is tested by executing the kernel test
+ *   suite on the target hardware. A port is validated only if it passes all
+ *   the tests. Speed and size benchmarks for all the supported architectures
+ *   are performed, both size and speed regressions are <b>monitored</b>.
+ * - <b>HAL</b>. The HAL high level code and device drivers implementations
+ *   are tested by use in the various demos and/or by users.
+ * - <b>Various</b>. The miscellaneous code is tested by use in the various
+ *   demos and/or by users.
+ * - <b>External Code</b>. Not tested, external libraries or components are
+ *   used as-is or with minor patching where required, problems are usually
+ *   reported upstream.
+ * .
+ * <h2>Kernel Test Suite</h2>
+ * The kernel test suite is divided in modules or test sequences. Each Test
+ * Module performs a series of tests on a specified kernel subsystem or
  * subsystems and can report a failure/success status and/or a performance
  * index as the test suite output.<br>
  * The test suite is usually activated in the demo applications by pressing a
  * button on the target board, see the readme into the various demos
- * directories. The test suite output is usually sent through a serial port and
- * can be examined by using a terminal emulator program.
+ * directories. The test suite output is usually sent through a serial port
+ * and can be examined by using a terminal emulator program.
  *
- * <h2>Test Modules</h2>
+ * <h2>Kernel Test Modules</h2>
+ *
  * - @subpage test_threads
  * - @subpage test_dynamic
  * - @subpage test_msg

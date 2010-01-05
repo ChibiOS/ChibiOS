@@ -86,6 +86,7 @@ static void queues1_setup(void) {
 
 static void queues1_execute(void) {
   unsigned i;
+  size_t n;
 
   /* Initial empty state */
   test_assert(1, chIQIsEmpty(&iq), "not empty");
@@ -107,9 +108,8 @@ static void queues1_execute(void) {
     chIQPutI(&iq, 'A' + i);
 
   /* Reading the whole thing */
-  test_assert(6,
-              chIQRead(&iq, wa[1], TEST_QUEUES_SIZE * 2) == TEST_QUEUES_SIZE,
-              "wrong returned size");
+  n = chIQReadTimeout(&iq, wa[1], TEST_QUEUES_SIZE * 2, TIME_IMMEDIATE);
+  test_assert(6, n == TEST_QUEUES_SIZE, "wrong returned size");
   test_assert(7, chIQIsEmpty(&iq), "still full");
 
   /* Testing reset */
@@ -148,6 +148,7 @@ static void queues2_setup(void) {
 
 static void queues2_execute(void) {
   unsigned i;
+  size_t n;
 
   /* Initial empty state */
   test_assert(1, chOQIsEmpty(&oq), "not empty");
@@ -165,9 +166,8 @@ static void queues2_execute(void) {
   test_assert(5, chOQGetI(&oq) == Q_EMPTY, "failed to report Q_EMPTY");
 
   /* Writing the whole thing */
-  test_assert(6,
-              chOQWrite(&oq, wa[1], TEST_QUEUES_SIZE * 2) == TEST_QUEUES_SIZE,
-              "wrong returned size");
+  n = chOQWriteTimeout(&oq, wa[1], TEST_QUEUES_SIZE * 2, TIME_IMMEDIATE);
+  test_assert(6, n == TEST_QUEUES_SIZE,"wrong returned size");
   test_assert(7, chOQIsFull(&oq), "not full");
 
   /* Testing reset */

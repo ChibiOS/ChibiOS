@@ -108,6 +108,10 @@ struct _serial_driver_methods {
  */
 struct SerialDriverVMT {
   /**
+   * @p BaseSequentialStream class inherited methods.
+   */
+  struct _base_sequental_stream_methods bss;
+  /**
    * @p BaseChannel class inherited methods.
    */
   struct _base_channel_methods bc;
@@ -133,6 +137,10 @@ struct _SerialDriver {
    * Virtual Methods Table.
    */
   const struct SerialDriverVMT *vmt;
+  /**
+   * @p BaseSequentialStream class inherited data.
+   */
+  struct _base_sequental_stream_data bss;
   /**
    * @p BaseChannel class inherited data.
    */
@@ -170,7 +178,7 @@ struct _SerialDriver {
 #define sdGetWouldBlock(sdp) chIQIsEmpty(&(sdp)->sd.iqueue)
 
 /**
- * @brief Direct blocking write to a @p SerialDriver.
+ * @brief Direct write to a @p SerialDriver.
  * @details This function bypasses the indirect access to the channel and
  *          writes directly on the output queue. This is faster but cannot
  *          be used to write to different channels implementations.
@@ -179,8 +187,7 @@ struct _SerialDriver {
 #define sdPut(sdp, b) chOQPut(&(sdp)->sd.oqueue, b)
 
 /**
- * @brief Direct blocking write on a @p SerialDriver with timeout
- *        specification.
+ * @brief Direct write to a @p SerialDriver with timeout specification.
  * @details This function bypasses the indirect access to the channel and
  *          writes directly on the output queue. This is faster but cannot
  *          be used to write to different channels implementations.
@@ -189,7 +196,7 @@ struct _SerialDriver {
 #define sdPutTimeout(sdp, b, t) chOQPutTimeout(&(sdp)->sd.iqueue, b, t)
 
 /**
- * @brief Direct blocking read from a @p SerialDriver.
+ * @brief Direct read from a @p SerialDriver.
  * @details This function bypasses the indirect access to the channel and
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
@@ -198,8 +205,7 @@ struct _SerialDriver {
 #define sdGet(sdp) chIQGet(&(sdp)->sd.iqueue)
 
 /**
- * @brief Direct blocking read from a @p SerialDriver with timeout
- *        specification.
+ * @brief Direct read from a @p SerialDriver with timeout specification.
  * @details This function bypasses the indirect access to the channel and
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
@@ -208,22 +214,77 @@ struct _SerialDriver {
 #define sdGetTimeout(sdp, t) chIQGetTimeout(&(sdp)->sd.iqueue, t)
 
 /**
+ * @brief Direct blocking write to a @p SerialDriver.
+ * @details This function bypasses the indirect access to the channel and
+ *          writes directly to the output queue. This is faster but cannot
+ *          be used to write from different channels implementations.
+ * @see chIOWriteTimeout()
+ */
+#define sdWrite(sdp, b, n)                                                  \
+  chOQWriteTimeout(&(sdp)->sd.oqueue, b, n, TIME_INFINITE)
+
+/**
+ * @brief Direct blocking write to a @p SerialDriver with timeout
+ *        specification.
+ * @details This function bypasses the indirect access to the channel and
+ *          writes directly to the output queue. This is faster but cannot
+ *          be used to write from different channels implementations.
+ * @see chIOWriteTimeout()
+ */
+#define sdWriteTimeout(sdp, b, n, t)                                        \
+  chOQWriteTimeout(&(sdp)->sd.oqueue, b, n, t)
+
+/**
  * @brief Direct non-blocking write to a @p SerialDriver.
  * @details This function bypasses the indirect access to the channel and
  *          writes directly to the output queue. This is faster but cannot
  *          be used to write from different channels implementations.
- * @see chIOWrite()
+ * @see chIOWriteTimeout()
  */
-#define sdWrite(sdp, b, n) chOQWrite(&(sdp)->sd.oqueue, b, n)
+#define sdAsynchronousWrite(sdp, b, n)                                      \
+  chOQWriteTimeout(&(sdp)->sd.oqueue, b, n, TIME_IMMEDIATE)
 
 /**
- * @brief Direct non-blocking read on a @p SerialDriver.
+ * @brief Direct blocking read from a @p SerialDriver.
  * @details This function bypasses the indirect access to the channel and
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
- * @see chIORead()
+ * @see chIOReadTimeout()
  */
-#define sdRead(sdp, b, n) chIQRead(&(sdp)->sd.iqueue, b, n)
+#define sdRead(sdp, b, n)                                                   \
+  chIQReadTimeout(&(sdp)->sd.iqueue, b, n, TIME_INFINITE)
+
+/**
+ * @brief Direct blocking read from a @p SerialDriver with timeout
+ *        specification.
+ * @details This function bypasses the indirect access to the channel and
+ *          reads directly from the input queue. This is faster but cannot
+ *          be used to read from different channels implementations.
+ * @see chIOReadTimeout()
+ */
+#define sdReadTimeout(sdp, b, n, t)                                         \
+  chIQReadTimeout(&(sdp)->sd.iqueue, b, n, t)
+
+/**
+ * @brief Direct non-blocking read from a @p SerialDriver.
+ * @details This function bypasses the indirect access to the channel and
+ *          reads directly from the input queue. This is faster but cannot
+ *          be used to read from different channels implementations.
+ * @see chIOReadTimeout()
+ */
+#define sdAsynchronousRead(sdp, b, n)                                       \
+  chIQReadTimeout(&(sdp)->sd.iqueue, b, n, TIME_IMMEDIATE)
+
+/**
+ * @brief Returns the status change event source.
+ * @details The status change event source is broadcasted when the channel
+ *          status is updated, the status flags can then be fetched and
+ *          cheared by using @p sdGetAndClearFlags().
+ *
+ * @param[in] ip pointer to a @p SerialDriver object
+ * @return A pointer to an @p EventSource object.
+ */
+#define sdGetStatusChangeEventSource(ip) (&((ip)->vmt->sd.sevent))
 
 /*===========================================================================*/
 /* External declarations.                                                    */

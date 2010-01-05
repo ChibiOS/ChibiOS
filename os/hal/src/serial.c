@@ -45,6 +45,19 @@
  * Interface implementation, the following functions just invoke the equivalent
  * queue-level function or macro.
  */
+
+static size_t writes(void *ip, const uint8_t *bp, size_t n) {
+
+  return chOQWriteTimeout(&((SerialDriver *)ip)->sd.oqueue, bp,
+                          n, TIME_INFINITE);
+}
+
+static size_t reads(void *ip, uint8_t *bp, size_t n) {
+
+  return chIQReadTimeout(&((SerialDriver *)ip)->sd.iqueue, bp,
+                         n, TIME_INFINITE);
+}
+
 static bool_t putwouldblock(void *ip) {
 
   return chOQIsFull(&((SerialDriver *)ip)->sd.oqueue);
@@ -55,29 +68,29 @@ static bool_t getwouldblock(void *ip) {
   return chIQIsEmpty(&((SerialDriver *)ip)->sd.iqueue);
 }
 
-static msg_t put(void *ip, uint8_t b, systime_t timeout) {
+static msg_t putt(void *ip, uint8_t b, systime_t timeout) {
 
   return chOQPutTimeout(&((SerialDriver *)ip)->sd.oqueue, b, timeout);
 }
 
-static msg_t get(void *ip, systime_t timeout) {
+static msg_t gett(void *ip, systime_t timeout) {
 
   return chIQGetTimeout(&((SerialDriver *)ip)->sd.iqueue, timeout);
 }
 
-static size_t write(void *ip, uint8_t *buffer, size_t n) {
+static size_t writet(void *ip, const uint8_t *bp, size_t n, systime_t time) {
 
-  return chOQWrite(&((SerialDriver *)ip)->sd.oqueue, buffer, n);
+  return chOQWriteTimeout(&((SerialDriver *)ip)->sd.oqueue, bp, n, time);
 }
 
-static size_t read(void *ip, uint8_t *buffer, size_t n) {
+static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t time) {
 
-  return chIQRead(&((SerialDriver *)ip)->sd.iqueue, buffer, n);
+  return chIQReadTimeout(&((SerialDriver *)ip)->sd.iqueue, bp, n, time);
 }
 
 static const struct SerialDriverVMT vmt = {
-  {putwouldblock, getwouldblock, put, get},
-  {write, read},
+  {writes, reads},
+  {putwouldblock, getwouldblock, putt, gett, writet, readt},
   {}
 };
 
@@ -112,10 +125,10 @@ void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
   chEvtInit(&sdp->bac.ievent);
   chEvtInit(&sdp->bac.oevent);
   chEvtInit(&sdp->sd.sevent);
+  sdp->sd.state = SD_STOP;
   sdp->sd.flags = SD_NO_ERROR;
   chIQInit(&sdp->sd.iqueue, sdp->sd.ib, SERIAL_BUFFERS_SIZE, inotify);
   chOQInit(&sdp->sd.oqueue, sdp->sd.ob, SERIAL_BUFFERS_SIZE, onotify);
-  sdp->sd.state = SD_STOP;
 }
 
 /**

@@ -2,6 +2,21 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.3.8 ***
+- NEW: Introduced an abstract streams interface BaseSequentialStream.
+- NEW: Added timeout specification to the I/O queues read/write primitives.
+- CHANGE: Modified the BaseChannel interface in order to make it a
+  BaseSequentialStream descendant.
+- CHANGE: Updated the serial driver model in order to expose the
+  BaseSequentialStream methods.
+- CHANGE: The behavior of the read/write primitives is changed, now the
+  functions are synchronous and do not return until the specified number of
+  bytes have been transferred or a timeout occurs, the old behavior can be
+  replicated by specifying TIME_IMMEDIATE as timeout. Another difference is
+  that specifying zero as bytes number is like specifying the largest size_t
+  plus one, zero was an illegal value before.
+- Documentation fixes and improvements, testing strategy explained.
+
 *** 1.3.7 ***
 - FIX: Fixed duplicated definition of SPI_USE_MUTUAL_EXCLUSION (bug 2922495).
 - FIX: Fixed coverage tool hanging during execution (bug 2921120).

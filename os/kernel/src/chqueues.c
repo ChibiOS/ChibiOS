@@ -34,33 +34,30 @@
  *          the bytes contained in the queue.
  *
  * @param[out] iqp pointer to an @p InputQueue structure
- * @param[in] buffer pointer to a memory area allocated as queue buffer
+ * @param[in] bp pointer to a memory area allocated as queue buffer
  * @param[in] size size of the queue buffer
- * @param[in] inotify pointer to a callback function that is invoked when
- *                    some data is read from the queue. The value can be
- *                    @p NULL.
+ * @param[in] infy pointer to a callback function that is invoked when
+ *                 data is read from the queue. The value can be @p NULL.
  *
  * @note The callback is invoked from within the S-Locked system state,
  *       see @ref system_states.
  */
-void chIQInit(InputQueue *iqp, uint8_t *buffer,
-              size_t size, qnotify_t inotify) {
+void chIQInit(InputQueue *iqp, uint8_t *bp, size_t size, qnotify_t infy) {
 
-  iqp->q_buffer = iqp->q_rdptr = iqp->q_wrptr = buffer;
-  iqp->q_top = buffer + size;
+  iqp->q_buffer = iqp->q_rdptr = iqp->q_wrptr = bp;
+  iqp->q_top = bp + size;
+  iqp->q_notify = infy;
   chSemInit(&iqp->q_sem, 0);
-  iqp->q_notify = inotify;
 }
 
 /**
  * @brief Resets an input queue.
  * @details All the data in the input queue is erased and lost, any waiting
  *          thread is resumed with status @p Q_RESET.
- *
- * @param[in] iqp pointer to an @p InputQueue structure
- *
  * @note A reset operation can be used by a low level driver in order to obtain
  *       immediate attention from the high level layers.
+ *
+ * @param[in] iqp pointer to an @p InputQueue structure
  */
 void chIQResetI(InputQueue *iqp) {
 
@@ -97,7 +94,7 @@ msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
  *          in the queue or a timeout occurs.
  *
  * @param[in] iqp pointer to an @p InputQueue structure
- * @param[in] timeout the number of ticks before the operation timeouts,
+ * @param[in] time the number of ticks before the operation timeouts,
  *             the following special values are allowed:
  *             - @a TIME_IMMEDIATE immediate timeout.
  *             - @a TIME_INFINITE no timeout.
@@ -106,12 +103,12 @@ msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the queue was reset.
  */
-msg_t chIQGetTimeout(InputQueue *iqp, systime_t timeout) {
+msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
   uint8_t b;
   msg_t msg;
 
   chSysLock();
-  if ((msg = chSemWaitTimeoutS(&iqp->q_sem, timeout)) < RDY_OK) {
+  if ((msg = chSemWaitTimeoutS(&iqp->q_sem, time)) < RDY_OK) {
     chSysUnlock();
     return msg;
   }
@@ -127,40 +124,45 @@ msg_t chIQGetTimeout(InputQueue *iqp, systime_t timeout) {
 }
 
 /**
- * @brief Non-blocking read.
+ * @brief Input queue read with timeout.
  * @details The function reads data from an input queue into a buffer. The
- *          transfer is non-blocking and can return zero if the queue is
- *          empty.
- *
- * @param[in] iqp pointer to an @p InputQueue structure
- * @param[out] buffer pointer to the buffer where the input data is copied
- * @param[in] n the maximum amount of data to be transferred
- * @return The number of bytes transferred.
- *
+ *          operation completes when the specified amount of data has been
+ *          transferred or after the specified timeout or if the queue has
+ *          been reset.
  * @note The function is not atomic, if you need atomicity it is suggested
  *       to use a semaphore or a mutex for mutual exclusion.
+ * @note The queue callback is invoked one time <b>for each</b> byte removed
+ *       from the queue.
+ *
+ * @param[in] iqp pointer to an @p InputQueue structure
+ * @param[out] bp pointer to the data buffer
+ * @param[in] n the maximum amount of data to be transferred
+ * @param[in] time the number of ticks before the operation timeouts,
+ *             the following special values are allowed:
+ *             - @a TIME_IMMEDIATE immediate timeout.
+ *             - @a TIME_INFINITE no timeout.
+ *             .
+ * @return The number of bytes effectively transferred.
  */
-size_t chIQRead(InputQueue *iqp, uint8_t *buffer, size_t n) {
+size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
+                       size_t n, systime_t time) {
+  qnotify_t nfy = iqp->q_notify;
   size_t r = 0;
 
-  while (n--) {
+  do {
     chSysLock();
-    if (chIQIsEmpty(iqp)) {
+    if (chSemWaitTimeoutS(&iqp->q_sem, time) != RDY_OK) {
       chSysUnlock();
-      break;
+      return r;
     }
-    chSemFastWaitI(&iqp->q_sem);
-    *buffer++ = *iqp->q_rdptr++;
+    *bp++ = *iqp->q_rdptr++;
     if (iqp->q_rdptr >= iqp->q_top)
       iqp->q_rdptr = iqp->q_buffer;
-    chSysUnlock();
+    if (nfy)
+      nfy();
+    chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
     r++;
-  }
-  if (r && iqp->q_notify) {
-    chSysLock();
-    iqp->q_notify();
-    chSysUnlock();
-  }
+  } while (--n > 0);
   return r;
 }
 
@@ -170,22 +172,20 @@ size_t chIQRead(InputQueue *iqp, uint8_t *buffer, size_t n) {
  *          the free bytes in the queue.
  *
  * @param[out] oqp pointer to an @p OutputQueue structure
- * @param[in] buffer pointer to a memory area allocated as queue buffer
+ * @param[in] bp pointer to a memory area allocated as queue buffer
  * @param[in] size size of the queue buffer
- * @param[in] onotify pointer to a callback function that is invoked when
- *                    some data is written to the queue. The value can be
- *                    @p NULL.
+ * @param[in] onfy pointer to a callback function that is invoked when
+ *                 data is written to the queue. The value can be @p NULL.
  *
  * @note The callback is invoked from within the S-Locked system state,
  *       see @ref system_states.
  */
-void chOQInit(OutputQueue *oqp, uint8_t *buffer,
-              size_t size, qnotify_t onotify) {
+void chOQInit(OutputQueue *oqp, uint8_t *bp, size_t size, qnotify_t onfy) {
 
-  oqp->q_buffer = oqp->q_rdptr = oqp->q_wrptr = buffer;
-  oqp->q_top = buffer + size;
+  oqp->q_buffer = oqp->q_rdptr = oqp->q_wrptr = bp;
+  oqp->q_top = bp + size;
+  oqp->q_notify = onfy;
   chSemInit(&oqp->q_sem, size);
-  oqp->q_notify = onotify;
 }
 
 /**
@@ -212,7 +212,7 @@ void chOQResetI(OutputQueue *oqp) {
  *
  * @param[in] oqp pointer to an @p OutputQueue structure
  * @param[in] b the byte value to be written in the queue
- * @param[in] timeout the number of ticks before the operation timeouts,
+ * @param[in] time the number of ticks before the operation timeouts,
  *             the following special values are allowed:
  *             - @a TIME_IMMEDIATE immediate timeout.
  *             - @a TIME_INFINITE no timeout.
@@ -222,11 +222,11 @@ void chOQResetI(OutputQueue *oqp) {
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the queue was reset.
  */
-msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t timeout) {
+msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time) {
   msg_t msg;
 
   chSysLock();
-  if ((msg = chSemWaitTimeoutS(&oqp->q_sem, timeout)) < RDY_OK) {
+  if ((msg = chSemWaitTimeoutS(&oqp->q_sem, time)) < RDY_OK) {
     chSysUnlock();
     return msg;
   }
@@ -263,40 +263,45 @@ msg_t chOQGetI(OutputQueue *oqp) {
 }
 
 /**
- * @brief Non-blocking write.
+ * @brief Output queue write with timeout.
  * @details The function writes data from a buffer to an output queue. The
- *          transfer is non-blocking and can return zero if the queue is
- *          already full.
- *
- * @param[in] oqp pointer to an @p OutputQueue structure
- * @param[out] buffer pointer to the buffer where the output data is stored
- * @param[in] n the maximum amount of data to be transferred
- * @return The number of bytes transferred.
- *
+ *          operation completes when the specified amount of data has been
+ *          transferred or after the specified timeout or if the queue has
+ *          been reset.
  * @note The function is not atomic, if you need atomicity it is suggested
  *       to use a semaphore or a mutex for mutual exclusion.
+ * @note The queue callback is invoked one time <b>for each</b> byte inserted
+ *       into the queue.
+ *
+ * @param[in] oqp pointer to an @p OutputQueue structure
+ * @param[out] bp pointer to the data buffer
+ * @param[in] n the maximum amount of data to be transferred
+ * @param[in] time the number of ticks before the operation timeouts,
+ *             the following special values are allowed:
+ *             - @a TIME_IMMEDIATE immediate timeout.
+ *             - @a TIME_INFINITE no timeout.
+ *             .
+ * @return The number of bytes effectively transferred.
  */
-size_t chOQWrite(OutputQueue *oqp, uint8_t *buffer, size_t n) {
-
+size_t chOQWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
+                        size_t n, systime_t time) {
+  qnotify_t nfy = oqp->q_notify;
   size_t w = 0;
-  while (n--) {
+
+  do {
     chSysLock();
-    if (chOQIsFull(oqp)) {
+    if (chSemWaitTimeoutS(&oqp->q_sem, time) != RDY_OK) {
       chSysUnlock();
-      break;
+      return w;
     }
-    chSemFastWaitI(&oqp->q_sem);
-    *oqp->q_wrptr++ = *buffer++;
+    *oqp->q_wrptr++ = *bp++;
     if (oqp->q_wrptr >= oqp->q_top)
       oqp->q_wrptr = oqp->q_buffer;
-    chSysUnlock();
+    if (nfy)
+      nfy();
+    chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
     w++;
-  }
-  if (w && oqp->q_notify) {
-    chSysLock();
-    oqp->q_notify();
-    chSysUnlock();
-  }
+  } while (--n > 0);
   return w;
 }
 #endif  /* CH_USE_QUEUES */

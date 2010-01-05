@@ -78,9 +78,7 @@ int _read_r(struct _reent *r, int file, char * ptr, int len)
     __errno_r(r) = EINVAL;
     return -1;
   }
-  *ptr++ = chIOGet(&STDOUT_SD);
-  if (--len > 0)
-    len = chIORead(&STDOUT_SD, (uint8_t *)ptr, (size_t)len);
+  len = sdRead(&STDOUT_SD, (uint8_t *)ptr, (size_t)len);
   return len;
 #else
   (void)file;
@@ -107,10 +105,6 @@ int _lseek_r(struct _reent *r, int file, int ptr, int dir)
 
 int _write_r(struct _reent *r, int file, char * ptr, int len)
 {
-#if defined(STDOUT_SD)
-  int n;
-#endif
-
   (void)r;
   (void)file;
   (void)ptr;
@@ -119,9 +113,7 @@ int _write_r(struct _reent *r, int file, char * ptr, int len)
     __errno_r(r) = EINVAL;
     return -1;
   }
-  n = len;
-  while (n--)
-    chIOPut(&STDOUT_SD, *ptr++);
+  sdWrite(&STDOUT_SD, (uint8_t *)ptr, (size_t)len);
 #endif
   return len;
 }

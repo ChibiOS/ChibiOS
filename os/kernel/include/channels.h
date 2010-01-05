@@ -19,7 +19,7 @@
 
 /**
  * @file channels.h
- * @brief I/O channels
+ * @brief I/O channels.
  * @addtogroup io_channels
  * @{
  */
@@ -45,12 +45,22 @@ struct _base_channel_methods {
    * @brief Channel put method with timeout specification.
    * @see chIOPut()
    */
-  msg_t (*put)(void *instance, uint8_t b, systime_t timeout);
+  msg_t (*put)(void *instance, uint8_t b, systime_t time);
   /**
    * @brief Channel get method with timeout specification.
    * @see chIOGet()
    */
-  msg_t (*get)(void *instance, systime_t timeout);
+  msg_t (*get)(void *instance, systime_t time);
+  /**
+   * @brief Channel write method with timeout specification.
+   * @see chIOWrite()
+   */
+  size_t (*write)(void *instance, const uint8_t *bp, size_t n, systime_t time);
+  /**
+   * @brief Channel read method with timeout specification.
+   * @see chIORead()
+   */
+  size_t (*read)(void *instance, uint8_t *bp, size_t n, systime_t time);
 };
 
 /**
@@ -66,20 +76,31 @@ struct _base_channel_data {
  */
 struct BaseChannelVMT {
   /**
+   * @p BaseSequentialStream class inherited methods.
+   */
+  struct _base_sequental_stream_methods bss;
+  /**
    * @p BaseChannel class specific methods.
    */
   struct _base_channel_methods bc;
 };
 
 /**
+ * @extends BaseSequentialStream
+ *
  * @brief Base channel class.
- * @details This class represents a generic, byte-wide, I/O channel.
+ * @details This class represents a generic, byte-wide, I/O channel. This class
+ *          introduces generic I/O primitives with timeout specification.
  */
 typedef struct {
   /**
    * Virtual Methods Table.
    */
   const struct BaseChannelVMT *vmt;
+  /**
+   * @p BaseSequentialStream class inherited data.
+   */
+  struct _base_sequental_stream_data bss;
   /**
    * @p BaseChannel class specific data.
    */
@@ -88,7 +109,8 @@ typedef struct {
 
 /**
  * @brief Channel output check.
- * @details This function verifies if a subsequent @p chIOPut() would block.
+ * @details This function verifies if a subsequent put/write operation would
+ *          block.
  *
  * @param[in] ip pointer to a @p BaseChannel or derived class
  * @return The output queue status:
@@ -100,7 +122,8 @@ typedef struct {
 
 /**
  * @brief Channel input check.
- * @details This function verifies if a subsequent @p chIOGett() would block.
+ * @details This function verifies if a subsequent get/read operation would
+ *          block.
  *
  * @param[in] ip pointer to a @p BaseChannel or derived class
  * @return The input queue status:
@@ -130,7 +153,7 @@ typedef struct {
  *
  * @param[in] ip pointer to a @p BaseChannel or derived class
  * @param[in] b the byte value to be written to the channel
- * @param[in] timeout the number of ticks before the operation timeouts,
+ * @param[in] time the number of ticks before the operation timeouts,
  *             the following special values are allowed:
  *             - @a TIME_IMMEDIATE immediate timeout.
  *             - @a TIME_INFINITE no timeout.
@@ -140,7 +163,7 @@ typedef struct {
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOPutTimeout(ip, b, timeout) ((ip)->vmt->bc.put(ip, b, timeout))
+#define chIOPutTimeout(ip, b, time) ((ip)->vmt->bc.put(ip, b, time))
 
 /**
  * @brief Channel blocking byte read.
@@ -159,7 +182,7 @@ typedef struct {
  *          is not available then the calling thread is suspended.
  *
  * @param[in] ip pointer to a @p BaseChannel or derived class
- * @param[in] timeout the number of ticks before the operation timeouts,
+ * @param[in] time the number of ticks before the operation timeouts,
  *             the following special values are allowed:
  *             - @a TIME_IMMEDIATE immediate timeout.
  *             - @a TIME_INFINITE no timeout.
@@ -168,23 +191,49 @@ typedef struct {
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOGetTimeout(ip, timeout) ((ip)->vmt->bc.get(ip, timeout))
+#define chIOGetTimeout(ip, time) ((ip)->vmt->bc.get(ip, time))
+
+/**
+ * @brief Channel blocking write with timeout.
+ * @details The function writes data from a buffer to a channel. If the channel
+ *          is not ready to accept data then the calling thread is suspended.
+ *
+ * @param[in] ip pointer to a @p BaseChannel or derived class
+ * @param[out] bp pointer to the data buffer
+ * @param[in] n the maximum amount of data to be transferred
+ * @param[in] time the number of ticks before the operation timeouts,
+ *             the following special values are allowed:
+ *             - @a TIME_IMMEDIATE immediate timeout.
+ *             - @a TIME_INFINITE no timeout.
+ *             .
+ * @return The number of bytes transferred.
+ */
+#define chIOWriteTimeout(ip, bp, n, time)                                   \
+  ((ip)->vmt->bac.write(ip, bp, n, time))
+
+/**
+ * @brief Channel blocking read with timeout.
+ * @details The function reads data from a channel into a buffer. If the data
+ *          is not available then the calling thread is suspended.
+ *
+ * @param[in] ip pointer to a @p BaseChannel or derived class
+ * @param[in] bp pointer to the data buffer
+ * @param[in] n the maximum amount of data to be transferred
+ * @param[in] time the number of ticks before the operation timeouts,
+ *             the following special values are allowed:
+ *             - @a TIME_IMMEDIATE immediate timeout.
+ *             - @a TIME_INFINITE no timeout.
+ *             .
+ * @return The number of bytes transferred.
+ */
+#define chIOReadTimeout(ip, bp, n, time)                                    \
+  ((ip)->vmt->bac.read(ip, bp, n, time))
 
 #if CH_USE_EVENTS
 /**
  * @brief @p BaseAsynchronousChannel specific methods.
  */
 struct _base_asynchronous_channel_methods {
-  /**
-   * Channel asynchronous write method.
-   * @see chIOWrite()
-   */
-  size_t (*write)(void *instance, uint8_t *buffer, size_t n);
-  /**
-   * Channel asynchronous read method.
-   * @see chIORead()
-   */
-  size_t (*read)(void *instance, uint8_t *buffer, size_t n);
 };
 
 /**
@@ -208,6 +257,10 @@ struct _base_asynchronous_channel_data {
  */
 struct BaseAsynchronousChannelVMT {
   /**
+   * @p BaseSequentialStream class inherited methods.
+   */
+  struct _base_sequental_stream_methods bss;
+  /**
    * @p BaseChannel class inherited methods.
    */
   struct _base_channel_methods bc;
@@ -221,14 +274,18 @@ struct BaseAsynchronousChannelVMT {
  * @extends BaseChannel
  *
  * @brief Base asynchronous channel class.
- * @details This class extends @p BaseChannel by adding methods for
- *          asynchronous I/O in an event-driven environment.
+ * @details This class extends @p BaseChannel by adding event sources fields
+ *          for asynchronous I/O for use in an event-driven environment.
  */
 typedef struct {
   /**
    * Virtual Methods Table.
    */
   const struct BaseAsynchronousChannelVMT *vmt;
+  /**
+   * @p BaseSequentialStream class inherited data.
+   */
+  struct _base_sequental_stream_data bss;
   /**
    * @p BaseChannel class inherited data.
    */
@@ -238,32 +295,6 @@ typedef struct {
    */
   struct _base_asynchronous_channel_data bac;
 } BaseAsynchronousChannel;
-
-/**
- * @brief Channel non-blocking write.
- * @details The function writes data from a buffer to a channel. The
- *          transfer is non-blocking and can return zero if the channel is
- *          not read to accept data.
- *
- * @param[in] ip pointer to a @p BaseAsynchronousChannel or derived class
- * @param[out] bp pointer to the buffer where the data is stored
- * @param[in] n the maximum amount of data to be transferred
- * @return The number of bytes transferred.
- */
-#define chIOWrite(ip, bp, n) ((ip)->vmt->bac.write(ip, bp, n))
-
-/**
- * @brief Channel non-blocking read.
- * @details The function reads data from a channel into a buffer. The
- *          transfer is non-blocking and can return zero if the channel has
- *          no data immediately available.
- *
- * @param[in] ip pointer to a @p BaseAsynchronousChannel or derived class
- * @param[out] bp pointer to the buffer where the input data is copied
- * @param[in] n the maximum amount of data to be transferred
- * @return The number of bytes transferred.
- */
-#define chIORead(ip, bp, n) ((ip)->vmt->bac.read(ip, bp, n))
 
 /**
  * @brief Returns the write event source.

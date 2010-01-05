@@ -205,17 +205,19 @@ typedef GenericQueue OutputQueue;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chIQInit(InputQueue *qp, uint8_t *buffer, size_t size, qnotify_t inotify);
+  void chIQInit(InputQueue *qp, uint8_t *bp, size_t size, qnotify_t infy);
   void chIQResetI(InputQueue *qp);
   msg_t chIQPutI(InputQueue *qp, uint8_t b);
-  msg_t chIQGetTimeout(InputQueue *qp, systime_t timeout);
-  size_t chIQRead(InputQueue *qp, uint8_t *buffer, size_t n);
+  msg_t chIQGetTimeout(InputQueue *qp, systime_t time);
+  size_t chIQReadTimeout(InputQueue *qp, uint8_t *bp,
+                         size_t n, systime_t time);
 
-  void chOQInit(OutputQueue *queue, uint8_t *buffer, size_t size, qnotify_t onotify);
+  void chOQInit(OutputQueue *queue, uint8_t *bp, size_t size, qnotify_t onfy);
   void chOQResetI(OutputQueue *queue);
-  msg_t chOQPutTimeout(OutputQueue *queue, uint8_t b, systime_t timeout);
+  msg_t chOQPutTimeout(OutputQueue *queue, uint8_t b, systime_t time);
   msg_t chOQGetI(OutputQueue *queue);
-  size_t chOQWrite(OutputQueue *queue, uint8_t *buffer, size_t n);
+  size_t chOQWriteTimeout(OutputQueue *queue, const uint8_t *bp,
+                          size_t n, systime_t time);
 #ifdef __cplusplus
 }
 #endif
