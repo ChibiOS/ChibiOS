@@ -131,8 +131,8 @@ msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
  *          been reset.
  * @note The function is not atomic, if you need atomicity it is suggested
  *       to use a semaphore or a mutex for mutual exclusion.
- * @note The queue callback is invoked one time <b>for each</b> byte removed
- *       from the queue.
+ * @note The queue callback is invoked before entering a sleep state and at
+ *       the end of the transfer.
  *
  * @param[in] iqp pointer to an @p InputQueue structure
  * @param[out] bp pointer to the data buffer
@@ -149,12 +149,18 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
   qnotify_t nfy = iqp->q_notify;
   size_t r = 0;
 
-  do {
-    chSysLock();
-    if (chSemWaitTimeoutS(&iqp->q_sem, time) != RDY_OK) {
-      chSysUnlock();
-      return r;
+  chSysLock();
+  while (TRUE) {
+    if (chIQIsEmpty(iqp)) {
+      if (nfy)
+        nfy();
+      if ((chSemWaitTimeoutS(&iqp->q_sem, time) != RDY_OK)) {
+        chSysUnlock();
+        return r;
+      }
     }
+    else
+      chSemFastWaitI(&iqp->q_sem);
     *bp++ = *iqp->q_rdptr++;
     if (iqp->q_rdptr >= iqp->q_top)
       iqp->q_rdptr = iqp->q_buffer;
@@ -162,8 +168,15 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
       nfy();
     chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
     r++;
-  } while (--n > 0);
-  return r;
+    if (--n == 0) {
+      chSysLock();
+      if (nfy)
+        nfy();
+      chSysUnlock();
+      return r;
+    }
+    chSysLock();
+  }
 }
 
 /**
@@ -270,8 +283,8 @@ msg_t chOQGetI(OutputQueue *oqp) {
  *          been reset.
  * @note The function is not atomic, if you need atomicity it is suggested
  *       to use a semaphore or a mutex for mutual exclusion.
- * @note The queue callback is invoked one time <b>for each</b> byte inserted
- *       into the queue.
+ * @note The queue callback is invoked before entering a sleep state and at
+ *       the end of the transfer.
  *
  * @param[in] oqp pointer to an @p OutputQueue structure
  * @param[out] bp pointer to the data buffer
@@ -288,21 +301,32 @@ size_t chOQWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
   qnotify_t nfy = oqp->q_notify;
   size_t w = 0;
 
-  do {
-    chSysLock();
-    if (chSemWaitTimeoutS(&oqp->q_sem, time) != RDY_OK) {
-      chSysUnlock();
-      return w;
+  chSysLock();
+  while (TRUE) {
+    if (chOQIsFull(oqp)) {
+      if (nfy)
+        nfy();
+      if ((chSemWaitTimeoutS(&oqp->q_sem, time) != RDY_OK)) {
+        chSysUnlock();
+        return w;
+      }
     }
+    else
+      chSemFastWaitI(&oqp->q_sem);
     *oqp->q_wrptr++ = *bp++;
     if (oqp->q_wrptr >= oqp->q_top)
       oqp->q_wrptr = oqp->q_buffer;
-    if (nfy)
-      nfy();
     chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
     w++;
-  } while (--n > 0);
-  return w;
+    if (--n == 0) {
+      chSysLock();
+      if (nfy)
+        nfy();
+      chSysUnlock();
+      return w;
+    }
+    chSysLock();
+  }
 }
 #endif  /* CH_USE_QUEUES */
 
