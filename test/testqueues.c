@@ -112,13 +112,24 @@ static void queues1_execute(void) {
   test_assert(6, n == TEST_QUEUES_SIZE, "wrong returned size");
   test_assert(7, chIQIsEmpty(&iq), "still full");
 
+  /* Queue filling again */
+  for (i = 0; i < TEST_QUEUES_SIZE; i++)
+    chIQPutI(&iq, 'A' + i);
+
+  /* Partial reads */
+  n = chIQReadTimeout(&iq, wa[1], TEST_QUEUES_SIZE / 2, TIME_IMMEDIATE);
+  test_assert(8, n == TEST_QUEUES_SIZE / 2, "wrong returned size");
+  n = chIQReadTimeout(&iq, wa[1], TEST_QUEUES_SIZE / 2, TIME_IMMEDIATE);
+  test_assert(9, n == TEST_QUEUES_SIZE / 2, "wrong returned size");
+  test_assert(10, chIQIsEmpty(&iq), "still full");
+
   /* Testing reset */
   chIQPutI(&iq, 0);
   chIQResetI(&iq);
-  test_assert(8, chIQIsEmpty(&iq), "still full");
+  test_assert(11, chIQIsEmpty(&iq), "still full");
 
   /* Timeout */
-  test_assert(9, chIQGetTimeout(&iq, 10) == Q_TIMEOUT, "wrong timeout return");
+  test_assert(12, chIQGetTimeout(&iq, 10) == Q_TIMEOUT, "wrong timeout return");
 }
 
 const struct testcase testqueues1 = {
@@ -167,18 +178,22 @@ static void queues2_execute(void) {
 
   /* Writing the whole thing */
   n = chOQWriteTimeout(&oq, wa[1], TEST_QUEUES_SIZE * 2, TIME_IMMEDIATE);
-  test_assert(6, n == TEST_QUEUES_SIZE,"wrong returned size");
+  test_assert(6, n == TEST_QUEUES_SIZE, "wrong returned size");
   test_assert(7, chOQIsFull(&oq), "not full");
 
   /* Testing reset */
   chOQResetI(&oq);
   test_assert(8, chOQIsEmpty(&oq), "still full");
 
+  /* Partial writes */
+  n = chOQWriteTimeout(&oq, wa[1], TEST_QUEUES_SIZE / 2, TIME_IMMEDIATE);
+  test_assert(9, n == TEST_QUEUES_SIZE / 2, "wrong returned size");
+  n = chOQWriteTimeout(&oq, wa[1], TEST_QUEUES_SIZE / 2, TIME_IMMEDIATE);
+  test_assert(10, n == TEST_QUEUES_SIZE / 2, "wrong returned size");
+  test_assert(11, chOQIsFull(&oq), "not full");
+
   /* Timeout */
-  for (i = 0; i < TEST_QUEUES_SIZE; i++)
-    chOQPut(&oq, 'A' + i);
-  test_assert(9, chOQIsFull(&oq), "still has space");
-  test_assert(10, chOQPutTimeout(&oq, 0, 10) == Q_TIMEOUT, "wrong timeout return");
+  test_assert(12, chOQPutTimeout(&oq, 0, 10) == Q_TIMEOUT, "wrong timeout return");
 }
 
 const struct testcase testqueues2 = {
