@@ -1,4 +1,53 @@
 *****************************************************************************
+*** Files Organization                                                    ***
+*****************************************************************************
+
+--{root}                - ChibiOS/RT directory.
+  +--readme.txt         - This file.
+  +--todo.txt           - Current plan (development/unstable versions only).
+  +--license.txt        - GPL license text.
+  +--exception.txt      - GPL exception text (stable releases only).
+  +--boards/            - Board support files.
+  +--demos/             - Demo projects.
+  +--docs/              - Documentation.
+  |  +--html/           - HTML documentation.
+  |  +--reports/        - Test reports.
+  |  +--src/            - Documentation source files (required for rebuild).
+  |  +--rsc/            - Documentation resource files (required for rebuild).
+  |  +--index.html      - Documentation access.
+  +--ext/               - External libraries, not part of ChibiOS/RT.
+  +--os/                - ChibiOS/RT files.
+  |  +--hal/            - Hardware Abstraction Layer.
+  |  |  +--include/     - HAL high level headers.
+  |  |  +--src/         - HAL high level source.
+  |  |  +--platforms/   - HAL low level drivers implementations.
+  |  |  |  +--AT91SAM7/ - Drivers for AT91SAM7 platform.
+  |  |  |  +--AVR/      - Drivers for AVR platform.
+  |  |  |  +--LPC214x/  - Drivers for LPC214x platform.
+  |  |  |  +--MSP430/   - Drivers for MSP430 platform.
+  |  |  |  +--STM32/    - Drivers for STM32 platform.
+  |  |  |  +--Linux/    - Drivers for x86 Linux simulator platform.
+  |  |  |  +--LPC214x/  - Drivers for x86 Win32 simulator platform.
+  |  |  +--templates/   - Driver template files.
+  |  |     +--meta/     - Driver meta templates.
+  |  +--ports/          - Port files for the various architectures.
+  |  |  +--GCC/         - Ports for the GCC compiler.
+  |  |     +--ARM/      - Port files for generic ARM architecture.
+  |  |     +--ARM7/     - Port files for ARM7 architecture.
+  |  |     +--ARMCM3/   - Port files for ARMCM3 architecture.
+  |  |     +--AVR/      - Port files for AVR architecture.
+  |  |     +--MSP430/   - Port files for MSP430 architecture.
+  |  |     +--SIMIA32/  - Port files for SIMIA32 simulator architecture.
+  |  +--kernel/         - Kernel portable files.
+  |  |  +--include/     - Kernel headers.
+  |  |  +--src/         - Kernel source.
+  |  |  +--templates/   - Kernel port template files.
+  |  +--various/        - Various portable support files.
+  +--test/              - Kernel test suite source code.
+  |  +--coverage/       - Code coverage project.
+  +--testhal/           - HAL integration test demos.
+ 
+*****************************************************************************
 *** Releases                                                              ***
 *****************************************************************************
 
