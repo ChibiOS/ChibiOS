@@ -3,6 +3,8 @@
 *****************************************************************************
 
 *** 1.3.8 ***
+- FIX: Fixed spurious character generation in MSP430 serial driver (bug
+  2926838).
 - NEW: Introduced an abstract streams interface BaseSequentialStream.
 - NEW: Added timeout specification to the I/O queues read/write primitives.
 - CHANGE: Modified the BaseChannel interface in order to make it a
@@ -15,6 +17,9 @@
   replicated by specifying TIME_IMMEDIATE as timeout. Another difference is
   that specifying zero as bytes number is like specifying the largest size_t
   plus one, zero was an illegal value before.
+- CHANGE: Simplified the LPC214x driver by removing the option to not use the
+  FIFO preload feature. Setting LPC214x_UART_FIFO_PRELOAD to 1 results in
+  the same behavior.
 - Documentation fixes and improvements, testing strategy explained.
 
 *** 1.3.7 ***

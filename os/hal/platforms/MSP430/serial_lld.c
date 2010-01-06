@@ -79,10 +79,11 @@ static void set_error(SerialDriver *sdp, uint8_t urctl) {
 static void notify1(void) {
 
   if (!(U0IE & UTXIE0)) {
-    chSysLockFromIsr();
-    U0TXBUF = (uint8_t)sdRequestDataI(&SD1);
-    chSysUnlockFromIsr();
-    U0IE |= UTXIE0;
+    msg_t b = sdRequestDataI(&SD1);
+    if (b != Q_EMPTY) {
+      U0IE |= UTXIE0;
+      U0TXBUF = (uint8_t)b;
+    }
   }
 }
 
@@ -122,8 +123,11 @@ static void usart0_deinit(void) {
 static void notify2(void) {
 
   if (!(U1IE & UTXIE1)) {
-    U1TXBUF = (uint8_t)sdRequestDataI(&SD2);
-    U1IE |= UTXIE1;
+    msg_t b = sdRequestDataI(&SD2);
+    if (b != Q_EMPTY) {
+      U1IE |= UTXIE1;
+      U1TXBUF = (uint8_t)b;
+    }
   }
 }
 

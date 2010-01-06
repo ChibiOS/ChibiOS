@@ -152,7 +152,6 @@ static void serve_interrupt(SerialDriver *sdp) {
       break;
     case IIR_SRC_TX:
       {
-#if LPC214x_UART_FIFO_PRELOAD > 0
         int i = LPC214x_UART_FIFO_PRELOAD;
         do {
           msg_t b;
@@ -169,15 +168,6 @@ static void serve_interrupt(SerialDriver *sdp) {
           }
           u->UART_THR = b;
         } while (--i);
-#else
-        chSysLockFromIsr();
-        msg_t b = sdRequestDataI(sdp);
-        chSysUnlockFromIsr();
-        if (b < Q_OK)
-          u->UART_IER &= ~IER_THRE;
-        else
-          u->UART_THR = b;
-#endif
       }
       break;
     default:
@@ -187,20 +177,18 @@ static void serve_interrupt(SerialDriver *sdp) {
   }
 }
 
-#if LPC214x_UART_FIFO_PRELOAD > 0
+/**
+ * @brief Attempts a TX FIFO preload.
+ */
 static void preload(SerialDriver *sdp) {
   UART *u = sdp->sd.uart;
 
   if (u->UART_LSR & LSR_THRE) {
     int i = LPC214x_UART_FIFO_PRELOAD;
     do {
-      chSysLockFromIsr();
       msg_t b = chOQGetI(&sdp->sd.oqueue);
-      chSysUnlockFromIsr();
       if (b < Q_OK) {
-        chSysLockFromIsr();
         chEvtBroadcastI(&sdp->bac.oevent);
-        chSysUnlockFromIsr();
         return;
       }
       u->UART_THR = b;
@@ -208,38 +196,25 @@ static void preload(SerialDriver *sdp) {
   }
   u->UART_IER |= IER_THRE;
 }
-#endif
 
+/**
+ * @brief Driver SD1 output notification.
+ */
 #if USE_LPC214x_UART0 || defined(__DOXYGEN__)
 static void notify1(void) {
-#if LPC214x_UART_FIFO_PRELOAD > 0
 
   preload(&SD1);
-#else
-  UART *u = U0Base;
-
-  if (u->UART_LSR & LSR_THRE) {
-    chSysLockFromIsr();
-    u->UART_THR = chOQGetI(&SD1.sd.oqueue);
-    chSysUnlockFromIsr();
-  }
-  u->UART_IER |= IER_THRE;
-#endif
 }
 #endif
 
+
+/**
+ * @brief Driver SD2 output notification.
+ */
 #if USE_LPC214x_UART1 || defined(__DOXYGEN__)
 static void notify2(void) {
-#if LPC214x_UART_FIFO_PRELOAD > 0
 
   preload(&SD2);
-#else
-  UART *u = U1Base;
-
-  if (u->UART_LSR & LSR_THRE)
-    u->UART_THR = chOQGetI(&SD2.sd.oqueue);
-  u->UART_IER |= IER_THRE;
-#endif
 }
 #endif
 
@@ -247,6 +222,9 @@ static void notify2(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief UART0 IRQ handler.
+ */
 #if USE_LPC214x_UART0 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(UART0IrqHandler) {
 
@@ -259,6 +237,10 @@ CH_IRQ_HANDLER(UART0IrqHandler) {
 }
 #endif
 
+
+/**
+ * @brief UART1 IRQ handler.
+ */
 #if USE_LPC214x_UART1 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(UART1IrqHandler) {
 

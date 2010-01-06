@@ -59,13 +59,10 @@
  * @brief FIFO preload parameter.
  * @details Configuration parameter, this values defines how many bytes are
  * preloaded in the HW transmit FIFO for each interrupt, the maximum value is
- * 16 the minimum is 2, the value 0 disables the feature.
+ * 16 the minimum is 1.
  * @note An high value reduces the number of interrupts generated but can
  *       also increase the worst case interrupt response time because the
  *       preload loops.
- * @note The value zero disables the feature and reverts to a simpler code
- *       that will generate an interrupt for each output byte but is much
- *       smaller and simpler.
  */
 #if !defined(UART_FIFO_PRELOAD) || defined(__DOXYGEN__)
 #define LPC214x_UART_FIFO_PRELOAD   16
@@ -88,6 +85,10 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if (LPC214x_UART_FIFO_PRELOAD < 1) || (LPC214x_UART_FIFO_PRELOAD > 16)
+#error "invalid LPC214x_UART_FIFO_PRELOAD setting"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
