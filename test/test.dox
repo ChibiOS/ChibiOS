@@ -24,7 +24,7 @@
  * order to verify the proper working of the kernel, the port and the demo
  * itself.
  *
- * <h2>Strategy by Components</h2>
+ * <h2>Strategy by Component</h2>
  * The OS components are tested in various modes depending on their importance:
  * - <b>Kernel</b>. The kernel code is subject to rigorous testing. The test
  *   suite aims to test <b>all</b> the kernel code and reach a code coverage

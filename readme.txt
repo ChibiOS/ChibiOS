@@ -70,6 +70,7 @@
   FIFO preload feature. Setting LPC214x_UART_FIFO_PRELOAD to 1 results in
   the same behavior.
 - Documentation fixes and improvements, testing strategy explained.
+- Added article about waking up threads from IRQ handlers.
 
 *** 1.3.7 ***
 - FIX: Fixed duplicated definition of SPI_USE_MUTUAL_EXCLUSION (bug 2922495).

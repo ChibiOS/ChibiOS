@@ -42,8 +42,8 @@
  *   number of all the above objects.
  * - PC simulator target included, the development can be done on a PC
  *   under Linux or Windows.<br>
- *   Timers, I/O channels and other HW resources are simulated in a
- *   Win32 process and the application code does not need to be aware of it.
+ *   Timers, I/O channels and other HW resources are simulated in a guest OS
+ *   process and the application code does not need to be aware of it.
  * - No *need* for a memory allocator, all the kernel structures are static
  *   and declaratively allocated.
  * - Optional, thread safe, Heap Allocator subsystem.

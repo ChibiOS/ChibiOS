@@ -35,7 +35,7 @@
  * 
  * <h2>The three subsystems</h2>
  * This is a small comparison table regarding the three subsystems, C-runtime
- * and static objects are thrown there for comparison:<br><br>
+ * and static objects are thrown in there for comparison:<br><br>
  * <table style="text-align: center; width: 95%;"
  *        align="center" border="1" cellpadding="2" cellspacing="0">
  *   <tr>

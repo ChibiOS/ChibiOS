@@ -160,7 +160,7 @@
 
 /**
  * @brief Atomic semaphore API.
- * @details If enabled then the semaphores the @p chSemWaitSignal() API
+ * @details If enabled then the semaphores the @p chSemSignalWait() API
  *          is included in the kernel.
  *
  * @note The default is @p TRUE.

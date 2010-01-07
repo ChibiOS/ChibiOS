@@ -20,8 +20,9 @@
 /**
  * @page articles Articles and Code Samples
  * ChibiOS/RT Articles and Code Examples:
- * - @subpage article_interrupts
  * - @subpage article_create_thread
+ * - @subpage article_interrupts
+ * - @subpage article_wakeup
  * - @subpage article_manage_memory
  * - @subpage article_stacks
  * - @subpage article_mutual_exclusion

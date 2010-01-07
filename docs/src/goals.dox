@@ -42,7 +42,7 @@
  *
  * <h3>Static design</h3>
  * Everything in the kernel is static, nowhere memory is allocated or freed,
- * there are two allocator subsystems but those are options and not part of
+ * there are three allocator subsystems but those are options and not part of
  * core OS. Safety is something you design in, not something you can add later.
  *
  * <h3>No tables, arrays or other fixed structures</h3>
@@ -84,5 +84,5 @@
  * committing to use it. Test results on all the supported platforms and
  * performance metrics are included in each ChibiOS/RT release. The test
  * code is released as well, all the included demos are capable of executing
- * the test suite and the OS benchmarks.
+ * the test suite and the OS benchmarks, see @ref testsuite.
  */

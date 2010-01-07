@@ -27,6 +27,13 @@
 #ifndef _THREADS_H_
 #define _THREADS_H_
 
+/*
+ * Module dependencies check.
+ */
+#if CH_USE_DYNAMIC && !CH_USE_WAITEXIT
+#error "CH_USE_DYNAMIC requires CH_USE_WAITEXIT"
+#endif
+
 /**
  * @brief Structure representing a thread.
  *
