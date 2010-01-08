@@ -99,9 +99,9 @@ void chSysInit(void) {
 void chSysTimerHandlerI(void) {
 
 #if CH_TIME_QUANTUM > 0
-  /* running thread has not used up quantum yet? */
+  /* Running thread has not used up quantum yet? */
   if (rlist.r_preempt > 0)
-    /* decrement remaining quantum */
+    /* Decrement remaining quantum.*/
     rlist.r_preempt--;
 #endif
 #if CH_DBG_THREADS_PROFILING

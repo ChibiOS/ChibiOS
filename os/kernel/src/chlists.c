@@ -28,12 +28,12 @@
 #if !CH_OPTIMIZE_SPEED || defined(__DOXYGEN__)
 /**
  * @brief Inserts a thread into a priority ordered queue.
- *
- * @param[in] tp the pointer to the thread to be inserted in the list
- * @param[in] tqp the pointer to the threads list header
  * @note The insertion is done by scanning the list from the highest priority
  *       toward the lowest.
  * @note This function is @b not an API.
+ *
+ * @param[in] tp the pointer to the thread to be inserted in the list
+ * @param[in] tqp the pointer to the threads list header
  */
 void prio_insert(Thread *tp, ThreadsQueue *tqp) {
 
@@ -52,10 +52,10 @@ void prio_insert(Thread *tp, ThreadsQueue *tqp) {
 
 /**
  * @brief Inserts a Thread into a queue.
+ * @note This function is @b not an API.
  *
  * @param[in] tp the pointer to the thread to be inserted in the list
  * @param[in] tqp the pointer to the threads list header
- * @note This function is @b not an API.
  */
 void queue_insert(Thread *tp, ThreadsQueue *tqp) {
 
@@ -65,10 +65,12 @@ void queue_insert(Thread *tp, ThreadsQueue *tqp) {
 
 /**
  * @brief Removes the first-out Thread from a queue and returns it.
+ * @note If the queue is priority ordered then this function returns the
+ *       thread with the highest priority.
+ * @note This function is @b not an API.
  *
  * @param[in] tqp the pointer to the threads list header
  * @return The removed thread pointer.
- * @note This function is @b not an API.
  */
 Thread *fifo_remove(ThreadsQueue *tqp) {
   Thread *tp = tqp->p_next;
@@ -79,15 +81,17 @@ Thread *fifo_remove(ThreadsQueue *tqp) {
 
 /**
  * @brief Removes the last-out Thread from a queue and returns it.
+ * @note If the queue is priority ordered then this function returns the
+ *       thread with the lowest priority.
+ * @note This function is @b not an API.
  *
  * @param[in] tqp the pointer to the threads list header
  * @return The removed thread pointer.
- * @note This function is @b not an API.
  */
 Thread *lifo_remove(ThreadsQueue *tqp) {
-  Thread *tp = tqp->p_next;
+  Thread *tp = tqp->p_prev;
 
-  (tqp->p_next = tp->p_next)->p_prev = (Thread *)tqp;
+  (tqp->p_prev = tp->p_prev)->p_next = (Thread *)tqp;
   return tp;
 }
 
@@ -95,10 +99,10 @@ Thread *lifo_remove(ThreadsQueue *tqp) {
  * @brief Removes a Thread from a queue and returns it.
  * @details The thread is removed from the queue regardless of its relative
  *          position and regardless the used insertion method.
+ * @note This function is @b not an API.
  *
  * @param[in] tp the pointer to the thread to be removed from the queue
  * @return The removed thread pointer.
- * @note This function is @b not an API.
  */
 Thread *dequeue(Thread *tp) {
 

@@ -52,6 +52,7 @@
 *****************************************************************************
 
 *** 1.3.8 ***
+- FIX: Fixed dequeuing in lifo_remove() function (bug 2928142).
 - FIX: Fixed spurious character generation in MSP430 serial driver (bug
   2926838).
 - NEW: Introduced an abstract streams interface BaseSequentialStream.

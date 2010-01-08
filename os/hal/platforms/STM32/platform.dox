@@ -23,8 +23,10 @@
  * @details The STM32 support includes:
  * - I/O ports driver.
  * - Buffered, interrupt driven, serial driver.
- * - DMA capable, high performance, SPI driver.
+ * - Interrupt driver CAN driver.
  * - DMA capable, high performance, ADC driver.
+ * - DMA capable, high performance, SPI driver.
+ * - PWM driver.
  * - A demo supporting the kernel test suite.
  * - A demo that demonstrate the FatFs use with the MMC driver.
  * .
@@ -124,4 +126,4 @@
  *
  * @ingroup STM32
  */
- 
+
