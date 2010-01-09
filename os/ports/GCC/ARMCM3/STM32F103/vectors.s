@@ -81,6 +81,35 @@ _vectors:
         .word   VectorE0
         .word   VectorE4
         .word   VectorE8
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL)
+        .word   VectorEC
+        .word   VectorF0
+        .word   VectorF4
+        .word   VectorF8
+        .word   VectorFC
+        .word   Vector100
+        .word   Vector104
+        .word   Vector108
+        .word   Vector10C
+        .word   Vector110
+        .word   Vector114
+        .word   Vector118
+        .word   Vector11C
+        .word   Vector120
+        .word   Vector124
+        .word   Vector128
+        .word   Vector12C
+#endif
+#if defined(STM32F10X_CL)
+        .word   Vector130
+        .word   Vector134
+        .word   Vector138
+        .word   Vector13C
+        .word   Vector140
+        .word   Vector144
+        .word   Vector148
+        .word   Vector14C
+#endif
 
 .weak NMIVector
 NMIVector:
@@ -252,5 +281,83 @@ VectorE4:
 
 .weak VectorE8
 VectorE8:
+
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL)
+.weak VectorEC
+VectorEC:
+
+.weak VectorF0
+VectorF0:
+
+.weak VectorF4
+VectorF4:
+
+.weak VectorF8
+VectorF8:
+
+.weak VectorFC
+VectorFC:
+
+.weak Vector100
+Vector100:
+
+.weak Vector104
+Vector104:
+
+.weak Vector108
+Vector108:
+
+.weak Vector10C
+Vector10C:
+
+.weak Vector110
+Vector110:
+
+.weak Vector114
+Vector114:
+
+.weak Vector118
+Vector118:
+
+.weak Vector11C
+Vector11C:
+
+.weak Vector120
+Vector120:
+
+.weak Vector124
+Vector124:
+
+.weak Vector128
+Vector128:
+
+.weak Vector12C
+Vector12C:
+#endif
+#if defined(STM32F10X_CL)
+.weak Vector130
+Vector130:
+
+.weak Vector134
+Vector134:
+
+.weak Vector138
+Vector138:
+
+.weak Vector13C
+Vector13C:
+
+.weak Vector140
+Vector140:
+
+.weak Vector144
+Vector144:
+
+.weak Vector148
+Vector148:
+
+.weak Vector14C
+Vector14C:
+#endif
 
 here:   b       here

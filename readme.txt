@@ -57,6 +57,7 @@
   2926838).
 - NEW: Introduced an abstract streams interface BaseSequentialStream.
 - NEW: Added timeout specification to the I/O queues read/write primitives.
+- NEW: Added support for HD and CL STM32 devices in the vectors table.
 - CHANGE: Modified the BaseChannel interface in order to make it a
   BaseSequentialStream descendant.
 - CHANGE: Updated the serial driver model in order to expose the
