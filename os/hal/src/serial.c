@@ -141,7 +141,7 @@ void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
  */
 void sdStart(SerialDriver *sdp, const SerialConfig *config) {
 
-  chDbgCheck((sdp != NULL) && (config != NULL), "sdStart");
+  chDbgCheck(sdp != NULL, "sdStart");
 
   chSysLock();
   chDbgAssert((sdp->sd.state == SD_STOP) || (sdp->sd.state == SD_READY),
@@ -251,8 +251,10 @@ sdflags_t sdGetAndClearFlags(SerialDriver *sdp) {
 
   chDbgCheck(sdp != NULL, "sdGetAndClearFlags");
 
+  chSysLock();
   mask = sdp->sd.flags;
   sdp->sd.flags = SD_NO_ERROR;
+  chSysUnlock();
   return mask;
 }
 

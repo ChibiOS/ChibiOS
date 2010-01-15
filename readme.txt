@@ -51,6 +51,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.5.0 ***
+- FIX: Fixed parameter check in sdStart() function (bug 2932922).
+
 *** 1.3.8 ***
 - FIX: Fixed dequeuing in lifo_remove() function (bug 2928142).
 - FIX: Fixed spurious character generation in MSP430 serial driver (bug
