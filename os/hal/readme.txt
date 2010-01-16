@@ -1,1 +1,0 @@
-ChibiOS/RT HAL code
