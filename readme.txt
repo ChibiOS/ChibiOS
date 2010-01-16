@@ -83,7 +83,7 @@
   MMC/SD, PWM, Serial, SPI drivers. Added driver implementations to the
   various platforms.
 - NEW: Added support for uIP, lwIP, FatFS external libraries, added demos.
-- Many Many improvements and minor features.
+- Many many other improvements and minor features.
 
 *** 1.2.4 ***
 - FIX: Fixed GCC 4.4.x aliasing warnings (bug 2846336).
