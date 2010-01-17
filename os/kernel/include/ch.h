@@ -42,7 +42,7 @@
 /**
  * Kernel version string.
  */
-#define CH_KERNEL_VERSION       "1.3.8unstable"
+#define CH_KERNEL_VERSION       "1.4.0"
 
 /**
  * Kernel version major number.
@@ -52,12 +52,12 @@
 /**
  * Kernel version minor number.
  */
-#define CH_KERNEL_MINOR         3
+#define CH_KERNEL_MINOR         4
 
 /**
  * Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         8
+#define CH_KERNEL_PATCH         0
 
 /*
  * Common values.
@@ -69,10 +69,10 @@
 #define TRUE        (!FALSE)
 #endif
 
-#include <chconf.h>
-#include <chtypes.h>
+#include "chconf.h"
+#include "chtypes.h"
 #include "lists.h"
-#include <chcore.h>
+#include "chcore.h"
 #include "sys.h"
 #include "vt.h"
 #include "scheduler.h"
