@@ -5,7 +5,7 @@ Settings: MCLK=DCOCLK 750KHz
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.3.3unstable
+*** Kernel:       1.4.0
 *** Architecture: MSP430
 *** GCC Version:  3.2.3
 
@@ -92,7 +92,7 @@ Settings: MCLK=DCOCLK 750KHz
 --- Score : 1934 msgs/S, 3868 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
---- Test Case 11.2 (Benchmark, messages #2)
+--- Test Case 11. (Benchmark, messages #2)
 --- Score : 1603 msgs/S, 3206 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
@@ -109,7 +109,7 @@ Settings: MCLK=DCOCLK 750KHz
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 1698 threads/S
+--- Score : 1699 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedulation, 5 threads)
