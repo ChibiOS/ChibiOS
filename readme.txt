@@ -46,13 +46,14 @@
   +--test/              - Kernel test suite source code.
   |  +--coverage/       - Code coverage project.
   +--testhal/           - HAL integration test demos.
- 
+
 *****************************************************************************
 *** Releases                                                              ***
 *****************************************************************************
 
 *** 1.5.0 ***
 - FIX: Fixed parameter check in sdStart() function (bug 2932922).
+- FIX: Fixed missing platform.mk file in MSP430 port (bug 2933735).
 
 *** 1.3.8 ***
 - FIX: Fixed dequeuing in lifo_remove() function (bug 2928142).
