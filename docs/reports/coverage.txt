@@ -49,7 +49,7 @@ Lines executed:100.00% of 65
 ../../os/kernel/src/chmboxes.c:creating `chmboxes.c.gcov'
 
 File `../../os/kernel/src/chqueues.c'
-Lines executed:100.00% of 96
+Lines executed:100.00% of 110
 ../../os/kernel/src/chqueues.c:creating `chqueues.c.gcov'
 
 File `../../os/kernel/src/chmemcore.c'
