@@ -88,26 +88,26 @@ void chMtxLockS(Mutex *mp) {
       switch (tp->p_state) {
       case THD_STATE_WTMTX:
         /* Re-enqueues tp with its new priority on the mutex wait queue.*/
-        prio_insert(dequeue(tp), (ThreadsQueue *)&tp->p_u.wtobjp);
+        prio_insert(dequeue(tp), (ThreadsQueue *)tp->p_u.wtobjp);
         /* Boost the owner of this mutex if needed.*/
         tp = ((Mutex *)tp->p_u.wtobjp)->m_owner;
         continue;
 #if CH_USE_CONDVARS
       case THD_STATE_WTCOND:
         /* Re-enqueues tp with its new priority on the condvar queue.*/
-        prio_insert(dequeue(tp), (ThreadsQueue *)&tp->p_u.wtobjp);
+        prio_insert(dequeue(tp), (ThreadsQueue *)tp->p_u.wtobjp);
         break;
 #endif
 #if CH_USE_SEMAPHORES_PRIORITY
       case THD_STATE_WTSEM:
         /* Re-enqueues tp with its new priority on the semaphore queue.*/
-        prio_insert(dequeue(tp), (ThreadsQueue *)&tp->p_u.wtobjp);
+        prio_insert(dequeue(tp), (ThreadsQueue *)tp->p_u.wtobjp);
         break;
 #endif
 #if CH_USE_MESSAGES_PRIORITY
       case THD_STATE_SNDMSG:
         /* Re-enqueues  tp with its new priority on the server thread queue.*/
-        prio_insert(dequeue(tp), ((Thread *)tp->p_u.wtobjp)->p_msgqueue);
+        prio_insert(dequeue(tp), &((Thread *)tp->p_u.wtobjp)->p_msgqueue);
         break;
 #endif
       case THD_STATE_READY:
