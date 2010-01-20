@@ -50,11 +50,11 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
   chSysLock();
   msg_insert(currp, &tp->p_msgqueue);
   currp->p_msg = msg;
-  currp->p_wtthdp = tp;
-  if (tp->p_state == PRWTMSG)
+  currp->p_u.wtobjp = tp;
+  if (tp->p_state == THD_STATE_WTMSG)
     chSchReadyI(tp);
-  chSchGoSleepS(PRSNDMSG);
-  msg = currp->p_rdymsg;
+  chSchGoSleepS(THD_STATE_SNDMSG);
+  msg = currp->p_u.rdymsg;
   chSysUnlock();
   return msg;
 }
@@ -73,7 +73,7 @@ msg_t chMsgWait(void) {
 
   chSysLock();
   if (!chMsgIsPendingI(currp))
-    chSchGoSleepS(PRWTMSG);
+    chSchGoSleepS(THD_STATE_WTMSG);
   msg = chMsgGetI(currp);
   chSysUnlock();
   return msg;

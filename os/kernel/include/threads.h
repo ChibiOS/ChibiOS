@@ -44,118 +44,94 @@
  */
 struct Thread {
   Thread                *p_next;        /**< Next @p Thread in the threads
-                                             list/queue.*/
+                                             list/queue.                    */
   /* End of the fields shared with the ThreadsList structure. */
   Thread                *p_prev;        /**< Previous @p Thread in the threads
-                                             queue.*/
+                                             queue.                         */
   /* End of the fields shared with the ThreadsQueue structure. */
-  tprio_t               p_prio;         /**< Thread priority.*/
+  tprio_t               p_prio;         /**< Thread priority.               */
   /* End of the fields shared with the ReadyList structure. */
-  tstate_t              p_state;        /**< Current thread state.*/
-  tmode_t               p_flags;        /**< Various flags.*/
-  struct context        p_ctx;          /**< Processor context.*/
+  tstate_t              p_state;        /**< Current thread state.          */
+  tmode_t               p_flags;        /**< Various thread flags.          */
+  struct context        p_ctx;          /**< Processor context.             */
 #if CH_USE_NESTED_LOCKS
-  cnt_t                 p_locks;        /**< Number of nested locks.*/
+  cnt_t                 p_locks;        /**< Number of nested locks.        */
 #endif
 #if CH_DBG_THREADS_PROFILING
-  volatile systime_t    p_time;         /**< Consumed time.
-                                             @note This field can overflow.*/
+  volatile systime_t    p_time;         /**< Thread  consumed time in ticks.
+                                             @note This field can overflow. */
 #endif
-  /*
-   * The following fields are merged in unions because they are all
-   * state-specific fields. This trick saves some extra space for each
-   * thread in the system.
-   */
   union {
-    msg_t               p_rdymsg;       /**< Thread wakeup code.*/
-    msg_t               p_exitcode;     /**< The thread exit code
-                                             (@p PREXIT state).*/
-    void                *p_wtobjp;      /**< Generic kernel object pointer used
-                                             for opaque access.*/
-#if CH_USE_SEMAPHORES
-    Semaphore           *p_wtsemp;      /**< Semaphore where the thread is
-                                             waiting on (@p PRWTSEM state).*/
-#endif
-#if CH_USE_MUTEXES
-    Mutex               *p_wtmtxp;      /**< Mutex where the thread is waiting
-                                             on (@p PRWTMTX state).*/
-#endif
-#if CH_USE_CONDVARS
-    CondVar             *p_wtcondp;     /**< CondVar where the thread is
-                                             waiting on (@p PRWTCOND state).*/
-#endif
-#if CH_USE_MESSAGES
-    Thread              *p_wtthdp;      /**< Destination thread for message
-                                             send @p PRSNDMSG state).*/
-#endif
+    msg_t               rdymsg;         /**< Thread wakeup code.            */
+    msg_t               exitcode;       /**< The thread exit code
+                                             (@p THD_STATE_FINAL state).    */
+    void                *wtobjp;        /**< Generic kernel object pointer. */
 #if CH_USE_EVENTS
-    eventmask_t         p_ewmask;       /**< Enabled events mask (@p PRWTOREVT
-                                             or @p PRWTANDEVT states).*/
+    eventmask_t         ewmask;         /**< Enabled events mask
+                                             (@p THD_STATE_WTOREVT or
+                                             @p THD_STATE_WTANDEVT states). */
 #endif
-  };
-  /*
-   * Start of the optional fields.
-   */
+  }                     p_u;            /**< State-specific fields.         */
 #if CH_USE_WAITEXIT
   Thread                *p_waiting;     /**< Thread waiting for termination.*/
 #endif
 #if CH_USE_MESSAGES
-  ThreadsQueue          p_msgqueue;     /**< Message queue.*/
-  msg_t                 p_msg;          /**< The message.*/
+  ThreadsQueue          p_msgqueue;     /**< Messages queue.                */
+  msg_t                 p_msg;          /**< Thread message.                */
 #endif
 #if CH_USE_EVENTS
-  eventmask_t           p_epending;     /**< Pending events mask.*/
+  eventmask_t           p_epending;     /**< Pending events mask.           */
 #endif
 #if CH_USE_MUTEXES
   Mutex                 *p_mtxlist;     /**< List of the mutexes owned by this
-                                             thread, @p NULL terminated.*/
+                                             thread, @p NULL terminated.    */
   tprio_t               p_realprio;     /**< Thread's own, non-inherited,
-                                             priority.*/
+                                             priority.                      */
 #endif
 #if CH_USE_DYNAMIC && CH_USE_MEMPOOLS
   void                  *p_mpool;       /**< Memory Pool where the thread
-                                             workspace is returned.*/
+                                             workspace is returned.         */
 #endif
   /* Extra fields defined in chconf.h */
   THREAD_EXT_FIELDS
 };
 
 /** Thread state: Ready to run, waiting on the ready list.*/
-#define PRREADY         0
-/** Thread state: Currently running. */
-#define PRCURR          1
-/** Thread state: Thread created in suspended state. */
-#define PRSUSPENDED     2
-/** Thread state: Waiting on a semaphore. */
-#define PRWTSEM         3
-/** Thread state: Waiting on a mutex. */
-#define PRWTMTX         4
-/** Thread state: Waiting in @p chThdSleep() or @p chThdSleepUntil(). */
-#define PRWTCOND        5
-/** Thread state: Waiting in @p chCondWait(). */
-#define PRSLEEP         6
-/** Thread state: Waiting in @p chThdWait(). */
-#define PRWAIT          7
+#define THD_STATE_READY             0
+/** Thread state: Currently running.*/
+#define THD_STATE_CURRENT           1
+/** Thread state: Thread created in suspended state.*/
+#define THD_STATE_SUSPENDED         2
+/** Thread state: Waiting on a semaphore.*/
+#define THD_STATE_WTSEM             3
+/** Thread state: Waiting on a mutex.*/
+#define THD_STATE_WTMTX             4
+/** Thread state: Waiting in @p chCondWait().*/
+#define THD_STATE_WTCOND            5
+/** Thread state: Waiting in @p chThdSleep() or @p chThdSleepUntil().*/
+#define THD_STATE_SLEEPING          6
+/** Thread state: Waiting in @p chThdWait().*/
+#define THD_STATE_WTEXIT            7
 /** Thread state: Waiting in @p chEvtWaitOneTimeout() or
-    @p chEvtWaitAnyTimeout(). */
-#define PRWTOREVT       8
-/** Thread state: Waiting in @p chEvtWaitAllTimeout(). */
-#define PRWTANDEVT      9
-/** Thread state: Waiting in @p chMsgSend(). */
-#define PRSNDMSG        10
-/** Thread state: Waiting in @p chMsgWait(). */
-#define PRWTMSG         11
+    @p chEvtWaitAnyTimeout().*/
+#define THD_STATE_WTOREVT           8
+/** Thread state: Waiting in @p chEvtWaitAllTimeout().*/
+#define THD_STATE_WTANDEVT          9
+/** Thread state: Waiting in @p chMsgSend().*/
+#define THD_STATE_SNDMSG            10
+/** Thread state: Waiting in @p chMsgWait().*/
+#define THD_STATE_WTMSG             11
 /** Thread state: After termination.*/
-#define PREXIT          12
+#define THD_STATE_FINAL             12
 
 /*
  * Various flags into the thread p_flags field.
  */
-#define P_MEM_MODE_MASK         3       /* Thread memory mode mask.     */
-#define P_MEM_MODE_STATIC       0       /* Thread memory mode: static.  */
-#define P_MEM_MODE_HEAP         1       /* Thread memory mode: heap.    */
-#define P_MEM_MODE_MEMPOOL      2       /* Thread memory mode: mempool. */
-#define P_TERMINATE             4       /* Termination requested.       */
+#define THD_MEM_MODE_MASK           3       /**< Thread memory mode mask.   */
+#define THD_MEM_MODE_STATIC         0       /**< Thread memory mode: static.*/
+#define THD_MEM_MODE_HEAP           1       /**< Thread memory mode: heap.  */
+#define THD_MEM_MODE_MEMPOOL        2       /**< Thread memory mode: pool.  */
+#define THD_TERMINATE               4       /**< Termination requested.     */
 
 /* Not an API, don't use into the application code.*/
 Thread *init_thread(Thread *tp, tprio_t prio);
@@ -205,13 +181,13 @@ extern "C" {
 #define chThdLS() (void *)(currp + 1)
 
 /**
- * Verifies if the specified thread is in the @p PREXIT state.
+ * Verifies if the specified thread is in the @p THD_STATE_FINAL state.
  *
  * @param[in] tp the pointer to the thread
  * @retval TRUE thread terminated.
  * @retval FALSE thread not terminated.
  */
-#define chThdTerminated(tp) ((tp)->p_state == PREXIT)
+#define chThdTerminated(tp) ((tp)->p_state == THD_STATE_FINAL)
 
 /**
  * Verifies if the current thread has a termination request pending.
@@ -219,7 +195,7 @@ extern "C" {
  * @retval TRUE termination request pended.
  * @retval FALSE termination request not pended.
  */
-#define chThdShouldTerminate() (currp->p_flags & P_TERMINATE)
+#define chThdShouldTerminate() (currp->p_flags & THD_TERMINATE)
 
 /**
  * Resumes a thread created with @p chThdInit().
@@ -240,7 +216,7 @@ extern "C" {
  *                   specification.
  *                 .
  */
-#define chThdSleepS(time) chSchGoSleepTimeoutS(PRSLEEP, time)
+#define chThdSleepS(time) chSchGoSleepTimeoutS(THD_STATE_SLEEPING, time)
 
 /**
  * Delays the invoking thread for the specified number of seconds.

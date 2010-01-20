@@ -72,7 +72,7 @@ void chCondSignalI(CondVar *cp) {
   chDbgCheck(cp != NULL, "chCondSignalI");
 
   if (notempty(&cp->c_queue))                           /* any thread ? */
-    chSchReadyI(fifo_remove(&cp->c_queue))->p_rdymsg = RDY_OK;
+    chSchReadyI(fifo_remove(&cp->c_queue))->p_u.rdymsg = RDY_OK;
 }
 
 /**
@@ -97,11 +97,11 @@ void chCondBroadcastI(CondVar *cp) {
 
   chDbgCheck(cp != NULL, "chCondBroadcastI");
 
-  /* empties the condition variable queue and inserts all the Threads into the
+  /* Empties the condition variable queue and inserts all the Threads into the
    * ready list in FIFO order. The wakeup message is set to @p RDY_RESET in
-   * order to make a chCondBroadcast() detectable from a chCondSignal(). */
+   * order to make a chCondBroadcast() detectable from a chCondSignal().*/
   while (cp->c_queue.p_next != (void *)&cp->c_queue)
-    chSchReadyI(fifo_remove(&cp->c_queue))->p_rdymsg = RDY_RESET;
+    chSchReadyI(fifo_remove(&cp->c_queue))->p_u.rdymsg = RDY_RESET;
 }
 
 /**
@@ -146,13 +146,13 @@ msg_t chCondWaitS(CondVar *cp) {
               "chCondWaitS(), #1",
               "not owning a mutex");
 
-  mp = chMtxUnlockS();                  /* unlocks the condvar mutex */
-  prio_insert(currp, &cp->c_queue);     /* enters the condvar queue */
-  currp->p_wtcondp = cp;                /* needed by the tracer */
-  chSchGoSleepS(PRWTCOND);              /* waits on the condvar */
-  msg = currp->p_rdymsg;                /* fetches the wakeup message */
-  chMtxLockS(mp);                       /* atomically relocks the mutex */
-  return msg;                           /* returns the wakeup message */
+  mp = chMtxUnlockS();
+  prio_insert(currp, &cp->c_queue);
+  currp->p_u.wtobjp = cp;
+  chSchGoSleepS(THD_STATE_WTCOND);
+  msg = currp->p_u.rdymsg;
+  chMtxLockS(mp);
+  return msg;
 }
 
 #if CH_USE_CONDVARS_TIMEOUT
@@ -212,13 +212,13 @@ msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time) {
               "chCondWaitTimeoutS(), #1",
               "not owning a mutex");
 
-  mp = chMtxUnlockS();                  /* unlocks the condvar mutex */
-  prio_insert(currp, &cp->c_queue);     /* enters the condvar queue */
-  currp->p_wtcondp = cp;                /* needed by the tracer */
-  chSchGoSleepTimeoutS(PRWTCOND, time); /* waits on the condvar */
-  msg = currp->p_rdymsg;                /* fetches the wakeup message */
-  chMtxLockS(mp);                       /* atomically relocks the mutex */
-  return msg;                           /* returns the wakeup message */
+  mp = chMtxUnlockS();
+  prio_insert(currp, &cp->c_queue);
+  currp->p_u.wtobjp = cp;
+  chSchGoSleepTimeoutS(THD_STATE_WTCOND, time);
+  msg = currp->p_u.rdymsg;
+  chMtxLockS(mp);
+  return msg;
 }
 #endif /* CH_USE_CONDVARS_TIMEOUT */
 

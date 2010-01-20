@@ -52,8 +52,13 @@
 *****************************************************************************
 
 *** 1.5.0 ***
-- FIX: Fixed parameter check in sdStart() function (bug 2932922).
-- FIX: Fixed missing platform.mk file in MSP430 port (bug 2933735).
+- FIX: Fixed parameter check in sdStart() function (bug 2932922)(backported in
+  1.4.0).
+- FIX: Fixed missing platform.mk file in MSP430 port (bug 2933735)(backported
+  in 1.4.0).
+- CHANGE: Removed the unnamed union from the Thread structure some compilers
+  do not support this non standard construct.
+- CHANGE: Modified the thread-related constant macros to have a THD_ prefix.
 
 *** 1.3.8 ***
 - FIX: Fixed dequeuing in lifo_remove() function (bug 2928142).

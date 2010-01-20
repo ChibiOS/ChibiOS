@@ -226,8 +226,8 @@ msg_t thread4(void *p) {
   (void)p;
   chSysLock();
   do {
-    chSchGoSleepS(PRSUSPENDED);
-    msg = self->p_rdymsg;
+    chSchGoSleepS(THD_STATE_SUSPENDED);
+    msg = self->p_u.rdymsg;
   } while (msg == RDY_OK);
   chSysUnlock();
   return 0;

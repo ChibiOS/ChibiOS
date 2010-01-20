@@ -60,7 +60,7 @@ Thread *chSchReadyI(Thread *tp) {
 #endif
   Thread *cp;
 
-  tp->p_state = PRREADY;
+  tp->p_state = THD_STATE_READY;
   cp = (Thread *)&rlist.r_queue;
   do {
     cp = cp->p_next;
@@ -82,7 +82,7 @@ void chSchGoSleepS(tstate_t newstate) {
   Thread *otp;
 
   (otp = currp)->p_state = newstate;
-  (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
+  (currp = fifo_remove(&rlist.r_queue))->p_state = THD_STATE_CURRENT;
 #if CH_TIME_QUANTUM > 0
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
@@ -99,21 +99,21 @@ static void wakeup(void *p) {
 #if CH_USE_SEMAPHORES || CH_USE_MUTEXES || CH_USE_CONDVARS
   switch (tp->p_state) {
 #if CH_USE_SEMAPHORES
-  case PRWTSEM:
-    chSemFastSignalI(tp->p_wtsemp);
+  case THD_STATE_WTSEM:
+    chSemFastSignalI((Semaphore *)tp->p_u.wtobjp);
     /* Falls into, intentional. */
 #endif
 #if CH_USE_MUTEXES
-  case PRWTMTX:
+  case THD_STATE_WTMTX:
 #endif
 #if CH_USE_CONDVARS
-  case PRWTCOND:
+  case THD_STATE_WTCOND:
 #endif
     /* States requiring dequeuing.*/
     dequeue(tp);
   }
 #endif
-  chSchReadyI(tp)->p_rdymsg = RDY_TIMEOUT;
+  chSchReadyI(tp)->p_u.rdymsg = RDY_TIMEOUT;
 }
 
 /**
@@ -149,7 +149,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
   }
   else
     chSchGoSleepS(newstate);
-  return currp->p_rdymsg;
+  return currp->p_u.rdymsg;
 }
 
 /**
@@ -166,7 +166,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
  */
 void chSchWakeupS(Thread *ntp, msg_t msg) {
 
-  ntp->p_rdymsg = msg;
+  ntp->p_u.rdymsg = msg;
   /* If the waken thread has a not-greater priority than the current
    * one then it is just inserted in the ready list else it made
    * running immediately and the invoking thread goes in the ready
@@ -179,7 +179,7 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
 #if CH_TIME_QUANTUM > 0
     rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-    (currp = ntp)->p_state = PRCURR;
+    (currp = ntp)->p_state = THD_STATE_CURRENT;
     chDbgTrace(otp, ntp);
     chSysSwitchI(otp, ntp);
   }
@@ -195,7 +195,7 @@ void chSchDoRescheduleI(void) {
 
   Thread *otp = currp;
   /* Pick the first thread from the ready queue and makes it current.*/
-  (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
+  (currp = fifo_remove(&rlist.r_queue))->p_state = THD_STATE_CURRENT;
   chSchReadyI(otp);
 #if CH_TIME_QUANTUM > 0
   rlist.r_preempt = CH_TIME_QUANTUM;
@@ -258,7 +258,7 @@ void chSchDoYieldS(void) {
      * ready list there is at least one thread with priority equal or higher
      * than the current one.
      */
-    otp->p_state = PRREADY;
+    otp->p_state = THD_STATE_READY;
     do {
       cp = cp->p_prev;
     } while (cp->p_prio < otp->p_prio);
@@ -267,7 +267,7 @@ void chSchDoYieldS(void) {
     otp->p_next->p_prev = cp->p_next = otp;
 
     /* Pick the first thread from the ready queue and makes it current.*/
-    (currp = fifo_remove(&rlist.r_queue))->p_state = PRCURR;
+    (currp = fifo_remove(&rlist.r_queue))->p_state = THD_STATE_CURRENT;
 #if CH_TIME_QUANTUM > 0
     rlist.r_preempt = CH_TIME_QUANTUM;
 #endif

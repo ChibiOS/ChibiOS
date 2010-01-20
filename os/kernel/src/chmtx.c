@@ -86,31 +86,31 @@ void chMtxLockS(Mutex *mp) {
        * The following states need priority queues reordering.
        */
       switch (tp->p_state) {
-      case PRWTMTX:
+      case THD_STATE_WTMTX:
         /* Re-enqueues tp with its new priority on the mutex wait queue.*/
-        prio_insert(dequeue(tp), &tp->p_wtmtxp->m_queue);
+        prio_insert(dequeue(tp), (ThreadsQueue *)&tp->p_u.wtobjp);
         /* Boost the owner of this mutex if needed.*/
-        tp = tp->p_wtmtxp->m_owner;
+        tp = ((Mutex *)tp->p_u.wtobjp)->m_owner;
         continue;
 #if CH_USE_CONDVARS
-      case PRWTCOND:
+      case THD_STATE_WTCOND:
         /* Re-enqueues tp with its new priority on the condvar queue.*/
-        prio_insert(dequeue(tp), &tp->p_wtcondp->c_queue);
+        prio_insert(dequeue(tp), (ThreadsQueue *)&tp->p_u.wtobjp);
         break;
 #endif
 #if CH_USE_SEMAPHORES_PRIORITY
-      case PRWTSEM:
+      case THD_STATE_WTSEM:
         /* Re-enqueues tp with its new priority on the semaphore queue.*/
-        prio_insert(dequeue(tp), &tp->p_wtsemp->s_queue);
+        prio_insert(dequeue(tp), (ThreadsQueue *)&tp->p_u.wtobjp);
         break;
 #endif
 #if CH_USE_MESSAGES_PRIORITY
-      case PRSNDMSG:
+      case THD_STATE_SNDMSG:
         /* Re-enqueues  tp with its new priority on the server thread queue.*/
-        prio_insert(dequeue(tp), &tp->p_wtthdp->p_msgqueue);
+        prio_insert(dequeue(tp), ((Thread *)tp->p_u.wtobjp)->p_msgqueue);
         break;
 #endif
-      case PRREADY:
+      case THD_STATE_READY:
         /* Re-enqueues  tp with its new priority on the ready list.*/
         chSchReadyI(dequeue(tp));
       }
@@ -118,8 +118,8 @@ void chMtxLockS(Mutex *mp) {
     }
     /* Sleep on the mutex.*/
     prio_insert(currp, &mp->m_queue);
-    currp->p_wtmtxp = mp;
-    chSchGoSleepS(PRWTMTX);
+    currp->p_u.wtobjp = mp;
+    chSchGoSleepS(THD_STATE_WTMTX);
     chDbgAssert(mp->m_owner == NULL, "chMtxLockS(), #1", "still owned");
   }
   /*

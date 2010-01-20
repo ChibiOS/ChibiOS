@@ -31,9 +31,9 @@
  */
 Thread *init_thread(Thread *tp, tprio_t prio) {
 
-  tp->p_flags = P_MEM_MODE_STATIC;
+  tp->p_flags = THD_MEM_MODE_STATIC;
   tp->p_prio = prio;
-  tp->p_state = PRSUSPENDED;
+  tp->p_state = THD_STATE_SUSPENDED;
 #if CH_USE_NESTED_LOCKS
   tp->p_locks = 0;
 #endif
@@ -69,7 +69,7 @@ static void memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
 /**
  * @brief Initializes a new thread.
  * @details The new thread is initialized but not inserted in the ready list,
- *          the initial state is @p PRSUSPENDED.
+ *          the initial state is @p THD_STATE_SUSPENDED.
  *
  * @param[out] wsp pointer to a working area dedicated to the thread stack
  * @param[in] size size of the working area
@@ -150,7 +150,7 @@ Thread *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
   if (wsp == NULL)
     return NULL;
   tp = chThdInit(wsp, size, prio, pf, arg);
-  tp->p_flags = P_MEM_MODE_HEAP;
+  tp->p_flags = THD_MEM_MODE_HEAP;
   return chThdResume(tp);
 }
 #endif /* CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_HEAP */
@@ -187,7 +187,7 @@ Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
   if (wsp == NULL)
     return NULL;
   tp = chThdInit(wsp, mp->mp_object_size, prio, pf, arg);
-  tp->p_flags = P_MEM_MODE_MEMPOOL;
+  tp->p_flags = THD_MEM_MODE_MEMPOOL;
   tp->p_mpool = mp;
   return chThdResume(tp);
 }
@@ -235,9 +235,9 @@ tprio_t chThdSetPriority(tprio_t newprio) {
 Thread *chThdResume(Thread *tp) {
 
   chSysLock();
-  chDbgAssert(tp->p_state == PRSUSPENDED,
+  chDbgAssert(tp->p_state == THD_STATE_SUSPENDED,
               "chThdResume(), #1",
-              "thread not in PRSUSPENDED state");
+              "thread not in THD_STATE_SUSPENDED state");
   chSchWakeupS(tp, RDY_OK);
   chSysUnlock();
   return tp;
@@ -254,7 +254,7 @@ Thread *chThdResume(Thread *tp) {
 void chThdTerminate(Thread *tp) {
 
   chSysLock();
-  tp->p_flags |= P_TERMINATE;
+  tp->p_flags |= THD_TERMINATE;
   chSysUnlock();
 }
 
@@ -315,13 +315,13 @@ void chThdExit(msg_t msg) {
   Thread *tp = currp;
 
   chSysLock();
-  tp->p_exitcode = msg;
+  tp->p_u.exitcode = msg;
   THREAD_EXT_EXIT(tp);
 #if CH_USE_WAITEXIT
   if (tp->p_waiting != NULL)
     chSchReadyI(tp->p_waiting);
 #endif
-  chSchGoSleepS(PREXIT);
+  chSchGoSleepS(THD_STATE_FINAL);
 }
 
 #if CH_USE_WAITEXIT
@@ -362,28 +362,28 @@ msg_t chThdWait(Thread *tp) {
   chDbgAssert(tp != currp, "chThdWait(), #1", "waiting self");
   chDbgAssert(tp->p_waiting == NULL, "chThdWait(), #2", "some other thread waiting");
 
-  if (tp->p_state != PREXIT) {
+  if (tp->p_state != THD_STATE_FINAL) {
     tp->p_waiting = currp;
-    chSchGoSleepS(PRWAIT);
+    chSchGoSleepS(THD_STATE_WTEXIT);
   }
-  msg = tp->p_exitcode;
+  msg = tp->p_u.exitcode;
 #if !CH_USE_DYNAMIC
   chSysUnlock();
   return msg;
 #else /* CH_USE_DYNAMIC */
 
   /* Returning memory.*/
-  tmode_t mode = tp->p_flags & P_MEM_MODE_MASK;
+  tmode_t mode = tp->p_flags & THD_MEM_MODE_MASK;
   chSysUnlock();
 
   switch (mode) {
 #if CH_USE_HEAP
-  case P_MEM_MODE_HEAP:
+  case THD_MEM_MODE_HEAP:
     chHeapFree(tp);
     break;
 #endif
 #if CH_USE_MEMPOOLS
-  case P_MEM_MODE_MEMPOOL:
+  case THD_MEM_MODE_MEMPOOL:
     chPoolFree(tp->p_mpool, tp);
     break;
 #endif

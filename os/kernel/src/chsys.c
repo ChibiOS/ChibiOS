@@ -75,7 +75,7 @@ void chSysInit(void) {
   /*
    * Now this instructions flow becomes the main thread.
    */
-  (currp = init_thread(&mainthread, NORMALPRIO))->p_state = PRCURR;
+  (currp = init_thread(&mainthread, NORMALPRIO))->p_state = THD_STATE_CURRENT;
   chSysEnable();
 
   /*
