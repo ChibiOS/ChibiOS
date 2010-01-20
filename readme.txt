@@ -60,6 +60,7 @@
   do not support this non standard construct.
 - CHANGE: Modified the thread-related constant macros to have a THD_ prefix.
 - OPT: Optimizations to the priority inheritance code.
+- OPT: Speed/size optimization to the synchronous messages subsystem.
 
 *** 1.3.8 ***
 - FIX: Fixed dequeuing in lifo_remove() function (bug 2928142).

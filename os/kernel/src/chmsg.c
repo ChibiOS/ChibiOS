@@ -44,17 +44,18 @@
  * @return The return message from @p chMsgRelease().
  */
 msg_t chMsgSend(Thread *tp, msg_t msg) {
+  Thread *ctp = currp;
 
   chDbgCheck(tp != NULL, "chMsgSend");
 
   chSysLock();
-  currp->p_msg = msg;
-  currp->p_u.wtobjp = &tp->p_msgqueue;
-  msg_insert(currp, &tp->p_msgqueue);
+  ctp->p_msg = msg;
+  ctp->p_u.wtobjp = &tp->p_msgqueue;
+  msg_insert(ctp, &tp->p_msgqueue);
   if (tp->p_state == THD_STATE_WTMSG)
     chSchReadyI(tp);
   chSchGoSleepS(THD_STATE_SNDMSG);
-  msg = currp->p_u.rdymsg;
+  msg = ctp->p_u.rdymsg;
   chSysUnlock();
   return msg;
 }
