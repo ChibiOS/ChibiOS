@@ -48,9 +48,9 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
   chDbgCheck(tp != NULL, "chMsgSend");
 
   chSysLock();
-  msg_insert(currp, &tp->p_msgqueue);
   currp->p_msg = msg;
-  currp->p_u.wtobjp = tp;
+  currp->p_u.wtobjp = &tp->p_msgqueue;
+  msg_insert(currp, &tp->p_msgqueue);
   if (tp->p_state == THD_STATE_WTMSG)
     chSchReadyI(tp);
   chSchGoSleepS(THD_STATE_SNDMSG);
