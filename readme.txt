@@ -59,6 +59,7 @@
 - CHANGE: Removed the unnamed union from the Thread structure some compilers
   do not support this non standard construct.
 - CHANGE: Modified the thread-related constant macros to have a THD_ prefix.
+- OPT: Speed/size optimization to the events subsystem.
 - OPT: Speed/size optimization to the mutexes subsystem.
 - OPT: Speed/size optimization to the condvars subsystem.
 - OPT: Speed/size optimization to the synchronous messages subsystem.

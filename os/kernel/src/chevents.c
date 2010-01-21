@@ -217,17 +217,18 @@ void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask) {
  *       an higher priority.
  */
 eventmask_t chEvtWaitOne(eventmask_t ewmask) {
+  Thread *ctp = currp;
   eventmask_t m;
 
   chSysLock();
 
-  if ((m = (currp->p_epending & ewmask)) == 0) {
-    currp->p_u.ewmask = ewmask;
+  if ((m = (ctp->p_epending & ewmask)) == 0) {
+    ctp->p_u.ewmask = ewmask;
     chSchGoSleepS(THD_STATE_WTOREVT);
-    m = currp->p_epending & ewmask;
+    m = ctp->p_epending & ewmask;
   }
   m &= -m;
-  currp->p_epending &= ~m;
+  ctp->p_epending &= ~m;
 
   chSysUnlock();
   return m;
@@ -243,16 +244,17 @@ eventmask_t chEvtWaitOne(eventmask_t ewmask) {
  * @return The mask of the served and cleared events.
  */
 eventmask_t chEvtWaitAny(eventmask_t ewmask) {
+  Thread *ctp = currp;
   eventmask_t m;
 
   chSysLock();
 
-  if ((m = (currp->p_epending & ewmask)) == 0) {
-    currp->p_u.ewmask = ewmask;
+  if ((m = (ctp->p_epending & ewmask)) == 0) {
+    ctp->p_u.ewmask = ewmask;
     chSchGoSleepS(THD_STATE_WTOREVT);
-    m = currp->p_epending & ewmask;
+    m = ctp->p_epending & ewmask;
   }
-  currp->p_epending &= ~m;
+  ctp->p_epending &= ~m;
 
   chSysUnlock();
   return m;
@@ -267,14 +269,15 @@ eventmask_t chEvtWaitAny(eventmask_t ewmask) {
  * @return The mask of the served and cleared events.
  */
 eventmask_t chEvtWaitAll(eventmask_t ewmask) {
+  Thread *ctp = currp;
 
   chSysLock();
 
-  if ((currp->p_epending & ewmask) != ewmask) {
-    currp->p_u.ewmask = ewmask;
+  if ((ctp->p_epending & ewmask) != ewmask) {
+    ctp->p_u.ewmask = ewmask;
     chSchGoSleepS(THD_STATE_WTANDEVT);
   }
-  currp->p_epending &= ~ewmask;
+  ctp->p_epending &= ~ewmask;
 
   chSysUnlock();
   return ewmask;
@@ -303,20 +306,21 @@ eventmask_t chEvtWaitAll(eventmask_t ewmask) {
  *       an higher priority.
  */
 eventmask_t chEvtWaitOneTimeout(eventmask_t ewmask, systime_t time) {
+  Thread *ctp = currp;
   eventmask_t m;
 
   chSysLock();
 
-  if ((m = (currp->p_epending & ewmask)) == 0) {
+  if ((m = (ctp->p_epending & ewmask)) == 0) {
     if (TIME_IMMEDIATE == time)
       return (eventmask_t)0;
-    currp->p_u.ewmask = ewmask;
+    ctp->p_u.ewmask = ewmask;
     if (chSchGoSleepTimeoutS(THD_STATE_WTOREVT, time) < RDY_OK)
       return (eventmask_t)0;
-    m = currp->p_epending & ewmask;
+    m = ctp->p_epending & ewmask;
   }
   m &= -m;
-  currp->p_epending &= ~m;
+  ctp->p_epending &= ~m;
 
   chSysUnlock();
   return m;
@@ -339,19 +343,20 @@ eventmask_t chEvtWaitOneTimeout(eventmask_t ewmask, systime_t time) {
  * @retval 0 if the specified timeout expired.
  */
 eventmask_t chEvtWaitAnyTimeout(eventmask_t ewmask, systime_t time) {
+  Thread *ctp = currp;
   eventmask_t m;
 
   chSysLock();
 
-  if ((m = (currp->p_epending & ewmask)) == 0) {
+  if ((m = (ctp->p_epending & ewmask)) == 0) {
     if (TIME_IMMEDIATE == time)
       return (eventmask_t)0;
-    currp->p_u.ewmask = ewmask;
+    ctp->p_u.ewmask = ewmask;
     if (chSchGoSleepTimeoutS(THD_STATE_WTOREVT, time) < RDY_OK)
       return (eventmask_t)0;
-    m = currp->p_epending & ewmask;
+    m = ctp->p_epending & ewmask;
   }
-  currp->p_epending &= ~m;
+  ctp->p_epending &= ~m;
 
   chSysUnlock();
   return m;
@@ -372,17 +377,18 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t ewmask, systime_t time) {
  * @retval 0 if the specified timeout expired.
  */
 eventmask_t chEvtWaitAllTimeout(eventmask_t ewmask, systime_t time) {
+  Thread *ctp = currp;
 
   chSysLock();
 
-  if ((currp->p_epending & ewmask) != ewmask) {
+  if ((ctp->p_epending & ewmask) != ewmask) {
     if (TIME_IMMEDIATE == time)
       return (eventmask_t)0;
-    currp->p_u.ewmask = ewmask;
+    ctp->p_u.ewmask = ewmask;
     if (chSchGoSleepTimeoutS(THD_STATE_WTANDEVT, time) < RDY_OK)
       return (eventmask_t)0;
   }
-  currp->p_epending &= ~ewmask;
+  ctp->p_epending &= ~ewmask;
 
   chSysUnlock();
   return ewmask;
