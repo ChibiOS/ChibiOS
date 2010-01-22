@@ -30,59 +30,29 @@
 /**
  * @brief @p BaseChannel specific methods.
  */
-struct _base_channel_methods {
-  /**
-   * @brief Channel output check.
-   * @see chIOPutWouldBlock()
-   */
-  bool_t (*putwouldblock)(void *instance);
-  /**
-   * @brief Channel input check.
-   * @see chIOGetWouldBlock()
-   */
-  bool_t (*getwouldblock)(void *instance);
-  /**
-   * @brief Channel put method with timeout specification.
-   * @see chIOPut()
-   */
-  msg_t (*put)(void *instance, uint8_t b, systime_t time);
-  /**
-   * @brief Channel get method with timeout specification.
-   * @see chIOGet()
-   */
-  msg_t (*get)(void *instance, systime_t time);
-  /**
-   * @brief Channel write method with timeout specification.
-   * @see chIOWrite()
-   */
-  size_t (*write)(void *instance, const uint8_t *bp, size_t n, systime_t time);
-  /**
-   * @brief Channel read method with timeout specification.
-   * @see chIORead()
-   */
-  size_t (*read)(void *instance, uint8_t *bp, size_t n, systime_t time);
-};
+#define _base_channel_methods                                               \
+  _base_sequental_stream_methods;                                           \
+  bool_t (*putwouldblock)(void *instance);                                  \
+  bool_t (*getwouldblock)(void *instance);                                  \
+  msg_t (*put)(void *instance, uint8_t b, systime_t time);                  \
+  msg_t (*get)(void *instance, systime_t time);                             \
+  size_t (*writet)(void *instance, const uint8_t *bp,                       \
+                  size_t n, systime_t time);                                \
+  size_t (*readt)(void *instance, uint8_t *bp, size_t n, systime_t time)
 
 /**
  * @brief @p BaseChannel specific data.
  * @note It is empty because @p BaseChannel is only an interface without
  *       implementation.
  */
-struct _base_channel_data {
-};
+#define _base_channel_data                                                  \
+  _base_sequental_stream_data
 
 /**
  * @brief @p BaseChannel virtual methods table.
  */
-struct BaseChannelVMT {
-  /**
-   * @p BaseSequentialStream class inherited methods.
-   */
-  struct _base_sequental_stream_methods bss;
-  /**
-   * @p BaseChannel class specific methods.
-   */
-  struct _base_channel_methods bc;
+struct BaseChannelVMT {                                                     \
+  _base_channel_methods;                                                    \
 };
 
 /**
@@ -97,14 +67,7 @@ typedef struct {
    * Virtual Methods Table.
    */
   const struct BaseChannelVMT *vmt;
-  /**
-   * @p BaseSequentialStream class inherited data.
-   */
-  struct _base_sequental_stream_data bss;
-  /**
-   * @p BaseChannel class specific data.
-   */
-  struct _base_channel_data bc;
+  _base_channel_data;
 } BaseChannel;
 
 /**
@@ -118,7 +81,7 @@ typedef struct {
  *         operation.
  * @retval TRUE if the output queue is full and would block a write operation.
  */
-#define chIOPutWouldBlock(ip) ((ip)->vmt->bc.putwouldblock(ip))
+#define chIOPutWouldBlock(ip) ((ip)->vmt->putwouldblock(ip))
 
 /**
  * @brief Channel input check.
@@ -131,7 +94,7 @@ typedef struct {
  *         operation.
  * @retval TRUE if the input queue is empty and would block a read operation.
  */
-#define chIOGetWouldBlock(ip) ((ip)->vmt->bc.getwouldblock(ip))
+#define chIOGetWouldBlock(ip) ((ip)->vmt->getwouldblock(ip))
 
 /**
  * @brief Channel blocking byte write.
@@ -144,7 +107,7 @@ typedef struct {
  * @retval Q_OK if the operation succeeded.
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOPut(ip, b) ((ip)->vmt->bc.put(ip, b, TIME_INFINITE))
+#define chIOPut(ip, b) ((ip)->vmt->put(ip, b, TIME_INFINITE))
 
 /**
  * @brief Channel blocking byte write with timeout.
@@ -163,7 +126,7 @@ typedef struct {
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOPutTimeout(ip, b, time) ((ip)->vmt->bc.put(ip, b, time))
+#define chIOPutTimeout(ip, b, time) ((ip)->vmt->put(ip, b, time))
 
 /**
  * @brief Channel blocking byte read.
@@ -174,7 +137,7 @@ typedef struct {
  * @return A byte value from the queue or:
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOGet(ip) ((ip)->vmt->bc.get(ip, TIME_INFINITE))
+#define chIOGet(ip) ((ip)->vmt->get(ip, TIME_INFINITE))
 
 /**
  * @brief Channel blocking byte read with timeout.
@@ -191,7 +154,7 @@ typedef struct {
  * @retval Q_TIMEOUT if the specified time expired.
  * @retval Q_RESET if the channel associated queue (if any) was reset.
  */
-#define chIOGetTimeout(ip, time) ((ip)->vmt->bc.get(ip, time))
+#define chIOGetTimeout(ip, time) ((ip)->vmt->get(ip, time))
 
 /**
  * @brief Channel blocking write with timeout.
@@ -209,7 +172,7 @@ typedef struct {
  * @return The number of bytes transferred.
  */
 #define chIOWriteTimeout(ip, bp, n, time)                                   \
-  ((ip)->vmt->bac.write(ip, bp, n, time))
+  ((ip)->vmt->write(ip, bp, n, time))
 
 /**
  * @brief Channel blocking read with timeout.
@@ -227,47 +190,28 @@ typedef struct {
  * @return The number of bytes transferred.
  */
 #define chIOReadTimeout(ip, bp, n, time)                                    \
-  ((ip)->vmt->bac.read(ip, bp, n, time))
+  ((ip)->vmt->read(ip, bp, n, time))
 
 #if CH_USE_EVENTS
 /**
  * @brief @p BaseAsynchronousChannel specific methods.
  */
-struct _base_asynchronous_channel_methods {
-};
+#define _base_asynchronous_channel_methods                                  \
+  _base_channel_methods
 
 /**
  * @brief @p BaseAsynchronousChannel specific data.
  */
-struct _base_asynchronous_channel_data {
-  /**
-   * Data Available @p EventSource. This event is generated when some incoming
-   * data is inserted in the input queue.
-   */
-  EventSource           ievent;
-  /**
-   * Data Transmitted @p EventSource. This event is generated when the
-   * output queue is empty.
-   */
-  EventSource           oevent;
-};
+#define _base_asynchronous_channel_data                                     \
+  _base_channel_data;                                                       \
+  EventSource           ievent;                                             \
+  EventSource           oevent
 
 /**
  * @brief @p BaseAsynchronousChannel virtual methods table.
  */
 struct BaseAsynchronousChannelVMT {
-  /**
-   * @p BaseSequentialStream class inherited methods.
-   */
-  struct _base_sequental_stream_methods bss;
-  /**
-   * @p BaseChannel class inherited methods.
-   */
-  struct _base_channel_methods bc;
-  /**
-   * @p BaseAsynchronousChannel class specific methods.
-   */
-  struct _base_asynchronous_channel_methods bac;
+  _base_asynchronous_channel_methods;
 };
 
 /**
@@ -282,18 +226,7 @@ typedef struct {
    * Virtual Methods Table.
    */
   const struct BaseAsynchronousChannelVMT *vmt;
-  /**
-   * @p BaseSequentialStream class inherited data.
-   */
-  struct _base_sequental_stream_data bss;
-  /**
-   * @p BaseChannel class inherited data.
-   */
-  struct _base_channel_data bc;
-  /**
-   * @p BaseAsynchronousChannel class specific data.
-   */
-  struct _base_asynchronous_channel_data bac;
+  _base_asynchronous_channel_data;
 } BaseAsynchronousChannel;
 
 /**
@@ -304,7 +237,7 @@ typedef struct {
  * @param[in] ip pointer to a @p BaseAsynchronousChannel or derived class
  * @return A pointer to an @p EventSource object.
  */
-#define chIOGetWriteEventSource(ip) (&((ip)->vmt->bac.oevent))
+#define chIOGetWriteEventSource(ip) (&((ip)->vmt->oevent))
 
 /**
  * @brief Returns the read event source.
@@ -314,7 +247,7 @@ typedef struct {
  * @param[in] ip pointer to a @p BaseAsynchronousChannel or derived class
  * @return A pointer to an @p EventSource object.
  */
-#define chIOGetReadEventSource(ip) (&((ip)->vmt->bac.ievent))
+#define chIOGetReadEventSource(ip) (&((ip)->vmt->ievent))
 
 #endif /* CH_USE_EVENTS */
 

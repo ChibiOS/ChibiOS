@@ -67,8 +67,8 @@ void sd_lld_init(void) {
  */
 void sd_lld_start(SerialDriver *sdp) {
 
-  if (sdp->sd.config == NULL)
-    sdp->sd.config = &default_config;
+  if (sdp->config == NULL)
+    sdp->config = &default_config;
 
 }
 

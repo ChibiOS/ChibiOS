@@ -61,18 +61,18 @@ static void init(SerialDriver *sdp, uint16_t port) {
   struct protoent *prtp;
 
   if ((prtp = getprotobyname("tcp")) == NULL) {
-    printf("%s: Error mapping protocol name to protocol number\n", sdp->sd.com_name);
+    printf("%s: Error mapping protocol name to protocol number\n", sdp->com_name);
     goto abort;
   }
 
-  sdp->sd.com_listen = socket(PF_INET, SOCK_STREAM, prtp->p_proto);
-  if (sdp->sd.com_listen == INVALID_SOCKET) {
-    printf("%s: Error creating simulator socket\n", sdp->sd.com_name);
+  sdp->com_listen = socket(PF_INET, SOCK_STREAM, prtp->p_proto);
+  if (sdp->com_listen == INVALID_SOCKET) {
+    printf("%s: Error creating simulator socket\n", sdp->com_name);
     goto abort;
   }
 
-  if (ioctlsocket(sdp->sd.com_listen, FIONBIO, &nb) != 0) {
-    printf("%s: Unable to setup non blocking mode on socket\n", sdp->sd.com_name);
+  if (ioctlsocket(sdp->com_listen, FIONBIO, &nb) != 0) {
+    printf("%s: Unable to setup non blocking mode on socket\n", sdp->com_name);
     goto abort;
   }
 
@@ -80,36 +80,36 @@ static void init(SerialDriver *sdp, uint16_t port) {
   sad.sin_family = AF_INET;
   sad.sin_addr.s_addr = INADDR_ANY;
   sad.sin_port = htons(port);
-  if (bind(sdp->sd.com_listen, (struct sockaddr *)&sad, sizeof(sad))) {
-    printf("%s: Error binding socket\n", sdp->sd.com_name);
+  if (bind(sdp->com_listen, (struct sockaddr *)&sad, sizeof(sad))) {
+    printf("%s: Error binding socket\n", sdp->com_name);
     goto abort;
   }
 
-  if (listen(sdp->sd.com_listen, 1) != 0) {
-    printf("%s: Error listening socket\n", sdp->sd.com_name);
+  if (listen(sdp->com_listen, 1) != 0) {
+    printf("%s: Error listening socket\n", sdp->com_name);
     goto abort;
   }
-  printf("Full Duplex Channel %s listening on port %d\n", sdp->sd.com_name, port);
+  printf("Full Duplex Channel %s listening on port %d\n", sdp->com_name, port);
   return;
 
 abort:
-  if (sdp->sd.com_listen != INVALID_SOCKET)
-    closesocket(sdp->sd.com_listen);
+  if (sdp->com_listen != INVALID_SOCKET)
+    closesocket(sdp->com_listen);
   WSACleanup();
   exit(1);
 }
 
 static bool_t connint(SerialDriver *sdp) {
 
-  if (sdp->sd.com_data == INVALID_SOCKET) {
+  if (sdp->com_data == INVALID_SOCKET) {
     struct sockaddr addr;
     int addrlen = sizeof(addr);
 
-    if ((sdp->sd.com_data = accept(sdp->sd.com_listen, &addr, &addrlen)) == INVALID_SOCKET)
+    if ((sdp->com_data = accept(sdp->com_listen, &addr, &addrlen)) == INVALID_SOCKET)
       return FALSE;
 
-    if (ioctlsocket(sdp->sd.com_data, FIONBIO, &nb) != 0) {
-      printf("%s: Unable to setup non blocking mode on data socket\n", sdp->sd.com_name);
+    if (ioctlsocket(sdp->com_data, FIONBIO, &nb) != 0) {
+      printf("%s: Unable to setup non blocking mode on data socket\n", sdp->com_name);
       goto abort;
     }
     sdAddFlagsI(sdp, SD_CONNECTED);
@@ -117,35 +117,35 @@ static bool_t connint(SerialDriver *sdp) {
   }
   return FALSE;
 abort:
-  if (sdp->sd.com_listen != INVALID_SOCKET)
-    closesocket(sdp->sd.com_listen);
-  if (sdp->sd.com_data != INVALID_SOCKET)
-    closesocket(sdp->sd.com_data);
+  if (sdp->com_listen != INVALID_SOCKET)
+    closesocket(sdp->com_listen);
+  if (sdp->com_data != INVALID_SOCKET)
+    closesocket(sdp->com_data);
   WSACleanup();
   exit(1);
 }
 
 static bool_t inint(SerialDriver *sdp) {
 
-  if (sdp->sd.com_data != INVALID_SOCKET) {
+  if (sdp->com_data != INVALID_SOCKET) {
     int i;
     uint8_t data[32];
 
     /*
      * Input.
      */
-    int n = recv(sdp->sd.com_data, data, sizeof(data), 0);
+    int n = recv(sdp->com_data, data, sizeof(data), 0);
     switch (n) {
     case 0:
-      closesocket(sdp->sd.com_data);
-      sdp->sd.com_data = INVALID_SOCKET;
+      closesocket(sdp->com_data);
+      sdp->com_data = INVALID_SOCKET;
       sdAddFlagsI(sdp, SD_DISCONNECTED);
       return FALSE;
     case SOCKET_ERROR:
       if (WSAGetLastError() == WSAEWOULDBLOCK)
         return FALSE;
-      closesocket(sdp->sd.com_data);
-      sdp->sd.com_data = INVALID_SOCKET;
+      closesocket(sdp->com_data);
+      sdp->com_data = INVALID_SOCKET;
       return FALSE;
     }
     for (i = 0; i < n; i++)
@@ -157,7 +157,7 @@ static bool_t inint(SerialDriver *sdp) {
 
 static bool_t outint(SerialDriver *sdp) {
 
-  if (sdp->sd.com_data != INVALID_SOCKET) {
+  if (sdp->com_data != INVALID_SOCKET) {
     int n;
     uint8_t data[1];
 
@@ -168,18 +168,18 @@ static bool_t outint(SerialDriver *sdp) {
     if (n < 0)
       return FALSE;
     data[0] = (uint8_t)n;
-    n = send(sdp->sd.com_data, data, sizeof(data), 0);
+    n = send(sdp->com_data, data, sizeof(data), 0);
     switch (n) {
     case 0:
-      closesocket(sdp->sd.com_data);
-      sdp->sd.com_data = INVALID_SOCKET;
+      closesocket(sdp->com_data);
+      sdp->com_data = INVALID_SOCKET;
       sdAddFlagsI(sdp, SD_DISCONNECTED);
       return FALSE;
     case SOCKET_ERROR:
       if (WSAGetLastError() == WSAEWOULDBLOCK)
         return FALSE;
-      closesocket(sdp->sd.com_data);
-      sdp->sd.com_data = INVALID_SOCKET;
+      closesocket(sdp->com_data);
+      sdp->com_data = INVALID_SOCKET;
       return FALSE;
     }
     return TRUE;
@@ -202,16 +202,16 @@ void sd_lld_init(void) {
 
 #if USE_WIN32_SERIAL1
   sdObjectInit(&SD1, NULL, NULL);
-  SD1.sd.com_listen = INVALID_SOCKET;
-  SD1.sd.com_data = INVALID_SOCKET;
-  SD1.sd.com_name = "SD1";
+  SD1.com_listen = INVALID_SOCKET;
+  SD1.com_data = INVALID_SOCKET;
+  SD1.com_name = "SD1";
 #endif
 
 #if USE_WIN32_SERIAL1
   sdObjectInit(&SD2, NULL, NULL);
-  SD2.sd.com_listen = INVALID_SOCKET;
-  SD2.sd.com_data = INVALID_SOCKET;
-  SD2.sd.com_name = "SD2";
+  SD2.com_listen = INVALID_SOCKET;
+  SD2.com_data = INVALID_SOCKET;
+  SD2.com_name = "SD2";
 #endif
 }
 
@@ -222,8 +222,8 @@ void sd_lld_init(void) {
  */
 void sd_lld_start(SerialDriver *sdp) {
 
-  if (sdp->sd.config == NULL)
-    sdp->sd.config = &default_config;
+  if (sdp->config == NULL)
+    sdp->config = &default_config;
 
 #if USE_WIN32_SERIAL1
   if (sdp == &SD1)

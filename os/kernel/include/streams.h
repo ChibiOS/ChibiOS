@@ -30,33 +30,22 @@
 /**
  * @brief BaseSequentialStream specific methods.
  */
-struct _base_sequental_stream_methods {
-  /**
-   * @brief Stream write buffer method.
-   */
-  size_t (*write)(void *instance, const uint8_t *bp, size_t n);
-  /**
-   * @brief Stream read buffer method.
-   */
-  size_t (*read)(void *instance, uint8_t *bp, size_t n);
-};
+#define _base_sequental_stream_methods                                      \
+  size_t (*write)(void *instance, const uint8_t *bp, size_t n);             \
+  size_t (*read)(void *instance, uint8_t *bp, size_t n)
 
 /**
  * @brief @p BaseSequentialStream specific data.
  * @note It is empty because @p BaseSequentialStream is only an interface
  *       without implementation.
  */
-struct _base_sequental_stream_data {
-};
+#define _base_sequental_stream_data
 
 /**
  * @brief @p BaseSequentialStream virtual methods table.
  */
 struct BaseSequentialStreamVMT {
-  /**
-   * @p BaseSequentialStream class specific methods.
-   */
-  struct _base_sequental_stream_methods bss;
+  _base_sequental_stream_methods;
 };
 
 /**
@@ -69,10 +58,7 @@ typedef struct {
    * Virtual Methods Table.
    */
   const struct BaseSequentialStreamVMT *vmt;
-  /**
-   * @p BaseSequentialStream class specific data.
-   */
-  struct _base_sequental_stream_data bss;
+  _base_sequental_stream_data;
 } BaseSequentialStream;
 
 /**
@@ -86,7 +72,7 @@ typedef struct {
  *         than the specified number of bytes if the stream reaches a
  *         physical end of file and cannot be extended.
  */
-#define chSequentialStreamWrite(ip, bp, n) ((ip)->vmt->bss.write(ip, bp, n))
+#define chSequentialStreamWrite(ip, bp, n) ((ip)->vmt->write(ip, bp, n))
 
 /**
  * @brief Sequential Stream read.
@@ -99,7 +85,7 @@ typedef struct {
  *         than the specified number of bytes if the stream reaches the end
  *         of the available data.
  */
-#define chSequentialStreamRead(ip, bp, n) ((ip)->vmt->bss.read(ip, bp, n))
+#define chSequentialStreamRead(ip, bp, n) ((ip)->vmt->read(ip, bp, n))
 
 #endif /* _STREAMS_H_ */
 

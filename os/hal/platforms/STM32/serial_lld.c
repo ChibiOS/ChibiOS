@@ -72,24 +72,24 @@ static const SerialConfig default_config =
  * @param[in] sdp pointer to a @p SerialDriver object
  */
 static void usart_init(SerialDriver *sdp) {
-  USART_TypeDef *u = sdp->sd.usart;
+  USART_TypeDef *u = sdp->usart;
 
   /*
    * Baud rate setting.
    */
-  if (sdp->sd.usart == USART1)
-    u->BRR = APB2CLK / sdp->sd.config->sc_speed;
+  if (sdp->usart == USART1)
+    u->BRR = APB2CLK / sdp->config->sc_speed;
   else
-    u->BRR = APB1CLK / sdp->sd.config->sc_speed;
+    u->BRR = APB1CLK / sdp->config->sc_speed;
 
   /*
    * Note that some bits are enforced.
    */
-  u->CR1 = sdp->sd.config->sc_cr1 | USART_CR1_UE | USART_CR1_PEIE |
+  u->CR1 = sdp->config->sc_cr1 | USART_CR1_UE | USART_CR1_PEIE |
                                     USART_CR1_RXNEIE | USART_CR1_TE |
                                     USART_CR1_RE;
-  u->CR2 = sdp->sd.config->sc_cr2 | USART_CR2_LBDIE;
-  u->CR3 = sdp->sd.config->sc_cr3 | USART_CR3_EIE;
+  u->CR2 = sdp->config->sc_cr2 | USART_CR2_LBDIE;
+  u->CR3 = sdp->config->sc_cr3 | USART_CR3_EIE;
   (void)u->SR;  /* SR reset step 1.*/
   (void)u->DR;  /* SR reset step 2.*/
 }
@@ -137,7 +137,7 @@ static void set_error(SerialDriver *sdp, uint16_t sr) {
  * @param[in] sdp communication channel associated to the USART
  */
 static void serve_interrupt(SerialDriver *sdp) {
-  USART_TypeDef *u = sdp->sd.usart;
+  USART_TypeDef *u = sdp->usart;
   uint16_t cr1 = u->CR1;
   uint16_t sr = u->SR;  /* SR reset step 1.*/
   uint16_t dr = u->DR;  /* SR reset step 2.*/
@@ -155,9 +155,9 @@ static void serve_interrupt(SerialDriver *sdp) {
   if ((cr1 & USART_CR1_TXEIE) && (sr & USART_SR_TXE)) {
     msg_t b;
     chSysLockFromIsr();
-    b = chOQGetI(&sdp->sd.oqueue);
+    b = chOQGetI(&sdp->oqueue);
     if (b < Q_OK) {
-      chEvtBroadcastI(&sdp->bac.oevent);
+      chEvtBroadcastI(&sdp->oevent);
       u->CR1 = cr1 & ~USART_CR1_TXEIE;
     }
     else
@@ -235,17 +235,17 @@ void sd_lld_init(void) {
 
 #if USE_STM32_USART1
   sdObjectInit(&SD1, NULL, notify1);
-  SD1.sd.usart = USART1;
+  SD1.usart = USART1;
 #endif
 
 #if USE_STM32_USART2
   sdObjectInit(&SD2, NULL, notify2);
-  SD2.sd.usart = USART2;
+  SD2.usart = USART2;
 #endif
 
 #if USE_STM32_USART3
   sdObjectInit(&SD3, NULL, notify3);
-  SD3.sd.usart = USART3;
+  SD3.usart = USART3;
 #endif
 }
 
@@ -256,10 +256,10 @@ void sd_lld_init(void) {
  */
 void sd_lld_start(SerialDriver *sdp) {
 
-  if (sdp->sd.config == NULL)
-    sdp->sd.config = &default_config;
+  if (sdp->config == NULL)
+    sdp->config = &default_config;
 
-  if (sdp->sd.state == SD_STOP) {
+  if (sdp->state == SD_STOP) {
 #if USE_STM32_USART1
     if (&SD1 == sdp) {
       RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
@@ -291,8 +291,8 @@ void sd_lld_start(SerialDriver *sdp) {
  */
 void sd_lld_stop(SerialDriver *sdp) {
 
-  if (sdp->sd.state == SD_READY) {
-    usart_deinit(sdp->sd.usart);
+  if (sdp->state == SD_READY) {
+    usart_deinit(sdp->usart);
 #if USE_STM32_USART1
     if (&SD1 == sdp) {
       RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;

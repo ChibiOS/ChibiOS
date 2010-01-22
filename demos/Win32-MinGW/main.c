@@ -94,7 +94,7 @@ static void termination_handler(eventid_t id) {
     chThdSleepMilliseconds(10);
     cputs("Init: shell on SD1 terminated");
     chSysLock();
-    chOQResetI(&SD1.sd.oqueue);
+    chOQResetI(&SD1.oqueue);
     chSysUnlock();
   }
   if (shelltp2 && chThdTerminated(shelltp2)) {
@@ -103,7 +103,7 @@ static void termination_handler(eventid_t id) {
     chThdSleepMilliseconds(10);
     cputs("Init: shell on SD2 terminated");
     chSysLock();
-    chOQResetI(&SD2.sd.oqueue);
+    chOQResetI(&SD2.oqueue);
     chSysUnlock();
   }
 }
@@ -125,7 +125,7 @@ static void sd1_handler(eventid_t id) {
   if (flags & SD_DISCONNECTED) {
     cputs("Init: disconnection on SD1");
     chSysLock();
-    chIQResetI(&SD1.sd.iqueue);
+    chIQResetI(&SD1.iqueue);
     chSysUnlock();
   }
 }
@@ -147,7 +147,7 @@ static void sd2_handler(eventid_t id) {
   if (flags & SD_DISCONNECTED) {
     cputs("Init: disconnection on SD2");
     chSysLock();
-    chIQResetI(&SD2.sd.iqueue);
+    chIQResetI(&SD2.iqueue);
     chSysUnlock();
   }
 }
@@ -198,10 +198,10 @@ int main(void) {
   cputs("Shell service started on SD1, SD2");
   cputs("  - Listening for connections on SD1");
   (void) sdGetAndClearFlags(&SD1);
-  chEvtRegister(&SD1.sd.sevent, &sd1fel, 1);
+  chEvtRegister(&SD1.sevent, &sd1fel, 1);
   cputs("  - Listening for connections on SD2");
   (void) sdGetAndClearFlags(&SD2);
-  chEvtRegister(&SD2.sd.sevent, &sd2fel, 2);
+  chEvtRegister(&SD2.sevent, &sd2fel, 2);
 
   /*
    * Events servicing loop.
@@ -212,7 +212,7 @@ int main(void) {
   /*
    * Clean simulator exit.
    */
-  chEvtUnregister(&SD1.sd.sevent, &sd1fel);
-  chEvtUnregister(&SD2.sd.sevent, &sd2fel);
+  chEvtUnregister(&SD1.sevent, &sd1fel);
+  chEvtUnregister(&SD2.sevent, &sd2fel);
   return 0;
 }

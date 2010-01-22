@@ -102,56 +102,31 @@ typedef struct {
 /**
  * @brief @p SerialDriver specific data.
  */
-struct _serial_driver_data {
-  /**
-   * @brief Driver state.
-   */
-  sdstate_t                 state;
-  /**
-   * @brief Current configuration data.
-   */
-  const SerialConfig        *config;
-  /**
-   * @brief Input queue, incoming data can be read from this input queue by
-   *        using the queues APIs.
-   */
-  InputQueue                iqueue;
-  /**
-   * @brief Output queue, outgoing data can be written to this output queue by
-   *        using the queues APIs.
-   */
-  OutputQueue               oqueue;
-  /**
-   * @brief Status Change @p EventSource. This event is generated when one or
-   *        more condition flags change.
-   */
-  EventSource               sevent;
-  /**
-   * @brief I/O driver status flags.
-   */
-  sdflags_t                 flags;
-  /**
-   * @brief Input circular buffer.
-   */
-  uint8_t                   ib[SERIAL_BUFFERS_SIZE];
-  /**
-   * @brief Output circular buffer.
-   */
-  uint8_t                   ob[SERIAL_BUFFERS_SIZE];
-  /* End of the mandatory fields.*/
-  /**
-   * Listen socket for simulated serial port.
-   */
-  SOCKET                    com_listen;
-  /**
-   * Data socket for simulated serial port.
-   */
-  SOCKET                    com_data;
-  /**
-   * Port readable name.
-   */
-  const char                *com_name;
-};
+#define _serial_driver_data                                                 \
+  _base_asynchronous_channel_data;                                          \
+  /* Driver state.*/                                                        \
+  sdstate_t                 state;                                          \
+  /* Current configuration data.*/                                          \
+  const SerialConfig        *config;                                        \
+  /* Input queue.*/                                                         \
+  InputQueue                iqueue;                                         \
+  /* Output queue.*/                                                        \
+  OutputQueue               oqueue;                                         \
+  /* Status Change @p EventSource.*/                                        \
+  EventSource               sevent;                                         \
+  /* I/O driver status flags.*/                                             \
+  sdflags_t                 flags;                                          \
+  /* Input circular buffer.*/                                               \
+  uint8_t                   ib[SERIAL_BUFFERS_SIZE];                        \
+  /* Output circular buffer.*/                                              \
+  uint8_t                   ob[SERIAL_BUFFERS_SIZE];                        \
+  /* End of the mandatory fields.*/                                         \
+  /* Listen socket for simulated serial port.*/                             \
+  SOCKET                    com_listen;                                     \
+  /* Data socket for simulated serial port.*/                               \
+  SOCKET                    com_data;                                       \
+  /* Port readable name.*/                                                  \
+  const char                *com_name
 
 /*===========================================================================*/
 /* External declarations.                                                    */
