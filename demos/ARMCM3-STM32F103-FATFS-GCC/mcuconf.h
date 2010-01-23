@@ -66,9 +66,17 @@
 #define USE_STM32_USART1            FALSE
 #define USE_STM32_USART2            TRUE
 #define USE_STM32_USART3            FALSE
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL)
+#define USE_STM32_UART4             FALSE
+#define USE_STM32_UART5             FALSE
+#endif
 #define STM32_USART1_PRIORITY       0xC0
 #define STM32_USART2_PRIORITY       0xC0
 #define STM32_USART3_PRIORITY       0xC0
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL)
+#define STM32_UART4_PRIORITY        0xC0
+#define STM32_UART5_PRIORITY        0xC0
+#endif
 
 /*
  * SPI driver system settings.

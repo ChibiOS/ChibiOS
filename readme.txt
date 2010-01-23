@@ -64,6 +64,8 @@
 - OPT: Speed/size optimization to the mutexes subsystem.
 - OPT: Speed/size optimization to the condvars subsystem.
 - OPT: Speed/size optimization to the synchronous messages subsystem.
+- NEW: Added support for STM32/HD/CL UART4 and UART5, thanks Egon for the
+  patch.
 
 *** 1.3.8 ***
 - FIX: Fixed dequeuing in lifo_remove() function (bug 2928142).

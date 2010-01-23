@@ -64,6 +64,27 @@
 #define USE_STM32_USART3            TRUE
 #endif
 
+
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL) || defined(__DOXYGEN__)
+/**
+ * @brief UART4 driver enable switch.
+ * @details If set to @p TRUE the support for UART4 is included.
+ * @note The default is @p FALSE.
+ */
+#if !defined(USE_STM32_UART4) || defined(__DOXYGEN__)
+#define USE_STM32_UART4            TRUE
+#endif
+
+/**
+ * @brief UART5 driver enable switch.
+ * @details If set to @p TRUE the support for UART5 is included.
+ * @note The default is @p FALSE.
+ */
+#if !defined(USE_STM32_USART3) || defined(__DOXYGEN__)
+#define USE_STM32_UART5            TRUE
+#endif
+#endif
+
 /**
  * @brief USART1 interrupt priority level setting.
  * @note @p BASEPRI_KERNEL >= @p STM32_USART1_PRIORITY > @p PRIORITY_PENDSV.
@@ -88,6 +109,23 @@
 #define STM32_USART3_PRIORITY       0xC0
 #endif
 
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL) || defined(__DOXYGEN__)
+/**
+ * @brief UART4 interrupt priority level setting.
+ * @note @p BASEPRI_KERNEL >= @p STM32_USART2_PRIORITY > @p PRIORITY_PENDSV.
+ */
+#if !defined(STM32_UART4_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_UART4_PRIORITY        0xC0
+#endif
+
+/**
+ * @brief UART5 interrupt priority level setting.
+ * @note @p BASEPRI_KERNEL >= @p STM32_USART2_PRIORITY > @p PRIORITY_PENDSV.
+ */
+#if !defined(STM32_UART5_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_UART5_PRIORITY        0xC0
+#endif
+#endif
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -179,6 +217,14 @@ extern SerialDriver SD2;
 #endif
 #if USE_STM32_USART3
 extern SerialDriver SD3;
+#endif
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL)
+#if USE_STM32_UART4
+extern SerialDriver SD4;
+#endif
+#if USE_STM32_UART5
+extern SerialDriver SD5;
+#endif
 #endif
 
 #ifdef __cplusplus

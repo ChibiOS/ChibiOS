@@ -48,6 +48,18 @@ SerialDriver SD2;
 SerialDriver SD3;
 #endif
 
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL) || defined(__DOXYGEN__)
+/** @brief UART4 serial driver identifier.*/
+#if USE_STM32_UART4 || defined(__DOXYGEN__)
+SerialDriver SD4;
+#endif
+
+/** @brief UART5 serial driver identifier.*/
+#if USE_STM32_UART5 || defined(__DOXYGEN__)
+SerialDriver SD5;
+#endif
+#endif
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -187,6 +199,22 @@ static void notify3(void) {
 }
 #endif
 
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL) || defined(__DOXYGEN__)
+#if USE_STM32_UART4 || defined(__DOXYGEN__)
+static void notify4(void) {
+
+  UART4->CR1 |= USART_CR1_TXEIE;
+}
+#endif
+
+#if USE_STM32_UART5 || defined(__DOXYGEN__)
+static void notify5(void) {
+
+  UART5->CR1 |= USART_CR1_TXEIE;
+}
+#endif
+#endif
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -224,6 +252,30 @@ CH_IRQ_HANDLER(VectorDC) {
 }
 #endif
 
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL) || defined(__DOXYGEN__)
+#if USE_STM32_UART4 || defined(__DOXYGEN__)
+CH_IRQ_HANDLER(Vector110) {
+
+  CH_IRQ_PROLOGUE();
+
+  serve_interrupt(&SD4);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+#if USE_STM32_UART5 || defined(__DOXYGEN__)
+CH_IRQ_HANDLER(Vector114) {
+
+  CH_IRQ_PROLOGUE();
+
+  serve_interrupt(&SD5);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+#endif
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -246,6 +298,18 @@ void sd_lld_init(void) {
 #if USE_STM32_USART3
   sdObjectInit(&SD3, NULL, notify3);
   SD3.usart = USART3;
+#endif
+
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL)
+#if USE_STM32_UART4
+  sdObjectInit(&SD4, NULL, notify4);
+  SD4.usart = UART4;
+#endif
+
+#if USE_STM32_UART5
+  sdObjectInit(&SD5, NULL, notify5);
+  SD5.usart = UART5;
+#endif
 #endif
 }
 
@@ -277,6 +341,20 @@ void sd_lld_start(SerialDriver *sdp) {
       RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
       NVICEnableVector(USART3_IRQn, STM32_USART3_PRIORITY);
     }
+#endif
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL)
+#if USE_STM32_UART4
+    if (&SD4 == sdp) {
+      RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
+      NVICEnableVector(UART4_IRQn, STM32_UART4_PRIORITY);
+    }
+#endif
+#if USE_STM32_UART5
+    if (&SD5 == sdp) {
+      RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
+      NVICEnableVector(UART5_IRQn, STM32_UART5_PRIORITY);
+    }
+#endif
 #endif
   }
   usart_init(sdp);
@@ -313,6 +391,22 @@ void sd_lld_stop(SerialDriver *sdp) {
       NVICDisableVector(USART3_IRQn);
       return;
     }
+#endif
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL)
+#if USE_STM32_UART4
+    if (&SD4 == sdp) {
+      RCC->APB1ENR &= ~RCC_APB1ENR_UART4EN;
+      NVICDisableVector(UART4_IRQn);
+      return;
+    }
+#endif
+#if USE_STM32_UART5
+    if (&SD5 == sdp) {
+      RCC->APB1ENR &= ~RCC_APB1ENR_UART5EN;
+      NVICDisableVector(UART5_IRQn);
+      return;
+    }
+#endif
 #endif
   }
 }
