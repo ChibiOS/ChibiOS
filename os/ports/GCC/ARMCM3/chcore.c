@@ -70,24 +70,17 @@ void SysTickVector(void) {
 
 /**
  * @brief SVC vector.
- * @details The SVC vector is used for commanded context switch.
+ * @details The SVC vector is used for commanded context switch. Structures
+ *          @p intctx are saved and restored from the process stacks of the
+ *          switched threads.
  *
  * @param otp the thread to be switched out
  * @param ntp the thread to be switched it
  */
-/** @cond never */
+#if !defined(__DOXYGEN__)
 __attribute__((naked))
-/** @endcond */
+#endif
 void SVCallVector(Thread *otp, Thread *ntp) {
-  /* { r0 = otp, r1 = ntp } */
-  /* get the BASEPRI in r3 */
-  /* get the PSP in r12 */
-  /* push the registers on the PSP stack */
-  /* stores the modified PSP into the thread context */
-  /* fetches the PSP position from the new thread context */
-  /* pop the registers from the PSP stack */
-  /* set the PSP from r12 */
-  /* set the BASEPRI from R3 */
   (void)otp;
   (void)ntp;
 #ifdef CH_CURRP_REGISTER_CACHE
@@ -146,9 +139,9 @@ void SVCallVector(Thread *otp, Thread *ntp) {
 /**
  * @brief Preemption code.
  */
-/** @cond never */
+#ifndef __DOXYGEN__
 __attribute__((naked))
-/** @endcond */
+#endif
 void PendSVVector(void) {
   Thread *otp;
   register struct intctx *sp_thd asm("r12");
@@ -161,7 +154,7 @@ void PendSVVector(void) {
   (currp = fifo_remove(&rlist.r_queue))->p_state = THD_STATE_CURRENT;
   chSchReadyI(otp);
 #if CH_TIME_QUANTUM > 0
-  /* set the round-robin time quantum */
+  /* Set the round-robin time quantum.*/
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
   chDbgTrace(otp, currp);
