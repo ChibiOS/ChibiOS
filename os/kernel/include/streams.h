@@ -31,7 +31,9 @@
  * @brief BaseSequentialStream specific methods.
  */
 #define _base_sequental_stream_methods                                      \
+  /* Stream write buffer method.*/                                          \
   size_t (*write)(void *instance, const uint8_t *bp, size_t n);             \
+  /* Stream read buffer method.*/                                           \
   size_t (*read)(void *instance, uint8_t *bp, size_t n)
 
 /**

@@ -32,12 +32,18 @@
  */
 #define _base_channel_methods                                               \
   _base_sequental_stream_methods;                                           \
+  /* Channel output check.*/                                                \
   bool_t (*putwouldblock)(void *instance);                                  \
+  /* Channel input check.*/                                                 \
   bool_t (*getwouldblock)(void *instance);                                  \
+  /* Channel put method with timeout specification.*/                       \
   msg_t (*put)(void *instance, uint8_t b, systime_t time);                  \
+  /* Channel get method with timeout specification.*/                       \
   msg_t (*get)(void *instance, systime_t time);                             \
+  /* Channel write method with timeout specification.*/                     \
   size_t (*writet)(void *instance, const uint8_t *bp,                       \
                   size_t n, systime_t time);                                \
+  /* Channel read method with timeout specification.*/                      \
   size_t (*readt)(void *instance, uint8_t *bp, size_t n, systime_t time)
 
 /**
@@ -204,7 +210,9 @@ typedef struct {
  */
 #define _base_asynchronous_channel_data                                     \
   _base_channel_data;                                                       \
+  /* Data Available EventSource.*/                                          \
   EventSource           ievent;                                             \
+  /* Data Transmitted EventSource.*/                                        \
   EventSource           oevent
 
 /**
