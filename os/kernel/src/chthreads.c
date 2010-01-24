@@ -354,13 +354,17 @@ void chThdExit(msg_t msg) {
  */
 msg_t chThdWait(Thread *tp) {
   msg_t msg;
+#if CH_USE_DYNAMIC
+  tmode_t mode;
+#endif
 
   chDbgCheck(tp != NULL, "chThdWait");
 
   chSysLock();
 
   chDbgAssert(tp != currp, "chThdWait(), #1", "waiting self");
-  chDbgAssert(tp->p_waiting == NULL, "chThdWait(), #2", "some other thread waiting");
+  chDbgAssert(tp->p_waiting == NULL, "chThdWait(), #2",
+              "some other thread waiting");
 
   if (tp->p_state != THD_STATE_FINAL) {
     tp->p_waiting = currp;
@@ -373,7 +377,7 @@ msg_t chThdWait(Thread *tp) {
 #else /* CH_USE_DYNAMIC */
 
   /* Returning memory.*/
-  tmode_t mode = tp->p_flags & THD_MEM_MODE_MASK;
+  mode = tp->p_flags & THD_MEM_MODE_MASK;
   chSysUnlock();
 
   switch (mode) {

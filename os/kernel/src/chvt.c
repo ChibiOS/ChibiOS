@@ -93,7 +93,7 @@ void chVTResetI(VirtualTimer *vtp) {
     vtp->vt_next->vt_time += vtp->vt_time;
   vtp->vt_prev->vt_next = vtp->vt_next;
   vtp->vt_next->vt_prev = vtp->vt_prev;
-  vtp->vt_func = NULL;
+  vtp->vt_func = (vtfunc_t)NULL;
 }
 
 /**

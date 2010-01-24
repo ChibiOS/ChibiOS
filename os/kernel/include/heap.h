@@ -47,9 +47,9 @@ typedef struct memory_heap MemoryHeap;
  */
 struct heap_header {
   union {
-    struct heap_header  *h_next;    /**< @brief Next block in free list.    */
-    MemoryHeap          *h_heap;    /**< @brief Block owner heap.           */
-  };
+    struct heap_header  *next;      /**< @brief Next block in free list.    */
+    MemoryHeap          *heap;      /**< @brief Block owner heap.           */
+  } h_u;                            /**< @brief Overlapped fields.          */
   size_t                h_size;     /**< @brief Size of the memory block.   */
 };
 
