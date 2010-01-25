@@ -31,7 +31,7 @@
  * @brief @p BaseChannel specific methods.
  */
 #define _base_channel_methods                                               \
-  _base_sequental_stream_methods;                                           \
+  _base_sequental_stream_methods                                            \
   /* Channel output check.*/                                                \
   bool_t (*putwouldblock)(void *instance);                                  \
   /* Channel input check.*/                                                 \
@@ -44,7 +44,7 @@
   size_t (*writet)(void *instance, const uint8_t *bp,                       \
                   size_t n, systime_t time);                                \
   /* Channel read method with timeout specification.*/                      \
-  size_t (*readt)(void *instance, uint8_t *bp, size_t n, systime_t time)
+  size_t (*readt)(void *instance, uint8_t *bp, size_t n, systime_t time);
 
 /**
  * @brief @p BaseChannel specific data.
@@ -58,7 +58,7 @@
  * @brief @p BaseChannel virtual methods table.
  */
 struct BaseChannelVMT {                                                     \
-  _base_channel_methods;                                                    \
+  _base_channel_methods                                                    \
 };
 
 /**
@@ -73,7 +73,7 @@ typedef struct {
    * Virtual Methods Table.
    */
   const struct BaseChannelVMT *vmt;
-  _base_channel_data;
+  _base_channel_data
 } BaseChannel;
 
 /**
@@ -209,17 +209,17 @@ typedef struct {
  * @brief @p BaseAsynchronousChannel specific data.
  */
 #define _base_asynchronous_channel_data                                     \
-  _base_channel_data;                                                       \
+  _base_channel_data                                                       \
   /* Data Available EventSource.*/                                          \
   EventSource           ievent;                                             \
   /* Data Transmitted EventSource.*/                                        \
-  EventSource           oevent
+  EventSource           oevent;
 
 /**
  * @brief @p BaseAsynchronousChannel virtual methods table.
  */
 struct BaseAsynchronousChannelVMT {
-  _base_asynchronous_channel_methods;
+  _base_asynchronous_channel_methods
 };
 
 /**
@@ -234,7 +234,7 @@ typedef struct {
    * Virtual Methods Table.
    */
   const struct BaseAsynchronousChannelVMT *vmt;
-  _base_asynchronous_channel_data;
+  _base_asynchronous_channel_data
 } BaseAsynchronousChannel;
 
 /**

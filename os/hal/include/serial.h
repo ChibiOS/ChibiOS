@@ -126,7 +126,7 @@ struct _SerialDriver {
    * Virtual Methods Table.
    */
   const struct SerialDriverVMT *vmt;
-  _serial_driver_data;
+  _serial_driver_data
 };
 
 /*===========================================================================*/

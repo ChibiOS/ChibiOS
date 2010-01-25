@@ -212,10 +212,11 @@ void sdIncomingDataI(SerialDriver *sdp, uint8_t b) {
  *                 the interrupt source when this happens).
  */
 msg_t sdRequestDataI(SerialDriver *sdp) {
+  msg_t  b;
 
   chDbgCheck(sdp != NULL, "sdRequestDataI");
 
-  msg_t b = chOQGetI(&sdp->oqueue);
+  b = chOQGetI(&sdp->oqueue);
   if (b < Q_OK)
     chEvtBroadcastI(&sdp->oevent);
   return b;

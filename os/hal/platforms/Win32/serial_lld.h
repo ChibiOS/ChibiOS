@@ -126,7 +126,7 @@ typedef struct {
   /* Data socket for simulated serial port.*/                               \
   SOCKET                    com_data;                                       \
   /* Port readable name.*/                                                  \
-  const char                *com_name
+  const char                *com_name;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

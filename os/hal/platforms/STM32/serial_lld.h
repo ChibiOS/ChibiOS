@@ -190,7 +190,7 @@ typedef struct {
   uint8_t                   ob[SERIAL_BUFFERS_SIZE];                        \
   /* End of the mandatory fields.*/                                         \
   /* Pointer to the USART registers block.*/                                \
-  USART_TypeDef             *usart
+  USART_TypeDef             *usart;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
