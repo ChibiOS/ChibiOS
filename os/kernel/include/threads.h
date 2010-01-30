@@ -33,6 +33,9 @@
 #if CH_USE_DYNAMIC && !CH_USE_WAITEXIT
 #error "CH_USE_DYNAMIC requires CH_USE_WAITEXIT"
 #endif
+#if CH_USE_DYNAMIC && !CH_USE_HEAP && !CH_USE_MEMPOOLS
+#error "CH_USE_DYNAMIC requires CH_USE_HEAP and/or CH_USE_MEMPOOLS"
+#endif
 
 /**
  * @brief Structure representing a thread.

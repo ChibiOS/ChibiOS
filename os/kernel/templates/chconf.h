@@ -329,6 +329,7 @@
  *
  * @note The default is @p TRUE.
  * @note Requires @p CH_USE_WAITEXIT.
+ * @note Requires @p CH_USE_HEAP and/or @p CH_USE_MEMPOOLS.
  */
 #if !defined(CH_USE_DYNAMIC) || defined(__DOXYGEN__)
 #define CH_USE_DYNAMIC                  TRUE

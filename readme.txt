@@ -52,6 +52,8 @@
 *****************************************************************************
 
 *** 1.5.0 ***
+- FIX: Fixed missing dependencies check for CH_USE_DYNAMIC (bug 2942757)
+  (backported in 1.4.1).
 - FIX: Fixed swapped thread states descriptions (bug 2938445)(backported in
   1.4.1).
 - FIX_ Fixed C99-style variable declaration (bug 2938444)(backported in 1.4.1).

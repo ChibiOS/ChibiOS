@@ -6,6 +6,8 @@ X = In progress, some work done.
 
 Before 1.6.0:
 * Remove instances of unnamed structures/unions.
+- Reference counter for threads, concept of detached threads, threads
+  management.
 - Active threads registry in the kernel.
 - Debug-related features and tools.
 - I2C device driver class support.
@@ -14,17 +16,15 @@ Before 1.6.0:
   require changes to lwIP or a new TCP/IP stack however.
 - More code examples into the documentation.
 - Update C++ wrapper (Heap, Pools, Mailboxes and any new feature).
-- Threads Pools manager in the library.
-? OSEK-style simple tasks within the idle thread.
 
 After 1.6.0
 ? Minimal optional C-runtime library (complete enough for lwIP).
 ? Think to something for threads restart.
+? OSEK-style simple tasks within the idle thread.
+- Threads Pools manager in the library.
 
 Ideas for 2.x.x:
 - High resolution timers and tickless kernel.
-- Reference counter for threads, concept of detached threads, threads
-  management.
 
 Ideas for 3.x.x:
 - Multicore support.
