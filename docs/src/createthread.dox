@@ -1,0 +1,186 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006-2007 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @page article_create_thread How to create a thread
+ * At the system startup there are already two active threads:
+ * - <b>Idle thread</b>. This thread has the lowest priority in the system so
+ *   it runs only when the other threads in the system are sleeping. This
+ *   threads usually switches the system in a low power mode and does nothing
+ *   else.
+ * - <b>Main thread</b>. This thread executes your @p main() function at
+ *   startup. The main thread is created at the @p NORMALPRIO level but it
+ *   can change its own priority if required. It is from the main thread
+ *   that the other threads are usually created.
+ * .
+ * There are two kind of threads in ChibiOS/RT:
+ * - <b>Static Threads</b>. This kind of threads are statically allocated in
+ *   memory. The memory used by the thread cannot reused except for restarting
+ *   the threads.
+ * - <b>Dynamic Threads</b>. Threads created by allocating memory from a memory
+ *   heap or a memory pool.
+ * .
+ * <h2>Creating a static thread</h2>
+ * In order to create a static thread a working area must be declared using
+ * the macro @p WORKING_AREA as shown:
+ * @code
+static WORKING_AREA(myThreadWorkingArea, 128);
+ * @endcode
+ * This macro reserves 128 bytes of stack for the thread and space for all
+ * the required thread related structures. The total size and the alignment
+ * problems are handled inside the macro, you only need to specify the pure
+ * stack size.<br>
+ * A thread can be started by invoking @p chThdCreateStatic() as shown in this
+ * example:
+ * @code
+  Thread *tp = chThdCreateStatic(myThreadWorkingArea,
+                                 sizeof(myThreadWorkingArea),
+                                 NORMALPRIO,    /* Initial priority.    */
+                                 myThread,      /* Thread function.     */
+                                 NULL);         /* Thread parameter.    */
+ * @endcode
+ * Tre variable tp receives the pointer to the thread object, it is taken
+ * by other APIs as parameter.<br>
+ * Now a complete example:
+ * @code
+/*
+* * My simple application.
+ */
+
+#include <ch.h>
+
+/*
+* * Working area for the LED flashing thread.
+ */
+static WORKING_AREA(myThreadWorkingArea, 128);
+
+/*
+* * LED flashing thread.
+ */
+static msg_t myThread(void *arg) {
+
+  while (TRUE) {
+    LED_ON();
+    chThdSleepMilliseconds(500);
+    LED_OFF();
+    chThdSleepMilliseconds(500);
+  }
+}
+
+int main(int argc, char *argv[]) {
+
+  /* Starting the flashing LEDs thread.*/
+  (void)chThdCreateStatic(myThreadWorkingArea, sizeof(myThreadWorkingArea),
+                          NORMALPRIO, myThread, NULL);
+  .
+  .
+  .
+}
+ * @endcode
+ * Note that is memory allocated to myThread() is statically defined and cannot
+ * be reused. Static threads are ideal for safety applications because there is
+ * no risk of a memory allocation failure because progressive heap
+ * fragmentation.
+ *
+ * <h2>Creating a dynamic thread using the heap allocator</h2>
+ * In order to create a thread from a memory heap is very easy:
+ * @code
+  Thread *tp = chThdCreateFromHeap(NULL,        /* NULL = Default heap. */
+                                   128,         /* Stack size.          */
+                                   NORMALPRIO,  /* Initial priority.    */
+                                   myThread,    /* Thread function.     */
+                                   NULL);       /* Thread parameter.    */
+ * @endcode
+ * The memory is allocated from the spawned heap and the thread is started.
+ * Note that the memory is not freed when the thread terminates but when the
+ * thread final status (its return value) is collected by the spawning thread.
+ * As example:
+ * @code
+static msg_t myThread(void *arg) {
+
+  unsigned i = 10;
+  while (i > 0) {
+    LED_ON();
+    chThdSleepMilliseconds(500);
+    LED_OFF();
+    chThdSleepMilliseconds(500);
+    i--;
+  }
+  return (msg_t)i;
+}
+
+int main(int argc, char *argv[]) {
+
+  Thread *tp = chThdCreateFromHeap(NULL, 128, NORMALPRIO+1, myThread, NULL);
+  if (tp == NULL)
+    chSysHalt();    /* Memory exausted. */
+  
+  /* The main thread continues its normal execution.*/
+  .
+  .
+  /*
+*   * Now waits for the spawned thread to terminate (if it has not terminated
+*   * already) then gets the thread exit message (msg) and returns the
+*   * terminated thread memory to the heap (default system heap in this
+*   * example).
+   */
+  msg_t msg = chThdWait(tp);
+  .
+  .
+}
+ * @endcode
+ *
+ * <h2>Creating a dynamic thread using the heap allocator</h2>
+ * A pool is a collection of equally sized memory blocks, creating a thread from
+ * a memry pool is very similar to the previous example but the memory of
+ * terminated threads is returned to the memory pool rather than to a heap:
+ * @code
+static msg_t myThread(void *arg) {
+
+  unsigned i = 10;
+  while (i > 0) {
+    LED_ON();
+    chThdSleepMilliseconds(500);
+    LED_OFF();
+    chThdSleepMilliseconds(500);
+    i--;
+  }
+  return (msg_t)i;
+}
+
+int main(int argc, char *argv[]) {
+
+  Thread *tp = chThdCreateFromMemoryPool(myPool, NORMALPRIO+1, myThread, NULL);
+  if (tp == NULL)
+    chSysHalt();    /* Pool empty. */
+  
+  /* The main thread continues its normal execution.*/
+  .
+  .
+  /*
+*   * Now waits for the spawned thread to terminate (if it has not terminated
+*   * already) then gets the thread exit message (msg) and returns the
+*   * terminated thread memory to the original memory pool.
+   */
+  msg_t msg = chThdWait(tp);
+  .
+  .
+}
+ * @endcode
+ */
