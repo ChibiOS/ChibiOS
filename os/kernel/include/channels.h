@@ -58,7 +58,7 @@
  * @brief @p BaseChannel virtual methods table.
  */
 struct BaseChannelVMT {                                                     \
-  _base_channel_methods                                                    \
+  _base_channel_methods                                                     \
 };
 
 /**
@@ -209,7 +209,7 @@ typedef struct {
  * @brief @p BaseAsynchronousChannel specific data.
  */
 #define _base_asynchronous_channel_data                                     \
-  _base_channel_data                                                       \
+  _base_channel_data                                                        \
   /* Data Available EventSource.*/                                          \
   EventSource           ievent;                                             \
   /* Data Transmitted EventSource.*/                                        \

@@ -107,7 +107,7 @@ typedef struct {
  * @brief @p SerialDriver specific data.
  */
 #define _serial_driver_data                                                 \
-  _base_asynchronous_channel_data;                                          \
+  _base_asynchronous_channel_data                                           \
   /* Driver state.*/                                                        \
   sdstate_t                 state;                                          \
   /* Current configuration data.*/                                          \
