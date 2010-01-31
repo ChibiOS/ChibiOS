@@ -26,14 +26,17 @@
 
 #include "ch.h"
 
-/*
- * Initializes a thread structure.
+/**
+ * @brief Initializes a thread structure.
  */
 Thread *init_thread(Thread *tp, tprio_t prio) {
 
   tp->p_flags = THD_MEM_MODE_STATIC;
   tp->p_prio = prio;
   tp->p_state = THD_STATE_SUSPENDED;
+#if CH_USE_DYNAMIC
+  tp->p_refs = 1;
+#endif
 #if CH_USE_NESTED_LOCKS
   tp->p_locks = 0;
 #endif
@@ -41,12 +44,11 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
   tp->p_time = 0;
 #endif
 #if CH_USE_MUTEXES
-  /* realprio is the thread's own, non-inherited, priority */
   tp->p_realprio = prio;
   tp->p_mtxlist = NULL;
 #endif
 #if CH_USE_WAITEXIT
-  tp->p_waiting = NULL;
+  list_init(&tp->p_waiting);
 #endif
 #if CH_USE_MESSAGES
   queue_init(&tp->p_msgqueue);
@@ -120,7 +122,7 @@ Thread *chThdCreateStatic(void *wsp, size_t size,
   return chThdResume(chThdInit(wsp, size, prio, pf, arg));
 }
 
-#if CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_HEAP
+#if CH_USE_DYNAMIC && CH_USE_HEAP
 /**
  * @brief Creates a new thread allocating the memory from the heap.
  *
@@ -153,9 +155,9 @@ Thread *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
   tp->p_flags = THD_MEM_MODE_HEAP;
   return chThdResume(tp);
 }
-#endif /* CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_HEAP */
+#endif /* CH_USE_DYNAMIC && CH_USE_HEAP */
 
-#if CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_MEMPOOLS
+#if CH_USE_DYNAMIC && CH_USE_MEMPOOLS
 /**
  * @brief Creates a new thread allocating the memory from the specified Memory
  *        Pool.
@@ -191,7 +193,7 @@ Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
   tp->p_mpool = mp;
   return chThdResume(tp);
 }
-#endif /* CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_MEMPOOLS */
+#endif /* CH_USE_DYNAMIC && CH_USE_MEMPOOLS */
 
 /**
  * @brief Changes the running thread priority level then reschedules if
@@ -310,6 +312,7 @@ void chThdYield(void) {
  *
  * @param[in] msg the thread exit code. The code can be retrieved by using
  *                @p chThdWait().
+ * @return The same thread pointer passed as parameter.
  */
 void chThdExit(msg_t msg) {
   Thread *tp = currp;
@@ -318,17 +321,67 @@ void chThdExit(msg_t msg) {
   tp->p_u.exitcode = msg;
   THREAD_EXT_EXIT(tp);
 #if CH_USE_WAITEXIT
-  if (tp->p_waiting != NULL)
-    chSchReadyI(tp->p_waiting);
+  while (notempty(&tp->p_waiting))
+    chSchReadyI(list_remove(&tp->p_waiting));
 #endif
   chSchGoSleepS(THD_STATE_FINAL);
 }
 
-#if CH_USE_WAITEXIT
+#if CH_USE_DYNAMIC || defined(__DOXYGEN__)
+Thread *chThdAddRef(Thread *tp) {
+
+  chSysLock();
+  chDbgAssert(tp->p_refs < 255, "chThdAddRef(), #1", "too many references");
+  tp->p_refs++;
+  chSysUnlock();
+  return tp;
+}
 /**
- * @brief Blocks the execution of the invoking thread until the specified
- *        thread terminates then the exit code is returned.
- * @details The memory used by the exited thread is handled in different ways
+ * @brief   Releases a reference to a thread object.
+ * @details If the references counter reaches zero and the thread is in
+ *          @p THD_STATE_FINAL state then the thread's memory is returned
+ *          to the proper allocator.
+ * @note    Static threads are not affected.
+ *
+ * @param[in] tp the thread pointer
+ * @return The same thread pointer passed as parameter.
+ */
+Thread *chThdRelease(Thread *tp) {
+  trefs_t refs;
+
+  chSysLock();
+  chDbgAssert(tp->p_refs > 0, "chThdRelease(), #1", "not referenced");
+  refs = --tp->p_refs;
+  chSysUnlock();
+
+  /* If the references counter reaches zero then the memory can be returned
+     to the proper allocator. Of course static threads are not affected.*/
+  if (refs == 0) {
+    switch (tp->p_flags & THD_MEM_MODE_MASK) {
+#if CH_USE_HEAP
+    case THD_MEM_MODE_HEAP:
+      chHeapFree(tp);
+      break;
+#endif
+#if CH_USE_MEMPOOLS
+    case THD_MEM_MODE_MEMPOOL:
+      chPoolFree(tp->p_mpool, tp);
+      break;
+#endif
+    }
+  }
+  return tp;
+}
+#endif /* CH_USE_DYNAMIC */
+
+#if CH_USE_WAITEXIT || defined(__DOXYGEN__)
+/**
+ * @brief   Blocks the execution of the invoking thread until the specified
+ *          thread terminates then the exit code is returned.
+ * @details This function waits that the specified thread terminates then
+ *          decrements its reference counter, if the counter reaches zero then
+ *          the thread working area is returned to the proper allocator.<br>
+ *          The memory used by the exited thread is handled in different ways
  *          depending on the API that spawned the thread:
  *          - If the thread was spawned by @p chThdCreateStatic() or by
  *            @p chThdInit() then nothing happens and the thread working area
@@ -339,61 +392,34 @@ void chThdExit(msg_t msg) {
  *          - If the thread was spawned by @p chThdCreateFromMemoryPool()
  *            then the working area is returned to the owning memory pool.
  *          .
+ *          Please read the @ref article_lifecycle article for more details.
  * @param[in] tp the thread pointer
  * @return The exit code from the terminated thread
  * @note After invoking @p chThdWait() the thread pointer becomes invalid and
  *       must not be used as parameter for further system calls.
  * @note The function is available only if the @p CH_USE_WAITEXIT
  *       option is enabled in @p chconf.h.
- * @note Only one thread can be waiting for another thread at any time. You
- *       should imagine the threads as having a reference counter that is set
- *       to one when the thread is created, chThdWait() decreases the reference
- *       and the memory is freed when the counter reaches zero. In the current
- *       implementation there is no real reference counter in the thread
- *       structure but it is a planned extension.
+ * @note If @p CH_USE_DYNAMIC is not specified this function just waits for
+ *       the thread termination, no memory allocators are involved.
  */
 msg_t chThdWait(Thread *tp) {
   msg_t msg;
-#if CH_USE_DYNAMIC
-  tmode_t mode;
-#endif
 
   chDbgCheck(tp != NULL, "chThdWait");
 
   chSysLock();
-
   chDbgAssert(tp != currp, "chThdWait(), #1", "waiting self");
-  chDbgAssert(tp->p_waiting == NULL, "chThdWait(), #2",
-              "some other thread waiting");
-
+  chDbgAssert(tp->p_refs > 0, "chThdWait(), #2", "not referenced");
   if (tp->p_state != THD_STATE_FINAL) {
-    tp->p_waiting = currp;
+    list_insert(currp, &tp->p_waiting);
     chSchGoSleepS(THD_STATE_WTEXIT);
   }
   msg = tp->p_u.exitcode;
-#if !CH_USE_DYNAMIC
   chSysUnlock();
-  return msg;
-#else /* CH_USE_DYNAMIC */
-
-  /* Returning memory.*/
-  mode = tp->p_flags & THD_MEM_MODE_MASK;
-  chSysUnlock();
-
-  switch (mode) {
-#if CH_USE_HEAP
-  case THD_MEM_MODE_HEAP:
-    chHeapFree(tp);
-    break;
+#if CH_USE_DYNAMIC
+  chThdRelease(tp);
 #endif
-#if CH_USE_MEMPOOLS
-  case THD_MEM_MODE_MEMPOOL:
-    chPoolFree(tp->p_mpool, tp);
-    break;
-#endif
-  }
   return msg;
-#endif /* CH_USE_DYNAMIC */
 }
 #endif /* CH_USE_WAITEXIT */
 

@@ -6,7 +6,7 @@ X = In progress, some work done.
 
 Before 1.6.0:
 * Remove instances of unnamed structures/unions.
-- Reference counter for threads, concept of detached threads, threads
+* Reference counter for threads, concept of detached threads, threads
   management.
 - Active threads registry in the kernel.
 - Debug-related features and tools.

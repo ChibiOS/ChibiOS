@@ -54,6 +54,9 @@ struct Thread {
   /* End of the fields shared with the ThreadsQueue structure. */
   tprio_t               p_prio;         /**< Thread priority.               */
   /* End of the fields shared with the ReadyList structure. */
+#if CH_USE_DYNAMIC
+  trefs_t               p_refs;         /**< References to this thread.     */
+#endif
   tstate_t              p_state;        /**< Current thread state.          */
   tmode_t               p_flags;        /**< Various thread flags.          */
   struct context        p_ctx;          /**< Processor context.             */
@@ -61,7 +64,7 @@ struct Thread {
   cnt_t                 p_locks;        /**< Number of nested locks.        */
 #endif
 #if CH_DBG_THREADS_PROFILING
-  volatile systime_t    p_time;         /**< Thread  consumed time in ticks.
+  volatile systime_t    p_time;         /**< Thread consumed time in ticks.
                                              @note This field can overflow. */
 #endif
   union {
@@ -76,7 +79,7 @@ struct Thread {
 #endif
   }                     p_u;            /**< State-specific fields.         */
 #if CH_USE_WAITEXIT
-  Thread                *p_waiting;     /**< Thread waiting for termination.*/
+  ThreadsList           p_waiting;      /**< Termination waiting list.      */
 #endif
 #if CH_USE_MESSAGES
   ThreadsQueue          p_msgqueue;     /**< Messages queue.                */
@@ -167,6 +170,10 @@ extern "C" {
   void chThdSleepUntil(systime_t time);
   void chThdYield(void);
   void chThdExit(msg_t msg);
+#if CH_USE_DYNAMIC
+  Thread *chThdAddRef(Thread *tp);
+  Thread *chThdRelease(Thread *tp);
+#endif
 #if CH_USE_WAITEXIT
   msg_t chThdWait(Thread *tp);
 #endif
