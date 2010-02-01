@@ -36,15 +36,16 @@
 #include <stdint.h>
 #endif
 
-typedef int8_t          bool_t;         /**< Fast boolean type. */
-typedef uint8_t         tmode_t;        /**< Thread flags. */
-typedef uint8_t         tstate_t;       /**< Thread state. */
-typedef uint8_t         tprio_t;        /**< Thread priority. */
-typedef int16_t         msg_t;          /**< Inter-thread message. */
-typedef uint8_t         eventid_t;      /**< Event Id. */
-typedef uint8_t         eventmask_t;    /**< Events mask. */
-typedef uint16_t        systime_t;      /**< System time. */
-typedef int8_t          cnt_t;          /**< Resources counter. */
+typedef int8_t          bool_t;         /**< Fast boolean type.             */
+typedef uint8_t         tmode_t;        /**< Thread flags.                  */
+typedef uint8_t         tstate_t;       /**< Thread state.                  */
+typedef uint8_t         trefs_t;        /**< Thread references counter.     */
+typedef uint8_t         tprio_t;        /**< Thread priority.               */
+typedef int16_t         msg_t;          /**< Inter-thread message.          */
+typedef uint8_t         eventid_t;      /**< Event Id.                      */
+typedef uint8_t         eventmask_t;    /**< Events mask.                   */
+typedef uint16_t        systime_t;      /**< System time.                   */
+typedef int8_t          cnt_t;          /**< Resources counter.             */
 
 #define INLINE      inline
 #define PACK_STRUCT_STRUCT __attribute__((packed))
