@@ -55,7 +55,7 @@
 - FIX: Fixed wrong notes on function chThdResume() (bug 2943160).
 - NEW: Implemented the concept of thread references, this mechanism ensures
   that a dynamic thread's memory is not freed while some other thread still
-  owns a pointer to the thread. Static threads are not affected by the new
+  owns a reference to the thread. Static threads are not affected by the new
   mechanism. Two new APIs have been added: chThdAddRef() and chThdRelease().
 - NEW: Not more than one thread can be waiting in chThdWait() as long they
   own a reference.
