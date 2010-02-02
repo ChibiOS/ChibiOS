@@ -52,14 +52,17 @@
 *****************************************************************************
 
 *** 1.5.1 ***
+- FIX: Fixed wrong notes on function chThdResume() (bug 2943160).
 - NEW: Implemented the concept of thread references, this mechanism ensures
   that a dynamic thread's memory is not freed while some other thread still
   owns a pointer to the thread. Static threads are not affected by the new
   mechanism. Two new APIs have been added: chThdAddRef() and chThdRelease().
-- NEW: Not more than one thread can be waiting in chThdWait(), this
-  capability was already present in beta versions before 0.8.0 but removed
-  because at the time there was not the references mechanism in place.
-
+- NEW: Not more than one thread can be waiting in chThdWait() as long they
+  own a reference.
+- NEW: Implemented a new threads registry subsystem, the registry allows to
+  enumerate the active threads at runtime. The registry is meant as both
+  a runtime API and a support for debuggers.
+  
 *** 1.5.0 ***
 - FIX: Fixed missing dependencies check for CH_USE_DYNAMIC (bug 2942757)
   (backported in 1.4.1).

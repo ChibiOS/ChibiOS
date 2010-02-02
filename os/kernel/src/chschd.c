@@ -26,9 +26,10 @@
 
 #include "ch.h"
 
-/** @cond never */
+/**
+ * @brief Ready list header.
+ */
 ReadyList rlist;
-/** @endcond */
 
 /**
  * @brief Scheduler initialization.
@@ -41,6 +42,9 @@ void scheduler_init(void) {
   rlist.r_prio = NOPRIO;
 #if CH_TIME_QUANTUM > 0
   rlist.r_preempt = CH_TIME_QUANTUM;
+#endif
+#if CH_USE_REGISTRY
+  rlist.p_newer = rlist.p_older = (Thread *)&rlist;
 #endif
 }
 

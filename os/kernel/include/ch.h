@@ -79,6 +79,7 @@
 #include "heap.h"
 #include "mempools.h"
 #include "threads.h"
+#include "registry.h"
 #include "inline.h"
 #include "queues.h"
 #include "streams.h"

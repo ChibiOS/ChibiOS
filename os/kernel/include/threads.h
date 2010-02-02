@@ -53,13 +53,17 @@ struct Thread {
                                              queue.                         */
   /* End of the fields shared with the ThreadsQueue structure. */
   tprio_t               p_prio;         /**< Thread priority.               */
+  struct context        p_ctx;          /**< Processor context.             */
+#if CH_USE_REGISTRY
+  Thread                *p_newer;       /**< Newer registry element.        */
+  Thread                *p_older;       /**< Older registry element.        */
+#endif
   /* End of the fields shared with the ReadyList structure. */
 #if CH_USE_DYNAMIC
   trefs_t               p_refs;         /**< References to this thread.     */
 #endif
   tstate_t              p_state;        /**< Current thread state.          */
   tmode_t               p_flags;        /**< Various thread flags.          */
-  struct context        p_ctx;          /**< Processor context.             */
 #if CH_USE_NESTED_LOCKS
   cnt_t                 p_locks;        /**< Number of nested locks.        */
 #endif
@@ -181,13 +185,19 @@ extern "C" {
 }
 #endif
 
-/** Returns the pointer to the @p Thread currently in execution.*/
+/**
+ * Returns a pointer to the current @p Thread.
+ */
 #define chThdSelf() currp
 
-/** Returns the current thread priority.*/
+/**
+ * Returns the current thread priority.
+ */
 #define chThdGetPriority() (currp->p_prio)
 
-/** Returns the pointer to the @p Thread local storage area, if any.*/
+/**
+ * Returns the pointer to the @p Thread local storage area, if any.
+ */
 #define chThdLS() (void *)(currp + 1)
 
 /**

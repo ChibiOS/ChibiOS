@@ -64,19 +64,27 @@
  * @extends ThreadsQueue
  */
 typedef struct {
-  ThreadsQueue          r_queue;        /**< Threads queue.*/
+  ThreadsQueue          r_queue;        /**< Threads queue.                 */
   tprio_t               r_prio;         /**< This field must be initialized to
-                                             zero.*/
+                                             zero.                          */
+  struct context        p_ctx;          /**< Not used, present because
+                                             offsets.                       */
+#if CH_USE_REGISTRY
+  Thread                *p_newer;       /**< Newer registry element.        */
+  Thread                *p_older;       /**< Older registry element.        */
+#endif
   /* End of the fields shared with the Thread structure.*/
 #if CH_TIME_QUANTUM > 0
-  cnt_t                 r_preempt;      /**< Round robin counter.*/
+  cnt_t                 r_preempt;      /**< Round robin counter.           */
 #endif
 #ifndef CH_CURRP_REGISTER_CACHE
-  Thread                *r_current;     /**< The currently running thread.*/
+  Thread                *r_current;     /**< The currently running thread.  */
 #endif
 } ReadyList;
 
+#if !defined(__DOXYGEN__)
 extern ReadyList rlist;
+#endif
 
 #ifdef CH_CURRP_REGISTER_CACHE
 register Thread *currp asm(CH_CURRP_REGISTER_CACHE);

@@ -126,6 +126,16 @@
 /*===========================================================================*/
 
 /**
+ * @brief Threads registry APIs.
+ * @details If enabled then the registry APIs are included in the kernel.
+ *
+ * @note The default is @p TRUE.
+ */
+#if !defined(CH_USE_REGISTRY) || defined(__DOXYGEN__)
+#define CH_USE_REGISTRY                 TRUE
+#endif
+
+/**
  * @brief Threads synchronization APIs.
  * @details If enabled then the @p chThdWait() function is included in
  *          the kernel.
