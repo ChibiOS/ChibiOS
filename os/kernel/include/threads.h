@@ -176,7 +176,7 @@ extern "C" {
   void chThdExit(msg_t msg);
 #if CH_USE_DYNAMIC
   Thread *chThdAddRef(Thread *tp);
-  Thread *chThdRelease(Thread *tp);
+  void chThdRelease(Thread *tp);
 #endif
 #if CH_USE_WAITEXIT
   msg_t chThdWait(Thread *tp);

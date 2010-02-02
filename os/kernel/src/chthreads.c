@@ -345,7 +345,8 @@ void chThdExit(msg_t msg) {
  * @brief   Adds a reference to a thread object.
  *
  * @param[in] tp    pointer to the thread
- * @return  The same thread pointer passed as parameter.
+ * @return  The same thread pointer passed as parameter representing the
+ *          new reference.
  */
 Thread *chThdAddRef(Thread *tp) {
 
@@ -357,15 +358,14 @@ Thread *chThdAddRef(Thread *tp) {
 }
 /**
  * @brief   Releases a reference to a thread object.
- * @details If the references counter reaches zero and the thread is in
- *          @p THD_STATE_FINAL state then the thread's memory is returned
- *          to the proper allocator.
+ * @details If the references counter reaches zero <b>and</b> the thread
+ *          is in the @p THD_STATE_FINAL state then the thread's memory is
+ *          returned to the proper allocator.
  * @note    Static threads are not affected.
  *
  * @param[in] tp    pointer to the thread
- * @return  The same thread pointer passed as parameter.
  */
-Thread *chThdRelease(Thread *tp) {
+void chThdRelease(Thread *tp) {
   trefs_t refs;
 
   chSysLock();
@@ -389,7 +389,6 @@ Thread *chThdRelease(Thread *tp) {
 #endif
     }
   }
-  return tp;
 }
 #endif /* CH_USE_DYNAMIC */
 
@@ -397,7 +396,7 @@ Thread *chThdRelease(Thread *tp) {
 /**
  * @brief   Blocks the execution of the invoking thread until the specified
  *          thread terminates then the exit code is returned.
- * @details This function waits that the specified thread terminates then
+ * @details This function waits for the specified thread to terminate then
  *          decrements its reference counter, if the counter reaches zero then
  *          the thread working area is returned to the proper allocator.<br>
  *          The memory used by the exited thread is handled in different ways
