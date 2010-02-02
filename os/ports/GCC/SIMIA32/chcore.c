@@ -46,8 +46,8 @@ static void __dummy(Thread *otp, Thread *ntp) {
                 "push    %esi                                   \n\t" \
                 "push    %edi                                   \n\t" \
                 "push    %ebx                                   \n\t" \
-                "movl    %esp, 16(%ecx)                         \n\t" \
-                "movl    16(%edx), %esp                         \n\t" \
+                "movl    %esp, 12(%ecx)                         \n\t" \
+                "movl    12(%edx), %esp                         \n\t" \
                 "pop     %ebx                                   \n\t" \
                 "pop     %edi                                   \n\t" \
                 "pop     %esi                                   \n\t" \

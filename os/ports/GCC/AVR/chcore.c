@@ -59,33 +59,17 @@ void port_switch(Thread *otp, Thread *ntp) {
   asm volatile ("push    r28");
   asm volatile ("push    r29");
 
-  /* This is required because the context offset changes if CH_USE_DYNAMIC
-     is activated.*/
-#if CH_USE_DYNAMIC
   asm volatile ("movw    r30, r24");
   asm volatile ("in      r0, 0x3d");
-  asm volatile ("std     Z+8, r0");
+  asm volatile ("std     Z+6, r0");
   asm volatile ("in      r0, 0x3e");
-  asm volatile ("std     Z+9, r0");
-
-  asm volatile ("movw    r30, r22");
-  asm volatile ("ldd     r0, Z+8");
-  asm volatile ("out     0x3d, r0");
-  asm volatile ("ldd     r0, Z+9");
-  asm volatile ("out     0x3e, r0");
-#else /* !CH_USE_DYNAMIC */
-  asm volatile ("movw    r30, r24");
-  asm volatile ("in      r0, 0x3d");
   asm volatile ("std     Z+7, r0");
-  asm volatile ("in      r0, 0x3e");
-  asm volatile ("std     Z+8, r0");
 
   asm volatile ("movw    r30, r22");
-  asm volatile ("ldd     r0, Z+7");
+  asm volatile ("ldd     r0, Z+6");
   asm volatile ("out     0x3d, r0");
-  asm volatile ("ldd     r0, Z+8");
+  asm volatile ("ldd     r0, Z+7");
   asm volatile ("out     0x3e, r0");
-#endif /* !CH_USE_DYNAMIC */
 
   asm volatile ("pop     r29");
   asm volatile ("pop     r28");
