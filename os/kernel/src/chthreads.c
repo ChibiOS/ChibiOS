@@ -356,6 +356,7 @@ Thread *chThdAddRef(Thread *tp) {
   chSysUnlock();
   return tp;
 }
+
 /**
  * @brief   Releases a reference to a thread object.
  * @details If the references counter reaches zero <b>and</b> the thread
