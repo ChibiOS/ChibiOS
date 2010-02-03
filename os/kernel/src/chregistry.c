@@ -33,6 +33,8 @@
  *          the main thread unless it terminated.
  * @note    A reference is added to the returned thread in order to make sure
  *          it status is not lost.
+ * @note    This function cannot return @p NULL because there is always at
+ *          least one thread in the system.
  *
  * @return  A reference to the first thread.
  */

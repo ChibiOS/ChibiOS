@@ -62,7 +62,11 @@
 - NEW: Implemented a new threads registry subsystem, the registry allows to
   enumerate the active threads at runtime. The registry is meant as both
   a runtime API and a support for debuggers.
-  
+- NEW: New chCoreFree() API that returns the core memory left.
+- NEW: Added to the simulators shell demos two new commands: threads and mem,
+  that show the active threads (using the new registry) and the memory
+  allocators state.
+
 *** 1.5.0 ***
 - FIX: Fixed missing dependencies check for CH_USE_DYNAMIC (bug 2942757)
   (backported in 1.4.1).

@@ -64,6 +64,7 @@ extern "C" {
   void core_init(void);
   void *chCoreAlloc(size_t size);
   void *chCoreAllocI(size_t size);
+  size_t chCoreFree(void);
 #ifdef __cplusplus
 }
 #endif

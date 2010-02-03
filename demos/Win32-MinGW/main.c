@@ -32,7 +32,60 @@ static Thread *cdtp;
 static Thread *shelltp1;
 static Thread *shelltp2;
 
-void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
+static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
+  size_t n, size;
+  char buf[52];
+
+  (void)argv;
+  if (argc > 0) {
+    shellPrintLine(chp, "Usage: mem");
+    return;
+  }
+  n = chHeapStatus(NULL, &size);
+  sprintf(buf, "core free memory : %i bytes", chCoreFree());
+  shellPrintLine(chp, buf);
+  sprintf(buf, "heap fragments   : %i", n);
+  shellPrintLine(chp, buf);
+  sprintf(buf, "heap free total  : %i bytes", size);
+  shellPrintLine(chp, buf);
+}
+
+static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
+  static const char *states[] = {
+    "READY",
+    "CURRENT",
+    "SUSPENDED",
+    "WTSEM",
+    "WTMTX",
+    "WTCOND",
+    "SLEEPING",
+    "WTEXIT",
+    "WTOREVT",
+    "WTANDEVT",
+    "SNDMSG",
+    "WTMSG",
+    "FINAL"
+  };
+  Thread *tp;
+  char buf[60];
+
+  (void)argv;
+  if (argc > 0) {
+    shellPrintLine(chp, "Usage: threads");
+    return;
+  }
+  shellPrintLine(chp, "    addr    stack prio refs     state time");
+  tp = chRegFirstThread();
+  do {
+    sprintf(buf, "%8p %8p %4i %4i %9s %i",
+            tp, tp->p_ctx.esp, tp->p_prio, tp->p_refs - 1,
+            states[tp->p_state], tp->p_time);
+    shellPrintLine(chp, buf);
+    tp = chRegNextThread(tp);
+  } while (tp != NULL);
+}
+
+static void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
   Thread *tp;
 
   (void)argv;
@@ -50,6 +103,8 @@ void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
 }
 
 static const ShellCommand commands[] = {
+  {"mem", cmd_mem},
+  {"threads", cmd_threads},
   {"test", cmd_test},
   {NULL, NULL}
 };

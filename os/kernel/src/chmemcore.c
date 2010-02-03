@@ -32,9 +32,8 @@ static uint8_t *nextmem;
 static uint8_t *endmem;
 
 /**
- * @brief Low level memory manager initialization.
- *
- * @note Internal use only.
+ * @brief   Low level memory manager initialization.
+ * @note    Internal use only.
  */
 void core_init(void) {
 #if CH_MEMCORE_SIZE == 0
@@ -50,15 +49,15 @@ void core_init(void) {
 }
 
 /**
- * @brief Allocates a memory block.
+ * @brief   Allocates a memory block.
  * @details The size of the returned block is aligned to the alignment
  *          type @p align_t so it is not possible to allocate less than
  *          <code>sizeof(align_t)</code>.
  *
  *
- * @param[in] size the size of the block to be allocated
- * @return A pointer to the allocated memory block.
- * @retval NULL allocation failed, core memory exhausted.
+ * @param[in] size  the size of the block to be allocated
+ * @return  A pointer to the allocated memory block.
+ * @retval  NULL allocation failed, core memory exhausted.
  */
 void *chCoreAlloc(size_t size) {
   void *p;
@@ -70,14 +69,14 @@ void *chCoreAlloc(size_t size) {
 }
 
 /**
- * @brief Allocates a memory block.
+ * @brief   Allocates a memory block.
  * @details The size of the returned block is aligned to the alignment
  *          type @p align_t so it is not possible to allocate less than
  *          <code>sizeof(align_t)</code>.
  *
- * @param[in] size the size of the block to be allocated.
- * @return A pointer to the allocated memory block.
- * @retval NULL allocation failed, core memory exhausted.
+ * @param[in] size  the size of the block to be allocated.
+ * @return  A pointer to the allocated memory block.
+ * @retval  NULL allocation failed, core memory exhausted.
  */
 void *chCoreAllocI(size_t size) {
   void *p;
@@ -90,6 +89,15 @@ void *chCoreAllocI(size_t size) {
   return p;
 }
 
+/**
+ * @brief   Core memory left.
+ *
+ * @return  The size, in bytes, of the free core memory.
+ */
+size_t chCoreFree(void) {
+
+  return (size_t)(endmem - nextmem);
+}
 #endif /* CH_USE_MEMCORE */
 
 /** @} */
