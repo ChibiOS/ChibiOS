@@ -18,8 +18,9 @@
 */
 
 /**
- * @file chmemcore.c
- * @brief Core memory manager code.
+ * @file    chmemcore.c
+ * @brief   Core memory manager code.
+ *
  * @addtogroup memcore
  * @{
  */
@@ -55,9 +56,9 @@ void core_init(void) {
  *          <code>sizeof(align_t)</code>.
  *
  *
- * @param[in] size  the size of the block to be allocated
- * @return  A pointer to the allocated memory block.
- * @retval  NULL allocation failed, core memory exhausted.
+ * @param[in] size      the size of the block to be allocated
+ * @return              A pointer to the allocated memory block.
+ * @retval NULL         allocation failed, core memory exhausted.
  */
 void *chCoreAlloc(size_t size) {
   void *p;
@@ -74,9 +75,9 @@ void *chCoreAlloc(size_t size) {
  *          type @p align_t so it is not possible to allocate less than
  *          <code>sizeof(align_t)</code>.
  *
- * @param[in] size  the size of the block to be allocated.
- * @return  A pointer to the allocated memory block.
- * @retval  NULL allocation failed, core memory exhausted.
+ * @param[in] size      the size of the block to be allocated.
+ * @return              A pointer to the allocated memory block.
+ * @retval NULL         allocation failed, core memory exhausted.
  */
 void *chCoreAllocI(size_t size) {
   void *p;
@@ -92,7 +93,7 @@ void *chCoreAllocI(size_t size) {
 /**
  * @brief   Core memory left.
  *
- * @return  The size, in bytes, of the free core memory.
+ * @return              The size, in bytes, of the free core memory.
  */
 size_t chCoreFree(void) {
 

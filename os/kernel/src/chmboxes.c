@@ -18,8 +18,9 @@
 */
 
 /**
- * @file chmboxes.c
- * @brief Mailboxes code.
+ * @file    chmboxes.c
+ * @brief   Mailboxes code.
+ *
  * @addtogroup mailboxes
  * @{
  */
@@ -28,11 +29,11 @@
 
 #if CH_USE_MAILBOXES
 /**
- * @brief Initializes a Mailbox object.
+ * @brief   Initializes a Mailbox object.
  *
- * @param[out] mbp the pointer to the Mailbox structure to be initialized
- * @param[in] buf the circular messages buffer
- * @param[in] n the buffer size as number of @p msg_t
+ * @param[out] mbp      the pointer to the Mailbox structure to be initialized
+ * @param[in] buf       the circular messages buffer
+ * @param[in] n         the buffer size as number of @p msg_t
  */
 void chMBInit(Mailbox *mbp, msg_t *buf, cnt_t n) {
 
@@ -45,11 +46,11 @@ void chMBInit(Mailbox *mbp, msg_t *buf, cnt_t n) {
 }
 
 /**
- * @brief Resets a Mailbox object.
+ * @brief   Resets a Mailbox object.
  * @details All the waiting threads are resumed with status @p RDY_RESET and
  *          the queued messages are lost.
  *
- * @param[in] mbp the pointer to an initialized Mailbox object
+ * @param[in] mbp       the pointer to an initialized Mailbox object
  */
 void chMBReset(Mailbox *mbp) {
 
@@ -64,21 +65,21 @@ void chMBReset(Mailbox *mbp) {
 }
 
 /**
- * @brief Posts a message into a mailbox.
+ * @brief   Posts a message into a mailbox.
  * @details The invoking thread waits until a empty slot in the mailbox becomes
  *          available or the specified time runs out.
  *
- * @param[in] mbp the pointer to an initialized Mailbox object
- * @param[in] msg the message to be posted on the mailbox
- * @param[in] time the number of ticks before the operation timeouts,
- *                 the following special values are allowed:
- *                 - @a TIME_IMMEDIATE immediate timeout.
- *                 - @a TIME_INFINITE no timeout.
- *                 .
- * @return The operation status.
- * @retval RDY_OK if the message was correctly posted.
- * @retval RDY_RESET if the mailbox was reset while waiting.
- * @retval RDY_TIMEOUT if the operation timed out.
+ * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[in] msg       the message to be posted on the mailbox
+ * @param[in] time      the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The operation status.
+ * @retval RDY_OK       if the message was correctly posted.
+ * @retval RDY_RESET    if the mailbox was reset while waiting.
+ * @retval RDY_TIMEOUT  if the operation timed out.
  */
 msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
@@ -90,21 +91,21 @@ msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t time) {
 }
 
 /**
- * @brief Posts a message into a mailbox.
+ * @brief   Posts a message into a mailbox.
  * @details The invoking thread waits until a empty slot in the mailbox becomes
  *          available or the specified time runs out.
  *
- * @param[in] mbp the pointer to an initialized Mailbox object
- * @param[in] msg the message to be posted on the mailbox
- * @param[in] time the number of ticks before the operation timeouts,
- *                 the following special values are allowed:
- *                 - @a TIME_IMMEDIATE immediate timeout.
- *                 - @a TIME_INFINITE no timeout.
- *                 .
- * @return The operation status.
- * @retval RDY_OK if the message was correctly posted.
- * @retval RDY_RESET if the mailbox was reset while waiting.
- * @retval RDY_TIMEOUT if the operation timed out.
+ * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[in] msg       the message to be posted on the mailbox
+ * @param[in] time      the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The operation status.
+ * @retval RDY_OK       if the message was correctly posted.
+ * @retval RDY_RESET    if the mailbox was reset while waiting.
+ * @retval RDY_TIMEOUT  if the operation timed out.
  */
 msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
@@ -123,21 +124,21 @@ msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t time) {
 }
 
 /**
- * @brief Posts an high priority message into a mailbox.
+ * @brief   Posts an high priority message into a mailbox.
  * @details The invoking thread waits until a empty slot in the mailbox becomes
  *          available or the specified time runs out.
  *
- * @param[in] mbp the pointer to an initialized Mailbox object
- * @param[in] msg the message to be posted on the mailbox
- * @param[in] time the number of ticks before the operation timeouts,
- *                 the following special values are allowed:
- *                 - @a TIME_IMMEDIATE immediate timeout.
- *                 - @a TIME_INFINITE no timeout.
- *                 .
- * @return The operation status.
- * @retval RDY_OK if the message was correctly posted.
- * @retval RDY_RESET if the mailbox was reset while waiting.
- * @retval RDY_TIMEOUT if the operation timed out.
+ * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[in] msg       the message to be posted on the mailbox
+ * @param[in] time      the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The operation status.
+ * @retval RDY_OK       if the message was correctly posted.
+ * @retval RDY_RESET    if the mailbox was reset while waiting.
+ * @retval RDY_TIMEOUT  if the operation timed out.
  */
 msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
@@ -149,21 +150,21 @@ msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t time) {
 }
 
 /**
- * @brief Posts an high priority message into a mailbox.
+ * @brief   Posts an high priority message into a mailbox.
  * @details The invoking thread waits until a empty slot in the mailbox becomes
  *          available or the specified time runs out.
  *
- * @param[in] mbp the pointer to an initialized Mailbox object
- * @param[in] msg the message to be posted on the mailbox
- * @param[in] time the number of ticks before the operation timeouts,
- *                 the following special values are allowed:
- *                 - @a TIME_IMMEDIATE immediate timeout.
- *                 - @a TIME_INFINITE no timeout.
- *                 .
- * @return The operation status.
- * @retval RDY_OK if the message was correctly posted.
- * @retval RDY_RESET if the mailbox was reset while waiting.
- * @retval RDY_TIMEOUT if the operation timed out.
+ * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[in] msg       the message to be posted on the mailbox
+ * @param[in] time      the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The operation status.
+ * @retval RDY_OK       if the message was correctly posted.
+ * @retval RDY_RESET    if the mailbox was reset while waiting.
+ * @retval RDY_TIMEOUT  if the operation timed out.
  */
 msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
@@ -182,21 +183,21 @@ msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t time) {
 }
 
 /**
- * @brief Retrieves a message from a mailbox.
+ * @brief   Retrieves a message from a mailbox.
  * @details The invoking thread waits until a message is posted in the mailbox
  *          or the specified time runs out.
  *
- * @param[in] mbp the pointer to an initialized Mailbox object
- * @param[out] msgp pointer to a message variable for the received message
- * @param[in] time the number of ticks before the operation timeouts,
- *                 the following special values are allowed:
- *                 - @a TIME_IMMEDIATE immediate timeout.
- *                 - @a TIME_INFINITE no timeout.
- *                 .
- * @return The operation status.
- * @retval RDY_OK if a message was correctly fetched.
- * @retval RDY_RESET if the mailbox was reset while waiting.
- * @retval RDY_TIMEOUT if the operation timed out.
+ * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[out] msgp     pointer to a message variable for the received message
+ * @param[in] time      the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The operation status.
+ * @retval RDY_OK       if a message was correctly fetched.
+ * @retval RDY_RESET    if the mailbox was reset while waiting.
+ * @retval RDY_TIMEOUT  if the operation timed out.
  */
 msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t time) {
   msg_t rdymsg;
@@ -208,21 +209,21 @@ msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t time) {
 }
 
 /**
- * @brief Retrieves a message from a mailbox.
+ * @brief   Retrieves a message from a mailbox.
  * @details The invoking thread waits until a message is posted in the mailbox
  *          or the specified time runs out.
  *
- * @param[in] mbp the pointer to an initialized Mailbox object
- * @param[out] msgp pointer to a message variable for the received message
- * @param[in] time the number of ticks before the operation timeouts,
- *                 the following special values are allowed:
- *                 - @a TIME_IMMEDIATE immediate timeout.
- *                 - @a TIME_INFINITE no timeout.
- *                 .
- * @return The operation status.
- * @retval RDY_OK if a message was correctly fetched.
- * @retval RDY_RESET if the mailbox was reset while waiting.
- * @retval RDY_TIMEOUT if the operation timed out.
+ * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[out] msgp     pointer to a message variable for the received message
+ * @param[in] time      the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The operation status.
+ * @retval RDY_OK       if a message was correctly fetched.
+ * @retval RDY_RESET    if the mailbox was reset while waiting.
+ * @retval RDY_TIMEOUT  if the operation timed out.
  */
 msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t time) {
   msg_t rdymsg;

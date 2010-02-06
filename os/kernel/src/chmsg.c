@@ -18,8 +18,9 @@
 */
 
 /**
- * @file chmsg.c
- * @brief Messages code.
+ * @file    chmsg.c
+ * @brief   Messages code.
+ *
  * @addtogroup messages
  * @{
  */
@@ -35,13 +36,13 @@
 #endif
 
 /**
- * @brief Sends a message to the specified thread.
+ * @brief   Sends a message to the specified thread.
  * @details The sender is stopped until the receiver executes a
  *          @p chMsgRelease()after receiving the message.
  *
- * @param[in] tp the pointer to the thread
- * @param[in] msg the message
- * @return The return message from @p chMsgRelease().
+ * @param[in] tp        the pointer to the thread
+ * @param[in] msg       the message
+ * @return              The answer message from @p chMsgRelease().
  */
 msg_t chMsgSend(Thread *tp, msg_t msg) {
   Thread *ctp = currp;
@@ -61,13 +62,14 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
 }
 
 /**
- * @brief Suspends the thread and waits for an incoming message.
+ * @brief   Suspends the thread and waits for an incoming message.
+ * @note    You can assume that the data contained in the message is stable
+ *          until you invoke @p chMsgRelease() because the sending thread is
+ *          suspended until then.
  *
- * @return The pointer to the message structure. Note, it is always the
- *         message associated to the thread on the top of the messages queue.
- * @note You can assume that the data contained in the message is stable until
- *       you invoke @p chMsgRelease() because the sending thread is
- *       suspended until then.
+ * @return              The pointer to the message structure. Note, it is
+ *                      always the message associated to the thread on the
+ *                      top of the messages queue.
  */
 msg_t chMsgWait(void) {
   msg_t msg;
@@ -81,15 +83,17 @@ msg_t chMsgWait(void) {
 }
 
 /**
- * @brief Returns the next message in the queue.
+ * @brief   Returns the next message in the queue.
+ * @note    You can assume that the data pointed by the message is stable until
+ *          you invoke @p chMsgRelease() because the sending thread is
+ *          suspended until then. Always remember that the message data is not
+ *          copied between the sender and the receiver, just a pointer is
+ *          passed.
  *
- * @return The pointer to the message structure. Note, it is always the
- *         message associated to the thread on the top of the messages queue.
- *         If the queue is empty then @p NULL is returned.
- * @note You can assume that the data pointed by the message is stable until
- *       you invoke @p chMsgRelease() because the sending thread is
- *       suspended until then. Always remember that the message data is not
- *       copied between the sender and the receiver, just a pointer is passed.
+ * @return              The pointer to the message structure. Note, it is
+ *                      always the message associated to the thread on the
+ *                      top of the messages queue.
+ * @retval NULL         if the queue is empty.
  */
 msg_t chMsgGet(void) {
   msg_t msg;
@@ -101,15 +105,15 @@ msg_t chMsgGet(void) {
 }
 
 /**
- * @brief Releases the thread waiting on top of the messages queue.
+ * @brief   Releases the thread waiting on top of the messages queue.
+ * @note    You can call this function only if there is a message already in
+ *          the queue else the result will be unpredictable (a crash most likely).
+ *          Exiting from the @p chMsgWait() ensures you have at least one
+ *          message in the queue so it is not a big deal.<br>
+ *          The condition is only tested in debug mode in order to make this
+ *          code as fast as possible.
  *
- * @param[in] msg the message returned to the message sender
- * @note You can call this function only if there is a message already in the
- *       queue else the result will be unpredictable (a crash most likely).
- *       Exiting from the @p chMsgWait() ensures you have at least one
- *       message in the queue so it is not a big deal.<br>
- *       The condition is only tested in debug mode in order to make this code
- *       as fast as possible.
+ * @param[in] msg       the message returned to the message sender
  */
 void chMsgRelease(msg_t msg) {
 

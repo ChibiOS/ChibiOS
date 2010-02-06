@@ -18,8 +18,11 @@
 */
 
 /**
- * @file ch.h
- * @brief ChibiOS/RT main include file, it includes everything else.
+ * @file    ch.h
+ * @brief   ChibiOS/RT main include file.
+ * @details This header includes all the required kernel headers so it is the
+ *          only kernel header you usually want to include in your application.
+ *
  * @addtogroup kernel_info
  * @{
  */
@@ -28,27 +31,27 @@
 #define _CH_H_
 
 /**
- * ChibiOS/RT identification macro.
+ * @brief   ChibiOS/RT identification macro.
  */
 #define _CHIBIOS_RT_
 
 /**
- * Kernel version string.
+ * @brief   Kernel version string.
  */
 #define CH_KERNEL_VERSION       "1.5.1unstable"
 
 /**
- * Kernel version major number.
+ * @brief   Kernel version major number.
  */
 #define CH_KERNEL_MAJOR         1
 
 /**
- * Kernel version minor number.
+ * @brief   Kernel version minor number.
  */
 #define CH_KERNEL_MINOR         5
 
 /**
- * Kernel version patch number.
+ * @brief   Kernel version patch number.
  */
 #define CH_KERNEL_PATCH         1
 

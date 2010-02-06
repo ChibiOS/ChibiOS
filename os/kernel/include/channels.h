@@ -18,8 +18,9 @@
 */
 
 /**
- * @file channels.h
- * @brief I/O channels.
+ * @file    channels.h
+ * @brief   I/O channels.
+ *
  * @addtogroup io_channels
  * @{
  */

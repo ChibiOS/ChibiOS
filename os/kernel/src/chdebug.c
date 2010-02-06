@@ -18,8 +18,9 @@
 */
 
 /**
- * @file chdebug.c
- * @brief ChibiOS/RT Debug code.
+ * @file    chdebug.c
+ * @brief   ChibiOS/RT Debug code.
+ *
  * @addtogroup debug
  * @{
  */
@@ -28,12 +29,12 @@
 
 #if CH_DBG_ENABLE_TRACE
 /**
- * @brief Public trace buffer.
+ * @brief   Public trace buffer.
  */
 TraceBuffer trace_buffer;
 
 /**
- * @brief Trace circular buffer subsystem initialization.
+ * @brief   Trace circular buffer subsystem initialization.
  */
 void trace_init(void) {
 
@@ -42,10 +43,10 @@ void trace_init(void) {
 }
 
 /**
- * @brief Inserts in the circular debug trace buffer a context switch record.
+ * @brief   Inserts in the circular debug trace buffer a context switch record.
  *
- * @param[in] otp the thread being switched out
- * @param[in] ntp the thread to be switched in
+ * @param[in] otp       the thread being switched out
+ * @param[in] ntp       the thread to be switched in
  */
 void chDbgTrace(Thread *otp, Thread *ntp) {
 
@@ -60,7 +61,7 @@ void chDbgTrace(Thread *otp, Thread *ntp) {
 
 #if CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK
 /**
- * @brief Pointer to the panic message.
+ * @brief   Pointer to the panic message.
  * @details This pointer is meant to be accessed through the debugger, it is
  *          written once and then the system is halted. This variable can be
  *          set to @p NULL if the halt is caused by a stack overflow.
@@ -68,9 +69,9 @@ void chDbgTrace(Thread *otp, Thread *ntp) {
 char *panic_msg;
 
 /**
- * @brief Prints a panic message on the console and then halts the system.
+ * @brief   Prints a panic message on the console and then halts the system.
  *
- * @param[in] msg the pointer to the panic message string
+ * @param[in] msg       the pointer to the panic message string
  */
 void chDbgPanic(char *msg) {
 

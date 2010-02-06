@@ -18,8 +18,9 @@
 */
 
 /**
- * @file chmempools.c
- * @brief Memory Pools code.
+ * @file    chmempools.c
+ * @brief   Memory Pools code.
+ *
  * @addtogroup pools
  * @{
  */
@@ -28,16 +29,17 @@
 
 #if CH_USE_MEMPOOLS
 /**
- * @brief Initializes an empty memory pool.
+ * @brief   Initializes an empty memory pool.
+ * @note    The size is internally aligned to be a multiple of the @p align_t
+ *          type size.
  *
- * @param[out] mp pointer to a @p MemoryPool structure
- * @param[in] size the size of the objects contained in this memory pool,
- *                 the minimum accepted size is the size of a pointer to void.
- * @param[in] provider memory provider function for the memory pool or
- *                     @p NULL if the pool is not allowed to grow automatically
- *
- * @note The size is internally aligned to be a multiple of the @p align_t
- *       type size.
+ * @param[out] mp       pointer to a @p MemoryPool structure
+ * @param[in] size      the size of the objects contained in this memory pool,
+ *                      the minimum accepted size is the size of a pointer to
+ *                      void.
+ * @param[in] provider  memory provider function for the memory pool or
+ *                      @p NULL if the pool is not allowed to grow
+ *                      automatically
  */
 void chPoolInit(MemoryPool *mp, size_t size, memgetfunc_t provider) {
 
@@ -49,11 +51,11 @@ void chPoolInit(MemoryPool *mp, size_t size, memgetfunc_t provider) {
 }
 
 /**
- * @brief Allocates an object from a memory pool.
+ * @brief   Allocates an object from a memory pool.
  *
- * @param[in] mp pointer to a @p MemoryPool structure
- * @return The pointer to the allocated object.
- * @retval NULL if pool is empty.
+ * @param[in] mp        pointer to a @p MemoryPool structure
+ * @return              The pointer to the allocated object.
+ * @retval NULL         if pool is empty.
  */
 void *chPoolAllocI(MemoryPool *mp) {
   void *objp;
@@ -70,11 +72,11 @@ void *chPoolAllocI(MemoryPool *mp) {
 }
 
 /**
- * @brief Allocates an object from a memory pool.
+ * @brief   Allocates an object from a memory pool.
  *
- * @param[in] mp pointer to a @p MemoryPool structure
- * @return The pointer to the allocated object.
- * @retval NULL if pool is empty.
+ * @param[in] mp        pointer to a @p MemoryPool structure
+ * @return              The pointer to the allocated object.
+ * @retval NULL         if pool is empty.
  */
 void *chPoolAlloc(MemoryPool *mp) {
   void *objp;
@@ -86,15 +88,14 @@ void *chPoolAlloc(MemoryPool *mp) {
 }
 
 /**
- * @brief Releases (or adds) an object into (to) a memory pool.
+ * @brief   Releases (or adds) an object into (to) a memory pool.
+ * @note    The object is assumed to be of the right size for the specified
+ *          memory pool.
+ * @note    The object is assumed to be memory aligned to the size of @p align_t
+ *          type.
  *
- * @param[in] mp pointer to a @p MemoryPool structure
- * @param[in] objp the pointer to the object to be released or added
- *
- * @note The object is assumed to be of the right size for the specified
- *       memory pool.
- * @note The object is assumed to be memory aligned to the size of @p align_t
- *       type.
+ * @param[in] mp        pointer to a @p MemoryPool structure
+ * @param[in] objp      the pointer to the object to be released or added
  */
 void chPoolFreeI(MemoryPool *mp, void *objp) {
   struct pool_header *php = objp;
@@ -107,12 +108,12 @@ void chPoolFreeI(MemoryPool *mp, void *objp) {
 }
 
 /**
- * @brief Releases (or adds) an object into (to) a memory pool.
+ * @brief   Releases (or adds) an object into (to) a memory pool.
+ * @note    The object is assumed to be of the right size for the specified
+ *          memory pool.
  *
- * @param[in] mp pointer to a @p MemoryPool structure
- * @param[in] objp the pointer to the object to be released or added
- * @note the object is assumed to be of the right size for the specified
- *       memory pool.
+ * @param[in] mp        pointer to a @p MemoryPool structure
+ * @param[in] objp      the pointer to the object to be released or added
  */
 void chPoolFree(MemoryPool *mp, void *objp) {
 

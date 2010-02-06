@@ -18,8 +18,9 @@
 */
 
 /**
- * @file chregistry.c
- * @brief Threads registry code.
+ * @file    chregistry.c
+ * @brief   Threads registry code.
+ *
  * @addtogroup registry
  * @{
  */
@@ -36,7 +37,7 @@
  * @note    This function cannot return @p NULL because there is always at
  *          least one thread in the system.
  *
- * @return  A reference to the first thread.
+ * @return              A reference to the first thread.
  */
 Thread *chRegFirstThread(void) {
   Thread *tp;
@@ -52,9 +53,9 @@ Thread *chRegFirstThread(void) {
  * @details The reference counter of the specified thread is decremented and
  *          the reference counter of the returned thread is incremented.
  *
- * @param[in] tp    pointer to the thread
- * @return  A reference to the next thread.
- * @retval  NULL if there is no next thread.
+ * @param[in] tp        pointer to the thread
+ * @return              A reference to the next thread.
+ * @retval NULL         if there is no next thread.
  */
 Thread *chRegNextThread(Thread *tp) {
 

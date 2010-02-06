@@ -18,8 +18,9 @@
 */
 
 /**
- * @file heap.h
- * @brief Heaps macros and structures.
+ * @file    heap.h
+ * @brief   Heaps macros and structures.
+ *
  * @addtogroup heaps
  * @{
  */
@@ -43,7 +44,7 @@
 typedef struct memory_heap MemoryHeap;
 
 /**
- * @brief Memory heap block header.
+ * @brief   Memory heap block header.
  */
 struct heap_header {
   union {
@@ -54,7 +55,7 @@ struct heap_header {
 };
 
 /**
- * @brief Structure describing a memory heap.
+ * @brief   Structure describing a memory heap.
  */
 struct memory_heap {
   memgetfunc_t          h_provider; /**< @brief Memory blocks provider for
