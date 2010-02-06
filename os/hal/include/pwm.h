@@ -18,8 +18,9 @@
 */
 
 /**
- * @file pwm.h
- * @brief PWM Driver macros and structures.
+ * @file    pwm.h
+ * @brief   PWM Driver macros and structures.
+ *
  * @addtogroup PWM
  * @{
  */
@@ -46,26 +47,26 @@
 /*===========================================================================*/
 
 /**
- * @brief Driver state machine possible states.
+ * @brief   Driver state machine possible states.
  */
 typedef enum {
-  PWM_UNINIT = 0,                       /**< @brief Not initialized.        */
-  PWM_STOP = 1,                         /**< @brief Stopped.                */
-  PWM_READY = 2,                        /**< @brief Ready.                  */
+  PWM_UNINIT = 0,                   /**< @brief Not initialized.            */
+  PWM_STOP = 1,                     /**< @brief Stopped.                    */
+  PWM_READY = 2,                    /**< @brief Ready.                      */
 } pwmstate_t;
 
 /**
  * @brief PWM logic mode.
  */
 typedef enum {
-  PWM_OUTPUT_DISABLED = 0,              /**< @brief Output not driven, callback
-                                                    only.                   */
-  PWM_OUTPUT_ACTIVE_HIGH = 1,           /**< @brief Idle is logic level 0.  */
-  PWM_OUTPUT_ACTIVE_LOW = 2             /**< @brief Idle is logic level 1.  */
+  PWM_OUTPUT_DISABLED = 0,          /**< @brief Output not driven, callback
+                                                only.                       */
+  PWM_OUTPUT_ACTIVE_HIGH = 1,       /**< @brief Idle is logic level 0.      */
+  PWM_OUTPUT_ACTIVE_LOW = 2         /**< @brief Idle is logic level 1.      */
 } pwmmode_t;
 
 /**
- * @brief PWM notification callback type.
+ * @brief   PWM notification callback type.
  *
  * @param[in] active    current channel output state
  */

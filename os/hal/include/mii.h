@@ -23,8 +23,9 @@
  */
 
 /*-*
- * @file mii.h
- * @brief MII Driver macros and structures.
+ * @file    mii.h
+ * @brief   MII Driver macros and structures.
+ *
  * @addtogroup MII
  * @{
  */

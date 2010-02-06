@@ -18,8 +18,9 @@
 */
 
 /**
- * @file xxx.h
- * @brief XXX Driver macros and structures.
+ * @file    xxx.h
+ * @brief   XXX Driver macros and structures.
+ *
  * @addtogroup XXX
  * @{
  */
@@ -46,12 +47,12 @@
 /*===========================================================================*/
 
 /**
- * @brief Driver state machine possible states.
+ * @brief   Driver state machine possible states.
  */
 typedef enum {
-  XXX_UNINIT = 0,                           /**< @brief Not initialized.    */
-  XXX_STOP = 1,                             /**< @brief Stopped.            */
-  XXX_READY = 2,                            /**< @brief Ready.              */
+  XXX_UNINIT = 0,                   /**< @brief Not initialized.            */
+  XXX_STOP = 1,                     /**< @brief Stopped.                    */
+  XXX_READY = 2,                    /**< @brief Ready.                      */
 } xxxstate_t;
 
 #include "xxx_lld.h"

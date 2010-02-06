@@ -18,8 +18,9 @@
 */
 
 /**
- * @file XXX.c
- * @brief XXX Driver code.
+ * @file    xxx.c
+ * @brief   XXX Driver code.
+ *
  * @addtogroup XXX
  * @{
  */
@@ -46,7 +47,7 @@
 /*===========================================================================*/
 
 /**
- * @brief XXX Driver initialization.
+ * @brief   XXX Driver initialization.
  */
 void xxxInit(void) {
 
@@ -54,7 +55,7 @@ void xxxInit(void) {
 }
 
 /**
- * @brief Initializes the standard part of a @p XXXDriver structure.
+ * @brief   Initializes the standard part of a @p XXXDriver structure.
  *
  * @param[in] xxxp      pointer to the @p XXXDriver object
  */
@@ -65,7 +66,7 @@ void xxxObjectInit(XXXDriver *xxxp) {
 }
 
 /**
- * @brief Configures and activates the XXX peripheral.
+ * @brief   Configures and activates the XXX peripheral.
  *
  * @param[in] xxxp      pointer to the @p XXXDriver object
  * @param[in] config    pointer to the @p XXXConfig object
@@ -85,7 +86,7 @@ void xxxStart(XXXDriver *xxxp, const XXXConfig *config) {
 }
 
 /**
- * @brief Deactivates the XXX peripheral.
+ * @brief   Deactivates the XXX peripheral.
  *
  * @param[in] xxxp      pointer to the @p XXXDriver object
  */

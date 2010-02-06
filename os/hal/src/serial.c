@@ -18,8 +18,9 @@
 */
 
 /**
- * @file serial.c
- * @brief Serial Driver code.
+ * @file    serial.c
+ * @brief   Serial Driver code.
+ *
  * @addtogroup SERIAL
  * @{
  */
@@ -97,7 +98,7 @@ static const struct SerialDriverVMT vmt = {
 /*===========================================================================*/
 
 /**
- * @brief Serial Driver initialization.
+ * @brief   Serial Driver initialization.
  */
 void sdInit(void) {
 
@@ -105,17 +106,17 @@ void sdInit(void) {
 }
 
 /**
- * @brief Initializes a generic full duplex driver object.
+ * @brief   Initializes a generic full duplex driver object.
  * @details The HW dependent part of the initialization has to be performed
  *          outside, usually in the hardware initialization code.
  *
- * @param[out] sdp pointer to a @p SerialDriver structure
- * @param[in] inotify pointer to a callback function that is invoked when
- *                    some data is read from the Queue. The value can be
- *                    @p NULL.
- * @param[in] onotify pointer to a callback function that is invoked when
- *                    some data is written in the Queue. The value can be
- *                    @p NULL.
+ * @param[out] sdp      pointer to a @p SerialDriver structure
+ * @param[in] inotify   pointer to a callback function that is invoked when
+ *                      some data is read from the Queue. The value can be
+ *                      @p NULL.
+ * @param[in] onotify   pointer to a callback function that is invoked when
+ *                      some data is written in the Queue. The value can be
+ *                      @p NULL.
  */
 void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
 
@@ -130,12 +131,12 @@ void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
 }
 
 /**
- * @brief Configures and starts the driver.
+ * @brief   Configures and starts the driver.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
- * @param[in] config the architecture-dependent serial driver configuration.
- *                   If this parameter is set to @p NULL then a default
- *                   configuration is used.
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] config    the architecture-dependent serial driver configuration.
+ *                      If this parameter is set to @p NULL then a default
+ *                      configuration is used.
  */
 void sdStart(SerialDriver *sdp, const SerialConfig *config) {
 
@@ -152,11 +153,11 @@ void sdStart(SerialDriver *sdp, const SerialConfig *config) {
 }
 
 /**
- * @brief Stops the driver.
+ * @brief   Stops the driver.
  * @details Any thread waiting on the driver's queues will be awakened with
  *          the message @p Q_RESET.
  *
- * @param[in] sdp pointer to a @p SerialDrive object
+ * @param[in] sdp       pointer to a @p SerialDrive object
  */
 void sdStop(SerialDriver *sdp) {
 
@@ -175,18 +176,18 @@ void sdStop(SerialDriver *sdp) {
 }
 
 /**
- * @brief Handles incoming data.
+ * @brief   Handles incoming data.
  * @details This function must be called from the input interrupt service
  *          routine in order to enqueue incoming data and generate the
  *          related events.
- * @note The incoming data event is only generated when the input queue
- *       becomes non-empty.
- * @note In order to gain some performance it is suggested to not use
- *       this function directly but copy this code directly into the
- *       interrupt service routine.
+ * @note    The incoming data event is only generated when the input queue
+ *          becomes non-empty.
+ * @note    In order to gain some performance it is suggested to not use
+ *          this function directly but copy this code directly into the
+ *          interrupt service routine.
  *
- * @param[in] sdp pointer to a @p SerialDriver structure
- * @param[in] b the byte to be written in the driver's Input Queue
+ * @param[in] sdp       pointer to a @p SerialDriver structure
+ * @param[in] b         the byte to be written in the driver's Input Queue
  */
 void sdIncomingDataI(SerialDriver *sdp, uint8_t b) {
 
@@ -199,17 +200,17 @@ void sdIncomingDataI(SerialDriver *sdp, uint8_t b) {
 }
 
 /**
- * @brief Handles outgoing data.
+ * @brief   Handles outgoing data.
  * @details Must be called from the output interrupt service routine in order
  *          to get the next byte to be transmitted.
- * @note In order to gain some performance it is suggested to not use
- *       this function directly but copy this code directly into the
- *       interrupt service routine.
+ * @note    In order to gain some performance it is suggested to not use
+ *          this function directly but copy this code directly into the
+ *          interrupt service routine.
  *
- * @param[in] sdp pointer to a @p SerialDriver structure
- * @return The byte value read from the driver's output queue.
- * @retval Q_EMPTY if the queue is empty (the lower driver usually disables
- *                 the interrupt source when this happens).
+ * @param[in] sdp       pointer to a @p SerialDriver structure
+ * @return              The byte value read from the driver's output queue.
+ * @retval Q_EMPTY      if the queue is empty (the lower driver usually
+ *                      disables the interrupt source when this happens).
  */
 msg_t sdRequestDataI(SerialDriver *sdp) {
   msg_t  b;
@@ -223,12 +224,12 @@ msg_t sdRequestDataI(SerialDriver *sdp) {
 }
 
 /**
- * @brief Handles communication events/errors.
+ * @brief   Handles communication events/errors.
  * @details Must be called from the I/O interrupt service routine in order to
  *          notify I/O conditions as errors, signals change etc.
  *
- * @param[in] sdp pointer to a @p SerialDriver structure
- * @param[in] mask condition flags to be added to the mask
+ * @param[in] sdp       pointer to a @p SerialDriver structure
+ * @param[in] mask      condition flags to be added to the mask
  */
 void sdAddFlagsI(SerialDriver *sdp, sdflags_t mask) {
 
@@ -239,11 +240,11 @@ void sdAddFlagsI(SerialDriver *sdp, sdflags_t mask) {
 }
 
 /**
- * @brief Returns and clears the errors mask associated to the driver.
+ * @brief   Returns and clears the errors mask associated to the driver.
  *
- * @param[in] sdp pointer to a @p SerialDriver structure
- * @return The condition flags modified since last time this function was
- *         invoked.
+ * @param[in] sdp       pointer to a @p SerialDriver structure
+ * @return              The condition flags modified since last time this
+ *                      function was invoked.
  */
 sdflags_t sdGetAndClearFlags(SerialDriver *sdp) {
   sdflags_t mask;

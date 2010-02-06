@@ -18,8 +18,8 @@
 */
 
 /**
- * @file PWM.c
- * @brief PWM Driver code.
+ * @file    pwm.c
+ * @brief   PWM Driver code.
  * @addtogroup PWM
  * @{
  */
@@ -46,7 +46,7 @@
 /*===========================================================================*/
 
 /**
- * @brief PWM Driver initialization.
+ * @brief   PWM Driver initialization.
  */
 void pwmInit(void) {
 
@@ -54,7 +54,7 @@ void pwmInit(void) {
 }
 
 /**
- * @brief Initializes the standard part of a @p PWMDriver structure.
+ * @brief   Initializes the standard part of a @p PWMDriver structure.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  */
@@ -65,7 +65,7 @@ void pwmObjectInit(PWMDriver *pwmp) {
 }
 
 /**
- * @brief Configures and activates the PWM peripheral.
+ * @brief   Configures and activates the PWM peripheral.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] config    pointer to a @p PWMConfig object
@@ -85,7 +85,7 @@ void pwmStart(PWMDriver *pwmp, const PWMConfig *config) {
 }
 
 /**
- * @brief Deactivates the PWM peripheral.
+ * @brief   Deactivates the PWM peripheral.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  */
@@ -103,7 +103,7 @@ void pwmStop(PWMDriver *pwmp) {
 }
 
 /**
- * @brief Enables a PWM channel.
+ * @brief   Enables a PWM channel.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] channel   PWM channel identifier

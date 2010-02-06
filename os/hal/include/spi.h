@@ -18,8 +18,9 @@
 */
 
 /**
- * @file spi.h
- * @brief SPI Driver macros and structures.
+ * @file    spi.h
+ * @brief   SPI Driver macros and structures.
+ *
  * @addtogroup SPI
  * @{
  */
@@ -38,7 +39,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Enables the mutual exclusion APIs on the SPI bus.
+ * @brief   Enables the mutual exclusion APIs on the SPI bus.
  */
 #if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define SPI_USE_MUTUAL_EXCLUSION    TRUE
@@ -57,13 +58,13 @@
 /*===========================================================================*/
 
 /**
- * @brief Driver state machine possible states.
+ * @brief   Driver state machine possible states.
  */
 typedef enum {
-  SPI_UNINIT = 0,                           /**< @brief Not initialized.    */
-  SPI_STOP = 1,                             /**< @brief Stopped.            */
-  SPI_READY = 2,                            /**< @brief Ready.              */
-  SPI_ACTIVE = 3                            /**< @brief Slave selected.     */
+  SPI_UNINIT = 0,                   /**< @brief Not initialized.            */
+  SPI_STOP = 1,                     /**< @brief Stopped.                    */
+  SPI_READY = 2,                    /**< @brief Ready.                      */
+  SPI_ACTIVE = 3                    /**< @brief Slave selected.             */
 } spistate_t;
 
 #include "spi_lld.h"

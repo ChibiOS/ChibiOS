@@ -18,8 +18,9 @@
 */
 
 /**
- * @file can.h
- * @brief CAN Driver macros and structures.
+ * @file    can.h
+ * @brief   CAN Driver macros and structures.
+ *
  * @addtogroup CAN
  * @{
  */
@@ -34,23 +35,23 @@
 /*===========================================================================*/
 
 /**
- * @brief Errors rate warning.
+ * @brief   Errors rate warning.
  */
 #define CAN_LIMIT_WARNING           1
 /**
- * @brief Errors rate error.
+ * @brief   Errors rate error.
  */
 #define CAN_LIMIT_ERROR             2
 /**
- * @brief Bus off condition reached.
+ * @brief   Bus off condition reached.
  */
 #define CAN_BUS_OFF_ERROR           4
 /**
- * @brief Framing error of some kind on the CAN bus.
+ * @brief   Framing error of some kind on the CAN bus.
  */
 #define CAN_FRAMING_ERROR           8
 /**
- * @brief Overflow in receive queue.
+ * @brief   Overflow in receive queue.
  */
 #define CAN_OVERFLOW_ERROR          16
 
@@ -59,7 +60,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Sleep mode related APIs inclusion switch.
+ * @brief   Sleep mode related APIs inclusion switch.
  */
 #define CAN_USE_SLEEP_MODE          TRUE
 
@@ -76,7 +77,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Driver state machine possible states.
+ * @brief   Driver state machine possible states.
  */
 typedef enum {
   CAN_UNINIT = 0,                           /**< @brief Not initialized.    */
@@ -93,7 +94,7 @@ typedef enum {
 /*===========================================================================*/
 
 /**
- * @brief Adds some flags to the CAN status mask.
+ * @brief   Adds some flags to the CAN status mask.
  *
  * @param[in] canp      pointer to the @p CANDriver object
  * @param[in] mask      flags to be added to the status mask

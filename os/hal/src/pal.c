@@ -18,8 +18,9 @@
 */
 
 /**
- * @file pal.c
- * @brief I/O Ports Abstraction Layer code.
+ * @file    pal.c
+ * @brief   I/O Ports Abstraction Layer code.
+ *
  * @addtogroup PAL
  * @{
  */
@@ -46,17 +47,17 @@
 /*===========================================================================*/
 
 /**
- * @brief Read from an I/O bus.
+ * @brief   Read from an I/O bus.
+ * @note    The operation is not guaranteed to be atomic on all the
+ *          architectures, for atomicity and/or portability reasons you may
+ *          need to enclose port I/O operations between @p chSysLock() and
+ *          @p chSysUnlock().
+ * @note    The function internally uses the @p palReadGroup() macro. The use
+ *          of this function is preferred when you value code size, readability
+ *          and error checking over speed.
  *
- * @param[in] bus the I/O bus, pointer to a @p IOBus structure
- * @return The bus logical states.
- *
- * @note The operation is not guaranteed to be atomic on all the architectures,
- *       for atomicity and/or portability reasons you may need to enclose port
- *       I/O operations between @p chSysLock() and @p chSysUnlock().
- * @note The function internally uses the @p palReadGroup() macro. The use of
- *       this function is preferred when you value code size, readability  and
- *       error checking over speed.
+ * @param[in] bus       the I/O bus, pointer to a @p IOBus structure
+ * @return              The bus logical states.
  */
 ioportmask_t palReadBus(IOBus *bus) {
 
@@ -67,18 +68,19 @@ ioportmask_t palReadBus(IOBus *bus) {
 }
 
 /**
- * @brief Write to an I/O bus.
+ * @brief   Write to an I/O bus.
+ * @note    The operation is not guaranteed to be atomic on all the
+ *          architectures, for atomicity and/or portability reasons you may
+ *          need to enclose port I/O operations between @p chSysLock() and
+ *          @p chSysUnlock().
+ * @note    The default implementation is non atomic and not necessarily
+ *          optimal. Low level drivers may  optimize the function by using
+ *          specific hardware or coding.
  *
- * @param[in] bus the I/O bus, pointer to a @p IOBus structure
- * @param[in] bits the bits to be written on the I/O bus. Values exceeding
- *            the bus width are masked so most significant bits are lost.
- *
- * @note The operation is not guaranteed to be atomic on all the architectures,
- *       for atomicity and/or portability reasons you may need to enclose port
- *       I/O operations between @p chSysLock() and @p chSysUnlock().
- * @note The default implementation is non atomic and not necessarily
- *       optimal. Low level drivers may  optimize the function by using
- *       specific hardware or coding.
+ * @param[in] bus       the I/O bus, pointer to a @p IOBus structure
+ * @param[in] bits      the bits to be written on the I/O bus. Values exceeding
+ *                      the bus width are masked so most significant bits are
+ *                      lost.
  */
 void palWriteBus(IOBus *bus, ioportmask_t bits) {
 
@@ -89,17 +91,17 @@ void palWriteBus(IOBus *bus, ioportmask_t bits) {
 }
 
 /**
- * @brief Programs a bus with the specified mode.
+ * @brief   Programs a bus with the specified mode.
+ * @note    The operation is not guaranteed to be atomic on all the
+ *          architectures, for atomicity and/or portability reasons you may
+ *          need to enclose port I/O operations between @p chSysLock() and
+ *          @p chSysUnlock().
+ * @note    The default implementation is non atomic and not necessarily
+ *          optimal. Low level drivers may  optimize the function by using
+ *          specific hardware or coding.
  *
- * @param[in] bus the I/O bus, pointer to a @p IOBus structure
- * @param[in] mode the mode
- *
- * @note The operation is not guaranteed to be atomic on all the architectures,
- *       for atomicity and/or portability reasons you may need to enclose port
- *       I/O operations between @p chSysLock() and @p chSysUnlock().
- * @note The default implementation is non atomic and not necessarily
- *       optimal. Low level drivers may  optimize the function by using
- *       specific hardware or coding.
+ * @param[in] bus       the I/O bus, pointer to a @p IOBus structure
+ * @param[in] mode      the mode
  */
 void palSetBusMode(IOBus *bus, uint_fast8_t mode) {
 

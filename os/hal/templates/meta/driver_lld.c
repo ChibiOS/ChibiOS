@@ -18,8 +18,9 @@
 */
 
 /**
- * @file templates/xxx_lld.c
- * @brief XXX Driver subsystem low level driver source template.
+ * @file    templates/xxx_lld.c
+ * @brief   XXX Driver subsystem low level driver source template.
+ *
  * @addtogroup XXX_LLD
  * @{
  */
@@ -50,16 +51,16 @@
 /*===========================================================================*/
 
 /**
- * @brief Low level XXX driver initialization.
+ * @brief   Low level XXX driver initialization.
  */
 void xxx_lld_init(void) {
 
 }
 
 /**
- * @brief Configures and activates the XXX peripheral.
+ * @brief   Configures and activates the XXX peripheral.
  *
- * @param[in] xxxp pointer to the @p XXXDriver object
+ * @param[in] xxxp      pointer to the @p XXXDriver object
  */
 void xxx_lld_start(XXXDriver *xxxp) {
 
@@ -70,9 +71,9 @@ void xxx_lld_start(XXXDriver *xxxp) {
 }
 
 /**
- * @brief Deactivates the XXX peripheral.
+ * @brief   Deactivates the XXX peripheral.
  *
- * @param[in] xxxp pointer to the @p XXXDriver object
+ * @param[in] xxxp      pointer to the @p XXXDriver object
  */
 void xxx_lld_stop(XXXDriver *xxxp) {
 

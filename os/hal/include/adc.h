@@ -18,8 +18,9 @@
 */
 
 /**
- * @file adc.h
- * @brief ADC Driver macros and structures.
+ * @file    adc.h
+ * @brief   ADC Driver macros and structures.
+ *
  * @addtogroup ADC
  * @{
  */
@@ -50,7 +51,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Driver state machine possible states.
+ * @brief   Driver state machine possible states.
  */
 typedef enum {
   ADC_UNINIT = 0,                           /**< @brief Not initialized.    */

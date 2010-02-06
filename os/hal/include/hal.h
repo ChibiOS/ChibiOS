@@ -18,8 +18,9 @@
 */
 
 /**
- * @file hal.h
- * @brief HAL subsystem header.
+ * @file    hal.h
+ * @brief   HAL subsystem header.
+ *
  * @addtogroup HAL
  * @{
  */

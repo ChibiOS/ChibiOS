@@ -18,8 +18,9 @@
 */
 
 /**
- * @file templates/xxx_lld.h
- * @brief XXX Driver subsystem low level driver header template.
+ * @file    templates/xxx_lld.h
+ * @brief   XXX Driver subsystem low level driver header template.
+ *
  * @addtogroup XXX_LLD
  * @{
  */
@@ -46,15 +47,15 @@
 /*===========================================================================*/
 
 /**
- * @brief Driver configuration structure.
- * @note It could be empty on some architectures.
+ * @brief   Driver configuration structure.
+ * @note    It could be empty on some architectures.
  */
 typedef struct {
 
 } XXXConfig;
 
 /**
- * @brief Structure representing an XXX driver.
+ * @brief   Structure representing an XXX driver.
  */
 typedef struct {
   /**

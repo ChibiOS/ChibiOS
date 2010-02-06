@@ -18,8 +18,9 @@
 */
 
 /**
- * @file hal.c
- * @brief HAL subsystem code.
+ * @file    hal.c
+ * @brief   HAL subsystem code.
+ *
  * @addtogroup HAL
  * @{
  */
@@ -44,7 +45,7 @@
 /*===========================================================================*/
 
 /**
- * @brief HAL initialization.
+ * @brief   HAL initialization.
  */
 void halInit(void) {
 
