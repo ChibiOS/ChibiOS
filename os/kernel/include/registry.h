@@ -18,8 +18,9 @@
 */
 
 /**
- * @file registry.h
- * @brief Threads registry macros and structures.
+ * @file    registry.h
+ * @brief   Threads registry macros and structures.
+ *
  * @addtogroup registry
  * @{
  */
@@ -32,6 +33,8 @@
 /**
  * @brief   Removes a thread from the registry list.
  * @note    This macro is not meant for use in application code.
+ *
+ * @param[in] tp        thread to remove from the registry
  */
 #define REG_REMOVE(tp) {                                                    \
   (tp)->p_older->p_newer = (tp)->p_newer;                                   \
@@ -41,6 +44,8 @@
 /**
  * @brief   Adds a thread to the registry list.
  * @note    This macro is not meant for use in application code.
+ *
+ * @param[in] tp        thread to add to the registry
  */
 #define REG_INSERT(tp) {                                                    \
   (tp)->p_newer = (Thread *)&rlist;                                         \

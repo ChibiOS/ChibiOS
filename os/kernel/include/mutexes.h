@@ -18,8 +18,9 @@
 */
 
 /**
- * @file mutexes.h
- * @brief Mutexes macros and structures.
+ * @file    mutexes.h
+ * @brief   Mutexes macros and structures.
+ *
  * @addtogroup mutexes
  * @{
  */
@@ -33,12 +34,12 @@
  * @brief Mutex structure.
  */
 typedef struct Mutex {
-  ThreadsQueue          m_queue;        /**< Queue of the threads sleeping on
-                                             this Mutex.*/
-  Thread                *m_owner;       /**< Owner @p Thread pointer or
-                                             @p NULL.*/
-  struct Mutex          *m_next;        /**< Next @p Mutex into an owner-list
-                                             or @p NULL.*/
+  ThreadsQueue          m_queue;    /**< @brief Queue of the threads sleeping
+                                                on this Mutex.              */
+  Thread                *m_owner;   /**< @brief Owner @p Thread pointer or
+                                                @p NULL.                    */
+  struct Mutex          *m_next;    /**< @brief Next @p Mutex into an
+                                                owner-list or @p NULL.      */
 } Mutex;
 
 #ifdef __cplusplus
@@ -57,23 +58,26 @@ extern "C" {
 #endif
 
 /**
- * @brief Data part of a static mutex initializer.
+ * @brief   Data part of a static mutex initializer.
  * @details This macro should be used when statically initializing a mutex
  *          that is part of a bigger structure.
- * @param name the name of the mutex variable
+ *
+ * @param[in] name      the name of the mutex variable
  */
 #define _MUTEX_DATA(name) {_THREADSQUEUE_DATA(name.m_queue), NULL, NULL}
 
 /**
- * @brief Static mutex initializer.
+ * @brief   Static mutex initializer.
  * @details Statically initialized mutexes require no explicit initialization
  *          using @p chMtxInit().
- * @param name the name of the mutex variable
+ *
+ * @param[in] name      the name of the mutex variable
  */
 #define MUTEX_DECL(name) Mutex name = _MUTEX_DATA(name)
 
 /**
- * Returns @p TRUE if the mutex queue contains at least a waiting thread.
+ * @brief   Returns @p TRUE if the mutex queue contains at least a waiting
+ *          thread.
  */
 #define chMtxQueueNotEmptyS(mp) notempty(&(mp)->m_queue)
 

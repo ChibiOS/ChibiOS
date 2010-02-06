@@ -18,8 +18,9 @@
 */
 
 /**
- * @file debug.h
- * @brief Debug macros and structures.
+ * @file    debug.h
+ * @brief   Debug macros and structures.
+ *
  * @addtogroup debug
  * @{
  */
@@ -31,56 +32,63 @@
  * @brief Trace buffer entries.
  */
 #ifndef TRACE_BUFFER_SIZE
-#define TRACE_BUFFER_SIZE 64
+#define TRACE_BUFFER_SIZE       64
 #endif
 
 /**
  * @brief Fill value for thread stack area in debug mode.
  */
 #ifndef STACK_FILL_VALUE
-#define STACK_FILL_VALUE 0x55
+#define STACK_FILL_VALUE        0x55
 #endif
 
 /**
- * @brief Fill value for thread area in debug mode.
- * @note The chosen default value is 0xFF in order to make evident which
- *       thread fields were not initialized when inspecting the memory with
- *       a debugger. A uninitialized field is not an error in itself but it
- *       better to know it.
+ * @brief   Fill value for thread area in debug mode.
+ * @note    The chosen default value is 0xFF in order to make evident which
+ *          thread fields were not initialized when inspecting the memory with
+ *          a debugger. A uninitialized field is not an error in itself but it
+ *          better to know it.
  */
 #ifndef THREAD_FILL_VALUE
-#define THREAD_FILL_VALUE 0xFF
+#define THREAD_FILL_VALUE       0xFF
 #endif
 
 /**
  * @brief Trace buffer record.
  */
 typedef struct {
-  void                  *cse_wtobjp;    /**< Object where going to sleep.*/
-  systime_t             cse_time;       /**< Time of the switch event.*/
-  uint16_t              cse_state: 4;   /**< Switched out thread state.*/
-  uint16_t              cse_tid: 12;    /**< Switched in thdread id.*/
+  void                  *cse_wtobjp;    /**< @brief Object where going to
+                                                    sleep.                  */
+  systime_t             cse_time;       /**< @brief Time of the switch
+                                                    event.                  */
+  uint16_t              cse_state: 4;   /**< @brief Switched out thread
+                                                    state.                  */
+  uint16_t              cse_tid: 12;    /**< @brief Switched in thread id.  */
 } CtxSwcEvent;
 
 /**
  * @brief Trace buffer header.
  */
 typedef struct {
-  unsigned              tb_size;        /**< Trace buffer size (records).*/
-  CtxSwcEvent           *tb_ptr;        /**< Pointer to the ring buffer front.*/
-  CtxSwcEvent           tb_buffer[TRACE_BUFFER_SIZE];   /**< Ring buffer.*/
+  unsigned              tb_size;        /**< @brief Trace buffer size
+                                                    (entries).              */
+  CtxSwcEvent           *tb_ptr;        /**< @brief Pointer to the ring buffer
+                                                    front.                  */
+  /** @brief Ring buffer.*/
+  CtxSwcEvent           tb_buffer[TRACE_BUFFER_SIZE];
 } TraceBuffer;
 
 #define __QUOTE_THIS(p) #p
 
 #if CH_DBG_ENABLE_CHECKS
 /**
- * Function parameter check, if the condition check fails then the kernel
- * panics.
- * @param c the condition to be verified to be true
- * @param func the undecorated function name
- * @note The condition is tested only if the @p CH_DBG_ENABLE_CHECKS switch is
- *       specified in @p chconf.h else the macro does nothing.
+ * @brief   Function parameter check.
+ * @details If the condition check fails then the kernel panics and halts.
+ * @note    The condition is tested only if the @p CH_DBG_ENABLE_CHECKS switch
+ *          is specified in @p chconf.h else the macro does nothing.
+ *
+ * @param[in] c         the condition to be verified to be true
+ * @param[in] func      the undecorated function name
  */
 #define chDbgCheck(c, func) {                                           \
   if (!(c))                                                             \
@@ -94,17 +102,19 @@ typedef struct {
 
 #if CH_DBG_ENABLE_ASSERTS
 /**
- * Condition assertion, if the condition check fails then the kernel panics
- * with the specified message.
- * @param c the condition to be verified to be true
- * @param m the text message
- * @param r a remark string
- * @note The condition is tested only if the @p CH_DBG_ENABLE_ASSERTS switch is
- *       specified in @p chconf.h else the macro does nothing.
- * @note The convention for the message is the following:<br>
- *       @<function_name@>(), #@<assert_number@>
- * @note The remark string is not currently used except for putting a comment
- *       in the code about the assert.
+ * @brief   Condition assertion.
+ * @details If the condition check fails then the kernel panics with the
+ *          specified message and halts.
+ * @note    The condition is tested only if the @p CH_DBG_ENABLE_ASSERTS switch
+ *          is specified in @p chconf.h else the macro does nothing.
+ * @note    The convention for the message is the following:<br>
+ *          @<function_name@>(), #@<assert_number@>
+ * @note    The remark string is not currently used except for putting a
+ *          comment in the code about the assertion.
+ *
+ * @param[in] c         the condition to be verified to be true
+ * @param[in] m         the text message
+ * @param[in] r         a remark string
  */
 #define chDbgAssert(c, m, r) {                                          \
   if (!(c))                                                             \
@@ -114,15 +124,17 @@ typedef struct {
 #define chDbgAssert(c, m, r) {(void)(c);}
 #endif /* !CH_DBG_ENABLE_ASSERTS */
 
-#if !(CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK)
+#if !(CH_DBG_ENABLE_ASSERTS ||                                          \
+      CH_DBG_ENABLE_CHECKS ||                                           \
+      CH_DBG_ENABLE_STACK_CHECK)
 /* When the debug features are disabled this function is replaced by an empty
- * macro.*/
+   macro.*/
 #define chDbgPanic(msg) {}
 #endif
 
 #if !CH_DBG_ENABLE_TRACE
 /* When the trace feature is disabled this function is replaced by an empty
- * macro.*/
+   macro.*/
 #define chDbgTrace(otp, ntp) {}
 #endif
 

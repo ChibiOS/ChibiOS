@@ -22,8 +22,9 @@
  */
 
 /**
- * @file condvars.h
- * @brief Condition Variables macros and structures.
+ * @file    condvars.h
+ * @brief   Condition Variables macros and structures.
+ *
  * @addtogroup condvars
  * @{
  */
@@ -41,10 +42,10 @@
 #endif
 
 /**
- * @brief CondVar structure.
+ * @brief   CondVar structure.
  */
 typedef struct CondVar {
-  ThreadsQueue          c_queue;        /**< CondVar threads queue.*/
+  ThreadsQueue          c_queue;        /**< @brief CondVar threads queue.*/
 } CondVar;
 
 #ifdef __cplusplus
@@ -69,6 +70,8 @@ extern "C" {
  * @brief Data part of a static condition variable initializer.
  * @details This macro should be used when statically initializing a condition
  *          variable that is part of a bigger structure.
+ *
+ * @param[in] name      the name of the condition variable
  */
 #define _CONDVAR_DATA(name) {_THREADSQUEUE_DATA(name.c_queue)}
 
@@ -76,7 +79,8 @@ extern "C" {
  * @brief Static condition variable initializer.
  * @details Statically initialized condition variables require no explicit
  *          initialization using @p chCondInit().
- * @param name the name of the condition variable
+ *
+ * @param[in] name      the name of the condition variable
  */
 #define CONDVAR_DECL(name) CondVar name = _CONDVAR_DATA(name)
 

@@ -18,8 +18,9 @@
 */
 
 /**
- * @file scheduler.h
- * @brief Scheduler macros and structures.
+ * @file    scheduler.h
+ * @brief   Scheduler macros and structures.
+ *
  * @addtogroup scheduler
  * @{
  */
@@ -27,58 +28,61 @@
 #ifndef _SCHEDULER_H_
 #define _SCHEDULER_H_
 
-/** Default thread wakeup low level message. */
+/** @brief Default thread wakeup low level message.*/
 #define RDY_OK          0
-/** Low level message sent to a thread awakened by a timeout. */
+/** @brief Low level message sent to a thread awakened by a timeout.*/
 #define RDY_TIMEOUT     -1
-/** Low level message sent to a thread awakened by a reset operation. */
+/** @brief Low level message sent to a thread awakened by a reset operation.*/
 #define RDY_RESET       -2
 
-#define NOPRIO          0               /**< Ready list header priority.*/
-#define IDLEPRIO        1               /**< Idle thread priority.*/
-#define LOWPRIO         2               /**< Lowest user priority.*/
-#define NORMALPRIO      64              /**< Normal user priority.*/
-#define HIGHPRIO        127             /**< Highest user priority.*/
-#define ABSPRIO         255             /**< Greatest possible priority.*/
+#define NOPRIO          0           /**< @brief Ready list header priority. */
+#define IDLEPRIO        1           /**< @brief Idle thread priority.       */
+#define LOWPRIO         2           /**< @brief Lowest user priority.       */
+#define NORMALPRIO      64          /**< @brief Normal user priority.       */
+#define HIGHPRIO        127         /**< @brief Highest user priority.      */
+#define ABSPRIO         255         /**< @brief Greatest possible priority. */
 
 /**
- * Zero time specification for some syscalls with a timeout
- * specification.
- * @note Not all functions accept @p TIME_IMMEDIATE as timeout parameter,
- *       see the specific function documentation.
+ * @brief   Zero time specification for some syscalls with a timeout
+ *          specification.
+ * @note    Not all functions accept @p TIME_IMMEDIATE as timeout parameter,
+ *          see the specific function documentation.
  */
 #define TIME_IMMEDIATE  ((systime_t)-1)
 
 /**
- * Infinite time specification for all the syscalls with a timeout
- * specification.
+ * @brief   Infinite time specification for all the syscalls with a timeout
+ *          specification.
  */
 #define TIME_INFINITE   ((systime_t)0)
 
-/** The priority of the first thread on the given ready list. */
+/**
+ * @brief   Returns the priority of the first thread on the given ready list.
+ */
 #define firstprio(rlp)  ((rlp)->p_next->p_prio)
 
 /**
- * @brief Ready list header.
- *
  * @extends ThreadsQueue
+ *
+ * @brief   Ready list header.
  */
 typedef struct {
-  ThreadsQueue          r_queue;        /**< Threads queue.                 */
-  tprio_t               r_prio;         /**< This field must be initialized to
-                                             zero.                          */
-  struct context        p_ctx;          /**< Not used, present because
-                                             offsets.                       */
+  ThreadsQueue          r_queue;    /**< @brief Threads queue.              */
+  tprio_t               r_prio;     /**< @brief This field must be
+                                                initialized to zero.        */
+  struct context        p_ctx;      /**< @brief Not used, present because
+                                                offsets.                    */
 #if CH_USE_REGISTRY
-  Thread                *p_newer;       /**< Newer registry element.        */
-  Thread                *p_older;       /**< Older registry element.        */
+  Thread                *p_newer;   /**< @brief Newer registry element.     */
+  Thread                *p_older;   /**< @brief Older registry element.     */
 #endif
   /* End of the fields shared with the Thread structure.*/
 #if CH_TIME_QUANTUM > 0
-  cnt_t                 r_preempt;      /**< Round robin counter.           */
+  cnt_t                 r_preempt;  /**< @brief Round robin counter.        */
 #endif
 #ifndef CH_CURRP_REGISTER_CACHE
-  Thread                *r_current;     /**< The currently running thread.  */
+  Thread                *r_current; /**< @brief The currently running
+                                                thread.                     */
 #endif
 } ReadyList;
 
@@ -112,14 +116,14 @@ extern "C" {
 #endif
 
 /**
- * @brief Determines if yielding is possible.
+ * @brief   Determines if yielding is possible.
  * @details This function returns @p TRUE if there is a ready thread with
  *          equal or higher priority.
  */
 #define chSchCanYieldS() (firstprio(&rlist.r_queue) >= currp->p_prio)
 
 /**
- * @brief Determines if the current thread must reschedule.
+ * @brief   Determines if the current thread must reschedule.
  * @details This function returns @p TRUE if there is a ready thread with
  *          higher priority.
  */

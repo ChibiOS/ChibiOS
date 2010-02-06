@@ -18,8 +18,12 @@
 */
 
 /**
- * @file lists.h
- * @brief Thread queues/lists macros and structures.
+ * @file    lists.h
+ * @brief   Thread queues/lists macros and structures.
+ * @note    All the macros present in this module, while public, are not
+ *          an OS API and should not be directly used in the user applications
+ *          code.
+ *
  * @addtogroup internals
  * @{
  */
@@ -30,46 +34,49 @@
 typedef struct Thread Thread;
 
 /**
- * @brief Threads queue initialization.
+ * @brief   Threads queue initialization.
  */
 #define queue_init(tqp) ((tqp)->p_next = (tqp)->p_prev = (Thread *)(tqp));
 
 /**
- * @brief Threads list initialization.
+ * @brief   Threads list initialization.
  */
 #define list_init(tlp) ((tlp)->p_next = (Thread *)(tlp))
 
 /**
- * @brief Evaluates to @p TRUE if the specified threads queue or list is
+ * @brief   Evaluates to @p TRUE if the specified threads queue or list is
  * empty.
  */
 #define isempty(p)      ((p)->p_next == (Thread *)(p))
 
 /**
- * @brief Evaluates to @p TRUE if the specified threads queue or list is
- * not empty.
+ * @brief   Evaluates to @p TRUE if the specified threads queue or list is
+ *          not empty.
  */
 #define notempty(p)     ((p)->p_next != (Thread *)(p))
 
 /**
- * @brief Data part of a static threads queue initializer.
+ * @brief   Data part of a static threads queue initializer.
  * @details This macro should be used when statically initializing a threads
  *          queue that is part of a bigger structure.
- * @param name the name of the threads queue variable
+ *
+ * @param[in] name      the name of the threads queue variable
  */
 #define _THREADSQUEUE_DATA(name) {(Thread *)&name, (Thread *)&name}
 
 /**
- * @brief Static threads queue initializer.
+ * @brief   Static threads queue initializer.
  * @details Statically initialized threads queues require no explicit
  *          initialization using @p queue_init().
- * @param name the name of the threads queue variable
+ *
+ * @param[in] name      the name of the threads queue variable
  */
 #define THREADSQUEUE_DECL(name) ThreadsQueue name = _THREADSQUEUE_DATA(name)
 
 /**
- * @brief Generic threads bidirectional linked list header and element.
  * @extends ThreadsList
+ *
+ * @brief   Generic threads bidirectional linked list header and element.
  */
 typedef struct {
   Thread                *p_next;        /**< First @p Thread in the queue, or
@@ -79,7 +86,7 @@ typedef struct {
 } ThreadsQueue;
 
 /**
- * @brief Generic threads single link list, it works like a stack.
+ * @brief   Generic threads single link list, it works like a stack.
  */
 typedef struct {
 

@@ -18,8 +18,9 @@
 */
 
 /**
- * @file semaphores.h
- * @brief Semaphores macros and structures.
+ * @file    semaphores.h
+ * @brief   Semaphores macros and structures.
+ *
  * @addtogroup semaphores
  * @{
  */
@@ -30,12 +31,12 @@
 #if CH_USE_SEMAPHORES
 
 /**
- * @brief Semaphore structure.
+ * @brief   Semaphore structure.
  */
 typedef struct Semaphore {
-  ThreadsQueue          s_queue;        /**< Queue of the threads sleeping on
-                                             this semaphore.*/
-  cnt_t                 s_cnt;          /**< The semaphore counter.*/
+  ThreadsQueue          s_queue;    /**< @brief Queue of the threads sleeping
+                                                on this semaphore.          */
+  cnt_t                 s_cnt;      /**< @brief The semaphore counter.      */
 } Semaphore;
 
 #ifdef __cplusplus
@@ -58,37 +59,41 @@ extern "C" {
 #endif
 
 /**
- * @brief Data part of a static semaphore initializer.
+ * @brief   Data part of a static semaphore initializer.
  * @details This macro should be used when statically initializing a semaphore
  *          that is part of a bigger structure.
- * @param name the name of the semaphore variable
- * @param n the counter initial value, this value must be non-negative
+ *
+ * @param[in] name      the name of the semaphore variable
+ * @param[in] n         the counter initial value, this value must be
+ *                      non-negative
  */
 #define _SEMAPHORE_DATA(name, n) {_THREADSQUEUE_DATA(name.s_queue), n}
 
 /**
- * @brief Static semaphore initializer.
- * @details Statically initialized semaphores require no explicit initialization
- *          using @p chSemInit().
- * @param name the name of the semaphore variable
- * @param n the counter initial value, this value must be non-negative
+ * @brief   Static semaphore initializer.
+ * @details Statically initialized semaphores require no explicit
+ *          initialization using @p chSemInit().
+ *
+ * @param[in] name      the name of the semaphore variable
+ * @param[in] n         the counter initial value, this value must be
+ *                      non-negative
  */
 #define SEMAPHORE_DECL(name, n) Semaphore name = _SEMAPHORE_DATA(name, n)
 
 /**
- * Decreases the semaphore counter, this macro can be used when it is ensured
- * that the counter would not become negative.
+ * @brief   Decreases the semaphore counter.
+ * @details This macro can be used when the counter is known to be positive.
  */
 #define chSemFastWaitI(sp)      ((sp)->s_cnt--)
 
 /**
- * Increases the semaphore counter, this macro can be used when the counter is
- * not negative.
+ * @brief   Increases the semaphore counter.
+ * @details This macro can be used when the counter is known to be not negative.
  */
 #define chSemFastSignalI(sp)    ((sp)->s_cnt++)
 
 /**
- * Returns the semaphore counter current value.
+ * @brief   Returns the semaphore counter current value.
  */
 #define chSemGetCounterI(sp)    ((sp)->s_cnt)
 

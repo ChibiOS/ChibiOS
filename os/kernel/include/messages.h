@@ -18,8 +18,9 @@
 */
 
 /**
- * @file messages.h
- * @brief Messages macros and structures.
+ * @file    messages.h
+ * @brief   Messages macros and structures.
+ *
  * @addtogroup messages
  * @{
  */
@@ -30,13 +31,13 @@
 #if CH_USE_MESSAGES
 
 /**
- * Evaluates to TRUE if the thread has pending messages.
+ * @brief   Evaluates to TRUE if the thread has pending messages.
  */
 #define chMsgIsPendingI(tp) \
         ((tp)->p_msgqueue.p_next != (Thread *)&(tp)->p_msgqueue)
 
 /**
- * Returns the first message in the queue.
+ * @brief   Returns the first message in the queue.
  */
 #define chMsgGetI(tp) \
         ((tp)->p_msgqueue.p_next->p_msg)

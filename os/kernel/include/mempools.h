@@ -18,8 +18,9 @@
 */
 
 /**
- * @file mempools.h
- * @brief Memory Pools macros and structures.
+ * @file    mempools.h
+ * @brief   Memory Pools macros and structures.
+ *
  * @addtogroup pools
  * @{
  */
@@ -30,14 +31,15 @@
 #if CH_USE_MEMPOOLS
 
 /**
- * @brief Memory pool free object header.
+ * @brief   Memory pool free object header.
  */
 struct pool_header {
-  struct pool_header    *ph_next;
+  struct pool_header    *ph_next;       /**< @brief Pointer to the next pool
+                                                    header in the list.     */
 };
 
 /**
- * @brief Memory pool descriptor.
+ * @brief   Memory pool descriptor.
  */
 typedef struct {
   struct pool_header    *mp_next;       /**< @brief Pointer to the header.  */
@@ -48,13 +50,13 @@ typedef struct {
 } MemoryPool;
 
 /**
- * @brief Data part of a static memory pool initializer.
+ * @brief   Data part of a static memory pool initializer.
  * @details This macro should be used when statically initializing a
  *          memory pool that is part of a bigger structure.
  *
- * @param[in] name the name of the memory pool variable
- * @param[in] size size of the memory pool contained objects
- * @param[in] provider memory provider function for the memory pool
+ * @param[in] name      the name of the memory pool variable
+ * @param[in] size      size of the memory pool contained objects
+ * @param[in] provider  memory provider function for the memory pool
  */
 #define _MEMORYPOOL_DATA(name, size, provider)                              \
   {NULL, MEM_ALIGN_SIZE(size), provider}

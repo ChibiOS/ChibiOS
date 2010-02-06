@@ -18,8 +18,9 @@
 */
 
 /**
- * @file memcore.h
- * @brief Core memory manager macros and structures.
+ * @file    memcore.h
+ * @brief   Core memory manager macros and structures.
+ *
  * @addtogroup memcore
  * @{
  */
@@ -28,31 +29,30 @@
 #define _MEMCORE_H_
 
 /**
- * @brief Memory alignment type.
+ * @brief   Memory alignment type.
  */
 typedef void *align_t;
 
 /**
- * @brief Memory get function.
- *
- * @note This type must be assignment compatible with the @p chMemAlloc()
- *       function.
+ * @brief   Memory get function.
+ * @note    This type must be assignment compatible with the @p chMemAlloc()
+ *          function.
  */
 typedef void *(*memgetfunc_t)(size_t size);
 
 /**
- * @brief Alignment mask constant.
+ * @brief   Alignment mask constant.
  */
 #define MEM_ALIGN_MASK      (sizeof(align_t) - 1)
 
 /**
- * @brief Alignment helper macro.
+ * @brief   Alignment helper macro.
  */
 #define MEM_ALIGN_SIZE(p)   (((size_t)(p) + MEM_ALIGN_MASK) & ~MEM_ALIGN_MASK)
 
 /**
- * @brief Returns whatever a pointer or memory size is aligned to
- *        the type @p align_t.
+ * @brief   Returns whatever a pointer or memory size is aligned to
+ *          the type @p align_t.
  */
 #define MEM_IS_ALIGNED(p)   (((size_t)(p) & MEM_ALIGN_MASK) == 0)
 

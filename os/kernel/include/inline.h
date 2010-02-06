@@ -21,15 +21,12 @@
 #define _INLINE_H_
 
 /**
- * @file inline.h
- * @brief kernel inlined functions.
+ * @file    inline.h
+ * @brief   Kernel inlined functions.
+ * @details In this file there are a set of inlined functions if the
+ *          @p CH_OPTIMIZE_SPEED is enabled.
  */
 
-/*
- * Inlined functions if CH_OPTIMIZE_SPEED is enabled.
- * Note: static inlined functions do not duplicate the code in every module
- *       this is true for GCC, not sure about other compilers.
- */
 #if CH_OPTIMIZE_SPEED
 static INLINE void prio_insert(Thread *tp, ThreadsQueue *tqp) {
 
