@@ -9,6 +9,9 @@ Before 1.6.0:
 * Reference counter for threads, concept of detached threads, threads
   management.
 * Active threads registry in the kernel.
+- Rename all the kernel headers by putting "ch" in front of the name, this is
+  required in order to avoid potential conflicts with external libraries, the
+  current names are a bit too generic.
 - Debug-related features and tools.
 - I2C device driver class support.
 - USB device driver class support.

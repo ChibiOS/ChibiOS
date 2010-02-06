@@ -18,97 +18,96 @@
 */
 
 /**
- * @file templates/chcore.c
- * @brief Port related template code.
+ * @file    templates/chcore.c
+ * @brief   Port related template code.
+ * @details This file is a template of the system driver functions provided by
+ *          a port. Some of the following functions may be implemented as
+ *          macros in chcore.h if the implementer decides that there is an
+ *          advantage in doing so, as example because performance concerns.
+ *
  * @addtogroup core
  * @{
  */
 
 #include "ch.h"
 
-/*
- * This file is a template of the system driver functions provided by a port.
- * Some of the following functions may be implemented as macros in chcore.h if
- * the implementer decides that there is an advantage in doing so, as example
- * because performance concerns.
- */
-
 /**
- * @brief Port-related initialization code.
- *
- * @note This function is usually empty.
+ * @brief   Port-related initialization code.
+ * @note    This function is usually empty.
  */
 void port_init(void){
 }
 
 /**
- * @brief Kernel-lock action.
+ * @brief   Kernel-lock action.
  * @details Usually this function just disables interrupts but may perform more
- * actions.
+ *          actions.
  */
 void port_lock(void) {
 }
 
 /**
- * @brief Kernel-unlock action.
+ * @brief   Kernel-unlock action.
  * @details Usually this function just disables interrupts but may perform more
- * actions.
+ *          actions.
  */
 void port_unlock(void) {
 }
 
 /**
- * @brief Kernel-lock action from an interrupt handler.
+ * @brief   Kernel-lock action from an interrupt handler.
  * @details This function is invoked before invoking I-class APIs from
- * interrupt handlers. The implementation is architecture dependent, in its
- * simplest form it is void.
+ *          interrupt handlers. The implementation is architecture dependent,
+ *          in its simplest form it is void.
  */
 void port_lock_from_isr(void) {
 }
 
 /**
- * @brief Kernel-unlock action from an interrupt handler.
+ * @brief   Kernel-unlock action from an interrupt handler.
  * @details This function is invoked after invoking I-class APIs from interrupt
- * handlers. The implementation is architecture dependent, in its simplest form
- * it is void.
+ *          handlers. The implementation is architecture dependent, in its
+ *          simplest form it is void.
  */
 void port_unlock_from_isr(void) {
 }
 
 /**
- * @brief Disables all the interrupt sources.
- *
- * @note Of course non maskable interrupt sources are not included.
+ * @brief   Disables all the interrupt sources.
+ * @note    Of course non maskable interrupt sources are not included.
  */
 void port_disable() {
 }
 
 /**
- * @brief Disables the interrupt sources that are not supposed to preempt the kernel.
+ * @brief   Disables the interrupt sources that are not supposed to preempt
+ *          the kernel.
  */
 void port_suspend(void) {
 }
 
 /**
- * @brief Enables all the interrupt sources.
+ * @brief   Enables all the interrupt sources.
  */
 void port_enable(void) {
 }
 
 /**
- * @brief Enters an architecture-dependent halt mode.
+ * @brief   Enters an architecture-dependent halt mode.
  * @details The function is meant to return when an interrupt becomes pending.
- * The simplest implementation is an empty function but this will not take
- * advantage of architecture-specific power saving modes.
+ *          The simplest implementation is an empty function or macro but this
+ *          would not take advantage of architecture-specific power saving
+ *          modes.
  */
 void port_wait_for_interrupt(void) {
 }
 
 /**
- * @brief Halts the system.
+ * @brief   Halts the system.
  * @details This function is invoked by the operating system when an
- * unrecoverable error is detected (as example because a programming error in
- * the application code that triggers an assertion while in debug mode).
+ *          unrecoverable error is detected (as example because a programming
+ *          error in the application code that triggers an assertion while in
+ *          debug mode).
  */
 void port_halt(void) {
 
@@ -118,14 +117,14 @@ void port_halt(void) {
 }
 
 /**
- * @brief Performs a context switch between two threads.
+ * @brief   Performs a context switch between two threads.
  * @details This is the most critical code in any port, this function
- * is responsible for the context switch between 2 threads.
+ *          is responsible for the context switch between 2 threads.
+ * @note    The implementation of this code affects <b>directly</b> the context
+ *          switch performance so optimize here as much as you can.
  *
- * @param otp the thread to be switched out
- * @param ntp the thread to be switched in
- * @note The implementation of this code affects <b>directly</b> the context
- *       switch performance so optimize here as much as you can.
+ * @param otp   the thread to be switched out
+ * @param ntp   the thread to be switched in
  */
 void port_switch(Thread *otp, Thread *ntp) {
 }

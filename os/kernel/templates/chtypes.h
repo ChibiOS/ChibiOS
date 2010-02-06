@@ -18,8 +18,13 @@
 */
 
 /**
- * @file templates/chtypes.h
- * @brief System types template.
+ * @file    templates/chtypes.h
+ * @brief   System types template.
+ * @details The types defined in this file may change depending on the target
+ *          architecture. You may also try to optimize the size of the various
+ *          types in order to privilege size or performance, be careful in
+ *          doing so.
+ *
  * @addtogroup types
  * @{
  */
@@ -35,46 +40,74 @@
 #include <stdint.h>
 #endif
 
-/** Boolean, recommended the fastest signed. */
+/**
+ * @brief   Boolean, recommended the fastest signed.
+ */
 typedef int32_t         bool_t;
 
-/** Thread mode flags, uint8_t is ok. */
+/**
+ * @brief   Thread mode flags, uint8_t is ok.
+ */
 typedef uint8_t         tmode_t;
 
-/** Thread state, uint8_t is ok. */
+/**
+ * @brief   Thread state, uint8_t is ok.
+ */
 typedef uint8_t         tstate_t;
 
-/** Thread references counter, uint8_t is ok. */
+/**
+ * @brief   Thread references counter, uint8_t is ok.
+ */
 typedef uint8_t         trefs_t;
 
-/** Priority, use the fastest unsigned type. */
+/**
+ * @brief   Priority, use the fastest unsigned type.
+ */
 typedef uint32_t        tprio_t;
 
-/** Message, use signed pointer equivalent.*/
+/**
+ * @brief   Message, use signed pointer equivalent.
+ */
 typedef int32_t         msg_t;
 
-/** Event Id, use fastest signed.*/
+/**
+ * @brief   Event Id, use fastest signed.
+ */
 typedef int32_t         eventid_t;
 
-/** Event Mask, recommended fastest unsigned.*/
+/**
+ * @brief   Event Mask, recommended fastest unsigned.
+ */
 typedef uint32_t        eventmask_t;
 
-/** System Time, recommended fastest unsigned.*/
+/**
+ * @brief   System Time, recommended fastest unsigned.
+ */
 typedef uint32_t        systime_t;
 
-/** Counter, recommended fastest signed.*/
+/**
+ * @brief   Counter, recommended fastest signed.
+ */
 typedef int32_t         cnt_t;
 
-/** Inline function modifier. */
-#define INLINE      inline
+/**
+ * @brief   Inline function modifier.
+ */
+#define INLINE inline
 
-/** Packed structure modifier (within). */
+/**
+ * @brief   Packed structure modifier (within).
+ */
 #define PACK_STRUCT_STRUCT __attribute__((packed))
 
-/** Packed structure modifier (before). */
+/**
+ * @brief   Packed structure modifier (before).
+ */
 #define PACK_STRUCT_BEGIN
 
-/** Packed structure modifier (after). */
+/**
+ * @brief   Packed structure modifier (after).
+ */
 #define PACK_STRUCT_END
 
 #endif /* _CHTYPES_H_ */
