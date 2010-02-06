@@ -167,17 +167,18 @@ struct context {
 
 /**
  * The default idle thread implementation requires no extra stack space in
- * this port.
+ * this port but it is set to 4 because the idle thread does have a stack
+ * frame when compiling without optimizations.
  */
 #ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE 0
+#define IDLE_THREAD_STACK_SIZE      4
 #endif
 
 /**
  * This port requires no extra stack space for interrupt handling.
  */
 #ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK 0
+#define INT_REQUIRED_STACK          0
 #endif
 
 /**

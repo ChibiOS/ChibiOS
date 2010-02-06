@@ -52,6 +52,8 @@
 *****************************************************************************
 
 *** 1.5.1 ***
+- FIX: Fixed insufficient stack space for the idle thread in the ARMCM3 port
+  when compiling without optimizations (bug 2946233)(backported in 1.4.1).
 - FIX: Fixed wrong notes on function chThdResume() (bug 2943160).
 - NEW: Implemented the concept of thread references, this mechanism ensures
   that a dynamic thread's memory is not freed while some other thread still
