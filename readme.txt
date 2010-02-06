@@ -66,6 +66,9 @@
 - NEW: Added to the simulators shell demos two new commands: threads and mem,
   that show the active threads (using the new registry) and the memory
   allocators state.
+- CHANGE: Doxygen tags cleanup in all the system code, comments are better
+  looking now.
+- CHANGE: Documentation improvements.
 
 *** 1.5.0 ***
 - FIX: Fixed missing dependencies check for CH_USE_DYNAMIC (bug 2942757)
