@@ -34,7 +34,7 @@
  * Module dependencies check.
  */
 #if !CH_USE_MEMCORE && !CH_USE_MALLOC_HEAP
-#error "CH_USE_HEAP requires CH_USE_MEM"
+#error "CH_USE_HEAP requires CH_USE_MEMCORE or CH_USE_MALLOC_HEAP"
 #endif
 
 #if !CH_USE_MUTEXES && !CH_USE_SEMAPHORES
