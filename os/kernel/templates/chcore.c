@@ -35,7 +35,7 @@
  * @brief   Port-related initialization code.
  * @note    This function is usually empty.
  */
-void port_init(void){
+void port_init(void) {
 }
 
 /**
