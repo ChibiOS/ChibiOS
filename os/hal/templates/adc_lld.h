@@ -18,8 +18,9 @@
 */
 
 /**
- * @file templates/adc_lld.h
- * @brief ADC Driver subsystem low level driver header template.
+ * @file    templates/adc_lld.h
+ * @brief   ADC Driver subsystem low level driver header template.
+ *
  * @addtogroup ADC_LLD
  * @{
  */
@@ -50,24 +51,25 @@
 /*===========================================================================*/
 
 /**
- * @brief ADC sample data type.
+ * @brief   ADC sample data type.
  */
 typedef uint16_t adcsample_t;
 
 /**
- * @brief Channels number in a conversion group.
+ * @brief   Channels number in a conversion group.
  */
 typedef uint16_t adc_channels_num_t;
 
 /**
- * @brief ADC notification callback type.
- * @param[in] buffer pointer to the most recent samples data
- * @param[in] n number of buffer rows available starting from @p buffer
+ * @brief   ADC notification callback type.
+ *
+ * @param[in] buffer    pointer to the most recent samples data
+ * @param[in] n         number of buffer rows available starting from @p buffer
  */
 typedef void (*adccallback_t)(adcsample_t *buffer, size_t n);
 
 /**
- * @brief Conversion group configuration structure.
+ * @brief   Conversion group configuration structure.
  * @details This implementation-dependent structure describes a conversion
  *          operation.
  */
@@ -84,15 +86,15 @@ typedef struct {
 } ADCConversionGroup;
 
 /**
- * @brief Driver configuration structure.
- * @note It could be empty on some architectures.
+ * @brief   Driver configuration structure.
+ * @note    It could be empty on some architectures.
  */
 typedef struct {
 
 } ADCConfig;
 
 /**
- * @brief Structure representing an ADC driver.
+ * @brief   Structure representing an ADC driver.
  */
 typedef struct {
   /**

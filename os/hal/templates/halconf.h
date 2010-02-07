@@ -18,16 +18,18 @@
 */
 
 /**
- * @file templates/halconf.h
- * @brief HAL configuration header.
+ * @file    templates/halconf.h
+ * @brief   HAL configuration header.
+ * @details HAL configuration file, this file allows to enable or disable the
+ *          various device drivers from your application. You may also use
+ *          this file in order to override the device drivers default settings.
+ *
  * @addtogroup HAL_CONF
  * @{
  */
 
 /*
- * HAL configuration file, this file allows to enable or disable the various
- * device drivers from your application. You may also use this file in order
- * to override the device drivers default settings.
+ *
  */
 
 #ifndef _HALCONF_H_
@@ -45,7 +47,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Enables the PAL subsystem.
+ * @brief   Enables the PAL subsystem.
  */
 #if !defined(CH_HAL_USE_PAL) || defined(__DOXYGEN__)
 #define CH_HAL_USE_PAL              TRUE
@@ -56,7 +58,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Enables the ADC subsystem.
+ * @brief   Enables the ADC subsystem.
  */
 #if !defined(CH_HAL_USE_ADC) || defined(__DOXYGEN__)
 #define CH_HAL_USE_ADC              TRUE
@@ -67,7 +69,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Enables the CAN subsystem.
+ * @brief   Enables the CAN subsystem.
  */
 #if !defined(CH_HAL_USE_CAN) || defined(__DOXYGEN__)
 #define CH_HAL_USE_CAN              TRUE
@@ -83,7 +85,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Enables the MAC subsystem.
+ * @brief   Enables the MAC subsystem.
  */
 #if !defined(CH_HAL_USE_MAC) || defined(__DOXYGEN__)
 #define CH_HAL_USE_MAC              TRUE
@@ -94,7 +96,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Enables the PWM subsystem.
+ * @brief   Enables the PWM subsystem.
  */
 #if !defined(CH_HAL_USE_PWM) || defined(__DOXYGEN__)
 #define CH_HAL_USE_PWM              TRUE
@@ -105,7 +107,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Enables the SERIAL subsystem.
+ * @brief   Enables the SERIAL subsystem.
  */
 #if !defined(CH_HAL_USE_SERIAL) || defined(__DOXYGEN__)
 #define CH_HAL_USE_SERIAL           TRUE
@@ -122,7 +124,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Enables the SPI subsystem.
+ * @brief   Enables the SPI subsystem.
  */
 #if !defined(CH_HAL_USE_SPI) || defined(__DOXYGEN__)
 #define CH_HAL_USE_SPI              TRUE
@@ -138,7 +140,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Enables the MMC_SPI subsystem.
+ * @brief   Enables the MMC_SPI subsystem.
  */
 #if !defined(CH_HAL_USE_MMC_SPI) || defined(__DOXYGEN__)
 #define CH_HAL_USE_MMC_SPI          TRUE

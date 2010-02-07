@@ -18,8 +18,9 @@
 */
 
 /**
- * @file templates/hal_lld.c
- * @brief HAL Driver subsystem low level driver source template.
+ * @file    templates/hal_lld.c
+ * @brief   HAL Driver subsystem low level driver source template.
+ *
  * @addtogroup HAL_LLD
  * @{
  */
@@ -48,7 +49,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Low level HAL driver initialization.
+ * @brief   Low level HAL driver initialization.
  */
 void hal_lld_init(void) {
 

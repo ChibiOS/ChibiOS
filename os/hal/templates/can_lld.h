@@ -18,8 +18,9 @@
 */
 
 /**
- * @file templates/can_lld.h
- * @brief CAN Driver subsystem low level driver header template.
+ * @file    templates/can_lld.h
+ * @brief   CAN Driver subsystem low level driver header template.
+ *
  * @addtogroup CAN_LLD
  * @{
  */
@@ -34,8 +35,8 @@
 /*===========================================================================*/
 
 /**
- * @brief This switch defines whether the driver implementation supports
- *        a low power switch mode with automatic an wakeup feature.
+ * @brief   This switch defines whether the driver implementation supports
+ *          a low power switch mode with automatic an wakeup feature.
  */
 #define CAN_SUPPORTS_SLEEP  TRUE
 
@@ -44,9 +45,9 @@
 /*===========================================================================*/
 
 /**
- * @brief Sleep mode related APIs inclusion switch.
- * @note This switch is enforced to @p FALSE if the driver implementation
- *       does not support the sleep mode.
+ * @brief   Sleep mode related APIs inclusion switch.
+ * @note    This switch is enforced to @p FALSE if the driver implementation
+ *          does not support the sleep mode.
  */
 #if CAN_SUPPORTS_SLEEP || defined(__DOXYGEN__)
 #if !defined(CAN_USE_SLEEP_MODE) || defined(__DOXYGEN__)
@@ -69,14 +70,15 @@
 /*===========================================================================*/
 
 /**
- * @brief CAN status flags.
+ * @brief   CAN status flags.
  */
 typedef uint32_t canstatus_t;
 
 /**
- * @brief CAN transmission frame.
- * @note Accessing the frame data as word16 or word32 is not portable because
- *       machine data endianness, it can be still useful for a quick filling.
+ * @brief   CAN transmission frame.
+ * @note    Accessing the frame data as word16 or word32 is not portable
+ *          because machine data endianness, it can be still useful for a
+ *          quick filling.
  */
 typedef struct {
   struct {
@@ -100,9 +102,10 @@ typedef struct {
 } CANTxFrame;
 
 /**
- * @brief CAN received frame.
- * @note Accessing the frame data as word16 or word32 is not portable because
- *       machine data endianness, it can be still useful for a quick filling.
+ * @brief   CAN received frame.
+ * @note    Accessing the frame data as word16 or word32 is not portable
+ *          because machine data endianness, it can be still useful for a
+ *          quick filling.
  */
 typedef struct {
   struct {
@@ -126,21 +129,21 @@ typedef struct {
 } CANRxFrame;
 
 /**
- * @brief CAN filter.
- * @note It could not be present on some architectures.
+ * @brief   CAN filter.
+ * @note    It could not be present on some architectures.
  */
 typedef struct {
 } CANFilter;
 
 /**
- * @brief Driver configuration structure.
- * @note It could be empty on some architectures.
+ * @brief   Driver configuration structure.
+ * @note    It could be empty on some architectures.
  */
 typedef struct {
 } CANConfig;
 
 /**
- * @brief Structure representing an CAN driver.
+ * @brief   Structure representing an CAN driver.
  */
 typedef struct {
   /**
@@ -161,12 +164,12 @@ typedef struct {
   Semaphore                 cd_rxsem;
   /**
    * @brief One or more frames become available.
-   * @note After broadcasting this event it will not be broadcasted again
-   *       until the received frames queue has been completely emptied. It
-   *       is <b>not</b> broadcasted for each received frame. It is
-   *       responsibility of the application to empty the queue by repeatedly
-   *       invoking @p chReceive() when listening to this event. This behavior
-   *       minimizes the interrupt served by the system because CAN traffic.
+   * @note  After broadcasting this event it will not be broadcasted again
+   *        until the received frames queue has been completely emptied. It
+   *        is <b>not</b> broadcasted for each received frame. It is
+   *        responsibility of the application to empty the queue by repeatedly
+   *        invoking @p chReceive() when listening to this event. This behavior
+   *        minimizes the interrupt served by the system because CAN traffic.
    */
   EventSource               cd_rxfull_event;
   /**

@@ -18,8 +18,9 @@
 */
 
 /**
- * @file templates/mac_lld.h
- * @brief MAC Driver subsystem low level driver header template.
+ * @file    templates/mac_lld.h
+ * @brief   MAC Driver subsystem low level driver header template.
+ *
  * @addtogroup MAC_LLD
  * @{
  */
@@ -38,21 +39,21 @@
 /*===========================================================================*/
 
 /**
- * @brief Number of available transmit buffers.
+ * @brief   Number of available transmit buffers.
  */
 #if !defined(MAC_TRANSMIT_BUFFERS) || defined(__DOXYGEN__)
 #define MAC_TRANSMIT_BUFFERS            2
 #endif
 
 /**
- * @brief Number of available receive buffers.
+ * @brief   Number of available receive buffers.
  */
 #if !defined(MAC_RECEIVE_BUFFERS) || defined(__DOXYGEN__)
 #define MAC_RECEIVE_BUFFERS             2
 #endif
 
 /**
- * @brief Maximum supported frame size.
+ * @brief   Maximum supported frame size.
  */
 #if !defined(MAC_BUFFERS_SIZE) || defined(__DOXYGEN__)
 #define MAC_BUFFERS_SIZE                1518
@@ -67,7 +68,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Structure representing a MAC driver.
+ * @brief   Structure representing a MAC driver.
  */
 typedef struct {
   Semaphore             md_tdsem;       /**< Transmit semaphore.        */
@@ -79,7 +80,7 @@ typedef struct {
 } MACDriver;
 
 /**
- * @brief Structure representing a transmit descriptor.
+ * @brief   Structure representing a transmit descriptor.
  */
 typedef struct {
   size_t                td_offset;      /**< Current write offset.      */
@@ -88,7 +89,7 @@ typedef struct {
 } MACTransmitDescriptor;
 
 /**
- * @brief Structure representing a receive descriptor.
+ * @brief   Structure representing a receive descriptor.
  */
 typedef struct {
   size_t                rd_offset;      /**< Current read offset.       */

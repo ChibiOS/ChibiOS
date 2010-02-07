@@ -18,8 +18,9 @@
 */
 
 /**
- * @file templates/pwm_lld.h
- * @brief PWM Driver subsystem low level driver header template.
+ * @file    templates/pwm_lld.h
+ * @brief   PWM Driver subsystem low level driver header template.
+ *
  * @addtogroup PWM_LLD
  * @{
  */
@@ -36,7 +37,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Number of PWM channels per PWM driver.
+ * @brief   Number of PWM channels per PWM driver.
  */
 #if !defined(PWM_CHANNELS) || defined(__DOXYGEN__)
 #define PWM_CHANNELS        1
@@ -51,25 +52,25 @@
 /*===========================================================================*/
 
 /**
- * @brief PWM channel type.
+ * @brief   PWM channel type.
  */
 typedef uint8_t pwmchannel_t;
 
 /**
- * @brief PWM counter type.
+ * @brief   PWM counter type.
  */
 typedef uint16_t pwmcnt_t;
 
 /**
- * @brief Driver configuration structure.
- * @note It could be empty on some architectures.
+ * @brief   Driver configuration structure.
+ * @note    It could be empty on some architectures.
  */
 typedef struct {
 
 } PWMConfig;
 
 /**
- * @brief Structure representing an PWM driver.
+ * @brief   Structure representing an PWM driver.
  */
 typedef struct {
   /**

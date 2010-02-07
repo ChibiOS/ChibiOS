@@ -18,8 +18,9 @@
 */
 
 /**
- * @file templates/serial_lld.c
- * @brief Serial Driver subsystem low level driver source template.
+ * @file    templates/serial_lld.c
+ * @brief   Serial Driver subsystem low level driver source template.
+ *
  * @addtogroup SERIAL_LLD
  * @{
  */
@@ -37,7 +38,9 @@
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
-/** @brief Driver default configuration.*/
+/**
+ * @brief   Driver default configuration.
+ */
 static const SerialConfig default_config = {
 };
 
@@ -54,16 +57,16 @@ static const SerialConfig default_config = {
 /*===========================================================================*/
 
 /**
- * Low level serial driver initialization.
+ * @brief   Low level serial driver initialization.
  */
 void sd_lld_init(void) {
 
 }
 
 /**
- * @brief Low level serial driver configuration and (re)start.
+ * @brief   Low level serial driver configuration and (re)start.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
+ * @param[in] sdp       pointer to a @p SerialDriver object
  */
 void sd_lld_start(SerialDriver *sdp) {
 
@@ -73,11 +76,11 @@ void sd_lld_start(SerialDriver *sdp) {
 }
 
 /**
- * @brief Low level serial driver stop.
+ * @brief   Low level serial driver stop.
  * @details De-initializes the USART, stops the associated clock, resets the
  *          interrupt vector.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
+ * @param[in] sdp       pointer to a @p SerialDriver object
  */
 void sd_lld_stop(SerialDriver *sdp) {
 

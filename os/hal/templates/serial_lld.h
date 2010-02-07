@@ -18,8 +18,9 @@
 */
 
 /**
- * @file templates/serial_lld.h
- * @brief Serial Driver subsystem low level driver header template.
+ * @file    templates/serial_lld.h
+ * @brief   Serial Driver subsystem low level driver header template.
+ *
  * @addtogroup SERIAL_LLD
  * @{
  */
@@ -46,18 +47,17 @@
 /*===========================================================================*/
 
 /**
- * Serial Driver condition flags type.
+ * @brief   Serial Driver condition flags type.
  */
 typedef uint8_t sdflags_t;
 
 /**
- * @brief Generic Serial Driver configuration structure.
+ * @brief   Generic Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
- *
- * @note This structure content is architecture dependent, each driver
- *       implementation defines its own version and the custom static
- *       initializers.
+ * @note    This structure content is architecture dependent, each driver
+ *          implementation defines its own version and the custom static
+ *          initializers.
  */
 typedef struct {
 

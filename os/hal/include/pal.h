@@ -144,7 +144,7 @@ typedef struct {
  * @brief   Port bit helper macro.
  * @details This macro calculates the mask of a bit within a port.
  *
- * @param[in] n         the bit position within the port
+ * @param[in] n         bit position within the port
  * @return              The bit mask.
  */
 #define PAL_PORT_BIT(n) ((ioportmask_t)(1 << (n)))
@@ -154,7 +154,7 @@ typedef struct {
  * @brief   Bits group mask helper.
  * @details This macro calculates the mask of a bits group.
  *
- * @param[in] width         the group width
+ * @param[in] width         group width
  * @return                  The group mask.
  */
 #define PAL_GROUP_MASK(width) ((ioportmask_t)(1 << (width)) - 1)
@@ -164,10 +164,10 @@ typedef struct {
  * @details This macro should be used when statically initializing an I/O bus
  *          that is part of a bigger structure.
  *
- * @param[in] name      the name of the IOBus variable
- * @param[in] port      the I/O port descriptor
- * @param[in] width     the bus width in bits
- * @param[in] offset    the bus bit offset within the port
+ * @param[in] name      name of the IOBus variable
+ * @param[in] port      I/O port descriptor
+ * @param[in] width     bus width in bits
+ * @param[in] offset     bus bit offset within the port
  */
 #define _IOBUS_DATA(name, port, width, offset)                          \
   {port, PAL_GROUP_MASK(width), offset}
@@ -175,10 +175,10 @@ typedef struct {
 /**
  * @brief   Static I/O bus initializer.
  *
- * @param[in] name      the name of the IOBus variable
- * @param[in] port      the I/O port descriptor
- * @param[in] width     the bus width in bits
- * @param[in] offset    the bus bit offset within the port
+ * @param[in] name      name of the IOBus variable
+ * @param[in] port      I/O port descriptor
+ * @param[in] width     bus width in bits
+ * @param[in] offset    bus bit offset within the port
  */
 #define IOBUS_DECL(name, port, width, offset)                           \
   IOBus name = _IOBUS_DATA(name, port, width, offset)
@@ -197,7 +197,7 @@ typedef struct {
  * @note    The default implementation always return zero and computes the
  *          parameter eventual side effects.
  *
- * @param[in] port      the port identifier
+ * @param[in] port      port identifier
  * @return              The port logical states.
  */
 #if !defined(pal_lld_readport) || defined(__DOXYGEN__)
@@ -213,7 +213,7 @@ typedef struct {
  * @note    The default implementation always return zero and computes the
  *          parameter eventual side effects.
  *
- * @param[in] port      the port identifier
+ * @param[in] port      port identifier
  * @return              The latched logical states.
  */
 #if !defined(pal_lld_readlatch) || defined(__DOXYGEN__)
@@ -227,8 +227,8 @@ typedef struct {
  * @note    The default implementation does nothing except computing the
  *          parameters eventual side effects.
  *
- * @param[in] port      the port identifier
- * @param[in] bits      the bits to be written on the specified port
+ * @param[in] port      port identifier
+ * @param[in] bits      bits to be written on the specified port
  */
 #if !defined(pal_lld_writeport) || defined(__DOXYGEN__)
 #define palWritePort(port, bits) ((void)(port), (void)(bits))
@@ -246,8 +246,8 @@ typedef struct {
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
  *
- * @param[in] port      the port identifier
- * @param[in] bits      the bits to be ORed on the specified port
+ * @param[in] port      port identifier
+ * @param[in] bits      bits to be ORed on the specified port
  */
 #if !defined(pal_lld_setport) || defined(__DOXYGEN__)
 #define palSetPort(port, bits) {                                        \
@@ -267,8 +267,8 @@ typedef struct {
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
  *
- * @param[in] port      the port identifier
- * @param[in] bits      the bits to be cleared on the specified port
+ * @param[in] port      port identifier
+ * @param[in] bits      bits to be cleared on the specified port
  *
  */
 #if !defined(pal_lld_clearport) || defined(__DOXYGEN__)
@@ -289,8 +289,8 @@ typedef struct {
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
  *
- * @param[in] port      the port identifier
- * @param[in] bits      the bits to be XORed on the specified port
+ * @param[in] port      port identifier
+ * @param[in] bits      bits to be XORed on the specified port
  */
 #if !defined(pal_lld_toggleport) || defined(__DOXYGEN__)
 #define palTogglePort(port, bits) {                                     \
@@ -303,10 +303,10 @@ typedef struct {
 /**
  * @brief   Reads a group of bits.
  *
- * @param[in] port      the port identifier
- * @param[in] mask      the group mask, a logical AND is performed on the input
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask, a logical AND is performed on the input
  *                      data
- * @param[in] offset    the group bit offset within the port
+ * @param[in] offset    group bit offset within the port
  * @return              The group logical states.
  */
 #if !defined(pal_lld_readgroup) || defined(__DOXYGEN__)
@@ -319,11 +319,11 @@ typedef struct {
 /**
  * @brief   Writes a group of bits.
  *
- * @param[in] port      the port identifier
- * @param[in] mask      the group mask, a logical AND is performed on the
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask, a logical AND is performed on the
  *                      output  data
- * @param[in] offset    the group bit offset within the port
- * @param[in] bits      the bits to be written. Values exceeding the group
+ * @param[in] offset    group bit offset within the port
+ * @param[in] bits      bits to be written. Values exceeding the group
  *                      width are masked.
  */
 #if !defined(pal_lld_writegroup) || defined(__DOXYGEN__)
@@ -343,9 +343,9 @@ typedef struct {
  *          with the specified mode.
  * @note    Programming an unknown or unsupported mode is silently ignored.
  *
- * @param[in] port      the port identifier
- * @param[in] mask      the group mask
- * @param[in] mode      the setup mode
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask
+ * @param[in] mode      group mode
  *
  */
 #if !defined(pal_lld_setgroupmode) || defined(__DOXYGEN__)
@@ -361,8 +361,8 @@ typedef struct {
  *          or coding.
  * @note    The default implementation internally uses the @p palReadPort().
  *
- * @param[in] port      the port identifier
- * @param[in] pad       the pad number within the port
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
  * @return              The logical state.
  * @retval PAL_LOW      low logical state.
  * @retval PAL_HIGH     high logical state.
@@ -386,9 +386,10 @@ typedef struct {
  * @note    The default implementation internally uses the @p palReadLatch()
  *          and @p palWritePort().
  *
- * @param[in] port      the port identifier
- * @param[in] pad       the pad number within the port
- * @param[out] bit      the logical value, the value must be @p 0 or @p 1
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @param[out] bit      logical value, the value must be @p PAL_LOW or
+ *                      @p PAL_HIGH
  */
 #if !defined(pal_lld_writepad) || defined(__DOXYGEN__)
 #define palWritePad(port, pad, bit) {                                   \
@@ -410,8 +411,8 @@ typedef struct {
  *          specific hardware or coding.
  * @note    The default implementation internally uses the @p palSetPort().
  *
- * @param[in] port      the port identifier
- * @param[in] pad       the pad number within the port
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
  */
 #if !defined(pal_lld_setpad) || defined(__DOXYGEN__)
 #define palSetPad(port, pad) palSetPort(port, PAL_PORT_BIT(pad))
@@ -430,8 +431,8 @@ typedef struct {
  *          specific hardware or coding.
  * @note    The default implementation internally uses the @p palClearPort().
  *
- * @param[in] port      the port identifier
- * @param[in] pad       the pad number within the port
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
  */
 #if !defined(pal_lld_clearpad) || defined(__DOXYGEN__)
 #define palClearPad(port, pad) palClearPort(port, PAL_PORT_BIT(pad))
@@ -450,8 +451,8 @@ typedef struct {
  *          specific hardware or coding.
  * @note    The default implementation internally uses the @p palTogglePort().
  *
- * @param[in] port      the port identifier
- * @param[in] pad       the pad number within the port
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
  */
 #if !defined(pal_lld_togglepad) || defined(__DOXYGEN__)
 #define palTogglePad(port, pad) palTogglePort(port, PAL_PORT_BIT(pad))
@@ -468,9 +469,9 @@ typedef struct {
  *          or coding.
  * @note    Programming an unknown or unsupported mode is silently ignored.
  *
- * @param[in] port      the port identifier
- * @param[in] pad       the pad number within the port
- * @param[in] mode      the setup mode
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @param[in] mode      pad mode
  */
 #if !defined(pal_lld_setpadmode) || defined(__DOXYGEN__)
 #define palSetPadMode(port, pad, mode)                                  \

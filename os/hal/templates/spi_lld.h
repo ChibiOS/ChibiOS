@@ -18,8 +18,9 @@
 */
 
 /**
- * @file templates/spi_lld.h
- * @brief SPI Driver subsystem low level driver header template.
+ * @file    templates/spi_lld.h
+ * @brief   SPI Driver subsystem low level driver header template.
+ *
  * @addtogroup SPI_LLD
  * @{
  */
@@ -46,14 +47,14 @@
 /*===========================================================================*/
 
 /**
- * @brief Driver configuration structure.
+ * @brief   Driver configuration structure.
  */
 typedef struct {
 
 } SPIConfig;
 
 /**
- * @brief Structure representing a SPI driver.
+ * @brief   Structure representing a SPI driver.
  */
 typedef struct {
   /**
