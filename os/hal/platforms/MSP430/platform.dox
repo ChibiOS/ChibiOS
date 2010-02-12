@@ -1,0 +1,67 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006-2007 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @defgroup MSP430_DRIVERS MSP430 Drivers
+ * @brief Device drivers included in the MSP430 support.
+ *
+ * @ingroup MSP430
+ */
+
+/**
+ * @defgroup MSP430_HAL MSP430 HAL Support
+ * @brief HAL support.
+ *
+ * @ingroup MSP430_DRIVERS
+ */
+
+/**
+ * @defgroup MSP430_PAL MSP430 I/O Ports Support
+ * @brief I/O Ports peripherals support.
+ * @details This module supports the MSP430 Digital I/O controller. The
+ * controller supports the following features (see @ref PAL):
+ * - 8 bits wide ports.
+ * - Atomic set/reset/toggle functions because special MSP430 instruction set.
+ * - Output latched regardless of the pad setting.
+ * - Direct read of input pads regardless of the pad setting.
+ * .
+ * <h2>Supported Setup Modes</h2>
+ * - @p PAL_MODE_RESET.
+ * - @p PAL_MODE_UNCONNECTED.
+ * - @p PAL_MODE_INPUT.
+ * - @p PAL_MODE_OUTPUT_PUSHPULL.
+ * .
+ * Any attempt to setup an invalid mode is ignored.
+ *
+ * <h2>Suboptimal Behavior</h2>
+ * Some MSP430 I/O ports features are less than optimal:
+ * - Bus/group writing is not atomic.
+ * - Pad/group mode setup is not atomic.
+ * .
+ * @ingroup MSP430_DRIVERS
+ */
+
+/**
+ * @defgroup MSP430_SERIAL MSP430 USART Support
+ * @brief USART support.
+ * @details The serial driver supports both the MSP430 USARTs in asynchronous
+ * mode.
+ *
+ * @ingroup MSP430_DRIVERS
+ */
