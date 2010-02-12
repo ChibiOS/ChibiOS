@@ -10,6 +10,9 @@ CH_USE_NESTED_LOCKS=TRUE
 CH_TIME_QUANTUM=0
   * Building...OK
   * Testing...OK
+CH_USE_REGISTRY=FALSE
+  * Building...OK
+  * Testing...OK
 CH_USE_SEMAPHORES_PRIORITY=TRUE
   * Building...OK
   * Testing...OK
