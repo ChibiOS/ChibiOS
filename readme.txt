@@ -59,15 +59,15 @@
   that a dynamic thread's memory is not freed while some other thread still
   owns a reference to the thread. Static threads are not affected by the new
   mechanism. Two new APIs have been added: chThdAddRef() and chThdRelease().
-- NEW: Not more than one thread can be waiting in chThdWait() as long they
+- NEW: Now more than one thread can be waiting in chThdWait() as long they
   own a reference.
 - NEW: Implemented a new threads registry subsystem, the registry allows to
-  enumerate the active threads at runtime. The registry is meant as both
-  a runtime API and a support for debuggers.
+  enumerate the active threads at runtime and/or from a debugger. This is
+  a preparatory step for a dedicated ChibiOS/RT debugger.
 - NEW: New chCoreFree() API that returns the core memory left.
 - NEW: Added to the simulators shell demos two new commands: threads and mem,
-  that show the active threads (using the new registry) and the memory
-  allocators state.
+  that show the currently active threads (using the new registry) and the
+  memory allocators state.
 - CHANGE: Doxygen tags cleanup in all the system code, comments are better
   looking now.
 - CHANGE: Documentation improvements.
