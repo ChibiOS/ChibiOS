@@ -107,8 +107,7 @@ static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t time) {
 }
 
 static const struct BaseChannelVMT vmt = {
-  {writes, reads},
-  {putwouldblock, getwouldblock, putt, gett, writet, readt}
+  writes, reads, putwouldblock, getwouldblock, putt, gett, writet, readt
 };
 
 /*===========================================================================*/

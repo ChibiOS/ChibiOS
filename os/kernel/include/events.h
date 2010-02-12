@@ -145,9 +145,9 @@ extern "C" {
 #endif
 
 #if !CH_OPTIMIZE_SPEED && CH_USE_EVENTS_TIMEOUT
-#define chEvtWaitOne(ewmask) chEvtWaitOneTimeout(emask, TIME_INFINITE)
-#define chEvtWaitAny(ewmask) chEvtWaitAnyTimeout(emask, TIME_INFINITE)
-#define chEvtWaitAll(ewmask) chEvtWaitAllTimeout(emask, TIME_INFINITE)
+#define chEvtWaitOne(mask) chEvtWaitOneTimeout(mask, TIME_INFINITE)
+#define chEvtWaitAny(mask) chEvtWaitAnyTimeout(mask, TIME_INFINITE)
+#define chEvtWaitAll(mask) chEvtWaitAllTimeout(mask, TIME_INFINITE)
 #endif
 
 #endif /* CH_USE_EVENTS */
