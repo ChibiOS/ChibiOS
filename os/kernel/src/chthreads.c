@@ -427,7 +427,9 @@ msg_t chThdWait(Thread *tp) {
 
   chSysLock();
   chDbgAssert(tp != currp, "chThdWait(), #1", "waiting self");
+#if CH_USE_DYNAMIC
   chDbgAssert(tp->p_refs > 0, "chThdWait(), #2", "not referenced");
+#endif
   if (tp->p_state != THD_STATE_FINAL) {
     list_insert(currp, &tp->p_waiting);
     chSchGoSleepS(THD_STATE_WTEXIT);

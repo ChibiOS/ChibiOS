@@ -43,7 +43,10 @@ Thread *chRegFirstThread(void) {
   Thread *tp;
 
   chSysLock();
-  (tp = rlist.p_newer)->p_refs++;
+  tp = rlist.p_newer;
+#if CH_USE_DYNAMIC
+  tp->p_refs++;
+#endif
   chSysUnlock();
   return tp;
 }
@@ -60,14 +63,18 @@ Thread *chRegFirstThread(void) {
 Thread *chRegNextThread(Thread *tp) {
 
   chSysLock();
+#if CH_USE_DYNAMIC
   chDbgAssert(tp->p_refs > 0, "chRegNextThread(), #1",
               "not referenced");
   tp->p_refs--;
+#endif
   if (tp->p_newer != (Thread *)&rlist) {
     tp = tp->p_newer;
+#if CH_USE_DYNAMIC
     chDbgAssert(tp->p_refs < 255, "chRegNextThread(), #2",
                 "too many references");
     tp->p_refs++;
+#endif
   }
   else
     tp = NULL;
