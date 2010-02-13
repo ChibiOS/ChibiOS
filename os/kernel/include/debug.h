@@ -53,6 +53,7 @@
 #define THREAD_FILL_VALUE       0xFF
 #endif
 
+#if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
 /**
  * @brief Trace buffer record.
  */
@@ -77,6 +78,7 @@ typedef struct {
   /** @brief Ring buffer.*/
   CtxSwcEvent           tb_buffer[TRACE_BUFFER_SIZE];
 } TraceBuffer;
+#endif /* CH_DBG_ENABLE_TRACE */
 
 #define __QUOTE_THIS(p) #p
 
