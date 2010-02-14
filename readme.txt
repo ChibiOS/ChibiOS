@@ -51,6 +51,10 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.5.2 ***
+- FIX: Wrong prototype in template file chcore.c (bug 2951529)(backported
+  in 1.4.1).
+
 *** 1.5.1 ***
 - FIX: Fixed insufficient stack space for the idle thread in the ARMCM3 port
   when compiling without optimizations (bug 2946233)(backported in 1.4.1).
