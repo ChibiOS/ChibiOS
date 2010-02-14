@@ -28,6 +28,7 @@
  * Board identifier.
  */
 #define BOARD_OLIMEX_MSP430_P1611
+#define BOARD_NAME "Olimex MSP430-P1611"
 
 /*
  * Clock constants.

@@ -28,6 +28,7 @@
  * Board identifier.
  */
 #define BOARD_OLIMEX_SAM7_EX256
+#define BOARD_NAME "Olimex SAM7-EX256"
 
 /*
  * Select your platform by modifying the following line.

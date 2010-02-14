@@ -54,6 +54,7 @@
 *** 1.5.2 ***
 - FIX: Wrong prototype in template file chcore.c (bug 2951529)(backported
   in 1.4.1).
+- NEW: Added BOARD_NAME macro to the various board.h files.
 
 *** 1.5.1 ***
 - FIX: Fixed insufficient stack space for the idle thread in the ARMCM3 port

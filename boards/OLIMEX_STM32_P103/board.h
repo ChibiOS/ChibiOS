@@ -28,6 +28,7 @@
  * Board identifier.
  */
 #define BOARD_OLIMEX_STM32_P103
+#define BOARD_NAME "Olimex STM33-P103"
 
 /*
  * Board frequencies.

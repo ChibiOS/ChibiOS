@@ -21,13 +21,14 @@
 #define _BOARD_H_
 
 /*
- * Setup for the Olimex LCP-P2148 proto board.
+ * Setup for the Olimex AVR-MT-128 proto board.
  */
 
 /*
  * Board identifier.
  */
 #define BOARD_OLIMEX_AVR_MT_128
+#define BOARD_NAME "Olimex AVR-MT-128"
 
 /*       PA7 RLY  DS  B5  B4  B3  B2  B1
  *        IN OUT  IN  IN  IN  IN  IN  IN

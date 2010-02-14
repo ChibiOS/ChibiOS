@@ -28,6 +28,7 @@
  * Board identifier.
  */
 #define BOARD_OLIMEX_LCP_P2148
+#define BOARD_NAME "Olimex LCP-P2148"
 
 /*
  * The following values are implementation dependent. You may change them in
