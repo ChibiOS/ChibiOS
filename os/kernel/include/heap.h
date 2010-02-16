@@ -46,12 +46,15 @@ typedef struct memory_heap MemoryHeap;
 /**
  * @brief   Memory heap block header.
  */
-struct heap_header {
-  union {
-    struct heap_header  *next;      /**< @brief Next block in free list.    */
-    MemoryHeap          *heap;      /**< @brief Block owner heap.           */
-  } h_u;                            /**< @brief Overlapped fields.          */
-  size_t                h_size;     /**< @brief Size of the memory block.   */
+union heap_header {
+  stkalign_t align;
+  struct {
+    union {
+      union heap_header *next;      /**< @brief Next block in free list.    */
+      MemoryHeap        *heap;      /**< @brief Block owner heap.           */
+    } u;                            /**< @brief Overlapped fields.          */
+    size_t              size;       /**< @brief Size of the memory block.   */
+  } h;
 };
 
 /**
@@ -60,7 +63,7 @@ struct heap_header {
 struct memory_heap {
   memgetfunc_t          h_provider; /**< @brief Memory blocks provider for
                                                 this heap.                  */
-  struct heap_header    h_free;     /**< @brief Free blocks list header.    */
+  union heap_header     h_free;     /**< @brief Free blocks list header.    */
 #if CH_USE_MUTEXES
   Mutex                 h_mtx;      /**< @brief Heap access mutex.          */
 #else

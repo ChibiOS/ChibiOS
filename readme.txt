@@ -52,6 +52,8 @@
 *****************************************************************************
 
 *** 1.5.2 ***
+- FIX: Impossible to enforce alignment greater of a pointer size for heap/core
+  objects (bug 2952961)(backported in 1.4.1).
 - FIX: Wrong prototype in template file chcore.c (bug 2951529)(backported
   in 1.4.1).
 - NEW: Added BOARD_NAME macro to the various board.h files.

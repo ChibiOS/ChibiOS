@@ -43,17 +43,19 @@ void core_init(void) {
   nextmem = &__heap_base__;
   endmem = &__heap_end__;
 #else
-  static align_t buffer[MEM_ALIGN_SIZE(CH_MEMCORE_SIZE) / sizeof(align_t)];
+  static stkalign_t buffer[MEM_ALIGN_SIZE(CH_MEMCORE_SIZE) /
+                           sizeof(stkalign_t)];
   nextmem = (uint8_t *)&buffer[0];
-  endmem = (uint8_t *)&buffer[MEM_ALIGN_SIZE(CH_MEMCORE_SIZE) / sizeof(align_t)];
+  endmem = (uint8_t *)&buffer[MEM_ALIGN_SIZE(CH_MEMCORE_SIZE) /
+                              sizeof(stkalign_t)];
 #endif
 }
 
 /**
  * @brief   Allocates a memory block.
  * @details The size of the returned block is aligned to the alignment
- *          type @p align_t so it is not possible to allocate less than
- *          <code>sizeof(align_t)</code>.
+ *          type @p stkalign_t so it is not possible to allocate less
+ *          than <code>sizeof(stkalign_t)</code>.
  *
  *
  * @param[in] size      the size of the block to be allocated

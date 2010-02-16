@@ -36,9 +36,11 @@
 #define CH_ARCHITECTURE_NAME "x86 Simulator"
 
 /**
- * 32 bit stack alignment.
+ * 16 bytes stack alignment.
  */
-typedef uint32_t stkalign_t;
+typedef struct {
+  uint8_t a[16];
+} stkalign_t __attribute__((aligned(16)));
 
 /**
  * Generic x86 register.

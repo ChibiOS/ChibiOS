@@ -29,11 +29,6 @@
 #define _MEMCORE_H_
 
 /**
- * @brief   Memory alignment type.
- */
-typedef void *align_t;
-
-/**
  * @brief   Memory get function.
  * @note    This type must be assignment compatible with the @p chMemAlloc()
  *          function.
@@ -43,7 +38,7 @@ typedef void *(*memgetfunc_t)(size_t size);
 /**
  * @brief   Alignment mask constant.
  */
-#define MEM_ALIGN_MASK      (sizeof(align_t) - 1)
+#define MEM_ALIGN_MASK      (sizeof(stkalign_t) - 1)
 
 /**
  * @brief   Alignment helper macro.
