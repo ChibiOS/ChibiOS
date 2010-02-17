@@ -85,6 +85,8 @@ struct context {
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
   uint8_t *esp = (uint8_t *)workspace + wsize;                          \
+  APUSH(esp, 0);                                                        \
+  APUSH(esp, 0);                                                        \
   APUSH(esp, arg);                                                      \
   APUSH(esp, threadexit);                                               \
   esp -= sizeof(struct intctx);                                         \
@@ -122,7 +124,7 @@ struct context {
   * Computes the thread working area global size.
   */
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
-                                   sizeof(void *) * 2 +                 \
+                                   sizeof(void *) * 4 +                 \
                                    sizeof(struct intctx) +              \
                                    sizeof(struct extctx) +              \
                                   (n) + (INT_REQUIRED_STACK))
