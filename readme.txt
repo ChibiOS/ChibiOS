@@ -52,6 +52,8 @@
 *****************************************************************************
 
 *** 1.5.2 ***
+- FIX: Fixed invalid UART-related macro in the LPC214x HAL (bug 2953195)
+  (backported in 1.4.1).
 - FIX: Impossible to enforce alignment greater of a pointer size for heap/core
   objects (bug 2952961)(backported in 1.4.1).
 - FIX: Wrong prototype in template file chcore.c (bug 2951529)(backported
