@@ -40,6 +40,9 @@
 #if CH_USE_DYNAMIC && !CH_USE_WAITEXIT
 #error "CH_USE_DYNAMIC requires CH_USE_WAITEXIT"
 #endif
+#if CH_USE_DYNAMIC && !CH_USE_HEAP && !CH_USE_MEMPOOLS
+#error "CH_USE_DYNAMIC requires CH_USE_HEAP and/or CH_USE_MEMPOOLS"
+#endif
 
 /**
  * @brief Structure representing a thread.
@@ -137,9 +140,9 @@ struct Thread {
 #define PRWTSEM         3
 /** Thread state: Waiting on a mutex. */
 #define PRWTMTX         4
-/** Thread state: Waiting in @p chThdSleep() or @p chThdSleepUntil(). */
-#define PRWTCOND        5
 /** Thread state: Waiting in @p chCondWait(). */
+#define PRWTCOND        5
+/** Thread state: Waiting in @p chThdSleep() or @p chThdSleepUntil(). */
 #define PRSLEEP         6
 /** Thread state: Waiting in @p chThdWait(). */
 #define PRWAIT          7

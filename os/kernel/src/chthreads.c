@@ -237,7 +237,6 @@ tprio_t chThdSetPriority(tprio_t newprio) {
  * @param[in] tp the pointer to the thread
  * @return The pointer to the thread.
  * @note This call is supposed to resume threads created with @p chThdInit().
- *       It should not be used on threads suspended using @p chThdSuspend().
  */
 Thread *chThdResume(Thread *tp) {
 
@@ -360,6 +359,9 @@ void chThdExit(msg_t msg) {
  *       structure but it is a planned extension.
  */
 msg_t chThdWait(Thread *tp) {
+#if CH_USE_DYNAMIC
+  tmode_t mode;
+#endif
   msg_t msg;
 
   chDbgCheck(tp != NULL, "chThdWait");
@@ -380,7 +382,7 @@ msg_t chThdWait(Thread *tp) {
 #else /* CH_USE_DYNAMIC */
 
   /* Returning memory.*/
-  tmode_t mode = tp->p_flags & P_MEM_MODE_MASK;
+  mode = tp->p_flags & P_MEM_MODE_MASK;
   chSysUnlock();
 
   switch (mode) {

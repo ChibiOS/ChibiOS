@@ -177,7 +177,7 @@ struct context {
  * this port.
  */
 #ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE 0
+#define IDLE_THREAD_STACK_SIZE 4
 #endif
 
 /**

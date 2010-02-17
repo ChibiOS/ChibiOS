@@ -54,8 +54,8 @@
 #define USE_LPC214x_UART0           TRUE
 #define USE_LPC214x_UART1           TRUE
 #define LPC214x_UART_FIFO_PRELOAD   16
-#define LPC214x_UART1_PRIORITY      1
-#define LPC214x_UART2_PRIORITY      2
+#define LPC214x_UART0_PRIORITY      1
+#define LPC214x_UART1_PRIORITY      2
 
 /*
  * SPI driver system settings.

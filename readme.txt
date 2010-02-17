@@ -51,6 +51,15 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.4.1 ***
+- FIX: Fixed invalid UART-related macro in the LPC214x HAL (bug 2953195).
+- FIX: Fixed insufficient stack space for the idle thread in the ARMCM3 port
+  when compiling without optimizations (bug 2946233).
+- FIX: Fixed wrong notes on function chThdResume() (bug 2943160).
+- FIX: Fixed missing dependencies check for CH_USE_DYNAMIC (bug 2942757).
+- FIX: Fixed swapped thread states descriptions (bug 2938445).
+- FIX_ Fixed C99-style variable declaration (bug 2938444).
+
 *** 1.4.0 ***
 - Full test cycle and test reports updated.
 - NEW: Reorganized and rationalized the distribution tree and the

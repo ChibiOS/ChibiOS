@@ -273,12 +273,12 @@ void sd_lld_init(void) {
 #if USE_LPC214x_UART0
   sdObjectInit(&SD1, NULL, notify1);
   SD1.sd.uart = U0Base;
-  SetVICVector(UART0IrqHandler, LPC214x_UART1_PRIORITY, SOURCE_UART0);
+  SetVICVector(UART0IrqHandler, LPC214x_UART0_PRIORITY, SOURCE_UART0);
 #endif
 #if USE_LPC214x_UART1
   sdObjectInit(&SD2, NULL, notify2);
   SD2.sd.uart = U1Base;
-  SetVICVector(UART1IrqHandler, LPC214x_UART2_PRIORITY, SOURCE_UART1);
+  SetVICVector(UART1IrqHandler, LPC214x_UART1_PRIORITY, SOURCE_UART1);
 #endif
 }
 
@@ -293,13 +293,13 @@ void sd_lld_start(SerialDriver *sdp) {
     sdp->sd.config = &default_config;
 
   if (sdp->sd.state == SD_STOP) {
-#if USE_LPC214x_UART1
+#if USE_LPC214x_UART0
     if (&SD1 == sdp) {
       PCONP = (PCONP & PCALL) | PCUART0;
       VICIntEnable = INTMASK(SOURCE_UART0);
     }
 #endif
-#if USE_LPC214x_UART2
+#if USE_LPC214x_UART1
     if (&SD2 == sdp) {
       PCONP = (PCONP & PCALL) | PCUART1;
       VICIntEnable = INTMASK(SOURCE_UART1);
@@ -320,14 +320,14 @@ void sd_lld_stop(SerialDriver *sdp) {
 
   if (sdp->sd.state == SD_READY) {
     uart_deinit(sdp->sd.uart);
-#if USE_LPC214x_UART1
+#if USE_LPC214x_UART0
     if (&SD1 == sdp) {
       PCONP = (PCONP & PCALL) & ~PCUART0;
       VICIntEnClear = INTMASK(SOURCE_UART0);
       return;
     }
 #endif
-#if USE_LPC214x_UART2
+#if USE_LPC214x_UART1
     if (&SD2 == sdp) {
       PCONP = (PCONP & PCALL) & ~PCUART1;
       VICIntEnClear = INTMASK(SOURCE_UART1);
