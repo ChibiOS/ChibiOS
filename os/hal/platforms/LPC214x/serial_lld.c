@@ -92,12 +92,13 @@ static void uart_init(SerialDriver *sdp) {
  */
 static void uart_deinit(UART *u) {
 
+  u->UART_LCR = LCR_DLAB;
   u->UART_DLL = 1;
   u->UART_DLM = 0;
+  u->UART_LCR = 0;
   u->UART_FDR = 0x10;
   u->UART_IER = 0;
   u->UART_FCR = FCR_RXRESET | FCR_TXRESET;
-  u->UART_LCR = 0;
   u->UART_ACR = 0;
   u->UART_TER = TER_ENABLE;
 }

@@ -120,6 +120,7 @@ typedef struct {
 typedef struct {
   IOREG32       PS_SEL0;
   IOREG32       PS_SEL1;
+  IOREG32       _dummy[3];
   IOREG32       PS_SEL2;
 } PS;
 
