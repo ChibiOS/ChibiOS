@@ -52,6 +52,10 @@
 *****************************************************************************
 
 *** 1.5.2 ***
+- FIX: Fixed wrong UART deinitialization sequence in LPC214x serial driver
+  (bug 2953985)(backported in 1.4.1).
+- FIX: Fixed wrong PINSEL2 offset into lpc214x.h (bug 2953981)(backported
+  in 1.4.1).
 - FIX: Fixed invalid UART-related macro in the LPC214x HAL (bug 2953195)
   (backported in 1.4.1).
 - FIX: Impossible to enforce alignment greater of a pointer size for heap/core
