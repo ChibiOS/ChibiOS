@@ -62,7 +62,11 @@
   objects (bug 2952961).
 - FIX: Wrong prototype in template file chcore.c (bug 2951529)(backported
   in 1.4.1).
+- NEW: Added an experimental PowerPC port targeting the SPC563M64/MPC563x
+  ST/Freescale automotive SOCs. The port passed the whole test suite but it
+  will be developed further in next releases.
 - NEW: Added BOARD_NAME macro to the various board.h files.
+- NEW: Added a MemoryStream class under ./os/various.
 
 *** 1.5.1 ***
 - FIX: Fixed insufficient stack space for the idle thread in the ARMCM3 port
