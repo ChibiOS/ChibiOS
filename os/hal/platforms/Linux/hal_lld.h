@@ -35,6 +35,11 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Platform name.
+ */
+#define PLATFORM_NAME   "Linux"
+
 #define SOCKET int
 #define INVALID_SOCKET -1
 

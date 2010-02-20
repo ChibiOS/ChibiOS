@@ -18,6 +18,7 @@
 */
 
 #include "ch.h"
+#include "hal.h"
 
 #include "test.h"
 #include "testthd.h"
@@ -264,11 +265,23 @@ msg_t TestThread(void *p) {
   test_println("***");
   test_print("*** Kernel:       ");
   test_println(CH_KERNEL_VERSION);
-  test_print("*** Architecture: ");
-  test_println(CH_ARCHITECTURE_NAME);
 #ifdef __GNUC__
   test_print("*** GCC Version:  ");
   test_println(__VERSION__);
+#endif
+  test_print("*** Architecture: ");
+  test_println(CH_ARCHITECTURE_NAME);
+#ifdef CH_CORE_VARIANT_NAME
+  test_print("*** Core Variant: ");
+  test_println(CH_CORE_VARIANT_NAME);
+#endif
+#ifdef PLATFORM_NAME
+  test_print("*** Platform:     ");
+  test_println(PLATFORM_NAME);
+#endif
+#ifdef BOARD_NAME
+  test_print("*** Test Board:   ");
+  test_println(BOARD_NAME);
 #endif
   test_println("");
 

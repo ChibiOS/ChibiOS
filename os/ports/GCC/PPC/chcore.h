@@ -47,7 +47,12 @@
 /**
  * @brief   Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME "PPC E200Zx"
+#define CH_ARCHITECTURE_NAME "PowerPC"
+
+/**
+ * @brief   Name of the architecture variant (optional).
+ */
+#define CH_CORE_VARIANT_NAME "e200zX"
 
 /**
  * @brief   Base type for stack alignment.

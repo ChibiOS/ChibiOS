@@ -43,7 +43,12 @@
 /**
  * Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME "ARM7TDMI"
+#define CH_ARCHITECTURE_NAME "ARM"
+
+/**
+ * @brief   Name of the architecture variant (optional).
+ */
+#define CH_CORE_VARIANT_NAME "ARM7TDMI"
 
 /**
  * 32 bit stack alignment.

@@ -41,6 +41,11 @@
 #define CH_ARCHITECTURE_NAME ""
 
 /**
+ * @brief   Name of the architecture variant (optional).
+ */
+#define CH_ARCHITECTURE_VARIANT_NAME ""
+
+/**
  * @brief   Base type for stack alignment.
  * @details This type is used only for stack alignment reasons thus can be
  *          anything from a char to a double.

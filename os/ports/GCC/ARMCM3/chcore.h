@@ -91,7 +91,12 @@
 /**
  * Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME "ARM Cortex-M3"
+#define CH_ARCHITECTURE_NAME "ARM"
+
+/**
+ * @brief   Name of the architecture variant (optional).
+ */
+#define CH_CORE_VARIANT_NAME "Cortex-M3"
 
 /**
  * 32 bit stack alignment.

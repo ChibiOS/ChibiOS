@@ -65,6 +65,8 @@
 - NEW: Added an experimental PowerPC port targeting the SPC563M64/MPC563x
   ST/Freescale automotive SOCs. The port passed the whole test suite but it
   will be developed further in next releases.
+- NEW: Added core variant name macro in chcore.h and platform name in
+  hal_lld.h, the info are printed in the test report.
 - NEW: Added BOARD_NAME macro to the various board.h files.
 - NEW: Added a MemoryStream class under ./os/various.
 

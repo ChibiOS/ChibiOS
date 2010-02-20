@@ -33,7 +33,12 @@
 /**
  * Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME "x86 Simulator"
+#define CH_ARCHITECTURE_NAME "Simulator"
+
+/**
+ * @brief   Name of the architecture variant (optional).
+ */
+#define CH_CORE_VARIANT_NAME "x86 (integer only)"
 
 /**
  * 16 bytes stack alignment.

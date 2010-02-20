@@ -48,6 +48,11 @@
 #define CH_ARCHITECTURE_NAME "AVR"
 
 /**
+ * @brief   Name of the architecture variant (optional).
+ */
+#define CH_CORE_VARIANT_NAME "MegaAVR"
+
+/**
  * 8 bit stack alignment.
  */
 typedef uint8_t stkalign_t;

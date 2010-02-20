@@ -48,6 +48,11 @@
 #define CH_ARCHITECTURE_NAME "MSP430"
 
 /**
+ * @brief   Name of the architecture variant (optional).
+ */
+#define CH_CORE_VARIANT_NAME "MSP430"
+
+/**
  * 16 bit stack alignment.
  */
 typedef uint16_t stkalign_t;
