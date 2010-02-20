@@ -78,14 +78,14 @@
 /**
  * @brief UART0 interrupt priority level setting.
  */
-#if !defined(LPC214x_UART1_PRIORITY) || defined(__DOXYGEN__)
+#if !defined(LPC214x_UART0_PRIORITY) || defined(__DOXYGEN__)
 #define LPC214x_UART0_PRIORITY      0
 #endif
 
 /**
  * @brief UART1 interrupt priority level setting.
  */
-#if !defined(LPC214x_UART2_PRIORITY) || defined(__DOXYGEN__)
+#if !defined(LPC214x_UART1_PRIORITY) || defined(__DOXYGEN__)
 #define LPC214x_UART1_PRIORITY      1
 #endif
 
