@@ -5,7 +5,7 @@ Settings: MCLK=XT2CLK 8MHz
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.4.0
+*** Kernel:       1.4.1
 *** Architecture: MSP430
 *** GCC Version:  3.2.3
 

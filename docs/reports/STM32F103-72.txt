@@ -5,7 +5,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.4.0
+*** Kernel:       1.4.1
 *** Architecture: ARM Cortex-M3
 *** GCC Version:  4.4.2
 
@@ -137,7 +137,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)
---- System: 300 bytes
+--- System: 304 bytes
 --- Thread: 60 bytes
 --- Timer : 20 bytes
 --- Semaph: 12 bytes
