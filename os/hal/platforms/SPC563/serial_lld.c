@@ -57,7 +57,7 @@ SerialDriver SD2;
  */
 static const SerialConfig default_config = {
   SERIAL_DEFAULT_BITRATE,
-  SC_MODE_NORMAL | SC_MODE_PARITY_NONE
+  SD_MODE_NORMAL | SD_MODE_PARITY_NONE
 };
 
 /*===========================================================================*/
@@ -78,12 +78,12 @@ static void esci_init(SerialDriver *sdp) {
   escip->CR1.R  = 0;
   escip->LCR.R  = 0;
   escip->CR1.B.SBR = SPC563_SYSCLK / (16 * sdp->config->sc_speed);
-  if (mode & SC_MODE_LOOPBACK)
+  if (mode & SD_MODE_LOOPBACK)
     escip->CR1.B.LOOPS = 1;
-  switch (mode & SC_MODE_PARITY) {
-  case SC_MODE_PARITY_ODD:
+  switch (mode & SD_MODE_PARITY) {
+  case SD_MODE_PARITY_ODD:
     escip->CR1.B.PT = 1;
-  case SC_MODE_PARITY_EVEN:
+  case SD_MODE_PARITY_EVEN:
     escip->CR1.B.PE = 1;
     escip->CR1.B.M  = 1;            /* Makes it 8 bits data + 1 bit parity. */
   default:

@@ -34,13 +34,13 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-#define SC_MODE_PARITY          0x03        /**< @brief Parity field mask.  */
-#define SC_MODE_PARITY_NONE     0x00        /**< @brief No parity.          */
-#define SC_MODE_PARITY_EVEN     0x01        /**< @brief Even parity.        */
-#define SC_MODE_PARITY_ODD      0x02        /**< @brief Odd parity.         */
+#define SD_MODE_PARITY          0x03        /**< @brief Parity field mask.  */
+#define SD_MODE_PARITY_NONE     0x00        /**< @brief No parity.          */
+#define SD_MODE_PARITY_EVEN     0x01        /**< @brief Even parity.        */
+#define SD_MODE_PARITY_ODD      0x02        /**< @brief Odd parity.         */
 
-#define SC_MODE_NORMAL          0x00        /**< @brief Normal operations.  */
-#define SC_MODE_LOOPBACK        0x80        /**< @brief Internal loopback.  */
+#define SD_MODE_NORMAL          0x00        /**< @brief Normal operations.  */
+#define SD_MODE_LOOPBACK        0x80        /**< @brief Internal loopback.  */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
