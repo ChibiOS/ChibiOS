@@ -92,6 +92,7 @@ struct context {
   uint8_t *esp = (uint8_t *)workspace + wsize;                          \
   APUSH(esp, 0);                                                        \
   APUSH(esp, 0);                                                        \
+  APUSH(esp, 0);                                                        \
   APUSH(esp, arg);                                                      \
   APUSH(esp, threadexit);                                               \
   esp -= sizeof(struct intctx);                                         \

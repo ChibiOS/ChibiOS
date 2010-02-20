@@ -92,7 +92,6 @@ OPT = -ggdb -O2 -fomit-frame-pointer
 # End of user defines
 ##############################################################################################
 
-
 INCDIR  = $(patsubst %,-I%,$(DINCDIR) $(UINCDIR))
 LIBDIR  = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
 DEFS    = $(DDEFS) $(UDEFS)
@@ -100,9 +99,21 @@ ADEFS   = $(DADEFS) $(UADEFS)
 OBJS    = $(ASRC:.s=.o) $(SRC:.c=.o)
 LIBS    = $(DLIBS) $(ULIBS)
 
-LDFLAGS = -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
 ASFLAGS = -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
-CPFLAGS = $(OPT) -Wall -Wextra -Wstrict-prototypes -fverbose-asm -Wa,-alms=$(<:.c=.lst) $(DEFS)
+CPFLAGS = $(OPT) -Wall -Wextra -Wstrict-prototypes -fverbose-asm $(DEFS)
+
+ifeq ($(HOST_OSX),yes)
+	OSX_SDK = /Developer/SDKs/MacOSX10.5.sdk
+	OSX_ARCH = -mmacosx-version-min=10.3 -arch i386
+	
+	CPFLAGS += -isysroot $(OSX_SDK) $(OSX_ARCH)
+	LDFLAGS = -Wl -Map=$(PROJECT).map,-syslibroot,$(OSX_SDK),$(LIBDIR)
+	LIBS += $(OSX_ARCH)
+else
+	# Linux, or other
+	CPFLAGS += -Wa,-alms=$(<:.c=.lst)
+	LDFLAGS += -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
+endif
 
 # Generate dependency information
 CPFLAGS += -MD -MP -MF .dep/$(@F).d

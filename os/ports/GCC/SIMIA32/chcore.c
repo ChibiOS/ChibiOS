@@ -38,6 +38,9 @@ static void __dummy(Thread *otp, Thread *ntp) {
 #if defined(WIN32)
   asm volatile (".globl @port_switch@8                          \n\t" \
                 "@port_switch@8:");
+#elif defined(__APPLE__)
+  asm volatile (".globl _port_switch                            \n\t" \
+                "_port_switch:");
 #else
   asm volatile (".globl port_switch                             \n\t" \
                 "port_switch:");
@@ -69,7 +72,7 @@ void port_halt(void) {
  */
 void threadexit(void) {
 
-#if defined(WIN32)
+#if defined(WIN32) || defined (__APPLE__)
   asm volatile ("push    %eax                                   \n\t" \
                 "call    _chThdExit");
 #else

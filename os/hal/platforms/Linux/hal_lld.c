@@ -59,7 +59,11 @@ static struct timeval tick = {0, 1000000 / CH_FREQUENCY};
  */
 void hal_lld_init(void) {
 
+#if defined(__APPLE__)
+  puts("ChibiOS/RT simulator (OS X)\n");
+#else
   puts("ChibiOS/RT simulator (Linux)\n");
+#endif
   gettimeofday(&nextcnt, NULL);
   timeradd(&nextcnt, &tick, &nextcnt);
 }
