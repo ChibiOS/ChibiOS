@@ -87,7 +87,7 @@ void port_unlock_from_isr(void) {
  *
  * @note Of course non maskable interrupt sources are not included.
  */
-void port_disable() {
+void port_disable(void) {
 }
 
 /**

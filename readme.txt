@@ -56,6 +56,7 @@
   (bug 2953985).
 - FIX: Fixed wrong PINSEL2 offset into lpc214x.h (bug 2953981).
 - FIX: Fixed invalid UART-related macro in the LPC214x HAL (bug 2953195).
+- FIX: Wrong prototype in template file chcore.c (bug 2951529).
 - FIX: Fixed insufficient stack space for the idle thread in the ARMCM3 port
   when compiling without optimizations (bug 2946233).
 - FIX: Fixed wrong notes on function chThdResume() (bug 2943160).
