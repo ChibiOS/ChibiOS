@@ -584,6 +584,8 @@ INPUT                  = ../docs/src \
                          ../os/ports/GCC/ARM7/chcoreasm.s \
                          ../os/ports/GCC/ARMCM3 \
                          ../os/ports/GCC/ARMCM3/crt0.s \
+                         ../os/ports/GCC/PPC \
+                         ../os/ports/GCC/PPC/crt0.s \
                          ../os/ports/GCC/MSP430 \
                          ../os/ports/GCC/AVR \
                          ../os/hal \

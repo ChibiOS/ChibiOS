@@ -18,9 +18,10 @@
 */
 
 /**
- * @file PPCE200Z/chtypes.h
- * @brief PPC E200Zx architecture port system types.
- * @addtogroup PPCE200Z_CORE
+ * @file    PPC/chtypes.h
+ * @brief   PowerPC architecture port system types.
+ *
+ * @addtogroup PPC_CORE
  * @{
  */
 

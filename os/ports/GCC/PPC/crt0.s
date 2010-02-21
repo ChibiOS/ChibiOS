@@ -38,8 +38,20 @@ _boot_address:
         li          %r0, 0
         stwu        %r0, -8(%r1)
         /*
-        * Early initialization.
-        */
+         * IVPR initialization.
+         */
+        lis         %r4, __ivpr_base__@h
+        mtIVPR      %r4    
+        /*
+         * Small sections registers initialization.
+         */
+        lis         %r2, __sdata2_start__@h
+        ori         %r2, %r2, __sdata2_start__@l
+        lis         %r13, __sdata_start__@h
+        ori         %r13, %r13, __sdata_start__@l
+        /*
+         * Early initialization.
+         */
         bl          hwinit0
         /*
          * BSS clearing.
@@ -74,18 +86,6 @@ _boot_address:
         addi        %r5, %r5, 4
         b           .dataloop
 .dataend:
-        /*
-         * Small sections registers initialization.
-         */
-        lis         %r2, __sdata2_start__@h
-        ori         %r2, %r2, __sdata2_start__@l
-        lis         %r13, __sdata_start__@h
-        ori         %r13, %r13, __sdata_start__@l
-        /*
-         * IVPR initialization.
-         */
-        lis         %r4, __ivpr_base__@h
-        mtIVPR      %r4    
         /*
          * Late initialization.
          */

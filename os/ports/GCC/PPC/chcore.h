@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    PPCE200Z/chcore.h
- * @brief   PowerPC E200Zx architecture port macros and structures.
+ * @file    PPC/chcore.h
+ * @brief   PowerPC architecture port macros and structures.
  *
- * @addtogroup PPCE200Z_CORE
+ * @addtogroup PPC_CORE
  * @{
  */
 

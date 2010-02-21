@@ -69,7 +69,7 @@
  *   used by the interrupt handlers.<br>
  *   The default for this value is @p 32, this space is allocated for each
  *   thread so be careful in order to not waste precious RAM space.<br>
- *   The default value is set into <b>./ports/MSP430/chcore.h</b>.
+ *   The default value is set into <b>./os/ports/GCC/MSP430/chcore.h</b>.
  * .
  * @ingroup MSP430
  */
