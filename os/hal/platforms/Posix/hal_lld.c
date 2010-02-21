@@ -43,6 +43,15 @@
 static struct timeval nextcnt;
 static struct timeval tick = {0, 1000000 / CH_FREQUENCY};
 
+/**
+ * @brief PAL setup.
+ * @details Digital I/O ports static configuration as defined in @p board.h.
+ */
+const VIOConfig pal_default_config = {
+ {0, 0, 0},
+ {0, 0, 0}
+};
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
