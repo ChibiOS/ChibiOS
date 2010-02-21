@@ -18,9 +18,10 @@
 */
 
 /**
- * @file Linux/hal_lld.c
- * @brief Linux HAL subsystem low level driver code.
- * @addtogroup LINUX_HAL
+ * @file    Posix/hal_lld.c
+ * @brief   Posix HAL subsystem low level driver code.
+ *
+ * @addtogroup POSIX_HAL
  * @{
  */
 

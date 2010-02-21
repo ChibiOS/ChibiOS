@@ -18,9 +18,10 @@
 */
 
 /**
- * @file Linux/serial_lld.h
- * @brief Linux low level simulated serial driver header.
- * @addtogroup LINUX_SERIAL
+ * @file    Posix/serial_lld.h
+ * @brief   Posix low level simulated serial driver header.
+ *
+ * @addtogroup POSIX_SERIAL
  * @{
  */
 

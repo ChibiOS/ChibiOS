@@ -18,9 +18,10 @@
 */
 
 /**
- * @file Linux/hal_lld.h
- * @brief Linux simulator HAL subsystem low level driver header.
- * @addtogroup LINUX_HAL
+ * @file    Posix/hal_lld.h
+ * @brief   Posix simulator HAL subsystem low level driver header.
+ *
+ * @addtogroup POSIX_HAL
  * @{
  */
 
