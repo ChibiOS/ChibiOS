@@ -25,6 +25,7 @@
   |  |  |  +--AVR/      - Drivers for AVR platform.
   |  |  |  +--LPC214x/  - Drivers for LPC214x platform.
   |  |  |  +--MSP430/   - Drivers for MSP430 platform.
+  |  |  |  +--SPC563/   - Drivers for SPC563M/MPC563xM platforms.
   |  |  |  +--STM32/    - Drivers for STM32 platform.
   |  |  |  +--Linux/    - Drivers for x86 Linux simulator platform.
   |  |  |  +--LPC214x/  - Drivers for x86 Win32 simulator platform.
@@ -35,6 +36,7 @@
   |  |     +--ARM/      - Port files for generic ARM architecture.
   |  |     +--ARM7/     - Port files for ARM7 architecture.
   |  |     +--ARMCM3/   - Port files for ARMCM3 architecture.
+  |  |     +--PPC/      - Port files for PowerPC architecture.
   |  |     +--AVR/      - Port files for AVR architecture.
   |  |     +--MSP430/   - Port files for MSP430 architecture.
   |  |     +--SIMIA32/  - Port files for SIMIA32 simulator architecture.
