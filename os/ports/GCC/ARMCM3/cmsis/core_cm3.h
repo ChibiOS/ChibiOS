@@ -1,23 +1,21 @@
-/******************************************************************************
- * @file:    core_cm3.h
- * @purpose: CMSIS Cortex-M3 Core Peripheral Access Layer Header File
- * @version: V1.20.1 (ChibiOS/RT fixes)
- * @date:    18. July 2009
- *----------------------------------------------------------------------------
- *
- * Copyright (C) 2009 ARM Limited. All rights reserved.
- *
- * ARM Limited (ARM) is supplying this software for use with Cortex-Mx
- * processor based microcontrollers.  This file can be freely distributed
- * within development tools that are supporting such ARM based processors.
- *
- * THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
- * OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
- * ARM SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
- * CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
- *
- ******************************************************************************/
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /******************************************************************************
  * ChibiOS/RT notes and fixes:
