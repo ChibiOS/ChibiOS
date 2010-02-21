@@ -58,7 +58,7 @@ UADEFS =
 # Imported source files
 CHIBIOS = ../..
 include ${CHIBIOS}/os/hal/hal.mk
-include ${CHIBIOS}/os/hal/platforms/Linux/platform.mk
+include ${CHIBIOS}/os/hal/platforms/Posix/platform.mk
 include ${CHIBIOS}/os/ports/GCC/SIMIA32/port.mk
 include ${CHIBIOS}/os/kernel/kernel.mk
 include ${CHIBIOS}/test/test.mk
