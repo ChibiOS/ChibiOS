@@ -177,7 +177,8 @@ typedef sim_vio_port_t *ioportid_t;
  * @param[in] mask      group mask
  * @param[in] mode      group mode
  */
-#define pal_lld_setgroupmode(port, mask, mode)
+#define pal_lld_setgroupmode(port, mask, mode) \
+  _pal_lld_setgroupmode(port, mask, mode)
 
 #if !defined(__DOXYGEN__)
 extern sim_vio_port_t vio_port_1;
