@@ -18,34 +18,35 @@
 */
 
 /**
- * @file Win32/hal_lld.c
- * @brief Win32 HAL subsystem low level driver code.
- * @addtogroup WIN32_HAL
+ * @file    Win32/pal_lld.c
+ * @brief   Win32 low level simulated PAL driver code.
+ *
+ * @addtogroup WIN32_PAL
  * @{
  */
 
 #include "ch.h"
 #include "hal.h"
 
+#if CH_HAL_USE_PAL || defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   VIO1 simulated port.
+ */
+sim_vio_port_t vio_port_1;
+
+/**
+ * @brief   VIO2 simulated port.
+ */
+sim_vio_port_t vio_port_2;
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
-
-static LARGE_INTEGER nextcnt;
-static LARGE_INTEGER slice;
-
-/**
- * @brief PAL setup.
- * @details Digital I/O ports static configuration as defined in @p board.h.
- */
-const VIOConfig pal_default_config = {
- {0, 0, 0},
- {0, 0, 0}
-};
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -60,51 +61,38 @@ const VIOConfig pal_default_config = {
 /*===========================================================================*/
 
 /**
- * @brief Low level HAL driver initialization.
+ * @brief Pads mode setup.
+ * @details This function programs a pads group belonging to the same port
+ *          with the specified mode.
+ *
+ * @param[in] port the port identifier
+ * @param[in] mask the group mask
+ * @param[in] mode the mode
+ *
+ * @note This function is not meant to be invoked directly by the application
+ *       code.
+ * @note @p PAL_MODE_UNCONNECTED is implemented as push pull output with high
+ *       state.
+ * @note This function does not alter the @p PINSELx registers. Alternate
+ *       functions setup must be handled by device-specific code.
  */
-void hal_lld_init(void) {
-  WSADATA wsaData;
+void _pal_lld_setgroupmode(ioportid_t port,
+                           ioportmask_t mask,
+                           uint_fast8_t mode) {
 
-  /* Initialization.*/
-  if (WSAStartup(2, &wsaData) != 0) {
-    printf("Unable to locate a winsock DLL\n");
-    exit(1);
+  switch (mode) {
+  case PAL_MODE_RESET:
+  case PAL_MODE_INPUT:
+    port->dir &= ~mask;
+    break;
+  case PAL_MODE_UNCONNECTED:
+    port->latch |= mask;
+  case PAL_MODE_OUTPUT_PUSHPULL:
+    port->dir |= mask;
+    break;
   }
-
-  printf("ChibiOS/RT simulator (Win32)\n");
-  if (!QueryPerformanceFrequency(&slice)) {
-    printf("QueryPerformanceFrequency() error");
-    exit(1);
-  }
-  slice.QuadPart /= CH_FREQUENCY;
-  QueryPerformanceCounter(&nextcnt);
-  nextcnt.QuadPart += slice.QuadPart;
-
-  fflush(stdout);
 }
 
-/**
- * @brief Interrupt simulation.
- */
-void ChkIntSources(void) {
-  LARGE_INTEGER n;
-
-#if CH_HAL_USE_SERIAL
-  if (sd_lld_interrupt_pending()) {
-    if (chSchIsRescRequiredExI())
-      chSchDoRescheduleI();
-    return;
-  }
-#endif
-
-  // Interrupt Timer simulation (10ms interval).
-  QueryPerformanceCounter(&n);
-  if (n.QuadPart > nextcnt.QuadPart) {
-    nextcnt.QuadPart += slice.QuadPart;
-    chSysTimerHandlerI();
-    if (chSchIsRescRequiredExI())
-      chSchDoRescheduleI();
-  }
-}
+#endif /* CH_HAL_USE_PAL */
 
 /** @} */
