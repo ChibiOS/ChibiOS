@@ -25,7 +25,7 @@
   |  |  |  +--AVR/      - Drivers for AVR platform.
   |  |  |  +--LPC214x/  - Drivers for LPC214x platform.
   |  |  |  +--MSP430/   - Drivers for MSP430 platform.
-  |  |  |  +--SPC563/   - Drivers for SPC563M/MPC563xM platforms.
+  |  |  |  +--SPC56x/   - Drivers for SPC56x/MPC563xx platforms.
   |  |  |  +--STM32/    - Drivers for STM32 platform.
   |  |  |  +--Linux/    - Drivers for x86 Linux simulator platform.
   |  |  |  +--LPC214x/  - Drivers for x86 Win32 simulator platform.
