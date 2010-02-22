@@ -18,8 +18,9 @@
 */
 
 /**
- * @file Win32/hal_lld.h
- * @brief WIN32 simulator HAL subsystem low level driver header.
+ * @file    Win32/hal_lld.h
+ * @brief   WIN32 simulator HAL subsystem low level driver header.
+ *
  * @addtogroup WIN32_HAL
  * @{
  */
