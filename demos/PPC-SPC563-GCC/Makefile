@@ -55,7 +55,8 @@ CSRC = $(PORTSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        $(CHIBIOS)/os/various/evtimer.c \
-       $(CHIBIOS)/os/various/memstreams.c \
+       $(CHIBIOS)/os/various/shell.c \
+       $(CHIBIOS)/os/various/syscalls.c \
        main.c
 
 # C++ sources here.
@@ -109,7 +110,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all default C defines here, like -D_DEBUG=1
-DDEFS =
+DDEFS = -DPPC_VARIANT=PPC_VARIANT_e200z3
 
 # List all default ASM defines here, like -D_DEBUG=1
 DADEFS =

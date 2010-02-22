@@ -17,13 +17,97 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdio.h>
+
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
-#include "memstreams.h"
+#include "shell.h"
 
-int a = 1234;
-uint8_t report_buffer[8192];
+#define SHELL_WA_SIZE   THD_WA_SIZE(1024)
+#define TEST_WA_SIZE    THD_WA_SIZE(256)
+
+static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
+  size_t n, size;
+  char buf[52];
+
+  (void)argv;
+  if (argc > 0) {
+    shellPrintLine(chp, "Usage: mem");
+    return;
+  }
+  n = chHeapStatus(NULL, &size);
+  siprintf(buf, "core free memory : %i bytes", chCoreFree());
+  shellPrintLine(chp, buf);
+  siprintf(buf, "heap fragments   : %i", n);
+  shellPrintLine(chp, buf);
+  siprintf(buf, "heap free total  : %i bytes", size);
+  shellPrintLine(chp, buf);
+}
+
+static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
+  static const char *states[] = {
+    "READY",
+    "CURRENT",
+    "SUSPENDED",
+    "WTSEM",
+    "WTMTX",
+    "WTCOND",
+    "SLEEPING",
+    "WTEXIT",
+    "WTOREVT",
+    "WTANDEVT",
+    "SNDMSG",
+    "WTMSG",
+    "FINAL"
+  };
+  Thread *tp;
+  char buf[60];
+
+  (void)argv;
+  if (argc > 0) {
+    shellPrintLine(chp, "Usage: threads");
+    return;
+  }
+  shellPrintLine(chp, "    addr    stack prio refs     state time");
+  tp = chRegFirstThread();
+  do {
+    siprintf(buf, "%8p %8p %4u %4i %9s %u",
+             tp, tp->p_ctx.sp, (unsigned int)tp->p_prio, tp->p_refs - 1,
+             states[tp->p_state], (unsigned int)tp->p_time);
+    shellPrintLine(chp, buf);
+    tp = chRegNextThread(tp);
+  } while (tp != NULL);
+}
+
+static void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
+  Thread *tp;
+
+  (void)argv;
+  if (argc > 0) {
+    shellPrintLine(chp, "Usage: test");
+    return;
+  }
+  tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriority(),
+                           TestThread, chp);
+  if (tp == NULL) {
+    shellPrintLine(chp, "out of memory");
+    return;
+  }
+  chThdWait(tp);
+}
+
+static const ShellCommand commands[] = {
+  {"mem", cmd_mem},
+  {"threads", cmd_threads},
+  {"test", cmd_test},
+  {NULL, NULL}
+};
+
+static const ShellConfig shell_cfg1 = {
+  (BaseChannel *)&SD1,
+  commands
+};
 
 /*
  * LEDs blinker thread, times are in milliseconds.
@@ -32,7 +116,7 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   (void)arg;
-  
+
   SIU.GPDO[GPIO_LED1].R = 1;
   SIU.GPDO[GPIO_LED2].R = 1;
   SIU.GPDO[GPIO_LED3].R = 1;
@@ -64,6 +148,7 @@ static msg_t Thread1(void *arg) {
  * on entry.
  */
 int main(int argc, char **argv) {
+  Thread *shelltp = NULL;
 
   (void)argc;
   (void)argv;
@@ -74,6 +159,11 @@ int main(int argc, char **argv) {
   sdStart(&SD1, NULL);
 
   /*
+   * Shell manager initialization.
+   */
+  shellInit();
+
+  /*
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
@@ -82,6 +172,13 @@ int main(int argc, char **argv) {
    * Normal main() thread activity.
    */
   while (TRUE) {
+
+    if (!shelltp)
+      shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
+    else if (chThdTerminated(shelltp)) {
+      chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
+      shelltp = NULL;           /* Triggers spawning of a new shell.        */
+    }
     if (SIU.GPDI[GPIO_BUTTON1].B.PDI) {
       volatile msg_t result;
 #if 0

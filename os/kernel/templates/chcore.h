@@ -46,9 +46,7 @@
 #define CH_ARCHITECTURE_VARIANT_NAME ""
 
 /**
- * @brief   Base type for stack alignment.
- * @details This type is used only for stack alignment reasons thus can be
- *          anything from a char to a double.
+ * @brief   Base type for stack and memory alignment.
  */
 typedef uint8_t stkalign_t;
 

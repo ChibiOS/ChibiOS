@@ -40,7 +40,7 @@
          * override the weak symbol declared here.
          */
         .section    .vectors
-        .align		2
+        .align		4
         .globl      _vectors
 _vectors:
         .long       vector0

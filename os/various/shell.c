@@ -28,6 +28,7 @@
 #include <string.h>
 
 #include "ch.h"
+#include "hal.h"
 #include "shell.h"
 
 #if SHELL_USE_IPRINTF
@@ -84,13 +85,25 @@ static void cmd_info(BaseChannel *chp, int argc, char *argv[]) {
     return;
   }
 
-  shellPrint(chp, "Kernel version ");
+  shellPrint(chp, "Kernel version: ");
   shellPrintLine(chp, CH_KERNEL_VERSION);
-  shellPrint(chp, "Architecture ");
-  shellPrintLine(chp, CH_ARCHITECTURE_NAME);
 #ifdef __GNUC__
-  shellPrint(chp, "GCC Version ");
+  shellPrint(chp, "GCC Version:    ");
   shellPrintLine(chp, __VERSION__);
+#endif
+  shellPrint(chp, "Architecture:   ");
+  shellPrintLine(chp, CH_ARCHITECTURE_NAME);
+#ifdef CH_CORE_VARIANT_NAME
+  shellPrint(chp, "Core Variant:   ");
+  shellPrintLine(chp, CH_CORE_VARIANT_NAME);
+#endif
+#ifdef PLATFORM_NAME
+  shellPrint(chp, "Platform:       ");
+  shellPrintLine(chp, PLATFORM_NAME);
+#endif
+#ifdef BOARD_NAME
+  shellPrint(chp, "Board:          ");
+  shellPrintLine(chp, BOARD_NAME);
 #endif
 }
 

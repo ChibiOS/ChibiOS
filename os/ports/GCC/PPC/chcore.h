@@ -39,27 +39,46 @@
 #define ENABLE_WFI_IDLE         0
 #endif
 
+/* Core variants identifiers.*/
+#define PPC_VARIANT_e200z3      3       /**< e200z3 core identifier.        */
+#define PPC_VARIANT_e200z4      4       /**< e200z4 core identifier.        */
+
+/**
+ * @brief   Core variant selector.
+ * @details This setting affects the predefined architecture strings and
+ *          possibly code paths and structures into the port layer.
+ */
+#if !defined(PPC_VARIANT) || defined(__DOXYGEN__)
+#define PPC_VARIANT             PPC_VARIANT_e200z3
+#endif
+
 /**
  * @brief   Unique macro for the implemented architecture.
  */
-#define CH_ARCHITECTURE_PPCE200Z
+#define CH_ARCHITECTURE_PPC
 
 /**
  * @brief   Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME "PowerPC"
+#define CH_ARCHITECTURE_NAME    "PowerPC"
 
 /**
- * @brief   Name of the architecture variant (optional).
+ * @brief   Name of the architecture variant.
  */
-#define CH_CORE_VARIANT_NAME "e200zX"
+#if (PPC_VARIANT == PPC_VARIANT_e200z3) || defined(__DOXYGEN__)
+#define CH_CORE_VARIANT_NAME    "e200z3"
+#elif PPC_VARIANT == PPC_VARIANT_e200z4
+#define CH_CORE_VARIANT_NAME    "e200z4"
+#else
+#error "unknown PowerPC variant specified"
+#endif
 
 /**
- * @brief   Base type for stack alignment.
- * @details This type is used only for stack alignment reasons thus can be
- *          anything from a char to a double.
+ * @brief   Base type for stack and memory alignment.
  */
-typedef uint64_t stkalign_t;
+typedef struct {
+  uint8_t a[8];
+} stkalign_t __attribute__((aligned(8)));
 
 /**
  * @brief   Generic PPC register.
