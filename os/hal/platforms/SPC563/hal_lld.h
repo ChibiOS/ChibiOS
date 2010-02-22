@@ -144,7 +144,7 @@
                                      BIUCR_MASTER0_PREFETCH |               \
                                      BIUCR_DPFEN |                          \
                                      BIUCR_IPFEN |                          \
-                                     BIUCR_PFLIM_ON_HITMISS |               \
+                                     BIUCR_PFLIM_ON_MISS |                  \
                                      BIUCR_BFEN)
 #endif
 

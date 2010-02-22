@@ -114,7 +114,10 @@ static void heap1_execute(void) {
   chHeapFree(p1);
   test_assert(5, chHeapStatus(&test_heap, &n) == 2, "invalid state");
   p1 = chHeapAlloc(&test_heap, SIZE);
-  test_assert(6, chHeapStatus(&test_heap, &n) == 1, "heap fragmented");
+  /* Note, the first situation happens when the alignment size is smaller
+     than the header size, the second in the other cases.*/
+  test_assert(6, (chHeapStatus(&test_heap, &n) == 1) ||
+                 (chHeapStatus(&test_heap, &n) == 2), "heap fragmented");
   chHeapFree(p2);
   chHeapFree(p1);
   test_assert(7, chHeapStatus(&test_heap, &n) == 1, "heap fragmented");
