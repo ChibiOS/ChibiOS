@@ -70,7 +70,8 @@ Thread *threads[MAX_THREADS];
 /*
  * Pointers to the working areas.
  */
-void * const wa[5] = {test.waT0, test.waT1, test.waT2, test.waT3, test.waT4};
+void * const wa[5] = {test.wa.T0, test.wa.T1, test.wa.T2,
+                      test.wa.T3, test.wa.T4};
 
 /*
  * Console output.

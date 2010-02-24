@@ -31,7 +31,9 @@
 #define MAX_THREADS             5
 #define MAX_TOKENS              16
 
-#if defined(CH_ARCHITECTURE_AVR) || defined(CH_ARCHITECTURE_MSP430)
+#if defined(CH_ARCHITECTURE_AVR) ||                                         \
+    defined(CH_ARCHITECTURE_MSP430) ||                                      \
+    defined(CH_ARCHITECTURE_STM8)
 #define THREADS_STACK_SIZE      48
 #elif defined(CH_ARCHITECTURE_SIMIA32)
 #define THREADS_STACK_SIZE      512
@@ -50,12 +52,12 @@ struct testcase {
 #ifndef __DOXYGEN__
 union test_buffers {
   struct {
-    WORKING_AREA(waT0, THREADS_STACK_SIZE);
-    WORKING_AREA(waT1, THREADS_STACK_SIZE);
-    WORKING_AREA(waT2, THREADS_STACK_SIZE);
-    WORKING_AREA(waT3, THREADS_STACK_SIZE);
-    WORKING_AREA(waT4, THREADS_STACK_SIZE);
-  };
+    WORKING_AREA(T0, THREADS_STACK_SIZE);
+    WORKING_AREA(T1, THREADS_STACK_SIZE);
+    WORKING_AREA(T2, THREADS_STACK_SIZE);
+    WORKING_AREA(T3, THREADS_STACK_SIZE);
+    WORKING_AREA(T4, THREADS_STACK_SIZE);
+  } wa;
   uint8_t buffer[WA_SIZE * 5];
 };
 #endif

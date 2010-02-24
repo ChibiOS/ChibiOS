@@ -72,6 +72,8 @@
   shell command.
 - NEW: Added BOARD_NAME macro to the various board.h files.
 - NEW: Added a MemoryStream class under ./os/various.
+- CHANGE: Removed an instance of a structure without name from test.h for
+  increased portability of the test suite.
 
 *** 1.5.1 ***
 - FIX: Fixed insufficient stack space for the idle thread in the ARMCM3 port
