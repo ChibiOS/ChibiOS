@@ -129,7 +129,7 @@ extern "C" {
   void chEvtSignalI(Thread *tp, eventmask_t mask);
   void chEvtBroadcast(EventSource *esp);
   void chEvtBroadcastI(EventSource *esp);
-  void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask);
+  void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask);
 #if CH_OPTIMIZE_SPEED || !CH_USE_EVENTS_TIMEOUT
   eventmask_t chEvtWaitOne(eventmask_t mask);
   eventmask_t chEvtWaitAny(eventmask_t mask);

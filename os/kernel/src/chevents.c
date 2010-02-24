@@ -184,7 +184,7 @@ void chEvtBroadcastI(EventSource *esp) {
  * @param[in] handlers  an array of @p evhandler_t. The array must have size
  *                      equal to the number of bits in eventmask_t.
  */
-void chEvtDispatch(const evhandler_t handlers[], eventmask_t mask) {
+void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask) {
   eventid_t eid;
 
   chDbgCheck(handlers != NULL, "chEvtDispatch");
