@@ -18,8 +18,8 @@
 */
 
 /**
- * @page concepts Concepts and Architecture
- * @brief ChibiOS/RT Concepts and Architecture
+ * @page concepts Kernel Concepts
+ * @brief ChibiOS/RT Kernel Concepts
  * - @ref naming
  * - @ref api_suffixes
  * - @ref interrupt_classes
@@ -28,7 +28,6 @@
  * - @ref thread_states
  * - @ref priority
  * - @ref warea
- * - @ref architecture
  * .
  * @section naming Naming Conventions
  * ChibiOS/RT APIs are all named following this convention:
@@ -52,10 +51,10 @@
  * @section interrupt_classes Interrupt Classes
  * In ChibiOS/RT there are three logical interrupt classes:
  * - <b>Regular Interrupts</b>. Maskable interrupt sources that cannot
- *   preempt the kernel code and are thus able to invoke operating system APIs
- *   from within their handlers. The interrupt handlers belonging to this class
- *   must be written following some rules. See the @ref system APIs group and
- *   @ref article_interrupts.
+ *   preempt (small parts of) the kernel code and are thus able to invoke
+ *   operating system APIs from within their handlers. The interrupt handlers
+ *   belonging to this class must be written following some rules. See the
+ *   @ref system APIs group and @ref article_interrupts.
  * - <b>Fast Interrupts</b>. Maskable interrupt sources with the ability
  *   to preempt the kernel code and thus have a lower latency and are less
  *   subject to jitter, see @ref article_jitter. Such sources are not
@@ -246,17 +245,4 @@
  * .
  * See the @ref core documentation for details, the area may change on
  * the various ports and some structures may not be present (or be zero-sized).
- *
- * @section architecture Architectural Diagram
- * The following diagram shows the relationships among the hardware, the
- * various ChibiOS/RT subsystems and the application code.
- * <br><br>
- * @image html arch.png
- * <br>
- * In this diagram the device drivers are at the same level of the application
- * code because both have access to the system services and can directly
- * access the hardware.<br>
- * Of course it is possible to create in the application architecture several
- * extra layers, this is just not part of the kernel architecture but part of
- * the overall system design.
  */

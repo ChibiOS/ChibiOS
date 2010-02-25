@@ -598,7 +598,8 @@ INPUT                  = ../docs/src \
                          ../os/hal/platforms/MSP430 \
                          ../os/hal/platforms/STM32 \
                          ../os/various \
-                         ../test
+                         ../test \
+                         ../ext/ext.dox
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -1315,6 +1316,7 @@ PREDEFINED             = __DOXYGEN__ \
                          CH_USE_MESSAGES=1 \
                          CH_USE_MAILBOXES=1 \
                          CH_USE_DYNAMIC=1 \
+                         CH_USE_REGISTRY=1 \
                          CH_DBG_ENABLE_ASSERTS=1 \
                          CH_DBG_ENABLE_CHECKS=1 \
                          CH_DBG_ENABLE_TRACE=1 \

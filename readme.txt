@@ -74,6 +74,10 @@
 - NEW: Added a MemoryStream class under ./os/various.
 - CHANGE: Removed an instance of a structure without name from test.h for
   increased portability of the test suite.
+- NEW: Added Mac OS-X support for the simulator. The Linux simulator has
+  been renamed to Posix simulator in order to include this change in a
+  single project.
+- NEW: New articles, sections and various improvements to the documentation.
 
 *** 1.5.1 ***
 - FIX: Fixed insufficient stack space for the idle thread in the ARMCM3 port

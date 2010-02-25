@@ -39,6 +39,15 @@
  */
 
 /**
+ * @defgroup memory_streams Memory Streams
+ * @brief Memory Streams.
+ * @details This module allows to use a memory area (RAM or ROM) using a
+ * @ref data_streams interface.
+ *
+ * @ingroup various
+ */
+
+/**
  * @defgroup event_timer Periodic Events Timer
  * @brief Periodic Event Timer.
  * @details This timer generates an event at regular intervals. The

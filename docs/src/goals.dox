@@ -69,7 +69,7 @@
  * <h3>Fast and compact</h3>
  * Note, first "fast" then "compact", the focus is on speed and execution
  * efficiency and then on code size. This does not mean that the OS is large,
- * the kernel size with all the subsystems activated is around <b>5.2KiB</b>
+ * the kernel size with all the subsystems activated weighs around <b>5.3KiB</b>
  * and can shrink down around to <b>1.2Kib</b> in a minimal configuration
  * (STM32, Cortex-M3). It would be possible to make something even smaller but:
  * -# It would be pointless, it is already @a really small.
