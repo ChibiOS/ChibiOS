@@ -64,7 +64,7 @@
   objects (bug 2952961).
 - FIX: Wrong prototype in template file chcore.c (bug 2951529)(backported
   in 1.4.1).
-- NEW: Added an experimental PowerPC port targeting the SPC563M64/MPC563x
+- NEW: Added an experimental PowerPC port targeting the SPC563M/MPC563xM
   ST/Freescale automotive SOCs. The port passed the whole test suite but it
   will be developed further in next releases.
 - NEW: Added core variant name macro in chcore.h and platform name in
