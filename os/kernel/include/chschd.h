@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    scheduler.h
+ * @file    chschd.h
  * @brief   Scheduler macros and structures.
  *
  * @addtogroup scheduler
  * @{
  */
 
-#ifndef _SCHEDULER_H_
-#define _SCHEDULER_H_
+#ifndef _CHSCHD_H_
+#define _CHSCHD_H_
 
 /** @brief Default thread wakeup low level message.*/
 #define RDY_OK          0
@@ -129,6 +129,6 @@ extern "C" {
  */
 #define chSchIsRescRequiredI() (firstprio(&rlist.r_queue) > currp->p_prio)
 
-#endif /* _SCHEDULER_H_ */
+#endif /* _CHSCHD_H_ */
 
 /** @} */

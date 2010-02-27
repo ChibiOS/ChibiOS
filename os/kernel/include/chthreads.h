@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    threads.h
+ * @file    chthreads.h
  * @brief   Threads macros and structures.
  *
  * @addtogroup threads
  * @{
  */
 
-#ifndef _THREADS_H_
-#define _THREADS_H_
+#ifndef _CHTHREADS_H_
+#define _CHTHREADS_H_
 
 /*
  * Module dependencies check.
@@ -325,6 +325,6 @@ extern "C" {
  */
 #define chThdSleepMicroseconds(usec) chThdSleep(US2ST(usec))
 
-#endif /* _THREADS_H_ */
+#endif /* _CHTHREADS_H_ */
 
 /** @} */

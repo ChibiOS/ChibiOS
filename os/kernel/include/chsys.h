@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    sys.h
+ * @file    chsys.h
  * @brief   System related macros and structures.
  *
  * @addtogroup system
  * @{
  */
 
-#ifndef _SYS_H_
-#define _SYS_H_
+#ifndef _CHSYS_H_
+#define _CHSYS_H_
 
 /**
  * @brief   Halts the system.
@@ -173,6 +173,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _SYS_H_ */
+#endif /* _CHSYS_H_ */
 
 /** @} */

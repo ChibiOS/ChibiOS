@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    vt.h
+ * @file    chvt.h
  * @brief   Time macros and structures.
  *
  * @addtogroup time
  * @{
  */
 
-#ifndef _VT_H_
-#define _VT_H_
+#ifndef _CHVT_H_
+#define _CHVT_H_
 
 /**
  * @brief   Time conversion utility.
@@ -142,6 +142,6 @@ extern "C" {
  */
 #define chTimeNow() (vtlist.vt_systime)
 
-#endif /* _VT_H_ */
+#endif /* _CHVT_H_ */
 
 /** @} */

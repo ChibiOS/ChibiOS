@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    lists.h
+ * @file    chlists.h
  * @brief   Thread queues/lists macros and structures.
  * @note    All the macros present in this module, while public, are not
  *          an OS API and should not be directly used in the user applications
@@ -28,8 +28,8 @@
  * @{
  */
 
-#ifndef _LISTS_H_
-#define _LISTS_H_
+#ifndef _CHLISTS_H_
+#define _CHLISTS_H_
 
 typedef struct Thread Thread;
 
@@ -113,6 +113,6 @@ extern "C" {
 
 #endif /* !CH_OPTIMIZE_SPEED */
 
-#endif /* _LISTS_H_ */
+#endif /* _CHLISTS_H_ */
 
 /** @} */

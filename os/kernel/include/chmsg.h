@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    messages.h
+ * @file    chmsg.h
  * @brief   Messages macros and structures.
  *
  * @addtogroup messages
  * @{
  */
 
-#ifndef _MESSAGES_H_
-#define _MESSAGES_H_
+#ifndef _CHMSG_H_
+#define _CHMSG_H_
 
 #if CH_USE_MESSAGES
 
@@ -55,6 +55,6 @@ extern "C" {
 
 #endif /* CH_USE_MESSAGES */
 
-#endif /* _MESSAGES_H_ */
+#endif /* _CHMSG_H_ */
 
 /** @} */

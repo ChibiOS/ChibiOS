@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    streams.h
+ * @file    chstreams.h
  * @brief   Data streams.
  * @details This header defines abstract interfaces useful to access generic
  *          data streams in a standardized way.
@@ -27,8 +27,8 @@
  * @{
  */
 
-#ifndef _STREAMS_H_
-#define _STREAMS_H_
+#ifndef _CHSTREAMS_H_
+#define _CHSTREAMS_H_
 
 /**
  * @brief   BaseSequentialStream specific methods.
@@ -91,6 +91,6 @@ typedef struct {
  */
 #define chSequentialStreamRead(ip, bp, n) ((ip)->vmt->read(ip, bp, n))
 
-#endif /* _STREAMS_H_ */
+#endif /* _CHSTREAMS_H_ */
 
 /** @} */

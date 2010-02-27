@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    registry.h
+ * @file    chregistry.h
  * @brief   Threads registry macros and structures.
  *
  * @addtogroup registry
  * @{
  */
 
-#ifndef _REGISTRY_H_
-#define _REGISTRY_H_
+#ifndef _CHREGISTRY_H_
+#define _CHREGISTRY_H_
 
 #if CH_USE_REGISTRY
 
@@ -64,6 +64,6 @@ extern "C" {
 
 #endif /* CH_USE_REGISTRY */
 
-#endif /* _REGISTRY_H_ */
+#endif /* _CHREGISTRY_H_ */
 
 /** @} */

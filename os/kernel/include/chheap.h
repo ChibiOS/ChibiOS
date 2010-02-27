@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    heap.h
+ * @file    chheap.h
  * @brief   Heaps macros and structures.
  *
  * @addtogroup heaps
  * @{
  */
 
-#ifndef _HEAP_H_
-#define _HEAP_H_
+#ifndef _CHHEAP_H_
+#define _CHHEAP_H_
 
 #if CH_USE_HEAP
 
@@ -85,6 +85,6 @@ extern "C" {
 
 #endif /* CH_USE_HEAP */
 
-#endif /* _HEAP_H_ */
+#endif /* _CHHEAP_H_ */
 
 /** @} */

@@ -22,15 +22,15 @@
  */
 
 /**
- * @file    condvars.h
+ * @file    chcond.h
  * @brief   Condition Variables macros and structures.
  *
  * @addtogroup condvars
  * @{
  */
 
-#ifndef _CONDVARS_H_
-#define _CONDVARS_H_
+#ifndef _CHCOND_H_
+#define _CHCOND_H_
 
 #if CH_USE_CONDVARS
 
@@ -86,6 +86,6 @@ extern "C" {
 
 #endif /* CH_USE_CONDVARS */
 
-#endif /* _CONDVARS_H_ */
+#endif /* _CHCOND_H_ */
 
 /** @} */

@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    mailboxes.h
+ * @file    chmboxes.h
  * @brief   Mailboxes macros and structures.
  *
  * @addtogroup mailboxes
  * @{
  */
 
-#ifndef _MAILBOXES_H_
-#define _MAILBOXES_H_
+#ifndef _CHMBOXES_H_
+#define _CHMBOXES_H_
 
 #if CH_USE_MAILBOXES
 
@@ -138,6 +138,6 @@ extern "C" {
 
 #endif /* CH_USE_MAILBOXES */
 
-#endif /* _MAILBOXES_H_ */
+#endif /* _CHMBOXES_H_ */
 
 /** @} */

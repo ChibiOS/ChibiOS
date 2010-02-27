@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    queues.h I/O
+ * @file    chqueues.h I/O
  * @brief   Queues macros and structures.
  *
  * @addtogroup io_queues
  * @{
  */
 
-#ifndef _QUEUES_H_
-#define _QUEUES_H_
+#ifndef _CHQUEUES_H_
+#define _CHQUEUES_H_
 
 #if CH_USE_QUEUES
 
@@ -237,6 +237,6 @@ extern "C" {
 #endif
 #endif /* CH_USE_QUEUES */
 
-#endif /* _QUEUES_H_ */
+#endif /* _CHQUEUES_H_ */
 
 /** @} */

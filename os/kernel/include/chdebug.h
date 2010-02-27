@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    debug.h
+ * @file    chdebug.h
  * @brief   Debug macros and structures.
  *
  * @addtogroup debug
  * @{
  */
 
-#ifndef _DEBUG_H_
-#define _DEBUG_H_
+#ifndef _CHDEBUG_H_
+#define _CHDEBUG_H_
 
 /**
  * @brief Trace buffer entries.
@@ -158,6 +158,6 @@ extern "C" {
 #endif
 #endif /* !defined(__DOXYGEN__) */
 
-#endif /* _DEBUG_H_ */
+#endif /* _CHDEBUG_H_ */
 
 /** @} */

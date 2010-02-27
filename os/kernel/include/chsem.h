@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    semaphores.h
+ * @file    chsem.h
  * @brief   Semaphores macros and structures.
  *
  * @addtogroup semaphores
  * @{
  */
 
-#ifndef _SEMAPHORES_H_
-#define _SEMAPHORES_H_
+#ifndef _CHSEM_H_
+#define _CHSEM_H_
 
 #if CH_USE_SEMAPHORES
 
@@ -99,6 +99,6 @@ extern "C" {
 
 #endif /* CH_USE_SEMAPHORES */
 
-#endif /* _SEMAPHORES_H_ */
+#endif /* _CHSEM_H_ */
 
 /** @} */

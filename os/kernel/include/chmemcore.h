@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    memcore.h
+ * @file    chmemcore.h
  * @brief   Core memory manager macros and structures.
  *
  * @addtogroup memcore
  * @{
  */
 
-#ifndef _MEMCORE_H_
-#define _MEMCORE_H_
+#ifndef _CHMEMCORE_H_
+#define _CHMEMCORE_H_
 
 /**
  * @brief   Memory get function.
@@ -66,6 +66,6 @@ extern "C" {
 
 #endif /* CH_USE_MEMCORE */
 
-#endif /* _MEMCORE_H_ */
+#endif /* _CHMEMCORE_H_ */
 
 /** @} */

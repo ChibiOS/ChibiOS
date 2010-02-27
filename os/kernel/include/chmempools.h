@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    mempools.h
+ * @file    chmempools.h
  * @brief   Memory Pools macros and structures.
  *
  * @addtogroup pools
  * @{
  */
 
-#ifndef _MEMPOOLS_H_
-#define _MEMPOOLS_H_
+#ifndef _CHMEMPOOLS_H_
+#define _CHMEMPOOLS_H_
 
 #if CH_USE_MEMPOOLS
 
@@ -88,6 +88,6 @@ extern "C" {
 
 #endif /* CH_USE_MEMPOOLS */
 
-#endif /* _MEMPOOLS_H_ */
+#endif /* _CHMEMPOOLS_H_ */
 
 /** @} */

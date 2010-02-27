@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    channels.h
+ * @file    chioch.h
  * @brief   I/O channels.
  * @details This header defines abstract interfaces useful to access generic
  *          I/O resources in a standardized way.
@@ -27,8 +27,8 @@
  * @{
  */
 
-#ifndef _CHANNELS_H_
-#define _CHANNELS_H_
+#ifndef _CHIOCH_H_
+#define _CHIOCH_H_
 
 /**
  * @brief   @p BaseChannel specific methods.
@@ -264,6 +264,6 @@ typedef struct {
 
 #endif /* CH_USE_EVENTS */
 
-#endif /* _CHANNELS_H_ */
+#endif /* _CHIOCH_H_ */
 
 /** @} */

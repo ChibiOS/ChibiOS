@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    mutexes.h
+ * @file    chmtx.h
  * @brief   Mutexes macros and structures.
  *
  * @addtogroup mutexes
  * @{
  */
 
-#ifndef _MUTEXES_H_
-#define _MUTEXES_H_
+#ifndef _CHMTX_H_
+#define _CHMTX_H_
 
 #if CH_USE_MUTEXES
 
@@ -83,6 +83,6 @@ extern "C" {
 
 #endif /* CH_USE_MUTEXES */
 
-#endif /* _MUTEXES_H_ */
+#endif /* _CHMTX_H_ */
 
 /** @} */

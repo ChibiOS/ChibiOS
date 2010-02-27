@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    events.h
+ * @file    chevents.h
  * @brief   Events macros and structures.
  *
  * @addtogroup events
  * @{
  */
 
-#ifndef _EVENTS_H_
-#define _EVENTS_H_
+#ifndef _CHEVENTS_H_
+#define _CHEVENTS_H_
 
 #if CH_USE_EVENTS
 
@@ -152,6 +152,6 @@ extern "C" {
 
 #endif /* CH_USE_EVENTS */
 
-#endif /* _EVENTS_H_ */
+#endif /* _CHEVENTS_H_ */
 
 /** @} */
