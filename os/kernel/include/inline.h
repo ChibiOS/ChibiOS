@@ -27,6 +27,8 @@
  *          @p CH_OPTIMIZE_SPEED is enabled.
  */
 
+/* If the performance code path has been chosen then all the following
+   functions are inlined into the various kernel modules.*/
 #if CH_OPTIMIZE_SPEED
 static INLINE void prio_insert(Thread *tp, ThreadsQueue *tqp) {
 
