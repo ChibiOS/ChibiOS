@@ -17,15 +17,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _INLINE_H_
-#define _INLINE_H_
-
 /**
- * @file    inline.h
+ * @file    chinline.h
  * @brief   Kernel inlined functions.
  * @details In this file there are a set of inlined functions if the
  *          @p CH_OPTIMIZE_SPEED is enabled.
  */
+
+#ifndef _CHINLINE_H_
+#define _CHINLINE_H_
 
 /* If the performance code path has been chosen then all the following
    functions are inlined into the various kernel modules.*/
@@ -81,4 +81,4 @@ static INLINE Thread *list_remove(ThreadsList *tlp) {
 }
 #endif /* CH_OPTIMIZE_SPEED */
 
-#endif /* _INLINE_H_ */
+#endif /* _CHINLINE_H_ */
