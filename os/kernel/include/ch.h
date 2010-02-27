@@ -83,7 +83,7 @@
 #include "chmempools.h"
 #include "chthreads.h"
 #include "chregistry.h"
-#include "inline.h"
+#include "chinline.h"
 #include "chqueues.h"
 #include "chstreams.h"
 #include "chioch.h"
