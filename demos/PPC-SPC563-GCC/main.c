@@ -179,6 +179,7 @@ int main(int argc, char **argv) {
       chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
       shelltp = NULL;           /* Triggers spawning of a new shell.        */
     }
+#if 0
     if (SIU.GPDI[GPIO_BUTTON1].B.PDI) {
       volatile msg_t result;
 #if 0
@@ -190,6 +191,7 @@ int main(int argc, char **argv) {
       result = TestThread(&SD1);
 #endif
     }
+#endif
     chThdSleepMilliseconds(1000);
   }
   return 0;

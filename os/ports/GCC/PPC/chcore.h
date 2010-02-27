@@ -70,7 +70,7 @@
 #elif PPC_VARIANT == PPC_VARIANT_e200z4
 #define CH_CORE_VARIANT_NAME    "e200z4"
 #else
-#error "unknown PowerPC variant specified"
+#error "unknown or unsupported PowerPC variant specified"
 #endif
 
 /**
