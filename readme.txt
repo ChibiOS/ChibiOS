@@ -78,6 +78,9 @@
   been renamed to Posix simulator in order to include this change in a
   single project.
 - NEW: New articles, sections and various improvements to the documentation.
+- CHANGE: Renamed the kernel header files to match the names of their source
+  files. The change was also required in order to make the names less
+  "generic" and less likely to match names in external libraries.
 
 *** 1.5.1 ***
 - FIX: Fixed insufficient stack space for the idle thread in the ARMCM3 port
