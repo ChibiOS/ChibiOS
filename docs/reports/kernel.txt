@@ -1,3 +1,27 @@
+Platform : PowerPC
+OS Setup : Full kernel
+Compiler : powerpc-eabi-gcc (Sourcery G++ Lite 4.4-79) 4.4.1
+Options  : -O2
+Kernel Size = 11052
+
+Platform : PowerPC
+OS Setup : Minimal kernel
+Compiler : powerpc-eabi-gcc (Sourcery G++ Lite 4.4-79) 4.4.1
+Options  : -O2
+Kernel Size = 2532
+
+Platform : PowerPC
+OS Setup : Full kernel
+Compiler : powerpc-eabi-gcc (Sourcery G++ Lite 4.4-79) 4.4.1
+Options  : -Os
+Kernel Size = 9704
+
+Platform : PowerPC
+OS Setup : Minimal kernel
+Compiler : powerpc-eabi-gcc (Sourcery G++ Lite 4.4-79) 4.4.1
+Options  : -Os
+Kernel Size = 2508
+
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
 Compiler : arm-elf-gcc (GCC) 4.4.2
