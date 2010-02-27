@@ -42,10 +42,12 @@ static LARGE_INTEGER slice;
  * @brief PAL setup.
  * @details Digital I/O ports static configuration as defined in @p board.h.
  */
+#if CH_HAL_USE_PAL || defined(__DOXYGEN__)
 const VIOConfig pal_default_config = {
  {0, 0, 0},
  {0, 0, 0}
 };
+#endif
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
