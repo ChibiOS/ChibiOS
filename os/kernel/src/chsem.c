@@ -172,8 +172,8 @@ msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
       sp->s_cnt++;
       return RDY_TIMEOUT;
     }
-    sem_insert(currp, &sp->s_queue);
     currp->p_u.wtobjp = sp;
+    sem_insert(currp, &sp->s_queue);
     return chSchGoSleepTimeoutS(THD_STATE_WTSEM, time);
   }
   return RDY_OK;
