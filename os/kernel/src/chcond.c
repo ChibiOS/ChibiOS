@@ -218,8 +218,8 @@ msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time) {
   mp = chMtxUnlockS();
   ctp->p_u.wtobjp = cp;
   prio_insert(ctp, &cp->c_queue);
-  chSchGoSleepTimeoutS(THD_STATE_WTCOND, time);
-  msg = ctp->p_u.rdymsg;
+  msg = chSchGoSleepTimeoutS(THD_STATE_WTCOND, time);
+//  msg = ctp->p_u.rdymsg;
   chMtxLockS(mp);
   return msg;
 }
