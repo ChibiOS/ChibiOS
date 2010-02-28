@@ -233,10 +233,11 @@ msg_t chSemSignalWait(Semaphore *sps, Semaphore *spw) {
   if (sps->s_cnt++ < 0)
     chSchReadyI(fifo_remove(&sps->s_queue))->p_u.rdymsg = RDY_OK;
   if (--spw->s_cnt < 0) {
-    sem_insert(currp, &spw->s_queue);
-    currp->p_u.wtobjp = spw;
+    Thread *ctp = currp;
+    sem_insert(ctp, &spw->s_queue);
+    ctp->p_u.wtobjp = spw;
     chSchGoSleepS(THD_STATE_WTSEM);
-    msg = currp->p_u.rdymsg;
+    msg = ctp->p_u.rdymsg;
   }
   else {
     chSchRescheduleS();
