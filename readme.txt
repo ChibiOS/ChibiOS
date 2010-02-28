@@ -55,6 +55,7 @@
 
 *** 1.5.3 ***
 - NEW: Enhanced the kernel size report to cover more cases.
+- OPT: Minor optimizations in the "compact" code path.
 
 *** 1.5.2 ***
 - FIX: Fixed wrong UART deinitialization sequence in LPC214x serial driver

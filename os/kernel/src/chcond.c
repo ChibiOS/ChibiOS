@@ -149,8 +149,8 @@ msg_t chCondWaitS(CondVar *cp) {
               "not owning a mutex");
 
   mp = chMtxUnlockS();
-  prio_insert(ctp, &cp->c_queue);
   ctp->p_u.wtobjp = cp;
+  prio_insert(ctp, &cp->c_queue);
   chSchGoSleepS(THD_STATE_WTCOND);
   msg = ctp->p_u.rdymsg;
   chMtxLockS(mp);
@@ -216,8 +216,8 @@ msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time) {
               "not owning a mutex");
 
   mp = chMtxUnlockS();
-  prio_insert(ctp, &cp->c_queue);
   ctp->p_u.wtobjp = cp;
+  prio_insert(ctp, &cp->c_queue);
   chSchGoSleepTimeoutS(THD_STATE_WTCOND, time);
   msg = ctp->p_u.rdymsg;
   chMtxLockS(mp);
