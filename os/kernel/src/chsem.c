@@ -118,8 +118,8 @@ msg_t chSemWaitS(Semaphore *sp) {
   chDbgCheck(sp != NULL, "chSemWaitS");
 
   if (--sp->s_cnt < 0) {
-    sem_insert(currp, &sp->s_queue);
     currp->p_u.wtobjp = sp;
+    sem_insert(currp, &sp->s_queue);
     chSchGoSleepS(THD_STATE_WTSEM);
     return currp->p_u.rdymsg;
   }
