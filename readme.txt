@@ -54,6 +54,8 @@
 *****************************************************************************
 
 *** 1.5.3 ***
+- FIX: Fixed missing reschedulation in chEvtSignal() (bug 2961208)(backported
+  in 1.4.2).
 - NEW: Enhanced the kernel size report to cover more cases.
 - OPT: Minor optimizations in the "compact" code path.
 
