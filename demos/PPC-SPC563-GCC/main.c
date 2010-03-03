@@ -72,8 +72,9 @@ static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
   shellPrintLine(chp, "    addr    stack prio refs     state time");
   tp = chRegFirstThread();
   do {
-    siprintf(buf, "%8p %8p %4u %4i %9s %u",
-             tp, tp->p_ctx.sp, (unsigned int)tp->p_prio, tp->p_refs - 1,
+    siprintf(buf, "%8lx %8lx %4u %4i %9s %u",
+             (uint32_t)tp, (uint32_t)tp->p_ctx.sp,
+             (unsigned int)tp->p_prio, tp->p_refs - 1,
              states[tp->p_state], (unsigned int)tp->p_time);
     shellPrintLine(chp, buf);
     tp = chRegNextThread(tp);
