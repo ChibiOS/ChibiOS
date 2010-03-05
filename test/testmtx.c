@@ -68,7 +68,9 @@
  */
 static MUTEX_DECL(m1);
 static MUTEX_DECL(m2);
+#if CH_USE_CONDVARS
 static CONDVAR_DECL(c1);
+#endif
 
 /**
  * @page test_mtx_001 Priority enqueuing test
