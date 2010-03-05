@@ -1,12 +1,12 @@
 ***************************************************************************
-Options:  Optimized for space (3)
+Options:  Optimized for speed (3)
 Settings: CPUCLK=16MHz (HSI)
 Compiler: Raisonance
 ***************************************************************************
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.5.1unstable
+*** Kernel:       1.5.3unstable
 *** Architecture: STM8
 *** Test Board:   Raisonance REva V3 + STM8S208RB
 
@@ -51,15 +51,15 @@ Compiler: Raisonance
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 32096 msgs/S, 64192 ctxswc/S
+--- Score : 31903 msgs/S, 63806 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 25014 msgs/S, 50028 ctxswc/S
+--- Score : 24897 msgs/S, 49794 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 25014 msgs/S, 50028 ctxswc/S
+--- Score : 24897 msgs/S, 49794 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
@@ -75,7 +75,7 @@ Compiler: Raisonance
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedulation, 5 threads)
---- Score : 7239 reschedulations/S, 43434 ctxswc/S
+--- Score : 7322 reschedulations/S, 43932 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
@@ -87,11 +87,11 @@ Compiler: Raisonance
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 65508 timers/S
+--- Score : 64842 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 200424 wait+signal/S
+--- Score : 200420 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, RAM footprint)

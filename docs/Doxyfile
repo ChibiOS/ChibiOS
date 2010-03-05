@@ -579,6 +579,7 @@ INPUT                  = ../docs/src \
                          ../os/kernel/src \
                          ../os/kernel/templates \
                          ../os/ports \
+                         ../os/ports/GCC/AVR \
                          ../os/ports/GCC/ARM7 \
                          ../os/ports/GCC/ARM7/crt0.s \
                          ../os/ports/GCC/ARM7/chcoreasm.s \
@@ -587,7 +588,7 @@ INPUT                  = ../docs/src \
                          ../os/ports/GCC/PPC \
                          ../os/ports/GCC/PPC/crt0.s \
                          ../os/ports/GCC/MSP430 \
-                         ../os/ports/GCC/AVR \
+                         ../os/ports/RC/STM8 \
                          ../os/hal \
                          ../os/hal/include \
                          ../os/hal/src \
@@ -597,6 +598,7 @@ INPUT                  = ../docs/src \
                          ../os/hal/platforms/LPC214x \
                          ../os/hal/platforms/MSP430 \
                          ../os/hal/platforms/STM32 \
+                         ../os/hal/platforms/STM8 \
                          ../os/various \
                          ../test \
                          ../ext/ext.dox

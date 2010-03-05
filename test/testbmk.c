@@ -110,7 +110,6 @@ static void bmk1_execute(void) {
 
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread1, NULL);
   n = msg_loop_test(threads[0]);
-  chThdTerminate(threads[0]);
   test_wait_threads();
   test_print("--- Score : ");
   test_printn(n);
@@ -145,7 +144,6 @@ static void bmk2_execute(void) {
 
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread1, NULL);
   n = msg_loop_test(threads[0]);
-  chThdTerminate(threads[0]);
   test_wait_threads();
   test_print("--- Score : ");
   test_printn(n);
@@ -190,7 +188,6 @@ static void bmk3_execute(void) {
   threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-4, thread2, NULL);
   threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-5, thread2, NULL);
   n = msg_loop_test(threads[0]);
-  chThdTerminate(threads[0]);
   test_wait_threads();
   test_print("--- Score : ");
   test_printn(n);

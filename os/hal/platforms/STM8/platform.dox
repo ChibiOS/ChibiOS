@@ -1,0 +1,68 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006-2007 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @defgroup STM8_DRIVERS STM8 Drivers
+ * @brief Device drivers included in the STM8 support.
+ *
+ * @ingroup STM8
+ */
+
+/**
+ * @defgroup STM8_HAL STM8 HAL Support
+ * @brief HAL support.
+ *
+ * @ingroup STM8_DRIVERS
+ */
+
+/**
+ * @defgroup STM8_PAL STM8 I/O Ports Support
+ * @brief I/O Ports peripherals support.
+ * @details This module supports the STM8 GPIO controller. The controller
+ * supports the following features (see @ref PAL):
+ * - 8 bits wide ports.
+ * - Atomic set/reset/toggle functions because special STM8 instruction set.
+ * - Output latched regardless of the pad setting.
+ * - Direct read of input pads regardless of the pad setting.
+ * .
+ * <h2>Supported Setup Modes</h2>
+ * - @p PAL_MODE_RESET.
+ * - @p PAL_MODE_UNCONNECTED.
+ * - @p PAL_MODE_INPUT.
+ * - @p PAL_MODE_INPUT_PULLUP.
+ * - @p PAL_MODE_OUTPUT_PUSHPULL.
+ * - @p PAL_MODE_OUTPUT_OPENDRAIN.
+ * .
+ * Any attempt to setup an invalid mode is ignored.
+ *
+ * <h2>Suboptimal Behavior</h2>
+ * Some STM8 I/O ports features are less than optimal:
+ * - Bus/group writing is not atomic.
+ * - Pad/group mode setup is not atomic.
+ * .
+ * @ingroup STM8_DRIVERS
+ */
+
+/**
+ * @defgroup STM8_SERIAL STM8 UART Support
+ * @brief USART support.
+ * @details The serial driver supports the STM8 USARTs in asynchronous mode.
+ *
+ * @ingroup STM8_DRIVERS
+ */

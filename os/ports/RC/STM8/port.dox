@@ -1,0 +1,80 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006-2007 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @defgroup STM8 STM8
+ * @details STM8 port details. This section how the ChibiOS/RT features are
+ * implemented on this architecture.
+ *
+ * @section STM8_STATES Mapping of the System States in the STM8 port
+ * The ChibiOS/RT logical @ref system_states are mapped as follow in the STM8
+ * port:
+ * - <b>Init</b>. This state is represented by the startup code and the
+ *   initialization code before @p chSysInit() is executed. It has not a
+ *   special hardware state associated.
+ * - <b>Normal</b>. This is the state the system has after executing
+ *   @p chSysInit(). Interrupts are enabled.
+ * - <b>Suspended</b>. Interrupts are disabled.
+ * - <b>Disabled</b>. Interrupts are enabled. This state is equivalent to the
+ *   Suspended state because there are no fast interrupts in this architecture.
+ * - <b>Sleep</b>. Implemented with "wait" instruction insertion in the idle
+ *   loop.
+ * - <b>S-Locked</b>. Interrupts are disabled.
+ * - <b>I-Locked</b>. This state is equivalent to the SRI state, the
+ *   @p chSysLockI() and @p chSysUnlockI() APIs do nothing (still use them in
+ *   order to formally change state because this may change).
+ * - <b>Serving Regular Interrupt</b>. Normal interrupt service code.
+ * - <b>Serving Fast Interrupt</b>. Not present in this architecture.
+ * - <b>Serving Non-Maskable Interrupt</b>. The STM8 ha non
+ *   maskable interrupt sources that can be associated to this state.
+ * - <b>Halted</b>. Implemented as an infinite loop with interrupts disabled.
+ * .
+ * @section STM8_NOTES The STM8 port notes
+ * - The STM8 does not have a dedicated interrupt stack, make sure to reserve
+ *     enough stack space for interrupts in each thread stack. This can be done
+ *     by modifying the @p INT_REQUIRED_STACK macro into
+ *     <b>./os/ports/RC/STM8/chcore.h</b>.
+ * .
+ * @ingroup ports
+ */
+
+/**
+ * @defgroup STM8_CONF Configuration Options
+ * @brief STM8 Configuration Options.
+ * @details The STM8 port allows some architecture-specific configurations
+ * settings that can be specified externally, as example on the compiler
+ * command line:
+ * - @p INT_REQUIRED_STACK, this value represent the amount of stack space
+ *   used by the interrupt handlers.<br>
+ *   The default for this value is @p 32, this space is allocated for each
+ *   thread so be careful in order to not waste precious RAM space.<br>
+ *   The default value is set into <b>./os/ports/RC/STM8/chcore.h</b>.
+ * .
+ * @ingroup STM8
+ */
+
+/**
+ * @defgroup MSP430_CORE Core Port Implementation
+ * @brief MSP430 specific port code, structures and macros.
+ *
+ * @ingroup MSP430
+ * @file MSP430/chtypes.h Port types.
+ * @file MSP430/chcore.h Port related structures and macros.
+ * @file MSP430/chcore.c Port related code.
+ */
