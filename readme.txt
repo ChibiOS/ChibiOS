@@ -54,6 +54,8 @@
 *****************************************************************************
 
 *** 1.5.3 ***
+- FIX: Removed C99-style variables declarations (bug 2964418)(backported
+  in 1.4.2).
 - FIX: Fixed missing reschedulation in chEvtSignal() (bug 2961208)(backported
   in 1.4.2).
 - NEW: Enhanced the kernel size report to cover more cases.
