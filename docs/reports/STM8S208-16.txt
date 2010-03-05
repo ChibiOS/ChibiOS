@@ -44,6 +44,18 @@ Compiler: Raisonance
 --- Test Case 6.3 (Events, timeouts)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
+--- Test Case 7.1 (Heap, allocation and fragmentation test)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 8.1 (Memory Pools, queue/dequeue)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 9.1 (Dynamic APIs, threads creation from heap)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 9.2 (Dynamic APIs, threads creation from memory pool)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
 --- Test Case 10.1 (Queues, input queues)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
@@ -51,52 +63,52 @@ Compiler: Raisonance
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 31903 msgs/S, 63806 ctxswc/S
+--- Score : 31840 msgs/S, 63680 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 24897 msgs/S, 49794 ctxswc/S
+--- Score : 24743 msgs/S, 49486 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 24897 msgs/S, 49794 ctxswc/S
+--- Score : 24743 msgs/S, 49486 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 111488 ctxswc/S
+--- Score : 112568 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 19540 threads/S
+--- Score : 18457 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 28852 threads/S
+--- Score : 28904 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedulation, 5 threads)
---- Score : 7322 reschedulations/S, 43932 ctxswc/S
+--- Score : 7336 reschedulations/S, 44016 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 72160 reschedulations/S, 72160 ctxswc/S
+--- Score : 71920 reschedulations/S, 71920 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 69160 bytes/S
+--- Score : 69028 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 64842 timers/S
+--- Score : 64712 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 200420 wait+signal/S
+--- Score : 201052 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, RAM footprint)
---- System: 173 bytes
---- Thread: 26 bytes
+--- System: 179 bytes
+--- Thread: 29 bytes
 --- Timer : 10 bytes
 --- Semaph: 6 bytes
 --- EventS: 2 bytes

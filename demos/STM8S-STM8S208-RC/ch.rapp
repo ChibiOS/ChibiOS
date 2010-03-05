@@ -65,9 +65,9 @@
 		</NodeC>
 																																																																								
 	</Group>
-	<Group Header="test" Marker="-1" OutputFile="" sate="96" >
+	<Group Header="test" Marker="-1" OutputFile="" sate="0" >
 		<NodeC Path="..\..\test\test.c" Header="test.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\test.obj" sate="0" />
-		<NodeC Path="..\..\test\testbmk.c" Header="testbmk.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testbmk.obj" sate="2" />
+		<NodeC Path="..\..\test\testbmk.c" Header="testbmk.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testbmk.obj" sate="0" />
 		<NodeC Path="..\..\test\testdyn.c" Header="testdyn.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testdyn.obj" sate="0" />
 		<NodeC Path="..\..\test\testevt.c" Header="testevt.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testevt.obj" sate="0" />
 		<NodeC Path="..\..\test\testheap.c" Header="testheap.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testheap.obj" sate="0" />
@@ -104,7 +104,7 @@
 		<NodeC Path="..\..\boards\RAISONANCE_REVA_STM8S\board.c" Header="board.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\board.obj" sate="0" />
 																																																									
 	</Group>
-	<NodeC Path=".\main.c" Header="main.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\main.obj" sate="0" />
+	<NodeC Path=".\main.c" Header="main.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\main.obj" sate="98" />
 	<Options>
 		<Config Header="Standard" >
 			<Set Header="ApplicationBuild" >
