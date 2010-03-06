@@ -27,19 +27,22 @@
   |  |  |  +--MSP430/   - Drivers for MSP430 platform.
   |  |  |  +--SPC56x/   - Drivers for SPC56x/MPC563xx platforms.
   |  |  |  +--STM32/    - Drivers for STM32 platform.
-  |  |  |  +--Linux/    - Drivers for x86 Linux simulator platform.
-  |  |  |  +--LPC214x/  - Drivers for x86 Win32 simulator platform.
+  |  |  |  +--STM8/     - Drivers for STM8 platform.
+  |  |  |  +--Posix/    - Drivers for x86 Linux/OSX simulator platform.
+  |  |  |  +--Win32/    - Drivers for x86 Win32 simulator platform.
   |  |  +--templates/   - Driver template files.
   |  |     +--meta/     - Driver meta templates.
   |  +--ports/          - Port files for the various architectures.
   |  |  +--GCC/         - Ports for the GCC compiler.
-  |  |     +--ARM/      - Port files for generic ARM architecture.
-  |  |     +--ARM7/     - Port files for ARM7 architecture.
-  |  |     +--ARMCM3/   - Port files for ARMCM3 architecture.
-  |  |     +--PPC/      - Port files for PowerPC architecture.
-  |  |     +--AVR/      - Port files for AVR architecture.
-  |  |     +--MSP430/   - Port files for MSP430 architecture.
-  |  |     +--SIMIA32/  - Port files for SIMIA32 simulator architecture.
+  |  |  |  +--ARM/      - Port files for generic ARM architecture.
+  |  |  |  +--ARM7/     - Port files for ARM7 architecture.
+  |  |  |  +--ARMCM3/   - Port files for ARMCM3 architecture.
+  |  |  |  +--PPC/      - Port files for PowerPC architecture.
+  |  |  |  +--AVR/      - Port files for AVR architecture.
+  |  |  |  +--MSP430/   - Port files for MSP430 architecture.
+  |  |  |  +--SIMIA32/  - Port files for SIMIA32 simulator architecture.
+  |  |  +--RC/          - Ports for the Raisonance compiler.
+  |  |     +--STM8/     - Port files for STM8 architecture.
   |  +--kernel/         - Kernel portable files.
   |  |  +--include/     - Kernel headers.
   |  |  +--src/         - Kernel source.
