@@ -137,7 +137,7 @@
  *   The default for this value is @p 0x10 which should be a safe value, you
  *   can trim this down by defining the macro externally. This would save
  *   some valuable RAM space for each thread present in the system.<br>
- *   The default value is set into <b>./ports/ARM7/chcore.h</b>.
+ *   The default value is set into <b>./os/ports/GCC/ARM7/chcore.h</b>.
  * .
  * @ingroup ARM7
  */
