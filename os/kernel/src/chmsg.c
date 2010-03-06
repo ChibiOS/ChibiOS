@@ -77,8 +77,11 @@ msg_t chMsgWait(void) {
   chSysLock();
   if (!chMsgIsPendingI(currp))
     chSchGoSleepS(THD_STATE_WTMSG);
-/*  msg = chMsgGetI(currp);*/
+#if defined(CH_ARCHITECTURE_STM8)
   msg = chMsgGetI((volatile Thread *)currp); /* Temporary hack.*/
+#else
+  msg = chMsgGetI(currp);
+#endif
   chSysUnlock();
   return msg;
 }
