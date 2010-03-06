@@ -18,14 +18,10 @@
 */
 
 /**
- * @file    templates/chcore.c
- * @brief   Port related template code.
- * @details This file is a template of the system driver functions provided by
- *          a port. Some of the following functions may be implemented as
- *          macros in chcore.h if the implementer decides that there is an
- *          advantage in doing so, as example because performance concerns.
+ * @file    RC/STM8/chcore.c
+ * @brief   STM8 architecture port code.
  *
- * @addtogroup core
+ * @addtogroup STM8_CORE
  * @{
  */
 

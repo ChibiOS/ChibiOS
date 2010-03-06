@@ -18,12 +18,10 @@
 */
 
 /**
- * @file    templates/chcore.h
- * @brief   Port related template macros and structures.
- * @details This file is a template of the system driver macros provided by
- *          a port.
+ * @file    RC/STM8/chcore.h
+ * @brief   STM8 architecture port macros and structures.
  *
- * @addtogroup core
+ * @addtogroup STM8_CORE
  * @{
  */
 
