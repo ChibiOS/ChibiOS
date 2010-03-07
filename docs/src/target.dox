@@ -19,9 +19,7 @@
 
 /**
  * @page target Applicative Range
- * @brief ChibiOS/RT Applicative Range
- * ChibiOS/RT has a well defined Applicative Range: deeply embedded systems
- * that range from low/mid-range 8bits MCUs up to complex 32bits SOCs.
+ * @brief ChibiOS/RT Applicative Range.
  * - @ref applications
  * - @ref min_requirements
  * - @ref desirable_features
