@@ -1,5 +1,5 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006-2007 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -50,6 +50,13 @@
  *     enough stack space for interrupts in each thread stack. This can be done
  *     by modifying the @p INT_REQUIRED_STACK macro into
  *     <b>./os/ports/RC/STM8/chcore.h</b>.
+ * - The kernel currently supports only the small memory model so the
+ *   kernel files should be loaded in the first 64K. Note that this is not
+ *   a problem because upper addresses can be used by the user code, the
+ *   kernel can context switch code running there.
+ * - The configuration option @p CH_OPTIMIZE_SPEED is not currently supported
+ *   because the missing support of the @p inline "C" keyword in the
+ *   compiler.
  * .
  * @ingroup ports
  */

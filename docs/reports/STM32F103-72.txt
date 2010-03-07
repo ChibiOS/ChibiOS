@@ -5,7 +5,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.5.2unstable
+*** Kernel:       1.5.3unstable
 *** GCC Version:  4.4.2
 *** Architecture: ARM
 *** Core Variant: Cortex-M3
@@ -92,7 +92,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 223893 msgs/S, 447786 ctxswc/S
+--- Score : 223892 msgs/S, 447784 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
