@@ -47,6 +47,13 @@
 typedef uint8_t stkalign_t;
 
 /**
+ * @brief   Generic STM8 function pointer.
+ * @note    It is used to allocate the proper size for return addresses in
+ *          context-related structures.
+ */
+typedef void (*stm8func_t)(void);
+
+/**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
  *          preemption-capable interrupt handler.
@@ -75,7 +82,7 @@ struct extctx {
  */
 struct intctx {
   uint8_t       _next;
-  uint16_t      pc;
+  stm8func_t    pc;             /* Function pointer sized return address.   */
 };
 
 /**
@@ -85,10 +92,10 @@ struct intctx {
  */
 struct startctx {
   uint8_t       _next;
-  uint16_t      ts;             /* Trampoline address.                      */
-  uint16_t      arg;            /* Thread argument.                         */
-  uint16_t      pc;             /* Thread function address.                 */
-  uint16_t      ret;            /* chThdExit() address.                     */
+  stm8func_t    ts;             /* Trampoline address.                      */
+  void          *arg;           /* Thread argument.                         */
+  stm8func_t    pc;             /* Thread function address.                 */
+  stm8func_t    ret;            /* chThdExit() address.                     */
 };
 
 /**
@@ -109,10 +116,10 @@ struct context {
   struct startctx *scp;                                                 \
   scp = (struct startctx *)((uint8_t *)workspace + wsize  -             \
                             sizeof(struct startctx));                   \
-  scp->ts   = (uint16_t)_port_thread_start;                             \
-  scp->arg  = (uint16_t)arg;                                            \
-  scp->pc   = (uint16_t)pf;                                             \
-  scp->ret  = (uint16_t)chThdExit;                                      \
+  scp->ts   = _port_thread_start;                                       \
+  scp->arg  = arg;                                                      \
+  scp->pc   = (stm8func_t)pf;                                           \
+  scp->ret  = (stm8func_t)chThdExit;                                    \
   tp->p_ctx.sp = (struct intctx *)scp;                                  \
 }
 

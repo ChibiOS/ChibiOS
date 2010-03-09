@@ -56,6 +56,11 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.5.4 ***
+- NEW: Added support for the STM8 large memory model to the STM8 port.
+- NEW: Added RIDE7 project files to the STM32 demo. The normal makefile is
+  still available of course.
+
 *** 1.5.3 ***
 - FIX: Removed C99-style variables declarations (bug 2964418)(backported
   in 1.4.2).
