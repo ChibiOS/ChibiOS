@@ -97,7 +97,7 @@ static void spi_start_wait(SPIDriver *spip, size_t n,
 
   /* Wait for completion event.*/
   spip->spd_thread = currp;
-  chSchGoSleepS(PRSUSPENDED);
+  chSchGoSleepS(THD_STATE_SUSPENDED);
   spip->spd_thread = NULL;
   chSysUnlock();
 }
