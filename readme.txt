@@ -57,6 +57,7 @@
 *****************************************************************************
 
 *** 1.5.4 ***
+- FIX: Fixed wrong thread state macro in STM32/spi_lld.c (bug 2968142).
 - NEW: Added support for the STM8 large memory model to the STM8 port. Now
   the assembler port code is totally inlined and the chcoreasm.asm file has
   been removed.
