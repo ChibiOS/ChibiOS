@@ -77,11 +77,11 @@
  */
 
 /**
- * @defgroup MSP430_CORE Core Port Implementation
- * @brief MSP430 specific port code, structures and macros.
+ * @defgroup STM8_CORE Core Port Implementation
+ * @brief STM8 specific port code, structures and macros.
  *
- * @ingroup MSP430
- * @file MSP430/chtypes.h Port types.
- * @file MSP430/chcore.h Port related structures and macros.
- * @file MSP430/chcore.c Port related code.
+ * @ingroup STM8
+ * @file STM8/chtypes.h Port types.
+ * @file STM8/chcore.h Port related structures and macros.
+ * @file STM8/chcore.c Port related code.
  */

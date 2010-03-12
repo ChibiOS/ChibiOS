@@ -64,6 +64,7 @@
 - NEW: Added RIDE7 project files to the STM32 demo under a ./ride7
   subdirectory, this should make things easier for RIDE7 users. The normal
   makefile is still available of course.
+- NEW: New article in the documentation. Fixed an orphaned page (STM8 port).
 
 *** 1.5.3 ***
 - FIX: Removed C99-style variables declarations (bug 2964418)(backported

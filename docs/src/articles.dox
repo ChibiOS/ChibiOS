@@ -25,6 +25,7 @@
  * - @subpage article_wakeup
  * - @subpage article_manage_memory
  * - @subpage article_stacks
+ * - @subpage article_roundrobin
  * - @subpage article_lifecycle
  * - @subpage article_mutual_exclusion
  * - @subpage article_atomic
