@@ -52,7 +52,7 @@
 #define CH_CORE_VARIANT_NAME "ARM7TDMI"
 
 /**
- * @brief   32 bit stack and memory alignment enforcement.
+ * @brief   32 bits stack and memory alignment enforcement.
  */
 typedef uint32_t stkalign_t;
 

@@ -33,7 +33,7 @@
  */
 
 /**
- * @brief   Enables the use of the WFI ins.
+ * @brief   Enables the use of the @p WFI instruction.
  */
 #ifndef ENABLE_WFI_IDLE
 #define ENABLE_WFI_IDLE         0

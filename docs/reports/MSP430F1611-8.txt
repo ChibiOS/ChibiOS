@@ -5,9 +5,12 @@ Settings: MCLK=XT2CLK 8MHz
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.3.8unstable
-*** Architecture: MSP430
+*** Kernel:       1.5.4unstable
 *** GCC Version:  3.2.3
+*** Architecture: MSP430
+*** Core Variant: MSP430
+*** Platform:     MSP430x16x
+*** Test Board:   Olimex MSP430-P1611
 
 ----------------------------------------------------------------------------
 --- Test Case 1.1 (Threads, enqueuing test #1)
@@ -89,35 +92,35 @@ Settings: MCLK=XT2CLK 8MHz
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 20963 msgs/S, 41926 ctxswc/S
+--- Score : 21356 msgs/S, 42712 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 17363 msgs/S, 34726 ctxswc/S
+--- Score : 17593 msgs/S, 35186 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 17363 msgs/S, 34726 ctxswc/S
+--- Score : 17593 msgs/S, 35186 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 64288 ctxswc/S
+--- Score : 64024 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 14288 threads/S
+--- Score : 12194 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 18404 threads/S
+--- Score : 16367 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedulation, 5 threads)
---- Score : 5350 reschedulations/S, 32100 ctxswc/S
+--- Score : 5329 reschedulations/S, 31974 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 46372 reschedulations/S, 46372 ctxswc/S
+--- Score : 46100 reschedulations/S, 46100 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
@@ -133,12 +136,12 @@ Settings: MCLK=XT2CLK 8MHz
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 84076 lock+unlock/S
+--- Score : 81504 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)
---- System: 202 bytes
---- Thread: 30 bytes
+--- System: 220 bytes
+--- Thread: 36 bytes
 --- Timer : 10 bytes
 --- Semaph: 6 bytes
 --- EventS: 2 bytes

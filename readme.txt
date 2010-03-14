@@ -65,6 +65,9 @@
   subdirectory, this should make things easier for RIDE7 users. The normal
   makefile is still available of course.
 - NEW: New article in the documentation. Fixed an orphaned page (STM8 port).
+- OPT: Optimization on the interface between scheduler and port layer, now
+  the kernel is even smaller and the context switch performance improved
+  quite a bit on all the supported architectures.
 
 *** 1.5.3 ***
 - FIX: Removed C99-style variables declarations (bug 2964418)(backported

@@ -18,8 +18,9 @@
 */
 
 /**
- * @file MSP430/chcore.c
- * @brief MSP430 architecture port code.
+ * @file    MSP430/chcore.c
+ * @brief   MSP430 architecture port code.
+ *
  * @addtogroup MSP430_CORE
  * @{
  */
@@ -27,16 +28,21 @@
 #include "ch.h"
 
 /**
- * Performs a context switch between two threads.
- * @param otp the thread to be switched out
- * @param ntp the thread to be switched in
- * @note The function is declared as a weak symbol, it is possible to redefine
- *       it in your application code.
+ * @brief   Performs a context switch between two threads.
+ * @details This is the most critical code in any port, this function
+ *          is responsible for the context switch between 2 threads.
+ * @note    The implementation of this code affects <b>directly</b> the context
+ *          switch performance so optimize here as much as you can.
+ * @note    The function is declared as a weak symbol, it is possible to
+ *          redefine it in your application code.
+ *
+ * @param[in] ntp       the thread to be switched in
+ * @param[in] otp       the thread to be switched out
  */
-/** @cond never */
+#if !defined(__DOXYGEN__)
 __attribute__((naked, weak))
-/** @endcond */
-void port_switch(Thread *otp, Thread *ntp) {
+#endif
+void port_switch(Thread *ntp, Thread *otp) {
   register struct intctx *sp asm("r1");
 
   asm volatile ("push    r11                                    \n\t" \
@@ -61,13 +67,17 @@ void port_switch(Thread *otp, Thread *ntp) {
 }
 
 /**
- * Disables the interrupts and halts the system.
- * @note The function is declared as a weak symbol, it is possible to redefine
- *       it in your application code.
+ * @brief   Halts the system.
+ * @details This function is invoked by the operating system when an
+ *          unrecoverable error is detected (as example because a programming
+ *          error in the application code that triggers an assertion while in
+ *          debug mode).
+ * @note    The function is declared as a weak symbol, it is possible to
+ *          redefine it in your application code.
  */
-/** @cond never */
+#if !defined(__DOXYGEN__)
 __attribute__((weak))
-/** @endcond */
+#endif
 void port_halt(void) {
 
   port_disable();
@@ -76,10 +86,11 @@ void port_halt(void) {
 }
 
 /**
- * Start a thread by invoking its work function.
- * If the work function returns @p chThdExit() is automatically invoked.
+ * @brief   Start a thread by invoking its work function.
+ * @details If the work function returns @p chThdExit() is automatically
+ *          invoked.
  */
-void threadstart(void) {
+void _port_thread_start(void) {
 
   asm volatile ("eint                                           \n\t" \
                 "mov     r11, r15                               \n\t" \

@@ -90,7 +90,7 @@ struct context {
  *          by @p INT_REQUIRED_STACK.
  */
 #ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE 0
+#define IDLE_THREAD_STACK_SIZE      0
 #endif
 
 /**
@@ -102,7 +102,7 @@ struct context {
  *          @p extctx is known to be zero.
  */
 #ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK 0
+#define INT_REQUIRED_STACK          0
 #endif
 
 /**
