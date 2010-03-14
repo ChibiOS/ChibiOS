@@ -53,6 +53,7 @@ typedef uint8_t stkalign_t;
  */
 typedef void (*stm8func_t)(void);
 
+#if !defined(__DOXYGEN__)
 /**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
@@ -72,7 +73,9 @@ struct extctx {
   uint8_t       pch;
   uint8_t       pcl;
 };
+#endif
 
+#if !defined(__DOXYGEN__)
 /**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
@@ -84,20 +87,9 @@ struct intctx {
   uint8_t       _next;
   stm8func_t    pc;             /* Function pointer sized return address.   */
 };
+#endif
 
-/**
- * @brief   Start context.
- * @details This context is the stack organization for the trampoline code
- *          @p _port_thread_start().
- */
-struct startctx {
-  uint8_t       _next;
-  stm8func_t    ts;             /* Trampoline address.                      */
-  void          *arg;           /* Thread argument.                         */
-  stm8func_t    pc;             /* Thread function address.                 */
-  stm8func_t    ret;            /* chThdExit() address.                     */
-};
-
+#if !defined(__DOXYGEN__)
 /**
  * @brief   Platform dependent part of the @p Thread structure.
  * @details This structure usually contains just the saved stack pointer
@@ -106,6 +98,20 @@ struct startctx {
 struct context {
   struct intctx *sp;
 };
+#endif
+
+/**
+ * @brief   Start context.
+ * @details This context is the stack organization for the trampoline code
+ *          @p _port_thread_start().
+ */
+struct stm8_startctx {
+  uint8_t       _next;
+  stm8func_t    ts;             /* Trampoline address.                      */
+  void          *arg;           /* Thread argument.                         */
+  stm8func_t    pc;             /* Thread function address.                 */
+  stm8func_t    ret;            /* chThdExit() address.                     */
+};
 
 /**
  * @brief   Platform dependent part of the @p chThdInit() API.
@@ -113,9 +119,9 @@ struct context {
  *          by an @p intctx structure.
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
-  struct startctx *scp;                                                 \
-  scp = (struct startctx *)((uint8_t *)workspace + wsize  -             \
-                            sizeof(struct startctx));                   \
+  struct stm8_startctx *scp;                                            \
+  scp = (struct stm8_startctx *)((uint8_t *)workspace + wsize  -        \
+                            sizeof(struct stm8_startctx));              \
   scp->ts   = _port_thread_start;                                       \
   scp->arg  = arg;                                                      \
   scp->pc   = (stm8func_t)pf;                                           \
