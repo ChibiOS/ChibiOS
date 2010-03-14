@@ -45,10 +45,10 @@ void trace_init(void) {
 /**
  * @brief   Inserts in the circular debug trace buffer a context switch record.
  *
- * @param[in] otp       the thread being switched out
  * @param[in] ntp       the thread to be switched in
+ * @param[in] otp       the thread being switched out
  */
-void chDbgTrace(Thread *otp, Thread *ntp) {
+void chDbgTrace(Thread *ntp, Thread *otp) {
 
   trace_buffer.tb_ptr->cse_wtobjp = otp->p_u.wtobjp;
   trace_buffer.tb_ptr->cse_time = chTimeNow();

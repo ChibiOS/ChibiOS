@@ -40,10 +40,10 @@
 /**
  * @brief   Performs a context switch.
  *
- * @param[in] otp       the thread to be switched out
  * @param[in] ntp       the thread to be switched in
+ * @param[in] otp       the thread to be switched out
  */
-#define chSysSwitchI(otp, ntp) port_switch(otp, ntp)
+#define chSysSwitchI(ntp, otp) port_switch(ntp, otp)
 
 /**
  * @brief   Raises the system interrupt priority mask to the maximum level.

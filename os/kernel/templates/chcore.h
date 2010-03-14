@@ -159,7 +159,7 @@ extern "C" {
   void port_enable(void);
   void port_wait_for_interrupt(void);
   void port_halt(void);
-  void port_switch(Thread *otp, Thread *ntp);
+  void port_switch(Thread *ntp, Thread *otp);
 #ifdef __cplusplus
 }
 #endif

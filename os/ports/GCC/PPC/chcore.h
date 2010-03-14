@@ -308,7 +308,7 @@ struct context {
 extern "C" {
 #endif
   void port_halt(void);
-  void port_switch(Thread *otp, Thread *ntp);
+  void port_switch(Thread *ntp, Thread *otp);
   void _port_thread_start(void);
 #ifdef __cplusplus
 }

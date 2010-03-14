@@ -90,8 +90,8 @@ void chSchGoSleepS(tstate_t newstate) {
 #if CH_TIME_QUANTUM > 0
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-  chDbgTrace(otp, currp);
-  chSysSwitchI(otp, currp);
+  chDbgTrace(currp, otp);
+  chSysSwitchI(currp, otp);
 }
 
 /*
@@ -185,8 +185,8 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
     rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
     (currp = ntp)->p_state = THD_STATE_CURRENT;
-    chDbgTrace(otp, ntp);
-    chSysSwitchI(otp, ntp);
+    chDbgTrace(ntp, otp);
+    chSysSwitchI(ntp, otp);
   }
 }
 
@@ -204,8 +204,8 @@ void chSchDoRescheduleI(void) {
 #if CH_TIME_QUANTUM > 0
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-  chDbgTrace(otp, currp);
-  chSysSwitchI(otp, currp);
+  chDbgTrace(currp, otp);
+  chSysSwitchI(currp, otp);
 }
 
 /**
@@ -272,8 +272,8 @@ void chSchDoYieldS(void) {
 #if CH_TIME_QUANTUM > 0
     rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-    chDbgTrace(otp, currp);
-    chSysSwitchI(otp, currp);
+    chDbgTrace(currp, otp);
+    chSysSwitchI(currp, otp);
   }
 }
 

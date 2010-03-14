@@ -80,8 +80,8 @@ void port_disable(void) {
 }
 
 /**
- * @brief   Disables the interrupt sources that are not supposed to preempt
- *          the kernel.
+ * @brief   Disables the interrupt sources below kernel-level priority.
+ * @note    Interrupt sources above kernel level remains enabled.
  */
 void port_suspend(void) {
 }
@@ -93,7 +93,7 @@ void port_enable(void) {
 }
 
 /**
- * @brief   Enters an architecture-dependent halt mode.
+ * @brief   Enters an architecture-dependent IRQ-waiting mode.
  * @details The function is meant to return when an interrupt becomes pending.
  *          The simplest implementation is an empty function or macro but this
  *          would not take advantage of architecture-specific power saving
@@ -123,10 +123,10 @@ void port_halt(void) {
  * @note    The implementation of this code affects <b>directly</b> the context
  *          switch performance so optimize here as much as you can.
  *
- * @param otp   the thread to be switched out
- * @param ntp   the thread to be switched in
+ * @param[in] ntp       the thread to be switched in
+ * @param[in] otp       the thread to be switched out
  */
-void port_switch(Thread *otp, Thread *ntp) {
+void port_switch(Thread *ntp, Thread *otp) {
 }
 
 /** @} */

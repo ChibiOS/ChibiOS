@@ -105,8 +105,8 @@ _port_switch_thumb:
 _port_switch_arm:
 #ifdef CH_CURRP_REGISTER_CACHE
         stmfd   sp!, {r4, r5, r6, r8, r9, r10, r11, lr}
-        str     sp, [r0, #16]
-        ldr     sp, [r1, #16]
+        str     sp, [r1, #16]
+        ldr     sp, [r0, #16]
 #ifdef THUMB_PRESENT
         ldmfd   sp!, {r4, r5, r6, r8, r9, r10, r11, lr}
         bx      lr
@@ -115,8 +115,8 @@ _port_switch_arm:
 #endif /* !THUMB_PRESENT */
 #else /* !CH_CURRP_REGISTER_CACHE */
         stmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
-        str     sp, [r0, #12]
-        ldr     sp, [r1, #12]
+        str     sp, [r1, #12]
+        ldr     sp, [r0, #12]
 #ifdef THUMB_PRESENT
         ldmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
         bx      lr

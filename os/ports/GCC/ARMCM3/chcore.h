@@ -18,8 +18,9 @@
 */
 
 /**
- * @file ARMCM3/chcore.h
- * @brief ARM Cortex-M3 architecture port macros and structures.
+ * @file    ARMCM3/chcore.h
+ * @brief   ARM Cortex-M3 architecture port macros and structures.
+ *
  * @addtogroup ARMCM3_CORE
  * @{
  */
@@ -32,64 +33,66 @@
  */
 
 /**
- * Enables the use of the WFI ins.
+ * @brief   Enables the use of the WFI ins.
  */
 #ifndef ENABLE_WFI_IDLE
 #define ENABLE_WFI_IDLE         0
 #endif
 
 /**
- * BASEPRI user level, 0 = disabled.
+ * @brief   BASEPRI user level, 0 = disabled.
  */
 #ifndef BASEPRI_USER
 #define BASEPRI_USER            0
 #endif
 
 /**
- * BASEPRI level within kernel lock.
- * Priority levels higher than this one (lower values) are unaffected by
- * the OS activity and can be classified as fast interrupt sources, see
- * @ref interrupt_classes.
+ * @brief   BASEPRI level within kernel lock.
+ * @details Priority levels higher than this one (lower values) are unaffected
+ *          by the OS activity and can be classified as fast interrupt sources,
+ *          see @ref interrupt_classes.
  */
 #ifndef BASEPRI_KERNEL
 #define BASEPRI_KERNEL          0x40
 #endif
 
 /**
- * SVCALL handler priority.
- * @note This priority must always be one level above the @p BASEPRI_KERNEL
- *       value.
- * @note It is recommended to leave this priority level for this handler alone.
+ * @brief   SVCALL handler priority.
+ * @note    This priority must always be one level above the @p BASEPRI_KERNEL
+ *          value.
+ * @note    It is recommended, but not mandatory, to leave this priority level
+ *          for this handler alone.
  */
 #ifndef PRIORITY_SVCALL
 #define PRIORITY_SVCALL         (BASEPRI_KERNEL - 0x10)
 #endif
 
 /**
- * SYSTICK handler priority.
+ * @brief   SYSTICK handler priority.
  */
 #ifndef PRIORITY_SYSTICK
 #define PRIORITY_SYSTICK        0x80
 #endif
 
 /**
- * PENDSV handler priority.
- * @note It is recommended to leave this priority level for this handler alone.
- * @note This is a reserved handler and its priority must always be the
- *       lowest priority in the system in order to be always executed last
- *       in the interrupt servicing chain.
+ * @brief   PENDSV handler priority.
+ * @note    It is recommended to leave this priority level for this handler
+ *          alone.
+ * @note    This is a reserved handler and its priority must always be the
+ *          lowest priority in the system in order to be always executed last
+ *          in the interrupt servicing chain.
  */
 #ifndef PRIORITY_PENDSV
 #define PRIORITY_PENDSV         0xF0
 #endif
 
 /**
- * Macro defining the ARM Cortex-M3 architecture.
+ * @brief   Macro defining the ARM Cortex-M3 architecture.
  */
 #define CH_ARCHITECTURE_ARMCM3
 
 /**
- * Name of the implemented architecture.
+ * @brief   Name of the implemented architecture.
  */
 #define CH_ARCHITECTURE_NAME "ARM"
 
@@ -99,26 +102,31 @@
 #define CH_CORE_VARIANT_NAME "Cortex-M3"
 
 /**
- * 32 bit stack alignment.
+ * @brief   32 bit stack and memory alignment enforcement.
  */
 typedef uint32_t stkalign_t;
 
 /**
- * Generic ARM register.
+ * @brief   Generic ARM register.
  */
 typedef void *regarm_t;
 
-/** @cond never */
+#if !defined(__DOXYGEN__)
 /**
- * Interrupt saved context, empty in this architecture.
+ * @brief   Interrupt saved context.
+ * @details This structure represents the stack frame saved during a
+ *          preemption-capable interrupt handler.
+ * @note    This structure is empty in this port.
  */
 struct extctx {
 };
-/** @endcond */
+#endif
 
-/** @cond never */
+#if !defined(__DOXYGEN__)
 /**
- * This structure represents the inner stack frame during a context switching.
+ * @brief   System saved context.
+ * @details This structure represents the inner stack frame during a context
+ *          switching.
  */
 struct intctx {
   regarm_t      basepri;
@@ -142,21 +150,21 @@ struct intctx {
   regarm_t      pc;
   regarm_t      xpsr;
 };
-/** @endcond */
+#endif
 
-/** @cond never */
+#if !defined(__DOXYGEN__)
 /**
- * Cortex-M3 context structure.
+ * @brief   Cortex-M3 port context structure.
  */
 struct context {
   struct intctx *r13;
 };
-/** @endcond */
+#endif
 
 /**
- * Platform dependent part of the @p chThdInit() API.
- * This code usually setup the context switching frame represented by a
- * @p intctx structure.
+ * @brief   Platform dependent part of the @p chThdInit() API.
+ * @details This code usually setup the context switching frame represented
+ *          by an @p intctx structure.
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
   tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +              \
@@ -171,28 +179,37 @@ struct context {
 }
 
 /**
- * The default idle thread implementation requires no extra stack space in
- * this port but it is set to 4 because the idle thread does have a stack
- * frame when compiling without optimizations.
+ * @brief   Stack size for the system idle thread.
+ * @details This size depends on the idle thread implementation, usually
+ *          the idle thread should take no more space than those reserved
+ *          by @p INT_REQUIRED_STACK.
+ * @note    In this port it is set to 4 because the idle thread does have
+ *          a stack frame when compiling without optimizations.
  */
 #ifndef IDLE_THREAD_STACK_SIZE
 #define IDLE_THREAD_STACK_SIZE      4
 #endif
 
 /**
- * This port requires no extra stack space for interrupt handling.
+ * @brief   Per-thread stack overhead for interrupts servicing.
+ * @details This constant is used in the calculation of the correct working
+ *          area size.
+ *          This value can be zero on those architecture where there is a
+ *          separate interrupt stack and the stack space between @p intctx and
+ *          @p extctx is known to be zero.
+ * @note    This port requires no extra stack space for interrupt handling.
  */
 #ifndef INT_REQUIRED_STACK
 #define INT_REQUIRED_STACK          0
 #endif
 
 /**
- * Enforces a correct alignment for a stack area size value.
+ * @brief   Enforces a correct alignment for a stack area size value.
  */
 #define STACK_ALIGN(n) ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
 
 /**
- * Computes the thread working area global size.
+ * @brief   Computes the thread working area global size.
  */
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
                                    sizeof(struct intctx) +              \
@@ -200,20 +217,23 @@ struct context {
                                    (n) + (INT_REQUIRED_STACK))
 
 /**
- * Macro used to allocate a thread working area aligned as both position and
- * size.
+ * @brief   Static working area allocation.
+ * @details This macro is used to allocate a static thread working area
+ *          aligned as both position and size.
  */
 #define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
 
 /**
- * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
- * invoke system APIs.
+ * @brief   IRQ prologue code.
+ * @details This macro must be inserted at the start of all IRQ handlers
+ *          enabled to invoke system APIs.
  */
 #define PORT_IRQ_PROLOGUE()
 
 /**
- * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
- * invoke system APIs.
+ * @brief   IRQ epilogue code.
+ * @details This macro must be inserted at the end of all IRQ handlers
+ *          enabled to invoke system APIs.
  */
 #define PORT_IRQ_EPILOGUE() {                                           \
   chSysLockFromIsr();                                                   \
@@ -223,17 +243,23 @@ struct context {
 }
 
 /**
- * IRQ handler function declaration.
+ * @brief   IRQ handler function declaration.
+ * @note    @p id can be a function name or a vector number depending on the
+ *          port implementation.
  */
 #define PORT_IRQ_HANDLER(id) void id(void)
 
 /**
- * This function is empty in this port.
+ * @brief   Port-related initialization code.
+ * @note    This function is empty in this port.
  */
 #define port_init()
 
 /**
- * Raises the base priority to kernel level.
+ * @brief   Kernel-lock action.
+ * @details Usually this function just disables interrupts but may perform
+ *          more actions.
+ * @note    In this port this it raises the base priority to kernel level.
  */
 #if CH_OPTIMIZE_SPEED
 #define port_lock() {                                                   \
@@ -247,7 +273,10 @@ struct context {
 #endif
 
 /**
- * Lowers the base priority to user level.
+ * @brief   Kernel-unlock action.
+ * @details Usually this function just disables interrupts but may perform
+ *          more actions.
+ * @note    In this port this it lowers the base priority to kernel level.
  */
 #if CH_OPTIMIZE_SPEED
 #define port_unlock() {                                                 \
@@ -261,22 +290,35 @@ struct context {
 #endif
 
 /**
- * Same as @p port_lock() in this port.
+ * @brief   Kernel-lock action from an interrupt handler.
+ * @details This function is invoked before invoking I-class APIs from
+ *          interrupt handlers. The implementation is architecture dependent,
+ *          in its simplest form it is void.
+ * @note    Same as @p port_lock() in this port.
  */
 #define port_lock_from_isr() port_lock()
 
 /**
- * Same as @p port_unlock() in this port.
+ * @brief   Kernel-unlock action from an interrupt handler.
+ * @details This function is invoked after invoking I-class APIs from interrupt
+ *          handlers. The implementation is architecture dependent, in its
+ *          simplest form it is void.
+ * @note    Same as @p port_unlock() in this port.
  */
 #define port_unlock_from_isr() port_unlock()
 
 /**
- * Disables all the interrupt sources by raising the priority mask to level 0.
+ * @brief   Disables all the interrupt sources.
+ * @note    Of course non maskable interrupt sources are not included.
+ * @note    In this port it disables all the interrupt sources by raising
+ *          the priority mask to level 0.
  */
 #define port_disable() asm volatile ("cpsid   i")
 
 /**
- * Raises/lowers the base priority to kernel level.
+ * @brief   Disables the interrupt sources below kernel-level priority.
+ * @note    Interrupt sources above kernel level remains enabled.
+ * @note    In this port it raises/lowers the base priority to kernel level.
  */
 #define port_suspend() {                                                \
   register uint32_t tmp asm ("r3") = BASEPRI_KERNEL;                    \
@@ -285,7 +327,8 @@ struct context {
 }
 
 /**
- * Lowers the base priority to user level.
+ * @brief   Enables all the interrupt sources.
+ * @note    In this port it lowers the base priority to user level.
  */
 #define port_enable() {                                                 \
   register uint32_t tmp asm ("r3") = BASEPRI_USER;                      \
@@ -294,7 +337,12 @@ struct context {
 }
 
 /**
- * This port function is implemented as inlined code for performance reasons.
+ * @brief   Enters an architecture-dependent IRQ-waiting mode.
+ * @details The function is meant to return when an interrupt becomes pending.
+ *          The simplest implementation is an empty function or macro but this
+ *          would not take advantage of architecture-specific power saving
+ *          modes.
+ * @note    Implemented as an inlined @p WFI instruction.
  */
 #if ENABLE_WFI_IDLE || defined(__DOXYGEN__)
 #define port_wait_for_interrupt() {                                     \
@@ -305,25 +353,28 @@ struct context {
 #endif
 
 /**
- * This port function is implemented as inlined code for performance reasons.
+ * @brief   Performs a context switch between two threads.
+ * @details This is the most critical code in any port, this function
+ *          is responsible for the context switch between 2 threads.
+ * @note    The implementation of this code affects <b>directly</b> the context
+ *          switch performance so optimize here as much as you can.
+ * @note    Implemented as inlined code for performance reasons.
+ *
+ * @param[in] ntp       the thread to be switched in
+ * @param[in] otp       the thread to be switched out
  */
+static INLINE Thread *port_switch(Thread *ntp, Thread *otp) {
+  register Thread *_ntp asm ("r0") = (ntp);
+  register Thread *_otp asm ("r1") = (otp);
 #if CH_DBG_ENABLE_STACK_CHECK
-#define port_switch(otp, ntp) {                                         \
-  register Thread *_otp asm ("r0") = (otp);                             \
-  register Thread *_ntp asm ("r1") = (ntp);                             \
-  register char *sp asm ("sp");                                         \
-  if (sp - sizeof(struct intctx) - sizeof(Thread) < (char *)_otp)       \
-    asm volatile ("movs    r0, #0                               \n\t"   \
-                  "b       chDbgPanic");                                \
-  asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");    \
+  register char *sp asm ("sp");
+  if (sp - sizeof(struct intctx) - sizeof(Thread) < (char *)_otp)
+    asm volatile ("movs    r0, #0                               \n\t"
+                  "b       chDbgPanic");
+#endif /* CH_DBG_ENABLE_STACK_CHECK */
+  asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");
+  return _otp;
 }
-#else /* !CH_DBG_ENABLE_STACK_CHECK */
-#define port_switch(otp, ntp) {                                         \
-  register Thread *_otp asm ("r0") = (otp);                             \
-  register Thread *_ntp asm ("r1") = (ntp);                             \
-  asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");    \
-}
-#endif /* !CH_DBG_ENABLE_STACK_CHECK */
 
 #ifdef __cplusplus
 extern "C" {

@@ -147,7 +147,7 @@ extern "C" {
 #if CH_DBG_ENABLE_TRACE
   extern TraceBuffer trace_buffer;
   void trace_init(void);
-  void chDbgTrace(Thread *otp, Thread *ntp);
+  void chDbgTrace(Thread *ntp, Thread *otp);
 #endif
 #if CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK
   extern char *panic_msg;

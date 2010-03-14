@@ -18,8 +18,9 @@
 */
 
 /**
- * @file ARMCM3/chcore.c
- * @brief ARM Cortex-M3 architecture port code.
+ * @file    ARMCM3/chcore.c
+ * @brief   ARM Cortex-M3 architecture port code.
+ *
  * @addtogroup ARMCM3_CORE
  * @{
  */
@@ -28,13 +29,13 @@
 #include "nvic.h"
 
 /**
- * @brief Halts the system.
- * @note The function is declared as a weak symbol, it is possible to redefine
- *       it in your application code.
+ * @brief   Halts the system.
+ * @note    The function is declared as a weak symbol, it is possible
+ *          to redefine it in your application code.
  */
-/** @cond never */
+#if !defined(__DOXYGEN__)
 __attribute__((weak))
-/** @endcond */
+#endif
 void port_halt(void) {
 
   port_disable();
@@ -55,9 +56,9 @@ void _port_unlock(void) {
 #endif
 
 /**
- * @brief System Timer vector.
+ * @brief   System Timer vector.
  * @details This interrupt is used as system tick.
- * @note The timer is initialized in the board setup code.
+ * @note    The timer must be initialized in the startup code.
  */
 void SysTickVector(void) {
 
@@ -69,26 +70,26 @@ void SysTickVector(void) {
 }
 
 /**
- * @brief SVC vector.
+ * @brief   SVC vector.
  * @details The SVC vector is used for commanded context switch. Structures
  *          @p intctx are saved and restored from the process stacks of the
  *          switched threads.
  *
- * @param otp the thread to be switched out
- * @param ntp the thread to be switched it
+ * @param[in] ntp       the thread to be switched it
+ * @param[in] otp       the thread to be switched out
  */
 #if !defined(__DOXYGEN__)
 __attribute__((naked))
 #endif
-void SVCallVector(Thread *otp, Thread *ntp) {
+void SVCallVector(Thread *ntp, Thread *otp) {
   (void)otp;
   (void)ntp;
 #ifdef CH_CURRP_REGISTER_CACHE
   asm volatile ("mrs     r3, BASEPRI                            \n\t" \
                 "mrs     r12, PSP                               \n\t" \
                 "stmdb   r12!, {r3-r6,r8-r11, lr}               \n\t" \
-                "str     r12, [r0, #12]                         \n\t" \
-                "ldr     r12, [r1, #12]                         \n\t" \
+                "str     r12, [r1, #12]                         \n\t" \
+                "ldr     r12, [r0, #12]                         \n\t" \
                 "ldmia   r12!, {r3-r6,r8-r11, lr}               \n\t" \
                 "msr     PSP, r12                               \n\t" \
                 "msr     BASEPRI, r3                            \n\t" \
@@ -97,8 +98,8 @@ void SVCallVector(Thread *otp, Thread *ntp) {
   asm volatile ("mrs     r3, BASEPRI                            \n\t" \
                 "mrs     r12, PSP                               \n\t" \
                 "stmdb   r12!, {r3-r11, lr}                     \n\t" \
-                "str     r12, [r0, #12]                         \n\t" \
-                "ldr     r12, [r1, #12]                         \n\t" \
+                "str     r12, [r1, #12]                         \n\t" \
+                "ldr     r12, [r0, #12]                         \n\t" \
                 "ldmia   r12!, {r3-r11, lr}                     \n\t" \
                 "msr     PSP, r12                               \n\t" \
                 "msr     BASEPRI, r3                            \n\t" \
@@ -137,9 +138,9 @@ void SVCallVector(Thread *otp, Thread *ntp) {
 #endif
 
 /**
- * @brief Preemption code.
+ * @brief   Preemption code.
  */
-#ifndef __DOXYGEN__
+#if !defined(__DOXYGEN__)
 __attribute__((naked))
 #endif
 void PendSVVector(void) {

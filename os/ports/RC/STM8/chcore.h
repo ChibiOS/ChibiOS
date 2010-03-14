@@ -252,10 +252,10 @@ struct context {
  *          is responsible for the context switch between 2 threads.
  * @note    Implemented as a call to a low level assembler routine.
  *
- * @param otp   the thread to be switched out
  * @param ntp   the thread to be switched in
+ * @param otp   the thread to be switched out
  */
-#define port_switch(otp, ntp) _port_switch(otp)
+#define port_switch(ntp, otp) _port_switch(otp)
 
 #ifdef __cplusplus
 extern "C" {

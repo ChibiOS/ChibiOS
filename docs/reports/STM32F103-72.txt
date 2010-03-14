@@ -5,7 +5,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.5.3unstable
+*** Kernel:       1.5.4unstable
 *** GCC Version:  4.4.2
 *** Architecture: ARM
 *** Core Variant: Cortex-M3
@@ -92,31 +92,31 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 223892 msgs/S, 447784 ctxswc/S
+--- Score : 226004 msgs/S, 452008 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 187652 msgs/S, 375304 ctxswc/S
+--- Score : 188141 msgs/S, 376282 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 187652 msgs/S, 375304 ctxswc/S
+--- Score : 188141 msgs/S, 376282 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 696944 ctxswc/S
+--- Score : 707232 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 146984 threads/S
+--- Score : 147284 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 203030 threads/S
+--- Score : 204767 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedulation, 5 threads)
---- Score : 56954 reschedulations/S, 341724 ctxswc/S
+--- Score : 57181 reschedulations/S, 343086 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
