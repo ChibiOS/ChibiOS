@@ -5,9 +5,12 @@ Settings: SYSCLK=80, optimal wait states, prefetching enabled
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.5.1unstable
-*** Architecture: PPC E200Zx
+*** Kernel:       1.5.4unstable
 *** GCC Version:  4.4.1
+*** Architecture: PowerPC
+*** Core Variant: e200z3
+*** Platform:     SPC563M64
+*** Test Board:   Generic SPC563
 
 ----------------------------------------------------------------------------
 --- Test Case 1.1 (Threads, enqueuing test #1)
@@ -89,47 +92,47 @@ Settings: SYSCLK=80, optimal wait states, prefetching enabled
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 276305 msgs/S, 552610 ctxswc/S
+--- Score : 280180 msgs/S, 560360 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 224302 msgs/S, 448604 ctxswc/S
+--- Score : 227495 msgs/S, 454990 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 224302 msgs/S, 448604 ctxswc/S
+--- Score : 227495 msgs/S, 454990 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 878728 ctxswc/S
+--- Score : 898496 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 180662 threads/S
+--- Score : 183569 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 259260 threads/S
+--- Score : 262670 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedulation, 5 threads)
---- Score : 73119 reschedulations/S, 438714 ctxswc/S
+--- Score : 73863 reschedulations/S, 443178 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 654412 reschedulations/S, 654412 ctxswc/S
+--- Score : 654408 reschedulations/S, 654408 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 617488 bytes/S
+--- Score : 618384 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 1132448 timers/S
+--- Score : 1093666 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 1027012 wait+signal/S
+--- Score : 1027008 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
