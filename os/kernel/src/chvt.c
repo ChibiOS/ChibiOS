@@ -22,6 +22,7 @@
  * @brief   Time and Virtual Timers related code.
  *
  * @addtogroup time
+ * @details Time and Virtual Timers related APIs and services.
  * @{
  */
 

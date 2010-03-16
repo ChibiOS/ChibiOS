@@ -21,8 +21,7 @@
  * @file    chschd.c
  * @brief   Scheduler code.
  *
- * @defgroup scheduler Scheduler
- * @ingroup base
+ * @addtogroup scheduler
  * @details This module provides the default portable scheduler code,
  *          scheduler functions can be individually captured by the port
  *          layer in order to provide architecture optimized equivalents.

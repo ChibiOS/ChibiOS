@@ -26,6 +26,7 @@
  *          doing so.
  *
  * @addtogroup types
+ * @details System types and macros.
  * @{
  */
 

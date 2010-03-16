@@ -22,6 +22,28 @@
  * @brief   Semaphores code.
  *
  * @addtogroup semaphores
+ * @details Semaphores and threads synchronization.
+ *
+ *          <h2>Operation mode</h2>
+ *          A semaphore is a threads synchronization object, some operations
+ *          are defined on semaphores:
+ *          - <b>Signal</b>: The semaphore counter is increased and if the
+ *            result is non-positive then a waiting thread is removed from
+ *            the semaphore queue and made ready for execution.
+ *          - <b>Wait</b>: The semaphore counter is decreased and if the result
+ *            becomes negative the thread is queued in the semaphore and
+ *            suspended.
+ *          - <b>Reset</b>: The semaphore counter is reset to a non-negative
+ *            value and all the threads in the queue are released.
+ *          .
+ *          Semaphores can be used as guards for mutual exclusion code zones
+ *          (note that mutexes are recommended for this kind of use) but also
+ *          have other uses, queues guards and counters as example.<br>
+ *          Semaphores usually use a FIFO queuing strategy but it is possible
+ *          to make them order threads by priority by enabling
+ *          @p CH_USE_SEMAPHORES_PRIORITY in @p chconf.h.<br>
+ *          In order to use the Semaphores APIs the @p CH_USE_SEMAPHORES
+ *          option must be enabled in @p chconf.h.
  * @{
  */
 

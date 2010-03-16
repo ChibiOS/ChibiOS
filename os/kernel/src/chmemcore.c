@@ -22,6 +22,22 @@
  * @brief   Core memory manager code.
  *
  * @addtogroup memcore
+ * @details Core Memory Manager related APIs and services.
+ *          <h2>Operation mode</h2>
+ *          The core memory manager is a simplified allocator that only allows
+ *          to allocate memory blocks without the possibility to free them.<br>
+ *          This allocator is meant as a memory blocks provider for the other
+ *          allocators such as:
+ *          - C-Runtime allocator (through a compiler specific adapter module).
+ *          - Heap allocator (see @ref heaps).
+ *          - Memory pools allocator (see @ref pools).
+ *          .
+ *          By having a centralized memory provider the various allocators can
+ *          coexist and share the main memory.<br>
+ *          This allocator, alone, is also useful for very simple applications
+ *          that just require a simple way to get memory blocks.<br>
+ *          In order to use the core memory manager APIs the @p CH_USE_MEMCORE
+ *          option must be enabled in @p chconf.h.
  * @{
  */
 

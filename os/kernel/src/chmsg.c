@@ -22,6 +22,22 @@
  * @brief   Messages code.
  *
  * @addtogroup messages
+ * @details Synchronous inter-thread messages APIs and services.
+ *          <h2>Operation Mode</h2>
+ *          Synchronous messages are an easy to use and fast IPC mechanism,
+ *          threads can both act as message servers and/or message clients,
+ *          the mechanism allows data to be carried in both directions. Note
+ *          that messages are not copied between the client and server threads
+ *          but just a pointer passed so the exchange is very time
+ *          efficient.<br>
+ *          Messages are usually processed in FIFO order but it is possible to
+ *          process them in priority order by enabling the
+ *          @p CH_USE_MESSAGES_PRIORITY option in @p chconf.h.<br>
+ *          Applications do not need to allocate buffers for synchronous
+ *          message queues, the mechanism just requires two extra pointers in
+ *          the @p Thread structure (the message queue header).<br>
+ *          In order to use the Messages APIs the @p CH_USE_MESSAGES option
+ *          must be enabled in @p chconf.h.
  * @{
  */
 

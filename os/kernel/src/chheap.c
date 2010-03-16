@@ -22,6 +22,18 @@
  * @brief   Heaps code.
  *
  * @addtogroup heaps
+ * @details Heap Allocator related APIs.
+ *          <h2>Operation mode</h2>
+ *          The heap allocator implements a first-fit strategy and its APIs
+ *          are functionally equivalent to the usual @p malloc() and @p free()
+ *          library functions. The main difference is that the OS heap APIs
+ *          are guaranteed to be thread safe.<br>
+ *          By enabling the @p CH_USE_MALLOC_HEAP option the heap manager
+ *          will use the runtime-provided @p malloc() and @p free() as
+ *          backend for the heap APIs instead of the system provided
+ *          allocator.<br>
+ *          In order to use the heap APIs the @p CH_USE_HEAP option must
+ *          be enabled in @p chconf.h.
  * @{
  */
 

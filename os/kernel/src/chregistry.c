@@ -22,6 +22,9 @@
  * @brief   Threads registry code.
  *
  * @addtogroup registry
+ * @details Threads Registry related APIs and services.<br>
+ *          In order to use the threads registry the @p CH_USE_REGISTRY option
+ *          must be enabled in @p chconf.h.
  * @{
  */
 #include "ch.h"

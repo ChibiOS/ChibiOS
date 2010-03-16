@@ -22,6 +22,43 @@
  * @brief   Mutexes code.
  *
  * @addtogroup mutexes
+ * @details Mutexes related APIs and services.
+ *
+ *          <h2>Operation mode</h2>
+ *          A mutex is a threads synchronization object that can be in two
+ *          distinct states:
+ *          - Not owned.
+ *          - Owned by a thread.
+ *          .
+ *          Some operations are defined on mutexes:
+ *          - <b>Lock</b>: The mutex is checked, if the mutex is not owned by
+ *            some other thread then it is associated to the locking thread
+ *            else the thread is queued on the mutex in a list ordered by
+ *            priority.
+ *          - <b>Unlock</b>: The mutex is released by the owner and the highest
+ *            priority thread waiting in the queue, if any, is resumed and made
+ *            owner of the mutex.
+ *          .
+ *          In order to use the Mutexes APIs the @p CH_USE_MUTEXES option must
+ *          be enabled in @p chconf.h.
+ *          <h2>Constraints</h2>
+ *          In ChibiOS/RT the Unlock operations are always performed in
+ *          lock-reverse order. The unlock API does not even have a parameter,
+ *          the mutex to unlock is selected from an internal, per-thread, stack
+ *          of owned mutexes. This both improves the performance and is
+ *          required for an efficient implementation of the priority
+ *          inheritance mechanism.
+ *
+ *          <h2>The priority inversion problem</h2>
+ *          The mutexes in ChibiOS/RT implements the <b>full</b> priority
+ *          inheritance mechanism in order handle the priority inversion
+ *          problem.<br>
+ *          When a thread is queued on a mutex, any thread, directly or
+ *          indirectly, holding the mutex gains the same priority of the
+ *          waiting thread (if their priority was not already equal or higher).
+ *          The mechanism works with any number of nested mutexes and any
+ *          number of involved threads. The algorithm complexity (worst case)
+ *          is N with N equal to the number of nested mutexes.
  * @{
  */
 

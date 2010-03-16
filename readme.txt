@@ -70,11 +70,16 @@
   versions. This is done because further scheduler optimizations are
   becoming increasingly pointless without considering architecture and
   compiler related constraints.
+- NEW: Documentation improvements, now the description goes on top of each
+  page, doxygen defaulted it in the middle, not exactly the best for
+  readability. Improved many descriptions of the various subsystems.
 - OPT: Optimization on the interface between scheduler and port layer, now
   the kernel is even smaller and the context switch performance improved
   quite a bit on all the supported architectures.
 - OPT: Simplified the implementation of chSchYieldS() and made it a macro.
   The previous implementation was probably overkill and took too much space.
+- CHANGE: Exiting from a chCondWaitTimeout() because a timeout now does not
+  re-acquire the mutex, ownership is lost.
 
 *** 1.5.3 ***
 - FIX: Removed C99-style variables declarations (bug 2964418)(backported

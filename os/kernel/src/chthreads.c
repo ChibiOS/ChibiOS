@@ -21,12 +21,15 @@
  * @file    chthreads.c
  * @brief   Threads code.
  *
- * @defgroup threads Threads
- * @ingroup base
- * @details This module contains all the threads related APIs, creation,
- *          termination, synchronization, delay etc. Dynamic variants of
- *          the base static API are also included.
- *
+ * @addtogroup threads
+ * @details This module contains all the threads related APIs and services:
+ *          - Creation.
+ *          - Termination.
+ *          - Synchronization.
+ *          - Delays.
+ *          - References.
+ *          .
+ *          Dynamic variants of the base static API are also included.
  * @{
  */
 

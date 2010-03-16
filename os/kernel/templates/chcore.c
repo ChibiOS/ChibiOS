@@ -26,6 +26,7 @@
  *          advantage in doing so, as example because performance concerns.
  *
  * @addtogroup core
+ * @details Non portable code templates.
  * @{
  */
 

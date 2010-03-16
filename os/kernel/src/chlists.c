@@ -20,11 +20,11 @@
 /**
  * @file    chlists.c
  * @brief   Thread queues/lists code.
- * @note    All the functions present in this module, while public, are not
- *          an OS API and should not be directly used in the user applications
- *          code.
  *
  * @addtogroup internals
+ * @details All the functions present in this module, while public, are not
+ *          an OS API and should not be directly used in the user applications
+ *          code.
  * @{
  */
 #include "ch.h"

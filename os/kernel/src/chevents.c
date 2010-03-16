@@ -22,6 +22,33 @@
  * @brief   Events code.
  *
  * @addtogroup events
+ * @details Event Flags, Event Sources and Event Listeners.
+ *          <h2>Operation mode</h2>
+ *          Each thread has a mask of pending event flags inside its @p Thread
+ *          structure.
+ *          Several operations are defined:
+ *          - <b>Wait</b>, the invoking thread goes to sleep until a certain
+ *            AND/OR combination of event flags becomes pending.
+ *          - <b>Clear</b>, a mask of event flags is cleared from the pending
+ *            events mask, the cleared event flags mask is returned (only the
+ *            flags that were actually pending and then cleared).
+ *          - <b>Signal</b>, an event mask is directly ORed to the mask of the
+ *            signaled thread.
+ *          - <b>Broadcast</b>, each thread registered on an Event Source is
+ *            signaled with the event flags specified in its Event Listener.
+ *          - <b>Dispatch</b>, an events mask is scanned and for each bit set
+ *            to one an associated handler function is invoked. Bit masks are
+ *            scanned from bit zero upward.
+ *          .
+ *          An Event Source is a special object that can be "broadcasted" by
+ *          a thread or an interrupt service routine. Broadcasting an Event
+ *          Source has the effect that all the threads registered on the
+ *          Event Source will be signaled with an events mask.<br>
+ *          An unlimited number of Event Sources can exists in a system and
+ *          each thread can be listening on an unlimited number of
+ *          them.<br><br>
+ *          In order to use the Events APIs the @p CH_USE_EVENTS option must be
+ *          enabled in @p chconf.h.
  * @{
  */
 #include "ch.h"

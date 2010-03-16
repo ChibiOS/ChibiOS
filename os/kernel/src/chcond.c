@@ -26,6 +26,15 @@
  * @brief   Condition Variables code.
  *
  * @addtogroup condvars Condition Variables
+ * @details This module implements the Condition Variables mechanism. Condition
+ *          variables are an extensions to the Mutex subsystem and cannot
+ *          work alone.
+ *          <h2>Operation mode</h2>
+ *          The condition variable is a synchronization object meant to be
+ *          used inside a zone protected by a @p Mutex. Mutexes and CondVars
+ *          together can implement a Monitor construct.<br>
+ *          In order to use the Condition Variables APIs the @p CH_USE_CONDVARS
+ *          option must be enabled in @p chconf.h.
  * @{
  */
 
@@ -107,10 +116,11 @@ void chCondBroadcastI(CondVar *cp) {
 
 /**
  * @brief   Waits on the condition variable releasing the mutex lock.
- * @details Releases the mutex, waits on the condition variable, and finally
- *          acquires the mutex again. This is done atomically.
- * @note    The thread MUST already have locked the mutex when calling
- *          @p chCondWait().
+ * @details Releases the currently owned mutex, waits on the condition
+ *          variable, and finally acquires the mutex again. All the sequence
+ *          is performed atomically.
+ * @note    The invoking thread <b>must</b> have at least one owned mutex on
+ *          entry.
  *
  * @param[in] cp        pointer to the @p CondVar structure
  * @return              The wakep mode.
@@ -128,10 +138,11 @@ msg_t chCondWait(CondVar *cp) {
 
 /**
  * @brief   Waits on the condition variable releasing the mutex lock.
- * @details Releases the mutex, waits on the condition variable, and finally
- *          acquires the mutex again. This is done atomically.
- * @note    The thread MUST already have locked the mutex when calling
- *          @p chCondWaitS().
+ * @details Releases the currently owned mutex, waits on the condition
+ *          variable, and finally acquires the mutex again. All the sequence
+ *          is performed atomically.
+ * @note    The invoking thread <b>must</b> have at least one owned mutex on
+ *          entry.
  *
  * @param[in] cp        pointer to the @p CondVar structure
  * @return              The wakep mode.
@@ -160,10 +171,13 @@ msg_t chCondWaitS(CondVar *cp) {
 #if CH_USE_CONDVARS_TIMEOUT
 /**
  * @brief   Waits on the condition variable releasing the mutex lock.
- * @details Releases the mutex, waits on the condition variable, and finally
- *          acquires the mutex again. This is done atomically.
- * @note    The thread MUST already have locked the mutex when calling
- *          @p chCondWaitTimeout().
+ * @details Releases the currently owned mutex, waits on the condition
+ *          variable, and finally acquires the mutex again. All the sequence
+ *          is performed atomically.
+ * @note    The invoking thread <b>must</b> have at least one owned mutex on
+ *          entry.
+ * @note    Exiting the function because a timeout does not re-acquire the
+ *          mutex, the mutex ownership is lost.
  *
  * @param[in] cp        pointer to the @p CondVar structure
  * @param[in] time      the number of ticks before the operation timeouts,
@@ -188,10 +202,13 @@ msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
 
 /**
  * @brief   Waits on the condition variable releasing the mutex lock.
- * @details Releases the mutex, waits on the condition variable, and finally
- *          acquires the mutex again. This is done atomically.
- * @note    The thread MUST already have locked the mutex when calling
- *          @p chCondWaitTimeoutS().
+ * @details Releases the currently owned mutex, waits on the condition
+ *          variable, and finally acquires the mutex again. All the sequence
+ *          is performed atomically.
+ * @note    The invoking thread <b>must</b> have at least one owned mutex on
+ *          entry.
+ * @note    Exiting the function because a timeout does not re-acquire the
+ *          mutex, the mutex ownership is lost.
  *
  * @param[in] cp        pointer to the @p CondVar structure
  * @param[in] time      the number of ticks before the operation timeouts,
@@ -218,7 +235,8 @@ msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time) {
   currp->p_u.wtobjp = cp;
   prio_insert(currp, &cp->c_queue);
   msg = chSchGoSleepTimeoutS(THD_STATE_WTCOND, time);
-  chMtxLockS(mp);
+  if (msg != RDY_TIMEOUT)
+    chMtxLockS(mp);
   return msg;
 }
 #endif /* CH_USE_CONDVARS_TIMEOUT */

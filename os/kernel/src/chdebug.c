@@ -22,6 +22,11 @@
  * @brief   ChibiOS/RT Debug code.
  *
  * @addtogroup debug
+ * @details Debug APIs and services:
+ *          - Trace buffer.
+ *          - Parameters check.
+ *          - Kernel assertions.
+ *          .
  * @{
  */
 

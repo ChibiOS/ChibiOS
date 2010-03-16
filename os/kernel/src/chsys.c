@@ -22,6 +22,13 @@
  * @brief   System related code.
  *
  * @addtogroup system
+ * @details System related APIs and services:
+ *          - Initialization.
+ *          - Locks.
+ *          - Interrupt Handling.
+ *          - Power Management.
+ *          - Abnormal Termination.
+ *          .
  * @{
  */
 

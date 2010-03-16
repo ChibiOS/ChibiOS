@@ -22,6 +22,23 @@
  * @brief   I/O Queues code.
  *
  * @addtogroup io_queues
+ * @details ChibiOS/RT queues are mostly used in serial-like device drivers.
+ *          The device drivers are usually designed to have a lower side
+ *          (lower driver, it is usually an interrupt service routine) and an
+ *          upper side (upper driver, accessed by the application threads).<br>
+ *          There are several kind of queues:<br>
+ *          - <b>Input queue</b>, unidirectional queue where the writer is the
+ *            lower side and the reader is the upper side.
+ *          - <b>Output queue</b>, unidirectional queue where the writer is the
+ *            upper side and the reader is the lower side.
+ *          - <b>Full duplex queue</b>, bidirectional queue. Full duplex queues
+ *            are implemented by pairing an input queue and an output queue
+ *            together.
+ *          .
+ *          In order to use the I/O queues the @p CH_USE_QUEUES option must
+ *          be enabled in @p chconf.h.<br>
+ *          I/O queues are usually used as an implementation layer for the I/O
+ *          channels interface, also see @ref io_channels.
  * @{
  */
 

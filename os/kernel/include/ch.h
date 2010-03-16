@@ -24,6 +24,7 @@
  *          only kernel header you usually want to include in your application.
  *
  * @addtogroup kernel_info
+ * @details Kernel related info.
  * @{
  */
 

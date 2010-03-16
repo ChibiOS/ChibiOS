@@ -22,6 +22,13 @@
  * @brief   Memory Pools code.
  *
  * @addtogroup pools
+ * @details Memory Pools related APIs and services.
+ *          <h2>Operation mode</h2>
+ *          The Memory Pools APIs allow to allocate/free fixed size objects in
+ *          <b>constant time</b> and reliably without memory fragmentation
+ *          problems.<br>
+ *          In order to use the memory pools APIs the @p CH_USE_MEMPOOLS option
+ *          must be enabled in @p chconf.h.
  * @{
  */
 

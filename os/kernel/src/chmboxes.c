@@ -22,6 +22,30 @@
  * @brief   Mailboxes code.
  *
  * @addtogroup mailboxes
+ * @details Asynchronous messages.
+ *          <h2>Operation mode</h2>
+ *          A mailbox is an asynchronous communication mechanism.<br>
+ *          The following operations are possible on a mailbox:
+ *          - <b>Post</b>: Posts a message on the mailbox in FIFO order.
+ *          - <b>Post Ahead</b>: Posts a message on the mailbox with urgent
+ *            priority.
+ *          - <b>Fetch</b>: A message is fetched from the mailbox and removed
+ *            from the queue.
+ *          - <b>Reset</b>: The mailbox is emptied and all the stored messages
+ *            are lost.
+ *          .
+ *          A message is a variable of type msg_t that is guaranteed to have
+ *          the same size of and be compatible with (data) pointers (anyway an
+ *          explicit cast is needed).
+ *          If larger messages need to be exchanged then a pointer to a
+ *          structure can be posted in the mailbox but the posting side has
+ *          no predefined way to know when the message has been processed. A
+ *          possible approach is to allocate memory (from a memory pool as
+ *          example) from the posting side and free it on the fetching side.
+ *          Another approach is to set a "done" flag into the structure pointed
+ *          by the message.<br>
+ *          In order to use the mailboxes APIs the @p CH_USE_MAILBOXES option
+ *          must be enabled in @p chconf.h.
  * @{
  */
 

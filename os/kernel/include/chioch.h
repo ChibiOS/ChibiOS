@@ -24,6 +24,14 @@
  *          I/O resources in a standardized way.
  *
  * @addtogroup io_channels
+ * @details This module defines an abstract interface for I/O channels by
+ *          extending the @p BaseSequentialStream interface. Note that no code
+ *          is present, I/O channels are just abstract interface like
+ *          structures, you should look at the systems as to a set of abstract
+ *          C++ classes (even if written in C). Specific device drivers can
+ *          use/extend the interface and implement them.<br>
+ *          This system has the advantage to make the access to channels
+ *          independent from the implementation logic.
  * @{
  */
 

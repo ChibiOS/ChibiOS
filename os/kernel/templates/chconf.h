@@ -24,6 +24,7 @@
  *          contains the application specific kernel settings.
  *
  * @addtogroup config
+ * @details Kernel related settings and hooks.
  * @{
  */
 
