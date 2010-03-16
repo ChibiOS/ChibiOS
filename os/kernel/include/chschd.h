@@ -66,6 +66,7 @@
  *
  * @brief   Ready list header.
  */
+#if !defined(PORT_OPTIMIZED_READYLIST_STRUCT) || defined(__DOXYGEN__)
 typedef struct {
   ThreadsQueue          r_queue;    /**< @brief Threads queue.              */
   tprio_t               r_prio;     /**< @brief This field must be
@@ -85,10 +86,11 @@ typedef struct {
                                                 thread.                     */
 #endif
 } ReadyList;
+#endif /* !defined(PORT_OPTIMIZED_READYLIST_STRUCT) */
 
-#if !defined(__DOXYGEN__)
+#if !defined(PORT_OPTIMIZED_RLIST_EXT) && !defined(__DOXYGEN__)
 extern ReadyList rlist;
-#endif
+#endif /* !defined(PORT_OPTIMIZED_RLIST_EXT) */
 
 #ifdef CH_CURRP_REGISTER_CACHE
 register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
@@ -116,18 +118,34 @@ extern "C" {
 #endif
 
 /**
- * @brief   Determines if yielding is possible.
- * @details This function returns @p TRUE if there is a ready thread with
- *          equal or higher priority.
- */
-#define chSchCanYieldS() (firstprio(&rlist.r_queue) >= currp->p_prio)
-
-/**
  * @brief   Determines if the current thread must reschedule.
  * @details This function returns @p TRUE if there is a ready thread with
  *          higher priority.
  */
+#if !defined(PORT_OPTIMIZED_ISRESCHREQUIREDI) && !defined(__DOXYGEN__)
 #define chSchIsRescRequiredI() (firstprio(&rlist.r_queue) > currp->p_prio)
+#endif /* !defined(PORT_OPTIMIZED_ISRESCHREQUIREDI) */
+
+/**
+ * @brief   Determines if yielding is possible.
+ * @details This function returns @p TRUE if there is a ready thread with
+ *          equal or higher priority.
+ */
+#if !defined(PORT_OPTIMIZED_CANYIELDS) && !defined(__DOXYGEN__)
+#define chSchCanYieldS() (firstprio(&rlist.r_queue) >= currp->p_prio)
+#endif /* !defined(PORT_OPTIMIZED_CANYIELDS) */
+
+/**
+ * @brief   Yields the time slot.
+ * @details Yields the CPU control to the next thread in the ready list with
+ *          equal or higher priority, if any.
+ */
+#if !defined(PORT_OPTIMIZED_DOYIELDS) || defined(__DOXYGEN__)
+#define chSchDoYieldS(void) {                                               \
+  if (chSchCanYieldS())                                                     \
+    chSchDoRescheduleI();                                                   \
+}
+#endif /* !defined(PORT_OPTIMIZED_DOYIELDS) */
 
 #endif /* _CHSCHD_H_ */
 

@@ -65,9 +65,16 @@
   subdirectory, this should make things easier for RIDE7 users. The normal
   makefile is still available of course.
 - NEW: New article in the documentation. Fixed an orphaned page (STM8 port).
+- NEW: The port layer now can "capture" the implementation of individual
+  scheduler API functions in order to provide architecture-optimized
+  versions. This is done because further scheduler optimizations are
+  becoming increasingly pointless without considering architecture and
+  compiler related constraints.
 - OPT: Optimization on the interface between scheduler and port layer, now
   the kernel is even smaller and the context switch performance improved
   quite a bit on all the supported architectures.
+- OPT: Simplified the implementation of chSchYieldS() and made it a macro.
+  The previous implementation was probably overkill and took too much space.
 
 *** 1.5.3 ***
 - FIX: Removed C99-style variables declarations (bug 2964418)(backported

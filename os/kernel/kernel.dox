@@ -62,18 +62,6 @@
  */
 
 /**
- * @defgroup scheduler Scheduler
- * ChibiOS/RT scheduler APIs and macros.
- * @ingroup base
- */
-
-/**
- * @defgroup threads Threads
- * Threads related APIs.
- * @ingroup base
- */
-
-/**
  * @defgroup synchronization Synchronization
  * Synchronization services.
  * @ingroup kernel

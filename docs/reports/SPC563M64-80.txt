@@ -92,7 +92,7 @@ Settings: SYSCLK=80, optimal wait states, prefetching enabled
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 280181 msgs/S, 560362 ctxswc/S
+--- Score : 280180 msgs/S, 560360 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
@@ -120,7 +120,7 @@ Settings: SYSCLK=80, optimal wait states, prefetching enabled
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 654408 reschedulations/S, 654408 ctxswc/S
+--- Score : 614140 reschedulations/S, 614140 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
@@ -128,7 +128,7 @@ Settings: SYSCLK=80, optimal wait states, prefetching enabled
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 1093662 timers/S
+--- Score : 1093664 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)

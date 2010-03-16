@@ -21,7 +21,13 @@
  * @file    chschd.c
  * @brief   Scheduler code.
  *
- * @addtogroup scheduler
+ * @defgroup scheduler Scheduler
+ * @ingroup base
+ * @details This module provides the default portable scheduler code,
+ *          scheduler functions can be individually captured by the port
+ *          layer in order to provide architecture optimized equivalents.
+ *          When a function is captured its default code is not built into
+ *          the OS image, the optimized version is included instead.
  * @{
  */
 
@@ -30,7 +36,9 @@
 /**
  * @brief   Ready list header.
  */
+#if !defined(PORT_OPTIMIZED_RLIST_VAR) || defined(__DOXYGEN__)
 ReadyList rlist;
+#endif /* !defined(PORT_OPTIMIZED_RLIST_VAR) */
 
 /**
  * @brief   Scheduler initialization.
@@ -56,6 +64,7 @@ void scheduler_init(void) {
  * @param[in] tp        the Thread to be made ready
  * @return              The Thread pointer.
  */
+#if !defined(PORT_OPTIMIZED_READYI) || defined(__DOXYGEN__)
 #if CH_OPTIMIZE_SPEED
 /* NOTE: it is inlined in this module only.*/
 INLINE Thread *chSchReadyI(Thread *tp) {
@@ -74,6 +83,7 @@ Thread *chSchReadyI(Thread *tp) {
   tp->p_prev->p_next = cp->p_prev = tp;
   return tp;
 }
+#endif /* !defined(PORT_OPTIMIZED_READYI) */
 
 /**
  * @brief   Puts the current thread to sleep into the specified state.
@@ -82,6 +92,7 @@ Thread *chSchReadyI(Thread *tp) {
  *
  * @param[in] newstate  the new thread state
  */
+#if !defined(PORT_OPTIMIZED_GOSLEEPS) || defined(__DOXYGEN__)
 void chSchGoSleepS(tstate_t newstate) {
   Thread *otp;
 
@@ -93,6 +104,7 @@ void chSchGoSleepS(tstate_t newstate) {
   chDbgTrace(currp, otp);
   chSysSwitchI(currp, otp);
 }
+#endif /* !defined(PORT_OPTIMIZED_GOSLEEPS) */
 
 /*
  * Timeout wakeup callback.
@@ -169,6 +181,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
  * @param[in] ntp       the Thread to be made ready
  * @param[in] msg       message to the awakened thread
  */
+#if !defined(PORT_OPTIMIZED_WAKEUPS) || defined(__DOXYGEN__)
 void chSchWakeupS(Thread *ntp, msg_t msg) {
 
   ntp->p_u.rdymsg = msg;
@@ -189,12 +202,14 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
     chSysSwitchI(ntp, otp);
   }
 }
+#endif /* !defined(PORT_OPTIMIZED_WAKEUPS) */
 
 /**
  * @brief   Switches to the first thread on the runnable queue.
  * @note    It is intended to be called if @p chSchRescRequiredI() evaluates
  *          to @p TRUE.
  */
+#if !defined(PORT_OPTIMIZED_DORESCHEDULEI) || defined(__DOXYGEN__)
 void chSchDoRescheduleI(void) {
   Thread *otp, *ntp;
 
@@ -202,23 +217,26 @@ void chSchDoRescheduleI(void) {
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
   otp = currp;
-  /* Pick the first thread from the ready queue and makes it current.*/
+  /* Picks the first thread from the ready queue and makes it current.*/
   (currp = ntp = fifo_remove(&rlist.r_queue))->p_state = THD_STATE_CURRENT;
   chSchReadyI(otp);
   chDbgTrace(ntp, otp);
   chSysSwitchI(ntp, otp);
 }
+#endif /* !defined(PORT_OPTIMIZED_DORESCHEDULEI) */
 
 /**
  * @brief   Performs a reschedulation if a higher priority thread is runnable.
  * @details If a thread with a higher priority than the current thread is in
  *          the ready list then make the higher priority thread running.
  */
+#if !defined(PORT_OPTIMIZED_RESCHEDULES) || defined(__DOXYGEN__)
 void chSchRescheduleS(void) {
 
   if (chSchIsRescRequiredI())
     chSchDoRescheduleI();
 }
+#endif /* !defined(PORT_OPTIMIZED_RESCHEDULES) */
 
 /**
  * @brief   Evaluates if a reschedulation is required.
@@ -230,6 +248,7 @@ void chSchRescheduleS(void) {
  * @retval TRUE         if there is a thread that should go in running state.
  * @retval FALSE        if a reschedulation is not required.
  */
+#if !defined(PORT_OPTIMIZED_ISRESCHREQUIREDEXI) || defined(__DOXYGEN__)
 bool_t chSchIsRescRequiredExI(void) {
   tprio_t p1 = firstprio(&rlist.r_queue);
   tprio_t p2 = currp->p_prio;
@@ -245,37 +264,6 @@ bool_t chSchIsRescRequiredExI(void) {
   return p1 > p2;
 #endif
 }
-
-/**
- * @brief   Yields the time slot.
- * @details Yields the CPU control to the next thread in the ready list with
- *          equal priority, if any.
- */
-void chSchDoYieldS(void) {
-
-  if (chSchCanYieldS()) {
-    Thread *cp = (Thread *)&rlist.r_queue;
-    Thread *otp = currp;
-
-    /* Note, the following insertion code works because we know that on the
-       ready list there is at least one thread with priority equal or higher
-       than the current one.*/
-    otp->p_state = THD_STATE_READY;
-    do {
-      cp = cp->p_prev;
-    } while (cp->p_prio < otp->p_prio);
-    /* Insertion on p_next.*/
-    otp->p_next = (otp->p_prev = cp)->p_next;
-    otp->p_next->p_prev = cp->p_next = otp;
-
-    /* Pick the first thread from the ready queue and makes it current.*/
-    (currp = fifo_remove(&rlist.r_queue))->p_state = THD_STATE_CURRENT;
-#if CH_TIME_QUANTUM > 0
-    rlist.r_preempt = CH_TIME_QUANTUM;
-#endif
-    chDbgTrace(currp, otp);
-    chSysSwitchI(currp, otp);
-  }
-}
+#endif /* !defined(PORT_OPTIMIZED_ISRESCHREQUIREDEXI) */
 
 /** @} */
