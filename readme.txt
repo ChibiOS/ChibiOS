@@ -57,7 +57,14 @@
 *****************************************************************************
 
 *** 1.5.4 ***
+- FIX: Fixed missing memory recovery on reference release in chRegNextThread()
+  (bug 2971878).
 - FIX: Fixed wrong thread state macro in STM32/spi_lld.c (bug 2968142).
+- NEW: The port layer now can "capture" the implementation of individual
+  scheduler API functions in order to provide architecture-optimized
+  versions. This is done because further scheduler optimizations are
+  becoming increasingly pointless without considering architecture and
+  compiler related constraints.
 - NEW: Added support for the STM8 large memory model to the STM8 port. Now
   the assembler port code is totally inlined and the chcoreasm.asm file has
   been removed.
@@ -65,11 +72,6 @@
   subdirectory, this should make things easier for RIDE7 users. The normal
   makefile is still available of course.
 - NEW: New article in the documentation. Fixed an orphaned page (STM8 port).
-- NEW: The port layer now can "capture" the implementation of individual
-  scheduler API functions in order to provide architecture-optimized
-  versions. This is done because further scheduler optimizations are
-  becoming increasingly pointless without considering architecture and
-  compiler related constraints.
 - NEW: Documentation improvements, now the description goes on top of each
   page, doxygen defaulted it in the middle, not exactly the best for
   readability. Improved many descriptions of the various subsystems.
@@ -80,6 +82,9 @@
   The previous implementation was probably overkill and took too much space.
 - CHANGE: Exiting from a chCondWaitTimeout() because a timeout now does not
   re-acquire the mutex, ownership is lost.
+- CHANGE: The module documentation has been moved from the kernel.dox file
+  to the various source code files in order to make it easier to maintain
+  and double as source comments.
 
 *** 1.5.3 ***
 - FIX: Removed C99-style variables declarations (bug 2964418)(backported

@@ -23,6 +23,16 @@
  *
  * @addtogroup registry
  * @details Threads Registry related APIs and services.<br>
+ *          The threads Threads Registry is a double linked list that holds
+ *          all the active threads in the system.<br>
+ *          The registry is meant to be mainly a debug feature, as example
+ *          through the registry a debugger can enumerate the active threads
+ *          in any given moment or the shell can print the active threads and
+ *          their state.<br>
+ *          Another possible use is for centralized threads memory management,
+ *          terminating threads can pulse an event source and an event handler
+ *          can perform a scansion of the registry in order to recover the
+ *          memory.<br>
  *          In order to use the threads registry the @p CH_USE_REGISTRY option
  *          must be enabled in @p chconf.h.
  * @{
@@ -64,25 +74,24 @@ Thread *chRegFirstThread(void) {
  * @retval NULL         if there is no next thread.
  */
 Thread *chRegNextThread(Thread *tp) {
+  Thread *ntp;
 
   chSysLock();
+  ntp = tp->p_newer;
+  if (ntp == (Thread *)&rlist)
+    ntp = NULL;
 #if CH_USE_DYNAMIC
-  chDbgAssert(tp->p_refs > 0, "chRegNextThread(), #1",
-              "not referenced");
-  tp->p_refs--;
-#endif
-  if (tp->p_newer != (Thread *)&rlist) {
-    tp = tp->p_newer;
-#if CH_USE_DYNAMIC
-    chDbgAssert(tp->p_refs < 255, "chRegNextThread(), #2",
+  else {
+    chDbgAssert(ntp->p_refs < 255, "chRegNextThread(), #1",
                 "too many references");
-    tp->p_refs++;
-#endif
+    ntp->p_refs++;
   }
-  else
-    tp = NULL;
+#endif
   chSysUnlock();
-  return tp;
+#if CH_USE_DYNAMIC
+  chThdRelease(tp);
+#endif
+  return ntp;
 }
 
 #endif /* CH_USE_REGISTRY */
