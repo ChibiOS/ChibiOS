@@ -30,7 +30,7 @@
  *          - Not owned.
  *          - Owned by a thread.
  *          .
- *          Some operations are defined on mutexes:
+ *          Operations defined for mutexes:
  *          - <b>Lock</b>: The mutex is checked, if the mutex is not owned by
  *            some other thread then it is associated to the locking thread
  *            else the thread is queued on the mutex in a list ordered by

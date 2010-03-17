@@ -22,14 +22,36 @@
  * @brief   Threads code.
  *
  * @addtogroup threads
- * @details This module contains all the threads related APIs and services:
- *          - Creation.
- *          - Termination.
- *          - Synchronization.
- *          - Delays.
- *          - References.
+ * @details Threads related APIs and services.
+ *
+ *          <h2>Operation mode</h2>
+ *          A thread is an abstraction of an independent instructions flow.
+ *          In ChibiOS/RT a thread is represented by a "C" function owning
+ *          a processor context, state informations and a dedicated stack
+ *          area. In this scenario static variables are shared among all
+ *          threads while automatic variables are local to the thread.<br>
+ *          Operations defined for threads:
+ *          - <b>Init</b>, a thread is prepared and put in the suspended
+ *            state.
+ *          - <b>Create</b>, a thread is started on the specified thread
+ *            function. This operation is available in multiple variants,
+ *            both static and dynamic.
+ *          - <b>Exit</b>, a thread terminates by returning from its top
+ *            level function or invoking a specific API, the thread can
+ *            return a value that can be retrieved by other threads.
+ *          - <b>Wait</b>, a thread waits for the termination of another
+ *            thread and retrieves its return value.
+ *          - <b>Resume</b>, a thread created in suspended state is started.
+ *          - <b>Sleep</b>, the execution of a thread is suspended for the
+ *            specified amount of time or the specified future absolute time
+ *            is reached.
+ *          - <b>SetPriority</b>, a thread changes its own priority level.
+ *          - <b>Yield</b>, a thread voluntarily renounces to its time slot.
  *          .
- *          Dynamic variants of the base static API are also included.
+ *          The threads subsystem is implicitly included in kernel however
+ *          some of its part may be excluded by disabling them in @p chconf.h,
+ *          see the @p CH_USE_WAITEXIT and @p CH_USE_DYNAMIC configuration
+ *          options.
  * @{
  */
 

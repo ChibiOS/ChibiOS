@@ -26,7 +26,7 @@
  *          <h2>Operation mode</h2>
  *          Each thread has a mask of pending event flags inside its @p Thread
  *          structure.
- *          Several operations are defined:
+ *          Operations defined for event flags:
  *          - <b>Wait</b>, the invoking thread goes to sleep until a certain
  *            AND/OR combination of event flags becomes pending.
  *          - <b>Clear</b>, a mask of event flags is cleared from the pending

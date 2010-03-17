@@ -22,11 +22,20 @@
  * @brief   Semaphores code.
  *
  * @addtogroup semaphores
- * @details Semaphores and threads synchronization.
+ * @details Semaphores related APIs and services.
  *
  *          <h2>Operation mode</h2>
- *          A semaphore is a threads synchronization object, some operations
- *          are defined on semaphores:
+ *          Semaphores are a flexible synchronization primitive, ChibiOS/RT
+ *          implements semaphores in their "counting semaphores" variant as
+ *          defined by Edsger Dijkstra plus several enhancements like:
+ *          - Wait operation with timeout.
+ *          - Reset operation.
+ *          - Atomic wait+signal operation.
+ *          - Return message from the wait operation (OK, RESET, TIMEOUT).
+ *          .
+ *          The binary semaphores variant can be easily implemented using
+ *          counting semaphores.<br>
+ *          Operations defined for semaphores:
  *          - <b>Signal</b>: The semaphore counter is increased and if the
  *            result is non-positive then a waiting thread is removed from
  *            the semaphore queue and made ready for execution.
@@ -36,9 +45,9 @@
  *          - <b>Reset</b>: The semaphore counter is reset to a non-negative
  *            value and all the threads in the queue are released.
  *          .
- *          Semaphores can be used as guards for mutual exclusion code zones
- *          (note that mutexes are recommended for this kind of use) but also
- *          have other uses, queues guards and counters as example.<br>
+ *          Semaphores can be used as guards for mutual exclusion zones
+ *          (note that mutexes are recommended for this kind of use) but
+ *          also have other uses, queues guards and counters as example.<br>
  *          Semaphores usually use a FIFO queuing strategy but it is possible
  *          to make them order threads by priority by enabling
  *          @p CH_USE_SEMAPHORES_PRIORITY in @p chconf.h.<br>

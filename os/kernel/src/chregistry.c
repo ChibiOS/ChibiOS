@@ -22,13 +22,21 @@
  * @brief   Threads registry code.
  *
  * @addtogroup registry
- * @details Threads Registry related APIs and services.<br>
- *          The threads Threads Registry is a double linked list that holds
- *          all the active threads in the system.<br>
- *          The registry is meant to be mainly a debug feature, as example
- *          through the registry a debugger can enumerate the active threads
- *          in any given moment or the shell can print the active threads and
- *          their state.<br>
+ * @details Threads Registry related APIs and services.
+ *
+ *          <h2>Operation mode</h2>
+ *          The Threads Registry is a double linked list that holds all the
+ *          active threads in the system.<br>
+ *          Operations defined for the registry:
+ *          - <b>First</b>, returns the first, in creation order, active thread
+ *            in the system.
+ *          - <b>Next</b>, returns the next, in creation order, active thread
+ *            in the system.
+ *          .
+ *          The registry is meant to be mainly a debug feature, as example,
+ *          using the registry a debugger can enumerate the active threads
+ *          in any given moment or the shell can print the active threads
+ *          and their state.<br>
  *          Another possible use is for centralized threads memory management,
  *          terminating threads can pulse an event source and an event handler
  *          can perform a scansion of the registry in order to recover the

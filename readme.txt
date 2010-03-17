@@ -57,8 +57,8 @@
 *****************************************************************************
 
 *** 1.5.4 ***
-- FIX: Fixed missing memory recovery on reference release in chRegNextThread()
-  (bug 2971878).
+- FIX: Fixed missing memory recovery on thread reference release in
+  chRegNextThread() (bug 2971878).
 - FIX: Fixed wrong thread state macro in STM32/spi_lld.c (bug 2968142).
 - NEW: The port layer now can "capture" the implementation of individual
   scheduler API functions in order to provide architecture-optimized
@@ -71,15 +71,17 @@
 - NEW: Added RIDE7 project files to the STM32 demo under a ./ride7
   subdirectory, this should make things easier for RIDE7 users. The normal
   makefile is still available of course.
-- NEW: New article in the documentation. Fixed an orphaned page (STM8 port).
+- NEW: New article in the documentation.
 - NEW: Documentation improvements, now the description goes on top of each
   page, doxygen defaulted it in the middle, not exactly the best for
-  readability. Improved many descriptions of the various subsystems.
+  readability. Improved many descriptions of the various subsystems. Fixed
+  a misplaced page (STM8 port).
 - OPT: Optimization on the interface between scheduler and port layer, now
   the kernel is even smaller and the context switch performance improved
   quite a bit on all the supported architectures.
 - OPT: Simplified the implementation of chSchYieldS() and made it a macro.
-  The previous implementation was probably overkill and took too much space.
+  The previous implementation was probably overkill and took too much space
+  even if a bit faster.
 - CHANGE: Exiting from a chCondWaitTimeout() because a timeout now does not
   re-acquire the mutex, ownership is lost.
 - CHANGE: The module documentation has been moved from the kernel.dox file

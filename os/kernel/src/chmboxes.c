@@ -25,7 +25,7 @@
  * @details Asynchronous messages.
  *          <h2>Operation mode</h2>
  *          A mailbox is an asynchronous communication mechanism.<br>
- *          The following operations are possible on a mailbox:
+ *          Operations defined for mailboxes:
  *          - <b>Post</b>: Posts a message on the mailbox in FIFO order.
  *          - <b>Post Ahead</b>: Posts a message on the mailbox with urgent
  *            priority.
