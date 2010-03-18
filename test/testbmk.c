@@ -359,7 +359,7 @@ const struct testcase testbmk6 = {
  * @page test_benchmarks_007 Mass reschedule performance
  *
  * <h2>Description</h2>
- * Five threads are created and atomically reschedulated by resetting the
+ * Five threads are created and atomically rescheduled by resetting the
  * semaphore where they are waiting on. The operation is performed into a
  * continuous loop.<br>
  * The performance is calculated by measuring the number of iterations after
@@ -468,8 +468,6 @@ static void bmk8_execute(void) {
   test_wait_threads();
 
   test_print("--- Score : ");
-  test_printn(n);
-  test_print(" reschedules/S, ");
   test_printn(n);
   test_println(" ctxswc/S");
 }
