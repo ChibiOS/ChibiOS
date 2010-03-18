@@ -59,8 +59,8 @@
  * @section desirable_features Desirable Features
  * - Efficient instruction set for linked lists traversal. The kernel makes
  *   extensive use of simple and bidirectional linked lists so the performance
- *   is directly affected by the suported addressing modes, number of registers
- *   etc.
+ *   is directly affected by the supported addressing modes, number of
+ *   registers etc.
  * - Uniformly sized C pointers.
  * - 2KiB RAM.
  * - 16KiB ROM/Flash.
