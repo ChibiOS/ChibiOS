@@ -112,6 +112,7 @@ void chSchGoSleepS(tstate_t newstate) {
 static void wakeup(void *p) {
   Thread *tp = (Thread *)p;
 
+  tp->p_u.rdymsg = RDY_TIMEOUT;
 #if CH_USE_SEMAPHORES || (CH_USE_CONDVARS && CH_USE_CONDVARS_TIMEOUT)
   switch (tp->p_state) {
 #if CH_USE_SEMAPHORES
@@ -126,7 +127,7 @@ static void wakeup(void *p) {
     dequeue(tp);
   }
 #endif
-  chSchReadyI(tp)->p_u.rdymsg = RDY_TIMEOUT;
+  chSchReadyI(tp);
 }
 
 /**
