@@ -23,9 +23,10 @@
  * @addtogroup ARM7_CORE
  * @{
  */
-/** @cond never */
 
-#include <chconf.h>
+#include "chconf.h"
+
+#if !defined(__DOXYGEN__)
 
 .set    MODE_USR, 0x10
 .set    MODE_FIQ, 0x11
@@ -230,5 +231,6 @@ jmpr4:
         bx      r4
 #endif /* !THUMB_NO_INTERWORKING */
 
-/** @endcond */
+#endif /* !defined(__DOXYGEN__) */
+
 /** @} */

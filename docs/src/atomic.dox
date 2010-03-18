@@ -20,38 +20,38 @@
 /**
  * @page article_atomic Invoking multiple primitives as a single atomic operation
  * It is often necessary to invoke multiple operations involving a
- * reschedulation as a single atomic operation.<br>
+ * reschedule as a single atomic operation.<br>
  * ChibiOS/RT already implements APIs that perform complex operations, as
  * example the API @p chSemSignalWait() performs two operations atomically.<br>
  * If more complex operations are required in your application then it is
  * possible to build macro-operations, see the following example:
  * @code
   chSysLock();
- 
+
   chSemSignalI(&sem1);
   chSemSignalI(&sem2);
   chMtxUnlockS();
   chSchRescheduleS();
- 
+
   chSysUnlock();
  * @endcode
  * The above example performs a signal operation on two semaphores, unlocks the
- * last aquired mutex and finally performs a reschedulation. All the operations
+ * last acquired mutex and finally performs a reschedule. All the operations
  * are performed atomically.<br>
- * An hypotetical @p chSemSignalSignalWait() operation could be implemented as
+ * An hypothetical @p chSemSignalSignalWait() operation could be implemented as
  * follow:
  * @code
   chSysLock();
- 
+
   chSemSignalI(&sem1);
   chSemSignalI(&sem2);
   chSemWaitS(&Sem3);  /* May reschedule or not. */
   chSchRescheduleS(); /* This one reschedules if necessary. */
- 
+
   chSysUnlock();
  * @endcode
  * In general multiple @ref I-Class and (non rescheduling) @ref S-Class APIs
  * can be included and the block is terminated by a rescheduling @ref S-Class
  * API. An extra @p chSchRescheduleS() can be present at the very end of the
- * block, it only reschedules if a reschedulation is still required.
+ * block, it only reschedules if a reschedule is still required.
  */

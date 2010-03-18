@@ -136,7 +136,7 @@ IVOR4:
         ori         %r3, %r3, INTC_EOIR@l
         stw         %r3, 0(%r3)             /* Writing any value should do. */
 
-        /* Verifies if a reschedulation is required.*/
+        /* Verifies if a reschedule is required.*/
         bl          chSchIsRescRequiredExI
         cmpli       cr0, %r3, 0
         beq         cr0, .ctxrestore

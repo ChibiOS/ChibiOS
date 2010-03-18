@@ -105,14 +105,27 @@ register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
 extern "C" {
 #endif
   void scheduler_init(void);
+#if !defined(PORT_OPTIMIZED_READYI)
   Thread *chSchReadyI(Thread *tp);
+#endif
+#if !defined(PORT_OPTIMIZED_GOSLEEPS)
   void chSchGoSleepS(tstate_t newstate);
+#endif
+#if !defined(PORT_OPTIMIZED_GOSLEEPTIMEOUTS)
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time);
+#endif
+#if !defined(PORT_OPTIMIZED_WAKEUPS)
   void chSchWakeupS(Thread *tp, msg_t msg);
+#endif
+#if !defined(PORT_OPTIMIZED_DORESCHEDULEI)
   void chSchDoRescheduleI(void);
+#endif
+#if !defined(PORT_OPTIMIZED_RESCHEDULES)
   void chSchRescheduleS(void);
+#endif
+#if !defined(PORT_OPTIMIZED_ISRESCHREQUIREDEXI)
   bool_t chSchIsRescRequiredExI(void);
-  void chSchDoYieldS(void);
+#endif
 #ifdef __cplusplus
 }
 #endif

@@ -356,7 +356,7 @@ const struct testcase testbmk6 = {
 };
 
 /**
- * @page test_benchmarks_007 Mass reschedulation performance
+ * @page test_benchmarks_007 Mass reschedule performance
  *
  * <h2>Description</h2>
  * Five threads are created and atomically reschedulated by resetting the
@@ -376,7 +376,7 @@ static msg_t thread3(void *p) {
 
 static char *bmk7_gettest(void) {
 
-  return "Benchmark, mass reschedulation, 5 threads";
+  return "Benchmark, mass reschedule, 5 threads";
 }
 
 static void bmk7_setup(void) {
@@ -409,7 +409,7 @@ static void bmk7_execute(void) {
 
   test_print("--- Score : ");
   test_printn(n);
-  test_print(" reschedulations/S, ");
+  test_print(" reschedules/S, ");
   test_printn(n * 6);
   test_println(" ctxswc/S");
 }
@@ -422,7 +422,7 @@ const struct testcase testbmk7 = {
 };
 
 /**
- * @page test_benchmarks_008 I/O Round-Robin voluntary reschedulation.
+ * @page test_benchmarks_008 I/O Round-Robin voluntary reschedule.
  *
  * <h2>Description</h2>
  * Five threads are created at equal priority, each thread just increases a
@@ -469,7 +469,7 @@ static void bmk8_execute(void) {
 
   test_print("--- Score : ");
   test_printn(n);
-  test_print(" reschedulations/S, ");
+  test_print(" reschedules/S, ");
   test_printn(n);
   test_println(" ctxswc/S");
 }

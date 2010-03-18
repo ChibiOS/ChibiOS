@@ -91,7 +91,7 @@
 *** 1.5.3 ***
 - FIX: Removed C99-style variables declarations (bug 2964418)(backported
   in 1.4.2).
-- FIX: Fixed missing reschedulation in chEvtSignal() (bug 2961208)(backported
+- FIX: Fixed missing reschedule in chEvtSignal() (bug 2961208)(backported
   in 1.4.2).
 - NEW: Added STM8 port and demo, the demo targets the Raisonance REva board
   with STM8S208RB piggyback.
@@ -835,14 +835,14 @@
   faster if the feature is not required. Threads at the same priority level
   are still supported when the feature is disabled but the scheduling among
   them becomes cooperative.
-- OPT: Improved reschedulation time by reordering the sequence of operations,
+- OPT: Improved reschedule time by reordering the sequence of operations,
   now during enqueuing the ready list contains one less element. This change
   also slightly improves the interrupt latency.
 - OPT: Optimization to the chSemReset(), reversed the order of dequeuing.
 - FIX: Fixed a bug in the chThdSetPriority() API.
 - FIX: Modified the structure names into nvic.h in order to not make them
   collide with external libraries.
-- Added a benchmark to the test suit that measures the mass reschedulation
+- Added a benchmark to the test suit that measures the mass reschedule
   performance.
 - Added a test_terminate_threads() function to the test framework.
 - Made the Cortex-M3 port preemption code more readable.

@@ -105,23 +105,21 @@ void chSchGoSleepS(tstate_t newstate) {
 }
 #endif /* !defined(PORT_OPTIMIZED_GOSLEEPS) */
 
+#if !defined(PORT_OPTIMIZED_GOSLEEPTIMEOUTS) || defined(__DOXYGEN__)
 /*
  * Timeout wakeup callback.
  */
 static void wakeup(void *p) {
   Thread *tp = (Thread *)p;
 
-#if CH_USE_SEMAPHORES || CH_USE_MUTEXES || CH_USE_CONDVARS
+#if CH_USE_SEMAPHORES || (CH_USE_CONDVARS && CH_USE_CONDVARS_TIMEOUT)
   switch (tp->p_state) {
 #if CH_USE_SEMAPHORES
   case THD_STATE_WTSEM:
     chSemFastSignalI((Semaphore *)tp->p_u.wtobjp);
     /* Falls into, intentional. */
 #endif
-#if CH_USE_MUTEXES
-  case THD_STATE_WTMTX:
-#endif
-#if CH_USE_CONDVARS
+#if CH_USE_CONDVARS && CH_USE_CONDVARS_TIMEOUT
   case THD_STATE_WTCOND:
 #endif
     /* States requiring dequeuing.*/
@@ -166,6 +164,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
     chSchGoSleepS(newstate);
   return currp->p_u.rdymsg;
 }
+#endif /* !defined(PORT_OPTIMIZED_GOSLEEPTIMEOUTS) */
 
 /**
  * @brief   Wakes up a thread.
@@ -191,8 +190,7 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
   if (ntp->p_prio <= currp->p_prio)
     chSchReadyI(ntp);
   else {
-    Thread *otp = currp;
-    chSchReadyI(otp);
+    Thread *otp = chSchReadyI(currp);
 #if CH_TIME_QUANTUM > 0
     rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
@@ -225,7 +223,7 @@ void chSchDoRescheduleI(void) {
 #endif /* !defined(PORT_OPTIMIZED_DORESCHEDULEI) */
 
 /**
- * @brief   Performs a reschedulation if a higher priority thread is runnable.
+ * @brief   Performs a reschedule if a higher priority thread is runnable.
  * @details If a thread with a higher priority than the current thread is in
  *          the ready list then make the higher priority thread running.
  */
@@ -238,14 +236,14 @@ void chSchRescheduleS(void) {
 #endif /* !defined(PORT_OPTIMIZED_RESCHEDULES) */
 
 /**
- * @brief   Evaluates if a reschedulation is required.
+ * @brief   Evaluates if a reschedule is required.
  * @details The decision is taken by comparing the relative priorities and
  *          depending on the state of the round robin timeout counter.
  * @note    This function is meant to be used in the timer interrupt handler
  *          where @p chVTDoTickI() is invoked.
  *
  * @retval TRUE         if there is a thread that should go in running state.
- * @retval FALSE        if a reschedulation is not required.
+ * @retval FALSE        if a reschedule is not required.
  */
 #if !defined(PORT_OPTIMIZED_ISRESCHREQUIREDEXI) || defined(__DOXYGEN__)
 bool_t chSchIsRescRequiredExI(void) {
