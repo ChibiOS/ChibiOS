@@ -80,7 +80,8 @@ void chSysInit(void) {
 #endif
 
   /* Now this instructions flow becomes the main thread.*/
-  (currp = init_thread(&mainthread, NORMALPRIO))->p_state = THD_STATE_CURRENT;
+  setcurrp(init_thread(&mainthread, NORMALPRIO));
+  currp->p_state = THD_STATE_CURRENT;
   chSysEnable();
 
   /* This thread has the lowest priority in the system, its role is just to

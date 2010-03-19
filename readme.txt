@@ -87,6 +87,10 @@
 - CHANGE: The module documentation has been moved from the kernel.dox file
   to the various source code files in order to make it easier to maintain
   and double as source comments.
+- CHANGE: Removed the support for the CH_CURRP_REGISTER_CACHE optimization
+  in the configuration files and in the scheduler header. It will be
+  reintroduced as an architecture-specific optimization using the new
+  capture mechanism (among other optimizations).
 
 *** 1.5.3 ***
 - FIX: Removed C99-style variables declarations (bug 2964418)(backported

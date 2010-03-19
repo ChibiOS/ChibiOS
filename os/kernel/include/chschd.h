@@ -92,11 +92,33 @@ typedef struct {
 extern ReadyList rlist;
 #endif /* !defined(PORT_OPTIMIZED_RLIST_EXT) */
 
-#ifdef CH_CURRP_REGISTER_CACHE
-register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
-#else
+/**
+ * @brief   Current thread pointer access macro.
+ * @note    This macro is not meant to be used in the application code but
+ *          only from within the kernel, use the @p chThdSelf() API instead.
+ * @note    It is forbidden to use this macro in order to change the pointer
+ *          (currp = something), use @p setcurrp() instead.
+ */
+#if !defined(PORT_OPTIMIZED_CURRP) || defined(__DOXYGEN__)
+#if !defined(CH_CURRP_REGISTER_CACHE) || defined(__DOXYGEN__)
 #define currp rlist.r_current
-#endif
+#else /* defined(CH_CURRP_REGISTER_CACHE) */
+register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
+#endif /* defined(CH_CURRP_REGISTER_CACHE) */
+#endif /* !defined(PORT_OPTIMIZED_CURRP) */
+
+/**
+ * @brief   Current thread pointer change macro.
+ * @note    This macro is not meant to be used in the application code but
+ *          only from within the kernel.
+ */
+#if !defined(PORT_OPTIMIZED_SETCURRP) || defined(__DOXYGEN__)
+#if !defined(CH_CURRP_REGISTER_CACHE) || defined(__DOXYGEN__)
+#define setcurrp(tp) (rlist.r_current = (tp))
+#else /* defined(CH_CURRP_REGISTER_CACHE) */
+(currp = (tp))
+#endif /* defined(CH_CURRP_REGISTER_CACHE) */
+#endif /* !defined(PORT_OPTIMIZED_SETCURRP) */
 
 /*
  * Scheduler APIs.
@@ -135,7 +157,7 @@ extern "C" {
  * @details This function returns @p TRUE if there is a ready thread with
  *          higher priority.
  */
-#if !defined(PORT_OPTIMIZED_ISRESCHREQUIREDI) && !defined(__DOXYGEN__)
+#if !defined(PORT_OPTIMIZED_ISRESCHREQUIREDI) || defined(__DOXYGEN__)
 #define chSchIsRescRequiredI() (firstprio(&rlist.r_queue) > currp->p_prio)
 #endif /* !defined(PORT_OPTIMIZED_ISRESCHREQUIREDI) */
 
@@ -144,7 +166,7 @@ extern "C" {
  * @details This function returns @p TRUE if there is a ready thread with
  *          equal or higher priority.
  */
-#if !defined(PORT_OPTIMIZED_CANYIELDS) && !defined(__DOXYGEN__)
+#if !defined(PORT_OPTIMIZED_CANYIELDS) || defined(__DOXYGEN__)
 #define chSchCanYieldS() (firstprio(&rlist.r_queue) >= currp->p_prio)
 #endif /* !defined(PORT_OPTIMIZED_CANYIELDS) */
 

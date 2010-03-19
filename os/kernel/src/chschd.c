@@ -96,7 +96,8 @@ void chSchGoSleepS(tstate_t newstate) {
   Thread *otp;
 
   (otp = currp)->p_state = newstate;
-  (currp = fifo_remove(&rlist.r_queue))->p_state = THD_STATE_CURRENT;
+  setcurrp(fifo_remove(&rlist.r_queue));
+  currp->p_state = THD_STATE_CURRENT;
 #if CH_TIME_QUANTUM > 0
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
@@ -196,7 +197,8 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
 #if CH_TIME_QUANTUM > 0
     rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-    (currp = ntp)->p_state = THD_STATE_CURRENT;
+    setcurrp(ntp);
+    ntp->p_state = THD_STATE_CURRENT;
     chDbgTrace(ntp, otp);
     chSysSwitchI(ntp, otp);
   }
@@ -217,7 +219,8 @@ void chSchDoRescheduleI(void) {
 #endif
   otp = currp;
   /* Picks the first thread from the ready queue and makes it current.*/
-  (currp = ntp = fifo_remove(&rlist.r_queue))->p_state = THD_STATE_CURRENT;
+  (ntp = fifo_remove(&rlist.r_queue))->p_state = THD_STATE_CURRENT;
+  setcurrp(ntp);
   chSchReadyI(otp);
   chDbgTrace(ntp, otp);
   chSysSwitchI(ntp, otp);

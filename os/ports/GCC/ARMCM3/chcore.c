@@ -144,7 +144,7 @@ void SVCallVector(Thread *ntp, Thread *otp) {
 __attribute__((naked))
 #endif
 void PendSVVector(void) {
-  Thread *otp;
+  Thread *otp, *ntp;
   register struct intctx *sp_thd asm("r12");
 
   chSysLockFromIsr();
@@ -152,14 +152,16 @@ void PendSVVector(void) {
   PUSH_CONTEXT(sp_thd);
 
   (otp = currp)->p_ctx.r13 = sp_thd;
-  (currp = fifo_remove(&rlist.r_queue))->p_state = THD_STATE_CURRENT;
+  ntp = fifo_remove(&rlist.r_queue);
+  setcurrp(ntp);
+  ntp->p_state = THD_STATE_CURRENT;
   chSchReadyI(otp);
 #if CH_TIME_QUANTUM > 0
   /* Set the round-robin time quantum.*/
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-  chDbgTrace(otp, currp);
-  sp_thd = currp->p_ctx.r13;
+  chDbgTrace(ntp, otp);
+  sp_thd = ntp->p_ctx.r13;
 
   POP_CONTEXT(sp_thd);
 }
