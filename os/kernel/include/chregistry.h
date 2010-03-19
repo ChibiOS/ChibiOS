@@ -49,8 +49,8 @@
  */
 #define REG_INSERT(tp) {                                                    \
   (tp)->p_newer = (Thread *)&rlist;                                         \
-  (tp)->p_older = rlist.p_older;                                            \
-  (tp)->p_older->p_newer = rlist.p_older = (tp);                            \
+  (tp)->p_older = rlist.r_older;                                            \
+  (tp)->p_older->p_newer = rlist.r_older = (tp);                            \
 }
 
 #ifdef __cplusplus

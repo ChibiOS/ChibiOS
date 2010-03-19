@@ -71,11 +71,11 @@ typedef struct {
   ThreadsQueue          r_queue;    /**< @brief Threads queue.              */
   tprio_t               r_prio;     /**< @brief This field must be
                                                 initialized to zero.        */
-  struct context        p_ctx;      /**< @brief Not used, present because
+  struct context        r_ctx;      /**< @brief Not used, present because
                                                 offsets.                    */
 #if CH_USE_REGISTRY
-  Thread                *p_newer;   /**< @brief Newer registry element.     */
-  Thread                *p_older;   /**< @brief Older registry element.     */
+  Thread                *r_newer;   /**< @brief Newer registry element.     */
+  Thread                *r_older;   /**< @brief Older registry element.     */
 #endif
   /* End of the fields shared with the Thread structure.*/
 #if CH_TIME_QUANTUM > 0

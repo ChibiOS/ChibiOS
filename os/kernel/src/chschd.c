@@ -51,7 +51,7 @@ void scheduler_init(void) {
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
 #if CH_USE_REGISTRY
-  rlist.p_newer = rlist.p_older = (Thread *)&rlist;
+  rlist.r_newer = rlist.r_older = (Thread *)&rlist;
 #endif
 }
 
@@ -96,11 +96,11 @@ void chSchGoSleepS(tstate_t newstate) {
   Thread *otp;
 
   (otp = currp)->p_state = newstate;
-  setcurrp(fifo_remove(&rlist.r_queue));
-  currp->p_state = THD_STATE_CURRENT;
 #if CH_TIME_QUANTUM > 0
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
+  setcurrp(fifo_remove(&rlist.r_queue));
+  currp->p_state = THD_STATE_CURRENT;
   chDbgTrace(currp, otp);
   chSysSwitchI(currp, otp);
 }

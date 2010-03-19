@@ -64,7 +64,7 @@ Thread *chRegFirstThread(void) {
   Thread *tp;
 
   chSysLock();
-  tp = rlist.p_newer;
+  tp = rlist.r_newer;
 #if CH_USE_DYNAMIC
   tp->p_refs++;
 #endif
