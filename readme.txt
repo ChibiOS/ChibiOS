@@ -57,6 +57,8 @@
 *****************************************************************************
 
 *** 1.5.4 ***
+- FIX: Fixed broken CH_CURRP_REGISTER_CACHE option in the ARM7 port (bug
+  2973365).
 - FIX: Fixed missing memory recovery on thread reference release in
   chRegNextThread() (bug 2971878).
 - FIX: Fixed wrong thread state macro in STM32/spi_lld.c (bug 2968142).
