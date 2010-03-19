@@ -137,7 +137,7 @@ typedef struct {
 #if !CH_DBG_ENABLE_TRACE
 /* When the trace feature is disabled this function is replaced by an empty
    macro.*/
-#define chDbgTrace(otp, ntp) {}
+#define chDbgTrace(otp) {}
 #endif
 
 #if !defined(__DOXYGEN__)
@@ -147,7 +147,7 @@ extern "C" {
 #if CH_DBG_ENABLE_TRACE
   extern TraceBuffer trace_buffer;
   void trace_init(void);
-  void chDbgTrace(Thread *ntp, Thread *otp);
+  void chDbgTrace(Thread *otp);
 #endif
 #if CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK
   extern char *panic_msg;
