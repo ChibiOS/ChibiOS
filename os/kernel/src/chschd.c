@@ -212,18 +212,18 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
  */
 #if !defined(PORT_OPTIMIZED_DORESCHEDULEI) || defined(__DOXYGEN__)
 void chSchDoRescheduleI(void) {
-  Thread *otp, *ntp;
+  Thread *otp;
 
 #if CH_TIME_QUANTUM > 0
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
   otp = currp;
   /* Picks the first thread from the ready queue and makes it current.*/
-  (ntp = fifo_remove(&rlist.r_queue))->p_state = THD_STATE_CURRENT;
-  setcurrp(ntp);
+  setcurrp(fifo_remove(&rlist.r_queue));
+  currp->p_state = THD_STATE_CURRENT;
   chSchReadyI(otp);
-  chDbgTrace(ntp, otp);
-  chSysSwitchI(ntp, otp);
+  chDbgTrace(currp, otp);
+  chSysSwitchI(currp, otp);
 }
 #endif /* !defined(PORT_OPTIMIZED_DORESCHEDULEI) */
 
