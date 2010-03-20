@@ -160,7 +160,7 @@
  * @brief IRQ handler exit code.
  *
  * @note Usually IRQ handlers function are also declared naked.
- * @note This macro usually performs the final reschedulation by using
+ * @note This macro usually performs the final reschedule by using
  *       @p chSchRescRequiredI() and @p chSchDoRescheduleI().
  */
 #define CH_IRQ_EPILOGUE() PORT_IRQ_EPILOGUE()

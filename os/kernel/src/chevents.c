@@ -129,6 +129,7 @@ void chEvtSignal(Thread *tp, eventmask_t mask) {
 
   chSysLock();
   chEvtSignalI(tp, mask);
+  chSchRescheduleS();
   chSysUnlock();
 }
 

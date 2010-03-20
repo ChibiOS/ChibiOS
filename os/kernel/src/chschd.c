@@ -212,7 +212,7 @@ void chSchDoRescheduleI(void) {
 }
 
 /**
- * @brief Performs a reschedulation if a higher priority thread is runnable.
+ * @brief Performs a reschedule if a higher priority thread is runnable.
  * @details If a thread with a higher priority than the current thread is in
  *          the ready list then make the higher priority thread running.
  */
@@ -223,12 +223,12 @@ void chSchRescheduleS(void) {
 }
 
 /**
- * @brief Evaluates if a reschedulation is required.
+ * @brief Evaluates if a reschedule is required.
  * @details The decision is taken by comparing the relative priorities and
  *          depending on the state of the round robin timeout counter.
  *
  * @retval TRUE if there is a thread that should go in running state.
- * @retval FALSE if a reschedulation is not required.
+ * @retval FALSE if a reschedule is not required.
  *
  * @note This function is meant to be used in the timer interrupt handler
  *       where @p chVTDoTickI() is invoked.

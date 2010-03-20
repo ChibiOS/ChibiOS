@@ -51,6 +51,11 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.4.2 ***
+- FIX: Fixed missing reschedule in chEvtSignal() (bug 2961208).
+- FIX: Removed C99-style variables declarations (bug 2964418).
+- Minor documentation fixes.
+
 *** 1.4.1 ***
 - FIX: Fixed wrong UART deinitialization sequence in LPC214x serial driver
   (bug 2953985).
