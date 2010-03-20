@@ -79,9 +79,10 @@ static msg_t thread1(void *p) {
   return 0;
 }
 
-#ifdef __GNUC____attribute__((noinline))
-#endifstatic unsigned int msg_loop_test(Thread *tp) {
-
+#ifdef __GNUC___
+_attribute__((noinline))
+#endif
+static unsigned int msg_loop_test(Thread *tp) {
   uint32_t n = 0;
   test_wait_tick();
   test_start_timer(1000);
