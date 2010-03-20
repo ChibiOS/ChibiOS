@@ -35,7 +35,7 @@
  */
 
 /*
- * HAL driver settings.
+ * HAL driver system settings.
  */
 #define STM32_SYSCLK                72
 
