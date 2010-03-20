@@ -5,7 +5,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.4.1
+*** Kernel:       1.4.2
 *** Architecture: ARM7TDMI
 *** GCC Version:  4.4.2
 
@@ -112,12 +112,12 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Score : 120402 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
---- Test Case 11.7 (Benchmark, mass reschedulation, 5 threads)
---- Score : 29578 reschedulations/S, 177468 ctxswc/S
+--- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
+--- Score : 29578 reschedules/S, 177468 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 257316 reschedulations/S, 257316 ctxswc/S
+--- Score : 257312 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)

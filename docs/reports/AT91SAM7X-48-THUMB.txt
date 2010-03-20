@@ -5,7 +5,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.4.1
+*** Kernel:       1.4.2
 *** Architecture: ARM7TDMI
 *** GCC Version:  4.4.2
 
@@ -89,7 +89,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 104701 msgs/S, 209402 ctxswc/S
+--- Score : 104700 msgs/S, 209400 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
@@ -112,12 +112,12 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Score : 117274 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
---- Test Case 11.7 (Benchmark, mass reschedulation, 5 threads)
---- Score : 28617 reschedulations/S, 171702 ctxswc/S
+--- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
+--- Score : 28617 reschedules/S, 171702 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 249856 reschedulations/S, 249856 ctxswc/S
+--- Score : 249860 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)

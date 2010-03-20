@@ -37,7 +37,7 @@ Lines executed:100.00% of 58
 ../../os/kernel/src/chcond.c:creating `chcond.c.gcov'
 
 File `../../os/kernel/src/chevents.c'
-Lines executed:100.00% of 101
+Lines executed:100.00% of 102
 ../../os/kernel/src/chevents.c:creating `chevents.c.gcov'
 
 File `../../os/kernel/src/chmsg.c'
