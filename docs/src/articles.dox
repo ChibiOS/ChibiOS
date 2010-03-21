@@ -20,6 +20,7 @@
 /**
  * @page articles Articles and Code Samples
  * ChibiOS/RT Articles and Code Examples:
+ * . @subpage article_eclipse
  * - @subpage article_create_thread
  * - @subpage article_interrupts
  * - @subpage article_wakeup
