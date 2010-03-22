@@ -123,7 +123,7 @@
  *   to the ChibiOS/RT root directory (you may have as many workspaces you
  *   want, keep this for later), make sure to select the check box or it will
  *   ask you again each time.
- *   <br>
+ *   <br><br>
  *   @image html tool001.jpg
  *   <br>
  * - Now you should see the welcome screen, close it and you will be in the
@@ -143,7 +143,7 @@
  * - Press the "Add..." button and put http://opensource.zylin.com/zylincdt
  *   into the location field, then press OK. The Zylin plugin will appear in the
  *   available plugins view, select and install it.
- *   <br>
+ *   <br><br>
  *   @image html tool002.jpg
  * .
  *
