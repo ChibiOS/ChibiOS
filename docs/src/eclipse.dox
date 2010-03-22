@@ -49,6 +49,7 @@
  * - @ref install_compiler
  * - @ref install_eclipse
  * - @ref install_zylin
+ * - @ref install_openocd
  * - @ref install_doxygen
  * - @ref install_graphviz
  * - @ref install_eclox
