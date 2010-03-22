@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    SPC563/serial_lld.c
+ * @file    SPC56x/serial_lld.c
  * @brief   SPC563 low level serial driver code.
  *
  * @addtogroup SPC563_SERIAL

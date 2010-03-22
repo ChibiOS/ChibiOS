@@ -24,12 +24,11 @@ Build procedure:
 - Normal paragraphs, return rescriptions and notes must start with a capital
   letter and must be terminated with a dot.
 - Multiple return values should be listed using the @retval command.
-- AUTOBRIEF is enabled but deprecated, gradually convert to the use of explicit
-  @brief command.
+- Parameters direction must be specified.
 
 Examples:
 @note This is a note.
 @retval RDY_OK is a possible return value.
 @return The pointer to the created thread is returned.
-@param n the number of bytes to be written
-@param n the number of bytes to be written. This value can be zero.
+@param[in] n the number of bytes to be written
+@param[in] n the number of bytes to be written. This value can be zero.

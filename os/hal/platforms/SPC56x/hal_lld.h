@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    SPC563/hal_lld.h
+ * @file    SPC56x/hal_lld.h
  * @brief   SPC563 HAL subsystem low level driver header.
  *
  * @addtogroup SPC563_HAL

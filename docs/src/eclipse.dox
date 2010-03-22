@@ -62,8 +62,6 @@
  *   OpenOCD home page</a>, more exactly
  *   <a href="http://openocd.berlios.de/doc/html/Debug-Adapter-Hardware.html#Debug-Adapter-Hardware"
  *   target="_blank">here</a>.
- * - An STM32 development board (but this guide apply to all the ARM targets
- *   supported by ChibiOS/RT. This guide describes the Olimex STM32-P103.
  * - <a href="https://sourceforge.net/projects/chibios/" target="_blank">
  *   ChibiOS/RT latest stable release</a>.
  * - <a href="http://www.java.com/en/" target="_blank">Java runtime</a>, you
@@ -76,8 +74,8 @@
  * - Zylin plugin for on-board debugging, see @ref install_zylin section.
  * - OpenOCD binaries for Windows, YAGARTO does not provide those anymore but
  *   you can download them from <a href="http://www.freddiechopin.info/"
- *   target="_blank">here</a>. This guide will describe the use with version
- *   3.1 but it should apply to newer releases as well.
+ *   target="_blank">here</a>. Linux users can try 
+ *   <a href="http://home.comcast.net/~mcatudal/" target="_blank">here</a>.
  * - <b>Optional</b>, <a href="http://www.stack.nl/~dimitri/doxygen/"
  *   target="_blank">MinGW compiler</a>, needed if you want to compile, debug
  *   and run the simulator from within Eclipse. Linux users do not need this
@@ -125,7 +123,9 @@
  *   to the ChibiOS/RT root directory (you may have as many workspaces you
  *   want, keep this for later), make sure to select the check box or it will
  *   ask you again each time.
+ *   <br>
  *   @image html tool001.jpg
+ *   <br>
  * - Now you should see the welcome screen, close it and you will be in the
  *   normal C/C++ perspective.
  * - Unselect "Project->Build Automatically" unless you like insanity.
@@ -143,8 +143,14 @@
  * - Press the "Add..." button and put http://opensource.zylin.com/zylincdt
  *   into the location field, then press OK. The Zylin plugin will appear in the
  *   available plugins view, select and install it.
+ *   <br>
  *   @image html tool002.jpg
  * .
+ *
+ * @section install_openocd OpenOCD Installation
+ * Windows users just have to use the installer. Linux user should follow the
+ * normal installation procedure for deb or rpm packages, of course it is also
+ * possible to build it from the source code.
  *
  * @section install_doxygen Doxygen Installation
  * Just use the installer, Linux users probably have Doxygen already available
@@ -157,8 +163,9 @@
  * is listed in the PATH variable or Doxygen would not be able to locate it.
  *
  * @section install_eclox Eclox Installation
- * Use the same installation steps used for the Zylin plugin except use the
- * URL http://download.gna.org/eclox/update. Install "Eclox" not "Eclox Hot".
+ * Use the same installation steps used for the Zylin plugin except use
+ * http://download.gna.org/eclox/update as URL. Install "Eclox" not "Eclox
+ * Hot".
  * After installing Eclox you will be able to compile Doxygen documentation
  * using the button with the blue @@ inside.
  */

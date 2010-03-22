@@ -18,13 +18,24 @@
 */
 
 /**
- * @file    SPC56x/typedefs.h
- * @brief   Dummy typedefs file.
+ * @defgroup SPC563_DRIVERS SPC563 Drivers
+ * @brief Device drivers included in the SPC563 support.
+ *
+ * @ingroup PPC
  */
 
-#ifndef _TYPEDEFS_H_
-#define _TYPEDEFS_H_
+/**
+ * @defgroup SPC563_HAL SPC563 HAL Support
+ * @brief HAL support.
+ *
+ * @ingroup SPC563_DRIVERS
+ */
 
-#include "chtypes.h"
-
-#endif /* _TYPEDEFS_H_ */
+/**
+ * @defgroup SPC563_SERIAL SPC563 ESCI Support
+ * @brief ESCI support.
+ * @details The serial driver supports both the SPC563 ESCIs in asynchronous
+ * mode.
+ *
+ * @ingroup SPC563_DRIVERS
+ */

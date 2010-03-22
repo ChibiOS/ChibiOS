@@ -598,6 +598,7 @@ INPUT                  = ../docs/src \
                          ../os/hal/platforms/AVR \
                          ../os/hal/platforms/LPC214x \
                          ../os/hal/platforms/MSP430 \
+                         ../os/hal/platforms/SPC56x \
                          ../os/hal/platforms/STM32 \
                          ../os/hal/platforms/STM8 \
                          ../os/various \
