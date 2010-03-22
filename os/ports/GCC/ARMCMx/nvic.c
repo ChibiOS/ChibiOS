@@ -18,9 +18,9 @@
 */
 
 /**
- * @file ARMCM3/nvic.c
- * @brief Cortex-M3 NVIC support code.
- * @addtogroup ARMCM3_NVIC
+ * @file ARMCMx/nvic.c
+ * @brief Cortex-Mx NVIC support code.
+ * @addtogroup ARMCMx_NVIC
  * @{
  */
 

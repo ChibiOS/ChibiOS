@@ -30,7 +30,7 @@
  * - A demo supporting the kernel test suite.
  * - A demo that demonstrate the FatFs use with the MMC driver.
  * .
- * @ingroup ARMCM3
+ * @ingroup ARMCMx
  */
 
 /**

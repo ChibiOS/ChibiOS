@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    ARMCM3/chcore.c
- * @brief   ARM Cortex-M3 architecture port code.
+ * @file    ARMCMx/chcore.c
+ * @brief   ARM Cortex-Mx architecture port code.
  *
- * @addtogroup ARMCM3_CORE
+ * @addtogroup ARMCMx_CORE
  * @{
  */
 

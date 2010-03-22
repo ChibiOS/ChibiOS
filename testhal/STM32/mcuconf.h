@@ -25,28 +25,34 @@
  * is enabled in halconf.h.
  *
  * IRQ priorities:
- * 0xF0         Lowest, priority level reserved for PENDSV.
- * 0xE0...0x40  Normal IRQs priority levels (0x80 used by SYSTICK).
- * 0x30         Used by SVCALL, do not share.
- * 0x20...0x00  Fast interrupts, can preempt the kernel but cannot use it.
+ * 15           Lowest, priority level reserved for PENDSV.
+ * 14...4       Normal IRQs priority levels (0x80 used by SYSTICK).
+ * 3            Used by SVCALL, do not share.
+ * 2...0        Fast interrupts, can preempt the kernel but cannot use it
+ *              directly.
  *
  * DMA priorities:
  * 0...3        Lowest...Highest.
  */
 
 /*
+ * HAL driver system settings.
+ */
+#define STM32_SYSCLK                72
+
+/*
  * ADC driver system settings.
  */
 #define USE_STM32_ADC1              TRUE
 #define STM32_ADC1_DMA_PRIORITY     3
-#define STM32_ADC1_IRQ_PRIORITY     0x50
+#define STM32_ADC1_IRQ_PRIORITY     CORTEX_PRIORITY(5)
 #define STM32_ADC1_DMA_ERROR_HOOK() chSysHalt()
 
 /*
  * CAN driver system settings.
  */
 #define USE_STM32_CAN1              TRUE
-#define STM32_CAN1_IRQ_PRIORITY     0xB0
+#define STM32_CAN1_IRQ_PRIORITY     CORTEX_PRIORITY(11)
 
 /*
  * PWM driver system settings.
@@ -55,10 +61,10 @@
 #define USE_STM32_PWM2              FALSE
 #define USE_STM32_PWM3              FALSE
 #define USE_STM32_PWM4              FALSE
-#define STM32_PWM1_IRQ_PRIORITY     0x70
-#define STM32_PWM2_IRQ_PRIORITY     0x70
-#define STM32_PWM3_IRQ_PRIORITY     0x70
-#define STM32_PWM4_IRQ_PRIORITY     0x70
+#define STM32_PWM1_IRQ_PRIORITY     CORTEX_PRIORITY(7)
+#define STM32_PWM2_IRQ_PRIORITY     CORTEX_PRIORITY(7)
+#define STM32_PWM3_IRQ_PRIORITY     CORTEX_PRIORITY(7)
+#define STM32_PWM4_IRQ_PRIORITY     CORTEX_PRIORITY(7)
 
 /*
  * SERIAL driver system settings.
@@ -66,9 +72,17 @@
 #define USE_STM32_USART1            FALSE
 #define USE_STM32_USART2            TRUE
 #define USE_STM32_USART3            FALSE
-#define STM32_USART1_PRIORITY       0xC0
-#define STM32_USART2_PRIORITY       0xC0
-#define STM32_USART3_PRIORITY       0xC0
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL)
+#define USE_STM32_UART4             FALSE
+#define USE_STM32_UART5             FALSE
+#endif
+#define STM32_USART1_PRIORITY       CORTEX_PRIORITY(12)
+#define STM32_USART2_PRIORITY       CORTEX_PRIORITY(12)
+#define STM32_USART3_PRIORITY       CORTEX_PRIORITY(12)
+#if defined(STM32F10X_HD) || defined(STM32F10X_CL)
+#define STM32_UART4_PRIORITY        CORTEX_PRIORITY(12)
+#define STM32_UART5_PRIORITY        CORTEX_PRIORITY(12)
+#endif
 
 /*
  * SPI driver system settings.
@@ -77,6 +91,6 @@
 #define USE_STM32_SPI2              TRUE
 #define STM32_SPI1_DMA_PRIORITY     2
 #define STM32_SPI2_DMA_PRIORITY     2
-#define STM32_SPI1_IRQ_PRIORITY     0xA0
-#define STM32_SPI2_IRQ_PRIORITY     0xA0
+#define STM32_SPI1_IRQ_PRIORITY     CORTEX_PRIORITY(10)
+#define STM32_SPI2_IRQ_PRIORITY     CORTEX_PRIORITY(10)
 #define STM32_SPI1_DMA_ERROR_HOOK() chSysHalt()

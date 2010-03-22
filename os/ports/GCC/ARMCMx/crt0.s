@@ -18,9 +18,9 @@
 */
 
 /**
- * @file ARMCM3/crt0.s
- * @brief Generic ARM Cortex-M3 startup file for ChibiOS/RT.
- * @addtogroup ARMCM3_CORE
+ * @file ARMCMx/crt0.s
+ * @brief Generic ARM Cortex-Mx startup file for ChibiOS/RT.
+ * @addtogroup ARMCMx_CORE
  * @{
  */
 /** @cond never */

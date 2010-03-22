@@ -84,6 +84,7 @@
 - OPT: Simplified the implementation of chSchYieldS() and made it a macro.
   The previous implementation was probably overkill and took too much space
   even if a bit faster.
+- CHANGE: Modified the Cortex-M3 port to be a more generic Cortex-Mx port.
 - CHANGE: Exiting from a chCondWaitTimeout() because a timeout now does not
   re-acquire the mutex, ownership is lost.
 - CHANGE: The module documentation has been moved from the kernel.dox file

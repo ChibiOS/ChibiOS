@@ -583,8 +583,9 @@ INPUT                  = ../docs/src \
                          ../os/ports/GCC/ARM7 \
                          ../os/ports/GCC/ARM7/crt0.s \
                          ../os/ports/GCC/ARM7/chcoreasm.s \
-                         ../os/ports/GCC/ARMCM3 \
-                         ../os/ports/GCC/ARMCM3/crt0.s \
+                         ../os/ports/GCC/ARMCMx \
+                         ../os/ports/GCC/ARMCMx/crt0.s \
+                         ../os/ports/GCC/ARMCMx\STM32F103 \
                          ../os/ports/GCC/PPC \
                          ../os/ports/GCC/PPC/crt0.s \
                          ../os/ports/GCC/MSP430 \

@@ -18,9 +18,9 @@
 */
 
 /**
- * @file ARMCM3/chtypes.h
+ * @file ARMCMx/chtypes.h
  * @brief ARM Cortex-M3 architecture port system types.
- * @addtogroup ARMCM3_CORE
+ * @addtogroup ARMCMx_CORE
  * @{
  */
 
