@@ -109,7 +109,7 @@ void SVCallVector(Thread *ntp, Thread *otp) {
 
 #ifdef CH_CURRP_REGISTER_CACHE
 #define PUSH_CONTEXT(sp) {                                              \
-  register uint32_t tmp asm ("r3") = BASEPRI_USER;                      \
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_USER;               \
   asm volatile ("mrs     %0, PSP                                \n\t"   \
                 "stmdb   %0!, {r3-r6,r8-r11, lr}" :                     \
                 "=r" (sp) : "r" (sp), "r" (tmp));                       \
@@ -123,7 +123,7 @@ void SVCallVector(Thread *ntp, Thread *otp) {
 }
 #else
 #define PUSH_CONTEXT(sp) {                                              \
-  register uint32_t tmp asm ("r3") = BASEPRI_USER;                      \
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_USER;               \
   asm volatile ("mrs     %0, PSP                                \n\t"   \
                 "stmdb   %0!, {r3-r11,lr}" :                            \
                 "=r" (sp) : "r" (sp), "r" (tmp));                       \

@@ -39,67 +39,34 @@
 #define ENABLE_WFI_IDLE         0
 #endif
 
-/**
- * @brief   BASEPRI user level, 0 = disabled.
- */
-#ifndef BASEPRI_USER
-#define BASEPRI_USER            0
-#endif
-
-/**
- * @brief   BASEPRI level within kernel lock.
- * @details Priority levels higher than this one (lower values) are unaffected
- *          by the OS activity and can be classified as fast interrupt sources,
- *          see @ref interrupt_classes.
- */
-#ifndef BASEPRI_KERNEL
-#define BASEPRI_KERNEL          0x40
-#endif
-
-/**
- * @brief   SVCALL handler priority.
- * @note    This priority must always be one level above the @p BASEPRI_KERNEL
- *          value.
- * @note    It is recommended, but not mandatory, to leave this priority level
- *          for this handler alone.
- */
-#ifndef PRIORITY_SVCALL
-#define PRIORITY_SVCALL         (BASEPRI_KERNEL - 0x10)
-#endif
-
-/**
- * @brief   SYSTICK handler priority.
- */
-#ifndef PRIORITY_SYSTICK
-#define PRIORITY_SYSTICK        0x80
-#endif
-
-/**
- * @brief   PENDSV handler priority.
- * @note    It is recommended to leave this priority level for this handler
- *          alone.
- * @note    This is a reserved handler and its priority must always be the
- *          lowest priority in the system in order to be always executed last
- *          in the interrupt servicing chain.
- */
-#ifndef PRIORITY_PENDSV
-#define PRIORITY_PENDSV         0xF0
-#endif
-
-/**
- * @brief   Macro defining the ARM Cortex-M3 architecture.
- */
-#define CH_ARCHITECTURE_ARMCM3
+#define CORTEX_M0               0       /**< @brief Cortex-M0 variant.      */
+#define CORTEX_M3               3       /**< @brief Cortex-M3 variant.      */
 
 /**
  * @brief   Name of the implemented architecture.
  */
 #define CH_ARCHITECTURE_NAME "ARM"
 
+/* Inclusion of the Cortex-Mx implementation specific parameters.*/
+#include "cmparams.h"
+
+/* Generating model-dependent info.*/
+#if (CORTEX_MODEL == CORTEX_M3) || defined(__DOXYGEN__)
+/**
+ * @brief   Macro defining the ARM Cortex-M3 architecture.
+ */
+#define CH_ARCHITECTURE_ARMCM3
+
 /**
  * @brief   Name of the architecture variant (optional).
  */
-#define CH_CORE_VARIANT_NAME "Cortex-M3"
+#define CH_CORE_VARIANT_NAME    "Cortex-M3"
+#elif (CORTEX_MODEL == CORTEX_M0)
+#define CH_ARCHITECTURE_ARMCM0
+#define CH_CORE_VARIANT_NAME    "Cortex-M0"
+#else
+#error "unknown or unsupported Cortex-M model"
+#endif
 
 /**
  * @brief   32 bits stack and memory alignment enforcement.
@@ -170,7 +137,7 @@ struct context {
   tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +              \
                                      wsize -                            \
                                      sizeof(struct intctx));            \
-  tp->p_ctx.r13->basepri = BASEPRI_USER;                                \
+  tp->p_ctx.r13->basepri = CORTEX_BASEPRI_USER;                         \
   tp->p_ctx.r13->lr_exc = (regarm_t)0xFFFFFFFD;                         \
   tp->p_ctx.r13->r0 = arg;                                              \
   tp->p_ctx.r13->lr_thd = chThdExit;                                    \
@@ -263,7 +230,7 @@ struct context {
  */
 #if CH_OPTIMIZE_SPEED
 #define port_lock() {                                                   \
-  register uint32_t tmp asm ("r3") = BASEPRI_KERNEL;                    \
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;             \
   asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
 }
 #else
@@ -280,7 +247,7 @@ struct context {
  */
 #if CH_OPTIMIZE_SPEED
 #define port_unlock() {                                                 \
-  register uint32_t tmp asm ("r3") = BASEPRI_USER;                      \
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_USER;               \
   asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
 }
 #else
@@ -321,7 +288,7 @@ struct context {
  * @note    In this port it raises/lowers the base priority to kernel level.
  */
 #define port_suspend() {                                                \
-  register uint32_t tmp asm ("r3") = BASEPRI_KERNEL;                    \
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;             \
   asm volatile ("msr     BASEPRI, %0                    \n\t"           \
                 "cpsie   i" : : "r" (tmp));                             \
 }
@@ -331,7 +298,7 @@ struct context {
  * @note    In this port it lowers the base priority to user level.
  */
 #define port_enable() {                                                 \
-  register uint32_t tmp asm ("r3") = BASEPRI_USER;                      \
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_USER;               \
   asm volatile ("msr     BASEPRI, %0                    \n\t"           \
                 "cpsie   i" : : "r" (tmp));                             \
 }

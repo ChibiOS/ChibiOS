@@ -6,4 +6,5 @@ PORTSRC = ${CHIBIOS}/os/ports/GCC/ARMCM3/chcore.c \
 PORTASM = ${CHIBIOS}/os/ports/GCC/ARMCM3/crt0.s
 
 PORTINC = ${CHIBIOS}/os/ports/GCC/ARMCM3 \
+          ${CHIBIOS}/os/ports/GCC/ARMCM3/STM32F103 \
           ${CHIBIOS}/os/ports/GCC/ARMCM3/cmsis
