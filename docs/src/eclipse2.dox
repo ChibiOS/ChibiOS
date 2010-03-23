@@ -160,7 +160,47 @@
  * - Set an initial breakpoint in the main function.
  * - Start the target (which will immediately stop on the breakpoint).
  * .
- * **To be completed**
+ * The first thing to do is to open the "Debug Configurations..." dialog:
+ *   <br><br>
+ *   @image html eclipse006.jpg
+ *   <br>
+ * The configuration dialog will appear, we must create a native Zylin
+ * configuration:
+ *   <br><br>
+ *   @image html eclipse007.jpg
+ *   <br>
+ * Now we must give the configuration a name, "ARMCM3-STM32F103-GCC (flash and
+ * run)" in this example, then setup the various configuration pages as follow:
+ * <br><br>
+ * The "Main" tab:
+ * @image html eclipse008.jpg
+ * <br><br>
+ * The "Debugger" tab:
+ * @image html eclipse009.jpg
+ * <br><br>
+ * The "Commands" tab:
+ * @image html eclipse010.jpg
+ * <br>
+ * Note that the "Commands" tab contains the part that changes depending on
+ * the target. The complete commands sequence (it is not fully visible in the
+ * image) for STM32 is:
+ * @code
+ * monitor soft_reset_halt
+ * monitor wait_halt
+ * monitor poll
+ * monitor flash probe 0
+ * monitor stm32x mass_erase 0
+ * monitor flash write_bank 0 ch.bin 0
+ * monitor soft_reset_halt
+ * symbol-file ch.elf
+ * thbreak main
+ * continue
+ * @endcode  
+ * <br><br>
+ * The "Common" tab:
+ * @image html eclipse011.jpg
+ * <br>
+ * Now the debug configuration is complete.
  *
  * @subsection eclipse2_configuring_openocd Configuring and running OpenOCD
  * OpenOCD must be run, with appropriate parameters, before starting your
@@ -184,10 +224,16 @@
  * debug configuration (we created just one but you may have multiple
  * debug configurations in your project, as example I usually create
  * another debug configuration that just starts the target without
- * uploading the code).<br>
+ * uploading the code).
+ * <br><br>
+ * @image html eclipse012.jpg
+ * <br>
  * The debugger will be initialized, you will see the operation in progress on
  * the console then Eclipse will switch to the debug perspective and you will
  * see your program stopped on the default breakpoint in the main function.
+ * <br><br>
+ * @image html eclipse013.jpg
+ * <br>
  * From there you can perform all the usual debugging tasks, set breakpoints,
  * single step execution, variables, memory and registers inspection etc.
  * Please refer to the Eclipse documentation about those "normal" operations.
