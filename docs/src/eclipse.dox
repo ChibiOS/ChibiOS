@@ -19,28 +19,22 @@
 
 /**
  * @page article_eclipse Setting up a free embedded IDE
- * @brief Free advanced embedded IDE for ChibiOS/RT
- * This article will explain how to setup and use a free toolchain and use it
- * with ChibiOS/RT and general embedded development. The IDE will allow you
- * to:
- * - Edit and reformat your source code.
- * - Compile and verify errors.
- * - Debug your code on the target board both in high level language and
- *   assembler.
- * - Generate documentation from your source code.
- * - Develop embedded applications with or without ChibiOS/RT.
- * .
+ * @brief Free advanced embedded IDE for ChibiOS/RT.
+ * details This article will explain how to setup a free toolchain for use with
+ * ChibiOS/RT and general embedded development.<br>
  * The guide is meant mainly for Windows users but notes about Linux and
  * MAC OSX are present where the setup differs, mostly the toolchain is
  * exactly the same.
  *
- * <h2>What this guide will not explain</h2>
+ * <h2>What this guide does not cover</h2>
  * We will not enter in details of common system tasks like and not limited to:
  * - Installing applications (unless a special procedure is required).
  * - Creating desktop shortcuts.
  * - Adding paths to the PATH variable.
  * - Creating environment variables.
  * - Any other normal PC usage task.
+ * - Use of the toolchain, the use is covered by the "@ref article_eclipse2"
+ *   article.
  * .
  *
  * <h2>Article Index</h2>
@@ -75,7 +69,7 @@
  * - Zylin plugin for on-board debugging, see @ref install_zylin section.
  * - OpenOCD binaries for Windows, YAGARTO does not provide those anymore but
  *   you can download them from <a href="http://www.freddiechopin.info/"
- *   target="_blank">here</a>. Linux users can try 
+ *   target="_blank">here</a>. Linux users can try
  *   <a href="http://home.comcast.net/~mcatudal/" target="_blank">here</a>.
  * - <b>Optional</b>, <a href="http://www.stack.nl/~dimitri/doxygen/"
  *   target="_blank">MinGW compiler</a>, needed if you want to compile, debug
@@ -113,7 +107,7 @@
  * Eclipse is distributed into a compressed archive, there is no installation
  * procedure:
  * - Verify if you have Java installed, if not install the runtime. You may
- *   verify this using the command: java -version. Make sure you have at
+ *   verify this using the command: "java -version". Make sure you have at
  *   least version 1.6.
  * - Create an eclipse directory in your home and unpack the archive there.
  *   Windows users may unpack it into c:@\program files@\eclipse.
@@ -130,17 +124,19 @@
  * - Now you should see the welcome screen, close it and you will be in the
  *   normal C/C++ perspective.
  * - Unselect "Project->Build Automatically" unless you like insanity.
- * - Disable the "usage collector" in Window->Preferences->Usage_Data_Collector
- *   by unselecting "Enable capture".
+ * - Disable the "usage collector" in
+ *   "Window->Preferences->Usage_Data_Collector" by unselecting "Enable
+ *   capture".
  * - If you are behind a proxy or firewall (corporate users usually are)
- *   configure the correct parameters in Window->Preferences->General->Network_Connections.
- * - Let Eclipse auto update to the latest version Help->Check_for_Updates.
+ *   configure the correct parameters in
+ *   "Window->Preferences->General->Network_Connections".
+ * - Let Eclipse auto update to the latest version "Help->Check_for_Updates".
  * .
  *
  * @section install_zylin Zylin Plugin Installation
  * Eclipse requires an hardware debugger component in order to perform on board
  * execution and debug.
- * - Open Eclipse, then help->Install_New_Software...
+ * - Open Eclipse, then "Help->Install_New_Software...".
  * - Press the "Add..." button and put http://opensource.zylin.com/zylincdt
  *   into the location field, then press OK. The Zylin plugin will appear in the
  *   available plugins view, select and install it.
