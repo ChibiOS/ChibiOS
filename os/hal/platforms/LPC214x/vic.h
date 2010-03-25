@@ -18,8 +18,9 @@
 */
 
 /**
- * @file LPC214x/vic.h
- * @brief LPC214x VIC peripheral support code.
+ * @file    LPC214x/vic.h
+ * @brief   LPC214x VIC peripheral support header.
+ *
  * @addtogroup LPC214x_VIC
  * @{
  */

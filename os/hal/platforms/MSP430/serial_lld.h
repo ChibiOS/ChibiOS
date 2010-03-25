@@ -125,11 +125,10 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/** @cond never*/
-#if USE_MSP430_USART0
+#if USE_MSP430_USART0 && !defined(__DOXYGEN__)
 extern SerialDriver SD1;
 #endif
-#if USE_MSP430_USART1
+#if USE_MSP430_USART1 && !defined(__DOXYGEN__)
 extern SerialDriver SD2;
 #endif
 
@@ -142,7 +141,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-/** @endcond*/
 
 #endif /* CH_HAL_USE_SERIAL */
 

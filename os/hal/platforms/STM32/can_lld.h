@@ -293,8 +293,7 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/** @cond never*/
-#if USE_STM32_CAN1
+#if USE_STM32_CAN1 && !defined(__DOXYGEN__)
 extern CANDriver CAND1;
 #endif
 
@@ -315,7 +314,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-/** @endcond*/
 
 #endif /* CH_HAL_USE_CAN */
 

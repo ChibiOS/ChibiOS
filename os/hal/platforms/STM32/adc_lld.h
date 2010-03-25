@@ -258,8 +258,7 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/** @cond never*/
-#if USE_STM32_ADC1
+#if USE_STM32_ADC1 && !defined(__DOXYGEN__)
 extern ADCDriver ADCD1;
 #endif
 
@@ -274,7 +273,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-/** @endcond*/
 
 #endif /* CH_HAL_USE_ADC */
 

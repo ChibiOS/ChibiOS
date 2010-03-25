@@ -113,8 +113,7 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/** @cond never*/
-#if USE_LPC214x_SPI1
+#if USE_LPC214x_SPI1 && !defined(__DOXYGEN__)
 extern SPIDriver SPID1;
 #endif
 
@@ -134,7 +133,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-/** @endcond*/
 
 #endif /* CH_HAL_USE_SPI */
 

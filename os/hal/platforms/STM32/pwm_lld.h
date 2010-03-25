@@ -216,20 +216,19 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/** @cond never*/
-#if defined(USE_STM32_PWM1)
+#if defined(USE_STM32_PWM1) && !defined(__DOXYGEN__)
 extern PWMDriver PWMD1;
 #endif
 
-#if defined(USE_STM32_PWM2)
+#if defined(USE_STM32_PWM2) && !defined(__DOXYGEN__)
 extern PWMDriver PWMD2;
 #endif
 
-#if defined(USE_STM32_PWM3)
+#if defined(USE_STM32_PWM3) && !defined(__DOXYGEN__)
 extern PWMDriver PWMD3;
 #endif
 
-#if defined(USE_STM32_PWM4)
+#if defined(USE_STM32_PWM4) && !defined(__DOXYGEN__)
 extern PWMDriver PWMD4;
 #endif
 
@@ -246,7 +245,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-/** @endcond*/
 
 #endif /* CH_HAL_USE_PWM */
 

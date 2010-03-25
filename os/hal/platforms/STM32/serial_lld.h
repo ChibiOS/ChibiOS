@@ -214,21 +214,20 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/** @cond never*/
-#if USE_STM32_USART1
+#if USE_STM32_USART1 && !defined(__DOXYGEN__)
 extern SerialDriver SD1;
 #endif
-#if USE_STM32_USART2
+#if USE_STM32_USART2 && !defined(__DOXYGEN__)
 extern SerialDriver SD2;
 #endif
-#if USE_STM32_USART3
+#if USE_STM32_USART3 && !defined(__DOXYGEN__)
 extern SerialDriver SD3;
 #endif
 #if defined(STM32F10X_HD) || defined(STM32F10X_CL)
-#if USE_STM32_UART4
+#if USE_STM32_UART4 && !defined(__DOXYGEN__)
 extern SerialDriver SD4;
 #endif
-#if USE_STM32_UART5
+#if USE_STM32_UART5 && !defined(__DOXYGEN__)
 extern SerialDriver SD5;
 #endif
 #endif
@@ -242,7 +241,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-/** @endcond*/
 
 #endif /* CH_HAL_USE_SERIAL */
 

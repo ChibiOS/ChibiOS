@@ -167,8 +167,9 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/** @cond never*/
+#if !defined(__DOXYGEN__)
 extern MACDriver ETH1;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -191,7 +192,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-/** @endcond*/
 
 #endif /* CH_HAL_USE_MAC */
 

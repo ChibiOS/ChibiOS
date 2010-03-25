@@ -18,8 +18,9 @@
 */
 
 /**
- * @file LPC214x/vic.c
- * @brief LPC214x VIC peripheral support code.
+ * @file    LPC214x/vic.c
+ * @brief   LPC214x VIC peripheral support code.
+ *
  * @addtogroup LPC214x_VIC
  * @{
  */
@@ -27,8 +28,8 @@
 #include "ch.h"
 
 /**
- * @brief VIC Initialization.
- * @note Better reset everything in the VIC, it is a HUGE source of trouble.
+ * @brief   VIC Initialization.
+ * @note    Better reset everything in the VIC, it is a HUGE source of trouble.
  */
 void vic_init(void) {
   int i;
@@ -45,11 +46,12 @@ void vic_init(void) {
 }
 
 /**
- * @brief Initializes a VIC vector.
+ * @brief   Initializes a VIC vector.
  * @details Set a vector for an interrupt source and enables it.
- * @param[in] handler the pointer to the IRQ service routine
- * @param[in] vector the vector number
- * @param[in] source the IRQ source to be associated to the vector
+ *
+ * @param[in] handler   the pointer to the IRQ service routine
+ * @param[in] vector    the vector number
+ * @param[in] source    the IRQ source to be associated to the vector
  */
 void SetVICVector(void *handler, int vector, int source) {
 
