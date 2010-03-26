@@ -33,8 +33,8 @@
  * @param ntp the thread to be switched in
  */
 __attribute__((used))
-static void __dummy(Thread *otp, Thread *ntp) {
-  (void)otp; (void)ntp;
+static void __dummy(Thread *ntp, Thread *otp) {
+  (void)ntp; (void)otp;
 #if defined(WIN32)
   asm volatile (".globl @port_switch@8                          \n\t" \
                 "@port_switch@8:");
@@ -49,8 +49,8 @@ static void __dummy(Thread *otp, Thread *ntp) {
                 "push    %esi                                   \n\t" \
                 "push    %edi                                   \n\t" \
                 "push    %ebx                                   \n\t" \
-                "movl    %esp, 12(%ecx)                         \n\t" \
-                "movl    12(%edx), %esp                         \n\t" \
+                "movl    %esp, 12(%edx)                         \n\t" \
+                "movl    12(%ecx), %esp                         \n\t" \
                 "pop     %ebx                                   \n\t" \
                 "pop     %edi                                   \n\t" \
                 "pop     %esi                                   \n\t" \

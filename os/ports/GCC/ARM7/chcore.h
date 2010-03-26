@@ -102,7 +102,10 @@ struct intctx {
 
 #if !defined(__DOXYGEN__)
 /**
- * @brief   ATM7 port context structure.
+ * @brief   Platform dependent part of the @p Thread structure.
+ * @details In the ARM7 port this structure just holds a pointer to the
+ *          @p intctx structure representing the stack pointer at the time
+ *          of the context switch.
  */
 struct context {
   struct intctx *r13;

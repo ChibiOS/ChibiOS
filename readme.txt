@@ -73,7 +73,7 @@
 - NEW: Added RIDE7 project files to the STM32 demo under a ./ride7
   subdirectory, this should make things easier for RIDE7 users. The normal
   makefile is still available of course.
-- NEW: New article in the documentation.
+- NEW: New articles and guides in the documentation.
 - NEW: Documentation improvements, now the description goes on top of each
   page, doxygen defaulted it in the middle, not exactly the best for
   readability. Improved many descriptions of the various subsystems. Fixed

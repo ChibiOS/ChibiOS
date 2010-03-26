@@ -121,7 +121,10 @@ struct intctx {
 
 #if !defined(__DOXYGEN__)
 /**
- * @brief   Cortex-M3 port context structure.
+ * @brief   Platform dependent part of the @p Thread structure.
+ * @details In the Cortex-Mx port this structure just holds a pointer to the
+ *          @p intctx structure representing the stack pointer at the time
+ *          of the context switch.
  */
 struct context {
   struct intctx *r13;

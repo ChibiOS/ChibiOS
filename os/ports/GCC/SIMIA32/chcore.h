@@ -207,7 +207,7 @@ struct context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  __attribute__((fastcall)) void port_switch(Thread *otp, Thread *ntp);
+  __attribute__((fastcall)) void port_switch(Thread *ntp, Thread *otp);
   __attribute__((fastcall)) void port_halt(void);
   void threadexit(void);
   void ChkIntSources(void);

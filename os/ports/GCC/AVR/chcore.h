@@ -18,8 +18,9 @@
 */
 
 /**
- * @file AVR/chcore.h
- * @brief AVR architecture port macros and structures.
+ * @file    AVR/chcore.h
+ * @brief   AVR architecture port macros and structures.
+ *
  * @addtogroup AVR_CORE
  * @{
  */
@@ -31,19 +32,19 @@
 #include <avr/interrupt.h>
 
 /**
- * If enabled allows the idle thread to enter a low power mode.
+ * @brief   If enabled allows the idle thread to enter a low power mode.
  */
 #ifndef ENABLE_WFI_IDLE
 #define ENABLE_WFI_IDLE 0
 #endif
 
 /**
- * Macro defining the AVR architecture.
+ * @brief   Macro defining the AVR architecture.
  */
 #define CH_ARCHITECTURE_AVR
 
 /**
- * Name of the implemented architecture.
+ * @brief   Name of the implemented architecture.
  */
 #define CH_ARCHITECTURE_NAME "AVR"
 
@@ -53,15 +54,17 @@
 #define CH_CORE_VARIANT_NAME "MegaAVR"
 
 /**
- * 8 bit stack alignment.
+ * @brief   8 bits stack and memory alignment enforcement.
  */
 typedef uint8_t stkalign_t;
 
-/** @cond never */
+#if !defined(__DOXYGEN__)
 /**
- * Interrupt saved context.
- * @note The field @p _next is not part of the context, it represents the
- *       offset of the structure relative to the stack pointer.
+ * @brief   Interrupt saved context.
+ * @details This structure represents the stack frame saved during a
+ *          preemption-capable interrupt handler.
+ * @note    The field @p _next is not part of the context, it represents the
+ *          offset of the structure relative to the stack pointer.
  */
 struct extctx {
   uint8_t       _next;
@@ -82,13 +85,15 @@ struct extctx {
   uint8_t       r0;
   uint16_t      pc;
 };
-/** @endcond */
+#endif
 
-/** @cond never */
+#if !defined(__DOXYGEN__)
 /**
- * System saved context.
- * @note The field @p _next is not part of the context, it represents the
- *       offset of the structure relative to the stack pointer.
+ * @brief   System saved context.
+ * @details This structure represents the inner stack frame during a context
+ *          switching.
+ * @note    The field @p _next is not part of the context, it represents the
+ *          offset of the structure relative to the stack pointer.
  */
 struct intctx {
   uint8_t       _next;
@@ -115,22 +120,24 @@ struct intctx {
   uint8_t       pcl;
   uint8_t       pch;
 };
-/** @endcond */
+#endif
 
-/** @cond never */
+#if !defined(__DOXYGEN__)
 /**
- * In the AVR port this structure just holds a pointer to the @p intctx
- * structure representing the stack pointer at the time of the context switch.
+ * @brief   Platform dependent part of the @p Thread structure.
+ * @details In the AVR port this structure just holds a pointer to the
+ *          @p intctx structure representing the stack pointer at the time
+ *          of the context switch.
  */
 struct context {
   struct intctx *sp;
 };
-/** @endcond */
+#endif
 
 /**
- * Platform dependent part of the @p chThdInit() API.
- * This code usually setup the context switching frame represented by a
- * @p intctx structure.
+ * @brief   Platform dependent part of the @p chThdInit() API.
+ * @details This code usually setup the context switching frame represented
+ *          by an @p intctx structure.
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
   tp->p_ctx.sp = (struct intctx*)((uint8_t *)workspace + wsize  -       \
@@ -139,34 +146,41 @@ struct context {
   tp->p_ctx.sp->r3  = (int)pf >> 8;                                     \
   tp->p_ctx.sp->r4  = (int)arg;                                         \
   tp->p_ctx.sp->r5  = (int)arg >> 8;                                    \
-  tp->p_ctx.sp->pcl = (int)threadstart >> 8;                            \
-  tp->p_ctx.sp->pch = (int)threadstart;                                 \
+  tp->p_ctx.sp->pcl = (int)_port_thread_start >> 8;                     \
+  tp->p_ctx.sp->pch = (int)_port_thread_start;                          \
 }
 
 /**
- * The default idle thread implementation requires no extra stack space in
- * this port.
+ * @brief   Stack size for the system idle thread.
+ * @details This size depends on the idle thread implementation, usually
+ *          the idle thread should take no more space than those reserved
+ *          by @p INT_REQUIRED_STACK.
+ * @note    In this port it is set to 8.
  */
 #ifndef IDLE_THREAD_STACK_SIZE
 #define IDLE_THREAD_STACK_SIZE 8
 #endif
 
 /**
- * Per-thread stack overhead for interrupts servicing, it is used in the
- * calculation of the correct working area size. In this port the default is
- * 32 bytes per thread.
+ * @brief   Per-thread stack overhead for interrupts servicing.
+ * @details This constant is used in the calculation of the correct working
+ *          area size.
+ *          This value can be zero on those architecture where there is a
+ *          separate interrupt stack and the stack space between @p intctx and
+ *          @p extctx is known to be zero.
+ * @note    In this port the default is 32 bytes per thread.
  */
 #ifndef INT_REQUIRED_STACK
 #define INT_REQUIRED_STACK 32
 #endif
 
 /**
- * Enforces a correct alignment for a stack area size value.
+ * @brief   Enforces a correct alignment for a stack area size value.
  */
 #define STACK_ALIGN(n) ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
 
 /**
- * Computes the thread working area global size.
+ * @brief   Computes the thread working area global size.
  */
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
                                    (sizeof(struct intctx) - 1) +        \
@@ -174,16 +188,18 @@ struct context {
                                    (n) + (INT_REQUIRED_STACK))
 
 /**
- * Macro used to allocate a thread working area aligned as both position and
- * size.
+ * @brief   Static working area allocation.
+ * @details This macro is used to allocate a static thread working area
+ *          aligned as both position and size.
  */
 #define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
 
 /**
- * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
- * invoke system APIs.
- * This code tricks the compiler to save all the specified registers by
- * "touching" them.
+ * @brief   IRQ prologue code.
+ * @details This macro must be inserted at the start of all IRQ handlers
+ *          enabled to invoke system APIs.
+ * @note    This code tricks the compiler to save all the specified registers
+ *          by "touching" them.
  */
 #define PORT_IRQ_PROLOGUE() {                                           \
   asm ("" : : : "r18", "r19", "r20", "r21", "r22", "r23", "r24",        \
@@ -191,8 +207,9 @@ struct context {
 }
 
 /**
- * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
- * invoke system APIs.
+ * @brief   IRQ epilogue code.
+ * @details This macro must be inserted at the end of all IRQ handlers
+ *          enabled to invoke system APIs.
  */
 #define PORT_IRQ_EPILOGUE() {                                           \
   if (chSchIsRescRequiredExI())                                         \
@@ -200,54 +217,81 @@ struct context {
 }
 
 /**
- * IRQ handler function declaration. Note, it just aliases the WinAVR "ISR"
- * macro.
+ * @brief   IRQ handler function declaration.
+ * @note    @p id can be a function name or a vector number depending on the
+ *          port implementation.
  */
 #define PORT_IRQ_HANDLER(id) ISR(id)
 
 /**
- * This function is empty in this port.
+ * @brief   Port-related initialization code.
+ * @note    This function is empty in this port.
  */
 #define port_init()
 
 /**
- * Implemented as global interrupt disable.
+ * @brief   Kernel-lock action.
+ * @details Usually this function just disables interrupts but may perform more
+ *          actions.
+ * @note    Implemented as global interrupt disable.
  */
 #define port_lock() asm volatile ("cli")
 
 /**
- * Implemented as global interrupt enable.
+ * @brief   Kernel-unlock action.
+ * @details Usually this function just disables interrupts but may perform more
+ *          actions.
+ * @note    Implemented as global interrupt enable.
  */
 #define port_unlock() asm volatile ("sei")
 
 /**
- * This function is empty in this port.
+ * @brief   Kernel-lock action from an interrupt handler.
+ * @details This function is invoked before invoking I-class APIs from
+ *          interrupt handlers. The implementation is architecture dependent,
+ *          in its simplest form it is void.
+ * @note    This function is empty in this port.
  */
 #define port_lock_from_isr()
 
 /**
- * This function is empty in this port.
+ * @brief   Kernel-unlock action from an interrupt handler.
+ * @details This function is invoked after invoking I-class APIs from interrupt
+ *          handlers. The implementation is architecture dependent, in its
+ *          simplest form it is void.
+ * @note    This function is empty in this port.
  */
 #define port_unlock_from_isr()
 
 /**
- * Implemented as global interrupt disable.
+ * @brief   Disables all the interrupt sources.
+ * @note    Of course non maskable interrupt sources are not included.
+ * @note    Implemented as global interrupt disable.
  */
 #define port_disable() asm volatile ("cli")
 
 /**
- * Same as @p port_disable() in this port, there is no difference between the
- * two states.
+ * @brief   Disables the interrupt sources below kernel-level priority.
+ * @note    Interrupt sources above kernel level remains enabled.
+ * @note    Same as @p port_disable() in this port, there is no difference
+ *          between the two states.
  */
 #define port_suspend() asm volatile ("cli")
 
 /**
- * Implemented as global interrupt enable.
+ * @brief   Enables all the interrupt sources.
+ * @note    Implemented as global interrupt enable.
  */
 #define port_enable() asm volatile ("sei")
 
 /**
- * This port function is implemented as inlined code for performance reasons.
+ * @brief   Enters an architecture-dependent IRQ-waiting mode.
+ * @details The function is meant to return when an interrupt becomes pending.
+ *          The simplest implementation is an empty function or macro but this
+ *          would not take advantage of architecture-specific power saving
+ *          modes.
+ * @note    This port function is implemented as inlined code for performance
+ *          reasons.
  */
 #if ENABLE_WFI_IDLE != 0
 #define port_wait_for_interrupt() {                                     \
@@ -260,9 +304,9 @@ struct context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void port_switch(Thread *otp, Thread *ntp);
+  void port_switch(Thread *ntp, Thread *otp);
   void port_halt(void);
-  void threadstart(void);
+  void _port_thread_start(void);
 #ifdef __cplusplus
 }
 #endif
