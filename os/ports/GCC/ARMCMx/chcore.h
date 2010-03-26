@@ -108,6 +108,7 @@ struct intctx {
   regarm_t      r10;
   regarm_t      r11;
   regarm_t      lr_exc;
+  /* Start of the hardware saved frame.*/
   regarm_t      r0;
   regarm_t      r1;
   regarm_t      r2;

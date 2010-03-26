@@ -70,6 +70,40 @@ void SysTickVector(void) {
 }
 
 #if CORTEX_MODEL == CORTEX_M0
+#define PUSH_CONTEXT(sp, prio) {                                        \
+  asm volatile ("mrs     %0, PSP                                \n\t"   \
+                "sub     %0, %0, #20                            \n\t"   \
+                "push    {r3-r7}                                \n\t"   \
+                "mov     r0, r8                                 \n\t"   \
+                "str     r0, [%0, #20]                          \n\t"   \
+                "mov     r0, r9                                 \n\t"   \
+                "str     r0, [%0, #24]                          \n\t"   \
+                "mov     r0, r10                                \n\t"   \
+                "str     r0, [%0, #28]                          \n\t"   \
+                "mov     r0, r11                                \n\t"   \
+                "str     r0, [%0, #32]                          \n\t"   \
+                "mov     r0, lr                                 \n\t"   \
+                "str     r0, [%0, #36]                          \n\t"   \
+                : "=r" (sp) : "r" (sp), "r" (prio));                    \
+}
+
+#define POP_CONTEXT(sp) {                                               \
+  asm volatile ("ldr     r0, [%0, #20]                          \n\t"   \
+                "mov     r8, r0                                 \n\t"   \
+                "ldr     r0, [%0, #24]                          \n\t"   \
+                "mov     r9, r0                                 \n\t"   \
+                "ldr     r0, [%0, #28]                          \n\t"   \
+                "mov     r10, r0                                \n\t"   \
+                "ldr     r0, [%0, #32]                          \n\t"   \
+                "mov     r11, r0                                \n\t"   \
+                "ldr     r0, [%0, #36]                          \n\t"   \
+                "mov     lr, r0                                 \n\t"   \
+                "pop     {r3-r7}                                \n\t"   \
+                "add     %0, %0, #20                            \n\t"   \
+                "msr     PSP, %0                                \n\t"   \
+                "msr     BASEPRI, r3                            \n\t"   \
+                "bx      lr" : "=r" (sp) : "r" (sp));                   \
+}
 #else /* CORTEX_MODEL != CORTEX_M0 */
 #if !defined(CH_CURRP_REGISTER_CACHE)
 #define PUSH_CONTEXT(sp, prio) {                                        \
@@ -79,7 +113,7 @@ void SysTickVector(void) {
 }
 
 #define POP_CONTEXT(sp) {                                               \
-  asm volatile ("ldmia   r12!, {r3-r11, lr}                     \n\t"   \
+  asm volatile ("ldmia   %0!, {r3-r11, lr}                      \n\t"   \
                 "msr     PSP, %0                                \n\t"   \
                 "msr     BASEPRI, r3                            \n\t"   \
                 "bx      lr" : "=r" (sp) : "r" (sp));                   \
@@ -113,7 +147,7 @@ void SysTickVector(void) {
 __attribute__((naked))
 #endif
 void SVCallVector(Thread *ntp, Thread *otp) {
-  register struct intctx *sp_thd asm("r12");
+  register struct intctx *sp_thd asm("r2");
   register uint32_t prio asm ("r3");
 
   asm volatile ("mrs     r3, BASEPRI" : "=r" (prio) : );
@@ -132,7 +166,7 @@ void SVCallVector(Thread *ntp, Thread *otp) {
 __attribute__((naked))
 #endif
 void PendSVVector(void) {
-  register struct intctx *sp_thd asm("r12");
+  register struct intctx *sp_thd asm("r2");
   register uint32_t prio asm ("r3");
   Thread *otp, *ntp;
 
