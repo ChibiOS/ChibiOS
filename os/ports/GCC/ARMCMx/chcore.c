@@ -69,20 +69,9 @@ void SysTickVector(void) {
   chSysUnlockFromIsr();
 }
 
-#ifdef CH_CURRP_REGISTER_CACHE
-#define PUSH_CONTEXT(sp, prio) {                                        \
-  asm volatile ("mrs     %0, PSP                                \n\t"   \
-                "stmdb   %0!, {r3-r6,r8-r11, lr}" :                     \
-                "=r" (sp) : "r" (sp), "r" (prio));                      \
-}
-
-#define POP_CONTEXT(sp) {                                               \
-  asm volatile ("ldmia   %0!, {r3-r6,r8-r11, lr}                \n\t"   \
-                "msr     PSP, %0                                \n\t"   \
-                "msr     BASEPRI, r3                            \n\t"   \
-                "bx      lr" : "=r" (sp) : "r" (sp));                   \
-}
-#else
+#if CORTEX_MODEL == CORTEX_M0
+#else /* CORTEX_MODEL != CORTEX_M0 */
+#if !defined(CH_CURRP_REGISTER_CACHE)
 #define PUSH_CONTEXT(sp, prio) {                                        \
   asm volatile ("mrs     %0, PSP                                \n\t"   \
                 "stmdb   %0!, {r3-r11,lr}" :                            \
@@ -95,7 +84,21 @@ void SysTickVector(void) {
                 "msr     BASEPRI, r3                            \n\t"   \
                 "bx      lr" : "=r" (sp) : "r" (sp));                   \
 }
-#endif
+#else /* defined(CH_CURRP_REGISTER_CACHE) */
+#define PUSH_CONTEXT(sp, prio) {                                        \
+  asm volatile ("mrs     %0, PSP                                \n\t"   \
+                "stmdb   %0!, {r3-r6,r8-r11, lr}" :                     \
+                "=r" (sp) : "r" (sp), "r" (prio));                      \
+}
+
+#define POP_CONTEXT(sp) {                                               \
+  asm volatile ("ldmia   %0!, {r3-r6,r8-r11, lr}                \n\t"   \
+                "msr     PSP, %0                                \n\t"   \
+                "msr     BASEPRI, r3                            \n\t"   \
+                "bx      lr" : "=r" (sp) : "r" (sp));                   \
+}
+#endif /* defined(CH_CURRP_REGISTER_CACHE) */
+#endif /* CORTEX_MODEL != CORTEX_M0 */
 
 /**
  * @brief   SVC vector.
@@ -114,12 +117,12 @@ void SVCallVector(Thread *ntp, Thread *otp) {
   register uint32_t prio asm ("r3");
 
   asm volatile ("mrs     r3, BASEPRI" : "=r" (prio) : );
-  PUSH_CONTEXT(sp_thd, prio);
+  PUSH_CONTEXT(sp_thd, prio)
 
   otp->p_ctx.r13 = sp_thd;
   sp_thd = ntp->p_ctx.r13;
 
-  POP_CONTEXT(sp_thd);
+  POP_CONTEXT(sp_thd)
 }
 
 /**
@@ -136,7 +139,7 @@ void PendSVVector(void) {
   chSysLockFromIsr();
 
   prio = CORTEX_BASEPRI_USER;
-  PUSH_CONTEXT(sp_thd, prio);
+  PUSH_CONTEXT(sp_thd, prio)
 
   (otp = currp)->p_ctx.r13 = sp_thd;
   ntp = fifo_remove(&rlist.r_queue);
@@ -150,7 +153,7 @@ void PendSVVector(void) {
   chDbgTrace(otp);
   sp_thd = ntp->p_ctx.r13;
 
-  POP_CONTEXT(sp_thd);
+  POP_CONTEXT(sp_thd)
 }
 
 /** @} */
