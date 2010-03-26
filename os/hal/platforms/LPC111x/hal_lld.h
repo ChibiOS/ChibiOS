@@ -61,6 +61,7 @@
 extern "C" {
 #endif
   void hal_lld_init(void);
+  void lpc111x_clock_init(void);
 #ifdef __cplusplus
 }
 #endif

@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    templates/hal_lld.c
- * @brief   HAL Driver subsystem low level driver source template.
+ * @file    LPC111x/hal_lld.c
+ * @brief   LPC111x HAL subsystem low level driver source.
  *
- * @addtogroup HAL_LLD
+ * @addtogroup LPC111x_HAL
  * @{
  */
 
@@ -53,6 +53,13 @@
  */
 void hal_lld_init(void) {
 
+}
+
+/**
+ * @brief   LPC111x clocks and PLL initialization.
+ * @note    All the involved constants come from the file @p board.h.
+ */
+void lpc111x_clock_init(void) {
 }
 
 /** @} */

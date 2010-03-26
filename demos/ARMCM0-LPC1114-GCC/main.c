@@ -18,7 +18,7 @@
 */
 
 #include "ch.h"
-//#include "hal.h"
+#include "hal.h"
 //#include "test.h"
 
 /*

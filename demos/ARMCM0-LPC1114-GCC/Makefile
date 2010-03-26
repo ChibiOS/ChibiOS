@@ -52,9 +52,9 @@ LDSCRIPT= ch.ld
 
 # Imported source files
 CHIBIOS = ../..
-#include $(CHIBIOS)/boards/EA_LPCXPRESSO_MB/board.mk
-#include $(CHIBIOS)/os/hal/platforms/LPC111x/platform.mk
-#include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/boards/EA_LPCXPRESSO_BB_1114/board.mk
+include $(CHIBIOS)/os/hal/platforms/LPC111x/platform.mk
+include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/LPC111x/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 #include $(CHIBIOS)/test/test.mk
