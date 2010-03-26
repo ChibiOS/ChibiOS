@@ -45,7 +45,9 @@
 .global ResetHandler
 .weak ResetHandler
 ResetHandler:
-        /* Interrupts globally masked. */
+        /*
+         * Interrupts are globally masked initially.
+         */
         cpsid   i
         /*
          * Stack pointers initialization.
@@ -53,9 +55,14 @@ ResetHandler:
         ldr     r0, =__ram_end__
         ldr     r1, =__main_stack_size__
         subs    r0, r0, r1
-        /* { r0  = main stack low address } */
+        /*
+         * Note that r0 is the main stack low boundary address and process
+         * stack initial top address.
+         */
         msr     PSP, r0
-        /* Early initialization. */
+        /*
+         * Early initialization phase, it is empty by default.
+         */
         bl      hwinit0
         /*
          * Data initialization.
@@ -100,11 +107,15 @@ endbloop:
         strlo   r0, [r1], #4
         blo     bloop
 #endif
-        /* Switches to the Process Stack. */
+        /*
+         * Switches to the Process Stack and uses a barrier just to be safe.
+         */
         movs    r0, #CONTROL_MODE_PRIVILEGED | CONTROL_USE_PSP
         msr     CONTROL, r0
         isb
-        /* Late initialization. */
+        /*
+         * Late initialization phase, it is empty by default.
+         */
         bl      hwinit1
         movs    r0, #0
         mov     r1, r0
