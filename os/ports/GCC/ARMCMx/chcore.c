@@ -69,6 +69,34 @@ void SysTickVector(void) {
   chSysUnlockFromIsr();
 }
 
+#ifdef CH_CURRP_REGISTER_CACHE
+#define PUSH_CONTEXT(sp, prio) {                                        \
+  asm volatile ("mrs     %0, PSP                                \n\t"   \
+                "stmdb   %0!, {r3-r6,r8-r11, lr}" :                     \
+                "=r" (sp) : "r" (sp), "r" (prio));                      \
+}
+
+#define POP_CONTEXT(sp) {                                               \
+  asm volatile ("ldmia   %0!, {r3-r6,r8-r11, lr}                \n\t"   \
+                "msr     PSP, %0                                \n\t"   \
+                "msr     BASEPRI, r3                            \n\t"   \
+                "bx      lr" : "=r" (sp) : "r" (sp));                   \
+}
+#else
+#define PUSH_CONTEXT(sp, prio) {                                        \
+  asm volatile ("mrs     %0, PSP                                \n\t"   \
+                "stmdb   %0!, {r3-r11,lr}" :                            \
+                "=r" (sp) : "r" (sp), "r" (prio));                      \
+}
+
+#define POP_CONTEXT(sp) {                                               \
+  asm volatile ("ldmia   r12!, {r3-r11, lr}                     \n\t"   \
+                "msr     PSP, %0                                \n\t"   \
+                "msr     BASEPRI, r3                            \n\t"   \
+                "bx      lr" : "=r" (sp) : "r" (sp));                   \
+}
+#endif
+
 /**
  * @brief   SVC vector.
  * @details The SVC vector is used for commanded context switch. Structures
@@ -82,60 +110,17 @@ void SysTickVector(void) {
 __attribute__((naked))
 #endif
 void SVCallVector(Thread *ntp, Thread *otp) {
-  (void)otp;
-  (void)ntp;
-#ifdef CH_CURRP_REGISTER_CACHE
-  asm volatile ("mrs     r3, BASEPRI                            \n\t" \
-                "mrs     r12, PSP                               \n\t" \
-                "stmdb   r12!, {r3-r6,r8-r11, lr}               \n\t" \
-                "str     r12, [r1, #12]                         \n\t" \
-                "ldr     r12, [r0, #12]                         \n\t" \
-                "ldmia   r12!, {r3-r6,r8-r11, lr}               \n\t" \
-                "msr     PSP, r12                               \n\t" \
-                "msr     BASEPRI, r3                            \n\t" \
-                "bx      lr                                     ");
-#else
-  asm volatile ("mrs     r3, BASEPRI                            \n\t" \
-                "mrs     r12, PSP                               \n\t" \
-                "stmdb   r12!, {r3-r11, lr}                     \n\t" \
-                "str     r12, [r1, #12]                         \n\t" \
-                "ldr     r12, [r0, #12]                         \n\t" \
-                "ldmia   r12!, {r3-r11, lr}                     \n\t" \
-                "msr     PSP, r12                               \n\t" \
-                "msr     BASEPRI, r3                            \n\t" \
-                "bx      lr                                     ");
-#endif
-}
+  register struct intctx *sp_thd asm("r12");
+  register uint32_t prio asm ("r3");
 
-#ifdef CH_CURRP_REGISTER_CACHE
-#define PUSH_CONTEXT(sp) {                                              \
-  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_USER;               \
-  asm volatile ("mrs     %0, PSP                                \n\t"   \
-                "stmdb   %0!, {r3-r6,r8-r11, lr}" :                     \
-                "=r" (sp) : "r" (sp), "r" (tmp));                       \
-}
+  asm volatile ("mrs     r3, BASEPRI" : "=r" (prio) : );
+  PUSH_CONTEXT(sp_thd, prio);
 
-#define POP_CONTEXT(sp) {                                               \
-  asm volatile ("ldmia   %0!, {r3-r6,r8-r11, lr}                \n\t"   \
-                "msr     PSP, %0                                \n\t"   \
-                "msr     BASEPRI, r3                            \n\t"   \
-                "bx      lr" : "=r" (sp) : "r" (sp));                   \
-}
-#else
-#define PUSH_CONTEXT(sp) {                                              \
-  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_USER;               \
-  asm volatile ("mrs     %0, PSP                                \n\t"   \
-                "stmdb   %0!, {r3-r11,lr}" :                            \
-                "=r" (sp) : "r" (sp), "r" (tmp));                       \
-}
+  otp->p_ctx.r13 = sp_thd;
+  sp_thd = ntp->p_ctx.r13;
 
-#define POP_CONTEXT(sp) {                                               \
-  asm volatile ("ldmia   %0!, {r3-r11, lr}                      \n\t"   \
-                "msr     PSP, %0                                \n\t"   \
-                "msr     BASEPRI, r3                            \n\t"   \
-                "bx      lr" : "=r" (sp) : "r" (sp));                   \
+  POP_CONTEXT(sp_thd);
 }
-#endif
 
 /**
  * @brief   Preemption code.
@@ -144,12 +129,14 @@ void SVCallVector(Thread *ntp, Thread *otp) {
 __attribute__((naked))
 #endif
 void PendSVVector(void) {
-  Thread *otp, *ntp;
   register struct intctx *sp_thd asm("r12");
+  register uint32_t prio asm ("r3");
+  Thread *otp, *ntp;
 
   chSysLockFromIsr();
 
-  PUSH_CONTEXT(sp_thd);
+  prio = CORTEX_BASEPRI_USER;
+  PUSH_CONTEXT(sp_thd, prio);
 
   (otp = currp)->p_ctx.r13 = sp_thd;
   ntp = fifo_remove(&rlist.r_queue);
