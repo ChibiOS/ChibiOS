@@ -23,7 +23,10 @@
  * @addtogroup ARMCMx_CORE
  * @{
  */
-/** @cond never */
+
+#include "cmparams.h"
+
+#if !defined(__DOXYGEN__)
 
 .set    CONTROL_MODE_PRIVILEGED, 0
 .set    CONTROL_MODE_UNPRIVILEGED, 1
@@ -49,7 +52,7 @@ ResetHandler:
          */
         ldr     r0, =__ram_end__
         ldr     r1, =__main_stack_size__
-        sub     r0, r0, r1
+        subs    r0, r0, r1
         /* { r0  = main stack low address } */
         msr     PSP, r0
         /* Early initialization. */
@@ -63,10 +66,20 @@ ResetHandler:
         ldr     r3, =_edata
 dloop:
         cmp     r2, r3
+#if CORTEX_MODEL == CORTEX_M0
+        bge     enddloop
+        ldr     r0, [r1]
+        str     r0, [r2]
+        adds    r0, r0, #4
+        adds    r1, r1, #4
+        b       dloop
+enddloop:
+#else
         ittt    lo
         ldrlo   r0, [r1], #4
         strlo   r0, [r2], #4
         blo     dloop
+#endif
         /*
          * BSS initialization.
          * NOTE: It assumes that the BSS size is a multiple of 4.
@@ -76,9 +89,17 @@ dloop:
         ldr     r2, =_bss_end
 bloop:
         cmp     r1, r2
+#if CORTEX_MODEL == CORTEX_M0
+        bge     endbloop
+        str     r0, [r1]
+        adds    r1, r1, #4
+        b       bloop
+endbloop:
+#else
         itt     lo
         strlo   r0, [r1], #4
         blo     bloop
+#endif
         /* Switches to the Process Stack. */
         movs    r0, #CONTROL_MODE_PRIVILEGED | CONTROL_USE_PSP
         msr     CONTROL, r0
@@ -124,5 +145,6 @@ hwinit0:
 hwinit1:
         bx      lr
 
-/** @endcond */
+#endif
+
 /** @} */

@@ -1,270 +1,64 @@
 Platform : PowerPC
 OS Setup : Full kernel
-Compiler : powerpc-eabi-gcc (Sourcery G++ Lite 4.4-79) 4.4.1
-Options  : -O2 -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 10916
-
+Compiler : Options  : -O2 -DCH_OPTIMIZE_SPEED=TRUE
+Make failed
 Platform : PowerPC
 OS Setup : Full kernel
-Compiler : powerpc-eabi-gcc (Sourcery G++ Lite 4.4-79) 4.4.1
-Options  : -O2 -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 10464
-
+Compiler : Options  : -O2 -DCH_OPTIMIZE_SPEED=FALSE
+Make failed
 Platform : PowerPC
 OS Setup : Minimal kernel
-Compiler : powerpc-eabi-gcc (Sourcery G++ Lite 4.4-79) 4.4.1
-Options  : -O2
-Kernel Size = 2176
-
+Compiler : Options  : -O2
+Make failed
 Platform : PowerPC
 OS Setup : Full kernel
-Compiler : powerpc-eabi-gcc (Sourcery G++ Lite 4.4-79) 4.4.1
-Options  : -Os -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 9572
-
+Compiler : Options  : -Os -DCH_OPTIMIZE_SPEED=TRUE
+Make failed
 Platform : PowerPC
 OS Setup : Full kernel
-Compiler : powerpc-eabi-gcc (Sourcery G++ Lite 4.4-79) 4.4.1
-Options  : -Os -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 9088
-
+Compiler : Options  : -Os -DCH_OPTIMIZE_SPEED=FALSE
+Make failed
 Platform : PowerPC
 OS Setup : Minimal kernel
-Compiler : powerpc-eabi-gcc (Sourcery G++ Lite 4.4-79) 4.4.1
-Options  : -Os
-Kernel Size = 2200
-
+Compiler : Options  : -Os
+Make failed
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
 Compiler : arm-elf-gcc (GCC) 4.4.2
 Options  : -O2 -mthumb -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 5360
-
+Make failed
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
 Compiler : arm-elf-gcc (GCC) 4.4.2
 Options  : -O2 -mthumb -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 4892
-
+Make failed
 Platform : ARM Cortex-M3
 OS Setup : Minimal kernel
 Compiler : arm-elf-gcc (GCC) 4.4.2
 Options  : -O2 -mthumb
-Kernel Size = 1360
-
+Make failed
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
 Compiler : arm-elf-gcc (GCC) 4.4.2
 Options  : -Os -mthumb -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 5156
-
+Make failed
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
 Compiler : arm-elf-gcc (GCC) 4.4.2
 Options  : -Os -mthumb -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 4740
-
+Make failed
 Platform : ARM Cortex-M3
 OS Setup : Minimal kernel
 Compiler : arm-elf-gcc (GCC) 4.4.2
 Options  : -Os -mthumb
-Kernel Size = 1308
-
+Make failed
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
 Compiler : arm-elf-gcc (GCC) 4.4.2
 Options  : -Os -mthumb -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\" -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 4964
-
+Make failed
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
 Compiler : arm-elf-gcc (GCC) 4.4.2
 Options  : -Os -mthumb -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\" -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 4560
-
-Platform : ARM Cortex-M3
-OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -Os -mthumb -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\"
-Kernel Size = 1272
-
-Platform : ARM7TDMI (ARM mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -O2 -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 7824
-
-Platform : ARM7TDMI (ARM mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -O2 -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 7416
-
-Platform : ARM7TDMI (ARM mode)
-OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -O2
-Kernel Size = 1868
-
-Platform : ARM7TDMI (ARM mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -Os -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 7592
-
-Platform : ARM7TDMI (ARM mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -Os -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 7212
-
-Platform : ARM7TDMI (ARM mode)
-OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -Os
-Kernel Size = 1824
-
-Platform : ARM7TDMI (ARM mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -O2 -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\" -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 7544
-
-Platform : ARM7TDMI (ARM mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -O2 -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\" -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 7148
-
-Platform : ARM7TDMI (ARM mode)
-OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -O2 -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\"
-Kernel Size = 1796
-
-Platform : ARM7TDMI (ARM mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -Os -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\" -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 7296
-
-Platform : ARM7TDMI (ARM mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -Os -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\" -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 6936
-
-Platform : ARM7TDMI (ARM mode)
-OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -Os -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\"
-Kernel Size = 1772
-
-Platform : ARM7TDMI (THUMB mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -O2 -mthumb -DCH_OPTIMIZE_SPEED=TRUE -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 5156
-
-Platform : ARM7TDMI (THUMB mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -O2 -mthumb -DCH_OPTIMIZE_SPEED=FALSE -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 4952
-
-Platform : ARM7TDMI (THUMB mode)
-OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -O2 -mthumb -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 1312
-
-Platform : ARM7TDMI (THUMB mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -Os -mthumb -DCH_OPTIMIZE_SPEED=TRUE -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 4988
-
-Platform : ARM7TDMI (THUMB mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -Os -mthumb -DCH_OPTIMIZE_SPEED=FALSE -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 4796
-
-Platform : ARM7TDMI (THUMB mode)
-OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -Os -mthumb -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 1292
-
-Platform : ARM7TDMI (THUMB mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -O2 -mthumb -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\" -DCH_OPTIMIZE_SPEED=TRUE -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 5000
-
-Platform : ARM7TDMI (THUMB mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -O2 -mthumb -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\" -DCH_OPTIMIZE_SPEED=FALSE -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 4812
-
-Platform : ARM7TDMI (THUMB mode)
-OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -O2 -mthumb -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\" -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 1268
-
-Platform : ARM7TDMI (THUMB mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -Os -mthumb -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\" -DCH_OPTIMIZE_SPEED=TRUE -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 4792
-
-Platform : ARM7TDMI (THUMB mode)
-OS Setup : Full kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -Os -mthumb -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\" -DCH_OPTIMIZE_SPEED=FALSE -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 4636
-
-Platform : ARM7TDMI (THUMB mode)
-OS Setup : Minimal kernel
-Compiler : arm-elf-gcc (GCC) 4.4.2
-Options  : -Os -mthumb -ffixed-r7 -DCH_CURRP_REGISTER_CACHE=\"r7\" -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 1252
-
-Platform : MSP430
-OS Setup : Full kernel
-Compiler : msp430-gcc (GCC) 3.2.3
-Options  : -O2 -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 5548
-
-Platform : MSP430
-OS Setup : Full kernel
-Compiler : msp430-gcc (GCC) 3.2.3
-Options  : -O2 -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 5036
-
-Platform : MSP430
-OS Setup : Minimal kernel
-Compiler : msp430-gcc (GCC) 3.2.3
-Options  : -O2
-Kernel Size = 1172
-
-Platform : MSP430
-OS Setup : Full kernel
-Compiler : msp430-gcc (GCC) 3.2.3
-Options  : -Os -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 5484
-
-Platform : MSP430
-OS Setup : Full kernel
-Compiler : msp430-gcc (GCC) 3.2.3
-Options  : -Os -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 4992
-
-Platform : MSP430
-OS Setup : Minimal kernel
-Compiler : msp430-gcc (GCC) 3.2.3
-Options  : -Os
-Kernel Size = 1172
-
+Make failed

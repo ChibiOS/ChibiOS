@@ -23,7 +23,8 @@
  * @addtogroup ARM7_CORE
  * @{
  */
-/** @cond never */
+
+#if !defined(__DOXYGEN__)
 
 .set    MODE_USR, 0x10
 .set    MODE_FIQ, 0x11
@@ -177,5 +178,6 @@ hwinit1:
         bx      lr
 .code 32
 
-/** @endcond */
+#endif
+
 /** @} */
