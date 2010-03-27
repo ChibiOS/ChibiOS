@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    LPC111x/hal_lld.c
- * @brief   LPC111x HAL subsystem low level driver source.
+ * @file    LPC11xx/hal_lld.c
+ * @brief   LPC11xx HAL subsystem low level driver source.
  *
- * @addtogroup LPC111x_HAL
+ * @addtogroup LPC11xx_HAL
  * @{
  */
 

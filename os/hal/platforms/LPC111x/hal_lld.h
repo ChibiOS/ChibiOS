@@ -18,15 +18,18 @@
 */
 
 /**
- * @file    templates/hal_lld.h
+ * @file    LPC11xx/hal_lld.h
  * @brief   HAL subsystem low level driver header template.
  *
- * @addtogroup HAL_LLD
+ * @addtogroup LPC11xx_HAL
  * @{
  */
 
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
+
+#include "LPC11xx.h"
+#include "nvic.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -35,7 +38,7 @@
 /**
  * @brief   Platform name.
  */
-#define PLATFORM_NAME   ""
+#define PLATFORM_NAME   "LPC11xx"
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
