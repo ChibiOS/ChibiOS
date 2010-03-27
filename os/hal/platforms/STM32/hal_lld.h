@@ -47,7 +47,7 @@
 /**
  * @brief   Platform name.
  */
-#define PLATFORM_NAME   "STM32"
+#define PLATFORM_NAME               "STM32"
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

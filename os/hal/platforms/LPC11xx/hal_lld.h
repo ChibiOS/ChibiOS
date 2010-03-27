@@ -38,15 +38,59 @@
 /**
  * @brief   Platform name.
  */
-#define PLATFORM_NAME   "LPC11xx"
+#define PLATFORM_NAME           "LPC11xx"
+
+#define IRCOSCCLK               12000000    /**< High speed internal clock. */
+
+#define SYSPLLCLKSEL_IRCOCS     0           /**< Internal RC oscillator
+                                                 clock source.              */
+#define SYSPLLCLKSEL_SYSOSC     1           /**< System oscillator clock
+                                                 source.                    */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   System PLL clock source.
+ */
+#if !defined(LPC11xx_SYSPLL_SOURCE) || defined(__DOXYGEN__)
+#define LPC11xx_SYSPLLCLKSEL    SYSPLLCLKSEL_SYSOSC
+#endif
+
+/**
+ * @brief   System PLL multiplier.
+ * @note    The value must be in the 1..32 range and the final frequency
+ *          must not exceed the CCO ratings.
+ */
+#if !defined(LPC11xx_SYSPLL_MUL) || defined(__DOXYGEN__)
+#define LPC11xx_SYSPLL_MUL      16
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if LPC11xx_SYSPLLCLKSEL == SYSPLLCLKSEL_SYSOSC
+#define LPC11xx_SYSPLLCLKIN     SYSOSCCLK
+#elif LPC11xx_SYSPLLCLKSEL == SYSPLLCLKSEL_IRCOCS
+#define LPC11xx_SYSPLLCLKIN     IRCOSCCLK
+#else
+#error "invalid LPC11xx_SYSPLLCLKSEL clock source specified"
+#endif
+
+#if (LPC11xx_SYSPLL_MUL < 1) || (LPC11xx_SYSPLL_MUL > 32)
+#error "LPC11xx_SYSPLL_MUL out of range (1...32)"
+#endif
+
+/**
+ * @brief   PLL output clock.
+ */
+#define  LPC11xx_SYSPLLCLKOUT   (LPC11xx_SYSPLLCLKIN * LPC11xx_SYSPLL_MUL)
+
+#if (LPC11xx_SYSPLLCLKOUT < 156000000) || (LPC11xx_SYSPLLCLKOUT > 320000000)
+#error "CCO frequency out of the acceptable range (156...320)"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

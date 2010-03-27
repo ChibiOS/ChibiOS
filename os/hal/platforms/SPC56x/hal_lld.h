@@ -37,7 +37,7 @@
 /**
  * @brief   Platform name.
  */
-#define PLATFORM_NAME   "SPC563M64"
+#define PLATFORM_NAME           "SPC563M64"
 
 #define RFD_DIV2                0           /**< Divide VCO frequency by 2. */
 #define RFD_DIV4                1           /**< Divide VCO frequency by 4. */

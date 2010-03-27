@@ -34,7 +34,7 @@
 /*
  * Board frequencies.
  */
-#define HSECLK          8000000
+#define SYSOSCCLK               12000000
 
 /*
  * Pin definitions.

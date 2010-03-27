@@ -34,6 +34,11 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Platform name.
+ */
+#define PLATFORM_NAME       "STM8x"
+
 #define LSICLK              128000      /**< Low speed internal clock.      */
 #define HSICLK              16000000    /**< High speed internal clock.     */
 
