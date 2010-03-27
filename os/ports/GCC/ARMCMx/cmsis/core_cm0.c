@@ -1,6 +1,6 @@
 /**************************************************************************//**
- * @file     core_cm3.c
- * @brief    CMSIS Cortex-M3 Core Peripheral Access Layer Source File
+ * @file     core_cm0.c
+ * @brief    CMSIS Cortex-M0 Core Peripheral Access Layer Source File
  * @version  V1.30
  * @date     30. October 2009
  *
@@ -134,41 +134,6 @@ __ASM int32_t __REVSH(int16_t value)
 
 #if (__ARMCC_VERSION < 400000)
 
-/**
- * @brief  Remove the exclusive lock created by ldrex
- *
- * Removes the exclusive lock which is created by ldrex.
- */
-__ASM void __CLREX(void)
-{
-  clrex
-}
-
-/**
- * @brief  Return the Base Priority value
- *
- * @return BasePriority
- *
- * Return the content of the base priority register
- */
-__ASM uint32_t  __get_BASEPRI(void)
-{
-  mrs r0, basepri
-  bx lr
-}
-
-/**
- * @brief  Set the Base Priority value
- *
- * @param  basePri  BasePriority
- *
- * Set the base priority register
- */
-__ASM void __set_BASEPRI(uint32_t basePri)
-{
-  msr basepri, r0
-  bx lr
-}
 
 /**
  * @brief  Return the Priority Mask value
@@ -193,32 +158,6 @@ __ASM uint32_t __get_PRIMASK(void)
 __ASM void __set_PRIMASK(uint32_t priMask)
 {
   msr primask, r0
-  bx lr
-}
-
-/**
- * @brief  Return the Fault Mask value
- *
- * @return FaultMask
- *
- * Return the content of the fault mask register
- */
-__ASM uint32_t  __get_FAULTMASK(void)
-{
-  mrs r0, faultmask
-  bx lr
-}
-
-/**
- * @brief  Set the Fault Mask value
- *
- * @param  faultMask  faultMask value
- *
- * Set the fault mask register
- */
-__ASM void __set_FAULTMASK(uint32_t faultMask)
-{
-  msr faultmask, r0
   bx lr
 }
 
@@ -325,106 +264,6 @@ uint32_t __REV16(uint16_t value)
   __ASM("bx lr");
 }
 
-/**
- * @brief  Reverse bit order of value
- *
- * @param  value  value to reverse
- * @return        reversed value
- *
- * Reverse bit order of value
- */
-uint32_t __RBIT(uint32_t value)
-{
-  __ASM("rbit r0, r0");
-  __ASM("bx lr");
-}
-
-/**
- * @brief  LDR Exclusive (8 bit)
- *
- * @param  *addr  address pointer
- * @return        value of (*address)
- *
- * Exclusive LDR command for 8 bit values)
- */
-uint8_t __LDREXB(uint8_t *addr)
-{
-  __ASM("ldrexb r0, [r0]");
-  __ASM("bx lr"); 
-}
-
-/**
- * @brief  LDR Exclusive (16 bit)
- *
- * @param  *addr  address pointer
- * @return        value of (*address)
- *
- * Exclusive LDR command for 16 bit values
- */
-uint16_t __LDREXH(uint16_t *addr)
-{
-  __ASM("ldrexh r0, [r0]");
-  __ASM("bx lr");
-}
-
-/**
- * @brief  LDR Exclusive (32 bit)
- *
- * @param  *addr  address pointer
- * @return        value of (*address)
- *
- * Exclusive LDR command for 32 bit values
- */
-uint32_t __LDREXW(uint32_t *addr)
-{
-  __ASM("ldrex r0, [r0]");
-  __ASM("bx lr");
-}
-
-/**
- * @brief  STR Exclusive (8 bit)
- *
- * @param  value  value to store
- * @param  *addr  address pointer
- * @return        successful / failed
- *
- * Exclusive STR command for 8 bit values
- */
-uint32_t __STREXB(uint8_t value, uint8_t *addr)
-{
-  __ASM("strexb r0, r0, [r1]");
-  __ASM("bx lr");
-}
-
-/**
- * @brief  STR Exclusive (16 bit)
- *
- * @param  value  value to store
- * @param  *addr  address pointer
- * @return        successful / failed
- *
- * Exclusive STR command for 16 bit values
- */
-uint32_t __STREXH(uint16_t value, uint16_t *addr)
-{
-  __ASM("strexh r0, r0, [r1]");
-  __ASM("bx lr");
-}
-
-/**
- * @brief  STR Exclusive (32 bit)
- *
- * @param  value  value to store
- * @param  *addr  address pointer
- * @return        successful / failed
- *
- * Exclusive STR command for 32 bit values
- */
-uint32_t __STREXW(uint32_t value, uint32_t *addr)
-{
-  __ASM("strex r0, r0, [r1]");
-  __ASM("bx lr");
-}
 
 #pragma diag_default=Pe940
 
@@ -499,32 +338,6 @@ void __set_MSP(uint32_t topOfMainStack)
                   "BX  lr     \n\t" : : "r" (topOfMainStack) );
 }
 
-/**
- * @brief  Return the Base Priority value
- *
- * @return BasePriority
- *
- * Return the content of the base priority register
- */
-uint32_t __get_BASEPRI(void)
-{
-  uint32_t result=0;
-  
-  __ASM volatile ("MRS %0, basepri_max" : "=r" (result) );
-  return(result);
-}
-
-/**
- * @brief  Set the Base Priority value
- *
- * @param  basePri  BasePriority
- *
- * Set the base priority register
- */
-void __set_BASEPRI(uint32_t value)
-{
-  __ASM volatile ("MSR basepri, %0" : : "r" (value) );
-}
 
 /**
  * @brief  Return the Priority Mask value
@@ -551,33 +364,6 @@ uint32_t __get_PRIMASK(void)
 void __set_PRIMASK(uint32_t priMask)
 {
   __ASM volatile ("MSR primask, %0" : : "r" (priMask) );
-}
-
-/**
- * @brief  Return the Fault Mask value
- *
- * @return FaultMask
- *
- * Return the content of the fault mask register
- */
-uint32_t __get_FAULTMASK(void)
-{
-  uint32_t result=0;
-  
-  __ASM volatile ("MRS %0, faultmask" : "=r" (result) );
-  return(result);
-}
-
-/**
- * @brief  Set the Fault Mask value
- *
- * @param  faultMask  faultMask value
- *
- * Set the fault mask register
- */
-void __set_FAULTMASK(uint32_t faultMask)
-{
-  __ASM volatile ("MSR faultmask, %0" : : "r" (faultMask) );
 }
 
 /**
@@ -654,121 +440,6 @@ int32_t __REVSH(int16_t value)
   
   __ASM volatile ("revsh %0, %1" : "=r" (result) : "r" (value) );
   return(result);
-}
-
-/**
- * @brief  Reverse bit order of value
- *
- * @param  value  value to reverse
- * @return        reversed value
- *
- * Reverse bit order of value
- */
-uint32_t __RBIT(uint32_t value)
-{
-  uint32_t result=0;
-  
-   __ASM volatile ("rbit %0, %1" : "=r" (result) : "r" (value) );
-   return(result);
-}
-
-/**
- * @brief  LDR Exclusive (8 bit)
- *
- * @param  *addr  address pointer
- * @return        value of (*address)
- *
- * Exclusive LDR command for 8 bit value
- */
-uint8_t __LDREXB(uint8_t *addr)
-{
-    uint8_t result=0;
-  
-   __ASM volatile ("ldrexb %0, [%1]" : "=r" (result) : "r" (addr) );
-   return(result);
-}
-
-/**
- * @brief  LDR Exclusive (16 bit)
- *
- * @param  *addr  address pointer
- * @return        value of (*address)
- *
- * Exclusive LDR command for 16 bit values
- */
-uint16_t __LDREXH(uint16_t *addr)
-{
-    uint16_t result=0;
-  
-   __ASM volatile ("ldrexh %0, [%1]" : "=r" (result) : "r" (addr) );
-   return(result);
-}
-
-/**
- * @brief  LDR Exclusive (32 bit)
- *
- * @param  *addr  address pointer
- * @return        value of (*address)
- *
- * Exclusive LDR command for 32 bit values
- */
-uint32_t __LDREXW(uint32_t *addr)
-{
-    uint32_t result=0;
-  
-   __ASM volatile ("ldrex %0, [%1]" : "=r" (result) : "r" (addr) );
-   return(result);
-}
-
-/**
- * @brief  STR Exclusive (8 bit)
- *
- * @param  value  value to store
- * @param  *addr  address pointer
- * @return        successful / failed
- *
- * Exclusive STR command for 8 bit values
- */
-uint32_t __STREXB(uint8_t value, uint8_t *addr)
-{
-   uint32_t result=0;
-  
-   __ASM volatile ("strexb %0, %2, [%1]" : "=r" (result) : "r" (addr), "r" (value) );
-   return(result);
-}
-
-/**
- * @brief  STR Exclusive (16 bit)
- *
- * @param  value  value to store
- * @param  *addr  address pointer
- * @return        successful / failed
- *
- * Exclusive STR command for 16 bit values
- */
-uint32_t __STREXH(uint16_t value, uint16_t *addr)
-{
-   uint32_t result=0;
-  
-   __ASM volatile ("strexh %0, %2, [%1]" : "=r" (result) : "r" (addr), "r" (value) );
-   return(result);
-}
-
-/**
- * @brief  STR Exclusive (32 bit)
- *
- * @param  value  value to store
- * @param  *addr  address pointer
- * @return        successful / failed
- *
- * Exclusive STR command for 32 bit values
- */
-uint32_t __STREXW(uint32_t value, uint32_t *addr)
-{
-   uint32_t result=0;
-  
-   __ASM volatile ("strex %0, %2, [%1]" : "=r" (result) : "r" (addr), "r" (value) );
-   return(result);
 }
 
 
