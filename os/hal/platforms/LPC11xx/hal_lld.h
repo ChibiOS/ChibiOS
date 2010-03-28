@@ -48,10 +48,10 @@
 #define SYSPLLCLKSEL_SYSOSC     1           /**< System oscillator clock
                                                  source.                    */
 
-#define SYSMAINCLKSEL_IRCOCS    0
-#define SYSMAINCLKSEL_PLLIN     1
-#define SYSMAINCLKSEL_WDGOSC    2
-#define SYSMAINCLKSEL_PLLOUT    3
+#define SYSMAINCLKSEL_IRCOCS    0           /**< Clock source is IRC.       */
+#define SYSMAINCLKSEL_PLLIN     1           /**< Clock source is PLLIN.     */
+#define SYSMAINCLKSEL_WDGOSC    2           /**< Clock source is WDGOSC.    */
+#define SYSMAINCLKSEL_PLLOUT    3           /**< Clock source is PLLOUT.    */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -70,7 +70,7 @@
  *          must not exceed the CCO ratings.
  */
 #if !defined(LPC11xx_SYSPLL_MUL) || defined(__DOXYGEN__)
-#define LPC11xx_SYSPLL_MUL      16
+#define LPC11xx_SYSPLL_MUL      4
 #endif
 
 /**
@@ -148,7 +148,8 @@
 /**
  * @brief   CCP frequency.
  */
-#define  LPC11xx_SYSPLLCCO   (LPC11xx_SYSPLLCLKIN * LPC11xx_SYSPLL_MUL)
+#define  LPC11xx_SYSPLLCCO   (LPC11xx_SYSPLLCLKIN * LPC11xx_SYSPLL_MUL *    \
+                              LPC11xx_SYSPLL_DIV)
 
 #if (LPC11xx_SYSPLLCCO < 156000000) || (LPC11xx_SYSPLLCCO > 320000000)
 #error "CCO frequency out of the acceptable range (156...320)"

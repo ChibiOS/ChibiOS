@@ -83,20 +83,24 @@ void lpc111x_clock_init(void) {
   FLASHCFG = (FLASHCFG & ~3) | LPC11xx_FLASHCFG_FLASHTIM;
 
   /* System oscillator initialization if required.*/
+#if LPC11xx_MAINCLK_SOURCE == SYSMAINCLKSEL_PLLOUT
 #if LPC11xx_PLLCLK_SOURCE == SYSPLLCLKSEL_SYSOSC
   LPC_SYSCON->SYSOSCCTRL = LPC11xx_SYSOSCCTRL;
   LPC_SYSCON->PDRUNCFG &= ~(1 << 5);            /* System oscillator ON.    */
   for (i = 0; i < 200; i++)
     __NOP();                                    /* Stabilization delay.     */
+#endif /* LPC11xx_PLLCLK_SOURCE == SYSPLLCLKSEL_SYSOSC */
 
   /* PLL initialization if required.*/
-#if LPC11xx_MAINCLK_SOURCE == SYSMAINCLKSEL_PLLOUT
+  LPC_SYSCON->SYSPLLCLKSEL = LPC11xx_PLLCLK_SOURCE;
+  LPC_SYSCON->SYSPLLCLKUEN = 1;                 /* Really required?         */
+  LPC_SYSCON->SYSPLLCLKUEN = 0;
+  LPC_SYSCON->SYSPLLCLKUEN = 1;
   LPC_SYSCON->SYSPLLCTRL = LPC11xx_SYSPLLCTRL_MSEL | LPC11xx_SYSPLLCTRL_PSEL;
   LPC_SYSCON->PDRUNCFG &= ~(1 << 7);            /* System PLL ON.           */
   while ((LPC_SYSCON->SYSPLLSTAT & 1) == 0)     /* Wait PLL lock.           */
     ;
 #endif /* LPC11xx_MAINCLK_SOURCE == SYSMAINCLKSEL_PLLOUT */
-#endif /* LPC11xx_PLLCLK_SOURCE == SYSPLLCLKSEL_SYSOSC */
 
   /* Main clock source selection.*/
   LPC_SYSCON->MAINCLKSEL = LPC11xx_MAINCLK_SOURCE;
