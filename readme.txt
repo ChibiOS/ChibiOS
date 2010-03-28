@@ -96,7 +96,7 @@
 - CHANGE: The module documentation has been moved from the kernel.dox file
   to the various source code files in order to make it easier to maintain
   and double as source comments.
-- CHANGE: Updated CMSIS files to version 1.3 and fixed the warnings in there
+- CHANGE: Updated CMSIS files to version 1.3 and fixed the warnings in there,
   again...
 
 *** 1.5.3 ***

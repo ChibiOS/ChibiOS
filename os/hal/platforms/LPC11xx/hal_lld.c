@@ -28,6 +28,11 @@
 #include "ch.h"
 #include "hal.h"
 
+/**
+ * @brief   Register missing in NXP header file.
+ */
+#define FLASHCFG (*((volatile uint32_t *)0x4003C010))
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -59,10 +64,12 @@ void hal_lld_init(void) {
   NVICSetSystemHandlerPriority(HANDLER_SYSTICK, CORTEX_PRIORITY_SYSTICK);
   NVICSetSystemHandlerPriority(HANDLER_PENDSV, CORTEX_PRIORITY_PENDSV);
 
-  /* Systick initialization.*/
-  SysTick->LOAD = LPC11xx_SYSCLK / (8000000 / CH_FREQUENCY) - 1;
+  /* SysTick initialization using the system clock.*/
+  SysTick->LOAD = LPC11xx_SYSCLK / CH_FREQUENCY - 1;
   SysTick->VAL = 0;
-  SysTick->CTRL = SysTick_CTRL_ENABLE_Msk | SysTick_CTRL_TICKINT_Msk;
+  SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
+                  SysTick_CTRL_ENABLE_Msk |
+                  SysTick_CTRL_TICKINT_Msk;
 }
 
 /**
@@ -70,6 +77,43 @@ void hal_lld_init(void) {
  * @note    All the involved constants come from the file @p board.h.
  */
 void lpc111x_clock_init(void) {
+  unsigned i;
+
+  /* Flash wait states setting, the code takes care to not touch TBD bits.*/
+  FLASHCFG = (FLASHCFG & ~3) | LPC11xx_FLASHCFG_FLASHTIM;
+
+  /* System oscillator initialization if required.*/
+#if LPC11xx_PLLCLK_SOURCE == SYSPLLCLKSEL_SYSOSC
+  LPC_SYSCON->SYSOSCCTRL = LPC11xx_SYSOSCCTRL;
+  LPC_SYSCON->PDRUNCFG &= ~(1 << 5);            /* System oscillator ON.    */
+  for (i = 0; i < 200; i++)
+    __NOP();                                    /* Stabilization delay.     */
+
+  /* PLL initialization if required.*/
+#if LPC11xx_MAINCLK_SOURCE == SYSMAINCLKSEL_PLLOUT
+  LPC_SYSCON->SYSPLLCTRL = LPC11xx_SYSPLLCTRL_MSEL | LPC11xx_SYSPLLCTRL_PSEL;
+  LPC_SYSCON->PDRUNCFG &= ~(1 << 7);            /* System PLL ON.           */
+  while ((LPC_SYSCON->SYSPLLSTAT & 1) == 0)     /* Wait PLL lock.           */
+    ;
+#endif /* LPC11xx_MAINCLK_SOURCE == SYSMAINCLKSEL_PLLOUT */
+#endif /* LPC11xx_PLLCLK_SOURCE == SYSPLLCLKSEL_SYSOSC */
+
+  /* Main clock source selection.*/
+  LPC_SYSCON->MAINCLKSEL = LPC11xx_MAINCLK_SOURCE;
+  LPC_SYSCON->MAINCLKUEN = 1;                   /* Really required?         */
+  LPC_SYSCON->MAINCLKUEN = 0;
+  LPC_SYSCON->MAINCLKUEN = 1;
+  while ((LPC_SYSCON->MAINCLKUEN & 1) == 0)     /* Wait switch completion.  */
+    ;
+
+  /* ABH divider initialization, peripheral clocks are initially disabled,
+     the various device drivers will handle their own setup except GPIO and
+     IOCON that are left enabled.*/
+  LPC_SYSCON->SYSAHBCLKDIV = LPC11xx_SYSABHCLK_DIV;
+  LPC_SYSCON->SYSAHBCLKCTRL = 0x0001005F;
+
+  /* Memory remapping, vectors always in ROM.*/
+  LPC_SYSCON->SYSMEMREMAP = 2;
 }
 
 /** @} */

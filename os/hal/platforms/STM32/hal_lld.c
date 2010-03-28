@@ -80,7 +80,7 @@ void hal_lld_init(void) {
   NVICSetSystemHandlerPriority(HANDLER_SYSTICK, CORTEX_PRIORITY_SYSTICK);
   NVICSetSystemHandlerPriority(HANDLER_PENDSV, CORTEX_PRIORITY_PENDSV);
 
-  /* Systick initialization using the system clock.*/
+  /* SysTick initialization using the system clock.*/
   SysTick->LOAD = SYSCLK / CH_FREQUENCY - 1;
   SysTick->VAL = 0;
   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |

@@ -41,7 +41,7 @@
 #define PLATFORM_NAME           "LPC11xx"
 
 #define IRCOSCCLK               12000000    /**< High speed internal clock. */
-#define WDGOSCCLK               12000000    /**< Watchdog internal clock.   */
+#define WDGOSCCLK               1600000     /**< Watchdog internal clock.   */
 
 #define SYSPLLCLKSEL_IRCOCS     0           /**< Internal RC oscillator
                                                  clock source.              */
@@ -93,12 +93,21 @@
  * @note    The value must be chosen between (1...255).
  */
 #if !defined(LPC11xx_SYSCLK_DIV) || defined(__DOXYGEN__)
-#define LPC11xx_SYSCLK_DIV      1
+#define LPC11xx_SYSABHCLK_DIV   1
 #endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/**
+ * @brief   Calculated SYSOSCCTRL setting.
+ */
+#if (SYSOSCCLK < 18000000) || defined(__DOXYGEN__)
+#define LPC11xx_SYSOSCCTRL      0
+#else
+#define LPC11xx_SYSOSCCTRL      1
+#endif
 
 /**
  * @brief   PLL input clock frequency.
@@ -111,12 +120,28 @@
 #error "invalid LPC11xx_PLLCLK_SOURCE clock source specified"
 #endif
 
-#if (LPC11xx_SYSPLL_MUL < 1) || (LPC11xx_SYSPLL_MUL > 32)
+/**
+ * @brief   MSEL mask in SYSPLLCTRL register.
+ */
+#if (LPC11xx_SYSPLL_MUL >= 1) && (LPC11xx_SYSPLL_MUL <= 32) ||              \
+    defined(__DOXYGEN__)
+#define LPC11xx_SYSPLLCTRL_MSEL (LPC11xx_SYSPLL_MUL - 1)
+#else
 #error "LPC11xx_SYSPLL_MUL out of range (1...32)"
 #endif
 
-#if (LPC11xx_SYSPLL_DIV != 2) && (LPC11xx_SYSPLL_DIV != 4) &&               \
-    (LPC11xx_SYSPLL_DIV != 8) && (LPC11xx_SYSPLL_DIV != 16)
+/**
+ * @brief   PSEL mask in SYSPLLCTRL register.
+ */
+#if (LPC11xx_SYSPLL_DIV == 2) || defined(__DOXYGEN__)
+#define LPC11xx_SYSPLLCTRL_PSEL (0 << 5)
+#elif LPC11xx_SYSPLL_DIV == 4
+#define LPC11xx_SYSPLLCTRL_PSEL (1 << 5)
+#elif LPC11xx_SYSPLL_DIV == 8
+#define LPC11xx_SYSPLLCTRL_PSEL (2 << 5)
+#elif LPC11xx_SYSPLL_DIV == 16
+#define LPC11xx_SYSPLLCTRL_PSEL (3 << 5)
+#else
 #error "invalid LPC11xx_SYSPLL_DIV value (2,4,8,16)"
 #endif
 
@@ -149,10 +174,21 @@
 /**
  * @brief   AHB clock.
  */
-#define  LPC11xx_SYSCLK     (LPC11xx_MAINCLK / LPC11xx_SYSCLK_DIV)
-
-#if LPC11xx_SYSCLK > 50000000
+#if (LPC11xx_SYSCLK <= 50000000) || defined(__DOXYGEN__)
+#define  LPC11xx_SYSCLK     (LPC11xx_MAINCLK / LPC11xx_SYSABHCLK_DIV)
+#else
 #error "AHB clock frequency out of the acceptable range (50MHz max)"
+#endif
+
+/**
+ * @brief   Flash wait states.
+ */
+#if (LPC11xx_SYSCLK <= 20000000) || defined(__DOXYGEN__)
+#define LPC11xx_FLASHCFG_FLASHTIM   0
+#elif LPC11xx_SYSCLK <= 40000000
+#define LPC11xx_FLASHCFG_FLASHTIM   1
+#else
+#define LPC11xx_FLASHCFG_FLASHTIM   2
 #endif
 
 /*===========================================================================*/
