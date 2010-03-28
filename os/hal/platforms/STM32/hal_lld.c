@@ -74,15 +74,18 @@ const STM32GPIOConfig pal_default_config =
 void hal_lld_init(void) {
 
   /* Note: PRIGROUP 4:0 (4:4).*/
-  SCB->AIRCR = AIRCR_VECTKEY | SCB_AIRCR_PRIGROUP_0 | SCB_AIRCR_PRIGROUP_1;
+  SCB->AIRCR = (0x05FA << SCB_AIRCR_VECTKEY_Pos) |
+               (3 << SCB_AIRCR_PRIGROUP_Pos);
   NVICSetSystemHandlerPriority(HANDLER_SVCALL, CORTEX_PRIORITY_SVCALL);
   NVICSetSystemHandlerPriority(HANDLER_SYSTICK, CORTEX_PRIORITY_SYSTICK);
   NVICSetSystemHandlerPriority(HANDLER_PENDSV, CORTEX_PRIORITY_PENDSV);
 
-  /* Systick initialization.*/
-  SysTick->LOAD = SYSCLK / (8000000 / CH_FREQUENCY) - 1;
+  /* Systick initialization using the system clock.*/
+  SysTick->LOAD = SYSCLK / CH_FREQUENCY - 1;
   SysTick->VAL = 0;
-  SysTick->CTRL = SysTick_CTRL_ENABLE | SysTick_CTRL_TICKINT;
+  SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
+                  SysTick_CTRL_ENABLE_Msk |
+                  SysTick_CTRL_TICKINT_Msk;
 
 #if CH_HAL_USE_ADC || CH_HAL_USE_SPI
   dmaInit();

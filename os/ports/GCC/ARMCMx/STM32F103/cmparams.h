@@ -35,6 +35,9 @@
 /* Constants parameters.                                                     */
 /*===========================================================================*/
 
+#define CORTEX_M0               0       /**< @brief Cortex-M0 variant.      */
+#define CORTEX_M3               3       /**< @brief Cortex-M3 variant.      */
+
 /**
  * @brief   Cortex core model.
  */

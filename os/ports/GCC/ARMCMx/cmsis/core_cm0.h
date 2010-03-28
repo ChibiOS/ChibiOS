@@ -20,9 +20,6 @@
 /*
  * Parts of this files have been modified in ChibiOS/RT in order to fix
  * some code quality issues.
- * ChibiOS/RT does not use any of the following code but this file is
- * included by the registers definition file so the warnings are still
- * propagated.
  */
 
 /**************************************************************************//**

@@ -84,7 +84,13 @@
 - OPT: Simplified the implementation of chSchYieldS() and made it a macro.
   The previous implementation was probably overkill and took too much space
   even if a bit faster.
-- CHANGE: Modified the Cortex-M3 port to be a more generic Cortex-Mx port.
+- CHANGE: Modified the Cortex-M3 port to be a more generic Cortex-Mx port,
+  changes were required to the startup code and the port code because the
+  reduced instruction set of the Cortex-M0 (there are two code paths now,
+  both optimized).
+- CHANGE: Modified the SysTick initialization for STM32 to use the system
+  clock rather than the external clock, also modified the initialization
+  code to use the CMSIS macros rather than the ST header macros.
 - CHANGE: Exiting from a chCondWaitTimeout() because a timeout now does not
   re-acquire the mutex, ownership is lost.
 - CHANGE: The module documentation has been moved from the kernel.dox file

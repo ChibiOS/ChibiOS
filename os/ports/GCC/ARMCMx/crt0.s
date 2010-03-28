@@ -77,8 +77,8 @@ dloop:
         bge     enddloop
         ldr     r0, [r1]
         str     r0, [r2]
-        adds    r0, r0, #4
         adds    r1, r1, #4
+        adds    r2, r2, #4
         b       dloop
 enddloop:
 #else

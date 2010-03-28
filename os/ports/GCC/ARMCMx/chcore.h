@@ -39,9 +39,6 @@
 #define ENABLE_WFI_IDLE         0
 #endif
 
-#define CORTEX_M0               0       /**< @brief Cortex-M0 variant.      */
-#define CORTEX_M3               3       /**< @brief Cortex-M3 variant.      */
-
 /**
  * @brief   Name of the implemented architecture.
  */
