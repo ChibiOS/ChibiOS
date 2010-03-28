@@ -72,33 +72,34 @@ void SysTickVector(void) {
 #if CORTEX_MODEL == CORTEX_M0
 #define PUSH_CONTEXT(sp, prio) {                                        \
   asm volatile ("mrs     %0, PSP                                \n\t"   \
+                "sub     %0, %0, #40                            \n\t"   \
+                "stmia   %0!, {r3-r7}                           \n\t"   \
                 "sub     %0, %0, #20                            \n\t"   \
-                "push    {r3-r7}                                \n\t"   \
-                "mov     r0, r8                                 \n\t"   \
-                "str     r0, [%0, #20]                          \n\t"   \
-                "mov     r0, r9                                 \n\t"   \
-                "str     r0, [%0, #24]                          \n\t"   \
-                "mov     r0, r10                                \n\t"   \
-                "str     r0, [%0, #28]                          \n\t"   \
-                "mov     r0, r11                                \n\t"   \
-                "str     r0, [%0, #32]                          \n\t"   \
-                "mov     r0, lr                                 \n\t"   \
-                "str     r0, [%0, #36]                          \n\t"   \
+                "mov     r3, r8                                 \n\t"   \
+                "str     r3, [%0, #20]                          \n\t"   \
+                "mov     r3, r9                                 \n\t"   \
+                "str     r3, [%0, #24]                          \n\t"   \
+                "mov     r3, r10                                \n\t"   \
+                "str     r3, [%0, #28]                          \n\t"   \
+                "mov     r3, r11                                \n\t"   \
+                "str     r3, [%0, #32]                          \n\t"   \
+                "mov     r3, lr                                 \n\t"   \
+                "str     r3, [%0, #36]                          \n\t"   \
                 : "=r" (sp) : "r" (sp), "r" (prio));                    \
 }
 
 #define POP_CONTEXT(sp) {                                               \
-  asm volatile ("ldr     r0, [%0, #20]                          \n\t"   \
-                "mov     r8, r0                                 \n\t"   \
-                "ldr     r0, [%0, #24]                          \n\t"   \
-                "mov     r9, r0                                 \n\t"   \
-                "ldr     r0, [%0, #28]                          \n\t"   \
-                "mov     r10, r0                                \n\t"   \
-                "ldr     r0, [%0, #32]                          \n\t"   \
-                "mov     r11, r0                                \n\t"   \
-                "ldr     r0, [%0, #36]                          \n\t"   \
-                "mov     lr, r0                                 \n\t"   \
-                "pop     {r3-r7}                                \n\t"   \
+  asm volatile ("ldr     r3, [%0, #20]                          \n\t"   \
+                "mov     r8, r3                                 \n\t"   \
+                "ldr     r3, [%0, #24]                          \n\t"   \
+                "mov     r9, r3                                 \n\t"   \
+                "ldr     r3, [%0, #28]                          \n\t"   \
+                "mov     r10, r3                                \n\t"   \
+                "ldr     r3, [%0, #32]                          \n\t"   \
+                "mov     r11, r3                                \n\t"   \
+                "ldr     r3, [%0, #36]                          \n\t"   \
+                "mov     lr, r3                                 \n\t"   \
+                "ldmia   %0!, {r3-r7}                           \n\t"   \
                 "add     %0, %0, #20                            \n\t"   \
                 "msr     PSP, %0                                \n\t"   \
                 "msr     BASEPRI, r3                            \n\t"   \
