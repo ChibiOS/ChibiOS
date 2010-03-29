@@ -202,7 +202,11 @@ struct context {
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_PROLOGUE()
+#define PORT_IRQ_PROLOGUE() {                                           \
+  chSysLockFromIsr();                                                   \
+  _port_irq_nesting++;                                                  \
+  chSysUnlockFromIsr();                                                 \
+}
 
 /**
  * @brief   IRQ epilogue code.
@@ -211,8 +215,7 @@ struct context {
  */
 #define PORT_IRQ_EPILOGUE() {                                           \
   chSysLockFromIsr();                                                   \
-  if (((SCB_ICSR & ICSR_VECTPENDING_MASK) == 0) &&						\
-      chSchIsRescRequiredExI()) {										\
+  if ((--_port_irq_nesting == 0) && chSchIsRescRequiredExI()) {         \
     register struct cmxctx *ctxp asm ("r3");                            \
                                                                         \
     asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : "r" (ctxp));        \
@@ -232,9 +235,10 @@ struct context {
 
 /**
  * @brief   Port-related initialization code.
- * @note    This function is empty in this port.
  */
-#define port_init()
+#define port_init() {                                                   \
+  _port_irq_nesting = 0;                                                \
+}
 
 /**
  * @brief   Kernel-lock action.
@@ -306,6 +310,7 @@ struct context {
 
 #if !defined(__DOXYGEN__)
 extern regarm_t _port_saved_pc;
+extern unsigned _port_irq_nesting;
 #endif
 
 #ifdef __cplusplus

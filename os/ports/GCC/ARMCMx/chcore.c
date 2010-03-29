@@ -34,6 +34,11 @@
 regarm_t _port_saved_pc;
 
 /**
+ * @brief	IRQ nesting counter.
+ */
+unsigned _port_irq_nesting;
+
+/**
  * @brief   Halts the system.
  * @note    The function is declared as a weak symbol, it is possible
  *          to redefine it in your application code.
