@@ -80,6 +80,8 @@ void _port_switch_from_irq(void) {
                 "mrs     r1, XPSR                               \n\t"   \
                 "push    {r0, r1, lr}                           \n\t"   \
                 "ldr     r0, =_port_saved_pc                    \n\t"   \
+                "ldr     r0, [r0]                               \n\t"   \
+                "add 	 r0, r0, #1								\n\t"	\
                 "str     r0, [sp, #28]");
 
   chSchDoRescheduleI();

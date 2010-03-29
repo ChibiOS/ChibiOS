@@ -211,7 +211,8 @@ struct context {
  */
 #define PORT_IRQ_EPILOGUE() {                                           \
   chSysLockFromIsr();                                                   \
-  if (((SCB_ICSR & ICSR_RETTOBASE) != 0) && chSchIsRescRequiredExI()) { \
+  if (((SCB_ICSR & ICSR_VECTPENDING_MASK) == 0) &&						\
+      chSchIsRescRequiredExI()) {										\
     register struct cmxctx *ctxp asm ("r3");                            \
                                                                         \
     asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : "r" (ctxp));        \
