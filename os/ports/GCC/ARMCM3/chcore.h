@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    ARMCMx/chcore.h
- * @brief   ARM Cortex-Mx architecture port macros and structures.
+ * @file    ARMCM3/chcore.h
+ * @brief   ARM Cortex-M3 architecture port macros and structures.
  *
- * @addtogroup ARMCMx_CORE
+ * @addtogroup ARMCM3_CORE
  * @{
  */
 
@@ -44,7 +44,7 @@
  */
 #define CH_ARCHITECTURE_NAME "ARM"
 
-/* Inclusion of the Cortex-Mx implementation specific parameters.*/
+/* Inclusion of the Cortex-M3 implementation specific parameters.*/
 #include "cmparams.h"
 
 /* Generating model-dependent info.*/
@@ -58,11 +58,8 @@
  * @brief   Name of the architecture variant (optional).
  */
 #define CH_CORE_VARIANT_NAME    "Cortex-M3"
-#elif (CORTEX_MODEL == CORTEX_M0)
-#define CH_ARCHITECTURE_ARMCM0
-#define CH_CORE_VARIANT_NAME    "Cortex-M0"
 #else
-#error "unknown or unsupported Cortex-M model"
+#error "this ports only supports the Cortex-M3 architecture"
 #endif
 
 /**
@@ -120,7 +117,7 @@ struct intctx {
 #if !defined(__DOXYGEN__)
 /**
  * @brief   Platform dependent part of the @p Thread structure.
- * @details In the Cortex-Mx port this structure just holds a pointer to the
+ * @details In the Cortex-M3 port this structure just holds a pointer to the
  *          @p intctx structure representing the stack pointer at the time
  *          of the context switch.
  */

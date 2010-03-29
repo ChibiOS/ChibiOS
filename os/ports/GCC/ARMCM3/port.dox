@@ -18,18 +18,17 @@
 */
 
 /**
- * @defgroup ARMCMx ARM Cortex-Mx
- * @details This port supports the ARM Cortex-Mx architectures, specifically
- *          the Cortex-M0 and the Cortex-M3.
+ * @defgroup ARMCM3 ARM Cortex-M3
+ * @details This port supports the ARM Cortex-M3 architecture.
  *
- * @section ARMCMx_STATES Mapping of the System States in the ARM Cortex-Mx port
+ * @section ARMCM3_STATES Mapping of the System States in the ARM Cortex-M3 port
  * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM
- * Cortex-Mx port:
+ * Cortex-M3 port:
  * - <b>Init</b>. This state is represented by the startup code and the
  *   initialization code before @p chSysInit() is executed. It has not a
  *   special hardware state associated.
  * - <b>Normal</b>. This is the state the system has after executing
- *   @p chSysInit(). In this state the ARM Cortex-Mx has the BASEPRI register
+ *   @p chSysInit(). In this state the ARM Cortex-M3 has the BASEPRI register
  *   set at @p CORTEX_BASEPRI_USER level, interrupts are not masked. The
  *   processor is running in thread-privileged mode.
  * - <b>Suspended</b>. In this state the interrupt sources are not globally
@@ -54,15 +53,15 @@
  * - <b>Serving Fast Interrupt</b>. It is basically the same of the SRI state
  *   but it is not possible to switch to the I-Locked state because fast
  *   interrupts can preempt the kernel critical zone.
- * - <b>Serving Non-Maskable Interrupt</b>. The Cortex-Mx has a specific
+ * - <b>Serving Non-Maskable Interrupt</b>. The Cortex-M3 has a specific
  *   asynchronous NMI vector and several synchronous fault vectors that can
  *   be considered to be in this category.
  * - <b>Halted</b>. Implemented as an infinite loop after globally masking all
  *   the maskable interrupt sources. The ARM state is whatever the processor
  *   was running when @p chSysHalt() was invoked.
  * .
- * @section ARMCMx_NOTES The ARM Cortex-Mx port notes
- * The ARM Cortex-Mx port is organized as follow:
+ * @section ARMCM3_NOTES The ARM Cortex-M3 port notes
+ * The ARM Cortex-M3 port is organized as follow:
  * - The @p main() function is invoked in thread-privileged mode.
  * - Each thread has a private process stack, the system has a single main
  *   stack where all the interrupts and exceptions are processed.
@@ -83,9 +82,9 @@
  */
 
 /**
- * @defgroup ARMCMx_CONF Configuration Options
- * @brief ARM Cortex-Mx Configuration Options.
- * @details The ARMCMx port allows some architecture-specific configurations
+ * @defgroup ARMCM3_CONF Configuration Options
+ * @brief ARM Cortex-M3 Configuration Options.
+ * @details The ARMCM3 port allows some architecture-specific configurations
  * settings that can be specified externally, as example on the compiler
  * command line:
  * - @p INT_REQUIRED_STACK, this value represent the amount of stack space used
@@ -97,32 +96,32 @@
  * - @p CORTEX_BASEPRI_USER, this is the @p BASEPRI value for the user threads.
  *   The default value is @p 0 (disabled).<br>
  *   Usually there is no need to change this value, please refer to the
- *   Cortex-Mx technical reference manual for a detailed description.
+ *   Cortex-M3 technical reference manual for a detailed description.
  * - @p CORTEX_BASEPRI_KERNEL, this is the @p BASEPRI value for the kernel lock
  *   code.<br>
  *   Code running at higher priority levels must not invoke any OS API.<br>
  *   Usually there is no need to change this value, please refer to the
- *   Cortex-Mx technical reference manual for a detailed description.
+ *   Cortex-M3 technical reference manual for a detailed description.
  * - @p ENABLE_WFI_IDLE, if set to @p 1 enables the use of the @p <b>wfi</b>
  *   instruction from within the idle loop. This is defaulted to 0 because
  *   it can create problems with some debuggers. Setting this option to 1
  *   reduces the system power requirements.
  * .
- * @ingroup ARMCMx
+ * @ingroup ARMCM3
  */
 
 /**
- * @defgroup ARMCMx_CORE Core Port Implementation
- * @brief ARM Cortex-Mx specific port code, structures and macros.
+ * @defgroup ARMCM3_CORE Core Port Implementation
+ * @brief ARM Cortex-M3 specific port code, structures and macros.
  *
- * @ingroup ARMCMx
+ * @ingroup ARMCM3
  */
 
 /**
- * @defgroup ARMCMx_STARTUP Startup Support
- * @brief ARM Cortex-Mx startup code support.
+ * @defgroup ARMCM3_STARTUP Startup Support
+ * @brief ARM Cortex-M3 startup code support.
  * @details ChibiOS/RT provides its own generic startup file for the ARM
- * Cortex-Mx port.
+ * Cortex-M3 port.
  * Of course it is not mandatory to use it but care should be taken about the
  * startup phase details.
  *
@@ -158,13 +157,13 @@
  * - @p _bss_start BSS start location.
  * - @p _bss_end BSS end location +1.
  * .
- * @ingroup ARMCMx
- * @file ARMCMx/crt0.s Startup code.
+ * @ingroup ARMCM3
+ * @file ARMCM3/crt0.s Startup code.
  */
 
 /**
- * @defgroup ARMCMx_NVIC NVIC Support
- * @brief ARM Cortex-Mx NVIC support.
+ * @defgroup ARMCM3_NVIC NVIC Support
+ * @brief ARM Cortex-M3 NVIC support.
  *
- * @ingroup ARMCMx
+ * @ingroup ARMCM3
  */

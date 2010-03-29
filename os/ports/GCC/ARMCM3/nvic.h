@@ -18,9 +18,9 @@
 */
 
 /**
- * @file ARMCMx/nvic.h
- * @brief Cortex-Mx NVIC support macros and structures.
- * @addtogroup ARMCMx_NVIC
+ * @file ARMCM3/nvic.h
+ * @brief Cortex-M3 NVIC support macros and structures.
+ * @addtogroup ARMCM3_NVIC
  * @{
  */
 
