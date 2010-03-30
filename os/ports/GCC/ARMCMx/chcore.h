@@ -62,9 +62,9 @@
  */
 #if (CORTEX_MODEL == CORTEX_M3) || (CORTEX_MODEL == CORTEX_M4) ||           \
     defined(__DOXYGEN__)
-#define CORTEX_SUPPORT_BASEPRI  TRUE
+#define CORTEX_SUPPORTS_BASEPRI TRUE
 #else
-#define CORTEX_SUPPORT_BASEPRI  FALSE
+#define CORTEX_SUPPORTS_BASEPRI FALSE
 #endif
 
 /**
@@ -85,7 +85,6 @@
  */
 #define CORTEX_MAXIMUM_PRIORITY 0
 
-#if 
 /*===========================================================================*/
 /* Port macros.                                                              */
 /*===========================================================================*/
