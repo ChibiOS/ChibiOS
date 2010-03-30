@@ -362,6 +362,7 @@ struct context {
  * @brief   Port-related initialization code.
  */
 #define port_init() {                                                       \
+  SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);                            \
   NVICSetSystemHandlerPriority(HANDLER_SVCALL,                              \
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL));                          \
   NVICSetSystemHandlerPriority(HANDLER_PENDSV,                              \

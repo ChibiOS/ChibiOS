@@ -73,10 +73,6 @@ const STM32GPIOConfig pal_default_config =
  */
 void hal_lld_init(void) {
 
-  /* Note: PRIGROUP 4:0 (4:4).*/
-  SCB->AIRCR = (0x05FA << SCB_AIRCR_VECTKEY_Pos) |
-               (3 << SCB_AIRCR_PRIGROUP_Pos);
-
   /* SysTick initialization using the system clock.*/
   SysTick->LOAD = SYSCLK / CH_FREQUENCY - 1;
   SysTick->VAL = 0;

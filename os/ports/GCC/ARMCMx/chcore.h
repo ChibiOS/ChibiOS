@@ -28,6 +28,8 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
+#include "nvic.h"
+
 /*===========================================================================*/
 /* Port constants.                                                           */
 /*===========================================================================*/
@@ -257,13 +259,13 @@ struct context {
  * @details This code usually setup the context switching frame represented
  *          by an @p intctx structure.
  */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
-  tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +              \
-                                     wsize -                            \
-                                     sizeof(struct intctx));            \
-  tp->p_ctx.r13->r4 = pf;                                               \
-  tp->p_ctx.r13->r5 = arg;                                              \
-  tp->p_ctx.r13->lr = _port_thread_start;                               \
+#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
+  tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +                  \
+                                     wsize -                                \
+                                     sizeof(struct intctx));                \
+  tp->p_ctx.r13->r4 = pf;                                                   \
+  tp->p_ctx.r13->r5 = arg;                                                  \
+  tp->p_ctx.r13->lr = _port_thread_start;                                   \
 }
 
 /**
@@ -299,9 +301,9 @@ struct context {
 /**
  * @brief   Computes the thread working area global size.
  */
-#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
-                                   sizeof(struct intctx) +              \
-                                   sizeof(struct extctx) +              \
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                         \
+                                   sizeof(struct intctx) +                  \
+                                   sizeof(struct extctx) +                  \
                                    (n) + (INT_REQUIRED_STACK))
 
 /**
@@ -316,10 +318,10 @@ struct context {
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_PROLOGUE() {                                           \
-  chSysLockFromIsr();                                                   \
-  _port_irq_nesting++;                                                  \
-  chSysUnlockFromIsr();                                                 \
+#define PORT_IRQ_PROLOGUE() {                                               \
+  chSysLockFromIsr();                                                       \
+  _port_irq_nesting++;                                                      \
+  chSysUnlockFromIsr();                                                     \
 }
 
 /**
@@ -327,17 +329,17 @@ struct context {
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() {                                           \
-  chSysLockFromIsr();                                                   \
-  if ((--_port_irq_nesting == 0) && chSchIsRescRequiredExI()) {         \
-    register struct cmxctx *ctxp asm ("r3");                            \
-                                                                        \
-    asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : "r" (ctxp));        \
-    _port_saved_pc = ctxp->pc;                                          \
-    ctxp->pc = _port_switch_from_irq;                                   \
-    return;                                                             \
-  }                                                                     \
-  chSysUnlockFromIsr();                                                 \
+#define PORT_IRQ_EPILOGUE() {                                               \
+  chSysLockFromIsr();                                                       \
+  if ((--_port_irq_nesting == 0) && chSchIsRescRequiredExI()) {             \
+    register struct cmxctx *ctxp asm ("r3");                                \
+                                                                            \
+    asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : "r" (ctxp));            \
+    _port_saved_pc = ctxp->pc;                                              \
+    ctxp->pc = _port_switch_from_irq;                                       \
+    return;                                                                 \
+  }                                                                         \
+  chSysUnlockFromIsr();                                                     \
 }
 
 /**
@@ -350,8 +352,11 @@ struct context {
 /**
  * @brief   Port-related initialization code.
  */
-#define port_init() {                                                   \
-  _port_irq_nesting = 0;                                                \
+#define port_init() {                                                       \
+  _port_irq_nesting = 0;                                                    \
+  SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);                            \
+  NVICSetSystemHandlerPriority(HANDLER_SYSTICK,                             \
+    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));                         \
 }
 
 /**
