@@ -327,32 +327,37 @@ void sd_lld_start(SerialDriver *sdp) {
 #if USE_STM32_USART1
     if (&SD1 == sdp) {
       RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
-      NVICEnableVector(USART1_IRQn, STM32_USART1_PRIORITY);
+      NVICEnableVector(USART1_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_USART1_PRIORITY));
     }
 #endif
 #if USE_STM32_USART2
     if (&SD2 == sdp) {
       RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
-      NVICEnableVector(USART2_IRQn, STM32_USART2_PRIORITY);
+      NVICEnableVector(USART2_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_USART2_PRIORITY));
     }
 #endif
 #if USE_STM32_USART3
     if (&SD3 == sdp) {
       RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
-      NVICEnableVector(USART3_IRQn, STM32_USART3_PRIORITY);
+      NVICEnableVector(USART3_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_USART3_PRIORITY));
     }
 #endif
 #if defined(STM32F10X_HD) || defined(STM32F10X_CL)
 #if USE_STM32_UART4
     if (&SD4 == sdp) {
       RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
-      NVICEnableVector(UART4_IRQn, STM32_UART4_PRIORITY);
+      NVICEnableVector(UART4_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_UART4_PRIORITY));
     }
 #endif
 #if USE_STM32_UART5
     if (&SD5 == sdp) {
       RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
-      NVICEnableVector(UART5_IRQn, STM32_UART5_PRIORITY);
+      NVICEnableVector(UART5_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_UART5_PRIORITY));
     }
 #endif
 #endif

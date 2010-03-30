@@ -155,7 +155,8 @@ void adc_lld_start(ADCDriver *adcp) {
 #if USE_STM32_ADC1
     if (&ADCD1 == adcp) {
       dmaEnable(DMA1_ID);   /* NOTE: Must be enabled before the IRQs.*/
-      NVICEnableVector(DMA1_Channel1_IRQn, STM32_ADC1_IRQ_PRIORITY);
+      NVICEnableVector(DMA1_Channel1_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_ADC1_IRQ_PRIORITY));
       DMA1_Channel1->CPAR = (uint32_t)&ADC1->DR;
       RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
     }

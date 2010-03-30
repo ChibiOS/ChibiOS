@@ -28,6 +28,8 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
+#include "nvic.h"
+
 /*===========================================================================*/
 /* Port constants.                                                           */
 /*===========================================================================*/
@@ -39,43 +41,170 @@
  */
 #define CORTEX_PORT_MODE_ENDOSWITCH
 
+#define CORTEX_M0               0       /**< @brief Cortex-M0 variant.      */
+#define CORTEX_M1               1       /**< @brief Cortex-M1 variant.      */
+#define CORTEX_M3               3       /**< @brief Cortex-M3 variant.      */
+#define CORTEX_M4               4       /**< @brief Cortex-M4 variant.      */
+
+/* Inclusion of the Cortex-Mx implementation specific parameters.*/
+#include "cmparams.h"
+
+/* Cortex model check, only M3 right now.*/
+#if (CORTEX_MODEL == CORTEX_M3)
+#else
+#error "unknown or unsupported Cortex-M model"
+#endif
+
+
+/*===========================================================================*/
+/* Port derived parameters.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   Priority masking support.
+ */
+#if defined(CH_ARCHITECTURE_ARM_v7M) || defined(__DOXYGEN__)
+#define CORTEX_SUPPORTS_BASEPRI TRUE
+#else
+#define CORTEX_SUPPORTS_BASEPRI FALSE
+#endif
+
+/**
+ * @brief   Total priority levels.
+ */
+#define CORTEX_PRIORITY_LEVELS  (1 << CORTEX_PRIORITY_BITS)
+
+/**
+ * @brief   Minimum priority level.
+ * @details This minimum priority level is calculated from the number of
+ *          priority bits supported by the specific Cortex-Mx implementation.
+ */
+#define CORTEX_MINIMUM_PRIORITY (CORTEX_PRIORITY_LEVELS - 1)
+
+/**
+ * @brief   Maximum priority level.
+ * @details The maximum allowed priority level is always zero.
+ */
+#define CORTEX_MAXIMUM_PRIORITY 0
+
+/*===========================================================================*/
+/* Port macros.                                                              */
+/*===========================================================================*/
+
+/**
+ * @brief   Priority level verification macro.
+ */
+#define CORTEX_IS_VALID_PRIORITY(n)                                         \
+  (((n) >= 0) && ((n) < CORTEX_PRIORITY_LEVELS))
+
+/**
+ * @brief   Priority level to priority mask conversion macro.
+ */
+#define CORTEX_PRIORITY_MASK(n) ((n) << (8 - CORTEX_PRIORITY_BITS))
+
 /*===========================================================================*/
 /* Port configurable parameters.                                             */
 /*===========================================================================*/
 
 /**
- * @brief   Enables the use of the WFI ins.
+ * @brief   Enables the use of the WFI instruction in the idle thread loop.
  */
 #ifndef CORTEX_ENABLE_WFI_IDLE
 #define CORTEX_ENABLE_WFI_IDLE  FALSE
+#endif
+
+/**
+ * @brief   SYSTICK handler priority.
+ * @note    The default is calculated as the priority level in the middle
+ *          of the priority range.
+ */
+#ifndef CORTEX_PRIORITY_SYSTICK
+#define CORTEX_PRIORITY_SYSTICK (CORTEX_PRIORITY_LEVELS >> 1)
+#else
+/* If it is externally redefined then better perform a validity check on it.*/
+#if !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SYSTICK)
+#error "invalid priority level specified for CORTEX_PRIORITY_SYSTICK"
+#endif
+#endif
+
+/**
+ * @brief   BASEPRI user level.
+ */
+#ifndef CORTEX_BASEPRI_USER
+#define CORTEX_BASEPRI_USER     CORTEX_PRIORITY_MASK(0)
+#endif
+
+/**
+ * @brief   BASEPRI level within kernel lock.
+ * @details Priority levels higher than this one (lower values) are unaffected
+ *          by the OS activity and can be classified as fast interrupt sources,
+ *          see @ref interrupt_classes.
+ */
+#ifndef CORTEX_BASEPRI_KERNEL
+#define CORTEX_BASEPRI_KERNEL   CORTEX_PRIORITY_MASK(CORTEX_MAXIMUM_PRIORITY+4)
+#endif
+
+/**
+ * @brief   PENDSV handler priority.
+ * @note    This priority must always be the lowest one.
+ * @note    It is recommended, but not mandatory, to leave this priority level
+ *          for this handler alone.
+ */
+#ifndef CORTEX_PRIORITY_PENDSV
+#define CORTEX_PRIORITY_PENDSV  CORTEX_MINIMUM_PRIORITY
+#endif
+
+/**
+ * @brief   SVCALL handler priority.
+ * @note    This priority must always be one level above the
+ *          @p CORTEX_MAXIMUM_PRIORITY value.
+ * @note    It is recommended, but not mandatory, to leave this priority level
+ *          for this handler alone.
+ */
+#ifndef CORTEX_PRIORITY_SVCALL
+#define CORTEX_PRIORITY_SVCALL  (CORTEX_MAXIMUM_PRIORITY + 3)
 #endif
 
 /*===========================================================================*/
 /* Port exported info.                                                       */
 /*===========================================================================*/
 
+#if defined(__DOXYGEN__)
+/**
+ * @brief   Macro defining the ARM architecture.
+ */
+#define CH_ARCHITECTURE_ARM_vxm
+
 /**
  * @brief   Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME "ARM"
-
-/* Inclusion of the Cortex-M3 implementation specific parameters.*/
-#include "cmparams.h"
-
-/* Generating model-dependent info.*/
-#if (CORTEX_MODEL == CORTEX_M3) || defined(__DOXYGEN__)
-/**
- * @brief   Macro defining the ARM Cortex-M3 architecture.
- */
-#define CH_ARCHITECTURE_ARMCM3
+#define CH_ARCHITECTURE_NAME    "ARMvx-M"
 
 /**
  * @brief   Name of the architecture variant (optional).
  */
+#define CH_CORE_VARIANT_NAME    "Cortex-Mx"
+#elif CORTEX_MODEL == CORTEX_M4
+#define CH_ARCHITECTURE_ARM_v7M
+#define CH_ARCHITECTURE_NAME    "ARMv7-M"
+#define CH_CORE_VARIANT_NAME    "Cortex-M4"
+#elif CORTEX_MODEL == CORTEX_M3
+#define CH_ARCHITECTURE_ARM_v7M
+#define CH_ARCHITECTURE_NAME    "ARMv7-M"
 #define CH_CORE_VARIANT_NAME    "Cortex-M3"
-#else
-#error "this ports only supports the Cortex-M3 architecture"
+#elif CORTEX_MODEL == CORTEX_M1
+#define CH_ARCHITECTURE_ARM_v6M
+#define CH_ARCHITECTURE_NAME    "ARMv6-M"
+#define CH_CORE_VARIANT_NAME    "Cortex-M1"
+#elif CORTEX_MODEL == CORTEX_M0
+#define CH_ARCHITECTURE_ARM_v6M
+#define CH_ARCHITECTURE_NAME    "ARMv6-M"
+#define CH_CORE_VARIANT_NAME    "Cortex-M0"
 #endif
+
+/*===========================================================================*/
+/* Port implementation part.                                                 */
+/*===========================================================================*/
 
 /**
  * @brief   32 bits stack and memory alignment enforcement.
@@ -231,9 +360,15 @@ struct context {
 
 /**
  * @brief   Port-related initialization code.
- * @note    This function is empty in this port.
  */
-#define port_init()
+#define port_init() {                                                       \
+  NVICSetSystemHandlerPriority(HANDLER_SVCALL,                              \
+    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL));                          \
+  NVICSetSystemHandlerPriority(HANDLER_PENDSV,                              \
+    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_PENDSV));                          \
+  NVICSetSystemHandlerPriority(HANDLER_SYSTICK,                             \
+    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));                         \
+}
 
 /**
  * @brief   Kernel-lock action.

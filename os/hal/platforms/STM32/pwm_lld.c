@@ -271,26 +271,31 @@ void pwm_lld_start(PWMDriver *pwmp) {
     /* Clock activation.*/
 #if USE_STM32_PWM1
     if (&PWMD1 == pwmp) {
-      NVICEnableVector(TIM1_UP_IRQn, STM32_PWM1_IRQ_PRIORITY);
-      NVICEnableVector(TIM1_CC_IRQn, STM32_PWM1_IRQ_PRIORITY);
+      NVICEnableVector(TIM1_UP_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_PWM1_IRQ_PRIORITY));
+      NVICEnableVector(TIM1_CC_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_PWM1_IRQ_PRIORITY);
       RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
     }
 #endif
 #if USE_STM32_PWM2
     if (&PWMD2 == pwmp) {
-      NVICEnableVector(TIM2_IRQn, STM32_PWM2_IRQ_PRIORITY);
+      NVICEnableVector(TIM2_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_PWM2_IRQ_PRIORITY));
       RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
     }
 #endif
 #if USE_STM32_PWM3
     if (&PWMD3 == pwmp) {
-      NVICEnableVector(TIM3_IRQn, STM32_PWM3_IRQ_PRIORITY);
+      NVICEnableVector(TIM3_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_PWM3_IRQ_PRIORITY));
       RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
     }
 #endif
 #if USE_STM32_PWM4
     if (&PWMD4 == pwmp) {
-      NVICEnableVector(TIM4_IRQn, STM32_PWM4_IRQ_PRIORITY);
+      NVICEnableVector(TIM4_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_PWM4_IRQ_PRIORITY));
       RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
     }
 #endif

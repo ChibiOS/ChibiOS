@@ -31,13 +31,6 @@
 #ifndef _CMPARAMS_H_
 #define _CMPARAMS_H_
 
-/*===========================================================================*/
-/* Constants parameters.                                                     */
-/*===========================================================================*/
-
-#define CORTEX_M0               0       /**< @brief Cortex-M0 variant.      */
-#define CORTEX_M3               3       /**< @brief Cortex-M3 variant.      */
-
 /**
  * @brief   Cortex core model.
  */
@@ -55,66 +48,8 @@
 
 /**
  * @brief   Number of bits in priority masks.
- * @details The available number of priority levels is equal to
- *          (1 << @p CORTEX_PRIORITY_BITS).
  */
 #define CORTEX_PRIORITY_BITS    4
-
-/**
- * @brief   Priority to priority mask conversion macro.
- */
-#define CORTEX_PRIORITY(n)      ((n) << (8 - CORTEX_PRIORITY_BITS))
-
-/*===========================================================================*/
-/* Configurable parameters.                                                  */
-/*===========================================================================*/
-
-/**
- * @brief   BASEPRI user level, 0 = disabled.
- */
-#ifndef CORTEX_BASEPRI_USER
-#define CORTEX_BASEPRI_USER     CORTEX_PRIORITY(0)
-#endif
-
-/**
- * @brief   BASEPRI level within kernel lock.
- * @details Priority levels higher than this one (lower values) are unaffected
- *          by the OS activity and can be classified as fast interrupt sources,
- *          see @ref interrupt_classes.
- */
-#ifndef CORTEX_BASEPRI_KERNEL
-#define CORTEX_BASEPRI_KERNEL   CORTEX_PRIORITY(4)
-#endif
-
-/**
- * @brief   SVCALL handler priority.
- * @note    This priority must always be one level above the @p BASEPRI_KERNEL
- *          value.
- * @note    It is recommended, but not mandatory, to leave this priority level
- *          for this handler alone.
- */
-#ifndef CORTEX_PRIORITY_SVCALL
-#define CORTEX_PRIORITY_SVCALL  CORTEX_PRIORITY(3)
-#endif
-
-/**
- * @brief   SYSTICK handler priority.
- */
-#ifndef CORTEX_PRIORITY_SYSTICK
-#define CORTEX_PRIORITY_SYSTICK CORTEX_PRIORITY(8)
-#endif
-
-/**
- * @brief   PENDSV handler priority.
- * @note    It is recommended to leave this priority level for this handler
- *          alone.
- * @note    This is a reserved handler and its priority must always be the
- *          lowest priority in the system in order to be always executed last
- *          in the interrupt servicing chain.
- */
-#ifndef CORTEX_PRIORITY_PENDSV
-#define CORTEX_PRIORITY_PENDSV  CORTEX_PRIORITY(15)
-#endif
 
 #endif /* _CMPARAMS_H_ */
 

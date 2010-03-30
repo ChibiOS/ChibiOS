@@ -7,7 +7,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 ***
 *** Kernel:       1.5.4unstable
 *** GCC Version:  4.4.2
-*** Architecture: ARM
+*** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
 *** Platform:     STM32
 *** Test Board:   Olimex STM32-P103

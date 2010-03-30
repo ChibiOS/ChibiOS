@@ -80,38 +80,30 @@
 
 /**
  * @brief PWM1 interrupt priority level setting.
- * @note @p CORTEX_BASEPRI_KERNEL >= @p STM32_PWM1_IRQ_PRIORITY >
- *       @p CORTEX_PRIORITY_PENDSV.
  */
 #if !defined(STM32_PWM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM1_IRQ_PRIORITY     CORTEX_PRIORITY(7)
+#define STM32_PWM1_IRQ_PRIORITY     7
 #endif
 
 /**
  * @brief PWM2 interrupt priority level setting.
- * @note @p CORTEX_BASEPRI_KERNEL >= @p STM32_PWM2_IRQ_PRIORITY >
- *       @p CORTEX_PRIORITY_PENDSV.
  */
 #if !defined(STM32_PWM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM2_IRQ_PRIORITY     CORTEX_PRIORITY(7)
+#define STM32_PWM2_IRQ_PRIORITY     7
 #endif
 
 /**
  * @brief PWM3 interrupt priority level setting.
- * @note @p CORTEX_BASEPRI_KERNEL >= @p STM32_PWM3_IRQ_PRIORITY >
- *       @p CORTEX_PRIORITY_PENDSV.
  */
 #if !defined(STM32_PWM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM3_IRQ_PRIORITY     CORTEX_PRIORITY(7)
+#define STM32_PWM3_IRQ_PRIORITY     7
 #endif
 
 /**
  * @brief PWM4 interrupt priority level setting.
- * @note @p CORTEX_BASEPRI_KERNEL >= @p STM32_PWM4_IRQ_PRIORITY >
- *       @p CORTEX_PRIORITY_PENDSV.
  */
 #if !defined(STM32_PWM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM4_IRQ_PRIORITY     CORTEX_PRIORITY(7)
+#define STM32_PWM4_IRQ_PRIORITY     7
 #endif
 
 /*===========================================================================*/

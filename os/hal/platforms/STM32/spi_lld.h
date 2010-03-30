@@ -78,18 +78,16 @@
 
 /**
  * @brief SPI1 interrupt priority level setting.
- * @note @p BASEPRI_KERNEL >= @p STM32_SPI1_IRQ_PRIORITY > @p PRIORITY_PENDSV.
  */
 #if !defined(STM32_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI1_IRQ_PRIORITY     CORTEX_PRIORITY(10)
+#define STM32_SPI1_IRQ_PRIORITY     10
 #endif
 
 /**
  * @brief SPI2 interrupt priority level setting.
- * @note @p BASEPRI_KERNEL >= @p STM32_SPI2_IRQ_PRIORITY > @p PRIORITY_PENDSV.
  */
 #if !defined(STM32_SPI2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI2_IRQ_PRIORITY     CORTEX_PRIORITY(10)
+#define STM32_SPI2_IRQ_PRIORITY     10
 #endif
 
 /**

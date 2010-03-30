@@ -76,9 +76,6 @@ void hal_lld_init(void) {
   /* Note: PRIGROUP 4:0 (4:4).*/
   SCB->AIRCR = (0x05FA << SCB_AIRCR_VECTKEY_Pos) |
                (3 << SCB_AIRCR_PRIGROUP_Pos);
-  NVICSetSystemHandlerPriority(HANDLER_SVCALL, CORTEX_PRIORITY_SVCALL);
-  NVICSetSystemHandlerPriority(HANDLER_SYSTICK, CORTEX_PRIORITY_SYSTICK);
-  NVICSetSystemHandlerPriority(HANDLER_PENDSV, CORTEX_PRIORITY_PENDSV);
 
   /* SysTick initialization using the system clock.*/
   SysTick->LOAD = SYSCLK / CH_FREQUENCY - 1;

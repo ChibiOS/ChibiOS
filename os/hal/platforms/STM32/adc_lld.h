@@ -77,11 +77,9 @@
 
 /**
  * @brief ADC1 interrupt priority level setting.
- * @note @p CORTEX_BASEPRI_KERNEL >= @p STM32_ADC1_IRQ_PRIORITY >
- *       @p CORTEX_PRIORITY_PENDSV.
  */
 #if !defined(STM32_ADC1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC1_IRQ_PRIORITY     CORTEX_PRIORITY(5)
+#define STM32_ADC1_IRQ_PRIORITY     5
 #endif
 
 /**

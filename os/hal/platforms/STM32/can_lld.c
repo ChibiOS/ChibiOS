@@ -174,10 +174,14 @@ void can_lld_start(CANDriver *canp) {
   /* Clock activation.*/
 #if USE_STM32_CAN1
   if (&CAND1 == canp) {
-    NVICEnableVector(USB_HP_CAN1_TX_IRQn, STM32_CAN1_IRQ_PRIORITY);
-    NVICEnableVector(USB_LP_CAN1_RX0_IRQn, STM32_CAN1_IRQ_PRIORITY);
-    NVICEnableVector(CAN1_RX1_IRQn, STM32_CAN1_IRQ_PRIORITY);
-    NVICEnableVector(CAN1_SCE_IRQn, STM32_CAN1_IRQ_PRIORITY);
+    NVICEnableVector(USB_HP_CAN1_TX_IRQn,
+                     CORTEX_PRIORITY_MASK(STM32_CAN1_IRQ_PRIORITY));
+    NVICEnableVector(USB_LP_CAN1_RX0_IRQn,
+                     CORTEX_PRIORITY_MASK(STM32_CAN1_IRQ_PRIORITY));
+    NVICEnableVector(CAN1_RX1_IRQn,
+                     CORTEX_PRIORITY_MASK(STM32_CAN1_IRQ_PRIORITY));
+    NVICEnableVector(CAN1_SCE_IRQn,
+                     CORTEX_PRIORITY_MASK(STM32_CAN1_IRQ_PRIORITY));
     RCC->APB1ENR |= RCC_APB1ENR_CAN1EN;
   }
 #endif
