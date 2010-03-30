@@ -129,32 +129,36 @@
 /* Port exported info.                                                       */
 /*===========================================================================*/
 
+#if defined(__DOXYGEN__)
+/**
+ * @brief   Macro defining the ARM architecture.
+ */
+#define CH_ARCHITECTURE_ARM_vxm
+
 /**
  * @brief   Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME    "ARM"
-
-#if defined(__DOXYGEN__)
-/**
- * @brief   Macro defining the ARM Cortex-M3 architecture.
- */
-#define CH_ARCHITECTURE_ARMCMx
+#define CH_ARCHITECTURE_NAME    "ARMvx-M"
 
 /**
  * @brief   Name of the architecture variant (optional).
  */
 #define CH_CORE_VARIANT_NAME    "Cortex-Mx"
 #elif CORTEX_MODEL == CORTEX_M4
-#define CH_ARCHITECTURE_ARMCM4
+#define CH_ARCHITECTURE_ARM_v7M
+#define CH_ARCHITECTURE_NAME    "ARMv7-M"
 #define CH_CORE_VARIANT_NAME    "Cortex-M4"
 #elif CORTEX_MODEL == CORTEX_M3
-#define CH_ARCHITECTURE_ARMCM3
+#define CH_ARCHITECTURE_ARM_v7M
+#define CH_ARCHITECTURE_NAME    "ARMv7-M"
 #define CH_CORE_VARIANT_NAME    "Cortex-M3"
 #elif CORTEX_MODEL == CORTEX_M1
-#define CH_ARCHITECTURE_ARMCM1
+#define CH_ARCHITECTURE_ARM_v6M
+#define CH_ARCHITECTURE_NAME    "ARMv6-M"
 #define CH_CORE_VARIANT_NAME    "Cortex-M1"
 #elif CORTEX_MODEL == CORTEX_M0
-#define CH_ARCHITECTURE_ARMCM0
+#define CH_ARCHITECTURE_ARM_v6M
+#define CH_ARCHITECTURE_NAME    "ARMv6-M"
 #define CH_CORE_VARIANT_NAME    "Cortex-M0"
 #endif
 
@@ -210,6 +214,7 @@ struct extctx {
  * @details This structure represents the inner stack frame during a context
  *          switching.
  */
+#if defined(CH_ARCHITECTURE_ARM_v6M)
 struct intctx {
   regarm_t      r8;
   regarm_t      r9;
@@ -221,6 +226,19 @@ struct intctx {
   regarm_t      r7;
   regarm_t      lr;
 };
+#elif defined(CH_ARCHITECTURE_ARM_v7M)
+struct intctx {
+  regarm_t      r4;
+  regarm_t      r5;
+  regarm_t      r6;
+  regarm_t      r7;
+  regarm_t      r8;
+  regarm_t      r9;
+  regarm_t      r10;
+  regarm_t      r11;
+  regarm_t      lr;
+};
+#endif
 #endif
 
 #if !defined(__DOXYGEN__)

@@ -104,7 +104,7 @@ void _port_switch_from_irq(void) {
                 "pop     {pc}");
 }
 
-#if CORTEX_MODEL == CORTEX_M0
+#if defined(CH_ARCHITECTURE_ARM_v6M)
 #define PUSH_CONTEXT(sp) {                                              \
   asm volatile ("push    {r4, r5, r6, r7, lr}                   \n\t"   \
                 "mov     r4, r8                                 \n\t"   \
@@ -122,8 +122,17 @@ void _port_switch_from_irq(void) {
                 "mov     r11, r7                                \n\t"   \
                 "pop     {r4, r5, r6, r7, pc}" :  : "r" (sp));          \
 }
-#else /* CORTEX_MODEL != CORTEX_M0 */
-#endif /* CORTEX_MODEL != CORTEX_M0 */
+#elif defined(CH_ARCHITECTURE_ARM_v7M)
+#define PUSH_CONTEXT(sp) {                                              \
+  asm volatile ("push    {r4, r5, r6, r7, r8, r9, r10, r11, lr} \n\t"); \
+}
+
+#define POP_CONTEXT(sp) {                                               \
+  asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc} \n\t"   \
+                :  : "r" (sp));                                         \
+}
+#else
+#endif
 
 /**
  * @brief   Performs a context switch between two threads.
