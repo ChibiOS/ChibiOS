@@ -28,16 +28,31 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
-/*
- * Port-related configuration parameters.
+/*===========================================================================*/
+/* Port constants.                                                           */
+/*===========================================================================*/
+
+/**
+ * @brief   Port implementing a exception mode context switching.
+ * @details This macro can be used to differentiate this port from the other
+ *          Cortex-Mx port which defines @p CORTEX_PORT_MODE_EXOSWITCH.
  */
+#define CORTEX_PORT_MODE_ENDOSWITCH
+
+/*===========================================================================*/
+/* Port configurable parameters.                                             */
+/*===========================================================================*/
 
 /**
  * @brief   Enables the use of the WFI ins.
  */
-#ifndef ENABLE_WFI_IDLE
-#define ENABLE_WFI_IDLE         0
+#ifndef CORTEX_ENABLE_WFI_IDLE
+#define CORTEX_ENABLE_WFI_IDLE  FALSE
 #endif
+
+/*===========================================================================*/
+/* Port exported info.                                                       */
+/*===========================================================================*/
 
 /**
  * @brief   Name of the implemented architecture.
@@ -309,7 +324,7 @@ struct context {
  *          modes.
  * @note    Implemented as an inlined @p WFI instruction.
  */
-#if ENABLE_WFI_IDLE || defined(__DOXYGEN__)
+#if CORTEX_ENABLE_WFI_IDLE || defined(__DOXYGEN__)
 #define port_wait_for_interrupt() {                                     \
   asm volatile ("wfi");                                                 \
 }

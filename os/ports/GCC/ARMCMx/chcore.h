@@ -28,42 +28,140 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
-/*
- * Port-related configuration parameters.
- */
+/*===========================================================================*/
+/* Port constants.                                                           */
+/*===========================================================================*/
 
 /**
- * @brief   Enables the use of the WFI ins.
+ * @brief   Port implementing a process mode context switching.
+ * @details This macro can be used to differentiate this port from the other
+ *          Cortex-Mx port which defines @p CORTEX_PORT_MODE_ENDOSWITCH.
  */
-#ifndef ENABLE_WFI_IDLE
-#define ENABLE_WFI_IDLE         0
-#endif
+#define CORTEX_PORT_MODE_EXOSWITCH
 
-/**
- * @brief   Name of the implemented architecture.
- */
-#define CH_ARCHITECTURE_NAME "ARM"
+#define CORTEX_M0               0       /**< @brief Cortex-M0 variant.      */
+#define CORTEX_M1               1       /**< @brief Cortex-M1 variant.      */
+#define CORTEX_M3               3       /**< @brief Cortex-M3 variant.      */
+#define CORTEX_M4               4       /**< @brief Cortex-M4 variant.      */
 
 /* Inclusion of the Cortex-Mx implementation specific parameters.*/
 #include "cmparams.h"
 
-/* Generating model-dependent info.*/
-#if (CORTEX_MODEL == CORTEX_M3) || defined(__DOXYGEN__)
+/* Cortex model check, only M0 and M3 right now.*/
+#if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M3)
+#else
+#error "unknown or unsupported Cortex-M model"
+#endif
+
+/*===========================================================================*/
+/* Port derived parameters.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   Priority masking support.
+ */
+#if (CORTEX_MODEL == CORTEX_M3) || (CORTEX_MODEL == CORTEX_M4) ||           \
+    defined(__DOXYGEN__)
+#define CORTEX_SUPPORT_BASEPRI  TRUE
+#else
+#define CORTEX_SUPPORT_BASEPRI  FALSE
+#endif
+
+/**
+ * @brief   Total priority levels.
+ */
+#define CORTEX_PRIORITY_LEVELS  (1 << CORTEX_PRIORITY_BITS)
+
+/**
+ * @brief   Minimum priority level.
+ * @details This minimum priority level is calculated from the number of
+ *          priority bits supported by the specific Cortex-Mx implementation.
+ */
+#define CORTEX_MINIMUM_PRIORITY (CORTEX_PRIORITY_LEVELS - 1)
+
+/**
+ * @brief   Maximum priority level.
+ * @details The maximum allowed priority level is always zero.
+ */
+#define CORTEX_MAXIMUM_PRIORITY 0
+
+#if 
+/*===========================================================================*/
+/* Port macros.                                                              */
+/*===========================================================================*/
+
+/**
+ * @brief   Priority level verification macro.
+ */
+#define CORTEX_IS_VALID_PRIORITY(n)                                         \
+  (((n) >= 0) && ((n) < CORTEX_PRIORITY_LEVELS))
+
+/**
+ * @brief   Priority level to priority mask conversion macro.
+ */
+#define CORTEX_PRIORITY_MASK(n) ((n) << (8 - CORTEX_PRIORITY_BITS))
+
+/*===========================================================================*/
+/* Port configurable parameters.                                             */
+/*===========================================================================*/
+
+/**
+ * @brief   Enables the use of the WFI instruction in the idle thread loop.
+ */
+#ifndef CORTEX_ENABLE_WFI_IDLE
+#define CORTEX_ENABLE_WFI_IDLE  FALSE
+#endif
+
+/**
+ * @brief   SYSTICK handler priority.
+ * @note    The default is calculated as the priority level in the middle
+ *          of the priority range.
+ */
+#ifndef CORTEX_PRIORITY_SYSTICK
+#define CORTEX_PRIORITY_SYSTICK (CORTEX_PRIORITY_LEVELS >> 1)
+#else
+/* If it is externally redefined then better perform a validity check on it.*/
+#if !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SYSTICK)
+#error "invalid priority level specified for CORTEX_PRIORITY_SYSTICK"
+#endif
+#endif
+
+/*===========================================================================*/
+/* Port exported info.                                                       */
+/*===========================================================================*/
+
+/**
+ * @brief   Name of the implemented architecture.
+ */
+#define CH_ARCHITECTURE_NAME    "ARM"
+
+#if defined(__DOXYGEN__)
 /**
  * @brief   Macro defining the ARM Cortex-M3 architecture.
  */
-#define CH_ARCHITECTURE_ARMCM3
+#define CH_ARCHITECTURE_ARMCMx
 
 /**
  * @brief   Name of the architecture variant (optional).
  */
+#define CH_CORE_VARIANT_NAME    "Cortex-Mx"
+#elif CORTEX_MODEL == CORTEX_M4
+#define CH_ARCHITECTURE_ARMCM4
+#define CH_CORE_VARIANT_NAME    "Cortex-M4"
+#elif CORTEX_MODEL == CORTEX_M3
+#define CH_ARCHITECTURE_ARMCM3
 #define CH_CORE_VARIANT_NAME    "Cortex-M3"
+#elif CORTEX_MODEL == CORTEX_M1
+#define CH_ARCHITECTURE_ARMCM1
+#define CH_CORE_VARIANT_NAME    "Cortex-M1"
 #elif CORTEX_MODEL == CORTEX_M0
 #define CH_ARCHITECTURE_ARMCM0
 #define CH_CORE_VARIANT_NAME    "Cortex-M0"
-#else
-#error "unknown or unsupported Cortex-M model"
 #endif
+
+/*===========================================================================*/
+/* Port implementation part.                                                 */
+/*===========================================================================*/
 
 /**
  * @brief   32 bits stack and memory alignment enforcement.
@@ -302,7 +400,7 @@ struct context {
  *          modes.
  * @note    Implemented as an inlined @p WFI instruction.
  */
-#if ENABLE_WFI_IDLE || defined(__DOXYGEN__)
+#if CORTEX_ENABLE_WFI_IDLE || defined(__DOXYGEN__)
 #define port_wait_for_interrupt() asm volatile ("wfi")
 #else
 #define port_wait_for_interrupt()
