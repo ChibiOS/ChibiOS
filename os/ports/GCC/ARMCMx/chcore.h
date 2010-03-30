@@ -198,8 +198,8 @@ struct cmxctx {
  *          preemption-capable interrupt handler.
  */
 struct extctx {
-  regarm_t      r12;
   regarm_t      xpsr;
+  regarm_t      r12;
   regarm_t      lr;
   regarm_t      r0;
   regarm_t      r1;
