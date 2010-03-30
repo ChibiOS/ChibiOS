@@ -287,10 +287,11 @@ struct context {
  *          This value can be zero on those architecture where there is a
  *          separate interrupt stack and the stack space between @p intctx and
  *          @p extctx is known to be zero.
- * @note    This port requires no extra stack space for interrupt handling.
+ * @note    This port requires some extra stack space for interrupt handling
+ *          representing the frame of the function @p chSchDoRescheduleI().
  */
 #ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK          0
+#define INT_REQUIRED_STACK          8
 #endif
 
 /**
