@@ -131,7 +131,7 @@
  * @brief   BASEPRI user level.
  */
 #ifndef CORTEX_BASEPRI_USER
-#define CORTEX_BASEPRI_USER     CORTEX_PRIORITY_MASK(0)
+#define CORTEX_BASEPRI_USER     0
 #endif
 
 /**

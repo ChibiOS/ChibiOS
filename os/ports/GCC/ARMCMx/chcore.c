@@ -82,7 +82,7 @@ void _port_switch_from_irq(void) {
   /* Note, saves r4 to make space for the PC.*/
 #if defined(CH_ARCHITECTURE_ARM_v6M)
   asm volatile ("push    {r0, r1, r2, r3, r4}                   \n\t"   \
-                "mrs     r0, XPSR                               \n\t"   \
+                "mrs     r0, APSR                               \n\t"   \
                 "mov     r1, r12                                \n\t"   \
                 "push    {r0, r1, lr}                           \n\t"   \
                 "ldr     r0, =_port_saved_pc                    \n\t"   \
@@ -91,7 +91,7 @@ void _port_switch_from_irq(void) {
                 "str     r0, [sp, #28]");
 #elif defined(CH_ARCHITECTURE_ARM_v7M)
   asm volatile ("push    {r0, r1, r2, r3, r4}                   \n\t"   \
-                "mrs     r0, XPSR                               \n\t"   \
+                "mrs     r0, APSR                               \n\t"   \
                 "push    {r0, r12, lr}                          \n\t"   \
                 "ldr     r0, =_port_saved_pc                    \n\t"   \
                 "ldr     r0, [r0]                               \n\t"   \
@@ -101,25 +101,27 @@ void _port_switch_from_irq(void) {
 
   chSchDoRescheduleI();
 
-  /* Note, the PC is restored alone after re-enabling the interrupts in
-     order to minimize the (very remote and unlikely) possibility that
-     the stack is filled by continuous and saturating interrupts that would
-     not allow that last word to be pulled out of the stack.*/
+  /* Note, the last registers are restored alone after re-enabling the
+     interrupts in order to minimize the (very remote and unlikely)
+     possibility that the stack is filled by continuous and saturating
+     interrupts that would not allow that last words to be pulled out of
+     the stack.*/
 #if defined(CH_ARCHITECTURE_ARM_v6M)
   asm volatile ("pop     {r0, r1, r2}                           \n\t"   \
                 "mov     r12, r1                                \n\t"   \
-                "msr     XPSR, r0                               \n\t"   \
-                "mov     lr, r2                                 \n\t"   \
-                "pop     {r0, r1, r2, r3}                       \n\t"   \
-                "cpsie   i                                      \n\t"   \
-                "pop     {pc}");
+                "msr     APSR, r0                               \n\t"   \
+                "mov     lr, r2");
 #elif defined(CH_ARCHITECTURE_ARM_v7M)
   asm volatile ("pop     {r0, r12, lr}                          \n\t"   \
-                "msr     XPSR, r0                               \n\t"   \
-                "pop     {r0, r1, r2, r3}                       \n\t"   \
-                "cpsie   i                                      \n\t"   \
-                "pop     {pc}");
+                "msr     APSR, r0");
 #endif
+#if CORTEX_USE_BASEPRI
+  asm volatile ("mov     r0, #0                                 \n\t"   \
+                "msr     BASEPRI, r0");
+#else /* !CORTEX_USE_BASEPRI */
+  asm volatile ("cpsie   i");
+#endif /* !CORTEX_USE_BASEPRI */
+  asm volatile ("pop     {r0, r1, r2, r3, pc}");
 }
 
 #if defined(CH_ARCHITECTURE_ARM_v6M)
@@ -189,8 +191,8 @@ void port_switch(Thread *ntp, Thread *otp) {
  */
 void _port_thread_start(void) {
 
-  asm volatile ("cpsie   i                                      \n\t"   \
-                "mov     r0, r5                                 \n\t"   \
+  port_unlock();
+  asm volatile ("mov     r0, r5                                 \n\t"   \
                 "blx     r4                                     \n\t"   \
                 "bl      chThdExit");
 }

@@ -64,7 +64,8 @@
 /**
  * @brief   Priority masking support.
  */
-#if defined(CH_ARCHITECTURE_ARM_v7M) || defined(__DOXYGEN__)
+#if (CORTEX_MODEL == CORTEX_M3) || (CORTEX_MODEL == CORTEX_M4) ||           \
+    defined(__DOXYGEN__)
 #define CORTEX_SUPPORTS_BASEPRI TRUE
 #else
 #define CORTEX_SUPPORTS_BASEPRI FALSE
@@ -152,15 +153,6 @@
 #endif /* !CORTEX_SUPPORTS_BASEPRI */
 
 #if CORTEX_USE_BASEPRI || defined(__DOXYGEN__)
-/**
- * @brief   BASEPRI user level.
- * @note    This constant is defined only if the @p CORTEX_USE_BASEPRI port
- *          option is enabled.
- */
-#ifndef CORTEX_BASEPRI_USER
-#define CORTEX_BASEPRI_USER     CORTEX_PRIORITY_MASK(0)
-#endif
-
 /**
  * @brief   BASEPRI level within kernel lock.
  * @details Priority levels higher than this one (lower numeric values) are
@@ -389,9 +381,9 @@ struct context {
 #define PORT_IRQ_EPILOGUE() {                                               \
   chSysLockFromIsr();                                                       \
   if ((--_port_irq_nesting == 0) && chSchIsRescRequiredExI()) {             \
-    register struct cmxctx *ctxp asm ("r3");                                \
+    register struct cmxctx *ctxp;                                           \
                                                                             \
-    asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : "r" (ctxp));            \
+    asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : );                      \
     _port_saved_pc = ctxp->pc;                                              \
     ctxp->pc = _port_switch_from_irq;                                       \
     return;                                                                 \
@@ -437,7 +429,7 @@ struct context {
  */
 #if CORTEX_USE_BASEPRI
 #define port_unlock() {                                                     \
-  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_USER;                   \
+  register uint32_t tmp asm ("r3") = 0;                                     \
   asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                       \
 }
 #else /* !CORTEX_USE_BASEPRI */
@@ -485,7 +477,7 @@ struct context {
  */
 #if CORTEX_USE_BASEPRI
 #define port_enable() {                                                     \
-  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_USER;                   \
+  register uint32_t tmp asm ("r3") = 0;                                     \
   asm volatile ("msr     BASEPRI, %0                    \n\t"               \
                 "cpsie   i" : : "r" (tmp));                                 \
 }
