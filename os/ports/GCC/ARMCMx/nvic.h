@@ -18,8 +18,9 @@
 */
 
 /**
- * @file ARMCMx/nvic.h
- * @brief Cortex-Mx NVIC support macros and structures.
+ * @file    ARMCMx/nvic.h
+ * @brief   Cortex-Mx NVIC support macros and structures.
+ *
  * @addtogroup ARMCMx_NVIC
  * @{
  */
@@ -30,21 +31,21 @@
 /*
  * System vector constants for @p NVICSetSystemHandlerPriority().
  */
-#define HANDLER_MEM_MANAGE      0       /**< MEM MANAGE vector id.*/
-#define HANDLER_BUS_FAULT       1       /**< BUS FAULT vector id.*/
-#define HANDLER_USAGE_FAULT     2       /**< USAGE FAULT vector id.*/
+#define HANDLER_MEM_MANAGE      0       /**< MEM MANAGE vector id.          */
+#define HANDLER_BUS_FAULT       1       /**< BUS FAULT vector id.           */
+#define HANDLER_USAGE_FAULT     2       /**< USAGE FAULT vector id.         */
 #define HANDLER_RESERVED_3      3
 #define HANDLER_RESERVED_4      4
 #define HANDLER_RESERVED_5      5
 #define HANDLER_RESERVED_6      6
-#define HANDLER_SVCALL          7       /**< SVCALL vector id.*/
-#define HANDLER_DEBUG_MONITOR   8       /**< DEBUG MONITOR vector id.*/
+#define HANDLER_SVCALL          7       /**< SVCALL vector id.              */
+#define HANDLER_DEBUG_MONITOR   8       /**< DEBUG MONITOR vector id.       */
 #define HANDLER_RESERVED_9      9
-#define HANDLER_PENDSV          10      /**< PENDSV vector id.*/
-#define HANDLER_SYSTICK         11      /**< SYS TCK vector id.*/
+#define HANDLER_PENDSV          10      /**< PENDSV vector id.              */
+#define HANDLER_SYSTICK         11      /**< SYS TCK vector id.             */
 
-typedef volatile unsigned char IOREG8;  /**< 8 bits I/O register type.*/
-typedef volatile unsigned int IOREG32;  /**< 32 bits I/O register type.*/
+typedef volatile uint8_t IOREG8;        /**< 8 bits I/O register type.      */
+typedef volatile uint32_t IOREG32;      /**< 32 bits I/O register type.     */
 
 /**
  * @brief NVIC ITCR register.

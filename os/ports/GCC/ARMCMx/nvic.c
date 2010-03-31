@@ -18,8 +18,9 @@
 */
 
 /**
- * @file ARMCMx/nvic.c
- * @brief Cortex-Mx NVIC support code.
+ * @file    ARMCMx/nvic.c
+ * @brief   Cortex-Mx NVIC support code.
+ *
  * @addtogroup ARMCMx_NVIC
  * @{
  */
@@ -31,7 +32,7 @@
  * @brief Sets the priority of an interrupt handler and enables it.
  *
  * @param n the interrupt number
- * @param prio the interrupt priority
+ * @param prio the interrupt priority mask
  *
  * @note The parameters are not tested for correctness.
  */
@@ -61,13 +62,14 @@ void NVICDisableVector(uint32_t n) {
  * @brief Changes the priority of a system handler.
  *
  * @param handler the system handler number
- * @param prio the system handler priority
+ * @param prio the system handler priority mask
  * @note The parameters are not tested for correctness.
  */
 void NVICSetSystemHandlerPriority(uint32_t handler, uint32_t prio) {
   unsigned sh = (handler & 3) * 8;
 
-  SCB_SHPR(handler >> 2) = (SCB_SHPR(handler >> 2) & ~(0xFF << sh)) | (prio << sh);
+  SCB_SHPR(handler >> 2) = (SCB_SHPR(handler >> 2) &
+                           ~(0xFF << sh)) | (prio << sh);
 }
 
 /** @} */

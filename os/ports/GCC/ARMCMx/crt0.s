@@ -73,7 +73,7 @@ ResetHandler:
         ldr     r3, =_edata
 dloop:
         cmp     r2, r3
-#if CORTEX_MODEL == CORTEX_M0
+#if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M1)
         bge     enddloop
         ldr     r0, [r1]
         str     r0, [r2]
@@ -96,7 +96,7 @@ enddloop:
         ldr     r2, =_bss_end
 bloop:
         cmp     r1, r2
-#if CORTEX_MODEL == CORTEX_M0
+#if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M1)
         bge     endbloop
         str     r0, [r1]
         adds    r1, r1, #4

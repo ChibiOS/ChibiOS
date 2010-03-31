@@ -18,8 +18,9 @@
 */
 
 /**
- * @file ARMCMx/chtypes.h
- * @brief ARM Cortex-M3 architecture port system types.
+ * @file    ARMCMx/chtypes.h
+ * @brief   ARM Cortex-Mx port system types.
+ *
  * @addtogroup ARMCMx_CORE
  * @{
  */
@@ -32,9 +33,7 @@
 #define __need_ptrdiff_t
 #include <stddef.h>
 
-#if !defined(_STDINT_H) && !defined(__STDINT_H_)
 #include <stdint.h>
-#endif
 
 typedef int32_t         bool_t;         /**< Fast boolean type.             */
 typedef uint8_t         tmode_t;        /**< Thread flags.                  */

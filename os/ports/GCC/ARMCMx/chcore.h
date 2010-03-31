@@ -19,7 +19,7 @@
 
 /**
  * @file    ARMCMx/chcore.h
- * @brief   ARM Cortex-Mx architecture port macros and structures.
+ * @brief   ARM Cortex-Mx port macros and structures.
  *
  * @addtogroup ARMCMx_CORE
  * @{
@@ -49,14 +49,16 @@
 /* Inclusion of the Cortex-Mx implementation specific parameters.*/
 #include "cmparams.h"
 
-/* Cortex model check, only M0 and M3 right now.*/
+/* Cortex model check, only M0 and M3 supported right now.*/
 #if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M3)
+#elif (CORTEX_MODEL == CORTEX_M1) || (CORTEX_MODEL == CORTEX_M4)
+#warning "untested Cortex-M model"
 #else
 #error "unknown or unsupported Cortex-M model"
 #endif
 
 /*===========================================================================*/
-/* Port derived parameters.                                                  */
+/* Port statically derived parameters.                                       */
 /*===========================================================================*/
 
 /**
@@ -114,8 +116,8 @@
 
 /**
  * @brief   SYSTICK handler priority.
- * @note    The default is calculated as the priority level in the middle
- *          of the priority range.
+ * @note    The default priority is calculated as the priority level in
+ *          the middle of the numeric priorities range.
  */
 #ifndef CORTEX_PRIORITY_SYSTICK
 #define CORTEX_PRIORITY_SYSTICK (CORTEX_PRIORITY_LEVELS >> 1)
@@ -126,13 +128,67 @@
 #endif
 #endif
 
+/**
+ * @brief   Priority masking support.
+ * @details The ARMv7-M architecture is capable to mask only interrupt
+ *          priorities below or equal to a certain specified priority
+ *          mask. If this option is enabled all the priorities above
+ *          @p CORTEX_BASEPRI_KERNEL (lower numeric values) are not
+ *          affected by the kernel locks and can operate with minimum
+ *          latency.<br>
+ *          This option makes the kernel code a bit larger and slower, if
+ *          your application does not need fast interrups it is recommended
+ *          to keep this option disabled.
+ */
+#if CORTEX_SUPPORTS_BASEPRI || defined(__DOXYGEN__)
+#if !defined(CORTEX_USE_BASEPRI) || defined(__DOXYGEN__)
+#define CORTEX_USE_BASEPRI      FALSE
+#endif /* !defined(CORTEX_USE_BASEPRI) */
+#else /* !CORTEX_SUPPORTS_BASEPRI */
+#if defined(CORTEX_USE_BASEPRI) && CORTEX_USE_BASEPRI
+#error "BASEPRI priority masking register not supported in this architecture"
+#endif
+#define CORTEX_USE_BASEPRI      FALSE
+#endif /* !CORTEX_SUPPORTS_BASEPRI */
+
+#if CORTEX_USE_BASEPRI || defined(__DOXYGEN__)
+/**
+ * @brief   BASEPRI user level.
+ * @note    This constant is defined only if the @p CORTEX_USE_BASEPRI port
+ *          option is enabled.
+ */
+#ifndef CORTEX_BASEPRI_USER
+#define CORTEX_BASEPRI_USER     CORTEX_PRIORITY_MASK(0)
+#endif
+
+/**
+ * @brief   BASEPRI level within kernel lock.
+ * @details Priority levels higher than this one (lower numeric values) are
+ *          unaffected by kernel locks and can be classified as fast
+ *          interrupt sources, see @ref interrupt_classes.
+ * @note    This constant is defined only if the @p CORTEX_USE_BASEPRI port
+ *          option is enabled.
+ * @note    The default setting reserves just the highest priority level
+ *          (@p CORTEX_MAXIMUM_PRIORITY) for fast interrupts, you may redefine
+ *          this setting in order to reserve more levels.
+ */
+#ifndef CORTEX_BASEPRI_KERNEL
+#define CORTEX_BASEPRI_KERNEL   CORTEX_PRIORITY_MASK(CORTEX_MAXIMUM_PRIORITY+1)
+#endif
+#endif /* CORTEX_USE_BASEPRI */
+
 /*===========================================================================*/
 /* Port exported info.                                                       */
 /*===========================================================================*/
 
+/**
+ * @brief   Macro defining a generic ARM architecture.
+ */
+#define CH_ARCHITECTURE_ARM
+
 #if defined(__DOXYGEN__)
 /**
- * @brief   Macro defining the ARM architecture.
+ * @brief   Macro defining the specific ARM architecture.
  */
 #define CH_ARCHITECTURE_ARM_vxm
 
@@ -147,7 +203,7 @@
 #define CH_CORE_VARIANT_NAME    "Cortex-Mx"
 #elif CORTEX_MODEL == CORTEX_M4
 #define CH_ARCHITECTURE_ARM_v7M
-#define CH_ARCHITECTURE_NAME    "ARMv7-M"
+#define CH_ARCHITECTURE_NAME    "ARMv7-ME"
 #define CH_CORE_VARIANT_NAME    "Cortex-M4"
 #elif CORTEX_MODEL == CORTEX_M3
 #define CH_ARCHITECTURE_ARM_v7M
@@ -364,17 +420,29 @@ struct context {
  * @brief   Kernel-lock action.
  * @details Usually this function just disables interrupts but may perform
  *          more actions.
- * @note    In this port it disables all the interrupt sources.
  */
+#if CORTEX_USE_BASEPRI
+#define port_lock() {                                                       \
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;                 \
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                       \
+}
+#else /* !CORTEX_USE_BASEPRI */
 #define port_lock() asm volatile ("cpsid   i")
+#endif /* !CORTEX_USE_BASEPRI */
 
 /**
  * @brief   Kernel-unlock action.
  * @details Usually this function just disables interrupts but may perform
  *          more actions.
- * @note    In this port it enables all the interrupt sources.
  */
+#if CORTEX_USE_BASEPRI
+#define port_unlock() {                                                     \
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_USER;                   \
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                       \
+}
+#else /* !CORTEX_USE_BASEPRI */
 #define port_unlock() asm volatile ("cpsie   i")
+#endif /* !CORTEX_USE_BASEPRI */
 
 /**
  * @brief   Kernel-lock action from an interrupt handler.
@@ -390,29 +458,40 @@ struct context {
  * @details This function is invoked after invoking I-class APIs from interrupt
  *          handlers. The implementation is architecture dependent, in its
  *          simplest form it is void.
- * @note    Same as @p port_unlock() in this port.
+ * @note    Same as @p port_lock() in this port.
  */
 #define port_unlock_from_isr() port_unlock()
 
 /**
  * @brief   Disables all the interrupt sources.
- * @note    Of course non maskable interrupt sources are not included.
- * @note    In this port it disables all the interrupt sources.
  */
 #define port_disable() asm volatile ("cpsid   i")
 
 /**
  * @brief   Disables the interrupt sources below kernel-level priority.
- * @note    Interrupt sources above kernel level remains enabled.
- * @note    In this port it disables all the interrupt sources.
  */
+#if CORTEX_USE_BASEPRI
+#define port_suspend() {                                                    \
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;                 \
+  asm volatile ("msr     BASEPRI, %0                    \n\t"               \
+                "cpsie   i" : : "r" (tmp));                                 \
+}
+#else /* !CORTEX_USE_BASEPRI */
 #define port_suspend() asm volatile ("cpsid   i")
+#endif /* !CORTEX_USE_BASEPRI */
 
 /**
  * @brief   Enables all the interrupt sources.
- * @note    In this port it enables all the interrupt sources.
  */
+#if CORTEX_USE_BASEPRI
+#define port_enable() {                                                     \
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_USER;                   \
+  asm volatile ("msr     BASEPRI, %0                    \n\t"               \
+                "cpsie   i" : : "r" (tmp));                                 \
+}
+#else /* !CORTEX_USE_BASEPRI */
 #define port_enable() asm volatile ("cpsie   i")
+#endif /* !CORTEX_USE_BASEPRI */
 
 /**
  * @brief   Enters an architecture-dependent IRQ-waiting mode.

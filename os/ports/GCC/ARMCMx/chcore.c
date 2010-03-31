@@ -19,7 +19,7 @@
 
 /**
  * @file    ARMCMx/chcore.c
- * @brief   ARM Cortex-Mx architecture port code.
+ * @brief   ARM Cortex-Mx port code.
  *
  * @addtogroup ARMCMx_CORE
  * @{
@@ -165,14 +165,21 @@ void _port_switch_from_irq(void) {
 __attribute__((naked))
 #endif
 void port_switch(Thread *ntp, Thread *otp) {
-  register struct intctx *sp_thd asm ("sp");
+  register struct intctx *r13 asm ("r13");
 
-  PUSH_CONTEXT(sp_thd);
+  /* Stack overflow check, if enabled.*/
+#if CH_DBG_ENABLE_STACK_CHECK
+  if ((void *)(r13 - 1) < (void *)(otp + 1))
+    asm volatile ("movs    r0, #0                               \n\t"
+                  "b       chDbgPanic");
+#endif /* CH_DBG_ENABLE_STACK_CHECK */
 
-  otp->p_ctx.r13 = sp_thd;
-  sp_thd = ntp->p_ctx.r13;
+  PUSH_CONTEXT(r13);
 
-  POP_CONTEXT(sp_thd);
+  otp->p_ctx.r13 = r13;
+  r13 = ntp->p_ctx.r13;
+
+  POP_CONTEXT(r13);
 }
 
 /**
@@ -182,9 +189,9 @@ void port_switch(Thread *ntp, Thread *otp) {
  */
 void _port_thread_start(void) {
 
-  asm volatile ("cpsie   i                                      \n\t" \
-                "mov     r0, r5                                 \n\t" \
-                "blx     r4                                     \n\t" \
+  asm volatile ("cpsie   i                                      \n\t"   \
+                "mov     r0, r5                                 \n\t"   \
+                "blx     r4                                     \n\t"   \
                 "bl      chThdExit");
 }
 

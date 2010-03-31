@@ -19,17 +19,65 @@
 
 /**
  * @defgroup ARMCMx ARM Cortex-Mx
- * @details This port supports the ARM Cortex-Mx architectures, specifically
- *          the Cortex-M0 and the Cortex-M3.
+ * @details This port supports the ARMv6-M and ARMv7-M architectures (all the
+ * Cortex-Mx cores).
  *
  * @section ARMCMx_STATES Mapping of the System States in the ARM Cortex-Mx port
- * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM
- * Cortex-Mx port:
+ * This port supports two IRQ handling modes:
+ * - <b>IRQ disabling</b>. This is the simplest and most efficient way to
+ *   implement kernel locks, this is done by globally disabling interrupts.
+ *   This mode is available to both the ARMv6-M and ARMv7-M architectures.
+ * - <b>IRQ priority masking</b>. In this mode kernel locks are implemented by
+ *   raising the priority mask to the @p CORTEX_BASEPRI_KERNEL level. Using
+ *   priority masking it is possible to reserve one or more priority levels
+ *   for use as fast interrupt handlers. This mode is slightly less efficient
+ *   because the lock/unlock code requires two instructions instead of just
+ *   one and is available to the ARMv7-M architecture only (Cortex-M3 and
+ *   Cortex-M4). The advantage in this mode is the availability of very low
+ *   latency priority levels unaffected by the RTOS activity.
+ * .
+ * The mapping of the @ref system_states changes depending on the chosen IRQ
+ * handling mode.
+ *
+ * @subsection ARMCMx_STATES_A System logical states in IRQ disabling mode
  * - <b>Init</b>. This state is represented by the startup code and the
  *   initialization code before @p chSysInit() is executed. It has not a
  *   special hardware state associated.
  * - <b>Normal</b>. This is the state the system has after executing
- *   @p chSysInit(). In this state the ARM Cortex-Mx has the BASEPRI register
+ *   @p chSysInit(). In this state interrupts are enabled. The processor
+ *   is running in thread-privileged mode.
+ * - <b>Suspended</b>. In this state the interrupt sources are globally
+ *   disabled. The processor is running in thread-privileged mode. In this
+ *   mode this state is not different from the <b>Disabled</b> state.
+ * - <b>Disabled</b>. In this state the interrupt sources are globally
+ *   disabled. The processor is running in thread-privileged mode. In this
+ *   mode this state is not different from the <b>Suspended</b> state.
+ * - <b>Sleep</b>. This state is entered with the execution of the specific
+ *   instruction @p <b>wfi</b>.
+ * - <b>S-Locked</b>. In this state the interrupt sources are globally
+ *   disabled. The processor is running in thread-privileged mode.
+ * - <b>I-Locked</b>. In this state the interrupt sources are globally
+ *   disabled. The processor is running in exception-privileged mode.
+ * - <b>Serving Regular Interrupt</b>. In this state the interrupt sources are
+ *   not globally masked but only interrupts with higher priority can preempt
+ *   the current handler. The processor is running in exception-privileged
+ *   mode.
+ * - <b>Serving Fast Interrupt</b>. This state is not implemented in this mode.
+ * - <b>Serving Non-Maskable Interrupt</b>. The Cortex-M3 has a specific
+ *   asynchronous NMI vector and several synchronous fault vectors that can
+ *   be considered belonging to this category.
+ * - <b>Halted</b>. Implemented as an infinite loop after globally masking all
+ *   the maskable interrupt sources. The ARM state is whatever the processor
+ *   was running when @p chSysHalt() was invoked.
+ *
+ * @subsection ARMCMx_STATES_B System logical states in IRQ priority masking mode
+ * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM
+ * Cortex-M3 port:
+ * - <b>Init</b>. This state is represented by the startup code and the
+ *   initialization code before @p chSysInit() is executed. It has not a
+ *   special hardware state associated.
+ * - <b>Normal</b>. This is the state the system has after executing
+ *   @p chSysInit(). In this state the ARM Cortex-M3 has the BASEPRI register
  *   set at @p CORTEX_BASEPRI_USER level, interrupts are not masked. The
  *   processor is running in thread-privileged mode.
  * - <b>Suspended</b>. In this state the interrupt sources are not globally
@@ -50,13 +98,14 @@
  *   is running in exception-privileged mode.
  * - <b>Serving Regular Interrupt</b>. In this state the interrupt sources are
  *   not globally masked but only interrupts with higher priority can preempt
- *   the current handler. The processor is running in exception-privileged mode.
+ *   the current handler. The processor is running in exception-privileged
+ *   mode.
  * - <b>Serving Fast Interrupt</b>. It is basically the same of the SRI state
  *   but it is not possible to switch to the I-Locked state because fast
  *   interrupts can preempt the kernel critical zone.
- * - <b>Serving Non-Maskable Interrupt</b>. The Cortex-Mx has a specific
+ * - <b>Serving Non-Maskable Interrupt</b>. The Cortex-M3 has a specific
  *   asynchronous NMI vector and several synchronous fault vectors that can
- *   be considered to be in this category.
+ *   be considered belonging to this category.
  * - <b>Halted</b>. Implemented as an infinite loop after globally masking all
  *   the maskable interrupt sources. The ARM state is whatever the processor
  *   was running when @p chSysHalt() was invoked.
@@ -66,18 +115,8 @@
  * - The @p main() function is invoked in thread-privileged mode.
  * - Each thread has a private process stack, the system has a single main
  *   stack where all the interrupts and exceptions are processed.
- * - Only the 4 MSb of the priority level are used, the 4 LSb are assumed
- *   to be zero.
- * - The threads are started in thread-privileged mode with BASEPRI level
- *   0x00 (disabled).
- * - The kernel raises its BASEPRI level to @p CORTEX_BASEPRI_KERNEL in order
- *   to protect the kernel data structures.
- * - Interrupt nesting and the other advanced NVIC features are supported.
- * - The SVC instruction and vector, with parameter #0,  is internally used
- *   for commanded context switching.<br>
- *   It is possible to share the SVC handler at the cost of slower context
- *   switching.
- * - The PendSV vector is internally used for preemption context switching.
+ * - The threads are started in thread-privileged mode.
+ * - Interrupt nesting and the other advanced core/NVIC features are supported.
  * .
  * @ingroup ports
  */
@@ -85,7 +124,7 @@
 /**
  * @defgroup ARMCMx_CONF Configuration Options
  * @brief ARM Cortex-Mx Configuration Options.
- * @details The ARMCMx port allows some architecture-specific configurations
+ * @details The ARMCM3 port allows some architecture-specific configurations
  * settings that can be specified externally, as example on the compiler
  * command line:
  * - @p INT_REQUIRED_STACK, this value represent the amount of stack space used
@@ -97,18 +136,18 @@
  * - @p CORTEX_BASEPRI_USER, this is the @p BASEPRI value for the user threads.
  *   The default value is @p 0 (disabled).<br>
  *   Usually there is no need to change this value, please refer to the
- *   Cortex-Mx technical reference manual for a detailed description.
+ *   Cortex-M3 technical reference manual for a detailed description.
  * - @p CORTEX_BASEPRI_KERNEL, this is the @p BASEPRI value for the kernel lock
  *   code.<br>
  *   Code running at higher priority levels must not invoke any OS API.<br>
  *   Usually there is no need to change this value, please refer to the
- *   Cortex-Mx technical reference manual for a detailed description.
- * - @p ENABLE_WFI_IDLE, if set to @p 1 enables the use of the @p <b>wfi</b>
- *   instruction from within the idle loop. This is defaulted to 0 because
- *   it can create problems with some debuggers. Setting this option to 1
- *   reduces the system power requirements.
+ *   Cortex-M3 technical reference manual for a detailed description.
+ * - @p CORTEX_ENABLE_WFI_IDLE, if set to @p 1 enables the use of the
+ *   @p <b>wfi</b> instruction from within the idle loop. This is defaulted to
+ *   0 because it can create problems with some debuggers. Setting this option
+ *   to 1 reduces the system power requirements.
  * .
- * @ingroup ARMCMx
+ * @ingroup ARMCM3
  */
 
 /**
@@ -159,7 +198,6 @@
  * - @p _bss_end BSS end location +1.
  * .
  * @ingroup ARMCMx
- * @file ARMCMx/crt0.s Startup code.
  */
 
 /**
