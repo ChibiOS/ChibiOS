@@ -89,11 +89,19 @@
 #endif
 
 /**
- * @brief   AHB divider.
+ * @brief   AHB clock divider.
  * @note    The value must be chosen between (1...255).
  */
 #if !defined(LPC11xx_SYSCLK_DIV) || defined(__DOXYGEN__)
 #define LPC11xx_SYSABHCLK_DIV   1
+#endif
+
+/**
+ * @brief   UART clock divider.
+ * @note    The value must be chosen between (1...255).
+ */
+#if !defined(LPC11xx_UART_PCLK_DIV) || defined(__DOXYGEN__)
+#define LPC11xx_UART_PCLK_DIV   1
 #endif
 
 /*===========================================================================*/
@@ -191,6 +199,11 @@
 #else
 #define LPC11xx_FLASHCFG_FLASHTIM   2
 #endif
+
+/**
+ * @brief   UART clock.
+ */
+#define  LPC11xx_UART_PCLK  (LPC11xx_MAINCLK / LPC11xx_UART_PCLK_DIV)
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

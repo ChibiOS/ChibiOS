@@ -30,52 +30,6 @@
 
 #if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
-#define IIR_SRC_MASK    0x0F
-#define IIR_SRC_NONE    0x01
-#define IIR_SRC_TX      0x02
-#define IIR_SRC_RX      0x04
-#define IIR_SRC_ERROR   0x06
-#define IIR_SRC_TIMEOUT 0x0C
-
-#define IER_RBR         1
-#define IER_THRE        2
-#define IER_STATUS      4
-
-#define IIR_INT_PENDING 1
-
-#define LCR_WL5         0
-#define LCR_WL6         1
-#define LCR_WL7         2
-#define LCR_WL8         3
-#define LCR_STOP1       0
-#define LCR_STOP2       4
-#define LCR_NOPARITY    0
-#define LCR_PARITYODD   0x08
-#define LCR_PARITYEVEN  0x18
-#define LCR_PARITYONE   0x28
-#define LCR_PARITYZERO  0x38
-#define LCR_BREAK_ON    0x40
-#define LCR_DLAB        0x80
-
-#define FCR_ENABLE      1
-#define FCR_RXRESET     2
-#define FCR_TXRESET     4
-#define FCR_TRIGGER0    0
-#define FCR_TRIGGER1    0x40
-#define FCR_TRIGGER2    0x80
-#define FCR_TRIGGER3    0xC0
-
-#define LSR_RBR_FULL    1
-#define LSR_OVERRUN     2
-#define LSR_PARITY      4
-#define LSR_FRAMING     8
-#define LSR_BREAK       0x10
-#define LSR_THRE        0x20
-#define LSR_TEMT        0x40
-#define LSR_RXFE        0x80
-
-#define TER_ENABLE      0x80
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -108,16 +62,16 @@ static const SerialConfig default_config = {
 static void uart_init(SerialDriver *sdp) {
   LPC_UART_TypeDef *u = sdp->uart;
 
-  uint32_t div = PCLK / (sdp->config->sc_speed << 4);
-  u->UART_LCR = sdp->config->sc_lcr | LCR_DLAB;
-  u->UART_DLL = div;
-  u->UART_DLM = div >> 8;
-  u->UART_LCR = sdp->config->sc_lcr;
-  u->UART_FCR = FCR_ENABLE | FCR_RXRESET | FCR_TXRESET | sdp->config->sc_fcr;
-  u->UART_ACR = 0;
-  u->UART_FDR = 0x10;
-  u->UART_TER = TER_ENABLE;
-  u->UART_IER = IER_RBR | IER_STATUS;
+  uint32_t div = LPC11xx_UART_PCLK / (sdp->config->sc_speed << 4);
+  u->LCR = sdp->config->sc_lcr | LCR_DLAB;
+  u->DLL = div;
+  u->DLM = div >> 8;
+  u->LCR = sdp->config->sc_lcr;
+  u->FCR = FCR_ENABLE | FCR_RXRESET | FCR_TXRESET | sdp->config->sc_fcr;
+  u->ACR = 0;
+  u->FDR = 0x10;
+  u->TER = TER_ENABLE;
+  u->IER = IER_RBR | IER_STATUS;
 }
 
 /**
@@ -125,17 +79,17 @@ static void uart_init(SerialDriver *sdp) {
  *
  * @param[in] u         pointer to an UART I/O block
  */
-static void uart_deinit(UART *u) {
+static void uart_deinit(LPC_UART_TypeDef *u) {
 
-  u->UART_LCR = LCR_DLAB;
-  u->UART_DLL = 1;
-  u->UART_DLM = 0;
-  u->UART_LCR = 0;
-  u->UART_FDR = 0x10;
-  u->UART_IER = 0;
-  u->UART_FCR = FCR_RXRESET | FCR_TXRESET;
-  u->UART_ACR = 0;
-  u->UART_TER = TER_ENABLE;
+  u->LCR = LCR_DLAB;
+  u->DLL = 1;
+  u->DLM = 0;
+  u->LCR = 0;
+  u->FDR = 0x10;
+  u->IER = 0;
+  u->FCR = FCR_RXRESET | FCR_TXRESET;
+  u->ACR = 0;
+  u->TER = TER_ENABLE;
 }
 
 /**
@@ -170,14 +124,14 @@ static void set_error(SerialDriver *sdp, IOREG32 err) {
  * @param[in] sdp       communication channel associated to the UART
  */
 static void serve_interrupt(SerialDriver *sdp) {
-  UART *u = sdp->uart;
+  LPC_UART_TypeDef *u = sdp->uart;
 
   while (TRUE) {
-    switch (u->UART_IIR & IIR_SRC_MASK) {
+    switch (u->IIR & IIR_SRC_MASK) {
     case IIR_SRC_NONE:
       return;
     case IIR_SRC_ERROR:
-      set_error(sdp, u->UART_LSR);
+      set_error(sdp, u->LSR);
       break;
     case IIR_SRC_TIMEOUT:
     case IIR_SRC_RX:
@@ -185,16 +139,16 @@ static void serve_interrupt(SerialDriver *sdp) {
       if (chIQIsEmpty(&sdp->iqueue))
         chEvtBroadcastI(&sdp->ievent);
       chSysUnlockFromIsr();
-      while (u->UART_LSR & LSR_RBR_FULL) {
+      while (u->LSR & LSR_RBR_FULL) {
         chSysLockFromIsr();
-        if (chIQPutI(&sdp->iqueue, u->UART_RBR) < Q_OK)
+        if (chIQPutI(&sdp->iqueue, u->RBR) < Q_OK)
            sdAddFlagsI(sdp, SD_OVERRUN_ERROR);
         chSysUnlockFromIsr();
       }
       break;
     case IIR_SRC_TX:
       {
-        int i = LPC214x_UART_FIFO_PRELOAD;
+        int i = LPC111x_UART_FIFO_PRELOAD;
         do {
           msg_t b;
 
@@ -202,19 +156,19 @@ static void serve_interrupt(SerialDriver *sdp) {
           b = chOQGetI(&sdp->oqueue);
           chSysUnlockFromIsr();
           if (b < Q_OK) {
-            u->UART_IER &= ~IER_THRE;
+            u->IER &= ~IER_THRE;
             chSysLockFromIsr();
             chEvtBroadcastI(&sdp->oevent);
             chSysUnlockFromIsr();
             break;
           }
-          u->UART_THR = b;
+          u->THR = b;
         } while (--i);
       }
       break;
     default:
-      (void) u->UART_THR;
-      (void) u->UART_RBR;
+      (void) u->THR;
+      (void) u->RBR;
     }
   }
 }
@@ -223,20 +177,20 @@ static void serve_interrupt(SerialDriver *sdp) {
  * @brief   Attempts a TX FIFO preload.
  */
 static void preload(SerialDriver *sdp) {
-  UART *u = sdp->uart;
+  LPC_UART_TypeDef *u = sdp->uart;
 
-  if (u->UART_LSR & LSR_THRE) {
-    int i = LPC214x_UART_FIFO_PRELOAD;
+  if (u->LSR & LSR_THRE) {
+    int i = LPC111x_UART_FIFO_PRELOAD;
     do {
       msg_t b = chOQGetI(&sdp->oqueue);
       if (b < Q_OK) {
         chEvtBroadcastI(&sdp->oevent);
         return;
       }
-      u->UART_THR = b;
+      u->THR = b;
     } while (--i);
   }
-  u->UART_IER |= IER_THRE;
+  u->IER |= IER_THRE;
 }
 
 /**
@@ -262,7 +216,6 @@ CH_IRQ_HANDLER(UART0IrqHandler) {
   CH_IRQ_PROLOGUE();
 
   serve_interrupt(&SD1);
-  VICVectAddr = 0;
 
   CH_IRQ_EPILOGUE();
 }
@@ -279,8 +232,7 @@ void sd_lld_init(void) {
 
 #if USE_LPC111x_UART0
   sdObjectInit(&SD1, NULL, notify1);
-  SD1.uart = U0Base;
-  SetVICVector(UART0IrqHandler, LPC214x_UART0_PRIORITY, SOURCE_UART0);
+  SD1.uart = LPC_UART;
 #endif
 }
 
@@ -297,8 +249,9 @@ void sd_lld_start(SerialDriver *sdp) {
   if (sdp->state == SD_STOP) {
 #if USE_LPC111x_UART0
     if (&SD1 == sdp) {
-      PCONP = (PCONP & PCALL) | PCUART0;
-      VICIntEnable = INTMASK(SOURCE_UART0);
+      LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
+      NVICEnableVector(UART_IRQn,
+                       CORTEX_PRIORITY_MASK(LPC111x_UART0_PRIORITY));
     }
 #endif
   }
@@ -318,8 +271,8 @@ void sd_lld_stop(SerialDriver *sdp) {
     uart_deinit(sdp->uart);
 #if USE_LPC111x_UART0
     if (&SD1 == sdp) {
-      PCONP = (PCONP & PCALL) & ~PCUART0;
-      VICIntEnClear = INTMASK(SOURCE_UART0);
+      LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 12);
+      NVICDisableVector(UART_IRQn);
       return;
     }
 #endif

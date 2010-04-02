@@ -34,6 +34,51 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+#define IIR_SRC_MASK    0x0F
+#define IIR_SRC_NONE    0x01
+#define IIR_SRC_MODEM   0x00
+#define IIR_SRC_TX      0x02
+#define IIR_SRC_RX      0x04
+#define IIR_SRC_ERROR   0x06
+#define IIR_SRC_TIMEOUT 0x0C
+
+#define IER_RBR         1
+#define IER_THRE        2
+#define IER_STATUS      4
+
+#define LCR_WL5         0
+#define LCR_WL6         1
+#define LCR_WL7         2
+#define LCR_WL8         3
+#define LCR_STOP1       0
+#define LCR_STOP2       4
+#define LCR_NOPARITY    0
+#define LCR_PARITYODD   0x08
+#define LCR_PARITYEVEN  0x18
+#define LCR_PARITYONE   0x28
+#define LCR_PARITYZERO  0x38
+#define LCR_BREAK_ON    0x40
+#define LCR_DLAB        0x80
+
+#define FCR_ENABLE      1
+#define FCR_RXRESET     2
+#define FCR_TXRESET     4
+#define FCR_TRIGGER0    0
+#define FCR_TRIGGER1    0x40
+#define FCR_TRIGGER2    0x80
+#define FCR_TRIGGER3    0xC0
+
+#define LSR_RBR_FULL    1
+#define LSR_OVERRUN     2
+#define LSR_PARITY      4
+#define LSR_FRAMING     8
+#define LSR_BREAK       0x10
+#define LSR_THRE        0x20
+#define LSR_TEMT        0x40
+#define LSR_RXFE        0x80
+
+#define TER_ENABLE      0x80
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
