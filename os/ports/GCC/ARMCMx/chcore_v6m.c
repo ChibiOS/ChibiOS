@@ -84,6 +84,7 @@ void _port_switch_from_irq(void) {
                 "mov     r12, r1                                \n\t"   \
                 "msr     APSR, r0                               \n\t"   \
                 "mov     lr, r2                                 \n\t"   \
+                "cpsie   i                                      \n\t"   \
                 "pop     {r0, r1, r2, r3, pc}");
 }
 
