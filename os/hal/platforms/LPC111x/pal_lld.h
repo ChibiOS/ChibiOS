@@ -176,7 +176,7 @@ typedef LPC_GPIO_TypeDef *ioportid_t;
  * @param[in] port      port identifier
  * @param[in] bits      bits to be ORed on the specified port
  */
-//#define pal_lld_setport(port, bits)
+#define pal_lld_setport(port, bits) ((port)->MASKED_ACCESS[bits] = 0xFFFFFFFF)
 
 /**
  * @brief   Clears a bits mask on a I/O port.
@@ -189,20 +189,7 @@ typedef LPC_GPIO_TypeDef *ioportid_t;
  * @param[in] port      port identifier
  * @param[in] bits      bits to be cleared on the specified port
  */
-//#define pal_lld_clearport(port, bits)
-
-/**
- * @brief   Toggles a bits mask on a I/O port.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
- * @note    The @ref PAL provides a default software implementation of this
- *          functionality, implement this function if can optimize it by using
- *          special hardware functionalities or special coding.
- *
- * @param[in] port      port identifier
- * @param[in] bits      bits to be XORed on the specified port
- */
-//#define pal_lld_toggleport(port, bits)
+#define pal_lld_clearport(port, bits) ((port)->MASKED_ACCESS[bits] = 0)
 
 /**
  * @brief   Reads a group of bits.
@@ -217,7 +204,8 @@ typedef LPC_GPIO_TypeDef *ioportid_t;
  * @param[in] offset    group bit offset within the port
  * @return              The group logical states.
  */
-//#define pal_lld_readgroup(port, mask, offset)
+#define pal_lld_readgroup(port, mask, offset)                               \
+  ((port)->MASKED_ACCESS[(mask) << (offset)])
 
 /**
  * @brief   Writes a group of bits.
@@ -233,7 +221,8 @@ typedef LPC_GPIO_TypeDef *ioportid_t;
  * @param[in] bits      bits to be written. Values exceeding the group width
  *                      are masked.
  */
-//#define pal_lld_writegroup(port, mask, offset, bits)
+#define pal_lld_writegroup(port, mask, offset, bits)                        \
+  ((port)->MASKED_ACCESS[(mask) << (offset)] = (bits))
 
 /**
  * @brief   Pads group mode setup.
@@ -247,23 +236,8 @@ typedef LPC_GPIO_TypeDef *ioportid_t;
  * @param[in] mask      group mask
  * @param[in] mode      group mode
  */
-//#define pal_lld_setgroupmode(port, mask, mode)
-
-/**
- * @brief   Reads a logical state from an I/O pad.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
- * @note    The @ref PAL provides a default software implementation of this
- *          functionality, implement this function if can optimize it by using
- *          special hardware functionalities or special coding.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- * @return              The logical state.
- * @retval PAL_LOW      low logical state.
- * @retval PAL_HIGH     high logical state.
- */
-//#define pal_lld_readpad(port, pad)
+#define pal_lld_setgroupmode(port, mask, mode)                              \
+  _pal_lld_setgroupmode(port, mask, mode)
 
 /**
  * @brief   Writes a logical state on an output pad.
@@ -278,7 +252,8 @@ typedef LPC_GPIO_TypeDef *ioportid_t;
  * @param[out] bit      logical value, the value must be @p PAL_LOW or
  *                      @p PAL_HIGH
  */
-//#define pal_lld_writepad(port, pad, bit)
+#define pal_lld_writepad(port, pad, bit)                                    \
+  ((port)->MASKED_ACCESS[(mask) << (pad)] = (bit) << (pad))
 
 /**
  * @brief   Sets a pad logical state to @p PAL_HIGH.
@@ -291,7 +266,8 @@ typedef LPC_GPIO_TypeDef *ioportid_t;
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
  */
-//#define pal_lld_setpad(port, pad)
+#define pal_lld_setpad(port, pad)                                           \
+  ((port)->MASKED_ACCESS[1 << (pad)] = 1 << (pad))
 
 /**
  * @brief   Clears a pad logical state to @p PAL_LOW.
@@ -304,38 +280,12 @@ typedef LPC_GPIO_TypeDef *ioportid_t;
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
  */
-//#define pal_lld_clearpad(port, pad)
+#define pal_lld_clearpad(port, pad)                                         \
+  ((port)->MASKED_ACCESS[1 << (pad)] = 0)
 
-/**
- * @brief   Toggles a pad logical state.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
- * @note    The @ref PAL provides a default software implementation of this
- *          functionality, implement this function if can optimize it by using
- *          special hardware functionalities or special coding.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- */
-//#define pal_lld_togglepad(port, pad)
-
-/**
- * @brief   Pad mode setup.
- * @details This function programs a pad with the specified mode.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
- * @note    The @ref PAL provides a default software implementation of this
- *          functionality, implement this function if can optimize it by using
- *          special hardware functionalities or special coding.
- * @note    Programming an unknown or unsupported mode is silently ignored.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- * @param[in] mode      pad mode
- */
-//#define pal_lld_setpadmode(port, pad, mode)
-
+#if !defined(__DOXYGEN__)
 extern const PALConfig pal_default_config;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
