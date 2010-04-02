@@ -274,7 +274,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
       NVICEnableVector(TIM1_UP_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM1_IRQ_PRIORITY));
       NVICEnableVector(TIM1_CC_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM1_IRQ_PRIORITY);
+                       CORTEX_PRIORITY_MASK(STM32_PWM1_IRQ_PRIORITY));
       RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
     }
 #endif

@@ -62,6 +62,10 @@
 - FIX: Fixed missing memory recovery on thread reference release in
   chRegNextThread() (bug 2971878).
 - FIX: Fixed wrong thread state macro in STM32/spi_lld.c (bug 2968142).
+- NEW: New unified ARM Cortex-Mx port, this port supports both the ARMv6M
+  and ARMv7-M architecture (Cortex-M0/M1/M3/M4 so far). The new port also
+  allow to easily add to new Cortex-M implementations by simply adding a
+  parameters file (cmparams.h).
 - NEW: The port layer now can "capture" the implementation of individual
   scheduler API functions in order to provide architecture-optimized
   versions. This is done because further scheduler optimizations are
