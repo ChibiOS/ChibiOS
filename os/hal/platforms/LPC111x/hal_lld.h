@@ -38,7 +38,7 @@
 /**
  * @brief   Platform name.
  */
-#define PLATFORM_NAME           "LPC11xx"
+#define PLATFORM_NAME           "LPC111x"
 
 #define IRCOSCCLK               12000000    /**< High speed internal clock. */
 #define WDGOSCCLK               1600000     /**< Watchdog internal clock.   */

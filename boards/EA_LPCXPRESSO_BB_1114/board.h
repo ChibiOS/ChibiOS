@@ -37,8 +37,34 @@
 #define SYSOSCCLK               12000000
 
 /*
+ * GPIO 0 initial setup.
+ * Bit7 - LPCxpresso LED, initially output at low level.
+ */
+#define VAL_GPIO0DIR            0x00000080
+#define VAL_GPIO0DATA           0x00000000
+
+/*
+ * GPIO 1 initial setup.
+ */
+#define VAL_GPIO1DIR            0x00000000
+#define VAL_GPIO1DATA           0x00000000
+
+/*
+ * GPIO 2 initial setup.
+ */
+#define VAL_GPIO2DIR            0x00000000
+#define VAL_GPIO2DATA           0x00000000
+
+/*
+ * GPIO 3 initial setup.
+ */
+#define VAL_GPIO3DIR            0x00000000
+#define VAL_GPIO3DATA           0x00000000
+
+/*
  * Pin definitions.
  */
+#define GPIO0_LED               7
 
 #ifdef __cplusplus
 extern "C" {

@@ -29,9 +29,9 @@ static msg_t Thread1(void *arg) {
 
   (void)arg;
   while (TRUE) {
-//    palClearPad(IOPORT3, GPIOC_LED);
+    palClearPad(IOPORT1, GPIO0_LED);
     chThdSleepMilliseconds(500);
-//    palSetPad(IOPORT3, GPIOC_LED);
+    palSetPad(IOPORT1, GPIO0_LED);
     chThdSleepMilliseconds(500);
   }
   return 0;
