@@ -74,6 +74,7 @@
 
 /**
  * @brief   Disabled value for BASEPRI register.
+ * @note    ARMv7-M architecture only.
  */
 #define CORTEX_BASEPRI_DISABLED 0
 
@@ -155,7 +156,9 @@
 
 /**
  * @brief   BASEPRI level within kernel lock.
- * @note    This value must not mask the SVCALL priority level.
+ * @note    This value must not mask the SVCALL priority level or the
+ *          kernel would hard fault.
+ * @note    ARMv7-M architecture only.
  */
 #ifndef CORTEX_BASEPRI_KERNEL
 #define CORTEX_BASEPRI_KERNEL   CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL+1)
@@ -204,7 +207,7 @@
 #endif
 
 /*===========================================================================*/
-/* Port implementation part.                                                 */
+/* Port implementation part (common).                                        */
 /*===========================================================================*/
 
 /**
@@ -228,6 +231,27 @@ struct context {
 };
 #endif
 
+/**
+ * @brief   Enforces a correct alignment for a stack area size value.
+ */
+#define STACK_ALIGN(n) ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
+
+/**
+ * @brief   Computes the thread working area global size.
+ */
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
+                                   sizeof(struct intctx) +              \
+                                   sizeof(struct extctx) +              \
+                                   (n) + (INT_REQUIRED_STACK))
+
+/**
+ * @brief   Static working area allocation.
+ * @details This macro is used to allocate a static thread working area
+ *          aligned as both position and size.
+ */
+#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
+
+/* Includes the architecture-specific implementation part.*/
 #if defined(CH_ARCHITECTURE_ARM_v6M)
 #include "chcore_v6m.h"
 #elif defined(CH_ARCHITECTURE_ARM_v7M)
