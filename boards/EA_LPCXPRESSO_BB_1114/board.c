@@ -43,6 +43,11 @@ void hwinit1(void) {
   halInit();
 
   /*
+   * Extra, board-specific, initializations.
+   */
+  LPC_IOCON->PIO0_7 = 0xC0;         /* Disables pull-up on LED output.      */
+
+  /*
    * ChibiOS/RT initialization.
    */
   chSysInit();

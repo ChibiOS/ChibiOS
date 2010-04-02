@@ -25,11 +25,7 @@
  * is enabled in halconf.h.
  *
  * IRQ priorities:
- * 3            Lowest, priority level reserved for PENDSV, do not share or
- *              use for non-OS-capable low priority handlers.
- * 2...1        Normal IRQs priority levels, use for OS-capable handlers.
- * 0            Used by SVCALL, do not share or use for non-OS-capable high
- *              priority handlers.
+ * 3...0        Lowest...highest.
  */
 
 /*

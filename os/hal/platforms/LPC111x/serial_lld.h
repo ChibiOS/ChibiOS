@@ -18,9 +18,10 @@
 */
 
 /**
- * @file LPC214x/serial_lld.h
- * @brief LPC214x low level serial driver header.
- * @addtogroup LPC214x_SERIAL
+ * @file    LPC111x/serial_lld.h
+ * @brief   LPC111x low level serial driver header.
+ *
+ * @addtogroup LPC111x_SERIAL
  * @{
  */
 
@@ -42,17 +43,8 @@
  * @details If set to @p TRUE the support for UART0 is included.
  * @note The default is @p TRUE .
  */
-#if !defined(USE_LPC214x_UART0) || defined(__DOXYGEN__)
-#define USE_LPC214x_UART0           TRUE
-#endif
-
-/**
- * @brief UART1 driver enable switch.
- * @details If set to @p TRUE the support for UART1 is included.
- * @note The default is @p TRUE.
- */
-#if !defined(USE_LPC214x_UART1) || defined(__DOXYGEN__)
-#define USE_LPC214x_UART1           TRUE
+#if !defined(USE_LPC111x_UART0) || defined(__DOXYGEN__)
+#define USE_LPC111x_UART0           TRUE
 #endif
 
 /**
@@ -64,29 +56,22 @@
  *       also increase the worst case interrupt response time because the
  *       preload loops.
  */
-#if !defined(LPC214x_UART_FIFO_PRELOAD) || defined(__DOXYGEN__)
-#define LPC214x_UART_FIFO_PRELOAD   16
+#if !defined(LPC111x_UART_FIFO_PRELOAD) || defined(__DOXYGEN__)
+#define LPC111x_UART_FIFO_PRELOAD   16
 #endif
 
 /**
  * @brief UART0 interrupt priority level setting.
  */
-#if !defined(LPC214x_UART0_PRIORITY) || defined(__DOXYGEN__)
-#define LPC214x_UART0_PRIORITY      1
-#endif
-
-/**
- * @brief UART1 interrupt priority level setting.
- */
-#if !defined(LPC214x_UART1_PRIORITY) || defined(__DOXYGEN__)
-#define LPC214x_UART1_PRIORITY      2
+#if !defined(LPC111x_UART0_PRIORITY) || defined(__DOXYGEN__)
+#define LPC111x_UART0_PRIORITY      3
 #endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if (LPC214x_UART_FIFO_PRELOAD < 1) || (LPC214x_UART_FIFO_PRELOAD > 16)
+#if (LPC111x_UART_FIFO_PRELOAD < 1) || (LPC111x_UART_FIFO_PRELOAD > 16)
 #error "invalid LPC214x_UART_FIFO_PRELOAD setting"
 #endif
 
@@ -142,7 +127,7 @@ typedef struct {
   uint8_t                   ob[SERIAL_BUFFERS_SIZE];                        \
   /* End of the mandatory fields.*/                                         \
   /* Pointer to the USART registers block.*/                                \
-  UART                      *uart;
+  LPC_UART_TypeDef        *uart;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -152,11 +137,8 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if USE_LPC214x_UART0 && !defined(__DOXYGEN__)
+#if USE_LPC111x_UART0 && !defined(__DOXYGEN__)
 extern SerialDriver SD1;
-#endif
-#if USE_LPC214x_UART1 && !defined(__DOXYGEN__)
-extern SerialDriver SD2;
 #endif
 
 #ifdef __cplusplus
