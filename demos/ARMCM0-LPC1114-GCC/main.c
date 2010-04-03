@@ -19,20 +19,51 @@
 
 #include "ch.h"
 #include "hal.h"
-//#include "test.h"
+#include "test.h"
 
 /*
- * Red LEDs blinker thread, times are in milliseconds.
+ * Red LED blinker thread, times are in milliseconds.
  */
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   (void)arg;
   while (TRUE) {
-    palClearPad(IOPORT1, GPIO0_LED);
+    palClearPad(GPIO0, GPIO0_LED2);
     chThdSleepMilliseconds(500);
-    palSetPad(IOPORT1, GPIO0_LED);
+    palSetPad(GPIO0, GPIO0_LED2);
     chThdSleepMilliseconds(500);
+  }
+  return 0;
+}
+
+/*
+ * RGB LED blinker thread, times are in milliseconds.
+ */
+static WORKING_AREA(waThread2, 128);
+static msg_t Thread2(void *arg) {
+
+  (void)arg;
+  while (TRUE) {
+    palClearPort(GPIO1, PAL_PORT_BIT(GPIO1_LED3B) |
+                        PAL_PORT_BIT(GPIO1_LED3R) |
+                        PAL_PORT_BIT(GPIO1_LED3G));
+    chThdSleepMilliseconds(250);
+    palClearPort(GPIO1, PAL_PORT_BIT(GPIO1_LED3B) |
+                        PAL_PORT_BIT(GPIO1_LED3R) |
+                        PAL_PORT_BIT(GPIO1_LED3G));
+    palSetPort(GPIO1, PAL_PORT_BIT(GPIO1_LED3B));
+    chThdSleepMilliseconds(250);
+    palClearPort(GPIO1, PAL_PORT_BIT(GPIO1_LED3B) |
+                        PAL_PORT_BIT(GPIO1_LED3R) |
+                        PAL_PORT_BIT(GPIO1_LED3G));
+    palSetPort(GPIO1, PAL_PORT_BIT(GPIO1_LED3R));
+    chThdSleepMilliseconds(250);
+    palClearPort(GPIO1, PAL_PORT_BIT(GPIO1_LED3B) |
+                        PAL_PORT_BIT(GPIO1_LED3R) |
+                        PAL_PORT_BIT(GPIO1_LED3G));
+    palSetPort(GPIO1, PAL_PORT_BIT(GPIO1_LED3G));
+    chThdSleepMilliseconds(250);
   }
   return 0;
 }
@@ -47,22 +78,23 @@ int main(int argc, char **argv) {
   (void)argv;
 
   /*
-   * Activates the serial driver 2 using the driver default configuration.
+   * Activates the serial driver 1 using the driver default configuration.
    */
-//  sdStart(&SD2, NULL);
+  sdStart(&SD1, NULL);
 
   /*
-   * Creates the blinker thread.
+   * Creates the blinker threads.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
-//    if (palReadPad(IOPORT1, GPIOA_BUTTON))
-//      TestThread(&SD2);
+    if (!palReadPad(GPIO0, GPIO0_SW3))
+      TestThread(&SD1);
     chThdSleepMilliseconds(500);
   }
   return 0;

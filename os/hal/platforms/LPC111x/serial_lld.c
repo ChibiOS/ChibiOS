@@ -211,7 +211,7 @@ static void notify1(void) {
  * @brief   UART0 IRQ handler.
  */
 #if USE_LPC111x_UART0 || defined(__DOXYGEN__)
-CH_IRQ_HANDLER(UART0IrqHandler) {
+CH_IRQ_HANDLER(Vector94) {
 
   CH_IRQ_PROLOGUE();
 

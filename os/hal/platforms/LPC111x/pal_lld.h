@@ -105,21 +105,25 @@ typedef LPC_GPIO_TypeDef *ioportid_t;
  * @brief   GPIO0 port identifier.
  */
 #define IOPORT1         LPC_GPIO0
+#define GPIO0           LPC_GPIO0
 
 /**
  * @brief   GPIO1 port identifier.
  */
 #define IOPORT2         LPC_GPIO1
+#define GPIO1           LPC_GPIO1
 
 /**
  * @brief   GPIO2 port identifier.
  */
 #define IOPORT3         LPC_GPIO2
+#define GPIO2           LPC_GPIO2
 
 /**
  * @brief   GPIO3 port identifier.
  */
 #define IOPORT4         LPC_GPIO3
+#define GPIO3           LPC_GPIO3
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */
