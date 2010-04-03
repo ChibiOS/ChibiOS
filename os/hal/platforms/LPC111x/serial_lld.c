@@ -251,7 +251,7 @@ void sd_lld_start(SerialDriver *sdp) {
   if (sdp->state == SD_STOP) {
 #if USE_LPC111x_UART0
     if (&SD1 == sdp) {
-      LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
+      LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 11);
       NVICEnableVector(UART_IRQn,
                        CORTEX_PRIORITY_MASK(LPC111x_UART0_PRIORITY));
     }
@@ -273,7 +273,7 @@ void sd_lld_stop(SerialDriver *sdp) {
     uart_deinit(sdp->uart);
 #if USE_LPC111x_UART0
     if (&SD1 == sdp) {
-      LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 12);
+      LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 11);
       NVICDisableVector(UART_IRQn);
       return;
     }
