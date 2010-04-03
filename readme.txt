@@ -66,6 +66,8 @@
   and ARMv7-M architecture (Cortex-M0/M1/M3/M4 so far). The new port also
   allow to easily add to new Cortex-M implementations by simply adding a
   parameters file (cmparams.h).
+- NEW: Embedded Artists LPCxpresso Base Board support files added.
+- NEW: LPC111x support, drivers (Serial, PAL, HAL) and demo.
 - NEW: The port layer now can "capture" the implementation of individual
   scheduler API functions in order to provide architecture-optimized
   versions. This is done because further scheduler optimizations are
@@ -93,8 +95,7 @@
   reduced instruction set of the Cortex-M0 (there are two code paths now,
   both optimized).
 - CHANGE: Modified the SysTick initialization for STM32 to use the system
-  clock rather than the external clock, also modified the initialization
-  code to use the CMSIS macros rather than the ST header macros.
+  clock rather than the external clock.
 - CHANGE: Exiting from a chCondWaitTimeout() because a timeout now does not
   re-acquire the mutex, ownership is lost.
 - CHANGE: The module documentation has been moved from the kernel.dox file
