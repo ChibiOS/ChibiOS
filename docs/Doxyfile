@@ -679,7 +679,8 @@ RECURSIVE              = NO
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
 EXCLUDE                = ../os/hal/platforms/STM32/stm32f10x.h \
-                         ../os/hal/platforms/LPC111x
+                         ../os/hal/platforms/LPC111x/LPC11xx.h \
+                         ../os/hal/platforms/LPC111x/system_LPC11xx.h
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 
