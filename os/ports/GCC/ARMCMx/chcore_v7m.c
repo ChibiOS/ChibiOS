@@ -29,12 +29,12 @@
 
 #if !CH_OPTIMIZE_SPEED
 void _port_lock(void) {
-  register uint32_t tmp asm ("r3") = BASEPRI_KERNEL;
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;
   asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));
 }
 
 void _port_unlock(void) {
-  register uint32_t tmp asm ("r3") = BASEPRI_USER;
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_DISABLED;
   asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));
 }
 #endif

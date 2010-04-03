@@ -116,7 +116,7 @@ register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
 #if !defined(CH_CURRP_REGISTER_CACHE) || defined(__DOXYGEN__)
 #define setcurrp(tp) (rlist.r_current = (tp))
 #else /* defined(CH_CURRP_REGISTER_CACHE) */
-(currp = (tp))
+#define setcurrp(tp) (currp = (tp))
 #endif /* defined(CH_CURRP_REGISTER_CACHE) */
 #endif /* !defined(PORT_OPTIMIZED_SETCURRP) */
 
