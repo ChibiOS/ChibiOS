@@ -19,9 +19,9 @@
 
 /**
  * @file    ARMCMx/LPC111x/cmparams.h
- * @brief   ARM Cortex-M0 LPC111x specific parameters.
+ * @brief   ARM Cortex-M0 LPC111x Specific Parameters.
  *
- * @defgroup ARMCMx_LPC111x LPC111x specific parameters
+ * @defgroup ARMCMx_LPC111x LPC111x Specific Parameters
  * @ingroup ARMCMx
  * @details This file contains the Cortex-M0 specific parameters for the
  *          LPC111x platform.

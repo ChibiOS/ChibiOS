@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    templates/pal_lld.c
- * @brief   PAL subsystem low level driver template.
+ * @file    LPC111x/pal_lld.c
+ * @brief   LPC111x GPIO low level driver code.
  *
- * @addtogroup PAL_LLD
+ * @addtogroup LPC111x_PAL
  * @{
  */
 
