@@ -113,11 +113,7 @@ register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
  *          only from within the kernel.
  */
 #if !defined(PORT_OPTIMIZED_SETCURRP) || defined(__DOXYGEN__)
-#if !defined(CH_CURRP_REGISTER_CACHE) || defined(__DOXYGEN__)
-#define setcurrp(tp) (rlist.r_current = (tp))
-#else /* defined(CH_CURRP_REGISTER_CACHE) */
 #define setcurrp(tp) (currp = (tp))
-#endif /* defined(CH_CURRP_REGISTER_CACHE) */
 #endif /* !defined(PORT_OPTIMIZED_SETCURRP) */
 
 /*
