@@ -233,8 +233,8 @@ void sd_lld_init(void) {
 #if USE_LPC111x_UART0
   sdObjectInit(&SD1, NULL, notify1);
   SD1.uart = LPC_UART;
-  LPC_IOCON->PIO0_6 = 0xC1;                 /* RDX without resistors.       */
-  LPC_IOCON->PIO0_7 = 0xC1;                 /* TDX without resistors.       */
+  LPC_IOCON->PIO1_6 = 0xC1;                 /* RDX without resistors.       */
+  LPC_IOCON->PIO1_7 = 0xC1;                 /* TDX without resistors.       */
 #endif
 }
 
@@ -251,7 +251,7 @@ void sd_lld_start(SerialDriver *sdp) {
   if (sdp->state == SD_STOP) {
 #if USE_LPC111x_UART0
     if (&SD1 == sdp) {
-      LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 11);
+      LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
       NVICEnableVector(UART_IRQn,
                        CORTEX_PRIORITY_MASK(LPC111x_UART0_PRIORITY));
     }
@@ -273,7 +273,7 @@ void sd_lld_stop(SerialDriver *sdp) {
     uart_deinit(sdp->uart);
 #if USE_LPC111x_UART0
     if (&SD1 == sdp) {
-      LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 11);
+      LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 12);
       NVICDisableVector(UART_IRQn);
       return;
     }
