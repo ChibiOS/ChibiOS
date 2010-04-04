@@ -39,7 +39,7 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "1.5.4unstable"
+#define CH_KERNEL_VERSION       "1.5.5unstable"
 
 /**
  * @brief   Kernel version major number.
