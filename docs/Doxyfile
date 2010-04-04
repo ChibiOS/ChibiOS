@@ -604,6 +604,7 @@ INPUT                  = ../docs/src \
                          ../os/ports/GCC/ARMCMx/crt0.s \
                          ../os/ports/GCC/ARMCMx/STM32F10x \
                          ../os/ports/GCC/ARMCMx/LPC111x \
+                         ../os/ports/GCC/ARMCMx/LPC13xx \
                          ../os/ports/GCC/PPC \
                          ../os/ports/GCC/PPC/crt0.s \
                          ../os/ports/GCC/MSP430 \
@@ -615,6 +616,7 @@ INPUT                  = ../docs/src \
                          ../os/hal/platforms/AT91SAM7 \
                          ../os/hal/platforms/AVR \
                          ../os/hal/platforms/LPC111x \
+                         ../os/hal/platforms/LPC13xx \
                          ../os/hal/platforms/LPC214x \
                          ../os/hal/platforms/MSP430 \
                          ../os/hal/platforms/SPC56x \
@@ -681,6 +683,8 @@ RECURSIVE              = NO
 EXCLUDE                = ../os/hal/platforms/STM32/stm32f10x.h \
                          ../os/hal/platforms/LPC111x/LPC11xx.h \
                          ../os/hal/platforms/LPC111x/system_LPC11xx.h
+                         ../os/hal/platforms/LPC13xx/LPC13xx.h \
+                         ../os/hal/platforms/LPC13xx/system_LPC13xx.h
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 
