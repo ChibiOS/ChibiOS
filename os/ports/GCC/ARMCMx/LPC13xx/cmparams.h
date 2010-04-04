@@ -19,11 +19,11 @@
 
 /**
  * @file    ARMCMx/LPC13xx/cmparams.h
- * @brief   ARM Cortex-M0 LPC13xx Specific Parameters.
+ * @brief   ARM Cortex-M3 LPC13xx Specific Parameters.
  *
  * @defgroup ARMCMx_LPC13xx LPC13xx Specific Parameters
  * @ingroup ARMCMx
- * @details This file contains the Cortex-M0 specific parameters for the
+ * @details This file contains the Cortex-M3 specific parameters for the
  *          LPC13xx platform.
  * @{
  */

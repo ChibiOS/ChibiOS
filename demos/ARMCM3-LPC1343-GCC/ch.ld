@@ -18,7 +18,7 @@
 */
 
 /*
- * LPC1114 memory setup.
+ * LPC1343 memory setup.
  */
 __main_stack_size__     = 0x0100;
 __process_stack_size__  = 0x0100;

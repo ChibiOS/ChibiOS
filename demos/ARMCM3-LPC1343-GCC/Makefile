@@ -111,9 +111,9 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
 # Compiler settings
 #
 
-MCU  = cortex-m0
+MCU  = cortex-m3
 
-TRGT = arm-none-eabi-
+TRGT = arm-elf-
 CC   = $(TRGT)gcc
 CPPC = $(TRGT)g++
 # Enable loading with g++ only if you need C++ runtime support.
@@ -148,7 +148,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all default C defines here, like -D_DEBUG=1
-DDEFS = -DLPC1114 -D__NEWLIB__
+DDEFS = -DLPC1348 -D__NEWLIB__
 
 # List all default ASM defines here, like -D_DEBUG=1
 DADEFS =
