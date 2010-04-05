@@ -53,9 +53,9 @@ LDSCRIPT= ch.ld
 # Imported source files
 CHIBIOS = ../..
 include $(CHIBIOS)/boards/EA_LPCXPRESSO_BB_1114/board.mk
-include $(CHIBIOS)/os/hal/platforms/LPC111x/platform.mk
+include $(CHIBIOS)/os/hal/platforms/LPC11xx/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/ports/GCC/ARMCMx/LPC111x/port.mk
+include $(CHIBIOS)/os/ports/GCC/ARMCMx/LPC11xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 include $(CHIBIOS)/test/test.mk
 
@@ -97,7 +97,7 @@ TCPPSRC =
 
 # List ASM source files here
 ASMSRC = $(PORTASM) \
-         $(CHIBIOS)/os/ports/GCC/ARMCMx/LPC111x/vectors.s
+         $(CHIBIOS)/os/ports/GCC/ARMCMx/LPC11xx/vectors.s
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \

@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    LPC111x/hal_lld.h
+ * @file    LPC11xx/hal_lld.h
  * @brief   HAL subsystem low level driver header template.
  *
- * @addtogroup LPC111x_HAL
+ * @addtogroup LPC11xx_HAL
  * @{
  */
 
@@ -38,7 +38,7 @@
 /**
  * @brief   Platform name.
  */
-#define PLATFORM_NAME           "LPC111x"
+#define PLATFORM_NAME           "LPC11xx"
 
 #define IRCOSCCLK               12000000    /**< High speed internal clock. */
 #define WDGOSCCLK               1600000     /**< Watchdog internal clock.   */

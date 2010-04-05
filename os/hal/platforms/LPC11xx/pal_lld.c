@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    LPC111x/pal_lld.c
- * @brief   LPC111x GPIO low level driver code.
+ * @file    LPC11xx/pal_lld.c
+ * @brief   LPC11xx GPIO low level driver code.
  *
- * @addtogroup LPC111x_PAL
+ * @addtogroup LPC11xx_PAL
  * @{
  */
 
@@ -50,10 +50,10 @@
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 /**
- * @brief LPC111x I/O ports configuration.
+ * @brief LPC11xx I/O ports configuration.
  * @details GPIO unit registers initialization.
  *
- * @param[in] config the LPC111x ports configuration
+ * @param[in] config the LPC11xx ports configuration
  */
 void _pal_lld_init(const PALConfig *config) {
 

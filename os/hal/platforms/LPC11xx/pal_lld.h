@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    LPC111x/pal_lld.h
- * @brief   LPC111x GPIO low level driver header.
+ * @file    LPC11xx/pal_lld.h
+ * @brief   LPC11xx GPIO low level driver header.
  *
- * @addtogroup LPC111x_PAL
+ * @addtogroup LPC11xx_PAL
  * @{
  */
 

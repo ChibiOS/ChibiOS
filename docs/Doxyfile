@@ -603,7 +603,7 @@ INPUT                  = ../docs/src \
                          ../os/ports/GCC/ARMCMx \
                          ../os/ports/GCC/ARMCMx/crt0.s \
                          ../os/ports/GCC/ARMCMx/STM32F10x \
-                         ../os/ports/GCC/ARMCMx/LPC111x \
+                         ../os/ports/GCC/ARMCMx/LPC11xx \
                          ../os/ports/GCC/ARMCMx/LPC13xx \
                          ../os/ports/GCC/PPC \
                          ../os/ports/GCC/PPC/crt0.s \
@@ -615,7 +615,7 @@ INPUT                  = ../docs/src \
                          ../os/hal/templates \
                          ../os/hal/platforms/AT91SAM7 \
                          ../os/hal/platforms/AVR \
-                         ../os/hal/platforms/LPC111x \
+                         ../os/hal/platforms/LPC11xx \
                          ../os/hal/platforms/LPC13xx \
                          ../os/hal/platforms/LPC214x \
                          ../os/hal/platforms/MSP430 \
@@ -681,8 +681,8 @@ RECURSIVE              = NO
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
 EXCLUDE                = ../os/hal/platforms/STM32/stm32f10x.h \
-                         ../os/hal/platforms/LPC111x/LPC11xx.h \
-                         ../os/hal/platforms/LPC111x/system_LPC11xx.h
+                         ../os/hal/platforms/LPC11xx/LPC11xx.h \
+                         ../os/hal/platforms/LPC11xx/system_LPC11xx.h \
                          ../os/hal/platforms/LPC13xx/LPC13xx.h \
                          ../os/hal/platforms/LPC13xx/system_LPC13xx.h
 

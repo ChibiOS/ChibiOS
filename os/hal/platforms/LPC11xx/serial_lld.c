@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    LPC111x/serial_lld.c
- * @brief   LPC111x low level serial driver code.
+ * @file    LPC11xx/serial_lld.c
+ * @brief   LPC11xx low level serial driver code.
  *
- * @addtogroup LPC111x_SERIAL
+ * @addtogroup LPC11xx_SERIAL
  * @{
  */
 
@@ -34,7 +34,7 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-#if USE_LPC111x_UART0 || defined(__DOXYGEN__)
+#if USE_LPC11xx_UART0 || defined(__DOXYGEN__)
 /** @brief UART0 serial driver identifier.*/
 SerialDriver SD1;
 #endif
@@ -148,7 +148,7 @@ static void serve_interrupt(SerialDriver *sdp) {
       break;
     case IIR_SRC_TX:
       {
-        int i = LPC111x_UART_FIFO_PRELOAD;
+        int i = LPC11xx_UART_FIFO_PRELOAD;
         do {
           msg_t b;
 
@@ -180,7 +180,7 @@ static void preload(SerialDriver *sdp) {
   LPC_UART_TypeDef *u = sdp->uart;
 
   if (u->LSR & LSR_THRE) {
-    int i = LPC111x_UART_FIFO_PRELOAD;
+    int i = LPC11xx_UART_FIFO_PRELOAD;
     do {
       msg_t b = chOQGetI(&sdp->oqueue);
       if (b < Q_OK) {
@@ -196,7 +196,7 @@ static void preload(SerialDriver *sdp) {
 /**
  * @brief   Driver SD1 output notification.
  */
-#if USE_LPC111x_UART0 || defined(__DOXYGEN__)
+#if USE_LPC11xx_UART0 || defined(__DOXYGEN__)
 static void notify1(void) {
 
   preload(&SD1);
@@ -210,7 +210,7 @@ static void notify1(void) {
 /**
  * @brief   UART0 IRQ handler.
  */
-#if USE_LPC111x_UART0 || defined(__DOXYGEN__)
+#if USE_LPC11xx_UART0 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(Vector94) {
 
   CH_IRQ_PROLOGUE();
@@ -230,7 +230,7 @@ CH_IRQ_HANDLER(Vector94) {
  */
 void sd_lld_init(void) {
 
-#if USE_LPC111x_UART0
+#if USE_LPC11xx_UART0
   sdObjectInit(&SD1, NULL, notify1);
   SD1.uart = LPC_UART;
   LPC_IOCON->PIO1_6 = 0xC1;                 /* RDX without resistors.       */
@@ -249,11 +249,11 @@ void sd_lld_start(SerialDriver *sdp) {
     sdp->config = &default_config;
 
   if (sdp->state == SD_STOP) {
-#if USE_LPC111x_UART0
+#if USE_LPC11xx_UART0
     if (&SD1 == sdp) {
       LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
       NVICEnableVector(UART_IRQn,
-                       CORTEX_PRIORITY_MASK(LPC111x_UART0_PRIORITY));
+                       CORTEX_PRIORITY_MASK(LPC11xx_UART0_PRIORITY));
     }
 #endif
   }
@@ -271,7 +271,7 @@ void sd_lld_stop(SerialDriver *sdp) {
 
   if (sdp->state == SD_READY) {
     uart_deinit(sdp->uart);
-#if USE_LPC111x_UART0
+#if USE_LPC11xx_UART0
     if (&SD1 == sdp) {
       LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 12);
       NVICDisableVector(UART_IRQn);

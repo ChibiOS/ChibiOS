@@ -18,9 +18,9 @@
 */
 
 /**
- * @defgroup LPC111x LPC111x Support
- * @brief LPC111x specific support.
- * @details The LPC111x support includes:
+ * @defgroup LPC11xx LPC11xx Support
+ * @brief LPC11xx specific support.
+ * @details The LPC11xx support includes:
  * - I/O ports driver.
  * - Buffered, interrupt driven, serial driver.
  * - A demo supporting the kernel test suite.
@@ -29,16 +29,16 @@
  */
 
 /**
- * @defgroup LPC111x_HAL LPC111x HAL Support
+ * @defgroup LPC11xx_HAL LPC11xx HAL Support
  * @brief HAL support.
  *
- * @ingroup LPC111x
+ * @ingroup LPC11xx
  */
 
 /**
- * @defgroup LPC111x_PAL LPC111x I/O Ports Support
+ * @defgroup LPC11xx_PAL LPC11xx I/O Ports Support
  * @brief I/O Ports peripherals support.
- * @details This module supports the LPC111x GPIO controller. The controller
+ * @details This module supports the LPC11xx GPIO controller. The controller
  * supports the following features (see @ref PAL):
  * - 12 bits wide ports.
  * - Atomic set/reset functions.
@@ -63,14 +63,14 @@
  * - Reading of the output latch for pads programmed as input is not possible,
  *   the input pin value is returned instead.
  * .
- * @ingroup LPC111x
+ * @ingroup LPC11xx
  */
 
 /**
- * @defgroup LPC111x_SERIAL LPC111x UART Support
+ * @defgroup LPC11xx_SERIAL LPC11xx UART Support
  * @brief UART peripherals support.
- * @details The serial driver supports the LPC111x UART taking advantage of
+ * @details The serial driver supports the LPC11xx UART taking advantage of
  *          its deep hardware buffers.
  *
- * @ingroup LPC111x
+ * @ingroup LPC11xx
  */
