@@ -62,7 +62,7 @@ static const SerialConfig default_config = {
 static void uart_init(SerialDriver *sdp) {
   LPC_UART_TypeDef *u = sdp->uart;
 
-  uint32_t div = LPC11xx_UART_PCLK / (sdp->config->sc_speed << 4);
+  uint32_t div = LPC13xx_UART_PCLK / (sdp->config->sc_speed << 4);
   u->LCR = sdp->config->sc_lcr | LCR_DLAB;
   u->DLL = div;
   u->DLM = div >> 8;

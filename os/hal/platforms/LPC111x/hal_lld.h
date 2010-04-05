@@ -43,12 +43,12 @@
 #define IRCOSCCLK               12000000    /**< High speed internal clock. */
 #define WDGOSCCLK               1600000     /**< Watchdog internal clock.   */
 
-#define SYSPLLCLKSEL_IRCOCS     0           /**< Internal RC oscillator
+#define SYSPLLCLKSEL_IRCOSC     0           /**< Internal RC oscillator
                                                  clock source.              */
 #define SYSPLLCLKSEL_SYSOSC     1           /**< System oscillator clock
                                                  source.                    */
 
-#define SYSMAINCLKSEL_IRCOCS    0           /**< Clock source is IRC.       */
+#define SYSMAINCLKSEL_IRCOSC    0           /**< Clock source is IRC.       */
 #define SYSMAINCLKSEL_PLLIN     1           /**< Clock source is PLLIN.     */
 #define SYSMAINCLKSEL_WDGOSC    2           /**< Clock source is WDGOSC.    */
 #define SYSMAINCLKSEL_PLLOUT    3           /**< Clock source is PLLOUT.    */
