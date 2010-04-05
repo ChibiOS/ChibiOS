@@ -57,6 +57,7 @@
 *****************************************************************************
 
 *** 1.5.5 ***
+- NEW: LPC13xx support, drivers (Serial, PAL, HAL) and demo.
 
 *** 1.5.4 ***
 - FIX: Fixed broken CH_CURRP_REGISTER_CACHE option in the ARM7 port (bug
