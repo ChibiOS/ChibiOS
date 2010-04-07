@@ -97,8 +97,9 @@
  * Simply follow the YAGARTO installation guide. Linux/MACOS users have several
  * other options:
  * - Download the latest CodeSourcery free Linux package.
- * - Build it yourself, Liam recommended a build script here:
- *   http://github.com/esden/summon-arm-toolchain, it looks interesting.
+ * - Build it yourself, Liam recommended a build script
+ *   <a href="http://github.com/esden/summon-arm-toolchain" target="_blank">
+ *   here</a>, it looks interesting.
  * .
  * Make sure that the compiler binaries directory is listed  in the PATH
  * variable or Eclipse would not be able to locate it.
