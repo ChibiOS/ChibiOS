@@ -263,7 +263,7 @@ struct intctx {
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  */
-static INLINE Thread *port_switch(Thread *ntp, Thread *otp) {
+static INLINE void port_switch(Thread *ntp, Thread *otp) {
   register Thread *_ntp asm ("r0") = (ntp);
   register Thread *_otp asm ("r1") = (otp);
 #if CH_DBG_ENABLE_STACK_CHECK
@@ -273,7 +273,6 @@ static INLINE Thread *port_switch(Thread *ntp, Thread *otp) {
                   "b       chDbgPanic");
 #endif /* CH_DBG_ENABLE_STACK_CHECK */
   asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");
-  return _otp;
 }
 
 #ifdef __cplusplus
