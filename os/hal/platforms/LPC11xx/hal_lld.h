@@ -183,9 +183,8 @@
 /**
  * @brief   AHB clock.
  */
-#if (LPC11xx_SYSCLK <= 50000000) || defined(__DOXYGEN__)
 #define  LPC11xx_SYSCLK     (LPC11xx_MAINCLK / LPC11xx_SYSABHCLK_DIV)
-#else
+#if LPC11xx_SYSCLK > 50000000
 #error "AHB clock frequency out of the acceptable range (50MHz max)"
 #endif
 
