@@ -59,7 +59,8 @@
 *** 1.5.5 ***
 - FIX: Removed some "dead" code in the ARMv7-M files.
 - NEW: LPC13xx support, drivers (Serial, PAL, HAL) and demo.
-- CHANGE: Renamed LPC111x port and platform in LPC11xx.
+- CHANGE: Renamed LPC111x port and platform in LPC11xx, minor fixes to the
+  platform header files.
 - CHANGE: Small documentation fixes and improvements.
 
 *** 1.5.4 ***
