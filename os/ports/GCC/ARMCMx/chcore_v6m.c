@@ -64,13 +64,13 @@ __attribute__((naked))
 #endif
 void _port_switch_from_irq(void) {
   /* Note, saves r4 to make space for the PC.*/
-  asm volatile ("push    {r0, r1, r2, r3, r4}                   \n\t"   \
-                "mrs     r0, APSR                               \n\t"   \
-                "mov     r1, r12                                \n\t"   \
-                "push    {r0, r1, lr}                           \n\t"   \
-                "ldr     r0, =_port_saved_pc                    \n\t"   \
-                "ldr     r0, [r0]                               \n\t"   \
-                "add 	 r0, r0, #1								\n\t"	\
+  asm volatile ("push    {r0, r1, r2, r3, r4}                   \n\t"
+                "mrs     r0, APSR                               \n\t"
+                "mov     r1, r12                                \n\t"
+                "push    {r0, r1, lr}                           \n\t"
+                "ldr     r0, =_port_saved_pc                    \n\t"
+                "ldr     r0, [r0]                               \n\t"
+                "add 	 r0, r0, #1								\n\t"
                 "str     r0, [sp, #28]");
 
   chSchDoRescheduleI();
@@ -80,30 +80,30 @@ void _port_switch_from_irq(void) {
      possibility that the stack is filled by continuous and saturating
      interrupts that would not allow that last words to be pulled out of
      the stack.*/
-  asm volatile ("pop     {r0, r1, r2}                           \n\t"   \
-                "mov     r12, r1                                \n\t"   \
-                "msr     APSR, r0                               \n\t"   \
-                "mov     lr, r2                                 \n\t"   \
-                "cpsie   i                                      \n\t"   \
+  asm volatile ("pop     {r0, r1, r2}                           \n\t"
+                "mov     r12, r1                                \n\t"
+                "msr     APSR, r0                               \n\t"
+                "mov     lr, r2                                 \n\t"
+                "cpsie   i                                      \n\t"
                 "pop     {r0, r1, r2, r3, pc}");
 }
 
-#define PUSH_CONTEXT(sp) {                                              \
-  asm volatile ("push    {r4, r5, r6, r7, lr}                   \n\t"   \
-                "mov     r4, r8                                 \n\t"   \
-                "mov     r5, r9                                 \n\t"   \
-                "mov     r6, r10                                \n\t"   \
-                "mov     r7, r11                                \n\t"   \
-                "push    {r4, r5, r6, r7}");                            \
+#define PUSH_CONTEXT(sp) {                                                  \
+  asm volatile ("push    {r4, r5, r6, r7, lr}                   \n\t"       \
+                "mov     r4, r8                                 \n\t"       \
+                "mov     r5, r9                                 \n\t"       \
+                "mov     r6, r10                                \n\t"       \
+                "mov     r7, r11                                \n\t"       \
+                "push    {r4, r5, r6, r7}");                                \
 }
 
-#define POP_CONTEXT(sp) {                                               \
-  asm volatile ("pop     {r4, r5, r6, r7}                       \n\t"   \
-                "mov     r8, r4                                 \n\t"   \
-                "mov     r9, r5                                 \n\t"   \
-                "mov     r10, r6                                \n\t"   \
-                "mov     r11, r7                                \n\t"   \
-                "pop     {r4, r5, r6, r7, pc}" :  : "r" (sp));          \
+#define POP_CONTEXT(sp) {                                                   \
+  asm volatile ("pop     {r4, r5, r6, r7}                       \n\t"       \
+                "mov     r8, r4                                 \n\t"       \
+                "mov     r9, r5                                 \n\t"       \
+                "mov     r10, r6                                \n\t"       \
+                "mov     r11, r7                                \n\t"       \
+                "pop     {r4, r5, r6, r7, pc}" :  : "r" (sp));              \
 }
 
 /**
@@ -145,8 +145,8 @@ void port_switch(Thread *ntp, Thread *otp) {
 void _port_thread_start(void) {
 
   port_unlock();
-  asm volatile ("mov     r0, r5                                 \n\t"   \
-                "blx     r4                                     \n\t"   \
+  asm volatile ("mov     r0, r5                                 \n\t"
+                "blx     r4                                     \n\t"
                 "bl      chThdExit");
 }
 

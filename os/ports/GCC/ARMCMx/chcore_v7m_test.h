@@ -150,13 +150,13 @@ struct intctx {
  * @note    In this port this it raises the base priority to kernel level.
  */
 #if CH_OPTIMIZE_SPEED
-#define port_lock() {                                                   \
-  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;             \
-  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
+#define port_lock() {                                                       \
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;                 \
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                       \
 }
 #else
-#define port_lock() {                                                   \
-  asm volatile ("bl      _port_lock" : : : "r3", "lr");                 \
+#define port_lock() {                                                       \
+  asm volatile ("bl      _port_lock" : : : "r3", "lr");                     \
 }
 #endif
 
@@ -164,16 +164,16 @@ struct intctx {
  * @brief   Kernel-unlock action.
  * @details Usually this function just disables interrupts but may perform
  *          more actions.
- * @note    In this port this it lowers the base priority to kernel level.
+ * @note    In this port this it lowers the base priority to user level.
  */
 #if CH_OPTIMIZE_SPEED
-#define port_unlock() {                                                 \
-  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_DISABLED;           \
-  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                   \
+#define port_unlock() {                                                     \
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_DISABLED;               \
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));                       \
 }
 #else
-#define port_unlock() {                                                 \
-  asm volatile ("bl      _port_unlock" : : : "r3", "lr");               \
+#define port_unlock() {                                                     \
+  asm volatile ("bl      _port_unlock" : : : "r3", "lr");                   \
 }
 #endif
 
@@ -208,20 +208,20 @@ struct intctx {
  * @note    Interrupt sources above kernel level remains enabled.
  * @note    In this port it raises/lowers the base priority to kernel level.
  */
-#define port_suspend() {                                                \
-  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;             \
-  asm volatile ("msr     BASEPRI, %0                    \n\t"           \
-                "cpsie   i" : : "r" (tmp));                             \
+#define port_suspend() {                                                    \
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;                 \
+  asm volatile ("msr     BASEPRI, %0                    \n\t"               \
+                "cpsie   i" : : "r" (tmp));                                 \
 }
 
 /**
  * @brief   Enables all the interrupt sources.
  * @note    In this port it lowers the base priority to user level.
  */
-#define port_enable() {                                                 \
-  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_DISABLED;           \
-  asm volatile ("msr     BASEPRI, %0                    \n\t"           \
-                "cpsie   i" : : "r" (tmp));                             \
+#define port_enable() {                                                     \
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_DISABLED;               \
+  asm volatile ("msr     BASEPRI, %0                    \n\t"               \
+                "cpsie   i" : : "r" (tmp));                                 \
 }
 
 /**
@@ -233,8 +233,8 @@ struct intctx {
  * @note    Implemented as an inlined @p WFI instruction.
  */
 #if CORTEX_ENABLE_WFI_IDLE || defined(__DOXYGEN__)
-#define port_wait_for_interrupt() {                                     \
-  asm volatile ("wfi");                                                 \
+#define port_wait_for_interrupt() {                                         \
+  asm volatile ("wfi");                                                     \
 }
 #else
 #define port_wait_for_interrupt()

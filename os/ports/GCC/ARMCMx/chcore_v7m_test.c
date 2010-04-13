@@ -63,7 +63,7 @@ CH_IRQ_HANDLER(SysTickVector) {
 void SVCallVector(void) {
   register struct extctx *ctxp;
 
-  /* Discardig the current exception context and positioning the stack to
+  /* Discarding the current exception context and positioning the stack to
      point to the real one.*/
   asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : );
   ctxp++;
@@ -94,9 +94,7 @@ void _port_irq_epilogue(void) {
 
 /**
  * @brief   Post-IRQ switch code.
- * @details On entry the stack and the registers are restored by the exception
- *          return, the PC value is stored in @p _port_saved_pc, the interrupts
- *          are disabled.
+ * @details Exception handlers return here for context switching.
  */
 #if !defined(__DOXYGEN__)
 __attribute__((naked))
@@ -107,13 +105,13 @@ void _port_switch_from_isr(void) {
   asm volatile ("svc     #0");
 }
 
-#define PUSH_CONTEXT(sp) {                                              \
-  asm volatile ("push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}");      \
+#define PUSH_CONTEXT(sp) {                                                  \
+  asm volatile ("push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}");          \
 }
 
-#define POP_CONTEXT(sp) {                                               \
-  asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}"        \
-                :  : "r" (sp));      \
+#define POP_CONTEXT(sp) {                                                   \
+  asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}"            \
+                :  : "r" (sp));                                             \
 }
 
 /**
@@ -155,8 +153,8 @@ void port_switch(Thread *ntp, Thread *otp) {
 void _port_thread_start(void) {
 
   port_unlock();
-  asm volatile ("mov     r0, r5                                 \n\t"   \
-                "blx     r4                                     \n\t"   \
+  asm volatile ("mov     r0, r5                                 \n\t"
+                "blx     r4                                     \n\t"
                 "bl      chThdExit");
 }
 

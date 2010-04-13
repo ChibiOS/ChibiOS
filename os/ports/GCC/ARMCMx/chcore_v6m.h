@@ -129,9 +129,9 @@ struct intctx {
  *          enabled to invoke system APIs.
  */
 #define PORT_IRQ_PROLOGUE() {                                               \
-  chSysLockFromIsr();                                                       \
+  port_lock_from_isr();                                                     \
   _port_irq_nesting++;                                                      \
-  chSysUnlockFromIsr();                                                     \
+  port_unlock_from_isr();                                                   \
 }
 
 /**
@@ -140,7 +140,7 @@ struct intctx {
  *          enabled to invoke system APIs.
  */
 #define PORT_IRQ_EPILOGUE() {                                               \
-  chSysLockFromIsr();                                                       \
+  port_lock_from_isr();                                                     \
   if ((--_port_irq_nesting == 0) && chSchIsRescRequiredExI()) {             \
     register struct cmxctx *ctxp;                                           \
                                                                             \
@@ -149,7 +149,7 @@ struct intctx {
     ctxp->pc = _port_switch_from_irq;                                       \
     return;                                                                 \
   }                                                                         \
-  chSysUnlockFromIsr();                                                     \
+  port_unlock_from_isr();                                                   \
 }
 
 /**
