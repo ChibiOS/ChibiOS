@@ -5,11 +5,11 @@ Settings: CLK=48, (3 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.5.4unstable
+*** Kernel:       1.5.5unstable
 *** GCC Version:  4.3.3
 *** Architecture: ARMv6-M
 *** Core Variant: Cortex-M0
-*** Platform:     LPC111x
+*** Platform:     LPC11xx
 *** Test Board:   Embedded Artists LPCXpresso Base Board + LPC1114
 
 ----------------------------------------------------------------------------
@@ -112,7 +112,7 @@ Settings: CLK=48, (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 105736 threads/S
+--- Score : 105737 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
