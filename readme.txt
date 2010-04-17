@@ -57,11 +57,20 @@
 *****************************************************************************
 
 *** 1.5.5 ***
-- FIX: Removed some "dead" code in the ARMv7-M files.
-- NEW: LPC13xx support, drivers (Serial, PAL, HAL) and demo.
+- FIX: Removed some "dead" code in the old ARMv7-M files (there are new
+  ones, see below).
+- NEW: LPC13xx support, drivers (Serial, PAL, HAL), demo and reports.
+- NEW: Added statistic info to the lwIP demo.
 - CHANGE: Renamed LPC111x port and platform in LPC11xx, minor fixes to the
   platform header files.
 - CHANGE: Small documentation fixes and improvements.
+- OPT: New Cortex-M3 port code, *huge* performance improvements in all the
+  context switching related benchmarks (5-15% depending on the benchmark).
+  The new code does no more require the use of the PendSV vector that is
+  thus available to the user, it also saves four RAM bytes for each thread
+  in the system. The old code is still available as a fall back option while
+  the new one is being hardened by peers review and time, the two ports are
+  perfectly interchangeable.
 
 *** 1.5.4 ***
 - FIX: Fixed broken CH_CURRP_REGISTER_CACHE option in the ARM7 port (bug

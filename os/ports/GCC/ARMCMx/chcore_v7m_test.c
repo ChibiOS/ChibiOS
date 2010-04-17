@@ -27,6 +27,22 @@
 
 #include "ch.h"
 
+/**
+ * @brief   Internal context stacking.
+ */
+#define PUSH_CONTEXT(sp) {                                                  \
+  asm volatile ("push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}");          \
+}
+
+
+/**
+ * @brief   Internal context unstacking.
+ */
+#define POP_CONTEXT(sp) {                                                   \
+  asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}"            \
+                :  : "r" (sp));                                             \
+}
+
 #if !CH_OPTIMIZE_SPEED
 void _port_lock(void) {
   register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;
@@ -87,8 +103,11 @@ void _port_irq_epilogue(void) {
     asm volatile ("msr     PSP, %0" :  : "r" (ctxp));
     ctxp->pc = _port_switch_from_isr;
     ctxp->xpsr = (regarm_t)0x01000000;
+    /* Note, returning without unlocking is intentional, this is done in
+       order to keep the rest of the context switching atomic.*/
     return;
   }
+  /* ISR exit without context switching.*/
   port_unlock_from_isr();
 }
 
@@ -103,15 +122,6 @@ void _port_switch_from_isr(void) {
 
   chSchDoRescheduleI();
   asm volatile ("svc     #0");
-}
-
-#define PUSH_CONTEXT(sp) {                                                  \
-  asm volatile ("push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}");          \
-}
-
-#define POP_CONTEXT(sp) {                                                   \
-  asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}"            \
-                :  : "r" (sp));                                             \
 }
 
 /**
