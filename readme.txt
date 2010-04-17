@@ -65,11 +65,11 @@
   platform header files.
 - CHANGE: Small documentation fixes and improvements.
 - OPT: New Cortex-M3 port code, *huge* performance improvements in all the
-  context switching related benchmarks (5-15% depending on the benchmark).
+  context switching related benchmarks (up to 18% depending on the benchmark).
   The new code does no more require the use of the PendSV vector that is
   thus available to the user, it also saves four RAM bytes for each thread
   in the system. The old code is still available as a fall back option while
-  the new one is being hardened by peers review and time, the two ports are
+  the new one is being hardened by peer review and time, the two ports are
   perfectly interchangeable.
 
 *** 1.5.4 ***
