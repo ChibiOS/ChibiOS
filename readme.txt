@@ -56,6 +56,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.5.6 ***
+- Various documentation fixes.
+
 *** 1.5.5 ***
 - FIX: Removed some "dead" code in the old ARMv7-M files (there are new
   ones, see below).

@@ -37,7 +37,7 @@
  *   kernel code is expected to compile without errors nor warnings and
  *   execute the test suite without failures (a specific simulator is used
  *   for this execution test, it is done automatically by a script because
- *   the entire sequence can require hours).<br>
+ *   the entire sequence can take hours).<br>
  *   All the tests results are included as reports in the OS distribution
  *   under @p ./docs/reports.
  * - <b>Ports</b>. The port code is tested by executing the kernel test

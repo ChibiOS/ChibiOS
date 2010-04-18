@@ -32,7 +32,7 @@
  * - When, after a while, I needed a RTOS again, none of the existing FOSS
  *   projects met my expectations or my ideas of how a RTOS should be, not
  *   even close (see below). I decided that work on that old project was
- *   a better idea that contribute to, or fork, something else.
+ *   a better idea than contribute to, or fork, something else.
  * - I wanted another toy.
  * .
  * <h2>Why is it different?</h2>
@@ -75,9 +75,9 @@
  * -# It would be pointless, it is already @a really small.
  * -# I would not trade efficiency or features in order to save few bytes.
  * .
- * About the "fast" part, the kernel is able to start/exit more than
+ * About the "fast" part, the kernel is able to start/exit over
  * <b>220,000 threads per second</b> on a 72MHz STM32.
- * The Context Switch takes <b>1.41 microseconds</b> on the same STM32.
+ * The Context Switch takes <b>1.2 microseconds</b> on the same STM32.
  *
  * <h3>Tests and metrics</h3>
  * I think it is nice to know how an OS is tested and how it performs before

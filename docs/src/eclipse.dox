@@ -33,7 +33,7 @@
  * - Adding paths to the PATH variable.
  * - Creating environment variables.
  * - Any other normal PC usage task.
- * - Use of the toolchain, the use is covered by the "@ref article_eclipse2"
+ * - Use of the toolchain, the use is covered by the @ref article_eclipse2
  *   article.
  * .
  *
