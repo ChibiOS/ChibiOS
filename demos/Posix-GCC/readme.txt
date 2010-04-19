@@ -19,7 +19,8 @@ See demo.c for details.
 
 ** Build Procedure **
 
-GCC required.
+GCC required.  The Makefile defaults to building for a Linux host.
+To build on OS X, use the following command: `make HOST_OSX=yes`
 
 ** Connect to the demo **
 
