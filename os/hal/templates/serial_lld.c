@@ -68,10 +68,10 @@ void sd_lld_init(void) {
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
  */
-void sd_lld_start(SerialDriver *sdp) {
+void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
-  if (sdp->config == NULL)
-    sdp->config = &default_config;
+  if (config == NULL)
+    config = &default_config;
 
 }
 

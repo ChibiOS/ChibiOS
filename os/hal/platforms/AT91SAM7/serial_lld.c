@@ -81,7 +81,7 @@ static const SerialConfig default_config = {
  *
  * @param[in] sdp communication channel associated to the USART
  */
-static void usart_init(SerialDriver *sdp) {
+static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
   AT91PS_USART u = sdp->usart;
 
   /* Disables IRQ sources and stop operations.*/
@@ -89,11 +89,11 @@ static void usart_init(SerialDriver *sdp) {
   u->US_CR = AT91C_US_RSTRX | AT91C_US_RSTTX | AT91C_US_RSTSTA;
 
   /* New parameters setup.*/
-  if (sdp->config->sc_mr & AT91C_US_OVER)
-    u->US_BRGR = MCK / (sdp->config->sc_speed * 8);
+  if (config->sc_mr & AT91C_US_OVER)
+    u->US_BRGR = MCK / (config->sc_speed * 8);
   else
-    u->US_BRGR = MCK / (sdp->config->sc_speed * 16);
-  u->US_MR = sdp->config->sc_mr;
+    u->US_BRGR = MCK / (config->sc_speed * 16);
+  u->US_MR = config->sc_mr;
   u->US_RTOR = 0;
   u->US_TTGR = 0;
 
@@ -254,10 +254,10 @@ void sd_lld_init(void) {
  *
  * @param[in] sdp pointer to a @p SerialDriver object
  */
-void sd_lld_start(SerialDriver *sdp) {
+void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
-  if (sdp->config == NULL)
-    sdp->config = &default_config;
+  if (config == NULL)
+    config = &default_config;
 
   if (sdp->state == SD_STOP) {
 #if USE_SAM7_USART0
@@ -277,7 +277,7 @@ void sd_lld_start(SerialDriver *sdp) {
     }
 #endif
   }
-  usart_init(sdp);
+  usart_init(sdp, config);
 }
 
 /**

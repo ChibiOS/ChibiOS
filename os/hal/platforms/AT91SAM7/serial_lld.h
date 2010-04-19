@@ -90,10 +90,12 @@ typedef uint32_t sdflags_t;
 typedef struct {
   /**
    * @brief Bit rate.
+   * @details This is written to the US_BRGR register of the appropriate AT91S_USART
    */
   uint32_t                  sc_speed;
   /**
    * @brief Initialization value for the MR register.
+   * @details This is written to the US_MR register of the appropriate AT91S_USART
    */
   uint32_t                  sc_mr;
 } SerialConfig;
@@ -105,8 +107,6 @@ typedef struct {
   _base_asynchronous_channel_data                                           \
   /* Driver state.*/                                                        \
   sdstate_t                 state;                                          \
-  /* Current configuration data.*/                                          \
-  const SerialConfig        *config;                                        \
   /* Input queue.*/                                                         \
   InputQueue                iqueue;                                         \
   /* Output queue.*/                                                        \
@@ -142,7 +142,7 @@ extern SerialDriver SD2;
 extern "C" {
 #endif
   void sd_lld_init(void);
-  void sd_lld_start(SerialDriver *sdp);
+  void sd_lld_start(SerialDriver *sdp, const SerialConfig *config);
   void sd_lld_stop(SerialDriver *sdp);
 #ifdef __cplusplus
 }

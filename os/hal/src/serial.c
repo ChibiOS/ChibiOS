@@ -146,8 +146,7 @@ void sdStart(SerialDriver *sdp, const SerialConfig *config) {
   chDbgAssert((sdp->state == SD_STOP) || (sdp->state == SD_READY),
               "sdStart(), #1",
               "invalid state");
-  sdp->config = config;
-  sd_lld_start(sdp);
+  sd_lld_start(sdp, config);
   sdp->state = SD_READY;
   chSysUnlock();
 }
