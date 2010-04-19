@@ -57,6 +57,7 @@
 *****************************************************************************
 
 *** 1.5.6 ***
+- FIX: Fixed wrong macros in chioch.h (bug 2989468).
 - FIX: Fixed wrong macro check in serial.h (bug 2989459)(backported in 1.4.3).
 - Various documentation fixes.
 

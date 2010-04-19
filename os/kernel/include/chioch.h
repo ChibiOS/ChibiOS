@@ -189,7 +189,7 @@ typedef struct {
  * @return              The number of bytes transferred.
  */
 #define chIOWriteTimeout(ip, bp, n, time)                                   \
-  ((ip)->vmt->write(ip, bp, n, time))
+  ((ip)->vmt->writet(ip, bp, n, time))
 
 /**
  * @brief   Channel blocking read with timeout.
@@ -207,7 +207,7 @@ typedef struct {
  * @return              The number of bytes transferred.
  */
 #define chIOReadTimeout(ip, bp, n, time)                                    \
-  ((ip)->vmt->read(ip, bp, n, time))
+  ((ip)->vmt->readt(ip, bp, n, time))
 
 #if CH_USE_EVENTS
 /**
