@@ -83,25 +83,25 @@ static const SerialConfig default_config =
  *
  * @param[in] sdp pointer to a @p SerialDriver object
  */
-static void usart_init(SerialDriver *sdp) {
+static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
   USART_TypeDef *u = sdp->usart;
 
   /*
    * Baud rate setting.
    */
   if (sdp->usart == USART1)
-    u->BRR = APB2CLK / sdp->config->sc_speed;
+    u->BRR = APB2CLK / config->sc_speed;
   else
-    u->BRR = APB1CLK / sdp->config->sc_speed;
+    u->BRR = APB1CLK / config->sc_speed;
 
   /*
    * Note that some bits are enforced.
    */
-  u->CR1 = sdp->config->sc_cr1 | USART_CR1_UE | USART_CR1_PEIE |
+  u->CR1 = config->sc_cr1 | USART_CR1_UE | USART_CR1_PEIE |
                                     USART_CR1_RXNEIE | USART_CR1_TE |
                                     USART_CR1_RE;
-  u->CR2 = sdp->config->sc_cr2 | USART_CR2_LBDIE;
-  u->CR3 = sdp->config->sc_cr3 | USART_CR3_EIE;
+  u->CR2 = config->sc_cr2 | USART_CR2_LBDIE;
+  u->CR3 = config->sc_cr3 | USART_CR3_EIE;
   (void)u->SR;  /* SR reset step 1.*/
   (void)u->DR;  /* SR reset step 2.*/
 }
@@ -318,10 +318,10 @@ void sd_lld_init(void) {
  *
  * @param[in] sdp pointer to a @p SerialDriver object
  */
-void sd_lld_start(SerialDriver *sdp) {
+void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
-  if (sdp->config == NULL)
-    sdp->config = &default_config;
+  if (config == NULL)
+    config = &default_config;
 
   if (sdp->state == SD_STOP) {
 #if USE_STM32_USART1
@@ -362,7 +362,7 @@ void sd_lld_start(SerialDriver *sdp) {
 #endif
 #endif
   }
-  usart_init(sdp);
+  usart_init(sdp, config);
 }
 
 /**
