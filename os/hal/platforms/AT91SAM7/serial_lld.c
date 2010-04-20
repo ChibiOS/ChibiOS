@@ -18,8 +18,9 @@
 */
 
 /**
- * @file AT91SAM7/serial_lld.c
- * @brief AT91SAM7 low level serial driver code.
+ * @file    AT91SAM7/serial_lld.c
+ * @brief   AT91SAM7 low level serial driver code.
+ *
  * @addtogroup AT91SAM7_SERIAL
  * @{
  */
@@ -77,9 +78,10 @@ static const SerialConfig default_config = {
 /*===========================================================================*/
 
 /**
- * @brief USART initialization.
+ * @brief   USART initialization.
  *
- * @param[in] sdp communication channel associated to the USART
+ * @param[in] sdp       communication channel associated to the USART
+ * @param[in] config    the architecture-dependent serial driver configuration
  */
 static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
   AT91PS_USART u = sdp->usart;
@@ -104,8 +106,9 @@ static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
 }
 
 /**
- * @brief USART de-initialization.
- * @param[in] u pointer to an USART I/O block
+ * @brief   USART de-initialization.
+ *
+ * @param[in] u         pointer to an USART I/O block
  */
 static void usart_deinit(AT91PS_USART u) {
 
@@ -118,9 +121,10 @@ static void usart_deinit(AT91PS_USART u) {
 }
 
 /**
- * @brief Error handling routine.
- * @param[in] err USART CSR register value
- * @param[in] sdp communication channel associated to the USART
+ * @brief   Error handling routine.
+ *
+ * @param[in] err       USART CSR register value
+ * @param[in] sdp       communication channel associated to the USART
  */
 static void set_error(SerialDriver *sdp, AT91_REG csr) {
   sdflags_t sts = 0;
@@ -142,9 +146,9 @@ static void set_error(SerialDriver *sdp, AT91_REG csr) {
 __attribute__((noinline))
 #endif
 /**
- * @brief Common IRQ handler.
+ * @brief   Common IRQ handler.
  *
- * @param[in] sdp communication channel associated to the USART
+ * @param[in] sdp       communication channel associated to the USART
  */
 static void serve_interrupt(SerialDriver *sdp) {
   uint32_t csr;
@@ -222,7 +226,7 @@ CH_IRQ_HANDLER(USART1IrqHandler) {
 /*===========================================================================*/
 
 /**
- * Low level serial driver initialization.
+ * @brief   Low level serial driver initialization.
  */
 void sd_lld_init(void) {
 
@@ -250,9 +254,12 @@ void sd_lld_init(void) {
 }
 
 /**
- * @brief Low level serial driver configuration and (re)start.
+ * @brief   Low level serial driver configuration and (re)start.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] config    the architecture-dependent serial driver configuration.
+ *                      If this parameter is set to @p NULL then a default
+ *                      configuration is used.
  */
 void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
@@ -281,11 +288,11 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 }
 
 /**
- * @brief Low level serial driver stop.
+ * @brief   Low level serial driver stop.
  * @details De-initializes the USART, stops the associated clock, resets the
  *          interrupt vector.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
+ * @param[in] sdp       pointer to a @p SerialDriver object
  */
 void sd_lld_stop(SerialDriver *sdp) {
 

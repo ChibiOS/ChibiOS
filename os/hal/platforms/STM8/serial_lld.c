@@ -278,21 +278,24 @@ void sd_lld_init(void) {
  * @brief   Low level serial driver configuration and (re)start.
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] config    the architecture-dependent serial driver configuration.
+ *                      If this parameter is set to @p NULL then a default
+ *                      configuration is used.
  */
-void sd_lld_start(SerialDriver *sdp) {
+void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
-  if (sdp->config == NULL)
-    sdp->config = &default_config;
+  if (config == NULL)
+    config = &default_config;
 
 #if USE_STM8_UART1
   if (&SD1 == sdp) {
-    uart1_init(sdp->config);
+    uart1_init(config);
     return;
   }
 #endif
 #if USE_STM8_UART3
   if (&SD3 == sdp) {
-    uart3_init(sdp->config);
+    uart3_init(config);
     return;
   }
 #endif

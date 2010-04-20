@@ -69,15 +69,16 @@ static const SerialConfig default_config = {
  * @details This function must be invoked with interrupts disabled.
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] config    the architecture-dependent serial driver configuration
  */
-static void esci_init(SerialDriver *sdp) {
+static void esci_init(SerialDriver *sdp, const SerialConfig *config) {
   volatile struct ESCI_tag *escip = sdp->escip;
-  uint8_t mode = sdp->config->sc_mode;
+  uint8_t mode = config->sc_mode;
 
   escip->CR2.R  = 0;                /* MDIS off.                            */
   escip->CR1.R  = 0;
   escip->LCR.R  = 0;
-  escip->CR1.B.SBR = SPC563_SYSCLK / (16 * sdp->config->sc_speed);
+  escip->CR1.B.SBR = SPC563_SYSCLK / (16 * config->sc_speed);
   if (mode & SD_MODE_LOOPBACK)
     escip->CR1.B.LOOPS = 1;
   switch (mode & SD_MODE_PARITY) {
@@ -267,12 +268,15 @@ void sd_lld_init(void) {
  * @brief   Low level serial driver configuration and (re)start.
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] config    the architecture-dependent serial driver configuration.
+ *                      If this parameter is set to @p NULL then a default
+ *                      configuration is used.
  */
-void sd_lld_start(SerialDriver *sdp) {
+void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
-  if (sdp->config == NULL)
-    sdp->config = &default_config;
-  esci_init(sdp);
+  if (config == NULL)
+    config = &default_config;
+  esci_init(sdp, config);
 }
 
 /**

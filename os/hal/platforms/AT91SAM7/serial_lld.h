@@ -18,8 +18,9 @@
 */
 
 /**
- * @file AT91SAM7/serial_lld.h
- * @brief AT91SAM7 low level serial driver header.
+ * @file    AT91SAM7/serial_lld.h
+ * @brief   AT91SAM7 low level serial driver header.
+ *
  * @addtogroup AT91SAM7_SERIAL
  * @{
  */
@@ -38,32 +39,32 @@
 /*===========================================================================*/
 
 /**
- * @brief UART0 driver enable switch.
+ * @brief   UART0 driver enable switch.
  * @details If set to @p TRUE the support for USART1 is included.
- * @note The default is @p TRUE.
+ * @note    The default is @p TRUE.
  */
 #if !defined(USE_SAM7_USART0) || defined(__DOXYGEN__)
 #define USE_SAM7_USART0             TRUE
 #endif
 
 /**
- * @brief UART1 driver enable switch.
+ * @brief   UART1 driver enable switch.
  * @details If set to @p TRUE the support for USART2 is included.
- * @note The default is @p TRUE.
+ * @note    The default is @p TRUE.
  */
 #if !defined(USE_SAM7_USART1) || defined(__DOXYGEN__)
 #define USE_SAM7_USART1             TRUE
 #endif
 
 /**
- * @brief UART1 interrupt priority level setting.
+ * @brief   UART1 interrupt priority level setting.
  */
 #if !defined(SAM7_USART0_PRIORITY) || defined(__DOXYGEN__)
 #define SAM7_USART0_PRIORITY        (AT91C_AIC_PRIOR_HIGHEST - 2)
 #endif
 
 /**
- * @brief UART2 interrupt priority level setting.
+ * @brief   UART2 interrupt priority level setting.
  */
 #if !defined(SAM7_USART1_PRIORITY) || defined(__DOXYGEN__)
 #define SAM7_USART1_PRIORITY        (AT91C_AIC_PRIOR_HIGHEST - 2)
@@ -78,30 +79,30 @@
 /*===========================================================================*/
 
 /**
- * @brief Serial Driver condition flags type.
+ * @brief   Serial Driver condition flags type.
  */
 typedef uint32_t sdflags_t;
 
 /**
- * @brief AT91SAM7 Serial Driver configuration structure.
+ * @brief   AT91SAM7 Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
  */
 typedef struct {
   /**
-   * @brief Bit rate.
+   * @brief   Bit rate.
    * @details This is written to the US_BRGR register of the appropriate AT91S_USART
    */
   uint32_t                  sc_speed;
   /**
-   * @brief Initialization value for the MR register.
+   * @brief   Initialization value for the MR register.
    * @details This is written to the US_MR register of the appropriate AT91S_USART
    */
   uint32_t                  sc_mr;
 } SerialConfig;
 
 /**
- * @brief @p SerialDriver specific data.
+ * @brief   @p SerialDriver specific data.
  */
 #define _serial_driver_data                                                 \
   _base_asynchronous_channel_data                                           \

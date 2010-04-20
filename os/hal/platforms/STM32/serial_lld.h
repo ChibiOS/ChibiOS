@@ -18,8 +18,9 @@
 */
 
 /**
- * @file STM32/serial_lld.h
- * @brief STM32 low level serial driver header.
+ * @file    STM32/serial_lld.h
+ * @brief   STM32 low level serial driver header.
+ *
  * @addtogroup STM32_SERIAL
  * @{
  */
@@ -38,27 +39,27 @@
 /*===========================================================================*/
 
 /**
- * @brief USART1 driver enable switch.
+ * @brief   USART1 driver enable switch.
  * @details If set to @p TRUE the support for USART1 is included.
- * @note The default is @p FALSE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(USE_STM32_USART1) || defined(__DOXYGEN__)
 #define USE_STM32_USART1            TRUE
 #endif
 
 /**
- * @brief USART2 driver enable switch.
+ * @brief   USART2 driver enable switch.
  * @details If set to @p TRUE the support for USART2 is included.
- * @note The default is @p TRUE.
+ * @note    The default is @p TRUE.
  */
 #if !defined(USE_STM32_USART2) || defined(__DOXYGEN__)
 #define USE_STM32_USART2            TRUE
 #endif
 
 /**
- * @brief USART3 driver enable switch.
+ * @brief   USART3 driver enable switch.
  * @details If set to @p TRUE the support for USART3 is included.
- * @note The default is @p FALSE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(USE_STM32_USART3) || defined(__DOXYGEN__)
 #define USE_STM32_USART3            TRUE
@@ -67,18 +68,18 @@
 
 #if defined(STM32F10X_HD) || defined(STM32F10X_CL) || defined(__DOXYGEN__)
 /**
- * @brief UART4 driver enable switch.
+ * @brief   UART4 driver enable switch.
  * @details If set to @p TRUE the support for UART4 is included.
- * @note The default is @p FALSE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(USE_STM32_UART4) || defined(__DOXYGEN__)
 #define USE_STM32_UART4             TRUE
 #endif
 
 /**
- * @brief UART5 driver enable switch.
+ * @brief   UART5 driver enable switch.
  * @details If set to @p TRUE the support for UART5 is included.
- * @note The default is @p FALSE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(USE_STM32_USART3) || defined(__DOXYGEN__)
 #define USE_STM32_UART5             TRUE
@@ -86,21 +87,21 @@
 #endif
 
 /**
- * @brief USART1 interrupt priority level setting.
+ * @brief   USART1 interrupt priority level setting.
  */
 #if !defined(STM32_USART1_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_USART1_PRIORITY       12
 #endif
 
 /**
- * @brief USART2 interrupt priority level setting.
+ * @brief   USART2 interrupt priority level setting.
  */
 #if !defined(STM32_USART2_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_USART2_PRIORITY       12)
 #endif
 
 /**
- * @brief USART3 interrupt priority level setting.
+ * @brief   USART3 interrupt priority level setting.
  */
 #if !defined(STM32_USART3_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_USART3_PRIORITY       12
@@ -108,14 +109,14 @@
 
 #if defined(STM32F10X_HD) || defined(STM32F10X_CL) || defined(__DOXYGEN__)
 /**
- * @brief UART4 interrupt priority level setting.
+ * @brief   UART4 interrupt priority level setting.
  */
 #if !defined(STM32_UART4_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART4_PRIORITY        12
 #endif
 
 /**
- * @brief UART5 interrupt priority level setting.
+ * @brief   UART5 interrupt priority level setting.
  */
 #if !defined(STM32_UART5_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART5_PRIORITY        12
@@ -131,18 +132,17 @@
 /*===========================================================================*/
 
 /**
- * @brief Serial Driver condition flags type.
+ * @brief   Serial Driver condition flags type.
  */
 typedef uint32_t sdflags_t;
 
 /**
- * @brief STM32 Serial Driver configuration structure.
+ * @brief   STM32 Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
- *
- * @note This structure content is architecture dependent, each driver
- *       implementation defines its own version and the custom static
- *       initializers.
+ * @note    This structure content is architecture dependent, each driver
+ *          implementation defines its own version and the custom static
+ *          initializers.
  */
 typedef struct {
   /**
@@ -164,7 +164,7 @@ typedef struct {
 } SerialConfig;
 
 /**
- * @brief @p SerialDriver specific data.
+ * @brief   @p SerialDriver specific data.
  */
 #define _serial_driver_data                                                 \
   _base_asynchronous_channel_data                                           \

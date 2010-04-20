@@ -18,8 +18,9 @@
 */
 
 /**
- * @file STM32/serial_lld.c
- * @brief STM32 low level serial driver code.
+ * @file    STM32/serial_lld.c
+ * @brief   STM32 low level serial driver code.
+ *
  * @addtogroup STM32_SERIAL
  * @{
  */
@@ -78,10 +79,11 @@ static const SerialConfig default_config =
 /*===========================================================================*/
 
 /**
- * @brief USART initialization.
+ * @brief   USART initialization.
  * @details This function must be invoked with interrupts disabled.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] config    the architecture-dependent serial driver configuration
  */
 static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
   USART_TypeDef *u = sdp->usart;
@@ -107,10 +109,10 @@ static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
 }
 
 /**
- * @brief USART de-initialization.
+ * @brief   USART de-initialization.
  * @details This function must be invoked with interrupts disabled.
  *
- * @param[in] u pointer to an USART I/O block
+ * @param[in] u         pointer to an USART I/O block
  */
 static void usart_deinit(USART_TypeDef *u) {
 
@@ -122,8 +124,8 @@ static void usart_deinit(USART_TypeDef *u) {
 /**
  * @brief Error handling routine.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
- * @param[in] sr USART SR register value
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] sr        USART SR register value
  */
 static void set_error(SerialDriver *sdp, uint16_t sr) {
   sdflags_t sts = 0;
@@ -144,9 +146,9 @@ static void set_error(SerialDriver *sdp, uint16_t sr) {
 }
 
 /**
- * @brief Common IRQ handler.
+ * @brief   Common IRQ handler.
  *
- * @param[in] sdp communication channel associated to the USART
+ * @param[in] sdp       communication channel associated to the USART
  */
 static void serve_interrupt(SerialDriver *sdp) {
   USART_TypeDef *u = sdp->usart;
@@ -281,7 +283,7 @@ CH_IRQ_HANDLER(Vector114) {
 /*===========================================================================*/
 
 /**
- * Low level serial driver initialization.
+ * @brief   Low level serial driver initialization.
  */
 void sd_lld_init(void) {
 
@@ -314,9 +316,12 @@ void sd_lld_init(void) {
 }
 
 /**
- * @brief Low level serial driver configuration and (re)start.
+ * @brief   Low level serial driver configuration and (re)start.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] config    the architecture-dependent serial driver configuration.
+ *                      If this parameter is set to @p NULL then a default
+ *                      configuration is used.
  */
 void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
@@ -366,11 +371,11 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 }
 
 /**
- * @brief Low level serial driver stop.
+ * @brief   Low level serial driver stop.
  * @details De-initializes the USART, stops the associated clock, resets the
  *          interrupt vector.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
+ * @param[in] sdp       pointer to a @p SerialDriver object
  */
 void sd_lld_stop(SerialDriver *sdp) {
 
