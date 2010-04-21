@@ -18,8 +18,9 @@
 */
 
 /**
- * @file AVR/serial_lld.c
- * @brief AVR low level serial driver code.
+ * @file    AVR/serial_lld.c
+ * @brief   AVR low level serial driver code.
+ *
  * @addtogroup AVR_SERIAL
  * @{
  */
@@ -34,18 +35,18 @@
 /*===========================================================================*/
 
 /**
- * @brief USART0 serial driver identifier.
- * @note The name does not follow the convention used in the other ports
- *       (COMn) because a name conflict with the AVR headers.
+ * @brief   USART0 serial driver identifier.
+ * @note    The name does not follow the convention used in the other ports
+ *          (COMn) because a name conflict with the AVR headers.
  */
 #if USE_AVR_USART0 || defined(__DOXYGEN__)
 SerialDriver SD1;
 #endif
 
 /**
- * @brief USART1 serial driver identifier.
- * @note The name does not follow the convention used in the other ports
- *       (COMn) because a name conflict with the AVR headers.
+ * @brief   USART1 serial driver identifier.
+ * @note    The name does not follow the convention used in the other ports
+ *          (COMn) because a name conflict with the AVR headers.
  */
 #if USE_AVR_USART1 || defined(__DOXYGEN__)
 SerialDriver SD2;
@@ -56,7 +57,7 @@ SerialDriver SD2;
 /*===========================================================================*/
 
 /**
- * @brief Driver default configuration.
+ * @brief   Driver default configuration.
  */
 static const SerialConfig default_config = {
   UBRR(SERIAL_DEFAULT_BITRATE),
@@ -88,8 +89,9 @@ static void notify1(void) {
 }
 
 /**
- * @brief USART0 initialization.
- * @param[in] config the architecture-dependent serial driver configuration
+ * @brief   USART0 initialization.
+ *
+ * @param[in] config    the architecture-dependent serial driver configuration
  */
 static void usart0_init(const SerialConfig *config) {
 
@@ -101,7 +103,7 @@ static void usart0_init(const SerialConfig *config) {
 }
 
 /**
- * @brief USART0 de-initialization.
+ * @brief   USART0 de-initialization.
  */
 static void usart0_deinit(void) {
 
@@ -118,8 +120,9 @@ static void notify2(void) {
 }
 
 /**
- * @brief USART1 initialization.
- * @param[in] config the architecture-dependent serial driver configuration
+ * @brief   USART1 initialization.
+ *
+ * @param[in] config    the architecture-dependent serial driver configuration
  */
 static void usart1_init(const SerialConfig *config) {
 
@@ -131,7 +134,7 @@ static void usart1_init(const SerialConfig *config) {
 }
 
 /**
- * @brief USART1 de-initialization.
+ * @brief   USART1 de-initialization.
  */
 static void usart1_deinit(void) {
 
@@ -216,7 +219,7 @@ CH_IRQ_HANDLER(USART1_UDRE_vect) {
 /*===========================================================================*/
 
 /**
- * Low level serial driver initialization.
+ * @brief   Low level serial driver initialization.
  */
 void sd_lld_init(void) {
 
@@ -229,35 +232,38 @@ void sd_lld_init(void) {
 }
 
 /**
- * @brief Low level serial driver configuration and (re)start.
+ * @brief   Low level serial driver configuration and (re)start.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] config    the architecture-dependent serial driver configuration.
+ *                      If this parameter is set to @p NULL then a default
+ *                      configuration is used.
  */
-void sd_lld_start(SerialDriver *sdp) {
+void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
-  if (sdp->config == NULL)
-    sdp->config = &default_config;
+  if (config == NULL)
+    config = &default_config;
 
 #if USE_AVR_USART0
   if (&SD1 == sdp) {
-    usart0_init(sdp->config);
+    usart0_init(config);
     return;
   }
 #endif
 #if USE_AVR_USART1
   if (&SD2 == sdp) {
-    usart1_init(sdp->config);
+    usart1_init(config);
     return;
   }
 #endif
 }
 
 /**
- * @brief Low level serial driver stop.
+ * @brief   Low level serial driver stop.
  * @details De-initializes the USART, stops the associated clock, resets the
  *          interrupt vector.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
+ * @param[in] sdp       pointer to a @p SerialDriver object
  */
 void sd_lld_stop(SerialDriver *sdp) {
 

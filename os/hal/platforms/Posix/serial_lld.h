@@ -39,41 +39,41 @@
 /*===========================================================================*/
 
 /**
- * @brief Serial buffers size.
+ * @brief   Serial buffers size.
  * @details Configuration parameter, you can change the depth of the queue
- * buffers depending on the requirements of your application.
+ *          buffers depending on the requirements of your application.
  */
 #if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
 #define SERIAL_BUFFERS_SIZE         1024
 #endif
 
 /**
- * @brief SD1 driver enable switch.
+ * @brief   SD1 driver enable switch.
  * @details If set to @p TRUE the support for SD1 is included.
- * @note The default is @p TRUE.
+ * @note    The default is @p TRUE.
  */
 #if !defined(USE_SIM_SERIAL1) || defined(__DOXYGEN__)
 #define USE_SIM_SERIAL1             TRUE
 #endif
 
 /**
- * @brief SD2 driver enable switch.
+ * @brief   SD2 driver enable switch.
  * @details If set to @p TRUE the support for SD2 is included.
- * @note The default is @p TRUE.
+ * @note    The default is @p TRUE.
  */
 #if !defined(USE_SIM_SERIAL2) || defined(__DOXYGEN__)
 #define USE_SIM_SERIAL2             TRUE
 #endif
 
 /**
- * @brief Listen port for SD1.
+ * @brief   Listen port for SD1.
  */
 #if !defined(SD1_PORT) || defined(__DOXYGEN__)
 #define SIM_SD1_PORT                29001
 #endif
 
 /**
- * @brief Listen port for SD2.
+ * @brief   Listen port for SD2.
  */
 #if !defined(SD2_PORT) || defined(__DOXYGEN__)
 #define SIM_SD2_PORT                29002
@@ -88,24 +88,23 @@
 /*===========================================================================*/
 
 /**
- * Serial Driver condition flags type.
+ * @brief   Serial Driver condition flags type.
  */
 typedef uint32_t sdflags_t;
 
 /**
- * @brief Generic Serial Driver configuration structure.
+ * @brief   Generic Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
- *
- * @note This structure content is architecture dependent, each driver
- *       implementation defines its own version and the custom static
- *       initializers.
+ * @note    This structure content is architecture dependent, each driver
+ *          implementation defines its own version and the custom static
+ *          initializers.
  */
 typedef struct {
 } SerialConfig;
 
 /**
- * @brief @p SerialDriver specific data.
+ * @brief   @p SerialDriver specific data.
  */
 #define _serial_driver_data                                                 \
   _base_asynchronous_channel_data                                           \

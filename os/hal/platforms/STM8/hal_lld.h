@@ -66,21 +66,21 @@
 /*===========================================================================*/
 
 /**
- * @brief Clock source setting.
+ * @brief   Clock source setting.
  */
 #if !defined(STM8_CLOCK_SOURCE) || defined(__DOXYGEN__)
 #define STM8_CLOCK_SOURCE           CLK_SOURCE_DEFAULT
 #endif
 
 /**
- * @brief HSI clock divider.
+ * @brief   HSI clock divider.
  */
 #if !defined(STM8_HSI_DIVIDER) || defined(__DOXYGEN__)
 #define STM8_HSI_DIVIDER            CLK_HSI_DIV8
 #endif
 
 /**
- * @brief CPU clock divider.
+ * @brief   CPU clock divider.
  */
 #if !defined(STM8_CPU_DIVIDER) || defined(__DOXYGEN__)
 #define STM8_CPU_DIVIDER            CLK_CPU_DIV1

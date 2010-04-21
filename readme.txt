@@ -59,7 +59,15 @@
 *** 1.5.6 ***
 - FIX: Fixed wrong macros in chioch.h (bug 2989468).
 - FIX: Fixed wrong macro check in serial.h (bug 2989459)(backported in 1.4.3).
-- Various documentation fixes.
+- NEW: Added a ROMCONST macro in chtypes.h, this macro must be used for
+  constant that must be placed in code space, it should not be assumed that
+  the "const" keyword does that. Note that this macro is not used to place
+  constants in different address spaces (AVR) because it is assumed that a
+  pointer to a ROMCONST variable is compatible with a normal pointer.
+- OPT: Internal optimization in the serial driver, it now is a bit smaller
+  and uses less RAM (all architectures).
+- Various documentation fixes, added an article covering debugging under
+  ChibiOS/RT.
 
 *** 1.5.5 ***
 - FIX: Removed some "dead" code in the old ARMv7-M files (there are new

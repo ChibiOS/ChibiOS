@@ -79,7 +79,7 @@ SerialDriver SD3;
 /**
  * @brief   Driver default configuration.
  */
-static const SerialConfig default_config = {
+static ROMCONST SerialConfig default_config = {
   BBR(SERIAL_DEFAULT_BITRATE),
   SD_MODE_PARITY_NONE | SD_MODE_STOP_1
 };

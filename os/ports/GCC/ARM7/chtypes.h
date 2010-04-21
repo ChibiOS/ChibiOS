@@ -18,8 +18,9 @@
 */
 
 /**
- * @file ARM7/chtypes.h
- * @brief ARM7 architecture port system types.
+ * @file    ARM7/chtypes.h
+ * @brief   ARM7 architecture port system types.
+ *
  * @addtogroup ARM7_CORE
  * @{
  */
@@ -47,9 +48,33 @@ typedef uint32_t        eventmask_t;    /**< Events mask.                   */
 typedef uint32_t        systime_t;      /**< System time.                   */
 typedef int32_t         cnt_t;          /**< Resources counter.             */
 
+/**
+ * @brief   Inline function modifier.
+ */
 #define INLINE inline
+
+/**
+ * @brief   ROM constant modifier.
+ * @note    It is set to use the "const" keyword in this port.
+ */
+#define ROMCONST const
+
+/**
+ * @brief   Packed structure modifier (within).
+ * @note    It uses the "packed" GCC attribute.
+ */
 #define PACK_STRUCT_STRUCT __attribute__((packed))
+
+/**
+ * @brief   Packed structure modifier (before).
+ * @note    Empty in this port.
+ */
 #define PACK_STRUCT_BEGIN
+
+/**
+ * @brief   Packed structure modifier (after).
+ * @note    Empty in this port.
+ */
 #define PACK_STRUCT_END
 
 #endif /* _CHTYPES_H_ */

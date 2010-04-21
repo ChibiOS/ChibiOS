@@ -58,16 +58,17 @@ static const SerialConfig default_config = {
  * @brief   UART initialization.
  *
  * @param[in] sdp       communication channel associated to the UART
+ * @param[in] config    the architecture-dependent serial driver configuration
  */
-static void uart_init(SerialDriver *sdp) {
+static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
   LPC_UART_TypeDef *u = sdp->uart;
 
-  uint32_t div = LPC11xx_UART_PCLK / (sdp->config->sc_speed << 4);
-  u->LCR = sdp->config->sc_lcr | LCR_DLAB;
+  uint32_t div = LPC11xx_UART_PCLK / (config->sc_speed << 4);
+  u->LCR = config->sc_lcr | LCR_DLAB;
   u->DLL = div;
   u->DLM = div >> 8;
-  u->LCR = sdp->config->sc_lcr;
-  u->FCR = FCR_ENABLE | FCR_RXRESET | FCR_TXRESET | sdp->config->sc_fcr;
+  u->LCR = config->sc_lcr;
+  u->FCR = FCR_ENABLE | FCR_RXRESET | FCR_TXRESET | config->sc_fcr;
   u->ACR = 0;
   u->FDR = 0x10;
   u->TER = TER_ENABLE;
@@ -242,11 +243,14 @@ void sd_lld_init(void) {
  * @brief   Low level serial driver configuration and (re)start.
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] config    the architecture-dependent serial driver configuration.
+ *                      If this parameter is set to @p NULL then a default
+ *                      configuration is used.
  */
-void sd_lld_start(SerialDriver *sdp) {
+void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
-  if (sdp->config == NULL)
-    sdp->config = &default_config;
+  if (config == NULL)
+    config = &default_config;
 
   if (sdp->state == SD_STOP) {
 #if USE_LPC11xx_UART0
@@ -257,7 +261,7 @@ void sd_lld_start(SerialDriver *sdp) {
     }
 #endif
   }
-  uart_init(sdp);
+  uart_init(sdp, config);
 }
 
 /**

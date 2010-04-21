@@ -60,16 +60,33 @@ typedef uint32_t            eventmask_t;    /**< Events mask.               */
 typedef uint32_t            systime_t;      /**< System time.               */
 typedef int32_t             cnt_t;          /**< Resources counter.         */
 
-/** Inline function modifier. */
-#define INLINE      inline
+/**
+ * @brief   Inline function modifier.
+ */
+#define INLINE inline
 
-/** Packed structure modifier (within). */
+/**
+ * @brief   ROM constant modifier.
+ * @note    It is set to use the "const" keyword in this port.
+ */
+#define ROMCONST const
+
+/**
+ * @brief   Packed structure modifier (within).
+ * @note    It uses the "packed" GCC attribute.
+ */
 #define PACK_STRUCT_STRUCT __attribute__((packed))
 
-/** Packed structure modifier (before). */
+/**
+ * @brief   Packed structure modifier (before).
+ * @note    Empty in this port.
+ */
 #define PACK_STRUCT_BEGIN
 
-/** Packed structure modifier (after). */
+/**
+ * @brief   Packed structure modifier (after).
+ * @note    Empty in this port.
+ */
 #define PACK_STRUCT_END
 
 #endif /* _CHTYPES_H_ */

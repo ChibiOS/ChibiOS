@@ -38,6 +38,9 @@
 /* I/O Ports Types and constants.                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   GPIO port representation.
+ */
 typedef struct {
   volatile uint8_t      ODR;
   volatile uint8_t      IDR;
@@ -191,7 +194,7 @@ typedef gpio_t *ioportid_t;
  */
 #define pal_lld_setgroupmode(port, mask, mode) ((void)(mode))
 
-extern const STM8GPIOConfig pal_default_config;
+extern ROMCONST STM8GPIOConfig pal_default_config;
 
 #endif /* CH_HAL_USE_PAL */
 

@@ -84,29 +84,29 @@
 /*===========================================================================*/
 
 /**
- * @brief UART0 driver enable switch.
+ * @brief   UART0 driver enable switch.
  * @details If set to @p TRUE the support for UART0 is included.
- * @note The default is @p TRUE .
+ * @note    The default is @p TRUE .
  */
 #if !defined(USE_LPC13xx_UART0) || defined(__DOXYGEN__)
 #define USE_LPC13xx_UART0           TRUE
 #endif
 
 /**
- * @brief FIFO preload parameter.
+ * @brief   FIFO preload parameter.
  * @details Configuration parameter, this values defines how many bytes are
- * preloaded in the HW transmit FIFO for each interrupt, the maximum value is
- * 16 the minimum is 1.
- * @note An high value reduces the number of interrupts generated but can
- *       also increase the worst case interrupt response time because the
- *       preload loops.
+ *          preloaded in the HW transmit FIFO for each interrupt, the maximum
+ *          value is 16 the minimum is 1.
+ * @note    An high value reduces the number of interrupts generated but can
+ *          also increase the worst case interrupt response time because the
+ *          preload loops.
  */
 #if !defined(LPC13xx_UART_FIFO_PRELOAD) || defined(__DOXYGEN__)
 #define LPC13xx_UART_FIFO_PRELOAD   16
 #endif
 
 /**
- * @brief UART0 interrupt priority level setting.
+ * @brief   UART0 interrupt priority level setting.
  */
 #if !defined(LPC13xx_UART0_PRIORITY) || defined(__DOXYGEN__)
 #define LPC13xx_UART0_PRIORITY      3
@@ -117,7 +117,7 @@
 /*===========================================================================*/
 
 #if (LPC13xx_UART_FIFO_PRELOAD < 1) || (LPC13xx_UART_FIFO_PRELOAD > 16)
-#error "invalid LPC214x_UART_FIFO_PRELOAD setting"
+#error "invalid LPC13xx_UART_FIFO_PRELOAD setting"
 #endif
 
 /*===========================================================================*/
@@ -125,12 +125,12 @@
 /*===========================================================================*/
 
 /**
- * @brief Serial Driver condition flags type.
+ * @brief   Serial Driver condition flags type.
  */
 typedef uint32_t sdflags_t;
 
 /**
- * @brief LPC214x Serial Driver configuration structure.
+ * @brief   LPC13xx Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
  */
@@ -156,8 +156,6 @@ typedef struct {
   _base_asynchronous_channel_data                                           \
   /* Driver state.*/                                                        \
   sdstate_t                 state;                                          \
-  /* Current configuration data.*/                                          \
-  const SerialConfig        *config;                                        \
   /* Input queue.*/                                                         \
   InputQueue                iqueue;                                         \
   /* Output queue.*/                                                        \
@@ -190,7 +188,7 @@ extern SerialDriver SD1;
 extern "C" {
 #endif
   void sd_lld_init(void);
-  void sd_lld_start(SerialDriver *sdp);
+  void sd_lld_start(SerialDriver *sdp, const SerialConfig *config);
   void sd_lld_stop(SerialDriver *sdp);
 #ifdef __cplusplus
 }

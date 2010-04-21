@@ -37,10 +37,10 @@
 /*===========================================================================*/
 
 /**
- * @brief PAL setup.
+ * @brief   PAL setup.
  * @details Digital I/O ports static configuration as defined in @p board.h.
  */
-const STM8GPIOConfig pal_default_config =
+ROMCONST STM8GPIOConfig pal_default_config =
 {
   {
     {VAL_GPIOAODR, 0, VAL_GPIOADDR, VAL_GPIOACR1, VAL_GPIOACR2},
@@ -78,7 +78,7 @@ void hal_lld_init(void) {
   while ((CLK_ICKR & 2) == 0)       /* HSIRDY */
     ;
 #elif STM8_CLOCK_SOURCE == CLK_SOURCE_LSI
-  CLK_ICKR    = 8;                  /* LSIEN */             
+  CLK_ICKR    = 8;                  /* LSIEN */
   while ((CLK_ICKR & 16) == 0)      /* LSIRDY */
     ;
 #else /* STM8_CLOCK_SOURCE == CLK_SOURCE_HSE */
@@ -100,7 +100,7 @@ void hal_lld_init(void) {
   /* Clocks initially all disabled.*/
   CLK_PCKENR1 = 0;
   CLK_PCKENR2 = 0;
-  
+
   /* Other clock related initializations.*/
   CLK_CSSR    = 0;
   CLK_CCOR    = 0;

@@ -18,14 +18,10 @@
 */
 
 /**
- * @file    templates/chtypes.h
- * @brief   System types template.
- * @details The types defined in this file may change depending on the target
- *          architecture. You may also try to optimize the size of the various
- *          types in order to privilege size or performance, be careful in
- *          doing so.
+ * @file    STM8/chtypes.h
+ * @brief   STM8 port system types.
  *
- * @addtogroup types
+ * @addtogroup STM8_CORE
  * @{
  */
 
@@ -40,15 +36,15 @@
 //#include <stdint.h>
 //#endif
 
-typedef unsigned char   uint8_t;
-typedef signed char     int8_t;
-typedef unsigned int    uint16_t;
-typedef signed int      int16_t;
-typedef unsigned long   uint32_t;
-typedef signed long     int32_t;
-typedef uint8_t         uint_fast8_t;
-typedef uint16_t        uint_fast16_t;
-typedef uint32_t        uint_fast32_t;
+typedef unsigned char   uint8_t;        /**< C99-style 8 bits unsigned.     */
+typedef signed char     int8_t;         /**< C99-style 8 bits signed.       */
+typedef unsigned int    uint16_t;       /**< C99-style 16 bits unsigned.    */
+typedef signed int      int16_t;        /**< C99-style 16 bits signed.      */
+typedef unsigned long   uint32_t;       /**< C99-style 32 bits unsigned.    */
+typedef signed long     int32_t;        /**< C99-style 32 bits signed.      */
+typedef uint8_t         uint_fast8_t;   /**< C99-style 8 bits unsigned.     */
+typedef uint16_t        uint_fast16_t;  /**< C99-style 16 bits unsigned.    */
+typedef uint32_t        uint_fast32_t;  /**< C99-style 32 bits unsigned.    */
 
 /**
  * @brief   Boolean, recommended the fastest signed.
@@ -106,17 +102,26 @@ typedef int16_t         cnt_t;
 #define INLINE inline
 
 /**
+ * @brief   ROM constant modifier.
+ * @note    Uses the custom "code" keyword in this port.
+ */
+#define ROMCONST code
+
+/**
  * @brief   Packed structure modifier (within).
+ * @note    Empty in this port.
  */
 #define PACK_STRUCT_STRUCT
 
 /**
  * @brief   Packed structure modifier (before).
+ * @note    Empty in this port.
  */
 #define PACK_STRUCT_BEGIN
 
 /**
  * @brief   Packed structure modifier (after).
+ * @note    Empty in this port.
  */
 #define PACK_STRUCT_END
 

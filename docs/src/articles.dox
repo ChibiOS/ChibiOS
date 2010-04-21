@@ -22,6 +22,7 @@
  * ChibiOS/RT Articles and Code Examples:
  * - @subpage article_eclipse
  * - @subpage article_eclipse2
+ * - @subpage article_debug
  * - @subpage article_create_thread
  * - @subpage article_interrupts
  * - @subpage article_wakeup

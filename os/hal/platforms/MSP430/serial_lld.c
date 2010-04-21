@@ -18,8 +18,9 @@
 */
 
 /**
- * @file MSP430/serial_lld.c
- * @brief MSP430 low level serial driver code.
+ * @file    MSP430/serial_lld.c
+ * @brief   MSP430 low level serial driver code.
+ *
  * @addtogroup MSP430_SERIAL
  * @{
  */
@@ -88,9 +89,9 @@ static void notify1(void) {
 }
 
 /**
- * @brief USART0 initialization.
+ * @brief   USART0 initialization.
  *
- * @param[in] config the architecture-dependent serial driver configuration
+ * @param[in] config    the architecture-dependent serial driver configuration
  */
 static void usart0_init(const SerialConfig *config) {
 
@@ -110,7 +111,7 @@ static void usart0_init(const SerialConfig *config) {
 }
 
 /**
- * @brief USART0 de-initialization.
+ * @brief   USART0 de-initialization.
  */
 static void usart0_deinit(void) {
 
@@ -132,9 +133,9 @@ static void notify2(void) {
 }
 
 /**
- * @brief USART1 initialization.
+ * @brief   USART1 initialization.
  *
- * @param[in] config the architecture-dependent serial driver configuration
+ * @param[in] config    the architecture-dependent serial driver configuration
  */
 static void usart1_init(const SerialConfig *config) {
 
@@ -154,7 +155,7 @@ static void usart1_init(const SerialConfig *config) {
 }
 
 /**
- * @brief USART1 de-initialization.
+ * @brief   USART1 de-initialization.
  */
 static void usart1_deinit(void) {
 
@@ -236,7 +237,7 @@ CH_IRQ_HANDLER(USART1RX_VECTOR) {
 /*===========================================================================*/
 
 /**
- * Low level serial driver initialization.
+ * @brief   Low level serial driver initialization.
  */
 void sd_lld_init(void) {
 
@@ -254,11 +255,14 @@ void sd_lld_init(void) {
 }
 
 /**
- * @brief Low level serial driver configuration and (re)start.
+ * @brief   Low level serial driver configuration and (re)start.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] config    the architecture-dependent serial driver configuration.
+ *                      If this parameter is set to @p NULL then a default
+ *                      configuration is used.
  */
-void sd_lld_start(SerialDriver *sdp) {
+void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
   if (sdp->config == NULL)
     sdp->config = &default_config;
@@ -278,11 +282,11 @@ void sd_lld_start(SerialDriver *sdp) {
 }
 
 /**
- * @brief Low level serial driver stop.
+ * @brief   Low level serial driver stop.
  * @details De-initializes the USART, stops the associated clock, resets the
  *          interrupt vector.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
+ * @param[in] sdp       pointer to a @p SerialDriver object
  */
 void sd_lld_stop(SerialDriver *sdp) {
 

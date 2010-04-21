@@ -18,8 +18,9 @@
 */
 
 /**
- * @file MSP430/chtypes.h
- * @brief MSP430 architecture port system types.
+ * @file    MSP430/chtypes.h
+ * @brief   MSP430 architecture port system types.
+ *
  * @addtogroup MSP430_CORE
  * @{
  */
@@ -47,9 +48,33 @@ typedef uint16_t        eventmask_t;    /**< Events mask.                   */
 typedef uint16_t        systime_t;      /**< System time.                   */
 typedef int16_t         cnt_t;          /**< Resources counter.             */
 
-#define INLINE      inline
+/**
+ * @brief   Inline function modifier.
+ */
+#define INLINE inline
+
+/**
+ * @brief   ROM constant modifier.
+ * @note    It is set to use the "const" keyword in this port.
+ */
+#define ROMCONST const
+
+/**
+ * @brief   Packed structure modifier (within).
+ * @note    It uses the "packed" GCC attribute.
+ */
 #define PACK_STRUCT_STRUCT __attribute__((packed))
+
+/**
+ * @brief   Packed structure modifier (before).
+ * @note    Empty in this port.
+ */
 #define PACK_STRUCT_BEGIN
+
+/**
+ * @brief   Packed structure modifier (after).
+ * @note    Empty in this port.
+ */
 #define PACK_STRUCT_END
 
 #endif /* _CHTYPES_H_ */

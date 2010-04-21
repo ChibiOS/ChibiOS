@@ -18,8 +18,9 @@
 */
 
 /**
- * @file AVR/serial_lld.h
- * @brief AVR low level serial driver header.
+ * @file    AVR/serial_lld.h
+ * @brief   AVR low level serial driver header.
+ *
  * @addtogroup AVR_SERIAL
  * @{
  */
@@ -38,18 +39,18 @@
 /*===========================================================================*/
 
 /**
- * @brief USART0 driver enable switch.
+ * @brief   USART0 driver enable switch.
  * @details If set to @p TRUE the support for USART0 is included.
- * @note The default is @p FALSE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(USE_AVR_USART0) || defined(__DOXYGEN__)
 #define USE_AVR_USART0              TRUE
 #endif
 
 /**
- * @brief USART1 driver enable switch.
+ * @brief   USART1 driver enable switch.
  * @details If set to @p TRUE the support for USART1 is included.
- * @note The default is @p TRUE.
+ * @note    The default is @p TRUE.
  */
 #if !defined(USE_AVR_USART1) || defined(__DOXYGEN__)
 #define USE_AVR_USART1              TRUE
@@ -64,12 +65,12 @@
 /*===========================================================================*/
 
 /**
- * @brief Serial Driver condition flags type.
+ * @brief   Serial Driver condition flags type.
  */
 typedef uint8_t sdflags_t;
 
 /**
- * @brief AVR Serial Driver configuration structure.
+ * @brief   AVR Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
  */
@@ -85,14 +86,12 @@ typedef struct {
 } SerialConfig;
 
 /**
- * @brief @p SerialDriver specific data.
+ * @brief   @p SerialDriver specific data.
  */
 #define _serial_driver_data                                                 \
   _base_asynchronous_channel_data                                           \
   /* Driver state.*/                                                        \
   sdstate_t                 state;                                          \
-  /* Current configuration data.*/                                          \
-  const SerialConfig        *config;                                        \
   /* Input queue.*/                                                         \
   InputQueue                iqueue;                                         \
   /* Output queue.*/                                                        \
@@ -112,8 +111,8 @@ typedef struct {
 /*===========================================================================*/
 
 /**
- * @brief Macro for baud rate computation.
- * @note Make sure the final baud rate is within tolerance.
+ * @brief   Macro for baud rate computation.
+ * @note    Make sure the final baud rate is within tolerance.
  */
 #define UBRR(b) ((F_CPU / (b << 4)) - 1)
 
@@ -132,7 +131,7 @@ extern SerialDriver SD2;
 extern "C" {
 #endif
   void sd_lld_init(void);
-  void sd_lld_start(SerialDriver *sdp);
+  void sd_lld_start(SerialDriver *sdp, const SerialConfig *config);
   void sd_lld_stop(SerialDriver *sdp);
 #ifdef __cplusplus
 }

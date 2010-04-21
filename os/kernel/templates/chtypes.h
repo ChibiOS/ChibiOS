@@ -97,6 +97,19 @@ typedef int32_t         cnt_t;
 #define INLINE inline
 
 /**
+ * @brief   ROM constant modifier.
+ * @note    This is required because some compilers require a custom keyword,
+ *          usually this macro is just set to "const" for the GCC compiler.
+ * @note    This macro is not used to place constants in different address
+ *          spaces (like AVR requires as example) because it is assumed that
+ *          a pointer to a ROMCONST constant is compatible with a pointer
+ *          to a normal variable. It is just like the "const" keyword but
+ *          requires that the constant is placed in ROM if the architecture
+ *          supports it.
+ */
+#define ROMCONST const
+
+/**
  * @brief   Packed structure modifier (within).
  */
 #define PACK_STRUCT_STRUCT __attribute__((packed))
