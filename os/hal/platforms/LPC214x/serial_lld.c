@@ -18,8 +18,9 @@
 */
 
 /**
- * @file LPC214x/serial_lld.c
- * @brief LPC214x low level serial driver code.
+ * @file    LPC214x/serial_lld.c
+ * @brief   LPC214x low level serial driver code.
+ *
  * @addtogroup LPC214x_SERIAL
  * @{
  */
@@ -47,7 +48,7 @@ SerialDriver SD2;
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
-/** @brief Driver default configuration.*/
+/** @brief  Driver default configuration.*/
 static const SerialConfig default_config = {
   SERIAL_DEFAULT_BITRATE,
   LCR_WL8 | LCR_STOP1 | LCR_NOPARITY,
@@ -59,19 +60,20 @@ static const SerialConfig default_config = {
 /*===========================================================================*/
 
 /**
- * @brief UART initialization.
+ * @brief   UART initialization.
  *
- * @param[in] sdp communication channel associated to the UART
+ * @param[in] sdp       communication channel associated to the UART
+ * @param[in] config    the architecture-dependent serial driver configuration
  */
-static void uart_init(SerialDriver *sdp) {
+static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
   UART *u = sdp->uart;
 
-  uint32_t div = PCLK / (sdp->config->sc_speed << 4);
-  u->UART_LCR = sdp->config->sc_lcr | LCR_DLAB;
+  uint32_t div = PCLK / (config->sc_speed << 4);
+  u->UART_LCR = config->sc_lcr | LCR_DLAB;
   u->UART_DLL = div;
   u->UART_DLM = div >> 8;
-  u->UART_LCR = sdp->config->sc_lcr;
-  u->UART_FCR = FCR_ENABLE | FCR_RXRESET | FCR_TXRESET | sdp->config->sc_fcr;
+  u->UART_LCR = config->sc_lcr;
+  u->UART_FCR = FCR_ENABLE | FCR_RXRESET | FCR_TXRESET | config->sc_fcr;
   u->UART_ACR = 0;
   u->UART_FDR = 0x10;
   u->UART_TER = TER_ENABLE;
@@ -79,9 +81,9 @@ static void uart_init(SerialDriver *sdp) {
 }
 
 /**
- * @brief UART de-initialization.
+ * @brief   UART de-initialization.
  *
- * @param[in] u pointer to an UART I/O block
+ * @param[in] u         pointer to an UART I/O block
  */
 static void uart_deinit(UART *u) {
 
@@ -97,10 +99,10 @@ static void uart_deinit(UART *u) {
 }
 
 /**
- * @brief Error handling routine.
+ * @brief   Error handling routine.
  *
- * @param[in] sdp communication channel associated to the UART
- * @param[in] err UART LSR register value
+ * @param[in] sdp       communication channel associated to the UART
+ * @param[in] err       UART LSR register value
  */
 static void set_error(SerialDriver *sdp, IOREG32 err) {
   sdflags_t sts = 0;
@@ -122,11 +124,12 @@ static void set_error(SerialDriver *sdp, IOREG32 err) {
 __attribute__((noinline))
 #endif
 /**
- * @brief Common IRQ handler.
- * @param[in] u pointer to an UART I/O block
- * @param[in] sdp communication channel associated to the UART
- * @note Tries hard to clear all the pending interrupt sources, we dont want to
- *       go through the whole ISR and have another interrupt soon after.
+ * @brief   Common IRQ handler.
+ * @note    Tries hard to clear all the pending interrupt sources, we dont want
+ *          to go through the whole ISR and have another interrupt soon after.
+ *
+ * @param[in] u         pointer to an UART I/O block
+ * @param[in] sdp       communication channel associated to the UART
  */
 static void serve_interrupt(SerialDriver *sdp) {
   UART *u = sdp->uart;
@@ -179,7 +182,7 @@ static void serve_interrupt(SerialDriver *sdp) {
 }
 
 /**
- * @brief Attempts a TX FIFO preload.
+ * @brief   Attempts a TX FIFO preload.
  */
 static void preload(SerialDriver *sdp) {
   UART *u = sdp->uart;
@@ -199,7 +202,7 @@ static void preload(SerialDriver *sdp) {
 }
 
 /**
- * @brief Driver SD1 output notification.
+ * @brief   Driver SD1 output notification.
  */
 #if USE_LPC214x_UART0 || defined(__DOXYGEN__)
 static void notify1(void) {
@@ -209,7 +212,7 @@ static void notify1(void) {
 #endif
 
 /**
- * @brief Driver SD2 output notification.
+ * @brief   Driver SD2 output notification.
  */
 #if USE_LPC214x_UART1 || defined(__DOXYGEN__)
 static void notify2(void) {
@@ -223,7 +226,7 @@ static void notify2(void) {
 /*===========================================================================*/
 
 /**
- * @brief UART0 IRQ handler.
+ * @brief   UART0 IRQ handler.
  */
 #if USE_LPC214x_UART0 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(UART0IrqHandler) {
@@ -238,7 +241,7 @@ CH_IRQ_HANDLER(UART0IrqHandler) {
 #endif
 
 /**
- * @brief UART1 IRQ handler.
+ * @brief   UART1 IRQ handler.
  */
 #if USE_LPC214x_UART1 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(UART1IrqHandler) {
@@ -257,7 +260,7 @@ CH_IRQ_HANDLER(UART1IrqHandler) {
 /*===========================================================================*/
 
 /**
- * Low level serial driver initialization.
+ * @brief   Low level serial driver initialization.
  */
 void sd_lld_init(void) {
 
@@ -274,14 +277,17 @@ void sd_lld_init(void) {
 }
 
 /**
- * @brief Low level serial driver configuration and (re)start.
+ * @brief   Low level serial driver configuration and (re)start.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] config    the architecture-dependent serial driver configuration.
+ *                      If this parameter is set to @p NULL then a default
+ *                      configuration is used.
  */
-void sd_lld_start(SerialDriver *sdp) {
+void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
-  if (sdp->config == NULL)
-    sdp->config = &default_config;
+  if (config == NULL)
+    config = &default_config;
 
   if (sdp->state == SD_STOP) {
 #if USE_LPC214x_UART0
@@ -297,15 +303,15 @@ void sd_lld_start(SerialDriver *sdp) {
     }
 #endif
   }
-  uart_init(sdp);
+  uart_init(sdp, config);
 }
 
 /**
- * @brief Low level serial driver stop.
+ * @brief   Low level serial driver stop.
  * @details De-initializes the UART, stops the associated clock, resets the
  *          interrupt vector.
  *
- * @param[in] sdp pointer to a @p SerialDriver object
+ * @param[in] sdp       pointer to a @p SerialDriver object
  */
 void sd_lld_stop(SerialDriver *sdp) {
 

@@ -264,18 +264,18 @@ void sd_lld_init(void) {
  */
 void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
-  if (sdp->config == NULL)
-    sdp->config = &default_config;
+  if (config == NULL)
+    config = &default_config;
 
 #if USE_MSP430_USART0
   if (&SD1 == sdp) {
-    usart0_init(sdp->config);
+    usart0_init(config);
     return;
   }
 #endif
 #if USE_MSP430_USART1
   if (&SD2 == sdp) {
-    usart1_init(sdp->config);
+    usart1_init(config);
     return;
   }
 #endif
