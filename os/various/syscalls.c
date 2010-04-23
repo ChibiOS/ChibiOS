@@ -78,7 +78,7 @@ int _read_r(struct _reent *r, int file, char * ptr, int len)
     __errno_r(r) = EINVAL;
     return -1;
   }
-  len = sdRead(&STDOUT_SD, (uint8_t *)ptr, (size_t)len);
+  len = sdRead(&STDIN_SD, (uint8_t *)ptr, (size_t)len);
   return len;
 #else
   (void)file;
