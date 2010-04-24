@@ -66,6 +66,7 @@
   the "const" keyword does that. Note that this macro is not used to place
   constants in different address spaces (AVR) because it is assumed that a
   pointer to a ROMCONST variable is compatible with a normal pointer.
+- NEW: AT91SAM7 HAL support for the DGBU UART peripheral, as SD3
 - OPT: Internal optimization in the serial driver, it now is a bit smaller
   and uses less RAM (all architectures).
 - Various documentation fixes, added an article covering debugging under
