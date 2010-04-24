@@ -57,6 +57,15 @@
 #endif
 
 /**
+ * @brief   DBGU UART driver enable switch.
+ * @details If set to @p TRUE the support for the DBGU UART is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(USE_SAM7_DBGU_UART) || defined(__DOXYGEN__)
+#define USE_SAM7_DBGU_UART             TRUE
+#endif
+
+/**
  * @brief   UART1 interrupt priority level setting.
  */
 #if !defined(SAM7_USART0_PRIORITY) || defined(__DOXYGEN__)
@@ -68,6 +77,13 @@
  */
 #if !defined(SAM7_USART1_PRIORITY) || defined(__DOXYGEN__)
 #define SAM7_USART1_PRIORITY        (AT91C_AIC_PRIOR_HIGHEST - 2)
+#endif
+
+/**
+ * @brief   DBGU_UART interrupt priority level setting.
+ */
+#if !defined(SAM7_DBGU_UART_PRIORITY) || defined(__DOXYGEN__)
+#define SAM7_DBGU_UART_PRIORITY        (AT91C_AIC_PRIOR_HIGHEST - 2)
 #endif
 
 /*===========================================================================*/
@@ -138,6 +154,9 @@ extern SerialDriver SD1;
 #if USE_SAM7_USART1 && !defined(__DOXYGEN__)
 extern SerialDriver SD2;
 #endif
+#if USE_SAM7_DBGU_UART
+extern SerialDriver SD3;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -145,6 +164,9 @@ extern "C" {
   void sd_lld_init(void);
   void sd_lld_start(SerialDriver *sdp, const SerialConfig *config);
   void sd_lld_stop(SerialDriver *sdp);
+#if USE_SAM7_DBGU_UART
+  void sd_lld_serve_interrupt(SerialDriver *sdp);
+#endif
 #ifdef __cplusplus
 }
 #endif
