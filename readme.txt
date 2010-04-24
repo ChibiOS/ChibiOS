@@ -57,6 +57,8 @@
 *****************************************************************************
 
 *** 1.5.6 ***
+- FIX: Fixed write problems in MMC_SPI driver (bug 2991714)(backported in
+  1.4.3).
 - FIX: Fixed wrong macros in chioch.h (bug 2989468).
 - FIX: Fixed wrong macro check in serial.h (bug 2989459)(backported in 1.4.3).
 - NEW: Added a ROMCONST macro in chtypes.h, this macro must be used for
