@@ -23,9 +23,14 @@
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
+#include "shell.h"
 #include "evtimer.h"
 
 #include "ff.h"
+
+/*===========================================================================*/
+/* MMC/SPI related.                                                          */
+/*===========================================================================*/
 
 /**
  * @brief FS object.
@@ -57,22 +62,6 @@ static bool_t mmc_is_protected(void) {return !palReadPad(IOPORT3, GPIOC_MMCWP);}
 
 /* Generic large buffer.*/
 uint8_t fbuff[1024];
-
-/*
- * Red LEDs blinker thread, times are in milliseconds.
- */
-static WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
-
-  (void)arg;
-  while (TRUE) {
-    palClearPad(IOPORT3, GPIOC_LED);
-    chThdSleepMilliseconds(500);
-    palSetPad(IOPORT3, GPIOC_LED);
-    chThdSleepMilliseconds(500);
-  }
-  return 0;
-}
 
 static FRESULT scan_files(char *path)
 {
@@ -107,32 +96,140 @@ static FRESULT scan_files(char *path)
   return res;
 }
 
-/*
- * Executed as event handler at 500mS intervals.
- */
-static void TimerHandler(eventid_t id) {
+/*===========================================================================*/
+/* Command line related.                                                     */
+/*===========================================================================*/
 
-  (void)id;
-  if (palReadPad(IOPORT1, GPIOA_BUTTON)) {
-    if (fs_ready) {
-      FRESULT err;
-      uint32_t clusters;
-      FATFS *fsp;
+#define SHELL_WA_SIZE   THD_WA_SIZE(1024)
+#define TEST_WA_SIZE    THD_WA_SIZE(256)
 
-      err = f_getfree("/", &clusters, &fsp);
-      if (err != FR_OK) {
-        iprintf("FS: f_getfree() failed\r\n");
-        return;
-      }
-      iprintf("FS: %lu free clusters, %u sectors per cluster, %lu bytes free\r\n",
-              clusters, MMC_FS.csize,
-              clusters * (uint32_t)MMC_FS.csize * (uint32_t)MMC_SECTOR_SIZE);
-      fbuff[0] = 0;
-      scan_files((char *)fbuff);
-    }
-    else
-      TestThread(&SD2);
+static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
+  size_t n, size;
+  char buf[52];
+
+  (void)argv;
+  if (argc > 0) {
+    shellPrintLine(chp, "Usage: mem");
+    return;
   }
+  n = chHeapStatus(NULL, &size);
+  siprintf(buf, "core free memory : %lu bytes", chCoreFree());
+  shellPrintLine(chp, buf);
+  siprintf(buf, "heap fragments   : %lu", n);
+  shellPrintLine(chp, buf);
+  siprintf(buf, "heap free total  : %lu bytes", size);
+  shellPrintLine(chp, buf);
+}
+
+static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
+  static const char *states[] = {
+    "READY",
+    "CURRENT",
+    "SUSPENDED",
+    "WTSEM",
+    "WTMTX",
+    "WTCOND",
+    "SLEEPING",
+    "WTEXIT",
+    "WTOREVT",
+    "WTANDEVT",
+    "SNDMSG",
+    "WTMSG",
+    "FINAL"
+  };
+  Thread *tp;
+  char buf[60];
+
+  (void)argv;
+  if (argc > 0) {
+    shellPrintLine(chp, "Usage: threads");
+    return;
+  }
+  shellPrintLine(chp, "    addr    stack prio refs     state time");
+  tp = chRegFirstThread();
+  do {
+    siprintf(buf, "%8lx %8lx %4u %4i %9s %u",
+             (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
+             (unsigned int)tp->p_prio, tp->p_refs - 1,
+             states[tp->p_state], (unsigned int)tp->p_time);
+    shellPrintLine(chp, buf);
+    tp = chRegNextThread(tp);
+  } while (tp != NULL);
+}
+
+static void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
+  Thread *tp;
+
+  (void)argv;
+  if (argc > 0) {
+    shellPrintLine(chp, "Usage: test");
+    return;
+  }
+  tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriority(),
+                           TestThread, chp);
+  if (tp == NULL) {
+    shellPrintLine(chp, "out of memory");
+    return;
+  }
+  chThdWait(tp);
+}
+
+static void cmd_tree(BaseChannel *chp, int argc, char *argv[]) {
+  FRESULT err;
+  uint32_t clusters;
+  FATFS *fsp;
+
+  (void)argv;
+  if (argc > 0) {
+    shellPrintLine(chp, "Usage: tree");
+    return;
+  }
+  if (!fs_ready) {
+    shellPrintLine(chp, "File System not mounted");
+    return;
+  }
+  err = f_getfree("/", &clusters, &fsp);
+  if (err != FR_OK) {
+    shellPrintLine(chp, "FS: f_getfree() failed");
+    return;
+  }
+  siprintf((void *)fbuff,
+           "FS: %lu free clusters, %lu sectors per cluster, %lu bytes free",
+           clusters, (uint32_t)MMC_FS.csize,
+           clusters * (uint32_t)MMC_FS.csize * (uint32_t)MMC_SECTOR_SIZE);
+  shellPrintLine(chp, (void *)fbuff);
+  fbuff[0] = 0;
+  scan_files((char *)fbuff);
+}
+
+static const ShellCommand commands[] = {
+  {"mem", cmd_mem},
+  {"threads", cmd_threads},
+  {"test", cmd_test},
+  {"tree", cmd_tree},
+  {NULL, NULL}
+};
+
+static const ShellConfig shell_cfg1 = {
+  (BaseChannel *)&SD2,
+  commands
+};
+
+/*
+ * Red LEDs blinker thread, times are in milliseconds.
+ */
+static WORKING_AREA(waThread1, 128);
+static msg_t Thread1(void *arg) {
+
+  (void)arg;
+  while (TRUE) {
+    palTogglePad(IOPORT3, GPIOC_LED);
+    if (fs_ready)
+      chThdSleepMilliseconds(200);
+    else
+      chThdSleepMilliseconds(500);
+  }
+  return 0;
 }
 
 /*
@@ -142,25 +239,18 @@ static void InsertHandler(eventid_t id) {
   FRESULT err;
 
   (void)id;
-  iprintf("MMC: inserted\r\n");
   /*
    * On insertion MMC initialization and FS mount.
    */
-  iprintf("MMC: initialization ");
   if (mmcConnect(&MMCD1)) {
-    iprintf("failed\r\n");
     return;
   }
-  iprintf("ok\r\n");
-  iprintf("FS: mount ");
   err = f_mount(0, &MMC_FS);
   if (err != FR_OK) {
-    iprintf("failed\r\n");
     mmcDisconnect(&MMCD1);
     return;
   }
   fs_ready = TRUE;
-  iprintf("ok\r\n");
 }
 
 /*
@@ -169,7 +259,6 @@ static void InsertHandler(eventid_t id) {
 static void RemoveHandler(eventid_t id) {
 
   (void)id;
-  iprintf("MMC: removed\r\n");
   fs_ready = FALSE;
 }
 
@@ -179,12 +268,11 @@ static void RemoveHandler(eventid_t id) {
  */
 int main(int argc, char **argv) {
   static const evhandler_t evhndl[] = {
-    TimerHandler,
     InsertHandler,
     RemoveHandler
   };
-  static EvTimer evt;
-  struct EventListener el0, el1, el2;
+  Thread *shelltp = NULL;
+  struct EventListener el0, el1;
 
   (void)argc;
   (void)argv;
@@ -193,6 +281,11 @@ int main(int argc, char **argv) {
    * Activates the serial driver 2 using the driver default configuration.
    */
   sdStart(&SD2, NULL);
+
+  /*
+   * Shell manager initialization.
+   */
+  shellInit();
 
   /*
    * Initializes the MMC driver to work with SPI2.
@@ -213,12 +306,16 @@ int main(int argc, char **argv) {
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and listen for events.
    */
-  evtInit(&evt, MS2ST(500));            /* Initializes an event timer object.   */
-  evtStart(&evt);                       /* Starts the event timer.              */
-  chEvtRegister(&evt.et_es, &el0, 0);   /* Registers on the timer event source. */
-  chEvtRegister(&MMCD1.mmc_inserted_event, &el1, 1);
-  chEvtRegister(&MMCD1.mmc_removed_event, &el2, 2);
-  while (TRUE)
+  chEvtRegister(&MMCD1.mmc_inserted_event, &el0, 0);
+  chEvtRegister(&MMCD1.mmc_removed_event, &el1, 1);
+  while (TRUE) {
+    if (!shelltp)
+      shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
+    else if (chThdTerminated(shelltp)) {
+      chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
+      shelltp = NULL;           /* Triggers spawning of a new shell.        */
+    }
     chEvtDispatch(evhndl, chEvtWaitOne(ALL_EVENTS));
+  }
   return 0;
 }

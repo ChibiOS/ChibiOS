@@ -11,9 +11,11 @@ The demo will on an Olimex STM32-P103 board.
 This demo shows how to integrate the FatFs file system and use the SPI and MMC
 drivers.
 The demo flashes the board LED using a thread and monitors the MMC slot for
-a card insertion. By pressing the button located on the board while a card is
-inserted a directory dump on the serial port is performed, if a card is not
-inserted then the test procedure is activated.
+a card insertion. When a card is inserted then the file system is mounted
+and the LED flashes faster.
+A command line shell is spawned on SD2, all the interaction with the demo is
+performed using the command shell, type "help" for a list of the available
+commands.
 
 ** Build Procedure **
 
