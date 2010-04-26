@@ -67,13 +67,16 @@
   constants in different address spaces (AVR) because it is assumed that a
   pointer to a ROMCONST variable is compatible with a normal pointer.
 - NEW: AT91SAM7 HAL support for the DGBU UART peripheral, as SD3.
+- NEW: Introduced a new macro CH_FAST_IRQ_HANDLER() for the declaration of
+  fast interrupt handlers on those architectures that support them.
 - OPT: Internal optimization in the serial driver, it now is a bit smaller
   and uses less RAM (all architectures).
 - CHANGE: Modified the STM32 FatFs demo, now it spawns a command shell or
   the serial port SD2, type "help" for the available commands. More commands
   can be easily added.
 - Various documentation fixes, added an article covering debugging under
-  ChibiOS/RT.
+  ChibiOS/RT, updated the article about interrupt handlers to cover also
+  fast interrupt sources.
 
 *** 1.5.5 ***
 - FIX: Removed some "dead" code in the old ARMv7-M files (there are new

@@ -146,6 +146,15 @@ struct context {
  */
 #define PORT_IRQ_HANDLER(id) void id(void)
 
+/**
+ * @brief   Fast IRQ handler function declaration.
+ * @note    @p id can be a function name or a vector number depending on the
+ *          port implementation.
+ * @note    Not all architectures support fast interrupts, in this case this
+ *          macro must be omitted.
+ */
+#define PORT_FAST_IRQ_HANDLER(id) void id(void)
+
 #ifdef __cplusplus
 extern "C" {
 #endif

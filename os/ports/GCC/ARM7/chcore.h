@@ -117,13 +117,13 @@ struct context {
  * @details This code usually setup the context switching frame represented
  *          by an @p intctx structure.
  */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
-  tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +              \
-                                     wsize -                            \
-                                     sizeof(struct intctx));            \
-  tp->p_ctx.r13->r4 = pf;                                               \
-  tp->p_ctx.r13->r5 = arg;                                              \
-  tp->p_ctx.r13->lr = _port_thread_start;                               \
+#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
+  tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +                  \
+                                     wsize -                                \
+                                     sizeof(struct intctx));                \
+  tp->p_ctx.r13->r4 = pf;                                                   \
+  tp->p_ctx.r13->r5 = arg;                                                  \
+  tp->p_ctx.r13->lr = _port_thread_start;                                   \
 }
 
 /**
@@ -160,9 +160,9 @@ struct context {
 /**
  * @brief   Computes the thread working area global size.
  */
-#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
-                                   sizeof(struct intctx) +              \
-                                   sizeof(struct extctx) +              \
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                         \
+                                   sizeof(struct intctx) +                  \
+                                   sizeof(struct extctx) +                  \
                                   (n) + (INT_REQUIRED_STACK))
 
 /**
@@ -184,16 +184,16 @@ struct context {
  *          it is transparent to the user code.
  */
 #ifdef THUMB
-#define PORT_IRQ_PROLOGUE() {                                           \
-  asm volatile (".code 32                               \n\t"           \
-                "stmfd   sp!, {r0-r3, r12, lr}          \n\t"           \
-                "add     r0, pc, #1                     \n\t"           \
-                "bx      r0                             \n\t"           \
-                ".code 16");                                            \
+#define PORT_IRQ_PROLOGUE() {                                               \
+  asm volatile (".code 32                               \n\t"               \
+                "stmfd   sp!, {r0-r3, r12, lr}          \n\t"               \
+                "add     r0, pc, #1                     \n\t"               \
+                "bx      r0                             \n\t"               \
+                ".code 16");                                                \
 }
 #else /* !THUMB */
-#define PORT_IRQ_PROLOGUE() {                                           \
-  asm volatile ("stmfd    sp!, {r0-r3, r12, lr}");                      \
+#define PORT_IRQ_PROLOGUE() {                                               \
+  asm volatile ("stmfd    sp!, {r0-r3, r12, lr}");                          \
 }
 #endif /* !THUMB */
 
@@ -205,13 +205,13 @@ struct context {
  *          ARM or THUMB mode.
  */
 #ifdef THUMB
-#define PORT_IRQ_EPILOGUE() {                                           \
-  asm volatile ("ldr     r0, =_port_irq_common          \n\t"           \
-                "bx      r0");                                          \
+#define PORT_IRQ_EPILOGUE() {                                               \
+  asm volatile ("ldr     r0, =_port_irq_common          \n\t"               \
+                "bx      r0");                                              \
 }
 #else /* !THUMB */
-#define PORT_IRQ_EPILOGUE() {                                           \
-  asm volatile ("b       _port_irq_common");                            \
+#define PORT_IRQ_EPILOGUE() {                                               \
+  asm volatile ("b       _port_irq_common");                                \
 }
 #endif /* !THUMB */
 
@@ -221,6 +221,14 @@ struct context {
  *          port implementation.
  */
 #define PORT_IRQ_HANDLER(id) __attribute__((naked)) void id(void)
+
+/**
+ * @brief   Fast IRQ handler function declaration.
+ * @note    @p id can be a function name or a vector number depending on the
+ *          port implementation.
+ */
+#define PORT_FAST_IRQ_HANDLER(id)                                           \
+  __attribute__((interrupt("FIQ"))) void id(void)
 
 /**
  * @brief   Port-related initialization code.
@@ -236,8 +244,8 @@ struct context {
  *          enabled.
  */
 #ifdef THUMB
-#define port_lock() {                                                   \
-  asm volatile ("bl     _port_lock_thumb" : : : "r3", "lr");            \
+#define port_lock() {                                                       \
+  asm volatile ("bl     _port_lock_thumb" : : : "r3", "lr");                \
 }
 #else /* !THUMB */
 #define port_lock() asm volatile ("msr     CPSR_c, #0x9F")
@@ -250,8 +258,8 @@ struct context {
  * @note    In this port it enables both the IRQ and FIQ sources.
  */
 #ifdef THUMB
-#define port_unlock() {                                                 \
-  asm volatile ("bl     _port_unlock_thumb" : : : "r3", "lr");          \
+#define port_unlock() {                                                     \
+  asm volatile ("bl     _port_unlock_thumb" : : : "r3", "lr");              \
 }
 #else /* !THUMB */
 #define port_unlock() asm volatile ("msr     CPSR_c, #0x1F")
@@ -283,16 +291,16 @@ struct context {
  *          LPC214x datasheet.
  */
 #ifdef THUMB
-#define port_disable() {                                                \
-  asm volatile ("bl     _port_disable_thumb" : : : "r3", "lr");         \
+#define port_disable() {                                                    \
+  asm volatile ("bl     _port_disable_thumb" : : : "r3", "lr");             \
 }
 #else /* !THUMB */
-#define port_disable() {                                                \
-  asm volatile ("mrs     r3, CPSR                       \n\t"           \
-                "orr     r3, #0x80                      \n\t"           \
-                "msr     CPSR_c, r3                     \n\t"           \
-                "orr     r3, #0x40                      \n\t"           \
-                "msr     CPSR_c, r3" : : : "r3");                       \
+#define port_disable() {                                                    \
+  asm volatile ("mrs     r3, CPSR                       \n\t"               \
+                "orr     r3, #0x80                      \n\t"               \
+                "msr     CPSR_c, r3                     \n\t"               \
+                "orr     r3, #0x40                      \n\t"               \
+                "msr     CPSR_c, r3" : : : "r3");                           \
 }
 #endif /* !THUMB */
 
@@ -303,8 +311,8 @@ struct context {
  *          FIQ sources.
  */
 #ifdef THUMB
-#define port_suspend() {                                                \
-  asm volatile ("bl     _port_suspend_thumb" : : : "r3", "lr");         \
+#define port_suspend() {                                                    \
+  asm volatile ("bl     _port_suspend_thumb" : : : "r3", "lr");             \
 }
 #else /* !THUMB */
 #define port_suspend() asm volatile ("msr     CPSR_c, #0x9F")
@@ -315,8 +323,8 @@ struct context {
  * @note    In this port it enables both the IRQ and FIQ sources.
  */
 #ifdef THUMB
-#define port_enable() {                                                 \
-  asm volatile ("bl     _port_enable_thumb" : : : "r3", "lr");          \
+#define port_enable() {                                                     \
+  asm volatile ("bl     _port_enable_thumb" : : : "r3", "lr");              \
 }
 #else /* !THUMB */
 #define port_enable() asm volatile ("msr     CPSR_c, #0x1F")
@@ -335,29 +343,29 @@ struct context {
  */
 #ifdef THUMB
 #if CH_DBG_ENABLE_STACK_CHECK
-#define port_switch(ntp, otp) {                                         \
-  register Thread *_ntp asm ("r0") = (ntp);                             \
-  register Thread *_otp asm ("r1") = (otp);                             \
-  register char *sp asm ("sp");                                         \
-  if (sp - sizeof(struct intctx) - sizeof(Thread) < (char *)_otp)       \
-    asm volatile ("mov     r0, #0                               \n\t"   \
-                  "ldr     r1, =chDbgPanic                      \n\t"   \
-                  "bx      r1");                                        \
-    _port_switch_thumb(_ntp, _otp);                                     \
+#define port_switch(ntp, otp) {                                             \
+  register Thread *_ntp asm ("r0") = (ntp);                                 \
+  register Thread *_otp asm ("r1") = (otp);                                 \
+  register char *sp asm ("sp");                                             \
+  if (sp - sizeof(struct intctx) - sizeof(Thread) < (char *)_otp)           \
+    asm volatile ("mov     r0, #0                               \n\t"       \
+                  "ldr     r1, =chDbgPanic                      \n\t"       \
+                  "bx      r1");                                            \
+    _port_switch_thumb(_ntp, _otp);                                         \
 }
 #else /* !CH_DBG_ENABLE_STACK_CHECK */
 #define port_switch(ntp, otp) _port_switch_thumb(ntp, otp)
 #endif /* !CH_DBG_ENABLE_STACK_CHECK */
 #else /* !THUMB */
 #if CH_DBG_ENABLE_STACK_CHECK
-#define port_switch(ntp, otp) {                                         \
-  register Thread *_ntp asm ("r0") = (ntp);                             \
-  register Thread *_otp asm ("r1") = (otp);                             \
-  register char *sp asm ("sp");                                         \
-  if (sp - sizeof(struct intctx) - sizeof(Thread) < (char *)_otp)       \
-    asm volatile ("mov     r0, #0                               \n\t"   \
-                  "b       chDbgPanic");                                \
-  _port_switch_arm(_ntp, _otp);                                         \
+#define port_switch(ntp, otp) {                                             \
+  register Thread *_ntp asm ("r0") = (ntp);                                 \
+  register Thread *_otp asm ("r1") = (otp);                                 \
+  register char *sp asm ("sp");                                             \
+  if (sp - sizeof(struct intctx) - sizeof(Thread) < (char *)_otp)           \
+    asm volatile ("mov     r0, #0                               \n\t"       \
+                  "b       chDbgPanic");                                    \
+  _port_switch_arm(_ntp, _otp);                                             \
 }
 #else /* !CH_DBG_ENABLE_STACK_CHECK */
 #define port_switch(ntp, otp) _port_switch_arm(ntp, otp)

@@ -154,11 +154,19 @@
 #define CH_IRQ_EPILOGUE() PORT_IRQ_EPILOGUE()
 
 /**
- * @brief   Standard IRQ handler declaration.
+ * @brief   Standard normal IRQ handler declaration.
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  */
 #define CH_IRQ_HANDLER(id) PORT_IRQ_HANDLER(id)
+
+/**
+ * @brief   Standard fast IRQ handler declaration.
+ * @note    @p id can be a function name or a vector number depending on the
+ *          port implementation.
+ * @note    Not all architectures support fast interrupts.
+ */
+#define CH_FAST_IRQ_HANDLER(id) PORT_FAST_IRQ_HANDLER(id)
 
 #ifdef __cplusplus
 extern "C" {
