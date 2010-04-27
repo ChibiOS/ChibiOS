@@ -23,6 +23,8 @@
 /**
  * @page test_queues I/O Queues test
  *
+ * File: @ref testqueues.c
+ *
  * <h2>Description</h2>
  * This module implements the test sequence for the @ref io_queues subsystem.
  * The tests are performed by inserting and removing data from queues and by
@@ -204,8 +206,8 @@ const struct testcase testqueues2 = {
 };
 #endif /* CH_USE_QUEUES */
 
-/*
- * Test sequence for queues pattern.
+/**
+ * @brief   Test sequence for queues.
  */
 const struct testcase * const patternqueues[] = {
 #if CH_USE_QUEUES

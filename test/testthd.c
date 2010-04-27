@@ -23,6 +23,8 @@
 /**
  * @page test_threads Threads and Scheduler test
  *
+ * File: @ref testthd.c
+ *
  * <h2>Description</h2>
  * This module implements the test sequence for the @ref scheduler,
  * @ref threads and @ref time subsystems.<br>
@@ -236,8 +238,8 @@ const struct testcase testthd4 = {
   thd4_execute
 };
 
-/*
- * Test sequence for threads patterns.
+/**
+ * @brief   Test sequence for threads.
  */
 const struct testcase * const patternthd[] = {
   &testthd1,

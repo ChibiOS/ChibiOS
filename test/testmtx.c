@@ -23,6 +23,8 @@
 /**
  * @page test_mtx Mutexes test
  *
+ * File: @ref testmtx.c
+ *
  * <h2>Description</h2>
  * This module implements the test sequence for the @ref mutexes and
  * @ref condvars subsystems.<br>
@@ -643,8 +645,8 @@ const struct testcase testmtx8 = {
 #endif /* CH_USE_CONDVARS */
 #endif /* CH_USE_MUTEXES */
 
-/*
- * Test sequence for mutexes pattern.
+/**
+ * @brief   Test sequence for mutexes.
  */
 const struct testcase * const patternmtx[] = {
 #if CH_USE_MUTEXES

@@ -23,6 +23,8 @@
 /**
  * @page test_pools Memory Pools test
  *
+ * File: @ref testpools.c
+ *
  * <h2>Description</h2>
  * This module implements the test sequence for the @ref pools subsystem.
  *
@@ -93,7 +95,7 @@ const struct testcase testpools1 = {
 #endif /* CH_USE_MEMPOOLS */
 
 /*
- * Test sequence for pools pattern.
+ * @brief   Test sequence for pools.
  */
 const struct testcase * const patternpools[] = {
 #if CH_USE_MEMPOOLS

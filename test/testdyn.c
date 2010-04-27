@@ -23,6 +23,8 @@
 /**
  * @page test_dynamic Dynamic APIs test
  *
+ * File: @ref testdyn.c
+ *
  * <h2>Description</h2>
  * This module implements the test sequence for the dynamic thread creation
  * APIs.
@@ -189,8 +191,8 @@ const struct testcase testdyn2 = {
 
 #endif /* CH_USE_DYNAMIC */
 
-/*
- * Test sequence for dynamic APIs pattern.
+/**
+ * @brief   Test sequence for dynamic APIs.
  */
 const struct testcase * const patterndyn[] = {
 #if CH_USE_DYNAMIC

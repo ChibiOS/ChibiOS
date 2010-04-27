@@ -23,6 +23,8 @@
 /**
  * @page test_msg Messages test
  *
+ * File: @ref testmsg.c
+ *
  * <h2>Description</h2>
  * This module implements the test sequence for the @ref messages subsystem.
  *
@@ -113,8 +115,8 @@ const struct testcase testmsg1 = {
 
 #endif /* CH_USE_MESSAGES */
 
-/*
- * Test sequence for messages pattern.
+/**
+ * @brief   Test sequence for messages.
  */
 const struct testcase * const patternmsg[] = {
 #if CH_USE_MESSAGES

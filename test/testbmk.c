@@ -23,6 +23,8 @@
 /**
  * @page test_benchmarks Kernel Benchmarks
  *
+ * File: @ref testbmk.c
+ *
  * <h2>Description</h2>
  * This module implements a series of system benchmarks. The benchmarks are
  * useful as a stress test and as a reference when comparing ChibiOS/RT
@@ -744,8 +746,8 @@ const struct testcase testbmk13 = {
   bmk13_execute
 };
 
-/*
- * Test sequence for benchmarks pattern.
+/**
+ * @brief   Test sequence for benchmarks.
  */
 const struct testcase * const patternbmk[] = {
 #if !TEST_NO_BENCHMARKS

@@ -23,6 +23,8 @@
 /**
  * @page test_events Events test
  *
+ * File: @ref testevt.c
+ *
  * <h2>Description</h2>
  * This module implements the test sequence for the @ref events subsystem.
  *
@@ -293,8 +295,8 @@ const struct testcase testevt3 = {
 };
 #endif /* CH_USE_EVENTS_TIMEOUT */
 
-/*
- * Test sequence for events pattern.
+/**
+ * @brief   Test sequence for events.
  */
 const struct testcase * const patternevt[] = {
 #if CH_USE_EVENTS

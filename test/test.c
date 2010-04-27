@@ -17,6 +17,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file    test.c
+ * @brief   Tests support code.
+ *
+ * @addtogroup test
+ * @{
+ */
+
 #include "ch.h"
 #include "hal.h"
 
@@ -78,6 +86,11 @@ void * const wa[5] = {test.wa.T0, test.wa.T1, test.wa.T2,
  */
 static BaseChannel *chp;
 
+/**
+ * @brief   Prints a decimal unsigned number.
+ *
+ * @param[in] n         the number to be printed
+ */
 void test_printn(uint32_t n) {
   char buf[16], *p;
 
@@ -92,12 +105,22 @@ void test_printn(uint32_t n) {
   }
 }
 
+/**
+ * @brief   Prints a line without final end-of-line.
+ *
+ * @param[in] msgp      the message
+ */
 void test_print(char *msgp) {
 
   while (*msgp)
     chIOPut(chp, *msgp++);
 }
 
+/**
+ * @brief   Prints a line.
+ *
+ * @param[in] msgp      the message
+ */
 void test_println(char *msgp) {
 
   test_print(msgp);
@@ -120,6 +143,11 @@ static void print_tokens(void) {
     chIOPut(chp, *cp++);
 }
 
+/**
+ * @brief   Emits a token into the tokens buffer.
+ *
+ * @param[in] token     the token as a char
+ */
 void test_emit_token(char token) {
 
   chSysLock();
@@ -165,6 +193,10 @@ bool_t _test_assert_time_window(unsigned point, systime_t start, systime_t end) 
 /*
  * Threads utils.
  */
+
+/**
+ * @brief   Pends a termination request in all the test-spawned threads.
+ */
 void test_terminate_threads(void) {
   int i;
 
@@ -173,6 +205,9 @@ void test_terminate_threads(void) {
       chThdTerminate(threads[i]);
 }
 
+/**
+ * @brief   Waits for the completion of all the test-spawned threads.
+ */
 void test_wait_threads(void) {
   int i;
 
@@ -184,6 +219,12 @@ void test_wait_threads(void) {
 }
 
 #if CH_DBG_THREADS_PROFILING
+/**
+ * @brief   CPU pulse.
+ * @note    The current implementation is not totally reliable.
+ *
+ * @param[in] duration      CPU pulse duration in milliseconds
+ */
 void test_cpu_pulse(unsigned duration) {
   systime_t start, end, now;
 
@@ -200,6 +241,9 @@ void test_cpu_pulse(unsigned duration) {
 }
 #endif
 
+/**
+ * @brief Delays execution until next system time tick.
+ */
 systime_t test_wait_tick(void) {
 
   chThdSleep(1);
@@ -209,15 +253,22 @@ systime_t test_wait_tick(void) {
 /*
  * Timer utils.
  */
-static VirtualTimer vt;
+
+/** @brief Set to @p TRUE when the test timer reaches its deadline.*/
 bool_t test_timer_done;
 
+static VirtualTimer vt;
 static void tmr(void *p) {
   (void)p;
 
   test_timer_done = TRUE;
 }
 
+/**
+ * @brief   Starts the test timer.
+ *
+ * @param[in] ms        time in milliseconds
+ */
 void test_start_timer(unsigned ms) {
 
   systime_t duration = MS2ST(ms);
@@ -257,6 +308,11 @@ static void print_line(void) {
   chIOPut(chp, '\n');
 }
 
+/**
+ * @brief   Test execution thread function.
+ *
+ * @param[in] p         pointer to a @p BaseChannel object for test output
+ */
 msg_t TestThread(void *p) {
   int i, j;
 
@@ -326,3 +382,5 @@ msg_t TestThread(void *p) {
 
   return (msg_t)global_fail;
 }
+
+/** @} */

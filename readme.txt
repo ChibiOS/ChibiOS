@@ -80,6 +80,7 @@
 - Various documentation fixes, added an article covering debugging under
   ChibiOS/RT, updated the article about interrupt handlers to cover also
   fast interrupt sources.
+- Long overdue test code cleanup and documentation.
 
 *** 1.5.5 ***
 - FIX: Removed some "dead" code in the old ARMv7-M files (there are new

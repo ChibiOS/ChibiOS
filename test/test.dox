@@ -18,6 +18,12 @@
 */
 
 /**
+ * @defgroup test Test Runtime
+ * @details Runtime code for the test suite execution, this code is not part
+ *          of the OS and should not be included in user applications.
+ */
+
+/**
  * @page testsuite Testing Strategy
  * <h2>Description</h2>
  * Most of the ChibiOS/RT demos link a set of software modules (test suite) in

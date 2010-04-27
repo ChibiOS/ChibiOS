@@ -23,6 +23,8 @@
 /**
  * @page test_mbox Mailboxes test
  *
+ * File: @ref testmbox.c
+ *
  * <h2>Description</h2>
  * This module implements the test sequence for the @ref mailboxes subsystem.
  *
@@ -167,8 +169,8 @@ const struct testcase testmbox1 = {
 
 #endif /* CH_USE_MAILBOXES */
 
-/*
- * Test sequence for mailboxes pattern.
+/**
+ * @brief   Test sequence for mailboxes.
  */
 const struct testcase * const patternmbox[] = {
 #if CH_USE_MAILBOXES

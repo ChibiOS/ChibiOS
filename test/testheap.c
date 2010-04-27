@@ -23,6 +23,8 @@
 /**
  * @page test_heap Memory Heap test
  *
+ * File: @ref testheap.c
+ *
  * <h2>Description</h2>
  * This module implements the test sequence for the @ref heaps subsystem.
  *
@@ -151,8 +153,8 @@ const struct testcase testheap1 = {
 
 #endif /* CH_USE_HEAP.*/
 
-/*
- * Test sequence for heap pattern.
+/**
+ * @brief   Test sequence for heap.
  */
 const struct testcase * const patternheap[] = {
 #if CH_USE_HEAP
