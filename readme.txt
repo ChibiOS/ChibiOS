@@ -23,6 +23,8 @@
   |  |  +--platforms/   - HAL low level drivers implementations.
   |  |  |  +--AT91SAM7/ - Drivers for AT91SAM7 platform.
   |  |  |  +--AVR/      - Drivers for AVR platform.
+  |  |  |  +--LPC11xx/  - Drivers for LPC11xx platform.
+  |  |  |  +--LPC13xx/  - Drivers for LPC13xx platform.
   |  |  |  +--LPC214x/  - Drivers for LPC214x platform.
   |  |  |  +--MSP430/   - Drivers for MSP430 platform.
   |  |  |  +--SPC56x/   - Drivers for SPC56x/MPC563xx platforms.
@@ -36,7 +38,7 @@
   |  |  +--GCC/         - Ports for the GCC compiler.
   |  |  |  +--ARM/      - Port files for generic ARM architecture.
   |  |  |  +--ARM7/     - Port files for ARM7 architecture.
-  |  |  |  +--ARMCM3/   - Port files for ARMCM3 architecture.
+  |  |  |  +--ARMCM3/   - Port files for ARMCMx architectures (ARMv6/7-M).
   |  |  |  +--PPC/      - Port files for PowerPC architecture.
   |  |  |  +--AVR/      - Port files for AVR architecture.
   |  |  |  +--MSP430/   - Port files for MSP430 architecture.
@@ -57,6 +59,7 @@
 *****************************************************************************
 
 *** 1.5.6 ***
+- FIX: Fixed centralized ARM makefile (bug 2992747)(backported in 1.4.3).
 - FIX: Fixed write problems in MMC_SPI driver (bug 2991714)(backported in
   1.4.3).
 - FIX: Fixed wrong macros in chioch.h (bug 2989468).
