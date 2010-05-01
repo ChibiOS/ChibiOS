@@ -467,7 +467,10 @@ bool_t mmcStopSequentialRead(MMCDriver *mmcp) {
   chSysUnlock();
 
   spiSend(mmcp->mmc_spip, sizeof(stopcmd), stopcmd);
-  result = recvr1(mmcp) != 0x00;
+/*  result = recvr1(mmcp) != 0x00;*/
+  /* Note, ignored r1 response, it can be not zero, unknown issue.*/
+  recvr1(mmcp);
+  result = FALSE;
   spiUnselect(mmcp->mmc_spip);
 
   chSysLock();
@@ -539,8 +542,10 @@ bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
   spiSend(mmcp->mmc_spip, MMC_SECTOR_SIZE, buffer); /* Data.                */
   spiIgnore(mmcp->mmc_spip, 2);                     /* CRC ignored.         */
   spiReceive(mmcp->mmc_spip, 1, b);
-  if ((b[0] & 0x1F) == 0x05)
+  if ((b[0] & 0x1F) == 0x05) {
+    wait(mmcp);
     return FALSE;
+  }
 
   /* Error.*/
   spiUnselect(mmcp->mmc_spip);

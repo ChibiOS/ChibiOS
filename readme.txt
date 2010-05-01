@@ -51,6 +51,11 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.4.3 ***
+- FIX: Fixed centralized ARM makefile (bug 2992747).
+- FIX: Fixed write problems in MMC_SPI driver (bug 2991714).
+- FIX: Fixed wrong macro check in serial.h (bug 2989459).
+
 *** 1.4.2 ***
 - FIX: Fixed missing reschedule in chEvtSignal() (bug 2961208).
 - FIX: Removed C99-style variables declarations (bug 2964418).

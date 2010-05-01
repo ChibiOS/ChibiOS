@@ -66,7 +66,7 @@
  * @details Configuration parameter, this is the baud rate selected for the
  *          default configuration.
  */
-#if !defined(DEFAULT_USART_BITRATE) || defined(__DOXYGEN__)
+#if !defined(SERIAL_DEFAULT_BITRATE) || defined(__DOXYGEN__)
 #define SERIAL_DEFAULT_BITRATE      38400
 #endif
 
