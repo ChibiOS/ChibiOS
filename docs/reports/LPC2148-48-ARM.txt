@@ -5,7 +5,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.4.2
+*** Kernel:       1.4.3
 *** Architecture: ARM7TDMI
 *** GCC Version:  4.4.2
 

@@ -5,7 +5,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.4.2
+*** Kernel:       1.4.3
 *** Architecture: ARM7TDMI
 *** GCC Version:  4.4.2
 
@@ -105,7 +105,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 85291 threads/S
+--- Score : 85290 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
