@@ -1,5 +1,5 @@
 ***************************************************************************
-Options:  -Os -fomit-frame-pointer -mabi=apcs-gnu
+Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu
 Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 ***************************************************************************
 
