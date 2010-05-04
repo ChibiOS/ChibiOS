@@ -37,7 +37,7 @@ static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
     return;
   }
   n = chHeapStatus(NULL, &size);
-  siprintf(buf, "core free memory : %i bytes", chCoreFree());
+  siprintf(buf, "core free memory : %i bytes", chCoreStatus());
   shellPrintLine(chp, buf);
   siprintf(buf, "heap fragments   : %i", n);
   shellPrintLine(chp, buf);

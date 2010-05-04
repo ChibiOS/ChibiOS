@@ -78,6 +78,9 @@ static void heap1_execute(void) {
   void *p1, *p2, *p3;
   size_t n, sz;
 
+  /* Unrelated, for coverage only.*/
+  (void)chCoreStatus();
+
   /*
    * Test on the default heap in order to cover the core allocator at
    * least one time.

@@ -44,6 +44,7 @@
  * <h2>Test Cases</h2>
  * - @subpage test_dynamic_001
  * - @subpage test_dynamic_002
+ * - @subpage test_dynamic_003
  * .
  * @file testdyn.c
  * @brief Dynamic thread APIs test source file
@@ -189,6 +190,77 @@ const struct testcase testdyn2 = {
 };
 #endif /* CH_USE_MEMPOOLS */
 
+#if CH_USE_HEAP
+/**
+ * @page test_dynamic_003 Registry and References test
+ *
+ * <h2>Description</h2>
+ * Registry and Thread References APIs are tested for functionality and
+ * coverage.
+ */
+
+static unsigned regscan(void) {
+  Thread *tp;
+  unsigned i = 0;
+
+  tp = chRegFirstThread();
+  do {
+    i++;
+    tp = chRegNextThread(tp);
+  } while (tp != NULL);
+  return i;
+}
+
+static char *dyn3_gettest(void) {
+
+  return "Dynamic APIs, registry and references";
+}
+
+static void dyn3_setup(void) {
+
+  chHeapInit(&heap1, test.buffer, sizeof(union test_buffers));
+}
+
+static void dyn3_execute(void) {
+  unsigned n1, n2, n3;
+  tprio_t prio = chThdGetPriority();
+
+  /* Current number of threads in the system, two times just in case some
+     external detached thread terminated.*/
+  (void)regscan();
+  n1 = regscan();
+
+  /* Testing references increase/decrease and final detach.*/
+  threads[0] = chThdCreateFromHeap(&heap1, THD_WA_SIZE(THREADS_STACK_SIZE),
+                                   prio-1, thread, "A");
+  test_assert(1, threads[0]->p_refs == 1, "wrong initial reference counter");
+  chThdAddRef(threads[0]);
+  test_assert(2, threads[0]->p_refs == 2, "references increase failure");
+  chThdRelease(threads[0]);
+  test_assert(3, threads[0]->p_refs == 1, "references decrease failure");
+
+  /* Verify the new threads count.*/
+  n2 = regscan();
+  test_assert(4, n1 == n2 - 1, "unexpected threads count");
+
+  /* Detach and let the thread execute and terminate.*/
+  chThdRelease(threads[0]);
+  test_assert(5, threads[0]->p_refs == 0, "detach failure");
+  chThdSleepMilliseconds(50);           /* The thread just terminates.      */
+  test_assert(6, threads[0]->p_state == THD_STATE_FINAL, "invalid state");
+
+  /* Clearing the zombie by scanning the registry.*/
+  n3 = regscan();
+  test_assert(7, n1 == n3, "unexpected threads count");
+}
+
+const struct testcase testdyn3 = {
+  dyn3_gettest,
+  dyn3_setup,
+  NULL,
+  dyn3_execute
+};
+#endif /* CH_USE_HEAP */
 #endif /* CH_USE_DYNAMIC */
 
 /**
@@ -201,6 +273,9 @@ const struct testcase * const patterndyn[] = {
 #endif
 #if CH_USE_MEMPOOLS
   &testdyn2,
+#endif
+#if CH_USE_HEAP
+  &testdyn3,
 #endif
 #endif
   NULL

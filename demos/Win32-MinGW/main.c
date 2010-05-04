@@ -42,7 +42,7 @@ static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
     return;
   }
   n = chHeapStatus(NULL, &size);
-  sprintf(buf, "core free memory : %i bytes", chCoreFree());
+  sprintf(buf, "core free memory : %i bytes", chCoreStatus());
   shellPrintLine(chp, buf);
   sprintf(buf, "heap fragments   : %i", n);
   shellPrintLine(chp, buf);

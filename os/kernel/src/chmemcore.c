@@ -109,11 +109,11 @@ void *chCoreAllocI(size_t size) {
 }
 
 /**
- * @brief   Core memory left.
+ * @brief   Core memory status.
  *
  * @return              The size, in bytes, of the free core memory.
  */
-size_t chCoreFree(void) {
+size_t chCoreStatus(void) {
 
   return (size_t)(endmem - nextmem);
 }

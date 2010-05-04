@@ -60,6 +60,11 @@ static MEMORYPOOL_DECL(mp1, THD_WA_SIZE(THREADS_STACK_SIZE), NULL);
  * operation.
  */
 
+static void *null_provider(size_t size) {
+
+  return NULL;
+}
+
 static char *pools1_gettest(void) {
 
   return "Memory Pools, queue/dequeue";
@@ -83,6 +88,10 @@ static void pools1_execute(void) {
 
   /* Now must be empty. */
   test_assert(2, chPoolAlloc(&mp1) == NULL, "list not empty");
+
+  /* Covering the case where a provider is unable to return more memory.*/
+  chPoolInit(&mp1, 16, null_provider);
+  test_assert(3, chPoolAlloc(&mp1) == NULL, "provider returned memory");
 }
 
 const struct testcase testpools1 = {

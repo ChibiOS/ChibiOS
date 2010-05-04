@@ -113,7 +113,7 @@ static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
     return;
   }
   n = chHeapStatus(NULL, &size);
-  siprintf(buf, "core free memory : %lu bytes", chCoreFree());
+  siprintf(buf, "core free memory : %lu bytes", chCoreStatus());
   shellPrintLine(chp, buf);
   siprintf(buf, "heap fragments   : %lu", n);
   shellPrintLine(chp, buf);
