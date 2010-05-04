@@ -62,6 +62,7 @@ static MEMORYPOOL_DECL(mp1, THD_WA_SIZE(THREADS_STACK_SIZE), NULL);
 
 static void *null_provider(size_t size) {
 
+  (void)size;
   return NULL;
 }
 

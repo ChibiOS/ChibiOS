@@ -79,6 +79,10 @@
   can be easily added.
 - CHANGE: Renamed the chCoreFree() function in chCoreStatus() because it
   might be mistaken for a function that frees memory.
+- CHANGE: All ARM demos makefiles now defaults to arm-none-eabi- GNU
+  toolchains because the latest YAGARTO now uses that setting. It is still
+  possible to use arm-elf- toolchains by editing the TRGT variable in the
+  makefiles.
 - Various documentation fixes, added an article covering debugging under
   ChibiOS/RT, updated the article about interrupt handlers to cover also
   fast interrupt sources.
@@ -86,6 +90,7 @@
 - Added new test cases, now the coverage is again up to 100% except for the
   debug module that would require triggering system terminating tests (panics),
   the uncovered code is minimal and extremely simple anyway.
+- ChibiOS/RT has been successfully verified with the latest GCC 4.5.0.
 
 *** 1.5.5 ***
 - FIX: Removed some "dead" code in the old ARMv7-M files (there are new
