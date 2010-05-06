@@ -90,7 +90,7 @@
 - Long overdue test code cleanup and documentation.
 - Added new test cases, now the coverage is again up to 100% except for the
   debug module that would require triggering system terminating tests (panics),
-  the uncovered code is minimal and extremely simple anyway.
+  the uncovered code is minimal, extremely simple and working anyway.
 - ChibiOS/RT has been successfully verified with the latest GCC 4.5.0.
 
 *** 1.5.5 ***
