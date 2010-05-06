@@ -83,9 +83,10 @@
   toolchains because the latest YAGARTO now uses that setting. It is still
   possible to use arm-elf- toolchains by editing the TRGT variable in the
   makefiles.
-- Various documentation fixes, added an article covering debugging under
-  ChibiOS/RT, updated the article about interrupt handlers to cover also
-  fast interrupt sources.
+- Various documentation fixes, added new articles covering debugging under
+  ChibiOS/RT, OS integration, OS stop and restart. Updated the article about
+  interrupt handlers to cover also fast interrupt sources, updated the article
+  about the OS porting.
 - Long overdue test code cleanup and documentation.
 - Added new test cases, now the coverage is again up to 100% except for the
   debug module that would require triggering system terminating tests (panics),

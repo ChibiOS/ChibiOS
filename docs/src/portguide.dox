@@ -40,17 +40,20 @@
  * applies when porting the OS on a custom hardware using a supported
  * microcontroller. This task can be easily performed with the following
  * steps:
- * -# Create a new directory under the ChibiOS/RT installation directory:
- *    <code>./projects/<i>@<my_app_name@></i></code>
- * -# Copy the microcontroller demo code under the newly created directory.
- * -# Customize the demo. Usually there are only four files that need to
- *    be modified:
+ * -# Create a new directory under ./boards and copy inside the board files
+ *    from another board using the same microcontroller.
+ * -# Customize the board files:
  *   - @p board.h This file contains the I/O pins setup for the uC, it
- *     may also contain other board-dependent settings, as example, clock and
- *     PLL settings. Customize this file depending on your target hardware.
+ *     may also contain other board-dependent settings, as example, the clock
+ *     frequency. Customize this file depending on your target hardware.
  *   - @p board.c This file contains the initialization code, it is possible
  *     you just need to customize @p board.h and not this file. If you have
  *     some hardware specific initialization code then put it here.
+ *   .
+ * -# Create a new directory under the ChibiOS/RT installation directory:
+ *    <code>./projects/<i>@<my_app_name@></i></code>
+ * -# Copy an existing demo code under the newly created directory.
+ * -# Customize the demo:
  *   - @p Makefile You may edit this file in order to remove the test related
  *     sources and/or add you application source files.
  *   - @p main.c It contains the demo simple code, clean it and write your

@@ -1,0 +1,63 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @page article_stop_os How to cleanly stop the OS
+ * Stopping the OS should not be normally required but there are scenarios
+ * where one might want the complete control over the system again.
+ * As example entering into a bootload mode, or invoking some flashing
+ * algorithm locked in ROM.<br>
+ * ChibiOS/RT does not have a shutdown API and there is a reason for this,
+ * stopping the kernel would not be enough, a well defined operations sequence
+ * is required.<br>
+ * The shutdown operation should always be implemented into the @p main()
+ * function because in that context the stack pointer is guaranteed to be
+ * in the area allocated by the startup code. Stopping from a thread would
+ * leave the stack pointer "somewhere".<br>
+ * The shutdown sequence should include the following steps, some steps
+ * are optional and depend on the application:
+ * - Safely stop critical threads. As example a thread that uses a File System
+ *   should flush all the modified buffers to the persistent storage before
+ *   terminating.<br>
+ *   The system should be designed to request the thread termination using
+ *   @p chThdTerminate() and then wait its termination using @p chThdWait().
+ *   This phase can be skipped for non-critical threads.
+ * - Invoke the xxxStop() method on all the active device drivers, this
+ *   disables the interrupt sources used by the various peripherals. This
+ *   is required in order to not have interrupts after the shutdown that
+ *   may invoke OS primitives.
+ * - Invoke chSysDisable().
+ * - Stop the system timer whose service routine invokes
+ *   @p chSysTimerHandlerI().
+ * - Disable any other interrupt source that may invoke OS APIs. In general
+ *   all the interrupt sources that have handlers declared by using the
+ *   @p CH_IRQ_HANDLER() macro.
+ * - Perform any application related de-initialization.
+ * - Invoke chSysEnable().
+ * .
+ * Now the OS is stopped and you can safely assume there are nothing going on
+ * under the hood. From here you can also restart the OS after finishing your
+ * critical operations using the following sequence:
+ * - Invoke chSysDisable().
+ * - Restart the system timer.
+ * - Reinitialize the OS by invoking @p chSysInit().
+ * - Restart your device drivers using the @p xxxStart() methods.
+ * - Restart all your threads.
+ * .
+ */
