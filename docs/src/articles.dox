@@ -27,7 +27,7 @@
  */
 
 /**
- * @page page_general General.
+ * @page page_general General
  * Articles and guides not necessarily related to ChibiOS/RT.
  * - @subpage article_eclipse
  * - @subpage article_eclipse2
@@ -36,7 +36,7 @@
  */
 
 /**
- * @page page_kb Knowledge Base.
+ * @page page_kb Knowledge Base
  * Articles and guides about ChibiOS/RT.
  * - @subpage article_integrationguide
  * - @subpage article_portguide
@@ -53,7 +53,7 @@
  */
 
 /**
- * @page page_howtos How To's.
+ * @page page_howtos How To's
  * Articles describing how to implement specific tasks using ChibiOS/RT.
  * - @subpage article_create_thread
  * - @subpage article_interrupts
