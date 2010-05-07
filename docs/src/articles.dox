@@ -20,24 +20,46 @@
 /**
  * @page articles Articles and Code Samples
  * ChibiOS/RT Articles and Code Examples:
+ * - @subpage page_general
+ * - @subpage page_kb
+ * - @subpage page_howtos
+ * .
+ */
+
+/**
+ * @page page_general General.
+ * Articles and guides not necessarily related to ChibiOS/RT.
  * - @subpage article_eclipse
  * - @subpage article_eclipse2
+ * - @subpage article_jitter
+ * .
+ */
+
+/**
+ * @page page_kb Knowledge Base.
+ * Articles and guides about ChibiOS/RT.
  * - @subpage article_integrationguide
  * - @subpage article_portguide
  * - @subpage article_debug
- * - @subpage article_create_thread
- * - @subpage article_interrupts
- * - @subpage article_wakeup
- * - @subpage article_manage_memory
- * - @subpage article_stop_os
  * - @subpage article_stacks
  * - @subpage article_roundrobin
  * - @subpage article_lifecycle
  * - @subpage article_mutual_exclusion
  * - @subpage article_atomic
  * - @subpage article_saveram
- * - @subpage article_jitter
  * - @subpage article_timing
  * - @subpage article_design
  * .
  */
+
+/**
+ * @page page_howtos How To's.
+ * Articles describing how to implement specific tasks using ChibiOS/RT.
+ * - @subpage article_create_thread
+ * - @subpage article_interrupts
+ * - @subpage article_wakeup
+ * - @subpage article_manage_memory
+ * - @subpage article_stop_os
+ * .
+ */
+

@@ -60,4 +60,74 @@
  * - Restart your device drivers using the @p xxxStart() methods.
  * - Restart all your threads.
  * .
+ * <h2>Example</h2>
+ * This is an example of an hypothetical application that have to shutdown
+ * the OS when a certain event is generated.
+ * @code
+#include "ch.h"
+#include "hal.h"
+
+/* A shutdown flag.*/
+bool_t shutdown_required;
+
+/* Critical thread.*/
+static void my_thread(void *p) {
+
+  while (!chThdShouldTerminate()) {
+    /* Normal thread activity code.*/
+  }
+  /* Thread de-initialization before terminating, here you put the critical
+     thread finalization code.*/
+  return 0;
+}
+
+/* Main program, it is entered with interrupts disabled.*/
+void main(void) {
+
+  /* HAL initialization, you need to do this just once.*/
+  halInit();
+
+  /* Main loop, the main() function never exits.*/
+  while (TRUE) {
+    Thread *tp;
+
+    shutdown_required = FALSE;
+
+    /* ChibiOS/RT initialization. This function becomes an OS thread.*/
+    chSysInit();
+
+    /* Starting a device driver, SD2 in this case.*/
+    sdStart(&SD2, NULL);
+
+    /* Starting our critical thread.*/
+    tp = chThdCreateFromHeap(NULL, THD_WA_SIZE(256),
+                             NORMALPRIO, my_thread, &SD2);
+
+    /* Main thread activity into a loop.*/
+    while (!shutdown_required) {
+      /* Main activity, OS active until a shutdown becomes necessary.*/
+    }
+
+    /* Starting the shutdown sequence.*/
+    chThdTerminate(tp);     /* Requesting termination.                  */
+    chThdWait(tp);          /* Waiting for the actual termination.      */
+    sdStop(&SD2);           /* Stopping serial port 2.                  */
+    chSysDisable();
+    stop_system_timer();
+    stop_any_other_interrupt();
+    chSysEnable();
+
+    /* Now the main function is again a normal function, no more a
+       OS thread.*/
+    do_funny_stuff();
+
+    /* Restarting the OS but you could also stop the system or trigger a
+       reset instead.*/
+    chSysDisable();
+  }
+}
+ * @endcode
+ * As you can see it is possible to jump in and out of the "OS mode" quite
+ * easily. Note that this is just an example, the real code could be very
+ * different depending on your requirements.
  */
