@@ -53,6 +53,12 @@
  */
 
 #if CH_USE_DYNAMIC
+#if CH_USE_HEAP
+static MemoryHeap heap1;
+#endif
+#if CH_USE_MEMPOOLS
+static MemoryPool mp1;
+#endif
 
 /**
  * @page test_dynamic_001 Threads creation from Memory Heap
@@ -72,9 +78,6 @@ static msg_t thread(void *p) {
 }
 
 #if CH_USE_HEAP
-
-static MemoryHeap heap1;
-
 static char *dyn1_gettest(void) {
 
   return "Dynamic APIs, threads creation from heap";
@@ -138,8 +141,6 @@ const struct testcase testdyn1 = {
  * one to fail.
  */
 
-static MemoryPool mp1;
-
 static char *dyn2_gettest(void) {
 
   return "Dynamic APIs, threads creation from memory pool";
@@ -190,7 +191,7 @@ const struct testcase testdyn2 = {
 };
 #endif /* CH_USE_MEMPOOLS */
 
-#if CH_USE_HEAP
+#if CH_USE_HEAP && CH_USE_REGISTRY
 /**
  * @page test_dynamic_003 Registry and References test
  *
@@ -223,6 +224,7 @@ static void dyn3_setup(void) {
 
 static void dyn3_execute(void) {
   unsigned n1, n2, n3;
+  Thread *tp;
   tprio_t prio = chThdGetPriority();
 
   /* Current number of threads in the system, two times just in case some
@@ -231,23 +233,22 @@ static void dyn3_execute(void) {
   n1 = regscan();
 
   /* Testing references increase/decrease and final detach.*/
-  threads[0] = chThdCreateFromHeap(&heap1, THD_WA_SIZE(THREADS_STACK_SIZE),
-                                   prio-1, thread, "A");
-  test_assert(1, threads[0]->p_refs == 1, "wrong initial reference counter");
-  chThdAddRef(threads[0]);
-  test_assert(2, threads[0]->p_refs == 2, "references increase failure");
-  chThdRelease(threads[0]);
-  test_assert(3, threads[0]->p_refs == 1, "references decrease failure");
+  tp = chThdCreateFromHeap(&heap1, WA_SIZE, prio-1, thread, "A");
+  test_assert(1, tp->p_refs == 1, "wrong initial reference counter");
+  chThdAddRef(tp);
+  test_assert(2, tp->p_refs == 2, "references increase failure");
+  chThdRelease(tp);
+  test_assert(3, tp->p_refs == 1, "references decrease failure");
 
   /* Verify the new threads count.*/
   n2 = regscan();
   test_assert(4, n1 == n2 - 1, "unexpected threads count");
 
   /* Detach and let the thread execute and terminate.*/
-  chThdRelease(threads[0]);
-  test_assert(5, threads[0]->p_refs == 0, "detach failure");
+  chThdRelease(tp);
+  test_assert(5, tp->p_refs == 0, "detach failure");
   chThdSleepMilliseconds(50);           /* The thread just terminates.      */
-  test_assert(6, threads[0]->p_state == THD_STATE_FINAL, "invalid state");
+  test_assert(6, tp->p_state == THD_STATE_FINAL, "invalid state");
 
   /* Clearing the zombie by scanning the registry.*/
   n3 = regscan();
@@ -260,7 +261,7 @@ const struct testcase testdyn3 = {
   NULL,
   dyn3_execute
 };
-#endif /* CH_USE_HEAP */
+#endif /* CH_USE_HEAP && CH_USE_REGISTRY */
 #endif /* CH_USE_DYNAMIC */
 
 /**
@@ -274,7 +275,7 @@ const struct testcase * const patterndyn[] = {
 #if CH_USE_MEMPOOLS
   &testdyn2,
 #endif
-#if CH_USE_HEAP
+#if CH_USE_HEAP && CH_USE_REGISTRY
   &testdyn3,
 #endif
 #endif
