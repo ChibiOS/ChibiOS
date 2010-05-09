@@ -33,9 +33,8 @@
 /*
  * Board frequencies.
  */
-#define LSECLK          32768
-#define HSECLK          8000000
-#define HSICLK          8000000
+#define STM32_LSECLK            32768
+#define STM32_HSECLK            8000000
 
 /*
  * IO pins assignments.

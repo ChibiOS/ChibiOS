@@ -74,7 +74,7 @@ const STM32GPIOConfig pal_default_config =
 void hal_lld_init(void) {
 
   /* SysTick initialization using the system clock.*/
-  SysTick->LOAD = SYSCLK / CH_FREQUENCY - 1;
+  SysTick->LOAD = STM32_HCLK / CH_FREQUENCY - 1;
   SysTick->VAL = 0;
   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
                   SysTick_CTRL_ENABLE_Msk |
@@ -99,20 +99,22 @@ void stm32_clock_init(void) {
   RCC->CR |= RCC_CR_HSEON;
   while (!(RCC->CR & RCC_CR_HSERDY))
     ;                           /* Waits until HSE stable.                  */
-  /* PLL setup.*/
-  RCC->CFGR = RCC_CFGR_PLLSRC | PLLPREBITS | PLLMULBITS;
+#if STM32_SW == STM32_SW_PLL
+  /* PLL setup, only if the PLL is the selected source of the system clock
+     else it is left disabled.*/
+  RCC->CFGR = ((STM32_PLLMUL - 2) << 18) | STM32_PLLXTPRE | STM32_PLLSRC;
   RCC->CR |= RCC_CR_PLLON;
   while (!(RCC->CR & RCC_CR_PLLRDY))
     ;                           /* Waits until PLL stable.                  */
-  /* Clock sources.*/
-  RCC->CFGR |= RCC_CFGR_HPRE_DIV1   | RCC_CFGR_PPRE1_DIV2  |
-               RCC_CFGR_PPRE2_DIV2  | RCC_CFGR_ADCPRE_DIV8 |
-               RCC_CFGR_MCO_NOCLOCK | USBPREBITS;
+#endif
+  /* Clock settings.*/
+  RCC->CFGR = ((STM32_PLLMUL - 2) << 18) | STM32_PLLXTPRE | STM32_PLLSRC |
+              STM32_ADCPRE | STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;
 
   /* Flash setup and final clock selection.   */
-  FLASH->ACR = FLASHBITS;       /* Flash wait states depending on clock.    */
-  RCC->CFGR |= RCC_CFGR_SW_PLL; /* Switches the PLL clock ON.               */
-  while ((RCC->CFGR & RCC_CFGR_SW) != RCC_CFGR_SW_PLL)
+  FLASH->ACR = STM32_FLASHBITS; /* Flash wait states depending on clock.    */
+  RCC->CFGR |= STM32_SW;        /* Switches on the clock sources.           */
+  while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
     ;
 }
 

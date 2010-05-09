@@ -58,6 +58,10 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.5.7 ***
+- NEW: Improved clock initialization for the STM32, now it is possible to
+  configure the clock using any clock source and any HSE frequency.
+
 *** 1.5.6 ***
 - FIX: Fixed centralized ARM makefile (bug 2992747)(backported in 1.4.3).
 - FIX: Fixed write problems in MMC_SPI driver (bug 2991714)(backported in

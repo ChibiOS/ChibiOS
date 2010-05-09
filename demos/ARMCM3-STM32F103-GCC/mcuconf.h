@@ -34,7 +34,6 @@
 /*
  * HAL driver system settings.
  */
-#define STM32_SYSCLK                72
 
 /*
  * ADC driver system settings.
