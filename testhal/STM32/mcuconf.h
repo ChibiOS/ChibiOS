@@ -38,7 +38,10 @@
 /*
  * HAL driver system settings.
  */
-#define STM32_SYSCLK                72
+#define STM32_SW                    STM32_SW_PLL
+#define STM32_PLLSRC                STM32_PLLSRC_HSE
+#define STM32_PLLXTPRE              STM32_PLLXTPRE_DIV1
+#define STM32_PLLCLKOUT             72000000
 
 /*
  * ADC driver system settings.
