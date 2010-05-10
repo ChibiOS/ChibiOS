@@ -41,6 +41,13 @@
  */
 
 /**
+ * @defgroup STM32F10x_HAL STM32F103 HAL Support
+ * @brief HAL support for STM32 LD, MD and HD families.
+ *
+ * @ingroup STM32_HAL
+ */
+
+/**
  * @defgroup STM32_PAL STM32 I/O Ports Support
  * @brief I/O Ports peripherals support.
  * @details This module supports the STM3 GPIO controller. The controller
