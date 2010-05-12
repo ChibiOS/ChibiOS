@@ -62,8 +62,9 @@
 - NEW: Improved clock initialization for the STM32, now it is possible to
   configure the clock using any clock source and any HSE frequency.
   The clock tree parameters and checks are now calculated into a separate
-  file in order to support multiple clock trees for different families of
-  the STM32 platform.
+  file in order to support multiple clock trees for different sub-families
+  of the STM32 platform. Added separated clock trees for the LD/MD/HD
+  sub-family and the CL sub-family.
 
 *** 1.5.6 ***
 - FIX: Fixed centralized ARM makefile (bug 2992747)(backported in 1.4.3).
