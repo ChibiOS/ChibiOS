@@ -21,40 +21,31 @@
 #define _BOARD_H_
 
 /*
- * Setup for the Olimex STM33-P103 proto board.
+ * Setup for the STMicroelectronics STM3210C-EVAL evaluation board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_OLIMEX_STM32_P103
-#define BOARD_NAME "Olimex STM32-P103"
+#define BOARD_ST_STM3210C_EVAL
+#define BOARD_NAME "ST STM3210C-EVAL"
 
 /*
  * Board frequencies.
  */
 #define STM32_LSECLK            32768
-#define STM32_HSECLK            8000000
+#define STM32_HSECLK            25000000
 
 /*
  * MCU type, this macro is used by both the ST library and the ChibiOS/RT
  * native STM32 HAL.
  */
-#define STM32F10X_MD
+#define STM32F10X_CL
 
 /*
  * IO pins assignments.
+ * *********************TO BE COMPLETED*********************
  */
-#define GPIOA_BUTTON            0
-#define GPIOA_SPI1NSS           4
-
-#define GPIOB_SPI2NSS           12
-
-#define GPIOC_MMCWP             6
-#define GPIOC_MMCCP             7
-#define GPIOC_CANCNTL           10
-#define GPIOC_DISC              11
-#define GPIOC_LED               12
 
 /*
  * I/O ports initial setup, this configuration is established soon after reset
@@ -83,50 +74,37 @@
 /*
  * Port A setup.
  * Everything input with pull-up except:
- * PA0  - Normal input      (BUTTON).
- * PA2  - Alternate output  (USART2 TX).
- * PA3  - Normal input      (USART2 RX).
  */
-#define VAL_GPIOACRL            0x88884B84      /*  PA7...PA0 */
+#define VAL_GPIOACRL            0x88888888      /*  PA7...PA0 */
 #define VAL_GPIOACRH            0x88888888      /* PA15...PA8 */
 #define VAL_GPIOAODR            0xFFFFFFFF
 
 /*
  * Port B setup.
  * Everything input with pull-up except:
- * PB13 - Alternate output  (MMC SPI2 SCK).
- * PB14 - Normal input      (MMC SPI2 MISO).
- * PB15 - Alternate output  (MMC SPI2 MOSI).
  */
 #define VAL_GPIOBCRL            0x88888888      /*  PB7...PB0 */
-#define VAL_GPIOBCRH            0xB4B88888      /* PB15...PB8 */
+#define VAL_GPIOBCRH            0x88888888      /* PB15...PB8 */
 #define VAL_GPIOBODR            0xFFFFFFFF
 
 /*
  * Port C setup.
  * Everything input with pull-up except:
- * PC6  - Normal input because there is an external resistor.
- * PC7  - Normal input because there is an external resistor.
- * PC11 - Push Pull output (CAN CNTRL).
- * PC12 - Push Pull output (LED).
  */
-#define VAL_GPIOCCRL            0x44888888      /*  PC7...PC0 */
-#define VAL_GPIOCCRH            0x88833888      /* PC15...PC8 */
+#define VAL_GPIOCCRL            0x88888888      /*  PC7...PC0 */
+#define VAL_GPIOCCRH            0x88888888      /* PC15...PC8 */
 #define VAL_GPIOCODR            0xFFFFFFFF
 
 /*
  * Port D setup.
  * Everything input with pull-up except:
- * PD0  - Normal input (XTAL).
- * PD1  - Normal input (XTAL).
  */
-#define VAL_GPIODCRL            0x88888844      /*  PD7...PD0 */
+#define VAL_GPIODCRL            0x88888888      /*  PD7...PD0 */
 #define VAL_GPIODCRH            0x88888888      /* PD15...PD8 */
 #define VAL_GPIODODR            0xFFFFFFFF
 
 /*
  * Port E setup.
- * Everything input with pull-up except:
  */
 #define VAL_GPIOECRL            0x88888888      /*  PE7...PE0 */
 #define VAL_GPIOECRH            0x88888888      /* PE15...PE8 */

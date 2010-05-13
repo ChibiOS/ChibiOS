@@ -25,11 +25,7 @@
  * is enabled in halconf.h.
  *
  * IRQ priorities:
- * 15           Lowest, priority level reserved for PENDSV.
- * 14...4       Normal IRQs priority levels (0x80 used by SYSTICK).
- * 3            Used by SVCALL, do not share.
- * 2...0        Fast interrupts, can preempt the kernel but cannot use it
- *              directly.
+ * 15...0       Lowest...Highest.
  *
  * DMA priorities:
  * 0...3        Lowest...Highest.
@@ -41,7 +37,11 @@
 #define STM32_SW                    STM32_SW_PLL
 #define STM32_PLLSRC                STM32_PLLSRC_HSE
 #define STM32_PLLXTPRE              STM32_PLLXTPRE_DIV1
-#define STM32_PLLCLKOUT             72000000
+#define STM32_PLLMUL_VALUE          9
+#define STM32_HPRE                  STM32_HPRE_DIV1
+#define STM32_PPRE1                 STM32_PPRE1_DIV2
+#define STM32_PPRE2                 STM32_PPRE2_DIV2
+#define STM32_ADCPRE                STM32_ADCPRE_DIV4
 
 /*
  * ADC driver system settings.

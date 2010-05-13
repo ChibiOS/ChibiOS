@@ -67,37 +67,16 @@
 #define STM32_ADCPRE_DIV6       (2 << 14)   /**< HCLK divided by 6.         */
 #define STM32_ADCPRE_DIV8       (3 << 14)   /**< HCLK divided by 8.         */
 
-#define STM32_PLL1SRC_HSI       (0 << 16)   /**< PLL1 clock source is HSI.  */
-#define STM32_PLL1SRC_PREDIV1   (1 << 16)   /**< PLL1 clock source is
+#define STM32_PLLSRC_HSI        (0 << 16)   /**< PLL clock source is HSI.   */
+#define STM32_PLLSRC_PREDIV1    (1 << 16)   /**< PLL clock source is
                                                  PREDIV1.                   */
-
-#define STM32_PLL1MUL_MUL4      (2 << 18)   /**< PLL2CLK multiplied by 4.   */
-#define STM32_PLL1MUL_MUL5      (3 << 18)   /**< PLL2CLK multiplied by 5.   */
-#define STM32_PLL1MUL_MUL6      (4 << 18)   /**< PLL2CLK multiplied by 6.   */
-#define STM32_PLL1MUL_MUL7      (5 << 18)   /**< PLL2CLK multiplied by 7.   */
-#define STM32_PLL1MUL_MUL8      (6 << 18)   /**< PLL2CLK multiplied by 8.   */
-#define STM32_PLL1MUL_MUL9      (7 << 18)   /**< PLL2CLK multiplied by 9.   */
-#define STM32_PLL1MUL_MUL6P5    (13 << 18)  /**< PLL2CLK multiplied by 6.5. */
 
 #define STM32_OTGFSPRE_DIV2     (1 << 22)   /**< HCLK*2 divided by 2.       */
 #define STM32_OTGFSPRE_DIV3     (0 << 22)   /**< HCLK*2 divided by 3.       */
 
 /* RCC_CFGR2 register bits definitions.*/
-#define STM32_PREDIV1_DIV(n)    ((n) << 0)  /**< PREDIV1 divided by n.      */
-#define STM32_PREDIV2_DIV(n)    ((n) << 4)  /**< PREDIV2 divided by n.      */
-
 #define STM32_PREDIV1SRC_HSE    (0 << 16)   /**< PREDIV1 source is HSE.     */
 #define STM32_PREDIV1SRC_PLL2   (1 << 16)   /**< PREDIV1 source is PLL2.    */
-
-#define STM32_PLL2MUL_MUL8      (6 << 8)    /**< PLL2CLK multiplied by 8.   */
-#define STM32_PLL2MUL_MUL9      (7 << 8)    /**< PLL2CLK multiplied by 9.   */
-#define STM32_PLL2MUL_MUL10     (8 << 8)    /**< PLL2CLK multiplied by 10.  */
-#define STM32_PLL2MUL_MUL11     (9 << 8)    /**< PLL2CLK multiplied by 11.  */
-#define STM32_PLL2MUL_MUL12     (10 << 8)   /**< PLL2CLK multiplied by 12.  */
-#define STM32_PLL2MUL_MUL13     (11 << 8)   /**< PLL2CLK multiplied by 13.  */
-#define STM32_PLL2MUL_MUL14     (12 << 8)   /**< PLL2CLK multiplied by 14.  */
-#define STM32_PLL2MUL_MUL16     (14 << 8)   /**< PLL2CLK multiplied by 16.  */
-#define STM32_PLL2MUL_MUL20     (15 << 8)   /**< PLL2CLK multiplied by 20.  */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -105,32 +84,32 @@
 
 /**
  * @brief   Main clock source selection.
- * @note    If the selected clock source is not the PLL1 then the PLL1 is not
+ * @note    If the selected clock source is not the PLL then the PLL is not
  *          initialized and started.
  * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL1 and PLL2.
+ *          a 25MHz crystal using both PLL and PLL2.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
 #define STM32_SW                    STM32_SW_PLL
 #endif
 
 /**
- * @brief   Clock source for the PLL1.
- * @note    This setting has only effect if the PLL1 is selected as the
+ * @brief   Clock source for the PLL.
+ * @note    This setting has only effect if the PLL is selected as the
  *          system clock source.
  * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL1 and PLL2.
+ *          a 25MHz crystal using both PLL and PLL2.
  */
-#if !defined(STM32_PLL1SRC) || defined(__DOXYGEN__)
-#define STM32_PLL1SRC                STM32_PLL1SRC_PREDIV1
+#if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
+#define STM32_PLLSRC                STM32_PLLSRC_PREDIV1
 #endif
 
 /**
  * @brief   PREDIV1 clock source.
- * @note    This setting has only effect if the PLL1 is selected as the
+ * @note    This setting has only effect if the PLL is selected as the
  *          system clock source.
  * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL1 and PLL2.
+ *          a 25MHz crystal using both PLL and PLL2.
  */
 #if !defined(STM32_PREDIV1SCR) || defined(__DOXYGEN__)
 #define STM32_PREDIV1SRC            STM32_PREDIV1SRC_PLL2
@@ -138,50 +117,51 @@
 
 /**
  * @brief   PREDIV1 division factor.
- * @note    This setting has only effect if the PLL1 is selected as the
+ * @note    This setting has only effect if the PLL is selected as the
  *          system clock source.
  * @note    The allowed range is 1...16.
  * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL1 and PLL2.
+ *          a 25MHz crystal using both PLL and PLL2.
  */
-#if !defined(STM32_PREDIV1) || defined(__DOXYGEN__)
-#define STM32_PREDIV1               5
+#if !defined(STM32_PREDIV1_VALUE) || defined(__DOXYGEN__)
+#define STM32_PREDIV1_VALUE         5
 #endif
 
 /**
- * @brief   PLL1 multiplier value.
+ * @brief   PLL multiplier value.
+ * @note    The allowed range is 4...9.
  * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL1 and PLL2.
+ *          a 25MHz crystal using both PLL and PLL2.
  */
-#if !defined(STM32_PLL1MUL) || defined(__DOXYGEN__)
-#define STM32_PLL1MUL               STM32_PLL1MUL_MUL9
+#if !defined(STM32_PLLMUL_VALUE) || defined(__DOXYGEN__)
+#define STM32_PLLMUL_VALUE          9
 #endif
 
 /**
  * @brief   PREDIV2 division factor.
  * @note    This setting has only effect if the PLL2 is selected as the
- *          clock source for the PLL1.
+ *          clock source for the PLL.
  * @note    The allowed range is 1...16.
  * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL1 and PLL2.
+ *          a 25MHz crystal using both PLL and PLL2.
  */
-#if !defined(STM32_PREDIV2) || defined(__DOXYGEN__)
-#define STM32_PREDIV2               5
+#if !defined(STM32_PREDIV2_VALUE) || defined(__DOXYGEN__)
+#define STM32_PREDIV2_VALUE         5
 #endif
 
 /**
  * @brief   PLL2 multiplier value.
  * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL1 and PLL2.
+ *          a 25MHz crystal using both PLL and PLL2.
  */
 #if !defined(STM32_PLL2MUL) || defined(__DOXYGEN__)
-#define STM32_PLL2MUL               STM32_PLL2MUL_MUL8
+#define STM32_PLL2MUL_VALUE         8
 #endif
 
 /**
  * @brief   AHB prescaler value.
  * @note    The default value is calculated for a 72MHz system clock from
- *          a 8MHz crystal using the PLL.
+ *          a 25MHz crystal using both PLL and PLL2.
  */
 #if !defined(STM32_HPRE) || defined(__DOXYGEN__)
 #define STM32_HPRE                  STM32_HPRE_DIV1
@@ -205,27 +185,61 @@
  * @brief   ADC prescaler value.
  */
 #if !defined(STM32_ADCPRE) || defined(__DOXYGEN__)
-#define STM32_ADCPRE                 STM32_ADCPRE_DIV4
+#define STM32_ADCPRE                STM32_ADCPRE_DIV4
 #endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/* PREDIV1 prescaler setting check.*/
-#if (STM32_PREDIV1 < 1) || (STM32_PREDIV1 > 16)
-#error "invalid STM32_PREDIV1 value specified"
+/**
+ * @brief   PREDIV1 field.
+ */
+#if (STM32_PREDIV1_VALUE >= 1) && (STM32_PREDIV1_VALUE <= 16) ||             \
+    defined(__DOXYGEN__)
+#define STM32_PREDIV1               (STM32_PREDIV1_VALUE << 0)
+#else
+#error "invalid STM32_PREDIV1_VALUE value specified"
 #endif
 
-/* PREDIV2 prescaler setting check.*/
-#if (STM32_PREDIV2 < 1) || (STM32_PREDIV2 > 16)
-#error "invalid STM32_PREDIV2 value specified"
+/**
+ * @brief   PREDIV2 field.
+ */
+#if (STM32_PREDIV2_VALUE >= 1) && (STM32_PREDIV2_VALUE <= 16) ||             \
+    defined(__DOXYGEN__)
+#define STM32_PREDIV2               (STM32_PREDIV2_VALUE << 4)
+#else
+#error "invalid STM32_PREDIV2_VALUE value specified"
+#endif
+
+/**
+ * @brief   PLLMUL field.
+ */
+#if ((STM32_PLLMUL_VALUE >= 4) && (STM32_PLLMUL_VALUE <= 9)) ||             \
+    defined(__DOXYGEN__)
+#define STM32_PLLMUL                ((STM32_PLLMUL_VALUE - 2) << 18)
+#else
+#error "invalid STM32_PLLMUL_VALUE value specified"
+#endif
+
+/**
+ * @brief   PLL2MUL field.
+ */
+#if ((STM32_PLL2MUL_VALUE >= 8) && (STM32_PLL2MUL_VALUE <= 14)) ||          \
+    defined(__DOXYGEN__)
+#define STM32_PLL2MUL               ((STM32_PLLMUL_VALUE - 2) << 8)
+#elif (STM32_PLL2MUL_VALUE == 16)
+#define STM32_PLL2MUL               (14 << 8)
+#elif (STM32_PLL2MUL_VALUE == 20)
+#define STM32_PLL2MUL               (15 << 8)
+#else
+#error "invalid STM32_PLL2MUL_VALUE value specified"
 #endif
 
 /**
  * @brief   PLL2 input frequency.
  */
-#define STM32_PLL2CLKIN             (STM32_HSECLK / STM32_PREDIV2)
+#define STM32_PLL2CLKIN             (STM32_HSECLK / STM32_PREDIV2_VALUE)
 
 /* PLL2 input frequency range check.*/
 #if (STM32_PLL2CLKIN < 3000000) || (STM32_PLL2CLKIN > 5000000)
@@ -235,7 +249,7 @@
 /**
  * @brief   PLL2 output clock frequency.
  */
-#define STM32_PLL2CLKOUT            (STM32_PLL2CLKIN * STM32_PLL2MUL)
+#define STM32_PLL2CLKOUT            (STM32_PLL2CLKIN * STM32_PLL2MUL_VALUE)
 
 /* PLL2 output frequency range check.*/
 #if (STM32_PLL2CLKOUT < 40000000) || (STM32_PLL2CLKOUT > 74000000)
@@ -246,43 +260,44 @@
  * @brief   PREDIV1 input frequency.
  */
 #if (STM32_PREDIV1SRC == STM32_PREDIV1SRC_PLL2) || defined(__DOXYGEN__)
-#define STM32_PREDIV1CLK            STM32_HSECLK
-#elif STM32_PREDIV1SRC == STM32_PREDIV1SRC_HSE
 #define STM32_PREDIV1CLK            STM32_PLL2CLKOUT
+#elif STM32_PREDIV1SRC == STM32_PREDIV1SRC_HSE
+#define STM32_PREDIV1CLK            STM32_HSECLK
 #else
+#error "invalid STM32_PREDIV1SRC value specified"
 #endif
 
 /**
- * @brief   PLL1 input clock frequency.
+ * @brief   PLL input clock frequency.
  */
-#if (STM32_PLL1SRC == STM32_PLL1SRC_PREDIV1) || defined(__DOXYGEN__)
-#define STM32_PLL1CLKIN             (STM32_PREDIV1CLK / STM32_PREDIV1)
+#if (STM32_PLLSRC == STM32_PLLSRC_PREDIV1) || defined(__DOXYGEN__)
+#define STM32_PLLCLKIN             (STM32_PREDIV1CLK / STM32_PREDIV1)
 #elif STM32_PLLSRC == STM32_PLLSRC_HSI
-#define STM32_PLL1CLKIN             (STM32_HSICLK / 2)
+#define STM32_PLLCLKIN             (STM32_HSICLK / 2)
 #else
-#error "invalid STM32_PLL1SRC value specified"
+#error "invalid STM32_PLLSRC value specified"
 #endif
 
-/* PLL1 input frequency range check.*/
-#if (STM32_PLL1CLKIN < 3000000) || (STM32_PLL1CLKIN > 12000000)
-#error "STM32_PLL1CLKIN outside acceptable range (3...12MHz)"
+/* PLL input frequency range check.*/
+#if (STM32_PLLCLKIN < 3000000) || (STM32_PLLCLKIN > 12000000)
+#error "STM32_PLLCLKIN outside acceptable range (3...12MHz)"
 #endif
 
 /**
- * @brief   PLL1 output clock frequency.
+ * @brief   PLL output clock frequency.
  */
-#define STM32_PLL1CLKOUT            (STM32_PLL1CLKIN * STM32_PLL1MUL)
+#define STM32_PLLCLKOUT            (STM32_PLLCLKIN * STM32_PLLMUL_VALUE)
 
-/* PLL1 output frequency range check.*/
-#if (STM32_PLL1CLKOUT < 18000000) || (STM32_PLL1CLKOUT > 72000000)
-#error "STM32_PLL1CLKOUT outside acceptable range (18...72MHz)"
+/* PLL output frequency range check.*/
+#if (STM32_PLLCLKOUT < 18000000) || (STM32_PLLCLKOUT > 72000000)
+#error "STM32_PLLCLKOUT outside acceptable range (18...72MHz)"
 #endif
 
 /**
  * @brief   System clock source.
  */
 #if (STM32_SW == STM32_SW_PLL) || defined(__DOXYGEN__)
-#define STM32_SYSCLK                STM32_PLL1CLKOUT
+#define STM32_SYSCLK                STM32_PLLCLKOUT
 #elif (STM32_SW == STM32_SW_HSI)
 #define STM32_SYSCLK                STM32_HSICLK
 #elif (STM32_SW == STM32_SW_HSE)

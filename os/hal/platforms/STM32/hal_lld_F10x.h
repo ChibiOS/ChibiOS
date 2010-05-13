@@ -84,7 +84,9 @@
  * @note    The default value is calculated for a 72MHz system clock from
  *          a 8MHz crystal using the PLL.
  */
+#if !defined(STM32_SW) || defined(__DOXYGEN__)
 #define STM32_SW                    STM32_SW_PLL
+#endif
 
 /**
  * @brief   Clock source for the PLL.
@@ -109,16 +111,13 @@
 #endif
 
 /**
- * @brief   Desired PLL output frequency.
- * @note    The PLL multiplier is calculated from the input clock and this
- *          value.
- * @note    This setting has only effect if the PLL is selected as the
- *          system clock source.
+ * @brief   PLL multiplier value.
+ * @note    The allowed range is 2...16.
  * @note    The default value is calculated for a 72MHz system clock from
  *          a 8MHz crystal using the PLL.
  */
-#if !defined(STM32_PLLCLKOUT) || defined(__DOXYGEN__)
-#define STM32_PLLCLKOUT             72000000
+#if !defined(STM32_PLLMUL_VALUE) || defined(__DOXYGEN__)
+#define STM32_PLLMUL_VALUE          9
 #endif
 
 /**
@@ -148,7 +147,7 @@
  * @brief   ADC prescaler value.
  */
 #if !defined(STM32_ADCPRE) || defined(__DOXYGEN__)
-#define STM32_ADCPRE                 STM32_ADCPRE_DIV4
+#define STM32_ADCPRE                STM32_ADCPRE_DIV4
 #endif
 
 /*===========================================================================*/
@@ -159,6 +158,15 @@
 #if (STM32_PLLXTPRE != STM32_PLLXTPRE_DIV1) &&                              \
     (STM32_PLLXTPRE != STM32_PLLXTPRE_DIV2)
 #error "invalid STM32_PLLXTPRE value specified"
+#endif
+/**
+ * @brief   PLLMUL field.
+ */
+#if ((STM32_PLLMUL_VALUE >= 2) && (STM32_PLLMUL_VALUE <= 16)) ||             \
+    defined(__DOXYGEN__)
+#define STM32_PLLMUL                ((STM32_PLLMUL_VALUE - 2) << 18)
+#else
+#error "invalid STM32_PLLMUL_VALUE value specified"
 #endif
 
 /**
@@ -181,20 +189,14 @@
 #error "STM32_PLLCLKIN outside acceptable range (3...12MHz)"
 #endif
 
+/**
+ * @brief   PLL output clock frequency.
+ */
+#define STM32_PLLCLKOUT             (STM32_PLLCLKIN * STM32_PLLMUL_VALUE)
+
 /* PLL output frequency range check.*/
 #if (STM32_PLLCLKOUT < 16000000) || (STM32_PLLCLKOUT > 72000000)
 #error "STM32_PLLCLKOUT outside acceptable range (16...72MHz)"
-#endif
-
-/**
- * @brief   PLL multiplier.
- */
-#define STM32_PLLMUL                (STM32_PLLCLKOUT / STM32_PLLCLKIN)
-#if (STM32_PLLMUL % 1) != 0
-#error "the requested PLL output frequency is not a multiple of the input frequency"
-#endif
-#if (STM32_PLLMUL < 2) || (STM32_PLLMUL > 16)
-#error "the calculated PLL multiplier is out of the allowed range (2...16)"
 #endif
 
 /**
@@ -210,6 +212,7 @@
 #error "invalid STM32_SYSCLK_SW value specified"
 #endif
 
+/* Check on the system clock.*/
 #if STM32_SYSCLK > 72000000
 #error "STM32_SYSCLK above maximum rated frequency (72MHz)"
 #endif
