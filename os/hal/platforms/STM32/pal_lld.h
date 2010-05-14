@@ -18,8 +18,9 @@
 */
 
 /**
- * @file STM32/pal_lld.h
- * @brief STM32 GPIO low level driver header.
+ * @file    STM32/pal_lld.h
+ * @brief   STM32 GPIO low level driver header.
+ *
  * @addtogroup STM32_PAL
  * @{
  */
@@ -30,21 +31,25 @@
 #if CH_HAL_USE_PAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
-/* I/O Ports Types and constants.                                            */
+/* Unsupported modes and specific modes                                      */
 /*===========================================================================*/
 
 /**
- * @brief STM32 specific alternate push-pull output mode.
+ * @brief   STM32 specific alternate push-pull output mode.
  */
 #define PAL_MODE_STM32_ALTERNATE_PUSHPULL   16
 
 /**
- * @brief STM32 specific alternate open-drain output mode.
+ * @brief   STM32 specific alternate open-drain output mode.
  */
 #define PAL_MODE_STM32_ALTERNATE_OPENDRAIN  17
 
+/*===========================================================================*/
+/* I/O Ports Types and constants.                                            */
+/*===========================================================================*/
+
 /**
- * @brief GPIO port setup info.
+ * @brief   GPIO port setup info.
  */
 typedef struct {
   /** Initial value for ODR register.*/
@@ -56,7 +61,7 @@ typedef struct {
 } stm32_gpio_setup_t;
 
 /**
- * @brief STM32 GPIO static initializer.
+ * @brief   STM32 GPIO static initializer.
  * @details An instance of this structure must be passed to @p palInit() at
  *          system startup time in order to initialize the digital I/O
  *          subsystem. This represents only the initial setup, specific pads
@@ -84,13 +89,13 @@ typedef struct {
 } STM32GPIOConfig;
 
 /**
- * @brief Width, in bits, of an I/O port.
+ * @brief   Width, in bits, of an I/O port.
  */
 #define PAL_IOPORTS_WIDTH 16
 
 /**
- * @brief Whole port mask.
- * @brief This macro specifies all the valid bits into a port.
+ * @brief   Whole port mask.
+ * @brief   This macro specifies all the valid bits into a port.
  */
 #define PAL_WHOLE_PORT ((ioportmask_t)0xFFFF)
 
@@ -100,7 +105,7 @@ typedef struct {
 typedef uint32_t ioportmask_t;
 
 /**
- * @brief Port Identifier.
+ * @brief   Port Identifier.
  * @details This type can be a scalar or some kind of pointer, do not make
  *          any assumption about it, use the provided macros when populating
  *          variables of this type.
@@ -114,40 +119,40 @@ typedef GPIO_TypeDef * ioportid_t;
 /*===========================================================================*/
 
 /**
- * @brief GPIO port A identifier.
+ * @brief   GPIO port A identifier.
  */
 #define IOPORT1         GPIOA
 
 /**
- * @brief GPIO port B identifier.
+ * @brief   GPIO port B identifier.
  */
 #define IOPORT2         GPIOB
 
 /**
- * @brief GPIO port C identifier.
+ * @brief   GPIO port C identifier.
  */
 #define IOPORT3         GPIOC
 
 /**
- * @brief GPIO port D identifier.
+ * @brief   GPIO port D identifier.
  */
 #define IOPORT4         GPIOD
 
 /**
- * @brief GPIO port E identifier.
+ * @brief   GPIO port E identifier.
  */
 #if !defined(STM32F10X_LD) || defined(__DOXYGEN__)
 #define IOPORT5         GPIOE
 #endif
 
 /**
- * @brief GPIO port F identifier.
+ * @brief   GPIO port F identifier.
  */
 #if defined(STM32F10X_HD) || defined(__DOXYGEN__)
 #define IOPORT6         GPIOF
 
 /**
- * @brief GPIO port G identifier.
+ * @brief   GPIO port G identifier.
  */
 #define IOPORT7         GPIOG
 #endif
@@ -158,100 +163,94 @@ typedef GPIO_TypeDef * ioportid_t;
 /*===========================================================================*/
 
 /**
- * @brief GPIO ports subsystem initialization.
+ * @brief   GPIO ports subsystem initialization.
  */
 #define pal_lld_init(config) _pal_lld_init(config)
 
 /**
- * @brief Reads an I/O port.
+ * @brief   Reads an I/O port.
  * @details This function is implemented by reading the GPIO IDR register, the
  *          implementation has no side effects.
+ * @note    This function is not meant to be invoked directly by the application
+ *          code.
  *
- * @param[in] port the port identifier
- * @return the port bits
- *
- * @note This function is not meant to be invoked directly by the application
- *       code.
+ * @param[in] port      the port identifier
+ * @return              The port bits.
  */
 #define pal_lld_readport(port) ((port)->IDR)
 
 /**
- * @brief Reads the output latch.
+ * @brief   Reads the output latch.
  * @details This function is implemented by reading the GPIO ODR register, the
  *          implementation has no side effects.
+ * @note    This function is not meant to be invoked directly by the application
+ *          code.
  *
- * @param[in] port the port identifier
- * @return The latched logical states.
- *
- * @note This function is not meant to be invoked directly by the application
- *       code.
+ * @param[in] port      the port identifier
+ * @return              The latched logical states.
  */
 #define pal_lld_readlatch(port) ((port)->ODR)
 
 /**
- * @brief Writes on a I/O port.
+ * @brief   Writes on a I/O port.
  * @details This function is implemented by writing the GPIO ODR register, the
  *          implementation has no side effects.
+ * @note    This function is not meant to be invoked directly by the
+ *          application code.
+ * @note    Writing on pads programmed as pull-up or pull-down has the side
+ *          effect to modify the resistor setting because the output latched
+ *          data is used for the resistor selection.
  *
- * @param[in] port the port identifier
- * @param[in] bits the bits to be written on the specified port
- *
- * @note This function is not meant to be invoked directly by the application
- *       code.
- * @note Writing on pads programmed as pull-up or pull-down has the side
- *       effect to modify the resistor setting because the output latched data
- *       is used for the resistor selection.
+ * @param[in] port      the port identifier
+ * @param[in] bits      the bits to be written on the specified port
  */
 #define pal_lld_writeport(port, bits) ((port)->ODR = (bits))
 
 /**
- * @brief Sets a bits mask on a I/O port.
+ * @brief   Sets a bits mask on a I/O port.
  * @details This function is implemented by writing the GPIO BSRR register, the
  *          implementation has no side effects.
+ * @note    This function is not meant to be invoked directly by the
+ *          application code.
+ * @note    Writing on pads programmed as pull-up or pull-down has the side
+ *          effect to modify the resistor setting because the output latched
+ *          data is used for the resistor selection.
  *
- * @param[in] port the port identifier
- * @param[in] bits the bits to be ORed on the specified port
- *
- * @note This function is not meant to be invoked directly by the application
- *       code.
- * @note Writing on pads programmed as pull-up or pull-down has the side
- *       effect to modify the resistor setting because the output latched data
- *       is used for the resistor selection.
+ * @param[in] port      the port identifier
+ * @param[in] bits      the bits to be ORed on the specified port
  */
 #define pal_lld_setport(port, bits) ((port)->BSRR = (bits))
 
 /**
- * @brief Clears a bits mask on a I/O port.
+ * @brief   Clears a bits mask on a I/O port.
  * @details This function is implemented by writing the GPIO BRR register, the
  *          implementation has no side effects.
+ * @note    This function is not meant to be invoked directly by the
+ *          application code.
+ * @note    Writing on pads programmed as pull-up or pull-down has the side
+ *          effect to modify the resistor setting because the output latched
+ *          data is used for the resistor selection.
  *
- * @param[in] port the port identifier
- * @param[in] bits the bits to be cleared on the specified port
- *
- * @note This function is not meant to be invoked directly by the application
- *       code.
- * @note Writing on pads programmed as pull-up or pull-down has the side
- *       effect to modify the resistor setting because the output latched data
- *       is used for the resistor selection.
+ * @param[in] port      the port identifier
+ * @param[in] bits      the bits to be cleared on the specified port
  */
 #define pal_lld_clearport(port, bits) ((port)->BRR = (bits))
 
 /**
- * @brief Writes a group of bits.
+ * @brief   Writes a group of bits.
  * @details This function is implemented by writing the GPIO BSRR register, the
  *          implementation has no side effects.
+ * @note    This function is not meant to be invoked directly by the
+ *          application code.
+ * @note    Writing on pads programmed as pull-up or pull-down has the side
+ *          effect to modify the resistor setting because the output latched
+ *          data is used for the resistor selection.
  *
- * @param[in] port the port identifier
- * @param[in] mask the group mask
- * @param[in] offset the group bit offset within the port
- * @param[in] bits the bits to be written. Values exceeding the group width
- *            are masked.
- *
- * @note This function is not meant to be invoked directly by the application
- *       code.
- * @note Writing on pads programmed as pull-up or pull-down has the side
- *       effect to modify the resistor setting because the output latched data
- *       is used for the resistor selection.
+ * @param[in] port      the port identifier
+ * @param[in] mask      the group mask
+ * @param[in] offset    the group bit offset within the port
+ * @param[in] bits      the bits to be written. Values exceeding the group
+ *                      width are masked.
  */
 #define pal_lld_writegroup(port, mask, offset, bits) {                  \
   (port)->BSRR = ((~(bits) & (mask)) << (16 + (offset))) |              \
@@ -259,35 +258,34 @@ typedef GPIO_TypeDef * ioportid_t;
 }
 
 /**
- * @brief Pads group mode setup.
+ * @brief   Pads group mode setup.
  * @details This function programs a pads group belonging to the same port
  *          with the specified mode.
+ * @note    This function is not meant to be invoked directly by the
+ *          application code.
+ * @note    Writing on pads programmed as pull-up or pull-down has the side
+ *          effect to modify the resistor setting because the output latched
+ *          data is used for the resistor selection.
  *
- * @param[in] port the port identifier
- * @param[in] mask the group mask
- * @param[in] mode the mode
- *
- * @note This function is not meant to be invoked directly by the application
- *       code.
- * @note Writing on pads programmed as pull-up or pull-down has the side
- *       effect to modify the resistor setting because the output latched data
- *       is used for the resistor selection.
+ * @param[in] port      the port identifier
+ * @param[in] mask      the group mask
+ * @param[in] mode      the mode
  */
 #define pal_lld_setgroupmode(port, mask, mode) \
   _pal_lld_setgroupmode(port, mask, mode)
 
 /**
- * @brief Writes a logical state on an output pad.
+ * @brief   Writes a logical state on an output pad.
+ * @note    This function is not meant to be invoked directly by the
+ *          application code.
+ * @note    Writing on pads programmed as pull-up or pull-down has the side
+ *          effect to modify the resistor setting because the output latched
+ *          data is used for the resistor selection.
  *
- * @param[in] port the port identifier
- * @param[in] pad the pad number within the port
- * @param[out] bit the logical value, the value must be @p 0 or @p 1
- *
- * @note This function is not meant to be invoked directly by the application
- *       code.
- * @note Writing on pads programmed as pull-up or pull-down has the side
- *       effect to modify the resistor setting because the output latched data
- *       is used for the resistor selection.
+ * @param[in] port      the port identifier
+ * @param[in] pad       the pad number within the port
+ * @param[in] bit       logical value, the value must be @p PAL_LOW or
+ *                      @p PAL_HIGH
  */
 #define pal_lld_writepad(port, pad, bit) pal_lld_writegroup(port, 1, pad, bit)
 

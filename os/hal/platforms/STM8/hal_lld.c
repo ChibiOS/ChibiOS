@@ -40,7 +40,7 @@
  * @brief   PAL setup.
  * @details Digital I/O ports static configuration as defined in @p board.h.
  */
-ROMCONST STM8GPIOConfig pal_default_config =
+ROMCONST PALConfig pal_default_config =
 {
   {
     {VAL_GPIOAODR, 0, VAL_GPIOADDR, VAL_GPIOACR1, VAL_GPIOACR2},

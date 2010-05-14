@@ -34,6 +34,18 @@
 /* Unsupported modes and specific modes                                      */
 /*===========================================================================*/
 
+#undef PAL_MODE_INPUT_PULLDOWN
+
+/**
+ * @brief   STM8 specific alternate push-pull slow output mode.
+ */
+#define PAL_MODE_OUTPUT_PUSHPULL_SLOW   16
+
+/**
+ * @brief   STM8 specific alternate open-drain slow output mode.
+ */
+#define PAL_MODE_OUTPUT_OPENDRAIN_SLOW  17
+
 /*===========================================================================*/
 /* I/O Ports Types and constants.                                            */
 /*===========================================================================*/
@@ -58,23 +70,23 @@ typedef struct {
  */
 typedef struct {
   gpio_t                P[9];
-} STM8GPIOConfig;
+} PALConfig;
 
 /**
  * @brief   Width, in bits, of an I/O port.
  */
-#define PAL_IOPORTS_WIDTH 32
+#define PAL_IOPORTS_WIDTH 8
 
 /**
  * @brief   Whole port mask.
  * @brief   This macro specifies all the valid bits into a port.
  */
-#define PAL_WHOLE_PORT ((ioportmask_t)0xFFFFFFFF)
+#define PAL_WHOLE_PORT ((ioportmask_t)0xFF)
 
 /**
  * @brief   Digital I/O port sized unsigned type.
  */
-typedef uint32_t ioportmask_t;
+typedef uint8_t ioportmask_t;
 
 /**
  * @brief   Port Identifier.
@@ -88,7 +100,7 @@ typedef gpio_t *ioportid_t;
 /**
  * @brief   GPIO ports as a whole.
  */
-#define IOPORTS         ((STM8GPIOConfig *)0x5000)
+#define IOPORTS         ((PALConfig *)0x5000)
 
 /**
  * @brief   GPIO port A identifier.
@@ -194,7 +206,7 @@ typedef gpio_t *ioportid_t;
  */
 #define pal_lld_setgroupmode(port, mask, mode) ((void)(mode))
 
-extern ROMCONST STM8GPIOConfig pal_default_config;
+extern ROMCONST PALConfig pal_default_config;
 
 #endif /* CH_HAL_USE_PAL */
 

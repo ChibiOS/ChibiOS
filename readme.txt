@@ -59,6 +59,7 @@
 *****************************************************************************
 
 *** 1.5.7 ***
+- FIX: Fixed wrong GPIO ports size in the STM8 PAL driver (bug 3001528).
 - NEW: Improved clock initialization for the STM32, now it is possible to
   configure the clock using any clock source and any HSE frequency.
 - NEW: The STM32 clock tree parameters and checks are now calculated into

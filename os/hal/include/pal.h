@@ -388,7 +388,7 @@ typedef struct {
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
- * @param[out] bit      logical value, the value must be @p PAL_LOW or
+ * @param[in] bit       logical value, the value must be @p PAL_LOW or
  *                      @p PAL_HIGH
  */
 #if !defined(pal_lld_writepad) || defined(__DOXYGEN__)
