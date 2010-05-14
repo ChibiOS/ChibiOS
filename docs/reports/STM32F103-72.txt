@@ -5,11 +5,11 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.5.6unstable
+*** Kernel:       1.5.7unstable
 *** GCC Version:  4.5.0
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
-*** Platform:     STM32
+*** Platform:     STM32 MD
 *** Test Board:   Olimex STM32-P103
 
 ----------------------------------------------------------------------------
@@ -95,7 +95,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 250283 msgs/S, 500566 ctxswc/S
+--- Score : 250284 msgs/S, 500568 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
@@ -111,7 +111,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 159279 threads/S
+--- Score : 159280 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
