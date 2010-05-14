@@ -106,46 +106,55 @@ typedef gpio_t *ioportid_t;
  * @brief   GPIO port A identifier.
  */
 #define IOPORT1         ((gpio_t *)0x5000)
+#define GPIOA           IOPORT1
 
 /**
  * @brief   GPIO port B identifier.
  */
 #define IOPORT2         ((gpio_t *)0x5005)
+#define GPIOB           IOPORT2
 
 /**
  * @brief   GPIO port C identifier.
  */
 #define IOPORT3         ((gpio_t *)0x500A)
+#define GPIOC           IOPORT3
 
 /**
  * @brief   GPIO port D identifier.
  */
 #define IOPORT4         ((gpio_t *)0x500F)
+#define GPIOD           IOPORT4
 
 /**
  * @brief   GPIO port E identifier.
  */
 #define IOPORT5         ((gpio_t *)0x5014)
+#define GPIOE           IOPORT5
 
 /**
  * @brief   GPIO port F identifier.
  */
 #define IOPORT6         ((gpio_t *)0x5019)
+#define GPIOF           IOPORT6
 
 /**
  * @brief   GPIO port G identifier.
  */
 #define IOPORT7         ((gpio_t *)0x501E)
+#define GPIOG           IOPORT7
 
 /**
  * @brief   GPIO port H identifier.
  */
 #define IOPORT8         ((gpio_t *)0x5023)
+#define GPIOH           IOPORT8
 
 /**
  * @brief   GPIO port I identifier.
  */
 #define IOPORT9         ((gpio_t *)0x5028)
+#define GPIOI           IOPORT9
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */
@@ -204,9 +213,20 @@ typedef gpio_t *ioportid_t;
  * @param[in] mask      group mask
  * @param[in] mode      group mode
  */
-#define pal_lld_setgroupmode(port, mask, mode) ((void)(mode))
+#define pal_lld_setgroupmode(port, mask, mode)                              \
+    _pal_lld_setgroupmode(port, mask, mode)
 
 extern ROMCONST PALConfig pal_default_config;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void _pal_lld_setgroupmode(ioportid_t port,
+                             ioportmask_t mask,
+                             uint_fast8_t mode);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* CH_HAL_USE_PAL */
 

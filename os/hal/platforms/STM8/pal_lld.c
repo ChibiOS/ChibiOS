@@ -50,6 +50,59 @@
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   Pads mode setup.
+ * @details This function programs a pads group belonging to the same port
+ *          with the specified mode.
+ * @note    This function is not meant to be invoked directly by the
+ *          application code.
+ * @note    @p PAL_MODE_UNCONNECTED is implemented as push pull output at 2MHz.
+ *
+ * @param[in] port      the port identifier
+ * @param[in] mask      the group mask
+ * @param[in] mode      the mode
+ */
+void _pal_lld_setgroupmode(ioportid_t port,
+                           ioportmask_t mask,
+                           uint_fast8_t mode) {
+
+  switch (mode & PAL_MODE_MASK) {
+  case PAL_MODE_RESET:
+  case PAL_MODE_INPUT_PULLUP:
+    port->DDR &= ~mask;
+    port->CR1 |=  mask;
+    port->CR2 &= ~mask;
+    break;
+  case PAL_MODE_INPUT:
+  case PAL_MODE_INPUT_ANALOG:
+    port->DDR &= ~mask;
+    port->CR1 &= ~mask;
+    port->CR2 &= ~mask;
+    break;
+  case PAL_MODE_UNCONNECTED:
+  case PAL_MODE_OUTPUT_PUSHPULL_SLOW:
+    port->DDR |=  mask;
+    port->CR1 |=  mask;
+    port->CR2 &= ~mask;
+    break;
+  case PAL_MODE_OUTPUT_PUSHPULL:
+    port->DDR |=  mask;
+    port->CR1 |=  mask;
+    port->CR2 |=  mask;
+    break;
+  case PAL_MODE_OUTPUT_OPENDRAIN_SLOW:
+    port->DDR |=  mask;
+    port->CR1 &= ~mask;
+    port->CR2 &= ~mask;
+    break;
+  case PAL_MODE_OUTPUT_OPENDRAIN:
+    port->DDR |=  mask;
+    port->CR1 &= ~mask;
+    port->CR2 |=  mask;
+    break;
+  }
+}
+
 #endif /* CH_HAL_USE_PAL */
 
 /** @} */

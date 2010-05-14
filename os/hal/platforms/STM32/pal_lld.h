@@ -252,9 +252,9 @@ typedef GPIO_TypeDef * ioportid_t;
  * @param[in] bits      the bits to be written. Values exceeding the group
  *                      width are masked.
  */
-#define pal_lld_writegroup(port, mask, offset, bits) {                  \
-  (port)->BSRR = ((~(bits) & (mask)) << (16 + (offset))) |              \
-                 (((bits) & (mask)) << (offset));                       \
+#define pal_lld_writegroup(port, mask, offset, bits) {                      \
+  (port)->BSRR = ((~(bits) & (mask)) << (16 + (offset))) |                  \
+                 (((bits) & (mask)) << (offset));                           \
 }
 
 /**
@@ -271,7 +271,7 @@ typedef GPIO_TypeDef * ioportid_t;
  * @param[in] mask      the group mask
  * @param[in] mode      the mode
  */
-#define pal_lld_setgroupmode(port, mask, mode) \
+#define pal_lld_setgroupmode(port, mask, mode)                              \
   _pal_lld_setgroupmode(port, mask, mode)
 
 /**
