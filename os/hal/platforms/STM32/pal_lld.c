@@ -46,7 +46,7 @@
                        RCC_APB2ENR_IOPEEN | RCC_APB2ENR_IOPFEN |        \
                        RCC_APB2ENR_IOPGEN | RCC_APB2ENR_AFIOEN)
 #else
-  /* Defaults on Medium Density devices.*/
+  /* Defaults on Medium Density and Connection Line devices.*/
 #define APB2_RST_MASK (RCC_APB2RSTR_IOPARST | RCC_APB2RSTR_IOPBRST |    \
                        RCC_APB2RSTR_IOPCRST | RCC_APB2RSTR_IOPDRST |    \
                        RCC_APB2RSTR_IOPERST | RCC_APB2RSTR_AFIORST);

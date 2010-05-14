@@ -73,41 +73,45 @@
 
 /*
  * Port A setup.
- * Everything input with pull-up except:
+ * Everything input except:
  */
-#define VAL_GPIOACRL            0x88888888      /*  PA7...PA0 */
-#define VAL_GPIOACRH            0x88888888      /* PA15...PA8 */
+#define VAL_GPIOACRL            0x44444444      /*  PA7...PA0 */
+#define VAL_GPIOACRH            0x44444444      /* PA15...PA8 */
 #define VAL_GPIOAODR            0xFFFFFFFF
 
 /*
  * Port B setup.
- * Everything input with pull-up except:
+ * Everything input except:
  */
-#define VAL_GPIOBCRL            0x88888888      /*  PB7...PB0 */
-#define VAL_GPIOBCRH            0x88888888      /* PB15...PB8 */
+#define VAL_GPIOBCRL            0x44444444      /*  PB7...PB0 */
+#define VAL_GPIOBCRH            0x44444444      /* PB15...PB8 */
 #define VAL_GPIOBODR            0xFFFFFFFF
 
 /*
  * Port C setup.
- * Everything input with pull-up except:
+ * Everything input except:
  */
-#define VAL_GPIOCCRL            0x88888888      /*  PC7...PC0 */
-#define VAL_GPIOCCRH            0x88888888      /* PC15...PC8 */
+#define VAL_GPIOCCRL            0x44444444      /*  PC7...PC0 */
+#define VAL_GPIOCCRH            0x44444444      /* PC15...PC8 */
 #define VAL_GPIOCODR            0xFFFFFFFF
 
 /*
  * Port D setup.
- * Everything input with pull-up except:
+ * Everything input except:
+ * PD5 - USART2TX (remapped) AF PP Output
+ * PD6 - USART2RX (remapped) Digital Input
+ * PD7 - LED (LD1) PP Output
  */
-#define VAL_GPIODCRL            0x88888888      /*  PD7...PD0 */
-#define VAL_GPIODCRH            0x88888888      /* PD15...PD8 */
-#define VAL_GPIODODR            0xFFFFFFFF
+#define VAL_GPIODCRL            0x34B44444      /*  PD7...PD0 */
+#define VAL_GPIODCRH            0x44444444      /* PD15...PD8 */
+#define VAL_GPIODODR            0x0F0FFFFF
 
 /*
  * Port E setup.
+ * Everything input except:
  */
-#define VAL_GPIOECRL            0x88888888      /*  PE7...PE0 */
-#define VAL_GPIOECRH            0x88888888      /* PE15...PE8 */
+#define VAL_GPIOECRL            0x44444444      /*  PE7...PE0 */
+#define VAL_GPIOECRH            0x44444444      /* PE15...PE8 */
 #define VAL_GPIOEODR            0xFFFFFFFF
 
 #endif /* _BOARD_H_ */

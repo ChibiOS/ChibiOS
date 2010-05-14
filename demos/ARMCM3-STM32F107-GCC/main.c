@@ -29,9 +29,9 @@ static msg_t Thread1(void *arg) {
 
   (void)arg;
   while (TRUE) {
-//    palClearPad(IOPORT3, GPIOC_LED);
+    palClearPad(IOPORT4, 7);
     chThdSleepMilliseconds(500);
-//    palSetPad(IOPORT3, GPIOC_LED);
+    palSetPad(IOPORT4, 7);
     chThdSleepMilliseconds(500);
   }
   return 0;
@@ -61,8 +61,8 @@ int main(int argc, char **argv) {
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
-//    if (palReadPad(IOPORT1, GPIOA_BUTTON))
-//      TestThread(&SD2);
+    if (palReadPad(IOPORT2, 9) == 0)
+      TestThread(&SD2);
     chThdSleepMilliseconds(500);
   }
   return 0;

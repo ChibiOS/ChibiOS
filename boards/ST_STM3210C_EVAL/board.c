@@ -43,6 +43,12 @@ void hwinit1(void) {
   halInit();
 
   /*
+   * Remap USART2 to the PD5/PD6 pins, done after halInit since HAL resets
+   * these.
+   */
+  AFIO->MAPR |= AFIO_MAPR_USART2_REMAP;
+
+  /*
    * ChibiOS/RT initialization.
    */
   chSysInit();

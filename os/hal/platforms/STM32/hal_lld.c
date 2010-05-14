@@ -126,7 +126,7 @@ void stm32_clock_init(void) {
 #endif
 
   /* Clock settings.*/
-  RCC->CFGR = STM32_PLLMUL | STM32_PLLXTPRE | STM32_PLLSRC |
+  RCC->CFGR = STM32_MCO | STM32_PLLMUL | STM32_PLLXTPRE | STM32_PLLSRC |
               STM32_ADCPRE | STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;
 
   /* Flash setup and final clock selection.   */
@@ -183,6 +183,13 @@ void stm32_clock_init(void) {
   while (!(RCC->CR & RCC_CR_PLL2RDY))
     ;                           /* Waits until PLL2 is stable.              */
 #endif
+
+  /* Clock settings.*/
+  RCC->CFGR = STM32_MCO | STM32_PLLMUL | STM32_PLLSRC |
+              STM32_ADCPRE | STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;
+
+  /* Flash setup and final clock selection.   */
+  FLASH->ACR = STM32_FLASHBITS; /* Flash wait states depending on clock.    */
 
   /* Switching on the configured clock source if it is different from HSI.*/
 #if (STM32_SW != STM32_SW_HSI)

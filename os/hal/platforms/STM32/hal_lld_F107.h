@@ -74,6 +74,16 @@
 #define STM32_OTGFSPRE_DIV2     (1 << 22)   /**< HCLK*2 divided by 2.       */
 #define STM32_OTGFSPRE_DIV3     (0 << 22)   /**< HCLK*2 divided by 3.       */
 
+#define STM32_MCO_NOCLOCK       (0 << 24)   /**< No clock on MCO pin.       */
+#define STM32_MCO_SYSCLK        (4 << 24)   /**< SYSCLK on MCO pin.         */
+#define STM32_MCO_HSI           (5 << 24)   /**< HSI clock on MCO pin.      */
+#define STM32_MCO_HSE           (6 << 24)   /**< HSE clock on MCO pin.      */
+#define STM32_MCO_PLLDIV2       (7 << 24)   /**< PLL/2 clock on MCO pin.    */
+#define STM32_MCO_PLL2          (8 << 24)   /**< PLL2 clock on MCO pin.     */
+#define STM32_MCO_PLL3DIV2      (9 << 24)   /**< PLL3/2 clock on MCO pin.   */
+#define STM32_MCO_XT1           (10 << 24)  /**< XT1 clock on MCO pin.      */
+#define STM32_MCO_PLL3          (11 << 24)  /**< PLL3 clock on MCO pin.     */
+
 /* RCC_CFGR2 register bits definitions.*/
 #define STM32_PREDIV1SRC_HSE    (0 << 16)   /**< PREDIV1 source is HSE.     */
 #define STM32_PREDIV1SRC_PLL2   (1 << 16)   /**< PREDIV1 source is PLL2.    */
@@ -186,6 +196,13 @@
  */
 #if !defined(STM32_ADCPRE) || defined(__DOXYGEN__)
 #define STM32_ADCPRE                STM32_ADCPRE_DIV4
+#endif
+
+/**
+ * @brief   MCO pin setting.
+ */
+#if !defined(STM32_MCO) || defined(__DOXYGEN__)
+#define STM32_MCO                   STM32_MCO_NOCLOCK
 #endif
 
 /*===========================================================================*/

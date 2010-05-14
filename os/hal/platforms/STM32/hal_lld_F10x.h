@@ -73,6 +73,12 @@
 #define STM32_PLLXTPRE_DIV1     (0 << 17)   /**< HSE divided by 1.          */
 #define STM32_PLLXTPRE_DIV2     (1 << 17)   /**< HSE divided by 2.          */
 
+#define STM32_MCO_NOCLOCK       (0 << 24)   /**< No clock on MCO pin.       */
+#define STM32_MCO_SYSCLK        (4 << 24)   /**< SYSCLK on MCO pin.         */
+#define STM32_MCO_HSI           (5 << 24)   /**< HSI clock on MCO pin.      */
+#define STM32_MCO_HSE           (6 << 24)   /**< HSE clock on MCO pin.      */
+#define STM32_MCO_PLLDIV2       (7 << 24)   /**< PLL/2 clock on MCO pin.    */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -148,6 +154,13 @@
  */
 #if !defined(STM32_ADCPRE) || defined(__DOXYGEN__)
 #define STM32_ADCPRE                STM32_ADCPRE_DIV4
+#endif
+
+/**
+ * @brief   MCO pin setting.
+ */
+#if !defined(STM32_MCO) || defined(__DOXYGEN__)
+#define STM32_MCO                   STM32_MCO_NOCLOCK
 #endif
 
 /*===========================================================================*/
