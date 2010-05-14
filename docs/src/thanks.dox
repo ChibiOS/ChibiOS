@@ -18,10 +18,10 @@
 */
 
 /**
- * @page thanks Thanks
+ * @page credits Credits
  * @brief Contributors
  *
- * I want to thanks to all the people that directly or indirectly contributed
+ * I want to thank to all the people that directly or indirectly contributed
  * to the project, I beg pardon if someone is missing:
  * - <b>Adamo Reggiani</b>, working on the Fujitsu port.
  * - <b>Brian Weaver</b>, STM8 port, STM8 and STM32 testing and improvements.

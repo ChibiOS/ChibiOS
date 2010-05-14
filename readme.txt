@@ -76,7 +76,7 @@
 - Tested the STM8 port with the latest RKit-STM8_2.28.10.0092. It works but
   the new compiler shows a general performance regression except in one
   test case.
-- Added thanks page to the documentation.
+- Added credits page to the documentation.
 
 *** 1.5.6 ***
 - FIX: Fixed centralized ARM makefile (bug 2992747)(backported in 1.4.3).
