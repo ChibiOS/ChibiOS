@@ -82,7 +82,7 @@
  *
  * @param[in] config    the STM32 ports configuration
  */
-void _pal_lld_init(const STM32GPIOConfig *config) {
+void _pal_lld_init(const PALConfig *config) {
 
   /*
    * Enables the GPIO related clocks.

@@ -86,7 +86,7 @@ typedef struct {
   /** @brief Port G setup data.*/
   stm32_gpio_setup_t    PGData;
 #endif
-} STM32GPIOConfig;
+} PALConfig;
 
 /**
  * @brief   Width, in bits, of an I/O port.
@@ -289,12 +289,12 @@ typedef GPIO_TypeDef * ioportid_t;
  */
 #define pal_lld_writepad(port, pad, bit) pal_lld_writegroup(port, 1, pad, bit)
 
-extern const STM32GPIOConfig pal_default_config;
+extern const PALConfig pal_default_config;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _pal_lld_init(const STM32GPIOConfig *config);
+  void _pal_lld_init(const PALConfig *config);
   void _pal_lld_setgroupmode(ioportid_t port,
                              ioportmask_t mask,
                              uint_fast8_t mode);
