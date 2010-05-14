@@ -167,20 +167,20 @@ void stm32_clock_init(void) {
 
   /* PLL2 setup, it is only performed if the PLL2 clock is selected as source
      for the PLL clock else it is left disabled.*/
+#if STM32_SW == STM32_SW_PLL
 #if STM32_PREDIV1SRC == STM32_PREDIV1SRC_PLL2
   RCC->CFGR2 |= STM32_PREDIV2 | STM32_PLL2MUL;
   RCC->CR    |= RCC_CR_PLL2ON;
-  while (!(RCC->CR & RCC_CR_PLLRDY))
+  while (!(RCC->CR & RCC_CR_PLL2RDY))
     ;                           /* Waits until PLL is stable.               */
 #endif
 
   /* PLL setup, it is only performed if the PLL is the selected source of
      the system clock else it is left disabled.*/
-#if STM32_SW == STM32_SW_PLL
   RCC->CFGR2 |= STM32_PREDIV1 | STM32_PREDIV1SRC;
   RCC->CFGR  |= STM32_PLLMUL | STM32_PLLSRC;
   RCC->CR    |= RCC_CR_PLLON;
-  while (!(RCC->CR & RCC_CR_PLL2RDY))
+  while (!(RCC->CR & RCC_CR_PLLRDY))
     ;                           /* Waits until PLL2 is stable.              */
 #endif
 
