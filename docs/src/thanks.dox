@@ -1,0 +1,49 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @page thanks Thanks
+ * @brief Contributors
+ *
+ * I want to thanks to all the people that directly or indirectly contributed
+ * to the project, I beg pardon if someone is missing:
+ * - <b>Adamo Reggiani</b>, working on the Fujitsu port.
+ * - <b>Brian Weaver</b>, STM8 port, STM8 and STM32 testing and improvements.
+ * - <b>Egon Carusi</b>, STM32 port improvements, testing and bug fixes.
+ * - <b>Enrico Cavazza</b>, working on the Fujitsu port and a GUI subsystem.
+ * - <b>Eric Weddington</b>, because his work on WinAVR and helping me sorting
+ *   out issues with the ChibiOS/RT license.
+ * - <b>Isidoro Orabona</b>, co-developer of the ChibiOS/RT grandfather back
+ *   in 1988, it is a long long story involving a 6502 and a Z80...
+ * - <b>Jacek</b>, Ride7 demo for STM32 Primer.
+ * - <b>Leon Woestenberg</b>, CondVars idea and implementation, documentation
+ *   improvements and a lot of other ideas, he also helped with the lwIP port
+ *   (he is one of the developers of that project too).
+ * - <b>Leszek Bednarz</b>, H8S and ColdFire ports and drivers.
+ * - <b>Liam Staskawicz</b>, Posix simulator, AT91SAM7x and STM32 related
+ *   contributions, many bug fixes and excellent suggestions.
+ * - <b>Michael Fischer</b>, because the work on YAGARTO and the excellent
+ *   feedback.
+ * - <b>Riccardo Scanu</b>, another long story, this time involving reverse
+ *   engineering and giant robots...
+ * - <b>Vladimir</b>, first tested and fixed the AVR port, I don't know the
+ *   surname but he has been the first contributor.
+ * - <b>Walter Goossens</b>, fixes to the LPC21xx support.
+ * .
+ */
