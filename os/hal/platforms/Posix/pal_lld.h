@@ -81,7 +81,7 @@ typedef struct {
    * @brief Virtual port 2 setup data.
    */
   sim_vio_port_t    VP2Data;
-} VIOConfig;
+} PALConfig;
 
 /**
  * @brief   Width, in bits, of an I/O port.
@@ -183,7 +183,7 @@ typedef sim_vio_port_t *ioportid_t;
 #if !defined(__DOXYGEN__)
 extern sim_vio_port_t vio_port_1;
 extern sim_vio_port_t vio_port_2;
-extern const VIOConfig pal_default_config;
+extern const PALConfig pal_default_config;
 #endif
 
 #ifdef __cplusplus

@@ -39,7 +39,7 @@
  * @brief PAL setup.
  * @details Digital I/O ports static configuration as defined in @p board.h.
  */
-const LPC214xFIOConfig pal_default_config =
+const PALConfig pal_default_config =
 {
   VAL_PINSEL0,
   VAL_PINSEL1,

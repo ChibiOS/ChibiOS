@@ -39,7 +39,7 @@
  * @brief PAL setup.
  * @details Digital I/O ports static configuration as defined in @p board.h.
  */
-const AT91SAM7PIOConfig pal_default_config =
+const PALConfig pal_default_config =
 {
   {VAL_PIOA_ODSR, VAL_PIOA_OSR, VAL_PIOA_PUSR},
 #if (SAM7_PLATFORM == SAM7X128) || (SAM7_PLATFORM == SAM7X256) || \

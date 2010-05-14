@@ -48,7 +48,7 @@ static struct timeval tick = {0, 1000000 / CH_FREQUENCY};
  * @details Digital I/O ports static configuration as defined in @p board.h.
  */
 #if CH_HAL_USE_PAL || defined(__DOXYGEN__)
-const VIOConfig pal_default_config = {
+const PALConfig pal_default_config = {
  {0, 0, 0},
  {0, 0, 0}
 };

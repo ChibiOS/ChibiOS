@@ -114,7 +114,7 @@ typedef struct {
   /** @brief Port 6 setup data.*/
   msp430_dio_setup_t    P6Data;
 #endif
-} MSP430DIOConfig;
+} PALConfig;
 
 /**
  * @brief Width, in bits, of an I/O port.
@@ -277,12 +277,12 @@ typedef union __ioport * ioportid_t;
 #define pal_lld_setgroupmode(port, mask, mode) \
   _pal_lld_setgroupmode(port, mask, mode)
 
-extern const MSP430DIOConfig pal_default_config;
+extern const PALConfig pal_default_config;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _pal_lld_init(const MSP430DIOConfig *config);
+  void _pal_lld_init(const PALConfig *config);
   void _pal_lld_setgroupmode(ioportid_t port,
                              ioportmask_t mask,
                              uint_fast8_t mode);

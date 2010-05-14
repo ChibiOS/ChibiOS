@@ -55,7 +55,7 @@
  *
  * @param[in] config the LPC214x ports configuration
  */
-void _pal_lld_init(const LPC214xFIOConfig *config) {
+void _pal_lld_init(const PALConfig *config) {
 
   /* Enables the access through the fast registers.*/
   SCS = 3;

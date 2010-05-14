@@ -69,7 +69,7 @@ typedef struct {
   lpc214x_fio_setup_t   P0Data;
   /** @brief Port 1 setup data.*/
   lpc214x_fio_setup_t   P1Data;
-} LPC214xFIOConfig;
+} PALConfig;
 
 /**
  * @brief Width, in bits, of an I/O port.
@@ -237,12 +237,12 @@ typedef FIO * ioportid_t;
   (port)->FIO_DIR = (dir);                                              \
 }
 
-extern const LPC214xFIOConfig pal_default_config;
+extern const PALConfig pal_default_config;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _pal_lld_init(const LPC214xFIOConfig *config);
+  void _pal_lld_init(const PALConfig *config);
   void _pal_lld_setgroupmode(ioportid_t port,
                              ioportmask_t mask,
                              uint_fast8_t mode);

@@ -35,7 +35,7 @@
  * @brief PAL setup.
  * @details Digital I/O ports static configuration as defined in @p board.h.
  */
-const MSP430DIOConfig pal_default_config =
+const PALConfig pal_default_config =
 {
 #if defined(__MSP430_HAS_PORT1__) || defined(__MSP430_HAS_PORT1_R__)
   {VAL_P1OUT, VAL_P1DIR},

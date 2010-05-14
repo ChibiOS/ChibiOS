@@ -57,7 +57,7 @@
  * @note The @p PxIFG, @p PxIE and @p PxSEL registers are cleared. @p PxOUT
  *       and @p PxDIR are configured as specified.
  */
-void _pal_lld_init(const MSP430DIOConfig *config) {
+void _pal_lld_init(const PALConfig *config) {
 
 #if defined(__MSP430_HAS_PORT1__) || defined(__MSP430_HAS_PORT1_R__)
   IOPORT1->iop_full.ie.reg_p = 0;

@@ -66,7 +66,7 @@ typedef struct {
   /** @brief Port 1 setup data.*/
   at91sam7_pio_setup_t P1Data;
 #endif
-} AT91SAM7PIOConfig;
+} PALConfig;
 
 /**
  * @brief Width, in bits, of an I/O port.
@@ -235,12 +235,12 @@ typedef AT91PS_PIO ioportid_t;
  */
 #define pal_lld_writepad(port, pad, bit) pal_lld_writegroup(port, 1, pad, bit)
 
-extern const AT91SAM7PIOConfig pal_default_config;
+extern const PALConfig pal_default_config;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _pal_lld_init(const AT91SAM7PIOConfig *config);
+  void _pal_lld_init(const PALConfig *config);
   void _pal_lld_setgroupmode(ioportid_t port,
                              ioportmask_t mask,
                              uint_fast8_t mode);

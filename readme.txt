@@ -70,9 +70,9 @@
   in the board.h file, there is no more the need to put -DSTM32F10X_xx into
   the makefile.
 - NEW: Added the palSetBusMode() capability to the STM8 PAL driver.
-- CHANGE: Renamed the STM32 and STM8 PAL configuration structures to
-  PALConfig, it is better to have the same name for this structure in
-  all ports.
+- CHANGE: Renamed the STM32, STM8, LPC214x, AT91SAM7x, MSP430 and simulators
+  PAL configuration structures to PALConfig, it is better to have the same
+  name for this structure in all ports (like for all the other drivers).
 - Tested the STM8 port with the latest RKit-STM8_2.28.10.0092. It works but
   the new compiler shows a general performance regression except in one
   test case.

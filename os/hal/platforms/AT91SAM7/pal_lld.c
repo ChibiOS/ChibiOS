@@ -55,7 +55,7 @@
  *
  * @param[in] config the AT91SAM7 ports configuration
  */
-void _pal_lld_init(const AT91SAM7PIOConfig *config) {
+void _pal_lld_init(const PALConfig *config) {
 
   uint32_t ports = (1 << AT91C_ID_PIOA);
 #if (SAM7_PLATFORM == SAM7X128) || (SAM7_PLATFORM == SAM7X256) || \
