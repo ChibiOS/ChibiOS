@@ -68,6 +68,9 @@
   the CL sub-family (untested). Now the selection of the sub-family is done
   in the board.h file, there is no more the need to put -DSTM32F10X_xx into
   the makefile.
+- Tested the STM8 port with the latest RKit-STM8_2.28.10.0092. It works but
+  the new compiler shows a general performance regression except in one
+  test case.
 
 *** 1.5.6 ***
 - FIX: Fixed centralized ARM makefile (bug 2992747)(backported in 1.4.3).
