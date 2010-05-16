@@ -87,7 +87,17 @@ void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,
                            uint_fast8_t mode) {
 
-  (void)port; (void)mask; (void)mode;
+  switch (mode & PAL_MODE_MASK) {
+  case PAL_MODE_RESET:
+  case PAL_MODE_INPUT:
+    port->DIR &= ~mask;
+    break;
+  case PAL_MODE_UNCONNECTED:
+    palSetPort(port, PAL_WHOLE_PORT);
+  case PAL_MODE_OUTPUT_PUSHPULL:
+    port->DIR |=  mask;
+    break;
+  }
 }
 
 #endif /* CH_HAL_USE_PAL */

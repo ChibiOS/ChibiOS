@@ -85,7 +85,7 @@ typedef struct {
  * @brief   Whole port mask.
  * @brief   This macro specifies all the valid bits into a port.
  */
-#define PAL_WHOLE_PORT ((ioportmask_t)0xFFFFFFFF)
+#define PAL_WHOLE_PORT ((ioportmask_t)0xFFF)
 
 /**
  * @brief   Digital I/O port sized unsigned type.

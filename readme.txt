@@ -70,6 +70,8 @@
   in the board.h file, there is no more the need to put -DSTM32F10X_xx into
   the makefile.
 - NEW: Added the palSetBusMode() capability to the STM8 PAL driver.
+- NEW: Added the palSetBusMode() capability to the LPC11xx and LPC13xx
+  PAL drivers.
 - CHANGE: Renamed the STM32, STM8, LPC214x, AT91SAM7x, MSP430 and simulators
   PAL configuration structures to PALConfig, it is better to have the same
   name for this structure in all ports (like for all the other drivers).
