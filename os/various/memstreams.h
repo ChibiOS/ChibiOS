@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    memstreams.c
+ * @file    memstreams.h
  * @brief   Memory streams structures and macros.
  
  * @addtogroup memory_streams

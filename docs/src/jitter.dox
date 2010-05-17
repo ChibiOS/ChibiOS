@@ -101,8 +101,8 @@
  * An obvious mitigation action is to optimize the interrupt handler code as
  * much as possible for speed.<br>
  * Complex actions should never be performed in interrupt handlers.
- * An handler should serve the interrupt and wakeup a dedicated thread in order
- * to handle the bulk of the work.<br>
+ * An handler should just serve the interrupt and wakeup a dedicated thread in
+ * order to handle the bulk of the work.<br>
  * Another possible mitigation action is to evaluate if a specific interrupt
  * handler really needs to interact with the OS, if the handler uses full
  * stand-alone code then it is possible to remove the OS related overhead.<br>

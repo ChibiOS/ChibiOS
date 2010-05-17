@@ -20,17 +20,17 @@
 /**
  * @page article_lifecycle Threads Lifecycle
  * In ChibiOS/RT threads are divided in two categories:
- * - Static threads. The memory used for static threads is allocated at
+ * - <b>Static threads</b>. The memory used for static threads is allocated at
  *   compile time so static threads are always there, there is no management
  *   to be done.
- * - Dynamic threads. Dynamic threads are allocated at runtime from one of
- *   the available allocators (see @ref heaps, @ref pools).
+ * - <b>Dynamic threads</b>. Dynamic threads are allocated at runtime from one
+ *   of the available allocators (see @ref heaps, @ref pools).
  * .
  * Dynamic threads create the problem of who is responsible of releasing
  * their memory because a thread cannot dispose its own memory.<br>
  * This is handled in ChibiOS/RT through the mechanism of "thread references",
- * When the @p CH_USE_DYNAMIC option is enabled the threads becomes objects
- * with a reference counter. The memory of a thread, if dynamic, is released
+ * When the @p CH_USE_DYNAMIC option is enabled the threads become objects
+ * with a reference counter. The memory of a thread, if dynamic, is freed
  * when the last reference to the thread is released while the thread is in
  * its @p THD_STATE_FINAL state.<br>
  * The following diagram explains the mechanism:
@@ -57,11 +57,12 @@
   }
  * @enddot
  * <br>
- * As you can see the simplest way to ensure that the memory is released is
- * that another threads performs a @p chThdWait() on the dynamic thread.<br>
+ * As you can see the easiest way to ensure that the memory is released is
+ * to make another thread perform a @p chThdWait() on the dynamic thread.<br>
  * If all the references to the threads are released while the thread is
  * still alive then the thread goes in a "detached" state and its memory
  * cannot be recovered unless there is a dedicated task in the system that
- * scans the threads through the @ref registry subsystem and frees the
- * terminated ones.
+ * scans the threads through the @ref registry subsystem, scanning the registry
+ * has the side effect to release the zombies (detached and then terminated
+ * threads).
  */

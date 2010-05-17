@@ -55,7 +55,7 @@ static WORKING_AREA(myThreadWorkingArea, 128);
                                  myThread,      /* Thread function.     */
                                  NULL);         /* Thread parameter.    */
  * @endcode
- * Tre variable tp receives the pointer to the thread object, it is taken
+ * The variable tp receives the pointer to the thread object, it is taken
  * by other APIs as parameter.<br>
  * Now a complete example:
  * @code
@@ -93,19 +93,19 @@ int main(int argc, char *argv[]) {
   .
 }
  * @endcode
- * Note that is memory allocated to myThread() is statically defined and cannot
- * be reused. Static threads are ideal for safety applications because there is
- * no risk of a memory allocation failure because progressive heap
+ * Note that the memory allocated to myThread() is statically defined and
+ * cannot be reused. Static threads are ideal for safety applications because
+ * there is no risk of a memory allocation failure because progressive heap
  * fragmentation.
  *
  * <h2>Creating a dynamic thread using the heap allocator</h2>
  * In order to create a thread from a memory heap is very easy:
  * @code
-  Thread *tp = chThdCreateFromHeap(NULL,        /* NULL = Default heap. */
-                                   128,         /* Stack size.          */
-                                   NORMALPRIO,  /* Initial priority.    */
-                                   myThread,    /* Thread function.     */
-                                   NULL);       /* Thread parameter.    */
+  Thread *tp = chThdCreateFromHeap(NULL,            /* NULL = Default heap. */
+                                   THD_WA_SIZE(128),/* Stack size.          */
+                                   NORMALPRIO,      /* Initial priority.    */
+                                   myThread,        /* Thread function.     */
+                                   NULL);           /* Thread parameter.    */
  * @endcode
  * The memory is allocated from the spawned heap and the thread is started.
  * Note that the memory is not freed when the thread terminates but when the
@@ -127,7 +127,8 @@ static msg_t myThread(void *arg) {
 
 int main(int argc, char *argv[]) {
 
-  Thread *tp = chThdCreateFromHeap(NULL, 128, NORMALPRIO+1, myThread, NULL);
+  Thread *tp = chThdCreateFromHeap(NULL, THD_WA_SIZE(128), NORMALPRIO+1,
+                                   myThread, NULL);
   if (tp == NULL)
     chSysHalt();    /* Memory exausted. */
   

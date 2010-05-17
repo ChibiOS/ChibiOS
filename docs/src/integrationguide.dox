@@ -24,9 +24,9 @@
  * integration effort, you are simply using the existing makefiles, the
  * default startup files etc, minimal effort.<br>
  * The matter is very different if you are going to integrate the OS into
- * a different runtime framework or want to use a different build system,
- * in that case you have the problem to integrate the OS source code into
- * your application.
+ * a different runtime framework or if you want to use a different build
+ * system, in that case you have the problem to integrate the OS source
+ * code into your application.
  *
  * <h2>What this guide does not cover</h2>
  * This guide has a limited scope, the following topics are handled elsewhere:
@@ -55,16 +55,16 @@
  *   subsystems. Unused subsystems can be excluded from the kernel
  *   configuration file @p chconf.h.
  * - All the source files contained under
- *   <tt>./os/<i>@<compiler@></i>/<i>@<architecture@></i></tt>. Note that those
- *   could be both C source files and assembler source files and that some
- *   architectures have an extra directories layer containing files required
- *   for a specific platform.
+ *   <tt>./os/ports/<i>@<compiler@></i>/<i>@<architecture@></i></tt>.
+ *   Note that those could be both C source files and assembler source files
+ *   and that some architectures have an extra directories layer containing
+ *   files required for a specific platform.
  * .
  * You also need to add to the compiler options the following paths for
  * searching header files:
  * - The portable kernel headers <tt>./os/kernel/include</tt>.
  * - The port layer headers
- *   <tt>./os/<i>@<compiler@></i>/<i>@<architecture@></i></tt>.
+ *   <tt>./os/ports/<i>@<compiler@></i>/<i>@<architecture@></i></tt>.
  * .
  * @section integrationguide_hal Integrating the HAL
  * If, in addition to the kernel as described in the previous section, you also
@@ -86,7 +86,7 @@
  * .
  * You also need to add to the compiler options the following paths for
  * searching header files:
- * - The portable HAL headers <tt>./os/hal/src</tt>.
+ * - The portable HAL headers <tt>./os/hal/include</tt>.
  * - The platform layer headers
  *   <tt>./os/hal/platforms/<i>@<platform@></i></tt>.
  * - The board description headers

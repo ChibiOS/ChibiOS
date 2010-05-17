@@ -79,6 +79,8 @@
   the new compiler shows a general performance regression except in one
   test case.
 - Added credits page to the documentation.
+- Performed another documentation revision cycle, fixed more bad English and
+  few errors.
 
 *** 1.5.6 ***
 - FIX: Fixed centralized ARM makefile (bug 2992747)(backported in 1.4.3).

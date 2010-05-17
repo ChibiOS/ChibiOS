@@ -19,7 +19,7 @@
 
 /**
  * @page article_stacks Stacks and stack sizes
- * In a RTOS like ChibiOS/RT there are several dedicated stacks, each stack
+ * In an RTOS like ChibiOS/RT there are several dedicated stacks, each stack
  * has a dedicated RAM space that must have a correctly sized assigned area.
  * <h2>The stacks</h2>
  * There are several stacks in the systems, some are always present, some
@@ -43,8 +43,8 @@
  * The most critical thing when writing an embedded multithreaded application
  * is to determine the correct stack size for main, threads and, when present,
  * interrupts.<br>
- * Assign too much space to a stack wastes RAM, assign too little space
- * leads to crashes or, worst scenario, hard to track instability.
+ * Assigning too much space to a stack is a waste of RAM, assigning too little
+ * space leads to crashes or, worst scenario, hard to track instability.
  *
  * <h2>Assigning the correct size</h2>
  * You may try to examine the asm listings in order to calculate the exact
@@ -101,7 +101,7 @@
  *   to this value. Resizing of the global interrupt stack may be required
  *   instead.
  * - Often is a good idea to have some extra space in stacks unless you
- *   are really starved on RAM. Anyway optimize stack space at the very
- *   end of your development cycle.
+ *   are really starved on RAM. Anyway, it is best to optimize stack space
+ *   at the very end of your development cycle.
  * .
  */

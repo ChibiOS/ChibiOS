@@ -51,7 +51,7 @@
  *     some hardware specific initialization code then put it here.
  *   .
  * -# Create a new directory under the ChibiOS/RT installation directory:
- *    <code>./projects/<i>@<my_app_name@></i></code>
+ *    <tt>./projects/<i>@<my_app_name@></i></tt>
  * -# Copy an existing demo code under the newly created directory.
  * -# Customize the demo:
  *   - @p Makefile You may edit this file in order to remove the test related
@@ -78,19 +78,19 @@
  * core (a common example: ARM7) of a supported microcontroller but has
  * differences in the internal peripherals.<br>
  * If this is your case proceed as follow:
- * -# Create a new directory under @p <code>./os/io/platforms</code> and
+ * -# Create a new directory under @p <tt>./os/io/platforms</tt> and
  *    name it with the microcontroller name (or family name).<br>
  *    In case of the ARM-based microcontroller you also need to create a
  *    equally named directory under
- *    @p <code>./os/ports/<i>@<compiler@></i>/<i>@<arch@></i></code> and
+ *    @p <tt>./os/ports/<i>@<compiler@></i>/<i>@<arch@></i></tt> and
  *    put there the microcontroller related files such as the vectors table,
  *    see the existing ports as example.
  * -# Copy into the newly created directory the most closely related existing
  *    chip port or the naked template files from
- *    @p <code>./os/io/templates</code>.
+ *    @p <tt>./os/io/templates</tt>.
  * -# Work out the differences in the drivers or implement them if you started
  *    from the templates.
- * -# Edit/create the documentation file @p <code>platform.dox</code>, this
+ * -# Edit/create the documentation file @p <tt>platform.dox</tt>, this
  *    is required if you want to regenerate this documentation including
  *    your work.
  * .

@@ -77,11 +77,12 @@
  * running at thread level. Usually a thread waits on a semaphore that is
  * signaled asynchronously by an interrupt handler.<br>
  * The semaphores can, however, be used as simple mutexes by initializing
- * counter to one.
+ * the semaphore counter to one.
  *
  * <h3>Advantages</h3>
- * - The semaphores code is "already there" if you use the I/O queues and
- *   you don't want to enable the mutexes too because space constraints.
+ * - The semaphores code is "already there" if you use the I/O queues or
+ *   mailboxes and you don't want to enable the mutexes too in order to save
+ *   space.
  * - Semaphores are lighter than mutexes because their queues are FIFO
  *   ordered and do not have any overhead caused by the priority inheritance
  *   algorithm.
@@ -112,14 +113,13 @@
  * @endcode
  *
  * <h2>Mutual exclusion by Mutexes</h2>
- * The mutexes, also known as binary semaphores (we choose to not use this
- * terminology to avoid confusion with counting semaphores), are the mechanism
- * intended as general solution for Mutual Exclusion.
+ * The mutexes are the mechanism intended as the most general solution for
+ * Mutual Exclusion.
  *
  * <h3>Advantages</h3>
  * - Mutexes implement the Priority Inheritance algorithm that is an important
  *   tool in reducing jitter and improve overall system response time (it is
- *   not a magic solution, just a tool for the system designer).
+ *   not a magic solution, just another tool for the system designer).
  * .
  * <h3>Disadvantages</h3>
  * - Heaviest among all the possible choices. The Priority Inheritance method

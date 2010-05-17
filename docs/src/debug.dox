@@ -125,10 +125,10 @@
  *   common RTOS related tasks, under "./testhal" there are examples
  *   regarding the various device drivers, the various demos contain
  *   good code samples too).
- * - Start your application from an existing demos, add things one piece at
- *   time and test often, if you add too many things at once a small problem
- *   can become a debugging nightmare. Follow the cycle: think, implement,
- *   test, repeat.
+ * - Start your application from an existing demo, add things one at a
+ *   time and test often, if you add too many things at once then finding a
+ *   small problem can become a debugging nightmare. Follow the cycle: think,
+ *   implement, test, repeat.
  * - If you are stuck for too much time then consider asking for advice.
  * - Report bugs and problems, bugs can be fixed, problems can become new
  *   articles in the documentation (this and other documentation articles

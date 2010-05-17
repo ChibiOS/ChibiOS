@@ -229,7 +229,7 @@
       start -> suspend [label="chThdInit()", constraint=false];
       start -> run [label="chThdCreate()"];
       start -> ready [label="chThdCreate()"];
-      run -> ready [label="Reschedulation", dir="both"];
+      run -> ready [label="Reschedule", dir="both"];
       suspend -> run [label="chThdResume()"];
       suspend -> ready [label="chThdResume()"];
       run -> sleep [label="chSchGoSleepS()"];

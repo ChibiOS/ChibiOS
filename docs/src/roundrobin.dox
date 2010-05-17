@@ -23,27 +23,27 @@
  * same priority level and schedules them using an <i>aggressive</i>
  * round-robin strategy.<br>
  * The strategy is defined as aggressive because any scheduling event
- * can cause the round-robin threads to rotate.<br>
+ * causes the round-robin threads to rotate.<br>
  * A round-robin rotation can happen because of the following events:
  * - The currently executed thread voluntarily invokes the @p chThdYield()
  *   API in order to allow the execution of another thread at the same
  *   priority level, if any.
  * - The currently executed thread voluntarily goes into a sleep state
- *   (see @ref thread_states), when the thread is waken it goes behind
- *   all the other threads at the same priority level.
+ *   (see @ref thread_states), when the thread is awakened it goes behind
+ *   any other thread at the same priority level.
  * - The currently executed thread is preempted by an higher priority
  *   thread, the thread is reinserted in the ready list (see @ref scheduling)
- *   behind all the other threads at the same priority level.
+ *   behind any other thread at the same priority level.
  * - If the @p CH_TIME_QUANTUM configuration constant is set to a value
  *   greater than zero and if the specified time quantum expired and if
  *   a thread with equal priority is ready then the currently executing
- *   thread is automatically reinserted in the ready list behind all the
- *   other threads at the same priority level.
+ *   thread is automatically reinserted in the ready list behind any
+ *   other thread at the same priority level.
  * .
  * As you can see the @p CH_TIME_QUANTUM setting is really useful only if
  * there are threads at the same priority level that can run not preempted
  * for long periods of time and that do not explicitly yield using
- * @p chThdYield(). Because of this you should consider to set
+ * @p chThdYield(). Because of this you should consider setting
  * @p CH_TIME_QUANTUM to zero in your configuration file, this makes the
  * kernel much faster and smaller and <b>does not</b> forbid the use of
  * multiple threads at the same priority level.
