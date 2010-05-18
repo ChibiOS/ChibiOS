@@ -94,7 +94,7 @@ typedef struct {
 extern VTList vtlist;
 
 /**
- * @brief   Virtual timers sticker.
+ * @brief   Virtual timers ticker.
  */
 #define chVTDoTickI() {                                                 \
   vtlist.vt_systime++;                                                  \
