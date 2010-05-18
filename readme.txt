@@ -72,6 +72,7 @@
 - NEW: Added the palSetBusMode() capability to the STM8 PAL driver.
 - NEW: Added the palSetBusMode() capability to the LPC11xx and LPC13xx
   PAL drivers.
+- NEW: Updated the STM32 FW Library files to latest version 3.3.0.
 - CHANGE: Renamed the STM32, STM8, LPC214x, AT91SAM7x, MSP430 and simulators
   PAL configuration structures to PALConfig, it is better to have the same
   name for this structure in all ports (like for all the other drivers).
