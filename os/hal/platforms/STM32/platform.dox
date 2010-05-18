@@ -41,8 +41,15 @@
  */
 
 /**
- * @defgroup STM32F10x_HAL STM32F103 HAL Support
+ * @defgroup STM32F103_HAL STM32F103 HAL Support
  * @brief HAL support for STM32 LD, MD and HD families.
+ *
+ * @ingroup STM32_HAL
+ */
+
+/**
+ * @defgroup STM32F10X_CL_HAL STM32F105/F107 HAL Support
+ * @brief HAL support for STM32 CL (Connectivity Line) family.
  *
  * @ingroup STM32_HAL
  */

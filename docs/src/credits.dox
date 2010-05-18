@@ -35,15 +35,16 @@
  * - <b>Leon Woestenberg</b>, CondVars idea and implementation, documentation
  *   improvements and a lot of other ideas, he also helped with the lwIP port
  *   (he is one of the developers of that project too).
- * - <b>Leszek Bednarz</b>, H8S and ColdFire ports and drivers.
+ * - <b>Leszek Bednarz</b>, H8S and ColdFire ports and drivers maintainer.
  * - <b>Liam Staskawicz</b>, Posix simulator, AT91SAM7x and STM32 related
- *   contributions, many bug fixes and excellent suggestions.
+ *   contributions, general improvements, many bug fixes and excellent
+ *   suggestions.
  * - <b>Michael Fischer</b>, because the work on YAGARTO and the excellent
  *   feedback.
  * - <b>Riccardo Scanu</b>, another long story, this time involving reverse
  *   engineering and giant robots...
  * - <b>Vladimir</b>, first tested and fixed the AVR port, I don't know the
  *   surname but he has been the first contributor.
- * - <b>Walter Goossens</b>, fixes to the LPC21xx support.
+ * - <b>Walter Goossens</b>, several fixes to the LPC21xx support.
  * .
  */

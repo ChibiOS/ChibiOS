@@ -44,14 +44,14 @@
  */
 #if defined(STM32F10X_MD) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32 MD"
-#include "hal_lld_F103.h"
+#include "hal_lld_f103.h"
 #elif defined(STM32F10X_LD)
 #define PLATFORM_NAME           "STM32 LD"
-#include "hal_lld_F103.h"
+#include "hal_lld_f103.h"
 #elif defined(STM32F10X_HD)
 #define PLATFORM_NAME           "STM32 HD"
-#include "hal_lld_F103.h"
-#elif defined(STM32F10X_CL)
+#include "hal_lld_f103.h"
+#elif defined(STM3F10X_CL)
 #define PLATFORM_NAME           "STM32 CL"
 #include "hal_lld_f105_f107.h"
 #else
