@@ -50,4 +50,3 @@
 /*
  * SPI driver system settings.
  */
-#define USE_LPC214x_SPI1            TRUE
