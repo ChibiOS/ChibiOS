@@ -66,8 +66,8 @@
   a separate file in order to support multiple clock trees for different
   sub-families of the STM32 platform.
 - NEW: Added separated clock trees for the STM32 LD/MD/HD sub-family and
-  the CL sub-family (untested). Now the selection of the sub-family is done
-  in the board.h file, there is no more the need to put -DSTM32F10X_xx into
+  the CL sub-family. Now the selection of the sub-family is done in the
+  board.h file, there is no more the need to put -DSTM32F10X_xx into
   the makefile.
 - NEW: Added the palSetBusMode() capability to the STM8 PAL driver.
 - NEW: Added the palSetBusMode() capability to the LPC11xx and LPC13xx
@@ -77,7 +77,7 @@
   PAL configuration structures to PALConfig, it is better to have the same
   name for this structure in all ports (like for all the other drivers).
 - Tested the STM8 port with the latest RKit-STM8_2.28.10.0092. It works but
-  the new compiler shows a general performance regression except in one
+  the new compiler shows a slight performance regression except in one
   test case.
 - Added credits page to the documentation.
 - Performed another documentation revision cycle, fixed more bad English and
