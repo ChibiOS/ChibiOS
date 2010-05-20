@@ -214,7 +214,7 @@
  */
 #if (STM32_PREDIV1_VALUE >= 1) && (STM32_PREDIV1_VALUE <= 16) ||             \
     defined(__DOXYGEN__)
-#define STM32_PREDIV1               (STM32_PREDIV1_VALUE << 0)
+#define STM32_PREDIV1               ((STM32_PREDIV1_VALUE - 1) << 0)
 #else
 #error "invalid STM32_PREDIV1_VALUE value specified"
 #endif
@@ -224,7 +224,7 @@
  */
 #if (STM32_PREDIV2_VALUE >= 1) && (STM32_PREDIV2_VALUE <= 16) ||             \
     defined(__DOXYGEN__)
-#define STM32_PREDIV2               (STM32_PREDIV2_VALUE << 4)
+#define STM32_PREDIV2               ((STM32_PREDIV2_VALUE - 1) << 4)
 #else
 #error "invalid STM32_PREDIV2_VALUE value specified"
 #endif
@@ -293,7 +293,7 @@
  * @brief   PLL input clock frequency.
  */
 #if (STM32_PLLSRC == STM32_PLLSRC_PREDIV1) || defined(__DOXYGEN__)
-#define STM32_PLLCLKIN             (STM32_PREDIV1CLK / STM32_PREDIV1)
+#define STM32_PLLCLKIN             (STM32_PREDIV1CLK / STM32_PREDIV1_VALUE)
 #elif STM32_PLLSRC == STM32_PLLSRC_HSI
 #define STM32_PLLCLKIN             (STM32_HSICLK / 2)
 #else
