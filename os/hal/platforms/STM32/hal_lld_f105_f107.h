@@ -164,7 +164,7 @@
  * @note    The default value is calculated for a 72MHz system clock from
  *          a 25MHz crystal using both PLL and PLL2.
  */
-#if !defined(STM32_PLL2MUL) || defined(__DOXYGEN__)
+#if !defined(STM32_PLL2MUL_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL2MUL_VALUE         8
 #endif
 
