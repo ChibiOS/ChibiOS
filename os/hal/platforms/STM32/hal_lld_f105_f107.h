@@ -253,6 +253,9 @@
 #error "invalid STM32_PLL2MUL_VALUE value specified"
 #endif
 
+/* The following values are only used if PLL2 clock is selected as source
+   for the PLL clock */
+#if (STM32_PREDIV1SRC == STM32_PREDIV1SRC_PLL2)
 /**
  * @brief   PLL2 input frequency.
  */
@@ -272,6 +275,8 @@
 #if (STM32_PLL2CLKOUT < 40000000) || (STM32_PLL2CLKOUT > 74000000)
 #error "STM32_PLL2CLKOUT outside acceptable range (40...74MHz)"
 #endif
+
+#endif /* STM32_PREDIV1SRC == STM32_PREDIV1SRC_PLL2 */
 
 /**
  * @brief   PREDIV1 input frequency.
@@ -376,7 +381,7 @@
 #endif
 
 /* APB1 frequency check.*/
-#if STM32_PCLK2 > 36000000
+#if STM32_PCLK1 > 36000000
 #error "STM32_PCLK1 exceeding maximum frequency (36MHz)"
 #endif
 
