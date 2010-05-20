@@ -121,7 +121,7 @@
  * @note    The default value is calculated for a 72MHz system clock from
  *          a 25MHz crystal using both PLL and PLL2.
  */
-#if !defined(STM32_PREDIV1SCR) || defined(__DOXYGEN__)
+#if !defined(STM32_PREDIV1SRC) || defined(__DOXYGEN__)
 #define STM32_PREDIV1SRC            STM32_PREDIV1SRC_PLL2
 #endif
 
