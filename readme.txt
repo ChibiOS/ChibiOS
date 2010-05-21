@@ -81,7 +81,8 @@
 - Tested the STM8 port with the latest RKit-STM8_2.28.10.0092. It works but
   the new compiler shows a slight performance regression except in one
   test case.
-- Added credits page to the documentation.
+- Added credits page to the documentation, improved the article regarding
+  timings.
 - Performed another documentation revision cycle, fixed more bad English and
   few errors.
 
