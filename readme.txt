@@ -59,6 +59,8 @@
 *****************************************************************************
 
 *** 1.5.7 ***
+- FIX: Fixed wrong inclusion order of board.h and halconf.h into hal.h
+  (bug 3005041)(backported in 1.4.4).
 - FIX: Fixed wrong GPIO ports size in the STM8 PAL driver (bug 3001528).
 - NEW: Improved clock initialization for the STM32, now it is possible to
   configure the clock using any clock source and any HSE frequency.

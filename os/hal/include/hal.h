@@ -28,8 +28,8 @@
 #ifndef _HAL_H_
 #define _HAL_H_
 
-#include "halconf.h"
 #include "board.h"
+#include "halconf.h"
 
 #include "hal_lld.h"
 
