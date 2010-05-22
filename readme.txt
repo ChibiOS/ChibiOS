@@ -59,6 +59,8 @@
 *****************************************************************************
 
 *** 1.5.7 ***
+- FIX: Fixed missing SPI driver reinitialization in the MMC driver (bug
+  3005628)(backported in 1.4.4).
 - FIX: Fixed wrong inclusion order of board.h and halconf.h into hal.h
   (bug 3005041)(backported in 1.4.4).
 - FIX: Fixed wrong GPIO ports size in the STM8 PAL driver (bug 3001528).

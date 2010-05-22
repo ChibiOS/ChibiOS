@@ -343,8 +343,9 @@ bool_t mmcConnect(MMCDriver *mmcp) {
  * @retval TRUE         the operation failed.
  */
 bool_t mmcDisconnect(MMCDriver *mmcp) {
+  bool_t status;
 
-  chDbgCheck(mmcp != NULL, "mmcConnect");
+  chDbgCheck(mmcp != NULL, "mmcDisconnect");
 
   chDbgAssert((mmcp->mmc_state != MMC_UNINIT) &&
               (mmcp->mmc_state != MMC_STOP),
@@ -359,10 +360,12 @@ bool_t mmcDisconnect(MMCDriver *mmcp) {
       mmcp->mmc_state = MMC_INSERTED;
     chSysUnlock();
   case MMC_INSERTED:
-    return FALSE;
+    status = FALSE;
   default:
-    return TRUE;
+    status = TRUE;
   }
+  spiStop(mmcp->mmc_spip);
+  return status;
 }
 
 /**
@@ -386,6 +389,7 @@ bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
   mmcp->mmc_state = MMC_READING;
   chSysUnlock();
 
+  spiStart(mmcp->mmc_spip, mmcp->mmc_hscfg);
   spiSelect(mmcp->mmc_spip);
   send_hdr(mmcp, MMC_CMDREADMULTIPLE, startblk * MMC_SECTOR_SIZE);
   if (recvr1(mmcp) != 0x00) {
@@ -494,6 +498,7 @@ bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk) {
   mmcp->mmc_state = MMC_WRITING;
   chSysUnlock();
 
+  spiStart(mmcp->mmc_spip, mmcp->mmc_hscfg);
   spiSelect(mmcp->mmc_spip);
   send_hdr(mmcp, MMC_CMDWRITEMULTIPLE, startblk * MMC_SECTOR_SIZE);
   if (recvr1(mmcp) != 0x00) {
@@ -520,7 +525,7 @@ bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
   static const uint8_t start[] = {0xFF, 0xFC};
   uint8_t b[1];
 
-  chDbgCheck((mmcp != NULL) && (buffer != NULL), "mmcSequentialRead");
+  chDbgCheck((mmcp != NULL) && (buffer != NULL), "mmcSequentialWrite");
 
   chSysLock();
   if (mmcp->mmc_state != MMC_WRITING) {
