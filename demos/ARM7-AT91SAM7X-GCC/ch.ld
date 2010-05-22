@@ -47,18 +47,28 @@ SECTIONS
         _text = .;
         KEEP(*(vectors))
         *(.text)
-        *(.text.*);
-        *(.rodata);
-        *(.rodata.*);
-        *(.glue_7t);
-        *(.glue_7);
-        *(.gcc*);
-        *(.ctors);
-        *(.dtors);
-        . = ALIGN(4);
-        _etext = .;
+        *(.text.*)
+        *(.rodata)
+        *(.rodata.*)
+        *(.glue_7t)
+        *(.glue_7)
+        *(.gcc*)
+        *(.ctors)
+        *(.dtors)
     } > flash
 
+    .ARM.extab : {*(.ARM.extab* .gnu.linkonce.armextab.*)}
+
+    __exidx_start = .;
+    .ARM.exidx : {*(.ARM.exidx* .gnu.linkonce.armexidx.*)} > flash
+    __exidx_end = .;
+
+    .eh_frame_hdr : {*(.eh_frame_hdr)}
+
+    .eh_frame : ONLY_IF_RO {*(.eh_frame)}
+
+    . = ALIGN(4);
+    _etext = .;
     _textdata = _etext;
 
     .data :
@@ -84,11 +94,6 @@ SECTIONS
         . = ALIGN(4);
         _bss_end = .;
     } > ram    
-    
-    /DISCARD/ :
-    {
-        *(.eh_*)
-    }
 }
 
 PROVIDE(end = .);

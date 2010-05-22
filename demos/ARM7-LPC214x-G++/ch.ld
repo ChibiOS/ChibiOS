@@ -25,7 +25,7 @@ __abt_stack_size__	= 0x0004;
 __fiq_stack_size__	= 0x0010;
 __irq_stack_size__	= 0x0080;
 __svc_stack_size__	= 0x0004;
-__sys_stack_size__	= 0x0800;
+__sys_stack_size__	= 0x0400;
 __stacks_total_size__	= __und_stack_size__ + __abt_stack_size__ + __fiq_stack_size__ + __irq_stack_size__ + __svc_stack_size__ + __sys_stack_size__;
 
 MEMORY
@@ -43,25 +43,35 @@ __dma_end__         = 0x7FD00000 + __dma_size__;
 
 SECTIONS
 {
-	. = 0;
+    . = 0;
 
-	.text : ALIGN(16) SUBALIGN(16)
-	{
+    .text : ALIGN(16) SUBALIGN(16)
+    {
         _text = .;
         KEEP(*(vectors))
         *(.text)
-        *(.text.*);
-        *(.rodata);
-        *(.rodata.*);
-        *(.glue_7t);
-        *(.glue_7);
-        *(.gcc*);
-        *(.ctors);
-        *(.dtors);
-        . = ALIGN(4);
-        _etext = .;
+        *(.text.*)
+        *(.rodata)
+        *(.rodata.*)
+        *(.glue_7t)
+        *(.glue_7)
+        *(.gcc*)
+        *(.ctors)
+        *(.dtors)
     } > flash
 
+    .ARM.extab : {*(.ARM.extab* .gnu.linkonce.armextab.*)}
+
+    __exidx_start = .;
+    .ARM.exidx : {*(.ARM.exidx* .gnu.linkonce.armexidx.*)} > flash
+    __exidx_end = .;
+
+    .eh_frame_hdr : {*(.eh_frame_hdr)}
+
+    .eh_frame : ONLY_IF_RO {*(.eh_frame)}
+
+    . = ALIGN(4);
+    _etext = .;
     _textdata = _etext;
 
     .data :
@@ -87,11 +97,6 @@ SECTIONS
         . = ALIGN(4);
         _bss_end = .;
     } > ram    
-    
-    /DISCARD/ :
-    {
-        *(.eh_*)
-    }
 }
 
 PROVIDE(end = .);

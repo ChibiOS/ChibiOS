@@ -1,12 +1,12 @@
 ***************************************************************************
-Options:  -Os -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
+Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
 Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 ***************************************************************************
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.5.4unstable
-*** GCC Version:  4.4.2
+*** Kernel:       1.5.7unstable
+*** GCC Version:  4.5.0
 *** Architecture: ARM
 *** Core Variant: ARM7TDMI
 *** Platform:     LPC214x
@@ -85,6 +85,9 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Test Case 9.2 (Dynamic APIs, threads creation from memory pool)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
+--- Test Case 9.3 (Dynamic APIs, registry and references)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
 --- Test Case 10.1 (Queues, input queues)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
@@ -92,51 +95,51 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 106455 msgs/S, 212910 ctxswc/S
+--- Score : 106460 msgs/S, 212920 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 88190 msgs/S, 176380 ctxswc/S
+--- Score : 88195 msgs/S, 176390 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 88190 msgs/S, 176380 ctxswc/S
+--- Score : 88195 msgs/S, 176390 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 412496 ctxswc/S
+--- Score : 412536 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 67800 threads/S
+--- Score : 69580 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 100842 threads/S
+--- Score : 104828 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
---- Test Case 11.7 (Benchmark, mass reschedulation, 5 threads)
---- Score : 29488 reschedulations/S, 176928 ctxswc/S
+--- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
+--- Score : 29580 reschedules/S, 177480 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 257308 reschedulations/S, 257308 ctxswc/S
+--- Score : 221556 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 265488 bytes/S
+--- Score : 261124 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 326324 timers/S
+--- Score : 326304 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 353452 wait+signal/S
+--- Score : 350836 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 255980 lock+unlock/S
+--- Score : 260148 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)

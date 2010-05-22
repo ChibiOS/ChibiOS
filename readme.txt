@@ -80,6 +80,8 @@
 - CHANGE: Renamed the STM32, STM8, LPC214x, AT91SAM7x, MSP430 and simulators
   PAL configuration structures to PALConfig, it is better to have the same
   name for this structure in all ports (like for all the other drivers).
+- CHANGE: Modified the linker scripts in the ARM demos in order to increase
+  compatibility with the CodeSourcery toolchain.
 - Tested the STM8 port with the latest RKit-STM8_2.28.10.0092. It works but
   the new compiler shows a slight performance regression except in one
   test case.

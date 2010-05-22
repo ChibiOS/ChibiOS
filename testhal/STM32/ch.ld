@@ -20,7 +20,7 @@
 /*
  * ST32F103 memory setup.
  */
-__main_stack_size__     = 0x0200;
+__main_stack_size__     = 0x0400;
 __process_stack_size__  = 0x0400;
 __stacks_total_size__   = __main_stack_size__ + __process_stack_size__;
 
@@ -41,20 +41,44 @@ SECTIONS
     .text : ALIGN(16) SUBALIGN(16)
     {
         _text = .;
-        KEEP(*(vectors));
+        KEEP(*(vectors))
         *(.text)
-        *(.text.*);
-        *(.rodata);
-        *(.rodata.*);
-        *(.glue_7t);
-        *(.glue_7);
-        *(.gcc*);
-        *(.ctors);
-        *(.dtors);
-        . = ALIGN(4);
-        _etext = .;
+        *(.text.*)
+        *(.rodata)
+        *(.rodata.*)
+        *(.glue_7t)
+        *(.glue_7)
+        *(.gcc*)
     } > flash
 
+    .ctors :
+    {
+        PROVIDE(_ctors_start_ = .);
+        KEEP(*(SORT(.ctors.*)))
+        KEEP(*(.ctors))
+        PROVIDE(_ctors_end_ = .);
+    } > flash
+
+    .dtors :
+    {
+        PROVIDE(_dtors_start_ = .);
+        KEEP(*(SORT(.dtors.*)))
+        KEEP(*(.dtors))
+        PROVIDE(_dtors_end_ = .);
+    } > flash
+
+    .ARM.extab : {*(.ARM.extab* .gnu.linkonce.armextab.*)}
+
+    __exidx_start = .;
+    .ARM.exidx : {*(.ARM.exidx* .gnu.linkonce.armexidx.*)} > flash
+    __exidx_end = .;
+
+    .eh_frame_hdr : {*(.eh_frame_hdr)}
+
+    .eh_frame : ONLY_IF_RO {*(.eh_frame)}
+
+    . = ALIGN(4);
+    _etext = .;
     _textdata = _etext;
 
     .data :
@@ -80,11 +104,6 @@ SECTIONS
         . = ALIGN(4);
         _bss_end = .;
     } > ram    
-    
-    /DISCARD/ :
-    {
-        *(.eh_*)
-    }
 }
 
 PROVIDE(end = .);
