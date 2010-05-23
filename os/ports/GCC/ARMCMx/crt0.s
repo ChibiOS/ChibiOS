@@ -18,8 +18,9 @@
 */
 
 /**
- * @file ARMCMx/crt0.s
- * @brief Generic ARM Cortex-Mx startup file for ChibiOS/RT.
+ * @file    ARMCMx/crt0.s
+ * @brief   Generic ARM Cortex-Mx startup file for ChibiOS/RT.
+ *
  * @addtogroup ARMCMx_CORE
  * @{
  */

@@ -18,8 +18,9 @@
 */
 
 /**
- * @file ARM7/chcoreasm.s
- * @brief ARM7 architecture port low level code.
+ * @file    ARM7/chcoreasm.s
+ * @brief   ARM7 architecture port low level code.
+ *
  * @addtogroup ARM7_CORE
  * @{
  */

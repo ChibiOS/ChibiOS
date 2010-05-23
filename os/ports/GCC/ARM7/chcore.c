@@ -18,8 +18,9 @@
 */
 
 /**
- * @file ARM7/chcore.c
- * @brief ARM7 architecture port code.
+ * @file    ARM7/chcore.c
+ * @brief   ARM7 architecture port code.
+ *
  * @addtogroup ARM7_CORE
  * @{
  */
@@ -29,9 +30,9 @@
 /**
  * Halts the system.
  */
-/** @cond never */
+#if !defined(__DOXYGEN__)
 __attribute__((weak))
-/** @endcond */
+#endif
 void port_halt(void) {
 
   port_disable();
