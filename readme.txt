@@ -58,6 +58,10 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 1.5.8 ***
+- Added notes about copyright attribution to the documentation. Fixed some
+  problems in the licensing FAQ page.
+
 *** 1.5.7 ***
 - FIX: Fixed missing SPI driver reinitialization in the MMC driver (bug
   3005628)(backported in 1.4.4).
