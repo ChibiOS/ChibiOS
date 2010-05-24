@@ -59,6 +59,7 @@
 *****************************************************************************
 
 *** 1.5.8 ***
+- FIX: Fixed missing files from ST library zip file (bug 3006629).
 - Added notes about copyright assignment to the documentation. Fixed some
   problems in the licensing FAQ page.
 
