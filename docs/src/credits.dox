@@ -33,12 +33,13 @@
  * contributed code to me (Giovanni Di Sirio).<br>
  * This may sound a bit harsh but is pretty standard for this kind of projects,
  * there are several reasons for this requirement:
- * - ChibiOS/RT will probably become also a commercial product and I could not
- *   re-license the code without ownership. Note that the commercial product
- *   would not be a different or better product, just the same GPL product
- *   made available, on request, under a different license. The code will
- *   always be available to you under the current licensing terms.
- * - I need ownership when changing the licensing terms and this happens
+ * - ChibiOS/RT will probably also become a commercial product and it would
+ *   not be possible to re-license the code without ownership. Note that the
+ *   commercial product would not be a different or better product, just the
+ *   same GPL product made available, on request, under a different license.
+ *   The code will always be available to you under the current licensing
+ *   terms.
+ * - Ownership is required when changing the licensing terms and this happens
  *   each time the project goes from development/unstable to stable and
  *   back because the addition/removal of the GPL linking exception.
  * - It will be easier for the project adopters to have a single ownership
