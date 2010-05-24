@@ -59,7 +59,7 @@
 *****************************************************************************
 
 *** 1.5.8 ***
-- Added notes about copyright attribution to the documentation. Fixed some
+- Added notes about copyright assignment to the documentation. Fixed some
   problems in the licensing FAQ page.
 
 *** 1.5.7 ***
