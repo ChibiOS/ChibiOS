@@ -27,9 +27,12 @@
 @endverbatim
  *
  * <h2>Contributions and Copyright Assignment</h2>
- * Contributing to the ChibiOS/RT project requires assigning the copyright
- * on the contributed code to myself (Giovanni Di Sirio).<br>
- * There are several reasons for this requirement:
+ * If you plan to contribute code to the ChibiOS/RT project then there is a
+ * requirement you should be aware of: contributing code for inclusion in
+ * the ChibiOS/RT <b>main line</b> requires  assigning the copyright on the
+ * contributed code to me (Giovanni Di Sirio).<br>
+ * This may sound a bit harsh but is pretty standard for this kind of projects,
+ * there are several reasons for this requirement:
  * - ChibiOS/RT will probably become also a commercial product and I could not
  *   re-license the code without ownership. Note that the commercial product
  *   would not be a different or better product, just the same GPL product
