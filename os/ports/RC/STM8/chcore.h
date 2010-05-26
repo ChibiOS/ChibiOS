@@ -118,15 +118,15 @@ struct stm8_startctx {
  * @details This code usually setup the context switching frame represented
  *          by an @p intctx structure.
  */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
-  struct stm8_startctx *scp;                                            \
-  scp = (struct stm8_startctx *)((uint8_t *)workspace + wsize  -        \
-                            sizeof(struct stm8_startctx));              \
-  scp->ts   = _port_thread_start;                                       \
-  scp->arg  = arg;                                                      \
-  scp->pc   = (stm8func_t)pf;                                           \
-  scp->ret  = (stm8func_t)chThdExit;                                    \
-  tp->p_ctx.sp = (struct intctx *)scp;                                  \
+#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
+  struct stm8_startctx *scp;                                                \
+  scp = (struct stm8_startctx *)((uint8_t *)workspace + wsize -             \
+                                 sizeof(struct stm8_startctx));             \
+  scp->ts   = _port_thread_start;                                           \
+  scp->arg  = arg;                                                          \
+  scp->pc   = (stm8func_t)pf;                                               \
+  scp->ret  = (stm8func_t)chThdExit;                                        \
+  tp->p_ctx.sp = (struct intctx *)scp;                                      \
 }
 
 /**
@@ -159,9 +159,9 @@ struct stm8_startctx {
 /**
  * @brief   Computes the thread working area global size.
  */
-#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
-                                   (sizeof(struct intctx) - 1) +        \
-                                   (sizeof(struct extctx) - 1) +        \
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                         \
+                                   (sizeof(struct intctx) - 1) +            \
+                                   (sizeof(struct extctx) - 1) +            \
                                    (n) + (INT_REQUIRED_STACK))
 
 /**
@@ -183,9 +183,9 @@ struct stm8_startctx {
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() {   \
-  if (chSchIsRescRequiredExI()) \
-      chSchDoRescheduleI();     \
+#define PORT_IRQ_EPILOGUE() {                                               \
+  if (chSchIsRescRequiredExI())                                             \
+    chSchDoRescheduleI();                                                   \
 }
 
 /**
