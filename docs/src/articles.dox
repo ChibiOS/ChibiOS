@@ -40,6 +40,7 @@
  * Articles and guides about ChibiOS/RT.
  * - @subpage article_integrationguide
  * - @subpage article_portguide
+ * - @subpage article_events
  * - @subpage article_debug
  * - @subpage article_stacks
  * - @subpage article_roundrobin

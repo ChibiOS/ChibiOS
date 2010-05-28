@@ -63,6 +63,7 @@
 - Formatting fixes to the port templates.
 - Added notes about copyright assignment to the documentation. Fixed some
   problems in the licensing FAQ page.
+- Added documentation article about events in ChibiOS/RT.
 
 *** 1.5.7 ***
 - FIX: Fixed missing SPI driver reinitialization in the MMC driver (bug
