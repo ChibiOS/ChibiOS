@@ -31,8 +31,8 @@
  * requirement you should be aware of: contributing code for inclusion in
  * the ChibiOS/RT <b>main line</b> requires  assigning the copyright on the
  * contributed code to me (Giovanni Di Sirio).<br>
- * This may sound a bit harsh but is pretty standard for this kind of projects,
- * there are several reasons for this requirement:
+ * This may sound a bit strange but is pretty standard for this kind of
+ * projects, there are several reasons for this requirement:
  * - ChibiOS/RT will probably also become a commercial product and it would
  *   not be possible to re-license the code without ownership. Note that the
  *   commercial product would not be a different or better product, just the
@@ -66,7 +66,7 @@
  * recognized for your hard work, see the following section.
  *
  * <h2>Credits</h2>
- * I want to thank to all the people that directly or indirectly contributed
+ * I want to thank all the people that directly or indirectly contributed
  * to the project, I beg pardon if someone is missing:
  * - <b>Adamo Reggiani</b>, working on the Fujitsu port.
  * - <b>Brian Weaver</b>, STM8 port, STM8 and STM32 testing and improvements.

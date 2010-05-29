@@ -24,7 +24,7 @@ The demo requires the patcher lwIP 1.3.1 stack, see: ./ext/readme.txt
 
 Some files used by the demo are not part of ChibiOS/RT but are Atmel copyright
 and are licensed under a different license, see the header present in all the
-source files under ./demos/AT91SAM7X256/at91lib for details.
+source files under ./demos/os/hal/platform/AT91SAM7/at91lib for details.
 Also note that not all the files present in the Atmel library are distribuited
 with ChibiOS/RT, you can find the whole library on the Atmel web site:
 

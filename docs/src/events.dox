@@ -105,7 +105,7 @@
  * The threads have a variety of @a wait primitives, they can @a wait for one
  * or more event flags to become @a pending, and can also specify AND/OR
  * conditions, as example a thread can @a wait for any event to become
- * @a pending or @w wait for all the specified events to become @a pending.<br>
+ * @a pending or @a wait for all the specified events to become @a pending.<br>
  * The field @p p_epending is the mask of the currently pending events,
  * the field @p p_ewmask is the mask of the events the thread is interested
  * on in that moment (AND or OR condition depending on the invoked

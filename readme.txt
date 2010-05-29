@@ -60,6 +60,9 @@
 
 *** 1.5.8 ***
 - FIX: Fixed missing files from ST library zip file (bug 3006629).
+- NEW: Added a demo for the AT91SAM7S256 and board files for the Olimex
+  SAM7-P256. The demo has been contributed by Alexander Kozaruk.
+- Fixed some wrong paths into the demos readme files.
 - Formatting fixes to the port templates.
 - Added notes about copyright assignment to the documentation. Fixed some
   problems in the licensing FAQ page.

@@ -1,16 +1,16 @@
 *****************************************************************************
-** ChibiOS/RT port for ARM7TDMI AT91SAM7X256.                              **
+** ChibiOS/RT port for ARM7TDMI AT91SAM7S256.                              **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an Olimex SAM7-EX256 board.
+The demo runs on an Olimex SAM7-P256 board.
 
 ** The Demo **
 
-The demo currently just flashes the LCD background using a thread.
-The button SW1 prints an "Hello World!" string on COM1, the button SW2
-activates che ChibiOS/RT test suite, output on COM1.
+The demo currently just flashes the LED1 using a thread.
+The button B1 prints an "Hello World!" string on RS232_0, the button B2
+activates che ChibiOS/RT test suite, output on RS232_0(port baudrate 38400).
 
 ** Build Procedure **
 
