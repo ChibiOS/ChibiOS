@@ -69,6 +69,8 @@
  * I want to thank all the people that directly or indirectly contributed
  * to the project, I beg pardon if someone is missing:
  * - <b>Adamo Reggiani</b>, working on the Fujitsu port.
+ * - <b>Alexander Kozaruk</b>, AT91SAM7S256 demo and description files for
+ *   the Olimex SAM7-P256 board.
  * - <b>Brian Weaver</b>, STM8 port, STM8 and STM32 testing and improvements.
  * - <b>Egon Carusi</b>, STM32 port improvements, testing and bug fixes.
  * - <b>Enrico Cavazza</b>, working on the Fujitsu port and a GUI subsystem.
