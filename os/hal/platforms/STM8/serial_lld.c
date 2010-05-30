@@ -148,7 +148,7 @@ static void uart1_deinit(void) {
 #if USE_STM8_UART3 || defined(__DOXYGEN__)
 static void notify3(void) {
 
-  UART1_CR2 |= 0x80;                        /* TIEN bit.                    */
+  UART3_CR2 |= 0x80;                        /* TIEN bit.                    */
 }
 
 /**
