@@ -215,7 +215,7 @@ void chOQInit(OutputQueue *oqp, uint8_t *bp, size_t size, qnotify_t onfy) {
   oqp->q_buffer = oqp->q_rdptr = oqp->q_wrptr = bp;
   oqp->q_top = bp + size;
   oqp->q_notify = onfy;
-  chSemInit(&oqp->q_sem, size);
+  chSemInit(&oqp->q_sem, (cnt_t)size);
 }
 
 /**
