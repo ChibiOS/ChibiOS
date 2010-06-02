@@ -61,6 +61,8 @@
 *** 1.5.9 ***
 - FIX: Fixed STM8 UART3 driver (bug 3009145).
 - OPT: Small size optimization in the semaphores subsystem.
+- OPT: Improvements in the STM8 port, the code is now smaller and generally
+  faster, also saved few bytes of RAM.
 
 *** 1.5.8 ***
 - FIX: Fixed missing files from ST library zip file (bug 3006629).
