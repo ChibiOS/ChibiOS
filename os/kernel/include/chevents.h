@@ -73,10 +73,10 @@ typedef struct EventSource {
 #define EVENTSOURCE_DECL(name) EventSource name = _EVENTSOURCE_DATA(name)
 
 /** All events allowed mask.*/
-#define ALL_EVENTS -1
+#define ALL_EVENTS      ((eventmask_t)-1)
 
 /** Returns the event mask from the event identifier.*/
-#define EVENT_MASK(eid) (1 << (eid))
+#define EVENT_MASK(eid) ((eventmask_t)(1 << (eid)))
 
 /**
  * @brief   Registers an Event Listener on an Event Source.
