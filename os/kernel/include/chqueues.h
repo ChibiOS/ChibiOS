@@ -98,10 +98,10 @@ typedef struct {
 typedef GenericQueue InputQueue;
 
 /** @brief Evaluates to @p TRUE if the specified Input Queue is empty.*/
-#define chIQIsEmpty(q) (chQSpace(q) <= 0)
+#define chIQIsEmpty(q) ((bool_t)(chQSpace(q) <= 0))
 
 /** @brief Evaluates to @p TRUE if the specified Input Queue is full.*/
-#define chIQIsFull(q) (chQSpace(q) >= chQSize(q))
+#define chIQIsFull(q) ((bool_t)(chQSpace(q) >= chQSize(q)))
 
 /**
  * @brief   Input queue read.
@@ -163,12 +163,12 @@ typedef GenericQueue OutputQueue;
 /**
  * @brief   Evaluates to @p TRUE if the specified Output Queue is empty.
  */
-#define chOQIsEmpty(q) (chQSpace(q) >= chQSize(q))
+#define chOQIsEmpty(q) ((bool_t)(chQSpace(q) >= chQSize(q)))
 
 /**
  * @brief   Evaluates to @p TRUE if the specified Output Queue is full.
  */
-#define chOQIsFull(q) (chQSpace(q) <= 0)
+#define chOQIsFull(q) ((bool_t)(chQSpace(q) <= 0))
 
 /**
  * @brief   Output queue write.

@@ -63,8 +63,8 @@
 - OPT: Small size optimization in the semaphores subsystem.
 - OPT: Improvements in the STM8 port, the code is now smaller and generally
   faster, also saved few bytes of RAM.
-- Added some explicit casts in chevents.h in order to silence two warnings on
-  a specific compiler.
+- Added explicit casts in chevents.h and chqueues.h in order to silence
+  some warnings on a specific compiler.
 
 *** 1.5.8 ***
 - FIX: Fixed missing files from ST library zip file (bug 3006629).
