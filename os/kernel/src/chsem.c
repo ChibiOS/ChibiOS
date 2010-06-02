@@ -117,7 +117,7 @@ void chSemResetI(Semaphore *sp, cnt_t n) {
 
   cnt = sp->s_cnt;
   sp->s_cnt = n;
-  while (cnt++ < 0)
+  while (++cnt <= 0)
     chSchReadyI(lifo_remove(&sp->s_queue))->p_u.rdymsg = RDY_RESET;
 }
 
@@ -220,7 +220,7 @@ void chSemSignal(Semaphore *sp) {
   chDbgCheck(sp != NULL, "chSemSignal");
 
   chSysLock();
-  if (sp->s_cnt++ < 0)
+  if (++sp->s_cnt <= 0)
     chSchWakeupS(fifo_remove(&sp->s_queue), RDY_OK);
   chSysUnlock();
 }
@@ -235,7 +235,7 @@ void chSemSignalI(Semaphore *sp) {
 
   chDbgCheck(sp != NULL, "chSemSignalI");
 
-  if (sp->s_cnt++ < 0) {
+  if (++sp->s_cnt <= 0) {
     /* note, it is done this way in order to allow a tail call on
              chSchReadyI().*/
     Thread *tp = fifo_remove(&sp->s_queue);
@@ -261,7 +261,7 @@ msg_t chSemSignalWait(Semaphore *sps, Semaphore *spw) {
   chDbgCheck((sps != NULL) && (spw != NULL), "chSemSignalWait");
 
   chSysLock();
-  if (sps->s_cnt++ < 0)
+  if (++sps->s_cnt <= 0)
     chSchReadyI(fifo_remove(&sps->s_queue))->p_u.rdymsg = RDY_OK;
   if (--spw->s_cnt < 0) {
     Thread *ctp = currp;
