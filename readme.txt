@@ -59,6 +59,7 @@
 *****************************************************************************
 
 *** 1.5.9 ***
+- FIX: Fixed STM8 baud rate setup error (bug 3010990).
 - FIX: Fixed STM8 UART3 driver (bug 3009145).
 - OPT: Small size optimization in the semaphores subsystem.
 - OPT: Improvements in the STM8 port, the code is now smaller and generally
