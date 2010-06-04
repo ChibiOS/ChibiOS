@@ -480,6 +480,10 @@ struct {                                                                \
 
 #define chThdGetExitEventSource(tp) (&(tp)->p_exitesource)
 
+/*===========================================================================*/
+/* Port-specific settings (override port settings defaulted in chcore.h).    */
+/*===========================================================================*/
+
 #endif  /* _CHCONF_H_ */
 
 /** @} */

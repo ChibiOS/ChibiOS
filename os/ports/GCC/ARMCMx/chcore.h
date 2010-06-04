@@ -140,10 +140,10 @@
  * @brief   PENDSV handler priority.
  * @note    The default PENDSV handler priority is set at the
  *          @p CORTEX_MINIMUM_PRIORITY priority level.
- * @note    In the ARMv7-M port this value should be not changed from the
- *          minimum priority level.
- * @note    The PENDSV vector is only used in the ARMv7-M port, it is available
- *          to user in the ARMv6-M port.
+ * @note    The PENDSV vector is only used in the ARMv7-M legacy port, it is
+ *          available to user in the ARMv6-M and ARMv7-M ports.
+ * @note    In the ARMv7-M legacy port this value should be not changed from
+ *          the minimum priority level.
  */
 #ifndef CORTEX_PRIORITY_PENDSV
 #define CORTEX_PRIORITY_PENDSV CORTEX_MINIMUM_PRIORITY
