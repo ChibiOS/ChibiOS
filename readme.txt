@@ -61,13 +61,15 @@
 *** 1.5.9 ***
 - FIX: Fixed STM8 baud rate setup error (bug 3010990).
 - FIX: Fixed STM8 UART3 driver (bug 3009145).
+- NEW: Added a STM8_ENABLE_WFI_IDLE option to the STM8 port, the default
+  is FALSE.
 - OPT: Small size optimization in the semaphores subsystem.
 - OPT: Improvements in the STM8 port, the code is now smaller and generally
   faster, also saved few bytes of RAM.
 - Added explicit casts in chevents.h, chqueues.h, chqueues.c in order to
   silence some warnings on a specific compiler.
 - Added a section in chconf.h where redefine the port-related configuration
-  parameters, also added a note to the configuration about this.
+  parameters, also added notes into the documentation about this.
 
 *** 1.5.8 ***
 - FIX: Fixed missing files from ST library zip file (bug 3006629).

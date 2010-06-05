@@ -60,14 +60,17 @@
  * @defgroup PPC_CONF Configuration Options
  * @brief PowerPC Configuration Options.
  * @details The PowerPC port allows some architecture-specific configurations
- * settings that can be specified externally, as example on the compiler
- * command line:
+ * settings that can be overridden by redefining them in @p chconf.h.
+ * Usually there is no need to change the default values.
  * - @p INT_REQUIRED_STACK, this value represent the amount of stack space used
  *   by an interrupt handler between the @p extctx and @p intctx
  *   structures.
  *   The default for this value is @p 128 bytes, this space is allocated for
  *   each thread so be careful in order to not waste precious RAM space.<br>
  *   The default value is set into <b>./os/ports/GCC/PPC/chcore.h</b>.
+ * - @p IDLE_THREAD_STACK_SIZE, stack area size to be assigned to the IDLE
+ *   thread. Usually there is no need to change this value unless inserting
+ *   code in the IDLE thread hook macro.
  * - @p ENABLE_WFI_IDLE, if set to @p TRUE enables the use of the @p <b>wait</b>
  *   instruction from within the idle loop. This is defaulted to 0 because
  *   it can create problems with some debuggers. Setting this option to 1
