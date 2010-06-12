@@ -153,7 +153,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all default C defines here, like -D_DEBUG=1
-DDEFS = -DSTM32F10X_MD
+DDEFS =
 
 # List all default ASM defines here, like -D_DEBUG=1
 DADEFS =
