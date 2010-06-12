@@ -100,7 +100,9 @@ void adcStop(ADCDriver *adcp) {
   chDbgCheck(adcp != NULL, "adcStop");
 
   chSysLock();
-  chDbgAssert((adcp->ad_state == ADC_STOP) || (adcp->ad_state == ADC_READY),
+  chDbgAssert((adcp->ad_state == ADC_STOP) ||
+              (adcp->ad_state == ADC_READY) ||
+              (adcp->ad_state == ADC_COMPLETE),
               "adcStop(), #1",
               "invalid state");
   adc_lld_stop(adcp);
