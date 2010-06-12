@@ -58,6 +58,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.1.0 ***
+- FIX: Fixed assertion in adcStop() (bug 3015109)(backported in 2.0.0).
+
 *** 1.5.9 ***
 - FIX: Fixed STM8 baud rate setup error (bug 3010990).
 - FIX: Fixed STM8 UART3 driver (bug 3009145).
