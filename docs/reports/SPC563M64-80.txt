@@ -5,7 +5,7 @@ Settings: SYSCLK=80, optimal wait states, prefetching enabled
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       1.5.4unstable
+*** Kernel:       2.0.0unstable
 *** GCC Version:  4.4.1
 *** Architecture: PowerPC
 *** Core Variant: e200z3
@@ -85,6 +85,9 @@ Settings: SYSCLK=80, optimal wait states, prefetching enabled
 --- Test Case 9.2 (Dynamic APIs, threads creation from memory pool)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
+--- Test Case 9.3 (Dynamic APIs, registry and references)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
 --- Test Case 10.1 (Queues, input queues)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
@@ -92,7 +95,7 @@ Settings: SYSCLK=80, optimal wait states, prefetching enabled
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 278228 msgs/S, 556456 ctxswc/S
+--- Score : 281168 msgs/S, 562336 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
@@ -104,7 +107,7 @@ Settings: SYSCLK=80, optimal wait states, prefetching enabled
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 895976 ctxswc/S
+--- Score : 907432 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
@@ -112,7 +115,7 @@ Settings: SYSCLK=80, optimal wait states, prefetching enabled
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 260954 threads/S
+--- Score : 263538 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
@@ -120,7 +123,7 @@ Settings: SYSCLK=80, optimal wait states, prefetching enabled
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 614136 ctxswc/S
+--- Score : 614140 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
@@ -128,11 +131,11 @@ Settings: SYSCLK=80, optimal wait states, prefetching enabled
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 1093666 timers/S
+--- Score : 1093664 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 1027012 wait+signal/S
+--- Score : 1027008 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
