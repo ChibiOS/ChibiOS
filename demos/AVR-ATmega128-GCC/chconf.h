@@ -308,7 +308,7 @@
  * @note    Mutexes are recommended.
  */
 #if !defined(CH_USE_HEAP) || defined(__DOXYGEN__)
-#define CH_USE_HEAP                     TRUE
+#define CH_USE_HEAP                     FALSE
 #endif
 
 /**
@@ -333,7 +333,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(CH_USE_MEMPOOLS) || defined(__DOXYGEN__)
-#define CH_USE_MEMPOOLS                 TRUE
+#define CH_USE_MEMPOOLS                 FALSE
 #endif
 
 /**
@@ -346,7 +346,7 @@
  * @note    Requires @p CH_USE_HEAP and/or @p CH_USE_MEMPOOLS.
  */
 #if !defined(CH_USE_DYNAMIC) || defined(__DOXYGEN__)
-#define CH_USE_DYNAMIC                  TRUE
+#define CH_USE_DYNAMIC                  FALSE
 #endif
 
 /*===========================================================================*/
