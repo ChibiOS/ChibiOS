@@ -110,7 +110,7 @@ void test_printn(uint32_t n) {
  *
  * @param[in] msgp      the message
  */
-void test_print(char *msgp) {
+void test_print(const char *msgp) {
 
   while (*msgp)
     chIOPut(chp, *msgp++);
@@ -121,7 +121,7 @@ void test_print(char *msgp) {
  *
  * @param[in] msgp      the message
  */
-void test_println(char *msgp) {
+void test_println(const char *msgp) {
 
   test_print(msgp);
   chIOPut(chp, '\r');
@@ -353,7 +353,7 @@ msg_t TestThread(void *p) {
       test_print(".");
       test_printn(j + 1);
       test_print(" (");
-      test_print(patterns[i][j]->gettest());
+      test_print(patterns[i][j]->name);
       test_println(")");
 #if DELAY_BETWEEN_TESTS > 0
       chThdSleepMilliseconds(DELAY_BETWEEN_TESTS);

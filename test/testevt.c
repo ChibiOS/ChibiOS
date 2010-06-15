@@ -75,11 +75,6 @@ static EVENTSOURCE_DECL(es2);
  * the associated event handlers are invoked in LSb-first order.
  */
 
-static char *evt1_gettest(void) {
-
-  return "Events, registration and dispatch";
-}
-
 static void evt1_setup(void) {
 
   chEvtClear(ALL_EVENTS);
@@ -113,7 +108,7 @@ static void evt1_execute(void) {
 }
 
 const struct testcase testevt1 = {
-  evt1_gettest,
+  "Events, registration and dispatch",
   evt1_setup,
   NULL,
   evt1_execute
@@ -132,11 +127,6 @@ const struct testcase testevt1 = {
  * After each test phase the test verifies that the events have been served at
  * the expected time and that there are no stuck event flags.
  */
-
-static char *evt2_gettest(void) {
-
-  return "Events, wait and broadcast";
-}
 
 static void evt2_setup(void) {
 
@@ -235,7 +225,7 @@ static void evt2_execute(void) {
 }
 
 const struct testcase testevt2 = {
-  evt2_gettest,
+  "Events, wait and broadcast",
   evt2_setup,
   NULL,
   evt2_execute
@@ -256,11 +246,6 @@ const struct testcase testevt2 = {
  * .
  * After each test phase the test verifies that there are no stuck event flags.
  */
-
-static char *evt3_gettest(void) {
-
-  return "Events, timeouts";
-}
 
 static void evt3_setup(void) {
 
@@ -288,7 +273,7 @@ static void evt3_execute(void) {
 }
 
 const struct testcase testevt3 = {
-  evt3_gettest,
+  "Events, timeouts",
   evt3_setup,
   NULL,
   evt3_execute

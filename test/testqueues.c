@@ -76,11 +76,6 @@ static OUTPUTQUEUE_DECL(oq, test.wa.T1, TEST_QUEUES_SIZE, notify);
  * consistent through the whole test.
  */
 
-static char *queues1_gettest(void) {
-
-  return "Queues, input queues";
-}
-
 static void queues1_setup(void) {
 
   chIQInit(&iq, wa[0], TEST_QUEUES_SIZE, notify);
@@ -135,7 +130,7 @@ static void queues1_execute(void) {
 }
 
 const struct testcase testqueues1 = {
-  queues1_gettest,
+  "Queues, input queues",
   queues1_setup,
   NULL,
   queues1_execute
@@ -149,10 +144,6 @@ const struct testcase testqueues1 = {
  * @p OutputQueue object including timeouts. The queue state must remain
  * consistent through the whole test.
  */
-static char *queues2_gettest(void) {
-
-  return "Queues, output queues";
-}
 
 static void queues2_setup(void) {
 
@@ -199,7 +190,7 @@ static void queues2_execute(void) {
 }
 
 const struct testcase testqueues2 = {
-  queues2_gettest,
+  "Queues, output queues",
   queues2_setup,
   NULL,
   queues2_execute

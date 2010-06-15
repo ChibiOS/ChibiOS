@@ -70,10 +70,6 @@ static SEMAPHORE_DECL(sem1, 0);
  * priority order depending on the CH_USE_SEMAPHORES_PRIORITY configuration
  * setting.
  */
-static char *sem1_gettest(void) {
-
-  return "Semaphores, enqueuing";
-}
 
 static void sem1_setup(void) {
 
@@ -107,6 +103,13 @@ static void sem1_execute(void) {
 #endif
 }
 
+const struct testcase testsem1 = {
+  "Semaphores, enqueuing",
+  sem1_setup,
+  NULL,
+  sem1_execute
+};
+
 /**
  * @page test_sem_002 Timeout test
  *
@@ -117,17 +120,6 @@ static void sem1_execute(void) {
  * in each of the above scenario and that the semaphore structure status is
  * correct after each operation.
  */
-const struct testcase testsem1 = {
-  sem1_gettest,
-  sem1_setup,
-  NULL,
-  sem1_execute
-};
-
-static char *sem2_gettest(void) {
-
-  return "Semaphores, timeout";
-}
 
 static void sem2_setup(void) {
 
@@ -186,7 +178,7 @@ static void sem2_execute(void) {
 }
 
 const struct testcase testsem2 = {
-  sem2_gettest,
+  "Semaphores, timeout",
   sem2_setup,
   NULL,
   sem2_execute
@@ -204,11 +196,6 @@ const struct testcase testsem2 = {
  * in each of the above scenario and that the semaphore structure status is
  * correct after each operation.
  */
-
-static char *sem3_gettest(void) {
-
-  return "Semaphores, atomic signal-wait";
-}
 
 static void sem3_setup(void) {
 
@@ -236,7 +223,7 @@ static void sem3_execute(void) {
 }
 
 const struct testcase testsem3 = {
-  sem3_gettest,
+  "Semaphores, atomic signal-wait",
   sem3_setup,
   NULL,
   sem3_execute

@@ -78,11 +78,6 @@ static msg_t thread(void *p) {
 }
 
 #if CH_USE_HEAP
-static char *dyn1_gettest(void) {
-
-  return "Dynamic APIs, threads creation from heap";
-}
-
 static void dyn1_setup(void) {
 
   chHeapInit(&heap1, test.buffer, sizeof(union test_buffers));
@@ -123,7 +118,7 @@ static void dyn1_execute(void) {
 }
 
 const struct testcase testdyn1 = {
-  dyn1_gettest,
+  "Dynamic APIs, threads creation from heap",
   dyn1_setup,
   NULL,
   dyn1_execute
@@ -140,11 +135,6 @@ const struct testcase testdyn1 = {
  * The test expects the first four threads to successfully start and the last
  * one to fail.
  */
-
-static char *dyn2_gettest(void) {
-
-  return "Dynamic APIs, threads creation from memory pool";
-}
 
 static void dyn2_setup(void) {
 
@@ -184,7 +174,7 @@ static void dyn2_execute(void) {
 }
 
 const struct testcase testdyn2 = {
-  dyn2_gettest,
+  "Dynamic APIs, threads creation from memory pool",
   dyn2_setup,
   NULL,
   dyn2_execute
@@ -210,11 +200,6 @@ static unsigned regscan(void) {
     tp = chRegNextThread(tp);
   } while (tp != NULL);
   return i;
-}
-
-static char *dyn3_gettest(void) {
-
-  return "Dynamic APIs, registry and references";
 }
 
 static void dyn3_setup(void) {
@@ -256,7 +241,7 @@ static void dyn3_execute(void) {
 }
 
 const struct testcase testdyn3 = {
-  dyn3_gettest,
+  "Dynamic APIs, registry and references",
   dyn3_setup,
   NULL,
   dyn3_execute

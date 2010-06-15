@@ -59,11 +59,6 @@
  * not find a fifth message waiting.
  */
 
-static char *msg1_gettest(void) {
-
-  return "Messages, loop";
-}
-
 static msg_t thread(void *p) {
 
   chMsgSend(p, 'A');
@@ -107,7 +102,7 @@ static void msg1_execute(void) {
 }
 
 const struct testcase testmsg1 = {
-  msg1_gettest,
+  "Messages, loop",
   NULL,
   NULL,
   msg1_execute

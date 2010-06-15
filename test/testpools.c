@@ -66,11 +66,6 @@ static void *null_provider(size_t size) {
   return NULL;
 }
 
-static char *pools1_gettest(void) {
-
-  return "Memory Pools, queue/dequeue";
-}
-
 static void pools1_setup(void) {
 
   chPoolInit(&mp1, THD_WA_SIZE(THREADS_STACK_SIZE), NULL);
@@ -96,7 +91,7 @@ static void pools1_execute(void) {
 }
 
 const struct testcase testpools1 = {
-  pools1_gettest,
+  "Memory Pools, queue/dequeue",
   pools1_setup,
   NULL,
   pools1_execute

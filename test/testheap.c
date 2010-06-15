@@ -64,11 +64,6 @@ static MemoryHeap test_heap;
  * sequence.
  */
 
-static char *heap1_gettest(void) {
-
-  return "Heap, allocation and fragmentation test";
-}
-
 static void heap1_setup(void) {
 
   chHeapInit(&test_heap, test.buffer, sizeof(union test_buffers));
@@ -148,7 +143,7 @@ static void heap1_execute(void) {
 }
 
 const struct testcase testheap1 = {
-  heap1_gettest,
+  "Heap, allocation and fragmentation test",
   heap1_setup,
   NULL,
   heap1_execute

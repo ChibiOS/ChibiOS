@@ -71,11 +71,6 @@ static MAILBOX_DECL(mb1, test.wa.T0, MB_SIZE);
  * The test expects to find a consistent mailbox status after each operation.
  */
 
-static char *mbox1_gettest(void) {
-
-  return "Mailboxes, queuing and timeouts";
-}
-
 static void mbox1_setup(void) {
 
   chMBInit(&mb1, (msg_t *)test.wa.T0, MB_SIZE);
@@ -161,7 +156,7 @@ static void mbox1_execute(void) {
 }
 
 const struct testcase testmbox1 = {
-  mbox1_gettest,
+  "Mailboxes, queuing and timeouts",
   mbox1_setup,
   NULL,
   mbox1_execute

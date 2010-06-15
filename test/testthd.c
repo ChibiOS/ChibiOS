@@ -66,11 +66,6 @@ static msg_t thread(void *p) {
   return 0;
 }
 
-static char *thd1_gettest(void) {
-
-  return "Threads, enqueuing test #1";
-}
-
 static void thd1_execute(void) {
 
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-5, thread, "E");
@@ -83,7 +78,7 @@ static void thd1_execute(void) {
 }
 
 const struct testcase testthd1 = {
-  thd1_gettest,
+  "Threads, enqueuing test #1",
   NULL,
   NULL,
   thd1_execute
@@ -99,11 +94,6 @@ const struct testcase testthd1 = {
  * priority order regardless of the initial order.
  */
 
-static char *thd2_gettest(void) {
-
-  return "Threads, enqueuing test #2";
-}
-
 static void thd2_execute(void) {
 
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-4, thread, "D");
@@ -116,7 +106,7 @@ static void thd2_execute(void) {
 }
 
 const struct testcase testthd2 = {
-  thd2_gettest,
+  "Threads, enqueuing test #2",
   NULL,
   NULL,
   thd2_execute
@@ -131,11 +121,6 @@ const struct testcase testthd2 = {
  * If the @p CH_USE_MUTEXES option is enabled then the priority changes are
  * also tested under priority inheritance boosted priority state.
  */
-
-static char *thd3_gettest(void) {
-
-  return "Threads, priority change";
-}
 
 static void thd3_execute(void) {
   tprio_t prio, p1;
@@ -186,7 +171,7 @@ static void thd3_execute(void) {
 }
 
 const struct testcase testthd3 = {
-  thd3_gettest,
+  "Threads, priority change",
   NULL,
   NULL,
   thd3_execute
@@ -199,11 +184,6 @@ const struct testcase testthd3 = {
  * Delay APIs and associated macros are tested, the invoking thread is verified
  * to wake up at the exact expected time.
  */
-
-static char *thd4_gettest(void) {
-
-  return "Threads, delays";
-}
 
 static void thd4_execute(void) {
   systime_t time;
@@ -232,7 +212,7 @@ static void thd4_execute(void) {
 }
 
 const struct testcase testthd4 = {
-  thd4_gettest,
+  "Threads, delays",
   NULL,
   NULL,
   thd4_execute
