@@ -74,14 +74,14 @@ void port_switch(Thread *ntp, Thread *otp) {
 
   asm volatile ("movw    r30, r22");
   asm volatile ("in      r0, 0x3d");
-  asm volatile ("std     Z+6, r0");
+  asm volatile ("std     Z+5, r0");
   asm volatile ("in      r0, 0x3e");
-  asm volatile ("std     Z+7, r0");
+  asm volatile ("std     Z+6, r0");
 
   asm volatile ("movw    r30, r24");
-  asm volatile ("ldd     r0, Z+6");
+  asm volatile ("ldd     r0, Z+5");
   asm volatile ("out     0x3d, r0");
-  asm volatile ("ldd     r0, Z+7");
+  asm volatile ("ldd     r0, Z+6");
   asm volatile ("out     0x3e, r0");
 
   asm volatile ("pop     r29");

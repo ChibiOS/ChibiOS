@@ -117,7 +117,7 @@
  * Default SERIAL settings overrides (uncomment to override).
  */
 /*#define SERIAL_DEFAULT_BITRATE      38400*/
-/*#define SERIAL_BUFFERS_SIZE         64*/
+#define SERIAL_BUFFERS_SIZE         16
 
 /*===========================================================================*/
 /* SPI driver related settings.                                              */

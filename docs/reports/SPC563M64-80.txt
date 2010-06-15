@@ -5,7 +5,7 @@ Settings: SYSCLK=80, optimal wait states, prefetching enabled
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.0.0unstable
+*** Kernel:       2.0.0
 *** GCC Version:  4.4.1
 *** Architecture: PowerPC
 *** Core Variant: e200z3
