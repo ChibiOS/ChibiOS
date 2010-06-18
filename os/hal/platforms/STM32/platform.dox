@@ -18,7 +18,7 @@
 */
 
 /**
- * @defgroup STM32 STM32 Support
+ * @defgroup STM32 STM32 Drivers
  * @brief STM32 specific support.
  * @details The STM32 support includes:
  * - I/O ports driver.
@@ -30,7 +30,7 @@
  * - A demo supporting the kernel test suite.
  * - A demo that demonstrate the FatFs use with the MMC driver.
  * .
- * @ingroup ARMCMx
+ * @ingroup platforms
  */
 
 /**

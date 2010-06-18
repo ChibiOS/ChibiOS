@@ -19,8 +19,7 @@
 
 /**
  * @defgroup AVR MegaAVR
- * @details AVR port details. This section how the ChibiOS/RT features are
- * implemented on this architecture.
+ * @details AVR port for the GCC compiler.
  *
  * @section AVR_STATES Mapping of the System States in the AVR port
  * The ChibiOS/RT logical @ref system_states are mapped as follow in the AVR
@@ -50,7 +49,7 @@
  *   by modifying the @p INT_REQUIRED_STACK macro into
  *   <b>./ports/AVR/chcore.h</b>.
  * .
- * @ingroup ports
+ * @ingroup gcc
  */
 
 /**

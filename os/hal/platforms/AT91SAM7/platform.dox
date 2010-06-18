@@ -18,7 +18,7 @@
 */
 
 /**
- * @defgroup AT91SAM7 AT91SAM7 Support
+ * @defgroup AT91SAM7 AT91SAM7 Drivers
  * @brief AT91SAM7 specific support.
  * @details The AT91SAM7 support includes:
  * - Buffered, interrupt driven, serial driver.
@@ -27,7 +27,7 @@
  * - A Web server demo using the uIP TCP/IP stack.
  * - A Web server demo using the lwIP TCP/IP stack.
  * .
- * @ingroup ARM7
+ * @ingroup platforms
  */
 
 /**

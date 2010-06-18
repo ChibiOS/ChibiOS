@@ -19,8 +19,7 @@
 
 /**
  * @defgroup STM8 STM8
- * @details STM8 port details. This section how the ChibiOS/RT features are
- * implemented on this architecture.
+ * @details STM8 port for the Raisonance C compiler.
  *
  * @section STM8_STATES Mapping of the System States in the STM8 port
  * The ChibiOS/RT logical @ref system_states are mapped as follow in the STM8
@@ -58,7 +57,7 @@
  *   because the missing support of the @p inline "C" keyword in the
  *   compiler.
  * .
- * @ingroup ports
+ * @ingroup raisonance
  */
 
 /**

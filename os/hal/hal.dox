@@ -58,6 +58,17 @@
  */
 
 /**
+ * @defgroup platforms Platforms
+ * @brief Supported platforms.
+ * @details The implementation of the device drivers can be sligthly different
+ * on the various platforms because architectural constrains. This section
+ * describes the implementation of the various device drivers on the various
+ * supported platforms.
+ *
+ * @ingroup IO
+ */
+
+/**
  * @defgroup HAL HAL Driver
  * @brief Hardware Abstraction Layer.
  * @details The HAL driver performs the system initialization and includes

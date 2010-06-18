@@ -18,9 +18,8 @@
 */
 
 /**
- * @defgroup PPC PowerPC
- * @details PowerPC port details. This section describes how the ChibiOS/RT
- * features are implemented on this architecture.
+ * @defgroup PPC Power Architecture
+ * @details Power Architecture port for the GCC compiler.
  *
  * @section PPC_STATES Mapping of the System States in the PowerPC port
  * The ChibiOS/RT logical @ref system_states are mapped as follow in the
@@ -53,7 +52,7 @@
  * - The Book-E Decrementer Timer, mapped on IVOR10, is used for system tick.
  * - Interrupt nesting is not currently supported.
  * .
- * @ingroup ports
+ * @ingroup gcc
  */
 
 /**

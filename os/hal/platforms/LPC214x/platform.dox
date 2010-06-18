@@ -18,7 +18,7 @@
 */
 
 /**
- * @defgroup LPC214x LPC214x Support
+ * @defgroup LPC214x LPC214x Drivers
  * @brief LPC214x specific support.
  * @details The LPC214x support includes:
  * - VIC support code.
@@ -29,7 +29,7 @@
  * - A C++ demo supporting the kernel test suite.
  * - A demo integrating ChibiOS/RT with FatFS.
  * .
- * @ingroup ARM7
+ * @ingroup platforms
  */
 
 /**

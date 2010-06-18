@@ -18,12 +18,11 @@
 */
 
 /**
- * @defgroup ARM7 ARM7TDMI
- * @details The ARM7 architecture is quite complex for a microcontroller and
- * some explanations are required about the port choices.
+ * @defgroup ARM7 ARM7
+ * @details ARM7 port for the GCC compiler.
  *
- * @section ARM7_NOTES The ARM7 modes
- * The ARM7 port supports three modes:
+ * @section ARM7_NOTES Supported ARM7 modes
+ * The ARM7-GCC port supports three modes:
  * - Pure ARM mode, this is the preferred mode for code speed. The code size
  *   is larger however. This mode is enabled when all the modules are compiled
  *   in ARM mode, see the Makefiles.
@@ -118,7 +117,7 @@
  * greatly improves code efficiency and size. You can look at the serial
  * driver for real examples of interrupt handlers.
  *
- * @ingroup ports
+ * @ingroup gcc
  */
 
 /**

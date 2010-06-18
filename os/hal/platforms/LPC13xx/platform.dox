@@ -18,14 +18,14 @@
 */
 
 /**
- * @defgroup LPC13xx LPC13xx Support
+ * @defgroup LPC13xx LPC13xx Drivers
  * @brief LPC13xx specific support.
  * @details The LPC13xx support includes:
  * - I/O ports driver.
  * - Buffered, interrupt driven, serial driver.
  * - A demo supporting the kernel test suite.
  * .
- * @ingroup ARMCMx
+ * @ingroup platforms
  */
 
 /**

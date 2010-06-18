@@ -19,9 +19,9 @@
 
 /**
  * @defgroup MSP430_DRIVERS MSP430 Drivers
- * @brief Device drivers included in the MSP430 support.
+ * @brief MSP430 specific support.
  *
- * @ingroup MSP430
+ * @ingroup platforms
  */
 
 /**

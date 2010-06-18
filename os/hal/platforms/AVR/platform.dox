@@ -19,9 +19,9 @@
 
 /**
  * @defgroup AVR_DRIVERS AVR Drivers
- * @brief Device drivers included in the AVR support.
+ * @brief AVR specific support.
  *
- * @ingroup AVR
+ * @ingroup platforms
  */
 
 /**

@@ -23,3 +23,16 @@
  * ChibiOS/RT ports.
  */
 
+/**
+ * @defgroup gcc GCC Ports
+ * Ports for the GCC compiler or derivatives.
+ *
+ * @ingroup ports
+ */
+
+/**
+ * @defgroup raisonance Raisonance Ports
+ * Ports for the Raisonance compiler or derivatives.
+ *
+ * @ingroup ports
+ */

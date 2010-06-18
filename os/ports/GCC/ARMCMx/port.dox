@@ -19,8 +19,11 @@
 
 /**
  * @defgroup ARMCMx ARM Cortex-Mx
- * @details This port supports the ARMv6-M and ARMv7-M architectures (all the
- * Cortex-Mx cores).
+ * @details ARM Cortex-Mx port for the GCC compiler.
+ 
+ * @section ARMCMx_INTRO
+ * This port supports all the cores implementing the ARMv6-M and ARMv7-M
+ * architectures.
  *
  * @section ARMCMx_STATES_A System logical states in ARMv6-M
  * - <b>Init</b>. This state is represented by the startup code and the
@@ -102,7 +105,7 @@
  * - The threads are started in thread-privileged mode.
  * - Interrupt nesting and the other advanced core/NVIC features are supported.
  * .
- * @ingroup ports
+ * @ingroup gcc
  */
 
 /**

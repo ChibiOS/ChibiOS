@@ -18,14 +18,14 @@
 */
 
 /**
- * @defgroup LPC11xx LPC11xx Support
+ * @defgroup LPC11xx LPC11xx Drivers
  * @brief LPC11xx specific support.
  * @details The LPC11xx support includes:
  * - I/O ports driver.
  * - Buffered, interrupt driven, serial driver.
  * - A demo supporting the kernel test suite.
  * .
- * @ingroup ARMCMx
+ * @ingroup platforms
  */
 
 /**

@@ -19,8 +19,7 @@
 
 /**
  * @defgroup MSP430 MSP430
- * @details MSP430 port details. This section how the ChibiOS/RT features are
- * implemented on this architecture.
+ * @details MSP430 port for the GCC compiler.
  *
  * @section MSP430_STATES Mapping of the System States in the MSP430 port
  * The ChibiOS/RT logical @ref system_states are mapped as follow in the MSP430
@@ -56,7 +55,7 @@
  *   select the proper low power mode for you application by defining the
  *   macro @p port_wait_for_interrupt().
  * .
- * @ingroup ports
+ * @ingroup gcc
  */
 
 /**

@@ -19,9 +19,9 @@
 
 /**
  * @defgroup SPC563_DRIVERS SPC563 Drivers
- * @brief Device drivers included in the SPC563 support.
+ * @brief SPC563 specific support.
  *
- * @ingroup PPC
+ * @ingroup platforms
  */
 
 /**
