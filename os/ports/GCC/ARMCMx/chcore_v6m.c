@@ -33,7 +33,7 @@
 regarm_t _port_saved_pc;
 
 /**
- * @brief	IRQ nesting counter.
+ * @brief   IRQ nesting counter.
  */
 unsigned _port_irq_nesting;
 
@@ -70,7 +70,7 @@ void _port_switch_from_irq(void) {
                 "push    {r0, r1, lr}                           \n\t"
                 "ldr     r0, =_port_saved_pc                    \n\t"
                 "ldr     r0, [r0]                               \n\t"
-                "add 	 r0, r0, #1								\n\t"
+                "add     r0, r0, #1                             \n\t"
                 "str     r0, [sp, #28]");
 
   chSchDoRescheduleI();
