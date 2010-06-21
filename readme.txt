@@ -59,6 +59,8 @@
 *****************************************************************************
 
 *** 2.1.0 ***
+- FIX: Fixed missing check in chIQReadTimeout() and chIQWriteTimeout() (bug
+  3019158)(backported in 2.0.1).
 - FIX: Fixed instability in Mutexes subsystem (bug 3019099)(backported
   in 2.0.1).
 - FIX: Fixed broken AVR port (bug 3016619)(backported in 2.0.0).
