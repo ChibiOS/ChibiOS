@@ -58,6 +58,11 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.0.1 ***
+- FIX: Fixed missing check in chIQReadTimeout() and chIQWriteTimeout() (bug
+  3019158).
+- FIX: Fixed instability in Mutexes subsystem (bug 3019099).
+
 *** 2.0.0 ***
 - NEW: Implemented the concept of thread references, this mechanism ensures
   that a dynamic thread's memory is not freed while some other thread still

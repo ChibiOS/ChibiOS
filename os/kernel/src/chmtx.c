@@ -152,12 +152,17 @@ void chMtxLockS(Mutex *mp) {
     prio_insert(ctp, &mp->m_queue);
     ctp->p_u.wtobjp = mp;
     chSchGoSleepS(THD_STATE_WTMTX);
-    chDbgAssert(mp->m_owner == NULL, "chMtxLockS(), #1", "still owned");
+    /* It is assumed that the thread performing the unlock operation assigns
+       the mutex to this thread.*/
+    chDbgAssert(mp->m_owner == ctp, "chMtxLockS(), #1", "not owner");
+    chDbgAssert(ctp->p_mtxlist == mp, "chMtxLockS(), #2", "not owned");
   }
-  /* The mutex is now inserted in the owned mutexes list.*/
-  mp->m_owner = ctp;
-  mp->m_next = ctp->p_mtxlist;
-  ctp->p_mtxlist = mp;
+  else {
+    /* It was not owned, inserted in the owned mutexes list.*/
+    mp->m_owner = ctp;
+    mp->m_next = ctp->p_mtxlist;
+    ctp->p_mtxlist = mp;
+  }
 }
 
 /**
@@ -223,9 +228,10 @@ Mutex *chMtxUnlock(void) {
      as not owned.*/
   ump = ctp->p_mtxlist;
   ctp->p_mtxlist = ump->m_next;
-  ump->m_owner = NULL;
   /* If a thread is waiting on the mutex then the fun part begins.*/
   if (chMtxQueueNotEmptyS(ump)) {
+    Thread *tp;
+
     /* Recalculates the optimal thread priority by scanning the owned
        mutexes list.*/
     tprio_t newprio = ctp->p_realprio;
@@ -241,9 +247,16 @@ Mutex *chMtxUnlock(void) {
     /* Assigns to the current thread the highest priority among all the
        waiting threads.*/
     ctp->p_prio = newprio;
-    /* Awakens the highest priority thread waiting for the unlocked mutex.*/
-    chSchWakeupS(fifo_remove(&ump->m_queue), RDY_OK);
+    /* Awakens the highest priority thread waiting for the unlocked mutex and
+       assigns the mutex to it.*/
+    tp = fifo_remove(&ump->m_queue);
+    ump->m_owner = tp;
+    ump->m_next = tp->p_mtxlist;
+    tp->p_mtxlist = ump;
+    chSchWakeupS(tp, RDY_OK);
   }
+  else
+    ump->m_owner = NULL;
   chSysUnlock();
   return ump;
 }
@@ -269,9 +282,10 @@ Mutex *chMtxUnlockS(void) {
      owned.*/
   ump = ctp->p_mtxlist;
   ctp->p_mtxlist = ump->m_next;
-  ump->m_owner = NULL;
   /* If a thread is waiting on the mutex then the fun part begins.*/
   if (chMtxQueueNotEmptyS(ump)) {
+    Thread *tp;
+
     /* Recalculates the optimal thread priority by scanning the owned
        mutexes list.*/
     tprio_t newprio = ctp->p_realprio;
@@ -285,8 +299,16 @@ Mutex *chMtxUnlockS(void) {
       mp = mp->m_next;
     }
     ctp->p_prio = newprio;
-    chSchReadyI(fifo_remove(&ump->m_queue));
+    /* Awakens the highest priority thread waiting for the unlocked mutex and
+       assigns the mutex to it.*/
+    tp = fifo_remove(&ump->m_queue);
+    ump->m_owner = tp;
+    ump->m_next = tp->p_mtxlist;
+    tp->p_mtxlist = ump;
+    chSchReadyI(tp);
   }
+  else
+    ump->m_owner = NULL;
   return ump;
 }
 
@@ -303,11 +325,17 @@ void chMtxUnlockAll(void) {
   chSysLock();
   if (ctp->p_mtxlist != NULL) {
     do {
-      Mutex *mp = ctp->p_mtxlist;
-      ctp->p_mtxlist = mp->m_next;
-      mp->m_owner = NULL;
-      if (chMtxQueueNotEmptyS(mp))
-        chSchReadyI(fifo_remove(&mp->m_queue));
+      Mutex *ump = ctp->p_mtxlist;
+      ctp->p_mtxlist = ump->m_next;
+      if (chMtxQueueNotEmptyS(ump)) {
+        Thread *tp = fifo_remove(&ump->m_queue);
+        ump->m_owner = tp;
+        ump->m_next = tp->p_mtxlist;
+        tp->p_mtxlist = ump;
+        chSchReadyI(tp);
+      }
+      else
+        ump->m_owner = NULL;
     } while (ctp->p_mtxlist != NULL);
     ctp->p_prio = ctp->p_realprio;
     chSchRescheduleS();
