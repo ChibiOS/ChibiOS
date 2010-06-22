@@ -434,6 +434,24 @@
 #endif
 
 /**
+ * @brief   Timers 2, 3, 4, 5, 6, 7 clock.
+ */
+#if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
+#define STM32_TIMCLK1               (STM32_PCLK1 * 1)
+#else
+#define STM32_TIMCLK1               (STM32_PCLK1 * 2)
+#endif
+
+/**
+ * @brief   Timer 1 clock.
+ */
+#if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
+#define STM32_TIMCLK2               (STM32_PCLK2 * 1)
+#else
+#define STM32_TIMCLK2               (STM32_PCLK2 * 2)
+#endif
+
+/**
  * @brief   Flash settings.
  */
 #if (STM32_HCLK <= 24000000) || defined(__DOXYGEN__)

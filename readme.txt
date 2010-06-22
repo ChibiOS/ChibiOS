@@ -59,9 +59,16 @@
 *****************************************************************************
 
 *** 2.0.1 ***
+- FIX: Fixed non functional CH_DBG_ENABLE_STACK_CHECK option in the Cortex-M3
+  caused by GCC 4.5.0, the fix also improves the context switch performance
+  because GCC 4.5.0 apparently was generating useless instructions within the
+  very critical context switch code (bug 3019738).
+- FIX: Fixed insufficient stack space assigned to the idle thread in
+  Cortex-M3 port (bug 3019594).
 - FIX: Fixed missing check in chIQReadTimeout() and chIQWriteTimeout() (bug
   3019158).
 - FIX: Fixed instability in Mutexes subsystem (bug 3019099).
+- NEW: Added timers clock macros to the STM32 clock tree HAL driver.
 
 *** 2.0.0 ***
 - NEW: Implemented the concept of thread references, this mechanism ensures
