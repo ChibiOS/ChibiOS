@@ -325,18 +325,21 @@
 #endif
 
 /**
- * @brief   Timers clocks.
+ * @brief   Timers 2, 3, 4, 5, 6, 7, 12, 13, 14 clock.
  */
 #if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
-#define STM32_TIMCLK1   (STM32_PCLK1 * 1)
+#define STM32_TIMCLK1               (STM32_PCLK1 * 1)
 #else
-#define STM32_TIMCLK1   (STM32_PCLK1 * 2)
+#define STM32_TIMCLK1               (STM32_PCLK1 * 2)
 #endif
 
+/**
+ * @brief   Timers 1, 8, 9, 10 and 11 clock.
+ */
 #if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
-#define STM32_TIMCLK2   (STM32_PCLK2 * 1)
+#define STM32_TIMCLK2               (STM32_PCLK2 * 1)
 #else
-#define STM32_TIMCLK2   (STM32_PCLK2 * 2)
+#define STM32_TIMCLK2               (STM32_PCLK2 * 2)
 #endif
 
 /**

@@ -65,6 +65,8 @@
   in 2.0.1).
 - FIX: Fixed broken AVR port (bug 3016619)(backported in 2.0.0).
 - FIX: Fixed assertion in adcStop() (bug 3015109)(backported in 2.0.0).
+- NEW: Added timers clock macros to the STM32 clock tree HAL driver (backported
+  in 2.0.1).
 - OPT: Simplified the test suite code, now it is smaller.
 - Reorganized the documentation, now the description of the device drivers
   implementation is under the HAL module instead of the Ports module.
