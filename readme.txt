@@ -59,6 +59,10 @@
 *****************************************************************************
 
 *** 2.1.0 ***
+- FIX: Fixed notification order in input queues (bug 3020708)(backported in
+  2.0.1).
+- FIX: Fixed non functional CH_CURRP_REGISTER_CACHE option in the Cortex-M3
+  port (bug 3020702)(backported in 2.0.1).
 - FIX: Fixed non functional CH_DBG_ENABLE_STACK_CHECK option in the Cortex-M3
   caused by GCC 4.5.0, the fix also improves the context switch performance
   because GCC 4.5.0 apparently was generating useless instructions within the
@@ -73,6 +77,9 @@
 - FIX: Fixed assertion in adcStop() (bug 3015109)(backported in 2.0.0).
 - NEW: Added timers clock macros to the STM32 clock tree HAL driver (backported
   in 2.0.1).
+- NEW: Added Binary Semaphores among the synchronization primitives. The new
+  subsystem is entirely implemented as macros over the existing and proven
+  Counting Semaphores thus takes no space.
 - OPT: Simplified the test suite code, now it is smaller.
 - Reorganized the documentation, now the description of the device drivers
   implementation is under the HAL module instead of the Ports module.

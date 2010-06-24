@@ -72,7 +72,12 @@
  */
 
 /**
- * @defgroup semaphores Semaphores
+ * @defgroup semaphores Counting Semaphores
+ * @ingroup synchronization
+ */
+
+/**
+ * @defgroup binary_semaphores Binary Semaphores
  * @ingroup synchronization
  */
 
