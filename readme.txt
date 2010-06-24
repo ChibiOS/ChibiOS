@@ -59,6 +59,9 @@
 *****************************************************************************
 
 *** 2.0.1 ***
+- FIX: Fixed notification order in input queues (bug 3020708).
+- FIX: Fixed non functional CH_CURRP_REGISTER_CACHE option in the Cortex-M3
+  port (bug 3020702).
 - FIX: Fixed non functional CH_DBG_ENABLE_STACK_CHECK option in the Cortex-M3
   caused by GCC 4.5.0, the fix also improves the context switch performance
   because GCC 4.5.0 apparently was generating useless instructions within the

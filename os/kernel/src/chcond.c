@@ -24,8 +24,7 @@
     for full details of how and when the exception can be applied.
 */
 /*
-   Concepts and parts of this file are contributed by and Copyright (C) 2008
-   of Leon Woestenberg.
+   Concepts and parts of this file have been contributed by Leon Woestenberg.
  */
 
 /**

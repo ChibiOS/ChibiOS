@@ -133,6 +133,10 @@ msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
   msg_t msg;
 
   chSysLock();
+  
+  if (iqp->q_notify)
+    iqp->q_notify();
+
   if ((msg = chSemWaitTimeoutS(&iqp->q_sem, time)) < RDY_OK) {
     chSysUnlock();
     return msg;
@@ -140,9 +144,6 @@ msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
   b = *iqp->q_rdptr++;
   if (iqp->q_rdptr >= iqp->q_top)
     iqp->q_rdptr = iqp->q_buffer;
-
-  if (iqp->q_notify)
-    iqp->q_notify();
 
   chSysUnlock();
   return b;

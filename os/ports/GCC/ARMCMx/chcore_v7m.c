@@ -34,6 +34,7 @@
 
 #include "ch.h"
 
+#if !defined(CH_CURRP_REGISTER_CACHE) || defined(__DOXXYGEN__)
 /**
  * @brief   Internal context stacking.
  */
@@ -47,6 +48,15 @@
 #define POP_CONTEXT() {                                                     \
   asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}");          \
 }
+#else /* defined(CH_CURRP_REGISTER_CACHE) */
+#define PUSH_CONTEXT() {                                                    \
+  asm volatile ("push    {r4, r5, r6, r8, r9, r10, r11, lr}");              \
+}
+
+#define POP_CONTEXT() {                                                     \
+  asm volatile ("pop     {r4, r5, r6, r8, r9, r10, r11, pc}");              \
+}
+#endif /* defined(CH_CURRP_REGISTER_CACHE) */
 
 #if !CH_OPTIMIZE_SPEED
 void _port_lock(void) {
