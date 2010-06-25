@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    RC/STM8/chtypes.h
- * @brief   STM8 (Raisonance) port system types.
+ * @file    cosmic/STM8/chtypes.h
+ * @brief   STM8 (Cosmic) port system types.
  *
- * @addtogroup STM8_RAISONANCE_CORE
+ * @addtogroup STM8_COSMIC_CORE
  * @{
  */
 
@@ -99,13 +99,13 @@ typedef int8_t          cnt_t;
 /**
  * @brief   Inline function modifier.
  */
-#define INLINE inline
+#define INLINE @inline
 
 /**
  * @brief   ROM constant modifier.
  * @note    Uses the "const" keyword in this port.
  */
-#define ROMCONST code
+#define ROMCONST const
 
 /**
  * @brief   Packed structure modifier (within).

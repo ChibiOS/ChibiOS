@@ -20,6 +20,6 @@
 #ifndef _TESTBMK_H_
 #define _TESTBMK_H_
 
-extern const struct testcase *patternbmk[];
+extern ROMCONST struct testcase * ROMCONST patternbmk[];
 
 #endif /* _TESTBMK_H_ */

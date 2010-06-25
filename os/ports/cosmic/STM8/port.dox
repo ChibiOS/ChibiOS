@@ -18,10 +18,10 @@
 */
 
 /**
- * @defgroup STM8_RAISONANCE STM8
- * @details STM8 port for the Raisonance C compiler.
+ * @defgroup STM8_COSMIC STM8
+ * @details STM8 port for the Cosmic C compiler.
  *
- * @section STM8_RAISONANCE_STATES Mapping of the System States in the STM8 port
+ * @section STM8_COSMIC_STATES Mapping of the System States in the STM8 port
  * The ChibiOS/RT logical @ref system_states are mapped as follow in the STM8
  * port:
  * - <b>Init</b>. This state is represented by the startup code and the
@@ -44,7 +44,7 @@
  *   maskable interrupt sources that can be associated to this state.
  * - <b>Halted</b>. Implemented as an infinite loop with interrupts disabled.
  * .
- * @section STM8_RAISONANCE_NOTES The STM8 port notes
+ * @section STM8_COSMIC_NOTES The STM8 port notes
  * - The STM8 does not have a dedicated interrupt stack, make sure to reserve
  *     enough stack space for interrupts in each thread stack. This can be done
  *     by modifying the @p INT_REQUIRED_STACK macro into
@@ -57,11 +57,11 @@
  *   because the missing support of the @p inline "C" keyword in the
  *   compiler.
  * .
- * @ingroup raisonance
+ * @ingroup cosmic
  */
 
 /**
- * @defgroup STM8_RAISONANCE_CONF Configuration Options
+ * @defgroup STM8_COSMIC_CONF Configuration Options
  * @brief STM8 Configuration Options.
  * @details The STM8 port allows some architecture-specific configurations
  * settings that can be specified externally, as example on the compiler
@@ -70,17 +70,17 @@
  *   used by the interrupt handlers.<br>
  *   The default for this value is @p 32, this space is allocated for each
  *   thread so be careful in order to not waste precious RAM space.<br>
- *   The default value is set into <b>./os/ports/RC/STM8/chcore.h</b>.
+ *   The default value is set into <b>./os/ports/cosmic/STM8/chcore.h</b>.
  * .
- * @ingroup STM8_RAISONANCE
+ * @ingroup STM8_COSMIC
  */
 
 /**
- * @defgroup STM8_RAISONANCE_CORE Core Port Implementation
+ * @defgroup STM8_COSMIC_CORE Core Port Implementation
  * @brief STM8 specific port code, structures and macros.
  *
- * @ingroup STM8_RAISONANCE
- * @file RC/STM8/chtypes.h Port types.
- * @file RC/STM8/chcore.h Port related structures and macros.
- * @file RC/STM8/chcore.c Port related code.
+ * @ingroup STM8_COSMIC
+ * @file cosmic/STM8/chtypes.h Port types.
+ * @file cosmic/STM8/chcore.h Port related structures and macros.
+ * @file cosmic/STM8/chcore.c Port related code.
  */

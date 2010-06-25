@@ -20,6 +20,6 @@
 #ifndef _TESTRDY_H_
 #define _TESTRDY_H_
 
-extern const struct testcase *patternthd[];
+extern ROMCONST struct testcase * ROMCONST patternthd[];
 
 #endif /* _TESTRDY_H_ */

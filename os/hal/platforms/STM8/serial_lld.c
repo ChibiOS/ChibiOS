@@ -28,30 +28,6 @@
 #include "ch.h"
 #include "hal.h"
 
-/* Because someone somewhere couldn't use the same name for the same thing.*/
-#if STM8_PLATFORM == PLATFORM_STM8AF51AA
-#define UART1_BRR1  USART_BRR1
-#define UART1_BRR2  USART_BRR2
-#define UART1_SR    USART_SR
-#define UART1_DR    USART_DR
-#define UART1_CR1   USART_CR1
-#define UART1_CR2   USART_CR2
-#define UART1_CR3   USART_CR3
-#define UART1_CR4   USART_CR4
-#define UART1_CR5   USART_CR5
-
-#define UART3_BRR1  LINUART_BRR1
-#define UART3_BRR2  LINUART_BRR2
-#define UART3_SR    LINUART_SR
-#define UART3_DR    LINUART_DR
-#define UART3_CR1   LINUART_CR1
-#define UART3_CR2   LINUART_CR2
-#define UART3_CR3   LINUART_CR3
-#define UART3_CR4   LINUART_CR4
-#define UART3_CR5   LINUART_CR5
-#define UART3_CR6   LINUART_CR6
-#endif
-
 #if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
@@ -63,6 +39,13 @@
  */
 #if USE_STM8_UART1 || defined(__DOXYGEN__)
 SerialDriver SD1;
+#endif
+
+/**
+ * @brief   UART2 serial driver identifier.
+ */
+#if USE_STM8_UART2 || defined(__DOXYGEN__)
+SerialDriver SD2;
 #endif
 
 /**
@@ -91,13 +74,15 @@ static ROMCONST SerialConfig default_config = {
 static void set_error(SerialDriver *sdp, uint8_t sr) {
   sdflags_t sts = 0;
 
-  if (sr & 0x08)                            /* OR bit.                      */
+  /* Note, SR register bit definitions are equal for all UARTs so using
+     the UART1 definitions is fine.*/
+  if (sr & UART1_SR_OR)
     sts |= SD_OVERRUN_ERROR;
-  if (sr & 0x04)                            /* NF bit.                      */
+  if (sr & UART1_SR_NF)
     sts |= SD_NOISE_ERROR;
-  if (sr & 0x02)                            /* FE bit.                      */
+  if (sr & UART1_SR_FE)
     sts |= SD_FRAMING_ERROR;
-  if (sr & 0x01)                            /* PE bit.                      */
+  if (sr & UART1_SR_PE)
     sts |= SD_PARITY_ERROR;
   chSysLockFromIsr();
   sdAddFlagsI(sdp, sts);
@@ -107,7 +92,7 @@ static void set_error(SerialDriver *sdp, uint8_t sr) {
 #if USE_STM8_UART1 || defined(__DOXYGEN__)
 static void notify1(void) {
 
-  UART1_CR2 |= 0x80;                        /* TIEN bit.                    */
+  UART1->CR2 |= UART1_CR2_TIEN;
 }
 
 /**
@@ -117,18 +102,18 @@ static void notify1(void) {
  */
 static void uart1_init(const SerialConfig *config) {
 
-  UART1_BRR2 = ((uint8_t)(config->sc_brr >> 8) & (uint8_t)0xF0) |
-               ((uint8_t)config->sc_brr & (uint8_t)0x0F);
-  UART1_BRR1 = (uint8_t)(config->sc_brr >> 4);
-  UART1_CR1  = config->sc_mode &
-               SD_MODE_PARITY;              /* PIEN included.               */
-  UART1_CR2  = 0x2C;                        /* RIEN | TEN | REN.            */
-  UART1_CR3  = config->sc_mode & SD_MODE_STOP;
-  UART1_CR4  = 0;
-  UART1_CR5  = 0;
-  UART1_PSCR = 1;
-  (void)UART1_SR;
-  (void)UART1_DR;
+  UART1->BRR2 = (uint8_t)(((uint8_t)(config->sc_brr >> 8) & (uint8_t)0xF0) |
+                          ((uint8_t)config->sc_brr & (uint8_t)0x0F));
+  UART1->BRR1 = (uint8_t)(config->sc_brr >> 4);
+  UART1->CR1  = (uint8_t)(config->sc_mode &
+                          SD_MODE_PARITY);  /* PIEN included.               */
+  UART1->CR2  = UART1_CR2_RIEN | UART1_CR2_TEN | UART1_CR2_REN;
+  UART1->CR3  = (uint8_t)(config->sc_mode & SD_MODE_STOP);
+  UART1->CR4  = 0;
+  UART1->CR5  = 0;
+  UART1->PSCR = 1;
+  (void)UART1->SR;
+  (void)UART1->DR;
 }
 
 /**
@@ -136,19 +121,62 @@ static void uart1_init(const SerialConfig *config) {
  */
 static void uart1_deinit(void) {
 
-  UART1_CR1  = 0x20;                        /* UARTD (low power).           */
-  UART1_CR2  = 0;
-  UART1_CR3  = 0;
-  UART1_CR4  = 0;
-  UART1_CR5  = 0;
-  UART1_PSCR = 0;
+  UART1->CR1  = UART1_CR1_UARTD;
+  UART1->CR2  = 0;
+  UART1->CR3  = 0;
+  UART1->CR4  = 0;
+  UART1->CR5  = 0;
+  UART1->PSCR = 0;
+}
+#endif /* USE_STM8_UART1 */
+
+#if USE_STM8_UART2 || defined(__DOXYGEN__)
+static void notify2(void) {
+
+  UART2->CR2 |= UART2_CR2_TIEN;
+}
+
+/**
+ * @brief   UART2 initialization.
+ *
+ * @param[in] config    architecture-dependent serial driver configuration
+ */
+static void uart2_init(const SerialConfig *config) {
+
+  UART2->BRR2 = (uint8_t)(((uint8_t)(config->sc_brr >> 8) & (uint8_t)0xF0) |
+                          ((uint8_t)config->sc_brr & (uint8_t)0x0F));
+  UART2->BRR1 = (uint8_t)(config->sc_brr >> 4);
+  UART2->CR1  = (uint8_t)(config->sc_mode &
+                          SD_MODE_PARITY);  /* PIEN included.               */
+  UART2->CR2  = UART2_CR2_RIEN | UART2_CR2_TEN | UART2_CR2_REN;
+  UART2->CR3  = (uint8_t)(config->sc_mode & SD_MODE_STOP);
+  UART2->CR4  = 0;
+  UART2->CR5  = 0;
+  UART2->CR6  = 0;
+  UART2->PSCR = 1;
+  (void)UART2->SR;
+  (void)UART2->DR;
+}
+
+/**
+ * @brief   UART1 de-initialization.
+ */
+static void uart2_deinit(void) {
+
+  UART2->CR1  = UART2_CR1_UARTD;
+  UART2->CR2  = 0;
+  UART2->CR3  = 0;
+  UART2->CR4  = 0;
+  UART2->CR5  = 0;
+  UART2->CR6  = 0;
+  UART2->PSCR = 0;
 }
 #endif /* USE_STM8_UART1 */
 
 #if USE_STM8_UART3 || defined(__DOXYGEN__)
 static void notify3(void) {
 
-  UART3_CR2 |= 0x80;                        /* TIEN bit.                    */
+  UART3->CR2 |= UART3_CR2_TIEN;
 }
 
 /**
@@ -158,17 +186,17 @@ static void notify3(void) {
  */
 static void uart3_init(const SerialConfig *config) {
 
-  UART3_BRR2 = ((uint8_t)(config->sc_brr >> 8) & (uint8_t)0xF0) |
-               ((uint8_t)config->sc_brr & (uint8_t)0x0F);
-  UART3_BRR1 = (uint8_t)(config->sc_brr >> 4);
-  UART3_CR1  = config->sc_mode &
-               SD_MODE_PARITY;              /* PIEN included.               */
-  UART3_CR2  = 0x2C;                        /* RIEN | TEN | REN.            */
-  UART3_CR3  = config->sc_mode & SD_MODE_STOP;
-  UART3_CR4  = 0;
-  UART3_CR6  = 0;
-  (void)UART3_SR;
-  (void)UART3_DR;
+  UART3->BRR2 = (uint8_t)(((uint8_t)(config->sc_brr >> 8) & (uint8_t)0xF0) |
+                          ((uint8_t)config->sc_brr & (uint8_t)0x0F));
+  UART3->BRR1 = (uint8_t)(config->sc_brr >> 4);
+  UART3->CR1  = (uint8_t)(config->sc_mode &
+                          SD_MODE_PARITY);  /* PIEN included.               */
+  UART3->CR2  = UART3_CR2_RIEN | UART3_CR2_TEN | UART3_CR2_REN;
+  UART3->CR3  = (uint8_t)(config->sc_mode & SD_MODE_STOP);
+  UART3->CR4  = 0;
+  UART3->CR6  = 0;
+  (void)UART3->SR;
+  (void)UART3->DR;
 }
 
 /**
@@ -176,11 +204,11 @@ static void uart3_init(const SerialConfig *config) {
  */
 static void uart3_deinit(void) {
 
-  UART3_CR1  = 0x20;                        /* UARTD (low power).           */
-  UART3_CR2  = 0;
-  UART3_CR3  = 0;
-  UART3_CR4  = 0;
-  UART3_CR6  = 0;
+  UART3->CR1  = UART3_CR1_UARTD;
+  UART3->CR2  = 0;
+  UART3->CR3  = 0;
+  UART3->CR4  = 0;
+  UART3->CR6  = 0;
 }
 #endif /* USE_STM8_UART3 */
 
@@ -198,27 +226,61 @@ CH_IRQ_HANDLER(17) {
   b = sdRequestDataI(&SD1);
   chSysUnlockFromIsr();
   if (b < Q_OK)
-    UART1_CR2 &= ~0x80;                         /* TIEN.                    */
+    UART1->CR2 &= (uint8_t)~UART1_CR2_TIEN;
   else
-    UART1_DR = b;
+    UART1->DR = (uint8_t)b;
 
   CH_IRQ_EPILOGUE();
 }
 
 CH_IRQ_HANDLER(18) {
-  uint8_t sr = UART1_SR;
+  uint8_t sr = UART1->SR;
 
   CH_IRQ_PROLOGUE();
 
-  if ((sr = UART1_SR) & 0x0F)                   /* OR | BF | FE | PE.       */
+  if ((sr = UART1->SR) & (UART1_SR_OR | UART1_SR_NF |
+                          UART1_SR_FE | UART1_SR_PE))
     set_error(&SD1, sr);
   chSysLockFromIsr();
-  sdIncomingDataI(&SD1, UART1_DR);
+  sdIncomingDataI(&SD1, UART1->DR);
   chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
 }
 #endif /* USE_STM8_UART1 */
+
+#if USE_STM8_UART2 || defined(__DOXYGEN__)
+CH_IRQ_HANDLER(20) {
+  msg_t b;
+
+  CH_IRQ_PROLOGUE();
+
+  chSysLockFromIsr();
+  b = sdRequestDataI(&SD2);
+  chSysUnlockFromIsr();
+  if (b < Q_OK)
+    UART2->CR2 &= (uint8_t)~UART2_CR2_TIEN;
+  else
+    UART2->DR = (uint8_t)b;
+
+  CH_IRQ_EPILOGUE();
+}
+
+CH_IRQ_HANDLER(21) {
+  uint8_t sr = UART2->SR;
+
+  CH_IRQ_PROLOGUE();
+
+  if ((sr = UART2->SR) & (UART2_SR_OR | UART2_SR_NF |
+                          UART2_SR_FE | UART2_SR_PE))
+    set_error(&SD2, sr);
+  chSysLockFromIsr();
+  sdIncomingDataI(&SD2, UART2->DR);
+  chSysUnlockFromIsr();
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* USE_STM8_UART2 */
 
 #if USE_STM8_UART3 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(20) {
@@ -230,22 +292,23 @@ CH_IRQ_HANDLER(20) {
   b = sdRequestDataI(&SD3);
   chSysUnlockFromIsr();
   if (b < Q_OK)
-    UART3_CR2 &= ~0x80;                         /* TIEN.                    */
+    UART3->CR2 &= (uint8_t)~UART3_CR2_TIEN;
   else
-    UART3_DR = b;
+    UART3->DR = (uint8_t)b;
 
   CH_IRQ_EPILOGUE();
 }
 
 CH_IRQ_HANDLER(21) {
-  uint8_t sr = UART3_SR;
+  uint8_t sr = UART3->SR;
 
   CH_IRQ_PROLOGUE();
 
-  if ((sr = UART3_SR) & 0x0F)                   /* OR | BF | FE | PE.       */
+  if ((sr = UART3->SR) & (UART3_SR_OR | UART3_SR_NF |
+                          UART3_SR_FE | UART3_SR_PE))
     set_error(&SD3, sr);
   chSysLockFromIsr();
-  sdIncomingDataI(&SD3, UART3_DR);
+  sdIncomingDataI(&SD3, UART3->DR);
   chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
@@ -263,14 +326,20 @@ void sd_lld_init(void) {
 
 #if USE_STM8_UART1
   sdObjectInit(&SD1, NULL, notify1);
-  CLK_PCKENR1 |= 4;                         /* PCKEN12, clock source.       */
-  UART1_CR1 = 0x20;                         /* UARTD (low power).           */
+  CLK->PCKENR1 |= CLK_PCKENR1_UART1;        /* PCKEN12, clock source.       */
+  UART1->CR1 = UART1_CR1_UARTD;             /* UARTD (low power).           */
+#endif
+
+#if USE_STM8_UART2
+  sdObjectInit(&SD2, NULL, notify2);
+  CLK->PCKENR1 |= CLK_PCKENR1_UART2;        /* PCKEN13, clock source.       */
+  UART2->CR1 = UART2_CR1_UARTD;             /* UARTD (low power).           */
 #endif
 
 #if USE_STM8_UART3
   sdObjectInit(&SD3, NULL, notify3);
-  CLK_PCKENR1 |= 8;                         /* PCKEN13, clock source.       */
-  UART3_CR1 = 0x20;                         /* UARTD (low power).           */
+  CLK->PCKENR1 |= CLK_PCKENR1_UART3;        /* PCKEN13, clock source.       */
+  UART3->CR1 = UART3_CR1_UARTD;             /* UARTD (low power).           */
 #endif
 }
 
@@ -290,6 +359,12 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 #if USE_STM8_UART1
   if (&SD1 == sdp) {
     uart1_init(config);
+    return;
+  }
+#endif
+#if USE_STM8_UART2
+  if (&SD2 == sdp) {
+    uart2_init(config);
     return;
   }
 #endif
@@ -313,6 +388,12 @@ void sd_lld_stop(SerialDriver *sdp) {
 #if USE_STM8_UART1
   if (&SD1 == sdp) {
     uart1_deinit();
+    return;
+  }
+#endif
+#if USE_STM8_UART2
+  if (&SD2 == sdp) {
+    uart2_deinit();
     return;
   }
 #endif

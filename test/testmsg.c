@@ -101,7 +101,7 @@ static void msg1_execute(void) {
   test_assert(3, msg == 0, "unknown message");
 }
 
-const struct testcase testmsg1 = {
+ROMCONST struct testcase testmsg1 = {
   "Messages, loop",
   NULL,
   NULL,
@@ -113,7 +113,7 @@ const struct testcase testmsg1 = {
 /**
  * @brief   Test sequence for messages.
  */
-const struct testcase * const patternmsg[] = {
+ROMCONST struct testcase * ROMCONST patternmsg[] = {
 #if CH_USE_MESSAGES
   &testmsg1,
 #endif

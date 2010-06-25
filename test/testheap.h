@@ -20,6 +20,6 @@
 #ifndef _TESTHEAP_H_
 #define _TESTHEAP_H_
 
-extern const struct testcase *patternheap[];
+extern ROMCONST struct testcase * ROMCONST patternheap[];
 
 #endif /* _TESTHEAP_H_ */

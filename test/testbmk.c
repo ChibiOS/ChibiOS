@@ -115,7 +115,7 @@ static void bmk1_execute(void) {
   test_println(" ctxswc/S");
 }
 
-const struct testcase testbmk1 = {
+ROMCONST struct testcase testbmk1 = {
   "Benchmark, messages #1",
   NULL,
   NULL,
@@ -144,7 +144,7 @@ static void bmk2_execute(void) {
   test_println(" ctxswc/S");
 }
 
-const struct testcase testbmk2 = {
+ROMCONST struct testcase testbmk2 = {
   "Benchmark, messages #2",
   NULL,
   NULL,
@@ -183,7 +183,7 @@ static void bmk3_execute(void) {
   test_println(" ctxswc/S");
 }
 
-const struct testcase testbmk3 = {
+ROMCONST struct testcase testbmk3 = {
   "Benchmark, messages #3",
   NULL,
   NULL,
@@ -244,7 +244,7 @@ static void bmk4_execute(void) {
   test_println(" ctxswc/S");
 }
 
-const struct testcase testbmk4 = {
+ROMCONST struct testcase testbmk4 = {
   "Benchmark, context switch",
   NULL,
   NULL,
@@ -281,7 +281,7 @@ static void bmk5_execute(void) {
   test_println(" threads/S");
 }
 
-const struct testcase testbmk5 = {
+ROMCONST struct testcase testbmk5 = {
   "Benchmark, threads, full cycle",
   NULL,
   NULL,
@@ -320,7 +320,7 @@ static void bmk6_execute(void) {
   test_println(" threads/S");
 }
 
-const struct testcase testbmk6 = {
+ROMCONST struct testcase testbmk6 = {
   "Benchmark, threads, create only",
   NULL,
   NULL,
@@ -381,7 +381,7 @@ static void bmk7_execute(void) {
   test_println(" ctxswc/S");
 }
 
-const struct testcase testbmk7 = {
+ROMCONST struct testcase testbmk7 = {
   "Benchmark, mass reschedule, 5 threads",
   bmk7_setup,
   NULL,
@@ -434,7 +434,7 @@ static void bmk8_execute(void) {
   test_println(" ctxswc/S");
 }
 
-const struct testcase testbmk8 = {
+ROMCONST struct testcase testbmk8 = {
   "Benchmark, round robin context switching",
   NULL,
   NULL,
@@ -479,7 +479,7 @@ static void bmk9_execute(void) {
   test_println(" bytes/S");
 }
 
-const struct testcase testbmk9 = {
+ROMCONST struct testcase testbmk9 = {
   "Benchmark, I/O Queues throughput",
   NULL,
   NULL,
@@ -520,7 +520,7 @@ static void bmk10_execute(void) {
   test_println(" timers/S");
 }
 
-const struct testcase testbmk10 = {
+ROMCONST struct testcase testbmk10 = {
   "Benchmark, virtual timers set/reset",
   NULL,
   NULL,
@@ -566,7 +566,7 @@ static void bmk11_execute(void) {
   test_println(" wait+signal/S");
 }
 
-const struct testcase testbmk11 = {
+ROMCONST struct testcase testbmk11 = {
   "Benchmark, semaphores wait/signal",
   bmk11_setup,
   NULL,
@@ -613,7 +613,7 @@ static void bmk12_execute(void) {
   test_println(" lock+unlock/S");
 }
 
-const struct testcase testbmk12 = {
+ROMCONST struct testcase testbmk12 = {
   "Benchmark, mutexes lock/unlock",
   bmk12_setup,
   NULL,
@@ -674,7 +674,7 @@ static void bmk13_execute(void) {
 #endif
 }
 
-const struct testcase testbmk13 = {
+ROMCONST struct testcase testbmk13 = {
   "Benchmark, RAM footprint",
   NULL,
   NULL,
@@ -684,7 +684,7 @@ const struct testcase testbmk13 = {
 /**
  * @brief   Test sequence for benchmarks.
  */
-const struct testcase * const patternbmk[] = {
+ROMCONST struct testcase * ROMCONST patternbmk[] = {
 #if !TEST_NO_BENCHMARKS
   &testbmk1,
   &testbmk2,

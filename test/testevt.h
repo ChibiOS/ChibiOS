@@ -20,6 +20,6 @@
 #ifndef _TESTEVT_H_
 #define _TESTEVT_H_
 
-extern const struct testcase *patternevt[];
+extern ROMCONST struct testcase * ROMCONST patternevt[];
 
 #endif /* _TESTEVT_H_ */

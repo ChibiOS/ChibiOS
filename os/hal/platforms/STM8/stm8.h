@@ -20,22 +20,17 @@
 #ifndef _STM8_H_
 #define _STM8_H_
 
-/*
- * Supported platforms.
- */
-#define PLATFORM_STM8S208RB     1
-#define PLATFORM_STM8AF51AA     2
+#undef FALSE
+#undef TRUE
 
-#ifndef STM8_PLATFORM
-#error "STM8 platform not defined"
-#endif
-
-#if STM8_PLATFORM == PLATFORM_STM8S208RB
-#include "STM8/STM8S208RB.h"
-#elif STM8_PLATFORM == PLATFORM_STM8AF51AA
-#include "STM8/STM8AF51AA.h"
+#if defined(STM8S208) || defined(STM8S207) || defined(STM8S105) ||          \
+    defined(STM8S103) || defined (STM8S903)
+#include "stm8s.h"
 #else
 #error "unsupported or invalid STM8 platform"
 #endif
+
+#define FALSE 0
+#define TRUE (!FALSE)
 
 #endif /* _STM8_H_ */

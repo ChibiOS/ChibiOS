@@ -51,17 +51,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   GPIO port representation.
- */
-typedef struct {
-  volatile uint8_t      ODR;
-  volatile uint8_t      IDR;
-  volatile uint8_t      DDR;
-  volatile uint8_t      CR1;
-  volatile uint8_t      CR2;
-} gpio_t;
-
-/**
  * @brief   Generic I/O ports static initializer.
  * @details An instance of this structure must be passed to @p palInit() at
  *          system startup time in order to initialized the digital I/O
@@ -69,7 +58,14 @@ typedef struct {
  *          or whole ports can be reprogrammed at later time.
  */
 typedef struct {
-  gpio_t                P[9];
+#if defined(STM8S207) || defined(STM8S208) || defined(STM8S105) ||          \
+    defined(__DOXYGEN__)
+  GPIO_TypeDef          P[7];
+#elif defined(STM8S207) || defined(STM8S208)
+  GPIO_TypeDef          P[9];
+#else
+  GPIO_TypeDef          P[6];
+#endif
 } PALConfig;
 
 /**
@@ -91,7 +87,7 @@ typedef uint8_t ioportmask_t;
 /**
  * @brief   Port Identifier.
  */
-typedef gpio_t *ioportid_t;
+typedef GPIO_TypeDef *ioportid_t;
 
 /*===========================================================================*/
 /* I/O Ports Identifiers.                                                    */
@@ -105,56 +101,52 @@ typedef gpio_t *ioportid_t;
 /**
  * @brief   GPIO port A identifier.
  */
-#define IOPORT1         ((gpio_t *)0x5000)
-#define GPIOA           IOPORT1
+#define IOPORT1         GPIOA
 
 /**
  * @brief   GPIO port B identifier.
  */
-#define IOPORT2         ((gpio_t *)0x5005)
-#define GPIOB           IOPORT2
+#define IOPORT2         GPIOB
 
 /**
  * @brief   GPIO port C identifier.
  */
-#define IOPORT3         ((gpio_t *)0x500A)
-#define GPIOC           IOPORT3
+#define IOPORT3         GPIOC
 
 /**
  * @brief   GPIO port D identifier.
  */
-#define IOPORT4         ((gpio_t *)0x500F)
-#define GPIOD           IOPORT4
+#define IOPORT4         GPIOD
 
 /**
  * @brief   GPIO port E identifier.
  */
-#define IOPORT5         ((gpio_t *)0x5014)
-#define GPIOE           IOPORT5
+#define IOPORT5         GPIOE
 
 /**
  * @brief   GPIO port F identifier.
  */
-#define IOPORT6         ((gpio_t *)0x5019)
-#define GPIOF           IOPORT6
+#define IOPORT6         GPIOF
 
+#if defined(STM8S207) || defined(STM8S208) || defined(STM8S105) ||          \
+    defined(__DOXYGEN__)
 /**
  * @brief   GPIO port G identifier.
  */
-#define IOPORT7         ((gpio_t *)0x501E)
-#define GPIOG           IOPORT7
+#define IOPORT7         GPIOG
+#endif
 
+#if defined(STM8S207) || defined(STM8S208) || defined(__DOXYGEN__)
 /**
  * @brief   GPIO port H identifier.
  */
-#define IOPORT8         ((gpio_t *)0x5023)
-#define GPIOH           IOPORT8
+#define IOPORT8         GPIOH
 
 /**
  * @brief   GPIO port I identifier.
  */
-#define IOPORT9         ((gpio_t *)0x5028)
-#define GPIOI           IOPORT9
+#define IOPORT9         GPIOI
+#endif
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */

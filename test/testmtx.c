@@ -112,7 +112,7 @@ static void mtx1_execute(void) {
   test_assert_sequence(2, "ABCDE");
 }
 
-const struct testcase testmtx1 = {
+ROMCONST struct testcase testmtx1 = {
   "Mutexes, priority enqueuing test",
   mtx1_setup,
   NULL,
@@ -203,7 +203,7 @@ static void mtx2_execute(void) {
   test_assert_time_window(2, time + MS2ST(100), time + MS2ST(100) + ALLOWED_DELAY);
 }
 
-const struct testcase testmtx2 = {
+ROMCONST struct testcase testmtx2 = {
   "Mutexes, priority inheritance, simple case",
   mtx2_setup,
   NULL,
@@ -323,7 +323,7 @@ static void mtx3_execute(void) {
   test_assert_time_window(2, time + MS2ST(110), time + MS2ST(110) + ALLOWED_DELAY);
 }
 
-const struct testcase testmtx3 = {
+ROMCONST struct testcase testmtx3 = {
   "Mutexes, priority inheritance, complex case",
   mtx3_setup,
   NULL,
@@ -411,7 +411,7 @@ static void mtx4_execute(void) {
   test_wait_threads();
 }
 
-const struct testcase testmtx4 = {
+ROMCONST struct testcase testmtx4 = {
   "Mutexes, priority return",
   mtx4_setup,
   NULL,
@@ -454,7 +454,7 @@ static void mtx5_execute(void) {
   test_assert(5, chThdGetPriority() == prio, "wrong priority level");
 }
 
-const struct testcase testmtx5 = {
+ROMCONST struct testcase testmtx5 = {
   "Mutexes, status",
   mtx5_setup,
   NULL,
@@ -508,7 +508,7 @@ static void mtx6_execute(void) {
   test_assert_sequence(1, "ABCDE");
 }
 
-const struct testcase testmtx6 = {
+ROMCONST struct testcase testmtx6 = {
   "CondVar, signal test",
   mtx6_setup,
   NULL,
@@ -545,7 +545,7 @@ static void mtx7_execute(void) {
   test_assert_sequence(1, "ABCDE");
 }
 
-const struct testcase testmtx7 = {
+ROMCONST struct testcase testmtx7 = {
   "CondVar, broadcast test",
   mtx7_setup,
   NULL,
@@ -603,7 +603,7 @@ static void mtx8_execute(void) {
   test_assert_sequence(1, "ABC");
 }
 
-const struct testcase testmtx8 = {
+ROMCONST struct testcase testmtx8 = {
   "CondVar, boost test",
   mtx8_setup,
   NULL,
@@ -615,7 +615,7 @@ const struct testcase testmtx8 = {
 /**
  * @brief   Test sequence for mutexes.
  */
-const struct testcase * const patternmtx[] = {
+ROMCONST struct testcase * ROMCONST patternmtx[] = {
 #if CH_USE_MUTEXES
   &testmtx1,
 #if CH_DBG_THREADS_PROFILING

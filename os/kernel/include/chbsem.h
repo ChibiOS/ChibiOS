@@ -67,10 +67,10 @@ typedef struct  {
  *          that is part of a bigger structure.
  *
  * @param[in] name      the name of the semaphore variable
- * @param[in] n         the counter initial value, this value must be
- *                      non-negative
+ * @param[in] taken     the semaphore initial state
  */
-#define _BSEMAPHORE_DATA(name, t) {_SEMAPHORE_DATA(name.bs_sem), ((t) ? 0 : 1)}
+#define _BSEMAPHORE_DATA(name, taken)                                       \
+  {_SEMAPHORE_DATA(name.bs_sem), ((taken) ? 0 : 1)}
 
 /**
  * @brief   Static semaphore initializer.
@@ -78,11 +78,10 @@ typedef struct  {
  *          initialization using @p chSemInit().
  *
  * @param[in] name      the name of the semaphore variable
- * @param[in] n         the counter initial value, this value must be
- *                      non-negative
+ * @param[in] taken     the semaphore initial state
  */
-#define BSEMAPHORE_DECL(name, t) Semaphore name = _BSEMAPHORE_DATA(name, t)
-
+#define BSEMAPHORE_DECL(name, taken)                                        \
+  BinarySemaphore name = _BSEMAPHORE_DATA(name, taken)
 
 /**
  * @brief   Initializes a binary semaphore.

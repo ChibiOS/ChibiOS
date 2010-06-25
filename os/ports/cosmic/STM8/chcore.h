@@ -18,17 +18,15 @@
 */
 
 /**
- * @file    RC/STM8/chcore.h
- * @brief   STM8 (Raisonance) architecture port macros and structures.
+ * @file    cosmic/STM8/chcore.h
+ * @brief   STM8 (Cosmic) architecture port macros and structures.
  *
- * @addtogroup STM8_RAISONANCE_CORE
+ * @addtogroup STM8_COSMIC_CORE
  * @{
  */
 
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
-
-#include <intrins.h>
 
 /*===========================================================================*/
 /* Port configurable parameters.                                             */
@@ -82,8 +80,8 @@ typedef void (*stm8func_t)(void);
  */
 struct extctx {
   uint8_t       _next;
-  uint16_t      cx;
-  uint16_t      bx;
+  uint8_t       c_y[3];
+  uint8_t       c_x[3];
   uint8_t       cc;
   uint8_t       a;
   uint16_t      x;
@@ -209,7 +207,7 @@ struct stm8_startctx {
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  */
-#define PORT_IRQ_HANDLER(id) void vector##id(void) interrupt id
+#define PORT_IRQ_HANDLER(id) @far @interrupt void vector##id(void)
 
 /**
  * @brief   Port-related initialization code.
@@ -221,13 +219,13 @@ struct stm8_startctx {
  * @brief   Kernel-lock action.
  * @note    Implemented as global interrupts disable.
  */
-#define port_lock() _sim_()
+#define port_lock() _asm("sim")
 
 /**
  * @brief   Kernel-unlock action.
  * @note    Implemented as global interrupts enable.
  */
-#define port_unlock() _rim_()
+#define port_unlock() _asm("rim")
 
 /**
  * @brief   Kernel-lock action from an interrupt handler.
@@ -246,7 +244,7 @@ struct stm8_startctx {
  * @note    Implemented as global interrupts disable.
  * @note    Of course non maskable interrupt sources are not included.
  */
-#define port_disable() _sim_()
+#define port_disable() _asm("sim")
 
 /**
  * @brief   Disables the interrupt sources that are not supposed to preempt
@@ -254,20 +252,20 @@ struct stm8_startctx {
  * @note    Same as @p port_disable() in this port, there is no difference
  *          between the two states.
  */
-#define port_suspend() _sim_()
+#define port_suspend() _asm("sim")
 
 /**
  * @brief   Enables all the interrupt sources.
  * @note    Implemented as global interrupt enable.
  */
-#define port_enable() _rim_()
+#define port_enable() _asm("rim")
 
 /**
  * @brief   Enters an architecture-dependent halt mode.
  * @note    Implemented with the specific "wfi" instruction.
  */
 #if STM8_ENABLE_WFI_IDLE || defined(__DOXYGEN__)
-#define port_wait_for_interrupt() _wfi_()
+#define port_wait_for_interrupt() _asm("wfi")
 #else
 #define port_wait_for_interrupt()
 #endif
@@ -315,7 +313,7 @@ typedef struct {
 #endif
 } ReadyList;
 
-page0 extern ReadyList rlist;
+@tiny extern ReadyList rlist;
 
 #endif /* _CHCORE_H_ */
 

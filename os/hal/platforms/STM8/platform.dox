@@ -19,9 +19,9 @@
 
 /**
  * @defgroup STM8_DRIVERS STM8 Drivers
- * @brief STM8 specific support.
+ * @brief Device drivers included in the STM8 support.
  *
- * @ingroup platforms
+ * @ingroup STM8
  */
 
 /**

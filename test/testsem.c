@@ -103,7 +103,7 @@ static void sem1_execute(void) {
 #endif
 }
 
-const struct testcase testsem1 = {
+ROMCONST struct testcase testsem1 = {
   "Semaphores, enqueuing",
   sem1_setup,
   NULL,
@@ -177,7 +177,7 @@ static void sem2_execute(void) {
   test_assert_time_window(11, target_time, target_time + ALLOWED_DELAY);
 }
 
-const struct testcase testsem2 = {
+ROMCONST struct testcase testsem2 = {
   "Semaphores, timeout",
   sem2_setup,
   NULL,
@@ -222,7 +222,7 @@ static void sem3_execute(void) {
   test_assert(4, sem1.s_cnt == 0, "counter not zero");
 }
 
-const struct testcase testsem3 = {
+ROMCONST struct testcase testsem3 = {
   "Semaphores, atomic signal-wait",
   sem3_setup,
   NULL,
@@ -234,7 +234,7 @@ const struct testcase testsem3 = {
 /**
  * @brief   Test sequence for semaphores.
  */
-const struct testcase * const patternsem[] = {
+ROMCONST struct testcase * ROMCONST patternsem[] = {
 #if CH_USE_SEMAPHORES
   &testsem1,
   &testsem2,

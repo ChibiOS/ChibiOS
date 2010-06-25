@@ -44,7 +44,7 @@
 /*
  * Array of all the test patterns.
  */
-static const struct testcase **patterns[] = {
+static ROMCONST struct testcase **patterns[] = {
   patternthd,
   patternsem,
   patternmtx,
@@ -78,8 +78,8 @@ Thread *threads[MAX_THREADS];
 /*
  * Pointers to the working areas.
  */
-void * const wa[5] = {test.wa.T0, test.wa.T1, test.wa.T2,
-                      test.wa.T3, test.wa.T4};
+void * ROMCONST wa[5] = {test.wa.T0, test.wa.T1, test.wa.T2,
+                         test.wa.T3, test.wa.T4};
 
 /*
  * Console output.

@@ -83,7 +83,7 @@ static void evt1_setup(void) {
 static void h1(eventid_t id) {(void)id;test_emit_token('A');}
 static void h2(eventid_t id) {(void)id;test_emit_token('B');}
 static void h3(eventid_t id) {(void)id;test_emit_token('C');}
-static const evhandler_t evhndl[] = {h1, h2, h3};
+static ROMCONST evhandler_t evhndl[] = {h1, h2, h3};
 
 static void evt1_execute(void) {
   EventListener el1, el2;
@@ -107,7 +107,7 @@ static void evt1_execute(void) {
   test_assert_sequence(4, "ABC");
 }
 
-const struct testcase testevt1 = {
+ROMCONST struct testcase testevt1 = {
   "Events, registration and dispatch",
   evt1_setup,
   NULL,
@@ -224,7 +224,7 @@ static void evt2_execute(void) {
   test_assert(15, !chEvtIsListening(&es2), "stuck listener");
 }
 
-const struct testcase testevt2 = {
+ROMCONST struct testcase testevt2 = {
   "Events, wait and broadcast",
   evt2_setup,
   NULL,
@@ -272,7 +272,7 @@ static void evt3_execute(void) {
   test_assert(6, m == 0, "spurious event");
 }
 
-const struct testcase testevt3 = {
+ROMCONST struct testcase testevt3 = {
   "Events, timeouts",
   evt3_setup,
   NULL,
@@ -283,7 +283,7 @@ const struct testcase testevt3 = {
 /**
  * @brief   Test sequence for events.
  */
-const struct testcase * const patternevt[] = {
+ROMCONST struct testcase * ROMCONST patternevt[] = {
 #if CH_USE_EVENTS
   &testevt1,
   &testevt2,

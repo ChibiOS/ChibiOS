@@ -20,6 +20,6 @@
 #ifndef _TESTPOOLS_H_
 #define _TESTPOOLS_H_
 
-extern const struct testcase *patternpools[];
+extern ROMCONST struct testcase * ROMCONST patternpools[];
 
 #endif /* _TESTPOOLS_H_ */

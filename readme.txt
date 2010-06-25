@@ -75,6 +75,10 @@
   in 2.0.1).
 - FIX: Fixed broken AVR port (bug 3016619)(backported in 2.0.0).
 - FIX: Fixed assertion in adcStop() (bug 3015109)(backported in 2.0.0).
+- NEW: Merged the new unified STM8 port, now the port supports both the
+  Cosmic and Raisonance compilers.
+- NEW: Added an STM8-DISCOVERY demo, the demo can be compiled with both the
+  Cosmic and Raisonance compilers under the STDV IDE.
 - NEW: Added timers clock macros to the STM32 clock tree HAL driver (backported
   in 2.0.1).
 - NEW: Added Binary Semaphores among the synchronization primitives. The new

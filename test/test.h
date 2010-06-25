@@ -45,10 +45,10 @@
 #define MAX_THREADS             5
 #define MAX_TOKENS              16
 
-#if defined(CH_ARCHITECTURE_AVR) ||                                         \
-    defined(CH_ARCHITECTURE_MSP430) ||                                      \
-    defined(CH_ARCHITECTURE_STM8)
+#if defined(CH_ARCHITECTURE_AVR) || defined(CH_ARCHITECTURE_MSP430)
 #define THREADS_STACK_SIZE      48
+#elif defined(CH_ARCHITECTURE_STM8)
+#define THREADS_STACK_SIZE      64
 #elif defined(CH_ARCHITECTURE_SIMIA32)
 #define THREADS_STACK_SIZE      512
 #else
@@ -84,8 +84,8 @@ extern "C" {
 #endif
   msg_t TestThread(void *p);
   void test_printn(uint32_t n);
-  void test_print(const char *msgp);
-  void test_println(const char *msgp);
+  void test_print(char *msgp);
+  void test_println(char *msgp);
   void test_emit_token(char token);
   bool_t _test_fail(unsigned point);
   bool_t _test_assert(unsigned point, bool_t condition);
@@ -151,7 +151,7 @@ extern "C" {
 #if !defined(__DOXYGEN__)
 extern Thread *threads[MAX_THREADS];
 extern union test_buffers test;
-extern void * const wa[];
+extern void * ROMCONST wa[];
 extern bool_t test_timer_done;
 #endif
 

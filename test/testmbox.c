@@ -155,7 +155,7 @@ static void mbox1_execute(void) {
   test_assert(21, mb1.mb_buffer == mb1.mb_rdptr, "read pointer not aligned to base");
 }
 
-const struct testcase testmbox1 = {
+ROMCONST struct testcase testmbox1 = {
   "Mailboxes, queuing and timeouts",
   mbox1_setup,
   NULL,
@@ -167,7 +167,7 @@ const struct testcase testmbox1 = {
 /**
  * @brief   Test sequence for mailboxes.
  */
-const struct testcase * const patternmbox[] = {
+ROMCONST struct testcase * ROMCONST patternmbox[] = {
 #if CH_USE_MAILBOXES
   &testmbox1,
 #endif

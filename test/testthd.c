@@ -77,7 +77,7 @@ static void thd1_execute(void) {
   test_assert_sequence(1, "ABCDE");
 }
 
-const struct testcase testthd1 = {
+ROMCONST struct testcase testthd1 = {
   "Threads, enqueuing test #1",
   NULL,
   NULL,
@@ -105,7 +105,7 @@ static void thd2_execute(void) {
   test_assert_sequence(1, "ABCDE");
 }
 
-const struct testcase testthd2 = {
+ROMCONST struct testcase testthd2 = {
   "Threads, enqueuing test #2",
   NULL,
   NULL,
@@ -170,7 +170,7 @@ static void thd3_execute(void) {
 #endif
 }
 
-const struct testcase testthd3 = {
+ROMCONST struct testcase testthd3 = {
   "Threads, priority change",
   NULL,
   NULL,
@@ -211,7 +211,7 @@ static void thd4_execute(void) {
   test_assert_time_window(4, time, time + 1);
 }
 
-const struct testcase testthd4 = {
+ROMCONST struct testcase testthd4 = {
   "Threads, delays",
   NULL,
   NULL,
@@ -221,7 +221,7 @@ const struct testcase testthd4 = {
 /**
  * @brief   Test sequence for threads.
  */
-const struct testcase * const patternthd[] = {
+ROMCONST struct testcase * ROMCONST patternthd[] = {
   &testthd1,
   &testthd2,
   &testthd3,
