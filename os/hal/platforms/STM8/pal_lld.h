@@ -58,8 +58,7 @@
  *          or whole ports can be reprogrammed at later time.
  */
 typedef struct {
-#if defined(STM8S207) || defined(STM8S208) || defined(STM8S105) ||          \
-    defined(__DOXYGEN__)
+#if defined(STM8S105) || defined(__DOXYGEN__)
   GPIO_TypeDef          P[7];
 #elif defined(STM8S207) || defined(STM8S208)
   GPIO_TypeDef          P[9];

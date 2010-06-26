@@ -37,7 +37,7 @@ CH_IRQ_HANDLER(13) {
   chSysTimerHandlerI();
   chSysUnlockFromIsr();
 
-  TIM2_SR1 = 0;
+  TIM2->SR1 = 0;
 
   CH_IRQ_EPILOGUE();
 }
@@ -55,13 +55,13 @@ void hwinit(void) {
   /*
    * TIM2 initialization as system tick.
    */
-  CLK_PCKENR1 |= 32;            /* PCKEN15, TIM2 clock source.*/
-  TIM2_PSCR    = 4;             /* Prescaler divide by 2^4=16.*/
-  TIM2_ARRH    = TIM2_ARR >> 8;
-  TIM2_ARRL    = TIM2_ARR;
-  TIM2_CNTRH   = 0;
-  TIM2_CNTRL   = 0;
-  TIM2_SR1     = 0;
-  TIM2_IER     = 1;             /* UIE */
-  TIM2_CR1     = 1;             /* CEN */
+  CLK->PCKENR1 |= 32;           /* PCKEN15, TIM2 clock source.*/
+  TIM2->PSCR    = 4;            /* Prescaler divide by 2^4=16.*/
+  TIM2->ARRH    = TIM2_ARR >> 8;
+  TIM2->ARRL    = TIM2_ARR;
+  TIM2->CNTRH   = 0;
+  TIM2->CNTRL   = 0;
+  TIM2->SR1     = 0;
+  TIM2->IER     = 1;            /* UIE */
+  TIM2->CR1     = 1;            /* CEN */
 }
