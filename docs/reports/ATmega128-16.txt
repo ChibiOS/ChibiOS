@@ -5,7 +5,7 @@ Settings: F_CPU=16000000
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.0.0
+*** Kernel:       2.0.1
 *** GCC Version:  4.3.0
 *** Architecture: AVR
 *** Core Variant: MegaAVR
@@ -118,7 +118,7 @@ Settings: F_CPU=16000000
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 82696 bytes/S
+--- Score : 80180 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
@@ -130,7 +130,7 @@ Settings: F_CPU=16000000
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 117588 lock+unlock/S
+--- Score : 116720 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)

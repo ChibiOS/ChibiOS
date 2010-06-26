@@ -5,7 +5,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.0.0
+*** Kernel:       2.0.1
 *** GCC Version:  4.5.0
 *** Architecture: ARM
 *** Core Variant: ARM7TDMI
@@ -123,11 +123,11 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 212108 ctxswc/S
+--- Score : 212116 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 262808 bytes/S
+--- Score : 258636 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
@@ -139,7 +139,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 268336 lock+unlock/S
+--- Score : 256808 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)

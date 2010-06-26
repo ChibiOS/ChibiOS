@@ -5,7 +5,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.0.0
+*** Kernel:       2.0.1
 *** GCC Version:  4.5.0
 *** Architecture: ARM
 *** Core Variant: ARM7TDMI
@@ -127,7 +127,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 316988 bytes/S
+--- Score : 310808 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
@@ -139,7 +139,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 368616 lock+unlock/S
+--- Score : 352328 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)

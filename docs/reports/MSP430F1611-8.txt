@@ -5,7 +5,7 @@ Settings: MCLK=XT2CLK 8MHz
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.0.0
+*** Kernel:       2.0.1
 *** GCC Version:  3.2.3
 *** Architecture: MSP430
 *** Core Variant: MSP430
@@ -127,7 +127,7 @@ Settings: MCLK=XT2CLK 8MHz
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 54380 bytes/S
+--- Score : 53292 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
