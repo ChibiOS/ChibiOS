@@ -83,10 +83,10 @@ String.100.0=STM8S105C6
 
 [Root.Config.0.Settings.3]
 String.2.0=Compiling $(InputFile)...
-String.3.0=cxstm8 +warn +modsl0 -customDebCompat -customOpt-no -customC-pp -customLst -l -i..\demo -i..\..\..\test -i..\..\..\os\hal\include -i..\..\..\os\hal\platforms\stm8 -i..\..\..\boards\st_stm8s_discovery -i..\..\..\os\ports\cosmic\stm8 -i..\..\..\os\kernel\include $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
+String.3.0=cxstm8 +warn -customDebCompat -customOpt-no -customC-pp -customLst -l -i..\demo -i..\..\..\test -i..\..\..\os\hal\include -i..\..\..\os\hal\platforms\stm8 -i..\..\..\boards\st_stm8s_discovery -i..\..\..\os\ports\cosmic\stm8 -i..\..\..\os\kernel\include $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,6,5,11,53,48
+String.6.0=2010,6,26,17,30,51
 
 [Root.Config.0.Settings.4]
 String.2.0=Assembling $(InputFile)...
@@ -156,6 +156,7 @@ Int.108=0
 String.6.0=2010,5,25,14,45,56
 String.100.0=$(TargetFName)
 String.101.0=
+String.102.0=
 String.103.0=.\;..\..\..\os\kernel\src;..\..\..\os\kernel\include;..\..\..\os\ports\cosmic\stm8;..\..\..\boards\st_stm8s_discovery;..\..\..\os\hal\platforms\stm8;..\..\..\os\hal\include;..\..\..\os\hal\src;..\..\..\test;..\demo;
 
 [Root.Config.1.Settings.2]

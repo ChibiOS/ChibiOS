@@ -83,17 +83,17 @@ String.100.0=STM8S105C6
 
 [Root.Config.0.Settings.3]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,38,46
+String.6.0=2010,6,26,17,42,15
 
 [Root.Config.0.Settings.4]
 String.2.0=Assembling $(InputFile)...
 String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,10,30,46
+String.6.0=2010,6,26,17,46,5
 
 [Root.Config.0.Settings.5]
 String.2.0=Running Pre-Link step
@@ -142,6 +142,7 @@ Int.108=0
 String.6.0=2010,6,4,10,10,40
 String.100.0=$(TargetFName)
 String.101.0=
+String.102.0=
 String.103.0=.\;..\demo;..\..\..\boards\st_stm8s_discovery;..\..\..\os\kernel\src;..\..\..\os\kernel\include;..\..\..\os\hal\include;..\..\..\os\hal\platforms\stm8;..\..\..\os\hal\src;..\..\..\test;..\..\..\os\ports\rc\stm8;
 
 [Root.Config.1.Settings.2]
@@ -151,17 +152,17 @@ String.100.0=STM8S105C6
 
 [Root.Config.1.Settings.3]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 
 [Root.Config.1.Settings.4]
 String.2.0=Assembling $(InputFile)...
-String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT NOCOND NOLIST NOLISTINCLUDE NOGEN NOSB NOXREF MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,10,10,40
+String.6.0=2010,6,26,17,22,23
 
 [Root.Config.1.Settings.5]
 String.2.0=Running Pre-Link step
@@ -218,17 +219,17 @@ Int.1=0
 
 [Root.Source Files.Config.0.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,38,46
+String.6.0=2010,6,26,17,42,15
 
 [Root.Source Files.Config.0.Settings.2]
 String.2.0=Assembling $(InputFile)...
 String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,10,30,46
+String.6.0=2010,6,26,17,46,5
 
 [Root.Source Files.Config.0.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -245,17 +246,17 @@ Int.1=0
 
 [Root.Source Files.Config.1.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 
 [Root.Source Files.Config.1.Settings.2]
 String.2.0=Assembling $(InputFile)...
-String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT NOCOND NOLIST NOLISTINCLUDE NOGEN NOSB NOXREF MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,10,10,40
+String.6.0=2010,6,26,17,22,23
 
 [Root.Source Files.Config.1.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -299,7 +300,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files...\demo\main.c.Config.1.Settings.0]
@@ -317,10 +318,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files...\demo\main.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\board]
@@ -354,14 +355,14 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 
 [Root.Source Files.Source Files\board.Config.0.Settings.2]
 String.2.0=Assembling $(InputFile)...
 String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,10,30,46
+String.6.0=2010,6,26,17,46,5
 
 [Root.Source Files.Source Files\board.Config.0.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -378,17 +379,17 @@ Int.1=0
 
 [Root.Source Files.Source Files\board.Config.1.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 
 [Root.Source Files.Source Files\board.Config.1.Settings.2]
 String.2.0=Assembling $(InputFile)...
-String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT NOCOND NOLIST NOLISTINCLUDE NOGEN NOSB NOXREF MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,10,10,40
+String.6.0=2010,6,26,17,22,23
 
 [Root.Source Files.Source Files\board.Config.1.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -438,14 +439,14 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 
 [Root.Source Files.Source Files\os.Source Files\os\hal.Config.0.Settings.2]
 String.2.0=Assembling $(InputFile)...
 String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,10,30,46
+String.6.0=2010,6,26,17,46,5
 
 [Root.Source Files.Source Files\os.Source Files\os\hal.Config.0.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -462,17 +463,17 @@ Int.1=0
 
 [Root.Source Files.Source Files\os.Source Files\os\hal.Config.1.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 
 [Root.Source Files.Source Files\os.Source Files\os\hal.Config.1.Settings.2]
 String.2.0=Assembling $(InputFile)...
-String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT NOCOND NOLIST NOLISTINCLUDE NOGEN NOSB NOXREF MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,10,10,40
+String.6.0=2010,6,26,17,22,23
 
 [Root.Source Files.Source Files\os.Source Files\os\hal.Config.1.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -586,7 +587,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(page0) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,5,11,28,3
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.1.Settings.0]
@@ -604,10 +605,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(page0) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(page0) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,5,11,27,18
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c]
@@ -645,7 +646,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.1.Settings.0]
@@ -663,10 +664,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c]
@@ -704,7 +705,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.1.Settings.0]
@@ -722,10 +723,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c]
@@ -763,7 +764,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.1.Settings.0]
@@ -781,10 +782,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c]
@@ -822,7 +823,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.1.Settings.0]
@@ -840,10 +841,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c]
@@ -881,7 +882,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.1.Settings.0]
@@ -899,10 +900,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c]
@@ -940,7 +941,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.1.Settings.0]
@@ -958,10 +959,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c]
@@ -999,7 +1000,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.1.Settings.0]
@@ -1017,10 +1018,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c]
@@ -1058,7 +1059,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.1.Settings.0]
@@ -1076,10 +1077,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c]
@@ -1117,7 +1118,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.1.Settings.0]
@@ -1135,10 +1136,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c]
@@ -1176,7 +1177,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.1.Settings.0]
@@ -1194,10 +1195,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c]
@@ -1235,7 +1236,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.1.Settings.0]
@@ -1253,10 +1254,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c]
@@ -1294,7 +1295,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.1.Settings.0]
@@ -1312,10 +1313,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c]
@@ -1353,7 +1354,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(page0) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,5,11,28,14
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.1.Settings.0]
@@ -1371,10 +1372,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(page0) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(page0) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,5,11,27,37
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c]
@@ -1412,7 +1413,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.1.Settings.0]
@@ -1430,10 +1431,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c]
@@ -1471,7 +1472,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.1.Settings.0]
@@ -1489,10 +1490,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c]
@@ -1529,7 +1530,7 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 String.8.0=Debug
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.1.Settings.0]
@@ -1547,10 +1548,10 @@ String.6.0=2010,6,4,10,10,40
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\port]
@@ -1583,14 +1584,14 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 
 [Root.Source Files.Source Files\os.Source Files\os\port.Config.0.Settings.2]
 String.2.0=Assembling $(InputFile)...
 String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,10,30,46
+String.6.0=2010,6,26,17,46,5
 
 [Root.Source Files.Source Files\os.Source Files\os\port.Config.0.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -1607,17 +1608,17 @@ Int.1=0
 
 [Root.Source Files.Source Files\os.Source Files\os\port.Config.1.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 
 [Root.Source Files.Source Files\os.Source Files\os\port.Config.1.Settings.2]
 String.2.0=Assembling $(InputFile)...
-String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT NOCOND NOLIST NOLISTINCLUDE NOGEN NOSB NOXREF MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,10,10,40
+String.6.0=2010,6,26,17,22,23
 
 [Root.Source Files.Source Files\os.Source Files\os\port.Config.1.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -1660,14 +1661,14 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 
 [Root.Source Files.Source Files\test.Config.0.Settings.2]
 String.2.0=Assembling $(InputFile)...
 String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,10,30,46
+String.6.0=2010,6,26,17,46,5
 
 [Root.Source Files.Source Files\test.Config.0.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -1684,17 +1685,17 @@ Int.1=0
 
 [Root.Source Files.Source Files\test.Config.1.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 
 [Root.Source Files.Source Files\test.Config.1.Settings.2]
 String.2.0=Assembling $(InputFile)...
-String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT NOCOND NOLIST NOLISTINCLUDE NOGEN NOSB NOXREF MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,10,10,40
+String.6.0=2010,6,26,17,22,23
 
 [Root.Source Files.Source Files\test.Config.1.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -1792,14 +1793,14 @@ String.2.0=Compiling $(InputFile)...
 String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,11,9,20
+String.6.0=2010,6,26,17,42,15
 
 [Root.Include Files.Config.0.Settings.2]
 String.2.0=Assembling $(InputFile)...
 String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,10,30,46
+String.6.0=2010,6,26,17,46,5
 
 [Root.Include Files.Config.0.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -1816,17 +1817,17 @@ Int.1=0
 
 [Root.Include Files.Config.1.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,12,11,58
+String.6.0=2010,6,26,17,22,23
 
 [Root.Include Files.Config.1.Settings.2]
 String.2.0=Assembling $(InputFile)...
-String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT NOCOND NOLIST NOLISTINCLUDE NOGEN NOSB NOXREF MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,6,4,10,10,40
+String.6.0=2010,6,26,17,22,23
 
 [Root.Include Files.Config.1.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
