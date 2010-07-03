@@ -44,7 +44,7 @@
 /*
  * Array of all the test patterns.
  */
-static ROMCONST struct testcase **patterns[] = {
+static ROMCONST struct testcase * ROMCONST *patterns[] = {
   patternthd,
   patternsem,
   patternmtx,
