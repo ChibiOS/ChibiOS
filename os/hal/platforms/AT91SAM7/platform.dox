@@ -75,6 +75,15 @@
  */
 
 /**
+ * @defgroup AT91SAM7_SPI AT91SAM7 SPI Support
+ * @brief SPI peripheral support.
+ * @details The SPI driver supports the AT91SAM7 SPI, the driver works in
+ * polling mode.
+ *
+ * @ingroup AT91SAM7
+ */
+
+/**
  * @defgroup AT91SAM7_MAC AT91SAM7 EMAC Support
  * @brief EMAC peripheral support.
  * @details the @ref MAC supports the AT91SAM7 EMAC peripheral.

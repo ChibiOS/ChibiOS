@@ -608,7 +608,6 @@ INPUT                  = ../docs/src \
                          ../os/ports/GCC/PPC \
                          ../os/ports/GCC/PPC/crt0.s \
                          ../os/ports/GCC/MSP430 \
-                         ../os/ports/cosmic/STM8 \
                          ../os/ports/RC/STM8 \
                          ../os/hal \
                          ../os/hal/include \
@@ -682,6 +681,8 @@ RECURSIVE              = NO
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
 EXCLUDE                = ../os/hal/platforms/STM32/stm32f10x.h \
+                         ../os/hal/platforms/STM8/stm8s.h \
+                         ../os/hal/platforms/STM8/stm8s_type.h \
                          ../os/hal/platforms/LPC11xx/LPC11xx.h \
                          ../os/hal/platforms/LPC11xx/system_LPC11xx.h \
                          ../os/hal/platforms/LPC13xx/LPC13xx.h \

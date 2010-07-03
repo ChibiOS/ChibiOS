@@ -83,7 +83,11 @@
   in 2.0.1).
 - NEW: Added Binary Semaphores among the synchronization primitives. The new
   subsystem is entirely implemented as macros over the existing and proven
-  Counting Semaphores thus takes no space.
+  Counting Semaphores thus takes no space (experimental).
+- NEW: Added a simplified SPI driver for AT91SAM7 devices, contributed by
+  Alexander (experimental).
+- NEW: Added FatFs demos for AT91SAM7S and AT91SAM7X, contributed by
+  Alexander (experimental).
 - OPT: Simplified the test suite code, now it is smaller.
 - Reorganized the documentation, now the description of the device drivers
   implementation is under the HAL module instead of the Ports module.
