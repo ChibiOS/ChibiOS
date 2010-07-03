@@ -72,6 +72,7 @@
 #define PIOA_USB_PUP_MASK       (1 << PIOA_USB_PUP)
 #define PIOA_USB_PR             26
 #define PIOA_USB_PR_MASK        (1 << PIOA_USB_PR)
+#define PIOA_CS_MMC             13
 
 #define PIOB_PHY_PD             18
 #define PIOB_PHY_PD_MASK        (1 << PIOB_PHY_PD)
@@ -89,5 +90,14 @@
 #define PIOB_SW2_MASK           (1 << PIOB_SW2)
 #define PIOB_PHY_IRQ            26
 #define PIOB_PHY_IRQ_MASK       (1 << PIOB_PHY_IRQ)
+
+#define MMC_CSR_NUM             1
+
+/*
+ * SPI0 pins
+ */
+#define SPI_MISO                (1 << 16) 
+#define SPI_MOSI                (1 << 17)
+#define SPI_SCK                 (1 << 18)
 
 #endif /* _BOARD_H_ */

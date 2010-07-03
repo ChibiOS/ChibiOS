@@ -51,10 +51,10 @@
 /*
  * I/O definitions.
  */
-#define PIOA_LED1		18
-#define PIOA_LED1_MASK		(1 << PIOA_LED1_MASK)
-#define PIOA_LED2		17
-#define PIOA_LED2_MASK		(1 << PIOA_LED2_MASK)
+#define PIOA_LED1               18
+#define PIOA_LED1_MASK          (1 << PIOA_LED1_MASK)
+#define PIOA_LED2               17
+#define PIOA_LED2_MASK          (1 << PIOA_LED2_MASK)
 #define PIOA_B1                 19
 #define PIOA_B1_MASK            (1 << PIOA_B1)
 #define PIOA_B2                 20
@@ -64,9 +64,20 @@
 #define PIOA_USB_D              26
 #define PIOA_USB_D_MASK         (1 << PIOA_USB_D)
 
-#define PIOA_MMC_WP             16
+#define PIOA_MMC_WP             25
 #define PIOA_MMC_WP_MASK        (1 << PIOA_MMC_WP)
 #define PIOA_MMC_CP             15
 #define PIOA_MMC_CP_MASK        (1 << PIOA_MMC_CP)
+#define PIOA_MMC_NPCS0          11
+#define PIOA_MMC_NPCS0_MASK     (1 << PIOA_MMC_NPCS0_MASK)
+
+#define MMC_CSR_NUM             0
+
+/*
+ * SPI pins
+ */
+#define SPI_MISO                (1 << 12)
+#define SPI_MOSI                (1 << 13)
+#define SPI_SCK                 (1 << 14)
 
 #endif /* _BOARD_H_ */
