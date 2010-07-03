@@ -78,7 +78,12 @@
 - NEW: Merged the new unified STM8 port, now the port supports both the
   Cosmic and Raisonance compilers.
 - NEW: Added an STM8-DISCOVERY demo, the demo can be compiled with both the
-  Cosmic and Raisonance compilers under the STDV IDE.
+  Cosmic and Raisonance compilers under the STDV IDE. Performance reports
+  have been added for both compilers.
+  NOTE: The Raisonance compiler seems to have problems in debugging under
+        the STDV IDE, if you need to debug using the Raisonance compiler
+        consider using the RIDE7 IDE instead.
+        Compiling and executing using the "release" mode under STDV works fine.
 - NEW: Added timers clock macros to the STM32 clock tree HAL driver (backported
   in 2.0.1).
 - NEW: Added Binary Semaphores among the synchronization primitives. The new
