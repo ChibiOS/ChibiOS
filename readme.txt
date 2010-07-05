@@ -58,6 +58,10 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.1.1 ***
+- FIX: Added option to enforce the stack alignment to 32 or 64 bits in the
+  Cortex-Mx port (bug 3025133)(backported to 2.0.2).
+
 *** 2.1.0 ***
 - FIX: Fixed notification order in input queues (bug 3020708)(backported in
   2.0.1).
