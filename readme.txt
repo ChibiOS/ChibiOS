@@ -59,6 +59,8 @@
 *****************************************************************************
 
 *** 2.1.1 ***
+- FIX: Fixed race condition in STM32 SPI driver (bug 3025854)(backported to
+  2.0.2).
 - FIX: Fixed H_LOCK and H_UNLOCK redefined with CH_USE_MALLOC_HEAP (bug
   3025549)(backported to 2.0.2).
 - FIX: Added option to enforce the stack alignment to 32 or 64 bits in the
