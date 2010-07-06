@@ -110,27 +110,46 @@
 #define TIM1_CC_IRQHandler         VectorAC // TIM1 Capture Compare
 #define TIM2_IRQHandler            VectorB0 // TIM2
 #define TIM3_IRQHandler            VectorB4 // TIM3
-#if defined(STM32F10X_MD)
+#if defined(STM32F10X_MD) || defined(STM32F10X_HD)
 #define TIM4_IRQHandler            VectorB8 // TIM4
 #endif
 #define I2C1_EV_IRQHandler         VectorBC // I2C1 Event
 #define I2C1_ER_IRQHandler         VectorC0 // I2C1 Error
-#if defined(STM32F10X_MD)
+#if defined(STM32F10X_MD) || defined(STM32F10X_HD)
 #define I2C2_EV_IRQHandler         VectorC4 // I2C2 Event
 #define I2C2_ER_IRQHandler         VectorC8 // I2C2 Error
 #endif
 #define SPI1_IRQHandler            VectorCC // SPI1
-#if defined(STM32F10X_MD)
+#if defined(STM32F10X_MD) || defined(STM32F10X_HD)
 #define SPI2_IRQHandler            VectorD0 // SPI2
 #endif
 #define USART1_IRQHandler          VectorD4 // USART1
 #define USART2_IRQHandler          VectorD8 // USART2
-#if defined(STM32F10X_MD)
+#if defined(STM32F10X_MD) || defined(STM32F10X_HD)
 #define USART3_IRQHandler          VectorDC // USART3
 #endif
 #define EXTI15_10_IRQHandler       VectorE0 // EXTI Line 15..10
 #define RTCAlarm_IRQHandler        VectorE4 // RTC Alarm through EXTI Line
 #define USBWakeUp_IRQHandler       VectorE8 // USB Wakeup from suspend
+#if defined(STM32F10X_HD)
+#define TIM8_BRK_IRQHandler        VectorEC  // TIM8 Break
+#define TIM8_UP_IRQHandler         VectorF0  // TIM8 Update
+#define TIM8_TRG_COM_IRQHandler    VectorF4  // TIM8 Trigger and Commutation
+#define TIM8_CC_IRQHandler         VectorF8  // TIM8 Capture Compare
+#define ADC3_IRQHandler            VectorFC  // ADC3
+#define FSMC_IRQHandler            Vector100 // FSMC
+#define SDIO_IRQHandler            Vector104 // SDIO
+#define TIM5_IRQHandler            Vector108 // TIM5
+#define SPI3_IRQHandler            Vector10C // SPI3
+#define UART4_IRQHandler           Vector110 // UART4
+#define UART5_IRQHandler           Vector114 // UART5
+#define TIM6_IRQHandler            Vector118 // TIM6
+#define TIM7_IRQHandler            Vector11C // TIM7
+#define DMA2_Channel1_IRQHandler   Vector120 // DMA2 Channel1
+#define DMA2_Channel2_IRQHandler   Vector124 // DMA2 Channel2
+#define DMA2_Channel3_IRQHandler   Vector128 // DMA2 Channel3
+#define DMA2_Channel4_5_IRQHandler Vector12C // DMA2 Channel4 & Channel5
+#endif
 
 
 /*===========================================================================*/

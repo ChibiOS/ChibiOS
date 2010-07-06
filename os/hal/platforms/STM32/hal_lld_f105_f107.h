@@ -132,15 +132,6 @@
 #define EXTI15_10_IRQHandler       VectorE0 // EXTI Line 15..10
 #define RTCAlarm_IRQHandler        VectorE4 // RTC alarm through EXTI line
 #define OTG_FS_WKUP_IRQHandler     VectorE8 // USB OTG FS Wakeup through EXTI line
-#if defined(STM32F10X_HD)
-#define TIM8_BRK_IRQHandler        VectorEC  // TIM8 Break
-#define TIM8_UP_IRQHandler         VectorF0  // TIM8 Update
-#define TIM8_TRG_COM_IRQHandler    VectorF4  // TIM8 Trigger and Commutation
-#define TIM8_CC_IRQHandler         VectorF8  // TIM8 Capture Compare
-#define ADC3_IRQHandler            VectorFC  // ADC3
-#define FSMC_IRQHandler            Vector100 // FSMC
-#define SDIO_IRQHandler            Vector104 // SDIO
-#endif
 #define TIM5_IRQHandler            Vector108 // TIM5
 #define SPI3_IRQHandler            Vector10C // SPI3
 #define UART4_IRQHandler           Vector110 // UART4
@@ -150,9 +141,6 @@
 #define DMA2_Channel1_IRQHandler   Vector120 // DMA2 Channel1
 #define DMA2_Channel2_IRQHandler   Vector124 // DMA2 Channel2
 #define DMA2_Channel3_IRQHandler   Vector128 // DMA2 Channel3
-#if defined(STM32F10X_HD)
-#define DMA2_Channel4_5_IRQHandler Vector12C // DMA2 Channel4 & Channel5
-#elif defined(STM32F10X_CL)
 #define DMA2_Channel4_IRQHandler   Vector12C // DMA2 Channel4
 #define DMA2_Channel5_IRQHandler   Vector130 // DMA2 Channel5
 #define ETH_IRQHandler             Vector134 // Ethernet
@@ -162,7 +150,6 @@
 #define CAN2_RX1_IRQHandler        Vector144 // CAN2 RX1
 #define CAN2_SCE_IRQHandler        Vector148 // CAN2 SCE
 #define OTG_FS_IRQHandler          Vector14C // USB OTG FS
-#endif
                                    
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
