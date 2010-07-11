@@ -1,11 +1,11 @@
 ***************************************************************************
-Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
+Options:  -O2 -fomit-frame-pointer -falign-functions=16
 Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 ***************************************************************************
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.0.1
+*** Kernel:       2.0.2
 *** GCC Version:  4.5.0
 *** Architecture: ARM
 *** Core Variant: ARM7TDMI
@@ -95,7 +95,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 138219 msgs/S, 276438 ctxswc/S
+--- Score : 138220 msgs/S, 276440 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)

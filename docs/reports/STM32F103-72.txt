@@ -1,5 +1,5 @@
 ***************************************************************************
-Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
+Options:  -O2 -fomit-frame-pointer -falign-functions=16
 Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 ***************************************************************************
 

@@ -1,12 +1,12 @@
 ***************************************************************************
 Options:  Optimized for speed (3)
 Settings: CPUCLK=16MHz (HSI)
-Compiler: Raisonance RKit-STM8_2.28.10.0092
+Compiler: Raisonance RKit-STM8_2.30.10.0175
 ***************************************************************************
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.0.0
+*** Kernel:       2.0.2
 *** Architecture: STM8
 *** Platform:     STM8x
 *** Test Board:   Raisonance REva V3 + STM8S208RB
@@ -67,47 +67,47 @@ Compiler: Raisonance RKit-STM8_2.28.10.0092
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 31277 msgs/S, 62554 ctxswc/S
+--- Score : 31651 msgs/S, 63302 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 24107 msgs/S, 48214 ctxswc/S
+--- Score : 24292 msgs/S, 48584 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 24107 msgs/S, 48214 ctxswc/S
+--- Score : 24292 msgs/S, 48584 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 108544 ctxswc/S
+--- Score : 108552 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 17242 threads/S
+--- Score : 17960 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 26159 threads/S
+--- Score : 27798 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 6922 reschedules/S, 41532 ctxswc/S
+--- Score : 7020 reschedules/S, 42120 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 54552 ctxswc/S
+--- Score : 54356 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 63268 bytes/S
+--- Score : 62808 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 55766 timers/S
+--- Score : 57704 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 210996 wait+signal/S
+--- Score : 211004 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, RAM footprint)

@@ -1,11 +1,11 @@
 ***************************************************************************
-Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu
+Options:  -O2 -fomit-frame-pointer
 Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 ***************************************************************************
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.0.1
+*** Kernel:       2.0.2
 *** GCC Version:  4.5.0
 *** Architecture: ARM
 *** Core Variant: ARM7TDMI

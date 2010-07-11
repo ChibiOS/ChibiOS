@@ -120,11 +120,11 @@ static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
     return;
   }
   n = chHeapStatus(NULL, &size);
-  siprintf(buf, "core free memory : %lu bytes", chCoreStatus());
+  siprintf(buf, "core free memory : %u bytes", chCoreStatus());
   shellPrintLine(chp, buf);
-  siprintf(buf, "heap fragments   : %lu", n);
+  siprintf(buf, "heap fragments   : %u", n);
   shellPrintLine(chp, buf);
-  siprintf(buf, "heap free total  : %lu bytes", size);
+  siprintf(buf, "heap free total  : %u bytes", size);
   shellPrintLine(chp, buf);
 }
 
