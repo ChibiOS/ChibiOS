@@ -58,7 +58,7 @@ void port_switch(Thread *ntp, Thread *otp) {
                 "push    r8                                     \n\t" \
                 "push    r7                                     \n\t" \
                 "push    r6                                     \n\t" \
-                "push    r6                                     \n\t" \
+                "push    r5                                     \n\t" \
                 "push    r4");
   otp->p_ctx.sp = sp;
   sp = ntp->p_ctx.sp;

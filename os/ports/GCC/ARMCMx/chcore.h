@@ -135,7 +135,7 @@
  *          to user in the ARMv6-M port.
  */
 #ifndef CORTEX_PRIORITY_SVCALL
-#define CORTEX_PRIORITY_SVCALL (CORTEX_MAXIMUM_PRIORITY + 1)
+#define CORTEX_PRIORITY_SVCALL  (CORTEX_MAXIMUM_PRIORITY + 1)
 #else
 /* If it is externally redefined then better perform a validity check on it.*/
 #if !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SVCALL)
@@ -153,7 +153,7 @@
  *          the minimum priority level.
  */
 #ifndef CORTEX_PRIORITY_PENDSV
-#define CORTEX_PRIORITY_PENDSV CORTEX_MINIMUM_PRIORITY
+#define CORTEX_PRIORITY_PENDSV  CORTEX_MINIMUM_PRIORITY
 #else
 /* If it is externally redefined then better perform a validity check on it.*/
 #if !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_PENDSV)
@@ -169,6 +169,17 @@
  */
 #ifndef CORTEX_BASEPRI_KERNEL
 #define CORTEX_BASEPRI_KERNEL   CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL+1)
+#endif
+
+/**
+ * @brief   Stack alignment enforcement.
+ * @note    The default value is 64 in order to comply with EABI, reducing
+ *          the value to 32 can save some RAM space if you don't care about
+ *          binary compatibility with EABI compiled libraries.
+ * @note    Allowed values are 32 or 64.
+ */
+#ifndef CORTEX_STACK_ALIGNMENT
+#define CORTEX_STACK_ALIGNMENT  64
 #endif
 
 /*===========================================================================*/
@@ -218,9 +229,15 @@
 /*===========================================================================*/
 
 /**
- * @brief   32 bits stack and memory alignment enforcement.
+ * @brief   Stack and memory alignment enforcement.
  */
-typedef uint32_t stkalign_t;
+#if (CORTEX_STACK_ALIGNMENT == 64) || defined(__DOXYGEN__)
+typedef uint64_t stkalign_t __attribute__ ((aligned (8)));
+#elif CORTEX_STACK_ALIGNMENT == 32
+typedef uint32_t stkalign_t __attribute__ ((aligned (4)));
+#else
+#error "invalid stack alignment selected"
+#endif
 
 /**
  * @brief   Generic ARM register.

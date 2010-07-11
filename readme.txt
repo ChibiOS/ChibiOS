@@ -58,6 +58,17 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.0.2 ***
+- FIX: Fixed invalid contex restore in MSP430 port (bug 3027975).
+- FIX: Fixed STM32 vectors file (bug 3026528).
+- FIX: Fixed race condition in STM32 SPI driver (bug 3025854).
+- FIX: Fixed H_LOCK and H_UNLOCK redefined with CH_USE_MALLOC_HEAP (bug
+  3025549).
+- FIX: Added option to enforce the stack alignment to 32 or 64 bits in the
+  Cortex-Mx port (bug 3025133).
+- NEW: Added friendly interrupt vectors names to the STM32 HAL (change request
+  3023944).
+
 *** 2.0.1 ***
 - FIX: Fixed notification order in input queues (bug 3020708).
 - FIX: Fixed non functional CH_CURRP_REGISTER_CACHE option in the Cortex-M3

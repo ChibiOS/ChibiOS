@@ -27,6 +27,13 @@
 .syntax unified
 .thumb
 
+/* If the macro is not defined in the Makefile then a board.h file must be
+   provided containing the definition of the STM32 family member.*/
+#if !defined(STM32F10X_LD) && !defined(STM32F10X_MD) &&                     \
+    !defined(STM32F10X_HD) && !defined(STM32F10X_CL)
+#include "board.h"
+#endif
+
 .section vectors
 _vectors:
         .word   __ram_end__

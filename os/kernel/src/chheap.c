@@ -48,6 +48,8 @@
 
 #if CH_USE_HEAP
 
+#if !CH_USE_MALLOC_HEAP
+
 /*
  * Defaults on the best synchronization mechanism available.
  */
@@ -58,8 +60,6 @@
 #define H_LOCK(h)       chSemWait(&(h)->h_sem)
 #define H_UNLOCK(h)     chSemSignal(&(h)->h_sem)
 #endif
-
-#if !CH_USE_MALLOC_HEAP
 
 /**
  * @brief   Default heap descriptor.
@@ -260,7 +260,7 @@ size_t chHeapStatus(MemoryHeap *heapp, size_t *sizep) {
 
 #if CH_USE_MUTEXES
 #define H_LOCK()        chMtxLock(&hmtx)
-#define H_UNLOCK()      chMtxUnock()
+#define H_UNLOCK()      chMtxUnlock()
 static Mutex            hmtx;
 #elif CH_USE_SEMAPHORES
 #define H_LOCK()        chSemWait(&hsem)

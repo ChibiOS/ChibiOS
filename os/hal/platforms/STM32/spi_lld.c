@@ -94,13 +94,13 @@ static void spi_start_wait(SPIDriver *spip, size_t n,
   spip->spd_dmatx->CNDTR = (uint32_t)n;
   spip->spd_dmatx->CCR |= ccr;
 
-  /* DMAs start.*/
-  spip->spd_dmarx->CCR |= DMA_CCR1_EN;
-  spip->spd_dmatx->CCR |= DMA_CCR1_EN;
-
   /* SPI enable.*/
   chSysLock();
   spip->spd_spi->CR1 |= SPI_CR1_SPE;
+
+  /* DMAs start.*/
+  spip->spd_dmarx->CCR |= DMA_CCR1_EN;
+  spip->spd_dmatx->CCR |= DMA_CCR1_EN;
 
   /* Wait for completion event.*/
   spip->spd_thread = currp;
