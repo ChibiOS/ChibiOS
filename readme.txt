@@ -59,7 +59,7 @@
 *****************************************************************************
 
 *** 2.1.1 ***
-- FIX: Fixed invalid contex restore in MSP430 port (bug 3027975)(backported
+- FIX: Fixed invalid context restore in MSP430 port (bug 3027975)(backported
   to 2.0.2).
 - FIX: Fixed STM32 vectors file (bug 3026528)(backported to 2.0.2).
 - FIX: Fixed race condition in STM32 SPI driver (bug 3025854)(backported to
