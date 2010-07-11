@@ -70,6 +70,10 @@
   Cortex-Mx port (bug 3025133)(backported to 2.0.2).
 - NEW: Added friendly interrupt vectors names to the STM32 HAL (change request
   3023944).
+- CHANGE: Removed the option -mabi=apcs-gnu from all the Cortex-Mx demos. The
+  option is not compatible with the 64 bits stack alignment now default in
+  the Cortex-Mx port. Note that the 64 bits alignment has a cost both as
+  performance and as space but it is the "standard".
 
 *** 2.1.0 ***
 - FIX: Fixed notification order in input queues (bug 3020708)(backported in
