@@ -43,6 +43,8 @@
   |  |  |  +--AVR/      - Port files for AVR architecture.
   |  |  |  +--MSP430/   - Port files for MSP430 architecture.
   |  |  |  +--SIMIA32/  - Port files for SIMIA32 simulator architecture.
+  |  |  +--cosmic/      - Ports for the Cosmic compiler.
+  |  |     +--STM8/     - Port files for STM8 architecture.
   |  |  +--RC/          - Ports for the Raisonance compiler.
   |  |     +--STM8/     - Port files for STM8 architecture.
   |  +--kernel/         - Kernel portable files.
@@ -59,6 +61,8 @@
 *****************************************************************************
 
 *** 2.1.1 ***
+- FIX: Fixed wrong macro check in the STM32 SPI driver (bug 3028562)(backported
+  to 2.0.3).
 - FIX: Fixed invalid context restore in MSP430 port (bug 3027975)(backported
   to 2.0.2).
 - FIX: Fixed STM32 vectors file (bug 3026528)(backported to 2.0.2).
@@ -70,7 +74,7 @@
   Cortex-Mx port (bug 3025133)(backported to 2.0.2).
 - NEW: Added friendly interrupt vectors names to the STM32 HAL (change request
   3023944).
-- NEW: Added support for SPI3 in the STM32 HAL
+- NEW: Added support for SPI3 in the STM32 HAL.
 - CHANGE: Removed the option -mabi=apcs-gnu from all the Cortex-Mx demos. The
   option is not compatible with the 64 bits stack alignment now default in
   the Cortex-Mx port. Note that the 64 bits alignment has a cost both as
