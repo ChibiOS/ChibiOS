@@ -608,6 +608,7 @@ INPUT                  = ../docs/src \
                          ../os/ports/GCC/PPC \
                          ../os/ports/GCC/PPC/crt0.s \
                          ../os/ports/GCC/MSP430 \
+                         ../os/ports/cosmic/STM8 \
                          ../os/ports/RC/STM8 \
                          ../os/hal \
                          ../os/hal/include \
