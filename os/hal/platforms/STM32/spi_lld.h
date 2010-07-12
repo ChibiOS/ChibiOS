@@ -69,7 +69,7 @@
  *       because of the channels ordering the RX channel has always priority
  *       over the TX channel.
  */
-#if !defined(SPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#if !defined(STM32_SPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_SPI1_DMA_PRIORITY     2
 #endif
 
@@ -79,7 +79,7 @@
  *       because of the channels ordering the RX channel has always priority
  *       over the TX channel.
  */
-#if !defined(SPI2_DMA_PRIORITY) || defined(__DOXYGEN__)
+#if !defined(STM32_SPI2_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_SPI2_DMA_PRIORITY     2
 #endif
 

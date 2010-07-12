@@ -58,6 +58,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.0.3 ***
+- FIX: Fixed wrong macro check in the STM32 SPI driver (bug 3028562).
+
 *** 2.0.2 ***
 - FIX: Fixed invalid context restore in MSP430 port (bug 3027975).
 - FIX: Fixed STM32 vectors file (bug 3026528).
