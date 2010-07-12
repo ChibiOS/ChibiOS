@@ -70,6 +70,7 @@
   Cortex-Mx port (bug 3025133)(backported to 2.0.2).
 - NEW: Added friendly interrupt vectors names to the STM32 HAL (change request
   3023944).
+- NEW: Added support for SPI3 in the STM32 HAL
 - CHANGE: Removed the option -mabi=apcs-gnu from all the Cortex-Mx demos. The
   option is not compatible with the 64 bits stack alignment now default in
   the Cortex-Mx port. Note that the 64 bits alignment has a cost both as
