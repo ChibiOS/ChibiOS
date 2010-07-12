@@ -126,7 +126,7 @@
  * <br>
  * When designing a system it is recommended to proceed as follow:
  * -# Use static objects and initializers whenever possible.
- * -# Where dynamic allocation is required without have to free the allocated
+ * -# Where dynamic allocation is required without having to free the allocated
  *    memory then use the Core Memory Manager allocation APIs.
  * -# Where dynamic allocation is required evaluate if one or more memory
  *    pools can be used.

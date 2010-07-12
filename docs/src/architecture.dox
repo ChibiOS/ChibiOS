@@ -59,6 +59,7 @@
     Platform [label="Platform"];
     Kernel [label="Kernel"];
     Port [label="Port"];
+    Board [label="Board Setup"];
     HW [label="Hardware", style="filled", width="3.0", height="0.3"];
 
     Application -> Kernel;
@@ -66,9 +67,12 @@
     Application -> HW [label=" (not recommended)"];
     HAL -> Platform;
     HAL -> Kernel;
+    Board -> HW;
     Platform -> Kernel;
+    Platform -> Board;
     Platform -> HW;
     Kernel -> Port;
+    Port -> Board [label="Optional", style="dotted"];
     Port -> HW;
   }
  * @enddot
@@ -119,7 +123,7 @@
  * @dot
   digraph example {
     node [shape=rectangle, fontname=Helvetica, fontsize=8,
-          fixedsize="true", width="1.0", height="0.25"];
+          fixedsize="true", width="1.1", height="0.25"];
     edge [fontname=Helvetica, fontsize=8];
 
     Semaphores -> Scheduler;
@@ -128,6 +132,7 @@
     Condvars -> Mutexes;
     Events -> Scheduler;
     Messages -> Scheduler;
+    "Binary Semaphores" -> Semaphores;
     Mailboxes -> Semaphores;
   }
  * @enddot
@@ -151,17 +156,25 @@
           fixedsize="true", width="1.0", height="0.25"];
     edge [fontname=Helvetica, fontsize=8];
 
+    Application [label="Application", width="2.0"];
+    RAM [label="RAM", style="filled", width="2.0"];
     Core [label="Core Allocator"];
     Dynamic [label="Dynamic Threads"];
     Heaps [label="Dynamic Heaps"];
     Pools [label="Memory Pools"];
     C [label="C-runtime"];
 
+    Application -> Dynamic;
+    Application -> Heaps;
+    Application -> Pools;
+    Application -> C [label="(not recommended)"];
+    Application -> Core;
     Dynamic -> Heaps;
     Dynamic -> Pools;
     Heaps -> Core;
     Pools -> Core;
     C -> Core;
+    Core -> RAM
   }
  * @enddot
  *   Please also see the article @ref article_manage_memory.

@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
 }
  * @endcode
  *
- * <h2>Creating a dynamic thread using the heap allocator</h2>
+ * <h2>Creating a dynamic thread using the memory pool allocator</h2>
  * A pool is a collection of equally sized memory blocks, creating a thread from
  * a memry pool is very similar to the previous example but the memory of
  * terminated threads is returned to the memory pool rather than to a heap:

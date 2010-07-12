@@ -78,7 +78,7 @@
  * core (a common example: ARM7) of a supported microcontroller but has
  * differences in the internal peripherals.<br>
  * If this is your case proceed as follow:
- * -# Create a new directory under @p <tt>./os/io/platforms</tt> and
+ * -# Create a new directory under @p <tt>./os/hal/platforms</tt> and
  *    name it with the microcontroller name (or family name).<br>
  *    In case of the ARM-based microcontroller you also need to create a
  *    equally named directory under
@@ -87,11 +87,11 @@
  *    see the existing ports as example.
  * -# Copy into the newly created directory the most closely related existing
  *    chip port or the naked template files from
- *    @p <tt>./os/io/templates</tt>.
+ *    @p <tt>./os/hal/templates</tt>.
  * -# Work out the differences in the drivers or implement them if you started
  *    from the templates.
  * -# Edit/create the documentation file @p <tt>platform.dox</tt>, this
- *    is required if you want to regenerate this documentation including
+ *    is only required if you want to regenerate this documentation including
  *    your work.
  * .
  * Usually this kind of port just requires a serial driver (and those are very

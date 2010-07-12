@@ -74,6 +74,7 @@
   option is not compatible with the 64 bits stack alignment now default in
   the Cortex-Mx port. Note that the 64 bits alignment has a cost both as
   performance and as space but it is the "standard".
+- Fixed various documentation errors.
 
 *** 2.1.0 ***
 - FIX: Fixed notification order in input queues (bug 3020708)(backported in
