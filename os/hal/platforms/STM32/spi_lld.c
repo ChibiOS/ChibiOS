@@ -294,15 +294,15 @@ void spi_lld_start(SPIDriver *spip) {
       RCC->APB1ENR |= RCC_APB1ENR_SPI3EN;
     }
 #endif
+
+    /* DMA setup.*/
+    spip->spd_dmarx->CPAR = (uint32_t)&spip->spd_spi->DR;
+    spip->spd_dmatx->CPAR = (uint32_t)&spip->spd_spi->DR;
   }
 
   /* SPI setup.*/
   spip->spd_spi->CR1 = spip->spd_config->spc_cr1 | SPI_CR1_MSTR;
   spip->spd_spi->CR2 = SPI_CR2_SSOE | SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
-  
-  /* DMA setup.*/
-  spip->spd_dmarx->CPAR = (uint32_t)&spip->spd_spi->DR;
-  spip->spd_dmatx->CPAR = (uint32_t)&spip->spd_spi->DR;
 }
 
 /**

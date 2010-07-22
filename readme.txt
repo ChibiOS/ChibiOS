@@ -81,6 +81,7 @@
   option is not compatible with the 64 bits stack alignment now default in
   the Cortex-Mx port. Note that the 64 bits alignment has a cost both as
   performance and as space but it is the "standard".
+- OPT: Small speed optimization in the STM32 SPI driver.
 - Fixed various documentation errors.
 
 *** 2.1.0 ***
