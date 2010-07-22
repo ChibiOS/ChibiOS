@@ -59,6 +59,8 @@
 *****************************************************************************
 
 *** 2.0.3 ***
+- FIX: Fixed misspelled word in some chioch.h and chstreams.h macros (bug
+  3031534).
 - FIX: Fixed wrong macro check in the STM32 SPI driver (bug 3028562).
 
 *** 2.0.2 ***

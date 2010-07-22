@@ -49,7 +49,7 @@
  * @brief   @p BaseChannel specific methods.
  */
 #define _base_channel_methods                                               \
-  _base_sequental_stream_methods                                            \
+  _base_sequential_stream_methods                                           \
   /* Channel output check.*/                                                \
   bool_t (*putwouldblock)(void *instance);                                  \
   /* Channel input check.*/                                                 \
@@ -70,7 +70,7 @@
  *          implementation.
  */
 #define _base_channel_data                                                  \
-  _base_sequental_stream_data
+  _base_sequential_stream_data
 
 /**
  * @brief   @p BaseChannel virtual methods table.
