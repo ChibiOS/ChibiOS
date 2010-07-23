@@ -98,12 +98,12 @@ struct intctx {
  * @details This size depends on the idle thread implementation, usually
  *          the idle thread should take no more space than those reserved
  *          by @p INT_REQUIRED_STACK.
- * @note    In this port it is set to 4 because the idle thread does have
+ * @note    In this port it is set to 8 because the idle thread does have
  *          a stack frame when compiling without optimizations. You may
  *          reduce this value to zero when compiling with optimizations.
  */
 #ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE      4
+#define IDLE_THREAD_STACK_SIZE      8
 #endif
 
 /**
@@ -113,11 +113,12 @@ struct intctx {
  *          This value can be zero on those architecture where there is a
  *          separate interrupt stack and the stack space between @p intctx and
  *          @p extctx is known to be zero.
- * @note    In this port it is set to 8 because the function
- *          @p chSchDoRescheduleI() has a stack frame.
+ * @note    In this port it is conservatively set to 16 because the function
+ *          @p chSchDoRescheduleI() can have a stack frame, expecially with
+ *          compiler optimizations disabled.
  */
 #ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK          8
+#define INT_REQUIRED_STACK          16
 #endif
 
 /**
