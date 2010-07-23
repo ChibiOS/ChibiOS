@@ -106,7 +106,7 @@ struct intctx {
  *          a stack frame when compiling without optimizations.
  */
 #ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE      4
+#define IDLE_THREAD_STACK_SIZE      8
 #endif
 
 /**
@@ -120,7 +120,7 @@ struct intctx {
  *          representing the frame of the function @p chSchDoRescheduleI().
  */
 #ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK          8
+#define INT_REQUIRED_STACK          16
 #endif
 
 /**

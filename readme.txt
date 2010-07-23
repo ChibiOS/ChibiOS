@@ -61,6 +61,8 @@
 *****************************************************************************
 
 *** 2.1.1 ***
+- FIX: Fixed insufficient stack size for idle thread (bug 3033624)(backported
+  to 2.0.3).
 - FIX: Fixed misspelled word in some chioch.h and chstreams.h macros (bug
   3031534)(backported to 2.0.3).
 - FIX: Fixed wrong macro check in the STM32 SPI driver (bug 3028562)(backported
