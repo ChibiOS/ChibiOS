@@ -76,6 +76,8 @@
   3025549)(backported to 2.0.2).
 - FIX: Added option to enforce the stack alignment to 32 or 64 bits in the
   Cortex-Mx port (bug 3025133)(backported to 2.0.2).
+- NEW: New UART device driver model, this device driver allows unbuffered,
+  callback driven access to UART-type devices.
 - NEW: Added friendly interrupt vectors names to the STM32 HAL (change request
   3023944).
 - NEW: Added support for SPI3 in the STM32 HAL.

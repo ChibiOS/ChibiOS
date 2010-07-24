@@ -6,6 +6,12 @@ X = In progress, some work done.
 
 Within 2.1.x (hopefully)
 * Binary Semaphores on top of Counting Semaphores.
+X Direct unbuffered UART driver (evaluate rebuilding the current serial driver
+  as a generic driver on top of the low level UART driver).
+  Requirements: low level, callbacks, DMA capable, state machines buildable
+                on top, support data words greater than 8 bits, callback for
+                "last byte transmitted (RS485)", simple implementation,
+                verifiable.
 X Resist doing more changes and optimizations in the kernel, fixes only.
 - Merge the Coldfire branch in mainline.
 - Merge the H8S branch in mainline.
@@ -13,12 +19,6 @@ X Resist doing more changes and optimizations in the kernel, fixes only.
 - Add a *very simple* ADC API for simgle one shot sampling (implement it as
   an injected conversion on the STM32).
 - MAC driver for STM32F105/STM32F107 (hardware missing).
-- Direct unbuffered UART driver (evaluate rebuilding the current serial driver
-  as a generic driver on top of the low level UART driver).
-  Requirements: low level, callbacks, DMA capable, state machines buildable
-                on top, support data words greater than 8 bits, callback for
-                "last byte transmitted (RS485)", simple implementation,
-                verifiable.
 - Device drivers for STM8 (SPI, ADC, PWM, bring it on par with STM32).
 - Support for more compilers (ARMCMx only initially).
 - Support for not just Makefiles (Ride7, Crossworks, Eclipse CDT etc).

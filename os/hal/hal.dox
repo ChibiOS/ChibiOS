@@ -406,3 +406,88 @@
  */
 
  
+/**
+ * @defgroup UART UART Driver
+ * @brief Generic UART Driver.
+ * @details This module implements a generic UART driver. The driver implements
+ *          a state machine internally:
+ * @dot
+  digraph example {
+    rankdir="LR";
+    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.8", height="0.8"];
+    edge [fontname=Helvetica, fontsize=8];
+
+    subgraph cluster_RECEIVER {
+      rx_idle [label="RX_IDLE", style="bold"];
+      rx_active [label="RX_ACTIVE"];
+      rx_complete [label="RX_COMPLETE"];
+      rx_fatal [label="Fatal Error", style="bold"];
+
+      rx_idle -> rx_idle [label="\nuartStopReceive()\n>uc_rxchar<\n>uc_rxerr<"];
+      rx_idle -> rx_active [label="\nuartStartReceive()"];
+
+      rx_active -> rx_complete [label="\nbuffer filled\n>uc_rxend<"];
+      rx_active -> rx_idle [label="\nuartStopReceive()"];
+      rx_active -> rx_active [label="\nreceive error\n>uc_rxerr<"];
+      rx_active -> rx_fatal [label="\nuartStartReceive()"];
+      rx_complete -> rx_active [label="\nuartStartReceiveI()\nthen\ncallback return"];
+      rx_complete -> rx_idle [label="\ncallback return"];
+
+      color = blue;
+      label = "Receiver state machine (within driver state UART_READY)";
+    }
+
+    subgraph cluster_TRANSMITTER {
+      tx_idle [label="TX_IDLE", style="bold"];
+      tx_active [label="TX_ACTIVE"];
+      tx_complete [label="TX_COMPLETE"];
+      tx_fatal [label="Fatal Error", style="bold"];
+
+      tx_idle -> tx_active [label="\nuartStartSend()"];
+      tx_idle -> tx_idle [label="\nuartStopSend()\n>uc_txend2<"];
+      tx_active -> tx_complete [label="\nbuffer transmitted\n>uc_txend1<"];
+      tx_active -> tx_idle [label="\nuartStopSend()"];
+      tx_active -> tx_fatal [label="\nuartStartSend()"];
+      tx_complete -> tx_active [label="\nuartStartSendI()\nthen\ncallback return"];
+      tx_complete -> tx_idle [label="\ncallback return"];
+
+      color = blue;
+      label = "Transmitter state machine (within driver state UART_READY)";
+    }
+
+    subgraph cluster_DRIVER {
+      uninit [label="UART_UNINIT", style="bold"];
+      stop  [label="UART_STOP\nLow Power"];
+      ready [label="UART_READY\nClock Enabled"];
+
+      uninit -> stop [label="\nuartInit()"];
+      stop -> ready [label="\nuartStart()"];
+      ready -> ready [label="\nuartStart()"];
+      ready -> stop [label="\nuartStop()"];
+      stop -> stop [label="\nuartStop()"];
+
+      color = blue;
+      label = "Driver state machine";
+    }
+  }
+ * @enddot
+ * The UART driver is meant for those application where unbuffered access to
+ * the physical device is required. The driver is totally asynchronous and
+ * invokes callbacks on relevant driver state transitions. If your application
+ * requires a buffered driver then the @ref SERIAL should be used instead.<br>
+ * This driver model is best used where communication events are meant to
+ * drive an higher level state machine, as example:
+ * - RS485 drivers.
+ * - Multipoint network drivers.
+ * - Protocol decoders.
+ * .
+ *
+ * @ingroup IO
+ */
+
+/**
+ * @defgroup UART_LLD UART Low Level Driver
+ * @brief @ref UART low level driver template.
+ *
+ * @ingroup UART
+ */

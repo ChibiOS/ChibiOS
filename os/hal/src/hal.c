@@ -75,6 +75,9 @@ void halInit(void) {
 #if CH_HAL_USE_MMC_SPI
   mmcInit();
 #endif
+#if CH_HAL_USE_UART
+  uartInit();
+#endif
 }
 
 /** @} */
