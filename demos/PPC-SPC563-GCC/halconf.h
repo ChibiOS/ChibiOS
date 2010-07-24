@@ -147,6 +147,17 @@
 /*#define MMC_POLLING_INTERVAL        10*/
 /*#define MMC_POLLING_DELAY           10*/
 
+/*===========================================================================*/
+/* UART driver related settings.                                             */
+/*===========================================================================*/
+
+/**
+ * @brief   Enables the UART subsystem.
+ */
+#if !defined(CH_HAL_USE_UART) || defined(__DOXYGEN__)
+#define CH_HAL_USE_UART             FALSE
+#endif
+
 #endif /* _HALCONF_H_ */
 
 /** @} */
