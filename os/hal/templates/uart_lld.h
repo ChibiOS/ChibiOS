@@ -47,6 +47,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   UART driver condition flags type.
+ */
+typedef uint32_t uartflags_t;
+
+/**
  * @brief   Driver configuration structure.
  * @note    It could be empty on some architectures.
  */

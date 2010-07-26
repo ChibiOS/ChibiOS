@@ -34,6 +34,19 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/** @brief No pending conditions.*/
+#define UART_NO_ERROR           0
+/** @brief Parity error happened.*/
+#define UART_PARITY_ERROR       4
+/** @brief Framing error happened.*/
+#define UART_FRAMING_ERROR      8
+/** @brief Overflow happened.*/
+#define UART_OVERRUN_ERROR      16
+/** @brief Noise on the line.*/
+#define UART_NOISE_ERROR        32
+/** @brief Break detected.*/
+#define UART_BREAK_DETECTED     64
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -89,8 +102,8 @@ typedef enum {
 typedef enum {
   UART_RX_IDLE = 0,                 /**< @brief Not receiving.              */
   UART_RX_ACTIVE = 1,               /**< @brief Receiving.                  */
-  UART_TX_ERROR = 2,                /**< @brief Receive error.              */
-  UART_TX_COMPLETE = 3              /**< @brief Buffer complete.            */
+  UART_RX_ERROR = 2,                /**< @brief Receive error.              */
+  UART_RX_COMPLETE = 3              /**< @brief Buffer complete.            */
 } uartrxstate_t;
 
 #include "uart_lld.h"

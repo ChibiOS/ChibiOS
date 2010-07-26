@@ -222,7 +222,7 @@ void uartStartReceive(UARTDriver *uartp, size_t n, void *rxbuf) {
               "uartStartReceive(), #1",
               "not active");
 
-  uart_lld_start_receive(uartp, n, txbuf);
+  uart_lld_start_receive(uartp, n, rxbuf);
   uartp->ud_rxstate = UART_RX_ACTIVE;
   chSysUnlock();
 }
@@ -247,7 +247,7 @@ void uartStartReceiveI(UARTDriver *uartp, size_t n, void *rxbuf) {
               "uartStartReceiveI(), #1",
               "not active");
 
-  uart_lld_start_receive(uartp, n, txbuf);
+  uart_lld_start_receive(uartp, n, rxbuf);
   uartp->ud_rxstate = UART_RX_ACTIVE;
 }
 
