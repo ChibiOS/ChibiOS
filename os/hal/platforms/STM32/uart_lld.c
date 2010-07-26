@@ -54,7 +54,7 @@ UARTDriver UARTD1;
 }
 
 #define dma_disable(dmap) {                                                 \
-  (dmap)->CCR   = 0;                                                        \
+  (dmap)->CCR               = 0;                                                        \
 }
 
 #define dma_rx_setup(uartp, cndtr, cmar, ccr)                               \
@@ -84,16 +84,18 @@ static void usart_start(UARTDriver *uartp) {
                                       USART_CR1_TE | USART_CR1_RE;
   u->CR2 = uartp->ud_config->uc_cr2 | USART_CR2_LBDIE;
   u->CR3 = uartp->ud_config->uc_cr3 | USART_CR3_EIE;
+
+  /* Resetting eventual pending status flags.*/
   (void)u->SR;  /* SR reset step 1.*/
   (void)u->DR;  /* SR reset step 2.*/
 
   /* RX DMA channel preparation, circular 1 frame transfers, an interrupt is
      generated for each received character.*/
-  dma_rx_setup(uartp, 1, &uartp->ud_rxbuf,
-               DMA_CCR1_TCIE | DMA_CCR1_TEIE | DMA_CCR1_CIRC | DMA_CCR1_EN);
+  dmaSetupChannel(uartp->ud_dmap, uartp->ud_dmarx, 1, &uartp->ud_rxbuf,
+                  DMA_CCR1_TCIE | DMA_CCR1_TEIE | DMA_CCR1_CIRC | DMA_CCR1_EN);
   
   /* TX DMA channel preparation, simply disabled.*/
-  dma_disable(uartp->ud_dmatx);
+  dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmatx);
 }
 
 /**
@@ -105,8 +107,8 @@ static void usart_start(UARTDriver *uartp) {
 static void usart_stop(UARTDriver *uartp) {
 
   /* Stops RX and TX DMA channels.*/
-  dma_disable(uartp->ud_dmarx);
-  dma_disable(uartp->ud_dmatx);
+  dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmarx);
+  dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmatx);
   
   /* Stops USART operations.*/
   uartp->ud_usart->CR1 = 0;
@@ -132,11 +134,9 @@ void uart_lld_init(void) {
   RCC->APB2RSTR     = 0;
   uartObjectInit(&UARTD1);
   UARTD1.ud_usart   = USART1;
-  UARTD1.ud_dmarx   = DMA1_Channel4;
-  UARTD1.ud_dmatx   = DMA1_Channel5;
+  UARTD1.ud_dmarx   = STM32_DMA_CHANNEL_4;
+  UARTD1.ud_dmatx   = STM32_DMA_CHANNEL_5;
   UARTD1.ud_dmaccr  = 0;
-  UARTD1.ud_dmarmsk = 0xF << (4 - 1);
-  UARTD1.ud_dmatmsk = 0xF << (5 - 1);
 #endif
 }
 
@@ -166,8 +166,8 @@ void uart_lld_start(UARTDriver *uartp) {
     uartp->ud_dmaccr      = STM32_UART_USART1_DMA_PRIORITY << 12;
     if ((uartp->ud_config->uc_cr1 & (USART_CR1_M | USART_CR1_PCE)) == USART_CR1_M)
       uartp->ud_dmaccr |= DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0;
-    uartp->ud_dmarx->CPAR = (uint32_t)&uartp->ud_usart->DR;
-    uartp->ud_dmatx->CPAR = (uint32_t)&uartp->ud_usart->DR;
+    uartp->ud_dmap->channels[uartp->ud_dmarx].CPAR = (uint32_t)&uartp->ud_usart->DR;
+    uartp->ud_dmap->channels[uartp->ud_dmatx].CPAR = (uint32_t)&uartp->ud_usart->DR;
   }
   uartp->ud_txstate = UART_TX_IDLE;
   uartp->ud_rxstate = UART_RX_IDLE;
@@ -181,7 +181,7 @@ void uart_lld_start(UARTDriver *uartp) {
  */
 void uart_lld_stop(UARTDriver *uartp) {
 
-  if (uartp->ud_state == SD_READY) {
+  if (uartp->ud_state == UART_READY) {
     usart_stop(uartp);
 
 #if STM32_UART_USE_USART1

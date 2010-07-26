@@ -118,20 +118,18 @@ typedef struct {
   /** @brief UART driver status flags.*/
   uartflags_t               ud_flags;
   /* End of the mandatory fields.*/
-  /** @brief Default receive buffer while into @p UART_RX_IDLE state.*/
-  uint16_t                  ud_rxbuf;
   /** @brief Pointer to the USART registers block.*/
   USART_TypeDef             *ud_usart;
-  /** @brief Pointer to the receive DMA channel registers block.*/
-  DMA_Channel_TypeDef       *ud_dmarx;
-  /** @brief Receive DMA flags mask*/
-  uint32_t                  ud_dmarmsk;
-  /** @brief Pointer to the transmit DMA channel registers block.*/
-  DMA_Channel_TypeDef       *ud_dmatx;
-  /** @brief Transmit DMA flags mask*/
-  uint32_t                  ud_dmatmsk;
+  /** @brief Pointer to the DMA registers block.*/
+  stm32_dma_t               *ud_dmap;
   /** @brief DMA priority bit mask.*/
   uint32_t                  ud_dmaccr;
+  /** @brief Receive DMA channel.*/
+  uint8_t                   ud_dmarx;
+  /** @brief Transmit DMA channel.*/
+  uint8_t                   ud_dmatx;
+  /** @brief Default receive buffer while into @p UART_RX_IDLE state.*/
+  uint16_t                  ud_rxbuf;
 } UARTDriver;
 
 /*===========================================================================*/

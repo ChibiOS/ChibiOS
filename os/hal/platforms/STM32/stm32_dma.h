@@ -101,6 +101,38 @@ typedef struct {
 #define STM32_DMA2_CH5          (STM32_DMA2->channels[4])
 #endif
 
+#define STM32_DMA_CHANNEL_1     0
+#define STM32_DMA_CHANNEL_2     1
+#define STM32_DMA_CHANNEL_3     2
+#define STM32_DMA_CHANNEL_4     3
+#define STM32_DMA_CHANNEL_5     4
+#define STM32_DMA_CHANNEL_6     5
+#define STM32_DMA_CHANNEL_7     6
+
+/**
+ * @brief   DMA channel setup.
+ * @note    This macro does not change the CPAR register because that register
+ *          value does not change frequently, it usually points to a peripheral
+ *          data register.
+ * @note    Channels are numbered from 0 to 6, use the appropriate macro
+ *          as parameter.
+ */
+#define dmaSetupChannel(dmap, ch, cndtr, cmar, ccr) {                       \
+  stm32_dma_channel_t *dmachp = &dmap->channels[ch];                        \
+  (dmachp)->CNDTR = (uint32_t)(cndtr);                                      \
+  (dmachp)->CMAR  = (uint32_t)(cmar);                                       \
+  (dmachp)->CCR   = (uint32_t)(ccr);                                        \
+}
+
+/**
+ * @brief   DMA channel disable.
+ * @note    Channel's pending interrupt are cleared.
+ */
+#define dmaDisableChannel(dmap, ch) {                                       \
+  (dmap)->channels[ch].CCR = 0;                                             \
+  (dmap)->IFCR = 0xF << (ch);                                               \
+}
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
