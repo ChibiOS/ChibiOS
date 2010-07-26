@@ -75,7 +75,7 @@ typedef struct {
   volatile uint32_t     ISR;
   volatile uint32_t     IFCR;
   stm32_dma_channel_t   channels[7];
-} stm32_dma_t:
+} stm32_dma_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
