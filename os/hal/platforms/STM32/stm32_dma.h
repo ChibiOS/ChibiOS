@@ -147,6 +147,18 @@ typedef struct {
 }
 
 /**
+ * @brief   DMA channel enable.
+ * @note    Channels are numbered from 0 to 6, use the appropriate macro
+ *          as parameter.
+ *
+ * @param[in] dmap      pointer to a stm32_dma_t structure
+ * @param[in] ch        channel number
+ */
+#define dmaEnableChannel(dmap, ch) {                                        \
+  (dmap)->channels[ch].CCR |= 1;                                            \
+}
+
+/**
  * @brief   DMA channel disable.
  * @note    Channels are numbered from 0 to 6, use the appropriate macro
  *          as parameter.

@@ -122,7 +122,7 @@ static void usart_deinit(USART_TypeDef *u) {
 }
 
 /**
- * @brief Error handling routine.
+ * @brief   Error handling routine.
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
  * @param[in] sr        USART SR register value

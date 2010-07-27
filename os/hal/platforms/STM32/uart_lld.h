@@ -148,7 +148,7 @@ typedef struct {
   /** @brief Transmit DMA channel.*/
   uint8_t                   ud_dmatx;
   /** @brief Default receive buffer while into @p UART_RX_IDLE state.*/
-  uint16_t                  ud_rxbuf;
+  volatile uint16_t         ud_rxbuf;
 } UARTDriver;
 
 /*===========================================================================*/

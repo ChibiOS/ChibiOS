@@ -98,3 +98,10 @@
 #define STM32_SPI1_IRQ_PRIORITY     10
 #define STM32_SPI2_IRQ_PRIORITY     10
 #define STM32_SPI1_DMA_ERROR_HOOK() chSysHalt()
+
+/*
+ * UART driver system settings.
+ */
+#define STM32_UART_USE_USART1               TRUE
+#define STM32_UART_USART1_IRQ_PRIORITY      12
+#define STM32_UART_USART1_DMA_PRIORITY      1
