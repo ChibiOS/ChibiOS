@@ -132,6 +132,12 @@ typedef struct {
  *          data register.
  * @note    Channels are numbered from 0 to 6, use the appropriate macro
  *          as parameter.
+ *
+ * @param[in] dmap      pointer to a stm32_dma_t structure
+ * @param[in] ch        channel number
+ * @param[in] cntdr     value to be written in the CNDTR register
+ * @param[in] cmar      value to be written in the CMAR register
+ * @param[in] ccr       value to be written in the CCR register
  */
 #define dmaSetupChannel(dmap, ch, cndtr, cmar, ccr) {                       \
   stm32_dma_channel_t *dmachp = &dmap->channels[ch];                        \
@@ -142,11 +148,28 @@ typedef struct {
 
 /**
  * @brief   DMA channel disable.
- * @note    Channel's pending interrupts are cleared.
+ * @note    Channels are numbered from 0 to 6, use the appropriate macro
+ *          as parameter.
+ *
+ * @param[in] dmap      pointer to a stm32_dma_t structure
+ * @param[in] ch        channel number
  */
 #define dmaDisableChannel(dmap, ch) {                                       \
   (dmap)->channels[ch].CCR = 0;                                             \
-  (dmap)->IFCR = 0xF << (ch);                                               \
+}
+
+/**
+ * @brief   DMA channel interrupt sources clear.
+ * @details Sets the appropriate CGIF bit into the IFCR register in order to
+ *          withdraw all the pending interrupt bits from the ISR register.
+ * @note    Channels are numbered from 0 to 6, use the appropriate macro
+ *          as parameter.
+ *
+ * @param[in] dmap      pointer to a stm32_dma_t structure
+ * @param[in] ch        channel number
+ */
+#define dmaClearChannel(dmap, ch){                                          \
+  (dmap)->IFCR = 1 << (ch);                                                 \
 }
 
 /*===========================================================================*/

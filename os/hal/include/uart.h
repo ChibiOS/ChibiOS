@@ -60,25 +60,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Generic UART notification callback type.
- */
-typedef void (*uartcb_t)(void);
-
-/**
- * @brief   Character received UART notification callback type.
- *
- * @param[in] c         received character
- */
-typedef void (*uartccb_t)(uint16_t c);
-
-/**
- * @brief   Receive error UART notification callback type.
- *
- * @param[in] e         receive error mask
- */
-typedef void (*uartecb_t)(uint16_t e);
-
-/**
  * @brief   Driver state machine possible states.
  */
 typedef enum {

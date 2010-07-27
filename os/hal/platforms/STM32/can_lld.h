@@ -18,8 +18,9 @@
 */
 
 /**
- * @file STM32/can_lld.h
- * @brief STM32 CAN subsystem low level driver header.
+ * @file    STM32/can_lld.h
+ * @brief   STM32 CAN subsystem low level driver header.
+ *
  * @addtogroup STM32_CAN
  * @{
  */
@@ -43,13 +44,13 @@
 #undef CAN_BTR_SJW
 
 /**
- * @brief This switch defines whether the driver implementation supports
- *        a low power switch mode with automatic an wakeup feature.
+ * @brief   This switch defines whether the driver implementation supports
+ *          a low power switch mode with automatic an wakeup feature.
  */
 #define CAN_SUPPORTS_SLEEP          TRUE
 
 /**
- * @brief Minimum number of CAN filters.
+ * @brief   Minimum number of CAN filters.
  */
 #if defined(STM32F10X_CL) || defined(__DOXYGEN__)
 #define CAN_MAX_FILTERS             28
@@ -73,16 +74,16 @@
 /*===========================================================================*/
 
 /**
- * @brief CAN1 driver enable switch.
+ * @brief   CAN1 driver enable switch.
  * @details If set to @p TRUE the support for ADC1 is included.
- * @note The default is @p TRUE.
+ * @note    The default is @p TRUE.
  */
 #if !defined(USE_STM32_CAN1) || defined(__DOXYGEN__)
 #define USE_STM32_CAN1              TRUE
 #endif
 
 /**
- * @brief CAN1 interrupt priority level setting.
+ * @brief   CAN1 interrupt priority level setting.
  */
 #if !defined(STM32_CAN1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_CAN1_IRQ_PRIORITY     11
@@ -101,14 +102,14 @@
 /*===========================================================================*/
 
 /**
- * @brief CAN status flags.
+ * @brief   CAN status flags.
  */
 typedef uint32_t canstatus_t;
 
 /**
- * @brief CAN transmission frame.
- * @note Accessing the frame data as word16 or word32 is not portable because
- *       machine data endianness, it can be still useful for a quick filling.
+ * @brief   CAN transmission frame.
+ * @note    Accessing the frame data as word16 or word32 is not portable because
+ *          machine data endianness, it can be still useful for a quick filling.
  */
 typedef struct {
   struct {
@@ -132,9 +133,9 @@ typedef struct {
 } CANTxFrame;
 
 /**
- * @brief CAN received frame.
- * @note Accessing the frame data as word16 or word32 is not portable because
- *       machine data endianness, it can be still useful for a quick filling.
+ * @brief   CAN received frame.
+ * @note    Accessing the frame data as word16 or word32 is not portable because
+ *          machine data endianness, it can be still useful for a quick filling.
  */
 typedef struct {
   struct {
@@ -162,26 +163,26 @@ typedef struct {
 } CANRxFrame;
 
 /**
- * @brief CAN filter.
- * @note Refer to the STM32 reference manual for info about filters.
+ * @brief   CAN filter.
+ * @note    Refer to the STM32 reference manual for info about filters.
  */
 typedef struct {
   /**
    * @brief Filter mode.
-   * @note This bit represent the CAN_FM1R register bit associated to this
-   *       filter (0=mask mode, 1=list mode).
+   * @note  This bit represent the CAN_FM1R register bit associated to this
+   *        filter (0=mask mode, 1=list mode).
    */
   uint32_t                  cf_mode:1;
   /**
    * @brief Filter sclae.
-   * @note This bit represent the CAN_FS1R register bit associated to this
-   *       filter (0=16 bits mode, 1=32 bits mode).
+   * @note  This bit represent the CAN_FS1R register bit associated to this
+   *        filter (0=16 bits mode, 1=32 bits mode).
    */
   uint32_t                  cf_scale:1;
   /**
    * @brief Filter mode.
-   * @note This bit represent the CAN_FFA1R register bit associated to this
-   *       filter, must be set to zero in this version of the driver.
+   * @note  This bit represent the CAN_FFA1R register bit associated to this
+   *        filter, must be set to zero in this version of the driver.
    */
   uint32_t                  cf_assignment:1;
   /**
@@ -195,37 +196,37 @@ typedef struct {
 } CANFilter;
 
 /**
- * @brief Driver configuration structure.
+ * @brief   Driver configuration structure.
  */
 typedef struct {
   /**
    * @brief CAN MCR register initialization data.
-   * @note Some bits in this register are enforced by the driver regardless
-   *       their status in this field.
+   * @note  Some bits in this register are enforced by the driver regardless
+   *        their status in this field.
    */
   uint32_t                  cc_mcr;
   /**
    * @brief CAN BTR register initialization data.
-   * @note Some bits in this register are enforced by the driver regardless
-   *       their status in this field.
+   * @note  Some bits in this register are enforced by the driver regardless
+   *        their status in this field.
    */
   uint32_t                  cc_btr;
   /**
    * @brief Number of elements into the filters array.
-   * @note By setting this field to zero a default filter is enabled that
-   *       allows all frames, this should be adequate  for simple applications.
+   * @note  By setting this field to zero a default filter is enabled that
+   *        allows all frames, this should be adequate  for simple applications.
    */
   uint32_t                  cc_num;
   /**
    * @brief Pointer to an array of @p CANFilter structures.
-   * @note This field can be set to @p NULL if the field @p cc_num is set to
-   *       zero.
+   * @note  This field can be set to @p NULL if the field @p cc_num is set to
+   *        zero.
    */
   const CANFilter           *cc_filters;
 } CANConfig;
 
 /**
- * @brief Structure representing an CAN driver.
+ * @brief   Structure representing an CAN driver.
  */
 typedef struct {
   /**
@@ -246,12 +247,12 @@ typedef struct {
   Semaphore                 cd_rxsem;
   /**
    * @brief One or more frames become available.
-   * @note After broadcasting this event it will not be broadcasted again
-   *       until the received frames queue has been completely emptied. It
-   *       is <b>not</b> broadcasted for each received frame. It is
-   *       responsibility of the application to empty the queue by repeatedly
-   *       invoking @p chReceive() when listening to this event. This behavior
-   *       minimizes the interrupt served by the system because CAN traffic.
+   * @note  After broadcasting this event it will not be broadcasted again
+   *        until the received frames queue has been completely emptied. It
+   *        is <b>not</b> broadcasted for each received frame. It is
+   *        responsibility of the application to empty the queue by repeatedly
+   *        invoking @p chReceive() when listening to this event. This behavior
+   *        minimizes the interrupt served by the system because CAN traffic.
    */
   EventSource               cd_rxfull_event;
   /**

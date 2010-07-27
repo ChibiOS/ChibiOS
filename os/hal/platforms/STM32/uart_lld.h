@@ -78,6 +78,25 @@
 typedef uint32_t uartflags_t;
 
 /**
+ * @brief   Generic UART notification callback type.
+ */
+typedef void (*uartcb_t)(void);
+
+/**
+ * @brief   Character received UART notification callback type.
+ *
+ * @param[in] c         received character
+ */
+typedef void (*uartccb_t)(uint16_t c);
+
+/**
+ * @brief   Receive error UART notification callback type.
+ *
+ * @param[in] e         receive error mask
+ */
+typedef void (*uartecb_t)(uartflags_t e);
+
+/**
  * @brief   Driver configuration structure.
  * @note    It could be empty on some architectures.
  */
@@ -89,9 +108,9 @@ typedef struct {
   /** @brief Receive buffer filled callback.*/
   uartcb_t                  uc_rxend;
   /** @brief Character received while out if the @p UART_RECEIVE state.*/
-  uartcb_t                  uc_rxchar;
+  uartccb_t                 uc_rxchar;
   /** @brief Receive error callback.*/  
-  uartcb_t                  uc_rxerr;
+  uartecb_t                 uc_rxerr;
   /* End of the mandatory fields.*/
   /** @brief Bit rate.*/
   uint32_t                  uc_speed;

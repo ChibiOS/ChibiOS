@@ -18,8 +18,9 @@
 */
 
 /**
- * @file STM32/pwm_lld.h
- * @brief STM32 PWM subsystem low level driver header.
+ * @file    STM32/pwm_lld.h
+ * @brief   STM32 PWM subsystem low level driver header.
+ *
  * @addtogroup STM32_PWM
  * @{
  */
@@ -34,7 +35,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Number of PWM channels per PWM driver.
+ * @brief   Number of PWM channels per PWM driver.
  */
 #define PWM_CHANNELS                4
 
@@ -43,64 +44,64 @@
 /*===========================================================================*/
 
 /**
- * @brief PWM1 driver enable switch.
+ * @brief   PWM1 driver enable switch.
  * @details If set to @p TRUE the support for PWM1 is included.
- * @note The default is @p TRUE.
+ * @note    The default is @p TRUE.
  */
 #if !defined(USE_STM32_PWM1) || defined(__DOXYGEN__)
 #define USE_STM32_PWM1              TRUE
 #endif
 
 /**
- * @brief PWM2 driver enable switch.
+ * @brief   PWM2 driver enable switch.
  * @details If set to @p TRUE the support for PWM2 is included.
- * @note The default is @p TRUE.
+ * @note    The default is @p TRUE.
  */
 #if !defined(USE_STM32_PWM2) || defined(__DOXYGEN__)
 #define USE_STM32_PWM2              TRUE
 #endif
 
 /**
- * @brief PWM3 driver enable switch.
+ * @brief   PWM3 driver enable switch.
  * @details If set to @p TRUE the support for PWM3 is included.
- * @note The default is @p TRUE.
+ * @note    The default is @p TRUE.
  */
 #if !defined(USE_STM32_PWM3) || defined(__DOXYGEN__)
 #define USE_STM32_PWM3              TRUE
 #endif
 
 /**
- * @brief PWM4 driver enable switch.
+ * @brief   PWM4 driver enable switch.
  * @details If set to @p TRUE the support for PWM4 is included.
- * @note The default is @p TRUE.
+ * @note    The default is @p TRUE.
  */
 #if !defined(USE_STM32_PWM4) || defined(__DOXYGEN__)
 #define USE_STM32_PWM4              TRUE
 #endif
 
 /**
- * @brief PWM1 interrupt priority level setting.
+ * @brief   PWM1 interrupt priority level setting.
  */
 #if !defined(STM32_PWM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM1_IRQ_PRIORITY     7
 #endif
 
 /**
- * @brief PWM2 interrupt priority level setting.
+ * @brief   PWM2 interrupt priority level setting.
  */
 #if !defined(STM32_PWM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM2_IRQ_PRIORITY     7
 #endif
 
 /**
- * @brief PWM3 interrupt priority level setting.
+ * @brief   PWM3 interrupt priority level setting.
  */
 #if !defined(STM32_PWM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM3_IRQ_PRIORITY     7
 #endif
 
 /**
- * @brief PWM4 interrupt priority level setting.
+ * @brief   PWM4 interrupt priority level setting.
  */
 #if !defined(STM32_PWM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM4_IRQ_PRIORITY     7
@@ -119,18 +120,18 @@
 /*===========================================================================*/
 
 /**
- * @brief PWM channel type.
+ * @brief   PWM channel type.
  */
 typedef uint8_t pwmchannel_t;
 
 /**
- * @brief PWM counter type.
+ * @brief   PWM counter type.
  */
 typedef uint16_t pwmcnt_t;
 
 /**
- * @brief PWM driver channel configuration structure.
- * @note It could be empty on some architectures.
+ * @brief   PWM driver channel configuration structure.
+ * @note    It could be empty on some architectures.
  */
 typedef struct {
   /**
@@ -139,22 +140,22 @@ typedef struct {
   pwmmode_t                 pcc_mode;
   /**
    * @brief Channel callback pointer.
-   * @details This callback is invoked on the channel compare event. If set to
-   * @p NULL then the callback is disabled.
+   * @note  This callback is invoked on the channel compare event. If set to
+   *        @p NULL then the callback is disabled.
    */
   pwmcallback_t             pcc_callback;
   /* End of the mandatory fields.*/
 } PWMChannelConfig;
 
 /**
- * @brief PWM driver configuration structure.
- * @note It could be empty on some architectures.
+ * @brief   PWM driver configuration structure.
+ * @note    It could be empty on some architectures.
  */
 typedef struct {
   /**
    * @brief Periodic callback pointer.
-   * @details This callback is invoked on PWM counter reset. If set to
-   * @p NULL then the callback is disabled.
+   * @note  This callback is invoked on PWM counter reset. If set to
+   *        @p NULL then the callback is disabled.
    */
   pwmcallback_t             pc_callback;
   /**
@@ -172,13 +173,13 @@ typedef struct {
   uint16_t                  pc_arr;
   /**
    * @brief TIM CR2 register initialization data.
-   * @note The value of this field should normally be equal to zero.
+   * @note  The value of this field should normally be equal to zero.
    */
   uint16_t                  pc_cr2;
 } PWMConfig;
 
 /**
- * @brief Structure representing a PWM driver.
+ * @brief   Structure representing a PWM driver.
  */
 typedef struct {
   /**

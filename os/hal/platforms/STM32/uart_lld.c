@@ -48,6 +48,39 @@ UARTDriver UARTD1;
 /*===========================================================================*/
 
 /**
+ * @brief   Puts the receiver in the UART_RX_IDLE state.
+ *
+ * @param[in] uartp      pointer to the @p UARTDriver object
+ */
+static void set_rx_idle(UARTDriver *uartp) {
+  uint32_t ccr;
+  
+  dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmarx);
+  dmaClearChannel(uartp->ud_dmap, uartp->ud_dmarx);
+  uartp->ud_rxstate = UART_RX_IDLE;
+
+  /* RX DMA channel preparation, circular 1 frame transfers, an interrupt is
+     generated for each received character if the callback is defined.*/
+  ccr = DMA_CCR1_TEIE | DMA_CCR1_CIRC | DMA_CCR1_EN;
+  if (uartp->ud_config->uc_rxchar != NULL)
+    ccr |= DMA_CCR1_TCIE;
+  dmaSetupChannel(uartp->ud_dmap, uartp->ud_dmarx, 1,
+                  &uartp->ud_rxbuf, uartp->ud_dmaccr | ccr);
+}
+
+/**
+ * @brief   Puts the transmitter in the UART_TX_IDLE state.
+ *
+ * @param[in] uartp      pointer to the @p UARTDriver object
+ */
+static void set_tx_idle(UARTDriver *uartp) {
+
+  dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmatx);
+  dmaClearChannel(uartp->ud_dmap, uartp->ud_dmatx);
+  uartp->ud_txstate = UART_TX_IDLE;
+}
+
+/**
  * @brief   USART initialization.
  * @details This function must be invoked with interrupts disabled.
  *
@@ -73,26 +106,23 @@ static void usart_start(UARTDriver *uartp) {
   (void)u->SR;  /* SR reset step 1.*/
   (void)u->DR;  /* SR reset step 2.*/
 
-  /* RX DMA channel preparation, circular 1 frame transfers, an interrupt is
-     generated for each received character.*/
-  dmaSetupChannel(uartp->ud_dmap, uartp->ud_dmarx, 1, &uartp->ud_rxbuf,
-                  DMA_CCR1_TCIE | DMA_CCR1_TEIE | DMA_CCR1_CIRC | DMA_CCR1_EN);
-  
-  /* TX DMA channel preparation, simply disabled.*/
-  dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmatx);
+  set_rx_idle(uartp);
+  set_tx_idle(uartp);
 }
 
 /**
  * @brief   USART de-initialization.
  * @details This function must be invoked with interrupts disabled.
  *
- * @param[in] u         pointer to an USART I/O block
+ * @param[in] uartp      pointer to the @p UARTDriver object
  */
 static void usart_stop(UARTDriver *uartp) {
 
   /* Stops RX and TX DMA channels.*/
   dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmarx);
   dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmatx);
+  dmaClearChannel(uartp->ud_dmap, uartp->ud_dmarx);
+  dmaClearChannel(uartp->ud_dmap, uartp->ud_dmatx);
   
   /* Stops USART operations.*/
   uartp->ud_usart->CR1 = 0;
@@ -109,11 +139,30 @@ static void usart_stop(UARTDriver *uartp) {
  * @brief   USART1 RX DMA interrupt handler (channel 4).
  */
 CH_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
+  UARTDriver *uartp;
 
   CH_IRQ_PROLOGUE();
 
-  DMA1->IFCR |= DMA_IFCR_CGIF4  | DMA_IFCR_CTCIF4 |
-                DMA_IFCR_CHTIF4 | DMA_IFCR_CTEIF4;
+  dmaClearChannel(&DMA1, STM32_DMA_CHANNEL_4);
+
+  uartp = &UARTD1;
+  if (uartp->ud_rxstate == UART_RX_IDLE) {
+    /* Receiver in idle state, a callback is generated, if enabled, for each
+       received character.*/
+    if (uartp->ud_config->uc_rxchar != NULL)
+      uartp->ud_config->uc_rxchar(uartp->ud_rxbuf);
+  }
+  else {
+    /* Receiver in active state, a callback is generated, if enabled, after
+       a completed transfer.*/
+    uartp->ud_rxstate = UART_RX_COMPLETE;
+    if (uartp->ud_config->uc_rxend != NULL)
+      uartp->ud_config->uc_rxend();
+    /* If the callback didn't restart a receive operation then the receiver
+       returns to the idle state.*/
+    if (uartp->ud_rxstate == UART_RX_COMPLETE)
+      set_rx_idle(uartp);
+  }
 
   CH_IRQ_EPILOGUE();
 }
@@ -125,17 +174,24 @@ CH_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  DMA1->IFCR |= DMA_IFCR_CGIF5  | DMA_IFCR_CTCIF5 |
-                DMA_IFCR_CHTIF5 | DMA_IFCR_CTEIF5;
+  dmaClearChannel(&DMA1, STM32_DMA_CHANNEL_5);
+
+  /* A callback is generated, if enabled, after a completed transfer.*/
+  uartp->ud_txstate = UART_TX_COMPLETE;
+  if (UARTD1.ud_config->uc_txend1 != NULL)
+    UARTD1.ud_config->uc_txend1();
+  /* If the callback didn't restart a transmit operation then the transmitter
+     returns to the idle state.*/
+  if (uartp->ud_txstate == UART_TX_COMPLETE)
+    set_tx_idle(uartp);
 
   CH_IRQ_EPILOGUE();
 }
 
-CH_IRQ_HANDLER(USART2_IRQHandler) {
+CH_IRQ_HANDLER(USART1_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(&SD2);
 
   CH_IRQ_EPILOGUE();
 }
@@ -190,8 +246,6 @@ void uart_lld_start(UARTDriver *uartp) {
     uartp->ud_dmap->channels[uartp->ud_dmarx].CPAR = (uint32_t)&uartp->ud_usart->DR;
     uartp->ud_dmap->channels[uartp->ud_dmatx].CPAR = (uint32_t)&uartp->ud_usart->DR;
   }
-  uartp->ud_txstate = UART_TX_IDLE;
-  uartp->ud_rxstate = UART_RX_IDLE;
   usart_start(uartp);
 }
 
