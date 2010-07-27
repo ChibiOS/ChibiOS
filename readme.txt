@@ -76,16 +76,21 @@
   3025549)(backported to 2.0.2).
 - FIX: Added option to enforce the stack alignment to 32 or 64 bits in the
   Cortex-Mx port (bug 3025133)(backported to 2.0.2).
+- NEW: Centralized DMA macros in the STM32 HAL.
 - NEW: New UART device driver model, this device driver allows unbuffered,
   callback driven access to UART-type devices.
 - NEW: Added friendly interrupt vectors names to the STM32 HAL (change request
   3023944).
 - NEW: Added support for SPI3 in the STM32 HAL.
+- CHANGE: Redeclared the IRQ handlers in the various STM32 drivers using the
+  new friendly vector names.
 - CHANGE: Removed the option -mabi=apcs-gnu from all the Cortex-Mx demos. The
   option is not compatible with the 64 bits stack alignment now default in
   the Cortex-Mx port. Note that the 64 bits alignment has a cost both as
   performance and as space but it is the "standard".
 - OPT: Small speed optimization in the STM32 SPI driver.
+- OPT: Optimized DMA clearing in STM32 ADC and SPI drivers, there was no need
+  to read/modify/write the IFCR DMA register, it is write only.
 - Fixed various documentation errors.
 
 *** 2.1.0 ***

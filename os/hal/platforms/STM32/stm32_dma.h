@@ -81,33 +81,49 @@ typedef struct {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/** DMA1 registers block numeric address.*/
 #define STM32_DMA1_BASE         (AHBPERIPH_BASE + 0x0000)
+/** Pointer to the DMA1 registers block.*/
 #define STM32_DMA1              ((stm32_dma_t *)STM32_DMA1_BASE)
-#define STM32_DMA1_CH1          (STM32_DMA1->channels[0])
-#define STM32_DMA1_CH2          (STM32_DMA1->channels[1])
-#define STM32_DMA1_CH3          (STM32_DMA1->channels[2])
-#define STM32_DMA1_CH4          (STM32_DMA1->channels[3])
-#define STM32_DMA1_CH5          (STM32_DMA1->channels[4])
-#define STM32_DMA1_CH6          (STM32_DMA1->channels[5])
-#define STM32_DMA1_CH7          (STM32_DMA1->channels[6])
+/** Pointer to the DMA1 channel 1 registers block.*/
+#define STM32_DMA1_CH1          (&STM32_DMA1->channels[0])
+/** Pointer to the DMA1 channel 2 registers block.*/
+#define STM32_DMA1_CH2          (&STM32_DMA1->channels[1])
+/** Pointer to the DMA1 channel 3 registers block.*/
+#define STM32_DMA1_CH3          (&STM32_DMA1->channels[2])
+/** Pointer to the DMA1 channel 4 registers block.*/
+#define STM32_DMA1_CH4          (&STM32_DMA1->channels[3])
+/** Pointer to the DMA1 channel 5 registers block.*/
+#define STM32_DMA1_CH5          (&STM32_DMA1->channels[4])
+/** Pointer to the DMA1 channel 6 registers block.*/
+#define STM32_DMA1_CH6          (&STM32_DMA1->channels[5])
+/** Pointer to the DMA1 channel 7 registers block.*/
+#define STM32_DMA1_CH7          (&STM32_DMA1->channels[6])
 
 #if defined(STM32F10X_HD) || defined (STM32F10X_CL) || defined(__DOXYGEN__)
+/** DMA2 registers block numeric address.*/
 #define STM32_DMA2_BASE         (AHBPERIPH_BASE + 0x0400)
+/** Pointer to the DMA2 registers block.*/
 #define STM32_DMA2              ((stm32_dma_t *)STM32_DMA2_BASE)
-#define STM32_DMA2_CH1          (STM32_DMA2->channels[0])
-#define STM32_DMA2_CH2          (STM32_DMA2->channels[1])
-#define STM32_DMA2_CH3          (STM32_DMA2->channels[2])
-#define STM32_DMA2_CH4          (STM32_DMA2->channels[3])
-#define STM32_DMA2_CH5          (STM32_DMA2->channels[4])
+/** Pointer to the DMA2 channel 1 registers block.*/
+#define STM32_DMA2_CH1          (&STM32_DMA2->channels[0])
+/** Pointer to the DMA2 channel 2 registers block.*/
+#define STM32_DMA2_CH2          (&STM32_DMA2->channels[1])
+/** Pointer to the DMA2 channel 3 registers block.*/
+#define STM32_DMA2_CH3          (&STM32_DMA2->channels[2])
+/** Pointer to the DMA2 channel 4 registers block.*/
+#define STM32_DMA2_CH4          (&STM32_DMA2->channels[3])
+/** Pointer to the DMA2 channel 5 registers block.*/
+#define STM32_DMA2_CH5          (&STM32_DMA2->channels[4])
 #endif
 
-#define STM32_DMA_CHANNEL_1     0
-#define STM32_DMA_CHANNEL_2     1
-#define STM32_DMA_CHANNEL_3     2
-#define STM32_DMA_CHANNEL_4     3
-#define STM32_DMA_CHANNEL_5     4
-#define STM32_DMA_CHANNEL_6     5
-#define STM32_DMA_CHANNEL_7     6
+#define STM32_DMA_CHANNEL_1     0       /**< @brief DMA channel 1.          */
+#define STM32_DMA_CHANNEL_2     1       /**< @brief DMA channel 2.          */
+#define STM32_DMA_CHANNEL_3     2       /**< @brief DMA channel 3.          */
+#define STM32_DMA_CHANNEL_4     3       /**< @brief DMA channel 4.          */
+#define STM32_DMA_CHANNEL_5     4       /**< @brief DMA channel 5.          */
+#define STM32_DMA_CHANNEL_6     5       /**< @brief DMA channel 6.          */
+#define STM32_DMA_CHANNEL_7     6       /**< @brief DMA channel 7.          */
 
 /**
  * @brief   DMA channel setup.
@@ -126,7 +142,7 @@ typedef struct {
 
 /**
  * @brief   DMA channel disable.
- * @note    Channel's pending interrupt are cleared.
+ * @note    Channel's pending interrupts are cleared.
  */
 #define dmaDisableChannel(dmap, ch) {                                       \
   (dmap)->channels[ch].CCR = 0;                                             \

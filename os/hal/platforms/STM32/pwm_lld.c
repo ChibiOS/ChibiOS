@@ -18,8 +18,9 @@
 */
 
 /**
- * @file STM32/pwm_lld.c
- * @brief STM32 PWM subsystem low level driver header.
+ * @file    STM32/pwm_lld.c
+ * @brief   STM32 PWM subsystem low level driver header.
+ *
  * @addtogroup STM32_PWM
  * @{
  */
@@ -34,32 +35,32 @@
 /*===========================================================================*/
 
 /**
- * @brief PWM1 driver identifier.
- * @note The driver PWM1 allocates the complex timer TIM1 when enabled.
+ * @brief   PWM1 driver identifier.
+ * @note    The driver PWM1 allocates the complex timer TIM1 when enabled.
  */
 #if defined(USE_STM32_PWM1) || defined(__DOXYGEN__)
 PWMDriver PWMD1;
 #endif
 
 /**
- * @brief PWM2 driver identifier.
- * @note The driver PWM2 allocates the timer TIM2 when enabled.
+ * @brief   PWM2 driver identifier.
+ * @note    The driver PWM2 allocates the timer TIM2 when enabled.
  */
 #if defined(USE_STM32_PWM2) || defined(__DOXYGEN__)
 PWMDriver PWMD2;
 #endif
 
 /**
- * @brief PWM3 driver identifier.
- * @note The driver PWM3 allocates the timer TIM3 when enabled.
+ * @brief   PWM3 driver identifier.
+ * @note    The driver PWM3 allocates the timer TIM3 when enabled.
  */
 #if defined(USE_STM32_PWM3) || defined(__DOXYGEN__)
 PWMDriver PWMD3;
 #endif
 
 /**
- * @brief PWM4 driver identifier.
- * @note The driver PWM4 allocates the timer TIM4 when enabled.
+ * @brief   PWM4 driver identifier.
+ * @note    The driver PWM4 allocates the timer TIM4 when enabled.
  */
 #if defined(USE_STM32_PWM4) || defined(__DOXYGEN__)
 PWMDriver PWMD4;
@@ -74,9 +75,9 @@ PWMDriver PWMD4;
 /*===========================================================================*/
 
 /**
- * @brief Stops all channels.
+ * @brief   Stops all channels.
  *
- * @param[in] pwmp pointer to a @p PWMDriver object
+ * @param[in] pwmp      pointer to a @p PWMDriver object
  */
 static void stop_channels(PWMDriver *pwmp) {
 
@@ -92,10 +93,10 @@ static void stop_channels(PWMDriver *pwmp) {
 
 #if USE_STM32_PWM2 || USE_STM32_PWM3 || USE_STM32_PWM4 || defined(__DOXYGEN__)
 /**
- * @brief Common TIM2...TIM4 IRQ handler.
- * @note It is assumed that the various sources are only activated if the
- *       associated callback pointer is not equal to @p NULL in order to not
- *       perform an extra check in a potentially critical interrupt handler.
+ * @brief   Common TIM2...TIM4 IRQ handler.
+ * @note    It is assumed that the various sources are only activated if the
+ *          associated callback pointer is not equal to @p NULL in order to not
+ *          perform an extra check in a potentially critical interrupt handler.
  */
 static void serve_interrupt(PWMDriver *pwmp) {
   uint16_t sr;
@@ -122,12 +123,12 @@ static void serve_interrupt(PWMDriver *pwmp) {
 
 #if USE_STM32_PWM1
 /**
- * @brief TIM1 update interrupt handler.
- * @note It is assumed that this interrupt is only activated if the callback
- *       pointer is not equal to @p NULL in order to not perform an extra
- *       check in a potentially critical interrupt handler.
+ * @brief   TIM1 update interrupt handler.
+ * @note    It is assumed that this interrupt is only activated if the callback
+ *          pointer is not equal to @p NULL in order to not perform an extra
+ *          check in a potentially critical interrupt handler.
  */
-CH_IRQ_HANDLER(VectorA4) {
+CH_IRQ_HANDLER(TIM1_UP_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -138,12 +139,12 @@ CH_IRQ_HANDLER(VectorA4) {
 }
 
 /**
- * @brief TIM1 compare interrupt handler.
- * @note It is assumed that the various sources are only activated if the
- *       associated callback pointer is not equal to @p NULL in order to not
- *       perform an extra check in a potentially critical interrupt handler.
+ * @brief   TIM1 compare interrupt handler.
+ * @note    It is assumed that the various sources are only activated if the
+ *          associated callback pointer is not equal to @p NULL in order to not
+ *          perform an extra check in a potentially critical interrupt handler.
  */
-CH_IRQ_HANDLER(VectorAC) {
+CH_IRQ_HANDLER(TIM1_CC_IRQHandler) {
   uint16_t sr;
 
   CH_IRQ_PROLOGUE();
@@ -167,7 +168,7 @@ CH_IRQ_HANDLER(VectorAC) {
 /**
  * @brief TIM2 interrupt handler.
  */
-CH_IRQ_HANDLER(VectorB0) {
+CH_IRQ_HANDLER(TIM2_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -181,7 +182,7 @@ CH_IRQ_HANDLER(VectorB0) {
 /**
  * @brief TIM3 interrupt handler.
  */
-CH_IRQ_HANDLER(VectorB4) {
+CH_IRQ_HANDLER(TIM3_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -195,7 +196,7 @@ CH_IRQ_HANDLER(VectorB4) {
 /**
  * @brief TIM4 interrupt handler.
  */
-CH_IRQ_HANDLER(VectorB8) {
+CH_IRQ_HANDLER(TIM4_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -210,7 +211,7 @@ CH_IRQ_HANDLER(VectorB8) {
 /*===========================================================================*/
 
 /**
- * @brief Low level PWM driver initialization.
+ * @brief   Low level PWM driver initialization.
  */
 void pwm_lld_init(void) {
 
@@ -260,9 +261,9 @@ void pwm_lld_init(void) {
 }
 
 /**
- * @brief Configures and activates the PWM peripheral.
+ * @brief   Configures and activates the PWM peripheral.
  *
- * @param[in] pwmp pointer to a @p PWMDriver object
+ * @param[in] pwmp      pointer to a @p PWMDriver object
  */
 void pwm_lld_start(PWMDriver *pwmp) {
   uint16_t ccer;
@@ -354,9 +355,9 @@ void pwm_lld_start(PWMDriver *pwmp) {
 }
 
 /**
- * @brief Deactivates the PWM peripheral.
+ * @brief   Deactivates the PWM peripheral.
  *
- * @param[in] pwmp pointer to a @p PWMDriver object
+ * @param[in] pwmp      pointer to a @p PWMDriver object
  */
 void pwm_lld_stop(PWMDriver *pwmp) {
   /* If in ready state then disables the PWM clock.*/
@@ -395,7 +396,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 }
 
 /**
- * @brief Enables a PWM channel.
+ * @brief   Enables a PWM channel.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] channel   PWM channel identifier
@@ -469,7 +470,7 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
 }
 
 /**
- * @brief Disables a PWM channel.
+ * @brief   Disables a PWM channel.
  * @details The channel is disabled and its output line returned to the
  *          idle state.
  *

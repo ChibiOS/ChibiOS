@@ -54,14 +54,14 @@ ADCDriver ADCD1;
 /**
  * @brief ADC1 DMA interrupt handler (channel 1).
  */
-CH_IRQ_HANDLER(Vector6C) {
+CH_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
   uint32_t isr;
 
   CH_IRQ_PROLOGUE();
 
   isr = DMA1->ISR;
-  DMA1->IFCR |= DMA_IFCR_CGIF1  | DMA_IFCR_CTCIF1 |
-                DMA_IFCR_CHTIF1 | DMA_IFCR_CTEIF1;
+  DMA1->IFCR = DMA_IFCR_CGIF1  | DMA_IFCR_CTCIF1 |
+               DMA_IFCR_CHTIF1 | DMA_IFCR_CTEIF1;
   if ((isr & DMA_ISR_HTIF1) != 0) {
     /* Half transfer processing.*/
     if (ADCD1.ad_callback != NULL) {

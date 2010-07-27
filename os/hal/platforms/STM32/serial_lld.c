@@ -222,7 +222,7 @@ static void notify5(void) {
 /*===========================================================================*/
 
 #if USE_STM32_USART1 || defined(__DOXYGEN__)
-CH_IRQ_HANDLER(VectorD4) {
+CH_IRQ_HANDLER(USART1_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -233,7 +233,7 @@ CH_IRQ_HANDLER(VectorD4) {
 #endif
 
 #if USE_STM32_USART2 || defined(__DOXYGEN__)
-CH_IRQ_HANDLER(VectorD8) {
+CH_IRQ_HANDLER(USART2_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -244,7 +244,7 @@ CH_IRQ_HANDLER(VectorD8) {
 #endif
 
 #if USE_STM32_USART3 || defined(__DOXYGEN__)
-CH_IRQ_HANDLER(VectorDC) {
+CH_IRQ_HANDLER(USART3_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -256,7 +256,7 @@ CH_IRQ_HANDLER(VectorDC) {
 
 #if defined(STM32F10X_HD) || defined(STM32F10X_CL) || defined(__DOXYGEN__)
 #if USE_STM32_UART4 || defined(__DOXYGEN__)
-CH_IRQ_HANDLER(Vector110) {
+CH_IRQ_HANDLER(UART4_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -267,7 +267,7 @@ CH_IRQ_HANDLER(Vector110) {
 #endif
 
 #if USE_STM32_UART5 || defined(__DOXYGEN__)
-CH_IRQ_HANDLER(Vector114) {
+CH_IRQ_HANDLER(UART5_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 

@@ -116,7 +116,7 @@ static void spi_start_wait(SPIDriver *spip, size_t n,
 /**
  * @brief   SPI1 RX DMA interrupt handler (channel 2).
  */
-CH_IRQ_HANDLER(Vector70) {
+CH_IRQ_HANDLER(DMA1_Ch2_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -124,8 +124,8 @@ CH_IRQ_HANDLER(Vector70) {
   if ((DMA1->ISR & DMA_ISR_TEIF2) != 0) {
     STM32_SPI1_DMA_ERROR_HOOK();
   }
-  DMA1->IFCR |= DMA_IFCR_CGIF2  | DMA_IFCR_CTCIF2 |
-                DMA_IFCR_CHTIF2 | DMA_IFCR_CTEIF2;
+  DMA1->IFCR = DMA_IFCR_CGIF2  | DMA_IFCR_CTCIF2 |
+               DMA_IFCR_CHTIF2 | DMA_IFCR_CTEIF2;
 
   CH_IRQ_EPILOGUE();
 }
@@ -133,13 +133,13 @@ CH_IRQ_HANDLER(Vector70) {
 /**
  * @brief   SPI1 TX DMA interrupt handler (channel 3).
  */
-CH_IRQ_HANDLER(Vector74) {
+CH_IRQ_HANDLER(DMA1_Ch3_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
   STM32_SPI1_DMA_ERROR_HOOK();
-  DMA1->IFCR |= DMA_IFCR_CGIF3  | DMA_IFCR_CTCIF3 |
-                DMA_IFCR_CHTIF3 | DMA_IFCR_CTEIF3;
+  DMA1->IFCR = DMA_IFCR_CGIF3  | DMA_IFCR_CTCIF3 |
+               DMA_IFCR_CHTIF3 | DMA_IFCR_CTEIF3;
 
   CH_IRQ_EPILOGUE();
 }
@@ -149,7 +149,7 @@ CH_IRQ_HANDLER(Vector74) {
 /**
  * @brief   SPI2 RX DMA interrupt handler (channel 4).
  */
-CH_IRQ_HANDLER(Vector78) {
+CH_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -157,8 +157,8 @@ CH_IRQ_HANDLER(Vector78) {
   if ((DMA1->ISR & DMA_ISR_TEIF4) != 0) {
     STM32_SPI2_DMA_ERROR_HOOK();
   }
-  DMA1->IFCR |= DMA_IFCR_CGIF4  | DMA_IFCR_CTCIF4 |
-                DMA_IFCR_CHTIF4 | DMA_IFCR_CTEIF4;
+  DMA1->IFCR = DMA_IFCR_CGIF4  | DMA_IFCR_CTCIF4 |
+               DMA_IFCR_CHTIF4 | DMA_IFCR_CTEIF4;
 
   CH_IRQ_EPILOGUE();
 }
@@ -166,13 +166,13 @@ CH_IRQ_HANDLER(Vector78) {
 /**
  * @brief   SPI2 TX DMA interrupt handler (channel 5).
  */
-CH_IRQ_HANDLER(Vector7C) {
+CH_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
   STM32_SPI2_DMA_ERROR_HOOK();
-  DMA1->IFCR |= DMA_IFCR_CGIF5  | DMA_IFCR_CTCIF5 |
-                DMA_IFCR_CHTIF5 | DMA_IFCR_CTEIF5;
+  DMA1->IFCR = DMA_IFCR_CGIF5  | DMA_IFCR_CTCIF5 |
+               DMA_IFCR_CHTIF5 | DMA_IFCR_CTEIF5;
 
   CH_IRQ_EPILOGUE();
 }
@@ -182,7 +182,7 @@ CH_IRQ_HANDLER(Vector7C) {
 /**
  * @brief   SPI3 RX DMA interrupt handler (DMA2, channel 1).
  */
-CH_IRQ_HANDLER(Vector120) {
+CH_IRQ_HANDLER(DMA2_Ch1_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -190,8 +190,8 @@ CH_IRQ_HANDLER(Vector120) {
   if ((DMA2->ISR & DMA_ISR_TEIF1) != 0) {
     STM32_SPI3_DMA_ERROR_HOOK();
   }
-  DMA2->IFCR |= DMA_IFCR_CGIF1  | DMA_IFCR_CTCIF1 |
-                DMA_IFCR_CHTIF1 | DMA_IFCR_CTEIF1;
+  DMA2->IFCR = DMA_IFCR_CGIF1  | DMA_IFCR_CTCIF1 |
+               DMA_IFCR_CHTIF1 | DMA_IFCR_CTEIF1;
 
   CH_IRQ_EPILOGUE();
 }
@@ -199,13 +199,13 @@ CH_IRQ_HANDLER(Vector120) {
 /**
  * @brief   SPI3 TX DMA2 interrupt handler (DMA2, channel 2).
  */
-CH_IRQ_HANDLER(Vector124) {
+CH_IRQ_HANDLER(DMA2_Ch2_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
   STM32_SPI3_DMA_ERROR_HOOK();
-  DMA2->IFCR |= DMA_IFCR_CGIF2  | DMA_IFCR_CTCIF2 |
-                DMA_IFCR_CHTIF2 | DMA_IFCR_CTEIF2;
+  DMA2->IFCR = DMA_IFCR_CGIF2  | DMA_IFCR_CTCIF2 |
+               DMA_IFCR_CHTIF2 | DMA_IFCR_CTEIF2;
 
   CH_IRQ_EPILOGUE();
 }

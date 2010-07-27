@@ -47,22 +47,6 @@ UARTDriver UARTD1;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-#define dma_setup(dmap, cndtr, cmar, ccr) {                                 \
-  (dmap)->CNDTR             = (uint32_t)(cndtr);                            \
-  (dmap)->CMAR              = (uint32_t)(cmar);                             \
-  (dmap)->CCR               = (uint32_t)(ccr);                              \
-}
-
-#define dma_disable(dmap) {                                                 \
-  (dmap)->CCR               = 0;                                                        \
-}
-
-#define dma_rx_setup(uartp, cndtr, cmar, ccr)                               \
-  dma_setup((uartp)->ud_dmarx, (cndtr), (cmar), (uartp)->ud_dmaccr|(ccr))
-
-#define dma_tx_setup(uartp, cndtr, cmar, ccr) {                             \
-  dma_setup((uartp)->ud_dmatx, (cndtr), (cmar), (uartp)->ud_dmaccr|(ccr))
-
 /**
  * @brief   USART initialization.
  * @details This function must be invoked with interrupts disabled.
@@ -119,6 +103,43 @@ static void usart_stop(UARTDriver *uartp) {
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
+
+#if STM32_UART_USE_USART1 || defined(__DOXYGEN__)
+/**
+ * @brief   USART1 RX DMA interrupt handler (channel 4).
+ */
+CH_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  DMA1->IFCR |= DMA_IFCR_CGIF4  | DMA_IFCR_CTCIF4 |
+                DMA_IFCR_CHTIF4 | DMA_IFCR_CTEIF4;
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   USART1 TX DMA interrupt handler (channel 5).
+ */
+CH_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  DMA1->IFCR |= DMA_IFCR_CGIF5  | DMA_IFCR_CTCIF5 |
+                DMA_IFCR_CHTIF5 | DMA_IFCR_CTEIF5;
+
+  CH_IRQ_EPILOGUE();
+}
+
+CH_IRQ_HANDLER(USART2_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  serve_interrupt(&SD2);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
