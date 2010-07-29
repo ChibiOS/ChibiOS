@@ -116,6 +116,7 @@ static void usart_stop(UARTDriver *uartp) {
  * @param[in] uartp     pointer to the @p UARTDriver object
  */
 static void usart_start(UARTDriver *uartp) {
+  uint16_t cr1;
   USART_TypeDef *u = uartp->ud_usart;
 
   /* Defensive programming, starting from a clean state.*/
@@ -127,16 +128,21 @@ static void usart_start(UARTDriver *uartp) {
   else
     u->BRR = STM32_PCLK1 / uartp->ud_config->uc_speed;
 
-  /* Note that some bits are enforced because required for correct driver
-     operations.*/
-  u->CR1 = uartp->ud_config->uc_cr1 | USART_CR1_UE | USART_CR1_PEIE |
-                                      USART_CR1_TE | USART_CR1_RE;
-  u->CR2 = uartp->ud_config->uc_cr2 | USART_CR2_LBDIE;
-  u->CR3 = uartp->ud_config->uc_cr3 | USART_CR3_EIE;
-
   /* Resetting eventual pending status flags.*/
   (void)u->SR;  /* SR reset step 1.*/
   (void)u->DR;  /* SR reset step 2.*/
+  u->SR = 0;
+
+  /* Note that some bits are enforced because required for correct driver
+     operations.*/
+  if (uartp->ud_config->uc_txend2 == NULL)
+    cr1 = USART_CR1_UE | USART_CR1_PEIE | USART_CR1_TE | USART_CR1_RE;
+  else
+    cr1 = USART_CR1_UE | USART_CR1_PEIE | USART_CR1_TE | USART_CR1_RE |
+          USART_CR1_TCIE;
+  u->CR1 = uartp->ud_config->uc_cr1 | cr1;
+  u->CR2 = uartp->ud_config->uc_cr2 | USART_CR2_LBDIE;
+  u->CR3 = uartp->ud_config->uc_cr3 | USART_CR3_EIE;
 
   /* Starting the receiver idle loop.*/
   set_rx_idle_loop(uartp);
@@ -152,7 +158,7 @@ static void serve_rx_end_irq(UARTDriver *uartp) {
   uartp->ud_rxstate = UART_RX_COMPLETE;
   if (uartp->ud_config->uc_rxend != NULL)
     uartp->ud_config->uc_rxend();
-  /* If the callback didn't explicitely change state then the receiver
+  /* If the callback didn't explicitly change state then the receiver
      automatically returns to the idle state.*/
   if (uartp->ud_rxstate == UART_RX_COMPLETE) {
     uartp->ud_rxstate = UART_RX_IDLE;
@@ -171,7 +177,7 @@ static void serve_tx_end_irq(UARTDriver *uartp) {
   uartp->ud_txstate = UART_TX_COMPLETE;
   if (uartp->ud_config->uc_txend1 != NULL)
     uartp->ud_config->uc_txend1();
-  /* If the callback didn't explicitely change state then the transmitter
+  /* If the callback didn't explicitly change state then the transmitter
      automatically returns to the idle state.*/
   if (uartp->ud_txstate == UART_TX_COMPLETE)
     uartp->ud_txstate = UART_TX_IDLE;
@@ -187,27 +193,36 @@ static void serve_usart_irq(UARTDriver *uartp) {
   
   sr = u->SR;   /* SR reset step 1.*/
   (void)u->DR;  /* SR reset step 2.*/
-/////////////////  u->SR = 0;    /* Clears the LBD bit in the SR.*/
-  if (uartp->ud_rxstate == UART_RX_IDLE) {
-    /* Receiver in idle state, a callback is generated, if enabled, for each
-       receive error and then the driver stays in the same state.*/
-    if (uartp->ud_config->uc_rxerr != NULL)
-      uartp->ud_config->uc_rxerr(translate_errors(sr));
-  }
-  else {
-    /* Receiver in active state, a callback is generated and the receive
-       operation aborts.*/
-    dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmarx);
-    dmaClearChannel(uartp->ud_dmap, uartp->ud_dmarx);
-    uartp->ud_rxstate = UART_RX_ERROR;
-    if (uartp->ud_config->uc_rxerr != NULL)
-      uartp->ud_config->uc_rxerr(translate_errors(sr));
-    /* If the callback didn't explicitely change state then the receiver
-       automatically returns to the idle state.*/
-    if (uartp->ud_rxstate == UART_RX_ERROR) {
-      uartp->ud_rxstate = UART_RX_IDLE;
-      set_rx_idle_loop(uartp);
+  if (sr & (USART_SR_LBD | USART_SR_ORE | USART_SR_NE |
+            USART_SR_FE  | USART_SR_PE)) {
+    u->SR = ~USART_SR_LBD;
+    if (uartp->ud_rxstate == UART_RX_IDLE) {
+      /* Receiver in idle state, a callback is generated, if enabled, for each
+         receive error and then the driver stays in the same state.*/
+      if (uartp->ud_config->uc_rxerr != NULL)
+        uartp->ud_config->uc_rxerr(translate_errors(sr));
     }
+    else {
+      /* Receiver in active state, a callback is generated and the receive
+         operation aborts.*/
+      dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmarx);
+      dmaClearChannel(uartp->ud_dmap, uartp->ud_dmarx);
+      uartp->ud_rxstate = UART_RX_ERROR;
+      if (uartp->ud_config->uc_rxerr != NULL)
+        uartp->ud_config->uc_rxerr(translate_errors(sr));
+      /* If the callback didn't explicitly change state then the receiver
+         automatically returns to the idle state.*/
+      if (uartp->ud_rxstate == UART_RX_ERROR) {
+        uartp->ud_rxstate = UART_RX_IDLE;
+        set_rx_idle_loop(uartp);
+      }
+    }
+  }
+  if (sr & USART_SR_TC) {
+    u->SR = ~USART_SR_TC;
+    /* End of transmission, a callback is generated.*/
+    if (uartp->ud_config->uc_txend2 != NULL)
+      uartp->ud_config->uc_txend2();
   }
 }
 
@@ -356,6 +371,9 @@ void uart_lld_stop(UARTDriver *uartp) {
  */
 void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
 
+  (void)uartp;
+  (void)n;
+  (void)txbuf;
 }
 
 /**
@@ -366,6 +384,7 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
  */
 void uart_lld_stop_send(UARTDriver *uartp) {
 
+  (void)uartp;
 }
 
 /**
@@ -379,6 +398,9 @@ void uart_lld_stop_send(UARTDriver *uartp) {
  */
 void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
 
+  (void)uartp;
+  (void)n;
+  (void)rxbuf;
 }
 
 /**
@@ -389,6 +411,7 @@ void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
  */
 void uart_lld_stop_receive(UARTDriver *uartp) {
 
+  (void)uartp;
 }
 
 #endif /* CH_HAL_USE_UART */
