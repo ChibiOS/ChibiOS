@@ -48,10 +48,42 @@
 #endif
 
 /**
+ * @brief   UART driver on USART2 enable switch.
+ * @details If set to @p TRUE the support for USART2 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_UART_USE_USART2) || defined(__DOXYGEN__)
+#define STM32_UART_USE_USART2               TRUE
+#endif
+
+/**
+ * @brief   UART driver on USART3 enable switch.
+ * @details If set to @p TRUE the support for USART3 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_UART_USE_USART3) || defined(__DOXYGEN__)
+#define STM32_UART_USE_USART3               TRUE
+#endif
+
+/**
  * @brief   USART1 interrupt priority level setting.
  */
 #if !defined(STM32_UART_USART1_IRQ_PRIO) || defined(__DOXYGEN__)
 #define STM32_UART_USART1_IRQ_PRIORITY      12
+#endif
+
+/**
+ * @brief   USART2 interrupt priority level setting.
+ */
+#if !defined(STM32_UART_USART2_IRQ_PRIO) || defined(__DOXYGEN__)
+#define STM32_UART_USART2_IRQ_PRIORITY      12
+#endif
+
+/**
+ * @brief   USART3 interrupt priority level setting.
+ */
+#if !defined(STM32_UART_USART3_IRQ_PRIO) || defined(__DOXYGEN__)
+#define STM32_UART_USART3_IRQ_PRIORITY      12
 #endif
 
 /**
@@ -61,8 +93,28 @@
  *          over the TX channel.
  */
 #if !defined(STM32_UART_USART1_DMA_PRIO) || defined(__DOXYGEN__)
-#define STM32_UART_USART1_DMA_PRIORITY      1
+#define STM32_UART_USART1_DMA_PRIORITY      0
 #endif
+
+/**
+ * @brief   USART2 DMA priority (0..3|lowest..highest).
+ * @note    The priority level is used for both the TX and RX DMA channels but
+ *          because of the channels ordering the RX channel has always priority
+ *          over the TX channel.
+ */
+#if !defined(STM32_UART_USART2_DMA_PRIO) || defined(__DOXYGEN__)
+#define STM32_UART_USART2_DMA_PRIORITY      0
+#endif
+/**
+ * @brief   USART3 DMA priority (0..3|lowest..highest).
+ * @note    The priority level is used for both the TX and RX DMA channels but
+ *          because of the channels ordering the RX channel has always priority
+ *          over the TX channel.
+ */
+#if !defined(STM32_UART_USART3_DMA_PRIO) || defined(__DOXYGEN__)
+#define STM32_UART_USART3_DMA_PRIORITY      0
+#endif
+
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -158,6 +210,18 @@ typedef struct {
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+#if STM32_UART_USE_USART1 && !defined(__DOXYGEN__)
+extern UARTDriver UARTD1;
+#endif
+
+#if STM32_UART_USE_USART2 && !defined(__DOXYGEN__)
+extern UARTDriver UARTD2;
+#endif
+
+#if STM32_UART_USE_USART3 && !defined(__DOXYGEN__)
+extern UARTDriver UARTD3;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
