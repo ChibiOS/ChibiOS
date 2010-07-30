@@ -371,9 +371,10 @@ void uart_lld_stop(UARTDriver *uartp) {
  */
 void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
 
-  (void)uartp;
-  (void)n;
-  (void)txbuf;
+  /* TX DMA channel preparation and start.*/
+  dmaSetupChannel(uartp->ud_dmap, uartp->ud_dmatx, n, &uartp->ud_txbuf,
+                  uartp->ud_dmaccr | DMA_CCR1_TEIE | DMA_CCR1_TCIE);
+  dmaEnableChannel(uartp->ud_dmap, uartp->ud_dmatx);
 }
 
 /**
@@ -384,7 +385,8 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
  */
 void uart_lld_stop_send(UARTDriver *uartp) {
 
-  (void)uartp;
+  dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmatx);
+  dmaClearChannel(uartp->ud_dmap, uartp->ud_dmatx);
 }
 
 /**
