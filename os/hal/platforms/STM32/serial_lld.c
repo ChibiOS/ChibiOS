@@ -70,7 +70,7 @@ static const SerialConfig default_config =
 {
   SERIAL_DEFAULT_BITRATE,
   0,
-  USART_CR2_STOP1_BITS | USART_CR2_LINEN,
+  USART_CR2_STOP1_BITS,
   0
 };
 
@@ -121,6 +121,9 @@ static void usart_deinit(USART_TypeDef *u) {
   u->CR3 = 0;
 }
 
+#if USE_STM32_USART1 || USE_STM32_USART2 || USE_STM32_USART3 ||             \
+    ((USE_STM32_USART4 || USE_STM32_USART5) &&                              \
+     (defined(STM32F10X_HD) || defined(STM32F10X_CL)))
 /**
  * @brief   Error handling routine.
  *
@@ -179,6 +182,7 @@ static void serve_interrupt(SerialDriver *sdp) {
     chSysUnlockFromIsr();
   }
 }
+#endif
 
 #if USE_STM32_USART1 || defined(__DOXYGEN__)
 static void notify1(void) {

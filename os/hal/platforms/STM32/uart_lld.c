@@ -373,10 +373,10 @@ void uart_lld_init(void) {
   RCC->APB1RSTR     = RCC_APB1RSTR_USART2RST;
   RCC->APB1RSTR     = 0;
   uartObjectInit(&UARTD2);
-  UARTD1.ud_usart   = USART2;
-  UARTD1.ud_dmarx   = STM32_DMA_CHANNEL_6;
-  UARTD1.ud_dmatx   = STM32_DMA_CHANNEL_7;
-  UARTD1.ud_dmaccr  = 0;
+  UARTD2.ud_usart   = USART2;
+  UARTD2.ud_dmarx   = STM32_DMA_CHANNEL_6;
+  UARTD2.ud_dmatx   = STM32_DMA_CHANNEL_7;
+  UARTD2.ud_dmaccr  = 0;
 #endif
 }
 
@@ -410,7 +410,7 @@ void uart_lld_start(UARTDriver *uartp) {
                        CORTEX_PRIORITY_MASK(STM32_UART_USART2_IRQ_PRIORITY));
       NVICEnableVector(DMA1_Channel7_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_UART_USART2_IRQ_PRIORITY));
-      RCC->APB1ENR |= RCC_APB2ENR_USART1EN;
+      RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
     }
 #endif
 

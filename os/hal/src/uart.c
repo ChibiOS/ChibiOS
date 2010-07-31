@@ -57,7 +57,7 @@ void uartInit(void) {
 /**
  * @brief   Initializes the standard part of a @p UARTDriver structure.
  *
- * @param[in] uartp      pointer to the @p UARTDriver object
+ * @param[in] uartp     pointer to the @p UARTDriver object
  */
 void uartObjectInit(UARTDriver *uartp) {
 
@@ -70,7 +70,7 @@ void uartObjectInit(UARTDriver *uartp) {
 /**
  * @brief   Configures and activates the UART peripheral.
  *
- * @param[in] uartp      pointer to the @p UARTDriver object
+ * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in] config    pointer to the @p UARTConfig object
  */
 void uartStart(UARTDriver *uartp, const UARTConfig *config) {
@@ -92,7 +92,7 @@ void uartStart(UARTDriver *uartp, const UARTConfig *config) {
 /**
  * @brief   Deactivates the UART peripheral.
  *
- * @param[in] uartp      pointer to the @p UARTDriver object
+ * @param[in] uartp     pointer to the @p UARTDriver object
  */
 void uartStop(UARTDriver *uartp) {
 
@@ -163,13 +163,13 @@ void uartStartSendI(UARTDriver *uartp, size_t n, const void *txbuf) {
  * @brief   Stops any ongoing transmission.
  * @note    Stopping a transmission also suppresses the transmission callbacks.
  *
- * @param[in] uartp      pointer to the @p UARTDriver object
+ * @param[in] uartp     pointer to the @p UARTDriver object
  */
 void uartStopSend(UARTDriver *uartp) {
 
   chDbgCheck(uartp != NULL, "uartStopSend");
 
-  chSysLock()
+  chSysLock();
   chDbgAssert(uartp->ud_state == UART_READY,
               "uartStopSend(), #1",
               "not active");
@@ -186,7 +186,7 @@ void uartStopSend(UARTDriver *uartp) {
  * @note    Stopping a transmission also suppresses the transmission callbacks.
  * @note    This function has to be invoked from a lock zone.
  *
- * @param[in] uartp      pointer to the @p UARTDriver object
+ * @param[in] uartp     pointer to the @p UARTDriver object
  */
 void uartStopSendI(UARTDriver *uartp) {
 
@@ -255,13 +255,13 @@ void uartStartReceiveI(UARTDriver *uartp, size_t n, void *rxbuf) {
  * @brief   Stops any ongoing receive operation.
  * @note    Stopping a receive operation also suppresses the receive callbacks.
  *
- * @param[in] uartp      pointer to the @p UARTDriver object
+ * @param[in] uartp     pointer to the @p UARTDriver object
  */
 void uartStopReceive(UARTDriver *uartp) {
 
   chDbgCheck(uartp != NULL, "uartStopReceive");
 
-  chSysLock()
+  chSysLock();
   chDbgAssert(uartp->ud_state == UART_READY,
               "uartStopReceive(), #1",
               "not active");
