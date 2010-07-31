@@ -364,6 +364,7 @@ void uart_lld_init(void) {
   RCC->APB2RSTR     = 0;
   uartObjectInit(&UARTD1);
   UARTD1.ud_usart   = USART1;
+  UARTD1.ud_dmap    = STM32_DMA1;
   UARTD1.ud_dmarx   = STM32_DMA_CHANNEL_4;
   UARTD1.ud_dmatx   = STM32_DMA_CHANNEL_5;
   UARTD1.ud_dmaccr  = 0;
@@ -374,6 +375,7 @@ void uart_lld_init(void) {
   RCC->APB1RSTR     = 0;
   uartObjectInit(&UARTD2);
   UARTD2.ud_usart   = USART2;
+  UARTD2.ud_dmap    = STM32_DMA1;
   UARTD2.ud_dmarx   = STM32_DMA_CHANNEL_6;
   UARTD2.ud_dmatx   = STM32_DMA_CHANNEL_7;
   UARTD2.ud_dmaccr  = 0;
@@ -416,7 +418,7 @@ void uart_lld_start(UARTDriver *uartp) {
 
     /* Static DMA setup, the transfer size depends on the USART settings,
        it is 16 bits if M=1 and PCE=0 else it is 8 bits.*/
-    uartp->ud_dmaccr      = STM32_UART_USART1_DMA_PRIORITY << 12;
+    uartp->ud_dmaccr = STM32_UART_USART1_DMA_PRIORITY << 12;
     if ((uartp->ud_config->uc_cr1 & (USART_CR1_M | USART_CR1_PCE)) == USART_CR1_M)
       uartp->ud_dmaccr |= DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0;
     uartp->ud_dmap->channels[uartp->ud_dmarx].CPAR = (uint32_t)&uartp->ud_usart->DR;
@@ -475,7 +477,8 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
 
   /* TX DMA channel preparation and start.*/
   dmaSetupChannel(uartp->ud_dmap, uartp->ud_dmatx, n, txbuf,
-                  uartp->ud_dmaccr | DMA_CCR1_TEIE | DMA_CCR1_TCIE);
+                  uartp->ud_dmaccr | DMA_CCR1_DIR |
+                  DMA_CCR1_TEIE | DMA_CCR1_TCIE);
   dmaEnableChannel(uartp->ud_dmap, uartp->ud_dmatx);
 }
 
