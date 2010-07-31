@@ -94,6 +94,7 @@ int main(int argc, char **argv) {
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
+    uartStartSend(&UARTD2, 14, "Hello World!\r\n");
     chThdSleepMilliseconds(500);
   }
   return 0;

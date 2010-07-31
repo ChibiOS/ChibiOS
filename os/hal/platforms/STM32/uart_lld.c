@@ -491,7 +491,7 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
 
   /* TX DMA channel preparation and start.*/
   dmaSetupChannel(uartp->ud_dmap, uartp->ud_dmatx, n, txbuf,
-                  uartp->ud_dmaccr | DMA_CCR1_DIR |
+                  uartp->ud_dmaccr | DMA_CCR1_DIR | DMA_CCR1_MINC |
                   DMA_CCR1_TEIE | DMA_CCR1_TCIE);
   dmaEnableChannel(uartp->ud_dmap, uartp->ud_dmatx);
 }
