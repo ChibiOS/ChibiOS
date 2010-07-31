@@ -152,7 +152,8 @@ static void usart_start(UARTDriver *uartp) {
           USART_CR1_TCIE;
   u->CR1 = uartp->ud_config->uc_cr1 | cr1;
   u->CR2 = uartp->ud_config->uc_cr2 | USART_CR2_LBDIE;
-  u->CR3 = uartp->ud_config->uc_cr3 | USART_CR3_EIE;
+  u->CR3 = uartp->ud_config->uc_cr3 | USART_CR3_DMAT | USART_CR3_DMAR |
+                                      USART_CR3_EIE;
 
   /* Starting the receiver idle loop.*/
   set_rx_idle_loop(uartp);
@@ -249,11 +250,11 @@ CH_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
+  uartp = &UARTD1;
   if ((STM32_DMA1->ISR & DMA_ISR_TEIF4) != 0) {
     STM32_UART_USART1_DMA_ERROR_HOOK();
   }
   dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_4);
-  uartp = &UARTD1;
   if (uartp->ud_rxstate == UART_RX_IDLE) {
     /* Fast IRQ path, this is why it is not centralized in serve_rx_end_irq().*/
     /* Receiver in idle state, a callback is generated, if enabled, for each
@@ -310,11 +311,11 @@ CH_IRQ_HANDLER(DMA1_Ch6_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
+  uartp = &UARTD2;
   if ((STM32_DMA1->ISR & DMA_ISR_TEIF6) != 0) {
     STM32_UART_USART2_DMA_ERROR_HOOK();
   }
   dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_6);
-  uartp = &UARTD2;
   if (uartp->ud_rxstate == UART_RX_IDLE) {
     /* Fast IRQ path, this is why it is not centralized in serve_rx_end_irq().*/
     /* Receiver in idle state, a callback is generated, if enabled, for each
@@ -435,6 +436,7 @@ void uart_lld_start(UARTDriver *uartp) {
       uartp->ud_dmaccr |= DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0;
     uartp->ud_dmap->channels[uartp->ud_dmarx].CPAR = (uint32_t)&uartp->ud_usart->DR;
     uartp->ud_dmap->channels[uartp->ud_dmatx].CPAR = (uint32_t)&uartp->ud_usart->DR;
+    uartp->ud_rxbuf = 0;
   }
 
   uartp->ud_rxstate = UART_RX_IDLE;

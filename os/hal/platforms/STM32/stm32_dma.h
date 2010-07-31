@@ -181,7 +181,7 @@ typedef struct {
  * @param[in] ch        channel number
  */
 #define dmaClearChannel(dmap, ch){                                          \
-  (dmap)->IFCR = 1 << (ch);                                                 \
+  (dmap)->IFCR = 1 << ((ch) * 4);                                           \
 }
 
 /*===========================================================================*/

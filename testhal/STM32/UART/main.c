@@ -28,12 +28,26 @@ static void txend2(void) {
 
 }
 
+static void rxerr(uartflags_t e) {
+
+  (void)e;
+}
+
+static void rxchar(uint16_t c) {
+
+  (void)c;
+}
+
+static void rxend(void) {
+
+}
+
 static UARTConfig uart_cfg_1 = {
   txend1,
   txend2,
-  NULL,
-  NULL,
-  NULL,
+  rxend,
+  rxchar,
+  rxerr,
   38400,
   0,
   USART_CR2_LINEN,
