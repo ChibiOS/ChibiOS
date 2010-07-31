@@ -249,6 +249,9 @@ CH_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
+  if ((STM32_DMA1->ISR & DMA_ISR_TEIF4) != 0) {
+    STM32_UART_USART1_DMA_ERROR_HOOK();
+  }
   dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_4);
   uartp = &UARTD1;
   if (uartp->ud_rxstate == UART_RX_IDLE) {
@@ -275,6 +278,9 @@ CH_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
+  if ((STM32_DMA1->ISR & DMA_ISR_TEIF5) != 0) {
+    STM32_UART_USART1_DMA_ERROR_HOOK();
+  }
   dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_5);
   dmaDisableChannel(STM32_DMA1, STM32_DMA_CHANNEL_5);
   serve_tx_end_irq(&UARTD1);
@@ -304,6 +310,9 @@ CH_IRQ_HANDLER(DMA1_Ch6_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
+  if ((STM32_DMA1->ISR & DMA_ISR_TEIF6) != 0) {
+    STM32_UART_USART2_DMA_ERROR_HOOK();
+  }
   dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_6);
   uartp = &UARTD2;
   if (uartp->ud_rxstate == UART_RX_IDLE) {
@@ -330,6 +339,9 @@ CH_IRQ_HANDLER(DMA1_Ch7_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
+  if ((STM32_DMA1->ISR & DMA_ISR_TEIF7) != 0) {
+    STM32_UART_USART2_DMA_ERROR_HOOK();
+  }
   dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_7);
   dmaDisableChannel(STM32_DMA1, STM32_DMA_CHANNEL_7);
   serve_tx_end_irq(&UARTD2);

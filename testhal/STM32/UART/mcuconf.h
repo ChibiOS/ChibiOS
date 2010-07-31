@@ -93,11 +93,16 @@
  */
 #define USE_STM32_SPI1              TRUE
 #define USE_STM32_SPI2              TRUE
+#define USE_STM32_SPI3              TRUE
 #define STM32_SPI1_DMA_PRIORITY     2
 #define STM32_SPI2_DMA_PRIORITY     2
+#define STM32_SPI3_DMA_PRIORITY     2
 #define STM32_SPI1_IRQ_PRIORITY     10
 #define STM32_SPI2_IRQ_PRIORITY     10
+#define STM32_SPI3_IRQ_PRIORITY     10
 #define STM32_SPI1_DMA_ERROR_HOOK() chSysHalt()
+#define STM32_SPI2_DMA_ERROR_HOOK() chSysHalt()
+#define STM32_SPI3_DMA_ERROR_HOOK() chSysHalt()
 
 /*
  * UART driver system settings.
@@ -111,4 +116,6 @@
 #define STM32_UART_USART1_DMA_PRIORITY      0
 #define STM32_UART_USART2_DMA_PRIORITY      0
 #define STM32_UART_USART3_DMA_PRIORITY      0
-#define STM32_UART_DMA_ERROR_HOOK()         chSysHalt()
+#define STM32_UART_USART1_DMA_ERROR_HOOK()  chSysHalt()
+#define STM32_UART_USART2_DMA_ERROR_HOOK()  chSysHalt()
+#define STM32_UART_USART3_DMA_ERROR_HOOK()  chSysHalt()

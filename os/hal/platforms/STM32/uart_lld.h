@@ -115,6 +115,32 @@
 #define STM32_UART_USART3_DMA_PRIORITY      0
 #endif
 
+/**
+ * @brief   USART1 DMA error hook.
+ * @note    The default action for DMA errors is a system halt because DMA error
+ *          can only happen because programming errors.
+ */
+#if !defined(STM32_UART_USART1_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_UART_USART1_DMA_ERROR_HOOK()  chSysHalt()
+#endif
+
+/**
+ * @brief   USART2 DMA error hook.
+ * @note    The default action for DMA errors is a system halt because DMA error
+ *          can only happen because programming errors.
+ */
+#if !defined(STM32_UART_USART2_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_UART_USART2_DMA_ERROR_HOOK()  chSysHalt()
+#endif
+
+/**
+ * @brief   USART3 DMA error hook.
+ * @note    The default action for DMA errors is a system halt because DMA error
+ *          can only happen because programming errors.
+ */
+#if !defined(STM32_UART_USART3_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_UART_USART3_DMA_ERROR_HOOK()  chSysHalt()
+#endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
