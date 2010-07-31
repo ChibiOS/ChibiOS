@@ -20,12 +20,23 @@
 #include "ch.h"
 #include "hal.h"
 
+static VirtualTimer vt;
+
+static void restart(void *p) {
+
+  (void)p;
+  uartStartSend(&UARTD2, 14, "Hello World!\r\n");
+}
+
 static void txend1(void) {
 
 }
 
 static void txend2(void) {
 
+  chSysLockFromIsr();
+  chVTSetI(&vt, MS2ST(1000), restart, NULL);
+  chSysUnlockFromIsr();
 }
 
 static void rxerr(uartflags_t e) {
@@ -90,11 +101,15 @@ int main(int argc, char **argv) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
+   * Starts the transmission, it will be handled entirely in background.
+   */
+  uartStartSend(&UARTD2, 13, "Starting...\r\n");
+
+  /*
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
-    uartStartSend(&UARTD2, 14, "Hello World!\r\n");
     chThdSleepMilliseconds(500);
   }
   return 0;
