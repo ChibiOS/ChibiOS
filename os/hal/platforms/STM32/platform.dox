@@ -89,10 +89,19 @@
  */
 
 /**
- * @defgroup STM32_SERIAL STM32 USART Support
+ * @defgroup STM32_SERIAL STM32 USART Support (buffered)
  * @brief USART peripherals support.
  * @details The serial driver supports the STM32 USARTs in asynchronous
- *           mode.
+ *          mode.
+ *
+ * @ingroup STM32
+ */
+
+/**
+ * @defgroup STM32_UART STM32 USART Support (unbuffered)
+ * @brief USART peripherals support.
+ * @details The UART driver supports the STM32 USARTs using DMA channels for
+ *          improved performance.
  *
  * @ingroup STM32
  */
@@ -140,4 +149,3 @@
  *
  * @ingroup STM32
  */
-

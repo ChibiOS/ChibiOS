@@ -135,7 +135,7 @@ typedef struct {
  *
  * @param[in] dmap      pointer to a stm32_dma_t structure
  * @param[in] ch        channel number
- * @param[in] cntdr     value to be written in the CNDTR register
+ * @param[in] cndtr     value to be written in the CNDTR register
  * @param[in] cmar      value to be written in the CMAR register
  * @param[in] ccr       value to be written in the CCR register
  */
