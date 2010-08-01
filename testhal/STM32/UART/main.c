@@ -121,8 +121,7 @@ int main(int argc, char **argv) {
   uartStartSend(&UARTD2, 13, "Starting...\r\n");
 
   /*
-   * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the button state.
+   * Normal main() thread activity, in this demo it does nothing.
    */
   while (TRUE) {
     chThdSleepMilliseconds(500);

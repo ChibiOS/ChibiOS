@@ -60,6 +60,8 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.1.2 ***
+
 *** 2.1.1 ***
 - FIX: Fixed insufficient stack size for idle thread (bug 3033624)(backported
   to 2.0.3).
