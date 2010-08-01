@@ -79,6 +79,8 @@
 - NEW: Centralized DMA macros in the STM32 HAL.
 - NEW: New UART device driver model, this device driver allows unbuffered,
   callback driven access to UART-type devices.
+- NEW: UART device driver for STM32 and UART demo application under
+  ./testhal/STM32/UART.
 - NEW: Added friendly interrupt vectors names to the STM32 HAL (change request
   3023944).
 - NEW: Added support for SPI3 in the STM32 HAL.

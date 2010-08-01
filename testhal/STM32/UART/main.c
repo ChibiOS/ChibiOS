@@ -20,7 +20,7 @@
 #include "ch.h"
 #include "hal.h"
 
-static VirtualTimer vt;
+static VirtualTimer vt1, vt2;
 
 static void restart(void *p) {
 
@@ -28,31 +28,66 @@ static void restart(void *p) {
   uartStartSend(&UARTD2, 14, "Hello World!\r\n");
 }
 
-static void txend1(void) {
+static void ledoff(void *p) {
 
+  (void)p;
+  palSetPad(IOPORT3, GPIOC_LED);
 }
 
+/*
+ * This callback is invoked when a transmission buffer has been completely
+ * read by the driver.
+ */
+static void txend1(void) {
+
+  palClearPad(IOPORT3, GPIOC_LED);
+}
+
+/*
+ * This callback is invoked when a transmission has phisically completed.
+ */
 static void txend2(void) {
 
+  palSetPad(IOPORT3, GPIOC_LED);
   chSysLockFromIsr();
-  chVTSetI(&vt, MS2ST(1000), restart, NULL);
+  chVTSetI(&vt1, MS2ST(5000), restart, NULL);
   chSysUnlockFromIsr();
 }
 
+/*
+ * This callback is invoked on a receive error, the errors mask is passed
+ * as parameter.
+ */
 static void rxerr(uartflags_t e) {
 
   (void)e;
 }
 
+/*
+ * This callback is invoked when a character is received but the application
+ * was not ready to receive it, the character is passed as parameter.
+ */
 static void rxchar(uint16_t c) {
 
   (void)c;
+  /* Flashing the LED each time a character is received.*/
+  palClearPad(IOPORT3, GPIOC_LED);
+  chSysLockFromIsr();
+  if (!chVTIsArmedI(&vt2))
+    chVTSetI(&vt2, MS2ST(200), ledoff, NULL);
+  chSysUnlockFromIsr();
 }
 
+/*
+ * This callback is invoked when a receive buffer has been completely written.
+ */
 static void rxend(void) {
 
 }
 
+/*
+ * UART driver configuration structure.
+ */
 static UARTConfig uart_cfg_1 = {
   txend1,
   txend2,
@@ -64,22 +99,6 @@ static UARTConfig uart_cfg_1 = {
   USART_CR2_LINEN,
   0
 };
-
-/*
- * Red LEDs blinker thread, times are in milliseconds.
- */
-static WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
-
-  (void)arg;
-  while (TRUE) {
-    palClearPad(IOPORT3, GPIOC_LED);
-    chThdSleepMilliseconds(500);
-    palSetPad(IOPORT3, GPIOC_LED);
-    chThdSleepMilliseconds(500);
-  }
-  return 0;
-}
 
 /*
  * Entry point, note, the main() function is already a thread in the system
@@ -94,11 +113,6 @@ int main(int argc, char **argv) {
    * Activates the serial driver 2 using the driver default configuration.
    */
   uartStart(&UARTD2, &uart_cfg_1);
-
-  /*
-   * Creates the blinker thread.
-   */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
    * Starts the transmission, it will be handled entirely in background.

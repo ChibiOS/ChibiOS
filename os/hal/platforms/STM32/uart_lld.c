@@ -243,19 +243,19 @@ static void serve_usart_irq(UARTDriver *uartp) {
 
 #if STM32_UART_USE_USART1 || defined(__DOXYGEN__)
 /**
- * @brief   USART1 RX DMA interrupt handler (channel 4).
+ * @brief   USART1 RX DMA interrupt handler (channel 5).
  */
-CH_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
+CH_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
   UARTDriver *uartp;
 
   CH_IRQ_PROLOGUE();
 
   uartp = &UARTD1;
-  if ((STM32_DMA1->ISR & DMA_ISR_TEIF4) != 0) {
+  if ((STM32_DMA1->ISR & DMA_ISR_TEIF5) != 0) {
     STM32_UART_USART1_DMA_ERROR_HOOK();
   }
-  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_4);
   if (uartp->ud_rxstate == UART_RX_IDLE) {
+    dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_5);
     /* Fast IRQ path, this is why it is not centralized in serve_rx_end_irq().*/
     /* Receiver in idle state, a callback is generated, if enabled, for each
        received character and then the driver stays in the same state.*/
@@ -265,7 +265,8 @@ CH_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
   else {
     /* Receiver in active state, a callback is generated, if enabled, after
        a completed transfer.*/
-    dmaDisableChannel(STM32_DMA1, STM32_DMA_CHANNEL_4);
+    dmaDisableChannel(STM32_DMA1, STM32_DMA_CHANNEL_5);
+    dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_5);
     serve_rx_end_irq(uartp);
   }
 
@@ -273,17 +274,17 @@ CH_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
 }
 
 /**
- * @brief   USART1 TX DMA interrupt handler (channel 5).
+ * @brief   USART1 TX DMA interrupt handler (channel 4).
  */
-CH_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
+CH_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  if ((STM32_DMA1->ISR & DMA_ISR_TEIF5) != 0) {
+  if ((STM32_DMA1->ISR & DMA_ISR_TEIF4) != 0) {
     STM32_UART_USART1_DMA_ERROR_HOOK();
   }
-  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_5);
-  dmaDisableChannel(STM32_DMA1, STM32_DMA_CHANNEL_5);
+  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_4);
+  dmaDisableChannel(STM32_DMA1, STM32_DMA_CHANNEL_4);
   serve_tx_end_irq(&UARTD1);
 
   CH_IRQ_EPILOGUE();
@@ -315,8 +316,8 @@ CH_IRQ_HANDLER(DMA1_Ch6_IRQHandler) {
   if ((STM32_DMA1->ISR & DMA_ISR_TEIF6) != 0) {
     STM32_UART_USART2_DMA_ERROR_HOOK();
   }
-  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_6);
   if (uartp->ud_rxstate == UART_RX_IDLE) {
+    dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_6);
     /* Fast IRQ path, this is why it is not centralized in serve_rx_end_irq().*/
     /* Receiver in idle state, a callback is generated, if enabled, for each
        received character and then the driver stays in the same state.*/
@@ -327,6 +328,7 @@ CH_IRQ_HANDLER(DMA1_Ch6_IRQHandler) {
     /* Receiver in active state, a callback is generated, if enabled, after
        a completed transfer.*/
     dmaDisableChannel(STM32_DMA1, STM32_DMA_CHANNEL_6);
+    dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_6);
     serve_rx_end_irq(uartp);
   }
 
@@ -363,6 +365,68 @@ CH_IRQ_HANDLER(USART2_IRQHandler) {
 }
 #endif /* STM32_UART_USE_USART2 */
 
+#if STM32_UART_USE_USART3 || defined(__DOXYGEN__)
+/**
+ * @brief   USART3 RX DMA interrupt handler (channel 3).
+ */
+CH_IRQ_HANDLER(DMA1_Ch3_IRQHandler) {
+  UARTDriver *uartp;
+
+  CH_IRQ_PROLOGUE();
+
+  uartp = &UARTD3;
+  if ((STM32_DMA1->ISR & DMA_ISR_TEIF3) != 0) {
+    STM32_UART_USART1_DMA_ERROR_HOOK();
+  }
+  if (uartp->ud_rxstate == UART_RX_IDLE) {
+    dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_3);
+    /* Fast IRQ path, this is why it is not centralized in serve_rx_end_irq().*/
+    /* Receiver in idle state, a callback is generated, if enabled, for each
+       received character and then the driver stays in the same state.*/
+    if (uartp->ud_config->uc_rxchar != NULL)
+      uartp->ud_config->uc_rxchar(uartp->ud_rxbuf);
+  }
+  else {
+    /* Receiver in active state, a callback is generated, if enabled, after
+       a completed transfer.*/
+    dmaDisableChannel(STM32_DMA1, STM32_DMA_CHANNEL_3);
+    dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_3);
+    serve_rx_end_irq(uartp);
+  }
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   USART3 TX DMA interrupt handler (channel 2).
+ */
+CH_IRQ_HANDLER(DMA1_Ch2_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  if ((STM32_DMA1->ISR & DMA_ISR_TEIF2) != 0) {
+    STM32_UART_USART1_DMA_ERROR_HOOK();
+  }
+  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_2);
+  dmaDisableChannel(STM32_DMA1, STM32_DMA_CHANNEL_2);
+  serve_tx_end_irq(&UARTD3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   USART3 IRQ handler.
+ */
+CH_IRQ_HANDLER(USART3_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  serve_usart_irq(&UARTD3);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* STM32_UART_USE_USART3 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -378,8 +442,8 @@ void uart_lld_init(void) {
   uartObjectInit(&UARTD1);
   UARTD1.ud_usart   = USART1;
   UARTD1.ud_dmap    = STM32_DMA1;
-  UARTD1.ud_dmarx   = STM32_DMA_CHANNEL_4;
-  UARTD1.ud_dmatx   = STM32_DMA_CHANNEL_5;
+  UARTD1.ud_dmarx   = STM32_DMA_CHANNEL_5;
+  UARTD1.ud_dmatx   = STM32_DMA_CHANNEL_4;
   UARTD1.ud_dmaccr  = 0;
 #endif
 
@@ -391,6 +455,17 @@ void uart_lld_init(void) {
   UARTD2.ud_dmap    = STM32_DMA1;
   UARTD2.ud_dmarx   = STM32_DMA_CHANNEL_6;
   UARTD2.ud_dmatx   = STM32_DMA_CHANNEL_7;
+  UARTD2.ud_dmaccr  = 0;
+#endif
+
+#if STM32_UART_USE_USART3
+  RCC->APB1RSTR     = RCC_APB1RSTR_USART3RST;
+  RCC->APB1RSTR     = 0;
+  uartObjectInit(&UARTD3);
+  UARTD2.ud_usart   = USART3;
+  UARTD2.ud_dmap    = STM32_DMA1;
+  UARTD2.ud_dmarx   = STM32_DMA_CHANNEL_3;
+  UARTD2.ud_dmatx   = STM32_DMA_CHANNEL_2;
   UARTD2.ud_dmaccr  = 0;
 #endif
 }
@@ -426,6 +501,19 @@ void uart_lld_start(UARTDriver *uartp) {
       NVICEnableVector(DMA1_Channel7_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_UART_USART2_IRQ_PRIORITY));
       RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+    }
+#endif
+
+#if STM32_UART_USE_USART3
+    if (&UARTD3 == uartp) {
+      dmaEnable(DMA1_ID);   /* NOTE: Must be enabled before the IRQs.*/
+      NVICEnableVector(USART3_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_UART_USART3_IRQ_PRIORITY));
+      NVICEnableVector(DMA1_Channel2_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_UART_USART3_IRQ_PRIORITY));
+      NVICEnableVector(DMA1_Channel3_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_UART_USART3_IRQ_PRIORITY));
+      RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
     }
 #endif
 
@@ -475,6 +563,17 @@ void uart_lld_stop(UARTDriver *uartp) {
       return;
     }
 #endif
+
+#if STM32_UART_USE_USART3
+    if (&UARTD3 == uartp) {
+      NVICDisableVector(USART3_IRQn);
+      NVICDisableVector(DMA1_Channel2_IRQn);
+      NVICDisableVector(DMA1_Channel3_IRQn);
+      dmaDisable(DMA1_ID);
+      RCC->APB1ENR &= ~RCC_APB1ENR_USART3EN;
+      return;
+    }
+#endif
   }
 }
 
@@ -519,9 +618,15 @@ void uart_lld_stop_send(UARTDriver *uartp) {
  */
 void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
 
-  (void)uartp;
-  (void)n;
-  (void)rxbuf;
+  /* Stopping previous activity (idle state).*/
+  dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmarx);
+  dmaClearChannel(uartp->ud_dmap, uartp->ud_dmarx);
+
+  /* RX DMA channel preparation and start.*/
+  dmaSetupChannel(uartp->ud_dmap, uartp->ud_dmarx, n, rxbuf,
+                  uartp->ud_dmaccr | DMA_CCR1_MINC |
+                  DMA_CCR1_TEIE | DMA_CCR1_TCIE);
+  dmaEnableChannel(uartp->ud_dmap, uartp->ud_dmarx);
 }
 
 /**
@@ -532,7 +637,9 @@ void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
  */
 void uart_lld_stop_receive(UARTDriver *uartp) {
 
-  (void)uartp;
+  dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmarx);
+  dmaClearChannel(uartp->ud_dmap, uartp->ud_dmarx);
+  set_rx_idle_loop(uartp);
 }
 
 #endif /* CH_HAL_USE_UART */
