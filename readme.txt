@@ -61,6 +61,7 @@
 *****************************************************************************
 
 *** 2.1.2 ***
+- NEW: Added a simple STM32 ADC demo under ./testhal/STM32/ADC.
 
 *** 2.1.1 ***
 - FIX: Fixed insufficient stack size for idle thread (bug 3033624)(backported
