@@ -73,8 +73,9 @@ static void rxchar(uint16_t c) {
   /* Flashing the LED each time a character is received.*/
   palClearPad(IOPORT3, GPIOC_LED);
   chSysLockFromIsr();
-  if (!chVTIsArmedI(&vt2))
-    chVTSetI(&vt2, MS2ST(200), ledoff, NULL);
+  if (chVTIsArmedI(&vt2))
+    chVTResetI(&vt2);
+  chVTSetI(&vt2, MS2ST(200), ledoff, NULL);
   chSysUnlockFromIsr();
 }
 

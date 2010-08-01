@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/RT port for ARM-Cortex-M3 STM32F103.                            **
+** ChibiOS/RT HAL - UART driver demo for STM32.                            **
 *****************************************************************************
 
 ** TARGET **
@@ -8,11 +8,7 @@ The demo will on an Olimex STM32-P103 board.
 
 ** The Demo **
 
-The demo is a stress test for the STM32 I/O subsystem, simultaneous activity
-is performed on a SPI, an ADC, the CAN and a serial port all while executing
-the complex test suite.
-The demo is DMA and IRQ intensive so the debugging can be difficoult, so be
-warned if you see anomalies in your debugger.
+The application demonstrates the use of the STM32 UART driver.
 
 ** Build Procedure **
 

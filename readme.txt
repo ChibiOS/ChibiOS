@@ -86,6 +86,8 @@
 - NEW: Added support for SPI3 in the STM32 HAL.
 - CHANGE: Redeclared the IRQ handlers in the various STM32 drivers using the
   new friendly vector names.
+- CHANGE: Moved the STM32 HAL stess test application under
+  ./testhal/STM32/_stress_test.
 - CHANGE: Removed the option -mabi=apcs-gnu from all the Cortex-Mx demos. The
   option is not compatible with the 64 bits stack alignment now default in
   the Cortex-Mx port. Note that the 64 bits alignment has a cost both as
