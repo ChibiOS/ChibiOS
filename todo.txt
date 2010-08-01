@@ -6,13 +6,14 @@ X = In progress, some work done.
 
 Within 2.1.x (hopefully)
 * Binary Semaphores on top of Counting Semaphores.
-X Direct unbuffered UART driver (evaluate rebuilding the current serial driver
+* Direct unbuffered UART driver (evaluate rebuilding the current serial driver
   as a generic driver on top of the low level UART driver).
   Requirements: low level, callbacks, DMA capable, state machines buildable
                 on top, support data words greater than 8 bits, callback for
                 "last byte transmitted (RS485)", simple implementation,
                 verifiable.
 X Resist doing more changes and optimizations in the kernel, fixes only.
+X Rework STM32 drivers to use friendly IRQ names and centralized DMA macros.
 - Merge the Coldfire branch in mainline.
 - Merge the H8S branch in mainline.
 - File System infrastructure.
