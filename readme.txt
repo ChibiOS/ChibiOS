@@ -55,13 +55,23 @@
   +--test/              - Kernel test suite source code.
   |  +--coverage/       - Code coverage project.
   +--testhal/           - HAL integration test demos.
+     +--STM32/          - STM32 HAL demos.
 
 *****************************************************************************
 *** Releases                                                              ***
 *****************************************************************************
 
 *** 2.1.2 ***
+- FIX: Fixed a documentation error regarding the ADC driver function
+  adcStartConversion() (bug 3039890)(backported to 2.0.3).
 - NEW: Added a simple STM32 ADC demo under ./testhal/STM32/ADC.
+- NEW: Added pwmEnableChannelI() and pwmDisableChannelI() APIs to the PWM
+  driver in order to allow channel reprogramming from within callbacks or
+  other interrupt handlers. The new APIs are implemented as macros so there
+  is no footprint overhead.
+- NEW: Added a generic BaseFileStream interface for future File System
+  implementations or integrations (untested and not sure if it will stay or
+  change).
 
 *** 2.1.1 ***
 - FIX: Fixed insufficient stack size for idle thread (bug 3033624)(backported

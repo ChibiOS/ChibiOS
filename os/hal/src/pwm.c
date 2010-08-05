@@ -20,6 +20,7 @@
 /**
  * @file    pwm.c
  * @brief   PWM Driver code.
+ *
  * @addtogroup PWM
  * @{
  */
@@ -104,6 +105,7 @@ void pwmStop(PWMDriver *pwmp) {
 
 /**
  * @brief   Enables a PWM channel.
+ * @details Programs (or reprograms) a PWM channel.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] channel   PWM channel identifier

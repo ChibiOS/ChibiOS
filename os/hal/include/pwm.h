@@ -78,6 +78,32 @@ typedef void (*pwmcallback_t)(void);
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Enables a PWM channel.
+ * @details Programs (or reprograms) a PWM channel.
+ * @note    This function has to be invoked from a lock zone.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier
+ * @param[in] width     PWM pulse width as clock pulses number
+ */
+#define pwmEnableChannelI(pwmp, channel, width) {                           \
+  pwm_lld_enable_channel(pwmp, channel, width);                             \
+}
+
+/**
+ * @brief Disables a PWM channel.
+ * @details The channel is disabled and its output line returned to the
+ *          idle state.
+ * @note    This function has to be invoked from a lock zone.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier
+ */
+#define pwmDisableChannelI(pwmp, channel) {                                 \
+  pwm_lld_disable_channel(pwmp, channel);                                   \
+}
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
