@@ -61,8 +61,7 @@ CH_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
   CH_IRQ_PROLOGUE();
 
   isr = DMA1->ISR;
-  DMA1->IFCR = DMA_IFCR_CGIF1  | DMA_IFCR_CTCIF1 |
-               DMA_IFCR_CHTIF1 | DMA_IFCR_CTEIF1;
+  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_1);
   if ((isr & DMA_ISR_HTIF1) != 0) {
     /* Half transfer processing.*/
     if (ADCD1.ad_callback != NULL) {
@@ -120,7 +119,7 @@ void adc_lld_init(void) {
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
   ADCD1.ad_adc = ADC1;
-  ADCD1.ad_dma = DMA1_Channel1;
+  ADCD1.ad_dmap = STM32_DMA1;
   ADCD1.ad_dmaprio = STM32_ADC1_DMA_PRIORITY << 12;
 
   /* Temporary activation.*/
@@ -201,7 +200,6 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   const ADCConversionGroup *grpp = adcp->ad_grpp;
 
   /* DMA setup.*/
-  adcp->ad_dma->CMAR  = (uint32_t)adcp->ad_samples;
   ccr = adcp->ad_dmaprio | DMA_CCR1_EN   | DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0 |
                            DMA_CCR1_MINC | DMA_CCR1_TCIE    | DMA_CCR1_TEIE;
   if (grpp->acg_circular)
@@ -214,8 +212,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   }
   else
     n = (uint32_t)grpp->acg_num_channels;
-  adcp->ad_dma->CNDTR = n;
-  adcp->ad_dma->CCR = ccr;
+  dmaSetupChannel(adcp->ad_dmap, STM32_DMA_CHANNEL_1,
+                  n, adcp->ad_samples, ccr);
 
   /* ADC setup.*/
   adcp->ad_adc->SMPR1 = grpp->acg_smpr1;
@@ -237,7 +235,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
  */
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 
-  adcp->ad_dma->CCR = 0;
+  adcp->ad_dmap->channels[STM32_DMA_CHANNEL_1].CCR = 0;
   adcp->ad_adc->CR2 = 0;
 }
 

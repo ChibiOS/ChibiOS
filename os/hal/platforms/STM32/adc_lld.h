@@ -213,9 +213,9 @@ typedef struct {
    */
   ADC_TypeDef               *ad_adc;
   /**
-   * @brief Pointer to the DMA channel registers block.
+   * @brief Pointer to the DMA registers block.
    */
-  DMA_Channel_TypeDef       *ad_dma;
+  stm32_dma_t               *ad_dmap;
   /**
    * @brief DMA priority bit mask.
    */

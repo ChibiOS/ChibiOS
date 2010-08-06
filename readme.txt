@@ -72,6 +72,7 @@
 - NEW: Added a generic BaseFileStream interface for future File System
   implementations or integrations (untested and not sure if it will stay or
   change).
+- CHANGE: Modified the STM32 ADC driver to use the new DMA infrastructure.
 
 *** 2.1.1 ***
 - FIX: Fixed insufficient stack size for idle thread (bug 3033624)(backported
