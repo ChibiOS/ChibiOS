@@ -62,6 +62,8 @@
 *****************************************************************************
 
 *** 2.1.2 ***
+- FIX: Corrupted IRQ stack in Cortex-Mx port (bug 3041117)(backported to
+  2.0.3).
 - FIX: Fixed a documentation error regarding the ADC driver function
   adcStartConversion() (bug 3039890)(backported to 2.0.3).
 - NEW: Added a simple STM32 ADC demo under ./testhal/STM32/ADC.
