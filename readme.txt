@@ -65,6 +65,7 @@
 - FIX: Fixed a documentation error regarding the ADC driver function
   adcStartConversion() (bug 3039890)(backported to 2.0.3).
 - NEW: Added a simple STM32 ADC demo under ./testhal/STM32/ADC.
+- NEW: Added a simple STM32 PWM demo under ./testhal/STM32/PWM.
 - NEW: Added pwmEnableChannelI() and pwmDisableChannelI() APIs to the PWM
   driver in order to allow channel reprogramming from within callbacks or
   other interrupt handlers. The new APIs are implemented as macros so there
