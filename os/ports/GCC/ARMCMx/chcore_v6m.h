@@ -166,16 +166,14 @@ struct intctx {
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  */
-#define PORT_IRQ_HANDLER(id)                                                \
-  __attribute__((interrupt("IRQ"))) void id(void)
+#define PORT_IRQ_HANDLER(id) void id(void)
 
 /**
  * @brief   Fast IRQ handler function declaration.
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  */
-#define PORT_FAST_IRQ_HANDLER(id)                                           \
-  __attribute__((interrupt("IRQ"))) void id(void)
+#define PORT_FAST_IRQ_HANDLER(id) void id(void)
 
 /**
  * @brief   Port-related initialization code.

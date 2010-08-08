@@ -121,11 +121,10 @@ void adcStop(ADCDriver *adcp) {
  * @brief   Starts an ADC conversion.
  * @details Starts a conversion operation, there are two kind of conversion
  *          modes:
- *          - <b>LINEAR</b>, this mode is activated when the @p callback
- *            parameter is set to @p NULL, in this mode the buffer is filled
- *            once and then the conversion stops automatically.
- *          - <b>CIRCULAR</b>, when a callback function is defined the
- *            conversion never stops and the buffer is filled circularly.
+ *          - <b>LINEAR</b>, in this mode the buffer is filled once and then
+ *            the conversion stops automatically.
+ *          - <b>CIRCULAR</b>, in this mode the conversion never stops and
+ *            the buffer is filled circularly.<br>
  *            During the conversion the callback function is invoked when
  *            the buffer is 50% filled and when the buffer is 100% filled,
  *            this way is possible to process the conversion stream in real
@@ -142,7 +141,8 @@ void adcStop(ADCDriver *adcp) {
  * @param[out] samples  pointer to the samples buffer
  * @param[in] depth     buffer depth (matrix rows number). The buffer depth
  *                      must be one or an even number.
- * @param[in] callback  pointer to the conversion callback function
+ * @param[in] callback  pointer to the conversion callback function, this
+ *                      parameter can be @p NULL if a callback is not required
  * @return              The operation status.
  * @retval FALSE        the conversion has been started.
  * @retval TRUE         the driver is busy, conversion not started.

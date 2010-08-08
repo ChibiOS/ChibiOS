@@ -392,7 +392,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
       RCC->APB1ENR &= ~RCC_APB1ENR_TIM3EN;
     }
 #endif
-#if USE_STM32_PWM2
+#if USE_STM32_PWM4
     if (&PWMD4 == pwmp) {
       NVICDisableVector(TIM4_IRQn);
       RCC->APB1ENR &= ~RCC_APB1ENR_TIM4EN;
