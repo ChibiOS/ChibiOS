@@ -146,6 +146,16 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if STM32_UART_USE_UART4 &&                                                 \
+    !(defined(STM32F10X_HD) || defined(STM32F10X_CL))
+#error "UART4 only present in HD and CL devices"
+#endif
+
+#if !STM32_UART_USE_USART1 && !STM32_UART_USE_USART2 &&                     \
+    !STM32_UART_USE_USART3 && !STM32_UART_USE_UART4
+#error "UART driver activated but no USART/UART peripheral assigned"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/

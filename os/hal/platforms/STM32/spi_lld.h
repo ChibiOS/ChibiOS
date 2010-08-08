@@ -43,8 +43,8 @@
  * @details If set to @p TRUE the support for SPI1 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_STM32_SPI1) || defined(__DOXYGEN__)
-#define USE_STM32_SPI1              TRUE
+#if !defined(STM32_SPI_USE_SPI1) || defined(__DOXYGEN__)
+#define STM32_SPI_USE_SPI1                  TRUE
 #endif
 
 /**
@@ -52,8 +52,8 @@
  * @details If set to @p TRUE the support for SPI2 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_STM32_SPI2) || defined(__DOXYGEN__)
-#define USE_STM32_SPI2              TRUE
+#if !defined(STM32_SPI_USE_SPI2) || defined(__DOXYGEN__)
+#define STM32_SPI_USE_SPI2                  TRUE
 #endif
 
 /**
@@ -61,8 +61,8 @@
  * @details If set to @p TRUE the support for SPI3 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_STM32_SPI3) || defined(__DOXYGEN__)
-#define USE_STM32_SPI3              FALSE
+#if !defined(STM32_SPI_USE_SPI3) || defined(__DOXYGEN__)
+#define STM32_SPI_USE_SPI3                  FALSE
 #endif
 
 /**
@@ -71,8 +71,8 @@
  *          because of the channels ordering the RX channel has always priority
  *          over the TX channel.
  */
-#if !defined(STM32_SPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI1_DMA_PRIORITY     2
+#if !defined(STM32_SPI_SPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI1_DMA_PRIORITY         2
 #endif
 
 /**
@@ -81,8 +81,8 @@
  *          because of the channels ordering the RX channel has always priority
  *          over the TX channel.
  */
-#if !defined(STM32_SPI2_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI2_DMA_PRIORITY     2
+#if !defined(STM32_SPI_SPI2_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI2_DMA_PRIORITY         2
 #endif
 
 /**
@@ -91,29 +91,29 @@
  *          because of the channels ordering the RX channel has always priority
  *          over the TX channel.
  */
-#if !defined(STM32_SPI3_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI3_DMA_PRIORITY     2
+#if !defined(STM32_SPI_SPI3_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI3_DMA_PRIORITY         2
 #endif
 
 /**
  * @brief   SPI1 interrupt priority level setting.
  */
-#if !defined(STM32_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI1_IRQ_PRIORITY     10
+#if !defined(STM32_SPI_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI1_IRQ_PRIORITY         10
 #endif
 
 /**
  * @brief   SPI2 interrupt priority level setting.
  */
-#if !defined(STM32_SPI2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI2_IRQ_PRIORITY     10
+#if !defined(STM32_SPI_SPI2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI2_IRQ_PRIORITY         10
 #endif
 
 /**
  * @brief   SPI3 interrupt priority level setting.
  */
-#if !defined(STM32_SPI3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI3_IRQ_PRIORITY     10
+#if !defined(STM32_SPI_SPI3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI3_IRQ_PRIORITY         10
 #endif
 
 /**
@@ -121,8 +121,8 @@
  * @note    The default action for DMA errors is a system halt because DMA error
  *          can only happen because programming errors.
  */
-#if !defined(STM32_SPI1_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_SPI1_DMA_ERROR_HOOK() chSysHalt()
+#if !defined(STM32_SPI_SPI1_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI1_DMA_ERROR_HOOK()     chSysHalt()
 #endif
 
 /**
@@ -130,8 +130,8 @@
  * @note    The default action for DMA errors is a system halt because DMA error
  *          can only happen because programming errors.
  */
-#if !defined(STM32_SPI2_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_SPI2_DMA_ERROR_HOOK() chSysHalt()
+#if !defined(STM32_SPI_SPI2_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI2_DMA_ERROR_HOOK()     chSysHalt()
 #endif
 
 /**
@@ -139,13 +139,22 @@
  * @note    The default action for DMA errors is a system halt because DMA error
  *          can only happen because programming errors.
  */
-#if !defined(STM32_SPI3_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_SPI3_DMA_ERROR_HOOK() chSysHalt()
+#if !defined(STM32_SPI_SPI3_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI3_DMA_ERROR_HOOK()     chSysHalt()
 #endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if STM32_SPI_USE_SPI3 &&                                                   \
+    !(defined(STM32F10X_HD) || defined(STM32F10X_CL))
+#error "SPI only present in HD and CL devices"
+#endif
+
+#if !STM32_SPI_USE_SPI1 && !STM32_SPI_USE_SPI2 && !STM32_SPI_USE_SPI3
+#error "SPI driver activated but no SPI peripheral assigned"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -200,15 +209,15 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if USE_STM32_SPI1 && !defined(__DOXYGEN__)
+#if STM32_SPI_USE_SPI1 && !defined(__DOXYGEN__)
 extern SPIDriver SPID1;
 #endif
 
-#if USE_STM32_SPI2 && !defined(__DOXYGEN__)
+#if STM32_SPI_USE_SPI2 && !defined(__DOXYGEN__)
 extern SPIDriver SPID2;
 #endif
 
-#if USE_STM32_SPI3 && !defined(__DOXYGEN__)
+#if STM32_SPI_USE_SPI3 && !defined(__DOXYGEN__)
 extern SPIDriver SPID3;
 #endif
 

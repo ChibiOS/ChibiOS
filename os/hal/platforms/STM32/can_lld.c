@@ -35,7 +35,7 @@
 /*===========================================================================*/
 
 /** @brief ADC1 driver identifier.*/
-#if USE_STM32_CAN1 || defined(__DOXYGEN__)
+#if STM32_CAN_USE_CAN1 || defined(__DOXYGEN__)
 CANDriver CAND1;
 #endif
 
@@ -154,7 +154,7 @@ CH_IRQ_HANDLER(CAN1_SCE_IRQHandler) {
  */
 void can_lld_init(void) {
 
-#if USE_STM32_CAN1
+#if STM32_CAN_USE_CAN1
   /* CAN reset, ensures reset state in order to avoid trouble with JTAGs.*/
   RCC->APB1RSTR = RCC_APB1RSTR_CAN1RST;
   RCC->APB1RSTR = 0;
@@ -173,16 +173,16 @@ void can_lld_init(void) {
 void can_lld_start(CANDriver *canp) {
 
   /* Clock activation.*/
-#if USE_STM32_CAN1
+#if STM32_CAN_USE_CAN1
   if (&CAND1 == canp) {
     NVICEnableVector(USB_HP_CAN1_TX_IRQn,
-                     CORTEX_PRIORITY_MASK(STM32_CAN1_IRQ_PRIORITY));
+                     CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
     NVICEnableVector(USB_LP_CAN1_RX0_IRQn,
-                     CORTEX_PRIORITY_MASK(STM32_CAN1_IRQ_PRIORITY));
+                     CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
     NVICEnableVector(CAN1_RX1_IRQn,
-                     CORTEX_PRIORITY_MASK(STM32_CAN1_IRQ_PRIORITY));
+                     CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
     NVICEnableVector(CAN1_SCE_IRQn,
-                     CORTEX_PRIORITY_MASK(STM32_CAN1_IRQ_PRIORITY));
+                     CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
     RCC->APB1ENR |= RCC_APB1ENR_CAN1EN;
   }
 #endif
@@ -258,7 +258,7 @@ void can_lld_stop(CANDriver *canp) {
 
   /* If in ready state then disables the CAN peripheral.*/
   if (canp->cd_state == CAN_READY) {
-#if USE_STM32_CAN1
+#if STM32_CAN_USE_CAN1
     if (&CAND1 == canp) {
       CAN1->MCR = 0x00010002;                   /* Register reset value.    */
       CAN1->IER = 0x00000000;                   /* All sources disabled.    */

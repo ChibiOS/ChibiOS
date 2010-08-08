@@ -62,10 +62,13 @@
 *****************************************************************************
 
 *** 2.1.2 ***
+- FIX: Fixed wrong condition check in STM32 PWM driver (bug 3041414)
+  (backported in 2.0.3).
 - FIX: Corrupted IRQ stack in Cortex-Mx port (bug 3041117)(backported to
   2.0.3).
 - FIX: Fixed a documentation error regarding the ADC driver function
   adcStartConversion() (bug 3039890)(backported to 2.0.3).
+- NEW: Added more compile-time checks to the various STM32 device drivers.
 - NEW: Added a simple STM32 ADC demo under ./testhal/STM32/ADC.
 - NEW: Added a simple STM32 CAN demo under ./testhal/STM32/CAN.
 - NEW: Added a simple STM32 PWM demo under ./testhal/STM32/PWM.
@@ -77,6 +80,11 @@
   implementations or integrations (untested and not sure if it will stay or
   change).
 - CHANGE: Modified the STM32 ADC driver to use the new DMA infrastructure.
+- CHANGE: Simplified preprocessor conditions in the STM32 serial driver.
+- CHANGE: Renamed most of the STM32 HAL settings macro names in order to
+          make names more consistent.
+          NOTE: ****** Make sure to use a mcuconf.h file taken from ******
+                ****** this version in your project.                ******
 
 *** 2.1.1 ***
 - FIX: Fixed insufficient stack size for idle thread (bug 3033624)(backported

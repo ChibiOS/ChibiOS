@@ -37,7 +37,7 @@
 /**
  * @brief   Number of PWM channels per PWM driver.
  */
-#define PWM_CHANNELS                4
+#define PWM_CHANNELS                        4
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -48,8 +48,8 @@
  * @details If set to @p TRUE the support for PWM1 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_STM32_PWM1) || defined(__DOXYGEN__)
-#define USE_STM32_PWM1              TRUE
+#if !defined(STM32_PWM_USE_TIM1) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_TIM1                  TRUE
 #endif
 
 /**
@@ -57,8 +57,8 @@
  * @details If set to @p TRUE the support for PWM2 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_STM32_PWM2) || defined(__DOXYGEN__)
-#define USE_STM32_PWM2              TRUE
+#if !defined(STM32_PWM_USE_TIM2) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_TIM2                  TRUE
 #endif
 
 /**
@@ -66,8 +66,8 @@
  * @details If set to @p TRUE the support for PWM3 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_STM32_PWM3) || defined(__DOXYGEN__)
-#define USE_STM32_PWM3              TRUE
+#if !defined(STM32_PWM_USE_TIM3) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_TIM3                  TRUE
 #endif
 
 /**
@@ -75,44 +75,50 @@
  * @details If set to @p TRUE the support for PWM4 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_STM32_PWM4) || defined(__DOXYGEN__)
-#define USE_STM32_PWM4              TRUE
+#if !defined(STM32_PWM_USE_TIM4) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_TIM4                  TRUE
 #endif
 
 /**
  * @brief   PWM1 interrupt priority level setting.
  */
-#if !defined(STM32_PWM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM1_IRQ_PRIORITY     7
+#if !defined(STM32_PWM_PWM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_PWM1_IRQ_PRIORITY         7
 #endif
 
 /**
  * @brief   PWM2 interrupt priority level setting.
  */
-#if !defined(STM32_PWM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM2_IRQ_PRIORITY     7
+#if !defined(STM32_PWM_PWM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_PWM2_IRQ_PRIORITY         7
 #endif
 
 /**
  * @brief   PWM3 interrupt priority level setting.
  */
-#if !defined(STM32_PWM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM3_IRQ_PRIORITY     7
+#if !defined(STM32_PWM_PWM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_PWM3_IRQ_PRIORITY         7
 #endif
 
 /**
  * @brief   PWM4 interrupt priority level setting.
  */
-#if !defined(STM32_PWM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM4_IRQ_PRIORITY     7
+#if !defined(STM32_PWM_PWM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_PWM4_IRQ_PRIORITY         7
 #endif
 
 /*===========================================================================*/
 /* Configuration checks.                                                     */
 /*===========================================================================*/
 
-#if USE_STM32_PWM4 && defined(STM32F10X_LD)
+#if STM32_PWM_USE_TIM4 && defined(STM32F10X_LD)
 #error "TIM4 not present in low density STM32 devices"
+#endif
+
+#if !STM32_SERIAL_USE_USART1 && !STM32_SERIAL_USE_USART2 &&                 \
+    !STM32_SERIAL_USE_USART3 && !STM32_SERIAL_USE_UART4  &&                 \
+    !STM32_SERIAL_USE_UART5
+#error "PWM driver activated but no TIM peripheral assigned"
 #endif
 
 /*===========================================================================*/
@@ -209,19 +215,19 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if defined(USE_STM32_PWM1) && !defined(__DOXYGEN__)
+#if defined(STM32_PWM_USE_TIM1) && !defined(__DOXYGEN__)
 extern PWMDriver PWMD1;
 #endif
 
-#if defined(USE_STM32_PWM2) && !defined(__DOXYGEN__)
+#if defined(STM32_PWM_USE_TIM2) && !defined(__DOXYGEN__)
 extern PWMDriver PWMD2;
 #endif
 
-#if defined(USE_STM32_PWM3) && !defined(__DOXYGEN__)
+#if defined(STM32_PWM_USE_TIM3) && !defined(__DOXYGEN__)
 extern PWMDriver PWMD3;
 #endif
 
-#if defined(USE_STM32_PWM4) && !defined(__DOXYGEN__)
+#if defined(STM32_PWM_USE_TIM4) && !defined(__DOXYGEN__)
 extern PWMDriver PWMD4;
 #endif
 

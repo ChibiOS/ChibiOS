@@ -21,8 +21,8 @@
  * STM32 drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
- * Note that the settings for each driver only have effect if the driver
- * is enabled in halconf.h.
+ * Note that the settings for each driver only have effect if the whole
+ * driver is enabled in halconf.h.
  *
  * IRQ priorities:
  * 15...0       Lowest...Highest.
@@ -34,67 +34,84 @@
 /*
  * HAL driver system settings.
  */
-#define STM32_SW                    STM32_SW_PLL
-#define STM32_PLLSRC                STM32_PLLSRC_HSE
-#define STM32_PLLXTPRE              STM32_PLLXTPRE_DIV1
-#define STM32_PLLMUL_VALUE          9
-#define STM32_HPRE                  STM32_HPRE_DIV1
-#define STM32_PPRE1                 STM32_PPRE1_DIV2
-#define STM32_PPRE2                 STM32_PPRE2_DIV2
-#define STM32_ADCPRE                STM32_ADCPRE_DIV4
-#define STM32_MCO                   STM32_MCO_NOCLOCK
+#define STM32_SW                            STM32_SW_PLL
+#define STM32_PLLSRC                        STM32_PLLSRC_HSE
+#define STM32_PLLXTPRE                      STM32_PLLXTPRE_DIV1
+#define STM32_PLLMUL_VALUE                  9
+#define STM32_HPRE                          STM32_HPRE_DIV1
+#define STM32_PPRE1                         STM32_PPRE1_DIV2
+#define STM32_PPRE2                         STM32_PPRE2_DIV2
+#define STM32_ADCPRE                        STM32_ADCPRE_DIV4
+#define STM32_MCO                           STM32_MCO_NOCLOCK
 
 /*
  * ADC driver system settings.
  */
-#define USE_STM32_ADC1              TRUE
-#define STM32_ADC1_DMA_PRIORITY     3
-#define STM32_ADC1_IRQ_PRIORITY     5
-#define STM32_ADC1_DMA_ERROR_HOOK() chSysHalt()
+#define STM32_ADC_USE_ADC1                  TRUE
+#define STM32_ADC_ADC1_DMA_PRIORITY         3
+#define STM32_ADC_ADC1_IRQ_PRIORITY         5
+#define STM32_ADC_ADC1_DMA_ERROR_HOOK()     chSysHalt()
 
 /*
  * CAN driver system settings.
  */
-#define USE_STM32_CAN1              TRUE
-#define STM32_CAN1_IRQ_PRIORITY     11
+#define STM32_CAN_USE_CAN1                  TRUE
+#define STM32_CAN_CAN1_IRQ_PRIORITY         11
 
 /*
  * PWM driver system settings.
  */
-#define USE_STM32_PWM1              TRUE
-#define USE_STM32_PWM2              FALSE
-#define USE_STM32_PWM3              FALSE
-#define USE_STM32_PWM4              FALSE
-#define STM32_PWM1_IRQ_PRIORITY     7
-#define STM32_PWM2_IRQ_PRIORITY     7
-#define STM32_PWM3_IRQ_PRIORITY     7
-#define STM32_PWM4_IRQ_PRIORITY     7
+#define STM32_PWM_USE_TIM1                  TRUE
+#define STM32_PWM_USE_TIM2                  FALSE
+#define STM32_PWM_USE_TIM3                  FALSE
+#define STM32_PWM_USE_TIM4                  FALSE
+#define STM32_PWM_PWM1_IRQ_PRIORITY         7
+#define STM32_PWM_PWM2_IRQ_PRIORITY         7
+#define STM32_PWM_PWM3_IRQ_PRIORITY         7
+#define STM32_PWM_PWM4_IRQ_PRIORITY         7
 
 /*
  * SERIAL driver system settings.
  */
-#define USE_STM32_USART1            FALSE
-#define USE_STM32_USART2            TRUE
-#define USE_STM32_USART3            FALSE
-#if defined(STM32F10X_HD) || defined(STM32F10X_CL)
-#define USE_STM32_UART4             FALSE
-#define USE_STM32_UART5             FALSE
-#endif
-#define STM32_USART1_PRIORITY       12
-#define STM32_USART2_PRIORITY       12
-#define STM32_USART3_PRIORITY       12
-#if defined(STM32F10X_HD) || defined(STM32F10X_CL)
-#define STM32_UART4_PRIORITY        12
-#define STM32_UART5_PRIORITY        12
-#endif
+#define STM32_SERIAL_USE_USART1             FALSE
+#define STM32_SERIAL_USE_USART2             TRUE
+#define STM32_SERIAL_USE_USART3             FALSE
+#define STM32_SERIAL_USE_UART4              FALSE
+#define STM32_SERIAL_USE_UART5              FALSE
+#define STM32_SERIAL_USART1_PRIORITY        12
+#define STM32_SERIAL_USART2_PRIORITY        12
+#define STM32_SERIAL_USART3_PRIORITY        12
+#define STM32_SERIAL_UART4_PRIORITY         12
+#define STM32_SERIAL_UART5_PRIORITY         12
 
 /*
  * SPI driver system settings.
  */
-#define USE_STM32_SPI1              TRUE
-#define USE_STM32_SPI2              TRUE
-#define STM32_SPI1_DMA_PRIORITY     2
-#define STM32_SPI2_DMA_PRIORITY     2
-#define STM32_SPI1_IRQ_PRIORITY     10
-#define STM32_SPI2_IRQ_PRIORITY     10
-#define STM32_SPI1_DMA_ERROR_HOOK() chSysHalt()
+#define STM32_SPI_USE_SPI1                  TRUE
+#define STM32_SPI_USE_SPI2                  TRUE
+#define STM32_SPI_USE_SPI3                  FALSE
+#define STM32_SPI_SPI1_DMA_PRIORITY         2
+#define STM32_SPI_SPI2_DMA_PRIORITY         2
+#define STM32_SPI_SPI3_DMA_PRIORITY         2
+#define STM32_SPI_SPI1_IRQ_PRIORITY         10
+#define STM32_SPI_SPI2_IRQ_PRIORITY         10
+#define STM32_SPI_SPI3_IRQ_PRIORITY         10
+#define STM32_SPI_SPI1_DMA_ERROR_HOOK()     chSysHalt()
+#define STM32_SPI_SPI2_DMA_ERROR_HOOK()     chSysHalt()
+#define STM32_SPI_SPI3_DMA_ERROR_HOOK()     chSysHalt()
+
+/*
+ * UART driver system settings.
+ */
+#define STM32_UART_USE_USART1               FALSE
+#define STM32_UART_USE_USART2               TRUE
+#define STM32_UART_USE_USART3               FALSE
+#define STM32_UART_USART1_IRQ_PRIORITY      12
+#define STM32_UART_USART2_IRQ_PRIORITY      12
+#define STM32_UART_USART3_IRQ_PRIORITY      12
+#define STM32_UART_USART1_DMA_PRIORITY      0
+#define STM32_UART_USART2_DMA_PRIORITY      0
+#define STM32_UART_USART3_DMA_PRIORITY      0
+#define STM32_UART_USART1_DMA_ERROR_HOOK()  chSysHalt()
+#define STM32_UART_USART2_DMA_ERROR_HOOK()  chSysHalt()
+#define STM32_UART_USART3_DMA_ERROR_HOOK()  chSysHalt()

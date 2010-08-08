@@ -78,15 +78,15 @@
  * @details If set to @p TRUE the support for ADC1 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_STM32_CAN1) || defined(__DOXYGEN__)
-#define USE_STM32_CAN1              TRUE
+#if !defined(STM32_CAN_USE_CAN1) || defined(__DOXYGEN__)
+#define STM32_CAN_USE_CAN1                  TRUE
 #endif
 
 /**
  * @brief   CAN1 interrupt priority level setting.
  */
-#if !defined(STM32_CAN1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_CAN1_IRQ_PRIORITY     11
+#if !defined(STM32_CAN_CAN1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_CAN_CAN1_IRQ_PRIORITY         11
 #endif
 
 /*===========================================================================*/
@@ -95,6 +95,10 @@
 
 #if CAN_USE_SLEEP_MODE && !CAN_SUPPORTS_SLEEP
 #error "CAN sleep mode not supported in this architecture"
+#endif
+
+#if !STM32_CAN_USE_CAN1
+#error "CAN driver activated but no CAN peripheral assigned"
 #endif
 
 /*===========================================================================*/
@@ -292,7 +296,7 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if USE_STM32_CAN1 && !defined(__DOXYGEN__)
+#if STM32_CAN_USE_CAN1 && !defined(__DOXYGEN__)
 extern CANDriver CAND1;
 #endif
 

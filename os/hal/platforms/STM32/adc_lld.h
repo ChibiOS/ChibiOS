@@ -65,22 +65,22 @@
  * @details If set to @p TRUE the support for ADC1 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_STM32_ADC1) || defined(__DOXYGEN__)
-#define USE_STM32_ADC1              TRUE
+#if !defined(STM32_ADC_USE_ADC1) || defined(__DOXYGEN__)
+#define STM32_ADC_USE_ADC1                  TRUE
 #endif
 
 /**
  * @brief   ADC1 DMA priority (0..3|lowest..highest).
  */
-#if !defined(STM32_ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC1_DMA_PRIORITY     3
+#if !defined(STM32_ADC_ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC1_DMA_PRIORITY         3
 #endif
 
 /**
  * @brief   ADC1 interrupt priority level setting.
  */
-#if !defined(STM32_ADC1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC1_IRQ_PRIORITY     5
+#if !defined(STM32_ADC_ADC1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC1_IRQ_PRIORITY         5
 #endif
 
 /**
@@ -95,6 +95,10 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if !STM32_ADC_USE_ADC1
+#error "ADC driver activated but no ADC peripheral assigned"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -251,7 +255,7 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if USE_STM32_ADC1 && !defined(__DOXYGEN__)
+#if STM32_ADC_USE_ADC1 && !defined(__DOXYGEN__)
 extern ADCDriver ADCD1;
 #endif
 

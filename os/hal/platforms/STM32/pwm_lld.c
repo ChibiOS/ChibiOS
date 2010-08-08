@@ -38,7 +38,7 @@
  * @brief   PWM1 driver identifier.
  * @note    The driver PWM1 allocates the complex timer TIM1 when enabled.
  */
-#if defined(USE_STM32_PWM1) || defined(__DOXYGEN__)
+#if defined(STM32_PWM_USE_TIM1) || defined(__DOXYGEN__)
 PWMDriver PWMD1;
 #endif
 
@@ -46,7 +46,7 @@ PWMDriver PWMD1;
  * @brief   PWM2 driver identifier.
  * @note    The driver PWM2 allocates the timer TIM2 when enabled.
  */
-#if defined(USE_STM32_PWM2) || defined(__DOXYGEN__)
+#if defined(STM32_PWM_USE_TIM2) || defined(__DOXYGEN__)
 PWMDriver PWMD2;
 #endif
 
@@ -54,7 +54,7 @@ PWMDriver PWMD2;
  * @brief   PWM3 driver identifier.
  * @note    The driver PWM3 allocates the timer TIM3 when enabled.
  */
-#if defined(USE_STM32_PWM3) || defined(__DOXYGEN__)
+#if defined(STM32_PWM_USE_TIM3) || defined(__DOXYGEN__)
 PWMDriver PWMD3;
 #endif
 
@@ -91,7 +91,7 @@ static void stop_channels(PWMDriver *pwmp) {
   pwmp->pd_tim->CCMR2 = 0;                  /* Channels 3 and 4 frozen.     */
 }
 
-#if USE_STM32_PWM2 || USE_STM32_PWM3 || USE_STM32_PWM4 || defined(__DOXYGEN__)
+#if STM32_PWM_USE_TIM2 || STM32_PWM_USE_TIM3 || USE_STM32_PWM4 || defined(__DOXYGEN__)
 /**
  * @brief   Common TIM2...TIM4 IRQ handler.
  * @note    It is assumed that the various sources are only activated if the
@@ -115,13 +115,13 @@ static void serve_interrupt(PWMDriver *pwmp) {
   if ((sr & TIM_SR_UIF) != 0)
     pwmp->pd_config->pc_callback();
 }
-#endif /* USE_STM32_PWM2 || USE_STM32_PWM3 || USE_STM32_PWM4 */
+#endif /* STM32_PWM_USE_TIM2 || STM32_PWM_USE_TIM3 || USE_STM32_PWM4 */
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if USE_STM32_PWM1
+#if STM32_PWM_USE_TIM1
 /**
  * @brief   TIM1 update interrupt handler.
  * @note    It is assumed that this interrupt is only activated if the callback
@@ -162,9 +162,9 @@ CH_IRQ_HANDLER(TIM1_CC_IRQHandler) {
 
   CH_IRQ_EPILOGUE();
 }
-#endif /* USE_STM32_PWM1 */
+#endif /* STM32_PWM_USE_TIM1 */
 
-#if USE_STM32_PWM2
+#if STM32_PWM_USE_TIM2
 /**
  * @brief TIM2 interrupt handler.
  */
@@ -176,9 +176,9 @@ CH_IRQ_HANDLER(TIM2_IRQHandler) {
 
   CH_IRQ_EPILOGUE();
 }
-#endif /* USE_STM32_PWM2 */
+#endif /* STM32_PWM_USE_TIM2 */
 
-#if USE_STM32_PWM3
+#if STM32_PWM_USE_TIM3
 /**
  * @brief TIM3 interrupt handler.
  */
@@ -190,7 +190,7 @@ CH_IRQ_HANDLER(TIM3_IRQHandler) {
 
   CH_IRQ_EPILOGUE();
 }
-#endif /* USE_STM32_PWM3 */
+#endif /* STM32_PWM_USE_TIM3 */
 
 #if USE_STM32_PWM4
 /**
@@ -215,7 +215,7 @@ CH_IRQ_HANDLER(TIM4_IRQHandler) {
  */
 void pwm_lld_init(void) {
 
-#if USE_STM32_PWM1
+#if STM32_PWM_USE_TIM1
   /* TIM1 reset, ensures reset state in order to avoid trouble with JTAGs.*/
   RCC->APB2RSTR = RCC_APB2RSTR_TIM1RST;
   RCC->APB2RSTR = 0;
@@ -226,7 +226,7 @@ void pwm_lld_init(void) {
   PWMD1.pd_tim = TIM1;
 #endif
 
-#if USE_STM32_PWM2
+#if STM32_PWM_USE_TIM2
   /* TIM2 reset, ensures reset state in order to avoid trouble with JTAGs.*/
   RCC->APB1RSTR = RCC_APB1RSTR_TIM2RST;
   RCC->APB1RSTR = 0;
@@ -237,7 +237,7 @@ void pwm_lld_init(void) {
   PWMD2.pd_tim = TIM2;
 #endif
 
-#if USE_STM32_PWM3
+#if STM32_PWM_USE_TIM3
   /* TIM2 reset, ensures reset state in order to avoid trouble with JTAGs.*/
   RCC->APB1RSTR = RCC_APB1RSTR_TIM3RST;
   RCC->APB1RSTR = 0;
@@ -270,33 +270,33 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
   if (pwmp->pd_state == PWM_STOP) {
     /* Clock activation.*/
-#if USE_STM32_PWM1
+#if STM32_PWM_USE_TIM1
     if (&PWMD1 == pwmp) {
       NVICEnableVector(TIM1_UP_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM1_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM_PWM1_IRQ_PRIORITY));
       NVICEnableVector(TIM1_CC_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM1_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM_PWM1_IRQ_PRIORITY));
       RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
     }
 #endif
-#if USE_STM32_PWM2
+#if STM32_PWM_USE_TIM2
     if (&PWMD2 == pwmp) {
       NVICEnableVector(TIM2_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM2_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM_PWM2_IRQ_PRIORITY));
       RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
     }
 #endif
-#if USE_STM32_PWM3
+#if STM32_PWM_USE_TIM3
     if (&PWMD3 == pwmp) {
       NVICEnableVector(TIM3_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM3_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM_PWM3_IRQ_PRIORITY));
       RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
     }
 #endif
 #if USE_STM32_PWM4
     if (&PWMD4 == pwmp) {
       NVICEnableVector(TIM4_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM4_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM_PWM4_IRQ_PRIORITY));
       RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
     }
 #endif
@@ -367,26 +367,26 @@ void pwm_lld_stop(PWMDriver *pwmp) {
     pwmp->pd_tim->BDTR = 0;
     pwmp->pd_tim->DIER = 0;
 
-#if USE_STM32_PWM1
+#if STM32_PWM_USE_TIM1
     if (&PWMD1 == pwmp) {
       NVICDisableVector(TIM1_UP_IRQn);
       NVICDisableVector(TIM1_CC_IRQn);
       RCC->APB2ENR &= ~RCC_APB2ENR_TIM1EN;
     }
 #endif
-#if USE_STM32_PWM2
+#if STM32_PWM_USE_TIM2
     if (&PWMD2 == pwmp) {
       NVICDisableVector(TIM2_IRQn);
       RCC->APB1ENR &= ~RCC_APB1ENR_TIM2EN;
     }
 #endif
-#if USE_STM32_PWM3
+#if STM32_PWM_USE_TIM3
     if (&PWMD3 == pwmp) {
       NVICDisableVector(TIM3_IRQn);
       RCC->APB1ENR &= ~RCC_APB1ENR_TIM3EN;
     }
 #endif
-#if USE_STM32_PWM2
+#if STM32_PWM_USE_TIM4
     if (&PWMD4 == pwmp) {
       NVICDisableVector(TIM4_IRQn);
       RCC->APB1ENR &= ~RCC_APB1ENR_TIM4EN;

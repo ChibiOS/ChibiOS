@@ -35,7 +35,7 @@
 /*===========================================================================*/
 
 /** @brief ADC1 driver identifier.*/
-#if USE_STM32_ADC1 || defined(__DOXYGEN__)
+#if STM32_ADC_USE_ADC1 || defined(__DOXYGEN__)
 ADCDriver ADCD1;
 #endif
 
@@ -51,7 +51,7 @@ ADCDriver ADCD1;
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if USE_STM32_ADC1 || defined(__DOXYGEN__)
+#if STM32_ADC_USE_ADC1 || defined(__DOXYGEN__)
 /**
  * @brief   ADC1 DMA interrupt handler (channel 1).
  */
@@ -111,7 +111,7 @@ CH_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
  */
 void adc_lld_init(void) {
 
-#if USE_STM32_ADC1
+#if STM32_ADC_USE_ADC1
   /* ADC reset, ensures reset state in order to avoid trouble with JTAGs.*/
   RCC->APB2RSTR = RCC_APB2RSTR_ADC1RST;
   RCC->APB2RSTR = 0;
@@ -120,7 +120,7 @@ void adc_lld_init(void) {
   adcObjectInit(&ADCD1);
   ADCD1.ad_adc = ADC1;
   ADCD1.ad_dmap = STM32_DMA1;
-  ADCD1.ad_dmaprio = STM32_ADC1_DMA_PRIORITY << 12;
+  ADCD1.ad_dmaprio = STM32_ADC_ADC1_DMA_PRIORITY << 12;
 
   /* Temporary activation.*/
   RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
@@ -152,11 +152,11 @@ void adc_lld_start(ADCDriver *adcp) {
 
   /* If in stopped state then enables the ADC and DMA clocks.*/
   if (adcp->ad_state == ADC_STOP) {
-#if USE_STM32_ADC1
+#if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
       dmaEnable(DMA1_ID);   /* NOTE: Must be enabled before the IRQs.*/
       NVICEnableVector(DMA1_Channel1_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_ADC1_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_ADC_ADC1_IRQ_PRIORITY));
       DMA1_Channel1->CPAR = (uint32_t)&ADC1->DR;
       RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
     }
@@ -178,7 +178,7 @@ void adc_lld_stop(ADCDriver *adcp) {
 
   /* If in ready state then disables the ADC clock.*/
   if (adcp->ad_state == ADC_READY) {
-#if USE_STM32_ADC1
+#if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
       ADC1->CR1 = 0;
       ADC1->CR2 = 0;
