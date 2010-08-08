@@ -72,6 +72,7 @@
 - NEW: Added a simple STM32 ADC demo under ./testhal/STM32/ADC.
 - NEW: Added a simple STM32 CAN demo under ./testhal/STM32/CAN.
 - NEW: Added a simple STM32 PWM demo under ./testhal/STM32/PWM.
+- NEW: Added a simple STM32 SPI demo under ./testhal/STM32/SPI.
 - NEW: Added pwmEnableChannelI() and pwmDisableChannelI() APIs to the PWM
   driver in order to allow channel reprogramming from within callbacks or
   other interrupt handlers. The new APIs are implemented as macros so there
