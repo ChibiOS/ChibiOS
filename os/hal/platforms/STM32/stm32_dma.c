@@ -56,10 +56,17 @@ static cnt_t dmacnt2;
  * @brief STM32 DMA helper initialization.
  */
 void dmaInit(void) {
+  int i;
 
   dmacnt1 = 0;
+  for (i = STM32_DMA_CHANNEL_7; i >= STM32_DMA_CHANNEL_1; i--)
+    dmaDisableChannel(STM32_DMA1, i);
+  STM32_DMA1->IFCR = 0xFFFFFFFF;
 #if defined(STM32F10X_HD) || defined (STM32F10X_CL)
   dmacnt2 = 0;
+  for (i = STM32_DMA_CHANNEL_5; i >= STM32_DMA_CHANNEL_1; i--)
+    dmaDisableChannel(STM32_DMA2, i);
+  STM32_DMA1->IFCR = 0xFFFFFFFF;
 #endif
 }
 

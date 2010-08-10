@@ -126,7 +126,53 @@ typedef struct {
 #define STM32_DMA_CHANNEL_7     6       /**< @brief DMA channel 7.          */
 
 /**
- * @brief   DMA channel setup.
+ * @brief   Associates a peripheral data register to a DMA channel.
+ *
+ * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
+ * @param[in] cmar      value to be written in the CPAR register
+ */
+#define dmaChannelSetPeripheral(dmachp, cpar) {                             \
+  (dmachp)->CPAR  = (uint32_t)(cpar);                                       \
+}
+
+/**
+ * @brief   DMA channel setup by channel pointer.
+ * @note    This macro does not change the CPAR register because that register
+ *          value does not change frequently, it usually points to a peripheral
+ *          data register.
+ *
+ * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
+ * @param[in] cndtr     value to be written in the CNDTR register
+ * @param[in] cmar      value to be written in the CMAR register
+ * @param[in] ccr       value to be written in the CCR register
+ */
+#define dmaChannelSetup(dmachp, cndtr, cmar, ccr) {                         \
+  (dmachp)->CNDTR = (uint32_t)(cndtr);                                      \
+  (dmachp)->CMAR  = (uint32_t)(cmar);                                       \
+  (dmachp)->CCR   = (uint32_t)(ccr);                                        \
+}
+
+/**
+ * @brief   DMA channel enable by channel pointer.
+ *
+ * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
+ */
+#define dmaChannelEnable(dmachp) {                                          \
+  (dmachp)->CCR |= DMA_CCR1_EN;                                             \
+}
+
+
+/**
+ * @brief   DMA channel disable by channel pointer.
+ *
+ * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
+ */
+#define dmaChannelDisable(dmachp) {                                         \
+  (dmachp)->CCR = 0;                                                        \
+}
+
+/**
+ * @brief   DMA channel setup by channel ID.
  * @note    This macro does not change the CPAR register because that register
  *          value does not change frequently, it usually points to a peripheral
  *          data register.
@@ -140,14 +186,11 @@ typedef struct {
  * @param[in] ccr       value to be written in the CCR register
  */
 #define dmaSetupChannel(dmap, ch, cndtr, cmar, ccr) {                       \
-  stm32_dma_channel_t *dmachp = &dmap->channels[ch];                        \
-  (dmachp)->CNDTR = (uint32_t)(cndtr);                                      \
-  (dmachp)->CMAR  = (uint32_t)(cmar);                                       \
-  (dmachp)->CCR   = (uint32_t)(ccr);                                        \
+  dmaChannelSetup(&(dmap)->channels[ch], (cndtr), (cmar), (ccr));           \
 }
 
 /**
- * @brief   DMA channel enable.
+ * @brief   DMA channel enable by channel ID.
  * @note    Channels are numbered from 0 to 6, use the appropriate macro
  *          as parameter.
  *
@@ -155,11 +198,11 @@ typedef struct {
  * @param[in] ch        channel number
  */
 #define dmaEnableChannel(dmap, ch) {                                        \
-  (dmap)->channels[ch].CCR |= 1;                                            \
+  dmaChannelEnable(&(dmap)->channels[ch]);                                  \
 }
 
 /**
- * @brief   DMA channel disable.
+ * @brief   DMA channel disable by channel ID.
  * @note    Channels are numbered from 0 to 6, use the appropriate macro
  *          as parameter.
  *
@@ -167,7 +210,7 @@ typedef struct {
  * @param[in] ch        channel number
  */
 #define dmaDisableChannel(dmap, ch) {                                       \
-  (dmap)->channels[ch].CCR = 0;                                             \
+  dmaChannelDisable(&(dmap)->channels[ch]);                                 \
 }
 
 /**

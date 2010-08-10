@@ -194,11 +194,11 @@ typedef struct {
   /** @brief Pointer to the SPIx registers block.*/
   SPI_TypeDef           *spd_spi;
   /** @brief Pointer to the receive DMA channel registers block.*/
-  DMA_Channel_TypeDef   *spd_dmarx;
+  stm32_dma_channel_t   *spd_dmarx;
   /** @brief Pointer to the transmit DMA channel registers block.*/
-  DMA_Channel_TypeDef   *spd_dmatx;
+  stm32_dma_channel_t   *spd_dmatx;
   /** @brief DMA priority bit mask.*/
-  uint32_t              spd_dmaprio;
+  uint32_t              spd_dmaccr;
 } SPIDriver;
 
 /*===========================================================================*/

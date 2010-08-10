@@ -53,9 +53,6 @@ SPIDriver SPID3;
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
-static uint16_t dummyrx;
-static uint16_t dummytx;
-
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -63,8 +60,8 @@ static uint16_t dummytx;
 static void spi_stop(SPIDriver *spip) {
 
   /* Stops RX and TX DMA channels.*/
-  spip->spd_dmarx->CCR = 0;
-  spip->spd_dmatx->CCR = 0;
+  dmaChannelDisable(spip->spd_dmarx);
+  dmaChannelDisable(spip->spd_dmatx);
 
   /* Stops SPI operations.*/
   spip->spd_spi->CR1 &= ~SPI_CR1_SPE;
@@ -74,32 +71,16 @@ static void spi_stop(SPIDriver *spip) {
   chSysUnlockFromIsr();
 }
 
-static void spi_start_wait(SPIDriver *spip, size_t n,
-                           const void *txbuf, void *rxbuf) {
-  uint32_t ccr;
+static void spi_start_wait(SPIDriver *spip) {
 
-  /* Common DMA setup.*/
-  ccr = spip->spd_dmaprio;
-  if ((spip->spd_config->spc_cr1 & SPI_CR1_DFF) != 0)
-    ccr |= DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0; /* 16 bits transfer.*/
-
-  /* RX DMA setup.*/
-  spip->spd_dmarx->CMAR = (uint32_t)rxbuf;
-  spip->spd_dmarx->CNDTR = (uint32_t)n;
-  spip->spd_dmarx->CCR |= ccr;
-
-  /* TX DMA setup.*/
-  spip->spd_dmatx->CMAR = (uint32_t)txbuf;
-  spip->spd_dmatx->CNDTR = (uint32_t)n;
-  spip->spd_dmatx->CCR |= ccr;
-
-  /* SPI enable.*/
   chSysLock();
-  spip->spd_spi->CR1 |= SPI_CR1_SPE;
 
   /* DMAs start.*/
-  spip->spd_dmarx->CCR |= DMA_CCR1_EN;
-  spip->spd_dmatx->CCR |= DMA_CCR1_EN;
+  dmaChannelEnable(spip->spd_dmarx);
+  dmaChannelEnable(spip->spd_dmatx);
+
+  /* SPI enable.*/
+  spip->spd_spi->CR1 |= SPI_CR1_SPE;
 
   /* Wait for completion event.*/
   spip->spd_thread = currp;
@@ -121,11 +102,10 @@ CH_IRQ_HANDLER(DMA1_Ch2_IRQHandler) {
   CH_IRQ_PROLOGUE();
 
   spi_stop(&SPID1);
-  if ((DMA1->ISR & DMA_ISR_TEIF2) != 0) {
+  if ((STM32_DMA1->ISR & DMA_ISR_TEIF2) != 0) {
     STM32_SPI_SPI1_DMA_ERROR_HOOK();
   }
-  DMA1->IFCR = DMA_IFCR_CGIF2  | DMA_IFCR_CTCIF2 |
-               DMA_IFCR_CHTIF2 | DMA_IFCR_CTEIF2;
+  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_2);
 
   CH_IRQ_EPILOGUE();
 }
@@ -138,8 +118,7 @@ CH_IRQ_HANDLER(DMA1_Ch3_IRQHandler) {
   CH_IRQ_PROLOGUE();
 
   STM32_SPI_SPI1_DMA_ERROR_HOOK();
-  DMA1->IFCR = DMA_IFCR_CGIF3  | DMA_IFCR_CTCIF3 |
-               DMA_IFCR_CHTIF3 | DMA_IFCR_CTEIF3;
+  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_3);
 
   CH_IRQ_EPILOGUE();
 }
@@ -154,11 +133,10 @@ CH_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
   CH_IRQ_PROLOGUE();
 
   spi_stop(&SPID2);
-  if ((DMA1->ISR & DMA_ISR_TEIF4) != 0) {
+  if ((STM32_DMA1->ISR & DMA_ISR_TEIF4) != 0) {
     STM32_SPI_SPI2_DMA_ERROR_HOOK();
   }
-  DMA1->IFCR = DMA_IFCR_CGIF4  | DMA_IFCR_CTCIF4 |
-               DMA_IFCR_CHTIF4 | DMA_IFCR_CTEIF4;
+  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_4);
 
   CH_IRQ_EPILOGUE();
 }
@@ -171,8 +149,7 @@ CH_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
   CH_IRQ_PROLOGUE();
 
   STM32_SPI_SPI2_DMA_ERROR_HOOK();
-  DMA1->IFCR = DMA_IFCR_CGIF5  | DMA_IFCR_CTCIF5 |
-               DMA_IFCR_CHTIF5 | DMA_IFCR_CTEIF5;
+  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_5);
 
   CH_IRQ_EPILOGUE();
 }
@@ -187,11 +164,10 @@ CH_IRQ_HANDLER(DMA2_Ch1_IRQHandler) {
   CH_IRQ_PROLOGUE();
 
   spi_stop(&SPID3);
-  if ((DMA2->ISR & DMA_ISR_TEIF1) != 0) {
+  if ((STM32_DMA2->ISR & DMA_ISR_TEIF1) != 0) {
     STM32_SPI_SPI3_DMA_ERROR_HOOK();
   }
-  DMA2->IFCR = DMA_IFCR_CGIF1  | DMA_IFCR_CTCIF1 |
-               DMA_IFCR_CHTIF1 | DMA_IFCR_CTEIF1;
+  dmaClearChannel(STM32_DMA2, STM32_DMA_CHANNEL_1);
 
   CH_IRQ_EPILOGUE();
 }
@@ -204,8 +180,7 @@ CH_IRQ_HANDLER(DMA2_Ch2_IRQHandler) {
   CH_IRQ_PROLOGUE();
 
   STM32_SPI_SPI3_DMA_ERROR_HOOK();
-  DMA2->IFCR = DMA_IFCR_CGIF2  | DMA_IFCR_CTCIF2 |
-               DMA_IFCR_CHTIF2 | DMA_IFCR_CTEIF2;
+  dmaClearChannel(STM32_DMA2, STM32_DMA_CHANNEL_2);
 
   CH_IRQ_EPILOGUE();
 }
@@ -220,17 +195,14 @@ CH_IRQ_HANDLER(DMA2_Ch2_IRQHandler) {
  */
 void spi_lld_init(void) {
 
-  dummytx = 0xFFFF;
-
 #if STM32_SPI_USE_SPI1
   RCC->APB2RSTR     = RCC_APB2RSTR_SPI1RST;
   RCC->APB2RSTR     = 0;
   spiObjectInit(&SPID1);
   SPID1.spd_thread  = NULL;
   SPID1.spd_spi     = SPI1;
-  SPID1.spd_dmarx   = DMA1_Channel2;
-  SPID1.spd_dmatx   = DMA1_Channel3;
-  SPID1.spd_dmaprio = STM32_SPI_SPI1_DMA_PRIORITY << 12;
+  SPID1.spd_dmarx   = STM32_DMA1_CH2;
+  SPID1.spd_dmatx   = STM32_DMA1_CH3;
 #endif
 
 #if STM32_SPI_USE_SPI2
@@ -239,9 +211,8 @@ void spi_lld_init(void) {
   spiObjectInit(&SPID2);
   SPID2.spd_thread  = NULL;
   SPID2.spd_spi     = SPI2;
-  SPID2.spd_dmarx   = DMA1_Channel4;
-  SPID2.spd_dmatx   = DMA1_Channel5;
-  SPID2.spd_dmaprio = STM32_SPI_SPI2_DMA_PRIORITY << 12;
+  SPID2.spd_dmarx   = STM32_DMA1_CH4;
+  SPID2.spd_dmatx   = STM32_DMA1_CH5;
 #endif
 
 #if STM32_SPI_USE_SPI3
@@ -250,9 +221,8 @@ void spi_lld_init(void) {
   spiObjectInit(&SPID3);
   SPID3.spd_thread  = NULL;
   SPID3.spd_spi     = SPI3;
-  SPID3.spd_dmarx   = DMA2_Channel1;
-  SPID3.spd_dmatx   = DMA2_Channel2;
-  SPID3.spd_dmaprio = STM32_SPI_SPI3_DMA_PRIORITY << 12;
+  SPID3.spd_dmarx   = STM32_DMA2_CH1;
+  SPID3.spd_dmatx   = STM32_DMA2_CH2;
 #endif
 }
 
@@ -297,9 +267,18 @@ void spi_lld_start(SPIDriver *spip) {
 #endif
 
     /* DMA setup.*/
-    spip->spd_dmarx->CPAR = (uint32_t)&spip->spd_spi->DR;
-    spip->spd_dmatx->CPAR = (uint32_t)&spip->spd_spi->DR;
+    dmaChannelSetPeripheral(spip->spd_dmarx, &spip->spd_spi->DR);
+    dmaChannelSetPeripheral(spip->spd_dmatx, &spip->spd_spi->DR);
   }
+
+  /* More DMA setup.*/
+  if ((spip->spd_config->spc_cr1 & SPI_CR1_DFF) == 0)
+    spip->spd_dmaccr = (STM32_SPI_SPI2_DMA_PRIORITY << 12) |
+                       DMA_CCR1_TEIE;               /* 8 bits transfers.    */
+  else
+    spip->spd_dmaccr = (STM32_SPI_SPI2_DMA_PRIORITY << 12) |
+                       DMA_CCR1_TEIE | DMA_CCR1_MSIZE_0 |
+                       DMA_CCR1_PSIZE_0;            /* 16 bits transfers.   */
 
   /* SPI setup.*/
   spip->spd_spi->CR1 = spip->spd_config->spc_cr1 | SPI_CR1_MSTR;
@@ -373,10 +352,14 @@ void spi_lld_unselect(SPIDriver *spip) {
  * @param[in] n         number of words to be ignored
  */
 void spi_lld_ignore(SPIDriver *spip, size_t n) {
+  uint16_t dummyrx;
+  uint16_t dummytx = 0xFFFF;
 
-  spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_TEIE;
-  spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_TEIE;
-  spi_start_wait(spip, n, &dummytx, &dummyrx);
+  dmaChannelSetup(spip->spd_dmarx, n, &dummyrx,
+                  spip->spd_dmaccr | DMA_CCR1_TCIE);
+  dmaChannelSetup(spip->spd_dmatx, n, &dummytx,
+                  spip->spd_dmaccr | DMA_CCR1_DIR);
+  spi_start_wait(spip);
 }
 
 /**
@@ -393,9 +376,11 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
 void spi_lld_exchange(SPIDriver *spip, size_t n,
                       const void *txbuf, void *rxbuf) {
 
-  spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_MINC | DMA_CCR1_TEIE;
-  spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_MINC | DMA_CCR1_TEIE;
-  spi_start_wait(spip, n, txbuf, rxbuf);
+  dmaChannelSetup(spip->spd_dmarx, n, rxbuf,
+                  spip->spd_dmaccr | DMA_CCR1_TCIE | DMA_CCR1_MINC);
+  dmaChannelSetup(spip->spd_dmatx, n, txbuf,
+                  spip->spd_dmaccr | DMA_CCR1_DIR | DMA_CCR1_MINC);
+  spi_start_wait(spip);
 }
 
 /**
@@ -408,10 +393,13 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
  * @param[in] txbuf     the pointer to the transmit buffer
  */
 void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
+  uint16_t dummyrx;
 
-  spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_TEIE;
-  spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_MINC | DMA_CCR1_TEIE;
-  spi_start_wait(spip, n, txbuf, &dummyrx);
+  dmaChannelSetup(spip->spd_dmarx, n, &dummyrx,
+                  spip->spd_dmaccr | DMA_CCR1_TCIE);
+  dmaChannelSetup(spip->spd_dmatx, n, txbuf,
+                  spip->spd_dmaccr | DMA_CCR1_DIR | DMA_CCR1_MINC);
+  spi_start_wait(spip);
 }
 
 /**
@@ -424,10 +412,13 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
  * @param[out] rxbuf    the pointer to the receive buffer
  */
 void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
+  uint16_t dummytx = 0xFFFF;
 
-  spip->spd_dmarx->CCR = DMA_CCR1_TCIE | DMA_CCR1_MINC | DMA_CCR1_TEIE;
-  spip->spd_dmatx->CCR = DMA_CCR1_DIR  | DMA_CCR1_TEIE;
-  spi_start_wait(spip, n, &dummytx, rxbuf);
+  dmaChannelSetup(spip->spd_dmarx, n, rxbuf,
+                  spip->spd_dmaccr | DMA_CCR1_TCIE | DMA_CCR1_MINC);
+  dmaChannelSetup(spip->spd_dmatx, n, &dummytx,
+                  spip->spd_dmaccr | DMA_CCR1_DIR);
+  spi_start_wait(spip);
 }
 
 #endif /* CH_HAL_USE_SPI */

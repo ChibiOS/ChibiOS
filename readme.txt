@@ -80,7 +80,10 @@
 - NEW: Added a generic BaseFileStream interface for future File System
   implementations or integrations (untested and not sure if it will stay or
   change).
+- OPT: Speed optimizations of the STM32 SPI driver, improved latency.
 - CHANGE: Modified the STM32 ADC driver to use the new DMA infrastructure.
+- CHANGE: Modified the STM32 SPI driver to use the new DMA infrastructure.
+- CHANGE: Added DMA cleanup code to the STM32 dmaInit() function.
 - CHANGE: Simplified preprocessor conditions in the STM32 serial driver.
 - CHANGE: Renamed most of the STM32 HAL settings macro names in order to
           make names more consistent.
