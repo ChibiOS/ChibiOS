@@ -60,7 +60,7 @@ CH_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  isr = DMA1->ISR;
+  isr = STM32_DMA1->ISR;
   dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_1);
   if ((isr & DMA_ISR_HTIF1) != 0) {
     /* Half transfer processing.*/
@@ -119,8 +119,10 @@ void adc_lld_init(void) {
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
   ADCD1.ad_adc = ADC1;
-  ADCD1.ad_dmap = STM32_DMA1;
-  ADCD1.ad_dmaprio = STM32_ADC_ADC1_DMA_PRIORITY << 12;
+  ADCD1.ad_dmachp = STM32_DMA1_CH1;
+  ADCD1.ad_dmaccr = (STM32_ADC_ADC1_DMA_PRIORITY << 12) |
+                    DMA_CCR1_EN   | DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0 |
+                    DMA_CCR1_MINC | DMA_CCR1_TCIE    | DMA_CCR1_TEIE;
 
   /* Temporary activation.*/
   RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
@@ -157,7 +159,8 @@ void adc_lld_start(ADCDriver *adcp) {
       dmaEnable(DMA1_ID);   /* NOTE: Must be enabled before the IRQs.*/
       NVICEnableVector(DMA1_Channel1_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ADC_ADC1_IRQ_PRIORITY));
-      DMA1_Channel1->CPAR = (uint32_t)&ADC1->DR;
+//      DMA1_Channel1->CPAR = (uint32_t)&ADC1->DR;
+      dmaChannelSetPeripheral(adcp->ad_dmachp, &ADC1->DR);
       RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
     }
 #endif
@@ -200,8 +203,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   const ADCConversionGroup *grpp = adcp->ad_grpp;
 
   /* DMA setup.*/
-  ccr = adcp->ad_dmaprio | DMA_CCR1_EN   | DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0 |
-                           DMA_CCR1_MINC | DMA_CCR1_TCIE    | DMA_CCR1_TEIE;
+  ccr = adcp->ad_dmaccr;
   if (grpp->acg_circular)
     ccr |= DMA_CCR1_CIRC;
   if (adcp->ad_depth > 1) {
@@ -212,8 +214,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   }
   else
     n = (uint32_t)grpp->acg_num_channels;
-  dmaSetupChannel(adcp->ad_dmap, STM32_DMA_CHANNEL_1,
-                  n, adcp->ad_samples, ccr);
+  dmaChannelSetup(adcp->ad_dmachp, n, adcp->ad_samples, ccr);
 
   /* ADC setup.*/
   adcp->ad_adc->SMPR1 = grpp->acg_smpr1;
@@ -235,7 +236,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
  */
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 
-  adcp->ad_dmap->channels[STM32_DMA_CHANNEL_1].CCR = 0;
+  dmaChannelDisable(adcp->ad_dmachp);
+//  adcp->ad_dmap->channels[STM32_DMA_CHANNEL_1].CCR = 0;
   adcp->ad_adc->CR2 = 0;
 }
 

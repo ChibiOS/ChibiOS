@@ -219,11 +219,11 @@ typedef struct {
   /**
    * @brief Pointer to the DMA registers block.
    */
-  stm32_dma_t               *ad_dmap;
+  stm32_dma_channel_t       *ad_dmachp;
   /**
-   * @brief DMA priority bit mask.
+   * @brief DMA CCR register bit mask.
    */
-  uint32_t                  ad_dmaprio;
+  uint32_t                  ad_dmaccr;
 } ADCDriver;
 
 /*===========================================================================*/
