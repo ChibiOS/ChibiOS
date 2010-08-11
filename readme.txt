@@ -81,6 +81,7 @@
   implementations or integrations (untested and not sure if it will stay or
   change).
 - OPT: Speed optimizations of the STM32 SPI driver, improved latency.
+- OPT: Speed optimizations of the STM32 ADC driver.
 - CHANGE: Modified the STM32 ADC driver to use the new DMA infrastructure.
 - CHANGE: Modified the STM32 SPI driver to use the new DMA infrastructure.
 - CHANGE: Added DMA cleanup code to the STM32 dmaInit() function.
