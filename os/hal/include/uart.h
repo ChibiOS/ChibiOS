@@ -106,9 +106,12 @@ extern "C" {
   void uartStop(UARTDriver *uartp);
   void uartStartSend(UARTDriver *uartp, size_t n, const void *txbuf);
   void uartStartSendI(UARTDriver *uartp, size_t n, const void *txbuf);
-  void uartStopSend(UARTDriver *uartp);
+  size_t uartStopSend(UARTDriver *uartp);
+  size_t uartStopSendI(UARTDriver *uartp);
   void uartStartReceive(UARTDriver *uartp, size_t n, void *rxbuf);
-  void uartStopReceive(UARTDriver *uartp);
+  void uartStartReceiveI(UARTDriver *uartp, size_t n, void *rxbuf);
+  size_t uartStopReceive(UARTDriver *uartp);
+  size_t uartStopReceiveI(UARTDriver *uartp);
 #ifdef __cplusplus
 }
 #endif

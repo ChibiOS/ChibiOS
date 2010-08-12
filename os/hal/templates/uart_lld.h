@@ -107,9 +107,9 @@ extern "C" {
   void uart_lld_start(UARTDriver *uartp);
   void uart_lld_stop(UARTDriver *uartp);
   void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf);
-  void uart_lld_stop_send(UARTDriver *uartp);
+  size_t uart_lld_stop_send(UARTDriver *uartp);
   void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf);
-  void uart_lld_stop_receive(UARTDriver *uartp);
+  size_t uart_lld_stop_receive(UARTDriver *uartp);
 #ifdef __cplusplus
 }
 #endif

@@ -164,8 +164,13 @@ void uartStartSendI(UARTDriver *uartp, size_t n, const void *txbuf) {
  * @note    Stopping a transmission also suppresses the transmission callbacks.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
+ *
+ * @return              The number of data frames not transmitted by the
+ *                      stopped transmit operation.
+ * @retval 0            There was no transmit operation in progress.
  */
-void uartStopSend(UARTDriver *uartp) {
+size_t uartStopSend(UARTDriver *uartp) {
+  size_t n;
 
   chDbgCheck(uartp != NULL, "uartStopSend");
 
@@ -175,10 +180,13 @@ void uartStopSend(UARTDriver *uartp) {
               "not active");
 
   if (uartp->ud_txstate == UART_TX_ACTIVE) {
-    uart_lld_stop_send(uartp);
+    n = uart_lld_stop_send(uartp);
     uartp->ud_txstate = UART_TX_IDLE;
   }
+  else
+    n = 0;
   chSysUnlock();
+  return n;
 }
 
 /**
@@ -187,8 +195,12 @@ void uartStopSend(UARTDriver *uartp) {
  * @note    This function has to be invoked from a lock zone.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
+ *
+ * @return              The number of data frames not transmitted by the
+ *                      stopped transmit operation.
+ * @retval 0            There was no transmit operation in progress.
  */
-void uartStopSendI(UARTDriver *uartp) {
+size_t uartStopSendI(UARTDriver *uartp) {
 
   chDbgCheck(uartp != NULL, "uartStopSendI");
 
@@ -197,9 +209,11 @@ void uartStopSendI(UARTDriver *uartp) {
               "not active");
 
   if (uartp->ud_txstate == UART_TX_ACTIVE) {
-    uart_lld_stop_send(uartp);
+    size_t n = uart_lld_stop_send(uartp);
     uartp->ud_txstate = UART_TX_IDLE;
+    return n;
   }
+  return 0;
 }
 
 /**
@@ -256,8 +270,13 @@ void uartStartReceiveI(UARTDriver *uartp, size_t n, void *rxbuf) {
  * @note    Stopping a receive operation also suppresses the receive callbacks.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
+ *
+ * @return              The number of data frames not received by the
+ *                      stopped receive operation.
+ * @retval 0            There was no receive operation in progress.
  */
-void uartStopReceive(UARTDriver *uartp) {
+size_t uartStopReceive(UARTDriver *uartp) {
+  size_t n;
 
   chDbgCheck(uartp != NULL, "uartStopReceive");
 
@@ -267,10 +286,13 @@ void uartStopReceive(UARTDriver *uartp) {
               "not active");
 
   if (uartp->ud_rxstate == UART_RX_ACTIVE) {
-    uart_lld_stop_receive(uartp);
+    n = uart_lld_stop_receive(uartp);
     uartp->ud_rxstate = UART_RX_IDLE;
   }
+  else
+    n = 0;
   chSysUnlock();
+  return n;
 }
 
 /**
@@ -279,9 +301,12 @@ void uartStopReceive(UARTDriver *uartp) {
  * @note    This function has to be invoked from a lock zone.
  *
  * @param[in] uartp      pointer to the @p UARTDriver object
+ *
+ * @return              The number of data frames not received by the
+ *                      stopped receive operation.
+ * @retval 0            There was no receive operation in progress.
  */
-void uartStopReceiveI(UARTDriver *uartp) {
-
+size_t uartStopReceiveI(UARTDriver *uartp) {
   chDbgCheck(uartp != NULL, "uartStopReceiveI");
 
   chDbgAssert(uartp->ud_state == UART_READY,
@@ -289,9 +314,11 @@ void uartStopReceiveI(UARTDriver *uartp) {
               "not active");
 
   if (uartp->ud_rxstate == UART_RX_ACTIVE) {
-    uart_lld_stop_receive(uartp);
+    size_t n = uart_lld_stop_receive(uartp);
     uartp->ud_rxstate = UART_RX_IDLE;
+    return n;
   }
+  return 0;
 }
 
 #endif /* CH_HAL_USE_UART */

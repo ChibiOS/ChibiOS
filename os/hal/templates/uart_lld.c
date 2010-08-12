@@ -97,8 +97,11 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
  * @note    Stopping a transmission also suppresses the transmission callbacks.
  *
  * @param[in] uartp      pointer to the @p UARTDriver object
+ *
+ * @return              The number of data frames not transmitted by the
+ *                      stopped transmit operation.
  */
-void uart_lld_stop_send(UARTDriver *uartp) {
+size_t uart_lld_stop_send(UARTDriver *uartp) {
 
 }
 
@@ -120,8 +123,11 @@ void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
  * @note    Stopping a receive operation also suppresses the receive callbacks.
  *
  * @param[in] uartp      pointer to the @p UARTDriver object
+ *
+ * @return              The number of data frames not received by the
+ *                      stopped receive operation.
  */
-void uart_lld_stop_receive(UARTDriver *uartp) {
+size_t uart_lld_stop_receive(UARTDriver *uartp) {
 
 }
 

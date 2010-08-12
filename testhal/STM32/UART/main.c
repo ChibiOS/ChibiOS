@@ -25,7 +25,9 @@ static VirtualTimer vt1, vt2;
 static void restart(void *p) {
 
   (void)p;
-  uartStartSend(&UARTD2, 14, "Hello World!\r\n");
+  chSysLockFromIsr();
+  uartStartSendI(&UARTD2, 14, "Hello World!\r\n");
+  chSysUnlockFromIsr();
 }
 
 static void ledoff(void *p) {
@@ -50,6 +52,8 @@ static void txend2(void) {
 
   palSetPad(IOPORT3, GPIOC_LED);
   chSysLockFromIsr();
+  if (chVTIsArmedI(&vt1))
+    chVTResetI(&vt1);
   chVTSetI(&vt1, MS2ST(5000), restart, NULL);
   chSysUnlockFromIsr();
 }

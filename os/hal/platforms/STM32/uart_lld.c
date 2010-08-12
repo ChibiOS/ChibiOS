@@ -522,8 +522,10 @@ void uart_lld_start(UARTDriver *uartp) {
     uartp->ud_dmaccr = STM32_UART_USART1_DMA_PRIORITY << 12;
     if ((uartp->ud_config->uc_cr1 & (USART_CR1_M | USART_CR1_PCE)) == USART_CR1_M)
       uartp->ud_dmaccr |= DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0;
-    uartp->ud_dmap->channels[uartp->ud_dmarx].CPAR = (uint32_t)&uartp->ud_usart->DR;
-    uartp->ud_dmap->channels[uartp->ud_dmatx].CPAR = (uint32_t)&uartp->ud_usart->DR;
+    dmaChannelSetPeripheral(&uartp->ud_dmap->channels[uartp->ud_dmarx],
+                            &uartp->ud_usart->DR);
+    dmaChannelSetPeripheral(&uartp->ud_dmap->channels[uartp->ud_dmatx],
+                            &uartp->ud_usart->DR);
     uartp->ud_rxbuf = 0;
   }
 
@@ -600,11 +602,15 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
  * @note    Stopping a transmission also suppresses the transmission callbacks.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
+ *
+ * @return              The number of data frames not transmitted by the
+ *                      stopped transmit operation.
  */
-void uart_lld_stop_send(UARTDriver *uartp) {
+size_t uart_lld_stop_send(UARTDriver *uartp) {
 
   dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmatx);
   dmaClearChannel(uartp->ud_dmap, uartp->ud_dmatx);
+  return (size_t)uartp->ud_dmap->channels[uartp->ud_dmatx].CNDTR;
 }
 
 /**
@@ -634,12 +640,18 @@ void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
  * @note    Stopping a receive operation also suppresses the receive callbacks.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
+ *
+ * @return              The number of data frames not received by the
+ *                      stopped receive operation.
  */
-void uart_lld_stop_receive(UARTDriver *uartp) {
+size_t uart_lld_stop_receive(UARTDriver *uartp) {
+  size_t n;
 
   dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmarx);
   dmaClearChannel(uartp->ud_dmap, uartp->ud_dmarx);
+  n = (size_t)uartp->ud_dmap->channels[uartp->ud_dmarx].CNDTR;
   set_rx_idle_loop(uartp);
+  return n;
 }
 
 #endif /* CH_HAL_USE_UART */
