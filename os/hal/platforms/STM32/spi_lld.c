@@ -63,9 +63,6 @@ static void spi_stop(SPIDriver *spip) {
   dmaChannelDisable(spip->spd_dmarx);
   dmaChannelDisable(spip->spd_dmatx);
 
-  /* Stops SPI operations.*/
-  spip->spd_spi->CR1 &= ~SPI_CR1_SPE;
-
   chSysLockFromIsr();
   chSchReadyI(spip->spd_thread);
   chSysUnlockFromIsr();
@@ -78,9 +75,6 @@ static void spi_start_wait(SPIDriver *spip) {
   /* DMAs start.*/
   dmaChannelEnable(spip->spd_dmarx);
   dmaChannelEnable(spip->spd_dmatx);
-
-  /* SPI enable.*/
-  spip->spd_spi->CR1 |= SPI_CR1_SPE;
 
   /* Wait for completion event.*/
   spip->spd_thread = currp;
@@ -280,9 +274,10 @@ void spi_lld_start(SPIDriver *spip) {
                        DMA_CCR1_TEIE | DMA_CCR1_MSIZE_0 |
                        DMA_CCR1_PSIZE_0;            /* 16 bits transfers.   */
 
-  /* SPI setup.*/
-  spip->spd_spi->CR1 = spip->spd_config->spc_cr1 | SPI_CR1_MSTR;
+  /* SPI setup and enable.*/
+  spip->spd_spi->CR1 = 0;
   spip->spd_spi->CR2 = SPI_CR2_SSOE | SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
+  spip->spd_spi->CR1 = spip->spd_config->spc_cr1 | SPI_CR1_MSTR | SPI_CR1_SPE;
 }
 
 /**
@@ -294,6 +289,10 @@ void spi_lld_stop(SPIDriver *spip) {
 
   /* If in ready state then disables the SPI clock.*/
   if (spip->spd_state == SPI_READY) {
+
+    /* SPI disable.*/
+    spip->spd_spi->CR1 = 0;
+
 #if STM32_SPI_USE_SPI1
     if (&SPID1 == spip) {
       NVICDisableVector(DMA1_Channel2_IRQn);
