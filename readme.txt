@@ -59,6 +59,12 @@
 *****************************************************************************
 
 *** 2.0.3 ***
+- FIX: Fixed incorrect PLL2 setting in STM32 HAL (bug 3044770).
+- FIX: Fixed wrong check on STM32_HCLK (bug 3044758).
+- FIX: Fixed wrong condition check in STM32 PWM driver (bug 3041414).
+- FIX: Corrupted IRQ stack in Cortex-Mx port (bug 3041117).
+- FIX: Fixed a documentation error regarding the ADC driver function
+  adcStartConversion() (bug 3039890).
 - FIX: Fixed insufficient stack size for idle thread (bug 3033624).
 - FIX: Fixed misspelled word in some chioch.h and chstreams.h macros (bug
   3031534).

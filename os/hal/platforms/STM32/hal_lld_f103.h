@@ -110,8 +110,10 @@
 #define DMA1_Ch6_IRQHandler     Vector80    /**< DMA1 Channel 6.            */
 #define DMA1_Ch7_IRQHandler     Vector84    /**< DMA1 Channel 7.            */
 #define ADC1_2_IRQHandler       Vector88    /**< ADC1_2.                    */
-#define USB_HP_CAN1_TX_IRQHandler Vector8C  /**< USB High Priority, CAN1 TX.*/
-#define USB_LP_CAN1_RX0_IRQHandler Vector90 /**< USB Low Priority, CAN1 RX0.*/
+#define CAN1_TX_IRQHandler      Vector8C    /**< CAN1 TX.                   */
+#define USB_HP_IRQHandler       Vector8C    /**< USB High Priority, CAN1 TX.*/
+#define CAN1_RX0_IRQHandler     Vector90    /**< CAN1 RX0.                  */
+#define USB_LP_IRQHandler       Vector90    /**< USB Low Priority, CAN1 RX0.*/
 #define CAN1_RX1_IRQHandler     Vector94    /**< CAN1 RX1.                  */
 #define CAN1_SCE_IRQHandler     Vector98    /**< CAN1 SCE.                  */
 #define EXTI9_5_IRQHandler      Vector9C    /**< EXTI Line 9..5.            */
@@ -341,8 +343,8 @@
 #endif
 
 /* AHB frequency check.*/
-#if STM32_HPRE > 72000000
-#error "STM32_HPRE exceeding maximum frequency (72MHz)"
+#if STM32_HCLK > 72000000
+#error "STM32_HCLK exceeding maximum frequency (72MHz)"
 #endif
 
 /**
