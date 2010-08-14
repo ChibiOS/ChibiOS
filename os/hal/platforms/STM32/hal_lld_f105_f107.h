@@ -315,7 +315,7 @@
  */
 #if ((STM32_PLL2MUL_VALUE >= 8) && (STM32_PLL2MUL_VALUE <= 14)) ||          \
     defined(__DOXYGEN__)
-#define STM32_PLL2MUL               ((STM32_PLLMUL_VALUE - 2) << 8)
+#define STM32_PLL2MUL               ((STM32_PLL2MUL_VALUE - 2) << 8)
 #elif (STM32_PLL2MUL_VALUE == 16)
 #define STM32_PLL2MUL               (14 << 8)
 #elif (STM32_PLL2MUL_VALUE == 20)
