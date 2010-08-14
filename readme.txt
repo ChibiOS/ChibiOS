@@ -62,6 +62,7 @@
 *****************************************************************************
 
 *** 2.1.2 ***
+- FIX: Fixed wrong check on STM32_HCLK (bug 3044758)(backported to 2.0.3).
 - FIX: Fixed wrong condition check in STM32 PWM driver (bug 3041414)
   (backported in 2.0.3).
 - FIX: Corrupted IRQ stack in Cortex-Mx port (bug 3041117)(backported to

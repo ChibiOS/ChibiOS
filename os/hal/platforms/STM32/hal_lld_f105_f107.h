@@ -429,8 +429,8 @@
 #endif
 
 /* AHB frequency check.*/
-#if STM32_HPRE > 72000000
-#error "STM32_HPRE exceeding maximum frequency (72MHz)"
+#if STM32_HCLK > 72000000
+#error "STM32_HCLK exceeding maximum frequency (72MHz)"
 #endif
 
 /**
