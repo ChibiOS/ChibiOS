@@ -126,6 +126,9 @@ typedef void (*adccallback_t)(adcsample_t *buffer, size_t n);
  * @brief   Conversion group configuration structure.
  * @details This implementation-dependent structure describes a conversion
  *          operation.
+ * @note    The use of this configuration structure requires knowledge of
+ *          STM32 ADC cell registers interface, please refer to the STM32
+ *          reference manual for details.
  */
 typedef struct {
   /**
