@@ -52,6 +52,34 @@
 typedef uint32_t uartflags_t;
 
 /**
+ * @brief   Structure representing an UART driver.
+ */
+typedef struct _UARTDriver UARTDriver;
+
+/**
+ * @brief   Generic UART notification callback type.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ */
+typedef void (*uartcb_t)(UARTDriver *uartp);
+
+/**
+ * @brief   Character received UART notification callback type.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ * @param[in] c         received character
+ */
+typedef void (*uartccb_t)(UARTDriver *uartp, uint16_t c);
+
+/**
+ * @brief   Receive error UART notification callback type.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ * @param[in] e         receive error mask
+ */
+typedef void (*uartecb_t)(UARTDriver *uartp, uartflags_t e);
+
+/**
  * @brief   Driver configuration structure.
  * @note    It could be empty on some architectures.
  */
@@ -72,7 +100,7 @@ typedef struct {
 /**
  * @brief   Structure representing an UART driver.
  */
-typedef struct {
+struct _UARTDriver {
   /**
    * @brief Driver state.
    */
@@ -90,7 +118,7 @@ typedef struct {
    */
   const UARTConfig          *ud_config;
   /* End of the mandatory fields.*/
-} UARTDriver;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

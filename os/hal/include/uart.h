@@ -83,8 +83,7 @@ typedef enum {
 typedef enum {
   UART_RX_IDLE = 0,                 /**< @brief Not receiving.              */
   UART_RX_ACTIVE = 1,               /**< @brief Receiving.                  */
-  UART_RX_ERROR = 2,                /**< @brief Receive error.              */
-  UART_RX_COMPLETE = 3              /**< @brief Buffer complete.            */
+  UART_RX_COMPLETE = 2              /**< @brief Buffer complete.            */
 } uartrxstate_t;
 
 #include "uart_lld.h"

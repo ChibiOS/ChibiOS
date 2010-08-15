@@ -168,7 +168,7 @@ static void serve_rx_end_irq(UARTDriver *uartp) {
 
   uartp->ud_rxstate = UART_RX_COMPLETE;
   if (uartp->ud_config->uc_rxend != NULL)
-    uartp->ud_config->uc_rxend();
+    uartp->ud_config->uc_rxend(uartp);
   /* If the callback didn't explicitly change state then the receiver
      automatically returns to the idle state.*/
   if (uartp->ud_rxstate == UART_RX_COMPLETE) {
@@ -187,7 +187,7 @@ static void serve_tx_end_irq(UARTDriver *uartp) {
   /* A callback is generated, if enabled, after a completed transfer.*/
   uartp->ud_txstate = UART_TX_COMPLETE;
   if (uartp->ud_config->uc_txend1 != NULL)
-    uartp->ud_config->uc_txend1();
+    uartp->ud_config->uc_txend1(uartp);
   /* If the callback didn't explicitly change state then the transmitter
      automatically returns to the idle state.*/
   if (uartp->ud_txstate == UART_TX_COMPLETE)
@@ -207,33 +207,14 @@ static void serve_usart_irq(UARTDriver *uartp) {
   if (sr & (USART_SR_LBD | USART_SR_ORE | USART_SR_NE |
             USART_SR_FE  | USART_SR_PE)) {
     u->SR = ~USART_SR_LBD;
-    if (uartp->ud_rxstate == UART_RX_IDLE) {
-      /* Receiver in idle state, a callback is generated, if enabled, for each
-         receive error and then the driver stays in the same state.*/
-      if (uartp->ud_config->uc_rxerr != NULL)
-        uartp->ud_config->uc_rxerr(translate_errors(sr));
-    }
-    else {
-      /* Receiver in active state, a callback is generated and the receive
-         operation aborts.*/
-      dmaDisableChannel(uartp->ud_dmap, uartp->ud_dmarx);
-      dmaClearChannel(uartp->ud_dmap, uartp->ud_dmarx);
-      uartp->ud_rxstate = UART_RX_ERROR;
-      if (uartp->ud_config->uc_rxerr != NULL)
-        uartp->ud_config->uc_rxerr(translate_errors(sr));
-      /* If the callback didn't explicitly change state then the receiver
-         automatically returns to the idle state.*/
-      if (uartp->ud_rxstate == UART_RX_ERROR) {
-        uartp->ud_rxstate = UART_RX_IDLE;
-        set_rx_idle_loop(uartp);
-      }
-    }
+    if (uartp->ud_config->uc_rxerr != NULL)
+      uartp->ud_config->uc_rxerr(uartp, translate_errors(sr));
   }
   if (sr & USART_SR_TC) {
     u->SR = ~USART_SR_TC;
     /* End of transmission, a callback is generated.*/
     if (uartp->ud_config->uc_txend2 != NULL)
-      uartp->ud_config->uc_txend2();
+      uartp->ud_config->uc_txend2(uartp);
   }
 }
 
@@ -322,7 +303,7 @@ CH_IRQ_HANDLER(DMA1_Ch6_IRQHandler) {
     /* Receiver in idle state, a callback is generated, if enabled, for each
        received character and then the driver stays in the same state.*/
     if (uartp->ud_config->uc_rxchar != NULL)
-      uartp->ud_config->uc_rxchar(uartp->ud_rxbuf);
+      uartp->ud_config->uc_rxchar(uartp, uartp->ud_rxbuf);
   }
   else {
     /* Receiver in active state, a callback is generated, if enabled, after

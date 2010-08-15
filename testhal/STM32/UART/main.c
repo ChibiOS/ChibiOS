@@ -40,16 +40,18 @@ static void ledoff(void *p) {
  * This callback is invoked when a transmission buffer has been completely
  * read by the driver.
  */
-static void txend1(void) {
+static void txend1(UARTDriver *uartp) {
 
+  (void)uartp;
   palClearPad(IOPORT3, GPIOC_LED);
 }
 
 /*
  * This callback is invoked when a transmission has phisically completed.
  */
-static void txend2(void) {
+static void txend2(UARTDriver *uartp) {
 
+  (void)uartp;
   palSetPad(IOPORT3, GPIOC_LED);
   chSysLockFromIsr();
   if (chVTIsArmedI(&vt1))
@@ -62,8 +64,9 @@ static void txend2(void) {
  * This callback is invoked on a receive error, the errors mask is passed
  * as parameter.
  */
-static void rxerr(uartflags_t e) {
+static void rxerr(UARTDriver *uartp, uartflags_t e) {
 
+  (void)uartp;
   (void)e;
 }
 
@@ -71,8 +74,9 @@ static void rxerr(uartflags_t e) {
  * This callback is invoked when a character is received but the application
  * was not ready to receive it, the character is passed as parameter.
  */
-static void rxchar(uint16_t c) {
+static void rxchar(UARTDriver *uartp, uint16_t c) {
 
+  (void)uartp;
   (void)c;
   /* Flashing the LED each time a character is received.*/
   palClearPad(IOPORT3, GPIOC_LED);
@@ -86,8 +90,9 @@ static void rxchar(uint16_t c) {
 /*
  * This callback is invoked when a receive buffer has been completely written.
  */
-static void rxend(void) {
+static void rxend(UARTDriver *uartp) {
 
+  (void)uartp;
 }
 
 /*

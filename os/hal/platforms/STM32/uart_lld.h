@@ -166,23 +166,32 @@
 typedef uint32_t uartflags_t;
 
 /**
- * @brief   Generic UART notification callback type.
+ * @brief   Structure representing an UART driver.
  */
-typedef void (*uartcb_t)(void);
+typedef struct _UARTDriver UARTDriver;
+
+/**
+ * @brief   Generic UART notification callback type.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ */
+typedef void (*uartcb_t)(UARTDriver *uartp);
 
 /**
  * @brief   Character received UART notification callback type.
  *
+ * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in] c         received character
  */
-typedef void (*uartccb_t)(uint16_t c);
+typedef void (*uartccb_t)(UARTDriver *uartp, uint16_t c);
 
 /**
  * @brief   Receive error UART notification callback type.
  *
+ * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in] e         receive error mask
  */
-typedef void (*uartecb_t)(uartflags_t e);
+typedef void (*uartecb_t)(UARTDriver *uartp, uartflags_t e);
 
 /**
  * @brief   Driver configuration structure.
@@ -213,7 +222,7 @@ typedef struct {
 /**
  * @brief   Structure representing an UART driver.
  */
-typedef struct {
+struct _UARTDriver {
   /** @brief Driver state.*/
   uartstate_t               ud_state;
   /** @brief Current configuration data.*/
@@ -237,7 +246,7 @@ typedef struct {
   uint8_t                   ud_dmatx;
   /** @brief Default receive buffer while into @p UART_RX_IDLE state.*/
   volatile uint16_t         ud_rxbuf;
-} UARTDriver;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

@@ -87,6 +87,12 @@
   change).
 - OPT: Speed optimizations of the STM32 SPI driver, improved latency.
 - OPT: Speed optimizations of the STM32 ADC driver.
+- CHANGE: Added a parameter to the UART driver callbacks, the pointer to the
+  driver itself.
+- CHANGE: In the UART driver now an error does not automatically brings the
+  receiver in UART_RX_IDLE state, the receive operation continues unless
+  explicitly stopped in the error callback handler. This considerably
+  simplifies the low level driver code.
 - CHANGE: Modified the STM32 ADC driver to use the new DMA infrastructure.
 - CHANGE: Modified the STM32 SPI driver to use the new DMA infrastructure.
 - CHANGE: Added DMA cleanup code to the STM32 dmaInit() function.
