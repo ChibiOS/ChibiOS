@@ -60,6 +60,9 @@ void halInit(void) {
 #if CH_HAL_USE_CAN
   canInit();
 #endif
+#if CH_HAL_USE_I2C
+  i2cInit();
+#endif
 #if CH_HAL_USE_MAC
   macInit();
 #endif

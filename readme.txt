@@ -71,6 +71,7 @@
   2.0.3).
 - FIX: Fixed a documentation error regarding the ADC driver function
   adcStartConversion() (bug 3039890)(backported to 2.0.3).
+- NEW: New I2C device driver model (no implementations yet).
 - NEW: Added to the UART driver the capability to return the number of
   not yet transferred frames when stopping an operation.
 - NEW: Added more compile-time checks to the various STM32 device drivers.
