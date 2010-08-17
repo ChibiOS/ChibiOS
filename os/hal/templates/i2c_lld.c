@@ -81,10 +81,13 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 
 /**
  * @brief   Initiates a master bus transaction.
+ * @details This function sends a start bit followed by an one or two bytes
+ *          header.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[in] header    transaction header
  */
-void i2c_lld_master_start(I2CDriver *i2cp) {
+void i2c_lld_master_start(I2CDriver *i2cp, uint16_t header) {
 
 }
 
@@ -94,6 +97,16 @@ void i2c_lld_master_start(I2CDriver *i2cp) {
  * @param[in] i2cp      pointer to the @p I2CDriver object
  */
 void i2c_lld_master_stop(I2CDriver *i2cp) {
+
+}
+
+/**
+ * @brief   Sends a restart bit.
+ * @details Restart bits are required by some types of I2C transactions.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ */
+void i2c_lld_master_restart(I2CDriver *i2cp) {
 
 }
 

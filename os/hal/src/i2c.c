@@ -105,18 +105,23 @@ void i2cStop(I2CDriver *i2cp) {
 
 /**
  * @brief   Initiates a master bus transaction.
+ * @details This function sends a start bit followed by an one or two bytes
+ *          header.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[in] header    transaction header
  * @param[in] callback  operation complete callback
  */
-void i2cMasterStartI(I2CDriver *i2cp, i2ccallback_t callback) {
+void i2cMasterStartI(I2CDriver *i2cp,
+                     uint16_t header,
+                     i2ccallback_t callback) {
 
   chDbgCheck((i2cp != NULL) && (callback != NULL), "i2cMasterStartI");
-  chDbgAssert((i2cp->i2c_state == I2C_READY) || (i2cp->i2c_state == I2C_MREADY),
+  chDbgAssert(i2cp->i2c_state == I2C_READY,
               "i2cMasterStartI(), #1", "invalid state");
 
   i2cp->id_callback = callback;
-  i2c_lld_master_start(i2cp);
+  i2c_lld_master_start(i2cp, header);
 }
 
 /**
@@ -133,6 +138,24 @@ void i2cMasterStopI(I2CDriver *i2cp, i2ccallback_t callback) {
 
   i2cp->id_callback = callback;
   i2c_lld_master_stop(i2cp);
+}
+
+
+/**
+ * @brief   Sends a restart bit.
+ * @details Restart bits are required by some types of I2C transactions.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[in] callback  operation complete callback
+ */
+void i2cMasterRestartI(I2CDriver *i2cp, i2ccallback_t callback) {
+
+  chDbgCheck((i2cp != NULL) && (callback != NULL), "i2cMasterRestartI");
+  chDbgAssert(i2cp->i2c_state == I2C_MREADY,
+              "i2cMasterRestartI(), #1", "invalid state");
+
+  i2cp->id_callback = callback;
+  i2c_lld_master_restart(i2cp);
 }
 
 /**

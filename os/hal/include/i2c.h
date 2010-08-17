@@ -60,9 +60,10 @@ typedef enum {
   I2C_UNINIT = 0,                   /**< @brief Not initialized.            */
   I2C_STOP = 1,                     /**< @brief Stopped.                    */
   I2C_READY = 2,                    /**< @brief Ready.                      */
-  I2C_MREADY = 3,                   /**< @brief START sent.                 */
+  I2C_MREADY = 3,                   /**< @brief START and address sent.     */
   I2C_MTRANSMIT = 4,                /**< @brief Master transmitting.        */
   I2C_MRECEIVE = 5,                 /**< @brief Master receiving.           */
+  I2C_MERROR = 6                    /**< @brief Error condition.            */
 } i2cstate_t;
 
 #include "i2c_lld.h"
@@ -70,6 +71,43 @@ typedef enum {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Read mode.
+ */
+#define I2C_READ                            1
+
+/**
+ * @brief   Write mode.
+ */
+#define I2C_WRITE                           0
+
+/**
+ * @brief   Seven bits addresses header builder.
+ *
+ * @param[in] addr      seven bits address value
+ * @param[in] rw        read/write flag
+ *
+ * @return              A 16 bit value representing the header, the most
+ *                      significant byte is always zero.
+ */
+#define I2C_ADDR7(addr, rw) (uint16_t)((addr) << 1 | (rw))
+
+
+/**
+ * @brief   Ten bits addresses header builder.
+ *
+ * @param[in] addr      ten bits address value
+ * @param[in] rw        read/write flag
+ *
+ * @return              A 16 bit value representing the header, the most
+ *                      significant byte is the first one to be transmitted.
+ */
+#define I2C_ADDR10(addr, rw)                                                \
+    (uint16_t)(0xF000 |                                                     \
+               (((addr) & 0x0300) << 1) |                                   \
+               (((rw) << 8)) |                                              \
+               ((addr) & 0x00FF))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -82,8 +120,11 @@ extern "C" {
   void i2cObjectInit(I2CDriver *i2cp);
   void i2cStart(I2CDriver *i2cp, const I2CConfig *config);
   void i2cStop(I2CDriver *i2cp);
-  void i2cMasterStartI(I2CDriver *i2cp, i2ccallback_t callback);
+  void i2cMasterStartI(I2CDriver *i2cp,
+                       uint16_t header,
+                       i2ccallback_t callback);
   void i2cMasterStopI(I2CDriver *i2cp, i2ccallback_t callback);
+  void i2cMasterRestartI(I2CDriver *i2cp, i2ccallback_t callback);
   void i2cMasterTransmitI(I2CDriver *i2cp, size_t n, const uint8_t *txbuf,
                           i2ccallback_t callback);
   void i2cMasterReceiveI(I2CDriver *i2cp, size_t n, uint8_t *rxbuf,

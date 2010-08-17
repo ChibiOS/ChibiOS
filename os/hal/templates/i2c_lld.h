@@ -91,8 +91,9 @@ extern "C" {
   void i2c_lld_init(void);
   void i2c_lld_start(I2CDriver *i2cp);
   void i2c_lld_stop(I2CDriver *i2cp);
-  void i2c_lld_master_start(I2CDriver *i2cp);
+  void i2c_lld_master_start(I2CDriver *i2cp, uint16_t header);
   void i2c_lld_master_stop(I2CDriver *i2cp);
+  void i2c_lld_master_restart(I2CDriver *i2cp);
   void i2c_lld_master_transmit(I2CDriver *i2cp, size_t n,
                                const uint8_t *txbuf);
   void i2c_lld_master_receive(I2CDriver *i2cp, size_t n, uint8_t *rxbuf);
