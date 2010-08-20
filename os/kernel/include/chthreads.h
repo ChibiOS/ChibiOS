@@ -251,6 +251,15 @@ extern "C" {
 #define chThdGetPriority() (currp->p_prio)
 
 /**
+ * @brief   Returns the number of ticks consumed by the specified thread.
+ * @note    This function is only available when the
+ *          @p CH_DBG_THREADS_PROFILING configuration option is enabled.
+ *
+ * @param[in] tp        the pointer to the thread
+ */
+#define chThdGetTicks(tp) ((tp)->p_time)
+
+/**
  * @brief   Returns the pointer to the @p Thread local storage area, if any.
  */
 #define chThdLS() (void *)(currp + 1)

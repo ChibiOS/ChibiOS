@@ -29,6 +29,16 @@
 #define _CHSYS_H_
 
 /**
+ * @brief   Returns a pointer to the idle thread.
+ * @note    The reference counter of the idle thread is not incremented but
+ *          it is not strictly required being the idle thread a static
+ *          object.
+ *
+ * @return              Pointer to the idle thread,
+ */
+#define chSysGetIdleThread() ((Thread *)_idle_thread_wa)
+
+/**
  * @brief   Halts the system.
  * @details This function is invoked by the operating system when an
  *          unrecoverable error is detected, as example because a programming
@@ -168,9 +178,12 @@
  */
 #define CH_FAST_IRQ_HANDLER(id) PORT_FAST_IRQ_HANDLER(id)
 
+extern WORKING_AREA(_idle_thread_wa, IDLE_THREAD_STACK_SIZE);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void _idle_thread(void *p);
   void chSysInit(void);
   void chSysTimerHandlerI(void);
 #if CH_USE_NESTED_LOCKS && !CH_OPTIMIZE_SPEED

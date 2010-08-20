@@ -71,6 +71,9 @@
   2.0.3).
 - FIX: Fixed a documentation error regarding the ADC driver function
   adcStartConversion() (bug 3039890)(backported to 2.0.3).
+- NEW: Added board files for the Olimex STM32-H103.
+- NEW: New kernel APIs chSysGetIdleThread() and chThdGetTicks(), the new
+  APIs are simple macros so there is no footprint overhead.
 - NEW: New I2C device driver model (no implementations yet).
 - NEW: Added to the UART driver the capability to return the number of
   not yet transferred frames when stopping an operation.

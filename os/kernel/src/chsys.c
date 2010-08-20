@@ -34,7 +34,7 @@
 
 #include "ch.h"
 
-static WORKING_AREA(idle_thread_wa, IDLE_THREAD_STACK_SIZE);
+WORKING_AREA(_idle_thread_wa, IDLE_THREAD_STACK_SIZE);
 
 /**
  * @brief   This function implements the idle thread infinite loop.
@@ -46,7 +46,7 @@ static WORKING_AREA(idle_thread_wa, IDLE_THREAD_STACK_SIZE);
  *
  * @param[in] p the thread parameter, unused in this scenario
  */
-static void idle_thread(void *p) {
+void _idle_thread(void *p) {
 
   (void)p;
   while (TRUE) {
@@ -87,8 +87,8 @@ void chSysInit(void) {
   /* This thread has the lowest priority in the system, its role is just to
      serve interrupts in its context while keeping the lowest energy saving
      mode compatible with the system status.*/
-  chThdCreateStatic(idle_thread_wa, sizeof(idle_thread_wa), IDLEPRIO,
-                    (tfunc_t)idle_thread, NULL);
+  chThdCreateStatic(idle_thread_wa, sizeof(_idle_thread_wa), IDLEPRIO,
+                    (tfunc_t)_idle_thread, NULL);
 }
 
 /**
