@@ -95,6 +95,15 @@ int main(int argc, char **argv) {
   (void)argv;
 
   /*
+   * SPI1 I/O pins setup.
+   */
+  palSetPadMode(IOPORT1, 5, PAL_MODE_STM32_ALTERNATE_PUSHPULL);     /* SCK. */
+  palSetPadMode(IOPORT1, 6, PAL_MODE_STM32_ALTERNATE_PUSHPULL);     /* MISO.*/
+  palSetPadMode(IOPORT1, 7, PAL_MODE_STM32_ALTERNATE_PUSHPULL);     /* MOSI.*/
+  palSetPadMode(IOPORT1, GPIOA_SPI1NSS, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetPad(IOPORT1, GPIOA_SPI1NSS);
+
+  /*
    * Prepare transmit pattern.
    */
   for (i = 0; i < sizeof(txbuf); i++)

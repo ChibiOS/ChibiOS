@@ -178,12 +178,9 @@
  */
 #define CH_FAST_IRQ_HANDLER(id) PORT_FAST_IRQ_HANDLER(id)
 
-extern WORKING_AREA(_idle_thread_wa, IDLE_THREAD_STACK_SIZE);
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _idle_thread(void *p);
   void chSysInit(void);
   void chSysTimerHandlerI(void);
 #if CH_USE_NESTED_LOCKS && !CH_OPTIMIZE_SPEED

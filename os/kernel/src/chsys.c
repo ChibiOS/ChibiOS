@@ -34,6 +34,10 @@
 
 #include "ch.h"
 
+/**
+ * @brief   Idle thread working area.
+ * @see     IDLE_THREAD_STACK_SIZE
+ */
 WORKING_AREA(_idle_thread_wa, IDLE_THREAD_STACK_SIZE);
 
 /**
@@ -87,7 +91,7 @@ void chSysInit(void) {
   /* This thread has the lowest priority in the system, its role is just to
      serve interrupts in its context while keeping the lowest energy saving
      mode compatible with the system status.*/
-  chThdCreateStatic(idle_thread_wa, sizeof(_idle_thread_wa), IDLEPRIO,
+  chThdCreateStatic(_idle_thread_wa, sizeof(_idle_thread_wa), IDLEPRIO,
                     (tfunc_t)_idle_thread, NULL);
 }
 

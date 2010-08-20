@@ -88,7 +88,20 @@
 #include "chqueues.h"
 #include "chstreams.h"
 #include "chioch.h"
+#include "chfiles.h"
 #include "chdebug.h"
+
+#if !defined(__DOXYGEN__)
+extern WORKING_AREA(_idle_thread_wa, IDLE_THREAD_STACK_SIZE);
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void _idle_thread(void *p);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _CH_H_ */
 
