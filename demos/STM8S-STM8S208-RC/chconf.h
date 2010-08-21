@@ -86,7 +86,7 @@
  * @note    Requires @p CH_USE_COREMEM.
  */
 #if !defined(CH_MEMCORE_SIZE) || defined(__DOXYGEN__)
-#define CH_MEMCORE_SIZE                 3072
+#define CH_MEMCORE_SIZE                 128
 #endif
 
 /*===========================================================================*/
@@ -191,7 +191,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(CH_USE_MUTEXES) || defined(__DOXYGEN__)
-#define CH_USE_MUTEXES                  FALSE
+#define CH_USE_MUTEXES                  TRUE
 #endif
 
 /**
@@ -203,7 +203,7 @@
  * @note    Requires @p CH_USE_MUTEXES.
  */
 #if !defined(CH_USE_CONDVARS) || defined(__DOXYGEN__)
-#define CH_USE_CONDVARS                 FALSE
+#define CH_USE_CONDVARS                 TRUE
 #endif
 
 /**
@@ -272,7 +272,7 @@
  * @note    Requires @p CH_USE_SEMAPHORES.
  */
 #if !defined(CH_USE_MAILBOXES) || defined(__DOXYGEN__)
-#define CH_USE_MAILBOXES                FALSE
+#define CH_USE_MAILBOXES                TRUE
 #endif
 
 /**
@@ -434,8 +434,8 @@
  * @brief   Threads descriptor structure hook.
  * @details User fields added to the end of the @p Thread structure.
  */
-#if !defined(THREAD_EXT_FIELDS) || defined(__DOXYGEN__)
-#define THREAD_EXT_FIELDS                                               \
+#if !defined(THREAD_EXT_FIELDS_HOOK) || defined(__DOXYGEN__)
+#define THREAD_EXT_FIELDS_HOOK                                              \
   /* Add threads custom fields here.*/
 #endif
 
@@ -446,9 +446,9 @@
  * @note    It is invoked from within @p chThdInit() and implicitily from all
  *          the threads creation APIs.
  */
-#if !defined(THREAD_EXT_INIT) || defined(__DOXYGEN__)
-#define THREAD_EXT_INIT(tp) {                                           \
-  /* Add threads initialization code here.*/                            \
+#if !defined(THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)
+#define THREAD_EXT_INIT_HOOK(tp) {                                          \
+  /* Add threads initialization code here.*/                                \
 }
 #endif
 
@@ -460,9 +460,9 @@
  * @note    It is also invoked when the threads simply return in order to
  *          terminate.
  */
-#if !defined(THREAD_EXT_EXIT) || defined(__DOXYGEN__)
-#define THREAD_EXT_EXIT(tp) {                                           \
-  /* Add threads finalization code here.*/                              \
+#if !defined(THREAD_EXT_EXIT_HOOK) || defined(__DOXYGEN__)
+#define THREAD_EXT_EXIT_HOOK(tp) {                                          \
+  /* Add threads finalization code here.*/                                  \
 }
 #endif
 
@@ -471,8 +471,30 @@
  * @details This hook is continuously invoked by the idle thread loop.
  */
 #if !defined(IDLE_LOOP_HOOK) || defined(__DOXYGEN__)
-#define IDLE_LOOP_HOOK() {                                              \
-  /* Idle loop code here.*/                                             \
+#define IDLE_LOOP_HOOK() {                                                  \
+  /* Idle loop code here.*/                                                 \
+}
+#endif
+
+/**
+ * @brief   System tick event hook.
+ * @details This hook is invoked in the system tick handler immediately
+ *          after processing the virtual timers queue.
+ */
+#if !defined(SYSTEM_TICK_EVENT_HOOK) || defined(__DOXYGEN__)
+#define SYSTEM_TICK_EVENT_HOOK() {                                          \
+  /* System tick event code here.*/                                         \
+}
+#endif
+
+/**
+ * @brief   System halt hook.
+ * @details This hook is invoked in case to a system halting error before
+ *          the system is halted.
+ */
+#if !defined(SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
+#define SYSTEM_HALT_HOOK() {                                                \
+  /* System halt code here.*/                                               \
 }
 #endif
 

@@ -160,8 +160,10 @@ struct Thread {
    */
   void                  *p_mpool;
 #endif
+#if defined(THREAD_EXT_FIELDS_HOOK)
   /* Extra fields defined in chconf.h.*/
-  THREAD_EXT_FIELDS
+  THREAD_EXT_FIELDS_HOOK
+#endif
 };
 
 /** @brief Thread state: Ready to run, waiting on the ready list.*/

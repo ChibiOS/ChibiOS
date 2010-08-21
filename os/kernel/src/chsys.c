@@ -117,6 +117,9 @@ void chSysTimerHandlerI(void) {
   currp->p_time++;
 #endif
   chVTDoTickI();
+#if defined(SYSTEM_TICK_EVENT_HOOK)
+  SYSTEM_TICK_EVENT_HOOK();
+#endif
 }
 
 #if CH_USE_NESTED_LOCKS && !CH_OPTIMIZE_SPEED

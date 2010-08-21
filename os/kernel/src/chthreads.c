@@ -94,7 +94,9 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
 #if CH_USE_EVENTS
   tp->p_epending = 0;
 #endif
-  THREAD_EXT_INIT(tp);
+#if defined(THREAD_EXT_EXIT_HOOK)
+  THREAD_EXT_INIT_HOOK(tp);
+#endif
   return tp;
 }
 
@@ -357,7 +359,9 @@ void chThdExit(msg_t msg) {
 
   chSysLock();
   tp->p_u.exitcode = msg;
-  THREAD_EXT_EXIT(tp);
+#if defined(THREAD_EXT_EXIT_HOOK)
+  THREAD_EXT_EXIT_HOOK(tp);
+#endif
 #if CH_USE_WAITEXIT
   while (notempty(&tp->p_waiting))
     chSchReadyI(list_remove(&tp->p_waiting));

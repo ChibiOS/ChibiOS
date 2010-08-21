@@ -71,6 +71,7 @@
   2.0.3).
 - FIX: Fixed a documentation error regarding the ADC driver function
   adcStartConversion() (bug 3039890)(backported to 2.0.3).
+- NEW: New kernel hooks: SYSTEM_TICK_EVENT_HOOK(), SYSTEM_HALT_HOOK().
 - NEW: Added board files for the Olimex STM32-H103.
 - NEW: New kernel APIs chSysGetIdleThread() and chThdGetTicks(), the new
   APIs are simple macros so there is no footprint overhead.
@@ -102,10 +103,14 @@
 - CHANGE: Added DMA cleanup code to the STM32 dmaInit() function.
 - CHANGE: Simplified preprocessor conditions in the STM32 serial driver.
 - CHANGE: Renamed most of the STM32 HAL settings macro names in order to
-          make names more consistent.
-          NOTE: ****** Make sure to use a mcuconf.h file taken from ******
-                ****** this version in your project.                ******
-
+  make names more consistent.
+      NOTE: ****** Make sure to use a mcuconf.h file taken from ******
+            ****** this version in your project.                ******
+- CHANGE: Renamed the existing system hooks by adding the _HOOK suffix to
+  the name in order to make names more consistent.
+      NOTE: ****** Make sure to use a chconf.h file taken from  ******
+            ****** this version in your project.                ******
+ 
 *** 2.1.1 ***
 - FIX: Fixed insufficient stack size for idle thread (bug 3033624)(backported
   to 2.0.3).

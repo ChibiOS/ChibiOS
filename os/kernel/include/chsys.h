@@ -45,7 +45,14 @@
  *          error in the application code that triggers an assertion while
  *          in debug mode.
  */
+#if !defined(SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
 #define chSysHalt() port_halt()
+#else
+#define chSysHalt() {                                                       \
+  SYSTEM_HALT_HOOK();                                                       \
+  port_halt();                                                              \
+}
+#endif
 
 /**
  * @brief   Performs a context switch.
