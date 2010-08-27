@@ -90,6 +90,8 @@
 - NEW: Added a generic BaseFileStream interface for future File System
   implementations or integrations (untested and not sure if it will stay or
   change).
+- NEW: Added to the documentation more notes about interrupt handlers in
+  the ARM7 port.
 - OPT: Speed optimizations of the STM32 SPI driver, improved latency.
 - OPT: Speed optimizations of the STM32 ADC driver.
 - CHANGE: Added a parameter to the UART driver callbacks, the pointer to the
