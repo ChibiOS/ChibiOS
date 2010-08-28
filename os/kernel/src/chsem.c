@@ -115,6 +115,11 @@ void chSemResetI(Semaphore *sp, cnt_t n) {
 
   chDbgCheck((sp != NULL) && (n >= 0), "chSemResetI");
 
+  chDbgAssert(((sp->s_cnt >= 0) && isempty(&sp->s_queue)) ||
+              ((sp->s_cnt < 0) && notempty(&sp->s_queue)),
+              "chSemResetI(), #1",
+              "inconsistent semaphore");
+
   cnt = sp->s_cnt;
   sp->s_cnt = n;
   while (++cnt <= 0)
@@ -147,6 +152,11 @@ msg_t chSemWait(Semaphore *sp) {
 msg_t chSemWaitS(Semaphore *sp) {
 
   chDbgCheck(sp != NULL, "chSemWaitS");
+
+  chDbgAssert(((sp->s_cnt >= 0) && isempty(&sp->s_queue)) ||
+              ((sp->s_cnt < 0) && notempty(&sp->s_queue)),
+              "chSemWaitS(), #1",
+              "inconsistent semaphore");
 
   if (--sp->s_cnt < 0) {
     currp->p_u.wtobjp = sp;
@@ -198,6 +208,11 @@ msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
 
   chDbgCheck(sp != NULL, "chSemWaitTimeoutS");
 
+  chDbgAssert(((sp->s_cnt >= 0) && isempty(&sp->s_queue)) ||
+              ((sp->s_cnt < 0) && notempty(&sp->s_queue)),
+              "chSemWaitTimeoutS(), #1",
+              "inconsistent semaphore");
+
   if (--sp->s_cnt < 0) {
     if (TIME_IMMEDIATE == time) {
       sp->s_cnt++;
@@ -219,6 +234,11 @@ void chSemSignal(Semaphore *sp) {
 
   chDbgCheck(sp != NULL, "chSemSignal");
 
+  chDbgAssert(((sp->s_cnt >= 0) && isempty(&sp->s_queue)) ||
+              ((sp->s_cnt < 0) && notempty(&sp->s_queue)),
+              "chSemSignal(), #1",
+              "inconsistent semaphore");
+
   chSysLock();
   if (++sp->s_cnt <= 0)
     chSchWakeupS(fifo_remove(&sp->s_queue), RDY_OK);
@@ -234,6 +254,11 @@ void chSemSignal(Semaphore *sp) {
 void chSemSignalI(Semaphore *sp) {
 
   chDbgCheck(sp != NULL, "chSemSignalI");
+
+  chDbgAssert(((sp->s_cnt >= 0) && isempty(&sp->s_queue)) ||
+              ((sp->s_cnt < 0) && notempty(&sp->s_queue)),
+              "chSemSignalI(), #1",
+              "inconsistent semaphore");
 
   if (++sp->s_cnt <= 0) {
     /* note, it is done this way in order to allow a tail call on
@@ -259,6 +284,16 @@ msg_t chSemSignalWait(Semaphore *sps, Semaphore *spw) {
   msg_t msg;
 
   chDbgCheck((sps != NULL) && (spw != NULL), "chSemSignalWait");
+
+  chDbgAssert(((sps->s_cnt >= 0) && isempty(&sps->s_queue)) ||
+              ((sps->s_cnt < 0) && notempty(&sps->s_queue)),
+              "chSemSignalWait(), #1",
+              "inconsistent semaphore");
+
+  chDbgAssert(((spw->s_cnt >= 0) && isempty(&spw->s_queue)) ||
+              ((spw->s_cnt < 0) && notempty(&spw->s_queue)),
+              "chSemSignalWait(), #2",
+              "inconsistent semaphore");
 
   chSysLock();
   if (++sps->s_cnt <= 0)
