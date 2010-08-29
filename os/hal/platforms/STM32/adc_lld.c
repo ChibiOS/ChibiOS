@@ -159,7 +159,6 @@ void adc_lld_start(ADCDriver *adcp) {
       dmaEnable(DMA1_ID);   /* NOTE: Must be enabled before the IRQs.*/
       NVICEnableVector(DMA1_Channel1_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ADC_ADC1_IRQ_PRIORITY));
-//      DMA1_Channel1->CPAR = (uint32_t)&ADC1->DR;
       dmaChannelSetPeripheral(adcp->ad_dmachp, &ADC1->DR);
       RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
     }
@@ -237,7 +236,6 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 
   dmaChannelDisable(adcp->ad_dmachp);
-//  adcp->ad_dmap->channels[STM32_DMA_CHANNEL_1].CCR = 0;
   adcp->ad_adc->CR2 = 0;
 }
 
