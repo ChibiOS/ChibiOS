@@ -5,8 +5,8 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.0.2
-*** GCC Version:  4.5.0
+*** Kernel:       2.0.3
+*** GCC Version:  4.5.1
 *** Architecture: ARM
 *** Core Variant: ARM7TDMI
 *** Platform:     AT91SAM7x
@@ -95,7 +95,7 @@ Settings: MCK=48.054857, MC_FMR = AT91C_MC_FWS_1FWS (1 wait state)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 109405 msgs/S, 218810 ctxswc/S
+--- Score : 109404 msgs/S, 218808 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
