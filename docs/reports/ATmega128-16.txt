@@ -5,7 +5,7 @@ Settings: F_CPU=16000000
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.0.1
+*** Kernel:       2.0.3
 *** GCC Version:  4.3.0
 *** Architecture: AVR
 *** Core Variant: MegaAVR
@@ -86,15 +86,15 @@ Settings: F_CPU=16000000
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 31248 msgs/S, 62496 ctxswc/S
+--- Score : 31125 msgs/S, 62250 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 25058 msgs/S, 50116 ctxswc/S
+--- Score : 24979 msgs/S, 49958 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 25058 msgs/S, 50116 ctxswc/S
+--- Score : 24979 msgs/S, 49958 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)

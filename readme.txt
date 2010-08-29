@@ -59,6 +59,8 @@
 *****************************************************************************
 
 *** 2.0.3 ***
+- Tests reports regenerated using GCC 4.5.1, small performance improvements
+  in all benchmarks.
 - FIX: Fixed crash of the Posix simulator under Ubuntu 10.4 (bug 3055329).
 - FIX: Fixed incorrect PLL2 setting in STM32 HAL (bug 3044770).
 - FIX: Fixed wrong check on STM32_HCLK (bug 3044758).
