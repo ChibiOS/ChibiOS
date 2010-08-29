@@ -9,7 +9,7 @@ Lines executed:76.92% of 13
 ../../os/kernel/src/chdebug.c:creating `chdebug.c.gcov'
 
 File `../../os/kernel/src/chlists.c'
-Lines executed:100.00% of 29
+Lines executed:100.00% of 31
 ../../os/kernel/src/chlists.c:creating `chlists.c.gcov'
 
 File `../../os/kernel/src/chvt.c'
@@ -17,7 +17,7 @@ Lines executed:100.00% of 29
 ../../os/kernel/src/chvt.c:creating `chvt.c.gcov'
 
 File `../../os/kernel/src/chschd.c'
-Lines executed:100.00% of 65
+Lines executed:100.00% of 66
 ../../os/kernel/src/chschd.c:creating `chschd.c.gcov'
 
 File `../../os/kernel/src/chthreads.c'
