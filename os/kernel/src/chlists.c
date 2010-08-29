@@ -55,9 +55,9 @@ void prio_insert(Thread *tp, ThreadsQueue *tqp) {
     cp = cp->p_next;
     /* Not end of queue? and cp has equal or higher priority than tp?.*/
   } while ((cp != (Thread *)tqp) && (cp->p_prio >= tp->p_prio));
-  /* Insert before cp, point tp to next and prev in queue.*/
-  tp->p_prev = (tp->p_next = cp)->p_prev;
-  /* Make prev point to tp, and cp point back to tp.*/
+  /* Insertion on p_prev.*/
+  tp->p_next = cp;
+  tp->p_prev = cp->p_prev;
   tp->p_prev->p_next = cp->p_prev = tp;
 }
 
@@ -70,7 +70,8 @@ void prio_insert(Thread *tp, ThreadsQueue *tqp) {
  */
 void queue_insert(Thread *tp, ThreadsQueue *tqp) {
 
-  tp->p_prev = (tp->p_next = (Thread *)tqp)->p_prev;
+  tp->p_next = (Thread *)tqp;
+  tp->p_prev = tqp->p_prev;
   tp->p_prev->p_next = tqp->p_prev = tp;
 }
 

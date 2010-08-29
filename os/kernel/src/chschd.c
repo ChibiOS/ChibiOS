@@ -85,7 +85,8 @@ Thread *chSchReadyI(Thread *tp) {
     cp = cp->p_next;
   } while (cp->p_prio >= tp->p_prio);
   /* Insertion on p_prev.*/
-  tp->p_prev = (tp->p_next = cp)->p_prev;
+  tp->p_next = cp;
+  tp->p_prev = cp->p_prev;
   tp->p_prev->p_next = cp->p_prev = tp;
   return tp;
 }

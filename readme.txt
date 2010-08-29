@@ -59,6 +59,7 @@
 *****************************************************************************
 
 *** 2.0.3 ***
+- FIX: Fixed crash of the Posix simulator under Ubuntu 10.4 (bug 3055329).
 - FIX: Fixed incorrect PLL2 setting in STM32 HAL (bug 3044770).
 - FIX: Fixed wrong check on STM32_HCLK (bug 3044758).
 - FIX: Fixed wrong condition check in STM32 PWM driver (bug 3041414).
