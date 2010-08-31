@@ -83,7 +83,7 @@ ifneq ($(TSRC),)
   endif
 else
   # Pure ARM mode
-  CPFLAGS += -mno-thumb-interwork
+  CFLAGS += -mno-thumb-interwork
   CPPFLAGS += -mno-thumb-interwork
   ASFLAGS += -mno-thumb-interwork
   LDFLAGS += -mno-thumb-interwork
