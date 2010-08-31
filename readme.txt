@@ -62,6 +62,8 @@
 *****************************************************************************
 
 *** 2.1.2 ***
+- FIX: Fixed reduced ARM7 performance with GCC 4.5.x (bug 3056866)(backported
+  to 2.0.4).
 - FIX: Fixed crash of the Posix simulator under Ubuntu 10.4 (bug 3055329)
   (backported to 2.0.3).
 - FIX: Fixed incorrect PLL2 setting in STM32 HAL (bug 3044770)(backported
