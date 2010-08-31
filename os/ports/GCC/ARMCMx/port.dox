@@ -21,7 +21,7 @@
  * @defgroup ARMCMx ARM Cortex-Mx
  * @details ARM Cortex-Mx port for the GCC compiler.
  
- * @section ARMCMx_INTRO
+ * @section ARMCMx_INTRO Introduction
  * This port supports all the cores implementing the ARMv6-M and ARMv7-M
  * architectures.
  *
@@ -116,10 +116,7 @@
  * Usually there is no need to change the default values.
  * - @p INT_REQUIRED_STACK, this value represent the amount of stack space used
  *   by an interrupt handler between the @p extctx and @p intctx
- *   structures.<br>
- *   In the current implementation this value is guaranteed to be zero so
- *   there is no need to modify this value unless changes are done at the
- *   interrupts handling code.
+ *   structures.
  * - @p IDLE_THREAD_STACK_SIZE, stack area size to be assigned to the IDLE
  *   thread. Usually there is no need to change this value unless inserting
  *   code in the IDLE thread hook macro.
