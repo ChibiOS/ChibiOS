@@ -62,7 +62,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(USE_SAM7_DBGU_UART) || defined(__DOXYGEN__)
-#define USE_SAM7_DBGU_UART             TRUE
+#define USE_SAM7_DBGU_UART          TRUE
 #endif
 
 /**
