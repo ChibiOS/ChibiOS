@@ -59,6 +59,8 @@
 *****************************************************************************
 
 *** 2.0.4 ***
+- FIX: Fixed potential issue with GCC reorganizing instructions around "asm
+  volatile" statements (bug 3058731).
 - FIX: Fixed reduced ARM7 performance with GCC 4.5.x (bug 3056866).
 
 *** 2.0.3 ***

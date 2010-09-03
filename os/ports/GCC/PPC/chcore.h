@@ -270,12 +270,12 @@ struct context {
 /**
  * @details Implemented as global interrupt disable.
  */
-#define port_lock() asm ("wrteei  0")
+#define port_lock() asm volatile ("wrteei  0" : : : "memory")
 
 /**
  * @details Implemented as global interrupt enable.
  */
-#define port_unlock() asm ("wrteei  1")
+#define port_unlock() asm volatile("wrteei  1" : : : "memory")
 
 /**
  * @details Implemented as global interrupt disable.
@@ -290,18 +290,18 @@ struct context {
 /**
  * @details Implemented as global interrupt disable.
  */
-#define port_disable() asm ("wrteei  0")
+#define port_disable() asm volatile ("wrteei  0" : : : "memory")
 
 /**
  * @details Same as @p port_disable() in this port, there is no difference
  *          between the two states.
  */
-#define port_suspend() asm ("wrteei  0")
+#define port_suspend() asm volatile ("wrteei  0" : : : "memory")
 
 /**
  * @details Implemented as global interrupt enable.
  */
-#define port_enable() asm ("wrteei  1")
+#define port_enable() asm volatile ("wrteei  1" : : : "memory")
 
 /**
  * @details This port function is implemented as inlined code for performance
@@ -310,7 +310,7 @@ struct context {
 #if ENABLE_WFI_IDLE != 0
 #ifndef port_wait_for_interrupt
 #define port_wait_for_interrupt() {                                     \
-  asm ("wait");                                                         \
+  asm volatile ("wait" : : : "memory");                                                         \
 }
 #endif
 #else

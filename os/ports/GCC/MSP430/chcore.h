@@ -209,7 +209,7 @@ struct context {
  *          actions.
  * @note    Implemented as global interrupt disable.
  */
-#define port_lock() asm volatile ("dint")
+#define port_lock() asm volatile ("dint" : : : "memory")
 
 /**
  * @brief   Kernel-unlock action.
@@ -217,7 +217,7 @@ struct context {
  *          actions.
  * @note    Implemented as global interrupt enable.
  */
-#define port_unlock() asm volatile ("eint")
+#define port_unlock() asm volatile ("eint" : : : "memory")
 
 /**
  * @brief   Kernel-lock action from an interrupt handler.
@@ -242,7 +242,7 @@ struct context {
  * @note    Of course non maskable interrupt sources are not included.
  * @note    Implemented as global interrupt disable.
  */
-#define port_disable() asm volatile ("dint")
+#define port_disable() asm volatile ("dint" : : : "memory")
 
 /**
  * @brief   Disables the interrupt sources below kernel-level priority.
@@ -250,13 +250,13 @@ struct context {
  * @note    Same as @p port_disable() in this port, there is no difference
  *          between the two states.
  */
-#define port_suspend() asm volatile ("dint")
+#define port_suspend() asm volatile ("dint" : : : "memory")
 
 /**
  * @brief   Enables all the interrupt sources.
  * @note    Implemented as global interrupt enable.
  */
-#define port_enable() asm volatile ("eint")
+#define port_enable() asm volatile ("eint" : : : "memory")
 
 /**
  * @brief   Enters an architecture-dependent IRQ-waiting mode.
@@ -273,7 +273,7 @@ struct context {
 #if ENABLE_WFI_IDLE != 0
 #ifndef port_wait_for_interrupt
 #define port_wait_for_interrupt() {                                     \
-  asm volatile ("nop");                                                 \
+  asm volatile ("nop" : : : "memory");                                  \
 }
 #endif
 #else

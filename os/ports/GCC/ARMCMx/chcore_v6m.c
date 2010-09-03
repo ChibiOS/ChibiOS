@@ -77,8 +77,8 @@ void _port_switch_from_irq(void) {
                 "push    {r0, r1, lr}                           \n\t"
                 "ldr     r0, =_port_saved_pc                    \n\t"
                 "ldr     r0, [r0]                               \n\t"
-                "add 	 r0, r0, #1								\n\t"
-                "str     r0, [sp, #28]");
+                "add     r0, r0, #1                             \n\t"
+                "str     r0, [sp, #28]" : : : "memory");
 
   chSchDoRescheduleI();
 
@@ -92,7 +92,7 @@ void _port_switch_from_irq(void) {
                 "msr     APSR, r0                               \n\t"
                 "mov     lr, r2                                 \n\t"
                 "cpsie   i                                      \n\t"
-                "pop     {r0, r1, r2, r3, pc}");
+                "pop     {r0, r1, r2, r3, pc}" : : : "memory");
 }
 
 #define PUSH_CONTEXT(sp) {                                                  \
@@ -101,7 +101,7 @@ void _port_switch_from_irq(void) {
                 "mov     r5, r9                                 \n\t"       \
                 "mov     r6, r10                                \n\t"       \
                 "mov     r7, r11                                \n\t"       \
-                "push    {r4, r5, r6, r7}");                                \
+                "push    {r4, r5, r6, r7}" : : : "memory");                 \
 }
 
 #define POP_CONTEXT(sp) {                                                   \
@@ -110,7 +110,7 @@ void _port_switch_from_irq(void) {
                 "mov     r9, r5                                 \n\t"       \
                 "mov     r10, r6                                \n\t"       \
                 "mov     r11, r7                                \n\t"       \
-                "pop     {r4, r5, r6, r7, pc}" :  : "r" (sp));              \
+                "pop     {r4, r5, r6, r7, pc}" : : "r" (sp) : "memory");    \
 }
 
 /**

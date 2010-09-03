@@ -59,7 +59,7 @@ void port_switch(Thread *ntp, Thread *otp) {
                 "push    r7                                     \n\t" \
                 "push    r6                                     \n\t" \
                 "push    r5                                     \n\t" \
-                "push    r4");
+                "push    r4" : : : "memory");
   otp->p_ctx.sp = sp;
   sp = ntp->p_ctx.sp;
   asm volatile ("pop     r4                                     \n\t" \
@@ -70,7 +70,7 @@ void port_switch(Thread *ntp, Thread *otp) {
                 "pop     r9                                     \n\t" \
                 "pop     r10                                    \n\t" \
                 "pop     r11                                    \n\t" \
-                "ret" : : "r" (sp));
+                "ret" : : "r" (sp) : "memory");
 }
 
 /**

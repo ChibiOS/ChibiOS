@@ -190,14 +190,14 @@ struct intctx {
  * @details Usually this function just disables interrupts but may perform
  *          more actions.
  */
-#define port_lock() asm volatile ("cpsid   i")
+#define port_lock() asm volatile ("cpsid   i" : : : "memory")
 
 /**
  * @brief   Kernel-unlock action.
  * @details Usually this function just disables interrupts but may perform
  *          more actions.
  */
-#define port_unlock() asm volatile ("cpsie   i")
+#define port_unlock() asm volatile ("cpsie   i" : : : "memory")
 
 /**
  * @brief   Kernel-lock action from an interrupt handler.
@@ -220,17 +220,17 @@ struct intctx {
 /**
  * @brief   Disables all the interrupt sources.
  */
-#define port_disable() asm volatile ("cpsid   i")
+#define port_disable() asm volatile ("cpsid   i" : : : "memory")
 
 /**
  * @brief   Disables the interrupt sources below kernel-level priority.
  */
-#define port_suspend() asm volatile ("cpsid   i")
+#define port_suspend() asm volatile ("cpsid   i" : : : "memory")
 
 /**
  * @brief   Enables all the interrupt sources.
  */
-#define port_enable() asm volatile ("cpsie   i")
+#define port_enable() asm volatile ("cpsie   i" : : : "memory")
 
 /**
  * @brief   Enters an architecture-dependent IRQ-waiting mode.
@@ -241,7 +241,7 @@ struct intctx {
  * @note    Implemented as an inlined @p WFI instruction.
  */
 #if CORTEX_ENABLE_WFI_IDLE || defined(__DOXYGEN__)
-#define port_wait_for_interrupt() asm volatile ("wfi")
+#define port_wait_for_interrupt() asm volatile ("wfi" : : : "memory")
 #else
 #define port_wait_for_interrupt()
 #endif

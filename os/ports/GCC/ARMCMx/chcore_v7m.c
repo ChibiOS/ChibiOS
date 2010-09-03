@@ -39,34 +39,38 @@
  * @brief   Internal context stacking.
  */
 #define PUSH_CONTEXT() {                                                    \
-  asm volatile ("push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}");          \
+  asm volatile ("push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}"            \
+                : : : "memory");                                            \
 }
 
 /**
  * @brief   Internal context unstacking.
  */
 #define POP_CONTEXT() {                                                     \
-  asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}");          \
+  asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}"            \
+                : : : "memory");                                            \
 }
 #else /* defined(CH_CURRP_REGISTER_CACHE) */
 #define PUSH_CONTEXT() {                                                    \
-  asm volatile ("push    {r4, r5, r6, r8, r9, r10, r11, lr}");              \
+  asm volatile ("push    {r4, r5, r6, r8, r9, r10, r11, lr}"                \
+                : : : "memory");                                            \
 }
 
 #define POP_CONTEXT() {                                                     \
-  asm volatile ("pop     {r4, r5, r6, r8, r9, r10, r11, pc}");              \
+  asm volatile ("pop     {r4, r5, r6, r8, r9, r10, r11, pc}"                \
+                 : : : "memory");                                           \
 }
 #endif /* defined(CH_CURRP_REGISTER_CACHE) */
 
 #if !CH_OPTIMIZE_SPEED
 void _port_lock(void) {
   register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;
-  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp) : "memory");
 }
 
 void _port_unlock(void) {
   register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_DISABLED;
-  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp));
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp) : "memory");
 }
 #endif
 
@@ -96,9 +100,9 @@ void SVCallVector(void) {
 
   /* Discarding the current exception context and positioning the stack to
      point to the real one.*/
-  asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : );
+  asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : : "memory");
   ctxp++;
-  asm volatile ("msr     PSP, %0" :  : "r" (ctxp));
+  asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
   port_unlock_from_isr();
 }
 
@@ -113,9 +117,9 @@ void _port_irq_epilogue(void) {
 
     /* Adding an artificial exception return context, there is no need to
        populate it fully.*/
-    asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : );
+    asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : : "memory");
     ctxp--;
-    asm volatile ("msr     PSP, %0" :  : "r" (ctxp));
+    asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
     ctxp->pc = _port_switch_from_isr;
     ctxp->xpsr = (regarm_t)0x01000000;
     /* Note, returning without unlocking is intentional, this is done in

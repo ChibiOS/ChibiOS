@@ -196,11 +196,11 @@ struct context {
                 "stmfd   sp!, {r0-r3, r12, lr}          \n\t"               \
                 "add     r0, pc, #1                     \n\t"               \
                 "bx      r0                             \n\t"               \
-                ".code 16");                                                \
+                ".code 16" : : : "memory");                                 \
 }
 #else /* !THUMB */
 #define PORT_IRQ_PROLOGUE() {                                               \
-  asm volatile ("stmfd    sp!, {r0-r3, r12, lr}");                          \
+  asm volatile ("stmfd    sp!, {r0-r3, r12, lr}" : : : "memory");           \
 }
 #endif /* !THUMB */
 
@@ -214,11 +214,11 @@ struct context {
 #ifdef THUMB
 #define PORT_IRQ_EPILOGUE() {                                               \
   asm volatile ("ldr     r0, =_port_irq_common          \n\t"               \
-                "bx      r0");                                              \
+                "bx      r0" : : : "memory");                               \
 }
 #else /* !THUMB */
 #define PORT_IRQ_EPILOGUE() {                                               \
-  asm volatile ("b       _port_irq_common");                                \
+  asm volatile ("b       _port_irq_common" : : : "memory");                 \
 }
 #endif /* !THUMB */
 
@@ -252,10 +252,10 @@ struct context {
  */
 #ifdef THUMB
 #define port_lock() {                                                       \
-  asm volatile ("bl     _port_lock_thumb" : : : "r3", "lr");                \
+  asm volatile ("bl     _port_lock_thumb" : : : "r3", "lr", "memory"        \
 }
 #else /* !THUMB */
-#define port_lock() asm volatile ("msr     CPSR_c, #0x9F")
+#define port_lock() asm volatile ("msr     CPSR_c, #0x9F" : : : "memory")
 #endif /* !THUMB */
 
 /**
@@ -266,10 +266,10 @@ struct context {
  */
 #ifdef THUMB
 #define port_unlock() {                                                     \
-  asm volatile ("bl     _port_unlock_thumb" : : : "r3", "lr");              \
+  asm volatile ("bl     _port_unlock_thumb" : : : "r3", "lr", "memory");    \
 }
 #else /* !THUMB */
-#define port_unlock() asm volatile ("msr     CPSR_c, #0x1F")
+#define port_unlock() asm volatile ("msr     CPSR_c, #0x1F" : : : "memory")
 #endif /* !THUMB */
 
 /**
@@ -299,7 +299,7 @@ struct context {
  */
 #ifdef THUMB
 #define port_disable() {                                                    \
-  asm volatile ("bl     _port_disable_thumb" : : : "r3", "lr");             \
+  asm volatile ("bl     _port_disable_thumb" : : : "r3", "lr", "memory");   \
 }
 #else /* !THUMB */
 #define port_disable() {                                                    \
@@ -307,7 +307,7 @@ struct context {
                 "orr     r3, #0x80                      \n\t"               \
                 "msr     CPSR_c, r3                     \n\t"               \
                 "orr     r3, #0x40                      \n\t"               \
-                "msr     CPSR_c, r3" : : : "r3");                           \
+                "msr     CPSR_c, r3" : : : "r3", "memory");                 \
 }
 #endif /* !THUMB */
 
@@ -319,10 +319,10 @@ struct context {
  */
 #ifdef THUMB
 #define port_suspend() {                                                    \
-  asm volatile ("bl     _port_suspend_thumb" : : : "r3", "lr");             \
+  asm volatile ("bl     _port_suspend_thumb" : : : "r3", "lr", "memory");   \
 }
 #else /* !THUMB */
-#define port_suspend() asm volatile ("msr     CPSR_c, #0x9F")
+#define port_suspend() asm volatile ("msr     CPSR_c, #0x9F" : : : "memory")
 #endif /* !THUMB */
 
 /**
@@ -331,10 +331,10 @@ struct context {
  */
 #ifdef THUMB
 #define port_enable() {                                                     \
-  asm volatile ("bl     _port_enable_thumb" : : : "r3", "lr");              \
+  asm volatile ("bl     _port_enable_thumb" : : : "r3", "lr", "memory");    \
 }
 #else /* !THUMB */
-#define port_enable() asm volatile ("msr     CPSR_c, #0x1F")
+#define port_enable() asm volatile ("msr     CPSR_c, #0x1F" : : : "memory")
 #endif /* !THUMB */
 
 /**
