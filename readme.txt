@@ -77,7 +77,7 @@
   2.0.3).
 - FIX: Fixed a documentation error regarding the ADC driver function
   adcStartConversion() (bug 3039890)(backported to 2.0.3).
-- NEW: More assertions added to the semaphores subsystem.
+- NEW: More assertions added to the kernel.
 - NEW: New kernel hooks: SYSTEM_TICK_EVENT_HOOK(), SYSTEM_HALT_HOOK().
 - NEW: Added board files for the Olimex STM32-H103.
 - NEW: New kernel APIs chSysGetIdleThread() and chThdGetTicks(), the new

@@ -72,6 +72,12 @@ Thread *chSchReadyI(Thread *tp) {
 #endif
   Thread *cp;
 
+  /* Integrity check.*/
+  chDbgAssert((tp->p_state != THD_STATE_READY) &&
+              (tp->p_state != THD_STATE_FINAL),
+              "chSchReadyI(), #1",
+              "invalid state");
+
   tp->p_state = THD_STATE_READY;
   cp = (Thread *)&rlist.r_queue;
   do {
