@@ -252,7 +252,7 @@ struct context {
  */
 #ifdef THUMB
 #define port_lock() {                                                       \
-  asm volatile ("bl     _port_lock_thumb" : : : "r3", "lr", "memory"        \
+  asm volatile ("bl     _port_lock_thumb" : : : "r3", "lr", "memory");      \
 }
 #else /* !THUMB */
 #define port_lock() asm volatile ("msr     CPSR_c, #0x9F" : : : "memory")
