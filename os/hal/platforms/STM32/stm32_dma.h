@@ -129,7 +129,7 @@ typedef struct {
  * @brief   Associates a peripheral data register to a DMA channel.
  *
  * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
- * @param[in] cmar      value to be written in the CPAR register
+ * @param[in] cpar      value to be written in the CPAR register
  */
 #define dmaChannelSetPeripheral(dmachp, cpar) {                             \
   (dmachp)->CPAR  = (uint32_t)(cpar);                                       \
