@@ -99,7 +99,7 @@ typedef enum {
 /**
  * @brief   Structure representing a serial driver.
  */
-typedef struct _SerialDriver SerialDriver;
+typedef struct SerialDriver SerialDriver;
 
 #include "serial_lld.h"
 
@@ -123,7 +123,7 @@ struct SerialDriverVMT {
  * @details This class extends @p BaseAsynchronousChannel by adding physical
  *          I/O queues.
  */
-struct _SerialDriver {
+struct SerialDriver {
   /** @brief Virtual Methods Table.*/
   const struct SerialDriverVMT *vmt;
   _serial_driver_data

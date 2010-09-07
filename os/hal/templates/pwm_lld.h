@@ -63,6 +63,8 @@ typedef uint16_t pwmcnt_t;
 
 /**
  * @brief   Driver configuration structure.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  * @note    It could be empty on some architectures.
  */
 typedef struct {
@@ -71,6 +73,8 @@ typedef struct {
 
 /**
  * @brief   Structure representing an PWM driver.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  */
 typedef struct {
   /**

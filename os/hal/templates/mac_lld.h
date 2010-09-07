@@ -69,6 +69,8 @@
 
 /**
  * @brief   Structure representing a MAC driver.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  */
 typedef struct {
   Semaphore             md_tdsem;       /**< Transmit semaphore.        */
@@ -81,6 +83,8 @@ typedef struct {
 
 /**
  * @brief   Structure representing a transmit descriptor.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  */
 typedef struct {
   size_t                td_offset;      /**< Current write offset.      */
@@ -90,6 +94,8 @@ typedef struct {
 
 /**
  * @brief   Structure representing a receive descriptor.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  */
 typedef struct {
   size_t                rd_offset;      /**< Current read offset.       */

@@ -56,7 +56,8 @@ typedef void (*i2ccallback_t)(I2CDriver *i2cp, i2cstatus_t sts);
 
 /**
  * @brief   Driver configuration structure.
- * @note    It could be empty on some architectures.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  */
 typedef struct {
   /** @brief I2C bus bit rate.*/
@@ -66,6 +67,8 @@ typedef struct {
 
 /**
  * @brief   Structure representing an I2C driver.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  */
 typedef struct {
   /** @brief Driver state.*/

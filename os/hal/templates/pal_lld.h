@@ -44,18 +44,12 @@
  *          system startup time in order to initialized the digital I/O
  *          subsystem. This represents only the initial setup, specific pads
  *          or whole ports can be reprogrammed at later time.
- * @note    This structure content is architecture dependent. The nome should
- *          be changed to include the architecture name following this
- *          pattern:<br>
- *          - [ARCH][CELL]Config.
- *          .
- *          As example:<br>
- *          - MSP430DIOConfig.
- *          .
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  */
 typedef struct {
 
-} GenericConfig;
+} PALConfig;
 
 /**
  * @brief   Width, in bits, of an I/O port.

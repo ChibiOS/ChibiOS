@@ -55,9 +55,8 @@ typedef uint8_t sdflags_t;
  * @brief   Generic Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
- * @note    This structure content is architecture dependent, each driver
- *          implementation defines its own version and the custom static
- *          initializers.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  */
 typedef struct {
 

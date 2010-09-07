@@ -130,6 +130,8 @@ typedef struct {
 
 /**
  * @brief   CAN filter.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  * @note    It could not be present on some architectures.
  */
 typedef struct {
@@ -137,6 +139,8 @@ typedef struct {
 
 /**
  * @brief   Driver configuration structure.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  * @note    It could be empty on some architectures.
  */
 typedef struct {
@@ -144,6 +148,8 @@ typedef struct {
 
 /**
  * @brief   Structure representing an CAN driver.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  */
 typedef struct {
   /**

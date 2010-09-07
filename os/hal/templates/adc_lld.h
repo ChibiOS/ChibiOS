@@ -72,6 +72,8 @@ typedef void (*adccallback_t)(adcsample_t *buffer, size_t n);
  * @brief   Conversion group configuration structure.
  * @details This implementation-dependent structure describes a conversion
  *          operation.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  */
 typedef struct {
   /**
@@ -87,6 +89,8 @@ typedef struct {
 
 /**
  * @brief   Driver configuration structure.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  * @note    It could be empty on some architectures.
  */
 typedef struct {
@@ -95,6 +99,8 @@ typedef struct {
 
 /**
  * @brief   Structure representing an ADC driver.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  */
 typedef struct {
   /**

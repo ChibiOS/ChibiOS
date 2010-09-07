@@ -168,7 +168,7 @@ typedef uint32_t uartflags_t;
 /**
  * @brief   Structure representing an UART driver.
  */
-typedef struct _UARTDriver UARTDriver;
+typedef struct UARTDriver UARTDriver;
 
 /**
  * @brief   Generic UART notification callback type.
@@ -222,7 +222,7 @@ typedef struct {
 /**
  * @brief   Structure representing an UART driver.
  */
-struct _UARTDriver {
+struct UARTDriver {
   /** @brief Driver state.*/
   uartstate_t               ud_state;
   /** @brief Current configuration data.*/

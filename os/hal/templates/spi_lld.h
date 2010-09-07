@@ -48,13 +48,17 @@
 
 /**
  * @brief   Driver configuration structure.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  */
 typedef struct {
 
 } SPIConfig;
 
 /**
- * @brief   Structure representing a SPI driver.
+ * @brief   Structure representing an SPI driver.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
  */
 typedef struct {
   /**
