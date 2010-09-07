@@ -614,6 +614,7 @@ INPUT                  = ../docs/src \
                          ../os/hal/include \
                          ../os/hal/src \
                          ../os/hal/templates \
+                         ../os/hal/platforms \
                          ../os/hal/platforms/AT91SAM7 \
                          ../os/hal/platforms/AVR \
                          ../os/hal/platforms/LPC11xx \
