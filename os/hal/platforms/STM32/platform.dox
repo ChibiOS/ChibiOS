@@ -20,23 +20,29 @@
 /**
  * @defgroup STM32 STM32 Drivers
  * @brief STM32 specific support.
- * @details The STM32 support includes:
- * - I/O ports driver.
- * - Buffered, interrupt driven, serial driver.
- * - Interrupt driver CAN driver.
- * - DMA capable, high performance, ADC driver.
- * - DMA capable, high performance, SPI driver.
- * - PWM driver.
- * - A demo supporting the kernel test suite.
- * - A demo that demonstrate the FatFs use with the MMC driver.
- * .
+ *
  * @ingroup platforms
  */
 
 /**
  * @defgroup STM32_HAL STM32 HAL Support
  * @brief HAL support.
+ * @details The STM32 HAL support is responsible for system initialization.
  *
+ * @section stm32_hal_1 Supported HW resources
+ * - PLL1.
+ * - PLL2.
+ * - RCC.
+ * - Flash.
+ * .
+ * @section stm32_hal_2 STM32 HAL driver implementation features
+ * - PLLs startup and stabilization.
+ * - Clock tree initialization.
+ * - Clock source selection.
+ * - Flash wait states initialization based on the selected clock options.
+ * - SYSTICK initialization based on current clock and kernel required rate.
+ * - DMA support initialization.
+ * .
  * @ingroup STM32
  */
 
@@ -55,17 +61,30 @@
  */
 
 /**
- * @defgroup STM32_PAL STM32 I/O Ports Support
- * @brief I/O Ports peripherals support.
- * @details This module supports the STM3 GPIO controller. The controller
- * supports the following features (see @ref PAL):
+ * @defgroup STM32_PAL STM32 GPIO Support
+ * @brief GPIO peripherals support.
+ *
+ * @section stm32_pal_1 Supported HW resources
+ * - AFIO.
+ * - GPIOA.
+ * - GPIOB.
+ * - GPIOC.
+ * - GPIOD.
+ * - GPIOE.
+ * - GPIOF.
+ * - GPIOG.
+ * .
+ * @section stm32_pal_2 STM32 PAL driver implementation features
+ * The PAL driver implementation fully supports the following hardware
+ * capabilities:
  * - 16 bits wide ports.
  * - Atomic set/reset functions.
  * - Atomic set+reset function (atomic bus operations).
  * - Output latched regardless of the pad setting.
  * - Direct read of input pads regardless of the pad setting.
  * .
- * <h2>Supported Setup Modes</h2>
+ * @section stm32_pal_3 Supported PAL setup modes
+ * The STM32 PAL driver supports the following I/O modes:
  * - @p PAL_MODE_RESET.
  * - @p PAL_MODE_UNCONNECTED.
  * - @p PAL_MODE_INPUT.
@@ -74,11 +93,14 @@
  * - @p PAL_MODE_INPUT_ANALOG.
  * - @p PAL_MODE_OUTPUT_PUSHPULL.
  * - @p PAL_MODE_OUTPUT_OPENDRAIN.
+ * - @p PAL_MODE_STM32_ALTERNATE_PUSHPULL (non standard).
+ * - @p PAL_MODE_STM32_ALTERNATE_OPENDRAIN (non standard).
  * .
  * Any attempt to setup an invalid mode is ignored.
  *
- * <h2>Suboptimal Behavior</h2>
- * Some GPIO features are less than optimal:
+ * @section stm32_pal_4 Suboptimal behavior
+ * The GPIO is less than optimal in several areas, the limitations should
+ * be taken in account while using the PAL driver:
  * - Pad/port toggling operations are not atomic.
  * - Pad/group mode setup is not atomic.
  * - Writing on pads/groups/ports programmed as input with pull-up/down
@@ -90,28 +112,63 @@
 
 /**
  * @defgroup STM32_SERIAL STM32 USART Support (buffered)
- * @brief USART peripherals support.
- * @details The serial driver supports the STM32 USARTs in asynchronous
- *          mode.
+ * @brief UART/USART peripherals support.
  *
+ * @section stm32_serial_1 Supported HW resources
+ * The serial driver can support any of the following hardware resources:
+ * - USART1.
+ * - USART2.
+ * - USART3.
+ * - UART4.
+ * - UART5.
+ * .
+ * @section stm32_serial_2 STM32 Serial driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Each UART/USART can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Fully interrupt driven.
+ * - Programmable priority levels for each UART/USART.
+ * .
  * @ingroup STM32
  */
 
 /**
  * @defgroup STM32_UART STM32 USART Support (unbuffered)
- * @brief USART peripherals support.
- * @details The UART driver supports the STM32 USARTs using DMA channels for
- *          improved performance.
+ * @brief UART/USART peripherals support.
  *
+ * @section stm32_uart_1 Supported HW resources
+ * The UART driver can support any of the following hardware resources:
+ * - USART1.
+ * - USART2.
+ * - USART3.
+ * .
+ * @section stm32_uart_2 STM32 UART driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Each UART/USART can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Programmable interrupt priority levels for each UART/USART.
+ * - DMA is used for receiving and transmitting.
+ * - Programmable DMA bus priority for each DMA channel.
+ * - Programmable DMA interrupt priority for each DMA channel.
+ * - Programmable DMA error hook for each DMA channel.
+ * .
  * @ingroup STM32
  */
 
 /**
  * @defgroup STM32_DMA STM32 DMA Support
- * @brief DMA support.
- * @details The DMA helper driver allows to stop the DMA clock when no other
- *          driver requires its services.
+ * @brief DMA helper driver.
  *
+ * @section stm32_dma_1 Supported HW resources
+ * The DMA driver can support any of the following hardware resources:
+ * - DMA1.
+ * - DMA2.
+ * .
+ * @section stm32_dma_2 STM32 DMA driver implementation features
+ * - Automatic DMA clock stop when not in use by other drivers.
+ * - Exports helper functions/macros to the other drivers that share the
+ *   DMA resource.
+ * .
  * @ingroup STM32
  */
 
@@ -121,23 +178,51 @@
  * @details The ADC driver supports the STM32 ADCs using DMA channels for
  *          improved performance.
  *
+ * @section stm32_adc_1 Supported HW resources
+ * - ADC1.
+ * .
+ * @section stm32_adc_2 STM32 ADC driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Streaming conversion using DMA for maximum performance.
+ * - Programmable ADC interrupt priority level.
+ * - Programmable DMA bus priority for each DMA channel.
+ * - Programmable DMA interrupt priority for each DMA channel.
+ * - Programmable DMA error hook for each DMA channel.
+ * .
  * @ingroup STM32
  */
 
 /**
  * @defgroup STM32_CAN STM32 CAN Support
  * @brief CAN peripheral support.
- * @details The CAN driver supports the STM32 bxCAN unit.
  *
+ * @section stm32_can_1 Supported HW resources
+ * - bxCAN1.
+ * .
+ * @section stm32_can_2 STM32 CAN driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Support for bxCAN sleep mode.
+ * - Programmable bxCAN interrupts priority level.
+ * .
  * @ingroup STM32
  */
-
 
 /**
  * @defgroup STM32_PWM STM32 PWM Support
  * @brief TIMx peripherals as PWM generators support.
- * @details The PWM driver supports the STM32 TIMx units as PWM generators.
  *
+ * @section stm32_pwm_1 Supported HW resources
+ * - TIM1.
+ * - TIM2.
+ * - TIM3.
+ * - TIM4.
+ * .
+ * @section stm32_pwm_2 STM32 PWM driver implementation features
+ * - Each timer can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Four independent PWM channels per timer.
+ * - Programmable TIMx interrupts priority level.
+ * .
  * @ingroup STM32
  */
 
@@ -147,5 +232,20 @@
  * @details The SPI driver supports the STM32 SPIs using DMA channels for
  *          improved performance.
  *
+ * @section stm32_spi_1 Supported HW resources
+ * - SPI1.
+ * - SPI2.
+ * - SPI3.
+ * .
+ * @section stm32_spi_2 STM32 SPI driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Each SPI can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Programmable interrupt priority levels for each SPI.
+ * - DMA is used for receiving and transmitting.
+ * - Programmable DMA bus priority for each DMA channel.
+ * - Programmable DMA interrupt priority for each DMA channel.
+ * - Programmable DMA error hook for each DMA channel.
+ * .
  * @ingroup STM32
  */
