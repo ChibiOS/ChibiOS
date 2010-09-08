@@ -26,6 +26,8 @@
  * architectures.
  *
  * @section ARMCMx_STATES_A System logical states in ARMv6-M
+ * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM
+ * Cortex-M0 port:
  * - <b>Init</b>. This state is represented by the startup code and the
  *   initialization code before @p chSysInit() is executed. It has not a
  *   special hardware state associated.

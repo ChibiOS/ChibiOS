@@ -119,7 +119,7 @@
   the name in order to make names more consistent.
       NOTE: ****** Make sure to use a chconf.h file taken from  ******
             ****** this version in your project.                ******
-- HAL documentation improvements.
+- CHANGE: Extensive documentation improvements.
 
 *** 2.1.1 ***
 - FIX: Fixed insufficient stack size for idle thread (bug 3033624)(backported

@@ -187,18 +187,37 @@
 #if defined(__DOXYGEN__)
 /**
  * @brief   Macro defining the specific ARM architecture.
+ * @note    This macro is for documentation only, the real name changes
+ *          depending on the selected architecture, the possible names are:
+ *          - CH_ARCHITECTURE_ARM_v6M.
+ *          - CH_ARCHITECTURE_ARM_v7M.
+ *          .
  */
 #define CH_ARCHITECTURE_ARM_vxm
 
 /**
  * @brief   Name of the implemented architecture.
+ * @note    The value is for documentation only, the real value changes
+ *          depending on the selected architecture, the possible values are:
+ *          - "ARMv6-M".
+ *          - "ARMv7-M".
+ *          - "ARMv7-ME".
+ *          .
  */
 #define CH_ARCHITECTURE_NAME    "ARMvx-M"
 
 /**
  * @brief   Name of the architecture variant (optional).
+ * @note    The value is for documentation only, the real value changes
+ *          depending on the selected architecture, the possible values are:
+ *          - "Cortex-M0"
+ *          - "Cortex-M1"
+ *          - "Cortex-M3"
+ *          - "Cortex-M4"
+ *          .
  */
 #define CH_CORE_VARIANT_NAME    "Cortex-Mx"
+
 #elif CORTEX_MODEL == CORTEX_M4
 #define CH_ARCHITECTURE_ARM_v7M
 #define CH_ARCHITECTURE_NAME    "ARMv7-ME"
@@ -225,7 +244,12 @@
  * @brief   Stack and memory alignment enforcement.
  */
 #if (CORTEX_STACK_ALIGNMENT == 64) || defined(__DOXYGEN__)
+#if defined(__DOXYGEN__)
+/* Dummy declaration, for Doxygen only.*/
+typedef uint64_t stkalign_t;
+#else
 typedef uint64_t stkalign_t __attribute__ ((aligned (8)));
+#endif
 #elif CORTEX_STACK_ALIGNMENT == 32
 typedef uint32_t stkalign_t __attribute__ ((aligned (4)));
 #else

@@ -47,7 +47,7 @@
  * @details This structure represents the common part of all the MSP430 I/O
  *          ports.
  */
-struct port_common_t {
+struct msp430_port_common {
   ioregister_t  in;
   ioregister_t  out;
   ioregister_t  dir;
@@ -56,11 +56,11 @@ struct port_common_t {
 /**
  * @brief Generic MSP430 I/O port.
  */
-union __ioport {
-  struct port_common_t iop_common;
-  struct port_simple_t iop_simple;
-  struct port_full_t iop_full;
-};
+typedef union {
+  struct msp430_port_common     iop_common;
+  struct port_simple_t          iop_simple;
+  struct port_full_t            iop_full;
+} msp430_ioport_t;
 
 /**
  * @brief Setup registers common to all the MSP430 ports.
@@ -138,7 +138,7 @@ typedef uint8_t ioportmask_t;
  *          any assumption about it, use the provided macros when populating
  *          variables of this type.
  */
-typedef union __ioport * ioportid_t;
+typedef union msp430_ioport_t *ioportid_t;
 
 /*===========================================================================*/
 /* I/O Ports Identifiers.                                                    */

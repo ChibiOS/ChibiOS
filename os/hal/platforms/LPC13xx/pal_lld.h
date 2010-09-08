@@ -51,7 +51,7 @@ typedef struct {
   uint32_t      data;
   /** Initial value for FIO_DIR register.*/
   uint32_t      dir;
-} LPC13xx_gpio_setup_t;
+} lpc13xx_gpio_setup_t;
 
 /**
  * @brief   GPIO static initializer.
@@ -67,13 +67,13 @@ typedef struct {
  */
 typedef struct {
   /** @brief GPIO 0 setup data.*/
-  LPC13xx_gpio_setup_t   P0;
+  lpc13xx_gpio_setup_t   P0;
   /** @brief GPIO 1 setup data.*/
-  LPC13xx_gpio_setup_t   P1;
+  lpc13xx_gpio_setup_t   P1;
   /** @brief GPIO 2 setup data.*/
-  LPC13xx_gpio_setup_t   P2;
+  lpc13xx_gpio_setup_t   P2;
   /** @brief GPIO 3 setup data.*/
-  LPC13xx_gpio_setup_t   P3;
+  lpc13xx_gpio_setup_t   P3;
 } PALConfig;
 
 /**
