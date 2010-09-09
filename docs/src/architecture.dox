@@ -109,7 +109,7 @@
  *   the kernel if not needed.
  *   - @ref semaphores, counter semaphores subsystem.
  *   - @ref mutexes, mutexes subsystem with support to the priority inheritance
- *     algorithm (fully implemented, any depht).
+ *     algorithm (fully implemented, any depth).
  *   - @ref condvars, condition variables, together with mutexes the condition
  *     variables allow the implementation of monitor constructs.
  *   - @ref events, event sources and event flags with flexible support for
@@ -142,7 +142,7 @@
  *     by the other allocators in order to get chunks of memory in a consistent
  *     way.
  *   - @ref heaps, central heap manager using a first fit strategy, it also
- *     allow the creation of multiple heaps in order to handle non uniform
+ *     allows the creation of multiple heaps in order to handle non uniform
  *     memory areas.
  *   - @ref pools, very fast fixed size objects allocator.
  *   - @ref threads (dynamic), usually threads are static objects in ChibiOS/RT
@@ -185,7 +185,7 @@
  *     stream interface.
  *   - @ref io_queues, generic, byte wide, I/O queues APIs.
  *   .
- * - @ref debug, debug services and APIs. The @ref registry susystem can be
+ * - @ref debug, debug services and APIs. The @ref registry subsystem can be
  *   seen as part of the debug category even if it finds use in non-debug
  *   roles.
  * .
