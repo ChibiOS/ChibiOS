@@ -16,7 +16,9 @@ Within 2.1.x (hopefully)
 X Resist doing more changes and optimizations in the kernel, fixes only.
 X File System infrastructure.
 X General HAL improvements.
-- I2C device driver class support.
+X I2C device driver class support.
+- I-class functions for the ADC driver.
+- Evaluate making SPI and CAN drivers callback-based.
 - MAC driver for STM32F105/STM32F107 (hardware missing).
 - Device drivers for STM8 (SPI, ADC, PWM, bring it on par with STM32).
 - Support for more compilers (ARMCMx only initially).
