@@ -139,7 +139,7 @@ struct context {
  * Macro used to allocate a thread working area aligned as both position and
  * size.
  */
-#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
+#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)]
 
 /**
  * IRQ prologue code, inserted at the start of all IRQ handlers enabled to

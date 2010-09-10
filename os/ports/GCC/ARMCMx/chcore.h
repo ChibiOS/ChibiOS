@@ -290,7 +290,7 @@ struct context {
  * @details This macro is used to allocate a static thread working area
  *          aligned as both position and size.
  */
-#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)];
+#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)]
 
 /* Includes the architecture-specific implementation part.*/
 #if defined(CH_ARCHITECTURE_ARM_v6M)

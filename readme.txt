@@ -107,6 +107,8 @@
   receiver in UART_RX_IDLE state, the receive operation continues unless
   explicitly stopped in the error callback handler. This considerably
   simplifies the low level driver code.
+- CHANGE: Removed a spurious trailing ; after the WORKING_AREA() macro
+  declaration in several ports. The ; should go after the macro invocation.
 - CHANGE: Modified the STM32 ADC driver to use the new DMA infrastructure.
 - CHANGE: Modified the STM32 SPI driver to use the new DMA infrastructure.
 - CHANGE: Added DMA cleanup code to the STM32 dmaInit() function.
