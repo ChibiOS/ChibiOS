@@ -62,6 +62,8 @@
 *****************************************************************************
 
 *** 2.1.2 ***
+- FIX: Fixed broken CH_DBG_ENABLE_STACK_CHECK option in legacy CM3 port (bug
+  3064274)(backported to 2.0.5).
 - FIX: Fixed CAN_USE_SLEEP_MODE setting (bug 3064204)(backported to 2.0.5).
 - FIX: Fixed potential issue with GCC reorganizing instructions around "asm
   volatile" statements (bug 3058731)(backported in 2.0.4).
@@ -83,7 +85,7 @@
 - NEW: Added board files for the Olimex STM32-H103.
 - NEW: New kernel APIs chSysGetIdleThread() and chThdGetTicks(), the new
   APIs are simple macros so there is no footprint overhead.
-- NEW: New I2C device driver model (no implementations yet).
+- NEW: New I2C device driver model (not complete and no implementations yet).
 - NEW: Added to the UART driver the capability to return the number of
   not yet transferred frames when stopping an operation.
 - NEW: Added more compile-time checks to the various STM32 device drivers.
