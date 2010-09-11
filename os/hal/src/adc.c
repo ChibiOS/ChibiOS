@@ -209,6 +209,9 @@ bool_t adcStartConversionI(ADCDriver *adcp,
 
 /**
  * @brief   Stops an ongoing conversion.
+ * @details This function stops the currently ongoing conversion and returns
+ *          the driver in the @p ADC_READY state. If there was no conversion
+ *          being processed then the function does nothing.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  */
@@ -236,6 +239,9 @@ void adcStopConversion(ADCDriver *adcp) {
 
 /**
  * @brief   Stops an ongoing conversion.
+ * @details This function stops the currently ongoing conversion and returns
+ *          the driver in the @p ADC_READY state. If there was no conversion
+ *          being processed then the function does nothing.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  */
