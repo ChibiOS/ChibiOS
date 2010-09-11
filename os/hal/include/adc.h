@@ -38,12 +38,19 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Inclusion of the @p adcWaitConversion() function.
+ */
+#if !defined(ADC_USE_WAIT) || defined(__DOXYGEN__)
+#define ADC_USE_WAIT                TRUE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_USE_SEMAPHORES
-#error "ADC driver requires CH_USE_SEMAPHORES"
+#if ADC_USE_WAIT && !CH_USE_SEMAPHORES
+#error "ADC driver requires CH_USE_SEMAPHORES when ADC_USE_WAIT is enabled"
 #endif
 
 /*===========================================================================*/
@@ -90,7 +97,9 @@ extern "C" {
                              adccallback_t callback);
   void adcStopConversion(ADCDriver *adcp);
   void adcStopConversionI(ADCDriver *adcp);
+#if ADC_USE_WAIT
   msg_t adcWaitConversion(ADCDriver *adcp, systime_t timeout);
+#endif
 #ifdef __cplusplus
 }
 #endif

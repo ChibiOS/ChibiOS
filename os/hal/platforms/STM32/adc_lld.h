@@ -195,10 +195,6 @@ typedef struct {
    */
   const ADCConfig           *ad_config;
   /**
-   * @brief Synchronization semaphore.
-   */
-  Semaphore                 ad_sem;
-  /**
    * @brief Current callback function or @p NULL.
    */
   adccallback_t             ad_callback;
@@ -214,6 +210,12 @@ typedef struct {
    * @brief Current conversion group pointer or @p NULL.
    */
   const ADCConversionGroup  *ad_grpp;
+#if ADC_USE_WAIT
+  /**
+   * @brief Synchronization semaphore.
+   */
+  Semaphore                 ad_sem;
+#endif
   /* End of the mandatory fields.*/
   /**
    * @brief Pointer to the ADCx registers block.

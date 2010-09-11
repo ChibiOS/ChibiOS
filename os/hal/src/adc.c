@@ -67,7 +67,9 @@ void adcObjectInit(ADCDriver *adcp) {
   adcp->ad_samples  = NULL;
   adcp->ad_depth    = 0;
   adcp->ad_grpp     = NULL;
+#if ADC_USE_WAIT
   chSemInit(&adcp->ad_sem, 0);
+#endif
 }
 
 /**
@@ -229,8 +231,10 @@ void adcStopConversion(ADCDriver *adcp) {
     adc_lld_stop_conversion(adcp);
     adcp->ad_grpp  = NULL;
     adcp->ad_state = ADC_READY;
+#if ADC_USE_WAIT
     chSemResetI(&adcp->ad_sem, 0);
     chSchRescheduleS();
+#endif
   }
   else
     adcp->ad_state = ADC_READY;
@@ -258,12 +262,15 @@ void adcStopConversionI(ADCDriver *adcp) {
     adc_lld_stop_conversion(adcp);
     adcp->ad_grpp  = NULL;
     adcp->ad_state = ADC_READY;
+#if ADC_USE_WAIT
     chSemResetI(&adcp->ad_sem, 0);
+#endif
   }
   else
     adcp->ad_state = ADC_READY;
 }
 
+#if ADC_USE_WAIT || defined(__DOXYGEN__)
 /**
  * @brief   Waits for completion.
  * @details If the conversion is not completed or not yet started then the
@@ -296,6 +303,7 @@ msg_t adcWaitConversion(ADCDriver *adcp, systime_t timeout) {
   chSysUnlock();
   return RDY_OK;
 }
+#endif /* ADC_USE_WAIT */
 
 #endif /* CH_HAL_USE_ADC */
 

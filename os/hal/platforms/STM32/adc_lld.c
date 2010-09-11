@@ -76,9 +76,11 @@ CH_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
       adc_lld_stop_conversion(&ADCD1);
       ADCD1.ad_grpp  = NULL;
       ADCD1.ad_state = ADC_COMPLETE;
+#if ADC_USE_WAIT
       chSysLockFromIsr();
       chSemResetI(&ADCD1.ad_sem, 0);
       chSysUnlockFromIsr();
+#endif
     }
     /* Callback handling.*/
     if (ADCD1.ad_callback != NULL) {

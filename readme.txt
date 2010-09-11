@@ -62,6 +62,7 @@
 *****************************************************************************
 
 *** 2.1.2 ***
+- FIX: Fixed CAN_USE_SLEEP_MODE setting (bug 3064204)(backported to 2.0.5).
 - FIX: Fixed potential issue with GCC reorganizing instructions around "asm
   volatile" statements (bug 3058731)(backported in 2.0.4).
 - FIX: Fixed reduced ARM7 performance with GCC 4.5.x (bug 3056866)(backported
@@ -96,7 +97,8 @@
   is no footprint overhead.
 - NEW: Added adcStartConversionI() and adcStopConversionI() APIs to the ADC
   driver in order to allow the driver control from within callbacks or other
-  interrupt handlers.
+  interrupt handlers. Made the adcWaitConversion() API optional, this allows
+  to save some space in Flash/RAM if it is not required.
 - NEW: Added a generic BaseFileStream interface for future File System
   implementations or integrations (untested and not sure if it will stay or
   change).
