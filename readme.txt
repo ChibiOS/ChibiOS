@@ -94,6 +94,9 @@
   driver in order to allow channel reprogramming from within callbacks or
   other interrupt handlers. The new APIs are implemented as macros so there
   is no footprint overhead.
+- NEW: Added adcStartConversionI() and adcStopConversionI() APIs to the ADC
+  driver in order to allow the driver control from within callbacks or other
+  interrupt handlers.
 - NEW: Added a generic BaseFileStream interface for future File System
   implementations or integrations (untested and not sure if it will stay or
   change).

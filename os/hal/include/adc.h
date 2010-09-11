@@ -83,7 +83,13 @@ extern "C" {
                             adcsample_t *samples,
                             size_t depth,
                             adccallback_t callback);
+  bool_t adcStartConversionI(ADCDriver *adcp,
+                             const ADCConversionGroup *grpp,
+                             adcsample_t *samples,
+                             size_t depth,
+                             adccallback_t callback);
   void adcStopConversion(ADCDriver *adcp);
+  void adcStopConversionI(ADCDriver *adcp);
   msg_t adcWaitConversion(ADCDriver *adcp, systime_t timeout);
 #ifdef __cplusplus
 }

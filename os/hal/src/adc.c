@@ -143,28 +143,67 @@ bool_t adcStartConversion(ADCDriver *adcp,
                           adcsample_t *samples,
                           size_t depth,
                           adccallback_t callback) {
+  bool_t result;
+
+  chSysLock();
+  result = adcStartConversionI(adcp, grpp, samples, depth, callback);
+  chSysUnlock();
+  return result;
+}
+
+/**
+ * @brief   Starts an ADC conversion.
+ * @details Starts a conversion operation, there are two kind of conversion
+ *          modes:
+ *          - <b>LINEAR</b>, in this mode the buffer is filled once and then
+ *            the conversion stops automatically.
+ *          - <b>CIRCULAR</b>, in this mode the conversion never stops and
+ *            the buffer is filled circularly.<br>
+ *            During the conversion the callback function is invoked when
+ *            the buffer is 50% filled and when the buffer is 100% filled,
+ *            this way is possible to process the conversion stream in real
+ *            time. This kind of conversion can only be stopped by explicitly
+ *            invoking @p adcStopConversion().
+ *          .
+ * @note    The buffer is organized as a matrix of M*N elements where M is the
+ *          channels number configured into the conversion group and N is the
+ *          buffer depth. The samples are sequentially written into the buffer
+ *          with no gaps.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ * @param[in] grpp      pointer to a @p ADCConversionGroup object
+ * @param[out] samples  pointer to the samples buffer
+ * @param[in] depth     buffer depth (matrix rows number). The buffer depth
+ *                      must be one or an even number.
+ * @param[in] callback  pointer to the conversion callback function, this
+ *                      parameter can be @p NULL if a callback is not required
+ * @return              The operation status.
+ * @retval FALSE        the conversion has been started.
+ * @retval TRUE         the driver is busy, conversion not started.
+ */
+bool_t adcStartConversionI(ADCDriver *adcp,
+                           const ADCConversionGroup *grpp,
+                           adcsample_t *samples,
+                           size_t depth,
+                           adccallback_t callback) {
 
   chDbgCheck((adcp != NULL) && (grpp != NULL) && (samples != NULL) &&
              ((depth == 1) || ((depth & 1) == 0)),
-             "adcStartConversion");
+             "adcStartConversionI");
 
-  chSysLock();
   chDbgAssert((adcp->ad_state == ADC_READY) ||
               (adcp->ad_state == ADC_RUNNING) ||
               (adcp->ad_state == ADC_COMPLETE),
-              "adcStartConversion(), #1",
+              "adcStartConversionI(), #1",
               "invalid state");
-  if (adcp->ad_state == ADC_RUNNING) {
-    chSysUnlock();
+  if (adcp->ad_state == ADC_RUNNING)
     return TRUE;
-  }
   adcp->ad_callback = callback;
   adcp->ad_samples  = samples;
   adcp->ad_depth    = depth;
   adcp->ad_grpp     = grpp;
   adc_lld_start_conversion(adcp);
   adcp->ad_state = ADC_RUNNING;
-  chSysUnlock();
   return FALSE;
 }
 
@@ -193,6 +232,30 @@ void adcStopConversion(ADCDriver *adcp) {
   else
     adcp->ad_state = ADC_READY;
   chSysUnlock();
+}
+
+/**
+ * @brief   Stops an ongoing conversion.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ */
+void adcStopConversionI(ADCDriver *adcp) {
+
+  chDbgCheck(adcp != NULL, "adcStopConversionI");
+
+  chDbgAssert((adcp->ad_state == ADC_READY) ||
+              (adcp->ad_state == ADC_RUNNING) ||
+              (adcp->ad_state == ADC_COMPLETE),
+              "adcStopConversionI(), #1",
+              "invalid state");
+  if (adcp->ad_state == ADC_RUNNING) {
+    adc_lld_stop_conversion(adcp);
+    adcp->ad_grpp  = NULL;
+    adcp->ad_state = ADC_READY;
+    chSemResetI(&adcp->ad_sem, 0);
+  }
+  else
+    adcp->ad_state = ADC_READY;
 }
 
 /**
