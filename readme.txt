@@ -108,6 +108,9 @@
   the ARM7 port.
 - OPT: Speed optimizations of the STM32 SPI driver, improved latency.
 - OPT: Speed optimizations of the STM32 ADC driver.
+- CHANGE: The event APIs chEvtPend() and chEvtClear() have been renamed
+  to chEvtAddFlags() and chEvtClearFlags() for consistency and correct
+  English (which I am famous for...).
 - CHANGE: Added a parameter to the UART driver callbacks, the pointer to the
   driver itself.
 - CHANGE: In the UART driver now an error does not automatically brings the

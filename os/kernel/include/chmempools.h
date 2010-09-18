@@ -28,7 +28,7 @@
 #ifndef _CHMEMPOOLS_H_
 #define _CHMEMPOOLS_H_
 
-#if CH_USE_MEMPOOLS
+#if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
 
 /**
  * @brief   Memory pool free object header.

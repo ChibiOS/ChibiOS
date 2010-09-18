@@ -28,7 +28,7 @@
 #ifndef _CHMBOXES_H_
 #define _CHMBOXES_H_
 
-#if CH_USE_MAILBOXES
+#if CH_USE_MAILBOXES || defined(__DOXYGEN__)
 
 /*
  * Module dependencies check.
@@ -37,6 +37,9 @@
 #error "CH_USE_MAILBOXES requires CH_USE_SEMAPHORES"
 #endif
 
+/**
+ * @brief   Structure representing a mailbox object.
+ */
 typedef struct {
   msg_t                 *mb_buffer;     /**< @brief Pointer to the mailbox
                                                     buffer.                 */
@@ -99,10 +102,10 @@ extern "C" {
 
 /**
  * @brief   Returns the next message in the queue without removing it.
- * @note    A message must be waiting in the queue for this function to work or
- *          it would return garbage. The correct way to use this macro is to
- *          use @p chMBGetFull() and then use this macro, all within a lock
- *          state.
+ * @pre     A message must be waiting in the queue for this function to work
+ *          or it would return garbage. The correct way to use this macro is
+ *          to use @p chMBGetFull() and then use this macro, all within a
+ *          lock state.
  */
 #define chMBPeek(mbp) (*(mbp)->mb_rdptr)
 

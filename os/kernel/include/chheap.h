@@ -28,7 +28,7 @@
 #ifndef _CHHEAP_H_
 #define _CHHEAP_H_
 
-#if CH_USE_HEAP
+#if CH_USE_HEAP || defined(__DOXYGEN__)
 
 /*
  * Module dependencies check.

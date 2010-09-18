@@ -50,15 +50,15 @@
  *          also have other uses, queues guards and counters as example.<br>
  *          Semaphores usually use a FIFO queuing strategy but it is possible
  *          to make them order threads by priority by enabling
- *          @p CH_USE_SEMAPHORES_PRIORITY in @p chconf.h.<br>
- *          In order to use the Semaphores APIs the @p CH_USE_SEMAPHORES
+ *          @p CH_USE_SEMAPHORES_PRIORITY in @p chconf.h.
+ * @pre     In order to use the semaphore APIs the @p CH_USE_SEMAPHORES
  *          option must be enabled in @p chconf.h.
  * @{
  */
 
 #include "ch.h"
 
-#if CH_USE_SEMAPHORES
+#if CH_USE_SEMAPHORES || defined(__DOXYGEN__)
 
 #if CH_USE_SEMAPHORES_PRIORITY
 #define sem_insert(tp, qp) prio_insert(tp, qp)
@@ -68,6 +68,8 @@
 
 /**
  * @brief   Initializes a semaphore with the specified counter value.
+ * @note    This function can be invoked before the kernel is initialized
+ *          because it just prepares a @p Semaphore structure.
  *
  * @param[out] sp       pointer to a @p Semaphore structure
  * @param[in] n         initial value of the semaphore counter. Must be
@@ -83,6 +85,9 @@ void chSemInit(Semaphore *sp, cnt_t n) {
 
 /**
  * @brief   Performs a reset operation on the semaphore.
+ * @post    After invoking this function all the threads waiting on the
+ *          semaphore, if any, are released and the semaphore counter is set
+ *          to the specified, non negative, value.
  * @note    The released threads can recognize they were waked up by a reset
  *          rather than a signal because the @p chSemWait() will return
  *          @p RDY_RESET instead of @p RDY_OK.
@@ -101,10 +106,16 @@ void chSemReset(Semaphore *sp, cnt_t n) {
 
 /**
  * @brief   Performs a reset operation on the semaphore.
+ * @post    After invoking this function all the threads waiting on the
+ *          semaphore, if any, are released and the semaphore counter is set
+ *          to the specified, non negative, value.
+ * @post    This function does not reschedule so a call to a rescheduling
+ *          function must be performed before unlocking the kernel. Note that
+ *          interrupt handlers always reschedule on exit so an explicit
+ *          reschedule must not be performed in ISRs.
  * @note    The released threads can recognize they were waked up by a reset
  *          rather than a signal because the @p chSemWait() will return
  *          @p RDY_RESET instead of @p RDY_OK.
- * @note    This function does not reschedule.
  *
  * @param[in] sp        pointer to a @p Semaphore structure
  * @param[in] n         the new value of the semaphore counter. The value must
@@ -130,8 +141,11 @@ void chSemResetI(Semaphore *sp, cnt_t n) {
  * @brief   Performs a wait operation on a semaphore.
  *
  * @param[in] sp        pointer to a @p Semaphore structure
- * @retval RDY_OK       if the semaphore was signaled or not taken.
- * @retval RDY_RESET    if the semaphore was reset using @p chSemReset().
+ * @return              A message specifying how the invoking thread has been
+ *                      released from the semaphore.
+ * @retval RDY_OK       if the thread has not stopped on the semaphore or the
+ *                      semaphore has been signaled.
+ * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
  */
 msg_t chSemWait(Semaphore *sp) {
   msg_t msg;
@@ -146,8 +160,11 @@ msg_t chSemWait(Semaphore *sp) {
  * @brief   Performs a wait operation on a semaphore.
  *
  * @param[in] sp        pointer to a @p Semaphore structure
- * @retval RDY_OK       if the semaphore was signaled or not taken.
- * @retval RDY_RESET    if the semaphore was reset using @p chSemReset().
+ * @return              A message specifying how the invoking thread has been
+ *                      released from the semaphore.
+ * @retval RDY_OK       if the thread has not stopped on the semaphore or the
+ *                      semaphore has been signaled.
+ * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
  */
 msg_t chSemWaitS(Semaphore *sp) {
 
@@ -176,10 +193,13 @@ msg_t chSemWaitS(Semaphore *sp) {
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
  *                      .
- * @retval RDY_OK       if the semaphore was signaled or not taken.
- * @retval RDY_RESET    if the semaphore was reset using @p chSemReset().
- * @retval RDY_TIMEOUT  if the semaphore was not signaled or reset within the
- *                      specified timeout.
+ * @return              A message specifying how the invoking thread has been
+ *                      released from the semaphore.
+ * @retval RDY_OK       if the thread has not stopped on the semaphore or the
+ *                      semaphore has been signaled.
+ * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
+ * @retval RDY_TIMEOUT  if the semaphore has not been signaled or reset within
+ *                      the specified timeout.
  */
 msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
   msg_t msg;
@@ -199,10 +219,13 @@ msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
  *                      .
- * @retval RDY_OK       if the semaphore was signaled or not taken.
- * @retval RDY_RESET    if the semaphore was reset using @p chSemReset().
- * @retval RDY_TIMEOUT  if the semaphore was not signaled or reset within the
- *                      specified timeout.
+ * @return              A message specifying how the invoking thread has been
+ *                      released from the semaphore.
+ * @retval RDY_OK       if the thread has not stopped on the semaphore or the
+ *                      semaphore has been signaled.
+ * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
+ * @retval RDY_TIMEOUT  if the semaphore has not been signaled or reset within
+ *                      the specified timeout.
  */
 msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
 
@@ -247,7 +270,10 @@ void chSemSignal(Semaphore *sp) {
 
 /**
  * @brief   Performs a signal operation on a semaphore.
- * @note    This function does not reschedule.
+ * @post    This function does not reschedule so a call to a rescheduling
+ *          function must be performed before unlocking the kernel. Note that
+ *          interrupt handlers always reschedule on exit so an explicit
+ *          reschedule must not be performed in ISRs.
  *
  * @param[in] sp    pointer to a @p Semaphore structure
  */
@@ -272,13 +298,16 @@ void chSemSignalI(Semaphore *sp) {
 #if CH_USE_SEMSW
 /**
  * @brief   Performs atomic signal and wait operations on two semaphores.
- * @note    The function is available only if the @p CH_USE_SEMSW
- *          option is enabled in @p chconf.h.
+ * @pre     The configuration option @p CH_USE_SEMSW must be enabled in order
+ *          to use this function.
  *
  * @param[in] sps       pointer to a @p Semaphore structure to be signaled
  * @param[in] spw       pointer to a @p Semaphore structure to be wait on
- * @retval RDY_OK       if the semaphore was signaled or not taken.
- * @retval RDY_RESET    if the semaphore was reset using @p chSemReset().
+ * @return              A message specifying how the invoking thread has been
+ *                      released from the semaphore.
+ * @retval RDY_OK       if the thread has not stopped on the semaphore or the
+ *                      semaphore has been signaled.
+ * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
  */
 msg_t chSemSignalWait(Semaphore *sps, Semaphore *spw) {
   msg_t msg;

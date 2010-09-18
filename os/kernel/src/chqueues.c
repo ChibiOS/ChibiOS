@@ -35,21 +35,23 @@
  *            are implemented by pairing an input queue and an output queue
  *            together.
  *          .
- *          In order to use the I/O queues the @p CH_USE_QUEUES option must
- *          be enabled in @p chconf.h.<br>
  *          I/O queues are usually used as an implementation layer for the I/O
  *          channels interface, also see @ref io_channels.
+ * @pre     In order to use the I/O queues the @p CH_USE_QUEUES option must
+ *          be enabled in @p chconf.h.
  * @{
  */
 
 #include "ch.h"
 
-#if CH_USE_QUEUES
+#if CH_USE_QUEUES || defined(__DOXYGEN__)
 
 /**
  * @brief   Initializes an input queue.
  * @details A Semaphore is internally initialized and works as a counter of
  *          the bytes contained in the queue.
+ * @note    This function can be invoked before the kernel is initialized
+ *          because it just prepares a @p InputQueue structure.
  * @note    The callback is invoked from within the S-Locked system state,
  *          see @ref system_states.
  *
@@ -88,7 +90,7 @@ void chIQResetI(InputQueue *iqp) {
  *
  * @param[in] iqp       pointer to an @p InputQueue structure
  * @param[in] b         the byte value to be written in the queue
- * @return              The operation status, it can be one of:
+ * @return              The operation status.
  * @retval Q_OK         if the operation has been completed with success.
  * @retval Q_FULL       if the queue is full and the operation cannot be
  *                      completed.
@@ -117,7 +119,7 @@ msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
  *                      .
- * @return              A byte value from the queue or:
+ * @return              A byte value from the queue.
  * @retval Q_TIMEOUT    if the specified time expired.
  * @retval Q_RESET      if the queue was reset.
  */
@@ -205,6 +207,8 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
  * @brief   Initializes an output queue.
  * @details A Semaphore is internally initialized and works as a counter of
  *          the free bytes in the queue.
+ * @note    This function can be invoked before the kernel is initialized
+ *          because it just prepares a @p OutputQueue structure.
  * @note    The callback is invoked from within the S-Locked system state,
  *          see @ref system_states.
  *
@@ -250,7 +254,7 @@ void chOQResetI(OutputQueue *oqp) {
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
  *                      .
- * @return              The operation status:
+ * @return              The operation status.
  * @retval Q_OK         if the operation succeeded.
  * @retval Q_TIMEOUT    if the specified time expired.
  * @retval Q_RESET      if the queue was reset.
@@ -279,7 +283,7 @@ msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time) {
  * @details A byte value is read from the low end of an output queue.
  *
  * @param[in] oqp       pointer to an @p OutputQueue structure
- * @return              The byte value from the queue or:
+ * @return              The byte value from the queue.
  * @retval Q_EMPTY      if the queue is empty.
  */
 msg_t chOQGetI(OutputQueue *oqp) {

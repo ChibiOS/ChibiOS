@@ -28,7 +28,7 @@
 #ifndef _CHMSG_H_
 #define _CHMSG_H_
 
-#if CH_USE_MESSAGES
+#if CH_USE_MESSAGES || defined(__DOXYGEN__)
 
 /**
  * @brief   Evaluates to TRUE if the thread has pending messages.

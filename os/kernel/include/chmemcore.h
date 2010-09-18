@@ -51,7 +51,7 @@ typedef void *(*memgetfunc_t)(size_t size);
  */
 #define MEM_IS_ALIGNED(p)   (((size_t)(p) & MEM_ALIGN_MASK) == 0)
 
-#if CH_USE_MEMCORE
+#if CH_USE_MEMCORE || defined(__DOXYGEN__)
 
 #ifdef __cplusplus
 extern "C" {

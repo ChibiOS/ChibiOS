@@ -63,9 +63,9 @@ void _idle_thread(void *p) {
  * @brief   ChibiOS/RT initialization.
  * @details After executing this function the current instructions stream
  *          becomes the main thread.
- * @note    Interrupts should be still disabled when @p chSysInit() is invoked
+ * @pre     Interrupts must be still disabled when @p chSysInit() is invoked
  *          and are internally enabled.
- * @note    The main thread is created with priority @p NORMALPRIO.
+ * @post    The main thread is created with priority @p NORMALPRIO.
  */
 void chSysInit(void) {
   static Thread mainthread;

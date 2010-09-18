@@ -28,10 +28,10 @@
 #ifndef _CHMTX_H_
 #define _CHMTX_H_
 
-#if CH_USE_MUTEXES
+#if CH_USE_MUTEXES || defined(__DOXYGEN__)
 
 /**
- * @brief Mutex structure.
+ * @brief   Mutex structure.
  */
 typedef struct Mutex {
   ThreadsQueue          m_queue;    /**< @brief Queue of the threads sleeping

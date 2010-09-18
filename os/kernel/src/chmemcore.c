@@ -35,15 +35,15 @@
  *          By having a centralized memory provider the various allocators can
  *          coexist and share the main memory.<br>
  *          This allocator, alone, is also useful for very simple applications
- *          that just require a simple way to get memory blocks.<br>
- *          In order to use the core memory manager APIs the @p CH_USE_MEMCORE
+ *          that just require a simple way to get memory blocks.
+ * @pre     In order to use the core memory manager APIs the @p CH_USE_MEMCORE
  *          option must be enabled in @p chconf.h.
  * @{
  */
 
 #include "ch.h"
 
-#if CH_USE_MEMCORE
+#if CH_USE_MEMCORE || defined(__DOXYGEN__)
 
 static uint8_t *nextmem;
 static uint8_t *endmem;
@@ -72,7 +72,6 @@ void core_init(void) {
  * @details The size of the returned block is aligned to the alignment
  *          type @p stkalign_t so it is not possible to allocate less
  *          than <code>sizeof(stkalign_t)</code>.
- *
  *
  * @param[in] size      the size of the block to be allocated
  * @return              A pointer to the allocated memory block.

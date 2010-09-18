@@ -57,11 +57,15 @@ void scheduler_init(void) {
 
 /**
  * @brief   Inserts a thread in the Ready List.
- * @note    The function does not reschedule, the @p chSchRescheduleS() should
- *          be called soon after.
+ * @pre     The thread must not be already inserted in any list through its
+ *          @p p_next and @p p_prev or list corruption would occur.
+ * @post    This function does not reschedule so a call to a rescheduling
+ *          function must be performed before unlocking the kernel. Note that
+ *          interrupt handlers always reschedule on exit so an explicit
+ *          reschedule must not be performed in ISRs.
  *
- * @param[in] tp        the Thread to be made ready
- * @return              The Thread pointer.
+ * @param[in] tp        the thread to be made ready
+ * @return              The thread pointer.
  */
 #if !defined(PORT_OPTIMIZED_READYI) || defined(__DOXYGEN__)
 #if CH_OPTIMIZE_SPEED
@@ -93,8 +97,8 @@ Thread *chSchReadyI(Thread *tp) {
 
 /**
  * @brief   Puts the current thread to sleep into the specified state.
- * @details The thread goes into a sleeping state. The @ref thread_states are
- *          described into @p threads.h.
+ * @details The thread goes into a sleeping state. The possible
+ *          @ref thread_states are defined into @p threads.h.
  *
  * @param[in] newstate  the new thread state
  */
@@ -144,8 +148,8 @@ static void wakeup(void *p) {
  *          timeout specification.
  * @details The thread goes into a sleeping state, if it is not awakened
  *          explicitly within the specified timeout then it is forcibly
- *          awakened with a @p RDY_TIMEOUT low level message. The @ref
- *          thread_states are described into @p threads.h.
+ *          awakened with a @p RDY_TIMEOUT low level message. The possible
+ *          @ref thread_states are defined into @p threads.h.
  *
  * @param[in] newstate  the new thread state
  * @param[in] time      the number of ticks before the operation timeouts, the
@@ -181,6 +185,8 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
  * @details The thread is inserted into the ready list or immediately made
  *          running depending on its relative priority compared to the current
  *          thread.
+ * @pre     The thread must not be already inserted in any list through its
+ *          @p p_next and @p p_prev or list corruption would occur.
  * @note    It is equivalent to a @p chSchReadyI() followed by a
  *          @p chSchRescheduleS() but much more efficient.
  * @note    The function assumes that the current thread has the highest

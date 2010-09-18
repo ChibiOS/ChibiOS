@@ -50,7 +50,7 @@
 #ifndef _CHBSEM_H_
 #define _CHBSEM_H_
 
-#if CH_USE_SEMAPHORES
+#if CH_USE_SEMAPHORES || defined(__DOXYGEN__)
 
 /**
  * @extends Semaphore

@@ -28,7 +28,7 @@
 #ifndef _CHSEM_H_
 #define _CHSEM_H_
 
-#if CH_USE_SEMAPHORES
+#if CH_USE_SEMAPHORES || defined(__DOXYGEN__)
 
 /**
  * @brief   Semaphore structure.

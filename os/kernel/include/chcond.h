@@ -32,7 +32,7 @@
 #ifndef _CHCOND_H_
 #define _CHCOND_H_
 
-#if CH_USE_CONDVARS
+#if CH_USE_CONDVARS || defined(__DOXYGEN__)
 
 /*
  * Module dependencies check.

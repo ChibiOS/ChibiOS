@@ -28,7 +28,7 @@
 #ifndef _CHQUEUES_H_
 #define _CHQUEUES_H_
 
-#if CH_USE_QUEUES
+#if CH_USE_QUEUES || defined(__DOXYGEN__)
 
 /*
  * Module dependencies check.

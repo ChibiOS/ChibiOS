@@ -27,12 +27,15 @@
  *          - Parameters check.
  *          - Kernel assertions.
  *          .
+ * @pre     In order to use the debug APIs the @p CH_DBG_ENABLE_TRACE,
+ *          @p CH_DBG_ENABLE_ASSERTS, @p CH_DBG_ENABLE_CHECKS options must
+ *          be enabled in @p chconf.h.
  * @{
  */
 
 #include "ch.h"
 
-#if CH_DBG_ENABLE_TRACE
+#if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
 /**
  * @brief   Public trace buffer.
  */
@@ -40,6 +43,7 @@ TraceBuffer trace_buffer;
 
 /**
  * @brief   Trace circular buffer subsystem initialization.
+ * @note    Internal use only.
  */
 void trace_init(void) {
 
@@ -63,7 +67,8 @@ void chDbgTrace(Thread *otp) {
 }
 #endif /* CH_DBG_ENABLE_TRACE */
 
-#if CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK
+#if CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS ||                        \
+    CH_DBG_ENABLE_STACK_CHECK || defined(__DOXYGEN__)
 /**
  * @brief   Pointer to the panic message.
  * @details This pointer is meant to be accessed through the debugger, it is

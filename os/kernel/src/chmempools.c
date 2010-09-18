@@ -26,19 +26,21 @@
  *          <h2>Operation mode</h2>
  *          The Memory Pools APIs allow to allocate/free fixed size objects in
  *          <b>constant time</b> and reliably without memory fragmentation
- *          problems.<br>
- *          In order to use the memory pools APIs the @p CH_USE_MEMPOOLS option
+ *          problems.
+ * @pre     In order to use the memory pools APIs the @p CH_USE_MEMPOOLS option
  *          must be enabled in @p chconf.h.
  * @{
  */
 
 #include "ch.h"
 
-#if CH_USE_MEMPOOLS
+#if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
 /**
  * @brief   Initializes an empty memory pool.
- * @note    The size is internally aligned to be a multiple of the @p align_t
- *          type size.
+ * @note    This function can be invoked before the kernel is initialized
+ *          because it just prepares a @p MemoryPool structure.
+ * @note    The size is internally aligned to be a multiple of the
+ *          @p stkalign_t type size.
  *
  * @param[out] mp       pointer to a @p MemoryPool structure
  * @param[in] size      the size of the objects contained in this memory pool,
@@ -96,10 +98,10 @@ void *chPoolAlloc(MemoryPool *mp) {
 
 /**
  * @brief   Releases (or adds) an object into (to) a memory pool.
- * @note    The object is assumed to be of the right size for the specified
+ * @pre     The freed object must be of the right size for the specified
  *          memory pool.
- * @note    The object is assumed to be memory aligned to the size of @p align_t
- *          type.
+ * @pre     The freed object must be memory aligned to the size of
+ *          @p stkalign_t type.
  *
  * @param[in] mp        pointer to a @p MemoryPool structure
  * @param[in] objp      the pointer to the object to be released or added
@@ -116,8 +118,10 @@ void chPoolFreeI(MemoryPool *mp, void *objp) {
 
 /**
  * @brief   Releases (or adds) an object into (to) a memory pool.
- * @note    The object is assumed to be of the right size for the specified
+ * @pre     The freed object must be of the right size for the specified
  *          memory pool.
+ * @pre     The freed object must be memory aligned to the size of
+ *          @p stkalign_t type.
  *
  * @param[in] mp        pointer to a @p MemoryPool structure
  * @param[in] objp      the pointer to the object to be released or added
