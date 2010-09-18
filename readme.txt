@@ -62,6 +62,8 @@
 *****************************************************************************
 
 *** 2.1.2 ***
+- FIX: Fixed race condition in threads creation (bug 3069854)(backported
+  to 2.0.5).
 - FIX: Fixed broken CH_DBG_ENABLE_STACK_CHECK option in legacy CM3 port (bug
   3064274)(backported to 2.0.5).
 - FIX: Fixed CAN_USE_SLEEP_MODE setting (bug 3064204)(backported to 2.0.5).
@@ -131,7 +133,8 @@
   the name in order to make names more consistent.
       NOTE: ****** Make sure to use a chconf.h file taken from  ******
             ****** this version in your project.                ******
-- CHANGE: Extensive documentation improvements.
+- CHANGE: Extensive documentation improvements, fixed terminology in the
+  events related documentation and articles.
 
 *** 2.1.1 ***
 - FIX: Fixed insufficient stack size for idle thread (bug 3033624)(backported

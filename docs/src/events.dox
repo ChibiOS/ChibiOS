@@ -27,33 +27,34 @@
  * explanation.<br>
  * Lets start with the events related terminology:
  * - <b>Event Source</b>, an @p EventSource is a system object that can be
- *   @a broadcasted asynchronously in response of a system event, as example,
- *   when the CAN driver receives a packet from the CAN bus it @a broadcasts
+ *   broadcasted asynchronously in response of a system event, as example,
+ *   when the CAN driver receives a packet from the CAN bus it broadcasts
  *   an event source in order to inform the registered threads that a packet
  *   has just arrived.
  * - <b>Broadcast</b>, the operation performed on an event source in order
- *   to inform the @a registered threads that an event just occurred.
+ *   to inform the registered threads that an event just occurred.
  *   Broadcasting can happened both in interrupt handlers and in threads.
  * - <b>Event Listener</b>, a system object that associates a @p Thread object
  *   to an event source. The process of associating a @p Thread to an
- *   @p EventSource using an @p EventListener is called @a registration.
+ *   @p EventSource using an @p EventListener is called registration.
  * - <b>Registration</b>, action performed by a thread in order to be informed
  *   of events from a specific event source. Of course a thread can be
- *   @a registered on more than one event source by using multiple
- *   @p EventListener objects. Threads can also @a unregister from an event
+ *   registered on more than one event source by using multiple
+ *   @p EventListener objects. Threads can also unregister from an event
  *   source.
- * - <b>Pend</b>, each thread has a mask of @a pending events. The @a broadcast
- *   operation @a pends an event mask on all the @a registered threads.
+ * - <b>Pending Events</b>, event flags waiting to be served by a thread.
+ * - <b>Add</b>, the broadcast operation adds (logical or) an events
+ *   mask to all the registered threads.
  * - <b>Wait</b>, synchronous operation performed by a thread in order to
- *   @a wait a specific combination of events. The API offers a variety of
- *   @a wait functions, please refer to the events API documentation.
+ *   wait a specific combination of events. The API offers a variety of
+ *   wait functions, please refer to the events API documentation.
  * .
  * Note that events are asynchronously generated, as example in an interrupt
  * handler, but are synchronously served.
  *
  * <h2>Events related data structures</h2>
  * The following diagram explains the relationship between an event source,
- * its list of event listeners and the @a registered threads.
+ * its list of event listeners and the registered threads.
  * @dot
   digraph example {
     rankdir="LR";
@@ -97,19 +98,19 @@
     el4 -> t4 [label="el_listener"];
   }
  * @enddot
- * Note that each event listener has a different bit mask to be @a pended on
- * its associated thread when the event source is @a broadcasted, this means
+ * Note that each event listener has a different bit mask to be added on
+ * its associated thread when the event source is broadcasted, this means
  * that each thread can define its own event identifiers independently. A
- * @a broadcast operation can also @a pend more than one bit on the
- * @a registered threads.<br>
- * The threads have a variety of @a wait primitives, they can @a wait for one
- * or more event flags to become @a pending, and can also specify AND/OR
- * conditions, as example a thread can @a wait for any event to become
- * @a pending or @a wait for all the specified events to become @a pending.<br>
+ * broadcast operation can also add more than one bit on the
+ * registered threads.<br>
+ * The threads have a variety of wait primitives, they can wait for one
+ * or more event flags, and can also specify AND/OR conditions, as example
+ * a thread can wait for any of the specified events or wait for all the
+ * specified events.<br>
  * The field @p p_epending is the mask of the currently pending events,
  * the field @p p_ewmask is the mask of the events the thread is interested
  * on in that moment (AND or OR condition depending on the invoked
- * @a wait API).
+ * wait API).
  *
  * <h2>Use Scenarios</h2>
  * Events are best used when one of more of the following conditions are
