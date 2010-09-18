@@ -134,12 +134,17 @@
  */
 
 /**
- * @defgroup data_streams Data Streams
+ * @defgroup data_streams Abstract Sequential Streams
  * @ingroup io_support
  */
 
 /**
- * @defgroup io_channels I/O Channels
+ * @defgroup data_files Abstract File Streams
+ * @ingroup io_support
+ */
+
+/**
+ * @defgroup io_channels Abstract I/O Channels
  * @ingroup io_support
  */
  

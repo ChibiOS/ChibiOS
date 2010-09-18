@@ -24,12 +24,12 @@
  *          data files in a standardized way.
  *
  * @addtogroup data_files
- * @details This module define an abstract interface for generic data files.
- *          Note that no code is present, data files are just abstract
- *          interface-like structures, you should look at the systems as to
- *          a set of abstract C++ classes (even if written in C). This system
- *          has the advantage to make the access to streams independent
- *          from the implementation logic.<br>
+ * @details This module define an abstract interface for generic data files by
+ *          extending the @p BaseSequentialStream interface. Note that no code
+ *          is present, data files are just abstract interface-like structures,
+ *          you should look at the systems as to a set of abstract C++ classes
+ *          (even if written in C). This system has the advantage to make the
+ *          access to streams independent from the implementation logic.<br>
  *          The data files interface can be used as base class for high level
  *          object types such as an API for a File System implementation.
  * @{
