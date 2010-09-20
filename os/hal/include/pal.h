@@ -39,7 +39,7 @@
  * @details The other bits are not defined and may be used as device-specific
  *          option bits.
  */
-#define PAL_MODE_MASK                   0xF
+#define PAL_MODE_MASK                   0x1F
 
 /**
  * @brief   After reset state.
