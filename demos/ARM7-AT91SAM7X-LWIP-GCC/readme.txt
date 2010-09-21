@@ -18,7 +18,7 @@ activates che ChibiOS/RT test suite, output on COM1.
 
 The demo was built using the YAGARTO toolchain but any toolchain based on GCC
 and GNU userspace programs will work.
-The demo requires the patcher lwIP 1.3.1 stack, see: ./ext/readme.txt
+The demo requires the lwIP 1.3.1 stack, included in ./ext
 
 ** Notes **
 
