@@ -90,6 +90,8 @@ typedef struct EventSource {
  *                      function.
  *                      The value must range between zero and the size, in bit,
  *                      of the @p eventid_t type minus one.
+ *
+ * @api
  */
 #define chEvtRegister(esp, elp, eid) \
   chEvtRegisterMask(esp, elp, EVENT_MASK(eid))
@@ -100,17 +102,20 @@ typedef struct EventSource {
  *          because it just prepares a @p EventSource structure.
  *
  * @param[in] esp       pointer to the @p EventSource structure
+ *
+ * @init
  */
 #define chEvtInit(esp) \
   ((esp)->es_next = (EventListener *)(void *)(esp))
 
 /**
  * @brief   Verifies if there is at least one @p EventListener registered.
- * @note    Can be called with interrupts disabled or enabled.
  *
  * @param[in] esp       pointer to the @p EventSource structure
+ *
+ * @iclass
  */
-#define chEvtIsListening(esp) \
+#define chEvtIsListeningI(esp) \
   ((void *)(esp) != (void *)(esp)->es_next)
 
 /**

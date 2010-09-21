@@ -83,6 +83,8 @@ typedef struct {
  *                      be less than the specified number of bytes if the
  *                      stream reaches a physical end of file and cannot be
  *                      extended.
+ *
+ * @api
  */
 #define chSequentialStreamWrite(ip, bp, n) ((ip)->vmt->write(ip, bp, n))
 
@@ -96,6 +98,8 @@ typedef struct {
  * @return              The number of bytes transferred. The return value can
  *                      be less than the specified number of bytes if the
  *                      stream reaches the end of the available data.
+ *
+ * @api
  */
 #define chSequentialStreamRead(ip, bp, n) ((ip)->vmt->read(ip, bp, n))
 

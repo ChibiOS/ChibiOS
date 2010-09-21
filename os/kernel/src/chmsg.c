@@ -61,6 +61,8 @@
  * @param[in] tp        the pointer to the thread
  * @param[in] msg       the message
  * @return              The answer message from @p chMsgRelease().
+ *
+ * @api
  */
 msg_t chMsgSend(Thread *tp, msg_t msg) {
   Thread *ctp = currp;
@@ -88,6 +90,8 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
  *          because the sending thread is suspended until then.
  *
  * @return              The message.
+ *
+ * @api
  */
 msg_t chMsgWait(void) {
   msg_t msg;
@@ -114,6 +118,8 @@ msg_t chMsgWait(void) {
  *
  * @return              The message.
  * @retval 0            if the queue is empty.
+ *
+ * @api
  */
 msg_t chMsgGet(void) {
   msg_t msg;
@@ -130,6 +136,8 @@ msg_t chMsgGet(void) {
  *          using @p chMsgWait() or @p chMsgGet().
  *
  * @param[in] msg       the message returned to the message sender
+ *
+ * @api
  */
 void chMsgRelease(msg_t msg) {
 

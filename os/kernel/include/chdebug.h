@@ -91,6 +91,8 @@ typedef struct {
  *
  * @param[in] c         the condition to be verified to be true
  * @param[in] func      the undecorated function name
+ *
+ * @api
  */
 #define chDbgCheck(c, func) {                                           \
   if (!(c))                                                             \
@@ -117,6 +119,8 @@ typedef struct {
  * @param[in] c         the condition to be verified to be true
  * @param[in] m         the text message
  * @param[in] r         a remark string
+ *
+ * @api
  */
 #define chDbgAssert(c, m, r) {                                          \
   if (!(c))                                                             \

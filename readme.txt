@@ -111,9 +111,15 @@
 - OPT: Removed an unused field in the VTList structure.
 - OPT: Speed optimizations of the STM32 SPI driver, improved latency.
 - OPT: Speed optimizations of the STM32 ADC driver.
+- CHANGE: The mailboxes macros chMBSize(), chMBGetEmpty(), chMBGetFull(),
+  chMBPeek() have been renamed to chMBSizeI(), chMBGetEmptyI(),
+  chMBGetFullI(), chMBPeekI().
+- CHANGE: The queue APIs chQSize(), chQSpace(), chIQIsEmpty(), chIQIsFull(),
+  chOQIsEmpty(), chOQIsFull() have been renamed to chQSizeI(), chQSpaceI(),
+  chIQIsEmptyI(), chIQIsFullI(), chOQIsEmptyI(), chOQIsFullI().
 - CHANGE: The event APIs chEvtPend() and chEvtClear() have been renamed
   to chEvtAddFlags() and chEvtClearFlags() for consistency and correct
-  English.
+  English. Changed the macro chEvtIsListening() in chEvtIsListeningI().
 - CHANGE: Added a parameter to the UART driver callbacks, the pointer to the
   driver itself.
 - CHANGE: In the UART driver now an error does not automatically brings the

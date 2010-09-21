@@ -94,11 +94,11 @@ static void evt1_execute(void) {
   chEvtInit(&es1);
   chEvtRegisterMask(&es1, &el1, 1);
   chEvtRegisterMask(&es1, &el2, 2);
-  test_assert(1, chEvtIsListening(&es1), "no listener");
+  test_assert(1, chEvtIsListeningI(&es1), "no listener");
   chEvtUnregister(&es1, &el1);
-  test_assert(2, chEvtIsListening(&es1), "no listener");
+  test_assert(2, chEvtIsListeningI(&es1), "no listener");
   chEvtUnregister(&es1, &el2);
-  test_assert(3, !chEvtIsListening(&es1), "stuck listener");
+  test_assert(3, !chEvtIsListeningI(&es1), "stuck listener");
 
   /*
    * Testing chEvtDispatch().
@@ -220,8 +220,8 @@ static void evt2_execute(void) {
   test_wait_threads();
   chEvtUnregister(&es1, &el1);
   chEvtUnregister(&es2, &el2);
-  test_assert(14, !chEvtIsListening(&es1), "stuck listener");
-  test_assert(15, !chEvtIsListening(&es2), "stuck listener");
+  test_assert(14, !chEvtIsListeningI(&es1), "stuck listener");
+  test_assert(15, !chEvtIsListeningI(&es2), "stuck listener");
 }
 
 ROMCONST struct testcase testevt2 = {

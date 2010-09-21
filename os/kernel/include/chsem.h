@@ -83,17 +83,24 @@ extern "C" {
 /**
  * @brief   Decreases the semaphore counter.
  * @details This macro can be used when the counter is known to be positive.
+ *
+ * @iclass
  */
 #define chSemFastWaitI(sp)      ((sp)->s_cnt--)
 
 /**
  * @brief   Increases the semaphore counter.
- * @details This macro can be used when the counter is known to be not negative.
+ * @details This macro can be used when the counter is known to be not
+ *          negative.
+ *
+ * @iclass
  */
 #define chSemFastSignalI(sp)    ((sp)->s_cnt++)
 
 /**
  * @brief   Returns the semaphore counter current value.
+ *
+ * @iclass
  */
 #define chSemGetCounterI(sp)    ((sp)->s_cnt)
 

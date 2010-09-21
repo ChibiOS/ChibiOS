@@ -32,12 +32,16 @@
 
 /**
  * @brief   Evaluates to TRUE if the thread has pending messages.
+ *
+ * @iclass
  */
 #define chMsgIsPendingI(tp) \
         ((tp)->p_msgqueue.p_next != (Thread *)&(tp)->p_msgqueue)
 
 /**
  * @brief   Returns the first message in the queue.
+ *
+ * @iclass
  */
 #define chMsgGetI(tp) \
         ((tp)->p_msgqueue.p_next->p_msg)

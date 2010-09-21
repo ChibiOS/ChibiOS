@@ -61,7 +61,8 @@ static MemoryHeap default_heap;
 
 /**
  * @brief   Initializes the default heap.
- * @note    Internal use only.
+ *
+ * @notapi
  */
 void heap_init(void) {
   default_heap.h_provider = chCoreAlloc;
@@ -82,6 +83,8 @@ void heap_init(void) {
  * @param[out] heapp    pointer to the memory heap descriptor to be initialized
  * @param[in] buf       heap buffer base
  * @param[in] size      heap size
+ *
+ * @init
  */
 void chHeapInit(MemoryHeap *heapp, void *buf, size_t size) {
   union heap_header *hp;
@@ -113,6 +116,8 @@ void chHeapInit(MemoryHeap *heapp, void *buf, size_t size) {
  *                      size for alignment and fragmentation reasons.
  * @return              A pointer to the allocated block.
  * @retval NULL         if the block cannot be allocated.
+ *
+ * @api
  */
 void *chHeapAlloc(MemoryHeap *heapp, size_t size) {
   union heap_header *qp, *hp, *fp;
@@ -173,6 +178,8 @@ void *chHeapAlloc(MemoryHeap *heapp, size_t size) {
  * @brief   Frees a previously allocated memory block.
  *
  * @param[in] p         pointer to the memory block to be freed
+ *
+ * @api
  */
 void chHeapFree(void *p) {
   union heap_header *qp, *hp;
@@ -227,6 +234,8 @@ void chHeapFree(void *p) {
  * @param[in] sizep     pointer to a variable that will receive the total
  *                      fragmented free space
  * @return              The number of fragments in the heap.
+ *
+ * @api
  */
 size_t chHeapStatus(MemoryHeap *heapp, size_t *sizep) {
   union heap_header *qp;

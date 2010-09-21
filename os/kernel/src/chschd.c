@@ -41,7 +41,8 @@ ReadyList rlist;
 
 /**
  * @brief   Scheduler initialization.
- * @note    Internally invoked by the @p chSysInit(), not an API.
+ *
+ * @notapi
  */
 void scheduler_init(void) {
 
@@ -66,6 +67,8 @@ void scheduler_init(void) {
  *
  * @param[in] tp        the thread to be made ready
  * @return              The thread pointer.
+ *
+ * @iclass
  */
 #if !defined(PORT_OPTIMIZED_READYI) || defined(__DOXYGEN__)
 #if CH_OPTIMIZE_SPEED
@@ -101,6 +104,8 @@ Thread *chSchReadyI(Thread *tp) {
  *          @ref thread_states are defined into @p threads.h.
  *
  * @param[in] newstate  the new thread state
+ *
+ * @sclass
  */
 #if !defined(PORT_OPTIMIZED_GOSLEEPS) || defined(__DOXYGEN__)
 void chSchGoSleepS(tstate_t newstate) {
@@ -163,6 +168,8 @@ static void wakeup(void *p) {
  *                      .
  * @return              The wakeup message.
  * @retval RDY_TIMEOUT if a timeout occurs.
+ *
+ * @sclass
  */
 msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
 
@@ -194,6 +201,8 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
  *
  * @param[in] ntp       the Thread to be made ready
  * @param[in] msg       message to the awakened thread
+ *
+ * @sclass
  */
 #if !defined(PORT_OPTIMIZED_WAKEUPS) || defined(__DOXYGEN__)
 void chSchWakeupS(Thread *ntp, msg_t msg) {
@@ -222,6 +231,8 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
  * @brief   Switches to the first thread on the runnable queue.
  * @note    It is intended to be called if @p chSchRescRequiredI() evaluates
  *          to @p TRUE.
+ *
+ * @iclass
  */
 #if !defined(PORT_OPTIMIZED_DORESCHEDULEI) || defined(__DOXYGEN__)
 void chSchDoRescheduleI(void) {
@@ -244,6 +255,8 @@ void chSchDoRescheduleI(void) {
  * @brief   Performs a reschedule if a higher priority thread is runnable.
  * @details If a thread with a higher priority than the current thread is in
  *          the ready list then make the higher priority thread running.
+ *
+ * @iclass
  */
 #if !defined(PORT_OPTIMIZED_RESCHEDULES) || defined(__DOXYGEN__)
 void chSchRescheduleS(void) {
@@ -262,6 +275,8 @@ void chSchRescheduleS(void) {
  *
  * @retval TRUE         if there is a thread that should go in running state.
  * @retval FALSE        if a reschedule is not required.
+ *
+ * @iclass
  */
 #if !defined(PORT_OPTIMIZED_ISRESCHREQUIREDEXI) || defined(__DOXYGEN__)
 bool_t chSchIsRescRequiredExI(void) {

@@ -43,10 +43,10 @@
 
 /**
  * @brief   Initializes s @p CondVar structure.
- * @note    This function can be invoked before the kernel is initialized
- *          because it just prepares a @p CondVar structure.
  *
  * @param[out] cp       pointer to a @p CondVar structure
+ *
+ * @init
  */
 void chCondInit(CondVar *cp) {
 
@@ -59,6 +59,8 @@ void chCondInit(CondVar *cp) {
  * @brief   Signals one thread that is waiting on the condition variable.
  *
  * @param[in] cp        pointer to the @p CondVar structure
+ *
+ * @api
  */
 void chCondSignal(CondVar *cp) {
 
@@ -78,6 +80,8 @@ void chCondSignal(CondVar *cp) {
  *          reschedule must not be performed in ISRs.
  *
  * @param[in] cp        pointer to the @p CondVar structure
+ *
+ * @iclass
  */
 void chCondSignalI(CondVar *cp) {
 
@@ -91,6 +95,8 @@ void chCondSignalI(CondVar *cp) {
  * @brief   Signals all threads that are waiting on the condition variable.
  *
  * @param[in] cp        pointer to the @p CondVar structure
+ *
+ * @api
  */
 void chCondBroadcast(CondVar *cp) {
 
@@ -108,6 +114,8 @@ void chCondBroadcast(CondVar *cp) {
  *          reschedule must not be performed in ISRs.
  *
  * @param[in] cp        pointer to the @p CondVar structure
+ *
+ * @iclass
  */
 void chCondBroadcastI(CondVar *cp) {
 
@@ -134,6 +142,8 @@ void chCondBroadcastI(CondVar *cp) {
  *                      @p chCondSignal().
  * @retval RDY_RESET    if the condvar has been signaled using
  *                      @p chCondBroadcast().
+ *
+ * @api
  */
 msg_t chCondWait(CondVar *cp) {
   msg_t msg;
@@ -158,6 +168,8 @@ msg_t chCondWait(CondVar *cp) {
  *                      @p chCondSignal().
  * @retval RDY_RESET    if the condvar has been signaled using
  *                      @p chCondBroadcast().
+ *
+ * @sclass
  */
 msg_t chCondWaitS(CondVar *cp) {
   Thread *ctp = currp;
@@ -204,6 +216,8 @@ msg_t chCondWaitS(CondVar *cp) {
  *                      @p chCondBroadcast().
  * @retval RDY_TIMEOUT  if the condvar has not been signaled within the
  *                      specified timeout.
+ *
+ * @api
  */
 msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
   msg_t msg;
@@ -239,6 +253,8 @@ msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
  *                      @p chCondBroadcast().
  * @retval RDY_TIMEOUT  if the condvar has not been signaled within the
  *                      specified timeout.
+ *
+ * @sclass
  */
 msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time) {
   Mutex *mp;

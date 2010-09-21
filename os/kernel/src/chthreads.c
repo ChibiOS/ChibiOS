@@ -64,6 +64,8 @@
  * @param[in] tp        pointer to the thread
  * @param[in] prio      the priority level for the new thread
  * @return              The same thread pointer passed as parameter.
+ *
+ * @notapi
  */
 Thread *init_thread(Thread *tp, tprio_t prio) {
 
@@ -128,6 +130,8 @@ static void memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
  *                      @p NULL.
  * @return              The pointer to the @p Thread structure allocated for
  *                      the thread into the working space area.
+ *
+ * @api
  */
 Thread *chThdInit(void *wsp, size_t size, tprio_t prio, tfunc_t pf, void *arg) {
   /* Thread structure is layed out in the lower part of the thread workspace */
@@ -158,6 +162,8 @@ Thread *chThdInit(void *wsp, size_t size, tprio_t prio, tfunc_t pf, void *arg) {
  *                      @p NULL.
  * @return              The pointer to the @p Thread structure allocated for
  *                      the thread into the working space area.
+ *
+ * @api
  */
 Thread *chThdCreateStatic(void *wsp, size_t size,
                           tprio_t prio, tfunc_t pf, void *arg) {
@@ -185,6 +191,8 @@ Thread *chThdCreateStatic(void *wsp, size_t size,
  * @return              The pointer to the @p Thread structure allocated for
  *                      the thread into the working space area.
  * @retval NULL         if the memory cannot be allocated.
+ *
+ * @api
  */
 Thread *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
                             tprio_t prio, tfunc_t pf, void *arg) {
@@ -219,6 +227,8 @@ Thread *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
  * @return              The pointer to the @p Thread structure allocated for
  *                      the thread into the working space area.
  * @retval  NULL        if the memory pool is empty.
+ *
+ * @api
  */
 Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
                                   tfunc_t pf, void *arg) {
@@ -246,6 +256,8 @@ Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
  *
  * @param[in] newprio   the new priority level of the running thread
  * @return              The old priority level.
+ *
+ * @api
  */
 tprio_t chThdSetPriority(tprio_t newprio) {
   tprio_t oldprio;
@@ -278,6 +290,8 @@ tprio_t chThdSetPriority(tprio_t newprio) {
  *
  * @param[in] tp        pointer to the thread
  * @return              The pointer to the thread.
+ *
+ * @api
  */
 Thread *chThdResume(Thread *tp) {
 
@@ -299,6 +313,8 @@ Thread *chThdResume(Thread *tp) {
  *          condition.
  *
  * @param[in] tp        pointer to the thread
+ *
+ * @api
  */
 void chThdTerminate(Thread *tp) {
 
@@ -318,6 +334,8 @@ void chThdTerminate(Thread *tp) {
  *                        interpreted as a normal time specification not as an
  *                        immediate timeout specification.
  *                      .
+ *
+ * @api
  */
 void chThdSleep(systime_t time) {
 
@@ -333,6 +351,8 @@ void chThdSleep(systime_t time) {
  *          specified value.
  *
  * @param[in] time      absolute system time
+ *
+ * @api
  */
 void chThdSleepUntil(systime_t time) {
 
@@ -346,6 +366,8 @@ void chThdSleepUntil(systime_t time) {
  * @brief   Yields the time slot.
  * @details Yields the CPU control to the next thread in the ready list with
  *          equal priority, if any.
+ *
+ * @api
  */
 void chThdYield(void) {
 
@@ -360,9 +382,13 @@ void chThdYield(void) {
  *          specified exit status code, other threads can retrieve the
  *          exit status code by invoking the function @p chThdWait().
  * @post    Eventual code after this function will never be executed,
- *          this function never returns.
+ *          this function never returns. The compiler has no way to
+ *          know this so do not assume that the compiler would remove
+ *          the dead code.
  *
  * @param[in] msg       thread exit code
+ *
+ * @api
  */
 void chThdExit(msg_t msg) {
   Thread *tp = currp;
@@ -391,6 +417,8 @@ void chThdExit(msg_t msg) {
  * @param[in] tp        pointer to the thread
  * @return              The same thread pointer passed as parameter
  *                      representing the new reference.
+ *
+ * @api
  */
 Thread *chThdAddRef(Thread *tp) {
 
@@ -411,6 +439,8 @@ Thread *chThdAddRef(Thread *tp) {
  * @note    Static threads are not affected.
  *
  * @param[in] tp        pointer to the thread
+ *
+ * @api
  */
 void chThdRelease(Thread *tp) {
   trefs_t refs;
@@ -469,6 +499,8 @@ void chThdRelease(Thread *tp) {
  *
  * @param[in] tp        pointer to the thread
  * @return              The exit code from the terminated thread.
+ *
+ * @api
  */
 msg_t chThdWait(Thread *tp) {
   msg_t msg;

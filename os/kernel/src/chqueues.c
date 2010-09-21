@@ -50,8 +50,6 @@
  * @brief   Initializes an input queue.
  * @details A Semaphore is internally initialized and works as a counter of
  *          the bytes contained in the queue.
- * @note    This function can be invoked before the kernel is initialized
- *          because it just prepares a @p InputQueue structure.
  * @note    The callback is invoked from within the S-Locked system state,
  *          see @ref system_states.
  *
@@ -60,6 +58,8 @@
  * @param[in] size      size of the queue buffer
  * @param[in] infy      pointer to a callback function that is invoked when
  *                      data is read from the queue. The value can be @p NULL.
+ *
+ * @init
  */
 void chIQInit(InputQueue *iqp, uint8_t *bp, size_t size, qnotify_t infy) {
 
@@ -77,6 +77,8 @@ void chIQInit(InputQueue *iqp, uint8_t *bp, size_t size, qnotify_t infy) {
  *          obtain immediate attention from the high level layers.
  *
  * @param[in] iqp       pointer to an @p InputQueue structure
+ *
+ * @iclass
  */
 void chIQResetI(InputQueue *iqp) {
 
@@ -94,10 +96,12 @@ void chIQResetI(InputQueue *iqp) {
  * @retval Q_OK         if the operation has been completed with success.
  * @retval Q_FULL       if the queue is full and the operation cannot be
  *                      completed.
+ *
+ * @iclass
  */
 msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
 
-  if (chIQIsFull(iqp))
+  if (chIQIsFullI(iqp))
     return Q_FULL;
 
   *iqp->q_wrptr++ = b;
@@ -122,6 +126,8 @@ msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
  * @return              A byte value from the queue.
  * @retval Q_TIMEOUT    if the specified time expired.
  * @retval Q_RESET      if the queue was reset.
+ *
+ * @api
  */
 msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
   uint8_t b;
@@ -165,6 +171,8 @@ msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The number of bytes effectively transferred.
+ *
+ * @api
  */
 size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
                        size_t n, systime_t time) {
@@ -175,7 +183,7 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
 
   chSysLock();
   while (TRUE) {
-    if (chIQIsEmpty(iqp)) {
+    if (chIQIsEmptyI(iqp)) {
       if (nfy)
         nfy();
       if ((chSemWaitTimeoutS(&iqp->q_sem, time) != RDY_OK)) {
@@ -207,8 +215,6 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
  * @brief   Initializes an output queue.
  * @details A Semaphore is internally initialized and works as a counter of
  *          the free bytes in the queue.
- * @note    This function can be invoked before the kernel is initialized
- *          because it just prepares a @p OutputQueue structure.
  * @note    The callback is invoked from within the S-Locked system state,
  *          see @ref system_states.
  *
@@ -217,6 +223,8 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
  * @param[in] size      size of the queue buffer
  * @param[in] onfy      pointer to a callback function that is invoked when
  *                      data is written to the queue. The value can be @p NULL.
+ *
+ * @init
  */
 void chOQInit(OutputQueue *oqp, uint8_t *bp, size_t size, qnotify_t onfy) {
 
@@ -234,6 +242,8 @@ void chOQInit(OutputQueue *oqp, uint8_t *bp, size_t size, qnotify_t onfy) {
  *          obtain immediate attention from the high level layers.
  *
  * @param[in] oqp       pointer to an @p OutputQueue structure
+ *
+ * @iclass
  */
 void chOQResetI(OutputQueue *oqp) {
 
@@ -258,6 +268,8 @@ void chOQResetI(OutputQueue *oqp) {
  * @retval Q_OK         if the operation succeeded.
  * @retval Q_TIMEOUT    if the specified time expired.
  * @retval Q_RESET      if the queue was reset.
+ *
+ * @api
  */
 msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time) {
   msg_t msg;
@@ -285,11 +297,13 @@ msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time) {
  * @param[in] oqp       pointer to an @p OutputQueue structure
  * @return              The byte value from the queue.
  * @retval Q_EMPTY      if the queue is empty.
+ *
+ * @iclass
  */
 msg_t chOQGetI(OutputQueue *oqp) {
   uint8_t b;
 
-  if (chOQIsEmpty(oqp))
+  if (chOQIsEmptyI(oqp))
     return Q_EMPTY;
 
   b = *oqp->q_rdptr++;
@@ -320,6 +334,8 @@ msg_t chOQGetI(OutputQueue *oqp) {
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The number of bytes effectively transferred.
+ *
+ * @api
  */
 size_t chOQWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
                         size_t n, systime_t time) {
@@ -330,7 +346,7 @@ size_t chOQWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
 
   chSysLock();
   while (TRUE) {
-    if (chOQIsFull(oqp)) {
+    if (chOQIsFullI(oqp)) {
       if (nfy)
         nfy();
       if ((chSemWaitTimeoutS(&oqp->q_sem, time) != RDY_OK)) {

@@ -50,7 +50,8 @@ static uint8_t *endmem;
 
 /**
  * @brief   Low level memory manager initialization.
- * @note    Internal use only.
+ *
+ * @notapi
  */
 void core_init(void) {
 #if CH_MEMCORE_SIZE == 0
@@ -76,6 +77,8 @@ void core_init(void) {
  * @param[in] size      the size of the block to be allocated
  * @return              A pointer to the allocated memory block.
  * @retval NULL         allocation failed, core memory exhausted.
+ *
+ * @api
  */
 void *chCoreAlloc(size_t size) {
   void *p;
@@ -95,6 +98,8 @@ void *chCoreAlloc(size_t size) {
  * @param[in] size      the size of the block to be allocated.
  * @return              A pointer to the allocated memory block.
  * @retval NULL         allocation failed, core memory exhausted.
+ *
+ * @iclass
  */
 void *chCoreAllocI(size_t size) {
   void *p;
@@ -111,6 +116,8 @@ void *chCoreAllocI(size_t size) {
  * @brief   Core memory status.
  *
  * @return              The size, in bytes, of the free core memory.
+ *
+ * @api
  */
 size_t chCoreStatus(void) {
 

@@ -91,11 +91,13 @@ typedef struct {
  *          block.
  *
  * @param[in] ip        pointer to a @p BaseChannel or derived class
- * @return              The output queue status:
+ * @return              The output queue status.
  * @retval FALSE        if the output queue has space and would not block a
  *                      write operation.
  * @retval TRUE         if the output queue is full and would block a write
  *                      operation.
+ *
+ * @api
  */
 #define chIOPutWouldBlock(ip) ((ip)->vmt->putwouldblock(ip))
 
@@ -105,11 +107,13 @@ typedef struct {
  *          block.
  *
  * @param[in] ip        pointer to a @p BaseChannel or derived class
- * @return              The input queue status:
+ * @return              The input queue status.
  * @retval FALSE        if the input queue contains data and would not block a
  *                      read operation.
  * @retval TRUE         if the input queue is empty and would block a read
  *                      operation.
+ *
+ * @api
  */
 #define chIOGetWouldBlock(ip) ((ip)->vmt->getwouldblock(ip))
 
@@ -120,9 +124,11 @@ typedef struct {
  *
  * @param[in] ip        pointer to a @p BaseChannel or derived class
  * @param[in] b         the byte value to be written to the channel
- * @return              The operation status:
+ * @return              The operation status.
  * @retval Q_OK         if the operation succeeded.
  * @retval Q_RESET      if the channel associated queue (if any) was reset.
+ *
+ * @api
  */
 #define chIOPut(ip, b) ((ip)->vmt->put(ip, b, TIME_INFINITE))
 
@@ -138,10 +144,12 @@ typedef struct {
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
  *                      .
- * @return              The operation status:
+ * @return              The operation status.
  * @retval Q_OK         if the operation succeeded.
  * @retval Q_TIMEOUT    if the specified time expired.
  * @retval Q_RESET      if the channel associated queue (if any) was reset.
+ *
+ * @api
  */
 #define chIOPutTimeout(ip, b, time) ((ip)->vmt->put(ip, b, time))
 
@@ -151,8 +159,11 @@ typedef struct {
  *          is not available then the calling thread is suspended.
  *
  * @param[in] ip        pointer to a @p BaseChannel or derived class
- * @return              A byte value from the queue or:
- * @retval Q_RESET      if the channel associated queue (if any) was reset.
+ * @return              A byte value from the queue.
+ * @retval Q_RESET      if the channel associated queue (if any) has been
+ *                      reset.
+ *
+ * @api
  */
 #define chIOGet(ip) ((ip)->vmt->get(ip, TIME_INFINITE))
 
@@ -167,9 +178,12 @@ typedef struct {
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
  *                      .
- * @return              A byte value from the queue or:
+ * @return              A byte value from the queue.
  * @retval Q_TIMEOUT    if the specified time expired.
- * @retval Q_RESET      if the channel associated queue (if any) was reset.
+ * @retval Q_RESET      if the channel associated queue (if any) has been
+ *                      reset.
+ *
+ * @api
  */
 #define chIOGetTimeout(ip, time) ((ip)->vmt->get(ip, time))
 
@@ -187,6 +201,8 @@ typedef struct {
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The number of bytes transferred.
+ *
+ * @api
  */
 #define chIOWriteTimeout(ip, bp, n, time)                                   \
   ((ip)->vmt->writet(ip, bp, n, time))
@@ -205,6 +221,8 @@ typedef struct {
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The number of bytes transferred.
+ *
+ * @api
  */
 #define chIOReadTimeout(ip, bp, n, time)                                    \
   ((ip)->vmt->readt(ip, bp, n, time))
@@ -255,6 +273,8 @@ typedef struct {
  * @param[in] ip        pointer to a @p BaseAsynchronousChannel or derived
  *                      class
  * @return              A pointer to an @p EventSource object.
+ *
+ * @api
  */
 #define chIOGetWriteEventSource(ip) (&((ip)->vmt->oevent))
 
@@ -267,6 +287,8 @@ typedef struct {
  * @param[in] ip        pointer to a @p BaseAsynchronousChannel or derived
  *                      class
  * @return              A pointer to an @p EventSource object.
+ *
+ * @api
  */
 #define chIOGetReadEventSource(ip) (&((ip)->vmt->ievent))
 

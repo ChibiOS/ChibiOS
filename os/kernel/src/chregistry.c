@@ -58,6 +58,8 @@
  *          least one thread in the system.
  *
  * @return              A reference to the most ancient thread.
+ *
+ * @api
  */
 Thread *chRegFirstThread(void) {
   Thread *tp;
@@ -79,6 +81,8 @@ Thread *chRegFirstThread(void) {
  * @param[in] tp        pointer to the thread
  * @return              A reference to the next thread.
  * @retval NULL         if there is no next thread.
+ *
+ * @api
  */
 Thread *chRegNextThread(Thread *tp) {
   Thread *ntp;

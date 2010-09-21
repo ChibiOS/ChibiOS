@@ -58,6 +58,8 @@
 
 /**
  * @brief   Returns the priority of the first thread on the given ready list.
+ *
+ * @notapi
  */
 #define firstprio(rlp)  ((rlp)->p_next->p_prio)
 
@@ -111,6 +113,8 @@ register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
  * @brief   Current thread pointer change macro.
  * @note    This macro is not meant to be used in the application code but
  *          only from within the kernel.
+ *
+ * @notapi
  */
 #if !defined(PORT_OPTIMIZED_SETCURRP) || defined(__DOXYGEN__)
 #define setcurrp(tp) (currp = (tp))
@@ -152,6 +156,8 @@ extern "C" {
  * @brief   Determines if the current thread must reschedule.
  * @details This function returns @p TRUE if there is a ready thread with
  *          higher priority.
+ *
+ * @iclass
  */
 #if !defined(PORT_OPTIMIZED_ISRESCHREQUIREDI) || defined(__DOXYGEN__)
 #define chSchIsRescRequiredI() (firstprio(&rlist.r_queue) > currp->p_prio)
@@ -161,6 +167,8 @@ extern "C" {
  * @brief   Determines if yielding is possible.
  * @details This function returns @p TRUE if there is a ready thread with
  *          equal or higher priority.
+ *
+ * @sclass
  */
 #if !defined(PORT_OPTIMIZED_CANYIELDS) || defined(__DOXYGEN__)
 #define chSchCanYieldS() (firstprio(&rlist.r_queue) >= currp->p_prio)
@@ -170,6 +178,8 @@ extern "C" {
  * @brief   Yields the time slot.
  * @details Yields the CPU control to the next thread in the ready list with
  *          equal or higher priority, if any.
+ *
+ * @sclass
  */
 #if !defined(PORT_OPTIMIZED_DOYIELDS) || defined(__DOXYGEN__)
 #define chSchDoYieldS() {                                                   \

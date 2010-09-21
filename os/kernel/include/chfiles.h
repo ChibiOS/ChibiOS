@@ -96,6 +96,8 @@ typedef struct {
  * @details The function closes a file stream.
  *
  * @param[in] ip        pointer to a @p BaseFileStream or derived class
+ *
+ * @api
  */
 #define chFileStreamClose(ip) ((ip)->vmt->close(ip))
 
@@ -103,6 +105,8 @@ typedef struct {
  * @brief   Returns an implementation dependent error code.
  *
  * @param[in] ip        pointer to a @p BaseFileStream or derived class
+ *
+ * @api
  */
 #define chFileStreamGetError ((ip)->vmt->geterror(ip))
 
@@ -110,6 +114,8 @@ typedef struct {
  * @brief   Returns the current file size.
  *
  * @param[in] ip        pointer to a @p BaseFileStream or derived class
+ *
+ * @api
  */
 #define chFileStreamGetSize ((ip)->vmt->getposition(ip))
 
@@ -117,6 +123,8 @@ typedef struct {
  * @brief   Returns the current file pointer position.
  *
  * @param[in] ip        pointer to a @p BaseFileStream or derived class
+ *
+ * @api
  */
 #define chFileStreamGetPosition ((ip)->vmt->getposition(ip))
 
@@ -125,6 +133,8 @@ typedef struct {
  *
  * @param[in] ip        pointer to a @p BaseFileStream or derived class
  * @param[in] offset    new absolute position
+ *
+ * @api
  */
 #define chFileStreamSeek ((ip)->vmt->lseek(ip, offset))
 

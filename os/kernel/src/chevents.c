@@ -68,6 +68,8 @@
  * @param[in] elp       pointer to the @p EventListener structure
  * @param[in] mask      the mask of event flags to be ORed to the thread when
  *                      the event source is broadcasted
+ *
+ * @api
  */
 void chEvtRegisterMask(EventSource *esp, EventListener *elp, eventmask_t mask) {
 
@@ -91,6 +93,8 @@ void chEvtRegisterMask(EventSource *esp, EventListener *elp, eventmask_t mask) {
  *
  * @param[in] esp       pointer to the  @p EventSource structure
  * @param[in] elp       pointer to the @p EventListener structure
+ *
+ * @api
  */
 void chEvtUnregister(EventSource *esp, EventListener *elp) {
   EventListener *p;
@@ -114,6 +118,8 @@ void chEvtUnregister(EventSource *esp, EventListener *elp) {
  *
  * @param[in] mask      the events to be cleared
  * @return              The pending events that were cleared.
+ *
+ * @api
  */
 eventmask_t chEvtClearFlags(eventmask_t mask) {
   eventmask_t m;
@@ -133,6 +139,8 @@ eventmask_t chEvtClearFlags(eventmask_t mask) {
  *
  * @param[in] mask      the event flags to be ORed
  * @return              The current pending events mask.
+ *
+ * @api
  */
 eventmask_t chEvtAddFlags(eventmask_t mask) {
 
@@ -149,6 +157,8 @@ eventmask_t chEvtAddFlags(eventmask_t mask) {
  *
  * @param[in] tp        the thread to be signaled
  * @param[in] mask      the event flags set to be ORed
+ *
+ * @api
  */
 void chEvtSignal(Thread *tp, eventmask_t mask) {
 
@@ -169,6 +179,8 @@ void chEvtSignal(Thread *tp, eventmask_t mask) {
  *
  * @param[in] tp        the thread to be signaled
  * @param[in] mask      the event flags set to be ORed
+ *
+ * @iclass
  */
 void chEvtSignalI(Thread *tp, eventmask_t mask) {
 
@@ -188,6 +200,8 @@ void chEvtSignalI(Thread *tp, eventmask_t mask) {
  *          Source.
  *
  * @param[in] esp       pointer to the @p EventSource structure
+ *
+ * @api
  */
 void chEvtBroadcast(EventSource *esp) {
 
@@ -206,6 +220,8 @@ void chEvtBroadcast(EventSource *esp) {
  *          reschedule must not be performed in ISRs.
  *
  * @param[in] esp       pointer to the @p EventSource structure
+ *
+ * @iclass
  */
 void chEvtBroadcastI(EventSource *esp) {
   EventListener *elp;
@@ -225,6 +241,8 @@ void chEvtBroadcastI(EventSource *esp) {
  * @param[in] mask      mask of the event flags to be dispatched
  * @param[in] handlers  an array of @p evhandler_t. The array must have size
  *                      equal to the number of bits in eventmask_t.
+ *
+ * @api
  */
 void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask) {
   eventid_t eid;
@@ -258,6 +276,8 @@ void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask) {
  * @param[in] mask      mask of the event flags that the function should wait
  *                      for, @p ALL_EVENTS enables all the events
  * @return              The mask of the lowest id served and cleared event.
+ *
+ * @api
  */
 eventmask_t chEvtWaitOne(eventmask_t mask) {
   Thread *ctp = currp;
@@ -285,6 +305,8 @@ eventmask_t chEvtWaitOne(eventmask_t mask) {
  * @param[in] mask      mask of the event flags that the function should wait
  *                      for, @p ALL_EVENTS enables all the events
  * @return              The mask of the served and cleared events.
+ *
+ * @api
  */
 eventmask_t chEvtWaitAny(eventmask_t mask) {
   Thread *ctp = currp;
@@ -311,6 +333,8 @@ eventmask_t chEvtWaitAny(eventmask_t mask) {
  * @param[in] mask      mask of the event flags that the function should wait
  *                      for, @p ALL_EVENTS requires all the events
  * @return              The mask of the served and cleared events.
+ *
+ * @api
  */
 eventmask_t chEvtWaitAll(eventmask_t mask) {
   Thread *ctp = currp;
@@ -348,6 +372,8 @@ eventmask_t chEvtWaitAll(eventmask_t mask) {
  *                      .
  * @return              The mask of the lowest id served and cleared event.
  * @retval 0            if the operation has timed out.
+ *
+ * @api
  */
 eventmask_t chEvtWaitOneTimeout(eventmask_t mask, systime_t time) {
   Thread *ctp = currp;
@@ -385,6 +411,8 @@ eventmask_t chEvtWaitOneTimeout(eventmask_t mask, systime_t time) {
  *                      .
  * @return              The mask of the served and cleared events.
  * @retval 0            if the operation has timed out.
+ *
+ * @api
  */
 eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t time) {
   Thread *ctp = currp;
@@ -420,6 +448,8 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t time) {
  *                      .
  * @return              The mask of the served and cleared events.
  * @retval 0            if the operation has timed out.
+ *
+ * @api
  */
 eventmask_t chEvtWaitAllTimeout(eventmask_t mask, systime_t time) {
   Thread *ctp = currp;

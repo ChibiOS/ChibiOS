@@ -35,6 +35,8 @@
  *          object.
  *
  * @return              Pointer to the idle thread,
+ *
+ * @api
  */
 #define chSysGetIdleThread() ((Thread *)_idle_thread_wa)
 
@@ -44,6 +46,9 @@
  *          unrecoverable error is detected, as example because a programming
  *          error in the application code that triggers an assertion while
  *          in debug mode.
+ * @note    Can be invoked from any system state.
+ *
+ * @special
  */
 #if !defined(SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
 #define chSysHalt() port_halt()
@@ -56,9 +61,12 @@
 
 /**
  * @brief   Performs a context switch.
+ * @note    This function should nevel be used from user code directly.
  *
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
+ *
+ * @special
  */
 #define chSysSwitchI(ntp, otp) port_switch(ntp, otp)
 
@@ -66,9 +74,9 @@
  * @brief   Raises the system interrupt priority mask to the maximum level.
  * @details All the maskable interrupt sources are disabled regardless their
  *          hardware priority.
- * @note    The implementation is architecture dependent, it may just disable
- *          the interrupts or be exactly equivalent to @p chSysDisable().
  * @note    Do not invoke this API from within a kernel lock.
+ *
+ * @special
  */
 #define chSysDisable() port_disable()
 
@@ -77,22 +85,22 @@
  * @details The interrupt sources that should not be able to preempt the kernel
  *          are disabled, interrupt sources with higher priority are still
  *          enabled.
- * @note    The implementation is architecture dependent, it may just disable
- *          the interrupts.
  * @note    Do not invoke this API from within a kernel lock.
  * @note    This API is no replacement for @p chSysLock(), the @p chSysLock()
  *          could do more than just disable the interrupts.
+ *
+ * @special
  */
 #define chSysSuspend() port_suspend()
 
 /**
  * @brief   Lowers the system interrupt priority mask to user level.
  * @details All the interrupt sources are enabled.
- * @note    The implementation is architecture dependent, it may just enable
- *          the interrupts.
  * @note    Do not invoke this API from within a kernel lock.
  * @note    This API is no replacement for @p chSysUnlock(), the
  *          @p chSysUnlock() could do more than just enable the interrupts.
+ *
+ * @special
  */
 #define chSysEnable() port_enable()
 
@@ -101,6 +109,8 @@
  * @note    The use of kernel lock mode is not recommended in the user code,
  *          it is a better idea to use the semaphores or mutexes instead.
  * @see     CH_USE_NESTED_LOCKS
+ *
+ * @special
  */
 #if CH_USE_NESTED_LOCKS || defined(__DOXYGEN__)
 #if CH_OPTIMIZE_SPEED || defined(__DOXYGEN__)
@@ -118,6 +128,8 @@
  * @note    The use of kernel lock mode is not recommended in the user code,
  *          it is a better idea to use the semaphores or mutexes instead.
  * @see     CH_USE_NESTED_LOCKS
+ *
+ * @special
  */
 #if CH_USE_NESTED_LOCKS || defined(__DOXYGEN__)
 #if CH_OPTIMIZE_SPEED || defined(__DOXYGEN__)
@@ -139,6 +151,8 @@
  *          It is good practice to invoke this API before invoking any I-class
  *          syscall from an interrupt handler.
  * @note    This API must be invoked exclusively from interrupt handlers.
+ *
+ * @special
  */
 #define chSysLockFromIsr() port_lock_from_isr()
 
@@ -151,7 +165,9 @@
  *          the system mutual exclusion zone.<br>
  *          It is good practice to invoke this API after invoking any I-class
  *          syscall from an interrupt handler.
- * @note This API must be invoked exclusively from interrupt handlers.
+ * @note    This API must be invoked exclusively from interrupt handlers.
+ *
+ * @special
  */
 #define chSysUnlockFromIsr() port_unlock_from_isr()
 

@@ -36,6 +36,8 @@ VTList vtlist;
 /**
  * @brief   Virtual Timers initialization.
  * @note    Internal use only.
+ *
+ * @notapi
  */
 void vt_init(void) {
 
@@ -58,6 +60,8 @@ void vt_init(void) {
  *                      be disposed or reused.
  * @param[in] par       a parameter that will be passed to the callback
  *                      function
+ *
+ * @iclass
  */
 void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
   VirtualTimer *p;
@@ -85,6 +89,8 @@ void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
  * @note    The timer MUST be active when this function is invoked.
  *
  * @param[in] vtp       the @p VirtualTimer structure pointer
+ *
+ * @iclass
  */
 void chVTResetI(VirtualTimer *vtp) {
 
@@ -110,6 +116,8 @@ void chVTResetI(VirtualTimer *vtp) {
  * @param[in] end       the end of the time window (non inclusive)
  * @retval TRUE         current time within the specified time window.
  * @retval FALSE        current time not within the specified time window.
+ *
+ * @api
  */
 bool_t chTimeIsWithin(systime_t start, systime_t end) {
 

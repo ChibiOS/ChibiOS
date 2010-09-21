@@ -94,6 +94,8 @@ extern VTList vtlist;
 
 /**
  * @brief   Virtual timers ticker.
+ *
+ * @iclass
  */
 #define chVTDoTickI() {                                                 \
   vtlist.vt_systime++;                                                  \
@@ -127,6 +129,8 @@ extern "C" {
 
 /**
  * @brief   Returns TRUE if the speciified timer is armed.
+ *
+ * @iclass
  */
 #define chVTIsArmedI(vtp) ((vtp)->vt_func != NULL)
 
@@ -138,6 +142,8 @@ extern "C" {
  * @note    This function is designed to work with the @p chThdSleepUntil().
  *
  * @return              The system time in ticks.r
+ *
+ * @api
  */
 #define chTimeNow() (vtlist.vt_systime)
 

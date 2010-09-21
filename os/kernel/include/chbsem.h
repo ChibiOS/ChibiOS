@@ -91,6 +91,8 @@ typedef struct  {
  *                      - @a FALSE, the initial state is not taken.
  *                      - @a TRUE, the initial state is taken.
  *                      .
+ *
+ * @init
  */
 #define chBSemInit(bsp, taken) chSemInit(&bsp->bs_sem, taken ? 0 : 1)
 
@@ -98,9 +100,13 @@ typedef struct  {
  * @brief   Wait operation on the binary semaphore.
  *
  * @param[in] bsp       pointer to a @p BinarySemaphore structure
- * @retval RDY_OK       if the binary semaphore had been successfully taken.
+ * @return              A message specifying how the invoking thread has been
+ *                      released from the semaphore.
+ * @retval RDY_OK       if the binary semaphore has been successfully taken.
  * @retval RDY_RESET    if the binary semaphore has been reset using
  *                      @p bsemReset().
+ *
+ * @api
  */
 #define chBSemWait(bsp) chSemWait(&bsp->bs_sem)
 
@@ -108,9 +114,13 @@ typedef struct  {
  * @brief   Wait operation on the binary semaphore.
  *
  * @param[in] bsp       pointer to a @p BinarySemaphore structure
- * @retval RDY_OK       if the binary semaphore had been successfully taken.
+ * @return              A message specifying how the invoking thread has been
+ *                      released from the semaphore.
+ * @retval RDY_OK       if the binary semaphore has been successfully taken.
  * @retval RDY_RESET    if the binary semaphore has been reset using
  *                      @p bsemReset().
+ *
+ * @sclass
  */
 #define chBSemWaitS(bsp) chSemWaitS(&bsp->bs_sem)
 
@@ -123,11 +133,15 @@ typedef struct  {
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
  *                      .
- * @retval RDY_OK       if the binary semaphore had been successfully taken.
+ * @return              A message specifying how the invoking thread has been
+ *                      released from the semaphore.
+ * @retval RDY_OK       if the binary semaphore has been successfully taken.
  * @retval RDY_RESET    if the binary semaphore has been reset using
  *                      @p bsemReset().
- * @retval RDY_TIMEOUT  if the binary semaphore was not signaled or reset
+ * @retval RDY_TIMEOUT  if the binary semaphore has not been signaled or reset
  *                      within the specified timeout.
+ *
+ * @api
  */
 #define chBSemWaitTimeout(bsp, time) chSemWaitTimeout(&bsp->bs_sem, time)
 
@@ -140,11 +154,15 @@ typedef struct  {
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
  *                      .
- * @retval RDY_OK       if the binary semaphore had been successfully taken.
+ * @return              A message specifying how the invoking thread has been
+ *                      released from the semaphore.
+ * @retval RDY_OK       if the binary semaphore has been successfully taken.
  * @retval RDY_RESET    if the binary semaphore has been reset using
  *                      @p bsemReset().
- * @retval RDY_TIMEOUT  if the binary semaphore was not signaled or reset
+ * @retval RDY_TIMEOUT  if the binary semaphore has not been signaled or reset
  *                      within the specified timeout.
+ *
+ * @sclass
  */
 #define chBSemWaitTimeoutS(bsp, time) chSemWaitTimeoutS(&bsp->bs_sem, time)
 
@@ -159,6 +177,8 @@ typedef struct  {
  *                      - @a FALSE, the new state is not taken.
  *                      - @a TRUE, the new state is taken.
  *                      .
+ *
+ * @api
  */
 #define chBSemReset(bsp, taken) chSemReset(&bsp->bs_sem, taken ? 0 : 1)
 
@@ -174,6 +194,8 @@ typedef struct  {
  *                      - @a FALSE, the new state is not taken.
  *                      - @a TRUE, the new state is taken.
  *                      .
+ *
+ * @iclass
  */
 #define chBSemResetI(bsp, taken) chSemResetI(&bsp->bs_sem, taken ? 0 : 1)
 
@@ -181,6 +203,8 @@ typedef struct  {
  * @brief   Performs a signal operation on a binary semaphore.
  *
  * @param[in] bsp       pointer to a @p BinarySemaphore structure
+ *
+ * @api
  */
 #define chBSemSignal(bsp) {                                                 \
   chSysLock();                                                              \
@@ -194,6 +218,8 @@ typedef struct  {
  * @note    This function does not reschedule.
  *
  * @param[in] bsp       pointer to a @p BinarySemaphore structure
+ *
+ * @iclass
  */
 #define chBSemSignalI(bsp) {                                                \
   if (bsp->bs_sem.s_cnt < 1)                                                \
@@ -207,6 +233,8 @@ typedef struct  {
  * @return              The binary semaphore current state.
  * @retval FALSE        if the binary semaphore is not taken.
  * @retval TRUE         if the binary semaphore is taken.
+ *
+ * @iclass
  */
 #define chBSemGetStateI(bsp) ((bsp)->bs_sem.s_cnt > 0 ? 0 : 1)
 

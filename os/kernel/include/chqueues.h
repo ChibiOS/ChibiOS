@@ -72,8 +72,10 @@ typedef struct {
 
 /**
  * @brief   Returns the queue's buffer size.
+ *
+ * @iclass
  */
-#define chQSize(q) ((q)->q_top - (q)->q_buffer)
+#define chQSizeI(q) ((q)->q_top - (q)->q_buffer)
 
 /**
  * @brief   Queue space.
@@ -81,8 +83,10 @@ typedef struct {
  *          space if used on an Output Queue.
  * @note    The returned value can be less than zero when there are waiting
  *          threads on the internal semaphore.
+ *
+ * @iclass
  */
-#define chQSpace(q) chSemGetCounterI(&(q)->q_sem)
+#define chQSpaceI(q) chSemGetCounterI(&(q)->q_sem)
 
 /**
  * @extends GenericQueue
@@ -97,11 +101,19 @@ typedef struct {
  */
 typedef GenericQueue InputQueue;
 
-/** @brief Evaluates to @p TRUE if the specified Input Queue is empty.*/
-#define chIQIsEmpty(q) ((bool_t)(chQSpace(q) <= 0))
+/**
+ * @brief   Evaluates to @p TRUE if the specified Input Queue is empty.
+ *
+ * @iclass
+ */
+#define chIQIsEmptyI(q) ((bool_t)(chQSpaceI(q) <= 0))
 
-/** @brief Evaluates to @p TRUE if the specified Input Queue is full.*/
-#define chIQIsFull(q) ((bool_t)(chQSpace(q) >= chQSize(q)))
+/**
+ * @brief   Evaluates to @p TRUE if the specified Input Queue is full.
+ *
+ * @iclass
+ */
+#define chIQIsFullI(q) ((bool_t)(chQSpaceI(q) >= chQSizeI(q)))
 
 /**
  * @brief   Input queue read.
@@ -110,8 +122,10 @@ typedef GenericQueue InputQueue;
  *          in the queue.
  *
  * @param[in] iqp       pointer to an @p InputQueue structure
- * @return              A byte value from the queue or:
+ * @return              A byte value from the queue.
  * @retval Q_RESET      if the queue was reset.
+ *
+ * @api
  */
 #define chIQGet(iqp) chIQGetTimeout(iqp, TIME_INFINITE)
 
@@ -162,13 +176,17 @@ typedef GenericQueue OutputQueue;
 
 /**
  * @brief   Evaluates to @p TRUE if the specified Output Queue is empty.
+ *
+ * @iclass
  */
-#define chOQIsEmpty(q) ((bool_t)(chQSpace(q) >= chQSize(q)))
+#define chOQIsEmptyI(q) ((bool_t)(chQSpaceI(q) >= chQSizeI(q)))
 
 /**
  * @brief   Evaluates to @p TRUE if the specified Output Queue is full.
+ *
+ * @iclass
  */
-#define chOQIsFull(q) ((bool_t)(chQSpace(q) <= 0))
+#define chOQIsFullI(q) ((bool_t)(chQSpaceI(q) <= 0))
 
 /**
  * @brief   Output queue write.
@@ -178,9 +196,11 @@ typedef GenericQueue OutputQueue;
  *
  * @param[in] oqp       pointer to an @p OutputQueue structure
  * @param[in] b         the byte value to be written in the queue
- * @return              The operation status:
+ * @return              The operation status.
  * @retval Q_OK         if the operation succeeded.
  * @retval Q_RESET      if the queue was reset.
+ *
+ * @api
  */
 #define chOQPut(oqp, b) chOQPutTimeout(oqp, b, TIME_INFINITE)
 

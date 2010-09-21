@@ -66,6 +66,10 @@ void _idle_thread(void *p) {
  * @pre     Interrupts must be still disabled when @p chSysInit() is invoked
  *          and are internally enabled.
  * @post    The main thread is created with priority @p NORMALPRIO.
+ * @note    This function has special, architecture-dependent, requirements,
+ *          see the notes into the various port reference manuals.
+ *
+ * @special
  */
 void chSysInit(void) {
   static Thread mainthread;
@@ -100,10 +104,11 @@ void chSysInit(void) {
  * @details Decrements the remaining time quantum of the running thread
  *          and preempts it when the quantum is used up. Increments system
  *          time and manages the timers.
- *
  * @note    The frequency of the timer determines the system tick granularity
  *          and, together with the @p CH_TIME_QUANTUM macro, the round robin
  *          interval.
+ *
+ * @iclass
  */
 void chSysTimerHandlerI(void) {
 

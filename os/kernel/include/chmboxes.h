@@ -72,8 +72,10 @@ extern "C" {
  * @brief   Returns the mailbox buffer size.
  *
  * @param[in] mbp       the pointer to an initialized Mailbox object
+ *
+ * @iclass
  */
-#define chMBSize(mbp)                                                   \
+#define chMBSizeI(mbp)                                                      \
         ((mbp)->mb_top - (mbp)->mb_buffer)
 
 /**
@@ -85,8 +87,10 @@ extern "C" {
  *
  * @param[in] mbp       the pointer to an initialized Mailbox object
  * @return              The number of empty message slots.
+ *
+ * @iclass
  */
-#define chMBGetEmpty(mbp) chSemGetCounterI(&(mbp)->mb_emptysem)
+#define chMBGetEmptyI(mbp) chSemGetCounterI(&(mbp)->mb_emptysem)
 
 /**
  * @brief   Returns the number of messages into the mailbox.
@@ -97,8 +101,10 @@ extern "C" {
  *
  * @param[in] mbp       the pointer to an initialized Mailbox object
  * @return              The number of queued messages.
+ *
+ * @iclass
  */
-#define chMBGetFull(mbp) chSemGetCounterI(&(mbp)->mb_fullsem)
+#define chMBGetFullI(mbp) chSemGetCounterI(&(mbp)->mb_fullsem)
 
 /**
  * @brief   Returns the next message in the queue without removing it.
@@ -106,8 +112,10 @@ extern "C" {
  *          or it would return garbage. The correct way to use this macro is
  *          to use @p chMBGetFull() and then use this macro, all within a
  *          lock state.
+ *
+ * @iclass
  */
-#define chMBPeek(mbp) (*(mbp)->mb_rdptr)
+#define chMBPeekI(mbp) (*(mbp)->mb_rdptr)
 
 /**
  * @brief   Data part of a static mailbox initializer.

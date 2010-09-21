@@ -70,10 +70,10 @@
 
 /**
  * @brief   Initializes s @p Mutex structure.
- * @note    This function can be invoked before the kernel is initialized
- *          because it just prepares a @p Mutex structure.
  *
  * @param[out] mp       pointer to a @p Mutex structure
+ *
+ * @init
  */
 void chMtxInit(Mutex *mp) {
 
@@ -89,6 +89,8 @@ void chMtxInit(Mutex *mp) {
  *          mutexes.
  *
  * @param[in] mp        pointer to the @p Mutex structure
+ *
+ * @api
  */
 void chMtxLock(Mutex *mp) {
 
@@ -105,6 +107,8 @@ void chMtxLock(Mutex *mp) {
  *          mutexes.
  *
  * @param[in] mp        pointer to the @p Mutex structure
+ *
+ * @sclass
  */
 void chMtxLockS(Mutex *mp) {
   Thread *ctp = currp;
@@ -184,6 +188,8 @@ void chMtxLockS(Mutex *mp) {
  * @return              The operation status.
  * @retval TRUE         if the mutex has been successfully acquired
  * @retval FALSE        if the lock attempt failed.
+ *
+ * @api
  */
 bool_t chMtxTryLock(Mutex *mp) {
   bool_t b;
@@ -210,6 +216,8 @@ bool_t chMtxTryLock(Mutex *mp) {
  * @return              The operation status.
  * @retval TRUE         if the mutex has been successfully acquired
  * @retval FALSE        if the lock attempt failed.
+ *
+ * @sclass
  */
 bool_t chMtxTryLockS(Mutex *mp) {
 
@@ -230,6 +238,8 @@ bool_t chMtxTryLockS(Mutex *mp) {
  *          owned mutexes.
  *
  * @return              A pointer to the unlocked mutex.
+ *
+ * @api
  */
 Mutex *chMtxUnlock(void) {
   Thread *ctp = currp;
@@ -288,6 +298,8 @@ Mutex *chMtxUnlock(void) {
  *          function must be performed before unlocking the kernel.
  *
  * @return              A pointer to the unlocked mutex.
+ *
+ * @sclass
  */
 Mutex *chMtxUnlockS(void) {
   Thread *ctp = currp;
@@ -342,6 +354,8 @@ Mutex *chMtxUnlockS(void) {
  *          mutexes one by one and not just because the call overhead,
  *          this function does not have any overhead related to the priority
  *          inheritance mechanism.
+ *
+ * @api
  */
 void chMtxUnlockAll(void) {
   Thread *ctp = currp;

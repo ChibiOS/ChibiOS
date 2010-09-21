@@ -54,12 +54,12 @@
 #if CH_USE_MAILBOXES || defined(__DOXYGEN__)
 /**
  * @brief   Initializes a Mailbox object.
- * @note    This function can be invoked before the kernel is initialized
- *          because it just prepares a @p Mailbox structure.
  *
  * @param[out] mbp      the pointer to the Mailbox structure to be initialized
  * @param[in] buf       the circular messages buffer
  * @param[in] n         the buffer size as number of @p msg_t
+ *
+ * @init
  */
 void chMBInit(Mailbox *mbp, msg_t *buf, cnt_t n) {
 
@@ -77,6 +77,8 @@ void chMBInit(Mailbox *mbp, msg_t *buf, cnt_t n) {
  *          the queued messages are lost.
  *
  * @param[in] mbp       the pointer to an initialized Mailbox object
+ *
+ * @api
  */
 void chMBReset(Mailbox *mbp) {
 
@@ -106,6 +108,8 @@ void chMBReset(Mailbox *mbp) {
  * @retval RDY_OK       if a message has been correctly posted.
  * @retval RDY_RESET    if the mailbox has been reset while waiting.
  * @retval RDY_TIMEOUT  if the operation has timed out.
+ *
+ * @api
  */
 msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
@@ -132,6 +136,8 @@ msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t time) {
  * @retval RDY_OK       if a message has been correctly posted.
  * @retval RDY_RESET    if the mailbox has been reset while waiting.
  * @retval RDY_TIMEOUT  if the operation has timed out.
+ *
+ * @sclass
  */
 msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
@@ -165,6 +171,8 @@ msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t time) {
  * @retval RDY_OK       if a message has been correctly posted.
  * @retval RDY_RESET    if the mailbox has been reset while waiting.
  * @retval RDY_TIMEOUT  if the operation has timed out.
+ *
+ * @api
  */
 msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
@@ -191,6 +199,8 @@ msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t time) {
  * @retval RDY_OK       if a message has been correctly posted.
  * @retval RDY_RESET    if the mailbox has been reset while waiting.
  * @retval RDY_TIMEOUT  if the operation has timed out.
+ *
+ * @sclass
  */
 msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
@@ -224,6 +234,8 @@ msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t time) {
  * @retval RDY_OK       if a message has been correctly fetched.
  * @retval RDY_RESET    if the mailbox has been reset while waiting.
  * @retval RDY_TIMEOUT  if the operation has timed out.
+ *
+ * @api
  */
 msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t time) {
   msg_t rdymsg;
@@ -250,6 +262,8 @@ msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t time) {
  * @retval RDY_OK       if a message has been correctly fetched.
  * @retval RDY_RESET    if the mailbox has been reset while waiting.
  * @retval RDY_TIMEOUT  if the operation has timed out.
+ *
+ * @sclass
  */
 msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t time) {
   msg_t rdymsg;

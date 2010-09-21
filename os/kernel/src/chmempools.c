@@ -37,8 +37,6 @@
 #if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
 /**
  * @brief   Initializes an empty memory pool.
- * @note    This function can be invoked before the kernel is initialized
- *          because it just prepares a @p MemoryPool structure.
  * @note    The size is internally aligned to be a multiple of the
  *          @p stkalign_t type size.
  *
@@ -49,6 +47,8 @@
  * @param[in] provider  memory provider function for the memory pool or
  *                      @p NULL if the pool is not allowed to grow
  *                      automatically
+ *
+ * @init
  */
 void chPoolInit(MemoryPool *mp, size_t size, memgetfunc_t provider) {
 
@@ -65,6 +65,8 @@ void chPoolInit(MemoryPool *mp, size_t size, memgetfunc_t provider) {
  * @param[in] mp        pointer to a @p MemoryPool structure
  * @return              The pointer to the allocated object.
  * @retval NULL         if pool is empty.
+ *
+ * @iclass
  */
 void *chPoolAllocI(MemoryPool *mp) {
   void *objp;
@@ -86,6 +88,8 @@ void *chPoolAllocI(MemoryPool *mp) {
  * @param[in] mp        pointer to a @p MemoryPool structure
  * @return              The pointer to the allocated object.
  * @retval NULL         if pool is empty.
+ *
+ * @api
  */
 void *chPoolAlloc(MemoryPool *mp) {
   void *objp;
@@ -105,6 +109,8 @@ void *chPoolAlloc(MemoryPool *mp) {
  *
  * @param[in] mp        pointer to a @p MemoryPool structure
  * @param[in] objp      the pointer to the object to be released or added
+ *
+ * @iclass
  */
 void chPoolFreeI(MemoryPool *mp, void *objp) {
   struct pool_header *php = objp;
@@ -125,6 +131,8 @@ void chPoolFreeI(MemoryPool *mp, void *objp) {
  *
  * @param[in] mp        pointer to a @p MemoryPool structure
  * @param[in] objp      the pointer to the object to be released or added
+ *
+ * @api
  */
 void chPoolFree(MemoryPool *mp, void *objp) {
 

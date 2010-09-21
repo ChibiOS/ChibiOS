@@ -68,12 +68,12 @@
 
 /**
  * @brief   Initializes a semaphore with the specified counter value.
- * @note    This function can be invoked before the kernel is initialized
- *          because it just prepares a @p Semaphore structure.
  *
  * @param[out] sp       pointer to a @p Semaphore structure
  * @param[in] n         initial value of the semaphore counter. Must be
  *                      non-negative.
+ *
+ * @init
  */
 void chSemInit(Semaphore *sp, cnt_t n) {
 
@@ -95,6 +95,8 @@ void chSemInit(Semaphore *sp, cnt_t n) {
  * @param[in] sp        pointer to a @p Semaphore structure
  * @param[in] n         the new value of the semaphore counter. The value must
  *                      be non-negative.
+ *
+ * @api
  */
 void chSemReset(Semaphore *sp, cnt_t n) {
 
@@ -120,6 +122,8 @@ void chSemReset(Semaphore *sp, cnt_t n) {
  * @param[in] sp        pointer to a @p Semaphore structure
  * @param[in] n         the new value of the semaphore counter. The value must
  *                      be non-negative.
+ *
+ * @iclass
  */
 void chSemResetI(Semaphore *sp, cnt_t n) {
   cnt_t cnt;
@@ -146,6 +150,8 @@ void chSemResetI(Semaphore *sp, cnt_t n) {
  * @retval RDY_OK       if the thread has not stopped on the semaphore or the
  *                      semaphore has been signaled.
  * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
+ *
+ * @api
  */
 msg_t chSemWait(Semaphore *sp) {
   msg_t msg;
@@ -165,6 +171,8 @@ msg_t chSemWait(Semaphore *sp) {
  * @retval RDY_OK       if the thread has not stopped on the semaphore or the
  *                      semaphore has been signaled.
  * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
+ *
+ * @sclass
  */
 msg_t chSemWaitS(Semaphore *sp) {
 
@@ -200,6 +208,8 @@ msg_t chSemWaitS(Semaphore *sp) {
  * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
  * @retval RDY_TIMEOUT  if the semaphore has not been signaled or reset within
  *                      the specified timeout.
+ *
+ * @api
  */
 msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
   msg_t msg;
@@ -226,6 +236,8 @@ msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
  * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
  * @retval RDY_TIMEOUT  if the semaphore has not been signaled or reset within
  *                      the specified timeout.
+ *
+ * @sclass
  */
 msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
 
@@ -252,6 +264,8 @@ msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
  * @brief   Performs a signal operation on a semaphore.
  *
  * @param[in] sp        pointer to a @p Semaphore structure
+ *
+ * @api
  */
 void chSemSignal(Semaphore *sp) {
 
@@ -276,6 +290,8 @@ void chSemSignal(Semaphore *sp) {
  *          reschedule must not be performed in ISRs.
  *
  * @param[in] sp    pointer to a @p Semaphore structure
+ *
+ * @iclass
  */
 void chSemSignalI(Semaphore *sp) {
 
@@ -308,6 +324,8 @@ void chSemSignalI(Semaphore *sp) {
  * @retval RDY_OK       if the thread has not stopped on the semaphore or the
  *                      semaphore has been signaled.
  * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
+ *
+ * @api
  */
 msg_t chSemSignalWait(Semaphore *sps, Semaphore *spw) {
   msg_t msg;

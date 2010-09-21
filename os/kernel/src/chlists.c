@@ -23,7 +23,7 @@
  *
  * @addtogroup internals
  * @details All the functions present in this module, while public, are not
- *          an OS API and should not be directly used in the user applications
+ *          OS APIs and should not be directly used in the user applications
  *          code.
  * @{
  */
@@ -32,12 +32,13 @@
 #if !CH_OPTIMIZE_SPEED || defined(__DOXYGEN__)
 /**
  * @brief   Inserts a thread into a priority ordered queue.
- * @note    The insertion is done by scanning the list from the highest priority
- *          toward the lowest.
- * @note    This function is @b not an API.
+ * @note    The insertion is done by scanning the list from the highest
+ *          priority toward the lowest.
  *
  * @param[in] tp        the pointer to the thread to be inserted in the list
  * @param[in] tqp       the pointer to the threads list header
+ *
+ * @notapi
  */
 void prio_insert(Thread *tp, ThreadsQueue *tqp) {
 
@@ -56,10 +57,11 @@ void prio_insert(Thread *tp, ThreadsQueue *tqp) {
 
 /**
  * @brief   Inserts a Thread into a queue.
- * @note    This function is @b not an API.
  *
  * @param[in] tp        the pointer to the thread to be inserted in the list
  * @param[in] tqp       the pointer to the threads list header
+ *
+ * @notapi
  */
 void queue_insert(Thread *tp, ThreadsQueue *tqp) {
 
@@ -72,10 +74,11 @@ void queue_insert(Thread *tp, ThreadsQueue *tqp) {
  * @brief   Removes the first-out Thread from a queue and returns it.
  * @note    If the queue is priority ordered then this function returns the
  *          thread with the highest priority.
- * @note    This function is @b not an API.
  *
  * @param[in] tqp       the pointer to the threads list header
  * @return              The removed thread pointer.
+ *
+ * @notapi
  */
 Thread *fifo_remove(ThreadsQueue *tqp) {
   Thread *tp = tqp->p_next;
@@ -88,10 +91,11 @@ Thread *fifo_remove(ThreadsQueue *tqp) {
  * @brief   Removes the last-out Thread from a queue and returns it.
  * @note    If the queue is priority ordered then this function returns the
  *          thread with the lowest priority.
- * @note    This function is @b not an API.
  *
  * @param[in] tqp   the pointer to the threads list header
  * @return          The removed thread pointer.
+ *
+ * @notapi
  */
 Thread *lifo_remove(ThreadsQueue *tqp) {
   Thread *tp = tqp->p_prev;
@@ -104,10 +108,11 @@ Thread *lifo_remove(ThreadsQueue *tqp) {
  * @brief   Removes a Thread from a queue and returns it.
  * @details The thread is removed from the queue regardless of its relative
  *          position and regardless the used insertion method.
- * @note    This function is @b not an API.
  *
  * @param[in] tp        the pointer to the thread to be removed from the queue
  * @return              The removed thread pointer.
+ *
+ * @notapi
  */
 Thread *dequeue(Thread *tp) {
 
@@ -118,10 +123,11 @@ Thread *dequeue(Thread *tp) {
 
 /**
  * @brief   Pushes a Thread on top of a stack list.
- * @note    This function is @b not an API.
  *
  * @param[in] tp    the pointer to the thread to be inserted in the list
  * @param[in] tlp   the pointer to the threads list header
+ *
+ * @notapi
  */
 void list_insert(Thread *tp, ThreadsList *tlp) {
 
@@ -131,11 +137,12 @@ void list_insert(Thread *tp, ThreadsList *tlp) {
 
 /**
  * @brief   Pops a Thread from the top of a stack list and returns it.
- * @note    The list must be non-empty before calling this function.
- * @note    This function is @b not an API.
+ * @pre     The list must be non-empty before calling this function.
  *
  * @param[in] tlp       the pointer to the threads list header
  * @return              The removed thread pointer.
+ *
+ * @notapi
  */
 Thread *list_remove(ThreadsList *tlp) {
 

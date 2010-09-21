@@ -144,7 +144,7 @@ static void serve_interrupt(SerialDriver *sdp) {
     case IIR_SRC_TIMEOUT:
     case IIR_SRC_RX:
       chSysLockFromIsr();
-      if (chIQIsEmpty(&sdp->iqueue))
+      if (chIQIsEmptyI(&sdp->iqueue))
         chEvtBroadcastI(&sdp->ievent);
       chSysUnlockFromIsr();
       while (u->UART_LSR & LSR_RBR_FULL) {

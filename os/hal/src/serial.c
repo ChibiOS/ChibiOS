@@ -61,12 +61,12 @@ static size_t reads(void *ip, uint8_t *bp, size_t n) {
 
 static bool_t putwouldblock(void *ip) {
 
-  return chOQIsFull(&((SerialDriver *)ip)->oqueue);
+  return chOQIsFullI(&((SerialDriver *)ip)->oqueue);
 }
 
 static bool_t getwouldblock(void *ip) {
 
-  return chIQIsEmpty(&((SerialDriver *)ip)->iqueue);
+  return chIQIsEmptyI(&((SerialDriver *)ip)->iqueue);
 }
 
 static msg_t putt(void *ip, uint8_t b, systime_t timeout) {
@@ -192,7 +192,7 @@ void sdIncomingDataI(SerialDriver *sdp, uint8_t b) {
 
   chDbgCheck(sdp != NULL, "sdIncomingDataI");
 
-  if (chIQIsEmpty(&sdp->iqueue))
+  if (chIQIsEmptyI(&sdp->iqueue))
     chEvtBroadcastI(&sdp->ievent);
   if (chIQPutI(&sdp->iqueue, b) < Q_OK)
     sdAddFlagsI(sdp, SD_OVERRUN_ERROR);

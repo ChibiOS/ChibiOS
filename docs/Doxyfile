@@ -189,7 +189,27 @@ TAB_SIZE               = 2
 # will result in a user-defined paragraph with heading "Side Effects:". 
 # You can put \n's in the value part of an alias to insert newlines.
 
-ALIASES                = 
+ALIASES                = "iclass=@par Function Class:\n This is an          \
+                          <b>I-Class</b> API, this function can be          \
+                          invoked from within a system lock zone by both    \
+                          threads and interrupt handlers."                  \
+                         "sclass=@par Function Class:\n This is an          \
+                          <b>S-Class</b> API, this function can be          \
+                          invoked from within a system lock zone by threads \
+                          only."                                            \
+                         "api=@par Function Class:\n Normal API, this       \
+                          function can be invoked by regular system threads \
+                          but not from within a lock zone."                 \
+                         "notapi=@par Function Class:\n Not an API, this    \
+                          function is for internal use only."               \
+                         "isr=@par Function Class:\n Interrupt handler,     \
+                          this function should not be directly invoked."    \
+                         "init=@par Function Class:\n Initializer, this     \
+                          function just initializes an object and can be    \
+                          invoked before the kernel is initialized."        \
+                         "special=@par Function Class:\n Special function,  \
+                          this function has special requirements see the    \
+                          notes."
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C 
 # sources only. Doxygen will then generate output that is more tailored for C. 

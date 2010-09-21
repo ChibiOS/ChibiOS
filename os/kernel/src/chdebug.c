@@ -55,6 +55,8 @@ void trace_init(void) {
  * @brief   Inserts in the circular debug trace buffer a context switch record.
  *
  * @param[in] otp       the thread being switched out
+ *
+ * @notapi
  */
 void chDbgTrace(Thread *otp) {
 
