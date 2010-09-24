@@ -87,6 +87,7 @@ typedef struct {
                                                 list.                       */
   VirtualTimer          *vt_prev;   /**< @brief Last timer in the delta
                                                 list.                       */
+  systime_t             vt_time;    /**< @brief Must be initialized to -1.  */
   volatile systime_t    vt_systime; /**< @brief System Time counter.        */
 } VTList;
 

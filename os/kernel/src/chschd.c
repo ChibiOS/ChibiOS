@@ -143,9 +143,12 @@ static void wakeup(void *p) {
     dequeue(tp);
   }
 #endif
-  /* Done this way in order to allow a tail call.*/
-  tp->p_u.rdymsg = RDY_TIMEOUT;
-  chSchReadyI(tp);
+  /* Handling the special case where the thread has been made ready by another
+     thread with higher priority.*/
+  if (tp->p_state != THD_STATE_READY) {
+    tp->p_u.rdymsg = RDY_TIMEOUT;
+    chSchReadyI(tp);
+  }
 }
 
 /**

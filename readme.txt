@@ -62,6 +62,8 @@
 *****************************************************************************
 
 *** 2.1.2 ***
+- FIX: Fixed race condition in function chSchGoSleepTimeoutS, thanks Balázs
+  (bug 3074984)(backported to 2.0.5).
 - FIX: Fixed race condition in threads creation (bug 3069854)(backported
   to 2.0.5).
 - FIX: Fixed broken CH_DBG_ENABLE_STACK_CHECK option in legacy CM3 port (bug
@@ -108,7 +110,6 @@
   change).
 - NEW: Added to the documentation more notes about interrupt handlers in
   the ARM7 port.
-- OPT: Removed an unused field in the VTList structure.
 - OPT: Speed optimizations of the STM32 SPI driver, improved latency.
 - OPT: Speed optimizations of the STM32 ADC driver.
 - CHANGE: The mailboxes macros chMBSize(), chMBGetEmpty(), chMBGetFull(),
