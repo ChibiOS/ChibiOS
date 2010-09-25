@@ -59,6 +59,8 @@
 *****************************************************************************
 
 *** 2.0.5 ***
+- FIX: Fixed broken CH_DBG_ENABLE_STACK_CHECK option in legacy CM3 port (bug
+  3064274).
 - FIX: Fixed CAN_USE_SLEEP_MODE setting (bug 3064204).
 
 *** 2.0.4 ***

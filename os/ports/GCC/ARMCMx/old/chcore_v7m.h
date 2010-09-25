@@ -270,17 +270,23 @@ struct intctx {
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  */
-static INLINE void port_switch(Thread *ntp, Thread *otp) {
-  register Thread *_ntp asm ("r0") = (ntp);
-  register Thread *_otp asm ("r1") = (otp);
-#if CH_DBG_ENABLE_STACK_CHECK
-  register char *sp asm ("sp");
-  if (sp - sizeof(struct intctx) - sizeof(Thread) < (char *)_otp)
-    asm volatile ("movs    r0, #0                               \n\t"
-                  "b       chDbgPanic");
-#endif /* CH_DBG_ENABLE_STACK_CHECK */
-  asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");
+#if !CH_DBG_ENABLE_STACK_CHECK || defined(__DOXYGEN__)
+#define port_switch(ntp, otp) {                                             \
+  register Thread *_ntp asm ("r0") = (ntp);                                 \
+  register Thread *_otp asm ("r1") = (otp);                                 \
+  asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");        \
 }
+#else /* CH_DBG_ENABLE_STACK_CHECK */
+#define port_switch(ntp, otp) {                                             \
+  register Thread *_ntp asm ("r0") = (ntp);                                 \
+  register Thread *_otp asm ("r1") = (otp);                                 \
+  register struct intctx *r13 asm ("r13");                                  \
+  if ((void *)(r13 - 1) < (void *)(_otp + 1))                               \
+    asm volatile ("movs    r0, #0                               \n\t"       \
+                  "b       chDbgPanic");                                    \
+  asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");        \
+}
+#endif /* CH_DBG_ENABLE_STACK_CHECK */
 
 #ifdef __cplusplus
 extern "C" {
