@@ -73,14 +73,15 @@
  */
 Thread *init_thread(Thread *tp, tprio_t prio) {
 
-  tp->p_flags = THD_MEM_MODE_STATIC;
   tp->p_prio = prio;
   tp->p_state = THD_STATE_SUSPENDED;
-#if CH_USE_REGISTRY
-  REG_INSERT(tp);
+  tp->p_flags = THD_MEM_MODE_STATIC;
+#if CH_USE_MUTEXES
+  tp->p_realprio = prio;
+  tp->p_mtxlist = NULL;
 #endif
-#if CH_USE_DYNAMIC
-  tp->p_refs = 1;
+#if CH_USE_EVENTS
+  tp->p_epending = 0;
 #endif
 #if CH_USE_NESTED_LOCKS
   tp->p_locks = 0;
@@ -88,9 +89,8 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
 #if CH_DBG_THREADS_PROFILING
   tp->p_time = 0;
 #endif
-#if CH_USE_MUTEXES
-  tp->p_realprio = prio;
-  tp->p_mtxlist = NULL;
+#if CH_USE_DYNAMIC
+  tp->p_refs = 1;
 #endif
 #if CH_USE_WAITEXIT
   list_init(&tp->p_waiting);
@@ -98,10 +98,14 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
 #if CH_USE_MESSAGES
   queue_init(&tp->p_msgqueue);
 #endif
-#if CH_USE_EVENTS
-  tp->p_epending = 0;
+#if CH_USE_REGISTRY
+  chSysLock();
+  REG_INSERT(tp);
+  chSysUnlock();
 #endif
-  THREAD_EXT_INIT(tp);
+#if defined(THREAD_EXT_EXIT_HOOK)
+  THREAD_EXT_INIT_HOOK(tp);
+#endif
   return tp;
 }
 
