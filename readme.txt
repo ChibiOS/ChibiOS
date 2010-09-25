@@ -58,6 +58,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.0.5 ***
+- FIX: Fixed CAN_USE_SLEEP_MODE setting (bug 3064204).
+
 *** 2.0.4 ***
 - FIX: Fixed potential issue with GCC reorganizing instructions around "asm
   volatile" statements (bug 3058731).
