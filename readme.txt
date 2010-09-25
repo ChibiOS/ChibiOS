@@ -59,6 +59,8 @@
 *****************************************************************************
 
 *** 2.0.5 ***
+- FIX: Fixed race condition in function chSchGoSleepTimeoutS, thanks Balázs
+  (bug 3074984).
 - FIX: Fixed race condition in threads creation (bug 3069854).
 - FIX: Fixed broken CH_DBG_ENABLE_STACK_CHECK option in legacy CM3 port (bug
   3064274).

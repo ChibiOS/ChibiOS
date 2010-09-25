@@ -121,8 +121,12 @@ void chSchGoSleepS(tstate_t newstate) {
 static void wakeup(void *p) {
   Thread *tp = (Thread *)p;
 
-#if CH_USE_SEMAPHORES || (CH_USE_CONDVARS && CH_USE_CONDVARS_TIMEOUT)
   switch (tp->p_state) {
+  case THD_STATE_READY:
+    /* Handling the special case where the thread has been made ready by
+       another thread with higher priority.*/
+    return;
+#if CH_USE_SEMAPHORES || (CH_USE_CONDVARS && CH_USE_CONDVARS_TIMEOUT)
 #if CH_USE_SEMAPHORES
   case THD_STATE_WTSEM:
     chSemFastSignalI((Semaphore *)tp->p_u.wtobjp);
@@ -133,9 +137,8 @@ static void wakeup(void *p) {
 #endif
     /* States requiring dequeuing.*/
     dequeue(tp);
-  }
 #endif
-  /* Done this way in order to allow a tail call.*/
+  }
   tp->p_u.rdymsg = RDY_TIMEOUT;
   chSchReadyI(tp);
 }
