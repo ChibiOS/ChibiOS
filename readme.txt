@@ -115,7 +115,7 @@
 - NEW: Added to the documentation more notes about interrupt handlers in
   the ARM7 port.
 - OPT: The fix to the bug 3075544 considerably improved the threads creation
-  performance.
+  benchmarks score.
 - OPT: Speed optimizations of the STM32 SPI driver, improved latency.
 - OPT: Speed optimizations of the STM32 ADC driver.
 - CHANGE: The API chThdInit() has been renamed to chThdCreateI().
