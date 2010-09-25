@@ -62,6 +62,8 @@
 *****************************************************************************
 
 *** 2.1.2 ***
+- FIX: Fixed non functioning option CH_USE_NESTED_LOCKS (bug 3075544)
+  (backported to 2.0.6).
 - FIX: Incorrect AT91SAM7X initialization, thanks Leszek (bug 3075354)
   (backported to 2.0.5).
 - FIX: Fixed race condition in function chSchGoSleepTimeoutS, thanks Balázs
@@ -112,8 +114,11 @@
   change).
 - NEW: Added to the documentation more notes about interrupt handlers in
   the ARM7 port.
+- OPT: The fix to the bug 3075544 considerably improved the threads creation
+  performance.
 - OPT: Speed optimizations of the STM32 SPI driver, improved latency.
 - OPT: Speed optimizations of the STM32 ADC driver.
+- CHANGE: The API chThdInit() has been renamed to chThdCreateI().
 - CHANGE: The mailboxes macros chMBSize(), chMBGetEmpty(), chMBGetFull(),
   chMBPeek() have been renamed to chMBSizeI(), chMBGetEmptyI(),
   chMBGetFullI(), chMBPeekI().

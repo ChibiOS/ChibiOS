@@ -95,9 +95,7 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
   queue_init(&tp->p_msgqueue);
 #endif
 #if CH_USE_REGISTRY
-  chSysLock();
   REG_INSERT(tp);
-  chSysUnlock();
 #endif
 #if defined(THREAD_EXT_EXIT_HOOK)
   THREAD_EXT_INIT_HOOK(tp);
@@ -114,13 +112,16 @@ static void memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
 #endif
 
 /**
- * @brief   Initializes a new thread.
+ * @brief   Creates a new thread into a static memory area.
  * @details The new thread is initialized but not inserted in the ready list,
  *          the initial state is @p THD_STATE_SUSPENDED.
  * @post    The initialized thread can be subsequently started by invoking
  *          @p chThdResume().
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
+ *          Threads created using this function do not obey to the
+ *          @p CH_DBG_FILL_THREADS debug option because it would keep
+ *          the kernel locked for too much time.
  *
  * @param[out] wsp      pointer to a working area dedicated to the thread stack
  * @param[in] size      size of the working area
@@ -131,20 +132,16 @@ static void memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
  * @return              The pointer to the @p Thread structure allocated for
  *                      the thread into the working space area.
  *
- * @api
+ * @iclass
  */
-Thread *chThdInit(void *wsp, size_t size, tprio_t prio, tfunc_t pf, void *arg) {
+Thread *chThdCreateI(void *wsp, size_t size,
+                     tprio_t prio, tfunc_t pf, void *arg) {
   /* Thread structure is layed out in the lower part of the thread workspace */
   Thread *tp = wsp;
 
   chDbgCheck((wsp != NULL) && (size >= THD_WA_SIZE(0)) &&
              (prio <= HIGHPRIO) && (pf != NULL),
-             "chThdInit");
-#if CH_DBG_FILL_THREADS
-  memfill((uint8_t *)wsp, (uint8_t *)wsp + sizeof(Thread), THREAD_FILL_VALUE);
-  memfill((uint8_t *)wsp + sizeof(Thread),
-          (uint8_t *)wsp + size, STACK_FILL_VALUE);
-#endif
+             "chThdCreateI");
   SETUP_CONTEXT(wsp, size, pf, arg);
   return init_thread(tp, prio);
 }
@@ -167,8 +164,17 @@ Thread *chThdInit(void *wsp, size_t size, tprio_t prio, tfunc_t pf, void *arg) {
  */
 Thread *chThdCreateStatic(void *wsp, size_t size,
                           tprio_t prio, tfunc_t pf, void *arg) {
-
-  return chThdResume(chThdInit(wsp, size, prio, pf, arg));
+  Thread *tp;
+  
+#if CH_DBG_FILL_THREADS
+  memfill((uint8_t *)wsp, (uint8_t *)wsp + sizeof(Thread), THREAD_FILL_VALUE);
+  memfill((uint8_t *)wsp + sizeof(Thread),
+          (uint8_t *)wsp + size, STACK_FILL_VALUE);
+#endif
+  chSysLock();
+  chSchWakeupS(tp = chThdCreateI(wsp, size, prio, pf, arg), RDY_OK);
+  chSysUnlock();
+  return tp;
 }
 
 #if CH_USE_DYNAMIC && CH_USE_HEAP
@@ -202,9 +208,19 @@ Thread *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
   wsp = chHeapAlloc(heapp, size);
   if (wsp == NULL)
     return NULL;
-  tp = chThdInit(wsp, size, prio, pf, arg);
+  
+#if CH_DBG_FILL_THREADS
+  memfill((uint8_t *)wsp, (uint8_t *)wsp + sizeof(Thread), THREAD_FILL_VALUE);
+  memfill((uint8_t *)wsp + sizeof(Thread),
+          (uint8_t *)wsp + size, STACK_FILL_VALUE);
+#endif
+  
+  chSysLock();
+  tp = chThdCreateI(wsp, size, prio, pf, arg);
   tp->p_flags = THD_MEM_MODE_HEAP;
-  return chThdResume(tp);
+  chSchWakeupS(tp, RDY_OK);
+  chSysUnlock();
+  return tp;
 }
 #endif /* CH_USE_DYNAMIC && CH_USE_HEAP */
 
@@ -240,10 +256,20 @@ Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
   wsp = chPoolAlloc(mp);
   if (wsp == NULL)
     return NULL;
-  tp = chThdInit(wsp, mp->mp_object_size, prio, pf, arg);
+  
+#if CH_DBG_FILL_THREADS
+  memfill((uint8_t *)wsp, (uint8_t *)wsp + sizeof(Thread), THREAD_FILL_VALUE);
+  memfill((uint8_t *)wsp + sizeof(Thread),
+          (uint8_t *)wsp + size, STACK_FILL_VALUE);
+#endif
+
+  chSysLock();
+  tp = chThdCreateI(wsp, mp->mp_object_size, prio, pf, arg);
   tp->p_flags = THD_MEM_MODE_MEMPOOL;
   tp->p_mpool = mp;
-  return chThdResume(tp);
+  chSchWakeupS(tp, RDY_OK);
+  chSysUnlock();
+  return tp;
 }
 #endif /* CH_USE_DYNAMIC && CH_USE_MEMPOOLS */
 
