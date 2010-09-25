@@ -112,7 +112,12 @@ void at91sam7_clock_init(void) {
   AT91C_BASE_RSTC->RSTC_RMR = ((0xA5 << 24) | AT91C_RSTC_URSTEN);
 
   /* Flash Memory: 1 wait state, about 50 cycles in a microsecond.*/
+#if SAM7_PLATFORM == SAM7X512
+  AT91C_BASE_MC->MC0_FMR = (AT91C_MC_FMCN & (50 << 16)) | AT91C_MC_FWS_1FWS;
+  AT91C_BASE_MC->MC1_FMR = (AT91C_MC_FMCN & (50 << 16)) | AT91C_MC_FWS_1FWS;
+#else
   AT91C_BASE_MC->MC_FMR = (AT91C_MC_FMCN & (50 << 16)) | AT91C_MC_FWS_1FWS;
+#endif
 
   /* Enables the main oscillator and waits 56 slow cycles as startup time.*/
   AT91C_BASE_PMC->PMC_MOR = (AT91C_CKGR_OSCOUNT & (7 << 8)) | AT91C_CKGR_MOSCEN;
@@ -129,7 +134,11 @@ void at91sam7_clock_init(void) {
     ;
 
   /* Master clock = PLLfreq / 2 = 48054858 Hz (rounded).*/
-  AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_CSS_PLL_CLK | AT91C_PMC_PRES_CLK_2;
+  AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_PRES_CLK_2;
+  while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY))
+    ;
+
+  AT91C_BASE_PMC->PMC_MCKR |= AT91C_PMC_CSS_PLL_CLK;
   while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY))
     ;
 }

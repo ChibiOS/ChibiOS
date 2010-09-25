@@ -59,6 +59,7 @@
 *****************************************************************************
 
 *** 2.0.5 ***
+- FIX: Incorrect AT91SAM7X initialization, thanks Leszek (bug 3075354).
 - FIX: Fixed race condition in function chSchGoSleepTimeoutS, thanks Balázs
   (bug 3074984).
 - FIX: Fixed race condition in threads creation (bug 3069854).

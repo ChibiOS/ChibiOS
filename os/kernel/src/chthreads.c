@@ -123,9 +123,6 @@ static void memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
  *          the initial state is @p THD_STATE_SUSPENDED.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
- * @note    This function can be invoked from within an interrupt handler
- *          even if it is not an I-Class API because it does not touch
- *          any critical kernel data structure.
  *
  * @param[out] wsp      pointer to a working area dedicated to the thread stack
  * @param[in] size      size of the working area
