@@ -260,7 +260,7 @@ Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
 #if CH_DBG_FILL_THREADS
   memfill((uint8_t *)wsp, (uint8_t *)wsp + sizeof(Thread), THREAD_FILL_VALUE);
   memfill((uint8_t *)wsp + sizeof(Thread),
-          (uint8_t *)wsp + size, STACK_FILL_VALUE);
+          (uint8_t *)wsp + mp->mp_object_size, STACK_FILL_VALUE);
 #endif
 
   chSysLock();
