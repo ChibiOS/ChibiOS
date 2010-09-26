@@ -116,7 +116,8 @@ static void memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
  * @details The new thread is initialized but not inserted in the ready list,
  *          the initial state is @p THD_STATE_SUSPENDED.
  * @post    The initialized thread can be subsequently started by invoking
- *          @p chThdResume().
+ *          @p chThdResume(), @p chThdResumeI() or @p chSchWakeupS()
+ *          depending on the execution context.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
  * @note    Threads created using this function do not obey to the
