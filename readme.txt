@@ -58,6 +58,10 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.0.6 ***
+- FIX: Fixed non functioning option CH_USE_NESTED_LOCKS (bug 3075544).
+- CHANGE: The API chThdInit() has been renamed to chThdCreateI().
+
 *** 2.0.5 ***
 - FIX: Incorrect AT91SAM7X initialization, thanks Leszek (bug 3075354).
 - FIX: Fixed race condition in function chSchGoSleepTimeoutS, thanks Balázs

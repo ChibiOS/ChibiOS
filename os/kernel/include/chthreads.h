@@ -217,8 +217,8 @@ typedef msg_t (*tfunc_t)(void *);
 extern "C" {
 #endif
   Thread *init_thread(Thread *tp, tprio_t prio);
-  Thread *chThdInit(void *wsp, size_t size,
-                    tprio_t prio, tfunc_t pf, void *arg);
+  Thread *chThdCreateI(void *wsp, size_t size,
+                       tprio_t prio, tfunc_t pf, void *arg);
   Thread *chThdCreateStatic(void *wsp, size_t size,
                             tprio_t prio, tfunc_t pf, void *arg);
 #if CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_HEAP
