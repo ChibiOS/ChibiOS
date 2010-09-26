@@ -119,7 +119,7 @@ static void memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
  *          @p chThdResume().
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
- *          Threads created using this function do not obey to the
+ * @note    Threads created using this function do not obey to the
  *          @p CH_DBG_FILL_THREADS debug option because it would keep
  *          the kernel locked for too much time.
  *
