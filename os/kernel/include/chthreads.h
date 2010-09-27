@@ -160,7 +160,7 @@ struct Thread {
    */
   void                  *p_mpool;
 #endif
-#if defined(THREAD_EXT_FIELDS_HOOK)
+#if defined(THREAD_EXT_FIELDS)
   /* Extra fields defined in chconf.h.*/
   THREAD_EXT_FIELDS
 #endif
