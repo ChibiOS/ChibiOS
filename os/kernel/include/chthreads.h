@@ -162,7 +162,7 @@ struct Thread {
 #endif
 #if defined(THREAD_EXT_FIELDS_HOOK)
   /* Extra fields defined in chconf.h.*/
-  THREAD_EXT_FIELDS_HOOK
+  THREAD_EXT_FIELDS
 #endif
 };
 

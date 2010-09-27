@@ -431,11 +431,11 @@
 /*===========================================================================*/
 
 /**
- * @brief   Threads descriptor structure hook.
+ * @brief   Threads descriptor structure extension.
  * @details User fields added to the end of the @p Thread structure.
  */
-#if !defined(THREAD_EXT_FIELDS_HOOK) || defined(__DOXYGEN__)
-#define THREAD_EXT_FIELDS_HOOK                                              \
+#if !defined(THREAD_EXT_FIELDS) || defined(__DOXYGEN__)
+#define THREAD_EXT_FIELDS                                                   \
   /* Add threads custom fields here.*/
 #endif
 

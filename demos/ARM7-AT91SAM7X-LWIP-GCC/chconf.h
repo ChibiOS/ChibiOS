@@ -431,15 +431,15 @@
 /*===========================================================================*/
 
 /**
- * @brief   Threads descriptor structure hook.
+ * @brief   Threads descriptor structure extension.
  * @details User fields added to the end of the @p Thread structure.
  */
-#if !defined(THREAD_EXT_FIELDS_HOOK) || defined(__DOXYGEN__)
-#define THREAD_EXT_FIELDS_HOOK                                               \
-struct {                                                                \
-  /* Add threads custom fields here.*/                                  \
-  /* Space for the LWIP sys_timeouts structure.*/                       \
-  void                  *p_lwipspace[1];                                \
+#if !defined(THREAD_EXT_FIELDS) || defined(__DOXYGEN__)
+#define THREAD_EXT_FIELDS                                                   \
+struct {                                                                    \
+  /* Add threads custom fields here.*/                                      \
+  /* Space for the LWIP sys_timeouts structure.*/                           \
+  void                  *p_lwipspace[1];                                    \
 };
 #endif
 
@@ -453,7 +453,7 @@ struct {                                                                \
 #if !defined(THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)
 #define THREAD_EXT_INIT_HOOK(tp) {                                          \
   /* Add threads initialization code here.*/                                \
-  (tp)->p_lwipspace[0] = NULL;                                          \
+  (tp)->p_lwipspace[0] = NULL;                                              \
 }
 #endif
 
