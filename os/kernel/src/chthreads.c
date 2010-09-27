@@ -101,8 +101,8 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
 #if CH_USE_REGISTRY
   REG_INSERT(tp);
 #endif
-#if defined(THREAD_EXT_INIT_HOOK)
-  THREAD_EXT_INIT_HOOK(tp);
+#if defined(THREAD_EXT_INIT)
+  THREAD_EXT_INIT(tp);
 #endif
   return tp;
 }
@@ -391,8 +391,8 @@ void chThdExit(msg_t msg) {
 
   chSysLock();
   tp->p_u.exitcode = msg;
-#if defined(THREAD_EXT_EXIT_HOOK)
-  THREAD_EXT_EXIT_HOOK(tp);
+#if defined(THREAD_EXT_EXIT)
+  THREAD_EXT_EXIT(tp);
 #endif
 #if CH_USE_WAITEXIT
   while (notempty(&tp->p_waiting))
