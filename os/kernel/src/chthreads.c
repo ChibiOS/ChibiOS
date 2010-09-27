@@ -97,7 +97,7 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
 #if CH_USE_REGISTRY
   REG_INSERT(tp);
 #endif
-#if defined(THREAD_EXT_EXIT_HOOK)
+#if defined(THREAD_EXT_INIT_HOOK)
   THREAD_EXT_INIT_HOOK(tp);
 #endif
   return tp;
