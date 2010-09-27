@@ -431,7 +431,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   Threads descriptor structure hook.
+ * @brief   Threads descriptor structure extension.
  * @details User fields added to the end of the @p Thread structure.
  */
 #if !defined(THREAD_EXT_FIELDS) || defined(__DOXYGEN__)
