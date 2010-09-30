@@ -88,7 +88,7 @@
  * @details If set to @p TRUE the support for UART5 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(USE_STM32_USART3) || defined(__DOXYGEN__)
+#if !defined(USE_STM32_UART5) || defined(__DOXYGEN__)
 #define USE_STM32_UART5             TRUE
 #endif
 #endif
