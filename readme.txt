@@ -62,6 +62,8 @@
 *****************************************************************************
 
 *** 2.1.2 ***
+- FIX: Fixed wrong macro check in STM32 serial support (but 3078891)(backported
+  to 2.0.6).
 - FIX: Fixed non functioning option CH_USE_NESTED_LOCKS (bug 3075544)
   (backported to 2.0.6).
 - FIX: Incorrect AT91SAM7X initialization, thanks Leszek (bug 3075354)
