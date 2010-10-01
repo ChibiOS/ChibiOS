@@ -112,10 +112,10 @@
 
 /**
  * @defgroup ARMCMx_CONF Configuration Options
- * @brief ARM Cortex-Mx Configuration Options.
- * @details The ARMCMx port allows some architecture-specific configurations
- * settings that can be overridden by redefining them in @p chconf.h.
- * Usually there is no need to change the default values.
+ * @details ARM Cortex-Mx Configuration Options. The ARMCMx port allows some
+ * architecture-specific configurations settings that can be overridden
+ * by redefining them in @p chconf.h. Usually there is no need to change
+ * the default values.
  * - @p INT_REQUIRED_STACK, this value represent the amount of stack space used
  *   by an interrupt handler between the @p extctx and @p intctx
  *   structures.
@@ -138,28 +138,27 @@
 
 /**
  * @defgroup ARMCMx_CORE Core Port Implementation
- * @brief ARM Cortex-Mx specific port code, structures and macros.
+ * @details ARM Cortex-Mx specific port code, structures and macros.
  *
  * @ingroup ARMCMx
  */
 
 /**
  * @defgroup ARMCMx_V6M_CORE ARMv6-M Specific Implementation
- * @brief ARMv6-M specific port code, structures and macros.
+ * @details ARMv6-M specific port code, structures and macros.
  *
  * @ingroup ARMCMx_CORE
  */
 
 /**
  * @defgroup ARMCMx_V7M_CORE ARMv7-M Specific Implementation
- * @brief ARMv7-M specific port code, structures and macros.
+ * @details ARMv7-M specific port code, structures and macros.
  *
  * @ingroup ARMCMx_CORE
  */
 
 /**
  * @defgroup ARMCMx_STARTUP Startup Support
- * @brief ARM Cortex-Mx startup code support.
  * @details ChibiOS/RT provides its own generic startup file for the ARM
  * Cortex-Mx port.
  * Of course it is not mandatory to use it but care should be taken about the
@@ -202,7 +201,7 @@
 
 /**
  * @defgroup ARMCMx_NVIC NVIC Support
- * @brief ARM Cortex-Mx NVIC support.
+ * @details ARM Cortex-Mx NVIC support.
  *
  * @ingroup ARMCMx
  */
