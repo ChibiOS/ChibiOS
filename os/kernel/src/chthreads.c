@@ -514,7 +514,6 @@ void chThdRelease(Thread *tp) {
  *          - If the thread was spawned by @p chThdCreateFromMemoryPool()
  *            then the working area is returned to the owning memory pool.
  *          .
- *          Please read the @ref article_lifecycle article for more details.
  * @pre     The configuration option @p CH_USE_WAITEXIT must be enabled in
  *          order to use this function.
  * @post    Enabling @p chThdWait() requires 2-4 (depending on the
