@@ -25,7 +25,7 @@
  * This port supports all the cores implementing the ARMv6-M and ARMv7-M
  * architectures.
  *
- * @section ARMCMx_STATES_A System logical states in ARMv6-M
+ * @section ARMCMx_STATES_A System logical states in ARMv6-M mode
  * The ChibiOS/RT logical system states are mapped as follow in the ARM
  * Cortex-M0 port:
  * - <b>Init</b>. This state is represented by the startup code and the
@@ -59,7 +59,7 @@
  *   the maskable interrupt sources. The ARM state is whatever the processor
  *   was running when @p chSysHalt() was invoked.
  *
- * @section ARMCMx_STATES_B System logical states in ARMv7-M
+ * @section ARMCMx_STATES_B System logical states in ARMv7-M mode
  * The ChibiOS/RT logical system states are mapped as follow in the ARM
  * Cortex-M3 port:
  * - <b>Init</b>. This state is represented by the startup code and the
@@ -99,7 +99,7 @@
  *   the maskable interrupt sources. The ARM state is whatever the processor
  *   was running when @p chSysHalt() was invoked.
  * .
- * @section ARMCMx_NOTES The ARM Cortex-Mx port notes
+ * @section ARMCMx_NOTES ARM Cortex-Mx/GCC port notes
  * The ARM Cortex-Mx port is organized as follow:
  * - The @p main() function is invoked in thread-privileged mode.
  * - Each thread has a private process stack, the system has a single main
