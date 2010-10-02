@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    PPC/ivor.s
+ * @file    SPC56x/ivor.s
  * @brief   PowerPC IVORx handlers.
  *
  * @addtogroup PPC_CORE

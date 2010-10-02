@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    PPC/SPC56x/vectors.s
+ * @file    SPC56x/vectors.s
  * @brief   SPC56x vectors table.
  *
  * @addtogroup PPC_CORE

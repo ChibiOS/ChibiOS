@@ -21,8 +21,11 @@
  * @defgroup PPC Power Architecture
  * @details Power Architecture port for the GCC compiler.
  *
- * @section PPC_STATES Mapping of the System States in the PowerPC port
- * The ChibiOS/RT logical @ref system_states are mapped as follow in the
+ * @section PPC_INTRO Introduction
+ * This port supports cores implementing a 32 bits Power Architecture.
+ *
+ * @section PPC_STATES Mapping of the System States in the Power Architecture port
+ * The ChibiOS/RT logical system states are mapped as follow in the
  * PowerPC port:
  * - <b>Init</b>. This state is represented by the startup code and the
  *   initialization code before @p chSysInit() is executed. It has not a
@@ -57,16 +60,15 @@
 
 /**
  * @defgroup PPC_CONF Configuration Options
- * @brief PowerPC Configuration Options.
- * @details The PowerPC port allows some architecture-specific configurations
- * settings that can be overridden by redefining them in @p chconf.h.
- * Usually there is no need to change the default values.
+ * @details PowerPC Configuration Options. The PowerPC port allows some
+ * architecture-specific configurations settings that can be overridden by
+ * redefining them in @p chconf.h. Usually there is no need to change the
+ * default values.
  * - @p INT_REQUIRED_STACK, this value represent the amount of stack space used
  *   by an interrupt handler between the @p extctx and @p intctx
  *   structures.
  *   The default for this value is @p 128 bytes, this space is allocated for
- *   each thread so be careful in order to not waste precious RAM space.<br>
- *   The default value is set into <b>./os/ports/GCC/PPC/chcore.h</b>.
+ *   each thread so be careful in order to not waste precious RAM space.
  * - @p IDLE_THREAD_STACK_SIZE, stack area size to be assigned to the IDLE
  *   thread. Usually there is no need to change this value unless inserting
  *   code in the IDLE thread hook macro.
@@ -87,13 +89,13 @@
 
 /**
  * @defgroup PPC_STARTUP Startup Support
- * @brief PPC startup code support.
- * @details ChibiOS/RT provides its own generic startup file for the PowerPC
- * port.
+ * @brief 
+ * @details PPC startup code support. ChibiOS/RT provides its own generic
+ * startup file for the PowerPC port.
  * Of course it is not mandatory to use it but care should be taken about the
  * startup phase details.
  *
- * <h2>Startup Process</h2>
+ * @section PPC_STARTUP_1 Startup Process
  * The startup process, as implemented, is the following:
  * -# The stacks pointer is initialized into the area defined in the linker
  *    script.
@@ -112,7 +114,7 @@
  * -# Should the @p main() function return a branch is performed to the weak
  *    symbol @p main_exit. The default code is an endless empty loop.
  * .
- * <h2>Expected linker symbols</h2>
+ * @section PPC_STARTUP_2 Expected linker symbols
  * The startup code starts at the symbol @p _boot_address and expects the
  * following symbols to be defined in the linker script:
  * - @p __ram_end__ RAM end location +1.
@@ -126,5 +128,4 @@
  * - @p __ivpr_base__ IVPR register initialization address.
  * .
  * @ingroup PPC
- * @file PPC/crt0.s Startup code.
  */
