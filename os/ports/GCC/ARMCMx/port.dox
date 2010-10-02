@@ -164,7 +164,7 @@
  * Of course it is not mandatory to use it but care should be taken about the
  * startup phase details.
  *
- * <h2>Startup Process</h2>
+ * @section ARMCMx_STARTUP_1 Startup Process
  * The startup process, as implemented, is the following:
  * -# Interrupts are masked globally.
  * -# The two stacks are initialized by assigning them the sizes defined in the
@@ -183,7 +183,7 @@
  * -# Should the @p main() function return a branch is performed to the weak
  *    symbol MainExitHandler. The default code is an endless empty loop.
  * .
- * <h2>Expected linker symbols</h2>
+ * @section ARMCMx_STARTUP_2 Expected linker symbols
  * The startup code starts at the symbol @p ResetHandler and expects the
  * following symbols to be defined in the linker script:
  * - @p __ram_end__ RAM end location +1.

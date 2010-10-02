@@ -21,8 +21,8 @@
  * @defgroup ARM7 ARM7
  * @details ARM7 port for the GCC compiler.
  *
- * @section ARM7_NOTES Supported ARM7 modes
- * The ARM7-GCC port supports three modes:
+ * @section ARM7_INTRO Introduction
+ * The ARM7-GCC port supports the ARM7 code in the following three modes:
  * - Pure ARM mode, this is the preferred mode for code speed. The code size
  *   is larger however. This mode is enabled when all the modules are compiled
  *   in ARM mode, see the Makefiles.
@@ -70,7 +70,7 @@
  *   @p chSysHalt() was invoked.
  * .
  * @section ARM7_NOTES The ARM7 port notes
- * The ARM7 port makes some assumptions on the application code organization:
+ * The ARM7 port is organized as follow:
  * - The @p main() function is invoked in system mode.
  * - Each thread has a private user/system stack, the system has a single
  *   interrupt stack where all the interrupts are processed.
@@ -137,10 +137,10 @@
 
 /**
  * @defgroup ARM7_CONF Configuration Options
- * @brief ARM7 specific configuration options.
- * @details The ARM7 port allows some architecture-specific configurations
- * settings that can be overridden by redefining them in @p chconf.h.
- * Usually there is no need to change the default values.
+ * @details ARM7 specific configuration options. The ARM7 port allows some
+ * architecture-specific configurations settings that can be overridden by
+ * redefining them in @p chconf.h. Usually there is no need to change the
+ * default values.
  * - @p INT_REQUIRED_STACK, this value represent the amount of stack space used
  *   by an interrupt handler between the @p extctx and @p intctx
  *   structures.<br>
@@ -161,7 +161,7 @@
 
 /**
  * @defgroup ARM7_CORE Core Port Implementation
- * @brief ARM7 specific port code, structures and macros.
+ * @details ARM7 specific port code, structures and macros.
  *
  * @ingroup ARM7
  * @file ARM7/chtypes.h Port types.
@@ -171,12 +171,11 @@
 
 /**
  * @defgroup ARM7_STARTUP Startup Support
- * @brief ARM7 startup code support.
- * @details ChibiOS/RT provides its own generic startup file for the ARM7 port.
- * Of course it is not mandatory to use it but care should be taken about the
- * startup phase details.
+ * @details ARM7 startup code support. ChibiOS/RT provides its own generic
+ * startup file for the ARM7 port. Of course it is not mandatory to use it
+ * but care should be taken about the startup phase details.
  *
- * <h2>Startup Process</h2>
+ * @section ARM7_STARTUP_1 Startup Process
  * The startup process, as implemented, is the following:
  * -# The stacks are initialized by assigning them the sizes defined in the
  *    linker script (usually named @p ch.ld). Stack areas are allocated from
@@ -195,7 +194,7 @@
  * -# Should the @p main() function return a branch is performed to the weak
  *    symbol MainExitHandler. The default code is an endless empty loop.
  * .
- * <h2>Expected linker symbols</h2>
+ * @section ARM7_STARTUP_2 Expected linker symbols
  * The startup code starts at the symbol @p ResetHandler and expects the
  * following symbols to be defined in the linker script:
  * - @p __ram_end__ RAM end location +1.
