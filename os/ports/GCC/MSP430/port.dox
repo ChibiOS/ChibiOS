@@ -48,8 +48,8 @@
  * .
  * @section MSP430_NOTES The MSP430 port notes
  * - The MSP430 does not have a dedicated interrupt stack, make sure to reserve
- *     enough stack space for interrupts in each thread stack. This can be done
- *     by modifying the @p INT_REQUIRED_STACK configuration options.
+ *   enough stack space for interrupts in each thread stack. This can be done
+ *   by modifying the @p INT_REQUIRED_STACK configuration options.
  * - The state of the hardware multiplier is not saved in the thread context,
  *   make sure to use it in <b>Suspended</b> state (interrupts masked).
  * - The port code does not define the switch to a low power mode for the
@@ -69,8 +69,7 @@
  * - @p INT_REQUIRED_STACK, this value represent the amount of stack space
  *   used by the interrupt handlers.<br>
  *   The default for this value is @p 32, this space is allocated for each
- *   thread so be careful in order to not waste precious RAM space.<br>
- *   The default value is set into <b>./os/ports/GCC/MSP430/chcore.h</b>.
+ *   thread so be careful in order to not waste precious RAM space.
  * - @p IDLE_THREAD_STACK_SIZE, stack area size to be assigned to the IDLE
  *   thread. Usually there is no need to change this value unless inserting
  *   code in the IDLE thread hook macro.

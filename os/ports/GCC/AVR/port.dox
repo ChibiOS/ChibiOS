@@ -54,15 +54,14 @@
 
 /**
  * @defgroup AVR_CONF Configuration Options
- * @brief AVR Configuration Options.
- * @details The AVR port allows some architecture-specific configurations
- * settings that can be overridden by redefining them in @p chconf.h.
- * Usually there is no need to change the default values.
+ * @details AVR Configuration Options. The AVR port allows some
+ * architecture-specific configurations settings that can be overridden
+ * by redefining them in @p chconf.h. Usually there is no need to change
+ * the default values.
  * - @p INT_REQUIRED_STACK, this value represent the amount of stack space
  *   used by the interrupt handlers.<br>
  *   The default for this value is @p 32, this space is allocated for each
- *   thread so be careful in order to not waste precious RAM space.<br>
- *   The default value is set into <b>./os/ports/GCC/AVR/chcore.h</b>.
+ *   thread so be careful in order to not waste precious RAM space.
  * - @p IDLE_THREAD_STACK_SIZE, stack area size to be assigned to the IDLE
  *   thread. Usually there is no need to change this value unless inserting
  *   code in the IDLE thread hook macro.
@@ -70,12 +69,18 @@
  * @ingroup AVR
  */
 
-/**
- * @defgroup AVR_CORE AVR Core Implementation
- * @brief AVR specific port code, structures and macros.
+ /**
+ * @defgroup AVR_STARTUP Startup Support
+ * @details ChibiOS/RT doed not provide startup files for the AVR, there
+ * are no special startup requirement so the normal toolchain-provided
+ * startup files can be used.
  *
  * @ingroup AVR
- * @file AVR/chtypes.h Port types.
- * @file AVR/chcore.h Port related structures and macros.
- * @file AVR/chcore.c Port related code.
+ */
+
+/**
+ * @defgroup AVR_CORE AVR Core Implementation
+ * @details AVR specific port code, structures and macros.
+ *
+ * @ingroup AVR
  */
