@@ -21,8 +21,11 @@
  * @defgroup STM8_COSMIC STM8
  * @details STM8 port for the Cosmic C compiler.
  *
+ * @section STM8_COSMIC_INTRO Introduction
+ * This port supports all STM8 8 bits MCUs.
+ *
  * @section STM8_COSMIC_STATES Mapping of the System States in the STM8 port
- * The ChibiOS/RT logical @ref system_states are mapped as follow in the STM8
+ * The ChibiOS/RT logical system states are mapped as follow in the STM8
  * port:
  * - <b>Init</b>. This state is represented by the startup code and the
  *   initialization code before @p chSysInit() is executed. It has not a
@@ -48,7 +51,7 @@
  * - The STM8 does not have a dedicated interrupt stack, make sure to reserve
  *     enough stack space for interrupts in each thread stack. This can be done
  *     by modifying the @p INT_REQUIRED_STACK macro into
- *     <b>./os/ports/RC/STM8/chcore.h</b>.
+ *     <b>./os/ports/cosmic/STM8/chcore.h</b>.
  * - The kernel currently supports only the small memory model so the
  *   kernel files should be loaded in the first 64K. Note that this is not
  *   a problem because upper addresses can be used by the user code, the
@@ -62,25 +65,30 @@
 
 /**
  * @defgroup STM8_COSMIC_CONF Configuration Options
- * @brief STM8 Configuration Options.
- * @details The STM8 port allows some architecture-specific configurations
- * settings that can be specified externally, as example on the compiler
- * command line:
+ * @details STM8 Configuration Options. The STM8 port allows some
+ * architecture-specific configurations settings that can be overridden
+ * by redefining them in @p chconf.h. Usually there is no need to change
+ * the default values.
  * - @p INT_REQUIRED_STACK, this value represent the amount of stack space
  *   used by the interrupt handlers.<br>
- *   The default for this value is @p 32, this space is allocated for each
- *   thread so be careful in order to not waste precious RAM space.<br>
- *   The default value is set into <b>./os/ports/cosmic/STM8/chcore.h</b>.
+ *   The default for this value is @p 48, this space is allocated for each
+ *   thread so be careful in order to not waste precious RAM space.
  * .
+ * @ingroup STM8_COSMIC
+ */
+
+ /**
+ * @defgroup STM8_COSMIC_STARTUP Startup Support
+ * @details ChibiOS/RT doed not provide startup files for the STM8, there
+ * are no special startup requirement so the normal toolchain-provided
+ * startup files can be used.
+ *
  * @ingroup STM8_COSMIC
  */
 
 /**
  * @defgroup STM8_COSMIC_CORE Core Port Implementation
- * @brief STM8 specific port code, structures and macros.
+ * @details STM8 specific port code, structures and macros.
  *
  * @ingroup STM8_COSMIC
- * @file cosmic/STM8/chtypes.h Port types.
- * @file cosmic/STM8/chcore.h Port related structures and macros.
- * @file cosmic/STM8/chcore.c Port related code.
  */
