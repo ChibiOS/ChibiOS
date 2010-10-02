@@ -35,7 +35,7 @@
  *   THUMB mode.
  * .
  * @section ARM7_STATES Mapping of the System States in the ARM7 port
- * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM7
+ * The ChibiOS/RT logical system states are mapped as follow in the ARM7
  * port:
  * - <b>Init</b>. This state is represented by the startup code and the
  *   initialization code before @p chSysInit() is executed. It has not a
