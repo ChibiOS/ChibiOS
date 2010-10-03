@@ -38,8 +38,8 @@
  */
 #define PLATFORM_NAME   "MSP430x16x"
 
-#define MSP430_CLOCK_SOURCE_XT2CLK  0   /** @brief XT2CLK clock selector.   */
-#define MSP430_CLOCK_SOURCE_DCOCLK  1   /** @brief DCOCLK clock selector.   */
+#define MSP430_CLOCK_SOURCE_XT2CLK  0   /**< @brief XT2CLK clock selector.  */
+#define MSP430_CLOCK_SOURCE_DCOCLK  1   /**< @brief DCOCLK clock selector.  */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
