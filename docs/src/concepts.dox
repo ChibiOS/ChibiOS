@@ -54,11 +54,15 @@
  *   preempt (small parts of) the kernel code and are thus able to invoke
  *   operating system APIs from within their handlers. The interrupt handlers
  *   belonging to this class must be written following some rules. See the
- *   @ref system APIs group and @ref article_interrupts.
+ *   @ref system APIs group and the web article
+ *   <a href="http://chibios.sourceforge.net/dokuwiki/doku.php?id=chibios:howtos:interrupts">
+ *   How to write interrupt handlers</a>.
  * - <b>Fast Interrupts</b>. Maskable interrupt sources with the ability
  *   to preempt the kernel code and thus have a lower latency and are less
- *   subject to jitter, see @ref article_jitter. Such sources are not
- *   supported on all the architectures.<br>
+ *   subject to jitter, see the web article
+ *   <a href="http://chibios.sourceforge.net/dokuwiki/doku.php?id=chibios:articles:jitter">
+ *   Response Time and Jitter</a>.
+ *   Such sources are not supported on all the architectures.<br>
  *   Fast interrupts are not allowed to invoke any operating system API from
  *   within their handlers. Fast interrupt sources may, however, pend a lower
  *   priority regular interrupt where access to the operating system is
@@ -394,6 +398,6 @@
  * - Interrupt Stack.
  * - Internal Context.
  * .
- * See the @ref core documentation for details, the area may change on
+ * See the port documentation for details, the area may change on
  * the various ports and some structures may not be present (or be zero-sized).
  */

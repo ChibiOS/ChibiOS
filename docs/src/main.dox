@@ -58,13 +58,7 @@
  *   driver models and device driver implementations.
  * .
  * <h2>Related pages</h2>
- * - @subpage credits
- * - @subpage lic_faq
- * - @subpage goals
- * - @subpage target
- * - @subpage architecture
  * - @subpage concepts
- * - @subpage articles
  * - @subpage testsuite
  * .
  */
