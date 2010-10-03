@@ -61,7 +61,6 @@ typedef uint32_t stkalign_t;
  */
 typedef void *regarm_t;
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
@@ -77,9 +76,7 @@ struct extctx {
   regarm_t      r12;
   regarm_t      lr_usr;
 };
-#endif
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
@@ -98,19 +95,15 @@ struct intctx {
   regarm_t      r11;
   regarm_t      lr;
 };
-#endif
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   Platform dependent part of the @p Thread structure.
- * @details In the ARM7 port this structure just holds a pointer to the
- *          @p intctx structure representing the stack pointer at the time
- *          of the context switch.
+ * @details In this port the structure just holds a pointer to the @p intctx
+ *          structure representing the stack pointer at context switch time.
  */
 struct context {
   struct intctx *r13;
 };
-#endif
 
 /**
  * @brief   Platform dependent part of the @p chThdInit() API.

@@ -282,7 +282,6 @@ struct intctx {
 };
 #endif
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   Platform dependent part of the @p Thread structure.
  * @details In this port the structure just holds a pointer to the @p intctx
@@ -291,7 +290,6 @@ struct intctx {
 struct context {
   struct intctx *r13;
 };
-#endif
 
 /**
  * @brief   Enforces a correct alignment for a stack area size value.
