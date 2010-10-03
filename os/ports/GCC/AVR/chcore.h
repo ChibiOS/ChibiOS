@@ -58,7 +58,6 @@
  */
 typedef uint8_t stkalign_t;
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
@@ -85,9 +84,7 @@ struct extctx {
   uint8_t       r0;
   uint16_t      pc;
 };
-#endif
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
@@ -120,9 +117,7 @@ struct intctx {
   uint8_t       pcl;
   uint8_t       pch;
 };
-#endif
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   Platform dependent part of the @p Thread structure.
  * @details In the AVR port this structure just holds a pointer to the
@@ -132,7 +127,6 @@ struct intctx {
 struct context {
   struct intctx *sp;
 };
-#endif
 
 /**
  * @brief   Platform dependent part of the @p chThdInit() API.
