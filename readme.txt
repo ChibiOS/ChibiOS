@@ -4,6 +4,7 @@
 
 --{root}                - ChibiOS/RT directory.
   +--readme.txt         - This file.
+  +--documentation.html - Shortcut to the web documentation page.
   +--todo.txt           - Current plan (development/unstable versions only).
   +--license.txt        - GPL license text.
   +--exception.txt      - GPL exception text (stable releases only).
