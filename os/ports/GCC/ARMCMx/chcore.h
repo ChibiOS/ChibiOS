@@ -261,6 +261,27 @@ typedef uint32_t stkalign_t __attribute__ ((aligned (4)));
  */
 typedef void *regarm_t;
 
+#if defined(__DOXYGEN__)
+/**
+ * @brief   Interrupt saved context.
+ * @details This structure represents the stack frame saved during a
+ *          preemption-capable interrupt handler.
+ * @note    It is implemented to match the Cortex-Mx exception context.
+ */
+struct extctx {
+  /* Dummy definition, just for Doxygen.*/
+};
+
+/**
+ * @brief   System saved context.
+ * @details This structure represents the inner stack frame during a context
+ *          switching.
+ */
+struct intctx {
+  /* Dummy definition, just for Doxygen.*/
+};
+#endif
+
 #if !defined(__DOXYGEN__)
 /**
  * @brief   Platform dependent part of the @p Thread structure.

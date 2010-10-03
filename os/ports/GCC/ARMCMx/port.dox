@@ -26,7 +26,7 @@
  * architectures.
  *
  * @section ARMCMx_STATES_A System logical states in ARMv6-M mode
- * The ChibiOS/RT logical system states are mapped as follow in the ARM
+ * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM
  * Cortex-M0 port:
  * - <b>Init</b>. This state is represented by the startup code and the
  *   initialization code before @p chSysInit() is executed. It has not a
@@ -60,7 +60,7 @@
  *   was running when @p chSysHalt() was invoked.
  *
  * @section ARMCMx_STATES_B System logical states in ARMv7-M mode
- * The ChibiOS/RT logical system states are mapped as follow in the ARM
+ * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM
  * Cortex-M3 port:
  * - <b>Init</b>. This state is represented by the startup code and the
  *   initialization code before @p chSysInit() is executed. It has not a

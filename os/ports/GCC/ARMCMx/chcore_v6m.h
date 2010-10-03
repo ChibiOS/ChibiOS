@@ -47,11 +47,6 @@ struct cmxctx {
 };
 
 #if !defined(__DOXYGEN__)
-/**
- * @brief   Interrupt saved context.
- * @details This structure represents the stack frame saved during a
- *          preemption-capable interrupt handler.
- */
 struct extctx {
   regarm_t      xpsr;
   regarm_t      r12;
@@ -62,14 +57,7 @@ struct extctx {
   regarm_t      r3;
   regarm_t      pc;
 };
-#endif
 
-#if !defined(__DOXYGEN__)
-/**
- * @brief   System saved context.
- * @details This structure represents the inner stack frame during a context
- *          switching.
- */
 struct intctx {
   regarm_t      r8;
   regarm_t      r9;

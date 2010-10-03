@@ -33,12 +33,6 @@
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
-/**
- * @brief   Interrupt saved context.
- * @details This structure represents the stack frame saved during a
- *          preemption-capable interrupt handler.
- * @note    It is implemented to match the Cortex-Mx exception context.
- */
 struct extctx {
   regarm_t      r0;
   regarm_t      r1;
@@ -49,14 +43,7 @@ struct extctx {
   regarm_t      pc;
   regarm_t      xpsr;
 };
-#endif
 
-#if !defined(__DOXYGEN__)
-/**
- * @brief   System saved context.
- * @details This structure represents the inner stack frame during a context
- *          switching.
- */
 struct intctx {
   regarm_t      r4;
   regarm_t      r5;
