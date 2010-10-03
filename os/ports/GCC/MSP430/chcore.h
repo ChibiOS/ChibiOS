@@ -63,7 +63,6 @@ typedef uint16_t stkalign_t;
  */
 typedef void *regmsp_t;
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
@@ -77,9 +76,7 @@ struct extctx {
   regmsp_t      sr;
   regmsp_t      pc;
 };
-#endif
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
@@ -96,9 +93,7 @@ struct intctx {
   regmsp_t      r11;
   regmsp_t      pc;
 };
-#endif
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   Platform dependent part of the @p Thread structure.
  * @details This structure usually contains just the saved stack pointer
@@ -107,7 +102,6 @@ struct intctx {
 struct context {
   struct intctx *sp;
 };
-#endif
 
 /**
  * @brief   Platform dependent part of the @p chThdInit() API.

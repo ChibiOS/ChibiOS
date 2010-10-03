@@ -72,7 +72,6 @@ typedef uint8_t stkalign_t;
  */
 typedef void (*stm8func_t)(void);
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
@@ -92,9 +91,7 @@ struct extctx {
   uint8_t       pch;
   uint8_t       pcl;
 };
-#endif
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
@@ -106,9 +103,7 @@ struct intctx {
   uint8_t       _next;
   stm8func_t    pc;             /* Function pointer sized return address.   */
 };
-#endif
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   Platform dependent part of the @p Thread structure.
  * @details This structure usually contains just the saved stack pointer
@@ -117,7 +112,6 @@ struct intctx {
 struct context {
   struct intctx *sp;
 };
-#endif
 
 /**
  * @brief   Start context.

@@ -93,7 +93,6 @@ struct eabi_frame {
   regppc_t      shole;          /**< Stack hole for LR storage.             */
 };
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
@@ -125,10 +124,8 @@ struct extctx {
   regppc_t      r12;
   regppc_t      padding;
  };
-#endif
 
-#if !defined(__DOXYGEN__)
-/**
+ /**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
  *          switching.
@@ -159,9 +156,7 @@ struct intctx {
   regppc_t      r31;
   regppc_t      padding;
 };
-#endif
 
-#if !defined(__DOXYGEN__)
 /**
  * @brief   Platform dependent part of the @p Thread structure.
  * @details This structure usually contains just the saved stack pointer
@@ -170,7 +165,6 @@ struct intctx {
 struct context {
   struct intctx *sp;
 };
-#endif
 
 /**
  * @brief   Platform dependent part of the @p chThdInit() API.
