@@ -25,7 +25,7 @@
  * This port supports all STM8 8 bits MCUs.
  *
  * @section STM8_COSMIC_STATES Mapping of the System States in the STM8 port
- * The ChibiOS/RT logical system states are mapped as follow in the STM8
+ * The ChibiOS/RT logical @ref system_states are mapped as follow in the STM8
  * port:
  * - <b>Init</b>. This state is represented by the startup code and the
  *   initialization code before @p chSysInit() is executed. It has not a
