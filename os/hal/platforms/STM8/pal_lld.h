@@ -156,6 +156,8 @@ typedef GPIO_TypeDef *ioportid_t;
  * @brief   Low level PAL subsystem initialization.
  *
  * @param[in] config    architecture-dependent ports configuration
+ *
+ * @notapi
  */
 #define pal_lld_init(config)    *IOPORTS = *(config)
 
@@ -166,6 +168,8 @@ typedef GPIO_TypeDef *ioportid_t;
  *
  * @param[in] port      port identifier
  * @return              The port bits.
+ *
+ * @notapi
  */
 #define pal_lld_readport(port) ((port)->IDR)
 
@@ -178,6 +182,8 @@ typedef GPIO_TypeDef *ioportid_t;
  *
  * @param[in] port      port identifier
  * @return              The latched logical states.
+ *
+ * @notapi
  */
 #define pal_lld_readlatch(port) ((port)->ODR)
 
@@ -188,6 +194,8 @@ typedef GPIO_TypeDef *ioportid_t;
  *
  * @param[in] port      port identifier
  * @param[in] bits      bits to be written on the specified port
+ *
+ * @notapi
  */
 #define pal_lld_writeport(port, bits) ((port)->ODR = (bits))
 
@@ -203,6 +211,8 @@ typedef GPIO_TypeDef *ioportid_t;
  * @param[in] port      port identifier
  * @param[in] mask      group mask
  * @param[in] mode      group mode
+ *
+ * @notapi
  */
 #define pal_lld_setgroupmode(port, mask, mode)                              \
     _pal_lld_setgroupmode(port, mask, mode)

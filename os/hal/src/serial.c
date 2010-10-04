@@ -99,6 +99,8 @@ static const struct SerialDriverVMT vmt = {
 
 /**
  * @brief   Serial Driver initialization.
+ *
+ * @init
  */
 void sdInit(void) {
 
@@ -117,6 +119,8 @@ void sdInit(void) {
  * @param[in] onotify   pointer to a callback function that is invoked when
  *                      some data is written in the Queue. The value can be
  *                      @p NULL.
+ *
+ * @init
  */
 void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
 
@@ -137,6 +141,8 @@ void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
  * @param[in] config    the architecture-dependent serial driver configuration.
  *                      If this parameter is set to @p NULL then a default
  *                      configuration is used.
+ *
+ * @api
  */
 void sdStart(SerialDriver *sdp, const SerialConfig *config) {
 
@@ -157,6 +163,8 @@ void sdStart(SerialDriver *sdp, const SerialConfig *config) {
  *          the message @p Q_RESET.
  *
  * @param[in] sdp       pointer to a @p SerialDrive object
+ *
+ * @api
  */
 void sdStop(SerialDriver *sdp) {
 
@@ -187,6 +195,8 @@ void sdStop(SerialDriver *sdp) {
  *
  * @param[in] sdp       pointer to a @p SerialDriver structure
  * @param[in] b         the byte to be written in the driver's Input Queue
+ *
+ * @iclass
  */
 void sdIncomingDataI(SerialDriver *sdp, uint8_t b) {
 
@@ -210,6 +220,8 @@ void sdIncomingDataI(SerialDriver *sdp, uint8_t b) {
  * @return              The byte value read from the driver's output queue.
  * @retval Q_EMPTY      if the queue is empty (the lower driver usually
  *                      disables the interrupt source when this happens).
+ *
+ * @iclass
  */
 msg_t sdRequestDataI(SerialDriver *sdp) {
   msg_t  b;
@@ -229,6 +241,8 @@ msg_t sdRequestDataI(SerialDriver *sdp) {
  *
  * @param[in] sdp       pointer to a @p SerialDriver structure
  * @param[in] mask      condition flags to be added to the mask
+ *
+ * @iclass
  */
 void sdAddFlagsI(SerialDriver *sdp, sdflags_t mask) {
 
@@ -244,6 +258,8 @@ void sdAddFlagsI(SerialDriver *sdp, sdflags_t mask) {
  * @param[in] sdp       pointer to a @p SerialDriver structure
  * @return              The condition flags modified since last time this
  *                      function was invoked.
+ *
+ * @api
  */
 sdflags_t sdGetAndClearFlags(SerialDriver *sdp) {
   sdflags_t mask;

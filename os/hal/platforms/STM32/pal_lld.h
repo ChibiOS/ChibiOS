@@ -95,7 +95,7 @@ typedef struct {
 
 /**
  * @brief   Whole port mask.
- * @brief   This macro specifies all the valid bits into a port.
+ * @details This macro specifies all the valid bits into a port.
  */
 #define PAL_WHOLE_PORT ((ioportmask_t)0xFFFF)
 
@@ -164,6 +164,8 @@ typedef GPIO_TypeDef * ioportid_t;
 
 /**
  * @brief   GPIO ports subsystem initialization.
+ *
+ * @notapi
  */
 #define pal_lld_init(config) _pal_lld_init(config)
 
@@ -176,6 +178,8 @@ typedef GPIO_TypeDef * ioportid_t;
  *
  * @param[in] port      the port identifier
  * @return              The port bits.
+ *
+ * @notapi
  */
 #define pal_lld_readport(port) ((port)->IDR)
 
@@ -188,6 +192,8 @@ typedef GPIO_TypeDef * ioportid_t;
  *
  * @param[in] port      the port identifier
  * @return              The latched logical states.
+ *
+ * @notapi
  */
 #define pal_lld_readlatch(port) ((port)->ODR)
 
@@ -203,6 +209,8 @@ typedef GPIO_TypeDef * ioportid_t;
  *
  * @param[in] port      the port identifier
  * @param[in] bits      the bits to be written on the specified port
+ *
+ * @notapi
  */
 #define pal_lld_writeport(port, bits) ((port)->ODR = (bits))
 
@@ -218,6 +226,8 @@ typedef GPIO_TypeDef * ioportid_t;
  *
  * @param[in] port      the port identifier
  * @param[in] bits      the bits to be ORed on the specified port
+ *
+ * @notapi
  */
 #define pal_lld_setport(port, bits) ((port)->BSRR = (bits))
 
@@ -233,6 +243,8 @@ typedef GPIO_TypeDef * ioportid_t;
  *
  * @param[in] port      the port identifier
  * @param[in] bits      the bits to be cleared on the specified port
+ *
+ * @notapi
  */
 #define pal_lld_clearport(port, bits) ((port)->BRR = (bits))
 
@@ -251,6 +263,8 @@ typedef GPIO_TypeDef * ioportid_t;
  * @param[in] offset    the group bit offset within the port
  * @param[in] bits      the bits to be written. Values exceeding the group
  *                      width are masked.
+ *
+ * @notapi
  */
 #define pal_lld_writegroup(port, mask, offset, bits) {                      \
   (port)->BSRR = ((~(bits) & (mask)) << (16 + (offset))) |                  \
@@ -270,6 +284,8 @@ typedef GPIO_TypeDef * ioportid_t;
  * @param[in] port      the port identifier
  * @param[in] mask      the group mask
  * @param[in] mode      the mode
+ *
+ * @notapi
  */
 #define pal_lld_setgroupmode(port, mask, mode)                              \
   _pal_lld_setgroupmode(port, mask, mode)
@@ -286,6 +302,8 @@ typedef GPIO_TypeDef * ioportid_t;
  * @param[in] pad       the pad number within the port
  * @param[in] bit       logical value, the value must be @p PAL_LOW or
  *                      @p PAL_HIGH
+ *
+ * @notapi
  */
 #define pal_lld_writepad(port, pad, bit) pal_lld_writegroup(port, 1, pad, bit)
 

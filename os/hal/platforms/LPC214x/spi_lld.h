@@ -18,8 +18,9 @@
 */
 
 /**
- * @file LPC214x/spi_lld.h
- * @brief LPC214x low level SPI driver header.
+ * @file    LPC214x/spi_lld.h
+ * @brief   LPC214x low level SPI driver header.
+ *
  * @addtogroup LPC214x_SPI
  * @{
  */
@@ -38,9 +39,9 @@
 /*===========================================================================*/
 
 /**
- * @brief SPI1 (SSP) driver enable switch.
+ * @brief   SPI1 (SSP) driver enable switch.
  * @details If set to @p TRUE the support for SPI0 is included.
- * @note The default is @p TRUE.
+ * @note    The default is @p TRUE.
  */
 #if !defined(USE_LPC214x_SPI1) || defined(__DOXYGEN__)
 #define USE_LPC214x_SPI1            TRUE
@@ -55,7 +56,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Driver configuration structure.
+ * @brief   Driver configuration structure.
  */
 typedef struct {
   /**
@@ -81,7 +82,7 @@ typedef struct {
 } SPIConfig;
 
 /**
- * @brief Structure representing a SPI driver.
+ * @brief   Structure representing a SPI driver.
  */
 typedef struct {
   /**

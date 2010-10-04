@@ -48,6 +48,8 @@
 
 /**
  * @brief   CAN Driver initialization.
+ *
+ * @init
  */
 void canInit(void) {
 
@@ -58,6 +60,8 @@ void canInit(void) {
  * @brief   Initializes the standard part of a @p CANDriver structure.
  *
  * @param[in] canp      pointer to the @p CANDriver object
+ *
+ * @init
  */
 void canObjectInit(CANDriver *canp) {
 
@@ -80,6 +84,8 @@ void canObjectInit(CANDriver *canp) {
  *
  * @param[in] canp      pointer to the @p CANDriver object
  * @param[in] config    pointer to the @p CANConfig object
+ *
+ * @api
  */
 void canStart(CANDriver *canp, const CANConfig *config) {
 
@@ -105,6 +111,8 @@ void canStart(CANDriver *canp, const CANConfig *config) {
  * @brief   Deactivates the CAN peripheral.
  *
  * @param[in] canp      pointer to the @p CANDriver object
+ *
+ * @api
  */
 void canStop(CANDriver *canp) {
 
@@ -140,6 +148,8 @@ void canStop(CANDriver *canp) {
  * @retval RDY_OK       the frame has been queued for transmission.
  * @retval RDY_TIMEOUT  operation not finished within the specified time.
  * @retval RDY_RESET    driver stopped while waiting.
+ *
+ * @api
  */
 msg_t canTransmit(CANDriver *canp, const CANTxFrame *ctfp, systime_t timeout) {
 
@@ -181,6 +191,8 @@ msg_t canTransmit(CANDriver *canp, const CANTxFrame *ctfp, systime_t timeout) {
  *                      frame not immediately available if invoked using
  *                      @p TIME_IMMEDIATE.
  * @retval RDY_RESET    driver stopped while waiting.
+ *
+ * @api
  */
 msg_t canReceive(CANDriver *canp, CANRxFrame *crfp, systime_t timeout) {
 
@@ -207,6 +219,8 @@ msg_t canReceive(CANDriver *canp, CANRxFrame *crfp, systime_t timeout) {
  *
  * @param[in] canp      pointer to the @p CANDriver object
  * @return              The status flags mask.
+ *
+ * @api
  */
 canstatus_t canGetAndClearFlags(CANDriver *canp) {
   canstatus_t status;
@@ -221,8 +235,15 @@ canstatus_t canGetAndClearFlags(CANDriver *canp) {
 #if CAN_USE_SLEEP_MODE || defined(__DOXYGEN__)
 /**
  * @brief   Enters the sleep mode.
+ * @details This function puts the CAN driver in sleep mode and broadcasts
+ *          the @p cd_sleep_event event source.
+ * @pre     In order to use this function the option @p CAN_USE_SLEEP_MODE must
+ *          be enabled and the @p CAN_SUPPORTS_SLEEP mode must be supported
+ *          by the low level driver.
  *
  * @param[in] canp      pointer to the @p CANDriver object
+ *
+ * @api
  */
 void canSleep(CANDriver *canp) {
 

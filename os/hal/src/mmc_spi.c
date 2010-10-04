@@ -46,8 +46,10 @@
  * @brief   Inserion monitor timer callback function.
  *
  * @param[in] p         pointer to the @p MMCDriver object
+ *
+ * @notapi
  */
-void tmrfunc(void *p) {
+static void tmrfunc(void *p) {
   MMCDriver *mmcp = p;
 
   if (mmcp->mmc_cnt > 0) {
@@ -74,6 +76,8 @@ void tmrfunc(void *p) {
  * @brief   Waits an idle condition.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
+ *
+ * @notapi
  */
 static void wait(MMCDriver *mmcp) {
   int i;
@@ -102,6 +106,8 @@ static void wait(MMCDriver *mmcp) {
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @param cmd[in]       the command id
  * @param arg[in]       the command argument
+ *
+ * @notapi
  */
 static void send_hdr(MMCDriver *mmcp, uint8_t cmd, uint32_t arg) {
   uint8_t buf[6];
@@ -124,6 +130,8 @@ static void send_hdr(MMCDriver *mmcp, uint8_t cmd, uint32_t arg) {
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @return              The response as an @p uint8_t value.
  * @retval 0xFF         timed out.
+ *
+ * @notapi
  */
 static uint8_t recvr1(MMCDriver *mmcp) {
   int i;
@@ -145,6 +153,8 @@ static uint8_t recvr1(MMCDriver *mmcp) {
  * @param arg[in]       the command argument
  * @return              The response as an @p uint8_t value.
  * @retval 0xFF         timed out.
+ *
+ * @notapi
  */
 static uint8_t send_command(MMCDriver *mmcp, uint8_t cmd, uint32_t arg) {
   uint8_t r1;
@@ -160,6 +170,8 @@ static uint8_t send_command(MMCDriver *mmcp, uint8_t cmd, uint32_t arg) {
  * @brief   Waits that the card reaches an idle state.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
+ *
+ * @notapi
  */
 static void sync(MMCDriver *mmcp) {
   uint8_t buf[1];
@@ -182,6 +194,8 @@ static void sync(MMCDriver *mmcp) {
 
 /**
  * @brief   MMC over SPI driver initialization.
+ *
+ * @init
  */
 void mmcInit(void) {
 
@@ -198,6 +212,8 @@ void mmcInit(void) {
  *                          setting
  * @param[in] is_inserted   function that returns the card insertion sensor
  *                          status
+ *
+ * @init
  */
 void mmcObjectInit(MMCDriver *mmcp, SPIDriver *spip,
                    const SPIConfig *lscfg, const SPIConfig *hscfg,
@@ -219,6 +235,8 @@ void mmcObjectInit(MMCDriver *mmcp, SPIDriver *spip,
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @param[in] config    pointer to the @p MMCConfig object
+ *
+ * @api
  */
 void mmcStart(MMCDriver *mmcp, const MMCConfig *config) {
 
@@ -237,6 +255,8 @@ void mmcStart(MMCDriver *mmcp, const MMCConfig *config) {
  * @brief   Disables the MMC peripheral.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
+ *
+ * @api
  */
 void mmcStop(MMCDriver *mmcp) {
 
@@ -266,9 +286,11 @@ void mmcStop(MMCDriver *mmcp) {
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @return              The operation status.
- * @retval FALSE        the operation was successful and the driver is now
+ * @retval FALSE        the operation succeeded and the driver is now
  *                      in the @p MMC_READY state.
  * @retval TRUE         the operation failed.
+ *
+ * @api
  */
 bool_t mmcConnect(MMCDriver *mmcp) {
   unsigned i;
@@ -338,9 +360,11 @@ bool_t mmcConnect(MMCDriver *mmcp) {
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @return              The operation status.
- * @retval FALSE        the operation was successful and the driver is now
+ * @retval FALSE        the operation succeeded and the driver is now
  *                      in the @p MMC_INSERTED state.
  * @retval TRUE         the operation failed.
+ *
+ * @api
  */
 bool_t mmcDisconnect(MMCDriver *mmcp) {
   bool_t status;
@@ -374,8 +398,10 @@ bool_t mmcDisconnect(MMCDriver *mmcp) {
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @param[in] startblk  first block to read
  * @return              The operation status.
- * @retval FALSE        the operation was successful.
+ * @retval FALSE        the operation succeeded.
  * @retval TRUE         the operation failed.
+ *
+ * @api
  */
 bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
 
@@ -409,8 +435,10 @@ bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @param[out] buffer   pointer to the read buffer
  * @return              The operation status.
- * @retval FALSE        the operation was successful.
+ * @retval FALSE        the operation succeeded.
  * @retval TRUE         the operation failed.
+ *
+ * @api
  */
 bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
   int i;
@@ -447,8 +475,10 @@ bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @return              The operation status.
- * @retval FALSE        the operation was successful.
+ * @retval FALSE        the operation succeeded.
  * @retval TRUE         the operation failed.
+ *
+ * @api
  */
 bool_t mmcStopSequentialRead(MMCDriver *mmcp) {
   static const uint8_t stopcmd[] = {0x40 | MMC_CMDSTOP, 0, 0, 0, 0, 1, 0xFF};
@@ -483,8 +513,10 @@ bool_t mmcStopSequentialRead(MMCDriver *mmcp) {
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @param[in] startblk  first block to write
  * @return              The operation status.
- * @retval FALSE        the operation was successful.
+ * @retval FALSE        the operation succeeded.
  * @retval TRUE         the operation failed.
+ *
+ * @api
  */
 bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk) {
 
@@ -518,8 +550,10 @@ bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk) {
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @param[out] buffer   pointer to the write buffer
  * @return              The operation status.
- * @retval FALSE        the operation was successful.
+ * @retval FALSE        the operation succeeded.
  * @retval TRUE         the operation failed.
+ *
+ * @api
  */
 bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
   static const uint8_t start[] = {0xFF, 0xFC};
@@ -557,8 +591,10 @@ bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @return              The operation status.
- * @retval FALSE        the operation was successful.
+ * @retval FALSE        the operation succeeded.
  * @retval TRUE         the operation failed.
+ *
+ * @api
  */
 bool_t mmcStopSequentialWrite(MMCDriver *mmcp) {
   static const uint8_t stop[] = {0xFD, 0xFF};

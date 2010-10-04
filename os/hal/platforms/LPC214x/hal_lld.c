@@ -18,8 +18,9 @@
 */
 
 /**
- * @file LPC214x/hal_lld.c
- * @brief LPC214x HAL subsystem low level driver source.
+ * @file    LPC214x/hal_lld.c
+ * @brief   LPC214x HAL subsystem low level driver source.
+ *
  * @addtogroup LPC214x_HAL
  * @{
  */
@@ -36,7 +37,7 @@
 /*===========================================================================*/
 
 /**
- * @brief PAL setup.
+ * @brief   PAL setup.
  * @details Digital I/O ports static configuration as defined in @p board.h.
  */
 const PALConfig pal_default_config =
@@ -75,7 +76,9 @@ static CH_IRQ_HANDLER(irq_handler) {
 /*===========================================================================*/
 
 /**
- * @brief Low level HAL driver initialization.
+ * @brief   Low level HAL driver initialization.
+ *
+ * @notapi
  */
 void hal_lld_init(void) {
 
@@ -85,8 +88,11 @@ void hal_lld_init(void) {
 }
 
 /**
- * @brief LPC214x clocks and PLL initialization.
- * @note All the involved constants come from the file @p board.h.
+ * @brief   LPC214x clocks and PLL initialization.
+ * @note    All the involved constants come from the file @p board.h.
+ * @note    This function must be invoked only after the system reset.
+ *
+ * @special
  */
 void lpc214x_clock_init(void) {
 

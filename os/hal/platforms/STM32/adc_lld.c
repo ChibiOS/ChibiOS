@@ -54,6 +54,8 @@ ADCDriver ADCD1;
 #if STM32_ADC_USE_ADC1 || defined(__DOXYGEN__)
 /**
  * @brief   ADC1 DMA interrupt handler (channel 1).
+ *
+ * @isr
  */
 CH_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
   uint32_t isr;
@@ -110,6 +112,8 @@ CH_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
 
 /**
  * @brief   Low level ADC driver initialization.
+ *
+ * @notapi
  */
 void adc_lld_init(void) {
 
@@ -151,6 +155,8 @@ void adc_lld_init(void) {
  * @brief   Configures and activates the ADC peripheral.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
  */
 void adc_lld_start(ADCDriver *adcp) {
 
@@ -177,6 +183,8 @@ void adc_lld_start(ADCDriver *adcp) {
  * @brief   Deactivates the ADC peripheral.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
  */
 void adc_lld_stop(ADCDriver *adcp) {
 
@@ -198,6 +206,8 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @brief   Starts an ADC conversion.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
   uint32_t ccr, n;
@@ -234,6 +244,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
  * @brief   Stops an ongoing conversion.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
  */
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 

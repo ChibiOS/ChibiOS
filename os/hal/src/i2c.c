@@ -48,6 +48,8 @@
 
 /**
  * @brief   I2C Driver initialization.
+ *
+ * @init
  */
 void i2cInit(void) {
 
@@ -58,6 +60,8 @@ void i2cInit(void) {
  * @brief   Initializes the standard part of a @p I2CDriver structure.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
+ * @init
  */
 void i2cObjectInit(I2CDriver *i2cp) {
 
@@ -70,6 +74,8 @@ void i2cObjectInit(I2CDriver *i2cp) {
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  * @param[in] config    pointer to the @p I2CConfig object
+ *
+ * @api
  */
 void i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
 
@@ -89,6 +95,8 @@ void i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
  * @brief   Deactivates the I2C peripheral.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
+ * @api
  */
 void i2cStop(I2CDriver *i2cp) {
 
@@ -111,6 +119,8 @@ void i2cStop(I2CDriver *i2cp) {
  * @param[in] i2cp      pointer to the @p I2CDriver object
  * @param[in] header    transaction header
  * @param[in] callback  operation complete callback
+ *
+ * @iclass
  */
 void i2cMasterStartI(I2CDriver *i2cp,
                      uint16_t header,
@@ -129,6 +139,8 @@ void i2cMasterStartI(I2CDriver *i2cp,
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  * @param[in] callback  operation complete callback
+ *
+ * @iclass
  */
 void i2cMasterStopI(I2CDriver *i2cp, i2ccallback_t callback) {
 
@@ -147,6 +159,8 @@ void i2cMasterStopI(I2CDriver *i2cp, i2ccallback_t callback) {
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  * @param[in] callback  operation complete callback
+ *
+ * @iclass
  */
 void i2cMasterRestartI(I2CDriver *i2cp, i2ccallback_t callback) {
 
@@ -165,6 +179,8 @@ void i2cMasterRestartI(I2CDriver *i2cp, i2ccallback_t callback) {
  * @param[in] n         number of bytes to be transmitted
  * @param[in] txbuf     transmit data buffer pointer
  * @param[in] callback  operation complete callback
+ *
+ * @iclass
  */
 void i2cMasterTransmitI(I2CDriver *i2cp, size_t n, const uint8_t *txbuf,
                         i2ccallback_t callback) {
@@ -185,6 +201,8 @@ void i2cMasterTransmitI(I2CDriver *i2cp, size_t n, const uint8_t *txbuf,
  * @param[in] n         number of bytes to be transmitted
  * @param[in] rxbuf     receive data buffer pointer
  * @param[in] callback  operation complete callback
+ *
+ * @iclass
  */
 void i2cMasterReceiveI(I2CDriver *i2cp, size_t n, uint8_t *rxbuf,
                        i2ccallback_t callback) {
@@ -203,10 +221,12 @@ void i2cMasterReceiveI(I2CDriver *i2cp, size_t n, uint8_t *rxbuf,
  * @brief   Gains exclusive access to the I2C bus.
  * @details This function tries to gain ownership to the I2C bus, if the bus
  *          is already being used then the invoking thread is queued.
- * @note    This function is only available when the @p I2C_USE_MUTUAL_EXCLUSION
- *          option is set to @p TRUE.
+ * @pre     In order to use this function the option @p I2C_USE_MUTUAL_EXCLUSION
+ *          must be enabled.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
+ * @api
  *
  */
 void i2cAcquireBus(I2CDriver *i2cp) {
@@ -222,10 +242,12 @@ void i2cAcquireBus(I2CDriver *i2cp) {
 
 /**
  * @brief   Releases exclusive access to the I2C bus.
- * @note    This function is only available when the @p I2C_USE_MUTUAL_EXCLUSION
- *          option is set to @p TRUE.
+ * @pre     In order to use this function the option @p I2C_USE_MUTUAL_EXCLUSION
+ *          must be enabled.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
+ * @api
  */
 void i2cReleaseBus(I2CDriver *i2cp) {
 

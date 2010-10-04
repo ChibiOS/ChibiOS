@@ -100,6 +100,8 @@ typedef enum {
  *
  * @param[in] canp      pointer to the @p CANDriver object
  * @param[in] mask      flags to be added to the status mask
+ *
+ * @iclass
  */
 #define canAddFlagsI(canp, mask) ((canp)->cd_status |= (mask))
 

@@ -95,6 +95,8 @@ typedef uint32_t ioportid_t;
  * @brief   Low level PAL subsystem initialization.
  *
  * @param[in] config    architecture-dependent ports configuration
+ *
+ * @notapi
  */
 #define pal_lld_init(config)
 
@@ -105,6 +107,8 @@ typedef uint32_t ioportid_t;
  *
  * @param[in] port      port identifier
  * @return              The port bits.
+ *
+ * @notapi
  */
 #define pal_lld_readport(port)
 
@@ -117,6 +121,8 @@ typedef uint32_t ioportid_t;
  *
  * @param[in] port      port identifier
  * @return              The latched logical states.
+ *
+ * @notapi
  */
 #define pal_lld_readlatch(port)
 
@@ -127,6 +133,8 @@ typedef uint32_t ioportid_t;
  *
  * @param[in] port      port identifier
  * @param[in] bits      bits to be written on the specified port
+ *
+ * @notapi
  */
 #define pal_lld_writeport(port, bits)
 
@@ -140,6 +148,8 @@ typedef uint32_t ioportid_t;
  *
  * @param[in] port      port identifier
  * @param[in] bits      bits to be ORed on the specified port
+ *
+ * @notapi
  */
 #define pal_lld_setport(port, bits)
 
@@ -153,6 +163,8 @@ typedef uint32_t ioportid_t;
  *
  * @param[in] port      port identifier
  * @param[in] bits      bits to be cleared on the specified port
+ *
+ * @notapi
  */
 #define pal_lld_clearport(port, bits)
 
@@ -166,6 +178,8 @@ typedef uint32_t ioportid_t;
  *
  * @param[in] port      port identifier
  * @param[in] bits      bits to be XORed on the specified port
+ *
+ * @notapi
  */
 #define pal_lld_toggleport(port, bits)
 
@@ -181,6 +195,8 @@ typedef uint32_t ioportid_t;
  * @param[in] mask      group mask
  * @param[in] offset    group bit offset within the port
  * @return              The group logical states.
+ *
+ * @notapi
  */
 #define pal_lld_readgroup(port, mask, offset)
 
@@ -197,6 +213,8 @@ typedef uint32_t ioportid_t;
  * @param[in] offset    group bit offset within the port
  * @param[in] bits      bits to be written. Values exceeding the group width
  *                      are masked.
+ *
+ * @notapi
  */
 #define pal_lld_writegroup(port, mask, offset, bits)
 
@@ -211,6 +229,8 @@ typedef uint32_t ioportid_t;
  * @param[in] port      port identifier
  * @param[in] mask      group mask
  * @param[in] mode      group mode
+ *
+ * @notapi
  */
 #define pal_lld_setgroupmode(port, mask, mode)
 
@@ -227,6 +247,8 @@ typedef uint32_t ioportid_t;
  * @return              The logical state.
  * @retval PAL_LOW      low logical state.
  * @retval PAL_HIGH     high logical state.
+ *
+ * @notapi
  */
 #define pal_lld_readpad(port, pad)
 
@@ -240,8 +262,10 @@ typedef uint32_t ioportid_t;
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
- * @param[out] bit      logical value, the value must be @p PAL_LOW or
+ * @param[in] bit       logical value, the value must be @p PAL_LOW or
  *                      @p PAL_HIGH
+ *
+ * @notapi
  */
 #define pal_lld_writepad(port, pad, bit)
 
@@ -255,6 +279,8 @@ typedef uint32_t ioportid_t;
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
+ *
+ * @notapi
  */
 #define pal_lld_setpad(port, pad)
 
@@ -268,6 +294,8 @@ typedef uint32_t ioportid_t;
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
+ *
+ * @notapi
  */
 #define pal_lld_clearpad(port, pad)
 
@@ -281,6 +309,8 @@ typedef uint32_t ioportid_t;
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
+ *
+ * @notapi
  */
 #define pal_lld_togglepad(port, pad)
 
@@ -297,6 +327,8 @@ typedef uint32_t ioportid_t;
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
  * @param[in] mode      pad mode
+ *
+ * @notapi
  */
 #define pal_lld_setpadmode(port, pad, mode)
 

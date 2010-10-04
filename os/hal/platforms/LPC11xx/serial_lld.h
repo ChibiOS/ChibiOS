@@ -125,7 +125,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Serial Driver condition flags type.
+ * @brief   Serial Driver condition flags type.
  */
 typedef uint32_t sdflags_t;
 
@@ -150,7 +150,7 @@ typedef struct {
 } SerialConfig;
 
 /**
- * @brief @p SerialDriver specific data.
+ * @brief   @p SerialDriver specific data.
  */
 #define _serial_driver_data                                                 \
   _base_asynchronous_channel_data                                           \

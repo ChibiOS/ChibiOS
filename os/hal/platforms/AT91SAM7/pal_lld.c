@@ -18,8 +18,9 @@
 */
 
 /**
- * @file AT91SAM7/pal_lld.c
- * @brief AT91SAM7 PIO low level driver code.
+ * @file    AT91SAM7/pal_lld.c
+ * @brief   AT91SAM7 PIO low level driver code.
+ *
  * @addtogroup AT91SAM7_PAL
  * @{
  */
@@ -50,10 +51,12 @@
 /*===========================================================================*/
 
 /**
- * @brief AT91SAM7 I/O ports configuration.
+ * @brief   AT91SAM7 I/O ports configuration.
  * @details PIO registers initialization.
  *
- * @param[in] config the AT91SAM7 ports configuration
+ * @param[in] config    the AT91SAM7 ports configuration
+ *
+ * @notapi
  */
 void _pal_lld_init(const PALConfig *config) {
 
@@ -99,20 +102,21 @@ void _pal_lld_init(const PALConfig *config) {
 }
 
 /**
- * @brief Pads mode setup.
+ * @brief   Pads mode setup.
  * @details This function programs a pads group belonging to the same port
  *          with the specified mode.
+ * @note    This function is not meant to be invoked directly from the
+ *          application code.
+ * @note    @p PAL_MODE_RESET is implemented as input with pull-up.
+ * @note    @p PAL_MODE_UNCONNECTED is implemented as push pull output with
+ *          high state.
+ * @note    @p PAL_MODE_OUTPUT_OPENDRAIN also enables the pull-up resistor.
  *
- * @param[in] port the port identifier
- * @param[in] mask the group mask
- * @param[in] mode the mode
+ * @param[in] port      the port identifier
+ * @param[in] mask      the group mask
+ * @param[in] mode      the mode
  *
- * @note This function is not meant to be invoked directly by the application
- *       code.
- * @note @p PAL_MODE_RESET is implemented as input with pull-up.
- * @note @p PAL_MODE_UNCONNECTED is implemented as push pull output with high
- *       state.
- * @note @p PAL_MODE_OUTPUT_OPENDRAIN also enables the pull-up resistor.
+ * @notapi
  */
 void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,

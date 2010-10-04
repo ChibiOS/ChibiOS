@@ -48,6 +48,8 @@
 
 /**
  * @brief   UART Driver initialization.
+ *
+ * @init
  */
 void uartInit(void) {
 
@@ -58,6 +60,8 @@ void uartInit(void) {
  * @brief   Initializes the standard part of a @p UARTDriver structure.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
+ *
+ * @init
  */
 void uartObjectInit(UARTDriver *uartp) {
 
@@ -72,6 +76,8 @@ void uartObjectInit(UARTDriver *uartp) {
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in] config    pointer to the @p UARTConfig object
+ *
+ * @api
  */
 void uartStart(UARTDriver *uartp, const UARTConfig *config) {
 
@@ -93,6 +99,8 @@ void uartStart(UARTDriver *uartp, const UARTConfig *config) {
  * @brief   Deactivates the UART peripheral.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
+ *
+ * @api
  */
 void uartStop(UARTDriver *uartp) {
 
@@ -119,6 +127,8 @@ void uartStop(UARTDriver *uartp) {
  * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in] n         number of data frames to send
  * @param[in] txbuf     the pointer to the transmit buffer
+ *
+ * @api
  */
 void uartStartSend(UARTDriver *uartp, size_t n, const void *txbuf) {
 
@@ -145,6 +155,8 @@ void uartStartSend(UARTDriver *uartp, size_t n, const void *txbuf) {
  * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in] n         number of data frames to send
  * @param[in] txbuf     the pointer to the transmit buffer
+ *
+ * @iclass
  */
 void uartStartSendI(UARTDriver *uartp, size_t n, const void *txbuf) {
 
@@ -168,6 +180,8 @@ void uartStartSendI(UARTDriver *uartp, size_t n, const void *txbuf) {
  * @return              The number of data frames not transmitted by the
  *                      stopped transmit operation.
  * @retval 0            There was no transmit operation in progress.
+ *
+ * @api
  */
 size_t uartStopSend(UARTDriver *uartp) {
   size_t n;
@@ -199,6 +213,8 @@ size_t uartStopSend(UARTDriver *uartp) {
  * @return              The number of data frames not transmitted by the
  *                      stopped transmit operation.
  * @retval 0            There was no transmit operation in progress.
+ *
+ * @iclass
  */
 size_t uartStopSendI(UARTDriver *uartp) {
 
@@ -224,6 +240,8 @@ size_t uartStopSendI(UARTDriver *uartp) {
  * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in] n         number of data frames to send
  * @param[in] rxbuf     the pointer to the receive buffer
+ *
+ * @api
  */
 void uartStartReceive(UARTDriver *uartp, size_t n, void *rxbuf) {
 
@@ -250,6 +268,8 @@ void uartStartReceive(UARTDriver *uartp, size_t n, void *rxbuf) {
  * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in] n         number of data frames to send
  * @param[in] rxbuf     the pointer to the receive buffer
+ *
+ * @iclass
  */
 void uartStartReceiveI(UARTDriver *uartp, size_t n, void *rxbuf) {
 
@@ -274,6 +294,8 @@ void uartStartReceiveI(UARTDriver *uartp, size_t n, void *rxbuf) {
  * @return              The number of data frames not received by the
  *                      stopped receive operation.
  * @retval 0            There was no receive operation in progress.
+ *
+ * @api
  */
 size_t uartStopReceive(UARTDriver *uartp) {
   size_t n;
@@ -305,6 +327,8 @@ size_t uartStopReceive(UARTDriver *uartp) {
  * @return              The number of data frames not received by the
  *                      stopped receive operation.
  * @retval 0            There was no receive operation in progress.
+ *
+ * @iclass
  */
 size_t uartStopReceiveI(UARTDriver *uartp) {
   chDbgCheck(uartp != NULL, "uartStopReceiveI");

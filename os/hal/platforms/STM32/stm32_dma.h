@@ -130,6 +130,8 @@ typedef struct {
  *
  * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
  * @param[in] cpar      value to be written in the CPAR register
+ *
+ * @api
  */
 #define dmaChannelSetPeripheral(dmachp, cpar) {                             \
   (dmachp)->CPAR  = (uint32_t)(cpar);                                       \
@@ -145,6 +147,8 @@ typedef struct {
  * @param[in] cndtr     value to be written in the CNDTR register
  * @param[in] cmar      value to be written in the CMAR register
  * @param[in] ccr       value to be written in the CCR register
+ *
+ * @api
  */
 #define dmaChannelSetup(dmachp, cndtr, cmar, ccr) {                         \
   (dmachp)->CNDTR = (uint32_t)(cndtr);                                      \
@@ -156,6 +160,8 @@ typedef struct {
  * @brief   DMA channel enable by channel pointer.
  *
  * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
+ *
+ * @api
  */
 #define dmaChannelEnable(dmachp) {                                          \
   (dmachp)->CCR |= DMA_CCR1_EN;                                             \
@@ -166,6 +172,8 @@ typedef struct {
  * @brief   DMA channel disable by channel pointer.
  *
  * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
+ *
+ * @api
  */
 #define dmaChannelDisable(dmachp) {                                         \
   (dmachp)->CCR = 0;                                                        \
@@ -184,6 +192,8 @@ typedef struct {
  * @param[in] cndtr     value to be written in the CNDTR register
  * @param[in] cmar      value to be written in the CMAR register
  * @param[in] ccr       value to be written in the CCR register
+ *
+ * @api
  */
 #define dmaSetupChannel(dmap, ch, cndtr, cmar, ccr) {                       \
   dmaChannelSetup(&(dmap)->channels[ch], (cndtr), (cmar), (ccr));           \
@@ -196,6 +206,8 @@ typedef struct {
  *
  * @param[in] dmap      pointer to a stm32_dma_t structure
  * @param[in] ch        channel number
+ *
+ * @api
  */
 #define dmaEnableChannel(dmap, ch) {                                        \
   dmaChannelEnable(&(dmap)->channels[ch]);                                  \
@@ -208,6 +220,8 @@ typedef struct {
  *
  * @param[in] dmap      pointer to a stm32_dma_t structure
  * @param[in] ch        channel number
+ *
+ * @api
  */
 #define dmaDisableChannel(dmap, ch) {                                       \
   dmaChannelDisable(&(dmap)->channels[ch]);                                 \
@@ -222,6 +236,8 @@ typedef struct {
  *
  * @param[in] dmap      pointer to a stm32_dma_t structure
  * @param[in] ch        channel number
+ *
+ * @api
  */
 #define dmaClearChannel(dmap, ch){                                          \
   (dmap)->IFCR = 1 << ((ch) * 4);                                           \

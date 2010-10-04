@@ -52,6 +52,8 @@
 
 /**
  * @brief   Low level ADC driver initialization.
+ *
+ * @notapi
  */
 void adc_lld_init(void) {
 
@@ -61,6 +63,8 @@ void adc_lld_init(void) {
  * @brief   Configures and activates the ADC peripheral.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
  */
 void adc_lld_start(ADCDriver *adcp) {
 
@@ -74,6 +78,8 @@ void adc_lld_start(ADCDriver *adcp) {
  * @brief   Deactivates the ADC peripheral.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
  */
 void adc_lld_stop(ADCDriver *adcp) {
 
@@ -83,6 +89,8 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @brief   Starts an ADC conversion.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
 
@@ -92,6 +100,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
  * @brief   Stops an ongoing conversion.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
  */
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 

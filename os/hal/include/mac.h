@@ -60,6 +60,8 @@
  *
  * @param[in] macp      pointer to the @p MACDriver object
  * @return              The pointer to the @p EventSource structure.
+ *
+ * @api
  */
 #if CH_USE_EVENTS || defined(__DOXYGEN__)
 #define macGetReceiveEventSource(macp)  (&(macp)->md_rdevent)
@@ -75,6 +77,8 @@
  *                      stream, this value can be less than the amount
  *                      specified in the parameter @p size if the maximum frame
  *                      size is reached.
+ *
+ * @api
  */
 #define macWriteTransmitDescriptor(tdp, buf, size)                          \
     mac_lld_write_transmit_descriptor(tdp, buf, size)
@@ -88,6 +92,8 @@
  * @return          The number of bytes read from the descriptor's stream, this
  *                  value can be less than the amount specified in the
  *                  parameter @p size if there are no more bytes to read.
+ *
+ * @api
  */
 #define macReadReceiveDescriptor(rdp, buf, size)                            \
     mac_lld_read_receive_descriptor(rdp, buf, size)

@@ -46,6 +46,8 @@
 
 /**
  * @brief   HAL initialization.
+ *
+ * @init
  */
 void halInit(void) {
 

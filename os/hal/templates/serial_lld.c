@@ -58,6 +58,8 @@ static const SerialConfig default_config = {
 
 /**
  * @brief   Low level serial driver initialization.
+ *
+ * @notapi
  */
 void sd_lld_init(void) {
 
@@ -70,6 +72,8 @@ void sd_lld_init(void) {
  * @param[in] config    the architecture-dependent serial driver configuration.
  *                      If this parameter is set to @p NULL then a default
  *                      configuration is used.
+ *
+ * @notapi
  */
 void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
@@ -84,6 +88,8 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
  *          interrupt vector.
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
+ *
+ * @notapi
  */
 void sd_lld_stop(SerialDriver *sdp) {
 

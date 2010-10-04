@@ -48,6 +48,8 @@
 
 /**
  * @brief   PWM Driver initialization.
+ *
+ * @init
  */
 void pwmInit(void) {
 
@@ -58,6 +60,8 @@ void pwmInit(void) {
  * @brief   Initializes the standard part of a @p PWMDriver structure.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
+ *
+ * @init
  */
 void pwmObjectInit(PWMDriver *pwmp) {
 
@@ -70,6 +74,8 @@ void pwmObjectInit(PWMDriver *pwmp) {
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] config    pointer to a @p PWMConfig object
+ *
+ * @api
  */
 void pwmStart(PWMDriver *pwmp, const PWMConfig *config) {
 
@@ -89,6 +95,8 @@ void pwmStart(PWMDriver *pwmp, const PWMConfig *config) {
  * @brief   Deactivates the PWM peripheral.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
+ *
+ * @api
  */
 void pwmStop(PWMDriver *pwmp) {
 
@@ -110,6 +118,8 @@ void pwmStop(PWMDriver *pwmp) {
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] channel   PWM channel identifier
  * @param[in] width     PWM pulse width as clock pulses number
+ *
+ * @api
  */
 void pwmEnableChannel(PWMDriver *pwmp,
                       pwmchannel_t channel,
@@ -132,6 +142,8 @@ void pwmEnableChannel(PWMDriver *pwmp,
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] channel   PWM channel identifier
+ *
+ * @api
  */
 void pwmDisableChannel(PWMDriver *pwmp, pwmchannel_t channel) {
 

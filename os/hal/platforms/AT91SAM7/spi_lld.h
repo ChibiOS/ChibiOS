@@ -18,8 +18,9 @@
 */
 
 /**
- * @file AT91SAM7/spi_lld.h
- * @brief AT91SAM7 low level SPI driver header.
+ * @file    AT91SAM7/spi_lld.h
+ * @brief   AT91SAM7 low level SPI driver header.
+ *
  * @addtogroup AT91SAM7_SPI
  * @{
  */
@@ -46,9 +47,9 @@
 /*===========================================================================*/
 
 /**
- * @brief SPI driver enable switch.
+ * @brief   SPI driver enable switch.
  * @details If set to @p TRUE the support for SPI0 is included.
- * @note The default is @p TRUE.
+ * @note    The default is @p TRUE.
  */
 #if !defined(USE_AT91SAM7_SPI) || defined(__DOXYGEN__)
 #define USE_AT91SAM7_SPI            TRUE
@@ -63,7 +64,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Driver configuration structure.
+ * @brief   Driver configuration structure.
  */
 typedef struct {
   /**

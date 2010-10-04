@@ -52,6 +52,8 @@
 
 /**
  * @brief   Low level UART driver initialization.
+ *
+ * @notapi
  */
 void uart_lld_init(void) {
 
@@ -61,6 +63,8 @@ void uart_lld_init(void) {
  * @brief   Configures and activates the UART peripheral.
  *
  * @param[in] uartp      pointer to the @p UARTDriver object
+ *
+ * @notapi
  */
 void uart_lld_start(UARTDriver *uartp) {
 
@@ -74,6 +78,8 @@ void uart_lld_start(UARTDriver *uartp) {
  * @brief   Deactivates the UART peripheral.
  *
  * @param[in] uartp      pointer to the @p UARTDriver object
+ *
+ * @notapi
  */
 void uart_lld_stop(UARTDriver *uartp) {
 
@@ -87,6 +93,8 @@ void uart_lld_stop(UARTDriver *uartp) {
  * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in] n         number of data frames to send
  * @param[in] txbuf     the pointer to the transmit buffer
+ *
+ * @notapi
  */
 void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
 
@@ -100,6 +108,8 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
  *
  * @return              The number of data frames not transmitted by the
  *                      stopped transmit operation.
+ *
+ * @notapi
  */
 size_t uart_lld_stop_send(UARTDriver *uartp) {
 
@@ -113,6 +123,8 @@ size_t uart_lld_stop_send(UARTDriver *uartp) {
  * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in] n         number of data frames to send
  * @param[in] rxbuf     the pointer to the receive buffer
+ *
+ * @notapi
  */
 void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
 
@@ -126,6 +138,8 @@ void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
  *
  * @return              The number of data frames not received by the
  *                      stopped receive operation.
+ *
+ * @notapi
  */
 size_t uart_lld_stop_receive(UARTDriver *uartp) {
 

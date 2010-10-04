@@ -219,6 +219,11 @@ static void notify3(void) {
 /*===========================================================================*/
 
 #if USE_SAM7_USART0 || defined(__DOXYGEN__)
+/**
+ * @brief   USART0 interrupt handler.
+ *
+ * @isr
+ */
 CH_IRQ_HANDLER(USART0IrqHandler) {
 
   CH_IRQ_PROLOGUE();
@@ -229,6 +234,11 @@ CH_IRQ_HANDLER(USART0IrqHandler) {
 #endif
 
 #if USE_SAM7_USART1 || defined(__DOXYGEN__)
+/**
+ * @brief   USART1 interrupt handler.
+ *
+ * @isr
+ */
 CH_IRQ_HANDLER(USART1IrqHandler) {
 
   CH_IRQ_PROLOGUE();
@@ -247,6 +257,8 @@ CH_IRQ_HANDLER(USART1IrqHandler) {
 
 /**
  * @brief   Low level serial driver initialization.
+ *
+ * @notapi
  */
 void sd_lld_init(void) {
 
@@ -291,6 +303,8 @@ void sd_lld_init(void) {
  * @param[in] config    the architecture-dependent serial driver configuration.
  *                      If this parameter is set to @p NULL then a default
  *                      configuration is used.
+ *
+ * @notapi
  */
 void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
@@ -325,6 +339,8 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
  *          interrupt vector.
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
+ *
+ * @notapi
  */
 void sd_lld_stop(SerialDriver *sdp) {
 

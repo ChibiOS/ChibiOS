@@ -52,6 +52,8 @@
 
 /**
  * @brief   Low level I2C driver initialization.
+ *
+ * @notapi
  */
 void i2c_lld_init(void) {
 
@@ -61,6 +63,8 @@ void i2c_lld_init(void) {
  * @brief   Configures and activates the I2C peripheral.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
+ * @notapi
  */
 void i2c_lld_start(I2CDriver *i2cp) {
 
@@ -74,6 +78,8 @@ void i2c_lld_start(I2CDriver *i2cp) {
  * @brief   Deactivates the I2C peripheral.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
+ * @notapi
  */
 void i2c_lld_stop(I2CDriver *i2cp) {
 
@@ -86,6 +92,8 @@ void i2c_lld_stop(I2CDriver *i2cp) {
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  * @param[in] header    transaction header
+ *
+ * @notapi
  */
 void i2c_lld_master_start(I2CDriver *i2cp, uint16_t header) {
 
@@ -95,6 +103,8 @@ void i2c_lld_master_start(I2CDriver *i2cp, uint16_t header) {
  * @brief   Terminates a master bus transaction.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
+ * @notapi
  */
 void i2c_lld_master_stop(I2CDriver *i2cp) {
 
@@ -105,6 +115,8 @@ void i2c_lld_master_stop(I2CDriver *i2cp) {
  * @details Restart bits are required by some types of I2C transactions.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
+ * @notapi
  */
 void i2c_lld_master_restart(I2CDriver *i2cp) {
 
@@ -116,6 +128,8 @@ void i2c_lld_master_restart(I2CDriver *i2cp) {
  * @param[in] i2cp      pointer to the @p I2CDriver object
  * @param[in] n         number of bytes to be transmitted
  * @param[in] txbuf     transmit data buffer pointer
+ *
+ * @notapi
  */
 void i2c_lld_master_transmit(I2CDriver *i2cp, size_t n,
                              const uint8_t *txbuf) {
@@ -128,6 +142,8 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, size_t n,
  * @param[in] i2cp      pointer to the @p I2CDriver object
  * @param[in] n         number of bytes to be transmitted
  * @param[in] rxbuf     receive data buffer pointer
+ *
+ * @notapi
  */
 void i2c_lld_master_receive(I2CDriver *i2cp, size_t n, uint8_t *rxbuf) {
 

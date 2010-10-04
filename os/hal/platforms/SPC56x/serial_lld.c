@@ -215,6 +215,8 @@ static void notify2(void) {
 #if USE_SPC563_ESCIA || defined(__DOXYGEN__)
 /**
  * @brief   eSCI-A interrupt handler.
+ *
+ * @isr
  */
 CH_IRQ_HANDLER(vector146) {
 
@@ -229,6 +231,8 @@ CH_IRQ_HANDLER(vector146) {
 #if USE_SPC563_ESCIB || defined(__DOXYGEN__)
 /**
  * @brief   eSCI-B interrupt handler.
+ *
+ * @isr
  */
 CH_IRQ_HANDLER(vector149) {
 
@@ -246,6 +250,8 @@ CH_IRQ_HANDLER(vector149) {
 
 /**
  * @brief   Low level serial driver initialization.
+ *
+ * @notapi
  */
 void sd_lld_init(void) {
 
@@ -271,6 +277,8 @@ void sd_lld_init(void) {
  * @param[in] config    the architecture-dependent serial driver configuration.
  *                      If this parameter is set to @p NULL then a default
  *                      configuration is used.
+ *
+ * @notapi
  */
 void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
@@ -283,6 +291,8 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
  * @brief   Low level serial driver stop.
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
+ *
+ * @notapi
  */
 void sd_lld_stop(SerialDriver *sdp) {
 

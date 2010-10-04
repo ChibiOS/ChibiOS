@@ -52,6 +52,8 @@
 
 /**
  * @brief   Low level XXX driver initialization.
+ *
+ * @notapi
  */
 void xxx_lld_init(void) {
 
@@ -61,6 +63,8 @@ void xxx_lld_init(void) {
  * @brief   Configures and activates the XXX peripheral.
  *
  * @param[in] xxxp      pointer to the @p XXXDriver object
+ *
+ * @notapi
  */
 void xxx_lld_start(XXXDriver *xxxp) {
 
@@ -74,6 +78,8 @@ void xxx_lld_start(XXXDriver *xxxp) {
  * @brief   Deactivates the XXX peripheral.
  *
  * @param[in] xxxp      pointer to the @p XXXDriver object
+ *
+ * @notapi
  */
 void xxx_lld_stop(XXXDriver *xxxp) {
 

@@ -18,8 +18,9 @@
 */
 
 /**
- * @file AVR/hal_lld.c
- * @brief AVR HAL subsystem low level driver code.
+ * @file    AVR/hal_lld.c
+ * @brief   AVR HAL subsystem low level driver code.
+ *
  * @addtogroup AVR_HAL
  * @{
  */
@@ -48,7 +49,9 @@
 /*===========================================================================*/
 
 /**
- * @brief Low level HAL driver initialization.
+ * @brief   Low level HAL driver initialization.
+ *
+ * @notapi
  */
 void hal_lld_init(void) {
 

@@ -217,6 +217,11 @@ static void uart3_deinit(void) {
 /*===========================================================================*/
 
 #if USE_STM8_UART1 || defined(__DOXYGEN__)
+/**
+ * @brief   IRQ 17 service routine.
+ *
+ * @isr
+ */
 CH_IRQ_HANDLER(17) {
   msg_t b;
 
@@ -233,6 +238,11 @@ CH_IRQ_HANDLER(17) {
   CH_IRQ_EPILOGUE();
 }
 
+/**
+ * @brief   IRQ 18 service routine.
+ *
+ * @isr
+ */
 CH_IRQ_HANDLER(18) {
   uint8_t sr = UART1->SR;
 
@@ -250,6 +260,11 @@ CH_IRQ_HANDLER(18) {
 #endif /* USE_STM8_UART1 */
 
 #if USE_STM8_UART2 || defined(__DOXYGEN__)
+/**
+ * @brief   IRQ 20 service routine.
+ *
+ * @isr
+ */
 CH_IRQ_HANDLER(20) {
   msg_t b;
 
@@ -266,6 +281,11 @@ CH_IRQ_HANDLER(20) {
   CH_IRQ_EPILOGUE();
 }
 
+/**
+ * @brief   IRQ 21 service routine.
+ *
+ * @isr
+ */
 CH_IRQ_HANDLER(21) {
   uint8_t sr = UART2->SR;
 
@@ -283,6 +303,11 @@ CH_IRQ_HANDLER(21) {
 #endif /* USE_STM8_UART2 */
 
 #if USE_STM8_UART3 || defined(__DOXYGEN__)
+/**
+ * @brief   IRQ 20 service routine.
+ *
+ * @isr
+ */
 CH_IRQ_HANDLER(20) {
   msg_t b;
 
@@ -299,6 +324,11 @@ CH_IRQ_HANDLER(20) {
   CH_IRQ_EPILOGUE();
 }
 
+/**
+ * @brief   IRQ 21 service routine.
+ *
+ * @isr
+ */
 CH_IRQ_HANDLER(21) {
   uint8_t sr = UART3->SR;
 
@@ -321,6 +351,8 @@ CH_IRQ_HANDLER(21) {
 
 /**
  * @brief   Low level serial driver initialization.
+ *
+ * @notapi
  */
 void sd_lld_init(void) {
 
@@ -350,6 +382,8 @@ void sd_lld_init(void) {
  * @param[in] config    the architecture-dependent serial driver configuration.
  *                      If this parameter is set to @p NULL then a default
  *                      configuration is used.
+ *
+ * @notapi
  */
 void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
@@ -382,6 +416,8 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
  *          interrupt vector.
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
+ *
+ * @notapi
  */
 void sd_lld_stop(SerialDriver *sdp) {
 

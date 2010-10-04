@@ -52,6 +52,8 @@
 
 /**
  * @brief   Low level MAC initialization.
+ *
+ * @notapi
  */
 void mac_lld_init(void) {
 
@@ -64,6 +66,8 @@ void mac_lld_init(void) {
  * @param[in] p         pointer to a six bytes buffer containing the MAC
  *                      address. If this parameter is set to @p NULL then
  *                      a system default MAC is used.
+ *
+ * @notapi
  */
 void mac_lld_set_address(MACDriver *macp, const uint8_t *p) {
 
@@ -79,6 +83,8 @@ void mac_lld_set_address(MACDriver *macp, const uint8_t *p) {
  * @return              The operation status.
  * @retval RDY_OK       a descriptor was obtained.
  * @retval RDY_TIMEOUT  descriptor not available.
+ *
+ * @notapi
  */
 msg_t max_lld_get_transmit_descriptor(MACDriver *macp,
                                       MACTransmitDescriptor *tdp) {
@@ -97,6 +103,8 @@ msg_t max_lld_get_transmit_descriptor(MACDriver *macp,
  *                      stream, this value can be less than the amount
  *                      specified in the parameter @p size if the maximum
  *                      frame size is reached.
+ *
+ * @notapi
  */
 size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
                                          uint8_t *buf,
@@ -110,6 +118,8 @@ size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
  *          enqueued data as a single frame.
  *
  * @param[in] tdp       pointer to a @p MACTransmitDescriptor structure
+ *
+ * @notapi
  */
 void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
 
@@ -123,6 +133,8 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
  * @return              The operation status.
  * @retval RDY_OK       a descriptor was obtained.
  * @retval RDY_TIMEOUT  descriptor not available.
+ *
+ * @notapi
  */
 msg_t max_lld_get_receive_descriptor(MACDriver *macp,
                                      MACReceiveDescriptor *rdp) {
@@ -139,6 +151,8 @@ msg_t max_lld_get_receive_descriptor(MACDriver *macp,
  * @return          The number of bytes read from the descriptor's stream,
  *                  this value can be less than the amount specified in
  *                  the parameter @p size if there are no more bytes to read.
+ *
+ * @notapi
  */
 size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
                                          uint8_t *buf,
@@ -153,6 +167,8 @@ size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
  *          frames.
  *
  * @param[in] rdp       pointer to a @p MACReceiveDescriptor structure
+ *
+ * @notapi
  */
 void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
 
@@ -165,6 +181,8 @@ void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
  * @return              The link status.
  * @retval TRUE         if the link is active.
  * @retval FALSE        if the link is down.
+ *
+ * @notapi
  */
 bool_t mac_lld_poll_link_status(MACDriver *macp) {
 

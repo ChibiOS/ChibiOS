@@ -61,6 +61,8 @@
  * @param[in] port      the port identifier
  * @param[in] mask      the group mask
  * @param[in] mode      the mode
+ *
+ * @notapi
  */
 void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,

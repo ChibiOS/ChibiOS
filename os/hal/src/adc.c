@@ -48,6 +48,8 @@
 
 /**
  * @brief   ADC Driver initialization.
+ *
+ * @init
  */
 void adcInit(void) {
 
@@ -58,6 +60,8 @@ void adcInit(void) {
  * @brief   Initializes the standard part of a @p ADCDriver structure.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @init
  */
 void adcObjectInit(ADCDriver *adcp) {
 
@@ -77,6 +81,8 @@ void adcObjectInit(ADCDriver *adcp) {
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @param[in] config    pointer to the @p ADCConfig object
+ *
+ * @api
  */
 void adcStart(ADCDriver *adcp, const ADCConfig *config) {
 
@@ -96,6 +102,8 @@ void adcStart(ADCDriver *adcp, const ADCConfig *config) {
  * @brief   Deactivates the ADC peripheral.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @api
  */
 void adcStop(ADCDriver *adcp) {
 
@@ -139,6 +147,8 @@ void adcStop(ADCDriver *adcp) {
  * @return              The operation status.
  * @retval FALSE        the conversion has been started.
  * @retval TRUE         the driver is busy, conversion not started.
+ *
+ * @api
  */
 bool_t adcStartConversion(ADCDriver *adcp,
                           const ADCConversionGroup *grpp,
@@ -182,6 +192,8 @@ bool_t adcStartConversion(ADCDriver *adcp,
  * @return              The operation status.
  * @retval FALSE        the conversion has been started.
  * @retval TRUE         the driver is busy, conversion not started.
+ *
+ * @iclass
  */
 bool_t adcStartConversionI(ADCDriver *adcp,
                            const ADCConversionGroup *grpp,
@@ -216,6 +228,8 @@ bool_t adcStartConversionI(ADCDriver *adcp,
  *          being processed then the function does nothing.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @api
  */
 void adcStopConversion(ADCDriver *adcp) {
 
@@ -248,6 +262,8 @@ void adcStopConversion(ADCDriver *adcp) {
  *          being processed then the function does nothing.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @iclass
  */
 void adcStopConversionI(ADCDriver *adcp) {
 
@@ -275,6 +291,8 @@ void adcStopConversionI(ADCDriver *adcp) {
  * @brief   Waits for completion.
  * @details If the conversion is not completed or not yet started then the
  *          invoking thread waits for a conversion completion event.
+ * @pre     In order to use this function the option @p ADC_USE_WAIT must be
+ *          enabled.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @param[in] timeout   the number of ticks before the operation timeouts,
@@ -285,6 +303,8 @@ void adcStopConversionI(ADCDriver *adcp) {
  * @return              The operation result.
  * @retval RDY_OK       conversion finished.
  * @retval RDY_TIMEOUT  conversion not finished within the specified time.
+ *
+ * @init
  */
 msg_t adcWaitConversion(ADCDriver *adcp, systime_t timeout) {
 

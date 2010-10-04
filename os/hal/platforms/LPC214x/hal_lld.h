@@ -18,8 +18,9 @@
 */
 
 /**
- * @file LPC214x/hal_lld.h
- * @brief LPC214x HAL subsystem low level driver header.
+ * @file    LPC214x/hal_lld.h
+ * @brief   LPC214x HAL subsystem low level driver header.
+ *
  * @addtogroup LPC214x_HAL
  * @{
  */
@@ -44,7 +45,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Default action for the non vectored IRQ handler, nothing.
+ * @brief   Default action for the non vectored IRQ handler, nothing.
  */
 #if !defined(LPC214x_NON_VECTORED_IRQ_HOOK) || defined(__DOXYGEN__)
 #define LPC214x_NON_VECTORED_IRQ_HOOK()

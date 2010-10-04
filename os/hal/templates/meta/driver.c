@@ -48,6 +48,8 @@
 
 /**
  * @brief   XXX Driver initialization.
+ *
+ * @init
  */
 void xxxInit(void) {
 
@@ -58,6 +60,8 @@ void xxxInit(void) {
  * @brief   Initializes the standard part of a @p XXXDriver structure.
  *
  * @param[in] xxxp      pointer to the @p XXXDriver object
+ *
+ * @init
  */
 void xxxObjectInit(XXXDriver *xxxp) {
 
@@ -70,6 +74,8 @@ void xxxObjectInit(XXXDriver *xxxp) {
  *
  * @param[in] xxxp      pointer to the @p XXXDriver object
  * @param[in] config    pointer to the @p XXXConfig object
+ *
+ * @api
  */
 void xxxStart(XXXDriver *xxxp, const XXXConfig *config) {
 
@@ -89,6 +95,8 @@ void xxxStart(XXXDriver *xxxp, const XXXConfig *config) {
  * @brief   Deactivates the XXX peripheral.
  *
  * @param[in] xxxp      pointer to the @p XXXDriver object
+ *
+ * @api
  */
 void xxxStop(XXXDriver *xxxp) {
 

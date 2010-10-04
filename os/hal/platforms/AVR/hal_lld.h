@@ -18,8 +18,9 @@
 */
 
 /**
- * @file AVR/hal_lld.h
- * @brief AVR HAL subsystem low level driver header.
+ * @file    AVR/hal_lld.h
+ * @brief   AVR HAL subsystem low level driver header.
+ *
  * @addtogroup AVR_HAL
  * @{
  */

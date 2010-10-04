@@ -54,6 +54,8 @@ static cnt_t dmacnt2;
 
 /**
  * @brief STM32 DMA helper initialization.
+ *
+ * @init
  */
 void dmaInit(void) {
   int i;
@@ -74,6 +76,8 @@ void dmaInit(void) {
  * @brief Enables the specified DMA controller clock.
  *
  * @param[in] dma the DMA controller id
+ *
+ * @api
  */
 void dmaEnable(uint32_t dma) {
 
@@ -99,6 +103,8 @@ void dmaEnable(uint32_t dma) {
  * @brief Disables the specified DMA controller clock.
  *
  * @param[in] dma the DMA controller id
+ *
+ * @api
  */
 void dmaDisable(uint32_t dma) {
 

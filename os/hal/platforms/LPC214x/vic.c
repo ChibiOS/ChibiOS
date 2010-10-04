@@ -30,6 +30,8 @@
 /**
  * @brief   VIC Initialization.
  * @note    Better reset everything in the VIC, it is a HUGE source of trouble.
+ *
+ * @notapi
  */
 void vic_init(void) {
   int i;
@@ -52,6 +54,8 @@ void vic_init(void) {
  * @param[in] handler   the pointer to the IRQ service routine
  * @param[in] vector    the vector number
  * @param[in] source    the IRQ source to be associated to the vector
+ *
+ * @api
  */
 void SetVICVector(void *handler, int vector, int source) {
 

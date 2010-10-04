@@ -50,6 +50,8 @@
 
 /**
  * @brief   Low level HAL driver initialization.
+ *
+ * @notapi
  */
 void hal_lld_init(void) {
 

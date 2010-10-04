@@ -18,8 +18,9 @@
 */
 
 /**
- * @file MSP430/hal_lld.h
- * @brief MSP430 HAL subsystem low level driver header.
+ * @file    MSP430/hal_lld.h
+ * @brief   MSP430 HAL subsystem low level driver header.
+ *
  * @addtogroup MSP430_HAL
  * @{
  */
@@ -46,11 +47,11 @@
 /*===========================================================================*/
 
 /**
- * @brief Clock source.
+ * @brief   Clock source.
  * @details The clock source can be selected from:
- * - @p MSP430_CLOCK_SOURCE_XT2CLK.
- * - @p MSP430_CLOCK_SOURCE_DCOCLK.
- * .
+ *          - @p MSP430_CLOCK_SOURCE_XT2CLK.
+ *          - @p MSP430_CLOCK_SOURCE_DCOCLK.
+ *          .
  */
 #if !defined(MSP430_USE_CLOCK) || defined(__DOXYGEN__)
 #define MSP430_USE_CLOCK            MSP430_CLOCK_SOURCE_XT2CLK

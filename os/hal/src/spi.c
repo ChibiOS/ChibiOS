@@ -48,6 +48,8 @@
 
 /**
  * @brief   SPI Driver initialization.
+ *
+ * @init
  */
 void spiInit(void) {
 
@@ -58,6 +60,8 @@ void spiInit(void) {
  * @brief   Initializes the standard part of a @p SPIDriver structure.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @init
  */
 void spiObjectInit(SPIDriver *spip) {
 
@@ -75,6 +79,8 @@ void spiObjectInit(SPIDriver *spip) {
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] config    pointer to the @p SPIConfig object
+ *
+ * @api
  */
 void spiStart(SPIDriver *spip, const SPIConfig *config) {
 
@@ -94,6 +100,8 @@ void spiStart(SPIDriver *spip, const SPIConfig *config) {
  * @brief Deactivates the SPI peripheral.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @api
  */
 void spiStop(SPIDriver *spip) {
 
@@ -112,6 +120,8 @@ void spiStop(SPIDriver *spip) {
  * @brief   Asserts the slave select signal and prepares for transfers.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @api
  */
 void spiSelect(SPIDriver *spip) {
 
@@ -132,6 +142,8 @@ void spiSelect(SPIDriver *spip) {
  * @details The previously selected peripheral is unselected.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @api
  */
 void spiUnselect(SPIDriver *spip) {
 
@@ -155,6 +167,8 @@ void spiUnselect(SPIDriver *spip) {
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
+ *
+ * @api
  */
 void spiIgnore(SPIDriver *spip, size_t n) {
 
@@ -176,6 +190,8 @@ void spiIgnore(SPIDriver *spip, size_t n) {
  * @param[in] n         number of words to be exchanged
  * @param[in] txbuf     the pointer to the transmit buffer
  * @param[out] rxbuf    the pointer to the receive buffer
+ *
+ * @api
  */
 void spiExchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf) {
 
@@ -196,6 +212,8 @@ void spiExchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf) {
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to send
  * @param[in] txbuf     the pointer to the transmit buffer
+ *
+ * @api
  */
 void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
 
@@ -216,6 +234,8 @@ void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to receive
  * @param[out] rxbuf    the pointer to the receive buffer
+ *
+ * @api
  */
 void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
 
@@ -233,11 +253,12 @@ void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
  * @brief   Gains exclusive access to the SPI bus.
  * @details This function tries to gain ownership to the SPI bus, if the bus
  *          is already being used then the invoking thread is queued.
- * @note    This function is only available when the @p SPI_USE_MUTUAL_EXCLUSION
- *          option is set to @p TRUE.
+ * @pre     In order to use this function the option @p SPI_USE_MUTUAL_EXCLUSION
+ *          must be enabled.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  *
+ * @api
  */
 void spiAcquireBus(SPIDriver *spip) {
 
@@ -252,10 +273,12 @@ void spiAcquireBus(SPIDriver *spip) {
 
 /**
  * @brief   Releases exclusive access to the SPI bus.
- * @note    This function is only available when the @p SPI_USE_MUTUAL_EXCLUSION
- *          option is set to @p TRUE.
+ * @pre     In order to use this function the option @p SPI_USE_MUTUAL_EXCLUSION
+ *          must be enabled.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @api
  */
 void spiReleaseBus(SPIDriver *spip) {
 

@@ -227,6 +227,8 @@ static void notify2(void) {
 
 /**
  * @brief   UART0 IRQ handler.
+ *
+ * @isr
  */
 #if USE_LPC214x_UART0 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(UART0IrqHandler) {
@@ -242,6 +244,8 @@ CH_IRQ_HANDLER(UART0IrqHandler) {
 
 /**
  * @brief   UART1 IRQ handler.
+ *
+ * @isr
  */
 #if USE_LPC214x_UART1 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(UART1IrqHandler) {
@@ -261,6 +265,8 @@ CH_IRQ_HANDLER(UART1IrqHandler) {
 
 /**
  * @brief   Low level serial driver initialization.
+ *
+ * @notapi
  */
 void sd_lld_init(void) {
 
@@ -283,6 +289,8 @@ void sd_lld_init(void) {
  * @param[in] config    the architecture-dependent serial driver configuration.
  *                      If this parameter is set to @p NULL then a default
  *                      configuration is used.
+ *
+ * @notapi
  */
 void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
@@ -312,6 +320,8 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
  *          interrupt vector.
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
+ *
+ * @notapi
  */
 void sd_lld_stop(SerialDriver *sdp) {
 

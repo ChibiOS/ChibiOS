@@ -39,7 +39,7 @@
 /*===========================================================================*/
 
 /**
- * @brief PAL setup.
+ * @brief   PAL setup.
  * @details Digital I/O ports static configuration as defined in @p board.h.
  */
 const PALConfig pal_default_config =
@@ -70,7 +70,9 @@ const PALConfig pal_default_config =
 /*===========================================================================*/
 
 /**
- * @brief Low level HAL driver initialization.
+ * @brief   Low level HAL driver initialization.
+ *
+ * @notapi
  */
 void hal_lld_init(void) {
 
@@ -87,8 +89,11 @@ void hal_lld_init(void) {
 }
 
 /**
- * @brief STM32 clocks and PLL initialization.
- * @note All the involved constants come from the file @p board.h.
+ * @brief   STM32 clocks and PLL initialization.
+ * @note    All the involved constants come from the file @p board.h.
+ * @note    This function must be invoked only after the system reset.
+ *
+ * @special
  */
 #if defined(STM32F10X_LD) || defined(STM32F10X_MD) ||                       \
     defined(STM32F10X_HD) || defined(__DOXYGEN__)

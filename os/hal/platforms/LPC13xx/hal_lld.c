@@ -42,7 +42,7 @@
 /*===========================================================================*/
 
 /**
- * @brief PAL setup.
+ * @brief   PAL setup.
  * @details Digital I/O ports static configuration as defined in @p board.h.
  */
 const PALConfig pal_default_config = {
@@ -66,6 +66,8 @@ const PALConfig pal_default_config = {
 
 /**
  * @brief   Low level HAL driver initialization.
+ *
+ * @notapi
  */
 void hal_lld_init(void) {
 
@@ -81,6 +83,9 @@ void hal_lld_init(void) {
 /**
  * @brief   LPC13xx clocks and PLL initialization.
  * @note    All the involved constants come from the file @p board.h.
+ * @note    This function must be invoked only after the system reset.
+ *
+ * @special
  */
 void LPC13xx_clock_init(void) {
   unsigned i;

@@ -222,6 +222,11 @@ static void notify5(void) {
 /*===========================================================================*/
 
 #if STM32_SERIAL_USE_USART1 || defined(__DOXYGEN__)
+/**
+ * @brief   USART1 interrupt handler.
+ *
+ * @isr
+ */
 CH_IRQ_HANDLER(USART1_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
@@ -233,6 +238,11 @@ CH_IRQ_HANDLER(USART1_IRQHandler) {
 #endif
 
 #if STM32_SERIAL_USE_USART2 || defined(__DOXYGEN__)
+/**
+ * @brief   USART2 interrupt handler.
+ *
+ * @isr
+ */
 CH_IRQ_HANDLER(USART2_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
@@ -244,6 +254,11 @@ CH_IRQ_HANDLER(USART2_IRQHandler) {
 #endif
 
 #if STM32_SERIAL_USE_USART3 || defined(__DOXYGEN__)
+/**
+ * @brief   USART3 interrupt handler.
+ *
+ * @isr
+ */
 CH_IRQ_HANDLER(USART3_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
@@ -255,6 +270,11 @@ CH_IRQ_HANDLER(USART3_IRQHandler) {
 #endif
 
 #if STM32_SERIAL_USE_UART4 || defined(__DOXYGEN__)
+/**
+ * @brief   UART4 interrupt handler.
+ *
+ * @isr
+ */
 CH_IRQ_HANDLER(UART4_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
@@ -266,6 +286,11 @@ CH_IRQ_HANDLER(UART4_IRQHandler) {
 #endif
 
 #if STM32_SERIAL_USE_UART5 || defined(__DOXYGEN__)
+/**
+ * @brief   UART5 interrupt handler.
+ *
+ * @isr
+ */
 CH_IRQ_HANDLER(UART5_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
@@ -282,6 +307,8 @@ CH_IRQ_HANDLER(UART5_IRQHandler) {
 
 /**
  * @brief   Low level serial driver initialization.
+ *
+ * @notapi
  */
 void sd_lld_init(void) {
 
@@ -318,6 +345,8 @@ void sd_lld_init(void) {
  * @param[in] config    the architecture-dependent serial driver configuration.
  *                      If this parameter is set to @p NULL then a default
  *                      configuration is used.
+ *
+ * @notapi
  */
 void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
@@ -370,6 +399,8 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
  *          interrupt vector.
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
+ *
+ * @notapi
  */
 void sd_lld_stop(SerialDriver *sdp) {
 

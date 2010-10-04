@@ -90,6 +90,8 @@ static void spi_start_wait(SPIDriver *spip) {
 #if STM32_SPI_USE_SPI1 || defined(__DOXYGEN__)
 /**
  * @brief   SPI1 RX DMA interrupt handler (channel 2).
+ *
+ * @isr
  */
 CH_IRQ_HANDLER(DMA1_Ch2_IRQHandler) {
 
@@ -106,6 +108,8 @@ CH_IRQ_HANDLER(DMA1_Ch2_IRQHandler) {
 
 /**
  * @brief   SPI1 TX DMA interrupt handler (channel 3).
+ *
+ * @isr
  */
 CH_IRQ_HANDLER(DMA1_Ch3_IRQHandler) {
 
@@ -121,6 +125,8 @@ CH_IRQ_HANDLER(DMA1_Ch3_IRQHandler) {
 #if STM32_SPI_USE_SPI2 || defined(__DOXYGEN__)
 /**
  * @brief   SPI2 RX DMA interrupt handler (channel 4).
+ *
+ * @isr
  */
 CH_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
 
@@ -137,6 +143,8 @@ CH_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
 
 /**
  * @brief   SPI2 TX DMA interrupt handler (channel 5).
+ *
+ * @isr
  */
 CH_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
 
@@ -152,6 +160,8 @@ CH_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
 #if STM32_SPI_USE_SPI3 || defined(__DOXYGEN__)
 /**
  * @brief   SPI3 RX DMA interrupt handler (DMA2, channel 1).
+ *
+ * @isr
  */
 CH_IRQ_HANDLER(DMA2_Ch1_IRQHandler) {
 
@@ -168,6 +178,8 @@ CH_IRQ_HANDLER(DMA2_Ch1_IRQHandler) {
 
 /**
  * @brief   SPI3 TX DMA2 interrupt handler (DMA2, channel 2).
+ *
+ * @isr
  */
 CH_IRQ_HANDLER(DMA2_Ch2_IRQHandler) {
 
@@ -186,6 +198,8 @@ CH_IRQ_HANDLER(DMA2_Ch2_IRQHandler) {
 
 /**
  * @brief   Low level SPI driver initialization.
+ *
+ * @notapi
  */
 void spi_lld_init(void) {
 
@@ -224,6 +238,8 @@ void spi_lld_init(void) {
  * @brief   Configures and activates the SPI peripheral.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
  */
 void spi_lld_start(SPIDriver *spip) {
 
@@ -284,6 +300,8 @@ void spi_lld_start(SPIDriver *spip) {
  * @brief   Deactivates the SPI peripheral.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
  */
 void spi_lld_stop(SPIDriver *spip) {
 
@@ -324,6 +342,8 @@ void spi_lld_stop(SPIDriver *spip) {
  * @brief   Asserts the slave select signal and prepares for transfers.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
  */
 void spi_lld_select(SPIDriver *spip) {
 
@@ -335,6 +355,8 @@ void spi_lld_select(SPIDriver *spip) {
  * @details The previously selected peripheral is unselected.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
  */
 void spi_lld_unselect(SPIDriver *spip) {
 
@@ -349,6 +371,8 @@ void spi_lld_unselect(SPIDriver *spip) {
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
+ *
+ * @notapi
  */
 void spi_lld_ignore(SPIDriver *spip, size_t n) {
   uint16_t dummyrx;
@@ -371,6 +395,8 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
  * @param[in] n         number of words to be exchanged
  * @param[in] txbuf     the pointer to the transmit buffer
  * @param[out] rxbuf    the pointer to the receive buffer
+ *
+ * @notapi
  */
 void spi_lld_exchange(SPIDriver *spip, size_t n,
                       const void *txbuf, void *rxbuf) {
@@ -390,6 +416,8 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to send
  * @param[in] txbuf     the pointer to the transmit buffer
+ *
+ * @notapi
  */
 void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
   uint16_t dummyrx;
@@ -409,6 +437,8 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to receive
  * @param[out] rxbuf    the pointer to the receive buffer
+ *
+ * @notapi
  */
 void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   uint16_t dummytx = 0xFFFF;

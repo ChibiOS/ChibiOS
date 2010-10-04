@@ -45,7 +45,7 @@
   |  |  |  +--MSP430/   - Port files for MSP430 architecture.
   |  |  |  +--SIMIA32/  - Port files for SIMIA32 simulator architecture.
   |  |  +--cosmic/      - Ports for the Cosmic compiler.
-  |  |     +--STM8/     - Port files for STM8 architecture.
+  |  |  |  +--STM8/     - Port files for STM8 architecture.
   |  |  +--RC/          - Ports for the Raisonance compiler.
   |  |     +--STM8/     - Port files for STM8 architecture.
   |  +--kernel/         - Kernel portable files.

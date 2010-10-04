@@ -86,6 +86,8 @@ typedef void (*pwmcallback_t)(void);
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] channel   PWM channel identifier
  * @param[in] width     PWM pulse width as clock pulses number
+ *
+ * @iclass
  */
 #define pwmEnableChannelI(pwmp, channel, width) {                           \
   pwm_lld_enable_channel(pwmp, channel, width);                             \
@@ -99,6 +101,8 @@ typedef void (*pwmcallback_t)(void);
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] channel   PWM channel identifier
+ *
+ * @iclass
  */
 #define pwmDisableChannelI(pwmp, channel) {                                 \
   pwm_lld_disable_channel(pwmp, channel);                                   \

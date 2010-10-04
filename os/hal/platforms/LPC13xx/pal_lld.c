@@ -50,10 +50,12 @@
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 /**
- * @brief LPC13xx I/O ports configuration.
+ * @brief   LPC13xx I/O ports configuration.
  * @details GPIO unit registers initialization.
  *
  * @param[in] config the LPC13xx ports configuration
+ *
+ * @notapi
  */
 void _pal_lld_init(const PALConfig *config) {
 
@@ -68,20 +70,19 @@ void _pal_lld_init(const PALConfig *config) {
 }
 
 /**
- * @brief Pads mode setup.
+ * @brief   Pads mode setup.
  * @details This function programs a pads group belonging to the same port
  *          with the specified mode.
+ * @note    @p PAL_MODE_UNCONNECTED is implemented as push pull output with
+ *          high state.
+ * @note    This function does not alter the @p PINSELx registers. Alternate
+ *          functions setup must be handled by device-specific code.
  *
- * @param[in] port the port identifier
- * @param[in] mask the group mask
- * @param[in] mode the mode
+ * @param[in] port      the port identifier
+ * @param[in] mask      the group mask
+ * @param[in] mode      the mode
  *
- * @note This function is not meant to be invoked directly by the application
- *       code.
- * @note @p PAL_MODE_UNCONNECTED is implemented as push pull output with high
- *       state.
- * @note This function does not alter the @p PINSELx registers. Alternate
- *       functions setup must be handled by device-specific code.
+ * @notapi
  */
 void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,

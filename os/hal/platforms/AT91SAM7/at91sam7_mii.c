@@ -18,8 +18,9 @@
 */
 
 /**
- * @file AT91SAM7/at91sam7_mii.c
- * @brief AT91SAM7 low level MII driver code.
+ * @file    AT91SAM7/at91sam7_mii.c
+ * @brief   AT91SAM7 low level MII driver code.
+ *
  * @addtogroup AT91SAM7_MII
  * @{
  */
@@ -51,16 +52,20 @@
 /*===========================================================================*/
 
 /**
- * @brief Low level MII driver initialization.
+ * @brief   Low level MII driver initialization.
+ *
+ * @notapi
  */
 void miiInit(void) {
 
 }
 
 /**
- * @brief Resets a PHY device.
+ * @brief   Resets a PHY device.
  *
- * @param[in] macp pointer to the @p MACDriver object
+ * @param[in] macp      pointer to the @p MACDriver object
+ *
+ * @notapi
  */
 void miiReset(MACDriver *macp) {
 
@@ -94,11 +99,13 @@ void miiReset(MACDriver *macp) {
 }
 
 /**
- * @brief Reads a PHY register through the MII interface.
+ * @brief   Reads a PHY register through the MII interface.
  *
- * @param[in] macp pointer to the @p MACDriver object
- * @param addr the register address
- * @return The register value.
+ * @param[in] macp      pointer to the @p MACDriver object
+ * @param[in] addr      the register address
+ * @return              The register value.
+ *
+ * @notapi
  */
 phyreg_t miiGet(MACDriver *macp, phyaddr_t addr) {
 
@@ -114,11 +121,13 @@ phyreg_t miiGet(MACDriver *macp, phyaddr_t addr) {
 }
 
 /**
- * @brief Writes a PHY register through the MII interface.
+ * @brief   Writes a PHY register through the MII interface.
  *
- * @param[in] macp pointer to the @p MACDriver object
- * @param addr the register address
- * @param value the new register value
+ * @param[in] macp      pointer to the @p MACDriver object
+ * @param[in] addr      the register address
+ * @param[in] value     the new register value
+ *
+ * @notapi
  */
 void miiPut(MACDriver *macp, phyaddr_t addr, phyreg_t value) {
 

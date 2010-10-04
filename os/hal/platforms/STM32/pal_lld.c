@@ -81,6 +81,8 @@
  * @details Ports A-D(E, F, G) clocks enabled, AFIO clock enabled.
  *
  * @param[in] config    the STM32 ports configuration
+ *
+ * @notapi
  */
 void _pal_lld_init(const PALConfig *config) {
 
@@ -136,6 +138,8 @@ void _pal_lld_init(const PALConfig *config) {
  * @param[in] port      the port identifier
  * @param[in] mask      the group mask
  * @param[in] mode      the mode
+ *
+ * @notapi
  */
 void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,

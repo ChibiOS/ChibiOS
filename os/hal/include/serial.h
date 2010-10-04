@@ -135,71 +135,85 @@ struct SerialDriver {
 
 /**
  * @brief   Direct output check on a @p SerialDriver.
- * @details This function bypasses the indirect access to the channel and
+ * @note    This function bypasses the indirect access to the channel and
  *          checks directly the output queue. This is faster but cannot
  *          be used to check different channels implementations.
  *
  * @see     chIOPutWouldBlock()
+ *
+ * @api
  */
 #define sdPutWouldBlock(sdp) chOQIsFull(&(sdp)->oqueue)
 
 /**
  * @brief   Direct input check on a @p SerialDriver.
- * @details This function bypasses the indirect access to the channel and
+ * @note    This function bypasses the indirect access to the channel and
  *          checks directly the input queue. This is faster but cannot
  *          be used to check different channels implementations.
  *
  * @see     chIOGetWouldBlock()
+ *
+ * @api
  */
 #define sdGetWouldBlock(sdp) chIQIsEmpty(&(sdp)->iqueue)
 
 /**
  * @brief   Direct write to a @p SerialDriver.
- * @details This function bypasses the indirect access to the channel and
+ * @note    This function bypasses the indirect access to the channel and
  *          writes directly on the output queue. This is faster but cannot
  *          be used to write to different channels implementations.
  *
  * @see     chIOPut()
+ *
+ * @api
  */
 #define sdPut(sdp, b) chOQPut(&(sdp)->oqueue, b)
 
 /**
  * @brief   Direct write to a @p SerialDriver with timeout specification.
- * @details This function bypasses the indirect access to the channel and
+ * @note    This function bypasses the indirect access to the channel and
  *          writes directly on the output queue. This is faster but cannot
  *          be used to write to different channels implementations.
  *
  * @see     chIOPutTimeout()
+ *
+ * @api
  */
 #define sdPutTimeout(sdp, b, t) chOQPutTimeout(&(sdp)->iqueue, b, t)
 
 /**
  * @brief   Direct read from a @p SerialDriver.
- * @details This function bypasses the indirect access to the channel and
+ * @note    This function bypasses the indirect access to the channel and
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
  *
  * @see     chIOGet()
+ *
+ * @api
  */
 #define sdGet(sdp) chIQGet(&(sdp)->iqueue)
 
 /**
  * @brief   Direct read from a @p SerialDriver with timeout specification.
- * @details This function bypasses the indirect access to the channel and
+ * @note    This function bypasses the indirect access to the channel and
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
  *
  * @see     chIOGetTimeout()
+ *
+ * @api
  */
 #define sdGetTimeout(sdp, t) chIQGetTimeout(&(sdp)->iqueue, t)
 
 /**
  * @brief   Direct blocking write to a @p SerialDriver.
- * @details This function bypasses the indirect access to the channel and
+ * @note    This function bypasses the indirect access to the channel and
  *          writes directly to the output queue. This is faster but cannot
  *          be used to write from different channels implementations.
  *
  * @see     chIOWriteTimeout()
+ *
+ * @api
  */
 #define sdWrite(sdp, b, n)                                                  \
   chOQWriteTimeout(&(sdp)->oqueue, b, n, TIME_INFINITE)
@@ -207,33 +221,39 @@ struct SerialDriver {
 /**
  * @brief   Direct blocking write to a @p SerialDriver with timeout
  *          specification.
- * @details This function bypasses the indirect access to the channel and
+ * @note    This function bypasses the indirect access to the channel and
  *          writes directly to the output queue. This is faster but cannot
- *          be used to write from different channels implementations.
+ *          be used to write to different channels implementations.
  *
  * @see     chIOWriteTimeout()
+ *
+ * @api
  */
 #define sdWriteTimeout(sdp, b, n, t)                                        \
   chOQWriteTimeout(&(sdp)->oqueue, b, n, t)
 
 /**
  * @brief   Direct non-blocking write to a @p SerialDriver.
- * @details This function bypasses the indirect access to the channel and
+ * @note    This function bypasses the indirect access to the channel and
  *          writes directly to the output queue. This is faster but cannot
- *          be used to write from different channels implementations.
+ *          be used to write to different channels implementations.
  *
  * @see     chIOWriteTimeout()
+ *
+ * @api
  */
 #define sdAsynchronousWrite(sdp, b, n)                                      \
   chOQWriteTimeout(&(sdp)->oqueue, b, n, TIME_IMMEDIATE)
 
 /**
  * @brief   Direct blocking read from a @p SerialDriver.
- * @details This function bypasses the indirect access to the channel and
+ * @note    This function bypasses the indirect access to the channel and
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
  *
  * @see     chIOReadTimeout()
+ *
+ * @api
  */
 #define sdRead(sdp, b, n)                                                   \
   chIQReadTimeout(&(sdp)->iqueue, b, n, TIME_INFINITE)
@@ -241,22 +261,26 @@ struct SerialDriver {
 /**
  * @brief   Direct blocking read from a @p SerialDriver with timeout
  *          specification.
- * @details This function bypasses the indirect access to the channel and
+ * @note    This function bypasses the indirect access to the channel and
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
  *
  * @see     chIOReadTimeout()
+ *
+ * @api
  */
 #define sdReadTimeout(sdp, b, n, t)                                         \
   chIQReadTimeout(&(sdp)->iqueue, b, n, t)
 
 /**
  * @brief   Direct non-blocking read from a @p SerialDriver.
- * @details This function bypasses the indirect access to the channel and
+ * @note    This function bypasses the indirect access to the channel and
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
  *
  * @see     chIOReadTimeout()
+ *
+ * @api
  */
 #define sdAsynchronousRead(sdp, b, n)                                       \
   chIQReadTimeout(&(sdp)->iqueue, b, n, TIME_IMMEDIATE)
@@ -265,10 +289,12 @@ struct SerialDriver {
  * @brief   Returns the status change event source.
  * @details The status change event source is broadcasted when the channel
  *          status is updated, the status flags can then be fetched and
- *          cheared by using @p sdGetAndClearFlags().
+ *          cleared by using @p sdGetAndClearFlags().
  *
  * @param[in] ip        pointer to a @p SerialDriver object
  * @return              A pointer to an @p EventSource object.
+ *
+ * @api
  */
 #define sdGetStatusChangeEventSource(ip) (&((ip)->vmt->sevent))
 

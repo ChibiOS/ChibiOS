@@ -66,6 +66,8 @@ const PALConfig pal_default_config = {
 
 /**
  * @brief   Low level HAL driver initialization.
+ *
+ * @notapi
  */
 void hal_lld_init(void) {
 
@@ -81,6 +83,9 @@ void hal_lld_init(void) {
 /**
  * @brief   LPC11xx clocks and PLL initialization.
  * @note    All the involved constants come from the file @p board.h.
+ * @note    This function must be invoked only after the system reset.
+ *
+ * @special
  */
 void lpc111x_clock_init(void) {
   unsigned i;

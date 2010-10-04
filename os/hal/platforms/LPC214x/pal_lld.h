@@ -18,8 +18,9 @@
 */
 
 /**
- * @file LPC214x/pal_lld.h
- * @brief LPC214x FIO low level driver header.
+ * @file    LPC214x/pal_lld.h
+ * @brief   LPC214x FIO low level driver header.
+ *
  * @addtogroup LPC214x_PAL
  * @{
  */
@@ -42,7 +43,7 @@
 /*===========================================================================*/
 
 /**
- * @brief FIO port setup info.
+ * @brief   FIO port setup info.
  */
 typedef struct {
   /** Initial value for FIO_PIN register.*/
@@ -52,7 +53,7 @@ typedef struct {
 } lpc214x_fio_setup_t;
 
 /**
- * @brief LPC214x FIO static initializer.
+ * @brief   LPC214x FIO static initializer.
  * @details An instance of this structure must be passed to @p palInit() at
  *          system startup time in order to initialize the digital I/O
  *          subsystem. This represents only the initial setup, specific pads
@@ -72,17 +73,23 @@ typedef struct {
 } PALConfig;
 
 /**
- * @brief Width, in bits, of an I/O port.
+ * @brief   Width, in bits, of an I/O port.
  */
 #define PAL_IOPORTS_WIDTH 32
 
 /**
- * @brief Digital I/O port sized unsigned type.
+ * @brief   Whole port mask.
+ * @details This macro specifies all the valid bits into a port.
+ */
+#define PAL_WHOLE_PORT ((ioportmask_t)0xFFFFFFFF)
+
+/**
+ * @brief   Digital I/O port sized unsigned type.
  */
 typedef uint32_t ioportmask_t;
 
 /**
- * @brief Port Identifier.
+ * @brief   Port Identifier.
  */
 typedef FIO * ioportid_t;
 
@@ -91,12 +98,12 @@ typedef FIO * ioportid_t;
 /*===========================================================================*/
 
 /**
- * @brief FIO port 0 identifier.
+ * @brief   FIO port 0 identifier.
  */
 #define IOPORT1        FIO0Base
 
 /**
- * @brief FIO port 1 identifier.
+ * @brief   FIO port 1 identifier.
  */
 #define IOPORT2        FIO1Base
 
@@ -106,91 +113,85 @@ typedef FIO * ioportid_t;
 /*===========================================================================*/
 
 /**
- * @brief FIO subsystem initialization.
+ * @brief   FIO subsystem initialization.
  * @details Enables the access through the fast registers.
  */
 #define pal_lld_init(config) _pal_lld_init(config)
 
 /**
- * @brief Reads an I/O port.
+ * @brief   Reads an I/O port.
  * @details This function is implemented by reading the FIO PIN register, the
  *          implementation has no side effects.
  *
- * @param[in] port the port identifier
- * @return the port bits
+ * @param[in] port      the port identifier
+ * @return              The port bits.
  *
- * @note This function is not meant to be invoked directly by the application
- *       code.
+ * @notapi
  */
 #define pal_lld_readport(port) ((port)->FIO_PIN)
 
 /**
- * @brief Reads the output latch.
+ * @brief   Reads the output latch.
  * @details This function is implemented by reading the FIO SET register, the
  *          implementation has no side effects.
  *
- * @param[in] port the port identifier
- * @return The latched logical states.
+ * @param[in] port      the port identifier
+ * @return              The latched logical states.
  *
- * @note This function is not meant to be invoked directly by the application
- *       code.
+ * @notapi
  */
 #define pal_lld_readlatch(port) ((port)->FIO_SET)
 
 /**
- * @brief Writes a bits mask on a I/O port.
+ * @brief   Writes a bits mask on a I/O port.
  * @details This function is implemented by writing the FIO PIN register, the
  *          implementation has no side effects.
  *
- * @param[in] port the port identifier
- * @param[in] bits the bits to be written on the specified port
+ * @param[in] port      the port identifier
+ * @param[in] bits      the bits to be written on the specified port
  *
- * @note This function is not meant to be invoked directly by the application
- *       code.
+ * @notapi
  */
 #define pal_lld_writeport(port, bits) ((port)->FIO_PIN = (bits))
 
 /**
- * @brief Sets a bits mask on a I/O port.
+ * @brief   Sets a bits mask on a I/O port.
  * @details This function is implemented by writing the FIO SET register, the
  *          implementation has no side effects.
  *
- * @param[in] port the port identifier
- * @param[in] bits the bits to be ORed on the specified port
+ * @param[in] port      the port identifier
+ * @param[in] bits      the bits to be ORed on the specified port
  *
- * @note This function is not meant to be invoked directly by the application
- *       code.
+ * @notapi
  */
 #define pal_lld_setport(port, bits) ((port)->FIO_SET = (bits))
 
 /**
- * @brief Clears a bits mask on a I/O port.
+ * @brief   Clears a bits mask on a I/O port.
  * @details This function is implemented by writing the FIO CLR register, the
  *          implementation has no side effects.
  *
- * @param[in] port the port identifier
- * @param[in] bits the bits to be cleared on the specified port
+ * @param[in] port      the port identifier
+ * @param[in] bits      the bits to be cleared on the specified port
  *
- * @note This function is not meant to be invoked directly by the application
- *       code.
+ * @notapi
  */
 #define pal_lld_clearport(port, bits) ((port)->FIO_CLR = (bits))
 
 /**
- * @brief Writes a value on an I/O bus.
+ * @brief   Writes a value on an I/O bus.
  * @details This function is implemented by writing the FIO PIN and MASK
  *          registers, the implementation is not atomic because the multiple
  *          accesses.
  *
- * @param[in] port the port identifier
- * @param[in] mask the group mask, a logical AND is performed on the output
- *            data
- * @param[in] offset the group bit offset within the port
- * @param[in] bits the bits to be written. Values exceeding the group width
- *            are masked.
+ * @param[in] port      the port identifier
+ * @param[in] mask      the group mask, a logical AND is performed on the
+ *                      output data
+ * @param[in] offset    the group bit offset within the port
+ * @param[in] bits      the bits to be written. Values exceeding the group
+ *                      width are masked.
  *
- * @note This function is not meant to be invoked directly by the application
- *       code.
+ * @notapi
  */
 #define pal_lld_writegroup(port, mask, offset, bits) {                  \
   (port)->FIO_MASK = ~((mask) << (offset));                             \
@@ -199,39 +200,40 @@ typedef FIO * ioportid_t;
 }
 
 /**
- * @brief Pads group mode setup.
+ * @brief   Pads group mode setup.
  * @details This function programs a pads group belonging to the same port
  *          with the specified mode.
+ * @note    @p PAL_MODE_UNCONNECTED is implemented as push pull output with
+ *          high state.
+ * @note    This function does not alter the @p PINSELx registers. Alternate
+ *          functions setup must be handled by device-specific code.
  *
- * @param[in] port the port identifier
- * @param[in] mask the group mask
- * @param[in] mode the mode
+ * @param[in] port      the port identifier
+ * @param[in] mask      the group mask
+ * @param[in] mode      the mode
  *
- * @note This function is not meant to be invoked directly by the application
- *       code.
- * @note @p PAL_MODE_UNCONNECTED is implemented as push pull output with high
- *       state.
- * @note This function does not alter the @p PINSELx registers. Alternate
- *       functions setup must be handled by device-specific code.
+ * @notapi
  */
 #define pal_lld_setgroupmode(port, mask, mode) \
   _pal_lld_setgroupmode(port, mask, mode)
 
 /**
- * @brief Writes a logical state on an output pad.
+ * @brief   Writes a logical state on an output pad.
  *
- * @param[in] port the port identifier
- * @param[in] pad the pad number within the port
- * @param[out] bit the logical value, the value must be @p 0 or @p 1
+ * @param[in] port      the port identifier
+ * @param[in] pad       the pad number within the port
+ * @param[in] bit       logical value, the value must be @p PAL_LOW or
+ *                      @p PAL_HIGH
  *
- * @note This function is not meant to be invoked directly by the application
- *       code.
+ * @notapi
  */
 #define pal_lld_writepad(port, pad, bit) pal_lld_writegroup(port, 1, pad, bit)
 
 /**
- * @brief FIO port setup.
+ * @brief   FIO port setup.
  * @details This function programs the pins direction within a port.
+ *
+ * @notapi
  */
 #define pal_lld_lpc214x_set_direction(port, dir) {                      \
   (port)->FIO_DIR = (dir);                                              \

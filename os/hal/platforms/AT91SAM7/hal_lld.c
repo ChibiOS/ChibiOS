@@ -18,8 +18,9 @@
 */
 
 /**
- * @file AT91SAM7/hal_lld.c
- * @brief AT91SAM7 HAL subsystem low level driver source.
+ * @file    AT91SAM7/hal_lld.c
+ * @brief   AT91SAM7 HAL subsystem low level driver source.
+ *
  * @addtogroup AT91SAM7_HAL
  * @{
  */
@@ -36,7 +37,7 @@
 /*===========================================================================*/
 
 /**
- * @brief PAL setup.
+ * @brief   PAL setup.
  * @details Digital I/O ports static configuration as defined in @p board.h.
  */
 const PALConfig pal_default_config =
@@ -72,7 +73,9 @@ static CH_IRQ_HANDLER(spurious_handler) {
 /*===========================================================================*/
 
 /**
- * @brief Low level HAL driver initialization.
+ * @brief   Low level HAL driver initialization.
+ *
+ * @notapi
  */
 void hal_lld_init(void) {
   unsigned i;
@@ -93,8 +96,11 @@ void hal_lld_init(void) {
 }
 
 /**
- * @brief AT91SAM7 clocks and PLL initialization.
- * @note All the involved constants come from the file @p board.h.
+ * @brief   AT91SAM7 clocks and PLL initialization.
+ * @note    All the involved constants come from the file @p board.h.
+ * @note    This function must be invoked only after the system reset.
+ *
+ * @special
  */
 void at91sam7_clock_init(void) {
 

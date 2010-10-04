@@ -18,8 +18,9 @@
 */
 
 /**
- * @file MSP430/hal_lld.c
- * @brief MSP430 HAL subsystem low level driver source.
+ * @file    MSP430/hal_lld.c
+ * @brief   MSP430 HAL subsystem low level driver source.
+ *
  * @addtogroup MSP430_HAL
  * @{
  */
@@ -32,7 +33,7 @@
 /*===========================================================================*/
 
 /**
- * @brief PAL setup.
+ * @brief   PAL setup.
  * @details Digital I/O ports static configuration as defined in @p board.h.
  */
 const PALConfig pal_default_config =
@@ -74,7 +75,9 @@ const PALConfig pal_default_config =
 /*===========================================================================*/
 
 /**
- * @brief Low level HAL driver initialization.
+ * @brief   Low level HAL driver initialization.
+ *
+ * @notapi
  */
 void hal_lld_init(void) {
 

@@ -181,11 +181,23 @@ typedef struct {
 
 /**
  * @brief   Returns the driver state.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ * @return              The driver state.
+ *
+ * @api
  */
 #define mmcGetDriverState(mmcp) ((mmcp)->mmc_state)
 
 /**
  * @brief   Returns the write protect status.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ * @return              The card state.
+ * @retval FALSE        card not inserted.
+ * @retval TRUE         card inserted.
+ *
+ * @api
  */
 #define mmcIsWriteProtected(mmcp) ((mmcp)->mmc_is_protected())
 
