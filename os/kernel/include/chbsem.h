@@ -94,7 +94,7 @@ typedef struct  {
  *
  * @init
  */
-#define chBSemInit(bsp, taken) chSemInit(&bsp->bs_sem, taken ? 0 : 1)
+#define chBSemInit(bsp, taken) chSemInit(&(bsp)->bs_sem, (taken) ? 0 : 1)
 
 /**
  * @brief   Wait operation on the binary semaphore.
@@ -108,7 +108,7 @@ typedef struct  {
  *
  * @api
  */
-#define chBSemWait(bsp) chSemWait(&bsp->bs_sem)
+#define chBSemWait(bsp) chSemWait(&(bsp)->bs_sem)
 
 /**
  * @brief   Wait operation on the binary semaphore.
@@ -122,7 +122,7 @@ typedef struct  {
  *
  * @sclass
  */
-#define chBSemWaitS(bsp) chSemWaitS(&bsp->bs_sem)
+#define chBSemWaitS(bsp) chSemWaitS(&(bsp)->bs_sem)
 
 /**
  * @brief   Wait operation on the binary semaphore.
@@ -143,7 +143,7 @@ typedef struct  {
  *
  * @api
  */
-#define chBSemWaitTimeout(bsp, time) chSemWaitTimeout(&bsp->bs_sem, time)
+#define chBSemWaitTimeout(bsp, time) chSemWaitTimeout(&(bsp)->bs_sem, (time))
 
 /**
  * @brief   Wait operation on the binary semaphore.
@@ -164,7 +164,7 @@ typedef struct  {
  *
  * @sclass
  */
-#define chBSemWaitTimeoutS(bsp, time) chSemWaitTimeoutS(&bsp->bs_sem, time)
+#define chBSemWaitTimeoutS(bsp, time) chSemWaitTimeoutS(&(bsp)->bs_sem, (time))
 
 /**
  * @brief   Reset operation on the binary semaphore.
@@ -180,7 +180,7 @@ typedef struct  {
  *
  * @api
  */
-#define chBSemReset(bsp, taken) chSemReset(&bsp->bs_sem, taken ? 0 : 1)
+#define chBSemReset(bsp, taken) chSemReset(&(bsp)->bs_sem, (taken) ? 0 : 1)
 
 /**
  * @brief   Reset operation on the binary semaphore.
@@ -197,7 +197,7 @@ typedef struct  {
  *
  * @iclass
  */
-#define chBSemResetI(bsp, taken) chSemResetI(&bsp->bs_sem, taken ? 0 : 1)
+#define chBSemResetI(bsp, taken) chSemResetI(&(bsp)->bs_sem, (taken) ? 0 : 1)
 
 /**
  * @brief   Performs a signal operation on a binary semaphore.
@@ -208,7 +208,7 @@ typedef struct  {
  */
 #define chBSemSignal(bsp) {                                                 \
   chSysLock();                                                              \
-  chBSemSignalI(bsp);                                                       \
+  chBSemSignalI((bsp));                                                     \
   chSchRescheduleS();                                                       \
   chSysUnlock();                                                            \
 }
@@ -222,8 +222,8 @@ typedef struct  {
  * @iclass
  */
 #define chBSemSignalI(bsp) {                                                \
-  if (bsp->bs_sem.s_cnt < 1)                                                \
-    chSemSignalI(&bsp->bs_sem);                                             \
+  if ((bsp)->bs_sem.s_cnt < 1)                                              \
+    chSemSignalI(&(bsp)->bs_sem);                                           \
 }
 
 /**
@@ -236,7 +236,7 @@ typedef struct  {
  *
  * @iclass
  */
-#define chBSemGetStateI(bsp) ((bsp)->bs_sem.s_cnt > 0 ? 0 : 1)
+#define chBSemGetStateI(bsp) ((bsp)->bs_sem.s_cnt > 0 ? FALSE : TRUE)
 
 #endif /* CH_USE_SEMAPHORES */
 

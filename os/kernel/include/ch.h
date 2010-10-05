@@ -74,6 +74,7 @@
 #include "chvt.h"
 #include "chschd.h"
 #include "chsem.h"
+#include "chbsem.h"
 #include "chmtx.h"
 #include "chcond.h"
 #include "chevents.h"

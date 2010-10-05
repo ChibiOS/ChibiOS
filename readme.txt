@@ -63,7 +63,7 @@
 *****************************************************************************
 
 *** 2.1.2 ***
-- FIX: Fixed wrong macro check in STM32 serial support (but 3078891)(backported
+- FIX: Fixed wrong macro check in STM32 serial support (bug 3078891)(backported
   to 2.0.6).
 - FIX: Fixed non functioning option CH_USE_NESTED_LOCKS (bug 3075544)
   (backported to 2.0.6).
@@ -117,11 +117,15 @@
   change).
 - NEW: Added to the documentation more notes about interrupt handlers in
   the ARM7 port.
+- NEW: Modified some tests in order to bring back code coverage to 100%
+  in all modules except chdebug.c. Added a test case covering binary
+  semaphores.
 - OPT: The fix to the bug 3075544 considerably improved the threads creation
   benchmarks score.
 - OPT: Speed optimizations of the STM32 SPI driver, improved latency.
 - OPT: Speed optimizations of the STM32 ADC driver.
-- CHANGE: The API chThdInit() has been renamed to chThdCreateI().
+- CHANGE: The API chThdInit() has been renamed to chThdCreateI() in order to
+  make clear it is useable from interrupt handlers.
 - CHANGE: The mailboxes macros chMBSize(), chMBGetEmpty(), chMBGetFull(),
   chMBPeek() have been renamed to chMBSizeI(), chMBGetEmptyI(),
   chMBGetFullI(), chMBPeekI().

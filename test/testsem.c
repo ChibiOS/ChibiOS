@@ -189,7 +189,7 @@ ROMCONST struct testcase testsem2 = {
  * @page test_sem_003 Atomic signal-wait test
  *
  * <h2>Description</h2>
- * This test case explicitly address the @p chSemWaitSignal() function. A
+ * This test case explicitly addresses the @p chSemWaitSignal() function. A
  * thread is created that performs a wait and a signal operations.
  * The tester thread is awakened from an atomic wait/signal operation.<br>
  * The test expects that the semaphore wait function returns the correct value
@@ -229,6 +229,57 @@ ROMCONST struct testcase testsem3 = {
   sem3_execute
 };
 #endif /* CH_USE_SEMSW */
+
+/**
+ * @page test_sem_004 Binary Wait and Signal
+ *
+ * <h2>Description</h2>
+ * This test case tests the binary semaphores functionality. The test both
+ * checks the binary semaphore status and the expected status of the underlying
+ * counting semaphore.
+ */
+static msg_t thread4(void *p) {
+
+  chBSemSignal((BinarySemaphore *)p);
+  return 0;
+}
+
+static void sem4_execute(void) {
+  BinarySemaphore bsem;
+  
+  /* Creates a taken binary semaphore.*/
+  chBSemInit(&bsem, TRUE);
+  chBSemReset(&bsem, TRUE);
+  test_assert(1, chBSemGetStateI(&bsem) == TRUE, "not taken");
+
+  /* Starts a signaler thread at a lower priority.*/
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE,
+                                 chThdGetPriority()-1, thread4, &bsem);
+                                 
+  /* Waits to be signaled.*/
+  chBSemWait(&bsem);
+  
+  /* The binary semaphore is expected to be taken.*/
+  test_assert(2, chBSemGetStateI(&bsem) == TRUE, "not taken");
+  
+  /* Releasing it, check both the binary semaphore state and the underlying
+     counter semaphore state..*/
+  chBSemSignal(&bsem);
+  test_assert(3, chBSemGetStateI(&bsem) == FALSE, "still taken");
+  test_assert(4, chSemGetCounterI(&bsem.bs_sem) == 1, "unexpected counter");
+  
+  /* Checking signaling overflow, the counter must not go beyond 1.*/
+  chBSemSignal(&bsem);
+  test_assert(3, chBSemGetStateI(&bsem) == FALSE, "taken");
+  test_assert(5, chSemGetCounterI(&bsem.bs_sem) == 1, "unexpected counter");
+}
+
+ROMCONST struct testcase testsem4 = {
+  "Binary Semaphores, functionality",
+  NULL,
+  NULL,
+  sem4_execute
+};
 #endif /* CH_USE_SEMAPHORES */
 
 /**
@@ -241,6 +292,7 @@ ROMCONST struct testcase * ROMCONST patternsem[] = {
 #if CH_USE_SEMSW
   &testsem3,
 #endif
+  &testsem4,
 #endif
   NULL
 };

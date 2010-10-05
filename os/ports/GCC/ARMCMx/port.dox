@@ -106,6 +106,20 @@
  *   stack where all the interrupts and exceptions are processed.
  * - The threads are started in thread-privileged mode.
  * - Interrupt nesting and the other advanced core/NVIC features are supported.
+ * - When using an STM32 one of the following macros must be defined on the
+ *   compiler command line or in a file named <tt>board.h</tt>:
+ *   - @p STM32F10X_LD
+ *   - @p STM32F10X_MD
+ *   - @p STM32F10X_HD
+ *   - @p STM32F10X_CL
+ *   .
+ *   This is required in order to include a vectors table with the correct
+ *   length for the STM32 model, see the file
+ *   <tt>./os/ports/GCC/ARMCMx/STM32F10x/vectors.s</tt>.
+ * - The Cortex-Mx port is perfectly generic, support for more devices can be
+ *   easily added by adding a subdirectory under <tt>./os/ports/GCC/ARMCMx</tt>
+ *   and giving it the name of the new device, then copy the files from another
+ *   device into the new directory and customize them for the new device.
  * .
  * @ingroup gcc
  */
