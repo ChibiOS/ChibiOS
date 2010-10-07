@@ -122,13 +122,13 @@
   semaphores.
 - OPT: The fix to the bug 3075544 considerably improved the threads creation
   benchmarks score.
-- OPT: Speed optimizations of the STM32 SPI driver, improved latency.
-- OPT: Speed optimizations of the STM32 ADC driver.
+- OPT: Speed optimizations to the STM32 SPI driver, improved latency.
+- OPT: Speed optimizations to the STM32 ADC driver.
 - CHANGE: The API chThdInit() has been renamed to chThdCreateI() in order to
-  make clear it is useable from interrupt handlers.
+  make clear it is usable from interrupt handlers.
 - CHANGE: The mailboxes macros chMBSize(), chMBGetEmpty(), chMBGetFull(),
-  chMBPeek() have been renamed to chMBSizeI(), chMBGetEmptyI(),
-  chMBGetFullI(), chMBPeekI().
+  chMBPeek() have been renamed to chMBSizeI(), chMBGetFreeCountI(),
+  chMBGetFullCountI(), chMBPeekI().
 - CHANGE: The queue APIs chQSize(), chQSpace(), chIQIsEmpty(), chIQIsFull(),
   chOQIsEmpty(), chOQIsFull() have been renamed to chQSizeI(), chQSpaceI(),
   chIQIsEmptyI(), chIQIsFullI(), chOQIsEmptyI(), chOQIsFullI().

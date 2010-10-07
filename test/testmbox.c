@@ -83,7 +83,7 @@ static void mbox1_execute(void) {
   /*
    * Testing initial space.
    */
-  test_assert(1, chMBGetEmptyI(&mb1) == MB_SIZE, "wrong size");
+  test_assert(1, chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");
 
   /*
    * Testing enqueuing and backward circularity.
@@ -104,8 +104,8 @@ static void mbox1_execute(void) {
   /*
    * Testing final conditions.
    */
-  test_assert(5, chMBGetEmptyI(&mb1) == 0, "still empty");
-  test_assert(6, chMBGetFullI(&mb1) == MB_SIZE, "not full");
+  test_assert(5, chMBGetFreeCountI(&mb1) == 0, "still empty");
+  test_assert(6, chMBGetFullCountI(&mb1) == MB_SIZE, "not full");
   test_assert(7, mb1.mb_rdptr == mb1.mb_wrptr, "pointers not aligned");
 
   /*
@@ -137,8 +137,8 @@ static void mbox1_execute(void) {
   /*
    * Testing final conditions.
    */
-  test_assert(15, chMBGetEmptyI(&mb1) == MB_SIZE, "not empty");
-  test_assert(16, chMBGetFullI(&mb1) == 0, "still full");
+  test_assert(15, chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
+  test_assert(16, chMBGetFullCountI(&mb1) == 0, "still full");
   test_assert(17, mb1.mb_rdptr == mb1.mb_wrptr, "pointers not aligned");
 
   /*
@@ -149,8 +149,8 @@ static void mbox1_execute(void) {
   /*
    * Re-testing final conditions.
    */
-  test_assert(18, chMBGetEmptyI(&mb1) == MB_SIZE, "not empty");
-  test_assert(19, chMBGetFullI(&mb1) == 0, "still full");
+  test_assert(18, chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
+  test_assert(19, chMBGetFullCountI(&mb1) == 0, "still full");
   test_assert(20, mb1.mb_buffer == mb1.mb_wrptr, "write pointer not aligned to base");
   test_assert(21, mb1.mb_buffer == mb1.mb_rdptr, "read pointer not aligned to base");
 }
