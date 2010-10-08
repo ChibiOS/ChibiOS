@@ -61,12 +61,19 @@ typedef uint16_t adcsample_t;
 typedef uint16_t adc_channels_num_t;
 
 /**
+ * @brief   Type of a structure representing an ADC driver.
+ */
+typedef struct ADCDriver ADCDriver;
+
+/**
  * @brief   ADC notification callback type.
  *
+ * @param[in] adcp      pointer to the @p ADCDriver object triggering the
+ *                      callback
  * @param[in] buffer    pointer to the most recent samples data
  * @param[in] n         number of buffer rows available starting from @p buffer
  */
-typedef void (*adccallback_t)(adcsample_t *buffer, size_t n);
+typedef void (*adccallback_t)(ADCDriver *adcp, adcsample_t *buffer, size_t n);
 
 /**
  * @brief   Conversion group configuration structure.
@@ -84,6 +91,10 @@ typedef struct {
    * @brief Number of the analog channels belonging to the conversion group.
    */
   adc_channels_num_t        acg_num_channels;
+  /**
+   * @brief Callback function associated to the group or @p NULL.
+   */
+  adccallback_t             acg_callback;
   /* End of the mandatory fields.*/
 } ADCConversionGroup;
 
@@ -102,7 +113,7 @@ typedef struct {
  * @note    Implementations may extend this structure to contain more,
  *          architecture dependent, fields.
  */
-typedef struct {
+struct ADCDriver {
   /**
    * @brief Driver state.
    */
@@ -111,10 +122,6 @@ typedef struct {
    * @brief Current configuration data.
    */
   const ADCConfig           *ad_config;
-  /**
-   * @brief Current callback function or @p NULL.
-   */
-  adccallback_t             ad_callback;
   /**
    * @brief Current samples buffer pointer or @p NULL.
    */
@@ -127,14 +134,17 @@ typedef struct {
    * @brief Current conversion group pointer or @p NULL.
    */
   const ADCConversionGroup  *ad_grpp;
-#if ADC_USE_WAIT
+#if ADC_USE_WAIT || defined(__DOXYGEN__)
   /**
    * @brief Synchronization semaphore.
    */
   Semaphore                 ad_sem;
 #endif
+#if defined(ADC_DRIVER_EXT_FIELDS)
+  ADC_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
-} ADCDriver;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

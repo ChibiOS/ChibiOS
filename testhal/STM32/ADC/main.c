@@ -28,6 +28,24 @@
  */
 static const ADCConfig adccfg = {};
 
+static adcsample_t samples[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
+static Thread *adctp;
+
+/*
+ * ADC streaming callback.
+ */
+size_t nx = 0, ny = 0;
+static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
+
+  (void)adcp;
+  if (samples == buffer) {
+    nx += n;
+  }
+  else {
+    ny += n;
+  }
+}
+
 /*
  * ADC conversion group.
  * Mode:        Streaming, continuous, 16 samples of 8 channels, SW triggered.
@@ -36,6 +54,7 @@ static const ADCConfig adccfg = {};
 static const ADCConversionGroup adcgrpcfg = {
   TRUE,
   ADC_GRP1_NUM_CHANNELS,
+  adccallback,
   0,
   ADC_CR2_EXTSEL_SWSTART | ADC_CR2_TSVREFE | ADC_CR2_CONT,
   0,
@@ -46,22 +65,6 @@ static const ADCConversionGroup adcgrpcfg = {
   ADC_SQR3_SQ3_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ2_N(ADC_CHANNEL_IN10) |
   ADC_SQR3_SQ1_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ0_N(ADC_CHANNEL_IN10)
 };
-static adcsample_t samples[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
-static Thread *adctp;
-
-/*
- * ADC streaming callback.
- */
-size_t nx = 0, ny = 0;
-static void adccallback(adcsample_t *buffer, size_t n) {
-
-  if (samples == buffer) {
-    nx += n;
-  }
-  else {
-    ny += n;
-  }
-}
 
 /*
  * ADC continuous conversion thread.
@@ -71,8 +74,7 @@ static msg_t adc_continuous_thread(void *p){
 
   (void)p;
   adcStart(&ADCD1, &adccfg);
-  adcStartConversion(&ADCD1, &adcgrpcfg, samples,
-                     ADC_GRP1_BUF_DEPTH, adccallback);
+  adcStartConversion(&ADCD1, &adcgrpcfg, samples, ADC_GRP1_BUF_DEPTH);
   adcWaitConversion(&ADCD1, TIME_INFINITE);
   adcStop(&ADCD1);
   return 0;

@@ -46,6 +46,12 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+
+/**
+ * @brief   Type of a structure representing an I2C driver.
+ */
+typedef struct I2CDriver I2CDriver;
+
 /**
  * @brief   I2C completion callback type.
  *
@@ -70,15 +76,18 @@ typedef struct {
  * @note    Implementations may extend this structure to contain more,
  *          architecture dependent, fields.
  */
-typedef struct {
+struct I2CDriver {
   /** @brief Driver state.*/
   i2cstate_t                id_state;
   /** @brief Current configuration data.*/
   const I2CConfig           *id_config;
   /** @brief Current callback.*/
   i2ccallback_t             id_callback;
+#if defined(I2C_DRIVER_EXT_FIELDS)
+  I2C_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
-} I2CDriver;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

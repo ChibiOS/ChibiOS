@@ -233,6 +233,9 @@ struct UARTDriver {
   uartrxstate_t             ud_rxstate;
   /** @brief UART driver status flags.*/
   uartflags_t               ud_flags;
+#if defined(UART_DRIVER_EXT_FIELDS)
+  UART_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
   /** @brief Pointer to the USART registers block.*/
   USART_TypeDef             *ud_usart;

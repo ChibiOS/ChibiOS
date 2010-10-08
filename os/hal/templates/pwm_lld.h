@@ -62,13 +62,34 @@ typedef uint8_t pwmchannel_t;
 typedef uint16_t pwmcnt_t;
 
 /**
+ * @brief   Type of a structure representing an PWM driver.
+ */
+typedef struct PWMDriver PWMDriver;
+
+/**
+ * @brief   PWM notification callback type.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ */
+typedef void (*pwmcallback_t)(PWMDriver *pwmp);
+
+/**
  * @brief   Driver configuration structure.
  * @note    Implementations may extend this structure to contain more,
  *          architecture dependent, fields.
- * @note    It could be empty on some architectures.
  */
 typedef struct {
-
+  /**
+   * @brief Periodic callback pointer.
+   * @note  This callback is invoked on PWM counter reset. If set to
+   *        @p NULL then the callback is disabled.
+   */
+  pwmcallback_t             pc_callback;
+  /**
+   * @brief Channels configurations.
+   */
+  PWMChannelConfig          pc_channels[PWM_CHANNELS];
+  /* End of the mandatory fields.*/
 } PWMConfig;
 
 /**
@@ -76,7 +97,7 @@ typedef struct {
  * @note    Implementations may extend this structure to contain more,
  *          architecture dependent, fields.
  */
-typedef struct {
+struct PWMDriver {
   /**
    * @brief Driver state.
    */
@@ -85,8 +106,11 @@ typedef struct {
    * @brief Current configuration data.
    */
   const PWMConfig           *pd_config;
+#if defined(PWM_DRIVER_EXT_FIELDS)
+  PWM_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
-} PWMDriver;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -103,8 +127,6 @@ extern "C" {
   void pwm_lld_start(PWMDriver *pwmp);
   void pwm_lld_stop(PWMDriver *pwmp);
   bool_t pwm_lld_is_enabled(PWMDriver *pwmp, pwmchannel_t channel);
-  void pwm_lld_set_callback(PWMDriver *pwmp, pwmchannel_t channel,
-                            pwmedge_t edge, pwmcallback_t callback);
   void pwm_lld_enable_channel(PWMDriver *pwmp,
                               pwmchannel_t channel,
                               pwmcnt_t width);

@@ -36,10 +36,14 @@ static msg_t Thread1(void *arg) {
   return 0;
 }
 
-static void pwmpcb(void) {
+static void pwmpcb(PWMDriver *pwmp) {
+
+  (void)pwmp;
 }
 
-static void pwmc1cb(void) {
+static void pwmc1cb(PWMDriver *pwmp) {
+
+  (void)pwmp;
 }
 
 static PWMConfig pwmcfg = {

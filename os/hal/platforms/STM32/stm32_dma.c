@@ -18,8 +18,9 @@
 */
 
 /**
- * @file stm32_dma.c
- * @brief STM32 DMA helper driver code.
+ * @file    stm32_dma.c
+ * @brief   STM32 DMA helper driver code.
+ *
  * @addtogroup STM32_DMA
  * @{
  */
@@ -53,7 +54,7 @@ static cnt_t dmacnt2;
 /*===========================================================================*/
 
 /**
- * @brief STM32 DMA helper initialization.
+ * @brief   STM32 DMA helper initialization.
  *
  * @init
  */
@@ -73,9 +74,9 @@ void dmaInit(void) {
 }
 
 /**
- * @brief Enables the specified DMA controller clock.
+ * @brief   Enables the specified DMA controller clock.
  *
- * @param[in] dma the DMA controller id
+ * @param[in] dma       the DMA controller id
  *
  * @api
  */
@@ -102,7 +103,7 @@ void dmaEnable(uint32_t dma) {
 /**
  * @brief Disables the specified DMA controller clock.
  *
- * @param[in] dma the DMA controller id
+ * @param[in] dma       the DMA controller id
  *
  * @api
  */

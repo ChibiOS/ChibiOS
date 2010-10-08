@@ -88,13 +88,11 @@ extern "C" {
   bool_t adcStartConversion(ADCDriver *adcp,
                             const ADCConversionGroup *grpp,
                             adcsample_t *samples,
-                            size_t depth,
-                            adccallback_t callback);
+                            size_t depth);
   bool_t adcStartConversionI(ADCDriver *adcp,
                              const ADCConversionGroup *grpp,
                              adcsample_t *samples,
-                             size_t depth,
-                             adccallback_t callback);
+                             size_t depth);
   void adcStopConversion(ADCDriver *adcp);
   void adcStopConversionI(ADCDriver *adcp);
 #if ADC_USE_WAIT

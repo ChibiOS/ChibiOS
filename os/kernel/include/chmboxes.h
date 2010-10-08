@@ -93,7 +93,7 @@ extern "C" {
 #define chMBGetFreeCountI(mbp) chSemGetCounterI(&(mbp)->mb_emptysem)
 
 /**
- * @brief   Returns the number of queued messages into a mailbox.
+ * @brief   Returns the number of used message slots into a mailbox.
  * @note    Can be invoked in any system state but if invoked out of a locked
  *          state then the returned value may change after reading.
  * @note    The returned value can be less than zero when there are waiting
@@ -104,7 +104,7 @@ extern "C" {
  *
  * @iclass
  */
-#define chMBGetFullCountI(mbp) chSemGetCounterI(&(mbp)->mb_fullsem)
+#define chMBGetUsedCountI(mbp) chSemGetCounterI(&(mbp)->mb_fullsem)
 
 /**
  * @brief   Returns the next message in the queue without removing it.

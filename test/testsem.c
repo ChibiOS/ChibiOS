@@ -42,7 +42,6 @@
  * - @subpage test_sem_001
  * - @subpage test_sem_002
  * - @subpage test_sem_003
- * - @subpage test_sem_004
  * .
  * @file testsem.c
  * @brief Semaphores test source file
@@ -232,7 +231,7 @@ ROMCONST struct testcase testsem3 = {
 #endif /* CH_USE_SEMSW */
 
 /**
- * @page test_sem_004 Binary wait and signal
+ * @page test_sem_004 Binary Wait and Signal
  *
  * <h2>Description</h2>
  * This test case tests the binary semaphores functionality. The test both

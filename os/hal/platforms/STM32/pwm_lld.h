@@ -136,6 +136,18 @@ typedef uint8_t pwmchannel_t;
 typedef uint16_t pwmcnt_t;
 
 /**
+ * @brief   Type of a structure representing an PWM driver.
+ */
+typedef struct PWMDriver PWMDriver;
+
+/**
+ * @brief   PWM notification callback type.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ */
+typedef void (*pwmcallback_t)(PWMDriver *pwmp);
+
+/**
  * @brief   PWM driver channel configuration structure.
  * @note    It could be empty on some architectures.
  */
@@ -155,7 +167,6 @@ typedef struct {
 
 /**
  * @brief   PWM driver configuration structure.
- * @note    It could be empty on some architectures.
  */
 typedef struct {
   /**
@@ -187,7 +198,7 @@ typedef struct {
 /**
  * @brief   Structure representing a PWM driver.
  */
-typedef struct {
+struct PWMDriver {
   /**
    * @brief Driver state.
    */
@@ -196,6 +207,9 @@ typedef struct {
    * @brief Current driver configuration data.
    */
   const PWMConfig           *pd_config;
+#if defined(PWM_DRIVER_EXT_FIELDS)
+  PWM_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
   /**
    * @brief Bit mask of the enabled channels.
@@ -205,7 +219,7 @@ typedef struct {
    * @brief Pointer to the TIMx registers block.
    */
   TIM_TypeDef               *pd_tim;
-} PWMDriver;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

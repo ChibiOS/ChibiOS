@@ -52,9 +52,7 @@
 typedef uint32_t uartflags_t;
 
 /**
- * @brief   Structure representing an UART driver.
- * @note    Implementations may extend this structure to contain more,
- *          architecture dependent, fields.
+ * @brief   Type of structure representing an UART driver.
  */
 typedef struct UARTDriver UARTDriver;
 
@@ -68,7 +66,8 @@ typedef void (*uartcb_t)(UARTDriver *uartp);
 /**
  * @brief   Character received UART notification callback type.
  *
- * @param[in] uartp     pointer to the @p UARTDriver object
+ * @param[in] uartp     pointer to the @p UARTDriver object triggering the
+ *                      callback
  * @param[in] c         received character
  */
 typedef void (*uartccb_t)(UARTDriver *uartp, uint16_t c);
@@ -76,7 +75,8 @@ typedef void (*uartccb_t)(UARTDriver *uartp, uint16_t c);
 /**
  * @brief   Receive error UART notification callback type.
  *
- * @param[in] uartp     pointer to the @p UARTDriver object
+ * @param[in] uartp     pointer to the @p UARTDriver object triggering the
+ *                      callback
  * @param[in] e         receive error mask
  */
 typedef void (*uartecb_t)(UARTDriver *uartp, uartflags_t e);
@@ -122,6 +122,9 @@ struct UARTDriver {
    * @brief Current configuration data.
    */
   const UARTConfig          *ud_config;
+#if defined(UART_DRIVER_EXT_FIELDS)
+  UART_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
 };
 

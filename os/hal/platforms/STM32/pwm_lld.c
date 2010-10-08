@@ -106,13 +106,13 @@ static void serve_interrupt(PWMDriver *pwmp) {
   pwmp->pd_tim->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC3IF |
                        TIM_SR_CC4IF | TIM_SR_UIF);
   if ((sr & TIM_SR_CC1IF) != 0)
-    pwmp->pd_config->pc_channels[0].pcc_callback();
+    pwmp->pd_config->pc_channels[0].pcc_callback(pwmp);
   if ((sr & TIM_SR_CC2IF) != 0)
-    pwmp->pd_config->pc_channels[1].pcc_callback();
+    pwmp->pd_config->pc_channels[1].pcc_callback(pwmp);
   if ((sr & TIM_SR_CC3IF) != 0)
-    pwmp->pd_config->pc_channels[2].pcc_callback();
+    pwmp->pd_config->pc_channels[2].pcc_callback(pwmp);
   if ((sr & TIM_SR_CC4IF) != 0)
-    pwmp->pd_config->pc_channels[3].pcc_callback();
+    pwmp->pd_config->pc_channels[3].pcc_callback(pwmp);
   if ((sr & TIM_SR_UIF) != 0)
     pwmp->pd_config->pc_callback();
 }
@@ -136,7 +136,7 @@ CH_IRQ_HANDLER(TIM1_UP_IRQHandler) {
   CH_IRQ_PROLOGUE();
 
   TIM1->SR = ~TIM_SR_UIF;
-  PWMD1.pd_config->pc_callback();
+  PWMD1.pd_config->pc_callback(&PWMD1);
 
   CH_IRQ_EPILOGUE();
 }
@@ -157,13 +157,13 @@ CH_IRQ_HANDLER(TIM1_CC_IRQHandler) {
   sr = TIM1->SR & TIM1->DIER;
   TIM1->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC3IF | TIM_SR_CC4IF);
   if ((sr & TIM_SR_CC1IF) != 0)
-    PWMD1.pd_config->pc_channels[0].pcc_callback();
+    PWMD1.pd_config->pc_channels[0].pcc_callback(&PWMD1);
   if ((sr & TIM_SR_CC2IF) != 0)
-    PWMD1.pd_config->pc_channels[1].pcc_callback();
+    PWMD1.pd_config->pc_channels[1].pcc_callback(&PWMD1);
   if ((sr & TIM_SR_CC3IF) != 0)
-    PWMD1.pd_config->pc_channels[2].pcc_callback();
+    PWMD1.pd_config->pc_channels[2].pcc_callback(&PWMD1);
   if ((sr & TIM_SR_CC4IF) != 0)
-    PWMD1.pd_config->pc_channels[3].pcc_callback();
+    PWMD1.pd_config->pc_channels[3].pcc_callback(&PWMD1);
 
   CH_IRQ_EPILOGUE();
 }

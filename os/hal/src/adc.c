@@ -67,7 +67,6 @@ void adcObjectInit(ADCDriver *adcp) {
 
   adcp->ad_state    = ADC_STOP;
   adcp->ad_config   = NULL;
-  adcp->ad_callback = NULL;
   adcp->ad_samples  = NULL;
   adcp->ad_depth    = 0;
   adcp->ad_grpp     = NULL;
@@ -142,8 +141,6 @@ void adcStop(ADCDriver *adcp) {
  * @param[out] samples  pointer to the samples buffer
  * @param[in] depth     buffer depth (matrix rows number). The buffer depth
  *                      must be one or an even number.
- * @param[in] callback  pointer to the conversion callback function, this
- *                      parameter can be @p NULL if a callback is not required
  * @return              The operation status.
  * @retval FALSE        the conversion has been started.
  * @retval TRUE         the driver is busy, conversion not started.
@@ -153,12 +150,11 @@ void adcStop(ADCDriver *adcp) {
 bool_t adcStartConversion(ADCDriver *adcp,
                           const ADCConversionGroup *grpp,
                           adcsample_t *samples,
-                          size_t depth,
-                          adccallback_t callback) {
+                          size_t depth) {
   bool_t result;
 
   chSysLock();
-  result = adcStartConversionI(adcp, grpp, samples, depth, callback);
+  result = adcStartConversionI(adcp, grpp, samples, depth);
   chSysUnlock();
   return result;
 }
@@ -187,8 +183,6 @@ bool_t adcStartConversion(ADCDriver *adcp,
  * @param[out] samples  pointer to the samples buffer
  * @param[in] depth     buffer depth (matrix rows number). The buffer depth
  *                      must be one or an even number.
- * @param[in] callback  pointer to the conversion callback function, this
- *                      parameter can be @p NULL if a callback is not required
  * @return              The operation status.
  * @retval FALSE        the conversion has been started.
  * @retval TRUE         the driver is busy, conversion not started.
@@ -198,8 +192,7 @@ bool_t adcStartConversion(ADCDriver *adcp,
 bool_t adcStartConversionI(ADCDriver *adcp,
                            const ADCConversionGroup *grpp,
                            adcsample_t *samples,
-                           size_t depth,
-                           adccallback_t callback) {
+                           size_t depth) {
 
   chDbgCheck((adcp != NULL) && (grpp != NULL) && (samples != NULL) &&
              ((depth == 1) || ((depth & 1) == 0)),
@@ -212,7 +205,6 @@ bool_t adcStartConversionI(ADCDriver *adcp,
               "invalid state");
   if (adcp->ad_state == ADC_RUNNING)
     return TRUE;
-  adcp->ad_callback = callback;
   adcp->ad_samples  = samples;
   adcp->ad_depth    = depth;
   adcp->ad_grpp     = grpp;

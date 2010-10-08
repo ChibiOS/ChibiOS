@@ -14,6 +14,9 @@ Within 2.1.x (hopefully)
                 verifiable.
 * Rework STM32 drivers to use friendly IRQ names and centralized DMA macros.
 * I-class functions for the ADC/PWM drivers.
+* All the device driver callbacks must have the driver pointer as first
+  parameter.
+X All the device driver structures must have a fields extension macro.
 X Resist doing more changes and optimizations in the kernel, fixes only.
 X File System infrastructure.
 X General HAL improvements.

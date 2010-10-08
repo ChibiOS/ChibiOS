@@ -65,13 +65,6 @@ typedef enum {
   PWM_OUTPUT_ACTIVE_LOW = 2         /**< @brief Idle is logic level 1.      */
 } pwmmode_t;
 
-/**
- * @brief   PWM notification callback type.
- *
- * @param[in] active    current channel output state
- */
-typedef void (*pwmcallback_t)(void);
-
 #include "pwm_lld.h"
 
 /*===========================================================================*/
