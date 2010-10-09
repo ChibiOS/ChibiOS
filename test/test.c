@@ -195,7 +195,7 @@ bool_t _test_assert_time_window(unsigned point, systime_t start, systime_t end) 
  */
 
 /**
- * @brief   Pends a termination request in all the test-spawned threads.
+ * @brief   Sets a termination request in all the test-spawned threads.
  */
 void test_terminate_threads(void) {
   int i;
@@ -242,7 +242,9 @@ void test_cpu_pulse(unsigned duration) {
 #endif
 
 /**
- * @brief Delays execution until next system time tick.
+ * @brief   Delays execution until next system time tick.
+ *
+ * @return              The system time.
  */
 systime_t test_wait_tick(void) {
 
@@ -254,7 +256,9 @@ systime_t test_wait_tick(void) {
  * Timer utils.
  */
 
-/** @brief Set to @p TRUE when the test timer reaches its deadline.*/
+/**
+ * @brief   Set to @p TRUE when the test timer reaches its deadline.
+ */
 bool_t test_timer_done;
 
 static VirtualTimer vt;
@@ -312,6 +316,7 @@ static void print_line(void) {
  * @brief   Test execution thread function.
  *
  * @param[in] p         pointer to a @p BaseChannel object for test output
+ * @return              A failure boolean value.
  */
 msg_t TestThread(void *p) {
   int i, j;
