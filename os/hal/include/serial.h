@@ -72,7 +72,7 @@
  *          buffers.
  */
 #if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define SERIAL_BUFFERS_SIZE         64
+#define SERIAL_BUFFERS_SIZE         16
 #endif
 
 /*===========================================================================*/

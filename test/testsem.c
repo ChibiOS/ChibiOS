@@ -42,6 +42,7 @@
  * - @subpage test_sem_001
  * - @subpage test_sem_002
  * - @subpage test_sem_003
+ * - @subpage test_sem_004
  * .
  * @file testsem.c
  * @brief Semaphores test source file

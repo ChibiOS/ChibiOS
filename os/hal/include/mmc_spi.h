@@ -34,19 +34,19 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-#define MMC_CMD0_RETRY          10
-#define MMC_CMD1_RETRY          100
-#define MMC_WAIT_DATA           10000
+#define MMC_CMD0_RETRY              10
+#define MMC_CMD1_RETRY              100
+#define MMC_WAIT_DATA               10000
 
-#define MMC_CMDGOIDLE           0
-#define MMC_CMDINIT             1
-#define MMC_CMDREADCSD          9
-#define MMC_CMDSTOP             12
-#define MMC_CMDSETBLOCKLEN      16
-#define MMC_CMDREAD             17
-#define MMC_CMDREADMULTIPLE     18
-#define MMC_CMDWRITE            24
-#define MMC_CMDWRITEMULTIPLE    25
+#define MMC_CMDGOIDLE               0
+#define MMC_CMDINIT                 1
+#define MMC_CMDREADCSD              9
+#define MMC_CMDSTOP                 12
+#define MMC_CMDSETBLOCKLEN          16
+#define MMC_CMDREAD                 17
+#define MMC_CMDREADMULTIPLE         18
+#define MMC_CMDWRITE                24
+#define MMC_CMDWRITEMULTIPLE        25
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -56,7 +56,7 @@
  * @brief   Block size for MMC transfers.
  */
 #if !defined(MMC_SECTOR_SIZE) || defined(__DOXYGEN__)
-#define MMC_SECTOR_SIZE         512
+#define MMC_SECTOR_SIZE             512
 #endif
 
 /**
@@ -68,7 +68,7 @@
  *          use a DMA channel and heavily loads the CPU.
  */
 #if !defined(MMC_NICE_WAITING) || defined(__DOXYGEN__)
-#define MMC_NICE_WAITING        TRUE
+#define MMC_NICE_WAITING            TRUE
 #endif
 
 /**
@@ -76,14 +76,14 @@
  *          insertion event.
  */
 #if !defined(MMC_POLLING_INTERVAL) || defined(__DOXYGEN__)
-#define MMC_POLLING_INTERVAL    10
+#define MMC_POLLING_INTERVAL        10
 #endif
 
 /**
  * @brief   Interval, in milliseconds, between insertion queries.
  */
 #if !defined(MMC_POLLING_DELAY) || defined(__DOXYGEN__)
-#define MMC_POLLING_DELAY       10
+#define MMC_POLLING_DELAY           10
 #endif
 
 /*===========================================================================*/

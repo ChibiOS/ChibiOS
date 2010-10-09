@@ -36,11 +36,11 @@
 #define _HALCONF_H_
 
 /*
- * Uncomment the following line in order to include a mcu-related
+ * Enable the following line in order to include a mcu-related
  * settings file. This file can be used to include platform specific
  * header files or to override the low level drivers settings.
  */
-/*#include "mcuconf.h"*/
+#include "mcuconf.h"
 
 /*===========================================================================*/
 /* PAL driver related settings.                                              */
@@ -64,6 +64,13 @@
 #define CH_HAL_USE_ADC              TRUE
 #endif
 
+/**
+ * @brief   Inclusion of the @p adcWaitConversion() function.
+ */
+#if !defined(ADC_USE_WAIT) || defined(__DOXYGEN__)
+#define ADC_USE_WAIT                TRUE
+#endif
+
 /*===========================================================================*/
 /* CAN driver related settings.                                              */
 /*===========================================================================*/
@@ -75,10 +82,12 @@
 #define CH_HAL_USE_CAN              TRUE
 #endif
 
-/*
- * Default CAN settings overrides (uncomment to override).
+/**
+ * @brief   Sleep mode related APIs inclusion switch.
  */
-/*#define CAN_USE_SLEEP_MODE          TRUE*/
+#if !defined(CAN_USE_SLEEP_MODE) || defined(__DOXYGEN__)
+#define CAN_USE_SLEEP_MODE          TRUE
+#endif
 
 /*===========================================================================*/
 /* MAC driver related settings.                                              */
@@ -113,11 +122,25 @@
 #define CH_HAL_USE_SERIAL           TRUE
 #endif
 
-/*
- * Default SERIAL settings overrides (uncomment to override).
+/**
+ * @brief   Default bit rate.
+ * @details Configuration parameter, this is the baud rate selected for the
+ *          default configuration.
  */
-/*#define SERIAL_DEFAULT_BITRATE      38400*/
-/*#define SERIAL_BUFFERS_SIZE         64*/
+#if !defined(SERIAL_DEFAULT_BITRATE) || defined(__DOXYGEN__)
+#define SERIAL_DEFAULT_BITRATE      38400
+#endif
+
+/**
+ * @brief   Serial buffers size.
+ * @details Configuration parameter, you can change the depth of the queue
+ *          buffers depending on the requirements of your application.
+ * @note    The default is 64 bytes for both the transmission and receive
+ *          buffers.
+ */
+#if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
+#define SERIAL_BUFFERS_SIZE         16
+#endif
 
 /*===========================================================================*/
 /* SPI driver related settings.                                              */
@@ -130,10 +153,12 @@
 #define CH_HAL_USE_SPI              TRUE
 #endif
 
-/*
- * Default SPI settings overrides (uncomment to override).
+/**
+ * @brief   Enables the mutual exclusion APIs on the SPI bus.
  */
-/*#define SPI_USE_MUTUAL_EXCLUSION    TRUE*/
+#if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define SPI_USE_MUTUAL_EXCLUSION    TRUE
+#endif
 
 /*===========================================================================*/
 /* MMC_SPI driver related settings.                                          */
@@ -146,13 +171,39 @@
 #define CH_HAL_USE_MMC_SPI          TRUE
 #endif
 
-/*
- * Default MMC_SPI settings overrides (uncomment to override).
+/**
+ * @brief   Block size for MMC transfers.
  */
-/*#define MMC_SECTOR_SIZE             512*/
-/*#define MMC_NICE_WAITING            TRUE*/
-/*#define MMC_POLLING_INTERVAL        10*/
-/*#define MMC_POLLING_DELAY           10*/
+#if !defined(MMC_SECTOR_SIZE) || defined(__DOXYGEN__)
+#define MMC_SECTOR_SIZE             512
+#endif
+
+/**
+ * @brief   Delays insertions.
+ * @details If enabled this options inserts delays into the MMC waiting
+ *          routines releasing some extra CPU time for the threads with
+ *          lower priority, this may slow down the driver a bit however.
+ *          This option is recommended also if the SPI driver does not
+ *          use a DMA channel and heavily loads the CPU.
+ */
+#if !defined(MMC_NICE_WAITING) || defined(__DOXYGEN__)
+#define MMC_NICE_WAITING            TRUE
+#endif
+
+/**
+ * @brief   Number of positive insertion queries before generating the
+ *          insertion event.
+ */
+#if !defined(MMC_POLLING_INTERVAL) || defined(__DOXYGEN__)
+#define MMC_POLLING_INTERVAL        10
+#endif
+
+/**
+ * @brief   Interval, in milliseconds, between insertion queries.
+ */
+#if !defined(MMC_POLLING_DELAY) || defined(__DOXYGEN__)
+#define MMC_POLLING_DELAY           10
+#endif
 
 /*===========================================================================*/
 /* UART driver related settings.                                             */

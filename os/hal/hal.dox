@@ -68,14 +68,14 @@
  */
 
 /**
- * @defgroup HAL_CONF HAL Configuration
+ * @defgroup HAL_CONF Configuration
  * @brief @ref HAL Configuration.
  * @details The file @p halconf.h contains the high level settings for all
  * the drivers supported by the HAL. The low level, platform dependent,
  * settings are contained in the @p mcuconf.h file instead and are describe
  * in the various platforms reference manuals.
  *
- * @ingroup HAL
+ * @ingroup IO
  */
 
 /**
