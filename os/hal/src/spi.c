@@ -69,11 +69,13 @@ void spiInit(void) {
 void spiObjectInit(SPIDriver *spip) {
 
   spip->spd_state = SPI_STOP;
+#if SPI_USE_MUTUAL_EXCLUSION
 #if CH_USE_MUTEXES
   chMtxInit(&spip->spd_mutex);
-#elif CH_USE_SEMAPHORES
+#else
   chSemInit(&spip->spd_semaphore, 1);
 #endif
+#endif /* SPI_USE_MUTUAL_EXCLUSION */
   spip->spd_config = NULL;
 }
 

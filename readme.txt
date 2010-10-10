@@ -59,7 +59,10 @@
 *****************************************************************************
 
 *** 2.0.6 ***
+- FIX: Fixed non functioning option SPI_USE_MUTUAL_EXCLUSION=FALSE (bug
+  3084764).
 - FIX: Fixed wrong macro check in STM32 serial support (but 3078891).
+- FIX: Fixed lwIP demo not working (bug 3076354).
 - FIX: Fixed non functioning option CH_USE_NESTED_LOCKS (bug 3075544).
 - CHANGE: The API chThdInit() has been renamed to chThdCreateI().
 
