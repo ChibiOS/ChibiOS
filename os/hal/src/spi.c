@@ -196,7 +196,7 @@ void spiExchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf) {
 }
 
 /**
- * @brief   Sends data ever the SPI bus.
+ * @brief   Sends data over the SPI bus.
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
