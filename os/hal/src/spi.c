@@ -129,11 +129,10 @@ void spiSelect(SPIDriver *spip) {
 
   chSysLock();
   chDbgAssert((spip->spd_state == SPI_READY) ||
-              (spip->spd_state == SPI_ACTIVE),
+              (spip->spd_state == SPI_SELECTED),
               "spiSelect(), #1",
               "not idle");
-  spi_lld_select(spip);
-  spip->spd_state = SPI_ACTIVE;
+  spiSelectI(spip);
   chSysUnlock();
 }
 
@@ -151,19 +150,48 @@ void spiUnselect(SPIDriver *spip) {
 
   chSysLock();
   chDbgAssert((spip->spd_state == SPI_READY) ||
-              (spip->spd_state == SPI_ACTIVE),
+              (spip->spd_state == SPI_SELECTED),
               "spiUnselect(), #1",
               "not locked");
-  spi_lld_unselect(spip);
-  spip->spd_state = SPI_READY;
+  spiUnselectI(spip);
+  chSysUnlock();
+}
+
+/**
+ * @brief   Emits a train of clock pulses on the SPI bus.
+ * @details This asynchronous function starts the emission of a train of
+ *          clock pulses without asserting any slave, while this is not
+ *          usually required by the SPI protocol it is required by
+ *          initialization procedure of MMC/SD cards in SPI mode.
+ * @post    At the end of the operation the configured callback is invoked.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to be clocked. The number of pulses
+ *                      is equal to the number of words multiplied to the
+ *                      configured word size in bits.
+ *
+ * @api
+ */
+void spiSynchronize(SPIDriver *spip, size_t n) {
+
+  chDbgCheck((spip != NULL) && (n > 0), "spiIgnore");
+
+  chSysLock();
+  chDbgAssert(spip->spd_state == SPI_READY,
+              "spiSynchronize(), #1",
+              "not ready");
+
+  spiSynchronizeI(spip, n);
   chSysUnlock();
 }
 
 /**
  * @brief   Ignores data on the SPI bus.
- * @details This function transmits a series of idle words on the SPI bus and
- *          ignores the received data. This function can be invoked even
- *          when a slave select signal has not been yet asserted.
+ * @details This asynchronous function starts the transmission of a series of
+ *          idle words on the SPI bus and ignores the received data.
+ * @pre     A slave must have been selected using @p spiSelect() or
+ *          @p spiSelectI().
+ * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
@@ -173,16 +201,22 @@ void spiUnselect(SPIDriver *spip) {
 void spiIgnore(SPIDriver *spip, size_t n) {
 
   chDbgCheck((spip != NULL) && (n > 0), "spiIgnore");
-  chDbgAssert((spip->spd_state == SPI_READY) || (spip->spd_state == SPI_ACTIVE),
-              "spiIgnore(), #1",
-              "not active");
 
-  spi_lld_ignore(spip, n);
+  chSysLock();
+  chDbgAssert(spip->spd_state == SPI_SELECTED,
+              "spiIgnore(), #1",
+              "not selected");
+  spiIgnoreI(spip, n);
+  chSysUnlock();
 }
 
 /**
  * @brief   Exchanges data on the SPI bus.
- * @details This function performs a simultaneous transmit/receive operation.
+ * @details This asynchronous function starts a simultaneous transmit/receive
+ *          operation.
+ * @pre     A slave must have been selected using @p spiSelect() or
+ *          @p spiSelectI().
+ * @post    At the end of the operation the configured callback is invoked.
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -197,15 +231,21 @@ void spiExchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf) {
 
   chDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL) && (txbuf != NULL),
              "spiExchange");
-  chDbgAssert(spip->spd_state == SPI_ACTIVE,
+
+  chSysLock();
+  chDbgAssert(spip->spd_state == SPI_SELECTED,
               "spiExchange(), #1",
               "not active");
-
-  spi_lld_exchange(spip, n, txbuf, rxbuf);
+  spiExchangeI(spip, n, txbuf, rxbuf);
+  chSysUnlock();
 }
 
 /**
- * @brief   Sends data ever the SPI bus.
+ * @brief   Sends data over the SPI bus.
+ * @details This asynchronous function starts a transmit operation.
+ * @pre     A slave must have been selected using @p spiSelect() or
+ *          @p spiSelectI().
+ * @post    At the end of the operation the configured callback is invoked.
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -219,15 +259,21 @@ void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
 
   chDbgCheck((spip != NULL) && (n > 0) && (txbuf != NULL),
              "spiSend");
-  chDbgAssert(spip->spd_state == SPI_ACTIVE,
+
+  chSysLock();
+  chDbgAssert(spip->spd_state == SPI_SELECTED,
               "spiSend(), #1",
               "not active");
-
-  spi_lld_send(spip, n, txbuf);
+  spiSendI(spip, n, txbuf);
+  chSysUnlock();
 }
 
 /**
  * @brief   Receives data from the SPI bus.
+ * @details This asynchronous function starts a receive operation.
+ * @pre     A slave must have been selected using @p spiSelect() or
+ *          @p spiSelectI().
+ * @post    At the end of the operation the configured callback is invoked.
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -241,11 +287,13 @@ void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   chDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL),
              "spiReceive");
-  chDbgAssert(spip->spd_state == SPI_ACTIVE,
+
+  chSysLock();
+  chDbgAssert(spip->spd_state == SPI_SELECTED,
               "spiReceive(), #1",
               "not active");
-
-  spi_lld_receive(spip, n, rxbuf);
+  spiReceiveI(spip, n, rxbuf);
+  chSysUnlock();
 }
 
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)

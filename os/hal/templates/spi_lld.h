@@ -46,13 +46,25 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+
+/**
+ * @brief   SPI notification callback type.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object triggering the
+ *                      callback
+ */
+typedef void (*spicallback_t)(SPIDriver *spip);
+
 /**
  * @brief   Driver configuration structure.
  * @note    Implementations may extend this structure to contain more,
  *          architecture dependent, fields.
  */
 typedef struct {
-
+  /**
+   * @brief Operation complete callback.
+   */
+  spicallback_t         spc_endcb;
 } SPIConfig;
 
 /**
