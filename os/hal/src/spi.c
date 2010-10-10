@@ -66,11 +66,16 @@ void spiInit(void) {
 void spiObjectInit(SPIDriver *spip) {
 
   spip->spd_state = SPI_STOP;
+#if SPI_USE_WAIT
+  spip->spd_thread = NULL;
+#endif /* SPI_USE_WAIT */
+#if SPI_USE_MUTUAL_EXCLUSION
 #if CH_USE_MUTEXES
   chMtxInit(&spip->spd_mutex);
-#elif CH_USE_SEMAPHORES
+#else
   chSemInit(&spip->spd_semaphore, 1);
 #endif
+#endif /* SPI_USE_MUTUAL_EXCLUSION */
   spip->spd_config = NULL;
 }
 
@@ -295,6 +300,64 @@ void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
   spiReceiveI(spip, n, rxbuf);
   chSysUnlock();
 }
+
+#if SPI_USE_WAIT || defined(__DOXYGEN__)
+/**
+ * @brief   Awakens the thread waiting for operation completion, if any.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
+ */
+void _spi_wakeup(SPIDriver *spip) {
+
+  if (spip->spd_thread != NULL) {
+    Thread *tp = spip->spd_thread;
+    spip->spd_thread = NULL;
+    tp->p_u.rdymsg = RDY_RESET;
+    chSchReadyI(tp);
+  }
+}
+
+/**
+ * @brief   Wait for operation completion.
+ * @details This function waits for the driver to complete the current
+ *          operation, if an operation is not running when the function is
+ *          invoked then it immediately returns.
+ * @note    No more than one thread can wait on a SPI driver using
+ *          this function.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @return              The wait status.
+ * @retval RDY_OK       There was not operation running when the function
+ *                      has been invoked.
+ * @retval RDY_RESET    The operation completed.
+ */
+msg_t spiWait(SPIDriver *spip) {
+  msg_t msg;
+
+  chDbgCheck(spip != NULL, "spiWait");
+
+  chSysLock();
+  chDbgAssert((spip->spd_state == SPI_READY) ||
+              (spip->spd_state == SPI_SELECTED) ||
+              (spip->spd_state == SPI_ACTIVE) ||
+              (spip->spd_state == SPI_SYNC),
+              "spiUnselect(), #1",
+              "invalid state");
+  chDbgAssert(spip->spd_thread == NULL, "spiWait(), #3", "already waiting");
+  if ((spip->spd_state == SPI_ACTIVE) || (spip->spd_state == SPI_SYNC)) {
+    spip->spd_thread = chThdSelf();
+    chSchGoSleepS(spip->spd_thread, THD_STATE_SUSPENDED);
+    msg = chThdSelf()->p_u.rdymsg;
+  }
+  else
+    msg = RDY_OK;
+  chSysUnlock();
+  return msg;
+}
+
+#endif /* SPI_USE_WAIT */
 
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 /**

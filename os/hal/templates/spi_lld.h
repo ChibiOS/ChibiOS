@@ -77,6 +77,12 @@ typedef struct {
    * @brief Driver state.
    */
   spistate_t            spd_state;
+#if SPI_USE_WAIT || defined(__DOXYGEN__)
+  /**
+   * @brief Waiting thread.
+   */
+  Thread                *spd_thread;
+#endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**

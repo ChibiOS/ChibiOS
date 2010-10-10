@@ -39,7 +39,16 @@
 /*===========================================================================*/
 
 /**
- * @brief   Enables the mutual exclusion APIs on the SPI bus.
+ * @brief   Enables the @p spiWait() API.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(SPI_USE_WAIT) || defined(__DOXYGEN__)
+#define SPI_USE_WAIT                TRUE
+#endif
+
+/**
+ * @brief   Enables the @p spiAcquireBus() and @p spiReleaseBus() APIs.
+ * @note    Disabling this option saves both code and data space.
  */
 #if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define SPI_USE_MUTUAL_EXCLUSION    TRUE
@@ -218,6 +227,10 @@ extern "C" {
   void spiExchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf);
   void spiSend(SPIDriver *spip, size_t n, const void *txbuf);
   void spiReceive(SPIDriver *spip, size_t n, void *rxbuf);
+#if SPI_USE_WAIT
+  void _spi_wakeup(SPIDriver *spip, mag_t msg);
+  msg_t spiWait(SPIDriver *spip);
+#endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION
   void spiAcquireBus(SPIDriver *spip);
   void spiReleaseBus(SPIDriver *spip);
