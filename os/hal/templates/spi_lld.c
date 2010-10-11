@@ -110,9 +110,9 @@ void spi_lld_unselect(SPIDriver *spip) {
 
 /**
  * @brief   Ignores data on the SPI bus.
- * @details This function transmits a series of idle words on the SPI bus and
- *          ignores the received data. This function can be invoked even
- *          when a slave select signal has not been yet asserted.
+ * @details This asynchronous function starts the transmission of a series of
+ *          idle words on the SPI bus and ignores the received data.
+ * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
@@ -125,7 +125,9 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
 
 /**
  * @brief   Exchanges data on the SPI bus.
- * @details This function performs a simultaneous transmit/receive operation.
+ * @details This asynchronous function starts a simultaneous transmit/receive
+ *          operation.
+ * @post    At the end of the operation the configured callback is invoked.
  * @note    The buffers are organized as uint8_t arrays for data sizes below or
  *          equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -142,7 +144,9 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
 }
 
 /**
- * @brief   Sends data ever the SPI bus.
+ * @brief   Sends data over the SPI bus.
+ * @details This asynchronous function starts a transmit operation.
+ * @post    At the end of the operation the configured callback is invoked.
  * @note    The buffers are organized as uint8_t arrays for data sizes below or
  *          equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -158,6 +162,8 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
 /**
  * @brief   Receives data from the SPI bus.
+ * @details This asynchronous function starts a receive operation.
+ * @post    At the end of the operation the configured callback is invoked.
  * @note    The buffers are organized as uint8_t arrays for data sizes below or
  *          equal to 8 bits else it is organized as uint16_t arrays.
  *

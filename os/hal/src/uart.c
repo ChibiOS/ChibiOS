@@ -69,6 +69,10 @@ void uartObjectInit(UARTDriver *uartp) {
   uartp->ud_txstate = UART_TX_IDLE;
   uartp->ud_rxstate = UART_RX_IDLE;
   uartp->ud_config  = NULL;
+  /* Optional, user-defined initializer.*/
+#if defined(UART_DRIVER_EXT_INIT_HOOK)
+  UART_DRIVER_EXT_INIT_HOOK(uartp);
+#endif
 }
 
 /**

@@ -87,15 +87,25 @@ typedef void (*uartecb_t)(UARTDriver *uartp, uartflags_t e);
  *          architecture dependent, fields.
  */
 typedef struct {
-  /** @brief End of transmission buffer callback.*/
+  /**
+   * @brief End of transmission buffer callback.
+   */
   uartcb_t                  uc_txend1;
-  /** @brief Physical end of transmission callback.*/
+  /**
+   * @brief Physical end of transmission callback.
+   */
   uartcb_t                  uc_txend2;
-  /** @brief Receive buffer filled callback.*/
+  /**
+   * @brief Receive buffer filled callback.
+   */
   uartcb_t                  uc_rxend;
-  /** @brief Character received while out if the @p UART_RECEIVE state.*/
+  /**
+   * @brief Character received while out if the @p UART_RECEIVE state.
+   */
   uartcb_t                  uc_rxchar;
-  /** @brief Receive error callback.*/  
+  /**
+   * @brief Receive error callback.
+   */
   uartcb_t                  uc_rxerr;
   /* End of the mandatory fields.*/
 } UARTConfig;

@@ -35,11 +35,6 @@
 #ifndef _HALCONF_H_
 #define _HALCONF_H_
 
-/*
- * Enable the following line in order to include a mcu-related
- * settings file. This file can be used to include platform specific
- * header files or to override the low level drivers settings.
- */
 #include "mcuconf.h"
 
 /*===========================================================================*/
@@ -154,7 +149,16 @@
 #endif
 
 /**
- * @brief   Enables the mutual exclusion APIs on the SPI bus.
+ * @brief   Enables the "wait" APIs.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(SPI_USE_WAIT) || defined(__DOXYGEN__)
+#define SPI_USE_WAIT                TRUE
+#endif
+
+/**
+ * @brief   Enables the @p spiAcquireBus() and @p spiReleaseBus() APIs.
+ * @note    Disabling this option saves both code and data space.
  */
 #if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define SPI_USE_MUTUAL_EXCLUSION    TRUE

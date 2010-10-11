@@ -57,30 +57,43 @@ SPIDriver SPID3;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static void spi_stop(SPIDriver *spip) {
-
-  /* Stops RX and TX DMA channels.*/
-  dmaChannelDisable(spip->spd_dmarx);
-  dmaChannelDisable(spip->spd_dmatx);
-
-  chSysLockFromIsr();
-  chSchReadyI(spip->spd_thread);
-  chSysUnlockFromIsr();
+/**
+ * @brief   Stops the SPI DMA channels.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ */
+#define dma_stop(spip) {                                                    \
+  dmaChannelDisable(spip->spd_dmatx);                                       \
+  dmaChannelDisable(spip->spd_dmarx);                                       \
 }
 
-static void spi_start_wait(SPIDriver *spip) {
+/**
+ * @brief   Starts the SPI DMA channels.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ */
+#define dma_start(spip) {                                                   \
+  dmaChannelEnable((spip)->spd_dmarx);                                      \
+  dmaChannelEnable((spip)->spd_dmatx);                                      \
+}
 
-  chSysLock();
+/**
+ * @brief   Shared end-of-transfer service routine.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ */
+static void serve_interrupt(SPIDriver *spip) {
 
-  /* DMAs start.*/
-  dmaChannelEnable(spip->spd_dmarx);
-  dmaChannelEnable(spip->spd_dmatx);
+  /* Stops everything.*/
+  dma_stop(spip);
 
-  /* Wait for completion event.*/
-  spip->spd_thread = currp;
-  chSchGoSleepS(THD_STATE_SUSPENDED);
-  spip->spd_thread = NULL;
-  chSysUnlock();
+  /* If a callback is defined then invokes it.*/
+  if (spip->spd_config->spc_endcb)
+    spip->spd_config->spc_endcb(spip);
+
+  /* Wakeup the waiting thread if any, note that the following macro is
+     empty if the SPI_USE_WAIT option is disabled.*/
+  _spi_wakeup(spip);
 }
 
 /*===========================================================================*/
@@ -97,10 +110,10 @@ CH_IRQ_HANDLER(DMA1_Ch2_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  spi_stop(&SPID1);
   if ((STM32_DMA1->ISR & DMA_ISR_TEIF2) != 0) {
     STM32_SPI_SPI1_DMA_ERROR_HOOK();
   }
+  serve_interrupt(&SPID1);
   dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_2);
 
   CH_IRQ_EPILOGUE();
@@ -132,10 +145,10 @@ CH_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  spi_stop(&SPID2);
   if ((STM32_DMA1->ISR & DMA_ISR_TEIF4) != 0) {
     STM32_SPI_SPI2_DMA_ERROR_HOOK();
   }
+  serve_interrupt(&SPID2);
   dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_4);
 
   CH_IRQ_EPILOGUE();
@@ -167,10 +180,10 @@ CH_IRQ_HANDLER(DMA2_Ch1_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  spi_stop(&SPID3);
   if ((STM32_DMA2->ISR & DMA_ISR_TEIF1) != 0) {
     STM32_SPI_SPI3_DMA_ERROR_HOOK();
   }
+  serve_interrupt(&SPID3);
   dmaClearChannel(STM32_DMA2, STM32_DMA_CHANNEL_1);
 
   CH_IRQ_EPILOGUE();
@@ -365,9 +378,9 @@ void spi_lld_unselect(SPIDriver *spip) {
 
 /**
  * @brief   Ignores data on the SPI bus.
- * @details This function transmits a series of idle words on the SPI bus and
- *          ignores the received data. This function can be invoked even
- *          when a slave select signal has not been yet asserted.
+ * @details This asynchronous function starts the transmission of a series of
+ *          idle words on the SPI bus and ignores the received data.
+ * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
@@ -382,14 +395,16 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
                   spip->spd_dmaccr | DMA_CCR1_TCIE);
   dmaChannelSetup(spip->spd_dmatx, n, &dummytx,
                   spip->spd_dmaccr | DMA_CCR1_DIR);
-  spi_start_wait(spip);
+  dma_start(spip);
 }
 
 /**
  * @brief   Exchanges data on the SPI bus.
- * @details This function performs a simultaneous transmit/receive operation.
- * @note The buffers are organized as uint8_t arrays for data sizes below or
- *       equal to 8 bits else it is organized as uint16_t arrays.
+ * @details This asynchronous function starts a simultaneous transmit/receive
+ *          operation.
+ * @post    At the end of the operation the configured callback is invoked.
+ * @note    The buffers are organized as uint8_t arrays for data sizes below or
+ *          equal to 8 bits else it is organized as uint16_t arrays.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be exchanged
@@ -405,11 +420,13 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
                   spip->spd_dmaccr | DMA_CCR1_TCIE | DMA_CCR1_MINC);
   dmaChannelSetup(spip->spd_dmatx, n, txbuf,
                   spip->spd_dmaccr | DMA_CCR1_DIR | DMA_CCR1_MINC);
-  spi_start_wait(spip);
+  dma_start(spip);
 }
 
 /**
- * @brief   Sends data ever the SPI bus.
+ * @brief   Sends data over the SPI bus.
+ * @details This asynchronous function starts a transmit operation.
+ * @post    At the end of the operation the configured callback is invoked.
  * @note    The buffers are organized as uint8_t arrays for data sizes below or
  *          equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -426,11 +443,13 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
                   spip->spd_dmaccr | DMA_CCR1_TCIE);
   dmaChannelSetup(spip->spd_dmatx, n, txbuf,
                   spip->spd_dmaccr | DMA_CCR1_DIR | DMA_CCR1_MINC);
-  spi_start_wait(spip);
+  dma_start(spip);
 }
 
 /**
  * @brief   Receives data from the SPI bus.
+ * @details This asynchronous function starts a receive operation.
+ * @post    At the end of the operation the configured callback is invoked.
  * @note    The buffers are organized as uint8_t arrays for data sizes below or
  *          equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -447,7 +466,7 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
                   spip->spd_dmaccr | DMA_CCR1_TCIE | DMA_CCR1_MINC);
   dmaChannelSetup(spip->spd_dmatx, n, &dummytx,
                   spip->spd_dmaccr | DMA_CCR1_DIR);
-  spi_start_wait(spip);
+  dma_start(spip);
 }
 
 #endif /* CH_HAL_USE_SPI */

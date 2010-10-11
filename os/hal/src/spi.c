@@ -77,6 +77,10 @@ void spiObjectInit(SPIDriver *spip) {
 #endif
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
   spip->spd_config = NULL;
+  /* Optional, user-defined initializer.*/
+#if defined(SPI_DRIVER_EXT_INIT_HOOK)
+  SPI_DRIVER_EXT_INIT_HOOK(spip);
+#endif
 }
 
 /**
@@ -165,9 +169,10 @@ void spiUnselect(SPIDriver *spip) {
 /**
  * @brief   Emits a train of clock pulses on the SPI bus.
  * @details This asynchronous function starts the emission of a train of
- *          clock pulses without asserting any slave, while this is not
- *          usually required by the SPI protocol it is required by
- *          initialization procedure of MMC/SD cards in SPI mode.
+ *          clock pulses without asserting any slave.
+ * @note    This functionality is not usually required by the SPI protocol
+ *          but it is required by initialization procedure of MMC/SD cards
+ *          in SPI mode.
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
@@ -179,13 +184,12 @@ void spiUnselect(SPIDriver *spip) {
  */
 void spiSynchronize(SPIDriver *spip, size_t n) {
 
-  chDbgCheck((spip != NULL) && (n > 0), "spiIgnore");
+  chDbgCheck((spip != NULL) && (n > 0), "spiSynchronize");
 
   chSysLock();
   chDbgAssert(spip->spd_state == SPI_READY,
               "spiSynchronize(), #1",
               "not ready");
-
   spiSynchronizeI(spip, n);
   chSysUnlock();
 }
@@ -240,7 +244,7 @@ void spiExchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf) {
   chSysLock();
   chDbgAssert(spip->spd_state == SPI_SELECTED,
               "spiExchange(), #1",
-              "not active");
+              "not selected");
   spiExchangeI(spip, n, txbuf, rxbuf);
   chSysUnlock();
 }
@@ -268,7 +272,7 @@ void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
   chSysLock();
   chDbgAssert(spip->spd_state == SPI_SELECTED,
               "spiSend(), #1",
-              "not active");
+              "not selected");
   spiSendI(spip, n, txbuf);
   chSysUnlock();
 }
@@ -296,45 +300,28 @@ void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
   chSysLock();
   chDbgAssert(spip->spd_state == SPI_SELECTED,
               "spiReceive(), #1",
-              "not active");
+              "not selected");
   spiReceiveI(spip, n, rxbuf);
   chSysUnlock();
 }
 
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
 /**
- * @brief   Awakens the thread waiting for operation completion, if any.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- *
- * @notapi
- */
-void _spi_wakeup(SPIDriver *spip) {
-
-  if (spip->spd_thread != NULL) {
-    Thread *tp = spip->spd_thread;
-    spip->spd_thread = NULL;
-    tp->p_u.rdymsg = RDY_RESET;
-    chSchReadyI(tp);
-  }
-}
-
-/**
- * @brief   Wait for operation completion.
+ * @brief   Waits for operation completion.
  * @details This function waits for the driver to complete the current
  *          operation, if an operation is not running when the function is
  *          invoked then it immediately returns.
+ * @pre     In order to use this function the option @p SPI_USE_WAIT must be
+ *          enabled.
+ * @post    On exit the SPI driver is ready to accept more commands.
  * @note    No more than one thread can wait on a SPI driver using
  *          this function.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
- * @return              The wait status.
- * @retval RDY_OK       There was not operation running when the function
- *                      has been invoked.
- * @retval RDY_RESET    The operation completed.
+ *
+ * @api
  */
-msg_t spiWait(SPIDriver *spip) {
-  msg_t msg;
+void spiWait(SPIDriver *spip) {
 
   chDbgCheck(spip != NULL, "spiWait");
 
@@ -343,20 +330,167 @@ msg_t spiWait(SPIDriver *spip) {
               (spip->spd_state == SPI_SELECTED) ||
               (spip->spd_state == SPI_ACTIVE) ||
               (spip->spd_state == SPI_SYNC),
-              "spiUnselect(), #1",
+              "spiWait(), #1",
               "invalid state");
-  chDbgAssert(spip->spd_thread == NULL, "spiWait(), #3", "already waiting");
-  if ((spip->spd_state == SPI_ACTIVE) || (spip->spd_state == SPI_SYNC)) {
-    spip->spd_thread = chThdSelf();
-    chSchGoSleepS(spip->spd_thread, THD_STATE_SUSPENDED);
-    msg = chThdSelf()->p_u.rdymsg;
-  }
-  else
-    msg = RDY_OK;
+  if ((spip->spd_state == SPI_ACTIVE) || (spip->spd_state == SPI_SYNC))
+    spiWaitS(spip);
   chSysUnlock();
-  return msg;
 }
 
+/**
+ * @brief   Emits a train of clock pulses on the SPI bus.
+ * @details This synchronous function performs the emission of a train of
+ *          clock pulses without asserting any slave.
+ * @pre     In order to use this function the option @p SPI_USE_WAIT must be
+ *          enabled.
+ * @post    At the end of the operation the configured callback is invoked.
+ * @note    This functionality is not usually required by the SPI protocol
+ *          but it is required by initialization procedure of MMC/SD cards
+ *          in SPI mode.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to be clocked. The number of pulses
+ *                      is equal to the number of words multiplied to the
+ *                      configured word size in bits.
+ *
+ * @api
+ */
+void spiSynchronizeWait(SPIDriver *spip, size_t n) {
+
+  chDbgCheck((spip != NULL) && (n > 0), "spiSynchronizeWait");
+
+  chSysLock();
+  chDbgAssert(spip->spd_state == SPI_READY,
+              "spiSynchronizeWait(), #1",
+              "not ready");
+  spiSynchronizeI(spip, n);
+  spiWaitS(spip);
+  chSysUnlock();
+}
+
+/**
+ * @brief   Ignores data on the SPI bus.
+ * @details This synchronous function performs the transmission of a series of
+ *          idle words on the SPI bus and ignores the received data.
+ * @pre     A slave must have been selected using @p spiSelect() or
+ *          @p spiSelectI().
+ * @pre     In order to use this function the option @p SPI_USE_WAIT must be
+ *          enabled.
+ * @post    At the end of the operation the configured callback is invoked.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to be ignored
+ *
+ * @api
+ */
+void spiIgnoreWait(SPIDriver *spip, size_t n) {
+
+  chDbgCheck((spip != NULL) && (n > 0), "spiIgnoreWait");
+
+  chSysLock();
+  chDbgAssert(spip->spd_state == SPI_SELECTED,
+              "spiIgnoreWait(), #1",
+              "not selected");
+  spiIgnoreI(spip, n);
+  spiWaitS(spip);
+  chSysUnlock();
+}
+
+/**
+ * @brief   Exchanges data on the SPI bus.
+ * @details This synchronous function performs a simultaneous transmit/receive
+ *          operation.
+ * @pre     A slave must have been selected using @p spiSelect() or
+ *          @p spiSelectI().
+ * @pre     In order to use this function the option @p SPI_USE_WAIT must be
+ *          enabled.
+ * @post    At the end of the operation the configured callback is invoked.
+ * @note    The buffers are organized as uint8_t arrays for data sizes below
+ *          or equal to 8 bits else it is organized as uint16_t arrays.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to be exchanged
+ * @param[in] txbuf     the pointer to the transmit buffer
+ * @param[out] rxbuf    the pointer to the receive buffer
+ *
+ * @api
+ */
+void spiExchangeWait(SPIDriver *spip, size_t n,
+                     const void *txbuf, void *rxbuf) {
+
+  chDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL) && (txbuf != NULL),
+             "spiExchangeWait");
+
+  chSysLock();
+  chDbgAssert(spip->spd_state == SPI_SELECTED,
+              "spiExchangeWait(), #1",
+              "not selected");
+  spiExchangeI(spip, n, txbuf, rxbuf);
+  spiWaitS(spip);
+  chSysUnlock();
+}
+
+/**
+ * @brief   Sends data over the SPI bus.
+ * @details This synchronous function performs a transmit operation.
+ * @pre     A slave must have been selected using @p spiSelect() or
+ *          @p spiSelectI().
+ * @pre     In order to use this function the option @p SPI_USE_WAIT must be
+ *          enabled.
+ * @post    At the end of the operation the configured callback is invoked.
+ * @note    The buffers are organized as uint8_t arrays for data sizes below
+ *          or equal to 8 bits else it is organized as uint16_t arrays.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to send
+ * @param[in] txbuf     the pointer to the transmit buffer
+ *
+ * @api
+ */
+void spiSendWait(SPIDriver *spip, size_t n, const void *txbuf) {
+
+  chDbgCheck((spip != NULL) && (n > 0) && (txbuf != NULL),
+             "spiSendWait");
+
+  chSysLock();
+  chDbgAssert(spip->spd_state == SPI_SELECTED,
+              "spiSendWait(), #1",
+              "not selected");
+  spiSendI(spip, n, txbuf);
+  spiWaitS(spip);
+  chSysUnlock();
+}
+
+/**
+ * @brief   Receives data from the SPI bus.
+ * @details This synchronous function performs a receive operation.
+ * @pre     A slave must have been selected using @p spiSelect() or
+ *          @p spiSelectI().
+ * @pre     In order to use this function the option @p SPI_USE_WAIT must be
+ *          enabled.
+ * @post    At the end of the operation the configured callback is invoked.
+ * @note    The buffers are organized as uint8_t arrays for data sizes below
+ *          or equal to 8 bits else it is organized as uint16_t arrays.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to receive
+ * @param[out] rxbuf    the pointer to the receive buffer
+ *
+ * @api
+ */
+void spiReceiveWait(SPIDriver *spip, size_t n, void *rxbuf) {
+
+  chDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL),
+             "spiReceiveWait");
+
+  chSysLock();
+  chDbgAssert(spip->spd_state == SPI_SELECTED,
+              "spiReceiveWait(), #1",
+              "not selected");
+  spiReceiveI(spip, n, rxbuf);
+  spiWaitS(spip);
+  chSysUnlock();
+}
 #endif /* SPI_USE_WAIT */
 
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)

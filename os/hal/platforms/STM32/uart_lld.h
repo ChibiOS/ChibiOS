@@ -198,24 +198,42 @@ typedef void (*uartecb_t)(UARTDriver *uartp, uartflags_t e);
  * @note    It could be empty on some architectures.
  */
 typedef struct {
-  /** @brief End of transmission buffer callback.*/
+  /**
+   * @brief End of transmission buffer callback.
+   */
   uartcb_t                  uc_txend1;
-  /** @brief Physical end of transmission callback.*/
+  /**
+   * @brief Physical end of transmission callback.
+   */
   uartcb_t                  uc_txend2;
-  /** @brief Receive buffer filled callback.*/
+  /**
+   * @brief Receive buffer filled callback.
+   */
   uartcb_t                  uc_rxend;
-  /** @brief Character received while out if the @p UART_RECEIVE state.*/
-  uartccb_t                 uc_rxchar;
-  /** @brief Receive error callback.*/  
-  uartecb_t                 uc_rxerr;
+  /**
+   * @brief Character received while out if the @p UART_RECEIVE state.
+   */
+  uartcb_t                  uc_rxchar;
+  /**
+   * @brief Receive error callback.
+   */
+  uartcb_t                  uc_rxerr;
   /* End of the mandatory fields.*/
-  /** @brief Bit rate.*/
+  /**
+   * @brief Bit rate.
+   */
   uint32_t                  uc_speed;
-  /** @brief Initialization value for the CR1 register.*/
+  /**
+   * @brief Initialization value for the CR1 register.
+   */
   uint16_t                  uc_cr1;
-  /** @brief Initialization value for the CR2 register.*/
+  /**
+   * @brief Initialization value for the CR2 register.
+   */
   uint16_t                  uc_cr2;
-  /** @brief Initialization value for the CR3 register.*/
+  /**
+   * @brief Initialization value for the CR3 register.
+   */
   uint16_t                  uc_cr3;
 } UARTConfig;
 
@@ -223,31 +241,49 @@ typedef struct {
  * @brief   Structure representing an UART driver.
  */
 struct UARTDriver {
-  /** @brief Driver state.*/
+  /**
+   * @brief Driver state.
+   */
   uartstate_t               ud_state;
-  /** @brief Current configuration data.*/
-  const UARTConfig          *ud_config;
-  /** @brief Transmitter state.*/
+  /**
+   * @brief Transmitter state.
+   */
   uarttxstate_t             ud_txstate;
-  /** @brief Receiver state.*/
+  /**
+   * @brief Receiver state.
+   */
   uartrxstate_t             ud_rxstate;
-  /** @brief UART driver status flags.*/
-  uartflags_t               ud_flags;
+  /**
+   * @brief Current configuration data.
+   */
+  const UARTConfig          *ud_config;
 #if defined(UART_DRIVER_EXT_FIELDS)
   UART_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
-  /** @brief Pointer to the USART registers block.*/
+  /**
+   * @brief Pointer to the USART registers block.
+   */
   USART_TypeDef             *ud_usart;
-  /** @brief Pointer to the DMA registers block.*/
+  /**
+   * @brief Pointer to the DMA registers block.
+   */
   stm32_dma_t               *ud_dmap;
-  /** @brief DMA priority bit mask.*/
+  /**
+   * @brief DMA priority bit mask.
+   */
   uint32_t                  ud_dmaccr;
-  /** @brief Receive DMA channel.*/
+  /**
+   * @brief Receive DMA channel.
+   */
   uint8_t                   ud_dmarx;
-  /** @brief Transmit DMA channel.*/
+  /**
+   * @brief Transmit DMA channel.
+   */
   uint8_t                   ud_dmatx;
-  /** @brief Default receive buffer while into @p UART_RX_IDLE state.*/
+  /**
+   * @brief Default receive buffer while into @p UART_RX_IDLE state.
+   */
   volatile uint16_t         ud_rxbuf;
 };
 

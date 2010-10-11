@@ -161,45 +161,90 @@
 /*===========================================================================*/
 
 /**
- * @brief Driver configuration structure.
+ * @brief   Type of a structure representing an SPI driver.
+ */
+typedef struct SPIDriver SPIDriver;
+
+/**
+ * @brief   SPI notification callback type.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object triggering the
+ *                      callback
+ */
+typedef void (*spicallback_t)(SPIDriver *spip);
+
+/**
+ * @brief   Driver configuration structure.
  */
 typedef struct {
-  /** @brief The chip select line port.*/
+  /**
+   * @brief Operation complete callback.
+   */
+  spicallback_t         spc_endcb;
+  /* End of the mandatory fields.*/
+  /**
+   * @brief The chip select line port.
+   */
   ioportid_t            spc_ssport;
-  /** @brief The chip select line pad number.*/
+  /**
+   * @brief The chip select line pad number.
+   */
   uint16_t              spc_sspad;
-  /** @brief SPI initialization data.*/
+  /**
+   * @brief SPI initialization data.
+   */
   uint16_t              spc_cr1;
 } SPIConfig;
 
 /**
- * @brief Structure representing a SPI driver.
+ * @brief   Structure representing a SPI driver.
  */
-typedef struct {
-  /** @brief Driver state.*/
+struct SPIDriver{
+  /**
+   * @brief Driver state.
+   */
   spistate_t            spd_state;
+#if SPI_USE_WAIT || defined(__DOXYGEN__)
+  /**
+   * @brief Waiting thread.
+   */
+  Thread                *spd_thread;
+#endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
-  /** @brief Mutex protecting the bus.*/
+  /**
+   * @brief Mutex protecting the bus.
+   */
   Mutex                 spd_mutex;
 #elif CH_USE_SEMAPHORES
   Semaphore             spd_semaphore;
 #endif
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
-  /** @brief Current configuration data.*/
+  /**
+   * @brief Current configuration data.
+   */
   const SPIConfig       *spd_config;
+#if defined(SPI_DRIVER_EXT_FIELDS)
+  SPI_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
-  /** @brief Thread waiting for I/O completion.*/
-  Thread                *spd_thread;
-  /** @brief Pointer to the SPIx registers block.*/
+  /**
+   * @brief Pointer to the SPIx registers block.
+   */
   SPI_TypeDef           *spd_spi;
-  /** @brief Pointer to the receive DMA channel registers block.*/
+  /**
+   * @brief Pointer to the receive DMA channel registers block.
+   */
   stm32_dma_channel_t   *spd_dmarx;
-  /** @brief Pointer to the transmit DMA channel registers block.*/
+  /**
+   * @brief Pointer to the transmit DMA channel registers block.
+   */
   stm32_dma_channel_t   *spd_dmatx;
-  /** @brief DMA priority bit mask.*/
+  /**
+   * @brief DMA priority bit mask.\
+   */
   uint32_t              spd_dmaccr;
-} SPIDriver;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

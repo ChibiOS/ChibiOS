@@ -39,7 +39,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   Enables the @p spiWait() API.
+ * @brief   Enables the "wait" APIs.
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(SPI_USE_WAIT) || defined(__DOXYGEN__)
@@ -112,9 +112,10 @@ typedef enum {
 /**
  * @brief   Emits a train of clock pulses on the SPI bus.
  * @details This asynchronous function starts the emission of a train of
- *          clock pulses without asserting any slave, while this is not
- *          usually required by the SPI protocol it is required by
- *          initialization procedure of MMC/SD cards in SPI mode.
+ *          clock pulses without asserting any slave.
+ * @note    This functionality is not usually required by the SPI protocol
+ *          but it is required by initialization procedure of MMC/SD cards
+ *          in SPI mode.
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
@@ -209,6 +210,51 @@ typedef enum {
   spi_lld_receive(spip, n, rxbuf);                                          \
 }
 
+#if SPI_USE_WAIT || defined(__DOXYGEN__)
+/**
+ * @brief   Awakens the thread waiting for operation completion, if any.
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
+ */
+#define _spi_wakeup(spip) {                                                 \
+  if ((spip)->spd_thread != NULL) {                                         \
+    Thread *tp = (spip)->spd_thread;                                        \
+    (spip)->spd_thread = NULL;                                              \
+    tp->p_u.rdymsg = RDY_RESET;                                             \
+    chSchReadyI(tp);                                                        \
+  }                                                                         \
+}
+
+/**
+ * @brief   Waits for operation completion.
+ * @details This function waits for the driver to complete the current
+ *          operation.
+ * @pre     An operation must be running while the function is invoked.
+ * @post    On exit the SPI driver is ready to accept more commands.
+ * @note    No more than one thread can wait on a SPI driver using
+ *          this function.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @sclass
+ */
+#define spiWaitS(spip) {                                                    \
+  chDbgAssert((spip)->spd_thread == NULL,                                   \
+              "spiWaitS(), #1", "already waiting");                         \
+  (spip)->spd_thread = chThdSelf();                                         \
+  chSchGoSleepS(THD_STATE_SUSPENDED);                                       \
+}
+#else /* !SPI_USE_WAIT */
+
+/* No wakeup when wait functions are disabled.*/
+#define _spi_wakeup(spip)
+
+#endif /* !SPI_USE_WAIT */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -228,8 +274,12 @@ extern "C" {
   void spiSend(SPIDriver *spip, size_t n, const void *txbuf);
   void spiReceive(SPIDriver *spip, size_t n, void *rxbuf);
 #if SPI_USE_WAIT
-  void _spi_wakeup(SPIDriver *spip, mag_t msg);
-  msg_t spiWait(SPIDriver *spip);
+  void spiWait(SPIDriver *spip);
+  void spiSynchronizeWait(SPIDriver *spip, size_t n);
+  void spiIgnoreWait(SPIDriver *spip, size_t n);
+  void spiExchangeWait(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf);
+  void spiSendWait(SPIDriver *spip, size_t n, const void *txbuf);
+  void spiReceiveWait(SPIDriver *spip, size_t n, void *rxbuf);
 #endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION
   void spiAcquireBus(SPIDriver *spip);

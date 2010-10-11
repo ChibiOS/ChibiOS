@@ -67,6 +67,9 @@ void pwmObjectInit(PWMDriver *pwmp) {
 
   pwmp->pd_state    = PWM_STOP;
   pwmp->pd_config   = NULL;
+#if defined(PWM_DRIVER_EXT_INIT_HOOK)
+  PWM_DRIVER_EXT_INIT_HOOK(pwmp);
+#endif
 }
 
 /**

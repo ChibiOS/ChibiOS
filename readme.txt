@@ -93,18 +93,24 @@
   2.0.3).
 - FIX: Fixed a documentation error regarding the ADC driver function
   adcStartConversion() (bug 3039890)(backported to 2.0.3).
-- NEW: Added an ADC_DRIVER_EXT_FIELDS macro to the ADCDriver structure
-  in order to be able to insert extra fields.
-- NEW: Added an PWM_DRIVER_EXT_FIELDS macro to the PWMDriver structure
-  in order to be able to insert extra fields.
-- NEW: Added an UART_DRIVER_EXT_FIELDS macro to the UARTDriver structure
-  in order to be able to insert extra fields.
-- NEW: More assertions added to the kernel.
-- NEW: New kernel hooks: SYSTEM_TICK_EVENT_HOOK(), SYSTEM_HALT_HOOK().
-- NEW: Added board files for the Olimex STM32-H103.
-- NEW: New kernel APIs chSysGetIdleThread() and chThdGetTicks(), the new
-  APIs are simple macros so there is no footprint overhead.
-- NEW: New I2C device driver model (not complete and no implementations yet).
+- NEW: New I2C driver model (not complete and no implementations yet).
+- NEW: New SPI driver model, the new model supports both synchronous and
+  asynchronous APIs and, in general, simplifies the implementation of the
+  low level driver. The API changed so be careful, for each old API there
+  is not a signature-equivalent one with a different name, as example the
+  old spiSend() now is named spiSendWait() because it is part of the
+  synchronous set.
+- NEW: Added pwmEnableChannelI() and pwmDisableChannelI() APIs to the PWM
+  driver in order to allow channel reprogramming from within callbacks or
+  interrupt handlers. The new APIs are implemented as macros so there is
+  no footprint overhead.
+- NEW: Added adcStartConversionI() and adcStopConversionI() APIs to the ADC
+  driver in order to allow the driver control from within callbacks or
+  interrupt handlers. Made the adcWaitConversion() API optional, this allows
+  to save some space in Flash/RAM if it is not required.
+- NEW: Added driver fields and initialization hooks for the callback-based
+  drivers. The hooks are named XXX_DRIVER_EXT_FIELDS and
+  XXX_DRIVER_EXT_INIT_HOOK().
 - NEW: Added to the UART driver the capability to return the number of
   not yet transferred frames when stopping an operation.
 - NEW: Added more compile-time checks to the various STM32 device drivers.
@@ -112,14 +118,11 @@
 - NEW: Added a simple STM32 CAN demo under ./testhal/STM32/CAN.
 - NEW: Added a simple STM32 PWM demo under ./testhal/STM32/PWM.
 - NEW: Added a simple STM32 SPI demo under ./testhal/STM32/SPI.
-- NEW: Added pwmEnableChannelI() and pwmDisableChannelI() APIs to the PWM
-  driver in order to allow channel reprogramming from within callbacks or
-  other interrupt handlers. The new APIs are implemented as macros so there
-  is no footprint overhead.
-- NEW: Added adcStartConversionI() and adcStopConversionI() APIs to the ADC
-  driver in order to allow the driver control from within callbacks or other
-  interrupt handlers. Made the adcWaitConversion() API optional, this allows
-  to save some space in Flash/RAM if it is not required.
+- NEW: More assertions added to the kernel for improved bug fixing.
+- NEW: New kernel hooks: SYSTEM_TICK_EVENT_HOOK(), SYSTEM_HALT_HOOK().
+- NEW: Added board files for the Olimex STM32-H103.
+- NEW: New kernel APIs chSysGetIdleThread() and chThdGetTicks(), the new
+  APIs are simple macros so there is no footprint overhead.
 - NEW: Added a generic BaseFileStream interface for future File System
   implementations or integrations (untested and not sure if it will stay or
   change).
@@ -130,7 +133,7 @@
   semaphores.
 - OPT: The fix to the bug 3075544 considerably improved the threads creation
   benchmarks score.
-- OPT: Speed optimizations to the STM32 SPI driver, improved latency.
+- OPT: Speed optimizations to the STM32 SPI driver, greatly improved latency.
 - OPT: Speed optimizations to the STM32 ADC driver.
 - CHANGE: The API chThdInit() has been renamed to chThdCreateI() in order to
   make clear it is usable from interrupt handlers.

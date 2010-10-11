@@ -65,8 +65,11 @@ void i2cInit(void) {
  */
 void i2cObjectInit(I2CDriver *i2cp) {
 
-  i2cp->i2c_state    = I2C_STOP;
-  i2cp->i2c_config   = NULL;
+  i2cp->i2c_state  = I2C_STOP;
+  i2cp->i2c_config = NULL;
+#if defined(I2C_DRIVER_EXT_INIT_HOOK)
+  I2C_DRIVER_EXT_INIT_HOOK(i2cp);
+#endif
 }
 
 /**
