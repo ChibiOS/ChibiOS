@@ -46,10 +46,11 @@ MMCDriver MMCD1;
 static bool_t fs_ready = FALSE;
 
 /* Maximum speed SPI configuration (18MHz, CPHA=0, CPOL=0, MSb first).*/
-static SPIConfig hs_spicfg = {IOPORT2, GPIOB_SPI2NSS, 0};
+static SPIConfig hs_spicfg = {NULL, IOPORT2, GPIOB_SPI2NSS, 0};
 
 /* Low speed SPI configuration (281.250KHz, CPHA=0, CPOL=0, MSb first).*/
-static SPIConfig ls_spicfg = {IOPORT2, GPIOB_SPI2NSS, SPI_CR1_BR_2 | SPI_CR1_BR_1};
+static SPIConfig ls_spicfg = {NULL, IOPORT2, GPIOB_SPI2NSS,
+                              SPI_CR1_BR_2 | SPI_CR1_BR_1};
 
 /* MMC configuration (empty).*/
 static const MMCConfig mmc_cfg = {};

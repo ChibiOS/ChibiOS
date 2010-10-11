@@ -53,6 +53,9 @@ SPIDriver SPID3;
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
+static uint16_t dummytx;
+static uint16_t dummyrx;
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -84,7 +87,7 @@ SPIDriver SPID3;
  */
 static void serve_interrupt(SPIDriver *spip) {
 
-  /* Stops everything.*/
+  /* Stop everything.*/
   dma_stop(spip);
 
   /* If a callback is defined then invokes it.*/
@@ -215,6 +218,8 @@ CH_IRQ_HANDLER(DMA2_Ch2_IRQHandler) {
  * @notapi
  */
 void spi_lld_init(void) {
+
+  dummytx = 0xFFFF;
 
 #if STM32_SPI_USE_SPI1
   RCC->APB2RSTR     = RCC_APB2RSTR_SPI1RST;
@@ -388,8 +393,6 @@ void spi_lld_unselect(SPIDriver *spip) {
  * @notapi
  */
 void spi_lld_ignore(SPIDriver *spip, size_t n) {
-  uint16_t dummyrx;
-  uint16_t dummytx = 0xFFFF;
 
   dmaChannelSetup(spip->spd_dmarx, n, &dummyrx,
                   spip->spd_dmaccr | DMA_CCR1_TCIE);
@@ -437,7 +440,6 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
  * @notapi
  */
 void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
-  uint16_t dummyrx;
 
   dmaChannelSetup(spip->spd_dmarx, n, &dummyrx,
                   spip->spd_dmaccr | DMA_CCR1_TCIE);
@@ -460,7 +462,6 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
  * @notapi
  */
 void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
-  uint16_t dummytx = 0xFFFF;
 
   dmaChannelSetup(spip->spd_dmarx, n, rxbuf,
                   spip->spd_dmaccr | DMA_CCR1_TCIE | DMA_CCR1_MINC);

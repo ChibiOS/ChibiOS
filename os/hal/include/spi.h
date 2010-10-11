@@ -221,12 +221,13 @@ typedef enum {
  * @notapi
  */
 #define _spi_wakeup(spip) {                                                 \
+  chSysLockFromIsr();                                                       \
   if ((spip)->spd_thread != NULL) {                                         \
     Thread *tp = (spip)->spd_thread;                                        \
     (spip)->spd_thread = NULL;                                              \
-    tp->p_u.rdymsg = RDY_RESET;                                             \
     chSchReadyI(tp);                                                        \
   }                                                                         \
+  chSysUnlockFromIsr();                                                     \
 }
 
 /**

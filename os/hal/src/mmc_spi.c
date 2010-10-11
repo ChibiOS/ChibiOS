@@ -84,13 +84,13 @@ static void wait(MMCDriver *mmcp) {
   uint8_t buf[4];
 
   for (i = 0; i < 16; i++) {
-    spiReceive(mmcp->mmc_spip, 1, buf);
+    spiReceiveWait(mmcp->mmc_spip, 1, buf);
     if (buf[0] == 0xFF)
       break;
   }
   /* Looks like it is a long wait.*/
   while (TRUE) {
-    spiReceive(mmcp->mmc_spip, 1, buf);
+    spiReceiveWait(mmcp->mmc_spip, 1, buf);
     if (buf[0] == 0xFF)
       break;
 #ifdef MMC_NICE_WAITING
@@ -121,7 +121,7 @@ static void send_hdr(MMCDriver *mmcp, uint8_t cmd, uint32_t arg) {
   buf[3] = arg >> 8;
   buf[4] = arg;
   buf[5] = 0x95;        /* Valid for CMD0 ignored by other commands. */
-  spiSend(mmcp->mmc_spip, 6, buf);
+  spiSendWait(mmcp->mmc_spip, 6, buf);
 }
 
 /**
@@ -138,7 +138,7 @@ static uint8_t recvr1(MMCDriver *mmcp) {
   uint8_t r1[1];
 
   for (i = 0; i < 9; i++) {
-    spiReceive(mmcp->mmc_spip, 1, r1);
+    spiReceiveWait(mmcp->mmc_spip, 1, r1);
     if (r1[0] != 0xFF)
       return r1[0];
   }
@@ -178,7 +178,7 @@ static void sync(MMCDriver *mmcp) {
 
   spiSelect(mmcp->mmc_spip);
   while (TRUE) {
-    spiReceive(mmcp->mmc_spip, 1, buf);
+    spiReceiveWait(mmcp->mmc_spip, 1, buf);
     if (buf[0] == 0xFF)
       break;
 #ifdef MMC_NICE_WAITING
@@ -306,7 +306,7 @@ bool_t mmcConnect(MMCDriver *mmcp) {
   if (mmcp->mmc_state == MMC_INSERTED) {
     /* Slow clock mode and 128 clock pulses.*/
     spiStart(mmcp->mmc_spip, mmcp->mmc_lscfg);
-    spiIgnore(mmcp->mmc_spip, 16);
+    spiSynchronizeWait(mmcp->mmc_spip, 16);
 
     /* SPI mode selection.*/
     i = 0;
@@ -453,11 +453,11 @@ bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
   chSysUnlock();
 
   for (i = 0; i < MMC_WAIT_DATA; i++) {
-    spiReceive(mmcp->mmc_spip, 1, buffer);
+    spiReceiveWait(mmcp->mmc_spip, 1, buffer);
     if (buffer[0] == 0xFE) {
-      spiReceive(mmcp->mmc_spip, MMC_SECTOR_SIZE, buffer);
+      spiReceiveWait(mmcp->mmc_spip, MMC_SECTOR_SIZE, buffer);
       /* CRC ignored. */
-      spiIgnore(mmcp->mmc_spip, 2);
+      spiIgnoreWait(mmcp->mmc_spip, 2);
       return FALSE;
     }
   }
@@ -493,7 +493,7 @@ bool_t mmcStopSequentialRead(MMCDriver *mmcp) {
   }
   chSysUnlock();
 
-  spiSend(mmcp->mmc_spip, sizeof(stopcmd), stopcmd);
+  spiSendWait(mmcp->mmc_spip, sizeof(stopcmd), stopcmd);
 /*  result = recvr1(mmcp) != 0x00;*/
   /* Note, ignored r1 response, it can be not zero, unknown issue.*/
   recvr1(mmcp);
@@ -568,10 +568,10 @@ bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
   }
   chSysUnlock();
 
-  spiSend(mmcp->mmc_spip, sizeof(start), start);    /* Data prologue.       */
-  spiSend(mmcp->mmc_spip, MMC_SECTOR_SIZE, buffer); /* Data.                */
-  spiIgnore(mmcp->mmc_spip, 2);                     /* CRC ignored.         */
-  spiReceive(mmcp->mmc_spip, 1, b);
+  spiSendWait(mmcp->mmc_spip, sizeof(start), start);    /* Data prologue.   */
+  spiSendWait(mmcp->mmc_spip, MMC_SECTOR_SIZE, buffer); /* Data.            */
+  spiIgnoreWait(mmcp->mmc_spip, 2);                     /* CRC ignored.     */
+  spiReceiveWait(mmcp->mmc_spip, 1, b);
   if ((b[0] & 0x1F) == 0x05) {
     wait(mmcp);
     return FALSE;
@@ -608,7 +608,7 @@ bool_t mmcStopSequentialWrite(MMCDriver *mmcp) {
   }
   chSysUnlock();
 
-  spiSend(mmcp->mmc_spip, sizeof(stop), stop);
+  spiSendWait(mmcp->mmc_spip, sizeof(stop), stop);
   spiUnselect(mmcp->mmc_spip);
 
   chSysLock();

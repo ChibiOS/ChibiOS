@@ -24,6 +24,7 @@
  * Maximum speed SPI configuration (18MHz, CPHA=0, CPOL=0, MSb first).
  */
 static const SPIConfig hs_spicfg = {
+  NULL,
   GPIOA,
   GPIOA_SPI1NSS,
   0
@@ -33,6 +34,7 @@ static const SPIConfig hs_spicfg = {
  * Low speed SPI configuration (281.250KHz, CPHA=0, CPOL=0, MSb first).
  */
 static const SPIConfig ls_spicfg = {
+  NULL,
   GPIOA,
   GPIOA_SPI1NSS,
   SPI_CR1_BR_2 | SPI_CR1_BR_1
@@ -56,8 +58,8 @@ static msg_t spi_thread_1(void *p) {
     palClearPad(IOPORT3, GPIOC_LED);    /* LED ON.                          */
     spiStart(&SPID1, &hs_spicfg);       /* Setup transfer parameters.       */
     spiSelect(&SPID1);                  /* Slave Select assertion.          */
-    spiExchange(&SPID1, 512,
-                txbuf, rxbuf);          /* Atomic transfer operations.      */
+    spiExchangeWait(&SPID1, 512,
+                    txbuf, rxbuf);      /* Atomic transfer operations.      */
     spiUnselect(&SPID1);                /* Slave Select de-assertion.       */
     spiReleaseBus(&SPID1);              /* Ownership release.               */
   }
@@ -76,8 +78,8 @@ static msg_t spi_thread_2(void *p) {
     palSetPad(IOPORT3, GPIOC_LED);      /* LED OFF.                         */
     spiStart(&SPID1, &ls_spicfg);       /* Setup transfer parameters.       */
     spiSelect(&SPID1);                  /* Slave Select assertion.          */
-    spiExchange(&SPID1, 512,
-                txbuf, rxbuf);          /* Atomic transfer operations.      */
+    spiExchangeWait(&SPID1, 512,
+                    txbuf, rxbuf);      /* Atomic transfer operations.      */
     spiUnselect(&SPID1);                /* Slave Select de-assertion.       */
     spiReleaseBus(&SPID1);              /* Ownership release.               */
   }
