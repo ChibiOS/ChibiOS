@@ -101,7 +101,7 @@ static FRESULT scan_files(char *path)
 /* Command line related.                                                     */
 /*===========================================================================*/
 
-#define SHELL_WA_SIZE   THD_WA_SIZE(1024)
+#define SHELL_WA_SIZE   THD_WA_SIZE(2048)
 #define TEST_WA_SIZE    THD_WA_SIZE(256)
 
 static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
