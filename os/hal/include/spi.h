@@ -188,6 +188,46 @@ typedef enum {
 
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
 /**
+ * @brief   Waits for operation completion.
+ * @details This function waits for the driver to complete the current
+ *          operation.
+ * @pre     An operation must be running while the function is invoked.
+ * @note    No more than one thread can wait on a SPI driver using
+ *          this function.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
+ */
+#define _spi_wait(spip) {                                                   \
+  chDbgAssert((spip)->spd_thread == NULL,                                   \
+              "_spi_wait(), #1", "already waiting");                        \
+  (spip)->spd_thread = chThdSelf();                                         \
+  chSchGoSleepS(THD_STATE_SUSPENDED);                                       \
+}
+
+/**
+ * @brief   Wakes up the waiting thread.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
+ */
+#define _spi_wakeup(spip) {                                                 \
+  chSysLockFromIsr();                                                       \
+  if ((spip)->spd_thread != NULL) {                                         \
+    Thread *tp = (spip)->spd_thread;                                        \
+    (spip)->spd_thread = NULL;                                              \
+    chSchReadyI(tp);                                                        \
+  }                                                                         \
+  chSysUnlockFromIsr();                                                     \
+}
+#else /* !SPI_USE_WAIT */
+#define _spi_wakeup(spip)
+#define _spi_wait(spip)
+#endif /* !SPI_USE_WAIT */
+
+/**
  * @brief   Common ISR code.
  * @details This code handles the portable part of the ISR code:
  *          - Callback invocation.
@@ -210,48 +250,9 @@ typedef enum {
   }                                                                         \
   else {                                                                    \
     spip->spd_state = SPI_READY;                                            \
-    chSysLockFromIsr();                                                     \
-    if ((spip)->spd_thread != NULL) {                                       \
-      Thread *tp = (spip)->spd_thread;                                      \
-      (spip)->spd_thread = NULL;                                            \
-      chSchReadyI(tp);                                                      \
-    }                                                                       \
-    chSysUnlockFromIsr();                                                   \
+    _spi_wakeup(spip);                                                      \
   }                                                                         \
 }
-
-/**
- * @brief   Waits for operation completion.
- * @details This function waits for the driver to complete the current
- *          operation.
- * @pre     An operation must be running while the function is invoked.
- * @note    No more than one thread can wait on a SPI driver using
- *          this function.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- *
- * @notapi
- */
-#define _spi_wait(spip) {                                                   \
-  chDbgAssert((spip)->spd_thread == NULL,                                   \
-              "_spi_wait(), #1", "already waiting");                        \
-  (spip)->spd_thread = chThdSelf();                                         \
-  chSchGoSleepS(THD_STATE_SUSPENDED);                                       \
-}
-#else /* !SPI_USE_WAIT */
-
-#define _spi_isr_code(spip) {                                               \
-  if (spip->spd_config->spc_endcb) {                                        \
-    spip->spd_state = SPI_COMPLETE;                                         \
-    spip->spd_config->spc_endcb(spip);                                      \
-    if (spip->spd_state == SPI_COMPLETE)                                    \
-      spip->spd_state = SPI_READY;                                          \
-  }                                                                         \
-  else                                                                      \
-    spip->spd_state = SPI_READY;                                            \
-}
-
-#endif /* !SPI_USE_WAIT */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

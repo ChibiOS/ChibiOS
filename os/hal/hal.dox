@@ -334,7 +334,8 @@
     stop -> stop [label="\nadcStop()"];
     ready -> active [label="\nadcStartConversion() (async)\nadcConvert() (sync)"];
     active -> ready [label="\nadcStopConversion()\nsync return"];
-    active -> complete [label="\nasync callback\n>acg_endcb<"];
+    active -> active [label="\nasync callback (half buffer)\nasync callback (full buffer circular)\n>acg_endcb<"];
+    active -> complete [label="\nasync callback (full buffer)\n>acg_endcb<"];
     complete -> active [label="\nadcStartConversionI()\nthen\ncallback return()"];
     complete -> ready [label="\nadcStopConversionI()\nthen\ncallback return"];
   }
@@ -359,7 +360,8 @@
     stop -> stop [label="\nadcStop()"];
     ready -> active [label="\nadcStartConversion() (async)\nadcConvert() (sync)"];
     active -> ready [label="\nadcStopConversion()\nsync return"];
-    active -> complete [label="\nasync callback\n>acg_endcb<"];
+    active -> active [label="\nasync callback (half buffer)\nasync callback (full buffer circular)\n>acg_endcb<"];
+    active -> complete [label="\nasync callback (full buffer)\n>acg_endcb<"];
     complete -> active [label="\nadcStartConversionI()\nthen\ncallback return()"];
     complete -> ready [label="\nadcStopConversionI()\nthen\ncallback return"];
   }
