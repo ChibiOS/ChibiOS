@@ -95,19 +95,15 @@
   adcStartConversion() (bug 3039890)(backported to 2.0.3).
 - NEW: New I2C driver model (not complete and no implementations yet).
 - NEW: New SPI driver model, the new model supports both synchronous and
-  asynchronous APIs and, in general, simplifies the implementation of the
-  low level driver. The API changed so be careful, for each old API there
-  is not a signature-equivalent one with a different name, as example the
-  old spiSend() now is named spiSendWait() because it is part of the
-  synchronous set.
+  asynchronous operations and, in general, simplifies the implementation of the
+  low level driver. The state diagram changed slightly changed so be careful.
+- NEW: New ADC driver model, the new model supports both synchronous and
+  asynchronous operations and, in general, simplifies the implementation of the
+  low level driver. The state diagram changed slightly changed so be careful.
 - NEW: Added pwmEnableChannelI() and pwmDisableChannelI() APIs to the PWM
   driver in order to allow channel reprogramming from within callbacks or
   interrupt handlers. The new APIs are implemented as macros so there is
   no footprint overhead.
-- NEW: Added adcStartConversionI() and adcStopConversionI() APIs to the ADC
-  driver in order to allow the driver control from within callbacks or
-  interrupt handlers. Made the adcWaitConversion() API optional, this allows
-  to save some space in Flash/RAM if it is not required.
 - NEW: Added driver fields and initialization hooks for the callback-based
   drivers. The hooks are named XXX_DRIVER_EXT_FIELDS and
   XXX_DRIVER_EXT_INIT_HOOK().
@@ -146,9 +142,6 @@
 - CHANGE: The event APIs chEvtPend() and chEvtClear() have been renamed
   to chEvtAddFlags() and chEvtClearFlags() for consistency and correct
   English. Changed the macro chEvtIsListening() in chEvtIsListeningI().
-- CHANGE: Added a parameter to the ADC driver callbacks, the pointer to the
-  driver itself. Now the callback is statically associated to the conversion
-  group, thanks to this the ADC function calls have one less parameter.
 - CHANGE: Added a parameter to the PWM driver callbacks, the pointer to the
   driver itself.
 - CHANGE: Added a parameter to the UART driver callbacks, the pointer to the

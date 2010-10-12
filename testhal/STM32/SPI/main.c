@@ -58,8 +58,8 @@ static msg_t spi_thread_1(void *p) {
     palClearPad(IOPORT3, GPIOC_LED);    /* LED ON.                          */
     spiStart(&SPID1, &hs_spicfg);       /* Setup transfer parameters.       */
     spiSelect(&SPID1);                  /* Slave Select assertion.          */
-    spiExchangeWait(&SPID1, 512,
-                    txbuf, rxbuf);      /* Atomic transfer operations.      */
+    spiExchange(&SPID1, 512,
+                txbuf, rxbuf);          /* Atomic transfer operations.      */
     spiUnselect(&SPID1);                /* Slave Select de-assertion.       */
     spiReleaseBus(&SPID1);              /* Ownership release.               */
   }
@@ -78,8 +78,8 @@ static msg_t spi_thread_2(void *p) {
     palSetPad(IOPORT3, GPIOC_LED);      /* LED OFF.                         */
     spiStart(&SPID1, &ls_spicfg);       /* Setup transfer parameters.       */
     spiSelect(&SPID1);                  /* Slave Select assertion.          */
-    spiExchangeWait(&SPID1, 512,
-                    txbuf, rxbuf);      /* Atomic transfer operations.      */
+    spiExchange(&SPID1, 512,
+                txbuf, rxbuf);          /* Atomic transfer operations.      */
     spiUnselect(&SPID1);                /* Slave Select de-assertion.       */
     spiReleaseBus(&SPID1);              /* Ownership release.               */
   }

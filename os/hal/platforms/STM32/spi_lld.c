@@ -90,19 +90,9 @@ static void serve_interrupt(SPIDriver *spip) {
   /* Stop everything.*/
   dma_stop(spip);
 
-  /* If a callback is defined then invokes it.*/
-  if (spip->spd_config->spc_endcb)
-    spip->spd_config->spc_endcb(spip);
-
-  /* Wakeup the waiting thread if any, note that the following macro is
-     empty if the SPI_USE_WAIT option is disabled.*/
-  _spi_wakeup(spip);
-
-  /* State change.*/
-  if (spip->spd_state == SPI_SYNC)
-    spip->spd_state = SPI_READY;
-  else
-    spip->spd_state = SPI_SELECTED;
+  /* Portable SPI ISR code defined in the high level driver, note, it is
+     a macro.*/
+  _spi_isr_code(spip);
 }
 
 /*===========================================================================*/

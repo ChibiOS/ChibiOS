@@ -39,10 +39,19 @@
 /*===========================================================================*/
 
 /**
- * @brief   Inclusion of the @p adcWaitConversion() function.
+ * @brief   Enables synchronous APIs.
+ * @note    Disabling this option saves both code and data space.
  */
 #if !defined(ADC_USE_WAIT) || defined(__DOXYGEN__)
 #define ADC_USE_WAIT                TRUE
+#endif
+
+/**
+ * @brief   Enables the @p adcAcquireBus() and @p adcReleaseBus() APIs.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(ADC_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define ADC_USE_MUTUAL_EXCLUSION    TRUE
 #endif
 
 /*===========================================================================*/
@@ -61,11 +70,11 @@
  * @brief   Driver state machine possible states.
  */
 typedef enum {
-  ADC_UNINIT = 0,                           /**< @brief Not initialized.    */
-  ADC_STOP = 1,                             /**< @brief Stopped.            */
-  ADC_READY = 2,                            /**< @brief Ready.              */
-  ADC_RUNNING = 3,                          /**< @brief Conversion running. */
-  ADC_COMPLETE = 4                          /**< @brief Conversion complete.*/
+  ADC_UNINIT = 0,                           /**< Not initialized.           */
+  ADC_STOP = 1,                             /**< Stopped.                   */
+  ADC_READY = 2,                            /**< Ready.                     */
+  ADC_ACTIVE = 3,                           /**< Converting.                */
+  ADC_COMPLETE = 4                          /**< Conversion complete.       */
 } adcstate_t;
 
 #include "adc_lld.h"
@@ -73,6 +82,49 @@ typedef enum {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+#if ADC_USE_WAIT || defined(__DOXYGEN__)
+/**
+ * @brief   Resumes a thread waiting for a conversion completion.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
+ */
+#define _adc_reset_i(adcp) {                                                \
+  if ((adcp)->ad_thread != NULL) {                                          \
+    Thread *tp = (adcp)->ad_thread;                                         \
+    (adcp)->ad_thread = NULL;                                               \
+    tp->p_u.rdymsg  = RDY_RESET;                                            \
+    chSchReadyI(tp);                                                        \
+  }                                                                         \
+}
+
+/**
+ * @brief   Resumes a thread waiting for a conversion completion.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
+ */
+#define _adc_reset_s(adcp) {                                                \
+  if ((adcp)->ad_thread != NULL) {                                          \
+    Thread *tp = (adcp)->ad_thread;                                         \
+    (adcp)->ad_thread = NULL;                                               \
+    chSchWakeupS(tp, RDY_RESET);                                            \
+  }                                                                         \
+}
+
+#else /* !ADC_USE_WAIT */
+
+#define _adc_reset_i(adcp)
+
+#define _adc_reset_s(adcp)
+
+#define _adc_isr_code(adcp) {                                               \
+}
+
+#endif /* !ADC_USE_WAIT */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -85,19 +137,26 @@ extern "C" {
   void adcObjectInit(ADCDriver *adcp);
   void adcStart(ADCDriver *adcp, const ADCConfig *config);
   void adcStop(ADCDriver *adcp);
-  bool_t adcStartConversion(ADCDriver *adcp,
+  void adcStartConversion(ADCDriver *adcp,
+                           const ADCConversionGroup *grpp,
+                           adcsample_t *samples,
+                           size_t depth);
+  void adcStartConversionI(ADCDriver *adcp,
                             const ADCConversionGroup *grpp,
                             adcsample_t *samples,
                             size_t depth);
-  bool_t adcStartConversionI(ADCDriver *adcp,
-                             const ADCConversionGroup *grpp,
-                             adcsample_t *samples,
-                             size_t depth);
   void adcStopConversion(ADCDriver *adcp);
   void adcStopConversionI(ADCDriver *adcp);
 #if ADC_USE_WAIT
-  msg_t adcWaitConversion(ADCDriver *adcp, systime_t timeout);
+  msg_t adcConvert(ADCDriver *adcp,
+                   const ADCConversionGroup *grpp,
+                   adcsample_t *samples,
+                   size_t depth);
 #endif
+#if ADC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+  void adcAcquireBus(ADCDriver *adcp);
+  void adcReleaseBus(ADCDriver *adcp);
+#endif /* ADC_USE_MUTUAL_EXCLUSION */
 #ifdef __cplusplus
 }
 #endif

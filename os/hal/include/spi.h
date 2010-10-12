@@ -39,7 +39,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   Enables the "wait" APIs.
+ * @brief   Enables synchronous APIs.
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(SPI_USE_WAIT) || defined(__DOXYGEN__)
@@ -70,12 +70,11 @@
  * @brief   Driver state machine possible states.
  */
 typedef enum {
-  SPI_UNINIT = 0,                   /**< @brief Not initialized.            */
-  SPI_STOP = 1,                     /**< @brief Stopped.                    */
-  SPI_READY = 2,                    /**< @brief Ready.                      */
-  SPI_SYNC= 3,                      /**< @brief Synchronizing.              */
-  SPI_SELECTED = 4,                 /**< @brief Slave selected.             */
-  SPI_ACTIVE = 5                    /**< @brief Exchanging data.            */
+  SPI_UNINIT = 0,                   /**< Not initialized.                   */
+  SPI_STOP = 1,                     /**< Stopped.                           */
+  SPI_READY = 2,                    /**< Ready.                             */
+  SPI_ACTIVE = 3,                   /**< Exchanging data.                   */
+  SPI_COMPLETE = 4                  /**< Asynchronous operation complete.   */
 } spistate_t;
 
 #include "spi_lld.h"
@@ -89,10 +88,9 @@ typedef enum {
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  *
- * @api
+ * @iclass
  */
 #define spiSelectI(spip) {                                                  \
-  (spip)->spd_state = SPI_SELECTED;                                         \
   spi_lld_select(spip);                                                     \
 }
 
@@ -102,32 +100,10 @@ typedef enum {
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  *
- * @api
+ * @iclass
  */
 #define spiUnselectI(spip) {                                                \
-  (spip)->spd_state = SPI_READY;                                            \
   spi_lld_unselect(spip);                                                   \
-}
-
-/**
- * @brief   Emits a train of clock pulses on the SPI bus.
- * @details This asynchronous function starts the emission of a train of
- *          clock pulses without asserting any slave.
- * @note    This functionality is not usually required by the SPI protocol
- *          but it is required by initialization procedure of MMC/SD cards
- *          in SPI mode.
- * @post    At the end of the operation the configured callback is invoked.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to be clocked. The number of pulses
- *                      is equal to the number of words multiplied to the
- *                      configured word size in bits.
- *
- * @api
- */
-#define spiSynchronizeI(spip, n) {                                          \
-  (spip)->spd_state = SPI_SYNC;                                             \
-  spi_lld_ignore(spip, n);                                                  \
 }
 
 /**
@@ -141,9 +117,9 @@ typedef enum {
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
  *
- * @api
+ * @iclass
  */
-#define spiIgnoreI(spip, n) {                                               \
+#define spiStartIgnoreI(spip, n) {                                          \
   (spip)->spd_state = SPI_ACTIVE;                                           \
   spi_lld_ignore(spip, n);                                                  \
 }
@@ -163,9 +139,9 @@ typedef enum {
  * @param[in] txbuf     the pointer to the transmit buffer
  * @param[out] rxbuf    the pointer to the receive buffer
  *
- * @api
+ * @iclass
  */
-#define spiExchangeI(spip, n, txbuf, rxbuf) {                               \
+#define spiStartExchangeI(spip, n, txbuf, rxbuf) {                          \
   (spip)->spd_state = SPI_ACTIVE;                                           \
   spi_lld_exchange(spip, n, txbuf, rxbuf);                                  \
 }
@@ -183,9 +159,9 @@ typedef enum {
  * @param[in] n         number of words to send
  * @param[in] txbuf     the pointer to the transmit buffer
  *
- * @api
+ * @iclass
  */
-#define spiSendI(spip, n, txbuf) {                                          \
+#define spiStartSendI(spip, n, txbuf) {                                     \
   (spip)->spd_state = SPI_ACTIVE;                                           \
   spi_lld_send(spip, n, txbuf);                                             \
 }
@@ -203,16 +179,21 @@ typedef enum {
  * @param[in] n         number of words to receive
  * @param[out] rxbuf    the pointer to the receive buffer
  *
- * @api
+ * @iclass
  */
-#define spiReceiveI(spip, n, rxbuf) {                                       \
+#define spiStartReceiveI(spip, n, rxbuf) {                                  \
   (spip)->spd_state = SPI_ACTIVE;                                           \
   spi_lld_receive(spip, n, rxbuf);                                          \
 }
 
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
 /**
- * @brief   Awakens the thread waiting for operation completion, if any.
+ * @brief   Common ISR code.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          - Waiting thread wakeup, if any.
+ *          - Driver state transitions.
+ *          .
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.
  *
@@ -220,14 +201,23 @@ typedef enum {
  *
  * @notapi
  */
-#define _spi_wakeup(spip) {                                                 \
-  chSysLockFromIsr();                                                       \
-  if ((spip)->spd_thread != NULL) {                                         \
-    Thread *tp = (spip)->spd_thread;                                        \
-    (spip)->spd_thread = NULL;                                              \
-    chSchReadyI(tp);                                                        \
+#define _spi_isr_code(spip) {                                               \
+  if (spip->spd_config->spc_endcb) {                                        \
+    spip->spd_state = SPI_COMPLETE;                                         \
+    spip->spd_config->spc_endcb(spip);                                      \
+    if (spip->spd_state == SPI_COMPLETE)                                    \
+      spip->spd_state = SPI_READY;                                          \
   }                                                                         \
-  chSysUnlockFromIsr();                                                     \
+  else {                                                                    \
+    spip->spd_state = SPI_READY;                                            \
+    chSysLockFromIsr();                                                     \
+    if ((spip)->spd_thread != NULL) {                                       \
+      Thread *tp = (spip)->spd_thread;                                      \
+      (spip)->spd_thread = NULL;                                            \
+      chSchReadyI(tp);                                                      \
+    }                                                                       \
+    chSysUnlockFromIsr();                                                   \
+  }                                                                         \
 }
 
 /**
@@ -235,24 +225,31 @@ typedef enum {
  * @details This function waits for the driver to complete the current
  *          operation.
  * @pre     An operation must be running while the function is invoked.
- * @post    On exit the SPI driver is ready to accept more commands.
  * @note    No more than one thread can wait on a SPI driver using
  *          this function.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  *
- * @sclass
+ * @notapi
  */
-#define spiWaitS(spip) {                                                    \
+#define _spi_wait(spip) {                                                   \
   chDbgAssert((spip)->spd_thread == NULL,                                   \
-              "spiWaitS(), #1", "already waiting");                         \
+              "_spi_wait(), #1", "already waiting");                        \
   (spip)->spd_thread = chThdSelf();                                         \
   chSchGoSleepS(THD_STATE_SUSPENDED);                                       \
 }
 #else /* !SPI_USE_WAIT */
 
-/* No wakeup when wait functions are disabled.*/
-#define _spi_wakeup(spip)
+#define _spi_isr_code(spip) {                                               \
+  if (spip->spd_config->spc_endcb) {                                        \
+    spip->spd_state = SPI_COMPLETE;                                         \
+    spip->spd_config->spc_endcb(spip);                                      \
+    if (spip->spd_state == SPI_COMPLETE)                                    \
+      spip->spd_state = SPI_READY;                                          \
+  }                                                                         \
+  else                                                                      \
+    spip->spd_state = SPI_READY;                                            \
+}
 
 #endif /* !SPI_USE_WAIT */
 
@@ -269,18 +266,16 @@ extern "C" {
   void spiStop(SPIDriver *spip);
   void spiSelect(SPIDriver *spip);
   void spiUnselect(SPIDriver *spip);
-  void spiSynchronize(SPIDriver *spip, size_t n);
+  void spiStartIgnore(SPIDriver *spip, size_t n);
+  void spiStartExchange(SPIDriver *spip, size_t n,
+                        const void *txbuf, void *rxbuf);
+  void spiStartSend(SPIDriver *spip, size_t n, const void *txbuf);
+  void spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf);
+#if SPI_USE_WAIT
   void spiIgnore(SPIDriver *spip, size_t n);
   void spiExchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf);
   void spiSend(SPIDriver *spip, size_t n, const void *txbuf);
   void spiReceive(SPIDriver *spip, size_t n, void *rxbuf);
-#if SPI_USE_WAIT
-  void spiWait(SPIDriver *spip);
-  void spiSynchronizeWait(SPIDriver *spip, size_t n);
-  void spiIgnoreWait(SPIDriver *spip, size_t n);
-  void spiExchangeWait(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf);
-  void spiSendWait(SPIDriver *spip, size_t n, const void *txbuf);
-  void spiReceiveWait(SPIDriver *spip, size_t n, void *rxbuf);
 #endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION
   void spiAcquireBus(SPIDriver *spip);

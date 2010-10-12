@@ -67,6 +67,9 @@ typedef void (*spicallback_t)(SPIDriver *spip);
 typedef struct {
   /**
    * @brief Operation complete callback.
+   * @note  In order to use synchronous functions this field must be set to
+   *        @p NULL, callbacks and synchronous operations are mutually
+   *        exclusive.
    */
   spicallback_t         spc_endcb;
   /* End of the mandatory fields.*/
@@ -82,6 +85,10 @@ struct SPIDriver {
    * @brief Driver state.
    */
   spistate_t            spd_state;
+  /**
+   * @brief Current configuration data.
+   */
+  const SPIConfig       *spd_config;
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
   /**
    * @brief Waiting thread.
@@ -98,10 +105,6 @@ struct SPIDriver {
   Semaphore             spd_semaphore;
 #endif
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
-  /**
-   * @brief Current configuration data.
-   */
-  const SPIConfig       *spd_config;
 #if defined(SPI_DRIVER_EXT_FIELDS)
   SPI_DRIVER_EXT_FIELDS
 #endif

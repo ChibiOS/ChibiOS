@@ -93,8 +93,11 @@ typedef struct {
   adc_channels_num_t        acg_num_channels;
   /**
    * @brief Callback function associated to the group or @p NULL.
+   * @note  In order to use synchronous functions this field must be set to
+   *        @p NULL, callbacks and synchronous operations are mutually
+   *        exclusive.
    */
-  adccallback_t             acg_callback;
+  adccallback_t             acg_endcb;
   /* End of the mandatory fields.*/
 } ADCConversionGroup;
 
@@ -136,10 +139,20 @@ struct ADCDriver {
   const ADCConversionGroup  *ad_grpp;
 #if ADC_USE_WAIT || defined(__DOXYGEN__)
   /**
-   * @brief Synchronization semaphore.
+   * @brief Waiting thread.
    */
-  Semaphore                 ad_sem;
+  Thread                    *ad_thread;
+#endif /* SPI_USE_WAIT */
+#if ADC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+  /**
+   * @brief Mutex protecting the peripheral.
+   */
+  Mutex                     ad_mutex;
+#elif CH_USE_SEMAPHORES
+  Semaphore                 ad_semaphore;
 #endif
+#endif /* ADC_USE_MUTUAL_EXCLUSION */
 #if defined(ADC_DRIVER_EXT_FIELDS)
   ADC_DRIVER_EXT_FIELDS
 #endif
