@@ -115,16 +115,105 @@ typedef enum {
   }                                                                         \
 }
 
-#else /* !ADC_USE_WAIT */
-
-#define _adc_reset_i(adcp)
-
-#define _adc_reset_s(adcp)
-
-#define _adc_isr_code(adcp) {                                               \
+/**
+ * @brief   Wakes up the waiting thread.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
+ */
+#define _adc_wakeup_i(adcp) {                                               \
+  chSysLockFromIsr();                                                       \
+  (adcp)->ad_grpp  = NULL;                                                  \
+  if ((adcp)->ad_thread != NULL) {                                          \
+    Thread *tp = (adcp)->ad_thread;                                         \
+    (adcp)->ad_thread = NULL;                                               \
+    tp->p_u.rdymsg = RDY_OK;                                                \
+    chSchReadyI(tp);                                                        \
+  }                                                                         \
+  chSysUnlockFromIsr();                                                     \
 }
 
+#else /* !ADC_USE_WAIT */
+#define _adc_reset_i(adcp)
+#define _adc_reset_s(adcp)
+#define _adc_wakeup(adcp)
 #endif /* !ADC_USE_WAIT */
+
+/**
+ * @brief   Common ISR code, half buffer full.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          .
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
+ */
+#define _adc_isr_half_code(adcp) {                                          \
+  if ((adcp)->ad_grpp->acg_endcb != NULL) {                                 \
+    (adcp)->ad_grpp->acg_endcb(adcp, (adcp)->ad_samples,                    \
+                               (adcp)->ad_depth / 2);                       \
+  }                                                                         \
+}
+
+/**
+ * @brief   Common ISR code, full buffer full.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          - Waiting thread wakeup, if any.
+ *          - Driver state transitions.
+ *          .
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
+ */
+#define _adc_isr_full_code(adcp) {                                          \
+  if ((adcp)->ad_grpp->acg_circular) {                                      \
+    /* Callback handling.*/                                                 \
+    if ((adcp)->ad_grpp->acg_endcb != NULL) {                               \
+      if ((adcp)->ad_depth > 1) {                                           \
+        /* Invokes the callback passing the 2nd half of the buffer.*/       \
+        size_t half = (adcp)->ad_depth / 2;                                 \
+        (adcp)->ad_grpp->acg_endcb(adcp, (adcp)->ad_samples + half, half);  \
+      }                                                                     \
+      else {                                                                \
+        /* Invokes the callback passing the whole buffer.*/                 \
+        (adcp)->ad_grpp->acg_endcb(adcp, (adcp)->ad_samples,                \
+                                   (adcp)->ad_depth);                       \
+      }                                                                     \
+    }                                                                       \
+  }                                                                         \
+  else {                                                                    \
+    (adcp)->ad_grpp = NULL;                                                 \
+    /* End conversion.*/                                                    \
+    adc_lld_stop_conversion(adcp);                                          \
+    if ((adcp)->ad_grpp->acg_endcb == NULL) {                               \
+      (adcp)->ad_state = ADC_READY;                                         \
+      _adc_wakeup_i(adcp);                                                  \
+    }                                                                       \
+    else {                                                                  \
+      (adcp)->ad_state = ADC_COMPLETE;                                      \
+      if ((adcp)->ad_depth > 1) {                                           \
+        /* Invokes the callback passing the 2nd half of the buffer.*/       \
+        size_t half = (adcp)->ad_depth / 2;                                 \
+        (adcp)->ad_grpp->acg_endcb(adcp, (adcp)->ad_samples + half, half);  \
+      }                                                                     \
+      else {                                                                \
+        /* Invokes the callback passing the whole buffer.*/                 \
+        (adcp)->ad_grpp->acg_endcb(adcp, (adcp)->ad_samples,                \
+                                   (adcp)->ad_depth);                       \
+      }                                                                     \
+      if ((adcp)->ad_state == ADC_COMPLETE)                                 \
+        (adcp)->ad_state = ADC_READY;                                       \
+    }                                                                       \
+  }                                                                         \
+}
 
 /*===========================================================================*/
 /* External declarations.                                                    */

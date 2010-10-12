@@ -64,47 +64,17 @@ CH_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
 
   isr = STM32_DMA1->ISR;
   dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_1);
-  if ((isr & DMA_ISR_HTIF1) != 0) {
-    /* Half transfer processing.*/
-    if (ADCD1.ad_grpp->acg_endcb != NULL) {
-      /* Invokes the callback passing the 1st half of the buffer.*/
-      ADCD1.ad_grpp->acg_endcb(&ADCD1, ADCD1.ad_samples, ADCD1.ad_depth / 2);
-    }
-  }
-  if ((isr & DMA_ISR_TCIF1) != 0) {
-    /* Transfer complete processing.*/
-    if (!ADCD1.ad_grpp->acg_circular) {
-      /* End conversion.*/
-      adc_lld_stop_conversion(&ADCD1);
-      ADCD1.ad_grpp  = NULL;
-      ADCD1.ad_state = ADC_COMPLETE;
-#if ADC_USE_WAIT
-      chSysLockFromIsr();
-      if (ADCD1.ad_thread != NULL) {
-        Thread *tp = ADCD1.ad_thread;
-        ADCD1.ad_thread = NULL;
-        tp->p_u.rdymsg = RDY_OK;
-        chSchReadyI(tp);
-      }
-      chSysUnlockFromIsr();
-#endif
-    }
-    /* Callback handling.*/
-    if (ADCD1.ad_grpp->acg_endcb != NULL) {
-      if (ADCD1.ad_depth > 1) {
-        /* Invokes the callback passing the 2nd half of the buffer.*/
-        size_t half = ADCD1.ad_depth / 2;
-        ADCD1.ad_grpp->acg_endcb(&ADCD1, ADCD1.ad_samples + half, half);
-      }
-      else {
-        /* Invokes the callback passing the whole buffer.*/
-        ADCD1.ad_grpp->acg_endcb(&ADCD1, ADCD1.ad_samples, ADCD1.ad_depth);
-      }
-    }
-  }
   if ((isr & DMA_ISR_TEIF1) != 0) {
     /* DMA error processing.*/
     STM32_ADC1_DMA_ERROR_HOOK();
+  }
+  if ((isr & DMA_ISR_HTIF1) != 0) {
+    /* Half transfer processing.*/
+    _adc_isr_half_code(&ADCD1);
+  }
+  if ((isr & DMA_ISR_TCIF1) != 0) {
+    /* Transfer complete processing.*/
+    _adc_isr_full_code(&ADCD1);
   }
 
   CH_IRQ_EPILOGUE();
