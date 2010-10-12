@@ -29,7 +29,6 @@
 static const ADCConfig adccfg = {};
 
 static adcsample_t samples[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
-static Thread *adctp;
 
 /*
  * ADC streaming callback.
@@ -65,20 +64,6 @@ static const ADCConversionGroup adcgrpcfg = {
   ADC_SQR3_SQ3_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ2_N(ADC_CHANNEL_IN10) |
   ADC_SQR3_SQ1_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ0_N(ADC_CHANNEL_IN10)
 };
-
-/*
- * ADC continuous conversion thread.
- */
-static WORKING_AREA(adc_continuous_wa, 256);
-static msg_t adc_continuous_thread(void *p){
-
-  (void)p;
-  adcStart(&ADCD1, &adccfg);
-  adcStartConversion(&ADCD1, &adcgrpcfg, samples, ADC_GRP1_BUF_DEPTH);
-  adcWaitConversion(&ADCD1, TIME_INFINITE);
-  adcStop(&ADCD1);
-  return 0;
-}
 
 /*
  * Red LEDs blinker thread, times are in milliseconds.
@@ -118,15 +103,17 @@ int main(int argc, char **argv) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
-   * Creates the ADC continuous conversion test thread.
+   * Starts an ADC continuous conversion.
    */
-  adctp = chThdCreateStatic(adc_continuous_wa, sizeof(adc_continuous_wa),
-                            NORMALPRIO + 10, adc_continuous_thread, NULL);
+  adcStart(&ADCD1, &adccfg);
+  adcStartConversion(&ADCD1, &adcgrpcfg, samples, ADC_GRP1_BUF_DEPTH);
 
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
   while (TRUE) {
+    if (palReadPad(IOPORT1, GPIOA_BUTTON))
+      adcStopConversion(&ADCD1);
     chThdSleepMilliseconds(500);
   }
   return 0;

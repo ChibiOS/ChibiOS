@@ -268,8 +268,7 @@ msg_t adcConvert(ADCDriver *adcp,
   msg_t msg;
 
   chSysLock();
-  chDbgAssert(adcp->ad_config->ac_endcb == NULL,
-              "adcConvert(), #1", "has callback");
+  chDbgAssert(grpp->acg_endcb == NULL, "adcConvert(), #1", "has callback");
   adcStartConversionI(adcp, grpp, samples, depth);
   (adcp)->ad_thread = chThdSelf();
   chSchGoSleepS(THD_STATE_SUSPENDED);
