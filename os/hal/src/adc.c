@@ -176,7 +176,8 @@ void adcStartConversionI(ADCDriver *adcp,
              ((depth == 1) || ((depth & 1) == 0)),
              "adcStartConversionI");
 
-  chDbgAssert(adcp->ad_state == ADC_READY,
+  chDbgAssert((adcp->ad_state == ADC_READY) ||
+              (adcp->ad_state == ADC_COMPLETE),
               "adcStartConversionI(), #1", "not ready");
   adcp->ad_samples  = samples;
   adcp->ad_depth    = depth;
@@ -201,8 +202,7 @@ void adcStopConversion(ADCDriver *adcp) {
 
   chSysLock();
   chDbgAssert((adcp->ad_state == ADC_READY) ||
-              (adcp->ad_state == ADC_ACTIVE) ||
-              (adcp->ad_state == ADC_COMPLETE),
+              (adcp->ad_state == ADC_ACTIVE),
               "adcStopConversion(), #1", "invalid state");
   if (adcp->ad_state != ADC_READY) {
     adc_lld_stop_conversion(adcp);

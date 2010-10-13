@@ -54,8 +54,8 @@ static PWMConfig pwmcfg = {
    {PWM_OUTPUT_DISABLED, NULL},
    {PWM_OUTPUT_DISABLED, NULL}
   },
-  (uint16_t)(STM32_TIMCLK2 / 10000 - 1),    /* 100 uS clock.*/
-  (uint16_t)(10000 - 1),                    /* Period 1S.*/
+  PWM_COMPUTE_PSC(STM32_TIMCLK2, 100000),       /* 100000 nS clock cycle.   */
+  PWM_COMPUTE_ARR(100000, 1000000000),          /* PWM period 1S.           */
   0
 };
 
@@ -81,15 +81,15 @@ int main(int argc, char **argv) {
   chThdSleepMilliseconds(2000);
 
   /*
-   * Starts the channel 0 with 50% duty cycle.
+   * Starts the channel 0 using 50% duty cycle.
    */
-  pwmEnableChannel(&PWMD1, 0, 4999); /* 50% */
+  pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 5000));
   chThdSleepMilliseconds(5000);
 
   /*
-   * Changes the channel 0 with 75% duty cycle.
+   * Changes the channel 0 to 75% duty cycle.
    */
-  pwmEnableChannel(&PWMD1, 0, 7499); /* 75% */
+  pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 7500));
   chThdSleepMilliseconds(5000);
 
   /*

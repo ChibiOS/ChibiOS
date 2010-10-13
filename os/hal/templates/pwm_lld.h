@@ -74,6 +74,25 @@ typedef struct PWMDriver PWMDriver;
 typedef void (*pwmcallback_t)(PWMDriver *pwmp);
 
 /**
+ * @brief   PWM driver channel configuration structure.
+ * @note    Some architectures may not be able to support the channel mode
+ *          or the callback, in this case the fields are ignored.
+ */
+typedef struct {
+  /**
+   * @brief Channel active logic level.
+   */
+  pwmmode_t                 pcc_mode;
+  /**
+   * @brief Channel callback pointer.
+   * @note  This callback is invoked on the channel compare event. If set to
+   *        @p NULL then the callback is disabled.
+   */
+  pwmcallback_t             pcc_callback;
+  /* End of the mandatory fields.*/
+} PWMChannelConfig;
+
+/**
  * @brief   Driver configuration structure.
  * @note    Implementations may extend this structure to contain more,
  *          architecture dependent, fields.
@@ -115,6 +134,36 @@ struct PWMDriver {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Converts from degrees to pulse width.
+ * @note    Be careful with rounding errors, this is integer math not magic.
+ *          You can specify hundredths of degrees but make sure you have the
+ *          proper hardware resolution by carefully choosing the clock source
+ *          and prescaler settings, see @p PWM_COMPUTE_PSC.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] degrees   degrees as an integer between 0 and 36000
+ * @return              The pulse width to be passed to @p pwmEnableChannel().
+ *
+ * @api
+ */
+#define PWM_DEGREES_TO_WIDTH(pwpm, degrees) 0
+
+/**
+ * @brief   Converts from percentage to pulse width.
+ * @note    Be careful with rounding errors, this is integer math not magic.
+ *          You can specify tenths of thousandth but make sure you have the
+ *          proper hardware resolution by carefully choosing the clock source
+ *          and prescaler settings, see @p PWM_COMPUTE_PSC.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] percentage percentage as an integer between 0 and 10000
+ * @return              The pulse width to be passed to @p pwmEnableChannel().
+ *
+ * @api
+ */
+#define PWM_PERCENTAGE_TO_WIDTH(pwpm, percentage) 0
 
 /*===========================================================================*/
 /* External declarations.                                                    */

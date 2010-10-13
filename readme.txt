@@ -100,10 +100,12 @@
 - NEW: New ADC driver model, the new model supports both synchronous and
   asynchronous operations and, in general, simplifies the implementation of the
   low level driver. The state diagram changed slightly changed so be careful.
-- NEW: Added pwmEnableChannelI() and pwmDisableChannelI() APIs to the PWM
-  driver in order to allow channel reprogramming from within callbacks or
-  interrupt handlers. The new APIs are implemented as macros so there is
-  no footprint overhead.
+- NEW: Improved PWM driver model, added several macros that helps to setup
+  configuration structures and to specify pulse widths also as percentages or
+  degrees using a fixed point notation. Added new pwmEnableChannelI() and
+  pwmDisableChannelI() APIs in order to allow channel reprogramming from
+  within callbacks or interrupt handlers, the new APIs are implemented as
+  macros so there is no footprint overhead.
 - NEW: Added driver fields and initialization hooks for the callback-based
   drivers. The hooks are named XXX_DRIVER_EXT_FIELDS and
   XXX_DRIVER_EXT_INIT_HOOK().

@@ -105,6 +105,8 @@ void spiStart(SPIDriver *spip, const SPIConfig *config) {
 
 /**
  * @brief Deactivates the SPI peripheral.
+ * @note  Deactivating the peripheral also enforces a release of the slave
+ *        select line.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  *
@@ -117,6 +119,7 @@ void spiStop(SPIDriver *spip) {
   chSysLock();
   chDbgAssert((spip->spd_state == SPI_STOP) || (spip->spd_state == SPI_READY),
               "spiStop(), #1", "invalid state");
+  spi_lld_unselect(spip);
   spi_lld_stop(spip);
   spip->spd_state = SPI_STOP;
   chSysUnlock();

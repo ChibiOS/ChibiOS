@@ -149,7 +149,6 @@ typedef void (*pwmcallback_t)(PWMDriver *pwmp);
 
 /**
  * @brief   PWM driver channel configuration structure.
- * @note    It could be empty on some architectures.
  */
 typedef struct {
   /**
@@ -224,6 +223,72 @@ struct PWMDriver {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   PWM clock prescaler initialization utility.
+ * @note    The real clock value is rounded to the lower valid value, please
+ *          make sure that the source clock frequency is a multiple of the
+ *          requested PWM clock frequency.
+ * @note    The calculated value must fit into an unsigned 16 bits integer.
+ *
+ * @param[in] clksrc    clock source frequency, depending on the target timer
+ *                      cell it can be one of:
+ *                      - STM32_TIMCLK1
+ *                      - STM32_TIMCLK2
+ *                      .
+ *                      Please refer to the STM32 HAL driver documentation
+ *                      and/or the STM32 Reference Manual for the right clock
+ *                      source.
+ * @param[in] nsec      PWM clock cycle time in nanoseconds
+ * @return              The value to be stored in the @p pc_psc field of the
+ *                      @p PWMConfig structure.
+ */
+#define PWM_COMPUTE_PSC(clksrc, nsec)                                       \
+  ((uint16_t)(((clksrc) / (1000000000 / (nsec))) - 1))
+
+/**
+ * @brief   PWM cycle period initialization utility.
+ * @note    The calculated value must fit into an unsigned 16 bits integer.
+ *
+ * @param[in] clkperiod PWM clock period in nanoseconds
+ * @param[in] pwmperiod PWM cycle period in nanoseconds
+ */
+#define PWM_COMPUTE_ARR(clkperiod, pwmperiod)                               \
+  ((uint16_t)(((clkperiod) / (1000000000 / (pwmperiod))) - 1))
+
+/**
+ * @brief   Converts from degrees to pulse width.
+ * @note    Be careful with rounding errors, this is integer math not magic.
+ *          You can specify hundredths of degrees but make sure you have the
+ *          proper hardware resolution by carefully choosing the clock source
+ *          and prescaler settings, see @p PWM_COMPUTE_PSC.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] degrees   degrees as an integer between 0 and 36000
+ * @return              The pulse width to be passed to @p pwmEnableChannel().
+ *
+ * @api
+ */
+#define PWM_DEGREES_TO_WIDTH(pwpm, degrees)                                 \
+  ((uint16_t)(((((uint32_t)(pwpm)->pd_config->pc_arr + 1UL) *               \
+                 (uint32_t)(degrees)) / 36000UL) - 1UL))
+
+/**
+ * @brief   Converts from percentage to pulse width.
+ * @note    Be careful with rounding errors, this is integer math not magic.
+ *          You can specify tenths of thousandth but make sure you have the
+ *          proper hardware resolution by carefully choosing the clock source
+ *          and prescaler settings, see @p PWM_COMPUTE_PSC.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] percentage percentage as an integer between 0 and 10000
+ * @return              The pulse width to be passed to @p pwmEnableChannel().
+ *
+ * @api
+ */
+#define PWM_PERCENTAGE_TO_WIDTH(pwpm, percentage)                           \
+  ((uint16_t)(((((uint32_t)(pwpm)->pd_config->pc_arr + 1UL) *               \
+                 (uint32_t)(percentage)) / 10000UL) - 1UL))
 
 /*===========================================================================*/
 /* External declarations.                                                    */

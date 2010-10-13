@@ -337,7 +337,7 @@
     active -> active [label="\nasync callback (half buffer)\nasync callback (full buffer circular)\n>acg_endcb<"];
     active -> complete [label="\nasync callback (full buffer)\n>acg_endcb<"];
     complete -> active [label="\nadcStartConversionI()\nthen\ncallback return()"];
-    complete -> ready [label="\nadcStopConversionI()\nthen\ncallback return"];
+    complete -> ready [label="\ncallback return"];
   }
  * @enddot
  * @else
@@ -363,7 +363,7 @@
     active -> active [label="\nasync callback (half buffer)\nasync callback (full buffer circular)\n>acg_endcb<"];
     active -> complete [label="\nasync callback (full buffer)\n>acg_endcb<"];
     complete -> active [label="\nadcStartConversionI()\nthen\ncallback return()"];
-    complete -> ready [label="\nadcStopConversionI()\nthen\ncallback return"];
+    complete -> ready [label="\ncallback return"];
   }
  * @enddot
  * @endif
@@ -373,7 +373,7 @@
  * the operational details follows.
  *
  * @subsection adc_2_1 ADC Conversion Groups
- * The ADC Conversion Group is the objects that specifies a physical
+ * The @p ADCConversionGroup is the objects that specifies a physical
  * conversion operation. This structure contains some standard fields and
  * several implementation-dependent fields.<br>
  * The standard fields define the CG mode, the number of channels belonging
@@ -522,6 +522,23 @@
     ready -> ready [label="pwmEnableChannel()\npwmDisableChannel()"];
   }
  * @enddot
+ *
+ * @section pwm_1 PWM Operations.
+ * This driver abstracts a generic PWM times composed of:
+ * - A main up counter.
+ * - A comparator register that resets the main counter to zero when the limit
+ *   is reached. An optional callback can be generated when this happens.
+ * - An array of @p PWM_CHANNELS PWM channels, each channel has an output,
+ *   a comparator and is able to invoke an optional callback when a comparator
+ *   match with the main counter happens.
+ * .
+ * A PWM channel output can be in two different states:
+ * - <b>IDLE</b>, when the channel is disabled or after a match occurred.
+ * - <b>ACTIVE</b>, when the channel is enabled and a match didn't occur yet
+ *   in the current PWM cycle.
+ * .
+ * Note that the two states can be associated to both logical zero or one in
+ * the @p PWMChannelConfig structure.
  *
  * @ingroup IO
  */
