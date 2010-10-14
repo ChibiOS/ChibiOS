@@ -38,7 +38,7 @@
  * - <b>Normal</b>. This is the state the system has after executing
  *   @p chSysInit(). Interrupts are enabled.
  * - <b>Suspended</b>. Interrupts are disabled.
- * - <b>Disabled</b>. Interrupts are enabled. This state is equivalent to the
+ * - <b>Disabled</b>. Interrupts are disabled. This state is equivalent to the
  *   Suspended state because there are no fast interrupts in this architecture.
  * - <b>Sleep</b>. Implemented with "wait" instruction insertion in the idle
  *   loop.
