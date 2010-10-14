@@ -440,44 +440,54 @@
   digraph example {
     size="5, 7";
     rankdir="LR";
-    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.8", height="0.8"];
+    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.9", height="0.9"];
     edge [fontname=Helvetica, fontsize=8];
-    uninit [label="CAN_UNINIT", style="bold"];
+
     stop  [label="CAN_STOP\nLow Power"];
+    uninit [label="CAN_UNINIT", style="bold"];
+    starting [label="CAN_STARTING\nInitializing"];
     ready [label="CAN_READY\nClock Enabled"];
     sleep [label="CAN_SLEEP\nLow Power"];
-    uninit -> stop [label="canInit()"];
-    stop -> stop [label="canStop()"];
-    stop -> ready [label="canStart()"];
-    ready -> stop [label="canStop()"];
-    ready -> ready [label="canReceive()\ncanTransmit()"];
-    ready -> ready [label="canStart()"];
-    ready -> sleep [label="canSleep()"];
-    sleep -> sleep [label="canSleep()"];
-    sleep -> ready [label="canWakeup()"];
-    sleep -> ready [label="wakeup event"];
+
+    uninit -> stop [label=" canInit()", constraint=false];
+    stop -> stop [label="\ncanStop()"];
+    stop -> ready [label="\ncanStart()\n(fast implementation)"];
+    stop -> starting [label="\ncanStart()\n(slow implementation)"];
+    starting -> starting [label="\ncanStart()\n(other thread)"];
+    starting -> ready [label="\ninitialization complete\n(all threads)"];
+    ready -> stop [label="\ncanStop()"];
+    ready -> ready [label="\ncanStart()\ncanReceive()\ncanTransmit()"];
+    ready -> sleep [label="\ncanSleep()"];
+    sleep -> sleep [label="\ncanSleep()"];
+    sleep -> ready [label="\ncanWakeup()"];
+    sleep -> ready [label="\nhardware\nwakeup event"];
   }
  * @enddot
  * @else
  * @dot
   digraph example {
     rankdir="LR";
-    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.8", height="0.8"];
+    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.9", height="0.9"];
     edge [fontname=Helvetica, fontsize=8];
-    uninit [label="CAN_UNINIT", style="bold"];
+
     stop  [label="CAN_STOP\nLow Power"];
+    uninit [label="CAN_UNINIT", style="bold"];
+    starting [label="CAN_STARTING\nInitializing"];
     ready [label="CAN_READY\nClock Enabled"];
     sleep [label="CAN_SLEEP\nLow Power"];
-    uninit -> stop [label="canInit()"];
-    stop -> stop [label="canStop()"];
-    stop -> ready [label="canStart()"];
-    ready -> stop [label="canStop()"];
-    ready -> ready [label="canReceive()\ncanTransmit()"];
-    ready -> ready [label="canStart()"];
-    ready -> sleep [label="canSleep()"];
-    sleep -> sleep [label="canSleep()"];
-    sleep -> ready [label="canWakeup()"];
-    sleep -> ready [label="wakeup event"];
+
+    uninit -> stop [label=" canInit()", constraint=false];
+    stop -> stop [label="\ncanStop()"];
+    stop -> ready [label="\ncanStart()\n(fast implementation)"];
+    stop -> starting [label="\ncanStart()\n(slow implementation)"];
+    starting -> starting [label="\ncanStart()\n(other thread)"];
+    starting -> ready [label="\ninitialization complete\n(all threads)"];
+    ready -> stop [label="\ncanStop()"];
+    ready -> ready [label="\ncanStart()\ncanReceive()\ncanTransmit()"];
+    ready -> sleep [label="\ncanSleep()"];
+    sleep -> sleep [label="\ncanSleep()"];
+    sleep -> ready [label="\ncanWakeup()"];
+    sleep -> ready [label="\nhardware\nwakeup event"];
   }
  * @enddot
  * @endif
@@ -510,7 +520,7 @@
  * @dot
   digraph example {
     rankdir="LR";
-    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.8", height="0.8"];
+    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.9", height="0.9"];
     edge [fontname=Helvetica, fontsize=8];
     uninit [label="PWM_UNINIT", style="bold"];
     stop  [label="PWM_STOP\nLow Power"];
@@ -592,7 +602,7 @@
   digraph example {
     size="5, 7";
     rankdir="LR";
-    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.8", height="0.8"];
+    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.9", height="0.9"];
     edge [fontname=Helvetica, fontsize=8];
 
     any [label="Any State"];
@@ -632,7 +642,7 @@
  * @dot
   digraph example {
     rankdir="LR";
-    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.8", height="0.8"];
+    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.9", height="0.9"];
     edge [fontname=Helvetica, fontsize=8];
 
     any [label="Any State"];
@@ -711,7 +721,7 @@
  * @dot
   digraph example {
     rankdir="LR";
-    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.8", height="0.8"];
+    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.9", height="0.9"];
     edge [fontname=Helvetica, fontsize=8];
 
     uninit [label="UART_UNINIT", style="bold"];
@@ -734,7 +744,7 @@
  * @dot
   digraph example {
     rankdir="LR";
-    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.8", height="0.8"];
+    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.9", height="0.9"];
     edge [fontname=Helvetica, fontsize=8];
 
     tx_idle [label="TX_IDLE", style="bold"];
@@ -760,7 +770,7 @@
  * @dot
   digraph example {
     rankdir="LR";
-    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.8", height="0.8"];
+    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.9", height="0.9"];
     edge [fontname=Helvetica, fontsize=8];
 
     rx_idle [label="RX_IDLE", style="bold"];

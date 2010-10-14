@@ -236,11 +236,10 @@ void can_lld_start(CANDriver *canp) {
         cfp->FR1 = 0;
         cfp->FR2 = 0;
       }
-      cfp++;
-      fmask <<= 1;
       /* Gives a chance for preemption since this is a rather long loop.*/
       chSysUnlock();
-      chThdYield();
+      cfp++;
+      fmask <<= 1;
       chSysLock();
     }
   }
