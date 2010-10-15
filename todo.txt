@@ -1,13 +1,12 @@
 Status:
-? = Not sure if worth the effort or useful at all.
 - = Planned.
 X = In progress, some work done.
 * = Done.
+? = Not sure if worth the effort or useful at all.
 
-Within 2.1.x (hopefully)
+Within 2.1.x
 * Binary Semaphores on top of Counting Semaphores.
-* Direct unbuffered UART driver (evaluate rebuilding the current serial driver
-  as a generic driver on top of the low level UART driver).
+* Direct unbuffered UART driver.
   Requirements: low level, callbacks, DMA capable, state machines buildable
                 on top, support data words greater than 8 bits, callback for
                 "last byte transmitted (RS485)", simple implementation,
@@ -18,37 +17,58 @@ Within 2.1.x (hopefully)
   initializer hook.
 * All the device driver callbacks must have the driver pointer as first
   parameter.
-* Change the SPI driver to be able to work asynchronously with callbacks,
+* Change the SPI driver to be able to work asynchronously using callbacks,
   keep the synchronous APIs available as option.
-* Update the STM32 SPI driver.
-- Update the AT91SAM7 SPI driver.
-- Update the LPC214x SPI driver.
-- Write an SPI driver for LPC1xxx.
-- Make the ADC, I2C and UART drivers have the same "wait" semantic like
-  the new SPI driver model.
-X Resist doing more changes and optimizations in the kernel, fixes only.
-X File System infrastructure.
-X General HAL improvements.
-X I2C device driver class support and at least one implementation.
-- MAC driver for STM32F105/STM32F107 (hardware missing).
-- Device drivers for STM8 (SPI, ADC, PWM, bring it on par with STM32).
-- Support for more compilers (ARMCMx only initially).
-- Support for not just Makefiles (Ride7, Crossworks, Eclipse CDT etc).
-- Batch testing of the ARM7/ARMCMx port using OpenOCD, with reports.
+* Update the STM32 SPI driver to the new model.
+* Make the ADC driver have the same synchronous/asynchronous API of the
+  new SPI driver model.
+* General HAL improvements.
+- Update the AT91SAM7 SPI driver (DMA and/or ISR).
+  - Verify the FatFs demo on both the AT91SAM7X and AT91SAM7S.
+- Update the LPC214x SPI driver (ISR).
+  - Verify the LPC214x FatFs demo.
+- Write a new SPI driver for LPC1xxx (ISR)(it should be very close to the
+  LPC214x one).
+- Evaluate if to add a synchronous API to the UART driver, eventually do so.
+- Serial over UART complex driver driver, evaluate from the performance
+  results if to make obsolete the current dedicated Serial driver.
+- STM8L official HAL support, it will have to be separated from the STM8S/STM8A
+  HAL because it is very different, actually it looks much more like a
+  mini STM32, most STM32 drivers will only require few changes it also has
+  a very similar DMA (waiting for the new STM8L-Discovery kit).
+- Add the STM32VL to the official STM32 HAL support (waiting for the new
+  STM32-Discovery kit).
+- Evaluate a new API for the SPI driver for quick transfers of few bytes.
+X Except for the above, bug fixing only until the 2.2.0 release.
 
-Later but within 2.x.x
-- Merge the Coldfire branch in mainline.
-- Merge the H8S branch in mainline.
+Within 2.3.x (hopefully)
+- Resist doing more changes and optimizations to the kernel.
+X File System infrastructure.
+  - Official FatFs wrapper using the new infrastructure, dedicated test suite.
+X I2C device driver class support and at least one implementation (test
+  hardware missing).
+- Shared DMA channels support in the STM32/STM8L HALs.
+- New device driver models: RTC, WDG, DAC, USB, Systick, Battery Monitor.
+- MAC driver for STM32F107 (hardware missing).
+- Device drivers for STM8/STM8L (SPI, ADC, PWM, bring it on par with STM32).
+- Support for more compilers (ARMCMx only initially).
+- Support for not just Makefiles (Ride7, Crossworks etc).
+- Batch testing of the ARM7/ARMCMx port using OpenOCD, with reports.
 - Debug-related features and tools.
-- Evaluate if reimplement the SPI/CAN drivers to be callback-based like the
-  ADC, PWM and UART drivers, the current API could be rebuilt on top.
 - Add a *very simple* ADC API for single one shot sampling (implement it as
   an injected conversion on the STM32).
-- USB device driver class support.
-- MAC driver revision in order to support copy-less operations, this will
-  require changes to lwIP or a new TCP/IP stack however.
 - Update C++ wrapper (Heap, Pools, Mailboxes and any new feature).
 - Threads Pools manager in the library.
+
+Later but within 2.x.x
+- Transactional file system.
+- Dedicated TCP/IP stack.
+? ISO7816 driver over UART driver, both reader and card side (hardware
+  missing).
+- Merge the Coldfire branch in mainline (hardware missing).
+- Merge the H8S branch in mainline (hardware missing).
+- MAC driver revision in order to support copy-less operations, this will
+  require changes to lwIP or a new TCP/IP stack however.
 
 Ideas for 3.x.x:
 - High resolution timers and tickless kernel.
@@ -57,10 +77,5 @@ Ideas for 3.x.x:
 Side projects:
 X ChibiOS Wizard, UML modeling and ChibiOS applications code and
   documentation generator.
-X File System
-? Posix layer.
+? File System
 - Visual debugger/monitor interfaced through OpenOCD.
-
-Lower priority:
-- More demos
-- More ports
