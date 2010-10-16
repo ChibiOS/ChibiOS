@@ -135,7 +135,6 @@ __attribute__((noinline))
  * @note    Tries hard to clear all the pending interrupt sources, we dont want
  *          to go through the whole ISR and have another interrupt soon after.
  *
- * @param[in] u         pointer to an UART I/O block
  * @param[in] sdp       communication channel associated to the UART
  */
 static void serve_interrupt(SerialDriver *sdp) {
