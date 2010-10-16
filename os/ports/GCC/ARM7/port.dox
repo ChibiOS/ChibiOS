@@ -123,7 +123,22 @@
  * have interrupt handlers compiled in thumb mode without have to use an
  * interworking mode (the mode switch is hidden in the macros), this
  * greatly improves code efficiency and size. You can look at the serial
- * driver for real examples of interrupt handlers.
+ * driver for real examples of interrupt handlers.<br>
+ * It is important that the serve_interrupt() interrupt function is not
+ * inlined by the compiler into the ISR or the code could still modify
+ * the unsaved registers, this can be accomplished using GCC by adding
+ * the attribute "noinline" to the function:
+ * @code
+ * #if defined(__GNUC__)
+ * __attribute__((noinline))
+ * #endif
+ * static void serve_interrupt(void) {
+ * }
+ * @endcode
+ * Note that several commercial compilers support a GNU-like functions
+ * attribute mechanism.<br>
+ * Alternative ways are to use an appropriate pragma directive or disable
+ * inlining optimizations in the modules containing the interrupt handlers.
  *
  * @ingroup ports
  */
