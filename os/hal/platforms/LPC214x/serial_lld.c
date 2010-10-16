@@ -127,7 +127,7 @@ static void set_error(SerialDriver *sdp, IOREG32 err) {
   chSysUnlockFromIsr();
 }
 
-#if defined(__GNU__)
+#if defined(__GNUC__)
 __attribute__((noinline))
 #endif
 /**

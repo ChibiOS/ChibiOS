@@ -59,6 +59,8 @@
 *****************************************************************************
 
 *** 2.0.6 ***
+- FIX: Fixed wrong macro check in LPC214x and AT91SAM7 serial drivers (bug
+  3088776).
 - FIX: Fixed non functioning option SPI_USE_MUTUAL_EXCLUSION=FALSE (bug
   3084764).
 - FIX: Fixed wrong macro check in STM32 serial support (but 3078891).
