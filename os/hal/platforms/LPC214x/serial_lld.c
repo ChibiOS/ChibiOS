@@ -120,7 +120,7 @@ static void set_error(SerialDriver *sdp, IOREG32 err) {
   chSysUnlockFromIsr();
 }
 
-#if defined(__GNU__)
+#if defined(__GNUC__)
 __attribute__((noinline))
 #endif
 /**
@@ -128,7 +128,6 @@ __attribute__((noinline))
  * @note    Tries hard to clear all the pending interrupt sources, we dont want
  *          to go through the whole ISR and have another interrupt soon after.
  *
- * @param[in] u         pointer to an UART I/O block
  * @param[in] sdp       communication channel associated to the UART
  */
 static void serve_interrupt(SerialDriver *sdp) {
