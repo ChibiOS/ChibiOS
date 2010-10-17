@@ -248,8 +248,8 @@ CH_IRQ_HANDLER(USART1IrqHandler) {
 }
 #endif
 
-// note - DBGU_UART IRQ is the SysIrq in board.c
-// since it's not vectored separately by the AIC
+/* note - DBGU_UART IRQ is the SysIrq in board.c
+   since it's not vectored separately by the AIC.*/
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -286,9 +286,9 @@ void sd_lld_init(void) {
 
 #if USE_SAM7_DBGU_UART
   sdObjectInit(&SD3, NULL, notify3);
-  // this is a little cheap, but OK for now since there's enough overlap
-  // between dbgu and usart register maps.  it means we can reuse all the
-  // same usart interrupt handling and config that already exists
+  /* this is a little cheap, but OK for now since there's enough overlap
+     between dbgu and usart register maps.  it means we can reuse all the
+     same usart interrupt handling and config that already exists.*/
   SD3.usart = (AT91PS_USART)AT91C_BASE_DBGU;
   AT91C_BASE_PIOA->PIO_PDR   = SAM7_DBGU_RX | SAM7_DBGU_TX;
   AT91C_BASE_PIOA->PIO_ASR   = SAM7_DBGU_RX | SAM7_DBGU_TX;
@@ -328,7 +328,8 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
       AIC_EnableIT(AT91C_ID_US1);
     }
 #endif
-  // note - no explicit start for SD3 (DBGU_UART) since it's not included in the AIC or PMC
+  /* Note - no explicit start for SD3 (DBGU_UART) since it's not included
+     in the AIC or PMC.*/
   }
   usart_init(sdp, config);
 }

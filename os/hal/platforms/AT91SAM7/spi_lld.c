@@ -34,9 +34,14 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-#if USE_AT91SAM7_SPI || defined(__DOXYGEN__)
-/** @brief SPI driver identifier.*/
-SPIDriver SPID;
+#if AT91SAM7_SPI_USE_SPI0 || defined(__DOXYGEN__)
+/** @brief SPI1 driver identifier.*/
+SPIDriver SPID1;
+#endif
+
+#if AT91SAM7_SPI_USE_SPI1 || defined(__DOXYGEN__)
+/** @brief SPI2 driver identifier.*/
+SPIDriver SPID2;
 #endif
 
 /*===========================================================================*/
@@ -81,6 +86,36 @@ void rw8(size_t n, const uint8_t *txbuf, uint8_t *rxbuf) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#if AT91SAM7_SPI_USE_SPI0 || defined(__DOXYGEN__)
+/**
+ * @brief   SPI0 interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPI0IrqHandler) {
+
+  CH_IRQ_PROLOGUE();
+  spi_lld_serve_interrupt(&SPID1);
+  AT91C_BASE_AIC->AIC_EOICR = 0;
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+#if AT91SAM7_SPI_USE_SPI1 || defined(__DOXYGEN__)
+/**
+ * @brief   SPI1 interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPI1IrqHandler) {
+
+  CH_IRQ_PROLOGUE();
+  spi_lld_serve_interrupt(&SPID2);
+  AT91C_BASE_AIC->AIC_EOICR = 0;
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -92,8 +127,32 @@ void rw8(size_t n, const uint8_t *txbuf, uint8_t *rxbuf) {
  */
 void spi_lld_init(void) {
 
-#if USE_AT91SAM7_SPI
-  spiObjectInit(&SPID);
+#if AT91SAM7_SPI_USE_SPI0
+  spiObjectInit(&SPID1);
+  /* Software reset must be written twice (errata for revision B parts).*/
+  AT91C_BASE_SPI0->SPI_CR    = AT91C_SPI_SWRST;
+  AT91C_BASE_SPI0->SPI_CR    = AT91C_SPI_SWRST;
+  AT91C_BASE_PIOA->PIO_PDR   = SPI0_MISO | SPI0_MOSI | SPI0_SCK;
+  AT91C_BASE_PIOA->PIO_ASR   = SPI0_MISO | SPI0_MOSI | SPI0_SCK;
+  AT91C_BASE_PIOA->PIO_PPUDR = SPI0_MISO | SPI0_MOSI | SPI0_SCK;
+  SPID1.spd_spi              = AT91C_BASE_SPI0;
+  AIC_ConfigureIT(AT91C_ID_SPI0,
+                  AT91C_AIC_SRCTYPE_HIGH_LEVEL | AT91SAM7_SPI0_PRIORITY,
+                  SPI0IrqHandler);
+#endif
+
+#if AT91SAM7_SPI_USE_SPI1
+  spiObjectInit(&SPID2);
+  /* Software reset must be written twice (errata for revision B parts).*/
+  AT91C_BASE_SPI1->SPI_CR    = AT91C_SPI_SWRST;
+  AT91C_BASE_SPI1->SPI_CR    = AT91C_SPI_SWRST;
+  AT91C_BASE_PIOA->PIO_PDR   = SPI1_MISO | SPI1_MOSI | SPI1_SCK;
+  AT91C_BASE_PIOA->PIO_BSR   = SPI1_MISO | SPI1_MOSI | SPI1_SCK;
+  AT91C_BASE_PIOA->PIO_PPUDR = SPI1_MISO | SPI1_MOSI | SPI1_SCK;
+  SPID2.spd_spi              = AT91C_BASE_SPI1;
+  AIC_ConfigureIT(AT91C_ID_SPI1,
+                  AT91C_AIC_SRCTYPE_HIGH_LEVEL | AT91SAM7_SPI1_PRIORITY,
+                  SPI1IrqHandler);
 #endif
 }
 
@@ -107,21 +166,29 @@ void spi_lld_init(void) {
 void spi_lld_start(SPIDriver *spip) {
 
   if (spip->spd_state == SPI_STOP) {
-    /* disable general-purpose I/O for SPI pins */
-    AT91C_BASE_PIOA->PIO_PDR = SPI_MISO | SPI_MOSI | SPI_SCK;
-    /* select perepheral A for SPI pins*/
-    AT91C_BASE_PIOA->PIO_ASR = SPI_MISO | SPI_MOSI | SPI_SCK;
-    /* Clock activation.*/
-    AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_SPI);
+#if AT91SAM7_SPI_USE_SPI0
+    if (&SPID1 == spip) {
+      /* Clock activation.*/
+      AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_SPI0);
+      /* Enables associated interrupt vector.*/
+      AIC_EnableIT(AT91C_ID_SPI0);
+    }
+#endif
+#if AT91SAM7_SPI_USE_SPI1
+    if (&SPID2 == spip) {
+      /* Clock activation.*/
+      AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_SPI1);
+      /* Enables associated interrupt vector.*/
+      AIC_EnableIT(AT91C_ID_SPI1);
+    }
+#endif
   }
-  /* software reset must be written twice (errata for revision B parts) */
-  AT91C_BASE_SPI->SPI_CR = AT91C_SPI_SWRST;
-  AT91C_BASE_SPI->SPI_CR = AT91C_SPI_SWRST;
+  else
+    spip->spd_spi->SPI_CR = AT91C_SPI_SPIDIS;
   /* Configuration.*/
-  AT91C_BASE_SPI->SPI_MR = spip->spd_config->spc_mr;
-  AT91C_BASE_SPI->SPI_CSR[MMC_CSR_NUM] = spip->spd_config->spc_csr;
-  /* Enable SPI */
-  AT91C_BASE_SPI->SPI_CR = AT91C_SPI_SPIEN;
+  spip->spd_spi->SPI_MR     = AT91C_SPI_MSTR | AT91C_SPI_MODFDIS;
+  spip->spd_spi->SPI_CSR[0] = spip->spd_config->spc_csr;
+  spip->spd_spi->SPI_CR     = AT91C_SPI_SPIEN;
 }
 
 /**
@@ -134,10 +201,20 @@ void spi_lld_start(SPIDriver *spip) {
 void spi_lld_stop(SPIDriver *spip) {
 
   if (spip->spd_state != SPI_STOP) {
-    /* disable SPI */
-    AT91C_BASE_SPI->SPI_CR = AT91C_SPI_SPIDIS;
-    /* disable clocks to SPI perepheral */
-    AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_SPI);
+#if AT91SAM7_SPI_USE_SPI0
+    if (&SPID1 == spip) {
+      spip->spd_spi->SPI_CR = AT91C_SPI_SPIDIS;
+      spip->spd_spi->PMC_PCDR = (1 << AT91C_ID_SPI0);
+      AIC_DisableIT(AT91C_ID_SPI0);
+    }
+#endif
+#if AT91SAM7_SPI_USE_SPI1
+    if (&SPID1 == spip) {
+      spip->spd_spi->SPI_CR = AT91C_SPI_SPIDIS;
+      spip->spd_spi->PMC_PCDR = (1 << AT91C_ID_SPI1);
+      AIC_DisableIT(AT91C_ID_SPI0);
+    }
+#endif
   }
 }
 

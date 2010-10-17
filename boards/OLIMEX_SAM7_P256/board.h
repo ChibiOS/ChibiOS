@@ -71,13 +71,4 @@
 #define PIOA_MMC_NPCS0          11
 #define PIOA_MMC_NPCS0_MASK     (1 << PIOA_MMC_NPCS0_MASK)
 
-#define MMC_CSR_NUM             0
-
-/*
- * SPI pins
- */
-#define SPI_MISO                (1 << 12)
-#define SPI_MOSI                (1 << 13)
-#define SPI_SCK                 (1 << 14)
-
 #endif /* _BOARD_H_ */

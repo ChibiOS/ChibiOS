@@ -244,7 +244,7 @@ struct SPIDriver{
    */
   stm32_dma_channel_t   *spd_dmatx;
   /**
-   * @brief DMA priority bit mask.\
+   * @brief DMA priority bit mask.
    */
   uint32_t              spd_dmaccr;
 };

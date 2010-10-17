@@ -45,17 +45,17 @@ static bool_t fs_ready = FALSE;
 
 /* Maximum speed SPI configuration (__MHz, NCPHA=1, CPOL=0).*/
 static SPIConfig hs_spicfg = {
+  NULL,
   IOPORT1,
   PIOA_CS_MMC,
-  AT91C_SPI_MSTR | AT91C_SPI_MODFDIS,
   (MAX_SPI_BITRATE << 8) | AT91C_SPI_NCPHA | AT91C_SPI_BITS_8
 };
 
 /* Low speed SPI configuration (192KHz, NCPHA=1, CPOL=0).*/
 static SPIConfig ls_spicfg = {
+  NULL,
   IOPORT1,
   PIOA_CS_MMC,
-  AT91C_SPI_MSTR | AT91C_SPI_MODFDIS,
   (MIN_SPI_BITRATE << 8) | AT91C_SPI_NCPHA | AT91C_SPI_BITS_8
 };
 
