@@ -73,7 +73,7 @@
   (backported to 2.0.6).
 - FIX: Incorrect AT91SAM7X initialization, thanks Leszek (bug 3075354)
   (backported to 2.0.5).
-- FIX: Fixed race condition in function chSchGoSleepTimeoutS, thanks Balázs
+- FIX: Fixed race condition in function chSchGoSleepTimeoutS(), thanks Balázs
   (bug 3074984)(backported to 2.0.5).
 - FIX: Fixed race condition in threads creation (bug 3069854)(backported
   to 2.0.5).
@@ -114,6 +114,8 @@
 - NEW: Added to the UART driver the capability to return the number of
   not yet transferred frames when stopping an operation.
 - NEW: Added more compile-time checks to the various STM32 device drivers.
+- NEW: Improved LPC214x SPI driver, now it uses IRQs and implements the
+  new SPI device driver model.
 - NEW: Added a simple STM32 ADC demo under ./testhal/STM32/ADC.
 - NEW: Added a simple STM32 CAN demo under ./testhal/STM32/CAN.
 - NEW: Added a simple STM32 PWM demo under ./testhal/STM32/PWM.

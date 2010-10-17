@@ -390,6 +390,7 @@ typedef struct {
 #define SSPMIS                  (SSPBase->SSP_MIS)
 #define SSPICR                  (SSPBase->SSP_ICR)
 
+#define CR0_DSSMASK             0x0F
 #define CR0_DSS4BIT             3
 #define CR0_DSS5BIT             4
 #define CR0_DSS6BIT             5

@@ -34,31 +34,76 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Hardware FIFO depth.
+ */
+#define LPC214x_SSP_FIFO_DEPTH          8
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
 /**
- * @brief   SPI1 (SSP) driver enable switch.
- * @details If set to @p TRUE the support for SPI0 is included.
+ * @brief   SPI1 driver enable switch.
+ * @details If set to @p TRUE the support for SSP is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_LPC214x_SPI1) || defined(__DOXYGEN__)
-#define USE_LPC214x_SPI1            TRUE
+#if !defined(LPC214x_SPI_USE_SSP) || defined(__DOXYGEN__)
+#define LPC214x_SPI_USE_SSP             TRUE
+#endif
+
+/**
+ * @brief   SSP interrupt priority level setting.
+ */
+#if !defined(STM32_SPI_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define LPC214x_SPI_SSP_IRQ_PRIORITY    4
+#endif
+
+/**
+ * @brief   Overflow error hook.
+ * @details The default action is to stop the system.
+ */
+#if !defined(LPC214x_SPI_SSP_ERROR_HOOK) || defined(__DOXYGEN__)
+#define LPC214x_SPI_SSP_ERROR_HOOK()    chSysHalt()
 #endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if !LPC214x_SPI_USE_SSP
+#error "SPI driver activated but no SPI peripheral assigned"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
 /**
+ * @brief   Type of a structure representing an SPI driver.
+ */
+typedef struct SPIDriver SPIDriver;
+
+/**
+ * @brief   SPI notification callback type.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object triggering the
+ *                      callback
+ */
+typedef void (*spicallback_t)(SPIDriver *spip);
+
+/**
  * @brief   Driver configuration structure.
  */
 typedef struct {
+  /**
+   * @brief Operation complete callback or @p NULL.
+   * @note  In order to use synchronous functions this field must be set to
+   *        @p NULL, callbacks and synchronous operations are mutually
+   *        exclusive.
+   */
+  spicallback_t         spc_endcb;
+  /* End of the mandatory fields.*/
   /**
    * @brief The chip select line port.
    */
@@ -84,11 +129,21 @@ typedef struct {
 /**
  * @brief   Structure representing a SPI driver.
  */
-typedef struct {
+struct SPIDriver {
   /**
    * @brief Driver state.
    */
   spistate_t            spd_state;
+  /**
+   * @brief Current configuration data.
+   */
+  const SPIConfig       *spd_config;
+#if SPI_USE_WAIT || defined(__DOXYGEN__)
+  /**
+   * @brief Waiting thread.
+   */
+  Thread                *spd_thread;
+#endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
@@ -99,12 +154,31 @@ typedef struct {
   Semaphore             spd_semaphore;
 #endif
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
-  /**
-   * @brief Current configuration data.
-   */
-  const SPIConfig       *spd_config;
+#if defined(SPI_DRIVER_EXT_FIELDS)
+  SPI_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
-} SPIDriver;
+  /**
+   * @brief Pointer to the SSP registers block.
+   */
+  SSP                   *spd_ssp;
+  /**
+   * @brief Number of bytes yet to be received.
+   */
+  uint32_t              spd_rxcnt;
+  /**
+   * @brief Receive pointer or @p NULL.
+   */
+  void                  *spd_rxptr;
+  /**
+   * @brief Number of bytes yet to be transmitted.
+   */
+  uint32_t              spd_txcnt;
+  /**
+   * @brief Transmit pointer or @p NULL.
+   */
+  const void            *spd_txptr;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -114,7 +188,7 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if USE_LPC214x_SPI1 && !defined(__DOXYGEN__)
+#if LPC214x_SPI_USE_SSP && !defined(__DOXYGEN__)
 extern SPIDriver SPID1;
 #endif
 

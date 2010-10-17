@@ -43,6 +43,7 @@ static bool_t fs_ready = FALSE;
 
 /* Maximum speed SPI configuration (18MHz, CPHA=0, CPOL=0).*/
 static SPIConfig hs_spicfg = {
+  NULL,
   IOPORT1,
   PA_SSEL1,
   CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0),
@@ -52,6 +53,7 @@ static SPIConfig hs_spicfg = {
 
 /* Low speed SPI configuration (281.250KHz, CPHA=0, CPOL=0).*/
 static SPIConfig ls_spicfg = {
+  NULL,
   IOPORT1,
   PA_SSEL1,
   CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0),
