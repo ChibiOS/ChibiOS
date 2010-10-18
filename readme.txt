@@ -63,6 +63,7 @@
 *****************************************************************************
 
 *** 2.1.2 ***
+- FIX: Fixed typo in memstreams.h (bug 3089567)(backported to 2.0.6).
 - FIX: Fixed wrong macro check in LPC214x and AT91SAM7 serial drivers (bug
   3088776)(backported to 2.0.6).
 - FIX: Fixed non functioning option SPI_USE_MUTUAL_EXCLUSION=FALSE (bug
