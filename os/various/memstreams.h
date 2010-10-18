@@ -39,7 +39,7 @@
  * @brief   @p RamStream specific data.
  */
 #define _memory_stream_data                                                 \
-  _base_sequental_stream_data                                               \
+  _base_sequential_stream_data                                              \
   /* Pointer to the stream buffer.*/                                        \
   uint8_t               *buffer;                                            \
   /* Size of the stream.*/                                                  \
@@ -53,7 +53,7 @@
  * @brief   @p MemStream virtual methods table.
  */
 struct MemStreamVMT {
-  _base_sequental_stream_methods
+  _base_sequential_stream_methods
 };
 
 /**
