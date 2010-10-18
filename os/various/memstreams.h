@@ -46,7 +46,7 @@
  * @brief   @p MemStream virtual methods table.
  */
 struct MemStreamVMT {
-  _base_sequental_stream_methods
+  _base_sequential_stream_methods
 };
 
 /**
