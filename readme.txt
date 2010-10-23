@@ -115,8 +115,10 @@
 - NEW: Added to the UART driver the capability to return the number of
   not yet transferred frames when stopping an operation.
 - NEW: Added more compile-time checks to the various STM32 device drivers.
-- NEW: Improved LPC214x SPI driver, now it uses IRQs and implements the
+- NEW: Improved LPC214x SPI driver, now it uses IRQs, it implements the
   new SPI device driver model.
+- NEW: Improved AT91SAM7 SPI driver, now it uses IRQs and DMAs, it implements
+  the new SPI device driver model.
 - NEW: Added a simple STM32 ADC demo under ./testhal/STM32/ADC.
 - NEW: Added a simple STM32 CAN demo under ./testhal/STM32/CAN.
 - NEW: Added a simple STM32 PWM demo under ./testhal/STM32/PWM.

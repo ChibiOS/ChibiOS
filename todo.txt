@@ -23,10 +23,10 @@ Within 2.1.x
 * Make the ADC driver have the same synchronous/asynchronous API of the
   new SPI driver model.
 * General HAL improvements.
-- Update the AT91SAM7 SPI driver (DMA and/or ISR).
-  - Verify the FatFs demo on both the AT91SAM7X and AT91SAM7S.
-- Update the LPC214x SPI driver (ISR).
-  - Verify the LPC214x FatFs demo.
+* Update the AT91SAM7 SPI driver (DMA and/or ISR).
+  * Verify the FatFs demo on both the AT91SAM7X and AT91SAM7S.
+* Update the LPC214x SPI driver (ISR).
+  * Verify the LPC214x FatFs demo.
 - Write a new SPI driver for LPC1xxx (ISR)(it should be very close to the
   LPC214x one).
 - Evaluate if to add a synchronous API to the UART driver, eventually do so.

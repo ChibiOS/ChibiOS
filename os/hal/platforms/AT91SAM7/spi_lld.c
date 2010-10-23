@@ -73,6 +73,22 @@ static const uint16_t idle_buf[] = {
   0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
   0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
   0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
   0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF
 };
 
@@ -81,36 +97,20 @@ static const uint16_t idle_buf[] = {
 /*===========================================================================*/
 
 /**
- * @brief   Synchronous SPI transfer.
- *
- * @param[in] n         number of bytes to be exchanged
- *
- * @param[in] txbuf     the pointer to the transmit buffer or @p NULL
- * @param[out] rxbuf    the pointer to the receive buffer or @p NULL
+ * @brief   Initializes a SPI device.
  */
-#if 0
-void rw8(size_t n, const uint8_t *txbuf, uint8_t *rxbuf) {
-  size_t ntx = n;
+static void spi_init(AT91PS_SPI spi) {
 
-  while (n > 0) {
-    uint32_t sr = AT91C_BASE_SPI->SPI_SR;
-    if (sr & AT91C_SPI_RDRF) {
-      uint8_t w = AT91C_BASE_SPI->SPI_RDR;
-      if (rxbuf != NULL)
-        *rxbuf++ = w;
-      n--;
-      continue; /* Priority over transmission. */
-    }
-    if ((ntx > 0) && (sr & AT91C_SPI_TDRE)) {
-      if (txbuf != NULL)
-        AT91C_BASE_SPI->SPI_TDR = *txbuf++;
-      else
-        AT91C_BASE_SPI->SPI_TDR = 0xFF;
-      ntx--;
-    }
-  }
+  /* Software reset must be written twice (errata for revision B parts).*/
+  spi->SPI_CR   = AT91C_SPI_SWRST;
+  spi->SPI_CR   = AT91C_SPI_SWRST;
+  spi->SPI_RCR  = 0;
+  spi->SPI_RNCR = 0;
+  spi->SPI_TCR  = 0;
+  spi->SPI_TNCR = 0;
+  spi->SPI_PTCR = AT91C_PDC_RXTDIS | AT91C_PDC_TXTDIS;
+  spi->SPI_MR   = AT91C_SPI_MSTR | AT91C_SPI_MODFDIS;
 }
-#endif
 
 #if defined(__GNUC__)
 __attribute__((noinline))
@@ -125,8 +125,10 @@ static void spi_lld_serve_interrupt(SPIDriver *spip) {
 
   if ((sr & AT91C_SPI_ENDRX) != 0) {
     (void)spip->spd_spi->SPI_RDR;               /* Clears eventual overflow.*/
-    spip->spd_spi->SPI_IDR = AT91C_SPI_ENDRX;   /* Interrupt disabled.      */
-    spip->spd_spi->SPI_CR  = AT91C_SPI_SPIDIS;  /* SPI disabled.            */
+    spip->spd_spi->SPI_PTCR = AT91C_PDC_RXTDIS |
+                              AT91C_PDC_TXTDIS; /* PDC disabled.            */
+    spip->spd_spi->SPI_IDR  = AT91C_SPI_ENDRX;  /* Interrupt disabled.      */
+    spip->spd_spi->SPI_CR   = AT91C_SPI_SPIDIS; /* SPI disabled.            */
     /* Portable SPI ISR code defined in the high level driver, note, it is
        a macro.*/
     _spi_isr_code(spip);
@@ -180,15 +182,11 @@ void spi_lld_init(void) {
 
 #if AT91SAM7_SPI_USE_SPI0
   spiObjectInit(&SPID1);
-  /* Software reset must be written twice (errata for revision B parts).*/
-  AT91C_BASE_SPI0->SPI_CR    = AT91C_SPI_SWRST;
-  AT91C_BASE_SPI0->SPI_CR    = AT91C_SPI_SWRST;
-  AT91C_BASE_SPI0->SPI_MR    = AT91C_SPI_MSTR | AT91C_SPI_MODFDIS;
-  AT91C_BASE_SPI0->SPI_PTCR  = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
+  SPID1.spd_spi = AT91C_BASE_SPI0;
+  spi_init(AT91C_BASE_SPI0);
   AT91C_BASE_PIOA->PIO_PDR   = SPI0_MISO | SPI0_MOSI | SPI0_SCK;
   AT91C_BASE_PIOA->PIO_ASR   = SPI0_MISO | SPI0_MOSI | SPI0_SCK;
   AT91C_BASE_PIOA->PIO_PPUDR = SPI0_MISO | SPI0_MOSI | SPI0_SCK;
-  SPID1.spd_spi              = AT91C_BASE_SPI0;
   AIC_ConfigureIT(AT91C_ID_SPI0,
                   AT91C_AIC_SRCTYPE_HIGH_LEVEL | AT91SAM7_SPI0_PRIORITY,
                   SPI0IrqHandler);
@@ -196,15 +194,11 @@ void spi_lld_init(void) {
 
 #if AT91SAM7_SPI_USE_SPI1
   spiObjectInit(&SPID2);
-  /* Software reset must be written twice (errata for revision B parts).*/
-  AT91C_BASE_SPI1->SPI_CR    = AT91C_SPI_SWRST;
-  AT91C_BASE_SPI1->SPI_CR    = AT91C_SPI_SWRST;
-  AT91C_BASE_SPI1->SPI_MR    = AT91C_SPI_MSTR | AT91C_SPI_MODFDIS;
-  AT91C_BASE_SPI1->SPI_PTCR  = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
+  SPID2.spd_spi = AT91C_BASE_SPI1;
+  spi_init(AT91C_BASE_SPI1);
   AT91C_BASE_PIOA->PIO_PDR   = SPI1_MISO | SPI1_MOSI | SPI1_SCK;
   AT91C_BASE_PIOA->PIO_BSR   = SPI1_MISO | SPI1_MOSI | SPI1_SCK;
   AT91C_BASE_PIOA->PIO_PPUDR = SPI1_MISO | SPI1_MOSI | SPI1_SCK;
-  SPID2.spd_spi              = AT91C_BASE_SPI1;
   AIC_ConfigureIT(AT91C_ID_SPI1,
                   AT91C_AIC_SRCTYPE_HIGH_LEVEL | AT91SAM7_SPI1_PRIORITY,
                   SPI1IrqHandler);
@@ -238,8 +232,6 @@ void spi_lld_start(SPIDriver *spip) {
     }
 #endif
   }
-  else
-    spip->spd_spi->SPI_CR = AT91C_SPI_SPIDIS;
   /* Configuration.*/
   spip->spd_spi->SPI_CSR[0] = spip->spd_config->spc_csr;
 }
@@ -256,14 +248,12 @@ void spi_lld_stop(SPIDriver *spip) {
   if (spip->spd_state != SPI_STOP) {
 #if AT91SAM7_SPI_USE_SPI0
     if (&SPID1 == spip) {
-      spip->spd_spi->SPI_CR = AT91C_SPI_SPIDIS;
       AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_SPI0);
       AIC_DisableIT(AT91C_ID_SPI0);
     }
 #endif
 #if AT91SAM7_SPI_USE_SPI1
     if (&SPID1 == spip) {
-      spip->spd_spi->SPI_CR = AT91C_SPI_SPIDIS;
       AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_SPI1);
       AIC_DisableIT(AT91C_ID_SPI0);
     }
@@ -315,6 +305,7 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
   spip->spd_spi->SPI_RPR  = (AT91_REG)idle_buf;
   spip->spd_spi->SPI_IER  = AT91C_SPI_ENDRX;
   spip->spd_spi->SPI_CR   = AT91C_SPI_SPIEN;
+  spip->spd_spi->SPI_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
 }
 
 /**
@@ -338,6 +329,7 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
   spip->spd_spi->SPI_RPR  = (AT91_REG)rxbuf;
   spip->spd_spi->SPI_IER  = AT91C_SPI_ENDRX;
   spip->spd_spi->SPI_CR   = AT91C_SPI_SPIEN;
+  spip->spd_spi->SPI_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
 }
 
 /**
@@ -358,6 +350,7 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
   spip->spd_spi->SPI_RPR  = (AT91_REG)idle_buf;
   spip->spd_spi->SPI_IER  = AT91C_SPI_ENDRX;
   spip->spd_spi->SPI_CR   = AT91C_SPI_SPIEN;
+  spip->spd_spi->SPI_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
 }
 
 /**
@@ -378,6 +371,7 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   spip->spd_spi->SPI_RPR  = (AT91_REG)rxbuf;
   spip->spd_spi->SPI_IER  = AT91C_SPI_ENDRX;
   spip->spd_spi->SPI_CR   = AT91C_SPI_SPIEN;
+  spip->spd_spi->SPI_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
 }
 
 #endif /* CH_HAL_USE_SPI */
