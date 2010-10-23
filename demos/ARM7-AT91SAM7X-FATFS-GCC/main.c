@@ -303,7 +303,7 @@ int main(int argc, char **argv) {
    */
   palSetPadMode(IOPORT1, PIOA_CS_MMC, PAL_MODE_OUTPUT_PUSHPULL);
   palSetPad(IOPORT1, PIOA_CS_MMC);
-  mmcObjectInit(&MMCD1, &SPID,
+  mmcObjectInit(&MMCD1, &SPID1,
                 &ls_spicfg, &hs_spicfg,
                 mmc_is_protected, mmc_is_inserted);
   mmcStart(&MMCD1, &mmc_cfg);
