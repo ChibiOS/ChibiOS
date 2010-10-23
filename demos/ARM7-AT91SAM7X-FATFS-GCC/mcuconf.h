@@ -57,3 +57,7 @@
  * SPI driver system settings.
  */
 #define USE_AT91SAM7_SPI            TRUE
+#define AT91SAM7_SPI_USE_SPI0       TRUE
+#define AT91SAM7_SPI_USE_SPI1       TRUE
+#define AT91SAM7_SPI0_PRIORITY      (AT91C_AIC_PRIOR_HIGHEST - 1)
+#define AT91SAM7_SPI1_PRIORITY      (AT91C_AIC_PRIOR_HIGHEST - 1)

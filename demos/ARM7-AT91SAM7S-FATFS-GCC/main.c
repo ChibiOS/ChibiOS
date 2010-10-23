@@ -45,17 +45,17 @@ static bool_t fs_ready = FALSE;
 
 /* Maximum speed SPI configuration (__MHz, NCPHA=1, CPOL=0).*/
 static SPIConfig hs_spicfg = {
+  NULL,
   IOPORT1,
   PIOA_MMC_NPCS0,
-  AT91C_SPI_MSTR | AT91C_SPI_MODFDIS,
   (MAX_SPI_BITRATE << 8) | AT91C_SPI_NCPHA | AT91C_SPI_BITS_8
 };
 
 /* Low speed SPI configuration (192KHz, NCPHA=1, CPOL=0).*/
 static SPIConfig ls_spicfg = {
+  NULL,
   IOPORT1,
   PIOA_MMC_NPCS0,
-  AT91C_SPI_MSTR | AT91C_SPI_MODFDIS,
   (MIN_SPI_BITRATE << 8) | AT91C_SPI_NCPHA | AT91C_SPI_BITS_8
 };
 
@@ -320,7 +320,7 @@ int main(int argc, char **argv) {
    */
   palSetPadMode(IOPORT1, PIOA_MMC_NPCS0, PAL_MODE_OUTPUT_PUSHPULL);
   palSetPad(IOPORT1, PIOA_MMC_NPCS0);
-  mmcObjectInit(&MMCD1, &SPID,
+  mmcObjectInit(&MMCD1, &SPID1,
                 &ls_spicfg, &hs_spicfg,
                 mmc_is_protected, mmc_is_inserted);
   mmcStart(&MMCD1, &mmc_cfg);

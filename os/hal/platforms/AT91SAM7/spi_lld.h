@@ -95,6 +95,10 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if defined (AT91C_BASE_SPI) && AT91SAM7_SPI_USE_SPI1
+#error "SPI1 not present"
+#endif
+
 #if !AT91SAM7_SPI_USE_SPI0 && !AT91SAM7_SPI_USE_SPI1
 #error "SPI driver activated but no SPI peripheral assigned"
 #endif
