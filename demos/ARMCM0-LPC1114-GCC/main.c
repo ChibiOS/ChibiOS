@@ -21,14 +21,28 @@
 #include "hal.h"
 #include "test.h"
 
+
+/* Maximum speed SPI configuration (1MHz, CPHA=0, CPOL=0).*/
+static SPIConfig spicfg = {
+  NULL,
+  GPIO1,
+  GPIO1_SPI0SEL,
+  CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0),
+  0,
+  48
+};
+
 /*
  * Red LED blinker thread, times are in milliseconds.
  */
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
+  uint8_t digit = 0;
 
   (void)arg;
   while (TRUE) {
+    spiStartSend(&SPID1, 1, &digit);
+    digit++;
     palClearPad(GPIO0, GPIO0_LED2);
     chThdSleepMilliseconds(500);
     palSetPad(GPIO0, GPIO0_LED2);
@@ -78,9 +92,10 @@ int main(int argc, char **argv) {
   (void)argv;
 
   /*
-   * Activates the serial driver 1 using the driver default configuration.
+   * Activates the SD1 and SPI1 drivers.
    */
-  sdStart(&SD1, NULL);
+  sdStart(&SD1, NULL);                  /* Default: 38400,8,N,1.            */
+  spiStart(&SPID1, &spicfg);
 
   /*
    * Creates the blinker threads.

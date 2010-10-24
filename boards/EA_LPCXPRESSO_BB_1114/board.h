@@ -78,6 +78,7 @@
 #define GPIO1_SW4               4
 #define GPIO1_LED3R             9
 #define GPIO1_LED3G             10
+#define GPIO1_SPI0SEL           11
 
 #ifdef __cplusplus
 extern "C" {
