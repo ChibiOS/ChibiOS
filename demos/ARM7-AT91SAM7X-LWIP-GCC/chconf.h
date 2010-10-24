@@ -78,7 +78,7 @@
  * @note T  he default is @p FALSE.
  */
 #if !defined(CH_USE_NESTED_LOCKS) || defined(__DOXYGEN__)
-#define CH_USE_NESTED_LOCKS             FALSE
+#define CH_USE_NESTED_LOCKS             TRUE
 #endif
 
 /**
