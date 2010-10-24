@@ -37,6 +37,11 @@
 #define SYSOSCCLK               12000000
 
 /*
+ * SCK0 connection on this board.
+ */
+#define LPC11xx_SPI_SCK0_SELECTOR SCK0_IS_PIO2_11
+
+/*
  * GPIO 0 initial setup.
  * Bit7 - LPCxpresso LED, initially output at low level.
  */

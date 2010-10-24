@@ -127,9 +127,6 @@ void lpc111x_clock_init(void) {
   LPC_SYSCON->SYSAHBCLKDIV = LPC11xx_SYSABHCLK_DIV;
   LPC_SYSCON->SYSAHBCLKCTRL = 0x0001005F;
 
-  /* Peripheral clock dividers initialization.*/
-  LPC_SYSCON->UARTCLKDIV = LPC11xx_UART_PCLK_DIV;
-
   /* Memory remapping, vectors always in ROM.*/
   LPC_SYSCON->SYSMEMREMAP = 2;
 }

@@ -130,7 +130,7 @@
  * @brief Enables the SPI subsystem.
  */
 #if !defined(CH_HAL_USE_SPI) || defined(__DOXYGEN__)
-#define CH_HAL_USE_SPI              FALSE
+#define CH_HAL_USE_SPI              TRUE
 #endif
 
 /*
