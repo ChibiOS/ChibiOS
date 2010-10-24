@@ -28,7 +28,6 @@ static SPIConfig spicfg = {
   GPIO1,
   GPIO1_SPI0SEL,
   CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0),
-  0,
   48
 };
 

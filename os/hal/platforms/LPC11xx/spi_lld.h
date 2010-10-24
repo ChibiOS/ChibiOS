@@ -246,10 +246,6 @@ typedef struct {
    */
   uint16_t              spc_cr0;
   /**
-   * @brief SSP CR1 initialization data.
-   */
-  uint16_t              spc_cr1;
-  /**
    * @brief SSP CPSR initialization data.
    */
   uint32_t              spc_cpsr;

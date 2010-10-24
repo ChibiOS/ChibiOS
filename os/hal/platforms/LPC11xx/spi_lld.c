@@ -81,7 +81,7 @@ static void ssp_fifo_preload(SPIDriver *spip) {
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  */
-static void serve_interrupt(SPIDriver *spip) {
+static void spi_serve_interrupt(SPIDriver *spip) {
   LPC_SSP_TypeDef *ssp = spip->spd_ssp;
 
   if ((ssp->MIS & MIS_ROR) != 0) {
@@ -101,7 +101,7 @@ static void serve_interrupt(SPIDriver *spip) {
       (void)ssp->DR;
     if (--spip->spd_rxcnt == 0) {
       chDbgAssert(spip->spd_txcnt == 0,
-                  "chSemResetI(), #1", "counter out of synch");
+                  "spi_serve_interrupt(), #1", "counter out of synch");
       /* Stops the IRQ sources.*/
       ssp->IMSC = 0;
       /* Portable SPI ISR code defined in the high level driver, note, it is
@@ -129,7 +129,7 @@ CH_IRQ_HANDLER(Vector90) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(&SPID1);
+  spi_serve_interrupt(&SPID1);
 
   CH_IRQ_EPILOGUE();
 }
@@ -145,7 +145,7 @@ CH_IRQ_HANDLER(Vector78) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(&SPID2);
+  spi_serve_interrupt(&SPID2);
 
   CH_IRQ_EPILOGUE();
 }
@@ -201,6 +201,7 @@ void spi_lld_start(SPIDriver *spip) {
     if (&SPID1 == spip) {
       LPC_SYSCON->SSP0CLKDIV = LPC11xx_SPI_SSP0CLKDIV;
       LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 11);
+      LPC_SYSCON->PRESETCTRL |= 1;
       NVICEnableVector(SSP0_IRQn,
                        CORTEX_PRIORITY_MASK(LPC11xx_SPI_SSP0_IRQ_PRIORITY));
     }
@@ -209,6 +210,7 @@ void spi_lld_start(SPIDriver *spip) {
     if (&SPID2 == spip) {
       LPC_SYSCON->SSP1CLKDIV = LPC11xx_SPI_SSP1CLKDIV;
       LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 18);
+      LPC_SYSCON->PRESETCTRL |= 4;
       NVICEnableVector(SSP1_IRQn,
                        CORTEX_PRIORITY_MASK(LPC11xx_SPI_SSP1_IRQ_PRIORITY));
     }
@@ -216,13 +218,10 @@ void spi_lld_start(SPIDriver *spip) {
   }
   /* Configuration.*/
   spip->spd_ssp->CR1  = 0;
-  /* Emptying the receive FIFO, it happens to not be empty while debugging.*/
-  while (spip->spd_ssp->SR & SR_RNE)
-    (void) spip->spd_ssp->DR;
   spip->spd_ssp->ICR  = ICR_RT | ICR_ROR;
   spip->spd_ssp->CR0  = spip->spd_config->spc_cr0;
   spip->spd_ssp->CPSR = spip->spd_config->spc_cpsr;
-  spip->spd_ssp->CR1  = spip->spd_config->spc_cr1 | CR1_SSE;
+  spip->spd_ssp->CR1  = CR1_SSE;
 }
 
 /**
@@ -237,6 +236,7 @@ void spi_lld_stop(SPIDriver *spip) {
   if (spip->spd_state != SPI_STOP) {
 #if LPC11xx_SPI_USE_SSP0
     if (&SPID1 == spip) {
+      LPC_SYSCON->PRESETCTRL &= ~1;
       LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 11);
       LPC_SYSCON->SSP0CLKDIV = 0;
       NVICDisableVector(SSP0_IRQn);
@@ -245,6 +245,7 @@ void spi_lld_stop(SPIDriver *spip) {
 #endif
 #if LPC11xx_SPI_USE_SSP1
     if (&SPID2 == spip) {
+      LPC_SYSCON->PRESETCTRL &= ~4;
       LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 18);
       LPC_SYSCON->SSP1CLKDIV = 0;
       NVICDisableVector(SSP1_IRQn);
