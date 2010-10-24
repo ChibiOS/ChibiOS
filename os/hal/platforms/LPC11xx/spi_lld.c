@@ -28,7 +28,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if LPC11xx_SPI_USE_SSP0 || defined(__DOXYGEN__)
+#if CH_HAL_USE_SPI || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
