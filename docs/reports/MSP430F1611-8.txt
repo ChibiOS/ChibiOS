@@ -5,7 +5,7 @@ Settings: MCLK=XT2CLK 8MHz
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.0.5
+*** Kernel:       2.0.6
 *** GCC Version:  3.2.3
 *** Architecture: MSP430
 *** Core Variant: MSP430
@@ -111,11 +111,11 @@ Settings: MCLK=XT2CLK 8MHz
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 12176 threads/S
+--- Score : 12402 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 16334 threads/S
+--- Score : 16745 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
