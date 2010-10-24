@@ -119,6 +119,7 @@
   new SPI device driver model.
 - NEW: Improved AT91SAM7 SPI driver, now it uses IRQs and DMAs, it implements
   the new SPI device driver model.
+- NEW: New LPC11xx SPI driver.
 - NEW: Added a simple STM32 ADC demo under ./testhal/STM32/ADC.
 - NEW: Added a simple STM32 CAN demo under ./testhal/STM32/CAN.
 - NEW: Added a simple STM32 PWM demo under ./testhal/STM32/PWM.

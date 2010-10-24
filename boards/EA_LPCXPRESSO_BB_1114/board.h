@@ -51,9 +51,10 @@
 /*
  * GPIO 1 initial setup.
  */
-#define VAL_GPIO1DIR            PAL_PORT_BIT(GPIO1_LED3B) |                 \
-                                PAL_PORT_BIT(GPIO1_LED3R) |                 \
-                                PAL_PORT_BIT(GPIO1_LED3G)
+#define VAL_GPIO1DIR            PAL_PORT_BIT(GPIO1_LED3B)   |               \
+                                PAL_PORT_BIT(GPIO1_LED3R)   |               \
+                                PAL_PORT_BIT(GPIO1_LED3G)   |               \
+                                PAL_PORT_BIT(GPIO1_SPI0SEL)
 #define VAL_GPIO1DATA           0x00000000
 
 /*

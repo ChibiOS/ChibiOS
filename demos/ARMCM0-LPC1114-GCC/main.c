@@ -21,10 +21,14 @@
 #include "hal.h"
 #include "test.h"
 
+static void endsend(SPIDriver *spip) {
+
+  spiUnselect(spip);
+}
 
 /* Maximum speed SPI configuration (1MHz, CPHA=0, CPOL=0).*/
 static SPIConfig spicfg = {
-  NULL,
+  endsend,
   GPIO1,
   GPIO1_SPI0SEL,
   CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0),
@@ -40,6 +44,7 @@ static msg_t Thread1(void *arg) {
 
   (void)arg;
   while (TRUE) {
+    spiSelect(&SPID1);
     spiStartSend(&SPID1, 1, &digit);
     digit++;
     palClearPad(GPIO0, GPIO0_LED2);
