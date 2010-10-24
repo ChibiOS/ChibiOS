@@ -171,7 +171,7 @@ void spi_lld_start(SPIDriver *spip) {
 #endif
   }
   /* Configuration.*/
-  SSPBase->SSP_CR1  = 0;
+  spip->spd_ssp->SSP_CR1  = 0;
   /* Emptying the receive FIFO, it happens to not be empty while debugging.*/
   while (spip->spd_ssp->SSP_SR & SR_RNE)
     (void) spip->spd_ssp->SSP_DR;
@@ -197,9 +197,9 @@ void spi_lld_stop(SPIDriver *spip) {
       VICIntEnClear = INTMASK(SOURCE_SPI1);
     }
 #endif
-    SSPBase->SSP_CR1  = 0;
-    SSPBase->SSP_CR0  = 0;
-    SSPBase->SSP_CPSR = 0;
+    spip->spd_ssp->SSP_CR1  = 0;
+    spip->spd_ssp->SSP_CR0  = 0;
+    spip->spd_ssp->SSP_CPSR = 0;
     PCONP &= ~PCSPI1;
   }
 }
