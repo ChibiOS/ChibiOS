@@ -167,7 +167,7 @@
  * @brief   SCK0 signal selector.
  */
 #if !defined(LPC11xx_SPI_SCK0_SELECTOR) || defined(__DOXYGEN__)
-#define LPC11xx_SPI_SCK0_SELECTOR           SCK0_IS_PIO0_10
+#define LPC11xx_SPI_SCK0_SELECTOR           SCK0_IS_PIO2_11
 #endif
 
 /*===========================================================================*/
