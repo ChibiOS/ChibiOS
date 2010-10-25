@@ -21,7 +21,7 @@
  * @file    STM32/can_lld.c
  * @brief   STM32 CAN subsystem low level driver source.
  *
- * @addtogroup STM32_CAN
+ * @addtogroup CAN
  * @{
  */
 

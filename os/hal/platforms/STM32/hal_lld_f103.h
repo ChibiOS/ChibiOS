@@ -18,6 +18,13 @@
 */
 
 /**
+ * @defgroup STM32F103_HAL STM32F103 HAL Support
+ * @brief HAL support for STM32 LD, MD and HD families.
+ *
+ * @ingroup HAL
+ */
+
+/**
  * @file    STM32/hal_lld_f103.h
  * @brief   STM32F103 HAL subsystem low level driver header.
  *

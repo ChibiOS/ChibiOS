@@ -21,7 +21,7 @@
  * @file    templates/can_lld.c
  * @brief   CAN Driver subsystem low level driver source template.
  *
- * @addtogroup CAN_LLD
+ * @addtogroup CAN
  * @{
  */
 

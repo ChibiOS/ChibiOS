@@ -21,7 +21,7 @@
  * @file    STM32/serial_lld.h
  * @brief   STM32 low level serial driver header.
  *
- * @addtogroup STM32_SERIAL
+ * @addtogroup SERIAL
  * @{
  */
 

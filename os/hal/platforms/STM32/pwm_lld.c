@@ -21,7 +21,7 @@
  * @file    STM32/pwm_lld.c
  * @brief   STM32 PWM subsystem low level driver header.
  *
- * @addtogroup STM32_PWM
+ * @addtogroup PWM
  * @{
  */
 

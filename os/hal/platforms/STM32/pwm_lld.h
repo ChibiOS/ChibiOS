@@ -21,7 +21,7 @@
  * @file    STM32/pwm_lld.h
  * @brief   STM32 PWM subsystem low level driver header.
  *
- * @addtogroup STM32_PWM
+ * @addtogroup PWM
  * @{
  */
 
@@ -269,8 +269,8 @@ struct PWMDriver {
  *
  * @api
  */
-#define PWM_DEGREES_TO_WIDTH(pwpm, degrees)                                 \
-  ((uint16_t)(((((uint32_t)(pwpm)->pd_config->pc_arr + 1UL) *               \
+#define PWM_DEGREES_TO_WIDTH(pwmp, degrees)                                 \
+  ((uint16_t)(((((uint32_t)(pwmp)->pd_config->pc_arr + 1UL) *               \
                  (uint32_t)(degrees)) / 36000UL) - 1UL))
 
 /**
@@ -286,8 +286,8 @@ struct PWMDriver {
  *
  * @api
  */
-#define PWM_PERCENTAGE_TO_WIDTH(pwpm, percentage)                           \
-  ((uint16_t)(((((uint32_t)(pwpm)->pd_config->pc_arr + 1UL) *               \
+#define PWM_PERCENTAGE_TO_WIDTH(pwmp, percentage)                           \
+  ((uint16_t)(((((uint32_t)(pwmp)->pd_config->pc_arr + 1UL) *               \
                  (uint32_t)(percentage)) / 10000UL) - 1UL))
 
 /*===========================================================================*/

@@ -11,11 +11,12 @@
   +--boards/            - Board support files.
   +--demos/             - Demo projects.
   +--docs/              - Documentation.
-  |  +--html/           - HTML documentation.
+  |  +--html/           - Local HTML documentation (after rebuild).
   |  +--reports/        - Test reports.
   |  +--src/            - Documentation source files (required for rebuild).
   |  +--rsc/            - Documentation resource files (required for rebuild).
-  |  +--index.html      - Documentation access.
+  |  +--Doxyfile        - Doxygen project file (required for rebuild).
+  |  +--index.html      - Local documentation access (after rebuild).
   +--ext/               - External libraries, not part of ChibiOS/RT.
   +--os/                - ChibiOS/RT files.
   |  +--hal/            - Hardware Abstraction Layer.
@@ -176,6 +177,11 @@
             ****** this version in your project.                ******
 - CHANGE: Extensive documentation improvements, fixed terminology in the
   events related documentation and articles.
+- CHANGE: The documentation is no more included in the distribution, the
+  file ./documentation.html redirects to the online documentation page
+  that contains *much* better documents.
+  Note that it is still possible to generate the local documentation using
+  Doxygen, the procedure is very simple and described in ./docs/readme.txt.
 
 *** 2.1.1 ***
 - FIX: Fixed insufficient stack size for idle thread (bug 3033624)(backported

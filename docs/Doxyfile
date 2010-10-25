@@ -631,19 +631,20 @@ INPUT                  = ../docs/src \
                          ../os/ports/cosmic/STM8 \
                          ../os/ports/RC/STM8 \
                          ../os/hal \
+                         ../os/hal/dox \
                          ../os/hal/include \
                          ../os/hal/src \
                          ../os/hal/templates \
                          ../os/hal/platforms \
-                         ../os/hal/platforms/AT91SAM7 \
-                         ../os/hal/platforms/AVR \
-                         ../os/hal/platforms/LPC11xx \
-                         ../os/hal/platforms/LPC13xx \
-                         ../os/hal/platforms/LPC214x \
-                         ../os/hal/platforms/MSP430 \
-                         ../os/hal/platforms/SPC56x \
-                         ../os/hal/platforms/STM32 \
-                         ../os/hal/platforms/STM8 \
+                         ../os/hal/platforms/AT91SAM7/platform.dox \
+                         ../os/hal/platforms/AVR/platform.dox \
+                         ../os/hal/platforms/LPC11xx/platform.dox \
+                         ../os/hal/platforms/LPC13xx/platform.dox \
+                         ../os/hal/platforms/LPC214x/platform.dox \
+                         ../os/hal/platforms/MSP430/platform.dox \
+                         ../os/hal/platforms/SPC56x/platform.dox \
+                         ../os/hal/platforms/STM32/platform.dox \
+                         ../os/hal/platforms/STM8/platform.dox \
                          ../os/various \
                          ../test \
                          ../ext/ext.dox

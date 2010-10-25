@@ -18,6 +18,13 @@
 */
 
 /**
+ * @defgroup STM32F10X_CL_HAL STM32F105/F107 HAL Support
+ * @brief HAL support for STM32 CL (Connectivity Line) family.
+ *
+ * @ingroup HAL
+ */
+
+/**
  * @file    STM32/hal_lld_f105_f107.h
  * @brief   STM32F10x Connectivity Line HAL subsystem low level driver header.
  *

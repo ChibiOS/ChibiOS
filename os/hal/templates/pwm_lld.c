@@ -21,7 +21,7 @@
  * @file    templates/pwm_lld.c
  * @brief   PWM Driver subsystem low level driver source template.
  *
- * @addtogroup PWM_LLD
+ * @addtogroup PWM
  * @{
  */
 

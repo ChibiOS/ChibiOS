@@ -21,7 +21,7 @@
  * @file    templates/pwm_lld.h
  * @brief   PWM Driver subsystem low level driver header template.
  *
- * @addtogroup PWM_LLD
+ * @addtogroup PWM
  * @{
  */
 
@@ -148,7 +148,7 @@ struct PWMDriver {
  *
  * @api
  */
-#define PWM_DEGREES_TO_WIDTH(pwpm, degrees) 0
+#define PWM_DEGREES_TO_WIDTH(pwmp, degrees) 0
 
 /**
  * @brief   Converts from percentage to pulse width.
@@ -163,7 +163,7 @@ struct PWMDriver {
  *
  * @api
  */
-#define PWM_PERCENTAGE_TO_WIDTH(pwpm, percentage) 0
+#define PWM_PERCENTAGE_TO_WIDTH(pwmp, percentage) 0
 
 /*===========================================================================*/
 /* External declarations.                                                    */

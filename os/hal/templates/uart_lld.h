@@ -21,7 +21,7 @@
  * @file    templates/uart_lld.h
  * @brief   UART Driver subsystem low level driver header template.
  *
- * @addtogroup UART_LLD
+ * @addtogroup UART
  * @{
  */
 

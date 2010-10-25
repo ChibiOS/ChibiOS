@@ -21,7 +21,7 @@
  * @file    templates/i2c_lld.c
  * @brief   I2C Driver subsystem low level driver source template.
  *
- * @addtogroup I2C_LLD
+ * @addtogroup I2C
  * @{
  */
 

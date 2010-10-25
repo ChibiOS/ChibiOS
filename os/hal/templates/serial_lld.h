@@ -21,7 +21,7 @@
  * @file    templates/serial_lld.h
  * @brief   Serial Driver subsystem low level driver header template.
  *
- * @addtogroup SERIAL_LLD
+ * @addtogroup SERIAL
  * @{
  */
 

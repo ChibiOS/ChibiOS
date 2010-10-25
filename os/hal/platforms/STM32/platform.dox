@@ -25,9 +25,44 @@
  */
 
 /**
- * @defgroup STM32_HAL STM32 HAL Support
- * @brief HAL support.
- * @details The STM32 HAL support is responsible for system initialization.
+ * @defgroup STM32_ADC STM32 ADC Support
+ * @brief ADC peripheral support.
+ * @details The ADC driver supports the STM32 ADCs using DMA channels for
+ *          improved performance.
+ *
+ * @section stm32_adc_1 Supported HW resources
+ * - ADC1.
+ * .
+ * @section stm32_adc_2 STM32 ADC driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Streaming conversion using DMA for maximum performance.
+ * - Programmable ADC interrupt priority level.
+ * - Programmable DMA bus priority for each DMA channel.
+ * - Programmable DMA interrupt priority for each DMA channel.
+ * - Programmable DMA error hook for each DMA channel.
+ * .
+ * @ingroup STM32
+ */
+
+/**
+ * @defgroup STM32_CAN STM32 CAN Support
+ * @brief CAN peripheral support.
+ *
+ * @section stm32_can_1 Supported HW resources
+ * - bxCAN1.
+ * .
+ * @section stm32_can_2 STM32 CAN driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Support for bxCAN sleep mode.
+ * - Programmable bxCAN interrupts priority level.
+ * .
+ * @ingroup STM32
+ */
+
+/**
+ * @defgroup STM32_HAL STM32 Clock Support
+ * @brief Clock support.
+ * @details The STM32 Clock support is responsible for system initialization.
  *
  * @section stm32_hal_1 Supported HW resources
  * - PLL1.
@@ -49,17 +84,20 @@
  */
 
 /**
- * @defgroup STM32F103_HAL STM32F103 HAL Support
- * @brief HAL support for STM32 LD, MD and HD families.
+ * @defgroup STM32_DMA STM32 DMA Support
+ * @brief DMA helper driver.
  *
- * @ingroup STM32_HAL
- */
-
-/**
- * @defgroup STM32F10X_CL_HAL STM32F105/F107 HAL Support
- * @brief HAL support for STM32 CL (Connectivity Line) family.
- *
- * @ingroup STM32_HAL
+ * @section stm32_dma_1 Supported HW resources
+ * The DMA driver can support any of the following hardware resources:
+ * - DMA1.
+ * - DMA2.
+ * .
+ * @section stm32_dma_2 STM32 DMA driver implementation features
+ * - Automatic DMA clock stop when not in use by other drivers.
+ * - Exports helper functions/macros to the other drivers that share the
+ *   DMA resource.
+ * .
+ * @ingroup STM32
  */
 
 /**
@@ -113,6 +151,49 @@
  */
 
 /**
+ * @defgroup STM32_PWM STM32 PWM Support
+ * @brief TIMx peripherals as PWM generators support.
+ *
+ * @section stm32_pwm_1 Supported HW resources
+ * - TIM1.
+ * - TIM2.
+ * - TIM3.
+ * - TIM4.
+ * .
+ * @section stm32_pwm_2 STM32 PWM driver implementation features
+ * - Each timer can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Four independent PWM channels per timer.
+ * - Programmable TIMx interrupts priority level.
+ * .
+ * @ingroup STM32
+ */
+
+/**
+ * @defgroup STM32_SPI STM32 SPI Support
+ * @brief SPI peripherals support.
+ * @details The SPI driver supports the STM32 SPIs using DMA channels for
+ *          improved performance.
+ *
+ * @section stm32_spi_1 Supported HW resources
+ * - SPI1.
+ * - SPI2.
+ * - SPI3.
+ * .
+ * @section stm32_spi_2 STM32 SPI driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Each SPI can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Programmable interrupt priority levels for each SPI.
+ * - DMA is used for receiving and transmitting.
+ * - Programmable DMA bus priority for each DMA channel.
+ * - Programmable DMA interrupt priority for each DMA channel.
+ * - Programmable DMA error hook for each DMA channel.
+ * .
+ * @ingroup STM32
+ */
+
+/**
  * @defgroup STM32_SERIAL STM32 USART Support (buffered)
  * @brief UART/USART peripherals support.
  *
@@ -149,101 +230,6 @@
  * - Each UART/USART can be independently enabled and programmed. Unused
  *   peripherals are left in low power mode.
  * - Programmable interrupt priority levels for each UART/USART.
- * - DMA is used for receiving and transmitting.
- * - Programmable DMA bus priority for each DMA channel.
- * - Programmable DMA interrupt priority for each DMA channel.
- * - Programmable DMA error hook for each DMA channel.
- * .
- * @ingroup STM32
- */
-
-/**
- * @defgroup STM32_DMA STM32 DMA Support
- * @brief DMA helper driver.
- *
- * @section stm32_dma_1 Supported HW resources
- * The DMA driver can support any of the following hardware resources:
- * - DMA1.
- * - DMA2.
- * .
- * @section stm32_dma_2 STM32 DMA driver implementation features
- * - Automatic DMA clock stop when not in use by other drivers.
- * - Exports helper functions/macros to the other drivers that share the
- *   DMA resource.
- * .
- * @ingroup STM32
- */
-
-/**
- * @defgroup STM32_ADC STM32 ADC Support
- * @brief ADC peripherals support.
- * @details The ADC driver supports the STM32 ADCs using DMA channels for
- *          improved performance.
- *
- * @section stm32_adc_1 Supported HW resources
- * - ADC1.
- * .
- * @section stm32_adc_2 STM32 ADC driver implementation features
- * - Clock stop for reduced power usage when the driver is in stop state.
- * - Streaming conversion using DMA for maximum performance.
- * - Programmable ADC interrupt priority level.
- * - Programmable DMA bus priority for each DMA channel.
- * - Programmable DMA interrupt priority for each DMA channel.
- * - Programmable DMA error hook for each DMA channel.
- * .
- * @ingroup STM32
- */
-
-/**
- * @defgroup STM32_CAN STM32 CAN Support
- * @brief CAN peripheral support.
- *
- * @section stm32_can_1 Supported HW resources
- * - bxCAN1.
- * .
- * @section stm32_can_2 STM32 CAN driver implementation features
- * - Clock stop for reduced power usage when the driver is in stop state.
- * - Support for bxCAN sleep mode.
- * - Programmable bxCAN interrupts priority level.
- * .
- * @ingroup STM32
- */
-
-/**
- * @defgroup STM32_PWM STM32 PWM Support
- * @brief TIMx peripherals as PWM generators support.
- *
- * @section stm32_pwm_1 Supported HW resources
- * - TIM1.
- * - TIM2.
- * - TIM3.
- * - TIM4.
- * .
- * @section stm32_pwm_2 STM32 PWM driver implementation features
- * - Each timer can be independently enabled and programmed. Unused
- *   peripherals are left in low power mode.
- * - Four independent PWM channels per timer.
- * - Programmable TIMx interrupts priority level.
- * .
- * @ingroup STM32
- */
-
-/**
- * @defgroup STM32_SPI STM32 SPI Support
- * @brief SPI peripherals support.
- * @details The SPI driver supports the STM32 SPIs using DMA channels for
- *          improved performance.
- *
- * @section stm32_spi_1 Supported HW resources
- * - SPI1.
- * - SPI2.
- * - SPI3.
- * .
- * @section stm32_spi_2 STM32 SPI driver implementation features
- * - Clock stop for reduced power usage when the driver is in stop state.
- * - Each SPI can be independently enabled and programmed. Unused
- *   peripherals are left in low power mode.
- * - Programmable interrupt priority levels for each SPI.
  * - DMA is used for receiving and transmitting.
  * - Programmable DMA bus priority for each DMA channel.
  * - Programmable DMA interrupt priority for each DMA channel.

@@ -21,7 +21,7 @@
  * @file    templates/xxx_lld.c
  * @brief   XXX Driver subsystem low level driver source template.
  *
- * @addtogroup XXX_LLD
+ * @addtogroup XXX
  * @{
  */
 

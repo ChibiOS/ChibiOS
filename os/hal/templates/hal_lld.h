@@ -21,7 +21,7 @@
  * @file    templates/hal_lld.h
  * @brief   HAL subsystem low level driver header template.
  *
- * @addtogroup HAL_LLD
+ * @addtogroup HAL
  * @{
  */
 

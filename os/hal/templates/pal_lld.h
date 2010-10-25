@@ -21,7 +21,7 @@
  * @file    templates/pal_lld.h
  * @brief   PAL subsystem low level driver header template.
  *
- * @addtogroup PAL_LLD
+ * @addtogroup PAL
  * @{
  */
 
