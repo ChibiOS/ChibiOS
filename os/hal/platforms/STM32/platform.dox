@@ -31,9 +31,11 @@
  *
  * @section stm32_hal_1 Supported HW resources
  * - PLL1.
- * - PLL2.
+ * - PLL2 (where present).
  * - RCC.
  * - Flash.
+ * - DMA1.
+ * - DMA2 (where present).
  * .
  * @section stm32_hal_2 STM32 HAL driver implementation features
  * - PLLs startup and stabilization.
