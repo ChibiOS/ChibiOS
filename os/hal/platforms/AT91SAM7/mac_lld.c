@@ -21,7 +21,7 @@
  * @file    AT91SAM7/mac_lld.c
  * @brief   AT91SAM7 low level MAC driver code.
  *
- * @addtogroup AT91SAM7_MAC
+ * @addtogroup MAC
  * @{
  */
 

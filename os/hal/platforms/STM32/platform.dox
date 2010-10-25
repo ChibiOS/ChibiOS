@@ -25,6 +25,30 @@
  */
 
 /**
+ * @defgroup STM32_HAL STM32 HAL Support
+ * @brief HAL support.
+ * @details The STM32 HAL support is responsible for system initialization.
+ *
+ * @section stm32_hal_1 Supported HW resources
+ * - PLL1.
+ * - PLL2 (where present).
+ * - RCC.
+ * - Flash.
+ * - DMA1.
+ * - DMA2 (where present).
+ * .
+ * @section stm32_hal_2 STM32 HAL driver implementation features
+ * - PLLs startup and stabilization.
+ * - Clock tree initialization.
+ * - Clock source selection.
+ * - Flash wait states initialization based on the selected clock options.
+ * - SYSTICK initialization based on current clock and kernel required rate.
+ * - DMA support initialization.
+ * .
+ * @ingroup STM32
+ */
+
+/**
  * @defgroup STM32_ADC STM32 ADC Support
  * @brief ADC peripheral support.
  * @details The ADC driver supports the STM32 ADCs using DMA channels for
@@ -55,30 +79,6 @@
  * - Clock stop for reduced power usage when the driver is in stop state.
  * - Support for bxCAN sleep mode.
  * - Programmable bxCAN interrupts priority level.
- * .
- * @ingroup STM32
- */
-
-/**
- * @defgroup STM32_HAL STM32 Clock Support
- * @brief Clock support.
- * @details The STM32 Clock support is responsible for system initialization.
- *
- * @section stm32_hal_1 Supported HW resources
- * - PLL1.
- * - PLL2 (where present).
- * - RCC.
- * - Flash.
- * - DMA1.
- * - DMA2 (where present).
- * .
- * @section stm32_hal_2 STM32 HAL driver implementation features
- * - PLLs startup and stabilization.
- * - Clock tree initialization.
- * - Clock source selection.
- * - Flash wait states initialization based on the selected clock options.
- * - SYSTICK initialization based on current clock and kernel required rate.
- * - DMA support initialization.
  * .
  * @ingroup STM32
  */
@@ -139,7 +139,7 @@
  * Any attempt to setup an invalid mode is ignored.
  *
  * @section stm32_pal_4 Suboptimal behavior
- * The GPIO is less than optimal in several areas, the limitations should
+ * The STM32 GPIO is less than optimal in several areas, the limitations should
  * be taken in account while using the PAL driver:
  * - Pad/port toggling operations are not atomic.
  * - Pad/group mode setup is not atomic.

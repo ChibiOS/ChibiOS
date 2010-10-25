@@ -21,7 +21,7 @@
  * @file    AT91SAM7/serial_lld.c
  * @brief   AT91SAM7 low level serial driver code.
  *
- * @addtogroup AT91SAM7_SERIAL
+ * @addtogroup SERIAL
  * @{
  */
 

@@ -21,7 +21,7 @@
  * @file    AT91SAM7/pal_lld.h
  * @brief   AT91SAM7 PIO low level driver header.
  *
- * @addtogroup AT91SAM7_PAL
+ * @addtogroup PAL
  * @{
  */
 

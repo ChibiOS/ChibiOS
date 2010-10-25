@@ -21,7 +21,7 @@
  * @file    AT91SAM7/spi_lld.h
  * @brief   AT91SAM7 low level SPI driver header.
  *
- * @addtogroup AT91SAM7_SPI
+ * @addtogroup SPI
  * @{
  */
 
