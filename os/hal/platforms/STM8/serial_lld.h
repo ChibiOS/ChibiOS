@@ -21,7 +21,7 @@
  * @file    STM8/serial_lld.h
  * @brief   STM8 low level serial driver header.
  *
- * @addtogroup STM8_SERIAL
+ * @addtogroup SERIAL
  * @{
  */
 

@@ -21,7 +21,7 @@
  * @file    LPC13xx/serial_lld.h
  * @brief   LPC13xx low level serial driver header.
  *
- * @addtogroup LPC13xx_SERIAL
+ * @addtogroup SERIAL
  * @{
  */
 
@@ -109,7 +109,7 @@
  * @brief   UART0 interrupt priority level setting.
  */
 #if !defined(LPC13xx_UART0_PRIORITY) || defined(__DOXYGEN__)
-#define LPC13xx_UART0_PRIORITY      3
+#define LPC13xx_UART0_PRIORITY      6
 #endif
 
 /*===========================================================================*/

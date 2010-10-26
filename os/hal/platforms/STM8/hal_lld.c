@@ -21,7 +21,7 @@
  * @file    STM8/hal_lld.c
  * @brief   STM8 HAL subsystem low level driver source.
  *
- * @addtogroup STM8_HAL
+ * @addtogroup HAL
  * @{
  */
 

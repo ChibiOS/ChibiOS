@@ -21,7 +21,7 @@
  * @file    LPC11xx/hal_lld.h
  * @brief   HAL subsystem low level driver header template.
  *
- * @addtogroup LPC11xx_HAL
+ * @addtogroup HAL
  * @{
  */
 

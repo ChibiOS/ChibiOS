@@ -21,7 +21,7 @@
  * @file    LPC11xx/spi_lld.c
  * @brief   LPC11xx low level SPI driver code.
  *
- * @addtogroup LPC11xx_SPI
+ * @addtogroup SPI
  * @{
  */
 

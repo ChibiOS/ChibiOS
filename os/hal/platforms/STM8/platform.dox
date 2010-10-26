@@ -18,30 +18,54 @@
 */
 
 /**
- * @defgroup STM8_DRIVERS STM8 Drivers
- * @brief STM8 specific support.
+ * @defgroup STM8_DRIVERS STM8x Drivers
+ * @details This section describes all the supported drivers on the STM8S and
+ *          STM8A platforms and the implementation details of the single
+ *          drivers.
  *
  * @ingroup platforms
  */
 
 /**
- * @defgroup STM8_HAL STM8 HAL Support
- * @brief HAL support.
+ * @defgroup STM8_HAL STM8 Initialization Support
+ * @details The STM8 HAL support is responsible for system initialization.
  *
+ * @section stm8_hal_1 Supported HW resources
+ * - CLK.
+ * .
+ * @section stm8_hal_2 STM8 HAL driver implementation features
+ * - Clock tree initialization.
+ * - Clock source selection.
+ * .
  * @ingroup STM8_DRIVERS
  */
 
 /**
- * @defgroup STM8_PAL STM8 I/O Ports Support
- * @brief I/O Ports peripherals support.
- * @details This module supports the STM8 GPIO controller. The controller
- * supports the following features (see @ref PAL):
+ * @defgroup STM8_PAL STM8 GPIO Support
+ * @details The STM8 PAL driver uses the GPIO peripherals.
+ *
+ * @section stm8_pal_1 Supported HW resources
+ * - AFIO.
+ * - GPIOA.
+ * - GPIOB.
+ * - GPIOC.
+ * - GPIOD.
+ * - GPIOE.
+ * - GPIOF.
+ * - GPIOG (where present).
+ * - GPIOH (where present).
+ * - GPIOI (where present).
+ * .
+ * @section stm8_pal_2 STM8 PAL driver implementation features
+ * The PAL driver implementation fully supports the following hardware
+ * capabilities:
  * - 8 bits wide ports.
  * - Atomic set/reset/toggle functions because special STM8 instruction set.
  * - Output latched regardless of the pad setting.
  * - Direct read of input pads regardless of the pad setting.
  * .
- * <h2>Supported Setup Modes</h2>
+ * @section stm8_pal_3 Supported PAL setup modes
+ * The STM8 PAL driver supports the following I/O modes:
  * - @p PAL_MODE_RESET.
  * - @p PAL_MODE_UNCONNECTED.
  * - @p PAL_MODE_INPUT.
@@ -51,8 +75,9 @@
  * .
  * Any attempt to setup an invalid mode is ignored.
  *
- * <h2>Suboptimal Behavior</h2>
- * Some STM8 I/O ports features are less than optimal:
+ * @section stm8_pal_4 Suboptimal behavior
+ * The STM8 GPIO is less than optimal in several areas, the limitations
+ * should be taken in account while using the PAL driver:
  * - Bus/group writing is not atomic.
  * - Pad/group mode setup is not atomic.
  * .
@@ -60,9 +85,21 @@
  */
 
 /**
- * @defgroup STM8_SERIAL STM8 UART Support
- * @brief USART support.
- * @details The serial driver supports the STM8 USARTs in asynchronous mode.
+ * @defgroup STM8_SERIAL STM8 UART Support (buffered)
+ * @details The STM8 Serial driver uses the UART peripherals in a
+ *          buffered, interrupt driven, implementation.
  *
+ * @section stm8_serial_1 Supported HW resources
+ * The serial driver can support any of the following hardware resources:
+ * - UART1.
+ * - UART2 (where present).
+ * - UART3 (where present).
+ * .
+ * @section stm8_serial_2 STM8 Serial driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Each UART can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Fully interrupt driven.
+ * .
  * @ingroup STM8_DRIVERS
  */

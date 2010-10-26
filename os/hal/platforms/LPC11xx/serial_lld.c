@@ -21,7 +21,7 @@
  * @file    LPC11xx/serial_lld.c
  * @brief   LPC11xx low level serial driver code.
  *
- * @addtogroup LPC11xx_SERIAL
+ * @addtogroup SERIAL
  * @{
  */
 

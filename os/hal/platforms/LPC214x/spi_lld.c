@@ -21,7 +21,7 @@
  * @file    LPC214x/spi_lld.c
  * @brief   LPC214x low level SPI driver code.
  *
- * @addtogroup LPC214x_SPI
+ * @addtogroup SPI
  * @{
  */
 

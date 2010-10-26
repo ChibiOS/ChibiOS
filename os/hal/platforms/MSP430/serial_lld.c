@@ -21,7 +21,7 @@
  * @file    MSP430/serial_lld.c
  * @brief   MSP430 low level serial driver code.
  *
- * @addtogroup MSP430_SERIAL
+ * @addtogroup SERIAL
  * @{
  */
 

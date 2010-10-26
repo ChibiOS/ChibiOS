@@ -19,23 +19,34 @@
 
 /**
  * @defgroup AVR_DRIVERS AVR Drivers
- * @brief AVR specific support.
+ * @details This section describes all the supported drivers on the AVR
+ *          platform and the implementation details of the single drivers.
  *
  * @ingroup platforms
  */
 
 /**
- * @defgroup AVR_HAL AVR HAL Support
- * @brief HAL support.
+ * @defgroup AVR_HAL AVR Initialization Support
+ * @details On the AVR platform the HAL driver is a stub and does not perform
+ *          any platform-specific initialization, it still performs the
+ *          initialization of the other drivers.
  *
  * @ingroup AVR_DRIVERS
  */
 
 /**
- * @defgroup AVR_SERIAL AVR USART Support
- * @brief USART support.
- * @details The serial driver supports both the AVR USARTs in asynchronous
- * mode.
+ * @defgroup AVR_SERIAL AVR USART Support (buffered)
+ * @details The AVR Serial driver uses the USART peripherals in a
+ *          buffered, interrupt driven, implementation.
  *
+ * @section avr_serial_1 Supported HW resources
+ * The serial driver can support any of the following hardware resources:
+ * - USART0.
+ * - USART1.
+ * .
+ * @section avr_serial_2 AVR Serial driver implementation features
+ * - Each USART can be independently enabled and programmed.
+ * - Fully interrupt driven.
+ * .
  * @ingroup AVR_DRIVERS
  */

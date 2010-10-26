@@ -21,7 +21,7 @@
  * @file    LPC11xx/hal_lld.c
  * @brief   LPC11xx HAL subsystem low level driver source.
  *
- * @addtogroup LPC11xx_HAL
+ * @addtogroup HAL
  * @{
  */
 

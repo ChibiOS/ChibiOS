@@ -21,7 +21,7 @@
  * @file    LPC13xx/pal_lld.c
  * @brief   LPC13xx GPIO low level driver code.
  *
- * @addtogroup LPC13xx_PAL
+ * @addtogroup PAL
  * @{
  */
 

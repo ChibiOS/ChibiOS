@@ -21,7 +21,7 @@
  * @file    AVR/serial_lld.c
  * @brief   AVR low level serial driver code.
  *
- * @addtogroup AVR_SERIAL
+ * @addtogroup SERIAL
  * @{
  */
 

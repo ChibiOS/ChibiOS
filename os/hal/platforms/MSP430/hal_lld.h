@@ -21,7 +21,7 @@
  * @file    MSP430/hal_lld.h
  * @brief   MSP430 HAL subsystem low level driver header.
  *
- * @addtogroup MSP430_HAL
+ * @addtogroup HAL
  * @{
  */
 

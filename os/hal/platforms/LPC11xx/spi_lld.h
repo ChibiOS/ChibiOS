@@ -21,7 +21,7 @@
  * @file    LPC11xx/spi_lld.h
  * @brief   LPC11xx low level SPI driver header.
  *
- * @addtogroup LPC11xx_SPI
+ * @addtogroup SPI
  * @{
  */
 
