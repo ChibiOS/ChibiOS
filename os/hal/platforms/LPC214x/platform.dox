@@ -74,7 +74,7 @@
  */
 
 /**
- * @defgroup LPC214x_SPI LPC214x SPI Support
+ * @defgroup LPC214x_SPI LPC214x SSP Support
  * @details The SPI driver supports the LPC214x SSP peripheral in an interrupt
  *          driven implementation.
  * @note    Being the SPI a fast peripheral, much care must be taken to
