@@ -79,7 +79,7 @@
  */
 
 /**
- * @defgroup LPC13xx_SPI LPC13xx SPI Support
+ * @defgroup LPC13xx_SPI LPC13xx SSP Support
  * @details The SPI driver supports the LPC13xx SSP peripherals in an interrupt
  *          driven implementation.
  * @note    Being the SPI a fast peripheral, much care must be taken to
