@@ -39,11 +39,6 @@
 SPIDriver SPID1;
 #endif
 
-#if LPC13xx_SPI_USE_SSP1 || defined(__DOXYGEN__)
-/** @brief SPI2 driver identifier.*/
-SPIDriver SPID2;
-#endif
-
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -135,22 +130,6 @@ CH_IRQ_HANDLER(Vector90) {
 }
 #endif
 
-#if LPC13xx_SPI_USE_SSP1 || defined(__DOXYGEN__)
-/**
- * @brief   SSP1 interrupt handler.
- *
- * @isr
- */
-CH_IRQ_HANDLER(Vector78) {
-
-  CH_IRQ_PROLOGUE();
-
-  spi_serve_interrupt(&SPID2);
-
-  CH_IRQ_EPILOGUE();
-}
-#endif
-
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -161,7 +140,7 @@ CH_IRQ_HANDLER(Vector78) {
  * @notapi
  */
 void spi_lld_init(void) {
-
+************************************************************
 #if LPC13xx_SPI_USE_SSP0
   spiObjectInit(&SPID1);
   SPID1.spd_ssp = LPC_SSP0;
@@ -175,14 +154,6 @@ void spi_lld_init(void) {
 #endif
   LPC_IOCON->PIO0_8  = 0xC1;                /* MISO0 without resistors.     */
   LPC_IOCON->PIO0_9  = 0xC1;                /* MOSI0 without resistors.     */
-#endif /* LPC13xx_SPI_USE_SSP0 */
-
-#if LPC13xx_SPI_USE_SSP1
-  spiObjectInit(&SPID2);
-  SPID2.spd_ssp = LPC_SSP1;
-  LPC_IOCON->PIO2_1  = 0xC2;                /* SCK1 without resistors.      */
-  LPC_IOCON->PIO2_2  = 0xC2;                /* MISO1 without resistors.     */
-  LPC_IOCON->PIO2_3  = 0xC2;                /* MOSI1 without resistors.     */
 #endif /* LPC13xx_SPI_USE_SSP0 */
 }
 
@@ -204,15 +175,6 @@ void spi_lld_start(SPIDriver *spip) {
       LPC_SYSCON->PRESETCTRL |= 1;
       NVICEnableVector(SSP0_IRQn,
                        CORTEX_PRIORITY_MASK(LPC13xx_SPI_SSP0_IRQ_PRIORITY));
-    }
-#endif
-#if LPC13xx_SPI_USE_SSP1
-    if (&SPID2 == spip) {
-      LPC_SYSCON->SSP1CLKDIV = LPC13xx_SPI_SSP1CLKDIV;
-      LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 18);
-      LPC_SYSCON->PRESETCTRL |= 4;
-      NVICEnableVector(SSP1_IRQn,
-                       CORTEX_PRIORITY_MASK(LPC13xx_SPI_SSP1_IRQ_PRIORITY));
     }
 #endif
   }
@@ -240,15 +202,6 @@ void spi_lld_stop(SPIDriver *spip) {
       LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 11);
       LPC_SYSCON->SSP0CLKDIV = 0;
       NVICDisableVector(SSP0_IRQn);
-      return;
-    }
-#endif
-#if LPC13xx_SPI_USE_SSP1
-    if (&SPID2 == spip) {
-      LPC_SYSCON->PRESETCTRL &= ~4;
-      LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 18);
-      LPC_SYSCON->SSP1CLKDIV = 0;
-      NVICDisableVector(SSP1_IRQn);
       return;
     }
 #endif
