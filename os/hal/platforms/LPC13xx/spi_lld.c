@@ -140,7 +140,7 @@ CH_IRQ_HANDLER(Vector90) {
  * @notapi
  */
 void spi_lld_init(void) {
-************************************************************
+
 #if LPC13xx_SPI_USE_SSP0
   spiObjectInit(&SPID1);
   SPID1.spd_ssp = LPC_SSP0;
