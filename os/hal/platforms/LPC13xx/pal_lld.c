@@ -53,7 +53,7 @@
  * @brief   LPC13xx I/O ports configuration.
  * @details GPIO unit registers initialization.
  *
- * @param[in] config the LPC13xx ports configuration
+ * @param[in] config    the LPC13xx ports configuration
  *
  * @notapi
  */

@@ -38,18 +38,23 @@
 
 /*
  * GPIO 0 initial setup.
- * Bit7 - LPCxpresso LED, initially output at low level.
  */
-#define VAL_GPIO0DIR            PAL_PORT_BIT(GPIO0_LED2)
-#define VAL_GPIO0DATA           0x00000000
+#define VAL_GPIO0DIR            PAL_PORT_BIT(GPIO0_OLEDSEL) |               \
+                                PAL_PORT_BIT(GPIO0_LED2)
+#define VAL_GPIO0DATA           PAL_PORT_BIT(GPIO0_OLEDSEL) |               \
+                                PAL_PORT_BIT(GPIO0_LED2)
 
 /*
  * GPIO 1 initial setup.
  */
-#define VAL_GPIO1DIR            PAL_PORT_BIT(GPIO1_LED3B) |                 \
-                                PAL_PORT_BIT(GPIO1_LED3R) |                 \
-                                PAL_PORT_BIT(GPIO1_LED3G)
-#define VAL_GPIO1DATA           0x00000000
+#define VAL_GPIO1DIR            PAL_PORT_BIT(GPIO1_LED3B)   |               \
+                                PAL_PORT_BIT(GPIO1_LED3R)   |               \
+                                PAL_PORT_BIT(GPIO1_LED3G)   |               \
+                                PAL_PORT_BIT(GPIO1_SPI0SEL)
+#define VAL_GPIO1DATA           PAL_PORT_BIT(GPIO1_LED3B)   |               \
+                                PAL_PORT_BIT(GPIO1_LED3R)   |               \
+                                PAL_PORT_BIT(GPIO1_LED3G)   |               \
+                                PAL_PORT_BIT(GPIO1_SPI0SEL)
 
 /*
  * GPIO 2 initial setup.
@@ -67,12 +72,14 @@
  * Pin definitions.
  */
 #define GPIO0_SW3               1
+#define GPIO0_OLEDSEL           2
 #define GPIO0_LED2              7
 
 #define GPIO1_LED3B             2
 #define GPIO1_SW4               4
 #define GPIO1_LED3R             9
 #define GPIO1_LED3G             10
+#define GPIO1_SPI0SEL           11
 
 #ifdef __cplusplus
 extern "C" {
