@@ -214,7 +214,7 @@ static void notify1(void) {
  * @isr
  */
 #if LPC13xx_SERIAL_USE_UART0 || defined(__DOXYGEN__)
-CH_IRQ_HANDLER(Vector94) {
+CH_IRQ_HANDLER(VectorF8) {
 
   CH_IRQ_PROLOGUE();
 
