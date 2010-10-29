@@ -28,7 +28,7 @@ Within 2.1.x
   * Verify the FatFs demo on both the AT91SAM7X and AT91SAM7S.
 * Update the LPC214x SPI driver (ISR).
   * Verify the LPC214x FatFs demo.
-X Write a new SPI driver for LPC1xxx (ISR)(it should be very close to the
+* Write a new SPI driver for LPC1xxx (ISR)(it should be very close to the
   LPC214x one).
 N Evaluate if to add a synchronous API to the UART driver, eventually do so.
 X Global documentation reorganization in order to allow both separate documents
@@ -43,6 +43,7 @@ X PDF generation from the documentation system (only separate documents, not
   a very similar DMA (waiting for the new STM8L-Discovery kit).
 - Add the STM32VL to the official STM32 HAL support (waiting for the new
   STM32-Discovery kit).
+- Add a spiPolledExchange() API to the SPI driver model.
 - New STM8S/A SPI driver.
 X Evaluate a new API for the SPI driver enabling quick transfers of few bytes
   in polled mode.
