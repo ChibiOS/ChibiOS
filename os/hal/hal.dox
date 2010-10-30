@@ -44,8 +44,8 @@
  *   .
  *   The LLD may be not present in those drivers that do not access the
  *   hardware directly but through other device drivers, as example the
- *   @ref MMC_SPI driver uses the @ref SPI and @ref PAL drivers in order
- *   to implement its functionalities.
+ *   MMC_SPI driver uses the SPI and PAL drivers in order to implement
+ *   its functionalities.
  * .
  * @subsection hal_device_driver_diagram Diagram
  * @dot
