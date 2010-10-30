@@ -99,7 +99,7 @@ static void serve_interrupt(SPIDriver *spip) {
       (void)ssp->SSP_DR;
     if (--spip->spd_rxcnt == 0) {
       chDbgAssert(spip->spd_txcnt == 0,
-                  "chSemResetI(), #1", "counter out of synch");
+                  "spi_serve_interrupt(), #1", "counter out of synch");
       /* Stops the IRQ sources.*/
       ssp->SSP_IMSC = 0;
       /* Portable SPI ISR code defined in the high level driver, note, it is
@@ -178,7 +178,7 @@ void spi_lld_start(SPIDriver *spip) {
   spip->spd_ssp->SSP_ICR  = ICR_RT | ICR_ROR;
   spip->spd_ssp->SSP_CR0  = spip->spd_config->spc_cr0;
   spip->spd_ssp->SSP_CPSR = spip->spd_config->spc_cpsr;
-  spip->spd_ssp->SSP_CR1  = spip->spd_config->spc_cr1 | CR1_SSE;
+  spip->spd_ssp->SSP_CR1  = CR1_SSE;
 }
 
 /**
@@ -191,16 +191,15 @@ void spi_lld_start(SPIDriver *spip) {
 void spi_lld_stop(SPIDriver *spip) {
 
   if (spip->spd_state != SPI_STOP) {
+    spip->spd_ssp->SSP_CR1  = 0;
+    spip->spd_ssp->SSP_CR0  = 0;
+    spip->spd_ssp->SSP_CPSR = 0;
 #if LPC214x_SPI_USE_SSP
     if (&SPID1 == spip) {
       PCONP = (PCONP & PCALL) & ~PCSPI1;
       VICIntEnClear = INTMASK(SOURCE_SPI1);
     }
 #endif
-    spip->spd_ssp->SSP_CR1  = 0;
-    spip->spd_ssp->SSP_CR0  = 0;
-    spip->spd_ssp->SSP_CPSR = 0;
-    PCONP &= ~PCSPI1;
   }
 }
 
@@ -316,6 +315,26 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   spip->spd_rxcnt = spip->spd_txcnt = n;
   ssp_fifo_preload(spip);
   spip->spd_ssp->SSP_IMSC = IMSC_ROR | IMSC_RT | IMSC_TX | IMSC_RX;
+}
+
+/**
+ * @brief   Exchanges one frame using a polled wait.
+ * @details This synchronous function exchanges one frame using a polled
+ *          synchronization method. This function is useful when exchanging
+ *          small amount of data on high speed channels, usually in this
+ *          situation is much more efficient just wait for completion using
+ *          polling than suspending the thread waiting for an interrupt.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] frame     the data frame to send over the SPI bus
+ * @return              The received data frame from the SPI bus.
+ */
+uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
+
+  spip->spd_ssp->SSP_DR = (uint32_t)frame;
+  while ((spip->spd_ssp->SSP_SR & SR_RNE) == 0)
+    ;
+  return (uint16_t)spip->spd_ssp->SSP_DR;
 }
 
 #endif /* CH_HAL_USE_SPI */

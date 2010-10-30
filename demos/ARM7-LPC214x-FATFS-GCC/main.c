@@ -47,7 +47,6 @@ static SPIConfig hs_spicfg = {
   IOPORT1,
   PA_SSEL1,
   CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0),
-  0,
   2
 };
 
@@ -57,7 +56,6 @@ static SPIConfig ls_spicfg = {
   IOPORT1,
   PA_SSEL1,
   CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0),
-  0,
   254
 };
 

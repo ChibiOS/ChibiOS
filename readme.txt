@@ -100,10 +100,13 @@
 - NEW: New I2C driver model (not complete and no implementations yet).
 - NEW: New SPI driver model, the new model supports both synchronous and
   asynchronous operations and, in general, simplifies the implementation of the
-  low level driver. The state diagram changed slightly changed so be careful.
+  low level driver. The new driver also specifies a simplified polled exchange
+  API, useful for efficiently sending small amount of data over high speed
+  connections. The driver state diagram changed slightly changed so be careful.
 - NEW: New ADC driver model, the new model supports both synchronous and
   asynchronous operations and, in general, simplifies the implementation of the
-  low level driver. The state diagram changed slightly changed so be careful.
+  low level driver. The driver state diagram changed slightly changed so be
+  careful.
 - NEW: Improved PWM driver model, added several macros that helps to setup
   configuration structures and to specify pulse widths also as percentages or
   degrees using a fixed point notation. Added new pwmEnableChannelI() and

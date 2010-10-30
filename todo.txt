@@ -43,10 +43,8 @@ X PDF generation from the documentation system (only separate documents, not
   a very similar DMA (waiting for the new STM8L-Discovery kit).
 - Add the STM32VL to the official STM32 HAL support (waiting for the new
   STM32-Discovery kit).
-- Add a spiPolledExchange() API to the SPI driver model.
+* Add an optional spiPolledExchange() API to the SPI driver model.
 - New STM8S/A SPI driver.
-X Evaluate a new API for the SPI driver enabling quick transfers of few bytes
-  in polled mode.
 X Except for the above, bug fixing only until the 2.2.0 release.
 
 Within 2.3.x (hopefully)

@@ -33,14 +33,9 @@ static uint8_t digits[32] = {
   0x00, 0x02, 0x01, 0x18, 0x54, 0x88, 0x50, 0x51
 };
 
-static void endsend(SPIDriver *spip) {
-
-  spiUnselect(spip);
-}
-
 /* Maximum speed SPI configuration (1MHz, CPHA=0, CPOL=0).*/
 static SPIConfig spicfg = {
-  endsend,
+  NULL,
   GPIO1,
   GPIO1_SPI0SEL,
   CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0),
@@ -52,19 +47,13 @@ static SPIConfig spicfg = {
  */
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
-  uint8_t i = 0;
 
   (void)arg;
   while (TRUE) {
-    spiSelect(&SPID1);
-    spiStartSend(&SPID1, 1, &digits[i]);
     palClearPad(GPIO0, GPIO0_LED2);
     chThdSleepMilliseconds(500);
-    spiSelect(&SPID1);
-    spiStartSend(&SPID1, 1, &digits[i | 0x10]);
     palSetPad(GPIO0, GPIO0_LED2);
     chThdSleepMilliseconds(500);
-    i = (i + 1) & 15;
   }
   return 0;
 }
@@ -105,6 +94,7 @@ static msg_t Thread2(void *arg) {
  * on entry.
  */
 int main(int argc, char **argv) {
+  uint8_t i;
 
   (void)argc;
   (void)argv;
@@ -122,13 +112,22 @@ int main(int argc, char **argv) {
   chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
 
   /*
-   * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the button state.
+   * Normal main() thread activity, in this demo it updates the 7-segments
+   * display on the LPCXpresso main board using the SPI driver.
    */
+  i = 0;
   while (TRUE) {
     if (!palReadPad(GPIO0, GPIO0_SW3))
       TestThread(&SD1);
+    spiSelect(&SPID1);
+    spiSend(&SPID1, 1, &digits[i]);                 /* Non polled method.   */
+    spiUnselect(&SPID1);
     chThdSleepMilliseconds(500);
+    spiSelect(&SPID1);
+    spiPolledExchange(&SPID1, digits[i | 0x10]);    /* Polled method.       */
+    spiUnselect(&SPID1);
+    chThdSleepMilliseconds(500);
+    i = (i + 1) & 15;
   }
   return 0;
 }

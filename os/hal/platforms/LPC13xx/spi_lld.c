@@ -196,18 +196,17 @@ void spi_lld_start(SPIDriver *spip) {
 void spi_lld_stop(SPIDriver *spip) {
 
   if (spip->spd_state != SPI_STOP) {
+    spip->spd_ssp->CR1  = 0;
+    spip->spd_ssp->CR0  = 0;
+    spip->spd_ssp->CPSR = 0;
 #if LPC13xx_SPI_USE_SSP0
     if (&SPID1 == spip) {
       LPC_SYSCON->PRESETCTRL &= ~1;
       LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 11);
       LPC_SYSCON->SSPCLKDIV = 0;
       NVICDisableVector(SSP_IRQn);
-      return;
     }
 #endif
-    spip->spd_ssp->CR1  = 0;
-    spip->spd_ssp->CR0  = 0;
-    spip->spd_ssp->CPSR = 0;
   }
 }
 
@@ -323,6 +322,26 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   spip->spd_rxcnt = spip->spd_txcnt = n;
   ssp_fifo_preload(spip);
   spip->spd_ssp->IMSC = IMSC_ROR | IMSC_RT | IMSC_TX | IMSC_RX;
+}
+
+/**
+ * @brief   Exchanges one frame using a polled wait.
+ * @details This synchronous function exchanges one frame using a polled
+ *          synchronization method. This function is useful when exchanging
+ *          small amount of data on high speed channels, usually in this
+ *          situation is much more efficient just wait for completion using
+ *          polling than suspending the thread waiting for an interrupt.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] frame     the data frame to send over the SPI bus
+ * @return              The received data frame from the SPI bus.
+ */
+uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
+
+  spip->spd_ssp->DR = (uint32_t)frame;
+  while ((spip->spd_ssp->SR & SR_RNE) == 0)
+    ;
+  return (uint16_t)spip->spd_ssp->DR;
 }
 
 #endif /* CH_HAL_USE_SPI */

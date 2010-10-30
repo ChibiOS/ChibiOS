@@ -186,6 +186,21 @@ typedef enum {
   spi_lld_receive(spip, n, rxbuf);                                          \
 }
 
+/**
+ * @brief   Exchanges one frame using a polled wait.
+ * @details This synchronous function exchanges one frame using a polled
+ *          synchronization method. This function is useful when exchanging
+ *          small amount of data on high speed channels, usually in this
+ *          situation is much more efficient just wait for completion using
+ *          polling than suspending the thread waiting for an interrupt.
+ * @note    This API is implemented as a macro in order to minimize latency.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] frame     the data frame to send over the SPI bus
+ * @return              The received data frame from the SPI bus.
+ */
+#define spiPolledExchange(spip, frame) spi_lld_polled_exchange(spip, frame)
+
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
 /**
  * @brief   Waits for operation completion.

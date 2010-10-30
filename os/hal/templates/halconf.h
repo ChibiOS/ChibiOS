@@ -173,6 +173,17 @@
 #define MMC_POLLING_DELAY           10
 #endif
 
+/**
+ * @brief   Uses the SPI polled API for small data transfers.
+ * @details Polled transfers usually improve performance because it
+ *          saves two context switches and interrupt servicing. Note
+ *          that this option has no effect on large transfers which
+ *          are always performed using DMAs/IRQs.
+ */
+#if !defined(MMC_USE_SPI_POLLING) || defined(__DOXYGEN__)
+#define MMC_USE_SPI_POLLING         TRUE
+#endif
+
 /*===========================================================================*/
 /* PAL driver related settings.                                              */
 /*===========================================================================*/
