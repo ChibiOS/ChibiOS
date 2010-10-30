@@ -20,6 +20,7 @@ Within 2.1.x
   parameter.
 * Change the SPI driver to be able to work asynchronously using callbacks,
   keep the synchronous APIs available as option.
+* Add an optional spiPolledExchange() API to the SPI driver model.
 * Update the STM32 SPI driver to the new model.
 * Make the ADC driver have the same synchronous/asynchronous API of the
   new SPI driver model.
@@ -31,11 +32,11 @@ Within 2.1.x
 * Write a new SPI driver for LPC1xxx (ISR)(it should be very close to the
   LPC214x one).
 N Evaluate if to add a synchronous API to the UART driver, eventually do so.
-X Global documentation reorganization in order to allow both separate documents
+* Global documentation reorganization in order to allow both separate documents
   and the usual blob document.
-X PDF generation from the documentation system (only separate documents, not
+* PDF generation from the documentation system (only separate documents, not
   the blob).
-- Automatic compilation and upload of the various documents on the web site
+* Automatic compilation and upload of the various documents on the web site
   (doxygen + rsync).
 - STM8L official HAL support, it will have to be separated from the STM8S/STM8A
   HAL because it is very different, actually it looks much more like a
@@ -43,7 +44,6 @@ X PDF generation from the documentation system (only separate documents, not
   a very similar DMA (waiting for the new STM8L-Discovery kit).
 - Add the STM32VL to the official STM32 HAL support (waiting for the new
   STM32-Discovery kit).
-* Add an optional spiPolledExchange() API to the SPI driver model.
 - New STM8S/A SPI driver.
 X Except for the above, bug fixing only until the 2.2.0 release.
 
