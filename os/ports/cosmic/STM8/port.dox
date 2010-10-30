@@ -77,18 +77,18 @@
  * @ingroup STM8_COSMIC
  */
 
+/**
+ * @defgroup STM8_COSMIC_CORE Core Port Implementation
+ * @details STM8 specific port code, structures and macros.
+ *
+ * @ingroup STM8_COSMIC
+ */
+
  /**
  * @defgroup STM8_COSMIC_STARTUP Startup Support
  * @details ChibiOS/RT doed not provide startup files for the STM8, there
  * are no special startup requirement so the normal toolchain-provided
  * startup files can be used.
- *
- * @ingroup STM8_COSMIC
- */
-
-/**
- * @defgroup STM8_COSMIC_CORE Core Port Implementation
- * @details STM8 specific port code, structures and macros.
  *
  * @ingroup STM8_COSMIC
  */

@@ -164,9 +164,6 @@
  * @details ARM7 specific port code, structures and macros.
  *
  * @ingroup ARM7
- * @file ARM7/chtypes.h Port types.
- * @file ARM7/chcore.h Port related structures and macros.
- * @file ARM7/chcore.c Port related code.
  */
 
 /**

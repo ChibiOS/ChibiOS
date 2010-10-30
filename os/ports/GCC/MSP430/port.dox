@@ -77,18 +77,18 @@
  * @ingroup MSP430
  */
 
+/**
+ * @defgroup MSP430_CORE Core Port Implementation
+ * @details MSP430 specific port code, structures and macros.
+ *
+ * @ingroup MSP430
+ */
+
  /**
  * @defgroup MSP430_STARTUP Startup Support
  * @details ChibiOS/RT doed not provide startup files for the MSP430, there
  * are no special startup requirement so the normal toolchain-provided
  * startup files can be used.
- *
- * @ingroup MSP430
- */
-
-/**
- * @defgroup MSP430_CORE Core Port Implementation
- * @details MSP430 specific port code, structures and macros.
  *
  * @ingroup MSP430
  */
