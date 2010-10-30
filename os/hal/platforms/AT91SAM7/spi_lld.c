@@ -374,6 +374,27 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   spip->spd_spi->SPI_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
 }
 
+/**
+ * @brief   Exchanges one frame using a polled wait.
+ * @details This synchronous function exchanges one frame using a polled
+ *          synchronization method. This function is useful when exchanging
+ *          small amount of data on high speed channels, usually in this
+ *          situation is much more efficient just wait for completion using
+ *          polling than suspending the thread waiting for an interrupt.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] frame     the data frame to send over the SPI bus
+ * @return              The received data frame from the SPI bus.
+ */
+uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
+
+  spip->spd_spi->SPI_CR   = AT91C_SPI_SPIEN;
+  spip->spd_spi->SPI_TDR = frame;
+  while ((spip->spd_spi->SPI_SR & AT91C_SPI_RDRF) == 0)
+    ;
+  return spip->spd_spi->SPI_RDR;
+}
+
 #endif /* CH_HAL_USE_SPI */
 
 /** @} */
