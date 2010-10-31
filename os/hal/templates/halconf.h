@@ -59,10 +59,24 @@
 #endif
 
 /**
+ * @brief   Enables the I2C subsystem.
+ */
+#if !defined(CH_HAL_USE_I2C) || defined(__DOXYGEN__)
+#define CH_HAL_USE_I2C              FALSE
+#endif
+
+/**
  * @brief   Enables the MAC subsystem.
  */
 #if !defined(CH_HAL_USE_MAC) || defined(__DOXYGEN__)
 #define CH_HAL_USE_MAC              TRUE
+#endif
+
+/**
+ * @brief   Enables the MMC_SPI subsystem.
+ */
+#if !defined(CH_HAL_USE_MMC_SPI) || defined(__DOXYGEN__)
+#define CH_HAL_USE_MMC_SPI          TRUE
 #endif
 
 /**
@@ -84,13 +98,6 @@
  */
 #if !defined(CH_HAL_USE_SPI) || defined(__DOXYGEN__)
 #define CH_HAL_USE_SPI              TRUE
-#endif
-
-/**
- * @brief   Enables the MMC_SPI subsystem.
- */
-#if !defined(CH_HAL_USE_MMC_SPI) || defined(__DOXYGEN__)
-#define CH_HAL_USE_MMC_SPI          TRUE
 #endif
 
 /**
@@ -129,6 +136,17 @@
  */
 #if !defined(CAN_USE_SLEEP_MODE) || defined(__DOXYGEN__)
 #define CAN_USE_SLEEP_MODE          TRUE
+#endif
+
+/*===========================================================================*/
+/* I2C driver related settings.                                              */
+/*===========================================================================*/
+
+/**
+ * @brief   Enables the mutual exclusion APIs on the I2C bus.
+ */
+#if !defined(I2C_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define I2C_USE_MUTUAL_EXCLUSION    TRUE
 #endif
 
 /*===========================================================================*/
