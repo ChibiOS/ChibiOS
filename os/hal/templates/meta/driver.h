@@ -50,9 +50,9 @@
  * @brief   Driver state machine possible states.
  */
 typedef enum {
-  XXX_UNINIT = 0,                   /**< @brief Not initialized.            */
-  XXX_STOP = 1,                     /**< @brief Stopped.                    */
-  XXX_READY = 2,                    /**< @brief Ready.                      */
+  XXX_UNINIT = 0,                   /**< Not initialized.                   */
+  XXX_STOP = 1,                     /**< Stopped.                           */
+  XXX_READY = 2,                    /**< Ready.                             */
 } xxxstate_t;
 
 #include "xxx_lld.h"

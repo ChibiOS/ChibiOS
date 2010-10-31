@@ -102,13 +102,13 @@
  * @brief   Driver state machine possible states.
  */
 typedef enum {
-  MMC_UNINIT = 0,                           /**< @brief Not initialized.    */
-  MMC_STOP = 1,                             /**< @brief Stopped.            */
-  MMC_WAIT = 2,                             /**< @brief Waiting card.       */
-  MMC_INSERTED = 3,                         /**< @brief Card inserted.      */
-  MMC_READY = 4,                            /**< @brief Card ready.         */
-  MMC_READING = 5,                          /**< @brief Reading.            */
-  MMC_WRITING = 6                           /**< @brief Writing.            */
+  MMC_UNINIT = 0,                           /**< Not initialized.           */
+  MMC_STOP = 1,                             /**< Stopped.                   */
+  MMC_WAIT = 2,                             /**< Waiting card.              */
+  MMC_INSERTED = 3,                         /**< Card inserted.             */
+  MMC_READY = 4,                            /**< Card ready.                */
+  MMC_READING = 5,                          /**< Reading.                   */
+  MMC_WRITING = 6                           /**< Writing.                   */
 } mmcstate_t;
 
 /**

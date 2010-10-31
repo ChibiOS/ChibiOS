@@ -82,11 +82,11 @@
  * @brief   Driver state machine possible states.
  */
 typedef enum {
-  CAN_UNINIT = 0,                           /**< @brief Not initialized.    */
-  CAN_STOP = 1,                             /**< @brief Stopped.            */
-  CAN_STARTING = 2,                         /**< @brief Starting.           */
-  CAN_READY = 3,                            /**< @brief Ready.              */
-  CAN_SLEEP = 4                             /**< @brief Sleep state.        */
+  CAN_UNINIT = 0,                           /**< Not initialized.           */
+  CAN_STOP = 1,                             /**< Stopped.                   */
+  CAN_STARTING = 2,                         /**< Starting.                  */
+  CAN_READY = 3,                            /**< Ready.                     */
+  CAN_SLEEP = 4                             /**< Sleep state.               */
 } canstate_t;
 
 #include "can_lld.h"

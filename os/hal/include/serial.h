@@ -91,9 +91,9 @@
  * @brief Driver state machine possible states.
  */
 typedef enum {
-  SD_UNINIT = 0,                    /**< @brief Not initialized.            */
-  SD_STOP = 1,                      /**< @brief Stopped.                    */
-  SD_READY = 2                      /**< @brief Ready.                      */
+  SD_UNINIT = 0,                    /**< Not initialized.                   */
+  SD_STOP = 1,                      /**< Stopped.                           */
+  SD_READY = 2                      /**< Ready.                             */
 } sdstate_t;
 
 /**
