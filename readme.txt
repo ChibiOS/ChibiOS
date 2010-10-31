@@ -63,6 +63,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.1.3 ***
+- FIX: DMA not initialized under some conditions (bug 3099701).
+
 *** 2.1.2 ***
 - FIX: Fixed typo in memstreams.h (bug 3089567)(backported to 2.0.6).
 - FIX: Fixed wrong macro check in LPC214x and AT91SAM7 serial drivers (bug
