@@ -5,7 +5,7 @@ Settings: F_CPU=16000000
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.0unstable
+*** Kernel:       2.1.2unstable
 *** GCC Version:  4.3.0
 *** Architecture: AVR
 *** Core Variant: MegaAVR
@@ -32,6 +32,9 @@ Settings: F_CPU=16000000
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 2.3 (Semaphores, atomic signal-wait)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 2.4 (Binary Semaphores, functionality)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 3.1 (Mutexes, priority enqueuing test)
@@ -80,15 +83,15 @@ Settings: F_CPU=16000000
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 31248 msgs/S, 62496 ctxswc/S
+--- Score : 31125 msgs/S, 62250 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 25058 msgs/S, 50116 ctxswc/S
+--- Score : 24979 msgs/S, 49958 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 25058 msgs/S, 50116 ctxswc/S
+--- Score : 24979 msgs/S, 49958 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
@@ -96,11 +99,11 @@ Settings: F_CPU=16000000
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 20805 threads/S
+--- Score : 21252 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 26709 threads/S
+--- Score : 27451 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
@@ -108,11 +111,11 @@ Settings: F_CPU=16000000
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 60756 ctxswc/S
+--- Score : 60760 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 82696 bytes/S
+--- Score : 80180 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
@@ -124,7 +127,7 @@ Settings: F_CPU=16000000
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 117588 lock+unlock/S
+--- Score : 116720 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)

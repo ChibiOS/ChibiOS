@@ -62,11 +62,6 @@
 #define CH_HAL_USE_ADC              FALSE
 #endif
 
-/*
- * Default ADC settings overrides (uncomment to override).
- */
-/*#define ADC_USE_WAIT                TRUE*/
-
 /*===========================================================================*/
 /* CAN driver related settings.                                              */
 /*===========================================================================*/
@@ -77,11 +72,6 @@
 #if !defined(CH_HAL_USE_CAN) || defined(__DOXYGEN__)
 #define CH_HAL_USE_CAN              FALSE
 #endif
-
-/*
- * Default CAN settings overrides (uncomment to override).
- */
-/*#define CAN_USE_SLEEP_MODE          TRUE*/
 
 /*===========================================================================*/
 /* MAC driver related settings.                                              */
