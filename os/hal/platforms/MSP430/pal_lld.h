@@ -139,7 +139,7 @@ typedef uint8_t ioportmask_t;
  *          any assumption about it, use the provided macros when populating
  *          variables of this type.
  */
-typedef union msp430_ioport_t *ioportid_t;
+typedef msp430_ioport_t *ioportid_t;
 
 /*===========================================================================*/
 /* I/O Ports Identifiers.                                                    */
