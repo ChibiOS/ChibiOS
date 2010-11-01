@@ -38,13 +38,13 @@ N Evaluate if to add a synchronous API to the UART driver, eventually do so.
   the blob).
 * Automatic compilation and upload of the various documents on the web site
   (doxygen + rsync).
+* New STM8S/A SPI driver.
 - STM8L official HAL support, it will have to be separated from the STM8S/STM8A
   HAL because it is very different, actually it looks much more like a
   mini STM32, most STM32 drivers will only require few changes it also has
   a very similar DMA (waiting for the new STM8L-Discovery kit).
 - Add the STM32VL to the official STM32 HAL support (waiting for the new
   STM32-Discovery kit).
-- New STM8S/A SPI driver.
 X Except for the above, bug fixing only until the 2.2.0 release.
 
 Within 2.3.x (hopefully)
