@@ -509,7 +509,12 @@ Next=Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\s
 [Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8]
 ElemType=Folder
 PathName=Source Files\os\hal\stm8
-Child=Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8...\..\..\os\hal\platforms\stm8\hal_lld.c
+Child=Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8...\..\..\os\hal\platforms\stm8\spi_lld.c
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8...\..\..\os\hal\platforms\stm8\spi_lld.c]
+ElemType=File
+PathName=..\..\..\os\hal\platforms\stm8\spi_lld.c
+Next=Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8...\..\..\os\hal\platforms\stm8\hal_lld.c
 
 [Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8...\..\..\os\hal\platforms\stm8\hal_lld.c]
 ElemType=File
@@ -1905,7 +1910,12 @@ Next=Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\h
 [Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8]
 ElemType=Folder
 PathName=Include Files\os\hal\stm8
-Child=Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8...\..\..\os\hal\platforms\stm8\hal_lld.h
+Child=Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8...\..\..\os\hal\platforms\stm8\spi_lld.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8...\..\..\os\hal\platforms\stm8\spi_lld.h]
+ElemType=File
+PathName=..\..\..\os\hal\platforms\stm8\spi_lld.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8...\..\..\os\hal\platforms\stm8\hal_lld.h
 
 [Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8...\..\..\os\hal\platforms\stm8\hal_lld.h]
 ElemType=File
