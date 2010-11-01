@@ -28,7 +28,7 @@
 #ifndef _ADC_H_
 #define _ADC_H_
 
-#if CH_HAL_USE_ADC || defined(__DOXYGEN__)
+#if HAL_USE_ADC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -250,7 +250,7 @@ extern "C" {
 }
 #endif
 
-#endif /* CH_HAL_USE_ADC */
+#endif /* HAL_USE_ADC */
 
 #endif /* _ADC_H_ */
 

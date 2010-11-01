@@ -28,7 +28,7 @@
 #ifndef _CAN_LLD_H_
 #define _CAN_LLD_H_
 
-#if CH_HAL_USE_CAN || defined(__DOXYGEN__)
+#if HAL_USE_CAN || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -229,7 +229,7 @@ extern "C" {
 }
 #endif
 
-#endif /* CH_HAL_USE_CAN */
+#endif /* HAL_USE_CAN */
 
 #endif /* _CAN_LLD_H_ */
 

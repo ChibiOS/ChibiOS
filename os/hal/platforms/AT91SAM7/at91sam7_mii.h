@@ -28,7 +28,7 @@
 #ifndef _AT91SAM7_MII_H_
 #define _AT91SAM7_MII_H_
 
-#if CH_HAL_USE_MAC || defined(__DOXYGEN__)
+#if HAL_USE_MAC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -107,7 +107,7 @@ extern "C" {
 }
 #endif
 
-#endif /* CH_HAL_USE_MAC */
+#endif /* HAL_USE_MAC */
 
 #endif /* _AT91SAM7_MII_H_ */
 

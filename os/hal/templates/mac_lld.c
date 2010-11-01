@@ -28,7 +28,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_MAC || defined(__DOXYGEN__)
+#if HAL_USE_MAC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -189,6 +189,6 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
   return FALSE;
 }
 
-#endif /* CH_HAL_USE_MAC */
+#endif /* HAL_USE_MAC */
 
 /** @} */

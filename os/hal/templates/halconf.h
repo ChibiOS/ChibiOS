@@ -40,71 +40,71 @@
 /**
  * @brief   Enables the PAL subsystem.
  */
-#if !defined(CH_HAL_USE_PAL) || defined(__DOXYGEN__)
-#define CH_HAL_USE_PAL              TRUE
+#if !defined(HAL_USE_PAL) || defined(__DOXYGEN__)
+#define HAL_USE_PAL                 TRUE
 #endif
 
 /**
  * @brief   Enables the ADC subsystem.
  */
-#if !defined(CH_HAL_USE_ADC) || defined(__DOXYGEN__)
-#define CH_HAL_USE_ADC              TRUE
+#if !defined(HAL_USE_ADC) || defined(__DOXYGEN__)
+#define HAL_USE_ADC                 TRUE
 #endif
 
 /**
  * @brief   Enables the CAN subsystem.
  */
-#if !defined(CH_HAL_USE_CAN) || defined(__DOXYGEN__)
-#define CH_HAL_USE_CAN              TRUE
+#if !defined(HAL_USE_CAN) || defined(__DOXYGEN__)
+#define HAL_USE_CAN                 TRUE
 #endif
 
 /**
  * @brief   Enables the I2C subsystem.
  */
-#if !defined(CH_HAL_USE_I2C) || defined(__DOXYGEN__)
-#define CH_HAL_USE_I2C              FALSE
+#if !defined(HAL_USE_I2C) || defined(__DOXYGEN__)
+#define HAL_USE_I2C                 FALSE
 #endif
 
 /**
  * @brief   Enables the MAC subsystem.
  */
-#if !defined(CH_HAL_USE_MAC) || defined(__DOXYGEN__)
-#define CH_HAL_USE_MAC              TRUE
+#if !defined(HAL_USE_MAC) || defined(__DOXYGEN__)
+#define HAL_USE_MAC                 TRUE
 #endif
 
 /**
  * @brief   Enables the MMC_SPI subsystem.
  */
-#if !defined(CH_HAL_USE_MMC_SPI) || defined(__DOXYGEN__)
-#define CH_HAL_USE_MMC_SPI          TRUE
+#if !defined(HAL_USE_MMC_SPI) || defined(__DOXYGEN__)
+#define HAL_USE_MMC_SPI             TRUE
 #endif
 
 /**
  * @brief   Enables the PWM subsystem.
  */
-#if !defined(CH_HAL_USE_PWM) || defined(__DOXYGEN__)
-#define CH_HAL_USE_PWM              TRUE
+#if !defined(HAL_USE_PWM) || defined(__DOXYGEN__)
+#define HAL_USE_PWM                 TRUE
 #endif
 
 /**
  * @brief   Enables the SERIAL subsystem.
  */
-#if !defined(CH_HAL_USE_SERIAL) || defined(__DOXYGEN__)
-#define CH_HAL_USE_SERIAL           TRUE
+#if !defined(HAL_USE_SERIAL) || defined(__DOXYGEN__)
+#define HAL_USE_SERIAL              TRUE
 #endif
 
 /**
  * @brief   Enables the SPI subsystem.
  */
-#if !defined(CH_HAL_USE_SPI) || defined(__DOXYGEN__)
-#define CH_HAL_USE_SPI              TRUE
+#if !defined(HAL_USE_SPI) || defined(__DOXYGEN__)
+#define HAL_USE_SPI                 TRUE
 #endif
 
 /**
  * @brief   Enables the UART subsystem.
  */
-#if !defined(CH_HAL_USE_UART) || defined(__DOXYGEN__)
-#define CH_HAL_USE_UART             TRUE
+#if !defined(HAL_USE_UART) || defined(__DOXYGEN__)
+#define HAL_USE_UART                TRUE
 #endif
 
 /*===========================================================================*/

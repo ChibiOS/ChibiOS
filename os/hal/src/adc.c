@@ -28,7 +28,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_ADC || defined(__DOXYGEN__)
+#if HAL_USE_ADC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -323,6 +323,6 @@ void adcReleaseBus(ADCDriver *adcp) {
 }
 #endif /* ADC_USE_MUTUAL_EXCLUSION */
 
-#endif /* CH_HAL_USE_ADC */
+#endif /* HAL_USE_ADC */
 
 /** @} */

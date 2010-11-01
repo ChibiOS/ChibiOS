@@ -28,7 +28,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_UART || defined(__DOXYGEN__)
+#if HAL_USE_UART || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -145,6 +145,6 @@ size_t uart_lld_stop_receive(UARTDriver *uartp) {
 
 }
 
-#endif /* CH_HAL_USE_UART */
+#endif /* HAL_USE_UART */
 
 /** @} */

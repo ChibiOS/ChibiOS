@@ -28,7 +28,7 @@
 #ifndef _SPI_LLD_H_
 #define _SPI_LLD_H_
 
-#if CH_HAL_USE_SPI || defined(__DOXYGEN__)
+#if HAL_USE_SPI || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -186,7 +186,7 @@ extern "C" {
 }
 #endif
 
-#endif /* CH_HAL_USE_SPI */
+#endif /* HAL_USE_SPI */
 
 #endif /* _SPI_LLD_H_ */
 

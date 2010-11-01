@@ -28,7 +28,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_I2C || defined(__DOXYGEN__)
+#if HAL_USE_I2C || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -149,6 +149,6 @@ void i2c_lld_master_receive(I2CDriver *i2cp, size_t n, uint8_t *rxbuf) {
 
 }
 
-#endif /* CH_HAL_USE_I2C */
+#endif /* HAL_USE_I2C */
 
 /** @} */

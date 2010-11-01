@@ -42,7 +42,7 @@ static LARGE_INTEGER slice;
  * @brief PAL setup.
  * @details Digital I/O ports static configuration as defined in @p board.h.
  */
-#if CH_HAL_USE_PAL || defined(__DOXYGEN__)
+#if HAL_USE_PAL || defined(__DOXYGEN__)
 const PALConfig pal_default_config = {
  {0, 0, 0},
  {0, 0, 0}
@@ -91,7 +91,7 @@ void hal_lld_init(void) {
 void ChkIntSources(void) {
   LARGE_INTEGER n;
 
-#if CH_HAL_USE_SERIAL
+#if HAL_USE_SERIAL
   if (sd_lld_interrupt_pending()) {
     if (chSchIsRescRequiredExI())
       chSchDoRescheduleI();

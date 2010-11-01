@@ -28,7 +28,7 @@
 #ifndef _XXX_H_
 #define _XXX_H_
 
-#if CH_HAL_USE_XXX || defined(__DOXYGEN__)
+#if HAL_USE_XXX || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -76,7 +76,7 @@ extern "C" {
 }
 #endif
 
-#endif /* CH_HAL_USE_XXX */
+#endif /* HAL_USE_XXX */
 
 #endif /* _XXX_H_ */
 

@@ -32,7 +32,7 @@
 #include "mii.h"
 #include "at91sam7_mii.h"
 
-#if CH_HAL_USE_MAC || defined(__DOXYGEN__)
+#if HAL_USE_MAC || defined(__DOXYGEN__)
 
 #define EMAC_PIN_MASK (AT91C_PB0_ETXCK_EREFCK  | AT91C_PB1_ETXEN         | \
                        AT91C_PB2_ETX0          | AT91C_PB3_ETX1          | \
@@ -527,6 +527,6 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
   return link_up = TRUE;
 }
 
-#endif /* CH_HAL_USE_MAC */
+#endif /* HAL_USE_MAC */
 
 /** @} */

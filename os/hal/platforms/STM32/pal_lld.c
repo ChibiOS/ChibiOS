@@ -28,7 +28,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_PAL || defined(__DOXYGEN__)
+#if HAL_USE_PAL || defined(__DOXYGEN__)
 
 #if defined(STM32F10X_LD)
 #define APB2_RST_MASK (RCC_APB2RSTR_IOPARST | RCC_APB2RSTR_IOPBRST |    \
@@ -192,6 +192,6 @@ void _pal_lld_setgroupmode(ioportid_t port,
   port->CRL = (port->CRL & ml) | crl;
 }
 
-#endif /* CH_HAL_USE_PAL */
+#endif /* HAL_USE_PAL */
 
 /** @} */

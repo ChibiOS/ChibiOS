@@ -28,7 +28,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_I2C || defined(__DOXYGEN__)
+#if HAL_USE_I2C || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -265,6 +265,6 @@ void i2cReleaseBus(I2CDriver *i2cp) {
 }
 #endif /* I2C_USE_MUTUAL_EXCLUSION */
 
-#endif /* CH_HAL_USE_I2C */
+#endif /* HAL_USE_I2C */
 
 /** @} */

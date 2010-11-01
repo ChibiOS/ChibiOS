@@ -28,7 +28,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_MMC_SPI || defined(__DOXYGEN__)
+#if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -621,6 +621,6 @@ bool_t mmcStopSequentialWrite(MMCDriver *mmcp) {
   return TRUE;
 }
 
-#endif /* CH_HAL_USE_MMC_SPI */
+#endif /* HAL_USE_MMC_SPI */
 
 /** @} */

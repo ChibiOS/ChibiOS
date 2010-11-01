@@ -29,7 +29,7 @@
 #include "hal.h"
 #include "at91sam7_mii.h"
 
-#if CH_HAL_USE_MAC || defined(__DOXYGEN__)
+#if HAL_USE_MAC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -142,6 +142,6 @@ void miiPut(MACDriver *macp, phyaddr_t addr, phyreg_t value) {
     ;
 }
 
-#endif /* CH_HAL_USE_MAC */
+#endif /* HAL_USE_MAC */
 
 /** @} */

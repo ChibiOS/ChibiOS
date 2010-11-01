@@ -28,7 +28,7 @@
 #ifndef _I2C_LLD_H_
 #define _I2C_LLD_H_
 
-#if CH_HAL_USE_I2C || defined(__DOXYGEN__)
+#if HAL_USE_I2C || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -113,7 +113,7 @@ extern "C" {
 }
 #endif
 
-#endif /* CH_HAL_USE_I2C */
+#endif /* HAL_USE_I2C */
 
 #endif /* _I2C_LLD_H_ */
 

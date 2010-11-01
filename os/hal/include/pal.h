@@ -28,7 +28,7 @@
 #ifndef _PAL_H_
 #define _PAL_H_
 
-#if CH_HAL_USE_PAL || defined(__DOXYGEN__)
+#if HAL_USE_PAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -525,6 +525,6 @@ extern "C" {
 
 #endif /* _PAL_H_ */
 
-#endif /* CH_HAL_USE_PAL */
+#endif /* HAL_USE_PAL */
 
 /** @} */

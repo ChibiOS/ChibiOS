@@ -28,7 +28,7 @@
 #ifndef _MMC_SPI_H_
 #define _MMC_SPI_H_
 
-#if CH_HAL_USE_MMC_SPI || defined(__DOXYGEN__)
+#if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -90,8 +90,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_HAL_USE_SPI || !CH_USE_EVENTS
-#error "MMC_SPI driver requires CH_HAL_USE_SPI and CH_USE_EVENTS"
+#if !HAL_USE_SPI || !CH_USE_EVENTS
+#error "MMC_SPI driver requires HAL_USE_SPI and CH_USE_EVENTS"
 #endif
 
 /*===========================================================================*/
@@ -226,7 +226,7 @@ extern "C" {
 }
 #endif
 
-#endif /* CH_HAL_USE_MMC_SPI */
+#endif /* HAL_USE_MMC_SPI */
 
 #endif /* _MMC_SPI_H_ */
 

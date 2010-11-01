@@ -18,37 +18,93 @@
 */
 
 /**
- * @file templates/halconf.h
- * @brief HAL configuration header.
+ * @file    templates/halconf.h
+ * @brief   HAL configuration header.
+ * @details HAL configuration file, this file allows to enable or disable the
+ *          various device drivers from your application. You may also use
+ *          this file in order to override the device drivers default settings.
+ *
  * @addtogroup HAL_CONF
  * @{
  */
 
 /*
- * HAL configuration file, this file allows to enable or disable the various
- * device drivers from your application. You may also use this file in order
- * to override the device drivers default settings.
+ *
  */
 
 #ifndef _HALCONF_H_
 #define _HALCONF_H_
 
-/*
- * Uncomment the following line in order to include a mcu-related
- * settings file. This file can be used to include platform specific
- * header files or to override the low level drivers settings.
- */
 #include "mcuconf.h"
 
-/*===========================================================================*/
-/* PAL driver related settings.                                              */
-/*===========================================================================*/
+/**
+ * @brief   Enables the PAL subsystem.
+ */
+#if !defined(HAL_USE_PAL) || defined(__DOXYGEN__)
+#define HAL_USE_PAL                 TRUE
+#endif
 
 /**
- * @brief Enables the PAL subsystem.
+ * @brief   Enables the ADC subsystem.
  */
-#if !defined(CH_HAL_USE_PAL) || defined(__DOXYGEN__)
-#define CH_HAL_USE_PAL              TRUE
+#if !defined(HAL_USE_ADC) || defined(__DOXYGEN__)
+#define HAL_USE_ADC                 FALSE
+#endif
+
+/**
+ * @brief   Enables the CAN subsystem.
+ */
+#if !defined(HAL_USE_CAN) || defined(__DOXYGEN__)
+#define HAL_USE_CAN                 FALSE
+#endif
+
+/**
+ * @brief   Enables the I2C subsystem.
+ */
+#if !defined(HAL_USE_I2C) || defined(__DOXYGEN__)
+#define HAL_USE_I2C                 FALSE
+#endif
+
+/**
+ * @brief   Enables the MAC subsystem.
+ */
+#if !defined(HAL_USE_MAC) || defined(__DOXYGEN__)
+#define HAL_USE_MAC                 FALSE
+#endif
+
+/**
+ * @brief   Enables the MMC_SPI subsystem.
+ */
+#if !defined(HAL_USE_MMC_SPI) || defined(__DOXYGEN__)
+#define HAL_USE_MMC_SPI             FALSE
+#endif
+
+/**
+ * @brief   Enables the PWM subsystem.
+ */
+#if !defined(HAL_USE_PWM) || defined(__DOXYGEN__)
+#define HAL_USE_PWM                 FALSE
+#endif
+
+/**
+ * @brief   Enables the SERIAL subsystem.
+ */
+#if !defined(HAL_USE_SERIAL) || defined(__DOXYGEN__)
+#define HAL_USE_SERIAL              FALSE
+#endif
+
+/**
+ * @brief   Enables the SPI subsystem.
+ */
+#if !defined(HAL_USE_SPI) || defined(__DOXYGEN__)
+#define HAL_USE_SPI                 TRUE
+#endif
+
+/**
+ * @brief   Enables the UART subsystem.
+ */
+#if !defined(HAL_USE_UART) || defined(__DOXYGEN__)
+#define HAL_USE_UART                FALSE
 #endif
 
 /*===========================================================================*/
@@ -56,117 +112,151 @@
 /*===========================================================================*/
 
 /**
- * @brief Enables the ADC subsystem.
+ * @brief   Enables synchronous APIs.
+ * @note    Disabling this option saves both code and data space.
  */
-#if !defined(CH_HAL_USE_ADC) || defined(__DOXYGEN__)
-#define CH_HAL_USE_ADC              FALSE
+#if !defined(ADC_USE_WAIT) || defined(__DOXYGEN__)
+#define ADC_USE_WAIT                TRUE
 #endif
 
-/*
- * Default ADC settings overrides (uncomment to override).
+/**
+ * @brief   Enables the @p adcAcquireBus() and @p adcReleaseBus() APIs.
+ * @note    Disabling this option saves both code and data space.
  */
-/*#define ADC_USE_WAIT                TRUE*/
+#if !defined(ADC_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define ADC_USE_MUTUAL_EXCLUSION    TRUE
+#endif
 
 /*===========================================================================*/
 /* CAN driver related settings.                                              */
 /*===========================================================================*/
 
 /**
- * @brief Enables the CAN subsystem.
+ * @brief   Sleep mode related APIs inclusion switch.
  */
-#if !defined(CH_HAL_USE_CAN) || defined(__DOXYGEN__)
-#define CH_HAL_USE_CAN              FALSE
+#if !defined(CAN_USE_SLEEP_MODE) || defined(__DOXYGEN__)
+#define CAN_USE_SLEEP_MODE          TRUE
 #endif
 
-/*
- * Default CAN settings overrides (uncomment to override).
+/*===========================================================================*/
+/* I2C driver related settings.                                              */
+/*===========================================================================*/
+
+/**
+ * @brief   Enables the mutual exclusion APIs on the I2C bus.
  */
-/*#define CAN_USE_SLEEP_MODE          TRUE*/
+#if !defined(I2C_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define I2C_USE_MUTUAL_EXCLUSION    TRUE
+#endif
 
 /*===========================================================================*/
 /* MAC driver related settings.                                              */
 /*===========================================================================*/
-
-/**
- * @brief Enables the MAC subsystem.
- */
-#if !defined(CH_HAL_USE_MAC) || defined(__DOXYGEN__)
-#define CH_HAL_USE_MAC              FALSE
-#endif
-
-/*===========================================================================*/
-/* PWM driver related settings.                                              */
-/*===========================================================================*/
-
-/**
- * @brief Enables the PWM subsystem.
- */
-#if !defined(CH_HAL_USE_PWM) || defined(__DOXYGEN__)
-#define CH_HAL_USE_PWM              FALSE
-#endif
-
-/*===========================================================================*/
-/* SERIAL driver related settings.                                           */
-/*===========================================================================*/
-
-/**
- * @brief Enables the SERIAL subsystem.
- */
-#if !defined(CH_HAL_USE_SERIAL) || defined(__DOXYGEN__)
-#define CH_HAL_USE_SERIAL           FALSE
-#endif
-
-/*
- * Default SERIAL settings overrides (uncomment to override).
- */
-/*#define SERIAL_DEFAULT_BITRATE      38400*/
-#define SERIAL_BUFFERS_SIZE         16
-
-/*===========================================================================*/
-/* SPI driver related settings.                                              */
-/*===========================================================================*/
-
-/**
- * @brief Enables the SPI subsystem.
- */
-#if !defined(CH_HAL_USE_SPI) || defined(__DOXYGEN__)
-#define CH_HAL_USE_SPI              TRUE
-#endif
-
-/*
- * Default SPI settings overrides (uncomment to override).
- */
-/*#define SPI_USE_MUTUAL_EXCLUSION    TRUE*/
 
 /*===========================================================================*/
 /* MMC_SPI driver related settings.                                          */
 /*===========================================================================*/
 
 /**
- * @brief Enables the MMC_SPI subsystem.
+ * @brief   Block size for MMC transfers.
  */
-#if !defined(CH_HAL_USE_MMC_SPI) || defined(__DOXYGEN__)
-#define CH_HAL_USE_MMC_SPI          FALSE
+#if !defined(MMC_SECTOR_SIZE) || defined(__DOXYGEN__)
+#define MMC_SECTOR_SIZE             512
 #endif
 
-/*
- * Default MMC_SPI settings overrides (uncomment to override).
+/**
+ * @brief   Delays insertions.
+ * @details If enabled this options inserts delays into the MMC waiting
+ *          routines releasing some extra CPU time for the threads with
+ *          lower priority, this may slow down the driver a bit however.
+ *          This option is recommended also if the SPI driver does not
+ *          use a DMA channel and heavily loads the CPU.
  */
-/*#define MMC_SECTOR_SIZE             512*/
-/*#define MMC_NICE_WAITING            TRUE*/
-/*#define MMC_POLLING_INTERVAL        10*/
-/*#define MMC_POLLING_DELAY           10*/
+#if !defined(MMC_NICE_WAITING) || defined(__DOXYGEN__)
+#define MMC_NICE_WAITING            TRUE
+#endif
+
+/**
+ * @brief   Number of positive insertion queries before generating the
+ *          insertion event.
+ */
+#if !defined(MMC_POLLING_INTERVAL) || defined(__DOXYGEN__)
+#define MMC_POLLING_INTERVAL        10
+#endif
+
+/**
+ * @brief   Interval, in milliseconds, between insertion queries.
+ */
+#if !defined(MMC_POLLING_DELAY) || defined(__DOXYGEN__)
+#define MMC_POLLING_DELAY           10
+#endif
+
+/**
+ * @brief   Uses the SPI polled API for small data transfers.
+ * @details Polled transfers usually improve performance because it
+ *          saves two context switches and interrupt servicing. Note
+ *          that this option has no effect on large transfers which
+ *          are always performed using DMAs/IRQs.
+ */
+#if !defined(MMC_USE_SPI_POLLING) || defined(__DOXYGEN__)
+#define MMC_USE_SPI_POLLING         TRUE
+#endif
+
+/*===========================================================================*/
+/* PAL driver related settings.                                              */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* PWM driver related settings.                                              */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* SERIAL driver related settings.                                           */
+/*===========================================================================*/
+
+/**
+ * @brief   Default bit rate.
+ * @details Configuration parameter, this is the baud rate selected for the
+ *          default configuration.
+ */
+#if !defined(SERIAL_DEFAULT_BITRATE) || defined(__DOXYGEN__)
+#define SERIAL_DEFAULT_BITRATE      38400
+#endif
+
+/**
+ * @brief   Serial buffers size.
+ * @details Configuration parameter, you can change the depth of the queue
+ *          buffers depending on the requirements of your application.
+ * @note    The default is 64 bytes for both the transmission and receive
+ *          buffers.
+ */
+#if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
+#define SERIAL_BUFFERS_SIZE         16
+#endif
+
+/*===========================================================================*/
+/* SPI driver related settings.                                              */
+/*===========================================================================*/
+
+/**
+ * @brief   Enables synchronous APIs.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(SPI_USE_WAIT) || defined(__DOXYGEN__)
+#define SPI_USE_WAIT                TRUE
+#endif
+
+/**
+ * @brief   Enables the @p spiAcquireBus() and @p spiReleaseBus() APIs.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define SPI_USE_MUTUAL_EXCLUSION    TRUE
+#endif
 
 /*===========================================================================*/
 /* UART driver related settings.                                             */
 /*===========================================================================*/
-
-/**
- * @brief   Enables the UART subsystem.
- */
-#if !defined(CH_HAL_USE_UART) || defined(__DOXYGEN__)
-#define CH_HAL_USE_UART             FALSE
-#endif
 
 #endif /* _HALCONF_H_ */
 

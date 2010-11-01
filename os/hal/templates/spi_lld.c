@@ -28,7 +28,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_SPI || defined(__DOXYGEN__)
+#if HAL_USE_SPI || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -193,6 +193,6 @@ uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
 
 }
 
-#endif /* CH_HAL_USE_SPI */
+#endif /* HAL_USE_SPI */
 
 /** @} */

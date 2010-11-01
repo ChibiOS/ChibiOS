@@ -28,7 +28,7 @@
 #ifndef _SERIAL_H_
 #define _SERIAL_H_
 
-#if CH_HAL_USE_SERIAL || defined(__DOXYGEN__)
+#if HAL_USE_SERIAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -317,7 +317,7 @@ extern "C" {
 }
 #endif
 
-#endif /* CH_HAL_USE_SERIAL */
+#endif /* HAL_USE_SERIAL */
 
 #endif /* _SERIAL_H_ */
 

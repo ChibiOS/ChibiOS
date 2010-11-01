@@ -65,11 +65,14 @@
 *****************************************************************************
 
 *** 2.1.3 ***
+- FIX: Fixed broken STM32 synchronous UART driver (bug 3100946).
+- FIX: Broken C++ wrapper (bug 3100925).
+- FIX: Broken lwIP/uIP demos (bug 3100901).
 - FIX: DMA not initialized under some conditions (bug 3099701).
 - NEW: Added an SPI driver to the STM8 platform support.
 - NEW: Added a simple STM8 SPI demo under ./testhal/STM8/SPI.
-- CHANGE: Renamed most of the STM8 HAL settings macro names in order to
-  make names more consistent.
+- CHANGE: Renamed the HAL settings macro names, removed the CH_ prefix
+  because it is reserved as kernel namespace.
       NOTE: ****** Make sure to use a mcuconf.h file taken from ******
             ****** this version in your project.                ******
 

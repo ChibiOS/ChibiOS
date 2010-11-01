@@ -53,34 +53,34 @@ void halInit(void) {
 
   hal_lld_init();
 
-#if CH_HAL_USE_PAL
+#if HAL_USE_PAL
   palInit(&pal_default_config);
 #endif
-#if CH_HAL_USE_ADC
+#if HAL_USE_ADC
   adcInit();
 #endif
-#if CH_HAL_USE_CAN
+#if HAL_USE_CAN
   canInit();
 #endif
-#if CH_HAL_USE_I2C
+#if HAL_USE_I2C
   i2cInit();
 #endif
-#if CH_HAL_USE_MAC
+#if HAL_USE_MAC
   macInit();
 #endif
-#if CH_HAL_USE_PWM
+#if HAL_USE_PWM
   pwmInit();
 #endif
-#if CH_HAL_USE_SERIAL
+#if HAL_USE_SERIAL
   sdInit();
 #endif
-#if CH_HAL_USE_SPI
+#if HAL_USE_SPI
   spiInit();
 #endif
-#if CH_HAL_USE_MMC_SPI
+#if HAL_USE_MMC_SPI
   mmcInit();
 #endif
-#if CH_HAL_USE_UART
+#if HAL_USE_UART
   uartInit();
 #endif
 }

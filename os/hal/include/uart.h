@@ -28,7 +28,7 @@
 #ifndef _UART_H_
 #define _UART_H_
 
-#if CH_HAL_USE_UART || defined(__DOXYGEN__)
+#if HAL_USE_UART || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -115,7 +115,7 @@ extern "C" {
 }
 #endif
 
-#endif /* CH_HAL_USE_UART */
+#endif /* HAL_USE_UART */
 
 #endif /* _UART_H_ */
 

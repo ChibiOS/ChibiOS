@@ -28,7 +28,7 @@
 #ifndef _UART_LLD_H_
 #define _UART_LLD_H_
 
-#if CH_HAL_USE_UART || defined(__DOXYGEN__)
+#if HAL_USE_UART || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -102,11 +102,11 @@ typedef struct {
   /**
    * @brief Character received while out if the @p UART_RECEIVE state.
    */
-  uartcb_t                  uc_rxchar;
+  uartccb_t                 uc_rxchar;
   /**
    * @brief Receive error callback.
    */
-  uartcb_t                  uc_rxerr;
+  uartecb_t                 uc_rxerr;
   /* End of the mandatory fields.*/
 } UARTConfig;
 
@@ -160,7 +160,7 @@ extern "C" {
 }
 #endif
 
-#endif /* CH_HAL_USE_UART */
+#endif /* HAL_USE_UART */
 
 #endif /* _UART_LLD_H_ */
 

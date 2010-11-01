@@ -27,7 +27,7 @@
 #ifndef _MAC_H_
 #define _MAC_H_
 
-#if CH_HAL_USE_MAC || defined(__DOXYGEN__)
+#if HAL_USE_MAC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -121,7 +121,7 @@ extern "C" {
 }
 #endif
 
-#endif /* CH_HAL_USE_MAC */
+#endif /* HAL_USE_MAC */
 
 #endif /* _MAC_H_ */
 
