@@ -64,7 +64,7 @@ CH_IRQ_HANDLER(10) {
   if ((SPI->SR & SPI_SR_OVR) != 0) {
     /* The overflow condition should never happen because priority is given
        to receive but a hook macro is provided anyway...*/
-    STM8_SPI_SPI_ERROR_HOOK(&SPID1);
+    STM8_SPI_ERROR_HOOK(&SPID1);
   }
   /* Handling the DR register like it is a FIFO with depth>1 in order to
      handle the case where a frame arrives immediately after reading the

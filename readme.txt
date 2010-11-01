@@ -65,6 +65,11 @@
 
 *** 2.1.3 ***
 - FIX: DMA not initialized under some conditions (bug 3099701).
+- NEW: Added an SPI driver to the STM8 platform support.
+- CHANGE: Renamed most of the STM8 HAL settings macro names in order to
+  make names more consistent.
+      NOTE: ****** Make sure to use a mcuconf.h file taken from ******
+            ****** this version in your project.                ******
 
 *** 2.1.2 ***
 - FIX: Fixed typo in memstreams.h (bug 3089567)(backported to 2.0.6).

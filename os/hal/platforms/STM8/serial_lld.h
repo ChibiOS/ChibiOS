@@ -53,8 +53,8 @@
  * @details If set to @p TRUE the support for UART1 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_STM8_UART1) || defined(__DOXYGEN__)
-#define USE_STM8_UART1              TRUE
+#if !defined(STM8_SERIAL_USE_UART1) || defined(__DOXYGEN__)
+#define STM8_SERIAL_USE_UART1           TRUE
 #endif
 
 /**
@@ -62,8 +62,8 @@
  * @details If set to @p TRUE the support for UART3 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_STM8_UART2) || defined(__DOXYGEN__)
-#define USE_STM8_UART2              TRUE
+#if !defined(STM8_SERIAL_USE_UART2) || defined(__DOXYGEN__)
+#define STM8_SERIAL_USE_UART2           TRUE
 #endif
 
 /**
@@ -71,15 +71,15 @@
  * @details If set to @p TRUE the support for UART3 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_STM8_UART3) || defined(__DOXYGEN__)
-#define USE_STM8_UART3              TRUE
+#if !defined(STM8_SERIAL_USE_UART3) || defined(__DOXYGEN__)
+#define STM8_SERIAL_USE_UART3           TRUE
 #endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if USE_STM8_UART2 && USE_STM8_UART3
+#if STM8_SERIAL_USE_UART2 && STM8_SERIAL_USE_UART3
 #error "STM8 UART2 and UART3 cannot be used together"
 #endif
 
@@ -146,13 +146,13 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if USE_STM8_UART1 && !defined(__DOXYGEN__)
+#if STM8_SERIAL_USE_UART1 && !defined(__DOXYGEN__)
 extern SerialDriver SD1;
 #endif
-#if USE_STM8_UART2 && !defined(__DOXYGEN__)
+#if STM8_SERIAL_USE_UART2 && !defined(__DOXYGEN__)
 extern SerialDriver SD2;
 #endif
-#if USE_STM8_UART3 && !defined(__DOXYGEN__)
+#if STM8_SERIAL_USE_UART3 && !defined(__DOXYGEN__)
 extern SerialDriver SD3;
 #endif
 

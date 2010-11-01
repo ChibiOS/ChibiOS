@@ -52,7 +52,7 @@
  * @details The default action is to stop the system.
  */
 #if !defined(STM8_SPI_SPI_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM8_SPI_SPI_ERROR_HOOK(spip)   chSysHalt()
+#define STM8_SPI_ERROR_HOOK(spip)       chSysHalt()
 #endif
 
 /*===========================================================================*/

@@ -28,13 +28,19 @@
 /*
  * HAL general settings.
  */
-#define STM8_CLOCK_SOURCE           CLK_SOURCE_HSI
-#define STM8_HSI_DIVIDER            CLK_HSI_DIV1
-#define STM8_CPU_DIVIDER            CLK_CPU_DIV1
+#define STM8_CLOCK_SOURCE               CLK_SOURCE_HSI
+#define STM8_HSI_DIVIDER                CLK_HSI_DIV1
+#define STM8_CPU_DIVIDER                CLK_CPU_DIV1
 
 /*
  * SERIAL driver system settings.
  */
-#define USE_STM8_UART1              FALSE
-#define USE_STM8_UART2              TRUE
-#define USE_STM8_UART3              FALSE
+#define STM8_SERIAL_USE_UART1           FALSE
+#define STM8_SERIAL_USE_UART2           TRUE
+#define STM8_SERIAL_USE_UART3           FALSE
+
+/*
+ * SPI driver system settings.
+ */
+#define STM8_SPI_USE_SPI                TRUE
+#define STM8_SPI_ERROR_HOOK(spip)       chSysHalt()
