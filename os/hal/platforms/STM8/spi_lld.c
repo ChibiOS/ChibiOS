@@ -87,18 +87,12 @@ CH_IRQ_HANDLER(10) {
       goto exit_isr;
     }
   }
-  /* Loading the DR register like it is a FIFO with depth>1 in order to
-     handle the case where the shift register is empty too.*/
-  while ((SPI->SR & SPI_SR_TXE) != 0) {
+  /* Loading the DR register.*/
+  if ((SPI->SR & SPI_SR_TXE) != 0) {
     if (SPID1.spd_txptr != NULL)
       SPI->DR = *SPID1.spd_txptr++;
     else
       SPI->DR = 0xFF;
-    if (--SPID1.spd_txcnt == 0) {
-      /* Stops just the TX interrupt source.*/
-      SPI->ICR &= ~SPI_ICR_TXEI;
-      break;
-    }
   }
 
 exit_isr:
@@ -132,11 +126,11 @@ void spi_lld_init(void) {
 void spi_lld_start(SPIDriver *spip) {
 
   /* Clock activation.*/
-  CLK->PCKENR1 |= CLK_PCKENR1_SPI;              /* PCKEN11, clock source.       */
+  CLK->PCKENR1 |= CLK_PCKENR1_SPI;              /* PCKEN11, clock source.   */
 
   /* Configuration.*/
-  SPI->CR2 = SPI_CR2_SSI;
-  SPI->CR1 = spip->spd_config->spc_cr1 | SPI_CR1_SPE;
+  SPI->CR2 = 0;
+  SPI->CR1 = spip->spd_config->spc_cr1 | SPI_CR1_MSTR | SPI_CR1_SPE;
 }
 
 /**
@@ -156,7 +150,7 @@ void spi_lld_stop(SPIDriver *spip) {
   SPI->ICR = 0;
 
   /* Clock de-activation.*/
-  CLK->PCKENR1 &= ~CLK_PCKENR1_SPI;             /* PCKEN11, clock source.       */
+  CLK->PCKENR1 &= (uint8_t)~CLK_PCKENR1_SPI;    /* PCKEN11, clock source.   */
 }
 
 /**

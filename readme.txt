@@ -58,6 +58,7 @@
   |  +--coverage/       - Code coverage project.
   +--testhal/           - HAL integration test demos.
      +--STM32/          - STM32 HAL demos.
+     +--STM8/           - STM8 HAL demos.
 
 *****************************************************************************
 *** Releases                                                              ***
@@ -66,6 +67,7 @@
 *** 2.1.3 ***
 - FIX: DMA not initialized under some conditions (bug 3099701).
 - NEW: Added an SPI driver to the STM8 platform support.
+- NEW: Added a simple STM8 SPI demo under ./testhal/STM8/SPI.
 - CHANGE: Renamed most of the STM8 HAL settings macro names in order to
   make names more consistent.
       NOTE: ****** Make sure to use a mcuconf.h file taken from ******
