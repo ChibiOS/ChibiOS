@@ -516,7 +516,7 @@ namespace chibios_rt {
      * @param[in] mask          the events to be cleared
      * @return                  The pending events that were cleared.
      */
-    static eventmask_t Clear(eventmask_t mask);
+    static eventmask_t ClearFlags(eventmask_t mask);
 
     /**
      * @brief   Makes an events mask pending in the current thread.
@@ -525,7 +525,7 @@ namespace chibios_rt {
      * @param[in] mask          the events to be pended
      * @return                  The current pending events mask.
      */
-    static eventmask_t Pend(eventmask_t mask);
+    static eventmask_t AddFlags(eventmask_t mask);
 
     /**
      * @brief   Invokes the event handlers associated with a mask.

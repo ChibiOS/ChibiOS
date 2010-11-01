@@ -284,14 +284,14 @@ namespace chibios_rt {
     chEvtBroadcast(&event);
   }
 
-  eventmask_t Event::Clear(eventmask_t mask) {
+  eventmask_t Event::ClearFlags(eventmask_t mask) {
 
-    return chEvtClear(mask);
+    return chEvtClearFlags(mask);
   }
 
-  eventmask_t Event::Pend(eventmask_t mask) {
+  eventmask_t Event::AddFlags(eventmask_t mask) {
 
-    return chEvtPend(mask);
+    return chEvtAddFlags(mask);
   }
 
   void Event::Dispatch(const evhandler_t handlers[], eventmask_t mask) {
