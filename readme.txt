@@ -71,6 +71,7 @@
 - FIX: DMA not initialized under some conditions (bug 3099701).
 - NEW: Added an SPI driver to the STM8 platform support.
 - NEW: Added a simple STM8 SPI demo under ./testhal/STM8/SPI.
+- CHANGE: Renamed ./os/ports/GCC/ARMCMx/STM32F10x in STM32.
 - CHANGE: Diviced the file ARMCMx/crt0.s in crt0_v6m.s and crt0_v7m.s in
   order to remove the preprocessor directives from assembler files.
 - CHANGE: Divided the file STM32/vectors.s in several files, one for each
