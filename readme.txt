@@ -71,12 +71,13 @@
 - FIX: DMA not initialized under some conditions (bug 3099701).
 - NEW: Added an SPI driver to the STM8 platform support.
 - NEW: Added a simple STM8 SPI demo under ./testhal/STM8/SPI.
-- CHANGE: Renamed ./os/ports/GCC/ARMCMx/STM32F10x in STM32.
-- CHANGE: Diviced the file ARMCMx/crt0.s in crt0_v6m.s and crt0_v7m.s in
-  order to remove the preprocessor directives from assembler files.
-- CHANGE: Divided the file STM32/vectors.s in several files, one for each
+- NEW: Divided the file STM32/vectors.s in several files, one for each
   STM32 sub-family. This has been done in order to remove the preprocessor
-  directives from assembler files.
+  directives from assembler files and to support all the various STM32
+  sub-families.
+- CHANGE: Renamed ./os/ports/GCC/ARMCMx/STM32F10x in STM32.
+- CHANGE: Divided the file ARMCMx/crt0.s in crt0_v6m.s and crt0_v7m.s in
+  order to remove the preprocessor directives from assembler files.
 - CHANGE: Renamed the HAL settings macro names, removed the CH_ prefix
   because it is reserved for the kernel namespace.
       NOTE: ****** Make sure to use a mcuconf.h file taken from ******
