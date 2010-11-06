@@ -18,8 +18,8 @@
 */
 
 /**
- * @file    LPC13xx/vectors.s
- * @brief   Interrupt vectors for the LPC13xx family.
+ * @file    STM32/vectors_hd.s
+ * @brief   Interrupt vectors for the STM32 High Density sub-family.
  *
  * @addtogroup ARMCMx_CORE
  * @{
@@ -104,6 +104,10 @@ _vectors:
         .word   Vector114
         .word   Vector118
         .word   Vector11C
+        .word   Vector120
+        .word   Vector124
+        .word   Vector128
+        .word   Vector12C
 
 .weak NMIVector
 NMIVector:
@@ -314,6 +318,18 @@ Vector118:
 
 .weak Vector11C
 Vector11C:
+
+.weak Vector120
+Vector120:
+
+.weak Vector124
+Vector124:
+
+.weak Vector128
+Vector128:
+
+.weak Vector12C
+Vector12C:
 
         .global _unhandled_exception
 _unhandled_exception:

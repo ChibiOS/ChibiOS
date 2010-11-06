@@ -4,7 +4,7 @@ PORTSRC = ${CHIBIOS}/os/ports/GCC/ARMCMx/chcore.c \
           ${CHIBIOS}/os/ports/GCC/ARMCMx/nvic.c \
           ${CHIBIOS}/os/ports/GCC/ARMCMx/cmsis/core_cm0.c
 
-PORTASM = ${CHIBIOS}/os/ports/GCC/ARMCMx/crt0.s
+PORTASM = ${CHIBIOS}/os/ports/GCC/ARMCMx/crt0_v6m.s
 
 PORTINC = ${CHIBIOS}/os/ports/GCC/ARMCMx \
           ${CHIBIOS}/os/ports/GCC/ARMCMx/LPC11xx \

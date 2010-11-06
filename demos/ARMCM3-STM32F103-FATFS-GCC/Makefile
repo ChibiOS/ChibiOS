@@ -104,7 +104,7 @@ TCPPSRC =
 
 # List ASM source files here
 ASMSRC = $(PORTASM) \
-         $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F10x/vectors.s
+         $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F10x/vectors_md.s
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \

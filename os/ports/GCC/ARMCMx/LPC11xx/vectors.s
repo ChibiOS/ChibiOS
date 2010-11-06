@@ -17,6 +17,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file    LPC11xx/vectors.s
+ * @brief   Interrupt vectors for the LPC11xx family.
+ *
+ * @addtogroup ARMCMx_CORE
+ * @{
+ */
+
+#if !defined(__DOXYGEN__)
+
 .syntax unified
 .thumb
 
@@ -209,4 +219,10 @@ VectorB8:
 .weak VectorBC
 VectorBC:
 
-here:   b       here
+        .global _unhandled_exception
+_unhandled_exception:
+        b       _unhandled_exception
+
+#endif
+
+/** @} */

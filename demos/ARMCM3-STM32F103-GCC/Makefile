@@ -102,7 +102,7 @@ TCPPSRC =
 
 # List ASM source files here
 ASMSRC = $(PORTASM) \
-         $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F10x/vectors.s
+         $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F10x/vectors_md.s
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
@@ -128,7 +128,7 @@ CPPC = $(TRGT)g++
 LD   = $(TRGT)gcc
 #LD   = $(TRGT)g++
 CP   = $(TRGT)objcopy
-AS   = $(TRGT)gcc -x assembler-with-cpp
+AS   = $(TRGT)gcc
 OD   = $(TRGT)objdump
 HEX  = $(CP) -O ihex
 BIN  = $(CP) -O binary

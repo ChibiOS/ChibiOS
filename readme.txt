@@ -71,11 +71,16 @@
 - FIX: DMA not initialized under some conditions (bug 3099701).
 - NEW: Added an SPI driver to the STM8 platform support.
 - NEW: Added a simple STM8 SPI demo under ./testhal/STM8/SPI.
+- CHANGE: Diviced the file ARMCMx/crt0.s in crt0_v6m.s and crt0_v7m.s in
+  order to remove the preprocessor directives from assembler files.
+- CHANGE: Divided the file STM32/vectors.s in several files, one for each
+  STM32 sub-family. This has been done in order to remove the preprocessor
+  directives from assembler files.
 - CHANGE: Renamed the HAL settings macro names, removed the CH_ prefix
   because it is reserved for the kernel namespace.
       NOTE: ****** Make sure to use a mcuconf.h file taken from ******
             ****** this version in your project.                ******
-
+ 
 *** 2.1.2 ***
 - FIX: Fixed typo in memstreams.h (bug 3089567)(backported to 2.0.6).
 - FIX: Fixed wrong macro check in LPC214x and AT91SAM7 serial drivers (bug
