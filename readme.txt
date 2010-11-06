@@ -69,6 +69,8 @@
 - FIX: Broken C++ wrapper (bug 3100925).
 - FIX: Broken lwIP/uIP demos (bug 3100901).
 - FIX: DMA not initialized under some conditions (bug 3099701).
+- FIX: Restored the RIDE7 build files in the STM32F103 demo, note the RIDE7
+  build files are not supported so this has not been tracked as a bug.
 - NEW: Added an SPI driver to the STM8 platform support.
 - NEW: Added a simple STM8 SPI demo under ./testhal/STM8/SPI.
 - NEW: Divided the file STM32/vectors.s in several files, one for each
