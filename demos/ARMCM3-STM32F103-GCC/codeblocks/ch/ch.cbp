@@ -42,11 +42,11 @@
 			<Add directory="..\..\..\ARMCM3-STM32F103-GCC" />
 			<Add directory="..\..\..\..\os\kernel\include" />
 			<Add directory="..\..\..\..\os\ports\GCC\ARMCMx" />
-			<Add directory="..\..\..\..\os\ports\GCC\ARMCMx\STM32F10x" />
+			<Add directory="..\..\..\..\os\ports\GCC\ARMCMx\STM32" />
+			<Add directory="..\..\..\..\os\ports\GCC\ARMCMx\cmsis" />
 			<Add directory="..\..\..\..\os\hal\include" />
 			<Add directory="..\..\..\..\os\hal\platforms\STM32" />
 			<Add directory="..\..\..\..\boards\OLIMEX_STM32_P103" />
-			<Add directory="..\..\..\..\os\ports\GCC\ARMCMx\cmsis" />
 			<Add directory="..\..\..\..\test" />
 		</Compiler>
 		<Linker>
@@ -224,10 +224,8 @@
 		<Unit filename="..\..\..\..\os\kernel\src\chvt.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\..\os\ports\GCC\ARMCMx\STM32F10x\cmparams.h" />
-		<Unit filename="..\..\..\..\os\ports\GCC\ARMCMx\STM32F10x\vectors.s">
-			<Option compiler="armelfgcc" use="1" buildCommand="$compiler -x assembler-with-cpp $options $includes -c $file -o $object" />
-		</Unit>
+		<Unit filename="..\..\..\..\os\ports\GCC\ARMCMx\STM32\cmparams.h" />
+		<Unit filename="..\..\..\..\os\ports\GCC\ARMCMx\STM32\vectors_md.s" />
 		<Unit filename="..\..\..\..\os\ports\GCC\ARMCMx\chcore.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -238,9 +236,7 @@
 		<Unit filename="..\..\..\..\os\ports\GCC\ARMCMx\chcore_v7m.h" />
 		<Unit filename="..\..\..\..\os\ports\GCC\ARMCMx\chtypes.h" />
 		<Unit filename="..\..\..\..\os\ports\GCC\ARMCMx\cmsis\core_cm0.h" />
-		<Unit filename="..\..\..\..\os\ports\GCC\ARMCMx\crt0.s">
-			<Option compiler="armelfgcc" use="1" buildCommand="$compiler -x assembler-with-cpp $options $includes -c $file -o $object" />
-		</Unit>
+		<Unit filename="..\..\..\..\os\ports\GCC\ARMCMx\crt0_v7m.s" />
 		<Unit filename="..\..\..\..\os\ports\GCC\ARMCMx\nvic.c">
 			<Option compilerVar="CC" />
 		</Unit>
