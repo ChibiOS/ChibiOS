@@ -84,7 +84,7 @@
   because it is reserved for the kernel namespace.
       NOTE: ****** Make sure to use a mcuconf.h file taken from ******
             ****** this version in your project.                ******
- 
+
 *** 2.1.2 ***
 - FIX: Fixed typo in memstreams.h (bug 3089567)(backported to 2.0.6).
 - FIX: Fixed wrong macro check in LPC214x and AT91SAM7 serial drivers (bug
