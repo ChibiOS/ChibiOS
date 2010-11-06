@@ -1,0 +1,92 @@
+Status:
+- = Planned.
+X = In progress, some work done.
+* = Done.
+? = Not sure if worth the effort or useful at all.
+N = Decided against.
+
+Within 2.1.x
+* Binary Semaphores on top of Counting Semaphores.
+* Direct unbuffered UART driver.
+  Requirements: low level, callbacks, DMA capable, state machines buildable
+                on top, support data words greater than 8 bits, callback for
+                "last byte transmitted (RS485)", simple implementation,
+                verifiable.
+* Rework STM32 drivers to use friendly IRQ names and centralized DMA macros.
+* I-class functions for the ADC/PWM drivers.
+* All the device driver structures must have a fields extension macro and
+  initializer hook.
+* All the device driver callbacks must have the driver pointer as first
+  parameter.
+* Change the SPI driver to be able to work asynchronously using callbacks,
+  keep the synchronous APIs available as option.
+* Add an optional spiPolledExchange() API to the SPI driver model.
+* Update the STM32 SPI driver to the new model.
+* Make the ADC driver have the same synchronous/asynchronous API of the
+  new SPI driver model.
+* General HAL improvements.
+* Update the AT91SAM7 SPI driver (DMA and/or ISR).
+  * Verify the FatFs demo on both the AT91SAM7X and AT91SAM7S.
+* Update the LPC214x SPI driver (ISR).
+  * Verify the LPC214x FatFs demo.
+* Write a new SPI driver for LPC1xxx (ISR)(it should be very close to the
+  LPC214x one).
+N Evaluate if to add a synchronous API to the UART driver, eventually do so.
+* Global documentation reorganization in order to allow both separate documents
+  and the usual blob document.
+* PDF generation from the documentation system (only separate documents, not
+  the blob).
+* Automatic compilation and upload of the various documents on the web site
+  (doxygen + rsync).
+* New STM8S/A SPI driver.
+* Reorganization of the STM32 family port-level support.
+* Remove preprocessor directives from the assembler files and restore the
+  RIDE7 build files in the STM32 demo.
+- STM8L official HAL support, it will have to be separated from the STM8S/STM8A
+  HAL because it is very different, actually it looks much more like a
+  mini STM32, most STM32 drivers will only require few changes it also has
+  a very similar DMA (waiting for the new STM8L-Discovery kit).
+- Add the STM32VL to the official STM32 HAL support (waiting for the new
+  STM32-Discovery kit).
+X Except for the above, bug fixing only until the 2.2.0 release.
+
+Within 2.3.x (hopefully)
+- Resist doing more changes and optimizations to the kernel.
+X File System infrastructure.
+  - Official FatFs wrapper using the new infrastructure, dedicated test suite.
+X I2C device driver class support and at least one implementation (test
+  hardware missing).
+- Serial over UART complex driver driver, evaluate from the performance
+  results if to make obsolete the current dedicated Serial driver.
+- Shared DMA channels support in the STM32/STM8L HALs.
+- New device driver models: RTC, WDG, DAC, USB, Systick, Battery Monitor.
+- MAC driver for STM32F107 (hardware missing).
+- Device drivers for STM8/STM8L (SPI, ADC, PWM, bring it on par with STM32).
+- Support for more compilers (ARMCMx only initially).
+- Support for not just Makefiles (Ride7, Crossworks etc).
+- Batch testing of the ARM7/ARMCMx port using OpenOCD, with reports.
+- Debug-related features and tools.
+- Add a *very simple* ADC API for single one shot sampling (implement it as
+  an injected conversion on the STM32).
+- Update C++ wrapper (Heap, Pools, Mailboxes and any new feature).
+- Threads Pools manager in the library.
+
+Later but within 2.x.x
+- Transactional file system.
+- Dedicated TCP/IP stack.
+? ISO7816 driver over UART driver, both reader and card side (hardware
+  missing).
+- Merge the Coldfire branch in mainline (hardware missing).
+- Merge the H8S branch in mainline (hardware missing).
+- MAC driver revision in order to support copy-less operations, this will
+  require changes to lwIP or a new TCP/IP stack however.
+
+Ideas for 3.x.x:
+- High resolution timers and tickless kernel.
+- Multicore support.
+
+Side projects:
+X ChibiOS Wizard, UML modeling and ChibiOS applications code and
+  documentation generator.
+? File System
+- Visual debugger/monitor interfaced through OpenOCD.
