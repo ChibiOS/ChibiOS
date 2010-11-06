@@ -72,7 +72,7 @@
 - NEW: Added an SPI driver to the STM8 platform support.
 - NEW: Added a simple STM8 SPI demo under ./testhal/STM8/SPI.
 - CHANGE: Renamed the HAL settings macro names, removed the CH_ prefix
-  because it is reserved as kernel namespace.
+  because it is reserved for the kernel namespace.
       NOTE: ****** Make sure to use a mcuconf.h file taken from ******
             ****** this version in your project.                ******
 
