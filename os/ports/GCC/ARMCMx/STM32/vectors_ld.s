@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    STM32/vectors_cl.s
+ * @file    STM32/vectors_ld.s
  * @brief   Interrupt vectors for the STM32 Low Density sub-family.
  *
  * @addtogroup ARMCMx_CORE
