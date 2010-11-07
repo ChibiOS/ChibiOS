@@ -42,6 +42,7 @@ N Evaluate if to add a synchronous API to the UART driver, eventually do so.
 * Reorganization of the STM32 family port-level support.
 * Remove preprocessor directives from the assembler files and restore the
   RIDE7 build files in the STM32 demo.
+- Evaluate moving dynamic APIs into a separate source file.
 - STM8L official HAL support, it will have to be separated from the STM8S/STM8A
   HAL because it is very different, actually it looks much more like a
   mini STM32, most STM32 drivers will only require few changes it also has
