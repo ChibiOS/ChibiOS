@@ -95,6 +95,7 @@
  * - Clock stop for reduced power usage when the driver is in stop state.
  * - Each SSP can be independently enabled and programmed. Unused
  *   peripherals are left in low power mode.
+ * - Fully interrupt driven.
  * - Programmable interrupt priority levels for each SSP.
  * .
  * @ingroup LPC13xx

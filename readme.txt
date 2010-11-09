@@ -64,6 +64,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.1.4 ***
+- Added SPI driver to the STM8 documentation, it was missing.
+
 *** 2.1.3 ***
 - FIX: Fixed broken STM32 synchronous UART driver (bug 3100946).
 - FIX: Broken C++ wrapper (bug 3100925).
