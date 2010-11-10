@@ -21,7 +21,7 @@
 #define _BOARD_H_
 
 /*
- * Setup for Raisonance REva V3 + STM8S208RB daughter board.
+ * Setup for STMicroelectronics STM8S-Discovery board.
  */
 
 /*
