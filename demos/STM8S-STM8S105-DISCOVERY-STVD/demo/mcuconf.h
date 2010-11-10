@@ -42,5 +42,5 @@
 /*
  * SPI driver system settings.
  */
-#define STM8_SPI_USE_SPI                TRUE
+#define STM8_SPI_USE_SPI                FALSE
 #define STM8_SPI_ERROR_HOOK(spip)       chSysHalt()
