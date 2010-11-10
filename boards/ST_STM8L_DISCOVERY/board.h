@@ -27,7 +27,7 @@
 /*
  * Board identifiers.
  */
-#define BOARD_ST_STM8S_DISCOVERY
+#define BOARD_ST_STM8L_DISCOVERY
 #define BOARD_NAME "ST STM8L-Discovery"
 
 /*

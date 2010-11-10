@@ -71,7 +71,7 @@
 /* Comment the line below if you will not use the peripherals drivers.
    In this case, these drivers will not be included and the application code will be
    based on direct access to peripherals registers */
- #define USE_STDPERIPH_DRIVER
+/* #define USE_STDPERIPH_DRIVER*/
 #endif
 
 /**
@@ -182,6 +182,8 @@
 #define     __O     volatile         /*!< defines 'write only' permissions    */
 #define     __IO    volatile         /*!< defines 'read / write' permissions  */
 
+/* Stupid thing to do...*/
+#if 0
 /*!< Signed integer types  */
 typedef   signed char     int8_t;
 typedef   signed short    int16_t;
@@ -191,6 +193,7 @@ typedef   signed long     int32_t;
 typedef unsigned char     uint8_t;
 typedef unsigned short    uint16_t;
 typedef unsigned long     uint32_t;
+#endif
 
 /*!< STM8Lx Standard Peripheral Library old types (maintained for legacy purpose) */
 
