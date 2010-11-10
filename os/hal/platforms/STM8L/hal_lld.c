@@ -39,7 +39,7 @@
 /**
  * @brief   PAL setup.
  * @details Digital I/O ports static configuration as defined in @p board.h.
- */
+ *//*
 ROMCONST PALConfig pal_default_config =
 {
   {
@@ -55,7 +55,7 @@ ROMCONST PALConfig pal_default_config =
     {VAL_GPIOIODR, 0, VAL_GPIOIDDR, VAL_GPIOICR1, VAL_GPIOICR2},
 #endif
   }
-};
+};*/
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */

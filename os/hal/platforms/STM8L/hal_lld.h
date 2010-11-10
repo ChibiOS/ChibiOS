@@ -228,7 +228,7 @@
 #define RTCCLK                      (LSICLK / (1 << STM8L_RTCCLK_DIVIDER))
 #elif STM8L_RTCCLK_SOURCE == CLK_RTCSEL_HSE
 #define RTCCLK                      (HSECLK / (1 << STM8L_RTCCLK_DIVIDER))
-#elif STM8L_SYSCLK_SOURCE == CLK_RTCSEL_LSE
+#elif STM8L_RTCCLK_SOURCE == CLK_RTCSEL_LSE
 #define RTCCLK                      (LSECLK / (1 << STM8L_RTCCLK_DIVIDER))
 #else
 #error "specified invalid RTCCLK source"
