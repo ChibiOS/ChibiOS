@@ -33,7 +33,7 @@
  *          - <b>Next</b>, returns the next, in creation order, active thread
  *            in the system.
  *          .
- *          The registry is meant to be mainly a debug feature, as example,
+ *          The registry is meant to be mainly a debug feature, for example,
  *          using the registry a debugger can enumerate the active threads
  *          in any given moment or the shell can print the active threads
  *          and their state.<br>

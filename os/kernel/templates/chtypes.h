@@ -101,7 +101,7 @@ typedef int32_t         cnt_t;
  * @note    This is required because some compilers require a custom keyword,
  *          usually this macro is just set to "const" for the GCC compiler.
  * @note    This macro is not used to place constants in different address
- *          spaces (like AVR requires as example) because it is assumed that
+ *          spaces (like AVR requires for example) because it is assumed that
  *          a pointer to a ROMCONST constant is compatible with a pointer
  *          to a normal variable. It is just like the "const" keyword but
  *          requires that the constant is placed in ROM if the architecture

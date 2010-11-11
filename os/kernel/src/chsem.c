@@ -47,7 +47,7 @@
  *          .
  *          Semaphores can be used as guards for mutual exclusion zones
  *          (note that mutexes are recommended for this kind of use) but
- *          also have other uses, queues guards and counters as example.<br>
+ *          also have other uses, queues guards and counters for example.<br>
  *          Semaphores usually use a FIFO queuing strategy but it is possible
  *          to make them order threads by priority by enabling
  *          @p CH_USE_SEMAPHORES_PRIORITY in @p chconf.h.

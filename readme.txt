@@ -903,7 +903,7 @@
   semaphores. It is defaulted to off because usually semaphores are used for
   I/O related tasks without hard realtime requirements.
 - NEW: Now the all the options in chconf.h and the various driver headers
-  can be overridden externally, as example from within the Makefile.
+  can be overridden externally, for example from within the Makefile.
   The options are no mode a simple define but a define with an assigned
   TRUE/FALSE value within an #ifndef block.
 - NEW: Idle thread hook macro added to the configuration file.

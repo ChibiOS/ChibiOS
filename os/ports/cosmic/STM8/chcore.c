@@ -56,7 +56,7 @@ void _port_thread_start(void) {
 /**
  * @brief   Halts the system.
  * @details This function is invoked by the operating system when an
- *          unrecoverable error is detected (as example because a programming
+ *          unrecoverable error is detected (for example because a programming
  *          error in the application code that triggers an assertion while in
  *          debug mode).
  */

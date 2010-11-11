@@ -23,7 +23,7 @@
  * @details This file is a template of the system driver functions provided by
  *          a port. Some of the following functions may be implemented as
  *          macros in chcore.h if the implementer decides that there is an
- *          advantage in doing so, as example because performance concerns.
+ *          advantage in doing so, for example because performance concerns.
  *
  * @addtogroup core
  * @details Non portable code templates.
@@ -106,7 +106,7 @@ void port_wait_for_interrupt(void) {
 /**
  * @brief   Halts the system.
  * @details This function is invoked by the operating system when an
- *          unrecoverable error is detected (as example because a programming
+ *          unrecoverable error is detected (for example because a programming
  *          error in the application code that triggers an assertion while in
  *          debug mode).
  */
