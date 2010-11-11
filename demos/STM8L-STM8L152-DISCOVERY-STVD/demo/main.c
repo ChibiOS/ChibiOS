@@ -29,9 +29,13 @@ static msg_t Thread1(void *arg) {
 
   (void)arg;
   while (TRUE) {
-//    palClearPad(GPIOD, PD_LD10);
+    palClearPad(GPIOC, PC_LED4);
     chThdSleepMilliseconds(500);
-//    palSetPad(GPIOD, PD_LD10);
+    palSetPad(GPIOC, PC_LED4);
+    chThdSleepMilliseconds(500);
+    palClearPad(GPIOE, PE_LED3);
+    chThdSleepMilliseconds(500);
+    palSetPad(GPIOE, PE_LED3);
     chThdSleepMilliseconds(500);
   }
   return 0;
@@ -55,7 +59,7 @@ void main(void) {
   /*
    * Activates the serial driver 1 using the driver default configuration.
    */
-//  sdStart(&SD2, NULL);
+  sdStart(&SD1, NULL);
 
   /*
    * Creates the blinker thread.
@@ -66,10 +70,8 @@ void main(void) {
    * Normal main() thread activity.
    */
   while (TRUE) {
-//    if (palReadPad(GPIOG, 0) == PAL_LOW)
-//      TestThread(&SD2);
-//    if (palReadPad(GPIOG, 1) == PAL_LOW)
-//      sdWriteTimeout(&SD2, "Hello World!\r\n", 14, TIME_INFINITE);
+    if (palReadPad(GPIOC, PC_BUTTON) == PAL_LOW)
+      TestThread(&SD1);
     chThdSleepMilliseconds(1000);
   }
 }

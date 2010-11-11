@@ -43,12 +43,15 @@ N Evaluate if to add a synchronous API to the UART driver, eventually do so.
 * Remove preprocessor directives from the assembler files and restore the
   RIDE7 build files in the STM32 demo.
 - Evaluate moving dynamic APIs into a separate source file.
-- STM8L official HAL support, it will have to be separated from the STM8S/STM8A
-  HAL because it is very different, actually it looks much more like a
-  mini STM32, most STM32 drivers will only require few changes it also has
-  a very similar DMA (waiting for the new STM8L-Discovery kit).
-- Add the STM32VL to the official STM32 HAL support (waiting for the new
-  STM32-Discovery kit).
+X STM8L official HAL support, it will have to be separated from the STM8S/STM8A
+  HAL because it is very different.
+  X Shared ISR management.
+  - Shared DMA management.
+  X STM8L-Discovery demo.
+- Realign the STM8 port to the new STM8L one as options, naming conventions
+  and general solutions.
+X Add the STM32F100 (Value Line) to the official STM32 HAL support.
+  - STM32VL-Discovery demo.
 X Except for the above, bug fixing only until the 2.2.0 release.
 
 Within 2.3.x (hopefully)
