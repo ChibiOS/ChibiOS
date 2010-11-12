@@ -27,6 +27,22 @@
 #define TIM2_ARR    ((TIM2_CLOCK / CH_FREQUENCY) - 1)
 
 /*
+ * TIM2 interrupt handler.
+ */
+CH_IRQ_HANDLER(13) {
+
+  CH_IRQ_PROLOGUE();
+
+  chSysLockFromIsr();
+  chSysTimerHandlerI();
+  chSysUnlockFromIsr();
+
+  TIM2->SR1 = 0;
+
+  CH_IRQ_EPILOGUE();
+}
+
+/*
  * Board initialization code.
  */
 void hwinit(void) {
