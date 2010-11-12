@@ -21,148 +21,95 @@
 #define _BOARD_H_
 
 /*
- * Setup for STMicroelectronics STM8L-Discovery board.
+ * Setup for STMicroelectronics STM8S-Discovery board.
  */
 
 /*
  * Board identifiers.
  */
-#define BOARD_ST_STM8L_DISCOVERY
-#define BOARD_NAME "ST STM8L-Discovery"
+#define BOARD_ST_STM8S_DISCOVERY
+#define BOARD_NAME "ST STM8S-Discovery"
 
 /*
- * Board frequencies and bypass modes.
- *
- * The bypass must be set to TRUE if the chip is driven by an external
- * oscillator rather than a crystal. Frequency must be set to zero if
- * the clock source is not used at all.
- * The following constants are used by the HAL low level driver for
- * correct clock initialization.
+ * Board frequencies.
  */
-#define HSECLK              0
-#define HSEBYPASS           FALSE
-#define LSECLK              32768
-#define LSEBYPASS           FALSE
+#define HSECLK          16000000
 
 /*
  * MCU model used on the board.
  */
-#define STM8L152C6
-#define STM8L15X_MD
+#define STM8S105
 
 /*
  * Pin definitions.
  */
-#define PA_OSC_IN           2
-#define PA_OSC_OUT          3
-#define PA_LCD_COM0         4
-#define PA_LCD_COM1         5
-#define PA_LCD_COM2         6
-#define PA_LCD_SEG0         7
+#define PA_OSCIN        1
+#define PA_OSCOUT       2
 
-#define PB_LCD_SEG10        0
-#define PB_LCD_SEG11        1
-#define PB_LCD_SEG12        2
-#define PB_LCD_SEG13        3
-#define PB_LCD_SEG14        4
-#define PB_LCD_SEG15        5
-#define PB_LCD_SEG16        6
-#define PB_LCD_SEG17        7
+#define PC_TS_KEY       1
+#define PC_TS_LOADREF   2
+#define PC_TS_SHIELD    3
 
-#define PC_UNUSED           0
-#define PC_BUTTON           1
-#define PC_LCD_SEG22        2
-#define PC_LCD_SEG23        3
-#define PC_IDD_CNT_EN       4
-#define PC_LED4             7
-
-#define PD_LCD_SEG7         0
-#define PD_LCD_COM3         1
-#define PD_LCD_SEG8         2
-#define PD_LCD_SEG9         3
-#define PD_LCD_SEG18        4
-#define PD_LCD_SEG19        5
-#define PD_LCD_SEG20        6
-#define PD_LCD_SEG21        7
-
-#define PE_LCD_SEG1         0
-#define PE_LCD_SEG2         1
-#define PE_LCD_SEG3         2
-#define PE_LCD_SEG4         3
-#define PE_LCD_SEG5         4
-#define PE_LCD_SEG6         5
-#define PE_IDD_WAKEUP       6
-#define PE_LED3             7
-
-#define PF0_IDD_MEASUREMENT 0
+#define PD_LD10         0
+#define PD_SWIM         1
+#define PD_TX           5
+#define PD_RX           6
 
 /*
  * Port A initial setup.
  */
-#define VAL_GPIOAODR        0
-#define VAL_GPIOADDR        0               /* All inputs.                  */
-#define VAL_GPIOACR1        0xFF            /* All pull-up.                 */
-#define VAL_GPIOACR2        0
+#define VAL_GPIOAODR    0
+#define VAL_GPIOADDR    0               /* All inputs.                      */
+#define VAL_GPIOACR1    0xFF            /* All pull-up or push-pull.        */
+#define VAL_GPIOACR2    0
 
 /*
  * Port B initial setup.
  */
-#define VAL_GPIOBODR        0
-#define VAL_GPIOBDDR        0               /* All inputs.                  */
-#define VAL_GPIOBCR1        0xFF            /* All pull-up.                 */
-#define VAL_GPIOBCR2        0
+#define VAL_GPIOBODR    0
+#define VAL_GPIOBDDR    0               /* All inputs.                      */
+#define VAL_GPIOBCR1    0xFF            /* All push-pull.                   */
+#define VAL_GPIOBCR2    0
 
 /*
  * Port C initial setup.
  */
-#define VAL_GPIOCODR        (1 < PC_LED4)
-#define VAL_GPIOCDDR        (1 < PC_LED4)
-#define VAL_GPIOCCR1        0xFF            /* All pull-up/open drain.      */
-#define VAL_GPIOCCR2        0
+#define VAL_GPIOCODR    0
+#define VAL_GPIOCDDR    0               /* All inputs.                      */
+#define VAL_GPIOCCR1    0xFF            /* All pull-up.                     */
+#define VAL_GPIOCCR2    0
 
 /*
  * Port D initial setup.
  */
-#define VAL_GPIODODR        0
-#define VAL_GPIODDDR        0               /* All inputs.                  */
-#define VAL_GPIODCR1        0xFF            /* All pull-up.                 */
-#define VAL_GPIODCR2        0
+#define VAL_GPIODODR    (1 << PD_LD10) | (1 << PD_TX)
+#define VAL_GPIODDDR    (1 << PD_LD10) | (1 << PD_TX)
+#define VAL_GPIODCR1    0xFF            /* All pull-up.                     */
+#define VAL_GPIODCR2    0
 
 /*
  * Port E initial setup.
  */
-#define VAL_GPIOEODR        (1 < PE_LED3)
-#define VAL_GPIOEDDR        (1 < PE_LED3)
-#define VAL_GPIOECR1        0xFF            /* All pull-up/open drain.      */
-#define VAL_GPIOECR2        0
+#define VAL_GPIOEODR    0 
+#define VAL_GPIOEDDR    0               /* All inputs.                      */
+#define VAL_GPIOECR1    0xFF            /* All pull-up.                     */
+#define VAL_GPIOECR2    0
 
 /*
  * Port F initial setup.
  */
-#define VAL_GPIOFODR        0
-#define VAL_GPIOFDDR        0               /* All inputs.                  */
-#define VAL_GPIOFCR1        0xFF            /* All pull-up.                 */
-#define VAL_GPIOFCR2        0
+#define VAL_GPIOFODR    0
+#define VAL_GPIOFDDR    0               /* All inputs.                      */
+#define VAL_GPIOFCR1    0xFF            /* All pull-up.                     */
+#define VAL_GPIOFCR2    0
 
 /*
- * Port G initial setup (not present but still initialized).
+ * Port G initial setup.
  */
-#define VAL_GPIOGODR        0
-#define VAL_GPIOGDDR        0               /* All inputs.                  */
-#define VAL_GPIOGCR1        0xFF            /* All pull-up.                 */
-#define VAL_GPIOGCR2        0
-
-/*
- * TIM2 interrupt handler segment.
- */
-#define _TIM2_UPDATE_ISR() {                                                \
-  if ((TIM2->SR1 & TIM_SR1_UIF) != 0) {                                     \
-    chSysLockFromIsr();                                                     \
-    chSysTimerHandlerI();                                                   \
-    chSysUnlockFromIsr();                                                   \
-    TIM2->SR1 = 0;                                                          \
-  }                                                                         \
-}
+#define VAL_GPIOGODR    0
+#define VAL_GPIOGDDR    0               /* All inputs.                      */
+#define VAL_GPIOGCR1    0xFF            /* All pull-up or push-pull.        */
+#define VAL_GPIOGCR2    0
 
 #ifdef __cplusplus
 extern "C" {
