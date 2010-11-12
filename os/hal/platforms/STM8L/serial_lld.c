@@ -63,51 +63,13 @@ SerialDriver SD3;
  * @brief   Driver default configuration.
  */
 static ROMCONST SerialConfig default_config = {
-  BBR(SERIAL_DEFAULT_BITRATE),
+  BRR(SERIAL_DEFAULT_BITRATE),
   SD_MODE_PARITY_NONE | SD_MODE_STOP_1
 };
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
-
-/**
- * @brief   USART initialization.
- *
- * @param[in] config    architecture-dependent serial driver configuration
- * @param[in] sdp       pointer to a @p SerialDriver object
- */
-static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
-  USART_TypeDef *u = sdp->usart;
-
-  u->BRR2 = (uint8_t)(((uint8_t)(config->sc_brr >> 8) & (uint8_t)0xF0) |
-                      ((uint8_t)config->sc_brr & (uint8_t)0x0F));
-  u->BRR1 = (uint8_t)(config->sc_brr >> 4);
-  u->CR1  = (uint8_t)(config->sc_mode & SD_MODE_PARITY);
-  u->CR2  = USART_CR2_RIEN | USART_CR2_TEN | USART_CR2_REN;
-  u->CR3  = (uint8_t)(config->sc_mode & SD_MODE_STOP);
-  u->CR4  = 0;
-  u->CR5  = 0;
-  u->PSCR = 1;
-  (void)u->SR;
-  (void)u->DR;
-}
-
-/**
- * @brief   USART de-initialization.
- *
- * @param[in] sdp       pointer to a @p SerialDriver object
- */
-static void usart_deinit(SerialDriver *sdp) {
-  USART_TypeDef *u = sdp->usart;
-
-  u->CR1  = USART_CR1_USARTD;
-  u->CR2  = 0;
-  u->CR3  = 0;
-  u->CR4  = 0;
-  u->CR5  = 0;
-  u->PSCR = 0;
-}
 
 #if STM8L_SERIAL_USE_USART1 || defined(__DOXYGEN__)
 static void notify1(void) {
@@ -204,11 +166,22 @@ void sd_lld_init(void) {
  * @notapi
  */
 void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
+  USART_TypeDef *u = sdp->usart;
 
   if (config == NULL)
     config = &default_config;
 
-  usart_init(sdp, config);
+  u->BRR2 = (uint8_t)(((uint8_t)(config->sc_brr >> 8) & (uint8_t)0xF0) |
+                      ((uint8_t)config->sc_brr & (uint8_t)0x0F));
+  u->BRR1 = (uint8_t)(config->sc_brr >> 4);
+  u->CR1  = (uint8_t)(config->sc_mode & SD_MODE_PARITY);
+  u->CR2  = USART_CR2_RIEN | USART_CR2_TEN | USART_CR2_REN;
+  u->CR3  = (uint8_t)(config->sc_mode & SD_MODE_STOP);
+  u->CR4  = 0;
+  u->CR5  = 0;
+  u->PSCR = 1;
+  (void)u->SR;
+  (void)u->DR;
 }
 
 /**
@@ -221,8 +194,14 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
  * @notapi
  */
 void sd_lld_stop(SerialDriver *sdp) {
+  USART_TypeDef *u = sdp->usart;
 
-  usart_deinit(sdp);
+  u->CR1  = USART_CR1_USARTD;
+  u->CR2  = 0;
+  u->CR3  = 0;
+  u->CR4  = 0;
+  u->CR5  = 0;
+  u->PSCR = 0;
 }
 
 #endif /* HAL_USE_SERIAL */

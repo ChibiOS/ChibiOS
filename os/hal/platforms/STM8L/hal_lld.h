@@ -16,6 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 /**
  * @file    STM8L/hal_lld.h
  * @brief   STM8L HAL subsystem low level driver source.
@@ -25,6 +26,11 @@
  *          - HSEBYPASS (@p TRUE if external oscillator rather than a crystal).
  *          - LSECLK (@p 0 if disabled or frequency in Hertz).
  *          - LSEBYPASS (@p TRUE if external oscillator rather than a crystal).
+ *          .
+ *          One of the following macros must also be defined:
+ *          - STM8L15X_MD for Medium Density devices.
+ *          - STM8L15X_MDP for Medium Density Plus devices.
+ *          - STM8L15X_HD for High Density devices.
  *          .
  *
  * @addtogroup HAL
@@ -37,14 +43,20 @@
 #undef FALSE
 #undef TRUE
 
-#if defined (STM8L15X_MD) || defined (STM8L15X_MDP) || defined (STM8L15X_HD)
 #include "stm8l15x.h"
-#else
-#error "unsupported or invalid STM8L platform"
-#endif
 
 #define FALSE 0
 #define TRUE (!FALSE)
+
+#if defined (STM8L15X_MD)
+#include "hal_lld_stm8l_md.h"
+#elif defined (STM8L15X_MDP)
+#include "hal_lld_stm8l_mdp.h"
+#elif defined (STM8L15X_HD)
+#include "hal_lld_stm8l_hd.h"
+#else
+#error "unspecified, unsupported or invalid STM8L platform"
+#endif
 
 /*===========================================================================*/
 /* Driver constants.                                                         */

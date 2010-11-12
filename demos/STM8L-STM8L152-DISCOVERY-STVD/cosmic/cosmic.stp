@@ -61,7 +61,7 @@ String.100.2=STM8 Cosmic
 String.100.3=ST7 Metrowerks V1.1
 String.100.4=Raisonance
 String.101.0=STM8 Cosmic
-String.102.0=C:\Programmi\COSMIC\CXSTM8_32K
+String.102.0=C:\Program Files\COSMIC\CXSTM8_32K
 String.103.0=
 String.104.0=Hstm8
 String.105.0=Lib
@@ -144,7 +144,7 @@ String.100.2=STM8 Cosmic
 String.100.3=ST7 Metrowerks V1.1
 String.100.4=Raisonance
 String.101.0=STM8 Cosmic
-String.102.0=C:\Programmi\COSMIC\CXSTM8_32K
+String.102.0=C:\Program Files\COSMIC\CXSTM8_32K
 String.103.0=
 String.104.0=Hstm8
 String.105.0=Lib
@@ -1235,8 +1235,13 @@ String.8.0=Release
 [Root.Source Files.Source Files\os.Source Files\os\kernel]
 ElemType=Folder
 PathName=Source Files\os\kernel
-Child=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c
+Child=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c
 Next=Root.Source Files.Source Files\os.Source Files\os\port
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chdynamic.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c]
 ElemType=File
@@ -3474,7 +3479,7 @@ PathName=..\..\..\os\hal\platforms\stm8l\stm8l15x.h
 [Root.Include Files.Include Files\os.Include Files\os\kernel]
 ElemType=Folder
 PathName=Include Files\os\kernel
-Child=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\ch.h
+Child=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdynamic.h
 Next=Root.Include Files.Include Files\os.Include Files\os\port
 Config.0=Root.Include Files.Include Files\os.Include Files\os\kernel.Config.0
 Config.1=Root.Include Files.Include Files\os.Include Files\os\kernel.Config.1
@@ -3544,6 +3549,11 @@ String.3.0=
 String.4.0=
 String.5.0=
 String.6.0=2010,5,25,14,45,56
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdynamic.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chdynamic.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\ch.h
 
 [Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\ch.h]
 ElemType=File

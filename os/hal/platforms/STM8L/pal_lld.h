@@ -95,52 +95,68 @@ typedef GPIO_TypeDef *ioportid_t;
  */
 #define IOPORTS         ((PALConfig *)0x5000)
 
+#if STM8L_HAS_GPIOA || defined(__DOXYGEN__)
 /**
  * @brief   GPIO port A identifier.
  */
 #define IOPORT1         GPIOA
+#endif
 
+#if STM8L_HAS_GPIOB || defined(__DOXYGEN__)
 /**
  * @brief   GPIO port B identifier.
  */
 #define IOPORT2         GPIOB
+#endif
 
+#if STM8L_HAS_GPIOC || defined(__DOXYGEN__)
 /**
  * @brief   GPIO port C identifier.
  */
 #define IOPORT3         GPIOC
+#endif
 
+#if STM8L_HAS_GPIOD || defined(__DOXYGEN__)
 /**
  * @brief   GPIO port D identifier.
  */
 #define IOPORT4         GPIOD
+#endif
 
+#if STM8L_HAS_GPIOE || defined(__DOXYGEN__)
 /**
  * @brief   GPIO port E identifier.
  */
 #define IOPORT5         GPIOE
+#endif
 
+#if STM8L_HAS_GPIOF || defined(__DOXYGEN__)
 /**
  * @brief   GPIO port F identifier.
  */
 #define IOPORT6         GPIOF
+#endif
 
+#if STM8L_HAS_GPIOG || defined(__DOXYGEN__)
 /**
  * @brief   GPIO port G identifier.
  */
 #define IOPORT7         GPIOG
+#endif
 
-#if defined(STM8L15X_MDP) || defined(STM8L15X_HD)
+#if STM8L_HAS_GPIOH || defined(__DOXYGEN__)
 /**
  * @brief   GPIO port H identifier.
  */
 #define IOPORT8         GPIOH
+#endif
 
+#if STM8L_HAS_GPIOI || defined(__DOXYGEN__)
 /**
  * @brief   GPIO port I identifier.
  */
 #define IOPORT9         GPIOI
-#endif /* defined(STM8L15X_MDP) || defined(STM8L15X_HD) */
+#endif
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */

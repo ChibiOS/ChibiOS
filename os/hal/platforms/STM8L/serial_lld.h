@@ -79,9 +79,16 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if defined(STM8L15X_MD) &&                                                 \
-    (STM8L_SERIAL_USE_USART2 || STM8L_SERIAL_USE_USART3)
-#error "STM8L15X_MD devices do not have USART2 and USART3"
+#if STM8L_SERIAL_USE_USART1 && !STM8L_HAS_USART1
+#error "USART1 enabled but not present"
+#endif
+
+#if STM8L_SERIAL_USE_USART2 && !STM8L_HAS_USART2
+#error "USART2 enabled but not present"
+#endif
+
+#if STM8L_SERIAL_USE_USART3 && !STM8L_HAS_USART3
+#error "USART3 enabled but not present"
 #endif
 
 /*===========================================================================*/
@@ -142,7 +149,7 @@ typedef struct {
  * @brief   Macro for baud rate computation.
  * @note    Make sure the final baud rate is within tolerance.
  */
-#define BBR(b) (SYSCLK / (b))
+#define BRR(b) (SYSCLK / (b))
 
 #if STM8L_SERIAL_USE_USART1 || defined(__DOXYGEN__)
 /**

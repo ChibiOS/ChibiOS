@@ -23,6 +23,8 @@
  * @details The STM8L shares some interrupt handlers among several sources.
  *          This module includes all the interrupt handlers that are
  *          used by more than one peripheral.
+ * @note    Only the interrupt handlers that are used by the HAL are defined
+ *          in this module.
  *
  * @addtogroup HAL
  * @{

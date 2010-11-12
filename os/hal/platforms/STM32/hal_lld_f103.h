@@ -19,7 +19,7 @@
 
 /**
  * @defgroup STM32F103_HAL STM32F103 HAL Support
- * @brief HAL support for STM32 LD, MD and HD families.
+ * @details HAL support for STM32 LD, MD and HD families.
  *
  * @ingroup HAL
  */

@@ -19,7 +19,7 @@
 
 /**
  * @defgroup STM32F10X_CL_HAL STM32F105/F107 HAL Support
- * @brief HAL support for STM32 CL (Connectivity Line) family.
+ * @details HAL support for STM32 CL (Connectivity Line) family.
  *
  * @ingroup HAL
  */

@@ -92,8 +92,8 @@
  * @section stm8l_serial_1 Supported HW resources
  * The serial driver can support any of the following hardware resources:
  * - USART1.
- * - USART2.
- * - USART3.
+ * - USART2 (where present).
+ * - USART3 (where present).
  * .
  * @section stm8l_serial_2 STM8L Serial driver implementation features
  * - Clock stop for reduced power usage when the driver is in stop state.
