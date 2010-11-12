@@ -12,5 +12,5 @@ Filename=raisonance\raisonance.stp
 Dependencies=
 [Options]
 ActiveProject=cosmic
-ActiveConfig=Release
+ActiveConfig=Debug
 AddSortedElements=0
