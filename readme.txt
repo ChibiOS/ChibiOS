@@ -65,6 +65,8 @@
 *****************************************************************************
 
 *** 2.1.4 ***
+- CHANGE: Separated dynamic threads code into dedicated files: chdynamic.c
+  and chdynamic.h.
 - Added SPI driver to the STM8 documentation, it was missing.
 
 *** 2.1.3 ***

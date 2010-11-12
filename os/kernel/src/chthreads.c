@@ -67,7 +67,7 @@
  *
  * @notapi
  */
-Thread *init_thread(Thread *tp, tprio_t prio) {
+Thread *_thread_init(Thread *tp, tprio_t prio) {
 
   tp->p_prio = prio;
   tp->p_state = THD_STATE_SUSPENDED;
@@ -103,13 +103,18 @@ Thread *init_thread(Thread *tp, tprio_t prio) {
   return tp;
 }
 
-#if CH_DBG_FILL_THREADS
-static void memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
+#if CH_DBG_FILL_THREADS || defined(__DOXYGEN__)
+/**
+ * @brief   Memory fill utility.
+ *
+ * @notapi
+ */
+void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
 
   while (startp < endp)
     *startp++ = v;
 }
-#endif
+#endif /* CH_DBG_FILL_THREADS */
 
 /**
  * @brief   Creates a new thread into a static memory area.
@@ -144,7 +149,7 @@ Thread *chThdCreateI(void *wsp, size_t size,
              (prio <= HIGHPRIO) && (pf != NULL),
              "chThdCreateI");
   SETUP_CONTEXT(wsp, size, pf, arg);
-  return init_thread(tp, prio);
+  return _thread_init(tp, prio);
 }
 
 /**
@@ -177,102 +182,6 @@ Thread *chThdCreateStatic(void *wsp, size_t size,
   chSysUnlock();
   return tp;
 }
-
-#if CH_USE_DYNAMIC && CH_USE_HEAP
-/**
- * @brief   Creates a new thread allocating the memory from the heap.
- * @pre     The configuration options @p CH_USE_DYNAMIC and @p CH_USE_HEAP
- *          must be enabled in order to use this function.
- * @note    A thread can terminate by calling @p chThdExit() or by simply
- *          returning from its main function.
- * @note    The memory allocated for the thread is not released when the thread
- *          terminates but when a @p chThdWait() is performed.
- *
- * @param[in] heapp     heap from which allocate the memory or @p NULL for the
- *                      default heap
- * @param[in] size      size of the working area to be allocated
- * @param[in] prio      the priority level for the new thread
- * @param[in] pf        the thread function
- * @param[in] arg       an argument passed to the thread function. It can be
- *                      @p NULL.
- * @return              The pointer to the @p Thread structure allocated for
- *                      the thread into the working space area.
- * @retval NULL         if the memory cannot be allocated.
- *
- * @api
- */
-Thread *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
-                            tprio_t prio, tfunc_t pf, void *arg) {
-  void *wsp;
-  Thread *tp;
-
-  wsp = chHeapAlloc(heapp, size);
-  if (wsp == NULL)
-    return NULL;
-  
-#if CH_DBG_FILL_THREADS
-  memfill((uint8_t *)wsp, (uint8_t *)wsp + sizeof(Thread), THREAD_FILL_VALUE);
-  memfill((uint8_t *)wsp + sizeof(Thread),
-          (uint8_t *)wsp + size, STACK_FILL_VALUE);
-#endif
-  
-  chSysLock();
-  tp = chThdCreateI(wsp, size, prio, pf, arg);
-  tp->p_flags = THD_MEM_MODE_HEAP;
-  chSchWakeupS(tp, RDY_OK);
-  chSysUnlock();
-  return tp;
-}
-#endif /* CH_USE_DYNAMIC && CH_USE_HEAP */
-
-#if CH_USE_DYNAMIC && CH_USE_MEMPOOLS
-/**
- * @brief   Creates a new thread allocating the memory from the specified
- *          memory pool.
- * @pre     The configuration options @p CH_USE_DYNAMIC and @p CH_USE_MEMPOOLS
- *          must be enabled in order to use this function.
- * @note    A thread can terminate by calling @p chThdExit() or by simply
- *          returning from its main function.
- * @note    The memory allocated for the thread is not released when the thread
- *          terminates but when a @p chThdWait() is performed.
- *
- * @param[in] mp        pointer to the memory pool object
- * @param[in] prio      the priority level for the new thread
- * @param[in] pf        the thread function
- * @param[in] arg       an argument passed to the thread function. It can be
- *                      @p NULL.
- * @return              The pointer to the @p Thread structure allocated for
- *                      the thread into the working space area.
- * @retval  NULL        if the memory pool is empty.
- *
- * @api
- */
-Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
-                                  tfunc_t pf, void *arg) {
-  void *wsp;
-  Thread *tp;
-
-  chDbgCheck(mp != NULL, "chThdCreateFromMemoryPool");
-
-  wsp = chPoolAlloc(mp);
-  if (wsp == NULL)
-    return NULL;
-  
-#if CH_DBG_FILL_THREADS
-  memfill((uint8_t *)wsp, (uint8_t *)wsp + sizeof(Thread), THREAD_FILL_VALUE);
-  memfill((uint8_t *)wsp + sizeof(Thread),
-          (uint8_t *)wsp + mp->mp_object_size, STACK_FILL_VALUE);
-#endif
-
-  chSysLock();
-  tp = chThdCreateI(wsp, mp->mp_object_size, prio, pf, arg);
-  tp->p_flags = THD_MEM_MODE_MEMPOOL;
-  tp->p_mpool = mp;
-  chSchWakeupS(tp, RDY_OK);
-  chSysUnlock();
-  return tp;
-}
-#endif /* CH_USE_DYNAMIC && CH_USE_MEMPOOLS */
 
 /**
  * @brief   Changes the running thread priority level then reschedules if
@@ -434,67 +343,6 @@ void chThdExit(msg_t msg) {
 #endif
   chSchGoSleepS(THD_STATE_FINAL);
 }
-
-#if CH_USE_DYNAMIC || defined(__DOXYGEN__)
-/**
- * @brief   Adds a reference to a thread object.
- * @pre     The configuration option @p CH_USE_DYNAMIC must be enabled in order
- *          to use this function.
- *
- * @param[in] tp        pointer to the thread
- * @return              The same thread pointer passed as parameter
- *                      representing the new reference.
- *
- * @api
- */
-Thread *chThdAddRef(Thread *tp) {
-
-  chSysLock();
-  chDbgAssert(tp->p_refs < 255, "chThdAddRef(), #1", "too many references");
-  tp->p_refs++;
-  chSysUnlock();
-  return tp;
-}
-
-/**
- * @brief   Releases a reference to a thread object.
- * @details If the references counter reaches zero <b>and</b> the thread
- *          is in the @p THD_STATE_FINAL state then the thread's memory is
- *          returned to the proper allocator.
- * @pre     The configuration option @p CH_USE_DYNAMIC must be enabled in order
- *          to use this function.
- * @note    Static threads are not affected.
- *
- * @param[in] tp        pointer to the thread
- *
- * @api
- */
-void chThdRelease(Thread *tp) {
-  trefs_t refs;
-
-  chSysLock();
-  chDbgAssert(tp->p_refs > 0, "chThdRelease(), #1", "not referenced");
-  refs = --tp->p_refs;
-  chSysUnlock();
-
-  /* If the references counter reaches zero then the memory can be returned
-     to the proper allocator. Of course static threads are not affected.*/
-  if (refs == 0) {
-    switch (tp->p_flags & THD_MEM_MODE_MASK) {
-#if CH_USE_HEAP
-    case THD_MEM_MODE_HEAP:
-      chHeapFree(tp);
-      break;
-#endif
-#if CH_USE_MEMPOOLS
-    case THD_MEM_MODE_MEMPOOL:
-      chPoolFree(tp->p_mpool, tp);
-      break;
-#endif
-    }
-  }
-}
-#endif /* CH_USE_DYNAMIC */
 
 #if CH_USE_WAITEXIT || defined(__DOXYGEN__)
 /**

@@ -28,16 +28,6 @@
 #ifndef _CHTHREADS_H_
 #define _CHTHREADS_H_
 
-/*
- * Module dependencies check.
- */
-#if CH_USE_DYNAMIC && !CH_USE_WAITEXIT
-#error "CH_USE_DYNAMIC requires CH_USE_WAITEXIT"
-#endif
-#if CH_USE_DYNAMIC && !CH_USE_HEAP && !CH_USE_MEMPOOLS
-#error "CH_USE_DYNAMIC requires CH_USE_HEAP and/or CH_USE_MEMPOOLS"
-#endif
-
 /**
  * @extends ThreadsQueue
  *
@@ -211,19 +201,14 @@ typedef msg_t (*tfunc_t)(void *);
 #ifdef __cplusplus
 extern "C" {
 #endif
-  Thread *init_thread(Thread *tp, tprio_t prio);
+  Thread *_thread_init(Thread *tp, tprio_t prio);
+#if CH_DBG_FILL_THREADS
+  void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v);
+#endif
   Thread *chThdCreateI(void *wsp, size_t size,
                        tprio_t prio, tfunc_t pf, void *arg);
   Thread *chThdCreateStatic(void *wsp, size_t size,
                             tprio_t prio, tfunc_t pf, void *arg);
-#if CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_HEAP
-  Thread *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
-                              tprio_t prio, tfunc_t pf, void *arg);
-#endif
-#if CH_USE_DYNAMIC && CH_USE_WAITEXIT && CH_USE_MEMPOOLS
-  Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
-                                    tfunc_t pf, void *arg);
-#endif
   tprio_t chThdSetPriority(tprio_t newprio);
   Thread *chThdResume(Thread *tp);
   void chThdTerminate(Thread *tp);
@@ -231,10 +216,6 @@ extern "C" {
   void chThdSleepUntil(systime_t time);
   void chThdYield(void);
   void chThdExit(msg_t msg);
-#if CH_USE_DYNAMIC
-  Thread *chThdAddRef(Thread *tp);
-  void chThdRelease(Thread *tp);
-#endif
 #if CH_USE_WAITEXIT
   msg_t chThdWait(Thread *tp);
 #endif

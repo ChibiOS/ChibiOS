@@ -42,7 +42,7 @@ N Evaluate if to add a synchronous API to the UART driver, eventually do so.
 * Reorganization of the STM32 family port-level support.
 * Remove preprocessor directives from the assembler files and restore the
   RIDE7 build files in the STM32 demo.
-- Evaluate moving dynamic APIs into a separate source file.
+* Move dynamic APIs into a separate source file.
 X STM8L official HAL support, it will have to be separated from the STM8S/STM8A
   HAL because it is very different.
   X Shared ISR management.
@@ -50,22 +50,28 @@ X STM8L official HAL support, it will have to be separated from the STM8S/STM8A
   X STM8L-Discovery demo.
 - Realign the STM8 port to the new STM8L one as options, naming conventions
   and general solutions.
-X Add the STM32F100 (Value Line) to the official STM32 HAL support.
+- Improved support in the STM32 HAL support for multiple sub-families. Do
+  not check for the family in the various drivers but simply check for
+  switch macros like STM32_HAS_USART3, STM32_HAS_SPI3. This what the
+  drivers will not need changes when adding new sub-families.
+X Add the STM32F100 (Value Line) sub-family to the official STM32 HAL support.
   - STM32VL-Discovery demo.
 X Except for the above, bug fixing only until the 2.2.0 release.
 
 Within 2.3.x (hopefully)
 - Resist doing more changes and optimizations to the kernel.
+- Add a switch to enable/disable the priority inheritance algorithm in mutexes.
 X File System infrastructure.
   - Official FatFs wrapper using the new infrastructure, dedicated test suite.
-X I2C device driver class support and at least one implementation (test
-  hardware missing).
+X Transactional flash file system implementation.
+X I2C device driver class support and at least one implementation.
+- Switch for turning off priority inheritance protocol on mutexes.
 - Serial over UART complex driver driver, evaluate from the performance
   results if to make obsolete the current dedicated Serial driver.
 - Shared DMA channels support in the STM32/STM8L HALs.
-- New device driver models: RTC, WDG, DAC, USB, Systick, Battery Monitor.
+- New device driver models: Clock, Systick, RTC, WDG, DAC, USB, Power Monitor.
 - MAC driver for STM32F107 (hardware missing).
-- Device drivers for STM8/STM8L (SPI, ADC, PWM, bring it on par with STM32).
+- Device drivers for STM8/STM8L (ADC, PWM, bring them on par with STM32).
 - Support for more compilers (ARMCMx only initially).
 - Support for not just Makefiles (Ride7, Crossworks etc).
 - Batch testing of the ARM7/ARMCMx port using OpenOCD, with reports.
@@ -76,7 +82,6 @@ X I2C device driver class support and at least one implementation (test
 - Threads Pools manager in the library.
 
 Later but within 2.x.x
-- Transactional file system.
 - Dedicated TCP/IP stack.
 ? ISO7816 driver over UART driver, both reader and card side (hardware
   missing).

@@ -84,6 +84,7 @@
 #include "chheap.h"
 #include "chmempools.h"
 #include "chthreads.h"
+#include "chdynamic.h"
 #include "chregistry.h"
 #include "chinline.h"
 #include "chqueues.h"

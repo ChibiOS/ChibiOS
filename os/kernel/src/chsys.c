@@ -88,7 +88,7 @@ void chSysInit(void) {
 #endif
 
   /* Now this instructions flow becomes the main thread.*/
-  setcurrp(init_thread(&mainthread, NORMALPRIO));
+  setcurrp(_thread_init(&mainthread, NORMALPRIO));
   currp->p_state = THD_STATE_CURRENT;
   chSysEnable();
 
