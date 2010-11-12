@@ -1386,7 +1386,7 @@ String.8.0=Release
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c]
 ElemType=File
 PathName=..\..\..\os\kernel\src\chevents.c
-Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c
 Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.0
 Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.1
 
@@ -1441,6 +1441,11 @@ String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
 String.6.0=2010,6,26,17,22,23
 String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chdynamic.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c]
 ElemType=File
@@ -2061,6 +2066,11 @@ Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\ker
 [Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chevents.h]
 ElemType=File
 PathName=..\..\..\os\kernel\include\chevents.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdynamic.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdynamic.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chdynamic.h
 Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdebug.h
 
 [Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdebug.h]
