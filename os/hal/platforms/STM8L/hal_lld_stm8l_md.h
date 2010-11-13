@@ -55,7 +55,7 @@
 #define STM8L_HAS_GPIOD             TRUE
 #define STM8L_HAS_GPIOE             TRUE
 #define STM8L_HAS_GPIOF             TRUE
-#define STM8L_HAS_GPIOG             TRUE
+#define STM8L_HAS_GPIOG             FALSE
 #define STM8L_HAS_GPIOH             FALSE
 #define STM8L_HAS_GPIOI             FALSE
 

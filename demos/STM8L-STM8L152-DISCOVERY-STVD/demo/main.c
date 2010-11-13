@@ -51,6 +51,10 @@ void main(void) {
    */
   hwinit();
 
+    palClearPad(GPIOC, PC_LED4);
+    palSetPad(GPIOE, PE_LED3);
+    while(1);
+
   /*
    * OS initialization.
    */

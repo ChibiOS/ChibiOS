@@ -28,7 +28,7 @@
  * Board identifiers.
  */
 #define BOARD_ST_STM8L_DISCOVERY
-#define BOARD_NAME "ST STM8L-Discovery"
+#define BOARD_NAME          "ST STM8L-Discovery"
 
 /*
  * Board frequencies and bypass modes.
@@ -101,7 +101,7 @@
  */
 #define VAL_GPIOAODR        0
 #define VAL_GPIOADDR        0               /* All inputs.                  */
-#define VAL_GPIOACR1        0xFF            /* All pull-up.                 */
+#define VAL_GPIOACR1        0xFF            /* All pull-up/push-pull.       */
 #define VAL_GPIOACR2        0
 
 /*
@@ -109,15 +109,15 @@
  */
 #define VAL_GPIOBODR        0
 #define VAL_GPIOBDDR        0               /* All inputs.                  */
-#define VAL_GPIOBCR1        0xFF            /* All pull-up.                 */
+#define VAL_GPIOBCR1        0xFF            /* All pull-up/push-pull.       */
 #define VAL_GPIOBCR2        0
 
 /*
  * Port C initial setup.
  */
-#define VAL_GPIOCODR        (1 < PC_LED4)
+#define VAL_GPIOCODR        0
 #define VAL_GPIOCDDR        (1 < PC_LED4)
-#define VAL_GPIOCCR1        0xFF            /* All pull-up/open drain.      */
+#define VAL_GPIOCCR1        0xFF            /* All pull-up/push-pull.       */
 #define VAL_GPIOCCR2        0
 
 /*
@@ -125,15 +125,15 @@
  */
 #define VAL_GPIODODR        0
 #define VAL_GPIODDDR        0               /* All inputs.                  */
-#define VAL_GPIODCR1        0xFF            /* All pull-up.                 */
+#define VAL_GPIODCR1        0xFF            /* All pull-up/push-pull.       */
 #define VAL_GPIODCR2        0
 
 /*
  * Port E initial setup.
  */
-#define VAL_GPIOEODR        (1 < PE_LED3)
+#define VAL_GPIOEODR        0
 #define VAL_GPIOEDDR        (1 < PE_LED3)
-#define VAL_GPIOECR1        0xFF            /* All pull-up/open drain.      */
+#define VAL_GPIOECR1        0xFF            /* All pull-up/push-pull.       */
 #define VAL_GPIOECR2        0
 
 /*
@@ -141,16 +141,8 @@
  */
 #define VAL_GPIOFODR        0
 #define VAL_GPIOFDDR        0               /* All inputs.                  */
-#define VAL_GPIOFCR1        0xFF            /* All pull-up.                 */
+#define VAL_GPIOFCR1        0xFF            /* All pull-up/push-pull.       */
 #define VAL_GPIOFCR2        0
-
-/*
- * Port G initial setup (not present but still initialized).
- */
-#define VAL_GPIOGODR        0
-#define VAL_GPIOGDDR        0               /* All inputs.                  */
-#define VAL_GPIOGCR1        0xFF            /* All pull-up.                 */
-#define VAL_GPIOGCR2        0
 
 #ifdef __cplusplus
 extern "C" {

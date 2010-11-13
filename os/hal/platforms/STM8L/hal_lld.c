@@ -49,10 +49,14 @@ ROMCONST PALConfig pal_default_config =
     {VAL_GPIODODR, 0, VAL_GPIODDDR, VAL_GPIODCR1, VAL_GPIODCR2},
     {VAL_GPIOEODR, 0, VAL_GPIOEDDR, VAL_GPIOECR1, VAL_GPIOECR2},
     {VAL_GPIOFODR, 0, VAL_GPIOFDDR, VAL_GPIOFCR1, VAL_GPIOFCR2},
+#if STM8L_HAS_GPIOG
     {VAL_GPIOGODR, 0, VAL_GPIOGDDR, VAL_GPIOGCR1, VAL_GPIOGCR2},
-#if defined(STM8L15X_MDP) || defined(STM8L15X_HD)
+#if STM8L_HAS_GPIOI
     {VAL_GPIOHODR, 0, VAL_GPIOHDDR, VAL_GPIOHCR1, VAL_GPIOHCR2},
+#if STM8L_HAS_GPIOH
     {VAL_GPIOIODR, 0, VAL_GPIOIDDR, VAL_GPIOICR1, VAL_GPIOICR2},
+#endif
+#endif
 #endif
   }
 };
@@ -80,7 +84,7 @@ ROMCONST PALConfig pal_default_config =
  */
 void hal_lld_init(void) {
 
-#if STM8L_CLOCK_INIT
+#if !STM8L_NO_CLOCK_INIT
   /* Makes sure that HSI is stable before proceeding.*/
   CLK->ICKCR |= CLK_ICKCR_HSION;
   while ((CLK->ICKCR & CLK_ICKCR_HSIRDY) == 0)
@@ -141,7 +145,7 @@ void hal_lld_init(void) {
 #if !STM8L_HSI_ENABLED
   CLK->ICKCR &= ~CLK_ICKCR_HSION;
 #endif
-#endif /* STM8L_CLOCK_INIT */
+#endif /* !STM8L_NO_CLOCK_INIT */
 }
 
 /** @} */

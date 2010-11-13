@@ -102,10 +102,10 @@
 /*===========================================================================*/
 
 /**
- * @brief   Enables the clock initialization in the HAL.
+ * @brief   Disables the clock initialization in the HAL.
  */
 #if !defined(STM8L_NO_CLOCK_INIT) || defined(__DOXYGEN__)
-#define STM8L_CLOCK_INIT            TRUE
+#define STM8L_NO_CLOCK_INIT         FALSE
 #endif
 
 /**

@@ -58,10 +58,14 @@
  *          or whole ports can be reprogrammed at later time.
  */
 typedef struct {
-#if defined(STM8L15X_MD) || defined(__DOXYGEN__)
-  GPIO_TypeDef          P[7];
-#elif defined(STM8L15X_MDP) || defined(STM8L15X_HD)
+#if STM8L_HAS_GPIOI || defined(__DOXYGEN__)
   GPIO_TypeDef          P[9];
+#elif STM8L_HAS_GPIOH || defined(__DOXYGEN__)
+  GPIO_TypeDef          P[8];
+#elif STM8L_HAS_GPIOG || defined(__DOXYGEN__)
+  GPIO_TypeDef          P[7];
+#else
+  GPIO_TypeDef          P[6];
 #endif
 } PALConfig;
 
