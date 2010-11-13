@@ -186,7 +186,8 @@ struct stm8_startctx {
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_PROLOGUE()
+#define PORT_IRQ_PROLOGUE() {                                               \
+}
 
 /**
  * @brief   IRQ epilogue code.

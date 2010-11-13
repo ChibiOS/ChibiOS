@@ -45,6 +45,7 @@
  * @details This handler is shared between the following sources:
  *          - TIM2 update/overflow/trigger/break.
  *          - USART2 transmit.
+ *          .
  *
  * @isr
  */

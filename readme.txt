@@ -65,6 +65,8 @@
 *****************************************************************************
 
 *** 2.1.4 ***
+- NEW: Initial STM8L support: HAL, PAL and Serial drivers.
+- NEW: Added demo for the ST STM8L-Discovery kit.
 - CHANGE: Separated dynamic threads code into dedicated files: chdynamic.c
   and chdynamic.h.
 - Added SPI driver to the STM8 documentation, it was missing.

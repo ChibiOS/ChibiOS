@@ -167,6 +167,9 @@ typedef struct {
   }                                                                         \
 }
 
+/**
+ * @brief USART1 TX interrupt handler segment.
+ */
 #define _USART1_TRANSMIT_ISR() {                                            \
   if (USART1->SR & USART_SR_TXE) {                                          \
     msg_t b;                                                                \
@@ -183,7 +186,7 @@ typedef struct {
 
 #if STM8L_SERIAL_USE_USART2 || defined(__DOXYGEN__)
 /**
- * @brief USART1 RX interrupt handler segment.
+ * @brief USART2 RX interrupt handler segment.
  */
 #define _USART2_RECEIVE_ISR() {                                             \
   uint8_t sr = USART2->SR;                                                  \
@@ -197,6 +200,9 @@ typedef struct {
   }                                                                         \
 }
 
+/**
+ * @brief USART2 TX interrupt handler segment.
+ */
 #define _USART2_TRANSMIT_ISR() {                                            \
   if (USART2->SR & USART_SR_TXE) {                                          \
     msg_t b;                                                                \
@@ -213,7 +219,7 @@ typedef struct {
 
 #if STM8L_SERIAL_USE_USART3 || defined(__DOXYGEN__)
 /**
- * @brief USART1 RX interrupt handler segment.
+ * @brief USART3 RX interrupt handler segment.
  */
 #define _USART3_RECEIVE_ISR() {                                             \
   uint8_t sr = USART3->SR;                                                  \
@@ -227,6 +233,9 @@ typedef struct {
   }                                                                         \
 }
 
+/**
+ * @brief USART3 TX interrupt handler segment.
+ */
 #define _USART3_TRANSMIT_ISR() {                                            \
   if (USART3->SR & USART_SR_TXE) {                                          \
     msg_t b;                                                                \

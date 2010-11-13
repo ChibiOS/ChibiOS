@@ -142,16 +142,16 @@ void sd_lld_init(void) {
 
 #if STM8L_SERIAL_USE_USART2
   sdObjectInit(&SD2, NULL, notify2);
-  CLK->PCKENR1 |= CLK_PCKENR1_USART2;       /* PCKEN13, clock source.       */
-  USART2->CR1 = USART2_CR1_USARTD;          /* USARTD (low power).          */
-  SD1.usart = USART2;
+  CLK->PCKENR3 |= CLK_PCKENR3_USART2;       /* PCKEN13, clock source.       */
+  USART2->CR1 = USART_CR1_USARTD;           /* USARTD (low power).          */
+  SD2.usart = USART2;
 #endif
 
 #if STM8L_SERIAL_USE_USART3
   sdObjectInit(&SD3, NULL, notify3);
-  CLK->PCKENR1 |= CLK_PCKENR1_USART3;       /* PCKEN13, clock source.       */
-  USART3->CR1 = USART3_CR1_USARTD;          /* USARTD (low power).          */
-  SD1.usart = USART3;
+  CLK->PCKENR3 |= CLK_PCKENR3_USART3;       /* PCKEN13, clock source.       */
+  USART3->CR1 = USART_CR1_USARTD;           /* USARTD (low power).          */
+  SD3.usart = USART3;
 #endif
 }
 

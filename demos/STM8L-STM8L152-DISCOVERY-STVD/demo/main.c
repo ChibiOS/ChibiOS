@@ -30,13 +30,13 @@ static msg_t Thread1(void *arg) {
   (void)arg;
   while (TRUE) {
     palSetPad(GPIOC, PC_LED4);
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(250);
     palClearPad(GPIOC, PC_LED4);
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(250);
     palSetPad(GPIOE, PE_LED3);
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(250);
     palClearPad(GPIOE, PE_LED3);
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(250);
   }
   return 0;
 }
@@ -58,8 +58,10 @@ void main(void) {
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
+   * The STM8L-Discovery requires USART1 pins remapping on PA2 and PA3.
    */
-//  sdStart(&SD1, NULL);
+  SYSCFG->RMPCR1 = 0x1C;
+  sdStart(&SD1, NULL);
 
   /*
    * Creates the blinker thread.
@@ -70,8 +72,8 @@ void main(void) {
    * Normal main() thread activity.
    */
   while (TRUE) {
-//    if (palReadPad(GPIOC, PC_BUTTON) == PAL_LOW)
-//      TestThread(&SD1);
+    if (palReadPad(GPIOC, PC_BUTTON) == PAL_LOW)
+      TestThread(&SD1);
     chThdSleepMilliseconds(1000);
   }
 }
