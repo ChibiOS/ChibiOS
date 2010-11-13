@@ -116,7 +116,7 @@
  * Port C initial setup.
  */
 #define VAL_GPIOCODR        0
-#define VAL_GPIOCDDR        (1 < PC_LED4)
+#define VAL_GPIOCDDR        (1 << PC_LED4)
 #define VAL_GPIOCCR1        0xFF            /* All pull-up/push-pull.       */
 #define VAL_GPIOCCR2        0
 
@@ -132,7 +132,7 @@
  * Port E initial setup.
  */
 #define VAL_GPIOEODR        0
-#define VAL_GPIOEDDR        (1 < PE_LED3)
+#define VAL_GPIOEDDR        (1 << PE_LED3)
 #define VAL_GPIOECR1        0xFF            /* All pull-up/push-pull.       */
 #define VAL_GPIOECR2        0
 
@@ -143,6 +143,19 @@
 #define VAL_GPIOFDDR        0               /* All inputs.                  */
 #define VAL_GPIOFCR1        0xFF            /* All pull-up/push-pull.       */
 #define VAL_GPIOFCR2        0
+
+/*
+ * TIM2-update ISR segment code. This code is injected into the appropriate
+ * ISR by the HAL.
+ */
+#define _TIM2_UPDATE_ISR() {                                                \
+  if (TIM2->SR1 & TIM_SR1_UIF) {                                            \
+    chSysLockFromIsr();                                                     \
+    chSysTimerHandlerI();                                                   \
+    chSysUnlockFromIsr();                                                   \
+    TIM2->SR1 = 0;                                                          \
+  }                                                                         \
+}
 
 #ifdef __cplusplus
 extern "C" {

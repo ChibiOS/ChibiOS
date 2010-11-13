@@ -29,13 +29,13 @@ static msg_t Thread1(void *arg) {
 
   (void)arg;
   while (TRUE) {
-    palClearPad(GPIOC, PC_LED4);
-    chThdSleepMilliseconds(500);
     palSetPad(GPIOC, PC_LED4);
     chThdSleepMilliseconds(500);
-    palClearPad(GPIOE, PE_LED3);
+    palClearPad(GPIOC, PC_LED4);
     chThdSleepMilliseconds(500);
     palSetPad(GPIOE, PE_LED3);
+    chThdSleepMilliseconds(500);
+    palClearPad(GPIOE, PE_LED3);
     chThdSleepMilliseconds(500);
   }
   return 0;
@@ -50,10 +50,6 @@ void main(void) {
    * Board/HAL initialization.
    */
   hwinit();
-
-    palClearPad(GPIOC, PC_LED4);
-    palSetPad(GPIOE, PE_LED3);
-    while(1);
 
   /*
    * OS initialization.

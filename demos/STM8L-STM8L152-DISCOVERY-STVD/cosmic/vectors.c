@@ -211,7 +211,7 @@ exception_vector_t const _vectab[] = {
 	{0x82, _unhandled_exception},               /* vector18 */
 #endif
 
-#if defined(_TIM2_OVERFLOW_ISR) || defined(_USART2_TRANSMIT_ISR)
+#if defined(_TIM2_UPDATE_ISR) || defined(_USART2_TRANSMIT_ISR)
 	{0x82, vector19},
 #else
 	{0x82, _unhandled_exception},               /* vector19 */

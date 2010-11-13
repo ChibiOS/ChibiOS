@@ -39,13 +39,13 @@ void hwinit(void) {
   /*
    * TIM2 initialization as system tick.
    */
-  CLK->PCKENR1 |= 32;           /* PCKEN15, TIM2 clock source.*/
+  CLK->PCKENR1 |= CLK_PCKENR1_TIM2;
   TIM2->PSCR    = 4;            /* Prescaler divide by 2^4=16.*/
   TIM2->ARRH    = (uint8_t)(TIM2_ARR >> 8);
   TIM2->ARRL    = (uint8_t)(TIM2_ARR);
   TIM2->CNTRH   = 0;
   TIM2->CNTRL   = 0;
   TIM2->SR1     = 0;
-  TIM2->IER     = 1;            /* UIE */
-  TIM2->CR1     = 1;            /* CEN */
+  TIM2->IER     = TIM_IER_UIE;
+  TIM2->CR1     = TIM_CR1_CEN;
 }
