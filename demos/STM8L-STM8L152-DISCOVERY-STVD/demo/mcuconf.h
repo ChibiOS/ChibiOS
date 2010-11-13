@@ -28,7 +28,7 @@
 /*
  * HAL general settings.
  */
-#define STM8L_NO_CLOCK_INIT         TRUE
+#define STM8L_NO_CLOCK_INIT         FALSE
 #define STM8L_HSI_ENABLED           TRUE
 #define STM8L_LSI_ENABLED           TRUE
 #define STM8L_HSE_ENABLED           FALSE

@@ -217,7 +217,7 @@
 #error "requested LSE clock is not enabled"
 #endif
 
-#if !STM8L_CLOCK_INIT
+#if STM8L_NO_CLOCK_INIT
 #define SYSCLK                      (HSICLK / 8)
 #elif STM8L_SYSCLK_SOURCE == CLK_SYSSEL_HSI
 #define SYSCLK                      (HSICLK / (1 << STM8L_SYSCLK_DIVIDER))
@@ -231,7 +231,7 @@
 #error "specified invalid SYSCLK source"
 #endif
 
-#if !STM8L_CLOCK_INIT
+#if STM8L_NO_CLOCK_INIT
 #define RTCCLK                      0
 #elif STM8L_RTCCLK_SOURCE == CLK_RTCSEL_HSI
 #define RTCCLK                      (HSICLK / (1 << STM8L_RTCCLK_DIVIDER))
