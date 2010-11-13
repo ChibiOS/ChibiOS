@@ -129,6 +129,11 @@
  * @ingroup memory
  */
 
+/**
+ * @defgroup dynamic_threads Dynamic Threads
+ * @ingroup memory
+ */
+
  /**
  * @defgroup io_support I/O Support
  * @details I/O related services.
