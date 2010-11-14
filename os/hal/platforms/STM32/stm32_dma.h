@@ -38,7 +38,7 @@
 #define DMA1_ID 0
 
 /** @brief DMA2 identifier.*/
-#if defined(STM32_HAS_DMA2) || defined(__DOXYGEN__)
+#if STM32_HAS_DMA2 || defined(__DOXYGEN__)
 #define DMA2_ID 1
 #endif
 
@@ -100,7 +100,7 @@ typedef struct {
 /** Pointer to the DMA1 channel 7 registers block.*/
 #define STM32_DMA1_CH7          (&STM32_DMA1->channels[6])
 
-#if defined(STM32_HAS_DMA2) || defined(__DOXYGEN__)
+#if STM32_HAS_DMA2 || defined(__DOXYGEN__)
 /** DMA2 registers block numeric address.*/
 #define STM32_DMA2_BASE         (AHBPERIPH_BASE + 0x0400)
 /** Pointer to the DMA2 registers block.*/

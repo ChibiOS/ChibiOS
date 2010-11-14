@@ -37,7 +37,7 @@
 /*===========================================================================*/
 
 static cnt_t dmacnt1;
-#if defined(STM32_HAS_DMA2)
+#if STM32_HAS_DMA2
 static cnt_t dmacnt2;
 #endif
 
@@ -65,7 +65,7 @@ void dmaInit(void) {
   for (i = STM32_DMA_CHANNEL_7; i >= STM32_DMA_CHANNEL_1; i--)
     dmaDisableChannel(STM32_DMA1, i);
   STM32_DMA1->IFCR = 0xFFFFFFFF;
-#if defined(STM32_HAS_DMA2)
+#if STM32_HAS_DMA2
   dmacnt2 = 0;
   for (i = STM32_DMA_CHANNEL_5; i >= STM32_DMA_CHANNEL_1; i--)
     dmaDisableChannel(STM32_DMA2, i);
@@ -89,7 +89,7 @@ void dmaEnable(uint32_t dma) {
       DMA1->IFCR = 0x0FFFFFFF;
     }
     break;
-#if defined(STM32_HAS_DMA2)
+#if STM32_HAS_DMA2
   case DMA2_ID:
     if (dmacnt2++ == 0) {
       RCC->AHBENR |= RCC_AHBENR_DMA2EN;
@@ -114,7 +114,7 @@ void dmaDisable(uint32_t dma) {
     if (--dmacnt1 == 0)
       RCC->AHBENR &= ~RCC_AHBENR_DMA1EN;
     break;
-#if defined(STM32_HAS_DMA2)
+#if STM32_HAS_DMA2
   case DMA2_ID:
     if (--dmacnt2 == 0)
       RCC->AHBENR &= ~RCC_AHBENR_DMA2EN;
