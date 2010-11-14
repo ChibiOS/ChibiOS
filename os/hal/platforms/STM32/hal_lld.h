@@ -26,6 +26,8 @@
  *          - STM32_HSECLK.
  *          .
  *          One of the following macros must also be defined:
+ *          - STM32F100x4, STM32F100x6 for Value Line Low Density devices.
+ *          - STM32F100x8, STM32F100xB for Value Line Medium Density devices.
  *          - STM32F103x4, STM32F103x6 for Performance Low Density devices.
  *          - STM32F103x8, STM32F103xB for Performance Medium Density devices.
  *          - STM32F103xC, STM32F103xD, STM32F103xE, STM32F103xG for
@@ -61,9 +63,147 @@
 #if defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32"
 
+#elif defined(STM32F100x4) || defined(STM32F100x6)
+/*
+ * Capability flags for Value Line Low Density devices.
+ */
+#define STM32F10X_LD_VL
+#define PLATFORM_NAME           "STM32 Value Line Low Density"
+#include "hal_lld_f100.h"
+
+#define STM32_HAS_ADC1          TRUE
+#define STM32_HAS_ADC2          FALSE
+#define STM32_HAS_ADC3          FALSE
+
+#define STM32_HAS_CAN1          FALSE
+#define STM32_HAS_CAN2          FALSE
+
+#define STM32_HAS_DAC1          TRUE
+#define STM32_HAS_DAC2          TRUE
+
+#define STM32_HAS_DMA1          TRUE
+#define STM32_HAS_DMA2          FALSE
+
+#define STM32_HAS_ETH           FALSE
+
+#define STM32_HAS_GPIOA         TRUE
+#define STM32_HAS_GPIOB         TRUE
+#define STM32_HAS_GPIOC         TRUE
+#define STM32_HAS_GPIOD         TRUE
+#define STM32_HAS_GPIOE         TRUE
+#define STM32_HAS_GPIOF         FALSE
+#define STM32_HAS_GPIOG         FALSE
+
+#define STM32_HAS_I2C1          TRUE
+#define STM32_HAS_I2C2          FALSE
+
+#define STM32_HAS_RTC           TRUE
+
+#define STM32_HAS_SDIO          FALSE
+
+#define STM32_HAS_SPI1          TRUE
+#define STM32_HAS_SPI2          FALSE
+#define STM32_HAS_SPI3          FALSE
+
+#define STM32_HAS_TIM1          TRUE
+#define STM32_HAS_TIM2          TRUE
+#define STM32_HAS_TIM3          TRUE
+#define STM32_HAS_TIM4          FALSE
+#define STM32_HAS_TIM5          FALSE
+#define STM32_HAS_TIM6          TRUE
+#define STM32_HAS_TIM7          TRUE
+#define STM32_HAS_TIM8          FALSE
+#define STM32_HAS_TIM9          FALSE
+#define STM32_HAS_TIM10         FALSE
+#define STM32_HAS_TIM11         FALSE
+#define STM32_HAS_TIM12         FALSE
+#define STM32_HAS_TIM13         FALSE
+#define STM32_HAS_TIM14         FALSE
+#define STM32_HAS_TIM15         TRUE
+#define STM32_HAS_TIM16         TRUE
+#define STM32_HAS_TIM17         TRUE
+
+#define STM32_HAS_USART1        TRUE
+#define STM32_HAS_USART2        TRUE
+#define STM32_HAS_USART3        FALSE
+#define STM32_HAS_UART3         FALSE
+#define STM32_HAS_UART4         FALSE
+
+#define STM32_HAS_USB           FALSE
+#define STM32_HAS_USBOTG        FALSE
+
+#elif defined(STM32F100x8) || defined(STM32F100xB)
+/*
+ * Capability flags for Value Line Medium Density devices.
+ */
+#define STM32F10X_MD_VL
+#define PLATFORM_NAME           "STM32 Value Line Medium Density"
+#include "hal_lld_f100.h"
+
+#define STM32_HAS_ADC1          TRUE
+#define STM32_HAS_ADC2          FALSE
+#define STM32_HAS_ADC3          FALSE
+
+#define STM32_HAS_CAN1          FALSE
+#define STM32_HAS_CAN2          FALSE
+
+#define STM32_HAS_DAC1          TRUE
+#define STM32_HAS_DAC2          TRUE
+
+#define STM32_HAS_DMA1          TRUE
+#define STM32_HAS_DMA2          FALSE
+
+#define STM32_HAS_ETH           FALSE
+
+#define STM32_HAS_GPIOA         TRUE
+#define STM32_HAS_GPIOB         TRUE
+#define STM32_HAS_GPIOC         TRUE
+#define STM32_HAS_GPIOD         TRUE
+#define STM32_HAS_GPIOE         TRUE
+#define STM32_HAS_GPIOF         FALSE
+#define STM32_HAS_GPIOG         FALSE
+
+#define STM32_HAS_I2C1          TRUE
+#define STM32_HAS_I2C2          TRUE
+
+#define STM32_HAS_RTC           TRUE
+
+#define STM32_HAS_SDIO          FALSE
+
+#define STM32_HAS_SPI1          TRUE
+#define STM32_HAS_SPI2          TRUE
+#define STM32_HAS_SPI3          FALSE
+
+#define STM32_HAS_TIM1          TRUE
+#define STM32_HAS_TIM2          TRUE
+#define STM32_HAS_TIM3          TRUE
+#define STM32_HAS_TIM4          TRUE
+#define STM32_HAS_TIM5          FALSE
+#define STM32_HAS_TIM6          TRUE
+#define STM32_HAS_TIM7          TRUE
+#define STM32_HAS_TIM8          FALSE
+#define STM32_HAS_TIM9          FALSE
+#define STM32_HAS_TIM10         FALSE
+#define STM32_HAS_TIM11         FALSE
+#define STM32_HAS_TIM12         FALSE
+#define STM32_HAS_TIM13         FALSE
+#define STM32_HAS_TIM14         FALSE
+#define STM32_HAS_TIM15         TRUE
+#define STM32_HAS_TIM16         TRUE
+#define STM32_HAS_TIM17         TRUE
+
+#define STM32_HAS_USART1        TRUE
+#define STM32_HAS_USART2        TRUE
+#define STM32_HAS_USART3        TRUE
+#define STM32_HAS_UART3         FALSE
+#define STM32_HAS_UART4         FALSE
+
+#define STM32_HAS_USB           FALSE
+#define STM32_HAS_USBOTG        FALSE
+
 #elif defined(STM32F103x4) || defined(STM32F103x6)
 /*
- * Capability flags for Low Density devices.
+ * Capability flags for Performance Line Low Density devices.
  */
 #define STM32F10X_LD
 #define PLATFORM_NAME           "STM32 Performance Line Low Density"
@@ -76,7 +216,8 @@
 #define STM32_HAS_CAN1          TRUE
 #define STM32_HAS_CAN2          FALSE
 
-#define STM32_HAS_DAC           FALSE
+#define STM32_HAS_DAC1          FALSE
+#define STM32_HAS_DAC2          FALSE
 
 #define STM32_HAS_DMA1          TRUE
 #define STM32_HAS_DMA2          FALSE
@@ -131,7 +272,7 @@
 
 #elif defined(STM32F103x8) || defined(STM32F103xB)
 /*
- * Capability flags for Medium Density devices.
+ * Capability flags for Performance Line Medium Density devices.
  */
 #define STM32F10X_MD
 #define PLATFORM_NAME           "STM32 Performance Line Medium Density"
@@ -144,7 +285,8 @@
 #define STM32_HAS_CAN1          TRUE
 #define STM32_HAS_CAN2          FALSE
 
-#define STM32_HAS_DAC           FALSE
+#define STM32_HAS_DAC1          FALSE
+#define STM32_HAS_DAC2          FALSE
 
 #define STM32_HAS_DMA1          TRUE
 #define STM32_HAS_DMA2          FALSE
@@ -200,7 +342,7 @@
 #elif defined(STM32F103xC) || defined(STM32F103xD) ||                       \
       defined(STM32F103xE) || defined(STM32F103xG)
 /*
- * Capability flags for High Density devices.
+ * Capability flags for Performance Line High Density devices.
  */
 #define STM32F10X_HD
 #define PLATFORM_NAME           "STM32 Performance Line High Density"
@@ -213,7 +355,8 @@
 #define STM32_HAS_CAN1          TRUE
 #define STM32_HAS_CAN2          FALSE
 
-#define STM32_HAS_DAC           FALSE
+#define STM32_HAS_DAC1          TRUE
+#define STM32_HAS_DAC2          TRUE
 
 #define STM32_HAS_DMA1          TRUE
 #define STM32_HAS_DMA2          TRUE
@@ -281,7 +424,8 @@
 #define STM32_HAS_CAN1          TRUE
 #define STM32_HAS_CAN2          TRUE
 
-#define STM32_HAS_DAC           TRUE
+#define STM32_HAS_DAC1          TRUE
+#define STM32_HAS_DAC2          TRUE
 
 #define STM32_HAS_DMA1          TRUE
 #define STM32_HAS_DMA2          TRUE
@@ -339,7 +483,7 @@
  * Capability flags for Connectivity Line devices with Ethernet.
  */
 #define STM32F10X_CL
-#define PLATFORM_NAME           "STM32 Connectivity Line"
+#define PLATFORM_NAME           "STM32 Connectivity Line with Ethernet"
 #include "hal_lld_f105_f107.h"
 
 #define STM32_HAS_ADC1          TRUE
@@ -349,7 +493,8 @@
 #define STM32_HAS_CAN1          TRUE
 #define STM32_HAS_CAN2          TRUE
 
-#define STM32_HAS_DAC           TRUE
+#define STM32_HAS_DAC1          TRUE
+#define STM32_HAS_DAC2          TRUE
 
 #define STM32_HAS_DMA1          TRUE
 #define STM32_HAS_DMA2          TRUE

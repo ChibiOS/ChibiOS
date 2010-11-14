@@ -19,14 +19,14 @@
 
 /**
  * @defgroup STM32F103_HAL STM32F103 HAL Support
- * @details HAL support for STM32 LD, MD and HD families.
+ * @details HAL support for STM32 Performance Line LD, MD and HD sub-families.
  *
  * @ingroup HAL
  */
 
 /**
  * @file    STM32/hal_lld_f103.h
- * @brief   STM32F103 HAL subsystem low level driver header.
+ * @brief   STM32F103 Performance Line HAL subsystem low level driver header.
  *
  * @addtogroup STM32F103_HAL
  * @{
@@ -124,22 +124,22 @@
 #define TIM1_CC_IRQHandler      VectorAC    /**< TIM1 Capture Compare.      */
 #define TIM2_IRQHandler         VectorB0    /**< TIM2.                      */
 #define TIM3_IRQHandler         VectorB4    /**< TIM3.                      */
-#if defined(STM32F10X_MD) || defined(STM32F10X_HD) || defined(__DOXYGEN__)
+#if !defined(STM32F10X_LD) || defined(__DOXYGEN__)
 #define TIM4_IRQHandler         VectorB8    /**< TIM4.                      */
 #endif
 #define I2C1_EV_IRQHandler      VectorBC    /**< I2C1 Event.                */
 #define I2C1_ER_IRQHandler      VectorC0    /**< I2C1 Error.                */
-#if defined(STM32F10X_MD) || defined(STM32F10X_HD) || defined(__DOXYGEN__)
+#if !defined(STM32F10X_LD) || defined(__DOXYGEN__)
 #define I2C2_EV_IRQHandler      VectorC4    /**< I2C2 Event.                */
 #define I2C2_ER_IRQHandler      VectorC8    /**< I2C2 Error.                */
 #endif
 #define SPI1_IRQHandler         VectorCC    /**< SPI1.                      */
-#if defined(STM32F10X_MD) || defined(STM32F10X_HD) || defined(__DOXYGEN__)
+#if !defined(STM32F10X_LD) || defined(__DOXYGEN__)
 #define SPI2_IRQHandler         VectorD0    /**< SPI2.                      */
 #endif
 #define USART1_IRQHandler       VectorD4    /**< USART1.                    */
 #define USART2_IRQHandler       VectorD8    /**< USART2.                    */
-#if defined(STM32F10X_MD) || defined(STM32F10X_HD) || defined(__DOXYGEN__)
+#if !defined(STM32F10X_LD) || defined(__DOXYGEN__)
 #define USART3_IRQHandler       VectorDC    /**< USART3.                    */
 #endif
 #define EXTI15_10_IRQHandler    VectorE0    /**< EXTI Line 15..10.          */
@@ -262,7 +262,7 @@
 /**
  * @brief   PLLMUL field.
  */
-#if ((STM32_PLLMUL_VALUE >= 2) && (STM32_PLLMUL_VALUE <= 16)) ||             \
+#if ((STM32_PLLMUL_VALUE >= 2) && (STM32_PLLMUL_VALUE <= 16)) ||            \
     defined(__DOXYGEN__)
 #define STM32_PLLMUL                ((STM32_PLLMUL_VALUE - 2) << 18)
 #else

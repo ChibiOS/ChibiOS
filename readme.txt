@@ -67,6 +67,7 @@
 *** 2.1.4 ***
 - NEW: Initial STM8L support: HAL, PAL and Serial drivers.
 - NEW: Added demo for the ST STM8L-Discovery kit.
+- NEW: Added support for the STM32 Value Line to the HAL.
 - CHANGE: Improved the STM32 HAL to support more sub-families, now it
   is possible to test the presence of any single peripheral into the
   specified STM32 device. Now in the board.h files the specific device

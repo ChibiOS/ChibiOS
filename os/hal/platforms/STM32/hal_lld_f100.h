@@ -18,22 +18,22 @@
 */
 
 /**
- * @defgroup STM32F10X_CL_HAL STM32F105/F107 HAL Support
- * @details HAL support for STM32 Connectivity Line sub-family.
+ * @defgroup STM32F100_HAL STM32F100 HAL Support
+ * @details HAL support for STM32 Value Line LD, MD and HD sub-families.
  *
  * @ingroup HAL
  */
 
 /**
- * @file    STM32/hal_lld_f105_f107.h
- * @brief   STM32F10x Connectivity Line HAL subsystem low level driver header.
+ * @file    STM32/hal_lld_f100.h
+ * @brief   STM32F100 Value Line HAL subsystem low level driver header.
  *
- * @addtogroup STM32F10X_CL_HAL
+ * @addtogroup STM32F100_HAL
  * @{
  */
 
-#ifndef _HAL_LLD_F105_F107_H_
-#define _HAL_LLD_F105_F107_H_
+#ifndef _HAL_LLD_F100_H_
+#define _HAL_LLD_F100_H_
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -75,25 +75,16 @@
 #define STM32_ADCPRE_DIV8       (3 << 14)   /**< HCLK divided by 8.         */
 
 #define STM32_PLLSRC_HSI        (0 << 16)   /**< PLL clock source is HSI.   */
-#define STM32_PLLSRC_PREDIV1    (1 << 16)   /**< PLL clock source is
-                                                 PREDIV1.                   */
+#define STM32_PLLSRC_HSE        (1 << 16)   /**< PLL clock source is HSE.   */
 
-#define STM32_OTGFSPRE_DIV2     (1 << 22)   /**< HCLK*2 divided by 2.       */
-#define STM32_OTGFSPRE_DIV3     (0 << 22)   /**< HCLK*2 divided by 3.       */
+#define STM32_PLLXTPRE_DIV1     (0 << 17)   /**< HSE divided by 1.          */
+#define STM32_PLLXTPRE_DIV2     (1 << 17)   /**< HSE divided by 2.          */
 
 #define STM32_MCO_NOCLOCK       (0 << 24)   /**< No clock on MCO pin.       */
 #define STM32_MCO_SYSCLK        (4 << 24)   /**< SYSCLK on MCO pin.         */
 #define STM32_MCO_HSI           (5 << 24)   /**< HSI clock on MCO pin.      */
 #define STM32_MCO_HSE           (6 << 24)   /**< HSE clock on MCO pin.      */
 #define STM32_MCO_PLLDIV2       (7 << 24)   /**< PLL/2 clock on MCO pin.    */
-#define STM32_MCO_PLL2          (8 << 24)   /**< PLL2 clock on MCO pin.     */
-#define STM32_MCO_PLL3DIV2      (9 << 24)   /**< PLL3/2 clock on MCO pin.   */
-#define STM32_MCO_XT1           (10 << 24)  /**< XT1 clock on MCO pin.      */
-#define STM32_MCO_PLL3          (11 << 24)  /**< PLL3 clock on MCO pin.     */
-
-/* RCC_CFGR2 register bits definitions.*/
-#define STM32_PREDIV1SRC_HSE    (0 << 16)   /**< PREDIV1 source is HSE.     */
-#define STM32_PREDIV1SRC_PLL2   (1 << 16)   /**< PREDIV1 source is PLL2.    */
 
 /*===========================================================================*/
 /* Platform specific friendly IRQ names.                                     */
@@ -118,11 +109,7 @@
 #define DMA1_Ch5_IRQHandler     Vector7C    /**< DMA1 Channel 5.            */
 #define DMA1_Ch6_IRQHandler     Vector80    /**< DMA1 Channel 6.            */
 #define DMA1_Ch7_IRQHandler     Vector84    /**< DMA1 Channel 7.            */
-#define ADC1_2_IRQHandler       Vector88    /**< ADC1 and ADC2.             */
-#define CAN1_TX_IRQHandler      Vector8C    /**< CAN1 TX.                   */
-#define CAN1_RX0_IRQHandler     Vector90    /**< CAN1 RX0.                  */
-#define CAN1_RX1_IRQHandler     Vector94    /**< CAN1 RX1.                  */
-#define CAN1_SCE_IRQHandler     Vector98    /**< CAN1 SCE.                  */
+#define ADC1_2_IRQHandler       Vector88    /**< ADC1_2.                    */
 #define EXTI9_5_IRQHandler      Vector9C    /**< EXTI Line 9..5.            */
 #define TIM1_BRK_IRQHandler     VectorA0    /**< TIM1 Break.                */
 #define TIM1_UP_IRQHandler      VectorA4    /**< TIM1 Update.               */
@@ -131,41 +118,31 @@
 #define TIM1_CC_IRQHandler      VectorAC    /**< TIM1 Capture Compare.      */
 #define TIM2_IRQHandler         VectorB0    /**< TIM2.                      */
 #define TIM3_IRQHandler         VectorB4    /**< TIM3.                      */
+#if !defined(STM32F10X_LD_VL) || defined(__DOXYGEN__)
 #define TIM4_IRQHandler         VectorB8    /**< TIM4.                      */
+#endif
 #define I2C1_EV_IRQHandler      VectorBC    /**< I2C1 Event.                */
 #define I2C1_ER_IRQHandler      VectorC0    /**< I2C1 Error.                */
+#if !defined(STM32F10X_LD_VL) || defined(__DOXYGEN__)
 #define I2C2_EV_IRQHandler      VectorC4    /**< I2C2 Event.                */
-#define I2C2_ER_IRQHandler      VectorC8    /**< I2C1 Error.                */
+#define I2C2_ER_IRQHandler      VectorC8    /**< I2C2 Error.                */
+#endif
 #define SPI1_IRQHandler         VectorCC    /**< SPI1.                      */
+#if !defined(STM32F10X_LD_VL) || defined(__DOXYGEN__)
 #define SPI2_IRQHandler         VectorD0    /**< SPI2.                      */
+#endif
 #define USART1_IRQHandler       VectorD4    /**< USART1.                    */
 #define USART2_IRQHandler       VectorD8    /**< USART2.                    */
+#if !defined(STM32F10X_LD_VL) || defined(__DOXYGEN__)
 #define USART3_IRQHandler       VectorDC    /**< USART3.                    */
+#endif
 #define EXTI15_10_IRQHandler    VectorE0    /**< EXTI Line 15..10.          */
-#define RTCAlarm_IRQHandler     VectorE4    /**< RTC alarm through EXTI
-                                                 line.                      */
-#define OTG_FS_WKUP_IRQHandler  VectorE8    /**< USB OTG FS Wakeup through
-                                                 EXTI line.                 */
-#define TIM5_IRQHandler         Vector108   /**< TIM5.                      */
-#define SPI3_IRQHandler         Vector10C   /**< SPI3.                      */
-#define UART4_IRQHandler        Vector110   /**< UART4.                     */
-#define UART5_IRQHandler        Vector114   /**< UART5.                     */
-#define TIM6_IRQHandler         Vector118   /**< TIM6.                      */
-#define TIM7_IRQHandler         Vector11C   /**< TIM7.                      */
-#define DMA2_Ch1_IRQHandler     Vector120   /**< DMA2 Channel1.             */
-#define DMA2_Ch2_IRQHandler     Vector124   /**< DMA2 Channel2.             */
-#define DMA2_Ch3_IRQHandler     Vector128   /**< DMA2 Channel3.             */
-#define DMA2_Ch4_IRQHandler     Vector12C   /**< DMA2 Channel4.             */
-#define DMA2_Ch5_IRQHandler     Vector130   /**< DMA2 Channel5.             */
-#define ETH_IRQHandler          Vector134   /**< Ethernet.                  */
-#define ETH_WKUP_IRQHandler     Vector138   /**< Ethernet Wakeup through
-                                                 EXTI line.                 */
-#define CAN2_TX_IRQHandler      Vector13C   /**< CAN2 TX.                   */
-#define CAN2_RX0_IRQHandler     Vector140   /**< CAN2 RX0.                  */
-#define CAN2_RX1_IRQHandler     Vector144   /**< CAN2 RX1.                  */
-#define CAN2_SCE_IRQHandler     Vector148   /**< CAN2 SCE.                  */
-#define OTG_FS_IRQHandler       Vector14C   /**< USB OTG FS.                */
-                                   
+#define RTCAlarm_IRQHandler     VectorE4    /**< RTC Alarm through EXTI.    */
+#define CEC_IRQHandler          VectorE8    /**< CEC.                      */
+#define TIM12_IRQHandler        VectorEC    /**< TIM12.                     */
+#define TIM13_IRQHandler        VectorF0    /**< TIM13.                     */
+#define TIM14_IRQHandler        VectorF4    /**< TIM14.                     */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -175,7 +152,7 @@
  * @note    If the selected clock source is not the PLL then the PLL is not
  *          initialized and started.
  * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL and PLL2.
+ *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
 #define STM32_SW                    STM32_SW_PLL
@@ -186,70 +163,37 @@
  * @note    This setting has only effect if the PLL is selected as the
  *          system clock source.
  * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL and PLL2.
+ *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
-#define STM32_PLLSRC                STM32_PLLSRC_PREDIV1
+#define STM32_PLLSRC                STM32_PLLSRC_HSE
 #endif
 
 /**
- * @brief   PREDIV1 clock source.
+ * @brief   Crystal PLL pre-divider.
  * @note    This setting has only effect if the PLL is selected as the
  *          system clock source.
  * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL and PLL2.
+ *          a 8MHz crystal using the PLL.
  */
-#if !defined(STM32_PREDIV1SRC) || defined(__DOXYGEN__)
-#define STM32_PREDIV1SRC            STM32_PREDIV1SRC_PLL2
-#endif
-
-/**
- * @brief   PREDIV1 division factor.
- * @note    This setting has only effect if the PLL is selected as the
- *          system clock source.
- * @note    The allowed range is 1...16.
- * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL and PLL2.
- */
-#if !defined(STM32_PREDIV1_VALUE) || defined(__DOXYGEN__)
-#define STM32_PREDIV1_VALUE         5
+#if !defined(STM32_PLLXTPRE) || defined(__DOXYGEN__)
+#define STM32_PLLXTPRE              STM32_PLLXTPRE_DIV1
 #endif
 
 /**
  * @brief   PLL multiplier value.
- * @note    The allowed range is 4...9.
+ * @note    The allowed range is 2...16.
  * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL and PLL2.
+ *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_PLLMUL_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLMUL_VALUE          9
 #endif
 
 /**
- * @brief   PREDIV2 division factor.
- * @note    This setting has only effect if the PLL2 is selected as the
- *          clock source for the PLL.
- * @note    The allowed range is 1...16.
- * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL and PLL2.
- */
-#if !defined(STM32_PREDIV2_VALUE) || defined(__DOXYGEN__)
-#define STM32_PREDIV2_VALUE         5
-#endif
-
-/**
- * @brief   PLL2 multiplier value.
- * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL and PLL2.
- */
-#if !defined(STM32_PLL2MUL_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL2MUL_VALUE         8
-#endif
-
-/**
  * @brief   AHB prescaler value.
  * @note    The default value is calculated for a 72MHz system clock from
- *          a 25MHz crystal using both PLL and PLL2.
+ *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_HPRE) || defined(__DOXYGEN__)
 #define STM32_HPRE                  STM32_HPRE_DIV1
@@ -287,30 +231,15 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/**
- * @brief   PREDIV1 field.
- */
-#if (STM32_PREDIV1_VALUE >= 1) && (STM32_PREDIV1_VALUE <= 16) ||            \
-    defined(__DOXYGEN__)
-#define STM32_PREDIV1               ((STM32_PREDIV1_VALUE - 1) << 0)
-#else
-#error "invalid STM32_PREDIV1_VALUE value specified"
+/* HSE prescaler setting check.*/
+#if (STM32_PLLXTPRE != STM32_PLLXTPRE_DIV1) &&                              \
+    (STM32_PLLXTPRE != STM32_PLLXTPRE_DIV2)
+#error "invalid STM32_PLLXTPRE value specified"
 #endif
-
-/**
- * @brief   PREDIV2 field.
- */
-#if (STM32_PREDIV2_VALUE >= 1) && (STM32_PREDIV2_VALUE <= 16) ||            \
-    defined(__DOXYGEN__)
-#define STM32_PREDIV2               ((STM32_PREDIV2_VALUE - 1) << 4)
-#else
-#error "invalid STM32_PREDIV2_VALUE value specified"
-#endif
-
 /**
  * @brief   PLLMUL field.
  */
-#if ((STM32_PLLMUL_VALUE >= 4) && (STM32_PLLMUL_VALUE <= 9)) ||             \
+#if ((STM32_PLLMUL_VALUE >= 2) && (STM32_PLLMUL_VALUE <= 16)) ||            \
     defined(__DOXYGEN__)
 #define STM32_PLLMUL                ((STM32_PLLMUL_VALUE - 2) << 18)
 #else
@@ -318,78 +247,33 @@
 #endif
 
 /**
- * @brief   PLL2MUL field.
- */
-#if ((STM32_PLL2MUL_VALUE >= 8) && (STM32_PLL2MUL_VALUE <= 14)) ||          \
-    defined(__DOXYGEN__)
-#define STM32_PLL2MUL               ((STM32_PLL2MUL_VALUE - 2) << 8)
-#elif (STM32_PLL2MUL_VALUE == 16)
-#define STM32_PLL2MUL               (14 << 8)
-#elif (STM32_PLL2MUL_VALUE == 20)
-#define STM32_PLL2MUL               (15 << 8)
-#else
-#error "invalid STM32_PLL2MUL_VALUE value specified"
-#endif
-
-/* The following values are only used if PLL2 clock is selected as source
-   for the PLL clock */
-#if (STM32_PREDIV1SRC == STM32_PREDIV1SRC_PLL2) || defined(__DOXYGEN__)
-/**
- * @brief   PLL2 input frequency.
- */
-#define STM32_PLL2CLKIN             (STM32_HSECLK / STM32_PREDIV2_VALUE)
-
-/* PLL2 input frequency range check.*/
-#if (STM32_PLL2CLKIN < 3000000) || (STM32_PLL2CLKIN > 5000000)
-#error "STM32_PLL2CLKIN outside acceptable range (3...5MHz)"
-#endif
-
-/**
- * @brief   PLL2 output clock frequency.
- */
-#define STM32_PLL2CLKOUT            (STM32_PLL2CLKIN * STM32_PLL2MUL_VALUE)
-
-/* PLL2 output frequency range check.*/
-#if (STM32_PLL2CLKOUT < 40000000) || (STM32_PLL2CLKOUT > 74000000)
-#error "STM32_PLL2CLKOUT outside acceptable range (40...74MHz)"
-#endif
-#endif /* STM32_PREDIV1SRC == STM32_PREDIV1SRC_PLL2 */
-
-/**
- * @brief   PREDIV1 input frequency.
- */
-#if (STM32_PREDIV1SRC == STM32_PREDIV1SRC_PLL2) || defined(__DOXYGEN__)
-#define STM32_PREDIV1CLK            STM32_PLL2CLKOUT
-#elif STM32_PREDIV1SRC == STM32_PREDIV1SRC_HSE
-#define STM32_PREDIV1CLK            STM32_HSECLK
-#else
-#error "invalid STM32_PREDIV1SRC value specified"
-#endif
-
-/**
  * @brief   PLL input clock frequency.
  */
-#if (STM32_PLLSRC == STM32_PLLSRC_PREDIV1) || defined(__DOXYGEN__)
-#define STM32_PLLCLKIN             (STM32_PREDIV1CLK / STM32_PREDIV1_VALUE)
+#if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
+#if STM32_PLLXTPRE == STM32_PLLXTPRE_DIV1
+#define STM32_PLLCLKIN              (STM32_HSECLK / 1)
+#else
+#define STM32_PLLCLKIN              (STM32_HSECLK / 2)
+#endif
 #elif STM32_PLLSRC == STM32_PLLSRC_HSI
-#define STM32_PLLCLKIN             (STM32_HSICLK / 2)
+#define STM32_PLLCLKIN              (STM32_HSICLK / 2)
 #else
 #error "invalid STM32_PLLSRC value specified"
 #endif
 
 /* PLL input frequency range check.*/
-#if (STM32_PLLCLKIN < 3000000) || (STM32_PLLCLKIN > 12000000)
-#error "STM32_PLLCLKIN outside acceptable range (3...12MHz)"
+#if (STM32_PLLCLKIN < 1000000) || (STM32_PLLCLKIN > 24000000)
+#error "STM32_PLLCLKIN outside acceptable range (1...24MHz)"
 #endif
 
 /**
  * @brief   PLL output clock frequency.
  */
-#define STM32_PLLCLKOUT            (STM32_PLLCLKIN * STM32_PLLMUL_VALUE)
+#define STM32_PLLCLKOUT             (STM32_PLLCLKIN * STM32_PLLMUL_VALUE)
 
 /* PLL output frequency range check.*/
-#if (STM32_PLLCLKOUT < 18000000) || (STM32_PLLCLKOUT > 72000000)
-#error "STM32_PLLCLKOUT outside acceptable range (18...72MHz)"
+#if (STM32_PLLCLKOUT < 16000000) || (STM32_PLLCLKOUT > 24000000)
+#error "STM32_PLLCLKOUT outside acceptable range (16...24MHz)"
 #endif
 
 /**
@@ -406,8 +290,8 @@
 #endif
 
 /* Check on the system clock.*/
-#if STM32_SYSCLK > 72000000
-#error "STM32_SYSCLK above maximum rated frequency (72MHz)"
+#if STM32_SYSCLK > 24000000
+#error "STM32_SYSCLK above maximum rated frequency (24MHz)"
 #endif
 
 /**
@@ -436,8 +320,8 @@
 #endif
 
 /* AHB frequency check.*/
-#if STM32_HCLK > 72000000
-#error "STM32_HCLK exceeding maximum frequency (72MHz)"
+#if STM32_HCLK > 24000000
+#error "STM32_HCLK exceeding maximum frequency (24MHz)"
 #endif
 
 /**
@@ -458,8 +342,8 @@
 #endif
 
 /* APB1 frequency check.*/
-#if STM32_PCLK1 > 36000000
-#error "STM32_PCLK1 exceeding maximum frequency (36MHz)"
+#if STM32_PCLK2 > 24000000
+#error "STM32_PCLK1 exceeding maximum frequency (24MHz)"
 #endif
 
 /**
@@ -480,8 +364,8 @@
 #endif
 
 /* APB2 frequency check.*/
-#if STM32_PCLK2 > 72000000
-#error "STM32_PCLK2 exceeding maximum frequency (72MHz)"
+#if STM32_PCLK2 > 24000000
+#error "STM32_PCLK2 exceeding maximum frequency (24MHz)"
 #endif
 
 /**
@@ -500,12 +384,12 @@
 #endif
 
 /* ADC frequency check.*/
-#if STM32_ADCCLK > 14000000
-#error "STM32_ADCCLK exceeding maximum frequency (14MHz)"
+#if STM32_ADCCLK > 12000000
+#error "STM32_ADCCLK exceeding maximum frequency (12MHz)"
 #endif
 
 /**
- * @brief   Timers 2, 3, 4, 5, 6, 7 clock.
+ * @brief   Timers 2, 3, 4, 5, 6, 7, 12, 13, 14 clock.
  */
 #if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK1               (STM32_PCLK1 * 1)
@@ -514,7 +398,7 @@
 #endif
 
 /**
- * @brief   Timer 1 clock.
+ * @brief   Timers 1, 8, 9, 10, 11 clock.
  */
 #if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK2               (STM32_PCLK2 * 1)
@@ -533,6 +417,6 @@
 #define STM32_FLASHBITS             0x00000012
 #endif
 
-#endif /* _HAL_LLD_F105_F107_H_ */
+#endif /* _HAL_LLD_F100_H_ */
 
 /** @} */
