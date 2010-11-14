@@ -36,6 +36,7 @@
 #include "board.h"
 #endif
 
+#if !defined(__DOXYGEN__)
 extern void __ram_end__(void);
 extern void ResetHandler(void);
 extern void NMIVector(void);
@@ -125,6 +126,7 @@ extern void Vector140(void);
 extern void Vector144(void);
 extern void Vector148(void);
 extern void Vector14C(void);
+#endif
 #endif
 
 /**
