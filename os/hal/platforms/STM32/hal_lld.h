@@ -60,6 +60,7 @@
  */
 #if defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32"
+
 #elif defined(STM32F103x4) || defined(STM32F103x6)
 /*
  * Capability flags for Low Density devices.
