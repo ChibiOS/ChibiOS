@@ -147,9 +147,16 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if STM32_SPI_USE_SPI3 &&                                                   \
-    !(defined(STM32F10X_HD) || defined(STM32F10X_CL))
-#error "SPI only present in HD and CL devices"
+#if STM32_SPI_USE_SPI1 && !STM32_HAS_SPI1
+#error "SPI1 not present in the selected device"
+#endif
+
+#if STM32_SPI_USE_SPI2 && !STM32_HAS_SPI2
+#error "SPI2 not present in the selected device"
+#endif
+
+#if STM32_SPI_USE_SPI3 && !STM32_HAS_SPI3
+#error "SPI3 not present in the selected device"
 #endif
 
 #if !STM32_SPI_USE_SPI1 && !STM32_SPI_USE_SPI2 && !STM32_SPI_USE_SPI3

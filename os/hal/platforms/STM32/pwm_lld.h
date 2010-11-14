@@ -111,13 +111,24 @@
 /* Configuration checks.                                                     */
 /*===========================================================================*/
 
-#if STM32_PWM_USE_TIM4 && defined(STM32F10X_LD)
-#error "TIM4 not present in low density STM32 devices"
+#if STM32_PWM_USE_TIM1 && !STM32_HAS_TIM1
+#error "TIM1 not present in the selected device"
 #endif
 
-#if !STM32_SERIAL_USE_USART1 && !STM32_SERIAL_USE_USART2 &&                 \
-    !STM32_SERIAL_USE_USART3 && !STM32_SERIAL_USE_UART4  &&                 \
-    !STM32_SERIAL_USE_UART5
+#if STM32_PWM_USE_TIM2 && !STM32_HAS_TIM2
+#error "TIM2 not present in the selected device"
+#endif
+
+#if STM32_PWM_USE_TIM3 && !STM32_HAS_TIM3
+#error "TIM3 not present in the selected device"
+#endif
+
+#if STM32_PWM_USE_TIM4 && !STM32_HAS_TIM4
+#error "TIM4 not present in the selected device"
+#endif
+
+#if !STM32_PWM_USE_TIM1 && !STM32_PWM_USE_TIM2 &&                           \
+    !STM32_PWM_USE_TIM3 && !STM32_PWM_USE_TIM4
 #error "PWM driver activated but no TIM peripheral assigned"
 #endif
 

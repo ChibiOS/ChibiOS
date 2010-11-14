@@ -67,6 +67,10 @@
 *** 2.1.4 ***
 - NEW: Initial STM8L support: HAL, PAL and Serial drivers.
 - NEW: Added demo for the ST STM8L-Discovery kit.
+- CHANGE: Improved the STM32 HAL to support more sub-families, now it
+  is possible to test the presence of any single peripheral into the
+  specified STM32 device. Now in the board.h files the specific device
+  must be specified instead of the sub-family.
 - CHANGE: Separated dynamic threads code into dedicated files: chdynamic.c
   and chdynamic.h.
 - Added SPI driver to the STM8 documentation, it was missing.

@@ -96,6 +96,10 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if STM32_ADC_USE_ADC1 && !STM32_HAS_ADC1
+#error "ADC1 not present in the selected device"
+#endif
+
 #if !STM32_ADC_USE_ADC1
 #error "ADC driver activated but no ADC peripheral assigned"
 #endif

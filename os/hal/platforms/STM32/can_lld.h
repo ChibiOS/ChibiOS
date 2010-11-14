@@ -93,12 +93,16 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if CAN_USE_SLEEP_MODE && !CAN_SUPPORTS_SLEEP
-#error "CAN sleep mode not supported in this architecture"
+#if STM32_CAN_USE_CAN1 && !STM32_HAS_CAN1
+#error "CAN1 not present in the selected device"
 #endif
 
 #if !STM32_CAN_USE_CAN1
 #error "CAN driver activated but no CAN peripheral assigned"
+#endif
+
+#if CAN_USE_SLEEP_MODE && !CAN_SUPPORTS_SLEEP
+#error "CAN sleep mode not supported in this architecture"
 #endif
 
 /*===========================================================================*/

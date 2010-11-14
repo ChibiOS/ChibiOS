@@ -122,14 +122,24 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if STM32_SERIAL_USE_UART4 &&                                               \
-    !(defined(STM32F10X_HD) || defined(STM32F10X_CL))
-#error "UART4 only present in HD and CL devices"
+#if STM32_SERIAL_USE_USART1 && !STM32_HAS_USART1
+#error "USART1 not present in the selected device"
 #endif
 
-#if STM32_SERIAL_USE_UART5 &&                                               \
-    !(defined(STM32F10X_HD) || defined(STM32F10X_CL))
-#error "UART5 only present in HD and CL devices"
+#if STM32_SERIAL_USE_USART2 && !STM32_HAS_USART2
+#error "USART2 not present in the selected device"
+#endif
+
+#if STM32_SERIAL_USE_USART3 && !STM32_HAS_USART3
+#error "USART3 not present in the selected device"
+#endif
+
+#if STM32_SERIAL_USE_UART4 && !STM32_HAS_UART4
+#error "UART4 not present in the selected device"
+#endif
+
+#if STM32_SERIAL_USE_UART5 && !STM32_HAS_UART5
+#error "UART5 not present in the selected device"
 #endif
 
 #if !STM32_SERIAL_USE_USART1 && !STM32_SERIAL_USE_USART2 &&                 \

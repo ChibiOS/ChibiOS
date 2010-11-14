@@ -80,15 +80,15 @@
 /*===========================================================================*/
 
 #if STM8L_SERIAL_USE_USART1 && !STM8L_HAS_USART1
-#error "USART1 enabled but not present"
+#error "USART1 not present in the selected device"
 #endif
 
 #if STM8L_SERIAL_USE_USART2 && !STM8L_HAS_USART2
-#error "USART2 enabled but not present"
+#error "USART2 not present in the selected device"
 #endif
 
 #if STM8L_SERIAL_USE_USART3 && !STM8L_HAS_USART3
-#error "USART3 enabled but not present"
+#error "USART3 not present in the selected device"
 #endif
 
 /*===========================================================================*/

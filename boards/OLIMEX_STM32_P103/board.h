@@ -37,10 +37,9 @@
 #define STM32_HSECLK            8000000
 
 /*
- * MCU type, this macro is used by both the ST library and the ChibiOS/RT
- * native STM32 HAL.
+ * MCU type, supported types are defined in ./os/hal/platforms/hal_lld.h.
  */
-#define STM32F10X_MD
+#define STM32F103xB
 
 /*
  * IO pins assignments.

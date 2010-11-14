@@ -76,15 +76,17 @@ typedef struct {
   stm32_gpio_setup_t    PCData;
   /** @brief Port D setup data.*/
   stm32_gpio_setup_t    PDData;
-#if !defined(STM32F10X_LD) || defined(__DOXYGEN__)
+#if STM32_HAS_GPIOE || defined(__DOXYGEN__)
   /** @brief Port E setup data.*/
   stm32_gpio_setup_t    PEData;
-#endif
-#if defined(STM32F10X_HD) || defined(__DOXYGEN__)
+#if STM32_HAS_GPIOF || defined(__DOXYGEN__)
   /** @brief Port F setup data.*/
   stm32_gpio_setup_t    PFData;
+#if STM32_HAS_GPIOG || defined(__DOXYGEN__)
   /** @brief Port G setup data.*/
   stm32_gpio_setup_t    PGData;
+#endif
+#endif
 #endif
 } PALConfig;
 
@@ -121,39 +123,49 @@ typedef GPIO_TypeDef * ioportid_t;
 /**
  * @brief   GPIO port A identifier.
  */
+#if STM32_HAS_GPIOA || defined(__DOXYGEN__)
 #define IOPORT1         GPIOA
+#endif
 
 /**
  * @brief   GPIO port B identifier.
  */
+#if STM32_HAS_GPIOB || defined(__DOXYGEN__)
 #define IOPORT2         GPIOB
+#endif
 
 /**
  * @brief   GPIO port C identifier.
  */
+#if STM32_HAS_GPIOC || defined(__DOXYGEN__)
 #define IOPORT3         GPIOC
+#endif
 
 /**
  * @brief   GPIO port D identifier.
  */
+#if STM32_HAS_GPIOD || defined(__DOXYGEN__)
 #define IOPORT4         GPIOD
+#endif
 
 /**
  * @brief   GPIO port E identifier.
  */
-#if !defined(STM32F10X_LD) || defined(__DOXYGEN__)
+#if STM32_HAS_GPIOE || defined(__DOXYGEN__)
 #define IOPORT5         GPIOE
 #endif
 
 /**
  * @brief   GPIO port F identifier.
  */
-#if defined(STM32F10X_HD) || defined(__DOXYGEN__)
+#if STM32_HAS_GPIOF || defined(__DOXYGEN__)
 #define IOPORT6         GPIOF
+#endif
 
 /**
  * @brief   GPIO port G identifier.
  */
+#if STM32_HAS_GPIOG || defined(__DOXYGEN__)
 #define IOPORT7         GPIOG
 #endif
 
