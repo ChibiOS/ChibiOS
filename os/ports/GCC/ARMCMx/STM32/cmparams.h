@@ -18,8 +18,8 @@
 */
 
 /**
- * @file    ARMCMx/STM32/cmparams.h
- * @brief   ARM Cortex-M3 STM32 Specific Parameters.
+ * @file    STM32/cmparams.h
+ * @brief   ARM Cortex-M3 parameters for the STM32.
  *
  * @defgroup ARMCMx_STM32 STM32 Specific Parameters
  * @ingroup ARMCMx
