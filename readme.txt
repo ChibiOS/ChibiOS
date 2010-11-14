@@ -74,6 +74,8 @@
   must be specified instead of the sub-family.
 - CHANGE: Separated dynamic threads code into dedicated files: chdynamic.c
   and chdynamic.h.
+- CHANGE: Removed the various assembler files for the STM32 interrupt
+  vectors, now it is a single vectors.c file.
 - Added SPI driver to the STM8 documentation, it was missing.
 
 *** 2.1.3 ***
