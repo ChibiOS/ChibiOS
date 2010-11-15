@@ -78,8 +78,7 @@
 #define STM32_HAS_CAN1          FALSE
 #define STM32_HAS_CAN2          FALSE
 
-#define STM32_HAS_DAC1          TRUE
-#define STM32_HAS_DAC2          TRUE
+#define STM32_HAS_DAC           TRUE
 
 #define STM32_HAS_DMA1          TRUE
 #define STM32_HAS_DMA2          FALSE
@@ -147,8 +146,7 @@
 #define STM32_HAS_CAN1          FALSE
 #define STM32_HAS_CAN2          FALSE
 
-#define STM32_HAS_DAC1          TRUE
-#define STM32_HAS_DAC2          TRUE
+#define STM32_HAS_DAC           TRUE
 
 #define STM32_HAS_DMA1          TRUE
 #define STM32_HAS_DMA2          FALSE
@@ -216,8 +214,7 @@
 #define STM32_HAS_CAN1          TRUE
 #define STM32_HAS_CAN2          FALSE
 
-#define STM32_HAS_DAC1          FALSE
-#define STM32_HAS_DAC2          FALSE
+#define STM32_HAS_DAC           FALSE
 
 #define STM32_HAS_DMA1          TRUE
 #define STM32_HAS_DMA2          FALSE
@@ -285,8 +282,7 @@
 #define STM32_HAS_CAN1          TRUE
 #define STM32_HAS_CAN2          FALSE
 
-#define STM32_HAS_DAC1          FALSE
-#define STM32_HAS_DAC2          FALSE
+#define STM32_HAS_DAC           FALSE
 
 #define STM32_HAS_DMA1          TRUE
 #define STM32_HAS_DMA2          FALSE
@@ -355,8 +351,7 @@
 #define STM32_HAS_CAN1          TRUE
 #define STM32_HAS_CAN2          FALSE
 
-#define STM32_HAS_DAC1          TRUE
-#define STM32_HAS_DAC2          TRUE
+#define STM32_HAS_DAC           TRUE
 
 #define STM32_HAS_DMA1          TRUE
 #define STM32_HAS_DMA2          TRUE
@@ -424,8 +419,7 @@
 #define STM32_HAS_CAN1          TRUE
 #define STM32_HAS_CAN2          TRUE
 
-#define STM32_HAS_DAC1          TRUE
-#define STM32_HAS_DAC2          TRUE
+#define STM32_HAS_DAC           TRUE
 
 #define STM32_HAS_DMA1          TRUE
 #define STM32_HAS_DMA2          TRUE
@@ -493,8 +487,7 @@
 #define STM32_HAS_CAN1          TRUE
 #define STM32_HAS_CAN2          TRUE
 
-#define STM32_HAS_DAC1          TRUE
-#define STM32_HAS_DAC2          TRUE
+#define STM32_HAS_DAC           TRUE
 
 #define STM32_HAS_DMA1          TRUE
 #define STM32_HAS_DMA2          TRUE

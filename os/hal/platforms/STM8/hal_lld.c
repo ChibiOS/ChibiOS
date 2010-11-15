@@ -36,29 +36,6 @@
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
-/**
- * @brief   PAL setup.
- * @details Digital I/O ports static configuration as defined in @p board.h.
- */
-ROMCONST PALConfig pal_default_config =
-{
-  {
-    {VAL_GPIOAODR, 0, VAL_GPIOADDR, VAL_GPIOACR1, VAL_GPIOACR2},
-    {VAL_GPIOBODR, 0, VAL_GPIOBDDR, VAL_GPIOBCR1, VAL_GPIOBCR2},
-    {VAL_GPIOCODR, 0, VAL_GPIOCDDR, VAL_GPIOCCR1, VAL_GPIOCCR2},
-    {VAL_GPIODODR, 0, VAL_GPIODDDR, VAL_GPIODCR1, VAL_GPIODCR2},
-    {VAL_GPIOEODR, 0, VAL_GPIOEDDR, VAL_GPIOECR1, VAL_GPIOECR2},
-    {VAL_GPIOFODR, 0, VAL_GPIOFDDR, VAL_GPIOFCR1, VAL_GPIOFCR2},
-#if defined(STM8S207) || defined(STM8S208) || defined(STM8S105)
-    {VAL_GPIOGODR, 0, VAL_GPIOGDDR, VAL_GPIOGCR1, VAL_GPIOGCR2},
-#endif
-#if defined(STM8S207) || defined(STM8S208)
-    {VAL_GPIOHODR, 0, VAL_GPIOHDDR, VAL_GPIOHCR1, VAL_GPIOHCR2},
-    {VAL_GPIOIODR, 0, VAL_GPIOIDDR, VAL_GPIOICR1, VAL_GPIOICR2},
-#endif
-  }
-};
-
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/

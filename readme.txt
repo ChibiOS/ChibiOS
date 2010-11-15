@@ -68,12 +68,16 @@
 - NEW: Initial STM8L support: HAL, PAL and Serial drivers.
 - NEW: Added demo for the ST STM8L-Discovery kit.
 - NEW: Added support for the STM32 Value Line to the HAL.
-- CHANGE: Improved the STM32 HAL to support more sub-families, now it
+- NEW: Added demo for the ST STM32VL-Discovery kit.
+- CHANGE: Improved the STM32 HAL to support multiple sub-families, now it
   is possible to test the presence of any single peripheral into the
   specified STM32 device. Now in the board.h files the specific device
   must be specified instead of the sub-family.
 - CHANGE: Separated dynamic threads code into dedicated files: chdynamic.c
   and chdynamic.h.
+- CHANGE: Moved the declaration of the variable pal_default_config from
+  hal_lld.c to the various board.c. That structure is more meaningful in
+  the board layer because it is related to the board initialization.
 - CHANGE: Removed the various assembler files for the STM32 interrupt
   vectors, now it is a single vectors.c file.
 - Added SPI driver to the STM8 documentation, it was missing.

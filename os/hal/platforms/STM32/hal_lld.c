@@ -38,27 +38,6 @@
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
-/**
- * @brief   PAL setup.
- * @details Digital I/O ports static configuration as defined in @p board.h.
- */
-const PALConfig pal_default_config =
-{
-  {VAL_GPIOAODR, VAL_GPIOACRL, VAL_GPIOACRH},
-  {VAL_GPIOBODR, VAL_GPIOBCRL, VAL_GPIOBCRH},
-  {VAL_GPIOCODR, VAL_GPIOCCRL, VAL_GPIOCCRH},
-  {VAL_GPIODODR, VAL_GPIODCRL, VAL_GPIODCRH},
-#if STM32_HAS_GPIOE || defined(__DOXYGEN__)
-  {VAL_GPIOEODR, VAL_GPIOECRL, VAL_GPIOECRH},
-#if STM32_HAS_GPIOF || defined(__DOXYGEN__)
-  {VAL_GPIOFODR, VAL_GPIOFCRL, VAL_GPIOFCRH},
-#if STM32_HAS_GPIOG || defined(__DOXYGEN__)
-  {VAL_GPIOGODR, VAL_GPIOGCRL, VAL_GPIOGCRH},
-#endif
-#endif
-#endif
-};
-
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -97,8 +76,9 @@ void hal_lld_init(void) {
  *
  * @special
  */
-#if defined(STM32F10X_LD) || defined(STM32F10X_MD) ||                       \
-    defined(STM32F10X_HD) || defined(__DOXYGEN__)
+#if defined(STM32F10X_LD)    || defined(STM32F10X_MD)    ||                 \
+    defined(STM32F10X_HD)    || defined(STM32F10X_LD_VL) ||                 \
+    defined(STM32F10X_MD_VL) || defined(__DOXYGEN__)
 /*
  * Clocks initialization for the LD, MD and HD sub-families.
  */
@@ -146,6 +126,7 @@ void stm32_clock_init(void) {
     ;
 #endif
 }
+
 #elif defined(STM32F10X_CL)
 /*
  * Clocks initialization for the CL sub-family.

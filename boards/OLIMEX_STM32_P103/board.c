@@ -20,6 +20,20 @@
 #include "ch.h"
 #include "hal.h"
 
+/**
+ * @brief   PAL setup.
+ * @details Digital I/O ports static configuration as defined in @p board.h.
+ *          This variable is used by the HAL when initializing the PAL driver.
+ */
+const PALConfig pal_default_config =
+{
+  {VAL_GPIOAODR, VAL_GPIOACRL, VAL_GPIOACRH},
+  {VAL_GPIOBODR, VAL_GPIOBCRL, VAL_GPIOBCRH},
+  {VAL_GPIOCODR, VAL_GPIOCCRL, VAL_GPIOCCRH},
+  {VAL_GPIODODR, VAL_GPIODCRL, VAL_GPIODCRH},
+  {VAL_GPIOEODR, VAL_GPIOECRL, VAL_GPIOECRH},
+};
+
 /*
  * Early initialization code.
  * This initialization is performed just after reset before BSS and DATA

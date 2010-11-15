@@ -20,6 +20,20 @@
 #include "ch.h"
 #include "hal.h"
 
+/**
+ * @brief   PAL setup.
+ * @details Digital I/O ports static configuration as defined in @p board.h.
+ *          This variable is used by the HAL when initializing the PAL driver.
+ */
+const PALConfig pal_default_config =
+{
+  {VAL_PIOA_ODSR, VAL_PIOA_OSR, VAL_PIOA_PUSR},
+#if (SAM7_PLATFORM == SAM7X128) || (SAM7_PLATFORM == SAM7X256) || \
+    (SAM7_PLATFORM == SAM7X512)
+  {VAL_PIOB_ODSR, VAL_PIOB_OSR, VAL_PIOB_PUSR}
+#endif
+};
+
 /*
  * SYS IRQ handling here.
  */

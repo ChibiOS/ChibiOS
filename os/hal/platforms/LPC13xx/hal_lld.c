@@ -41,17 +41,6 @@
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
-/**
- * @brief   PAL setup.
- * @details Digital I/O ports static configuration as defined in @p board.h.
- */
-const PALConfig pal_default_config = {
- {VAL_GPIO0DATA, VAL_GPIO0DIR},
- {VAL_GPIO1DATA, VAL_GPIO1DIR},
- {VAL_GPIO2DATA, VAL_GPIO2DIR},
- {VAL_GPIO3DATA, VAL_GPIO3DIR},
-};
-
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/

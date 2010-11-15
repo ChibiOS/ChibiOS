@@ -51,8 +51,10 @@ N Evaluate if to add a synchronous API to the UART driver, eventually do so.
   HAL because it is very different.
   * Shared ISR management.
   * STM8L-Discovery demo.
-X Add the STM32F100 (Value Line) sub-family to the official STM32 HAL support.
-  - STM32VL-Discovery demo.
+* Add the STM32F100 (Value Line) sub-family to the official STM32 HAL support.
+  * STM32VL-Discovery demo.
+* Remove the PAL default configuration from the various hal_lld.c and move
+  them into board.c files, this will remove an ugly dependency.
 - Realign the STM8 port to the new STM8L one as options, naming conventions
   and general solutions.
 X Except for the above, bug fixing only until the 2.2.0 release.
@@ -71,8 +73,8 @@ X I2C device driver class support and at least one implementation.
 - New device driver models: Clock, Systick, RTC, WDG, DAC, USB, Power Monitor.
 - MAC driver for STM32F107 (hardware missing).
 - Device drivers for STM8/STM8L (ADC, PWM, bring them on par with STM32).
-- Support for more compilers (ARMCMx only initially).
-- Support for not just Makefiles (Ride7, Crossworks etc).
+- Support for more compilers (IAR, Keil, ARMCMx only initially).
+X Support for not just Makefiles (Ride7, Crossworks etc).
 - Batch testing of the ARM7/ARMCMx port using OpenOCD, with reports.
 - Debug-related features and tools.
 - Add a *very simple* ADC API for single one shot sampling (implement it as
