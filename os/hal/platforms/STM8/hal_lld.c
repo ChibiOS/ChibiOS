@@ -74,7 +74,7 @@ void hal_lld_init(void) {
 
   /* HSE startup and stabilization if required.*/
 #if STM8_HSE_ENABLED
-  CLK->ECKR |= CLK_ECKCR_HSEEN;
+  CLK->ECKR |= CLK_ECKR_HSEEN;
   while ((CLK->ECKR & CLK_ECKR_HSERDY) == 0)
     ;
 #endif
@@ -102,7 +102,7 @@ void hal_lld_init(void) {
 
   /* HSI disabled if it is no more required.*/
 #if !STM8_HSI_ENABLED
-  CLK->ICKR &= ~CLK_ICKR_HSION;
+  CLK->ICKR &= ~CLK_ICKR_HSIEN;
 #endif
 #endif /* !STM8_NO_CLOCK_INIT */
 }

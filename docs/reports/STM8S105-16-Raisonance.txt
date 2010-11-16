@@ -1,14 +1,14 @@
 ***************************************************************************
 Options:  Optimized for speed
-Settings: CPUCLK=16MHz (HSI)
+Settings: CPUCLK=16MHz (HSE)
 Compiler: Raisonance RKit-STM8_2.30.10.0175
 ***************************************************************************
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.2unstable
+*** Kernel:       2.1.4unstable
 *** Architecture: STM8
-*** Platform:     STM8x
+*** Platform:     STM8S
 *** Test Board:   ST STM8S-Discovery
 
 ----------------------------------------------------------------------------

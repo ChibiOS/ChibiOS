@@ -1,14 +1,14 @@
 ***************************************************************************
 Options:  Optimized for speed
-Settings: CPUCLK=16MHz (HSI)
+Settings: CPUCLK=16MHz (HSE)
 Compiler: Cosmic STM8 compiler 4.3.3.3.
 ***************************************************************************
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.3unstable
+*** Kernel:       2.1.4unstable
 *** Architecture: STM8
-*** Platform:     STM8x
+*** Platform:     STM8S
 *** Test Board:   ST STM8S-Discovery
 
 ----------------------------------------------------------------------------
@@ -97,43 +97,43 @@ Compiler: Cosmic STM8 compiler 4.3.3.3.
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 35999 msgs/S, 71998 ctxswc/S
+--- Score : 35678 msgs/S, 71356 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 28391 msgs/S, 56782 ctxswc/S
+--- Score : 28141 msgs/S, 56282 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 28391 msgs/S, 56782 ctxswc/S
+--- Score : 28141 msgs/S, 56282 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 136616 ctxswc/S
+--- Score : 135312 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 21059 threads/S
+--- Score : 20922 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 32956 threads/S
+--- Score : 32889 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 8480 reschedules/S, 50880 ctxswc/S
+--- Score : 8458 reschedules/S, 50748 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 70960 ctxswc/S
+--- Score : 71040 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 76592 bytes/S
+--- Score : 76228 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 72764 timers/S
+--- Score : 73264 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
@@ -141,7 +141,7 @@ Compiler: Cosmic STM8 compiler 4.3.3.3.
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 141760 lock+unlock/S
+--- Score : 143032 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)
