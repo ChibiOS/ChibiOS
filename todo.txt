@@ -66,7 +66,6 @@ X File System infrastructure.
   - Official FatFs wrapper using the new infrastructure, dedicated test suite.
 X Transactional flash file system implementation.
 X I2C device driver class support and at least one implementation.
-- Switch for turning off priority inheritance protocol on mutexes.
 - Serial over UART complex driver driver, evaluate from the performance
   results if to make obsolete the current dedicated Serial driver.
 - Shared DMA channels support in the STM32/STM8L HALs.
