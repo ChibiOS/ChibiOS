@@ -28,7 +28,7 @@
  * Board identifiers.
  */
 #define BOARD_ST_STM8S_DISCOVERY
-#define BOARD_NAME "ST STM8S-Discovery"
+#define BOARD_NAME      "ST STM8S-Discovery"
 
 /*
  * Board frequencies.

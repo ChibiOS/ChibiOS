@@ -28,12 +28,12 @@
  * Board identifiers.
  */
 #define BOARD_REVA_V3_STM8S208RB
-#define BOARD_NAME "Raisonance REva V3 + STM8S208RB"
+#define BOARD_NAME      "Raisonance REva V3 + STM8S208RB"
 
 /*
  * Board frequencies.
  */
-#define HSECLK          24000000
+#define HSECLK          0
 
 /*
  * MCU model used on the board.

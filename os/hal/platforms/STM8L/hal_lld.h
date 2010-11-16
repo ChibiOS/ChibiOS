@@ -42,9 +42,7 @@
 
 #undef FALSE
 #undef TRUE
-
 #include "stm8l15x.h"
-
 #define FALSE 0
 #define TRUE (!FALSE)
 
@@ -217,7 +215,10 @@
 #error "requested LSE clock is not enabled"
 #endif
 
-#if STM8L_NO_CLOCK_INIT
+/**
+ * @brief   System clock.
+ */
+#if STM8L_NO_CLOCK_INIT || defined(__DOXYGEN__)
 #define SYSCLK                      (HSICLK / 8)
 #elif STM8L_SYSCLK_SOURCE == CLK_SYSSEL_HSI
 #define SYSCLK                      (HSICLK / (1 << STM8L_SYSCLK_DIVIDER))
@@ -231,7 +232,10 @@
 #error "specified invalid SYSCLK source"
 #endif
 
-#if STM8L_NO_CLOCK_INIT
+/**
+ * @brief   RTC clock.
+ */
+#if STM8L_NO_CLOCK_INIT || defined(__DOXYGEN__)
 #define RTCCLK                      0
 #elif STM8L_RTCCLK_SOURCE == CLK_RTCSEL_HSI
 #define RTCCLK                      (HSICLK / (1 << STM8L_RTCCLK_DIVIDER))
@@ -244,6 +248,12 @@
 #else
 #error "specified invalid RTCCLK source"
 #endif
+
+/**
+ * @brief   CPU clock.
+ * @details On the STM8L the CPU clock is always equal to the system clock.
+ */
+#define CPUCLK                      SYSCLK
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

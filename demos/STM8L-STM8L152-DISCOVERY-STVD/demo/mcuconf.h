@@ -28,19 +28,19 @@
 /*
  * HAL general settings.
  */
-#define STM8L_NO_CLOCK_INIT         FALSE
-#define STM8L_HSI_ENABLED           TRUE
-#define STM8L_LSI_ENABLED           TRUE
-#define STM8L_HSE_ENABLED           FALSE
-#define STM8L_LSE_ENABLED           TRUE
-#define STM8L_SYSCLK_SOURCE         CLK_SYSSEL_HSI
-#define STM8L_SYSCLK_DIVIDER        CLK_SYSCLK_DIV1
-#define STM8L_RTCCLK_SOURCE         CLK_RTCSEL_LSE
-#define STM8L_RTCCLK_DIVIDER        CLK_RTCCLK_DIV1
+#define STM8L_NO_CLOCK_INIT             FALSE
+#define STM8L_HSI_ENABLED               TRUE
+#define STM8L_LSI_ENABLED               TRUE
+#define STM8L_HSE_ENABLED               FALSE
+#define STM8L_LSE_ENABLED               TRUE
+#define STM8L_SYSCLK_SOURCE             CLK_SYSSEL_HSI
+#define STM8L_SYSCLK_DIVIDER            CLK_SYSCLK_DIV1
+#define STM8L_RTCCLK_SOURCE             CLK_RTCSEL_LSE
+#define STM8L_RTCCLK_DIVIDER            CLK_RTCCLK_DIV1
 
 /*
  * SERIAL driver system settings.
  */
-#define STM8L_SERIAL_USE_USART1     TRUE
-#define STM8L_SERIAL_USE_USART2     FALSE
-#define STM8L_SERIAL_USE_USART3     FALSE
+#define STM8L_SERIAL_USE_USART1         TRUE
+#define STM8L_SERIAL_USE_USART2         FALSE
+#define STM8L_SERIAL_USE_USART3         FALSE

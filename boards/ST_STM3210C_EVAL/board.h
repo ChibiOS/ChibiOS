@@ -28,7 +28,7 @@
  * Board identifier.
  */
 #define BOARD_ST_STM3210C_EVAL
-#define BOARD_NAME "ST STM3210C-EVAL"
+#define BOARD_NAME              "ST STM3210C-EVAL"
 
 /*
  * Board frequencies.
@@ -39,7 +39,7 @@
 /*
  * MCU type, supported types are defined in ./os/hal/platforms/hal_lld.h.
  */
-#define STM32F107xC
+#define STM32F10X_CL
 
 /*
  * IO pins assignments.

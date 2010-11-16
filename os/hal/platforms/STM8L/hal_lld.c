@@ -100,7 +100,7 @@ void hal_lld_init(void) {
   /* SYSCLK switch to the selected source, not necessary if it is HSI.*/
 #if STM8L_SYSCLK_SOURCE != CLK_SYSSEL_HSI
   /* Switching clock (manual switch mode).*/
-  CLK->SWR  = STM8_CLOCK_SOURCE;
+  CLK->SWR  = STM8L_SYSCLK_SOURCE;
   while ((CLK->SWCR & CLK_SWCR_SWIF) == 0)
     ;
   CLK->SWCR = CLK_SWCR_SWEN;

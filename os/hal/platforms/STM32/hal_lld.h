@@ -26,16 +26,13 @@
  *          - STM32_HSECLK.
  *          .
  *          One of the following macros must also be defined:
- *          - STM32F100x4, STM32F100x6 for Value Line Low Density devices.
- *          - STM32F100x8, STM32F100xB for Value Line Medium Density devices.
- *          - STM32F103x4, STM32F103x6 for Performance Low Density devices.
- *          - STM32F103x8, STM32F103xB for Performance Medium Density devices.
- *          - STM32F103xC, STM32F103xD, STM32F103xE, STM32F103xG for
- *            Performance High Density devices.
- *          - STM32F105x8, STM32F105xB, STM32F105xC for Connectivity Line
- *            devices.
- *          - STM32F107xB, STM32F107xC for Connectivity Line devices with
- *            Ethernet.
+ *          - STM32F10X_LD_VL for Value Line Low Density devices.
+ *          - STM32F10X_MD_VL for Value Line Medium Density devices.
+ *          - STM32F10X_LD for Performance Low Density devices.
+ *          - STM32F10X_MD for Performance Medium Density devices.
+ *          - STM32F10X_HD for Performance High Density devices.
+ *          - STM32F10X_XD for Performance eXtra Density devices.
+ *          - STM32F10X_CL for Connectivity Line devices.
  *          .
  *
  * @addtogroup HAL
@@ -63,11 +60,10 @@
 #if defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32"
 
-#elif defined(STM32F100x4) || defined(STM32F100x6)
+#elif defined(STM32F10X_LD_VL)
 /*
  * Capability flags for Value Line Low Density devices.
  */
-#define STM32F10X_LD_VL
 #define PLATFORM_NAME           "STM32 Value Line Low Density"
 #include "hal_lld_f100.h"
 
@@ -131,11 +127,10 @@
 #define STM32_HAS_USB           FALSE
 #define STM32_HAS_USBOTG        FALSE
 
-#elif defined(STM32F100x8) || defined(STM32F100xB)
+#elif defined(STM32F10X_MD_VL)
 /*
  * Capability flags for Value Line Medium Density devices.
  */
-#define STM32F10X_MD_VL
 #define PLATFORM_NAME           "STM32 Value Line Medium Density"
 #include "hal_lld_f100.h"
 
@@ -199,11 +194,10 @@
 #define STM32_HAS_USB           FALSE
 #define STM32_HAS_USBOTG        FALSE
 
-#elif defined(STM32F103x4) || defined(STM32F103x6)
+#elif defined(STM32F10X_LD)
 /*
  * Capability flags for Performance Line Low Density devices.
  */
-#define STM32F10X_LD
 #define PLATFORM_NAME           "STM32 Performance Line Low Density"
 #include "hal_lld_f103.h"
 
@@ -267,11 +261,10 @@
 #define STM32_HAS_USB           FALSE
 #define STM32_HAS_USBOTG        FALSE
 
-#elif defined(STM32F103x8) || defined(STM32F103xB)
+#elif defined(STM32F10X_MD)
 /*
  * Capability flags for Performance Line Medium Density devices.
  */
-#define STM32F10X_MD
 #define PLATFORM_NAME           "STM32 Performance Line Medium Density"
 #include "hal_lld_f103.h"
 
@@ -335,12 +328,10 @@
 #define STM32_HAS_USB           TRUE
 #define STM32_HAS_USBOTG        FALSE
 
-#elif defined(STM32F103xC) || defined(STM32F103xD) ||                       \
-      defined(STM32F103xE) || defined(STM32F103xG)
+#elif defined(STM32F10X_HD)
 /*
  * Capability flags for Performance Line High Density devices.
  */
-#define STM32F10X_HD
 #define PLATFORM_NAME           "STM32 Performance Line High Density"
 #include "hal_lld_f103.h"
 
@@ -404,20 +395,19 @@
 #define STM32_HAS_USB           TRUE
 #define STM32_HAS_USBOTG        FALSE
 
-#elif defined(STM32F105x8) || defined(STM32F105xB) || defined(STM32F105xC)
+#elif defined(STM32F10X_XD)
 /*
- * Capability flags for Connectivity Line devices.
+ * Capability flags for Performance Line eXtra Density devices.
  */
-#define STM32F10X_CL
-#define PLATFORM_NAME           "STM32 Connectivity Line"
-#include "hal_lld_f105_f107.h"
+#define PLATFORM_NAME           "STM32 Performance Line eXtra Density"
+#include "hal_lld_f103.h"
 
 #define STM32_HAS_ADC1          TRUE
 #define STM32_HAS_ADC2          TRUE
-#define STM32_HAS_ADC3          FALSE
+#define STM32_HAS_ADC3          TRUE
 
 #define STM32_HAS_CAN1          TRUE
-#define STM32_HAS_CAN2          TRUE
+#define STM32_HAS_CAN2          FALSE
 
 #define STM32_HAS_DAC           TRUE
 
@@ -431,15 +421,15 @@
 #define STM32_HAS_GPIOC         TRUE
 #define STM32_HAS_GPIOD         TRUE
 #define STM32_HAS_GPIOE         TRUE
-#define STM32_HAS_GPIOF         FALSE
-#define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOF         TRUE
+#define STM32_HAS_GPIOG         TRUE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE
 
 #define STM32_HAS_RTC           TRUE
 
-#define STM32_HAS_SDIO          FALSE
+#define STM32_HAS_SDIO          TRUE
 
 #define STM32_HAS_SPI1          TRUE
 #define STM32_HAS_SPI2          TRUE
@@ -452,7 +442,7 @@
 #define STM32_HAS_TIM5          TRUE
 #define STM32_HAS_TIM6          TRUE
 #define STM32_HAS_TIM7          TRUE
-#define STM32_HAS_TIM8          FALSE
+#define STM32_HAS_TIM8          TRUE
 #define STM32_HAS_TIM9          FALSE
 #define STM32_HAS_TIM10         FALSE
 #define STM32_HAS_TIM11         FALSE
@@ -469,15 +459,14 @@
 #define STM32_HAS_UART3         TRUE
 #define STM32_HAS_UART4         TRUE
 
-#define STM32_HAS_USB           FALSE
-#define STM32_HAS_USBOTG        TRUE
+#define STM32_HAS_USB           TRUE
+#define STM32_HAS_USBOTG        FALSE
 
-#elif defined(STM32F107xB) || defined(STM32F107xC)
+#elif defined(STM32F10X_CL)
 /*
- * Capability flags for Connectivity Line devices with Ethernet.
+ * Capability flags for Connectivity Line devices.
  */
-#define STM32F10X_CL
-#define PLATFORM_NAME           "STM32 Connectivity Line with Ethernet"
+#define PLATFORM_NAME           "STM32 Connectivity Line"
 #include "hal_lld_f105_f107.h"
 
 #define STM32_HAS_ADC1          TRUE

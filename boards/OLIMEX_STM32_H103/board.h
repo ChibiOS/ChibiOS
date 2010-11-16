@@ -28,7 +28,7 @@
  * Board identifier.
  */
 #define BOARD_OLIMEX_STM32_H103
-#define BOARD_NAME "Olimex STM32-H103"
+#define BOARD_NAME              "Olimex STM32-H103"
 
 /*
  * Board frequencies.
@@ -39,7 +39,7 @@
 /*
  * MCU type, supported types are defined in ./os/hal/platforms/hal_lld.h.
  */
-#define STM32F103xB
+#define STM32F10X_MD
 
 /*
  * IO pins assignments.

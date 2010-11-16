@@ -50,35 +50,46 @@
 
 /**
  * @brief   Low level HAL driver initialization.
+ * @details Clock sources initialization, HSI is assumed to be already
+ *          started after reset.
+ * @note    If the @p STM8_CLOCK_INIT option is set to @p FALSE then the
+ *          initialization is not performed and is left to the application.
  *
  * @notapi
  */
 void hal_lld_init(void) {
 
-#if STM8_CLOCK_SOURCE != CLK_SOURCE_DEFAULT
-#if STM8_CLOCK_SOURCE == CLK_SOURCE_HSI
-  CLK->ICKR    = 1;                 /* HSIEN */
-  while ((CLK->ICKR & 2) == 0)      /* HSIRDY */
+#if !STM8_NO_CLOCK_INIT
+  /* Makes sure that HSI is stable before proceeding.*/
+  CLK->ICKR |= CLK_ICKR_HSIRDY;
+  while ((CLK->ICKR & CLK_ICKR_HSIRDY) == 0)
     ;
-#elif STM8_CLOCK_SOURCE == CLK_SOURCE_LSI
-  CLK->ICKR    = 8;                 /* LSIEN */
-  while ((CLK->ICKR & 16) == 0)     /* LSIRDY */
-    ;
-#else /* STM8_CLOCK_SOURCE == CLK_SOURCE_HSE */
-  CLK->ECKR    = 1;                 /* HSEEN */
-  while ((CLK->ECKR & 2) == 0)      /* HSERDY */
+
+  /* LSI startup and stabilization if required.*/
+#if STM8_LSI_ENABLED
+  CLK->ICKR |= CLK_ICKR_LSIEN;
+  while ((CLK->ICKR & CLK_ICKR_LSIRDY) == 0)
     ;
 #endif
-#if STM8_CLOCK_SOURCE != CLK_SOURCE_HSI
-  /* Switching clock (manual switch mode).*/
-  CLK->SWCR    = 0;
-  CLK->SWR     = STM8_CLOCK_SOURCE;
-  while ((CLK->SWCR & 8) == 0)      /* SWIF */
+
+  /* HSE startup and stabilization if required.*/
+#if STM8_HSE_ENABLED
+  CLK->ECKR |= CLK_ECKCR_HSEEN;
+  while ((CLK->ECKR & CLK_ECKR_HSERDY) == 0)
     ;
-  CLK->SWCR    = 2;                 /* SWEN */
 #endif
+
   /* Setting up clock dividers.*/
   CLK->CKDIVR  = (STM8_HSI_DIVIDER << 3) | (STM8_CPU_DIVIDER << 0);
+
+  /* SYSCLK switch to the selected source, not necessary if it is HSI.*/
+#if STM8_SYSCLK_SOURCE != CLK_SYSSEL_HSI
+  /* Switching clock (manual switch mode).*/
+  CLK->SWR  = STM8_SYSCLK_SOURCE;
+  while ((CLK->SWCR & CLK_SWCR_SWIF) == 0)
+    ;
+  CLK->SWCR = CLK_SWCR_SWEN;
+#endif
 
   /* Clocks initially all disabled.*/
   CLK->PCKENR1 = 0;
@@ -87,8 +98,13 @@ void hal_lld_init(void) {
   /* Other clock related initializations.*/
   CLK->CSSR    = 0;
   CLK->CCOR    = 0;
-  CLK->CANCCR  = 0;
-#endif /* STM8_CLOCK_SOURCE != CLK_SOURCE_DEFAULT */
+  CLK->CANCCR  = STM8_CAN_DIVIDER_VALUE;
+
+  /* HSI disabled if it is no more required.*/
+#if !STM8_HSI_ENABLED
+  CLK->ICKR &= ~CLK_ICKR_HSION;
+#endif
+#endif /* !STM8_NO_CLOCK_INIT */
 }
 
 /** @} */
