@@ -1,5 +1,6 @@
 # List of the ChibiOS/RT Cortex-M0 LPC11xx port files.
-PORTSRC = ${CHIBIOS}/os/ports/GCC/ARMCMx/chcore.c \
+PORTSRC = $(CHIBIOS)/os/ports/GCC/ARMCMx/LPC11xx/vectors.c \
+          ${CHIBIOS}/os/ports/GCC/ARMCMx/chcore.c \
           ${CHIBIOS}/os/ports/GCC/ARMCMx/chcore_v6m.c \
           ${CHIBIOS}/os/ports/GCC/ARMCMx/nvic.c \
           ${CHIBIOS}/os/ports/GCC/ARMCMx/cmsis/core_cm0.c

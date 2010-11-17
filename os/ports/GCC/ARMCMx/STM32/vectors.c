@@ -274,4 +274,5 @@ void _unhandled_exception(void) {
   while (TRUE)
     ;
 }
+
 /** @} */

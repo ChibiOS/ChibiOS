@@ -18,8 +18,8 @@
 */
 
 /**
- * @file    STM8/serial_lld.h
- * @brief   STM8 low level serial driver header.
+ * @file    STM8S/serial_lld.h
+ * @brief   STM8S low level serial driver header.
  *
  * @addtogroup SERIAL
  * @{
@@ -53,8 +53,8 @@
  * @details If set to @p TRUE the support for UART1 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(STM8_SERIAL_USE_UART1) || defined(__DOXYGEN__)
-#define STM8_SERIAL_USE_UART1           TRUE
+#if !defined(STM8S_SERIAL_USE_UART1) || defined(__DOXYGEN__)
+#define STM8S_SERIAL_USE_UART1          TRUE
 #endif
 
 /**
@@ -62,8 +62,8 @@
  * @details If set to @p TRUE the support for UART3 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(STM8_SERIAL_USE_UART2) || defined(__DOXYGEN__)
-#define STM8_SERIAL_USE_UART2           TRUE
+#if !defined(STM8S_SERIAL_USE_UART2) || defined(__DOXYGEN__)
+#define STM8S_SERIAL_USE_UART2          TRUE
 #endif
 
 /**
@@ -71,16 +71,16 @@
  * @details If set to @p TRUE the support for UART3 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(STM8_SERIAL_USE_UART3) || defined(__DOXYGEN__)
-#define STM8_SERIAL_USE_UART3           TRUE
+#if !defined(STM8S_SERIAL_USE_UART3) || defined(__DOXYGEN__)
+#define STM8S_SERIAL_USE_UART3          TRUE
 #endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if STM8_SERIAL_USE_UART2 && STM8_SERIAL_USE_UART3
-#error "STM8 UART2 and UART3 cannot be used together"
+#if STM8S_SERIAL_USE_UART2 && STM8S_SERIAL_USE_UART3
+#error "STM8S UART2 and UART3 cannot be used together"
 #endif
 
 /*===========================================================================*/
@@ -146,13 +146,13 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if STM8_SERIAL_USE_UART1 && !defined(__DOXYGEN__)
+#if STM8S_SERIAL_USE_UART1 && !defined(__DOXYGEN__)
 extern SerialDriver SD1;
 #endif
-#if STM8_SERIAL_USE_UART2 && !defined(__DOXYGEN__)
+#if STM8S_SERIAL_USE_UART2 && !defined(__DOXYGEN__)
 extern SerialDriver SD2;
 #endif
-#if STM8_SERIAL_USE_UART3 && !defined(__DOXYGEN__)
+#if STM8S_SERIAL_USE_UART3 && !defined(__DOXYGEN__)
 extern SerialDriver SD3;
 #endif
 
