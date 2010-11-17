@@ -617,7 +617,7 @@ INPUT                  = ../docs/src \
                          ../os/kernel/templates \
                          ../os/ports \
                          ../os/ports/GCC/AVR \
-                         ../os/ports/GCC/ARM7 \
+                         ../os/ports/GCC/ARM \
                          ../os/ports/GCC/ARMCMx \
                          ../os/ports/GCC/ARMCMx/STM32 \
                          ../os/ports/GCC/ARMCMx/LPC11xx \
