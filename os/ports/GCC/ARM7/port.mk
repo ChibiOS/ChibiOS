@@ -1,7 +1,7 @@
-# List of the ChibiOS/RT ARM7 port files.
-PORTSRC = ${CHIBIOS}/os/ports/GCC/ARM7/chcore.c
+# List of the ChibiOS/RT ARM7/9 port files.
+PORTSRC = ${CHIBIOS}/os/ports/GCC/ARM/chcore.c
 
-PORTASM = ${CHIBIOS}/os/ports/GCC/ARM7/crt0.s \
-          ${CHIBIOS}/os/ports/GCC/ARM7/chcoreasm.s
+PORTASM = ${CHIBIOS}/os/ports/GCC/ARM/crt0.s \
+          ${CHIBIOS}/os/ports/GCC/ARM/chcoreasm.s
 
-PORTINC = ${CHIBIOS}/os/ports/GCC/ARM7
+PORTINC = ${CHIBIOS}/os/ports/GCC/ARM

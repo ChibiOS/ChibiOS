@@ -189,4 +189,4 @@ ULIBS =
 # End of user defines
 ##############################################################################
 
-include $(CHIBIOS)/os/ports/GCC/ARM/rules.mk
+include $(CHIBIOS)/os/ports/GCC/ARMCMx/rules.mk

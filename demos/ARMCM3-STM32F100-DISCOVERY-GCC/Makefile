@@ -201,4 +201,4 @@ ifeq ($(USE_FWLIB),yes)
   USE_OPT += -DUSE_STDPERIPH_DRIVER
 endif
 
-include $(CHIBIOS)/os/ports/GCC/ARM/rules.mk
+include $(CHIBIOS)/os/ports/GCC/ARMCMx/rules.mk
