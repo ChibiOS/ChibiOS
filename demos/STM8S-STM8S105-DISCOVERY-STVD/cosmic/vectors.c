@@ -40,8 +40,8 @@ void _stext(void);
  * @brief   Exception vector type.
  */
 typedef struct {
-	uint8_t               ev_instruction;
-	interrupt_handler_t   ev_handler;
+  uint8_t               ev_instruction;
+  interrupt_handler_t   ev_handler;
 } exception_vector_t;
 
 /**
@@ -50,57 +50,57 @@ typedef struct {
  */
 @far @interrupt static void vector (void)
 {
-	return;
+  return;
 }
 
 /**
  * @brief   Exceptions table.
  */
 exception_vector_t const _vectab[] = {
-	{0x82, (interrupt_handler_t)_stext},        /* reset */
-	{0x82, vector},                             /* trap  */
-	{0x82, vector},                             /* vector0  */
-	{0x82, vector},                             /* vector1  */
-	{0x82, vector},                             /* vector2  */
-	{0x82, vector},                             /* vector3  */
-	{0x82, vector},                             /* vector4  */
-	{0x82, vector},                             /* vector5  */
-	{0x82, vector},                             /* vector6  */
-	{0x82, vector},                             /* vector7  */
-	{0x82, vector},                             /* vector8  */
-	{0x82, vector},                             /* vector9  */
+  {0x82, (interrupt_handler_t)_stext},        /* reset */
+  {0x82, vector},                             /* trap  */
+  {0x82, vector},                             /* vector0  */
+  {0x82, vector},                             /* vector1  */
+  {0x82, vector},                             /* vector2  */
+  {0x82, vector},                             /* vector3  */
+  {0x82, vector},                             /* vector4  */
+  {0x82, vector},                             /* vector5  */
+  {0x82, vector},                             /* vector6  */
+  {0x82, vector},                             /* vector7  */
+  {0x82, vector},                             /* vector8  */
+  {0x82, vector},                             /* vector9  */
 #if HAL_USE_SPI && STM8_SPI_USE_SPI
-	{0x82, vector10},
+  {0x82, vector10},
 #else
-	{0x82, vector},                             /* vector10 */
+  {0x82, vector},                             /* vector10 */
 #endif
-	{0x82, vector},                             /* vector11 */
-	{0x82, vector},                             /* vector12 */
-	{0x82, vector13},                           /* vector13 */
-	{0x82, vector},                             /* vector14 */
-	{0x82, vector},                             /* vector15 */
-	{0x82, vector},                             /* vector16 */
+  {0x82, vector},                             /* vector11 */
+  {0x82, vector},                             /* vector12 */
+  {0x82, vector13},                           /* vector13 */
+  {0x82, vector},                             /* vector14 */
+  {0x82, vector},                             /* vector15 */
+  {0x82, vector},                             /* vector16 */
 #if HAL_USE_SERIAL && STM8_SERIAL_USE_UART1
-	{0x82, vector17},                           /* vector17 */
-	{0x82, vector18},                           /* vector18 */
+  {0x82, vector17},                           /* vector17 */
+  {0x82, vector18},                           /* vector18 */
 #else
-	{0x82, vector},                             /* vector17 */
-	{0x82, vector},                             /* vector18 */
+  {0x82, vector},                             /* vector17 */
+  {0x82, vector},                             /* vector18 */
 #endif
-	{0x82, vector},                             /* vector19 */
+  {0x82, vector},                             /* vector19 */
 #if HAL_USE_SERIAL && (STM8_SERIAL_USE_UART2 || STM8_SERIAL_USE_UART3)
   {0x82, vector20},                           /* vector20 */
-	{0x82, vector21},                           /* vector21 */
+  {0x82, vector21},                           /* vector21 */
 #else
   {0x82, vector},                             /* vector20 */
-	{0x82, vector},                             /* vector21 */
+  {0x82, vector},                             /* vector21 */
 #endif
-	{0x82, vector},                             /* vector22 */
-	{0x82, vector},                             /* vector23 */
-	{0x82, vector},                             /* vector24 */
-	{0x82, vector},                             /* vector25 */
-	{0x82, vector},                             /* vector26 */
-	{0x82, vector},                             /* vector27 */
-	{0x82, vector},                             /* vector28 */
-	{0x82, vector},                             /* vector29 */
+  {0x82, vector},                             /* vector22 */
+  {0x82, vector},                             /* vector23 */
+  {0x82, vector},                             /* vector24 */
+  {0x82, vector},                             /* vector25 */
+  {0x82, vector},                             /* vector26 */
+  {0x82, vector},                             /* vector27 */
+  {0x82, vector},                             /* vector28 */
+  {0x82, vector},                             /* vector29 */
 };
