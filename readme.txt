@@ -58,7 +58,7 @@
   |  +--coverage/       - Code coverage project.
   +--testhal/           - HAL integration test demos.
      +--STM32/          - STM32 HAL demos.
-     +--STM8/           - STM8 HAL demos.
+     +--STM8S/          - STM8S HAL demos.
 
 *****************************************************************************
 *** Releases                                                              ***
@@ -83,6 +83,7 @@
 - CHANGE: Renamed ./os/ports/GCC/ARM7 in ./os/ports/GCC/ARM. Now the port is
   meant for ARM9 too (requires more testing).
 - CHANGE: Renamed ./os/hal/platforms/STM8 in ./os/hal/platforms/STM8S.
+- CHANGE: Renamed ./testhal/STM8 in ./testhal/STM8S.
 - Added SPI driver to the STM8S documentation, it was missing.
 
 *** 2.1.3 ***
