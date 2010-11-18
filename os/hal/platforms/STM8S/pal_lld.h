@@ -18,8 +18,8 @@
 */
 
 /**
- * @file    STM8/pal_lld.h
- * @brief   STM8 GPIO low level driver header.
+ * @file    STM8S/pal_lld.h
+ * @brief   STM8S GPIO low level driver header.
  *
  * @addtogroup PAL
  * @{
@@ -37,12 +37,12 @@
 #undef PAL_MODE_INPUT_PULLDOWN
 
 /**
- * @brief   STM8 specific alternate push-pull slow output mode.
+ * @brief   STM8S specific alternate push-pull slow output mode.
  */
 #define PAL_MODE_OUTPUT_PUSHPULL_SLOW   16
 
 /**
- * @brief   STM8 specific alternate open-drain slow output mode.
+ * @brief   STM8S specific alternate open-drain slow output mode.
  */
 #define PAL_MODE_OUTPUT_OPENDRAIN_SLOW  17
 

@@ -82,10 +82,10 @@
 		<NodeC Path="..\..\os\hal\src\pwm.c" Header="pwm.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\pwm.obj" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\os\hal\src\serial.c" Header="serial.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\serial.obj" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\os\hal\src\spi.c" Header="spi.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\spi.obj" sate="0" AsyncBuild="" />
-		<NodeC Path="..\..\os\hal  \platforms\STM8S\hal_lld.c" Header="hal_lld.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\hal_lld.obj" sate="0" AsyncBuild="" />
-		<NodeC Path="..\..\os\hal  \platforms\STM8S\serial_lld.c" Header="serial_lld.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\serial_lld.obj" sate="0" AsyncBuild="" />
-		<NodeC Path="..\..\os\hal  \platforms\STM8S\pal_lld.c" Header="pal_lld.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\pal_lld.obj" sate="0" AsyncBuild="" />
-		<NodeC Path="..\..\os\hal  \platforms\STM8S\spi_lld.c" Header="spi_lld.c" Marker="-1" AsyncBuild="" OutputFile="..\STM8S-STM8S208-RC/bin\spi_lld.obj" sate="0" />
+		<NodeC Path="..\..\os\hal\platforms\STM8S\hal_lld.c" Header="hal_lld.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\hal_lld.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\hal\platforms\STM8S\serial_lld.c" Header="serial_lld.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\serial_lld.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\hal\platforms\STM8S\pal_lld.c" Header="pal_lld.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\pal_lld.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\hal\platforms\STM8S\spi_lld.c" Header="spi_lld.c" Marker="-1" AsyncBuild="" OutputFile="..\STM8S-STM8S208-RC/bin\spi_lld.obj" sate="0" />
 																																																																																																												
 	</Group>
 	<Group Header="board" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
@@ -101,7 +101,7 @@
 																																																																																																																																																																																																																																																																																																																																																																																																										
 				</Section>
 				<Section Header="Directories" >
-					<Property Header="IncDir" Value="$(RkitInc);$(RkitInc)\ST7;..\..\os\kernel\include;..\..\os\ports\RC\STM8;..\..\os\hal\include;..\..\os\hal  \platforms\STM8S;..\..\boards\RAISONANCE_REVA_STM8S;..\..\test" Removable="1" />
+					<Property Header="IncDir" Value="$(RkitInc);$(RkitInc)\ST7;..\..\os\kernel\include;..\..\os\ports\RC\STM8;..\..\os\hal\include;..\..\os\hal\platforms\STM8S;..\..\boards\RAISONANCE_REVA_STM8S;..\..\test" Removable="1" />
 					<Property Header="OutDir" Value="$(ApplicationDir)/bin" Removable="1" />
 					<Property Header="ListDir" Value="$(ApplicationDir)/lst" Removable="1" />
 					<Property Header="LinkerOutputDir" Value="Output Directory" Removable="1" />

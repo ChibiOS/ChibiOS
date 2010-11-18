@@ -18,8 +18,8 @@
 */
 
 /**
- * @file    STM8/hal_lld.c
- * @brief   STM8 HAL subsystem low level driver source.
+ * @file    STM8S/hal_lld.c
+ * @brief   STM8S HAL subsystem low level driver source.
  *
  * @addtogroup HAL
  * @{
@@ -52,40 +52,40 @@
  * @brief   Low level HAL driver initialization.
  * @details Clock sources initialization, HSI is assumed to be already
  *          started after reset.
- * @note    If the @p STM8_CLOCK_INIT option is set to @p FALSE then the
+ * @note    If the @p STM8S_CLOCK_INIT option is set to @p FALSE then the
  *          initialization is not performed and is left to the application.
  *
  * @notapi
  */
 void hal_lld_init(void) {
 
-#if !STM8_NO_CLOCK_INIT
+#if !STM8S_NO_CLOCK_INIT
   /* Makes sure that HSI is stable before proceeding.*/
   CLK->ICKR |= CLK_ICKR_HSIRDY;
   while ((CLK->ICKR & CLK_ICKR_HSIRDY) == 0)
     ;
 
   /* LSI startup and stabilization if required.*/
-#if STM8_LSI_ENABLED
+#if STM8S_LSI_ENABLED
   CLK->ICKR |= CLK_ICKR_LSIEN;
   while ((CLK->ICKR & CLK_ICKR_LSIRDY) == 0)
     ;
 #endif
 
   /* HSE startup and stabilization if required.*/
-#if STM8_HSE_ENABLED
+#if STM8S_HSE_ENABLED
   CLK->ECKR |= CLK_ECKR_HSEEN;
   while ((CLK->ECKR & CLK_ECKR_HSERDY) == 0)
     ;
 #endif
 
   /* Setting up clock dividers.*/
-  CLK->CKDIVR  = (STM8_HSI_DIVIDER << 3) | (STM8_CPU_DIVIDER << 0);
+  CLK->CKDIVR  = (STM8S_HSI_DIVIDER << 3) | (STM8S_CPU_DIVIDER << 0);
 
   /* SYSCLK switch to the selected source, not necessary if it is HSI.*/
-#if STM8_SYSCLK_SOURCE != CLK_SYSSEL_HSI
+#if STM8S_SYSCLK_SOURCE != CLK_SYSSEL_HSI
   /* Switching clock (manual switch mode).*/
-  CLK->SWR  = STM8_SYSCLK_SOURCE;
+  CLK->SWR  = STM8S_SYSCLK_SOURCE;
   while ((CLK->SWCR & CLK_SWCR_SWIF) == 0)
     ;
   CLK->SWCR = CLK_SWCR_SWEN;
@@ -98,13 +98,13 @@ void hal_lld_init(void) {
   /* Other clock related initializations.*/
   CLK->CSSR    = 0;
   CLK->CCOR    = 0;
-  CLK->CANCCR  = STM8_CAN_DIVIDER_VALUE;
+  CLK->CANCCR  = STM8S_CAN_DIVIDER_VALUE;
 
   /* HSI disabled if it is no more required.*/
-#if !STM8_HSI_ENABLED
+#if !STM8S_HSI_ENABLED
   CLK->ICKR &= ~CLK_ICKR_HSIEN;
 #endif
-#endif /* !STM8_NO_CLOCK_INIT */
+#endif /* !STM8S_NO_CLOCK_INIT */
 }
 
 /** @} */

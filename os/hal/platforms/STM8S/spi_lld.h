@@ -43,23 +43,23 @@
  * @details If set to @p TRUE the support for device SSP0 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(STM8_SPI_USE_SPI) || defined(__DOXYGEN__)
-#define STM8_SPI_USE_SPI                TRUE
+#if !defined(STM8S_SPI_USE_SPI) || defined(__DOXYGEN__)
+#define STM8S_SPI_USE_SPI               TRUE
 #endif
 
 /**
  * @brief   Overflow error hook.
  * @details The default action is to stop the system.
  */
-#if !defined(STM8_SPI_SPI_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM8_SPI_ERROR_HOOK(spip)       chSysHalt()
+#if !defined(STM8S_SPI_SPI_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM8S_SPI_ERROR_HOOK(spip)      chSysHalt()
 #endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !STM8_SPI_USE_SPI
+#if !STM8S_SPI_USE_SPI
 #error "SPI driver activated but no SPI peripheral assigned"
 #endif
 
@@ -164,7 +164,7 @@ struct SPIDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if STM8_SPI_USE_SPI && !defined(__DOXYGEN__)
+#if STM8S_SPI_USE_SPI && !defined(__DOXYGEN__)
 extern SPIDriver SPID1;
 #endif
 

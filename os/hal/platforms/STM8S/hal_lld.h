@@ -18,8 +18,8 @@
 */
 
 /**
- * @file    STM8/hal_lld.h
- * @brief   STM8 HAL subsystem low level driver source.
+ * @file    STM8S/hal_lld.h
+ * @brief   STM8S HAL subsystem low level driver source.
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - HSECLK (@p 0 if disabled or frequency in Hertz).
@@ -39,7 +39,18 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
-#include "stm8.h"
+#undef FALSE
+#undef TRUE
+
+#if defined(STM8S208) || defined(STM8S207) || defined(STM8S105) ||          \
+    defined(STM8S103) || defined(STM8S903)
+#include "stm8s.h"
+#else
+#error "unsupported or invalid STM8 platform"
+#endif
+
+#define FALSE 0
+#define TRUE (!FALSE)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -78,111 +89,111 @@
 /**
  * @brief   Disables the clock initialization in the HAL.
  */
-#if !defined(STM8_NO_CLOCK_INIT) || defined(__DOXYGEN__)
-#define STM8_NO_CLOCK_INIT          FALSE
+#if !defined(STM8S_NO_CLOCK_INIT) || defined(__DOXYGEN__)
+#define STM8S_NO_CLOCK_INIT         FALSE
 #endif
 
 /**
  * @brief   Enables or disables the HSI clock source.
  */
-#if !defined(STM8_HSI_ENABLED) || defined(__DOXYGEN__)
-#define STM8_HSI_ENABLED            FALSE
+#if !defined(STM8S_HSI_ENABLED) || defined(__DOXYGEN__)
+#define STM8S_HSI_ENABLED           FALSE
 #endif
 
 /**
  * @brief   Enables or disables the LSI clock source.
  */
-#if !defined(STM8_LSI_ENABLED) || defined(__DOXYGEN__)
-#define STM8_LSI_ENABLED            TRUE
+#if !defined(STM8S_LSI_ENABLED) || defined(__DOXYGEN__)
+#define STM8S_LSI_ENABLED           TRUE
 #endif
 
 /**
  * @brief   Enables or disables the HSE clock source.
  */
-#if !defined(STM8_HSE_ENABLED) || defined(__DOXYGEN__)
-#define STM8_HSE_ENABLED            TRUE
+#if !defined(STM8S_HSE_ENABLED) || defined(__DOXYGEN__)
+#define STM8S_HSE_ENABLED           TRUE
 #endif
 
 /**
  * @brief   Clock source setting.
  */
-#if !defined(STM8_SYSCLK_SOURCE) || defined(__DOXYGEN__)
-#define STM8_SYSCLK_SOURCE          CLK_SYSSEL_HSE
+#if !defined(STM8S_SYSCLK_SOURCE) || defined(__DOXYGEN__)
+#define STM8S_SYSCLK_SOURCE         CLK_SYSSEL_HSE
 #endif
 
 /**
  * @brief   HSI clock divider.
  */
-#if !defined(STM8_HSI_DIVIDER) || defined(__DOXYGEN__)
-#define STM8_HSI_DIVIDER            CLK_HSI_DIV8
+#if !defined(STM8S_HSI_DIVIDER) || defined(__DOXYGEN__)
+#define STM8S_HSI_DIVIDER           CLK_HSI_DIV8
 #endif
 
 /**
  * @brief   CPU clock divider.
  */
-#if !defined(STM8_CPU_DIVIDER) || defined(__DOXYGEN__)
-#define STM8_CPU_DIVIDER            CLK_CPU_DIV1
+#if !defined(STM8S_CPU_DIVIDER) || defined(__DOXYGEN__)
+#define STM8S_CPU_DIVIDER           CLK_CPU_DIV1
 #endif
 
 /**
  * @brief   bxCAN divider value.
  */
-#if !defined(STM8_CAN_DIVIDER_VALUE) || defined(__DOXYGEN__)
-#define STM8_CAN_DIVIDER_VALUE      1
+#if !defined(STM8S_CAN_DIVIDER_VALUE) || defined(__DOXYGEN__)
+#define STM8S_CAN_DIVIDER_VALUE     1
 #endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if (STM8_HSI_DIVIDER != CLK_HSI_DIV1)  &&                                  \
-    (STM8_HSI_DIVIDER != CLK_HSI_DIV2)  &&                                  \
-    (STM8_HSI_DIVIDER != CLK_HSI_DIV4)  &&                                  \
-    (STM8_HSI_DIVIDER != CLK_HSI_DIV8)
+#if (STM8S_HSI_DIVIDER != CLK_HSI_DIV1)  &&                                 \
+    (STM8S_HSI_DIVIDER != CLK_HSI_DIV2)  &&                                 \
+    (STM8S_HSI_DIVIDER != CLK_HSI_DIV4)  &&                                 \
+    (STM8S_HSI_DIVIDER != CLK_HSI_DIV8)
 #error "specified invalid HSI divider"
 #endif
 
-#if (STM8_CPU_DIVIDER != CLK_CPU_DIV1)  &&                                  \
-    (STM8_CPU_DIVIDER != CLK_CPU_DIV2)  &&                                  \
-    (STM8_CPU_DIVIDER != CLK_CPU_DIV4)  &&                                  \
-    (STM8_CPU_DIVIDER != CLK_CPU_DIV8)  &&                                  \
-    (STM8_CPU_DIVIDER != CLK_CPU_DIV16) &&                                  \
-    (STM8_CPU_DIVIDER != CLK_CPU_DIV32) &&                                  \
-    (STM8_CPU_DIVIDER != CLK_CPU_DIV64) &&                                  \
-    (STM8_CPU_DIVIDER != CLK_CPU_DIV128)
+#if (STM8S_CPU_DIVIDER != CLK_CPU_DIV1)  &&                                 \
+    (STM8S_CPU_DIVIDER != CLK_CPU_DIV2)  &&                                 \
+    (STM8S_CPU_DIVIDER != CLK_CPU_DIV4)  &&                                 \
+    (STM8S_CPU_DIVIDER != CLK_CPU_DIV8)  &&                                 \
+    (STM8S_CPU_DIVIDER != CLK_CPU_DIV16) &&                                 \
+    (STM8S_CPU_DIVIDER != CLK_CPU_DIV32) &&                                 \
+    (STM8S_CPU_DIVIDER != CLK_CPU_DIV64) &&                                 \
+    (STM8S_CPU_DIVIDER != CLK_CPU_DIV128)
 #error "specified invalid CPU divider"
 #endif
 
-#if (STM8_CAN_DIVIDER_VALUE < 1) || (STM8_CAN_DIVIDER_VALUE > 8)
+#if (STM8S_CAN_DIVIDER_VALUE < 1) || (STM8S_CAN_DIVIDER_VALUE > 8)
 #error "specified invalid CAN divider value"
 #endif
 
-#if STM8_HSE_ENABLED && (HSECLK == 0)
+#if STM8S_HSE_ENABLED && (HSECLK == 0)
 #error "impossible to activate HSE"
 #endif
 
-#if !STM8_HSI_ENABLED && (STM8_SYSCLK_SOURCE == CLK_SYSSEL_HSI)
+#if !STM8S_HSI_ENABLED && (STM8S_SYSCLK_SOURCE == CLK_SYSSEL_HSI)
 #error "requested HSI clock is not enabled"
 #endif
 
-#if !STM8_LSI_ENABLED && (STM8_SYSCLK_SOURCE == CLK_SYSSEL_LSI)
+#if !STM8S_LSI_ENABLED && (STM8S_SYSCLK_SOURCE == CLK_SYSSEL_LSI)
 #error "requested LSI clock is not enabled"
 #endif
 
-#if !STM8_HSE_ENABLED && (STM8_SYSCLK_SOURCE == CLK_SYSSEL_HSE)
+#if !STM8S_HSE_ENABLED && (STM8S_SYSCLK_SOURCE == CLK_SYSSEL_HSE)
 #error "requested HSE clock is not enabled"
 #endif
 
 /**
  * @brief   System clock.
  */
-#if STM8L_NO_CLOCK_INIT || defined(__DOXYGEN__)
+#if STM8SL_NO_CLOCK_INIT || defined(__DOXYGEN__)
 #define SYSCLK                      (HSICLK / 8)
-#elif STM8_SYSCLK_SOURCE == CLK_SYSSEL_HSI
-#define SYSCLK                      (HSICLK / (1 << STM8_HSI_DIVIDER))
-#elif STM8_SYSCLK_SOURCE == CLK_SYSSEL_LSI
+#elif STM8S_SYSCLK_SOURCE == CLK_SYSSEL_HSI
+#define SYSCLK                      (HSICLK / (1 << STM8S_HSI_DIVIDER))
+#elif STM8S_SYSCLK_SOURCE == CLK_SYSSEL_LSI
 #define SYSCLK                      LSICLK
-#elif STM8_SYSCLK_SOURCE == CLK_SYSSEL_HSE
+#elif STM8S_SYSCLK_SOURCE == CLK_SYSSEL_HSE
 #define SYSCLK                      HSECLK
 #else
 #error "specified invalid clock source"
@@ -190,10 +201,10 @@
 
 /**
  * @brief   CPU clock.
- * @details On the STM8S the CPU clock can be programmed to be a fraction of
+ * @details On the STM8SS the CPU clock can be programmed to be a fraction of
  *          the system clock.
  */
-#define CPUCLK                      (SYSCLK / (1 << STM8_CPU_DIVIDER))
+#define CPUCLK                      (SYSCLK / (1 << STM8S_CPU_DIVIDER))
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

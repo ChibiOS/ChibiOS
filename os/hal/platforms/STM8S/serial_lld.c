@@ -18,8 +18,8 @@
 */
 
 /**
- * @file    STM8/serial_lld.c
- * @brief   STM8 low level serial driver code.
+ * @file    STM8S/serial_lld.c
+ * @brief   STM8S low level serial driver code.
  *
  * @addtogroup SERIAL
  * @{
@@ -37,21 +37,21 @@
 /**
  * @brief   UART1 serial driver identifier.
  */
-#if STM8_SERIAL_USE_UART1 || defined(__DOXYGEN__)
+#if STM8S_SERIAL_USE_UART1 || defined(__DOXYGEN__)
 SerialDriver SD1;
 #endif
 
 /**
  * @brief   UART2 serial driver identifier.
  */
-#if STM8_SERIAL_USE_UART2 || defined(__DOXYGEN__)
+#if STM8S_SERIAL_USE_UART2 || defined(__DOXYGEN__)
 SerialDriver SD2;
 #endif
 
 /**
  * @brief   UART3 serial driver identifier.
  */
-#if STM8_SERIAL_USE_UART3 || defined(__DOXYGEN__)
+#if STM8S_SERIAL_USE_UART3 || defined(__DOXYGEN__)
 SerialDriver SD3;
 #endif
 
@@ -63,7 +63,7 @@ SerialDriver SD3;
  * @brief   Driver default configuration.
  */
 static ROMCONST SerialConfig default_config = {
-  BBR(SERIAL_DEFAULT_BITRATE),
+  BRR(SERIAL_DEFAULT_BITRATE),
   SD_MODE_PARITY_NONE | SD_MODE_STOP_1
 };
 
@@ -89,7 +89,7 @@ static void set_error(SerialDriver *sdp, uint8_t sr) {
   chSysUnlockFromIsr();
 }
 
-#if STM8_SERIAL_USE_UART1 || defined(__DOXYGEN__)
+#if STM8S_SERIAL_USE_UART1 || defined(__DOXYGEN__)
 static void notify1(void) {
 
   UART1->CR2 |= UART1_CR2_TIEN;
@@ -128,9 +128,9 @@ static void uart1_deinit(void) {
   UART1->CR5  = 0;
   UART1->PSCR = 0;
 }
-#endif /* STM8_SERIAL_USE_UART1 */
+#endif /* STM8S_SERIAL_USE_UART1 */
 
-#if STM8_SERIAL_USE_UART2 || defined(__DOXYGEN__)
+#if STM8S_SERIAL_USE_UART2 || defined(__DOXYGEN__)
 static void notify2(void) {
 
   UART2->CR2 |= UART2_CR2_TIEN;
@@ -171,9 +171,9 @@ static void uart2_deinit(void) {
   UART2->CR6  = 0;
   UART2->PSCR = 0;
 }
-#endif /* STM8_SERIAL_USE_UART1 */
+#endif /* STM8S_SERIAL_USE_UART1 */
 
-#if STM8_SERIAL_USE_UART3 || defined(__DOXYGEN__)
+#if STM8S_SERIAL_USE_UART3 || defined(__DOXYGEN__)
 static void notify3(void) {
 
   UART3->CR2 |= UART3_CR2_TIEN;
@@ -210,13 +210,13 @@ static void uart3_deinit(void) {
   UART3->CR4  = 0;
   UART3->CR6  = 0;
 }
-#endif /* STM8_SERIAL_USE_UART3 */
+#endif /* STM8S_SERIAL_USE_UART3 */
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if STM8_SERIAL_USE_UART1 || defined(__DOXYGEN__)
+#if STM8S_SERIAL_USE_UART1 || defined(__DOXYGEN__)
 /**
  * @brief   IRQ 17 service routine.
  *
@@ -257,9 +257,9 @@ CH_IRQ_HANDLER(18) {
 
   CH_IRQ_EPILOGUE();
 }
-#endif /* STM8_SERIAL_USE_UART1 */
+#endif /* STM8S_SERIAL_USE_UART1 */
 
-#if STM8_SERIAL_USE_UART2 || defined(__DOXYGEN__)
+#if STM8S_SERIAL_USE_UART2 || defined(__DOXYGEN__)
 /**
  * @brief   IRQ 20 service routine.
  *
@@ -300,9 +300,9 @@ CH_IRQ_HANDLER(21) {
 
   CH_IRQ_EPILOGUE();
 }
-#endif /* STM8_SERIAL_USE_UART2 */
+#endif /* STM8S_SERIAL_USE_UART2 */
 
-#if STM8_SERIAL_USE_UART3 || defined(__DOXYGEN__)
+#if STM8S_SERIAL_USE_UART3 || defined(__DOXYGEN__)
 /**
  * @brief   IRQ 20 service routine.
  *
@@ -343,7 +343,7 @@ CH_IRQ_HANDLER(21) {
 
   CH_IRQ_EPILOGUE();
 }
-#endif /* STM8_SERIAL_USE_UART3 */
+#endif /* STM8S_SERIAL_USE_UART3 */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -356,19 +356,19 @@ CH_IRQ_HANDLER(21) {
  */
 void sd_lld_init(void) {
 
-#if STM8_SERIAL_USE_UART1
+#if STM8S_SERIAL_USE_UART1
   sdObjectInit(&SD1, NULL, notify1);
   CLK->PCKENR1 |= CLK_PCKENR1_UART1;        /* PCKEN12, clock source.       */
   UART1->CR1 = UART1_CR1_UARTD;             /* UARTD (low power).           */
 #endif
 
-#if STM8_SERIAL_USE_UART2
+#if STM8S_SERIAL_USE_UART2
   sdObjectInit(&SD2, NULL, notify2);
   CLK->PCKENR1 |= CLK_PCKENR1_UART2;        /* PCKEN13, clock source.       */
   UART2->CR1 = UART2_CR1_UARTD;             /* UARTD (low power).           */
 #endif
 
-#if STM8_SERIAL_USE_UART3
+#if STM8S_SERIAL_USE_UART3
   sdObjectInit(&SD3, NULL, notify3);
   CLK->PCKENR1 |= CLK_PCKENR1_UART3;        /* PCKEN13, clock source.       */
   UART3->CR1 = UART3_CR1_UARTD;             /* UARTD (low power).           */
@@ -390,19 +390,19 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
   if (config == NULL)
     config = &default_config;
 
-#if STM8_SERIAL_USE_UART1
+#if STM8S_SERIAL_USE_UART1
   if (&SD1 == sdp) {
     uart1_init(config);
     return;
   }
 #endif
-#if STM8_SERIAL_USE_UART2
+#if STM8S_SERIAL_USE_UART2
   if (&SD2 == sdp) {
     uart2_init(config);
     return;
   }
 #endif
-#if STM8_SERIAL_USE_UART3
+#if STM8S_SERIAL_USE_UART3
   if (&SD3 == sdp) {
     uart3_init(config);
     return;
@@ -421,19 +421,19 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
  */
 void sd_lld_stop(SerialDriver *sdp) {
 
-#if STM8_SERIAL_USE_UART1
+#if STM8S_SERIAL_USE_UART1
   if (&SD1 == sdp) {
     uart1_deinit();
     return;
   }
 #endif
-#if STM8_SERIAL_USE_UART2
+#if STM8S_SERIAL_USE_UART2
   if (&SD2 == sdp) {
     uart2_deinit();
     return;
   }
 #endif
-#if STM8_SERIAL_USE_UART3
+#if STM8S_SERIAL_USE_UART3
   if (&SD3 == sdp) {
     uart3_deinit();
     return;

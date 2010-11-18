@@ -18,8 +18,8 @@
 */
 
 /**
- * @file    STM8/pal_lld.c
- * @brief   STM8 GPIO low level driver code.
+ * @file    STM8S/pal_lld.c
+ * @brief   STM8S GPIO low level driver code.
  *
  * @addtogroup PAL
  * @{
