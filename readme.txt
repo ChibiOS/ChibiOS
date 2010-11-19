@@ -31,8 +31,8 @@
   |  |  |  +--MSP430/   - Drivers for MSP430 platform.
   |  |  |  +--SPC56x/   - Drivers for SPC56x/MPC563xx platforms.
   |  |  |  +--STM32/    - Drivers for STM32 platform.
-  |  |  |  +--STM8S/    - Drivers for STM8S platform.
   |  |  |  +--STM8L/    - Drivers for STM8L platform.
+  |  |  |  +--STM8S/    - Drivers for STM8S platform.
   |  |  |  +--Posix/    - Drivers for x86 Linux/OSX simulator platform.
   |  |  |  +--Win32/    - Drivers for x86 Win32 simulator platform.
   |  |  +--templates/   - Driver template files.
@@ -40,7 +40,7 @@
   |  +--ports/          - Port files for the various architectures.
   |  |  +--GCC/         - Ports for the GCC compiler.
   |  |  |  +--ARM/      - Port files for ARM7 and ARM9 architectures.
-  |  |  |  +--ARMCM3/   - Port files for ARMCMx architectures (ARMv6/7-M).
+  |  |  |  +--ARMCMx/   - Port files for ARMCMx architectures (ARMv6/7-M).
   |  |  |  +--PPC/      - Port files for PowerPC architecture.
   |  |  |  +--AVR/      - Port files for AVR architecture.
   |  |  |  +--MSP430/   - Port files for MSP430 architecture.
@@ -65,13 +65,17 @@
 *****************************************************************************
 
 *** 2.1.4 ***
+- NEW: ARM7 port reorganization following the same pattern of the ARMCMx
+  one, on now the port is also supports the ARM9 architecture (but not
+  tested yet hardware). Removed the dependencies between the port layer
+  and the vendors-provided headers.
 - NEW: Initial STM8L support: HAL, PAL and Serial drivers.
 - NEW: Added demo for the ST STM8L-Discovery kit.
 - NEW: Added support for the STM32 Value Line to the HAL.
 - NEW: Added demo for the ST STM32VL-Discovery kit.
-- CHANGE: Improved the STM32 HAL to support multiple sub-families, now it
-  is possible to test the presence of any single peripheral into the
-  specified STM32 device.
+- CHANGE: Improved the STM32 HAL to support multiple sub-families, at compile
+  time now it is possible to test the presence of any single peripheral into
+  the specified STM32 device.
 - CHANGE: Separated dynamic threads code into dedicated files: chdynamic.c
   and chdynamic.h.
 - CHANGE: Moved the declaration of the variable pal_default_config from
@@ -80,11 +84,11 @@
 - CHANGE: Removed the various assembler files for the STM32 interrupt
   vectors, now it is a single vectors.c file.
 - CHANGE: Deleted ./os/ports/GCC/ARM.
-- CHANGE: Renamed ./os/ports/GCC/ARM7 in ./os/ports/GCC/ARM. Now the port is
-  meant for ARM9 too (requires more testing).
+- CHANGE: Renamed ./os/ports/GCC/ARM7 in ./os/ports/GCC/ARM.
 - CHANGE: Renamed ./os/hal/platforms/STM8 in ./os/hal/platforms/STM8S.
 - CHANGE: Renamed ./testhal/STM8 in ./testhal/STM8S.
 - Added SPI driver to the STM8S documentation, it was missing.
+- Improved documentation for the ARM and ARMCMx ports.
 
 *** 2.1.3 ***
 - FIX: Fixed broken STM32 synchronous UART driver (bug 3100946).

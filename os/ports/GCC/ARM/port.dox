@@ -18,41 +18,42 @@
 */
 
 /**
- * @defgroup ARM7 ARM7
- * @details ARM7 port for the GCC compiler.
+ * @defgroup ARM ARM7/9
+ * @details ARM7/9 port for the GCC compiler.
  *
- * @section ARM7_INTRO Introduction
- * The ARM7-GCC port supports the ARM7 code in the following three modes:
- * - Pure ARM mode, this is the preferred mode for code speed. The code size
- *   is larger however. This mode is enabled when all the modules are compiled
- *   in ARM mode, see the Makefiles.
- * - Pure THUMB mode, this is the preferred mode for code size. In this mode
- *   the execution speed is slower than the ARM mode. This mode is enabled
- *   when all the modules are compiled in THUMB mode, see the Makefiles.
- * - Interworking mode, when in the system there are ARM modules mixed with
- *   THUMB modules then the interworking compiler option is enabled. This is
- *   usually the slowest mode and the code size is not as good as in pure
- *   THUMB mode.
+ * @section ARM_INTRO Introduction
+ * The ARM7/9-GCC port supports the ARM7/9 core in the following three modes:
+ * - <b>Pure ARM</b> mode, this is the preferred mode for code speed, this
+ *   mode increases the memory footprint however. This mode is enabled when
+ *   all the modules are compiled in ARM mode, see the Makefiles.
+ * - <b>Pure THUMB</b> mode, this is the preferred mode for code size. In
+ *   this mode the execution speed is slower than the ARM mode. This mode
+ *   is enabled when all the modules are compiled in THUMB mode, see the
+ *   Makefiles.
+ * - <b>Interworking</b> mode, when in the system there are ARM modules mixed
+ *   with THUMB modules then the interworking compiler option is enabled.
+ *   This is usually the slowest mode and the code size is not as good as
+ *   in pure THUMB mode.
  * .
- * @section ARM7_STATES Mapping of the System States in the ARM7 port
- * The ChibiOS/RT logical system states are mapped as follow in the ARM7
+ * @section ARM_STATES Mapping of the System States in the ARM7/9 port
+ * The ChibiOS/RT logical system states are mapped as follow in the ARM7/9
  * port:
  * - <b>Init</b>. This state is represented by the startup code and the
  *   initialization code before @p chSysInit() is executed. It has not a
  *   special hardware state associated, usually the CPU goes through several
  *   hardware states during the startup phase.
  * - <b>Normal</b>. This is the state the system has after executing
- *   @p chSysInit(). In this state the ARM7TDMI has both the interrupt sources
+ *   @p chSysInit(). In this state the CPU has both the interrupt sources
  *   (IRQ and FIQ) enabled and is running in ARM System Mode.
  * - <b>Suspended</b>. In this state the IRQ sources are disabled but the FIQ
  *   sources are served, the core is running in ARM System Mode.
  * - <b>Disabled</b>. Both the IRQ and FIQ sources are disabled, the core is
  *   running in ARM System Mode.
- * - <b>Sleep</b>. The ARM7 code does not have any built-in low power mode but
- *   there are clock stop modes implemented in custom ways by the various
- *   silicon vendors. This state is implemented in each microcontroller support
- *   code in a different way, the core is running (or freezed...) in ARM
- *   System Mode.
+ * - <b>Sleep</b>. ARM7/9 cores does not have an explicit built-in low power
+ *   mode but there are clock stop modes implemented in custom ways by the
+ *   various silicon vendors. This state is implemented in each microcontroller
+ *   support code in a different way, the core is running (or freezed...)
+ *   in ARM System Mode.
  * - <b>S-Locked</b>. IRQ sources disabled, core running in ARM System Mode.
  * - <b>I-Locked</b>. IRQ sources disabled, core running in ARM IRQ Mode. Note
  *   that this state is not different from the SRI state in this port, the
@@ -63,14 +64,14 @@
  * - <b>Serving Fast Interrupt</b>. IRQ and FIQ sources disabled, core running
  *   in ARM FIQ Mode.
  * - <b>Serving Non-Maskable Interrupt</b>. There are no asynchronous NMI
- *   sources in ARM7 architecture but synchronous SVC, ABT and UND exception
+ *   sources in ARM7/9 architecture but synchronous SVC, ABT and UND exception
  *   handlers can be seen as belonging to this category.
  * - <b>Halted</b>. Implemented as an infinite loop after disabling both IRQ
  *   and FIQ sources. The ARM state is whatever the processor was running when
  *   @p chSysHalt() was invoked.
  * .
- * @section ARM7_NOTES The ARM7 port notes
- * The ARM7 port is organized as follow:
+ * @section ARM_NOTES The ARM7/9 port notes
+ * The ARM7/9 port is organized as follow:
  * - The @p main() function is invoked in system mode.
  * - Each thread has a private user/system stack, the system has a single
  *   interrupt stack where all the interrupts are processed.
@@ -83,18 +84,18 @@
  * - Other modes are not preempt-able because the system code assumes the
  *   threads running in system mode. When running in supervisor or other
  *   modes make sure that the interrupts are globally disabled.
- * - Interrupts nesting is not supported in the ARM7 code because their
+ * - Interrupts nesting is not supported in the ARM7/9 port because their
  *   implementation, even if possible, is not really efficient in this
  *   architecture.
  * - FIQ sources can preempt the kernel (by design) so it is not possible to
  *   invoke the kernel APIs from inside a FIQ handler. FIQ handlers are not
  *   affected by the kernel activity so there is not added jitter.
  * .
- * @section ARM7_IH ARM7 Interrupt Handlers
- * ARM7 Interrupt handlers do not save function-saved registers so you need to
- * make sure your code saves them or does not use them (this happens
- * because in the ARM7 port all the OS interrupt handler functions are declared
- * naked).<br>
+ * @section ARM_IH ARM7/9 Interrupt Handlers
+ * In the current implementation the ARM7/9 Interrupt handlers do not save
+ * function-saved registers so you need to make sure your code saves them
+ * or does not use them (this happens because in the ARM7/9 port all the
+ * OS interrupt handler functions are declared naked).<br>
  * Function-trashed registers (R0-R3, R12, LR, SR) are saved/restored by the
  * system macros @p CH_IRQ_PROLOGUE() and @p CH_IRQ_EPILOGUE().<br>
  * The easiest way to ensure this is to just invoke a normal function from
@@ -136,8 +137,8 @@
  */
 
 /**
- * @defgroup ARM7_CONF Configuration Options
- * @details ARM7 specific configuration options. The ARM7 port allows some
+ * @defgroup ARM_CONF Configuration Options
+ * @details ARM7/9 specific configuration options. The ARM7/9 port allows some
  * architecture-specific configurations settings that can be overridden by
  * redefining them in @p chconf.h. Usually there is no need to change the
  * default values.
@@ -151,28 +152,33 @@
  *   The default for this value is @p 0x10 which should be a safe value, you
  *   can trim this down by defining the macro externally. This would save
  *   some valuable RAM space for each thread present in the system.<br>
- *   The default value is set into <b>./os/ports/GCC/ARM7/chcore.h</b>.
+ *   The default value is set into <b>./os/ports/GCC/ARM/chcore.h</b>.
  * - @p IDLE_THREAD_STACK_SIZE, stack area size to be assigned to the IDLE
  *   thread. Usually there is no need to change this value unless inserting
- *   code in the IDLE thread hook macro.
+ *   code in the IDLE thread using the @p IDLE_LOOP_HOOK hook macro.
+ * - @p ARM_ENABLE_WFI_IDLE, if set to @p TRUE enables the use of the
+ *   an implementation-specific clock stop mode from within the idle loop.
+ *   This option is defaulted to FALSE because it can create problems with
+ *   some debuggers. Setting this option to TRUE reduces the system power
+ *   requirements.
  * .
- * @ingroup ARM7
+ * @ingroup ARM
  */
 
 /**
- * @defgroup ARM7_CORE Core Port Implementation
- * @details ARM7 specific port code, structures and macros.
+ * @defgroup ARM_CORE Core Port Implementation
+ * @details ARM7/9 specific port code, structures and macros.
  *
- * @ingroup ARM7
+ * @ingroup ARM
  */
 
 /**
- * @defgroup ARM7_STARTUP Startup Support
- * @details ARM7 startup code support. ChibiOS/RT provides its own generic
- * startup file for the ARM7 port. Of course it is not mandatory to use it
+ * @defgroup ARM_STARTUP Startup Support
+ * @details ARM7/9 startup code support. ChibiOS/RT provides its own generic
+ * startup file for the ARM7/9 port. Of course it is not mandatory to use it
  * but care should be taken about the startup phase details.
  *
- * @section ARM7_STARTUP_1 Startup Process
+ * @section ARM_STARTUP_1 Startup Process
  * The startup process, as implemented, is the following:
  * -# The stacks are initialized by assigning them the sizes defined in the
  *    linker script (usually named @p ch.ld). Stack areas are allocated from
@@ -191,7 +197,7 @@
  * -# Should the @p main() function return a branch is performed to the weak
  *    symbol MainExitHandler. The default code is an endless empty loop.
  * .
- * @section ARM7_STARTUP_2 Expected linker symbols
+ * @section ARM_STARTUP_2 Expected linker symbols
  * The startup code starts at the symbol @p ResetHandler and expects the
  * following symbols to be defined in the linker script:
  * - @p __ram_end__ RAM end location +1.
@@ -208,6 +214,12 @@
  * - @p _bss_start BSS start location.
  * - @p _bss_end BSS end location +1.
  * .
- * @ingroup ARM7
- * @file ARM7/crt0.s Startup code.
+ * @ingroup ARM
+ */
+
+/**
+ * @defgroup ARM_SPECIFIC Specific Implementations
+ * @details Platform-specific port code.
+ *
+ * @ingroup ARM
  */

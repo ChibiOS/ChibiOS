@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    ARM7/chtypes.h
- * @brief   ARM7 architecture port system types.
+ * @file    ARM/chtypes.h
+ * @brief   ARM7/9 architecture port system types.
  *
- * @addtogroup ARM7_CORE
+ * @addtogroup ARM_CORE
  * @{
  */
 

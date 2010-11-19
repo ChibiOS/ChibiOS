@@ -135,7 +135,7 @@
  *   structures.
  * - @p IDLE_THREAD_STACK_SIZE, stack area size to be assigned to the IDLE
  *   thread. Usually there is no need to change this value unless inserting
- *   code in the IDLE thread hook macro.
+ *   code in the IDLE thread using the @p IDLE_LOOP_HOOK hook macro.
  * - @p CORTEX_BASEPRI_KERNEL, this is the @p BASEPRI value for the kernel lock
  *   code. Code running at higher priority levels must not invoke any OS API.
  *   This setting is specific to the ARMv7-M architecture.
@@ -143,9 +143,9 @@
  * - @p CORTEX_PRIORITY_SVCALL, priority of the SVCALL handler.
  * - @p CORTEX_PRIORITY_PENDSV, priority of the PENDSV handler.
  * - @p CORTEX_ENABLE_WFI_IDLE, if set to @p TRUE enables the use of the
- *   @p <b>wfi</b> instruction from within the idle loop. This is defaulted to
- *   FALSE because it can create problems with some debuggers. Setting this
- *   option to TRUE reduces the system power requirements.
+ *   @p <b>wfi</b> instruction from within the idle loop. This option is
+ *   defaulted to FALSE because it can create problems with some debuggers.
+ *   Setting this option to TRUE reduces the system power requirements.
  * .
  * @ingroup ARMCMx
  */
@@ -216,6 +216,13 @@
 /**
  * @defgroup ARMCMx_NVIC NVIC Support
  * @details ARM Cortex-Mx NVIC support.
+ *
+ * @ingroup ARMCMx
+ */
+
+/**
+ * @defgroup ARMCMx_SPECIFIC Specific Implementations
+ * @details Platform-specific port code.
  *
  * @ingroup ARMCMx
  */

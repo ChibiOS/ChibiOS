@@ -18,7 +18,7 @@
 */
 
 /**
- * @defgroup STM8S STM8Sx Drivers
+ * @defgroup STM8S STM8S Drivers
  * @details This section describes all the supported drivers on the STM8S
  *          platform and the implementation details of the single drivers.
  *
@@ -44,7 +44,6 @@
  * @details The STM8S PAL driver uses the GPIO peripherals.
  *
  * @section stm8s_pal_1 Supported HW resources
- * - AFIO.
  * - GPIOA.
  * - GPIOB.
  * - GPIOC.

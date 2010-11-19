@@ -17,6 +17,29 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file    ARM/LPC214x/vectors.s
+ * @brief   Interrupt vectors for the LPC214x family.
+ *
+ * @defgroup ARM_LPC214x_VECTORS LPC214x Interrupt Vectors
+ * @ingroup ARM_SPECIFIC
+ * @details Interrupt vectors for the LPC214x family.
+ * @{
+ */
+
+#if defined(__DOXYGEN__)
+/**
+ * @brief   Unhandled exceptions handler.
+ * @details Any undefined exception vector points to this function by default.
+ *          This function simply stops the system into an infinite loop.
+ *
+ * @notapi
+ */
+void _unhandled_exception(void) {}
+#endif
+
+#if !defined(__DOXYGEN__)
+
 .section vectors
 .code 32
 .balign 4
@@ -68,4 +91,10 @@ AbortHandler:
 .weak FiqHandler
 FiqHandler:
 
-.loop:  b       .loop
+.global _unhandled_exception
+_unhandled_exception:
+        b       _unhandled_exception
+
+#endif
+
+/** @} */

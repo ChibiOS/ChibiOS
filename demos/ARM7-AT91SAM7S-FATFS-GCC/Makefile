@@ -47,7 +47,7 @@ CHIBIOS = ../..
 include $(CHIBIOS)/boards/OLIMEX_SAM7_P256/board.mk
 include $(CHIBIOS)/os/hal/platforms/AT91SAM7/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/ports/GCC/ARM7/port.mk
+include $(CHIBIOS)/os/ports/GCC/ARM/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 include $(CHIBIOS)/test/test.mk
 include $(CHIBIOS)/ext/fatfs/fatfs.mk
@@ -91,13 +91,13 @@ TCPPSRC =
 
 # List ASM source files here
 ASMSRC = $(PORTASM) \
-         $(CHIBIOS)/os/ports/GCC/ARM7/AT91SAM7/vectors.s
+         $(CHIBIOS)/os/ports/GCC/ARM/AT91SAM7/vectors.s
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
          $(FATFSINC) \
          $(CHIBIOS)/os/various \
-         $(CHIBIOS)/os/ports/GCC/ARM7/AT91SAM7
+         $(CHIBIOS)/os/ports/GCC/ARM/AT91SAM7
 
 #
 # Project, sources and paths

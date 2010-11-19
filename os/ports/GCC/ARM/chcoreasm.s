@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    ARM7/chcoreasm.s
- * @brief   ARM7 architecture port low level code.
+ * @file    ARM/chcoreasm.s
+ * @brief   ARM7/9 architecture port low level code.
  *
- * @addtogroup ARM7_CORE
+ * @addtogroup ARM_CORE
  * @{
  */
 

@@ -34,10 +34,10 @@
 /* Port constants.                                                           */
 /*===========================================================================*/
 
-#define CORTEX_M0               0       /**< @brief Cortex-M0 variant.      */
-#define CORTEX_M1               1       /**< @brief Cortex-M1 variant.      */
-#define CORTEX_M3               3       /**< @brief Cortex-M3 variant.      */
-#define CORTEX_M4               4       /**< @brief Cortex-M4 variant.      */
+#define CORTEX_M0                   0   /**< @brief Cortex-M0 variant.      */
+#define CORTEX_M1                   1   /**< @brief Cortex-M1 variant.      */
+#define CORTEX_M3                   3   /**< @brief Cortex-M3 variant.      */
+#define CORTEX_M4                   4   /**< @brief Cortex-M4 variant.      */
 
 /* Inclusion of the Cortex-Mx implementation specific parameters.*/
 #include "cmparams.h"
@@ -57,26 +57,26 @@
 /**
  * @brief   Total priority levels.
  */
-#define CORTEX_PRIORITY_LEVELS  (1 << CORTEX_PRIORITY_BITS)
+#define CORTEX_PRIORITY_LEVELS      (1 << CORTEX_PRIORITY_BITS)
 
 /**
  * @brief   Minimum priority level.
  * @details This minimum priority level is calculated from the number of
  *          priority bits supported by the specific Cortex-Mx implementation.
  */
-#define CORTEX_MINIMUM_PRIORITY (CORTEX_PRIORITY_LEVELS - 1)
+#define CORTEX_MINIMUM_PRIORITY     (CORTEX_PRIORITY_LEVELS - 1)
 
 /**
  * @brief   Maximum priority level.
  * @details The maximum allowed priority level is always zero.
  */
-#define CORTEX_MAXIMUM_PRIORITY 0
+#define CORTEX_MAXIMUM_PRIORITY     0
 
 /**
  * @brief   Disabled value for BASEPRI register.
  * @note    ARMv7-M architecture only.
  */
-#define CORTEX_BASEPRI_DISABLED 0
+#define CORTEX_BASEPRI_DISABLED     0
 
 /*===========================================================================*/
 /* Port macros.                                                              */
@@ -91,7 +91,8 @@
 /**
  * @brief   Priority level to priority mask conversion macro.
  */
-#define CORTEX_PRIORITY_MASK(n) ((n) << (8 - CORTEX_PRIORITY_BITS))
+#define CORTEX_PRIORITY_MASK(n)                                             \
+  ((n) << (8 - CORTEX_PRIORITY_BITS))
 
 /*===========================================================================*/
 /* Port configurable parameters.                                             */
@@ -101,7 +102,7 @@
  * @brief   Enables the use of the WFI instruction in the idle thread loop.
  */
 #ifndef CORTEX_ENABLE_WFI_IDLE
-#define CORTEX_ENABLE_WFI_IDLE  FALSE
+#define CORTEX_ENABLE_WFI_IDLE      FALSE
 #endif
 
 /**
@@ -110,7 +111,7 @@
  *          level in the middle of the numeric priorities range.
  */
 #ifndef CORTEX_PRIORITY_SYSTICK
-#define CORTEX_PRIORITY_SYSTICK (CORTEX_PRIORITY_LEVELS >> 1)
+#define CORTEX_PRIORITY_SYSTICK     (CORTEX_PRIORITY_LEVELS >> 1)
 #else
 /* If it is externally redefined then better perform a validity check on it.*/
 #if !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SYSTICK)
@@ -128,7 +129,7 @@
  *          to user in the ARMv6-M port.
  */
 #ifndef CORTEX_PRIORITY_SVCALL
-#define CORTEX_PRIORITY_SVCALL  (CORTEX_MAXIMUM_PRIORITY + 1)
+#define CORTEX_PRIORITY_SVCALL      (CORTEX_MAXIMUM_PRIORITY + 1)
 #else
 /* If it is externally redefined then better perform a validity check on it.*/
 #if !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SVCALL)
@@ -146,7 +147,7 @@
  *          the minimum priority level.
  */
 #ifndef CORTEX_PRIORITY_PENDSV
-#define CORTEX_PRIORITY_PENDSV  CORTEX_MINIMUM_PRIORITY
+#define CORTEX_PRIORITY_PENDSV      CORTEX_MINIMUM_PRIORITY
 #else
 /* If it is externally redefined then better perform a validity check on it.*/
 #if !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_PENDSV)
@@ -161,7 +162,8 @@
  * @note    ARMv7-M architecture only.
  */
 #ifndef CORTEX_BASEPRI_KERNEL
-#define CORTEX_BASEPRI_KERNEL   CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL+1)
+#define CORTEX_BASEPRI_KERNEL                                               \
+  CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL+1)
 #endif
 
 /**
@@ -172,7 +174,7 @@
  * @note    Allowed values are 32 or 64.
  */
 #ifndef CORTEX_STACK_ALIGNMENT
-#define CORTEX_STACK_ALIGNMENT  64
+#define CORTEX_STACK_ALIGNMENT      64
 #endif
 
 /*===========================================================================*/
@@ -204,7 +206,7 @@
  *          - "ARMv7-ME".
  *          .
  */
-#define CH_ARCHITECTURE_NAME    "ARMvx-M"
+#define CH_ARCHITECTURE_NAME        "ARMvx-M"
 
 /**
  * @brief   Name of the architecture variant (optional).
@@ -216,24 +218,24 @@
  *          - "Cortex-M4"
  *          .
  */
-#define CH_CORE_VARIANT_NAME    "Cortex-Mx"
+#define CH_CORE_VARIANT_NAME        "Cortex-Mx"
 
 #elif CORTEX_MODEL == CORTEX_M4
 #define CH_ARCHITECTURE_ARM_v7M
-#define CH_ARCHITECTURE_NAME    "ARMv7-ME"
-#define CH_CORE_VARIANT_NAME    "Cortex-M4"
+#define CH_ARCHITECTURE_NAME        "ARMv7-ME"
+#define CH_CORE_VARIANT_NAME        "Cortex-M4"
 #elif CORTEX_MODEL == CORTEX_M3
 #define CH_ARCHITECTURE_ARM_v7M
-#define CH_ARCHITECTURE_NAME    "ARMv7-M"
-#define CH_CORE_VARIANT_NAME    "Cortex-M3"
+#define CH_ARCHITECTURE_NAME        "ARMv7-M"
+#define CH_CORE_VARIANT_NAME        "Cortex-M3"
 #elif CORTEX_MODEL == CORTEX_M1
 #define CH_ARCHITECTURE_ARM_v6M
-#define CH_ARCHITECTURE_NAME    "ARMv6-M"
-#define CH_CORE_VARIANT_NAME    "Cortex-M1"
+#define CH_ARCHITECTURE_NAME        "ARMv6-M"
+#define CH_CORE_VARIANT_NAME        "Cortex-M1"
 #elif CORTEX_MODEL == CORTEX_M0
 #define CH_ARCHITECTURE_ARM_v6M
-#define CH_ARCHITECTURE_NAME    "ARMv6-M"
-#define CH_CORE_VARIANT_NAME    "Cortex-M0"
+#define CH_ARCHITECTURE_NAME        "ARMv6-M"
+#define CH_CORE_VARIANT_NAME        "Cortex-M0"
 #endif
 
 /*===========================================================================*/

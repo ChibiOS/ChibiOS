@@ -22,7 +22,7 @@
  * @brief   ARM Cortex-M3 LPC13xx Specific Parameters.
  *
  * @defgroup ARMCMx_LPC13xx LPC13xx Specific Parameters
- * @ingroup ARMCMx
+ * @ingroup ARMCMx_SPECIFIC
  * @details This file contains the Cortex-M3 specific parameters for the
  *          LPC13xx platform.
  * @{

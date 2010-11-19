@@ -26,6 +26,7 @@
  */
 
 #include "ch.h"
+#include "hal.h"
 
 /**
  * @brief   VIC Initialization.

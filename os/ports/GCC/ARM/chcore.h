@@ -18,38 +18,106 @@
 */
 
 /**
- * @file    ARM7/chcore.h
- * @brief   ARM7 architecture port macros and structures.
+ * @file    ARM/chcore.h
+ * @brief   ARM7/9 architecture port macros and structures.
  *
- * @addtogroup ARM7_CORE
+ * @addtogroup ARM_CORE
  * @{
  */
 
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
+/*===========================================================================*/
+/* Port constants.                                                           */
+/*===========================================================================*/
+
+/* Core variants identifiers.*/
+#define ARM_CORE_ARM7TDMI           7   /**< ARM77TDMI core identifier.     */
+#define ARM_CORE_ARM9               9   /**< ARM9 core identifier.          */
+
+/* Inclusion of the ARM implementation specific parameters.*/
+#include "armparams.h"
+
+/* ARM core check, only ARM7TDMI and ARM9 supported right now.*/
+#if (ARM_CORE == ARM_CORE_ARM7TDMI) || (ARM_CORE == ARM_CORE_ARM9)
+#else
+#error "unknown or unsupported ARM core"
+#endif
+
+/*===========================================================================*/
+/* Port statically derived parameters.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Port macros.                                                              */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Port configurable parameters.                                             */
+/*===========================================================================*/
+
 /**
  * @brief   If enabled allows the idle thread to enter a low power mode.
  */
-#ifndef ENABLE_WFI_IDLE
-#define ENABLE_WFI_IDLE 0
+#ifndef ARM_ENABLE_WFI_IDLE
+#define ARM_ENABLE_WFI_IDLE         FALSE
 #endif
-#include <wfi.h>
+
+/*===========================================================================*/
+/* Port exported info.                                                       */
+/*===========================================================================*/
 
 /**
- * @brief   Macro defining the ARM7 architecture.
+ * @brief   Macro defining a generic ARM architecture.
  */
-#define CH_ARCHITECTURE_ARM7
+#define CH_ARCHITECTURE_ARM
+
+#if defined(__DOXYGEN__)
+/**
+ * @brief   Macro defining the specific ARM architecture.
+ * @note    This macro is for documentation only, the real name changes
+ *          depending on the selected architecture, the possible names are:
+ *          - CH_ARCHITECTURE_ARM7TDMI.
+ *          - CH_ARCHITECTURE_ARM9.
+ *          .
+ */
+#define CH_ARCHITECTURE_ARMx
 
 /**
  * @brief   Name of the implemented architecture.
+ * @note    The value is for documentation only, the real value changes
+ *          depending on the selected architecture, the possible values are:
+ *          - "ARM7".
+ *          - "ARM9".
+ *          .
  */
-#define CH_ARCHITECTURE_NAME "ARM"
+#define CH_ARCHITECTURE_NAME "ARMx"
 
 /**
  * @brief   Name of the architecture variant (optional).
+ * @note    The value is for documentation only, the real value changes
+ *          depending on the selected architecture, the possible values are:
+ *          - "ARM7TDMI"
+ *          - "ARM9"
+ *          .
  */
-#define CH_CORE_VARIANT_NAME "ARM7TDMI"
+#define CH_CORE_VARIANT_NAME "ARMxy"
+
+#elif ARM_CORE == ARM_CORE_ARM7TDMI
+#define CH_ARCHITECTURE_ARM7TDMI
+#define CH_ARCHITECTURE_NAME        "ARM7"
+#define CH_CORE_VARIANT_NAME        "ARM7TDMI"
+
+#elif ARM_MODEL == ARM_VARIANT_ARM9
+#define CH_ARCHITECTURE_ARM9
+#define CH_ARCHITECTURE_NAME        "ARM9"
+#define CH_CORE_VARIANT_NAME        "ARM9"
+#endif
+
+/*===========================================================================*/
+/* Port implementation part (common).                                        */
+/*===========================================================================*/
 
 /**
  * @brief   32 bits stack and memory alignment enforcement.

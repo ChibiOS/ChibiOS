@@ -22,7 +22,7 @@
  * @brief   ARM Cortex-M3 parameters for the STM32.
  *
  * @defgroup ARMCMx_STM32 STM32 Specific Parameters
- * @ingroup ARMCMx
+ * @ingroup ARMCMx_SPECIFIC
  * @details This file contains the Cortex-M3 specific parameters for the
  *          STM32 platform.
  * @{

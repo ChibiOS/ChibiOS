@@ -22,7 +22,7 @@
  * @brief   Interrupt vectors for the STM32 family.
  *
  * @defgroup ARMCMx_STM32_VECTORS STM32 Interrupt Vectors
- * @ingroup ARMCMx
+ * @ingroup ARMCMx_SPECIFIC
  * @details Interrupt vectors for the STM32 family.
  * @{
  */

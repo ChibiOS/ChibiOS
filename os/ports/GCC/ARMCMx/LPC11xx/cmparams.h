@@ -22,7 +22,7 @@
  * @brief   ARM Cortex-M0 LPC11xx Specific Parameters.
  *
  * @defgroup ARMCMx_LPC11xx LPC11xx Specific Parameters
- * @ingroup ARMCMx
+ * @ingroup ARMCMx_SPECIFIC
  * @details This file contains the Cortex-M0 specific parameters for the
  *          LPC11xx platform.
  * @{

@@ -45,7 +45,6 @@
  * @details The STM8L PAL driver uses the GPIO peripherals.
  *
  * @section stm8l_pal_1 Supported HW resources
- * - AFIO.
  * - GPIOA.
  * - GPIOB.
  * - GPIOC.

@@ -47,7 +47,7 @@ CHIBIOS = ../..
 include $(CHIBIOS)/boards/OLIMEX_LPC_P2148/board.mk
 include $(CHIBIOS)/os/hal/platforms/LPC214x/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/ports/GCC/ARM7/port.mk
+include $(CHIBIOS)/os/ports/GCC/ARM/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 include $(CHIBIOS)/test/test.mk
 
@@ -87,12 +87,12 @@ TCPPSRC =
 
 # List ASM source files here
 ASMSRC = $(PORTASM) \
-         $(CHIBIOS)/os/ports/GCC/ARM7/LPC214x/vectors.s
+         $(CHIBIOS)/os/ports/GCC/ARM/LPC214x/vectors.s
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
          $(CHIBIOS)/os/various \
-         $(CHIBIOS)/os/ports/GCC/ARM7/LPC214x
+         $(CHIBIOS)/os/ports/GCC/ARM/LPC214x
 
 #
 # Project, sources and paths
