@@ -28,14 +28,14 @@
 #define _BOARD_H_
 
 /*
- * Setup for the Olimex LCP-P2148 proto board.
+ * Setup for the Olimex LPC-P2148 proto board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_OLIMEX_LCP_P2148
-#define BOARD_NAME "Olimex LCP-P2148"
+#define BOARD_OLIMEX_LPC_P2148
+#define BOARD_NAME "Olimex LPC-P2148"
 
 /*
  * The following values are implementation dependent. You may change them in
