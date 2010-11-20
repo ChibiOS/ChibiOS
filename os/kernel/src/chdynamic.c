@@ -122,9 +122,12 @@ Thread *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
     return NULL;
   
 #if CH_DBG_FILL_THREADS
-  memfill((uint8_t *)wsp, (uint8_t *)wsp + sizeof(Thread), THREAD_FILL_VALUE);
-  memfill((uint8_t *)wsp + sizeof(Thread),
-          (uint8_t *)wsp + size, STACK_FILL_VALUE);
+  _thread_memfill((uint8_t *)wsp,
+                  (uint8_t *)wsp + sizeof(Thread),
+                  THREAD_FILL_VALUE);
+  _thread_memfill((uint8_t *)wsp + sizeof(Thread),
+                  (uint8_t *)wsp + size,
+                  STACK_FILL_VALUE);
 #endif
   
   chSysLock();
@@ -170,9 +173,12 @@ Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
     return NULL;
   
 #if CH_DBG_FILL_THREADS
-  memfill((uint8_t *)wsp, (uint8_t *)wsp + sizeof(Thread), THREAD_FILL_VALUE);
-  memfill((uint8_t *)wsp + sizeof(Thread),
-          (uint8_t *)wsp + mp->mp_object_size, STACK_FILL_VALUE);
+  _thread_memfill((uint8_t *)wsp,
+                  (uint8_t *)wsp + sizeof(Thread),
+                  THREAD_FILL_VALUE);
+  _thread_memfill((uint8_t *)wsp + sizeof(Thread),
+                  (uint8_t *)wsp + mp->mp_object_size,
+                  STACK_FILL_VALUE);
 #endif
 
   chSysLock();
