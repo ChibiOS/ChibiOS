@@ -24,11 +24,11 @@
 #include "web/webthread.h"
 
 static WORKING_AREA(waWebThread, 1024);
+
 static WORKING_AREA(waThread1, 128);
+static msg_t Thread1(void *p) {
 
-static msg_t Thread1(void *arg) {
-
-  (void)arg;
+  (void)p;
   while (TRUE) {
     palSetPad(IOPORT2, PIOB_LCD_BL);
     chThdSleepMilliseconds(100);

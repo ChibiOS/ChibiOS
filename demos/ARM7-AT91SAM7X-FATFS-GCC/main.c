@@ -230,7 +230,7 @@ static const ShellConfig shell_cfg1 = {
 /*
  * LCD blinker thread, times are in milliseconds.
  */
-static WORKING_AREA(waThread1, 64);
+static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *p) {
 
   (void)p;

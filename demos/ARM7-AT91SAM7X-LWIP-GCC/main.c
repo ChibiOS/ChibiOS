@@ -24,7 +24,7 @@
 #include "lwip/lwipthread.h"
 #include "web/web.h"
 
-static WORKING_AREA(waThread1, 64);
+static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *p) {
 
   (void)p;

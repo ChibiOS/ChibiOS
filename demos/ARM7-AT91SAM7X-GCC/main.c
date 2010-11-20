@@ -21,7 +21,7 @@
 #include "hal.h"
 #include "test.h"
 
-static WORKING_AREA(waThread1, 64);
+static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *p) {
 
   (void)p;
