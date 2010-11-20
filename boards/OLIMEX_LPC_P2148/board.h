@@ -21,7 +21,7 @@
 #define _BOARD_H_
 
 /*
- * Setup for the Olimex LCP-P2148 proto board.
+ * Setup for the Olimex LPC-P2148 proto board.
  */
 
 /*
