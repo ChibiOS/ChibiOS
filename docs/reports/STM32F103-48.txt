@@ -5,11 +5,11 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.2unstable
+*** Kernel:       2.1.4unstable
 *** GCC Version:  4.5.1
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
-*** Platform:     STM32 MD
+*** Platform:     STM32 Performance Line Medium Density
 *** Test Board:   Olimex STM32-P103
 
 ----------------------------------------------------------------------------
@@ -98,7 +98,7 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 186214 msgs/S, 372428 ctxswc/S
+--- Score : 186215 msgs/S, 372430 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
@@ -122,7 +122,7 @@ Settings: SYSCLK=48, ACR=0x11 (1 wait state)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 46508 reschedules/S, 279048 ctxswc/S
+--- Score : 46509 reschedules/S, 279054 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
