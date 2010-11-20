@@ -58,6 +58,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.0.7 ***
+- FIX: Fixed defective event wait functions with timeout (bug 3113443).
+
 *** 2.0.6 ***
 - FIX: Fixed typo in memstreams.h (bug 3089567).
 - FIX: Fixed wrong macro check in LPC214x and AT91SAM7 serial drivers (bug

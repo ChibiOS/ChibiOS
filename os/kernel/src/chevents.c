@@ -349,11 +349,15 @@ eventmask_t chEvtWaitOneTimeout(eventmask_t mask, systime_t time) {
   chSysLock();
 
   if ((m = (ctp->p_epending & mask)) == 0) {
-    if (TIME_IMMEDIATE == time)
+    if (TIME_IMMEDIATE == time) {
+      chSysUnlock();
       return (eventmask_t)0;
+    }
     ctp->p_u.ewmask = mask;
-    if (chSchGoSleepTimeoutS(THD_STATE_WTOREVT, time) < RDY_OK)
+    if (chSchGoSleepTimeoutS(THD_STATE_WTOREVT, time) < RDY_OK) {
+      chSysUnlock();
       return (eventmask_t)0;
+    }
     m = ctp->p_epending & mask;
   }
   m &= -m;
@@ -386,11 +390,15 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t time) {
   chSysLock();
 
   if ((m = (ctp->p_epending & mask)) == 0) {
-    if (TIME_IMMEDIATE == time)
+    if (TIME_IMMEDIATE == time) {
+      chSysUnlock();
       return (eventmask_t)0;
+    }
     ctp->p_u.ewmask = mask;
-    if (chSchGoSleepTimeoutS(THD_STATE_WTOREVT, time) < RDY_OK)
+    if (chSchGoSleepTimeoutS(THD_STATE_WTOREVT, time) < RDY_OK) {
+      chSysUnlock();
       return (eventmask_t)0;
+    }
     m = ctp->p_epending & mask;
   }
   ctp->p_epending &= ~m;
@@ -419,11 +427,15 @@ eventmask_t chEvtWaitAllTimeout(eventmask_t mask, systime_t time) {
   chSysLock();
 
   if ((ctp->p_epending & mask) != mask) {
-    if (TIME_IMMEDIATE == time)
+    if (TIME_IMMEDIATE == time) {
+      chSysUnlock();
       return (eventmask_t)0;
+    }
     ctp->p_u.ewmask = mask;
-    if (chSchGoSleepTimeoutS(THD_STATE_WTANDEVT, time) < RDY_OK)
+    if (chSchGoSleepTimeoutS(THD_STATE_WTANDEVT, time) < RDY_OK) {
+      chSysUnlock();
       return (eventmask_t)0;
+    }
   }
   ctp->p_epending &= ~mask;
 
