@@ -28,10 +28,6 @@
  * @{
  */
 
-/*
- *
- */
-
 #ifndef _HALCONF_H_
 #define _HALCONF_H_
 
