@@ -5,7 +5,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.0.6
+*** Kernel:       2.0.7
 *** GCC Version:  4.5.1
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
