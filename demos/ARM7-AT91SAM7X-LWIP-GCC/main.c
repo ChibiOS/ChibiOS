@@ -25,14 +25,14 @@
 #include "web/web.h"
 
 static WORKING_AREA(waThread1, 64);
-static msg_t Thread1(void *arg) {
+static msg_t Thread1(void *p) {
 
-  (void)arg;
+  (void)p;
   while (TRUE) {
-    palClearPad(IOPORT2, PIOB_LCD_BL);
-    chThdSleepMilliseconds(900);
     palSetPad(IOPORT2, PIOB_LCD_BL);
     chThdSleepMilliseconds(100);
+    palClearPad(IOPORT2, PIOB_LCD_BL);
+    chThdSleepMilliseconds(900);
   }
   return 0;
 }
