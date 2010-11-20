@@ -5,12 +5,12 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.2unstable
+*** Kernel:       2.1.4unstable
 *** GCC Version:  4.5.1
-*** Architecture: ARM
+*** Architecture: ARM7
 *** Core Variant: ARM7TDMI
 *** Platform:     LPC214x
-*** Test Board:   Olimex LCP-P2148
+*** Test Board:   Olimex LPC-P2148
 
 ----------------------------------------------------------------------------
 --- Test Case 1.1 (Threads, enqueuing test #1)

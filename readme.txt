@@ -65,6 +65,8 @@
 *****************************************************************************
 
 *** 2.1.4 ***
+- FIX: Fixed defective event wait functions with timeout (bug 3113443)
+  (backported to 2.0.7).
 - NEW: ARM7 port reorganization following the same pattern of the ARMCMx
   one, on now the port is also supports the ARM9 architecture (but not
   tested yet hardware). Removed the dependencies between the port layer
