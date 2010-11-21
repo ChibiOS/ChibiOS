@@ -141,7 +141,7 @@ typedef enum {
 #endif /* !ADC_USE_WAIT */
 
 /**
- * @brief   Common ISR code, half buffer full.
+ * @brief   Common ISR code, half buffer event.
  * @details This code handles the portable part of the ISR code:
  *          - Callback invocation.
  *          .
@@ -160,7 +160,7 @@ typedef enum {
 }
 
 /**
- * @brief   Common ISR code, full buffer full.
+ * @brief   Common ISR code, full buffer event.
  * @details This code handles the portable part of the ISR code:
  *          - Callback invocation.
  *          - Waiting thread wakeup, if any.
