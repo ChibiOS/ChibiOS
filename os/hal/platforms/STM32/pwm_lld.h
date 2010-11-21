@@ -262,12 +262,12 @@ struct PWMDriver {
  * @note    The calculated value must fit into an unsigned 16 bits integer.
  *
  * @param[in] pwmclk    PWM clock frequency in cycles
- * @param[in] pwmperiod PWM cycle period in microseconds
+ * @param[in] pwmperiod PWM cycle period in nanoseconds
  * @return              The value to be stored in the @p pc_arr field of the
  *                      @p PWMConfig structure.
  */
 #define PWM_COMPUTE_ARR(pwmclk, pwmperiod)                                  \
-  ((uint16_t)(((pwmclk) / (1000000 / (pwmperiod))) - 1))
+  ((uint16_t)(((pwmclk) / (1000000000 / (pwmperiod))) - 1))
 
 /**
  * @brief   Converts from fraction to pulse width.
