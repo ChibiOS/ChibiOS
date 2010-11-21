@@ -250,22 +250,24 @@ struct PWMDriver {
  *                      Please refer to the STM32 HAL driver documentation
  *                      and/or the STM32 Reference Manual for the right clock
  *                      source.
- * @param[in] nsec      PWM clock cycle time in nanoseconds
+ * @param[in] pwmclk    PWM clock frequency in cycles
  * @return              The value to be stored in the @p pc_psc field of the
  *                      @p PWMConfig structure.
  */
-#define PWM_COMPUTE_PSC(clksrc, nsec)                                       \
-  ((uint16_t)(((clksrc) / (1000000000 / (nsec))) - 1))
+#define PWM_COMPUTE_PSC(clksrc, pwmclk)                                     \
+  ((uint16_t)(((clksrc) / (pwmclk)) - 1))
 
 /**
  * @brief   PWM cycle period initialization utility.
  * @note    The calculated value must fit into an unsigned 16 bits integer.
  *
- * @param[in] clkperiod PWM clock period in nanoseconds
- * @param[in] pwmperiod PWM cycle period in nanoseconds
+ * @param[in] pwmclk    PWM clock frequency in cycles
+ * @param[in] pwmperiod PWM cycle period in microseconds
+ * @return              The value to be stored in the @p pc_arr field of the
+ *                      @p PWMConfig structure.
  */
-#define PWM_COMPUTE_ARR(clkperiod, pwmperiod)                               \
-  ((uint16_t)(((clkperiod) / (1000000000 / (pwmperiod))) - 1))
+#define PWM_COMPUTE_ARR(pwmclk, pwmperiod)                                  \
+  ((uint16_t)(((pwmclk) / (1000000 / (pwmperiod))) - 1))
 
 /**
  * @brief   Converts from degrees to pulse width.

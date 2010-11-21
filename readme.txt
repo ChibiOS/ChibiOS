@@ -65,6 +65,8 @@
 *****************************************************************************
 
 *** 2.1.4 ***
+- FIX: Fixed wrong initializer macros in STM32 PWM driver (bug 3114319).
+- FIX: Fixed syntax error in STM32 PWM driver(bug 3114266).
 - FIX: Fixed typo in board name (bug 3113574)(backported to 2.0.7).
 - FIX: Fixed defective event wait functions with timeout (bug 3113443)
   (backported to 2.0.7).
