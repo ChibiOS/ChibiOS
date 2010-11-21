@@ -8,9 +8,11 @@ The demo runs on an ST STM32VL-Discovery board.
 
 ** The Demo **
 
-The demo flashes the board LEDs using a thread, by pressing the button located
-on the board the test procedure is activated with output on the serial port
-COM1 (USART1).
+The demo shows how to use the ADC, PWM and SPI drivers using asynchronous
+APIs. The ADC samples two channels and modulates the PWM using the sample
+values. The sample data is also transmitted on the SPI port 1.
+By pressing the button located on the board the test procedure is activated
+with output on the serial port COM1 (USART1).
 
 ** Build Procedure **
 

@@ -23,20 +23,18 @@
 
 static void pwmpcb(PWMDriver *pwmp);
 static void adccb(ADCDriver *adcp, adcsample_t *buffer, size_t n);
+static void spicb(SPIDriver *spip);
 
+/* Total number of channels to be sampled by a single ADC operation.*/
 #define ADC_GRP1_NUM_CHANNELS   2
+
+/* Depth of the conversion buffer, channels are sampled four times each.*/
 #define ADC_GRP1_BUF_DEPTH      4
 
 /*
  * ADC samples buffer.
  */
-static adcsample_t samples[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH] =
-{
-  2048, 0,
-  2048, 0,
-  2048, 0,
-  2048, 0
-};
+static adcsample_t samples[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 
 /*
  * ADC conversion group.
@@ -53,7 +51,7 @@ static const ADCConversionGroup adcgrpcfg = {
   0,
   ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),
   0,
-  ADC_SQR3_SQ1_N(ADC_CHANNEL_SENSOR) | ADC_SQR3_SQ0_N(ADC_CHANNEL_IN10)
+  ADC_SQR3_SQ1_N(ADC_CHANNEL_IN10) | ADC_SQR3_SQ0_N(ADC_CHANNEL_SENSOR)
 };
 
 /*
@@ -64,6 +62,8 @@ static const ADCConfig adccfg = {
 
 /*
  * PWM configuration structure.
+ * Cyclic callback enabled, channels 3 and 4 enabled without callbacks,
+ * the active state is a logic one.
  */
 static PWMConfig pwmcfg = {
   pwmpcb,
@@ -79,6 +79,18 @@ static PWMConfig pwmcfg = {
 };
 
 /*
+ * SPI configuration structure.
+ * Maximum speed (12MHz), CPHA=0, CPOL=0, 16bits frames, MSb transmitted first.
+ * The slave select line is the pin GPIOA_SPI1NSS on the port GPIOA.
+ */
+static const SPIConfig spicfg = {
+  spicb,
+  GPIOA,
+  GPIOA_SPI1NSS,
+  SPI_CR1_DFF
+};
+
+/*
  * PWM cyclic callback. PWM channels are reprogrammed using a duty cycle
  * calculated as average of the last sampling operations.
  */
@@ -90,33 +102,60 @@ static void pwmpcb(PWMDriver *pwmp) {
   avg_ch1 = (samples[0] + samples[2] + samples[4] + samples[6]) / 4;
   avg_ch2 = (samples[1] + samples[3] + samples[5] + samples[7]) / 4;
   chSysLockFromIsr();
+
+  /* Changes the channels pulse width, the change will be effective
+     starting from the next cycle.*/
   pwmEnableChannelI(pwmp, 2, PWM_FRACTION_TO_WIDTH(pwmp, 4096, avg_ch1));
   pwmEnableChannelI(pwmp, 3, PWM_FRACTION_TO_WIDTH(pwmp, 4096, avg_ch2));
 
   /* Starts an asynchronous ADC conversion operation, the conversion
      will be executed in parallel to the current PWM cycle and will
      terminate before the next PWM cycle.*/
-//  adcStartConversionI(&ADCD1, &adcgrpcfg, samples, ADC_GRP1_BUF_DEPTH);
+  adcStartConversionI(&ADCD1, &adcgrpcfg, samples, ADC_GRP1_BUF_DEPTH);
   chSysUnlockFromIsr();
 }
 
 /*
  * ADC end conversion callback.
+ * The latest samples are transmitted into a single SPI transaction.
  */
 void adccb(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
 
-  (void)adcp; (void) buffer; (void) n;
+  (void) buffer; (void) n;
+  /* Note, only in the ADC_COMPLETE state because the ADC driver fires an
+     intermediate callback when the buffer is half full.*/
+  if (adcp->ad_state == ADC_COMPLETE) {
+    /* SPI slave selection and transmission start.*/
+    chSysLockFromIsr();
+    spiSelectI(&SPID1);
+    spiStartSendI(&SPID1, ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH, samples);
+    chSysUnlockFromIsr();
+  }
 }
 
 /*
- * Red and blue LEDs blinker thread, times are in milliseconds.
+ * SPI end transfer callback.
+ */
+static void spicb(SPIDriver *spip) {
+
+  /* On transfer end just releases the slave select line.*/
+  chSysLockFromIsr();
+  spiUnselectI(spip);
+  chSysUnlockFromIsr();
+}
+
+/*
+ * This is a periodic thread that does absolutely nothing except sleeping and
+ * increase a counter.
  */
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
+  static uint32_t seconds_counter;
 
   (void)arg;
   while (TRUE) {
-    chThdSleepMilliseconds(250);
+    chThdSleepMilliseconds(1000);
+    seconds_counter++;
   }
   return 0;
 }
@@ -136,6 +175,11 @@ int main(int argc, char **argv) {
   sdStart(&SD1, NULL);
 
   /*
+   * Initializes the SPI driver 1.
+   */
+  spiStart(&SPID1, &spicfg);
+
+  /*
    * Initializes the ADC driver 1.
    */
   adcStart(&ADCD1, &adccfg);
@@ -153,7 +197,7 @@ int main(int argc, char **argv) {
                   PAL_MODE_STM32_ALTERNATE_PUSHPULL);
 
   /*
-   * Creates the blinker thread.
+   * Creates the example thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
