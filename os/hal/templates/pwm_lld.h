@@ -138,6 +138,21 @@ struct PWMDriver {
 /*===========================================================================*/
 
 /**
+ * @brief   Converts from fraction to pulse width.
+ * @note    Be careful with rounding errors, this is integer math not magic.
+ *          You can specify tenths of thousandth but make sure you have the
+ *          proper hardware resolution by carefully choosing the clock source
+ *          and prescaler settings, see @p PWM_COMPUTE_PSC.
+ *
+ * @param[in] numerator numerator of the fraction
+ * @param[in] denominator percentage as an integer between 0 and numerator
+ * @return              The pulse width to be passed to @p pwmEnableChannel().
+ *
+ * @api
+ */
+#define PWM_FRACTION_TO_WIDTH(pwmp, numerator, denominator) 0
+
+/**
  * @brief   Converts from degrees to pulse width.
  * @note    Be careful with rounding errors, this is integer math not magic.
  *          You can specify hundredths of degrees but make sure you have the
@@ -150,7 +165,8 @@ struct PWMDriver {
  *
  * @api
  */
-#define PWM_DEGREES_TO_WIDTH(pwmp, degrees) 0
+#define PWM_DEGREES_TO_WIDTH(pwmp, degrees)                                 \
+  PWM_FRACTION_TO_WIDTH(pwmp, 36000, degrees)
 
 /**
  * @brief   Converts from percentage to pulse width.
@@ -165,7 +181,8 @@ struct PWMDriver {
  *
  * @api
  */
-#define PWM_PERCENTAGE_TO_WIDTH(pwmp, percentage) 0
+#define PWM_PERCENTAGE_TO_WIDTH(pwmp, percentage)                           \
+  PWM_FRACTION_TO_WIDTH(pwmp, 10000, percentage)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
