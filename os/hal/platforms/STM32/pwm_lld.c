@@ -87,9 +87,8 @@ static void stop_channels(PWMDriver *pwmp) {
   pwmp->pd_tim->CCR2 = 0;                   /* Comparator 2 disabled.       */
   pwmp->pd_tim->CCR3 = 0;                   /* Comparator 3 disabled.       */
   pwmp->pd_tim->CCR4 = 0;                   /* Comparator 4 disabled.       */
-  /* Channels forced to idle.*/
-  pwmp->pd_tim->CCMR1 = TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC2M_2;
-  pwmp->pd_tim->CCMR2 = TIM_CCMR2_OC3M_2 | TIM_CCMR2_OC4M_2;
+  pwmp->pd_tim->CCMR1 = 0;                  /* Channels 1 and 2 frozen.     */
+  pwmp->pd_tim->CCMR2 = 0;                  /* Channels 3 and 4 frozen.     */
 }
 
 #if STM32_PWM_USE_TIM2 || STM32_PWM_USE_TIM3 || STM32_PWM_USE_TIM4 ||       \
@@ -414,102 +413,106 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 }
 
 /**
- * @brief   Disables, enables or reprograms a PWM channel.
+ * @brief   Enables a PWM channel.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
- * @param[in] width     PWM pulse width as clock pulses number, note that
- *                      specifying zero disables the channel and enforces
- *                      the output to the idle state.
+ * @param[in] width     PWM pulse width as clock pulses number
  *
  * @notapi
  */
-void pwm_lld_set_channel(PWMDriver *pwmp,
-                         pwmchannel_t channel,
-                         pwmcnt_t width) {
+void pwm_lld_enable_channel(PWMDriver *pwmp,
+                            pwmchannel_t channel,
+                            pwmcnt_t width) {
 
-  if (width == 0) {
-    /* Channel disable mode.*/
-    pwmp->pd_enabled_channels &= ~(1 << channel);
+  switch (channel) {
+  case 0:
+    pwmp->pd_tim->CCR1 = width;
+    break;
+  case 1:
+    pwmp->pd_tim->CCR2 = width;
+    break;
+  case 2:
+    pwmp->pd_tim->CCR3 = width;
+    break;
+  case 3:
+    pwmp->pd_tim->CCR4 = width;
+    break;
+  }
+  if ((pwmp->pd_enabled_channels & (1 << channel)) == 0) {
+    /* The channel is not enabled yet.*/
+    pwmp->pd_enabled_channels |= (1 << channel);
+    /* Setup the comparator, the channel is configured as PWM mode 1 with
+       preload enabled.*/
     switch (channel) {
     case 0:
-      pwmp->pd_tim->CCR1 = 0;
-      pwmp->pd_tim->CCMR1 = (pwmp->pd_tim->CCMR1 & 0xFF00) | TIM_CCMR1_OC1M_2;
-      pwmp->pd_tim->DIER &= ~TIM_DIER_CC1IE;
+      pwmp->pd_tim->CCMR1 = (pwmp->pd_tim->CCMR1 & 0xFF00) |
+                            TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2 |
+                            TIM_CCMR1_OC1PE;
+      pwmp->pd_tim->SR = ~TIM_SR_CC1IF;
+      pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[0].pcc_callback == NULL
+                            ? 0 : TIM_DIER_CC1IE;
       break;
     case 1:
-      pwmp->pd_tim->CCR2 = 0;
-      pwmp->pd_tim->CCMR1 = (pwmp->pd_tim->CCMR1 & 0x00FF) | TIM_CCMR1_OC2M_2;
-      pwmp->pd_tim->DIER &= ~TIM_DIER_CC2IE;
+      pwmp->pd_tim->CCMR1 = (pwmp->pd_tim->CCMR1 & 0x00FF) |
+                            TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2 |
+                            TIM_CCMR1_OC2PE;
+      pwmp->pd_tim->SR = ~TIM_SR_CC2IF;
+      pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[1].pcc_callback == NULL
+                            ? 0 : TIM_DIER_CC2IE;
       break;
     case 2:
-      pwmp->pd_tim->CCR3 = 0;
-      pwmp->pd_tim->CCMR2 = (pwmp->pd_tim->CCMR2 & 0xFF00) | TIM_CCMR2_OC3M_2;
-      pwmp->pd_tim->DIER &= ~TIM_DIER_CC3IE;
+      pwmp->pd_tim->CCMR2 = (pwmp->pd_tim->CCMR2 & 0xFF00) |
+                            TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2 |
+                            TIM_CCMR2_OC3PE;
+      pwmp->pd_tim->SR = ~TIM_SR_CC3IF;
+      pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[2].pcc_callback == NULL
+                            ? 0 : TIM_DIER_CC3IE;
       break;
     case 3:
-      pwmp->pd_tim->CCR4 = 0;
-      pwmp->pd_tim->CCMR2 = (pwmp->pd_tim->CCMR2 & 0x00FF) | TIM_CCMR2_OC4M_2;
-      pwmp->pd_tim->DIER &= ~TIM_DIER_CC4IE;
+      pwmp->pd_tim->CCMR2 = (pwmp->pd_tim->CCMR2 & 0x00FF) |
+                            TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2 |
+                            TIM_CCMR2_OC4PE;
+      pwmp->pd_tim->SR = ~TIM_SR_CC4IF;
+      pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[3].pcc_callback == NULL
+                            ? 0 : TIM_DIER_CC4IE;
       break;
     }
   }
-  else {
-    /* Channel enable or reprogram mode.*/
-    switch (channel) {
-    case 0:
-      pwmp->pd_tim->CCR1 = width;
-      break;
-    case 1:
-      pwmp->pd_tim->CCR2 = width;
-      break;
-    case 2:
-      pwmp->pd_tim->CCR3 = width;
-      break;
-    case 3:
-      pwmp->pd_tim->CCR4 = width;
-      break;
-    }
-    if ((pwmp->pd_enabled_channels & (1 << channel)) == 0) {
-      /* The channel is not enabled yet.*/
-      pwmp->pd_enabled_channels |= (1 << channel);
-      /* Setup the comparator, the channel is configured as PWM mode 1 with
-         preload enabled.*/
-      switch (channel) {
-      case 0:
-        pwmp->pd_tim->CCMR1 = (pwmp->pd_tim->CCMR1 & 0xFF00) |
-                              TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2 |
-                              TIM_CCMR1_OC1PE;
-        pwmp->pd_tim->SR = ~TIM_SR_CC1IF;
-        pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[0].pcc_callback == NULL
-                              ? 0 : TIM_DIER_CC1IE;
-        break;
-      case 1:
-        pwmp->pd_tim->CCMR1 = (pwmp->pd_tim->CCMR1 & 0x00FF) |
-                              TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2 |
-                              TIM_CCMR1_OC2PE;
-        pwmp->pd_tim->SR = ~TIM_SR_CC2IF;
-        pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[1].pcc_callback == NULL
-                              ? 0 : TIM_DIER_CC2IE;
-        break;
-      case 2:
-        pwmp->pd_tim->CCMR2 = (pwmp->pd_tim->CCMR2 & 0xFF00) |
-                              TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2 |
-                              TIM_CCMR2_OC3PE;
-        pwmp->pd_tim->SR = ~TIM_SR_CC3IF;
-        pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[2].pcc_callback == NULL
-                              ? 0 : TIM_DIER_CC3IE;
-        break;
-      case 3:
-        pwmp->pd_tim->CCMR2 = (pwmp->pd_tim->CCMR2 & 0x00FF) |
-                              TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2 |
-                              TIM_CCMR2_OC4PE;
-        pwmp->pd_tim->SR = ~TIM_SR_CC4IF;
-        pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[3].pcc_callback == NULL
-                              ? 0 : TIM_DIER_CC4IE;
-        break;
-      }
-    }
+}
+
+/**
+ * @brief   Disables a PWM channel.
+ * @details The channel is disabled and its output line returned to the
+ *          idle state.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
+ */
+void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
+
+  pwmp->pd_enabled_channels &= ~(1 << channel);
+  switch (channel) {
+  case 0:
+    pwmp->pd_tim->CCR1 = 0;
+    pwmp->pd_tim->CCMR1 = pwmp->pd_tim->CCMR1 & 0xFF00;
+    pwmp->pd_tim->DIER &= ~TIM_DIER_CC1IE;
+    break;
+  case 1:
+    pwmp->pd_tim->CCR2 = 0;
+    pwmp->pd_tim->CCMR1 = pwmp->pd_tim->CCMR1 & 0x00FF;
+    pwmp->pd_tim->DIER &= ~TIM_DIER_CC2IE;
+    break;
+  case 2:
+    pwmp->pd_tim->CCR3 = 0;
+    pwmp->pd_tim->CCMR2 = pwmp->pd_tim->CCMR2 & 0xFF00;
+    pwmp->pd_tim->DIER &= ~TIM_DIER_CC3IE;
+    break;
+  case 3:
+    pwmp->pd_tim->CCR4 = 0;
+    pwmp->pd_tim->CCMR2 = pwmp->pd_tim->CCMR2 & 0x00FF;
+    pwmp->pd_tim->DIER &= ~TIM_DIER_CC4IE;
+    break;
   }
 }
 

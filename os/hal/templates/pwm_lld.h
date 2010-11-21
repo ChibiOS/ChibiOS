@@ -195,9 +195,10 @@ extern "C" {
   void pwm_lld_start(PWMDriver *pwmp);
   void pwm_lld_stop(PWMDriver *pwmp);
   bool_t pwm_lld_is_enabled(PWMDriver *pwmp, pwmchannel_t channel);
-  void pwm_lld_set_channel(PWMDriver *pwmp,
-                           pwmchannel_t channel,
-                           pwmcnt_t width);
+  void pwm_lld_enable_channel(PWMDriver *pwmp,
+                              pwmchannel_t channel,
+                              pwmcnt_t width);
+  void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel);
 #ifdef __cplusplus
 }
 #endif
