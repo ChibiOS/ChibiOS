@@ -117,8 +117,9 @@ void pwmStop(PWMDriver *pwmp) {
  * @details Programs (or reprograms) a PWM channel.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1])
- * @param[in] width     PWM pulse width as clock pulses number
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
+ * @param[in] width     PWM pulse width as clock pulses number, setting the
+ *                      width at zero is equivalent to disabling the channel
  *
  * @api
  */
@@ -132,17 +133,17 @@ void pwmEnableChannel(PWMDriver *pwmp,
   chSysLock();
   chDbgAssert(pwmp->pd_state == PWM_READY,
               "pwmEnableChannel(), #1", "not ready");
-  pwm_lld_enable_channel(pwmp, channel, width);
+  pwm_lld_set_channel(pwmp, channel, width);
   chSysUnlock();
 }
 
 /**
- * @brief Disables a PWM channel.
+ * @brief   Disables a PWM channel.
  * @details The channel is disabled and its output line returned to the
  *          idle state.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1])
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
  *
  * @api
  */
@@ -154,7 +155,7 @@ void pwmDisableChannel(PWMDriver *pwmp, pwmchannel_t channel) {
   chSysLock();
   chDbgAssert(pwmp->pd_state == PWM_READY,
               "pwmDisableChannel(), #1", "not ready");
-  pwm_lld_disable_channel(pwmp, channel);
+  pwm_lld_set_channel(pwmp, channel, 0);
   chSysUnlock();
 }
 

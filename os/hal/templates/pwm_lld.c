@@ -102,31 +102,19 @@ bool_t pwm_lld_is_enabled(PWMDriver *pwmp, pwmchannel_t channel) {
 }
 
 /**
- * @brief   Enables a PWM channel.
+ * @brief   Disables, enables or reprograms a PWM channel.
  *
- * @param[in] pwmp      pointer to the @p PWMDriver object
- * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1])
- * @param[in] width     PWM pulse width as clock pulses number
- *
- * @notapi
- */
-void pwm_lld_enable_channel(PWMDriver *pwmp,
-                            pwmchannel_t channel,
-                            pwmcnt_t width) {
-
-}
-
-/**
- * @brief   Disables a PWM channel.
- * @details The channel is disabled and its output line returned to the
- *          idle state.
- *
- * @param[in] pwmp      pointer to the @p PWMDriver object
- * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1])
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
+ * @param[in] width     PWM pulse width as clock pulses number, note that
+ *                      specifying zero disables the channel and enforces
+ *                      the output to the idle state.
  *
  * @notapi
  */
-void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
+void pwm_lld_set_channel(PWMDriver *pwmp,
+                         pwmchannel_t channel,
+                         pwmcnt_t width) {
 
 }
 

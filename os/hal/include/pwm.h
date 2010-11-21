@@ -82,7 +82,7 @@ typedef enum {
  * @iclass
  */
 #define pwmEnableChannelI(pwmp, channel, width) {                           \
-  pwm_lld_enable_channel(pwmp, channel, width);                             \
+  pwm_lld_set_channel(pwmp, channel, width);                                \
 }
 
 /**
@@ -97,7 +97,7 @@ typedef enum {
  * @iclass
  */
 #define pwmDisableChannelI(pwmp, channel) {                                 \
-  pwm_lld_disable_channel(pwmp, channel);                                   \
+  pwm_lld_set_channel(pwmp, channel, 0);                                    \
 }
 
 /*===========================================================================*/
