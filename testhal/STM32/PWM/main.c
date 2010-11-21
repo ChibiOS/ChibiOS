@@ -54,8 +54,8 @@ static PWMConfig pwmcfg = {
    {PWM_OUTPUT_DISABLED, NULL},
    {PWM_OUTPUT_DISABLED, NULL}
   },
-  PWM_COMPUTE_PSC(STM32_TIMCLK2, 100000),       /* 100000 nS clock cycle.   */
-  PWM_COMPUTE_ARR(100000, 1000000000),          /* PWM period 1S.           */
+  PWM_COMPUTE_PSC(STM32_TIMCLK1, 10000),    /* 10KHz PWM clock frequency.   */
+  PWM_COMPUTE_ARR(10000, 1000000),          /* PWM period 1S.               */
   0
 };
 
