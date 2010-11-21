@@ -46,7 +46,7 @@ static const ADCConversionGroup adcgrpcfg = {
   ADC_GRP1_NUM_CHANNELS,
   adccb,
   0,
-  ADC_CR2_EXTSEL_SWSTART | ADC_CR2_TSVREFE,
+  ADC_CR2_EXTSEL_SWSTART | ADC_CR2_TSVREFE | ADC_CR2_CONT,
   0,
   0,
   ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),
@@ -181,8 +181,10 @@ int main(int argc, char **argv) {
 
   /*
    * Initializes the ADC driver 1.
+   * The pin PC0 on the port GPIOC is programmed as analog input.
    */
   adcStart(&ADCD1, &adccfg);
+  palSetGroupMode(GPIOC, PAL_PORT_BIT(0), PAL_MODE_INPUT_ANALOG);
 
   /*
    * Initializes the PWM driver 1, re-routes the TIM3 outputs, programs the
@@ -206,7 +208,7 @@ int main(int argc, char **argv) {
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
-    if (palReadPad(IOPORT1, GPIOA_BUTTON))
+    if (palReadPad(GPIOA, GPIOA_BUTTON))
       TestThread(&SD1);
     chThdSleepMilliseconds(500);
   }
