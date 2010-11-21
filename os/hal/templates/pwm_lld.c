@@ -102,26 +102,10 @@ bool_t pwm_lld_is_enabled(PWMDriver *pwmp, pwmchannel_t channel) {
 }
 
 /**
- * @brief   Enables a callback mode for the specified PWM channel.
- * @details The callback mode must be set before starting a PWM channel.
- *
- * @param[in] pwmp      pointer to the @p PWMDriver object
- * @param[in] channel   PWM channel identifier
- * @param[in] edge      output edge mode
- * @param[in] callback  callback function
- *
- * @notapi
- */
-void pwm_lld_set_callback(PWMDriver *pwmp, pwmchannel_t channel,
-                          pwmedge_t edge, pwmcallback_t callback) {
-
-}
-
-/**
  * @brief   Enables a PWM channel.
  *
  * @param[in] pwmp      pointer to the @p PWMDriver object
- * @param[in] channel   PWM channel identifier
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1])
  * @param[in] width     PWM pulse width as clock pulses number
  *
  * @notapi
@@ -138,7 +122,7 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
  *          idle state.
  *
  * @param[in] pwmp      pointer to the @p PWMDriver object
- * @param[in] channel   PWM channel identifier
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1])
  *
  * @notapi
  */

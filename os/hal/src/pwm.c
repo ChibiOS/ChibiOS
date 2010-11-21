@@ -117,7 +117,7 @@ void pwmStop(PWMDriver *pwmp) {
  * @details Programs (or reprograms) a PWM channel.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1])
  * @param[in] width     PWM pulse width as clock pulses number
  *
  * @api
@@ -142,7 +142,7 @@ void pwmEnableChannel(PWMDriver *pwmp,
  *          idle state.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1])
  *
  * @api
  */

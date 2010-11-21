@@ -114,7 +114,7 @@ static void serve_interrupt(PWMDriver *pwmp) {
   if ((sr & TIM_SR_CC4IF) != 0)
     pwmp->pd_config->pc_channels[3].pcc_callback(pwmp);
   if ((sr & TIM_SR_UIF) != 0)
-    pwmp->pd_config->pc_callback();
+    pwmp->pd_config->pc_callback(pwmp);
 }
 #endif /* STM32_PWM_USE_TIM2 || STM32_PWM_USE_TIM3 || STM32_PWM_USE_TIM4 */
 
@@ -416,7 +416,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
  * @brief   Enables a PWM channel.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1])
  * @param[in] width     PWM pulse width as clock pulses number
  *
  * @notapi
@@ -494,7 +494,7 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
  *          idle state.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1])
  *
  * @notapi
  */
