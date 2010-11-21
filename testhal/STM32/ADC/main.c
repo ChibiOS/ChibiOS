@@ -93,8 +93,7 @@ int main(int argc, char **argv) {
   /*
    * Setting up analog inputs used by the demo.
    */
-  palSetGroupMode(IOPORT3,
-                  PAL_PORT_BIT(0) | PAL_PORT_BIT(1),
+  palSetGroupMode(GPIOC, PAL_PORT_BIT(0) | PAL_PORT_BIT(1),
                   PAL_MODE_INPUT_ANALOG);
 
   /*
@@ -112,7 +111,7 @@ int main(int argc, char **argv) {
    * Normal main() thread activity, in this demo it does nothing.
    */
   while (TRUE) {
-    if (palReadPad(IOPORT1, GPIOA_BUTTON))
+    if (palReadPad(GPIOA, GPIOA_BUTTON))
       adcStopConversion(&ADCD1);
     chThdSleepMilliseconds(500);
   }
