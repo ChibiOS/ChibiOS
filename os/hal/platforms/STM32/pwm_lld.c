@@ -87,8 +87,9 @@ static void stop_channels(PWMDriver *pwmp) {
   pwmp->pd_tim->CCR2 = 0;                   /* Comparator 2 disabled.       */
   pwmp->pd_tim->CCR3 = 0;                   /* Comparator 3 disabled.       */
   pwmp->pd_tim->CCR4 = 0;                   /* Comparator 4 disabled.       */
-  pwmp->pd_tim->CCMR1 = 0;                  /* Channels 1 and 2 frozen.     */
-  pwmp->pd_tim->CCMR2 = 0;                  /* Channels 3 and 4 frozen.     */
+  /* Channels forced to idle.*/
+  pwmp->pd_tim->CCMR1 = TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC2M_2;
+  pwmp->pd_tim->CCMR2 = TIM_CCMR2_OC3M_2 | TIM_CCMR2_OC4M_2;
 }
 
 #if STM32_PWM_USE_TIM2 || STM32_PWM_USE_TIM3 || STM32_PWM_USE_TIM4 ||       \
@@ -504,22 +505,22 @@ void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
   switch (channel) {
   case 0:
     pwmp->pd_tim->CCR1 = 0;
-    pwmp->pd_tim->CCMR1 = pwmp->pd_tim->CCMR1 & 0xFF00;
+    pwmp->pd_tim->CCMR1 = (pwmp->pd_tim->CCMR1 & 0xFF00) | TIM_CCMR1_OC1M_2;
     pwmp->pd_tim->DIER &= ~TIM_DIER_CC1IE;
     break;
   case 1:
     pwmp->pd_tim->CCR2 = 0;
-    pwmp->pd_tim->CCMR1 = pwmp->pd_tim->CCMR1 & 0x00FF;
+    pwmp->pd_tim->CCMR1 = (pwmp->pd_tim->CCMR1 & 0x00FF) | TIM_CCMR1_OC2M_2;
     pwmp->pd_tim->DIER &= ~TIM_DIER_CC2IE;
     break;
   case 2:
     pwmp->pd_tim->CCR3 = 0;
-    pwmp->pd_tim->CCMR2 = pwmp->pd_tim->CCMR2 & 0xFF00;
+    pwmp->pd_tim->CCMR2 = (pwmp->pd_tim->CCMR2 & 0xFF00) | TIM_CCMR2_OC3M_2;
     pwmp->pd_tim->DIER &= ~TIM_DIER_CC3IE;
     break;
   case 3:
     pwmp->pd_tim->CCR4 = 0;
-    pwmp->pd_tim->CCMR2 = pwmp->pd_tim->CCMR2 & 0x00FF;
+    pwmp->pd_tim->CCMR2 = (pwmp->pd_tim->CCMR2 & 0x00FF) | TIM_CCMR2_OC4M_2;
     pwmp->pd_tim->DIER &= ~TIM_DIER_CC4IE;
     break;
   }

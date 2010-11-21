@@ -65,6 +65,8 @@
 *****************************************************************************
 
 *** 2.1.4 ***
+- FIX: Fixed PWM channels return to IDLE state in STM32 PWM driver (bug
+  3114467)(backported to 2.0.8).
 - FIX: Fixed wrong initializer macros in STM32 PWM driver (bug 3114319).
 - FIX: Fixed syntax error in STM32 PWM driver(bug 3114266).
 - FIX: Fixed typo in board name (bug 3113574)(backported to 2.0.7).
