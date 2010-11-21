@@ -190,7 +190,6 @@ typedef enum {
     }                                                                       \
   }                                                                         \
   else {                                                                    \
-    (adcp)->ad_grpp = NULL;                                                 \
     /* End conversion.*/                                                    \
     adc_lld_stop_conversion(adcp);                                          \
     if ((adcp)->ad_grpp->acg_endcb == NULL) {                               \
@@ -212,6 +211,7 @@ typedef enum {
       if ((adcp)->ad_state == ADC_COMPLETE)                                 \
         (adcp)->ad_state = ADC_READY;                                       \
     }                                                                       \
+    (adcp)->ad_grpp = NULL;                                                 \
   }                                                                         \
 }
 
