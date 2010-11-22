@@ -95,24 +95,11 @@ static const SPIConfig spicfg = {
  * calculated as average of the last sampling operations.
  */
 static void pwmpcb(PWMDriver *pwmp) {
-  adcsample_t avg_ch1, avg_ch2;
-
-  /* Calculates the average values from the previous ADC sampling
-     operation.*/
-  avg_ch1 = (samples[0] + samples[2] + samples[4] + samples[6]) / 4;
-  avg_ch2 = (samples[1] + samples[3] + samples[5] + samples[7]) / 4;
-
-  chSysLockFromIsr();
-
-  /* Changes the channels pulse width, the change will be effective
-     starting from the next cycle.*/
-  pwmEnableChannelI(pwmp, 2, PWM_FRACTION_TO_WIDTH(pwmp, 4096, avg_ch1));
-  pwmEnableChannelI(pwmp, 3, PWM_FRACTION_TO_WIDTH(pwmp, 4096, avg_ch2));
-
 
   /* Starts an asynchronous ADC conversion operation, the conversion
      will be executed in parallel to the current PWM cycle and will
      terminate before the next PWM cycle.*/
+  chSysLockFromIsr();
   adcStartConversionI(&ADCD1, &adcgrpcfg, samples, ADC_GRP1_BUF_DEPTH);
   chSysUnlockFromIsr();
 }
@@ -127,10 +114,23 @@ void adccb(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
   /* Note, only in the ADC_COMPLETE state because the ADC driver fires an
      intermediate callback when the buffer is half full.*/
   if (adcp->ad_state == ADC_COMPLETE) {
-    /* SPI slave selection and transmission start.*/
+    adcsample_t avg_ch1, avg_ch2;
+
+    /* Calculates the average values from the ADC samples.*/
+    avg_ch1 = (samples[0] + samples[2] + samples[4] + samples[6]) / 4;
+    avg_ch2 = (samples[1] + samples[3] + samples[5] + samples[7]) / 4;
+
     chSysLockFromIsr();
+
+    /* Changes the channels pulse width, the change will be effective
+       starting from the next cycle.*/
+    pwmEnableChannelI(&PWMD3, 2, PWM_FRACTION_TO_WIDTH(&PWMD3, 4096, avg_ch1));
+    pwmEnableChannelI(&PWMD3, 3, PWM_FRACTION_TO_WIDTH(&PWMD3, 4096, avg_ch2));
+
+    /* SPI slave selection and transmission start.*/
     spiSelectI(&SPID1);
     spiStartSendI(&SPID1, ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH, samples);
+
     chSysUnlockFromIsr();
   }
 }
