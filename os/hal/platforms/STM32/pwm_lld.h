@@ -283,8 +283,8 @@ struct PWMDriver {
  * @api
  */
 #define PWM_FRACTION_TO_WIDTH(pwmp, numerator, denominator)                 \
-  ((uint16_t)(((((uint32_t)(pwmp)->pd_config->pc_arr + 1UL) *               \
-                 (uint32_t)(denominator)) / (uint32_t)(numerator)) - 1UL))
+  ((uint16_t)((((uint32_t)(pwmp)->pd_config->pc_arr + 1UL) *                \
+               (uint32_t)(denominator)) / (uint32_t)(numerator)))
 
 /**
  * @brief   Converts from degrees to pulse width.
