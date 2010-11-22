@@ -101,12 +101,14 @@ static void pwmpcb(PWMDriver *pwmp) {
      operation.*/
   avg_ch1 = (samples[0] + samples[2] + samples[4] + samples[6]) / 4;
   avg_ch2 = (samples[1] + samples[3] + samples[5] + samples[7]) / 4;
+
   chSysLockFromIsr();
 
   /* Changes the channels pulse width, the change will be effective
      starting from the next cycle.*/
   pwmEnableChannelI(pwmp, 2, PWM_FRACTION_TO_WIDTH(pwmp, 4096, avg_ch1));
   pwmEnableChannelI(pwmp, 3, PWM_FRACTION_TO_WIDTH(pwmp, 4096, avg_ch2));
+
 
   /* Starts an asynchronous ADC conversion operation, the conversion
      will be executed in parallel to the current PWM cycle and will
