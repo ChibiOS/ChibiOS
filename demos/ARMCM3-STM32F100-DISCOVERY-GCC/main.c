@@ -96,6 +96,8 @@ static const SPIConfig spicfg = {
  */
 static void pwmpcb(PWMDriver *pwmp) {
 
+  (void)pwmp;
+
   /* Starts an asynchronous ADC conversion operation, the conversion
      will be executed in parallel to the current PWM cycle and will
      terminate before the next PWM cycle.*/
