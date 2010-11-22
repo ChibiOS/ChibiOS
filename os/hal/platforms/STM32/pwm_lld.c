@@ -74,23 +74,6 @@ PWMDriver PWMD4;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-/**
- * @brief   Stops all channels.
- *
- * @param[in] pwmp      pointer to a @p PWMDriver object
- */
-static void stop_channels(PWMDriver *pwmp) {
-
-  pwmp->pd_enabled_channels = 0;            /* All channels disabled.       */
-  pwmp->pd_tim->CCER = 0;                   /* Outputs disabled.            */
-  pwmp->pd_tim->CCR1 = 0;                   /* Comparator 1 disabled.       */
-  pwmp->pd_tim->CCR2 = 0;                   /* Comparator 2 disabled.       */
-  pwmp->pd_tim->CCR3 = 0;                   /* Comparator 3 disabled.       */
-  pwmp->pd_tim->CCR4 = 0;                   /* Comparator 4 disabled.       */
-  pwmp->pd_tim->CCMR1 = 0;                  /* Channels 1 and 2 frozen.     */
-  pwmp->pd_tim->CCMR2 = 0;                  /* Channels 3 and 4 frozen.     */
-}
-
 #if STM32_PWM_USE_TIM2 || STM32_PWM_USE_TIM3 || STM32_PWM_USE_TIM4 ||       \
     defined(__DOXYGEN__)
 /**
@@ -283,45 +266,73 @@ void pwm_lld_init(void) {
 void pwm_lld_start(PWMDriver *pwmp) {
   uint16_t ccer;
 
+  /* Reset channels.*/
+  pwmp->pd_enabled_channels = 0;            /* All channels disabled.       */
+
   if (pwmp->pd_state == PWM_STOP) {
-    /* Clock activation.*/
+    /* Clock activation and timer reset.*/
 #if STM32_PWM_USE_TIM1
     if (&PWMD1 == pwmp) {
+      RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+      RCC->APB2RSTR = RCC_APB2RSTR_TIM1RST;
+      RCC->APB2RSTR = 0;
       NVICEnableVector(TIM1_UP_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_PWM1_IRQ_PRIORITY));
       NVICEnableVector(TIM1_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_PWM1_IRQ_PRIORITY));
-      RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
     }
 #endif
 #if STM32_PWM_USE_TIM2
     if (&PWMD2 == pwmp) {
+      RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+      RCC->APB1RSTR = RCC_APB1RSTR_TIM1RST;
+      RCC->APB1RSTR = 0;
       NVICEnableVector(TIM2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_PWM2_IRQ_PRIORITY));
-      RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
     }
 #endif
 #if STM32_PWM_USE_TIM3
     if (&PWMD3 == pwmp) {
+      RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+      RCC->APB1RSTR = RCC_APB1RSTR_TIM3RST;
+      RCC->APB1RSTR = 0;
       NVICEnableVector(TIM3_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_PWM3_IRQ_PRIORITY));
-      RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
     }
 #endif
 #if STM32_PWM_USE_TIM4
     if (&PWMD4 == pwmp) {
+      RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
+      RCC->APB1RSTR = RCC_APB1RSTR_TIM4RST;
+      RCC->APB1RSTR = 0;
       NVICEnableVector(TIM4_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_PWM4_IRQ_PRIORITY));
-      RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
     }
 #endif
+    /* All channels configured in PWM1 mode with preload enabled and will
+       stay that way until the driver is stopped.*/
+    pwmp->pd_tim->CCMR1 = TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2 |
+                          TIM_CCMR1_OC1PE |
+                          TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2 |
+                          TIM_CCMR1_OC2PE;
+    pwmp->pd_tim->CCMR2 = TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2 |
+                          TIM_CCMR2_OC3PE |
+                          TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2 |
+                          TIM_CCMR2_OC4PE;
   }
-  /* Reset channels.*/
-  stop_channels(pwmp);
+  else {
+    /* Driver re-configuration scenario, it must be stopped first.*/
+    /* Really required ?????????? */
+    pwmp->pd_tim->CR1  = 0;                   /* Timer stopped.               */
+    pwmp->pd_tim->CR2  = 0;                   /* Timer stopped.               */
+    pwmp->pd_tim->SMCR = 0;                   /* Slave mode disabled.         */
+    pwmp->pd_tim->CCR1 = 0;                   /* Comparator 1 disabled.       */
+    pwmp->pd_tim->CCR2 = 0;                   /* Comparator 2 disabled.       */
+    pwmp->pd_tim->CCR3 = 0;                   /* Comparator 3 disabled.       */
+    pwmp->pd_tim->CCR4 = 0;                   /* Comparator 4 disabled.       */
+  }
 
-  /* Configuration or reconfiguration.*/
-  pwmp->pd_tim->CR1  = 0;                   /* Timer stopped.               */
-  pwmp->pd_tim->SMCR = 0;                   /* Slave mode disabled.         */
+  /* Timer configuration.*/
   pwmp->pd_tim->CR2  = pwmp->pd_config->pc_cr2;
   pwmp->pd_tim->PSC  = pwmp->pd_config->pc_psc;
   pwmp->pd_tim->CNT  = 0;
@@ -365,8 +376,8 @@ void pwm_lld_start(PWMDriver *pwmp) {
   pwmp->pd_tim->SR   = 0;                   /* Clear pending IRQs.          */
   pwmp->pd_tim->DIER = pwmp->pd_config->pc_callback == NULL ? 0 : TIM_DIER_UIE;
   pwmp->pd_tim->BDTR = TIM_BDTR_MOE;
-  pwmp->pd_tim->CR1  = TIM_CR1_ARPE | TIM_CR1_URS |
-                       TIM_CR1_CEN;         /* Timer configured and started.*/
+  /* Timer configured and started.*/
+  pwmp->pd_tim->CR1  = TIM_CR1_ARPE | TIM_CR1_URS | TIM_CR1_CEN;
 }
 
 /**
@@ -379,10 +390,18 @@ void pwm_lld_start(PWMDriver *pwmp) {
 void pwm_lld_stop(PWMDriver *pwmp) {
   /* If in ready state then disables the PWM clock.*/
   if (pwmp->pd_state == PWM_READY) {
-    stop_channels(pwmp);
-    pwmp->pd_tim->CR1 = 0;
-    pwmp->pd_tim->BDTR = 0;
-    pwmp->pd_tim->DIER = 0;
+    pwmp->pd_enabled_channels = 0;          /* All channels disabled.       */
+    pwmp->pd_tim->CR1   = 0;
+    pwmp->pd_tim->CR2   = 0;
+    pwmp->pd_tim->CCER  = 0;                /* Outputs disabled.            */
+    pwmp->pd_tim->CCR1  = 0;                /* Comparator 1 disabled.       */
+    pwmp->pd_tim->CCR2  = 0;                /* Comparator 2 disabled.       */
+    pwmp->pd_tim->CCR3  = 0;                /* Comparator 3 disabled.       */
+    pwmp->pd_tim->CCR4  = 0;                /* Comparator 4 disabled.       */
+    pwmp->pd_tim->BDTR  = 0;
+    pwmp->pd_tim->DIER  = 0;
+    pwmp->pd_tim->SR    = 0;
+    pwmp->pd_tim->EGR  = TIM_EGR_UG;        /* Update event.                */
 
 #if STM32_PWM_USE_TIM1
     if (&PWMD1 == pwmp) {
@@ -425,58 +444,15 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
                             pwmchannel_t channel,
                             pwmcnt_t width) {
 
-  switch (channel) {
-  case 0:
-    pwmp->pd_tim->CCR1 = width;
-    break;
-  case 1:
-    pwmp->pd_tim->CCR2 = width;
-    break;
-  case 2:
-    pwmp->pd_tim->CCR3 = width;
-    break;
-  case 3:
-    pwmp->pd_tim->CCR4 = width;
-    break;
-  }
+  *(&pwmp->pd_tim->CCR1 + (channel * 2)) = width;   /* New duty cycle.      */
   if ((pwmp->pd_enabled_channels & (1 << channel)) == 0) {
     /* The channel is not enabled yet.*/
     pwmp->pd_enabled_channels |= (1 << channel);
-    /* Setup the comparator, the channel is configured as PWM mode 1 with
-       preload enabled.*/
-    switch (channel) {
-    case 0:
-      pwmp->pd_tim->CCMR1 = (pwmp->pd_tim->CCMR1 & 0xFF00) |
-                            TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2 |
-                            TIM_CCMR1_OC1PE;
-      pwmp->pd_tim->SR = ~TIM_SR_CC1IF;
-      pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[0].pcc_callback == NULL
-                            ? 0 : TIM_DIER_CC1IE;
-      break;
-    case 1:
-      pwmp->pd_tim->CCMR1 = (pwmp->pd_tim->CCMR1 & 0x00FF) |
-                            TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2 |
-                            TIM_CCMR1_OC2PE;
-      pwmp->pd_tim->SR = ~TIM_SR_CC2IF;
-      pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[1].pcc_callback == NULL
-                            ? 0 : TIM_DIER_CC2IE;
-      break;
-    case 2:
-      pwmp->pd_tim->CCMR2 = (pwmp->pd_tim->CCMR2 & 0xFF00) |
-                            TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2 |
-                            TIM_CCMR2_OC3PE;
-      pwmp->pd_tim->SR = ~TIM_SR_CC3IF;
-      pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[2].pcc_callback == NULL
-                            ? 0 : TIM_DIER_CC3IE;
-      break;
-    case 3:
-      pwmp->pd_tim->CCMR2 = (pwmp->pd_tim->CCMR2 & 0x00FF) |
-                            TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2 |
-                            TIM_CCMR2_OC4PE;
-      pwmp->pd_tim->SR = ~TIM_SR_CC4IF;
-      pwmp->pd_tim->DIER |= pwmp->pd_config->pc_channels[3].pcc_callback == NULL
-                            ? 0 : TIM_DIER_CC4IE;
-      break;
+    /* If there is a callback associated to the channel then the proper
+       interrupt is cleared and enabled.*/
+    if (pwmp->pd_config->pc_channels[0].pcc_callback) {
+      pwmp->pd_tim->SR    = ~(2 << channel);
+      pwmp->pd_tim->DIER |= (2 << channel);
     }
   }
 }
@@ -491,29 +467,9 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
  */
 void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
 
+  *(&pwmp->pd_tim->CCR1 + (channel * 2)) = 0;
+  pwmp->pd_tim->DIER = ~(2 << channel);
   pwmp->pd_enabled_channels &= ~(1 << channel);
-  switch (channel) {
-  case 0:
-    pwmp->pd_tim->CCR1 = 0;
-    pwmp->pd_tim->CCMR1 = pwmp->pd_tim->CCMR1 & 0xFF00;
-    pwmp->pd_tim->DIER &= ~TIM_DIER_CC1IE;
-    break;
-  case 1:
-    pwmp->pd_tim->CCR2 = 0;
-    pwmp->pd_tim->CCMR1 = pwmp->pd_tim->CCMR1 & 0x00FF;
-    pwmp->pd_tim->DIER &= ~TIM_DIER_CC2IE;
-    break;
-  case 2:
-    pwmp->pd_tim->CCR3 = 0;
-    pwmp->pd_tim->CCMR2 = pwmp->pd_tim->CCMR2 & 0xFF00;
-    pwmp->pd_tim->DIER &= ~TIM_DIER_CC3IE;
-    break;
-  case 3:
-    pwmp->pd_tim->CCR4 = 0;
-    pwmp->pd_tim->CCMR2 = pwmp->pd_tim->CCMR2 & 0x00FF;
-    pwmp->pd_tim->DIER &= ~TIM_DIER_CC4IE;
-    break;
-  }
 }
 
 #endif /* HAL_USE_PWM */
