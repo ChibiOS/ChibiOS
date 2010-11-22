@@ -149,8 +149,8 @@ static void spicb(SPIDriver *spip) {
 }
 
 /*
- * This is a periodic thread that does absolutely nothing except sleeping and
- * increase a counter.
+ * This is a periodic thread that does absolutely nothing except increasing
+ * a seconds counter.
  */
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
