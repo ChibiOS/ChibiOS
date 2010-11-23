@@ -76,6 +76,9 @@
 - FIX: Fixed typo in board name (bug 3113574)(backported to 2.0.7).
 - FIX: Fixed defective event wait functions with timeout (bug 3113443)
   (backported to 2.0.7).
+- NEW: Added to the STM32 ADC driver the macros for easy handling of the
+  sampling time for each channel.
+- NEW: Greatly simplified the STM32 PWM driver implementation.
 - NEW: Added new macro PWM_FRACTION_TO_WIDTH() to the PWM driver model.
 - NEW: ARM7 port reorganization following the same pattern of the ARMCMx
   one, on now the port is also supports the ARM9 architecture (but not

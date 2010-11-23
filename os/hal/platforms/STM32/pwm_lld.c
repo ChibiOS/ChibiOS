@@ -30,6 +30,18 @@
 
 #if HAL_USE_PWM || defined(__DOXYGEN__)
 
+/* There are differences in vector names in the ST header for devices
+   including TIM15, TIM16, TIM17.*/
+#if STM32_HAS_TIM15
+#define TIM1_BRK_IRQn       TIM1_BRK_TIM15_IRQn
+#endif
+#if STM32_HAS_TIM16
+#define TIM1_UP_IRQn        TIM1_UP_TIM16_IRQn
+#endif
+#if STM32_HAS_TIM17
+#define TIM1_TRG_COM_IRQn   TIM1_TRG_COM_TIM17_IRQn
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -285,7 +297,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 #if STM32_PWM_USE_TIM2
     if (&PWMD2 == pwmp) {
       RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-      RCC->APB1RSTR = RCC_APB1RSTR_TIM1RST;
+      RCC->APB1RSTR = RCC_APB1RSTR_TIM2RST;
       RCC->APB1RSTR = 0;
       NVICEnableVector(TIM2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_PWM2_IRQ_PRIORITY));
@@ -330,12 +342,12 @@ void pwm_lld_start(PWMDriver *pwmp) {
     pwmp->pd_tim->CCR2 = 0;                   /* Comparator 2 disabled.       */
     pwmp->pd_tim->CCR3 = 0;                   /* Comparator 3 disabled.       */
     pwmp->pd_tim->CCR4 = 0;                   /* Comparator 4 disabled.       */
+    pwmp->pd_tim->CNT  = 0;
   }
 
   /* Timer configuration.*/
   pwmp->pd_tim->CR2  = pwmp->pd_config->pc_cr2;
   pwmp->pd_tim->PSC  = pwmp->pd_config->pc_psc;
-  pwmp->pd_tim->CNT  = 0;
   pwmp->pd_tim->ARR  = pwmp->pd_config->pc_arr;
   /* Output enables and polarities setup.*/
   ccer = 0;

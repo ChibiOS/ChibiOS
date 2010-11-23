@@ -39,15 +39,17 @@ static adcsample_t samples[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 /*
  * ADC conversion group.
  * Mode:        Linear buffer, 4 samples of 2 channels, SW triggered.
- * Channels:    IN10, Sensor.
+ * Channels:    IN10   (41.5 cycles sample time)
+ *              Sensor (239.5 cycles sample time)
  */
 static const ADCConversionGroup adcgrpcfg = {
   FALSE,
   ADC_GRP1_NUM_CHANNELS,
   adccb,
+  /* HW dependent part.*/
   0,
   ADC_CR2_EXTSEL_SWSTART | ADC_CR2_TSVREFE | ADC_CR2_CONT,
-  0,
+  ADC_SMPR1_SMP_AN10(ADC_SAMPLE_41P5) | ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_239P5),
   0,
   ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),
   0,
@@ -73,6 +75,7 @@ static PWMConfig pwmcfg = {
     {PWM_OUTPUT_ACTIVE_HIGH, NULL},
     {PWM_OUTPUT_ACTIVE_HIGH, NULL}
   },
+  /* HW dependent part.*/
   PWM_COMPUTE_PSC(STM32_TIMCLK1, 10000),    /* 10KHz PWM clock frequency.   */
   PWM_COMPUTE_ARR(10000, 1000000000),       /* PWM period 1S (in nS).       */
   0
@@ -85,6 +88,7 @@ static PWMConfig pwmcfg = {
  */
 static const SPIConfig spicfg = {
   spicb,
+  /* HW dependent part.*/
   GPIOA,
   GPIOA_SPI1NSS,
   SPI_CR1_DFF

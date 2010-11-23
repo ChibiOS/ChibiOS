@@ -53,8 +53,6 @@ N Evaluate if to add a synchronous API to the UART driver, eventually do so.
   * STM8L-Discovery demo.
 * Add the STM32F100 (Value Line) sub-family to the official STM32 HAL support.
   * STM32VL-Discovery demo.
-  - Problem, some IRQ vectors have a different vector name in the STM32F100
-    sub-family. Use vector numbers instead?
 * Remove the PAL default configuration from the various hal_lld.c and move
   them into board.c files, this will remove an ugly dependency.
 * Realign the STM8 port to the new STM8L one as options, naming conventions
