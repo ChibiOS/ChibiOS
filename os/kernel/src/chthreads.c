@@ -342,7 +342,10 @@ void chThdExit(msg_t msg) {
     chSchReadyI(list_remove(&tp->p_waiting));
 #endif
 #if CH_USE_REGISTRY
-  REG_REMOVE(tp);
+  /* Static threads are immediately removed from the registry because
+     there is no memory to recover.*/
+  if ((tp->p_flags & THD_MEM_MODE_MASK) == THD_MEM_MODE_STATIC)
+    REG_REMOVE(tp);
 #endif
   chSchGoSleepS(THD_STATE_FINAL);
 }

@@ -65,6 +65,8 @@
 *****************************************************************************
 
 *** 2.1.4 ***
+- FIX: Fixed failed memory recovery by registry scan, improved the related
+  test case (bug 3116888)(backported to 2.0.8).
 - FIX: Fixed failure in STM32 ADC driver when a linear buffer mode is used
   (bug 3114696).
 - FIX: Fixed PWM channels going to ACTIVE state when the pulse width is
