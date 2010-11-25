@@ -92,6 +92,8 @@
 - NEW: Added demo for the ST STM8L-Discovery kit.
 - NEW: Added support for the STM32 Value Line to the HAL.
 - NEW: Added demo for the ST STM32VL-Discovery kit.
+- OPT: STM32 SPI driver implementation improved, reduced latency when
+  starting a transfer.
 - CHANGE: Improved the STM32 HAL to support multiple sub-families, at compile
   time now it is possible to test the presence of any single peripheral into
   the specified STM32 device.
