@@ -86,9 +86,6 @@ typedef void (*spicallback_t)(SPIDriver *spip);
 typedef struct {
   /**
    * @brief Operation complete callback or @p NULL.
-   * @note  In order to use synchronous functions this field must be set to
-   *        @p NULL, callbacks and synchronous operations are mutually
-   *        exclusive.
    */
   spicallback_t         spc_endcb;
   /* End of the mandatory fields.*/

@@ -295,7 +295,7 @@ void spiIgnore(SPIDriver *spip, size_t n) {
   chDbgAssert(spip->spd_config->spc_endcb == NULL,
               "spiIgnore(), #2", "has callback");
   spiStartIgnoreI(spip, n);
-  _spi_wait(spip);
+  _spi_wait_s(spip);
   chSysUnlock();
 }
 
@@ -329,7 +329,7 @@ void spiExchange(SPIDriver *spip, size_t n,
   chDbgAssert(spip->spd_config->spc_endcb == NULL,
               "spiExchange(), #2", "has callback");
   spiStartExchangeI(spip, n, txbuf, rxbuf);
-  _spi_wait(spip);
+  _spi_wait_s(spip);
   chSysUnlock();
 }
 
@@ -360,7 +360,7 @@ void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
   chDbgAssert(spip->spd_config->spc_endcb == NULL,
               "spiSend(), #2", "has callback");
   spiStartSendI(spip, n, txbuf);
-  _spi_wait(spip);
+  _spi_wait_s(spip);
   chSysUnlock();
 }
 
@@ -391,7 +391,7 @@ void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
   chDbgAssert(spip->spd_config->spc_endcb == NULL,
               "spiReceive(), #2", "has callback");
   spiStartReceiveI(spip, n, rxbuf);
-  _spi_wait(spip);
+  _spi_wait_s(spip);
   chSysUnlock();
 }
 #endif /* SPI_USE_WAIT */

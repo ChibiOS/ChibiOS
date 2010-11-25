@@ -93,9 +93,6 @@ typedef struct {
   adc_channels_num_t        acg_num_channels;
   /**
    * @brief Callback function associated to the group or @p NULL.
-   * @note  In order to use synchronous functions this field must be set to
-   *        @p NULL, callbacks and synchronous operations are mutually
-   *        exclusive.
    */
   adccallback_t             acg_endcb;
   /* End of the mandatory fields.*/

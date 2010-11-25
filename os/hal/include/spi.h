@@ -214,7 +214,7 @@ typedef enum {
  *
  * @notapi
  */
-#define _spi_wait(spip) {                                                   \
+#define _spi_wait_s(spip) {                                                 \
   chDbgAssert((spip)->spd_thread == NULL,                                   \
               "_spi_wait(), #1", "already waiting");                        \
   (spip)->spd_thread = chThdSelf();                                         \
@@ -228,18 +228,18 @@ typedef enum {
  *
  * @notapi
  */
-#define _spi_wakeup(spip) {                                                 \
-  chSysLockFromIsr();                                                       \
+#define _spi_wakeup_isr(spip) {                                             \
   if ((spip)->spd_thread != NULL) {                                         \
     Thread *tp = (spip)->spd_thread;                                        \
     (spip)->spd_thread = NULL;                                              \
+    chSysLockFromIsr();                                                     \
     chSchReadyI(tp);                                                        \
+    chSysUnlockFromIsr();                                                   \
   }                                                                         \
-  chSysUnlockFromIsr();                                                     \
 }
 #else /* !SPI_USE_WAIT */
-#define _spi_wakeup(spip)
-#define _spi_wait(spip)
+#define _spi_wait_s(spip)
+#define _spi_wakeup_isr(spip)
 #endif /* !SPI_USE_WAIT */
 
 /**
@@ -261,11 +261,8 @@ typedef enum {
     (spip)->spd_state = SPI_COMPLETE;                                       \
     (spip)->spd_config->spc_endcb(spip);                                    \
     if ((spip)->spd_state == SPI_COMPLETE)                                  \
-    (spip)->spd_state = SPI_READY;                                          \
-  }                                                                         \
-  else {                                                                    \
-    (spip)->spd_state = SPI_READY;                                          \
-    _spi_wakeup(spip);                                                      \
+      (spip)->spd_state = SPI_READY;                                        \
+    _spi_wakeup_isr(spip);                                                  \
   }                                                                         \
 }
 

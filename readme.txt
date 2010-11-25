@@ -78,6 +78,8 @@
 - FIX: Fixed typo in board name (bug 3113574)(backported to 2.0.7).
 - FIX: Fixed defective event wait functions with timeout (bug 3113443)
   (backported to 2.0.7).
+- NEW: More improvements to the ADC and SPI drivers, now synchronous
+  operations can also have callbacks, optimized ISR code paths.
 - NEW: Added to the STM32 ADC driver the macros for easy handling of the
   sampling time for each channel.
 - NEW: Greatly simplified the STM32 PWM driver implementation.

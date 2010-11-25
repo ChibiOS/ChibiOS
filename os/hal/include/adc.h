@@ -122,22 +122,21 @@ typedef enum {
  *
  * @notapi
  */
-#define _adc_wakeup_i(adcp) {                                               \
-  chSysLockFromIsr();                                                       \
-  (adcp)->ad_grpp  = NULL;                                                  \
+#define _adc_wakeup_isr(adcp) {                                             \
   if ((adcp)->ad_thread != NULL) {                                          \
     Thread *tp = (adcp)->ad_thread;                                         \
     (adcp)->ad_thread = NULL;                                               \
+    chSysLockFromIsr();                                                     \
     tp->p_u.rdymsg = RDY_OK;                                                \
     chSchReadyI(tp);                                                        \
+    chSysUnlockFromIsr();                                                   \
   }                                                                         \
-  chSysUnlockFromIsr();                                                     \
 }
 
 #else /* !ADC_USE_WAIT */
 #define _adc_reset_i(adcp)
 #define _adc_reset_s(adcp)
-#define _adc_wakeup(adcp)
+#define _adc_wakeup_isr(adcp)
 #endif /* !ADC_USE_WAIT */
 
 /**
@@ -192,11 +191,7 @@ typedef enum {
   else {                                                                    \
     /* End conversion.*/                                                    \
     adc_lld_stop_conversion(adcp);                                          \
-    if ((adcp)->ad_grpp->acg_endcb == NULL) {                               \
-      (adcp)->ad_state = ADC_READY;                                         \
-      _adc_wakeup_i(adcp);                                                  \
-    }                                                                       \
-    else {                                                                  \
+    if ((adcp)->ad_grpp->acg_endcb != NULL) {                               \
       (adcp)->ad_state = ADC_COMPLETE;                                      \
       if ((adcp)->ad_depth > 1) {                                           \
         /* Invokes the callback passing the 2nd half of the buffer.*/       \
@@ -212,6 +207,7 @@ typedef enum {
         (adcp)->ad_state = ADC_READY;                                       \
     }                                                                       \
     (adcp)->ad_grpp = NULL;                                                 \
+    _adc_wakeup_isr(adcp);                                                  \
   }                                                                         \
 }
 

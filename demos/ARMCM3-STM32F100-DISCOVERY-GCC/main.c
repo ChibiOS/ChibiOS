@@ -188,16 +188,8 @@ int main(int argc, char **argv) {
   spiStart(&SPID1, &spicfg);
 
   /*
-   * Initializes the ADC driver 1.
-   * The pin PC0 on the port GPIOC is programmed as analog input.
-   */
-  adcStart(&ADCD1, &adccfg);
-  palSetGroupMode(GPIOC, PAL_PORT_BIT(0), PAL_MODE_INPUT_ANALOG);
-
-  /*
    * Initializes the PWM driver 1, re-routes the TIM3 outputs, programs the
-   * pins as alternate functions and finally enables channels with zero
-   * initial duty cycle.
+   * pins as alternate functions.
    * Note, the AFIO access routes the TIM3 output pins on the PC6...PC9
    * where the LEDs are connected.
    */
@@ -205,6 +197,14 @@ int main(int argc, char **argv) {
   AFIO->MAPR |= AFIO_MAPR_TIM3_REMAP_0 | AFIO_MAPR_TIM3_REMAP_1;
   palSetGroupMode(GPIOC, PAL_PORT_BIT(GPIOC_LED3) | PAL_PORT_BIT(GPIOC_LED4),
                   PAL_MODE_STM32_ALTERNATE_PUSHPULL);
+
+  /*
+   * Initializes the ADC driver 1 and performs a conversion.
+   * The pin PC0 on the port GPIOC is programmed as analog input.
+   */
+  adcStart(&ADCD1, &adccfg);
+  palSetGroupMode(GPIOC, PAL_PORT_BIT(0), PAL_MODE_INPUT_ANALOG);
+  adcConvert(&ADCD1, &adcgrpcfg, samples, ADC_GRP1_BUF_DEPTH);
 
   /*
    * Creates the example thread.
