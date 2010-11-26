@@ -95,8 +95,8 @@ static const SPIConfig spicfg = {
 };
 
 /*
- * PWM cyclic callback. PWM channels are reprogrammed using a duty cycle
- * calculated as average of the last sampling operations.
+ * PWM cyclic callback.
+ * A new ADC conversion is started.
  */
 static void pwmpcb(PWMDriver *pwmp) {
 
@@ -112,6 +112,7 @@ static void pwmpcb(PWMDriver *pwmp) {
 
 /*
  * ADC end conversion callback.
+ * The PWM channels are reprogrammed using the latest ADC samples.
  * The latest samples are transmitted into a single SPI transaction.
  */
 void adccb(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
