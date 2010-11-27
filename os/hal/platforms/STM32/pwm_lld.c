@@ -78,6 +78,15 @@ PWMDriver PWMD3;
 PWMDriver PWMD4;
 #endif
 
+/**
+ * @brief   PWM5 driver identifier.
+ * @note    The driver PWM5 allocates the timer TIM5 when enabled.
+ */
+#if defined(STM32_PWM_USE_TIM5) || defined(__DOXYGEN__)
+PWMDriver PWMD5;
+#endif
+
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -212,6 +221,23 @@ CH_IRQ_HANDLER(TIM4_IRQHandler) {
 }
 #endif /* STM32_PWM_USE_TIM4 */
 
+#if STM32_PWM_USE_TIM5
+/**
+ * @brief   TIM5 interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(TIM5_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  serve_interrupt(&PWMD5);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* STM32_PWM_USE_TIM5 */
+
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -266,6 +292,17 @@ void pwm_lld_init(void) {
   PWMD4.pd_enabled_channels = 0;
   PWMD4.pd_tim = TIM4;
 #endif
+
+#if STM32_PWM_USE_TIM5
+  /* TIM2 reset, ensures reset state in order to avoid trouble with JTAGs.*/
+  RCC->APB1RSTR = RCC_APB1RSTR_TIM5RST;
+  RCC->APB1RSTR = 0;
+
+  /* Driver initialization.*/
+  pwmObjectInit(&PWMD5);
+  PWMD5.pd_enabled_channels = 0;
+  PWMD5.pd_tim = TIM5;
+#endif
 }
 
 /**
@@ -289,9 +326,9 @@ void pwm_lld_start(PWMDriver *pwmp) {
       RCC->APB2RSTR = RCC_APB2RSTR_TIM1RST;
       RCC->APB2RSTR = 0;
       NVICEnableVector(TIM1_UP_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_PWM1_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM1_IRQ_PRIORITY));
       NVICEnableVector(TIM1_CC_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_PWM1_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM1_IRQ_PRIORITY));
     }
 #endif
 #if STM32_PWM_USE_TIM2
@@ -300,7 +337,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
       RCC->APB1RSTR = RCC_APB1RSTR_TIM2RST;
       RCC->APB1RSTR = 0;
       NVICEnableVector(TIM2_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_PWM2_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM2_IRQ_PRIORITY));
     }
 #endif
 #if STM32_PWM_USE_TIM3
@@ -309,7 +346,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
       RCC->APB1RSTR = RCC_APB1RSTR_TIM3RST;
       RCC->APB1RSTR = 0;
       NVICEnableVector(TIM3_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_PWM3_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM3_IRQ_PRIORITY));
     }
 #endif
 #if STM32_PWM_USE_TIM4
@@ -318,9 +355,21 @@ void pwm_lld_start(PWMDriver *pwmp) {
       RCC->APB1RSTR = RCC_APB1RSTR_TIM4RST;
       RCC->APB1RSTR = 0;
       NVICEnableVector(TIM4_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_PWM4_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM4_IRQ_PRIORITY));
     }
 #endif
+
+#if STM32_PWM_USE_TIM5
+    if (&PWMD5 == pwmp) {
+      RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
+      RCC->APB1RSTR = RCC_APB1RSTR_TIM5RST;
+      RCC->APB1RSTR = 0;
+      NVICEnableVector(TIM5_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM5_IRQ_PRIORITY));
+    }
+#endif
+
+
     /* All channels configured in PWM1 mode with preload enabled and will
        stay that way until the driver is stopped.*/
     pwmp->pd_tim->CCMR1 = TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2 |
@@ -440,6 +489,12 @@ void pwm_lld_stop(PWMDriver *pwmp) {
       RCC->APB1ENR &= ~RCC_APB1ENR_TIM4EN;
     }
 #endif
+#if STM32_PWM_USE_TIM5
+    if (&PWMD5 == pwmp) {
+      NVICDisableVector(TIM5_IRQn);
+      RCC->APB1ENR &= ~RCC_APB1ENR_TIM5EN;
+    }
+#endif
   }
 }
 
@@ -462,7 +517,7 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
     pwmp->pd_enabled_channels |= (1 << channel);
     /* If there is a callback associated to the channel then the proper
        interrupt is cleared and enabled.*/
-    if (pwmp->pd_config->pc_channels[0].pcc_callback) {
+    if (pwmp->pd_config->pc_channels[channel].pcc_callback) {
       pwmp->pd_tim->SR    = ~(2 << channel);
       pwmp->pd_tim->DIER |= (2 << channel);
     }

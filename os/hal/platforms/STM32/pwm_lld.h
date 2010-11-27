@@ -80,31 +80,47 @@
 #endif
 
 /**
+ * @brief   PWM5 driver enable switch.
+ * @details If set to @p TRUE the support for PWM5 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_PWM_USE_TIM5) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_TIM5                  TRUE
+#endif
+
+/**
  * @brief   PWM1 interrupt priority level setting.
  */
-#if !defined(STM32_PWM_PWM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM_PWM1_IRQ_PRIORITY         7
+#if !defined(STM32_PWM_TIM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_TIM1_IRQ_PRIORITY         7
 #endif
 
 /**
  * @brief   PWM2 interrupt priority level setting.
  */
-#if !defined(STM32_PWM_PWM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM_PWM2_IRQ_PRIORITY         7
+#if !defined(STM32_PWM_TIM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_TIM2_IRQ_PRIORITY         7
 #endif
 
 /**
  * @brief   PWM3 interrupt priority level setting.
  */
-#if !defined(STM32_PWM_PWM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM_PWM3_IRQ_PRIORITY         7
+#if !defined(STM32_PWM_TIM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_TIM3_IRQ_PRIORITY         7
 #endif
 
 /**
  * @brief   PWM4 interrupt priority level setting.
  */
-#if !defined(STM32_PWM_PWM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_PWM_PWM4_IRQ_PRIORITY         7
+#if !defined(STM32_PWM_TIM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_TIM4_IRQ_PRIORITY         7
+#endif
+
+/**
+ * @brief   PWM5 interrupt priority level setting.
+ */
+#if !defined(STM32_PWM_TIM5_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_TIM5_IRQ_PRIORITY         7
 #endif
 
 /*===========================================================================*/
@@ -127,8 +143,13 @@
 #error "TIM4 not present in the selected device"
 #endif
 
+#if STM32_PWM_USE_TIM5 && !STM32_HAS_TIM5
+#error "TIM5 not present in the selected device"
+#endif
+
 #if !STM32_PWM_USE_TIM1 && !STM32_PWM_USE_TIM2 &&                           \
-    !STM32_PWM_USE_TIM3 && !STM32_PWM_USE_TIM4
+    !STM32_PWM_USE_TIM3 && !STM32_PWM_USE_TIM4 &&                           \
+    !STM32_PWM_USE_TIM5
 #error "PWM driver activated but no TIM peripheral assigned"
 #endif
 
@@ -336,6 +357,10 @@ extern PWMDriver PWMD3;
 
 #if defined(STM32_PWM_USE_TIM4) && !defined(__DOXYGEN__)
 extern PWMDriver PWMD4;
+#endif
+
+#if defined(STM32_PWM_USE_TIM5) && !defined(__DOXYGEN__)
+extern PWMDriver PWMD5;
 #endif
 
 #ifdef __cplusplus
