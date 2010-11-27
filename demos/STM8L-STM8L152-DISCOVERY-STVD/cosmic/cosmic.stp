@@ -641,67 +641,8 @@ PathName=..\..\..\os\hal\platforms\stm8l\hal_lld.c
 [Root.Source Files.Source Files\os.Source Files\os\kernel]
 ElemType=Folder
 PathName=Source Files\os\kernel
-Child=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c
+Child=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c
 Next=Root.Source Files.Source Files\os.Source Files\os\port
-
-[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c]
-ElemType=File
-PathName=..\..\..\os\kernel\src\chdynamic.c
-Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c
-Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0
-Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1
-
-[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0]
-Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0.Settings.0
-Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0.Settings.1
-Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0.Settings.2
-
-[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1]
-Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1.Settings.0
-Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1.Settings.1
-Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1.Settings.2
-
-[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0.Settings.0]
-String.6.0=2010,11,12,20,29,53
-String.8.0=Debug
-Int.0=0
-Int.1=0
-
-[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0.Settings.1]
-String.2.0=Performing Custom Build on $(InputFile)
-String.3.0=
-String.4.0=
-String.5.0=
-String.6.0=2010,5,25,14,45,56
-
-[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0.Settings.2]
-String.2.0=Compiling $(InputFile)...
-String.3.0=cxstm8 -i..\..\..\os\hal\platforms\stm8l  +warn +modsl0 -customDebCompat -customOpt-no -customC-pp -customLst -ll -i..\demo -i..\..\..\test -i..\..\..\os\hal\include -i..\..\..\boards\st_stm8l_discovery -i..\..\..\os\ports\cosmic\stm8 -i..\..\..\os\kernel\include $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
-String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
-String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,11,12,20,27,7
-String.8.0=Debug
-
-[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1.Settings.0]
-String.6.0=2010,11,12,20,29,53
-String.8.0=Release
-Int.0=0
-Int.1=0
-
-[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1.Settings.1]
-String.2.0=Performing Custom Build on $(InputFile)
-String.3.0=
-String.4.0=
-String.5.0=
-String.6.0=2010,5,25,14,45,56
-
-[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1.Settings.2]
-String.2.0=Compiling $(InputFile)...
-String.3.0=cxstm8 -i..\..\..\os\hal\platforms\stm8l  +modsl0 -customC-pp -customLst-ll -i..\demo -i..\..\..\test -i..\..\..\os\hal\include -i..\..\..\boards\st_stm8l_discovery -i..\..\..\os\ports\cosmic\stm8 -i..\..\..\os\kernel\include $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
-String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
-String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,11,12,20,27,7
-String.8.0=Release
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c]
 ElemType=File
@@ -765,7 +706,7 @@ String.8.0=Release
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c]
 ElemType=File
 PathName=..\..\..\os\kernel\src\chdebug.c
-Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c
 Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.0
 Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.1
 
@@ -814,6 +755,65 @@ String.5.0=
 String.6.0=2010,5,25,14,45,56
 
 [Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=cxstm8 -i..\..\..\os\hal\platforms\stm8l  +modsl0 -customC-pp -customLst-ll -i..\demo -i..\..\..\test -i..\..\..\os\hal\include -i..\..\..\boards\st_stm8l_discovery -i..\..\..\os\ports\cosmic\stm8 -i..\..\..\os\kernel\include $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).ls
+String.6.0=2010,11,12,20,27,7
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chdynamic.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0.Settings.0]
+String.6.0=2010,11,12,20,29,53
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,5,25,14,45,56
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=cxstm8 -i..\..\..\os\hal\platforms\stm8l  +warn +modsl0 -customDebCompat -customOpt-no -customC-pp -customLst -ll -i..\demo -i..\..\..\test -i..\..\..\os\hal\include -i..\..\..\boards\st_stm8l_discovery -i..\..\..\os\ports\cosmic\stm8 -i..\..\..\os\kernel\include $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).ls
+String.6.0=2010,11,12,20,27,7
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1.Settings.0]
+String.6.0=2010,11,12,20,29,53
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,5,25,14,45,56
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c.Config.1.Settings.2]
 String.2.0=Compiling $(InputFile)...
 String.3.0=cxstm8 -i..\..\..\os\hal\platforms\stm8l  +modsl0 -customC-pp -customLst-ll -i..\demo -i..\..\..\test -i..\..\..\os\hal\include -i..\..\..\boards\st_stm8l_discovery -i..\..\..\os\ports\cosmic\stm8 -i..\..\..\os\kernel\include $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
@@ -2116,13 +2116,8 @@ PathName=..\..\..\os\hal\platforms\stm8l\stm8l15x.h
 [Root.Include Files.Include Files\os.Include Files\os\kernel]
 ElemType=Folder
 PathName=Include Files\os\kernel
-Child=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdynamic.h
+Child=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\ch.h
 Next=Root.Include Files.Include Files\os.Include Files\os\port
-
-[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdynamic.h]
-ElemType=File
-PathName=..\..\..\os\kernel\include\chdynamic.h
-Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\ch.h
 
 [Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\ch.h]
 ElemType=File
@@ -2137,6 +2132,11 @@ Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\ker
 [Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdebug.h]
 ElemType=File
 PathName=..\..\..\os\kernel\include\chdebug.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdynamic.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdynamic.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chdynamic.h
 Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chevents.h
 
 [Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chevents.h]

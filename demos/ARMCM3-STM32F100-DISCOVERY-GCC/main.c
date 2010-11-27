@@ -184,6 +184,14 @@ int main(int argc, char **argv) {
   sdStart(&SD1, NULL);
 
   /*
+   * If the user button is pressed after the reset then the test suite is
+   * executed immediately before activating the various device drivers in
+   * order to not alter the benchmark scores.
+   */
+  if (palReadPad(GPIOA, GPIOA_BUTTON))
+    TestThread(&SD1);
+
+  /*
    * Initializes the SPI driver 1.
    */
   spiStart(&SPID1, &spicfg);
