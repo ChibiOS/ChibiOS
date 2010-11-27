@@ -6,9 +6,9 @@ Compiler: Raisonance RKit-STM8_2.30.10.0175
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.0unstable
+*** Kernel:       2.1.4unstable
 *** Architecture: STM8
-*** Platform:     STM8x
+*** Platform:     STM8S
 *** Test Board:   Raisonance REva V3 + STM8S208RB
 
 ----------------------------------------------------------------------------
@@ -33,7 +33,37 @@ Compiler: Raisonance RKit-STM8_2.30.10.0175
 --- Test Case 2.3 (Semaphores, atomic signal-wait)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
+--- Test Case 2.4 (Binary Semaphores, functionality)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 3.1 (Mutexes, priority enqueuing test)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 3.2 (Mutexes, priority inheritance, simple case)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 3.3 (Mutexes, priority inheritance, complex case)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 3.4 (Mutexes, priority return)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 3.5 (Mutexes, status)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 3.6 (CondVar, signal test)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 3.7 (CondVar, broadcast test)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 3.8 (CondVar, boost test)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
 --- Test Case 4.1 (Messages, loop)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 5.1 (Mailboxes, queuing and timeouts)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 6.1 (Events, registration and dispatch)
@@ -67,57 +97,64 @@ Compiler: Raisonance RKit-STM8_2.30.10.0175
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 32031 msgs/S, 64062 ctxswc/S
+--- Score : 31278 msgs/S, 62556 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 24553 msgs/S, 49106 ctxswc/S
+--- Score : 23785 msgs/S, 47570 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 24553 msgs/S, 49106 ctxswc/S
+--- Score : 23785 msgs/S, 47570 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 110712 ctxswc/S
+--- Score : 107368 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 18102 threads/S
+--- Score : 17603 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 28091 threads/S
+--- Score : 27510 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 7067 reschedules/S, 42402 ctxswc/S
+--- Score : 6268 reschedules/S, 37608 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 54880 ctxswc/S
+--- Score : 53236 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 63540 bytes/S
+--- Score : 53004 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 57788 timers/S
+--- Score : 57830 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 216720 wait+signal/S
+--- Score : 125116 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
---- Test Case 11.12 (Benchmark, RAM footprint)
---- System: 208 bytes
---- Thread: 29 bytes
+--- Test Case 11.12 (Benchmark, mutexes lock/unlock)
+--- Score : 123188 lock+unlock/S
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 11.13 (Benchmark, RAM footprint)
+--- System: 214 bytes
+--- Thread: 32 bytes
 --- Timer : 10 bytes
 --- Semaph: 5 bytes
 --- EventS: 2 bytes
 --- EventL: 5 bytes
+--- Mutex : 8 bytes
+--- CondV.: 4 bytes
 --- Queue : 15 bytes
+--- MailB.: 18 bytes
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 
