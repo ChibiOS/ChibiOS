@@ -108,7 +108,7 @@ Thread *_thread_init(Thread *tp, tprio_t prio) {
  * @brief   Memory fill utility.
  *
  * @param[in] startp    first address to fill
- * @param[in] endp      last address to fille +1
+ * @param[in] endp      last address to fill +1
  * @param[in] v         filler value
  *
  * @notapi
