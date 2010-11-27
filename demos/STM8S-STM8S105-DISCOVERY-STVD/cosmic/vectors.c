@@ -69,7 +69,7 @@ exception_vector_t const _vectab[] = {
   {0x82, vector},                             /* vector7  */
   {0x82, vector},                             /* vector8  */
   {0x82, vector},                             /* vector9  */
-#if HAL_USE_SPI && STM8_SPI_USE_SPI
+#if HAL_USE_SPI && STM8S_SPI_USE_SPI
   {0x82, vector10},
 #else
   {0x82, vector},                             /* vector10 */
@@ -80,7 +80,7 @@ exception_vector_t const _vectab[] = {
   {0x82, vector},                             /* vector14 */
   {0x82, vector},                             /* vector15 */
   {0x82, vector},                             /* vector16 */
-#if HAL_USE_SERIAL && STM8_SERIAL_USE_UART1
+#if HAL_USE_SERIAL && STM8S_SERIAL_USE_UART1
   {0x82, vector17},                           /* vector17 */
   {0x82, vector18},                           /* vector18 */
 #else
@@ -88,7 +88,7 @@ exception_vector_t const _vectab[] = {
   {0x82, vector},                             /* vector18 */
 #endif
   {0x82, vector},                             /* vector19 */
-#if HAL_USE_SERIAL && (STM8_SERIAL_USE_UART2 || STM8_SERIAL_USE_UART3)
+#if HAL_USE_SERIAL && (STM8S_SERIAL_USE_UART2 || STM8S_SERIAL_USE_UART3)
   {0x82, vector20},                           /* vector20 */
   {0x82, vector21},                           /* vector21 */
 #else
