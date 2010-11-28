@@ -446,7 +446,7 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
 void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
 
   *(&pwmp->pd_tim->CCR1 + (channel * 2)) = 0;
-  pwmp->pd_tim->DIER = ~(2 << channel);
+  pwmp->pd_tim->DIER &= ~(2 << channel);
   pwmp->pd_enabled_channels &= ~(1 << channel);
 }
 
