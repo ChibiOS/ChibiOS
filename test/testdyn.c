@@ -207,16 +207,16 @@ const struct testcase testdyn2 = {
  * coverage.
  */
 
-static unsigned regscan(void) {
-  Thread *tp;
-  unsigned i = 0;
+static bool_t regfind(Thread *tp) {
+  Thread *ftp;
+  bool_t found = FALSE;
 
-  tp = chRegFirstThread();
+  ftp = chRegFirstThread();
   do {
-    i++;
-    tp = chRegNextThread(tp);
-  } while (tp != NULL);
-  return i;
+    found |= ftp == tp;
+    ftp = chRegNextThread(ftp);
+  } while (ftp != NULL);
+  return found;
 }
 
 static char *dyn3_gettest(void) {
@@ -230,14 +230,8 @@ static void dyn3_setup(void) {
 }
 
 static void dyn3_execute(void) {
-  unsigned n1, n2, n3;
   Thread *tp;
   tprio_t prio = chThdGetPriority();
-
-  /* Current number of threads in the system, two times just in case some
-     external detached thread terminated.*/
-  (void)regscan();
-  n1 = regscan();
 
   /* Testing references increase/decrease and final detach.*/
   tp = chThdCreateFromHeap(&heap1, WA_SIZE, prio-1, thread, "A");
@@ -248,18 +242,21 @@ static void dyn3_execute(void) {
   test_assert(3, tp->p_refs == 1, "references decrease failure");
 
   /* Verify the new threads count.*/
-  n2 = regscan();
-  test_assert(4, n1 == n2 - 1, "unexpected threads count");
+  test_assert(4, regfind(tp), "thread missing from registry");
+  test_assert(5, regfind(tp), "thread disappeared");
 
   /* Detach and let the thread execute and terminate.*/
   chThdRelease(tp);
-  test_assert(5, tp->p_refs == 0, "detach failure");
+  test_assert(6, tp->p_refs == 0, "detach failure");
+  test_assert(7, tp->p_state == THD_STATE_READY, "invalid state");
+  test_assert(8, regfind(tp), "thread disappeared");
+  test_assert(9, regfind(tp), "thread disappeared");
   chThdSleepMilliseconds(50);           /* The thread just terminates.      */
-  test_assert(6, tp->p_state == THD_STATE_FINAL, "invalid state");
+  test_assert(10, tp->p_state == THD_STATE_FINAL, "invalid state");
 
   /* Clearing the zombie by scanning the registry.*/
-  n3 = regscan();
-  test_assert(7, n1 == n3, "unexpected threads count");
+  test_assert(11, regfind(tp), "thread disappeared");
+  test_assert(12, !regfind(tp), "thread still in registry");
 }
 
 const struct testcase testdyn3 = {

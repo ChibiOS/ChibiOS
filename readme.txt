@@ -58,6 +58,10 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.0.8 ***
+- FIX: Fixed failed memory recovery by registry scan, improved the related
+  test case (bug 3116888).
+
 *** 2.0.7 ***
 - FIX: Fixed typo in board name (bug 3113574).
 - FIX: Fixed defective event wait functions with timeout (bug 3113443).

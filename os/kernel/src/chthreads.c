@@ -399,7 +399,10 @@ void chThdExit(msg_t msg) {
     chSchReadyI(list_remove(&tp->p_waiting));
 #endif
 #if CH_USE_REGISTRY
-  REG_REMOVE(tp);
+  /* Static threads are immediately removed from the registry because
+     there is no memory to recover.*/
+  if ((tp->p_flags & THD_MEM_MODE_MASK) == THD_MEM_MODE_STATIC)
+    REG_REMOVE(tp);
 #endif
   chSchGoSleepS(THD_STATE_FINAL);
 }
@@ -438,17 +441,24 @@ void chThdRelease(Thread *tp) {
   refs = --tp->p_refs;
   chSysUnlock();
 
-  /* If the references counter reaches zero then the memory can be returned
-     to the proper allocator. Of course static threads are not affected.*/
-  if (refs == 0) {
+  /* If the references counter reaches zero and the thread is in its
+     terminated state then the memory can be returned to the proper
+     allocator. Of course static threads are not affected.*/
+  if ((refs == 0) && (tp->p_state == THD_STATE_FINAL)) {
     switch (tp->p_flags & THD_MEM_MODE_MASK) {
 #if CH_USE_HEAP
     case THD_MEM_MODE_HEAP:
+#if CH_USE_REGISTRY
+      REG_REMOVE(tp);
+#endif
       chHeapFree(tp);
       break;
 #endif
 #if CH_USE_MEMPOOLS
     case THD_MEM_MODE_MEMPOOL:
+#if CH_USE_REGISTRY
+      REG_REMOVE(tp);
+#endif
       chPoolFree(tp->p_mpool, tp);
       break;
 #endif

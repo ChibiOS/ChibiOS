@@ -21,7 +21,7 @@ Lines executed:100.00% of 67
 ../../os/kernel/src/chschd.c:creating `chschd.c.gcov'
 
 File `../../os/kernel/src/chthreads.c'
-Lines executed:95.52% of 134
+Lines executed:95.62% of 137
 ../../os/kernel/src/chthreads.c:creating `chthreads.c.gcov'
 
 File `../../os/kernel/src/chregistry.c'
