@@ -269,9 +269,9 @@ void pwm_lld_start(PWMDriver *pwmp) {
       RCC->APB2RSTR = RCC_APB2RSTR_TIM1RST;
       RCC->APB2RSTR = 0;
       NVICEnableVector(TIM1_UP_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM1_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM1_IRQ_PRIORITY));
       NVICEnableVector(TIM1_CC_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM1_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM1_IRQ_PRIORITY));
     }
 #endif
 #if USE_STM32_PWM2
@@ -280,7 +280,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
       RCC->APB1RSTR = RCC_APB1RSTR_TIM2RST;
       RCC->APB1RSTR = 0;
       NVICEnableVector(TIM2_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM2_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM2_IRQ_PRIORITY));
     }
 #endif
 #if USE_STM32_PWM3
@@ -289,7 +289,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
       RCC->APB1RSTR = RCC_APB1RSTR_TIM3RST;
       RCC->APB1RSTR = 0;
       NVICEnableVector(TIM3_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM3_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM3_IRQ_PRIORITY));
     }
 #endif
 #if USE_STM32_PWM4
@@ -298,7 +298,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
       RCC->APB1RSTR = RCC_APB1RSTR_TIM4RST;
       RCC->APB1RSTR = 0;
       NVICEnableVector(TIM4_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM4_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_PWM4_IRQ_PRIORITY));
     }
 #endif
   }
