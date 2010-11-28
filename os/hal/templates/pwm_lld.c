@@ -35,6 +35,8 @@
 #include "ch.h"
 #include "hal.h"
 
+#if CH_HAL_USE_PWM || defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -99,24 +101,10 @@ bool_t pwm_lld_is_enabled(PWMDriver *pwmp, pwmchannel_t channel) {
 }
 
 /**
- * @brief   Enables a callback mode for the specified PWM channel.
- * @details The callback mode must be set before starting a PWM channel.
- *
- * @param[in] pwmp      pointer to the @p PWMDriver object
- * @param[in] channel   PWM channel identifier
- * @param[in] edge      output edge mode
- * @param[in] callback  callback function
- */
-void pwm_lld_set_callback(PWMDriver *pwmp, pwmchannel_t channel,
-                          pwmedge_t edge, pwmcallback_t callback) {
-
-}
-
-/**
  * @brief   Enables a PWM channel.
  *
- * @param[in] pwmp      pointer to the @p PWMDriver object
- * @param[in] channel   PWM channel identifier
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
  * @param[in] width     PWM pulse width as clock pulses number
  */
 void pwm_lld_enable_channel(PWMDriver *pwmp,
@@ -130,11 +118,13 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
  * @details The channel is disabled and its output line returned to the
  *          idle state.
  *
- * @param[in] pwmp      pointer to the @p PWMDriver object
- * @param[in] channel   PWM channel identifier
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
  */
 void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
 
 }
+
+#endif /* CH_HAL_USE_PWM */
 
 /** @} */

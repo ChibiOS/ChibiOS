@@ -57,33 +57,49 @@
  * @brief   Driver state machine possible states.
  */
 typedef enum {
-  PWM_UNINIT = 0,                   /**< @brief Not initialized.            */
-  PWM_STOP = 1,                     /**< @brief Stopped.                    */
-  PWM_READY = 2,                    /**< @brief Ready.                      */
+  PWM_UNINIT = 0,                   /**< Not initialized.                   */
+  PWM_STOP = 1,                     /**< Stopped.                           */
+  PWM_READY = 2,                    /**< Ready.                             */
 } pwmstate_t;
 
 /**
  * @brief PWM logic mode.
  */
 typedef enum {
-  PWM_OUTPUT_DISABLED = 0,          /**< @brief Output not driven, callback
-                                                only.                       */
-  PWM_OUTPUT_ACTIVE_HIGH = 1,       /**< @brief Idle is logic level 0.      */
-  PWM_OUTPUT_ACTIVE_LOW = 2         /**< @brief Idle is logic level 1.      */
+  PWM_OUTPUT_DISABLED = 0,          /**< Output not driven, callback only.  */
+  PWM_OUTPUT_ACTIVE_HIGH = 1,       /**< Idle is logic level 0.             */
+  PWM_OUTPUT_ACTIVE_LOW = 2         /**< Idle is logic level 1.             */
 } pwmmode_t;
-
-/**
- * @brief   PWM notification callback type.
- *
- * @param[in] active    current channel output state
- */
-typedef void (*pwmcallback_t)(void);
 
 #include "pwm_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Enables a PWM channel.
+ * @details Programs (or reprograms) a PWM channel.
+ * @note    This function has to be invoked from a lock zone.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier
+ * @param[in] width     PWM pulse width as clock pulses number
+ */
+#define pwmEnableChannelI(pwmp, channel, width)                             \
+  pwm_lld_enable_channel(pwmp, channel, width)
+
+/**
+ * @brief Disables a PWM channel.
+ * @details The channel is disabled and its output line returned to the
+ *          idle state.
+ * @note    This function has to be invoked from a lock zone.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier
+ */
+#define pwmDisableChannelI(pwmp, channel)                                   \
+  pwm_lld_disable_channel(pwmp, channel)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

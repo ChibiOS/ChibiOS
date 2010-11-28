@@ -27,6 +27,7 @@
 /**
  * @file    pwm.c
  * @brief   PWM Driver code.
+ *
  * @addtogroup PWM
  * @{
  */
@@ -34,7 +35,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#if CH_HAL_USE_PWM || defined(__DOXYGEN__)
+#if HAL_USE_PWM || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -69,6 +70,9 @@ void pwmObjectInit(PWMDriver *pwmp) {
 
   pwmp->pd_state    = PWM_STOP;
   pwmp->pd_config   = NULL;
+#if defined(PWM_DRIVER_EXT_INIT_HOOK)
+  PWM_DRIVER_EXT_INIT_HOOK(pwmp);
+#endif
 }
 
 /**
@@ -83,8 +87,7 @@ void pwmStart(PWMDriver *pwmp, const PWMConfig *config) {
 
   chSysLock();
   chDbgAssert((pwmp->pd_state == PWM_STOP) || (pwmp->pd_state == PWM_READY),
-              "pwmStart(), #1",
-              "invalid state");
+              "pwmStart(), #1", "invalid state");
   pwmp->pd_config = config;
   pwm_lld_start(pwmp);
   pwmp->pd_state = PWM_READY;
@@ -102,8 +105,7 @@ void pwmStop(PWMDriver *pwmp) {
 
   chSysLock();
   chDbgAssert((pwmp->pd_state == PWM_STOP) || (pwmp->pd_state == PWM_READY),
-              "pwmStop(), #1",
-              "invalid state");
+              "pwmStop(), #1", "invalid state");
   pwm_lld_stop(pwmp);
   pwmp->pd_state = PWM_STOP;
   chSysUnlock();
@@ -111,9 +113,10 @@ void pwmStop(PWMDriver *pwmp) {
 
 /**
  * @brief   Enables a PWM channel.
+ * @details Programs (or reprograms) a PWM channel.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
  * @param[in] width     PWM pulse width as clock pulses number
  */
 void pwmEnableChannel(PWMDriver *pwmp,
@@ -125,18 +128,18 @@ void pwmEnableChannel(PWMDriver *pwmp,
 
   chSysLock();
   chDbgAssert(pwmp->pd_state == PWM_READY,
-              "pwmEnableChannel(), #1", "invalid state");
+              "pwmEnableChannel(), #1", "not ready");
   pwm_lld_enable_channel(pwmp, channel, width);
   chSysUnlock();
 }
 
 /**
- * @brief Disables a PWM channel.
+ * @brief   Disables a PWM channel.
  * @details The channel is disabled and its output line returned to the
  *          idle state.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
  */
 void pwmDisableChannel(PWMDriver *pwmp, pwmchannel_t channel) {
 
@@ -145,7 +148,7 @@ void pwmDisableChannel(PWMDriver *pwmp, pwmchannel_t channel) {
 
   chSysLock();
   chDbgAssert(pwmp->pd_state == PWM_READY,
-              "pwmDisableChannel(), #1", "invalid state");
+              "pwmDisableChannel(), #1", "not ready");
   pwm_lld_disable_channel(pwmp, channel);
   chSysUnlock();
 }

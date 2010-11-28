@@ -61,6 +61,12 @@
 *** 2.0.8 ***
 - FIX: Fixed failed memory recovery by registry scan, improved the related
   test case (bug 3116888).
+- FIX: Fixed PWM channels going to ACTIVE state when the pulse width is
+  set to zero in the STM32 PWM driver (bug 3114481).
+- FIX: Fixed PWM channels return to IDLE state in STM32 PWM driver (bug
+  3114467).
+- CHANGE: Bugs 3114467 and 3114481 have been fixed by backporting the 2.1.x
+  PWM driver, there is a difference in the PWM callback parameters.
 
 *** 2.0.7 ***
 - FIX: Fixed typo in board name (bug 3113574).
