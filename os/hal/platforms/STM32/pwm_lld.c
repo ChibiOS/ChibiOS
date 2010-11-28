@@ -95,9 +95,9 @@ PWMDriver PWMD5;
 /*===========================================================================*/
 
 #if STM32_PWM_USE_TIM2 || STM32_PWM_USE_TIM3 || STM32_PWM_USE_TIM4 ||       \
-    defined(__DOXYGEN__)
+    STM32_PWM_USE_TIM5 || defined(__DOXYGEN__)
 /**
- * @brief   Common TIM2...TIM4 IRQ handler.
+ * @brief   Common TIM2...TIM5 IRQ handler.
  * @note    It is assumed that the various sources are only activated if the
  *          associated callback pointer is not equal to @p NULL in order to not
  *          perform an extra check in a potentially critical interrupt handler.
@@ -119,7 +119,7 @@ static void serve_interrupt(PWMDriver *pwmp) {
   if ((sr & TIM_SR_UIF) != 0)
     pwmp->pd_config->pc_callback(pwmp);
 }
-#endif /* STM32_PWM_USE_TIM2 || STM32_PWM_USE_TIM3 || STM32_PWM_USE_TIM4 */
+#endif /* STM32_PWM_USE_TIM2 || ... || STM32_PWM_USE_TIM5 */
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -235,7 +235,6 @@ CH_IRQ_HANDLER(TIM5_IRQHandler) {
   CH_IRQ_EPILOGUE();
 }
 #endif /* STM32_PWM_USE_TIM5 */
-
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -530,6 +529,8 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
+ *
+ * @notapi
  */
 void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
 
