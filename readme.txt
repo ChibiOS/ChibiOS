@@ -65,6 +65,7 @@
 *****************************************************************************
 
 *** 2.1.5 ***
+- FIX: Fixed pwmDisableChannel() now working in STM32 PWM driver (bug 3121246).
 - FIX: Fixed problem with PWM channel callbacks (bug 3120785).
 - NEW: Added support for TIM5 in the STM32 PWM driver.
 - CHANGE: Modified the STM32_PWM_PWMx_IRQ_PRIORITY macros in the STM32
