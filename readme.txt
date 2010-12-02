@@ -69,6 +69,9 @@
 - FIX: Fixed pwmDisableChannel() now working in STM32 PWM driver (bug 3121246).
 - FIX: Fixed problem with PWM channel callbacks (bug 3120785).
 - NEW: Added support for TIM5 in the STM32 PWM driver.
+- NEW: Added to the ARM port the option to externally redefine the port IRQ
+  macros in order to accomodate different implementations without have to
+  change the port layer.
 - CHANGE: Modified the STM32_PWM_PWMx_IRQ_PRIORITY macros in the STM32
   PWM driver (and all the STM32 mcuconf.h files) and renamed them in
   STM32_PWM_TIMx_IRQ_PRIORITY for consistency.

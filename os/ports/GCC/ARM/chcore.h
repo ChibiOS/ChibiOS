@@ -244,6 +244,7 @@ struct context {
  *          value. The switch in THUMB mode is done in the function prologue so
  *          it is transparent to the user code.
  */
+#if !defined(PORT_IRQ_PROLOGUE)
 #ifdef THUMB
 #define PORT_IRQ_PROLOGUE() {                                               \
   asm volatile (".code 32                               \n\t"               \
@@ -257,6 +258,7 @@ struct context {
   asm volatile ("stmfd    sp!, {r0-r3, r12, lr}" : : : "memory");           \
 }
 #endif /* !THUMB */
+#endif /* !defined(PORT_IRQ_PROLOGUE) */
 
 /**
  * @brief   IRQ epilogue code.
@@ -265,6 +267,7 @@ struct context {
  * @note    This macro has a different implementation depending if compiled in
  *          ARM or THUMB mode.
  */
+#if !defined(PORT_IRQ_EPILOGUE)
 #ifdef THUMB
 #define PORT_IRQ_EPILOGUE() {                                               \
   asm volatile ("ldr     r0, =_port_irq_common          \n\t"               \
@@ -275,21 +278,26 @@ struct context {
   asm volatile ("b       _port_irq_common" : : : "memory");                 \
 }
 #endif /* !THUMB */
+#endif /* !defined(PORT_IRQ_EPILOGUE) */
 
 /**
  * @brief   IRQ handler function declaration.
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  */
+#if !defined(PORT_IRQ_HANDLER)
 #define PORT_IRQ_HANDLER(id) __attribute__((naked)) void id(void)
+#endif /* !defined(PORT_IRQ_HANDLER) */
 
 /**
  * @brief   Fast IRQ handler function declaration.
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  */
+#if !defined(PORT_FAST_IRQ_HANDLER)
 #define PORT_FAST_IRQ_HANDLER(id)                                           \
   __attribute__((interrupt("FIQ"))) void id(void)
+#endif /* !defined(PORT_FAST_IRQ_HANDLER) */
 
 /**
  * @brief   Port-related initialization code.
