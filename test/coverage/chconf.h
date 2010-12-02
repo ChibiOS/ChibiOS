@@ -68,7 +68,7 @@
  *          You may use this option if you need to merge ChibiOS/RT with
  *          external libraries that require nested lock/unlock operations.
  *
- * @note T  he default is @p FALSE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(CH_USE_NESTED_LOCKS) || defined(__DOXYGEN__)
 #define CH_USE_NESTED_LOCKS             TRUE
