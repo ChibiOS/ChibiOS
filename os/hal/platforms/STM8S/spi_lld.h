@@ -18,8 +18,8 @@
 */
 
 /**
- * @file    LPC13xx/spi_lld.h
- * @brief   LPC13xx low level SPI driver header.
+ * @file    STM8S/spi_lld.h
+ * @brief   STM8S low level SPI driver header.
  *
  * @addtogroup SPI
  * @{

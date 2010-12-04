@@ -297,6 +297,7 @@ struct PWMDriver {
  *          proper hardware resolution by carefully choosing the clock source
  *          and prescaler settings, see @p PWM_COMPUTE_PSC.
  *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] numerator numerator of the fraction
  * @param[in] denominator percentage as an integer between 0 and numerator
  * @return              The pulse width to be passed to @p pwmEnableChannel().

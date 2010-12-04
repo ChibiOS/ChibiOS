@@ -75,6 +75,7 @@
 - CHANGE: Modified the STM32_PWM_PWMx_IRQ_PRIORITY macros in the STM32
   PWM driver (and all the STM32 mcuconf.h files) and renamed them in
   STM32_PWM_TIMx_IRQ_PRIORITY for consistency.
+- Documentation related fixes.
 
 *** 2.1.4 ***
 - FIX: Fixed failed memory recovery by registry scan, improved the related
