@@ -65,6 +65,7 @@
 *****************************************************************************
 
 *** 2.1.5 ***
+- FIX: Fixed broken SPI synchronous API (bug 3127921).
 - FIX: Fixed missing vector.c files in LPC11xx and LPC13xx ports (bug 3124849).
 - FIX: Fixed pwmDisableChannel() now working in STM32 PWM driver (bug 3121246).
 - FIX: Fixed problem with PWM channel callbacks (bug 3120785).

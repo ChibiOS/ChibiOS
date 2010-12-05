@@ -262,8 +262,8 @@ typedef enum {
     (spip)->spd_config->spc_endcb(spip);                                    \
     if ((spip)->spd_state == SPI_COMPLETE)                                  \
       (spip)->spd_state = SPI_READY;                                        \
-    _spi_wakeup_isr(spip);                                                  \
   }                                                                         \
+  _spi_wakeup_isr(spip);                                                    \
 }
 
 /*===========================================================================*/
