@@ -37,7 +37,7 @@
 /**
  * @brief   Hardware FIFO depth.
  */
-#define LPC11xx_SSP_FIFO_DEPTH          8
+#define LPC11xx_SSP_FIFO_DEPTH  8
 
 #define CR0_DSSMASK             0x0F
 #define CR0_DSS4BIT             3
@@ -88,7 +88,6 @@
 
 #define ICR_ROR                 1
 #define ICR_RT                  2
-
 
 /**
  * @brief   SCK0 signal assigned to pin PIO0_10.

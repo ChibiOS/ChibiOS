@@ -61,7 +61,7 @@
  * @brief   System PLL clock source.
  */
 #if !defined(LPC13xx_PLLCLK_SOURCE) || defined(__DOXYGEN__)
-#define LPC13xx_PLLCLK_SOURCE   SYSPLLCLKSEL_SYSOSC
+#define LPC13xx_PLLCLK_SOURCE               SYSPLLCLKSEL_SYSOSC
 #endif
 
 /**
@@ -70,7 +70,7 @@
  *          must not exceed the CCO ratings.
  */
 #if !defined(LPC13xx_SYSPLL_MUL) || defined(__DOXYGEN__)
-#define LPC13xx_SYSPLL_MUL      6
+#define LPC13xx_SYSPLL_MUL                  6
 #endif
 
 /**
@@ -78,14 +78,14 @@
  * @note    The value must be chosen between (2, 4, 8, 16).
  */
 #if !defined(LPC13xx_SYSPLL_DIV) || defined(__DOXYGEN__)
-#define LPC13xx_SYSPLL_DIV      4
+#define LPC13xx_SYSPLL_DIV                  4
 #endif
 
 /**
  * @brief   System main clock source.
  */
 #if !defined(LPC13xx_MAINCLK_SOURCE) || defined(__DOXYGEN__)
-#define LPC13xx_MAINCLK_SOURCE  SYSMAINCLKSEL_PLLOUT
+#define LPC13xx_MAINCLK_SOURCE              SYSMAINCLKSEL_PLLOUT
 #endif
 
 /**
@@ -93,7 +93,7 @@
  * @note    The value must be chosen between (1...255).
  */
 #if !defined(LPC13xx_SYSCLK_DIV) || defined(__DOXYGEN__)
-#define LPC13xx_SYSABHCLK_DIV   1
+#define LPC13xx_SYSABHCLK_DIV               1
 #endif
 
 /*===========================================================================*/
