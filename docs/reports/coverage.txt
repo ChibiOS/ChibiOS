@@ -21,11 +21,11 @@ Lines executed:100.00% of 68
 ../../os/kernel/src/chschd.c:creating `chschd.c.gcov'
 
 File `../../os/kernel/src/chthreads.c'
-Lines executed:100.00% of 86
+Lines executed:100.00% of 87
 ../../os/kernel/src/chthreads.c:creating `chthreads.c.gcov'
 
 File `../../os/kernel/src/chdynamic.c'
-Lines executed:100.00% of 48
+Lines executed:100.00% of 50
 ../../os/kernel/src/chdynamic.c:creating `chdynamic.c.gcov'
 
 File `../../os/kernel/src/chregistry.c'
