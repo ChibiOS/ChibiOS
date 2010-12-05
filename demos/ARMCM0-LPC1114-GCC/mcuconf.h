@@ -31,6 +31,11 @@
 /*
  * HAL driver system settings.
  */
+#define LPC11xx_PLLCLK_SOURCE               SYSPLLCLKSEL_SYSOSC
+#define LPC11xx_SYSPLL_MUL                  4
+#define LPC11xx_SYSPLL_DIV                  4
+#define LPC11xx_MAINCLK_SOURCE              SYSMAINCLKSEL_PLLOUT
+#define LPC11xx_SYSABHCLK_DIV               1
 
 /*
  * ADC driver system settings.
@@ -47,7 +52,19 @@
 /*
  * SERIAL driver system settings.
  */
+#define LPC11xx_SERIAL_USE_UART0            TRUE
+#define LPC11xx_SERIAL_FIFO_PRELOAD         16
+#define LPC11xx_SERIAL_UART0CLKDIV          1
+#define LPC11xx_SERIAL_UART0_IRQ_PRIORITY   3
 
 /*
  * SPI driver system settings.
  */
+#define LPC11xx_SPI_USE_SSP0                TRUE
+#define LPC11xx_SPI_USE_SSP1                FALSE
+#define LPC11xx_SPI_SSP0CLKDIV              1
+#define LPC11xx_SPI_SSP1CLKDIV              1
+#define LPC11xx_SPI_SSP0_IRQ_PRIORITY       1
+#define LPC11xx_SPI_SSP1_IRQ_PRIORITY       1
+#define LPC11xx_SPI_SSP_ERROR_HOOK(spip)    chSysHalt()
+#define LPC11xx_SPI_SCK0_SELECTOR           SCK0_IS_PIO2_11
