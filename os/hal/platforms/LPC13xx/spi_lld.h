@@ -119,15 +119,6 @@
 #endif
 
 /**
- * @brief   SPI2 driver enable switch.
- * @details If set to @p TRUE the support for device SSP1 is included.
- * @note    The default is @p TRUE.
- */
-#if !defined(LPC13xx_SPI_USE_SSP1) || defined(__DOXYGEN__)
-#define LPC13xx_SPI_USE_SSP1                TRUE
-#endif
-
-/**
  * @brief   SSP0 PCLK divider.
  */
 #if !defined(LPC13xx_SPI_SSP0CLKDIV) || defined(__DOXYGEN__)
@@ -135,24 +126,10 @@
 #endif
 
 /**
- * @brief   SSP1 PCLK divider.
- */
-#if !defined(LPC13xx_SPI_SSP1CLKDIV) || defined(__DOXYGEN__)
-#define LPC13xx_SPI_SSP1CLKDIV              1
-#endif
-
-/**
  * @brief   SPI0 interrupt priority level setting.
  */
 #if !defined(LPC13xx_SPI_SSP0_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define LPC13xx_SPI_SSP0_IRQ_PRIORITY       5
-#endif
-
-/**
- * @brief   SPI1 interrupt priority level setting.
- */
-#if !defined(LPC13xx_SPI_SSP1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define LPC13xx_SPI_SSP1_IRQ_PRIORITY       5
 #endif
 
 /**
@@ -182,7 +159,7 @@
 #error "invalid LPC13xx_SPI_SSP1CLKDIV setting"
 #endif
 
-#if !LPC13xx_SPI_USE_SSP0 && !LPC13xx_SPI_USE_SSP1
+#if !LPC13xx_SPI_USE_SSP0
 #error "SPI driver activated but no SPI peripheral assigned"
 #endif
 
@@ -197,12 +174,6 @@
  */
 #define  LPC13xx_SERIAL_SSP0_PCLK                                          \
   (LPC13xx_MAINCLK / LPC13xx_SERIAL_SSP0CLKDIV)
-
-/**
- * @brief   SSP1 clock.
- */
-#define  LPC13xx_SERIAL_SSP1_PCLK                                          \
-  (LPC13xx_MAINCLK / LPC13xx_SERIAL_SSP1CLKDIV)
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -312,10 +283,6 @@ struct SPIDriver {
 
 #if LPC13xx_SPI_USE_SSP0 && !defined(__DOXYGEN__)
 extern SPIDriver SPID1;
-#endif
-
-#if LPC13xx_SPI_USE_SSP1 && !defined(__DOXYGEN__)
-extern SPIDriver SPID2;
 #endif
 
 #ifdef __cplusplus

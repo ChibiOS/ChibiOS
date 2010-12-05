@@ -65,6 +65,8 @@
 *****************************************************************************
 
 *** 2.1.5 ***
+- FIX: Fixed references to non-existing SSP1 device in LPC13xx SPI device
+  driver (bug 3127926).
 - FIX: Fixed broken SPI synchronous API (bug 3127921).
 - FIX: Fixed missing vector.c files in LPC11xx and LPC13xx ports (bug 3124849).
 - FIX: Fixed pwmDisableChannel() now working in STM32 PWM driver (bug 3121246).
