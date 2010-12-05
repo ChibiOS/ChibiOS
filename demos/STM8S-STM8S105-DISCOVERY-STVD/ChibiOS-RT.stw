@@ -1,0 +1,16 @@
+;	STMicroelectronics Workspace file
+
+[Version]
+Keyword=ST7Workspace-V0.7
+
+[Project0]
+Filename=cosmic\cosmic.stp
+Dependencies=
+
+[Project1]
+Filename=raisonance\raisonance.stp
+Dependencies=
+[Options]
+ActiveProject=raisonance
+ActiveConfig=Release
+AddSortedElements=0
