@@ -154,10 +154,6 @@
 #error "invalid LPC13xx_SPI_SSP0CLKDIV setting"
 #endif
 
-#if (LPC13xx_SPI_SSP1CLKDIV < 1) || (LPC13xx_SPI_SSP1CLKDIV > 255)
-#error "invalid LPC13xx_SPI_SSP1CLKDIV setting"
-#endif
-
 #if !LPC13xx_SPI_USE_SSP0
 #error "SPI driver activated but no SPI peripheral assigned"
 #endif
