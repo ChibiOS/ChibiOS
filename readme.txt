@@ -64,6 +64,11 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.1.6 ***
+- NEW: Now the STM32 CAN driver puts the lower half word of the ESR
+  register in the upper half word of the can status word for easier
+  debug.
+
 *** 2.1.5 ***
 - FIX: Fixed references to non-existing SSP1 device in LPC13xx SPI device
   driver (bug 3127926).
