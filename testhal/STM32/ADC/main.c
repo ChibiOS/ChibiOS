@@ -55,7 +55,7 @@ static const ADCConversionGroup adcgrpcfg = {
   ADC_GRP1_NUM_CHANNELS,
   adccallback,
   0,
-  ADC_CR2_EXTSEL_SWSTART | ADC_CR2_TSVREFE | ADC_CR2_CONT,
+  ADC_CR2_TSVREFE | ADC_CR2_CONT,
   0,
   0,
   ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),

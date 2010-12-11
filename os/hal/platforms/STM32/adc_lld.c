@@ -203,16 +203,16 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   dmaChannelSetup(adcp->ad_dmachp, n, adcp->ad_samples, ccr);
 
   /* ADC setup.*/
+  adcp->ad_adc->CR1   = grpp->acg_cr1 | ADC_CR1_SCAN;
+  adcp->ad_adc->CR2   = grpp->acg_cr2 | ADC_CR2_DMA | ADC_CR2_ADON;
   adcp->ad_adc->SMPR1 = grpp->acg_smpr1;
   adcp->ad_adc->SMPR2 = grpp->acg_smpr2;
   adcp->ad_adc->SQR1  = grpp->acg_sqr1;
   adcp->ad_adc->SQR2  = grpp->acg_sqr2;
   adcp->ad_adc->SQR3  = grpp->acg_sqr3;
-  adcp->ad_adc->CR1   = grpp->acg_cr1 | ADC_CR1_SCAN;
-  adcp->ad_adc->CR2   = grpp->acg_cr2 | ADC_CR2_DMA | ADC_CR2_ADON;
 
-  /* ADC start.*/
-  adcp->ad_adc->CR2  |= ADC_CR2_SWSTART | ADC_CR2_EXTTRIG;
+  /* ADC start by writing ADC_CR2_ADON a second time.*/
+  adcp->ad_adc->CR2   = grpp->acg_cr2 | ADC_CR2_DMA | ADC_CR2_ADON;
 }
 
 /**
