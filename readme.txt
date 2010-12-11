@@ -74,9 +74,9 @@
   there is the possibility that the various vendors would use different
   CMSIS versions now that CMSIS 2.x has been released.
 - CHANGE: Modified the start of the ADC in the STM32 ADC driver, now it is
-  no more required to specify ADC_CR2_EXTSEL_SWSTART in the CR2 register
-  configuration. Also reordered the start sequence in order to allows a
-  longer stabilization time for the ADC.
+  no more required to specify ADC_CR2_EXTSEL_SWSTART and ADC_CR2_CONT
+  in the CR2 register configuration. Also reordered the start sequence
+  in order to allows a longer stabilization time for the ADC.
 
 *** 2.1.5 ***
 - FIX: Fixed references to non-existing SSP1 device in LPC13xx SPI device

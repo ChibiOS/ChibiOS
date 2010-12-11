@@ -173,8 +173,8 @@ typedef struct {
   /**
    * @brief   ADC CR2 register initialization data.
    * @note    All the required bits must be defined into this field except
-   *          @p ADC_CR2_DMA and @p ADC_CR2_ADON that are enforced inside the
-   *          driver.
+   *          @p ADC_CR2_DMA, @p ADC_CR2_CONT and @p ADC_CR2_ADON that are
+   *          enforced inside the driver.
    */
   uint32_t                  acg_cr2;
   /**

@@ -48,7 +48,7 @@ static const ADCConversionGroup adcgrpcfg = {
   adccb,
   /* HW dependent part.*/
   0,
-  ADC_CR2_TSVREFE | ADC_CR2_CONT,
+  ADC_CR2_TSVREFE,
   ADC_SMPR1_SMP_AN10(ADC_SAMPLE_41P5) | ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_239P5),
   0,
   ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),
