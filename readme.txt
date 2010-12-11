@@ -68,6 +68,11 @@
 - NEW: Now the STM32 CAN driver puts the lower half word of the ESR
   register in the upper half word of the can status word for easier
   debug.
+- CHANGE: Removed the CMSIS files from the ARMCMx port, added the headers
+  into the various HAL platforms requiring them. The change is required
+  because the port layer must not have vendor specific dependencies and
+  there is the possibility that the various vendors would use different
+  CMSIS versions now that CMSIS 2.x has been released.
 - CHANGE: Modified the start of the ADC in the STM32 ADC driver, now it is
   no more required to specify ADC_CR2_EXTSEL_SWSTART in the CR2 register
   configuration. Also reordered the start sequence in order to allows a
