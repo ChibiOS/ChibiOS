@@ -65,6 +65,7 @@
 *****************************************************************************
 
 *** 2.1.6 ***
+- NEW: Integrated the new CMSIS 2.0.
 - NEW: Now the STM32 CAN driver puts the lower half word of the ESR
   register in the upper half word of the can status word for easier
   debug.

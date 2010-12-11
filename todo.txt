@@ -68,11 +68,11 @@ X Transactional flash file system implementation.
 X I2C device driver class support and at least one implementation.
 - Serial over UART complex driver driver, evaluate from the performance
   results if to make obsolete the current dedicated Serial driver.
-- Shared DMA channels support in the STM32/STM8L HALs.
-- New device driver models: Clock, Systick, RTC, WDG, DAC, USB, Power Monitor.
+X Shared DMA channels support in the STM32/STM8L HALs.
+X New device driver models: Clock, Systick, RTC, WDG, DAC, USB, Power Monitor.
 - MAC driver for STM32F107 (hardware missing).
 - Device drivers for STM8/STM8L (ADC, PWM, bring them on par with STM32).
-- Support for more compilers (IAR, Keil, ARMCMx only initially).
+X Support for more compilers (IAR, Keil, ARMCMx only initially).
 X Support for not just Makefiles (Ride7, Crossworks etc).
 - Batch testing of the ARM7/ARMCMx port using OpenOCD, with reports.
 - Debug-related features and tools.
@@ -91,6 +91,7 @@ Later but within 2.x.x
   require changes to lwIP or a new TCP/IP stack however.
 
 Ideas for 3.x.x:
+- MMU/MPU support.
 - High resolution timers and tickless kernel.
 - Multicore support.
 
