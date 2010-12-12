@@ -34,7 +34,7 @@
  *          it is not strictly required being the idle thread a static
  *          object.
  *
- * @return              Pointer to the idle thread,
+ * @return              Pointer to the idle thread.
  *
  * @api
  */
