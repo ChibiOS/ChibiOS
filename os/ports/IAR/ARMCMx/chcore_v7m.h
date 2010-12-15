@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    ARMCMx/chcore_v7m.h
+ * @file    IAR/ARMCMx/chcore_v7m.h
  * @brief   ARMv7-M architecture port macros and structures.
  *
- * @addtogroup ARMCMx_V7M_CORE
+ * @addtogroup IAR_ARMCMx_V7M_CORE
  * @{
  */
 
@@ -33,12 +33,6 @@
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
-/**
- * @brief   Interrupt saved context.
- * @details This structure represents the stack frame saved during a
- *          preemption-capable interrupt handler.
- * @note    It is implemented to match the Cortex-Mx exception context.
- */
 struct extctx {
   regarm_t      r0;
   regarm_t      r1;
@@ -49,14 +43,7 @@ struct extctx {
   regarm_t      pc;
   regarm_t      xpsr;
 };
-#endif
 
-#if !defined(__DOXYGEN__)
-/**
- * @brief   System saved context.
- * @details This structure represents the inner stack frame during a context
- *          switching.
- */
 struct intctx {
   regarm_t      r4;
   regarm_t      r5;
@@ -81,9 +68,9 @@ struct intctx {
   tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +                  \
                                      wsize -                                \
                                      sizeof(struct intctx));                \
-  tp->p_ctx.r13->r4 = (void *)pf;                                           \
+  tp->p_ctx.r13->r4 = pf;                                                   \
   tp->p_ctx.r13->r5 = arg;                                                  \
-  tp->p_ctx.r13->lr = (void *)_port_thread_start;                           \
+  tp->p_ctx.r13->lr = _port_thread_start;                                   \
 }
 
 /**
@@ -91,11 +78,12 @@ struct intctx {
  * @details This size depends on the idle thread implementation, usually
  *          the idle thread should take no more space than those reserved
  *          by @p INT_REQUIRED_STACK.
- * @note    In this port it is set to 4 because the idle thread does have
- *          a stack frame when compiling without optimizations.
+ * @note    In this port it is set to 8 because the idle thread does have
+ *          a stack frame when compiling without optimizations. You may
+ *          reduce this value to zero when compiling with optimizations.
  */
 #ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE      4
+#define IDLE_THREAD_STACK_SIZE      8
 #endif
 
 /**
@@ -105,10 +93,12 @@ struct intctx {
  *          This value can be zero on those architecture where there is a
  *          separate interrupt stack and the stack space between @p intctx and
  *          @p extctx is known to be zero.
- * @note    This port requires no extra stack space for interrupt handling.
+ * @note    In this port it is conservatively set to 16 because the function
+ *          @p chSchDoRescheduleI() can have a stack frame, expecially with
+ *          compiler optimizations disabled.
  */
 #ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK          0
+#define INT_REQUIRED_STACK          16
 #endif
 
 /**
@@ -130,16 +120,14 @@ struct intctx {
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  */
-#define PORT_IRQ_HANDLER(id)                                                \
-  void id(void)
+#define PORT_IRQ_HANDLER(id) void id(void)
 
 /**
  * @brief   Fast IRQ handler function declaration.
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  */
-#define PORT_FAST_IRQ_HANDLER(id)                                           \
-  void id(void)
+#define PORT_FAST_IRQ_HANDLER(id) void id(void)
 
 /**
  * @brief   Port-related initialization code.
@@ -222,7 +210,7 @@ struct intctx {
  * @note    Implemented as an inlined @p WFI instruction.
  */
 #if CORTEX_ENABLE_WFI_IDLE || defined(__DOXYGEN__)
-#define port_wait_for_interrupt()
+#define port_wait_for_interrupt() asm ("wfi")
 #else
 #define port_wait_for_interrupt()
 #endif

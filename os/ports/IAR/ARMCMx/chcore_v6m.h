@@ -47,11 +47,6 @@ struct cmxctx {
 };
 
 #if !defined(__DOXYGEN__)
-/**
- * @brief   Interrupt saved context.
- * @details This structure represents the stack frame saved during a
- *          preemption-capable interrupt handler.
- */
 struct extctx {
   regarm_t      xpsr;
   regarm_t      r12;
@@ -62,14 +57,7 @@ struct extctx {
   regarm_t      r3;
   regarm_t      pc;
 };
-#endif
 
-#if !defined(__DOXYGEN__)
-/**
- * @brief   System saved context.
- * @details This structure represents the inner stack frame during a context
- *          switching.
- */
 struct intctx {
   regarm_t      r8;
   regarm_t      r9;
@@ -92,9 +80,9 @@ struct intctx {
   tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +                  \
                                      wsize -                                \
                                      sizeof(struct intctx));                \
-  tp->p_ctx.r13->r4 = (void *)pf;                                           \
+  tp->p_ctx.r13->r4 = pf;                                                   \
   tp->p_ctx.r13->r5 = arg;                                                  \
-  tp->p_ctx.r13->lr = (void *)_port_thread_start;                           \
+  tp->p_ctx.r13->lr = _port_thread_start;                                   \
 }
 
 /**
@@ -102,11 +90,12 @@ struct intctx {
  * @details This size depends on the idle thread implementation, usually
  *          the idle thread should take no more space than those reserved
  *          by @p INT_REQUIRED_STACK.
- * @note    In this port it is set to 4 because the idle thread does have
- *          a stack frame when compiling without optimizations.
+ * @note    In this port it is set to 8 because the idle thread does have
+ *          a stack frame when compiling without optimizations. You may
+ *          reduce this value to zero when compiling with optimizations.
  */
 #ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE      4
+#define IDLE_THREAD_STACK_SIZE      8
 #endif
 
 /**
@@ -116,11 +105,12 @@ struct intctx {
  *          This value can be zero on those architecture where there is a
  *          separate interrupt stack and the stack space between @p intctx and
  *          @p extctx is known to be zero.
- * @note    This port requires some extra stack space for interrupt handling
- *          representing the frame of the function @p chSchDoRescheduleI().
+ * @note    In this port it is conservatively set to 16 because the function
+ *          @p chSchDoRescheduleI() can have a stack frame, expecially with
+ *          compiler optimizations disabled.
  */
 #ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK          8
+#define INT_REQUIRED_STACK          16
 #endif
 
 /**
@@ -157,16 +147,14 @@ struct intctx {
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  */
-#define PORT_IRQ_HANDLER(id)                                                \
-  void id(void)
+#define PORT_IRQ_HANDLER(id) void id(void)
 
 /**
  * @brief   Fast IRQ handler function declaration.
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  */
-#define PORT_FAST_IRQ_HANDLER(id)                                           \
-  void id(void)
+#define PORT_FAST_IRQ_HANDLER(id) void id(void)
 
 /**
  * @brief   Port-related initialization code.
@@ -183,14 +171,14 @@ struct intctx {
  * @details Usually this function just disables interrupts but may perform
  *          more actions.
  */
-#define port_lock() asm volatile ("cpsid   i")
+#define port_lock() asm volatile ("cpsid   i" : : : "memory")
 
 /**
  * @brief   Kernel-unlock action.
  * @details Usually this function just disables interrupts but may perform
  *          more actions.
  */
-#define port_unlock() asm volatile ("cpsie   i")
+#define port_unlock() asm volatile ("cpsie   i" : : : "memory")
 
 /**
  * @brief   Kernel-lock action from an interrupt handler.
@@ -213,17 +201,17 @@ struct intctx {
 /**
  * @brief   Disables all the interrupt sources.
  */
-#define port_disable() asm volatile ("cpsid   i")
+#define port_disable() asm volatile ("cpsid   i" : : : "memory")
 
 /**
  * @brief   Disables the interrupt sources below kernel-level priority.
  */
-#define port_suspend() asm volatile ("cpsid   i")
+#define port_suspend() asm volatile ("cpsid   i" : : : "memory")
 
 /**
  * @brief   Enables all the interrupt sources.
  */
-#define port_enable() asm volatile ("cpsie   i")
+#define port_enable() asm volatile ("cpsie   i" : : : "memory")
 
 /**
  * @brief   Enters an architecture-dependent IRQ-waiting mode.
@@ -234,7 +222,7 @@ struct intctx {
  * @note    Implemented as an inlined @p WFI instruction.
  */
 #if CORTEX_ENABLE_WFI_IDLE || defined(__DOXYGEN__)
-#define port_wait_for_interrupt() asm volatile ("wfi")
+#define port_wait_for_interrupt() asm volatile ("wfi" : : : "memory")
 #else
 #define port_wait_for_interrupt()
 #endif
