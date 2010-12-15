@@ -84,7 +84,7 @@ struct context {
 #define APUSH(p, a) (p) -= sizeof(void *), *(void **)(p) = (void*)(a)
 
 /**
- * Platform dependent part of the @p chThdInit() API.
+ * Platform dependent part of the @p chThdCreateI() API.
  * This code usually setup the context switching frame represented by a
  * @p intctx structure.
  */
