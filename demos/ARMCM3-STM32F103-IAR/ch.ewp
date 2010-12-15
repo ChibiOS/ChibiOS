@@ -1171,7 +1171,7 @@
         <option>
           <name>CCOptStrategy</name>
           <version>0</version>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCOptLevelSlave</name>
@@ -1233,7 +1233,7 @@
         </option>
         <option>
           <name>IccCppInlineSemantics</name>
-          <state>1</state>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -1732,7 +1732,6 @@
   </configuration>
   <mfc>
     <configuration>Debug</configuration>
-    <configuration>Release</configuration>
   </mfc>
   <group>
     <name>board</name>
