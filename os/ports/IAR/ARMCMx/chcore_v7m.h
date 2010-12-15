@@ -60,7 +60,7 @@ struct intctx {
 #endif
 
 /**
- * @brief   Platform dependent part of the @p chThdInit() API.
+ * @brief   Platform dependent part of the @p chThdCreateI() API.
  * @details This code usually setup the context switching frame represented
  *          by an @p intctx structure.
  */
@@ -68,9 +68,9 @@ struct intctx {
   tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +                  \
                                      wsize -                                \
                                      sizeof(struct intctx));                \
-  tp->p_ctx.r13->r4 = pf;                                                   \
+  tp->p_ctx.r13->r4 = (void *)pf;                                           \
   tp->p_ctx.r13->r5 = arg;                                                  \
-  tp->p_ctx.r13->lr = _port_thread_start;                                   \
+  tp->p_ctx.r13->lr = (void *)_port_thread_start;                           \
 }
 
 /**

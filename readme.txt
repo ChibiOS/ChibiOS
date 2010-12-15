@@ -64,6 +64,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.3.0 ***
+- NEW: ARM Cortex-Mx port for IAR compiler.
+
 *** 2.1.6 ***
 - NEW: Now the STM32 CAN driver puts the lower half word of the ESR
   register in the upper half word of the can status word for easier
