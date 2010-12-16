@@ -178,7 +178,7 @@ struct _SerialDriver {
  *
  * @see     chIOPutTimeout()
  */
-#define sdPutTimeout(sdp, b, t) chOQPutTimeout(&(sdp)->iqueue, b, t)
+#define sdPutTimeout(sdp, b, t) chOQPutTimeout(&(sdp)->oqueue, b, t)
 
 /**
  * @brief   Direct read from a @p SerialDriver.

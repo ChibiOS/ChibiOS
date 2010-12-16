@@ -58,6 +58,10 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.0.9 ***
+- FIX: Fixed error in sdPutTimeout() macro (bug 3138763).
+- FIX: Fixed preprocessing crt0.s fail (bug 3132293).
+
 *** 2.0.8 ***
 - FIX: Fixed failed memory recovery by registry scan, improved the related
   test case (bug 3116888).

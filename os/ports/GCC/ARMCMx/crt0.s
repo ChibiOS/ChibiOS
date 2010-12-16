@@ -32,8 +32,6 @@
  * @{
  */
 
-#include "cmparams.h"
-
 #if !defined(__DOXYGEN__)
 
 .set    CONTROL_MODE_PRIVILEGED, 0
@@ -81,7 +79,6 @@ ResetHandler:
         ldr     r3, =_edata
 dloop:
         cmp     r2, r3
-#if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M1)
         bge     enddloop
         ldr     r0, [r1]
         str     r0, [r2]
@@ -89,12 +86,6 @@ dloop:
         adds    r2, r2, #4
         b       dloop
 enddloop:
-#else
-        ittt    lo
-        ldrlo   r0, [r1], #4
-        strlo   r0, [r2], #4
-        blo     dloop
-#endif
         /*
          * BSS initialization.
          * NOTE: It assumes that the BSS size is a multiple of 4.
@@ -104,17 +95,11 @@ enddloop:
         ldr     r2, =_bss_end
 bloop:
         cmp     r1, r2
-#if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M1)
         bge     endbloop
         str     r0, [r1]
         adds    r1, r1, #4
         b       bloop
 endbloop:
-#else
-        itt     lo
-        strlo   r0, [r1], #4
-        blo     bloop
-#endif
         /*
          * Switches to the Process Stack and uses a barrier just to be safe.
          */
