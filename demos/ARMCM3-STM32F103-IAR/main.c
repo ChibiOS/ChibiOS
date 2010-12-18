@@ -40,12 +40,9 @@ static msg_t Thread1(void *arg) {
  * Entry point.
  */
 int main(int argc, char **argv) {
-  void hwinit1(void);
 
   (void)argc;
   (void)argv;
-
-  hwinit1();
 
   /*
    * Activates the serial driver 2 using the driver default configuration.

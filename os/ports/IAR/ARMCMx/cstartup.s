@@ -39,10 +39,13 @@ CONTROL_USE_PSP SET 2
         SECTION .intvec:CODE:NOROOT(3)
 
         PUBLIC  __iar_program_start
-        EXTERN  __cmain
+        EXTERN  main
+        EXTERN  _exit
         EXTERN  __vector_table
         EXTWEAK __iar_init_core
         EXTWEAK __iar_init_vfp
+        EXTWEAK __low_level_init
+        EXTWEAK __iar_data_init3
 
         SECTION .text:CODE:REORDER(2)
         THUMB
@@ -56,10 +59,24 @@ __iar_program_start:
         bl      hwinit0
         bl      __iar_init_core
         bl      __iar_init_vfp
-        bl      __cmain
+
+; Replicated cmain.s here in order to insert the call to hwinit1.
+        bl      __low_level_init
+        cmp     r0, #0
+        beq.n   _call_main
+        bl      __iar_data_init3
+_call_main:
+        bl      hwinit1
+        bl      main
+        bl      _exit
 
         PUBWEAK hwinit0
 hwinit0
+        bx      lr
+
+
+        PUBWEAK hwinit1
+hwinit1
         bx      lr
 
         REQUIRE __vector_table
