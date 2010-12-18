@@ -71,12 +71,11 @@ _call_main:
         bl      _exit
 
         PUBWEAK hwinit0
-hwinit0
+hwinit0:
         bx      lr
 
-
         PUBWEAK hwinit1
-hwinit1
+hwinit1:
         bx      lr
 
         REQUIRE __vector_table
