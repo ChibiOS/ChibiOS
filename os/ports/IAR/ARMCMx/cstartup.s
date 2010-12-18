@@ -63,9 +63,9 @@ __iar_program_start:
         EXTWEAK __iar_data_init3
         bl      __low_level_init
         cmp     r0, #0
-        beq.n   _call_main
+        beq.n   _skipinit
         bl      __iar_data_init3
-_call_main:
+_skipinit:
         bl      hwinit1
         bl      main
         bl      _exit
