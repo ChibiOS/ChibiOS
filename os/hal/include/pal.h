@@ -185,6 +185,8 @@ typedef struct {
 
 /**
  * @brief   PAL subsystem initialization.
+ * @note    This function is implicitly invoked by @p halInit(), there is
+ *          no need to explicitly initialize the driver.
  *
  * @param[in] config pointer to an architecture specific configuration
  *            structure. This structure is defined in the low level driver

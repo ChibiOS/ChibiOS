@@ -48,6 +48,8 @@
 
 /**
  * @brief   I2C Driver initialization.
+ * @note    This function is implicitly invoked by @p halInit(), there is
+ *          no need to explicitly initialize the driver.
  *
  * @init
  */

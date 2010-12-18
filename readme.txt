@@ -78,6 +78,7 @@
   no more required to specify ADC_CR2_EXTSEL_SWSTART and ADC_CR2_CONT
   in the CR2 register configuration. Also reordered the start sequence
   in order to allows a longer stabilization time for the ADC.
+- Documentation improvements.
 
 *** 2.1.5 ***
 - FIX: Fixed references to non-existing SSP1 device in LPC13xx SPI device
