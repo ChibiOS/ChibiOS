@@ -26,12 +26,12 @@
 
         MODULE  ?vectors
 
-	AAPCS INTERWORK, VFP_COMPATIBLE, RWPI_COMPATIBLE
+        AAPCS INTERWORK, VFP_COMPATIBLE, RWPI_COMPATIBLE
         PRESERVE8
 
         SECTION CSTACK:DATA:NOROOT(3)
         SECTION .intvec:CODE:NOROOT(2)
-	
+
         EXTERN  __iar_program_start
         PUBLIC  __vector_table
 
