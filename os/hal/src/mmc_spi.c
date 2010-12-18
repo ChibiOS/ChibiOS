@@ -194,6 +194,8 @@ static void sync(MMCDriver *mmcp) {
 
 /**
  * @brief   MMC over SPI driver initialization.
+ * @note    This function is implicitly invoked by @p halInit(), there is
+ *          no need to explicitly initialize the driver.
  *
  * @init
  */
