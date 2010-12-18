@@ -1,29 +1,21 @@
-/**************************************************
- *
- * Part one of the system initialization code, contains low-level
- * initialization, plain thumb variant.
- *
- * Copyright 2008 IAR Systems. All rights reserved.
- *
- * $Revision: 34775 $
- *
- **************************************************/
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
 
-;
-; The modules in this file are included in the libraries, and may be replaced
-; by any user-defined modules that define the PUBLIC symbol _program_start or
-; a user defined start symbol.
-; To override the cstartup defined in the library, simply add your modified
-; version to the workbench project.
-;
-; The vector table is normally located at address 0.
-; When debugging in RAM, it can be located in RAM, aligned to at least 2^6.
-; The name "__vector_table" has special meaning for C-SPY:
-; it is where the SP start value is found, and the NVIC vector
-; table register (VTOR) is initialized to this address if != 0.
-;
-; Cortex-M version
-;
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
         MODULE  ?cstartup
 
