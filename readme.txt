@@ -66,9 +66,14 @@
 
 *** 2.1.6 ***
 - FIX: Fixed error in sdPutTimeout() macro (bug 3138763)(backported in 2.0.9).
+- NEW: New ARM Cortex-Mx port for IAR compiler.
 - NEW: Now the STM32 CAN driver puts the lower half word of the ESR
   register in the upper half word of the can status word for easier
   debug.
+- CHANGE: Changes in the board files organization, now the board
+  initialization is invoked from within halInit() after all the device
+  drivers have been initialized. Now applications are required to
+  explicitely invoke halInit() and chSysInit() from within their main().
 - CHANGE: Removed the CMSIS files from the ARMCMx port, added the headers
   into the various HAL platforms requiring them. The change is required
   because the port layer must not have vendor specific dependencies and

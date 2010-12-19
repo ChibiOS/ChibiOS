@@ -36,34 +36,21 @@ const PALConfig pal_default_config =
 
 /*
  * Early initialization code.
- * This initialization is performed just after reset before BSS and DATA
- * segments initialization.
+ * This initialization must be performed just after stack setup and before
+ * any other initialization.
  */
-void hwinit0(void) {
+void __early_init(void) {
 
   stm32_clock_init();
 }
 
 /*
- * Late initialization code.
- * This initialization is performed after BSS and DATA segments initialization
- * and before invoking the main() function.
+ * Board-specific initialization code.
  */
-void hwinit1(void) {
+void boardInit(void) {
 
   /*
-   * HAL initialization.
-   */
-  halInit();
-
-  /*
-   * Remap USART2 to the PD5/PD6 pins, done after halInit since HAL resets
-   * these.
+   * Remap USART2 to the PD5/PD6 pins.
    */
   AFIO->MAPR |= AFIO_MAPR_USART2_REMAP;
-
-  /*
-   * ChibiOS/RT initialization.
-   */
-  chSysInit();
 }

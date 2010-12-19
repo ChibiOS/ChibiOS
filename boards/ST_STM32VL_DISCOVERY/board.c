@@ -36,28 +36,16 @@ const PALConfig pal_default_config =
 
 /*
  * Early initialization code.
- * This initialization is performed just after reset before BSS and DATA
- * segments initialization.
+ * This initialization must be performed just after stack setup and before
+ * any other initialization.
  */
-void hwinit0(void) {
+void __early_init(void) {
 
   stm32_clock_init();
 }
 
 /*
- * Late initialization code.
- * This initialization is performed after BSS and DATA segments initialization
- * and before invoking the main() function.
+ * Board-specific initialization code.
  */
-void hwinit1(void) {
-
-  /*
-   * HAL initialization.
-   */
-  halInit();
-
-  /*
-   * ChibiOS/RT initialization.
-   */
-  chSysInit();
+void boardInit(void) {
 }

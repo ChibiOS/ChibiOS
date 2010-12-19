@@ -21,6 +21,7 @@
     !defined(STM32F10X_MD) && !defined(STM32F10X_MD_VL) &&                  \
     !defined(STM32F10X_HD) && !defined(STM32F10X_XL) &&                     \
     !defined(STM32F10X_CL)
+#define _FROM_ASM_
 #include "board.h"
 #endif
 

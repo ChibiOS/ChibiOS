@@ -34,6 +34,7 @@ CONTROL_USE_PSP SET 2
         EXTERN  __vector_table
         EXTWEAK __iar_init_core
         EXTWEAK __iar_init_vfp
+        EXTERN  __cmain
 
         SECTION .text:CODE:REORDER(2)
         THUMB
@@ -44,30 +45,13 @@ __iar_program_start:
         movs    r0, #CONTROL_MODE_PRIVILEGED | CONTROL_USE_PSP
         msr     CONTROL, r0
         isb
-        bl      hwinit0
+        bl      __early_init
         bl      __iar_init_core
         bl      __iar_init_vfp
+        b       __cmain
 
-; Replicated cmain.s here in order to insert the call to hwinit1.
-        EXTERN  main
-        EXTERN  _exit
-        EXTWEAK __low_level_init
-        EXTWEAK __iar_data_init3
-        bl      __low_level_init
-        cmp     r0, #0
-        beq.n   _skipinit
-        bl      __iar_data_init3
-_skipinit:
-        bl      hwinit1
-        bl      main
-        bl      _exit
-
-        PUBWEAK hwinit0
-hwinit0:
-        bx      lr
-
-        PUBWEAK hwinit1
-hwinit1:
+        PUBWEAK __early_init
+__early_init:
         bx      lr
 
         REQUIRE __vector_table
