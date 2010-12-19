@@ -52,7 +52,7 @@ _boot_address:
         /*
          * Early initialization.
          */
-        bl          hwinit0
+        bl          __early_init
         /*
          * BSS clearing.
          */
@@ -87,9 +87,8 @@ _boot_address:
         b           .dataloop
 .dataend:
         /*
-         * Late initialization.
+         * Main program invocation.
          */
-        bl          hwinit1
         li          %r3, 0
         li          %r4, 0
         bl          main
@@ -107,12 +106,9 @@ forever:
         /*
          * Default initialization code, none.
          */
-        .weak       hwinit0
-        .globl      hwinit0
-hwinit0:
-        .weak       hwinit1
-        .globl      hwinit1
-hwinit1:
+        .weak       __early_init
+        .globl      __early_init
+__early_init:
         blr
 
 /** @endcond */
