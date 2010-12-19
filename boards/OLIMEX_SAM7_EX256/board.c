@@ -25,6 +25,7 @@
  * @details Digital I/O ports static configuration as defined in @p board.h.
  *          This variable is used by the HAL when initializing the PAL driver.
  */
+#if HAL_USE_PAL || defined(__DOXYGEN__)
 const PALConfig pal_default_config =
 {
   {VAL_PIOA_ODSR, VAL_PIOA_OSR, VAL_PIOA_PUSR},
@@ -33,6 +34,7 @@ const PALConfig pal_default_config =
   {VAL_PIOB_ODSR, VAL_PIOB_OSR, VAL_PIOB_PUSR}
 #endif
 };
+#endif
 
 /*
  * SYS IRQ handling here.
