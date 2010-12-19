@@ -169,13 +169,13 @@ int main(void) {
   EventListener sd1fel, sd2fel, tel;
 
   /*
-   * HAL initialization.
+   * System initializations.
+   * - HAL initialization, this also initializes the configured device drivers
+   *   and performs the board-specific initializations.
+   * - Kernel initialization, the main() function becomes a thread and the
+   *   RTOS is active.
    */
   halInit();
-
-  /*
-   * ChibiOS/RT initialization.
-   */
   chSysInit();
 
   /*
