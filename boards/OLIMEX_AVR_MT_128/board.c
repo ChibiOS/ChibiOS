@@ -32,9 +32,9 @@ CH_IRQ_HANDLER(TIMER0_COMP_vect) {
 }
 
 /*
- * Board initialization code.
+ * Board-specific initialization code.
  */
-void hwinit(void) {
+void boardInit(void) {
 
   /*
    * I/O ports setup.
@@ -76,9 +76,4 @@ void hwinit(void) {
   TCNT0  = 0;                                           /* Reset counter.   */
   TIFR   = (1 << OCF0);                                 /* Reset pending.   */
   TIMSK  = (1 << OCIE0);                                /* IRQ on compare.  */
-
-  /*
-   * HAL initialization.
-   */
-  halInit();
 }
