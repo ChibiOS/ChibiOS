@@ -291,8 +291,7 @@ static void RemoveHandler(eventid_t id) {
 }
 
 /*
- * Entry point, note, the main() function is already a thread in the system
- * on entry.
+ * Application entry point.
  */
 int main(int argc, char **argv) {
   static const evhandler_t evhndl[] = {
@@ -304,6 +303,16 @@ int main(int argc, char **argv) {
 
   (void)argc;
   (void)argv;
+
+  /*
+   * System initializations.
+   * - HAL initialization, this also initializes the configured device drivers
+   *   and performs the board-specific initializations.
+   * - Kernel initialization, the main() function becomes a thread and the
+   *   RTOS is active.
+   */
+  halInit();
+  chSysInit();
 
   /*
    * Activates the serial driver 1 using the driver default configuration.

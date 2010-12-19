@@ -71,4 +71,14 @@
 #define PIOA_MMC_NPCS0          11
 #define PIOA_MMC_NPCS0_MASK     (1 << PIOA_MMC_NPCS0_MASK)
 
+#if !defined(_FROM_ASM_)
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void boardInit(void);
+#ifdef __cplusplus
+}
+#endif
+#endif /* _FROM_ASM_ */
+
 #endif /* _BOARD_H_ */
