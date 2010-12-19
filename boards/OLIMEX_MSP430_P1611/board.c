@@ -61,15 +61,9 @@ CH_IRQ_HANDLER(TIMERA0_VECTOR) {
 }
 
 /*
- * Hardware initialization goes here.
- * NOTE: Interrupts are still disabled.
+ * Board-specific initialization code.
  */
-void hwinit(void) {
-
-  /*
-   * HAL initialization.
-   */
-  halInit();
+void boardInit(void) {
 
   /*
    * Timer 0 setup, uses SMCLK as source.

@@ -5,7 +5,7 @@ Settings: MCLK=DCOCLK 750KHz
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.4unstable
+*** Kernel:       2.1.6unstable
 *** GCC Version:  3.2.3
 *** Architecture: MSP430
 *** Core Variant: MSP430

@@ -28,7 +28,7 @@
 /*
  * HAL driver system settings.
  */
-#define MSP430_USE_CLOCK            MSP430_CLOCK_SOURCE_XT2CLK
+#define MSP430_USE_CLOCK            MSP430_CLOCK_SOURCE_DCOCLK
 
 /*
  * ADC driver system settings.
