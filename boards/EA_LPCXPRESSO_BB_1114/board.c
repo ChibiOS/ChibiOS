@@ -34,25 +34,18 @@ const PALConfig pal_default_config = {
 
 /*
  * Early initialization code.
- * This initialization is performed just after reset before BSS and DATA
- * segments initialization.
+ * This initialization must be performed just after stack setup and before
+ * any other initialization.
  */
-void hwinit0(void) {
+void __early_init(void) {
 
   lpc111x_clock_init();
 }
 
 /*
- * Late initialization code.
- * This initialization is performed after BSS and DATA segments initialization
- * and before invoking the main() function.
+ * Board-specific initialization code.
  */
-void hwinit1(void) {
-
-  /*
-   * HAL initialization.
-   */
-  halInit();
+void boardInit(void) {
 
   /*
    * Extra, board-specific, initializations.
@@ -64,9 +57,4 @@ void hwinit1(void) {
                                            and makes it GPIO1_2.            */
   LPC_IOCON->PIO1_9 = 0xC0;             /* Disables pull-up on LED3R output.*/
   LPC_IOCON->PIO1_10 = 0xC0;            /* Disables pull-up on LED3G output.*/
-
-  /*
-   * ChibiOS/RT initialization.
-   */
-  chSysInit();
 }
