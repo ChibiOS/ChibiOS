@@ -80,8 +80,8 @@ ASRC =
 
 # List all user directories here
 UINCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         $(HALINC) $(PLATFORMINC) $(BOARDINC) \
-         $(CHIBIOS)/os/various
+          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
+          $(CHIBIOS)/os/various
 
 # List the user directory to look for the libraries here
 ULIBDIR =
