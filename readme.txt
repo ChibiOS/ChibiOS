@@ -66,7 +66,8 @@
 
 *** 2.1.6 ***
 - FIX: Fixed error in sdPutTimeout() macro (bug 3138763)(backported in 2.0.9).
-- NEW: New ARM Cortex-Mx port for IAR compiler.
+- NEW: New ARM Cortex-Mx port for IAR compiler (probably will not be
+  included in 2.2.0, requires more testing).
 - NEW: Now the STM32 CAN driver puts the lower half word of the ESR
   register in the upper half word of the can status word for easier
   debug.
