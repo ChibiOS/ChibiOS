@@ -19,7 +19,7 @@
 
         MODULE  ?chcoreasm_v7m
 
-	AAPCS INTERWORK, VFP_COMPATIBLE
+        AAPCS INTERWORK, VFP_COMPATIBLE
         PRESERVE8
 
 /*
