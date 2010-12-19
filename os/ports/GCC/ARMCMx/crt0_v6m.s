@@ -100,7 +100,7 @@ endbloop:
         msr     CONTROL, r0
         isb
         /*
-         * Main program invokation.
+         * Main program invocation.
          */
         movs    r0, #0
         mov     r1, r0
