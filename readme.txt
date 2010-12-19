@@ -74,7 +74,7 @@
 - CHANGE: Changes in the board files organization, now the board
   initialization is invoked from within halInit() after all the device
   drivers have been initialized. Now applications are required to
-  explicitely invoke halInit() and chSysInit() from within their main().
+  explicitly invoke halInit() and chSysInit() from within their main().
 - CHANGE: Removed the CMSIS files from the ARMCMx port, added the headers
   into the various HAL platforms requiring them. The change is required
   because the port layer must not have vendor specific dependencies and
