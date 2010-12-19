@@ -24,6 +24,7 @@
  * @brief   PAL setup.
  * @details Digital I/O ports static configuration as defined in @p board.h.
  */
+#if HAL_USE_PAL || defined(__DOXYGEN__)
 ROMCONST PALConfig pal_default_config =
 {
   {
@@ -36,6 +37,7 @@ ROMCONST PALConfig pal_default_config =
     {VAL_GPIOGODR, 0, VAL_GPIOGDDR, VAL_GPIOGCR1, VAL_GPIOGCR2},
   }
 };
+#endif
 
 /*
  * TIM 2 clock after the prescaler.
@@ -60,14 +62,9 @@ CH_IRQ_HANDLER(13) {
 }
 
 /*
- * Board initialization code.
+ * Board-specific initialization code.
  */
-void hwinit(void) {
-
-  /*
-   * HAL initialization.
-   */
-  halInit();
+void boardInit(void) {
 
   /*
    * TIM2 initialization as system tick.

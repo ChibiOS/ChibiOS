@@ -25,6 +25,7 @@
  * @details Digital I/O ports static configuration as defined in @p board.h.
  *          This variable is used by the HAL when initializing the PAL driver.
  */
+#if HAL_USE_PAL || defined(__DOXYGEN__)
 ROMCONST PALConfig pal_default_config =
 {
   {
@@ -36,6 +37,7 @@ ROMCONST PALConfig pal_default_config =
     {VAL_GPIOFODR, 0, VAL_GPIOFDDR, VAL_GPIOFCR1, VAL_GPIOFCR2},
   }
 };
+#endif
 
 /*
  * TIM 2 clock after the prescaler.
@@ -44,14 +46,9 @@ ROMCONST PALConfig pal_default_config =
 #define TIM2_ARR    ((TIM2_CLOCK / CH_FREQUENCY) - 1)
 
 /*
- * Board initialization code.
+ * Board-specific initialization code.
  */
-void hwinit(void) {
-
-  /*
-   * HAL initialization.
-   */
-  halInit();
+void boardInit(void) {
 
   /*
    * TIM2 initialization as system tick.

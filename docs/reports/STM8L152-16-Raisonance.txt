@@ -6,7 +6,7 @@ Compiler: Raisonance RKit-STM8_2.30.10.0175
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.4unstable
+*** Kernel:       2.1.6unstable
 *** Architecture: STM8
 *** Platform:     STM8L
 *** Test Board:   ST STM8L-Discovery
