@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    ARMCMx/chcore_v6m.c
+ * @file    GCC/ARMCMx/chcore_v6m.c
  * @brief   ARMv6-M architecture port code.
  *
  * @addtogroup ARMCMx_V6M_CORE

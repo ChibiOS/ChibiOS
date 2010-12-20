@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    LPC13xx/vectors.c
+ * @file    GCC/ARMCMx/LPC13xx/vectors.c
  * @brief   Interrupt vectors for the LPC13xx family.
  *
  * @defgroup ARMCMx_LPC13xx_VECTORS LPC13xx Interrupt Vectors

@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    ARMCMx/chcore_v6m.h
+ * @file    IAR/ARMCMx/chcore_v6m.h
  * @brief   ARMv6-M architecture port macros and structures.
  *
- * @addtogroup ARMCMx_V6M_CORE
+ * @addtogroup IAR_ARMCMx_V6M_CORE
  * @{
  */
 

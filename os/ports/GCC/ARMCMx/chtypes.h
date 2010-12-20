@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    ARMCMx/chtypes.h
+ * @file    GCC/ARMCMx/chtypes.h
  * @brief   ARM Cortex-Mx port system types.
  *
  * @addtogroup ARMCMx_CORE

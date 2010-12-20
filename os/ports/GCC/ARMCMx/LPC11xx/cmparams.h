@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    ARMCMx/LPC11xx/cmparams.h
+ * @file    GCC/ARMCMx/LPC11xx/cmparams.h
  * @brief   ARM Cortex-M0 LPC11xx Specific Parameters.
  *
  * @defgroup ARMCMx_LPC11xx LPC11xx Specific Parameters

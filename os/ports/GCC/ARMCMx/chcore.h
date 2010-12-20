@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    ARMCMx/chcore.h
+ * @file    GCC/ARMCMx/chcore.h
  * @brief   ARM Cortex-Mx port macros and structures.
  *
  * @addtogroup ARMCMx_CORE

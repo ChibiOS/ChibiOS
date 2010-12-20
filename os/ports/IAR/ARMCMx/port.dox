@@ -18,14 +18,14 @@
 */
 
 /**
- * @defgroup ARMCMx ARM Cortex-Mx
- * @details ARM Cortex-Mx port for the GCC compiler.
+ * @defgroup IAR_ARMCMx ARM Cortex-Mx
+ * @details ARM Cortex-Mx port for the IAR compiler.
  
- * @section ARMCMx_INTRO Introduction
+ * @section IAR_ARMCMx_INTRO Introduction
  * This port supports all the cores implementing the ARMv6-M and ARMv7-M
  * architectures.
  *
- * @section ARMCMx_STATES_A System logical states in ARMv6-M mode
+ * @section IAR_ARMCMx_STATES_A System logical states in ARMv6-M mode
  * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM
  * Cortex-M0 port:
  * - <b>Init</b>. This state is represented by the startup code and the
@@ -59,7 +59,7 @@
  *   the maskable interrupt sources. The ARM state is whatever the processor
  *   was running when @p chSysHalt() was invoked.
  *
- * @section ARMCMx_STATES_B System logical states in ARMv7-M mode
+ * @section IAR_ARMCMx_STATES_B System logical states in ARMv7-M mode
  * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM
  * Cortex-M3 port:
  * - <b>Init</b>. This state is represented by the startup code and the
@@ -99,7 +99,7 @@
  *   the maskable interrupt sources. The ARM state is whatever the processor
  *   was running when @p chSysHalt() was invoked.
  * .
- * @section ARMCMx_NOTES ARM Cortex-Mx/GCC port notes
+ * @section IAR_ARMCMx_NOTES ARM Cortex-Mx/IAR port notes
  * The ARM Cortex-Mx port is organized as follow:
  * - The @p main() function is invoked in thread-privileged mode.
  * - Each thread has a private process stack, the system has a single main
@@ -118,17 +118,17 @@
  *   .
  *   This is required in order to include a vectors table with the correct
  *   length for the STM32 model, see the file
- *   <tt>./os/ports/GCC/ARMCMx/STM32/vectors.c</tt>.
+ *   <tt>./os/ports/IAR/ARMCMx/STM32/vectors.s</tt>.
  * - The Cortex-Mx port is perfectly generic, support for more devices can be
- *   easily added by adding a subdirectory under <tt>./os/ports/GCC/ARMCMx</tt>
+ *   easily added by adding a subdirectory under <tt>./os/ports/IAR/ARMCMx</tt>
  *   and giving it the name of the new device, then copy the files from another
  *   device into the new directory and customize them for the new device.
  * .
- * @ingroup gcc
+ * @ingroup iar
  */
 
 /**
- * @defgroup ARMCMx_CONF Configuration Options
+ * @defgroup IAR_ARMCMx_CONF Configuration Options
  * @details ARM Cortex-Mx Configuration Options. The ARMCMx port allows some
  * architecture-specific configurations settings that can be overridden
  * by redefining them in @p chconf.h. Usually there is no need to change
@@ -150,78 +150,62 @@
  *   defaulted to FALSE because it can create problems with some debuggers.
  *   Setting this option to TRUE reduces the system power requirements.
  * .
- * @ingroup ARMCMx
+ * @ingroup IAR_ARMCMx
  */
 
 /**
- * @defgroup ARMCMx_CORE Core Port Implementation
+ * @defgroup IAR_ARMCMx_CORE Core Port Implementation
  * @details ARM Cortex-Mx specific port code, structures and macros.
  *
- * @ingroup ARMCMx
+ * @ingroup IAR_ARMCMx
  */
 
 /**
- * @defgroup ARMCMx_V6M_CORE ARMv6-M Specific Implementation
+ * @defgroup IAR_ARMCMx_V6M_CORE ARMv6-M Specific Implementation
  * @details ARMv6-M specific port code, structures and macros.
  *
- * @ingroup ARMCMx_CORE
+ * @ingroup IAR_ARMCMx_CORE
  */
 
 /**
- * @defgroup ARMCMx_V7M_CORE ARMv7-M Specific Implementation
+ * @defgroup IAR_ARMCMx_V7M_CORE ARMv7-M Specific Implementation
  * @details ARMv7-M specific port code, structures and macros.
  *
- * @ingroup ARMCMx_CORE
+ * @ingroup IAR_ARMCMx_CORE
  */
 
 /**
- * @defgroup ARMCMx_STARTUP Startup Support
+ * @defgroup IAR_ARMCMx_STARTUP Startup Support
  * @details ChibiOS/RT provides its own generic startup file for the ARM
  * Cortex-Mx port.
  * Of course it is not mandatory to use it but care should be taken about the
  * startup phase details.
  *
- * @section ARMCMx_STARTUP_1 Startup Process
+ * @section IAR_ARMCMx_STARTUP_1 Startup Process
  * The startup process, as implemented, is the following:
  * -# Interrupts are masked globally.
  * -# The two stacks are initialized by assigning them the sizes defined in the
- *    linker script (usually named @p ch.ld). Stack areas are allocated from
- *    the highest RAM location downward.
+ *    linker script (usually named @p ch.icf).
  * -# The CPU state is switched to Privileged and the PSP stack is used.
  * -# An early initialization routine @p __early_init() is invoked, if the
  *    symbol is not defined then an empty default routine is executed
  *    (weak symbol).
- * -# DATA and BSS segments are initialized.
- * -# The @p main() function is invoked with no parameters.
- * -# Should the @p main() function return a branch is performed to the weak
- *    symbol _main_exit_handler. The default code is an endless empty loop.
+ * -# Control is passed to the C runtime entry point @p __cmain that performs
+ *    the required initializations before invoking the @p main() function.
  * .
- * @section ARMCMx_STARTUP_2 Expected linker symbols
- * The startup code starts at the symbol @p ResetHandler and expects the
- * following symbols to be defined in the linker script:
- * - @p __ram_end__ RAM end location +1.
- * - @p __main_stack_size__ Exception stack size.
- * - @p __process_stack_size__ Process stack size. This is the stack area used
- *      by the @p main() function.
- * - @p _textdata address of the data segment source read only data.
- * - @p _data data segment start location.
- * - @p _edata data segment end location +1.
- * - @p _bss_start BSS start location.
- * - @p _bss_end BSS end location +1.
- * .
- * @ingroup ARMCMx
+ * @ingroup IAR_ARMCMx
  */
 
 /**
- * @defgroup ARMCMx_NVIC NVIC Support
+ * @defgroup IAR_ARMCMx_NVIC NVIC Support
  * @details ARM Cortex-Mx NVIC support.
  *
- * @ingroup ARMCMx
+ * @ingroup IAR_ARMCMx
  */
 
 /**
- * @defgroup ARMCMx_SPECIFIC Specific Implementations
+ * @defgroup IAR_ARMCMx_SPECIFIC Specific Implementations
  * @details Platform-specific port code.
  *
- * @ingroup ARMCMx
+ * @ingroup IAR_ARMCMx
  */
