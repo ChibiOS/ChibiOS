@@ -120,9 +120,10 @@ typedef bool_t (*mmcquery_t)(void);
 
 /**
  * @brief   Driver configuration structure.
+ * @note    Not required in the current implementation.
  */
 typedef struct {
-
+  uint8_t               dummy;
 } MMCConfig;
 
 /**

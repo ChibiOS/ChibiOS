@@ -67,6 +67,10 @@
 *** 2.1.7 ***
 - NEW: New ARM Cortex-Mx port for RVCT compiler (probably will not be
   included in 2.2.0, requires more testing).
+- CHANGE: Modified the ADC and CAN drivers to allow a NULL pointer for
+  the configuration structure if it is not required by the implementation.
+- CHANGE: Modified the MMC_SPI driver to *require* a NULL as pointer to
+  the configuration.
 - CHANGE: Removed enforced inlining for the chSchReadyI() function when
   the CH_OPTIMIZE_SPEED is enabled. Now the matter is left to the compiler
   specific settings. This change is meant to increase compatibility with
