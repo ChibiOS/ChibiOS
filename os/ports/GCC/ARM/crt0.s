@@ -125,25 +125,21 @@ bssloop:
         add     r0, pc, #1
         bx      r0
         .code   16
-        mov     r0, #0
-        mov     r1, r0
         bl      main
-        ldr     r1, =MainExitHandler
+        ldr     r1, =_main_exit_handler
         bx      r1
         .code   32
 #else
-        mov     r0, #0
-        mov     r1, r0
         bl      main
-        b       MainExitHandler
+        b       _main_exit_handler
 #endif
 
 /*
  * Default main function exit handler.
  */
-        .weak   MainExitHandler
-        .global MainExitHandler
-MainExitHandler:
+        .weak   _main_exit_handler
+        .global _main_exit_handler
+_main_exit_handler:
 .loop:  b       .loop
 
 /*

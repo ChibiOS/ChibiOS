@@ -62,10 +62,7 @@ static PWMConfig pwmcfg = {
 /*
  * Application entry point.
  */
-int main(int argc, char **argv) {
-
-  (void)argc;
-  (void)argv;
+int main(void) {
 
   /*
    * System initializations.

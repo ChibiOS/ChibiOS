@@ -40,10 +40,7 @@ static msg_t Thread1(void *p) {
 /*
  * Application entry point.
  */
-int main(int argc, char **argv) {
-
-  (void)argc;
-  (void)argv;
+int main(void) {
 
   /*
    * System initializations.

@@ -144,15 +144,12 @@ static void TimerHandler(eventid_t id) {
 /*
  * Application entry point.
  */
-int main(int argc, char **argv) {
+int main(void) {
   static const evhandler_t evhndl[] = {
     TimerHandler
   };
   static EvTimer evt;
   struct EventListener el0;
-
-  (void)argc;
-  (void)argv;
 
   /*
    * System initializations.

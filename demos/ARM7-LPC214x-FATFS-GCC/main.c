@@ -223,7 +223,7 @@ static void RemoveHandler(eventid_t id) {
 /*
  * Application entry point.
  */
-int main(int argc, char **argv) {
+int main(void) {
   static const evhandler_t evhndl[] = {
     TimerHandler,
     InsertHandler,
@@ -231,9 +231,6 @@ int main(int argc, char **argv) {
   };
   static EvTimer evt;
   struct EventListener el0, el1, el2;
-
-  (void)argc;
-  (void)argv;
 
   /*
    * System initializations.

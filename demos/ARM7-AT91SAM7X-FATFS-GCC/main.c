@@ -276,16 +276,13 @@ static void RemoveHandler(eventid_t id) {
 /*
  * Application entry point.
  */
-int main(int argc, char **argv) {
+int main(void) {
   static const evhandler_t evhndl[] = {
     InsertHandler,
     RemoveHandler
   };
   Thread *shelltp = NULL;
   struct EventListener el0, el1;
-
-  (void)argc;
-  (void)argv;
 
   /*
    * System initializations.

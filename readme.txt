@@ -64,6 +64,18 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.1.7 ***
+- NEW: New ARM Cortex-Mx port for RVCT compiler (probably will not be
+  included in 2.2.0, requires more testing).
+- CHANGE: Removed enforced inlining for the chSchReadyI() function when
+  the CH_OPTIMIZE_SPEED is enabled. Now the matter is left to the compiler
+  specific settings. This change is meant to increase compatibility with
+  compilers that have a different inlining semantic than GCC when not in
+  C99 mode.
+- CHANGE: Changed the declaration of the main() function in all demos
+  without arguments. Removed the clearing of arguments from the startup
+  files and saved some space.
+ 
 *** 2.1.6 ***
 - FIX: Fixed error in sdPutTimeout() macro (bug 3138763)(backported in 2.0.9).
 - NEW: New ARM Cortex-Mx port for IAR compiler (probably will not be

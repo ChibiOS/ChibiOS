@@ -147,11 +147,8 @@ static msg_t Thread1(void *arg) {
 /*
  * Application entry point.
  */
-int main(int argc, char **argv) {
+int main(void) {
   Thread *shelltp = NULL;
-
-  (void)argc;
-  (void)argv;
 
   /*
    * System initializations.

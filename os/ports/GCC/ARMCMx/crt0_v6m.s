@@ -102,19 +102,17 @@ endbloop:
         /*
          * Main program invocation.
          */
-        movs    r0, #0
-        mov     r1, r0
         bl      main
-        b       MainExitHandler
+        b       _main_exit_handler
 
 /*
  * Default main exit code, just a loop.
  * It is a weak symbol, the application code can redefine the behavior.
  */
         .thumb_func
-        .global MainExitHandler
-        .weak   MainExitHandler
-MainExitHandler:
+        .global _main_exit_handler
+        .weak   _main_exit_handler
+_main_exit_handler:
 .loop:  b       .loop
 
 /*

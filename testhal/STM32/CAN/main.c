@@ -80,10 +80,7 @@ static msg_t can_tx(void * p) {
 /*
  * Application entry point.
  */
-int main(int argc, char **argv) {
-
-  (void)argc;
-  (void)argv;
+int main(void) {
 
   /*
    * System initializations.

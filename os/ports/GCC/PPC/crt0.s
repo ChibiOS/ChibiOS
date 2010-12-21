@@ -89,17 +89,15 @@ _boot_address:
         /*
          * Main program invocation.
          */
-        li          %r3, 0
-        li          %r4, 0
         bl          main
-        b           main_exit
+        b           _main_exit_handler
 
         /*
          * Default main exit code, infinite loop.
          */
-        .weak       main_exit
-        .globl      main_exit
-main_exit:
+        .weak       _main_exit_handler
+        .globl      _main_exit_handler
+_main_exit_handler:
 forever:
         b           forever
 

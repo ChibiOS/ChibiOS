@@ -94,11 +94,8 @@ static msg_t Thread2(void *arg) {
 /*
  * Application entry point.
  */
-int main(int argc, char **argv) {
+int main(void) {
   uint8_t i;
-
-  (void)argc;
-  (void)argv;
 
   /*
    * System initializations.

@@ -89,11 +89,8 @@ static msg_t spi_thread_2(void *p) {
 /*
  * Application entry point.
  */
-int main(int argc, char **argv) {
+int main(void) {
   unsigned i;
-
-  (void)argc;
-  (void)argv;
 
   /*
    * System initializations.

@@ -44,7 +44,7 @@ static void TimerHandler(eventid_t id) {
 /*
  * Application entry point.
  */
-int main(int argc, char **argv) {
+int main(void) {
   static EvTimer evt;
   static evhandler_t handlers[1] = {
     TimerHandler
