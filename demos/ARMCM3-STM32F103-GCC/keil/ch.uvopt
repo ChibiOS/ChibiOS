@@ -240,8 +240,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>73</TopLine>
+      <CurrentLine>73</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\os\ports\RVCT\ARMCMx\cstartup.s</PathWithFileName>
       <FilenameWithoutPath>cstartup.s</FilenameWithoutPath>
@@ -597,8 +597,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>4</TopLine>
+      <CurrentLine>4</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\os\kernel\src\chsys.c</PathWithFileName>
       <FilenameWithoutPath>chsys.c</FilenameWithoutPath>
@@ -994,10 +994,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>13</ColumnNumber>
+      <ColumnNumber>68</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>76</TopLine>
-      <CurrentLine>98</CurrentLine>
+      <TopLine>79</TopLine>
+      <CurrentLine>92</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\os\hal\src\can.c</PathWithFileName>
       <FilenameWithoutPath>can.c</FilenameWithoutPath>
@@ -1024,8 +1024,8 @@
       <Focus>0</Focus>
       <ColumnNumber>58</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>61</TopLine>
-      <CurrentLine>81</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\os\hal\src\i2c.c</PathWithFileName>
       <FilenameWithoutPath>i2c.c</FilenameWithoutPath>
@@ -1050,10 +1050,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>40</ColumnNumber>
+      <ColumnNumber>1</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>226</TopLine>
-      <CurrentLine>245</CurrentLine>
+      <CurrentLine>233</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\os\hal\src\mmc_spi.c</PathWithFileName>
       <FilenameWithoutPath>mmc_spi.c</FilenameWithoutPath>
@@ -1080,8 +1080,8 @@
       <Focus>0</Focus>
       <ColumnNumber>56</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>67</TopLine>
-      <CurrentLine>81</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\os\hal\src\pwm.c</PathWithFileName>
       <FilenameWithoutPath>pwm.c</FilenameWithoutPath>
@@ -1956,7 +1956,7 @@
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>32</TopLine>
-      <CurrentLine>44</CurrentLine>
+      <CurrentLine>39</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -1968,37 +1968,19 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>3</ActiveTab>
+      <ActiveTab>1</ActiveTab>
       <Documents>
         <Doc>
           <Name>..\main.c</Name>
           <ColumnNumber>0</ColumnNumber>
           <TopLine>32</TopLine>
-          <CurrentLine>44</CurrentLine>
+          <CurrentLine>39</CurrentLine>
         </Doc>
         <Doc>
-          <Name>..\..\..\os\hal\src\serial.c</Name>
-          <ColumnNumber>32</ColumnNumber>
-          <TopLine>106</TopLine>
-          <CurrentLine>120</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\os\hal\src\adc.c</Name>
-          <ColumnNumber>13</ColumnNumber>
-          <TopLine>85</TopLine>
-          <CurrentLine>101</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\os\hal\src\can.c</Name>
-          <ColumnNumber>58</ColumnNumber>
-          <TopLine>76</TopLine>
-          <CurrentLine>91</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\os\hal\src\mmc_spi.c</Name>
-          <ColumnNumber>40</ColumnNumber>
-          <TopLine>226</TopLine>
-          <CurrentLine>245</CurrentLine>
+          <Name>..\..\..\os\ports\RVCT\ARMCMx\cstartup.s</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>73</TopLine>
+          <CurrentLine>73</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>
