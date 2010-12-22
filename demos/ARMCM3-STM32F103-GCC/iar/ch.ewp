@@ -275,7 +275,7 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state>$PROJ_DIR$\</state>
+          <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\os\kernel\include</state>
           <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32</state>
