@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    IAR/ARMCMx/nvic.h
+ * @file    RVCT/ARMCMx/nvic.h
  * @brief   Cortex-Mx NVIC support macros and structures.
  *
- * @addtogroup IAR_ARMCMx_NVIC
+ * @addtogroup RVCT_ARMCMx_NVIC
  * @{
  */
 

@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    IAR/ARMCMx/nvic.c
+ * @file    RVCT/ARMCMx/nvic.c
  * @brief   Cortex-Mx NVIC support code.
  *
- * @addtogroup IAR_ARMCMx_NVIC
+ * @addtogroup RVCT_ARMCMx_NVIC
  * @{
  */
 

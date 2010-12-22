@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    IAR/ARMCMx/chcore.h
+ * @file    RVCT/ARMCMx/chcore.h
  * @brief   ARM Cortex-Mx port macros and structures.
  *
- * @addtogroup IAR_ARMCMx_CORE
+ * @addtogroup RVCT_ARMCMx_CORE
  * @{
  */
 

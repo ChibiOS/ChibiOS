@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    IAR/ARMCMx/chcore_v7m.c
+ * @file    RVCT/ARMCMx/chcore_v7m.c
  * @brief   ARMv7-M architecture port code.
  *
- * @addtogroup IAR_ARMCMx_V7M_CORE
+ * @addtogroup RVCT_ARMCMx_V7M_CORE
  * @{
  */
 

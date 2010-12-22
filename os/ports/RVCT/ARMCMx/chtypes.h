@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    IAR/ARMCMx/chtypes.h
+ * @file    RVCT/ARMCMx/chtypes.h
  * @brief   ARM Cortex-Mx port system types.
  *
- * @addtogroup IAR_ARMCMx_CORE
+ * @addtogroup RVCT_ARMCMx_CORE
  * @{
  */
 
