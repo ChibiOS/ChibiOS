@@ -37,6 +37,7 @@ CONTROL_USE_PSP SET 2
         EXTERN  __cmain
 
         SECTION .text:CODE:REORDER(2)
+        REQUIRE __vector_table
         THUMB
 __iar_program_start:
         cpsid   i
@@ -54,6 +55,9 @@ __iar_program_start:
 __early_init:
         bx      lr
 
-        REQUIRE __vector_table
+        SECTION SYSHEAP:DATA:NOROOT(3)
+        PUBLIC  __heap_base__
+__heap_base__:
+        DS32    2
 
         END

@@ -6,7 +6,7 @@ Compiler: IAR C/C++ Compiler for ARM 6.10.1.32143
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.6unstable
+*** Kernel:       2.1.7unstable
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
 *** Platform:     STM32 Performance Line Medium Density
@@ -98,7 +98,7 @@ Compiler: IAR C/C++ Compiler for ARM 6.10.1.32143
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 237877 msgs/S, 475754 ctxswc/S
+--- Score : 237878 msgs/S, 475756 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
@@ -142,7 +142,7 @@ Compiler: IAR C/C++ Compiler for ARM 6.10.1.32143
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 627424 lock+unlock/S
+--- Score : 627420 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)
