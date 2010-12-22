@@ -1730,9 +1730,6 @@
       <data/>
     </settings>
   </configuration>
-  <mfc>
-    <configuration>Debug</configuration>
-  </mfc>
   <group>
     <name>board</name>
     <file>
