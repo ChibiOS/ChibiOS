@@ -105,7 +105,8 @@ PWMDriver PWMD5;
 static void serve_interrupt(PWMDriver *pwmp) {
   uint16_t sr;
 
-  sr = pwmp->pd_tim->SR & pwmp->pd_tim->DIER;
+  sr  = pwmp->pd_tim->SR;
+  sr &= pwmp->pd_tim->DIER;
   pwmp->pd_tim->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC3IF |
                        TIM_SR_CC4IF | TIM_SR_UIF);
   if ((sr & TIM_SR_CC1IF) != 0)

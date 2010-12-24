@@ -57,12 +57,6 @@ static const ADCConversionGroup adcgrpcfg = {
 };
 
 /*
- * ADC configuration structure, empty for STM32, there is nothing to configure.
- */
-static const ADCConfig adccfg = {
-};
-
-/*
  * PWM configuration structure.
  * Cyclic callback enabled, channels 3 and 4 enabled without callbacks,
  * the active state is a logic one.
@@ -217,7 +211,7 @@ int main(void) {
    * Initializes the ADC driver 1 and performs a conversion.
    * The pin PC0 on the port GPIOC is programmed as analog input.
    */
-  adcStart(&ADCD1, &adccfg);
+  adcStart(&ADCD1, NULL);
   palSetGroupMode(GPIOC, PAL_PORT_BIT(0), PAL_MODE_INPUT_ANALOG);
   adcConvert(&ADCD1, &adcgrpcfg, samples, ADC_GRP1_BUF_DEPTH);
 
@@ -237,5 +231,4 @@ int main(void) {
       TestThread(&SD1);
     chThdSleepMilliseconds(500);
   }
-  return 0;
 }

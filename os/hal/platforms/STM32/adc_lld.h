@@ -211,6 +211,7 @@ typedef struct {
  * @note    It could be empty on some architectures.
  */
 typedef struct {
+  uint32_t                  dummy;
 } ADCConfig;
 
 /**
