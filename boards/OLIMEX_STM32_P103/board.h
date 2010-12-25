@@ -49,10 +49,11 @@
 
 #define GPIOB_SPI2NSS           12
 
+#define GPIOC_USB_P             4
 #define GPIOC_MMCWP             6
 #define GPIOC_MMCCP             7
-#define GPIOC_CANCNTL           10
-#define GPIOC_DISC              11
+#define GPIOC_CAN_CNTL          10
+#define GPIOC_USB_DISC          11
 #define GPIOC_LED               12
 
 /*
@@ -104,13 +105,15 @@
 /*
  * Port C setup.
  * Everything input with pull-up except:
+ * PC4  - Normal input because there is an external resistor.
  * PC6  - Normal input because there is an external resistor.
  * PC7  - Normal input because there is an external resistor.
- * PC11 - Push Pull output (CAN CNTRL).
+ * PC10 - Push Pull output (CAN CNTRL).
+ * PC11 - Push Pull output (USB DISC).
  * PC12 - Push Pull output (LED).
  */
-#define VAL_GPIOCCRL            0x44888888      /*  PC7...PC0 */
-#define VAL_GPIOCCRH            0x88833888      /* PC15...PC8 */
+#define VAL_GPIOCCRL            0x44848888      /*  PC7...PC0 */
+#define VAL_GPIOCCRH            0x88833388      /* PC15...PC8 */
 #define VAL_GPIOCODR            0xFFFFFFFF
 
 /*
