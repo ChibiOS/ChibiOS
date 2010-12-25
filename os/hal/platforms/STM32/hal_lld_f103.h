@@ -249,7 +249,7 @@
 /**
  * @brief   USB prescaler initialization.
  */
-#if !defined(STM32_USEUSB) || defined(__DOXYGEN__)
+#if !defined(STM32_USBPRE) || defined(__DOXYGEN__)
 #define STM32_USBPRE                STM32_USBPRE_DIV1P5
 #endif
 
@@ -416,6 +416,11 @@
 #error "invalid STM32_ADCPRE value specified"
 #endif
 
+/* ADC frequency check.*/
+#if STM32_ADCCLK > 14000000
+#error "STM32_ADCCLK exceeding maximum frequency (14MHz)"
+#endif
+
 /**
  * @brief   USB frequency.
  */
@@ -425,11 +430,6 @@
 #define STM32_USBCLK                STM32_PLLCLKOUT
 #else
 #error "invalid STM32_USBPRE value specified"
-#endif
-
-/* ADC frequency check.*/
-#if STM32_ADCCLK > 14000000
-#error "STM32_ADCCLK exceeding maximum frequency (14MHz)"
 #endif
 
 /**
