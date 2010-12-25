@@ -42,6 +42,7 @@
 #define STM32_PPRE1                         STM32_PPRE1_DIV2
 #define STM32_PPRE2                         STM32_PPRE2_DIV2
 #define STM32_ADCPRE                        STM32_ADCPRE_DIV4
+#define STM32_USBPRE                        STM32_USBPRE_DIV1P5
 #define STM32_MCO                           STM32_MCO_NOCLOCK
 
 /*

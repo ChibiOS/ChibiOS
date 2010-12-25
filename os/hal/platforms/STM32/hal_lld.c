@@ -113,8 +113,9 @@ void stm32_clock_init(void) {
 #endif
 
   /* Clock settings.*/
-  RCC->CFGR = STM32_MCO | STM32_PLLMUL | STM32_PLLXTPRE | STM32_PLLSRC |
-              STM32_ADCPRE | STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;
+  RCC->CFGR = STM32_MCO | STM32_USBPRE | STM32_PLLMUL | STM32_PLLXTPRE |
+              STM32_PLLSRC | STM32_ADCPRE | STM32_PPRE2 | STM32_PPRE1 |
+              STM32_HPRE;
 
   /* Flash setup and final clock selection.   */
   FLASH->ACR = STM32_FLASHBITS; /* Flash wait states depending on clock.    */
