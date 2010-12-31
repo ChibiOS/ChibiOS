@@ -65,6 +65,8 @@
 *****************************************************************************
 
 *** 2.1.7 ***
+- FIX: Fixed extra notifications in input queues (bug 3148525)(backported
+  to 2.0.9).
 - NEW: New ARM Cortex-Mx port for RVCT compiler (probably will not be
   included in 2.2.0, requires more testing).
 - NEW: Integrated the STM32 GCC, IAR and RVCT demos in a single demo with
