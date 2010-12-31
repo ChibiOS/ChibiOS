@@ -164,7 +164,7 @@ void sdStart(SerialDriver *sdp, const SerialConfig *config) {
  * @details Any thread waiting on the driver's queues will be awakened with
  *          the message @p Q_RESET.
  *
- * @param[in] sdp       pointer to a @p SerialDrive object
+ * @param[in] sdp       pointer to a @p SerialDriver object
  *
  * @api
  */
