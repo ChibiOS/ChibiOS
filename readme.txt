@@ -65,6 +65,8 @@
 *****************************************************************************
 
 *** 2.1.7 ***
+- FIX: Fixed error in output queues static initializer (bug 3149141)
+  (backported to 2.0.9).
 - FIX: Fixed extra notifications in input queues (bug 3148525)(backported
   to 2.0.9).
 - NEW: New ARM Cortex-Mx port for RVCT compiler (probably will not be

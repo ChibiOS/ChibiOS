@@ -59,9 +59,22 @@ N Evaluate if to add a synchronous API to the UART driver, eventually do so.
   and general solutions.
 X Support for more compilers (IAR, Keil, ARMCMx only initially).
 X Support for not just Makefiles (Ride7, Crossworks etc).
-- Make thread functions return void.
+? Make thread functions return void.
 - Introduce a "THREAD" function prefix in order to hide compiler-specific
   optimizations for thread functions.
+- Move I/O queues out of the kernel into an new "oslib" category.
+- Add an I/O buffers mechanism to the oslib category.
+- Move MemStreams to the oslib category.
+- Move iochannels and file interfaces to the oslib category.
+? Evaluate moving mailboxes to the oslib category.
+- Make the oslib category appear in the general documentation and the various
+  kernel reference manuals.
+- IAR port for Cortex-Mx, add demos for all the supported families.
+- Keil port for Cortex-Mx, add demos for all the supported families.
+- Add an USB abstract device driver class.
+- USB driver implementation for STM32F103/STM32F102.
+- Add a Serial over USB generic device driver implementing a USB Communication
+  Device Class and offering a Serial-like interface to the applications.
 X Except for the above, bug fixing only until the 2.2.0 release.
 
 Within 2.3.x (hopefully)
