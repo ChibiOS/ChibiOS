@@ -134,7 +134,7 @@ msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
   msg_t msg;
 
   chSysLock();
-  
+
   if (iqp->q_notify)
     iqp->q_notify();
 
