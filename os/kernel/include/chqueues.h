@@ -18,8 +18,8 @@
 */
 
 /**
- * @file    chqueues.h I/O
- * @brief   Queues macros and structures.
+ * @file    chqueues.h
+ * @brief   I/O Queues macros and structures.
  *
  * @addtogroup io_queues
  * @{
