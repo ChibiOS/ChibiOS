@@ -37,9 +37,6 @@
 #error "CH_USE_QUEUES requires CH_USE_SEMAPHORES"
 #endif
 
-/** @brief Queue notification callback type.*/
-typedef void (*qnotify_t)(void);
-
 /** @brief Returned by the queue functions if the operation is successful.*/
 #define Q_OK            RDY_OK
 /** @brief Returned by the queue functions if a timeout occurs.*/
@@ -53,6 +50,14 @@ typedef void (*qnotify_t)(void);
 
 /**
  * @brief   Type of a generic I/O queue structure.
+ */
+typedef struct GenericQueue GenericQueue;
+
+/** @brief Queue notification callback type.*/
+typedef void (*qnotify_t)(GenericQueue *qp);
+
+/**
+ * @brief   Generic I/O queue structure.
  * @details This structure represents a generic Input or Output asymmetrical
  *          queue. The queue is asymmetrical because one end is meant to be
  *          accessed from a thread context, and thus can be blocking, the other
@@ -60,7 +65,7 @@ typedef void (*qnotify_t)(void);
  *          lock zone (see <b>I-Locked</b> and <b>S-Locked</b> states in
  *          @ref system_states) and is non-blocking.
  */
-typedef struct {
+struct GenericQueue {
   uint8_t               *q_buffer;  /**< @brief Pointer to the queue buffer.*/
   uint8_t               *q_top;     /**< @brief Pointer to the first location
                                                 after the buffer.           */
@@ -68,7 +73,7 @@ typedef struct {
   uint8_t               *q_rdptr;   /**< @brief Read pointer.               */
   Semaphore             q_sem;      /**< @brief Counter @p Semaphore.       */
   qnotify_t             q_notify;   /**< @brief Data notification callback. */
-} GenericQueue;
+};
 
 /**
  * @brief   Returns the queue's buffer size.
@@ -266,6 +271,7 @@ typedef GenericQueue OutputQueue;
 extern "C" {
 #endif
   void chIQInit(InputQueue *iqp, uint8_t *bp, size_t size, qnotify_t infy);
+  size_t chIQGetFullI(InputQueue *iqp);
   void chIQResetI(InputQueue *iqp);
   msg_t chIQPutI(InputQueue *iqp, uint8_t b);
   msg_t chIQGetTimeout(InputQueue *iqp, systime_t time);
@@ -273,6 +279,7 @@ extern "C" {
                          size_t n, systime_t time);
 
   void chOQInit(OutputQueue *oqp, uint8_t *bp, size_t size, qnotify_t onfy);
+  size_t chOQGetFullI(OutputQueue *oqp);
   void chOQResetI(OutputQueue *oqp);
   msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time);
   msg_t chOQGetI(OutputQueue *oqp);
