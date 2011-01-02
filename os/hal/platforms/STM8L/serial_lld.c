@@ -72,22 +72,25 @@ static ROMCONST SerialConfig default_config = {
 /*===========================================================================*/
 
 #if STM8L_SERIAL_USE_USART1 || defined(__DOXYGEN__)
-static void notify1(void) {
+static void notify1(GenericQueue *qp) {
 
+  (void)qp;
   USART1->CR2 |= USART_CR2_TIEN;
 }
 #endif /* STM8L_SERIAL_USE_USART1 */
 
 #if STM8L_SERIAL_USE_USART2 || defined(__DOXYGEN__)
-static void notify2(void) {
+static void notify2(GenericQueue *qp) {
 
+  (void)qp;
   USART2->CR2 |= USART_CR2_TIEN;
 }
 #endif /* STM8L_SERIAL_USE_USART1 */
 
 #if STM8L_SERIAL_USE_USART3 || defined(__DOXYGEN__)
-static void notify3(void) {
+static void notify3(GenericQueue *qp) {
 
+  (void)qp;
   USART3->CR2 |= USART_CR2_TIEN;
 }
 #endif /* STM8L_SERIAL_USE_USART3 */

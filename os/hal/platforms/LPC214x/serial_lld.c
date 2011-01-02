@@ -204,8 +204,9 @@ static void preload(SerialDriver *sdp) {
  * @brief   Driver SD1 output notification.
  */
 #if USE_LPC214x_UART0 || defined(__DOXYGEN__)
-static void notify1(void) {
+static void notify1(GenericQueue *qp) {
 
+  (void)qp;
   preload(&SD1);
 }
 #endif
@@ -214,8 +215,9 @@ static void notify1(void) {
  * @brief   Driver SD2 output notification.
  */
 #if USE_LPC214x_UART1 || defined(__DOXYGEN__)
-static void notify2(void) {
+static void notify2(GenericQueue *qp) {
 
+  (void)qp;
   preload(&SD2);
 }
 #endif

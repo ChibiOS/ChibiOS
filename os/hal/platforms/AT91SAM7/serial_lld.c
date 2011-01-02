@@ -194,22 +194,25 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
 }
 
 #if USE_SAM7_USART0 || defined(__DOXYGEN__)
-static void notify1(void) {
+static void notify1(GenericQueue *qp) {
 
+  (void)qp;
   AT91C_BASE_US0->US_IER = AT91C_US_TXRDY;
 }
 #endif
 
 #if USE_SAM7_USART1 || defined(__DOXYGEN__)
-static void notify2(void) {
+static void notify2(GenericQueue *qp) {
 
+  (void)qp;
   AT91C_BASE_US1->US_IER = AT91C_US_TXRDY;
 }
 #endif
 
 #if USE_SAM7_DBGU_UART || defined(__DOXYGEN__)
-static void notify3(void) {
+static void notify3(GenericQueue *qp) {
 
+  (void)qp;
   AT91C_BASE_DBGU->DBGU_IER = AT91C_US_TXRDY;
 }
 #endif

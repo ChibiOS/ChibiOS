@@ -167,8 +167,9 @@ static void serve_interrupt(SerialDriver *sdp) {
 }
 
 #if USE_SPC563_ESCIA || defined(__DOXYGEN__)
-static void notify1(void) {
+static void notify1(GenericQueue *qp) {
 
+  (void)qp;
   if (ESCI_A.SR.B.TDRE) {
     msg_t b = sdRequestDataI(&SD1);
     if (b != Q_EMPTY) {
@@ -177,19 +178,13 @@ static void notify1(void) {
       ESCI_A.DR.R = (uint16_t)b;
     }
   }
-/*  if (!ESCI_A.CR1.B.TIE) {
-    msg_t b = sdRequestDataI(&SD1);
-    if (b != Q_EMPTY) {
-      ESCI_A.CR1.B.TIE = 1;
-      ESCI_A.DR.R = (uint16_t)b;
-    }
-  }*/
 }
 #endif
 
 #if USE_SPC563_ESCIB || defined(__DOXYGEN__)
-static void notify2(void) {
+static void notify2(GenericQueue *qp) {
 
+  (void)qp;
   if (ESCI_B.SR.B.TDRE) {
     msg_t b = sdRequestDataI(&SD2);
     if (b != Q_EMPTY) {
@@ -198,13 +193,6 @@ static void notify2(void) {
       ESCI_B.DR.R = (uint16_t)b;
     }
   }
-/*  if (!ESCI_B.CR1.B.TIE) {
-    msg_t b = sdRequestDataI(&SD2);
-    if (b != Q_EMPTY) {
-      ESCI_B.CR1.B.TIE = 1;
-      ESCI_B.DR.R = (uint16_t)b;
-    }
-  }*/
 }
 #endif
 

@@ -198,8 +198,9 @@ static void preload(SerialDriver *sdp) {
  * @brief   Driver SD1 output notification.
  */
 #if LPC11xx_SERIAL_USE_UART0 || defined(__DOXYGEN__)
-static void notify1(void) {
+static void notify1(GenericQueue *qp) {
 
+  (void)qp;
   preload(&SD1);
 }
 #endif

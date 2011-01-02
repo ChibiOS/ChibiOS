@@ -183,36 +183,41 @@ static void serve_interrupt(SerialDriver *sdp) {
 #endif
 
 #if STM32_SERIAL_USE_USART1 || defined(__DOXYGEN__)
-static void notify1(void) {
+static void notify1(GenericQueue *qp) {
 
+  (void)qp;
   USART1->CR1 |= USART_CR1_TXEIE;
 }
 #endif
 
 #if STM32_SERIAL_USE_USART2 || defined(__DOXYGEN__)
-static void notify2(void) {
+static void notify2(GenericQueue *qp) {
 
+  (void)qp;
   USART2->CR1 |= USART_CR1_TXEIE;
 }
 #endif
 
 #if STM32_SERIAL_USE_USART3 || defined(__DOXYGEN__)
-static void notify3(void) {
+static void notify3(GenericQueue *qp) {
 
+  (void)qp;
   USART3->CR1 |= USART_CR1_TXEIE;
 }
 #endif
 
 #if STM32_SERIAL_USE_UART4 || defined(__DOXYGEN__)
-static void notify4(void) {
+static void notify4(GenericQueue *qp) {
 
+  (void)qp;
   UART4->CR1 |= USART_CR1_TXEIE;
 }
 #endif
 
 #if STM32_SERIAL_USE_UART5 || defined(__DOXYGEN__)
-static void notify5(void) {
+static void notify5(GenericQueue *qp) {
 
+  (void)qp;
   UART5->CR1 |= USART_CR1_TXEIE;
 }
 #endif
