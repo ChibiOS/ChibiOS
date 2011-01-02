@@ -88,6 +88,8 @@
 - CHANGE: Changed the declaration of the main() function in all demos
   without arguments. Removed the clearing of arguments from the startup
   files and saved some space.
+- CHANGE: Queues callbacks now have as parameter a pointer to the queue,
+  there were no parameters previously.
  
 *** 2.1.6 ***
 - FIX: Fixed error in sdPutTimeout() macro (bug 3138763)(backported in 2.0.9).
