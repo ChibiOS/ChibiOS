@@ -62,18 +62,11 @@ X Support for not just Makefiles (Ride7, Crossworks etc).
 ? Make thread functions return void.
 - Introduce a "THREAD" function prefix in order to hide compiler-specific
   optimizations for thread functions.
-- Move I/O queues out of the kernel into an new "oslib" category.
-- Add an I/O buffers mechanism to the oslib category.
-- Move MemStreams to the oslib category.
-- Move iochannels and file interfaces to the oslib category.
-? Evaluate moving mailboxes to the oslib category.
-- Make the oslib category appear in the general documentation and the various
-  kernel reference manuals.
-- IAR port for Cortex-Mx, add demos for all the supported families.
-- Keil port for Cortex-Mx, add demos for all the supported families.
-- Add an USB abstract device driver class.
-- USB driver implementation for STM32F103/STM32F102.
-- Add a Serial over USB generic device driver implementing a USB Communication
+X IAR port for Cortex-Mx, add demos for all the supported families.
+X Keil port for Cortex-Mx, add demos for all the supported families.
+X Add an USB abstract device driver class.
+X USB driver implementation for STM32F103/STM32F102.
+X Add a Serial over USB generic device driver implementing a USB Communication
   Device Class and offering a Serial-like interface to the applications.
 X Except for the above, bug fixing only until the 2.2.0 release.
 
@@ -87,7 +80,7 @@ X I2C device driver class support and at least one implementation.
 - Serial over UART complex driver driver, evaluate from the performance
   results if to make obsolete the current dedicated Serial driver.
 X Shared DMA channels support in the STM32/STM8L HALs.
-X New device driver models: Clock, Systick, RTC, WDG, DAC, USB, Power Monitor.
+X New device driver models: Clock, Systick, RTC, WDG, DAC, Power Monitor.
 - MAC driver for STM32F107 (hardware missing).
 - Device drivers for STM8/STM8L (ADC, PWM, bring them on par with STM32).
 - Batch testing of the ARM7/ARMCMx port using OpenOCD, with reports.

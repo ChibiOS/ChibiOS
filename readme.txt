@@ -74,6 +74,7 @@
 - NEW: Integrated the STM32 GCC, IAR and RVCT demos in a single demo with
   multiple project files, the code is exactly the same.
 - NEW: Added an USB clock configuration in the STM32 HAL driver (LD, MD, HD).
+- NEW: New semaphore API chSemSetCounterI().
 - CHANGE: Modified the ADC and CAN drivers to allow a NULL pointer for
   the configuration structure if it is not required by the implementation.
 - CHANGE: Modified the MMC_SPI driver to *require* a NULL as pointer to
