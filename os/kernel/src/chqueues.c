@@ -73,6 +73,8 @@ void chIQInit(InputQueue *iqp, uint8_t *bp, size_t size, qnotify_t infy) {
  * @brief   Returns the filled space into an input queue.
  *
  * @param[in] iqp       pointer to an @p InputQueue structure
+ * @return              The number of bytes in the queue.
+ * @retval 0            if the queue is empty.
  *
  * @iclass
  */
@@ -252,6 +254,8 @@ void chOQInit(OutputQueue *oqp, uint8_t *bp, size_t size, qnotify_t onfy) {
  * @brief   Returns the filled space into an output queue.
  *
  * @param[in] oqp       pointer to an @p OutputQueue structure
+ * @return              The number of bytes in the queue.
+ * @retval 0            if the queue is empty.
  *
  * @iclass
  */

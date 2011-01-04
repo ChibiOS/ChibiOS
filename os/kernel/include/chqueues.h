@@ -205,7 +205,7 @@ typedef GenericQueue OutputQueue;
  *
  * @iclass
  */
-#define chOQIsEmptyI(q) ((bool_t)(chQSpaceI(q) >= chQSizeI(q)))
+#define chOQIsEmptyI(oqp) ((bool_t)(chQSpaceI(q) >= chQSizeI(q)))
 
 /**
  * @brief   Evaluates to @p TRUE if the specified output queue is full.
@@ -217,7 +217,7 @@ typedef GenericQueue OutputQueue;
  *
  * @iclass
  */
-#define chOQIsFullI(q) ((bool_t)(chQSpaceI(q) <= 0))
+#define chOQIsFullI(oqp) ((bool_t)(chQSpaceI(q) <= 0))
 
 /**
  * @brief   Output queue write.
