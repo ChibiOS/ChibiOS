@@ -61,7 +61,7 @@ void xxxInit(void) {
 /**
  * @brief   Initializes the standard part of a @p XXXDriver structure.
  *
- * @param[in] xxxp      pointer to the @p XXXDriver object
+ * @param[out] xxxp     pointer to the @p XXXDriver object
  *
  * @init
  */

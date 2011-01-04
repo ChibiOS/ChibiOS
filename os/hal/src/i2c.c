@@ -61,7 +61,7 @@ void i2cInit(void) {
 /**
  * @brief   Initializes the standard part of a @p I2CDriver structure.
  *
- * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[out] i2cp     pointer to the @p I2CDriver object
  *
  * @init
  */

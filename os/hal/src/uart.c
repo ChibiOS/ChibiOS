@@ -61,7 +61,7 @@ void uartInit(void) {
 /**
  * @brief   Initializes the standard part of a @p UARTDriver structure.
  *
- * @param[in] uartp     pointer to the @p UARTDriver object
+ * @param[out] uartp    pointer to the @p UARTDriver object
  *
  * @init
  */
@@ -273,7 +273,7 @@ void uartStartReceive(UARTDriver *uartp, size_t n, void *rxbuf) {
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in] n         number of data frames to send
- * @param[in] rxbuf     the pointer to the receive buffer
+ * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @iclass
  */

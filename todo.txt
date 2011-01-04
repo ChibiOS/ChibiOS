@@ -68,6 +68,9 @@ X Add an USB abstract device driver class.
 X USB driver implementation for STM32F103/STM32F102.
 X Add a Serial over USB generic device driver implementing a USB Communication
   Device Class and offering a Serial-like interface to the applications.
+- Change the serial drivers to have a single event source instead of three.
+  Add Rx and Tx to the existing flags mechanism. Move up the flags handling in
+  the superclass.
 X Except for the above, bug fixing only until the 2.2.0 release.
 
 Within 2.3.x (hopefully)

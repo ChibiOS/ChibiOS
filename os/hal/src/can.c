@@ -61,7 +61,7 @@ void canInit(void) {
 /**
  * @brief   Initializes the standard part of a @p CANDriver structure.
  *
- * @param[in] canp      pointer to the @p CANDriver object
+ * @param[out] canp     pointer to the @p CANDriver object
  *
  * @init
  */

@@ -90,7 +90,8 @@
   files and saved some space.
 - CHANGE: Queues callbacks now have as parameter a pointer to the queue,
   there were no parameters previously.
- 
+- Documentation related fixes.
+
 *** 2.1.6 ***
 - FIX: Fixed error in sdPutTimeout() macro (bug 3138763)(backported in 2.0.9).
 - NEW: New ARM Cortex-Mx port for IAR compiler (probably will not be
