@@ -221,7 +221,7 @@ typedef GenericQueue OutputQueue;
  * @param[in] onotify   output notification callback pointer
  */
 #define OUTPUTQUEUE_DECL(name, buffer, size, onotify)                   \
-  InputQueue name = _OUTPUTQUEUE_DATA(name, buffer, size, onotify)
+  OutputQueue name = _OUTPUTQUEUE_DATA(name, buffer, size, onotify)
 
 #ifdef __cplusplus
 extern "C" {

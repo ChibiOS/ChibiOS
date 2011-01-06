@@ -75,7 +75,7 @@ void xxxObjectInit(XXXDriver *xxxp) {
 /**
  * @brief   Configures and activates the XXX peripheral.
  *
- * @param[in] xxxp      pointer to the @p XXXDriver object
+ * @param[out] xxxp     pointer to the @p XXXDriver object
  * @param[in] config    pointer to the @p XXXConfig object
  */
 void xxxStart(XXXDriver *xxxp, const XXXConfig *config) {

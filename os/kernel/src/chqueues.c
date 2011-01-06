@@ -193,8 +193,6 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
     *bp++ = *iqp->q_rdptr++;
     if (iqp->q_rdptr >= iqp->q_top)
       iqp->q_rdptr = iqp->q_buffer;
-    if (nfy)
-      nfy();
     chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
     r++;
     if (--n == 0) {

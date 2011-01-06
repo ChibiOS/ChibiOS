@@ -64,7 +64,7 @@ void adcInit(void) {
 /**
  * @brief   Initializes the standard part of a @p ADCDriver structure.
  *
- * @param[in] adcp      pointer to the @p ADCDriver object
+ * @param[out] adcp     pointer to the @p ADCDriver object
  */
 void adcObjectInit(ADCDriver *adcp) {
 

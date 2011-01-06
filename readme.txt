@@ -59,8 +59,11 @@
 *****************************************************************************
 
 *** 2.0.9 ***
+- FIX: Fixed error in output queues static initializer (bug 3149141).
+- FIX: Fixed extra notifications in input queues (bug 3148525).
 - FIX: Fixed error in sdPutTimeout() macro (bug 3138763).
 - FIX: Fixed preprocessing crt0.s fail (bug 3132293).
+- Documentation related fixes.
 
 *** 2.0.8 ***
 - FIX: Fixed failed memory recovery by registry scan, improved the related
