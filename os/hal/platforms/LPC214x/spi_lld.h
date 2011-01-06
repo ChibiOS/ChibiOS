@@ -55,7 +55,7 @@
 /**
  * @brief   SSP interrupt priority level setting.
  */
-#if !defined(STM32_SPI_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#if !defined(LPC214x_SPI_SSP_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define LPC214x_SPI_SSP_IRQ_PRIORITY    4
 #endif
 
