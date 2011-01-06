@@ -59,10 +59,16 @@ static void ssp_fifo_preload(SPIDriver *spip) {
 
   while(((ssp->SR & SR_TNF) != 0) && (n > 0)) {
     if (spip->spd_txptr != NULL) {
-      if ((ssp->CR0 & CR0_DSSMASK) > CR0_DSS8BIT)
-        ssp->DR = *(uint16_t *)spip->spd_txptr++;
-      else
-        ssp->DR = *(uint8_t *)spip->spd_txptr++;
+      if ((ssp->CR0 & CR0_DSSMASK) > CR0_DSS8BIT) {
+        const uint16_t *p = spip->spd_txptr;
+        ssp->DR = *p++;
+        spip->spd_txptr = p;
+      }
+      else {
+        const uint8_t *p = spip->spd_txptr;
+        ssp->DR = *p++;
+        spip->spd_txptr = p;
+      }
     }
     else
       ssp->DR = 0xFFFFFFFF;
@@ -87,10 +93,16 @@ static void spi_serve_interrupt(SPIDriver *spip) {
   ssp->ICR = ICR_RT | ICR_ROR;
   while ((ssp->SR & SR_RNE) != 0) {
     if (spip->spd_rxptr != NULL) {
-      if ((ssp->CR0 & CR0_DSSMASK) > CR0_DSS8BIT)
-        *(uint16_t *)spip->spd_rxptr++ = ssp->DR;
-      else
-        *(uint8_t *)spip->spd_rxptr++ = ssp->DR;
+      if ((ssp->CR0 & CR0_DSSMASK) > CR0_DSS8BIT) {
+        uint16_t *p = spip->spd_rxptr;
+        *p++ = ssp->DR;
+        spip->spd_rxptr = p;
+      }
+      else {
+        uint8_t *p = spip->spd_rxptr;
+        *p++ = ssp->DR;
+        spip->spd_rxptr = p;
+      }
     }
     else
       (void)ssp->DR;
