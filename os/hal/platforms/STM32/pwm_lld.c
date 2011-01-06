@@ -45,7 +45,7 @@
  * @brief   PWM1 driver identifier.
  * @note    The driver PWM1 allocates the complex timer TIM1 when enabled.
  */
-#if defined(USE_STM32_PWM1) || defined(__DOXYGEN__)
+#if USE_STM32_PWM1 || defined(__DOXYGEN__)
 PWMDriver PWMD1;
 #endif
 
@@ -53,7 +53,7 @@ PWMDriver PWMD1;
  * @brief   PWM2 driver identifier.
  * @note    The driver PWM2 allocates the timer TIM2 when enabled.
  */
-#if defined(USE_STM32_PWM2) || defined(__DOXYGEN__)
+#if USE_STM32_PWM2 || defined(__DOXYGEN__)
 PWMDriver PWMD2;
 #endif
 
@@ -61,7 +61,7 @@ PWMDriver PWMD2;
  * @brief   PWM3 driver identifier.
  * @note    The driver PWM3 allocates the timer TIM3 when enabled.
  */
-#if defined(USE_STM32_PWM3) || defined(__DOXYGEN__)
+#if USE_STM32_PWM3 || defined(__DOXYGEN__)
 PWMDriver PWMD3;
 #endif
 
@@ -69,7 +69,7 @@ PWMDriver PWMD3;
  * @brief   PWM4 driver identifier.
  * @note    The driver PWM4 allocates the timer TIM4 when enabled.
  */
-#if defined(USE_STM32_PWM4) || defined(__DOXYGEN__)
+#if USE_STM32_PWM4 || defined(__DOXYGEN__)
 PWMDriver PWMD4;
 #endif
 

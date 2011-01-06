@@ -305,19 +305,19 @@ struct PWMDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if defined(USE_STM32_PWM1) && !defined(__DOXYGEN__)
+#if USE_STM32_PWM1 && !defined(__DOXYGEN__)
 extern PWMDriver PWMD1;
 #endif
 
-#if defined(USE_STM32_PWM2) && !defined(__DOXYGEN__)
+#if USE_STM32_PWM2 && !defined(__DOXYGEN__)
 extern PWMDriver PWMD2;
 #endif
 
-#if defined(USE_STM32_PWM3) && !defined(__DOXYGEN__)
+#if USE_STM32_PWM3 && !defined(__DOXYGEN__)
 extern PWMDriver PWMD3;
 #endif
 
-#if defined(USE_STM32_PWM4) && !defined(__DOXYGEN__)
+#if USE_STM32_PWM4 && !defined(__DOXYGEN__)
 extern PWMDriver PWMD4;
 #endif
 

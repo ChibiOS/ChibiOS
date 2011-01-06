@@ -58,6 +58,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.0.10 ***
+- FIX: Fixed switch condition error in STM32 PWM driver (bug 3152482).
+
 *** 2.0.9 ***
 - FIX: Fixed error in output queues static initializer (bug 3149141).
 - FIX: Fixed extra notifications in input queues (bug 3148525).
