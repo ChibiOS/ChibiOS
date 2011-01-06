@@ -19,7 +19,7 @@
 
 ;/* <<< Use Configuration Wizard in Context Menu >>> */
 
-;// <h> Main Stack Configuration
+;// <h> Main Stack Configuration (IRQ Stack)
 ;//   <o> Main Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ;// </h>
 main_stack_size EQU     0x00000400
