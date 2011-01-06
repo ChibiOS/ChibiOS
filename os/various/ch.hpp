@@ -69,8 +69,9 @@ namespace chibios_rt {
 
     /**
      * @brief Returns the system time as system ticks.
-     *
      * @note the system tick time interval is implementation dependent.
+     *
+     * @return          The system time.
      */
     static systime_t GetTime(void);
   };

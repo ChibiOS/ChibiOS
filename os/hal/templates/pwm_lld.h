@@ -151,11 +151,10 @@ struct PWMDriver {
  *          proper hardware resolution by carefully choosing the clock source
  *          and prescaler settings, see @p PWM_COMPUTE_PSC.
  *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] numerator numerator of the fraction
  * @param[in] denominator percentage as an integer between 0 and numerator
  * @return              The pulse width to be passed to @p pwmEnableChannel().
- *
- * @api
  */
 #define PWM_FRACTION_TO_WIDTH(pwmp, numerator, denominator) 0
 
@@ -169,8 +168,6 @@ struct PWMDriver {
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] degrees   degrees as an integer between 0 and 36000
  * @return              The pulse width to be passed to @p pwmEnableChannel().
- *
- * @api
  */
 #define PWM_DEGREES_TO_WIDTH(pwmp, degrees)                                 \
   PWM_FRACTION_TO_WIDTH(pwmp, 36000, degrees)
@@ -185,8 +182,6 @@ struct PWMDriver {
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] percentage percentage as an integer between 0 and 10000
  * @return              The pulse width to be passed to @p pwmEnableChannel().
- *
- * @api
  */
 #define PWM_PERCENTAGE_TO_WIDTH(pwmp, percentage)                           \
   PWM_FRACTION_TO_WIDTH(pwmp, 10000, percentage)

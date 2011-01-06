@@ -250,6 +250,8 @@ void test_cpu_pulse(unsigned duration) {
 
 /**
  * @brief Delays execution until next system time tick.
+ *
+ * @return              The system time.
  */
 systime_t test_wait_tick(void) {
 
@@ -319,6 +321,7 @@ static void print_line(void) {
  * @brief   Test execution thread function.
  *
  * @param[in] p         pointer to a @p BaseChannel object for test output
+ * @return              A failure boolean value.
  */
 msg_t TestThread(void *p) {
   int i, j;
