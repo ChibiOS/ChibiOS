@@ -27,7 +27,7 @@ CONTROL_USE_PSP SET 2
         AAPCS INTERWORK, VFP_COMPATIBLE, ROPI
         PRESERVE8
 
-        SECTION PSTACK:DATA:NOROOT(3)
+        SECTION CSTACK:DATA:NOROOT(3)
         SECTION .intvec:CODE:NOROOT(3)
 
         PUBLIC  __iar_program_start
@@ -41,7 +41,7 @@ CONTROL_USE_PSP SET 2
         THUMB
 __iar_program_start:
         cpsid   i
-        ldr     r0, =sfe(PSTACK)
+        ldr     r0, =sfe(CSTACK)
         msr     PSP, r0
         movs    r0, #CONTROL_MODE_PRIVILEGED | CONTROL_USE_PSP
         msr     CONTROL, r0

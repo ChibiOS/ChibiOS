@@ -30,7 +30,7 @@
         AAPCS INTERWORK, VFP_COMPATIBLE, RWPI_COMPATIBLE
         PRESERVE8
 
-        SECTION CSTACK:DATA:NOROOT(3)
+        SECTION IRQSTACK:DATA:NOROOT(3)
         SECTION .intvec:CODE:NOROOT(2)
 
         EXTERN  __iar_program_start
@@ -39,7 +39,7 @@
         DATA
 
 __vector_table:
-        DCD     SFE(CSTACK)
+        DCD     SFE(IRQSTACK)
         DCD     __iar_program_start
         DCD     NMIVector
         DCD     HardFaultVector
