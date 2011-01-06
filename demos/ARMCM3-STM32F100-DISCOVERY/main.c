@@ -160,7 +160,6 @@ static msg_t Thread1(void *arg) {
     chThdSleepMilliseconds(1000);
     seconds_counter++;
   }
-  return 0;
 }
 
 /*
