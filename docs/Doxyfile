@@ -628,8 +628,12 @@ INPUT                  = ../docs/src \
                          ../os/ports/GCC/MSP430 \
                          ../os/ports/IAR/ARMCMx \
                          ../os/ports/IAR/ARMCMx/STM32 \
+                         ../os/ports/IAR/ARMCMx/LPC11xx \
+                         ../os/ports/IAR/ARMCMx/LPC13xx \
                          ../os/ports/RVCT/ARMCMx \
                          ../os/ports/RVCT/ARMCMx/STM32 \
+                         ../os/ports/RVCT/ARMCMx/LPC11xx \
+                         ../os/ports/RVCT/ARMCMx/LPC13xx \
                          ../os/ports/cosmic/STM8 \
                          ../os/ports/RC/STM8 \
                          ../os/hal \
