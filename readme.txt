@@ -74,8 +74,8 @@
   to 2.0.9).
 - NEW: New ARM Cortex-Mx port for RVCT compiler (probably will not be
   included in 2.2.0, requires more testing).
-- NEW: Integrated the STM32 GCC, IAR and RVCT demos in a single demo with
-  multiple project files, the code is exactly the same.
+- NEW: Integrated the Cortex-M3 GCC, IAR and RVCT demos in a single demo
+  with multiple project files, the code is exactly the same.
 - NEW: Added an USB clock configuration in the STM32 HAL driver (LD, MD, HD).
 - NEW: New semaphore API chSemSetCounterI().
 - NEW: New queue APIs chIQGetFullI() and chOQGetFullI().
