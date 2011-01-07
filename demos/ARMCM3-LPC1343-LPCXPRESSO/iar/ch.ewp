@@ -99,7 +99,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>STM32F10xxB	ST STM32F10xxB</state>
+          <state>LPC1343	NXP LPC1343</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -963,7 +963,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>STM32F10xxB	ST STM32F10xxB</state>
+          <state>LPC1343	NXP LPC1343</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -1410,7 +1410,7 @@
         <option>
           <name>OOCOutputFormat</name>
           <version>2</version>
-          <state>1</state>
+          <state>2</state>
         </option>
         <option>
           <name>OCOutputOverride</name>
@@ -1418,7 +1418,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state>ch.hex</state>
+          <state>ch.bin</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
