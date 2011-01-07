@@ -17,14 +17,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(STM32F10X_LD) && !defined(STM32F10X_LD_VL) &&                  \
-    !defined(STM32F10X_MD) && !defined(STM32F10X_MD_VL) &&                  \
-    !defined(STM32F10X_HD) && !defined(STM32F10X_XL) &&                     \
-    !defined(STM32F10X_CL)
-#define _FROM_ASM_
-#include "board.h"
-#endif
-
         MODULE  ?vectors
 
         AAPCS INTERWORK, VFP_COMPATIBLE, RWPI_COMPATIBLE
@@ -98,13 +90,9 @@ __vector_table:
         DCD     VectorE0
         DCD     VectorE4
         DCD     VectorE8
-#if defined(STM32F10X_MD_VL) || defined(STM32F10X_HD) ||                    \
-    defined(STM32F10X_XL)    || defined(STM32F10X_CL)
         DCD     VectorEC
         DCD     VectorF0
         DCD     VectorF4
-#endif
-#if defined(STM32F10X_HD)    || defined(STM32F10X_XL) || defined(STM32F10X_CL)
         DCD     VectorF8
         DCD     VectorFC
         DCD     Vector100
@@ -115,21 +103,6 @@ __vector_table:
         DCD     Vector114
         DCD     Vector118
         DCD     Vector11C
-        DCD     Vector120
-        DCD     Vector124
-        DCD     Vector128
-        DCD     Vector12C
-#endif
-#if defined(STM32F10X_CL)
-        DCD     Vector130
-        DCD     Vector134
-        DCD     Vector138
-        DCD     Vector13C
-        DCD     Vector140
-        DCD     Vector144
-        DCD     Vector148
-        DCD     Vector14C
-#endif
 
 /*
  * Default interrupt handlers.
@@ -204,18 +177,6 @@ __vector_table:
         PUBWEAK Vector114
         PUBWEAK Vector118
         PUBWEAK Vector11C
-        PUBWEAK Vector120
-        PUBWEAK Vector124
-        PUBWEAK Vector128
-        PUBWEAK Vector12C
-        PUBWEAK Vector130
-        PUBWEAK Vector134
-        PUBWEAK Vector138
-        PUBWEAK Vector13C
-        PUBWEAK Vector140
-        PUBWEAK Vector144
-        PUBWEAK Vector148
-        PUBWEAK Vector14C
         PUBLIC  _unhandled_exception
 
         SECTION .text:CODE:REORDER(1)
@@ -291,18 +252,6 @@ Vector110
 Vector114
 Vector118
 Vector11C
-Vector120
-Vector124
-Vector128
-Vector12C
-Vector130
-Vector134
-Vector138
-Vector13C
-Vector140
-Vector144
-Vector148
-Vector14C
 _unhandled_exception
         b       _unhandled_exception
 
