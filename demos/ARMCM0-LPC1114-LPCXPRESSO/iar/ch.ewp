@@ -2005,6 +2005,9 @@
         <name>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\chtypes.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\LPC11xx\cmparams.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\cstartup.s</name>
       </file>
       <file>
@@ -2012,6 +2015,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\nvic.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\LPC11xx\vectors.s</name>
       </file>
     </group>
   </group>
