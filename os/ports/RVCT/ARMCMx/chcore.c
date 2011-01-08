@@ -33,7 +33,7 @@
  *          to redefine it in your application code.
  */
 #if !defined(__DOXYGEN__)
-__weak
+__attribute__((weak))
 #endif
 void port_halt(void) {
 
