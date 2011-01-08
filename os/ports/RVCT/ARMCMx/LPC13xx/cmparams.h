@@ -21,8 +21,8 @@
  * @file    RVCT/ARMCMx/LPC13xx/cmparams.h
  * @brief   ARM Cortex-M3 parameters for the LPC13xx.
  *
- * @defgroup ARMCMx_LPC13xx LPC13xx Specific Parameters
- * @ingroup ARMCMx_SPECIFIC
+ * @defgroup RVCT_ARMCMx_LPC13xx LPC13xx Specific Parameters
+ * @ingroup RVCT_ARMCMx_SPECIFIC
  * @details This file contains the Cortex-M3 specific parameters for the
  *          LPC13xx platform.
  * @{

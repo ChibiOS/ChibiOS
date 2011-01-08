@@ -18,13 +18,13 @@
 */
 
 /**
- * @file    RVCT/ARMCMx/STM32/cmparams.h
- * @brief   ARM Cortex-M3 parameters for the STM32.
+ * @file    IAR/ARMCMx/LPC11xx/cmparams.h
+ * @brief   ARM Cortex-M0 parameters for the LPC11xx.
  *
- * @defgroup RVCT_ARMCMx_STM32 STM32 Specific Parameters
- * @ingroup RVCT_ARMCMx_SPECIFIC
- * @details This file contains the Cortex-M3 specific parameters for the
- *          STM32 platform.
+ * @defgroup IAR_ARMCMx_LPC11xx LPC11xx Specific Parameters
+ * @ingroup IAR_ARMCMx_SPECIFIC
+ * @details This file contains the Cortex-M0 specific parameters for the
+ *          LPC11xx platform.
  * @{
  */
 
@@ -34,7 +34,7 @@
 /**
  * @brief   Cortex core model.
  */
-#define CORTEX_MODEL            CORTEX_M3
+#define CORTEX_MODEL            CORTEX_M0
 
 /**
  * @brief   Systick unit presence.
@@ -49,7 +49,7 @@
 /**
  * @brief   Number of bits in priority masks.
  */
-#define CORTEX_PRIORITY_BITS    4
+#define CORTEX_PRIORITY_BITS    2
 
 #endif /* _CMPARAMS_H_ */
 
