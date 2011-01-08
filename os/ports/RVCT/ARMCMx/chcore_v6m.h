@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    IAR/ARMCMx/chcore_v6m.h
+ * @file    RVCT/ARMCMx/chcore_v6m.h
  * @brief   ARMv6-M architecture port macros and structures.
  *
- * @addtogroup IAR_ARMCMx_V6M_CORE
+ * @addtogroup RVCT_ARMCMx_V6M_CORE
  * @{
  */
 
@@ -160,14 +160,14 @@ struct intctx {
  * @details Usually this function just disables interrupts but may perform
  *          more actions.
  */
-#define port_lock() __disable_interrupt()
+#define port_lock() __disable_irq()
 
 /**
  * @brief   Kernel-unlock action.
  * @details Usually this function just disables interrupts but may perform
  *          more actions.
  */
-#define port_unlock() __enable_interrupt()
+#define port_unlock() __enable_irq()
 
 /**
  * @brief   Kernel-lock action from an interrupt handler.
@@ -190,17 +190,17 @@ struct intctx {
 /**
  * @brief   Disables all the interrupt sources.
  */
-#define port_disable() __disable_interrupt()
+#define port_disable() __disable_irq()
 
 /**
  * @brief   Disables the interrupt sources below kernel-level priority.
  */
-#define port_suspend() __disable_interrupt()
+#define port_suspend() __disable_irq()
 
 /**
  * @brief   Enables all the interrupt sources.
  */
-#define port_enable() __enable_interrupt()
+#define port_enable() __enable_irq()
 
 /**
  * @brief   Enters an architecture-dependent IRQ-waiting mode.
@@ -211,7 +211,7 @@ struct intctx {
  * @note    Implemented as an inlined @p WFI instruction.
  */
 #if CORTEX_ENABLE_WFI_IDLE || defined(__DOXYGEN__)
-#define port_wait_for_interrupt() asm ("wfi")
+#define port_wait_for_interrupt() __wfi()
 #else
 #define port_wait_for_interrupt()
 #endif

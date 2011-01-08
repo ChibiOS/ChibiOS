@@ -72,7 +72,8 @@ Reset_Handler   PROC
                 msr     CONTROL, r0
                 isb
                 bl      __early_init
-                b       __main
+                ldr     r0, =__main
+                bx      r0
                 ENDP
 
 __early_init    PROC
