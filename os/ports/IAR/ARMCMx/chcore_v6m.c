@@ -88,10 +88,10 @@ void _port_switch_from_irq(void) {
 #define PUSH_CONTEXT(sp) {                                                  \
   asm ("push    {r4, r5, r6, r7, lr}                   \n\t"                \
        "mov     r4, r8                                 \n\t"                \
-        "mov     r5, r9                                \n\t"                \
-        "mov     r6, r10                               \n\t"                \
-        "mov     r7, r11                               \n\t"                \
-        "push    {r4, r5, r6, r7}");                                        \
+       "mov     r5, r9                                 \n\t"                \
+       "mov     r6, r10                                \n\t"                \
+       "mov     r7, r11                                \n\t"                \
+       "push    {r4, r5, r6, r7}");                                         \
 }
 
 #define POP_CONTEXT(sp) {                                                   \

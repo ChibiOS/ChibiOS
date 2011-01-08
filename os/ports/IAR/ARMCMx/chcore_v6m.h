@@ -80,9 +80,9 @@ struct intctx {
   tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +                  \
                                      wsize -                                \
                                      sizeof(struct intctx));                \
-  tp->p_ctx.r13->r4 = pf;                                                   \
+  tp->p_ctx.r13->r4 = (void *)pf;                                           \
   tp->p_ctx.r13->r5 = arg;                                                  \
-  tp->p_ctx.r13->lr = _port_thread_start;                                   \
+  tp->p_ctx.r13->lr = (void *)_port_thread_start;                           \
 }
 
 /**
@@ -129,18 +129,7 @@ struct intctx {
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() {                                               \
-  port_lock_from_isr();                                                     \
-  if ((--_port_irq_nesting == 0) && chSchIsRescRequiredExI()) {             \
-    register struct cmxctx *ctxp;                                           \
-                                                                            \
-    asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : );                      \
-    _port_saved_pc = ctxp->pc;                                              \
-    ctxp->pc = _port_switch_from_irq;                                       \
-    return;                                                                 \
-  }                                                                         \
-  port_unlock_from_isr();                                                   \
-}
+#define PORT_IRQ_EPILOGUE() _port_irq_epilogue()
 
 /**
  * @brief   IRQ handler function declaration.
@@ -171,14 +160,14 @@ struct intctx {
  * @details Usually this function just disables interrupts but may perform
  *          more actions.
  */
-#define port_lock() asm volatile ("cpsid   i" : : : "memory")
+#define port_lock() __disable_interrupt()
 
 /**
  * @brief   Kernel-unlock action.
  * @details Usually this function just disables interrupts but may perform
  *          more actions.
  */
-#define port_unlock() asm volatile ("cpsie   i" : : : "memory")
+#define port_unlock() __enable_interrupt()
 
 /**
  * @brief   Kernel-lock action from an interrupt handler.
@@ -201,17 +190,17 @@ struct intctx {
 /**
  * @brief   Disables all the interrupt sources.
  */
-#define port_disable() asm volatile ("cpsid   i" : : : "memory")
+#define port_disable() __enable_interrupt()
 
 /**
  * @brief   Disables the interrupt sources below kernel-level priority.
  */
-#define port_suspend() asm volatile ("cpsid   i" : : : "memory")
+#define port_suspend() __enable_interrupt()
 
 /**
  * @brief   Enables all the interrupt sources.
  */
-#define port_enable() asm volatile ("cpsie   i" : : : "memory")
+#define port_enable() __enable_interrupt()
 
 /**
  * @brief   Enters an architecture-dependent IRQ-waiting mode.
@@ -222,7 +211,7 @@ struct intctx {
  * @note    Implemented as an inlined @p WFI instruction.
  */
 #if CORTEX_ENABLE_WFI_IDLE || defined(__DOXYGEN__)
-#define port_wait_for_interrupt() asm volatile ("wfi" : : : "memory")
+#define port_wait_for_interrupt() asm ("wfi")
 #else
 #define port_wait_for_interrupt()
 #endif
