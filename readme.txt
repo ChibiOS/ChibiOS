@@ -65,6 +65,7 @@
 *****************************************************************************
 
 *** 2.1.7 ***
+- FIX: Fixed error in STM32 unbuffered UART driver (bug 3153437).
 - FIX: Fixed wrong macro check in LPC214x driver (bug 3152510).
 - FIX: Fixed switch condition error in STM32 PWM driver (bug 3152482)
   (backported to 2.0.10).
