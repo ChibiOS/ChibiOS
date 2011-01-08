@@ -62,7 +62,7 @@ CH_IRQ_HANDLER(SysTickVector) {
 #if !defined(__DOXYGEN__)
 __attribute__((naked))
 #endif
-void _port_switch_from_irq(void) {
+void _port_switch_from_isr(void) {
   /* Note, saves r4 to make space for the PC.*/
   asm volatile ("push    {r0, r1, r2, r3, r4}                   \n\t"
                 "mrs     r0, APSR                               \n\t"

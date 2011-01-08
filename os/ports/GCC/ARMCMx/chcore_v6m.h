@@ -136,7 +136,7 @@ struct intctx {
                                                                             \
     asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : );                      \
     _port_saved_pc = ctxp->pc;                                              \
-    ctxp->pc = _port_switch_from_irq;                                       \
+    ctxp->pc = _port_switch_from_isr;                                       \
     return;                                                                 \
   }                                                                         \
   port_unlock_from_isr();                                                   \
@@ -237,7 +237,7 @@ extern "C" {
 #endif
   void port_halt(void);
   void port_switch(Thread *ntp, Thread *otp);
-  void _port_switch_from_irq(void);
+  void _port_switch_from_isr(void);
   void _port_thread_start(void);
 #ifdef __cplusplus
 }
