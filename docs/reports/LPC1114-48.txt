@@ -1,6 +1,6 @@
 ***************************************************************************
 Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu
-Settings: CLK=48, (3 wait states)
+Settings: CLK=48, (2 wait states)
 ***************************************************************************
 
 *** ChibiOS/RT test suite

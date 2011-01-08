@@ -110,6 +110,7 @@ _port_irq_epilogue PROC
                 str     r3, [r2]
                 cmp     r3, #0
                 beq     skipexit
+notrequired
                 cpsie   i
                 pop     {r4, pc}
 skipexit
@@ -122,7 +123,6 @@ skipexit
                 str     r3, [r2]
                 ldr     r3, =_port_switch_from_isr
                 str     r3, [r1, #24]
-notrequired
                 pop     {r4, pc}
                 nop
                 ENDP

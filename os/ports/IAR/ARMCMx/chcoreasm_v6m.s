@@ -111,20 +111,20 @@ _port_irq_epilogue:
         subs    r3, r3, #1
         str     r3, [r2]
         cmp     r3, #0
-        beq     .L34
+        beq     skipexit
+notrequired
         cpsie   i
         pop     {r4, pc}
-.L34:
+skipexit
         bl      chSchIsRescRequiredExI
         cmp     r0, #0
-        beq     .L31
+        beq     notrequired
         mrs     r1, PSP
         ldr     r2, =_port_saved_pc
         ldr     r3, [r1, #24]
         str     r3, [r2]
         ldr     r3, =_port_switch_from_isr
         str     r3, [r1, #24]
-.L31:
         pop     {r4, pc}
 
         END
