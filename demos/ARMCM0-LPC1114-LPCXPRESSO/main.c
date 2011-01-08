@@ -33,7 +33,7 @@ static uint8_t digits[32] = {
   0x00, 0x02, 0x01, 0x18, 0x54, 0x88, 0x50, 0x51
 };
 
-/* 
+/*
  * SPI configuration (1MHz, CPHA=0, CPOL=0).
  */
 static SPIConfig spicfg = {
@@ -57,7 +57,6 @@ static msg_t Thread1(void *arg) {
     palSetPad(GPIO0, GPIO0_LED2);
     chThdSleepMilliseconds(500);
   }
-  return 0;
 }
 
 /*
@@ -88,7 +87,6 @@ static msg_t Thread2(void *arg) {
     palSetPort(GPIO1, PAL_PORT_BIT(GPIO1_LED3G));
     chThdSleepMilliseconds(250);
   }
-  return 0;
 }
 
 /*
@@ -137,5 +135,4 @@ int main(void) {
     chThdSleepMilliseconds(500);
     i = (i + 1) & 15;
   }
-  return 0;
 }

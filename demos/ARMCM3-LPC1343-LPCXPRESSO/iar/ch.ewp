@@ -523,8 +523,8 @@
         </option>
         <option>
           <name>AUserIncludes</name>
-          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32</state>
-          <state>$PROJ_DIR$\..\..\..\boards\OLIMEX_STM32_P103</state>
+          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\LPC13xx</state>
+          <state>$PROJ_DIR$\..\..\..\boards\EA_LPCXPRESSO_BB_1343</state>
         </option>
         <option>
           <name>AExtraOptionsCheckV2</name>
@@ -1387,8 +1387,8 @@
         </option>
         <option>
           <name>AUserIncludes</name>
-          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32</state>
-          <state>$PROJ_DIR$\..\..\..\boards\OLIMEX_STM32_P103</state>
+          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\LPC13xx</state>
+          <state>$PROJ_DIR$\..\..\..\boards\EA_LPCXPRESSO_BB_1343</state>
         </option>
         <option>
           <name>AExtraOptionsCheckV2</name>

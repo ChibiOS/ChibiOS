@@ -216,6 +216,18 @@ struct intctx {
 #define port_wait_for_interrupt()
 #endif
 
+/**
+ * @brief   Performs a context switch between two threads.
+ * @details This is the most critical code in any port, this function
+ *          is responsible for the context switch between 2 threads.
+ * @note    The implementation of this code affects <b>directly</b> the context
+ *          switch performance so optimize here as much as you can.
+ *
+ * @param[in] ntp       the thread to be switched in
+ * @param[in] otp       the thread to be switched out
+ */
+#define port_switch(ntp, otp) _port_switch(ntp, otp)
+
 #if !defined(__DOXYGEN__)
 extern regarm_t _port_saved_pc;
 extern unsigned _port_irq_nesting;
@@ -225,8 +237,9 @@ extern unsigned _port_irq_nesting;
 extern "C" {
 #endif
   void port_halt(void);
-  void port_switch(Thread *ntp, Thread *otp);
-  void _port_switch_from_irq(void);
+  void _port_switch(Thread *ntp, Thread *otp);
+  void _port_irq_epilogue(void);
+  void _port_switch_from_isr(void);
   void _port_thread_start(void);
 #ifdef __cplusplus
 }
