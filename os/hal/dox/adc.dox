@@ -21,7 +21,7 @@
  * @defgroup ADC ADC Driver
  * @brief Generic ADC Driver.
  * @details This module implements a generic ADC driver.
- * @pre     In order to use the ADC driver the @p CH_HAL_USE_ADC option
+ * @pre     In order to use the ADC driver the @p HAL_USE_ADC option
  *          must be enabled in @p halconf.h.
  *
  * @section adc_1 Driver State Machine

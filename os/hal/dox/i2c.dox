@@ -21,7 +21,7 @@
  * @defgroup I2C I2C Driver
  * @brief Generic I2C Driver.
  * @details This module implements a generic I2C driver.
- * @pre     In order to use the ADC driver the @p CH_HAL_USE_I2C option
+ * @pre     In order to use the I2C driver the @p HAL_USE_I2C option
  *          must be enabled in @p halconf.h.
  *
  * @section i2c_1 Driver State Machine

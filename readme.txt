@@ -65,6 +65,7 @@
 *****************************************************************************
 
 *** 2.1.7 ***
+- FIX: Fixed various errors in the HAL documentation (bug 3153591).
 - FIX: Fixed error in chIOGetxxxxxEventSource() macros (bug 3153550)
   (backported to 2.0.10)
 - FIX: Fixed error in STM32 unbuffered UART driver (bug 3153437).
