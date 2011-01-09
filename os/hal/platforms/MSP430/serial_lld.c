@@ -61,7 +61,7 @@ static const SerialConfig default_config = {
 /*===========================================================================*/
 
 static void set_error(SerialDriver *sdp, uint8_t urctl) {
-  sdflags_t sts = 0;
+  ioflags_t sts = 0;
 
   if (urctl & OE)
     sts |= SD_OVERRUN_ERROR;
@@ -72,7 +72,7 @@ static void set_error(SerialDriver *sdp, uint8_t urctl) {
   if (urctl & BRK)
     sts |= SD_BREAK_DETECTED;
   chSysLockFromIsr();
-  sdAddFlagsI(sdp, sts);
+  chIOAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();
 }
 

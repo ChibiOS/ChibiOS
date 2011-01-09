@@ -228,21 +228,40 @@ typedef struct {
   ((ip)->vmt->readt(ip, bp, n, time))
 
 #if CH_USE_EVENTS
+
+/** @brief No pending conditions.*/
+#define IO_NO_ERROR             0
+/** @brief Connection happened.*/
+#define IO_CONNECTED            1
+/** @brief Disconnection happened.*/
+#define IO_DISCONNECTED         2
+/** @brief Data available in the input queue.*/
+#define IO_INPUT_AVAILABLE      4
+/** @brief Output queue empty.*/
+#define IO_OUTPUT_EMPTY         8
+
+/**
+ * @brief   Type of an I/O condition flags mask.
+ */
+typedef uint_fast16_t ioflags_t;
+
 /**
  * @brief   @p BaseAsynchronousChannel specific methods.
  */
 #define _base_asynchronous_channel_methods                                  \
-  _base_channel_methods
+  _base_channel_methods                                                     \
+  /* Channel read method with timeout specification.*/                      \
+  ioflags_t (*getflags)(void *instance);
 
 /**
  * @brief   @p BaseAsynchronousChannel specific data.
  */
 #define _base_asynchronous_channel_data                                     \
   _base_channel_data                                                        \
-  /* Data Available EventSource.*/                                          \
-  EventSource           ievent;                                             \
-  /* Data Transmitted EventSource.*/                                        \
-  EventSource           oevent;
+  /* I/O condition event source.*/                                          \
+  EventSource           event;                                              \
+  /* I/O condition flags.*/                                                 \
+  ioflags_t             flags;
 
 /**
  * @brief   @p BaseAsynchronousChannel virtual methods table.
@@ -265,10 +284,8 @@ typedef struct {
 } BaseAsynchronousChannel;
 
 /**
- * @brief   Returns the write event source.
- * @details The write event source is broadcasted when the channel is ready
- *          for write operations. This usually happens when the internal
- *          output queue becomes empty.
+ * @brief   Returns the I/O condition event source.
+ * @details The event source is broadcasted when an I/O condition happens.
  *
  * @param[in] ip        pointer to a @p BaseAsynchronousChannel or derived
  *                      class
@@ -276,21 +293,54 @@ typedef struct {
  *
  * @api
  */
-#define chIOGetWriteEventSource(ip) (&((ip)->vmt->oevent))
+#define chIOGetEventSource(ip) (&((ip)->event))
 
 /**
- * @brief   Returns the read event source.
- * @details The read event source is broadcasted when the channel is ready
- *          for read operations. This usually happens when the internal
- *          input queue becomes non-empty.
+ * @brief   Adds condition flags to the channel's mask.
+ * @details This function is usually called from the I/O ISTs in order to
+ *          notify I/O conditions such as data events, errors, signalù
+ *          changes etc.
  *
  * @param[in] ip        pointer to a @p BaseAsynchronousChannel or derived
  *                      class
- * @return              A pointer to an @p EventSource object.
+ * @param[in] mask      condition flags to be added to the mask
+ *
+ * @iclass
+ */
+#define chIOAddFlagsI(ip, mask) {                                           \
+  (ip)->flags |= (mask);                                                    \
+  chEvtBroadcastI(&(ip)->event);                                            \
+}
+
+/**
+ * @brief   Returns and clears the errors mask associated to the channel.
+ *
+ * @param[in] ip        pointer to a @p BaseAsynchronousChannel or derived
+ *                      class
+ * @return              The condition flags modified since last time this
+ *                      function was invoked.
  *
  * @api
  */
-#define chIOGetReadEventSource(ip) (&((ip)->vmt->ievent))
+#define chIOGetAndClearFlags(ip) ((ip)->vmt->getflags(ip))
+
+/**
+ * @brief   Default implementation of the @p getflags virtual method.
+ *
+ * @param[in] ip        pointer to a @p BaseAsynchronousChannel or derived
+ *                      class
+ * @return              The condition flags modified since last time this
+ *                      function was invoked.
+ *
+ * @notapi
+ */
+#define _ch_get_and_clear_flags_impl(ip)                                    \
+  ioflags_t mask;                                                           \
+  chSysLock();                                                              \
+  mask = ((BaseAsynchronousChannel *)(ip))->flags;                          \
+  ((BaseAsynchronousChannel *)(ip))->flags = IO_NO_ERROR;                   \
+  chSysUnlock();                                                            \
+  return mask
 
 #endif /* CH_USE_EVENTS */
 

@@ -131,10 +131,6 @@ typedef struct {
   InputQueue                iqueue;                                         \
   /* Output queue.*/                                                        \
   OutputQueue               oqueue;                                         \
-  /* Status Change @p EventSource.*/                                        \
-  EventSource               sevent;                                         \
-  /* I/O driver status flags.*/                                             \
-  sdflags_t                 flags;                                          \
   /* Input circular buffer.*/                                               \
   uint8_t                   ib[SERIAL_BUFFERS_SIZE];                        \
   /* Output circular buffer.*/                                              \

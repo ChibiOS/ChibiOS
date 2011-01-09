@@ -57,16 +57,16 @@ N Evaluate if to add a synchronous API to the UART driver, eventually do so.
   them into board.c files, this will remove an ugly dependency.
 * Realign the STM8 port to the new STM8L one as options, naming conventions
   and general solutions.
-X Support for more compilers (IAR, Keil, ARMCMx only initially).
+* Support for more compilers (IAR, Keil, ARMCMx only initially).
 X Support for not just Makefiles (Ride7, Crossworks etc).
+* IAR port for Cortex-Mx, add demos for all the supported families.
+* Keil port for Cortex-Mx, add demos for all the supported families.
+* Change the serial drivers to have a single event source instead of three.
+  Add Rx and Tx to the existing flags mechanism. Move up the flags handling in
+  the superclass.
 ? Make thread functions return void.
 - Introduce a "THREAD" function prefix in order to hide compiler-specific
   optimizations for thread functions.
-X IAR port for Cortex-Mx, add demos for all the supported families.
-X Keil port for Cortex-Mx, add demos for all the supported families.
-- Change the serial drivers to have a single event source instead of three.
-  Add Rx and Tx to the existing flags mechanism. Move up the flags handling in
-  the superclass.
 X Except for the above, bug fixing only until the 2.2.0 release.
 
 Within 2.3.x (hopefully)

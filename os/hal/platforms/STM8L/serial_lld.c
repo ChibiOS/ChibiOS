@@ -114,7 +114,7 @@ static void notify3(GenericQueue *qp) {
  * @notapi
  */
 void sd_lld_set_error(SerialDriver *sdp, uint8_t sr) {
-  sdflags_t sts = 0;
+  ioflags_t sts = 0;
 
   if (sr & USART_SR_OR)
     sts |= SD_OVERRUN_ERROR;
@@ -125,7 +125,7 @@ void sd_lld_set_error(SerialDriver *sdp, uint8_t sr) {
   if (sr & USART_SR_PE)
     sts |= SD_PARITY_ERROR;
   chSysLockFromIsr();
-  sdAddFlagsI(sdp, sts);
+  chIOAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();
 }
 

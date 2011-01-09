@@ -129,7 +129,7 @@ static void usart_deinit(USART_TypeDef *u) {
  * @param[in] sr        USART SR register value
  */
 static void set_error(SerialDriver *sdp, uint16_t sr) {
-  sdflags_t sts = 0;
+  ioflags_t sts = 0;
 
   if (sr & USART_SR_ORE)
     sts |= SD_OVERRUN_ERROR;
@@ -142,7 +142,7 @@ static void set_error(SerialDriver *sdp, uint16_t sr) {
   if (sr & USART_SR_LBD)
     sts |= SD_BREAK_DETECTED;
   chSysLockFromIsr();
-  sdAddFlagsI(sdp, sts);
+  chIOAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();
 }
 
@@ -172,7 +172,7 @@ static void serve_interrupt(SerialDriver *sdp) {
     chSysLockFromIsr();
     b = chOQGetI(&sdp->oqueue);
     if (b < Q_OK) {
-      chEvtBroadcastI(&sdp->oevent);
+      chIOAddFlagsI(sdp, IO_OUTPUT_EMPTY);
       u->CR1 = cr1 & ~USART_CR1_TXEIE;
     }
     else

@@ -65,6 +65,8 @@
 *****************************************************************************
 
 *** 2.1.7 ***
+- FIX: Fixed error in chIOGetxxxxxEventSource() macros (bug 3153550)
+  (backported to 2.0.10)
 - FIX: Fixed error in STM32 unbuffered UART driver (bug 3153437).
 - FIX: Fixed wrong macro check in LPC214x driver (bug 3152510).
 - FIX: Fixed switch condition error in STM32 PWM driver (bug 3152482)
@@ -81,6 +83,10 @@
 - NEW: Added an USB clock configuration in the STM32 HAL driver (LD, MD, HD).
 - NEW: New semaphore API chSemSetCounterI().
 - NEW: New queue APIs chIQGetFullI() and chOQGetFullI().
+- CHANGE: Serial drivers now have a single event source instead of three,
+  the event source is located in the superclass, this allows to create
+  alternative implementations of the serial driver while keeping compatibility,
+  the change also allowed to save 8/4 RAM bytes per serial driver.
 - CHANGE: Modified the ADC and CAN drivers to allow a NULL pointer for
   the configuration structure if it is not required by the implementation.
 - CHANGE: Modified the MMC_SPI driver to *require* a NULL as pointer to

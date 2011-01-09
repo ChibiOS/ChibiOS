@@ -59,9 +59,6 @@ static SPIConfig ls_spicfg = {
   254
 };
 
-/* MMC configuration (empty).*/
-static const MMCConfig mmc_cfg = {};
-
 /* Card insertion verification.*/
 static bool_t mmc_is_inserted(void) {
   return !palReadPad(IOPORT2, PB_CP1);
@@ -258,7 +255,7 @@ int main(void) {
   mmcObjectInit(&MMCD1, &SPID1,
                 &ls_spicfg, &hs_spicfg,
                 mmc_is_protected, mmc_is_inserted);
-  mmcStart(&MMCD1, &mmc_cfg);
+  mmcStart(&MMCD1, NULL);
 
   /*
    * Creates the blinker threads.
