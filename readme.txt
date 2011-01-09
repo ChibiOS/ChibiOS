@@ -64,6 +64,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.1.8 ***
+- FIX: Fixed STM32F103 demo's incorrect clock settings (bug 3153746).
+
 *** 2.1.7 ***
 - FIX: Fixed various errors in the HAL documentation (bug 3153591).
 - FIX: Fixed error in chIOGetxxxxxEventSource() macros (bug 3153550)
@@ -76,8 +79,7 @@
   (backported to 2.0.9).
 - FIX: Fixed extra notifications in input queues (bug 3148525)(backported
   to 2.0.9).
-- NEW: New ARM Cortex-Mx port for RVCT compiler (probably will not be
-  included in 2.2.0, requires more testing).
+- NEW: New ARM Cortex-Mx port for RVCT compiler.
 - NEW: Integrated the various Cortex-Mx GCC, IAR and RVCT demos in unified
   demos with multiple project files, the code is exactly the same. Renamed
   the directories removing the compiler suffix.
@@ -106,8 +108,7 @@
 
 *** 2.1.6 ***
 - FIX: Fixed error in sdPutTimeout() macro (bug 3138763)(backported in 2.0.9).
-- NEW: New ARM Cortex-Mx port for IAR compiler (probably will not be
-  included in 2.2.0, requires more testing).
+- NEW: New ARM Cortex-Mx port for IAR compiler.
 - NEW: Now the STM32 CAN driver puts the lower half word of the ESR
   register in the upper half word of the can status word for easier
   debug.
