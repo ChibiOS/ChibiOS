@@ -4,7 +4,12 @@
 
 ** TARGET **
 
-The demo runs on an Olimex MSP430-P1611 board.
+The demo runs on an Olimex MSP430-P1611 board with a 8MHz xtal installed. In
+order to execute the demo without an crystal you need to edit mcuconf.h
+and change:
+#define MSP430_USE_CLOCK            MSP430_CLOCK_SOURCE_XT2CLK
+in:
+#define MSP430_USE_CLOCK            MSP430_CLOCK_SOURCE_DCOCLK
 
 ** The Demo **
 

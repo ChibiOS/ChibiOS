@@ -33,7 +33,7 @@ Lines executed:100.00% of 18
 ../../os/kernel/src/chregistry.c:creating `chregistry.c.gcov'
 
 File `../../os/kernel/src/chsem.c'
-Lines executed:100.00% of 81
+Lines executed:91.01% of 89
 ../../os/kernel/src/chsem.c:creating `chsem.c.gcov'
 
 File `../../os/kernel/src/chmtx.c'
@@ -57,7 +57,7 @@ Lines executed:100.00% of 65
 ../../os/kernel/src/chmboxes.c:creating `chmboxes.c.gcov'
 
 File `../../os/kernel/src/chqueues.c'
-Lines executed:100.00% of 112
+Lines executed:90.16% of 122
 ../../os/kernel/src/chqueues.c:creating `chqueues.c.gcov'
 
 File `../../os/kernel/src/chmemcore.c'
