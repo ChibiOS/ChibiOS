@@ -59,6 +59,7 @@
 *****************************************************************************
 
 *** 2.0.10 ***
+- FIX: Fixed error in chIOGetxxxxxEventSource() macros (bug 3153550).
 - FIX: Fixed switch condition error in STM32 PWM driver (bug 3152482).
 
 *** 2.0.9 ***

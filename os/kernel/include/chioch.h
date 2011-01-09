@@ -263,7 +263,7 @@ typedef struct {
  *                      class
  * @return              A pointer to an @p EventSource object.
  */
-#define chIOGetWriteEventSource(ip) (&((ip)->vmt->oevent))
+#define chIOGetWriteEventSource(ip) (&((ip)->oevent))
 
 /**
  * @brief   Returns the read event source.
@@ -275,7 +275,7 @@ typedef struct {
  *                      class
  * @return              A pointer to an @p EventSource object.
  */
-#define chIOGetReadEventSource(ip) (&((ip)->vmt->ievent))
+#define chIOGetReadEventSource(ip) (&((ip)->ievent))
 
 #endif /* CH_USE_EVENTS */
 
