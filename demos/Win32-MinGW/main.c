@@ -169,7 +169,7 @@ static void termination_handler(eventid_t id) {
  * @param[in] id event id.
  */
 static void sd1_handler(eventid_t id) {
-  sdflags_t flags;
+  ioflags_t flags;
 
   (void)id;
   flags = chIOGetAndClearFlags(&SD1);
@@ -191,7 +191,7 @@ static void sd1_handler(eventid_t id) {
  * @param[in] id event id.
  */
 static void sd2_handler(eventid_t id) {
-  sdflags_t flags;
+  ioflags_t flags;
 
   (void)id;
   flags = chIOGetAndClearFlags(&SD2);

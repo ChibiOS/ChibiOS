@@ -47,11 +47,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Serial Driver condition flags type.
- */
-typedef uint8_t sdflags_t;
-
-/**
  * @brief   Generic Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
