@@ -301,6 +301,17 @@ void pwm_lld_start(PWMDriver *pwmp) {
                        CORTEX_PRIORITY_MASK(STM32_PWM4_IRQ_PRIORITY));
     }
 #endif
+
+    /* All channels configured in PWM1 mode with preload enabled and will
+       stay that way until the driver is stopped.*/
+    pwmp->pd_tim->CCMR1 = TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2 |
+                          TIM_CCMR1_OC1PE |
+                          TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2 |
+                          TIM_CCMR1_OC2PE;
+    pwmp->pd_tim->CCMR2 = TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2 |
+                          TIM_CCMR2_OC3PE |
+                          TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2 |
+                          TIM_CCMR2_OC4PE;
   }
   else {
     /* Driver re-configuration scenario, it must be stopped first.*/
