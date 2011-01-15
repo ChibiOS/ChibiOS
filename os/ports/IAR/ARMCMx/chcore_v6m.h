@@ -226,7 +226,15 @@ struct intctx {
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  */
+#if !defined(CH_DBG_ENABLE_STACK_CHECK) || defined(__DOXYGEN__)
 #define port_switch(ntp, otp) _port_switch(ntp, otp)
+#else
+#define port_switch(ntp, otp) {                                             \
+  if ((void *)(__get_SP() - sizeof(struct intctx)) < (void *)(otp + 1))     \
+    chDbgPanic("stack overflow");                                           \
+  _port_switch(ntp, otp);                                                   \
+}
+#endif
 
 #if !defined(__DOXYGEN__)
 extern regarm_t _port_saved_pc;

@@ -65,8 +65,10 @@
 *****************************************************************************
 
 *** 2.1.8 ***
+- FIX: Fixed IAR Cortex-Mx port memory organization problem (bug 3158776).
 - FIX: Fixed STM32F103 demo's incorrect clock settings (bug 3153746).
 - NEW: Added OTG clock setting to the STM32 HAL.
+- NEW: Added stack check support to the IAR Cortex-Mx port.
 
 *** 2.1.7 ***
 - FIX: Fixed various errors in the HAL documentation (bug 3153591).

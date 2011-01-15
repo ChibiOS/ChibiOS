@@ -31,7 +31,7 @@
         PRESERVE8
 
         SECTION IRQSTACK:DATA:NOROOT(3)
-        SECTION .intvec:CODE:NOROOT(2)
+        SECTION .intvec:CODE:NOROOT(3)
 
         EXTERN  __iar_program_start
         PUBLIC  __vector_table

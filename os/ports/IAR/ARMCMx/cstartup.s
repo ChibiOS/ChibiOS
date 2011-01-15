@@ -27,8 +27,15 @@ CONTROL_USE_PSP SET 2
         AAPCS INTERWORK, VFP_COMPATIBLE, ROPI
         PRESERVE8
 
-        SECTION CSTACK:DATA:NOROOT(3)
         SECTION .intvec:CODE:NOROOT(3)
+
+        SECTION CSTACK:DATA:NOROOT(3)
+        PUBLIC  __heap_end__
+__heap_end__:
+
+        SECTION SYSHEAP:DATA:NOROOT(3)
+        PUBLIC  __heap_base__
+__heap_base__:
 
         PUBLIC  __iar_program_start
         EXTERN  __vector_table
@@ -41,7 +48,7 @@ CONTROL_USE_PSP SET 2
         THUMB
 __iar_program_start:
         cpsid   i
-        ldr     r0, =sfe(CSTACK)
+        ldr     r0, =SFE(CSTACK)
         msr     PSP, r0
         movs    r0, #CONTROL_MODE_PRIVILEGED | CONTROL_USE_PSP
         msr     CONTROL, r0
@@ -54,10 +61,5 @@ __iar_program_start:
         PUBWEAK __early_init
 __early_init:
         bx      lr
-
-        SECTION SYSHEAP:DATA:NOROOT(3)
-        PUBLIC  __heap_base__
-__heap_base__:
-        DS32    2
 
         END
