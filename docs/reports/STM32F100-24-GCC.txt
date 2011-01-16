@@ -5,8 +5,8 @@ Settings: SYSCLK=24, ACR=0x10 (no wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.7unstable
-*** GCC Version:  4.5.1
+*** Kernel:       2.2.0
+*** GCC Version:  4.5.2
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
 *** Platform:     STM32 Value Line Medium Density

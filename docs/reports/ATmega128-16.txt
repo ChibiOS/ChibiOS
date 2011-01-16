@@ -5,7 +5,7 @@ Settings: F_CPU=16000000
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.6unstable
+*** Kernel:       2.2.0
 *** GCC Version:  4.3.0
 *** Architecture: AVR
 *** Core Variant: MegaAVR

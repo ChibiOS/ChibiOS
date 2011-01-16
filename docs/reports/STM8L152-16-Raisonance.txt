@@ -1,12 +1,12 @@
 ***************************************************************************
 Options:  Optimized for speed
 Settings: CPUCLK=16MHz (HSI)
-Compiler: Raisonance RKit-STM8_2.30.10.0175
+Compiler: Raisonance RKit-STM8_2.32.10.0307
 ***************************************************************************
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.6unstable
+*** Kernel:       2.2.0
 *** Architecture: STM8
 *** Platform:     STM8L
 *** Test Board:   ST STM8L-Discovery
@@ -101,11 +101,11 @@ Compiler: Raisonance RKit-STM8_2.30.10.0175
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 23783 msgs/S, 47566 ctxswc/S
+--- Score : 23784 msgs/S, 47568 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 23783 msgs/S, 47566 ctxswc/S
+--- Score : 23784 msgs/S, 47568 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
@@ -117,7 +117,7 @@ Compiler: Raisonance RKit-STM8_2.30.10.0175
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 27508 threads/S
+--- Score : 27509 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
@@ -133,7 +133,7 @@ Compiler: Raisonance RKit-STM8_2.30.10.0175
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 57696 timers/S
+--- Score : 57698 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)

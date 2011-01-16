@@ -6,7 +6,7 @@ Compiler: RealView C/C++ Compiler V4.1.0.561 [Evaluation].
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.7unstable
+*** Kernel:       2.2.0
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
 *** Platform:     STM32 Value Line Medium Density

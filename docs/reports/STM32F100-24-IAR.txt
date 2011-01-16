@@ -6,7 +6,7 @@ Compiler: IAR C/C++ Compiler for ARM 6.10.1.32143
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.7unstable
+*** Kernel:       2.2.0
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
 *** Platform:     STM32 Value Line Medium Density

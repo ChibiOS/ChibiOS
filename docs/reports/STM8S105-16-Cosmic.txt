@@ -6,7 +6,7 @@ Compiler: Cosmic STM8 compiler 4.3.3.3.
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.7unstable
+*** Kernel:       2.2.0
 *** Architecture: STM8
 *** Platform:     STM8S
 *** Test Board:   ST STM8S-Discovery
