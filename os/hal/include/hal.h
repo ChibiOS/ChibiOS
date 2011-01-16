@@ -43,7 +43,6 @@
 #include "pal.h"
 #include "adc.h"
 #include "can.h"
-#include "i2c.h"
 #include "mac.h"
 #include "pwm.h"
 #include "serial.h"
