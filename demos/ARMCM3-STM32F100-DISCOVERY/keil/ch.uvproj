@@ -163,7 +163,7 @@
             <DriverSelection>4100</DriverSelection>
           </Flash1>
           <Flash2>STLink\ST-LINKIII-KEIL.dll</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
         </Utilities>
         <TargetArmAds>
@@ -687,11 +687,6 @@
               <FilePath>..\..\..\os\hal\src\hal.c</FilePath>
             </File>
             <File>
-              <FileName>i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\hal\src\i2c.c</FilePath>
-            </File>
-            <File>
               <FileName>mac.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\os\hal\src\mac.c</FilePath>
@@ -740,11 +735,6 @@
               <FileName>hal.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\os\hal\include\hal.h</FilePath>
-            </File>
-            <File>
-              <FileName>i2c.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\include\i2c.h</FilePath>
             </File>
             <File>
               <FileName>mac.h</FileName>
