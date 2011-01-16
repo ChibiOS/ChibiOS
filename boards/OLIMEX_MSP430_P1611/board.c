@@ -27,6 +27,7 @@
  * @details Digital I/O ports static configuration as defined in @p board.h.
  *          This variable is used by the HAL when initializing the PAL driver.
  */
+#if HAL_USE_PAL || defined(__DOXYGEN__)
 const PALConfig pal_default_config =
 {
 #if defined(__MSP430_HAS_PORT1__) || defined(__MSP430_HAS_PORT1_R__)
@@ -48,6 +49,7 @@ const PALConfig pal_default_config =
   {VAL_P6OUT, VAL_P6DIR},
 #endif
 };
+#endif
 
 CH_IRQ_HANDLER(TIMERA0_VECTOR) {
 
@@ -61,15 +63,9 @@ CH_IRQ_HANDLER(TIMERA0_VECTOR) {
 }
 
 /*
- * Hardware initialization goes here.
- * NOTE: Interrupts are still disabled.
+ * Board-specific initialization code.
  */
-void hwinit(void) {
-
-  /*
-   * HAL initialization.
-   */
-  halInit();
+void boardInit(void) {
 
   /*
    * Timer 0 setup, uses SMCLK as source.

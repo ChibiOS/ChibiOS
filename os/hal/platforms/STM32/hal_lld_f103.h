@@ -80,6 +80,9 @@
 #define STM32_PLLXTPRE_DIV1     (0 << 17)   /**< HSE divided by 1.          */
 #define STM32_PLLXTPRE_DIV2     (1 << 17)   /**< HSE divided by 2.          */
 
+#define STM32_USBPRE_DIV1P5     (0 << 22)   /**< PLLOUT divided by 1.5.     */
+#define STM32_USBPRE_DIV1       (1 << 22)   /**< PLLOUT divided by 1.       */
+
 #define STM32_MCO_NOCLOCK       (0 << 24)   /**< No clock on MCO pin.       */
 #define STM32_MCO_SYSCLK        (4 << 24)   /**< SYSCLK on MCO pin.         */
 #define STM32_MCO_HSI           (5 << 24)   /**< HSI clock on MCO pin.      */
@@ -241,6 +244,13 @@
  */
 #if !defined(STM32_ADCPRE) || defined(__DOXYGEN__)
 #define STM32_ADCPRE                STM32_ADCPRE_DIV4
+#endif
+
+/**
+ * @brief   USB prescaler initialization.
+ */
+#if !defined(STM32_USBPRE) || defined(__DOXYGEN__)
+#define STM32_USBPRE                STM32_USBPRE_DIV1P5
 #endif
 
 /**
@@ -409,6 +419,17 @@
 /* ADC frequency check.*/
 #if STM32_ADCCLK > 14000000
 #error "STM32_ADCCLK exceeding maximum frequency (14MHz)"
+#endif
+
+/**
+ * @brief   USB frequency.
+ */
+#if (STM32_USBPRE == STM32_USBPRE_DIV1P5) || defined(__DOXYGEN__)
+#define STM32_USBCLK                ((STM32_PLLCLKOUT * 2) / 3)
+#elif (STM32_USBPRE == STM32_USBPRE_DIV1)
+#define STM32_USBCLK                STM32_PLLCLKOUT
+#else
+#error "invalid STM32_USBPRE value specified"
 #endif
 
 /**

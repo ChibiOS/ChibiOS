@@ -21,7 +21,7 @@
  * @defgroup SPI SPI Driver
  * @brief Generic SPI Driver.
  * @details This module implements a generic SPI driver.
- * @pre     In order to use the ADC driver the @p CH_HAL_USE_SPI option
+ * @pre     In order to use the SPI driver the @p HAL_USE_SPI option
  *          must be enabled in @p halconf.h.
  *
  * @section spi_1 Driver State Machine

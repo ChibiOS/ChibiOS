@@ -112,7 +112,7 @@ static bool_t connint(SerialDriver *sdp) {
       printf("%s: Unable to setup non blocking mode on data socket\n", sdp->com_name);
       goto abort;
     }
-    sdAddFlagsI(sdp, SD_CONNECTED);
+    chIOAddFlagsI(sdp, IO_CONNECTED);
     return TRUE;
   }
   return FALSE;
@@ -139,7 +139,7 @@ static bool_t inint(SerialDriver *sdp) {
     case 0:
       closesocket(sdp->com_data);
       sdp->com_data = INVALID_SOCKET;
-      sdAddFlagsI(sdp, SD_DISCONNECTED);
+      chIOAddFlagsI(sdp, IO_DISCONNECTED);
       return FALSE;
     case SOCKET_ERROR:
       if (WSAGetLastError() == WSAEWOULDBLOCK)
@@ -173,7 +173,7 @@ static bool_t outint(SerialDriver *sdp) {
     case 0:
       closesocket(sdp->com_data);
       sdp->com_data = INVALID_SOCKET;
-      sdAddFlagsI(sdp, SD_DISCONNECTED);
+      chIOAddFlagsI(sdp, IO_DISCONNECTED);
       return FALSE;
     case SOCKET_ERROR:
       if (WSAGetLastError() == WSAEWOULDBLOCK)

@@ -61,7 +61,7 @@ void spiInit(void) {
 /**
  * @brief   Initializes the standard part of a @p SPIDriver structure.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[out] spip     pointer to the @p SPIDriver object
  *
  * @init
  */

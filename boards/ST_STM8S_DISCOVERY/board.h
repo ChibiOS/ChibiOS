@@ -111,12 +111,14 @@
 #define VAL_GPIOGCR1    0xFF            /* All pull-up or push-pull.        */
 #define VAL_GPIOGCR2    0
 
+#if !defined(_FROM_ASM_)
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void hwinit(void);
+  void boardInit(void);
 #ifdef __cplusplus
 }
 #endif
+#endif /* _FROM_ASM_ */
 
 #endif /* _BOARD_H_ */

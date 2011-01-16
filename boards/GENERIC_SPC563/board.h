@@ -53,13 +53,14 @@
 #define GPIO_LED3       190
 #define GPIO_LED4       191
 
+#if !defined(_FROM_ASM_)
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void hwinit0(void);
-  void hwinit1(void);
+  void boardInit(void);
 #ifdef __cplusplus
 }
 #endif
+#endif /* _FROM_ASM_ */
 
 #endif /* _BOARD_H_ */

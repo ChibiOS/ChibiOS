@@ -136,7 +136,7 @@ static void usart_deinit(AT91PS_USART u) {
  * @param[in] sdp       communication channel associated to the USART
  */
 static void set_error(SerialDriver *sdp, AT91_REG csr) {
-  sdflags_t sts = 0;
+  ioflags_t sts = 0;
 
   if (csr & AT91C_US_OVRE)
     sts |= SD_OVERRUN_ERROR;
@@ -147,7 +147,7 @@ static void set_error(SerialDriver *sdp, AT91_REG csr) {
   if (csr & AT91C_US_RXBRK)
     sts |= SD_BREAK_DETECTED;
   chSysLockFromIsr();
-  sdAddFlagsI(sdp, sts);
+  chIOAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();
 }
 
@@ -178,7 +178,7 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
     chSysLockFromIsr();
     b = chOQGetI(&sdp->oqueue);
     if (b < Q_OK) {
-      chEvtBroadcastI(&sdp->oevent);
+      chIOAddFlagsI(sdp, IO_OUTPUT_EMPTY);
       u->US_IDR = AT91C_US_TXRDY;
     }
     else
@@ -194,22 +194,25 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
 }
 
 #if USE_SAM7_USART0 || defined(__DOXYGEN__)
-static void notify1(void) {
+static void notify1(GenericQueue *qp) {
 
+  (void)qp;
   AT91C_BASE_US0->US_IER = AT91C_US_TXRDY;
 }
 #endif
 
 #if USE_SAM7_USART1 || defined(__DOXYGEN__)
-static void notify2(void) {
+static void notify2(GenericQueue *qp) {
 
+  (void)qp;
   AT91C_BASE_US1->US_IER = AT91C_US_TXRDY;
 }
 #endif
 
 #if USE_SAM7_DBGU_UART || defined(__DOXYGEN__)
-static void notify3(void) {
+static void notify3(GenericQueue *qp) {
 
+  (void)qp;
   AT91C_BASE_DBGU->DBGU_IER = AT91C_US_TXRDY;
 }
 #endif

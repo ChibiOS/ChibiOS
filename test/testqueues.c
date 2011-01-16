@@ -57,7 +57,9 @@
 
 #define TEST_QUEUES_SIZE 4
 
-static void notify(void) {}
+static void notify(GenericQueue *qp) {
+  (void)qp;
+}
 
 /*
  * Note, the static initializers are not really required because the

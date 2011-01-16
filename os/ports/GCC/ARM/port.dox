@@ -195,7 +195,7 @@
  * -# The @p main() function is invoked with the parameters @p argc and @p argv
  *    set to zero.
  * -# Should the @p main() function return a branch is performed to the weak
- *    symbol MainExitHandler. The default code is an endless empty loop.
+ *    symbol _main_exit_handler. The default code is an endless empty loop.
  * .
  * @section ARM_STARTUP_2 Expected linker symbols
  * The startup code starts at the symbol @p ResetHandler and expects the

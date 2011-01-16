@@ -82,4 +82,14 @@
 #define PB_WP1          24
 #define PB_CP1          25
 
+#if !defined(_FROM_ASM_)
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void boardInit(void);
+#ifdef __cplusplus
+}
+#endif
+#endif /* _FROM_ASM_ */
+
 #endif /* _BOARD_H_ */

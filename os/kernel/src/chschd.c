@@ -71,12 +71,7 @@ void scheduler_init(void) {
  * @iclass
  */
 #if !defined(PORT_OPTIMIZED_READYI) || defined(__DOXYGEN__)
-#if CH_OPTIMIZE_SPEED
-/* NOTE: it is inlined in this module only.*/
-INLINE Thread *chSchReadyI(Thread *tp) {
-#else
 Thread *chSchReadyI(Thread *tp) {
-#endif
   Thread *cp;
 
   /* Integrity check.*/

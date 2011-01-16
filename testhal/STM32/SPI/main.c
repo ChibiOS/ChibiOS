@@ -87,14 +87,20 @@ static msg_t spi_thread_2(void *p) {
 }
 
 /*
- * Entry point, note, the main() function is already a thread in the system
- * on entry.
+ * Application entry point.
  */
-int main(int argc, char **argv) {
+int main(void) {
   unsigned i;
 
-  (void)argc;
-  (void)argv;
+  /*
+   * System initializations.
+   * - HAL initialization, this also initializes the configured device drivers
+   *   and performs the board-specific initializations.
+   * - Kernel initialization, the main() function becomes a thread and the
+   *   RTOS is active.
+   */
+  halInit();
+  chSysInit();
 
   /*
    * SPI1 I/O pins setup.

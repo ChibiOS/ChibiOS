@@ -34,22 +34,16 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/** @brief No pending conditions.*/
-#define SD_NO_ERROR             0
-/** @brief Connection happened.*/
-#define SD_CONNECTED            1
-/** @brief Disconnection happened.*/
-#define SD_DISCONNECTED         2
 /** @brief Parity error happened.*/
-#define SD_PARITY_ERROR         4
+#define SD_PARITY_ERROR         16
 /** @brief Framing error happened.*/
-#define SD_FRAMING_ERROR        8
+#define SD_FRAMING_ERROR        32
 /** @brief Overflow happened.*/
-#define SD_OVERRUN_ERROR        16
+#define SD_OVERRUN_ERROR        64
 /** @brief Noise on the line.*/
-#define SD_NOISE_ERROR          32
+#define SD_NOISE_ERROR          128
 /** @brief Break detected.*/
-#define SD_BREAK_DETECTED       64
+#define SD_BREAK_DETECTED       256
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -68,7 +62,7 @@
  * @brief   Serial buffers size.
  * @details Configuration parameter, you can change the depth of the queue
  *          buffers depending on the requirements of your application.
- * @note    The default is 64 bytes for both the transmission and receive
+ * @note    The default is 16 bytes for both the transmission and receive
  *          buffers.
  */
 #if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
@@ -311,8 +305,6 @@ extern "C" {
   void sdStop(SerialDriver *sdp);
   void sdIncomingDataI(SerialDriver *sdp, uint8_t b);
   msg_t sdRequestDataI(SerialDriver *sdp);
-  void sdAddFlagsI(SerialDriver *sdp, sdflags_t mask);
-  sdflags_t sdGetAndClearFlags(SerialDriver *sdp);
 #ifdef __cplusplus
 }
 #endif

@@ -206,7 +206,7 @@ void mmcInit(void) {
 /**
  * @brief   Initializes an instance.
  *
- * @param[in] mmcp          pointer to the @p MMCDriver object
+ * @param[out] mmcp         pointer to the @p MMCDriver object
  * @param[in] spip          pointer to the SPI driver to be used as interface
  * @param[in] lscfg         low speed configuration for the SPI driver
  * @param[in] hscfg         high speed configuration for the SPI driver
@@ -236,13 +236,13 @@ void mmcObjectInit(MMCDriver *mmcp, SPIDriver *spip,
  * @brief   Configures and activates the MMC peripheral.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
- * @param[in] config    pointer to the @p MMCConfig object
+ * @param[in] config    pointer to the @p MMCConfig object. Must be @p NULL.
  *
  * @api
  */
 void mmcStart(MMCDriver *mmcp, const MMCConfig *config) {
 
-  chDbgCheck((mmcp != NULL) && (config != NULL), "mmcStart");
+  chDbgCheck((mmcp != NULL) && (config == NULL), "mmcStart");
 
   chSysLock();
   chDbgAssert(mmcp->mmc_state == MMC_STOP, "mmcStart(), #1", "invalid state");

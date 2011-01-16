@@ -113,8 +113,15 @@ void stm32_clock_init(void) {
 #endif
 
   /* Clock settings.*/
-  RCC->CFGR = STM32_MCO | STM32_PLLMUL | STM32_PLLXTPRE | STM32_PLLSRC |
-              STM32_ADCPRE | STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;
+#if STM32_HAS_USB
+  RCC->CFGR = STM32_MCO    | STM32_USBPRE | STM32_PLLMUL | STM32_PLLXTPRE |
+              STM32_PLLSRC | STM32_ADCPRE | STM32_PPRE2  | STM32_PPRE1    |
+              STM32_HPRE;
+#else
+  RCC->CFGR = STM32_MCO    |                STM32_PLLMUL | STM32_PLLXTPRE |
+              STM32_PLLSRC | STM32_ADCPRE | STM32_PPRE2  | STM32_PPRE1    |
+              STM32_HPRE;
+#endif
 
   /* Flash setup and final clock selection.   */
   FLASH->ACR = STM32_FLASHBITS; /* Flash wait states depending on clock.    */
@@ -173,8 +180,13 @@ void stm32_clock_init(void) {
 #endif
 
   /* Clock settings.*/
-  RCC->CFGR = STM32_MCO | STM32_PLLMUL | STM32_PLLSRC |
-              STM32_ADCPRE | STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;
+#if STM32_HAS_OTG1
+  RCC->CFGR = STM32_MCO    | STM32_OTGFSPRE | STM32_PLLMUL | STM32_PLLSRC |
+              STM32_ADCPRE | STM32_PPRE2    | STM32_PPRE1  | STM32_HPRE;
+#else
+  RCC->CFGR = STM32_MCO    |                  STM32_PLLMUL | STM32_PLLSRC |
+              STM32_ADCPRE | STM32_PPRE2    | STM32_PPRE1  | STM32_HPRE;
+#endif
 
   /* Flash setup and final clock selection.   */
   FLASH->ACR = STM32_FLASHBITS; /* Flash wait states depending on clock.    */

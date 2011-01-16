@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    ARMCMx/crt0_v6m.s
+ * @file    GCC/ARMCMx/crt0_v6m.s
  * @brief   Generic ARMv6-M (Cortex-M0/M1) startup file for ChibiOS/RT.
  *
  * @addtogroup ARMCMx_CORE
@@ -27,22 +27,22 @@
 
 #if !defined(__DOXYGEN__)
 
-.set    CONTROL_MODE_PRIVILEGED, 0
-.set    CONTROL_MODE_UNPRIVILEGED, 1
-.set    CONTROL_USE_MSP, 0
-.set    CONTROL_USE_PSP, 2
+        .set    CONTROL_MODE_PRIVILEGED, 0
+        .set    CONTROL_MODE_UNPRIVILEGED, 1
+        .set    CONTROL_USE_MSP, 0
+        .set    CONTROL_USE_PSP, 2
 
-.text
-.balign 2
-.syntax unified
-.thumb
+        .text
+        .balign 2
+        .syntax unified
+        .thumb
 
 /*
  * Reset handler.
  */
-.thumb_func
-.global ResetHandler
-.weak ResetHandler
+        .thumb_func
+        .global ResetHandler
+        .weak ResetHandler
 ResetHandler:
         /*
          * Interrupts are globally masked initially.
@@ -62,7 +62,7 @@ ResetHandler:
         /*
          * Early initialization phase, it is empty by default.
          */
-        bl      hwinit0
+        bl      __early_init
         /*
          * Data initialization.
          * NOTE: It assumes that the DATA size is a multiple of 4.
@@ -100,46 +100,31 @@ endbloop:
         msr     CONTROL, r0
         isb
         /*
-         * Late initialization phase, it is empty by default.
+         * Main program invocation.
          */
-        bl      hwinit1
-        movs    r0, #0
-        mov     r1, r0
         bl      main
-        b       MainExitHandler
+        b       _main_exit_handler
 
 /*
  * Default main exit code, just a loop.
  * It is a weak symbol, the application code can redefine the behavior.
  */
-.thumb_func
-.global MainExitHandler
-.weak MainExitHandler
-MainExitHandler:
+        .thumb_func
+        .global _main_exit_handler
+        .weak   _main_exit_handler
+_main_exit_handler:
 .loop:  b       .loop
 
 /*
  * Default early initialization code. It is declared weak in order to be
  * replaced by the real initialization code.
- * Early initialization is performed just after reset before BSS and DATA
- * segments initialization.
+ * The arly initialization is performed just after stacks setup and before BSS
+ * and DATA segments initialization.
  */
-.thumb_func
-.global hwinit0
-.weak hwinit0
-hwinit0:
-        bx      lr
-
-/*
- * Default late initialization code. It is declared weak in order to be
- * replaced by the real initialization code.
- * Late initialization is performed after BSS and DATA segments initialization
- * and before invoking the main() function.
- */
-.thumb_func
-.global hwinit1
-.weak hwinit1
-hwinit1:
+        .thumb_func
+        .global __early_init
+        .weak   __early_init
+__early_init:
         bx      lr
 
 #endif

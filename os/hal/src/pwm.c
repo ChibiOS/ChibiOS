@@ -61,7 +61,7 @@ void pwmInit(void) {
 /**
  * @brief   Initializes the standard part of a @p PWMDriver structure.
  *
- * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[out] pwmp     pointer to a @p PWMDriver object
  *
  * @init
  */

@@ -61,7 +61,7 @@ void adcInit(void) {
 /**
  * @brief   Initializes the standard part of a @p ADCDriver structure.
  *
- * @param[in] adcp      pointer to the @p ADCDriver object
+ * @param[out] adcp     pointer to the @p ADCDriver object
  *
  * @init
  */
@@ -91,13 +91,14 @@ void adcObjectInit(ADCDriver *adcp) {
  * @brief   Configures and activates the ADC peripheral.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
- * @param[in] config    pointer to the @p ADCConfig object
+ * @param[in] config    pointer to the @p ADCConfig object. Depending on
+ *                      the implementation the value can be @p NULL.
  *
  * @api
  */
 void adcStart(ADCDriver *adcp, const ADCConfig *config) {
 
-  chDbgCheck((adcp != NULL) && (config != NULL), "adcStart");
+  chDbgCheck(adcp != NULL, "adcStart");
 
   chSysLock();
   chDbgAssert((adcp->ad_state == ADC_STOP) || (adcp->ad_state == ADC_READY),

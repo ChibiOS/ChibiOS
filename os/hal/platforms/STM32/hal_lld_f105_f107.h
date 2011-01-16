@@ -277,6 +277,13 @@
 #endif
 
 /**
+ * @brief   OTG prescaler initialization.
+ */
+#if !defined(STM32_OTGFSPRE) || defined(__DOXYGEN__)
+#define STM32_OTGFSPRE              STM32_OTGFSPRE_DIV3
+#endif
+
+/**
  * @brief   MCO pin setting.
  */
 #if !defined(STM32_MCO) || defined(__DOXYGEN__)
@@ -502,6 +509,17 @@
 /* ADC frequency check.*/
 #if STM32_ADCCLK > 14000000
 #error "STM32_ADCCLK exceeding maximum frequency (14MHz)"
+#endif
+
+/**
+ * @brief   OTG frequency.
+ */
+#if (STM32_OTGFSPRE == STM32_OTGFSPRE_DIV3) || defined(__DOXYGEN__)
+#define STM32_OTGFSCLK              ((STM32_PLLCLKOUT * 2) / 3)
+#elif (STM32_OTGFSPRE == STM32_OTGFSPRE_DIV2)
+#define STM32_OTGFSCLK              STM32_PLLCLKOUT
+#else
+#error "invalid STM32_OTGFSPRE value specified"
 #endif
 
 /**

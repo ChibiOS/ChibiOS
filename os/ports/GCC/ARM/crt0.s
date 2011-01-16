@@ -27,25 +27,25 @@
 
 #if !defined(__DOXYGEN__)
 
-.set    MODE_USR, 0x10
-.set    MODE_FIQ, 0x11
-.set    MODE_IRQ, 0x12
-.set    MODE_SVC, 0x13
-.set    MODE_ABT, 0x17
-.set    MODE_UND, 0x1B
-.set    MODE_SYS, 0x1F
+        .set    MODE_USR, 0x10
+        .set    MODE_FIQ, 0x11
+        .set    MODE_IRQ, 0x12
+        .set    MODE_SVC, 0x13
+        .set    MODE_ABT, 0x17
+        .set    MODE_UND, 0x1B
+        .set    MODE_SYS, 0x1F
 
-.equ    I_BIT, 0x80
-.equ    F_BIT, 0x40
+        .set    I_BIT, 0x80
+        .set    F_BIT, 0x40
 
-.text
-.code 32
-.balign 4
+        .text
+        .code   32
+        .balign 4
 
 /*
  * Reset handler.
  */
-.global ResetHandler
+        .global ResetHandler
 ResetHandler:
         /*
          * Stack pointers initialization.
@@ -85,15 +85,15 @@ ResetHandler:
          * Early initialization.
          */
 #ifndef THUMB_NO_INTERWORKING
-        bl      hwinit0
+        bl      __early_init
 #else
         add     r0, pc, #1
         bx      r0
-.code 16
-        bl      hwinit0
+        .code   16
+        bl      __early_init
         mov     r0, pc
         bx      r0
-.code 32
+        .code   32
 #endif
         /*
          * Data initialization.
@@ -119,34 +119,27 @@ bssloop:
         strlo   r0, [r1], #4
         blo     bssloop
         /*
-         * Late initialization.
+         * Main program invocation.
          */
 #ifdef THUMB_NO_INTERWORKING
         add     r0, pc, #1
         bx      r0
-.code 16
-        bl      hwinit1
-        mov     r0, #0
-        mov     r1, r0
+        .code   16
         bl      main
-        ldr     r1, =MainExitHandler
+        ldr     r1, =_main_exit_handler
         bx      r1
-.code 32
+        .code   32
 #else
-        bl      hwinit1
-        mov     r0, #0
-        mov     r1, r0
         bl      main
-        b       MainExitHandler
+        b       _main_exit_handler
 #endif
 
 /*
  * Default main function exit handler.
  */
-.weak MainExitHandler
-.globl MainExitHandler
-MainExitHandler:
-
+        .weak   _main_exit_handler
+        .global _main_exit_handler
+_main_exit_handler:
 .loop:  b       .loop
 
 /*
@@ -156,29 +149,13 @@ MainExitHandler:
  * segments initialization.
  */
 #ifdef THUMB_NO_INTERWORKING
-.thumb_func
-.code 16
+        .thumb_func
+        .code   16
 #endif
-.weak hwinit0
+        .weak   __early_init
 hwinit0:
         bx      lr
-.code 32
-
-/*
- * Default late initialization code. It is declared weak in order to be
- * replaced by the real initialization code.
- * Late initialization is performed after BSS and DATA segments initialization
- * and before invoking the main() function.
- */
-#ifdef THUMB_NO_INTERWORKING
-.thumb_func
-.code 16
-#endif
-.weak hwinit1
-hwinit1:
-        bx      lr
-.code 32
-
+        .code   32
 #endif
 
 /** @} */

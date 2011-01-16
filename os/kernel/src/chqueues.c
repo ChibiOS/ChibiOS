@@ -70,6 +70,24 @@ void chIQInit(InputQueue *iqp, uint8_t *bp, size_t size, qnotify_t infy) {
 }
 
 /**
+ * @brief   Returns the filled space into an input queue.
+ *
+ * @param[in] iqp       pointer to an @p InputQueue structure
+ * @return              The number of bytes in the queue.
+ * @retval 0            if the queue is empty.
+ *
+ * @iclass
+ */
+size_t chIQGetFullI(InputQueue *iqp) {
+  cnt_t cnt;
+
+  cnt = chQSpaceI(iqp);
+  if (cnt < 0)
+    return 0;
+  return (size_t)cnt;
+}
+
+/**
  * @brief   Resets an input queue.
  * @details All the data in the input queue is erased and lost, any waiting
  *          thread is resumed with status @p Q_RESET.
@@ -134,9 +152,9 @@ msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
   msg_t msg;
 
   chSysLock();
-  
+
   if (iqp->q_notify)
-    iqp->q_notify();
+    iqp->q_notify(iqp);
 
   if ((msg = chSemWaitTimeoutS(&iqp->q_sem, time)) < RDY_OK) {
     chSysUnlock();
@@ -185,7 +203,7 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
   while (TRUE) {
     if (chIQIsEmptyI(iqp)) {
       if (nfy)
-        nfy();
+        nfy(iqp);
       if ((chSemWaitTimeoutS(&iqp->q_sem, time) != RDY_OK)) {
         chSysUnlock();
         return r;
@@ -196,14 +214,12 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
     *bp++ = *iqp->q_rdptr++;
     if (iqp->q_rdptr >= iqp->q_top)
       iqp->q_rdptr = iqp->q_buffer;
-    if (nfy)
-      nfy();
     chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
     r++;
     if (--n == 0) {
       chSysLock();
       if (nfy)
-        nfy();
+        nfy(iqp);
       chSysUnlock();
       return r;
     }
@@ -232,6 +248,24 @@ void chOQInit(OutputQueue *oqp, uint8_t *bp, size_t size, qnotify_t onfy) {
   oqp->q_top = bp + size;
   oqp->q_notify = onfy;
   chSemInit(&oqp->q_sem, (cnt_t)size);
+}
+
+/**
+ * @brief   Returns the filled space into an output queue.
+ *
+ * @param[in] oqp       pointer to an @p OutputQueue structure
+ * @return              The number of bytes in the queue.
+ * @retval 0            if the queue is empty.
+ *
+ * @iclass
+ */
+size_t chOQGetFullI(OutputQueue *oqp) {
+  cnt_t cnt;
+
+  cnt = chQSpaceI(oqp);
+  if (cnt < 0)
+    return chQSizeI(oqp);
+  return chQSizeI(oqp) - (size_t)cnt;
 }
 
 /**
@@ -284,7 +318,7 @@ msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time) {
     oqp->q_wrptr = oqp->q_buffer;
 
   if (oqp->q_notify)
-    oqp->q_notify();
+    oqp->q_notify(oqp);
 
   chSysUnlock();
   return Q_OK;
@@ -348,7 +382,7 @@ size_t chOQWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
   while (TRUE) {
     if (chOQIsFullI(oqp)) {
       if (nfy)
-        nfy();
+        nfy(oqp);
       if ((chSemWaitTimeoutS(&oqp->q_sem, time) != RDY_OK)) {
         chSysUnlock();
         return w;
@@ -364,7 +398,7 @@ size_t chOQWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
     if (--n == 0) {
       chSysLock();
       if (nfy)
-        nfy();
+        nfy(oqp);
       chSysUnlock();
       return w;
     }

@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    ARMCMx/chcore_v7m.h
+ * @file    GCC/ARMCMx/chcore_v7m.h
  * @brief   ARMv7-M architecture port macros and structures.
  *
  * @addtogroup ARMCMx_V7M_CORE

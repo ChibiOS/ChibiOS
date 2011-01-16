@@ -47,7 +47,9 @@
 /**
  * @brief   HAL initialization.
  * @details This function invokes the low level initialization code then
- *          initializes all the drivers enabled in the HAL.
+ *          initializes all the drivers enabled in the HAL. Finally the
+ *          board-specific initialization is performed by invoking
+ *          @p boardInit() (usually defined in @p board.c).
  *
  * @init
  */
@@ -85,6 +87,8 @@ void halInit(void) {
 #if HAL_USE_UART || defined(__DOXYGEN__)
   uartInit();
 #endif
+  /* Board specific initialization.*/
+  boardInit();
 }
 
 /** @} */

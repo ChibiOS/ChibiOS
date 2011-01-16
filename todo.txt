@@ -57,10 +57,24 @@ N Evaluate if to add a synchronous API to the UART driver, eventually do so.
   them into board.c files, this will remove an ugly dependency.
 * Realign the STM8 port to the new STM8L one as options, naming conventions
   and general solutions.
+* Support for more compilers (IAR, Keil, ARMCMx only initially).
+X Support for not just Makefiles (Ride7, Crossworks etc).
+* IAR port for Cortex-Mx, add demos for all the supported families.
+* Keil port for Cortex-Mx, add demos for all the supported families.
+* Change the serial drivers to have a single event source instead of three.
+  Add Rx and Tx to the existing flags mechanism. Move up the flags handling in
+  the superclass.
 X Except for the above, bug fixing only until the 2.2.0 release.
 
 Within 2.3.x (hopefully)
 - Resist doing more changes and optimizations to the kernel.
+? Make thread functions return void.
+- Introduce a "THREAD" function prefix in order to hide compiler-specific
+  optimizations for thread functions.
+X Add an USB abstract device driver class.
+X USB driver implementation for STM32F103/STM32F102.
+X Add a Serial over USB generic device driver implementing a USB Communication
+  Device Class and offering a Serial-like interface to the applications.
 - Add a switch to enable/disable the priority inheritance algorithm in mutexes.
 X File System infrastructure.
   - Official FatFs wrapper using the new infrastructure, dedicated test suite.
@@ -69,11 +83,9 @@ X I2C device driver class support and at least one implementation.
 - Serial over UART complex driver driver, evaluate from the performance
   results if to make obsolete the current dedicated Serial driver.
 X Shared DMA channels support in the STM32/STM8L HALs.
-X New device driver models: Clock, Systick, RTC, WDG, DAC, USB, Power Monitor.
+X New device driver models: Clock, Systick, RTC, WDG, DAC, Power Monitor.
 - MAC driver for STM32F107 (hardware missing).
 - Device drivers for STM8/STM8L (ADC, PWM, bring them on par with STM32).
-X Support for more compilers (IAR, Keil, ARMCMx only initially).
-X Support for not just Makefiles (Ride7, Crossworks etc).
 - Batch testing of the ARM7/ARMCMx port using OpenOCD, with reports.
 - Debug-related features and tools.
 - Add a *very simple* ADC API for single one shot sampling (implement it as

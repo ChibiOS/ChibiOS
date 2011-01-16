@@ -25,6 +25,7 @@
  * @details Digital I/O ports static configuration as defined in @p board.h.
  *          This variable is used by the HAL when initializing the PAL driver.
  */
+#if HAL_USE_PAL || defined(__DOXYGEN__)
 const PALConfig pal_default_config =
 {
   {VAL_GPIOAODR, VAL_GPIOACRL, VAL_GPIOACRH},
@@ -33,31 +34,20 @@ const PALConfig pal_default_config =
   {VAL_GPIODODR, VAL_GPIODCRL, VAL_GPIODCRH},
   {VAL_GPIOEODR, VAL_GPIOECRL, VAL_GPIOECRH},
 };
+#endif
 
 /*
  * Early initialization code.
- * This initialization is performed just after reset before BSS and DATA
- * segments initialization.
+ * This initialization must be performed just after stack setup and before
+ * any other initialization.
  */
-void hwinit0(void) {
+void __early_init(void) {
 
   stm32_clock_init();
 }
 
 /*
- * Late initialization code.
- * This initialization is performed after BSS and DATA segments initialization
- * and before invoking the main() function.
+ * Board-specific initialization code.
  */
-void hwinit1(void) {
-
-  /*
-   * HAL initialization.
-   */
-  halInit();
-
-  /*
-   * ChibiOS/RT initialization.
-   */
-  chSysInit();
+void boardInit(void) {
 }

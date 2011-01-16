@@ -31,7 +31,7 @@ PROJECT_NAME           = ChibiOS/RT
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 2.2.0
+PROJECT_NUMBER         = 2.1.8
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -626,6 +626,14 @@ INPUT                  = ../docs/src \
                          ../os/ports/GCC/PPC \
                          ../os/ports/GCC/AVR \
                          ../os/ports/GCC/MSP430 \
+                         ../os/ports/IAR/ARMCMx \
+                         ../os/ports/IAR/ARMCMx/STM32 \
+                         ../os/ports/IAR/ARMCMx/LPC11xx \
+                         ../os/ports/IAR/ARMCMx/LPC13xx \
+                         ../os/ports/RVCT/ARMCMx \
+                         ../os/ports/RVCT/ARMCMx/STM32 \
+                         ../os/ports/RVCT/ARMCMx/LPC11xx \
+                         ../os/ports/RVCT/ARMCMx/LPC13xx \
                          ../os/ports/cosmic/STM8 \
                          ../os/ports/RC/STM8 \
                          ../os/hal \

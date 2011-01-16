@@ -39,7 +39,7 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "2.2.0"
+#define CH_KERNEL_VERSION       "2.1.8unstable"
 
 /**
  * @brief   Kernel version major number.
@@ -49,12 +49,12 @@
 /**
  * @brief   Kernel version minor number.
  */
-#define CH_KERNEL_MINOR         2
+#define CH_KERNEL_MINOR         1
 
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         0
+#define CH_KERNEL_PATCH         8
 
 /*
  * Common values.
@@ -90,6 +90,7 @@
 #include "chqueues.h"
 #include "chstreams.h"
 #include "chioch.h"
+#include "chfiles.h"
 #include "chdebug.h"
 
 #if !defined(__DOXYGEN__)

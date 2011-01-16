@@ -112,7 +112,7 @@
  * -# The @p main() function is invoked with the parameters @p argc and @p argv
  *    set to zero.
  * -# Should the @p main() function return a branch is performed to the weak
- *    symbol @p main_exit. The default code is an endless empty loop.
+ *    symbol @p _main_exit_handler. The default code is an endless empty loop.
  * .
  * @section PPC_STARTUP_2 Expected linker symbols
  * The startup code starts at the symbol @p _boot_address and expects the

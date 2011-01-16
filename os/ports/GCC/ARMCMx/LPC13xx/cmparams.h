@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    ARMCMx/LPC13xx/cmparams.h
+ * @file    GCC/ARMCMx/LPC13xx/cmparams.h
  * @brief   ARM Cortex-M3 LPC13xx Specific Parameters.
  *
  * @defgroup ARMCMx_LPC13xx LPC13xx Specific Parameters

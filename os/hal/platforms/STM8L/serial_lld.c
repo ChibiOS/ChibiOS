@@ -72,22 +72,25 @@ static ROMCONST SerialConfig default_config = {
 /*===========================================================================*/
 
 #if STM8L_SERIAL_USE_USART1 || defined(__DOXYGEN__)
-static void notify1(void) {
+static void notify1(GenericQueue *qp) {
 
+  (void)qp;
   USART1->CR2 |= USART_CR2_TIEN;
 }
 #endif /* STM8L_SERIAL_USE_USART1 */
 
 #if STM8L_SERIAL_USE_USART2 || defined(__DOXYGEN__)
-static void notify2(void) {
+static void notify2(GenericQueue *qp) {
 
+  (void)qp;
   USART2->CR2 |= USART_CR2_TIEN;
 }
 #endif /* STM8L_SERIAL_USE_USART1 */
 
 #if STM8L_SERIAL_USE_USART3 || defined(__DOXYGEN__)
-static void notify3(void) {
+static void notify3(GenericQueue *qp) {
 
+  (void)qp;
   USART3->CR2 |= USART_CR2_TIEN;
 }
 #endif /* STM8L_SERIAL_USE_USART3 */
@@ -111,7 +114,7 @@ static void notify3(void) {
  * @notapi
  */
 void sd_lld_set_error(SerialDriver *sdp, uint8_t sr) {
-  sdflags_t sts = 0;
+  ioflags_t sts = 0;
 
   if (sr & USART_SR_OR)
     sts |= SD_OVERRUN_ERROR;
@@ -122,7 +125,7 @@ void sd_lld_set_error(SerialDriver *sdp, uint8_t sr) {
   if (sr & USART_SR_PE)
     sts |= SD_PARITY_ERROR;
   chSysLockFromIsr();
-  sdAddFlagsI(sdp, sts);
+  chIOAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();
 }
 

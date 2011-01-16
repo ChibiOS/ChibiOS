@@ -105,7 +105,7 @@ static void uart_deinit(UART *u) {
  * @param[in] err       UART LSR register value
  */
 static void set_error(SerialDriver *sdp, IOREG32 err) {
-  sdflags_t sts = 0;
+  ioflags_t sts = 0;
 
   if (err & LSR_OVERRUN)
     sts |= SD_OVERRUN_ERROR;
@@ -116,7 +116,7 @@ static void set_error(SerialDriver *sdp, IOREG32 err) {
   if (err & LSR_BREAK)
     sts |= SD_BREAK_DETECTED;
   chSysLockFromIsr();
-  sdAddFlagsI(sdp, sts);
+  chIOAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();
 }
 
@@ -144,12 +144,12 @@ static void serve_interrupt(SerialDriver *sdp) {
     case IIR_SRC_RX:
       chSysLockFromIsr();
       if (chIQIsEmptyI(&sdp->iqueue))
-        chEvtBroadcastI(&sdp->ievent);
+        chIOAddFlagsI(sdp, IO_INPUT_AVAILABLE);
       chSysUnlockFromIsr();
       while (u->UART_LSR & LSR_RBR_FULL) {
         chSysLockFromIsr();
         if (chIQPutI(&sdp->iqueue, u->UART_RBR) < Q_OK)
-           sdAddFlagsI(sdp, SD_OVERRUN_ERROR);
+          chIOAddFlagsI(sdp, SD_OVERRUN_ERROR);
         chSysUnlockFromIsr();
       }
       break;
@@ -165,7 +165,7 @@ static void serve_interrupt(SerialDriver *sdp) {
           if (b < Q_OK) {
             u->UART_IER &= ~IER_THRE;
             chSysLockFromIsr();
-            chEvtBroadcastI(&sdp->oevent);
+            chIOAddFlagsI(sdp, IO_OUTPUT_EMPTY);
             chSysUnlockFromIsr();
             break;
           }
@@ -191,7 +191,7 @@ static void preload(SerialDriver *sdp) {
     do {
       msg_t b = chOQGetI(&sdp->oqueue);
       if (b < Q_OK) {
-        chEvtBroadcastI(&sdp->oevent);
+        chIOAddFlagsI(sdp, IO_OUTPUT_EMPTY);
         return;
       }
       u->UART_THR = b;
@@ -204,8 +204,9 @@ static void preload(SerialDriver *sdp) {
  * @brief   Driver SD1 output notification.
  */
 #if USE_LPC214x_UART0 || defined(__DOXYGEN__)
-static void notify1(void) {
+static void notify1(GenericQueue *qp) {
 
+  (void)qp;
   preload(&SD1);
 }
 #endif
@@ -214,8 +215,9 @@ static void notify1(void) {
  * @brief   Driver SD2 output notification.
  */
 #if USE_LPC214x_UART1 || defined(__DOXYGEN__)
-static void notify2(void) {
+static void notify2(GenericQueue *qp) {
 
+  (void)qp;
   preload(&SD2);
 }
 #endif

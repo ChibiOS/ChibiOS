@@ -52,9 +52,6 @@ static SPIConfig hs_spicfg = {NULL, IOPORT2, GPIOB_SPI2NSS, 0};
 static SPIConfig ls_spicfg = {NULL, IOPORT2, GPIOB_SPI2NSS,
                               SPI_CR1_BR_2 | SPI_CR1_BR_1};
 
-/* MMC configuration (empty).*/
-static const MMCConfig mmc_cfg = {};
-
 /* Card insertion verification.*/
 static bool_t mmc_is_inserted(void) {return palReadPad(IOPORT3, GPIOC_MMCCP);}
 
@@ -264,10 +261,9 @@ static void RemoveHandler(eventid_t id) {
 }
 
 /*
- * Entry point, note, the main() function is already a thread in the system
- * on entry.
+ * Application entry point.
  */
-int main(int argc, char **argv) {
+int main(void) {
   static const evhandler_t evhndl[] = {
     InsertHandler,
     RemoveHandler
@@ -275,8 +271,15 @@ int main(int argc, char **argv) {
   Thread *shelltp = NULL;
   struct EventListener el0, el1;
 
-  (void)argc;
-  (void)argv;
+  /*
+   * System initializations.
+   * - HAL initialization, this also initializes the configured device drivers
+   *   and performs the board-specific initializations.
+   * - Kernel initialization, the main() function becomes a thread and the
+   *   RTOS is active.
+   */
+  halInit();
+  chSysInit();
 
   /*
    * Activates the serial driver 2 using the driver default configuration.
@@ -296,7 +299,7 @@ int main(int argc, char **argv) {
   mmcObjectInit(&MMCD1, &SPID2,
                 &ls_spicfg, &hs_spicfg,
                 mmc_is_protected, mmc_is_inserted);
-  mmcStart(&MMCD1, &mmc_cfg);
+  mmcStart(&MMCD1, NULL);
 
   /*
    * Creates the blinker thread.

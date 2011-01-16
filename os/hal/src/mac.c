@@ -65,7 +65,7 @@ void macInit(void) {
 /**
  * @brief   Initialize the standard part of a @p MACDriver structure.
  *
- * @param[in] macp      pointer to the @p MACDriver object
+ * @param[out] macp     pointer to the @p MACDriver object
  *
  * @init
  */

@@ -32,7 +32,7 @@
  * functions in order to support specific features but, of course, the use of
  * such interfaces would not be portable. Such interfaces shall be marked with
  * the architecture name inside the function names.
- * @pre     In order to use the ADC driver the @p CH_HAL_USE_PAL option
+ * @pre     In order to use the PAL driver the @p HAL_USE_PAL option
  *          must be enabled in @p halconf.h.
  *
  * @section pal_1 Implementation Rules

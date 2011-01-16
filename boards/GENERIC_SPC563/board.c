@@ -22,20 +22,18 @@
 
 /*
  * Early initialization code.
- * This initialization is performed just after reset before BSS and DATA
- * segments initialization.
+ * This initialization must be performed just after stack setup and before
+ * any other initialization.
  */
-void hwinit0(void) {
+void __early_init(void) {
 
   spc563_clock_init();
 }
 
 /*
- * Late initialization code.
- * This initialization is performed after BSS and DATA segments initialization
- * and before invoking the main() function.
+ * Board-specific initialization code.
  */
-void hwinit1(void) {
+void boardInit(void) {
 
   /*
    * Various initialization (temporary code).
@@ -50,14 +48,4 @@ void hwinit1(void) {
   SIU.PCR[GPIO_BUTTON4].R  = 0x0100;                /* IBE.                 */
   SIU.PCR[GPIO_SCI_A_TX].R = 0x0500;                /* Primary | IBE.       */
   SIU.PCR[GPIO_SCI_A_RX].R = 0x0500;                /* Primary | IBE.       */
-
-  /*
-   * HAL initialization.
-   */
-  halInit();
-
-  /*
-   * ChibiOS/RT initialization.
-   */
-  chSysInit();
 }

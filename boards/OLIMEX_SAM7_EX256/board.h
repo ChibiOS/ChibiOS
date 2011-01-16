@@ -91,4 +91,14 @@
 #define PIOB_PHY_IRQ            26
 #define PIOB_PHY_IRQ_MASK       (1 << PIOB_PHY_IRQ)
 
+#if !defined(_FROM_ASM_)
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void boardInit(void);
+#ifdef __cplusplus
+}
+#endif
+#endif /* _FROM_ASM_ */
+
 #endif /* _BOARD_H_ */

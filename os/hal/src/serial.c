@@ -89,8 +89,14 @@ static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t time) {
   return chIQReadTimeout(&((SerialDriver *)ip)->iqueue, bp, n, time);
 }
 
+static ioflags_t getflags(void *ip) {
+  _ch_get_and_clear_flags_impl(ip);
+}
+
 static const struct SerialDriverVMT vmt = {
-  writes, reads, putwouldblock, getwouldblock, putt, gett, writet, readt
+  writes, reads, putwouldblock, getwouldblock,
+  putt, gett, writet, readt,
+  getflags
 };
 
 /*===========================================================================*/
@@ -127,11 +133,9 @@ void sdInit(void) {
 void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
 
   sdp->vmt = &vmt;
-  chEvtInit(&sdp->ievent);
-  chEvtInit(&sdp->oevent);
-  chEvtInit(&sdp->sevent);
+  chEvtInit(&sdp->event);
+  sdp->flags = IO_NO_ERROR;
   sdp->state = SD_STOP;
-  sdp->flags = SD_NO_ERROR;
   chIQInit(&sdp->iqueue, sdp->ib, SERIAL_BUFFERS_SIZE, inotify);
   chOQInit(&sdp->oqueue, sdp->ob, SERIAL_BUFFERS_SIZE, onotify);
 }
@@ -164,7 +168,7 @@ void sdStart(SerialDriver *sdp, const SerialConfig *config) {
  * @details Any thread waiting on the driver's queues will be awakened with
  *          the message @p Q_RESET.
  *
- * @param[in] sdp       pointer to a @p SerialDrive object
+ * @param[in] sdp       pointer to a @p SerialDriver object
  *
  * @api
  */
@@ -205,9 +209,9 @@ void sdIncomingDataI(SerialDriver *sdp, uint8_t b) {
   chDbgCheck(sdp != NULL, "sdIncomingDataI");
 
   if (chIQIsEmptyI(&sdp->iqueue))
-    chEvtBroadcastI(&sdp->ievent);
+    chIOAddFlagsI(sdp, IO_INPUT_AVAILABLE);
   if (chIQPutI(&sdp->iqueue, b) < Q_OK)
-    sdAddFlagsI(sdp, SD_OVERRUN_ERROR);
+    chIOAddFlagsI(sdp, SD_OVERRUN_ERROR);
 }
 
 /**
@@ -232,47 +236,8 @@ msg_t sdRequestDataI(SerialDriver *sdp) {
 
   b = chOQGetI(&sdp->oqueue);
   if (b < Q_OK)
-    chEvtBroadcastI(&sdp->oevent);
+    chIOAddFlagsI(sdp, IO_OUTPUT_EMPTY);
   return b;
-}
-
-/**
- * @brief   Handles communication events/errors.
- * @details Must be called from the I/O interrupt service routine in order to
- *          notify I/O conditions as errors, signals change etc.
- *
- * @param[in] sdp       pointer to a @p SerialDriver structure
- * @param[in] mask      condition flags to be added to the mask
- *
- * @iclass
- */
-void sdAddFlagsI(SerialDriver *sdp, sdflags_t mask) {
-
-  chDbgCheck(sdp != NULL, "sdAddFlagsI");
-
-  sdp->flags |= mask;
-  chEvtBroadcastI(&sdp->sevent);
-}
-
-/**
- * @brief   Returns and clears the errors mask associated to the driver.
- *
- * @param[in] sdp       pointer to a @p SerialDriver structure
- * @return              The condition flags modified since last time this
- *                      function was invoked.
- *
- * @api
- */
-sdflags_t sdGetAndClearFlags(SerialDriver *sdp) {
-  sdflags_t mask;
-
-  chDbgCheck(sdp != NULL, "sdGetAndClearFlags");
-
-  chSysLock();
-  mask = sdp->flags;
-  sdp->flags = SD_NO_ERROR;
-  chSysUnlock();
-  return mask;
 }
 
 #endif /* HAL_USE_SERIAL */

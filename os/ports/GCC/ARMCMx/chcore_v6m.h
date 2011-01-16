@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    ARMCMx/chcore_v6m.h
+ * @file    GCC/ARMCMx/chcore_v6m.h
  * @brief   ARMv6-M architecture port macros and structures.
  *
  * @addtogroup ARMCMx_V6M_CORE
@@ -136,7 +136,7 @@ struct intctx {
                                                                             \
     asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : );                      \
     _port_saved_pc = ctxp->pc;                                              \
-    ctxp->pc = _port_switch_from_irq;                                       \
+    ctxp->pc = _port_switch_from_isr;                                       \
     return;                                                                 \
   }                                                                         \
   port_unlock_from_isr();                                                   \
@@ -237,7 +237,7 @@ extern "C" {
 #endif
   void port_halt(void);
   void port_switch(Thread *ntp, Thread *otp);
-  void _port_switch_from_irq(void);
+  void _port_switch_from_isr(void);
   void _port_thread_start(void);
 #ifdef __cplusplus
 }

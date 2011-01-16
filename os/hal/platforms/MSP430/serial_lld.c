@@ -61,7 +61,7 @@ static const SerialConfig default_config = {
 /*===========================================================================*/
 
 static void set_error(SerialDriver *sdp, uint8_t urctl) {
-  sdflags_t sts = 0;
+  ioflags_t sts = 0;
 
   if (urctl & OE)
     sts |= SD_OVERRUN_ERROR;
@@ -72,13 +72,14 @@ static void set_error(SerialDriver *sdp, uint8_t urctl) {
   if (urctl & BRK)
     sts |= SD_BREAK_DETECTED;
   chSysLockFromIsr();
-  sdAddFlagsI(sdp, sts);
+  chIOAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();
 }
 
 #if USE_MSP430_USART0 || defined(__DOXYGEN__)
-static void notify1(void) {
+static void notify1(GenericQueue *qp) {
 
+  (void)qp;
   if (!(U0IE & UTXIE0)) {
     msg_t b = sdRequestDataI(&SD1);
     if (b != Q_EMPTY) {
@@ -121,8 +122,9 @@ static void usart0_deinit(void) {
 #endif /* USE_MSP430_USART0 */
 
 #if USE_MSP430_USART1 || defined(__DOXYGEN__)
-static void notify2(void) {
+static void notify2(GenericQueue *qp) {
 
+  (void)qp;
   if (!(U1IE & UTXIE1)) {
     msg_t b = sdRequestDataI(&SD2);
     if (b != Q_EMPTY) {

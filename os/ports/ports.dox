@@ -31,6 +31,20 @@
  */
 
 /**
+ * @defgroup iar IAR Ports
+ * Ports for the IAR compiler.
+ *
+ * @ingroup ports
+ */
+
+/**
+ * @defgroup rvct RVCT Ports
+ * Ports for the RVCT compiler.
+ *
+ * @ingroup ports
+ */
+
+/**
  * @defgroup cosmic Cosmic Compiler Ports
  * Ports for the Compiler compiler.
  *

@@ -27,7 +27,7 @@
  * events.<br>
  * The  module also contains functions that make the implementation of the
  * interrupt service routines much easier.
- * @pre     In order to use the ADC driver the @p CH_HAL_USE_SERIAL option
+ * @pre     In order to use the SERIAL driver the @p HAL_USE_SERIAL option
  *          must be enabled in @p halconf.h.
  *
  * @ingroup IO

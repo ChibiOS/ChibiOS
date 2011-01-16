@@ -69,7 +69,7 @@ static const SerialConfig default_config = {
 /*===========================================================================*/
 
 static void set_error(uint8_t sra, SerialDriver *sdp) {
-  sdflags_t sts = 0;
+  ioflags_t sts = 0;
 
   if (sra & (1 << DOR))
     sts |= SD_OVERRUN_ERROR;
@@ -78,13 +78,14 @@ static void set_error(uint8_t sra, SerialDriver *sdp) {
   if (sra & (1 << FE))
     sts |= SD_FRAMING_ERROR;
   chSysLockFromIsr();
-  sdAddFlagsI(sdp, sts);
+  chIOAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();
 }
 
 #if USE_AVR_USART0 || defined(__DOXYGEN__)
-static void notify1(void) {
+static void notify1(GenericQueue *qp) {
 
+  (void)qp;
   UCSR0B |= (1 << UDRIE);
 }
 
@@ -114,8 +115,9 @@ static void usart0_deinit(void) {
 #endif
 
 #if USE_AVR_USART1 || defined(__DOXYGEN__)
-static void notify2(void) {
+static void notify2(GenericQueue *qp) {
 
+  (void)qp;
   UCSR1B |= (1 << UDRIE);
 }
 

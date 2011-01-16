@@ -39,7 +39,7 @@
  * .
  * If your application requires a synchronoyus buffered driver then the
  * @ref SERIAL should be used instead.
- * @pre     In order to use the ADC driver the @p CH_HAL_USE_UART option
+ * @pre     In order to use the UART driver the @p HAL_USE_UART option
  *          must be enabled in @p halconf.h.
  *
  * @section uart_1 Driver State Machine

@@ -72,7 +72,7 @@ static ROMCONST SerialConfig default_config = {
 /*===========================================================================*/
 
 static void set_error(SerialDriver *sdp, uint8_t sr) {
-  sdflags_t sts = 0;
+  ioflags_t sts = 0;
 
   /* Note, SR register bit definitions are equal for all UARTs so using
      the UART1 definitions is fine.*/
@@ -85,13 +85,14 @@ static void set_error(SerialDriver *sdp, uint8_t sr) {
   if (sr & UART1_SR_PE)
     sts |= SD_PARITY_ERROR;
   chSysLockFromIsr();
-  sdAddFlagsI(sdp, sts);
+  chIOAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();
 }
 
 #if STM8S_SERIAL_USE_UART1 || defined(__DOXYGEN__)
-static void notify1(void) {
+static void notify1(GenericQueue *qp) {
 
+  (void)qp;
   UART1->CR2 |= UART1_CR2_TIEN;
 }
 
@@ -131,8 +132,9 @@ static void uart1_deinit(void) {
 #endif /* STM8S_SERIAL_USE_UART1 */
 
 #if STM8S_SERIAL_USE_UART2 || defined(__DOXYGEN__)
-static void notify2(void) {
+static void notify2(GenericQueue *qp) {
 
+  (void)qp;
   UART2->CR2 |= UART2_CR2_TIEN;
 }
 
@@ -174,8 +176,9 @@ static void uart2_deinit(void) {
 #endif /* STM8S_SERIAL_USE_UART1 */
 
 #if STM8S_SERIAL_USE_UART3 || defined(__DOXYGEN__)
-static void notify3(void) {
+static void notify3(GenericQueue *qp) {
 
+  (void)qp;
   UART3->CR2 |= UART3_CR2_TIEN;
 }
 

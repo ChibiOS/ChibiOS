@@ -22,7 +22,7 @@
  * @brief Generic MAC driver.
  * @details This module implements a generic interface for MAC (Media
  *          Access Control) drivers, as example Ethernet controllers.
- * @pre     In order to use the ADC driver the @p CH_HAL_USE_MAC option
+ * @pre     In order to use the MAC driver the @p HAL_USE_MAC option
  *          must be enabled in @p halconf.h.
  *
  * @ingroup IO

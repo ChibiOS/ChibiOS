@@ -61,7 +61,7 @@ void canInit(void) {
 /**
  * @brief   Initializes the standard part of a @p CANDriver structure.
  *
- * @param[in] canp      pointer to the @p CANDriver object
+ * @param[out] canp     pointer to the @p CANDriver object
  *
  * @init
  */
@@ -88,13 +88,14 @@ void canObjectInit(CANDriver *canp) {
  *          complete.
  *
  * @param[in] canp      pointer to the @p CANDriver object
- * @param[in] config    pointer to the @p CANConfig object
+ * @param[in] config    pointer to the @p CANConfig object. Depending on
+ *                      the implementation the value can be @p NULL.
  *
  * @api
  */
 void canStart(CANDriver *canp, const CANConfig *config) {
 
-  chDbgCheck((canp != NULL) && (config != NULL), "canStart");
+  chDbgCheck(canp != NULL, "canStart");
 
   chSysLock();
   chDbgAssert((canp->cd_state == CAN_STOP) ||

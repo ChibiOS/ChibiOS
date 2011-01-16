@@ -243,7 +243,7 @@ CH_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
     /* Receiver in idle state, a callback is generated, if enabled, for each
        received character and then the driver stays in the same state.*/
     if (uartp->ud_config->uc_rxchar != NULL)
-      uartp->ud_config->uc_rxchar(uartp->ud_rxbuf);
+      uartp->ud_config->uc_rxchar(uartp, uartp->ud_rxbuf);
   }
   else {
     /* Receiver in active state, a callback is generated, if enabled, after
@@ -379,7 +379,7 @@ CH_IRQ_HANDLER(DMA1_Ch3_IRQHandler) {
     /* Receiver in idle state, a callback is generated, if enabled, for each
        received character and then the driver stays in the same state.*/
     if (uartp->ud_config->uc_rxchar != NULL)
-      uartp->ud_config->uc_rxchar(uartp->ud_rxbuf);
+      uartp->ud_config->uc_rxchar(uartp, uartp->ud_rxbuf);
   }
   else {
     /* Receiver in active state, a callback is generated, if enabled, after
@@ -463,11 +463,11 @@ void uart_lld_init(void) {
   RCC->APB1RSTR     = RCC_APB1RSTR_USART3RST;
   RCC->APB1RSTR     = 0;
   uartObjectInit(&UARTD3);
-  UARTD2.ud_usart   = USART3;
-  UARTD2.ud_dmap    = STM32_DMA1;
-  UARTD2.ud_dmarx   = STM32_DMA_CHANNEL_3;
-  UARTD2.ud_dmatx   = STM32_DMA_CHANNEL_2;
-  UARTD2.ud_dmaccr  = 0;
+  UARTD3.ud_usart   = USART3;
+  UARTD3.ud_dmap    = STM32_DMA1;
+  UARTD3.ud_dmarx   = STM32_DMA_CHANNEL_3;
+  UARTD3.ud_dmatx   = STM32_DMA_CHANNEL_2;
+  UARTD3.ud_dmaccr  = 0;
 #endif
 }
 
@@ -629,7 +629,7 @@ size_t uart_lld_stop_send(UARTDriver *uartp) {
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in] n         number of data frames to send
- * @param[in] rxbuf     the pointer to the receive buffer
+ * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @notapi
  */

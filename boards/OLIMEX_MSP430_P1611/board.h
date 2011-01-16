@@ -70,12 +70,14 @@
 #define VAL_P6OUT       P6_O_LED_MASK
 #define VAL_P6DIR       ~P6_I_BUTTON_MASK
 
+#if !defined(_FROM_ASM_)
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void hwinit(void);
+  void boardInit(void);
 #ifdef __cplusplus
 }
 #endif
+#endif /* _FROM_ASM_ */
 
 #endif /* _BOARD_H_ */

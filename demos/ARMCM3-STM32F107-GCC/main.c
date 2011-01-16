@@ -22,7 +22,7 @@
 #include "test.h"
 
 /*
- * Red LEDs blinker thread, times are in milliseconds.
+ * Red LED blinker thread, times are in milliseconds.
  */
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
@@ -38,13 +38,19 @@ static msg_t Thread1(void *arg) {
 }
 
 /*
- * Entry point, note, the main() function is already a thread in the system
- * on entry.
+ * Application entry point.
  */
-int main(int argc, char **argv) {
+int main(void) {
 
-  (void)argc;
-  (void)argv;
+  /*
+   * System initializations.
+   * - HAL initialization, this also initializes the configured device drivers
+   *   and performs the board-specific initializations.
+   * - Kernel initialization, the main() function becomes a thread and the
+   *   RTOS is active.
+   */
+  halInit();
+  chSysInit();
 
   /*
    * Activates the serial driver 2 using the driver default configuration.
