@@ -69,6 +69,8 @@
 *****************************************************************************
 
 *** 2.1.8 ***
+- FIX: Fixed error in STM32 ADC driver macro names (bug 3160306)(backported
+  to 2.0.11).
 - FIX: Fixed IAR Cortex-Mx port memory organization problem (bug 3158776).
 - FIX: Fixed STM32F103 demo's incorrect clock settings (bug 3153746).
 - NEW: Added OTG clock setting to the STM32 HAL.
