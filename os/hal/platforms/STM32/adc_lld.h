@@ -288,19 +288,19 @@ struct ADCDriver {
  */
 #define ADC_SQR1_NUM_CH(n)      (((n) - 1) << 20)
 
-#define ADC_SQR3_SQ0_N(n)       ((n) << 0)  /**< @brief 1st channel in seq. */
-#define ADC_SQR3_SQ1_N(n)       ((n) << 5)  /**< @brief 2nd channel in seq. */
-#define ADC_SQR3_SQ2_N(n)       ((n) << 10) /**< @brief 3rd channel in seq. */
-#define ADC_SQR3_SQ3_N(n)       ((n) << 15) /**< @brief 4th channel in seq. */
-#define ADC_SQR3_SQ4_N(n)       ((n) << 20) /**< @brief 5th channel in seq. */
-#define ADC_SQR3_SQ5_N(n)       ((n) << 25) /**< @brief 6th channel in seq. */
+#define ADC_SQR3_SQ1_N(n)       ((n) << 0)  /**< @brief 1st channel in seq. */
+#define ADC_SQR3_SQ2_N(n)       ((n) << 5)  /**< @brief 2nd channel in seq. */
+#define ADC_SQR3_SQ3_N(n)       ((n) << 10) /**< @brief 3rd channel in seq. */
+#define ADC_SQR3_SQ4_N(n)       ((n) << 15) /**< @brief 4th channel in seq. */
+#define ADC_SQR3_SQ5_N(n)       ((n) << 20) /**< @brief 5th channel in seq. */
+#define ADC_SQR3_SQ6_N(n)       ((n) << 25) /**< @brief 6th channel in seq. */
 
-#define ADC_SQR2_SQ6_N(n)       ((n) << 0)  /**< @brief 7th channel in seq. */
-#define ADC_SQR2_SQ7_N(n)       ((n) << 5)  /**< @brief 8th channel in seq. */
-#define ADC_SQR2_SQ8_N(n)       ((n) << 10) /**< @brief 9th channel in seq. */
-#define ADC_SQR2_SQ9_N(n)       ((n) << 15) /**< @brief 10th channel in seq.*/
-#define ADC_SQR2_SQ10_N(n)      ((n) << 20) /**< @brief 11th channel in seq.*/
-#define ADC_SQR2_SQ11_N(n)      ((n) << 25) /**< @brief 12th channel in seq.*/
+#define ADC_SQR2_SQ7_N(n)       ((n) << 0)  /**< @brief 7th channel in seq. */
+#define ADC_SQR2_SQ8_N(n)       ((n) << 5)  /**< @brief 8th channel in seq. */
+#define ADC_SQR2_SQ9_N(n)       ((n) << 10) /**< @brief 9th channel in seq. */
+#define ADC_SQR2_SQ10_N(n)      ((n) << 15) /**< @brief 10th channel in seq.*/
+#define ADC_SQR2_SQ11_N(n)      ((n) << 20) /**< @brief 11th channel in seq.*/
+#define ADC_SQR2_SQ12_N(n)      ((n) << 25) /**< @brief 12th channel in seq.*/
 
 #define ADC_SQR1_SQ13_N(n)      ((n) << 0)  /**< @brief 13th channel in seq.*/
 #define ADC_SQR1_SQ14_N(n)      ((n) << 5)  /**< @brief 14th channel in seq.*/

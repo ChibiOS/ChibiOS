@@ -30,11 +30,6 @@
 #define ADC_GRP1_NUM_CHANNELS   8
 #define ADC_GRP1_BUF_DEPTH      16
 
-/*
- * ADC configuration, empty for STM32, nothing to configure.
- */
-static const ADCConfig adccfg = {};
-
 static adcsample_t samples[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 
 /*
@@ -66,10 +61,10 @@ static const ADCConversionGroup adcgrpcfg = {
   0,
   0,
   ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),
-  ADC_SQR2_SQ7_N(ADC_CHANNEL_SENSOR) | ADC_SQR2_SQ6_N(ADC_CHANNEL_VREFINT),
-  ADC_SQR3_SQ5_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ4_N(ADC_CHANNEL_IN10) |
-  ADC_SQR3_SQ3_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ2_N(ADC_CHANNEL_IN10) |
-  ADC_SQR3_SQ1_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ0_N(ADC_CHANNEL_IN10)
+  ADC_SQR2_SQ8_N(ADC_CHANNEL_SENSOR) | ADC_SQR2_SQ7_N(ADC_CHANNEL_VREFINT),
+  ADC_SQR3_SQ6_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ5_N(ADC_CHANNEL_IN10) |
+  ADC_SQR3_SQ4_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ3_N(ADC_CHANNEL_IN10) |
+  ADC_SQR3_SQ2_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ1_N(ADC_CHANNEL_IN10)
 };
 
 /*
@@ -117,7 +112,7 @@ int main(void) {
   /*
    * Starts an ADC continuous conversion.
    */
-  adcStart(&ADCD1, &adccfg);
+  adcStart(&ADCD1, NULL);
   adcStartConversion(&ADCD1, &adcgrpcfg, samples, ADC_GRP1_BUF_DEPTH);
 
   /*
