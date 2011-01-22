@@ -69,6 +69,8 @@
 *****************************************************************************
 
 *** 2.1.8 ***
+- FIX: Fixed spurious character transmission in STM32 serial driver after
+  reset (bug 3163851)(backported to 2.0.11).
 - FIX: Fixed error in STM32 ADC driver macro names (bug 3160306)(backported
   to 2.0.11).
 - FIX: Fixed IAR Cortex-Mx port memory organization problem (bug 3158776).
