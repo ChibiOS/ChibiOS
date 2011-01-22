@@ -30,12 +30,12 @@
 		<Compiler>
 			<Add option="-mthumb" />
 			<Add option="-mno-thumb-interwork" />
+			<Add option="-fomit-frame-pointer" />
+			<Add option="-Wextra" />
 			<Add option="-Wall" />
 			<Add option="-g" />
 			<Add option="-mcpu=cortex-m3" />
-			<Add option="-fomit-frame-pointer" />
 			<Add option="-falign-functions=16" />
-			<Add option="-Wextra" />
 			<Add option="-Wstrict-prototypes" />
 			<Add option="-ffunction-sections" />
 			<Add option="-fdata-sections" />
@@ -50,7 +50,7 @@
 		</Compiler>
 		<Linker>
 			<Add option="-nostartfiles" />
-			<Add option="-T../../ch.ld" />
+			<Add option="-T../ch.ld" />
 			<Add option="-Wl,-Map=$exe_dir/ch.map,--cref,--no-warn-mismatch,--gc-sections" />
 		</Linker>
 		<ExtraCommands>
@@ -178,6 +178,9 @@
 		<Unit filename="..\..\..\os\kernel\src\chdebug.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chdynamic.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\os\kernel\src\chevents.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -224,7 +227,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\STM32\cmparams.h" />
-		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\STM32\vectors_md.s" />
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\STM32\vectors.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\chcore.c">
 			<Option compilerVar="CC" />
 		</Unit>
