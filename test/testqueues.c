@@ -90,6 +90,13 @@ static void queues1_setup(void) {
   chIQInit(&iq, wa[0], TEST_QUEUES_SIZE, notify);
 }
 
+static msg_t thread1(void *p) {
+
+  (void)p;
+  chIQGetTimeout(&iq, MS2ST(200));
+  return 0;
+}
+
 static void queues1_execute(void) {
   unsigned i;
   size_t n;
@@ -132,10 +139,13 @@ static void queues1_execute(void) {
   /* Testing reset */
   chIQPutI(&iq, 0);
   chIQResetI(&iq);
-  test_assert(11, chIQIsEmptyI(&iq), "still full");
+  test_assert(11, chIQGetFullI(&iq) == 0, "still full");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread1, NULL);
+  test_assert(12, chIQGetFullI(&iq) == 0, "not empty");
+  test_wait_threads();
 
   /* Timeout */
-  test_assert(12, chIQGetTimeout(&iq, 10) == Q_TIMEOUT, "wrong timeout return");
+  test_assert(13, chIQGetTimeout(&iq, 10) == Q_TIMEOUT, "wrong timeout return");
 }
 
 ROMCONST struct testcase testqueues1 = {
@@ -157,6 +167,13 @@ ROMCONST struct testcase testqueues1 = {
 static void queues2_setup(void) {
 
   chOQInit(&oq, wa[0], TEST_QUEUES_SIZE, notify);
+}
+
+static msg_t thread2(void *p) {
+
+  (void)p;
+  chOQPutTimeout(&oq, 0, MS2ST(200));
+  return 0;
 }
 
 static void queues2_execute(void) {
@@ -182,20 +199,23 @@ static void queues2_execute(void) {
   n = chOQWriteTimeout(&oq, wa[1], TEST_QUEUES_SIZE * 2, TIME_IMMEDIATE);
   test_assert(6, n == TEST_QUEUES_SIZE, "wrong returned size");
   test_assert(7, chOQIsFullI(&oq), "not full");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread2, NULL);
+  test_assert(8, chOQGetFullI(&oq) == TEST_QUEUES_SIZE, "not empty");
+  test_wait_threads();
 
   /* Testing reset */
   chOQResetI(&oq);
-  test_assert(8, chOQIsEmptyI(&oq), "still full");
+  test_assert(9, chOQGetFullI(&oq) == 0, "still full");
 
   /* Partial writes */
   n = chOQWriteTimeout(&oq, wa[1], TEST_QUEUES_SIZE / 2, TIME_IMMEDIATE);
-  test_assert(9, n == TEST_QUEUES_SIZE / 2, "wrong returned size");
-  n = chOQWriteTimeout(&oq, wa[1], TEST_QUEUES_SIZE / 2, TIME_IMMEDIATE);
   test_assert(10, n == TEST_QUEUES_SIZE / 2, "wrong returned size");
-  test_assert(11, chOQIsFullI(&oq), "not full");
+  n = chOQWriteTimeout(&oq, wa[1], TEST_QUEUES_SIZE / 2, TIME_IMMEDIATE);
+  test_assert(11, n == TEST_QUEUES_SIZE / 2, "wrong returned size");
+  test_assert(12, chOQIsFullI(&oq), "not full");
 
   /* Timeout */
-  test_assert(12, chOQPutTimeout(&oq, 0, 10) == Q_TIMEOUT, "wrong timeout return");
+  test_assert(13, chOQPutTimeout(&oq, 0, 10) == Q_TIMEOUT, "wrong timeout return");
 }
 
 ROMCONST struct testcase testqueues2 = {
