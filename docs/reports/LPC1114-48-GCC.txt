@@ -5,7 +5,7 @@ Settings: CLK=48, (2 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.7unstable
+*** Kernel:       2.2.0
 *** GCC Version:  4.3.3
 *** Architecture: ARMv6-M
 *** Core Variant: Cortex-M0
