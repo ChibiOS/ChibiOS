@@ -305,7 +305,7 @@ typedef struct {
 /**
  * @brief   Adds condition flags to the channel's mask.
  * @details This function is usually called from the I/O ISTs in order to
- *          notify I/O conditions such as data events, errors, signalù
+ *          notify I/O conditions such as data events, errors, signal
  *          changes etc.
  *
  * @param[in] ip        pointer to a @p BaseAsynchronousChannel or derived
