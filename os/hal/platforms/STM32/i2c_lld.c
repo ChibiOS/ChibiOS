@@ -227,6 +227,7 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t re
   while (!(i2cp->id_i2c->SR1 & I2C_SR1_SB)){
     i++; // wait start bit
   }
+
   i2cp->id_i2c->DR = (i2cp->id_slave_config->slave_addr1 << 1) | I2C_WRITE; // write slave addres in DR
   while (!(i2cp->id_i2c->SR1 & I2C_SR1_ADDR)){
     i++; // wait Address sent
@@ -249,6 +250,9 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t re
 
   if (restart){
     i2cp->id_i2c->CR1 |= I2C_CR1_START; // generate restart condition
+    while (!(i2cp->id_i2c->SR1 & I2C_SR1_SB)){
+      i++; // wait start bit
+    }
   }
   else i2cp->id_i2c->CR1 |= I2C_CR1_STOP; // generate stop condition
 
@@ -257,10 +261,8 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t re
 
 /**
  * @brief   Receives data from the I2C bus.
- * @details To receive data from I2C slave you must sent them some
- *          control bytes first. Driver takes this data from  @p I2CSlaveConfig
- *          structure (*txbuf and txbytes fields), so you must manually
- *          fill this fields before invocating receiving function
+ * @details Before receive data from I2C slave you must manually sent them some
+ *          control bytes first (refer to you device datasheet).
  *
  * @param[in] i2cp          pointer to the @p I2CDriver object
  * @param[in] i2cscfg       pointer to the @p I2CSlaveConfig object
@@ -273,45 +275,6 @@ void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
 
   uint16_t i = 0;
   uint16_t tmp = 0;
-
-  // send control secuence to slave
-  //i2c_lld_master_transmit(i2cp, i2cscfg, TRUE);
-
-
-
-
-
-  i2cp->id_i2c->CR1 |= I2C_CR1_START; // generate start condition
-  while (!(i2cp->id_i2c->SR1 & I2C_SR1_SB)){
-    i++; // wait start bit
-  }
-  i2cp->id_i2c->DR = (i2cp->id_slave_config->slave_addr1 << 1) | I2C_WRITE; // write slave addres in DR
-  while (!(i2cp->id_i2c->SR1 & I2C_SR1_ADDR)){
-    i++; // wait Address sent
-  }
-  i = i2cp->id_i2c->SR2; // TODO: check is it need to read this register for I2C to proper functionality
-  i = i2cp->id_i2c->SR1; //i2cp->id_i2c->SR1 &= (~I2C_SR1_ADDR); // clear ADDR bit
-
-  // now write data byte by byte in DR register
-  uint32_t n = 0;
-  for (n = 0; n < i2cp->id_slave_config->txbytes; n++){
-    i2cp->id_i2c->DR = i2cscfg->txbuf[n];
-    while (!(i2cp->id_i2c->SR1 & I2C_SR1_TXE)){
-      i++;
-    }
-  }
-
-  while (!(i2cp->id_i2c->SR1 & I2C_SR1_BTF)){
-    i++;
-  }
-
-  i2cp->id_i2c->CR1 |= I2C_CR1_START; // generate restart condition
-  while (!(i2cp->id_i2c->SR1 & I2C_SR1_SB)){
-    i++; // wait start bit
-  }
-
-
-
 
   // send slave addres with read-bit
   i2cp->id_i2c->DR = (i2cp->id_slave_config->slave_addr1 << 1) | I2C_READ;

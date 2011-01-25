@@ -115,6 +115,7 @@ void i2cStop(I2CDriver *i2cp) {
   i2cp->id_state = I2C_STOP;
   chSysUnlock();
 }
+
 /**
  * @brief Sends data ever the I2C bus.
  *
@@ -125,17 +126,17 @@ void i2cStop(I2CDriver *i2cp) {
  * @param[in] txbuf          the pointer to the transmit buffer
  *
  */
-void i2cMasterTransmit(I2CDriver *i2cp, uint8_t slave_addr1, uint8_t slave_addr2, size_t n, const void *txbuf) {
+void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart) {
 
-  chDbgCheck((i2cp != NULL) && (n > 0) && (txbuf != NULL),
-             "i2cSend");
+  chDbgCheck((i2cp != NULL) && (i2cscfg != NULL),
+             "i2cMasterTransmit");
   chDbgAssert(i2cp->id_state == I2C_READY,
-              "i2cSend(), #1",
+              "i2cMasterTransmit(), #1",
               "not active");
 
-  //i2c_lld_master_transmit(i2cp, slave_addr1, slave_addr2, n, txbuf);
-
+  i2c_lld_master_transmit(i2cp, i2cscfg, restart);
 }
+
 
 /**
  * @brief Receives data from the I2C bus.
@@ -147,122 +148,21 @@ void i2cMasterTransmit(I2CDriver *i2cp, uint8_t slave_addr1, uint8_t slave_addr2
  * @param[out] rxbuf    the pointer to the receive buffer
  *
  */
-void i2cMasterReceive(I2CDriver *i2cp, uint8_t slave_addr1, uint8_t slave_addr2, size_t n, void *rxbuf) {
+void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
 
-  chDbgCheck((i2cp != NULL) && (n > 0) && (rxbuf != NULL),
-             "i2cReceive");
+  chDbgCheck((i2cp != NULL) && (i2cscfg != NULL),
+             "i2cMasterReceive");
   chDbgAssert(i2cp->id_state == I2C_READY,
-              "i2cReceive(), #1",
+              "i2cMasterReceive(), #1",
               "not active");
 
-  //i2c_lld_master_receive(i2cp, slave_addr1, slave_addr2, n, rxbuf);
-
+  i2c_lld_master_receive(i2cp, i2cscfg);
 }
 
-/**
- * @brief   Initiates a master bus transaction.
- * @details This function sends a start bit followed by an one or two bytes
- *          header.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] header    transaction header
- * @param[in] callback  operation complete callback
- *
- * @iclass
- */
-//void i2cMasterStartI(I2CDriver *i2cp,
-//                     uint16_t header,
-//                     i2ccallback_t callback) {
-//
-//  chDbgCheck((i2cp != NULL) && (callback != NULL), "i2cMasterStartI");
-//  chDbgAssert(i2cp->id_state == I2C_READY,
-//              "i2cMasterStartI(), #1", "invalid state");
-//
-//  i2cp->id_callback = callback;
-//  i2c_lld_master_start(i2cp, header);
-//}
-
-/**
- * @brief   Terminates a master bus transaction.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] callback  operation complete callback
- *
- * @iclass
- */
-//void i2cMasterStopI(I2CDriver *i2cp, i2ccallback_t callback) {
-//
-//  chDbgCheck((i2cp != NULL) && (callback != NULL), "i2cMasterStopI");
-//  chDbgAssert(i2cp->id_state == I2C_MREADY,
-//              "i2cMasterStopI(), #1", "invalid state");
-//
-//  i2cp->id_callback = callback;
-//  i2c_lld_master_stop(i2cp);
-//}
 
 
-/**
- * @brief   Sends a restart bit.
- * @details Restart bits are required by some types of I2C transactions.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] callback  operation complete callback
- *
- * @iclass
- */
-//void i2cMasterRestartI(I2CDriver *i2cp, i2ccallback_t callback) {
-//
-//  chDbgCheck((i2cp != NULL) && (callback != NULL), "i2cMasterRestartI");
-//  chDbgAssert(i2cp->id_state == I2C_MREADY,
-//              "i2cMasterRestartI(), #1", "invalid state");
-//
-//  i2cp->id_callback = callback;
-//  i2c_lld_master_restart(i2cp);
-//}
 
-/**
- * @brief   Master transmission.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] n         number of bytes to be transmitted
- * @param[in] txbuf     transmit data buffer pointer
- * @param[in] callback  operation complete callback
- *
- * @iclass
- */
-//void i2cMasterTransmitI(I2CDriver *i2cp, size_t n, const uint8_t *txbuf,
-//                        i2ccallback_t callback) {
-//
-//  chDbgCheck((i2cp != NULL) && (n > 0) &&
-//             (txbuf != NULL) && (callback != NULL), "i2cMasterTransmitI");
-//  chDbgAssert(i2cp->id_state == I2C_MREADY,
-//              "i2cMasterTransmitI(), #1", "invalid state");
-//
-//  i2cp->id_callback = callback;
-//  i2c_lld_master_transmit(i2cp, n, txbuf);
-//}
 
-/**
- * @brief   Master receive.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] n         number of bytes to be transmitted
- * @param[in] rxbuf     receive data buffer pointer
- * @param[in] callback  operation complete callback
- *
- * @iclass
- */
-//void i2cMasterReceiveI(I2CDriver *i2cp, size_t n, uint8_t *rxbuf,
-//                       i2ccallback_t callback) {
-//
-//  chDbgCheck((i2cp != NULL) && (n > 0) &&
-//             (rxbuf != NULL) && (callback != NULL), "i2cMasterReceiveI");
-//  chDbgAssert(i2cp->id_state == I2C_MREADY,
-//              "i2cMasterReceiveI(), #1", "invalid state");
-//
-//  i2cp->id_callback = callback;
-//  i2c_lld_master_receive(i2cp, n, rxbuf);
-//}
 
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 /**

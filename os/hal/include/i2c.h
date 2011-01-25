@@ -120,8 +120,9 @@ extern "C" {
   void i2cObjectInit(I2CDriver *i2cp);
   void i2cStart(I2CDriver *i2cp, I2CConfig *config);
   void i2cStop(I2CDriver *i2cp);
-  void i2cMasterTransmit(I2CDriver *i2cp, uint8_t slave_addr1, uint8_t slave_addr2, size_t n, const void *txbuf);
-  void i2cMasterReceive(I2CDriver *i2cp, uint8_t slave_addr1, uint8_t slave_addr2, size_t n, void *rxbuf);
+  void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart);
+  void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
+
   void i2cMasterStartI(I2CDriver *i2cp,uint16_t header,i2ccallback_t callback);
   void i2cMasterStopI(I2CDriver *i2cp, i2ccallback_t callback);
   void i2cMasterRestartI(I2CDriver *i2cp, i2ccallback_t callback);
