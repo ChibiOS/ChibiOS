@@ -54,7 +54,6 @@
  * @init
  */
 void i2cInit(void) {
-
   i2c_lld_init();
 }
 
@@ -67,8 +66,9 @@ void i2cInit(void) {
  */
 void i2cObjectInit(I2CDriver *i2cp) {
 
-  i2cp->i2c_state  = I2C_STOP;
-  i2cp->i2c_config = NULL;
+  i2cp->id_state  = I2C_STOP;
+  i2cp->id_config = NULL;
+  i2cp->id_slave_config = NULL;
 #if defined(I2C_DRIVER_EXT_INIT_HOOK)
   I2C_DRIVER_EXT_INIT_HOOK(i2cp);
 #endif
@@ -82,17 +82,17 @@ void i2cObjectInit(I2CDriver *i2cp) {
  *
  * @api
  */
-void i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
+void i2cStart(I2CDriver *i2cp, I2CConfig *config) {
 
   chDbgCheck((i2cp != NULL) && (config != NULL), "i2cStart");
 
   chSysLock();
-  chDbgAssert((i2cp->i2c_state == I2C_STOP) || (i2cp->i2c_state == I2C_READY),
+  chDbgAssert((i2cp->id_state == I2C_STOP) || (i2cp->id_state == I2C_READY),
               "i2cStart(), #1",
               "invalid state");
-  i2cp->i2c_config = config;
+  i2cp->id_config = config;
   i2c_lld_start(i2cp);
-  i2cp->i2c_state = I2C_READY;
+  i2cp->id_state = I2C_READY;
   chSysUnlock();
 }
 
@@ -108,12 +108,55 @@ void i2cStop(I2CDriver *i2cp) {
   chDbgCheck(i2cp != NULL, "i2cStop");
 
   chSysLock();
-  chDbgAssert((i2cp->i2c_state == I2C_STOP) || (i2cp->i2c_state == I2C_READY),
+  chDbgAssert((i2cp->id_state == I2C_STOP) || (i2cp->id_state == I2C_READY),
               "i2cStop(), #1",
               "invalid state");
   i2c_lld_stop(i2cp);
-  i2cp->i2c_state = I2C_STOP;
+  i2cp->id_state = I2C_STOP;
   chSysUnlock();
+}
+/**
+ * @brief Sends data ever the I2C bus.
+ *
+ * @param[in] i2cp           pointer to the @p I2CDriver object
+ * @param[in] slave_addr1    7-bit address of the slave
+ * @param[in] slave_addr1    used in 10-bit address mode
+ * @param[in] n              number of words to send
+ * @param[in] txbuf          the pointer to the transmit buffer
+ *
+ */
+void i2cMasterTransmit(I2CDriver *i2cp, uint8_t slave_addr1, uint8_t slave_addr2, size_t n, const void *txbuf) {
+
+  chDbgCheck((i2cp != NULL) && (n > 0) && (txbuf != NULL),
+             "i2cSend");
+  chDbgAssert(i2cp->id_state == I2C_READY,
+              "i2cSend(), #1",
+              "not active");
+
+  //i2c_lld_master_transmit(i2cp, slave_addr1, slave_addr2, n, txbuf);
+
+}
+
+/**
+ * @brief Receives data from the I2C bus.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[in] slave_addr1    7-bit address of the slave
+ * @param[in] slave_addr1    used in 10-bit address mode
+ * @param[in] n         number of words to receive
+ * @param[out] rxbuf    the pointer to the receive buffer
+ *
+ */
+void i2cMasterReceive(I2CDriver *i2cp, uint8_t slave_addr1, uint8_t slave_addr2, size_t n, void *rxbuf) {
+
+  chDbgCheck((i2cp != NULL) && (n > 0) && (rxbuf != NULL),
+             "i2cReceive");
+  chDbgAssert(i2cp->id_state == I2C_READY,
+              "i2cReceive(), #1",
+              "not active");
+
+  //i2c_lld_master_receive(i2cp, slave_addr1, slave_addr2, n, rxbuf);
+
 }
 
 /**
@@ -127,17 +170,17 @@ void i2cStop(I2CDriver *i2cp) {
  *
  * @iclass
  */
-void i2cMasterStartI(I2CDriver *i2cp,
-                     uint16_t header,
-                     i2ccallback_t callback) {
-
-  chDbgCheck((i2cp != NULL) && (callback != NULL), "i2cMasterStartI");
-  chDbgAssert(i2cp->i2c_state == I2C_READY,
-              "i2cMasterStartI(), #1", "invalid state");
-
-  i2cp->id_callback = callback;
-  i2c_lld_master_start(i2cp, header);
-}
+//void i2cMasterStartI(I2CDriver *i2cp,
+//                     uint16_t header,
+//                     i2ccallback_t callback) {
+//
+//  chDbgCheck((i2cp != NULL) && (callback != NULL), "i2cMasterStartI");
+//  chDbgAssert(i2cp->id_state == I2C_READY,
+//              "i2cMasterStartI(), #1", "invalid state");
+//
+//  i2cp->id_callback = callback;
+//  i2c_lld_master_start(i2cp, header);
+//}
 
 /**
  * @brief   Terminates a master bus transaction.
@@ -147,15 +190,15 @@ void i2cMasterStartI(I2CDriver *i2cp,
  *
  * @iclass
  */
-void i2cMasterStopI(I2CDriver *i2cp, i2ccallback_t callback) {
-
-  chDbgCheck((i2cp != NULL) && (callback != NULL), "i2cMasterStopI");
-  chDbgAssert(i2cp->i2c_state == I2C_MREADY,
-              "i2cMasterStopI(), #1", "invalid state");
-
-  i2cp->id_callback = callback;
-  i2c_lld_master_stop(i2cp);
-}
+//void i2cMasterStopI(I2CDriver *i2cp, i2ccallback_t callback) {
+//
+//  chDbgCheck((i2cp != NULL) && (callback != NULL), "i2cMasterStopI");
+//  chDbgAssert(i2cp->id_state == I2C_MREADY,
+//              "i2cMasterStopI(), #1", "invalid state");
+//
+//  i2cp->id_callback = callback;
+//  i2c_lld_master_stop(i2cp);
+//}
 
 
 /**
@@ -167,15 +210,15 @@ void i2cMasterStopI(I2CDriver *i2cp, i2ccallback_t callback) {
  *
  * @iclass
  */
-void i2cMasterRestartI(I2CDriver *i2cp, i2ccallback_t callback) {
-
-  chDbgCheck((i2cp != NULL) && (callback != NULL), "i2cMasterRestartI");
-  chDbgAssert(i2cp->i2c_state == I2C_MREADY,
-              "i2cMasterRestartI(), #1", "invalid state");
-
-  i2cp->id_callback = callback;
-  i2c_lld_master_restart(i2cp);
-}
+//void i2cMasterRestartI(I2CDriver *i2cp, i2ccallback_t callback) {
+//
+//  chDbgCheck((i2cp != NULL) && (callback != NULL), "i2cMasterRestartI");
+//  chDbgAssert(i2cp->id_state == I2C_MREADY,
+//              "i2cMasterRestartI(), #1", "invalid state");
+//
+//  i2cp->id_callback = callback;
+//  i2c_lld_master_restart(i2cp);
+//}
 
 /**
  * @brief   Master transmission.
@@ -187,17 +230,17 @@ void i2cMasterRestartI(I2CDriver *i2cp, i2ccallback_t callback) {
  *
  * @iclass
  */
-void i2cMasterTransmitI(I2CDriver *i2cp, size_t n, const uint8_t *txbuf,
-                        i2ccallback_t callback) {
-
-  chDbgCheck((i2cp != NULL) && (n > 0) &&
-             (txbuf != NULL) && (callback != NULL), "i2cMasterTransmitI");
-  chDbgAssert(i2cp->i2c_state == I2C_MREADY,
-              "i2cMasterTransmitI(), #1", "invalid state");
-
-  i2cp->id_callback = callback;
-  i2c_lld_master_transmit(i2cp, n, txbuf);
-}
+//void i2cMasterTransmitI(I2CDriver *i2cp, size_t n, const uint8_t *txbuf,
+//                        i2ccallback_t callback) {
+//
+//  chDbgCheck((i2cp != NULL) && (n > 0) &&
+//             (txbuf != NULL) && (callback != NULL), "i2cMasterTransmitI");
+//  chDbgAssert(i2cp->id_state == I2C_MREADY,
+//              "i2cMasterTransmitI(), #1", "invalid state");
+//
+//  i2cp->id_callback = callback;
+//  i2c_lld_master_transmit(i2cp, n, txbuf);
+//}
 
 /**
  * @brief   Master receive.
@@ -209,17 +252,17 @@ void i2cMasterTransmitI(I2CDriver *i2cp, size_t n, const uint8_t *txbuf,
  *
  * @iclass
  */
-void i2cMasterReceiveI(I2CDriver *i2cp, size_t n, uint8_t *rxbuf,
-                       i2ccallback_t callback) {
-
-  chDbgCheck((i2cp != NULL) && (n > 0) &&
-             (rxbuf != NULL) && (callback != NULL), "i2cMasterReceiveI");
-  chDbgAssert(i2cp->i2c_state == I2C_MREADY,
-              "i2cMasterReceiveI(), #1", "invalid state");
-
-  i2cp->id_callback = callback;
-  i2c_lld_master_receive(i2cp, n, rxbuf);
-}
+//void i2cMasterReceiveI(I2CDriver *i2cp, size_t n, uint8_t *rxbuf,
+//                       i2ccallback_t callback) {
+//
+//  chDbgCheck((i2cp != NULL) && (n > 0) &&
+//             (rxbuf != NULL) && (callback != NULL), "i2cMasterReceiveI");
+//  chDbgAssert(i2cp->id_state == I2C_MREADY,
+//              "i2cMasterReceiveI(), #1", "invalid state");
+//
+//  i2cp->id_callback = callback;
+//  i2c_lld_master_receive(i2cp, n, rxbuf);
+//}
 
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 /**

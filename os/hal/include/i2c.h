@@ -34,6 +34,7 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -112,23 +113,20 @@ typedef enum {
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
-
 #ifdef __cplusplus
 extern "C" {
 #endif
   void i2cInit(void);
   void i2cObjectInit(I2CDriver *i2cp);
-  void i2cStart(I2CDriver *i2cp, const I2CConfig *config);
+  void i2cStart(I2CDriver *i2cp, I2CConfig *config);
   void i2cStop(I2CDriver *i2cp);
-  void i2cMasterStartI(I2CDriver *i2cp,
-                       uint16_t header,
-                       i2ccallback_t callback);
+  void i2cMasterTransmit(I2CDriver *i2cp, uint8_t slave_addr1, uint8_t slave_addr2, size_t n, const void *txbuf);
+  void i2cMasterReceive(I2CDriver *i2cp, uint8_t slave_addr1, uint8_t slave_addr2, size_t n, void *rxbuf);
+  void i2cMasterStartI(I2CDriver *i2cp,uint16_t header,i2ccallback_t callback);
   void i2cMasterStopI(I2CDriver *i2cp, i2ccallback_t callback);
   void i2cMasterRestartI(I2CDriver *i2cp, i2ccallback_t callback);
-  void i2cMasterTransmitI(I2CDriver *i2cp, size_t n, const uint8_t *txbuf,
-                          i2ccallback_t callback);
-  void i2cMasterReceiveI(I2CDriver *i2cp, size_t n, uint8_t *rxbuf,
-                         i2ccallback_t callback);
+  void i2cMasterTransmitI(I2CDriver *i2cp, size_t n, const uint8_t *txbuf, i2ccallback_t callback);
+  void i2cMasterReceiveI(I2CDriver *i2cp, size_t n, uint8_t *rxbuf, i2ccallback_t callback);
 #if I2C_USE_MUTUAL_EXCLUSION
   void i2cAcquireBus(I2CDriver *i2cp);
   void i2cReleaseBus(I2CDriver *i2cp);
