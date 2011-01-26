@@ -61,10 +61,13 @@ typedef enum {
   I2C_UNINIT = 0,                   /**< Not initialized.                   */
   I2C_STOP = 1,                     /**< Stopped.                           */
   I2C_READY = 2,                    /**< Ready.                             */
-  I2C_MREADY = 3,                   /**< START and address sent.            */
-  I2C_MTRANSMIT = 4,                /**< Master transmitting.               */
-  I2C_MRECEIVE = 5,                 /**< Master receiving.                  */
-  I2C_MERROR = 6                    /**< Error condition.                   */
+
+  I2C_MACTIVE = 3,                  /**< START condition sent.              */
+  I2C_MTXREADY = 4,                 /**< address sent when tx-flag set.     */
+  I2C_MTRANSMIT = 5,                /**< Master transmitting.               */
+
+  I2C_MRECEIVE = 6,                 /**< Master receiving.                  */
+  I2C_MERROR = 7                    /**< Error condition.                   */
 } i2cstate_t;
 
 #include "i2c_lld.h"

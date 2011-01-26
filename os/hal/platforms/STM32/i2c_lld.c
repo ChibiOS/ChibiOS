@@ -63,8 +63,29 @@ static i2cflags_t translate_errors(uint16_t sr) {
 
 
 static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
+  // TODO: enable interrupts in config registers
 
+  if ((i2cp->id_state == I2C_READY) && (i2cp->id_i2c->SR1 & I2C_SR1_SB)){// start bit sent
+    i2cp->id_state = I2C_MACTIVE;
+    i2cp->id_i2c->DR = (i2cp->id_slave_config->slave_addr1 << 1) |
+                        i2cp->id_slave_config->rw_bit; // write slave address in DR
+  }
+
+  // now wait interrupt with ADDR flag
+  // TODO: 10 bit address handling here
+  if ((i2cp->id_state == I2C_MACTIVE) && (i2cp->id_i2c->SR1 & I2C_SR1_ADDR)){// address successfully sent
+    if(i2cp->id_slave_config->rw_bit == I2C_WRITE){
+      i2cp->id_state = I2C_MTRANSMIT;
+      // TODO: setup here transmission via DMA like in ADC
+    }
+    else {
+      i2cp->id_state = I2C_MRECEIVE;
+      // TODO: setup here transmission via DMA like in ADC
+    }
+  }
 }
+
+
 
 static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
 
@@ -218,15 +239,14 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart) {
 	//TODO: check txbytes <= sizeof(i2cscfg->txbuf) here, or in hylevel API
 
-  chSysLock();
-
   int i = 0;
 
   i2cp->id_slave_config = i2cscfg;
+  i2cp->id_slave_config->rw_bit = I2C_WRITE;
+
+  //TODO: setup DMA channel here
   i2cp->id_i2c->CR1 |= I2C_CR1_START; // generate start condition
-  while (!(i2cp->id_i2c->SR1 & I2C_SR1_SB)){
-    i++; // wait start bit
-  }
+
 
   i2cp->id_i2c->DR = (i2cp->id_slave_config->slave_addr1 << 1) | I2C_WRITE; // write slave addres in DR
   while (!(i2cp->id_i2c->SR1 & I2C_SR1_ADDR)){
@@ -256,7 +276,7 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t re
   }
   else i2cp->id_i2c->CR1 |= I2C_CR1_STOP; // generate stop condition
 
-  chSysUnlock();
+
 }
 
 /**

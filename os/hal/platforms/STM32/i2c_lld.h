@@ -150,6 +150,10 @@ typedef struct {
 
   uint16_t              error_flags;
 
+  uint8_t               rw_bit; // this flag contain R/W bit
+
+  bool_t                restart; // send restart or stop event after complete data tx/rx
+
 }I2CSlaveConfig;
 
 
