@@ -228,6 +228,13 @@ void i2c_lld_stop(I2CDriver *i2cp) {
   i2cp->id_state = I2C_STOP;
 }
 
+
+
+void i2c_lld_master_transmitI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart){
+  ;
+}
+
+
 /**
  * @brief Transmits data ever the I2C bus as master.
  * TODO:@details
@@ -245,8 +252,13 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t re
   i2cp->id_slave_config->rw_bit = I2C_WRITE;
 
   //TODO: setup DMA channel here
-  i2cp->id_i2c->CR1 |= I2C_CR1_START; // generate start condition
+  //
+  //
 
+  i2cp->id_i2c->CR1 |= I2C_CR1_START; // generate start condition
+  while (!(i2cp->id_i2c->SR1 & I2C_SR1_SB)){
+    i++; // wait Address sent
+  }
 
   i2cp->id_i2c->DR = (i2cp->id_slave_config->slave_addr1 << 1) | I2C_WRITE; // write slave addres in DR
   while (!(i2cp->id_i2c->SR1 & I2C_SR1_ADDR)){

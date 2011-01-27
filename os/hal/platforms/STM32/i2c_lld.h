@@ -225,6 +225,7 @@ void i2c_lld_stop(I2CDriver *i2cp);
 void i2c_lld_master_start(I2CDriver *i2cp, uint16_t header);
 void i2c_lld_master_stop(I2CDriver *i2cp);
 void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart);
+void i2c_lld_master_transmitI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart);
 void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
 //static i2cflags_t translate_errors(uint16_t sr);
 
