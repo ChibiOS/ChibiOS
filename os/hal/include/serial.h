@@ -286,19 +286,6 @@ struct SerialDriver {
 #define sdAsynchronousRead(sdp, b, n)                                       \
   chIQReadTimeout(&(sdp)->iqueue, b, n, TIME_IMMEDIATE)
 
-/**
- * @brief   Returns the status change event source.
- * @details The status change event source is broadcasted when the channel
- *          status is updated, the status flags can then be fetched and
- *          cleared by using @p sdGetAndClearFlags().
- *
- * @param[in] ip        pointer to a @p SerialDriver object
- * @return              A pointer to an @p EventSource object.
- *
- * @api
- */
-#define sdGetStatusChangeEventSource(ip) (&((ip)->vmt->sevent))
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
