@@ -90,17 +90,21 @@ typedef struct I2CSlaveConfig I2CSlaveConfig;
 
 /**
  * @brief   I2C notification callback type.
+ * @details This function must be used to send start or stop events to I2C bus,
+ *          and change states of I2CDriver.
  *
- * @param[in] i2cp      FIXME: pointer to the @p I2CDriver object triggering the
+ * @param[in] i2cp      pointer to the @p I2CDriver object triggering the
+ *                      callback
+ * @param[in] i2cscfg   pointer to the @p I2CSlaveConfig object triggering the
  *                      callback
  */
 typedef void (*i2ccallback_t)(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
-//typedef void (*i2ccallback_t)(void);
+
 
 /**
  * @brief   I2C error notification callback type.
  *
- * @param[in] i2cp      FIXME: pointer to the @p I2CDriver object triggering the
+ * @param[in] i2cp      TODO: pointer to the @p I2CDriver object triggering the
  *                      callback
  */
 typedef void (*i2cerrorcallback_t)(void);
@@ -143,8 +147,7 @@ struct I2CSlaveConfig{
    *        by DMA buffer events
    *        @p NULL then the callback is disabled.
    */
-  i2ccallback_t         id_stop_callback;
-  i2ccallback_t         id_restart_callback;
+  i2ccallback_t         id_callback;
   /**
    * @brief Callback pointer.
    * @note  TODO: I don't know, when this callback is inwoked
@@ -242,17 +245,17 @@ extern "C" {
 void i2c_lld_init(void);
 void i2c_lld_start(I2CDriver *i2cp);
 void i2c_lld_stop(I2CDriver *i2cp);
-void i2c_lld_master_start(I2CDriver *i2cp, uint16_t header);
+
+void i2c_lld_master_start(I2CDriver *i2cp);
 void i2c_lld_master_stop(I2CDriver *i2cp);
 
 void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart);
-bool_t i2c_lld_txbyte(I2CDriver *i2cp); // helper function
 void i2c_lld_master_transmitI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
+bool_t i2c_lld_txbyte(I2CDriver *i2cp); // helper function
 
 void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
 void i2c_lld_master_receiveI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
 bool_t i2c_lld_rxbyte(I2CDriver *i2cp);
-//static i2cflags_t translate_errors(uint16_t sr);
 
 #ifdef __cplusplus
 }
