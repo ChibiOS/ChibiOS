@@ -61,9 +61,10 @@ static i2cflags_t translate_errors(uint16_t sr) {
 
 
 
-
+/* This function handle all regular interrupt conditions
+ *
+ */
 static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
-  // TODO: enable interrupts in config registers
 
   if ((i2cp->id_state == I2C_READY) && (i2cp->id_i2c->SR1 & I2C_SR1_SB)){// start bit sent
     i2cp->id_state = I2C_MACTIVE;
@@ -71,24 +72,104 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
                         i2cp->id_slave_config->rw_bit; // write slave address in DR
   }
 
-  // now wait interrupt with ADDR flag
+  // now "wait" interrupt with ADDR flag
   // TODO: 10 bit address handling here
+  // TODO: setup here transmission via DMA like in ADC
   if ((i2cp->id_state == I2C_MACTIVE) && (i2cp->id_i2c->SR1 & I2C_SR1_ADDR)){// address successfully sent
     if(i2cp->id_slave_config->rw_bit == I2C_WRITE){
-      i2cp->id_state = I2C_MTRANSMIT;
-      // TODO: setup here transmission via DMA like in ADC
+      i2c_lld_txbyte(i2cp); // send first byte
+      i2cp->id_state = I2C_MTRANSMIT; // change state
     }
     else {
-      i2cp->id_state = I2C_MRECEIVE;
-      // TODO: setup here transmission via DMA like in ADC
+      i2c_lld_rxbyte(i2cp); // read first byte
+      i2cp->id_state = I2C_MRECEIVE; // change stat
     }
   }
+
+  // transmitting bytes one by one
+  if ((i2cp->id_state == I2C_MTRANSMIT) && (i2cp->id_i2c->SR1 & I2C_SR1_TXE)){
+    if (i2c_lld_txbyte(i2cp))
+      i2cp->id_state = I2C_MWAIT_TF; // last byte written
+  }
+
+  //receiving bytes one by one
+  if ((i2cp->id_state == I2C_MRECEIVE) && (i2cp->id_i2c->SR1 & I2C_SR1_RXNE)){
+    if (i2c_lld_txbyte(i2cp))
+      i2cp->id_state = I2C_MWAIT_TF; // last byte read
+  }
+
+  // "wait" BTF bit in status register
+  if ((i2cp->id_state == I2C_MWAIT_TF) && (i2cp->id_i2c->SR1 & I2C_SR1_BTF)){
+    if (i2cp->id_slave_config->restart){  // restart need
+      i2cp->id_state = I2C_MACTIVE;
+      //i2cp->id_i2c->CR1 |= I2C_CR1_START; // send restart
+      i2cp->id_slave_config->id_restart_callback(i2cp, i2cp->id_slave_config); // callback call
+    }
+    else {
+      i2cp->id_state = I2C_READY;
+      i2cp->id_i2c->CR1 |= I2C_CR1_STOP; // stop communication
+      i2cp->id_slave_config->id_stop_callback(i2cp, i2cp->id_slave_config); // callback call
+    }
+  }
+}
+
+/* helper function, not API
+ * write bytes in DR register
+ * return TRUE if last byte written
+ */
+bool_t i2c_lld_txbyte(I2CDriver *i2cp) {
+  // temporal variables
+  #define txbuf     i2cp->id_slave_config->txbuf
+  #define txbufhead i2cp->id_slave_config->txbufhead
+  #define txdepth   i2cp->id_slave_config->txdepth
+
+  if (txbufhead < txdepth){
+    i2cp->id_i2c->DR = txbuf[txbufhead];
+    txbufhead++;
+    return(FALSE);
+  }
+
+  txbufhead = 0;
+  #undef txbuf
+  #undef txbufhead
+  #undef txdepth
+
+  return(TRUE); // last byte written
+}
+
+
+/* helper function, not API
+ * read bytes from DR register
+ * return TRUE if last byte read
+ */
+bool_t i2c_lld_rxbyte(I2CDriver *i2cp) {
+  // temporal variables
+  #define rxbuf     i2cp->id_slave_config->rxbuf
+  #define rxbufhead i2cp->id_slave_config->rxbufhead
+  #define rxdepth   i2cp->id_slave_config->rxdepth
+
+  if (rxbufhead < rxdepth){
+    rxbuf[rxbufhead] = i2cp->id_i2c->DR;
+    rxbufhead++;
+    return(FALSE);
+  }
+
+  rxbufhead = 0;
+  #undef rxbuf
+  #undef rxbufhead
+  #undef rxdepth
+
+  return(TRUE); // last byte read
 }
 
 
 
 static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
-
+  // TODO:remove this stub
+  //simply trap for errors
+  while TRUE{
+    translate_errors(i2cp->id_i2c->SR1);
+  }
 }
 
 #if STM32_I2C_USE_I2C1 || defined(__DOXYGEN__)
@@ -186,9 +267,9 @@ void i2c_lld_start(I2CDriver *i2cp) {
 
   i2cp->id_i2c->CR1 = i2cp->id_config->i2cc_cr1;
   i2cp->id_i2c->CR2 = i2cp->id_config->i2cc_cr2 |
-                            //I2C_CR2_ITERREN |
-                            //I2C_CR2_ITEVTEN |
-                            //I2C_CR2_ITBUFEN |
+                            I2C_CR2_ITERREN |
+                            I2C_CR2_ITEVTEN |
+                            I2C_CR2_ITBUFEN |
                             36; //TODO: replace this by macro calculation
   /* TODO:
    * 1. macro timing calculator
@@ -230,9 +311,31 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 
 
 
-void i2c_lld_master_transmitI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart){
-  ;
+void i2c_lld_master_transmitI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
+  //TODO: check txbytes <= sizeof(i2cscfg->txbuf) here, or in hylevel API
+
+  i2cp->id_slave_config = i2cscfg;
+  i2cp->id_slave_config->rw_bit = I2C_WRITE;
+
+
+  // generate start condition. Later transmission goes asynchronously
+  i2cp->id_i2c->CR1 |= I2C_CR1_START;
 }
+
+void i2c_lld_master_receiveI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
+  //TODO: check txbytes <= sizeof(i2cscfg->txbuf) here, or in hylevel API
+
+  i2cp->id_slave_config = i2cscfg;
+  i2cp->id_slave_config->rw_bit = I2C_READ;
+
+  // reset restart flag
+  i2cp->id_slave_config->restart = FALSE;
+
+  // generate (re)start condition. Later connection goes asynchronously
+  i2cp->id_i2c->CR1 |= I2C_CR1_START;
+  // TODO: need to clear ACK bit somewhere
+}
+
 
 
 /**
@@ -251,9 +354,6 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t re
   i2cp->id_slave_config = i2cscfg;
   i2cp->id_slave_config->rw_bit = I2C_WRITE;
 
-  //TODO: setup DMA channel here
-  //
-  //
 
   i2cp->id_i2c->CR1 |= I2C_CR1_START; // generate start condition
   while (!(i2cp->id_i2c->SR1 & I2C_SR1_SB)){

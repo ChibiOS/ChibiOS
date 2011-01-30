@@ -126,7 +126,7 @@ void i2cStop(I2CDriver *i2cp) {
  * @param[in] txbuf          the pointer to the transmit buffer
  *
  */
-void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart) {
+void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
 
   chDbgCheck((i2cp != NULL) && (i2cscfg != NULL),
              "i2cMasterTransmit");
@@ -134,7 +134,7 @@ void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart)
               "i2cMasterTransmit(), #1",
               "not active");
 
-  i2c_lld_master_transmit(i2cp, i2cscfg, restart);
+  i2c_lld_master_transmitI(i2cp, i2cscfg);
 }
 
 
@@ -156,7 +156,7 @@ void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
               "i2cMasterReceive(), #1",
               "not active");
 
-  i2c_lld_master_receive(i2cp, i2cscfg);
+  i2c_lld_master_receiveI(i2cp, i2cscfg);
 }
 
 

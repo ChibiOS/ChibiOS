@@ -78,12 +78,24 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of a structure representing an I2C driver.
+ */
+typedef struct I2CDriver I2CDriver;
+
+/**
+ * @brief   Type of a structure representing an I2C driver.
+ */
+typedef struct I2CSlaveConfig I2CSlaveConfig;
+
+
+/**
  * @brief   I2C notification callback type.
  *
  * @param[in] i2cp      FIXME: pointer to the @p I2CDriver object triggering the
  *                      callback
  */
-typedef void (*i2ccallback_t)(void);
+typedef void (*i2ccallback_t)(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
+//typedef void (*i2ccallback_t)(void);
 
 /**
  * @brief   I2C error notification callback type.
@@ -92,6 +104,7 @@ typedef void (*i2ccallback_t)(void);
  *                      callback
  */
 typedef void (*i2cerrorcallback_t)(void);
+
 
 /**
  * @brief Driver configuration structure.
@@ -123,27 +136,31 @@ typedef uint8_t i2cblock_t;
  * @brief Structure representing an I2C slave configuration.
  * @details Each slave has its own data buffers, adress, and error flags.
  */
-typedef struct {
+struct I2CSlaveConfig{
+  /**
+   * @brief Callback pointer.
+   * @note  Transfer finished callback. Invoke when all data transferred, or
+   *        by DMA buffer events
+   *        @p NULL then the callback is disabled.
+   */
+  i2ccallback_t         id_stop_callback;
+  i2ccallback_t         id_restart_callback;
   /**
    * @brief Callback pointer.
    * @note  TODO: I don't know, when this callback is inwoked
    *        @p NULL then the callback is disabled.
    */
-  i2ccallback_t         id_callback;
-  /**
-   * @brief Callback pointer.
-   * @note  TODO: I don't know, when this callback is inwoked
-   *        @p NULL then the callback is disabled.
-   */
-  i2cerrorcallback_t    id_errcallback;
+  i2cerrorcallback_t    id_err_callback;
 
-  i2cblock_t            *rxbuf; // pointer to buffer
-  size_t                rxdepth;// depth of buffer
-  size_t                rxbytes;// count of bytes to sent in one sending
+  i2cblock_t            *rxbuf;     // pointer to buffer
+  size_t                rxdepth;    // depth of buffer
+  size_t                rxbytes;    // count of bytes to sent in one sending
+  size_t                rxbufhead;  // head pointer to current data byte
 
   i2cblock_t            *txbuf;
   size_t                txdepth;
   size_t                txbytes;
+  size_t                txbufhead;
 
   uint8_t               slave_addr1; // 7-bit address of the slave
   uint8_t               slave_addr2; // used in 10-bit address mode
@@ -154,14 +171,14 @@ typedef struct {
 
   bool_t                restart; // send restart or stop event after complete data tx/rx
 
-}I2CSlaveConfig;
+};
 
 
 
 /**
  * @brief Structure representing an I2C driver.
  */
-typedef struct {
+struct I2CDriver{
   /**
    * @brief Driver state.
    */
@@ -195,7 +212,10 @@ typedef struct {
    */
   I2C_TypeDef           *id_i2c;
 
-} I2CDriver;
+} ;
+
+
+
 
 
 /*===========================================================================*/
@@ -224,9 +244,14 @@ void i2c_lld_start(I2CDriver *i2cp);
 void i2c_lld_stop(I2CDriver *i2cp);
 void i2c_lld_master_start(I2CDriver *i2cp, uint16_t header);
 void i2c_lld_master_stop(I2CDriver *i2cp);
+
 void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart);
-void i2c_lld_master_transmitI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart);
+bool_t i2c_lld_txbyte(I2CDriver *i2cp); // helper function
+void i2c_lld_master_transmitI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
+
 void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
+void i2c_lld_master_receiveI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
+bool_t i2c_lld_rxbyte(I2CDriver *i2cp);
 //static i2cflags_t translate_errors(uint16_t sr);
 
 #ifdef __cplusplus
