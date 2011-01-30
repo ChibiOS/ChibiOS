@@ -179,7 +179,7 @@ static void serve_interrupt(SerialDriver *sdp) {
     b = chOQGetI(&sdp->oqueue);
     if (b < Q_OK) {
       chIOAddFlagsI(sdp, IO_OUTPUT_EMPTY);
-      u->CR1 = cr1 & ~USART_CR1_TXEIE;
+      u->CR1 = (cr1 & ~USART_CR1_TXEIE) | USART_CR1_TCIE;
     }
     else
       u->DR = b;
@@ -200,7 +200,7 @@ static void serve_interrupt(SerialDriver *sdp) {
 static void notify1(GenericQueue *qp) {
 
   (void)qp;
-  USART1->CR1 |= USART_CR1_TXEIE | USART_CR1_TCIE;
+  USART1->CR1 |= USART_CR1_TXEIE;
 }
 #endif
 
@@ -208,7 +208,7 @@ static void notify1(GenericQueue *qp) {
 static void notify2(GenericQueue *qp) {
 
   (void)qp;
-  USART2->CR1 |= USART_CR1_TXEIE | USART_CR1_TCIE;
+  USART2->CR1 |= USART_CR1_TXEIE;
 }
 #endif
 
