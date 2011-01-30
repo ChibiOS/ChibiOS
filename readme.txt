@@ -69,8 +69,9 @@
 *****************************************************************************
 
 *** 2.3.0 ***
-- NEW: Added experimental USB driver, it will certainly change in next
+- NEW: Added experimental generic USB driver, it will certainly change in next
   releases.
+- NEW: Added an experimental USB driver implementation for STM32.
 - NEW: Added experimental "serial over USB" driver, it implements a
   Communication Device Class exposing it as a normal serial driver to
   applications, it will certainly change in next
