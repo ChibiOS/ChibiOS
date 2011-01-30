@@ -7,6 +7,7 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/STM32/hal_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/serial_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/spi_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/uart_lld.c \
+              ${CHIBIOS}/os/hal/platforms/STM32/usb_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/stm32_dma.c
 
 # Required include directories

@@ -69,6 +69,13 @@
 *****************************************************************************
 
 *** 2.3.0 ***
+- NEW: Added experimental USB driver, it will certainly change in next
+  releases.
+- NEW: Added experimental "serial over USB" driver, it implements a
+  Communication Device Class exposing it as a normal serial driver to
+  applications, it will certainly change in next
+  releases.
+- NEW: Added USB CDC loopback test application.
 - NEW: Implemented new event IO_TRANSMISSION_END in the generic serial
   driver. This event marks the physical transmission end of a data stream.
 - NEW: Implemented the new IO_TRANSMISSION_END event in the STM32 serial
