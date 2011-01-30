@@ -35,15 +35,15 @@
 /*===========================================================================*/
 
 /** @brief Parity error happened.*/
-#define SD_PARITY_ERROR         16
+#define SD_PARITY_ERROR         32
 /** @brief Framing error happened.*/
-#define SD_FRAMING_ERROR        32
+#define SD_FRAMING_ERROR        64
 /** @brief Overflow happened.*/
-#define SD_OVERRUN_ERROR        64
+#define SD_OVERRUN_ERROR        128
 /** @brief Noise on the line.*/
-#define SD_NOISE_ERROR          128
+#define SD_NOISE_ERROR          256
 /** @brief Break detected.*/
-#define SD_BREAK_DETECTED       256
+#define SD_BREAK_DETECTED       512
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

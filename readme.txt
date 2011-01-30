@@ -69,6 +69,8 @@
 *****************************************************************************
 
 *** 2.3.0 ***
+- NEW: Implemented new event IO_TRANSMISSION_END in the generic serial
+  driver. This event marks the physical transmission end of a data stream.
 
 *** 2.1.8 ***
 - FIX: Fixed error in STM32 ADC driver macro names (bug 3160306)(backported

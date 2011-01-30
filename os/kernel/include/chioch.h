@@ -239,6 +239,8 @@ typedef struct {
 #define IO_INPUT_AVAILABLE      4
 /** @brief Output queue empty.*/
 #define IO_OUTPUT_EMPTY         8
+/** @brief Transmission end.*/
+#define IO_TRANSMISSION_END     16
 
 /**
  * @brief   Type of an I/O condition flags mask.
