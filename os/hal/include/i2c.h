@@ -124,6 +124,8 @@ extern "C" {
   void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
   void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
 
+
+
   void i2cMasterStartI(I2CDriver *i2cp,uint16_t header);
   void i2cMasterStopI(I2CDriver *i2cp);
   void i2cMasterRestartI(I2CDriver *i2cp);

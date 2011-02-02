@@ -69,23 +69,31 @@ static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
  *
  */
 static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
+  // TODO: 10 bit address handling here
+  if ((i2cp->id_state == I2C_READY) && (i2cp->id_i2c->SR1 & I2C_SR1_BTF)){
+    i2cp->id_i2c->SR1  &= (~I2C_SR1_BTF);
+    i2cp->id_state = I2C_READY;
+    return;
+  }
 
   if ((i2cp->id_state == I2C_READY) && (i2cp->id_i2c->SR1 & I2C_SR1_SB)){// start bit sent
     i2cp->id_state = I2C_MACTIVE;
     i2cp->id_i2c->DR = (i2cp->id_slave_config->slave_addr1 << 1) |
                         i2cp->id_slave_config->rw_bit; // write slave address in DR
+    return;
   }
 
   // now "wait" interrupt with ADDR flag
-  // TODO: 10 bit address handling here
   if ((i2cp->id_state == I2C_MACTIVE) && (i2cp->id_i2c->SR1 & I2C_SR1_ADDR)){// address successfully sent
-    if(i2cp->id_slave_config->rw_bit == I2C_WRITE){
+    if(i2cp->id_i2c->SR2 & I2C_SR2_TRA){
       i2c_lld_txbyte(i2cp); // send first byte
       i2cp->id_state = I2C_MTRANSMIT; // change state
+      return;
     }
     else {
-      i2c_lld_rxbyte(i2cp); // read first byte
+      //i2c_lld_rxbyte(i2cp); // read first byte
       i2cp->id_state = I2C_MRECEIVE; // change status
+      return;
     }
   }
 
@@ -93,17 +101,20 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
   if ((i2cp->id_state == I2C_MTRANSMIT) && (i2cp->id_i2c->SR1 & I2C_SR1_TXE)){
     if (i2c_lld_txbyte(i2cp))
       i2cp->id_state = I2C_MWAIT_TF; // last byte written
+    return;
   }
 
   //receiving bytes one by one
   if ((i2cp->id_state == I2C_MRECEIVE) && (i2cp->id_i2c->SR1 & I2C_SR1_RXNE)){
-    if (i2c_lld_txbyte(i2cp))
+    if (i2c_lld_rxbyte(i2cp))
       i2cp->id_state = I2C_MWAIT_TF; // last byte read
+    return;
   }
 
   // "wait" BTF bit in status register
   if ((i2cp->id_state == I2C_MWAIT_TF) && (i2cp->id_i2c->SR1 & I2C_SR1_BTF)){
     i2cp->id_slave_config->id_callback(i2cp, i2cp->id_slave_config);
+    return;
   }
 }
 
@@ -251,22 +262,12 @@ void i2c_lld_stop(I2CDriver *i2cp) {
  * return TRUE if last byte written
  */
 bool_t i2c_lld_txbyte(I2CDriver *i2cp) {
-  // temporal variables
-  #define txbuf     i2cp->id_slave_config->txbuf
-  #define txbufhead i2cp->id_slave_config->txbufhead
-  #define txdepth   i2cp->id_slave_config->txdepth
-
-  if (txbufhead < txdepth){
-    i2cp->id_i2c->DR = txbuf[txbufhead];
-    txbufhead++;
+  if (i2cp->id_slave_config->txbufhead < i2cp->id_slave_config->txbytes){
+    i2cp->id_i2c->DR = i2cp->id_slave_config->txbuf[i2cp->id_slave_config->txbufhead];
+    (i2cp->id_slave_config->txbufhead)++;
     return(FALSE);
   }
-
-  txbufhead = 0;
-  #undef txbuf
-  #undef txbufhead
-  #undef txdepth
-
+  i2cp->id_slave_config->txbufhead = 0;
   return(TRUE); // last byte written
 }
 
@@ -282,12 +283,13 @@ bool_t i2c_lld_rxbyte(I2CDriver *i2cp) {
   #define rxdepth   i2cp->id_slave_config->rxdepth
   #define rxbytes   i2cp->id_slave_config->rxbytes
 
-  if (rxbufhead < rxdepth){
+  if (rxbufhead < rxbytes){
     rxbuf[rxbufhead] = i2cp->id_i2c->DR;
     rxbufhead++;
-    if ((rxbytes - rxbufhead) == 1)
+    if ((rxbytes - rxbufhead) == 1){
       // clear ACK bit for automatically send NACK
       i2cp->id_i2c->CR1 &= (~I2C_CR1_ACK);
+    }
     return(FALSE);
   }
 
@@ -307,6 +309,9 @@ void i2c_lld_master_start(I2CDriver *i2cp){
 
 void i2c_lld_master_stop(I2CDriver *i2cp){
   i2cp->id_i2c->CR1 |= I2C_CR1_STOP;
+  chSysLock();
+  while (i2cp->id_i2c->CR1 & I2C_CR1_STOP);
+  chSysUnlock();
 }
 
 
