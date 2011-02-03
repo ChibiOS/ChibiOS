@@ -66,17 +66,15 @@ static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
 }
 
 /* This function handle all regular interrupt conditions
- *
+ * TODO: 10 bit address handling here
  */
 static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
-  // TODO: 10 bit address handling here
-  if ((i2cp->id_state == I2C_READY) && (i2cp->id_i2c->SR1 & I2C_SR1_BTF)){
-    i2cp->id_i2c->SR1  &= (~I2C_SR1_BTF);
-    i2cp->id_state = I2C_READY;
-    return;
-  }
+  int i = 0;
+  int n = 0;
+  int m = 0;
 
   if ((i2cp->id_state == I2C_READY) && (i2cp->id_i2c->SR1 & I2C_SR1_SB)){// start bit sent
+    //i = i2cp->id_i2c->SR1;
     i2cp->id_state = I2C_MACTIVE;
     i2cp->id_i2c->DR = (i2cp->id_slave_config->slave_addr1 << 1) |
                         i2cp->id_slave_config->rw_bit; // write slave address in DR
@@ -106,16 +104,27 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
 
   //receiving bytes one by one
   if ((i2cp->id_state == I2C_MRECEIVE) && (i2cp->id_i2c->SR1 & I2C_SR1_RXNE)){
+//    i = i2cp->id_i2c->SR1;
+//    n = i2cp->id_i2c->SR2;
     if (i2c_lld_rxbyte(i2cp))
       i2cp->id_state = I2C_MWAIT_TF; // last byte read
+//    i = i2cp->id_i2c->SR1;
+//    n = i2cp->id_i2c->SR2;
     return;
   }
 
   // "wait" BTF bit in status register
-  if ((i2cp->id_state == I2C_MWAIT_TF) && (i2cp->id_i2c->SR1 & I2C_SR1_BTF)){
-  //if ((i2cp->id_state == I2C_MWAIT_TF) && ((i2cp->id_i2c->SR1 & I2C_SR1_RXNE) || (i2cp->id_i2c->SR1 & I2C_SR1_TXE))){
-    i2cp->id_i2c->SR1 &= (~I2C_SR1_BTF);
+//  if ((i2cp->id_state == I2C_MWAIT_TF) && (i2cp->id_i2c->SR1 & I2C_SR1_BTF)){
+  if ((i2cp->id_state == I2C_MWAIT_TF) && (i2cp->id_i2c->SR1 & I2C_SR1_RXNE | I2C_SR1_BTF | I2C_SR1_TXE)){
+    chSysLockFromIsr();
     i2cp->id_slave_config->id_callback(i2cp, i2cp->id_slave_config);
+    chSysUnlockFromIsr();
+    return;
+  }
+  else{ // trap
+    i = i2cp->id_i2c->SR1;
+    n = i2cp->id_i2c->SR2;
+    m = i2cp->id_i2c->CR1;
     return;
   }
 }
@@ -286,15 +295,15 @@ bool_t i2c_lld_rxbyte(I2CDriver *i2cp) {
   #define rxbytes   i2cp->id_slave_config->rxbytes
 
   if (rxbufhead < rxbytes){
+    if ((rxbytes - rxbufhead) == 1){
+      i2cp->id_i2c->CR1 &= (~I2C_CR1_ACK);// clear ACK bit for automatically send NACK
+    }
     rxbuf[rxbufhead] = i2cp->id_i2c->DR;
     rxbufhead++;
-    if ((rxbytes - rxbufhead) == 1){
-      // clear ACK bit for automatically send NACK
-      i2cp->id_i2c->CR1 &= (~I2C_CR1_ACK);
-    }
     return(FALSE);
   }
 
+  rxbuf[rxbufhead] = i2cp->id_i2c->DR; // read last byte
   rxbufhead = 0;
   #undef rxbuf
   #undef rxbufhead
