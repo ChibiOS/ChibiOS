@@ -89,7 +89,12 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       return;
     }
     else {
-      //i2c_lld_rxbyte(i2cp); // read first byte
+      /* In order to generate the non-acknowledge pulse after the last received
+       * data byte, the ACK bit must be cleared just after reading the second
+       * last data byte (after second last RxNE event).
+       */
+      if (i2cp->id_slave_config->rxbytes > 1)
+        i2cp->id_i2c->CR1 |= I2C_CR1_ACK; // set ACK bit
       i2cp->id_state = I2C_MRECEIVE; // change status
       return;
     }
@@ -118,6 +123,11 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
   if ((i2cp->id_state == I2C_MWAIT_TF) && (i2cp->id_i2c->SR1 & I2C_SR1_RXNE | I2C_SR1_BTF | I2C_SR1_TXE)){
     chSysLockFromIsr();
     i2cp->id_slave_config->id_callback(i2cp, i2cp->id_slave_config);
+
+    i = i2cp->id_i2c->SR1;
+    n = i2cp->id_i2c->SR2;
+    m = i2cp->id_i2c->CR1;
+
     chSysUnlockFromIsr();
     return;
   }
@@ -294,11 +304,15 @@ bool_t i2c_lld_rxbyte(I2CDriver *i2cp) {
   #define rxdepth   i2cp->id_slave_config->rxdepth
   #define rxbytes   i2cp->id_slave_config->rxbytes
 
+  /* In order to generate the non-acknowledge pulse after the last received
+   * data byte, the ACK bit must be cleared just after reading the second
+   * last data byte (after second last RxNE event).
+   */
   if (rxbufhead < rxbytes){
-    if ((rxbytes - rxbufhead) == 1){
+    rxbuf[rxbufhead] = i2cp->id_i2c->DR;
+    if ((rxbytes - rxbufhead) <= 2){
       i2cp->id_i2c->CR1 &= (~I2C_CR1_ACK);// clear ACK bit for automatically send NACK
     }
-    rxbuf[rxbufhead] = i2cp->id_i2c->DR;
     rxbufhead++;
     return(FALSE);
   }
