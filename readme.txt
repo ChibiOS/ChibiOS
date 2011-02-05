@@ -69,6 +69,7 @@
 *****************************************************************************
 
 *** 2.3.0 ***
+- FIX: Fixed wrong serial driver macros (bug 3173336)(backported to 2.2.1).
 - NEW: Added experimental generic USB driver, it will certainly change in next
   releases.
 - NEW: Added an experimental USB driver implementation for STM32.

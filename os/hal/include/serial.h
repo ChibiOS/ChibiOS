@@ -137,7 +137,7 @@ struct SerialDriver {
  *
  * @api
  */
-#define sdPutWouldBlock(sdp) chOQIsFull(&(sdp)->oqueue)
+#define sdPutWouldBlock(sdp) chOQIsFullI(&(sdp)->oqueue)
 
 /**
  * @brief   Direct input check on a @p SerialDriver.
@@ -149,7 +149,7 @@ struct SerialDriver {
  *
  * @api
  */
-#define sdGetWouldBlock(sdp) chIQIsEmpty(&(sdp)->iqueue)
+#define sdGetWouldBlock(sdp) chIQIsEmptyI(&(sdp)->iqueue)
 
 /**
  * @brief   Direct write to a @p SerialDriver.
