@@ -134,6 +134,7 @@ struct SerialDriver {
  *          be used to check different channels implementations.
  *
  * @see     chIOPutWouldBlock()
+ * @deprecated
  *
  * @api
  */
@@ -146,6 +147,7 @@ struct SerialDriver {
  *          be used to check different channels implementations.
  *
  * @see     chIOGetWouldBlock()
+ * @deprecated
  *
  * @api
  */
