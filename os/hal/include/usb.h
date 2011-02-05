@@ -313,8 +313,8 @@ extern "C" {
   void usbObjectInit(USBDriver *usbp);
   void usbStart(USBDriver *usbp, const USBConfig *config);
   void usbStop(USBDriver *usbp);
-  void usbEnableEndpointI(USBDriver *usbp, usbep_t ep,
-                          const USBEndpointConfig *epcp);
+  void usbInitEndpointI(USBDriver *usbp, usbep_t ep, USBEndpointState *epp,
+                        const USBEndpointConfig *epcp);
   void _usb_reset(USBDriver *usbp);
   void _usb_ep0in(USBDriver *usbp, usbep_t ep);
   void _usb_ep0out(USBDriver *usbp, usbep_t ep);

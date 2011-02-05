@@ -125,6 +125,49 @@ typedef struct {
   uint16_t                      uepc_outaddr;
 } USBEndpointConfig;
 
+
+/**
+ * @brief   Type of an endpoint state structure.
+ */
+typedef struct {
+  /**
+   * @brief   Configuration associated to the endpoint.
+   */
+  const USBEndpointConfig       *uep_config;
+  /**
+   * @brief   Pointer to the transmission buffer.
+   */
+  const uint8_t                 *uep_txbuf;
+  /**
+   * @brief   Pointer to the receive buffer.
+   */
+  uint8_t                       *uep_rxbuf;
+  /**
+   * @brief   Requested transmit transfer size.
+   */
+  size_t                        uep_txsize;
+  /**
+   * @brief   Requested receive transfer size.
+    */
+  size_t                        uep_rxsize;
+  /**
+   * @brief   Transmitted bytes so far.
+   */
+  size_t                        uep_txcnt;
+  /**
+   * @brief   Received bytes so far.
+    */
+  size_t                        uep_rxcnt;
+  /**
+   * @brief   @p TRUE if transmitting else @p FALSE.
+   */
+  uint8_t                       uep_transmitting;
+  /**
+   * @brief   @p TRUE if receiving else @p FALSE.
+   */
+  uint8_t                       uep_receiving;
+} USBEndpointState;
+
 /**
  * @brief   Type of an USB driver configuration structure.
  */
@@ -172,7 +215,7 @@ struct USBDriver {
   /**
    * @brief   Active endpoints configurations.
    */
-  const USBEndpointConfig       *usb_epc[USB_MAX_ENDPOINTS + 1];
+  USBEndpointState              *usb_ep[USB_MAX_ENDPOINTS + 1];
   /**
    * @brief   Endpoint 0 state.
    */
@@ -251,6 +294,10 @@ extern USBDriver USBD1;
 extern const USBEndpointConfig usb_lld_ep0config;
 #endif
 
+#if !defined(__DOXYGEN__)
+extern USBEndpointState usb_lld_ep0state;
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -259,8 +306,7 @@ extern "C" {
   void usb_lld_stop(USBDriver *usbp);
   void usb_lld_reset(USBDriver *usbp);
   void usb_lld_set_address(USBDriver *usbp, uint8_t addr);
-  void usb_lld_enable_endpoint(USBDriver *usbp, usbep_t ep,
-                               const USBEndpointConfig *epcp);
+  void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep);
   void usb_lld_disable_endpoints(USBDriver *usbp);
   size_t usb_lld_get_readable(USBDriver *usbp, usbep_t ep);
   size_t usb_lld_read(USBDriver *usbp, usbep_t ep,

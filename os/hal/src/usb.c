@@ -25,6 +25,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "ch.h"
 #include "hal.h"
 #include "usb.h"
@@ -75,8 +77,8 @@ static void start_rx_ep0(USBDriver *usbp) {
 
     /* Determines the maximum amount that can be received using a
        single packet.*/
-    if (usbp->usb_ep0n > usb_lld_ep0config.uepc_out_maxsize)
-      usbp->usb_ep0lastsize = usb_lld_ep0config.uepc_out_maxsize;
+    if (usbp->usb_ep0n > usbp->usb_ep[0]->uep_config->uepc_out_maxsize)
+      usbp->usb_ep0lastsize = usbp->usb_ep[0]->uep_config->uepc_out_maxsize;
     else
       usbp->usb_ep0lastsize = usbp->usb_ep0n;
     usbp->usb_ep0state = USB_EP0_RX;
@@ -102,8 +104,8 @@ static void start_tx_ep0(USBDriver *usbp) {
 
     /* Determines the maximum amount that can be transmitted using a
        single packet.*/
-    if (usbp->usb_ep0n > usb_lld_ep0config.uepc_in_maxsize)
-      usbp->usb_ep0lastsize = usb_lld_ep0config.uepc_in_maxsize;
+    if (usbp->usb_ep0n > usbp->usb_ep[0]->uep_config->uepc_in_maxsize)
+      usbp->usb_ep0lastsize = usbp->usb_ep[0]->uep_config->uepc_in_maxsize;
     else
       usbp->usb_ep0lastsize = usbp->usb_ep0n;
 
@@ -294,14 +296,16 @@ void usbObjectInit(USBDriver *usbp) {
  * @api
  */
 void usbStart(USBDriver *usbp, const USBConfig *config) {
+  unsigned i;
 
   chDbgCheck((usbp != NULL) && (config != NULL), "usbStart");
 
   chSysLock();
   chDbgAssert((usbp->usb_state == USB_STOP) || (usbp->usb_state == USB_READY),
-              "usbStart(), #1",
-              "invalid state");
+              "usbStart(), #1", "invalid state");
   usbp->usb_config = config;
+  for (i = 0; i <= USB_MAX_ENDPOINTS; i++)
+    usbp->usb_ep[i] = NULL;
   usb_lld_start(usbp);
   usbp->usb_state = USB_READY;
   chSysUnlock();
@@ -336,23 +340,26 @@ void usbStop(USBDriver *usbp) {
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
+ * @param[out] epp      pointer to an endpoint state descriptor structure
  * @param[in] epcp      the endpoint configuration
  *
  * @iclass
  */
-void usbEnableEndpointI(USBDriver *usbp, usbep_t ep,
-                        const USBEndpointConfig *epcp) {
+void usbInitEndpointI(USBDriver *usbp, usbep_t ep, USBEndpointState *epp,
+                      const USBEndpointConfig *epcp) {
 
   chDbgAssert(usbp->usb_state == USB_ACTIVE,
               "usbEnableEndpointI(), #1", "invalid state");
-  chDbgAssert(usbp->usb_epc[ep] != NULL,
-              "usbEnableEndpointI(), #2", "already enabled");
+  chDbgAssert(usbp->usb_ep[ep] != NULL,
+              "usbEnableEndpointI(), #2", "already initialized");
 
   /* Logically enabling the endpoint in the USBDriver structure.*/
-  usbp->usb_epc[ep] = epcp;
+  memset(epp, 0, sizeof(USBEndpointState));
+  epp->uep_config  = epcp;
+  usbp->usb_ep[ep] = epp;
 
   /* Low level endpoint activation.*/
-  usb_lld_enable_endpoint(usbp, ep, epcp);
+  usb_lld_init_endpoint(usbp, ep);
 }
 
 /**
@@ -373,7 +380,7 @@ void usbDisableEndpointsI(USBDriver *usbp) {
               "usbDisableEndpointsI(), #1", "invalid state");
 
   for (i = 1; i <= USB_MAX_ENDPOINTS; i++)
-    usbp->usb_epc[i] = NULL;
+    usbp->usb_ep[i] = NULL;
 
   /* Low level endpoints deactivation.*/
   usb_lld_disable_endpoints(usbp);
@@ -396,7 +403,7 @@ void _usb_reset(USBDriver *usbp) {
 
   /* Invalidates all endpoints into the USBDriver structure.*/
   for (i = 0; i <= USB_MAX_ENDPOINTS; i++)
-    usbp->usb_epc[i] = NULL;
+    usbp->usb_ep[i] = NULL;
 
   /* EP0 state machine initialization.*/
   usbp->usb_ep0state     = USB_EP0_WAITING_SETUP;
@@ -404,9 +411,9 @@ void _usb_reset(USBDriver *usbp) {
   /* Low level reset.*/
   usb_lld_reset(usbp);
 
-  /* Low level endpoint zero activation.*/
-  usbp->usb_epc[0] = &usb_lld_ep0config;
-  usb_lld_enable_endpoint(usbp, 0, &usb_lld_ep0config);
+  /* Endpoint zero initialization.*/
+/*  usbp->usb_ep[0].uep_config = &usb_lld_ep0config;
+  usb_lld_init_endpoint(usbp, 0, &usb_lld_ep0config);*/
 }
 
 /**
@@ -432,11 +439,13 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
        when a packet has been sent with size less than the maximum packet
        size.*/
     if ((usbp->usb_ep0max == 0) ||
-        (usbp->usb_ep0lastsize < usb_lld_ep0config.uepc_in_maxsize))
+        (usbp->usb_ep0lastsize < usbp->usb_ep[0]->uep_config->uepc_in_maxsize))
       usbp->usb_ep0state = USB_EP0_WAITING_STS;
     else {
-      usbp->usb_ep0lastsize = usbp->usb_ep0n > usb_lld_ep0config.uepc_in_maxsize ?
-                              usb_lld_ep0config.uepc_in_maxsize : usbp->usb_ep0n;
+      usbp->usb_ep0lastsize =
+          usbp->usb_ep0n > usbp->usb_ep[0]->uep_config->uepc_in_maxsize ?
+                           usbp->usb_ep[0]->uep_config->uepc_in_maxsize :
+                           usbp->usb_ep0n;
       usb_lld_write(usbp, 0, usbp->usb_ep0next, usbp->usb_ep0lastsize);
     }
     return;

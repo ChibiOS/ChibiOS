@@ -25,6 +25,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "ch.h"
 #include "hal.h"
 #include "usb.h"
@@ -42,10 +44,20 @@
 USBDriver USBD1;
 #endif
 
+
+/*===========================================================================*/
+/* Driver local variables.                                                   */
+/*===========================================================================*/
+
+/**
+ * @brief   EP0 state.
+ */
+static USBEndpointState ep0state;
+
 /**
  * @brief   EP0 initialization structure.
  */
-const USBEndpointConfig usb_lld_ep0config = {
+static const USBEndpointConfig ep0config = {
   _usb_ep0in,
   _usb_ep0out,
   0x40,
@@ -54,10 +66,6 @@ const USBEndpointConfig usb_lld_ep0config = {
   0x40,
   0x80
 };
-
-/*===========================================================================*/
-/* Driver local variables.                                                   */
-/*===========================================================================*/
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -112,18 +120,19 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
   while (istr & ISTR_CTR) {
     uint32_t ep;
     uint32_t epr = STM32_USB->EPR[ep = istr & ISTR_EP_ID_MASK];
+    const USBEndpointConfig *epcp = usbp->usb_ep[ep]->uep_config;
 
     if (epr & EPR_CTR_TX) {
       /* IN endpoint, transmission.*/
       EPR_CLEAR_CTR_TX(ep);
-      if (usbp->usb_epc[ep]->uepc_in_cb)
-        usbp->usb_epc[ep]->uepc_in_cb(usbp, ep);
+      if (epcp->uepc_in_cb)
+        epcp->uepc_in_cb(usbp, ep);
     }
     if (epr & EPR_CTR_RX) {
       /* OUT endpoint, receive.*/
       EPR_CLEAR_CTR_RX(ep);
-      if (usbp->usb_epc[ep]->uepc_out_cb)
-        usbp->usb_epc[ep]->uepc_out_cb(usbp, ep);
+      if (epcp->uepc_out_cb)
+        epcp->uepc_out_cb(usbp, ep);
     }
     istr = STM32_USB->ISTR;
   }
@@ -228,6 +237,12 @@ void usb_lld_reset(USBDriver *usbp) {
   if (usbp->usb_config->uc_sof_cb != NULL)
     cntr |= CNTR_SOFM;
   STM32_USB->CNTR = cntr;
+
+  /* EP0 initialization.*/
+  memset(&ep0state, 0, sizeof ep0state);
+  ep0state.uep_config = &ep0config;
+  usbp->usb_ep[0] = &ep0state;
+  usb_lld_init_endpoint(usbp, 0);
 }
 
 /**
@@ -240,6 +255,7 @@ void usb_lld_reset(USBDriver *usbp) {
  */
 void usb_lld_set_address(USBDriver *usbp, uint8_t addr) {
 
+  (void)usbp;
   STM32_USB->DADDR = (uint32_t)addr | DADDR_EF;
 }
 
@@ -248,14 +264,13 @@ void usb_lld_set_address(USBDriver *usbp, uint8_t addr) {
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
- * @param[in] epcp      the endpoint configuration
  *
  * @notapi
  */
-void usb_lld_enable_endpoint(USBDriver *usbp, usbep_t ep,
-                             const USBEndpointConfig *epcp) {
+void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   uint16_t nblocks;
   stm32_usb_descriptor_t *dp;
+  const USBEndpointConfig *epcp = usbp->usb_ep[ep]->uep_config;
 
   /* EPxR register setup.*/
   EPR_SET(ep, epcp->uepc_epr | ep);
@@ -263,7 +278,8 @@ void usb_lld_enable_endpoint(USBDriver *usbp, usbep_t ep,
 
   /* Endpoint size and address initialization.*/
   if (epcp->uepc_out_maxsize > 62)
-    nblocks = (((((epcp->uepc_out_maxsize - 1) | 0x1f) + 1) / 32) << 10) | 0x8000;
+    nblocks = (((((epcp->uepc_out_maxsize - 1) | 0x1f) + 1) / 32) << 10) |
+              0x8000;
   else
     nblocks = ((((epcp->uepc_out_maxsize - 1) | 1) + 1) / 2) << 10;
   dp = USB_GET_DESCRIPTOR(ep);
@@ -271,9 +287,6 @@ void usb_lld_enable_endpoint(USBDriver *usbp, usbep_t ep,
   dp->RXCOUNT = nblocks;
   dp->TXADDR  = epcp->uepc_inaddr;
   dp->RXADDR  = epcp->uepc_outaddr;
-
-  /* Logically enabling the endpoint in the USBDriver structure.*/
-  usbp->usb_epc[ep] = epcp;
 }
 
 /**
@@ -286,6 +299,7 @@ void usb_lld_enable_endpoint(USBDriver *usbp, usbep_t ep,
 void usb_lld_disable_endpoints(USBDriver *usbp) {
   unsigned i;
 
+  (void)usbp;
   for (i = 1; i <= USB_ENDOPOINTS_NUMBER; i++) {
     EPR_TOGGLE(i, 0);
     EPR_SET(i, 0);
@@ -306,6 +320,7 @@ void usb_lld_disable_endpoints(USBDriver *usbp) {
  */
 size_t usb_lld_get_readable(USBDriver *usbp, usbep_t ep) {
 
+  (void)usbp;
   if ((STM32_USB->EPR[ep] & EPR_STAT_RX_MASK) != EPR_STAT_RX_NAK)
     return 0;
   return (size_t)(USB_GET_DESCRIPTOR(ep)->RXCOUNT & RXCOUNT_COUNT_MASK);
@@ -331,6 +346,7 @@ size_t usb_lld_read(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n) {
   stm32_usb_descriptor_t *udp;
   size_t count;
 
+  (void)usbp;
   if ((STM32_USB->EPR[ep] & EPR_STAT_RX_MASK) != EPR_STAT_RX_NAK)
     return 0;
 
@@ -363,7 +379,7 @@ size_t usb_lld_get_writeable(USBDriver *usbp, usbep_t ep) {
 
   if ((STM32_USB->EPR[ep] & EPR_STAT_TX_MASK) != EPR_STAT_TX_NAK)
     return 0;
-  return (size_t)usbp->usb_epc[ep]->uepc_in_maxsize;
+  return (size_t)usbp->usb_ep[ep]->uep_config->uepc_in_maxsize;
 }
 
 /**
@@ -388,6 +404,7 @@ size_t usb_lld_write(USBDriver *usbp, usbep_t ep,
   stm32_usb_descriptor_t *udp;
   size_t count;
 
+  (void)usbp;
   if ((STM32_USB->EPR[ep] & EPR_STAT_TX_MASK) != EPR_STAT_TX_NAK)
     return 0;
 
@@ -414,6 +431,7 @@ size_t usb_lld_write(USBDriver *usbp, usbep_t ep,
  */
 usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
 
+  (void)usbp;
   switch (STM32_USB->EPR[ep] & EPR_STAT_TX_MASK) {
   case EPR_STAT_TX_DIS:
     return EP_STATUS_DISABLED;
@@ -434,6 +452,7 @@ usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
  */
 usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep) {
 
+  (void)usbp;
   switch (STM32_USB->EPR[ep] & EPR_STAT_RX_MASK) {
   case EPR_STAT_RX_DIS:
     return EP_STATUS_DISABLED;
@@ -454,6 +473,7 @@ usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep) {
  */
 void usb_lld_stall_in(USBDriver *usbp, usbep_t ep) {
 
+  (void)usbp;
   EPR_SET_STAT_TX(ep, EPR_STAT_TX_STALL);
 }
 
@@ -467,6 +487,7 @@ void usb_lld_stall_in(USBDriver *usbp, usbep_t ep) {
  */
 void usb_lld_stall_out(USBDriver *usbp, usbep_t ep) {
 
+  (void)usbp;
   EPR_SET_STAT_RX(ep, EPR_STAT_RX_STALL);
 }
 
@@ -479,6 +500,8 @@ void usb_lld_stall_out(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_clear_in(USBDriver *usbp, usbep_t ep) {
+
+  (void)usbp;
 
   /* Makes sure to not put to NAK an endpoint that is already
      transferring.*/
@@ -495,6 +518,8 @@ void usb_lld_clear_in(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_clear_out(USBDriver *usbp, usbep_t ep) {
+
+  (void)usbp;
 
   /* Makes sure to not put to NAK an endpoint that is already
      transferring.*/
