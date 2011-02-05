@@ -68,6 +68,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.2.1 ***
+- FIX: Fixed wrong serial driver macros (bug 3173336).
+
 *** 2.2.0 ***
 - NEW: The Cortex-Mx port now also supports the IAR and Keil compilers.
 - NEW: Improvements to the Cortex-Mx port.

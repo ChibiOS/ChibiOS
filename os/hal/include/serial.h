@@ -141,10 +141,11 @@ struct SerialDriver {
  *          be used to check different channels implementations.
  *
  * @see     chIOPutWouldBlock()
+ * @deprecated
  *
  * @api
  */
-#define sdPutWouldBlock(sdp) chOQIsFull(&(sdp)->oqueue)
+#define sdPutWouldBlock(sdp) chOQIsFullI(&(sdp)->oqueue)
 
 /**
  * @brief   Direct input check on a @p SerialDriver.
@@ -153,10 +154,11 @@ struct SerialDriver {
  *          be used to check different channels implementations.
  *
  * @see     chIOGetWouldBlock()
+ * @deprecated
  *
  * @api
  */
-#define sdGetWouldBlock(sdp) chIQIsEmpty(&(sdp)->iqueue)
+#define sdGetWouldBlock(sdp) chIQIsEmptyI(&(sdp)->iqueue)
 
 /**
  * @brief   Direct write to a @p SerialDriver.
