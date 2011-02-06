@@ -174,6 +174,12 @@ struct I2CSlaveConfig{
 
   bool_t                restart; // send restart or stop event after complete data tx/rx
 
+#if I2C_USE_WAIT
+  /**
+   * @brief Thread waiting for I/O completion.
+   */
+  Thread                *thread;
+#endif /* I2C_USE_WAIT */
 };
 
 

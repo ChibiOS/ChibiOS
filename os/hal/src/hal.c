@@ -81,11 +81,17 @@ void halInit(void) {
 #if HAL_USE_SPI || defined(__DOXYGEN__)
   spiInit();
 #endif
+#if HAL_USE_UART || defined(__DOXYGEN__)
+  uartInit();
+#endif
+#if HAL_USE_USB || defined(__DOXYGEN__)
+  usbInit();
+#endif
 #if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
   mmcInit();
 #endif
-#if HAL_USE_UART || defined(__DOXYGEN__)
-  uartInit();
+#if HAL_USE_SERIAL_USB || defined(__DOXYGEN__)
+  sduInit();
 #endif
   /* Board specific initialization.*/
   boardInit();

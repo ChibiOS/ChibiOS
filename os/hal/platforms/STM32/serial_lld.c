@@ -140,8 +140,6 @@ static void set_error(SerialDriver *sdp, uint16_t sr) {
     sts |= SD_FRAMING_ERROR;
   if (sr & USART_SR_NE)
     sts |= SD_NOISE_ERROR;
-  if (sr & USART_SR_LBD)
-    sts |= SD_BREAK_DETECTED;
   chSysLockFromIsr();
   chIOAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();
@@ -158,27 +156,42 @@ static void serve_interrupt(SerialDriver *sdp) {
   uint16_t sr = u->SR;  /* SR reset step 1.*/
   uint16_t dr = u->DR;  /* SR reset step 2.*/
 
-  if (sr & (USART_SR_LBD | USART_SR_ORE | USART_SR_NE |
-            USART_SR_FE  | USART_SR_PE)) {
+  /* Error condition detection.*/
+  if (sr & (USART_SR_ORE | USART_SR_NE | USART_SR_FE  | USART_SR_PE))
     set_error(sdp, sr);
-    u->SR = 0;    /* Clears the LBD bit in the SR.*/
+  /* Special case, LIN break detection.*/
+  if (sr & USART_SR_LBD) {
+    chSysLockFromIsr();
+    chIOAddFlagsI(sdp, SD_BREAK_DETECTED);
+    chSysUnlockFromIsr();
+    u->SR &= ~USART_SR_LBD;
   }
+  /* Data available.*/
   if (sr & USART_SR_RXNE) {
     chSysLockFromIsr();
     sdIncomingDataI(sdp, (uint8_t)dr);
     chSysUnlockFromIsr();
   }
+  /* Transmission buffer empty.*/
   if ((cr1 & USART_CR1_TXEIE) && (sr & USART_SR_TXE)) {
     msg_t b;
     chSysLockFromIsr();
     b = chOQGetI(&sdp->oqueue);
     if (b < Q_OK) {
       chIOAddFlagsI(sdp, IO_OUTPUT_EMPTY);
-      u->CR1 = cr1 & ~USART_CR1_TXEIE;
+      u->CR1 = (cr1 & ~USART_CR1_TXEIE) | USART_CR1_TCIE;
     }
     else
       u->DR = b;
     chSysUnlockFromIsr();
+  }
+  /* Physical transmission end.*/
+  if (sr & USART_SR_TC) {
+    chSysLockFromIsr();
+    chIOAddFlagsI(sdp, IO_TRANSMISSION_END);
+    chSysUnlockFromIsr();
+    u->CR1 = cr1 & ~USART_CR1_TCIE;
+    u->SR &= ~USART_SR_TC;
   }
 }
 #endif

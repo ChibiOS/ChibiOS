@@ -71,6 +71,7 @@ Within 2.3.x (hopefully)
 ? Make thread functions return void.
 - Introduce a "THREAD" function prefix in order to hide compiler-specific
   optimizations for thread functions.
+- Add a "transmission end" event to the serial device driver model.
 X Add an USB abstract device driver class.
 X USB driver implementation for STM32F103/STM32F102.
 X Add a Serial over USB generic device driver implementing a USB Communication

@@ -120,7 +120,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
 
   // "wait" BTF bit in status register
 //  if ((i2cp->id_state == I2C_MWAIT_TF) && (i2cp->id_i2c->SR1 & I2C_SR1_BTF)){
-  if ((i2cp->id_state == I2C_MWAIT_TF) && (i2cp->id_i2c->SR1 & I2C_SR1_RXNE | I2C_SR1_BTF | I2C_SR1_TXE)){
+  if ((i2cp->id_state == I2C_MWAIT_TF) && (i2cp->id_i2c->SR1 & I2C_SR1_BTF)){
     chSysLockFromIsr();
     i2cp->id_slave_config->id_callback(i2cp, i2cp->id_slave_config);
 
@@ -283,6 +283,9 @@ void i2c_lld_stop(I2CDriver *i2cp) {
  * return TRUE if last byte written
  */
 bool_t i2c_lld_txbyte(I2CDriver *i2cp) {
+  void *txbufhead = i2cp->id_slave_config->txbufhead;
+  void *txbytes = i2cp->id_slave_config->txbytes;
+
   if (i2cp->id_slave_config->txbufhead < i2cp->id_slave_config->txbytes){
     i2cp->id_i2c->DR = i2cp->id_slave_config->txbuf[i2cp->id_slave_config->txbufhead];
     (i2cp->id_slave_config->txbufhead)++;
@@ -316,7 +319,7 @@ bool_t i2c_lld_rxbyte(I2CDriver *i2cp) {
     rxbufhead++;
     return(FALSE);
   }
-
+  i2cp->id_i2c->CR2 &= (~I2C_CR2_ITBUFEN); // disable interrupt
   rxbuf[rxbufhead] = i2cp->id_i2c->DR; // read last byte
   rxbufhead = 0;
   #undef rxbuf

@@ -35,15 +35,15 @@
 /*===========================================================================*/
 
 /** @brief Parity error happened.*/
-#define SD_PARITY_ERROR         16
+#define SD_PARITY_ERROR         32
 /** @brief Framing error happened.*/
-#define SD_FRAMING_ERROR        32
+#define SD_FRAMING_ERROR        64
 /** @brief Overflow happened.*/
-#define SD_OVERRUN_ERROR        64
+#define SD_OVERRUN_ERROR        128
 /** @brief Noise on the line.*/
-#define SD_NOISE_ERROR          128
+#define SD_NOISE_ERROR          256
 /** @brief Break detected.*/
-#define SD_BREAK_DETECTED       256
+#define SD_BREAK_DETECTED       512
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -134,10 +134,11 @@ struct SerialDriver {
  *          be used to check different channels implementations.
  *
  * @see     chIOPutWouldBlock()
+ * @deprecated
  *
  * @api
  */
-#define sdPutWouldBlock(sdp) chOQIsFull(&(sdp)->oqueue)
+#define sdPutWouldBlock(sdp) chOQIsFullI(&(sdp)->oqueue)
 
 /**
  * @brief   Direct input check on a @p SerialDriver.
@@ -146,10 +147,11 @@ struct SerialDriver {
  *          be used to check different channels implementations.
  *
  * @see     chIOGetWouldBlock()
+ * @deprecated
  *
  * @api
  */
-#define sdGetWouldBlock(sdp) chIQIsEmpty(&(sdp)->iqueue)
+#define sdGetWouldBlock(sdp) chIQIsEmptyI(&(sdp)->iqueue)
 
 /**
  * @brief   Direct write to a @p SerialDriver.
@@ -278,19 +280,6 @@ struct SerialDriver {
  */
 #define sdAsynchronousRead(sdp, b, n)                                       \
   chIQReadTimeout(&(sdp)->iqueue, b, n, TIME_IMMEDIATE)
-
-/**
- * @brief   Returns the status change event source.
- * @details The status change event source is broadcasted when the channel
- *          status is updated, the status flags can then be fetched and
- *          cleared by using @p sdGetAndClearFlags().
- *
- * @param[in] ip        pointer to a @p SerialDriver object
- * @return              A pointer to an @p EventSource object.
- *
- * @api
- */
-#define sdGetStatusChangeEventSource(ip) (&((ip)->vmt->sevent))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
