@@ -222,70 +222,35 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @param[in] usbp      pointer to the @p USBDriver object
  * @return              The current frame number.
  *
- * @notapi
+ * @api
  */
 #define usbGetFrameNumber(usbp) usb_lld_get_frame_number(usbp)
 
 /**
- * @brief   Returns the number of bytes readable from the receive packet
- *          buffer.
+ * @brief   Returns the status of an IN endpoint.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
- * @return              The number of bytes that are effectively available.
- * @retval 0            Data not yet available.
+ * @return              The operation status.
+ * @retval FALSE        Endpoint ready.
+ * @retval TRUE         Endpoint busy.
  *
  * @iclass
  */
-#define usbGetReadableI(usbp, ep) usb_lld_get_readable(usbp, ep)
+#define usbGetTransmitStatusI(usbp, ep) (usbp)->ep[ep]->transmitting
 
 /**
- * @brief   Endpoint read.
- * @details The buffered packet is copied into the user buffer and then
- *          the endpoint is brought to the valid state in order to allow
- *          reception of more data.
+ * @brief   Returns the status of an OUT endpoint.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
- * @param[out] buf      buffer where to copy the endpoint data
- * @param[in] n         maximum number of bytes to copy
- * @return              The number of bytes that were effectively available.
- * @retval 0            Data not yet available.
+ * @return              The operation status.
+ * @retval FALSE        Endpoint ready.
+ * @retval TRUE         Endpoint busy.
  *
  * @iclass
  */
-#define usbReadI(usbp, ep, buf, n) usb_lld_read(usbp, ep, buf, n)
-
-/**
- * @brief   Returns the number of bytes writeable to the transmit packet
- *          buffer.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @return              The number of bytes that can be written.
- * @retval 0            Endpoint not ready for transmission.
- *
- * @iclass
- */
-#define usbGetWriteableI(usbp, ep) usb_lld_get_readable(usbp, ep)
-
-/**
- * @brief   Endpoint write.
- * @details The user data is copied in the packer memory and then
- *          the endpoint is brought to the valid state in order to allow
- *          transmission.
- *
- * @param[in] usbp      pointer to the @p USBDriver object triggering the
- *                      callback
- * @param[in] ep        endpoint number
- * @param[in] buf       buffer where to copy the endpoint data
- * @param[in] n         maximum number of bytes to copy
- * @return              The number of bytes that were effectively written.
- * @retval 0            Endpoint not ready for transmission.
- *
- * @iclass
- */
-#define usbWriteI(usbp, ep, buf, n) usb_lld_write(usbp, ep, buf, n)
+#define usbGetReceiveStatusI(usbp, ep) (usbp)->ep[ep]->receiving
 
 /**
  * @brief   Request transfer setup.
@@ -295,7 +260,6 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] buf       pointer to a buffer for the transaction data
  * @param[in] n         number of bytes to be transferred
- * @param[in] endcb     transfer complete callback
  *
  * @api
  */

@@ -192,6 +192,7 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
       }
       else {
         /* Transfer completed, invoking the callback, if defined.*/
+        (usbp)->ep[ep]->transmitting = FALSE;
         if (epcp->in_cb)
           epcp->in_cb(usbp, ep);
       }
@@ -218,6 +219,7 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
         }
         else {
           /* Transfer completed, invoking the callback, if defined.*/
+          (usbp)->ep[ep]->receiving = FALSE;
           if (epcp->out_cb)
             epcp->out_cb(usbp, ep);
         }
@@ -392,120 +394,6 @@ void usb_lld_disable_endpoints(USBDriver *usbp) {
     EPR_SET(i, 0);
   }
 
-}
-
-/**
- * @brief   Returns the number of bytes readable from the receive packet
- *          buffer.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @return              The number of bytes that are effectively available.
- * @retval 0            Data not yet available.
- *
- * @notapi
- */
-size_t usb_lld_get_readable(USBDriver *usbp, usbep_t ep) {
-
-  (void)usbp;
-  if ((STM32_USB->EPR[ep] & EPR_STAT_RX_MASK) != EPR_STAT_RX_NAK)
-    return 0;
-  return (size_t)(USB_GET_DESCRIPTOR(ep)->RXCOUNT & RXCOUNT_COUNT_MASK);
-}
-
-/**
- * @brief   Endpoint read.
- * @details The buffered packet is copied into the user buffer and then
- *          the endpoint is brought to the valid state in order to allow
- *          reception of more data.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[out] buf      buffer where to copy the endpoint data
- * @param[in] n         maximum number of bytes to copy
- * @return              The number of bytes that were effectively available.
- * @retval 0            Data not yet available.
- *
- * @notapi
- */
-size_t usb_lld_read(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n) {
-  uint32_t *pmap;
-  stm32_usb_descriptor_t *udp;
-  size_t count;
-
-  (void)usbp;
-  if ((STM32_USB->EPR[ep] & EPR_STAT_RX_MASK) != EPR_STAT_RX_NAK)
-    return 0;
-
-  udp = USB_GET_DESCRIPTOR(ep);
-  pmap = USB_ADDR2PTR(udp->RXADDR);
-  count = udp->RXCOUNT & RXCOUNT_COUNT_MASK;
-  if (n > count)
-    n = count;
-  count = (n + 1) / 2;
-  while (count) {
-    *(uint16_t *)buf = (uint16_t)*pmap++;
-    buf += 2;
-    count--;
-  }
-  EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
-  return n;
-}
-/**
- * @brief   Returns the number of bytes writeable to the transmit packet
- *          buffer.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @return              The number of bytes that can be written.
- * @retval 0            Endpoint not ready for transmission.
- *
- * @iclass
- */
-size_t usb_lld_get_writeable(USBDriver *usbp, usbep_t ep) {
-
-  if ((STM32_USB->EPR[ep] & EPR_STAT_TX_MASK) != EPR_STAT_TX_NAK)
-    return 0;
-  return (size_t)usbp->ep[ep]->config->in_maxsize;
-}
-
-/**
- * @brief   Endpoint write.
- * @details The user data is copied in the packer memory and then
- *          the endpoint is brought to the valid state in order to allow
- *          transmission.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] buf       buffer where to copy the endpoint data
- * @param[in] n         maximum number of bytes to copy
- * @return              The number of bytes that were effectively written.
- * @retval 0            Endpoint not ready for transmission.
- *
- * @notapi
- */
-size_t usb_lld_write(USBDriver *usbp, usbep_t ep,
-                     const uint8_t *buf,
-                     size_t n) {
-  uint32_t *pmap;
-  stm32_usb_descriptor_t *udp;
-  size_t count;
-
-  (void)usbp;
-  if ((STM32_USB->EPR[ep] & EPR_STAT_TX_MASK) != EPR_STAT_TX_NAK)
-    return 0;
-
-  udp = USB_GET_DESCRIPTOR(ep);
-  pmap = USB_ADDR2PTR(udp->TXADDR);
-  udp->TXCOUNT = n;
-  count = (n + 1) / 2;
-  while (count) {
-    *pmap++ = *(uint16_t *)buf;
-    buf += 2;
-    count--;
-  }
-  EPR_SET_STAT_TX(ep, EPR_STAT_TX_VALID);
-  return n;
 }
 
 /**
