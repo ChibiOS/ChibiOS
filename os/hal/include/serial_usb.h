@@ -114,10 +114,14 @@ typedef struct {
   InputQueue                iqueue;                                         \
   /* Output queue.*/                                                        \
   OutputQueue               oqueue;                                         \
-  /* Input circular buffer.*/                                               \
-  uint8_t                   ib[SERIAL_USB_BUFFERS_SIZE];                    \
-  /* Output circular buffer.*/                                              \
-  uint8_t                   ob[SERIAL_USB_BUFFERS_SIZE];                    \
+  /* Input buffer 1.*/                                                      \
+  uint8_t                   ib1[SERIAL_USB_BUFFERS_SIZE];                   \
+  /* Input buffer 2.*/                                                      \
+  uint8_t                   ib2[SERIAL_USB_BUFFERS_SIZE];                   \
+  /* Output buffer 1.*/                                                     \
+  uint8_t                   ob1[SERIAL_USB_BUFFERS_SIZE];                   \
+  /* Output buffer 2.*/                                                     \
+  uint8_t                   ob2[SERIAL_USB_BUFFERS_SIZE];                   \
   /* End of the mandatory fields.*/                                         \
   /* Current configuration data.*/                                          \
   const SerialUSBConfig     *config;
@@ -164,9 +168,9 @@ extern "C" {
   void sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config);
   void sduStop(SerialUSBDriver *sdup);
   bool_t sduRequestsHook(USBDriver *usbp);
-  void sduDataRequest(USBDriver *usbp, usbep_t ep);
-  void sduDataAvailable(USBDriver *usbp, usbep_t ep);
-  void sduInterruptRequest(USBDriver *usbp, usbep_t ep);
+  void sduDataTransmitted(USBDriver *usbp, usbep_t ep);
+  void sduDataReceived(USBDriver *usbp, usbep_t ep);
+  void sduInterruptTransmitted(USBDriver *usbp, usbep_t ep);
 #ifdef __cplusplus
 }
 #endif

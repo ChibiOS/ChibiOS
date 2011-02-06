@@ -32,7 +32,7 @@
 /*
  * USB driver structure.
  */
-//static SerialUSBDriver SDU1;
+static SerialUSBDriver SDU1;
 
 /*
  * USB Device Descriptor.
@@ -247,29 +247,11 @@ USBEndpointState ep2state;
  */
 USBEndpointState ep3state;
 
-void sduDataRequest(USBDriver *usbp, usbep_t ep) {
-
-  (void)usbp;
-  (void)ep;
-}
-
-void sduInterruptRequest(USBDriver *usbp, usbep_t ep) {
-
-  (void)usbp;
-  (void)ep;
-}
-
-void sduDataAvailable(USBDriver *usbp, usbep_t ep) {
-
-  (void)usbp;
-  (void)ep;
-}
-
 /**
  * @brief   EP1 initialization structure (IN only).
  */
 static const USBEndpointConfig ep1config = {
-  sduDataRequest,
+  sduDataTransmitted,
   NULL,
   0x0040,
   0x0000,
@@ -282,7 +264,7 @@ static const USBEndpointConfig ep1config = {
  * @brief   EP2 initialization structure (IN only).
  */
 static const USBEndpointConfig ep2config = {
-  sduInterruptRequest,
+  sduInterruptTransmitted,
   NULL,
   0x0010,
   0x0000,
@@ -296,7 +278,7 @@ static const USBEndpointConfig ep2config = {
  */
 static const USBEndpointConfig ep3config = {
   NULL,
-  sduDataAvailable,
+  sduDataReceived,
   0x0000,
   0x0040,
   EPR_EP_TYPE_BULK | EPR_STAT_TX_DIS | EPR_STAT_RX_VALID,
@@ -335,7 +317,6 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
 /*
  * Serial over USB driver configuration.
  */
-#if 0
 static const SerialUSBConfig serusbcfg = {
   &USBD1,
   {
@@ -348,8 +329,8 @@ static const SerialUSBConfig serusbcfg = {
   DATA_AVAILABLE_EP,
   INTERRUPT_REQUEST_EP
 };
-#endif
 
+#if 0
 #include "usb_cdc.h"
 static cdc_linecoding_t linecoding = {
   {0x00, 0x96, 0x00, 0x00},             /* 38400.                           */
@@ -375,6 +356,7 @@ bool_t sduRequestsHook(USBDriver *usbp) {
   }
   return FALSE;
 }
+#endif
 
 USBConfig usbconfig = {
   usb_event,
@@ -405,7 +387,6 @@ static msg_t Thread1(void *arg) {
 /*
  * USB CDC loopback thread.
  */
-#if 0
 static WORKING_AREA(waThread2, 256);
 static msg_t Thread2(void *arg) {
   SerialUSBDriver *sdup = arg;
@@ -422,7 +403,6 @@ static msg_t Thread2(void *arg) {
     }
   }
 }
-#endif
 
 /*
  * Application entry point.
@@ -442,10 +422,10 @@ int main(void) {
   /*
    * Activates the USB driver and then the USB bus pull-up on D+.
    */
-  usbStart(&USBD1, &usbconfig);
+//  usbStart(&USBD1, &usbconfig);
+  sduObjectInit(&SDU1);
+  sduStart(&SDU1, &serusbcfg);
   palClearPad(GPIOC, GPIOC_USB_DISC);
-//  sduObjectInit(&SDU1);
-//  sduStart(&SDU1, &serusbcfg);
 
   /*
    * Activates the serial driver 2 using the driver default configuration.
@@ -460,7 +440,7 @@ int main(void) {
   /*
    * Creates the USB CDC loopback thread.
    */
-//  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, &SDU1);
+  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, &SDU1);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

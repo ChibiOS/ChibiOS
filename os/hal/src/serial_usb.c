@@ -206,7 +206,7 @@ void sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config) {
               "invalid state");
   sdup->config = config;
   usbStart(config->usbp, &config->usb_config);
-  config->usbp->usb_param = sdup;
+  config->usbp->param = sdup;
   sdup->state = SDU_READY;
   chSysUnlock();
 }
@@ -245,17 +245,17 @@ void sduStop(SerialUSBDriver *sdup) {
  */
 bool_t sduRequestsHook(USBDriver *usbp) {
 
-  if ((usbp->usb_setup[0] & USB_RTYPE_TYPE_MASK) == USB_RTYPE_TYPE_CLASS) {
-    switch (usbp->usb_setup[1]) {
+  if ((usbp->setup[0] & USB_RTYPE_TYPE_MASK) == USB_RTYPE_TYPE_CLASS) {
+    switch (usbp->setup[1]) {
     case CDC_GET_LINE_CODING:
-      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding), NULL);
+      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding));
       return TRUE;
     case CDC_SET_LINE_CODING:
-      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding), NULL);
+      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding));
       return TRUE;
     case CDC_SET_CONTROL_LINE_STATE:
       /* Nothing to do, there are no control lines.*/
-      usbSetupTransfer(usbp, NULL, 0, NULL);
+      usbSetupTransfer(usbp, NULL, 0);
       return TRUE;
     default:
       return FALSE;
@@ -265,12 +265,12 @@ bool_t sduRequestsHook(USBDriver *usbp) {
 }
 
 /**
- * @brief   Default data request callback.
+ * @brief   Default data transmitted callback.
  * @details The application must use this function as callback for the IN
  *          data endpoint.
  */
-void sduDataRequest(USBDriver *usbp, usbep_t ep) {
-  SerialUSBDriver *sdup = usbp->usb_param;
+void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
+  SerialUSBDriver *sdup = usbp->param;
   size_t n;
 
   chSysLockFromIsr();
@@ -289,12 +289,12 @@ void sduDataRequest(USBDriver *usbp, usbep_t ep) {
 }
 
 /**
- * @brief   Default data available callback.
+ * @brief   Default data received callback.
  * @details The application must use this function as callback for the OUT
  *          data endpoint.
  */
-void sduDataAvailable(USBDriver *usbp, usbep_t ep) {
-  SerialUSBDriver *sdup = usbp->usb_param;
+void sduDataReceived(USBDriver *usbp, usbep_t ep) {
+  SerialUSBDriver *sdup = usbp->param;
 
   chSysLockFromIsr();
   /* Writes to the input queue can only happen when the queue has been
@@ -317,7 +317,7 @@ void sduDataAvailable(USBDriver *usbp, usbep_t ep) {
  * @details The application must use this function as callback for the IN
  *          interrupt endpoint.
  */
-void sduInterruptRequest(USBDriver *usbp, usbep_t ep) {
+void sduInterruptTransmitted(USBDriver *usbp, usbep_t ep) {
 
   (void)usbp;
   (void)ep;
