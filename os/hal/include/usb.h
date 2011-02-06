@@ -73,6 +73,9 @@
 #define USB_FEATURE_DEVICE_REMOTE_WAKEUP    1
 #define USB_FEATURE_TEST_MODE               2
 
+#define USB_EARLY_SET_ADDRESS               0
+#define USB_LATE_SET_ADDRESS                1
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -296,10 +299,9 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  *
  * @api
  */
-#define usbSetupTransfer(usbp, buf, n, endcb) {                             \
-  (usbp)->usb_ep0next  = (buf);                                             \
-  (usbp)->usb_ep0n     = (n);                                               \
-  (usbp)->usb_ep0endcb = (endcb);                                           \
+#define usbSetupTransfer(usbp, buf, n) {                                    \
+  (usbp)->ep0next  = (buf);                                                 \
+  (usbp)->ep0n     = (n);                                                   \
 }
 
 /*===========================================================================*/
@@ -315,6 +317,13 @@ extern "C" {
   void usbStop(USBDriver *usbp);
   void usbInitEndpointI(USBDriver *usbp, usbep_t ep, USBEndpointState *epp,
                         const USBEndpointConfig *epcp);
+  void usbDisableEndpointsI(USBDriver *usbp);
+  bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep,
+                          uint8_t *buf, size_t n);
+  bool_t usbStartTransmitI(USBDriver *usbp, usbep_t ep,
+                           const uint8_t *buf, size_t n);
+  bool_t usbStallReceiveI(USBDriver *usbp, usbep_t ep);
+  bool_t usbStallTransmitI(USBDriver *usbp, usbep_t ep);
   void _usb_reset(USBDriver *usbp);
   void _usb_ep0in(USBDriver *usbp, usbep_t ep);
   void _usb_ep0out(USBDriver *usbp, usbep_t ep);

@@ -32,7 +32,7 @@
 /*
  * USB driver structure.
  */
-static SerialUSBDriver SDU1;
+//static SerialUSBDriver SDU1;
 
 /*
  * USB Device Descriptor.
@@ -247,6 +247,24 @@ USBEndpointState ep2state;
  */
 USBEndpointState ep3state;
 
+void sduDataRequest(USBDriver *usbp, usbep_t ep) {
+
+  (void)usbp;
+  (void)ep;
+}
+
+void sduInterruptRequest(USBDriver *usbp, usbep_t ep) {
+
+  (void)usbp;
+  (void)ep;
+}
+
+void sduDataAvailable(USBDriver *usbp, usbep_t ep) {
+
+  (void)usbp;
+  (void)ep;
+}
+
 /**
  * @brief   EP1 initialization structure (IN only).
  */
@@ -317,6 +335,7 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
 /*
  * Serial over USB driver configuration.
  */
+#if 0
 static const SerialUSBConfig serusbcfg = {
   &USBD1,
   {
@@ -328,6 +347,40 @@ static const SerialUSBConfig serusbcfg = {
   DATA_REQUEST_EP,
   DATA_AVAILABLE_EP,
   INTERRUPT_REQUEST_EP
+};
+#endif
+
+#include "usb_cdc.h"
+static cdc_linecoding_t linecoding = {
+  {0x00, 0x96, 0x00, 0x00},             /* 38400.                           */
+  LC_STOP_1, LC_PARITY_NONE, 8
+};
+bool_t sduRequestsHook(USBDriver *usbp) {
+
+  if ((usbp->setup[0] & USB_RTYPE_TYPE_MASK) == USB_RTYPE_TYPE_CLASS) {
+    switch (usbp->setup[1]) {
+    case CDC_GET_LINE_CODING:
+      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding));
+      return TRUE;
+    case CDC_SET_LINE_CODING:
+      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding));
+      return TRUE;
+    case CDC_SET_CONTROL_LINE_STATE:
+      /* Nothing to do, there are no control lines.*/
+      usbSetupTransfer(usbp, NULL, 0);
+      return TRUE;
+    default:
+      return FALSE;
+    }
+  }
+  return FALSE;
+}
+
+USBConfig usbconfig = {
+  usb_event,
+  get_descriptor,
+  sduRequestsHook,
+  NULL
 };
 
 /*===========================================================================*/
@@ -352,6 +405,7 @@ static msg_t Thread1(void *arg) {
 /*
  * USB CDC loopback thread.
  */
+#if 0
 static WORKING_AREA(waThread2, 256);
 static msg_t Thread2(void *arg) {
   SerialUSBDriver *sdup = arg;
@@ -368,6 +422,7 @@ static msg_t Thread2(void *arg) {
     }
   }
 }
+#endif
 
 /*
  * Application entry point.
@@ -385,11 +440,12 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the USB bus and then the USB driver.
+   * Activates the USB driver and then the USB bus pull-up on D+.
    */
+  usbStart(&USBD1, &usbconfig);
   palClearPad(GPIOC, GPIOC_USB_DISC);
-  sduObjectInit(&SDU1);
-  sduStart(&SDU1, &serusbcfg);
+//  sduObjectInit(&SDU1);
+//  sduStart(&SDU1, &serusbcfg);
 
   /*
    * Activates the serial driver 2 using the driver default configuration.
@@ -404,7 +460,7 @@ int main(void) {
   /*
    * Creates the USB CDC loopback thread.
    */
-  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, &SDU1);
+//  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, &SDU1);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
