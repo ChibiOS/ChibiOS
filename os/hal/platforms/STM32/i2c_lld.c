@@ -122,6 +122,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
 //  if ((i2cp->id_state == I2C_MWAIT_TF) && (i2cp->id_i2c->SR1 & I2C_SR1_BTF)){
   if ((i2cp->id_state == I2C_MWAIT_TF) && (i2cp->id_i2c->SR1 & I2C_SR1_BTF)){
     chSysLockFromIsr();
+    i2cp->id_i2c->CR2 &= (~I2C_CR2_ITEVTEN); // disable BTF interrupt
     i2cp->id_slave_config->id_callback(i2cp, i2cp->id_slave_config);
 
     i = i2cp->id_i2c->SR1;
@@ -283,16 +284,23 @@ void i2c_lld_stop(I2CDriver *i2cp) {
  * return TRUE if last byte written
  */
 bool_t i2c_lld_txbyte(I2CDriver *i2cp) {
-  void *txbufhead = i2cp->id_slave_config->txbufhead;
-  void *txbytes = i2cp->id_slave_config->txbytes;
+#define _txbufhead (i2cp->id_slave_config->txbufhead)
+#define _txbytes (i2cp->id_slave_config->txbytes)
+#define _txbuf (i2cp->id_slave_config->txbuf)
 
-  if (i2cp->id_slave_config->txbufhead < i2cp->id_slave_config->txbytes){
-    i2cp->id_i2c->DR = i2cp->id_slave_config->txbuf[i2cp->id_slave_config->txbufhead];
-    (i2cp->id_slave_config->txbufhead)++;
+  if (_txbufhead < _txbytes){
+    /* disable interrupt to avoid jumping to ISR */
+    if ( _txbytes - _txbufhead == 1)
+      i2cp->id_i2c->CR2 &= (~I2C_CR2_ITBUFEN);
+    i2cp->id_i2c->DR = _txbuf[_txbufhead];
+    (_txbufhead)++;
     return(FALSE);
   }
-  i2cp->id_slave_config->txbufhead = 0;
+  _txbufhead = 0;
   return(TRUE); // last byte written
+#undef _txbufhead
+#undef _txbytes
+#undef _txbuf
 }
 
 
@@ -302,44 +310,49 @@ bool_t i2c_lld_txbyte(I2CDriver *i2cp) {
  */
 bool_t i2c_lld_rxbyte(I2CDriver *i2cp) {
   // temporal variables
-  #define rxbuf     i2cp->id_slave_config->rxbuf
-  #define rxbufhead i2cp->id_slave_config->rxbufhead
-  #define rxdepth   i2cp->id_slave_config->rxdepth
-  #define rxbytes   i2cp->id_slave_config->rxbytes
+#define _rxbuf     (i2cp->id_slave_config->rxbuf)
+#define _rxbufhead (i2cp->id_slave_config->rxbufhead)
+#define _rxdepth   (i2cp->id_slave_config->rxdepth)
+#define _rxbytes   (i2cp->id_slave_config->rxbytes)
 
   /* In order to generate the non-acknowledge pulse after the last received
    * data byte, the ACK bit must be cleared just after reading the second
    * last data byte (after second last RxNE event).
    */
-  if (rxbufhead < rxbytes){
-    rxbuf[rxbufhead] = i2cp->id_i2c->DR;
-    if ((rxbytes - rxbufhead) <= 2){
+  if (_rxbufhead < _rxbytes){
+    _rxbuf[_rxbufhead] = i2cp->id_i2c->DR;
+    if ((_rxbytes - _rxbufhead) <= 2){
       i2cp->id_i2c->CR1 &= (~I2C_CR1_ACK);// clear ACK bit for automatically send NACK
     }
-    rxbufhead++;
+    (_rxbufhead)++;
     return(FALSE);
   }
-  i2cp->id_i2c->CR2 &= (~I2C_CR2_ITBUFEN); // disable interrupt
-  rxbuf[rxbufhead] = i2cp->id_i2c->DR; // read last byte
-  rxbufhead = 0;
-  #undef rxbuf
-  #undef rxbufhead
-  #undef rxdepth
-  #undef rxbytes
+  /* disable interrupt to avoid jumping to ISR */
+  i2cp->id_i2c->CR2 &= (~I2C_CR2_ITBUFEN);
 
+  _rxbuf[_rxbufhead] = i2cp->id_i2c->DR; // read last byte
+  _rxbufhead = 0;
   return(TRUE); // last byte read
+
+#undef _rxbuf
+#undef _rxbufhead
+#undef _rxdepth
+#undef _rxbytes
 }
 
 
 void i2c_lld_master_start(I2CDriver *i2cp){
   i2cp->id_i2c->CR1 |= I2C_CR1_START;
+  while (i2cp->id_i2c->CR1 & I2C_CR1_START);
+
+  // enable interrupts
+  i2cp->id_i2c->CR2 |= I2C_CR2_ITEVTEN;
+  i2cp->id_i2c->CR2 |= I2C_CR2_ITBUFEN;
 }
 
 void i2c_lld_master_stop(I2CDriver *i2cp){
   i2cp->id_i2c->CR1 |= I2C_CR1_STOP;
-  chSysLock();
   while (i2cp->id_i2c->CR1 & I2C_CR1_STOP);
-  chSysUnlock();
 }
 
 
