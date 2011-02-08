@@ -251,11 +251,12 @@ USBEndpointState ep3state;
  * @brief   EP1 initialization structure (IN only).
  */
 static const USBEndpointConfig ep1config = {
+  EP_TYPE_BULK,
   sduDataTransmitted,
   NULL,
   0x0040,
   0x0000,
-  EPR_EP_TYPE_BULK | EPR_STAT_TX_NAK | EPR_STAT_RX_DIS,
+  USB_EP_FLAGS_IN_PACKET_MODE,
   0x00C0,
   0x0000
 };
@@ -264,11 +265,12 @@ static const USBEndpointConfig ep1config = {
  * @brief   EP2 initialization structure (IN only).
  */
 static const USBEndpointConfig ep2config = {
+  EP_TYPE_INTR,
   sduInterruptTransmitted,
   NULL,
   0x0010,
   0x0000,
-  EPR_EP_TYPE_INTERRUPT | EPR_STAT_TX_NAK | EPR_STAT_RX_DIS,
+  0,
   0x0100,
   0x0000
 };
@@ -277,11 +279,12 @@ static const USBEndpointConfig ep2config = {
  * @brief   EP3 initialization structure (OUT only).
  */
 static const USBEndpointConfig ep3config = {
+  EP_TYPE_BULK,
   NULL,
   sduDataReceived,
   0x0000,
   0x0040,
-  EPR_EP_TYPE_BULK | EPR_STAT_TX_DIS | EPR_STAT_RX_VALID,
+  USB_EP_FLAGS_OUT_PACKET_MODE,
   0x0000,
   0x0110
 };

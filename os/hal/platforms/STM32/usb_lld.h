@@ -46,6 +46,16 @@
  */
 #define USB_SET_ADDRESS_MODE                USB_LATE_SET_ADDRESS
 
+/**
+ * @brief   Enables the packet mode for an IN endpoint.
+ */
+#define USB_EP_FLAGS_IN_PACKET_MODE         1
+
+/**
+ * @brief   Enables the packet mode for an OUT endpoint.
+ */
+#define USB_EP_FLAGS_OUT_PACKET_MODE        2
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -99,27 +109,38 @@
  */
 typedef struct {
   /**
+   * @brief   Type of the endpoint.
+   */
+  usbeptype_t                   ep_type;
+  /**
    * @brief   IN endpoint notification callback.
+   * @details This field must be set to @p NULL if the IN endpoint is not
+   *          used.
    */
   usbepcallback_t               in_cb;
   /**
    * @brief   OUT endpoint notification callback.
+   * @details This field must be set to @p NULL if the OUT endpoint is not
+   *          used.
    */
   usbepcallback_t               out_cb;
   /**
    * @brief   IN endpoint maximum packet size.
+   * @details This field must be set to zero if the IN endpoint is not
+   *          used.
    */
   uint16_t                      in_maxsize;
   /**
    * @brief   OUT endpoint maximum packet size.
+   * @details This field must be set to zero if the OUT endpoint is not
+   *          used.
    */
   uint16_t                      out_maxsize;
   /* End of the mandatory fields.*/
   /**
-   * @brief   EPxR register initialization value.
-   * @note    Do not specify the EA field, leave it to zero.
+   * @bief    Endpoint mode flags.
    */
-  uint16_t                      epr;
+  uint16_t                      flags;
   /**
    * @brief   Endpoint IN buffer address as offset in the PMA.
    */

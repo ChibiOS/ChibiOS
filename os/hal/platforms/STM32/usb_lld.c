@@ -58,11 +58,12 @@ static USBEndpointState ep0state;
  * @brief   EP0 initialization structure.
  */
 static const USBEndpointConfig ep0config = {
+  EP_TYPE_CTRL,
   _usb_ep0in,
   _usb_ep0out,
   0x40,
   0x40,
-  EPR_EP_TYPE_CONTROL | EPR_STAT_TX_NAK | EPR_STAT_RX_VALID,
+  0,
   0x40,
   0x80
 };
@@ -178,50 +179,63 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
     if (epr & EPR_CTR_TX) {
       /* IN endpoint, transmission.*/
       EPR_CLEAR_CTR_TX(ep);
-      n = USB_GET_DESCRIPTOR(ep)->TXCOUNT;
-      usbp->ep[ep]->txbuf  += n;
-      usbp->ep[ep]->txcnt  += n;
-      usbp->ep[ep]->txsize -= n;
-      if (usbp->ep[ep]->txsize > 0) {
-        /* Transfer not completed, there are more packets to send.*/
-        if (usbp->ep[ep]->txsize > epcp->in_maxsize)
-          n = epcp->in_maxsize;
-        else
-          n = usbp->ep[ep]->txsize;
-        write_packet(ep, usbp->ep[ep]->txbuf, n);
+      if (epcp->flags & USB_EP_FLAGS_IN_PACKET_MODE) {
+        /* Packet mode, just invokes the callback.*/
+        (usbp)->ep[ep]->transmitting = FALSE;
+        epcp->in_cb(usbp, ep);
       }
       else {
-        /* Transfer completed, invoking the callback, if defined.*/
-        (usbp)->ep[ep]->transmitting = FALSE;
-        if (epcp->in_cb)
+        /* Transaction mode.*/
+        n = USB_GET_DESCRIPTOR(ep)->TXCOUNT;
+        usbp->ep[ep]->txbuf  += n;
+        usbp->ep[ep]->txcnt  += n;
+        usbp->ep[ep]->txsize -= n;
+        if (usbp->ep[ep]->txsize > 0) {
+          /* Transfer not completed, there are more packets to send.*/
+          if (usbp->ep[ep]->txsize > epcp->in_maxsize)
+            n = epcp->in_maxsize;
+          else
+            n = usbp->ep[ep]->txsize;
+          write_packet(ep, usbp->ep[ep]->txbuf, n);
+        }
+        else {
+          /* Transfer completed, invokes the callback.*/
+          (usbp)->ep[ep]->transmitting = FALSE;
           epcp->in_cb(usbp, ep);
+        }
       }
     }
     if (epr & EPR_CTR_RX) {
       EPR_CLEAR_CTR_RX(ep);
       /* OUT endpoint, receive.*/
-      if ((epr & EPR_SETUP) && (ep == 0)) {
-        /* Special case, setup packet for EP0, enforcing a reset of the
-           EP0 state machine for robustness.*/
-        usbp->ep0state = USB_EP0_WAITING_SETUP;
-        read_packet(0, usbp->setup, 8);
+      if (epcp->flags & USB_EP_FLAGS_IN_PACKET_MODE) {
+        /* Packet mode, just invokes the callback.*/
+        (usbp)->ep[ep]->receiving = FALSE;
         epcp->out_cb(usbp, ep);
       }
       else {
-        n = read_packet(ep, usbp->ep[ep]->rxbuf, usbp->ep[ep]->rxsize);
-        usbp->ep[ep]->rxbuf  += n;
-        usbp->ep[ep]->rxcnt  += n;
-        usbp->ep[ep]->rxsize -= n;
-        usbp->ep[ep]->rxpkts -= 1;
-        if (usbp->ep[ep]->rxpkts > 0) {
-          /* Transfer not completed, there are more packets to receive.*/
-          EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
+        if ((epr & EPR_SETUP) && (ep == 0)) {
+          /* Special case, setup packet for EP0, enforcing a reset of the
+             EP0 state machine for robustness.*/
+          usbp->ep0state = USB_EP0_WAITING_SETUP;
+          read_packet(0, usbp->setup, 8);
+          epcp->out_cb(usbp, ep);
         }
         else {
-          /* Transfer completed, invoking the callback, if defined.*/
-          (usbp)->ep[ep]->receiving = FALSE;
-          if (epcp->out_cb)
+          n = read_packet(ep, usbp->ep[ep]->rxbuf, usbp->ep[ep]->rxsize);
+          usbp->ep[ep]->rxbuf  += n;
+          usbp->ep[ep]->rxcnt  += n;
+          usbp->ep[ep]->rxsize -= n;
+          usbp->ep[ep]->rxpkts -= 1;
+          if (usbp->ep[ep]->rxpkts > 0) {
+            /* Transfer not completed, there are more packets to receive.*/
+            EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
+          }
+          else {
+            /* Transfer completed, invokes the callback.*/
+            (usbp)->ep[ep]->receiving = FALSE;
             epcp->out_cb(usbp, ep);
+          }
         }
       }
     }
@@ -357,13 +371,43 @@ void usb_lld_set_address(USBDriver *usbp) {
  * @notapi
  */
 void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
-  uint16_t nblocks;
+  uint16_t nblocks, epr;
   stm32_usb_descriptor_t *dp;
   const USBEndpointConfig *epcp = usbp->ep[ep]->config;
 
+  /* Setting the endpoint type.*/
+  switch (epcp->ep_type) {
+  case EP_TYPE_ISOC:
+    epr = EPR_EP_TYPE_ISO;
+    break;
+  case EP_TYPE_BULK:
+    epr = EPR_EP_TYPE_BULK;
+    break;
+  case EP_TYPE_INTR:
+    epr = EPR_EP_TYPE_INTERRUPT;
+    break;
+  default:
+    epr = EPR_EP_TYPE_CONTROL;
+  }
+
+  /* IN endpoint settings, always in NAK mode initially.*/
+  if (epcp->in_cb)
+    epr |= EPR_STAT_TX_NAK;
+
+  /* OUT endpoint settings. If the endpoint is in packet mode then it must
+     start ready to accept data else it must start in NAK mode.*/
+  if (epcp->out_cb) {
+    if (epcp->flags & USB_EP_FLAGS_IN_PACKET_MODE) {
+      usbp->ep[ep]->receiving = TRUE;
+      epr |= EPR_STAT_RX_VALID;
+    }
+    else
+      epr |= EPR_STAT_RX_NAK;
+  }
+
   /* EPxR register setup.*/
-  EPR_SET(ep, epcp->epr | ep);
-  EPR_TOGGLE(ep, epcp->epr);
+  EPR_SET(ep, epr | ep);
+  EPR_TOGGLE(ep, epr);
 
   /* Endpoint size and address initialization.*/
   if (epcp->out_maxsize > 62)
