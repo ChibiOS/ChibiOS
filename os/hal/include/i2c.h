@@ -33,8 +33,21 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
-
-
+#define  I2CD_NO_ERROR                  0
+/** @brief Bus Error.*/
+#define  I2CD_BUS_ERROR                 0x01
+/** @brief Arbitration Lost (master mode).*/
+#define  I2CD_ARBITRATION_LOST          0x02
+/** @brief Acknowledge Failure.*/
+#define  I2CD_ACK_FAILURE               0x04
+/** @brief Overrun/Underrun.*/
+#define  I2CD_OVERRUN                   0x08
+/** @brief PEC Error in reception.*/
+#define  I2CD_PEC_ERROR                 0x10
+/** @brief Timeout or Tlow Error.*/
+#define  I2CD_TIMEOUT                   0x20
+/** @brief SMBus Alert.*/
+#define  I2CD_SMB_ALERT                 0x40
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -123,7 +136,6 @@ extern "C" {
   void i2cStop(I2CDriver *i2cp);
   void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
   void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
-
 
 
   void i2cMasterStartI(I2CDriver *i2cp,uint16_t header);

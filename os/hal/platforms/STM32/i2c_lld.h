@@ -56,23 +56,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/** @brief No pending conditions.*/
-#define I2C_NO_ERROR          0
-/*@brief external Stop or Start condition during an address or a data transfer*/
-#define I2C_BUS_ERROR         1
-/** @brief */
-#define I2C_ARBITRATION_LOSS  2
-/** @brief */
-#define I2C_ACK_FAIL          4
-/** @brief */
-#define I2C_OVERRUN_UNDERRUN  8
-/** @brief */
-#define I2C_PEC_ERROR         16
-/** @brief */
-#define I2C_TIMEOUT           32
-/** @brief */
-#define I2C_SMBUS_ALERT       64
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -104,10 +87,12 @@ typedef void (*i2ccallback_t)(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
 /**
  * @brief   I2C error notification callback type.
  *
- * @param[in] i2cp      TODO: pointer to the @p I2CDriver object triggering the
+ * @param[in] i2cp      pointer to the @p I2CDriver object triggering the
+ *                      callback
+ * @param[in] i2cscfg   pointer to the @p I2CSlaveConfig object triggering the
  *                      callback
  */
-typedef void (*i2cerrorcallback_t)(void);
+typedef void (*i2cerrorcallback_t)(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
 
 typedef enum {
   opmodeI2C,
@@ -129,7 +114,7 @@ typedef struct {
   uint32_t ClockSpeed;              /*!< Specifies the clock frequency. Must be set to a value lower than 400kHz */
   I2C_DutyCycle_t FastModeDutyCycle;/*!< Specifies the I2C fast mode duty cycle */
   uint8_t OwnAddress7;              /*!< Specifies the first device 7-bit own address. */
-  uint8_t OwnAddress10;             /*!< Specifies the second part of device own address in 10-bit mode. */
+  uint16_t OwnAddress10;            /*!< Specifies the second part of device own address in 10-bit mode. Set to NULL if not used. */
 } I2CConfig;
 
 
@@ -174,12 +159,11 @@ struct I2CSlaveConfig{
   size_t                txbufhead;
 
   uint8_t               addr7;      // 7-bit address of the slave
-  uint8_t               addr10;     // used in 10-bit address mode. Set to NULL if not used
+  uint16_t              addr10;     // used in 10-bit address mode. Set to NULL if not used
 
-  uint16_t              error_flags;
   uint8_t               rw_bit;     // this flag contain R/W bit
   bool_t                restart;    // send restart or stop event after complete data tx/rx
-  //TODO: join error_flags, rw_bit, restart in one word.
+  //TODO: join rw_bit, restart in one word.
 
 #if I2C_USE_WAIT
   /**
@@ -224,11 +208,7 @@ struct I2CDriver{
    * @brief Pointer to the I2Cx registers block.
    */
   I2C_TypeDef           *id_i2c;
-
 } ;
-
-
-
 
 
 /*===========================================================================*/
@@ -255,20 +235,18 @@ extern "C" {
 void i2c_lld_init(void);
 void i2c_lld_start(I2CDriver *i2cp);
 void i2c_lld_stop(I2CDriver *i2cp);
-
 void i2c_lld_set_clock(I2CDriver *i2cp);
+void i2c_lld_set_opmode(I2CDriver *i2cp);
+void i2c_lld_set_own_address(I2CDriver *i2cp);
 
 void i2c_lld_master_start(I2CDriver *i2cp);
 void i2c_lld_master_stop(I2CDriver *i2cp);
 
+
 void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart);
 void i2c_lld_master_transmitI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
-bool_t i2c_lld_txbyte(I2CDriver *i2cp); // helper function
-
 void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
 void i2c_lld_master_receiveI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
-bool_t i2c_lld_rxbyte(I2CDriver *i2cp);
-
 #ifdef __cplusplus
 }
 #endif

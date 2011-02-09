@@ -161,9 +161,6 @@ void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
 
 
 
-
-
-
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 /**
  * @brief   Gains exclusive access to the I2C bus.
