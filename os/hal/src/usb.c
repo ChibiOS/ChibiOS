@@ -361,6 +361,7 @@ size_t usbReadPacketI(USBDriver *usbp, usbep_t ep,
   if (usbp->ep[ep]->receiving)
     return USB_ENDPOINT_BUSY;
 
+  usbp->ep[ep]->receiving = TRUE;
   return usb_lld_read_packet(usbp, ep, buf, n);;
 }
 
@@ -387,6 +388,7 @@ size_t usbWritePacketI(USBDriver *usbp, usbep_t ep,
   if (usbp->ep[ep]->transmitting)
     return USB_ENDPOINT_BUSY;
 
+  usbp->ep[ep]->transmitting = TRUE;
   usb_lld_write_packet(usbp, ep, buf, n);
   return 0;
 }
