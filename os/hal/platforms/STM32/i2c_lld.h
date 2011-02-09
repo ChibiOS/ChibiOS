@@ -109,19 +109,27 @@ typedef void (*i2ccallback_t)(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
  */
 typedef void (*i2cerrorcallback_t)(void);
 
+typedef enum {
+  opmodeI2C,
+  opmodeSMBusDevice,
+  opmodeSMBusHost,
+} I2C_opMode_t;
+
+typedef enum {
+  stdDutyCycle,
+  fastDutyCycle_2,
+  fastDutyCycle_16_9,
+} I2C_DutyCycle_t;
 
 /**
  * @brief Driver configuration structure.
  */
 typedef struct {
-  /**
-   * @brief I2C initialization data.
-   */
-  uint16_t              i2cc_cr1;
-  uint16_t              i2cc_cr2;
-  uint16_t              i2cc_ccr;
-  uint16_t              i2cc_trise;
-
+  I2C_opMode_t opMode;              /*!< Specifies the I2C mode.*/
+  uint32_t ClockSpeed;              /*!< Specifies the clock frequency. Must be set to a value lower than 400kHz */
+  I2C_DutyCycle_t FastModeDutyCycle;/*!< Specifies the I2C fast mode duty cycle */
+  uint8_t OwnAddress7;              /*!< Specifies the first device 7-bit own address. */
+  uint8_t OwnAddress10;             /*!< Specifies the second part of device own address in 10-bit mode. */
 } I2CConfig;
 
 
@@ -165,14 +173,13 @@ struct I2CSlaveConfig{
   size_t                txbytes;
   size_t                txbufhead;
 
-  uint8_t               slave_addr1; // 7-bit address of the slave
-  uint8_t               slave_addr2; // used in 10-bit address mode
+  uint8_t               addr7;      // 7-bit address of the slave
+  uint8_t               addr10;     // used in 10-bit address mode. Set to NULL if not used
 
   uint16_t              error_flags;
-
-  uint8_t               rw_bit; // this flag contain R/W bit
-
-  bool_t                restart; // send restart or stop event after complete data tx/rx
+  uint8_t               rw_bit;     // this flag contain R/W bit
+  bool_t                restart;    // send restart or stop event after complete data tx/rx
+  //TODO: join error_flags, rw_bit, restart in one word.
 
 #if I2C_USE_WAIT
   /**
@@ -212,10 +219,7 @@ struct I2CDriver{
   I2CSlaveConfig        *id_slave_config;
 
   /* End of the mandatory fields.*/
-  /**
-   * @brief Thread waiting for I/O completion.
-   */
-  Thread                *id_thread;
+
   /**
    * @brief Pointer to the I2Cx registers block.
    */
@@ -251,6 +255,8 @@ extern "C" {
 void i2c_lld_init(void);
 void i2c_lld_start(I2CDriver *i2cp);
 void i2c_lld_stop(I2CDriver *i2cp);
+
+void i2c_lld_set_clock(I2CDriver *i2cp);
 
 void i2c_lld_master_start(I2CDriver *i2cp);
 void i2c_lld_master_stop(I2CDriver *i2cp);

@@ -66,17 +66,17 @@ static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
 }
 
 /* This function handle all regular interrupt conditions
- * TODO: 10 bit address handling here
+ * TODO: 10 bit address handling
  */
 static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
+  // debug variables
   int i = 0;
   int n = 0;
   int m = 0;
 
   if ((i2cp->id_state == I2C_READY) && (i2cp->id_i2c->SR1 & I2C_SR1_SB)){// start bit sent
-    //i = i2cp->id_i2c->SR1;
     i2cp->id_state = I2C_MACTIVE;
-    i2cp->id_i2c->DR = (i2cp->id_slave_config->slave_addr1 << 1) |
+    i2cp->id_i2c->DR = (i2cp->id_slave_config->addr7 << 1) |
                         i2cp->id_slave_config->rw_bit; // write slave address in DR
     return;
   }
@@ -109,30 +109,20 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
 
   //receiving bytes one by one
   if ((i2cp->id_state == I2C_MRECEIVE) && (i2cp->id_i2c->SR1 & I2C_SR1_RXNE)){
-//    i = i2cp->id_i2c->SR1;
-//    n = i2cp->id_i2c->SR2;
     if (i2c_lld_rxbyte(i2cp))
       i2cp->id_state = I2C_MWAIT_TF; // last byte read
-//    i = i2cp->id_i2c->SR1;
-//    n = i2cp->id_i2c->SR2;
     return;
   }
 
   // "wait" BTF bit in status register
-//  if ((i2cp->id_state == I2C_MWAIT_TF) && (i2cp->id_i2c->SR1 & I2C_SR1_BTF)){
   if ((i2cp->id_state == I2C_MWAIT_TF) && (i2cp->id_i2c->SR1 & I2C_SR1_BTF)){
     chSysLockFromIsr();
     i2cp->id_i2c->CR2 &= (~I2C_CR2_ITEVTEN); // disable BTF interrupt
     i2cp->id_slave_config->id_callback(i2cp, i2cp->id_slave_config);
-
-    i = i2cp->id_i2c->SR1;
-    n = i2cp->id_i2c->SR2;
-    m = i2cp->id_i2c->CR1;
-
     chSysUnlockFromIsr();
     return;
   }
-  else{ // trap
+  else{ // debugging trap
     i = i2cp->id_i2c->SR1;
     n = i2cp->id_i2c->SR2;
     m = i2cp->id_i2c->CR1;
@@ -234,22 +224,89 @@ void i2c_lld_start(I2CDriver *i2cp) {
   i2cp->id_i2c->CR1 = I2C_CR1_SWRST; // reset i2c peripherial
   i2cp->id_i2c->CR1 = 0;
 
-  i2cp->id_i2c->CR1 = i2cp->id_config->i2cc_cr1;
-  i2cp->id_i2c->CR2 = i2cp->id_config->i2cc_cr2 |
-                            I2C_CR2_ITERREN |
-                            I2C_CR2_ITEVTEN |
-                            I2C_CR2_ITBUFEN |
-                            36; //TODO: replace this by macro calculation
-  /* TODO:
-   * 1. macro timing calculator
-   * 2. parameter checker
-   * 3. definitions in halconf.h: i2c-freq, i2c_mode, etc
-   * 4. trise time calculator/checker
-   */
-  i2cp->id_i2c->CCR = i2cp->id_config->i2cc_ccr | 180;
-  i2cp->id_i2c->TRISE = i2cp->id_config->i2cc_trise | 37;
+  i2c_lld_set_clock(i2cp);
+
   i2cp->id_i2c->CR1 |= 1; // enable interface
 }
+
+
+
+// int32_t clock_speed, I2C_DutyCycle_t duty
+
+void i2c_lld_set_clock(I2CDriver *i2cp) {
+  volatile uint16_t regCCR, regCR2, freq, clock_div;
+  volatile uint16_t pe_bit_saved;
+  int32_t clock_speed = i2cp->id_config->ClockSpeed;
+  I2C_DutyCycle_t duty = i2cp->id_config->FastModeDutyCycle;
+
+  chDbgCheck((i2cp != NULL) && (clock_speed > 0) && (clock_speed <= 4000000),
+             "i2c_lld_set_clock");
+
+  /*---------------------------- CR2 Configuration ------------------------*/
+  /* Get the I2Cx CR2 value */
+  regCR2 = i2cp->id_i2c->CR2;
+
+  /* Clear frequency FREQ[5:0] bits */
+  regCR2 &= (uint16_t)~I2C_CR2_FREQ;
+  /* Set frequency bits depending on pclk1 value */
+  freq = (uint16_t)(STM32_PCLK1 / 1000000);
+  chDbgCheck((freq >= 2) && (freq <= 36),
+              "i2c_lld_set_clock() : Peripheral clock freq. out of range");
+  regCR2 |= freq;
+  i2cp->id_i2c->CR2 = regCR2;
+
+  /*---------------------------- CCR Configuration ------------------------*/
+  pe_bit_saved = (i2cp->id_i2c->CR1 & I2C_CR1_PE);
+  /* Disable the selected I2C peripheral to configure TRISE */
+  i2cp->id_i2c->CR1 &= (uint16_t)~I2C_CR1_PE;
+
+  /* Clear F/S, DUTY and CCR[11:0] bits */
+  regCCR = 0;
+  clock_div = I2C_CCR_CCR;
+  /* Configure clock_div in standard mode */
+  if (clock_speed <= 100000) {
+    chDbgAssert(duty == stdDutyCycle,
+                "i2c_lld_set_clock(), #3", "Invalid standard mode duty cycle");
+    /* Standard mode clock_div calculate: Tlow/Thigh = 1/1 */
+    clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 2));
+    /* Test if CCR value is under 0x4, and set the minimum allowed value */
+    if (clock_div < 0x04) clock_div = 0x04;
+    /* Set clock_div value for standard mode */
+    regCCR |= (clock_div & I2C_CCR_CCR);
+    /* Set Maximum Rise Time for standard mode */
+    i2cp->id_i2c->TRISE = freq + 1;
+  }
+  /* Configure clock_div in fast mode */
+  else if(clock_speed <= 400000) {
+    chDbgAssert((duty == fastDutyCycle_2) || (duty == fastDutyCycle_16_9),
+                "i2c_lld_set_clock(), #3", "Invalid fast mode duty cycle");
+    if(duty == fastDutyCycle_2) {
+      /* Fast mode clock_div calculate: Tlow/Thigh = 2/1 */
+      clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 3));
+    }
+    else if(duty == fastDutyCycle_16_9) {
+      /* Fast mode clock_div calculate: Tlow/Thigh = 16/9 */
+      clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 25));
+      /* Set DUTY bit */
+      regCCR |= I2C_CCR_DUTY;
+    }
+    /* Test if CCR value is under 0x1, and set the minimum allowed value */
+    if(clock_div < 0x01) clock_div = 0x01;
+    /* Set clock_div value and F/S bit for fast mode*/
+    regCCR |= (I2C_CCR_FS | (clock_div & I2C_CCR_CCR));
+    /* Set Maximum Rise Time for fast mode */
+    i2cp->id_i2c->TRISE = (freq * 300 / 1000) + 1;
+  }
+  chDbgAssert((clock_div <= I2C_CCR_CCR),
+      "i2c_lld_set_clock(), #2", "Too low clock clock speed selected");
+
+  /* Write to I2Cx CCR */
+  i2cp->id_i2c->CCR = regCCR;
+
+  /* restore the I2C peripheral enabled state */
+  i2cp->id_i2c->CR1 |= pe_bit_saved;
+}
+
 
 /**
  * @brief Deactivates the I2C peripheral.
@@ -283,7 +340,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
  * write bytes in DR register
  * return TRUE if last byte written
  */
-bool_t i2c_lld_txbyte(I2CDriver *i2cp) {
+inline bool_t i2c_lld_txbyte(I2CDriver *i2cp) {
 #define _txbufhead (i2cp->id_slave_config->txbufhead)
 #define _txbytes (i2cp->id_slave_config->txbytes)
 #define _txbuf (i2cp->id_slave_config->txbuf)
@@ -308,7 +365,7 @@ bool_t i2c_lld_txbyte(I2CDriver *i2cp) {
  * read bytes from DR register
  * return TRUE if last byte read
  */
-bool_t i2c_lld_rxbyte(I2CDriver *i2cp) {
+inline bool_t i2c_lld_rxbyte(I2CDriver *i2cp) {
   // temporal variables
 #define _rxbuf     (i2cp->id_slave_config->rxbuf)
 #define _rxbufhead (i2cp->id_slave_config->rxbufhead)
@@ -319,7 +376,7 @@ bool_t i2c_lld_rxbyte(I2CDriver *i2cp) {
    * data byte, the ACK bit must be cleared just after reading the second
    * last data byte (after second last RxNE event).
    */
-  if (_rxbufhead < _rxbytes){
+  if (_rxbufhead < (_rxbytes - 1)){
     _rxbuf[_rxbufhead] = i2cp->id_i2c->DR;
     if ((_rxbytes - _rxbufhead) <= 2){
       i2cp->id_i2c->CR1 &= (~I2C_CR1_ACK);// clear ACK bit for automatically send NACK
@@ -399,7 +456,7 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t re
     i++; // wait Address sent
   }
 
-  i2cp->id_i2c->DR = (i2cp->id_slave_config->slave_addr1 << 1) | I2C_WRITE; // write slave addres in DR
+  i2cp->id_i2c->DR = (i2cp->id_slave_config->addr7 << 1) | I2C_WRITE; // write slave addres in DR
   while (!(i2cp->id_i2c->SR1 & I2C_SR1_ADDR)){
     i++; // wait Address sent
   }
@@ -447,7 +504,7 @@ void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
   uint16_t tmp = 0;
 
   // send slave addres with read-bit
-  i2cp->id_i2c->DR = (i2cp->id_slave_config->slave_addr1 << 1) | I2C_READ;
+  i2cp->id_i2c->DR = (i2cp->id_slave_config->addr7 << 1) | I2C_READ;
   while (!(i2cp->id_i2c->SR1 & I2C_SR1_ADDR)){
     i++; // wait Address sent
   }
