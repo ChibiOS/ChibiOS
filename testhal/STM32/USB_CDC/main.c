@@ -333,41 +333,6 @@ static const SerialUSBConfig serusbcfg = {
   INTERRUPT_REQUEST_EP
 };
 
-#if 0
-#include "usb_cdc.h"
-static cdc_linecoding_t linecoding = {
-  {0x00, 0x96, 0x00, 0x00},             /* 38400.                           */
-  LC_STOP_1, LC_PARITY_NONE, 8
-};
-bool_t sduRequestsHook(USBDriver *usbp) {
-
-  if ((usbp->setup[0] & USB_RTYPE_TYPE_MASK) == USB_RTYPE_TYPE_CLASS) {
-    switch (usbp->setup[1]) {
-    case CDC_GET_LINE_CODING:
-      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding));
-      return TRUE;
-    case CDC_SET_LINE_CODING:
-      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding));
-      return TRUE;
-    case CDC_SET_CONTROL_LINE_STATE:
-      /* Nothing to do, there are no control lines.*/
-      usbSetupTransfer(usbp, NULL, 0);
-      return TRUE;
-    default:
-      return FALSE;
-    }
-  }
-  return FALSE;
-}
-#endif
-
-USBConfig usbconfig = {
-  usb_event,
-  get_descriptor,
-  sduRequestsHook,
-  NULL
-};
-
 /*===========================================================================*/
 /* Generic code.                                                             */
 /*===========================================================================*/
@@ -425,7 +390,6 @@ int main(void) {
   /*
    * Activates the USB driver and then the USB bus pull-up on D+.
    */
-//  usbStart(&USBD1, &usbconfig);
   sduObjectInit(&SDU1);
   sduStart(&SDU1, &serusbcfg);
   palClearPad(GPIOC, GPIOC_USB_DISC);

@@ -208,7 +208,7 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
     if (epr & EPR_CTR_RX) {
       EPR_CLEAR_CTR_RX(ep);
       /* OUT endpoint, receive.*/
-      if (epcp->flags & USB_EP_FLAGS_IN_PACKET_MODE) {
+      if (epcp->flags & USB_EP_FLAGS_OUT_PACKET_MODE) {
         /* Packet mode, just invokes the callback.*/
         (usbp)->ep[ep]->receiving = FALSE;
         epcp->out_cb(usbp, ep);
@@ -397,7 +397,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   /* OUT endpoint settings. If the endpoint is in packet mode then it must
      start ready to accept data else it must start in NAK mode.*/
   if (epcp->out_cb) {
-    if (epcp->flags & USB_EP_FLAGS_IN_PACKET_MODE) {
+    if (epcp->flags & USB_EP_FLAGS_OUT_PACKET_MODE) {
       usbp->ep[ep]->receiving = TRUE;
       epr |= EPR_STAT_RX_VALID;
     }
