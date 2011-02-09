@@ -76,6 +76,11 @@
 #define USB_EARLY_SET_ADDRESS               0
 #define USB_LATE_SET_ADDRESS                1
 
+/**
+ * @brief   Returned by some functions to report a busy endpoint.
+ */
+#define USB_ENDPOINT_BUSY                   ((size_t)0xFFFFFFFF)
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -233,7 +238,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @param[in] ep        endpoint number
  * @return              The operation status.
  * @retval FALSE        Endpoint ready.
- * @retval TRUE         Endpoint busy.
+ * @retval TRUE         Endpoint transmitting.
  *
  * @iclass
  */
@@ -246,7 +251,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @param[in] ep        endpoint number
  * @return              The operation status.
  * @retval FALSE        Endpoint ready.
- * @retval TRUE         Endpoint busy.
+ * @retval TRUE         Endpoint receiving.
  *
  * @iclass
  */
@@ -282,6 +287,10 @@ extern "C" {
   void usbInitEndpointI(USBDriver *usbp, usbep_t ep, USBEndpointState *epp,
                         const USBEndpointConfig *epcp);
   void usbDisableEndpointsI(USBDriver *usbp);
+  size_t usbReadPacketI(USBDriver *usbp, usbep_t ep,
+                        uint8_t *buf, size_t n);
+  size_t usbWritePacketI(USBDriver *usbp, usbep_t ep,
+                         const uint8_t *buf, size_t n);
   bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep,
                           uint8_t *buf, size_t n);
   bool_t usbStartTransmitI(USBDriver *usbp, usbep_t ep,

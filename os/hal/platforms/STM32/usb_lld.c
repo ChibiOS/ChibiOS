@@ -483,6 +483,77 @@ usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
 }
 
 /**
+ * @brief   Reads a packet from the dedicated packet buffer.
+ * @pre     In order to use this function he endpoint must have been
+ *          initialized in packet mode.
+ * @post    The endpoint is ready to accept another packet.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[out] buf      buffer where to copy the packet data
+ * @param[in] n         maximum number of bytes to copy. This value must
+ *                      not exceed the maximum packet size for this endpoint.
+ * @return              The received packet size regardless the specified
+ *                      @p n parameter.
+ * @retval 0            Zero size packet received.
+ *
+ * @notapi
+ */
+size_t usb_lld_read_packet(USBDriver *usbp, usbep_t ep,
+                           uint8_t *buf, size_t n) {
+  uint32_t *pmap;
+  stm32_usb_descriptor_t *udp;
+  size_t count;
+
+  (void)usbp;
+  udp = USB_GET_DESCRIPTOR(ep);
+  pmap = USB_ADDR2PTR(udp->RXADDR);
+  count = udp->RXCOUNT & RXCOUNT_COUNT_MASK;
+  if (n > count)
+    n = count;
+  n = (n + 1) / 2;
+  while (n > 0) {
+    *(uint16_t *)buf = (uint16_t)*pmap++;
+    buf += 2;
+    n--;
+  }
+  EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
+  return count;
+}
+
+/**
+ * @brief   Writes a packet to the dedicated packet buffer.
+ * @pre     In order to use this function he endpoint must have been
+ *          initialized in packet mode.
+ * @post    The endpoint is ready to transmit the packet.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] buf       buffer where to fetch the packet data
+ * @param[in] n         maximum number of bytes to copy. This value must
+ *                      not exceed the maximum packet size for this endpoint.
+ *
+ * @notapi
+ */
+void usb_lld_write_packet(USBDriver *usbp, usbep_t ep,
+                          const uint8_t *buf, size_t n) {
+  uint32_t *pmap;
+  stm32_usb_descriptor_t *udp;
+
+  (void)usbp;
+  udp = USB_GET_DESCRIPTOR(ep);
+  pmap = USB_ADDR2PTR(udp->TXADDR);
+  udp->TXCOUNT = n;
+  n = (n + 1) / 2;
+  while (n > 0) {
+    *pmap++ = *(uint16_t *)buf;
+    buf += 2;
+    n--;
+  }
+  EPR_SET_STAT_TX(ep, EPR_STAT_TX_VALID);
+}
+
+/**
  * @brief   Starts a receive operation on an OUT endpoint.
  *
  * @param[in] usbp      pointer to the @p USBDriver object

@@ -34,7 +34,7 @@
  * Board frequencies.
  */
 #if !defined(EXTCLK)
-#define EXTCLK          8000000
+#define EXTCLK          12000000
 #endif
 
 /*

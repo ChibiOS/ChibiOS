@@ -333,6 +333,10 @@ extern "C" {
   void usb_lld_disable_endpoints(USBDriver *usbp);
   usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep);
   usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep);
+  size_t usb_lld_read_packet(USBDriver *usbp, usbep_t ep,
+                             uint8_t *buf, size_t n);
+  void usb_lld_write_packet(USBDriver *usbp, usbep_t ep,
+                            const uint8_t *buf, size_t n);
   void usb_lld_start_out(USBDriver *usbp, usbep_t ep,
                          uint8_t *buf, size_t n);
   void usb_lld_start_in(USBDriver *usbp, usbep_t ep,

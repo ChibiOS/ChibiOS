@@ -338,15 +338,73 @@ void usbDisableEndpointsI(USBDriver *usbp) {
 }
 
 /**
- * @brief   Starts a receive operation on an OUT endpoint.
+ * @brief   Reads a packet from the dedicated packet buffer.
+ * @pre     In order to use this function he endpoint must have been
+ *          initialized in packet mode.
+ * @post    The endpoint is ready to accept another packet.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
- * @param[out] buf      buffer where to copy the endpoint data
- * @param[in] n         maximum number of bytes to copy in the buffer
+ * @param[out] buf      buffer where to copy the packet data
+ * @param[in] n         maximum number of bytes to copy. This value must
+ *                      not exceed the maximum packet size for this endpoint.
+ * @return              The received packet size regardless the specified
+ *                      @p n parameter.
+ * @retval USB_ENDPOINT_BUSY Endpoint busy receiving.
+ * @retval 0            Zero size packet received.
+ *
+ * @iclass
+ */
+size_t usbReadPacketI(USBDriver *usbp, usbep_t ep,
+                      uint8_t *buf, size_t n) {
+
+  if (usbp->ep[ep]->receiving)
+    return USB_ENDPOINT_BUSY;
+
+  return usb_lld_read_packet(usbp, ep, buf, n);;
+}
+
+/**
+ * @brief   Writes a packet to the dedicated packet buffer.
+ * @pre     In order to use this function he endpoint must have been
+ *          initialized in packet mode.
+ * @post    The endpoint is ready to transmit the packet.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] buf       buffer where to fetch the packet data
+ * @param[in] n         maximum number of bytes to copy. This value must
+ *                      not exceed the maximum packet size for this endpoint.
  * @return              The operation status.
- * @retval FALSE        Receive operation started.
- * @retval TRUE         Endpoint already receiving.
+ * @retval USB_ENDPOINT_BUSY Endpoint busy transmitting.
+ * @retval 0            Operation complete.
+ *
+ * @iclass
+ */
+size_t usbWritePacketI(USBDriver *usbp, usbep_t ep,
+                       const uint8_t *buf, size_t n) {
+
+  if (usbp->ep[ep]->transmitting)
+    return USB_ENDPOINT_BUSY;
+
+  usb_lld_write_packet(usbp, ep, buf, n);
+  return 0;
+}
+
+/**
+ * @brief   Starts a receive operation on an OUT endpoint.
+ * @pre     In order to use this function he endpoint must have been
+ *          initialized in transaction mode.
+ * @post    The endpoint callback is invoked when the transfer has been
+ *          completed.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[out] buf      buffer where to copy the received data
+ * @param[in] n         maximum number of bytes to copy
+ * @return              The operation status.
+ * @retval FALSE        Operation complete.
+ * @retval TRUE         Endpoint busy receiving.
  *
  * @iclass
  */
@@ -362,14 +420,18 @@ bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep,
 
 /**
  * @brief   Starts a transmit operation on an IN endpoint.
+ * @pre     In order to use this function he endpoint must have been
+ *          initialized in transaction mode.
+ * @post    The endpoint callback is invoked when the transfer has been
+ *          completed.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
- * @param[in] buf       buffer where to fetch the endpoint data
+ * @param[in] buf       buffer where to fetch the data to be transmitted
  * @param[in] n         maximum number of bytes to copy
  * @return              The operation status.
- * @retval FALSE        Transmit operation started.
- * @retval TRUE         Endpoint already transmitting.
+ * @retval FALSE        Operation complete.
+ * @retval TRUE         Endpoint busy transmitting.
  *
  * @iclass
  */

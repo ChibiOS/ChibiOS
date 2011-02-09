@@ -119,9 +119,9 @@ static void inotify(GenericQueue *qp) {
      emptied, then a whole packet is loaded in the queue.*/
   if (chIQIsEmptyI(&sdup->iqueue)) {
 
-    n = usbReadI(sdup->config->usbp, sdup->config->data_available_ep,
-                 sdup->iqueue.q_buffer, SERIAL_USB_BUFFERS_SIZE);
-    if (n > 0) {
+    n = usbReadPacketI(sdup->config->usbp, sdup->config->data_available_ep,
+                       sdup->iqueue.q_buffer, SERIAL_USB_BUFFERS_SIZE);
+    if (n != USB_ENDPOINT_BUSY) {
       sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
       chSemSetCounterI(&sdup->iqueue.q_sem, n);
     }
@@ -137,9 +137,9 @@ static void onotify(GenericQueue *qp) {
 
   /* If there is any data in the output queue then it is sent within a
      single packet and the queue is emptied.*/
-  n = usbWriteI(sdup->config->usbp, sdup->config->data_request_ep,
-                sdup->oqueue.q_buffer, chOQGetFullI(&sdup->oqueue));
-  if (n > 0) {
+  n = usbWritePacketI(sdup->config->usbp, sdup->config->data_request_ep,
+                      sdup->oqueue.q_buffer, chOQGetFullI(&sdup->oqueue));
+  if (n != USB_ENDPOINT_BUSY) {
     sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
     chSemSetCounterI(&sdup->oqueue.q_sem, SERIAL_USB_BUFFERS_SIZE);
   }
@@ -278,8 +278,8 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
      single packet and the queue is emptied.*/
   n = chOQGetFullI(&sdup->oqueue);
   if (n > 0) {
-    n = usbWriteI(usbp, ep, sdup->oqueue.q_buffer, n);
-    if (n > 0) {
+    n = usbWritePacketI(usbp, ep, sdup->oqueue.q_buffer, n);
+    if (n != USB_ENDPOINT_BUSY) {
       sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
       chSemSetCounterI(&sdup->oqueue.q_sem, SERIAL_USB_BUFFERS_SIZE);
       chIOAddFlagsI(sdup, IO_OUTPUT_EMPTY);
@@ -302,8 +302,9 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
   if (chIQIsEmptyI(&sdup->iqueue)) {
     size_t n;
 
-    n = usbReadI(usbp, ep, sdup->iqueue.q_buffer, SERIAL_USB_BUFFERS_SIZE);
-    if (n > 0) {
+    n = usbReadPacketI(usbp, ep, sdup->iqueue.q_buffer,
+                       SERIAL_USB_BUFFERS_SIZE);
+    if (n != USB_ENDPOINT_BUSY) {
       sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
       chSemSetCounterI(&sdup->iqueue.q_sem, n);
       chIOAddFlagsI(sdup, IO_INPUT_AVAILABLE);
