@@ -138,19 +138,19 @@ struct I2CSlaveConfig{
    * @brief Callback pointer.
    * @note  Transfer finished callback. Invoke when all data transferred, or
    *        by DMA buffer events
-   *        @p NULL then the callback is disabled.
+   *        If set to @p NULL then the callback is disabled.
    */
   i2ccallback_t         id_callback;
   /**
    * @brief Callback pointer.
-   * @note  TODO: I don't know, when this callback is inwoked
-   *        @p NULL then the callback is disabled.
+   * @note  This callback will be invoked when error condition occur.
+   *        If set to @p NULL then the callback is disabled.
    */
   i2cerrorcallback_t    id_err_callback;
 
   i2cblock_t            *rxbuf;     // pointer to buffer
   size_t                rxdepth;    // depth of buffer
-  size_t                rxbytes;    // count of bytes to sent in one sending
+  size_t                rxbytes;    // count of bytes to sent in one transmission
   size_t                rxbufhead;  // head pointer to current data byte
 
   i2cblock_t            *txbuf;
@@ -158,12 +158,19 @@ struct I2CSlaveConfig{
   size_t                txbytes;
   size_t                txbufhead;
 
-  uint8_t               addr7;      // 7-bit address of the slave
-  uint16_t              addr10;     // used in 10-bit address mode. Set to NULL if not used
+  /**
+   * @brief   Address word.
+   * @details The MSB used to switch between 10-bit and 7-bit modes
+   *          (0 denotes 7-bit mode). Bits 0..9 contain slave address.
+   *          Bits 10..14 ignores in 10-bit mode.
+   *          Bits 7..14 ignores in 7-bot mode.
+   */
+  uint16_t              address;
 
+  //TODO: join rw_bit, restart in one word.
   uint8_t               rw_bit;     // this flag contain R/W bit
   bool_t                restart;    // send restart or stop event after complete data tx/rx
-  //TODO: join rw_bit, restart in one word.
+
 
 #if I2C_USE_WAIT
   /**

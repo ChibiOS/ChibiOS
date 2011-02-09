@@ -112,10 +112,23 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
 
   if ((i2cp->id_state == I2C_READY) && (i2cp->id_i2c->SR1 & I2C_SR1_SB)){// start bit sent
     i2cp->id_state = I2C_MACTIVE;
-    //TODO: 10 bit address handling
-    i2cp->id_i2c->DR = (i2cp->id_slave_config->addr7 << 1) |
+    /*TODO: 10 bit address handling
+    In 10-bit addressing mode,
+    – To enter Transmitter mode, a master sends the header (11110xx0) and then the
+    slave address, (where xx denotes the two most significant bits of the address).
+    – To enter Receiver mode, a master sends the header (11110xx0) and then the
+    slave address. Then it should send a repeated Start condition followed by the
+    header (11110xx1), (where xx denotes the two most significant bits of the
+    address).
+    The TRA bit indicates whether the master is in Receiver or Transmitter mode.*/
+
+    i2cp->id_i2c->DR = (i2cp->id_slave_config->address << 1) |
                         i2cp->id_slave_config->rw_bit; // write slave address in DR
     return;
+  }
+
+  if ((i2cp->id_state == I2C_MACTIVE) && (i2cp->id_i2c->SR1 & I2C_SR1_ADD10)){// header sent
+
   }
 
   // "wait" interrupt with ADDR flag
@@ -468,7 +481,7 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t re
   i2cp->id_i2c->CR1 |= I2C_CR1_START; // generate start condition
   while (!(i2cp->id_i2c->SR1 & I2C_SR1_SB)); // wait Address sent
 
-  i2cp->id_i2c->DR = (i2cp->id_slave_config->addr7 << 1) | I2C_WRITE; // write slave addres in DR
+  i2cp->id_i2c->DR = (i2cp->id_slave_config->address << 1) | I2C_WRITE; // write slave addres in DR
   while (!(i2cp->id_i2c->SR1 & I2C_SR1_ADDR)); // wait Address sent
   i = i2cp->id_i2c->SR2;
   i = i2cp->id_i2c->SR1; //i2cp->id_i2c->SR1 &= (~I2C_SR1_ADDR); // clear ADDR bit
@@ -505,7 +518,7 @@ void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
   uint16_t i = 0;
 
   // send slave addres with read-bit
-  i2cp->id_i2c->DR = (i2cp->id_slave_config->addr7 << 1) | I2C_READ;
+  i2cp->id_i2c->DR = (i2cp->id_slave_config->address << 1) | I2C_READ;
   while (!(i2cp->id_i2c->SR1 & I2C_SR1_ADDR)); // wait Address sent
 
   i = i2cp->id_i2c->SR2;
