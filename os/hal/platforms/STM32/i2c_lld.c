@@ -225,14 +225,11 @@ void i2c_lld_start(I2CDriver *i2cp) {
   i2cp->id_i2c->CR1 = 0;
 
   i2c_lld_set_clock(i2cp);
-
+  i2cp->id_i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN | I2C_CR2_ITBUFEN;
   i2cp->id_i2c->CR1 |= 1; // enable interface
 }
 
-
-
-// int32_t clock_speed, I2C_DutyCycle_t duty
-
+//TODO: dox here
 void i2c_lld_set_clock(I2CDriver *i2cp) {
   volatile uint16_t regCCR, regCR2, freq, clock_div;
   volatile uint16_t pe_bit_saved;
@@ -403,8 +400,7 @@ void i2c_lld_master_start(I2CDriver *i2cp){
   while (i2cp->id_i2c->CR1 & I2C_CR1_START);
 
   // enable interrupts
-  i2cp->id_i2c->CR2 |= I2C_CR2_ITEVTEN;
-  i2cp->id_i2c->CR2 |= I2C_CR2_ITBUFEN;
+  i2cp->id_i2c->CR2 |= I2C_CR2_ITEVTEN | I2C_CR2_ITBUFEN;
 }
 
 void i2c_lld_master_stop(I2CDriver *i2cp){
