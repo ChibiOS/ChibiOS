@@ -160,7 +160,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
   }
 
   // "wait" interrupt with ADDR (ADD10 in 10-bit receiver mode) flag
-  if ((i2cp->id_state == I2C_MWAIT_ADDR_ACK) && (i2cp->id_i2c->SR1 & I2C_SR1_ADDR & I2C_SR1_ADD10)){// address ACKed
+  if ((i2cp->id_state == I2C_MWAIT_ADDR_ACK) && (i2cp->id_i2c->SR1 & (I2C_SR1_ADDR | I2C_SR1_ADD10))){// address ACKed
     if(i2cp->id_i2c->SR2 & I2C_SR2_TRA){// I2C is transmitting data
       i2cp->id_state = I2C_MTRANSMIT; // change state
       i2c_lld_txbyte(i2cp); // send first byte
