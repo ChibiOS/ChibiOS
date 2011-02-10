@@ -110,32 +110,59 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
   int n = 0;
   int m = 0;
 
+  /*  In 10-bit addressing mode,
+  – To enter Transmitter mode, a master sends the header (11110xx0) and then the
+  slave address, (where xx denotes the two most significant bits of the address).
+  – To enter Receiver mode, a master sends the header (11110xx0) and then the
+  slave address. Then it should send a repeated Start condition followed by the
+  header (11110xx1), (where xx denotes the two most significant bits of the
+  address).
+  The TRA bit indicates whether the master is in Receiver or Transmitter mode.*/
+
   if ((i2cp->id_state == I2C_READY) && (i2cp->id_i2c->SR1 & I2C_SR1_SB)){// start bit sent
     i2cp->id_state = I2C_MACTIVE;
-    /*TODO: 10 bit address handling
-    In 10-bit addressing mode,
-    – To enter Transmitter mode, a master sends the header (11110xx0) and then the
-    slave address, (where xx denotes the two most significant bits of the address).
-    – To enter Receiver mode, a master sends the header (11110xx0) and then the
-    slave address. Then it should send a repeated Start condition followed by the
-    header (11110xx1), (where xx denotes the two most significant bits of the
-    address).
-    The TRA bit indicates whether the master is in Receiver or Transmitter mode.*/
 
-    i2cp->id_i2c->DR = (i2cp->id_slave_config->address << 1) |
-                        i2cp->id_slave_config->rw_bit; // write slave address in DR
+    if(!(i2cp->id_slave_config->address & 0x8000)){ // slave address is 7-bit
+      i2cp->id_i2c->DR = ((i2cp->id_slave_config->address & 0x7F) << 1) |
+                        i2cp->id_slave_config->rw_bit;
+      i2cp->id_state = I2C_MWAIT_ADDR_ACK;
+      return;
+    }
+    else{ // slave address is 10-bit
+      i2cp->id_state = I2C_10BIT_HANDSHAKE;
+      // send MSB with header. LSB = 0.
+      i2cp->id_i2c->DR = ((i2cp->id_slave_config->address >> 7) & 0x6) | 0xF0;
+      return;
+    }
+  }
+
+  // "wait" interrupt with ADD10 flag
+  if ((i2cp->id_state == I2C_10BIT_HANDSHAKE) && (i2cp->id_i2c->SR1 & I2C_SR1_ADD10)){
+    i2cp->id_i2c->DR = i2cp->id_slave_config->address & 0x00FF; // send remaining bits of address
+    if (!(i2cp->id_slave_config->rw_bit))
+      // in transmit mode there is nothing to do with 10-bit handshaking
+      i2cp->id_state = I2C_MWAIT_ADDR_ACK;
     return;
   }
 
-  if ((i2cp->id_state == I2C_MACTIVE) && (i2cp->id_i2c->SR1 & I2C_SR1_ADD10)){// header sent
-
+  // "wait" interrupt with ADDR
+  if ((i2cp->id_state == I2C_10BIT_HANDSHAKE) && (i2cp->id_i2c->SR1 & I2C_SR1_ADDR)){// address ACKed
+    i2cp->id_i2c->CR1 |= I2C_CR1_START;
+    return;
   }
 
-  // "wait" interrupt with ADDR flag
-  if ((i2cp->id_state == I2C_MACTIVE) && (i2cp->id_i2c->SR1 & I2C_SR1_ADDR)){// address successfully sent
-    if(i2cp->id_i2c->SR2 & I2C_SR2_TRA){
-      i2c_lld_txbyte(i2cp); // send first byte
+  if ((i2cp->id_state == I2C_10BIT_HANDSHAKE) && (i2cp->id_i2c->SR1 & I2C_SR1_SB)){// restart generated
+    // send MSB with header. LSB = 1
+    i2cp->id_i2c->DR = ((i2cp->id_slave_config->address >> 7) & 0x6) | 0xF1;
+    i2cp->id_state = I2C_MWAIT_ADDR_ACK;
+    return;
+  }
+
+  // "wait" interrupt with ADDR (ADD10 in 10-bit receiver mode) flag
+  if ((i2cp->id_state == I2C_MWAIT_ADDR_ACK) && (i2cp->id_i2c->SR1 & I2C_SR1_ADDR & I2C_SR1_ADD10)){// address ACKed
+    if(i2cp->id_i2c->SR2 & I2C_SR2_TRA){// I2C is transmitting data
       i2cp->id_state = I2C_MTRANSMIT; // change state
+      i2c_lld_txbyte(i2cp); // send first byte
       return;
     }
     else {
@@ -145,7 +172,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
        */
       if (i2cp->id_slave_config->rxbytes > 1)
         i2cp->id_i2c->CR1 |= I2C_CR1_ACK; // set ACK bit
-      i2cp->id_state = I2C_MRECEIVE; // change status
+      i2cp->id_state = I2C_MRECEIVE; // change state
       return;
     }
   }

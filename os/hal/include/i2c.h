@@ -71,14 +71,16 @@
  * @brief   Driver state machine possible states.
  */
 typedef enum {
-  I2C_UNINIT = 0,                   /**< Not initialized.                   */
-  I2C_STOP = 1,                     /**< Stopped.                           */
-  I2C_READY = 2,                    /**< Ready.                             */
-  I2C_MACTIVE = 3,                  /**< START condition sent.              */
-  I2C_MTRANSMIT = 4,                /**< Master transmitting.               */
-  I2C_MRECEIVE = 5,                 /**< Master receiving.                  */
-  I2C_MWAIT_TF = 6,                 /**< Master wait Transmission Finished  */
-  I2C_MERROR = 7                    /**< Error condition.                   */
+  I2C_UNINIT = 0,             /**< Not initialized.                          */
+  I2C_STOP = 1,               /**< Stopped.                                  */
+  I2C_READY = 2,              /**< Ready. Start condition generated.         */
+  I2C_MACTIVE = 3,            /**< I2C configured and waiting start cond.    */
+  I2C_10BIT_HANDSHAKE = 4,    /**< 10-bit address sending                    */
+  I2C_MWAIT_ADDR_ACK = 5,     /**< Waiting ACK on address sending.           */
+  I2C_MTRANSMIT = 6,          /**< Master transmitting.                      */
+  I2C_MRECEIVE = 7,           /**< Master receiving.                         */
+  I2C_MWAIT_TF = 8,           /**< Master wait Transmission Finished         */
+  I2C_MERROR = 9              /**< Error condition.                          */
 } i2cstate_t;
 
 #include "i2c_lld.h"
