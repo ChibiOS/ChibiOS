@@ -70,13 +70,12 @@
 
 *** 2.3.0 ***
 - FIX: Fixed wrong serial driver macros (bug 3173336)(backported to 2.2.1).
-- NEW: Added experimental generic USB driver, it will certainly change in next
+- NEW: Added experimental generic USB driver, it will evolve in next
   releases.
 - NEW: Added an experimental USB driver implementation for STM32.
 - NEW: Added experimental "serial over USB" driver, it implements a
   Communication Device Class exposing it as a normal serial driver to
-  applications, it will certainly change in next
-  releases.
+  applications, probably it will evolve in next releases.
 - NEW: Added USB CDC loopback test application.
 - NEW: Implemented new event IO_TRANSMISSION_END in the generic serial
   driver. This event marks the physical transmission end of a data stream.
