@@ -250,9 +250,9 @@ void i2c_lld_master_start(I2CDriver *i2cp);
 void i2c_lld_master_stop(I2CDriver *i2cp);
 
 
-void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart);
+void i2c_lld_master_transmit_NI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart);
 void i2c_lld_master_transmitI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
-void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
+void i2c_lld_master_receive_NI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
 void i2c_lld_master_receiveI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
 #ifdef __cplusplus
 }

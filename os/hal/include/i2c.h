@@ -80,7 +80,12 @@ typedef enum {
   I2C_MTRANSMIT = 6,          /**< Master transmitting.                      */
   I2C_MRECEIVE = 7,           /**< Master receiving.                         */
   I2C_MWAIT_TF = 8,           /**< Master wait Transmission Finished         */
-  I2C_MERROR = 9              /**< Error condition.                          */
+  I2C_MERROR = 9,             /**< Error condition.                          */
+
+  // slave part
+  I2C_SACTIVE = 10,
+  I2C_STRANSMIT = 11,
+  I2C_SRECEIVE = 12,
 } i2cstate_t;
 
 #include "i2c_lld.h"

@@ -82,7 +82,8 @@ inline bool_t i2c_lld_rxbyte(I2CDriver *i2cp) {
   if (_rxbufhead < (_rxbytes - 1)){
     _rxbuf[_rxbufhead] = i2cp->id_i2c->DR;
     if ((_rxbytes - _rxbufhead) <= 2){
-      i2cp->id_i2c->CR1 &= (~I2C_CR1_ACK);// clear ACK bit for automatically send NACK
+      // clear ACK bit for automatically send NACK
+      i2cp->id_i2c->CR1 &= (~I2C_CR1_ACK);
     }
     (_rxbufhead)++;
     return(FALSE);
@@ -145,7 +146,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     return;
   }
 
-  // "wait" interrupt with ADDR
+  // "wait" interrupt with ADDR flag
   if ((i2cp->id_state == I2C_10BIT_HANDSHAKE) && (i2cp->id_i2c->SR1 & I2C_SR1_ADDR)){// address ACKed
     i2cp->id_i2c->CR1 |= I2C_CR1_START;
     return;
@@ -306,7 +307,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
   i2cp->id_i2c->CR1 |= 1; // enable interface
 }
 
-//TODO: dox here
+
 void i2c_lld_set_clock(I2CDriver *i2cp) {
   volatile uint16_t regCCR, regCR2, freq, clock_div;
   volatile uint16_t pe_bit_saved;
@@ -492,11 +493,13 @@ void i2c_lld_master_receiveI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 /**
  * @brief Transmits data ever the I2C bus as masteri2cp.
  *
+ * @note  This function does not use interrupts
+ *
  * @param[in] i2cp          pointer to the @p I2CDriver object
  * @param[in] i2cscfg       pointer to the @p I2CSlaveConfig object
- * @param[in] restart       bool. If TRUE then generate restart condition insted of stop
+ * @param[in] restart       bool. If TRUE then generate restart condition instead of stop
  */
-void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart) {
+void i2c_lld_master_transmit_NI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart) {
 	//TODO: check txbytes <= sizeof(i2cscfg->txbuf) here, or in hylevel API
 
   int i = 0;
@@ -532,13 +535,12 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t re
 
 /**
  * @brief   Receives data from the I2C bus.
- * @details Before receive data from I2C slave you must manually sent them some
- *          control bytes first (refer to you device datasheet).
+ * @note  This function does not use interrupts
  *
  * @param[in] i2cp          pointer to the @p I2CDriver object
  * @param[in] i2cscfg       pointer to the @p I2CSlaveConfig object
  */
-void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
+void i2c_lld_master_receive_NI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
 
   i2cp->id_slave_config = i2cscfg;
 
