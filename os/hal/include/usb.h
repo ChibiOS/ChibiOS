@@ -81,6 +81,14 @@
  */
 #define USB_ENDPOINT_BUSY                   ((size_t)0xFFFFFFFF)
 
+#define USB_EP_MODE_TYPE                0x0003  /**< Endpoint type mask.    */
+#define USB_EP_MODE_TYPE_CTRL           0x0000  /**< Control endpoint.      */
+#define USB_EP_MODE_TYPE_ISOC           0x0001  /**< Isochronous endpoint.  */
+#define USB_EP_MODE_TYPE_BULK           0x0002  /**< Bulk endpoint.         */
+#define USB_EP_MODE_TYPE_INTR           0x0003  /**< Interrupt endpoint.    */
+#define USB_EP_MODE_TRANSACTION         0x0000  /**< Transaction mode.      */
+#define USB_EP_MODE_PACKET              0x0010  /**< Packet mode enabled.   */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -115,20 +123,10 @@ typedef enum {
 } usbstate_t;
 
 /**
- * @brief   Type of an endpoint type.
- */
-typedef enum {
-  EP_TYPE_CTRL = 0,                     /**< Control endpoint.              */
-  EP_TYPE_ISOC = 1,                     /**< Isochronous endpoint.          */
-  EP_TYPE_BULK = 2,                     /**< Bulk endpoint.                 */
-  EP_TYPE_INTR = 3                      /**< Interrupt endpoint.            */
-} usbeptype_t;
-
-/**
  * @brief   Type of an endpoint status.
  */
 typedef enum {
-  EP_STATUS_DISABLED = 0,               /**< Endpoint not opened.           */
+  EP_STATUS_DISABLED = 0,               /**< Endpoint not active.           */
   EP_STATUS_STALLED = 1,                /**< Endpoint opened but stalled.   */
   EP_STATUS_ACTIVE = 2                  /**< Active endpoint.               */
 } usbepstatus_t;

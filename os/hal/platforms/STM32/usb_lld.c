@@ -58,12 +58,11 @@ static USBEndpointState ep0state;
  * @brief   EP0 initialization structure.
  */
 static const USBEndpointConfig ep0config = {
-  EP_TYPE_CTRL,
+  USB_EP_MODE_TYPE_CTRL | USB_EP_MODE_TRANSACTION,
   _usb_ep0in,
   _usb_ep0out,
   0x40,
   0x40,
-  0,
   0x40,
   0x80
 };
@@ -179,7 +178,7 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
     if (epr & EPR_CTR_TX) {
       /* IN endpoint, transmission.*/
       EPR_CLEAR_CTR_TX(ep);
-      if (epcp->flags & USB_EP_FLAGS_IN_PACKET_MODE) {
+      if (epcp->ep_mode & USB_EP_MODE_PACKET) {
         /* Packet mode, just invokes the callback.*/
         (usbp)->transmitting &= ~((uint16_t)(1 << ep));
         epcp->in_cb(usbp, ep);
@@ -208,7 +207,7 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
     if (epr & EPR_CTR_RX) {
       EPR_CLEAR_CTR_RX(ep);
       /* OUT endpoint, receive.*/
-      if (epcp->flags & USB_EP_FLAGS_OUT_PACKET_MODE) {
+      if (epcp->ep_mode & USB_EP_MODE_PACKET) {
         /* Packet mode, just invokes the callback.*/
         (usbp)->receiving &= ~((uint16_t)(1 << ep));
         epcp->out_cb(usbp, ep);
@@ -376,14 +375,14 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   const USBEndpointConfig *epcp = usbp->ep[ep]->config;
 
   /* Setting the endpoint type.*/
-  switch (epcp->ep_type) {
-  case EP_TYPE_ISOC:
+  switch (epcp->ep_mode & USB_EP_MODE_TYPE) {
+  case USB_EP_MODE_TYPE_ISOC:
     epr = EPR_EP_TYPE_ISO;
     break;
-  case EP_TYPE_BULK:
+  case USB_EP_MODE_TYPE_BULK:
     epr = EPR_EP_TYPE_BULK;
     break;
-  case EP_TYPE_INTR:
+  case USB_EP_MODE_TYPE_INTR:
     epr = EPR_EP_TYPE_INTERRUPT;
     break;
   default:
@@ -397,7 +396,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   /* OUT endpoint settings. If the endpoint is in packet mode then it must
      start ready to accept data else it must start in NAK mode.*/
   if (epcp->out_cb) {
-    if (epcp->flags & USB_EP_FLAGS_OUT_PACKET_MODE) {
+    if (epcp->ep_mode & USB_EP_MODE_PACKET) {
       usbp->receiving |= ((uint16_t)(1 << ep));
       epr |= EPR_STAT_RX_VALID;
     }
