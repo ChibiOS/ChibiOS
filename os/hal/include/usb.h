@@ -242,7 +242,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  *
  * @iclass
  */
-#define usbGetTransmitStatusI(usbp, ep) (usbp)->ep[ep]->transmitting
+#define usbGetTransmitStatusI(usbp, ep) ((usbp)->transmitting & (1 << (ep)))
 
 /**
  * @brief   Returns the status of an OUT endpoint.
@@ -255,7 +255,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  *
  * @iclass
  */
-#define usbGetReceiveStatusI(usbp, ep) (usbp)->ep[ep]->receiving
+#define usbGetReceiveStatusI(usbp, ep) ((usbp)->receiving & (1 << (ep)))
 
 /**
  * @brief   Request transfer setup.

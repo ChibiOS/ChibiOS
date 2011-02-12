@@ -161,15 +161,6 @@ typedef struct {
    */
   const USBEndpointConfig       *config;
   /**
-   * @brief   @p TRUE if transmitting else @p FALSE.
-   */
-  uint8_t                       transmitting;
-  /**
-   * @brief   @p TRUE if receiving else @p FALSE.
-   */
-  uint8_t                       receiving;
-  /* End of the mandatory fields.*/
-  /**
    * @brief   Number of packets to receive.
     */
   uint16_t                      rxpkts;
@@ -243,6 +234,14 @@ struct USBDriver {
    *          application-defined handler to the USB driver.
    */
   void                          *param;
+  /**
+   * @brief   Bit map of the transmitting IN endpoints.
+   */
+  uint16_t                      transmitting;
+  /**
+   * @brief   Bit map of the receiving OUT endpoints.
+   */
+  uint16_t                      receiving;
   /**
    * @brief   Active endpoints configurations.
    */

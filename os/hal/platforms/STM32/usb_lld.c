@@ -181,7 +181,7 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
       EPR_CLEAR_CTR_TX(ep);
       if (epcp->flags & USB_EP_FLAGS_IN_PACKET_MODE) {
         /* Packet mode, just invokes the callback.*/
-        (usbp)->ep[ep]->transmitting = FALSE;
+        (usbp)->transmitting &= ~((uint16_t)(1 << ep));
         epcp->in_cb(usbp, ep);
       }
       else {
@@ -200,7 +200,7 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
         }
         else {
           /* Transfer completed, invokes the callback.*/
-          (usbp)->ep[ep]->transmitting = FALSE;
+          (usbp)->transmitting &= ~((uint16_t)(1 << ep));
           epcp->in_cb(usbp, ep);
         }
       }
@@ -210,7 +210,7 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
       /* OUT endpoint, receive.*/
       if (epcp->flags & USB_EP_FLAGS_OUT_PACKET_MODE) {
         /* Packet mode, just invokes the callback.*/
-        (usbp)->ep[ep]->receiving = FALSE;
+        (usbp)->receiving &= ~((uint16_t)(1 << ep));
         epcp->out_cb(usbp, ep);
       }
       else {
@@ -233,7 +233,7 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
           }
           else {
             /* Transfer completed, invokes the callback.*/
-            (usbp)->ep[ep]->receiving = FALSE;
+            (usbp)->receiving &= ~((uint16_t)(1 << ep));
             epcp->out_cb(usbp, ep);
           }
         }
@@ -398,7 +398,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
      start ready to accept data else it must start in NAK mode.*/
   if (epcp->out_cb) {
     if (epcp->flags & USB_EP_FLAGS_OUT_PACKET_MODE) {
-      usbp->ep[ep]->receiving = TRUE;
+      usbp->receiving |= ((uint16_t)(1 << ep));
       epr |= EPR_STAT_RX_VALID;
     }
     else

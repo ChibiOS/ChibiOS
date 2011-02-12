@@ -234,9 +234,11 @@ void usbInit(void) {
  */
 void usbObjectInit(USBDriver *usbp) {
 
-  usbp->state  = USB_STOP;
-  usbp->config = NULL;
-  usbp->param  = NULL;
+  usbp->state        = USB_STOP;
+  usbp->config       = NULL;
+  usbp->param        = NULL;
+  usbp->transmitting = 0;
+  usbp->receiving    = 0;
 }
 
 /**
@@ -358,10 +360,10 @@ void usbDisableEndpointsI(USBDriver *usbp) {
 size_t usbReadPacketI(USBDriver *usbp, usbep_t ep,
                       uint8_t *buf, size_t n) {
 
-  if (usbp->ep[ep]->receiving)
+  if (usbGetReceiveStatusI(usbp, ep))
     return USB_ENDPOINT_BUSY;
 
-  usbp->ep[ep]->receiving = TRUE;
+  usbp->receiving |= (1 << ep);
   return usb_lld_read_packet(usbp, ep, buf, n);;
 }
 
@@ -385,10 +387,10 @@ size_t usbReadPacketI(USBDriver *usbp, usbep_t ep,
 size_t usbWritePacketI(USBDriver *usbp, usbep_t ep,
                        const uint8_t *buf, size_t n) {
 
-  if (usbp->ep[ep]->transmitting)
+  if (usbGetTransmitStatusI(usbp, ep))
     return USB_ENDPOINT_BUSY;
 
-  usbp->ep[ep]->transmitting = TRUE;
+  usbp->transmitting |= (1 << ep);
   usb_lld_write_packet(usbp, ep, buf, n);
   return 0;
 }
@@ -413,9 +415,10 @@ size_t usbWritePacketI(USBDriver *usbp, usbep_t ep,
 bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep,
                         uint8_t *buf, size_t n) {
 
-  if (usbp->ep[ep]->receiving)
+  if (usbGetReceiveStatusI(usbp, ep))
     return TRUE;
-  usbp->ep[ep]->receiving = TRUE;
+
+  usbp->receiving |= (1 << ep);
   usb_lld_start_out(usbp, ep, buf, n);
   return FALSE;
 }
@@ -440,9 +443,10 @@ bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep,
 bool_t usbStartTransmitI(USBDriver *usbp, usbep_t ep,
                          const uint8_t *buf, size_t n) {
 
-  if (usbp->ep[ep]->transmitting)
+  if (usbGetTransmitStatusI(usbp, ep))
     return TRUE;
-  usbp->ep[ep]->transmitting = TRUE;
+
+  usbp->transmitting |= (1 << ep);
   usb_lld_start_in(usbp, ep, buf, n);
   return FALSE;
 }
@@ -460,8 +464,9 @@ bool_t usbStartTransmitI(USBDriver *usbp, usbep_t ep,
  */
 bool_t usbStallReceiveI(USBDriver *usbp, usbep_t ep) {
 
-  if (usbp->ep[ep]->receiving)
+  if (usbGetReceiveStatusI(usbp, ep))
     return TRUE;
+
   usb_lld_stall_out(usbp, ep);
   return FALSE;
 }
@@ -479,8 +484,9 @@ bool_t usbStallReceiveI(USBDriver *usbp, usbep_t ep) {
  */
 bool_t usbStallTransmitI(USBDriver *usbp, usbep_t ep) {
 
-  if (usbp->ep[ep]->transmitting)
+  if (usbGetTransmitStatusI(usbp, ep))
     return TRUE;
+
   usb_lld_stall_in(usbp, ep);
   return FALSE;
 }
