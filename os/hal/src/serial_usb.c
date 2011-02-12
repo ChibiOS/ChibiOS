@@ -124,7 +124,7 @@ static void inotify(GenericQueue *qp) {
     if (n != USB_ENDPOINT_BUSY) {
       sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
       chSemSetCounterI(&sdup->iqueue.q_sem, n);
-//      chIOAddFlagsI(sdup, IO_INPUT_AVAILABLE);
+      chIOAddFlagsI(sdup, IO_INPUT_AVAILABLE);
     }
   }
 }
@@ -143,7 +143,7 @@ static void onotify(GenericQueue *qp) {
   if (n != USB_ENDPOINT_BUSY) {
     sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
     chSemSetCounterI(&sdup->oqueue.q_sem, SERIAL_USB_BUFFERS_SIZE);
-//    chIOAddFlagsI(sdup, IO_OUTPUT_EMPTY);
+    chIOAddFlagsI(sdup, IO_OUTPUT_EMPTY);
   }
 }
 

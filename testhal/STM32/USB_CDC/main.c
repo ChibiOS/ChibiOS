@@ -367,7 +367,8 @@ static msg_t Thread2(void *arg) {
       uint8_t buffer[0x40];
       size_t n = chIQReadTimeout(&sdup->iqueue, buffer,
                                  sizeof(buffer), TIME_IMMEDIATE);
-      chOQWriteTimeout(&sdup->oqueue, buffer, n, TIME_IMMEDIATE);
+      if (n > 0)
+        chOQWriteTimeout(&sdup->oqueue, buffer, n, TIME_IMMEDIATE);
     }
   }
 }
