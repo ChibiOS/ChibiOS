@@ -130,8 +130,10 @@ msg_t macWaitTransmitDescriptor(MACDriver *macp,
          (time > 0)) {
     chSysLock();
     systime_t now = chTimeNow();
-    if ((msg = chSemWaitTimeoutS(&macp->md_tdsem, time)) == RDY_TIMEOUT)
+    if ((msg = chSemWaitTimeoutS(&macp->md_tdsem, time)) == RDY_TIMEOUT) {
+      chSysUnlock();
       break;
+    }
     if (time != TIME_INFINITE)
       time -= (chTimeNow() - now);
     chSysUnlock();
@@ -180,8 +182,10 @@ msg_t macWaitReceiveDescriptor(MACDriver *macp,
          (time > 0)) {
     chSysLock();
     systime_t now = chTimeNow();
-    if ((msg = chSemWaitTimeoutS(&macp->md_rdsem, time)) == RDY_TIMEOUT)
+    if ((msg = chSemWaitTimeoutS(&macp->md_rdsem, time)) == RDY_TIMEOUT) {
+      chSysUnlock();
       break;
+    }
     if (time != TIME_INFINITE)
       time -= (chTimeNow() - now);
     chSysUnlock();
