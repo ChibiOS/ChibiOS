@@ -127,14 +127,6 @@ typedef struct {
    */
   uint16_t                      out_maxsize;
   /* End of the mandatory fields.*/
-  /**
-   * @brief   Endpoint IN buffer address as offset in the PMA.
-   */
-  uint16_t                      inaddr;
-  /**
-   * @brief   Endpoint OUT buffer address as offset in the PMA.
-   */
-  uint16_t                      outaddr;
 } USBEndpointConfig;
 
 
@@ -265,6 +257,10 @@ struct USBDriver {
    */
   uint8_t                       configuration;
   /* End of the mandatory fields.*/
+  /**
+   * @brief   Pointer to the next address in the packet memory.
+   */
+  uint32_t                      pmnext;
 };
 
 /*===========================================================================*/

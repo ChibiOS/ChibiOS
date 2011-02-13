@@ -255,8 +255,6 @@ static const USBEndpointConfig ep1config = {
   sduDataTransmitted,
   NULL,
   0x0040,
-  0x0000,
-  0x00C0,
   0x0000
 };
 
@@ -268,8 +266,6 @@ static const USBEndpointConfig ep2config = {
   sduInterruptTransmitted,
   NULL,
   0x0010,
-  0x0000,
-  0x0100,
   0x0000
 };
 
@@ -281,9 +277,7 @@ static const USBEndpointConfig ep3config = {
   NULL,
   sduDataReceived,
   0x0000,
-  0x0040,
-  0x0000,
-  0x0110
+  0x0040
 };
 
 /*

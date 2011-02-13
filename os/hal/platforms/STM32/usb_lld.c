@@ -44,7 +44,6 @@
 USBDriver USBD1;
 #endif
 
-
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -62,14 +61,33 @@ static const USBEndpointConfig ep0config = {
   _usb_ep0in,
   _usb_ep0out,
   0x40,
-  0x40,
-  0x40,
-  0x80
+  0x40
 };
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+/**
+ * @brief   Resets the packet memory allocator.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ */
+static void pm_reset(USBDriver *usbp) {
+  usbp->pmnext = 64;
+}
+
+/**
+ * @brief   Resets the packet memory allocator.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] size      size of the packet buffer to allocate
+ */
+static uint32_t pm_alloc(USBDriver *usbp, size_t size) {
+  uint32_t next = usbp->pmnext;
+  usbp->pmnext += size;
+  return next;
+}
 
 /**
  * @brief   Copies a packet from memory into a packet buffer.
@@ -342,6 +360,9 @@ void usb_lld_reset(USBDriver *usbp) {
     cntr |= CNTR_SOFM;
   STM32_USB->CNTR = cntr;
 
+  /* Resets the packet memory allocator.*/
+  pm_reset(usbp);
+
   /* EP0 initialization.*/
   memset(&ep0state, 0, sizeof ep0state);
   ep0state.config = &ep0config;
@@ -417,8 +438,8 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   dp = USB_GET_DESCRIPTOR(ep);
   dp->TXCOUNT = 0;
   dp->RXCOUNT = nblocks;
-  dp->TXADDR  = epcp->inaddr;
-  dp->RXADDR  = epcp->outaddr;
+  dp->TXADDR  = pm_alloc(usbp, epcp->in_maxsize);
+  dp->RXADDR  = pm_alloc(usbp, epcp->out_maxsize);
 }
 
 /**
