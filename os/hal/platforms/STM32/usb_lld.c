@@ -319,7 +319,8 @@ void usb_lld_start(USBDriver *usbp) {
                        CORTEX_PRIORITY_MASK(STM32_USB_USB1_HP_IRQ_PRIORITY));
       NVICEnableVector(USB_LP_CAN1_RX0_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_USB_USB1_LP_IRQ_PRIORITY));
-
+      /* Releases the USB reset.*/
+      STM32_USB->CNTR = 0;
     }
 #endif
     /* Reset procedure enforced on driver start.*/
@@ -360,11 +361,8 @@ void usb_lld_stop(USBDriver *usbp) {
 void usb_lld_reset(USBDriver *usbp) {
   uint32_t cntr;
 
-  /* Powers up the transceiver while holding the USB in reset state.*/
-  STM32_USB->CNTR   = CNTR_FRES;
-
-  /* Releases the USB reset, BTABLE is reset to zero.*/
-  STM32_USB->CNTR   = 0;
+  /* Post reset initialization.*/
+  STM32_USB->BTABLE = 0;
   STM32_USB->ISTR   = 0;
   STM32_USB->DADDR  = DADDR_EF;
   cntr              = /*CNTR_ESOFM | */ CNTR_RESETM  | /*CNTR_SUSPM |*/
