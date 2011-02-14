@@ -50,8 +50,19 @@ USBDriver USBD1;
 
 /**
  * @brief   EP0 state.
+ * @note    It is an union because IN and OUT endpoints are never used at the
+ *          same time for EP0.
  */
-static USBEndpointState ep0state;
+static union {
+  /**
+   * @brief   IN EP0 state.
+   */
+  USBInEndpointState in;
+  /**
+   * @brief   OUT EP0 state.
+   */
+  USBOutEndpointState out;
+} ep0_state;
 
 /**
  * @brief   EP0 initialization structure.
@@ -61,7 +72,9 @@ static const USBEndpointConfig ep0config = {
   _usb_ep0in,
   _usb_ep0out,
   0x40,
-  0x40
+  0x40,
+  &ep0_state.in,
+  &ep0_state.out
 };
 
 /*===========================================================================*/
@@ -191,33 +204,33 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
   while (istr & ISTR_CTR) {
     uint32_t ep;
     uint32_t epr = STM32_USB->EPR[ep = istr & ISTR_EP_ID_MASK];
-    const USBEndpointConfig *epcp = usbp->ep[ep]->config;
+    const USBEndpointConfig *epcp = usbp->epc[ep];
 
     if (epr & EPR_CTR_TX) {
       /* IN endpoint, transmission.*/
       EPR_CLEAR_CTR_TX(ep);
       if (epcp->ep_mode & USB_EP_MODE_PACKET) {
         /* Packet mode, just invokes the callback.*/
-        (usbp)->transmitting &= ~((uint16_t)(1 << ep));
+        (usbp)->transmitting &= ~(1 << ep);
         epcp->in_cb(usbp, ep);
       }
       else {
         /* Transaction mode.*/
         n = USB_GET_DESCRIPTOR(ep)->TXCOUNT;
-        usbp->ep[ep]->txbuf  += n;
-        usbp->ep[ep]->txcnt  += n;
-        usbp->ep[ep]->txsize -= n;
-        if (usbp->ep[ep]->txsize > 0) {
+        epcp->in_state->txbuf  += n;
+        epcp->in_state->txcnt  += n;
+        epcp->in_state->txsize -= n;
+        if (epcp->in_state->txsize > 0) {
           /* Transfer not completed, there are more packets to send.*/
-          if (usbp->ep[ep]->txsize > epcp->in_maxsize)
+          if (epcp->in_state->txsize > epcp->in_maxsize)
             n = epcp->in_maxsize;
           else
-            n = usbp->ep[ep]->txsize;
-          write_packet(ep, usbp->ep[ep]->txbuf, n);
+            n = epcp->in_state->txsize;
+          write_packet(ep, epcp->in_state->txbuf, n);
         }
         else {
           /* Transfer completed, invokes the callback.*/
-          (usbp)->transmitting &= ~((uint16_t)(1 << ep));
+          (usbp)->transmitting &= ~(1 << ep);
           epcp->in_cb(usbp, ep);
         }
       }
@@ -227,10 +240,11 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
       /* OUT endpoint, receive.*/
       if (epcp->ep_mode & USB_EP_MODE_PACKET) {
         /* Packet mode, just invokes the callback.*/
-        (usbp)->receiving &= ~((uint16_t)(1 << ep));
+        (usbp)->receiving &= ~(1 << ep);
         epcp->out_cb(usbp, ep);
       }
       else {
+        /* Transaction mode.*/
         if ((epr & EPR_SETUP) && (ep == 0)) {
           /* Special case, setup packet for EP0, enforcing a reset of the
              EP0 state machine for robustness.*/
@@ -239,18 +253,18 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
           epcp->out_cb(usbp, ep);
         }
         else {
-          n = read_packet(ep, usbp->ep[ep]->rxbuf, usbp->ep[ep]->rxsize);
-          usbp->ep[ep]->rxbuf  += n;
-          usbp->ep[ep]->rxcnt  += n;
-          usbp->ep[ep]->rxsize -= n;
-          usbp->ep[ep]->rxpkts -= 1;
-          if (usbp->ep[ep]->rxpkts > 0) {
+          n = read_packet(ep, epcp->out_state->rxbuf, epcp->out_state->rxsize);
+          epcp->out_state->rxbuf  += n;
+          epcp->out_state->rxcnt  += n;
+          epcp->out_state->rxsize -= n;
+          epcp->out_state->rxpkts -= 1;
+          if (epcp->out_state->rxpkts > 0) {
             /* Transfer not completed, there are more packets to receive.*/
             EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
           }
           else {
             /* Transfer completed, invokes the callback.*/
-            (usbp)->receiving &= ~((uint16_t)(1 << ep));
+            (usbp)->receiving &= ~(1 << ep);
             epcp->out_cb(usbp, ep);
           }
         }
@@ -306,10 +320,10 @@ void usb_lld_start(USBDriver *usbp) {
       NVICEnableVector(USB_LP_CAN1_RX0_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_USB_USB1_LP_IRQ_PRIORITY));
 
-      /* Reset procedure enforced on driver start.*/
-      _usb_reset(&USBD1);
     }
 #endif
+    /* Reset procedure enforced on driver start.*/
+    _usb_reset(usbp);
   }
   /* Configuration.*/
 }
@@ -329,6 +343,7 @@ void usb_lld_stop(USBDriver *usbp) {
     if (&USBD1 == usbp) {
       NVICDisableVector(USB_HP_CAN1_TX_IRQn);
       NVICDisableVector(USB_LP_CAN1_RX0_IRQn);
+      STM32_USB->CNTR = CNTR_PDWN | CNTR_FRES;
       RCC->APB1ENR &= ~RCC_APB1ENR_USBEN;
     }
 #endif
@@ -364,9 +379,7 @@ void usb_lld_reset(USBDriver *usbp) {
   pm_reset(usbp);
 
   /* EP0 initialization.*/
-  memset(&ep0state, 0, sizeof ep0state);
-  ep0state.config = &ep0config;
-  usbp->ep[0] = &ep0state;
+  usbp->epc[0] = &ep0config;
   usb_lld_init_endpoint(usbp, 0);
 }
 
@@ -393,7 +406,7 @@ void usb_lld_set_address(USBDriver *usbp) {
 void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   uint16_t nblocks, epr;
   stm32_usb_descriptor_t *dp;
-  const USBEndpointConfig *epcp = usbp->ep[ep]->config;
+  const USBEndpointConfig *epcp = usbp->epc[ep];
 
   /* Setting the endpoint type.*/
   switch (epcp->ep_mode & USB_EP_MODE_TYPE) {
@@ -418,7 +431,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
      start ready to accept data else it must start in NAK mode.*/
   if (epcp->out_cb) {
     if (epcp->ep_mode & USB_EP_MODE_PACKET) {
-      usbp->receiving |= ((uint16_t)(1 << ep));
+      usbp->receiving |= (1 << ep);
       epr |= EPR_STAT_RX_VALID;
     }
     else
@@ -585,16 +598,16 @@ void usb_lld_write_packet(USBDriver *usbp, usbep_t ep,
  */
 void usb_lld_start_out(USBDriver *usbp, usbep_t ep,
                        uint8_t *buf, size_t n) {
-  USBEndpointState *uesp = usbp->ep[ep];
+  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
-  uesp->rxbuf  = buf;
-  uesp->rxsize = n;
-  uesp->rxcnt  = 0;
-  if (uesp->rxsize == 0)    /* Special case for zero sized packets.*/
-    uesp->rxpkts = 1;
+  osp->rxbuf  = buf;
+  osp->rxsize = n;
+  osp->rxcnt  = 0;
+  if (osp->rxsize == 0)    /* Special case for zero sized packets.*/
+    osp->rxpkts = 1;
   else
-    uesp->rxpkts = (uint16_t)((n + uesp->config->out_maxsize - 1) /
-                              uesp->config->out_maxsize);
+    osp->rxpkts = (uint16_t)((n + usbp->epc[ep]->out_maxsize - 1) /
+                             usbp->epc[ep]->out_maxsize);
   EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
 }
 
@@ -610,13 +623,13 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep,
  */
 void usb_lld_start_in(USBDriver *usbp, usbep_t ep,
                       const uint8_t *buf, size_t n) {
-  USBEndpointState *uesp = usbp->ep[ep];
+  USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
-  uesp->txbuf  = buf;
-  uesp->txsize = n;
-  uesp->txcnt  = 0;
-  if (n > (size_t)uesp->config->in_maxsize)
-    n = (size_t)uesp->config->in_maxsize;
+  isp->txbuf  = buf;
+  isp->txsize = n;
+  isp->txcnt  = 0;
+  if (n > (size_t)usbp->epc[ep]->in_maxsize)
+    n = (size_t)usbp->epc[ep]->in_maxsize;
   write_packet(ep, buf, n);
 }
 

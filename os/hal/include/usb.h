@@ -139,7 +139,8 @@ typedef enum {
   USB_EP0_TX,                           /**< Trasmitting.                   */
   USB_EP0_WAITING_STS,                  /**< Waiting status.                */
   USB_EP0_RX,                           /**< Receiving.                     */
-  USB_EP0_SENDING_STS                   /**< Sending status.                */
+  USB_EP0_SENDING_STS,                  /**< Sending status.                */
+  USB_EP0_ERROR                         /**< Error, EP0 stalled.            */
 } usbep0state_t;
 
 /**
@@ -256,6 +257,37 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 #define usbGetReceiveStatusI(usbp, ep) ((usbp)->receiving & (1 << (ep)))
 
 /**
+ * @brief   Returns the exact size of a receive transaction.
+ * @details The received size can be different from the size specified in
+ *          @p usbStartReceiveI() because the last packet could have a size
+ *          different from the expected one.
+ * @pre     The OUT endpoint must have been configured in transaction mode
+ *          in order to use this function.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @return              Received data size.
+ *
+ * @iclass
+ */
+#define usbGetReceiveTransactionSizeI(usbp, ep)                             \
+  usb_lld_get_transaction_size(usbp, ep)
+
+/**
+ * @brief   Returns the exact size of a received packet.
+ * @pre     The OUT endpoint must have been configured in packet mode
+ *          in order to use this function.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @return              Received data size.
+ *
+ * @iclass
+ */
+#define usbGetReceivePacketSizeI(usbp, ep)                                  \
+  usb_lld_get_packet_size(usbp, ep)
+
+/**
  * @brief   Request transfer setup.
  * @details This macro is used by the request handling callbacks in order to
  *          prepare a transaction over the endpoint zero.
@@ -266,9 +298,10 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  *
  * @api
  */
-#define usbSetupTransfer(usbp, buf, n) {                                    \
+#define usbSetupTransfer(usbp, buf, n, endcb) {                             \
   (usbp)->ep0next  = (buf);                                                 \
   (usbp)->ep0n     = (n);                                                   \
+  (usbp)->ep0endcb = (endcb);                                               \
 }
 
 /*===========================================================================*/
@@ -282,7 +315,7 @@ extern "C" {
   void usbObjectInit(USBDriver *usbp);
   void usbStart(USBDriver *usbp, const USBConfig *config);
   void usbStop(USBDriver *usbp);
-  void usbInitEndpointI(USBDriver *usbp, usbep_t ep, USBEndpointState *epp,
+  void usbInitEndpointI(USBDriver *usbp, usbep_t ep,
                         const USBEndpointConfig *epcp);
   void usbDisableEndpointsI(USBDriver *usbp);
   size_t usbReadPacketI(USBDriver *usbp, usbep_t ep,

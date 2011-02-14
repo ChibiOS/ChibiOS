@@ -250,14 +250,14 @@ bool_t sduRequestsHook(USBDriver *usbp) {
   if ((usbp->setup[0] & USB_RTYPE_TYPE_MASK) == USB_RTYPE_TYPE_CLASS) {
     switch (usbp->setup[1]) {
     case CDC_GET_LINE_CODING:
-      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding));
+      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding), NULL);
       return TRUE;
     case CDC_SET_LINE_CODING:
-      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding));
+      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding), NULL);
       return TRUE;
     case CDC_SET_CONTROL_LINE_STATE:
       /* Nothing to do, there are no control lines.*/
-      usbSetupTransfer(usbp, NULL, 0);
+      usbSetupTransfer(usbp, NULL, 0, NULL);
       return TRUE;
     default:
       return FALSE;

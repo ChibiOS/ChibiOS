@@ -94,6 +94,46 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of an endpoint state structure.
+ */
+typedef struct {
+  /**
+   * @brief   Pointer to the transmission buffer.
+   */
+  const uint8_t                 *txbuf;
+  /**
+   * @brief   Requested transmit transfer size.
+   */
+  size_t                        txsize;
+  /**
+   * @brief   Transmitted bytes so far.
+   */
+  size_t                        txcnt;
+} USBInEndpointState;
+
+/**
+ * @brief   Type of an endpoint state structure.
+ */
+typedef struct {
+  /**
+   * @brief   Number of packets to receive.
+   */
+  uint16_t                      rxpkts;
+  /**
+   * @brief   Pointer to the receive buffer.
+   */
+  uint8_t                       *rxbuf;
+  /**
+   * @brief   Requested receive transfer size.
+   */
+  size_t                        rxsize;
+  /**
+   * @brief   Received bytes so far.
+   */
+  size_t                        rxcnt;
+} USBOutEndpointState;
+
+/**
  * @brief   Type of an USB endpoint configuration structure.
  * @note    Platform specific restrictions may apply to endpoints.
  */
@@ -126,47 +166,22 @@ typedef struct {
    *          used.
    */
   uint16_t                      out_maxsize;
+  /**
+   * @brief   @p USBEndpointState associated to the IN endpoint.
+   * @details This structure maintains the state of the IN endpoint when
+   *          the endpoint is not in packet mode. Endpoints configured in
+   *          packet mode must set this field to @p NULL.
+   */
+  USBInEndpointState            *in_state;
+  /**
+   * @brief   @p USBEndpointState associated to the OUT endpoint.
+   * @details This structure maintains the state of the OUT endpoint when
+   *          the endpoint is not in packet mode. Endpoints configured in
+   *          packet mode must set this field to @p NULL.
+   */
+  USBOutEndpointState           *out_state;
   /* End of the mandatory fields.*/
 } USBEndpointConfig;
-
-
-/**
- * @brief   Type of an endpoint state structure.
- */
-typedef struct {
-  /**
-   * @brief   Configuration associated to the endpoint.
-   */
-  const USBEndpointConfig       *config;
-  /**
-   * @brief   Number of packets to receive.
-    */
-  uint16_t                      rxpkts;
-  /**
-   * @brief   Pointer to the transmission buffer.
-   */
-  const uint8_t                 *txbuf;
-  /**
-   * @brief   Pointer to the receive buffer.
-   */
-  uint8_t                       *rxbuf;
-  /**
-   * @brief   Requested transmit transfer size.
-   */
-  size_t                        txsize;
-  /**
-   * @brief   Requested receive transfer size.
-    */
-  size_t                        rxsize;
-  /**
-   * @brief   Transmitted bytes so far.
-   */
-  size_t                        txcnt;
-  /**
-   * @brief   Received bytes so far.
-    */
-  size_t                        rxcnt;
-} USBEndpointState;
 
 /**
  * @brief   Type of an USB driver configuration structure.
@@ -223,7 +238,7 @@ struct USBDriver {
   /**
    * @brief   Active endpoints configurations.
    */
-  USBEndpointState              *ep[USB_MAX_ENDPOINTS + 1];
+  const USBEndpointConfig       *epc[USB_MAX_ENDPOINTS + 1];
   /**
    * @brief   Endpoint 0 state.
    */
@@ -233,13 +248,13 @@ struct USBDriver {
    */
   uint8_t                       *ep0next;
   /**
-   * @brief   Maximum number of bytes to be transferred through endpoint 0.
-   */
-  size_t                        ep0max;
-  /**
    * @brief   Number of bytes yet to be transferred through endpoint 0.
    */
   size_t                        ep0n;
+  /**
+   * @brief   Endpoint 0 end transaction callback.
+   */
+  usbcallback_t                 ep0endcb;
   /**
    * @brief   Setup packet buffer.
    */
@@ -286,20 +301,43 @@ struct USBDriver {
  */
 #define usb_lld_get_frame_number(usbp) (STM32_USB->FNR & FNR_FN_MASK)
 
+/**
+ * @brief   Returns the exact size of a receive transaction.
+ * @details The received size can be different from the size specified in
+ *          @p usbStartReceiveI() because the last packet could have a size
+ *          different from the expected one.
+ * @pre     The OUT endpoint must have been configured in transaction mode
+ *          in order to use this function.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @return              Received data size.
+ *
+ * @notapi
+ */
+#define usb_lld_get_transaction_size(usbp, ep)                              \
+  ((usbp)->epc[ep]->out_state->rxcnt)
+
+/**
+ * @brief   Returns the exact size of a received packet.
+ * @pre     The OUT endpoint must have been configured in packet mode
+ *          in order to use this function.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @return              Received data size.
+ *
+ * @notapi
+ */
+#define  usb_lld_get_packet_size(usbp, ep)                                  \
+  ((size_t)USB_GET_DESCRIPTOR(ep)->RXCOUNT & RXCOUNT_COUNT_MASK)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
 #if STM32_USB_USE_USB1 && !defined(__DOXYGEN__)
 extern USBDriver USBD1;
-#endif
-
-#if !defined(__DOXYGEN__)
-extern const USBEndpointConfig usb_lld_ep0config;
-#endif
-
-#if !defined(__DOXYGEN__)
-extern USBEndpointState usb_lld_ep0state;
 #endif
 
 #ifdef __cplusplus

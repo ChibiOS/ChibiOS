@@ -233,21 +233,6 @@ static const USBDescriptor *get_descriptor(USBDriver *usbp,
 }
 
 /**
- * @brief   EP1 state.
- */
-USBEndpointState ep1state;
-
-/**
- * @brief   EP2 state.
- */
-USBEndpointState ep2state;
-
-/**
- * @brief   EP3 state.
- */
-USBEndpointState ep3state;
-
-/**
  * @brief   EP1 initialization structure (IN only).
  */
 static const USBEndpointConfig ep1config = {
@@ -255,7 +240,9 @@ static const USBEndpointConfig ep1config = {
   sduDataTransmitted,
   NULL,
   0x0040,
-  0x0000
+  0x0000,
+  NULL,
+  NULL
 };
 
 /**
@@ -266,7 +253,9 @@ static const USBEndpointConfig ep2config = {
   sduInterruptTransmitted,
   NULL,
   0x0010,
-  0x0000
+  0x0000,
+  NULL,
+  NULL
 };
 
 /**
@@ -277,7 +266,9 @@ static const USBEndpointConfig ep3config = {
   NULL,
   sduDataReceived,
   0x0000,
-  0x0040
+  0x0040,
+  NULL,
+  NULL
 };
 
 /*
@@ -293,9 +284,9 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
   case USB_EVENT_CONFIGURED:
     /* Enables the endpoints specified into the configuration.*/
     chSysLock();
-    usbInitEndpointI(usbp, DATA_REQUEST_EP, &ep1state, &ep1config);
-    usbInitEndpointI(usbp, INTERRUPT_REQUEST_EP, &ep2state, &ep2config);
-    usbInitEndpointI(usbp, DATA_AVAILABLE_EP, &ep3state, &ep3config);
+    usbInitEndpointI(usbp, DATA_REQUEST_EP, &ep1config);
+    usbInitEndpointI(usbp, INTERRUPT_REQUEST_EP, &ep2config);
+    usbInitEndpointI(usbp, DATA_AVAILABLE_EP, &ep3config);
     chSysUnlock();
     return;
   case USB_EVENT_SUSPEND:
