@@ -60,6 +60,13 @@
 #endif
 
 /**
+ * @brief   Enables the USB device low power mode on suspend.
+ */
+#if !defined(STM32_USB_LOW_POWER_ON_SUSPEND) || defined(__DOXYGEN__)
+#define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
+#endif
+
+/**
  * @brief   USB1 interrupt priority level setting.
  */
 #if !defined(STM32_USB_USB1_HP_IRQ_PRIORITY) || defined(__DOXYGEN__)

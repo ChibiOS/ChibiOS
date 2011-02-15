@@ -199,6 +199,35 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
     STM32_USB->ISTR = ~ISTR_RESET;
   }
 
+  /* USB bus SUSPEND condition handling.*/
+  if (istr & ISTR_SUSP) {
+    STM32_USB->CNTR |= CNTR_FSUSP;
+    if (usbp->config->event_cb)
+      usbp->config->event_cb(usbp, USB_EVENT_SUSPEND);
+#if STM32_USB_LOW_POWER_ON_SUSPEND
+    STM32_USB->CNTR |= CNTR_LP_MODE;
+#endif
+    STM32_USB->ISTR = ~ISTR_SUSP;
+  }
+
+  /* USB bus WAKEUP condition handling.*/
+  if (istr & ISTR_WKUP) {
+    uint32_t fnr = STM32_USB->FNR;
+    if (!(fnr & FNR_RXDP)) {
+      STM32_USB->CNTR &= ~CNTR_FSUSP;
+      if (usbp->config->event_cb)
+        usbp->config->event_cb(usbp, USB_EVENT_WAKEUP);
+    }
+#if STM32_USB_LOW_POWER_ON_SUSPEND
+    else {
+      /* Just noise, going back in SUSPEND mode, reference manual 22.4.5,
+         table 169.*/
+      STM32_USB->CNTR |= CNTR_LP_MODE;
+    }
+#endif
+    STM32_USB->ISTR = ~ISTR_WKUP;
+  }
+
   /* SOF handling.*/
   if (istr & ISTR_SOF) {
     if (usbp->config->sof_cb)
@@ -371,8 +400,8 @@ void usb_lld_reset(USBDriver *usbp) {
   STM32_USB->BTABLE = 0;
   STM32_USB->ISTR   = 0;
   STM32_USB->DADDR  = DADDR_EF;
-  cntr              = /*CNTR_ESOFM | */ CNTR_RESETM  | /*CNTR_SUSPM |*/
-                      /*CNTR_WKUPM | CNTR_ERRM | CNTR_PMAOVRM |*/ CNTR_CTRM;
+  cntr              = /*CNTR_ESOFM | */ CNTR_RESETM  | CNTR_SUSPM |
+                      CNTR_WKUPM | /*CNTR_ERRM | CNTR_PMAOVRM |*/ CNTR_CTRM;
   /* The SOF interrupt is only enabled if a callback is defined for
      this service because it is an high rate source.*/
   if (usbp->config->sof_cb != NULL)

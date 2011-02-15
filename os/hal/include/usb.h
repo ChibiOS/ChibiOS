@@ -77,6 +77,96 @@
 #define USB_LATE_SET_ADDRESS                1
 
 /**
+ * @brief   Helper macro for index values into descriptor strings.
+ */
+#define USB_DESC_INDEX(i) ((uint8_t)(i))
+
+/**
+ * @brief   Helper macro for byte values into descriptor strings.
+ */
+#define USB_DESC_BYTE(b) ((uint8_t)(b))
+
+/**
+ * @brief   Helper macro for word values into descriptor strings.
+ */
+#define USB_DESC_WORD(w)                                                    \
+  (uint8_t)((w) & 255),                                                     \
+  (uint8_t)(((w) >> 8) & 255)
+
+/**
+ * @brief   Helper macro for BCD values into descriptor strings.
+ */
+#define USB_DESC_BCD(bcd)                                                  \
+  (uint8_t)((bcd) & 255),                                                   \
+  (uint8_t)(((bcd) >> 8) & 255)
+
+/**
+ * @brief   Device Descriptor helper macro.
+ */
+#define USB_DESC_DEVICE(bcdUSB, bDeviceClass, bDeviceSubClass,              \
+                        bDeviceProtocol, bMaxPacketSize, idVendor,          \
+                        idProduct, bcdDevice, iManufacturer,                \
+                        iProduct, iSerialNumber, bNumConfigurations)        \
+  USB_DESC_BYTE(18),                                                        \
+  USB_DESC_BYTE(USB_DESCRIPTOR_DEVICE),                                     \
+  USB_DESC_BCD(bcdUSB),                                                     \
+  USB_DESC_BYTE(bDeviceClass),                                              \
+  USB_DESC_BYTE(bDeviceSubClass),                                           \
+  USB_DESC_BYTE(bDeviceProtocol),                                           \
+  USB_DESC_BYTE(bMaxPacketSize),                                            \
+  USB_DESC_WORD(idVendor),                                                  \
+  USB_DESC_WORD(idProduct),                                                 \
+  USB_DESC_BCD(bcdDevice),                                                  \
+  USB_DESC_INDEX(iManufacturer),                                            \
+  USB_DESC_INDEX(iProduct),                                                 \
+  USB_DESC_INDEX(iSerialNumber),                                            \
+  USB_DESC_BYTE(bNumConfigurations)
+
+/**
+ * @brief   Configuration Descriptor helper macro.
+ */
+#define USB_DESC_CONFIGURATION(wTotalLength, bNumInterfaces,                \
+                               bConfigurationValue, iConfiguration,         \
+                               bmAttributes, bMaxPower)                     \
+  USB_DESC_BYTE(9),                                                         \
+  USB_DESC_BYTE(USB_DESCRIPTOR_CONFIGURATION),                              \
+  USB_DESC_WORD(wTotalLength),                                              \
+  USB_DESC_BYTE(bNumInterfaces),                                            \
+  USB_DESC_BYTE(bConfigurationValue),                                       \
+  USB_DESC_INDEX(iConfiguration),                                           \
+  USB_DESC_BYTE(bmAttributes),                                              \
+  USB_DESC_BYTE(bMaxPower)
+
+/**
+ * @brief   Interface Descriptor helper macro.
+ */
+#define USB_DESC_INTERFACE(bInterfaceNumber, bAlternateSetting,             \
+                           bNumEndpoints, bInterfaceClass,                  \
+                           bInterfaceSubClass, bInterfaceProtocol,          \
+                           iInterface)                                      \
+  USB_DESC_BYTE(9),                                                         \
+  USB_DESC_BYTE(USB_DESCRIPTOR_INTERFACE),                                  \
+  USB_DESC_BYTE(bInterfaceNumber),                                          \
+  USB_DESC_BYTE(bAlternateSetting),                                         \
+  USB_DESC_BYTE(bNumEndpoints),                                             \
+  USB_DESC_BYTE(bInterfaceClass),                                           \
+  USB_DESC_BYTE(bInterfaceSubClass),                                        \
+  USB_DESC_BYTE(bInterfaceProtocol),                                        \
+  USB_DESC_INDEX(iInterface)
+
+/**
+ * @brief   Endpoint Descriptor helper macro.
+ */
+#define USB_DESC_ENDPOINT(bEndpointAddress, bmAttributes, wMaxPacketSize,   \
+                          bInterval)                                        \
+  USB_DESC_BYTE(7),                                                         \
+  USB_DESC_BYTE(USB_DESCRIPTOR_ENDPOINT),                                   \
+  USB_DESC_BYTE(bEndpointAddress),                                          \
+  USB_DESC_BYTE(bmAttributes),                                              \
+  USB_DESC_WORD(wMaxPacketSize),                                            \
+  USB_DESC_BYTE(bInterval)
+
+/**
  * @brief   Returned by some functions to report a busy endpoint.
  */
 #define USB_ENDPOINT_BUSY                   ((size_t)0xFFFFFFFF)
@@ -151,7 +241,7 @@ typedef enum {
   USB_EVENT_ADDRESS = 1,                /**< Address assigned.              */
   USB_EVENT_CONFIGURED = 2,             /**< Configuration selected.        */
   USB_EVENT_SUSPEND = 3,                /**< Entering suspend mode.         */
-  USB_EVENT_RESUME = 4,                 /**< Leaving suspend mode.          */
+  USB_EVENT_WAKEUP = 4,                 /**< Leaving suspend mode.          */
   USB_EVENT_STALLED = 5,                /**< Endpoint 0 error, stalled.     */
 } usbevent_t;
 

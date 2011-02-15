@@ -110,7 +110,6 @@
 #define HAL_USE_UART                FALSE
 #endif
 
-
 /**
  * @brief   Enables the USB subsystem.
  */
