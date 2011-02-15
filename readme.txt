@@ -69,6 +69,7 @@
 *****************************************************************************
 
 *** 2.2.1 ***
+- FIX: Fixed missing e200z test report (bug 3182611).
 - FIX: Error in MAC driver (bug 3179783).
 - FIX: Fixed wrong serial driver macros (bug 3173336).
 
