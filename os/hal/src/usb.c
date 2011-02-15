@@ -335,6 +335,8 @@ void usbDisableEndpointsI(USBDriver *usbp) {
   chDbgAssert(usbp->state == USB_SELECTED,
               "usbDisableEndpointsI(), #1", "invalid state");
 
+  usbp->transmitting &= ~1;
+  usbp->receiving    &= ~1;
   for (i = 1; i <= USB_MAX_ENDPOINTS; i++)
     usbp->epc[i] = NULL;
 
@@ -399,7 +401,7 @@ size_t usbWritePacketI(USBDriver *usbp, usbep_t ep,
 }
 
 /**
- * @brief   Starts a receive operation on an OUT endpoint.
+ * @brief   Starts a receive transaction on an OUT endpoint.
  * @pre     In order to use this function he endpoint must have been
  *          initialized in transaction mode.
  * @post    The endpoint callback is invoked when the transfer has been
@@ -410,8 +412,8 @@ size_t usbWritePacketI(USBDriver *usbp, usbep_t ep,
  * @param[out] buf      buffer where to copy the received data
  * @param[in] n         maximum number of bytes to copy
  * @return              The operation status.
- * @retval FALSE        Operation complete.
- * @retval TRUE         Endpoint busy receiving.
+ * @retval FALSE        Operation started successfully.
+ * @retval TRUE         Endpoint busy, operation not started.
  *
  * @iclass
  */
@@ -427,7 +429,7 @@ bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep,
 }
 
 /**
- * @brief   Starts a transmit operation on an IN endpoint.
+ * @brief   Starts a transmit transaction on an IN endpoint.
  * @pre     In order to use this function he endpoint must have been
  *          initialized in transaction mode.
  * @post    The endpoint callback is invoked when the transfer has been
@@ -438,8 +440,8 @@ bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep,
  * @param[in] buf       buffer where to fetch the data to be transmitted
  * @param[in] n         maximum number of bytes to copy
  * @return              The operation status.
- * @retval FALSE        Operation complete.
- * @retval TRUE         Endpoint busy transmitting.
+ * @retval FALSE        Operation started successfully.
+ * @retval TRUE         Endpoint busy, operation not started.
  *
  * @iclass
  */
@@ -461,7 +463,7 @@ bool_t usbStartTransmitI(USBDriver *usbp, usbep_t ep,
  * @param[in] ep        endpoint number
  * @return              The operation status.
  * @retval FALSE        Endpoint stalled.
- * @retval TRUE         The endpoint was within a transaction, not stalled.
+ * @retval TRUE         Endpoint busy, not stalled.
  *
  * @iclass
  */
@@ -481,7 +483,7 @@ bool_t usbStallReceiveI(USBDriver *usbp, usbep_t ep) {
  * @param[in] ep        endpoint number
  * @return              The operation status.
  * @retval FALSE        Endpoint stalled.
- * @retval TRUE         The endpoint was within a transaction, not stalled.
+ * @retval TRUE         Endpoint busy, not stalled.
  *
  * @iclass
  */
@@ -510,6 +512,8 @@ void _usb_reset(USBDriver *usbp) {
   usbp->status        = 0;
   usbp->address       = 0;
   usbp->configuration = 0;
+  usbp->transmitting  = 0;
+  usbp->receiving     = 0;
 
   /* Invalidates all endpoints into the USBDriver structure.*/
   for (i = 0; i <= USB_MAX_ENDPOINTS; i++)

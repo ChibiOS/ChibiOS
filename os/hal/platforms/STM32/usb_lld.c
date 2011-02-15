@@ -87,6 +87,9 @@ static const USBEndpointConfig ep0config = {
  * @param[in] usbp      pointer to the @p USBDriver object
  */
 static void pm_reset(USBDriver *usbp) {
+
+  /* The first 64 bytes are reserved for the descriptors table. The effective
+     available RAM for endpoint buffers is just 448 bytes.*/
   usbp->pmnext = 64;
 }
 
@@ -97,8 +100,11 @@ static void pm_reset(USBDriver *usbp) {
  * @param[in] size      size of the packet buffer to allocate
  */
 static uint32_t pm_alloc(USBDriver *usbp, size_t size) {
-  uint32_t next = usbp->pmnext;
+  uint32_t next;
+
+  next = usbp->pmnext;
   usbp->pmnext += size;
+  chDbgAssert(usbp->pmnext > USB_PMA_SIZE, "pm_alloc(), #1", "PMA overflow");
   return next;
 }
 
@@ -463,12 +469,14 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
 void usb_lld_disable_endpoints(USBDriver *usbp) {
   unsigned i;
 
-  (void)usbp;
+  /* Resets the packet memory allocator.*/
+  pm_reset(usbp);
+
+  /* Disabling all endpoints.*/
   for (i = 1; i <= USB_ENDOPOINTS_NUMBER; i++) {
     EPR_TOGGLE(i, 0);
     EPR_SET(i, 0);
   }
-
 }
 
 /**
