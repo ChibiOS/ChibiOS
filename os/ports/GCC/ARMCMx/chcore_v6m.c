@@ -82,7 +82,7 @@ void _port_switch_from_isr(void) {
 
   chSchDoRescheduleI();
 
-  /* Note, the last registers are restored alone after re-enabling the
+  /* Note, the last register is restored alone after re-enabling the
      interrupts in order to minimize the (very remote and unlikely)
      possibility that the stack is filled by continuous and saturating
      interrupts that would not allow that last words to be pulled out of
@@ -91,8 +91,9 @@ void _port_switch_from_isr(void) {
                 "mov     r12, r1                                \n\t"
                 "msr     APSR, r0                               \n\t"
                 "mov     lr, r2                                 \n\t"
+                "pop     {r0, r1, r2, r3}                       \n\t"
                 "cpsie   i                                      \n\t"
-                "pop     {r0, r1, r2, r3, pc}" : : : "memory");
+                "pop     {pc}" : : : "memory");
 }
 
 #define PUSH_CONTEXT(sp) {                                                  \

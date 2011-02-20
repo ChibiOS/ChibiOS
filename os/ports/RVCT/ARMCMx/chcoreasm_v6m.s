@@ -100,8 +100,9 @@ _port_switch_from_isr PROC
                 mov     r12, r1
                 msr     APSR, r0
                 mov     lr, r2
+                pop     {r0, r1, r2, r3}
                 cpsie   i
-                pop     {r0, r1, r2, r3, pc}
+                pop     {pc}
                 ENDP
 
 /*
