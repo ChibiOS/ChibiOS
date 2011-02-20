@@ -71,6 +71,8 @@
 *** 2.3.0 ***
 - FIX: Stack overflow in CM0 port when nearing interrupts saturation (bug
   3187105)(backported to 2.2.1).
+- FIX: Fixed error in _BSEMAPHORE_DATA macro (bug 3184139)(backported to
+  2.2.1).
 - FIX: Error in MAC driver (bug 3179783)(backported to 2.2.1).
 - FIX: Fixed wrong serial driver macros (bug 3173336)(backported to 2.2.1).
 - NEW: Added experimental generic USB driver, it will evolve in next
