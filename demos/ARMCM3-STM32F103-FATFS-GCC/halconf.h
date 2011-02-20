@@ -90,6 +90,13 @@
 #endif
 
 /**
+ * @brief   Enables the SERIAL over USB subsystem.
+ */
+#if !defined(HAL_USE_SERIAL_USB) || defined(__DOXYGEN__)
+#define HAL_USE_SERIAL_USB          FALSE
+#endif
+
+/**
  * @brief   Enables the SPI subsystem.
  */
 #if !defined(HAL_USE_SPI) || defined(__DOXYGEN__)
@@ -101,6 +108,13 @@
  */
 #if !defined(HAL_USE_UART) || defined(__DOXYGEN__)
 #define HAL_USE_UART                FALSE
+#endif
+
+/**
+ * @brief   Enables the USB subsystem.
+ */
+#if !defined(HAL_USE_USB) || defined(__DOXYGEN__)
+#define HAL_USE_USB                 FALSE
 #endif
 
 /*===========================================================================*/
