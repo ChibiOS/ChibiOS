@@ -132,7 +132,6 @@ skipexit
                 ldr     r3, =_port_switch_from_isr
                 str     r3, [r1, #24]
                 pop     {r4, pc}
-                nop
                 ENDP
 
                 END

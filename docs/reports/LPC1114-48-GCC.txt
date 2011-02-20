@@ -5,7 +5,7 @@ Settings: CLK=48, (2 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.2.0
+*** Kernel:       2.2.1
 *** GCC Version:  4.3.3
 *** Architecture: ARMv6-M
 *** Core Variant: Cortex-M0
@@ -98,7 +98,7 @@ Settings: CLK=48, (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 124135 msgs/S, 248270 ctxswc/S
+--- Score : 124136 msgs/S, 248272 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)

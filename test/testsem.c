@@ -257,7 +257,7 @@ static msg_t thread4(void *p) {
 }
 
 static void sem4_execute(void) {
-  BSEMAPHORE_DECL(bsem, TRUE);
+  BinarySemaphore bsem;
   
   /* Creates a taken binary semaphore.*/
   chBSemInit(&bsem, TRUE);
