@@ -77,7 +77,7 @@ typedef struct  {
  * @param[in] taken     the semaphore initial state
  */
 #define _BSEMAPHORE_DATA(name, taken)                                       \
-  {_SEMAPHORE_DATA(name.bs_sem), ((taken) ? 0 : 1)}
+  {_SEMAPHORE_DATA(name.bs_sem, ((taken) ? 0 : 1))}
 
 /**
  * @brief   Static semaphore initializer.
