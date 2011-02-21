@@ -75,6 +75,14 @@
   2.2.1).
 - FIX: Error in MAC driver (bug 3179783)(backported to 2.2.1).
 - FIX: Fixed wrong serial driver macros (bug 3173336)(backported to 2.2.1).
+- NEW: Added two new functions to the events subsystem: chEvtBroadcastFlags()
+  and chEvtBroadcastFlagsI(). The old chEvtBroadcast() and chEvtBroadcastI()
+  become macros. The new functions allow to add the same flags to all the
+  registered listener threads.
+- CHANGE: The functions chEvtSignal() and chEvtSignalI() have been renamed
+  to chEvtSignalFlags() and chEvtSignalFlagsI() for consistency.
+- NEW: Added I-Class functions to the MailBoxes subsystem, now it is
+  possible to use them as a transport layer between ISRs and Threads.
 - NEW: Added experimental generic USB driver, it will evolve in next
   releases.
 - NEW: Added an experimental USB driver implementation for STM32.
