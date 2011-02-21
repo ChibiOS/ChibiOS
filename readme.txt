@@ -68,6 +68,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.2.2 ***
+- Documentation related fixes.
+
 *** 2.2.1 ***
 - FIX: Stack overflow in CM0 ports when nearing interrupts saturation (bug
   3187105).
