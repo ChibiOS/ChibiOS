@@ -94,6 +94,8 @@
   driver. This event marks the physical transmission end of a data stream.
 - NEW: Implemented the new IO_TRANSMISSION_END event in the STM32 serial
   driver.
+- CHANGE: Swapped the numeric values of the TIME_IMMEDIATE and TIME_INFINITE
+  constants. Fixed the relative documentation in various places.
 
 *** 2.1.8 ***
 - FIX: Fixed error in STM32 ADC driver macro names (bug 3160306)(backported
