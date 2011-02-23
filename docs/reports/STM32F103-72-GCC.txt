@@ -98,15 +98,15 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 248573 msgs/S, 497146 ctxswc/S
+--- Score : 248569 msgs/S, 497138 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 201227 msgs/S, 402454 ctxswc/S
+--- Score : 198998 msgs/S, 397996 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 201227 msgs/S, 402454 ctxswc/S
+--- Score : 198998 msgs/S, 397996 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)

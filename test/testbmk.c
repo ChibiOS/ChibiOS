@@ -65,11 +65,14 @@ static Mutex mtx1;
 #endif
 
 static msg_t thread1(void *p) {
+  Thread *tp;
   msg_t msg;
 
   (void)p;
   do {
-    chMsgRelease(msg = chMsgWait());
+    tp = chMsgWait();
+    msg = chMsgGet(tp);
+    chMsgRelease(tp, msg);
   } while (msg);
   return 0;
 }

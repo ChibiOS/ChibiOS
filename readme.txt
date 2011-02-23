@@ -96,6 +96,8 @@
   driver.
 - CHANGE: Swapped the numeric values of the TIME_IMMEDIATE and TIME_INFINITE
   constants. Fixed the relative documentation in various places.
+- CHANGE: Slightly modified the messages API in order to allow the
+  processing of multiple messages at the same time.
 
 *** 2.1.8 ***
 - FIX: Fixed error in STM32 ADC driver macro names (bug 3160306)(backported

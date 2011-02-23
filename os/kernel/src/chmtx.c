@@ -141,7 +141,7 @@ void chMtxLockS(Mutex *mp) {
       case THD_STATE_WTSEM:
 #endif
 #if CH_USE_MESSAGES_PRIORITY
-      case THD_STATE_SNDMSG:
+      case THD_STATE_SNDMSGQ:
 #endif
         /* Re-enqueues tp with its new priority on the queue.*/
         prio_insert(dequeue(tp), (ThreadsQueue *)tp->p_u.wtobjp);

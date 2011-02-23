@@ -75,7 +75,7 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
   msg_insert(ctp, &tp->p_msgqueue);
   if (tp->p_state == THD_STATE_WTMSG)
     chSchReadyI(tp);
-  chSchGoSleepS(THD_STATE_SNDMSG);
+  chSchGoSleepS(THD_STATE_SNDMSGQ);
   msg = ctp->p_u.rdymsg;
   chSysUnlock();
   return msg;
@@ -83,69 +83,46 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
 
 /**
  * @brief   Suspends the thread and waits for an incoming message.
- * @post    After receiving a message the function @p chMsgRelease() must be
- *          invoked in order to acknowledge the reception and send the answer.
+ * @post    After receiving a message the function @p chMsgGet() must be
+ *          called in order to retrieve the message and then @p chMsgRelease()
+ *          must be invoked in order to acknowledge the reception and send
+ *          the answer.
  * @note    If the message is a pointer then you can assume that the data
  *          pointed by the message is stable until you invoke @p chMsgRelease()
  *          because the sending thread is suspended until then.
  *
- * @return              The message.
+ * @return              A reference to the thread carrying the message.
  *
  * @api
  */
-msg_t chMsgWait(void) {
-  msg_t msg;
+Thread *chMsgWait(void) {
+  Thread *tp;
 
   chSysLock();
   if (!chMsgIsPendingI(currp))
     chSchGoSleepS(THD_STATE_WTMSG);
-#if defined(CH_ARCHITECTURE_STM8)
-  msg = chMsgGetI((volatile Thread *)currp); /* Temporary hack.*/
-#else
-  msg = chMsgGetI(currp);
-#endif
+  tp = fifo_remove(&currp->p_msgqueue);
+  tp->p_state = THD_STATE_SNDMSG;
   chSysUnlock();
-  return msg;
-}
-
-/**
- * @brief   Returns the next message in the queue.
- * @post    After receiving a message the function @p chMsgRelease() must be
- *          invoked in order to acknowledge the reception and send the answer.
- * @note    If the message is a pointer then you can assume that the data
- *          pointed by the message is stable until you invoke @p chMsgRelease()
- *          because the sending thread is suspended until then.
- *
- * @return              The message.
- * @retval 0            if the queue is empty.
- *
- * @api
- */
-msg_t chMsgGet(void) {
-  msg_t msg;
-
-  chSysLock();
-  msg = chMsgIsPendingI(currp) ? chMsgGetI(currp) : (msg_t)NULL;
-  chSysUnlock();
-  return msg;
+  return tp;
 }
 
 /**
  * @brief   Releases the thread waiting on top of the messages queue.
  * @pre     Invoke this function only after a message has been received
- *          using @p chMsgWait() or @p chMsgGet().
+ *          using @p chMsgWait().
  *
- * @param[in] msg       the message returned to the message sender
+ * @param[in] tp        pointer to the thread
+ * @param[in] msg       message to be returned to the sender
  *
  * @api
  */
-void chMsgRelease(msg_t msg) {
+void chMsgRelease(Thread *tp, msg_t msg) {
 
   chSysLock();
-  chDbgAssert(chMsgIsPendingI(currp),
-              "chMsgRelease(), #1",
-              "no message pending");
-  chSchWakeupS(fifo_remove(&currp->p_msgqueue), msg);
+  chDbgAssert(tp->p_state == THD_STATE_SNDMSG,
+              "chMsgRelease(), #1", "invalid state");
+  chMsgReleaseS(tp, msg);
   chSysUnlock();
 }
 

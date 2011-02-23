@@ -176,12 +176,14 @@ struct Thread {
 #define THD_STATE_WTOREVT       8
 /** @brief Thread state: Waiting in @p chEvtWaitAllTimeout().*/
 #define THD_STATE_WTANDEVT      9
-/** @brief Thread state: Waiting in @p chMsgSend().*/
-#define THD_STATE_SNDMSG        10
+/** @brief Thread state: Waiting in @p chMsgSend() (queued).*/
+#define THD_STATE_SNDMSGQ       10
+/** @brief Thread state: Waiting in @p chMsgSend() (not queued).*/
+#define THD_STATE_SNDMSG        11
 /** @brief Thread state: Waiting in @p chMsgWait().*/
-#define THD_STATE_WTMSG         11
+#define THD_STATE_WTMSG         12
 /** @brief Thread state: After termination.*/
-#define THD_STATE_FINAL         12
+#define THD_STATE_FINAL         13
 
 /*
  * Various flags into the thread p_flags field.
@@ -242,7 +244,7 @@ extern "C" {
  * @note    This function is only available when the
  *          @p CH_DBG_THREADS_PROFILING configuration option is enabled.
  *
- * @param[in] tp        the pointer to the thread
+ * @param[in] tp        pointer to the thread
  *
  * @api
  */
@@ -258,7 +260,7 @@ extern "C" {
 /**
  * @brief   Verifies if the specified thread is in the @p THD_STATE_FINAL state.
  *
- * @param[in] tp        the pointer to the thread
+ * @param[in] tp        pointer to the thread
  * @retval TRUE         thread terminated.
  * @retval FALSE        thread not terminated.
  *
@@ -279,7 +281,7 @@ extern "C" {
 /**
  * @brief   Resumes a thread created with @p chThdInit().
  *
- * @param[in] tp        the pointer to the thread
+ * @param[in] tp        pointer to the thread
  *
  * @iclass
  */
@@ -305,7 +307,7 @@ extern "C" {
  *          system clock.
  * @note    The maximum specified value is implementation dependent.
  *
- * @param[in] sec       the time in seconds
+ * @param[in] sec       time in seconds
  *
  * @api
  */
@@ -318,7 +320,7 @@ extern "C" {
  *          system clock.
  * @note    The maximum specified value is implementation dependent.
  *
- * @param[in] msec      the time in milliseconds
+ * @param[in] msec      time in milliseconds
  *
  * @api
  */
@@ -331,7 +333,7 @@ extern "C" {
  *          system clock.
  * @note    The maximum specified value is implementation dependent.
  *
- * @param[in] usec      the time in microseconds
+ * @param[in] usec      time in microseconds
  *
  * @api
  */
