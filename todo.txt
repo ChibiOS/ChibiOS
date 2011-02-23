@@ -15,8 +15,8 @@ Within 2.3.x (hopefully)
 * Add a "transmission end" event to the serial device driver model.
   X Implement the "transmission end" serial driver event on those platforms
     supporting the feature.
-- Swap TIME_IMMEDIATE and TIME_INFINITE values.
-- Improvements to the message passing mechanism in order to allow "delayed,
+* Swap TIME_IMMEDIATE and TIME_INFINITE values.
+* Improvements to the message passing mechanism in order to allow "delayed,
   out of order, responses".
 ? Make thread functions return void and add a CH_THREAD macro for threads
   declaration in order to hide compiler-specific optimizations for thread
