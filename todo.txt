@@ -37,7 +37,7 @@ X Transactional flash file system implementation.
 X I2C device driver class support and at least one implementation.
 X Shared DMA channels support in the STM32/STM8L HALs.
 X RAM ISR vectors support in the STM32 HAL.
-X New device driver models: Clock, Systick, RTC, WDG, DAC, Power Monitor.
+X New device driver models: Clock, Systick, PT, RTC, WDG, DAC, Power Monitor.
 
 Later but within 2.x.x
 - Batch testing of the ARM7/ARMCMx port using OpenOCD, with reports.
