@@ -91,7 +91,8 @@
 - CHANGE: The functions chEvtSignal() and chEvtSignalI() have been renamed
   to chEvtSignalFlags() and chEvtSignalFlagsI() for consistency.
 - NEW: Added I-Class functions to the MailBoxes subsystem, now it is
-  possible to use them as a transport layer between ISRs and Threads.
+  possible to use them as a transport layer between ISRs and Threads
+  (backported to 2.2.2).
 - NEW: Added experimental generic USB driver, it will evolve in next
   releases.
 - NEW: Added an experimental USB driver implementation for STM32.
@@ -104,7 +105,8 @@
 - NEW: Implemented the new IO_TRANSMISSION_END event in the STM32 serial
   driver.
 - CHANGE: Swapped the numeric values of the TIME_IMMEDIATE and TIME_INFINITE
-  constants. Fixed the relative documentation in various places.
+  constants. Fixed the relative documentation in various places (backported
+  to 2.2.2).
 
 *** 2.1.8 ***
 - FIX: Fixed error in STM32 ADC driver macro names (bug 3160306)(backported
