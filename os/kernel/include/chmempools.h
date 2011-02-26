@@ -66,7 +66,7 @@ typedef struct {
  * @param[in] provider  memory provider function for the memory pool
  */
 #define _MEMORYPOOL_DATA(name, size, provider)                              \
-  {NULL, MEM_ALIGN_SIZE(size), provider}
+  {NULL, MEM_ALIGN_NEXT(size), provider}
 
 /**
  * @brief Static memory pool initializer in hungry mode.
