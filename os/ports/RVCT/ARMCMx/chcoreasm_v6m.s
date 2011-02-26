@@ -43,7 +43,6 @@ CONTEXT_OFFSET  EQU     12
                 IMPORT  chSchIsRescRequiredExI
                 IMPORT  chSchDoRescheduleI
                 IMPORT  _port_saved_pc
-                IMPORT  _port_irq_nesting
 
 /*
  * Performs a context switch between two threads.
