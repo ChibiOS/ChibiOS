@@ -125,11 +125,9 @@ struct intctx {
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_PROLOGUE() {                                               \
-  port_lock_from_isr();                                                     \
-  _port_irq_nesting++;                                                      \
-  port_unlock_from_isr();                                                   \
-}
+#define PORT_IRQ_PROLOGUE()                                                 \
+  regarm_t _saved_lr;                                                       \
+  asm volatile ("mov     %0, lr" : "=r" (_saved_lr) : : "memory")
 
 /**
  * @brief   IRQ epilogue code.
@@ -137,16 +135,18 @@ struct intctx {
  *          enabled to invoke system APIs.
  */
 #define PORT_IRQ_EPILOGUE() {                                               \
-  port_lock_from_isr();                                                     \
-  if ((--_port_irq_nesting == 0) && chSchIsRescRequiredExI()) {             \
-    register struct cmxctx *ctxp;                                           \
+  if (_saved_lr != (regarm_t)0xFFFFFFF1) {                                  \
+    port_lock_from_isr();                                                   \
+    if (chSchIsRescRequiredExI()) {                                         \
+      register struct cmxctx *ctxp;                                         \
                                                                             \
-    asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : );                      \
-    _port_saved_pc = ctxp->pc;                                              \
-    ctxp->pc = _port_switch_from_isr;                                       \
-    return;                                                                 \
+      asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : );                    \
+      _port_saved_pc = ctxp->pc;                                            \
+      ctxp->pc = _port_switch_from_isr;                                     \
+      return;                                                               \
+    }                                                                       \
+    port_unlock_from_isr();                                                 \
   }                                                                         \
-  port_unlock_from_isr();                                                   \
 }
 
 /**
@@ -167,7 +167,6 @@ struct intctx {
  * @brief   Port-related initialization code.
  */
 #define port_init() {                                                       \
-  _port_irq_nesting = 0;                                                    \
   SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);                            \
   NVICSetSystemHandlerPriority(HANDLER_SYSTICK,                             \
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));                         \
@@ -236,7 +235,6 @@ struct intctx {
 
 #if !defined(__DOXYGEN__)
 extern regarm_t _port_saved_pc;
-extern unsigned _port_irq_nesting;
 #endif
 
 #ifdef __cplusplus

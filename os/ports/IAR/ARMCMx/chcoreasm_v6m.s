@@ -112,27 +112,23 @@ _port_switch_from_isr:
  */
         PUBLIC  _port_irq_epilogue
 _port_irq_epilogue:
-        push    {r4, lr}
+        push    {r3, lr}
+        adds    r0, r0, #15
+        beq     stillnested
         cpsid   i
-        ldr     r2, =_port_irq_nesting
-        ldr     r3, [r2]
-        subs    r3, r3, #1
-        str     r3, [r2]
-        cmp     r3, #0
-        beq     skipexit
-notrequired
-        cpsie   i
-        pop     {r4, pc}
-skipexit
         bl      chSchIsRescRequiredExI
         cmp     r0, #0
-        beq     notrequired
-        mrs     r1, PSP
+        bne     doresch
+        cpsie   i
+stillnested
+        pop     {r3, pc}
+doresch
+        mrs     r3, PSP
         ldr     r2, =_port_saved_pc
-        ldr     r3, [r1, #24]
-        str     r3, [r2]
-        ldr     r3, =_port_switch_from_isr
-        str     r3, [r1, #24]
-        pop     {r4, pc}
+        ldr     r1, [r3, #24]
+        str     r1, [r2]
+        ldr     r2, =_port_switch_from_isr
+        str     r2, [r3, #24]
+        pop     {r3, pc}
 
         END

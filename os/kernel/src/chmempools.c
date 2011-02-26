@@ -82,10 +82,8 @@ void *chPoolAllocI(MemoryPool *mp) {
 
   if ((objp = mp->mp_next) != NULL)
     mp->mp_next = mp->mp_next->ph_next;
-#if CH_USE_MEMCORE
   else if (mp->mp_provider != NULL)
     objp = mp->mp_provider(mp->mp_object_size);
-#endif
   return objp;
 }
 

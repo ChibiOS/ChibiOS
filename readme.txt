@@ -69,6 +69,18 @@
 *****************************************************************************
 
 *** 2.2.2 ***
+- FIX: Fixed race condition in CM0 ports, the fix also improves the
+  ISR latency (bug 3193062).
+- FIX: Fixed Cortex-Mx linker scripts alignment of __heap_base__, the
+  correct alignment is now enforced at runtime into core_init() in order
+  to make the OS integration easier (bug 3191112).
+- FIX: Fixed error in function chCoreAllocI() function documentation (bug
+  3191107).
+- FIX: Fixed minor problem with memory pools (bug 3190512).
+- NEW: Added I-Class functions to the MailBoxes subsystem, now it is
+  possible to use them as a transport layer between ISRs and Threads.
+- CHANGE: Swapped the numeric values of the TIME_IMMEDIATE and TIME_INFINITE
+  constants. Fixed the relative documentation in various places.
 - Documentation related fixes.
 
 *** 2.2.1 ***

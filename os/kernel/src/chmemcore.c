@@ -31,18 +31,20 @@
  * @addtogroup memcore
  * @details Core Memory Manager related APIs and services.
  *          <h2>Operation mode</h2>
- *          The core memory manager is a simplified allocator that only allows
- *          to allocate memory blocks without the possibility to free them.<br>
- *          This allocator is meant as a memory blocks provider for the other
- *          allocators such as:
+ *          The core memory manager is a simplified allocator that only
+ *          allows to allocate memory blocks without the possibility to
+ *          free them.<br>
+ *          This allocator is meant as a memory blocks provider for the
+ *          other allocators such as:
  *          - C-Runtime allocator (through a compiler specific adapter module).
  *          - Heap allocator (see @ref heaps).
  *          - Memory pools allocator (see @ref pools).
  *          .
- *          By having a centralized memory provider the various allocators can
- *          coexist and share the main memory.<br>
- *          This allocator, alone, is also useful for very simple applications
- *          that just require a simple way to get memory blocks.
+ *          By having a centralized memory provider the various allocators
+ *          can coexist and share the main memory.<br>
+ *          This allocator, alone, is also useful for very simple
+ *          applications that just require a simple way to get memory
+ *          blocks.
  * @pre     In order to use the core memory manager APIs the @p CH_USE_MEMCORE
  *          option must be enabled in @p chconf.h.
  * @{
@@ -62,24 +64,22 @@ static uint8_t *endmem;
  */
 void core_init(void) {
 #if CH_MEMCORE_SIZE == 0
-  extern uint8_t __heap_base__;
-  extern uint8_t __heap_end__;
-  nextmem = &__heap_base__;
-  endmem = &__heap_end__;
+  extern uint8_t __heap_base__[];
+  extern uint8_t __heap_end__[];
+  nextmem = (uint8_t *)MEM_ALIGN_NEXT(__heap_base__);
+  endmem = (uint8_t *)MEM_ALIGN_PREV(__heap_end__);
 #else
-  static stkalign_t buffer[MEM_ALIGN_SIZE(CH_MEMCORE_SIZE) /
-                           sizeof(stkalign_t)];
+  static stkalign_t buffer[MEM_ALIGN_NEXT(CH_MEMCORE_SIZE)/MEM_ALIGN_SIZE];
   nextmem = (uint8_t *)&buffer[0];
-  endmem = (uint8_t *)&buffer[MEM_ALIGN_SIZE(CH_MEMCORE_SIZE) /
-                              sizeof(stkalign_t)];
+  endmem = (uint8_t *)&buffer[MEM_ALIGN_NEXT(CH_MEMCORE_SIZE)/MEM_ALIGN_SIZE];
 #endif
 }
 
 /**
  * @brief   Allocates a memory block.
  * @details The size of the returned block is aligned to the alignment
- *          type @p stkalign_t so it is not possible to allocate less
- *          than <code>sizeof(stkalign_t)</code>.
+ *          type so it is not possible to allocate less
+ *          than <code>MEM_ALIGN_SIZE</code>.
  *
  * @param[in] size      the size of the block to be allocated
  * @return              A pointer to the allocated memory block.
@@ -99,8 +99,8 @@ void *chCoreAlloc(size_t size) {
 /**
  * @brief   Allocates a memory block.
  * @details The size of the returned block is aligned to the alignment
- *          type @p align_t so it is not possible to allocate less than
- *          <code>sizeof(align_t)</code>.
+ *          type so it is not possible to allocate less than
+ *          <code>MEM_ALIGN_SIZE</code>.
  *
  * @param[in] size      the size of the block to be allocated.
  * @return              A pointer to the allocated memory block.
@@ -111,7 +111,7 @@ void *chCoreAlloc(size_t size) {
 void *chCoreAllocI(size_t size) {
   void *p;
 
-  size = MEM_ALIGN_SIZE(size);
+  size = MEM_ALIGN_NEXT(size);
   if ((size_t)(endmem - nextmem) < size)
     return NULL;
   p = nextmem;

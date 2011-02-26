@@ -55,13 +55,13 @@
  * @note    Not all functions accept @p TIME_IMMEDIATE as timeout parameter,
  *          see the specific function documentation.
  */
-#define TIME_IMMEDIATE  ((systime_t)-1)
+#define TIME_IMMEDIATE  ((systime_t)0)
 
 /**
  * @brief   Infinite time specification for all the syscalls with a timeout
  *          specification.
  */
-#define TIME_INFINITE   ((systime_t)0)
+#define TIME_INFINITE   ((systime_t)-1)
 
 /**
  * @brief   Returns the priority of the first thread on the given ready list.

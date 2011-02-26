@@ -210,11 +210,11 @@ msg_t chCondWaitS(CondVar *cp) {
  *          mutex, the mutex ownership is lost.
  *
  * @param[in] cp        pointer to the @p CondVar structure
- * @param[in] time      the number of ticks before the operation timeouts,
- *                      the special value @p TIME_INFINITE is allowed.
- *                      It is not possible to specify zero @p TIME_IMMEDIATE
- *                      as timeout specification because it would make no sense
- *                      in this function.
+ * @param[in] time      the number of ticks before the operation timeouts, the
+ *                      special values are handled as follow:
+ *                      - @a TIME_INFINITE no timeout.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
+ *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the condition variable.
  * @retval RDY_OK       if the condvar has been signaled using
@@ -247,11 +247,11 @@ msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
  *          mutex, the mutex ownership is lost.
  *
  * @param[in] cp        pointer to the @p CondVar structure
- * @param[in] time      the number of ticks before the operation timeouts,
- *                      the special value @p TIME_INFINITE is allowed.
- *                      It is not possible to specify zero @p TIME_IMMEDIATE
- *                      as timeout specification because it would make no sense
- *                      in this function.
+ * @param[in] time      the number of ticks before the operation timeouts, the
+ *                      special values are handled as follow:
+ *                      - @a TIME_INFINITE no timeout.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
+ *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the condition variable.
  * @retval RDY_OK       if the condvar has been signaled using
@@ -267,7 +267,7 @@ msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time) {
   Mutex *mp;
   msg_t msg;
 
-  chDbgCheck(cp != NULL, "chCondWaitTimeoutS");
+  chDbgCheck((cp != NULL) && (time != TIME_IMMEDIATE), "chCondWaitTimeoutS");
   chDbgAssert(currp->p_mtxlist != NULL,
               "chCondWaitTimeoutS(), #1",
               "not owning a mutex");

@@ -167,9 +167,7 @@ static void wakeup(void *p) {
  *                      - @a TIME_INFINITE the thread enters an infinite sleep
  *                        state, this is equivalent to invoking
  *                        @p chSchGoSleepS() but, of course, less efficient.
- *                      - @a TIME_IMMEDIATE this value is accepted but
- *                        interpreted as a normal time specification not as an
- *                        immediate timeout specification.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
  *                      .
  * @return              The wakeup message.
  * @retval RDY_TIMEOUT if a timeout occurs.

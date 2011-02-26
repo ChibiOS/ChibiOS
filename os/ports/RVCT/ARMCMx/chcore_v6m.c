@@ -40,11 +40,6 @@
 regarm_t _port_saved_pc;
 
 /**
- * @brief   IRQ nesting counter.
- */
-unsigned _port_irq_nesting;
-
-/**
  * @brief   System Timer vector.
  * @details This interrupt is used as system tick.
  * @note    The timer must be initialized in the startup code.

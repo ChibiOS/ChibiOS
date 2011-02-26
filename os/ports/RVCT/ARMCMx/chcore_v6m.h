@@ -125,18 +125,14 @@ struct intctx {
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_PROLOGUE() {                                               \
-  port_lock_from_isr();                                                     \
-  _port_irq_nesting++;                                                      \
-  port_unlock_from_isr();                                                   \
-}
+#define PORT_IRQ_PROLOGUE() regarm_t _saved_lr = (regarm_t)__return_address()
 
 /**
  * @brief   IRQ epilogue code.
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() _port_irq_epilogue()
+#define PORT_IRQ_EPILOGUE() _port_irq_epilogue(_saved_lr)
 
 /**
  * @brief   IRQ handler function declaration.
@@ -156,7 +152,6 @@ struct intctx {
  * @brief   Port-related initialization code.
  */
 #define port_init() {                                                       \
-  _port_irq_nesting = 0;                                                    \
   SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);                            \
   NVICSetSystemHandlerPriority(HANDLER_SYSTICK,                             \
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));                         \
@@ -237,7 +232,6 @@ struct intctx {
 
 #if !defined(__DOXYGEN__)
 extern regarm_t _port_saved_pc;
-extern unsigned _port_irq_nesting;
 #endif
 
 #ifdef __cplusplus
@@ -245,7 +239,7 @@ extern "C" {
 #endif
   void port_halt(void);
   void _port_switch(Thread *ntp, Thread *otp);
-  void _port_irq_epilogue(void);
+  void _port_irq_epilogue(regarm_t lr);
   void _port_switch_from_isr(void);
   void _port_thread_start(void);
 #ifdef __cplusplus

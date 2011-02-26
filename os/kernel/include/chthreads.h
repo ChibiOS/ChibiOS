@@ -249,7 +249,7 @@ extern "C" {
  * @note    This function is only available when the
  *          @p CH_DBG_THREADS_PROFILING configuration option is enabled.
  *
- * @param[in] tp        the pointer to the thread
+ * @param[in] tp        pointer to the thread
  *
  * @api
  */
@@ -265,7 +265,7 @@ extern "C" {
 /**
  * @brief   Verifies if the specified thread is in the @p THD_STATE_FINAL state.
  *
- * @param[in] tp        the pointer to the thread
+ * @param[in] tp        pointer to the thread
  * @retval TRUE         thread terminated.
  * @retval FALSE        thread not terminated.
  *
@@ -286,7 +286,7 @@ extern "C" {
 /**
  * @brief   Resumes a thread created with @p chThdInit().
  *
- * @param[in] tp        the pointer to the thread
+ * @param[in] tp        pointer to the thread
  *
  * @iclass
  */
@@ -299,9 +299,7 @@ extern "C" {
  *                      handled as follow:
  *                      - @a TIME_INFINITE the thread enters an infinite sleep
  *                        state.
- *                      - @a TIME_IMMEDIATE this value is accepted but
- *                        interpreted as a normal time specification not as
- *                        an immediate timeout specification.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
  *                      .
  *
  * @sclass
@@ -314,7 +312,7 @@ extern "C" {
  *          system clock.
  * @note    The maximum specified value is implementation dependent.
  *
- * @param[in] sec       the time in seconds
+ * @param[in] sec       time in seconds
  *
  * @api
  */
@@ -327,7 +325,7 @@ extern "C" {
  *          system clock.
  * @note    The maximum specified value is implementation dependent.
  *
- * @param[in] msec      the time in milliseconds
+ * @param[in] msec      time in milliseconds
  *
  * @api
  */
@@ -340,7 +338,7 @@ extern "C" {
  *          system clock.
  * @note    The maximum specified value is implementation dependent.
  *
- * @param[in] usec      the time in microseconds
+ * @param[in] usec      time in microseconds
  *
  * @api
  */
