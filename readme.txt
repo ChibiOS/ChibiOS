@@ -69,7 +69,8 @@
 *****************************************************************************
 
 *** 2.3.0 ***
-- FIX: Fixed race condition in CM0 ports (bug 3193062)(backported to 2.2.2).
+- FIX: Fixed race condition in CM0 ports, the fix also improves the
+  ISR latency (bug 3193062)(backported to 2.2.2).
 - FIX: Fixed Cortex-Mx linker scripts alignment of __heap_base__, the
   correct alignment is now enforced at runtime into core_init() in order
   to make the OS integration easier (bug 3191112)(backported to 2.2.2).

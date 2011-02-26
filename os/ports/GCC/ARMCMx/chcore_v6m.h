@@ -128,16 +128,18 @@ struct intctx {
  *          enabled to invoke system APIs.
  */
 #define PORT_IRQ_EPILOGUE() {                                               \
-  port_lock_from_isr();                                                     \
-  if ((_saved_lr != (regarm_t)0xFFFFFFF1) && chSchIsRescRequiredExI()) {    \
-    register struct cmxctx *ctxp;                                           \
+  if (_saved_lr != (regarm_t)0xFFFFFFF1) {                                  \
+    port_lock_from_isr();                                                   \
+    if (chSchIsRescRequiredExI()) {                                         \
+      register struct cmxctx *ctxp;                                         \
                                                                             \
-    asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : );                      \
-    _port_saved_pc = ctxp->pc;                                              \
-    ctxp->pc = _port_switch_from_isr;                                       \
-    return;                                                                 \
+      asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : );                    \
+      _port_saved_pc = ctxp->pc;                                            \
+      ctxp->pc = _port_switch_from_isr;                                     \
+      return;                                                               \
+    }                                                                       \
+    port_unlock_from_isr();                                                 \
   }                                                                         \
-  port_unlock_from_isr();                                                   \
 }
 
 /**
