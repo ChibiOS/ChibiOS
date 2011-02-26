@@ -62,7 +62,7 @@ void chPoolInit(MemoryPool *mp, size_t size, memgetfunc_t provider) {
   chDbgCheck((mp != NULL) && (size >= sizeof(void *)), "chPoolInit");
 
   mp->mp_next = NULL;
-  mp->mp_object_size = MEM_ALIGN_SIZE(size);
+  mp->mp_object_size = MEM_ALIGN_NEXT(size);
   mp->mp_provider = provider;
 }
 

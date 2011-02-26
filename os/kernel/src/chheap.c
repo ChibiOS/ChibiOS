@@ -132,7 +132,7 @@ void *chHeapAlloc(MemoryHeap *heapp, size_t size) {
   if (heapp == NULL)
     heapp = &default_heap;
 
-  size = MEM_ALIGN_SIZE(size);
+  size = MEM_ALIGN_NEXT(size);
   qp = &heapp->h_free;
   H_LOCK(heapp);
 
