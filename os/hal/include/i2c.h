@@ -33,21 +33,7 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
-#define  I2CD_NO_ERROR                  0
-/** @brief Bus Error.*/
-#define  I2CD_BUS_ERROR                 0x01
-/** @brief Arbitration Lost (master mode).*/
-#define  I2CD_ARBITRATION_LOST          0x02
-/** @brief Acknowledge Failure.*/
-#define  I2CD_ACK_FAILURE               0x04
-/** @brief Overrun/Underrun.*/
-#define  I2CD_OVERRUN                   0x08
-/** @brief PEC Error in reception.*/
-#define  I2CD_PEC_ERROR                 0x10
-/** @brief Timeout or Tlow Error.*/
-#define  I2CD_TIMEOUT                   0x20
-/** @brief SMBus Alert.*/
-#define  I2CD_SMB_ALERT                 0x40
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -88,7 +74,95 @@ typedef enum {
   I2C_SRECEIVE = 12,
 } i2cstate_t;
 
+
 #include "i2c_lld.h"
+
+/**
+ * @brief   I2C notification callback type.
+ * @details This function must be used to send start or stop events to I2C bus,
+ *          and change states of I2CDriver.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object triggering the
+ *                      callback
+ * @param[in] i2cscfg   pointer to the @p I2CSlaveConfig object triggering the
+ *                      callback
+ */
+typedef void (*i2ccallback_t)(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
+
+
+/**
+ * @brief   I2C error notification callback type.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object triggering the
+ *                      callback
+ * @param[in] i2cscfg   pointer to the @p I2CSlaveConfig object triggering the
+ *                      callback
+ */
+typedef void (*i2cerrorcallback_t)(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
+
+
+/**
+ * @brief I2C transmission data block size.
+ */
+typedef uint8_t i2cblock_t;
+
+
+/**
+ * @brief Structure representing an I2C slave configuration.
+ */
+struct I2CSlaveConfig{
+  /**
+   * @brief Callback pointer.
+   * @note  Transfer finished callback. Invoke when all data transferred, or
+   *        by DMA buffer events
+   *        If set to @p NULL then the callback is disabled.
+   */
+  i2ccallback_t         id_callback;
+
+  /**
+   * @brief Callback pointer.
+   * @note  This callback will be invoked when error condition occur.
+   *        If set to @p NULL then the callback is disabled.
+   */
+  i2cerrorcallback_t    id_err_callback;
+
+  i2cblock_t            *rxbuf;     // pointer to buffer
+  size_t                rxdepth;    // depth of buffer
+  size_t                rxbytes;    // count of bytes to sent in one transmission
+  size_t                rxbufhead;  // head pointer to current data byte
+
+  i2cblock_t            *txbuf;
+  size_t                txdepth;
+  size_t                txbytes;
+  size_t                txbufhead;
+
+  /**
+   * @brief   Contain slave address and some flags.
+   * @details Bits 0..9 contain slave address in 10-bit mode.
+   *
+   *          Bits 0..6 contain slave address in 7-bit mode.
+   *
+   *          Bits 10..14 are not used in 10-bit mode.
+   *          Bits  7..14 are not used in 7-bit mode.
+   *
+   *          Bit 15 is used to switch between 10-bit and 7-bit modes
+   *          (0 denotes 7-bit mode).
+   */
+  uint16_t              address;
+
+  //TODO: (is it need?) merge rw_bit, restart and address in one 16-bit variable.
+  uint8_t               rw_bit;
+  bool_t                restart;    // send restart if TRUE. Else sent stop event after complete data tx/rx
+
+
+#if I2C_USE_WAIT
+  /**
+   * @brief Thread waiting for I/O completion.
+   */
+  Thread                *thread;
+#endif /* I2C_USE_WAIT */
+};
+
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
