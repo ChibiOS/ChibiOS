@@ -452,8 +452,6 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 }
 
 
-
-
 void i2c_lld_master_start(I2CDriver *i2cp){
   i2cp->id_i2c->CR1 |= I2C_CR1_START;
   while (i2cp->id_i2c->CR1 & I2C_CR1_START);
@@ -468,8 +466,8 @@ void i2c_lld_master_stop(I2CDriver *i2cp){
 }
 
 
-void i2c_lld_master_transmitI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
-  //TODO: check txbytes <= sizeof(i2cscfg->txbuf) here, or in hylevel API
+void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
+  //TODO: check txbytes <= sizeof(i2cscfg->txbuf) here, or in hi level API
 
   i2cp->id_slave_config = i2cscfg;
   i2cp->id_slave_config->rw_bit = I2C_WRITE;
@@ -478,8 +476,8 @@ void i2c_lld_master_transmitI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
   i2c_lld_master_start(i2cp);
 }
 
-void i2c_lld_master_receiveI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
-  //TODO: check txbytes <= sizeof(i2cscfg->txbuf) here, or in hylevel API
+void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
+  //TODO: check txbytes <= sizeof(i2cscfg->txbuf) here, or in hi level API
 
   i2cp->id_slave_config = i2cscfg;
   i2cp->id_slave_config->rw_bit = I2C_READ;

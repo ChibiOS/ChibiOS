@@ -117,13 +117,34 @@ void i2cStop(I2CDriver *i2cp) {
 }
 
 /**
+ * @brief     Generate (re)start on the bus.
+ *
+ * @param[in] i2cp           pointer to the @p I2CDriver object
+ */
+void i2cMasterStart(I2CDriver *i2cp){
+
+  chDbgCheck((i2cp != NULL), "i2cMasterTransmit");
+
+  i2c_lld_master_start(i2cp);
+}
+
+/**
+ * @brief     Generate stop on the bus.
+ *
+ * @param[in] i2cp           pointer to the @p I2CDriver object
+ */
+void i2cMasterStop(I2CDriver *i2cp){
+
+  chDbgCheck((i2cp != NULL), "i2cMasterTransmit");
+
+  i2c_lld_master_stop(i2cp);
+}
+
+/**
  * @brief Sends data ever the I2C bus.
  *
  * @param[in] i2cp           pointer to the @p I2CDriver object
- * @param[in] slave_addr1    7-bit address of the slave
- * @param[in] slave_addr1    used in 10-bit address mode
- * @param[in] n              number of words to send
- * @param[in] txbuf          the pointer to the transmit buffer
+ * @param[in] i2cscfg        pointer to the @p I2CSlaveConfig object
  *
  */
 void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
@@ -134,19 +155,15 @@ void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
               "i2cMasterTransmit(), #1",
               "not active");
 
-  i2c_lld_master_transmitI(i2cp, i2cscfg);
+  i2c_lld_master_transmit(i2cp, i2cscfg);
 }
 
 
 /**
  * @brief Receives data from the I2C bus.
  *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] slave_addr1    7-bit address of the slave
- * @param[in] slave_addr1    used in 10-bit address mode
- * @param[in] n         number of words to receive
- * @param[out] rxbuf    the pointer to the receive buffer
- *
+ * @param[in] i2cp           pointer to the @p I2CDriver object
+ * @param[in] i2cscfg        pointer to the @p I2CSlaveConfig object
  */
 void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
 
@@ -156,7 +173,7 @@ void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
               "i2cMasterReceive(), #1",
               "not active");
 
-  i2c_lld_master_receiveI(i2cp, i2cscfg);
+  i2c_lld_master_receive(i2cp, i2cscfg);
 }
 
 

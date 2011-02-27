@@ -110,28 +110,23 @@ typedef enum {
  * @brief Driver configuration structure.
  */
 typedef struct {
-  I2C_opMode_t opMode;              /*!< Specifies the I2C mode.*/
-  uint32_t ClockSpeed;              /*!< Specifies the clock frequency. Must be set to a value lower than 400kHz */
+  I2C_opMode_t    opMode;           /*!< Specifies the I2C mode.*/
+  uint32_t        ClockSpeed;       /*!< Specifies the clock frequency. Must be set to a value lower than 400kHz */
   I2C_DutyCycle_t FastModeDutyCycle;/*!< Specifies the I2C fast mode duty cycle */
-  uint8_t OwnAddress7;              /*!< Specifies the first device 7-bit own address. */
-  uint16_t OwnAddress10;            /*!< Specifies the second part of device own address in 10-bit mode. Set to NULL if not used. */
+  uint8_t         OwnAddress7;      /*!< Specifies the first device 7-bit own address. */
+  uint16_t        OwnAddress10;     /*!< Specifies the second part of device own address in 10-bit mode. Set to NULL if not used. */
 } I2CConfig;
 
 
-/**
- * @brief TODO:
- */
-typedef uint32_t i2cflags_t;
 
 /**
- * @brief TODO:
+ * @brief I2C transmission data block size.
  */
 typedef uint8_t i2cblock_t;
 
 
 /**
  * @brief Structure representing an I2C slave configuration.
- * @details Each slave has its own data buffers, adress, and error flags.
  */
 struct I2CSlaveConfig{
   /**
@@ -141,6 +136,7 @@ struct I2CSlaveConfig{
    *        If set to @p NULL then the callback is disabled.
    */
   i2ccallback_t         id_callback;
+
   /**
    * @brief Callback pointer.
    * @note  This callback will be invoked when error condition occur.
@@ -159,17 +155,22 @@ struct I2CSlaveConfig{
   size_t                txbufhead;
 
   /**
-   * @brief   Address word.
-   * @details The MSB used to switch between 10-bit and 7-bit modes
-   *          (0 denotes 7-bit mode). Bits 0..9 contain slave address.
-   *          Bits 10..14 ignores in 10-bit mode.
-   *          Bits 7..14 ignores in 7-bot mode.
+   * @brief   Contain slave address and some flags.
+   * @details Bits 0..9 contain slave address in 10-bit mode.
+   *
+   *          Bits 0..6 contain slave address in 7-bit mode.
+   *
+   *          Bits 10..14 are not used in 10-bit mode.
+   *          Bits  7..14 are not used in 7-bit mode.
+   *
+   *          Bit 15 is used to switch between 10-bit and 7-bit modes
+   *          (0 denotes 7-bit mode).
    */
   uint16_t              address;
 
-  //TODO: join rw_bit, restart in one word.
-  uint8_t               rw_bit;     // this flag contain R/W bit
-  bool_t                restart;    // send restart or stop event after complete data tx/rx
+  //TODO: merge rw_bit, restart and address in one 16-bit variable.
+  uint8_t               rw_bit;
+  bool_t                restart;    // send restart if TRUE. Else sent stop event after complete data tx/rx
 
 
 #if I2C_USE_WAIT
@@ -249,11 +250,12 @@ void i2c_lld_set_own_address(I2CDriver *i2cp);
 void i2c_lld_master_start(I2CDriver *i2cp);
 void i2c_lld_master_stop(I2CDriver *i2cp);
 
+void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
+void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
 
 void i2c_lld_master_transmit_NI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart);
-void i2c_lld_master_transmitI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
 void i2c_lld_master_receive_NI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
-void i2c_lld_master_receiveI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
+
 #ifdef __cplusplus
 }
 #endif

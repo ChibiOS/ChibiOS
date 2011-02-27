@@ -143,13 +143,9 @@ extern "C" {
   void i2cStop(I2CDriver *i2cp);
   void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
   void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
+  void i2cMasterStart(I2CDriver *i2cp);
+  void i2cMasterStop(I2CDriver *i2cp);
 
-
-  void i2cMasterStartI(I2CDriver *i2cp,uint16_t header);
-  void i2cMasterStopI(I2CDriver *i2cp);
-  void i2cMasterRestartI(I2CDriver *i2cp);
-  void i2cMasterTransmitI(I2CDriver *i2cp, size_t n, const uint8_t *txbuf);
-  void i2cMasterReceiveI(I2CDriver *i2cp, size_t n, uint8_t *rxbuf);
 #if I2C_USE_MUTUAL_EXCLUSION
   void i2cAcquireBus(I2CDriver *i2cp);
   void i2cReleaseBus(I2CDriver *i2cp);
