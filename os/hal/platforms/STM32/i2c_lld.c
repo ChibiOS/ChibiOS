@@ -34,9 +34,10 @@ I2CDriver I2CD2;
 /*===========================================================================*/
 
 static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
-    chSysLockFromIsr();
-    i2cp->id_slave_config->id_err_callback(i2cp, i2cp->id_slave_config);
-    chSysUnlockFromIsr();
+  //TODO: more robust error handling
+  chSysLockFromIsr();
+  i2cp->id_slave_config->id_err_callback(i2cp, i2cp->id_slave_config);
+  chSysUnlockFromIsr();
 }
 
 /* helper function, not API
@@ -72,7 +73,6 @@ inline bool_t i2c_lld_rxbyte(I2CDriver *i2cp) {
   // temporal variables
 #define _rxbuf     (i2cp->id_slave_config->rxbuf)
 #define _rxbufhead (i2cp->id_slave_config->rxbufhead)
-#define _rxdepth   (i2cp->id_slave_config->rxdepth)
 #define _rxbytes   (i2cp->id_slave_config->rxbytes)
 
   /* In order to generate the non-acknowledge pulse after the last received
@@ -97,7 +97,6 @@ inline bool_t i2c_lld_rxbyte(I2CDriver *i2cp) {
 
 #undef _rxbuf
 #undef _rxbufhead
-#undef _rxdepth
 #undef _rxbytes
 }
 
@@ -456,8 +455,7 @@ void i2c_lld_master_start(I2CDriver *i2cp){
   i2cp->id_i2c->CR1 |= I2C_CR1_START;
   while (i2cp->id_i2c->CR1 & I2C_CR1_START);
 
-  // enable interrupts
-  i2cp->id_i2c->CR2 |= I2C_CR2_ITEVTEN | I2C_CR2_ITBUFEN;
+  i2cp->id_i2c->CR2 |= I2C_CR2_ITEVTEN | I2C_CR2_ITBUFEN; // enable interrupts
 }
 
 void i2c_lld_master_stop(I2CDriver *i2cp){
@@ -467,7 +465,6 @@ void i2c_lld_master_stop(I2CDriver *i2cp){
 
 
 void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
-  //TODO: check txbytes <= sizeof(i2cscfg->txbuf) here, or in hi level API
 
   i2cp->id_slave_config = i2cscfg;
   i2cp->id_slave_config->rw_bit = I2C_WRITE;
@@ -477,7 +474,6 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 }
 
 void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
-  //TODO: check txbytes <= sizeof(i2cscfg->txbuf) here, or in hi level API
 
   i2cp->id_slave_config = i2cscfg;
   i2cp->id_slave_config->rw_bit = I2C_READ;
@@ -498,7 +494,6 @@ void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
  * @param[in] restart       bool. If TRUE then generate restart condition instead of stop
  */
 void i2c_lld_master_transmit_NI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart) {
-	//TODO: check txbytes <= sizeof(i2cscfg->txbuf) here, or in hylevel API
 
   int i = 0;
 

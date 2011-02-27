@@ -168,7 +168,7 @@ struct I2CSlaveConfig{
    */
   uint16_t              address;
 
-  //TODO: merge rw_bit, restart and address in one 16-bit variable.
+  //TODO: (is it need?) merge rw_bit, restart and address in one 16-bit variable.
   uint8_t               rw_bit;
   bool_t                restart;    // send restart if TRUE. Else sent stop event after complete data tx/rx
 
