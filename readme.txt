@@ -88,22 +88,28 @@
   and chEvtBroadcastFlagsI(). The old chEvtBroadcast() and chEvtBroadcastI()
   become macros. The new functions allow to add the same flags to all the
   registered listener threads.
-- CHANGE: The functions chEvtSignal() and chEvtSignalI() have been renamed
-  to chEvtSignalFlags() and chEvtSignalFlagsI() for consistency.
 - NEW: Added I-Class functions to the MailBoxes subsystem, now it is
   possible to use them as a transport layer between ISRs and Threads
   (backported to 2.2.2).
-- NEW: Added experimental generic USB driver, it will evolve in next
+- NEW: Added new USB driver model, probably it will evolve in next
   releases.
-- NEW: Added an experimental USB driver implementation for STM32.
-- NEW: Added experimental "serial over USB" driver, it implements a
-  Communication Device Class exposing it as a normal serial driver to
-  applications, probably it will evolve in next releases.
+- NEW: USB driver implementation for STM32.
+- NEW: Added "serial over USB" driver, it implements a Communication
+  Device Class exposing it as a normal serial driver to applications,
+  probably it will evolve in next releases.
 - NEW: Added USB CDC loopback test application.
+- NEW: Added new GPT driver model, General Purpose Timer. The driver
+  allows to access the available timers in an abstract way.
+- NEW: GTP driver implementation for STM32.
 - NEW: Implemented new event IO_TRANSMISSION_END in the generic serial
   driver. This event marks the physical transmission end of a data stream.
 - NEW: Implemented the new IO_TRANSMISSION_END event in the STM32 serial
   driver.
+- NEW: Added explicit reset of all peripherals inside the STM32 HAL driver.
+- OPT: Removed TIMx reset on system startup in the STM32 PWM driver, the
+  timers are already reset on driver startup.
+- CHANGE: The functions chEvtSignal() and chEvtSignalI() have been renamed
+  to chEvtSignalFlags() and chEvtSignalFlagsI() for consistency.
 - CHANGE: Swapped the numeric values of the TIME_IMMEDIATE and TIME_INFINITE
   constants. Fixed the relative documentation in various places (backported
   to 2.2.2).

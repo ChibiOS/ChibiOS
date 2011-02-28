@@ -29,7 +29,6 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "usb.h"
 
 #if HAL_USE_USB || defined(__DOXYGEN__)
 
@@ -513,6 +512,10 @@ void usb_lld_disable_endpoints(USBDriver *usbp) {
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
+ * @return              The endpoint status.
+ * @retval EP_STATUS_DISABLED The endpoint is not active.
+ * @retval EP_STATUS_STALLED  The endpoint is stalled.
+ * @retval EP_STATUS_ACTIVE   The endpoint is active.
  *
  * @notapi
  */
@@ -534,6 +537,10 @@ usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep) {
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
+ * @return              The endpoint status.
+ * @retval EP_STATUS_DISABLED The endpoint is not active.
+ * @retval EP_STATUS_STALLED  The endpoint is stalled.
+ * @retval EP_STATUS_ACTIVE   The endpoint is active.
  *
  * @notapi
  */

@@ -18,17 +18,17 @@
 */
 
 /**
- * @file    templates/adc_lld.c
- * @brief   ADC Driver subsystem low level driver source template.
+ * @file    templates/gpt_lld.c
+ * @brief   GPT Driver subsystem low level driver source template.
  *
- * @addtogroup ADC
+ * @addtogroup GPT
  * @{
  */
 
 #include "ch.h"
 #include "hal.h"
 
-#if HAL_USE_ADC || defined(__DOXYGEN__)
+#if HAL_USE_GPT || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -51,66 +51,84 @@
 /*===========================================================================*/
 
 /**
- * @brief   Low level ADC driver initialization.
+ * @brief   Low level GPT driver initialization.
  *
  * @notapi
  */
-void adc_lld_init(void) {
+void gpt_lld_init(void) {
 
 }
 
 /**
- * @brief   Configures and activates the ADC peripheral.
+ * @brief   Configures and activates the GPT peripheral.
  *
- * @param[in] adcp      pointer to the @p ADCDriver object
+ * @param[in] gptp      pointer to the @p GPTDriver object
  *
  * @notapi
  */
-void adc_lld_start(ADCDriver *adcp) {
+void gpt_lld_start(GPTDriver *gptp) {
+  uint16_t psc;
 
-  if (adcp->adc_state == ADC_STOP) {
+  if (gptp->state == GPT_STOP) {
     /* Clock activation.*/
+
   }
   /* Configuration.*/
 }
 
 /**
- * @brief   Deactivates the ADC peripheral.
+ * @brief   Deactivates the GPT peripheral.
  *
- * @param[in] adcp      pointer to the @p ADCDriver object
+ * @param[in] gptp      pointer to the @p GPTDriver object
  *
  * @notapi
  */
-void adc_lld_stop(ADCDriver *adcp) {
+void gpt_lld_stop(GPTDriver *gptp) {
 
-  if (adcp->ad_state == ADC_READY) {
+  if (gptp->state == GPT_READY) {
     /* Clock de-activation.*/
 
   }
 }
 
 /**
- * @brief   Starts an ADC conversion.
+ * @brief   Starts the timer in continuous mode.
  *
- * @param[in] adcp      pointer to the @p ADCDriver object
+ * @param[in] gptp      pointer to the @p GPTDriver object
+ * @param[in] period    period in ticks
  *
  * @notapi
  */
-void adc_lld_start_conversion(ADCDriver *adcp) {
+void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t period) {
 
 }
 
 /**
- * @brief   Stops an ongoing conversion.
+ * @brief   Stops the timer.
  *
- * @param[in] adcp      pointer to the @p ADCDriver object
+ * @param[in] gptp      pointer to the @p GPTDriver object
  *
  * @notapi
  */
-void adc_lld_stop_conversion(ADCDriver *adcp) {
+void gpt_lld_stop_timer(GPTDriver *gptp) {
 
 }
 
-#endif /* HAL_USE_ADC */
+/**
+ * @brief   Starts the timer in one shot mode and waits for completion.
+ * @details This function specifically polls the timer waiting for completion
+ *          in order to not have extra delays caused by interrupt servicing,
+ *          this function is only recommended for short delays.
+ *
+ * @param[in] gptp      pointer to the @p GPTDriver object
+ * @param[in] interval  time interval in ticks
+ *
+ * @notapi
+ */
+void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval) {
+
+}
+
+#endif /* HAL_USE_GPT */
 
 /** @} */

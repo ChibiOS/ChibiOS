@@ -18,8 +18,8 @@
 */
 
 /**
- * @file    STM32/usb_lld.h
- * @brief   STM32 USB subsystem low level driver header.
+ * @file    templates/usb_lld.h
+ * @brief   USB Driver subsystem low level driver header template.
  *
  * @addtogroup USB
  * @{
@@ -39,7 +39,7 @@
 /**
  * @brief   Maximum endpoint address.
  */
-#define USB_MAX_ENDPOINTS                   USB_ENDOPOINTS_NUMBER
+#define USB_MAX_ENDPOINTS                   4
 
 /**
  * @brief   This device requires the address change after the status packet.
@@ -50,94 +50,27 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   USB1 driver enable switch.
- * @details If set to @p TRUE the support for USB1 is included.
- * @note    The default is @p TRUE.
- */
-#if !defined(STM32_USB_USE_USB1) || defined(__DOXYGEN__)
-#define STM32_USB_USE_USB1                  TRUE
-#endif
-
-/**
- * @brief   Enables the USB device low power mode on suspend.
- */
-#if !defined(STM32_USB_LOW_POWER_ON_SUSPEND) || defined(__DOXYGEN__)
-#define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
-#endif
-
-/**
- * @brief   USB1 interrupt priority level setting.
- */
-#if !defined(STM32_USB_USB1_HP_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_USB_USB1_HP_IRQ_PRIORITY      6
-#endif
-
-/**
- * @brief   USB1 interrupt priority level setting.
- */
-#if !defined(STM32_USB_USB1_LP_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_USB_USB1_LP_IRQ_PRIORITY      14
-#endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#if STM32_USB_USE_USB1 && !STM32_HAS_USB
-#error "USB not present in the selected device"
-#endif
-
-#if !STM32_USB_USE_USB1
-#error "USB driver activated but no USB peripheral assigned"
-#endif
-
-#if STM32_USBCLK != 48000000
-#error "the USB driver requires a 48MHz clock"
-#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
 /**
- * @brief   Type of an endpoint state structure.
+ * @brief   Type of an IN endpoint state structure.
  */
 typedef struct {
-  /**
-   * @brief   Pointer to the transmission buffer.
-   */
-  const uint8_t                 *txbuf;
-  /**
-   * @brief   Requested transmit transfer size.
-   */
-  size_t                        txsize;
-  /**
-   * @brief   Transmitted bytes so far.
-   */
-  size_t                        txcnt;
+
 } USBInEndpointState;
 
 /**
- * @brief   Type of an endpoint state structure.
+ * @brief   Type of an OUT endpoint state structure.
  */
 typedef struct {
-  /**
-   * @brief   Number of packets to receive.
-   */
-  uint16_t                      rxpkts;
-  /**
-   * @brief   Pointer to the receive buffer.
-   */
-  uint8_t                       *rxbuf;
-  /**
-   * @brief   Requested receive transfer size.
-   */
-  size_t                        rxsize;
-  /**
-   * @brief   Received bytes so far.
-   */
-  size_t                        rxcnt;
+
 } USBOutEndpointState;
 
 /**
@@ -279,10 +212,6 @@ struct USBDriver {
    */
   uint8_t                       configuration;
   /* End of the mandatory fields.*/
-  /**
-   * @brief   Pointer to the next address in the packet memory.
-   */
-  uint32_t                      pmnext;
 };
 
 /*===========================================================================*/
@@ -306,7 +235,7 @@ struct USBDriver {
  *
  * @notapi
  */
-#define usb_lld_get_frame_number(usbp) (STM32_USB->FNR & FNR_FN_MASK)
+#define usb_lld_get_frame_number(usbp)
 
 /**
  * @brief   Returns the exact size of a receive transaction.
@@ -322,8 +251,7 @@ struct USBDriver {
  *
  * @notapi
  */
-#define usb_lld_get_transaction_size(usbp, ep)                              \
-  ((usbp)->epc[ep]->out_state->rxcnt)
+#define usb_lld_get_transaction_size(usbp, ep)
 
 /**
  * @brief   Returns the exact size of a received packet.
@@ -336,16 +264,11 @@ struct USBDriver {
  *
  * @notapi
  */
-#define  usb_lld_get_packet_size(usbp, ep)                                  \
-  ((size_t)USB_GET_DESCRIPTOR(ep)->RXCOUNT & RXCOUNT_COUNT_MASK)
+#define  usb_lld_get_packet_size(usbp, ep)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
-
-#if STM32_USB_USE_USB1 && !defined(__DOXYGEN__)
-extern USBDriver USBD1;
-#endif
 
 #ifdef __cplusplus
 extern "C" {

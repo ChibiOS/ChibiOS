@@ -18,17 +18,17 @@
 */
 
 /**
- * @file    templates/xxx_lld.h
- * @brief   XXX Driver subsystem low level driver header template.
+ * @file    gpt.h
+ * @brief   GPT Driver macros and structures.
  *
- * @addtogroup XXX
+ * @addtogroup GPT
  * @{
  */
 
-#ifndef _XXX_LLD_H_
-#define _XXX_LLD_H_
+#ifndef _GPT_H_
+#define _GPT_H_
 
-#if HAL_USE_XXX || defined(__DOXYGEN__)
+#if HAL_USE_GPT || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -38,42 +38,38 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Enables synchronous APIs.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(GPT_USE_WAIT) || defined(__DOXYGEN__)
+#define GPT_USE_WAIT                TRUE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if GPT_USE_WAIT && !CH_USE_SEMAPHORES
+#error "GPT driver requires CH_USE_SEMAPHORES when GPT_USE_WAIT is enabled"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-
 /**
- * @brief   Type of a structure representing an XXX driver.
+ * @brief   Driver state machine possible states.
  */
-typedef struct XXXDriver XXXDriver;
+typedef enum {
+  GPT_UNINIT = 0,                   /**< Not initialized.                   */
+  GPT_STOP = 1,                     /**< Stopped.                           */
+  GPT_READY = 2,                    /**< Ready.                             */
+  GPT_CONTINUOUS = 3,               /**< Active in continuous mode.         */
+  GPT_ONESHOT = 4                   /**< Active in one shot mode.           */
+} gptstate_t;
 
-/**
- * @brief   Driver configuration structure.
- * @note    It could be empty on some architectures.
- */
-typedef struct {
-
-} XXXConfig;
-
-/**
- * @brief   Structure representing an XXX driver.
- */
-struct XXXDriver {
-  /**
-   * @brief Driver state.
-   */
-  xxxstate_t                state;
-  /**
-   * @brief Current configuration data.
-   */
-  const XXXConfig           *config;
-  /* End of the mandatory fields.*/
-};
+#include "gpt_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -86,15 +82,26 @@ struct XXXDriver {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void xxx_lld_init(void);
-  void xxx_lld_start(XXXDriver *xxxp);
-  void xxx_lld_stop(XXXDriver *xxxp);
+  void gptInit(void);
+  void gptObjectInit(GPTDriver *gptp);
+  void gptStart(GPTDriver *gptp, const GPTConfig *config);
+  void gptStop(GPTDriver *gptp);
+  void gptStartContinuous(GPTDriver *gptp, gptcnt_t interval);
+  void gptStartContinuousI(GPTDriver *gptp, gptcnt_t interval);
+  void gptStartOneShot(GPTDriver *gptp, gptcnt_t interval);
+  void gptStartOneShotI(GPTDriver *gptp, gptcnt_t interval);
+  void gptStopTimer(GPTDriver *gptp);
+  void gptStopTimerI(GPTDriver *gptp);
+  void gptPolledDelay(GPTDriver *gptp, gptcnt_t interval);
+#if GPT_USE_WAIT
+  void gptDelay(GPTDriver *gptp, gptcnt_t interval);
+#endif
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_XXX */
+#endif /* HAL_USE_GPT */
 
-#endif /* _XXX_LLD_H_ */
+#endif /* _GPT_H_ */
 
 /** @} */

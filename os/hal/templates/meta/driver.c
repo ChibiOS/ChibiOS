@@ -67,8 +67,8 @@ void xxxInit(void) {
  */
 void xxxObjectInit(XXXDriver *xxxp) {
 
-  xxxp->xxx_state    = XXX_STOP;
-  xxxp->xxx_config   = NULL;
+  xxxp->state  = XXX_STOP;
+  xxxp->config = NULL;
 }
 
 /**
@@ -84,12 +84,11 @@ void xxxStart(XXXDriver *xxxp, const XXXConfig *config) {
   chDbgCheck((xxxp != NULL) && (config != NULL), "xxxStart");
 
   chSysLock();
-  chDbgAssert((xxxp->xxx_state == XXX_STOP) || (xxxp->xxx_state == XXX_READY),
-              "xxxStart(), #1",
-              "invalid state");
-  xxxp->xxx_config = config;
+  chDbgAssert((xxxp->state == XXX_STOP) || (xxxp->state == XXX_READY),
+              "xxxStart(), #1", "invalid state");
+  xxxp->config = config;
   xxx_lld_start(xxxp);
-  xxxp->xxx_state = XXX_READY;
+  xxxp->state = XXX_READY;
   chSysUnlock();
 }
 
@@ -105,11 +104,10 @@ void xxxStop(XXXDriver *xxxp) {
   chDbgCheck(xxxp != NULL, "xxxStop");
 
   chSysLock();
-  chDbgAssert((xxxp->xxx_state == XXX_STOP) || (xxxp->xxx_state == XXX_READY),
-              "xxxStop(), #1",
-              "invalid state");
+  chDbgAssert((xxxp->state == XXX_STOP) || (xxxp->state == XXX_READY),
+              "xxxStop(), #1", "invalid state");
   xxx_lld_stop(xxxp);
-  xxxp->xxx_state = XXX_STOP;
+  xxxp->state = XXX_STOP;
   chSysUnlock();
 }
 

@@ -66,6 +66,9 @@ void halInit(void) {
 #if HAL_USE_CAN || defined(__DOXYGEN__)
   canInit();
 #endif
+#if HAL_USE_GPT || defined(__DOXYGEN__)
+  gptInit();
+#endif
 #if HAL_USE_I2C || defined(__DOXYGEN__)
   i2cInit();
 #endif

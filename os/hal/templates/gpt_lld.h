@@ -18,17 +18,17 @@
 */
 
 /**
- * @file    templates/xxx_lld.h
- * @brief   XXX Driver subsystem low level driver header template.
+ * @file    templates/gpt_lld.h
+ * @brief   GPT Driver subsystem low level driver header template.
  *
- * @addtogroup XXX
+ * @addtogroup GPT
  * @{
  */
 
-#ifndef _XXX_LLD_H_
-#define _XXX_LLD_H_
+#ifndef _GPT_LLD_H_
+#define _GPT_LLD_H_
 
-#if HAL_USE_XXX || defined(__DOXYGEN__)
+#if HAL_USE_GPT || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -46,32 +46,59 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   GPT frequency type.
+ */
+typedef uint32_t gptfreq_t;
 
 /**
- * @brief   Type of a structure representing an XXX driver.
+ * @brief   GPT counter type.
  */
-typedef struct XXXDriver XXXDriver;
+typedef uint16_t gptcnt_t;
+
+/**
+ * @brief   Type of a structure representing a GPT driver.
+ */
+typedef struct GPTDriver GPTDriver;
+
+/**
+ * @brief   GPT notification callback type.
+ *
+ * @param[in] gptp      pointer to a @p GPTDriver object
+ */
+typedef void (*gptcallback_t)(GPTDriver *gptp);
 
 /**
  * @brief   Driver configuration structure.
  * @note    It could be empty on some architectures.
  */
 typedef struct {
-
-} XXXConfig;
+  /**
+   * @brief   Timer clock in Hz.
+   * @note    The low level can use assertions in order to catch invalid
+   *          frequency specifications.
+   */
+  gptfreq_t                 frequency;
+  /**
+   * @brief   Timer callback pointer.
+   * @note    This callback is invoked on GPT counter events.
+   */
+  gptcallback_t             callback;
+  /* End of the mandatory fields.*/
+} GPTConfig;
 
 /**
- * @brief   Structure representing an XXX driver.
+ * @brief   Structure representing a GPT driver.
  */
-struct XXXDriver {
+struct GPTDriver {
   /**
    * @brief Driver state.
    */
-  xxxstate_t                state;
+  gptstate_t                state;
   /**
    * @brief Current configuration data.
    */
-  const XXXConfig           *config;
+  const GPTConfig           *config;
   /* End of the mandatory fields.*/
 };
 
@@ -86,15 +113,18 @@ struct XXXDriver {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void xxx_lld_init(void);
-  void xxx_lld_start(XXXDriver *xxxp);
-  void xxx_lld_stop(XXXDriver *xxxp);
+  void gpt_lld_init(void);
+  void gpt_lld_start(GPTDriver *gptp);
+  void gpt_lld_stop(GPTDriver *gptp);
+  void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval);
+  void gpt_lld_stop_timer(GPTDriver *gptp);
+  void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_XXX */
+#endif /* HAL_USE_GPT */
 
-#endif /* _XXX_LLD_H_ */
+#endif /* _GPT_LLD_H_ */
 
 /** @} */

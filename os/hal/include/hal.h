@@ -36,6 +36,7 @@
 #include "pal.h"
 #include "adc.h"
 #include "can.h"
+#include "gpt.h"
 #include "i2c.h"
 #include "mac.h"
 #include "pwm.h"

@@ -57,6 +57,12 @@
  */
 void hal_lld_init(void) {
 
+  /* Reset of all the peripherals.*/
+  RCC->APB1RSTR = 0xFFFFFFFF;
+  RCC->APB2RSTR = 0xFFFFFFFF;
+  RCC->APB1RSTR = 0;
+  RCC->APB2RSTR = 0;
+
   /* SysTick initialization using the system clock.*/
   SysTick->LOAD = STM32_HCLK / CH_FREQUENCY - 1;
   SysTick->VAL = 0;
