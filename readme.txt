@@ -97,10 +97,11 @@
 - NEW: Added "serial over USB" driver, it implements a Communication
   Device Class exposing it as a normal serial driver to applications,
   probably it will evolve in next releases.
-- NEW: Added USB CDC loopback test application.
+- NEW: Added STM32 USB CDC loopback test application.
 - NEW: Added new GPT driver model, General Purpose Timer. The driver
   allows to access the available timers in an abstract way.
 - NEW: GTP driver implementation for STM32.
+- NEW: Added STM32 GPT test application.
 - NEW: Implemented new event IO_TRANSMISSION_END in the generic serial
   driver. This event marks the physical transmission end of a data stream.
 - NEW: Implemented the new IO_TRANSMISSION_END event in the STM32 serial
