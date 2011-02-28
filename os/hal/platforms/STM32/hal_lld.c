@@ -57,7 +57,7 @@
  */
 void hal_lld_init(void) {
 
-  /* Reset of all the peripherals.*/
+  /* Reset of all peripherals.*/
   RCC->APB1RSTR = 0xFFFFFFFF;
   RCC->APB2RSTR = 0xFFFFFFFF;
   RCC->APB1RSTR = 0;

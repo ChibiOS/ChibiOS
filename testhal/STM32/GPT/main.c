@@ -21,20 +21,21 @@
 #include "hal.h"
 
 /*
- * Red LEDs blinker thread, times are in milliseconds.
+ * GPT1 callback.
  */
-static WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+static void gpt1cb(GPTDriver *gptp) {
 
-  (void)arg;
-  while (TRUE) {
-    palClearPad(IOPORT3, GPIOC_LED);
-    chThdSleepMilliseconds(500);
-    palSetPad(IOPORT3, GPIOC_LED);
-    chThdSleepMilliseconds(500);
-  }
-  return 0;
+  (void)gptp;
+  palTogglePad(IOPORT3, GPIOC_LED);
 }
+
+/*
+ * GPT1 configuration.
+ */
+static const GPTConfig gpt1cfg = {
+  10000,    /* 10KHz timer clock.*/
+  gpt1cb    /* Timer callback.*/
+};
 
 /*
  * Application entry point.
@@ -52,20 +53,18 @@ int main(void) {
   chSysInit();
 
   /*
-   * Creates the blinker thread.
-   */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-
-  /*
    * Initializes the GPT driver 1.
    */
-//  gptStart(&GPTD1, &pwmcfg);
+  gptStart(&GPTD1, &gpt1cfg);
 
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
   while (TRUE) {
-    chThdSleepMilliseconds(500);
+    gptStartContinuous(&GPTD1, 5000);
+    chThdSleepMilliseconds(5000);
+    gptStartContinuous(&GPTD1, 2500);
+    chThdSleepMilliseconds(5000);
   }
   return 0;
 }
