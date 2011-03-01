@@ -20,8 +20,8 @@
 /**
  * @defgroup MAC MAC Driver
  * @brief Generic MAC driver.
- * @details This module implements a generic interface for MAC (Media
- *          Access Control) drivers, as example Ethernet controllers.
+ * @details This module implements a generic MAC (Media Access Control)
+ *          driver for Ethernet controllers.
  * @pre     In order to use the MAC driver the @p HAL_USE_MAC option
  *          must be enabled in @p halconf.h.
  *

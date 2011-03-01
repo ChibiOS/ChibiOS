@@ -20,7 +20,8 @@
 /**
  * @defgroup CAN CAN Driver
  * @brief Generic CAN Driver.
- * @details This module implements a generic CAN driver.
+ * @details This module implements a generic CAN driver allowing the exchange
+ *          of information at frame level.
  * @pre     In order to use the CAN driver the @p HAL_USE_CAN option
  *          must be enabled in @p halconf.h.
  *

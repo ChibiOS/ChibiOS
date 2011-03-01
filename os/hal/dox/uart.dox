@@ -19,26 +19,27 @@
 
 /**
  * @defgroup UART UART Driver
- * @brief Generic UART Driver.
+ * @brief   Generic UART Driver.
  * @details This driver abstracts a generic UART peripheral, the API is
- * designed to be:
- * - Unbuffered and copy-less, transfers are always directly performed
- *   from/to the application-level buffers without extra copy operations.
- * - Asynchronous, the API is always non blocking.
- * - Callbacks capable, operations completion and other events are notified
- *   via callbacks.
- * .
- * Special hardware features like deep hardware buffers, DMA transfers
- * are hidden to the user but fully supportable by the low level
- * implementations.<br>
- * This driver model is best used where communication events are meant to
- * drive an higher level state machine, as example:
- * - RS485 drivers.
- * - Multipoint network drivers.
- * - Serial protocol decoders.
- * .
- * If your application requires a synchronoyus buffered driver then the
- * @ref SERIAL should be used instead.
+ *          designed to be:
+ *          - Unbuffered and copy-less, transfers are always directly performed
+ *            from/to the application-level buffers without extra copy
+ *            operations.
+ *          - Asynchronous, the API is always non blocking.
+ *          - Callbacks capable, operations completion and other events are
+ *            notified using callbacks.
+ *          .
+ *          Special hardware features like deep hardware buffers, DMA transfers
+ *          are hidden to the user but fully supportable by the low level
+ *          implementations.<br>
+ *          This driver model is best used where communication events are
+ *          meant to drive an higher level state machine, as example:
+ *          - RS485 drivers.
+ *          - Multipoint network drivers.
+ *          - Serial protocol decoders.
+ *          .
+ *          If your application requires a synchronoyus buffered driver then
+ *          the @ref SERIAL should be used instead.
  * @pre     In order to use the UART driver the @p HAL_USE_UART option
  *          must be enabled in @p halconf.h.
  *

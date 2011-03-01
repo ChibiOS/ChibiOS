@@ -20,7 +20,7 @@
 /**
  * @defgroup MMC_SPI MMC over SPI Driver
  * @brief Generic MMC driver.
- * @details This module implements a portable MMC driver that uses a SPI
+ * @details This module implements a portable MMC/SD driver that uses a SPI
  *          driver as physical layer.
  * @pre     In order to use the MMC_SPI driver the @p HAL_USE_MMC_SPI option
  *          must be enabled in @p halconf.h.

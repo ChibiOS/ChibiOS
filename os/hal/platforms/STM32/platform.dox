@@ -100,6 +100,25 @@
  */
 
 /**
+ * @defgroup STM32_GPT STM32 GPT Support
+ * @details The STM32 GPT driver uses the TIMx peripherals.
+ *
+ * @section stm32_gpt_1 Supported HW resources
+ * - TIM1.
+ * - TIM2.
+ * - TIM3.
+ * - TIM4.
+ * - TIM5.
+ * .
+ * @section stm32_gpt_2 STM32 GPT driver implementation features
+ * - Each timer can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Programmable TIMx interrupts priority level.
+ * .
+ * @ingroup STM32_DRIVERS
+ */
+
+/**
  * @defgroup STM32_PAL STM32 GPIO Support
  * @details The STM32 PAL driver uses the GPIO peripherals.
  *
@@ -158,6 +177,7 @@
  * - TIM2.
  * - TIM3.
  * - TIM4.
+ * - TIM5.
  * .
  * @section stm32_pwm_2 STM32 PWM driver implementation features
  * - Each timer can be independently enabled and programmed. Unused

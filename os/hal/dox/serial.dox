@@ -19,14 +19,14 @@
 
 /**
  * @defgroup SERIAL Serial Driver
- * @brief Generic Serial Driver.
+ * @brief   Generic Serial Driver.
  * @details This module implements a generic full duplex serial driver. The
- * driver implements a @p SerialDriver interface and uses I/O Queues for
- * communication between the upper and the lower driver. Event flags are used
- * to notify the application about incoming data, outgoing data and other I/O
- * events.<br>
- * The  module also contains functions that make the implementation of the
- * interrupt service routines much easier.
+ *          driver implements a @p SerialDriver interface and uses I/O Queues
+ *          for communication between the upper and the lower driver. Event
+ *          flags are used to notify the application about incoming data,
+ *          outgoing data and other I/O events.<br>
+ *          The  module also contains functions that make the implementation
+ *          of the interrupt service routines much easier.
  * @pre     In order to use the SERIAL driver the @p HAL_USE_SERIAL option
  *          must be enabled in @p halconf.h.
  *

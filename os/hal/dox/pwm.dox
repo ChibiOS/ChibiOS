@@ -19,7 +19,7 @@
 
 /**
  * @defgroup PWM PWM Driver
- * @brief Generic PWM Driver.
+ * @brief   Generic PWM Driver.
  * @details This module implements a generic PWM driver.
  * @pre     In order to use the PWM driver the @p HAL_USE_PWM option
  *          must be enabled in @p halconf.h.
@@ -45,8 +45,9 @@
   }
  * @enddot
  *
- * @section pwm_1 PWM Operations.
- * This driver abstracts a generic PWM times composed of:
+ * @section pwm_2 PWM Operations.
+ * This driver abstracts a generic PWM timer composed of:
+ * - A clock prescaler.
  * - A main up counter.
  * - A comparator register that resets the main counter to zero when the limit
  *   is reached. An optional callback can be generated when this happens.

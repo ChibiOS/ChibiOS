@@ -385,6 +385,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] buf       pointer to a buffer for the transaction data
  * @param[in] n         number of bytes to be transferred
+ * @param[in] endcb     callback to be invoked after the transfer or @p NULL
  *
  * @api
  */

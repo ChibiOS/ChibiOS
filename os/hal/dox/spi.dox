@@ -19,8 +19,10 @@
 
 /**
  * @defgroup SPI SPI Driver
- * @brief Generic SPI Driver.
- * @details This module implements a generic SPI driver.
+ * @brief   Generic SPI Driver.
+ * @details This module implements a generic SPI driver allowing bidirectional
+ *          and monodirectional transfers, complex atomic transactions are
+ *          supported as well.
  * @pre     In order to use the SPI driver the @p HAL_USE_SPI option
  *          must be enabled in @p halconf.h.
  *

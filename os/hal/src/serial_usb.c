@@ -167,12 +167,6 @@ void sduInit(void) {
  *          outside, usually in the hardware initialization code.
  *
  * @param[out] sdup     pointer to a @p SerialUSBDriver structure
- * @param[in] inotify   pointer to a callback function that is invoked when
- *                      some data is read from the Queue. The value can be
- *                      @p NULL.
- * @param[in] onotify   pointer to a callback function that is invoked when
- *                      some data is written in the Queue. The value can be
- *                      @p NULL.
  *
  * @init
  */
@@ -244,6 +238,11 @@ void sduStop(SerialUSBDriver *sdup) {
  *          - CDC_SET_LINE_CODING.
  *          - CDC_SET_CONTROL_LINE_STATE.
  *          .
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @return              The hook status.
+ * @retval TRUE         Message handled internally.
+ * @retval FALSE        Message not handled.
  */
 bool_t sduRequestsHook(USBDriver *usbp) {
 
@@ -270,6 +269,9 @@ bool_t sduRequestsHook(USBDriver *usbp) {
  * @brief   Default data transmitted callback.
  * @details The application must use this function as callback for the IN
  *          data endpoint.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
  */
 void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
   SerialUSBDriver *sdup = usbp->param;
@@ -294,6 +296,9 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
  * @brief   Default data received callback.
  * @details The application must use this function as callback for the OUT
  *          data endpoint.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
  */
 void sduDataReceived(USBDriver *usbp, usbep_t ep) {
   SerialUSBDriver *sdup = usbp->param;
@@ -319,6 +324,9 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
  * @brief   Default data received callback.
  * @details The application must use this function as callback for the IN
  *          interrupt endpoint.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
  */
 void sduInterruptTransmitted(USBDriver *usbp, usbep_t ep) {
 

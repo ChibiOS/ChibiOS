@@ -137,12 +137,12 @@
       <dirs visible="yes" title=""/>
       <nestedgroups visible="yes" title=""/>
       <files visible="yes" title=""/>
+      <variables title=""/>
+      <functions title=""/>
       <defines title=""/>
       <typedefs title=""/>
       <enums title=""/>
       <enumvalues title=""/>
-      <functions title=""/>
-      <variables title=""/>
       <signals title=""/>
       <publicslots title=""/>
       <protectedslots title=""/>
@@ -154,12 +154,12 @@
     </memberdecl>
     <memberdef>
       <pagedocs/>
+      <variables title=""/>
+      <functions title=""/>
       <defines title=""/>
       <typedefs title=""/>
       <enums title=""/>
       <enumvalues title=""/>
-      <functions title=""/>
-      <variables title=""/>
       <signals title=""/>
       <publicslots title=""/>
       <protectedslots title=""/>

@@ -20,7 +20,8 @@
 /**
  * @defgroup ADC ADC Driver
  * @brief Generic ADC Driver.
- * @details This module implements a generic ADC driver.
+ * @details This module implements a generic ADC driver supporting a
+ *          variety of buffer and conversion modes.
  * @pre     In order to use the ADC driver the @p HAL_USE_ADC option
  *          must be enabled in @p halconf.h.
  *

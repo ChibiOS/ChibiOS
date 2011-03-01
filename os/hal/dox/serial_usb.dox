@@ -19,7 +19,7 @@
 
 /**
  * @defgroup SERIAL_USB Serial over USB Driver
- * @brief Serial over USB Driver.
+ * @brief   Serial over USB Driver.
  * @details This module implements an USB Communication Device Class
  *          (CDC) as a normal serial communication port accessible from
  *          the device application.
