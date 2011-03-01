@@ -114,6 +114,7 @@
 - CHANGE: Swapped the numeric values of the TIME_IMMEDIATE and TIME_INFINITE
   constants. Fixed the relative documentation in various places (backported
   to 2.2.2).
+- Many documentation improvements.
 
 *** 2.1.8 ***
 - FIX: Fixed error in STM32 ADC driver macro names (bug 3160306)(backported
