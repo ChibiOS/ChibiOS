@@ -121,7 +121,6 @@
  * - <b>Transaction Mode</b>. In this mode the driver invokes a callback
  *   only after a large, potentially multi-packet, transfer has been
  *   completed, a callback is invoked only at the end of the transfer.
- *   .
  * .
  * @subsection usb_2_3 USB Callbacks
  * The USB driver uses callbacks in order to interact with the application.
