@@ -438,8 +438,6 @@ CH_IRQ_HANDLER(USART3_IRQHandler) {
 void uart_lld_init(void) {
 
 #if STM32_UART_USE_USART1
-  RCC->APB2RSTR     = RCC_APB2RSTR_USART1RST;
-  RCC->APB2RSTR     = 0;
   uartObjectInit(&UARTD1);
   UARTD1.ud_usart   = USART1;
   UARTD1.ud_dmap    = STM32_DMA1;
@@ -449,8 +447,6 @@ void uart_lld_init(void) {
 #endif
 
 #if STM32_UART_USE_USART2
-  RCC->APB1RSTR     = RCC_APB1RSTR_USART2RST;
-  RCC->APB1RSTR     = 0;
   uartObjectInit(&UARTD2);
   UARTD2.ud_usart   = USART2;
   UARTD2.ud_dmap    = STM32_DMA1;
@@ -460,8 +456,6 @@ void uart_lld_init(void) {
 #endif
 
 #if STM32_UART_USE_USART3
-  RCC->APB1RSTR     = RCC_APB1RSTR_USART3RST;
-  RCC->APB1RSTR     = 0;
   uartObjectInit(&UARTD3);
   UARTD3.ud_usart   = USART3;
   UARTD3.ud_dmap    = STM32_DMA1;

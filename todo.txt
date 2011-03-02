@@ -19,6 +19,8 @@ Within 2.3.x (hopefully)
 * Improvements to the message passing mechanism in order to allow "delayed,
   out of order, responses".
 * New device driver models: GPT.
+- Add UART4 support to the STM32 UART driver.
+- Add ADC3 support to the STM32 ADC driver.
 ? Make thread functions return void and add a CH_THREAD macro for threads
   declaration in order to hide compiler-specific optimizations for thread
   functions.

@@ -93,10 +93,6 @@ CH_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
 void adc_lld_init(void) {
 
 #if STM32_ADC_USE_ADC1
-  /* ADC reset, ensures reset state in order to avoid trouble with JTAGs.*/
-  RCC->APB2RSTR = RCC_APB2RSTR_ADC1RST;
-  RCC->APB2RSTR = 0;
-
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
   ADCD1.ad_adc = ADC1;

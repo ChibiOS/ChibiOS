@@ -31,25 +31,15 @@
 #if HAL_USE_PAL || defined(__DOXYGEN__)
 
 #if STM32_HAS_GPIOG
-#define APB2_RST_MASK (RCC_APB2RSTR_IOPARST | RCC_APB2RSTR_IOPBRST |        \
-                       RCC_APB2RSTR_IOPCRST | RCC_APB2RSTR_IOPDRST |        \
-                       RCC_APB2RSTR_IOPERST | RCC_APB2RSTR_IOPFRST |        \
-                       RCC_APB2RSTR_IOPGRST | RCC_APB2RSTR_AFIORST);
 #define APB2_EN_MASK  (RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN |            \
                        RCC_APB2ENR_IOPCEN | RCC_APB2ENR_IOPDEN |            \
                        RCC_APB2ENR_IOPEEN | RCC_APB2ENR_IOPFEN |            \
                        RCC_APB2ENR_IOPGEN | RCC_APB2ENR_AFIOEN)
 #elif STM32_HAS_GPIOE
-#define APB2_RST_MASK (RCC_APB2RSTR_IOPARST | RCC_APB2RSTR_IOPBRST |        \
-                       RCC_APB2RSTR_IOPCRST | RCC_APB2RSTR_IOPDRST |        \
-                       RCC_APB2RSTR_IOPERST | RCC_APB2RSTR_AFIORST);
 #define APB2_EN_MASK  (RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN |            \
                        RCC_APB2ENR_IOPCEN | RCC_APB2ENR_IOPDEN |            \
                        RCC_APB2ENR_IOPEEN | RCC_APB2ENR_AFIOEN)
 #else
-#define APB2_RST_MASK (RCC_APB2RSTR_IOPARST | RCC_APB2RSTR_IOPBRST |        \
-                       RCC_APB2RSTR_IOPCRST | RCC_APB2RSTR_IOPDRST |        \
-                       RCC_APB2RSTR_AFIORST)
 #define APB2_EN_MASK  (RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN |            \
                        RCC_APB2ENR_IOPCEN | RCC_APB2ENR_IOPDEN |            \
                        RCC_APB2ENR_AFIOEN)
@@ -91,11 +81,8 @@ void _pal_lld_init(const PALConfig *config) {
   RCC->APB2ENR |= APB2_EN_MASK;
 
   /*
-   * Resets the GPIO ports and AFIO.
+   * Initial GPIO setup.
    */
-  RCC->APB2RSTR = APB2_RST_MASK;
-  RCC->APB2RSTR = 0;
-
   GPIOA->ODR = config->PAData.odr;
   GPIOA->CRH = config->PAData.crh;
   GPIOA->CRL = config->PAData.crl;

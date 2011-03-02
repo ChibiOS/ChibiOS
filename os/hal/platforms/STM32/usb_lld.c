@@ -322,10 +322,6 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
  */
 void usb_lld_init(void) {
 
-  /* USB reset, ensures reset state in order to avoid trouble with JTAGs.*/
-  RCC->APB1RSTR = RCC_APB1RSTR_USBRST;
-  RCC->APB1RSTR = 0;
-
   /* Driver initialization.*/
   usbObjectInit(&USBD1);
 }

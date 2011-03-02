@@ -107,6 +107,8 @@
 - NEW: Implemented the new IO_TRANSMISSION_END event in the STM32 serial
   driver.
 - NEW: Added explicit reset of all peripherals inside the STM32 HAL driver.
+  Removed the separate resets on initialization from the various other
+  drivers saving significant space.
 - OPT: Removed TIMx reset on system startup in the STM32 PWM driver, the
   timers are already reset on driver startup.
 - CHANGE: The functions chEvtSignal() and chEvtSignalI() have been renamed

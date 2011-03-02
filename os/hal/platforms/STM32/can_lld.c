@@ -165,10 +165,6 @@ CH_IRQ_HANDLER(CAN1_SCE_IRQHandler) {
 void can_lld_init(void) {
 
 #if STM32_CAN_USE_CAN1
-  /* CAN reset, ensures reset state in order to avoid trouble with JTAGs.*/
-  RCC->APB1RSTR = RCC_APB1RSTR_CAN1RST;
-  RCC->APB1RSTR = 0;
-
   /* Driver initialization.*/
   canObjectInit(&CAND1);
   CAND1.cd_can = CAN1;
