@@ -43,7 +43,7 @@
  */
 
 /**
- * @defgroup LPC13xx_PAL LPC13xx GPIO Support
+ * @defgroup LPC13xx_PAL LPC13xx PAL Support
  * @details The LPC13xx PAL driver uses the GPIO peripherals.
  *
  * @section lpc13xx_pal_1 Supported HW resources
@@ -79,7 +79,26 @@
  */
 
 /**
- * @defgroup LPC13xx_SPI LPC13xx SSP Support
+ * @defgroup LPC13xx_SERIAL LPC13xx Serial Support
+ * @details The LPC13xx Serial driver uses the UART peripheral in a
+ *          buffered, interrupt driven, implementation. The serial driver
+ *          also takes advantage of the LPC13xx UARTs deep hardware buffers.
+ *
+ * @section lpc13xx_serial_1 Supported HW resources
+ * The serial driver can support any of the following hardware resources:
+ * - UART.
+ * .
+ * @section lpc13xx_serial_2 LPC13xx Serial driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Fully interrupt driven.
+ * - Programmable priority level.
+ * - Takes advantage of the input and output FIFOs.
+ * .
+ * @ingroup LPC13xx
+ */
+
+/**
+ * @defgroup LPC13xx_SPI LPC13xx SPI Support
  * @details The SPI driver supports the LPC13xx SSP peripherals in an interrupt
  *          driven implementation.
  * @note    Being the SPI a fast peripheral, much care must be taken to
@@ -97,25 +116,6 @@
  *   peripherals are left in low power mode.
  * - Fully interrupt driven.
  * - Programmable interrupt priority levels for each SSP.
- * .
- * @ingroup LPC13xx
- */
-
-/**
- * @defgroup LPC13xx_SERIAL LPC13xx UART Support (buffered)
- * @details The LPC13xx Serial driver uses the UART peripheral in a
- *          buffered, interrupt driven, implementation. The serial driver
- *          also takes advantage of the LPC13xx UARTs deep hardware buffers.
- *
- * @section lpc13xx_serial_1 Supported HW resources
- * The serial driver can support any of the following hardware resources:
- * - UART.
- * .
- * @section lpc13xx_serial_2 LPC13xx Serial driver implementation features
- * - Clock stop for reduced power usage when the driver is in stop state.
- * - Fully interrupt driven.
- * - Programmable priority level.
- * - Takes advantage of the input and output FIFOs.
  * .
  * @ingroup LPC13xx
  */

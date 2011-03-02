@@ -41,7 +41,7 @@
  */
 
 /**
- * @defgroup MSP430_PAL MSP430 PORT Support
+ * @defgroup MSP430_PAL MSP430 PAL Support
  * @details The MSP430 PAL driver uses the PORT peripherals.
  *
  * @section msp430_pal_1 Supported HW resources
@@ -79,7 +79,7 @@
  */
 
 /**
- * @defgroup MSP430_SERIAL MSP430 USART Support (buffered)
+ * @defgroup MSP430_SERIAL MSP430 Serial Support
  * @details The MSP430 Serial driver uses the USART peripherals in a
  *          buffered, interrupt driven, implementation.
  *

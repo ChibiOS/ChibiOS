@@ -41,7 +41,7 @@
  */
 
 /**
- * @defgroup STM8L_PAL STM8L GPIO Support
+ * @defgroup STM8L_PAL STM8L PAL Support
  * @details The STM8L PAL driver uses the GPIO peripherals.
  *
  * @section stm8l_pal_1 Supported HW resources
@@ -84,7 +84,7 @@
  */
 
 /**
- * @defgroup STM8L_SERIAL STM8L USART Support (buffered)
+ * @defgroup STM8L_SERIAL STM8L Serial Support
  * @details The STM8L Serial driver uses the USART1 peripheral in a
  *          buffered, interrupt driven, implementation.
  *

@@ -35,7 +35,7 @@
  */
 
 /**
- * @defgroup AVR_SERIAL AVR USART Support (buffered)
+ * @defgroup AVR_SERIAL AVR Serial Support
  * @details The AVR Serial driver uses the USART peripherals in a
  *          buffered, interrupt driven, implementation.
  *

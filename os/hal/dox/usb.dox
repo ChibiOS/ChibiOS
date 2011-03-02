@@ -206,21 +206,28 @@
  *   @enddot
  *   <br><br>
  * .
- * An important difference in the two modes is that there is a dedicated
- * endpoint buffer in packet mode while in transaction mode the application
- * specifies its own buffer for the whole transfer.
+ * @subsection usb_2_3 USB Packet Buffers
+ * An important difference between packet and transaction modes is that there
+ * is a dedicated endpoint buffer in packet mode while in transaction mode
+ * the application has to specify its own buffer for duration of the whole
+ * transfer.<br>
+ * Packet buffers cannot be accessed directly by the application because those
+ * could not be necessarily memory mapped, a buffer could be a FIFO or some
+ * other kind of memory accessible in a special way depending on the
+ * underlying hardware architecture, the functions @p usbReadPacketI() and
+ * @p usbWritePacketI() allow to access packet buffers in an abstract way.
  *
- * @subsection usb_2_3 USB Callbacks
+ * @subsection usb_2_4 USB Callbacks
  * The USB driver uses callbacks in order to interact with the application.
- * There are several kind of callbacks to be handled:
- * - Driver-wide events callback. As example errors, suspend event, reset
- *   event etc.
- * - Messages hook callback. This hook allows the application to implement
+ * There are several kinds of callbacks to be handled:
+ * - Driver events callback. As example errors, suspend event, reset event
+ *   etc.
+ * - Messages Hook callback. This hook allows the application to implement
  *   handling of custom messages or to override the default handling of
- *   standard messages.
- * - Descriptor requested callback. When the driver endpoint zero handler
- *   needs to serve a descriptor to the host it queries the application
- *   using this callback.
+ *   standard messages on endpoint zero.
+ * - Descriptor Requested callback. When the driver endpoint zero handler
+ *   receives a GET DESCRIPTOR message and needs to send a descriptor to
+ *   the host it queries the application using this callback.
  * - Start of Frame callback. This callback is invoked each time a SOF
  *   packet is received.
  * - Endpoint callbacks. Each endpoint informs the application about I/O

@@ -119,7 +119,7 @@
  */
 
 /**
- * @defgroup STM32_PAL STM32 GPIO Support
+ * @defgroup STM32_PAL STM32 PAL Support
  * @details The STM32 PAL driver uses the GPIO peripherals.
  *
  * @section stm32_pal_1 Supported HW resources
@@ -189,6 +189,29 @@
  */
 
 /**
+ * @defgroup STM32_SERIAL STM32 Serial Support
+ * @details The STM32 Serial driver uses the USART/UART peripherals in a
+ *          buffered, interrupt driven, implementation.
+ *
+ * @section stm32_serial_1 Supported HW resources
+ * The serial driver can support any of the following hardware resources:
+ * - USART1.
+ * - USART2.
+ * - USART3 (where present).
+ * - UART4 (where present).
+ * - UART5 (where present).
+ * .
+ * @section stm32_serial_2 STM32 Serial driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Each UART/USART can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Fully interrupt driven.
+ * - Programmable priority levels for each UART/USART.
+ * .
+ * @ingroup STM32_DRIVERS
+ */
+
+/**
  * @defgroup STM32_SPI STM32 SPI Support
  * @details The SPI driver supports the STM32 SPI peripherals using DMA
  *          channels for maximum performance.
@@ -214,30 +237,7 @@
  */
 
 /**
- * @defgroup STM32_SERIAL STM32 USART Support (buffered)
- * @details The STM32 Serial driver uses the USART/UART peripherals in a
- *          buffered, interrupt driven, implementation.
- *
- * @section stm32_serial_1 Supported HW resources
- * The serial driver can support any of the following hardware resources:
- * - USART1.
- * - USART2.
- * - USART3 (where present).
- * - UART4 (where present).
- * - UART5 (where present).
- * .
- * @section stm32_serial_2 STM32 Serial driver implementation features
- * - Clock stop for reduced power usage when the driver is in stop state.
- * - Each UART/USART can be independently enabled and programmed. Unused
- *   peripherals are left in low power mode.
- * - Fully interrupt driven.
- * - Programmable priority levels for each UART/USART.
- * .
- * @ingroup STM32_DRIVERS
- */
-
-/**
- * @defgroup STM32_UART STM32 USART Support (unbuffered)
+ * @defgroup STM32_UART STM32 UART Support
  * @details The UART driver supports the STM32 USART peripherals using DMA
  *          channels for maximum performance.
  *
@@ -246,6 +246,7 @@
  * - USART1.
  * - USART2.
  * - USART3 (where present).
+ * - UART4 (where present).
  * - DMA1.
  * - DMA2 (where present).
  * .
@@ -258,6 +259,22 @@
  * - Programmable DMA bus priority for each DMA channel.
  * - Programmable DMA interrupt priority for each DMA channel.
  * - Programmable DMA error hook for each DMA channel.
+ * .
+ * @ingroup STM32_DRIVERS
+ */
+
+/**
+ * @defgroup STM32_USB STM32 USB Support
+ * @details The USB driver supports the STM32 USB peripheral.
+ *
+ * @section stm32_usb_1 Supported HW resources
+ * The USB driver can support any of the following hardware resources:
+ * - USB.
+ * .
+ * @section stm32_usb_2 STM32 USB driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Programmable interrupt priority levels.
+ * - Each endpoint programmable in Control, Bulk and Interrupt modes.
  * .
  * @ingroup STM32_DRIVERS
  */
