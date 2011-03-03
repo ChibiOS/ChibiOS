@@ -158,12 +158,8 @@
 #error "USART3 not present in the selected device"
 #endif
 
-#if STM32_UART_USE_UART4 && !STM32_HAS_UART4
-#error "UART4 not present in the selected device"
-#endif
-
 #if !STM32_UART_USE_USART1 && !STM32_UART_USE_USART2 &&                     \
-    !STM32_UART_USE_USART3 && !STM32_UART_USE_UART4
+    !STM32_UART_USE_USART3
 #error "UART driver activated but no USART/UART peripheral assigned"
 #endif
 
