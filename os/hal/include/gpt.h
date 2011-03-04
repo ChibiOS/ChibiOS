@@ -38,21 +38,9 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Enables synchronous APIs.
- * @note    Disabling this option saves both code and data space.
- */
-#if !defined(GPT_USE_WAIT) || defined(__DOXYGEN__)
-#define GPT_USE_WAIT                TRUE
-#endif
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#if GPT_USE_WAIT && !CH_USE_SEMAPHORES
-#error "GPT driver requires CH_USE_SEMAPHORES when GPT_USE_WAIT is enabled"
-#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -93,9 +81,6 @@ extern "C" {
   void gptStopTimer(GPTDriver *gptp);
   void gptStopTimerI(GPTDriver *gptp);
   void gptPolledDelay(GPTDriver *gptp, gptcnt_t interval);
-#if GPT_USE_WAIT
-  void gptDelay(GPTDriver *gptp, gptcnt_t interval);
-#endif
 #ifdef __cplusplus
 }
 #endif
