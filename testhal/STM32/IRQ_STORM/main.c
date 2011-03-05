@@ -17,15 +17,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdlib.h>
+
 #include "ch.h"
 #include "hal.h"
 
 /*===========================================================================*/
-/* Test related code.                                                        */
+/* Configurable settings.                                                    */
 /*===========================================================================*/
 
+#ifndef RANDOMIZE
+#define RANDOMIZE       FALSE
+#endif
+
+#ifndef ITERATIONS
+#define ITERATIONS      100
+#endif
+
+#ifndef NUM_THREADS
 #define NUM_THREADS     4
+#endif
+
+#ifndef MAILBOX_SIZE
 #define MAILBOX_SIZE    2
+#endif
+
+/*===========================================================================*/
+/* Test related code.                                                        */
+/*===========================================================================*/
 
 #define MSG_SEND_LEFT   0
 #define MSG_SEND_RIGHT  1
@@ -43,11 +62,11 @@ static msg_t b[NUM_THREADS][MAILBOX_SIZE];
  */
 static WORKING_AREA(waWorkerThread[NUM_THREADS], 128);
 static msg_t WorkerThread(void *arg) {
-  static volatile uint32_t x = 0;
-  static uint32_t cnt = 0;
-  uint32_t me = (uint32_t)arg;
-  uint32_t target;
-  uint32_t i;
+  static volatile unsigned x = 0;
+  static unsigned cnt = 0;
+  unsigned me = (unsigned)arg;
+  unsigned target;
+  unsigned r;
   msg_t msg;
 
   /* Work loop.*/
@@ -55,9 +74,23 @@ static msg_t WorkerThread(void *arg) {
     /* Waiting for a message.*/
    chMBFetch(&mb[me], &msg, TIME_INFINITE);
 
-    /* Pseudo-random delay.*/
-    for (i = 0; i < (me >> 4); i++)
-      x++;
+#if RANDOMIZE
+   /* Pseudo-random delay.*/
+   {
+     chSysLock();
+     r = rand() & 15;
+     chSysUnlock();
+     while (r--)
+       x++;
+   }
+#else
+   /* Fixed delay.*/
+   {
+     r = me >> 4;
+     while (r--)
+       x++;
+   }
+#endif
 
     /* Deciding in which direction to re-send the message.*/
     if (msg == MSG_SEND_LEFT)
@@ -165,8 +198,7 @@ static void printn(uint32_t n) {
  */
 int main(void) {
   unsigned i;
-  gptcnt_t interval;
-  gptcnt_t threshold;
+  gptcnt_t interval, threshold, worst;
 
   /*
    * System initializations.
@@ -201,7 +233,7 @@ int main(void) {
   println("*** ChibiOS/RT IRQ-STORM long duration test");
   println("***");
   print("*** Kernel:       ");
- println(CH_KERNEL_VERSION);
+  println(CH_KERNEL_VERSION);
 #ifdef __GNUC__
   print("*** GCC Version:  ");
   println(__VERSION__);
@@ -220,12 +252,26 @@ int main(void) {
   print("*** Test Board:   ");
   println(BOARD_NAME);
 #endif
-  print("*** SYSCLK:       ");
+  println("***");
+  print("*** System Clock: ");
   printn(STM32_SYSCLK);
+  println("");
+  print("*** Iterations:   ");
+  printn(ITERATIONS);
+  println("");
+  print("*** Randomize:    ");
+  printn(RANDOMIZE);
+  println("");
+  print("*** Threads:      ");
+  printn(NUM_THREADS);
+  println("");
+  print("*** Mailbox size: ");
+  printn(MAILBOX_SIZE);
   println("");
 
   println("");
-  for (i = 1; i <= 100; i++){
+  worst = 0;
+  for (i = 1; i <= ITERATIONS; i++){
     print("Iteration ");
     printn(i);
     println("");
@@ -248,14 +294,22 @@ int main(void) {
     /* Gives the worker threads a chance to empty the mailboxes before next
        cycle.*/
     chThdSleepMilliseconds(20);
-    print("\r\nSaturated at ");
+    println("");
+    print("Saturated at ");
     printn(threshold);
-    print(" uS\r\n\n");
+    println(" uS");
+    println("");
+    if (threshold > worst)
+      worst = threshold;
   }
   gptStopTimer(&GPTD1);
   gptStopTimer(&GPTD2);
 
-  println("\r\nTest Complete");
+  print("Worst case at ");
+  printn(worst);
+  println(" uS");
+  println("");
+  println("Test Complete");
 
   /*
    * Normal main() thread activity, nothing in this test.
