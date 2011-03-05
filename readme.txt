@@ -84,9 +84,9 @@
   2.2.1).
 - FIX: Error in MAC driver (bug 3179783)(backported to 2.2.1).
 - FIX: Fixed wrong serial driver macros (bug 3173336)(backported to 2.2.1).
-- NEW: Added an "IRQ STORM" long duration test for the STM32. The test
-  demonstrates the system stability in a thread-intensive, progressively
-  CPU saturating, IRQ intensive long duration test.
+- NEW: Added "IRQ STORM" long duration tests for the STM32 and LPC11xx. The
+  test demonstrates the system stability in a thread-intensive, progressively
+  CPU-saturating, IRQ-intensive long duration test.
 - NEW: Added two new functions to the events subsystem: chEvtBroadcastFlags()
   and chEvtBroadcastFlagsI(). The old chEvtBroadcast() and chEvtBroadcastI()
   become macros. The new functions allow to add the same flags to all the
