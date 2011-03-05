@@ -43,6 +43,24 @@
  */
 
 /**
+ * @defgroup LPC11xx_GPT LPC11xx GPT Support
+ * @details The LPC11xx GPT driver uses the CTxxBy peripherals.
+ *
+ * @section lpc11xx_gpt_1 Supported HW resources
+ * - CT16B0.
+ * - CT16B1.
+ * - CT32B0.
+ * - CT32B1.
+ * .
+ * @section lpc11xx_gpt_2 LPC11xx GPT driver implementation features
+ * - Each timer can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Programmable TIMx interrupts priority level.
+ * .
+ * @ingroup LPC11xx
+ */
+
+/**
  * @defgroup LPC11xx_PAL LPC11xx PAL Support
  * @details The LPC11xx PAL driver uses the GPIO peripherals.
  *

@@ -103,7 +103,7 @@
 - NEW: Added STM32 USB CDC loopback test application.
 - NEW: Added new GPT driver model, General Purpose Timer. The driver
   allows to access the available timers in an abstract way.
-- NEW: GTP driver implementation for STM32.
+- NEW: GTP driver implementation for STM32 and LPC11xx.
 - NEW: Added STM32 GPT test application.
 - NEW: Implemented new event IO_TRANSMISSION_END in the generic serial
   driver. This event marks the physical transmission end of a data stream.
