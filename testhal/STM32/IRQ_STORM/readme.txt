@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/RT HAL - GPT driver demo for STM32.                             **
+** ChibiOS/RT HAL - IRQ-STORM demo for STM32.                              **
 *****************************************************************************
 
 ** TARGET **
@@ -8,7 +8,8 @@ The demo will on an Olimex STM32-P103 board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32 GPT driver.
+The application demonstrates the use of the STM32 GPT, PAL and Serial drivers
+in order to implement a system stress demo.
 
 ** Build Procedure **
 
