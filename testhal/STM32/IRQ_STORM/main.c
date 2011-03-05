@@ -39,7 +39,7 @@
 #endif
 
 #ifndef MAILBOX_SIZE
-#define MAILBOX_SIZE    2
+#define MAILBOX_SIZE    4
 #endif
 
 /*===========================================================================*/
