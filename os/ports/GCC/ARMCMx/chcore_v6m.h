@@ -218,10 +218,6 @@ struct intctx {
 #define port_wait_for_interrupt()
 #endif
 
-#if !defined(__DOXYGEN__)
-extern regarm_t _port_saved_pc;
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
