@@ -55,7 +55,7 @@
  * @section lpc11xx_gpt_2 LPC11xx GPT driver implementation features
  * - Each timer can be independently enabled and programmed. Unused
  *   peripherals are left in low power mode.
- * - Programmable TIMx interrupts priority level.
+ * - Programmable CTxxBy interrupts priority level.
  * .
  * @ingroup LPC11xx
  */

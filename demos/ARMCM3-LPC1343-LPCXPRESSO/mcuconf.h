@@ -46,6 +46,18 @@
  */
 
 /*
+ * GPT driver system settings.
+ */
+#define LPC13xx_GPT_USE_CT16B0              TRUE
+#define LPC13xx_GPT_USE_CT16B1              TRUE
+#define LPC13xx_GPT_USE_CT32B0              TRUE
+#define LPC13xx_GPT_USE_CT32B1              TRUE
+#define LPC13xx_GPT_CT16B0_IRQ_PRIORITY     2
+#define LPC13xx_GPT_CT16B1_IRQ_PRIORITY     2
+#define LPC13xx_GPT_CT32B0_IRQ_PRIORITY     2
+#define LPC13xx_GPT_CT32B1_IRQ_PRIORITY     2
+
+/*
  * PWM driver system settings.
  */
 

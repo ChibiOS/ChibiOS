@@ -43,6 +43,24 @@
  */
 
 /**
+ * @defgroup LPC13xx_GPT LPC13xx GPT Support
+ * @details The LPC13xx GPT driver uses the CTxxBy peripherals.
+ *
+ * @section lpc13xx_gpt_1 Supported HW resources
+ * - CT16B0.
+ * - CT16B1.
+ * - CT32B0.
+ * - CT32B1.
+ * .
+ * @section lpc13xx_gpt_2 LPC13xx GPT driver implementation features
+ * - Each timer can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Programmable CTxxBy interrupts priority level.
+ * .
+ * @ingroup LPC13xx
+ */
+
+/**
  * @defgroup LPC13xx_PAL LPC13xx PAL Support
  * @details The LPC13xx PAL driver uses the GPIO peripherals.
  *
