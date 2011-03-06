@@ -1,0 +1,41 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @defgroup I2C I2C Driver
+ * @brief Generic I2C Driver.
+ * @details This module implements a generic I2C driver.
+ * @pre     In order to use the I2C driver the @p HAL_USE_I2C option
+ *          must be enabled in @p halconf.h.
+ *
+ * @section i2c_1 Driver State Machine
+ * The driver implements a state machine internally, not all the driver
+ * functionalities can be used in any moment, any transition not explicitly
+ * shown in the following diagram has to be considered an error and shall
+ * be captured by an assertion (if enabled).
+ * @if LATEX_PDF
+ * @else
+ * @endif
+ *
+ * The driver is not thread safe for performance reasons, if you need to access
+ * the I2C bus from multiple thread then use the @p i2cAcquireBus() and
+ * @p i2cReleaseBus() APIs in order to gain exclusive access.
+ *
+ * @ingroup IO
+ */
