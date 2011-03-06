@@ -32,10 +32,8 @@
 /* Port implementation part.                                                 */
 /*===========================================================================*/
 
-/**
- * @brief   Cortex-Mx exception context.
- */
-struct cmxctx {
+#if !defined(__DOXYGEN__)
+struct extctx {
   regarm_t      r0;
   regarm_t      r1;
   regarm_t      r2;
@@ -44,18 +42,6 @@ struct cmxctx {
   regarm_t      lr_thd;
   regarm_t      pc;
   regarm_t      xpsr;
-};
-
-#if !defined(__DOXYGEN__)
-struct extctx {
-  regarm_t      xpsr;
-  regarm_t      r12;
-  regarm_t      lr;
-  regarm_t      r0;
-  regarm_t      r1;
-  regarm_t      r2;
-  regarm_t      r3;
-  regarm_t      pc;
 };
 
 struct intctx {
@@ -131,11 +117,17 @@ struct intctx {
   if (_saved_lr != (regarm_t)0xFFFFFFF1) {                                  \
     port_lock_from_isr();                                                   \
     if (chSchIsRescRequiredExI()) {                                         \
-      register struct cmxctx *ctxp;                                         \
+      register struct extctx *ctxp;                                         \
                                                                             \
-      asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : );                    \
-      _port_saved_pc = ctxp->pc;                                            \
+      /* Adding an artificial exception return context, there is no need to \
+         populate it fully.*/                                               \
+      asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : : "memory");          \
+      ctxp--;                                                               \
+      asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");           \
       ctxp->pc = _port_switch_from_isr;                                     \
+      ctxp->xpsr = (regarm_t)0x01000000;                                    \
+      /* Note, returning without unlocking is intentional, this is done in  \
+        order to keep the rest of the context switching atomic.*/           \
       return;                                                               \
     }                                                                       \
     port_unlock_from_isr();                                                 \
