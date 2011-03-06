@@ -19,6 +19,8 @@ Within 2.3.x (hopefully)
 * Improvements to the message passing mechanism in order to allow "delayed,
   out of order, responses".
 * New device driver models: GPT.
+X GPT implementation and long duration "IRQ storm" stress test applications
+  for all the supported critical platforms.
 - Add UART4 support to the STM32 UART driver (CL line only, HD has a nasty
   shared interrupt).
 - Add ADC3 support to the STM32 ADC driver.
@@ -29,8 +31,6 @@ Within 2.3.x (hopefully)
   with the compiler info.
 - Test suite overhaul, the API should be more generic in order to be used
   with different subsystems and not just the kernel.
-- Long duration "IRQ storm" stress test applications for all supported
-  architectures.
 - Device drivers for STM8/STM8L (ADC, PWM, bring them on par with STM32).
 - Device drivers for LPC1xxx (ADC, PWM, bring them on par with STM32).
 - Implement USB Mass Storage Class support and demo using the MMC_SPI driver
