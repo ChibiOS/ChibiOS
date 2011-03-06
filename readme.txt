@@ -86,7 +86,9 @@
 - FIX: Fixed wrong serial driver macros (bug 3173336)(backported to 2.2.1).
 - NEW: Inproved preemption implementation for the Cortex-M0, now it uses
   the NMI vector in order to restore the original context. The change makes
-  IRQ handling faster and also saves some RAM/ROM space (backported to 2.2.3).
+  IRQ handling faster and also saves some RAM/ROM space. The GCC port code
+  now does not inline the epilogue code in each ISR saving significan ROM
+  space for each interrupt handler in the system (backported to 2.2.3).
 - NEW: Added "IRQ STORM" long duration tests for the STM32 and LPC11xx. The
   test demonstrates the system stability in a thread-intensive, progressively
   CPU-saturating, IRQ-intensive long duration test.

@@ -128,6 +128,33 @@ void port_switch(Thread *ntp, Thread *otp) {
 }
 
 /**
+ * @brief   IRQ epilogue code.
+ *
+ * @param[in] lr        value of the @p LR register on ISR entry
+ */
+void _port_irq_epilogue(regarm_t lr) {
+
+  if (lr != (regarm_t)0xFFFFFFF1) {
+    port_lock_from_isr();
+    if (chSchIsRescRequiredExI()) {
+      register struct extctx *ctxp;
+
+      /* Adding an artificial exception return context, there is no need to
+         populate it fully.*/
+      asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : : "memory");
+      ctxp--;
+      asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
+      ctxp->pc = _port_switch_from_isr;
+      ctxp->xpsr = (regarm_t)0x01000000;
+      /* Note, returning without unlocking is intentional, this is done in
+        order to keep the rest of the context switching atomic.*/
+      return;
+    }
+    port_unlock_from_isr();
+  }
+}
+
+/**
  * @brief   Start a thread by invoking its work function.
  * @details If the work function returns @p chThdExit() is automatically
  *          invoked.

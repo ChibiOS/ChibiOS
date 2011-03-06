@@ -113,26 +113,7 @@ struct intctx {
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() {                                               \
-  if (_saved_lr != (regarm_t)0xFFFFFFF1) {                                  \
-    port_lock_from_isr();                                                   \
-    if (chSchIsRescRequiredExI()) {                                         \
-      register struct extctx *ctxp;                                         \
-                                                                            \
-      /* Adding an artificial exception return context, there is no need to \
-         populate it fully.*/                                               \
-      asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : : "memory");          \
-      ctxp--;                                                               \
-      asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");           \
-      ctxp->pc = _port_switch_from_isr;                                     \
-      ctxp->xpsr = (regarm_t)0x01000000;                                    \
-      /* Note, returning without unlocking is intentional, this is done in  \
-        order to keep the rest of the context switching atomic.*/           \
-      return;                                                               \
-    }                                                                       \
-    port_unlock_from_isr();                                                 \
-  }                                                                         \
-}
+#define PORT_IRQ_EPILOGUE() _port_irq_epilogue(_saved_lr)
 
 /**
  * @brief   IRQ handler function declaration.
@@ -223,6 +204,7 @@ extern "C" {
 #endif
   void port_halt(void);
   void port_switch(Thread *ntp, Thread *otp);
+  void _port_irq_epilogue(regarm_t lr);
   void _port_switch_from_isr(void);
   void _port_thread_start(void);
 #ifdef __cplusplus
