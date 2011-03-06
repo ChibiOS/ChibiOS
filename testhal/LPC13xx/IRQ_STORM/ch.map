@@ -1,0 +1,2983 @@
+Archive member included because of file (symbol)
+
+c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+                              ../../../os/various/syscalls.o (memset)
+
+Allocating common symbols
+Common symbol       size              file
+
+GPTD2               0x10              ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+test_timer_done     0x4               ../../../test/test.o
+GPTD4               0x10              ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+GPTD1               0x10              ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+threads             0x14              ../../../test/test.o
+test                0x578             ../../../test/test.o
+GPTD3               0x10              ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+vtlist              0x10              ../../../os/kernel/src/chvt.o
+rlist               0x20              ../../../os/kernel/src/chschd.o
+_idle_thread_wa     0xa0              ../../../os/kernel/src/chsys.o
+SD1                 0x74              ../../../os/hal/platforms/LPC13xx/serial_lld.o
+
+Discarded input sections
+
+ .data          0x00000000        0x0 ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+ .bss           0x00000000        0x0 ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+ .text          0x00000000        0x0 ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+ .data          0x00000000        0x0 ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+ .bss           0x00000000        0x0 ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+ .text          0x00000000        0x0 ../../../os/ports/GCC/ARMCMx/chcore.o
+ .data          0x00000000        0x0 ../../../os/ports/GCC/ARMCMx/chcore.o
+ .bss           0x00000000        0x0 ../../../os/ports/GCC/ARMCMx/chcore.o
+ .text.port_halt
+                0x00000000        0x4 ../../../os/ports/GCC/ARMCMx/chcore.o
+ .text          0x00000000        0x0 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+ .data          0x00000000        0x0 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+ .bss           0x00000000        0x0 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+ .text          0x00000000        0x0 ../../../os/ports/GCC/ARMCMx/nvic.o
+ .data          0x00000000        0x0 ../../../os/ports/GCC/ARMCMx/nvic.o
+ .bss           0x00000000        0x0 ../../../os/ports/GCC/ARMCMx/nvic.o
+ .text.NVICDisableVector
+                0x00000000       0x3c ../../../os/ports/GCC/ARMCMx/nvic.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chsys.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chsys.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chsys.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chdebug.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chdebug.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chdebug.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chlists.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chlists.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chlists.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chvt.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chvt.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chvt.o
+ .text.chTimeIsWithin
+                0x00000000       0x34 ../../../os/kernel/src/chvt.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chschd.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chschd.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chschd.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chthreads.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chthreads.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chthreads.o
+ .text.chThdSetPriority
+                0x00000000       0x30 ../../../os/kernel/src/chthreads.o
+ .text.chThdResume
+                0x00000000       0x1c ../../../os/kernel/src/chthreads.o
+ .text.chThdTerminate
+                0x00000000       0x18 ../../../os/kernel/src/chthreads.o
+ .text.chThdSleepUntil
+                0x00000000       0x24 ../../../os/kernel/src/chthreads.o
+ .text.chThdYield
+                0x00000000       0x28 ../../../os/kernel/src/chthreads.o
+ .text.chThdWait
+                0x00000000       0x38 ../../../os/kernel/src/chthreads.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chdynamic.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chdynamic.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chdynamic.o
+ .text.chThdAddRef
+                0x00000000       0x14 ../../../os/kernel/src/chdynamic.o
+ .text.chThdRelease
+                0x00000000       0x54 ../../../os/kernel/src/chdynamic.o
+ .text.chThdCreateFromHeap
+                0x00000000       0x44 ../../../os/kernel/src/chdynamic.o
+ .text.chThdCreateFromMemoryPool
+                0x00000000       0x44 ../../../os/kernel/src/chdynamic.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chregistry.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chregistry.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chregistry.o
+ .text.chRegFirstThread
+                0x00000000       0x20 ../../../os/kernel/src/chregistry.o
+ .text.chRegNextThread
+                0x00000000       0x2c ../../../os/kernel/src/chregistry.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chsem.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chsem.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chsem.o
+ .text.chSemResetI
+                0x00000000       0x28 ../../../os/kernel/src/chsem.o
+ .text.chSemReset
+                0x00000000       0x18 ../../../os/kernel/src/chsem.o
+ .text.chSemWaitS
+                0x00000000       0x34 ../../../os/kernel/src/chsem.o
+ .text.chSemWait
+                0x00000000       0x14 ../../../os/kernel/src/chsem.o
+ .text.chSemWaitTimeout
+                0x00000000       0x14 ../../../os/kernel/src/chsem.o
+ .text.chSemSignal
+                0x00000000       0x2c ../../../os/kernel/src/chsem.o
+ .text.chSemSetCounterI
+                0x00000000       0x28 ../../../os/kernel/src/chsem.o
+ .text.chSemSignalWait
+                0x00000000       0x64 ../../../os/kernel/src/chsem.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chmtx.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chmtx.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chmtx.o
+ .text.chMtxLockS
+                0x00000000       0xcc ../../../os/kernel/src/chmtx.o
+ .text.chMtxLock
+                0x00000000       0x14 ../../../os/kernel/src/chmtx.o
+ .text.chMtxTryLock
+                0x00000000       0x2c ../../../os/kernel/src/chmtx.o
+ .text.chMtxTryLockS
+                0x00000000       0x20 ../../../os/kernel/src/chmtx.o
+ .text.chMtxUnlock
+                0x00000000       0x60 ../../../os/kernel/src/chmtx.o
+ .text.chMtxUnlockS
+                0x00000000       0x50 ../../../os/kernel/src/chmtx.o
+ .text.chMtxUnlockAll
+                0x00000000       0x54 ../../../os/kernel/src/chmtx.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chcond.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chcond.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chcond.o
+ .text.chCondInit
+                0x00000000        0x8 ../../../os/kernel/src/chcond.o
+ .text.chCondSignal
+                0x00000000       0x24 ../../../os/kernel/src/chcond.o
+ .text.chCondSignalI
+                0x00000000       0x1c ../../../os/kernel/src/chcond.o
+ .text.chCondBroadcastI
+                0x00000000       0x24 ../../../os/kernel/src/chcond.o
+ .text.chCondBroadcast
+                0x00000000       0x18 ../../../os/kernel/src/chcond.o
+ .text.chCondWaitS
+                0x00000000       0x48 ../../../os/kernel/src/chcond.o
+ .text.chCondWait
+                0x00000000       0x14 ../../../os/kernel/src/chcond.o
+ .text.chCondWaitTimeoutS
+                0x00000000       0x58 ../../../os/kernel/src/chcond.o
+ .text.chCondWaitTimeout
+                0x00000000       0x14 ../../../os/kernel/src/chcond.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chevents.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chevents.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chevents.o
+ .text.chEvtRegisterMask
+                0x00000000       0x2c ../../../os/kernel/src/chevents.o
+ .text.chEvtUnregister
+                0x00000000       0x24 ../../../os/kernel/src/chevents.o
+ .text.chEvtClearFlags
+                0x00000000       0x24 ../../../os/kernel/src/chevents.o
+ .text.chEvtAddFlags
+                0x00000000       0x20 ../../../os/kernel/src/chevents.o
+ .text.chEvtSignalFlags
+                0x00000000       0x18 ../../../os/kernel/src/chevents.o
+ .text.chEvtBroadcastFlags
+                0x00000000       0x18 ../../../os/kernel/src/chevents.o
+ .text.chEvtDispatch
+                0x00000000       0x34 ../../../os/kernel/src/chevents.o
+ .text.chEvtWaitOne
+                0x00000000       0x3c ../../../os/kernel/src/chevents.o
+ .text.chEvtWaitAny
+                0x00000000       0x34 ../../../os/kernel/src/chevents.o
+ .text.chEvtWaitAll
+                0x00000000       0x38 ../../../os/kernel/src/chevents.o
+ .text.chEvtWaitOneTimeout
+                0x00000000       0x54 ../../../os/kernel/src/chevents.o
+ .text.chEvtWaitAnyTimeout
+                0x00000000       0x50 ../../../os/kernel/src/chevents.o
+ .text.chEvtWaitAllTimeout
+                0x00000000       0x54 ../../../os/kernel/src/chevents.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chmsg.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chmsg.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chmsg.o
+ .text.chMsgSend
+                0x00000000       0x44 ../../../os/kernel/src/chmsg.o
+ .text.chMsgWait
+                0x00000000       0x3c ../../../os/kernel/src/chmsg.o
+ .text.chMsgRelease
+                0x00000000       0x14 ../../../os/kernel/src/chmsg.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chmboxes.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chmboxes.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chmboxes.o
+ .text.chMBReset
+                0x00000000       0x34 ../../../os/kernel/src/chmboxes.o
+ .text.chMBPostAheadS
+                0x00000000       0x3c ../../../os/kernel/src/chmboxes.o
+ .text.chMBPostAhead
+                0x00000000       0x14 ../../../os/kernel/src/chmboxes.o
+ .text.chMBPostAheadI
+                0x00000000       0x34 ../../../os/kernel/src/chmboxes.o
+ .text.chMBFetchI
+                0x00000000       0x30 ../../../os/kernel/src/chmboxes.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chqueues.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chqueues.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chqueues.o
+ .text.chIQGetFullI
+                0x00000000        0x8 ../../../os/kernel/src/chqueues.o
+ .text.chIQResetI
+                0x00000000       0x18 ../../../os/kernel/src/chqueues.o
+ .text.chOQGetFullI
+                0x00000000       0x18 ../../../os/kernel/src/chqueues.o
+ .text.chOQResetI
+                0x00000000       0x18 ../../../os/kernel/src/chqueues.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chmemcore.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chmemcore.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chmemcore.o
+ .text.chCoreAllocI
+                0x00000000       0x28 ../../../os/kernel/src/chmemcore.o
+ .text.chCoreStatus
+                0x00000000       0x18 ../../../os/kernel/src/chmemcore.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chheap.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chheap.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chheap.o
+ .text.chHeapInit
+                0x00000000       0x24 ../../../os/kernel/src/chheap.o
+ .text.chHeapAlloc
+                0x00000000       0x90 ../../../os/kernel/src/chheap.o
+ .text.chHeapFree
+                0x00000000       0xa0 ../../../os/kernel/src/chheap.o
+ .text.chHeapStatus
+                0x00000000       0x40 ../../../os/kernel/src/chheap.o
+ .text          0x00000000        0x0 ../../../os/kernel/src/chmempools.o
+ .data          0x00000000        0x0 ../../../os/kernel/src/chmempools.o
+ .bss           0x00000000        0x0 ../../../os/kernel/src/chmempools.o
+ .text.chPoolInit
+                0x00000000       0x10 ../../../os/kernel/src/chmempools.o
+ .text.chPoolAllocI
+                0x00000000       0x1c ../../../os/kernel/src/chmempools.o
+ .text.chPoolAlloc
+                0x00000000       0x28 ../../../os/kernel/src/chmempools.o
+ .text.chPoolFreeI
+                0x00000000        0x8 ../../../os/kernel/src/chmempools.o
+ .text.chPoolFree
+                0x00000000       0x14 ../../../os/kernel/src/chmempools.o
+ .text          0x00000000        0x0 ../../../test/test.o
+ .data          0x00000000        0x0 ../../../test/test.o
+ .bss           0x00000000        0x0 ../../../test/test.o
+ .text.tmr      0x00000000       0x10 ../../../test/test.o
+ .text.print_line
+                0x00000000       0x40 ../../../test/test.o
+ .text.test_printn
+                0x00000000       0x64 ../../../test/test.o
+ .text.test_print
+                0x00000000       0x24 ../../../test/test.o
+ .text.test_println
+                0x00000000       0x2c ../../../test/test.o
+ .text.test_emit_token
+                0x00000000       0x20 ../../../test/test.o
+ .text._test_fail
+                0x00000000       0x28 ../../../test/test.o
+ .text._test_assert
+                0x00000000       0x24 ../../../test/test.o
+ .text._test_assert_sequence
+                0x00000000       0x50 ../../../test/test.o
+ .text._test_assert_time_window
+                0x00000000       0x30 ../../../test/test.o
+ .text.test_terminate_threads
+                0x00000000       0x1c ../../../test/test.o
+ .text.test_wait_threads
+                0x00000000       0x24 ../../../test/test.o
+ .text.test_cpu_pulse
+                0x00000000       0x64 ../../../test/test.o
+ .text.test_wait_tick
+                0x00000000       0x14 ../../../test/test.o
+ .text.test_start_timer
+                0x00000000       0x50 ../../../test/test.o
+ .text.TestThread
+                0x00000000      0x240 ../../../test/test.o
+ .bss.failpoint
+                0x00000000        0x4 ../../../test/test.o
+ .bss.local_fail
+                0x00000000        0x4 ../../../test/test.o
+ .rodata.wa     0x00000000       0x14 ../../../test/test.o
+ .bss.tokp      0x00000000        0x4 ../../../test/test.o
+ .bss.global_fail
+                0x00000000        0x4 ../../../test/test.o
+ .rodata.str1.4
+                0x00000000      0x174 ../../../test/test.o
+ .rodata.patterns
+                0x00000000       0x30 ../../../test/test.o
+ .bss.vt        0x00000000       0x14 ../../../test/test.o
+ .bss.chp       0x00000000        0x4 ../../../test/test.o
+ .bss.tokens_buffer
+                0x00000000       0x10 ../../../test/test.o
+ COMMON         0x00000000      0x590 ../../../test/test.o
+ .text          0x00000000        0x0 ../../../test/testthd.o
+ .data          0x00000000        0x0 ../../../test/testthd.o
+ .bss           0x00000000        0x0 ../../../test/testthd.o
+ .text.thd4_execute
+                0x00000000       0x74 ../../../test/testthd.o
+ .text.thd3_execute
+                0x00000000      0x138 ../../../test/testthd.o
+ .text.thd2_execute
+                0x00000000       0xf8 ../../../test/testthd.o
+ .text.thd1_execute
+                0x00000000       0xec ../../../test/testthd.o
+ .text.thread   0x00000000        0xc ../../../test/testthd.o
+ .rodata.testthd1
+                0x00000000       0x10 ../../../test/testthd.o
+ .rodata.testthd2
+                0x00000000       0x10 ../../../test/testthd.o
+ .rodata.testthd3
+                0x00000000       0x10 ../../../test/testthd.o
+ .rodata.testthd4
+                0x00000000       0x10 ../../../test/testthd.o
+ .rodata.patternthd
+                0x00000000       0x14 ../../../test/testthd.o
+ .rodata.str1.4
+                0x00000000       0x80 ../../../test/testthd.o
+ .text          0x00000000        0x0 ../../../test/testsem.o
+ .data          0x00000000        0x0 ../../../test/testsem.o
+ .bss           0x00000000        0x0 ../../../test/testsem.o
+ .text.sem3_setup
+                0x00000000       0x14 ../../../test/testsem.o
+ .text.sem2_setup
+                0x00000000       0x14 ../../../test/testsem.o
+ .text.sem1_setup
+                0x00000000       0x14 ../../../test/testsem.o
+ .text.sem4_execute
+                0x00000000      0x100 ../../../test/testsem.o
+ .text.thread4  0x00000000       0x24 ../../../test/testsem.o
+ .text.sem3_execute
+                0x00000000       0xa0 ../../../test/testsem.o
+ .text.thread3  0x00000000       0x1c ../../../test/testsem.o
+ .text.thread1  0x00000000       0x1c ../../../test/testsem.o
+ .text.sem2_execute
+                0x00000000      0x154 ../../../test/testsem.o
+ .text.thread2  0x00000000       0x28 ../../../test/testsem.o
+ .text.sem1_execute
+                0x00000000      0x140 ../../../test/testsem.o
+ .rodata.testsem1
+                0x00000000       0x10 ../../../test/testsem.o
+ .rodata.testsem2
+                0x00000000       0x10 ../../../test/testsem.o
+ .rodata.testsem3
+                0x00000000       0x10 ../../../test/testsem.o
+ .rodata.testsem4
+                0x00000000       0x10 ../../../test/testsem.o
+ .data.sem1     0x00000000        0xc ../../../test/testsem.o
+ .rodata.patternsem
+                0x00000000       0x14 ../../../test/testsem.o
+ .rodata.str1.4
+                0x00000000       0x8c ../../../test/testsem.o
+ .text          0x00000000        0x0 ../../../test/testmtx.o
+ .data          0x00000000        0x0 ../../../test/testmtx.o
+ .bss           0x00000000        0x0 ../../../test/testmtx.o
+ .text.mtx8_execute
+                0x00000000       0xb4 ../../../test/testmtx.o
+ .text.thread12
+                0x00000000       0x20 ../../../test/testmtx.o
+ .text.thread1  0x00000000       0x20 ../../../test/testmtx.o
+ .text.thread10
+                0x00000000       0x2c ../../../test/testmtx.o
+ .text.thread11
+                0x00000000       0x40 ../../../test/testmtx.o
+ .text.mtx8_setup
+                0x00000000       0x28 ../../../test/testmtx.o
+ .text.mtx7_setup
+                0x00000000       0x1c ../../../test/testmtx.o
+ .text.mtx6_setup
+                0x00000000       0x1c ../../../test/testmtx.o
+ .text.mtx5_setup
+                0x00000000       0x10 ../../../test/testmtx.o
+ .text.mtx4_setup
+                0x00000000       0x1c ../../../test/testmtx.o
+ .text.mtx3_setup
+                0x00000000       0x1c ../../../test/testmtx.o
+ .text.mtx2_setup
+                0x00000000       0x10 ../../../test/testmtx.o
+ .text.mtx1_setup
+                0x00000000       0x10 ../../../test/testmtx.o
+ .text.mtx7_execute
+                0x00000000       0xe8 ../../../test/testmtx.o
+ .text.mtx6_execute
+                0x00000000      0x110 ../../../test/testmtx.o
+ .text.mtx1_execute
+                0x00000000       0xf0 ../../../test/testmtx.o
+ .text.mtx5_execute
+                0x00000000       0xbc ../../../test/testmtx.o
+ .text.mtx4_execute
+                0x00000000      0x260 ../../../test/testmtx.o
+ .text.thread4b
+                0x00000000       0x1c ../../../test/testmtx.o
+ .text.thread4a
+                0x00000000       0x1c ../../../test/testmtx.o
+ .text.mtx3_execute
+                0x00000000       0xe4 ../../../test/testmtx.o
+ .text.mtx2_execute
+                0x00000000       0xa8 ../../../test/testmtx.o
+ .text.thread3HH
+                0x00000000       0x28 ../../../test/testmtx.o
+ .text.thread3H
+                0x00000000       0x18 ../../../test/testmtx.o
+ .text.thread3M
+                0x00000000       0x28 ../../../test/testmtx.o
+ .text.thread3L
+                0x00000000       0x44 ../../../test/testmtx.o
+ .text.thread3LL
+                0x00000000       0x24 ../../../test/testmtx.o
+ .text.thread2L
+                0x00000000       0x28 ../../../test/testmtx.o
+ .text.thread2M
+                0x00000000       0x18 ../../../test/testmtx.o
+ .text.thread2H
+                0x00000000       0x28 ../../../test/testmtx.o
+ .rodata.testmtx5
+                0x00000000       0x10 ../../../test/testmtx.o
+ .rodata.testmtx6
+                0x00000000       0x10 ../../../test/testmtx.o
+ .rodata.testmtx7
+                0x00000000       0x10 ../../../test/testmtx.o
+ .rodata.testmtx8
+                0x00000000       0x10 ../../../test/testmtx.o
+ .data.m1       0x00000000       0x10 ../../../test/testmtx.o
+ .data.m2       0x00000000       0x10 ../../../test/testmtx.o
+ .rodata.str1.4
+                0x00000000      0x10c ../../../test/testmtx.o
+ .rodata.patternmtx
+                0x00000000       0x24 ../../../test/testmtx.o
+ .data.c1       0x00000000        0x8 ../../../test/testmtx.o
+ .rodata.testmtx1
+                0x00000000       0x10 ../../../test/testmtx.o
+ .rodata.testmtx2
+                0x00000000       0x10 ../../../test/testmtx.o
+ .rodata.testmtx3
+                0x00000000       0x10 ../../../test/testmtx.o
+ .rodata.testmtx4
+                0x00000000       0x10 ../../../test/testmtx.o
+ .text          0x00000000        0x0 ../../../test/testmsg.o
+ .data          0x00000000        0x0 ../../../test/testmsg.o
+ .bss           0x00000000        0x0 ../../../test/testmsg.o
+ .text.msg1_execute
+                0x00000000       0x80 ../../../test/testmsg.o
+ .text.thread   0x00000000       0x20 ../../../test/testmsg.o
+ .rodata.testmsg1
+                0x00000000       0x10 ../../../test/testmsg.o
+ .rodata.str1.4
+                0x00000000       0x14 ../../../test/testmsg.o
+ .rodata.patternmsg
+                0x00000000        0x8 ../../../test/testmsg.o
+ .text          0x00000000        0x0 ../../../test/testmbox.o
+ .data          0x00000000        0x0 ../../../test/testmbox.o
+ .bss           0x00000000        0x0 ../../../test/testmbox.o
+ .text.mbox1_execute
+                0x00000000      0x49c ../../../test/testmbox.o
+ .text.mbox1_setup
+                0x00000000       0x1c ../../../test/testmbox.o
+ .data.mb1      0x00000000       0x28 ../../../test/testmbox.o
+ .rodata.patternmbox
+                0x00000000        0x8 ../../../test/testmbox.o
+ .rodata.str1.4
+                0x00000000       0x28 ../../../test/testmbox.o
+ .rodata.testmbox1
+                0x00000000       0x10 ../../../test/testmbox.o
+ .text          0x00000000        0x0 ../../../test/testevt.o
+ .data          0x00000000        0x0 ../../../test/testevt.o
+ .bss           0x00000000        0x0 ../../../test/testevt.o
+ .text.evt3_execute
+                0x00000000       0xa8 ../../../test/testevt.o
+ .text.evt3_setup
+                0x00000000        0xc ../../../test/testevt.o
+ .text.evt2_setup
+                0x00000000        0xc ../../../test/testevt.o
+ .text.evt1_setup
+                0x00000000        0xc ../../../test/testevt.o
+ .text.evt2_execute
+                0x00000000      0x274 ../../../test/testevt.o
+ .text.thread2  0x00000000       0x28 ../../../test/testevt.o
+ .text.thread1  0x00000000       0x18 ../../../test/testevt.o
+ .text.evt1_execute
+                0x00000000       0x88 ../../../test/testevt.o
+ .text.h3       0x00000000        0xc ../../../test/testevt.o
+ .text.h2       0x00000000        0xc ../../../test/testevt.o
+ .text.h1       0x00000000        0xc ../../../test/testevt.o
+ .rodata.patternevt
+                0x00000000       0x10 ../../../test/testevt.o
+ .rodata.testevt2
+                0x00000000       0x10 ../../../test/testevt.o
+ .rodata.str1.4
+                0x00000000       0x5c ../../../test/testevt.o
+ .rodata.testevt1
+                0x00000000       0x10 ../../../test/testevt.o
+ .rodata.evhndl
+                0x00000000        0xc ../../../test/testevt.o
+ .rodata.testevt3
+                0x00000000       0x10 ../../../test/testevt.o
+ .data.es1      0x00000000        0x4 ../../../test/testevt.o
+ .data.es2      0x00000000        0x4 ../../../test/testevt.o
+ .text          0x00000000        0x0 ../../../test/testheap.o
+ .data          0x00000000        0x0 ../../../test/testheap.o
+ .bss           0x00000000        0x0 ../../../test/testheap.o
+ .text.heap1_execute
+                0x00000000      0x24c ../../../test/testheap.o
+ .text.heap1_setup
+                0x00000000       0x1c ../../../test/testheap.o
+ .rodata.patternheap
+                0x00000000        0x8 ../../../test/testheap.o
+ .rodata.str1.4
+                0x00000000       0x28 ../../../test/testheap.o
+ .rodata.testheap1
+                0x00000000       0x10 ../../../test/testheap.o
+ .bss.test_heap
+                0x00000000       0x20 ../../../test/testheap.o
+ .text          0x00000000        0x0 ../../../test/testpools.o
+ .data          0x00000000        0x0 ../../../test/testpools.o
+ .bss           0x00000000        0x0 ../../../test/testpools.o
+ .text.null_provider
+                0x00000000        0x4 ../../../test/testpools.o
+ .text.pools1_execute
+                0x00000000       0x78 ../../../test/testpools.o
+ .text.pools1_setup
+                0x00000000       0x18 ../../../test/testpools.o
+ .rodata.str1.4
+                0x00000000       0x1c ../../../test/testpools.o
+ .rodata.patternpools
+                0x00000000        0x8 ../../../test/testpools.o
+ .data.mp1      0x00000000        0xc ../../../test/testpools.o
+ .rodata.testpools1
+                0x00000000       0x10 ../../../test/testpools.o
+ .text          0x00000000        0x0 ../../../test/testdyn.o
+ .data          0x00000000        0x0 ../../../test/testdyn.o
+ .bss           0x00000000        0x0 ../../../test/testdyn.o
+ .text.regfind  0x00000000       0x24 ../../../test/testdyn.o
+ .text.dyn3_execute
+                0x00000000      0x134 ../../../test/testdyn.o
+ .text.thread   0x00000000        0xc ../../../test/testdyn.o
+ .text.dyn3_setup
+                0x00000000       0x1c ../../../test/testdyn.o
+ .text.dyn1_setup
+                0x00000000       0x1c ../../../test/testdyn.o
+ .text.dyn2_execute
+                0x00000000      0x108 ../../../test/testdyn.o
+ .text.dyn2_setup
+                0x00000000       0x18 ../../../test/testdyn.o
+ .text.dyn1_execute
+                0x00000000      0x10c ../../../test/testdyn.o
+ .rodata.testdyn1
+                0x00000000       0x10 ../../../test/testdyn.o
+ .rodata.testdyn2
+                0x00000000       0x10 ../../../test/testdyn.o
+ .rodata.testdyn3
+                0x00000000       0x10 ../../../test/testdyn.o
+ .bss.mp1       0x00000000        0xc ../../../test/testdyn.o
+ .rodata.str1.4
+                0x00000000       0xa4 ../../../test/testdyn.o
+ .rodata.patterndyn
+                0x00000000       0x10 ../../../test/testdyn.o
+ .bss.heap1     0x00000000       0x20 ../../../test/testdyn.o
+ .text          0x00000000        0x0 ../../../test/testqueues.o
+ .data          0x00000000        0x0 ../../../test/testqueues.o
+ .bss           0x00000000        0x0 ../../../test/testqueues.o
+ .text.notify   0x00000000        0x4 ../../../test/testqueues.o
+ .text.thread2  0x00000000       0x18 ../../../test/testqueues.o
+ .text.queues2_execute
+                0x00000000      0x1b8 ../../../test/testqueues.o
+ .text.queues2_setup
+                0x00000000       0x24 ../../../test/testqueues.o
+ .text.thread1  0x00000000       0x14 ../../../test/testqueues.o
+ .text.queues1_execute
+                0x00000000      0x1e4 ../../../test/testqueues.o
+ .text.queues1_setup
+                0x00000000       0x24 ../../../test/testqueues.o
+ .rodata.testqueues1
+                0x00000000       0x10 ../../../test/testqueues.o
+ .rodata.testqueues2
+                0x00000000       0x10 ../../../test/testqueues.o
+ .rodata.str1.4
+                0x00000000       0x38 ../../../test/testqueues.o
+ .rodata.patternqueues
+                0x00000000        0xc ../../../test/testqueues.o
+ .data.oq       0x00000000       0x20 ../../../test/testqueues.o
+ .data.iq       0x00000000       0x20 ../../../test/testqueues.o
+ .text          0x00000000        0x0 ../../../test/testbmk.o
+ .data          0x00000000        0x0 ../../../test/testbmk.o
+ .bss           0x00000000        0x0 ../../../test/testbmk.o
+ .text.thread2  0x00000000        0x4 ../../../test/testbmk.o
+ .text.tmo      0x00000000        0x4 ../../../test/testbmk.o
+ .text.bmk13_execute
+                0x00000000      0x100 ../../../test/testbmk.o
+ .text.bmk12_execute
+                0x00000000       0x68 ../../../test/testbmk.o
+ .text.bmk12_setup
+                0x00000000       0x10 ../../../test/testbmk.o
+ .text.thread3  0x00000000       0x2c ../../../test/testbmk.o
+ .text.bmk11_execute
+                0x00000000       0x70 ../../../test/testbmk.o
+ .text.bmk11_setup
+                0x00000000       0x14 ../../../test/testbmk.o
+ .text.bmk7_setup
+                0x00000000       0x14 ../../../test/testbmk.o
+ .text.bmk10_execute
+                0x00000000       0x78 ../../../test/testbmk.o
+ .text.bmk9_execute
+                0x00000000       0x98 ../../../test/testbmk.o
+ .text.bmk6_execute
+                0x00000000       0x70 ../../../test/testbmk.o
+ .text.bmk8_execute
+                0x00000000       0xe8 ../../../test/testbmk.o
+ .text.thread8  0x00000000       0x30 ../../../test/testbmk.o
+ .text.bmk7_execute
+                0x00000000      0x104 ../../../test/testbmk.o
+ .text.bmk5_execute
+                0x00000000       0x74 ../../../test/testbmk.o
+ .text.bmk4_execute
+                0x00000000       0xb4 ../../../test/testbmk.o
+ .text.msg_loop_test
+                0x00000000       0x34 ../../../test/testbmk.o
+ .text.bmk3_execute
+                0x00000000       0xfc ../../../test/testbmk.o
+ .text.bmk2_execute
+                0x00000000       0x80 ../../../test/testbmk.o
+ .text.bmk1_execute
+                0x00000000       0x80 ../../../test/testbmk.o
+ .text.thread1  0x00000000       0x18 ../../../test/testbmk.o
+ .text.thread4  0x00000000       0x28 ../../../test/testbmk.o
+ .rodata.testbmk8
+                0x00000000       0x10 ../../../test/testbmk.o
+ .rodata.testbmk9
+                0x00000000       0x10 ../../../test/testbmk.o
+ .bss.vt2.2131  0x00000000       0x14 ../../../test/testbmk.o
+ .rodata.testbmk10
+                0x00000000       0x10 ../../../test/testbmk.o
+ .rodata.testbmk11
+                0x00000000       0x10 ../../../test/testbmk.o
+ .bss.vt1.2130  0x00000000       0x14 ../../../test/testbmk.o
+ .bss.mtx1      0x00000000       0x10 ../../../test/testbmk.o
+ .bss.ib.2119   0x00000000       0x10 ../../../test/testbmk.o
+ .rodata.testbmk12
+                0x00000000       0x10 ../../../test/testbmk.o
+ .rodata.testbmk13
+                0x00000000       0x10 ../../../test/testbmk.o
+ .rodata.str1.4
+                0x00000000      0x2c8 ../../../test/testbmk.o
+ .bss.iq.2120   0x00000000       0x20 ../../../test/testbmk.o
+ .bss.sem1      0x00000000        0xc ../../../test/testbmk.o
+ .rodata.patternbmk
+                0x00000000       0x38 ../../../test/testbmk.o
+ .rodata.testbmk1
+                0x00000000       0x10 ../../../test/testbmk.o
+ .rodata.testbmk2
+                0x00000000       0x10 ../../../test/testbmk.o
+ .rodata.testbmk3
+                0x00000000       0x10 ../../../test/testbmk.o
+ .rodata.testbmk4
+                0x00000000       0x10 ../../../test/testbmk.o
+ .rodata.testbmk5
+                0x00000000       0x10 ../../../test/testbmk.o
+ .rodata.testbmk6
+                0x00000000       0x10 ../../../test/testbmk.o
+ .rodata.testbmk7
+                0x00000000       0x10 ../../../test/testbmk.o
+ .text          0x00000000        0x0 ../../../os/hal/src/hal.o
+ .data          0x00000000        0x0 ../../../os/hal/src/hal.o
+ .bss           0x00000000        0x0 ../../../os/hal/src/hal.o
+ .text          0x00000000        0x0 ../../../os/hal/src/adc.o
+ .data          0x00000000        0x0 ../../../os/hal/src/adc.o
+ .bss           0x00000000        0x0 ../../../os/hal/src/adc.o
+ .text          0x00000000        0x0 ../../../os/hal/src/can.o
+ .data          0x00000000        0x0 ../../../os/hal/src/can.o
+ .bss           0x00000000        0x0 ../../../os/hal/src/can.o
+ .text          0x00000000        0x0 ../../../os/hal/src/gpt.o
+ .data          0x00000000        0x0 ../../../os/hal/src/gpt.o
+ .bss           0x00000000        0x0 ../../../os/hal/src/gpt.o
+ .text.gptStop  0x00000000       0x1c ../../../os/hal/src/gpt.o
+ .text.gptStartContinuousI
+                0x00000000        0xc ../../../os/hal/src/gpt.o
+ .text.gptStartOneShot
+                0x00000000       0x18 ../../../os/hal/src/gpt.o
+ .text.gptStartOneShotI
+                0x00000000        0xc ../../../os/hal/src/gpt.o
+ .text.gptStopTimerI
+                0x00000000        0xc ../../../os/hal/src/gpt.o
+ .text.gptPolledDelay
+                0x00000000        0xc ../../../os/hal/src/gpt.o
+ .text          0x00000000        0x0 ../../../os/hal/src/i2c.o
+ .data          0x00000000        0x0 ../../../os/hal/src/i2c.o
+ .bss           0x00000000        0x0 ../../../os/hal/src/i2c.o
+ .text          0x00000000        0x0 ../../../os/hal/src/mac.o
+ .data          0x00000000        0x0 ../../../os/hal/src/mac.o
+ .bss           0x00000000        0x0 ../../../os/hal/src/mac.o
+ .text          0x00000000        0x0 ../../../os/hal/src/pal.o
+ .data          0x00000000        0x0 ../../../os/hal/src/pal.o
+ .bss           0x00000000        0x0 ../../../os/hal/src/pal.o
+ .text.palReadBus
+                0x00000000       0x10 ../../../os/hal/src/pal.o
+ .text.palWriteBus
+                0x00000000       0x14 ../../../os/hal/src/pal.o
+ .text.palSetBusMode
+                0x00000000       0x10 ../../../os/hal/src/pal.o
+ .text          0x00000000        0x0 ../../../os/hal/src/pwm.o
+ .data          0x00000000        0x0 ../../../os/hal/src/pwm.o
+ .bss           0x00000000        0x0 ../../../os/hal/src/pwm.o
+ .text          0x00000000        0x0 ../../../os/hal/src/serial.o
+ .data          0x00000000        0x0 ../../../os/hal/src/serial.o
+ .bss           0x00000000        0x0 ../../../os/hal/src/serial.o
+ .text.sdStop   0x00000000       0x30 ../../../os/hal/src/serial.o
+ .text.sdIncomingDataI
+                0x00000000       0x40 ../../../os/hal/src/serial.o
+ .text.sdRequestDataI
+                0x00000000       0x28 ../../../os/hal/src/serial.o
+ .text          0x00000000        0x0 ../../../os/hal/src/spi.o
+ .data          0x00000000        0x0 ../../../os/hal/src/spi.o
+ .bss           0x00000000        0x0 ../../../os/hal/src/spi.o
+ .text          0x00000000        0x0 ../../../os/hal/src/uart.o
+ .data          0x00000000        0x0 ../../../os/hal/src/uart.o
+ .bss           0x00000000        0x0 ../../../os/hal/src/uart.o
+ .text          0x00000000        0x0 ../../../os/hal/src/usb.o
+ .data          0x00000000        0x0 ../../../os/hal/src/usb.o
+ .bss           0x00000000        0x0 ../../../os/hal/src/usb.o
+ .text          0x00000000        0x0 ../../../os/hal/src/mmc_spi.o
+ .data          0x00000000        0x0 ../../../os/hal/src/mmc_spi.o
+ .bss           0x00000000        0x0 ../../../os/hal/src/mmc_spi.o
+ .text          0x00000000        0x0 ../../../os/hal/src/serial_usb.o
+ .data          0x00000000        0x0 ../../../os/hal/src/serial_usb.o
+ .bss           0x00000000        0x0 ../../../os/hal/src/serial_usb.o
+ .text          0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/hal_lld.o
+ .data          0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/hal_lld.o
+ .bss           0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/hal_lld.o
+ .text          0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .data          0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .bss           0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .text.gpt_lld_stop
+                0x00000000       0xac ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .text.gpt_lld_polled_delay
+                0x00000000       0x20 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .text          0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .data          0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .bss           0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .text._pal_lld_setgroupmode
+                0x00000000       0x38 ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .text          0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .data          0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .bss           0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .text.sd_lld_stop
+                0x00000000       0x60 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .text          0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/spi_lld.o
+ .data          0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/spi_lld.o
+ .bss           0x00000000        0x0 ../../../os/hal/platforms/LPC13xx/spi_lld.o
+ .text          0x00000000        0x0 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+ .data          0x00000000        0x0 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+ .bss           0x00000000        0x0 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+ .text          0x00000000        0x0 ../../../os/various/evtimer.o
+ .data          0x00000000        0x0 ../../../os/various/evtimer.o
+ .bss           0x00000000        0x0 ../../../os/various/evtimer.o
+ .text.tmrcb    0x00000000       0x24 ../../../os/various/evtimer.o
+ .text.evtStart
+                0x00000000       0x24 ../../../os/various/evtimer.o
+ .text.evtStop  0x00000000       0x18 ../../../os/various/evtimer.o
+ .text          0x00000000        0x0 ../../../os/various/syscalls.o
+ .data          0x00000000        0x0 ../../../os/various/syscalls.o
+ .bss           0x00000000        0x0 ../../../os/various/syscalls.o
+ .text._read_r  0x00000000        0xc ../../../os/various/syscalls.o
+ .text._lseek_r
+                0x00000000        0x4 ../../../os/various/syscalls.o
+ .text._write_r
+                0x00000000        0x4 ../../../os/various/syscalls.o
+ .text._close_r
+                0x00000000        0x4 ../../../os/various/syscalls.o
+ .text._sbrk_r  0x00000000       0x18 ../../../os/various/syscalls.o
+ .text._fstat_r
+                0x00000000       0x18 ../../../os/various/syscalls.o
+ .text._isatty_r
+                0x00000000        0x4 ../../../os/various/syscalls.o
+ .text          0x00000000        0x0 main.o
+ .data          0x00000000        0x0 main.o
+ .bss           0x00000000        0x0 main.o
+ .text          0x00000000       0x9c c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+ .data          0x00000000        0x0 c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+ .bss           0x00000000        0x0 c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+flash            0x00000000         0x00008000
+ram              0x10000000         0x00002000
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+LOAD ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+LOAD ../../../os/ports/GCC/ARMCMx/chcore.o
+LOAD ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+LOAD ../../../os/ports/GCC/ARMCMx/nvic.o
+LOAD ../../../os/kernel/src/chsys.o
+LOAD ../../../os/kernel/src/chdebug.o
+LOAD ../../../os/kernel/src/chlists.o
+LOAD ../../../os/kernel/src/chvt.o
+LOAD ../../../os/kernel/src/chschd.o
+LOAD ../../../os/kernel/src/chthreads.o
+LOAD ../../../os/kernel/src/chdynamic.o
+LOAD ../../../os/kernel/src/chregistry.o
+LOAD ../../../os/kernel/src/chsem.o
+LOAD ../../../os/kernel/src/chmtx.o
+LOAD ../../../os/kernel/src/chcond.o
+LOAD ../../../os/kernel/src/chevents.o
+LOAD ../../../os/kernel/src/chmsg.o
+LOAD ../../../os/kernel/src/chmboxes.o
+LOAD ../../../os/kernel/src/chqueues.o
+LOAD ../../../os/kernel/src/chmemcore.o
+LOAD ../../../os/kernel/src/chheap.o
+LOAD ../../../os/kernel/src/chmempools.o
+LOAD ../../../test/test.o
+LOAD ../../../test/testthd.o
+LOAD ../../../test/testsem.o
+LOAD ../../../test/testmtx.o
+LOAD ../../../test/testmsg.o
+LOAD ../../../test/testmbox.o
+LOAD ../../../test/testevt.o
+LOAD ../../../test/testheap.o
+LOAD ../../../test/testpools.o
+LOAD ../../../test/testdyn.o
+LOAD ../../../test/testqueues.o
+LOAD ../../../test/testbmk.o
+LOAD ../../../os/hal/src/hal.o
+LOAD ../../../os/hal/src/adc.o
+LOAD ../../../os/hal/src/can.o
+LOAD ../../../os/hal/src/gpt.o
+LOAD ../../../os/hal/src/i2c.o
+LOAD ../../../os/hal/src/mac.o
+LOAD ../../../os/hal/src/pal.o
+LOAD ../../../os/hal/src/pwm.o
+LOAD ../../../os/hal/src/serial.o
+LOAD ../../../os/hal/src/spi.o
+LOAD ../../../os/hal/src/uart.o
+LOAD ../../../os/hal/src/usb.o
+LOAD ../../../os/hal/src/mmc_spi.o
+LOAD ../../../os/hal/src/serial_usb.o
+LOAD ../../../os/hal/platforms/LPC13xx/hal_lld.o
+LOAD ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+LOAD ../../../os/hal/platforms/LPC13xx/pal_lld.o
+LOAD ../../../os/hal/platforms/LPC13xx/serial_lld.o
+LOAD ../../../os/hal/platforms/LPC13xx/spi_lld.o
+LOAD ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+LOAD ../../../os/various/evtimer.o
+LOAD ../../../os/various/syscalls.o
+LOAD main.o
+START GROUP
+LOAD c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/thumb/v7m\libgcc.a
+LOAD c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a
+END GROUP
+                0x00000100                __main_stack_size__ = 0x100
+                0x00000100                __process_stack_size__ = 0x100
+                0x00000200                __stacks_total_size__ = (__main_stack_size__ + __process_stack_size__)
+                0x10000000                __ram_start__ = ORIGIN (ram)
+                0x00002000                __ram_size__ = 0x2000
+                0x10002000                __ram_end__ = (__ram_start__ + __ram_size__)
+                0x00000000                . = 0x0
+
+.text           0x00000000     0x1bb8
+                0x00000000                _text = .
+ *(vectors)
+ vectors        0x00000000      0x120 ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+                0x00000000                _vectors
+ *(.text)
+ .text          0x00000120       0x64 ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+                0x00000120                ResetHandler
+                0x00000164                _main_exit_handler
+ *(.text.*)
+ *fill*         0x00000184        0xc 00
+ .text._unhandled_exception
+                0x00000190        0x4 ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+                0x00000190                Vector58
+                0x00000190                Vector9C
+                0x00000190                VectorAC
+                0x00000190                Vector5C
+                0x00000190                NMIVector
+                0x00000190                Vector11C
+                0x00000190                Vector8C
+                0x00000190                VectorDC
+                0x00000190                Vector110
+                0x00000190                VectorC8
+                0x00000190                Vector94
+                0x00000190                VectorA8
+                0x00000190                VectorB4
+                0x00000190                Vector74
+                0x00000190                UsageFaultVector
+                0x00000190                DebugMonitorVector
+                0x00000190                Vector40
+                0x00000190                Vector108
+                0x00000190                VectorBC
+                0x00000190                PendSVVector
+                0x00000190                Vector118
+                0x00000190                Vector64
+                0x00000190                VectorCC
+                0x00000190                Vector54
+                0x00000190                Vector98
+                0x00000190                VectorD8
+                0x00000190                Vector24
+                0x00000190                Vector84
+                0x00000190                BusFaultVector
+                0x00000190                VectorD0
+                0x00000190                VectorC0
+                0x00000190                HardFaultVector
+                0x00000190                Vector100
+                0x00000190                VectorE0
+                0x00000190                VectorF4
+                0x00000190                MemManageVector
+                0x00000190                Vector6C
+                0x00000190                VectorA0
+                0x00000190                VectorC4
+                0x00000190                Vector7C
+                0x00000190                VectorB0
+                0x00000190                Vector90
+                0x00000190                Vector114
+                0x00000190                Vector60
+                0x00000190                Vector1C
+                0x00000190                Vector48
+                0x00000190                Vector70
+                0x00000190                VectorD4
+                0x00000190                Vector4C
+                0x00000190                Vector80
+                0x00000190                Vector68
+                0x00000190                Vector78
+                0x00000190                _unhandled_exception
+                0x00000190                Vector88
+                0x00000190                Vector104
+                0x00000190                Vector10C
+                0x00000190                Vector50
+                0x00000190                Vector44
+                0x00000190                Vector28
+                0x00000190                VectorB8
+                0x00000190                VectorFC
+                0x00000190                Vector34
+                0x00000190                VectorA4
+                0x00000190                Vector20
+ *fill*         0x00000194        0xc 00
+ .text._port_switch_from_isr
+                0x000001a0        0x8 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+                0x000001a0                _port_switch_from_isr
+ *fill*         0x000001a8        0x8 00
+ .text.SVCallVector
+                0x000001b0       0x14 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+                0x000001b0                SVCallVector
+ *fill*         0x000001c4        0xc 00
+ .text._port_irq_epilogue
+                0x000001d0       0x44 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+                0x000001d0                _port_irq_epilogue
+ *fill*         0x00000214        0xc 00
+ .text.SysTickVector
+                0x00000220       0x18 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+                0x00000220                SysTickVector
+ *fill*         0x00000238        0x8 00
+ .text.port_switch
+                0x00000240       0x10 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+                0x00000240                port_switch
+ .text._port_thread_start
+                0x00000250       0x10 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+                0x00000250                _port_thread_start
+ .text.NVICEnableVector
+                0x00000260       0x4c ../../../os/ports/GCC/ARMCMx/nvic.o
+                0x00000260                NVICEnableVector
+ *fill*         0x000002ac        0x4 00
+ .text.NVICSetSystemHandlerPriority
+                0x000002b0       0x30 ../../../os/ports/GCC/ARMCMx/nvic.o
+                0x000002b0                NVICSetSystemHandlerPriority
+ .text._idle_thread
+                0x000002e0        0x4 ../../../os/kernel/src/chsys.o
+                0x000002e0                _idle_thread
+ *fill*         0x000002e4        0xc 00
+ .text.chSysInit
+                0x000002f0       0x78 ../../../os/kernel/src/chsys.o
+                0x000002f0                chSysInit
+ *fill*         0x00000368        0x8 00
+ .text.chSysTimerHandlerI
+                0x00000370       0x50 ../../../os/kernel/src/chsys.o
+                0x00000370                chSysTimerHandlerI
+ .text.vt_init  0x000003c0       0x18 ../../../os/kernel/src/chvt.o
+                0x000003c0                vt_init
+ *fill*         0x000003d8        0x8 00
+ .text.chVTSetI
+                0x000003e0       0x3c ../../../os/kernel/src/chvt.o
+                0x000003e0                chVTSetI
+ *fill*         0x0000041c        0x4 00
+ .text.chVTResetI
+                0x00000420       0x24 ../../../os/kernel/src/chvt.o
+                0x00000420                chVTResetI
+ *fill*         0x00000444        0xc 00
+ .text.wakeup   0x00000450       0x48 ../../../os/kernel/src/chschd.o
+ *fill*         0x00000498        0x8 00
+ .text.scheduler_init
+                0x000004a0       0x1c ../../../os/kernel/src/chschd.o
+                0x000004a0                scheduler_init
+ *fill*         0x000004bc        0x4 00
+ .text.chSchReadyI
+                0x000004c0       0x20 ../../../os/kernel/src/chschd.o
+                0x000004c0                chSchReadyI
+ .text.chSchGoSleepS
+                0x000004e0       0x2c ../../../os/kernel/src/chschd.o
+                0x000004e0                chSchGoSleepS
+ *fill*         0x0000050c        0x4 00
+ .text.chSchGoSleepTimeoutS
+                0x00000510       0x44 ../../../os/kernel/src/chschd.o
+                0x00000510                chSchGoSleepTimeoutS
+ *fill*         0x00000554        0xc 00
+ .text.chSchWakeupS
+                0x00000560       0x60 ../../../os/kernel/src/chschd.o
+                0x00000560                chSchWakeupS
+ .text.chSchDoRescheduleI
+                0x000005c0       0x44 ../../../os/kernel/src/chschd.o
+                0x000005c0                chSchDoRescheduleI
+ *fill*         0x00000604        0xc 00
+ .text.chSchRescheduleS
+                0x00000610       0x1c ../../../os/kernel/src/chschd.o
+                0x00000610                chSchRescheduleS
+ *fill*         0x0000062c        0x4 00
+ .text.chSchIsRescRequiredExI
+                0x00000630       0x28 ../../../os/kernel/src/chschd.o
+                0x00000630                chSchIsRescRequiredExI
+ *fill*         0x00000658        0x8 00
+ .text._thread_init
+                0x00000660       0x4c ../../../os/kernel/src/chthreads.o
+                0x00000660                _thread_init
+ *fill*         0x000006ac        0x4 00
+ .text.chThdCreateI
+                0x000006b0       0x5c ../../../os/kernel/src/chthreads.o
+                0x000006b0                chThdCreateI
+ *fill*         0x0000070c        0x4 00
+ .text.chThdCreateStatic
+                0x00000710       0x30 ../../../os/kernel/src/chthreads.o
+                0x00000710                chThdCreateStatic
+ .text.chThdSleep
+                0x00000740       0x18 ../../../os/kernel/src/chthreads.o
+                0x00000740                chThdSleep
+ *fill*         0x00000758        0x8 00
+ .text.chThdExit
+                0x00000760       0x48 ../../../os/kernel/src/chthreads.o
+                0x00000760                chThdExit
+ *fill*         0x000007a8        0x8 00
+ .text.chSemInit
+                0x000007b0        0x8 ../../../os/kernel/src/chsem.o
+                0x000007b0                chSemInit
+ *fill*         0x000007b8        0x8 00
+ .text.chSemWaitTimeoutS
+                0x000007c0       0x40 ../../../os/kernel/src/chsem.o
+                0x000007c0                chSemWaitTimeoutS
+ .text.chSemSignalI
+                0x00000800       0x24 ../../../os/kernel/src/chsem.o
+                0x00000800                chSemSignalI
+ *fill*         0x00000824        0xc 00
+ .text.chMtxInit
+                0x00000830        0xc ../../../os/kernel/src/chmtx.o
+                0x00000830                chMtxInit
+ *fill*         0x0000083c        0x4 00
+ .text.chEvtSignalFlagsI
+                0x00000840       0x38 ../../../os/kernel/src/chevents.o
+                0x00000840                chEvtSignalFlagsI
+ *fill*         0x00000878        0x8 00
+ .text.chEvtBroadcastFlagsI
+                0x00000880       0x20 ../../../os/kernel/src/chevents.o
+                0x00000880                chEvtBroadcastFlagsI
+ .text.chMBInit
+                0x000008a0       0x2c ../../../os/kernel/src/chmboxes.o
+                0x000008a0                chMBInit
+ *fill*         0x000008cc        0x4 00
+ .text.chMBPostS
+                0x000008d0       0x38 ../../../os/kernel/src/chmboxes.o
+                0x000008d0                chMBPostS
+ *fill*         0x00000908        0x8 00
+ .text.chMBPost
+                0x00000910       0x14 ../../../os/kernel/src/chmboxes.o
+                0x00000910                chMBPost
+ *fill*         0x00000924        0xc 00
+ .text.chMBPostI
+                0x00000930       0x34 ../../../os/kernel/src/chmboxes.o
+                0x00000930                chMBPostI
+ *fill*         0x00000964        0xc 00
+ .text.chMBFetchS
+                0x00000970       0x38 ../../../os/kernel/src/chmboxes.o
+                0x00000970                chMBFetchS
+ *fill*         0x000009a8        0x8 00
+ .text.chMBFetch
+                0x000009b0       0x14 ../../../os/kernel/src/chmboxes.o
+                0x000009b0                chMBFetch
+ *fill*         0x000009c4        0xc 00
+ .text.chIQInit
+                0x000009d0       0x1c ../../../os/kernel/src/chqueues.o
+                0x000009d0                chIQInit
+ *fill*         0x000009ec        0x4 00
+ .text.chIQPutI
+                0x000009f0       0x34 ../../../os/kernel/src/chqueues.o
+                0x000009f0                chIQPutI
+ *fill*         0x00000a24        0xc 00
+ .text.chIQGetTimeout
+                0x00000a30       0x44 ../../../os/kernel/src/chqueues.o
+                0x00000a30                chIQGetTimeout
+ *fill*         0x00000a74        0xc 00
+ .text.chIQReadTimeout
+                0x00000a80       0x88 ../../../os/kernel/src/chqueues.o
+                0x00000a80                chIQReadTimeout
+ *fill*         0x00000b08        0x8 00
+ .text.chOQInit
+                0x00000b10       0x20 ../../../os/kernel/src/chqueues.o
+                0x00000b10                chOQInit
+ .text.chOQPutTimeout
+                0x00000b30       0x48 ../../../os/kernel/src/chqueues.o
+                0x00000b30                chOQPutTimeout
+ *fill*         0x00000b78        0x8 00
+ .text.chOQGetI
+                0x00000b80       0x38 ../../../os/kernel/src/chqueues.o
+                0x00000b80                chOQGetI
+ *fill*         0x00000bb8        0x8 00
+ .text.chOQWriteTimeout
+                0x00000bc0       0x88 ../../../os/kernel/src/chqueues.o
+                0x00000bc0                chOQWriteTimeout
+ *fill*         0x00000c48        0x8 00
+ .text.core_init
+                0x00000c50       0x2c ../../../os/kernel/src/chmemcore.o
+                0x00000c50                core_init
+ *fill*         0x00000c7c        0x4 00
+ .text.chCoreAlloc
+                0x00000c80       0x34 ../../../os/kernel/src/chmemcore.o
+                0x00000c80                chCoreAlloc
+ *fill*         0x00000cb4        0xc 00
+ .text.heap_init
+                0x00000cc0       0x24 ../../../os/kernel/src/chheap.o
+                0x00000cc0                heap_init
+ *fill*         0x00000ce4        0xc 00
+ .text.halInit  0x00000cf0       0x20 ../../../os/hal/src/hal.o
+                0x00000cf0                halInit
+ .text.gptInit  0x00000d10        0x8 ../../../os/hal/src/gpt.o
+                0x00000d10                gptInit
+ *fill*         0x00000d18        0x8 00
+ .text.gptObjectInit
+                0x00000d20        0xc ../../../os/hal/src/gpt.o
+                0x00000d20                gptObjectInit
+ *fill*         0x00000d2c        0x4 00
+ .text.gptStart
+                0x00000d30       0x1c ../../../os/hal/src/gpt.o
+                0x00000d30                gptStart
+ *fill*         0x00000d4c        0x4 00
+ .text.gptStartContinuous
+                0x00000d50       0x18 ../../../os/hal/src/gpt.o
+                0x00000d50                gptStartContinuous
+ *fill*         0x00000d68        0x8 00
+ .text.gptStopTimer
+                0x00000d70       0x18 ../../../os/hal/src/gpt.o
+                0x00000d70                gptStopTimer
+ *fill*         0x00000d88        0x8 00
+ .text.putwouldblock
+                0x00000d90        0xc ../../../os/hal/src/serial.o
+ *fill*         0x00000d9c        0x4 00
+ .text.getwouldblock
+                0x00000da0        0xc ../../../os/hal/src/serial.o
+ *fill*         0x00000dac        0x4 00
+ .text.getflags
+                0x00000db0       0x18 ../../../os/hal/src/serial.o
+ *fill*         0x00000dc8        0x8 00
+ .text.readt    0x00000dd0        0xc ../../../os/hal/src/serial.o
+ *fill*         0x00000ddc        0x4 00
+ .text.reads    0x00000de0       0x10 ../../../os/hal/src/serial.o
+ .text.writet   0x00000df0        0xc ../../../os/hal/src/serial.o
+ *fill*         0x00000dfc        0x4 00
+ .text.writes   0x00000e00       0x10 ../../../os/hal/src/serial.o
+ .text.gett     0x00000e10        0xc ../../../os/hal/src/serial.o
+ *fill*         0x00000e1c        0x4 00
+ .text.putt     0x00000e20        0xc ../../../os/hal/src/serial.o
+ *fill*         0x00000e2c        0x4 00
+ .text.sdInit   0x00000e30        0x8 ../../../os/hal/src/serial.o
+                0x00000e30                sdInit
+ *fill*         0x00000e38        0x8 00
+ .text.sdObjectInit
+                0x00000e40       0x4c ../../../os/hal/src/serial.o
+                0x00000e40                sdObjectInit
+ *fill*         0x00000e8c        0x4 00
+ .text.sdStart  0x00000e90       0x1c ../../../os/hal/src/serial.o
+                0x00000e90                sdStart
+ *fill*         0x00000eac        0x4 00
+ .text.hal_lld_init
+                0x00000eb0       0x28 ../../../os/hal/platforms/LPC13xx/hal_lld.o
+                0x00000eb0                hal_lld_init
+ *fill*         0x00000ed8        0x8 00
+ .text.LPC13xx_clock_init
+                0x00000ee0       0xa0 ../../../os/hal/platforms/LPC13xx/hal_lld.o
+                0x00000ee0                LPC13xx_clock_init
+ .text.VectorE4
+                0x00000f80       0x34 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                0x00000f80                VectorE4
+ *fill*         0x00000fb4        0xc 00
+ .text.VectorE8
+                0x00000fc0       0x34 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                0x00000fc0                VectorE8
+ *fill*         0x00000ff4        0xc 00
+ .text.VectorEC
+                0x00001000       0x34 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                0x00001000                VectorEC
+ *fill*         0x00001034        0xc 00
+ .text.VectorF0
+                0x00001040       0x34 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                0x00001040                VectorF0
+ *fill*         0x00001074        0xc 00
+ .text.gpt_lld_init
+                0x00001080       0x60 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                0x00001080                gpt_lld_init
+ .text.gpt_lld_start
+                0x000010e0       0xd0 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                0x000010e0                gpt_lld_start
+ .text.gpt_lld_start_timer
+                0x000011b0       0x18 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                0x000011b0                gpt_lld_start_timer
+ *fill*         0x000011c8        0x8 00
+ .text.gpt_lld_stop_timer
+                0x000011d0       0x10 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                0x000011d0                gpt_lld_stop_timer
+ .text._pal_lld_init
+                0x000011e0       0x64 ../../../os/hal/platforms/LPC13xx/pal_lld.o
+                0x000011e0                _pal_lld_init
+ *fill*         0x00001244        0xc 00
+ .text.notify1  0x00001250       0x4c ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ *fill*         0x0000129c        0x4 00
+ .text.VectorF8
+                0x000012a0      0x130 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                0x000012a0                VectorF8
+ .text.sd_lld_init
+                0x000013d0       0x38 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                0x000013d0                sd_lld_init
+ *fill*         0x00001408        0x8 00
+ .text.sd_lld_start
+                0x00001410       0x84 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                0x00001410                sd_lld_start
+ *fill*         0x00001494        0xc 00
+ .text.__early_init
+                0x000014a0        0x8 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+                0x000014a0                __early_init
+ *fill*         0x000014a8        0x8 00
+ .text.boardInit
+                0x000014b0       0x18 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+                0x000014b0                boardInit
+ *fill*         0x000014c8        0x8 00
+ .text.print    0x000014d0       0x24 main.o
+ *fill*         0x000014f4        0xc 00
+ .text.println  0x00001500       0x3c main.o
+ *fill*         0x0000153c        0x4 00
+ .text.printn   0x00001540       0x64 main.o
+ *fill*         0x000015a4        0xc 00
+ .text.gpt2cb   0x000015b0       0x28 main.o
+ *fill*         0x000015d8        0x8 00
+ .text.gpt1cb   0x000015e0       0x28 main.o
+ *fill*         0x00001608        0x8 00
+ .text.WorkerThread
+                0x00001610       0xb4 main.o
+ *fill*         0x000016c4        0xc 00
+ .text.main     0x000016d0      0x2a4 main.o
+                0x000016d0                main
+ *(.rodata)
+ *(.rodata.*)
+ *fill*         0x00001974        0xc 00
+ .rodata.vmt    0x00001980       0x24 ../../../os/hal/src/serial.o
+ *fill*         0x000019a4        0xc 00
+ .rodata.default_config
+                0x000019b0        0xc ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ *fill*         0x000019bc        0x4 00
+ .rodata.pal_default_config
+                0x000019c0       0x20 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+                0x000019c0                pal_default_config
+ .rodata.gpt2cfg
+                0x000019e0        0x8 main.o
+ *fill*         0x000019e8        0x8 00
+ .rodata.str1.4
+                0x000019f0      0x1c0 main.o
+                                0x1c4 (size before relaxing)
+ .rodata.gpt1cfg
+                0x00001bb0        0x8 main.o
+ *(.glue_7t)
+ .glue_7t       0x00000000        0x0 linker stubs
+ *(.glue_7)
+ .glue_7        0x00000000        0x0 linker stubs
+ *(.gcc*)
+
+.vfp11_veneer   0x00001bb8        0x0
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x00001bb8        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.ctors          0x00001bb8        0x0
+                0x00001bb8                PROVIDE (_ctors_start_, .)
+ *(SORT(.ctors.*))
+ *(.ctors)
+                0x00001bb8                PROVIDE (_ctors_end_, .)
+
+.dtors          0x00001bb8        0x0
+                0x00001bb8                PROVIDE (_dtors_start_, .)
+ *(SORT(.dtors.*))
+ *(.dtors)
+                0x00001bb8                PROVIDE (_dtors_end_, .)
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+                0x00001bb8                __exidx_start = .
+
+.ARM.exidx
+ *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+                0x00001bb8                __exidx_end = .
+
+.eh_frame_hdr
+ *(.eh_frame_hdr)
+
+.eh_frame
+ *(.eh_frame)
+                0x00001bb8                . = ALIGN (0x4)
+                0x00001bb8                _etext = .
+                0x00001bb8                _textdata = _etext
+
+.data           0x10000000        0x0 load address 0x00001bb8
+                0x10000000                _data = .
+ *(.data)
+                0x10000000                . = ALIGN (0x4)
+ *(.data.*)
+                0x10000000                . = ALIGN (0x4)
+ *(.ramtext)
+                0x10000000                . = ALIGN (0x4)
+                0x10000000                _edata = .
+
+.bss            0x10000000      0x744 load address 0x00001bb8
+                0x10000000                _bss_start = .
+ *(.bss)
+                0x10000000                . = ALIGN (0x4)
+ *(.bss.*)
+ .bss.mainthread.1972
+                0x10000000       0x44 ../../../os/kernel/src/chsys.o
+ .bss.endmem    0x10000044        0x4 ../../../os/kernel/src/chmemcore.o
+ .bss.nextmem   0x10000048        0x4 ../../../os/kernel/src/chmemcore.o
+ *fill*         0x1000004c        0x4 00
+ .bss.default_heap
+                0x10000050       0x20 ../../../os/kernel/src/chheap.o
+ .bss.x.3296    0x10000070        0x4 main.o
+ .bss.cnt.3297  0x10000074        0x4 main.o
+ .bss.saturated
+                0x10000078        0x4 main.o
+ .bss.mb        0x1000007c       0xa0 main.o
+ .bss.b         0x1000011c       0x40 main.o
+ *fill*         0x1000015c        0x4 00
+ .bss.waWorkerThread
+                0x10000160      0x460 main.o
+                0x100005c0                . = ALIGN (0x4)
+ *(COMMON)
+ COMMON         0x100005c0       0xa0 ../../../os/kernel/src/chsys.o
+                0x100005c0                _idle_thread_wa
+ COMMON         0x10000660       0x10 ../../../os/kernel/src/chvt.o
+                0x10000660                vtlist
+ COMMON         0x10000670       0x20 ../../../os/kernel/src/chschd.o
+                0x10000670                rlist
+ COMMON         0x10000690       0x40 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                0x10000690                GPTD2
+                0x100006a0                GPTD4
+                0x100006b0                GPTD1
+                0x100006c0                GPTD3
+ COMMON         0x100006d0       0x74 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                0x100006d0                SD1
+                0x10000744                . = ALIGN (0x4)
+                0x10000744                _bss_end = .
+                0x10000744                PROVIDE (end, .)
+                0x10000744                _end = .
+                0x10000744                __heap_base__ = _end
+                0x10001e00                __heap_end__ = (__ram_end__ - __stacks_total_size__)
+OUTPUT(ch.elf elf32-littlearm)
+
+.ARM.attributes
+                0x00000000       0x2d
+ .ARM.attributes
+                0x00000000       0x21 ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+ .ARM.attributes
+                0x00000021       0x31 ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+ .ARM.attributes
+                0x00000052       0x31 ../../../os/ports/GCC/ARMCMx/chcore.o
+ .ARM.attributes
+                0x00000083       0x31 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+ .ARM.attributes
+                0x000000b4       0x31 ../../../os/ports/GCC/ARMCMx/nvic.o
+ .ARM.attributes
+                0x000000e5       0x31 ../../../os/kernel/src/chsys.o
+ .ARM.attributes
+                0x00000116       0x31 ../../../os/kernel/src/chdebug.o
+ .ARM.attributes
+                0x00000147       0x31 ../../../os/kernel/src/chlists.o
+ .ARM.attributes
+                0x00000178       0x31 ../../../os/kernel/src/chvt.o
+ .ARM.attributes
+                0x000001a9       0x31 ../../../os/kernel/src/chschd.o
+ .ARM.attributes
+                0x000001da       0x31 ../../../os/kernel/src/chthreads.o
+ .ARM.attributes
+                0x0000020b       0x31 ../../../os/kernel/src/chdynamic.o
+ .ARM.attributes
+                0x0000023c       0x31 ../../../os/kernel/src/chregistry.o
+ .ARM.attributes
+                0x0000026d       0x31 ../../../os/kernel/src/chsem.o
+ .ARM.attributes
+                0x0000029e       0x31 ../../../os/kernel/src/chmtx.o
+ .ARM.attributes
+                0x000002cf       0x31 ../../../os/kernel/src/chcond.o
+ .ARM.attributes
+                0x00000300       0x31 ../../../os/kernel/src/chevents.o
+ .ARM.attributes
+                0x00000331       0x31 ../../../os/kernel/src/chmsg.o
+ .ARM.attributes
+                0x00000362       0x31 ../../../os/kernel/src/chmboxes.o
+ .ARM.attributes
+                0x00000393       0x31 ../../../os/kernel/src/chqueues.o
+ .ARM.attributes
+                0x000003c4       0x31 ../../../os/kernel/src/chmemcore.o
+ .ARM.attributes
+                0x000003f5       0x31 ../../../os/kernel/src/chheap.o
+ .ARM.attributes
+                0x00000426       0x31 ../../../os/kernel/src/chmempools.o
+ .ARM.attributes
+                0x00000457       0x31 ../../../test/test.o
+ .ARM.attributes
+                0x00000488       0x31 ../../../test/testthd.o
+ .ARM.attributes
+                0x000004b9       0x31 ../../../test/testsem.o
+ .ARM.attributes
+                0x000004ea       0x31 ../../../test/testmtx.o
+ .ARM.attributes
+                0x0000051b       0x31 ../../../test/testmsg.o
+ .ARM.attributes
+                0x0000054c       0x31 ../../../test/testmbox.o
+ .ARM.attributes
+                0x0000057d       0x31 ../../../test/testevt.o
+ .ARM.attributes
+                0x000005ae       0x31 ../../../test/testheap.o
+ .ARM.attributes
+                0x000005df       0x31 ../../../test/testpools.o
+ .ARM.attributes
+                0x00000610       0x31 ../../../test/testdyn.o
+ .ARM.attributes
+                0x00000641       0x31 ../../../test/testqueues.o
+ .ARM.attributes
+                0x00000672       0x31 ../../../test/testbmk.o
+ .ARM.attributes
+                0x000006a3       0x31 ../../../os/hal/src/hal.o
+ .ARM.attributes
+                0x000006d4       0x31 ../../../os/hal/src/adc.o
+ .ARM.attributes
+                0x00000705       0x31 ../../../os/hal/src/can.o
+ .ARM.attributes
+                0x00000736       0x31 ../../../os/hal/src/gpt.o
+ .ARM.attributes
+                0x00000767       0x31 ../../../os/hal/src/i2c.o
+ .ARM.attributes
+                0x00000798       0x31 ../../../os/hal/src/mac.o
+ .ARM.attributes
+                0x000007c9       0x31 ../../../os/hal/src/pal.o
+ .ARM.attributes
+                0x000007fa       0x31 ../../../os/hal/src/pwm.o
+ .ARM.attributes
+                0x0000082b       0x31 ../../../os/hal/src/serial.o
+ .ARM.attributes
+                0x0000085c       0x31 ../../../os/hal/src/spi.o
+ .ARM.attributes
+                0x0000088d       0x31 ../../../os/hal/src/uart.o
+ .ARM.attributes
+                0x000008be       0x31 ../../../os/hal/src/usb.o
+ .ARM.attributes
+                0x000008ef       0x31 ../../../os/hal/src/mmc_spi.o
+ .ARM.attributes
+                0x00000920       0x31 ../../../os/hal/src/serial_usb.o
+ .ARM.attributes
+                0x00000951       0x31 ../../../os/hal/platforms/LPC13xx/hal_lld.o
+ .ARM.attributes
+                0x00000982       0x31 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .ARM.attributes
+                0x000009b3       0x31 ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .ARM.attributes
+                0x000009e4       0x31 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .ARM.attributes
+                0x00000a15       0x31 ../../../os/hal/platforms/LPC13xx/spi_lld.o
+ .ARM.attributes
+                0x00000a46       0x31 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+ .ARM.attributes
+                0x00000a77       0x31 ../../../os/various/evtimer.o
+ .ARM.attributes
+                0x00000aa8       0x31 ../../../os/various/syscalls.o
+ .ARM.attributes
+                0x00000ad9       0x31 main.o
+ .ARM.attributes
+                0x00000b0a       0x29 c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+
+.comment        0x00000000       0x11
+ .comment       0x00000000       0x11 ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+                                 0x12 (size before relaxing)
+ .comment       0x00000000       0x12 ../../../os/ports/GCC/ARMCMx/chcore.o
+ .comment       0x00000000       0x12 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+ .comment       0x00000000       0x12 ../../../os/ports/GCC/ARMCMx/nvic.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chsys.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chdebug.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chlists.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chvt.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chschd.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chthreads.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chdynamic.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chregistry.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chsem.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chmtx.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chcond.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chevents.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chmsg.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chmboxes.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chqueues.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chmemcore.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chheap.o
+ .comment       0x00000000       0x12 ../../../os/kernel/src/chmempools.o
+ .comment       0x00000000       0x12 ../../../test/test.o
+ .comment       0x00000000       0x12 ../../../test/testthd.o
+ .comment       0x00000000       0x12 ../../../test/testsem.o
+ .comment       0x00000000       0x12 ../../../test/testmtx.o
+ .comment       0x00000000       0x12 ../../../test/testmsg.o
+ .comment       0x00000000       0x12 ../../../test/testmbox.o
+ .comment       0x00000000       0x12 ../../../test/testevt.o
+ .comment       0x00000000       0x12 ../../../test/testheap.o
+ .comment       0x00000000       0x12 ../../../test/testpools.o
+ .comment       0x00000000       0x12 ../../../test/testdyn.o
+ .comment       0x00000000       0x12 ../../../test/testqueues.o
+ .comment       0x00000000       0x12 ../../../test/testbmk.o
+ .comment       0x00000000       0x12 ../../../os/hal/src/hal.o
+ .comment       0x00000000       0x12 ../../../os/hal/src/adc.o
+ .comment       0x00000000       0x12 ../../../os/hal/src/can.o
+ .comment       0x00000000       0x12 ../../../os/hal/src/gpt.o
+ .comment       0x00000000       0x12 ../../../os/hal/src/i2c.o
+ .comment       0x00000000       0x12 ../../../os/hal/src/mac.o
+ .comment       0x00000000       0x12 ../../../os/hal/src/pal.o
+ .comment       0x00000000       0x12 ../../../os/hal/src/pwm.o
+ .comment       0x00000000       0x12 ../../../os/hal/src/serial.o
+ .comment       0x00000000       0x12 ../../../os/hal/src/spi.o
+ .comment       0x00000000       0x12 ../../../os/hal/src/uart.o
+ .comment       0x00000000       0x12 ../../../os/hal/src/usb.o
+ .comment       0x00000000       0x12 ../../../os/hal/src/mmc_spi.o
+ .comment       0x00000000       0x12 ../../../os/hal/src/serial_usb.o
+ .comment       0x00000000       0x12 ../../../os/hal/platforms/LPC13xx/hal_lld.o
+ .comment       0x00000000       0x12 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .comment       0x00000000       0x12 ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .comment       0x00000000       0x12 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .comment       0x00000000       0x12 ../../../os/hal/platforms/LPC13xx/spi_lld.o
+ .comment       0x00000000       0x12 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+ .comment       0x00000000       0x12 ../../../os/various/evtimer.o
+ .comment       0x00000000       0x12 ../../../os/various/syscalls.o
+ .comment       0x00000000       0x12 main.o
+ .comment       0x00000000       0x12 c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+
+.debug_abbrev   0x00000000     0x5409
+ .debug_abbrev  0x00000000       0x74 ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+ .debug_abbrev  0x00000074       0x41 ../../../os/ports/GCC/ARMCMx/chcore.o
+ .debug_abbrev  0x000000b5      0x17a ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+ .debug_abbrev  0x0000022f       0xfa ../../../os/ports/GCC/ARMCMx/nvic.o
+ .debug_abbrev  0x00000329      0x182 ../../../os/kernel/src/chsys.o
+ .debug_abbrev  0x000004ab       0x2a ../../../os/kernel/src/chdebug.o
+ .debug_abbrev  0x000004d5       0x2a ../../../os/kernel/src/chlists.o
+ .debug_abbrev  0x000004ff      0x163 ../../../os/kernel/src/chvt.o
+ .debug_abbrev  0x00000662      0x29f ../../../os/kernel/src/chschd.o
+ .debug_abbrev  0x00000901      0x2e4 ../../../os/kernel/src/chthreads.o
+ .debug_abbrev  0x00000be5      0x1ac ../../../os/kernel/src/chdynamic.o
+ .debug_abbrev  0x00000d91      0x14b ../../../os/kernel/src/chregistry.o
+ .debug_abbrev  0x00000edc      0x27d ../../../os/kernel/src/chsem.o
+ .debug_abbrev  0x00001159      0x2c5 ../../../os/kernel/src/chmtx.o
+ .debug_abbrev  0x0000141e      0x26a ../../../os/kernel/src/chcond.o
+ .debug_abbrev  0x00001688      0x201 ../../../os/kernel/src/chevents.o
+ .debug_abbrev  0x00001889      0x1b1 ../../../os/kernel/src/chmsg.o
+ .debug_abbrev  0x00001a3a      0x1e2 ../../../os/kernel/src/chmboxes.o
+ .debug_abbrev  0x00001c1c      0x206 ../../../os/kernel/src/chqueues.o
+ .debug_abbrev  0x00001e22      0x167 ../../../os/kernel/src/chmemcore.o
+ .debug_abbrev  0x00001f89      0x18d ../../../os/kernel/src/chheap.o
+ .debug_abbrev  0x00002116      0x1ef ../../../os/kernel/src/chmempools.o
+ .debug_abbrev  0x00002305      0x40c ../../../test/test.o
+ .debug_abbrev  0x00002711      0x1c7 ../../../test/testthd.o
+ .debug_abbrev  0x000028d8      0x1e8 ../../../test/testsem.o
+ .debug_abbrev  0x00002ac0      0x27b ../../../test/testmtx.o
+ .debug_abbrev  0x00002d3b      0x171 ../../../test/testmsg.o
+ .debug_abbrev  0x00002eac      0x1a5 ../../../test/testmbox.o
+ .debug_abbrev  0x00003051      0x207 ../../../test/testevt.o
+ .debug_abbrev  0x00003258      0x1aa ../../../test/testheap.o
+ .debug_abbrev  0x00003402      0x14a ../../../test/testpools.o
+ .debug_abbrev  0x0000354c      0x211 ../../../test/testdyn.o
+ .debug_abbrev  0x0000375d      0x206 ../../../test/testqueues.o
+ .debug_abbrev  0x00003963      0x2cb ../../../test/testbmk.o
+ .debug_abbrev  0x00003c2e       0x98 ../../../os/hal/src/hal.o
+ .debug_abbrev  0x00003cc6       0x42 ../../../os/hal/src/adc.o
+ .debug_abbrev  0x00003d08       0x42 ../../../os/hal/src/can.o
+ .debug_abbrev  0x00003d4a      0x1e1 ../../../os/hal/src/gpt.o
+ .debug_abbrev  0x00003f2b       0x42 ../../../os/hal/src/i2c.o
+ .debug_abbrev  0x00003f6d       0x42 ../../../os/hal/src/mac.o
+ .debug_abbrev  0x00003faf      0x16d ../../../os/hal/src/pal.o
+ .debug_abbrev  0x0000411c       0x42 ../../../os/hal/src/pwm.o
+ .debug_abbrev  0x0000415e      0x24b ../../../os/hal/src/serial.o
+ .debug_abbrev  0x000043a9       0x42 ../../../os/hal/src/spi.o
+ .debug_abbrev  0x000043eb       0x42 ../../../os/hal/src/uart.o
+ .debug_abbrev  0x0000442d       0x42 ../../../os/hal/src/usb.o
+ .debug_abbrev  0x0000446f       0x42 ../../../os/hal/src/mmc_spi.o
+ .debug_abbrev  0x000044b1       0x42 ../../../os/hal/src/serial_usb.o
+ .debug_abbrev  0x000044f3      0x117 ../../../os/hal/platforms/LPC13xx/hal_lld.o
+ .debug_abbrev  0x0000460a      0x245 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .debug_abbrev  0x0000484f      0x14c ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .debug_abbrev  0x0000499b      0x301 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .debug_abbrev  0x00004c9c       0x42 ../../../os/hal/platforms/LPC13xx/spi_lld.o
+ .debug_abbrev  0x00004cde       0xec ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+ .debug_abbrev  0x00004dca      0x152 ../../../os/various/evtimer.o
+ .debug_abbrev  0x00004f1c      0x1dc ../../../os/various/syscalls.o
+ .debug_abbrev  0x000050f8      0x275 main.o
+ .debug_abbrev  0x0000536d       0x9c c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+
+.debug_info     0x00000000    0x15945
+ .debug_info    0x00000000       0xae ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+ .debug_info    0x000000ae       0x84 ../../../os/ports/GCC/ARMCMx/chcore.o
+ .debug_info    0x00000132      0x66a ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+ .debug_info    0x0000079c      0x356 ../../../os/ports/GCC/ARMCMx/nvic.o
+ .debug_info    0x00000af2      0x714 ../../../os/kernel/src/chsys.o
+ .debug_info    0x00001206       0x6c ../../../os/kernel/src/chdebug.o
+ .debug_info    0x00001272       0x6c ../../../os/kernel/src/chlists.o
+ .debug_info    0x000012de      0x272 ../../../os/kernel/src/chvt.o
+ .debug_info    0x00001550      0x83a ../../../os/kernel/src/chschd.o
+ .debug_info    0x00001d8a      0xa69 ../../../os/kernel/src/chthreads.o
+ .debug_info    0x000027f3      0x729 ../../../os/kernel/src/chdynamic.o
+ .debug_info    0x00002f1c      0x4f0 ../../../os/kernel/src/chregistry.o
+ .debug_info    0x0000340c      0x9d6 ../../../os/kernel/src/chsem.o
+ .debug_info    0x00003de2      0x945 ../../../os/kernel/src/chmtx.o
+ .debug_info    0x00004727      0x860 ../../../os/kernel/src/chcond.o
+ .debug_info    0x00004f87      0xc03 ../../../os/kernel/src/chevents.o
+ .debug_info    0x00005b8a      0x60b ../../../os/kernel/src/chmsg.o
+ .debug_info    0x00006195      0x854 ../../../os/kernel/src/chmboxes.o
+ .debug_info    0x000069e9      0xa25 ../../../os/kernel/src/chqueues.o
+ .debug_info    0x0000740e      0x212 ../../../os/kernel/src/chmemcore.o
+ .debug_info    0x00007620      0x618 ../../../os/kernel/src/chheap.o
+ .debug_info    0x00007c38      0x322 ../../../os/kernel/src/chmempools.o
+ .debug_info    0x00007f5a      0xfc0 ../../../test/test.o
+ .debug_info    0x00008f1a      0x7bc ../../../test/testthd.o
+ .debug_info    0x000096d6      0x92f ../../../test/testsem.o
+ .debug_info    0x0000a005      0xc6c ../../../test/testmtx.o
+ .debug_info    0x0000ac71      0x589 ../../../test/testmsg.o
+ .debug_info    0x0000b1fa      0x60c ../../../test/testmbox.o
+ .debug_info    0x0000b806      0x8de ../../../test/testevt.o
+ .debug_info    0x0000c0e4      0x65a ../../../test/testheap.o
+ .debug_info    0x0000c73e      0x250 ../../../test/testpools.o
+ .debug_info    0x0000c98e      0x8f5 ../../../test/testdyn.o
+ .debug_info    0x0000d283      0x81e ../../../test/testqueues.o
+ .debug_info    0x0000daa1      0xd5e ../../../test/testbmk.o
+ .debug_info    0x0000e7ff      0x14a ../../../os/hal/src/hal.o
+ .debug_info    0x0000e949       0x8d ../../../os/hal/src/adc.o
+ .debug_info    0x0000e9d6       0x8d ../../../os/hal/src/can.o
+ .debug_info    0x0000ea63      0x682 ../../../os/hal/src/gpt.o
+ .debug_info    0x0000f0e5       0x8d ../../../os/hal/src/i2c.o
+ .debug_info    0x0000f172       0x8d ../../../os/hal/src/mac.o
+ .debug_info    0x0000f1ff      0x2c5 ../../../os/hal/src/pal.o
+ .debug_info    0x0000f4c4       0x8d ../../../os/hal/src/pwm.o
+ .debug_info    0x0000f551      0xe72 ../../../os/hal/src/serial.o
+ .debug_info    0x000103c3       0x8d ../../../os/hal/src/spi.o
+ .debug_info    0x00010450       0x8d ../../../os/hal/src/uart.o
+ .debug_info    0x000104dd       0x94 ../../../os/hal/src/usb.o
+ .debug_info    0x00010571       0x8d ../../../os/hal/src/mmc_spi.o
+ .debug_info    0x000105fe       0x8d ../../../os/hal/src/serial_usb.o
+ .debug_info    0x0001068b      0x58c ../../../os/hal/platforms/LPC13xx/hal_lld.o
+ .debug_info    0x00010c17      0xb89 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .debug_info    0x000117a0      0x2da ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .debug_info    0x00011a7a     0x1654 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .debug_info    0x000130ce       0x8d ../../../os/hal/platforms/LPC13xx/spi_lld.o
+ .debug_info    0x0001315b      0x411 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+ .debug_info    0x0001356c      0x5a9 ../../../os/various/evtimer.o
+ .debug_info    0x00013b15      0xcc6 ../../../os/various/syscalls.o
+ .debug_info    0x000147db     0x1056 main.o
+ .debug_info    0x00015831      0x114 c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+
+.debug_line     0x00000000     0x61f5
+ .debug_line    0x00000000       0x60 ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+ .debug_line    0x00000060       0x56 ../../../os/ports/GCC/ARMCMx/chcore.o
+ .debug_line    0x000000b6      0x193 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+ .debug_line    0x00000249       0xe6 ../../../os/ports/GCC/ARMCMx/nvic.o
+ .debug_line    0x0000032f      0x18e ../../../os/kernel/src/chsys.o
+ .debug_line    0x000004bd       0x1d ../../../os/kernel/src/chdebug.o
+ .debug_line    0x000004da       0x1d ../../../os/kernel/src/chlists.o
+ .debug_line    0x000004f7      0x150 ../../../os/kernel/src/chvt.o
+ .debug_line    0x00000647      0x2c0 ../../../os/kernel/src/chschd.o
+ .debug_line    0x00000907      0x312 ../../../os/kernel/src/chthreads.o
+ .debug_line    0x00000c19      0x210 ../../../os/kernel/src/chdynamic.o
+ .debug_line    0x00000e29      0x151 ../../../os/kernel/src/chregistry.o
+ .debug_line    0x00000f7a      0x2f6 ../../../os/kernel/src/chsem.o
+ .debug_line    0x00001270      0x2fb ../../../os/kernel/src/chmtx.o
+ .debug_line    0x0000156b      0x260 ../../../os/kernel/src/chcond.o
+ .debug_line    0x000017cb      0x2d9 ../../../os/kernel/src/chevents.o
+ .debug_line    0x00001aa4      0x19f ../../../os/kernel/src/chmsg.o
+ .debug_line    0x00001c43      0x24c ../../../os/kernel/src/chmboxes.o
+ .debug_line    0x00001e8f      0x2de ../../../os/kernel/src/chqueues.o
+ .debug_line    0x0000216d      0x137 ../../../os/kernel/src/chmemcore.o
+ .debug_line    0x000022a4      0x269 ../../../os/kernel/src/chheap.o
+ .debug_line    0x0000250d      0x18e ../../../os/kernel/src/chmempools.o
+ .debug_line    0x0000269b      0x491 ../../../test/test.o
+ .debug_line    0x00002b2c      0x1e2 ../../../test/testthd.o
+ .debug_line    0x00002d0e      0x2b5 ../../../test/testsem.o
+ .debug_line    0x00002fc3      0x471 ../../../test/testmtx.o
+ .debug_line    0x00003434      0x157 ../../../test/testmsg.o
+ .debug_line    0x0000358b      0x1a8 ../../../test/testmbox.o
+ .debug_line    0x00003733      0x275 ../../../test/testevt.o
+ .debug_line    0x000039a8      0x1f2 ../../../test/testheap.o
+ .debug_line    0x00003b9a      0x113 ../../../test/testpools.o
+ .debug_line    0x00003cad      0x2df ../../../test/testdyn.o
+ .debug_line    0x00003f8c      0x29e ../../../test/testqueues.o
+ .debug_line    0x0000422a      0x562 ../../../test/testbmk.o
+ .debug_line    0x0000478c       0xdb ../../../os/hal/src/hal.o
+ .debug_line    0x00004867       0x4d ../../../os/hal/src/adc.o
+ .debug_line    0x000048b4       0x4d ../../../os/hal/src/can.o
+ .debug_line    0x00004901      0x1d8 ../../../os/hal/src/gpt.o
+ .debug_line    0x00004ad9       0x4d ../../../os/hal/src/i2c.o
+ .debug_line    0x00004b26       0x4d ../../../os/hal/src/mac.o
+ .debug_line    0x00004b73      0x125 ../../../os/hal/src/pal.o
+ .debug_line    0x00004c98       0x4d ../../../os/hal/src/pwm.o
+ .debug_line    0x00004ce5      0x331 ../../../os/hal/src/serial.o
+ .debug_line    0x00005016       0x4d ../../../os/hal/src/spi.o
+ .debug_line    0x00005063       0x4d ../../../os/hal/src/uart.o
+ .debug_line    0x000050b0       0x4d ../../../os/hal/src/usb.o
+ .debug_line    0x000050fd       0x4d ../../../os/hal/src/mmc_spi.o
+ .debug_line    0x0000514a       0x4d ../../../os/hal/src/serial_usb.o
+ .debug_line    0x00005197      0x109 ../../../os/hal/platforms/LPC13xx/hal_lld.o
+ .debug_line    0x000052a0      0x264 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .debug_line    0x00005504       0xf0 ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .debug_line    0x000055f4      0x2e7 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .debug_line    0x000058db       0x4d ../../../os/hal/platforms/LPC13xx/spi_lld.o
+ .debug_line    0x00005928      0x108 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+ .debug_line    0x00005a30      0x170 ../../../os/various/evtimer.o
+ .debug_line    0x00005ba0      0x187 ../../../os/various/syscalls.o
+ .debug_line    0x00005d27      0x35f main.o
+ .debug_line    0x00006086      0x16f c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+
+.debug_pubnames
+                0x00000000     0x13e4
+ .debug_pubnames
+                0x00000000       0x38 ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+ .debug_pubnames
+                0x00000038       0x20 ../../../os/ports/GCC/ARMCMx/chcore.o
+ .debug_pubnames
+                0x00000058       0x8d ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+ .debug_pubnames
+                0x000000e5       0x5e ../../../os/ports/GCC/ARMCMx/nvic.o
+ .debug_pubnames
+                0x00000143       0x5c ../../../os/kernel/src/chsys.o
+ .debug_pubnames
+                0x0000019f       0x58 ../../../os/kernel/src/chvt.o
+ .debug_pubnames
+                0x000001f7       0xc2 ../../../os/kernel/src/chschd.o
+ .debug_pubnames
+                0x000002b9       0xd0 ../../../os/kernel/src/chthreads.o
+ .debug_pubnames
+                0x00000389       0x69 ../../../os/kernel/src/chdynamic.o
+ .debug_pubnames
+                0x000003f2       0x3b ../../../os/kernel/src/chregistry.o
+ .debug_pubnames
+                0x0000042d       0xd1 ../../../os/kernel/src/chsem.o
+ .debug_pubnames
+                0x000004fe       0x94 ../../../os/kernel/src/chmtx.o
+ .debug_pubnames
+                0x00000592       0xb9 ../../../os/kernel/src/chcond.o
+ .debug_pubnames
+                0x0000064b      0x14b ../../../os/kernel/src/chevents.o
+ .debug_pubnames
+                0x00000796       0x3f ../../../os/kernel/src/chmsg.o
+ .debug_pubnames
+                0x000007d5       0xba ../../../os/kernel/src/chmboxes.o
+ .debug_pubnames
+                0x0000088f       0xd5 ../../../os/kernel/src/chqueues.o
+ .debug_pubnames
+                0x00000964       0x52 ../../../os/kernel/src/chmemcore.o
+ .debug_pubnames
+                0x000009b6       0x5f ../../../os/kernel/src/chheap.o
+ .debug_pubnames
+                0x00000a15       0x61 ../../../os/kernel/src/chmempools.o
+ .debug_pubnames
+                0x00000a76      0x158 ../../../test/test.o
+ .debug_pubnames
+                0x00000bce       0x55 ../../../test/testthd.o
+ .debug_pubnames
+                0x00000c23       0x55 ../../../test/testsem.o
+ .debug_pubnames
+                0x00000c78       0x89 ../../../test/testmtx.o
+ .debug_pubnames
+                0x00000d01       0x2e ../../../test/testmsg.o
+ .debug_pubnames
+                0x00000d2f       0x30 ../../../test/testmbox.o
+ .debug_pubnames
+                0x00000d5f       0x48 ../../../test/testevt.o
+ .debug_pubnames
+                0x00000da7       0x30 ../../../test/testheap.o
+ .debug_pubnames
+                0x00000dd7       0x32 ../../../test/testpools.o
+ .debug_pubnames
+                0x00000e09       0x48 ../../../test/testdyn.o
+ .debug_pubnames
+                0x00000e51       0x44 ../../../test/testqueues.o
+ .debug_pubnames
+                0x00000e95       0xda ../../../test/testbmk.o
+ .debug_pubnames
+                0x00000f6f       0x1e ../../../os/hal/src/hal.o
+ .debug_pubnames
+                0x00000f8d       0xd7 ../../../os/hal/src/gpt.o
+ .debug_pubnames
+                0x00001064       0x43 ../../../os/hal/src/pal.o
+ .debug_pubnames
+                0x000010a7       0x6c ../../../os/hal/src/serial.o
+ .debug_pubnames
+                0x00001113       0x3a ../../../os/hal/platforms/LPC13xx/hal_lld.o
+ .debug_pubnames
+                0x0000114d       0xea ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .debug_pubnames
+                0x00001237       0x3e ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .debug_pubnames
+                0x00001275       0x58 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .debug_pubnames
+                0x000012cd       0x48 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+ .debug_pubnames
+                0x00001315       0x2b ../../../os/various/evtimer.o
+ .debug_pubnames
+                0x00001340       0x6c ../../../os/various/syscalls.o
+ .debug_pubnames
+                0x000013ac       0x1b main.o
+ .debug_pubnames
+                0x000013c7       0x1d c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+
+.debug_pubtypes
+                0x00000000     0x34ef
+ .debug_pubtypes
+                0x00000000       0x12 ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+ .debug_pubtypes
+                0x00000012       0x12 ../../../os/ports/GCC/ARMCMx/chcore.o
+ .debug_pubtypes
+                0x00000024      0x116 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+ .debug_pubtypes
+                0x0000013a       0x38 ../../../os/ports/GCC/ARMCMx/nvic.o
+ .debug_pubtypes
+                0x00000172      0x185 ../../../os/kernel/src/chsys.o
+ .debug_pubtypes
+                0x000002f7       0x12 ../../../os/kernel/src/chdebug.o
+ .debug_pubtypes
+                0x00000309       0x12 ../../../os/kernel/src/chlists.o
+ .debug_pubtypes
+                0x0000031b       0x7e ../../../os/kernel/src/chvt.o
+ .debug_pubtypes
+                0x00000399      0x16d ../../../os/kernel/src/chschd.o
+ .debug_pubtypes
+                0x00000506      0x168 ../../../os/kernel/src/chthreads.o
+ .debug_pubtypes
+                0x0000066e      0x191 ../../../os/kernel/src/chdynamic.o
+ .debug_pubtypes
+                0x000007ff      0x117 ../../../os/kernel/src/chregistry.o
+ .debug_pubtypes
+                0x00000916      0x133 ../../../os/kernel/src/chsem.o
+ .debug_pubtypes
+                0x00000a49      0x122 ../../../os/kernel/src/chmtx.o
+ .debug_pubtypes
+                0x00000b6b      0x12f ../../../os/kernel/src/chcond.o
+ .debug_pubtypes
+                0x00000c9a      0x179 ../../../os/kernel/src/chevents.o
+ .debug_pubtypes
+                0x00000e13      0x117 ../../../os/kernel/src/chmsg.o
+ .debug_pubtypes
+                0x00000f2a      0x131 ../../../os/kernel/src/chmboxes.o
+ .debug_pubtypes
+                0x0000105b      0x18a ../../../os/kernel/src/chqueues.o
+ .debug_pubtypes
+                0x000011e5       0x36 ../../../os/kernel/src/chmemcore.o
+ .debug_pubtypes
+                0x0000121b      0x166 ../../../os/kernel/src/chheap.o
+ .debug_pubtypes
+                0x00001381       0x5a ../../../os/kernel/src/chmempools.o
+ .debug_pubtypes
+                0x000013db      0x1c4 ../../../test/test.o
+ .debug_pubtypes
+                0x0000159f      0x15e ../../../test/testthd.o
+ .debug_pubtypes
+                0x000016fd      0x18e ../../../test/testsem.o
+ .debug_pubtypes
+                0x0000188b      0x181 ../../../test/testmtx.o
+ .debug_pubtypes
+                0x00001a0c      0x124 ../../../test/testmsg.o
+ .debug_pubtypes
+                0x00001b30      0x16b ../../../test/testmbox.o
+ .debug_pubtypes
+                0x00001c9b      0x1c0 ../../../test/testevt.o
+ .debug_pubtypes
+                0x00001e5b      0x184 ../../../test/testheap.o
+ .debug_pubtypes
+                0x00001fdf       0x5a ../../../test/testpools.o
+ .debug_pubtypes
+                0x00002039      0x1c6 ../../../test/testdyn.o
+ .debug_pubtypes
+                0x000021ff      0x1d2 ../../../test/testqueues.o
+ .debug_pubtypes
+                0x000023d1      0x1b9 ../../../test/testbmk.o
+ .debug_pubtypes
+                0x0000258a       0x46 ../../../os/hal/src/hal.o
+ .debug_pubtypes
+                0x000025d0       0x12 ../../../os/hal/src/adc.o
+ .debug_pubtypes
+                0x000025e2       0x12 ../../../os/hal/src/can.o
+ .debug_pubtypes
+                0x000025f4       0x99 ../../../os/hal/src/gpt.o
+ .debug_pubtypes
+                0x0000268d       0x12 ../../../os/hal/src/i2c.o
+ .debug_pubtypes
+                0x0000269f       0x12 ../../../os/hal/src/mac.o
+ .debug_pubtypes
+                0x000026b1       0x6f ../../../os/hal/src/pal.o
+ .debug_pubtypes
+                0x00002720       0x12 ../../../os/hal/src/pwm.o
+ .debug_pubtypes
+                0x00002732      0x293 ../../../os/hal/src/serial.o
+ .debug_pubtypes
+                0x000029c5       0x12 ../../../os/hal/src/spi.o
+ .debug_pubtypes
+                0x000029d7       0x12 ../../../os/hal/src/uart.o
+ .debug_pubtypes
+                0x000029e9       0x12 ../../../os/hal/src/usb.o
+ .debug_pubtypes
+                0x000029fb       0x12 ../../../os/hal/src/mmc_spi.o
+ .debug_pubtypes
+                0x00002a0d       0x12 ../../../os/hal/src/serial_usb.o
+ .debug_pubtypes
+                0x00002a1f       0x47 ../../../os/hal/platforms/LPC13xx/hal_lld.o
+ .debug_pubtypes
+                0x00002a66       0xc6 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .debug_pubtypes
+                0x00002b2c       0x8c ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .debug_pubtypes
+                0x00002bb8      0x28e ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .debug_pubtypes
+                0x00002e46       0x12 ../../../os/hal/platforms/LPC13xx/spi_lld.o
+ .debug_pubtypes
+                0x00002e58       0x6d ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+ .debug_pubtypes
+                0x00002ec5      0x17e ../../../os/various/evtimer.o
+ .debug_pubtypes
+                0x00003043      0x180 ../../../os/various/syscalls.o
+ .debug_pubtypes
+                0x000031c3      0x30f main.o
+ .debug_pubtypes
+                0x000034d2       0x1d c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+
+.debug_aranges  0x00000000      0xe18
+ .debug_aranges
+                0x00000000       0x20 ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+ .debug_aranges
+                0x00000020       0x20 ../../../os/ports/GCC/ARMCMx/chcore.o
+ .debug_aranges
+                0x00000040       0x48 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+ .debug_aranges
+                0x00000088       0x30 ../../../os/ports/GCC/ARMCMx/nvic.o
+ .debug_aranges
+                0x000000b8       0x30 ../../../os/kernel/src/chsys.o
+ .debug_aranges
+                0x000000e8       0x38 ../../../os/kernel/src/chvt.o
+ .debug_aranges
+                0x00000120       0x60 ../../../os/kernel/src/chschd.o
+ .debug_aranges
+                0x00000180       0x70 ../../../os/kernel/src/chthreads.o
+ .debug_aranges
+                0x000001f0       0x38 ../../../os/kernel/src/chdynamic.o
+ .debug_aranges
+                0x00000228       0x28 ../../../os/kernel/src/chregistry.o
+ .debug_aranges
+                0x00000250       0x70 ../../../os/kernel/src/chsem.o
+ .debug_aranges
+                0x000002c0       0x58 ../../../os/kernel/src/chmtx.o
+ .debug_aranges
+                0x00000318       0x60 ../../../os/kernel/src/chcond.o
+ .debug_aranges
+                0x00000378       0x90 ../../../os/kernel/src/chevents.o
+ .debug_aranges
+                0x00000408       0x30 ../../../os/kernel/src/chmsg.o
+ .debug_aranges
+                0x00000438       0x70 ../../../os/kernel/src/chmboxes.o
+ .debug_aranges
+                0x000004a8       0x78 ../../../os/kernel/src/chqueues.o
+ .debug_aranges
+                0x00000520       0x38 ../../../os/kernel/src/chmemcore.o
+ .debug_aranges
+                0x00000558       0x40 ../../../os/kernel/src/chheap.o
+ .debug_aranges
+                0x00000598       0x40 ../../../os/kernel/src/chmempools.o
+ .debug_aranges
+                0x000005d8       0x98 ../../../test/test.o
+ .debug_aranges
+                0x00000670       0x40 ../../../test/testthd.o
+ .debug_aranges
+                0x000006b0       0x70 ../../../test/testsem.o
+ .debug_aranges
+                0x00000720      0x108 ../../../test/testmtx.o
+ .debug_aranges
+                0x00000828       0x28 ../../../test/testmsg.o
+ .debug_aranges
+                0x00000850       0x28 ../../../test/testmbox.o
+ .debug_aranges
+                0x00000878       0x70 ../../../test/testevt.o
+ .debug_aranges
+                0x000008e8       0x28 ../../../test/testheap.o
+ .debug_aranges
+                0x00000910       0x30 ../../../test/testpools.o
+ .debug_aranges
+                0x00000940       0x58 ../../../test/testdyn.o
+ .debug_aranges
+                0x00000998       0x50 ../../../test/testqueues.o
+ .debug_aranges
+                0x000009e8       0xd0 ../../../test/testbmk.o
+ .debug_aranges
+                0x00000ab8       0x20 ../../../os/hal/src/hal.o
+ .debug_aranges
+                0x00000ad8       0x70 ../../../os/hal/src/gpt.o
+ .debug_aranges
+                0x00000b48       0x30 ../../../os/hal/src/pal.o
+ .debug_aranges
+                0x00000b78       0x90 ../../../os/hal/src/serial.o
+ .debug_aranges
+                0x00000c08       0x28 ../../../os/hal/platforms/LPC13xx/hal_lld.o
+ .debug_aranges
+                0x00000c30       0x68 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .debug_aranges
+                0x00000c98       0x28 ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .debug_aranges
+                0x00000cc0       0x40 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .debug_aranges
+                0x00000d00       0x28 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+ .debug_aranges
+                0x00000d28       0x30 ../../../os/various/evtimer.o
+ .debug_aranges
+                0x00000d58       0x50 ../../../os/various/syscalls.o
+ .debug_aranges
+                0x00000da8       0x50 main.o
+ .debug_aranges
+                0x00000df8       0x20 c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+
+.debug_ranges   0x00000000     0x1418
+ .debug_ranges  0x00000000       0x10 ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+ .debug_ranges  0x00000010       0x10 ../../../os/ports/GCC/ARMCMx/chcore.o
+ .debug_ranges  0x00000020       0x38 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+ .debug_ranges  0x00000058       0x20 ../../../os/ports/GCC/ARMCMx/nvic.o
+ .debug_ranges  0x00000078       0x20 ../../../os/kernel/src/chsys.o
+ .debug_ranges  0x00000098       0x28 ../../../os/kernel/src/chvt.o
+ .debug_ranges  0x000000c0      0x130 ../../../os/kernel/src/chschd.o
+ .debug_ranges  0x000001f0       0xc0 ../../../os/kernel/src/chthreads.o
+ .debug_ranges  0x000002b0       0x58 ../../../os/kernel/src/chdynamic.o
+ .debug_ranges  0x00000308       0x30 ../../../os/kernel/src/chregistry.o
+ .debug_ranges  0x00000338      0x108 ../../../os/kernel/src/chsem.o
+ .debug_ranges  0x00000440      0x200 ../../../os/kernel/src/chmtx.o
+ .debug_ranges  0x00000640       0xf0 ../../../os/kernel/src/chcond.o
+ .debug_ranges  0x00000730       0xc8 ../../../os/kernel/src/chevents.o
+ .debug_ranges  0x000007f8       0x70 ../../../os/kernel/src/chmsg.o
+ .debug_ranges  0x00000868       0x78 ../../../os/kernel/src/chmboxes.o
+ .debug_ranges  0x000008e0       0x98 ../../../os/kernel/src/chqueues.o
+ .debug_ranges  0x00000978       0x58 ../../../os/kernel/src/chmemcore.o
+ .debug_ranges  0x000009d0       0x30 ../../../os/kernel/src/chheap.o
+ .debug_ranges  0x00000a00       0xa8 ../../../os/kernel/src/chmempools.o
+ .debug_ranges  0x00000aa8      0x110 ../../../test/test.o
+ .debug_ranges  0x00000bb8       0x78 ../../../test/testthd.o
+ .debug_ranges  0x00000c30       0x60 ../../../test/testsem.o
+ .debug_ranges  0x00000c90      0x110 ../../../test/testmtx.o
+ .debug_ranges  0x00000da0       0x18 ../../../test/testmsg.o
+ .debug_ranges  0x00000db8       0x18 ../../../test/testmbox.o
+ .debug_ranges  0x00000dd0       0x60 ../../../test/testevt.o
+ .debug_ranges  0x00000e30       0x18 ../../../test/testheap.o
+ .debug_ranges  0x00000e48       0x20 ../../../test/testpools.o
+ .debug_ranges  0x00000e68       0x48 ../../../test/testdyn.o
+ .debug_ranges  0x00000eb0       0x40 ../../../test/testqueues.o
+ .debug_ranges  0x00000ef0       0xd8 ../../../test/testbmk.o
+ .debug_ranges  0x00000fc8       0x10 ../../../os/hal/src/hal.o
+ .debug_ranges  0x00000fd8       0x90 ../../../os/hal/src/gpt.o
+ .debug_ranges  0x00001068       0x20 ../../../os/hal/src/pal.o
+ .debug_ranges  0x00001088       0xc8 ../../../os/hal/src/serial.o
+ .debug_ranges  0x00001150       0x18 ../../../os/hal/platforms/LPC13xx/hal_lld.o
+ .debug_ranges  0x00001168       0xb8 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .debug_ranges  0x00001220       0x18 ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .debug_ranges  0x00001238      0x128 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .debug_ranges  0x00001360       0x18 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+ .debug_ranges  0x00001378       0x20 ../../../os/various/evtimer.o
+ .debug_ranges  0x00001398       0x40 ../../../os/various/syscalls.o
+ .debug_ranges  0x000013d8       0x40 main.o
+
+.debug_str      0x00000000     0x2e58
+ .debug_str     0x00000000       0xda ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+                                0x10e (size before relaxing)
+ .debug_str     0x000000da       0x30 ../../../os/ports/GCC/ARMCMx/chcore.o
+                                 0xf1 (size before relaxing)
+ .debug_str     0x0000010a      0x223 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+                                0x303 (size before relaxing)
+ .debug_str     0x0000032d       0xb6 ../../../os/ports/GCC/ARMCMx/nvic.o
+                                0x1cd (size before relaxing)
+ .debug_str     0x000003e3      0x117 ../../../os/kernel/src/chsys.o
+                                0x383 (size before relaxing)
+ .debug_str     0x000004fa       0x21 ../../../os/kernel/src/chdebug.o
+                                 0xe2 (size before relaxing)
+ .debug_str     0x0000051b       0x21 ../../../os/kernel/src/chlists.o
+                                 0xe2 (size before relaxing)
+ .debug_str     0x0000053c       0x57 ../../../os/kernel/src/chvt.o
+                                0x194 (size before relaxing)
+ .debug_str     0x00000593       0xd8 ../../../os/kernel/src/chschd.o
+                                0x390 (size before relaxing)
+ .debug_str     0x0000066b       0xe4 ../../../os/kernel/src/chthreads.o
+                                0x3b6 (size before relaxing)
+ .debug_str     0x0000074f       0xf5 ../../../os/kernel/src/chdynamic.o
+                                0x352 (size before relaxing)
+ .debug_str     0x00000844       0x45 ../../../os/kernel/src/chregistry.o
+                                0x2aa (size before relaxing)
+ .debug_str     0x00000889       0xcb ../../../os/kernel/src/chsem.o
+                                0x359 (size before relaxing)
+ .debug_str     0x00000954       0x8d ../../../os/kernel/src/chmtx.o
+                                0x315 (size before relaxing)
+ .debug_str     0x000009e1       0xb3 ../../../os/kernel/src/chcond.o
+                                0x335 (size before relaxing)
+ .debug_str     0x00000a94      0x17c ../../../os/kernel/src/chevents.o
+                                0x3eb (size before relaxing)
+ .debug_str     0x00000c10       0x40 ../../../os/kernel/src/chmsg.o
+                                0x2be (size before relaxing)
+ .debug_str     0x00000c50       0xe5 ../../../os/kernel/src/chmboxes.o
+                                0x31e (size before relaxing)
+ .debug_str     0x00000d35      0x11b ../../../os/kernel/src/chqueues.o
+                                0x367 (size before relaxing)
+ .debug_str     0x00000e50       0x7d ../../../os/kernel/src/chmemcore.o
+                                0x15b (size before relaxing)
+ .debug_str     0x00000ecd       0x6c ../../../os/kernel/src/chheap.o
+                                0x300 (size before relaxing)
+ .debug_str     0x00000f39       0x5f ../../../os/kernel/src/chmempools.o
+                                0x192 (size before relaxing)
+ .debug_str     0x00000f98      0x283 ../../../test/test.o
+                                0x5a9 (size before relaxing)
+ .debug_str     0x0000121b       0x70 ../../../test/testthd.o
+                                0x379 (size before relaxing)
+ .debug_str     0x0000128b       0xd9 ../../../test/testsem.o
+                                0x3ee (size before relaxing)
+ .debug_str     0x00001364      0x197 ../../../test/testmtx.o
+                                0x4b8 (size before relaxing)
+ .debug_str     0x000014fb       0x2e ../../../test/testmsg.o
+                                0x2d7 (size before relaxing)
+ .debug_str     0x00001529       0x42 ../../../test/testmbox.o
+                                0x320 (size before relaxing)
+ .debug_str     0x0000156b       0x82 ../../../test/testevt.o
+                                0x3ea (size before relaxing)
+ .debug_str     0x000015ed       0x47 ../../../test/testheap.o
+                                0x324 (size before relaxing)
+ .debug_str     0x00001634       0x4f ../../../test/testpools.o
+                                0x1a2 (size before relaxing)
+ .debug_str     0x00001683       0x89 ../../../test/testdyn.o
+                                0x417 (size before relaxing)
+ .debug_str     0x0000170c       0x6f ../../../test/testqueues.o
+                                0x3da (size before relaxing)
+ .debug_str     0x0000177b      0x182 ../../../test/testbmk.o
+                                0x50f (size before relaxing)
+ .debug_str     0x000018fd       0x54 ../../../os/hal/src/hal.o
+                                0x130 (size before relaxing)
+ .debug_str     0x00001951       0x1a ../../../os/hal/src/adc.o
+                                 0xe8 (size before relaxing)
+ .debug_str     0x0000196b       0x1a ../../../os/hal/src/can.o
+                                 0xe8 (size before relaxing)
+ .debug_str     0x00001985      0x178 ../../../os/hal/src/gpt.o
+                                0x265 (size before relaxing)
+ .debug_str     0x00001afd       0x1a ../../../os/hal/src/i2c.o
+                                 0xe8 (size before relaxing)
+ .debug_str     0x00001b17       0x1a ../../../os/hal/src/mac.o
+                                 0xe8 (size before relaxing)
+ .debug_str     0x00001b31       0xbc ../../../os/hal/src/pal.o
+                                0x1a2 (size before relaxing)
+ .debug_str     0x00001bed       0x1a ../../../os/hal/src/pwm.o
+                                 0xe8 (size before relaxing)
+ .debug_str     0x00001c07      0x190 ../../../os/hal/src/serial.o
+                                0x4e4 (size before relaxing)
+ .debug_str     0x00001d97       0x1a ../../../os/hal/src/spi.o
+                                 0xe8 (size before relaxing)
+ .debug_str     0x00001db1       0x1b ../../../os/hal/src/uart.o
+                                 0xe9 (size before relaxing)
+ .debug_str     0x00001dcc       0x1a ../../../os/hal/src/usb.o
+                                 0xed (size before relaxing)
+ .debug_str     0x00001de6       0x1e ../../../os/hal/src/mmc_spi.o
+                                 0xec (size before relaxing)
+ .debug_str     0x00001e04       0x21 ../../../os/hal/src/serial_usb.o
+                                 0xef (size before relaxing)
+ .debug_str     0x00001e25      0x30d ../../../os/hal/platforms/LPC13xx/hal_lld.o
+                                0x407 (size before relaxing)
+ .debug_str     0x00002132      0x447 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                                0x8ab (size before relaxing)
+ .debug_str     0x00002579       0x55 ../../../os/hal/platforms/LPC13xx/pal_lld.o
+                                0x1be (size before relaxing)
+ .debug_str     0x000025ce      0x211 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                                0xc55 (size before relaxing)
+ .debug_str     0x000027df       0x2c ../../../os/hal/platforms/LPC13xx/spi_lld.o
+                                 0xfa (size before relaxing)
+ .debug_str     0x0000280b       0x45 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+                                0x2f8 (size before relaxing)
+ .debug_str     0x00002850       0x55 ../../../os/various/evtimer.o
+                                0x2e6 (size before relaxing)
+ .debug_str     0x000028a5      0x4b5 ../../../os/various/syscalls.o
+                                0x5d8 (size before relaxing)
+ .debug_str     0x00002d5a       0x5a main.o
+                                0x5cd (size before relaxing)
+ .debug_str     0x00002db4       0xa4 c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+                                0x147 (size before relaxing)
+
+.debug_frame    0x00000000     0x2514
+ .debug_frame   0x00000000       0x20 ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+ .debug_frame   0x00000020       0x20 ../../../os/ports/GCC/ARMCMx/chcore.o
+ .debug_frame   0x00000040       0x88 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+ .debug_frame   0x000000c8       0x54 ../../../os/ports/GCC/ARMCMx/nvic.o
+ .debug_frame   0x0000011c       0x5c ../../../os/kernel/src/chsys.o
+ .debug_frame   0x00000178       0x5c ../../../os/kernel/src/chvt.o
+ .debug_frame   0x000001d4       0xe4 ../../../os/kernel/src/chschd.o
+ .debug_frame   0x000002b8      0x140 ../../../os/kernel/src/chthreads.o
+ .debug_frame   0x000003f8       0x88 ../../../os/kernel/src/chdynamic.o
+ .debug_frame   0x00000480       0x3c ../../../os/kernel/src/chregistry.o
+ .debug_frame   0x000004bc      0x140 ../../../os/kernel/src/chsem.o
+ .debug_frame   0x000005fc       0xd4 ../../../os/kernel/src/chmtx.o
+ .debug_frame   0x000006d0      0x10c ../../../os/kernel/src/chcond.o
+ .debug_frame   0x000007dc      0x1b4 ../../../os/kernel/src/chevents.o
+ .debug_frame   0x00000990       0x64 ../../../os/kernel/src/chmsg.o
+ .debug_frame   0x000009f4      0x150 ../../../os/kernel/src/chmboxes.o
+ .debug_frame   0x00000b44      0x170 ../../../os/kernel/src/chqueues.o
+ .debug_frame   0x00000cb4       0x50 ../../../os/kernel/src/chmemcore.o
+ .debug_frame   0x00000d04       0xa8 ../../../os/kernel/src/chheap.o
+ .debug_frame   0x00000dac       0x78 ../../../os/kernel/src/chmempools.o
+ .debug_frame   0x00000e24      0x1c4 ../../../test/test.o
+ .debug_frame   0x00000fe8       0xc4 ../../../test/testthd.o
+ .debug_frame   0x000010ac      0x15c ../../../test/testsem.o
+ .debug_frame   0x00001208      0x3bc ../../../test/testmtx.o
+ .debug_frame   0x000015c4       0x48 ../../../test/testmsg.o
+ .debug_frame   0x0000160c       0x54 ../../../test/testmbox.o
+ .debug_frame   0x00001660      0x164 ../../../test/testevt.o
+ .debug_frame   0x000017c4       0x50 ../../../test/testheap.o
+ .debug_frame   0x00001814       0x5c ../../../test/testpools.o
+ .debug_frame   0x00001870      0x104 ../../../test/testdyn.o
+ .debug_frame   0x00001974       0xe0 ../../../test/testqueues.o
+ .debug_frame   0x00001a54      0x2d8 ../../../test/testbmk.o
+ .debug_frame   0x00001d2c       0x2c ../../../os/hal/src/hal.o
+ .debug_frame   0x00001d58      0x138 ../../../os/hal/src/gpt.o
+ .debug_frame   0x00001e90       0x4c ../../../os/hal/src/pal.o
+ .debug_frame   0x00001edc      0x19c ../../../os/hal/src/serial.o
+ .debug_frame   0x00002078       0x3c ../../../os/hal/platforms/LPC13xx/hal_lld.o
+ .debug_frame   0x000020b4      0x104 ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .debug_frame   0x000021b8       0x3c ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .debug_frame   0x000021f4       0xb0 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .debug_frame   0x000022a4       0x3c ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+ .debug_frame   0x000022e0       0x64 ../../../os/various/evtimer.o
+ .debug_frame   0x00002344       0x98 ../../../os/various/syscalls.o
+ .debug_frame   0x000023dc      0x110 main.o
+ .debug_frame   0x000024ec       0x28 c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+
+.debug_loc      0x00000000     0x7127
+ .debug_loc     0x00000000       0xf0 ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+ .debug_loc     0x000000f0       0xea ../../../os/ports/GCC/ARMCMx/nvic.o
+ .debug_loc     0x000001da       0x9e ../../../os/kernel/src/chsys.o
+ .debug_loc     0x00000278       0xb4 ../../../os/kernel/src/chvt.o
+ .debug_loc     0x0000032c      0x2ed ../../../os/kernel/src/chschd.o
+ .debug_loc     0x00000619      0x4a7 ../../../os/kernel/src/chthreads.o
+ .debug_loc     0x00000ac0      0x2eb ../../../os/kernel/src/chdynamic.o
+ .debug_loc     0x00000dab       0xc9 ../../../os/kernel/src/chregistry.o
+ .debug_loc     0x00000e74      0x609 ../../../os/kernel/src/chsem.o
+ .debug_loc     0x0000147d      0x4ad ../../../os/kernel/src/chmtx.o
+ .debug_loc     0x0000192a      0x483 ../../../os/kernel/src/chcond.o
+ .debug_loc     0x00001dad      0x87a ../../../os/kernel/src/chevents.o
+ .debug_loc     0x00002627      0x19a ../../../os/kernel/src/chmsg.o
+ .debug_loc     0x000027c1      0x4d4 ../../../os/kernel/src/chmboxes.o
+ .debug_loc     0x00002c95      0x72e ../../../os/kernel/src/chqueues.o
+ .debug_loc     0x000033c3       0xe0 ../../../os/kernel/src/chmemcore.o
+ .debug_loc     0x000034a3      0x30f ../../../os/kernel/src/chheap.o
+ .debug_loc     0x000037b2      0x193 ../../../os/kernel/src/chmempools.o
+ .debug_loc     0x00003945      0x50b ../../../test/test.o
+ .debug_loc     0x00003e50      0x1f3 ../../../test/testthd.o
+ .debug_loc     0x00004043      0x2d2 ../../../test/testsem.o
+ .debug_loc     0x00004315      0x684 ../../../test/testmtx.o
+ .debug_loc     0x00004999       0xe0 ../../../test/testmsg.o
+ .debug_loc     0x00004a79      0x164 ../../../test/testmbox.o
+ .debug_loc     0x00004bdd      0x2e2 ../../../test/testevt.o
+ .debug_loc     0x00004ebf      0x1d8 ../../../test/testheap.o
+ .debug_loc     0x00005097       0x67 ../../../test/testpools.o
+ .debug_loc     0x000050fe      0x20b ../../../test/testdyn.o
+ .debug_loc     0x00005309      0x150 ../../../test/testqueues.o
+ .debug_loc     0x00005459      0x678 ../../../test/testbmk.o
+ .debug_loc     0x00005ad1       0x20 ../../../os/hal/src/hal.o
+ .debug_loc     0x00005af1      0x390 ../../../os/hal/src/gpt.o
+ .debug_loc     0x00005e81       0x64 ../../../os/hal/src/pal.o
+ .debug_loc     0x00005ee5      0x50e ../../../os/hal/src/serial.o
+ .debug_loc     0x000063f3       0x33 ../../../os/hal/platforms/LPC13xx/hal_lld.o
+ .debug_loc     0x00006426      0x1ee ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+ .debug_loc     0x00006614       0x8d ../../../os/hal/platforms/LPC13xx/pal_lld.o
+ .debug_loc     0x000066a1      0x375 ../../../os/hal/platforms/LPC13xx/serial_lld.o
+ .debug_loc     0x00006a16       0x20 ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+ .debug_loc     0x00006a36      0x119 ../../../os/various/evtimer.o
+ .debug_loc     0x00006b4f      0x150 ../../../os/various/syscalls.o
+ .debug_loc     0x00006c9f      0x30a main.o
+ .debug_loc     0x00006fa9      0x17e c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+
+Cross Reference Table
+
+Symbol                                            File
+BusFaultVector                                    ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+DebugMonitorVector                                ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+GPTD1                                             main.o
+                                                  ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+GPTD2                                             main.o
+                                                  ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+GPTD3                                             ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+GPTD4                                             ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+HardFaultVector                                   ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+LPC13xx_clock_init                                ../../../os/hal/platforms/LPC13xx/hal_lld.o
+                                                  ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+MemManageVector                                   ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+NMIVector                                         ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+NVICDisableVector                                 ../../../os/ports/GCC/ARMCMx/nvic.o
+                                                  ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                                                  ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+NVICEnableVector                                  ../../../os/ports/GCC/ARMCMx/nvic.o
+                                                  ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                                                  ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+NVICSetSystemHandlerPriority                      ../../../os/ports/GCC/ARMCMx/nvic.o
+                                                  ../../../os/hal/platforms/LPC13xx/hal_lld.o
+                                                  ../../../os/kernel/src/chsys.o
+PendSVVector                                      ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+ResetHandler                                      ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+                                                  ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+SD1                                               main.o
+                                                  ../../../os/hal/platforms/LPC13xx/serial_lld.o
+SVCallVector                                      ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+                                                  ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+SysTickVector                                     ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+                                                  ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+TestThread                                        ../../../test/test.o
+UsageFaultVector                                  ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector100                                         ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector104                                         ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector108                                         ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector10C                                         ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector110                                         ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector114                                         ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector118                                         ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector11C                                         ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector1C                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector20                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector24                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector28                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector34                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector40                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector44                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector48                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector4C                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector50                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector54                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector58                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector5C                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector60                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector64                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector68                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector6C                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector70                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector74                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector78                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector7C                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector80                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector84                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector88                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector8C                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector90                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector94                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector98                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+Vector9C                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorA0                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorA4                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorA8                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorAC                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorB0                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorB4                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorB8                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorBC                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorC0                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorC4                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorC8                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorCC                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorD0                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorD4                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorD8                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorDC                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorE0                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorE4                                          ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                                                  ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorE8                                          ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                                                  ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorEC                                          ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                                                  ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorF0                                          ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                                                  ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorF4                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorF8                                          ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                                                  ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+VectorFC                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+__early_init                                      ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+                                                  ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+__heap_base__                                     ../../../os/kernel/src/chmemcore.o
+__heap_end__                                      ../../../os/kernel/src/chmemcore.o
+__main_stack_size__                               ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+__ram_end__                                       ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+                                                  ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+_bss_end                                          ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+_bss_start                                        ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+_close_r                                          ../../../os/various/syscalls.o
+_data                                             ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+_edata                                            ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+_fstat_r                                          ../../../os/various/syscalls.o
+_idle_thread                                      ../../../os/kernel/src/chsys.o
+_idle_thread_wa                                   ../../../os/kernel/src/chsys.o
+_isatty_r                                         ../../../os/various/syscalls.o
+_lseek_r                                          ../../../os/various/syscalls.o
+_main_exit_handler                                ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+_pal_lld_init                                     ../../../os/hal/platforms/LPC13xx/pal_lld.o
+                                                  ../../../os/hal/src/hal.o
+_pal_lld_setgroupmode                             ../../../os/hal/platforms/LPC13xx/pal_lld.o
+                                                  ../../../os/hal/src/pal.o
+_port_irq_epilogue                                ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+                                                  ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                                                  ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+_port_switch_from_isr                             ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+_port_thread_start                                ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+                                                  ../../../os/kernel/src/chthreads.o
+_read_r                                           ../../../os/various/syscalls.o
+_sbrk_r                                           ../../../os/various/syscalls.o
+_test_assert                                      ../../../test/test.o
+                                                  ../../../test/testqueues.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testpools.o
+                                                  ../../../test/testheap.o
+                                                  ../../../test/testevt.o
+                                                  ../../../test/testmbox.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../test/testsem.o
+                                                  ../../../test/testthd.o
+_test_assert_sequence                             ../../../test/test.o
+                                                  ../../../test/testqueues.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testevt.o
+                                                  ../../../test/testmbox.o
+                                                  ../../../test/testmsg.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../test/testsem.o
+                                                  ../../../test/testthd.o
+_test_assert_time_window                          ../../../test/test.o
+                                                  ../../../test/testevt.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../test/testsem.o
+                                                  ../../../test/testthd.o
+_test_fail                                        ../../../test/test.o
+_textdata                                         ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+_thread_init                                      ../../../os/kernel/src/chthreads.o
+                                                  ../../../os/kernel/src/chsys.o
+_unhandled_exception                              ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+_vectors                                          ../../../os/ports/GCC/ARMCMx/LPC13xx/vectors.o
+_write_r                                          ../../../os/various/syscalls.o
+boardInit                                         ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+                                                  ../../../os/hal/src/hal.o
+chCondBroadcast                                   ../../../os/kernel/src/chcond.o
+                                                  ../../../test/testmtx.o
+chCondBroadcastI                                  ../../../os/kernel/src/chcond.o
+chCondInit                                        ../../../os/kernel/src/chcond.o
+                                                  ../../../test/testmtx.o
+chCondSignal                                      ../../../os/kernel/src/chcond.o
+                                                  ../../../test/testmtx.o
+chCondSignalI                                     ../../../os/kernel/src/chcond.o
+                                                  ../../../test/testmtx.o
+chCondWait                                        ../../../os/kernel/src/chcond.o
+                                                  ../../../test/testmtx.o
+chCondWaitS                                       ../../../os/kernel/src/chcond.o
+chCondWaitTimeout                                 ../../../os/kernel/src/chcond.o
+                                                  ../../../test/testmtx.o
+chCondWaitTimeoutS                                ../../../os/kernel/src/chcond.o
+chCoreAlloc                                       ../../../os/kernel/src/chmemcore.o
+                                                  ../../../os/various/syscalls.o
+                                                  ../../../os/kernel/src/chheap.o
+chCoreAllocI                                      ../../../os/kernel/src/chmemcore.o
+chCoreStatus                                      ../../../os/kernel/src/chmemcore.o
+                                                  ../../../test/testheap.o
+chEvtAddFlags                                     ../../../os/kernel/src/chevents.o
+                                                  ../../../test/testevt.o
+chEvtBroadcastFlags                               ../../../os/kernel/src/chevents.o
+                                                  ../../../test/testevt.o
+chEvtBroadcastFlagsI                              ../../../os/kernel/src/chevents.o
+                                                  ../../../os/various/evtimer.o
+                                                  ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                                                  ../../../os/hal/src/serial.o
+chEvtClearFlags                                   ../../../os/kernel/src/chevents.o
+                                                  ../../../test/testevt.o
+chEvtDispatch                                     ../../../os/kernel/src/chevents.o
+                                                  ../../../test/testevt.o
+chEvtRegisterMask                                 ../../../os/kernel/src/chevents.o
+                                                  ../../../test/testevt.o
+chEvtSignalFlags                                  ../../../os/kernel/src/chevents.o
+                                                  ../../../test/testevt.o
+chEvtSignalFlagsI                                 ../../../os/kernel/src/chevents.o
+chEvtUnregister                                   ../../../os/kernel/src/chevents.o
+                                                  ../../../test/testevt.o
+chEvtWaitAll                                      ../../../os/kernel/src/chevents.o
+                                                  ../../../test/testevt.o
+chEvtWaitAllTimeout                               ../../../os/kernel/src/chevents.o
+                                                  ../../../test/testevt.o
+chEvtWaitAny                                      ../../../os/kernel/src/chevents.o
+                                                  ../../../test/testevt.o
+chEvtWaitAnyTimeout                               ../../../os/kernel/src/chevents.o
+                                                  ../../../test/testevt.o
+chEvtWaitOne                                      ../../../os/kernel/src/chevents.o
+                                                  ../../../test/testevt.o
+chEvtWaitOneTimeout                               ../../../os/kernel/src/chevents.o
+                                                  ../../../test/testevt.o
+chHeapAlloc                                       ../../../os/kernel/src/chheap.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testheap.o
+                                                  ../../../os/kernel/src/chdynamic.o
+chHeapFree                                        ../../../os/kernel/src/chheap.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testheap.o
+                                                  ../../../os/kernel/src/chdynamic.o
+chHeapInit                                        ../../../os/kernel/src/chheap.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testheap.o
+chHeapStatus                                      ../../../os/kernel/src/chheap.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testheap.o
+chIQGetFullI                                      ../../../os/kernel/src/chqueues.o
+                                                  ../../../test/testqueues.o
+chIQGetTimeout                                    ../../../os/kernel/src/chqueues.o
+                                                  ../../../os/hal/src/serial.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testqueues.o
+chIQInit                                          ../../../os/kernel/src/chqueues.o
+                                                  ../../../os/hal/src/serial.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testqueues.o
+chIQPutI                                          ../../../os/kernel/src/chqueues.o
+                                                  ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                                                  ../../../os/hal/src/serial.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testqueues.o
+chIQReadTimeout                                   ../../../os/kernel/src/chqueues.o
+                                                  ../../../os/hal/src/serial.o
+                                                  ../../../test/testqueues.o
+chIQResetI                                        ../../../os/kernel/src/chqueues.o
+                                                  ../../../os/hal/src/serial.o
+                                                  ../../../test/testqueues.o
+chMBFetch                                         ../../../os/kernel/src/chmboxes.o
+                                                  main.o
+                                                  ../../../test/testmbox.o
+chMBFetchI                                        ../../../os/kernel/src/chmboxes.o
+                                                  ../../../test/testmbox.o
+chMBFetchS                                        ../../../os/kernel/src/chmboxes.o
+chMBInit                                          ../../../os/kernel/src/chmboxes.o
+                                                  main.o
+                                                  ../../../test/testmbox.o
+chMBPost                                          ../../../os/kernel/src/chmboxes.o
+                                                  main.o
+                                                  ../../../test/testmbox.o
+chMBPostAhead                                     ../../../os/kernel/src/chmboxes.o
+                                                  ../../../test/testmbox.o
+chMBPostAheadI                                    ../../../os/kernel/src/chmboxes.o
+                                                  ../../../test/testmbox.o
+chMBPostAheadS                                    ../../../os/kernel/src/chmboxes.o
+chMBPostI                                         ../../../os/kernel/src/chmboxes.o
+                                                  main.o
+                                                  ../../../test/testmbox.o
+chMBPostS                                         ../../../os/kernel/src/chmboxes.o
+chMBReset                                         ../../../os/kernel/src/chmboxes.o
+                                                  ../../../test/testmbox.o
+chMsgRelease                                      ../../../os/kernel/src/chmsg.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testmsg.o
+chMsgSend                                         ../../../os/kernel/src/chmsg.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testmsg.o
+chMsgWait                                         ../../../os/kernel/src/chmsg.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testmsg.o
+chMtxInit                                         ../../../os/kernel/src/chmtx.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../os/kernel/src/chheap.o
+chMtxLock                                         ../../../os/kernel/src/chmtx.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../os/kernel/src/chheap.o
+chMtxLockS                                        ../../../os/kernel/src/chmtx.o
+                                                  ../../../os/kernel/src/chcond.o
+chMtxTryLock                                      ../../../os/kernel/src/chmtx.o
+                                                  ../../../test/testmtx.o
+chMtxTryLockS                                     ../../../os/kernel/src/chmtx.o
+chMtxUnlock                                       ../../../os/kernel/src/chmtx.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../os/kernel/src/chheap.o
+chMtxUnlockAll                                    ../../../os/kernel/src/chmtx.o
+                                                  ../../../test/testmtx.o
+chMtxUnlockS                                      ../../../os/kernel/src/chmtx.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../os/kernel/src/chcond.o
+chOQGetFullI                                      ../../../os/kernel/src/chqueues.o
+                                                  ../../../test/testqueues.o
+chOQGetI                                          ../../../os/kernel/src/chqueues.o
+                                                  ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                                                  ../../../os/hal/src/serial.o
+                                                  ../../../test/testqueues.o
+chOQInit                                          ../../../os/kernel/src/chqueues.o
+                                                  ../../../os/hal/src/serial.o
+                                                  ../../../test/testqueues.o
+chOQPutTimeout                                    ../../../os/kernel/src/chqueues.o
+                                                  ../../../os/hal/src/serial.o
+                                                  ../../../test/testqueues.o
+chOQResetI                                        ../../../os/kernel/src/chqueues.o
+                                                  ../../../os/hal/src/serial.o
+                                                  ../../../test/testqueues.o
+chOQWriteTimeout                                  ../../../os/kernel/src/chqueues.o
+                                                  ../../../os/hal/src/serial.o
+                                                  ../../../test/testqueues.o
+chPoolAlloc                                       ../../../os/kernel/src/chmempools.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testpools.o
+                                                  ../../../os/kernel/src/chdynamic.o
+chPoolAllocI                                      ../../../os/kernel/src/chmempools.o
+chPoolFree                                        ../../../os/kernel/src/chmempools.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testpools.o
+                                                  ../../../os/kernel/src/chdynamic.o
+chPoolFreeI                                       ../../../os/kernel/src/chmempools.o
+chPoolInit                                        ../../../os/kernel/src/chmempools.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testpools.o
+chRegFirstThread                                  ../../../os/kernel/src/chregistry.o
+                                                  ../../../test/testdyn.o
+chRegNextThread                                   ../../../os/kernel/src/chregistry.o
+                                                  ../../../test/testdyn.o
+chSchDoRescheduleI                                ../../../os/kernel/src/chschd.o
+                                                  ../../../os/kernel/src/chthreads.o
+                                                  ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+chSchGoSleepS                                     ../../../os/kernel/src/chschd.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../os/kernel/src/chmsg.o
+                                                  ../../../os/kernel/src/chevents.o
+                                                  ../../../os/kernel/src/chcond.o
+                                                  ../../../os/kernel/src/chmtx.o
+                                                  ../../../os/kernel/src/chsem.o
+                                                  ../../../os/kernel/src/chthreads.o
+chSchGoSleepTimeoutS                              ../../../os/kernel/src/chschd.o
+                                                  ../../../os/kernel/src/chevents.o
+                                                  ../../../os/kernel/src/chcond.o
+                                                  ../../../os/kernel/src/chsem.o
+                                                  ../../../os/kernel/src/chthreads.o
+chSchIsRescRequiredExI                            ../../../os/kernel/src/chschd.o
+                                                  ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+chSchReadyI                                       ../../../os/kernel/src/chschd.o
+                                                  ../../../os/kernel/src/chmsg.o
+                                                  ../../../os/kernel/src/chevents.o
+                                                  ../../../os/kernel/src/chcond.o
+                                                  ../../../os/kernel/src/chmtx.o
+                                                  ../../../os/kernel/src/chsem.o
+                                                  ../../../os/kernel/src/chthreads.o
+chSchRescheduleS                                  ../../../os/kernel/src/chschd.o
+                                                  ../../../os/hal/src/serial.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../test/testsem.o
+                                                  ../../../os/kernel/src/chmboxes.o
+                                                  ../../../os/kernel/src/chevents.o
+                                                  ../../../os/kernel/src/chcond.o
+                                                  ../../../os/kernel/src/chmtx.o
+                                                  ../../../os/kernel/src/chsem.o
+                                                  ../../../os/kernel/src/chthreads.o
+chSchWakeupS                                      ../../../os/kernel/src/chschd.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../os/kernel/src/chmsg.o
+                                                  ../../../os/kernel/src/chcond.o
+                                                  ../../../os/kernel/src/chmtx.o
+                                                  ../../../os/kernel/src/chsem.o
+                                                  ../../../os/kernel/src/chdynamic.o
+                                                  ../../../os/kernel/src/chthreads.o
+chSemInit                                         ../../../os/kernel/src/chsem.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testsem.o
+                                                  ../../../os/kernel/src/chqueues.o
+                                                  ../../../os/kernel/src/chmboxes.o
+chSemReset                                        ../../../os/kernel/src/chsem.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testsem.o
+chSemResetI                                       ../../../os/kernel/src/chsem.o
+                                                  ../../../os/kernel/src/chqueues.o
+                                                  ../../../os/kernel/src/chmboxes.o
+chSemSetCounterI                                  ../../../os/kernel/src/chsem.o
+                                                  ../../../test/testsem.o
+chSemSignal                                       ../../../os/kernel/src/chsem.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testsem.o
+chSemSignalI                                      ../../../os/kernel/src/chsem.o
+                                                  ../../../test/testsem.o
+                                                  ../../../os/kernel/src/chqueues.o
+                                                  ../../../os/kernel/src/chmboxes.o
+chSemSignalWait                                   ../../../os/kernel/src/chsem.o
+                                                  ../../../test/testsem.o
+chSemWait                                         ../../../os/kernel/src/chsem.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testsem.o
+chSemWaitS                                        ../../../os/kernel/src/chsem.o
+chSemWaitTimeout                                  ../../../os/kernel/src/chsem.o
+                                                  ../../../test/testsem.o
+chSemWaitTimeoutS                                 ../../../os/kernel/src/chsem.o
+                                                  ../../../os/kernel/src/chqueues.o
+                                                  ../../../os/kernel/src/chmboxes.o
+chSysInit                                         ../../../os/kernel/src/chsys.o
+                                                  main.o
+chSysTimerHandlerI                                ../../../os/kernel/src/chsys.o
+                                                  ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+chThdAddRef                                       ../../../os/kernel/src/chdynamic.o
+                                                  ../../../test/testdyn.o
+chThdCreateFromHeap                               ../../../os/kernel/src/chdynamic.o
+                                                  ../../../test/testdyn.o
+chThdCreateFromMemoryPool                         ../../../os/kernel/src/chdynamic.o
+                                                  ../../../test/testdyn.o
+chThdCreateI                                      ../../../os/kernel/src/chthreads.o
+                                                  ../../../test/testthd.o
+                                                  ../../../os/kernel/src/chdynamic.o
+chThdCreateStatic                                 ../../../os/kernel/src/chthreads.o
+                                                  main.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testqueues.o
+                                                  ../../../test/testevt.o
+                                                  ../../../test/testmsg.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../test/testsem.o
+                                                  ../../../test/testthd.o
+                                                  ../../../os/kernel/src/chsys.o
+chThdExit                                         ../../../os/kernel/src/chthreads.o
+                                                  ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+chThdRelease                                      ../../../os/kernel/src/chdynamic.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../os/kernel/src/chregistry.o
+                                                  ../../../os/kernel/src/chthreads.o
+chThdResume                                       ../../../os/kernel/src/chthreads.o
+                                                  ../../../test/testthd.o
+chThdSetPriority                                  ../../../os/kernel/src/chthreads.o
+                                                  ../../../test/testthd.o
+chThdSleep                                        ../../../os/kernel/src/chthreads.o
+                                                  main.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testevt.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../test/testsem.o
+                                                  ../../../test/testthd.o
+                                                  ../../../test/test.o
+chThdSleepUntil                                   ../../../os/kernel/src/chthreads.o
+                                                  ../../../test/testthd.o
+chThdTerminate                                    ../../../os/kernel/src/chthreads.o
+                                                  ../../../test/test.o
+chThdWait                                         ../../../os/kernel/src/chthreads.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/test.o
+chThdYield                                        ../../../os/kernel/src/chthreads.o
+                                                  ../../../test/testbmk.o
+chTimeIsWithin                                    ../../../os/kernel/src/chvt.o
+                                                  ../../../test/test.o
+chVTResetI                                        ../../../os/kernel/src/chvt.o
+                                                  ../../../os/various/evtimer.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../os/kernel/src/chschd.o
+chVTSetI                                          ../../../os/kernel/src/chvt.o
+                                                  ../../../os/various/evtimer.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/test.o
+                                                  ../../../os/kernel/src/chschd.o
+core_init                                         ../../../os/kernel/src/chmemcore.o
+                                                  ../../../os/kernel/src/chsys.o
+evtStart                                          ../../../os/various/evtimer.o
+evtStop                                           ../../../os/various/evtimer.o
+gptInit                                           ../../../os/hal/src/gpt.o
+                                                  ../../../os/hal/src/hal.o
+gptObjectInit                                     ../../../os/hal/src/gpt.o
+                                                  ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+gptPolledDelay                                    ../../../os/hal/src/gpt.o
+gptStart                                          ../../../os/hal/src/gpt.o
+                                                  main.o
+gptStartContinuous                                ../../../os/hal/src/gpt.o
+                                                  main.o
+gptStartContinuousI                               ../../../os/hal/src/gpt.o
+gptStartOneShot                                   ../../../os/hal/src/gpt.o
+gptStartOneShotI                                  ../../../os/hal/src/gpt.o
+gptStop                                           ../../../os/hal/src/gpt.o
+gptStopTimer                                      ../../../os/hal/src/gpt.o
+                                                  main.o
+gptStopTimerI                                     ../../../os/hal/src/gpt.o
+gpt_lld_init                                      ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                                                  ../../../os/hal/src/gpt.o
+gpt_lld_polled_delay                              ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                                                  ../../../os/hal/src/gpt.o
+gpt_lld_start                                     ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                                                  ../../../os/hal/src/gpt.o
+gpt_lld_start_timer                               ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                                                  ../../../os/hal/src/gpt.o
+gpt_lld_stop                                      ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                                                  ../../../os/hal/src/gpt.o
+gpt_lld_stop_timer                                ../../../os/hal/platforms/LPC13xx/gpt_lld.o
+                                                  ../../../os/hal/src/gpt.o
+halInit                                           ../../../os/hal/src/hal.o
+                                                  main.o
+hal_lld_init                                      ../../../os/hal/platforms/LPC13xx/hal_lld.o
+                                                  ../../../os/hal/src/hal.o
+heap_init                                         ../../../os/kernel/src/chheap.o
+                                                  ../../../os/kernel/src/chsys.o
+main                                              main.o
+                                                  ../../../os/ports/GCC/ARMCMx/crt0_v7m.o
+memset                                            c:/programmi/yagarto/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+                                                  ../../../os/various/syscalls.o
+palReadBus                                        ../../../os/hal/src/pal.o
+palSetBusMode                                     ../../../os/hal/src/pal.o
+palWriteBus                                       ../../../os/hal/src/pal.o
+pal_default_config                                ../../../boards/EA_LPCXPRESSO_BB_1343/board.o
+                                                  ../../../os/hal/src/hal.o
+patternbmk                                        ../../../test/testbmk.o
+                                                  ../../../test/test.o
+patterndyn                                        ../../../test/testdyn.o
+                                                  ../../../test/test.o
+patternevt                                        ../../../test/testevt.o
+                                                  ../../../test/test.o
+patternheap                                       ../../../test/testheap.o
+                                                  ../../../test/test.o
+patternmbox                                       ../../../test/testmbox.o
+                                                  ../../../test/test.o
+patternmsg                                        ../../../test/testmsg.o
+                                                  ../../../test/test.o
+patternmtx                                        ../../../test/testmtx.o
+                                                  ../../../test/test.o
+patternpools                                      ../../../test/testpools.o
+                                                  ../../../test/test.o
+patternqueues                                     ../../../test/testqueues.o
+                                                  ../../../test/test.o
+patternsem                                        ../../../test/testsem.o
+                                                  ../../../test/test.o
+patternthd                                        ../../../test/testthd.o
+                                                  ../../../test/test.o
+port_halt                                         ../../../os/ports/GCC/ARMCMx/chcore.o
+port_switch                                       ../../../os/ports/GCC/ARMCMx/chcore_v7m.o
+                                                  ../../../os/kernel/src/chschd.o
+rlist                                             ../../../test/testbmk.o
+                                                  ../../../test/testqueues.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testevt.o
+                                                  ../../../test/testmsg.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../test/testsem.o
+                                                  ../../../test/testthd.o
+                                                  ../../../test/test.o
+                                                  ../../../os/kernel/src/chmsg.o
+                                                  ../../../os/kernel/src/chevents.o
+                                                  ../../../os/kernel/src/chcond.o
+                                                  ../../../os/kernel/src/chmtx.o
+                                                  ../../../os/kernel/src/chsem.o
+                                                  ../../../os/kernel/src/chregistry.o
+                                                  ../../../os/kernel/src/chthreads.o
+                                                  ../../../os/kernel/src/chschd.o
+                                                  ../../../os/kernel/src/chsys.o
+scheduler_init                                    ../../../os/kernel/src/chschd.o
+                                                  ../../../os/kernel/src/chsys.o
+sdIncomingDataI                                   ../../../os/hal/src/serial.o
+sdInit                                            ../../../os/hal/src/serial.o
+                                                  ../../../os/hal/src/hal.o
+sdObjectInit                                      ../../../os/hal/src/serial.o
+                                                  ../../../os/hal/platforms/LPC13xx/serial_lld.o
+sdRequestDataI                                    ../../../os/hal/src/serial.o
+sdStart                                           ../../../os/hal/src/serial.o
+                                                  main.o
+sdStop                                            ../../../os/hal/src/serial.o
+sd_lld_init                                       ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                                                  ../../../os/hal/src/serial.o
+sd_lld_start                                      ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                                                  ../../../os/hal/src/serial.o
+sd_lld_stop                                       ../../../os/hal/platforms/LPC13xx/serial_lld.o
+                                                  ../../../os/hal/src/serial.o
+test                                              ../../../test/testqueues.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testheap.o
+                                                  ../../../test/testmbox.o
+                                                  ../../../test/test.o
+test_cpu_pulse                                    ../../../test/test.o
+                                                  ../../../test/testmtx.o
+test_emit_token                                   ../../../test/test.o
+                                                  ../../../test/testqueues.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testevt.o
+                                                  ../../../test/testmbox.o
+                                                  ../../../test/testmsg.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../test/testsem.o
+                                                  ../../../test/testthd.o
+test_print                                        ../../../test/test.o
+                                                  ../../../test/testbmk.o
+test_println                                      ../../../test/test.o
+                                                  ../../../test/testbmk.o
+test_printn                                       ../../../test/test.o
+                                                  ../../../test/testbmk.o
+test_start_timer                                  ../../../test/test.o
+                                                  ../../../test/testbmk.o
+test_terminate_threads                            ../../../test/test.o
+                                                  ../../../test/testbmk.o
+test_timer_done                                   ../../../test/testbmk.o
+                                                  ../../../test/test.o
+test_wait_threads                                 ../../../test/test.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testqueues.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testevt.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../test/testsem.o
+                                                  ../../../test/testthd.o
+test_wait_tick                                    ../../../test/test.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testevt.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../test/testsem.o
+                                                  ../../../test/testthd.o
+testbmk1                                          ../../../test/testbmk.o
+testbmk10                                         ../../../test/testbmk.o
+testbmk11                                         ../../../test/testbmk.o
+testbmk12                                         ../../../test/testbmk.o
+testbmk13                                         ../../../test/testbmk.o
+testbmk2                                          ../../../test/testbmk.o
+testbmk3                                          ../../../test/testbmk.o
+testbmk4                                          ../../../test/testbmk.o
+testbmk5                                          ../../../test/testbmk.o
+testbmk6                                          ../../../test/testbmk.o
+testbmk7                                          ../../../test/testbmk.o
+testbmk8                                          ../../../test/testbmk.o
+testbmk9                                          ../../../test/testbmk.o
+testdyn1                                          ../../../test/testdyn.o
+testdyn2                                          ../../../test/testdyn.o
+testdyn3                                          ../../../test/testdyn.o
+testevt1                                          ../../../test/testevt.o
+testevt2                                          ../../../test/testevt.o
+testevt3                                          ../../../test/testevt.o
+testheap1                                         ../../../test/testheap.o
+testmbox1                                         ../../../test/testmbox.o
+testmsg1                                          ../../../test/testmsg.o
+testmtx1                                          ../../../test/testmtx.o
+testmtx2                                          ../../../test/testmtx.o
+testmtx3                                          ../../../test/testmtx.o
+testmtx4                                          ../../../test/testmtx.o
+testmtx5                                          ../../../test/testmtx.o
+testmtx6                                          ../../../test/testmtx.o
+testmtx7                                          ../../../test/testmtx.o
+testmtx8                                          ../../../test/testmtx.o
+testpools1                                        ../../../test/testpools.o
+testqueues1                                       ../../../test/testqueues.o
+testqueues2                                       ../../../test/testqueues.o
+testsem1                                          ../../../test/testsem.o
+testsem2                                          ../../../test/testsem.o
+testsem3                                          ../../../test/testsem.o
+testsem4                                          ../../../test/testsem.o
+testthd1                                          ../../../test/testthd.o
+testthd2                                          ../../../test/testthd.o
+testthd3                                          ../../../test/testthd.o
+testthd4                                          ../../../test/testthd.o
+thread4                                           ../../../test/testbmk.o
+threads                                           ../../../test/testbmk.o
+                                                  ../../../test/testqueues.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testevt.o
+                                                  ../../../test/testmsg.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../test/testsem.o
+                                                  ../../../test/testthd.o
+                                                  ../../../test/test.o
+vt_init                                           ../../../os/kernel/src/chvt.o
+                                                  ../../../os/kernel/src/chsys.o
+vtlist                                            ../../../test/testevt.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../test/testsem.o
+                                                  ../../../test/testthd.o
+                                                  ../../../test/test.o
+                                                  ../../../os/kernel/src/chthreads.o
+                                                  ../../../os/kernel/src/chvt.o
+                                                  ../../../os/kernel/src/chsys.o
+wa                                                ../../../test/test.o
+                                                  ../../../test/testbmk.o
+                                                  ../../../test/testqueues.o
+                                                  ../../../test/testdyn.o
+                                                  ../../../test/testpools.o
+                                                  ../../../test/testevt.o
+                                                  ../../../test/testmsg.o
+                                                  ../../../test/testmtx.o
+                                                  ../../../test/testsem.o
+                                                  ../../../test/testthd.o
