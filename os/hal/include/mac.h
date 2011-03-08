@@ -64,7 +64,7 @@
  * @api
  */
 #if CH_USE_EVENTS || defined(__DOXYGEN__)
-#define macGetReceiveEventSource(macp)  (&(macp)->md_rdevent)
+#define macGetReceiveEventSource(macp)  (&(macp)->rdevent)
 #endif
 
 /**

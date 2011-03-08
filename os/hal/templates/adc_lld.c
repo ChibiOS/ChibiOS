@@ -83,7 +83,7 @@ void adc_lld_start(ADCDriver *adcp) {
  */
 void adc_lld_stop(ADCDriver *adcp) {
 
-  if (adcp->ad_state == ADC_READY) {
+  if (adcp->state == ADC_READY) {
     /* Clock de-activation.*/
 
   }

@@ -73,10 +73,10 @@
  *          architecture dependent, fields.
  */
 typedef struct {
-  Semaphore             md_tdsem;       /**< Transmit semaphore.        */
-  Semaphore             md_rdsem;       /**< Receive semaphore.         */
+  Semaphore             tdsem;              /**< Transmit semaphore.        */
+  Semaphore             rdsem;              /**< Receive semaphore.         */
 #if CH_USE_EVENTS
-  EventSource           md_rdevent;     /**< Receive event source.      */
+  EventSource           rdevent;            /**< Receive event source.      */
 #endif
   /* End of the mandatory fields.*/
 } MACDriver;
@@ -87,8 +87,8 @@ typedef struct {
  *          architecture dependent, fields.
  */
 typedef struct {
-  size_t                td_offset;      /**< Current write offset.      */
-  size_t                td_size;        /**< Available space size.      */
+  size_t                offset;             /**< Current write offset.      */
+  size_t                size;               /**< Available space size.      */
   /* End of the mandatory fields.*/
 } MACTransmitDescriptor;
 
@@ -98,8 +98,8 @@ typedef struct {
  *          architecture dependent, fields.
  */
 typedef struct {
-  size_t                rd_offset;      /**< Current read offset.       */
-  size_t                rd_size;        /**< Available data size.       */
+  size_t                offset;             /**< Current read offset.       */
+  size_t                size;               /**< Available data size.       */
   /* End of the mandatory fields.*/
 } MACReceiveDescriptor;
 

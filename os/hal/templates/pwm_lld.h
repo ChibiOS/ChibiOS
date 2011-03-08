@@ -84,13 +84,13 @@ typedef struct {
   /**
    * @brief Channel active logic level.
    */
-  pwmmode_t                 pcc_mode;
+  pwmmode_t                 mode;
   /**
    * @brief Channel callback pointer.
    * @note  This callback is invoked on the channel compare event. If set to
    *        @p NULL then the callback is disabled.
    */
-  pwmcallback_t             pcc_callback;
+  pwmcallback_t             callback;
   /* End of the mandatory fields.*/
 } PWMChannelConfig;
 
@@ -105,11 +105,11 @@ typedef struct {
    * @note  This callback is invoked on PWM counter reset. If set to
    *        @p NULL then the callback is disabled.
    */
-  pwmcallback_t             pc_callback;
+  pwmcallback_t             callback;
   /**
    * @brief Channels configurations.
    */
-  PWMChannelConfig          pc_channels[PWM_CHANNELS];
+  PWMChannelConfig          channels[PWM_CHANNELS];
   /* End of the mandatory fields.*/
 } PWMConfig;
 
@@ -122,11 +122,11 @@ struct PWMDriver {
   /**
    * @brief Driver state.
    */
-  pwmstate_t                pd_state;
+  pwmstate_t                state;
   /**
    * @brief Current configuration data.
    */
-  const PWMConfig           *pd_config;
+  const PWMConfig           *config;
 #if defined(PWM_DRIVER_EXT_FIELDS)
   PWM_DRIVER_EXT_FIELDS
 #endif

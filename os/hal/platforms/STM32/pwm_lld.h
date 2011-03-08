@@ -186,13 +186,13 @@ typedef struct {
   /**
    * @brief Channel active logic level.
    */
-  pwmmode_t                 pcc_mode;
+  pwmmode_t                 mode;
   /**
    * @brief Channel callback pointer.
    * @note  This callback is invoked on the channel compare event. If set to
    *        @p NULL then the callback is disabled.
    */
-  pwmcallback_t             pcc_callback;
+  pwmcallback_t             callback;
   /* End of the mandatory fields.*/
 } PWMChannelConfig;
 
@@ -205,25 +205,25 @@ typedef struct {
    * @note  This callback is invoked on PWM counter reset. If set to
    *        @p NULL then the callback is disabled.
    */
-  pwmcallback_t             pc_callback;
+  pwmcallback_t             callback;
   /**
    * @brief Channels configurations.
    */
-  PWMChannelConfig          pc_channels[PWM_CHANNELS];
+  PWMChannelConfig          channels[PWM_CHANNELS];
   /* End of the mandatory fields.*/
   /**
    * @brief TIM PSC (pre-scaler) register initialization data.
    */
-  uint16_t                  pc_psc;
+  uint16_t                  psc;
   /**
    * @brief TIM ARR (auto-reload) register initialization data.
    */
-  uint16_t                  pc_arr;
+  uint16_t                  arr;
   /**
    * @brief TIM CR2 register initialization data.
    * @note  The value of this field should normally be equal to zero.
    */
-  uint16_t                  pc_cr2;
+  uint16_t                  cr2;
 } PWMConfig;
 
 /**
@@ -233,11 +233,11 @@ struct PWMDriver {
   /**
    * @brief Driver state.
    */
-  pwmstate_t                pd_state;
+  pwmstate_t                state;
   /**
    * @brief Current driver configuration data.
    */
-  const PWMConfig           *pd_config;
+  const PWMConfig           *config;
 #if defined(PWM_DRIVER_EXT_FIELDS)
   PWM_DRIVER_EXT_FIELDS
 #endif
@@ -245,11 +245,11 @@ struct PWMDriver {
   /**
    * @brief Bit mask of the enabled channels.
    */
-  uint32_t                  pd_enabled_channels;
+  uint32_t                  enabled_channels;
   /**
    * @brief Pointer to the TIMx registers block.
    */
-  TIM_TypeDef               *pd_tim;
+  TIM_TypeDef               *tim;
 };
 
 /*===========================================================================*/
@@ -272,7 +272,7 @@ struct PWMDriver {
  *                      and/or the STM32 Reference Manual for the right clock
  *                      source.
  * @param[in] pwmclk    PWM clock frequency in cycles
- * @return              The value to be stored in the @p pc_psc field of the
+ * @return              The value to be stored in the @p psc field of the
  *                      @p PWMConfig structure.
  */
 #define PWM_COMPUTE_PSC(clksrc, pwmclk)                                     \
@@ -284,7 +284,7 @@ struct PWMDriver {
  *
  * @param[in] pwmclk    PWM clock frequency in cycles
  * @param[in] pwmperiod PWM cycle period in nanoseconds
- * @return              The value to be stored in the @p pc_arr field of the
+ * @return              The value to be stored in the @p arr field of the
  *                      @p PWMConfig structure.
  */
 #define PWM_COMPUTE_ARR(pwmclk, pwmperiod)                                  \
@@ -305,7 +305,7 @@ struct PWMDriver {
  * @api
  */
 #define PWM_FRACTION_TO_WIDTH(pwmp, numerator, denominator)                 \
-  ((uint16_t)((((uint32_t)(pwmp)->pd_config->pc_arr + 1UL) *                \
+  ((uint16_t)((((uint32_t)(pwmp)->config->arr + 1UL) *                      \
                (uint32_t)(denominator)) / (uint32_t)(numerator)))
 
 /**

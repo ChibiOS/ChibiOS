@@ -69,7 +69,7 @@ static size_t network_device_read(void) {
 
   if (macWaitReceiveDescriptor(&ETH1, &rd, TIME_IMMEDIATE) != RDY_OK)
     return 0;
-  size = rd.rd_size;
+  size = rd.size;
   macReadReceiveDescriptor(&rd, uip_buf, size);
   macReleaseReceiveDescriptor(&rd);
   return size;

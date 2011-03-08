@@ -121,14 +121,14 @@ __attribute__((noinline))
  * @param[in] spip      pointer to the @p SPIDriver object
  */
 static void spi_lld_serve_interrupt(SPIDriver *spip) {
-  uint32_t sr = spip->spd_spi->SPI_SR;
+  uint32_t sr = spip->spi->SPI_SR;
 
   if ((sr & AT91C_SPI_ENDRX) != 0) {
-    (void)spip->spd_spi->SPI_RDR;               /* Clears eventual overflow.*/
-    spip->spd_spi->SPI_PTCR = AT91C_PDC_RXTDIS |
+    (void)spip->spi->SPI_RDR;                   /* Clears eventual overflow.*/
+    spip->spi->SPI_PTCR = AT91C_PDC_RXTDIS |
                               AT91C_PDC_TXTDIS; /* PDC disabled.            */
-    spip->spd_spi->SPI_IDR  = AT91C_SPI_ENDRX;  /* Interrupt disabled.      */
-    spip->spd_spi->SPI_CR   = AT91C_SPI_SPIDIS; /* SPI disabled.            */
+    spip->spi->SPI_IDR  = AT91C_SPI_ENDRX;      /* Interrupt disabled.      */
+    spip->spi->SPI_CR   = AT91C_SPI_SPIDIS;     /* SPI disabled.            */
     /* Portable SPI ISR code defined in the high level driver, note, it is
        a macro.*/
     _spi_isr_code(spip);
@@ -182,7 +182,7 @@ void spi_lld_init(void) {
 
 #if AT91SAM7_SPI_USE_SPI0
   spiObjectInit(&SPID1);
-  SPID1.spd_spi = AT91C_BASE_SPI0;
+  SPID1.spi = AT91C_BASE_SPI0;
   spi_init(AT91C_BASE_SPI0);
   AT91C_BASE_PIOA->PIO_PDR   = SPI0_MISO | SPI0_MOSI | SPI0_SCK;
   AT91C_BASE_PIOA->PIO_ASR   = SPI0_MISO | SPI0_MOSI | SPI0_SCK;
@@ -194,7 +194,7 @@ void spi_lld_init(void) {
 
 #if AT91SAM7_SPI_USE_SPI1
   spiObjectInit(&SPID2);
-  SPID2.spd_spi = AT91C_BASE_SPI1;
+  SPID2.spi = AT91C_BASE_SPI1;
   spi_init(AT91C_BASE_SPI1);
   AT91C_BASE_PIOA->PIO_PDR   = SPI1_MISO | SPI1_MOSI | SPI1_SCK;
   AT91C_BASE_PIOA->PIO_BSR   = SPI1_MISO | SPI1_MOSI | SPI1_SCK;
@@ -214,7 +214,7 @@ void spi_lld_init(void) {
  */
 void spi_lld_start(SPIDriver *spip) {
 
-  if (spip->spd_state == SPI_STOP) {
+  if (spip->state == SPI_STOP) {
 #if AT91SAM7_SPI_USE_SPI0
     if (&SPID1 == spip) {
       /* Clock activation.*/
@@ -233,7 +233,7 @@ void spi_lld_start(SPIDriver *spip) {
 #endif
   }
   /* Configuration.*/
-  spip->spd_spi->SPI_CSR[0] = spip->spd_config->spc_csr;
+  spip->spi->SPI_CSR[0] = spip->config->csr;
 }
 
 /**
@@ -245,7 +245,7 @@ void spi_lld_start(SPIDriver *spip) {
  */
 void spi_lld_stop(SPIDriver *spip) {
 
-  if (spip->spd_state != SPI_STOP) {
+  if (spip->state != SPI_STOP) {
 #if AT91SAM7_SPI_USE_SPI0
     if (&SPID1 == spip) {
       AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_SPI0);
@@ -270,7 +270,7 @@ void spi_lld_stop(SPIDriver *spip) {
  */
 void spi_lld_select(SPIDriver *spip) {
 
-  palClearPad(spip->spd_config->spc_ssport, spip->spd_config->spc_sspad);
+  palClearPad(spip->config->ssport, spip->config->sspad);
 }
 
 /**
@@ -283,7 +283,7 @@ void spi_lld_select(SPIDriver *spip) {
  */
 void spi_lld_unselect(SPIDriver *spip) {
 
-  palSetPad(spip->spd_config->spc_ssport, spip->spd_config->spc_sspad);
+  palSetPad(spip->config->ssport, spip->config->sspad);
 }
 
 /**
@@ -299,13 +299,13 @@ void spi_lld_unselect(SPIDriver *spip) {
  */
 void spi_lld_ignore(SPIDriver *spip, size_t n) {
 
-  spip->spd_spi->SPI_TCR  = n;
-  spip->spd_spi->SPI_RCR  = n;
-  spip->spd_spi->SPI_TPR  = (AT91_REG)idle_buf;
-  spip->spd_spi->SPI_RPR  = (AT91_REG)idle_buf;
-  spip->spd_spi->SPI_IER  = AT91C_SPI_ENDRX;
-  spip->spd_spi->SPI_CR   = AT91C_SPI_SPIEN;
-  spip->spd_spi->SPI_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
+  spip->spi->SPI_TCR  = n;
+  spip->spi->SPI_RCR  = n;
+  spip->spi->SPI_TPR  = (AT91_REG)idle_buf;
+  spip->spi->SPI_RPR  = (AT91_REG)idle_buf;
+  spip->spi->SPI_IER  = AT91C_SPI_ENDRX;
+  spip->spi->SPI_CR   = AT91C_SPI_SPIEN;
+  spip->spi->SPI_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
 }
 
 /**
@@ -323,13 +323,13 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
 void spi_lld_exchange(SPIDriver *spip, size_t n,
                       const void *txbuf, void *rxbuf) {
 
-  spip->spd_spi->SPI_TCR  = n;
-  spip->spd_spi->SPI_RCR  = n;
-  spip->spd_spi->SPI_TPR  = (AT91_REG)txbuf;
-  spip->spd_spi->SPI_RPR  = (AT91_REG)rxbuf;
-  spip->spd_spi->SPI_IER  = AT91C_SPI_ENDRX;
-  spip->spd_spi->SPI_CR   = AT91C_SPI_SPIEN;
-  spip->spd_spi->SPI_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
+  spip->spi->SPI_TCR  = n;
+  spip->spi->SPI_RCR  = n;
+  spip->spi->SPI_TPR  = (AT91_REG)txbuf;
+  spip->spi->SPI_RPR  = (AT91_REG)rxbuf;
+  spip->spi->SPI_IER  = AT91C_SPI_ENDRX;
+  spip->spi->SPI_CR   = AT91C_SPI_SPIEN;
+  spip->spi->SPI_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
 }
 
 /**
@@ -344,13 +344,13 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
  */
 void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
-  spip->spd_spi->SPI_TCR  = n;
-  spip->spd_spi->SPI_RCR  = n;
-  spip->spd_spi->SPI_TPR  = (AT91_REG)txbuf;
-  spip->spd_spi->SPI_RPR  = (AT91_REG)idle_buf;
-  spip->spd_spi->SPI_IER  = AT91C_SPI_ENDRX;
-  spip->spd_spi->SPI_CR   = AT91C_SPI_SPIEN;
-  spip->spd_spi->SPI_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
+  spip->spi->SPI_TCR  = n;
+  spip->spi->SPI_RCR  = n;
+  spip->spi->SPI_TPR  = (AT91_REG)txbuf;
+  spip->spi->SPI_RPR  = (AT91_REG)idle_buf;
+  spip->spi->SPI_IER  = AT91C_SPI_ENDRX;
+  spip->spi->SPI_CR   = AT91C_SPI_SPIEN;
+  spip->spi->SPI_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
 }
 
 /**
@@ -365,13 +365,13 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
  */
 void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
-  spip->spd_spi->SPI_TCR  = n;
-  spip->spd_spi->SPI_RCR  = n;
-  spip->spd_spi->SPI_TPR  = (AT91_REG)idle_buf;
-  spip->spd_spi->SPI_RPR  = (AT91_REG)rxbuf;
-  spip->spd_spi->SPI_IER  = AT91C_SPI_ENDRX;
-  spip->spd_spi->SPI_CR   = AT91C_SPI_SPIEN;
-  spip->spd_spi->SPI_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
+  spip->spi->SPI_TCR  = n;
+  spip->spi->SPI_RCR  = n;
+  spip->spi->SPI_TPR  = (AT91_REG)idle_buf;
+  spip->spi->SPI_RPR  = (AT91_REG)rxbuf;
+  spip->spi->SPI_IER  = AT91C_SPI_ENDRX;
+  spip->spi->SPI_CR   = AT91C_SPI_SPIEN;
+  spip->spi->SPI_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
 }
 
 /**
@@ -388,11 +388,11 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
  */
 uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
 
-  spip->spd_spi->SPI_CR   = AT91C_SPI_SPIEN;
-  spip->spd_spi->SPI_TDR = frame;
-  while ((spip->spd_spi->SPI_SR & AT91C_SPI_RDRF) == 0)
+  spip->spi->SPI_CR   = AT91C_SPI_SPIEN;
+  spip->spi->SPI_TDR = frame;
+  while ((spip->spi->SPI_SR & AT91C_SPI_RDRF) == 0)
     ;
-  return spip->spd_spi->SPI_RDR;
+  return spip->spi->SPI_RDR;
 }
 
 #endif /* HAL_USE_SPI */

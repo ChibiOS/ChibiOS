@@ -103,7 +103,7 @@ typedef enum {
  *
  * @iclass
  */
-#define canAddFlagsI(canp, mask) ((canp)->cd_status |= (mask))
+#define canAddFlagsI(canp, mask) ((canp)->status |= (mask))
 
 /*===========================================================================*/
 /* External declarations.                                                    */

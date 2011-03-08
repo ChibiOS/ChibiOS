@@ -80,7 +80,7 @@ void can_lld_start(CANDriver *canp) {
 void can_lld_stop(CANDriver *canp) {
 
   /* If in ready state then disables the CAN peripheral.*/
-  if (canp->cd_state == CAN_READY) {
+  if (canp->state == CAN_READY) {
 
   }
 }

@@ -42,7 +42,7 @@ static msg_t can_rx(void *p) {
   CANRxFrame rxmsg;
 
   (void)p;
-  chEvtRegister(&CAND1.cd_rxfull_event, &el, 0);
+  chEvtRegister(&CAND1.rxfull_event, &el, 0);
   while(!chThdShouldTerminate()) {
     if (chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(100)) == 0)
       continue;
@@ -51,7 +51,7 @@ static msg_t can_rx(void *p) {
       palTogglePad(IOPORT3, GPIOC_LED);
     }
   }
-  chEvtUnregister(&CAND1.cd_rxfull_event, &el);
+  chEvtUnregister(&CAND1.rxfull_event, &el);
   return 0;
 }
 
@@ -63,12 +63,12 @@ static msg_t can_tx(void * p) {
   CANTxFrame txmsg;
 
   (void)p;
-  txmsg.cf_IDE = CAN_IDE_EXT;
-  txmsg.cf_EID = 0x01234567;
-  txmsg.cf_RTR = CAN_RTR_DATA;
-  txmsg.cf_DLC = 8;
-  txmsg.cf_data32[0] = 0x55AA55AA;
-  txmsg.cf_data32[1] = 0x00FF00FF;
+  txmsg.IDE = CAN_IDE_EXT;
+  txmsg.EID = 0x01234567;
+  txmsg.RTR = CAN_RTR_DATA;
+  txmsg.DLC = 8;
+  txmsg.data32[0] = 0x55AA55AA;
+  txmsg.data32[1] = 0x00FF00FF;
 
   while (!chThdShouldTerminate()) {
     canTransmit(&CAND1, &txmsg, MS2ST(100));

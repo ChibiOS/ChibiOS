@@ -187,20 +187,20 @@ typedef struct {
   /**
    * @brief Operation complete callback or @p NULL.
    */
-  spicallback_t         spc_endcb;
+  spicallback_t         end_cb;
   /* End of the mandatory fields.*/
   /**
    * @brief The chip select line port.
    */
-  ioportid_t            spc_ssport;
+  ioportid_t            ssport;
   /**
    * @brief The chip select line pad number.
    */
-  uint16_t              spc_sspad;
+  uint16_t              sspad;
   /**
    * @brief SPI initialization data.
    */
-  uint16_t              spc_cr1;
+  uint16_t              cr1;
 } SPIConfig;
 
 /**
@@ -210,25 +210,25 @@ struct SPIDriver{
   /**
    * @brief Driver state.
    */
-  spistate_t            spd_state;
+  spistate_t            state;
   /**
    * @brief Current configuration data.
    */
-  const SPIConfig       *spd_config;
+  const SPIConfig       *config;
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
   /**
    * @brief Waiting thread.
    */
-  Thread                *spd_thread;
+  Thread                *thread;
 #endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief Mutex protecting the bus.
    */
-  Mutex                 spd_mutex;
+  Mutex                 mutex;
 #elif CH_USE_SEMAPHORES
-  Semaphore             spd_semaphore;
+  Semaphore             semaphore;
 #endif
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
 #if defined(SPI_DRIVER_EXT_FIELDS)
@@ -238,19 +238,19 @@ struct SPIDriver{
   /**
    * @brief Pointer to the SPIx registers block.
    */
-  SPI_TypeDef           *spd_spi;
+  SPI_TypeDef           *spi;
   /**
    * @brief Pointer to the receive DMA channel registers block.
    */
-  stm32_dma_channel_t   *spd_dmarx;
+  stm32_dma_channel_t   *dmarx;
   /**
    * @brief Pointer to the transmit DMA channel registers block.
    */
-  stm32_dma_channel_t   *spd_dmatx;
+  stm32_dma_channel_t   *dmatx;
   /**
    * @brief DMA priority bit mask.
    */
-  uint32_t              spd_dmaccr;
+  uint32_t              dmaccr;
 };
 
 /*===========================================================================*/

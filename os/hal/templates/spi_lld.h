@@ -68,7 +68,7 @@ typedef struct {
   /**
    * @brief Operation complete callback.
    */
-  spicallback_t         spc_endcb;
+  spicallback_t         end_cb;
   /* End of the mandatory fields.*/
 } SPIConfig;
 
@@ -81,25 +81,25 @@ struct SPIDriver {
   /**
    * @brief Driver state.
    */
-  spistate_t            spd_state;
+  spistate_t            state;
   /**
    * @brief Current configuration data.
    */
-  const SPIConfig       *spd_config;
+  const SPIConfig       *config;
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
   /**
    * @brief Waiting thread.
    */
-  Thread                *spd_thread;
+  Thread                *thread;
 #endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief Mutex protecting the bus.
    */
-  Mutex                 spd_mutex;
+  Mutex                 mutex;
 #elif CH_USE_SEMAPHORES
-  Semaphore             spd_semaphore;
+  Semaphore             semaphore;
 #endif
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
 #if defined(SPI_DRIVER_EXT_FIELDS)

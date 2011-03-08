@@ -67,8 +67,8 @@ void pwmInit(void) {
  */
 void pwmObjectInit(PWMDriver *pwmp) {
 
-  pwmp->pd_state    = PWM_STOP;
-  pwmp->pd_config   = NULL;
+  pwmp->state    = PWM_STOP;
+  pwmp->config   = NULL;
 #if defined(PWM_DRIVER_EXT_INIT_HOOK)
   PWM_DRIVER_EXT_INIT_HOOK(pwmp);
 #endif
@@ -87,11 +87,11 @@ void pwmStart(PWMDriver *pwmp, const PWMConfig *config) {
   chDbgCheck((pwmp != NULL) && (config != NULL), "pwmStart");
 
   chSysLock();
-  chDbgAssert((pwmp->pd_state == PWM_STOP) || (pwmp->pd_state == PWM_READY),
+  chDbgAssert((pwmp->state == PWM_STOP) || (pwmp->state == PWM_READY),
               "pwmStart(), #1", "invalid state");
-  pwmp->pd_config = config;
+  pwmp->config = config;
   pwm_lld_start(pwmp);
-  pwmp->pd_state = PWM_READY;
+  pwmp->state = PWM_READY;
   chSysUnlock();
 }
 
@@ -107,10 +107,10 @@ void pwmStop(PWMDriver *pwmp) {
   chDbgCheck(pwmp != NULL, "pwmStop");
 
   chSysLock();
-  chDbgAssert((pwmp->pd_state == PWM_STOP) || (pwmp->pd_state == PWM_READY),
+  chDbgAssert((pwmp->state == PWM_STOP) || (pwmp->state == PWM_READY),
               "pwmStop(), #1", "invalid state");
   pwm_lld_stop(pwmp);
-  pwmp->pd_state = PWM_STOP;
+  pwmp->state = PWM_STOP;
   chSysUnlock();
 }
 
@@ -132,7 +132,7 @@ void pwmEnableChannel(PWMDriver *pwmp,
              "pwmEnableChannel");
 
   chSysLock();
-  chDbgAssert(pwmp->pd_state == PWM_READY,
+  chDbgAssert(pwmp->state == PWM_READY,
               "pwmEnableChannel(), #1", "not ready");
   pwm_lld_enable_channel(pwmp, channel, width);
   chSysUnlock();
@@ -154,7 +154,7 @@ void pwmDisableChannel(PWMDriver *pwmp, pwmchannel_t channel) {
              "pwmEnableChannel");
 
   chSysLock();
-  chDbgAssert(pwmp->pd_state == PWM_READY,
+  chDbgAssert(pwmp->state == PWM_READY,
               "pwmDisableChannel(), #1", "not ready");
   pwm_lld_disable_channel(pwmp, channel);
   chSysUnlock();

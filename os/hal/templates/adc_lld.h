@@ -86,15 +86,15 @@ typedef struct {
   /**
    * @brief Enables the circular buffer mode for the group.
    */
-  bool_t                    acg_circular;
+  bool_t                    circular;
   /**
    * @brief Number of the analog channels belonging to the conversion group.
    */
-  adc_channels_num_t        acg_num_channels;
+  adc_channels_num_t        num_channels;
   /**
    * @brief Callback function associated to the group or @p NULL.
    */
-  adccallback_t             acg_endcb;
+  adccallback_t             end_cb;
   /* End of the mandatory fields.*/
 } ADCConversionGroup;
 
@@ -117,37 +117,37 @@ struct ADCDriver {
   /**
    * @brief Driver state.
    */
-  adcstate_t                ad_state;
+  adcstate_t                state;
   /**
    * @brief Current configuration data.
    */
-  const ADCConfig           *ad_config;
+  const ADCConfig           *config;
   /**
    * @brief Current samples buffer pointer or @p NULL.
    */
-  adcsample_t               *ad_samples;
+  adcsample_t               *samples;
   /**
    * @brief Current samples buffer depth or @p 0.
    */
-  size_t                    ad_depth;
+  size_t                    depth;
   /**
    * @brief Current conversion group pointer or @p NULL.
    */
-  const ADCConversionGroup  *ad_grpp;
+  const ADCConversionGroup  *grpp;
 #if ADC_USE_WAIT || defined(__DOXYGEN__)
   /**
    * @brief Waiting thread.
    */
-  Thread                    *ad_thread;
+  Thread                    *thread;
 #endif /* SPI_USE_WAIT */
 #if ADC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief Mutex protecting the peripheral.
    */
-  Mutex                     ad_mutex;
+  Mutex                     mutex;
 #elif CH_USE_SEMAPHORES
-  Semaphore                 ad_semaphore;
+  Semaphore                 semaphore;
 #endif
 #endif /* ADC_USE_MUTUAL_EXCLUSION */
 #if defined(ADC_DRIVER_EXT_FIELDS)

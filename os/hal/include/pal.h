@@ -123,17 +123,17 @@ typedef struct {
   /**
    * @brief Port identifier.
    */
-  ioportid_t            bus_portid;
+  ioportid_t            portid;
   /**
    * @brief Bus mask aligned to port bit 0.
    * @note  The bus mask implicitly define the bus width. A logical AND is
    *        performed on the bus data.
    */
-  ioportmask_t          bus_mask;
+  ioportmask_t          mask;
   /**
    * @brief Offset, within the port, of the least significant bit of the bus.
    */
-  uint_fast8_t          bus_offset;
+  uint_fast8_t          offset;
 } IOBus;
 
 /*===========================================================================*/

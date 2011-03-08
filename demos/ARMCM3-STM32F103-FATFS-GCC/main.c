@@ -310,8 +310,8 @@ int main(void) {
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and listen for events.
    */
-  chEvtRegister(&MMCD1.mmc_inserted_event, &el0, 0);
-  chEvtRegister(&MMCD1.mmc_removed_event, &el1, 1);
+  chEvtRegister(&MMCD1.inserted_event, &el0, 0);
+  chEvtRegister(&MMCD1.removed_event, &el1, 1);
   while (TRUE) {
     if (!shelltp)
       shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);

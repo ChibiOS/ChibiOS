@@ -85,23 +85,23 @@ typedef struct {
   /**
    * @brief   USB driver to use.
    */
-  USBDriver                     *usbp;
+  USBDriver                 *usbp;
   /**
    * @brief   USB driver configuration structure.
    */
-  USBConfig                     usb_config;
+  USBConfig                 usb_config;
   /*
    * @brief   Endpoint used for data transmission.
    */
-  usbep_t                       data_request_ep;
+  usbep_t                   data_request_ep;
   /*
    * @brief   Endpoint used for data reception.
    */
-  usbep_t                       data_available_ep;
+  usbep_t                   data_available_ep;
   /*
    * @brief   Endpoint used for interrupt request.
    */
-  usbep_t                       interrupt_request_ep;
+  usbep_t                   interrupt_request_ep;
 } SerialUSBConfig;
 
 /**

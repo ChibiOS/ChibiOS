@@ -61,12 +61,18 @@
   +--test/              - Kernel test suite source code.
   |  +--coverage/       - Code coverage project.
   +--testhal/           - HAL integration test demos.
-     +--STM32/          - STM32 HAL demos.
-     +--STM8S/          - STM8S HAL demos.
+     +--LPC11xx/        - LPC11xx HAL test demos.
+     +--LPC13xx/        - LPC13xx HAL test demos.
+     +--STM32/          - STM32 HAL test demos.
+     +--STM8S/          - STM8S HAL test demos.
 
 *****************************************************************************
 *** Releases                                                              ***
 *****************************************************************************
+
+*** 2.3.1 ***
+- CHANGE: Removed all the prefixes from the structure/union field names
+  in the HAL subsystem.
 
 *** 2.3.0 ***
 - FIX: Fixed race condition in CM0 ports, the fix also improves the
@@ -84,10 +90,10 @@
   2.2.1).
 - FIX: Error in MAC driver (bug 3179783)(backported to 2.2.1).
 - FIX: Fixed wrong serial driver macros (bug 3173336)(backported to 2.2.1).
-- NEW: Inproved preemption implementation for the Cortex-M0, now it uses
+- NEW: Improved preemption implementation for the Cortex-M0, now it uses
   the NMI vector in order to restore the original context. The change makes
   IRQ handling faster and also saves some RAM/ROM space. The GCC port code
-  now does not inline the epilogue code in each ISR saving significan ROM
+  now does not inline the epilogue code in each ISR saving significant ROM
   space for each interrupt handler in the system (backported to 2.2.3).
 - NEW: Added "IRQ STORM" long duration tests for the STM32, LPC11xx and
   LPC11xx. The test demonstrates the system stability in a thread-intensive,

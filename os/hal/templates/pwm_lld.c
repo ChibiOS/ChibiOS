@@ -68,7 +68,7 @@ void pwm_lld_init(void) {
  */
 void pwm_lld_start(PWMDriver *pwmp) {
 
-  if (pwmp->pd_state == PWM_STOP) {
+  if (pwmp->state == PWM_STOP) {
     /* Clock activation.*/
   }
   /* Configuration.*/
