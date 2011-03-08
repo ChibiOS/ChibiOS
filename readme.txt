@@ -71,6 +71,7 @@
 *****************************************************************************
 
 *** 2.3.1 ***
+- OPT: Simplified Serial over USB driver configuration.
 - CHANGE: Removed all the prefixes from the structure/union field names
   in the HAL subsystem.
 

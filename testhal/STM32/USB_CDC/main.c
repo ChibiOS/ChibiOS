@@ -21,13 +21,11 @@
 #include "hal.h"
 #include "test.h"
 
+#include "usb_cdc.h"
+
 /*===========================================================================*/
 /* USB related stuff.                                                        */
 /*===========================================================================*/
-
-#define DATA_REQUEST_EP         1
-#define INTERRUPT_REQUEST_EP    2
-#define DATA_AVAILABLE_EP       3
 
 /*
  * USB Driver structure.
@@ -300,10 +298,7 @@ static const SerialUSBConfig serusbcfg = {
     get_descriptor,
     sduRequestsHook,
     NULL
-  },
-  DATA_REQUEST_EP,
-  DATA_AVAILABLE_EP,
-  INTERRUPT_REQUEST_EP
+  }
 };
 
 /*===========================================================================*/

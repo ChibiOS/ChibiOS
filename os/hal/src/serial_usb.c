@@ -119,7 +119,7 @@ static void inotify(GenericQueue *qp) {
      emptied, then a whole packet is loaded in the queue.*/
   if (chIQIsEmptyI(&sdup->iqueue)) {
 
-    n = usbReadPacketI(sdup->config->usbp, sdup->config->data_available_ep,
+    n = usbReadPacketI(sdup->config->usbp, DATA_AVAILABLE_EP,
                        sdup->iqueue.q_buffer, SERIAL_USB_BUFFERS_SIZE);
     if (n != USB_ENDPOINT_BUSY) {
       sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
@@ -138,7 +138,7 @@ static void onotify(GenericQueue *qp) {
 
   /* If there is any data in the output queue then it is sent within a
      single packet and the queue is emptied.*/
-  n = usbWritePacketI(sdup->config->usbp, sdup->config->data_request_ep,
+  n = usbWritePacketI(sdup->config->usbp, DATA_REQUEST_EP,
                       sdup->oqueue.q_buffer, chOQGetFullI(&sdup->oqueue));
   if (n != USB_ENDPOINT_BUSY) {
     sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
