@@ -64,18 +64,19 @@ static uint32_t cbw_tag;
 static uint32_t csw_sent;
 
 /**
- * @brief   Status .
+ * @brief   Status.
  */
 static uint8_t csw_status;
 
 /**
- * @brief   Multi purpose I/O buffer.
+ * @brief   Received CBW.
  */
-static union {
-  uint8_t           buf[512];
-  msccbw_t          CBW;
-  msccsw_t          CSW;
-} u;
+static msccbw_t CBW;
+
+/**
+ * @brief   CSW to be transmitted.
+ */
+static msccsw_t CSW;
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -90,8 +91,52 @@ static void msc_reset(USBDriver *usbp) {
 
   msc_state = MSC_IDLE;
   chSysLockFromIsr();
-  usbStartReceiveI(usbp, MSC_DATA_OUT_EP, u.buf, sizeof(u.buf));
+  usbStartReceiveI(usbp, MSC_DATA_OUT_EP, (uint8_t *)&CBW, sizeof CBW);
   chSysUnlockFromIsr();
+}
+
+static void msc_transmit(USBDriver *usbp, const uint8_t *p, size_t n) {
+
+  if (n > CBW.dCBWDataTransferLength)
+    n = CBW.dCBWDataTransferLength;
+  CSW.dCSWDataResidue = CBW.dCBWDataTransferLength - (uint32_t)n;
+  chSysLockFromIsr();
+  usbStartTransmitI(usbp, MSC_DATA_IN_EP, scsi_inquiry_data, n);
+  chSysUnlockFromIsr();
+}
+
+static bool_t msc_decode_in(USBDriver *usbp) {
+  uint32_t nblocks, secsize;
+  size_t n;
+
+  switch (u.CBW.CBWCB[0]) {
+  case SCSI_INQUIRY:
+    msc_transmit(usbp, &scsi_inquiry_data, sizeof scsi_inquiry_data);
+    CSW.bCSWStatus = MSC_CSW_STATUS_PASSED;
+    break;
+  case SCSI_READ_FORMAT_CAPACITIES:
+    buf[8]  = scsi_read_format_capacities(&nblocks, &secsize);
+    buf[0]  = u.buf[1] = u.buf[2] = 0;
+    buf[3]  = 8;
+    buf[4]  = (tU8)(nblocks >> 24);
+    buf[5]  = (tU8)(nblocks >> 16);
+    buf[6]  = (tU8)(nblocks >> 8);
+    buf[7]  = (tU8)(nblocks >> 0);
+    buf[9]  = (tU8)(secsize >> 16);
+    buf[10] = (tU8)(secsize >> 8);
+    buf[11] = (tU8)(secsize >> 0);
+    msc_transmit(usbp, buf, 12);
+    CSW.bCSWStatus = MSC_CSW_STATUS_PASSED;
+    break;
+  default:
+    return TRUE;
+  }
+  return FALSE;
+}
+
+static bool_t msc_decode_out(USBDriver *usbp) {
+
+  return FALSE;
 }
 
 /*===========================================================================*/
@@ -143,18 +188,16 @@ void mscDataTransmitted(USBDriver *usbp, usbep_t ep) {
 
   switch (msc_state) {
   case MSC_DATA_IN:
-    u.CSW.dCSWSignature = MSC_CSW_SIGNATURE;
-    u.CSW.dCSWTag = cbw_tag;
-    u.CSW.dCSWDataResidue = cbw_length - csw_sent;
-    u.CSW.bCSWStatus = csw_status;
+    CSW.dCSWSignature = MSC_CSW_SIGNATURE;
+    CSW.dCSWTag = CBW.dCBWTag;
     chSysLockFromIsr();
-    usbStartTransmitI(usbp, ep, (uint8_t *)&u.CSW, sizeof(u.CSW));
+    usbStartTransmitI(usbp, ep, (uint8_t *)&CSW, sizeof CSW);
     chSysUnlockFromIsr();
     msc_state = MSC_SENDING_CSW;
     break;
   case MSC_SENDING_CSW:
     chSysLockFromIsr();
-    usbStartReceiveI(usbp, MSC_DATA_OUT_EP, u.buf, sizeof(u.buf));
+    usbStartReceiveI(usbp, MSC_DATA_OUT_EP, (uint8_t *)&CBW, sizeof CBW);
     chSysUnlockFromIsr();
     msc_state = MSC_IDLE;
     break;
@@ -177,24 +220,23 @@ void mscDataReceived(USBDriver *usbp, usbep_t ep) {
   n = usbGetReceiveTransactionSizeI(usbp, ep);
   switch (msc_state) {
   case MSC_IDLE:
-    if ((n != sizeof(msccbw_t)) ||
-        (u.CBW.dCBWSignature != MSC_CBW_SIGNATURE))
+    if ((n != sizeof(msccbw_t)) || (CBW.dCBWSignature != MSC_CBW_SIGNATURE))
       goto stallout; /* 6.6.1 */
 
-    cbw_length = u.CBW.dCBWDataTransferLength;
-    cbw_tag = u.CBW.dCBWTag;
-    if (u.CBW.bmCBWFlags & 0x80) {
+    if (CBW.bmCBWFlags & 0x80) {
       /* IN, Device to Host.*/
-/*      if (scsi_decode_in(usbp))
-        goto stallout;*/
+      if (msc_decode_in(usbp))
+        goto stallout;
       msc_state = MSC_DATA_IN;
     }
     else {
       /* OUT, Host to Device.*/
-/*      if (scsi_decode_out(usbp))
-        goto stallout;*/
+      if (msc_decode_out(usbp))
+        goto stallout;
       msc_state = MSC_DATA_OUT;
     }
+    break;
+  case MSC_DATA_OUT:
     break;
   default:
     ;
@@ -202,6 +244,8 @@ void mscDataReceived(USBDriver *usbp, usbep_t ep) {
   return;
 stallout:
   msc_state = MSC_ERROR;
+  chSysLockFromIsr();
   usbStallReceiveI(usbp, ep);
+  chSysUnlockFromIsr();
   return;
 }

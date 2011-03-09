@@ -38,6 +38,10 @@
 #define MSC_GET_MAX_LUN_COMMAND         0xFE
 #define MSC_MASS_STORAGE_RESET_COMMAND  0xFF
 
+#define MSC_CSW_STATUS_PASSED           0
+#define MSC_CSW_STATUS_FAILED           1
+#define MSC_CSW_STATUS_PHASE_ERROR      2
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
