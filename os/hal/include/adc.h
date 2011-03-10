@@ -124,9 +124,10 @@ typedef enum {
  */
 #define _adc_wakeup_isr(adcp) {                                             \
   if ((adcp)->thread != NULL) {                                             \
-    Thread *tp = (adcp)->thread;                                            \
-    (adcp)->thread = NULL;                                                  \
+    Thread *tp;                                                             \
     chSysLockFromIsr();                                                     \
+    tp = (adcp)->thread;                                                    \
+    (adcp)->thread = NULL;                                                  \
     tp->p_u.rdymsg = RDY_OK;                                                \
     chSchReadyI(tp);                                                        \
     chSysUnlockFromIsr();                                                   \

@@ -44,29 +44,56 @@
 static const uint8_t zerobuf[4] = {0, 0, 0, 0};
 
 /**
+ * @brief   Answer to the INQUIRY command.
+ */
+static const uint8_t scsi_inquiry_data[] = {
+  0x00,             /* Direct Access Device.      */
+  0x80,             /* RMB = 1: Removable Medium. */
+  0x02,             /* ISO, ECMA, ANSI = 2.       */
+  0x00,             /* UFI response format.       */
+
+  36 - 4,           /* Additional Length.         */
+  0x00,
+  0x00,
+  0x00,
+  /* Vendor Identification */
+  'C', 'h', 'i', 'b', 'i', 'O', 'S', ' ',
+  /* Product Identification */
+  'S', 'D', ' ', 'F', 'l', 'a', 's', 'h',
+  ' ', 'D', 'i', 's', 'k', ' ', ' ', ' ',
+  /* Product Revision Level */
+  '1', '.', '0', ' '
+};
+
+/**
+ * @brief   Generic buffer.
+ */
+uint8_t buf[16];
+
+/*===========================================================================*/
+/* MMC interface code.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* SCSI emulation code.                                                      */
+/*===========================================================================*/
+
+static uint8_t scsi_read_format_capacities(uint32_t *nblocks,
+                                           uint32_t *secsize) {
+
+  *nblocks = 1024;
+  *secsize = 512;
+  return 3; /* No Media.*/
+}
+
+/*===========================================================================*/
+/* Mass Storage Class related code.                                          */
+/*===========================================================================*/
+
+/**
  * @brief   MSC state machine current state.
  */
 static mscstate_t msc_state;
-
-/**
- * @brief   Transfer lenght specified in the CBW.
- */
-static uint32_t cbw_length;
-
-/**
- * @brief   Tag specified in the CBW.
- */
-static uint32_t cbw_tag;
-
-/**
- * @brief   Transmitted lenght.
- */
-static uint32_t csw_sent;
-
-/**
- * @brief   Status.
- */
-static uint8_t csw_status;
 
 /**
  * @brief   Received CBW.
@@ -77,10 +104,6 @@ static msccbw_t CBW;
  * @brief   CSW to be transmitted.
  */
 static msccsw_t CSW;
-
-/*===========================================================================*/
-/* Driver local functions.                                                   */
-/*===========================================================================*/
 
 /**
  * @brief   MSC state machine initialization.
@@ -101,41 +124,46 @@ static void msc_transmit(USBDriver *usbp, const uint8_t *p, size_t n) {
     n = CBW.dCBWDataTransferLength;
   CSW.dCSWDataResidue = CBW.dCBWDataTransferLength - (uint32_t)n;
   chSysLockFromIsr();
-  usbStartTransmitI(usbp, MSC_DATA_IN_EP, scsi_inquiry_data, n);
+  usbStartTransmitI(usbp, MSC_DATA_IN_EP, p, n);
   chSysUnlockFromIsr();
 }
 
-static bool_t msc_decode_in(USBDriver *usbp) {
-  uint32_t nblocks, secsize;
-  size_t n;
+static void msc_sendstatus(USBDriver *usbp) {
 
-  switch (u.CBW.CBWCB[0]) {
+  msc_state = MSC_SENDING_CSW;
+  chSysLockFromIsr();
+  usbStartTransmitI(usbp, MSC_DATA_IN_EP, (uint8_t *)&CSW, sizeof CSW);
+  chSysUnlockFromIsr();
+}
+
+static bool_t msc_decode(USBDriver *usbp) {
+  uint32_t nblocks, secsize;
+
+  switch (CBW.CBWCB[0]) {
+  case SCSI_REQUEST_SENSE:
+    break;
   case SCSI_INQUIRY:
-    msc_transmit(usbp, &scsi_inquiry_data, sizeof scsi_inquiry_data);
+    msc_transmit(usbp, (uint8_t *)&scsi_inquiry_data,
+                 sizeof scsi_inquiry_data);
     CSW.bCSWStatus = MSC_CSW_STATUS_PASSED;
     break;
   case SCSI_READ_FORMAT_CAPACITIES:
     buf[8]  = scsi_read_format_capacities(&nblocks, &secsize);
-    buf[0]  = u.buf[1] = u.buf[2] = 0;
+    buf[0]  = buf[1] = buf[2] = 0;
     buf[3]  = 8;
-    buf[4]  = (tU8)(nblocks >> 24);
-    buf[5]  = (tU8)(nblocks >> 16);
-    buf[6]  = (tU8)(nblocks >> 8);
-    buf[7]  = (tU8)(nblocks >> 0);
-    buf[9]  = (tU8)(secsize >> 16);
-    buf[10] = (tU8)(secsize >> 8);
-    buf[11] = (tU8)(secsize >> 0);
+    buf[4]  = (uint8_t)(nblocks >> 24);
+    buf[5]  = (uint8_t)(nblocks >> 16);
+    buf[6]  = (uint8_t)(nblocks >> 8);
+    buf[7]  = (uint8_t)(nblocks >> 0);
+    buf[9]  = (uint8_t)(secsize >> 16);
+    buf[10] = (uint8_t)(secsize >> 8);
+    buf[11] = (uint8_t)(secsize >> 0);
     msc_transmit(usbp, buf, 12);
     CSW.bCSWStatus = MSC_CSW_STATUS_PASSED;
     break;
   default:
     return TRUE;
   }
-  return FALSE;
-}
-
-static bool_t msc_decode_out(USBDriver *usbp) {
-
   return FALSE;
 }
 
@@ -221,18 +249,32 @@ void mscDataReceived(USBDriver *usbp, usbep_t ep) {
   switch (msc_state) {
   case MSC_IDLE:
     if ((n != sizeof(msccbw_t)) || (CBW.dCBWSignature != MSC_CBW_SIGNATURE))
-      goto stallout; /* 6.6.1 */
+      goto stall_out; /* 6.6.1 */
 
+    /* Decoding SCSI command.*/
+    if (msc_decode(usbp)) {
+      if (CBW.dCBWDataTransferLength == 0) {
+        CSW.bCSWStatus = MSC_CSW_STATUS_FAILED;
+        CSW.dCSWDataResidue = 0;
+        msc_sendstatus(usbp);
+        return;
+      }
+      goto stall_both;
+    }
+
+    /* Commands with zero transfer length, 5.1.*/
+    if (CBW.dCBWDataTransferLength == 0) {
+      msc_sendstatus(usbp);
+      return;
+    }
+
+    /* Transfer direction.*/
     if (CBW.bmCBWFlags & 0x80) {
       /* IN, Device to Host.*/
-      if (msc_decode_in(usbp))
-        goto stallout;
       msc_state = MSC_DATA_IN;
     }
     else {
       /* OUT, Host to Device.*/
-      if (msc_decode_out(usbp))
-        goto stallout;
       msc_state = MSC_DATA_OUT;
     }
     break;
@@ -242,9 +284,16 @@ void mscDataReceived(USBDriver *usbp, usbep_t ep) {
     ;
   }
   return;
-stallout:
+stall_out:
   msc_state = MSC_ERROR;
   chSysLockFromIsr();
+  usbStallReceiveI(usbp, ep);
+  chSysUnlockFromIsr();
+  return;
+stall_both:
+  msc_state = MSC_ERROR;
+  chSysLockFromIsr();
+  usbStallTransmitI(usbp, ep);
   usbStallReceiveI(usbp, ep);
   chSysUnlockFromIsr();
   return;

@@ -42,6 +42,37 @@
 #define MSC_CSW_STATUS_FAILED           1
 #define MSC_CSW_STATUS_PHASE_ERROR      2
 
+
+#define SCSI_FORMAT_UNIT            0x04
+#define SCSI_INQUIRY                0x12
+#define SCSI_MODE_SELECT6           0x15
+#define SCSI_MODE_SELECT10          0x55
+#define SCSI_MODE_SENSE6            0x1A
+#define SCSI_MODE_SENSE10           0x5A
+#define SCSI_ALLOW_MEDIUM_REMOVAL   0x1E
+#define SCSI_READ6                  0x08
+#define SCSI_READ10                 0x28
+#define SCSI_READ12                 0xA8
+#define SCSI_READ16                 0x88
+
+#define SCSI_READ_CAPACITY10        0x25
+#define SCSI_READ_CAPACITY16        0x9E
+
+#define SCSI_REQUEST_SENSE          0x03
+#define SCSI_START_STOP_UNIT        0x1B
+#define SCSI_TEST_UNIT_READY        0x00
+#define SCSI_WRITE6                 0x0A
+#define SCSI_WRITE10                0x2A
+#define SCSI_WRITE12                0xAA
+#define SCSI_WRITE16                0x8A
+
+#define SCSI_VERIFY10               0x2F
+#define SCSI_VERIFY12               0xAF
+#define SCSI_VERIFY16               0x8F
+
+#define SCSI_SEND_DIAGNOSTIC        0x1D
+#define SCSI_READ_FORMAT_CAPACITIES 0x23
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
