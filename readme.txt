@@ -71,6 +71,8 @@
 *****************************************************************************
 
 *** 2.3.1 ***
+- FIX: Fixed invalid assertion in adcConvert() (bug 3205410)(backported
+  to 2.2.3).
 - OPT: Simplified Serial over USB driver configuration.
 - CHANGE: Removed all the prefixes from the structure/union field names
   in the HAL subsystem.
