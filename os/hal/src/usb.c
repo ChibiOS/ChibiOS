@@ -58,8 +58,7 @@ static void set_address(USBDriver *usbp) {
 
   usbp->address = usbp->setup[2];
   usb_lld_set_address(usbp);
-  if (usbp->config->event_cb)
-    usbp->config->event_cb(usbp, USB_EVENT_ADDRESS);
+  _usb_isr_invoke_event_cb(usbp, USB_EVENT_ADDRESS);
   usbp->state = USB_SELECTED;
 }
 
@@ -137,8 +136,7 @@ static bool_t default_handler(USBDriver *usbp) {
       usbp->state = USB_SELECTED;
     else
       usbp->state = USB_ACTIVE;
-    if (usbp->config->event_cb)
-      usbp->config->event_cb(usbp, USB_EVENT_CONFIGURED);
+    _usb_isr_invoke_event_cb(usbp, USB_EVENT_CONFIGURED);
     usbSetupTransfer(usbp, NULL, 0, NULL);
     return TRUE;
   case USB_RTYPE_RECIPIENT_INTERFACE | (USB_REQ_GET_STATUS << 8):
@@ -527,6 +525,77 @@ void _usb_reset(USBDriver *usbp) {
 }
 
 /**
+ * @brief   Default EP0 SETUP callback.
+ * @details This function is used by the low level driver as default handler
+ *          for EP0 SETUP events.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number, always zero
+ *
+ * @notapi
+ */
+void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
+  size_t max;
+
+  usbp->ep0state = USB_EP0_WAITING_SETUP;
+  usbReadSetup(usbp, ep, usbp->setup);
+
+  /* First verify if the application has an handler installed for this
+     request.*/
+  if (!(usbp->config->requests_hook_cb) ||
+      !(usbp->config->requests_hook_cb(usbp))) {
+    /* Invoking the default handler, if this fails then stalls the
+       endpoint zero as error.*/
+    if (((usbp->setup[0] & USB_RTYPE_TYPE_MASK) != USB_RTYPE_TYPE_STD) ||
+        !default_handler(usbp)) {
+      /* Error response, the state machine goes into an error state, the low
+         level layer will have to reset it to USB_EP0_WAITING_SETUP after
+         receiving a SETUP packet.*/
+      usb_lld_stall_in(usbp, 0);
+      usb_lld_stall_out(usbp, 0);
+      _usb_isr_invoke_event_cb(usbp, USB_EVENT_STALLED);
+      usbp->ep0state = USB_EP0_ERROR;
+    }
+  }
+
+  /* Transfer preparation. The request handler must have populated
+     correctly the fields ep0next, ep0n and ep0endcb using the macro
+     usbSetupTransfer().*/
+  max = usb_lld_fetch_word(&usbp->setup[6]);
+  /* The transfer size cannot exceed the specified amount.*/
+  if (usbp->ep0n > max)
+    usbp->ep0n = max;
+  if ((usbp->setup[0] & USB_RTYPE_DIR_MASK) == USB_RTYPE_DIR_DEV2HOST) {
+    /* IN phase.*/
+    if (usbp->ep0n > 0) {
+      /* Starts the transmit phase.*/
+      usbp->ep0state = USB_EP0_TX;
+      usb_lld_start_in(usbp, 0, usbp->ep0next, usbp->ep0n);
+    }
+    else {
+      /* No transmission phase, directly receiving the zero sized status
+         packet.*/
+      usbp->ep0state = USB_EP0_WAITING_STS;
+      usb_lld_start_out(usbp, 0, NULL, 0);
+    }
+  }
+  else {
+    /* OUT phase.*/
+    if (usbp->ep0n > 0) {
+      /* Starts the receive phase.*/
+      usbp->ep0state = USB_EP0_RX;
+      usb_lld_start_out(usbp, 0, usbp->ep0next, usbp->ep0n);
+    }
+    else {
+      /* No receive phase, directly sending the zero sized status
+         packet.*/
+      usbp->ep0state = USB_EP0_SENDING_STS;
+      usb_lld_start_in(usbp, 0, NULL, 0);
+    }
+  }
+}
+
+/**
  * @brief   Default EP0 IN callback.
  * @details This function is used by the low level driver as default handler
  *          for EP0 IN events.
@@ -558,7 +627,7 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
     return;
   case USB_EP0_SENDING_STS:
     /* Status packet sent, invoking the callback if defined.*/
-    if (usbp->ep0endcb)
+    if (usbp->ep0endcb != NULL)
       usbp->ep0endcb(usbp);
     usbp->ep0state = USB_EP0_WAITING_SETUP;
     return;
@@ -570,8 +639,7 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
      receiving a SETUP packet.*/
   usb_lld_stall_in(usbp, 0);
   usb_lld_stall_out(usbp, 0);
-  if (usbp->config->event_cb)
-    usbp->config->event_cb(usbp, USB_EVENT_STALLED);
+  _usb_isr_invoke_event_cb(usbp, USB_EVENT_STALLED);
   usbp->ep0state = USB_EP0_ERROR;
 }
 
@@ -586,62 +654,9 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void _usb_ep0out(USBDriver *usbp, usbep_t ep) {
-  size_t max;
 
   (void)ep;
   switch (usbp->ep0state) {
-  case USB_EP0_WAITING_SETUP:
-    /* SETUP packet handling. The setup packet is expected to be already
-       placed into the setup[8] field of the USBDriver structure, the low
-       level layer has to take care of this.*/
-
-    /* First verify if the application has an handler installed for this
-       request.*/
-    if (!(usbp->config->requests_hook_cb) ||
-        !(usbp->config->requests_hook_cb(usbp))) {
-      /* Invoking the default handler, if this fails then stalls the
-         endpoint zero as error.*/
-      if (((usbp->setup[0] & USB_RTYPE_TYPE_MASK) != USB_RTYPE_TYPE_STD) ||
-          !default_handler(usbp))
-        break;
-    }
-
-    /* Transfer preparation. The request handler must have populated
-       correctly the fields ep0next, ep0n and ep0endcb using the macro
-       usbSetupTransfer().*/
-    max = usb_lld_fetch_word(&usbp->setup[6]);
-    /* The transfer size cannot exceed the specified amount.*/
-    if (usbp->ep0n > max)
-      usbp->ep0n = max;
-    if ((usbp->setup[0] & USB_RTYPE_DIR_MASK) == USB_RTYPE_DIR_DEV2HOST) {
-      /* IN phase.*/
-      if (usbp->ep0n > 0) {
-        /* Starts the transmit phase.*/
-        usbp->ep0state = USB_EP0_TX;
-        usb_lld_start_in(usbp, 0, usbp->ep0next, usbp->ep0n);
-      }
-      else {
-        /* No transmission phase, directly receiving the zero sized status
-           packet.*/
-        usbp->ep0state = USB_EP0_WAITING_STS;
-        usb_lld_start_out(usbp, 0, NULL, 0);
-      }
-    }
-    else {
-      /* OUT phase.*/
-      if (usbp->ep0n > 0) {
-        /* Starts the receive phase.*/
-        usbp->ep0state = USB_EP0_RX;
-        usb_lld_start_out(usbp, 0, usbp->ep0next, usbp->ep0n);
-      }
-      else {
-        /* No receive phase, directly sending the zero sized status
-           packet.*/
-        usbp->ep0state = USB_EP0_SENDING_STS;
-        usb_lld_start_in(usbp, 0, NULL, 0);
-      }
-    }
-    return;
   case USB_EP0_RX:
     /* Receive phase over, sending the zero sized status packet.*/
     usbp->ep0state = USB_EP0_SENDING_STS;
@@ -652,7 +667,7 @@ void _usb_ep0out(USBDriver *usbp, usbep_t ep) {
        if defined.*/
     if (usbGetReceiveTransactionSizeI(usbp, 0) != 0)
       break;
-    if (usbp->ep0endcb)
+    if (usbp->ep0endcb != NULL)
       usbp->ep0endcb(usbp);
     usbp->ep0state = USB_EP0_WAITING_SETUP;
     return;
@@ -664,8 +679,7 @@ void _usb_ep0out(USBDriver *usbp, usbep_t ep) {
      receiving a SETUP packet.*/
   usb_lld_stall_in(usbp, 0);
   usb_lld_stall_out(usbp, 0);
-  if (usbp->config->event_cb)
-    usbp->config->event_cb(usbp, USB_EVENT_STALLED);
+  _usb_isr_invoke_event_cb(usbp, USB_EVENT_STALLED);
   usbp->ep0state = USB_EP0_ERROR;
 }
 

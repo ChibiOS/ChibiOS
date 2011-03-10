@@ -224,6 +224,7 @@ static const USBDescriptor *get_descriptor(USBDriver *usbp,
  */
 static const USBEndpointConfig ep1config = {
   USB_EP_MODE_TYPE_BULK | USB_EP_MODE_PACKET,
+  NULL,
   sduDataTransmitted,
   NULL,
   0x0040,
@@ -237,6 +238,7 @@ static const USBEndpointConfig ep1config = {
  */
 static const USBEndpointConfig ep2config = {
   USB_EP_MODE_TYPE_INTR | USB_EP_MODE_PACKET,
+  NULL,
   sduInterruptTransmitted,
   NULL,
   0x0010,
@@ -250,6 +252,7 @@ static const USBEndpointConfig ep2config = {
  */
 static const USBEndpointConfig ep3config = {
   USB_EP_MODE_TYPE_BULK | USB_EP_MODE_PACKET,
+  NULL,
   NULL,
   sduDataReceived,
   0x0000,

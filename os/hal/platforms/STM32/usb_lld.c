@@ -68,6 +68,7 @@ static union {
  */
 static const USBEndpointConfig ep0config = {
   USB_EP_MODE_TYPE_CTRL | USB_EP_MODE_TRANSACTION,
+  _usb_ep0setup,
   _usb_ep0in,
   _usb_ep0out,
   0x40,
@@ -193,16 +194,14 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
   /* USB bus reset condition handling.*/
   if (istr & ISTR_RESET) {
     _usb_reset(usbp);
-    if (usbp->config->event_cb)
-      usbp->config->event_cb(usbp, USB_EVENT_RESET);
+    _usb_isr_invoke_event_cb(usbp, USB_EVENT_RESET);
     STM32_USB->ISTR = ~ISTR_RESET;
   }
 
   /* USB bus SUSPEND condition handling.*/
   if (istr & ISTR_SUSP) {
     STM32_USB->CNTR |= CNTR_FSUSP;
-    if (usbp->config->event_cb)
-      usbp->config->event_cb(usbp, USB_EVENT_SUSPEND);
+    _usb_isr_invoke_event_cb(usbp, USB_EVENT_SUSPEND);
 #if STM32_USB_LOW_POWER_ON_SUSPEND
     STM32_USB->CNTR |= CNTR_LP_MODE;
 #endif
@@ -214,8 +213,7 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
     uint32_t fnr = STM32_USB->FNR;
     if (!(fnr & FNR_RXDP)) {
       STM32_USB->CNTR &= ~CNTR_FSUSP;
-      if (usbp->config->event_cb)
-        usbp->config->event_cb(usbp, USB_EVENT_WAKEUP);
+      _usb_isr_invoke_event_cb(usbp, USB_EVENT_WAKEUP);
     }
 #if STM32_USB_LOW_POWER_ON_SUSPEND
     else {
@@ -229,8 +227,7 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
 
   /* SOF handling.*/
   if (istr & ISTR_SOF) {
-    if (usbp->config->sof_cb)
-      usbp->config->sof_cb(usbp);
+    _usb_isr_invoke_sof_cb(usbp);
     STM32_USB->ISTR = ~ISTR_SOF;
   }
 
@@ -245,8 +242,7 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
       EPR_CLEAR_CTR_TX(ep);
       if (epcp->ep_mode & USB_EP_MODE_PACKET) {
         /* Packet mode, just invokes the callback.*/
-        (usbp)->transmitting &= ~(1 << ep);
-        epcp->in_cb(usbp, ep);
+        _usb_isr_invoke_in_cb(usbp, ep);
       }
       else {
         /* Transaction mode.*/
@@ -264,43 +260,36 @@ CH_IRQ_HANDLER(USB_LP_IRQHandler) {
         }
         else {
           /* Transfer completed, invokes the callback.*/
-          (usbp)->transmitting &= ~(1 << ep);
-          epcp->in_cb(usbp, ep);
+          _usb_isr_invoke_in_cb(usbp, ep);
         }
       }
     }
     if (epr & EPR_CTR_RX) {
       EPR_CLEAR_CTR_RX(ep);
       /* OUT endpoint, receive.*/
-      if (epcp->ep_mode & USB_EP_MODE_PACKET) {
+      if (epr & EPR_SETUP) {
+        /* Setup packets handling, setup packets are handled using a
+           specific callback.*/
+        _usb_isr_invoke_setup_cb(usbp, ep);
+      }
+      else if (epcp->ep_mode & USB_EP_MODE_PACKET) {
         /* Packet mode, just invokes the callback.*/
-        (usbp)->receiving &= ~(1 << ep);
-        epcp->out_cb(usbp, ep);
+        _usb_isr_invoke_out_cb(usbp, ep);
       }
       else {
         /* Transaction mode.*/
-        if ((epr & EPR_SETUP) && (ep == 0)) {
-          /* Special case, setup packet for EP0, enforcing a reset of the
-             EP0 state machine for robustness.*/
-          usbp->ep0state = USB_EP0_WAITING_SETUP;
-          read_packet(0, usbp->setup, 8);
-          epcp->out_cb(usbp, ep);
+        n = read_packet(ep, epcp->out_state->rxbuf, epcp->out_state->rxsize);
+        epcp->out_state->rxbuf  += n;
+        epcp->out_state->rxcnt  += n;
+        epcp->out_state->rxsize -= n;
+        epcp->out_state->rxpkts -= 1;
+        if (epcp->out_state->rxpkts > 0) {
+          /* Transfer not completed, there are more packets to receive.*/
+          EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
         }
         else {
-          n = read_packet(ep, epcp->out_state->rxbuf, epcp->out_state->rxsize);
-          epcp->out_state->rxbuf  += n;
-          epcp->out_state->rxcnt  += n;
-          epcp->out_state->rxsize -= n;
-          epcp->out_state->rxpkts -= 1;
-          if (epcp->out_state->rxpkts > 0) {
-            /* Transfer not completed, there are more packets to receive.*/
-            EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
-          }
-          else {
-            /* Transfer completed, invokes the callback.*/
-            (usbp)->receiving &= ~(1 << ep);
-            epcp->out_cb(usbp, ep);
-          }
+          /* Transfer completed, invokes the callback.*/
+          _usb_isr_invoke_out_cb(usbp, ep);
         }
       }
     }
@@ -452,12 +441,12 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   }
 
   /* IN endpoint settings, always in NAK mode initially.*/
-  if (epcp->in_cb)
+  if (epcp->in_cb != NULL)
     epr |= EPR_STAT_TX_NAK;
 
   /* OUT endpoint settings. If the endpoint is in packet mode then it must
      start ready to accept data else it must start in NAK mode.*/
-  if (epcp->out_cb) {
+  if (epcp->out_cb != NULL) {
     if (epcp->ep_mode & USB_EP_MODE_PACKET) {
       usbp->receiving |= (1 << ep);
       epr |= EPR_STAT_RX_VALID;
@@ -551,6 +540,35 @@ usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
   default:
     return EP_STATUS_ACTIVE;
   }
+}
+
+/**
+ * @brief   Reads a setup packet from the dedicated packet buffer.
+ * @details This function must be invoked in the context of the @p setup_cb
+ *          callback in order to read the received setup packet.
+ * @pre     In order to use this function the endpoint must have been
+ *          initialized as a control endpoint.
+ * @post    The endpoint is ready to accept another packet.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[out] buf      buffer where to copy the packet data
+ *
+ * @notapi
+ */
+void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
+  uint32_t *pmap;
+  stm32_usb_descriptor_t *udp;
+  uint32_t n;
+
+  (void)usbp;
+  udp = USB_GET_DESCRIPTOR(ep);
+  pmap = USB_ADDR2PTR(udp->RXADDR);
+  for (n = 0; n < 4; n++) {
+    *(uint16_t *)buf = (uint16_t)*pmap++;
+    buf += 2;
+  }
+  EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
 }
 
 /**

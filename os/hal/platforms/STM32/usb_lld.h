@@ -150,6 +150,17 @@ typedef struct {
    */
   uint32_t                      ep_mode;
   /**
+   * @brief   Setup packet notification callback.
+   * @details This callback is invoked when a setup packet has been
+   *          received.
+   * @post    The application must immediately call @p usbReadPacket() in
+   *          order to access the received packet.
+   * @note    This field is only valid for @p USB_EP_MODE_TYPE_CTRL
+   *          endpoints, it should be set to @p NULL for other endpoint
+   *          types.
+   */
+  usbepcallback_t               setup_cb;
+  /**
    * @brief   IN endpoint notification callback.
    * @details This field must be set to @p NULL if the IN endpoint is not
    *          used.
@@ -359,6 +370,7 @@ extern "C" {
   void usb_lld_disable_endpoints(USBDriver *usbp);
   usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep);
   usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep);
+  void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf);
   size_t usb_lld_read_packet(USBDriver *usbp, usbep_t ep,
                              uint8_t *buf, size_t n);
   void usb_lld_write_packet(USBDriver *usbp, usbep_t ep,

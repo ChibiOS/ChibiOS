@@ -395,6 +395,86 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
   (usbp)->ep0endcb = (endcb);                                               \
 }
 
+/**
+ * @brief   Reads a setup packet from the dedicated packet buffer.
+ * @details This function must be invoked in the context of the @p setup_cb
+ *          callback in order to read the received setup packet.
+ * @pre     In order to use this function the endpoint must have been
+ *          initialized as a control endpoint.
+ * @post    The endpoint is ready to accept another packet.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[out] buf      buffer where to copy the packet data
+ *
+ * @special
+ */
+#define usbReadSetup(usbp, ep, buf) usb_lld_read_setup(usbp, ep, buf)
+
+/**
+ * @brief   Common ISR code, usb event callback.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ *
+ * @notapi
+ */
+#define _usb_isr_invoke_event_cb(usbp, evt) {                               \
+  if (((usbp)->config->event_cb) != NULL)                                   \
+    (usbp)->config->event_cb(usbp, evt);                                    \
+}
+
+/**
+ * @brief   Common ISR code, SOF callback.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ *
+ * @notapi
+ */
+#define _usb_isr_invoke_sof_cb(usbp) {                                      \
+  if (((usbp)->config->sof_cb) != NULL)                                     \
+    (usbp)->config->sof_cb(usbp);                                           \
+}
+
+/**
+ * @brief   Common ISR code, setup packet callback.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ *
+ * @notapi
+ */
+#define _usb_isr_invoke_setup_cb(usbp, ep) {                                \
+  (usbp)->epc[ep]->setup_cb(usbp, ep);                                      \
+}
+
+/**
+ * @brief   Common ISR code, IN endpoint callback.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ *
+ * @notapi
+ */
+#define _usb_isr_invoke_in_cb(usbp, ep) {                                   \
+  (usbp)->transmitting &= ~(1 << (ep));                                     \
+  (usbp)->epc[ep]->in_cb(usbp, ep);                                         \
+}
+
+/**
+ * @brief   Common ISR code, OUT endpoint event.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ *
+ * @notapi
+ */
+#define _usb_isr_invoke_out_cb(usbp, ep) {                                  \
+  (usbp)->receiving &= ~(1 << (ep));                                        \
+  (usbp)->epc[ep]->out_cb(usbp, ep);                                        \
+}
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -409,6 +489,7 @@ extern "C" {
   void usbInitEndpointI(USBDriver *usbp, usbep_t ep,
                         const USBEndpointConfig *epcp);
   void usbDisableEndpointsI(USBDriver *usbp);
+  void usbReadSetupI(USBDriver *usbp, usbep_t ep, uint8_t *buf);
   size_t usbReadPacketI(USBDriver *usbp, usbep_t ep,
                         uint8_t *buf, size_t n);
   size_t usbWritePacketI(USBDriver *usbp, usbep_t ep,
@@ -420,6 +501,7 @@ extern "C" {
   bool_t usbStallReceiveI(USBDriver *usbp, usbep_t ep);
   bool_t usbStallTransmitI(USBDriver *usbp, usbep_t ep);
   void _usb_reset(USBDriver *usbp);
+  void _usb_ep0setup(USBDriver *usbp, usbep_t ep);
   void _usb_ep0in(USBDriver *usbp, usbep_t ep);
   void _usb_ep0out(USBDriver *usbp, usbep_t ep);
 #ifdef __cplusplus

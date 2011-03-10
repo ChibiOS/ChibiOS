@@ -204,6 +204,24 @@ usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
 }
 
 /**
+ * @brief   Reads a setup packet from the dedicated packet buffer.
+ * @details This function must be invoked in the context of the @p setup_cb
+ *          callback in order to read the received setup packet.
+ * @pre     In order to use this function the endpoint must have been
+ *          initialized as a control endpoint.
+ * @post    The endpoint is ready to accept another packet.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[out] buf      buffer where to copy the packet data
+ *
+ * @notapi
+ */
+void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
+
+}
+
+/**
  * @brief   Reads a packet from the dedicated packet buffer.
  * @pre     In order to use this function he endpoint must have been
  *          initialized in packet mode.
