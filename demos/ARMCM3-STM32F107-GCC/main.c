@@ -22,19 +22,18 @@
 #include "test.h"
 
 /*
- * Red LED blinker thread, times are in milliseconds.
+ * Green LED blinker thread, times are in milliseconds.
  */
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   (void)arg;
   while (TRUE) {
-    palClearPad(IOPORT4, 7);
+    palClearPad(GPIOC, GPIOC_LED_STATUS1);
     chThdSleepMilliseconds(500);
-    palSetPad(IOPORT4, 7);
+    palSetPad(GPIOC, GPIOC_LED_STATUS1);
     chThdSleepMilliseconds(500);
   }
-  return 0;
 }
 
 /*
@@ -55,7 +54,7 @@ int main(void) {
   /*
    * Activates the serial driver 2 using the driver default configuration.
    */
-  sdStart(&SD2, NULL);
+  sdStart(&SD3, NULL);
 
   /*
    * Creates the blinker thread.
@@ -67,8 +66,8 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
-    if (palReadPad(IOPORT2, 9) == 0)
-      TestThread(&SD2);
+    if (palReadPad(GPIOC, GPIOC_SWITCH_TAMPER) == 0)
+      TestThread(&SD3);
     chThdSleepMilliseconds(500);
   }
   return 0;

@@ -73,9 +73,12 @@
 *** 2.3.1 ***
 - FIX: Fixed invalid assertion in adcConvert() (bug 3205410)(backported
   to 2.2.3).
+- NEW: Added board files for the Olimex STM32-P107.
 - NEW: Improved setup packets handling in the USB driver through a specific
   callback.
 - OPT: Simplified Serial over USB driver configuration.
+- CHANGE: Now the STM32F107 demo targets the board Olimex STM32-P107 as
+  default.
 - CHANGE: Removed all the prefixes from the structure/union field names
   in the HAL subsystem.
 

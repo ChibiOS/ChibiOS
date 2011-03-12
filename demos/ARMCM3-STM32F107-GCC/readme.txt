@@ -4,15 +4,18 @@
 
 ** TARGET **
 
-The demo runs on an ST STM3210C-EVAL board.
+The demo runs on an Olimex STM32-P107 board.
 
 ** The Demo **
 
+The demo flashes the board LED using a thread, by pressing the button located
+on the board the test procedure is activated with output on the serial port
+SD3 (USART3).
 
 ** Build Procedure **
 
-The demo has been tested by using the free Codesourcery GCC-based toolchain,
-YAGARTO and an experimental WinARM build including GCC 4.3.0.
+The demo has been tested by using the free Codesourcery GCC-based toolchain
+and YAGARTO.
 Just modify the TRGT line in the makefile in order to use different GCC ports.
 
 ** Notes **
