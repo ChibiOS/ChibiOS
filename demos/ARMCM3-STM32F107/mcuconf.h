@@ -34,6 +34,9 @@
 /*
  * HAL driver system settings.
  */
+#define STM32_ACTIVATE_PLL1                 TRUE
+#define STM32_ACTIVATE_PLL2                 TRUE
+#define STM32_ACTIVATE_PLL3                 TRUE
 #define STM32_SW                            STM32_SW_PLL
 #define STM32_PLLSRC                        STM32_PLLSRC_PREDIV1
 #define STM32_PREDIV1SRC                    STM32_PREDIV1SRC_PLL2
@@ -41,12 +44,13 @@
 #define STM32_PLLMUL_VALUE                  9
 #define STM32_PREDIV2_VALUE                 5
 #define STM32_PLL2MUL_VALUE                 8
+#define STM32_PLL3MUL_VALUE                 10
 #define STM32_HPRE                          STM32_HPRE_DIV1
 #define STM32_PPRE1                         STM32_PPRE1_DIV2
 #define STM32_PPRE2                         STM32_PPRE2_DIV2
 #define STM32_ADCPRE                        STM32_ADCPRE_DIV4
 #define STM32_OTGFSPRE                      STM32_OTGFSPRE_DIV3
-#define STM32_MCO                           STM32_MCO_NOCLOCK
+#define STM32_MCO                           STM32_MCO_PLL3
 
 /*
  * ADC driver system settings.

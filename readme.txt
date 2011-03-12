@@ -73,6 +73,8 @@
 *** 2.3.1 ***
 - FIX: Fixed invalid assertion in adcConvert() (bug 3205410)(backported
   to 2.2.3).
+- NEW: Added support for PLL3 in STM32 HAL driver. Note, the format of the
+  mcuconf.h file is changed for STM32F105/STM32F107 devices.
 - NEW: Added board files for the Olimex STM32-P107.
 - NEW: Improved setup packets handling in the USB driver through a specific
   callback.
