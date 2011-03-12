@@ -77,8 +77,9 @@
 - NEW: Improved setup packets handling in the USB driver through a specific
   callback.
 - OPT: Simplified Serial over USB driver configuration.
-- CHANGE: Now the STM32F107 demo targets the board Olimex STM32-P107 as
-  default.
+- CHANGE: Renamed the demo ARMCM3-STM32F107-GCC in ARMCM3-STM32F107.
+- CHANGE: Now the ARMCM3-STM32F107 demo targets the board Olimex STM32-P107
+  as default.
 - CHANGE: Removed all the prefixes from the structure/union field names
   in the HAL subsystem.
 
