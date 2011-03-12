@@ -170,8 +170,8 @@
 /*
  * Port E setup.
  * Everything input with pull-up except:
- * PE12 - Normal input      (ETH_RMII_MDINT).
- * PE13 - Normal input      (USB_FAULT).
+ * PE14 - Normal input      (ETH_RMII_MDINT).
+ * PE15 - Normal input      (USB_FAULT).
  */
 #define VAL_GPIOECRL            0x88888888      /*  PE7...PE0 */
 #define VAL_GPIOECRH            0x44888888      /* PE15...PE8 */
