@@ -324,7 +324,6 @@
 #if STM32_ACTIVATE_PLL2 &&                                                  \
     (STM32_PREDIV1SRC != STM32_PREDIV1SRC_PLL2) &&                          \
     (STM32_MCO != STM32_MCO_PLL2)
-
 #error "PLL2 activated but not used"
 #endif
 
@@ -442,10 +441,15 @@
 #endif
 #endif /* STM32_ACTIVATE_PLL3 */
 
+/* The following values are only used if PLL1 is activated */
+#if STM32_ACTIVATE_PLL1
 /**
  * @brief   PREDIV1 input frequency.
  */
 #if (STM32_PREDIV1SRC == STM32_PREDIV1SRC_PLL2) || defined(__DOXYGEN__)
+#if !STM32_ACTIVATE_PLL2
+#error "PLL2 selected as clock source for STM32_PREDIV1SRC but not activated"
+#endif
 #define STM32_PREDIV1CLK            STM32_PLL2CLKOUT
 #elif STM32_PREDIV1SRC == STM32_PREDIV1SRC_HSE
 #define STM32_PREDIV1CLK            STM32_HSECLK
@@ -483,11 +487,15 @@
 #if (STM32_PLLVCO < 36000000) || (STM32_PLLVCO > 144000000)
 #error "STM32_PLLVCO outside acceptable range (36...144MHz)"
 #endif
+#endif /* STM32_ACTIVATE_PLL1 */
 
 /**
  * @brief   System clock source.
  */
 #if (STM32_SW == STM32_SW_PLL) || defined(__DOXYGEN__)
+#if !STM32_ACTIVATE_PLL1
+#error "PLL1 selected as clock source for STM32_SYSCLK but not activated"
+#endif
 #define STM32_SYSCLK                STM32_PLLCLKOUT
 #elif (STM32_SW == STM32_SW_HSI)
 #define STM32_SYSCLK                STM32_HSICLK
