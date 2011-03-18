@@ -68,6 +68,13 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.2.3 ***
+- NEW: Improved preemption implementation for the Cortex-M0, now it uses
+  the NMI vector in order to restore the original context. The change makes
+  IRQ handling faster and also saves some RAM/ROM space. The GCC port code
+  now does not inline the epilogue code in each ISR saving significant ROM
+  space for each interrupt handler in the system.
+
 *** 2.2.2 ***
 - FIX: Fixed race condition in CM0 ports, the fix also improves the
   ISR latency (bug 3193062).

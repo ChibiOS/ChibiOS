@@ -39,10 +39,8 @@
 /* Port implementation part.                                                 */
 /*===========================================================================*/
 
-/**
- * @brief   Cortex-Mx exception context.
- */
-struct cmxctx {
+#if !defined(__DOXYGEN__)
+struct extctx {
   regarm_t      r0;
   regarm_t      r1;
   regarm_t      r2;
@@ -51,18 +49,6 @@ struct cmxctx {
   regarm_t      lr_thd;
   regarm_t      pc;
   regarm_t      xpsr;
-};
-
-#if !defined(__DOXYGEN__)
-struct extctx {
-  regarm_t      xpsr;
-  regarm_t      r12;
-  regarm_t      lr;
-  regarm_t      r0;
-  regarm_t      r1;
-  regarm_t      r2;
-  regarm_t      r3;
-  regarm_t      pc;
 };
 
 struct intctx {
@@ -134,20 +120,7 @@ struct intctx {
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() {                                               \
-  if (_saved_lr != (regarm_t)0xFFFFFFF1) {                                  \
-    port_lock_from_isr();                                                   \
-    if (chSchIsRescRequiredExI()) {                                         \
-      register struct cmxctx *ctxp;                                         \
-                                                                            \
-      asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : );                    \
-      _port_saved_pc = ctxp->pc;                                            \
-      ctxp->pc = _port_switch_from_isr;                                     \
-      return;                                                               \
-    }                                                                       \
-    port_unlock_from_isr();                                                 \
-  }                                                                         \
-}
+#define PORT_IRQ_EPILOGUE() _port_irq_epilogue(_saved_lr)
 
 /**
  * @brief   IRQ handler function declaration.
@@ -233,15 +206,12 @@ struct intctx {
 #define port_wait_for_interrupt()
 #endif
 
-#if !defined(__DOXYGEN__)
-extern regarm_t _port_saved_pc;
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
   void port_halt(void);
   void port_switch(Thread *ntp, Thread *otp);
+  void _port_irq_epilogue(regarm_t lr);
   void _port_switch_from_isr(void);
   void _port_thread_start(void);
 #ifdef __cplusplus
