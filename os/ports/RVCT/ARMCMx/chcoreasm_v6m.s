@@ -34,6 +34,7 @@
 
 EXTCTX_SIZE     EQU     32
 CONTEXT_OFFSET  EQU     12
+SCB_ICSR        EQU     0xE000ED04
 
                 PRESERVE8
                 THUMB
@@ -42,7 +43,6 @@ CONTEXT_OFFSET  EQU     12
                 IMPORT  chThdExit
                 IMPORT  chSchIsRescRequiredExI
                 IMPORT  chSchDoRescheduleI
-                IMPORT  _port_saved_pc
 
 /*
  * Performs a context switch between two threads.
@@ -80,28 +80,31 @@ _port_thread_start PROC
                 ENDP
 
 /*
+ * NMI vector.
+ * The NMI vector is used for exception mode re-entering after a context
+ * switch.
+ */
+                EXPORT  NMIVector
+NMIVector       PROC
+                mrs     r3, PSP
+                adds    r3, r3, #32
+                msr     PSP, r3
+                cpsie   i
+                bx      lr
+                ENDP
+
+/*
  * Post-IRQ switch code.
  * Exception handlers return here for context switching.
  */
                 EXPORT  _port_switch_from_isr
 _port_switch_from_isr PROC
-                /* Note, saves r4 to make space for the PC.*/
-                push    {r0, r1, r2, r3, r4}
-                mrs     r0, APSR
-                mov     r1, r12
-                push    {r0, r1, lr}
-                ldr     r0, =_port_saved_pc
-                ldr     r0, [r0]
-                adds    r0, r0, #1
-                str     r0, [sp, #28]
                 bl      chSchDoRescheduleI
-                pop     {r0, r1, r2}
-                mov     r12, r1
-                msr     APSR, r0
-                mov     lr, r2
-                pop     {r0, r1, r2, r3}
-                cpsie   i
-                pop     {pc}
+                movs    r3, #128
+                lsls    r3, r3, #24
+                ldr     r2, =SCB_ICSR
+                str     r3, [r2, #0]
+_waitnmi        b       _waitnmi
                 ENDP
 
 /*
@@ -121,11 +124,13 @@ stillnested
                 pop     {r3, pc}
 doresch
                 mrs     r3, PSP
-                ldr     r2, =_port_saved_pc
-                ldr     r1, [r3, #24]
-                str     r1, [r2]
+                subs    r3, r3, #32
+                msr     PSP, r3
                 ldr     r2, =_port_switch_from_isr
                 str     r2, [r3, #24]
+                movs    r2, #128
+                lsls     r2, r2, #17
+                str     r2, [r3, #28]
                 pop     {r3, pc}
                 ENDP
 

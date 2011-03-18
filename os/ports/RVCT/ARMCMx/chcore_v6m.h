@@ -39,10 +39,8 @@
 /* Port implementation part.                                                 */
 /*===========================================================================*/
 
-/**
- * @brief   Cortex-Mx exception context.
- */
-struct cmxctx {
+#if !defined(__DOXYGEN__)
+struct extctx {
   regarm_t      r0;
   regarm_t      r1;
   regarm_t      r2;
@@ -51,18 +49,6 @@ struct cmxctx {
   regarm_t      lr_thd;
   regarm_t      pc;
   regarm_t      xpsr;
-};
-
-#if !defined(__DOXYGEN__)
-struct extctx {
-  regarm_t      xpsr;
-  regarm_t      r12;
-  regarm_t      lr;
-  regarm_t      r0;
-  regarm_t      r1;
-  regarm_t      r2;
-  regarm_t      r3;
-  regarm_t      pc;
 };
 
 struct intctx {
@@ -229,10 +215,6 @@ struct intctx {
  * @param[in] otp       the thread to be switched out
  */
 #define port_switch(ntp, otp) _port_switch(ntp, otp)
-
-#if !defined(__DOXYGEN__)
-extern regarm_t _port_saved_pc;
-#endif
 
 #ifdef __cplusplus
 extern "C" {
