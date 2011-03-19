@@ -75,6 +75,7 @@
 - FIX: Fixed wrong checks in PAL driver (bug 3224681).
 - FIX: Fixed wrong checks in I/O Queues (bug 3219197).
 - FIX: Fixed invalid assertion in adcConvert() (bug 3205410).
+- NEW: Implemented stack checking in the Cortex-Mx RVCT port.
 - NEW: Improved preemption implementation for the Cortex-M0, now it uses
   the NMI vector in order to restore the original context. The change makes
   IRQ handling faster and also saves some RAM/ROM space. The GCC port code
