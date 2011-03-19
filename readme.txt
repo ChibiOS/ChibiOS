@@ -71,6 +71,10 @@
 *****************************************************************************
 
 *** 2.3.1 ***
+- FIX: Fixed insufficient idle thread stack in Cortex-M0-GCC port (bug 3226671)
+  (backported to 2.2.3).
+- FIX: Fixed stack checking in Cortex-M0-GCC port (bug 3226657)(backported
+  to 2.2.3).
 - FIX: Fixed wrong checks in PAL driver (bug 3224681)(backported to 2.2.3).
 - FIX: Fixed wrong checks in I/O Queues (bug 3219197)(backported to 2.2.3).
 - FIX: Fixed invalid assertion in adcConvert() (bug 3205410)(backported
