@@ -71,6 +71,7 @@
 *****************************************************************************
 
 *** 2.3.1 ***
+- FIX: Fixed wrong chechs in PAL driver (bug 3224681)(backported to 2.2.3).
 - FIX: Fixed wrong checks in I/O Queues (bug 3219197)(backported to 2.2.3).
 - FIX: Fixed invalid assertion in adcConvert() (bug 3205410)(backported
   to 2.2.3).
