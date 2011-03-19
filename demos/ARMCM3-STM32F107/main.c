@@ -71,5 +71,4 @@ int main(void) {
       TestThread(&SD3);
     chThdSleepMilliseconds(500);
   }
-  return 0;
 }
