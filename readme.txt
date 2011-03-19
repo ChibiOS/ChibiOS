@@ -79,6 +79,8 @@
 - FIX: Fixed wrong checks in I/O Queues (bug 3219197)(backported to 2.2.3).
 - FIX: Fixed invalid assertion in adcConvert() (bug 3205410)(backported
   to 2.2.3).
+- NEW: Implemented stack checking in the Cortex-Mx RVCT port (backported
+  to 2.2.3).
 - NEW: Added support for PLL3 in STM32 HAL driver. Note, the format of the
   mcuconf.h file is changed for STM32F105/STM32F107 devices.
 - NEW: Added board files for the Olimex STM32-P107.
