@@ -116,15 +116,8 @@ void _port_switch_from_isr(void) {
 #if !defined(__DOXYGEN__)
 __attribute__((naked))
 #endif
-void port_switch(Thread *ntp, Thread *otp) {
+void _port_switch(Thread *ntp, Thread *otp) {
   register struct intctx *r13 asm ("r13");
-
-  /* Stack overflow check, if enabled.*/
-#if CH_DBG_ENABLE_STACK_CHECK
-  if ((void *)(r13 - 1) < (void *)(otp + 1))
-    asm volatile ("movs    r0, #0                               \n\t"
-                  "b       chDbgPanic");
-#endif /* CH_DBG_ENABLE_STACK_CHECK */
 
   PUSH_CONTEXT(r13);
 

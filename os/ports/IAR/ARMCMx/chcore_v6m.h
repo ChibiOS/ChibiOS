@@ -88,7 +88,7 @@ struct intctx {
  *          reduce this value to zero when compiling with optimizations.
  */
 #ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE      8
+#define IDLE_THREAD_STACK_SIZE      16
 #endif
 
 /**
