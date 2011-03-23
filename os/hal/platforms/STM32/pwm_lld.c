@@ -111,7 +111,7 @@ static void serve_interrupt(PWMDriver *pwmp) {
   sr  = pwmp->tim->SR;
   sr &= pwmp->tim->DIER;
   pwmp->tim->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC3IF |
-                       TIM_SR_CC4IF | TIM_SR_UIF);
+                    TIM_SR_CC4IF | TIM_SR_UIF);
   if ((sr & TIM_SR_CC1IF) != 0)
     pwmp->config->channels[0].callback(pwmp);
   if ((sr & TIM_SR_CC2IF) != 0)
@@ -354,13 +354,13 @@ void pwm_lld_start(PWMDriver *pwmp) {
     /* All channels configured in PWM1 mode with preload enabled and will
        stay that way until the driver is stopped.*/
     pwmp->tim->CCMR1 = TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2 |
-                          TIM_CCMR1_OC1PE |
-                          TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2 |
-                          TIM_CCMR1_OC2PE;
+                       TIM_CCMR1_OC1PE |
+                       TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2 |
+                       TIM_CCMR1_OC2PE;
     pwmp->tim->CCMR2 = TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2 |
-                          TIM_CCMR2_OC3PE |
-                          TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2 |
-                          TIM_CCMR2_OC4PE;
+                       TIM_CCMR2_OC3PE |
+                       TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2 |
+                       TIM_CCMR2_OC4PE;
   }
   else {
     /* Driver re-configuration scenario, it must be stopped first.*/
@@ -444,7 +444,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
     pwmp->tim->BDTR  = 0;
     pwmp->tim->DIER  = 0;
     pwmp->tim->SR    = 0;
-    pwmp->tim->EGR  = TIM_EGR_UG;           /* Update event.                */
+    pwmp->tim->EGR   = TIM_EGR_UG;          /* Update event.                */
 
 #if STM32_PWM_USE_TIM1
     if (&PWMD1 == pwmp) {

@@ -93,6 +93,11 @@
   as default.
 - CHANGE: Removed all the prefixes from the structure/union field names
   in the HAL subsystem.
+- CHANGE: Updated the documentation to use Doxygen 1.7.3 which produces a much
+  more readable output. Also modified the documentation layout to put functions
+  and variables ahead of everything else in the group pages.
+  Doxygen version below 1.7.3 cannot be used anymore because differences in
+  templates.
 
 *** 2.3.0 ***
 - FIX: Fixed race condition in CM0 ports, the fix also improves the

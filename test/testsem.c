@@ -51,7 +51,7 @@
  * @brief Semaphores test header file
  */
 
-#if CH_USE_SEMAPHORES
+#if CH_USE_SEMAPHORES || defined(__DOXYGEN__)
 
 #define ALLOWED_DELAY MS2ST(5)
 
@@ -190,7 +190,7 @@ ROMCONST struct testcase testsem2 = {
   sem2_execute
 };
 
-#if CH_USE_SEMSW
+#if CH_USE_SEMSW || defined(__DOXYGEN__)
 /**
  * @page test_sem_003 Atomic signal-wait test
  *
@@ -292,10 +292,10 @@ ROMCONST struct testcase testsem4 = {
  * @brief   Test sequence for semaphores.
  */
 ROMCONST struct testcase * ROMCONST patternsem[] = {
-#if CH_USE_SEMAPHORES
+#if CH_USE_SEMAPHORES || defined(__DOXYGEN__)
   &testsem1,
   &testsem2,
-#if CH_USE_SEMSW
+#if CH_USE_SEMSW || defined(__DOXYGEN__)
   &testsem3,
 #endif
   &testsem4,

@@ -299,3 +299,5 @@ stall_both:
   chSysUnlockFromIsr();
   return;
 }
+
+/** @} */

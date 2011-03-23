@@ -53,11 +53,11 @@
  * @brief Dynamic thread APIs test header file
  */
 
-#if CH_USE_DYNAMIC
-#if CH_USE_HEAP
+#if CH_USE_DYNAMIC || defined(__DOXYGEN__)
+#if CH_USE_HEAP || defined(__DOXYGEN__)
 static MemoryHeap heap1;
 #endif
-#if CH_USE_MEMPOOLS
+#if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
 static MemoryPool mp1;
 #endif
 
@@ -78,7 +78,7 @@ static msg_t thread(void *p) {
   return 0;
 }
 
-#if CH_USE_HEAP
+#if CH_USE_HEAP || defined(__DOXYGEN__)
 static void dyn1_setup(void) {
 
   chHeapInit(&heap1, test.buffer, sizeof(union test_buffers));
@@ -126,7 +126,7 @@ ROMCONST struct testcase testdyn1 = {
 };
 #endif /* CH_USE_HEAP */
 
-#if CH_USE_MEMPOOLS
+#if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
 /**
  * @page test_dynamic_002 Threads creation from Memory Pool
  *
@@ -182,7 +182,7 @@ ROMCONST struct testcase testdyn2 = {
 };
 #endif /* CH_USE_MEMPOOLS */
 
-#if CH_USE_HEAP && CH_USE_REGISTRY
+#if (CH_USE_HEAP && CH_USE_REGISTRY) || defined(__DOXYGEN__)
 /**
  * @page test_dynamic_003 Registry and References test
  *
@@ -251,14 +251,14 @@ ROMCONST struct testcase testdyn3 = {
  * @brief   Test sequence for dynamic APIs.
  */
 ROMCONST struct testcase * ROMCONST patterndyn[] = {
-#if CH_USE_DYNAMIC
-#if CH_USE_HEAP
+#if CH_USE_DYNAMIC || defined(__DOXYGEN__)
+#if CH_USE_HEAP || defined(__DOXYGEN__)
   &testdyn1,
 #endif
-#if CH_USE_MEMPOOLS
+#if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
   &testdyn2,
 #endif
-#if CH_USE_HEAP && CH_USE_REGISTRY
+#if (CH_USE_HEAP && CH_USE_REGISTRY) || defined(__DOXYGEN__)
   &testdyn3,
 #endif
 #endif

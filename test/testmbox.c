@@ -51,7 +51,7 @@
  * @brief Mailboxes header file
  */
 
-#if CH_USE_MAILBOXES
+#if CH_USE_MAILBOXES || defined(__DOXYGEN__)
 
 #define ALLOWED_DELAY MS2ST(5)
 #define MB_SIZE 5
@@ -218,7 +218,7 @@ ROMCONST struct testcase testmbox1 = {
  * @brief   Test sequence for mailboxes.
  */
 ROMCONST struct testcase * ROMCONST patternmbox[] = {
-#if CH_USE_MAILBOXES
+#if CH_USE_MAILBOXES || defined(__DOXYGEN__)
   &testmbox1,
 #endif
   NULL

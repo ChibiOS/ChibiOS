@@ -142,7 +142,7 @@ static void thd3_execute(void) {
   test_assert(4, chThdGetPriority() == prio,
               "unexpected priority level");
 
-#if CH_USE_MUTEXES
+#if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /* Simulates a priority boost situation (p_prio > p_realprio).*/
   chSysLock();
   chThdSelf()->p_prio += 2;

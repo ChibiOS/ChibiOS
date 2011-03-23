@@ -49,7 +49,7 @@
  * @brief Messages header file
  */
 
-#if CH_USE_MESSAGES
+#if CH_USE_MESSAGES || defined(__DOXYGEN__)
 
 /**
  * @page test_msg_001 Messages Server loop
@@ -105,7 +105,7 @@ ROMCONST struct testcase testmsg1 = {
  * @brief   Test sequence for messages.
  */
 ROMCONST struct testcase * ROMCONST patternmsg[] = {
-#if CH_USE_MESSAGES
+#if CH_USE_MESSAGES || defined(__DOXYGEN__)
   &testmsg1,
 #endif
   NULL

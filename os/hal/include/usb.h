@@ -416,7 +416,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @brief   Common ISR code, usb event callback.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
+ * @param[in] evt       USB event code
  *
  * @notapi
  */
@@ -429,7 +429,6 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @brief   Common ISR code, SOF callback.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
  *
  * @notapi
  */
