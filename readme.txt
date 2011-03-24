@@ -97,7 +97,8 @@
   more readable output. Also modified the documentation layout to put functions
   and variables ahead of everything else in the group pages.
   Doxygen version below 1.7.3 cannot be used anymore because differences in
-  templates.
+  templates. Note that now there are two Doxygen projects, one for generating
+  the CHM file the other for plain HTML.
 
 *** 2.3.0 ***
 - FIX: Fixed race condition in CM0 ports, the fix also improves the

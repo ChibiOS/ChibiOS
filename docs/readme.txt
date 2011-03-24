@@ -1,8 +1,3 @@
-*** Documentation access ***
-
-Open ./docs/index.html to open the start page or ./docs/html/index.html in
-order to access directly the doxigen documentation.
-
 *** Documentation build procedure ***
 
 The following software must be installed:
@@ -12,5 +7,5 @@ The following software must be installed:
 
 Build procedure:
 - Run Doxywizard.
-- Load ./docs/Doxyfile from Doxywizard.
+- Load ./docs/Doxyfile_html or ./docs/Doxyfile_chm from Doxywizard.
 - Start.
