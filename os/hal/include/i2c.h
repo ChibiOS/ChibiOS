@@ -116,6 +116,7 @@ typedef uint8_t i2cblock_t;
 
 /**
  * @brief Structure representing an I2C slave configuration.
+ * @details TODO: write about befers
  */
 struct I2CSlaveConfig{
   /**
@@ -133,6 +134,9 @@ struct I2CSlaveConfig{
    */
   i2cerrorcallback_t    id_err_callback;
 
+  /**
+   * @brief Pointer to input buffer.
+   */
   i2cblock_t            *rxbuf;     // pointer to buffer
   size_t                rxdepth;    // depth of buffer
   size_t                rxbytes;    // count of bytes to sent in one transmission

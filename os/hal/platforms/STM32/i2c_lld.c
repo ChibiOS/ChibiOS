@@ -297,8 +297,8 @@ void i2c_lld_start(I2CDriver *i2cp) {
 #endif
 #if STM32_I2C_USE_I2C2
     if (&I2CD2 == i2cp) {
-      NVICEnableVector(I2C2_EV_IRQn, STM32_I2C2_IRQ_PRIORITY);
-      NVICEnableVector(I2C2_ER_IRQn, STM32_I2C2_IRQ_PRIORITY);
+      NVICEnableVector(I2C2_EV_IRQn, STM32_I2C_I2C2_IRQ_PRIORITY);
+      NVICEnableVector(I2C2_ER_IRQn, STM32_I2C_I2C2_IRQ_PRIORITY);
       RCC->APB1ENR |= RCC_APB1ENR_I2C2EN; // I2C 2 clock enable
     }
 #endif
