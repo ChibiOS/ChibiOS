@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
+/*-*
  * @file    usb_cdc.h
  * @brief   USB Communication Device Class support header.
  *

@@ -24,7 +24,7 @@
  * Copyright (C) 1996, 1999, 2001 David S. Miller (davem@redhat.com)
  */
 
-/**
+/*-*
  * @file    mii.h
  * @brief   MII Driver macros and structures.
  *
