@@ -195,8 +195,16 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
   if ((i2cp->id_state == I2C_MWAIT_TF) && (i2cp->id_i2c->SR1 & I2C_SR1_BTF)){
     chSysLockFromIsr();
     i2cp->id_i2c->CR2 &= (~I2C_CR2_ITEVTEN); // disable BTF interrupt
-    i2cp->id_slave_config->id_callback(i2cp, i2cp->id_slave_config);
     chSysUnlockFromIsr();
+    /* now driver is ready to generate (re)start/stop condition.
+     * Callback function is good place to do that.*/
+    i2cp->id_state = I2C_READY;
+
+    if (i2cp->id_slave_config->id_callback != NULL)
+      i2cp->id_slave_config->id_callback(i2cp, i2cp->id_slave_config);
+    else /* If no callback function set - generate stop */
+      i2c_lld_master_stop(i2cp);
+
     return;
   }
   else{ // debugging trap
@@ -455,7 +463,9 @@ void i2c_lld_master_start(I2CDriver *i2cp){
   i2cp->id_i2c->CR1 |= I2C_CR1_START;
   while (i2cp->id_i2c->CR1 & I2C_CR1_START);
 
-  i2cp->id_i2c->CR2 |= I2C_CR2_ITEVTEN | I2C_CR2_ITBUFEN; // enable interrupts
+  /* enable interrupts from I2C hardware. They will disable in driver state
+  machine after the tranafer finish.*/
+  i2cp->id_i2c->CR2 |= I2C_CR2_ITEVTEN | I2C_CR2_ITBUFEN;
 }
 
 void i2c_lld_master_stop(I2CDriver *i2cp){

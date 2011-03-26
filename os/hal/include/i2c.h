@@ -79,8 +79,15 @@ typedef enum {
 
 /**
  * @brief   I2C notification callback type.
- * @details This function must be used to send start or stop events to I2C bus,
- *          and change states of I2CDriver.
+ * @details This callback invoked when byte transfer finish event generated,
+ *          No matter sending or reading. This function designed
+ *          for sending (re)start or stop events to I2C bus.
+ *          Use "restart" boolean flag
+ *          in I2CSlaveConfig structure for this needs.
+ *          Each slave can (must?) have its own callback function.
+ *
+ *          If callback function is set to NULL - driver generate stop
+ *          condition on the bus after the transfer finish.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object triggering the
  *                      callback
