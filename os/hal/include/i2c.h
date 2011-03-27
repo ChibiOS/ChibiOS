@@ -79,15 +79,12 @@ typedef enum {
 
 /**
  * @brief   I2C notification callback type.
- * @details This callback invoked when byte transfer finish event generated,
+ * @details This callback invoked when byte transfer finish event occurs,
  *          No matter sending or reading. This function designed
- *          for sending (re)start or stop events to I2C bus.
- *          Use "restart" boolean flag
- *          in I2CSlaveConfig structure for this needs.
- *          Each slave can (must?) have its own callback function.
+ *          for sending (re)start or stop events to I2C bus from user level.
  *
- *          If callback function is set to NULL - driver generate stop
- *          condition on the bus after the transfer finish.
+ *          If callback function is set to NULL - driver atomaticcaly
+ *          generate stop condition after the transfer finish.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object triggering the
  *                      callback
@@ -115,8 +112,9 @@ typedef uint8_t i2cblock_t;
 
 
 /**
- * @brief Structure representing an I2C slave configuration.
- * @details TODO: write about befers
+ * @brief   Structure representing an I2C slave configuration.
+ * @details Each slave device has its own config structure with input and
+ *          output buffers for temporally storing data.
  */
 struct I2CSlaveConfig{
   /**
@@ -135,17 +133,17 @@ struct I2CSlaveConfig{
   i2cerrorcallback_t    id_err_callback;
 
   /**
-   * @brief Pointer to input buffer.
+   * @brief Receive and transmit buffers.
    */
-  i2cblock_t            *rxbuf;     // pointer to buffer
-  size_t                rxdepth;    // depth of buffer
-  size_t                rxbytes;    // count of bytes to sent in one transmission
-  size_t                rxbufhead;  // head pointer to current data byte
+  i2cblock_t *rxbuf;     /*!< Pointer to receive buffer. */
+  size_t     rxdepth;    /*!< Depth of buffer. */
+  size_t     rxbytes;    /*!< Number of bytes to be receive in one transmission. */
+  size_t     rxbufhead;  /*!< Pointer to current data byte. */
 
-  i2cblock_t            *txbuf;
-  size_t                txdepth;
-  size_t                txbytes;
-  size_t                txbufhead;
+  i2cblock_t *txbuf;     /*!< Pointer to transmit buffer.*/
+  size_t     txdepth;    /*!< Depth of buffer. */
+  size_t     txbytes;    /*!< Number of bytes to be transmit in one transmission. */
+  size_t     txbufhead;  /*!< Pointer to current data byte. */
 
   /**
    * @brief   Contain slave address and some flags.
@@ -161,7 +159,13 @@ struct I2CSlaveConfig{
    */
   uint16_t              address;
 
-  bool_t                restart;    // send restart if TRUE. Else sent stop event after complete data tx/rx
+  /**
+   * @brief   Boolean flag for dealing with start/stop conditions.
+   * @note    This flag destined to use in callback functions. It place here
+   *          for convenience and flexibility reasons, but you can use your
+   *          own variable from user level code.
+   */
+  bool_t                restart;
 
 
 #if I2C_USE_WAIT

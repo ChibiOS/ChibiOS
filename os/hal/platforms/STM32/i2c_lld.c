@@ -33,6 +33,12 @@ I2CDriver I2CD2;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Interrupt service routine.
+ * @details This function handle all ERROR interrupt conditions.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ */
 static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
   //TODO: more robust error handling
   chSysLockFromIsr();
@@ -101,14 +107,20 @@ inline bool_t i2c_lld_rxbyte(I2CDriver *i2cp) {
 }
 
 
-/*
- * This function handle all regular interrupt conditions
+/**
+ * @brief   Interrupt service routine.
+ * @details This function handle all regular interrupt conditions.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
  */
 static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
+
+#if CH_DBG_ENABLE_CHECKS
   // debug variables
   int i = 0;
   int n = 0;
   int m = 0;
+#endif
 
   /*  In 10-bit addressing mode,
   – To enter Transmitter mode, a master sends the header (11110xx0) and then the
@@ -165,7 +177,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       i2c_lld_txbyte(i2cp); // send first byte
       return;
     }
-    else {
+    else {// I2C is receiving data
       /* In order to generate the non-acknowledge pulse after the last received
        * data byte, the ACK bit must be cleared just after reading the second
        * last data byte (after second last RxNE event).
@@ -197,22 +209,25 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     i2cp->id_i2c->CR2 &= (~I2C_CR2_ITEVTEN); // disable BTF interrupt
     chSysUnlockFromIsr();
     /* now driver is ready to generate (re)start/stop condition.
-     * Callback function is good place to do that.*/
+     * Callback function is good place to do that. If not callback was
+     * set - driver only generate stop condition. */
     i2cp->id_state = I2C_READY;
 
     if (i2cp->id_slave_config->id_callback != NULL)
       i2cp->id_slave_config->id_callback(i2cp, i2cp->id_slave_config);
-    else /* If no callback function set - generate stop */
+    else /* No callback function set - generate stop */
       i2c_lld_master_stop(i2cp);
 
     return;
   }
+#if CH_DBG_ENABLE_CHECKS
   else{ // debugging trap
     i = i2cp->id_i2c->SR1;
     n = i2cp->id_i2c->SR2;
     m = i2cp->id_i2c->CR1;
-    return;
+    while(TRUE);
   }
+#endif /* CH_DBG_ENABLE_CHECKS */
 }
 
 #if STM32_I2C_USE_I2C1 || defined(__DOXYGEN__)
@@ -314,7 +329,11 @@ void i2c_lld_start(I2CDriver *i2cp) {
   i2cp->id_i2c->CR1 |= 1; // enable interface
 }
 
-
+/**
+ * @brief Set clock speed.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ */
 void i2c_lld_set_clock(I2CDriver *i2cp) {
   volatile uint16_t regCCR, regCR2, freq, clock_div;
   volatile uint16_t pe_bit_saved;
@@ -389,6 +408,11 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
   i2cp->id_i2c->CR1 |= pe_bit_saved;
 }
 
+/**
+ * @brief Set operation mode of I2C hardware.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ */
 void i2c_lld_set_opmode(I2CDriver *i2cp) {
   I2C_opMode_t opmode = i2cp->id_config->opMode;
   uint16_t regCR1;
@@ -412,6 +436,11 @@ void i2c_lld_set_opmode(I2CDriver *i2cp) {
   i2cp->id_i2c->CR1 = regCR1;
 }
 
+/**
+ * @brief Set own address.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ */
 void i2c_lld_set_own_address(I2CDriver *i2cp) {
   //TODO: dual address mode
 
@@ -458,7 +487,11 @@ void i2c_lld_stop(I2CDriver *i2cp) {
   i2cp->id_state = I2C_STOP;
 }
 
-
+/**
+ * @brief Generate start condition.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ */
 void i2c_lld_master_start(I2CDriver *i2cp){
   i2cp->id_i2c->CR1 |= I2C_CR1_START;
   while (i2cp->id_i2c->CR1 & I2C_CR1_START);
@@ -468,12 +501,22 @@ void i2c_lld_master_start(I2CDriver *i2cp){
   i2cp->id_i2c->CR2 |= I2C_CR2_ITEVTEN | I2C_CR2_ITBUFEN;
 }
 
+/**
+ * @brief Generate stop condition.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ */
 void i2c_lld_master_stop(I2CDriver *i2cp){
   i2cp->id_i2c->CR1 |= I2C_CR1_STOP;
   while (i2cp->id_i2c->CR1 & I2C_CR1_STOP);
 }
 
-
+/**
+ * @brief Begin data transmitting.
+ *
+ * @param[in] i2cp          pointer to the @p I2CDriver object
+ * @param[in] i2cscfg       pointer to the @p I2CSlaveConfig object
+ */
 void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 
   i2cp->id_slave_config = i2cscfg;
@@ -483,6 +526,12 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
   i2c_lld_master_start(i2cp);
 }
 
+/**
+ * @brief Begin data receiving.
+ *
+ * @param[in] i2cp          pointer to the @p I2CDriver object
+ * @param[in] i2cscfg       pointer to the @p I2CSlaveConfig object
+ */
 void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 
   i2cp->id_slave_config = i2cscfg;
