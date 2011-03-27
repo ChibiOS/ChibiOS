@@ -69,6 +69,19 @@ void i2cObjectInit(I2CDriver *i2cp) {
   i2cp->id_state  = I2C_STOP;
   i2cp->id_config = NULL;
   i2cp->id_slave_config = NULL;
+
+#if I2C_USE_WAIT
+  i2cp->id_thread   = NULL;
+#endif /* I2C_USE_WAIT */
+
+#if I2C_USE_MUTUAL_EXCLUSION
+#if CH_USE_MUTEXES
+  chMtxInit(&i2cp->id_mutex);
+#else
+  chSemInit(&i2cp->id_semaphore, 1);
+#endif /* CH_USE_MUTEXES */
+#endif /* I2C_USE_MUTUAL_EXCLUSION */
+
 #if defined(I2C_DRIVER_EXT_INIT_HOOK)
   I2C_DRIVER_EXT_INIT_HOOK(i2cp);
 #endif
