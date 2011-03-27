@@ -124,7 +124,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
 
     if(!(i2cp->id_slave_config->address & 0x8000)){ // slave address is 7-bit
       i2cp->id_i2c->DR = ((i2cp->id_slave_config->address & 0x7F) << 1) |
-                        i2cp->id_slave_config->rw_bit;
+                        i2cp->rw_bit;
       i2cp->id_state = I2C_MWAIT_ADDR_ACK;
       return;
     }
@@ -139,7 +139,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
   // "wait" interrupt with ADD10 flag
   if ((i2cp->id_state == I2C_10BIT_HANDSHAKE) && (i2cp->id_i2c->SR1 & I2C_SR1_ADD10)){
     i2cp->id_i2c->DR = i2cp->id_slave_config->address & 0x00FF; // send remaining bits of address
-    if (!(i2cp->id_slave_config->rw_bit))
+    if (!(i2cp->rw_bit))
       // in transmit mode there is nothing to do with 10-bit handshaking
       i2cp->id_state = I2C_MWAIT_ADDR_ACK;
     return;
@@ -310,7 +310,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
 
   i2c_lld_set_clock(i2cp);
   i2c_lld_set_opmode(i2cp);
-  i2cp->id_i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN | I2C_CR2_ITBUFEN;
+  i2cp->id_i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN | I2C_CR2_ITBUFEN;// enable interrupts
   i2cp->id_i2c->CR1 |= 1; // enable interface
 }
 
@@ -477,7 +477,7 @@ void i2c_lld_master_stop(I2CDriver *i2cp){
 void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 
   i2cp->id_slave_config = i2cscfg;
-  i2cp->id_slave_config->rw_bit = I2C_WRITE;
+  i2cp->rw_bit = I2C_WRITE;
 
   // generate start condition. Later transmission goes in background
   i2c_lld_master_start(i2cp);
@@ -486,7 +486,7 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 
   i2cp->id_slave_config = i2cscfg;
-  i2cp->id_slave_config->rw_bit = I2C_READ;
+  i2cp->rw_bit = I2C_READ;
 
   // generate (re)start condition. Later connection goes asynchronously
   i2c_lld_master_start(i2cp);
@@ -495,7 +495,7 @@ void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 
 
 /**
- * @brief Transmits data ever the I2C bus as masteri2cp.
+ * @brief Transmits data via I2C bus.
  *
  * @note  This function does not use interrupts
  *
@@ -508,7 +508,7 @@ void i2c_lld_master_transmit_NI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t
   int i = 0;
 
   i2cp->id_slave_config = i2cscfg;
-  i2cp->id_slave_config->rw_bit = I2C_WRITE;
+  i2cp->rw_bit = I2C_WRITE;
 
 
   i2cp->id_i2c->CR1 |= I2C_CR1_START; // generate start condition

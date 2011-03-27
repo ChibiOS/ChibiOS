@@ -116,6 +116,12 @@ struct I2CDriver{
    * @brief Driver state.
    */
   i2cstate_t            id_state;
+#if I2C_USE_WAIT
+  /**
+   * @brief Thread waiting for I/O completion.
+   */
+  Thread                *thread;
+#endif /* I2C_USE_WAIT */
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
@@ -134,8 +140,12 @@ struct I2CDriver{
    * @brief Current slave configuration data.
    */
   I2CSlaveConfig        *id_slave_config;
+  /**
+   * @brief RW-bit sent to slave.
+   */
+  uint8_t               rw_bit;
 
-  /* End of the mandatory fields.*/
+  /*********** End of the mandatory fields. **********************************/
 
   /**
    * @brief Pointer to the I2Cx registers block.
