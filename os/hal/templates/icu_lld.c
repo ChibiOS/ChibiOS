@@ -122,7 +122,7 @@ void icu_lld_disable(ICUDriver *icup) {
  *
  * @notapi
  */
-icucnt_t icu_lld_get_width(icup) {
+icucnt_t icu_lld_get_width(ICUDriver *icup) {
 
 }
 
@@ -136,7 +136,7 @@ icucnt_t icu_lld_get_width(icup) {
  *
  * @notapi
  */
-icucnt_t icu_lld_get_period(icup) {
+icucnt_t icu_lld_get_period(ICUDriver *icup) {
 
 }
 

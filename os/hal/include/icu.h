@@ -72,7 +72,7 @@ typedef enum {
  *
  * @iclass
  */
-void icuEnableI(icup) icu_lld_enable(icup)
+#define icuEnableI(icup) icu_lld_enable(icup)
 
 /**
  * @brief   Disables the input capture.
@@ -81,7 +81,7 @@ void icuEnableI(icup) icu_lld_enable(icup)
  *
  * @iclass
  */
-void icuDisableI(ICUDriver *icup) icu_lld_disable(icup)
+#define icuDisableI(icup) icu_lld_disable(icup)
 
 /**
  * @brief   Returns the width of the latest pulse.
