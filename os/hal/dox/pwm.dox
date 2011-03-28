@@ -21,7 +21,8 @@
 /**
  * @defgroup PWM PWM Driver
  * @brief   Generic PWM Driver.
- * @details This module implements a generic PWM driver.
+ * @details This module implements a generic PWM (Pulse Width Modulation)
+ *          driver.
  * @pre     In order to use the PWM driver the @p HAL_USE_PWM option
  *          must be enabled in @p halconf.h.
  *

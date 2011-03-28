@@ -21,9 +21,10 @@
 /**
  * @defgroup GPT GPT Driver
  * @brief   Generic GPT Driver.
- * @details This module implements a generic timer driver. The timer can be
- *          programmed in order to trigger callbacks after a specified time
- *          period or continuously with a specified interval.
+ * @details This module implements a generic GPT (General Purpose Timer)
+ *          driver. The timer can be programmed in order to trigger callbacks
+ *          after a specified time period or continuously with a specified
+ *          interval.
  * @pre     In order to use the GPT driver the @p HAL_USE_GPT option
  *          must be enabled in @p halconf.h.
  *

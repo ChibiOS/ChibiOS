@@ -21,8 +21,8 @@
 /**
  * @defgroup USB USB Driver
  * @brief   Generic USB Driver.
- * @details This module implements a generic USB driver supporting device-mode
- *          operations.
+ * @details This module implements a generic USB (Universal Serial Bus) driver
+ *          supporting device-mode operations.
  * @pre     In order to use the USB driver the @p HAL_USE_USB option
  *          must be enabled in @p halconf.h.
  *

@@ -21,8 +21,8 @@
 /**
  * @defgroup UART UART Driver
  * @brief   Generic UART Driver.
- * @details This driver abstracts a generic UART peripheral, the API is
- *          designed to be:
+ * @details This driver abstracts a generic UART (Universal Asynchronous
+ *          Receiver Transmitter) peripheral, the API is designed to be:
  *          - Unbuffered and copy-less, transfers are always directly performed
  *            from/to the application-level buffers without extra copy
  *            operations.
