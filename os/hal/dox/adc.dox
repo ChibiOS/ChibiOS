@@ -54,7 +54,7 @@
     active -> ready [label="\nadcStopConversion()\nsync return"];
     active -> active [label="\nasync callback (half buffer)\nasync callback (full buffer circular)\n>acg_endcb<"];
     active -> complete [label="\nasync callback (full buffer)\n>acg_endcb<"];
-    complete -> active [label="\nadcStartConversionI()\nthen\ncallback return()"];
+    complete -> active [label="\nadcStartConversionI()\nthen\ncallback return"];
     complete -> ready [label="\ncallback return"];
   }
  * @enddot
@@ -80,7 +80,7 @@
     active -> ready [label="\nadcStopConversion()\nsync return"];
     active -> active [label="\nasync callback (half buffer)\nasync callback (full buffer circular)\n>acg_endcb<"];
     active -> complete [label="\nasync callback (full buffer)\n>acg_endcb<"];
-    complete -> active [label="\nadcStartConversionI()\nthen\ncallback return()"];
+    complete -> active [label="\nadcStartConversionI()\nthen\ncallback return"];
     complete -> ready [label="\ncallback return"];
   }
  * @enddot
