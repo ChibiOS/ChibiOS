@@ -39,6 +39,7 @@
 #include "can.h"
 #include "gpt.h"
 #include "i2c.h"
+#include "icu.h"
 #include "mac.h"
 #include "pwm.h"
 #include "serial.h"

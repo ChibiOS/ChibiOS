@@ -70,6 +70,13 @@
 #endif
 
 /**
+ * @brief   Enables the I2C subsystem.
+ */
+#if !defined(HAL_USE_ICU) || defined(__DOXYGEN__)
+#define HAL_USE_ICU                 TRUE
+#endif
+
+/**
  * @brief   Enables the MAC subsystem.
  */
 #if !defined(HAL_USE_MAC) || defined(__DOXYGEN__)

@@ -212,6 +212,9 @@ struct USBDriver {
    * @brief   Current USB device configuration.
    */
   uint8_t                       configuration;
+#if defined(USB_DRIVER_EXT_FIELDS)
+  USB_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
 };
 

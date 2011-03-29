@@ -127,7 +127,7 @@ register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void scheduler_init(void);
+  void _scheduler_init(void);
 #if !defined(PORT_OPTIMIZED_READYI)
   Thread *chSchReadyI(Thread *tp);
 #endif

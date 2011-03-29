@@ -67,7 +67,7 @@ typedef void *(*memgetfunc_t)(size_t size);
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void core_init(void);
+  void _core_init(void);
   void *chCoreAlloc(size_t size);
   void *chCoreAllocI(size_t size);
   size_t chCoreStatus(void);

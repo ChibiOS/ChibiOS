@@ -45,8 +45,8 @@
 /*===========================================================================*/
 
 /**
- * @brief   PWM1 driver enable switch.
- * @details If set to @p TRUE the support for PWM1 is included.
+ * @brief   PWMD1 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD1 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM1) || defined(__DOXYGEN__)
@@ -54,8 +54,8 @@
 #endif
 
 /**
- * @brief   PWM2 driver enable switch.
- * @details If set to @p TRUE the support for PWM2 is included.
+ * @brief   PWMD2 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD2 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM2) || defined(__DOXYGEN__)
@@ -63,8 +63,8 @@
 #endif
 
 /**
- * @brief   PWM3 driver enable switch.
- * @details If set to @p TRUE the support for PWM3 is included.
+ * @brief   PWMD3 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD3 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM3) || defined(__DOXYGEN__)
@@ -72,8 +72,8 @@
 #endif
 
 /**
- * @brief   PWM4 driver enable switch.
- * @details If set to @p TRUE the support for PWM4 is included.
+ * @brief   PWMD4 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD4 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM4) || defined(__DOXYGEN__)
@@ -81,8 +81,8 @@
 #endif
 
 /**
- * @brief   PWM5 driver enable switch.
- * @details If set to @p TRUE the support for PWM5 is included.
+ * @brief   PWMD5 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD5 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM5) || defined(__DOXYGEN__)
@@ -90,35 +90,35 @@
 #endif
 
 /**
- * @brief   PWM1 interrupt priority level setting.
+ * @brief   PWMD1 interrupt priority level setting.
  */
 #if !defined(STM32_PWM_TIM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM_TIM1_IRQ_PRIORITY         7
 #endif
 
 /**
- * @brief   PWM2 interrupt priority level setting.
+ * @brief   PWMD2 interrupt priority level setting.
  */
 #if !defined(STM32_PWM_TIM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM_TIM2_IRQ_PRIORITY         7
 #endif
 
 /**
- * @brief   PWM3 interrupt priority level setting.
+ * @brief   PWMD3 interrupt priority level setting.
  */
 #if !defined(STM32_PWM_TIM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM_TIM3_IRQ_PRIORITY         7
 #endif
 
 /**
- * @brief   PWM4 interrupt priority level setting.
+ * @brief   PWMD4 interrupt priority level setting.
  */
 #if !defined(STM32_PWM_TIM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM_TIM4_IRQ_PRIORITY         7
 #endif
 
 /**
- * @brief   PWM5 interrupt priority level setting.
+ * @brief   PWMD5 interrupt priority level setting.
  */
 #if !defined(STM32_PWM_TIM5_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM_TIM5_IRQ_PRIORITY         7

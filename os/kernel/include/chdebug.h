@@ -151,7 +151,7 @@ extern "C" {
 #endif
 #if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
   extern TraceBuffer trace_buffer;
-  void trace_init(void);
+  void _trace_init(void);
   void chDbgTrace(Thread *otp);
 #endif
 #if CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK

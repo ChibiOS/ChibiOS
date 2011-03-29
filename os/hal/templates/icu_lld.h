@@ -104,6 +104,9 @@ struct ICUDriver {
    * @brief Current configuration data.
    */
   const ICUConfig           *config;
+#if defined(ICU_DRIVER_EXT_FIELDS)
+  ICU_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
 };
 

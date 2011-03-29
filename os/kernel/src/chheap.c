@@ -65,7 +65,7 @@ static MemoryHeap default_heap;
  *
  * @notapi
  */
-void heap_init(void) {
+void _heap_init(void) {
   default_heap.h_provider = chCoreAlloc;
   default_heap.h_free.h.u.next = (union heap_header *)NULL;
   default_heap.h_free.h.size = 0;

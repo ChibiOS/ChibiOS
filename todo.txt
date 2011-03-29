@@ -18,7 +18,7 @@ Within 2.3.x (hopefully)
 * Swap TIME_IMMEDIATE and TIME_INFINITE values.
 * Improvements to the message passing mechanism in order to allow "delayed,
   out of order, responses".
-* New device driver models: GPT.
+* New device driver models: GPT, ICU.
 X GPT implementation and long duration "IRQ storm" stress test applications
   for all the supported critical platforms.
 - Add UART4 support to the STM32 UART driver (CL line only, HD has a nasty
@@ -40,7 +40,7 @@ X File System infrastructure.
 X Transactional flash file system implementation.
 X I2C device driver class support and at least one implementation.
 X Shared DMA channels support in the STM32/STM8L HALs.
-X RAM ISR vectors support in the STM32 HAL.
+? RAM ISR vectors support in the STM32 HAL.
 - New device driver models: Clock, Systick, RTC, WDG, DAC, Power Monitor.
 
 Later but within 2.x.x

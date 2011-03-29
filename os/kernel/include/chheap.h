@@ -75,7 +75,7 @@ struct memory_heap {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void heap_init(void);
+  void _heap_init(void);
   void chHeapInit(MemoryHeap *heapp, void *buf, size_t size);
   void *chHeapAlloc(MemoryHeap *heapp, size_t size);
   void chHeapFree(void *p);

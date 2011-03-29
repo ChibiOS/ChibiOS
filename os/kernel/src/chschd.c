@@ -45,7 +45,7 @@ ReadyList rlist;
  *
  * @notapi
  */
-void scheduler_init(void) {
+void _scheduler_init(void) {
 
   queue_init(&rlist.r_queue);
   rlist.r_prio = NOPRIO;

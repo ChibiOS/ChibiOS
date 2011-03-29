@@ -48,6 +48,77 @@
 #define STM32_ICU_USE_TIM1                  TRUE
 #endif
 
+/**
+ * @brief   ICUD2 driver enable switch.
+ * @details If set to @p TRUE the support for ICUD2 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_ICU_USE_TIM2) || defined(__DOXYGEN__)
+#define STM32_ICU_USE_TIM2                  TRUE
+#endif
+
+/**
+ * @brief   ICUD3 driver enable switch.
+ * @details If set to @p TRUE the support for ICUD3 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_ICU_USE_TIM3) || defined(__DOXYGEN__)
+#define STM32_ICU_USE_TIM3                  TRUE
+#endif
+
+/**
+ * @brief   ICUD4 driver enable switch.
+ * @details If set to @p TRUE the support for ICUD4 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_ICU_USE_TIM4) || defined(__DOXYGEN__)
+#define STM32_ICU_USE_TIM4                  TRUE
+#endif
+
+/**
+ * @brief   ICUD5 driver enable switch.
+ * @details If set to @p TRUE the support for ICUD5 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_ICU_USE_TIM5) || defined(__DOXYGEN__)
+#define STM32_ICU_USE_TIM5                  TRUE
+#endif
+
+/**
+ * @brief   ICUD1 interrupt priority level setting.
+ */
+#if !defined(STM32_ICU_TIM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ICU_TIM1_IRQ_PRIORITY         7
+#endif
+
+/**
+ * @brief   ICUD2 interrupt priority level setting.
+ */
+#if !defined(STM32_ICU_TIM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ICU_TIM2_IRQ_PRIORITY         7
+#endif
+
+/**
+ * @brief   ICUD3 interrupt priority level setting.
+ */
+#if !defined(STM32_ICU_TIM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ICU_TIM3_IRQ_PRIORITY         7
+#endif
+
+/**
+ * @brief   ICUD4 interrupt priority level setting.
+ */
+#if !defined(STM32_ICU_TIM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ICU_TIM4_IRQ_PRIORITY         7
+#endif
+
+/**
+ * @brief   ICUD5 interrupt priority level setting.
+ */
+#if !defined(STM32_ICU_TIM5_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ICU_TIM5_IRQ_PRIORITY         7
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -143,6 +214,9 @@ struct ICUDriver {
    * @brief Current configuration data.
    */
   const ICUConfig           *config;
+#if defined(ICU_DRIVER_EXT_FIELDS)
+  ICU_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
   /**
    * @brief Pointer to the TIMx registers block.
@@ -209,6 +283,22 @@ struct ICUDriver {
 extern ICUDriver ICUD1;
 #endif
 
+#if STM32_ICU_USE_TIM2 && !defined(__DOXYGEN__)
+extern ICUDriver ICUD2;
+#endif
+
+#if STM32_ICU_USE_TIM3 && !defined(__DOXYGEN__)
+extern ICUDriver ICUD3;
+#endif
+
+#if STM32_ICU_USE_TIM4 && !defined(__DOXYGEN__)
+extern ICUDriver ICUD4;
+#endif
+
+#if STM32_ICU_USE_TIM5 && !defined(__DOXYGEN__)
+extern ICUDriver ICUD5;
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -217,8 +307,6 @@ extern "C" {
   void icu_lld_stop(ICUDriver *icup);
   void icu_lld_enable(ICUDriver *icup);
   void icu_lld_disable(ICUDriver *icup);
-  icucnt_t icu_lld_get_width(ICUDriver *icup);
-  icucnt_t icu_lld_get_period(ICUDriver *icup);
 #ifdef __cplusplus
 }
 #endif

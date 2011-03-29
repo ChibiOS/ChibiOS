@@ -46,7 +46,7 @@ TraceBuffer trace_buffer;
  * @brief   Trace circular buffer subsystem initialization.
  * @note    Internal use only.
  */
-void trace_init(void) {
+void _trace_init(void) {
 
   trace_buffer.tb_size = TRACE_BUFFER_SIZE;
   trace_buffer.tb_ptr = &trace_buffer.tb_buffer[0];

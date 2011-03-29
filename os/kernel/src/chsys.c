@@ -76,16 +76,16 @@ void chSysInit(void) {
   static Thread mainthread;
 
   port_init();
-  scheduler_init();
-  vt_init();
+  _scheduler_init();
+  _vt_init();
 #if CH_USE_MEMCORE
-  core_init();
+  _core_init();
 #endif
 #if CH_USE_HEAP
-  heap_init();
+  _heap_init();
 #endif
 #if CH_DBG_ENABLE_TRACE
-  trace_init();
+  _trace_init();
 #endif
 
   /* Now this instructions flow becomes the main thread.*/

@@ -48,40 +48,40 @@
 /*===========================================================================*/
 
 /**
- * @brief   GPT1 driver identifier.
- * @note    The driver GPT1 allocates the complex timer TIM1 when enabled.
+ * @brief   GPTD1 driver identifier.
+ * @note    The driver GPTD1 allocates the complex timer TIM1 when enabled.
  */
 #if STM32_GPT_USE_TIM1 || defined(__DOXYGEN__)
 GPTDriver GPTD1;
 #endif
 
 /**
- * @brief   GPT2 driver identifier.
- * @note    The driver GPT2 allocates the timer TIM2 when enabled.
+ * @brief   GPTD2 driver identifier.
+ * @note    The driver GPTD2 allocates the timer TIM2 when enabled.
  */
 #if STM32_GPT_USE_TIM2 || defined(__DOXYGEN__)
 GPTDriver GPTD2;
 #endif
 
 /**
- * @brief   GPT3 driver identifier.
- * @note    The driver GPT3 allocates the timer TIM3 when enabled.
+ * @brief   GPTD3 driver identifier.
+ * @note    The driver GPTD3 allocates the timer TIM3 when enabled.
  */
 #if STM32_GPT_USE_TIM3 || defined(__DOXYGEN__)
 GPTDriver GPTD3;
 #endif
 
 /**
- * @brief   GPT4 driver identifier.
- * @note    The driver GPT4 allocates the timer TIM4 when enabled.
+ * @brief   GPTD4 driver identifier.
+ * @note    The driver GPTD4 allocates the timer TIM4 when enabled.
  */
 #if STM32_GPT_USE_TIM4 || defined(__DOXYGEN__)
 GPTDriver GPTD4;
 #endif
 
 /**
- * @brief   GPT5 driver identifier.
- * @note    The driver GPT5 allocates the timer TIM5 when enabled.
+ * @brief   GPTD5 driver identifier.
+ * @note    The driver GPTD5 allocates the timer TIM5 when enabled.
  */
 #if STM32_GPT_USE_TIM5 || defined(__DOXYGEN__)
 GPTDriver GPTD5;

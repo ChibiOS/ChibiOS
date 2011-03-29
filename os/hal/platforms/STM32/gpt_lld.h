@@ -40,8 +40,8 @@
 /*===========================================================================*/
 
 /**
- * @brief   GPT1 driver enable switch.
- * @details If set to @p TRUE the support for GPT1 is included.
+ * @brief   GPTD1 driver enable switch.
+ * @details If set to @p TRUE the support for GPTD1 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_GPT_USE_TIM1) || defined(__DOXYGEN__)
@@ -49,8 +49,8 @@
 #endif
 
 /**
- * @brief   GPT2 driver enable switch.
- * @details If set to @p TRUE the support for GPT2 is included.
+ * @brief   GPTD2 driver enable switch.
+ * @details If set to @p TRUE the support for GPTD2 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_GPT_USE_TIM2) || defined(__DOXYGEN__)
@@ -58,8 +58,8 @@
 #endif
 
 /**
- * @brief   GPT3 driver enable switch.
- * @details If set to @p TRUE the support for GPT3 is included.
+ * @brief   GPTD3 driver enable switch.
+ * @details If set to @p TRUE the support for GPTD3 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_GPT_USE_TIM3) || defined(__DOXYGEN__)
@@ -67,8 +67,8 @@
 #endif
 
 /**
- * @brief   GPT4 driver enable switch.
- * @details If set to @p TRUE the support for GPT4 is included.
+ * @brief   GPTD4 driver enable switch.
+ * @details If set to @p TRUE the support for GPTD4 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_GPT_USE_TIM4) || defined(__DOXYGEN__)
@@ -76,8 +76,8 @@
 #endif
 
 /**
- * @brief   GPT5 driver enable switch.
- * @details If set to @p TRUE the support for GPT5 is included.
+ * @brief   GPTD5 driver enable switch.
+ * @details If set to @p TRUE the support for GPTD5 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_GPT_USE_TIM5) || defined(__DOXYGEN__)
@@ -85,35 +85,35 @@
 #endif
 
 /**
- * @brief   GPT1 interrupt priority level setting.
+ * @brief   GPTD1 interrupt priority level setting.
  */
 #if !defined(STM32_GPT_TIM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_GPT_TIM1_IRQ_PRIORITY         7
 #endif
 
 /**
- * @brief   GPT2 interrupt priority level setting.
+ * @brief   GPTD2 interrupt priority level setting.
  */
 #if !defined(STM32_GPT_TIM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_GPT_TIM2_IRQ_PRIORITY         7
 #endif
 
 /**
- * @brief   GPT3 interrupt priority level setting.
+ * @brief   GPTD3 interrupt priority level setting.
  */
 #if !defined(STM32_GPT_TIM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_GPT_TIM3_IRQ_PRIORITY         7
 #endif
 
 /**
- * @brief   GPT4 interrupt priority level setting.
+ * @brief   GPTD4 interrupt priority level setting.
  */
 #if !defined(STM32_GPT_TIM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_GPT_TIM4_IRQ_PRIORITY         7
 #endif
 
 /**
- * @brief   GPT5 interrupt priority level setting.
+ * @brief   GPTD5 interrupt priority level setting.
  */
 #if !defined(STM32_GPT_TIM5_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_GPT_TIM5_IRQ_PRIORITY         7
@@ -206,6 +206,9 @@ struct GPTDriver {
    * @brief Current configuration data.
    */
   const GPTConfig           *config;
+#if defined(GPT_DRIVER_EXT_FIELDS)
+  GPT_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
   /**
    * @brief Timer base clock.
