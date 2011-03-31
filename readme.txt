@@ -79,7 +79,14 @@
 - FIX: Fixed wrong checks in I/O Queues (bug 3219197)(backported to 2.2.3).
 - FIX: Fixed invalid assertion in adcConvert() (bug 3205410)(backported
   to 2.2.3).
-- NEW: Added new ICU driver model, Input Capture Unit..
+- NEW: Improvements to the PWM driver model:
+  - Easier configuration similar to the GPT driver initializations, macros
+    are no more required.
+  - Added a new function that allows to change the PWM period on the fly,
+    even from within callbacks. Formerly it was required to stop and restart
+    the driver.
+  - Improved driver documentation.
+- NEW: Added new ICU driver model, Input Capture Unit.
 - NEW: ICU driver implementation for STM32.
 - NEW: Implemented stack checking in the Cortex-Mx RVCT port (backported
   to 2.2.3).

@@ -21,33 +21,21 @@
 #include "ch.h"
 #include "hal.h"
 
-/*
- * Red LEDs blinker thread, times are in milliseconds.
- */
-static WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
-
-  (void)arg;
-  while (TRUE) {
-    palClearPad(IOPORT3, GPIOC_LED);
-    chThdSleepMilliseconds(500);
-    palSetPad(IOPORT3, GPIOC_LED);
-    chThdSleepMilliseconds(500);
-  }
-  return 0;
-}
-
 static void pwmpcb(PWMDriver *pwmp) {
 
   (void)pwmp;
+  palSetPad(IOPORT3, GPIOC_LED);
 }
 
 static void pwmc1cb(PWMDriver *pwmp) {
 
   (void)pwmp;
+  palClearPad(IOPORT3, GPIOC_LED);
 }
 
 static PWMConfig pwmcfg = {
+  10000,                                    /* 10KHz PWM clock frequency.   */
+  10000,                                    /* Initial PWM period 1S.       */
   pwmpcb,
   {
    {PWM_OUTPUT_ACTIVE_HIGH, pwmc1cb},
@@ -55,8 +43,6 @@ static PWMConfig pwmcfg = {
    {PWM_OUTPUT_DISABLED, NULL},
    {PWM_OUTPUT_DISABLED, NULL}
   },
-  PWM_COMPUTE_PSC(STM32_TIMCLK1, 10000),    /* 10KHz PWM clock frequency.   */
-  PWM_COMPUTE_ARR(10000, 1000000),          /* PWM period 1S.               */
   0
 };
 
@@ -76,9 +62,9 @@ int main(void) {
   chSysInit();
 
   /*
-   * Creates the blinker thread.
+   * LED initially off.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  palSetPad(IOPORT3, GPIOC_LED);
 
   /*
    * Initializes the PWM driver 1.
@@ -88,9 +74,9 @@ int main(void) {
   chThdSleepMilliseconds(2000);
 
   /*
-   * Starts the channel 0 using 50% duty cycle.
+   * Starts the channel 0 using 25% duty cycle.
    */
-  pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 5000));
+  pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 2500));
   chThdSleepMilliseconds(5000);
 
   /*
@@ -100,10 +86,18 @@ int main(void) {
   chThdSleepMilliseconds(5000);
 
   /*
+   * Changes PWM period to half second and duty cycle to 50%.
+   */
+  pwmChangePeriod(&PWMD1, 5000);
+  pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 5000));
+  chThdSleepMilliseconds(5000);
+
+  /*
    * Disables channel 0.
    */
   pwmDisableChannel(&PWMD1, 0);
-
+  pwmStop(&PWMD1);
+  palSetPad(IOPORT3, GPIOC_LED);
 
   /*
    * Normal main() thread activity, in this demo it does nothing.

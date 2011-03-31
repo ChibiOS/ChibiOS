@@ -325,6 +325,7 @@ void gpt_lld_stop(GPTDriver *gptp) {
   if (gptp->state == GPT_READY) {
     gptp->tim->CR1  = 0;                    /* Timer disabled.              */
     gptp->tim->DIER = 0;                    /* All IRQs disabled.           */
+    gptp->tim->SR   = 0;                    /* Clear eventual pending IRQs. */
 
 #if STM32_GPT_USE_TIM1
     if (&GPTD1 == gptp) {

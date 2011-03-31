@@ -77,6 +77,8 @@ void pwmObjectInit(PWMDriver *pwmp) {
 
 /**
  * @brief   Configures and activates the PWM peripheral.
+ * @note    Starting a driver that is already in the @p PWM_READY state
+ *          disables all the active channels.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] config    pointer to a @p PWMConfig object
@@ -91,6 +93,7 @@ void pwmStart(PWMDriver *pwmp, const PWMConfig *config) {
   chDbgAssert((pwmp->state == PWM_STOP) || (pwmp->state == PWM_READY),
               "pwmStart(), #1", "invalid state");
   pwmp->config = config;
+  pwmp->period = config->period;
   pwm_lld_start(pwmp);
   pwmp->state = PWM_READY;
   chSysUnlock();
@@ -116,8 +119,40 @@ void pwmStop(PWMDriver *pwmp) {
 }
 
 /**
+ * @brief   Changes the period the PWM peripheral.
+ * @details This function changes the period of a PWM unit that has already
+ *          been activated using @p pwmStart().
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ * @post    The PWM unit period is changed to the new value.
+ * @post    Any active channel is disabled by this function and must be
+ *          activated explicitly using @p pwmEnableChannel().
+ * @note    Depending on the hardware implementation this function has
+ *          effect starting on the next cycle (recommended implementation)
+ *          or immediately (fallback implementation).
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ *
+ * @api
+ */
+void pwmChangePeriod(PWMDriver *pwmp, pwmcnt_t period) {
+
+  chDbgCheck(pwmp != NULL, "pwmChangePeriod");
+
+  chSysLock();
+  chDbgAssert(pwmp->state == PWM_READY,
+              "pwmChangePeriod(), #1", "invalid state");
+  pwmp->period = period;
+  pwm_lld_change_period(pwmp, period);
+  chSysUnlock();
+}
+
+/**
  * @brief   Enables a PWM channel.
- * @details Programs (or reprograms) a PWM channel.
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ * @post    The channel is active using the specified configuration.
+ * @note    Depending on the hardware implementation this function has
+ *          effect starting on the next cycle (recommended implementation)
+ *          or immediately (fallback implementation).
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
@@ -141,8 +176,12 @@ void pwmEnableChannel(PWMDriver *pwmp,
 
 /**
  * @brief   Disables a PWM channel.
- * @details The channel is disabled and its output line returned to the
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ * @post    The channel is disabled and its output line returned to the
  *          idle state.
+ * @note    Depending on the hardware implementation this function has
+ *          effect starting on the next cycle (recommended implementation)
+ *          or immediately (fallback implementation).
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)

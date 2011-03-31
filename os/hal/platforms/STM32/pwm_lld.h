@@ -169,16 +169,13 @@ typedef uint8_t pwmchannel_t;
 typedef uint16_t pwmcnt_t;
 
 /**
- * @brief   Type of a structure representing an PWM driver.
+ * @brief PWM logic mode.
  */
-typedef struct PWMDriver PWMDriver;
-
-/**
- * @brief   PWM notification callback type.
- *
- * @param[in] pwmp      pointer to a @p PWMDriver object
- */
-typedef void (*pwmcallback_t)(PWMDriver *pwmp);
+typedef enum {
+  PWM_OUTPUT_DISABLED = 0,          /**< Output not driven, callback only.  */
+  PWM_OUTPUT_ACTIVE_HIGH = 1,       /**< Idle is logic level 0.             */
+  PWM_OUTPUT_ACTIVE_LOW = 2         /**< Idle is logic level 1.             */
+} pwmmode_t;
 
 /**
  * @brief   PWM driver channel configuration structure.
@@ -202,6 +199,18 @@ typedef struct {
  */
 typedef struct {
   /**
+   * @brief   Timer clock in Hz.
+   * @note    The low level can use assertions in order to catch invalid
+   *          frequency specifications.
+   */
+  uint32_t                  frequency;
+  /**
+   * @brief   PWM period in ticks.
+   * @note    The low level can use assertions in order to catch invalid
+   *          period specifications.
+   */
+  pwmcnt_t                  period;
+  /**
    * @brief Periodic callback pointer.
    * @note  This callback is invoked on PWM counter reset. If set to
    *        @p NULL then the callback is disabled.
@@ -212,14 +221,6 @@ typedef struct {
    */
   PWMChannelConfig          channels[PWM_CHANNELS];
   /* End of the mandatory fields.*/
-  /**
-   * @brief TIM PSC (pre-scaler) register initialization data.
-   */
-  uint16_t                  psc;
-  /**
-   * @brief TIM ARR (auto-reload) register initialization data.
-   */
-  uint16_t                  arr;
   /**
    * @brief TIM CR2 register initialization data.
    * @note  The value of this field should normally be equal to zero.
@@ -239,6 +240,10 @@ struct PWMDriver {
    * @brief Current driver configuration data.
    */
   const PWMConfig           *config;
+  /**
+   * @brief   Current PWM period in ticks.
+   */
+  pwmcnt_t                  period;
 #if defined(PWM_DRIVER_EXT_FIELDS)
   PWM_DRIVER_EXT_FIELDS
 #endif
@@ -256,90 +261,6 @@ struct PWMDriver {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
-
-/**
- * @brief   PWM clock prescaler initialization utility.
- * @note    The real clock value is rounded to the lower valid value, please
- *          make sure that the source clock frequency is a multiple of the
- *          requested PWM clock frequency.
- * @note    The calculated value must fit into an unsigned 16 bits integer.
- *
- * @param[in] clksrc    clock source frequency, depending on the target timer
- *                      cell it can be one of:
- *                      - STM32_TIMCLK1
- *                      - STM32_TIMCLK2
- *                      .
- *                      Please refer to the STM32 HAL driver documentation
- *                      and/or the STM32 Reference Manual for the right clock
- *                      source.
- * @param[in] pwmclk    PWM clock frequency in cycles
- * @return              The value to be stored in the @p psc field of the
- *                      @p PWMConfig structure.
- */
-#define PWM_COMPUTE_PSC(clksrc, pwmclk)                                     \
-  ((uint16_t)(((clksrc) / (pwmclk)) - 1))
-
-/**
- * @brief   PWM cycle period initialization utility.
- * @note    The calculated value must fit into an unsigned 16 bits integer.
- *
- * @param[in] pwmclk    PWM clock frequency in cycles
- * @param[in] pwmperiod PWM cycle period in nanoseconds
- * @return              The value to be stored in the @p arr field of the
- *                      @p PWMConfig structure.
- */
-#define PWM_COMPUTE_ARR(pwmclk, pwmperiod)                                  \
-  ((uint16_t)(((pwmclk) / (1000000000 / (pwmperiod))) - 1))
-
-/**
- * @brief   Converts from fraction to pulse width.
- * @note    Be careful with rounding errors, this is integer math not magic.
- *          You can specify tenths of thousandth but make sure you have the
- *          proper hardware resolution by carefully choosing the clock source
- *          and prescaler settings, see @p PWM_COMPUTE_PSC.
- *
- * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] numerator numerator of the fraction
- * @param[in] denominator percentage as an integer between 0 and numerator
- * @return              The pulse width to be passed to @p pwmEnableChannel().
- *
- * @api
- */
-#define PWM_FRACTION_TO_WIDTH(pwmp, numerator, denominator)                 \
-  ((uint16_t)((((uint32_t)(pwmp)->config->arr + 1UL) *                      \
-               (uint32_t)(denominator)) / (uint32_t)(numerator)))
-
-/**
- * @brief   Converts from degrees to pulse width.
- * @note    Be careful with rounding errors, this is integer math not magic.
- *          You can specify hundredths of degrees but make sure you have the
- *          proper hardware resolution by carefully choosing the clock source
- *          and prescaler settings, see @p PWM_COMPUTE_PSC.
- *
- * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] degrees   degrees as an integer between 0 and 36000
- * @return              The pulse width to be passed to @p pwmEnableChannel().
- *
- * @api
- */
-#define PWM_DEGREES_TO_WIDTH(pwmp, degrees)                                 \
-  PWM_FRACTION_TO_WIDTH(pwmp, 36000, degrees)
-
-/**
- * @brief   Converts from percentage to pulse width.
- * @note    Be careful with rounding errors, this is integer math not magic.
- *          You can specify tenths of thousandth but make sure you have the
- *          proper hardware resolution by carefully choosing the clock source
- *          and prescaler settings, see @p PWM_COMPUTE_PSC.
- *
- * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] percentage percentage as an integer between 0 and 10000
- * @return              The pulse width to be passed to @p pwmEnableChannel().
- *
- * @api
- */
-#define PWM_PERCENTAGE_TO_WIDTH(pwmp, percentage)                           \
-  PWM_FRACTION_TO_WIDTH(pwmp, 10000, percentage)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -371,6 +292,7 @@ extern "C" {
   void pwm_lld_init(void);
   void pwm_lld_start(PWMDriver *pwmp);
   void pwm_lld_stop(PWMDriver *pwmp);
+  void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period);
   void pwm_lld_enable_channel(PWMDriver *pwmp,
                               pwmchannel_t channel,
                               pwmcnt_t width);
