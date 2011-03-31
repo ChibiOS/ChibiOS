@@ -59,6 +59,18 @@ typedef enum {
   ICU_IDLE = 5,                     /**< Idle cycle phase.                  */
 } icustate_t;
 
+/**
+ * @brief   Type of a structure representing an ICU driver.
+ */
+typedef struct ICUDriver ICUDriver;
+
+/**
+ * @brief   ICU notification callback type.
+ *
+ * @param[in] icup      pointer to a @p ICUDriver object
+ */
+typedef void (*icucallback_t)(ICUDriver *icup);
+
 #include "icu_lld.h"
 
 /*===========================================================================*/

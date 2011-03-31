@@ -248,6 +248,7 @@ void icu_lld_init(void) {
  * @notapi
  */
 void icu_lld_start(ICUDriver *icup) {
+  uint32_t clock, psc;
 
   if (icup->state == ICU_STOP) {
     /* Clock activation and timer reset.*/
@@ -258,6 +259,7 @@ void icu_lld_start(ICUDriver *icup) {
       RCC->APB2RSTR = 0;
       NVICEnableVector(TIM1_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM1_IRQ_PRIORITY));
+      clock = STM32_TIMCLK2;
     }
 #endif
 #if STM32_ICU_USE_TIM2
@@ -267,6 +269,7 @@ void icu_lld_start(ICUDriver *icup) {
       RCC->APB1RSTR = 0;
       NVICEnableVector(TIM2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM2_IRQ_PRIORITY));
+      clock = STM32_TIMCLK1;
     }
 #endif
 #if STM32_ICU_USE_TIM3
@@ -276,6 +279,7 @@ void icu_lld_start(ICUDriver *icup) {
       RCC->APB1RSTR = 0;
       NVICEnableVector(TIM3_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM3_IRQ_PRIORITY));
+      clock = STM32_TIMCLK1;
     }
 #endif
 #if STM32_ICU_USE_TIM4
@@ -285,6 +289,7 @@ void icu_lld_start(ICUDriver *icup) {
       RCC->APB1RSTR = 0;
       NVICEnableVector(TIM4_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM4_IRQ_PRIORITY));
+      clock = STM32_TIMCLK1;
     }
 #endif
 
@@ -295,16 +300,28 @@ void icu_lld_start(ICUDriver *icup) {
       RCC->APB1RSTR = 0;
       NVICEnableVector(TIM5_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM5_IRQ_PRIORITY));
+      clock = STM32_TIMCLK1;
     }
 #endif
   }
+  else {
+    /* Driver re-configuration scenario, it must be stopped first.*/
+    icup->tim->CR1  = 0;                    /* Timer disabled.              */
+    icup->tim->DIER = 0;                    /* All IRQs disabled.           */
+    icup->tim->SR   = 0;                    /* Clear eventual pending IRQs. */
+    icup->tim->CCR1 = 0;                    /* Comparator 1 disabled.       */
+    icup->tim->CCR2 = 0;                    /* Comparator 2 disabled.       */
+    icup->tim->CNT  = 0;                    /* Counter reset to zero.       */
+  }
 
-  /* Timer configuration, PWM input mode.*/
-  icup->tim->CR1   = 0;                     /* Initially stopped.           */
-  icup->tim->CR2   = 0;
+  /* Timer configuration.*/
+  psc = (clock / icup->config->frequency) - 1;
+  chDbgAssert((psc <= 0xFFFF) &&
+              ((psc + 1) * icup->config->frequency) == clock,
+              "icu_lld_start(), #1", "invalid frequency");
+  icup->tim->PSC  = (uint16_t)psc;
   icup->tim->ARR   = 0xFFFF;
-  icup->tim->PSC   = icup->config->psc;     /* Prescaler value.             */
-  icup->tim->DIER  = 0;
+
   /* CCMR1_CC1S = 01 = CH1 Input on TI1.
      CCMR1_CC2S = 10 = CH2 Input on TI2.*/
   icup->tim->CCMR1 = TIM_CCMR1_CC1S_0 |

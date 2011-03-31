@@ -56,21 +56,14 @@ typedef enum {
 } icumode_t;
 
 /**
+ * @brief   ICU frequency type.
+ */
+typedef uint32_t icufreq_t;
+
+/**
  * @brief   ICU counter type.
  */
 typedef uint16_t icucnt_t;
-
-/**
- * @brief   Type of a structure representing an ICU driver.
- */
-typedef struct ICUDriver ICUDriver;
-
-/**
- * @brief   ICU notification callback type.
- *
- * @param[in] icup      pointer to a @p ICUDriver object
- */
-typedef void (*icucallback_t)(ICUDriver *icup);
 
 /**
  * @brief   Driver configuration structure.
@@ -81,6 +74,12 @@ typedef struct {
    * @brief   Driver mode.
    */
   icumode_t                 mode;
+  /**
+   * @brief   Timer clock in Hz.
+   * @note    The low level can use assertions in order to catch invalid
+   *          frequency specifications.
+   */
+  icufreq_t                 frequency;
   /**
    * @brief   Callback for pulse width measurement.
    */
