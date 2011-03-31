@@ -63,6 +63,8 @@ static const ADCConversionGroup adcgrpcfg = {
  * the active state is a logic one.
  */
 static PWMConfig pwmcfg = {
+  10000,                                    /* 10KHz PWM clock frequency.   */
+  10000,                                    /* PWM period 1S (in ticks).    */
   pwmpcb,
   {
     {PWM_OUTPUT_DISABLED, NULL},
@@ -71,8 +73,6 @@ static PWMConfig pwmcfg = {
     {PWM_OUTPUT_ACTIVE_HIGH, NULL}
   },
   /* HW dependent part.*/
-  PWM_COMPUTE_PSC(STM32_TIMCLK1, 10000),    /* 10KHz PWM clock frequency.   */
-  PWM_COMPUTE_ARR(10000, 1000000000),       /* PWM period 1S (in nS).       */
   0
 };
 
@@ -115,7 +115,7 @@ void adccb(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
   (void) buffer; (void) n;
   /* Note, only in the ADC_COMPLETE state because the ADC driver fires an
      intermediate callback when the buffer is half full.*/
-  if (adcp->ad_state == ADC_COMPLETE) {
+  if (adcp->state == ADC_COMPLETE) {
     adcsample_t avg_ch1, avg_ch2;
 
     /* Calculates the average values from the ADC samples.*/

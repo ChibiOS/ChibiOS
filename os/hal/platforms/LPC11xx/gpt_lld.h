@@ -127,18 +127,6 @@ typedef uint32_t gptfreq_t;
 typedef uint32_t gptcnt_t;
 
 /**
- * @brief   Type of a structure representing a GPT driver.
- */
-typedef struct GPTDriver GPTDriver;
-
-/**
- * @brief   GPT notification callback type.
- *
- * @param[in] gptp      pointer to a @p GPTDriver object
- */
-typedef void (*gptcallback_t)(GPTDriver *gptp);
-
-/**
  * @brief   Driver configuration structure.
  * @note    It could be empty on some architectures.
  */
@@ -170,10 +158,6 @@ struct GPTDriver {
    */
   const GPTConfig           *config;
   /* End of the mandatory fields.*/
-  /**
-   * @brief Timer base clock.
-   */
-  uint32_t                  clock;
   /**
    * @brief Pointer to the CTxxBy registers block.
    */

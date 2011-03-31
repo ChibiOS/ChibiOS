@@ -58,6 +58,18 @@ typedef enum {
   GPT_ONESHOT = 4                   /**< Active in one shot mode.           */
 } gptstate_t;
 
+/**
+ * @brief   Type of a structure representing a GPT driver.
+ */
+typedef struct GPTDriver GPTDriver;
+
+/**
+ * @brief   GPT notification callback type.
+ *
+ * @param[in] gptp      pointer to a @p GPTDriver object
+ */
+typedef void (*gptcallback_t)(GPTDriver *gptp);
+
 #include "gpt_lld.h"
 
 /*===========================================================================*/

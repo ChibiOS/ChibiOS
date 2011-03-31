@@ -164,18 +164,6 @@ typedef uint32_t gptfreq_t;
 typedef uint16_t gptcnt_t;
 
 /**
- * @brief   Type of a structure representing a GPT driver.
- */
-typedef struct GPTDriver GPTDriver;
-
-/**
- * @brief   GPT notification callback type.
- *
- * @param[in] gptp      pointer to a @p GPTDriver object
- */
-typedef void (*gptcallback_t)(GPTDriver *gptp);
-
-/**
  * @brief   Driver configuration structure.
  * @note    It could be empty on some architectures.
  */
