@@ -354,6 +354,7 @@ void icu_lld_stop(ICUDriver *icup) {
     /* Clock deactivation.*/
     icup->tim->CR1  = 0;                    /* Timer disabled.              */
     icup->tim->DIER = 0;                    /* All IRQs disabled.           */
+    icup->tim->SR   = 0;                    /* Clear eventual pending IRQs. */
 
 #if STM32_ICU_USE_TIM1
     if (&ICUD1 == icup) {
