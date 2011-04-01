@@ -55,6 +55,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief PWM mode type.
+ */
+typedef uint32_t pwmmode_t;
+
+/**
  * @brief   PWM channel type.
  */
 typedef uint8_t pwmchannel_t;
@@ -63,15 +68,6 @@ typedef uint8_t pwmchannel_t;
  * @brief   PWM counter type.
  */
 typedef uint16_t pwmcnt_t;
-
-/**
- * @brief PWM logic mode.
- */
-typedef enum {
-  PWM_OUTPUT_DISABLED = 0,          /**< Output not driven, callback only.  */
-  PWM_OUTPUT_ACTIVE_HIGH = 1,       /**< Idle is logic level 0.             */
-  PWM_OUTPUT_ACTIVE_LOW = 2         /**< Idle is logic level 1.             */
-} pwmmode_t;
 
 /**
  * @brief   PWM driver channel configuration structure.

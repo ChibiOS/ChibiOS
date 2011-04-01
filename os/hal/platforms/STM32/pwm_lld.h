@@ -41,37 +41,20 @@
 #define PWM_CHANNELS                            4
 
 /**
- * @brief   Standard output modes mask.
- */
-#define PWM_OUTPUT_MASK                         0x07
-
-/**
- * @brief   Output not driven, callback only.
- */
-#define PWM_OUTPUT_DISABLED                     0x00
-
-/**
- * @brief   Positive PWM logic, active is logic level one.
- */
-#define PWM_OUTPUT_ACTIVE_HIGH                  0x01
-
-/**
- * @brief   Inverse PWM logic, active is logic level zero.
- */
-#define PWM_OUTPUT_ACTIVE_LOW                   0x02
-
-/**
  * @brief   Complementary output modes mask.
+ * @note    This is an STM32-specific setting.
  */
-#define PWM_COMPLEMENTARY_OUTPUT_MASK           0x70
+#define PWM_COMPLEMENTARY_OUTPUT_MASK           0xF0
 
 /**
  * @brief   Complementary output not driven.
+ * @note    This is an STM32-specific setting.
  */
 #define PWM_COMPLEMENTARY_OUTPUT_DISABLED       0x00
 
 /**
  * @brief   Complementary output, active is logic level one.
+ * @note    This is an STM32-specific setting.
  * @note    This setting is only available if the configuration option
  *          @p STM32_PWM_USE_ADVANCED is set to TRUE and only for advanced
  *          timers TIM1 and TIM8.
@@ -80,6 +63,7 @@
 
 /**
  * @brief   Complementary output, active is logic level zero.
+ * @note    This is an STM32-specific setting.
  * @note    This setting is only available if the configuration option
  *          @p STM32_PWM_USE_ADVANCED is set to TRUE and only for advanced
  *          timers TIM1 and TIM8.

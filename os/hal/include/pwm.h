@@ -35,6 +35,26 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Standard output modes mask.
+ */
+#define PWM_OUTPUT_MASK                         0x0F
+
+/**
+ * @brief   Output not driven, callback only.
+ */
+#define PWM_OUTPUT_DISABLED                     0x00
+
+/**
+ * @brief   Positive PWM logic, active is logic level one.
+ */
+#define PWM_OUTPUT_ACTIVE_HIGH                  0x01
+
+/**
+ * @brief   Inverse PWM logic, active is logic level zero.
+ */
+#define PWM_OUTPUT_ACTIVE_LOW                   0x02
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
