@@ -530,6 +530,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
  * @note    The function has effect at the next cycle start.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] period    new cycle time in ticks
  *
  * @api
  */

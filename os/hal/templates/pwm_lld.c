@@ -99,6 +99,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
  *          or immediately (fallback implementation).
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] period    new cycle time in ticks
  *
  * @api
  */
