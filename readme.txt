@@ -86,6 +86,7 @@
     even from within callbacks. Formerly it was required to stop and restart
     the driver.
   - Improved driver documentation.
+- NEW: Added advanced mode to the STM32 PWM driver (TIM1 only).
 - NEW: Added new ICU driver model, Input Capture Unit.
 - NEW: ICU driver implementation for STM32.
 - NEW: Implemented stack checking in the Cortex-Mx RVCT port (backported

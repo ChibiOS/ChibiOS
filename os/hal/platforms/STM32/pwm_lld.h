@@ -38,11 +38,67 @@
 /**
  * @brief   Number of PWM channels per PWM driver.
  */
-#define PWM_CHANNELS                        4
+#define PWM_CHANNELS                            4
+
+/**
+ * @brief   Standard output modes mask.
+ */
+#define PWM_OUTPUT_MASK                         0x07
+
+/**
+ * @brief   Output not driven, callback only.
+ */
+#define PWM_OUTPUT_DISABLED                     0x00
+
+/**
+ * @brief   Positive PWM logic, active is logic level one.
+ */
+#define PWM_OUTPUT_ACTIVE_HIGH                  0x01
+
+/**
+ * @brief   Inverse PWM logic, active is logic level zero.
+ */
+#define PWM_OUTPUT_ACTIVE_LOW                   0x02
+
+/**
+ * @brief   Complementary output modes mask.
+ */
+#define PWM_COMPLEMENTARY_OUTPUT_MASK           0x70
+
+/**
+ * @brief   Complementary output not driven.
+ */
+#define PWM_COMPLEMENTARY_OUTPUT_DISABLED       0x00
+
+/**
+ * @brief   Complementary output, active is logic level one.
+ * @note    This setting is only available if the configuration option
+ *          @p STM32_PWM_USE_ADVANCED is set to TRUE and only for advanced
+ *          timers TIM1 and TIM8.
+ */
+#define PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH    0x10
+
+/**
+ * @brief   Complementary output, active is logic level zero.
+ * @note    This setting is only available if the configuration option
+ *          @p STM32_PWM_USE_ADVANCED is set to TRUE and only for advanced
+ *          timers TIM1 and TIM8.
+ */
+#define PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW     0x20
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   If advanced timer features switch.
+ * @details If set to @p TRUE the advanced features for TIM1 and TIM8 are
+ *          enabled.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_PWM_USE_ADVANCED) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_ADVANCED              TRUE
+#endif
 
 /**
  * @brief   PWMD1 driver enable switch.
@@ -154,9 +210,18 @@
 #error "PWM driver activated but no TIM peripheral assigned"
 #endif
 
+#if STM32_PWM_USE_ADVANCED && !STM32_PWM_USE_TIM1
+#error "advanced mode selected but no advanced timer assigned"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief PWM mode type.
+ */
+typedef uint32_t pwmmode_t;
 
 /**
  * @brief   PWM channel type.
@@ -167,15 +232,6 @@ typedef uint8_t pwmchannel_t;
  * @brief   PWM counter type.
  */
 typedef uint16_t pwmcnt_t;
-
-/**
- * @brief PWM logic mode.
- */
-typedef enum {
-  PWM_OUTPUT_DISABLED = 0,          /**< Output not driven, callback only.  */
-  PWM_OUTPUT_ACTIVE_HIGH = 1,       /**< Idle is logic level 0.             */
-  PWM_OUTPUT_ACTIVE_LOW = 2         /**< Idle is logic level 1.             */
-} pwmmode_t;
 
 /**
  * @brief   PWM driver channel configuration structure.
@@ -226,6 +282,13 @@ typedef struct {
    * @note  The value of this field should normally be equal to zero.
    */
   uint16_t                  cr2;
+#if STM32_PWM_USE_ADVANCED || defined(__DOXYGEN__)
+  /**
+   * @brief TIM BDTR (break & dead-time) register initialization data.
+   * @note  The value of this field should normally be equal to zero.
+   */                                                                     \
+  uint16_t                  bdtr;
+#endif
 } PWMConfig;
 
 /**

@@ -73,7 +73,10 @@ static PWMConfig pwmcfg = {
     {PWM_OUTPUT_ACTIVE_HIGH, NULL}
   },
   /* HW dependent part.*/
+  0,
+#if STM32_PWM_USE_ADVANCED
   0
+#endif
 };
 
 /*
