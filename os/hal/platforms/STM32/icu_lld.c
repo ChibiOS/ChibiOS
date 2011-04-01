@@ -93,16 +93,10 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
 
   sr = icup->tim->SR & icup->tim->DIER;
   icup->tim->SR = 0;
-  if ((sr & TIM_SR_CC1IF) != 0) {
-    icustate_t previous_state = icup->state;
-    icup->state = ICU_ACTIVE;
-    if (previous_state != ICU_WAITING)
-      icup->config->period_cb(icup);
-  }
-  if ((sr & TIM_SR_CC2IF) != 0) {
-    icup->state = ICU_IDLE;
-    icup->config->width_cb(icup);
-  }
+  if ((sr & TIM_SR_CC1IF) != 0)
+    _icu_isr_invoke_period_cb(icup);
+  if ((sr & TIM_SR_CC2IF) != 0)
+    _icu_isr_invoke_width_cb(icup);
 }
 
 /*===========================================================================*/

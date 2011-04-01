@@ -119,6 +119,32 @@ typedef void (*icucallback_t)(ICUDriver *icup);
  */
 #define icuGetPeriodI(icup) icu_lld_get_period(icup)
 
+/**
+ * @brief   Common ISR code, ICU width event.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ *
+ * @notapi
+ */
+#define _icu_isr_invoke_width_cb(usbp) {                                    \
+  (icup)->state = ICU_IDLE;                                                 \
+  (icup)->config->width_cb(icup);                                           \
+}
+
+/**
+ * @brief   Common ISR code, ICU period event.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ *
+ * @notapi
+ */
+#define _icu_isr_invoke_period_cb(usbp) {                                   \
+  icustate_t previous_state = (icup)->state;                                \
+  (icup)->state = ICU_ACTIVE;                                               \
+  if (previous_state != ICU_WAITING)                                        \
+    (icup)->config->period_cb(icup);                                        \
+}
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
