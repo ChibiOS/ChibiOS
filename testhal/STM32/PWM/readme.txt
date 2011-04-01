@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/RT HAL - PWM driver demo for STM32.                             **
+** ChibiOS/RT HAL - PWM/ICU driver demo for STM32.                         **
 *****************************************************************************
 
 ** TARGET **
@@ -8,7 +8,9 @@ The demo will on an Olimex STM32-P103 board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32 PWM driver.
+The application demonstrates the use of the STM32 PWM and ICU drivers. Pins
+PA8 and PB6 must be connected in order to trigger the ICU input with the
+PWM output. The ICU unit will measure the generated PWM.
 
 ** Build Procedure **
 

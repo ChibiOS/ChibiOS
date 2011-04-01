@@ -130,8 +130,8 @@ extern "C" {
   void icuObjectInit(ICUDriver *icup);
   void icuStart(ICUDriver *icup, const ICUConfig *config);
   void icuStop(ICUDriver *icup);
-  void icuEnableI(ICUDriver *icup);
-  void icuDisableI(ICUDriver *icup);
+  void icuEnable(ICUDriver *icup);
+  void icuDisable(ICUDriver *icup);
 #ifdef __cplusplus
 }
 #endif

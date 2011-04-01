@@ -223,7 +223,6 @@ struct ICUDriver {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
-
 /**
  * @brief   Returns the width of the latest pulse.
  * @details The pulse width is defined as number of ticks between the start
@@ -234,7 +233,7 @@ struct ICUDriver {
  *
  * @notapi
  */
-#define icu_lld_get_width(icup) ((icup)->tim->CCR2)
+#define icu_lld_get_width(icup) ((icup)->tim->CCR2 + 1)
 
 /**
  * @brief   Returns the width of the latest cycle.
@@ -246,29 +245,7 @@ struct ICUDriver {
  *
  * @notapi
  */
-#define icu_lld_get_period(icup) ((icup)->tim->CCR1)
-
-/**
- * @brief   ICU clock prescaler initialization utility.
- * @note    The real clock value is rounded to the lower valid value, please
- *          make sure that the source clock frequency is a multiple of the
- *          requested ICU clock frequency.
- * @note    The calculated value must fit into an unsigned 16 bits integer.
- *
- * @param[in] clksrc    clock source frequency, depending on the target timer
- *                      cell it can be one of:
- *                      - STM32_TIMCLK1
- *                      - STM32_TIMCLK2
- *                      .
- *                      Please refer to the STM32 HAL driver documentation
- *                      and/or the STM32 Reference Manual for the right clock
- *                      source.
- * @param[in] icuclk    ICU clock frequency in cycles
- * @return              The value to be stored in the @p psc field of the
- *                      @p ICUConfig structure.
- */
-#define ICU_COMPUTE_PSC(clksrc, icuclk)                                     \
-  ((uint16_t)(((clksrc) / (icuclk)) - 1))
+#define icu_lld_get_period(icup) ((icup)->tim->CCR1 + 1)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

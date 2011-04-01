@@ -91,12 +91,18 @@ ICUDriver ICUD5;
 static void icu_lld_serve_interrupt(ICUDriver *icup) {
   uint16_t sr;
 
-  sr = TIM1->SR & TIM1->DIER;
+  sr = icup->tim->SR & icup->tim->DIER;
   icup->tim->SR = 0;
-  if ((sr & TIM_SR_CC1IF) != 0)
-    icup->config->period_cb(icup);
-  if ((sr & TIM_SR_CC2IF) != 0)
+  if ((sr & TIM_SR_CC1IF) != 0) {
+    icustate_t previous_state = icup->state;
+    icup->state = ICU_ACTIVE;
+    if (previous_state != ICU_WAITING)
+      icup->config->period_cb(icup);
+  }
+  if ((sr & TIM_SR_CC2IF) != 0) {
+    icup->state = ICU_IDLE;
     icup->config->width_cb(icup);
+  }
 }
 
 /*===========================================================================*/
