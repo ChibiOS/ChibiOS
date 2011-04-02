@@ -36,7 +36,7 @@ static msg_t PollTmp75Thread(void *arg) {
   systime_t time = chTimeNow();
 
   while (TRUE) {
-    time += MS2ST(1000);
+    time += MS2ST(1001);
     /* Call reading function */
     request_temperature();
     chThdSleepUntil(time);

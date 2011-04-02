@@ -138,7 +138,9 @@ void i2cMasterStart(I2CDriver *i2cp){
 
   chDbgCheck((i2cp != NULL), "i2cMasterTransmit");
 
+  chSysLock();
   i2c_lld_master_start(i2cp);
+  chSysUnlock();
 }
 
 /**
@@ -149,8 +151,9 @@ void i2cMasterStart(I2CDriver *i2cp){
 void i2cMasterStop(I2CDriver *i2cp){
 
   chDbgCheck((i2cp != NULL), "i2cMasterTransmit");
-
+  chSysLock();
   i2c_lld_master_stop(i2cp);
+  chSysUnlock();
 }
 
 /**
@@ -168,7 +171,9 @@ void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
               "i2cMasterTransmit(), #1",
               "not active");
 
+  chSysLock();
   i2c_lld_master_transmit(i2cp, i2cscfg);
+  chSysUnlock();
 }
 
 
@@ -186,7 +191,9 @@ void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
               "i2cMasterReceive(), #1",
               "not active");
 
+  chSysLock();
   i2c_lld_master_receive(i2cp, i2cscfg);
+  chSysUnlock();
 }
 
 

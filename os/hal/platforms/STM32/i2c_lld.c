@@ -215,7 +215,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
 
     if (i2cp->id_slave_config->id_callback != NULL)
       i2cp->id_slave_config->id_callback(i2cp, i2cp->id_slave_config);
-    else /* No callback function set - generate stop */
+    else /* No callback function set. Generate stop */
       i2c_lld_master_stop(i2cp);
 
     return;
@@ -497,7 +497,7 @@ void i2c_lld_master_start(I2CDriver *i2cp){
   while (i2cp->id_i2c->CR1 & I2C_CR1_START);
 
   /* enable interrupts from I2C hardware. They will disable in driver state
-  machine after the tranafer finish.*/
+  machine after the transfer finish.*/
   i2cp->id_i2c->CR2 |= I2C_CR2_ITEVTEN | I2C_CR2_ITBUFEN;
 }
 
