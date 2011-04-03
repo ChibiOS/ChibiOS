@@ -96,6 +96,8 @@
 - NEW: Added board files for the Olimex STM32-P107.
 - NEW: Improved setup packets handling in the USB driver through a specific
   callback.
+- NEW: Improvements to the PAL driver and various implementation in order
+  to make them more parenthesis friendly.
 - OPT: Simplified Serial over USB driver configuration.
 - CHANGE: Renamed the demo ARMCM3-STM32F107-GCC in ARMCM3-STM32F107 and added
   IAR and Keil projects.

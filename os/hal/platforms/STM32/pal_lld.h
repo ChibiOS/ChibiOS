@@ -279,10 +279,9 @@ typedef GPIO_TypeDef * ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_writegroup(port, mask, offset, bits) {                      \
-  (port)->BSRR = ((~(bits) & (mask)) << (16 + (offset))) |                  \
-                 (((bits) & (mask)) << (offset));                           \
-}
+#define pal_lld_writegroup(port, mask, offset, bits)                        \
+  ((port)->BSRR = ((~(bits) & (mask)) << (16 + (offset))) |                 \
+                 (((bits) & (mask)) << (offset)))
 
 /**
  * @brief   Pads group mode setup.

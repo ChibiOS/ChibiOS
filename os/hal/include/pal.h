@@ -263,9 +263,8 @@ typedef struct {
  * @api
  */
 #if !defined(pal_lld_setport) || defined(__DOXYGEN__)
-#define palSetPort(port, bits) {                                        \
-  palWritePort(port, palReadLatch(port) | (bits));                      \
-}
+#define palSetPort(port, bits)                                          \
+  palWritePort(port, palReadLatch(port) | (bits))
 #else
 #define palSetPort(port, bits) pal_lld_setport(port, bits)
 #endif
@@ -286,9 +285,8 @@ typedef struct {
  * @api
  */
 #if !defined(pal_lld_clearport) || defined(__DOXYGEN__)
-#define palClearPort(port, bits) {                                      \
-  palWritePort(port, palReadLatch(port) & ~(bits));                     \
-}
+#define palClearPort(port, bits)                                        \
+  palWritePort(port, palReadLatch(port) & ~(bits))
 #else
 #define palClearPort(port, bits) pal_lld_clearport(port, bits)
 #endif
@@ -309,9 +307,8 @@ typedef struct {
  * @api
  */
 #if !defined(pal_lld_toggleport) || defined(__DOXYGEN__)
-#define palTogglePort(port, bits) {                                     \
-  palWritePort(port, palReadLatch(port) ^ (bits));                      \
-}
+#define palTogglePort(port, bits)                                       \
+  palWritePort(port, palReadLatch(port) ^ (bits))
 #else
 #define palTogglePort(port, bits) pal_lld_toggleport(port, bits)
 #endif
@@ -347,10 +344,9 @@ typedef struct {
  * @api
  */
 #if !defined(pal_lld_writegroup) || defined(__DOXYGEN__)
-#define palWriteGroup(port, mask, offset, bits) {                       \
+#define palWriteGroup(port, mask, offset, bits)                         \
   palWritePort(port, (palReadLatch(port) & ~((mask) << (offset))) |     \
-                     (((bits) & (mask)) << (offset)));                  \
-}
+                     (((bits) & (mask)) << (offset)))
 #else
 #define palWriteGroup(port, mask, offset, bits)                         \
   pal_lld_writegroup(port, mask, offset, bits)
@@ -416,10 +412,9 @@ typedef struct {
  * @api
  */
 #if !defined(pal_lld_writepad) || defined(__DOXYGEN__)
-#define palWritePad(port, pad, bit) {                                   \
+#define palWritePad(port, pad, bit)                                     \
   palWritePort(port, (palReadLatch(port) & ~PAL_PORT_BIT(pad)) |        \
-                     (((bit) & 1) << pad));                             \
-}
+                     (((bit) & 1) << pad))
 #else
 #define palWritePad(port, pad, bit) pal_lld_writepad(port, pad, bit)
 #endif

@@ -255,9 +255,7 @@ typedef msp430_ioport_t *ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_writeport(port, bits) {                                 \
-  (port)->iop_common.out.reg_p = (bits);                                \
-}
+#define pal_lld_writeport(port, bits) ((port)->iop_common.out.reg_p = (bits))
 
 /**
  * @brief   Pads group mode setup.
