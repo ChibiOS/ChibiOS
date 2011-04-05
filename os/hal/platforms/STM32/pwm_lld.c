@@ -254,35 +254,30 @@ void pwm_lld_init(void) {
 #if STM32_PWM_USE_TIM1
   /* Driver initialization.*/
   pwmObjectInit(&PWMD1);
-  PWMD1.enabled_channels = 0;
   PWMD1.tim = TIM1;
 #endif
 
 #if STM32_PWM_USE_TIM2
   /* Driver initialization.*/
   pwmObjectInit(&PWMD2);
-  PWMD2.enabled_channels = 0;
   PWMD2.tim = TIM2;
 #endif
 
 #if STM32_PWM_USE_TIM3
   /* Driver initialization.*/
   pwmObjectInit(&PWMD3);
-  PWMD3.enabled_channels = 0;
   PWMD3.tim = TIM3;
 #endif
 
 #if STM32_PWM_USE_TIM4
   /* Driver initialization.*/
   pwmObjectInit(&PWMD4);
-  PWMD4.enabled_channels = 0;
   PWMD4.tim = TIM4;
 #endif
 
 #if STM32_PWM_USE_TIM5
   /* Driver initialization.*/
   pwmObjectInit(&PWMD5);
-  PWMD5.enabled_channels = 0;
   PWMD5.tim = TIM5;
 #endif
 }
@@ -299,9 +294,6 @@ void pwm_lld_init(void) {
 void pwm_lld_start(PWMDriver *pwmp) {
   uint32_t clock, psc;
   uint16_t ccer;
-
-  /* Reset channels.*/
-  pwmp->enabled_channels = 0;               /* All channels disabled.       */
 
   if (pwmp->state == PWM_STOP) {
     /* Clock activation and timer reset.*/
@@ -372,7 +364,6 @@ void pwm_lld_start(PWMDriver *pwmp) {
   }
   else {
     /* Driver re-configuration scenario, it must be stopped first.*/
-    pwmp->enabled_channels = 0;             /* All channels disabled.       */
     pwmp->tim->CR1  = 0;                    /* Timer disabled.              */
     pwmp->tim->DIER = 0;                    /* All IRQs disabled.           */
     pwmp->tim->SR   = 0;                    /* Clear eventual pending IRQs. */
@@ -457,8 +448,8 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
   pwmp->tim->CCER = ccer;
   pwmp->tim->EGR  = TIM_EGR_UG;             /* Update event.                */
-  pwmp->tim->SR   = 0;                      /* Clear pending IRQs.          */
   pwmp->tim->DIER = pwmp->config->callback == NULL ? 0 : TIM_DIER_UIE;
+  pwmp->tim->SR   = 0;                      /* Clear pending IRQs.          */
 #if STM32_PWM_USE_ADVANCED
   pwmp->tim->BDTR = pwmp->config->bdtr | TIM_BDTR_MOE;
 #else
@@ -479,7 +470,6 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 
   /* If in ready state then disables the PWM clock.*/
   if (pwmp->state == PWM_READY) {
-    pwmp->enabled_channels = 0;             /* All channels disabled.       */
     pwmp->tim->CR1  = 0;                    /* Timer disabled.              */
     pwmp->tim->DIER = 0;                    /* All IRQs disabled.           */
     pwmp->tim->SR   = 0;                    /* Clear eventual pending IRQs. */
@@ -520,35 +510,6 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 }
 
 /**
- * @brief   Changes the period the PWM peripheral.
- * @details This function changes the period of a PWM unit that has already
- *          been activated using @p pwmStart().
- * @pre     The PWM unit must have been activated using @p pwmStart().
- * @post    The PWM unit period is changed to the new value.
- * @post    Any active channel is disabled by this function and must be
- *          activated explicitly using @p pwmEnableChannel().
- * @note    The function has effect at the next cycle start.
- *
- * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] period    new cycle time in ticks
- *
- * @api
- */
-void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period) {
-
-  pwmp->enabled_channels = 0;           /* All channels disabled.           */
-  pwmp->tim->DIER &= ~(TIM_DIER_CC1IE |
-                       TIM_DIER_CC2IE |
-                       TIM_DIER_CC3IE |
-                       TIM_DIER_CC4IE); /* Channels sources disabled.       */
-  pwmp->tim->SR    = ~(TIM_SR_CC1IF |
-                       TIM_SR_CC1IF |
-                       TIM_SR_CC1IF |
-                       TIM_SR_CC1IF);   /* Clears eventual pending IRQs.    */
-  pwmp->tim->ARR   = (uint16_t)(period - 1);
-}
-
-/**
  * @brief   Enables a PWM channel.
  * @pre     The PWM unit must have been activated using @p pwmStart().
  * @post    The channel is active using the specified configuration.
@@ -565,14 +526,15 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
                             pwmcnt_t width) {
 
   *(&pwmp->tim->CCR1 + (channel * 2)) = width;      /* New duty cycle.      */
-  if ((pwmp->enabled_channels & (1 << channel)) == 0) {
-    /* The channel is not enabled yet.*/
-    pwmp->enabled_channels |= (1 << channel);
-    /* If there is a callback associated to the channel then the proper
-       interrupt is cleared and enabled.*/
-    if (pwmp->config->channels[channel].callback) {
-      pwmp->tim->SR    = ~(2 << channel);
-      pwmp->tim->DIER |= (2 << channel);
+  /* If there is a callback defined for the channel then the associated
+     interrupt must be enabled.*/
+  if (pwmp->config->channels[channel].callback != NULL) {
+    uint32_t dier = pwmp->tim->DIER;
+    /* If the IRQ is not already enabled care must be taken to clear it,
+       it is probably already pending because the timer is running.*/
+    if ((dier & (2 << channel)) == 0) {
+      pwmp->tim->DIER = dier | (2 << channel);
+      pwmp->tim->SR   = ~(2 << channel);
     }
   }
 }
@@ -593,7 +555,6 @@ void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
 
   *(&pwmp->tim->CCR1 + (channel * 2)) = 0;
   pwmp->tim->DIER &= ~(2 << channel);
-  pwmp->enabled_channels &= ~(1 << channel);
 }
 
 #endif /* HAL_USE_PWM */

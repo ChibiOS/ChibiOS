@@ -124,11 +124,9 @@ void pwmStop(PWMDriver *pwmp) {
  *          been activated using @p pwmStart().
  * @pre     The PWM unit must have been activated using @p pwmStart().
  * @post    The PWM unit period is changed to the new value.
- * @post    Any active channel is disabled by this function and must be
- *          activated explicitly using @p pwmEnableChannel().
- * @note    Depending on the hardware implementation this function has
- *          effect starting on the next cycle (recommended implementation)
- *          or immediately (fallback implementation).
+ * @note    If a period is specified that is shorter than the pulse width
+ *          programmed in one of the channels then the behavior is not
+ *          guaranteed.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] period    new cycle time in ticks
@@ -142,8 +140,7 @@ void pwmChangePeriod(PWMDriver *pwmp, pwmcnt_t period) {
   chSysLock();
   chDbgAssert(pwmp->state == PWM_READY,
               "pwmChangePeriod(), #1", "invalid state");
-  pwmp->period = period;
-  pwm_lld_change_period(pwmp, period);
+  pwmChangePeriodI(pwmp, period);
   chSysUnlock();
 }
 

@@ -296,10 +296,6 @@ struct PWMDriver {
 #endif
   /* End of the mandatory fields.*/
   /**
-   * @brief Bit mask of the enabled channels.
-   */
-  uint32_t                  enabled_channels;
-  /**
    * @brief Pointer to the TIMx registers block.
    */
   TIM_TypeDef               *tim;
@@ -308,6 +304,25 @@ struct PWMDriver {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Changes the period the PWM peripheral.
+ * @details This function changes the period of a PWM unit that has already
+ *          been activated using @p pwmStart().
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ * @post    The PWM unit period is changed to the new value.
+ * @note    The function has effect at the next cycle start.
+ * @note    If a period is specified that is shorter than the pulse width
+ *          programmed in one of the channels then the behavior is not
+ *          guaranteed.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] period    new cycle time in ticks
+ *
+ * @notapi
+ */
+#define pwm_lld_change_period(pwmp, period)                                 \
+  ((pwmp)->tim->ARR = (uint16_t)((period) - 1))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -339,7 +354,6 @@ extern "C" {
   void pwm_lld_init(void);
   void pwm_lld_start(PWMDriver *pwmp);
   void pwm_lld_stop(PWMDriver *pwmp);
-  void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period);
   void pwm_lld_enable_channel(PWMDriver *pwmp,
                               pwmchannel_t channel,
                               pwmcnt_t width);

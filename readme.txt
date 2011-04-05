@@ -70,6 +70,11 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.3.2 ***
+- OPT: STM32 PWM driver implementation simplified.
+- CHANGE: Now pwmChangePeriod() does not implicitly disable the active
+  PWM channels.
+
 *** 2.3.1 ***
 - FIX: Fixed insufficient idle thread stack in Cortex-M0-GCC port (bug 3226671)
   (backported to 2.2.3).
