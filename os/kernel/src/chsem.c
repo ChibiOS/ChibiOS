@@ -313,35 +313,32 @@ void chSemSignalI(Semaphore *sp) {
 }
 
 /**
- * @brief   Sets the semaphore counter to the specified value.
- * @post    After invoking this function all the threads waiting on the
- *          semaphore, if any, are released and the semaphore counter is set
- *          to the specified, non negative, value.
+ * @brief   Adds the specified value to the semaphore counter.
  * @post    This function does not reschedule so a call to a rescheduling
  *          function must be performed before unlocking the kernel. Note that
  *          interrupt handlers always reschedule on exit so an explicit
  *          reschedule must not be performed in ISRs.
  *
  * @param[in] sp        pointer to a @p Semaphore structure
- * @param[in] n         the new value of the semaphore counter. The value must
- *                      be non-negative.
+ * @param[in] n         value to be added to the semaphore counter. The value
+ *                      must be positive.
  *
  * @iclass
  */
-void chSemSetCounterI(Semaphore *sp, cnt_t n) {
-  cnt_t cnt;
+void chSemAddCounterI(Semaphore *sp, cnt_t n) {
 
-  chDbgCheck((sp != NULL) && (n >= 0), "chSemSetCounterI");
+  chDbgCheck((sp != NULL) && (n > 0), "chSemAddCounterI");
 
   chDbgAssert(((sp->s_cnt >= 0) && isempty(&sp->s_queue)) ||
               ((sp->s_cnt < 0) && notempty(&sp->s_queue)),
-              "chSemSetCounterI(), #1",
+              "chSemAddCounterI(), #1",
               "inconsistent semaphore");
 
-  cnt = sp->s_cnt;
-  sp->s_cnt = n;
-  while (++cnt <= 0)
-    chSchReadyI(lifo_remove(&sp->s_queue))->p_u.rdymsg = RDY_OK;
+  while (n > 0) {
+    if (++sp->s_cnt <= 0)
+      chSchReadyI(fifo_remove(&sp->s_queue))->p_u.rdymsg = RDY_OK;
+    n--;
+  }
 }
 
 #if CH_USE_SEMSW

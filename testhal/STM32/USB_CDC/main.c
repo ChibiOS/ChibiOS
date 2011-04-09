@@ -18,11 +18,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdio.h>
+#include <string.h>
+
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
 
 #include "usb_cdc.h"
+#include "shell.h"
 
 /*===========================================================================*/
 /* USB related stuff.                                                        */
@@ -306,6 +310,97 @@ static const SerialUSBConfig serusbcfg = {
 };
 
 /*===========================================================================*/
+/* Command line related.                                                     */
+/*===========================================================================*/
+
+#define SHELL_WA_SIZE   THD_WA_SIZE(2048)
+#define TEST_WA_SIZE    THD_WA_SIZE(256)
+
+static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
+  size_t n, size;
+  char buf[52];
+
+  (void)argv;
+  if (argc > 0) {
+    shellPrintLine(chp, "Usage: mem");
+    return;
+  }
+  n = chHeapStatus(NULL, &size);
+  siprintf(buf, "core free memory : %u bytes", chCoreStatus());
+  shellPrintLine(chp, buf);
+  siprintf(buf, "heap fragments   : %u", n);
+  shellPrintLine(chp, buf);
+  siprintf(buf, "heap free total  : %u bytes", size);
+  shellPrintLine(chp, buf);
+}
+
+static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
+  static const char *states[] = {
+    "READY",
+    "CURRENT",
+    "SUSPENDED",
+    "WTSEM",
+    "WTMTX",
+    "WTCOND",
+    "SLEEPING",
+    "WTEXIT",
+    "WTOREVT",
+    "WTANDEVT",
+    "SNDMSGQ",
+    "SNDMSG",
+    "WTMSG",
+    "FINAL"
+  };
+  Thread *tp;
+  char buf[60];
+
+  (void)argv;
+  if (argc > 0) {
+    shellPrintLine(chp, "Usage: threads");
+    return;
+  }
+  shellPrintLine(chp, "    addr    stack prio refs     state time");
+  tp = chRegFirstThread();
+  do {
+    siprintf(buf, "%8lx %8lx %4u %4i %9s %u",
+             (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
+             (unsigned int)tp->p_prio, tp->p_refs - 1,
+             states[tp->p_state], (unsigned int)tp->p_time);
+    shellPrintLine(chp, buf);
+    tp = chRegNextThread(tp);
+  } while (tp != NULL);
+}
+
+static void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
+  Thread *tp;
+
+  (void)argv;
+  if (argc > 0) {
+    shellPrintLine(chp, "Usage: test");
+    return;
+  }
+  tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriority(),
+                           TestThread, chp);
+  if (tp == NULL) {
+    shellPrintLine(chp, "out of memory");
+    return;
+  }
+  chThdWait(tp);
+}
+
+static const ShellCommand commands[] = {
+  {"mem", cmd_mem},
+  {"threads", cmd_threads},
+  {"test", cmd_test},
+  {NULL, NULL}
+};
+
+static const ShellConfig shell_cfg1 = {
+  (BaseChannel *)&SDU1,
+  commands
+};
+
+/*===========================================================================*/
 /* Generic code.                                                             */
 /*===========================================================================*/
 
@@ -325,30 +420,10 @@ static msg_t Thread1(void *arg) {
 }
 
 /*
- * USB CDC loopback thread.
- */
-static WORKING_AREA(waThread2, 256);
-static msg_t Thread2(void *arg) {
-  SerialUSBDriver *sdup = arg;
-  EventListener el;
-
-  chEvtRegisterMask(chIOGetEventSource(&SDU1), &el, 1);
-  while (TRUE) {
-    chEvtWaitAny(ALL_EVENTS);
-    if (chOQIsEmptyI(&SDU1.oqueue)) {
-      uint8_t buffer[0x40];
-      size_t n = chIQReadTimeout(&sdup->iqueue, buffer,
-                                 sizeof(buffer), TIME_IMMEDIATE);
-      if (n > 0)
-        chOQWriteTimeout(&sdup->oqueue, buffer, n, TIME_IMMEDIATE);
-    }
-  }
-}
-
-/*
  * Application entry point.
  */
 int main(void) {
+  Thread *shelltp = NULL;
 
   /*
    * System initializations.
@@ -368,9 +443,9 @@ int main(void) {
   palClearPad(GPIOC, GPIOC_USB_DISC);
 
   /*
-   * Activates the serial driver 2 using the driver default configuration.
+   * Shell manager initialization.
    */
-  sdStart(&SD2, NULL);
+  shellInit();
 
   /*
    * Creates the blinker thread.
@@ -378,17 +453,16 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
-   * Creates the USB CDC loopback thread.
-   */
-  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, &SDU1);
-
-  /*
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
-    if (palReadPad(IOPORT1, GPIOA_BUTTON))
-      TestThread(&SD2);
+    if (!shelltp && (SDU1.config->usbp->state == USB_ACTIVE))
+      shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
+    else if (chThdTerminated(shelltp)) {
+      chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
+      shelltp = NULL;           /* Triggers spawning of a new shell.        */
+    }
     chThdSleepMilliseconds(1000);
   }
 }

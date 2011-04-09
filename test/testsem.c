@@ -104,9 +104,9 @@ static void sem1_execute(void) {
   test_assert_sequence(1, "ABCDE");
 #endif
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+5, thread1, "A");
-  chSemSetCounterI(&sem1, 2);
+  chSemAddCounterI(&sem1, 2);
   test_wait_threads();
-  test_assert(2, chSemGetCounterI(&sem1) == 2, "invalid counter");
+  test_assert(2, chSemGetCounterI(&sem1) == 1, "invalid counter");
 }
 
 ROMCONST struct testcase testsem1 = {
