@@ -71,7 +71,7 @@ void hal_lld_init(void) {
                   SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
 
-#if HAL_USE_ADC || HAL_USE_SPI || HAL_USE_UART
+#if defined(STM32_DMA_REQUIRED)
   dmaInit();
 #endif
 }

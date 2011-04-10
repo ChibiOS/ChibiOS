@@ -94,12 +94,12 @@
 #endif
 
 /**
- * @brief   ADC1 DMA error hook.
+ * @brief   ADC DMA error hook.
  * @note    The default action for DMA errors is a system halt because DMA
  *          error can only happen because programming errors.
  */
-#if !defined(STM32_ADC1_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_ADC1_DMA_ERROR_HOOK() chSysHalt()
+#if !defined(STM32_ADC_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_ADC_DMA_ERROR_HOOK(adcp)      chSysHalt()
 #endif
 
 /*===========================================================================*/
@@ -112,6 +112,10 @@
 
 #if !STM32_ADC_USE_ADC1
 #error "ADC driver activated but no ADC peripheral assigned"
+#endif
+
+#if !defined(STM32_DMA_REQUIRED)
+#define STM32_DMA_REQUIRED
 #endif
 
 /*===========================================================================*/

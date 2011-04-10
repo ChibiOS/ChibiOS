@@ -59,7 +59,7 @@
 #define STM32_ADC_USE_ADC1                  TRUE
 #define STM32_ADC_ADC1_DMA_PRIORITY         3
 #define STM32_ADC_ADC1_IRQ_PRIORITY         5
-#define STM32_ADC_ADC1_DMA_ERROR_HOOK()     chSysHalt()
+#define STM32_ADC_DMA_ERROR_HOOK(adcp)      chSysHalt()
 
 /*
  * CAN driver system settings.
@@ -136,9 +136,7 @@
 #define STM32_SPI_SPI1_IRQ_PRIORITY         10
 #define STM32_SPI_SPI2_IRQ_PRIORITY         10
 #define STM32_SPI_SPI3_IRQ_PRIORITY         10
-#define STM32_SPI_SPI1_DMA_ERROR_HOOK()     chSysHalt()
-#define STM32_SPI_SPI2_DMA_ERROR_HOOK()     chSysHalt()
-#define STM32_SPI_SPI3_DMA_ERROR_HOOK()     chSysHalt()
+#define STM32_SPI_DMA_ERROR_HOOK(spip)      chSysHalt()
 
 /*
  * UART driver system settings.
@@ -152,9 +150,7 @@
 #define STM32_UART_USART1_DMA_PRIORITY      0
 #define STM32_UART_USART2_DMA_PRIORITY      0
 #define STM32_UART_USART3_DMA_PRIORITY      0
-#define STM32_UART_USART1_DMA_ERROR_HOOK()  chSysHalt()
-#define STM32_UART_USART2_DMA_ERROR_HOOK()  chSysHalt()
-#define STM32_UART_USART3_DMA_ERROR_HOOK()  chSysHalt()
+#define STM32_UART_DMA_ERROR_HOOK(uartp)    chSysHalt()
 
 /*
  * USB driver system settings.

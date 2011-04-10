@@ -48,39 +48,35 @@ ADCDriver ADCD1;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Shared ADC DMA ISR service routine.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ * @param[in] flags     pre-shifted content of the ISR register
+ */
+static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
+
+  /* DMA errors handling.*/
+#if defined(STM32_ADC_DMA_ERROR_HOOK)
+  if ((flags & DMA_ISR_TEIF1) != 0) {
+    STM32_ADC_DMA_ERROR_HOOK(spip);
+  }
+#else
+  (void)flags;
+#endif
+  if ((flags & DMA_ISR_HTIF1) != 0) {
+    /* Half transfer processing.*/
+    _adc_isr_half_code(adcp);
+  }
+  if ((flags & DMA_ISR_TCIF1) != 0) {
+    /* Transfer complete processing.*/
+    _adc_isr_full_code(adcp);
+  }
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
-
-#if STM32_ADC_USE_ADC1 || defined(__DOXYGEN__)
-/**
- * @brief   ADC1 DMA interrupt handler (channel 1).
- *
- * @isr
- */
-CH_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
-  uint32_t isr;
-
-  CH_IRQ_PROLOGUE();
-
-  isr = STM32_DMA1->ISR;
-  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_1);
-  if ((isr & DMA_ISR_TEIF1) != 0) {
-    /* DMA error processing.*/
-    STM32_ADC1_DMA_ERROR_HOOK();
-  }
-  if ((isr & DMA_ISR_HTIF1) != 0) {
-    /* Half transfer processing.*/
-    _adc_isr_half_code(&ADCD1);
-  }
-  if ((isr & DMA_ISR_TCIF1) != 0) {
-    /* Transfer complete processing.*/
-    _adc_isr_full_code(&ADCD1);
-  }
-
-  CH_IRQ_EPILOGUE();
-}
-#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -136,7 +132,8 @@ void adc_lld_start(ADCDriver *adcp) {
   if (adcp->state == ADC_STOP) {
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
-      dmaEnable(DMA1_ID);   /* NOTE: Must be enabled before the IRQs.*/
+      dmaAllocate(STM32_DMA1_ID, STM32_DMA_CHANNEL_1,
+                  (stm32_dmaisr_t)adc_lld_serve_rx_interrupt, (void *)adcp);
       NVICEnableVector(DMA1_Channel1_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ADC_ADC1_IRQ_PRIORITY));
       dmaChannelSetPeripheral(adcp->dmachp, &ADC1->DR);
@@ -167,7 +164,7 @@ void adc_lld_stop(ADCDriver *adcp) {
       ADC1->CR1 = 0;
       ADC1->CR2 = 0;
       NVICDisableVector(DMA1_Channel1_IRQn);
-      dmaDisable(DMA1_ID);
+      dmaRelease(STM32_DMA1_ID, STM32_DMA_CHANNEL_1);
       RCC->APB2ENR &= ~RCC_APB2ENR_ADC1EN;
     }
 #endif

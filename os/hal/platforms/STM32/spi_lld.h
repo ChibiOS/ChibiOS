@@ -118,30 +118,12 @@
 #endif
 
 /**
- * @brief   SPI1 DMA error hook.
- * @note    The default action for DMA errors is a system halt because DMA error
- *          can only happen because programming errors.
+ * @brief   SPI DMA error hook.
+ * @note    The default action for DMA errors is a system halt because DMA
+ *          error can only happen because programming errors.
  */
-#if !defined(STM32_SPI_SPI1_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_DMA_ERROR_HOOK()     chSysHalt()
-#endif
-
-/**
- * @brief   SPI2 DMA error hook.
- * @note    The default action for DMA errors is a system halt because DMA error
- *          can only happen because programming errors.
- */
-#if !defined(STM32_SPI_SPI2_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_DMA_ERROR_HOOK()     chSysHalt()
-#endif
-
-/**
- * @brief   SPI3 DMA error hook.
- * @note    The default action for DMA errors is a system halt because DMA error
- *          can only happen because programming errors.
- */
-#if !defined(STM32_SPI_SPI3_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_DMA_ERROR_HOOK()     chSysHalt()
+#if !defined(STM32_SPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_SPI_DMA_ERROR_HOOK(spip)      chSysHalt()
 #endif
 
 /*===========================================================================*/
@@ -162,6 +144,10 @@
 
 #if !STM32_SPI_USE_SPI1 && !STM32_SPI_USE_SPI2 && !STM32_SPI_USE_SPI3
 #error "SPI driver activated but no SPI peripheral assigned"
+#endif
+
+#if !defined(STM32_DMA_REQUIRED)
+#define STM32_DMA_REQUIRED
 #endif
 
 /*===========================================================================*/

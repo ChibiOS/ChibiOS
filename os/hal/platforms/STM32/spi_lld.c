@@ -82,11 +82,21 @@ static uint16_t dummyrx;
 }
 
 /**
- * @brief   Shared end-of-transfer service routine.
+ * @brief   Shared end-of-rx service routine.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] flags     pre-shifted content of the ISR register
  */
-static void serve_interrupt(SPIDriver *spip) {
+static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
+
+  /* DMA errors handling.*/
+#if defined(STM32_SPI_DMA_ERROR_HOOK)
+  if ((flags & DMA_ISR_TEIF1) != 0) {
+    STM32_SPI_DMA_ERROR_HOOK(spip);
+  }
+#else
+  (void)flags;
+#endif
 
   /* Stop everything.*/
   dma_stop(spip);
@@ -96,114 +106,28 @@ static void serve_interrupt(SPIDriver *spip) {
   _spi_isr_code(spip);
 }
 
+/**
+ * @brief   Shared end-of-tx service routine.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] flags     pre-shifted content of the ISR register
+ */
+static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
+
+  /* DMA errors handling.*/
+#if defined(STM32_SPI_DMA_ERROR_HOOK)
+  if ((flags & DMA_ISR_TEIF1) != 0) {
+    STM32_SPI_DMA_ERROR_HOOK(spip);
+  }
+#else
+  (void)spip;
+  (void)flags;
+#endif
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
-
-#if STM32_SPI_USE_SPI1 || defined(__DOXYGEN__)
-/**
- * @brief   SPI1 RX DMA interrupt handler (channel 2).
- *
- * @isr
- */
-CH_IRQ_HANDLER(DMA1_Ch2_IRQHandler) {
-
-  CH_IRQ_PROLOGUE();
-
-  if ((STM32_DMA1->ISR & DMA_ISR_TEIF2) != 0) {
-    STM32_SPI_SPI1_DMA_ERROR_HOOK();
-  }
-  serve_interrupt(&SPID1);
-  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_2);
-
-  CH_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   SPI1 TX DMA interrupt handler (channel 3).
- *
- * @isr
- */
-CH_IRQ_HANDLER(DMA1_Ch3_IRQHandler) {
-
-  CH_IRQ_PROLOGUE();
-
-  STM32_SPI_SPI1_DMA_ERROR_HOOK();
-  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_3);
-
-  CH_IRQ_EPILOGUE();
-}
-#endif
-
-#if STM32_SPI_USE_SPI2 || defined(__DOXYGEN__)
-/**
- * @brief   SPI2 RX DMA interrupt handler (channel 4).
- *
- * @isr
- */
-CH_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
-
-  CH_IRQ_PROLOGUE();
-
-  if ((STM32_DMA1->ISR & DMA_ISR_TEIF4) != 0) {
-    STM32_SPI_SPI2_DMA_ERROR_HOOK();
-  }
-  serve_interrupt(&SPID2);
-  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_4);
-
-  CH_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   SPI2 TX DMA interrupt handler (channel 5).
- *
- * @isr
- */
-CH_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
-
-  CH_IRQ_PROLOGUE();
-
-  STM32_SPI_SPI2_DMA_ERROR_HOOK();
-  dmaClearChannel(STM32_DMA1, STM32_DMA_CHANNEL_5);
-
-  CH_IRQ_EPILOGUE();
-}
-#endif
-
-#if STM32_SPI_USE_SPI3 || defined(__DOXYGEN__)
-/**
- * @brief   SPI3 RX DMA interrupt handler (DMA2, channel 1).
- *
- * @isr
- */
-CH_IRQ_HANDLER(DMA2_Ch1_IRQHandler) {
-
-  CH_IRQ_PROLOGUE();
-
-  if ((STM32_DMA2->ISR & DMA_ISR_TEIF1) != 0) {
-    STM32_SPI_SPI3_DMA_ERROR_HOOK();
-  }
-  serve_interrupt(&SPID3);
-  dmaClearChannel(STM32_DMA2, STM32_DMA_CHANNEL_1);
-
-  CH_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   SPI3 TX DMA2 interrupt handler (DMA2, channel 2).
- *
- * @isr
- */
-CH_IRQ_HANDLER(DMA2_Ch2_IRQHandler) {
-
-  CH_IRQ_PROLOGUE();
-
-  STM32_SPI_SPI3_DMA_ERROR_HOOK();
-  dmaClearChannel(STM32_DMA2, STM32_DMA_CHANNEL_2);
-
-  CH_IRQ_EPILOGUE();
-}
-#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -256,7 +180,11 @@ void spi_lld_start(SPIDriver *spip) {
   if (spip->state == SPI_STOP) {
 #if STM32_SPI_USE_SPI1
     if (&SPID1 == spip) {
-      dmaEnable(DMA1_ID);   /* NOTE: Must be enabled before the IRQs.*/
+      /* Note, the DMA must be enabled before the IRQs.*/
+      dmaAllocate(STM32_DMA1_ID, STM32_DMA_CHANNEL_2,
+                  (stm32_dmaisr_t)spi_lld_serve_rx_interrupt, (void *)spip);
+      dmaAllocate(STM32_DMA1_ID, STM32_DMA_CHANNEL_3,
+                  (stm32_dmaisr_t)spi_lld_serve_tx_interrupt, (void *)spip);
       NVICEnableVector(DMA1_Channel2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_SPI_SPI1_IRQ_PRIORITY));
       NVICEnableVector(DMA1_Channel3_IRQn,
@@ -266,7 +194,11 @@ void spi_lld_start(SPIDriver *spip) {
 #endif
 #if STM32_SPI_USE_SPI2
     if (&SPID2 == spip) {
-      dmaEnable(DMA1_ID);   /* NOTE: Must be enabled before the IRQs.*/
+      /* Note, the DMA must be enabled before the IRQs.*/
+      dmaAllocate(STM32_DMA1_ID, STM32_DMA_CHANNEL_4,
+                  (stm32_dmaisr_t)spi_lld_serve_rx_interrupt, (void *)spip);
+      dmaAllocate(STM32_DMA1_ID, STM32_DMA_CHANNEL_5,
+                  (stm32_dmaisr_t)spi_lld_serve_tx_interrupt, (void *)spip);
       NVICEnableVector(DMA1_Channel4_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_SPI_SPI2_IRQ_PRIORITY));
       NVICEnableVector(DMA1_Channel5_IRQn,
@@ -276,7 +208,11 @@ void spi_lld_start(SPIDriver *spip) {
 #endif
 #if STM32_SPI_USE_SPI3
     if (&SPID3 == spip) {
-      dmaEnable(DMA2_ID);   /* NOTE: Must be enabled before the IRQs.*/
+      /* Note, the DMA must be enabled before the IRQs.*/
+      dmaAllocate(STM32_DMA2_ID, STM32_DMA_CHANNEL_1,
+                  (stm32_dmaisr_t)spi_lld_serve_rx_interrupt, (void *)spip);
+      dmaAllocate(STM32_DMA2_ID, STM32_DMA_CHANNEL_2,
+                  (stm32_dmaisr_t)spi_lld_serve_tx_interrupt, (void *)spip);
       NVICEnableVector(DMA2_Channel1_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_SPI_SPI3_IRQ_PRIORITY));
       NVICEnableVector(DMA2_Channel2_IRQn,
@@ -324,7 +260,8 @@ void spi_lld_stop(SPIDriver *spip) {
     if (&SPID1 == spip) {
       NVICDisableVector(DMA1_Channel2_IRQn);
       NVICDisableVector(DMA1_Channel3_IRQn);
-      dmaDisable(DMA1_ID);
+      dmaRelease(STM32_DMA1_ID, STM32_DMA_CHANNEL_2);
+      dmaRelease(STM32_DMA1_ID, STM32_DMA_CHANNEL_3);
       RCC->APB2ENR &= ~RCC_APB2ENR_SPI1EN;
     }
 #endif
@@ -332,7 +269,8 @@ void spi_lld_stop(SPIDriver *spip) {
     if (&SPID2 == spip) {
       NVICDisableVector(DMA1_Channel4_IRQn);
       NVICDisableVector(DMA1_Channel5_IRQn);
-      dmaDisable(DMA1_ID);
+      dmaRelease(STM32_DMA1_ID, STM32_DMA_CHANNEL_4);
+      dmaRelease(STM32_DMA1_ID, STM32_DMA_CHANNEL_5);
       RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN;
     }
 #endif
@@ -340,7 +278,8 @@ void spi_lld_stop(SPIDriver *spip) {
     if (&SPID3 == spip) {
       NVICDisableVector(DMA2_Channel1_IRQn);
       NVICDisableVector(DMA2_Channel2_IRQn);
-      dmaDisable(DMA2_ID);
+      dmaRelease(STM32_DMA2_ID, STM32_DMA_CHANNEL_1);
+      dmaRelease(STM32_DMA2_ID, STM32_DMA_CHANNEL_2);
       RCC->APB1ENR &= ~RCC_APB1ENR_SPI3EN;
     }
 #endif
