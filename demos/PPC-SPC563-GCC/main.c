@@ -58,6 +58,7 @@ static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
     "WTEXIT",
     "WTOREVT",
     "WTANDEVT",
+    "SNDMSGQ",
     "SNDMSG",
     "WTMSG",
     "FINAL"
