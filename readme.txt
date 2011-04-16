@@ -69,6 +69,7 @@
 *****************************************************************************
 
 *** 2.2.4 ***
+- FIX: Fixed missing state transition in ADC driver (bug 3288149).
 - FIX: Fixed missing state transition in SPI driver (bug 3288112).
 
 *** 2.2.3 ***

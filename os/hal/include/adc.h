@@ -213,6 +213,8 @@ typedef enum {
       if ((adcp)->ad_state == ADC_COMPLETE)                                 \
         (adcp)->ad_state = ADC_READY;                                       \
     }                                                                       \
+    else                                                                    \
+      (adcp)->state = ADC_READY;                                            \
     (adcp)->ad_grpp = NULL;                                                 \
     _adc_wakeup_isr(adcp);                                                  \
   }                                                                         \
