@@ -78,6 +78,7 @@
 - NEW: Now it is possible to share DMA channels in the STM32 HAL thanks
   to a centralized manager. Channels are allocated when the driver is
   started and released when it is stopped.
+- NEW: Added an STM32 C++ demo for the GNU compiler.
 - OPT: STM32 PWM driver implementation simplified.
 - CHANGE: Now pwmChangePeriod() does not implicitly disable the active
   PWM channels.

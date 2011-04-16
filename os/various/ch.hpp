@@ -198,26 +198,27 @@ namespace chibios_rt {
     msg_t SendMessage(msg_t msg);
 
     /**
-     * @brief   Waits for a message and returns it.
+     * @brief   Waits for a message.
      *
-     * @return                  The incoming message.
+     * @return                  The sebder thread.
      */
-    static msg_t WaitMessage(void);
+    static Thread *WaitMessage(void);
 
     /**
      * @brief   Returns an enqueued message or @p NULL.
      *
+     * @param[in] tp            the sender thread
      * @return                  The incoming message.
-     * @retval NULL             No incoming message.
      */
-    static msg_t GetMessage(void);
+    static msg_t GetMessage(Thread* tp);
 
     /**
      * @brief   Releases the next message in queue with a reply.
      *
+     * @param[in] tp            the sender thread
      * @param[in] msg           the answer message
      */
-    static void ReleaseMessage(msg_t msg);
+    static void ReleaseMessage(Thread* tp, msg_t msg);
 
     /**
      * @brief   Returns true if there is at least one message in queue.

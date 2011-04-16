@@ -131,19 +131,19 @@ namespace chibios_rt {
     return chMsgSend(thread_ref, msg);
   }
 
-  msg_t BaseThread::WaitMessage(void) {
+  Thread *BaseThread::WaitMessage(void) {
 
     return chMsgWait();
   }
 
-  msg_t BaseThread::GetMessage(void) {
+  msg_t BaseThread::GetMessage(Thread* tp) {
 
-    return chMsgGet();
+    return chMsgGet(tp);
   }
 
-  void BaseThread::ReleaseMessage(msg_t msg) {
+  void BaseThread::ReleaseMessage(Thread* tp, msg_t msg) {
 
-    chMsgRelease(msg);
+    chMsgRelease(tp, msg);
   }
 
   bool BaseThread::IsPendingMessage(void) {
