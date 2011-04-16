@@ -264,6 +264,8 @@ typedef enum {
     if ((spip)->state == SPI_COMPLETE)                                      \
       (spip)->state = SPI_READY;                                            \
   }                                                                         \
+  else                                                                      \
+    (spip)->state = SPI_READY;                                              \
   _spi_wakeup_isr(spip);                                                    \
 }
 
