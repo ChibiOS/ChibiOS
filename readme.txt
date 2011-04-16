@@ -68,6 +68,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.2.4 ***
+- FIX: Fixed missing state transition in SPI driver (bug 3288112).
+
 *** 2.2.3 ***
 - FIX: Fixed insufficient idle thread stack in Cortex-M0-GCC port
   (bug 3226671).
