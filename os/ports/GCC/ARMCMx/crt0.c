@@ -27,6 +27,12 @@
 
 #include "chtypes.h"
 
+#define FALSE   0
+#define TRUE    (!FALSE)
+
+typedef void (*funcp_t)(void);
+typedef funcp_t * funcpp_t;
+
 /**
  * @brief   Control special register initialization value.
  * @details The system is setup to run in privileged mode using the PSP
@@ -124,36 +130,33 @@ extern uint32_t _bss_end;
  * @brief   Constructors table start.
  * @pre     The symbol must be aligned to a 32 bits boundary.
  */
-extern void __init_array_start(void);
+extern funcp_t __init_array_start;
 
 /**
  * @brief   Constructors table end.
  * @pre     The symbol must be aligned to a 32 bits boundary.
  */
-extern void __init_array_end(void);
+extern funcp_t __init_array_end;
 
 /**
  * @brief   Destructors table start.
  * @pre     The symbol must be aligned to a 32 bits boundary.
  */
-extern void __fini_array_start(void);
+extern funcp_t __fini_array_start;
 
 /**
  * @brief   Destructors table end.
  * @pre     The symbol must be aligned to a 32 bits boundary.
  */
-extern void __fini_array_end(void);
+extern funcp_t __fini_array_end;
 
 /**
  * @brief   Application @p main() function.
- *
- * @param[in] argc      Number of arguments, always zero.
- * @param[in] argv      Pointer to an array of arguments, always @p NULL.
  */
-extern void main(int argc, char **argv);
+extern void main(void);
 
 /**
- * @brief   Default initialization hook 0.
+ * @brief   Early initialization.
  * @details This hook is invoked immediately after the stack initialization
  *          and before the DATA and BSS segments initialization. The
  *          default behavior is to do nothing.
@@ -162,19 +165,19 @@ extern void main(int argc, char **argv);
 #if !defined(__DOXYGEN__)
 __attribute__((weak))
 #endif
-void hwinit0(void) {}
+void __early_init(void) {}
 
 /**
- * @brief   Default initialization hook 1.
- * @details This hook is invoked immediately after the DATA and BSS segments
- *          initialization and before entering the @p main() function. The
+ * @brief   Late initialization.
+ * @details This hook is invoked after the DATA and BSS segments
+ *          initialization and before any static constructor. The
  *          default behavior is to do nothing.
  * @note    This function is a weak symbol.
  */
 #if !defined(__DOXYGEN__)
 __attribute__((weak))
 #endif
-void hwinit1(void) {}
+void __late_init(void) {}
 
 /**
  * @brief   Default @p main() function exit handler.
@@ -183,9 +186,9 @@ void hwinit1(void) {}
  * @note    This function is a weak symbol.
  */
 #if !defined(__DOXYGEN__)
-__attribute__((weak, naked))
+__attribute__((weak, noreturn))
 #endif
-void _main_exit_handler(void) {
+void _default_exit(void) {
   while (1)
     ;
 }
@@ -194,24 +197,24 @@ void _main_exit_handler(void) {
  * @brief   Reset vector.
  */
 #if !defined(__DOXYGEN__)
-__attribute__((naked))
+__attribute__((noreturn))
 #endif
 void ResetHandler(void) {
-  uint32_t sz, ctl;
+  uint32_t psp, ctl;
 
   /* Process Stack initialization, it is allocated below the main stack. The
      main stack is assumed to be allocated starting from @p __ram_end__
      extending downward.*/
   asm volatile ("cpsid   i");
-  sz = SYMVAL(__ram_end__) - SYMVAL(__main_stack_size__);
-  asm volatile ("msr     PSP, %0" : : "r" (sz));
+  psp = SYMVAL(__ram_end__) - SYMVAL(__main_stack_size__);
+  asm volatile ("msr     PSP, %0" : : "r" (psp));
 
   ctl = CRT0_CONTROL_INIT;
   asm volatile ("msr     CONTROL, %0" : : "r" (ctl));
   asm volatile ("isb");
 
-  /* Initialization hook 0 invocation.*/
-  hwinit0();
+  /* Early initialization hook invocation.*/
+  __early_init();
 
 #if CRT0_INIT_DATA
   /* DATA segment initialization.*/
@@ -236,40 +239,36 @@ void ResetHandler(void) {
   }
 #endif
 
-  /* Initialization hook 1 invocation.*/
-  hwinit1();
+  /* Late initialization hook invocation.*/
+  __late_init();
 
 #if CRT0_CALL_CONSTRUCTORS
   /* Constructors invocation.*/
   {
-    void (*dpp)(void);
-
-    dpp = &__init_array_start;
-    while (dpp < &__init_array_end) {
-      (*dpp)();
-      dpp++;
+    funcpp_t fpp = &__init_array_start;
+    while (fpp < &__init_array_end) {
+      (*fpp)();
+      fpp++;
     }
   }
 #endif
 
   /* Invoking application main() function.*/
-  main(0, 0);
+  main();
 
 #if CRT0_CALL_DESTRUCTORS
   /* Destructors invocation.*/
   {
-    void (*dpp)(void);
-
-    dpp = &__fini_array_start;
-    while (dpp < &__fini_array_end) {
-      (*dpp)();
-      dpp++;
+    funcpp_t fpp = &__fini_array_start;
+    while (fpp < &__fini_array_end) {
+      (*fpp)();
+      fpp++;
     }
   }
 #endif
 
-  /* Invoking the main() exit handler.*/
-  asm volatile ("b       _main_exit_handler");
+  /* Invoking the exit handler.*/
+  _default_exit();
 }
 
 /** @} */
