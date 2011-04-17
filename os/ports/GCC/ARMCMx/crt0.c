@@ -186,7 +186,7 @@ void __late_init(void) {}
  * @note    This function is a weak symbol.
  */
 #if !defined(__DOXYGEN__)
-__attribute__((weak, noreturn))
+__attribute__((weak, naked))
 #endif
 void _default_exit(void) {
   while (1)
@@ -197,7 +197,7 @@ void _default_exit(void) {
  * @brief   Reset vector.
  */
 #if !defined(__DOXYGEN__)
-__attribute__((noreturn))
+__attribute__((naked))
 #endif
 void ResetHandler(void) {
   uint32_t psp, ctl;

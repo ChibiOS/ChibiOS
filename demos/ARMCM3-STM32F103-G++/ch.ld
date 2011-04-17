@@ -38,11 +38,32 @@ __ram_end__             = __ram_start__ + __ram_size__;
 SECTIONS
 {
     . = 0;
+    _text = .;
+
+    startup : ALIGN(16) SUBALIGN(16)
+    {
+        KEEP(*(vectors))
+    } > flash
+
+    constructors : ALIGN(4) SUBALIGN(4)
+    {
+        PROVIDE(__init_array_start = .);
+        KEEP(*(SORT(.init_array.*)))
+        KEEP(*(.init_array))
+        PROVIDE(__init_array_end = .);
+    } > flash
+
+    destructors : ALIGN(4) SUBALIGN(4)
+    {
+        PROVIDE(__fini_array_start = .);
+        KEEP(*(.fini_array))
+        KEEP(*(SORT(.fini_array.*)))
+        PROVIDE(__fini_array_end = .);
+    } > flash
 
     .text : ALIGN(16) SUBALIGN(16)
     {
-        _text = .;
-        KEEP(*(vectors))
+        *(.text.startup.*)
         *(.text)
         *(.text.*)
         *(.rodata)
@@ -50,35 +71,28 @@ SECTIONS
         *(.glue_7t)
         *(.glue_7)
         *(.gcc*)
-        *(.ARM.extab)
-        *(.ARM.extab.*)
     } > flash
 
-    .ctors :
+    .ARM.extab :
     {
-        PROVIDE(_ctors_start_ = .);
-        KEEP(*(SORT(.ctors.*)))
-        KEEP(*(.ctors))
-        PROVIDE(_ctors_end_ = .);
+        *(.ARM.extab* .gnu.linkonce.armextab.*)
     } > flash
 
-    .dtors :
+    .ARM.exidx : {
+        PROVIDE(__exidx_start = .);
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        PROVIDE(__exidx_end = .);
+     } > flash
+
+    .eh_frame_hdr :
     {
-        PROVIDE(_dtors_start_ = .);
-        KEEP(*(SORT(.dtors.*)))
-        KEEP(*(.dtors))
-        PROVIDE(_dtors_end_ = .);
+        *(.eh_frame_hdr)
     } > flash
 
-    .ARM.extab : {*(.ARM.extab* .gnu.linkonce.armextab.*)}
-
-    __exidx_start = .;
-    .ARM.exidx : {*(.ARM.exidx* .gnu.linkonce.armexidx.*)} > flash
-    __exidx_end = .;
-
-    .eh_frame_hdr : {*(.eh_frame_hdr)}
-
-    .eh_frame : ONLY_IF_RO {*(.eh_frame)}
+    .eh_frame : ONLY_IF_RO
+    {
+        *(.eh_frame)
+    } > flash
 
     . = ALIGN(4);
     _etext = .;
@@ -86,26 +100,26 @@ SECTIONS
 
     .data :
     {
-        _data = .;
+        PROVIDE(_data = .);
         *(.data)
         . = ALIGN(4);
         *(.data.*)
         . = ALIGN(4);
         *(.ramtext)
         . = ALIGN(4);
-        _edata = .;
+        PROVIDE(_edata = .);
     } > ram AT > flash
 
     .bss :
     {
-        _bss_start = .;
+        PROVIDE(_bss_start = .);
         *(.bss)
         . = ALIGN(4);
         *(.bss.*)
         . = ALIGN(4);
         *(COMMON)
         . = ALIGN(4);
-        _bss_end = .;
+        PROVIDE(_bss_end = .);
     } > ram    
 }
 

@@ -106,7 +106,7 @@ public:
 /*
  * Tester thread class. This thread executes the test suite.
  */
-class TesterThread : public EnhancedThread<128> {
+class TesterThread : public EnhancedThread<256> {
 
 protected:
   virtual msg_t Main(void) {
@@ -115,7 +115,7 @@ protected:
   }
 
 public:
-  TesterThread(void) : EnhancedThread<128>("tester") {
+  TesterThread(void) : EnhancedThread<256>("tester") {
   }
 };
 
