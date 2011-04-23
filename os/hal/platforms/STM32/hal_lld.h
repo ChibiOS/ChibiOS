@@ -402,7 +402,7 @@
 #define STM32_HAS_USB           TRUE
 #define STM32_HAS_OTG1          FALSE
 
-#elif defined(STM32F10X_XD)
+#elif defined(STM32F10X_XL)
 /*
  * Capability flags for Performance Line eXtra Density devices.
  */
