@@ -70,7 +70,7 @@
 #endif
 
 /**
- * @brief   Enables the I2C subsystem.
+ * @brief   Enables the ICU subsystem.
  */
 #if !defined(HAL_USE_ICU) || defined(__DOXYGEN__)
 #define HAL_USE_ICU                 TRUE
