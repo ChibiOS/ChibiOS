@@ -38,7 +38,7 @@
  *          - STM32F10X_LD for Performance Low Density devices.
  *          - STM32F10X_MD for Performance Medium Density devices.
  *          - STM32F10X_HD for Performance High Density devices.
- *          - STM32F10X_XD for Performance eXtra Density devices.
+ *          - STM32F10X_XL for Performance eXtra Density devices.
  *          - STM32F10X_CL for Connectivity Line devices.
  *          .
  *
