@@ -103,12 +103,13 @@ extern void VectorDC(void);
 extern void VectorE0(void);
 extern void VectorE4(void);
 extern void VectorE8(void);
-#if defined(STM32F10X_MD_VL) || defined(STM32F10X_HD) || defined(STM32F10X_CL)
+#if defined(STM32F10X_MD_VL) || defined(STM32F10X_HD) ||                    \
+    defined(STM32F10X_XL) || defined(STM32F10X_CL)
 extern void VectorEC(void);
 extern void VectorF0(void);
 extern void VectorF4(void);
 #endif
-#if defined(STM32F10X_HD) || defined(STM32F10X_CL)
+#if defined(STM32F10X_HD) || defined(STM32F10X_XL) || defined(STM32F10X_CL)
 extern void VectorF8(void);
 extern void VectorFC(void);
 extern void Vector100(void);
