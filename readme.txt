@@ -86,6 +86,8 @@
   to a centralized manager. Channels are allocated when the driver is
   started and released when it is stopped.
 - NEW: Added an STM32 C++ demo for the GNU compiler.
+- NEW: Added an STM32F103ZG demo for the STM3210E-EVAL evaluation board.
+
 - OPT: STM32 PWM driver implementation simplified.
 - CHANGE: Now pwmChangePeriod() does not implicitly disable the active
   PWM channels.

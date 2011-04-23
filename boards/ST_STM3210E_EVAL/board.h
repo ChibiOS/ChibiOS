@@ -39,8 +39,11 @@
 
 /*
  * MCU type, supported types are defined in ./os/hal/platforms/hal_lld.h.
+ * Note: Older board revisions should define STM32F10X_HD instead, please
+ *       verify the STM32 model mounted on your board. The change also
+ *       affects your linker script.
  */
-#define STM32F10X_HL
+#define STM32F10X_XL
 
 /*
  * IO pins assignments.
@@ -65,7 +68,7 @@
 #define GPIOF_SD_DETECT         11
 
 #define GPIOG_JOY_SEL           7
-#define GPIOC_USER_BUTTON       8
+#define GPIOG_USER_BUTTON       8
 #define GPIOG_JOY_RIGHT         13
 #define GPIOG_JOY_LEFT          14
 #define GPIOG_JOY_UP            15
@@ -116,7 +119,7 @@
 /*
  * Port B setup.
  */
-#define VAL_GPIOBCRL    (PIN_OUTPUT_PP_50(0)    | /* SmartCard_3/5V.    */  \                          \
+#define VAL_GPIOBCRL    (PIN_OUTPUT_PP_50(0)    | /* SmartCard_3/5V.    */  \
                          PIN_INPUT_PUD(1)       | /* Unconnected.       */  \
                          PIN_OUTPUT_PP_50(2)    | /* SPI1_CS.           */  \
                          PIN_INPUT(3)           | /* TDO.               */  \
@@ -137,7 +140,7 @@
 /*
  * Port C setup.
  */
-#define VAL_GPIOCCRL    (PIN_UNDEFINED(0))      |                           \
+#define VAL_GPIOCCRL    (PIN_UNDEFINED(0)       |                           \
                          PIN_UNDEFINED(1)       |                           \
                          PIN_UNDEFINED(2)       |                           \
                          PIN_UNDEFINED(3)       |                           \
@@ -236,7 +239,7 @@
                          PIN_ALTERNATE_PP_50(12)| /* FSMC_NE4.          */  \
                          PIN_INPUT(13)          | /* Joy Right.         */  \
                          PIN_INPUT(14)          | /* Joy Left.          */  \
-                         PIN_INPUT(15)            /* Joy Up.            */
+                         PIN_INPUT(15))           /* Joy Up.            */
 #define VAL_GPIOGODR    0xFFFFF7FF
 
 #if !defined(_FROM_ASM_)
