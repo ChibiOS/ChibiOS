@@ -189,7 +189,7 @@ CH_IRQ_HANDLER(USART0_UDRE_vect) {
   CH_IRQ_PROLOGUE();
 
   chSysLockFromIsr();
-  b = sdRequestDataI(&SER1);
+  b = sdRequestDataI(&SD1);
   chSysUnlockFromIsr();
   if (b < Q_OK)
     UCSR0B &= ~(1 << UDRIE);
