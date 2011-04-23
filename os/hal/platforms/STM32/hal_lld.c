@@ -83,9 +83,10 @@ void hal_lld_init(void) {
  *
  * @special
  */
-#if defined(STM32F10X_LD)    || defined(STM32F10X_MD)    ||                 \
-    defined(STM32F10X_HD)    || defined(STM32F10X_LD_VL) ||                 \
-    defined(STM32F10X_MD_VL) || defined(__DOXYGEN__)
+#if defined(STM32F10X_LD) || defined(STM32F10X_LD_VL) ||                    \
+    defined(STM32F10X_MD) || defined(STM32F10X_MD_VL) ||                    \
+    defined(STM32F10X_HD) || defined(STM32F10X_XL) ||                       \
+    defined(STM32F10X_CL) || defined(__DOXYGEN__)
 /*
  * Clocks initialization for the LD, MD and HD sub-families.
  */
