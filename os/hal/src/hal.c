@@ -85,6 +85,9 @@ void halInit(void) {
 #if HAL_USE_SERIAL || defined(__DOXYGEN__)
   sdInit();
 #endif
+#if HAL_USE_SDC || defined(__DOXYGEN__)
+  sdcInit();
+#endif
 #if HAL_USE_SPI || defined(__DOXYGEN__)
   spiInit();
 #endif

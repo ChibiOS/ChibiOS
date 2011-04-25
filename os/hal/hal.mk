@@ -9,6 +9,7 @@ HALSRC = ${CHIBIOS}/os/hal/src/hal.c \
          ${CHIBIOS}/os/hal/src/mac.c \
          ${CHIBIOS}/os/hal/src/pal.c \
          ${CHIBIOS}/os/hal/src/pwm.c \
+         ${CHIBIOS}/os/hal/src/sdc.c \
          ${CHIBIOS}/os/hal/src/serial.c \
          ${CHIBIOS}/os/hal/src/spi.c \
          ${CHIBIOS}/os/hal/src/uart.c \
