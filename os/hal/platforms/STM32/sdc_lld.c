@@ -120,6 +120,72 @@ void sdc_lld_stop(SDCDriver *sdcp) {
 }
 
 /**
+ * @brief   Starts the SDIO clock and sets it to init mode (400KHz or less).
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @notapi
+ */
+void sdc_lld_start_clk(SDCDriver *sdcp) {
+
+  (void)sdcp;
+  /* Initial clock setting: 400KHz, 1bit mode.*/
+  SDIO->CLKCR  = STM32_SDIO_DIV_LS;
+  SDIO->POWER |= SDIO_POWER_PWRCTRL_0 | SDIO_POWER_PWRCTRL_1;
+  SDIO->CLKCR |= SDIO_CLKCR_CLKEN;
+}
+
+/**
+ * @brief   Sets the SDIO clock to data mode (25MHz or less).
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @notapi
+ */
+void sdc_lld_set_data_clk(SDCDriver *sdcp) {
+
+  (void)sdcp;
+  SDIO->CLKCR = (SDIO->CLKCR & 0xFFFFFF00) | STM32_SDIO_DIV_HS;
+}
+
+/**
+ * @brief   Stops the SDIO clock.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @notapi
+ */
+void sdc_lld_stop_clk(SDCDriver *sdcp) {
+
+  (void)sdcp;
+  SDIO->CLKCR = 0;
+  SDIO->POWER = 0;
+}
+
+/**
+ * @brief   Switches the bus to 4 bits mode.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @notapi
+ */
+void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode) {
+  uint32_t clk = SDIO->CLKCR & ~SDIO_CLKCR_WIDBUS;
+
+  (void)sdcp;
+  switch (mode) {
+  case SDC_MODE_1BIT:
+    SDIO->CLKCR = clk;
+    break;
+  case SDC_MODE_4BIT:
+    SDIO->CLKCR = clk | SDIO_CLKCR_WIDBUS_0;
+    break;
+  case SDC_MODE_8BIT:
+    SDIO->CLKCR = clk | SDIO_CLKCR_WIDBUS_1;
+  }
+}
+
+/**
  * @brief   Sends an SDIO command with no response expected.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object

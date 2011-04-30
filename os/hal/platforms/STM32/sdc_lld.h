@@ -89,6 +89,14 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of SDIO bus mode.
+ */
+typedef enum {
+  SDC_MODE_1BIT = 0,
+  SDC_MODE_4BIT,
+  SDC_MODE_8BIT
+} sdcbusmode_t;
 
 /**
  * @brief   Type of a structure representing an SDC driver.
@@ -136,6 +144,10 @@ extern "C" {
   void sdc_lld_init(void);
   void sdc_lld_start(SDCDriver *sdcp);
   void sdc_lld_stop(SDCDriver *sdcp);
+  void sdc_lld_set_init_clk(SDCDriver *sdcp);
+  void sdc_lld_set_data_clk(SDCDriver *sdcp);
+  void sdc_lld_stop_clk(SDCDriver *sdcp);
+  void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode);
   void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg);
   bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                                 uint32_t *resp);

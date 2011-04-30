@@ -135,6 +135,8 @@ bool_t sdcConnect(SDCDriver *sdcp) {
   sdcp->state = SDC_INITNG;
   chSysUnlock();
 
+  sdc_lld_start_clk(sdcp);
+
   sdcp->state = SDC_ACTIVE;
   return FALSE;
 }
