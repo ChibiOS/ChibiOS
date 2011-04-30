@@ -25,6 +25,7 @@
  * SDIO configuration.
  */
 static const SDCConfig sdccfg = {
+  0
 };
 
 /*
@@ -53,5 +54,4 @@ int main(void) {
   while (TRUE) {
     chThdSleepMilliseconds(500);
   }
-  return 0;
 }

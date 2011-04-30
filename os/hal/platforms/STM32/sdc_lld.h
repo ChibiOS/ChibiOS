@@ -108,7 +108,7 @@ typedef struct SDCDriver SDCDriver;
  * @note    It could be empty on some architectures.
  */
 typedef struct {
-
+  uint32_t dummy;
 } SDCConfig;
 
 /**
