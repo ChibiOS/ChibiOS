@@ -47,6 +47,7 @@ int main(void) {
    * Initializes the SDIO drivers.
    */
   sdcStart(&SDCD1, &sdccfg);
+  sdcConnect(&SDCD1);
 
   /*
    * Normal main() thread activity.

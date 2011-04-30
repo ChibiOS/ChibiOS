@@ -137,6 +137,8 @@ bool_t sdcConnect(SDCDriver *sdcp) {
 
   sdc_lld_start_clk(sdcp);
 
+  sdc_lld_send_cmd_none(sdcp, SDC_CMD_GO_IDLE_STATE, 0);
+
   sdcp->state = SDC_ACTIVE;
   return FALSE;
 }

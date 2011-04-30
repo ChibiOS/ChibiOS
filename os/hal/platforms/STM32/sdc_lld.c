@@ -194,6 +194,12 @@ void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode) {
  */
 void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg) {
 
+  (void)sdcp;
+  SDIO->ARG = arg;
+  SDIO->CMD = (uint32_t)cmd | SDIO_CMD_CPSMEN;
+  while ((SDIO->STA & SDIO_STA_CMDSENT) == 0)
+    ;
+  SDIO->ICR = 0xFFFFFFFF;
 }
 
 /**
