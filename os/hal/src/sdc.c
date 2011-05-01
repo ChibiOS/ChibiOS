@@ -127,6 +127,7 @@ void sdcStop(SDCDriver *sdcp) {
  * @api
  */
 bool_t sdcConnect(SDCDriver *sdcp) {
+  uint32_t resp;
 
   chDbgCheck(sdcp != NULL, "sdcConnect");
 
@@ -135,12 +136,60 @@ bool_t sdcConnect(SDCDriver *sdcp) {
   sdcp->state = SDC_INITNG;
   chSysUnlock();
 
+  /* Resets card attributes.*/
+  sdcp->cardmode = 0;
+
+  /* Card clock initialization.*/
   sdc_lld_start_clk(sdcp);
 
+  /* Enforces the initial card state.*/
   sdc_lld_send_cmd_none(sdcp, SDC_CMD_GO_IDLE_STATE, 0);
+
+  /* V2.0 cards detection.*/
+  if (!sdc_lld_send_cmd_short(sdcp, SDC_CMD_SEND_IF_COND,
+                              SDC_CMD8_PATTERN, &resp))
+    sdcp->cardmode |= SDC_MODE_CARDTYPE_SDV20;
+    /* Voltage verification.*/
+    if (((resp >> 8) & 0xF) != 1)
+      goto failed;
+    if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_CMD, 0, &resp))
+      goto failed;
+  else {
+    /* MMC or SD detection.*/
+    if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_CMD, 0, &resp))
+      sdcp->cardmode |= SDC_MODE_CARDTYPE_MMC;
+  }
+
+  if ((sdcp->cardmode &  SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_MMC) {
+  }
+  else {
+    uint32_t ocr = 0x80100000;
+    unsigned i;
+
+    if ((sdcp->cardmode &  SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_SDV20)
+      ocr |= 0x40000000;
+
+    /* SD-type initialization. */
+    i = 0;
+    while (TRUE) {
+      chThdSleepMilliseconds(10);
+      if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_CMD, 0, &resp))
+       goto failed;
+      if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_OP_COND, ocr, &resp))
+        goto failed;
+      if ((resp & 0x80000000) != 0)
+        break;
+      if (++i >= SDC_ACMD41_RETRY)
+        goto failed;
+    }
+  }
 
   sdcp->state = SDC_ACTIVE;
   return FALSE;
+failed:
+  sdc_lld_stop_clk(sdcp);
+  sdcp->state = SDC_READY;
+  return TRUE;
 }
 
 /**

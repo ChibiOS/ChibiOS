@@ -36,6 +36,18 @@
 /*===========================================================================*/
 
 #define SDC_CMD_GO_IDLE_STATE         0
+#define SDC_CMD_SEND_IF_COND          8
+#define SDC_CMD_APP_OP_COND           41
+#define SDC_CMD_APP_CMD               55
+
+#define SDC_MODE_CARDTYPE_MASK        0xF
+#define SDC_MODE_CARDTYPE_SD          0   /**< Old SD card.                 */
+#define SDC_MODE_CARDTYPE_SDV20       1   /**< Card is V2.0 compliant.      */
+#define SDC_MODE_CARDTYPE_MMC         2   /**< Card is MMC.                 */
+
+#define SDC_CMD8_PATTERN              0x000001AA
+
+#define SDC_ACMD41_RETRY              100
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

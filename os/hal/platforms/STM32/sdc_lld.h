@@ -99,6 +99,11 @@ typedef enum {
 } sdcbusmode_t;
 
 /**
+ * @brief   Type of card flags.
+ */
+typedef uint32_t sdcmode_t;
+
+/**
  * @brief   Type of a structure representing an SDC driver.
  */
 typedef struct SDCDriver SDCDriver;
@@ -123,6 +128,10 @@ struct SDCDriver {
    * @brief Current configuration data.
    */
   const SDCConfig           *config;
+  /**
+   * @brief Various flags regarding the mounted card.
+   */
+  sdcmode_t                 cardmode;
   /* End of the mandatory fields.*/
 };
 
@@ -144,7 +153,7 @@ extern "C" {
   void sdc_lld_init(void);
   void sdc_lld_start(SDCDriver *sdcp);
   void sdc_lld_stop(SDCDriver *sdcp);
-  void sdc_lld_set_init_clk(SDCDriver *sdcp);
+  void sdc_lld_start_clk(SDCDriver *sdcp);
   void sdc_lld_set_data_clk(SDCDriver *sdcp);
   void sdc_lld_stop_clk(SDCDriver *sdcp);
   void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode);

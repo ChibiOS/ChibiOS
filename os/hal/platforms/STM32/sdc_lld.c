@@ -189,6 +189,8 @@ void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode) {
  * @brief   Sends an SDIO command with no response expected.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in[ cmd       card command
+ * @param[in] arg       command argument
  *
  * @notapi
  */
@@ -206,6 +208,9 @@ void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg) {
  * @brief   Sends an SDIO command with a short response expected.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in[ cmd       card command
+ * @param[in] arg       command argument
+ * @param[out] resp     pointer to the response buffer (one word)
  * @return              The operation status.
  * @retval FALSE        the operation succeeded.
  * @retval TRUE         the operation failed because timeout, CRC check or
@@ -215,13 +220,28 @@ void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg) {
  */
 bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                               uint32_t *resp) {
+  uint32_t sta;
 
+  (void)sdcp;
+  SDIO->ARG = arg;
+  SDIO->CMD = (uint32_t)cmd | SDIO_CMD_WAITRESP_0 | SDIO_CMD_CPSMEN;
+  while (((sta = SDIO->STA) & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
+                               SDIO_STA_CCRCFAIL)) == 0)
+    ;
+  SDIO->ICR = 0xFFFFFFFF;
+  if ((sta & (SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL)) != 0)
+    return TRUE;
+  *resp = SDIO->RESP1;
+  return FALSE;
 }
 
 /**
  * @brief   Sends an SDIO command with a long response expected.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in[ cmd       card command
+ * @param[in] arg       command argument
+ * @param[out] resp     pointer to the response buffer (four words)
  * @return              The operation status.
  * @retval FALSE        the operation succeeded.
  * @retval TRUE         the operation failed because timeout, CRC check or
@@ -232,6 +252,20 @@ bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
 bool_t sdc_lld_send_cmd_long(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                              uint32_t *resp) {
 
+  uint32_t sta;
+
+  (void)sdcp;
+  SDIO->ARG = arg;
+  SDIO->CMD = (uint32_t)cmd | SDIO_CMD_WAITRESP_0 | SDIO_CMD_WAITRESP_1 |
+                              SDIO_CMD_CPSMEN;
+  while (((sta = SDIO->STA) & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
+                               SDIO_STA_CCRCFAIL)) == 0)
+    ;
+  SDIO->ICR = 0xFFFFFFFF;
+  if ((sta & (SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL)) != 0)
+    return TRUE;
+  *resp = SDIO->RESP1;
+  return FALSE;
 }
 
 #endif /* HAL_USE_SDC */
