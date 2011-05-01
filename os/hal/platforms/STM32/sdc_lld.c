@@ -89,6 +89,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
   if (sdcp->state == SDC_STOP) {
     /* Note, the DMA must be enabled before the IRQs.*/
     dmaAllocate(STM32_DMA2_ID, STM32_DMA_CHANNEL_4, NULL, NULL);
+    dmaChannelSetPeripheral(&STM32_DMA2->channels[STM32_DMA_CHANNEL_4], &SDIO->FIFO);
     NVICEnableVector(SDIO_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_SDC_SDIO_IRQ_PRIORITY));
     RCC->AHBENR |= RCC_AHBENR_SDIOEN;
