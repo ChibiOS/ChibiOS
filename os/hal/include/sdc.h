@@ -41,13 +41,15 @@
 #define SDC_CMD_SEL_DESEL_CARD        7
 #define SDC_CMD_SEND_IF_COND          8
 #define SDC_CMD_SEND_CSD              9
+#define SDC_CMD_SET_BLOCKLEN          16
 #define SDC_CMD_APP_OP_COND           41
 #define SDC_CMD_APP_CMD               55
 
 #define SDC_MODE_CARDTYPE_MASK        0xF
-#define SDC_MODE_CARDTYPE_SDV11       0   /**< Card is V1.1 compliant.      */
-#define SDC_MODE_CARDTYPE_SDV20       1   /**< Card is V2.0 compliant.      */
-#define SDC_MODE_CARDTYPE_MMC         2   /**< Card is MMC compliant.       */
+#define SDC_MODE_CARDTYPE_SDV11       0     /**< Card is V1.1 compliant.    */
+#define SDC_MODE_CARDTYPE_SDV20       1     /**< Card is V2.0 compliant.    */
+#define SDC_MODE_CARDTYPE_MMC         2     /**< Card is MMC compliant.     */
+#define SDC_MODE_HIGH_CAPACITY        0x10  /**< High capacity card.        */
 
 #define SDC_CMD8_PATTERN              0x000001AA
 

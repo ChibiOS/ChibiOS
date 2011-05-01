@@ -176,8 +176,11 @@ bool_t sdcConnect(SDCDriver *sdcp) {
        goto failed;
       if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_OP_COND, ocr, resp))
         goto failed;
-      if ((resp[0] & 0x80000000) != 0)
+      if ((resp[0] & 0x80000000) != 0) {
+        if (resp[0] & 0x40000000)
+          sdcp->cardmode |= SDC_MODE_HIGH_CAPACITY;
         break;
+      }
       if (++i >= SDC_ACMD41_RETRY)
         goto failed;
     }
@@ -201,6 +204,17 @@ bool_t sdcConnect(SDCDriver *sdcp) {
   /* Selects the card for operations.*/
   if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEL_DESEL_CARD, resp[0], resp))
     goto failed;
+
+  /* Block lenght fixed at 512 bytes.*/
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SET_BLOCKLEN, 512, resp))
+    goto failed;
+
+  /* Switches to wide bus mode.*/
+  switch (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK) {
+  case SDC_MODE_CARDTYPE_SDV11:
+  case SDC_MODE_CARDTYPE_SDV20:
+    SDIO->CLKCR |= SDIO_CLKCR_WIDBUS_0;
+  }
 
   sdcp->state = SDC_ACTIVE;
   return FALSE;
@@ -228,6 +242,7 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
   chSysLock();
   chDbgAssert(sdcp->state == SDC_ACTIVE,
               "sdcDisconnect(), #1", "invalid state");
+  sdc_lld_stop_clk(sdcp);
   sdcp->state = SDC_READY;
   chSysUnlock();
   return FALSE;
