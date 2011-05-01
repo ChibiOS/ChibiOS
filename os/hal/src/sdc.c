@@ -146,17 +146,17 @@ bool_t sdcConnect(SDCDriver *sdcp) {
   sdc_lld_send_cmd_none(sdcp, SDC_CMD_GO_IDLE_STATE, 0);
 
   /* V2.0 cards detection.*/
-  if (!sdc_lld_send_cmd_short(sdcp, SDC_CMD_SEND_IF_COND,
-                              SDC_CMD8_PATTERN, &resp))
+  if (!sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_IF_COND,
+                                  SDC_CMD8_PATTERN, &resp))
     sdcp->cardmode |= SDC_MODE_CARDTYPE_SDV20;
     /* Voltage verification.*/
     if (((resp >> 8) & 0xF) != 1)
       goto failed;
-    if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_CMD, 0, &resp))
+    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, &resp))
       goto failed;
   else {
     /* MMC or SD detection.*/
-    if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_CMD, 0, &resp))
+    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, &resp))
       sdcp->cardmode |= SDC_MODE_CARDTYPE_MMC;
   }
 
@@ -173,7 +173,7 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     i = 0;
     while (TRUE) {
       chThdSleepMilliseconds(10);
-      if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_CMD, 0, &resp))
+      if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, &resp))
        goto failed;
       if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_OP_COND, ocr, &resp))
         goto failed;

@@ -160,8 +160,10 @@ extern "C" {
   void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg);
   bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                                 uint32_t *resp);
-  bool_t sdc_lld_send_cmd_long(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
-                               uint32_t *resp);
+  bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
+                                    uint32_t *resp);
+  bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
+                                   uint32_t *resp);
 #ifdef __cplusplus
 }
 #endif
