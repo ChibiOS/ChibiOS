@@ -132,6 +132,14 @@ struct SDCDriver {
    * @brief Various flags regarding the mounted card.
    */
   sdcmode_t                 cardmode;
+  /**
+   * @brief Card CID.
+   */
+  uint32_t                  cid[4];
+  /**
+   * @brief Card CSD.
+   */
+  uint32_t                  csd[4];
   /* End of the mandatory fields.*/
 };
 

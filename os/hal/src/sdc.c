@@ -127,7 +127,7 @@ void sdcStop(SDCDriver *sdcp) {
  * @api
  */
 bool_t sdcConnect(SDCDriver *sdcp) {
-  uint32_t resp;
+  uint32_t resp[1];
 
   chDbgCheck(sdcp != NULL, "sdcConnect");
 
@@ -135,9 +135,6 @@ bool_t sdcConnect(SDCDriver *sdcp) {
   chDbgAssert(sdcp->state == SDC_READY, "mmcConnect(), #1", "invalid state");
   sdcp->state = SDC_INITNG;
   chSysUnlock();
-
-  /* Resets card attributes.*/
-  sdcp->cardmode = 0;
 
   /* Card clock initialization.*/
   sdc_lld_start_clk(sdcp);
@@ -147,17 +144,19 @@ bool_t sdcConnect(SDCDriver *sdcp) {
 
   /* V2.0 cards detection.*/
   if (!sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_IF_COND,
-                                  SDC_CMD8_PATTERN, &resp))
-    sdcp->cardmode |= SDC_MODE_CARDTYPE_SDV20;
+                                  SDC_CMD8_PATTERN, resp))
+    sdcp->cardmode = SDC_MODE_CARDTYPE_SDV20;
     /* Voltage verification.*/
-    if (((resp >> 8) & 0xF) != 1)
+    if (((resp[0] >> 8) & 0xF) != 1)
       goto failed;
-    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, &resp))
+    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp))
       goto failed;
   else {
     /* MMC or SD detection.*/
-    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, &resp))
-      sdcp->cardmode |= SDC_MODE_CARDTYPE_MMC;
+    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp))
+      sdcp->cardmode = SDC_MODE_CARDTYPE_MMC;
+    else
+      sdcp->cardmode = SDC_MODE_CARDTYPE_SDV11;
   }
 
   if ((sdcp->cardmode &  SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_MMC) {
@@ -173,16 +172,35 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     i = 0;
     while (TRUE) {
       chThdSleepMilliseconds(10);
-      if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, &resp))
+      if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp))
        goto failed;
-      if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_OP_COND, ocr, &resp))
+      if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_OP_COND, ocr, resp))
         goto failed;
-      if ((resp & 0x80000000) != 0)
+      if ((resp[0] & 0x80000000) != 0)
         break;
       if (++i >= SDC_ACMD41_RETRY)
         goto failed;
     }
   }
+
+  /* Reads CID.*/
+  if (sdc_lld_send_cmd_long_crc(sdcp, SDC_CMD_ALL_SEND_CID, 0, sdcp->cid))
+    goto failed;
+
+  /* Asks for the RCA.*/
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_RELATIVE_ADDR, 0, resp))
+    goto failed;
+
+  /* Reads CSD.*/
+  if (sdc_lld_send_cmd_long_crc(sdcp, SDC_CMD_SEND_CSD, resp[0], sdcp->csd))
+    goto failed;
+
+  /* Switches to high speed.*/
+  sdc_lld_set_data_clk(sdcp);
+
+  /* Selects the card for operations.*/
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEL_DESEL_CARD, resp[0], resp))
+    goto failed;
 
   sdcp->state = SDC_ACTIVE;
   return FALSE;
