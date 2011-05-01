@@ -82,9 +82,9 @@
  * PA1  - Normal input      (ETH_RMII_REF_CLK).
  * PA2  - Alternate output  (ETH_RMII_MDIO).
  * PA3  - Input with PU     (unconnected).
- * PA4  - Normal input      (MMC, external pull down).
- * PA5  - Normal input      (MMC, external pull up).
- * PA6  - Normal input      (MMC, external pull up).
+ * PA4  - Push Pull output  (CS_MMC).
+ * PA5  - Input with PU     (unconnected).
+ * PA6  - Input with PU     (unconnected).
  * PA7  - Normal input      (ETH_RMII_CRS_DV).
  * PA8  - Alternate output  (MCO).
  * PA9  - Normal input      (OTG_VBUS).
@@ -95,7 +95,7 @@
  * PA14 - Normal input      (TCK).
  * PA15 - Normal input      (TDI).
  */
-#define VAL_GPIOACRL            0x44448B44      /*  PA7...PA0 */
+#define VAL_GPIOACRL            0x48838B44      /*  PA7...PA0 */
 #define VAL_GPIOACRH            0x4444444B      /* PA15...PA8 */
 #define VAL_GPIOAODR            0xFFFFFFFF
 
@@ -106,7 +106,7 @@
  * PB2  - Normal input      (BOOT1).
  * PB3  - Normal input      (TDO).
  * PB4  - Normal input      (TRST).
- * PB5  - Normal input      (MMC, external pull up).
+ * PB5  - Input with PU     (unconnected).
  * PB6  - Input with PU     (unconnected).
  * PB7  - Input with PU     (unconnected).
  * PB8  - Alternate O.D.    (I2C1 SCL, remapped).

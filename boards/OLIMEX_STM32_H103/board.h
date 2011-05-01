@@ -47,7 +47,7 @@
  */
 #define GPIOA_BUTTON            0
 
-#define GPIOC_DISC              11
+#define GPIOC_USB_DISC          11
 #define GPIOC_LED               12
 
 /*
