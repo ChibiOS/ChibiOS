@@ -35,25 +35,30 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-#define SDC_CMD_GO_IDLE_STATE         0
-#define SDC_CMD_ALL_SEND_CID          2
-#define SDC_CMD_SEND_RELATIVE_ADDR    3
-#define SDC_CMD_SEL_DESEL_CARD        7
-#define SDC_CMD_SEND_IF_COND          8
-#define SDC_CMD_SEND_CSD              9
-#define SDC_CMD_SET_BLOCKLEN          16
-#define SDC_CMD_APP_OP_COND           41
-#define SDC_CMD_APP_CMD               55
+#define SDC_BLOCK_SIZE                  512     /**< Fixed block size.      */
 
-#define SDC_MODE_CARDTYPE_MASK        0xF
-#define SDC_MODE_CARDTYPE_SDV11       0     /**< Card is V1.1 compliant.    */
-#define SDC_MODE_CARDTYPE_SDV20       1     /**< Card is V2.0 compliant.    */
-#define SDC_MODE_CARDTYPE_MMC         2     /**< Card is MMC compliant.     */
-#define SDC_MODE_HIGH_CAPACITY        0x10  /**< High capacity card.        */
+#define SDC_CMD_GO_IDLE_STATE           0
+#define SDC_CMD_ALL_SEND_CID            2
+#define SDC_CMD_SEND_RELATIVE_ADDR      3
+#define SDC_CMD_SEL_DESEL_CARD          7
+#define SDC_CMD_SEND_IF_COND            8
+#define SDC_CMD_SEND_CSD                9
+#define SDC_CMD_STOP_TRANSMISSION       12
+#define SDC_CMD_SET_BLOCKLEN            16
+#define SDC_CMD_READ_MULTIPLE_BLOCK     18
+#define SDC_CMD_WRITE_MULTIPLE_BLOCK    25
+#define SDC_CMD_APP_OP_COND             41
+#define SDC_CMD_APP_CMD                 55
 
-#define SDC_CMD8_PATTERN              0x000001AA
+#define SDC_MODE_CARDTYPE_MASK          0xF
+#define SDC_MODE_CARDTYPE_SDV11         0       /**< Card is V1.1 compliant.*/
+#define SDC_MODE_CARDTYPE_SDV20         1       /**< Card is V2.0 compliant.*/
+#define SDC_MODE_CARDTYPE_MMC           2       /**< Card is MMC compliant. */
+#define SDC_MODE_HIGH_CAPACITY          0x10    /**< High capacity card.    */
 
-#define SDC_ACMD41_RETRY              100
+#define SDC_CMD8_PATTERN                0x000001AA
+
+#define SDC_ACMD41_RETRY                100
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

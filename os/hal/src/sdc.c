@@ -205,8 +205,9 @@ bool_t sdcConnect(SDCDriver *sdcp) {
   if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEL_DESEL_CARD, resp[0], resp))
     goto failed;
 
-  /* Block lenght fixed at 512 bytes.*/
-  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SET_BLOCKLEN, 512, resp))
+  /* Block length fixed at 512 bytes.*/
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SET_BLOCKLEN,
+                                 SDC_BLOCK_SIZE, resp))
     goto failed;
 
   /* Switches to wide bus mode.*/
@@ -237,7 +238,7 @@ failed:
  */
 bool_t sdcDisconnect(SDCDriver *sdcp) {
 
-  chDbgCheck(sdcp != NULL, "sdcConnect");
+  chDbgCheck(sdcp != NULL, "sdcDisconnect");
 
   chSysLock();
   chDbgAssert(sdcp->state == SDC_ACTIVE,
@@ -255,7 +256,8 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
  * @param[in] startblk  first block to read
- * @param[out] buffer   pointer to the read buffer
+ * @param[out] buf      pointer to the read buffer
+ * @param[in] n         number of blocks to read
  * @return              The operation status.
  * @retval FALSE        operation succeeded, the requested blocks have been
  *                      read.
@@ -264,8 +266,23 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
  * @api
  */
 bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
-               uint8_t *buffer, uint32_t n) {
+               uint8_t *buf, uint32_t n) {
+  bool_t sts;
+  uint32_t resp[1];
 
+  chDbgCheck((sdcp != NULL) && (buffer != NULL) && (n > 0), "sdcRead");
+
+  if ((sdcp->cardmode & SDC_MODE_HIGH_CAPACITY) == 0)
+    startblk *= SDC_BLOCK_SIZE;
+
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_READ_MULTIPLE_BLOCK,
+                                 startblk, resp))
+    return TRUE;
+
+  sts = sdc_lld_read_blocks(sdcp, buffer, n);
+  sts = sts || sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION,
+                                          0, resp);
+  return sts;
 }
 
 /**
@@ -275,7 +292,8 @@ bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
  * @param[in] startblk  first block to write
- * @param[out] buffer   pointer to the write buffer
+ * @param[out] buf      pointer to the write buffer
+ * @param[in] n         number of blocks to write
  * @return              The operation status.
  * @retval FALSE        operation succeeded, the requested blocks have been
  *                      written.
@@ -284,8 +302,23 @@ bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
  * @api
  */
 bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
-                const uint8_t *buffer, uint32_t n) {
+                const uint8_t *buf, uint32_t n) {
+  bool_t sts;
+  uint32_t resp[1];
 
+  chDbgCheck((sdcp != NULL) && (buffer != NULL) && (n > 0), "sdcWrite");
+
+  if ((sdcp->cardmode & SDC_MODE_HIGH_CAPACITY) == 0)
+    startblk *= SDC_BLOCK_SIZE;
+
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_READ_MULTIPLE_BLOCK,
+                                 startblk, resp))
+    return TRUE;
+
+  sts = sdc_lld_write_blocks(sdcp, buffer, n);
+  sts = sts || sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION,
+                                          0, resp);
+  return sts;
 }
 
 #endif /* HAL_USE_SDC */
