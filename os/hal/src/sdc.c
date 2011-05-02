@@ -270,7 +270,7 @@ bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
   bool_t sts;
   uint32_t resp[1];
 
-  chDbgCheck((sdcp != NULL) && (buffer != NULL) && (n > 0), "sdcRead");
+  chDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0), "sdcRead");
 
   if ((sdcp->cardmode & SDC_MODE_HIGH_CAPACITY) == 0)
     startblk *= SDC_BLOCK_SIZE;
@@ -279,7 +279,7 @@ bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
                                  startblk, resp))
     return TRUE;
 
-  sts = sdc_lld_read_blocks(sdcp, buffer, n);
+  sts = sdc_lld_read_blocks(sdcp, buf, n);
   sts = sts || sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION,
                                           0, resp);
   return sts;
@@ -306,7 +306,7 @@ bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
   bool_t sts;
   uint32_t resp[1];
 
-  chDbgCheck((sdcp != NULL) && (buffer != NULL) && (n > 0), "sdcWrite");
+  chDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0), "sdcWrite");
 
   if ((sdcp->cardmode & SDC_MODE_HIGH_CAPACITY) == 0)
     startblk *= SDC_BLOCK_SIZE;
@@ -315,7 +315,7 @@ bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
                                  startblk, resp))
     return TRUE;
 
-  sts = sdc_lld_write_blocks(sdcp, buffer, n);
+  sts = sdc_lld_write_blocks(sdcp, buf, n);
   sts = sts || sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION,
                                           0, resp);
   return sts;

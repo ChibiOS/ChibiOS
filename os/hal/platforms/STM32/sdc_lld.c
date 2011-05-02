@@ -75,6 +75,7 @@ CH_IRQ_HANDLER(SDIO_IRQHandler) {
 void sdc_lld_init(void) {
 
   sdcObjectInit(&SDCD1);
+  SDCD1.thread = NULL;
 }
 
 /**
@@ -315,8 +316,16 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  * @notapi
  */
 bool_t sdc_lld_read_blocks(SDCDriver *sdcp, uint8_t *buf, uint32_t n) {
+  msg_t msg;
 
-  return TRUE;
+  chSysLock();
+  chDbgAssert(sdcp->thread == NULL, "sdc_lld_read_blocks(), #1", "not NULL");
+  sdcp->thread = chThdSelf();
+  chSchGoSleepS(THD_STATE_SUSPENDED);
+  chDbgAssert(sdcp->thread == NULL, "sdc_lld_read_blocks(), #2", "not NULL");
+  msg = chThdSelf()->p_u.rdymsg;
+  chSysUnlock();
+  return msg != RDY_OK;
 }
 
 /**

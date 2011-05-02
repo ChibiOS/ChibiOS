@@ -141,6 +141,10 @@ struct SDCDriver {
    */
   uint32_t                  csd[4];
   /* End of the mandatory fields.*/
+  /**
+   * @brief Tthread waiting for I/O completion IRQ.
+   */
+  Thread                    *thread;
 };
 
 /*===========================================================================*/
