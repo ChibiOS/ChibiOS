@@ -319,6 +319,11 @@ bool_t sdc_lld_read_blocks(SDCDriver *sdcp, uint8_t *buf, uint32_t n) {
   msg_t msg;
 
   chSysLock();
+  dmaChannelSetup(&STM32_DMA2->channels[STM32_DMA_CHANNEL_4],
+                  n * SDC_BLOCK_SIZE, buf,
+                  (STM32_SDC_SDIO_DMA_PRIORITY << 12) |
+                  DMA_CCR1_MINC | DMA_CCR1_EN);
+
   chDbgAssert(sdcp->thread == NULL, "sdc_lld_read_blocks(), #1", "not NULL");
   sdcp->thread = chThdSelf();
   chSchGoSleepS(THD_STATE_SUSPENDED);
