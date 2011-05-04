@@ -35,9 +35,17 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   SDIO data timeout in SDIO clock cycles.
+ */
+#if !defined(STM32_SDC_DATATIMEOUT) || defined(__DOXYGEN__)
+#define STM32_SDC_DATATIMEOUT               0x000FFFFF
+#endif
 
 /**
  * @brief   SDIO DMA priority (0..3|lowest..highest).

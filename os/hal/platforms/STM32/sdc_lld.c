@@ -96,9 +96,10 @@ void sdc_lld_start(SDCDriver *sdcp) {
     RCC->AHBENR |= RCC_AHBENR_SDIOEN;
   }
   /* Configuration, card clock is initially stopped.*/
-  SDIO->POWER = 0;
-  SDIO->CLKCR = 0;
-  SDIO->DCTRL = 0;
+  SDIO->POWER  = 0;
+  SDIO->CLKCR  = 0;
+  SDIO->DCTRL  = 0;
+  SDIO->DTIMER = STM32_SDC_DATATIMEOUT;
 }
 
 /**
@@ -111,9 +112,10 @@ void sdc_lld_start(SDCDriver *sdcp) {
 void sdc_lld_stop(SDCDriver *sdcp) {
 
   if ((sdcp->state == SDC_READY) || (sdcp->state == SDC_ACTIVE)) {
-    SDIO->POWER = 0;
-    SDIO->CLKCR = 0;
-    SDIO->DCTRL = 0;
+    SDIO->POWER  = 0;
+    SDIO->CLKCR  = 0;
+    SDIO->DCTRL  = 0;
+    SDIO->DTIMER = 0;
 
     /* Clock deactivation.*/
     NVICDisableVector(SDIO_IRQn);
@@ -319,11 +321,20 @@ bool_t sdc_lld_read_blocks(SDCDriver *sdcp, uint8_t *buf, uint32_t n) {
   msg_t msg;
 
   chSysLock();
+  /* Prepares the DMA channel.*/
   dmaChannelSetup(&STM32_DMA2->channels[STM32_DMA_CHANNEL_4],
-                  n * SDC_BLOCK_SIZE, buf,
+                  (n * SDC_BLOCK_SIZE) / sizeof (uint32_t), buf,
                   (STM32_SDC_SDIO_DMA_PRIORITY << 12) |
-                  DMA_CCR1_MINC | DMA_CCR1_EN);
-
+                  DMA_CCR1_PSIZE_1 | DMA_CCR1_MSIZE_1 |
+                  DMA_CCR1_MINC);
+  SDIO->DLEN = n;
+  /* Options: Card to Controller, Block mode, DMA mode, 512 bytes blocks.*/
+  SDIO->DCTRL = SDIO_DCTRL_RWMOD |
+                SDIO_DCTRL_DBLOCKSIZE_3 | SDIO_DCTRL_DBLOCKSIZE_3 |
+                SDIO_DCTRL_DMAEN |
+                SDIO_DCTRL_DTEN;
+  /* DMA channel activation.*/
+  dmaEnableChannel(&STM32_DMA2, STM32_DMA_CHANNEL_4);
   chDbgAssert(sdcp->thread == NULL, "sdc_lld_read_blocks(), #1", "not NULL");
   sdcp->thread = chThdSelf();
   chSchGoSleepS(THD_STATE_SUSPENDED);
