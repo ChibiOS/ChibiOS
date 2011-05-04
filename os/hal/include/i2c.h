@@ -33,7 +33,24 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
-
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+#define  I2CD_NO_ERROR                  0
+/** @brief Bus Error.*/
+#define  I2CD_BUS_ERROR                 0x01
+/** @brief Arbitration Lost (master mode).*/
+#define  I2CD_ARBITRATION_LOST          0x02
+/** @brief Acknowledge Failure.*/
+#define  I2CD_ACK_FAILURE               0x04
+/** @brief Overrun/Underrun.*/
+#define  I2CD_OVERRUN                   0x08
+/** @brief PEC Error in reception.*/
+#define  I2CD_PEC_ERROR                 0x10
+/** @brief Timeout or Tlow Error.*/
+#define  I2CD_TIMEOUT                   0x20
+/** @brief SMBus Alert.*/
+#define  I2CD_SMB_ALERT                 0x40
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -48,6 +65,9 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+#if I2C_USE_MUTUAL_EXCLUSION && !CH_USE_MUTEXES && !CH_USE_SEMAPHORES
+#error "I2C_USE_MUTUAL_EXCLUSION requires CH_USE_MUTEXES and/or CH_USE_SEMAPHORES"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -57,16 +77,11 @@
  * @brief   Driver state machine possible states.
  */
 typedef enum {
-  I2C_UNINIT = 0,             /**< Not initialized.                          */
-  I2C_STOP = 1,               /**< Stopped.                                  */
-  I2C_READY = 2,              /**< Ready. Start condition generated.         */
-  I2C_MACTIVE = 3,            /**< I2C configured and waiting start cond.    */
-  I2C_10BIT_HANDSHAKE = 4,    /**< 10-bit address sending                    */
-  I2C_MWAIT_ADDR_ACK = 5,     /**< Waiting ACK on address sending.           */
-  I2C_MTRANSMIT = 6,          /**< Master transmitting.                      */
-  I2C_MRECEIVE = 7,           /**< Master receiving.                         */
-  I2C_MWAIT_TF = 8,           /**< Master wait Transmission Finished         */
-  I2C_MERROR = 9,             /**< Error condition.                          */
+  I2C_UNINIT = 0,                           /**< @brief Not initialized.        */
+  I2C_STOP = 1,                             /**< @brief Stopped.                */
+  I2C_READY = 2,                            /**< @brief Ready.                  */
+  I2C_ACTIVE = 3,                           /**< @brief In communication.          */
+  I2C_COMPLETE = 4,                         /**< @brief Asynchronous operation complete.   */
 
   // slave part
   I2C_SACTIVE = 10,

@@ -55,24 +55,44 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-#define  I2CD_NO_ERROR                  0
-/** @brief Bus Error.*/
-#define  I2CD_BUS_ERROR                 0x01
-/** @brief Arbitration Lost (master mode).*/
-#define  I2CD_ARBITRATION_LOST          0x02
-/** @brief Acknowledge Failure.*/
-#define  I2CD_ACK_FAILURE               0x04
-/** @brief Overrun/Underrun.*/
-#define  I2CD_OVERRUN                   0x08
-/** @brief PEC Error in reception.*/
-#define  I2CD_PEC_ERROR                 0x10
-/** @brief Timeout or Tlow Error.*/
-#define  I2CD_TIMEOUT                   0x20
-/** @brief SMBus Alert.*/
-#define  I2CD_SMB_ALERT                 0x40
+
+/** @brief  EV5 */
+#define I2C_EV5_MASTER_MODE_SELECT          ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_SB))  /* BUSY, MSL and SB flag */
+/** @brief  EV6 */
+#define I2C_EV6_MASTER_TRA_MODE_SELECTED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY|I2C_SR2_TRA)<< 16)|I2C_SR1_ADDR|I2C_SR1_TXE))  /* BUSY, MSL, ADDR, TXE and TRA flags */
+#define I2C_EV6_MASTER_REC_MODE_SELECTED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_ADDR))  /* BUSY, MSL and ADDR flags */
+/** @brief  EV7 */
+#define I2C_EV7_MASTER_REC_BYTE_RECEIVED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_RXNE))  /* BUSY, MSL and RXNE flags */
+#define I2C_EV7_MASTER_REC_BYTE_QUEUED      ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_BTF|I2C_SR1_RXNE)) /* BUSY, MSL, RXNE and BTF flags*/
+/** @brief  EV8 */
+#define I2C_EV8_MASTER_BYTE_TRANSMITTING    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY|I2C_SR2_TRA)<< 16)|I2C_SR1_TXE))   /* TRA, BUSY, MSL, TXE flags */
+/** @brief  EV8_2 */
+#define I2C_EV8_2_MASTER_BYTE_TRANSMITTED   ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY|I2C_SR2_TRA)<< 16)|I2C_SR1_BTF|I2C_SR1_TXE))  /* TRA, BUSY, MSL, TXE and BTF flags */
+/** @brief  EV9 */
+#define I2C_EV9_MASTER_ADDR_10BIT           ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_ADD10))  /* BUSY, MSL and ADD10 flags */
+#define I2C_EV_MASK                         0x00FFFFFF
+
+#define I2C_FLG_1BTR            0x01 // Single byte to be received and processed
+#define I2C_FLG_2BTR            0x02 // Two bytes to be received and processed
+#define I2C_FLG_3BTR            0x04 // Last three received bytes to be processed
+#define I2C_FLG_MASTER_RECEIVER 0x10
+#define I2C_FLG_HEADER_SENT     0x80
+
+#define EV6_SUBEV_MASK  (I2C_FLG_1BTR|I2C_FLG_2BTR|I2C_FLG_MASTER_RECEIVER)
+#define EV7_SUBEV_MASK  (I2C_FLG_2BTR|I2C_FLG_3BTR|I2C_FLG_MASTER_RECEIVER)
+
+#define I2C_EV6_1_MASTER_REC_2BTR_MODE_SELECTED (I2C_FLG_2BTR|I2C_FLG_MASTER_RECEIVER)
+#define I2C_EV6_3_MASTER_REC_1BTR_MODE_SELECTED (I2C_FLG_1BTR|I2C_FLG_MASTER_RECEIVER)
+#define I2C_EV7_2_MASTER_REC_3BYTES_TO_PROCESS  (I2C_FLG_3BTR|I2C_FLG_MASTER_RECEIVER)
+#define I2C_EV7_3_MASTER_REC_2BYTES_TO_PROCESS  (I2C_FLG_2BTR|I2C_FLG_MASTER_RECEIVER)
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Serial Driver condition flags type.
+ */
+typedef uint32_t i2cflags_t;
 
 typedef enum {
   opmodeI2C,
@@ -176,20 +196,14 @@ extern "C" {
 #endif
 
 void i2c_lld_init(void);
+void i2c_lld_reset(I2CDriver *i2cp);
+void i2c_lld_set_clock(I2CDriver *i2cp, int32_t clock_speed, I2C_DutyCycle_t duty);
+void i2c_lld_set_opmode(I2CDriver *i2cp, I2C_opMode_t opmode);
+void i2c_lld_set_own_address(I2CDriver *i2cp, int16_t address, int8_t nr_bit);
 void i2c_lld_start(I2CDriver *i2cp);
 void i2c_lld_stop(I2CDriver *i2cp);
-void i2c_lld_set_clock(I2CDriver *i2cp);
-void i2c_lld_set_opmode(I2CDriver *i2cp);
-void i2c_lld_set_own_address(I2CDriver *i2cp);
-
-void i2c_lld_master_start(I2CDriver *i2cp);
-void i2c_lld_master_stop(I2CDriver *i2cp);
-
-void i2c_lld_master_transmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
-void i2c_lld_master_receive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
-
-void i2c_lld_master_transmit_NI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, bool_t restart);
-void i2c_lld_master_receive_NI(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
+void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr, size_t n, void *txbuf);
+void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr, size_t n, void *rxbuf);
 
 #ifdef __cplusplus
 }
