@@ -115,6 +115,8 @@ typedef struct {
   I2C_DutyCycle_t FastModeDutyCycle;/*!< Specifies the I2C fast mode duty cycle */
   uint8_t         OwnAddress7;      /*!< Specifies the first device 7-bit own address. */
   uint16_t        OwnAddress10;     /*!< Specifies the second part of device own address in 10-bit mode. Set to NULL if not used. */
+  uint16_t        Ack;              /*!< Enables or disables the acknowledgement. */
+  uint8_t         nBitAddress;      /*!< Specifies if 7-bit or 10-bit address is acknowledged */
 } I2CConfig;
 
 
@@ -165,6 +167,11 @@ struct I2CDriver{
    */
   uint8_t               rw_bit;
 
+  uint8_t               slave_addr1;    // 7-bit address of the slave
+  uint8_t               slave_addr2;    // used in 10-bit address mode
+  uint8_t               nbit_address;
+
+
   /*********** End of the mandatory fields. **********************************/
 
   /**
@@ -197,13 +204,13 @@ extern "C" {
 
 void i2c_lld_init(void);
 void i2c_lld_reset(I2CDriver *i2cp);
-void i2c_lld_set_clock(I2CDriver *i2cp, int32_t clock_speed, I2C_DutyCycle_t duty);
-void i2c_lld_set_opmode(I2CDriver *i2cp, I2C_opMode_t opmode);
-void i2c_lld_set_own_address(I2CDriver *i2cp, int16_t address, int8_t nr_bit);
+void i2c_lld_set_clock(I2CDriver *i2cp);
+void i2c_lld_set_opmode(I2CDriver *i2cp);
+void i2c_lld_set_own_address(I2CDriver *i2cp);
 void i2c_lld_start(I2CDriver *i2cp);
 void i2c_lld_stop(I2CDriver *i2cp);
-void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr, size_t n, void *txbuf);
-void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr, size_t n, void *rxbuf);
+void i2c_lld_master_transmit(I2CDriver *i2cp);
+void i2c_lld_master_receive(I2CDriver *i2cp);
 
 #ifdef __cplusplus
 }

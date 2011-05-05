@@ -150,45 +150,16 @@ struct I2CSlaveConfig{
   /**
    * @brief Receive and transmit buffers.
    */
-  i2cblock_t *rxbuf;     /*!< Pointer to receive buffer. */
-  size_t     rxdepth;    /*!< Depth of buffer. */
-  size_t     rxbytes;    /*!< Number of bytes to be receive in one transmission. */
-  size_t     rxbufhead;  /*!< Pointer to current data byte. */
-
-  i2cblock_t *txbuf;     /*!< Pointer to transmit buffer.*/
-  size_t     txdepth;    /*!< Depth of buffer. */
-  size_t     txbytes;    /*!< Number of bytes to be transmit in one transmission. */
-  size_t     txbufhead;  /*!< Pointer to current data byte. */
-
-  /**
-   * @brief   Contain slave address and some flags.
-   * @details Bits 0..9 contain slave address in 10-bit mode.
-   *
-   *          Bits 0..6 contain slave address in 7-bit mode.
-   *
-   *          Bits 10..14 are not used in 10-bit mode.
-   *          Bits  7..14 are not used in 7-bit mode.
-   *
-   *          Bit 15 is used to switch between 10-bit and 7-bit modes
-   *          (0 denotes 7-bit mode).
-   */
-  uint16_t              address;
-
-  /**
-   * @brief   Boolean flag for dealing with start/stop conditions.
-   * @note    This flag destined to use in callback functions. It place here
-   *          for convenience and flexibility reasons, but you can use your
-   *          own variable from user level code.
-   */
-  bool_t                restart;
-
-
-#if I2C_USE_WAIT
-  /**
-   * @brief Thread waiting for I/O completion.
-   */
-  Thread                *thread;
-#endif /* I2C_USE_WAIT */
+  size_t                tx_remaining_bytes;
+  size_t                rx_remaining_bytes;
+  i2cblock_t            *rxbuf;/*!< Pointer to receive buffer. */
+  i2cblock_t            *txbuf;/*!< Pointer to transmit buffer.*/
+  uint16_t              slave_addr;
+  uint8_t               nbit_address;
+  i2cflags_t            errors;
+  i2cflags_t            flags;
+  /* Status Change @p EventSource.*/
+  EventSource           sevent;
 };
 
 
@@ -196,42 +167,69 @@ struct I2CSlaveConfig{
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+#if I2C_USE_WAIT || defined(__DOXYGEN__)
 /**
- * @brief   Read mode.
+ * @brief   Waits for operation completion.
+ * @details This function waits for the driver to complete the current
+ *          operation.
+ * @pre     An operation must be running while the function is invoked.
+ * @note    No more than one thread can wait on a I2C driver using
+ *          this function.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
+ * @notapi
  */
-#define I2C_READ                            1
+#define _i2c_wait_s(i2cp) {                                                 \
+  chDbgAssert((i2cp)->thread == NULL,                                       \
+              "_i2c_wait(), #1", "already waiting");                        \
+  (i2cp)->thread = chThdSelf();                                             \
+  chSchGoSleepS(THD_STATE_SUSPENDED);                                       \
+}
 
 /**
- * @brief   Write mode.
+ * @brief   Wakes up the waiting thread.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
+ * @notapi
  */
-#define I2C_WRITE                           0
+#define _i2c_wakeup_isr(i2cp) {                                             \
+  if ((i2cp)->thread != NULL) {                                             \
+    Thread *tp = (i2cp)->thread;                                            \
+    (i2cp)->thread = NULL;                                                  \
+    chSysLockFromIsr();                                                     \
+    chSchReadyI(tp);                                                        \
+    chSysUnlockFromIsr();                                                   \
+  }                                                                         \
+}
+#else /* !I2C_USE_WAIT */
+#define i2c_lld_wait_bus_free(i2cp) //TODO: remove this STUB
+#define _i2c_wait_s(i2cp)
+#define _i2c_wakeup_isr(i2cp)
+#endif /* !I2C_USE_WAIT */
 
 /**
- * @brief   Seven bits addresses header builder.
+ * @brief   Common ISR code.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          - Waiting thread wakeup, if any.
+ *          - Driver state transitions.
+ *          .
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
  *
- * @param[in] addr      seven bits address value
- * @param[in] rw        read/write flag
+ * @param[in] i2cp      pointer to the @p I2CDriver object
  *
- * @return              A 16 bit value representing the header, the most
- *                      significant byte is always zero.
+ * @notapi
  */
-#define I2C_ADDR7(addr, rw) (uint16_t)((addr) << 1 | (rw))
-
-
-/**
- * @brief   Ten bits addresses header builder.
- *
- * @param[in] addr      ten bits address value
- * @param[in] rw        read/write flag
- *
- * @return              A 16 bit value representing the header, the most
- *                      significant byte is the first one to be transmitted.
- */
-#define I2C_ADDR10(addr, rw)                                                \
-    (uint16_t)(0xF000 |                                                     \
-               (((addr) & 0x0300) << 1) |                                   \
-               (((rw) << 8)) |                                              \
-               ((addr) & 0x00FF))
+#define _i2c_isr_code(i2cp, i2cscfg) {                                               \
+  (i2cp)->id_state = I2C_COMPLETE;                                          \
+  if(((i2cp)->id_slave_config)->id_callback) {                            \
+    ((i2cp)->id_slave_config)->id_callback(i2cp, i2cscfg);                                              \
+  }                                                                         \
+  _i2c_wakeup_isr(i2cp);                                                    \
+}
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -247,6 +245,7 @@ extern "C" {
   void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
   void i2cMasterStart(I2CDriver *i2cp);
   void i2cMasterStop(I2CDriver *i2cp);
+  void i2cAddFlagsI(I2CDriver *i2cp, i2cflags_t mask);
 
 #if I2C_USE_MUTUAL_EXCLUSION
   void i2cAcquireBus(I2CDriver *i2cp);
