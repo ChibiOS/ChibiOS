@@ -140,11 +140,14 @@ void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
 
   size_t n;
   i2cblock_t *txbuf;
+  uint8_t nbit_addr;
 
   txbuf = i2cscfg->txbuf;
+  nbit_addr = i2cscfg->nbit_address;
   n = i2cscfg->tx_remaining_bytes;
 
-  chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) && (n > 0) && (txbuf != NULL),
+  chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) && \
+      ((nbit_addr == 7) || (nbit_addr == 10)) && (n > 0) && (txbuf != NULL),
              "i2cMasterTransmit");
 
   // init slave config field in driver
@@ -186,11 +189,14 @@ void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 
   size_t n;
   i2cblock_t *rxbuf;
+  uint8_t nbit_addr;
 
   rxbuf = i2cscfg->rxbuf;
   n = i2cscfg->rx_remaining_bytes;
+  nbit_addr = i2cscfg->nbit_address;
 
-  chDbgCheck((i2cp != NULL) && (n > 0) && (rxbuf != NULL),
+  chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) && (n > 0) && \
+      ((nbit_addr == 7) || (nbit_addr == 10)) && (rxbuf != NULL),
              "i2cMasterReceive");
 
   // init slave config field in driver
@@ -220,6 +226,7 @@ void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
     i2cp->id_state = I2C_READY;
   chSysUnlock();
 }
+
 
 uint16_t i2cSMBusAlertResponse(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
 

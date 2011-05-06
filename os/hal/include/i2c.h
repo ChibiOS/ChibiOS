@@ -204,7 +204,6 @@ struct I2CSlaveConfig{
   }                                                                         \
 }
 #else /* !I2C_USE_WAIT */
-#define i2c_lld_wait_bus_free(i2cp) //TODO: remove this STUB
 #define _i2c_wait_s(i2cp)
 #define _i2c_wakeup_isr(i2cp)
 #endif /* !I2C_USE_WAIT */
@@ -223,12 +222,12 @@ struct I2CSlaveConfig{
  *
  * @notapi
  */
-#define _i2c_isr_code(i2cp, i2cscfg) {                                               \
-  (i2cp)->id_state = I2C_COMPLETE;                                          \
+#define _i2c_isr_code(i2cp, i2cscfg) {                                 \
+  (i2cp)->id_state = I2C_COMPLETE;                                     \
   if(((i2cp)->id_slave_config)->id_callback) {                            \
-    ((i2cp)->id_slave_config)->id_callback(i2cp, i2cscfg);                                              \
-  }                                                                         \
-  _i2c_wakeup_isr(i2cp);                                                    \
+    ((i2cp)->id_slave_config)->id_callback(i2cp, i2cscfg);                \
+  }                                                                     \
+  _i2c_wakeup_isr(i2cp);                                                 \
 }
 
 /*===========================================================================*/

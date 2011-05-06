@@ -185,6 +185,19 @@ struct I2CDriver{
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+#define i2c_lld_bus_is_busy(i2cp)                                           \
+  (i2cp->id_i2c->SR2 & I2C_SR2_BUSY)
+
+
+/* Wait until BUSY flag is reset: a STOP has been generated on the bus
+ * signaling the end of transmission
+ */
+#define i2c_lld_wait_bus_free(i2cp) {                                       \
+  uint32_t tmo = 0xffff;                                                    \
+  while((i2cp->id_i2c->SR2 & I2C_SR2_BUSY) && tmo--)                  \
+    ;                                                                       \
+}
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -211,6 +224,7 @@ void i2c_lld_start(I2CDriver *i2cp);
 void i2c_lld_stop(I2CDriver *i2cp);
 void i2c_lld_master_transmit(I2CDriver *i2cp);
 void i2c_lld_master_receive(I2CDriver *i2cp);
+void i2c_lld_master_transceive(I2CDriver *i2cp);
 
 #ifdef __cplusplus
 }

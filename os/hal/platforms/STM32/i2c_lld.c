@@ -94,11 +94,20 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     }
     break;
   case I2C_EV8_2_MASTER_BYTE_TRANSMITTED:
-    dp->CR1 |= I2C_CR1_STOP;   // stop generation
-    /* Disable ITEVT In order to not have again a BTF IT */
-    dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
-    /* Portable I2C ISR code defined in the high level driver, note, it is a macro.*/
-    _i2c_isr_code(i2cp, i2cp->id_slave_config);
+    /* if nothing to read then generate stop */
+    if (i2cp->id_slave_config->rx_remaining_bytes == 0){
+      dp->CR1 |= I2C_CR1_STOP;   // stop generation
+      /* Disable ITEVT In order to not have again a BTF IT */
+      dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
+      /* Portable I2C ISR code defined in the high level driver, note, it is a macro.*/
+      _i2c_isr_code(i2cp, i2cp->id_slave_config);
+    }
+    else{
+      /* Disable ITEVT In order to not have again a BTF IT */
+      dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
+      /* send restart and begin reading operations */
+      i2c_lld_master_transceive(i2cp);
+    }
     break;
 
 
@@ -550,7 +559,7 @@ void i2c_lld_master_receive(I2CDriver *i2cp){
   i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                 // acknowledge returned
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 
-  switch(i2cp->nbit_address){
+  switch(i2cp->id_slave_config->nbit_address){
   case 7:
     i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr <<1) | 0x01);  // LSB = 1 -> receive
     break;
@@ -584,6 +593,54 @@ void i2c_lld_master_receive(I2CDriver *i2cp){
 #endif /* I2C_USE_WAIT */
 }
 
+
+
+/**
+ * @brief
+ *
+ * @param[in] i2cp          pointer to the @p I2CDriver object
+ *
+ */
+void i2c_lld_master_transceive(I2CDriver *i2cp){
+  uint32_t a, b;
+  // enable ERR, EVT & BUF ITs
+  i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
+  i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                 // acknowledge returned
+  i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
+
+  switch(i2cp->id_slave_config->nbit_address){
+  case 7:
+    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr <<1) | 0x01);  // LSB = 1 -> receive
+    break;
+  case 10:
+    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr >>7) & 0x0006);  // add the two msb of 10-bit address to the header
+    i2cp->slave_addr1 |= 0xF0;                        // add the header bits (the LSB -> 1 will be add to second
+    i2cp->slave_addr2 = i2cp->id_slave_config->slave_addr & 0x00FF;          // the remaining 8 bit of 10-bit address
+    break;
+  }
+
+  i2cp->id_slave_config->flags = I2C_FLG_MASTER_RECEIVER;
+  i2cp->id_slave_config->errors = 0;
+
+  // Only one byte to be received
+  if(i2cp->id_slave_config->rx_remaining_bytes == 1) {
+    i2cp->id_slave_config->flags |= I2C_FLG_1BTR;
+  }
+  // Only two bytes to be received
+  else if(i2cp->id_slave_config->rx_remaining_bytes == 2) {
+    i2cp->id_slave_config->flags |= I2C_FLG_2BTR;
+    i2cp->id_i2c->CR1 |= I2C_CR1_POS;            // Acknowledge Position
+  }
+
+  i2cp->id_i2c->CR1 |= I2C_CR1_START;            // send start bit
+
+#if !I2C_USE_WAIT
+  /* Wait until the START condition is generated on the bus: the START bit is cleared by hardware */
+  uint32_t timeout = 0xfffff;
+  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
+    ;
+#endif /* I2C_USE_WAIT */
+}
 
 
 #endif // HAL_USE_I2C
