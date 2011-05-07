@@ -205,7 +205,7 @@ void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg) {
   SDIO->CMD = (uint32_t)cmd | SDIO_CMD_CPSMEN;
   while ((SDIO->STA & SDIO_STA_CMDSENT) == 0)
     ;
-  SDIO->ICR = 0xFFFFFFFF;
+  SDIO->ICR = SDIO_ICR_CMDSENTC;
 }
 
 /**
@@ -233,7 +233,7 @@ bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   while (((sta = SDIO->STA) & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
                                SDIO_STA_CCRCFAIL)) == 0)
     ;
-  SDIO->ICR = 0xFFFFFFFF;
+  SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
   if ((sta & (SDIO_STA_CTIMEOUT)) != 0)
     return TRUE;
   *resp = SDIO->RESP1;
@@ -264,7 +264,7 @@ bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   while (((sta = SDIO->STA) & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
                                SDIO_STA_CCRCFAIL)) == 0)
     ;
-  SDIO->ICR = 0xFFFFFFFF;
+  SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
   if ((sta & (SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL)) != 0)
     return TRUE;
   *resp = SDIO->RESP1;
@@ -297,7 +297,7 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   while (((sta = SDIO->STA) & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
                                SDIO_STA_CCRCFAIL)) == 0)
     ;
-  SDIO->ICR = 0xFFFFFFFF;
+  SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
   if ((sta & (SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL)) != 0)
     return TRUE;
   *resp = SDIO->RESP1;
@@ -305,9 +305,10 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
 }
 
 /**
- * @brief   Data read through the SDIO bus.
+ * @brief   Reads one or more blocks.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] startblk  first block to read
  * @param[out] buf      pointer to the read buffer
  * @param[in] n         number of blocks to read
  * @return              The operation status.
@@ -317,24 +318,40 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  *
  * @notapi
  */
-bool_t sdc_lld_read_blocks(SDCDriver *sdcp, uint8_t *buf, uint32_t n) {
+bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
+                    uint8_t *buf, uint32_t n) {
   msg_t msg;
+  uint32_t resp[1];
 
-  chSysLock();
-  /* Prepares the DMA channel.*/
+  /* Clearing status.*/
+  SDIO->ICR = 0xFFFFFFFF;
+
+  /* Prepares the DMA channel for reading.*/
   dmaChannelSetup(&STM32_DMA2->channels[STM32_DMA_CHANNEL_4],
                   (n * SDC_BLOCK_SIZE) / sizeof (uint32_t), buf,
                   (STM32_SDC_SDIO_DMA_PRIORITY << 12) |
                   DMA_CCR1_PSIZE_1 | DMA_CCR1_MSIZE_1 |
                   DMA_CCR1_MINC);
+
+  /* Setting up data transfer.
+     Options: Card to Controller, Block mode, DMA mode, 512 bytes blocks.*/
+  SDIO->DTIMER = STM32_SDC_DATATIMEOUT;
   SDIO->DLEN = n;
-  /* Options: Card to Controller, Block mode, DMA mode, 512 bytes blocks.*/
   SDIO->DCTRL = SDIO_DCTRL_RWMOD |
                 SDIO_DCTRL_DBLOCKSIZE_3 | SDIO_DCTRL_DBLOCKSIZE_3 |
                 SDIO_DCTRL_DMAEN |
                 SDIO_DCTRL_DTEN;
+
   /* DMA channel activation.*/
-  dmaEnableChannel(&STM32_DMA2, STM32_DMA_CHANNEL_4);
+  dmaEnableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
+
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_READ_MULTIPLE_BLOCK, n, resp) ||
+      (resp[0] & SDC_R1_ERROR_MASK)) {
+    dmaDisableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
+    SDIO->DCTRL = 0;
+    return TRUE;
+  }
+
   chDbgAssert(sdcp->thread == NULL, "sdc_lld_read_blocks(), #1", "not NULL");
   sdcp->thread = chThdSelf();
   chSchGoSleepS(THD_STATE_SUSPENDED);
@@ -345,9 +362,10 @@ bool_t sdc_lld_read_blocks(SDCDriver *sdcp, uint8_t *buf, uint32_t n) {
 }
 
 /**
- * @brief   Data write through the SDIO bus.
+ * @brief   Writes one or more blocks.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] startblk  first block to write
  * @param[out] buf      pointer to the write buffer
  * @param[in] n         number of blocks to write
  * @return              The operation status.
@@ -357,7 +375,8 @@ bool_t sdc_lld_read_blocks(SDCDriver *sdcp, uint8_t *buf, uint32_t n) {
  *
  * @notapi
  */
-bool_t sdc_lld_write_blocks(SDCDriver *sdcp, const uint8_t *buf, uint32_t n) {
+bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
+                     const uint8_t *buf, uint32_t n) {
 
   return TRUE;
 }

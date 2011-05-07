@@ -46,6 +46,7 @@
 #define SDC_CMD_STOP_TRANSMISSION       12
 #define SDC_CMD_SET_BLOCKLEN            16
 #define SDC_CMD_READ_MULTIPLE_BLOCK     18
+#define SDC_CMD_SET_BLOCK_COUNT         23
 #define SDC_CMD_WRITE_MULTIPLE_BLOCK    25
 #define SDC_CMD_APP_OP_COND             41
 #define SDC_CMD_APP_CMD                 55
@@ -59,6 +60,8 @@
 #define SDC_CMD8_PATTERN                0x000001AA
 
 #define SDC_ACMD41_RETRY                100
+
+#define SDC_R1_ERROR_MASK               0xFDFFE008
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

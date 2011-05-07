@@ -211,11 +211,11 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     goto failed;
 
   /* Switches to wide bus mode.*/
-  switch (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK) {
+/*  switch (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK) {
   case SDC_MODE_CARDTYPE_SDV11:
   case SDC_MODE_CARDTYPE_SDV20:
     SDIO->CLKCR |= SDIO_CLKCR_WIDBUS_0;
-  }
+  }*/
 
   sdcp->state = SDC_ACTIVE;
   return FALSE;
@@ -268,20 +268,33 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
 bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
                uint8_t *buf, uint32_t n) {
   bool_t sts;
-  uint32_t resp[1];
+  uint32_t resp[4];
 
   chDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0), "sdcRead");
+
+  chSysLock();
+  chDbgAssert(sdcp->state == SDC_ACTIVE,
+              "sdcDisconnect(), #1", "invalid state");
+  sdcp->state = SDC_READING;
+  chSysUnlock();
 
   if ((sdcp->cardmode & SDC_MODE_HIGH_CAPACITY) == 0)
     startblk *= SDC_BLOCK_SIZE;
 
-  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_READ_MULTIPLE_BLOCK,
-                                 startblk, resp))
+/*  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp) ||
+      (resp[0] & SDC_R1_ERROR_MASK))
+    return TRUE;
+  if (sdc_lld_send_cmd_long_crc(sdcp, 51, 0, resp))
     return TRUE;
 
-  sts = sdc_lld_read_blocks(sdcp, buf, n);
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SET_BLOCK_COUNT, n, resp) ||
+      (resp[0] & SDC_R1_ERROR_MASK))
+    return TRUE;*/
+
+  sts = sdc_lld_read(sdcp, startblk, buf, n);
   sts = sts || sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION,
                                           0, resp);
+  sdcp->state = SDC_ACTIVE;
   return sts;
 }
 
@@ -315,7 +328,7 @@ bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
                                  startblk, resp))
     return TRUE;
 
-  sts = sdc_lld_write_blocks(sdcp, buf, n);
+  sts = sdc_lld_write(sdcp, startblk, buf, n);
   sts = sts || sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION,
                                           0, resp);
   return sts;

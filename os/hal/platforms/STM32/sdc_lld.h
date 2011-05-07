@@ -184,8 +184,10 @@ extern "C" {
                                     uint32_t *resp);
   bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                                    uint32_t *resp);
-  bool_t sdc_lld_read_blocks(SDCDriver *sdcp, uint8_t *buffer, uint32_t n);
-  bool_t sdc_lld_write_blocks(SDCDriver *sdcp, const uint8_t *buf, uint32_t n);
+  bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
+                      uint8_t *buf, uint32_t n);
+  bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
+                       const uint8_t *buf, uint32_t n);
 #ifdef __cplusplus
 }
 #endif
