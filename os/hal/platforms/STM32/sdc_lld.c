@@ -59,6 +59,16 @@ CH_IRQ_HANDLER(SDIO_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
+  chSysLockFromIsr();
+  if (SDCD1.thread != NULL) {
+    if ((SDIO->STA & SDIO_STA_DATAEND) != 0)
+      SDCD1.thread->p_u.rdymsg = RDY_OK;
+    else
+      SDCD1.thread->p_u.rdymsg = RDY_RESET;
+    chSchReadyI(SDCD1.thread);
+    SDCD1.thread = NULL;
+  }
+  chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
 }
@@ -320,8 +330,7 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  */
 bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
                     uint8_t *buf, uint32_t n) {
-  msg_t msg;
-  uint32_t sts, resp[1];
+  uint32_t sta, resp[1];
 
   /* Prepares the DMA channel for reading.*/
   dmaChannelSetup(&STM32_DMA2->channels[STM32_DMA_CHANNEL_4],
@@ -349,11 +358,24 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
     goto error;
 
   chSysLock();
-  chDbgAssert(sdcp->thread == NULL, "sdc_lld_read_blocks(), #1", "not NULL");
-  sdcp->thread = chThdSelf();
-  chSchGoSleepS(THD_STATE_SUSPENDED);
-  chDbgAssert(sdcp->thread == NULL, "sdc_lld_read_blocks(), #2", "not NULL");
-  msg = chThdSelf()->p_u.rdymsg;
+  sta = SDIO->STA;
+  if ((sta & SDIO_STA_DCRCFAIL | SDIO_STA_DTIMEOUT |
+             SDIO_STA_DATAEND | SDIO_STA_STBITERR) == 0) {
+    chDbgAssert(sdcp->thread == NULL, "sdc_lld_read_blocks(), #1", "not NULL");
+    sdcp->thread = chThdSelf();
+    chSchGoSleepS(THD_STATE_SUSPENDED);
+    chDbgAssert(sdcp->thread == NULL, "sdc_lld_read_blocks(), #2", "not NULL");
+    if (chThdSelf()->p_u.rdymsg != RDY_OK) {
+      chSysUnlock();
+      goto error;
+    }
+  }
+  else {
+    if ((sta & SDIO_STA_DATAEND) == 0) {
+      chSysUnlock();
+      goto error;
+    }
+  }
   chSysUnlock();
 
   if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp))
