@@ -28,6 +28,8 @@ static const SDCConfig sdccfg = {
   0
 };
 
+static uint8_t buf[SDC_BLOCK_SIZE];
+
 /*
  * Application entry point.
  */
@@ -47,7 +49,9 @@ int main(void) {
    * Initializes the SDIO drivers.
    */
   sdcStart(&SDCD1, &sdccfg);
-  sdcConnect(&SDCD1);
+  if (!sdcConnect(&SDCD1)) {
+    sdcRead(&SDCD1, 0, buf, 1);
+  }
 
   /*
    * Normal main() thread activity.

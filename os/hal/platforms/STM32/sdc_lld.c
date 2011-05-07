@@ -321,10 +321,7 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
 bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
                     uint8_t *buf, uint32_t n) {
   msg_t msg;
-  uint32_t resp[1];
-
-  /* Clearing status.*/
-  SDIO->ICR = 0xFFFFFFFF;
+  uint32_t sts, resp[1];
 
   /* Prepares the DMA channel for reading.*/
   dmaChannelSetup(&STM32_DMA2->channels[STM32_DMA_CHANNEL_4],
@@ -335,8 +332,10 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
 
   /* Setting up data transfer.
      Options: Card to Controller, Block mode, DMA mode, 512 bytes blocks.*/
-  SDIO->DTIMER = STM32_SDC_DATATIMEOUT;
-  SDIO->DLEN = n;
+  SDIO->ICR   = 0xFFFFFFFF;
+  SDIO->MASK  = SDIO_MASK_DCRCFAILIE | SDIO_MASK_DTIMEOUTIE |
+                SDIO_MASK_DATAENDIE | SDIO_MASK_STBITERRIE;
+  SDIO->DLEN  = n;
   SDIO->DCTRL = SDIO_DCTRL_RWMOD |
                 SDIO_DCTRL_DBLOCKSIZE_3 | SDIO_DCTRL_DBLOCKSIZE_3 |
                 SDIO_DCTRL_DMAEN |
@@ -346,19 +345,26 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
   dmaEnableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
 
   if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_READ_MULTIPLE_BLOCK, n, resp) ||
-      (resp[0] & SDC_R1_ERROR_MASK)) {
-    dmaDisableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
-    SDIO->DCTRL = 0;
-    return TRUE;
-  }
+      (resp[0] & SDC_R1_ERROR_MASK))
+    goto error;
 
+  chSysLock();
   chDbgAssert(sdcp->thread == NULL, "sdc_lld_read_blocks(), #1", "not NULL");
   sdcp->thread = chThdSelf();
   chSchGoSleepS(THD_STATE_SUSPENDED);
   chDbgAssert(sdcp->thread == NULL, "sdc_lld_read_blocks(), #2", "not NULL");
   msg = chThdSelf()->p_u.rdymsg;
   chSysUnlock();
-  return msg != RDY_OK;
+
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp))
+    goto error;
+  return FALSE;
+error:
+  dmaDisableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
+  SDIO->ICR   = 0xFFFFFFFF;
+  SDIO->MASK  = 0;
+  SDIO->DCTRL = 0;
+  return TRUE;
 }
 
 /**

@@ -281,19 +281,7 @@ bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
   if ((sdcp->cardmode & SDC_MODE_HIGH_CAPACITY) == 0)
     startblk *= SDC_BLOCK_SIZE;
 
-/*  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp) ||
-      (resp[0] & SDC_R1_ERROR_MASK))
-    return TRUE;
-  if (sdc_lld_send_cmd_long_crc(sdcp, 51, 0, resp))
-    return TRUE;
-
-  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SET_BLOCK_COUNT, n, resp) ||
-      (resp[0] & SDC_R1_ERROR_MASK))
-    return TRUE;*/
-
   sts = sdc_lld_read(sdcp, startblk, buf, n);
-  sts = sts || sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION,
-                                          0, resp);
   sdcp->state = SDC_ACTIVE;
   return sts;
 }
