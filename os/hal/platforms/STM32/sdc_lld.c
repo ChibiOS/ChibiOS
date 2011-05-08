@@ -61,10 +61,6 @@ CH_IRQ_HANDLER(SDIO_IRQHandler) {
 
   chSysLockFromIsr();
   if (SDCD1.thread != NULL) {
-    if ((SDIO->STA & SDIO_STA_DATAEND) != 0)
-      SDCD1.thread->p_u.rdymsg = RDY_OK;
-    else
-      SDCD1.thread->p_u.rdymsg = RDY_RESET;
     chSchReadyI(SDCD1.thread);
     SDCD1.thread = NULL;
   }
@@ -368,16 +364,10 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
     sdcp->thread = chThdSelf();
     chSchGoSleepS(THD_STATE_SUSPENDED);
     chDbgAssert(sdcp->thread == NULL, "sdc_lld_read(), #2", "not NULL");
-    if (chThdSelf()->p_u.rdymsg != RDY_OK) {
-      chSysUnlock();
-      goto error;
-    }
   }
-  else {
-    if ((SDIO->STA & SDIO_STA_DATAEND) == 0) {
-      chSysUnlock();
-      goto error;
-    }
+  if ((SDIO->STA & SDIO_STA_DATAEND) == 0) {
+    chSysUnlock();
+    goto error;
   }
   dmaDisableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
   SDIO->ICR   = 0xFFFFFFFF;
