@@ -73,20 +73,20 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     txBuffp = (uint8_t*)i2cp->id_slave_config->txbuf;
     datap = txBuffp;
     txBuffp++;
-    i2cp->id_slave_config->tx_remaining_bytes--;
+    i2cp->id_slave_config->tx_bytes--;
     /* If no further data to be sent, disable the I2C ITBUF in order to not have a TxE interrupt */
-    if(i2cp->id_slave_config->tx_remaining_bytes == 0) {
+    if(i2cp->id_slave_config->tx_bytes == 0) {
       dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
     }
     //EV8_1 write the first data
     dp->DR = *datap;
     break;
   case I2C_EV8_MASTER_BYTE_TRANSMITTING:
-    if(i2cp->id_slave_config->tx_remaining_bytes > 0) {
+    if(i2cp->id_slave_config->tx_bytes > 0) {
       datap = txBuffp;
       txBuffp++;
-      i2cp->id_slave_config->tx_remaining_bytes--;
-      if(i2cp->id_slave_config->tx_remaining_bytes == 0) {
+      i2cp->id_slave_config->tx_bytes--;
+      if(i2cp->id_slave_config->tx_bytes == 0) {
         /* If no further data to be sent, disable the ITBUF in order to not have a TxE interrupt */
         dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
       }
@@ -95,7 +95,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     break;
   case I2C_EV8_2_MASTER_BYTE_TRANSMITTED:
     /* if nothing to read then generate stop */
-    if (i2cp->id_slave_config->rx_remaining_bytes == 0){
+    if (i2cp->id_slave_config->rx_bytes == 0){
       dp->CR1 |= I2C_CR1_STOP;   // stop generation
       /* Disable ITEVT In order to not have again a BTF IT */
       dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
@@ -135,12 +135,12 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     rxBuffp = i2cp->id_slave_config->rxbuf;
     break;
   case I2C_EV7_MASTER_REC_BYTE_RECEIVED:
-    if(i2cp->id_slave_config->rx_remaining_bytes != 3) {
+    if(i2cp->id_slave_config->rx_bytes != 3) {
       /* Read the data register */
       *rxBuffp = dp->DR;
       rxBuffp++;
-      i2cp->id_slave_config->rx_remaining_bytes--;
-      switch(i2cp->id_slave_config->rx_remaining_bytes){
+      i2cp->id_slave_config->rx_bytes--;
+      switch(i2cp->id_slave_config->rx_bytes){
       case 3:
         /* Disable the ITBUF in order to have only the BTF interrupt */
         dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
@@ -172,7 +172,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       chSysUnlockFromIsr();
       rxBuffp++;
       /* Decrement the number of readed bytes */
-      i2cp->id_slave_config->rx_remaining_bytes -= 2;
+      i2cp->id_slave_config->rx_bytes -= 2;
       i2cp->id_slave_config->flags = 0;
       // ready for read DataN on the next EV7
       break;
@@ -187,7 +187,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       rxBuffp++;
       /* Read the DataN*/
       *rxBuffp = dp->DR;
-      i2cp->id_slave_config->rx_remaining_bytes = 0;
+      i2cp->id_slave_config->rx_bytes = 0;
       i2cp->id_slave_config->flags = 0;
       /* Portable I2C ISR code defined in the high level driver, note, it is a macro.*/
       _i2c_isr_code(i2cp, i2cp->id_slave_config);
@@ -574,11 +574,11 @@ void i2c_lld_master_receive(I2CDriver *i2cp){
   i2cp->id_slave_config->errors = 0;
 
   // Only one byte to be received
-  if(i2cp->id_slave_config->rx_remaining_bytes == 1) {
+  if(i2cp->id_slave_config->rx_bytes == 1) {
     i2cp->id_slave_config->flags |= I2C_FLG_1BTR;
   }
   // Only two bytes to be received
-  else if(i2cp->id_slave_config->rx_remaining_bytes == 2) {
+  else if(i2cp->id_slave_config->rx_bytes == 2) {
     i2cp->id_slave_config->flags |= I2C_FLG_2BTR;
     i2cp->id_i2c->CR1 |= I2C_CR1_POS;            // Acknowledge Position
   }
@@ -623,11 +623,11 @@ void i2c_lld_master_transceive(I2CDriver *i2cp){
   i2cp->id_slave_config->errors = 0;
 
   // Only one byte to be received
-  if(i2cp->id_slave_config->rx_remaining_bytes == 1) {
+  if(i2cp->id_slave_config->rx_bytes == 1) {
     i2cp->id_slave_config->flags |= I2C_FLG_1BTR;
   }
   // Only two bytes to be received
-  else if(i2cp->id_slave_config->rx_remaining_bytes == 2) {
+  else if(i2cp->id_slave_config->rx_bytes == 2) {
     i2cp->id_slave_config->flags |= I2C_FLG_2BTR;
     i2cp->id_i2c->CR1 |= I2C_CR1_POS;            // Acknowledge Position
   }

@@ -77,11 +77,11 @@
  * @brief   Driver state machine possible states.
  */
 typedef enum {
-  I2C_UNINIT = 0,                           /**< @brief Not initialized.        */
-  I2C_STOP = 1,                             /**< @brief Stopped.                */
-  I2C_READY = 2,                            /**< @brief Ready.                  */
-  I2C_ACTIVE = 3,                           /**< @brief In communication.          */
-  I2C_COMPLETE = 4,                         /**< @brief Asynchronous operation complete.   */
+  I2C_UNINIT = 0,   /**< @brief Not initialized.        */
+  I2C_STOP = 1,     /**< @brief Stopped.                */
+  I2C_READY = 2,    /**< @brief Ready.                  */
+  I2C_ACTIVE = 3,   /**< @brief In communication.          */
+  I2C_COMPLETE = 4, /**< @brief Asynchronous operation complete.   */
 
   // slave part
   I2C_SACTIVE = 10,
@@ -150,12 +150,12 @@ struct I2CSlaveConfig{
   /**
    * @brief Receive and transmit buffers.
    */
-  size_t                tx_remaining_bytes;
-  size_t                rx_remaining_bytes;
-  i2cblock_t            *rxbuf;/*!< Pointer to receive buffer. */
-  i2cblock_t            *txbuf;/*!< Pointer to transmit buffer.*/
+  size_t                tx_bytes;
+  size_t                rx_bytes;
+  i2cblock_t            *rxbuf;       /*!< Pointer to receive buffer. */
+  i2cblock_t            *txbuf;       /*!< Pointer to transmit buffer.*/
   uint16_t              slave_addr;
-  uint8_t               nbit_address;
+  uint8_t               nbit_address; /*!< Length of address (must be 7 or 10).*/
   i2cflags_t            errors;
   i2cflags_t            flags;
   /* Status Change @p EventSource.*/
@@ -224,10 +224,10 @@ struct I2CSlaveConfig{
  */
 #define _i2c_isr_code(i2cp, i2cscfg) {                                 \
   (i2cp)->id_state = I2C_COMPLETE;                                     \
-  if(((i2cp)->id_slave_config)->id_callback) {                            \
-    ((i2cp)->id_slave_config)->id_callback(i2cp, i2cscfg);                \
-  }                                                                     \
-  _i2c_wakeup_isr(i2cp);                                                 \
+  if(((i2cp)->id_slave_config)->id_callback) {                         \
+    ((i2cp)->id_slave_config)->id_callback(i2cp, i2cscfg);             \
+  }                                                                    \
+  _i2c_wakeup_isr(i2cp);                                               \
 }
 
 /*===========================================================================*/
