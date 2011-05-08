@@ -399,7 +399,59 @@ error:
  */
 bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
                      const uint8_t *buf, uint32_t n) {
+  uint32_t resp[1];
 
+  /* Prepares the DMA channel for writing.*/
+  dmaChannelSetup(&STM32_DMA2->channels[STM32_DMA_CHANNEL_4],
+                  (n * SDC_BLOCK_SIZE) / sizeof (uint32_t), buf,
+                  (STM32_SDC_SDIO_DMA_PRIORITY << 12) |
+                  DMA_CCR1_PSIZE_1 | DMA_CCR1_MSIZE_1 |
+                  DMA_CCR1_MINC | DMA_CCR1_DIR);
+
+  /* Write multiple blocks command.*/
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_WRITE_MULTIPLE_BLOCK,
+                                 startblk, resp) ||
+      (resp[0] & SDC_R1_ERROR_MASK))
+    return TRUE;
+
+  /* Setting up data transfer.
+     Options: Controller to Card, Block mode, DMA mode, 512 bytes blocks.*/
+  SDIO->ICR   = 0xFFFFFFFF;
+  SDIO->MASK  = SDIO_MASK_DCRCFAILIE | SDIO_MASK_DTIMEOUTIE |
+                SDIO_MASK_DATAENDIE | SDIO_MASK_TXUNDERRIE |
+                SDIO_MASK_STBITERRIE;
+  SDIO->DLEN  = n * SDC_BLOCK_SIZE;
+  SDIO->DCTRL = SDIO_DCTRL_DBLOCKSIZE_3 | SDIO_DCTRL_DBLOCKSIZE_0 |
+                SDIO_DCTRL_DMAEN |
+                SDIO_DCTRL_DTEN;
+
+  /* DMA channel activation.*/
+  dmaEnableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
+
+  /* Note the mask is checked before going to sleep because the interrupt
+     may have occurred before reaching the critical zone.*/
+  chSysLock();
+  if (SDIO->MASK != 0) {
+    chDbgAssert(sdcp->thread == NULL, "sdc_lld_write(), #1", "not NULL");
+    sdcp->thread = chThdSelf();
+    chSchGoSleepS(THD_STATE_SUSPENDED);
+    chDbgAssert(sdcp->thread == NULL, "sdc_lld_write(), #2", "not NULL");
+  }
+  if ((SDIO->STA & SDIO_STA_DATAEND) == 0) {
+    chSysUnlock();
+    goto error;
+  }
+  dmaDisableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
+  SDIO->ICR   = 0xFFFFFFFF;
+  SDIO->DCTRL = 0;
+  chSysUnlock();
+
+  return sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp);
+error:
+  dmaDisableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
+  SDIO->ICR   = 0xFFFFFFFF;
+  SDIO->MASK  = 0;
+  SDIO->DCTRL = 0;
   return TRUE;
 }
 
