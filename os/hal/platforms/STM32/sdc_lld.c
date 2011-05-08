@@ -334,13 +334,6 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
                     uint8_t *buf, uint32_t n) {
   uint32_t sta, resp[1];
 
-  /* Prepares the DMA channel for reading.*/
-  dmaChannelSetup(&STM32_DMA2->channels[STM32_DMA_CHANNEL_4],
-                  (n * SDC_BLOCK_SIZE) / sizeof (uint32_t), buf,
-                  (STM32_SDC_SDIO_DMA_PRIORITY << 12) |
-                  DMA_CCR1_PSIZE_1 | DMA_CCR1_MSIZE_1 |
-                  DMA_CCR1_MINC);
-
   /* Setting up data transfer.
      Options: Card to Controller, Block mode, DMA mode, 512 bytes blocks.*/
   SDIO->ICR   = 0xFFFFFFFF;
@@ -353,7 +346,12 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
                 SDIO_DCTRL_DTEN;
 
   /* DMA channel activation.*/
-  dmaEnableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
+  /* Prepares the DMA channel for reading.*/
+  dmaChannelSetup(&STM32_DMA2->channels[STM32_DMA_CHANNEL_4],
+                  (n * SDC_BLOCK_SIZE) / sizeof (uint32_t), buf,
+                  (STM32_SDC_SDIO_DMA_PRIORITY << 12) |
+                  DMA_CCR1_PSIZE_1 | DMA_CCR1_MSIZE_1 |
+                  DMA_CCR1_EN);
 
   if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_READ_MULTIPLE_BLOCK,
                                  startblk, resp) ||
