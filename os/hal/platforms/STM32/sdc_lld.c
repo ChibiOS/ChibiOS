@@ -344,7 +344,7 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
   SDIO->ICR   = 0xFFFFFFFF;
   SDIO->MASK  = SDIO_MASK_DCRCFAILIE | SDIO_MASK_DTIMEOUTIE |
                 SDIO_MASK_DATAENDIE | SDIO_MASK_STBITERRIE;
-  SDIO->DLEN  = n;
+  SDIO->DLEN  = n * SDC_BLOCK_SIZE;
   SDIO->DCTRL = SDIO_DCTRL_RWMOD |
                 SDIO_DCTRL_DBLOCKSIZE_3 | SDIO_DCTRL_DBLOCKSIZE_3 |
                 SDIO_DCTRL_DMAEN |
@@ -353,14 +353,15 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
   /* DMA channel activation.*/
   dmaEnableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
 
-  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_READ_MULTIPLE_BLOCK, n, resp) ||
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_READ_MULTIPLE_BLOCK,
+                                 startblk, resp) ||
       (resp[0] & SDC_R1_ERROR_MASK))
     goto error;
 
   chSysLock();
   sta = SDIO->STA;
-  if ((sta & SDIO_STA_DCRCFAIL | SDIO_STA_DTIMEOUT |
-             SDIO_STA_DATAEND | SDIO_STA_STBITERR) == 0) {
+  if ((sta & (SDIO_STA_DCRCFAIL | SDIO_STA_DTIMEOUT |
+              SDIO_STA_DATAEND | SDIO_STA_STBITERR)) == 0) {
     chDbgAssert(sdcp->thread == NULL, "sdc_lld_read_blocks(), #1", "not NULL");
     sdcp->thread = chThdSelf();
     chSchGoSleepS(THD_STATE_SUSPENDED);

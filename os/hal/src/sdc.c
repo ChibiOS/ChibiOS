@@ -268,7 +268,6 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
 bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
                uint8_t *buf, uint32_t n) {
   bool_t sts;
-  uint32_t resp[4];
 
   chDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0), "sdcRead");
 
