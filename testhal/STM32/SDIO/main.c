@@ -51,6 +51,7 @@ int main(void) {
   sdcStart(&SDCD1, &sdccfg);
   if (!sdcConnect(&SDCD1)) {
     int i;
+    /* Repeated multiple reads.*/
     for (i = 0; i < 1000; i++)
       if (sdcRead(&SDCD1, 0, buf, 16))
         chSysHalt();
