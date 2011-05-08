@@ -28,7 +28,7 @@ static const SDCConfig sdccfg = {
   0
 };
 
-static uint8_t buf[SDC_BLOCK_SIZE * 16];
+static uint8_t buf[SDC_BLOCK_SIZE * 2];
 
 /*
  * Application entry point.
@@ -52,9 +52,18 @@ int main(void) {
   if (!sdcConnect(&SDCD1)) {
     int i;
     /* Repeated multiple reads.*/
-    for (i = 0; i < 1000; i++)
-      if (sdcRead(&SDCD1, 0, buf, 16))
+    for (i = 0; i < 5000; i++) {
+      if (sdcRead(&SDCD1, 0, buf, 2))
         chSysHalt();
+    }
+    if (sdcRead(&SDCD1, 0x10000, buf, 2))
+      chSysHalt();
+    if (sdcWrite(&SDCD1, 0x10000, buf, 2))
+      chSysHalt();
+    if (sdcRead(&SDCD1, 0x10000, buf, 2))
+      chSysHalt();
+    if (sdcDisconnect(&SDCD1))
+      chSysHalt();
   }
 
   /*
