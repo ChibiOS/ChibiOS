@@ -375,6 +375,7 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
     }
   }
   else {
+    SDIO->MASK = 0;
     if ((SDIO->STA & SDIO_STA_DATAEND) == 0) {
       chSysUnlock();
       goto error;
@@ -382,13 +383,10 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
   }
   dmaDisableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
   SDIO->ICR   = 0xFFFFFFFF;
-  SDIO->MASK  = 0;
   SDIO->DCTRL = 0;
   chSysUnlock();
 
-  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp))
-    goto error;
-  return FALSE;
+  return sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp);
 error:
   dmaDisableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
   SDIO->ICR   = 0xFFFFFFFF;
@@ -454,6 +452,7 @@ bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
     }
   }
   else {
+    SDIO->MASK = 0;
     if ((SDIO->STA & SDIO_STA_DATAEND) == 0) {
       chSysUnlock();
       goto error;
@@ -461,13 +460,10 @@ bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
   }
   dmaDisableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
   SDIO->ICR   = 0xFFFFFFFF;
-  SDIO->MASK  = 0;
   SDIO->DCTRL = 0;
   chSysUnlock();
 
-  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp))
-    goto error;
-  return FALSE;
+  return sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp);
 error:
   dmaDisableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
   SDIO->ICR   = 0xFFFFFFFF;
