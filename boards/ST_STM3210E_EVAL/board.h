@@ -28,7 +28,7 @@
 /*
  * Board identifier.
  */
-#define BOARD_OLIMEX_STM32_P107
+#define BOARD_ST_STM3210E_EVAL
 #define BOARD_NAME              "ST STM3210E-EVAL"
 
 /*
