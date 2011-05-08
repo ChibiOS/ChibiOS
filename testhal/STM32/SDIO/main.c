@@ -28,7 +28,7 @@ static const SDCConfig sdccfg = {
   0
 };
 
-static uint8_t buf[SDC_BLOCK_SIZE];
+static uint8_t buf[SDC_BLOCK_SIZE * 16];
 
 /*
  * Application entry point.
@@ -50,7 +50,10 @@ int main(void) {
    */
   sdcStart(&SDCD1, &sdccfg);
   if (!sdcConnect(&SDCD1)) {
-    sdcRead(&SDCD1, 0, buf, 1);
+    int i;
+    for (i = 0; i < 1000; i++)
+      if (sdcRead(&SDCD1, 0, buf, 16))
+        chSysHalt();
   }
 
   /*
