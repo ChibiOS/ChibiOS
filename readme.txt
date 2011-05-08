@@ -69,6 +69,8 @@
 *****************************************************************************
 
 *** 2.2.4 ***
+- FIX: Fixed missing IRQ vectors amicable names for STM32 XL devices (bug
+  3298889).
 - FIX: Fixed wrong identifier in AVR serial driver (bug 3292084).
 - FIX: Fixed wrong macro check for STM32 XL devices (bug 3291898).
 - FIX: Fixed missing state transition in ADC driver (bug 3288149).
