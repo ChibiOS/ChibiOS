@@ -98,6 +98,13 @@
 #endif
 
 /**
+ * @brief   Enables the SDC subsystem.
+ */
+#if !defined(HAL_USE_SDC) || defined(__DOXYGEN__)
+#define HAL_USE_SDC                 TRUE
+#endif
+
+/**
  * @brief   Enables the SERIAL subsystem.
  */
 #if !defined(HAL_USE_SERIAL) || defined(__DOXYGEN__)
@@ -109,13 +116,6 @@
  */
 #if !defined(HAL_USE_SERIAL_USB) || defined(__DOXYGEN__)
 #define HAL_USE_SERIAL_USB          FALSE
-#endif
-
-/**
- * @brief   Enables the SDC subsystem.
- */
-#if !defined(HAL_USE_SDC) || defined(__DOXYGEN__)
-#define HAL_USE_SDC                 TRUE
 #endif
 
 /**
