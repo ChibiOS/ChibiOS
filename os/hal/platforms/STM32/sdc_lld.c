@@ -70,6 +70,8 @@ CH_IRQ_HANDLER(SDIO_IRQHandler) {
   }
   chSysUnlockFromIsr();
 
+  SDIO->ICR = 0xFFFFFFFF;
+
   CH_IRQ_EPILOGUE();
 }
 
@@ -345,8 +347,8 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
   SDIO->MASK  = SDIO_MASK_DCRCFAILIE | SDIO_MASK_DTIMEOUTIE |
                 SDIO_MASK_DATAENDIE | SDIO_MASK_STBITERRIE;
   SDIO->DLEN  = n * SDC_BLOCK_SIZE;
-  SDIO->DCTRL = SDIO_DCTRL_RWMOD |
-                SDIO_DCTRL_DBLOCKSIZE_3 | SDIO_DCTRL_DBLOCKSIZE_3 |
+  SDIO->DCTRL = SDIO_DCTRL_DTDIR |
+                SDIO_DCTRL_DBLOCKSIZE_3 | SDIO_DCTRL_DBLOCKSIZE_0 |
                 SDIO_DCTRL_DMAEN |
                 SDIO_DCTRL_DTEN;
 
@@ -377,6 +379,10 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
       goto error;
     }
   }
+  dmaDisableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
+  SDIO->ICR   = 0xFFFFFFFF;
+  SDIO->MASK  = 0;
+  SDIO->DCTRL = 0;
   chSysUnlock();
 
   if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp))
