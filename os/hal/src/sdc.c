@@ -149,11 +149,13 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     /* Voltage verification.*/
     if (((resp[0] >> 8) & 0xF) != 1)
       goto failed;
-    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp))
+    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp) ||
+        (resp[0] & SDC_R1_ERROR_MASK))
       goto failed;
   else {
     /* MMC or SD detection.*/
-    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp))
+    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp) ||
+        (resp[0] & SDC_R1_ERROR_MASK))
       sdcp->cardmode = SDC_MODE_CARDTYPE_MMC;
     else
       sdcp->cardmode = SDC_MODE_CARDTYPE_SDV11;
@@ -172,7 +174,8 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     i = 0;
     while (TRUE) {
       chThdSleepMilliseconds(10);
-      if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp))
+      if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp) ||
+        (resp[0] & SDC_R1_ERROR_MASK))
         goto failed;
       if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_OP_COND, ocr, resp))
         goto failed;
@@ -207,7 +210,8 @@ bool_t sdcConnect(SDCDriver *sdcp) {
 
   /* Block length fixed at 512 bytes.*/
   if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SET_BLOCKLEN,
-                                 SDC_BLOCK_SIZE, resp))
+                                 SDC_BLOCK_SIZE, resp) ||
+      (resp[0] & SDC_R1_ERROR_MASK))
     goto failed;
 
   /* Switches to wide bus mode.*/

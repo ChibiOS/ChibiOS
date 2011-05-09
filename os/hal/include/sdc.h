@@ -45,6 +45,7 @@
 #define SDC_CMD_SEND_IF_COND            8
 #define SDC_CMD_SEND_CSD                9
 #define SDC_CMD_STOP_TRANSMISSION       12
+#define SDC_CMD_SEND_STATUS             13
 #define SDC_CMD_SET_BLOCKLEN            16
 #define SDC_CMD_READ_MULTIPLE_BLOCK     18
 #define SDC_CMD_SET_BLOCK_COUNT         23
@@ -57,6 +58,17 @@
 #define SDC_MODE_CARDTYPE_SDV20         1       /**< Card is V2.0 compliant.*/
 #define SDC_MODE_CARDTYPE_MMC           2       /**< Card is MMC compliant. */
 #define SDC_MODE_HIGH_CAPACITY          0x10    /**< High capacity card.    */
+
+#define SDC_STS(r1)                     (((r1) >> 9) & 15)
+#define SDC_STS_IDLE                    0
+#define SDC_STS_READY                   1
+#define SDC_STS_IDENT                   2
+#define SDC_STS_STBY                    3
+#define SDC_STS_TRAN                    4
+#define SDC_STS_DATA                    5
+#define SDC_STS_RCV                     6
+#define SDC_STS_PRG                     7
+#define SDC_STS_DIS                     8
 
 #define SDC_CMD8_PATTERN                0x000001AA
 

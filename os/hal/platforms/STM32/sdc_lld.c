@@ -399,7 +399,8 @@ error:
  */
 bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
                      const uint8_t *buf, uint32_t n) {
-  uint32_t resp[1];
+  uint32_t sts, resp[1];
+  bool_t err;
 
   /* Prepares the DMA channel for writing.*/
   dmaChannelSetup(&STM32_DMA2->channels[STM32_DMA_CHANNEL_4],
@@ -446,7 +447,14 @@ bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
   SDIO->DCTRL = 0;
   chSysUnlock();
 
-  return sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp);
+  err = sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp);
+  do {
+    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_STATUS,sdcp->rca, resp) ||
+        (resp[0] & SDC_R1_ERROR_MASK))
+      return TRUE;
+    sts = SDC_STS(resp[0]);
+  } while ((sts == SDC_STS_RCV) || (sts == SDC_STS_PRG));
+  return err;
 error:
   dmaDisableChannel(STM32_DMA2, STM32_DMA_CHANNEL_4);
   SDIO->ICR   = 0xFFFFFFFF;
