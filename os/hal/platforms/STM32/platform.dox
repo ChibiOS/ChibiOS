@@ -62,7 +62,7 @@
  * - Programmable ADC interrupt priority level.
  * - Programmable DMA bus priority for each DMA channel.
  * - Programmable DMA interrupt priority for each DMA channel.
- * - Programmable DMA error hook for each DMA channel.
+ * - Programmable DMA error hook.
  * .
  * @ingroup STM32_DRIVERS
  */
@@ -112,6 +112,25 @@
  * - TIM5.
  * .
  * @section stm32_gpt_2 STM32 GPT driver implementation features
+ * - Each timer can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Programmable TIMx interrupts priority level.
+ * .
+ * @ingroup STM32_DRIVERS
+ */
+
+/**
+ * @defgroup STM32_ICU STM32 ICU Support
+ * @details The STM32 ICU driver uses the TIMx peripherals.
+ *
+ * @section stm32_icu_1 Supported HW resources
+ * - TIM1.
+ * - TIM2.
+ * - TIM3.
+ * - TIM4.
+ * - TIM5.
+ * .
+ * @section stm32_icu_2 STM32 ICU driver implementation features
  * - Each timer can be independently enabled and programmed. Unused
  *   peripherals are left in low power mode.
  * - Programmable TIMx interrupts priority level.
@@ -190,6 +209,24 @@
  */
 
 /**
+ * @defgroup STM32_SDC STM32 SDC Support
+ * @details The STM32 SDC driver uses the SDIO peripheral.
+ *
+ * @section stm32_sdc_1 Supported HW resources
+ * - SDIO.
+ * - DMA2.
+ * .
+ * @section stm32_sdc_2 STM32 SDC driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Programmable interrupt priority.
+ * - DMA is used for receiving and transmitting.
+ * - Programmable DMA bus priority for each DMA channel.
+ * - Programmable DMA error hook.
+ * .
+ * @ingroup STM32_DRIVERS
+ */
+
+/**
  * @defgroup STM32_SERIAL STM32 Serial Support
  * @details The STM32 Serial driver uses the USART/UART peripherals in a
  *          buffered, interrupt driven, implementation.
@@ -232,7 +269,7 @@
  * - DMA is used for receiving and transmitting.
  * - Programmable DMA bus priority for each DMA channel.
  * - Programmable DMA interrupt priority for each DMA channel.
- * - Programmable DMA error hook for each DMA channel.
+ * - Programmable DMA error hook.
  * .
  * @ingroup STM32_DRIVERS
  */
@@ -259,7 +296,7 @@
  * - DMA is used for receiving and transmitting.
  * - Programmable DMA bus priority for each DMA channel.
  * - Programmable DMA interrupt priority for each DMA channel.
- * - Programmable DMA error hook for each DMA channel.
+ * - Programmable DMA error hook.
  * .
  * @ingroup STM32_DRIVERS
  */
