@@ -148,6 +148,10 @@ struct SDCDriver {
    * @brief Card CSD.
    */
   uint32_t                  csd[4];
+  /**
+   * @brief Card RCA.
+   */
+  uint32_t                  rca;
   /* End of the mandatory fields.*/
   /**
    * @brief Tthread waiting for I/O completion IRQ.

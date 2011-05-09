@@ -40,6 +40,7 @@
 #define SDC_CMD_GO_IDLE_STATE           0
 #define SDC_CMD_ALL_SEND_CID            2
 #define SDC_CMD_SEND_RELATIVE_ADDR      3
+#define SDC_CMD_SET_BUS_WIDTH           6
 #define SDC_CMD_SEL_DESEL_CARD          7
 #define SDC_CMD_SEND_IF_COND            8
 #define SDC_CMD_SEND_CSD                9

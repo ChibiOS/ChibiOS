@@ -173,7 +173,7 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     while (TRUE) {
       chThdSleepMilliseconds(10);
       if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp))
-       goto failed;
+        goto failed;
       if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_OP_COND, ocr, resp))
         goto failed;
       if ((resp[0] & 0x80000000) != 0) {
@@ -191,18 +191,18 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     goto failed;
 
   /* Asks for the RCA.*/
-  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_RELATIVE_ADDR, 0, resp))
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_RELATIVE_ADDR, 0, &sdcp->rca))
     goto failed;
 
   /* Reads CSD.*/
-  if (sdc_lld_send_cmd_long_crc(sdcp, SDC_CMD_SEND_CSD, resp[0], sdcp->csd))
+  if (sdc_lld_send_cmd_long_crc(sdcp, SDC_CMD_SEND_CSD, sdcp->rca, sdcp->csd))
     goto failed;
 
   /* Switches to high speed.*/
   sdc_lld_set_data_clk(sdcp);
 
   /* Selects the card for operations.*/
-  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEL_DESEL_CARD, resp[0], resp))
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEL_DESEL_CARD, sdcp->rca, resp))
     goto failed;
 
   /* Block length fixed at 512 bytes.*/
@@ -211,11 +211,17 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     goto failed;
 
   /* Switches to wide bus mode.*/
-/*  switch (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK) {
+  switch (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK) {
   case SDC_MODE_CARDTYPE_SDV11:
   case SDC_MODE_CARDTYPE_SDV20:
-    SDIO->CLKCR |= SDIO_CLKCR_WIDBUS_0;
-  }*/
+    sdc_lld_set_bus_mode(sdcp, SDC_MODE_4BIT);
+    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, sdcp->rca, resp) ||
+        (resp[0] & SDC_R1_ERROR_MASK))
+      goto failed;
+    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SET_BUS_WIDTH, 2, resp) ||
+        (resp[0] & SDC_R1_ERROR_MASK))
+      goto failed;
+  }
 
   sdcp->state = SDC_ACTIVE;
   return FALSE;
