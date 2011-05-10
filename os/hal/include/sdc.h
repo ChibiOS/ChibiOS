@@ -37,7 +37,34 @@
 
 #define SDC_BLOCK_SIZE                  512     /**< Fixed block size.      */
 
+/**
+ * @brief   Fixed pattern for CMD8.
+ */
+#define SDC_CMD8_PATTERN                0x000001AA
+
+#define SDC_MODE_CARDTYPE_MASK          0xF     /**< @brief Card type mask. */
+#define SDC_MODE_CARDTYPE_SDV11         0       /**< @brief Card is SD V1.1.*/
+#define SDC_MODE_CARDTYPE_SDV20         1       /**< @brief Card is SD V2.0.*/
+#define SDC_MODE_CARDTYPE_MMC           2       /**< @brief Card is MMC.    */
+#define SDC_MODE_HIGH_CAPACITY          0x10    /**< @brief High cap.card.  */
+
+/**
+ * @brief   Mask of error bits in R1 responses.
+ */
+#define SDC_R1_ERROR_MASK               0xFDFFE008
+
+#define SDC_STS_IDLE                    0
+#define SDC_STS_READY                   1
+#define SDC_STS_IDENT                   2
+#define SDC_STS_STBY                    3
+#define SDC_STS_TRAN                    4
+#define SDC_STS_DATA                    5
+#define SDC_STS_RCV                     6
+#define SDC_STS_PRG                     7
+#define SDC_STS_DIS                     8
+
 #define SDC_CMD_GO_IDLE_STATE           0
+#define SDC_CMD_INIT                    1
 #define SDC_CMD_ALL_SEND_CID            2
 #define SDC_CMD_SEND_RELATIVE_ADDR      3
 #define SDC_CMD_SET_BUS_WIDTH           6
@@ -51,34 +78,39 @@
 #define SDC_CMD_SET_BLOCK_COUNT         23
 #define SDC_CMD_WRITE_MULTIPLE_BLOCK    25
 #define SDC_CMD_APP_OP_COND             41
+#define SDC_CMD_LOCK_UNLOCK             42
 #define SDC_CMD_APP_CMD                 55
-
-#define SDC_MODE_CARDTYPE_MASK          0xF
-#define SDC_MODE_CARDTYPE_SDV11         0       /**< Card is V1.1 compliant.*/
-#define SDC_MODE_CARDTYPE_SDV20         1       /**< Card is V2.0 compliant.*/
-#define SDC_MODE_CARDTYPE_MMC           2       /**< Card is MMC compliant. */
-#define SDC_MODE_HIGH_CAPACITY          0x10    /**< High capacity card.    */
-
-#define SDC_STS(r1)                     (((r1) >> 9) & 15)
-#define SDC_STS_IDLE                    0
-#define SDC_STS_READY                   1
-#define SDC_STS_IDENT                   2
-#define SDC_STS_STBY                    3
-#define SDC_STS_TRAN                    4
-#define SDC_STS_DATA                    5
-#define SDC_STS_RCV                     6
-#define SDC_STS_PRG                     7
-#define SDC_STS_DIS                     8
-
-#define SDC_CMD8_PATTERN                0x000001AA
-
-#define SDC_ACMD41_RETRY                100
-
-#define SDC_R1_ERROR_MASK               0xFDFFE008
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Number of initialization attempts before rejecting the card.
+ * @note    Attempts are performed at 10mS intevals.
+ */
+#if !defined(SDC_INIT_RETRY) || defined(__DOXYGEN__)
+#define SDC_INIT_RETRY                  100
+#endif
+
+/**
+ * @brief   Include support for MMC cards.
+ * @note    MMC support is not yet implemented so this option must be kept
+ *          at @p FALSE.
+ */
+#if !defined(SDC_MMC_SUPPORT) || defined(__DOXYGEN__)
+#define SDC_MMC_SUPPORT                 FALSE
+#endif
+
+/**
+ * @brief   Delays insertions.
+ * @details If enabled this options inserts delays into the MMC waiting
+ *          routines releasing some extra CPU time for the threads with
+ *          lower priority, this may slow down the driver a bit however.
+ */
+#if !defined(SDC_NICE_WAITING) || defined(__DOXYGEN__)
+#define SDC_NICE_WAITING                TRUE
+#endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -95,10 +127,11 @@ typedef enum {
   SDC_UNINIT = 0,                   /**< Not initialized.                   */
   SDC_STOP = 1,                     /**< Stopped.                           */
   SDC_READY = 2,                    /**< Ready.                             */
-  SDC_INITNG = 3,                   /**< Card initialization in progress.   */
-  SDC_ACTIVE = 4,                   /**< Cart initialized.                  */
-  SDC_READING = 5,                  /**< Read operation in progress.        */
-  SDC_WRITING = 6,                  /**< Write operation in progress.       */
+  SDC_CONNECTING = 3,               /**< Card connection in progress.       */
+  SDC_DISCONNECTING = 4,            /**< Card disconnection in progress.    */
+  SDC_ACTIVE = 5,                   /**< Cart initialized.                  */
+  SDC_READING = 6,                  /**< Read operation in progress.        */
+  SDC_WRITING = 7,                  /**< Write operation in progress.       */
 } sdcstate_t;
 
 #include "sdc_lld.h"
@@ -106,6 +139,27 @@ typedef enum {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Evaluates to @p TRUE if the R1 response contains error flags.
+ *
+ * @param[in] r1        the r1 response
+ */
+#define SDC_R1_ERROR(r1)                (((r1) & SDC_R1_ERROR_MASK) != 0)
+
+/**
+ * @brief   Returns the status field of an R1 response.
+ *
+ * @param[in] r1        the r1 response
+ */
+#define SDC_R1_STS(r1)                  (((r1) >> 9) & 15)
+
+/**
+ * @brief   Evaluates to @p TRUE if the R1 response indicates a locked card.
+ *
+ * @param[in] r1        the r1 response
+ */
+#define SDC_R1_IS_CARD_LOCKED(r1)       (((r1) >> 21) & 1)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -124,6 +178,7 @@ extern "C" {
                  uint8_t *buffer, uint32_t n);
   bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
                   const uint8_t *buffer, uint32_t n);
+  bool_t sdc_wait_for_transfer_state(SDCDriver *sdcp);
 #ifdef __cplusplus
 }
 #endif

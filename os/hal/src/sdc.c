@@ -43,6 +43,43 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Wait for the card to complete pending operations.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @return              The operation status.
+ * @retval FALSE        the card is now in transfer state.
+ * @retval TRUE         an error occurred while waiting or the card is in an
+ *                      unexpected state.
+ *
+ * @notapi
+ */
+bool_t sdc_wait_for_transfer_state(SDCDriver *sdcp) {
+  uint32_t resp[1];
+
+  while (TRUE) {
+    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_STATUS,
+                                   sdcp->rca, resp) ||
+        SDC_R1_ERROR(resp[0]))
+      return TRUE;
+    switch (SDC_R1_STS(resp[0])) {
+    case SDC_STS_TRAN:
+      return FALSE;
+    case SDC_STS_DATA:
+    case SDC_STS_RCV:
+    case SDC_STS_PRG:
+#if SDC_NICE_WAITING
+      chThdSleepMilliseconds(1);
+#endif
+      continue;
+    default:
+      /* The card should have been initialized so any other state is not
+         valid and is reported as an error.*/
+      return TRUE;
+    }
+  }
+}
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -133,7 +170,7 @@ bool_t sdcConnect(SDCDriver *sdcp) {
 
   chSysLock();
   chDbgAssert(sdcp->state == SDC_READY, "mmcConnect(), #1", "invalid state");
-  sdcp->state = SDC_INITNG;
+  sdcp->state = SDC_CONNECTING;
   chSysUnlock();
 
   /* Card clock initialization.*/
@@ -150,32 +187,41 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     if (((resp[0] >> 8) & 0xF) != 1)
       goto failed;
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp) ||
-        (resp[0] & SDC_R1_ERROR_MASK))
+        SDC_R1_ERROR(resp[0]))
       goto failed;
   else {
-    /* MMC or SD detection.*/
+#if SDC_MMC_SUPPORT
+    /* MMC or SD V1.1 detection.*/
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp) ||
-        (resp[0] & SDC_R1_ERROR_MASK))
+        SDC_R1_ERROR(resp[0]))
       sdcp->cardmode = SDC_MODE_CARDTYPE_MMC;
     else
+#endif /* SDC_MMC_SUPPORT */
       sdcp->cardmode = SDC_MODE_CARDTYPE_SDV11;
   }
 
-  if ((sdcp->cardmode &  SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_MMC) {
+#if SDC_MMC_SUPPORT
+    if ((sdcp->cardmode &  SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_MMC) {
+    /* TODO: MMC initialization.*/
+    return TRUE;
   }
-  else {
-    uint32_t ocr = 0x80100000;
+  else
+#endif /* SDC_MMC_SUPPORT */
+  {
     unsigned i;
+    uint32_t ocr;
 
+    /* SD initialization.*/
     if ((sdcp->cardmode &  SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_SDV20)
-      ocr |= 0x40000000;
+      ocr = 0xC0100000;
+    else
+      ocr = 0x80100000;
 
     /* SD-type initialization. */
     i = 0;
     while (TRUE) {
-      chThdSleepMilliseconds(10);
       if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp) ||
-        (resp[0] & SDC_R1_ERROR_MASK))
+        SDC_R1_ERROR(resp[0]))
         goto failed;
       if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_OP_COND, ocr, resp))
         goto failed;
@@ -184,8 +230,9 @@ bool_t sdcConnect(SDCDriver *sdcp) {
           sdcp->cardmode |= SDC_MODE_HIGH_CAPACITY;
         break;
       }
-      if (++i >= SDC_ACMD41_RETRY)
+      if (++i >= SDC_INIT_RETRY)
         goto failed;
+      chThdSleepMilliseconds(10);
     }
   }
 
@@ -194,7 +241,8 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     goto failed;
 
   /* Asks for the RCA.*/
-  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_RELATIVE_ADDR, 0, &sdcp->rca))
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_RELATIVE_ADDR,
+                                 0, &sdcp->rca))
     goto failed;
 
   /* Reads CSD.*/
@@ -205,13 +253,14 @@ bool_t sdcConnect(SDCDriver *sdcp) {
   sdc_lld_set_data_clk(sdcp);
 
   /* Selects the card for operations.*/
-  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEL_DESEL_CARD, sdcp->rca, resp))
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEL_DESEL_CARD,
+                                 sdcp->rca, resp))
     goto failed;
 
   /* Block length fixed at 512 bytes.*/
   if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SET_BLOCKLEN,
                                  SDC_BLOCK_SIZE, resp) ||
-      (resp[0] & SDC_R1_ERROR_MASK))
+      SDC_R1_ERROR(resp[0]))
     goto failed;
 
   /* Switches to wide bus mode.*/
@@ -220,10 +269,10 @@ bool_t sdcConnect(SDCDriver *sdcp) {
   case SDC_MODE_CARDTYPE_SDV20:
     sdc_lld_set_bus_mode(sdcp, SDC_MODE_4BIT);
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, sdcp->rca, resp) ||
-        (resp[0] & SDC_R1_ERROR_MASK))
+        SDC_R1_ERROR(resp[0]))
       goto failed;
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SET_BUS_WIDTH, 2, resp) ||
-        (resp[0] & SDC_R1_ERROR_MASK))
+        SDC_R1_ERROR(resp[0]))
       goto failed;
   }
 
@@ -253,9 +302,17 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
   chSysLock();
   chDbgAssert(sdcp->state == SDC_ACTIVE,
               "sdcDisconnect(), #1", "invalid state");
-  sdc_lld_stop_clk(sdcp);
-  sdcp->state = SDC_READY;
+  sdcp->state = SDC_DISCONNECTING;
   chSysUnlock();
+
+  /* Waits for eventual pending operations completion.*/
+  if (sdc_wait_for_transfer_state(sdcp))
+    return TRUE;
+
+  /* Card clock stopped.*/
+  sdc_lld_stop_clk(sdcp);
+
+  sdcp->state = SDC_READY;
   return FALSE;
 }
 
@@ -277,7 +334,7 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
  */
 bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
                uint8_t *buf, uint32_t n) {
-  bool_t sts;
+  bool_t err;
 
   chDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0), "sdcRead");
 
@@ -289,9 +346,9 @@ bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
   if ((sdcp->cardmode & SDC_MODE_HIGH_CAPACITY) == 0)
     startblk *= SDC_BLOCK_SIZE;
 
-  sts = sdc_lld_read(sdcp, startblk, buf, n);
+  err = sdc_lld_read(sdcp, startblk, buf, n);
   sdcp->state = SDC_ACTIVE;
-  return sts;
+  return err;
 }
 
 /**
@@ -312,7 +369,7 @@ bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
  */
 bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
                 const uint8_t *buf, uint32_t n) {
-  bool_t sts;
+  bool_t err;
 
   chDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0), "sdcRead");
 
@@ -324,9 +381,9 @@ bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
   if ((sdcp->cardmode & SDC_MODE_HIGH_CAPACITY) == 0)
     startblk *= SDC_BLOCK_SIZE;
 
-  sts = sdc_lld_write(sdcp, startblk, buf, n);
+  err = sdc_lld_write(sdcp, startblk, buf, n);
   sdcp->state = SDC_ACTIVE;
-  return sts;
+  return err;
 }
 
 #endif /* HAL_USE_SDC */
