@@ -370,7 +370,7 @@ void dmaAllocate(uint32_t dma, uint32_t channel,
                 "dmaAllocate(), #2", "already allocated");
 
     /* If the DMA unit was idle then the clock is enabled.*/
-    if (dmamsk1 == 0) {
+    if (dmamsk2 == 0) {
       RCC->AHBENR |= RCC_AHBENR_DMA2EN;
       DMA2->IFCR = 0x0FFFFFFF;
     }
