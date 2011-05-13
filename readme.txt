@@ -79,6 +79,9 @@
   to 2.2.4).
 - FIX: Fixed wrong macro check for STM32 XL devices (bug 3291898)(backported
   to 2.2.4).
+- FIX: Fixed SPI driver restart in STM32 SPI driver implementation, also
+  applied the same fix to the STM8S SPI driver (bug 3288758)(backported to
+  2.2.4).
 - FIX: Fixed missing state transition in ADC driver (bug 3288149)(backported
   to 2.2.4).
 - FIX: Fixed missing state transition in SPI driver (bug 3288112)(backported

@@ -251,6 +251,7 @@ CH_IRQ_HANDLER(DMA2_Ch3_IRQHandler) {
   CH_IRQ_EPILOGUE();
 }
 
+#if defined(STM32F10X_CL) || defined(__DOXYGEN__)
 /**
  * @brief   DMA2 channel 4 shared interrupt handler.
  *
@@ -286,6 +287,39 @@ CH_IRQ_HANDLER(DMA2_Ch5_IRQHandler) {
 
   CH_IRQ_EPILOGUE();
 }
+
+#else /* !STM32F10X_CL */
+/**
+ * @brief   DMA2 channels 4 and 5 shared interrupt handler.
+ * @note    This IRQ is shared between DMA2 channels 4 and 5 so it is a
+ *          bit less efficient because an extra check.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(DMA2_Ch4_5_IRQHandler) {
+  uint32_t isr;
+
+  CH_IRQ_PROLOGUE();
+
+  /* Check on channel 4.*/
+  isr = STM32_DMA2->ISR >> (STM32_DMA_CHANNEL_5 * 4);
+  if (isr & DMA_ISR_GIF1) {
+    dmaClearChannel(STM32_DMA2, STM32_DMA_CHANNEL_5);
+    if (dma2[3].dmaisrfunc)
+      dma2[3].dmaisrfunc(dma2[3].dmaisrparam, isr);
+  }
+
+  /* Check on channel 5.*/
+  isr = STM32_DMA2->ISR >> (STM32_DMA_CHANNEL_4 * 4);
+  if (isr & DMA_ISR_GIF1) {
+    dmaClearChannel(STM32_DMA2, STM32_DMA_CHANNEL_5);
+    if (dma2[4].dmaisrfunc)
+      dma2[4].dmaisrfunc(dma2[4].dmaisrparam, isr);
+  }
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* !STM32F10X_CL */
 #endif /* STM32_HAS_DMA2 */
 
 /*===========================================================================*/
