@@ -602,7 +602,6 @@ void i2c_lld_master_receive(I2CDriver *i2cp){
  *
  */
 void i2c_lld_master_transceive(I2CDriver *i2cp){
-  uint32_t a, b;
   // enable ERR, EVT & BUF ITs
   i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
   i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                 // acknowledge returned
