@@ -312,9 +312,11 @@ void spi_lld_start(SPIDriver *spip) {
                        DMA_CCR1_PSIZE_0;            /* 16 bits transfers.   */
 
   /* SPI setup and enable.*/
-  spip->spd_spi->CR1 = 0;
-  spip->spd_spi->CR2 = SPI_CR2_SSOE | SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
-  spip->spd_spi->CR1 = spip->spd_config->spc_cr1 | SPI_CR1_MSTR | SPI_CR1_SPE;
+  spip->spi->CR1  = 0;
+  spip->spi->CR1  = spip->config->cr1 | SPI_CR1_MSTR | SPI_CR1_SSM |
+                    SPI_CR1_SSI;
+  spip->spi->CR2  = SPI_CR2_SSOE | SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
+  spip->spi->CR1 |= SPI_CR1_SPE;
 }
 
 /**

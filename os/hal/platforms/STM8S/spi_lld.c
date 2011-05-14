@@ -136,8 +136,10 @@ void spi_lld_start(SPIDriver *spip) {
   CLK->PCKENR1 |= CLK_PCKENR1_SPI;              /* PCKEN11, clock source.   */
 
   /* Configuration.*/
-  SPI->CR2 = 0;
-  SPI->CR1 = spip->spd_config->spc_cr1 | SPI_CR1_MSTR | SPI_CR1_SPE;
+  SPI->CR1  = 0;
+  SPI->CR1  = spip->config->cr1 | SPI_CR1_MSTR;
+  SPI->CR2  = SPI_CR2_SSI | SPI_CR2_SSM;
+  SPI->CR1 |= SPI_CR1_SPE;
 }
 
 /**

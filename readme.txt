@@ -73,6 +73,8 @@
   3298889).
 - FIX: Fixed wrong identifier in AVR serial driver (bug 3292084).
 - FIX: Fixed wrong macro check for STM32 XL devices (bug 3291898).
+- FIX: Fixed SPI driver restart in STM32 SPI driver implementation, also
+  applied the same fix to the STM8S SPI driver (bug 3288758).
 - FIX: Fixed missing state transition in ADC driver (bug 3288149).
 - FIX: Fixed missing state transition in SPI driver (bug 3288112).
 
