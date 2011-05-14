@@ -243,6 +243,36 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
+/* SDC driver related settings.                                              */
+/*===========================================================================*/
+/**
+ * @brief   Number of initialization attempts before rejecting the card.
+ * @note    Attempts are performed at 10mS intevals.
+ */
+#if !defined(SDC_INIT_RETRY) || defined(__DOXYGEN__)
+#define SDC_INIT_RETRY              100
+#endif
+
+/**
+ * @brief   Include support for MMC cards.
+ * @note    MMC support is not yet implemented so this option must be kept
+ *          at @p FALSE.
+ */
+#if !defined(SDC_MMC_SUPPORT) || defined(__DOXYGEN__)
+#define SDC_MMC_SUPPORT             FALSE
+#endif
+
+/**
+ * @brief   Delays insertions.
+ * @details If enabled this options inserts delays into the MMC waiting
+ *          routines releasing some extra CPU time for the threads with
+ *          lower priority, this may slow down the driver a bit however.
+ */
+#if !defined(SDC_NICE_WAITING) || defined(__DOXYGEN__)
+#define SDC_NICE_WAITING            TRUE
+#endif
+
+/*===========================================================================*/
 /* SERIAL driver related settings.                                           */
 /*===========================================================================*/
 
