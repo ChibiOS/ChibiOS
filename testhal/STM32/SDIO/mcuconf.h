@@ -104,6 +104,13 @@
 #define STM32_PWM_TIM5_IRQ_PRIORITY         7
 
 /*
+ * SDC driver system settings.
+ */
+#define STM32_SDC_DATATIMEOUT               0x000FFFFF
+#define STM32_SDC_SDIO_DMA_PRIORITY         3
+#define STM32_SDC_SDIO_IRQ_PRIORITY         9
+
+/*
  * SERIAL driver system settings.
  */
 #define STM32_SERIAL_USE_USART1             TRUE

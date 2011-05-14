@@ -51,7 +51,7 @@
  * @brief   SDIO DMA priority (0..3|lowest..highest).
  */
 #if !defined(STM32_SDC_SDIO_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SDC_SDIO_DMA_PRIORITY         2
+#define STM32_SDC_SDIO_DMA_PRIORITY         3
 #endif
 
 /**
@@ -59,15 +59,6 @@
  */
 #if !defined(STM32_SDC_SDIO_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_SDC_SDIO_IRQ_PRIORITY         9
-#endif
-
-/**
- * @brief   SDIO DMA error hook.
- * @note    The default action for DMA errors is a system halt because DMA
- *          error can only happen because programming errors.
- */
-#if !defined(STM32_SDC_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_SDC_DMA_ERROR_HOOK(sdcp)      chSysHalt()
 #endif
 
 /*===========================================================================*/
