@@ -1,0 +1,8 @@
+soft_reset_halt
+wait_halt
+poll
+flash probe 0
+stm32x mass_erase 0
+flash write_bank 0 ch.bin 0
+soft_reset_halt
+resume

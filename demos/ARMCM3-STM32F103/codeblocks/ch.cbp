@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ARMCM3-STM32F103" />
+		<Option pch_mode="2" />
+		<Option compiler="armelfgcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\ch.elf" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="obj\Debug\" />
+				<Option type="5" />
+				<Option compiler="armelfgcc" />
+			</Target>
+			<Target title="Release">
+				<Option output="bin\Release\ch.elf" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="obj\Release\" />
+				<Option type="5" />
+				<Option compiler="armelfgcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+			</Target>
+			<Environment>
+				<Variable name="NAME" value="cortex-m3" />
+			</Environment>
+		</Build>
+		<Compiler>
+			<Add option="-mthumb" />
+			<Add option="-mno-thumb-interwork" />
+			<Add option="-fomit-frame-pointer" />
+			<Add option="-Wextra" />
+			<Add option="-Wall" />
+			<Add option="-g" />
+			<Add option="-mcpu=cortex-m3" />
+			<Add option="-falign-functions=16" />
+			<Add option="-Wstrict-prototypes" />
+			<Add option="-ffunction-sections" />
+			<Add option="-fdata-sections" />
+			<Add directory="..\..\ARMCM3-STM32F103" />
+			<Add directory="..\..\..\os\kernel\include" />
+			<Add directory="..\..\..\os\ports\GCC\ARMCMx" />
+			<Add directory="..\..\..\os\ports\GCC\ARMCMx\STM32" />
+			<Add directory="..\..\..\os\hal\include" />
+			<Add directory="..\..\..\os\hal\platforms\STM32" />
+			<Add directory="..\..\..\boards\OLIMEX_STM32_P103" />
+			<Add directory="..\..\..\test" />
+		</Compiler>
+		<Linker>
+			<Add option="-nostartfiles" />
+			<Add option="-T../ch.ld" />
+			<Add option="-Wl,-Map=$exe_dir/ch.map,--cref,--no-warn-mismatch,--gc-sections" />
+		</Linker>
+		<ExtraCommands>
+			<Add after="arm-none-eabi-objcopy -O ihex $exe_dir/ch.elf  $exe_dir/ch.hex" />
+			<Add after="arm-none-eabi-objcopy -O binary $exe_dir/ch.elf  $exe_dir/ch.bin" />
+			<Mode after="always" />
+		</ExtraCommands>
+		<Unit filename="..\..\..\boards\OLIMEX_STM32_P103\board.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\boards\OLIMEX_STM32_P103\board.h" />
+		<Unit filename="..\main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\include\adc.h" />
+		<Unit filename="..\..\..\os\hal\include\can.h" />
+		<Unit filename="..\..\..\os\hal\include\hal.h" />
+		<Unit filename="..\..\..\os\hal\include\i2c.h" />
+		<Unit filename="..\..\..\os\hal\include\mac.h" />
+		<Unit filename="..\..\..\os\hal\include\mii.h" />
+		<Unit filename="..\..\..\os\hal\include\mmc_spi.h" />
+		<Unit filename="..\..\..\os\hal\include\pal.h" />
+		<Unit filename="..\..\..\os\hal\include\pwm.h" />
+		<Unit filename="..\..\..\os\hal\include\serial.h" />
+		<Unit filename="..\..\..\os\hal\include\spi.h" />
+		<Unit filename="..\..\..\os\hal\include\uart.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\adc_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\adc_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\can_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\can_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\hal_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\hal_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\hal_lld_f103.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\hal_lld_f105_f107.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\pal_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\pal_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\pwm_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\pwm_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\serial_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\serial_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\spi_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\spi_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\stm32_dma.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\stm32_dma.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\stm32f10x.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\uart_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\uart_lld.h" />
+		<Unit filename="..\..\..\os\hal\src\adc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\can.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\hal.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\i2c.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\mac.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\mmc_spi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\pal.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\pwm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\serial.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\spi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\uart.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\include\ch.h" />
+		<Unit filename="..\..\..\os\kernel\include\chbsem.h" />
+		<Unit filename="..\..\..\os\kernel\include\chcond.h" />
+		<Unit filename="..\..\..\os\kernel\include\chdebug.h" />
+		<Unit filename="..\..\..\os\kernel\include\chevents.h" />
+		<Unit filename="..\..\..\os\kernel\include\chfiles.h" />
+		<Unit filename="..\..\..\os\kernel\include\chheap.h" />
+		<Unit filename="..\..\..\os\kernel\include\chinline.h" />
+		<Unit filename="..\..\..\os\kernel\include\chioch.h" />
+		<Unit filename="..\..\..\os\kernel\include\chlists.h" />
+		<Unit filename="..\..\..\os\kernel\include\chmboxes.h" />
+		<Unit filename="..\..\..\os\kernel\include\chmemcore.h" />
+		<Unit filename="..\..\..\os\kernel\include\chmempools.h" />
+		<Unit filename="..\..\..\os\kernel\include\chmsg.h" />
+		<Unit filename="..\..\..\os\kernel\include\chmtx.h" />
+		<Unit filename="..\..\..\os\kernel\include\chqueues.h" />
+		<Unit filename="..\..\..\os\kernel\include\chregistry.h" />
+		<Unit filename="..\..\..\os\kernel\include\chschd.h" />
+		<Unit filename="..\..\..\os\kernel\include\chsem.h" />
+		<Unit filename="..\..\..\os\kernel\include\chstreams.h" />
+		<Unit filename="..\..\..\os\kernel\include\chsys.h" />
+		<Unit filename="..\..\..\os\kernel\include\chthreads.h" />
+		<Unit filename="..\..\..\os\kernel\include\chvt.h" />
+		<Unit filename="..\..\..\os\kernel\src\chcond.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chdebug.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chdynamic.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chevents.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chheap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chlists.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chmboxes.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chmemcore.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chmempools.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chmsg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chmtx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chqueues.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chregistry.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chschd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chsem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chsys.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chthreads.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\kernel\src\chvt.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\STM32\cmparams.h" />
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\STM32\vectors.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\chcore.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\chcore.h" />
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\chcore_v7m.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\chcore_v7m.h" />
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\chtypes.h" />
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\cmsis\core_cm0.h" />
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\crt0_v7m.s" />
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\nvic.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\nvic.h" />
+		<Unit filename="..\..\..\test\test.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\test\test.dox" />
+		<Unit filename="..\..\..\test\test.h" />
+		<Unit filename="..\..\..\test\test.mk" />
+		<Unit filename="..\..\..\test\testbmk.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\test\testbmk.h" />
+		<Unit filename="..\..\..\test\testdyn.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\test\testdyn.h" />
+		<Unit filename="..\..\..\test\testevt.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\test\testevt.h" />
+		<Unit filename="..\..\..\test\testheap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\test\testheap.h" />
+		<Unit filename="..\..\..\test\testmbox.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\test\testmbox.h" />
+		<Unit filename="..\..\..\test\testmsg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\test\testmsg.h" />
+		<Unit filename="..\..\..\test\testmtx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\test\testmtx.h" />
+		<Unit filename="..\..\..\test\testpools.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\test\testpools.h" />
+		<Unit filename="..\..\..\test\testqueues.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\test\testqueues.h" />
+		<Unit filename="..\..\..\test\testsem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\test\testsem.h" />
+		<Unit filename="..\..\..\test\testthd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\test\testthd.h" />
+		<Extensions>
+			<code_completion />
+			<debugger>
+				<remote_debugging target="Debug">
+					<options conn_type="0" serial_baud="115200" ip_address="127.0.0.1" ip_port="3333" />
+				</remote_debugging>
+				<remote_debugging target="Release">
+					<options conn_type="0" serial_baud="115200" ip_address="127.0.0.1" ip_port="3333" />
+				</remote_debugging>
+			</debugger>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
