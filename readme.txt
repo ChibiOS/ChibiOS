@@ -69,6 +69,7 @@
 *****************************************************************************
 
 *** 2.2.4 ***
+- FIX: Fixed invalid BRR() macro in AVR serial driver (bug 3299306).
 - FIX: Fixed missing IRQ vectors amicable names for STM32 XL devices (bug
   3298889).
 - FIX: Fixed wrong identifier in AVR serial driver (bug 3292084).
