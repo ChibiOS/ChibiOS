@@ -33,7 +33,7 @@ Lines executed:100.00% of 18
 ../../os/kernel/src/chregistry.c:creating `chregistry.c.gcov'
 
 File `../../os/kernel/src/chsem.c'
-Lines executed:100.00% of 89
+Lines executed:100.00% of 88
 ../../os/kernel/src/chsem.c:creating `chsem.c.gcov'
 
 File `../../os/kernel/src/chmtx.c'
