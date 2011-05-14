@@ -264,14 +264,14 @@ typedef enum {
  * @notapi
  */
 #define _spi_isr_code(spip) {                                               \
-  if ((spip)->config->end_cb) {                                             \
-    (spip)->state = SPI_COMPLETE;                                           \
-    (spip)->config->end_cb(spip);                                           \
-    if ((spip)->state == SPI_COMPLETE)                                      \
-      (spip)->state = SPI_READY;                                            \
+  if ((spip)->spd_config->spc_endcb) {                                      \
+    (spip)->spd_state = SPI_COMPLETE;                                       \
+    (spip)->spd_config->spc_endcb(spip);                                    \
+    if ((spip)->spd_state == SPI_COMPLETE)                                  \
+      (spip)->spd_state = SPI_READY;                                        \
   }                                                                         \
   else                                                                      \
-    (spip)->state = SPI_READY;                                              \
+    (spip)->spd_state = SPI_READY;                                          \
   _spi_wakeup_isr(spip);                                                    \
 }
 
