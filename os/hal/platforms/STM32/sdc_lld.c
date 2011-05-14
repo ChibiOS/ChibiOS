@@ -180,6 +180,7 @@ void sdc_lld_stop_clk(SDCDriver *sdcp) {
  * @brief   Switches the bus to 4 bits mode.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] mode      bus mode
  *
  * @notapi
  */
@@ -203,7 +204,7 @@ void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode) {
  * @brief   Sends an SDIO command with no response expected.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
- * @param[in[ cmd       card command
+ * @param[in] cmd       card command
  * @param[in] arg       command argument
  *
  * @notapi
@@ -223,7 +224,7 @@ void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg) {
  * @note    The CRC is not verified.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
- * @param[in[ cmd       card command
+ * @param[in] cmd       card command
  * @param[in] arg       command argument
  * @param[out] resp     pointer to the response buffer (one word)
  * @return              The operation status.
@@ -254,7 +255,7 @@ bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  * @brief   Sends an SDIO command with a short response expected and CRC.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
- * @param[in[ cmd       card command
+ * @param[in] cmd       card command
  * @param[in] arg       command argument
  * @param[out] resp     pointer to the response buffer (one word)
  * @return              The operation status.
@@ -285,7 +286,7 @@ bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  * @brief   Sends an SDIO command with a long response expected and CRC.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
- * @param[in[ cmd       card command
+ * @param[in] cmd       card command
  * @param[in] arg       command argument
  * @param[out] resp     pointer to the response buffer (four words)
  * @return              The operation status.

@@ -221,7 +221,6 @@
  * - Programmable interrupt priority.
  * - DMA is used for receiving and transmitting.
  * - Programmable DMA bus priority for each DMA channel.
- * - Programmable DMA error hook.
  * .
  * @ingroup STM32_DRIVERS
  */
