@@ -212,8 +212,7 @@ Thread *chThdCreateStatic(void *wsp, size_t size,
 tprio_t chThdSetPriority(tprio_t newprio) {
   tprio_t oldprio;
 
-  chDbgCheck((newprio >= LOWPRIO) && (newprio <= HIGHPRIO),
-              "chThdSetPriority");
+  chDbgCheck(newprio <= HIGHPRIO, "chThdSetPriority");
 
   chSysLock();
 #if CH_USE_MUTEXES

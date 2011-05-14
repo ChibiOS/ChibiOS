@@ -96,6 +96,23 @@
 #define CH_MEMCORE_SIZE                 512
 #endif
 
+/**
+ * @brief   Idle thread automatic spawn suppression.
+ * @details When this option is activated the function @p chSysInit()
+ *          does not spawn the idle thread automatically. The application has
+ *          then the responsibility to do one of the following:
+ *          - Spawn a custom idle thread at priority @p IDLEPRIO.
+ *          - Change the main() thread priority to @p IDLEPRIO then enter
+ *            an endless loop. In this scenario the @p main() thread acts as
+ *            the idle thread.
+ *          .
+ * @note    Unless an idle thread is spawned the @p main() thread must not
+ *          enter a sleep state.
+ */
+#if !defined(CH_NO_IDLE_THREAD) || defined(__DOXYGEN__)
+#define CH_NO_IDLE_THREAD               FALSE
+#endif
+
 /*===========================================================================*/
 /* Performance options.                                                      */
 /*===========================================================================*/

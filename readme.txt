@@ -78,6 +78,9 @@
   applied the same fix to the STM8S SPI driver (bug 3288758).
 - FIX: Fixed missing state transition in ADC driver (bug 3288149).
 - FIX: Fixed missing state transition in SPI driver (bug 3288112).
+- NEW: Added an option to the kernel to not spawn the Idle Thread from within
+  chSysInit(), this way the application can spawn a custom idle thread or
+  even use the main() thread as idle thread.
 
 *** 2.2.3 ***
 - FIX: Fixed insufficient idle thread stack in Cortex-M0-GCC port

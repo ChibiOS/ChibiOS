@@ -41,6 +41,7 @@
 
 #include "ch.h"
 
+#if !CH_NO_IDLE_THREAD || defined(__DOXYGEN__)
 /**
  * @brief   Idle thread working area.
  * @see     IDLE_THREAD_STACK_SIZE
@@ -65,6 +66,7 @@ void _idle_thread(void *p) {
     IDLE_LOOP_HOOK();
   }
 }
+#endif /* CH_NO_IDLE_THREAD */
 
 /**
  * @brief   ChibiOS/RT initialization.
@@ -99,11 +101,13 @@ void chSysInit(void) {
   currp->p_state = THD_STATE_CURRENT;
   chSysEnable();
 
+#if !CH_NO_IDLE_THREAD
   /* This thread has the lowest priority in the system, its role is just to
      serve interrupts in its context while keeping the lowest energy saving
      mode compatible with the system status.*/
   chThdCreateStatic(_idle_thread_wa, sizeof(_idle_thread_wa), IDLEPRIO,
                     (tfunc_t)_idle_thread, NULL);
+#endif
 }
 
 /**
