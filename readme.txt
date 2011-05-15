@@ -70,6 +70,10 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.3.3 ***
+- FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
+  (backported to 2.2.4).
+
 *** 2.3.2 ***
 - FIX: Fixed invalid BRR() macro in AVR serial driver (bug 3299306)(backported
   to 2.2.4).
