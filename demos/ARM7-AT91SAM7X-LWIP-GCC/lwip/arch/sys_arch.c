@@ -97,11 +97,12 @@ void sys_sem_signal(sys_sem_t sem) {
 }
 
 u32_t sys_arch_sem_wait(sys_sem_t sem, u32_t timeout) {
-  systime_t time;
+  systime_t time, tmo;
 
   chSysLock();
+  tmo = timeout > 0 ? (systime_t)timeout : TIME_INFINITE;
   time = chTimeNow();
-  if (chSemWaitTimeoutS(sem, (systime_t)timeout) != RDY_OK)
+  if (chSemWaitTimeoutS(sem, tmo) != RDY_OK)
     time = SYS_ARCH_TIMEOUT;
   else
     time = chTimeNow() - time;
@@ -141,11 +142,12 @@ err_t sys_mbox_trypost(sys_mbox_t mbox, void *msg) {
 }
 
 u32_t sys_arch_mbox_fetch(sys_mbox_t mbox, void **msg, u32_t timeout) {
-  systime_t time;
+  systime_t time, tmo;
 
   chSysLock();
+  tmo = timeout > 0 ? (systime_t)timeout : TIME_INFINITE;
   time = chTimeNow();
-  if (chMBFetchS(mbox, (msg_t *)msg, (systime_t)timeout) != RDY_OK)
+  if (chMBFetchS(mbox, (msg_t *)msg, tmo) != RDY_OK)
     time = SYS_ARCH_TIMEOUT;
   else
     time = chTimeNow() - time;
