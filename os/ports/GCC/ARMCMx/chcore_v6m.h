@@ -30,6 +30,57 @@
 #define _CHCORE_V6M_H_
 
 /*===========================================================================*/
+/* Port constants.                                                           */
+/*===========================================================================*/
+
+/**
+ * @brief   BASEPRI level within kernel lock.
+ * @note    The ARMv6-M architecture does not implement the BASEPRI register
+ *          so the kernel always masks the whole priority range during
+ *          a kernel lock.
+ */
+#define CORTEX_BASEPRI_KERNEL           0
+
+/**
+ * @brief   PendSV priority level.
+ * @note    This priority is enforced to be equal to @p CORTEX_BASEPRI_KERNEL,
+ *          this handler always have the highest priority that cannot preempt
+ *          the kernel.
+ */
+#define CORTEX_PRIORITY_PENDSV          CORTEX_BASEPRI_KERNEL
+
+/*===========================================================================*/
+/* Port configurable parameters.                                             */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Port derived parameters.                                                  */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Port exported info.                                                       */
+/*===========================================================================*/
+
+/**
+ * @brief   Macro defining the specific ARM architecture.
+ */
+#define CH_ARCHITECTURE_ARM_v7M
+
+/**
+ * @brief   Name of the implemented architecture.
+ */
+#define CH_ARCHITECTURE_NAME            "ARMv6-M"
+
+/**
+ * @brief   Name of the architecture variant.
+ */
+#if (CORTEX_MODEL == CORTEX_M0) || defined(__DOXYGEN__)
+#define CH_CORE_VARIANT_NAME            "Cortex-M0"
+#elif (CORTEX_MODEL == CORTEX_M1)
+#define CH_CORE_VARIANT_NAME            "Cortex-M1"
+#endif
+
+/*===========================================================================*/
 /* Port implementation part.                                                 */
 /*===========================================================================*/
 
@@ -56,48 +107,6 @@ struct intctx {
   regarm_t      r7;
   regarm_t      lr;
 };
-#endif
-
-/**
- * @brief   Platform dependent part of the @p chThdCreateI() API.
- * @details This code usually setup the context switching frame represented
- *          by an @p intctx structure.
- */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
-  tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +                  \
-                                     wsize -                                \
-                                     sizeof(struct intctx));                \
-  tp->p_ctx.r13->r4 = pf;                                                   \
-  tp->p_ctx.r13->r5 = arg;                                                  \
-  tp->p_ctx.r13->lr = _port_thread_start;                                   \
-}
-
-/**
- * @brief   Stack size for the system idle thread.
- * @details This size depends on the idle thread implementation, usually
- *          the idle thread should take no more space than those reserved
- *          by @p INT_REQUIRED_STACK.
- * @note    In this port it is set to 8 because the idle thread does have
- *          a stack frame when compiling without optimizations. You may
- *          reduce this value to zero when compiling with optimizations.
- */
-#ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE      16
-#endif
-
-/**
- * @brief   Per-thread stack overhead for interrupts servicing.
- * @details This constant is used in the calculation of the correct working
- *          area size.
- *          This value can be zero on those architecture where there is a
- *          separate interrupt stack and the stack space between @p intctx and
- *          @p extctx is known to be zero.
- * @note    In this port it is conservatively set to 16 because the function
- *          @p chSchDoRescheduleI() can have a stack frame, expecially with
- *          compiler optimizations disabled.
- */
-#ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK          16
 #endif
 
 /**
@@ -135,6 +144,8 @@ struct intctx {
  */
 #define port_init() {                                                       \
   SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);                            \
+  NVICSetSystemHandlerPriority(HANDLER_PENDSV,                              \
+    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_PENDSV));                          \
   NVICSetSystemHandlerPriority(HANDLER_SYSTICK,                             \
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));                         \
 }

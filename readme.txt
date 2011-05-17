@@ -73,6 +73,15 @@
 *** 2.3.3 ***
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Reorganization of the Cortex-Mx ports in order to reduced code and
+  comments duplication in the various headers.
+- CHANGE: Renamed the macros IDLE_THREAD_STACK_SIZE and INT_REQUIRED_STACK
+  to PORT_IDLE_THREAD_STACK_SIZE and PORT_INT_REQUIRED_STACK for consistency.
+- CHANGE: Removed the "old" Cortex-M3 port from the code, the current port
+  has no drawbacks and the old port is now just a maintenance cost.
+- CHANGE: Removed the CH_CURRP_REGISTER_CACHE option, it is GCC-specific so
+  it does not belong to the kernel options. The feature will be eventually
+  reimplemented as a port-specific option.
 
 *** 2.3.2 ***
 - FIX: Fixed invalid BRR() macro in AVR serial driver (bug 3299306)(backported

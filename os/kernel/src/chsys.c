@@ -40,7 +40,7 @@
  * @brief   Idle thread working area.
  * @see     IDLE_THREAD_STACK_SIZE
  */
-WORKING_AREA(_idle_thread_wa, IDLE_THREAD_STACK_SIZE);
+WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
 
 /**
  * @brief   This function implements the idle thread infinite loop.

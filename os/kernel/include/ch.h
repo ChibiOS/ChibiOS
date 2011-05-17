@@ -95,7 +95,7 @@
 #include "chdebug.h"
 
 #if !defined(__DOXYGEN__)
-extern WORKING_AREA(_idle_thread_wa, IDLE_THREAD_STACK_SIZE);
+extern WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
 #endif
 
 #ifdef __cplusplus

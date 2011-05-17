@@ -31,6 +31,48 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
+/*===========================================================================*/
+/* Port constants.                                                           */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Port macros.                                                              */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Port configurable parameters.                                             */
+/*===========================================================================*/
+
+/**
+ * @brief   Stack size for the system idle thread.
+ * @details This size depends on the idle thread implementation, usually
+ *          the idle thread should take no more space than those reserved
+ *          by @p INT_REQUIRED_STACK.
+ */
+#ifndef PORT_IDLE_THREAD_STACK_SIZE
+#define PORT_IDLE_THREAD_STACK_SIZE 0
+#endif
+
+/**
+ * @brief   Per-thread stack overhead for interrupts servicing.
+ * @details This constant is used in the calculation of the correct working
+ *          area size.
+ *          This value can be zero on those architecture where there is a
+ *          separate interrupt stack and the stack space between @p intctx and
+ *          @p extctx is known to be zero.
+ */
+#ifndef PORT_INT_REQUIRED_STACK
+#define PORT_INT_REQUIRED_STACK     0
+#endif
+
+/*===========================================================================*/
+/* Port derived parameters.                                                  */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Port exported info.                                                       */
+/*===========================================================================*/
+
 /**
  * @brief   Unique macro for the implemented architecture.
  */
@@ -39,12 +81,26 @@
 /**
  * @brief   Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME ""
+#define CH_ARCHITECTURE_NAME            ""
 
 /**
  * @brief   Name of the architecture variant (optional).
  */
-#define CH_ARCHITECTURE_VARIANT_NAME ""
+#define CH_ARCHITECTURE_VARIANT_NAME    ""
+
+/**
+ * @brief   Name of the compiler supported by this port.
+ */
+#define CH_COMPILER_NAME                "GCC"
+
+/**
+ * @brief   Port-specific information string.
+ */
+#define CH_PORT_INFO                    ""
+
+/*===========================================================================*/
+/* Port implementation part.                                                 */
+/*===========================================================================*/
 
 /**
  * @brief   Base type for stack and memory alignment.
@@ -83,28 +139,6 @@ struct context {
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
 }
-
-/**
- * @brief   Stack size for the system idle thread.
- * @details This size depends on the idle thread implementation, usually
- *          the idle thread should take no more space than those reserved
- *          by @p INT_REQUIRED_STACK.
- */
-#ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE      0
-#endif
-
-/**
- * @brief   Per-thread stack overhead for interrupts servicing.
- * @details This constant is used in the calculation of the correct working
- *          area size.
- *          This value can be zero on those architecture where there is a
- *          separate interrupt stack and the stack space between @p intctx and
- *          @p extctx is known to be zero.
- */
-#ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK          0
-#endif
 
 /**
  * @brief   Enforces a correct alignment for a stack area size value.

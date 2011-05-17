@@ -28,7 +28,6 @@
 
 #include "ch.h"
 
-#if !defined(CH_CURRP_REGISTER_CACHE) || defined(__DOXXYGEN__)
 /**
  * @brief   Internal context stacking.
  */
@@ -44,17 +43,6 @@
   asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}"            \
                 : : : "memory");                                            \
 }
-#else /* defined(CH_CURRP_REGISTER_CACHE) */
-#define PUSH_CONTEXT() {                                                    \
-  asm volatile ("push    {r4, r5, r6, r8, r9, r10, r11, lr}"                \
-                : : : "memory");                                            \
-}
-
-#define POP_CONTEXT() {                                                     \
-  asm volatile ("pop     {r4, r5, r6, r8, r9, r10, r11, pc}"                \
-                 : : : "memory");                                           \
-}
-#endif /* defined(CH_CURRP_REGISTER_CACHE) */
 
 #if !CH_OPTIMIZE_SPEED
 void _port_lock(void) {
@@ -84,10 +72,12 @@ CH_IRQ_HANDLER(SysTickVector) {
   CH_IRQ_EPILOGUE();
 }
 
+#if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
 /**
  * @brief   SVC vector.
  * @details The SVC vector is used for exception mode re-entering after a
  *          context switch.
+ * @note    The PendSV vector is only used in advanced kernel mode.
  */
 void SVCallVector(void) {
   register struct extctx *ctxp;
@@ -99,6 +89,25 @@ void SVCallVector(void) {
   asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
   port_unlock_from_isr();
 }
+#endif /* !CORTEX_SIMPLIFIED_PRIORITY */
+
+#if CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
+/**
+ * @brief   PendSV vector.
+ * @details The PendSV vector is used for exception mode re-entering after a
+ *          context switch.
+ * @note    The PendSV vector is only used in normal kernel mode.
+ */
+void PendSVVector(void) {
+  register struct extctx *ctxp;
+
+  /* Discarding the current exception context and positioning the stack to
+     point to the real one.*/
+  asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : : "memory");
+  ctxp++;
+  asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
+}
+#endif /* CORTEX_SIMPLIFIED_PRIORITY */
 
 /**
  * @brief   Reschedule verification and setup after an IRQ.
@@ -134,7 +143,14 @@ __attribute__((naked))
 void _port_switch_from_isr(void) {
 
   chSchDoRescheduleI();
+#if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
   asm volatile ("svc     #0");
+#else /* CORTEX_SIMPLIFIED_PRIORITY */
+  SCB_ICSR = ICSR_PENDSVSET;
+  port_unlock();
+  while (TRUE)
+    ;
+#endif /* CORTEX_SIMPLIFIED_PRIORITY */
 }
 
 /**

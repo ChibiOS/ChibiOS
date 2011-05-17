@@ -635,9 +635,11 @@ ROMCONST struct testcase testbmk12 = {
 static void bmk13_execute(void) {
 
   test_print("--- System: ");
-  test_printn(sizeof(ReadyList) + sizeof(VTList) + IDLE_THREAD_STACK_SIZE +
-              (sizeof(Thread) + sizeof(struct intctx) + sizeof(struct extctx) +
-               INT_REQUIRED_STACK) * 2);
+  test_printn(sizeof(ReadyList) + sizeof(VTList) +
+              PORT_IDLE_THREAD_STACK_SIZE +
+              (sizeof(Thread) + sizeof(struct intctx) +
+               sizeof(struct extctx) +
+               PORT_INT_REQUIRED_STACK) * 2);
   test_println(" bytes");
   test_print("--- Thread: ");
   test_printn(sizeof(Thread));
