@@ -75,6 +75,10 @@
   (backported to 2.2.4).
 - NEW: Reorganization of the Cortex-Mx ports in order to reduced code and
   comments duplication in the various headers.
+- NEW: Improved the ARMv7-M port now there are two modes: Compact and Advanced.
+  The advanced mode is equivalent to the previous versions, the compact mode
+  is new and makes the kernel *much* smaller and faster but does not support
+  fast interrupts, see reports.
 - CHANGE: Renamed the macros IDLE_THREAD_STACK_SIZE and INT_REQUIRED_STACK
   to PORT_IDLE_THREAD_STACK_SIZE and PORT_INT_REQUIRED_STACK for consistency.
 - CHANGE: Removed the "old" Cortex-M3 port from the code, the current port

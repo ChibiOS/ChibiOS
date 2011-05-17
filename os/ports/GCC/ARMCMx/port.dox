@@ -28,25 +28,25 @@
  *
  * @section ARMCMx_MODES Kernel Modes
  * The Cortex-Mx port supports two distinct kernel modes:
- * - <b>Normal Kernel</b> mode. In this mode the kernel handles IRQ priorities
- *   in a simplified way, all interrupt sources are disabled when the kernel
- *   enters into a critical zone and re-enabled on exit. This is simple and
- *   adequate for most applications, this mode results in a more compact and
- *   faster kernel.
  * - <b>Advanced Kernel</b> mode. In this mode the kernel only masks
  *   interrupt sources with priorities below or equal to the
  *   @p CORTEX_BASEPRI_KERNEL level. Higher priorities are not affected by
  *   the kernel critical sections and can be used for fast interrupts.
  *   This mode is not available in the ARMv6-M architecture which does not
  *   support priority masking.
+ * - <b>Compact Kernel</b> mode. In this mode the kernel handles IRQ priorities
+ *   in a simplified way, all interrupt sources are disabled when the kernel
+ *   enters into a critical zone and re-enabled on exit. This is simple and
+ *   adequate for most applications, this mode results in a more compact and
+ *   faster kernel.
  * .
  * The selection of the mode is performed using the port configuration option
  * @p CORTEX_SIMPLIFIED_PRIORITY. Apart from the different handling of
  * interrupts there are no other differences between the two modes. The
  * kernel API is exactly the same.
  *
- * @section ARMCMx_STATES_A System logical states in Normal Kernel mode
- * The ChibiOS/RT logical @ref system_states are mapped as follow in Normal
+ * @section ARMCMx_STATES_A System logical states in Compact Kernel mode
+ * The ChibiOS/RT logical @ref system_states are mapped as follow in Compact
  * Kernel mode:
  * - <b>Init</b>. This state is represented by the startup code and the
  *   initialization code before @p chSysInit() is executed. It has not a

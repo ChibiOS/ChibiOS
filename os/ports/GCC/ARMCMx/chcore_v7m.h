@@ -39,7 +39,7 @@
 
 /**
  * @brief   Simplified priority handling flag.
- * @details Activating this option will make the Kernel work in normal mode.
+ * @details Activating this option will make the Kernel work in compact mode.
  */
 #ifndef CORTEX_SIMPLIFIED_PRIORITY
 #define CORTEX_SIMPLIFIED_PRIORITY      FALSE
@@ -67,7 +67,7 @@
 
 /**
  * @brief   BASEPRI level within kernel lock.
- * @note    In normal kernel mode this constant value is enforced to zero.
+ * @note    In compact kernel mode this constant value is enforced to zero.
  */
 #if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
 #define CORTEX_BASEPRI_KERNEL                                               \
@@ -113,7 +113,7 @@
 #if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
 #define CH_PORT_INFO                    "Advanced kernel mode"
 #else
-#define CH_PORT_INFO                    "Normal kernel mode"
+#define CH_PORT_INFO                    "Compact kernel mode"
 #endif
 
 /*===========================================================================*/

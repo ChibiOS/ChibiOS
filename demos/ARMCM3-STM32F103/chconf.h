@@ -520,6 +520,8 @@
 /* Port-specific settings (override port settings defaulted in chcore.h).    */
 /*===========================================================================*/
 
+/*#define CORTEX_SIMPLIFIED_PRIORITY      TRUE*/
+
 #endif  /* _CHCONF_H_ */
 
 /** @} */

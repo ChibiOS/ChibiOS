@@ -96,7 +96,7 @@ void SVCallVector(void) {
  * @brief   PendSV vector.
  * @details The PendSV vector is used for exception mode re-entering after a
  *          context switch.
- * @note    The PendSV vector is only used in normal kernel mode.
+ * @note    The PendSV vector is only used in compact kernel mode.
  */
 void PendSVVector(void) {
   register struct extctx *ctxp;
