@@ -51,10 +51,8 @@ void port_switch(Thread *ntp, Thread *otp) {
   asm volatile ("push    r5");
   asm volatile ("push    r6");
   asm volatile ("push    r7");
-#ifndef CH_CURRP_REGISTER_CACHE
   asm volatile ("push    r8");
   asm volatile ("push    r9");
-#endif
   asm volatile ("push    r10");
   asm volatile ("push    r11");
   asm volatile ("push    r12");
@@ -88,10 +86,8 @@ void port_switch(Thread *ntp, Thread *otp) {
   asm volatile ("pop     r12");
   asm volatile ("pop     r11");
   asm volatile ("pop     r10");
-#ifndef CH_CURRP_REGISTER_CACHE
   asm volatile ("pop     r9");
   asm volatile ("pop     r8");
-#endif
   asm volatile ("pop     r7");
   asm volatile ("pop     r6");
   asm volatile ("pop     r5");

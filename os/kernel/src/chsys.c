@@ -38,7 +38,7 @@
 #if !CH_NO_IDLE_THREAD || defined(__DOXYGEN__)
 /**
  * @brief   Idle thread working area.
- * @see     IDLE_THREAD_STACK_SIZE
+ * @see     PORT_IDLE_THREAD_STACK_SIZE
  */
 WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
 

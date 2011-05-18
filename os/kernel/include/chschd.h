@@ -84,10 +84,8 @@ typedef struct {
 #if CH_TIME_QUANTUM > 0
   cnt_t                 r_preempt;  /**< @brief Round robin counter.        */
 #endif
-#ifndef CH_CURRP_REGISTER_CACHE
   Thread                *r_current; /**< @brief The currently running
                                                 thread.                     */
-#endif
 } ReadyList;
 #endif /* !defined(PORT_OPTIMIZED_READYLIST_STRUCT) */
 
@@ -103,11 +101,7 @@ extern ReadyList rlist;
  *          (currp = something), use @p setcurrp() instead.
  */
 #if !defined(PORT_OPTIMIZED_CURRP) || defined(__DOXYGEN__)
-#if !defined(CH_CURRP_REGISTER_CACHE) || defined(__DOXYGEN__)
 #define currp rlist.r_current
-#else /* defined(CH_CURRP_REGISTER_CACHE) */
-register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
-#endif /* defined(CH_CURRP_REGISTER_CACHE) */
 #endif /* !defined(PORT_OPTIMIZED_CURRP) */
 
 /**

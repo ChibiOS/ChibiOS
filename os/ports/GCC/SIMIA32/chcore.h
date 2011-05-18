@@ -108,8 +108,8 @@ struct context {
 /**
  * Stack size for the system idle thread.
  */
-#ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE 256
+#ifndef PORT_IDLE_THREAD_STACK_SIZE
+#define PORT_IDLE_THREAD_STACK_SIZE     256
 #endif
 
 /**
@@ -118,8 +118,8 @@ struct context {
  * It requires stack space because the simulated "interrupt handlers" can
  * invoke host library functions inside so it better have a lot of space.
  */
-#ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK 16384
+#ifndef PORT_INT_REQUIRED_STACK
+#define PORT_INT_REQUIRED_STACK         16384
 #endif
 
 /**
@@ -134,7 +134,7 @@ struct context {
                                    sizeof(void *) * 4 +                 \
                                    sizeof(struct intctx) +              \
                                    sizeof(struct extctx) +              \
-                                  (n) + (INT_REQUIRED_STACK))
+                                  (n) + (PORT_INT_REQUIRED_STACK))
 
 /**
  * Macro used to allocate a thread working area aligned as both position and

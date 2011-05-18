@@ -122,10 +122,10 @@ struct context {
  * @brief   Stack size for the system idle thread.
  * @details This size depends on the idle thread implementation, usually
  *          the idle thread should take no more space than those reserved
- *          by @p INT_REQUIRED_STACK.
+ *          by @p PORT_INT_REQUIRED_STACK.
  */
-#ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE      0
+#ifndef PORT_IDLE_THREAD_STACK_SIZE
+#define PORT_IDLE_THREAD_STACK_SIZE     0
 #endif
 
 /**
@@ -137,8 +137,8 @@ struct context {
  *          @p extctx is known to be zero.
  * @note    In this port the default is 32 bytes per thread.
  */
-#ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK          32
+#ifndef PORT_INT_REQUIRED_STACK
+#define PORT_INT_REQUIRED_STACK         32
 #endif
 
 /**
@@ -152,7 +152,7 @@ struct context {
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
                                    sizeof(struct intctx) +              \
                                    sizeof(struct extctx) +              \
-                                  (n) + (INT_REQUIRED_STACK))
+                                  (n) + (PORT_INT_REQUIRED_STACK))
 
 /**
  * @brief   Static working area allocation.

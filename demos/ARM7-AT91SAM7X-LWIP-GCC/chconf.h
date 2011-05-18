@@ -123,26 +123,6 @@
 #define CH_OPTIMIZE_SPEED               TRUE
 #endif
 
-/**
- * @brief   Exotic optimization.
- * @details If defined then a CPU register is used as storage for the global
- *          @p currp variable. Caching this variable in a register greatly
- *          improves both space and time OS efficiency. A side effect is that
- *          one less register has to be saved during the context switch
- *          resulting in lower RAM usage and faster context switch.
- *
- * @note    This option is only usable with the GCC compiler and is only useful
- *          on processors with many registers like ARM cores.
- * @note    If this option is enabled then ALL the libraries linked to the
- *          ChibiOS/RT code <b>must</b> be recompiled with the GCC option @p
- *          -ffixed-@<reg@>.
- * @note    This option must be enabled in the Makefile, it is listed here for
- *          documentation only.
- */
-#if defined(__DOXYGEN__)
-#define CH_CURRP_REGISTER_CACHE         "reg"
-#endif
-
 /*===========================================================================*/
 /* Subsystem options.                                                        */
 /*===========================================================================*/

@@ -302,7 +302,7 @@ struct context {
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
                                    sizeof(struct intctx) +              \
                                    sizeof(struct extctx) +              \
-                                   (n) + (INT_REQUIRED_STACK))
+                                   (n) + (PORT_INT_REQUIRED_STACK))
 
 /**
  * @brief   Static working area allocation.

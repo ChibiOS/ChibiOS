@@ -105,10 +105,8 @@ struct intctx {
   uint8_t       r12;
   uint8_t       r11;
   uint8_t       r10;
-#ifndef CH_CURRP_REGISTER_CACHE
   uint8_t       r9;
   uint8_t       r8;
-#endif
   uint8_t       r7;
   uint8_t       r6;
   uint8_t       r5;
@@ -149,11 +147,11 @@ struct context {
  * @brief   Stack size for the system idle thread.
  * @details This size depends on the idle thread implementation, usually
  *          the idle thread should take no more space than those reserved
- *          by @p INT_REQUIRED_STACK.
+ *          by @p PORT_INT_REQUIRED_STACK.
  * @note    In this port it is set to 8.
  */
-#ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE 8
+#ifndef PORT_IDLE_THREAD_STACK_SIZE
+#define PORT_IDLE_THREAD_STACK_SIZE     8
 #endif
 
 /**
@@ -165,8 +163,8 @@ struct context {
  *          @p extctx is known to be zero.
  * @note    In this port the default is 32 bytes per thread.
  */
-#ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK 32
+#ifndef PORT_INT_REQUIRED_STACK
+#define PORT_INT_REQUIRED_STACK     32
 #endif
 
 /**
@@ -180,7 +178,7 @@ struct context {
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
                                    (sizeof(struct intctx) - 1) +        \
                                    (sizeof(struct extctx) - 1) +        \
-                                   (n) + (INT_REQUIRED_STACK))
+                                   (n) + (PORT_INT_REQUIRED_STACK))
 
 /**
  * @brief   Static working area allocation.
