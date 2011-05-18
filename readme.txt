@@ -71,6 +71,7 @@
 *****************************************************************************
 
 *** 2.3.3 ***
+- FIX: Race condition in output queues (bug 3303908)(backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
 - NEW: Reorganization of the Cortex-Mx ports in order to reduced code and
@@ -89,6 +90,8 @@
 - CHANGE: Removed the CH_CURRP_REGISTER_CACHE option, it is GCC-specific so
   it does not belong to the kernel options. The feature will be eventually
   reimplemented as a port-specific option.
+- CHANGE: chiQGetFullI() and chOQGetFullI() become macros. The queues
+  subsystem has been optimized and is no more dependent on semaphores.
 
 *** 2.3.2 ***
 - FIX: Fixed invalid BRR() macro in AVR serial driver (bug 3299306)(backported
