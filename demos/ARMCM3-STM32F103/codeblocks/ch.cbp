@@ -68,7 +68,6 @@
 		<Unit filename="..\..\..\os\hal\include\adc.h" />
 		<Unit filename="..\..\..\os\hal\include\can.h" />
 		<Unit filename="..\..\..\os\hal\include\hal.h" />
-		<Unit filename="..\..\..\os\hal\include\i2c.h" />
 		<Unit filename="..\..\..\os\hal\include\mac.h" />
 		<Unit filename="..\..\..\os\hal\include\mii.h" />
 		<Unit filename="..\..\..\os\hal\include\mmc_spi.h" />
@@ -123,9 +122,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\os\hal\src\hal.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\os\hal\src\i2c.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\os\hal\src\mac.c">
@@ -298,10 +294,10 @@
 		<Extensions>
 			<code_completion />
 			<debugger>
-				<remote_debugging target="Debug">
+				<remote_debugging target="Release">
 					<options conn_type="0" serial_baud="115200" ip_address="127.0.0.1" ip_port="3333" />
 				</remote_debugging>
-				<remote_debugging target="Release">
+				<remote_debugging target="Debug">
 					<options conn_type="0" serial_baud="115200" ip_address="127.0.0.1" ip_port="3333" />
 				</remote_debugging>
 			</debugger>

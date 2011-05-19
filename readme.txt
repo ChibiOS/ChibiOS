@@ -69,7 +69,8 @@
 *****************************************************************************
 
 *** 2.2.4 ***
-- FIX: Race condition in output queues (bug 3303908).
+- FIX: Fixed CodeBlocks demo broken (bug 3304718).
+- FIX: Fixed race condition in output queues (bug 3303908).
 - FIX: Fixed CH_USE_HEAP and CH_USE_MALLOC_HEAP conflict (bug 3303841).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420).
 - FIX: Fixed invalid BRR() macro in AVR serial driver (bug 3299306).
