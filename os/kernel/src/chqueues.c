@@ -58,14 +58,14 @@
  *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from threads queue.
- * @retval RDY_OK       is the normal exit, thread signaled.
- * @retval RDY_RESET    if the queue has been reset.
- * @retval RDY_TIMEOUT  if the queue operation timed out.
+ * @retval Q_OK         is the normal exit, thread signaled.
+ * @retval Q_RESET      if the queue has been reset.
+ * @retval Q_TIMEOUT    if the queue operation timed out.
  */
 static msg_t qwait(GenericQueue *qp, systime_t time) {
 
   if (TIME_IMMEDIATE == time)
-    return RDY_TIMEOUT;
+    return Q_TIMEOUT;
   currp->p_u.wtobjp = qp;
   queue_insert(currp, &qp->q_waiting);
   return chSchGoSleepTimeoutS(THD_STATE_WTQUEUE, time);
@@ -111,7 +111,7 @@ void chIQResetI(InputQueue *iqp) {
   iqp->q_rdptr = iqp->q_wrptr = iqp->q_buffer;
   iqp->q_counter = 0;
   while (notempty(&iqp->q_waiting))
-    chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = RDY_RESET;
+    chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_RESET;
 }
 
 /**
@@ -137,7 +137,7 @@ msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
   if (iqp->q_wrptr >= iqp->q_top)
     iqp->q_wrptr = iqp->q_buffer;
   if (notempty(&iqp->q_waiting))
-    chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = RDY_OK;
+    chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
   return Q_OK;
 }
 
@@ -155,7 +155,7 @@ msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
  *                      .
  * @return              A byte value from the queue.
  * @retval Q_TIMEOUT    if the specified time expired.
- * @retval Q_RESET      if the queue was reset.
+ * @retval Q_RESET      if the queue has been reset.
  *
  * @api
  */
@@ -163,13 +163,13 @@ msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
   uint8_t b;
 
   chSysLock();
-  if (iqp->q_notify)
-    iqp->q_notify(iqp);
-
   while (chIQIsEmptyI(iqp)) {
     msg_t msg;
 
-    if ((msg = qwait((GenericQueue *)iqp, time)) < RDY_OK) {
+    if (iqp->q_notify)
+      iqp->q_notify(iqp);
+
+    if ((msg = qwait((GenericQueue *)iqp, time)) < Q_OK) {
       chSysUnlock();
       return msg;
     }
@@ -220,7 +220,7 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
     while (chIQIsEmptyI(iqp)) {
       if (nfy)
         nfy(iqp);
-      if (qwait((GenericQueue *)iqp, time) != RDY_OK) {
+      if (qwait((GenericQueue *)iqp, time) != Q_OK) {
         chSysUnlock();
         return r;
       }
@@ -283,7 +283,7 @@ void chOQResetI(OutputQueue *oqp) {
   oqp->q_rdptr = oqp->q_wrptr = oqp->q_buffer;
   oqp->q_counter = chQSizeI(oqp);
   while (notempty(&oqp->q_waiting))
-    chSchReadyI(fifo_remove(&oqp->q_waiting))->p_u.rdymsg = RDY_RESET;
+    chSchReadyI(fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_RESET;
 }
 
 /**
@@ -302,7 +302,7 @@ void chOQResetI(OutputQueue *oqp) {
  * @return              The operation status.
  * @retval Q_OK         if the operation succeeded.
  * @retval Q_TIMEOUT    if the specified time expired.
- * @retval Q_RESET      if the queue was reset.
+ * @retval Q_RESET      if the queue has been reset.
  *
  * @api
  */
@@ -312,7 +312,7 @@ msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time) {
   while (chOQIsFullI(oqp)) {
     msg_t msg;
 
-    if ((msg = qwait((GenericQueue *)oqp, time)) < RDY_OK) {
+    if ((msg = qwait((GenericQueue *)oqp, time)) < Q_OK) {
       chSysUnlock();
       return msg;
     }
@@ -351,7 +351,7 @@ msg_t chOQGetI(OutputQueue *oqp) {
   if (oqp->q_rdptr >= oqp->q_top)
     oqp->q_rdptr = oqp->q_buffer;
   if (notempty(&oqp->q_waiting))
-    chSchReadyI(fifo_remove(&oqp->q_waiting))->p_u.rdymsg = RDY_OK;
+    chSchReadyI(fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_OK;
   return b;
 }
 
@@ -391,7 +391,7 @@ size_t chOQWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
     while (chOQIsFullI(oqp)) {
       if (nfy)
         nfy(oqp);
-      if (qwait((GenericQueue *)oqp, time) != RDY_OK) {
+      if (qwait((GenericQueue *)oqp, time) != Q_OK) {
         chSysUnlock();
         return w;
       }

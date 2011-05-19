@@ -31,18 +31,11 @@
 
 #if CH_USE_QUEUES || defined(__DOXYGEN__)
 
-/*
- * Module dependencies check.
- */
-#if !CH_USE_SEMAPHORES
-#error "CH_USE_QUEUES requires CH_USE_SEMAPHORES"
-#endif
-
 /** @brief Returned by the queue functions if the operation is successful.*/
 #define Q_OK            RDY_OK
 /** @brief Returned by the queue functions if a timeout occurs.*/
 #define Q_TIMEOUT       RDY_TIMEOUT
-/** @brief Returned by the queue functions if the queue is reset.*/
+/** @brief Returned by the queue functions if the queue has been reset.*/
 #define Q_RESET         RDY_RESET
 /** @brief Returned by the queue functions if the queue is empty.*/
 #define Q_EMPTY         -3
@@ -166,7 +159,7 @@ typedef GenericQueue InputQueue;
  *
  * @param[in] iqp       pointer to an @p InputQueue structure
  * @return              A byte value from the queue.
- * @retval Q_RESET      If the queue has been reset.
+ * @retval Q_RESET      if the queue has been reset.
  *
  * @api
  */
