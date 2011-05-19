@@ -304,7 +304,6 @@
  * @details If enabled then the I/O queues APIs are included in the kernel.
  *
  * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_SEMAPHORES.
  */
 #if !defined(CH_USE_QUEUES) || defined(__DOXYGEN__)
 #define CH_USE_QUEUES                   TRUE
