@@ -80,6 +80,8 @@ void _heap_init(void) {
  * @brief   Initializes a memory heap from a static memory area.
  * @pre     Both the heap buffer base and the heap size must be aligned to
  *          the @p stkalign_t type size.
+ * @pre     In order to use this function the option @p CH_USE_MALLOC_HEAP
+ *          must be disabled.
  *
  * @param[out] heapp    pointer to the memory heap descriptor to be initialized
  * @param[in] buf       heap buffer base
@@ -271,7 +273,7 @@ static Mutex            hmtx;
 static Semaphore        hsem;
 #endif
 
-void heap_init(void) {
+void _heap_init(void) {
 
 #if CH_USE_MUTEXES
   chMtxInit(&hmtx);
