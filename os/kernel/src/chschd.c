@@ -136,11 +136,15 @@ static void wakeup(void *p) {
     /* Handling the special case where the thread has been made ready by
        another thread with higher priority.*/
     return;
-#if CH_USE_SEMAPHORES || (CH_USE_CONDVARS && CH_USE_CONDVARS_TIMEOUT)
+#if CH_USE_SEMAPHORES || CH_USE_QUEUES ||                                   \
+    (CH_USE_CONDVARS && CH_USE_CONDVARS_TIMEOUT)
 #if CH_USE_SEMAPHORES
   case THD_STATE_WTSEM:
     chSemFastSignalI((Semaphore *)tp->p_u.wtobjp);
     /* Falls into, intentional. */
+#endif
+#if CH_USE_QUEUES
+  case THD_STATE_WTQUEUE:
 #endif
 #if CH_USE_CONDVARS && CH_USE_CONDVARS_TIMEOUT
   case THD_STATE_WTCOND:

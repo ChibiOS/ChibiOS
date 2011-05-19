@@ -187,8 +187,10 @@ struct Thread {
 #define THD_STATE_SNDMSG        10
 /** @brief Thread state: Waiting in @p chMsgWait().*/
 #define THD_STATE_WTMSG         11
+/** @brief Thread state: Waiting on an I/O queue.*/
+#define THD_STATE_WTQUEUE       12
 /** @brief Thread state: After termination.*/
-#define THD_STATE_FINAL         12
+#define THD_STATE_FINAL         13
 
 /*
  * Various flags into the thread p_flags field.

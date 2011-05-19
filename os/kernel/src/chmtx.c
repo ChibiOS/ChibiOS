@@ -140,14 +140,16 @@ void chMtxLockS(Mutex *mp) {
         prio_insert(dequeue(tp), (ThreadsQueue *)tp->p_u.wtobjp);
         tp = ((Mutex *)tp->p_u.wtobjp)->m_owner;
         continue;
-#if CH_USE_CONDVARS | CH_USE_SEMAPHORES_PRIORITY | CH_USE_MESSAGES_PRIORITY
+#if CH_USE_CONDVARS |                                                       \
+    (CH_USE_SEMAPHORES && CH_USE_SEMAPHORES_PRIORITY) |                     \
+    (CH_USE_MESSAGES && CH_USE_MESSAGES_PRIORITY)
 #if CH_USE_CONDVARS
       case THD_STATE_WTCOND:
 #endif
-#if CH_USE_SEMAPHORES_PRIORITY
+#if CH_USE_SEMAPHORES && CH_USE_SEMAPHORES_PRIORITY
       case THD_STATE_WTSEM:
 #endif
-#if CH_USE_MESSAGES_PRIORITY
+#if CH_USE_MESSAGES && CH_USE_MESSAGES_PRIORITY
       case THD_STATE_SNDMSG:
 #endif
         /* Re-enqueues tp with its new priority on the queue.*/
