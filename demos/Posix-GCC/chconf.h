@@ -90,7 +90,7 @@
  *
  * @note    In order to let the OS manage the whole RAM the linker script must
  *          provide the @p __heap_base__ and @p __heap_end__ symbols.
- * @note    Requires @p CH_USE_COREMEM.
+ * @note    Requires @p CH_USE_MEMCORE.
  */
 #if !defined(CH_MEMCORE_SIZE) || defined(__DOXYGEN__)
 #define CH_MEMCORE_SIZE                 0x20000
@@ -326,7 +326,7 @@
  *          in the kernel.
  *
  * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_COREMEM and either @p CH_USE_MUTEXES or
+ * @note    Requires @p CH_USE_MEMCORE and either @p CH_USE_MUTEXES or
  *          @p CH_USE_SEMAPHORES.
  * @note    Mutexes are recommended.
  */
@@ -341,7 +341,7 @@
  *
  * @note    The default is @p FALSE.
  * @note    Requires @p CH_USE_HEAP.
- * @note    The C-runtime may or may not require @p CH_USE_COREMEM, see the
+ * @note    The C-runtime may or may not require @p CH_USE_MEMCORE, see the
  *          appropriate documentation.
  */
 #if !defined(CH_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
