@@ -71,9 +71,10 @@
 *****************************************************************************
 
 *** 2.3.3 ***
-- FIX: Race condition in output queues (bug 3303908)(backported to 2.2.4).
+- FIX: Fixed race condition in output queues (bug 3303908)(backported
+  to 2.2.4).
 - FIX: Fixed CH_USE_HEAP and CH_USE_MALLOC_HEAP conflict (bug 3303841)
-  (backported to 2.2.4)
+  (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
 - NEW: Reorganization of the Cortex-Mx ports in order to reduced code and
