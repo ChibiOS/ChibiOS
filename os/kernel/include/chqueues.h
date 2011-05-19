@@ -37,18 +37,11 @@
 
 #if CH_USE_QUEUES || defined(__DOXYGEN__)
 
-/*
- * Module dependencies check.
- */
-#if !CH_USE_SEMAPHORES
-#error "CH_USE_QUEUES requires CH_USE_SEMAPHORES"
-#endif
-
 /** @brief Returned by the queue functions if the operation is successful.*/
 #define Q_OK            RDY_OK
 /** @brief Returned by the queue functions if a timeout occurs.*/
 #define Q_TIMEOUT       RDY_TIMEOUT
-/** @brief Returned by the queue functions if the queue is reset.*/
+/** @brief Returned by the queue functions if the queue has been reset.*/
 #define Q_RESET         RDY_RESET
 /** @brief Returned by the queue functions if the queue is empty.*/
 #define Q_EMPTY         -3
@@ -73,12 +66,13 @@ typedef void (*qnotify_t)(GenericQueue *qp);
  *          @ref system_states) and is non-blocking.
  */
 struct GenericQueue {
+  ThreadsQueue          q_waiting;  /**< @brief Queue of waiting threads.   */
+  size_t                q_counter;  /**< @brief Resources counter.          */
   uint8_t               *q_buffer;  /**< @brief Pointer to the queue buffer.*/
   uint8_t               *q_top;     /**< @brief Pointer to the first location
                                                 after the buffer.           */
   uint8_t               *q_wrptr;   /**< @brief Write pointer.              */
   uint8_t               *q_rdptr;   /**< @brief Read pointer.               */
-  Semaphore             q_sem;      /**< @brief Counter @p Semaphore.       */
   qnotify_t             q_notify;   /**< @brief Data notification callback. */
 };
 
@@ -90,21 +84,19 @@ struct GenericQueue {
  *
  * @iclass
  */
-#define chQSizeI(qp) ((qp)->q_top - (qp)->q_buffer)
+#define chQSizeI(qp) ((size_t)((qp)->q_top - (qp)->q_buffer))
 
 /**
  * @brief   Queue space.
  * @details Returns the used space if used on an input queue or the empty
  *          space if used on an output queue.
- * @note    The returned value can be less than zero when there are waiting
- *          threads on the internal semaphore.
  *
  * @param[in] qp        pointer to a @p GenericQueue structure.
  * @return              The buffer space.
  *
  * @iclass
  */
-#define chQSpaceI(qp) chSemGetCounterI(&(qp)->q_sem)
+#define chQSpaceI(qp) ((size_t)((qp)->q_counter))
 
 /**
  * @extends GenericQueue
@@ -118,6 +110,28 @@ struct GenericQueue {
  *          be performed by a system thread.
  */
 typedef GenericQueue InputQueue;
+
+/**
+ * @brief   Returns the filled space into an input queue.
+ *
+ * @param[in] iqp       pointer to an @p InputQueue structure
+ * @return              The number of full bytes in the queue.
+ * @retval 0            if the queue is empty.
+ *
+ * @iclass
+ */
+#define chIQGetFullI(iqp) chQSpaceI(iqp)
+
+/**
+ * @brief   Returns the empty space into an input queue.
+ *
+ * @param[in] iqp       pointer to an @p InputQueue structure
+ * @return              The number of empty bytes in the queue.
+ * @retval 0            if the queue is full.
+ *
+ * @iclass
+ */
+#define chIQGetEmptyI(iqp) (chQSizeI(iqp) - chQSpaceI(iqp))
 
 /**
  * @brief   Evaluates to @p TRUE if the specified input queue is empty.
@@ -141,8 +155,7 @@ typedef GenericQueue InputQueue;
  *
  * @iclass
  */
-#define chIQIsFullI(iqp) ((bool_t)(((iqp)->q_wrptr == (iqp)->q_rdptr) &&    \
-                                    !chIQIsEmptyI(iqp)))
+#define chIQIsFullI(iqp) ((bool_t)(chQSpaceI(iqp) >= chQSizeI(iqp)))
 
 /**
  * @brief   Input queue read.
@@ -152,7 +165,7 @@ typedef GenericQueue InputQueue;
  *
  * @param[in] iqp       pointer to an @p InputQueue structure
  * @return              A byte value from the queue.
- * @retval Q_RESET      If the queue has been reset.
+ * @retval Q_RESET      if the queue has been reset.
  *
  * @api
  */
@@ -168,13 +181,14 @@ typedef GenericQueue InputQueue;
  * @param[in] size      size of the queue buffer area
  * @param[in] inotify   input notification callback pointer
  */
-#define _INPUTQUEUE_DATA(name, buffer, size, inotify) {                 \
-  (uint8_t *)(buffer),                                                  \
-  (uint8_t *)(buffer) + size,                                           \
-  (uint8_t *)(buffer),                                                  \
-  (uint8_t *)(buffer),                                                  \
-  _SEMAPHORE_DATA(name.q_sem, 0),                                       \
-  inotify                                                               \
+#define _INPUTQUEUE_DATA(name, buffer, size, inotify) {                     \
+  _THREADSQUEUE_DATA(name),                                                 \
+  0,                                                                        \
+  (uint8_t *)(buffer),                                                      \
+  (uint8_t *)(buffer) + (size),                                             \
+  (uint8_t *)(buffer),                                                      \
+  (uint8_t *)(buffer),                                                      \
+  inotify                                                                   \
 }
 
 /**
@@ -203,6 +217,28 @@ typedef GenericQueue InputQueue;
  */
 typedef GenericQueue OutputQueue;
 
+ /**
+  * @brief   Returns the filled space into an output queue.
+  *
+  * @param[in] oqp       pointer to an @p OutputQueue structure
+  * @return              The number of full bytes in the queue.
+  * @retval 0            if the queue is empty.
+  *
+  * @iclass
+  */
+#define chOQGetFullI(oqp) (chQSizeI(oqp) - chQSpaceI(oqp))
+
+/**
+ * @brief   Returns the empty space into an output queue.
+ *
+ * @param[in] iqp       pointer to an @p OutputQueue structure
+ * @return              The number of empty bytes in the queue.
+ * @retval 0            if the queue is full.
+ *
+ * @iclass
+ */
+#define chOQGetEmptyI(iqp) chQSpaceI(oqp)
+
 /**
  * @brief   Evaluates to @p TRUE if the specified output queue is empty.
  *
@@ -213,8 +249,7 @@ typedef GenericQueue OutputQueue;
  *
  * @iclass
  */
-#define chOQIsEmptyI(oqp) ((bool_t)(((oqp)->q_wrptr == (oqp)->q_rdptr) &&   \
-                                    !chOQIsFullI(oqp)))
+#define chOQIsEmptyI(oqp) ((bool_t)(chQSpaceI(oqp) >= chQSizeI(oqp)))
 
 /**
  * @brief   Evaluates to @p TRUE if the specified output queue is full.
@@ -254,13 +289,14 @@ typedef GenericQueue OutputQueue;
  * @param[in] size      size of the queue buffer area
  * @param[in] onotify   output notification callback pointer
  */
-#define _OUTPUTQUEUE_DATA(name, buffer, size, onotify) {                \
-  (uint8_t *)(buffer),                                                  \
-  (uint8_t *)(buffer) + size,                                           \
-  (uint8_t *)(buffer),                                                  \
-  (uint8_t *)(buffer),                                                  \
-  _SEMAPHORE_DATA(name.q_sem, size),                                    \
-  onotify                                                               \
+#define _OUTPUTQUEUE_DATA(name, buffer, size, onotify) {                    \
+  _THREADSQUEUE_DATA(name),                                                 \
+  (size),                                                                   \
+  (uint8_t *)(buffer),                                                      \
+  (uint8_t *)(buffer) + (size),                                             \
+  (uint8_t *)(buffer),                                                      \
+  (uint8_t *)(buffer),                                                      \
+  onotify                                                                   \
 }
 
 /**
@@ -280,7 +316,6 @@ typedef GenericQueue OutputQueue;
 extern "C" {
 #endif
   void chIQInit(InputQueue *iqp, uint8_t *bp, size_t size, qnotify_t infy);
-  size_t chIQGetFullI(InputQueue *iqp);
   void chIQResetI(InputQueue *iqp);
   msg_t chIQPutI(InputQueue *iqp, uint8_t b);
   msg_t chIQGetTimeout(InputQueue *iqp, systime_t time);
@@ -288,7 +323,6 @@ extern "C" {
                          size_t n, systime_t time);
 
   void chOQInit(OutputQueue *oqp, uint8_t *bp, size_t size, qnotify_t onfy);
-  size_t chOQGetFullI(OutputQueue *oqp);
   void chOQResetI(OutputQueue *oqp);
   msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time);
   msg_t chOQGetI(OutputQueue *oqp);
