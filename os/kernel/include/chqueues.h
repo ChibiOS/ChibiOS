@@ -149,7 +149,8 @@ typedef GenericQueue InputQueue;
  *
  * @iclass
  */
-#define chIQIsFullI(iqp) ((bool_t)(chQSpaceI(iqp) >= chQSizeI(iqp)))
+#define chIQIsFullI(iqp) ((bool_t)(((iqp)->q_wrptr == (iqp)->q_rdptr) &&   \
+                                   ((iqp)->q_counter != 0)))
 
 /**
  * @brief   Input queue read.
@@ -243,7 +244,8 @@ typedef GenericQueue OutputQueue;
  *
  * @iclass
  */
-#define chOQIsEmptyI(oqp) ((bool_t)(chQSpaceI(oqp) >= chQSizeI(oqp)))
+#define chOQIsEmptyI(oqp) ((bool_t)(((oqp)->q_wrptr == (oqp)->q_rdptr) &&   \
+                                    ((oqp)->q_counter != 0)))
 
 /**
  * @brief   Evaluates to @p TRUE if the specified output queue is full.
