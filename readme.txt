@@ -95,6 +95,8 @@
   reimplemented as a port-specific option.
 - CHANGE: chiQGetFullI() and chOQGetFullI() become macros. The queues
   subsystem has been optimized and is no more dependent on semaphores.
+  Note that the queues callbacks invocation policy has been slightly
+  changed, see the documentation.
 
 *** 2.3.2 ***
 - FIX: Fixed invalid BRR() macro in AVR serial driver (bug 3299306)(backported

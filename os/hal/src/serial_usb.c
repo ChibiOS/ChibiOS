@@ -126,9 +126,8 @@ static void inotify(GenericQueue *qp) {
       chIOAddFlagsI(sdup, IO_INPUT_AVAILABLE);
       sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
       sdup->iqueue.q_counter = n;
-      if (notempty(&sdup->iqueue.q_waiting))
+      while (notempty(&sdup->iqueue.q_waiting))
         chSchReadyI(fifo_remove(&sdup->iqueue.q_waiting))->p_u.rdymsg = Q_OK;
-      chSchRescheduleS();
     }
   }
 }
@@ -148,10 +147,9 @@ static void onotify(GenericQueue *qp) {
   if (w != USB_ENDPOINT_BUSY) {
     chIOAddFlagsI(sdup, IO_OUTPUT_EMPTY);
     sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
-    sdup->oqueue.q_counter = n;
-    if (notempty(&sdup->oqueue.q_waiting))
+    sdup->oqueue.q_counter = chQSizeI(&sdup->oqueue);
+    while (notempty(&sdup->oqueue.q_waiting))
       chSchReadyI(fifo_remove(&sdup->oqueue.q_waiting))->p_u.rdymsg = Q_OK;
-    chSchRescheduleS();
   }
 }
 
@@ -294,8 +292,8 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
     if (w != USB_ENDPOINT_BUSY) {
       chIOAddFlagsI(sdup, IO_OUTPUT_EMPTY);
       sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
-      sdup->oqueue.q_counter = n;
-      if (notempty(&sdup->oqueue.q_waiting))
+      sdup->oqueue.q_counter = chQSizeI(&sdup->oqueue);
+      while (notempty(&sdup->oqueue.q_waiting))
         chSchReadyI(fifo_remove(&sdup->oqueue.q_waiting))->p_u.rdymsg = Q_OK;
     }
   }
@@ -325,7 +323,7 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
       chIOAddFlagsI(sdup, IO_INPUT_AVAILABLE);
       sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
       sdup->iqueue.q_counter = n;
-      if (notempty(&sdup->iqueue.q_waiting))
+      while (notempty(&sdup->iqueue.q_waiting))
         chSchReadyI(fifo_remove(&sdup->iqueue.q_waiting))->p_u.rdymsg = Q_OK;
     }
   }
