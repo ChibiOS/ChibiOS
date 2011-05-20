@@ -85,6 +85,10 @@
 - NEW: Added an option to the kernel to not spawn the Idle Thread from within
   chSysInit(), this way the application can spawn a custom idle thread or
   even use the main() thread as idle thread.
+- CHANGE: chiQGetFullI() and chOQGetFullI() become macros. The queues
+  subsystem has been optimized and is no more dependent on semaphores.
+  Note that the queues callbacks invocation policy has been slightly
+  changed, see the documentation.
 
 *** 2.2.3 ***
 - FIX: Fixed insufficient idle thread stack in Cortex-M0-GCC port

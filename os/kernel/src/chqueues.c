@@ -142,8 +142,10 @@ msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
   *iqp->q_wrptr++ = b;
   if (iqp->q_wrptr >= iqp->q_top)
     iqp->q_wrptr = iqp->q_buffer;
+
   if (notempty(&iqp->q_waiting))
     chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
+
   return Q_OK;
 }
 
@@ -152,6 +154,9 @@ msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
  * @details This function reads a byte value from an input queue. If the queue
  *          is empty then the calling thread is suspended until a byte arrives
  *          in the queue or a timeout occurs.
+ * @note    The callback is invoked if the queue is empty before entering the
+ *          @p THD_STATE_WTQUEUE state in order to solicit the low level to
+ *          start queue filling.
  *
  * @param[in] iqp       pointer to an @p InputQueue structure
  * @param[in] time      the number of ticks before the operation timeouts,
@@ -198,8 +203,9 @@ msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
  *          been reset.
  * @note    The function is not atomic, if you need atomicity it is suggested
  *          to use a semaphore or a mutex for mutual exclusion.
- * @note    The queue callback is invoked before entering a sleep state and at
- *          the end of the transfer.
+ * @note    The callback is invoked if the queue is empty before entering the
+ *          @p THD_STATE_WTQUEUE state in order to solicit the low level to
+ *          start queue filling.
  *
  * @param[in] iqp       pointer to an @p InputQueue structure
  * @param[out] bp       pointer to the data buffer
@@ -226,6 +232,7 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
     while (chIQIsEmptyI(iqp)) {
       if (nfy)
         nfy(iqp);
+
       if (qwait((GenericQueue *)iqp, time) != Q_OK) {
         chSysUnlock();
         return r;
@@ -236,15 +243,12 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
     *bp++ = *iqp->q_rdptr++;
     if (iqp->q_rdptr >= iqp->q_top)
       iqp->q_rdptr = iqp->q_buffer;
+
     chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
     r++;
-    if (--n == 0) {
-      chSysLock();
-      if (nfy)
-        nfy(iqp);
-      chSysUnlock();
+    if (--n == 0)
       return r;
-    }
+
     chSysLock();
   }
 }
@@ -297,6 +301,8 @@ void chOQResetI(OutputQueue *oqp) {
  * @details This function writes a byte value to an output queue. If the queue
  *          is full then the calling thread is suspended until there is space
  *          in the queue or a timeout occurs.
+ * @note    The callback is invoked after writing the character into the
+ *          buffer.
  *
  * @param[in] oqp       pointer to an @p OutputQueue structure
  * @param[in] b         the byte value to be written in the queue
@@ -356,8 +362,10 @@ msg_t chOQGetI(OutputQueue *oqp) {
   b = *oqp->q_rdptr++;
   if (oqp->q_rdptr >= oqp->q_top)
     oqp->q_rdptr = oqp->q_buffer;
+
   if (notempty(&oqp->q_waiting))
     chSchReadyI(fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_OK;
+
   return b;
 }
 
@@ -369,8 +377,8 @@ msg_t chOQGetI(OutputQueue *oqp) {
  *          been reset.
  * @note    The function is not atomic, if you need atomicity it is suggested
  *          to use a semaphore or a mutex for mutual exclusion.
- * @note    The queue callback is invoked before entering a sleep state and at
- *          the end of the transfer.
+ * @note    The callback is invoked after writing each character into the
+ *          buffer.
  *
  * @param[in] oqp       pointer to an @p OutputQueue structure
  * @param[out] bp       pointer to the data buffer
@@ -395,8 +403,6 @@ size_t chOQWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
   chSysLock();
   while (TRUE) {
     while (chOQIsFullI(oqp)) {
-      if (nfy)
-        nfy(oqp);
       if (qwait((GenericQueue *)oqp, time) != Q_OK) {
         chSysUnlock();
         return w;
@@ -406,15 +412,14 @@ size_t chOQWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
     *oqp->q_wrptr++ = *bp++;
     if (oqp->q_wrptr >= oqp->q_top)
       oqp->q_wrptr = oqp->q_buffer;
+
+    if (nfy)
+      nfy(oqp);
+
     chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
     w++;
-    if (--n == 0) {
-      chSysLock();
-      if (nfy)
-        nfy(oqp);
-      chSysUnlock();
+    if (--n == 0)
       return w;
-    }
     chSysLock();
   }
 }
