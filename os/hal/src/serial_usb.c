@@ -123,9 +123,12 @@ static void inotify(GenericQueue *qp) {
     n = usbReadPacketI(sdup->config->usbp, DATA_AVAILABLE_EP,
                        sdup->iqueue.q_buffer, SERIAL_USB_BUFFERS_SIZE);
     if (n != USB_ENDPOINT_BUSY) {
-      sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
-      chSemAddCounterI(&sdup->iqueue.q_sem, n);
       chIOAddFlagsI(sdup, IO_INPUT_AVAILABLE);
+      sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
+      sdup->iqueue.q_counter = n;
+      if (notempty(&sdup->iqueue.q_waiting))
+        chSchReadyI(fifo_remove(&sdup->iqueue.q_waiting))->p_u.rdymsg = Q_OK;
+      chSchRescheduleS();
     }
   }
 }
@@ -143,9 +146,12 @@ static void onotify(GenericQueue *qp) {
   w = usbWritePacketI(sdup->config->usbp, DATA_REQUEST_EP,
                       sdup->oqueue.q_buffer, n);
   if (w != USB_ENDPOINT_BUSY) {
-    sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
-    chSemAddCounterI(&sdup->oqueue.q_sem, n);
     chIOAddFlagsI(sdup, IO_OUTPUT_EMPTY);
+    sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
+    sdup->oqueue.q_counter = n;
+    if (notempty(&sdup->oqueue.q_waiting))
+      chSchReadyI(fifo_remove(&sdup->oqueue.q_waiting))->p_u.rdymsg = Q_OK;
+    chSchRescheduleS();
   }
 }
 
@@ -286,9 +292,11 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
   if (n > 0) {
     w = usbWritePacketI(usbp, ep, sdup->oqueue.q_buffer, n);
     if (w != USB_ENDPOINT_BUSY) {
-      sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
-      chSemAddCounterI(&sdup->oqueue.q_sem, n);
       chIOAddFlagsI(sdup, IO_OUTPUT_EMPTY);
+      sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
+      sdup->oqueue.q_counter = n;
+      if (notempty(&sdup->oqueue.q_waiting))
+        chSchReadyI(fifo_remove(&sdup->oqueue.q_waiting))->p_u.rdymsg = Q_OK;
     }
   }
   chSysUnlockFromIsr();
@@ -314,9 +322,11 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
     n = usbReadPacketI(usbp, ep, sdup->iqueue.q_buffer,
                        SERIAL_USB_BUFFERS_SIZE);
     if (n != USB_ENDPOINT_BUSY) {
-      sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
-      chSemAddCounterI(&sdup->iqueue.q_sem, n);
       chIOAddFlagsI(sdup, IO_INPUT_AVAILABLE);
+      sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
+      sdup->iqueue.q_counter = n;
+      if (notempty(&sdup->iqueue.q_waiting))
+        chSchReadyI(fifo_remove(&sdup->iqueue.q_waiting))->p_u.rdymsg = Q_OK;
     }
   }
   chSysUnlockFromIsr();
