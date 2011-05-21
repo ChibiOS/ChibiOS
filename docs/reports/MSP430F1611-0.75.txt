@@ -5,7 +5,7 @@ Settings: MCLK=DCOCLK 750KHz
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.2.0
+*** Kernel:       2.2.4
 *** GCC Version:  3.2.3
 *** Architecture: MSP430
 *** Core Variant: MSP430
@@ -98,7 +98,7 @@ Settings: MCLK=DCOCLK 750KHz
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 1866 msgs/S, 3732 ctxswc/S
+--- Score : 1865 msgs/S, 3730 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
@@ -130,7 +130,7 @@ Settings: MCLK=DCOCLK 750KHz
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 4920 bytes/S
+--- Score : 6716 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)

@@ -6,7 +6,7 @@ Compiler: Raisonance RKit-STM8_2.32.10.0307
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.2.2
+*** Kernel:       2.2.4
 *** Architecture: STM8
 *** Platform:     STM8L
 *** Test Board:   ST STM8L-Discovery
@@ -129,7 +129,7 @@ Compiler: Raisonance RKit-STM8_2.32.10.0307
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 52824 bytes/S
+--- Score : 79488 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
@@ -153,7 +153,7 @@ Compiler: Raisonance RKit-STM8_2.32.10.0307
 --- EventL: 5 bytes
 --- Mutex : 8 bytes
 --- CondV.: 4 bytes
---- Queue : 15 bytes
+--- Queue : 16 bytes
 --- MailB.: 18 bytes
 --- Result: SUCCESS
 ----------------------------------------------------------------------------

@@ -1,11 +1,11 @@
 ***************************************************************************
-Options:  -O3 -fomit-frame-pointer -mabi=apcs-gnu
+Options:  -O3 -fomit-frame-pointer
 Settings: SYSCLK=24, ACR=0x10 (no wait states)
 ***************************************************************************
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.2.0
+*** Kernel:       2.2.4
 *** GCC Version:  4.5.2
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
@@ -130,7 +130,7 @@ Settings: SYSCLK=24, ACR=0x10 (no wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 203236 bytes/S
+--- Score : 273712 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)

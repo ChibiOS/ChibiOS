@@ -6,7 +6,7 @@ Compiler: IAR C/C++ Compiler for ARM 6.10.1.32143
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.2.0
+*** Kernel:       2.2.4
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
 *** Platform:     STM32 Value Line Medium Density
@@ -130,7 +130,7 @@ Compiler: IAR C/C++ Compiler for ARM 6.10.1.32143
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 214132 bytes/S
+--- Score : 268064 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
