@@ -222,7 +222,7 @@ String.6.0=2010,5,25,14,45,56
 [Root.Source Files]
 ElemType=Folder
 PathName=Source Files
-Child=Root.Source Files...\demo\main.c
+Child=Root.Source Files.Source Files\test
 Next=Root.Include Files
 Config.0=Root.Source Files.Config.0
 Config.1=Root.Source Files.Config.1
@@ -293,14 +293,79 @@ String.4.0=
 String.5.0=
 String.6.0=2010,5,25,14,45,56
 
-[Root.Source Files...\demo\main.c]
-ElemType=File
-PathName=..\demo\main.c
+[Root.Source Files.Source Files\test]
+ElemType=Folder
+PathName=Source Files\test
+Child=Root.Source Files.Source Files\test...\..\..\test\testthd.c
 Next=Root.Source Files.vectors.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testthd.c]
+ElemType=File
+PathName=..\..\..\test\testthd.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testsem.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testsem.c]
+ElemType=File
+PathName=..\..\..\test\testsem.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testqueues.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testqueues.c]
+ElemType=File
+PathName=..\..\..\test\testqueues.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testpools.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testpools.c]
+ElemType=File
+PathName=..\..\..\test\testpools.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testmtx.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testmtx.c]
+ElemType=File
+PathName=..\..\..\test\testmtx.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testmsg.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testmsg.c]
+ElemType=File
+PathName=..\..\..\test\testmsg.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testmbox.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testmbox.c]
+ElemType=File
+PathName=..\..\..\test\testmbox.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testheap.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testheap.c]
+ElemType=File
+PathName=..\..\..\test\testheap.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testevt.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testevt.c]
+ElemType=File
+PathName=..\..\..\test\testevt.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testdyn.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testdyn.c]
+ElemType=File
+PathName=..\..\..\test\testdyn.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testbmk.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testbmk.c]
+ElemType=File
+PathName=..\..\..\test\testbmk.c
+Next=Root.Source Files.Source Files\test...\..\..\test\test.c
+
+[Root.Source Files.Source Files\test...\..\..\test\test.c]
+ElemType=File
+PathName=..\..\..\test\test.c
 
 [Root.Source Files.vectors.c]
 ElemType=File
 PathName=vectors.c
+Next=Root.Source Files...\demo\main.c
+
+[Root.Source Files...\demo\main.c]
+ElemType=File
+PathName=..\demo\main.c
 Next=Root.Source Files.Source Files\board
 
 [Root.Source Files.Source Files\board]
@@ -385,7 +450,6 @@ PathName=..\..\..\boards\st_stm8s_discovery\board.c
 ElemType=Folder
 PathName=Source Files\os
 Child=Root.Source Files.Source Files\os.Source Files\os\hal
-Next=Root.Source Files.Source Files\test
 
 [Root.Source Files.Source Files\os.Source Files\os\hal]
 ElemType=Folder
@@ -1620,142 +1684,10 @@ String.6.0=2010,5,25,14,45,56
 ElemType=File
 PathName=..\..\..\os\ports\cosmic\stm8\chcore.c
 
-[Root.Source Files.Source Files\test]
-ElemType=Folder
-PathName=Source Files\test
-Child=Root.Source Files.Source Files\test...\..\..\test\test.c
-Config.0=Root.Source Files.Source Files\test.Config.0
-Config.1=Root.Source Files.Source Files\test.Config.1
-
-[Root.Source Files.Source Files\test.Config.0]
-Settings.0.0=Root.Source Files.Source Files\test.Config.0.Settings.0
-Settings.0.1=Root.Source Files.Source Files\test.Config.0.Settings.1
-Settings.0.2=Root.Source Files.Source Files\test.Config.0.Settings.2
-Settings.0.3=Root.Source Files.Source Files\test.Config.0.Settings.3
-
-[Root.Source Files.Source Files\test.Config.1]
-Settings.1.0=Root.Source Files.Source Files\test.Config.1.Settings.0
-Settings.1.1=Root.Source Files.Source Files\test.Config.1.Settings.1
-Settings.1.2=Root.Source Files.Source Files\test.Config.1.Settings.2
-Settings.1.3=Root.Source Files.Source Files\test.Config.1.Settings.3
-
-[Root.Source Files.Source Files\test.Config.0.Settings.0]
-String.6.0=2010,6,3,14,55,17
-String.8.0=Debug
-Int.0=0
-Int.1=0
-
-[Root.Source Files.Source Files\test.Config.0.Settings.1]
-String.2.0=Compiling $(InputFile)...
-String.3.0=cxstm8 +warn +modsl0 -customDebCompat -customOpt-no -customC-pp -customLst -l -i..\demo -i..\..\..\test -i..\..\..\os\hal\include -i..\..\..\os\hal\platforms\stm8s -i..\..\..\boards\st_stm8s_discovery -i..\..\..\os\ports\cosmic\stm8 -i..\..\..\os\kernel\include $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
-String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
-String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,6,5,11,53,48
-
-[Root.Source Files.Source Files\test.Config.0.Settings.2]
-String.2.0=Assembling $(InputFile)...
-String.3.0=castm8 -xx -l $(ToolsetIncOpts) -o$(IntermPath)$(InputName).$(ObjectExt) $(InputFile)
-String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
-String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,5,25,14,45,56
-
-[Root.Source Files.Source Files\test.Config.0.Settings.3]
-String.2.0=Performing Custom Build on $(InputFile)
-String.3.0=
-String.4.0=
-String.5.0=
-String.6.0=2010,5,25,14,45,56
-
-[Root.Source Files.Source Files\test.Config.1.Settings.0]
-String.6.0=2010,6,3,14,55,17
-String.8.0=Release
-Int.0=0
-Int.1=0
-
-[Root.Source Files.Source Files\test.Config.1.Settings.1]
-String.2.0=Compiling $(InputFile)...
-String.3.0=cxstm8 +modsl0 -customC-pp -customLst-l -i..\demo -i..\..\..\test -i..\..\..\os\hal\include -i..\..\..\os\hal\platforms\stm8s -i..\..\..\boards\st_stm8s_discovery -i..\..\..\os\ports\cosmic\stm8 -i..\..\..\os\kernel\include $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
-String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
-String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,6,5,11,53,48
-
-[Root.Source Files.Source Files\test.Config.1.Settings.2]
-String.2.0=Assembling $(InputFile)...
-String.3.0=castm8 -l $(ToolsetIncOpts) -o$(IntermPath)$(InputName).$(ObjectExt) $(InputFile)
-String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
-String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,6,2,8,54,4
-
-[Root.Source Files.Source Files\test.Config.1.Settings.3]
-String.2.0=Performing Custom Build on $(InputFile)
-String.3.0=
-String.4.0=
-String.5.0=
-String.6.0=2010,5,25,14,45,56
-
-[Root.Source Files.Source Files\test...\..\..\test\test.c]
-ElemType=File
-PathName=..\..\..\test\test.c
-Next=Root.Source Files.Source Files\test...\..\..\test\testbmk.c
-
-[Root.Source Files.Source Files\test...\..\..\test\testbmk.c]
-ElemType=File
-PathName=..\..\..\test\testbmk.c
-Next=Root.Source Files.Source Files\test...\..\..\test\testdyn.c
-
-[Root.Source Files.Source Files\test...\..\..\test\testdyn.c]
-ElemType=File
-PathName=..\..\..\test\testdyn.c
-Next=Root.Source Files.Source Files\test...\..\..\test\testevt.c
-
-[Root.Source Files.Source Files\test...\..\..\test\testevt.c]
-ElemType=File
-PathName=..\..\..\test\testevt.c
-Next=Root.Source Files.Source Files\test...\..\..\test\testheap.c
-
-[Root.Source Files.Source Files\test...\..\..\test\testheap.c]
-ElemType=File
-PathName=..\..\..\test\testheap.c
-Next=Root.Source Files.Source Files\test...\..\..\test\testmbox.c
-
-[Root.Source Files.Source Files\test...\..\..\test\testmbox.c]
-ElemType=File
-PathName=..\..\..\test\testmbox.c
-Next=Root.Source Files.Source Files\test...\..\..\test\testmsg.c
-
-[Root.Source Files.Source Files\test...\..\..\test\testmsg.c]
-ElemType=File
-PathName=..\..\..\test\testmsg.c
-Next=Root.Source Files.Source Files\test...\..\..\test\testmtx.c
-
-[Root.Source Files.Source Files\test...\..\..\test\testmtx.c]
-ElemType=File
-PathName=..\..\..\test\testmtx.c
-Next=Root.Source Files.Source Files\test...\..\..\test\testpools.c
-
-[Root.Source Files.Source Files\test...\..\..\test\testpools.c]
-ElemType=File
-PathName=..\..\..\test\testpools.c
-Next=Root.Source Files.Source Files\test...\..\..\test\testqueues.c
-
-[Root.Source Files.Source Files\test...\..\..\test\testqueues.c]
-ElemType=File
-PathName=..\..\..\test\testqueues.c
-Next=Root.Source Files.Source Files\test...\..\..\test\testsem.c
-
-[Root.Source Files.Source Files\test...\..\..\test\testsem.c]
-ElemType=File
-PathName=..\..\..\test\testsem.c
-Next=Root.Source Files.Source Files\test...\..\..\test\testthd.c
-
-[Root.Source Files.Source Files\test...\..\..\test\testthd.c]
-ElemType=File
-PathName=..\..\..\test\testthd.c
-
 [Root.Include Files]
 ElemType=Folder
 PathName=Include Files
-Child=Root.Include Files...\demo\halconf.h
+Child=Root.Include Files...\demo\chconf.h
 Config.0=Root.Include Files.Config.0
 Config.1=Root.Include Files.Config.1
 
@@ -1825,14 +1757,14 @@ String.4.0=
 String.5.0=
 String.6.0=2010,5,25,14,45,56
 
-[Root.Include Files...\demo\halconf.h]
-ElemType=File
-PathName=..\demo\halconf.h
-Next=Root.Include Files...\demo\chconf.h
-
 [Root.Include Files...\demo\chconf.h]
 ElemType=File
 PathName=..\demo\chconf.h
+Next=Root.Include Files...\demo\halconf.h
+
+[Root.Include Files...\demo\halconf.h]
+ElemType=File
+PathName=..\demo\halconf.h
 Next=Root.Include Files...\demo\mcuconf.h
 
 [Root.Include Files...\demo\mcuconf.h]
@@ -2078,63 +2010,63 @@ PathName=..\..\..\os\ports\cosmic\stm8\chtypes.h
 [Root.Include Files.Include Files\test]
 ElemType=Folder
 PathName=Include Files\test
-Child=Root.Include Files.Include Files\test...\..\..\test\test.h
+Child=Root.Include Files.Include Files\test...\..\..\test\testthd.h
 
-[Root.Include Files.Include Files\test...\..\..\test\test.h]
+[Root.Include Files.Include Files\test...\..\..\test\testthd.h]
 ElemType=File
-PathName=..\..\..\test\test.h
-Next=Root.Include Files.Include Files\test...\..\..\test\testbmk.h
-
-[Root.Include Files.Include Files\test...\..\..\test\testbmk.h]
-ElemType=File
-PathName=..\..\..\test\testbmk.h
-Next=Root.Include Files.Include Files\test...\..\..\test\testdyn.h
-
-[Root.Include Files.Include Files\test...\..\..\test\testdyn.h]
-ElemType=File
-PathName=..\..\..\test\testdyn.h
-Next=Root.Include Files.Include Files\test...\..\..\test\testevt.h
-
-[Root.Include Files.Include Files\test...\..\..\test\testevt.h]
-ElemType=File
-PathName=..\..\..\test\testevt.h
-Next=Root.Include Files.Include Files\test...\..\..\test\testheap.h
-
-[Root.Include Files.Include Files\test...\..\..\test\testheap.h]
-ElemType=File
-PathName=..\..\..\test\testheap.h
-Next=Root.Include Files.Include Files\test...\..\..\test\testmbox.h
-
-[Root.Include Files.Include Files\test...\..\..\test\testmbox.h]
-ElemType=File
-PathName=..\..\..\test\testmbox.h
-Next=Root.Include Files.Include Files\test...\..\..\test\testmsg.h
-
-[Root.Include Files.Include Files\test...\..\..\test\testmsg.h]
-ElemType=File
-PathName=..\..\..\test\testmsg.h
-Next=Root.Include Files.Include Files\test...\..\..\test\testmtx.h
-
-[Root.Include Files.Include Files\test...\..\..\test\testmtx.h]
-ElemType=File
-PathName=..\..\..\test\testmtx.h
-Next=Root.Include Files.Include Files\test...\..\..\test\testpools.h
-
-[Root.Include Files.Include Files\test...\..\..\test\testpools.h]
-ElemType=File
-PathName=..\..\..\test\testpools.h
-Next=Root.Include Files.Include Files\test...\..\..\test\testqueues.h
-
-[Root.Include Files.Include Files\test...\..\..\test\testqueues.h]
-ElemType=File
-PathName=..\..\..\test\testqueues.h
+PathName=..\..\..\test\testthd.h
 Next=Root.Include Files.Include Files\test...\..\..\test\testsem.h
 
 [Root.Include Files.Include Files\test...\..\..\test\testsem.h]
 ElemType=File
 PathName=..\..\..\test\testsem.h
-Next=Root.Include Files.Include Files\test...\..\..\test\testthd.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testqueues.h
 
-[Root.Include Files.Include Files\test...\..\..\test\testthd.h]
+[Root.Include Files.Include Files\test...\..\..\test\testqueues.h]
 ElemType=File
-PathName=..\..\..\test\testthd.h
+PathName=..\..\..\test\testqueues.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testpools.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testpools.h]
+ElemType=File
+PathName=..\..\..\test\testpools.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testmtx.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testmtx.h]
+ElemType=File
+PathName=..\..\..\test\testmtx.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testmsg.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testmsg.h]
+ElemType=File
+PathName=..\..\..\test\testmsg.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testmbox.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testmbox.h]
+ElemType=File
+PathName=..\..\..\test\testmbox.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testheap.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testheap.h]
+ElemType=File
+PathName=..\..\..\test\testheap.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testevt.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testevt.h]
+ElemType=File
+PathName=..\..\..\test\testevt.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testdyn.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testdyn.h]
+ElemType=File
+PathName=..\..\..\test\testdyn.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testbmk.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testbmk.h]
+ElemType=File
+PathName=..\..\..\test\testbmk.h
+Next=Root.Include Files.Include Files\test...\..\..\test\test.h
+
+[Root.Include Files.Include Files\test...\..\..\test\test.h]
+ElemType=File
+PathName=..\..\..\test\test.h
