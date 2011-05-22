@@ -39,7 +39,7 @@
  * @brief   Enables the use of the WFI instruction in the idle thread loop.
  */
 #ifndef STM8_ENABLE_WFI_IDLE
-#define STM8_ENABLE_WFI_IDLE    FALSE
+#define STM8_ENABLE_WFI_IDLE            FALSE
 #endif
 
 /*===========================================================================*/
@@ -54,7 +54,17 @@
 /**
  * @brief   Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME    "STM8"
+#define CH_ARCHITECTURE_NAME            "STM8"
+
+/**
+ * @brief   Name of the compiler supported by this port.
+ */
+#define CH_COMPILER_NAME                "Raisonance"
+
+/**
+ * @brief   Port-specific information string.
+ */
+#define CH_PORT_INFO                    "None"
 
 /*===========================================================================*/
 /* Port implementation part.                                                 */
