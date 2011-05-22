@@ -36,7 +36,7 @@
  * @brief   Enables the use of a wait state in the idle thread loop.
  */
 #ifndef ENABLE_WFI_IDLE
-#define ENABLE_WFI_IDLE         0
+#define ENABLE_WFI_IDLE                 0
 #endif
 
 /**
@@ -47,12 +47,22 @@
 /**
  * @brief   Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME "MSP430"
+#define CH_ARCHITECTURE_NAME            "MSP430"
 
 /**
  * @brief   Name of the architecture variant (optional).
  */
-#define CH_CORE_VARIANT_NAME "MSP430"
+#define CH_CORE_VARIANT_NAME            "MSP430"
+
+/**
+ * @brief   Name of the compiler supported by this port.
+ */
+#define CH_COMPILER_NAME                "GCC "__VERSION__
+
+/**
+ * @brief   Port-specific information string.
+ */
+#define CH_PORT_INFO                    "None"
 
 /**
  * @brief   16 bits stack and memory alignment enforcement.

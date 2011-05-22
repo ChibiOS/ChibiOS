@@ -34,12 +34,22 @@
 /**
  * Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME "Simulator"
+#define CH_ARCHITECTURE_NAME            "Simulator"
 
 /**
  * @brief   Name of the architecture variant (optional).
  */
-#define CH_CORE_VARIANT_NAME "x86 (integer only)"
+#define CH_CORE_VARIANT_NAME            "x86 (integer only)"
+
+/**
+ * @brief   Name of the compiler supported by this port.
+ */
+#define CH_COMPILER_NAME                "GCC "__VERSION__
+
+/**
+ * @brief   Port-specific information string.
+ */
+#define CH_PORT_INFO                    "No preemption"
 
 /**
  * 16 bytes stack alignment.
