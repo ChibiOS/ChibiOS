@@ -62,7 +62,7 @@
  * @brief   If enabled allows the idle thread to enter a low power mode.
  */
 #ifndef ARM_ENABLE_WFI_IDLE
-#define ARM_ENABLE_WFI_IDLE         FALSE
+#define ARM_ENABLE_WFI_IDLE             FALSE
 #endif
 
 /*===========================================================================*/
@@ -93,7 +93,7 @@
  *          - "ARM9".
  *          .
  */
-#define CH_ARCHITECTURE_NAME "ARMx"
+#define CH_ARCHITECTURE_NAME            "ARMx"
 
 /**
  * @brief   Name of the architecture variant (optional).
@@ -103,18 +103,44 @@
  *          - "ARM9"
  *          .
  */
-#define CH_CORE_VARIANT_NAME "ARMxy"
+#define CH_CORE_VARIANT_NAME            "ARMxy"
+
+/**
+ * @brief   Port-specific information string.
+ * @note    The value is for documentation only, the real value changes
+ *          depending on the selected options, the possible values are:
+ *          - "Pure ARM"
+ *          - "Pure THUMB"
+ *          - "Interworking"
+ *          .
+ */
+#define CH_PORT_INFO                    "ARM|THUMB|Interworking"
 
 #elif ARM_CORE == ARM_CORE_ARM7TDMI
 #define CH_ARCHITECTURE_ARM7TDMI
-#define CH_ARCHITECTURE_NAME        "ARM7"
-#define CH_CORE_VARIANT_NAME        "ARM7TDMI"
+#define CH_ARCHITECTURE_NAME            "ARM7"
+#define CH_CORE_VARIANT_NAME            "ARM7TDMI"
 
 #elif ARM_MODEL == ARM_VARIANT_ARM9
 #define CH_ARCHITECTURE_ARM9
-#define CH_ARCHITECTURE_NAME        "ARM9"
-#define CH_CORE_VARIANT_NAME        "ARM9"
+#define CH_ARCHITECTURE_NAME            "ARM9"
+#define CH_CORE_VARIANT_NAME            "ARM9"
 #endif
+
+#if THUMB_PRESENT
+#if THUMB_NO_INTERWORKING
+#define CH_PORT_INFO                    "Pure THUMB mode"
+#else /* !THUMB_NO_INTERWORKING */
+#define CH_PORT_INFO                    "Interworking mode"
+#endif /* !THUMB_NO_INTERWORKING */
+#else /* !THUMB_PRESENT */
+#define CH_PORT_INFO                    "Pure ARM mode"
+#endif /* !THUMB_PRESENT */
+
+/**
+ * @brief   Name of the compiler supported by this port.
+ */
+#define CH_COMPILER_NAME                "GCC "__VERSION__
 
 /*===========================================================================*/
 /* Port implementation part (common).                                        */
