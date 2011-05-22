@@ -73,7 +73,7 @@
  *          over the TX channel.
  */
 #if !defined(STM32_SPI_SPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_DMA_PRIORITY         2
+#define STM32_SPI_SPI1_DMA_PRIORITY         1
 #endif
 
 /**
@@ -83,7 +83,7 @@
  *          over the TX channel.
  */
 #if !defined(STM32_SPI_SPI2_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_DMA_PRIORITY         2
+#define STM32_SPI_SPI2_DMA_PRIORITY         1
 #endif
 
 /**
@@ -93,7 +93,7 @@
  *          over the TX channel.
  */
 #if !defined(STM32_SPI_SPI3_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_DMA_PRIORITY         2
+#define STM32_SPI_SPI3_DMA_PRIORITY         1
 #endif
 
 /**

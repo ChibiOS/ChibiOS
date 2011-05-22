@@ -83,7 +83,7 @@
  * @brief   ADC1 DMA priority (0..3|lowest..highest).
  */
 #if !defined(STM32_ADC_ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_DMA_PRIORITY         3
+#define STM32_ADC_ADC1_DMA_PRIORITY         2
 #endif
 
 /**
