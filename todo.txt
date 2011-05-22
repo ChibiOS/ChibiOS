@@ -21,14 +21,14 @@ Within 2.3.x (hopefully)
 * New device driver models: GPT, ICU.
 X GPT implementation and long duration "IRQ storm" stress test applications
   for all the supported critical platforms.
+X Introduce compiler-info macros to the port layer, improve the test reports
+  with the compiler info.
 - Add UART4 support to the STM32 UART driver (CL line only, HD has a nasty
   shared interrupt).
 - Add ADC3 support to the STM32 ADC driver.
 ? Make thread functions return void and add a CH_THREAD macro for threads
   declaration in order to hide compiler-specific optimizations for thread
   functions.
-- Introduce compiler-info macros to the port layer, improve the test reports
-  with the compiler info.
 - Test suite overhaul, the API should be more generic in order to be used
   with different subsystems and not just the kernel.
 - Device drivers for STM8/STM8L (ADC, PWM, bring them on par with STM32).
