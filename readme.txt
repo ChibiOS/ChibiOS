@@ -68,6 +68,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.2.5 ***
+- FIX: Fixed STM32F107 demo build failure (bug 3294998).
+
 *** 2.2.4 ***
 - FIX: Fixed CodeBlocks demo broken (bug 3304718).
 - FIX: Fixed race condition in output queues (bug 3303908).
