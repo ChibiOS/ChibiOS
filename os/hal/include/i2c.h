@@ -150,8 +150,8 @@ struct I2CSlaveConfig{
   /**
    * @brief Receive and transmit buffers.
    */
-  size_t                tx_bytes;
-  size_t                rx_bytes;
+  size_t                txbytes;
+  size_t                rxbytes;
   i2cblock_t            *rxbuf;       /*!< Pointer to receive buffer. */
   i2cblock_t            *txbuf;       /*!< Pointer to transmit buffer.*/
   uint16_t              slave_addr;
