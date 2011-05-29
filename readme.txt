@@ -72,6 +72,7 @@
 
 *** 2.3.4 ***
 - NEW: Now the STM32 SDC driver supports unaligned buffers transparently.
+  Optimized the driver for single block read and write operations.
 
 *** 2.3.3 ***
 - FIX: Fixed race condition in output queues (bug 3303908)(backported
