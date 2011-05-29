@@ -63,6 +63,7 @@ include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 include $(CHIBIOS)/test/test.mk
+include $(CHIBIOS)/ext/fatfs/fatfs.mk
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
