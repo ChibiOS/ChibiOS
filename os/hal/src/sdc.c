@@ -343,9 +343,6 @@ bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
   sdcp->state = SDC_READING;
   chSysUnlock();
 
-  if ((sdcp->cardmode & SDC_MODE_HIGH_CAPACITY) == 0)
-    startblk *= SDC_BLOCK_SIZE;
-
   err = sdc_lld_read(sdcp, startblk, buf, n);
   sdcp->state = SDC_ACTIVE;
   return err;
@@ -371,15 +368,12 @@ bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
                 const uint8_t *buf, uint32_t n) {
   bool_t err;
 
-  chDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0), "sdcRead");
+  chDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0), "sdcWrite");
 
   chSysLock();
   chDbgAssert(sdcp->state == SDC_ACTIVE, "sdcWrite(), #1", "invalid state");
   sdcp->state = SDC_WRITING;
   chSysUnlock();
-
-  if ((sdcp->cardmode & SDC_MODE_HIGH_CAPACITY) == 0)
-    startblk *= SDC_BLOCK_SIZE;
 
   err = sdc_lld_write(sdcp, startblk, buf, n);
   sdcp->state = SDC_ACTIVE;

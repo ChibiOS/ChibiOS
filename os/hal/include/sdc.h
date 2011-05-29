@@ -74,8 +74,10 @@
 #define SDC_CMD_STOP_TRANSMISSION       12
 #define SDC_CMD_SEND_STATUS             13
 #define SDC_CMD_SET_BLOCKLEN            16
+#define SDC_CMD_READ_SINGLE_BLOCK       17
 #define SDC_CMD_READ_MULTIPLE_BLOCK     18
 #define SDC_CMD_SET_BLOCK_COUNT         23
+#define SDC_CMD_WRITE_BLOCK             24
 #define SDC_CMD_WRITE_MULTIPLE_BLOCK    25
 #define SDC_CMD_APP_OP_COND             41
 #define SDC_CMD_LOCK_UNLOCK             42

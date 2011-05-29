@@ -61,6 +61,13 @@
 #define STM32_SDC_SDIO_IRQ_PRIORITY         9
 #endif
 
+/**
+ * @brief   SDIO support for unaligned transfers.
+ */
+#if !defined(STM32_SDC_UNALIGNED_SUPPORT) || defined(__DOXYGEN__)
+#define STM32_SDC_UNALIGNED_SUPPORT         TRUE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/

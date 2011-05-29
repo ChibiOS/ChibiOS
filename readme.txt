@@ -70,6 +70,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.3.4 ***
+- NEW: Now the STM32 SDC driver supports unaligned buffers transparently.
+
 *** 2.3.3 ***
 - FIX: Fixed race condition in output queues (bug 3303908)(backported
   to 2.2.4).

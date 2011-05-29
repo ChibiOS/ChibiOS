@@ -28,7 +28,7 @@ static const SDCConfig sdccfg = {
   0
 };
 
-static uint8_t blkbuf[SDC_BLOCK_SIZE * 4];
+static uint8_t blkbuf[SDC_BLOCK_SIZE * 4 + 1];
 
 /*
  * Application entry point.
@@ -51,12 +51,36 @@ int main(void) {
   sdcStart(&SDCD1, &sdccfg);
   if (!sdcConnect(&SDCD1)) {
     int i;
-    /* Repeated multiple reads.*/
-    for (i = 0; i < 5000; i++) {
+
+    /* Single aligned read.*/
+    if (sdcRead(&SDCD1, 0, blkbuf, 1))
+      chSysHalt();
+
+    /* Single unaligned read.*/
+    if (sdcRead(&SDCD1, 0, blkbuf + 1, 1))
+      chSysHalt();
+
+    /* Multiple aligned read.*/
+    if (sdcRead(&SDCD1, 0, blkbuf, 4))
+      chSysHalt();
+
+    /* Multiple unaligned read.*/
+    if (sdcRead(&SDCD1, 0, blkbuf + 1, 4))
+      chSysHalt();
+
+    /* Repeated multiple aligned reads.*/
+    for (i = 0; i < 1000; i++) {
       if (sdcRead(&SDCD1, 0, blkbuf, 4))
         chSysHalt();
     }
-    /* Repeated multiple write.*/
+
+    /* Repeated multiple unaligned reads.*/
+    for (i = 0; i < 1000; i++) {
+      if (sdcRead(&SDCD1, 0, blkbuf + 1, 4))
+        chSysHalt();
+    }
+
+    /* Repeated multiple aligned writes.*/
     for (i = 0; i < 100; i++) {
       if (sdcRead(&SDCD1, 0x10000, blkbuf, 4))
         chSysHalt();
@@ -65,6 +89,17 @@ int main(void) {
       if (sdcWrite(&SDCD1, 0x10000, blkbuf, 4))
         chSysHalt();
     }
+
+    /* Repeated multiple unaligned writes.*/
+    for (i = 0; i < 100; i++) {
+      if (sdcRead(&SDCD1, 0x10000, blkbuf + 1, 4))
+        chSysHalt();
+      if (sdcWrite(&SDCD1, 0x10000, blkbuf + 1, 4))
+        chSysHalt();
+      if (sdcWrite(&SDCD1, 0x10000, blkbuf + 1, 4))
+        chSysHalt();
+    }
+
     if (sdcDisconnect(&SDCD1))
       chSysHalt();
   }
