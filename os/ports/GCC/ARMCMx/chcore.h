@@ -29,11 +29,17 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
-#include "nvic.h"
+/*===========================================================================*/
+/* Port constants (common).                                                  */
+/*===========================================================================*/
 
-/*===========================================================================*/
-/* Port constants.                                                           */
-/*===========================================================================*/
+/* Added to make the header stand-alone when included from asm.*/
+#ifndef FALSE
+#define FALSE       0
+#endif
+#ifndef TRUE
+#define TRUE        (!FALSE)
+#endif
 
 #define CORTEX_M0                       0   /**< @brief Cortex-M0 variant.  */
 #define CORTEX_M1                       1   /**< @brief Cortex-M1 variant.  */
@@ -69,14 +75,8 @@
  */
 #define CORTEX_MAXIMUM_PRIORITY         0
 
-/**
- * @brief   Disabled value for BASEPRI register.
- * @note    ARMv7-M architecture only.
- */
-#define CORTEX_BASEPRI_DISABLED         0
-
 /*===========================================================================*/
-/* Port macros.                                                              */
+/* Port macros (common).                                                     */
 /*===========================================================================*/
 
 /**
@@ -92,7 +92,7 @@
   ((n) << (8 - CORTEX_PRIORITY_BITS))
 
 /*===========================================================================*/
-/* Port configurable parameters.                                             */
+/* Port configurable parameters (common).                                    */
 /*===========================================================================*/
 
 /**
@@ -156,11 +156,11 @@
 #endif
 
 /*===========================================================================*/
-/* Port derived parameters.                                                  */
+/* Port derived parameters (common).                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Port exported info.                                                       */
+/* Port exported info (common).                                              */
 /*===========================================================================*/
 
 /**
@@ -177,6 +177,17 @@
 /* Port implementation part (common).                                        */
 /*===========================================================================*/
 
+/* Includes the sub-architecture-specific part.*/
+#if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M1)
+#include "chcore_v6m.h"
+#elif (CORTEX_MODEL == CORTEX_M3) || (CORTEX_MODEL == CORTEX_M4)
+#include "chcore_v7m.h"
+#endif
+
+#if !defined(_FROM_ASM_)
+
+#include "nvic.h"
+
 /**
  * @brief   Stack and memory alignment enforcement.
  */
@@ -192,11 +203,6 @@ typedef uint32_t stkalign_t __attribute__ ((aligned (4)));
 #else
 #error "invalid stack alignment selected"
 #endif
-
-/**
- * @brief   Generic ARM register.
- */
-typedef void *regarm_t;
 
 #if defined(__DOXYGEN__)
 /**
@@ -262,12 +268,7 @@ struct context {
  */
 #define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)]
 
-/* Includes the architecture-specific implementation part.*/
-#if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M1)
-#include "chcore_v6m.h"
-#elif (CORTEX_MODEL == CORTEX_M3) || (CORTEX_MODEL == CORTEX_M4)
-#include "chcore_v7m.h"
-#endif
+#endif /* _FROM_ASM_ */
 
 #endif /* _CHCORE_H_ */
 

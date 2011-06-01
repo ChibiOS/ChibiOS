@@ -71,8 +71,12 @@
 *****************************************************************************
 
 *** 2.3.4 ***
+- FIX: Fixed wrong macro definition in ARMv6-M architecture files (bug
+  3310084).
 - NEW: Now the STM32 SDC driver supports unaligned buffers transparently.
   Optimized the driver for single block read and write operations.
+- NEW: Finished the reorganization of the Cortex-Mx ports, now also the
+  IAR and RVCT ports support the new Compact mode.
 
 *** 2.3.3 ***
 - FIX: Fixed race condition in output queues (bug 3303908)(backported

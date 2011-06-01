@@ -33,6 +33,11 @@
 /* Port constants.                                                           */
 /*===========================================================================*/
 
+/**
+ * @brief   Disabled value for BASEPRI register.
+ */
+#define CORTEX_BASEPRI_DISABLED         0
+
 /*===========================================================================*/
 /* Port configurable parameters.                                             */
 /*===========================================================================*/
@@ -88,6 +93,7 @@
 /* Port exported info.                                                       */
 /*===========================================================================*/
 
+#if (CORTEX_MODEL == CORTEX_M3) || defined(__DOXYGEN__)
 /**
  * @brief   Macro defining the specific ARM architecture.
  */
@@ -101,9 +107,11 @@
 /**
  * @brief   Name of the architecture variant.
  */
-#if (CORTEX_MODEL == CORTEX_M3) || defined(__DOXYGEN__)
 #define CH_CORE_VARIANT_NAME            "Cortex-M3"
+
 #elif (CORTEX_MODEL == CORTEX_M4)
+#define CH_ARCHITECTURE_ARM_v7ME
+#define CH_ARCHITECTURE_NAME            "ARMv7-ME"
 #define CH_CORE_VARIANT_NAME            "Cortex-M4"
 #endif
 
@@ -119,6 +127,13 @@
 /*===========================================================================*/
 /* Port implementation part.                                                 */
 /*===========================================================================*/
+
+#if !defined(_FROM_ASM_)
+
+/**
+ * @brief   Generic ARM register.
+ */
+typedef void *regarm_t;
 
 #if !defined(__DOXYGEN__)
 struct extctx {
@@ -314,6 +329,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* _FROM_ASM_ */
 
 #endif /* _CHCORE_V7M_H_ */
 

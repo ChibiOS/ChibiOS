@@ -34,20 +34,12 @@
 /*===========================================================================*/
 
 /**
- * @brief   BASEPRI level within kernel lock.
- * @note    The ARMv6-M architecture does not implement the BASEPRI register
- *          so the kernel always masks the whole priority range during
- *          a kernel lock.
- */
-#define CORTEX_BASEPRI_KERNEL           0
-
-/**
  * @brief   PendSV priority level.
- * @note    This priority is enforced to be equal to @p CORTEX_BASEPRI_KERNEL,
+ * @note    This priority is enforced to be equal to @p 0,
  *          this handler always have the highest priority that cannot preempt
  *          the kernel.
  */
-#define CORTEX_PRIORITY_PENDSV          CORTEX_BASEPRI_KERNEL
+#define CORTEX_PRIORITY_PENDSV          0
 
 /*===========================================================================*/
 /* Port configurable parameters.                                             */
@@ -64,7 +56,7 @@
 /**
  * @brief   Macro defining the specific ARM architecture.
  */
-#define CH_ARCHITECTURE_ARM_v7M
+#define CH_ARCHITECTURE_ARM_v6M
 
 /**
  * @brief   Name of the implemented architecture.
@@ -83,6 +75,13 @@
 /*===========================================================================*/
 /* Port implementation part.                                                 */
 /*===========================================================================*/
+
+#if !defined(_FROM_ASM_)
+
+/**
+ * @brief   Generic ARM register.
+ */
+typedef void *regarm_t;
 
 #if !defined(__DOXYGEN__)
 struct extctx {
@@ -243,6 +242,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* _FROM_ASM_ */
 
 #endif /* _CHCORE_V6M_H_ */
 
