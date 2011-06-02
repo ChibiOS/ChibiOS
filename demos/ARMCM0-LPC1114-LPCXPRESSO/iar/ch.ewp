@@ -523,6 +523,7 @@
         </option>
         <option>
           <name>AUserIncludes</name>
+          <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\LPC11xx</state>
           <state>$PROJ_DIR$\..\..\..\boards\EA_LPCXPRESSO_BB_1114</state>
         </option>
@@ -1387,6 +1388,7 @@
         </option>
         <option>
           <name>AUserIncludes</name>
+          <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\LPC11xx</state>
           <state>$PROJ_DIR$\..\..\..\boards\EA_LPCXPRESSO_BB_1114</state>
         </option>

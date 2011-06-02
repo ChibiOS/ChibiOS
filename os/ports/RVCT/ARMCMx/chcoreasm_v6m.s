@@ -89,8 +89,8 @@ NMIVector       PROC
 #endif
 
 /*
- * NMI vector.
- * The NMI vector is used for exception mode re-entering after a context
+ * PendSV vector.
+ * The PendSV vector is used for exception mode re-entering after a context
  * switch.
  */
 #if CORTEX_ALTERNATE_SWITCH
