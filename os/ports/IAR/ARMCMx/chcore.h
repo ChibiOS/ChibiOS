@@ -52,7 +52,7 @@
 /* Cortex model check, only M0 and M3 supported right now.*/
 #if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M3)
 #elif (CORTEX_MODEL == CORTEX_M1) || (CORTEX_MODEL == CORTEX_M4)
-#warning "untested Cortex-M model"
+#error "untested Cortex-M model, manually remove this check in chcore.h"
 #else
 #error "unknown or unsupported Cortex-M model"
 #endif
