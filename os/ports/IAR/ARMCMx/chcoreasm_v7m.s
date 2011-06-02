@@ -24,8 +24,7 @@
         PRESERVE8
 
 /*
- * Imports the Cortex-Mx configuration header and performs the same calculations
- * done in chcore.h.
+ * Imports the Cortex-Mx configuration headers.
  */
 #define _FROM_ASM_
 #include "chconf.h"

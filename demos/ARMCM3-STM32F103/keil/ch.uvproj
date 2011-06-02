@@ -361,7 +361,7 @@
               <MiscControls>--cpreproc</MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\boards\OLIMEX_STM32_P103;..\..\..\os\ports\RVCT\ARMCMx\STM32</IncludePath>
+              <IncludePath>..\;..\..\..\boards\OLIMEX_STM32_P103;..\..\..\os\ports\RVCT\ARMCMx\STM32</IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -1030,6 +1030,21 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>chconf.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\chconf.h</FilePath>
+            </File>
+            <File>
+              <FileName>halconf.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\halconf.h</FilePath>
+            </File>
+            <File>
+              <FileName>mcuconf.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\mcuconf.h</FilePath>
             </File>
           </Files>
         </Group>
