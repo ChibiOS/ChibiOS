@@ -235,9 +235,9 @@ int main(void) {
   println("***");
   print("*** Kernel:       ");
   println(CH_KERNEL_VERSION);
-#ifdef __GNUC__
-  print("*** GCC Version:  ");
-  println(__VERSION__);
+#ifdef CH_COMPILER_NAME
+  print("*** Compiler:     ");
+  println(CH_COMPILER_NAME);
 #endif
   print("*** Architecture: ");
   println(CH_ARCHITECTURE_NAME);
