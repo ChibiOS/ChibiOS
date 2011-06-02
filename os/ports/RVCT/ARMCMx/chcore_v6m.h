@@ -45,6 +45,15 @@
 /* Port configurable parameters.                                             */
 /*===========================================================================*/
 
+/**
+ * @brief   Alternate preemption method.
+ * @details Activating this option will make the Kernel use the PendSV
+ *          handler for preemption instead of the NMI handler.
+ */
+#ifndef CORTEX_ALTERNATE_SWITCH
+#define CORTEX_ALTERNATE_SWITCH         FALSE
+#endif
+
 /*===========================================================================*/
 /* Port derived parameters.                                                  */
 /*===========================================================================*/
@@ -70,6 +79,15 @@
 #define CH_CORE_VARIANT_NAME            "Cortex-M0"
 #elif (CORTEX_MODEL == CORTEX_M1)
 #define CH_CORE_VARIANT_NAME            "Cortex-M1"
+#endif
+
+/**
+ * @brief   Port-specific information string.
+ */
+#if !CORTEX_ALTERNATE_SWITCH || defined(__DOXYGEN__)
+#define CH_PORT_INFO                    "Preemption through NMI"
+#else
+#define CH_PORT_INFO                    "Preemption through PendSV"
 #endif
 
 /*===========================================================================*/

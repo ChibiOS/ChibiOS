@@ -19,12 +19,11 @@
 */
 
 /*
- * Imports the Cortex-Mx parameters header and performs the same calculations
- * done in chcore.h.
+ * Imports the Cortex-Mx configuration headers.
  */
-#include "cmparams.h"
-
-#define CORTEX_PRIORITY_MASK(n) ((n) << (8 - CORTEX_PRIORITY_BITS))
+#define _FROM_ASM_
+#include "chconf.h"
+#include "chcore.h"
 
 EXTCTX_SIZE     EQU     32
 CONTEXT_OFFSET  EQU     12
@@ -78,6 +77,7 @@ _port_thread_start PROC
  * The NMI vector is used for exception mode re-entering after a context
  * switch.
  */
+#if !CORTEX_ALTERNATE_SWITCH
                 EXPORT  NMIVector
 NMIVector       PROC
                 mrs     r3, PSP
@@ -86,6 +86,22 @@ NMIVector       PROC
                 cpsie   i
                 bx      lr
                 ENDP
+#endif
+
+/*
+ * NMI vector.
+ * The NMI vector is used for exception mode re-entering after a context
+ * switch.
+ */
+#if CORTEX_ALTERNATE_SWITCH
+                EXPORT  PendSVVector
+PendSVVector       PROC
+                mrs     r3, PSP
+                adds    r3, r3, #32
+                msr     PSP, r3
+                bx      lr
+                ENDP
+#endif
 
 /*
  * Post-IRQ switch code.
@@ -94,11 +110,17 @@ NMIVector       PROC
                 EXPORT  _port_switch_from_isr
 _port_switch_from_isr PROC
                 bl      chSchDoRescheduleI
-                movs    r3, #128
-                lsls    r3, r3, #24
                 ldr     r2, =SCB_ICSR
+                movs    r3, #128
+#if CORTEX_ALTERNATE_SWITCH
+                lsls    r3, r3, #20
                 str     r3, [r2, #0]
-_waitnmi        b       _waitnmi
+                cpsie   i
+#else
+                lsls    r3, r3, #24
+                str     r3, [r2, #0]
+#endif
+waithere        b       waithere
                 ENDP
 
 /*
