@@ -159,16 +159,23 @@
  * - @p IDLE_THREAD_STACK_SIZE, stack area size to be assigned to the IDLE
  *   thread. Usually there is no need to change this value unless inserting
  *   code in the IDLE thread using the @p IDLE_LOOP_HOOK hook macro.
- * - @p CORTEX_BASEPRI_KERNEL, this is the @p BASEPRI value for the kernel lock
- *   code. Code running at higher priority levels must not invoke any OS API.
- *   This setting is specific to the ARMv7-M architecture.
  * - @p CORTEX_PRIORITY_SYSTICK, priority of the SYSTICK handler.
- * - @p CORTEX_PRIORITY_SVCALL, priority of the SVCALL handler.
  * - @p CORTEX_PRIORITY_PENDSV, priority of the PENDSV handler.
  * - @p CORTEX_ENABLE_WFI_IDLE, if set to @p TRUE enables the use of the
  *   @p <b>wfi</b> instruction from within the idle loop. This option is
  *   defaulted to FALSE because it can create problems with some debuggers.
  *   Setting this option to TRUE reduces the system power requirements.
+ * .
+ * @section ARMCMx_CONF_1 ARMv6-M specific options
+ * The following options are specific for the ARMv6-M architecture:
+ * - @p CORTEX_ALTERNATE_SWITCH, when activated makes the OS use the PendSV
+ *   exception instead of NMI as preemption handler.
+ * .
+ * @section ARMCMx_CONF_2 ARMv7-M specific options
+ * The following options are specific for the ARMv6-M architecture:
+ * - @p CORTEX_PRIORITY_SVCALL, priority of the SVCALL handler.
+ * - @p CORTEX_SIMPLIFIED_PRIORITY, when enabled activates the Compact kernel
+ *   mode.
  * .
  * @ingroup ARMCMx
  */
@@ -219,15 +226,19 @@
  * @section ARMCMx_STARTUP_2 Expected linker symbols
  * The startup code starts at the symbol @p ResetHandler and expects the
  * following symbols to be defined in the linker script:
- * - @p __ram_end__ RAM end location +1.
+ * - @p __ram_end__ End of RAM.
  * - @p __main_stack_size__ Exception stack size.
  * - @p __process_stack_size__ Process stack size. This is the stack area used
  *      by the @p main() function.
- * - @p _textdata address of the data segment source read only data.
- * - @p _data data segment start location.
- * - @p _edata data segment end location +1.
- * - @p _bss_start BSS start location.
- * - @p _bss_end BSS end location +1.
+ * - @p _textdata Address of the data segment source read only data.
+ * - @p _data Start of the data segment.
+ * - @p _edata End of the data segment end location.
+ * - @p _bss_start Start of the BSS.
+ * - @p _bss_end End of the BSS segment.
+ * - @p __init_array_start Start of the constructors array.
+ * - @p __init_array_end End of the constructors array.
+ * - @p __fini_array_start Start of the destructors array.
+ * - @p __fini_array_end End of the destructors array.
  * .
  * @ingroup ARMCMx
  */

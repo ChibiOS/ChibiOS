@@ -77,6 +77,8 @@
   Optimized the driver for single block read and write operations.
 - NEW: Finished the reorganization of the Cortex-Mx ports, now also the
   IAR and RVCT ports support the new Compact mode.
+- NEW: Added to the ARMv6-M sub-port an option to use the PendSV exception
+  instead of NMI for preemption (backported to 2.2.5).
 
 *** 2.3.3 ***
 - FIX: Fixed race condition in output queues (bug 3303908)(backported
@@ -86,12 +88,12 @@
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
 - NEW: Reorganization of the Cortex-Mx ports in order to reduced code and
-  comments duplication in the various headers.
+  comments duplication in the various headers (backported to 2.2.5).
 - NEW: Improved the ARMv7-M sub-port now there are two modes: Compact and
   Advanced.
   The advanced mode is equivalent to the previous versions, the compact mode
   is new and makes the kernel *much* smaller and generally faster but does
-  not support fast interrupts, see the reports for details.
+  not support fast interrupts (backported to 2.2.5).
 - NEW: Now the port layer exports info regarding the compiler and the port
   options. The info are printed into the test reports.
 - CHANGE: Renamed the macros IDLE_THREAD_STACK_SIZE and INT_REQUIRED_STACK

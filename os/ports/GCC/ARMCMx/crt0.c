@@ -21,7 +21,7 @@
  * @file    ARMCMx/crt0.c
  * @brief   Generic ARMvx-M (Cortex-M0/M1/M3/M4) startup file for ChibiOS/RT.
  *
- * @addtogroup ARMCMx_CORE
+ * @addtogroup ARMCMx_STARTUP
  * @{
  */
 
