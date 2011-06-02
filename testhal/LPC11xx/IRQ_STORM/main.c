@@ -245,6 +245,10 @@ int main(void) {
   print("*** Core Variant: ");
   println(CH_CORE_VARIANT_NAME);
 #endif
+#ifdef CH_PORT_INFO
+  print("*** Port Info:    ");
+  println(CH_PORT_INFO);
+#endif
 #ifdef PLATFORM_NAME
   print("*** Platform:     ");
   println(PLATFORM_NAME);
