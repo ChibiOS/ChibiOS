@@ -113,7 +113,7 @@ _port_switch_from_isr PROC
                 ldr     r2, =SCB_ICSR
                 movs    r3, #128
 #if CORTEX_ALTERNATE_SWITCH
-                lsls    r3, r3, #20
+                lsls    r3, r3, #21
                 str     r3, [r2, #0]
                 cpsie   i
 #else
