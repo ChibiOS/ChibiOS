@@ -32,9 +32,28 @@
  * This port supports all the cores implementing the ARMv6-M and ARMv7-M
  * architectures.
  *
- * @section RVCT_ARMCMx_STATES_A System logical states in ARMv6-M mode
- * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM
- * Cortex-M0 port:
+ * @section RVCT_ARMCMx_MODES Kernel Modes
+ * The Cortex-Mx port supports two distinct kernel modes:
+ * - <b>Advanced Kernel</b> mode. In this mode the kernel only masks
+ *   interrupt sources with priorities below or equal to the
+ *   @p CORTEX_BASEPRI_KERNEL level. Higher priorities are not affected by
+ *   the kernel critical sections and can be used for fast interrupts.
+ *   This mode is not available in the ARMv6-M architecture which does not
+ *   support priority masking.
+ * - <b>Compact Kernel</b> mode. In this mode the kernel handles IRQ priorities
+ *   in a simplified way, all interrupt sources are disabled when the kernel
+ *   enters into a critical zone and re-enabled on exit. This is simple and
+ *   adequate for most applications, this mode results in a more compact and
+ *   faster kernel.
+ * .
+ * The selection of the mode is performed using the port configuration option
+ * @p CORTEX_SIMPLIFIED_PRIORITY. Apart from the different handling of
+ * interrupts there are no other differences between the two modes. The
+ * kernel API is exactly the same.
+ *
+ * @section RVCT_ARMCMx_STATES_A System logical states in Compact Kernel mode
+ * The ChibiOS/RT logical @ref system_states are mapped as follow in Compact
+ * Kernel mode:
  * - <b>Init</b>. This state is represented by the startup code and the
  *   initialization code before @p chSysInit() is executed. It has not a
  *   special hardware state associated.
@@ -59,21 +78,21 @@
  *   mode.
  * - <b>Serving Fast Interrupt</b>. This state is not implemented in the
  *   ARMv6-M implementation.
- * - <b>Serving Non-Maskable Interrupt</b>. The Cortex-M3 has a specific
+ * - <b>Serving Non-Maskable Interrupt</b>. The Cortex-Mx has a specific
  *   asynchronous NMI vector and several synchronous fault vectors that can
  *   be considered belonging to this category.
  * - <b>Halted</b>. Implemented as an infinite loop after globally masking all
  *   the maskable interrupt sources. The ARM state is whatever the processor
  *   was running when @p chSysHalt() was invoked.
  *
- * @section RVCT_ARMCMx_STATES_B System logical states in ARMv7-M mode
- * The ChibiOS/RT logical @ref system_states are mapped as follow in the ARM
- * Cortex-M3 port:
+ * @section RVCT_ARMCMx_STATES_B System logical states in Advanced Kernel mode
+ * The ChibiOS/RT logical @ref system_states are mapped as follow in the
+ * Advanced Kernel mode:
  * - <b>Init</b>. This state is represented by the startup code and the
  *   initialization code before @p chSysInit() is executed. It has not a
  *   special hardware state associated.
  * - <b>Normal</b>. This is the state the system has after executing
- *   @p chSysInit(). In this state the ARM Cortex-M3 has the BASEPRI register
+ *   @p chSysInit(). In this state the ARM Cortex-Mx has the BASEPRI register
  *   set at @p CORTEX_BASEPRI_USER level, interrupts are not masked. The
  *   processor is running in thread-privileged mode.
  * - <b>Suspended</b>. In this state the interrupt sources are not globally
@@ -99,7 +118,7 @@
  * - <b>Serving Fast Interrupt</b>. It is basically the same of the SRI state
  *   but it is not possible to switch to the I-Locked state because fast
  *   interrupts can preempt the kernel critical zone.
- * - <b>Serving Non-Maskable Interrupt</b>. The Cortex-M3 has a specific
+ * - <b>Serving Non-Maskable Interrupt</b>. The Cortex-Mx has a specific
  *   asynchronous NMI vector and several synchronous fault vectors that can
  *   be considered belonging to this category.
  * - <b>Halted</b>. Implemented as an infinite loop after globally masking all
@@ -146,16 +165,23 @@
  * - @p IDLE_THREAD_STACK_SIZE, stack area size to be assigned to the IDLE
  *   thread. Usually there is no need to change this value unless inserting
  *   code in the IDLE thread using the @p IDLE_LOOP_HOOK hook macro.
- * - @p CORTEX_BASEPRI_KERNEL, this is the @p BASEPRI value for the kernel lock
- *   code. Code running at higher priority levels must not invoke any OS API.
- *   This setting is specific to the ARMv7-M architecture.
  * - @p CORTEX_PRIORITY_SYSTICK, priority of the SYSTICK handler.
- * - @p CORTEX_PRIORITY_SVCALL, priority of the SVCALL handler.
  * - @p CORTEX_PRIORITY_PENDSV, priority of the PENDSV handler.
  * - @p CORTEX_ENABLE_WFI_IDLE, if set to @p TRUE enables the use of the
  *   @p <b>wfi</b> instruction from within the idle loop. This option is
  *   defaulted to FALSE because it can create problems with some debuggers.
  *   Setting this option to TRUE reduces the system power requirements.
+ * .
+ * @section RVCT_ARMCMx_CONF_1 ARMv6-M specific options
+ * The following options are specific for the ARMv6-M architecture:
+ * - @p CORTEX_ALTERNATE_SWITCH, when activated makes the OS use the PendSV
+ *   exception instead of NMI as preemption handler.
+ * .
+ * @section RVCT_ARMCMx_CONF_2 ARMv7-M specific options
+ * The following options are specific for the ARMv6-M architecture:
+ * - @p CORTEX_PRIORITY_SVCALL, priority of the SVCALL handler.
+ * - @p CORTEX_SIMPLIFIED_PRIORITY, when enabled activates the Compact kernel
+ *   mode.
  * .
  * @ingroup RVCT_ARMCMx
  */

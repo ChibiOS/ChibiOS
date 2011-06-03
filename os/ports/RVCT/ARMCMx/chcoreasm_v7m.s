@@ -25,27 +25,17 @@
 */
 
 /*
- * Imports the Cortex-Mx parameters header and performs the same calculations
- * done in chcore.h.
+ * Imports the Cortex-Mx configuration headers.
  */
-#include "cmparams.h"
-
-#define CORTEX_PRIORITY_MASK(n) ((n) << (8 - CORTEX_PRIORITY_BITS))
-
-#ifndef CORTEX_PRIORITY_SVCALL
-#define CORTEX_PRIORITY_SVCALL  1
-#endif
-
-#ifndef CORTEX_BASEPRI_KERNEL
-#define CORTEX_BASEPRI_KERNEL   CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL+1)
-#endif
-
-#define CORTEX_BASEPRI_DISABLED 0
+#define _FROM_ASM_
+#include "chconf.h"
+#include "chcore.h"
 
 EXTCTX_SIZE     EQU     32
 CONTEXT_OFFSET  EQU     12
 SCB_ICSR        EQU     0xE000ED04
 ICSR_RETTOBASE  EQU     0x00000800
+ICSR_PENDSVSET  EQU     0x10000000
 
                 PRESERVE8
                 THUMB
@@ -72,8 +62,12 @@ _port_switch    PROC
  */
                 EXPORT  _port_thread_start
 _port_thread_start PROC
+#if CORTEX_SIMPLIFIED_PRIORITY
+                cpsie   i
+#else
                 movs    r3, #CORTEX_BASEPRI_DISABLED
                 msr     BASEPRI, r3
+#endif
                 mov     r0, r5
                 blx     r4
                 bl      chThdExit
@@ -86,7 +80,16 @@ _port_thread_start PROC
                 EXPORT  _port_switch_from_isr
 _port_switch_from_isr PROC
                 bl      chSchDoRescheduleI
+#if CORTEX_SIMPLIFIED_PRIORITY
+                mov     r3, #SCB_ICSR :AND: 0xFFFF
+                movt    r3, #SCB_ICSR :SHR: 16
+                mov     r2, #ICSR_PENDSVSET
+                str     r2, [r3, #0]
+                cpsie   i
+waithere        b       waithere
+#else
                 svc     #0
+#endif
                 ENDP
 
 /*
@@ -94,15 +97,23 @@ _port_switch_from_isr PROC
  */
                 EXPORT  _port_irq_epilogue
 _port_irq_epilogue PROC
+#if CORTEX_SIMPLIFIED_PRIORITY
+                cpsid   i
+#else
                 movs    r3, #CORTEX_BASEPRI_KERNEL
                 msr     BASEPRI, r3
+#endif
                 mov     r3, #SCB_ICSR :AND: 0xFFFF
                 movt    r3, #SCB_ICSR :SHR: 16
                 ldr     r3, [r3, #0]
                 tst     r3, #ICSR_RETTOBASE
                 bne     skipexit
+#if CORTEX_SIMPLIFIED_PRIORITY
+                cpsie   i
+#else
                 movs    r3, #CORTEX_BASEPRI_DISABLED
                 msr     BASEPRI, r3
+#endif
                 bx      lr
 skipexit
                 push    {r3, lr}
@@ -118,8 +129,12 @@ skipexit
                 str     r2, [r3, #28]
                 pop     {r3, pc}
 noreschedule
+#if CORTEX_SIMPLIFIED_PRIORITY
+                cpsie   i
+#else
                 movs    r3, #CORTEX_BASEPRI_DISABLED
                 msr     BASEPRI, r3
+#endif
                 pop     {r3, pc}
                 ENDP
 
@@ -128,6 +143,7 @@ noreschedule
  * Discarding the current exception context and positioning the stack to
  * point to the real one.
  */
+#if !CORTEX_SIMPLIFIED_PRIORITY
                 EXPORT  SVCallVector
 SVCallVector    PROC
                 mrs     r3, PSP
@@ -137,5 +153,22 @@ SVCallVector    PROC
                 msr     BASEPRI, r3
                 bx      lr
                 ENDP
+#endif
+
+/*
+ * PendSV vector.
+ * Discarding the current exception context and positioning the stack to
+ * point to the real one.
+ */
+#if CORTEX_SIMPLIFIED_PRIORITY
+                EXPORT  PendSVVector
+PendSVVector    PROC
+                mrs     r3, PSP
+                adds    r3, r3, #EXTCTX_SIZE
+                msr     PSP, r3
+                bx      lr
+                nop
+                ENDP
+#endif
 
                 END

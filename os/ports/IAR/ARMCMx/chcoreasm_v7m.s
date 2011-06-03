@@ -30,27 +30,17 @@
         PRESERVE8
 
 /*
- * Imports the Cortex-Mx parameters header and performs the same calculations
- * done in chcore.h.
+ * Imports the Cortex-Mx configuration headers.
  */
-#include "cmparams.h"
-
-#define CORTEX_PRIORITY_MASK(n) ((n) << (8 - CORTEX_PRIORITY_BITS))
-
-#ifndef CORTEX_PRIORITY_SVCALL
-#define CORTEX_PRIORITY_SVCALL  1
-#endif
-
-#ifndef CORTEX_BASEPRI_KERNEL
-#define CORTEX_BASEPRI_KERNEL   CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL+1)
-#endif
-
-#define CORTEX_BASEPRI_DISABLED 0
+#define _FROM_ASM_
+#include "chconf.h"
+#include "chcore.h"
 
 EXTCTX_SIZE     SET 32
 CONTEXT_OFFSET  SET 12
 SCB_ICSR        SET 0xE000ED04
 ICSR_RETTOBASE  SET 0x00000800
+ICSR_PENDSVSET  SET 0x10000000
 
         SECTION .text:CODE:NOROOT(2)
 
@@ -66,7 +56,7 @@ ICSR_RETTOBASE  SET 0x00000800
         PUBLIC _port_switch
 _port_switch:
         push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}
-        str     sp, [r1, #CONTEXT_OFFSET]                          
+        str     sp, [r1, #CONTEXT_OFFSET]
         ldr     sp, [r0, #CONTEXT_OFFSET]
         pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}
 
@@ -76,8 +66,12 @@ _port_switch:
  */
         PUBLIC  _port_thread_start
 _port_thread_start:
+#if CORTEX_SIMPLIFIED_PRIORITY
+        cpsie   i
+#else
         movs    r3, #CORTEX_BASEPRI_DISABLED
         msr     BASEPRI, r3
+#endif
         mov     r0, r5
         blx     r4
         bl      chThdExit
@@ -89,22 +83,39 @@ _port_thread_start:
         PUBLIC  _port_switch_from_isr
 _port_switch_from_isr:
         bl      chSchDoRescheduleI
+#if CORTEX_SIMPLIFIED_PRIORITY
+        mov     r3, #LWRD SCB_ICSR
+        movt    r3, #HWRD SCB_ICSR
+        mov	r2, #ICSR_PENDSVSET
+        str	r2, [r3]
+        cpsie   i
+.L3:    b       .L3
+#else
         svc     #0
+#endif
 
 /*
  * Reschedule verification and setup after an IRQ.
  */
         PUBLIC  _port_irq_epilogue
 _port_irq_epilogue:
+#if CORTEX_SIMPLIFIED_PRIORITY
+        cpsid   i
+#else
         movs    r3, #CORTEX_BASEPRI_KERNEL
         msr     BASEPRI, r3
+#endif
         mov     r3, #LWRD SCB_ICSR
         movt    r3, #HWRD SCB_ICSR
         ldr     r3, [r3, #0]
         tst     r3, #ICSR_RETTOBASE
         bne     .L7
+#if CORTEX_SIMPLIFIED_PRIORITY
+        cpsie   i
+#else
         movs    r3, #CORTEX_BASEPRI_DISABLED
         msr     BASEPRI, r3
+#endif
         bx      lr
 .L7:
         push    {r3, lr}
@@ -120,8 +131,12 @@ _port_irq_epilogue:
         str     r2, [r3, #28]
         pop     {r3, pc}
 .L4:
+#if CORTEX_SIMPLIFIED_PRIORITY
+        cpsie   i
+#else
         movs    r3, #CORTEX_BASEPRI_DISABLED
         msr     BASEPRI, r3
+#endif
         pop     {r3, pc}
 
 /*
@@ -129,6 +144,7 @@ _port_irq_epilogue:
  * Discarding the current exception context and positioning the stack to
  * point to the real one.
  */
+#if !CORTEX_SIMPLIFIED_PRIORITY
         PUBLIC  SVCallVector
 SVCallVector:
         mrs     r3, PSP
@@ -137,5 +153,20 @@ SVCallVector:
         movs    r3, #CORTEX_BASEPRI_DISABLED
         msr     BASEPRI, r3
         bx      lr
+#endif
+
+/*
+ * PendSV vector.
+ * Discarding the current exception context and positioning the stack to
+ * point to the real one.
+ */
+#if CORTEX_SIMPLIFIED_PRIORITY
+        PUBLIC  PendSVVector
+PendSVVector:
+        mrs     r3, PSP
+        adds    r3, r3, #EXTCTX_SIZE
+        msr     PSP, r3
+        bx      lr
+#endif
 
         END

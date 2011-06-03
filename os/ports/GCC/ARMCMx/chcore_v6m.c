@@ -50,6 +50,7 @@ CH_IRQ_HANDLER(SysTickVector) {
   CH_IRQ_EPILOGUE();
 }
 
+#if !CORTEX_ALTERNATE_SWITCH || defined(__DOXYGEN__)
 /**
  * @brief   NMI vector.
  * @details The NMI vector is used for exception mode re-entering after a
@@ -65,6 +66,24 @@ void NMIVector(void) {
   asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
   port_unlock_from_isr();
 }
+#endif /* !CORTEX_ALTERNATE_SWITCH */
+
+#if CORTEX_ALTERNATE_SWITCH || defined(__DOXYGEN__)
+/**
+ * @brief   PendSV vector.
+ * @details The PendSV vector is used for exception mode re-entering after a
+ *          context switch.
+ */
+void PendSVVector(void) {
+  register struct extctx *ctxp;
+
+  /* Discarding the current exception context and positioning the stack to
+     point to the real one.*/
+  asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : : "memory");
+  ctxp++;
+  asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
+}
+#endif /* CORTEX_ALTERNATE_SWITCH */
 
 /**
  * @brief   Post-IRQ switch code.
@@ -78,8 +97,13 @@ __attribute__((naked))
 void _port_switch_from_isr(void) {
 
   chSchDoRescheduleI();
+#if CORTEX_ALTERNATE_SWITCH
+  SCB_ICSR = ICSR_PENDSVSET;
+  port_unlock();
+#else
   SCB_ICSR = ICSR_NMIPENDSET;
-  /* The following loop should never be executed, the NMI will kick in
+#endif
+  /* The following loop should never be executed, the exception will kick in
      immediately.*/
   while (TRUE)
     ;

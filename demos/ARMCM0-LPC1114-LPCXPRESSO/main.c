@@ -130,8 +130,8 @@ int main(void) {
    */
   i = 0;
   while (TRUE) {
-    if (!palReadPad(GPIO0, GPIO0_SW3))
-      TestThread(&SD1);
+//    if (!palReadPad(GPIO0, GPIO0_SW3))
+//      TestThread(&SD1);
     spiSelect(&SPID1);
     spiSend(&SPID1, 1, &digits[i]);                 /* Non polled method.   */
     spiUnselect(&SPID1);

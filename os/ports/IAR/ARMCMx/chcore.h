@@ -35,18 +35,22 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
-#include <intrinsics.h>
-
-#include "nvic.h"
-
 /*===========================================================================*/
-/* Port constants.                                                           */
+/* Port constants (common).                                                  */
 /*===========================================================================*/
 
-#define CORTEX_M0                   0   /**< @brief Cortex-M0 variant.      */
-#define CORTEX_M1                   1   /**< @brief Cortex-M1 variant.      */
-#define CORTEX_M3                   3   /**< @brief Cortex-M3 variant.      */
-#define CORTEX_M4                   4   /**< @brief Cortex-M4 variant.      */
+/* Added to make the header stand-alone when included from asm.*/
+#ifndef FALSE
+#define FALSE       0
+#endif
+#ifndef TRUE
+#define TRUE        (!FALSE)
+#endif
+
+#define CORTEX_M0                       0   /**< @brief Cortex-M0 variant.  */
+#define CORTEX_M1                       1   /**< @brief Cortex-M1 variant.  */
+#define CORTEX_M3                       3   /**< @brief Cortex-M3 variant.  */
+#define CORTEX_M4                       4   /**< @brief Cortex-M4 variant.  */
 
 /* Inclusion of the Cortex-Mx implementation specific parameters.*/
 #include "cmparams.h"
@@ -54,41 +58,31 @@
 /* Cortex model check, only M0 and M3 supported right now.*/
 #if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M3)
 #elif (CORTEX_MODEL == CORTEX_M1) || (CORTEX_MODEL == CORTEX_M4)
-#warning "untested Cortex-M model"
+#error "untested Cortex-M model, manually remove this check in chcore.h"
 #else
 #error "unknown or unsupported Cortex-M model"
 #endif
 
-/*===========================================================================*/
-/* Port statically derived parameters.                                       */
-/*===========================================================================*/
-
 /**
  * @brief   Total priority levels.
  */
-#define CORTEX_PRIORITY_LEVELS      (1 << CORTEX_PRIORITY_BITS)
+#define CORTEX_PRIORITY_LEVELS          (1 << CORTEX_PRIORITY_BITS)
 
 /**
  * @brief   Minimum priority level.
  * @details This minimum priority level is calculated from the number of
  *          priority bits supported by the specific Cortex-Mx implementation.
  */
-#define CORTEX_MINIMUM_PRIORITY     (CORTEX_PRIORITY_LEVELS - 1)
+#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1)
 
 /**
  * @brief   Maximum priority level.
  * @details The maximum allowed priority level is always zero.
  */
-#define CORTEX_MAXIMUM_PRIORITY     0
-
-/**
- * @brief   Disabled value for BASEPRI register.
- * @note    ARMv7-M architecture only.
- */
-#define CORTEX_BASEPRI_DISABLED     0
+#define CORTEX_MAXIMUM_PRIORITY         0
 
 /*===========================================================================*/
-/* Port macros.                                                              */
+/* Port macros (common).                                                     */
 /*===========================================================================*/
 
 /**
@@ -104,14 +98,42 @@
   ((n) << (8 - CORTEX_PRIORITY_BITS))
 
 /*===========================================================================*/
-/* Port configurable parameters.                                             */
+/* Port configurable parameters (common).                                    */
 /*===========================================================================*/
+
+/**
+ * @brief   Stack size for the system idle thread.
+ * @details This size depends on the idle thread implementation, usually
+ *          the idle thread should take no more space than those reserved
+ *          by @p PORT_INT_REQUIRED_STACK.
+ * @note    In this port it is set to 16 because the idle thread does have
+ *          a stack frame when compiling without optimizations. You may
+ *          reduce this value to zero when compiling with optimizations.
+ */
+#ifndef IDLE_THREAD_STACK_SIZE
+#define IDLE_THREAD_STACK_SIZE          16
+#endif
+
+/**
+ * @brief   Per-thread stack overhead for interrupts servicing.
+ * @details This constant is used in the calculation of the correct working
+ *          area size.
+ *          This value can be zero on those architecture where there is a
+ *          separate interrupt stack and the stack space between @p intctx and
+ *          @p extctx is known to be zero.
+ * @note    In this port it is conservatively set to 16 because the function
+ *          @p chSchDoRescheduleI() can have a stack frame, expecially with
+ *          compiler optimizations disabled.
+ */
+#ifndef INT_REQUIRED_STACK
+#define INT_REQUIRED_STACK              16
+#endif
 
 /**
  * @brief   Enables the use of the WFI instruction in the idle thread loop.
  */
 #ifndef CORTEX_ENABLE_WFI_IDLE
-#define CORTEX_ENABLE_WFI_IDLE      FALSE
+#define CORTEX_ENABLE_WFI_IDLE          FALSE
 #endif
 
 /**
@@ -120,59 +142,12 @@
  *          level in the middle of the numeric priorities range.
  */
 #ifndef CORTEX_PRIORITY_SYSTICK
-#define CORTEX_PRIORITY_SYSTICK     (CORTEX_PRIORITY_LEVELS >> 1)
+#define CORTEX_PRIORITY_SYSTICK         (CORTEX_PRIORITY_LEVELS >> 1)
 #else
 /* If it is externally redefined then better perform a validity check on it.*/
 #if !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SYSTICK)
 #error "invalid priority level specified for CORTEX_PRIORITY_SYSTICK"
 #endif
-#endif
-
-/**
- * @brief   SVCALL handler priority.
- * @note    The default SVCALL handler priority is calculated as
- *          @p CORTEX_MAXIMUM_PRIORITY+1, in the ARMv7-M port this reserves
- *          the @p CORTEX_MAXIMUM_PRIORITY priority level as fast interrupts
- *          priority level.
- * @note    The SVCALL vector is only used in the ARMv7-M port, it is available
- *          to user in the ARMv6-M port.
- */
-#ifndef CORTEX_PRIORITY_SVCALL
-#define CORTEX_PRIORITY_SVCALL      (CORTEX_MAXIMUM_PRIORITY + 1)
-#else
-/* If it is externally redefined then better perform a validity check on it.*/
-#if !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SVCALL)
-#error "invalid priority level specified for CORTEX_PRIORITY_SVCALL"
-#endif
-#endif
-
-/**
- * @brief   PENDSV handler priority.
- * @note    The default PENDSV handler priority is set at the
- *          @p CORTEX_MINIMUM_PRIORITY priority level.
- * @note    The PENDSV vector is only used in the ARMv7-M legacy port, it is
- *          available to user in the ARMv6-M and ARMv7-M ports.
- * @note    In the ARMv7-M legacy port this value should be not changed from
- *          the minimum priority level.
- */
-#ifndef CORTEX_PRIORITY_PENDSV
-#define CORTEX_PRIORITY_PENDSV      CORTEX_MINIMUM_PRIORITY
-#else
-/* If it is externally redefined then better perform a validity check on it.*/
-#if !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_PENDSV)
-#error "invalid priority level specified for CORTEX_PRIORITY_PENDSV"
-#endif
-#endif
-
-/**
- * @brief   BASEPRI level within kernel lock.
- * @note    This value must not mask the SVCALL priority level or the
- *          kernel would hard fault.
- * @note    ARMv7-M architecture only.
- */
-#ifndef CORTEX_BASEPRI_KERNEL
-#define CORTEX_BASEPRI_KERNEL                                               \
-  CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL+1)
 #endif
 
 /**
@@ -183,11 +158,15 @@
  * @note    Allowed values are 32 or 64.
  */
 #ifndef CORTEX_STACK_ALIGNMENT
-#define CORTEX_STACK_ALIGNMENT      64
+#define CORTEX_STACK_ALIGNMENT          64
 #endif
 
 /*===========================================================================*/
-/* Port exported info.                                                       */
+/* Port derived parameters (common).                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Port exported info (common).                                              */
 /*===========================================================================*/
 
 /**
@@ -195,61 +174,21 @@
  */
 #define CH_ARCHITECTURE_ARM
 
-#if defined(__DOXYGEN__)
-/**
- * @brief   Macro defining the specific ARM architecture.
- * @note    This macro is for documentation only, the real name changes
- *          depending on the selected architecture, the possible names are:
- *          - CH_ARCHITECTURE_ARM_v6M.
- *          - CH_ARCHITECTURE_ARM_v7M.
- *          .
- */
-#define CH_ARCHITECTURE_ARM_vxm
-
-/**
- * @brief   Name of the implemented architecture.
- * @note    The value is for documentation only, the real value changes
- *          depending on the selected architecture, the possible values are:
- *          - "ARMv6-M".
- *          - "ARMv7-M".
- *          - "ARMv7-ME".
- *          .
- */
-#define CH_ARCHITECTURE_NAME        "ARMvx-M"
-
-/**
- * @brief   Name of the architecture variant (optional).
- * @note    The value is for documentation only, the real value changes
- *          depending on the selected architecture, the possible values are:
- *          - "Cortex-M0"
- *          - "Cortex-M1"
- *          - "Cortex-M3"
- *          - "Cortex-M4"
- *          .
- */
-#define CH_CORE_VARIANT_NAME        "Cortex-Mx"
-
-#elif CORTEX_MODEL == CORTEX_M4
-#define CH_ARCHITECTURE_ARM_v7M
-#define CH_ARCHITECTURE_NAME        "ARMv7-ME"
-#define CH_CORE_VARIANT_NAME        "Cortex-M4"
-#elif CORTEX_MODEL == CORTEX_M3
-#define CH_ARCHITECTURE_ARM_v7M
-#define CH_ARCHITECTURE_NAME        "ARMv7-M"
-#define CH_CORE_VARIANT_NAME        "Cortex-M3"
-#elif CORTEX_MODEL == CORTEX_M1
-#define CH_ARCHITECTURE_ARM_v6M
-#define CH_ARCHITECTURE_NAME        "ARMv6-M"
-#define CH_CORE_VARIANT_NAME        "Cortex-M1"
-#elif CORTEX_MODEL == CORTEX_M0
-#define CH_ARCHITECTURE_ARM_v6M
-#define CH_ARCHITECTURE_NAME        "ARMv6-M"
-#define CH_CORE_VARIANT_NAME        "Cortex-M0"
-#endif
-
 /*===========================================================================*/
 /* Port implementation part (common).                                        */
 /*===========================================================================*/
+
+/* Includes the sub-architecture-specific part.*/
+#if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M1)
+#include "chcore_v6m.h"
+#elif (CORTEX_MODEL == CORTEX_M3) || (CORTEX_MODEL == CORTEX_M4)
+#include "chcore_v7m.h"
+#endif
+
+#if !defined(_FROM_ASM_)
+
+#include <intrinsics.h>
+#include "nvic.h"
 
 /**
  * @brief   Stack and memory alignment enforcement.
@@ -261,11 +200,6 @@ typedef uint32_t stkalign_t;
 #else
 #error "invalid stack alignment selected"
 #endif
-
-/**
- * @brief   Generic ARM register.
- */
-typedef void *regarm_t;
 
 #if defined(__DOXYGEN__)
 /**
@@ -298,6 +232,20 @@ struct context {
 };
 
 /**
+ * @brief   Platform dependent part of the @p chThdCreateI() API.
+ * @details This code usually setup the context switching frame represented
+ *          by an @p intctx structure.
+ */
+#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
+  tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +                  \
+                                     wsize -                                \
+                                     sizeof(struct intctx));                \
+  tp->p_ctx.r13->r4 = (void *)pf;                                           \
+  tp->p_ctx.r13->r5 = (void *)arg;                                          \
+  tp->p_ctx.r13->lr = (void *)_port_thread_start;                           \
+}
+
+/**
  * @brief   Enforces a correct alignment for a stack area size value.
  */
 #define STACK_ALIGN(n) ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
@@ -305,9 +253,9 @@ struct context {
 /**
  * @brief   Computes the thread working area global size.
  */
-#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
-                                   sizeof(struct intctx) +              \
-                                   sizeof(struct extctx) +              \
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                         \
+                                   sizeof(struct intctx) +                  \
+                                   sizeof(struct extctx) +                  \
                                    (n) + (INT_REQUIRED_STACK))
 
 /**
@@ -317,12 +265,7 @@ struct context {
  */
 #define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)]
 
-/* Includes the architecture-specific implementation part.*/
-#if defined(CH_ARCHITECTURE_ARM_v6M)
-#include "chcore_v6m.h"
-#elif defined(CH_ARCHITECTURE_ARM_v7M)
-#include "chcore_v7m.h"
-#endif
+#endif /* _FROM_ASM_ */
 
 #endif /* _CHCORE_H_ */
 

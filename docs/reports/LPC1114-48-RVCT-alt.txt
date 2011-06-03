@@ -114,7 +114,7 @@ Compiler: RealView C/C++ Compiler V4.1.0.561 [Evaluation].
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 78763 threads/S
+--- Score : 78764 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
@@ -126,7 +126,7 @@ Compiler: RealView C/C++ Compiler V4.1.0.561 [Evaluation].
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 251960 ctxswc/S
+--- Score : 251956 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
@@ -138,7 +138,7 @@ Compiler: RealView C/C++ Compiler V4.1.0.561 [Evaluation].
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 599396 wait+signal/S
+--- Score : 599400 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
