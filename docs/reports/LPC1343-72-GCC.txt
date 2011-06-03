@@ -5,7 +5,7 @@ Settings: CLK=72, (3 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.2.4
+*** Kernel:       2.2.5
 *** GCC Version:  4.3.3
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
@@ -126,11 +126,11 @@ Settings: CLK=72, (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 473396 ctxswc/S
+--- Score : 473392 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 653220 bytes/S
+--- Score : 653216 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
@@ -138,7 +138,7 @@ Settings: CLK=72, (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 909508 wait+signal/S
+--- Score : 909504 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
@@ -146,7 +146,7 @@ Settings: CLK=72, (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)
---- System: 360 bytes
+--- System: 368 bytes
 --- Thread: 68 bytes
 --- Timer : 20 bytes
 --- Semaph: 12 bytes

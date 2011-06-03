@@ -361,7 +361,7 @@
               <MiscControls>--cpreproc</MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\boards\EA_LPCXPRESSO_BB_1343;..\..\..\os\ports\RVCT\ARMCMx\LPC13xx</IncludePath>
+              <IncludePath>..\;..\..\..\boards\EA_LPCXPRESSO_BB_1343;..\..\..\os\ports\RVCT\ARMCMx\LPC13xx</IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
