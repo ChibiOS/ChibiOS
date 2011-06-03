@@ -361,7 +361,7 @@
               <MiscControls>--cpreproc</MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\boards\OLIMEX_STM32_P103;..\..\..\os\ports\RVCT\ARMCMx\STM32</IncludePath>
+              <IncludePath>..\;..\..\..\boards\OLIMEX_STM32_P103;..\..\..\os\ports\RVCT\ARMCMx\STM32</IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
