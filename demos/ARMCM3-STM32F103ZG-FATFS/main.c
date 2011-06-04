@@ -51,9 +51,22 @@ static EventSource inserted_event, removed_event;
  *
  * @notapi
  */
-static bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
+bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 
-  return TRUE;
+  return !palReadPad(GPIOF, GPIOF_SD_DETECT);
+}
+
+/**
+ * @brief   Protection detection.
+ * @note    Not supported.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @notapi
+ */
+bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
+
+  return FALSE;
 }
 
 /**

@@ -190,6 +190,7 @@ extern "C" {
                       uint8_t *buf, uint32_t n);
   bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
                        const uint8_t *buf, uint32_t n);
+  bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp);
   bool_t sdc_lld_is_write_protected(SDCDriver *sdcp);
 #ifdef __cplusplus
 }
