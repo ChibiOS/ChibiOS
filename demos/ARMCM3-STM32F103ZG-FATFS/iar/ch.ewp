@@ -1891,6 +1891,9 @@
           <name>$PROJ_DIR$\..\..\..\os\kernel\include\ch.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\os\kernel\include\chbsem.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\os\kernel\include\chcond.h</name>
         </file>
         <file>
@@ -1901,6 +1904,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\kernel\include\chevents.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\kernel\include\chfiles.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\kernel\include\chheap.h</name>

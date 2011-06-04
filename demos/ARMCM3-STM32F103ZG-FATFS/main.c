@@ -22,6 +22,89 @@
 #include "hal.h"
 #include "test.h"
 
+/*===========================================================================*/
+/* Card insertion monitor.                                                   */
+/*===========================================================================*/
+
+#define SDC_POLLING_INTERVAL            10
+#define SDC_POLLING_DELAY               10
+
+/**
+ * @brief   Card monitor timer.
+ */
+static VirtualTimer tmr;
+
+/**
+ * @brief   Debounce counter.
+ */
+static unsigned cnt;
+
+/**
+ * @brief   Card event sources.
+ */
+static EventSource inserted_event, removed_event;
+
+/**
+ * @brief   Inserion monitor function.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @notapi
+ */
+static bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
+
+  return TRUE;
+}
+
+/**
+ * @brief   Inserion monitor timer callback function.
+ *
+ * @param[in] p         pointer to the @p SDCDriver object
+ *
+ * @notapi
+ */
+static void tmrfunc(void *p) {
+  SDCDriver *sdcp = p;
+
+  if (cnt > 0) {
+    if (sdcIsCardInserted(sdcp)) {
+      if (--cnt == 0) {
+        chEvtBroadcastI(&inserted_event);
+      }
+    }
+    else
+      cnt = SDC_POLLING_INTERVAL;
+  }
+  else {
+    if (!sdcIsCardInserted(sdcp)) {
+      cnt = SDC_POLLING_INTERVAL;
+      chEvtBroadcastI(&removed_event);
+    }
+  }
+  chVTSetI(&tmr, MS2ST(SDC_POLLING_DELAY), tmrfunc, sdcp);
+}
+
+/**
+ * @brief   Polling monitor start.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @notapi
+ */
+static void tmr_init(SDCDriver *sdcp) {
+
+  chEvtInit(&inserted_event);
+  chEvtInit(&removed_event);
+  chSysLock();
+  cnt = SDC_POLLING_INTERVAL;
+  chVTSetI(&tmr, MS2ST(SDC_POLLING_DELAY), tmrfunc, sdcp);
+  chSysUnlock();
+}
+
+/*===========================================================================*/
+/* Main and generic code.                                                    */
+/*===========================================================================*/
+
 /*
  * Red LED blinker thread, times are in milliseconds.
  */
@@ -64,6 +147,11 @@ int main(void) {
    * Activates the serial driver 1 using the driver default configuration.
    */
   sdStart(&SD1, NULL);
+
+  /*
+   * Activates the card insertion monitor.
+   */
+  tmr_init(&SDCD1);
 
   /*
    * Creates the blinker thread.

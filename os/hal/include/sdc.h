@@ -174,6 +174,22 @@ typedef enum {
 #define sdcGetDriverState(sdcp)         ((sdcp)->state)
 
 /**
+ * @brief   Returns the card insertion status.
+ * @note    This macro wraps a low level function named
+ *          @p sdc_lld_is_card_inserted(), this function must be
+ *          provided by the application because it is not part of the
+ *          SDC driver.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @return              The card state.
+ * @retval FALSE        card not inserted.
+ * @retval TRUE         card inserted.
+ *
+ * @api
+ */
+#define sdcIsCardInserted(sdcp) (sdc_lld_is_card_inserted(sdcp))
+
+/**
  * @brief   Returns the write protect status.
  * @note    This macro wraps a low level function named
  *          @p sdc_lld_is_write_protected(), this function must be
