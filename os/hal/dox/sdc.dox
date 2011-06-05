@@ -52,9 +52,10 @@
     stop -> stop [label="\nsdcStop()"];
     stop -> ready [label="\nsdcStart()"];
     ready -> stop [label="\nsdcStop()"];
-    ready -> ready [label="\nsdcStart()"];
+    ready -> ready [label="\nsdcStart()\nsdcDisconnect()"];
     ready -> connecting [label="\nsdcConnect()"];
     connecting -> active [label="\nconnection\nsuccessful"];
+    connecting -> active [label="\nsdcConnect()", dir="back"];
     connecting -> ready [label="\nconnection\nfailed"];
     disconnecting -> active [label="\nsdcDisconnect()", dir="back"];
     ready -> disconnecting [label="\ndisconnection\nfinished", dir="back"];
@@ -85,9 +86,10 @@
     stop -> stop [label="\nsdcStop()"];
     stop -> ready [label="\nsdcStart()"];
     ready -> stop [label="\nsdcStop()"];
-    ready -> ready [label="\nsdcStart()"];
+    ready -> ready [label="\nsdcStart()\nsdcDisconnect()"];
     ready -> connecting [label="\nsdcConnect()"];
     connecting -> active [label="\nconnection\nsuccessful"];
+    connecting -> active [label="\nsdcConnect()", dir="back"];
     connecting -> ready [label="\nconnection\nfailed"];
     disconnecting -> active [label="\nsdcDisconnect()", dir="back"];
     ready -> disconnecting [label="\ndisconnection\nfinished", dir="back"];

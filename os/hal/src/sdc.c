@@ -169,7 +169,8 @@ bool_t sdcConnect(SDCDriver *sdcp) {
   chDbgCheck(sdcp != NULL, "sdcConnect");
 
   chSysLock();
-  chDbgAssert(sdcp->state == SDC_READY, "mmcConnect(), #1", "invalid state");
+  chDbgAssert((sdcp->state == SDC_READY) || (sdcp->state == SDC_ACTIVE),
+              "mmcConnect(), #1", "invalid state");
   sdcp->state = SDC_CONNECTING;
   chSysUnlock();
 
@@ -302,6 +303,10 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
   chSysLock();
   chDbgAssert(sdcp->state == SDC_ACTIVE,
               "sdcDisconnect(), #1", "invalid state");
+  if (sdcp->state == SDC_READY) {
+    chSysUnlock();
+    return FALSE;
+  }
   sdcp->state = SDC_DISCONNECTING;
   chSysUnlock();
 
