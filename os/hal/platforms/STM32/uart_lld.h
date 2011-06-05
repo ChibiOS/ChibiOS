@@ -69,21 +69,21 @@
 /**
  * @brief   USART1 interrupt priority level setting.
  */
-#if !defined(STM32_UART_USART1_IRQ_PRIO) || defined(__DOXYGEN__)
+#if !defined(STM32_UART_USART1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART1_IRQ_PRIORITY      12
 #endif
 
 /**
  * @brief   USART2 interrupt priority level setting.
  */
-#if !defined(STM32_UART_USART2_IRQ_PRIO) || defined(__DOXYGEN__)
+#if !defined(STM32_UART_USART2_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART2_IRQ_PRIORITY      12
 #endif
 
 /**
  * @brief   USART3 interrupt priority level setting.
  */
-#if !defined(STM32_UART_USART3_IRQ_PRIO) || defined(__DOXYGEN__)
+#if !defined(STM32_UART_USART3_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART3_IRQ_PRIORITY      12
 #endif
 
@@ -93,7 +93,7 @@
  *          because of the channels ordering the RX channel has always priority
  *          over the TX channel.
  */
-#if !defined(STM32_UART_USART1_DMA_PRIO) || defined(__DOXYGEN__)
+#if !defined(STM32_UART_USART1_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART1_DMA_PRIORITY      0
 #endif
 
@@ -103,7 +103,7 @@
  *          because of the channels ordering the RX channel has always priority
  *          over the TX channel.
  */
-#if !defined(STM32_UART_USART2_DMA_PRIO) || defined(__DOXYGEN__)
+#if !defined(STM32_UART_USART2_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART2_DMA_PRIORITY      0
 #endif
 /**
@@ -112,7 +112,7 @@
  *          because of the channels ordering the RX channel has always priority
  *          over the TX channel.
  */
-#if !defined(STM32_UART_USART3_DMA_PRIO) || defined(__DOXYGEN__)
+#if !defined(STM32_UART_USART3_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART3_DMA_PRIORITY      0
 #endif
 

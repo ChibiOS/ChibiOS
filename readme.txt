@@ -71,6 +71,8 @@
 *****************************************************************************
 
 *** 2.3.4 ***
+- FIX: Fixed wrong macro check in STM32 UART driver (bug 3311999)(backported
+  to 2.2.6).
 - FIX: Fixed wrong macro definition in ARMv6-M architecture files (bug
   3310084).
 - NEW: FatFs demo for the STM32F103ZG using the SDC driver (untested).
