@@ -68,6 +68,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.2.6 ***
+- FIX: Fixed wrong macro check in STM32 UART driver (bug 3311999).
+
 *** 2.2.5 ***
 - FIX: Fixed STM32F107 demo build failure (bug 3294998).
 - NEW: Reorganization of the Cortex-Mx ports in order to reduced code and
