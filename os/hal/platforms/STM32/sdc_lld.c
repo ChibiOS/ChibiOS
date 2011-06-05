@@ -422,7 +422,8 @@ void sdc_lld_init(void) {
 /**
  * @brief   Configures and activates the SDC peripheral.
  *
- * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] sdcp      pointer to the @p SDCDriver object, must be @p NULL,
+ *                      this driver does not require any configuration
  *
  * @notapi
  */

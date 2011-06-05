@@ -73,8 +73,10 @@
 *** 2.3.4 ***
 - FIX: Fixed wrong macro definition in ARMv6-M architecture files (bug
   3310084).
+- NEW: FatFs demo for the STM32F103ZG using the SDC driver (untested).
 - NEW: Now the STM32 SDC driver supports unaligned buffers transparently.
-  Optimized the driver for single block read and write operations.
+  Optimized the driver for single block read and write operations. Optimized
+  the driver state machine.
 - NEW: Finished the reorganization of the Cortex-Mx ports, now also the
   IAR and RVCT ports support the new Compact mode.
 - NEW: Added to the ARMv6-M sub-port an option to use the PendSV exception

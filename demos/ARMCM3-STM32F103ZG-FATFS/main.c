@@ -286,7 +286,7 @@ static const ShellCommand commands[] = {
 };
 
 static const ShellConfig shell_cfg1 = {
-  (BaseChannel *)&SD2,
+  (BaseChannel *)&SD1,
   commands
 };
 
@@ -302,11 +302,11 @@ static void InsertHandler(eventid_t id) {
 
   (void)id;
   /*
-   * On insertion MMC initialization and FS mount.
+   * On insertion SDC initialization and FS mount.
    */
-  if (sdcConnect(&SDCD1)) {
+  if (sdcConnect(&SDCD1))
     return;
-  }
+
   err = f_mount(0, &SDC_FS);
   if (err != FR_OK) {
     sdcDisconnect(&SDCD1);
@@ -321,7 +321,8 @@ static void InsertHandler(eventid_t id) {
 static void RemoveHandler(eventid_t id) {
 
   (void)id;
-  sdcDisconnect(&SDCD1);
+  if (sdcGetDriverState(&SDCD1) == SDC_ACTIVE)
+    sdcDisconnect(&SDCD1);
   fs_ready = FALSE;
 }
 
@@ -352,6 +353,12 @@ static msg_t Thread1(void *arg) {
  * Application entry point.
  */
 int main(void) {
+  static const evhandler_t evhndl[] = {
+    InsertHandler,
+    RemoveHandler
+  };
+  Thread *shelltp = NULL;
+  struct EventListener el0, el1;
 
   /*
    * System initializations.
@@ -364,9 +371,16 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 1 using the driver default configuration.
+   * Activates the serial driver 1 and SDC driver 1 using default
+   * configuration.
    */
   sdStart(&SD1, NULL);
+  sdcStart(&SDCD1, NULL);
+
+  /*
+   * Shell manager initialization.
+   */
+  shellInit();
 
   /*
    * Activates the card insertion monitor.
@@ -380,11 +394,17 @@ int main(void) {
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the button state.
+   * sleeping in a loop and listen for events.
    */
+  chEvtRegister(&inserted_event, &el0, 0);
+  chEvtRegister(&removed_event, &el1, 1);
   while (TRUE) {
-    if (!palReadPad(GPIOG, GPIOG_USER_BUTTON))
-      TestThread(&SD1);
-    chThdSleepMilliseconds(500);
+    if (!shelltp)
+      shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
+    else if (chThdTerminated(shelltp)) {
+      chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
+      shelltp = NULL;           /* Triggers spawning of a new shell.        */
+    }
+    chEvtDispatch(evhndl, chEvtWaitOne(ALL_EVENTS));
   }
 }

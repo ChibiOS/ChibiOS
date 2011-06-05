@@ -113,13 +113,15 @@ void sdcObjectInit(SDCDriver *sdcp) {
  * @brief   Configures and activates the SDC peripheral.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
- * @param[in] config    pointer to the @p SDCConfig object
+ * @param[in] config    pointer to the @p SDCConfig object, can be @p NULL if
+ *                      the driver supports a default configuration or
+ *                      requires no configuration
  *
  * @api
  */
 void sdcStart(SDCDriver *sdcp, const SDCConfig *config) {
 
-  chDbgCheck((sdcp != NULL) && (config != NULL), "sdcStart");
+  chDbgCheck(sdcp != NULL, "sdcStart");
 
   chSysLock();
   chDbgAssert((sdcp->state == SDC_STOP) || (sdcp->state == SDC_READY),
