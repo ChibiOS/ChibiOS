@@ -435,8 +435,6 @@
 #define THREAD_EXT_FIELDS                                                   \
 struct {                                                                    \
   /* Add threads custom fields here.*/                                      \
-  /* Space for the LWIP sys_timeouts structure.*/                           \
-  void                  *p_lwipspace[1];                                    \
 };
 #endif
 
@@ -450,7 +448,6 @@ struct {                                                                    \
 #if !defined(THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)
 #define THREAD_EXT_INIT_HOOK(tp) {                                          \
   /* Add threads initialization code here.*/                                \
-  (tp)->p_lwipspace[0] = NULL;                                              \
 }
 #endif
 

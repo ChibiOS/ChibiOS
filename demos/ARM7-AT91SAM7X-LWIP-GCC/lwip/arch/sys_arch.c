@@ -52,6 +52,8 @@
  *
  */
 
+// see http://lwip.wikia.com/wiki/Porting_for_an_OS for instructions
+
 #include "ch.h"
 
 #include "lwip/opt.h"
@@ -66,37 +68,39 @@ void sys_init(void) {
 
 }
 
-sys_sem_t sys_sem_new(u8_t count) {
+err_t sys_sem_new(sys_sem_t *sem, u8_t count) {
 
-  sys_sem_t sem = chHeapAlloc(NULL, sizeof(Semaphore));
-  if (sem == 0) {
+  *sem = chHeapAlloc(NULL, sizeof(Semaphore));
+  if (*sem == 0) {
     SYS_STATS_INC(sem.err);
+    return ERR_MEM;
   }
   else {
-    chSemInit(sem, (cnt_t)count);
+    chSemInit(*sem, (cnt_t)count);
     SYS_STATS_INC(sem.used);
+    return ERR_OK;
   }
-  return sem;
 }
 
-void sys_sem_free(sys_sem_t sem) {
+void sys_sem_free(sys_sem_t *sem) {
 
-  chHeapFree(sem);
+  chHeapFree(*sem);
+  *sem = SYS_SEM_NULL;
   SYS_STATS_DEC(sem.used);
 }
 
-void sys_sem_signal(sys_sem_t sem) {
+void sys_sem_signal(sys_sem_t *sem) {
 
-  chSemSignal(sem);
+  chSemSignal(*sem);
 }
 
-u32_t sys_arch_sem_wait(sys_sem_t sem, u32_t timeout) {
+u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout) {
   systime_t time, tmo;
 
   chSysLock();
   tmo = timeout > 0 ? (systime_t)timeout : TIME_INFINITE;
   time = chTimeNow();
-  if (chSemWaitTimeoutS(sem, tmo) != RDY_OK)
+  if (chSemWaitTimeoutS(*sem, tmo) != RDY_OK)
     time = SYS_ARCH_TIMEOUT;
   else
     time = chTimeNow() - time;
@@ -104,44 +108,65 @@ u32_t sys_arch_sem_wait(sys_sem_t sem, u32_t timeout) {
   return time;
 }
 
-sys_mbox_t sys_mbox_new(int size) {
-  
-  sys_mbox_t mbox = chHeapAlloc(NULL, sizeof(Mailbox) + sizeof(msg_t) * size);
-  if (mbox == 0) {
-    SYS_STATS_INC(mbox.err);
-  }
-  else {
-    chMBInit(mbox, (void *)(((uint8_t *)mbox) + sizeof(Mailbox)), size);
-    SYS_STATS_INC(mbox.used);
-  }
-  return mbox;
+int sys_sem_valid(sys_sem_t *sem) {
+  return *sem != SYS_SEM_NULL;
 }
 
-void sys_mbox_free(sys_mbox_t mbox) {
+// typically called within lwIP after freeing a semaphore
+// to make sure the pointer is not left pointing to invalid data
+void sys_sem_set_invalid(sys_sem_t *sem) {
+  *sem = SYS_SEM_NULL;
+}
 
-  chHeapFree(mbox);
+err_t sys_mbox_new(sys_mbox_t *mbox, int size) {
+  
+  *mbox = chHeapAlloc(NULL, sizeof(Mailbox) + sizeof(msg_t) * size);
+  if (*mbox == 0) {
+    SYS_STATS_INC(mbox.err);
+    return ERR_MEM;
+  }
+  else {
+    chMBInit(*mbox, (void *)(((uint8_t *)*mbox) + sizeof(Mailbox)), size);
+    SYS_STATS_INC(mbox.used);
+    return ERR_OK;
+  }
+}
+
+void sys_mbox_free(sys_mbox_t *mbox) {
+
+  if (chMBGetUsedCountI(*mbox) != 0) {
+    // If there are messages still present in the mailbox when the mailbox
+    // is deallocated, it is an indication of a programming error in lwIP
+    // and the developer should be notified.
+    SYS_STATS_INC(mbox.err);
+    chMBReset(*mbox);
+  }
+  chHeapFree(*mbox);
+  *mbox = SYS_MBOX_NULL;
   SYS_STATS_DEC(mbox.used);
 }
 
-void sys_mbox_post(sys_mbox_t mbox, void *msg) {
+void sys_mbox_post(sys_mbox_t *mbox, void *msg) {
 
-  chMBPost(mbox, (msg_t)msg, TIME_INFINITE);
+  chMBPost(*mbox, (msg_t)msg, TIME_INFINITE);
 }
 
-err_t sys_mbox_trypost(sys_mbox_t mbox, void *msg) {
+err_t sys_mbox_trypost(sys_mbox_t *mbox, void *msg) {
 
-  if (chMBPost(mbox, (msg_t)msg, TIME_IMMEDIATE) == RDY_TIMEOUT)
+  if (chMBPost(*mbox, (msg_t)msg, TIME_IMMEDIATE) == RDY_TIMEOUT) {
+    SYS_STATS_INC(mbox.err);
     return ERR_MEM;
+  }
   return ERR_OK;
 }
 
-u32_t sys_arch_mbox_fetch(sys_mbox_t mbox, void **msg, u32_t timeout) {
+u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout) {
   systime_t time, tmo;
 
   chSysLock();
   tmo = timeout > 0 ? (systime_t)timeout : TIME_INFINITE;
   time = chTimeNow();
-  if (chMBFetchS(mbox, (msg_t *)msg, tmo) != RDY_OK)
+  if (chMBFetchS(*mbox, (msg_t *)msg, tmo) != RDY_OK)
     time = SYS_ARCH_TIMEOUT;
   else
     time = chTimeNow() - time;
@@ -149,19 +174,24 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t mbox, void **msg, u32_t timeout) {
   return time;
 }
 
-u32_t sys_arch_mbox_tryfetch(sys_mbox_t mbox, void **msg) {
+u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg) {
 
-  if (chMBFetch(mbox, (msg_t *)msg, TIME_IMMEDIATE) == RDY_TIMEOUT)
+  if (chMBFetch(*mbox, (msg_t *)msg, TIME_IMMEDIATE) == RDY_TIMEOUT)
     return SYS_MBOX_EMPTY;
   return 0;
 }
 
-struct sys_timeouts *sys_arch_timeouts(void) {
-
-  return (struct sys_timeouts *)currp->p_lwipspace;
+int sys_mbox_valid(sys_mbox_t *mbox) {
+  return *mbox != SYS_MBOX_NULL;
 }
 
-sys_thread_t sys_thread_new(char *name, void (* thread)(void *arg),
+// typically called within lwIP after freeing an mbox
+// to make sure the pointer is not left pointing to invalid data
+void sys_mbox_set_invalid(sys_mbox_t *mbox) {
+  *mbox = SYS_MBOX_NULL;
+}
+
+sys_thread_t sys_thread_new(const char *name, lwip_thread_fn thread,
                             void *arg, int stacksize, int prio) {
   (void)name;
   size_t wsz = THD_WA_SIZE(stacksize);

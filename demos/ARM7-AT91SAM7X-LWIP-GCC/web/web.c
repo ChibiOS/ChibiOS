@@ -47,12 +47,13 @@ static void http_server_serve(struct netconn *conn) {
   struct netbuf *inbuf;
   char *buf;
   u16_t buflen;
+  err_t err;
 
   /* Read the data from the port, blocking if nothing yet there.
    We assume the request (the part we care about) is in one netbuf */
-  inbuf = netconn_recv(conn);
+  err = netconn_recv(conn, &inbuf);
 
-  if (netconn_err(conn) == ERR_OK) {
+  if (err == ERR_OK) {
     netbuf_data(inbuf, (void **)&buf, &buflen);
 
     /* Is this an HTTP GET command? (only check the first 5 chars, since
@@ -92,6 +93,7 @@ WORKING_AREA(wa_http_server, WEB_THREAD_STACK_SIZE);
  */
 msg_t http_server(void *p) {
   struct netconn *conn, *newconn;
+  err_t err;
 
   (void)p;
 
@@ -109,7 +111,9 @@ msg_t http_server(void *p) {
   chThdSetPriority(WEB_THREAD_PRIORITY);
 
   while(1) {
-    newconn = netconn_accept(conn);
+    err = netconn_accept(conn, &newconn);
+    if (err != ERR_OK)
+      continue;
     http_server_serve(newconn);
     netconn_delete(newconn);
   }
