@@ -60,6 +60,7 @@ static EventSource inserted_event, removed_event;
  */
 bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 
+  (void)sdcp;
   return !palReadPad(GPIOF, GPIOF_SD_DETECT);
 }
 
@@ -73,6 +74,7 @@ bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
  */
 bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
 
+  (void)sdcp;
   return FALSE;
 }
 
@@ -155,14 +157,14 @@ static FRESULT scan_files(char *path)
         continue;
       fn = fno.fname;
       if (fno.fattrib & AM_DIR) {
-        sprintf(&path[i], "/%s", fn);
+        siprintf(&path[i], "/%s", fn);
         res = scan_files(path);
         if (res != FR_OK)
           break;
         path[i] = 0;
       }
       else {
-//        iprintf("%s/%s\r\n", path, fn);
+        iprintf("%s/%s\r\n", path, fn);
       }
     }
   }
@@ -187,11 +189,11 @@ static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
     return;
   }
   n = chHeapStatus(NULL, &size);
-  sprintf(buf, "core free memory : %u bytes", chCoreStatus());
+  siprintf(buf, "core free memory : %u bytes", chCoreStatus());
   shellPrintLine(chp, buf);
-  sprintf(buf, "heap fragments   : %u", n);
+  siprintf(buf, "heap fragments   : %u", n);
   shellPrintLine(chp, buf);
-  sprintf(buf, "heap free total  : %u bytes", size);
+  siprintf(buf, "heap free total  : %u bytes", size);
   shellPrintLine(chp, buf);
 }
 
@@ -223,10 +225,10 @@ static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
   shellPrintLine(chp, "    addr    stack prio refs     state time");
   tp = chRegFirstThread();
   do {
-    sprintf(buf, "%8lx %8lx %4u %4i %9s %u",
-            (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
-            (unsigned int)tp->p_prio, tp->p_refs - 1,
-            states[tp->p_state], (unsigned int)tp->p_time);
+    siprintf(buf, "%8lx %8lx %4u %4i %9s %u",
+             (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
+             (unsigned int)tp->p_prio, tp->p_refs - 1,
+             states[tp->p_state], (unsigned int)tp->p_time);
     shellPrintLine(chp, buf);
     tp = chRegNextThread(tp);
   } while (tp != NULL);
@@ -268,10 +270,10 @@ static void cmd_tree(BaseChannel *chp, int argc, char *argv[]) {
     shellPrintLine(chp, "FS: f_getfree() failed");
     return;
   }
-  sprintf((void *)fbuff,
-          "FS: %lu free clusters, %lu sectors per cluster, %lu bytes free",
-          clusters, (uint32_t)SDC_FS.csize,
-          clusters * (uint32_t)SDC_FS.csize * (uint32_t)SDC_BLOCK_SIZE);
+  siprintf((void *)fbuff,
+           "FS: %lu free clusters, %lu sectors per cluster, %lu bytes free",
+           clusters, (uint32_t)SDC_FS.csize,
+           clusters * (uint32_t)SDC_FS.csize * (uint32_t)SDC_BLOCK_SIZE);
   shellPrintLine(chp, (void *)fbuff);
   fbuff[0] = 0;
   scan_files((char *)fbuff);
@@ -295,7 +297,7 @@ static const ShellConfig shell_cfg1 = {
 /*===========================================================================*/
 
 /*
- * MMC card insertion event.
+ * SD card insertion event.
  */
 static void InsertHandler(eventid_t id) {
   FRESULT err;
@@ -316,7 +318,7 @@ static void InsertHandler(eventid_t id) {
 }
 
 /*
- * MMC card removal event.
+ * SD card removal event.
  */
 static void RemoveHandler(eventid_t id) {
 

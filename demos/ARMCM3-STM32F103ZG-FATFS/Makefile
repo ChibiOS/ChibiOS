@@ -73,8 +73,10 @@ CSRC = $(PORTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
+       $(FATFSSRC) \
        $(CHIBIOS)/os/various/evtimer.c \
        $(CHIBIOS)/os/various/syscalls.c \
+       $(CHIBIOS)/os/various/shell.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -106,6 +108,7 @@ ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
+         $(FATFSINC) \
          $(CHIBIOS)/os/various
 
 #
@@ -154,7 +157,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all default C defines here, like -D_DEBUG=1
-DDEFS =
+DDEFS = -DSTDOUT_SD=SD1 -DSTDIN_SD=SD1
 
 # List all default ASM defines here, like -D_DEBUG=1
 DADEFS =
