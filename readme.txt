@@ -75,7 +75,7 @@
   to 2.2.6).
 - FIX: Fixed wrong macro definition in ARMv6-M architecture files (bug
   3310084).
-- NEW: FatFs demo for the STM32F103ZG using the SDC driver (untested).
+- NEW: FatFs demo for the STM32F103ZG using the SDC driver.
 - NEW: Now the STM32 SDC driver supports unaligned buffers transparently.
   Optimized the driver for single block read and write operations. Optimized
   the driver state machine.
