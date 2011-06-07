@@ -5,47 +5,45 @@ X = In progress, some work done.
 ? = Not sure if worth the effort or useful at all.
 N = Decided against.
 
-Within 2.3.x (hopefully)
-* Add an USB abstract device driver class.
-* USB driver implementation for STM32F102/STM32F103.
-* Add a Serial over USB generic device driver implementing a USB Communication
-  Device Class and offering a Serial-like interface to the applications.
-* Add I-class APIs for mailboxes.
-* Modify chEvtBroadcast() to accept a flags mask as parameter.
-* Add a "transmission end" event to the serial device driver model.
-  X Implement the "transmission end" serial driver event on those platforms
-    supporting the feature.
-* Swap TIME_IMMEDIATE and TIME_INFINITE values.
-* Improvements to the message passing mechanism in order to allow "delayed,
-  out of order, responses".
-* New device driver models: GPT, ICU.
-X GPT implementation and long duration "IRQ storm" stress test applications
-  for all the supported critical platforms.
-X Introduce compiler-info macros to the port layer, improve the test reports
-  with the compiler info.
-- Add UART4 support to the STM32 UART driver (CL line only, HD has a nasty
-  shared interrupt).
-- Add ADC3 support to the STM32 ADC driver.
-? Make thread functions return void and add a CH_THREAD macro for threads
-  declaration in order to hide compiler-specific optimizations for thread
-  functions.
+Current Pipeline (2.3.x):
+X lwIP 1.4.0 integration and test.
+- STM32L support.
+- STM32L-Discovery demo and article.
+- FatFs 0.8x integration.
+- FatFs wrapper.
+- STM32 USB support for double buffering.
+- Add a CH_THREAD macro for threads declaration in order to hide
+  compiler-specific optimizations for thread functions. All demos will have
+  to be updated.
+- LPC17xx support.
+X Implement the "transmission end" serial driver event on those platforms
+  supporting the feature, so far only done in STM32 driver.
+- Improved stack overflow checking, support main() thread, add guard pages
+  support.
 - Test suite overhaul, the API should be more generic in order to be used
   with different subsystems and not just the kernel.
+X File System infrastructure.
+  - Official FatFs wrapper using the new infrastructure, dedicated test suite.
+X I2C device driver class support and at least one implementation.
+- Kernel-only demos for users not interested in HAL.
+- Reduce number of demos globally, add demos to a repository or on web site.
+  Required in order to reduce support effort.
+
+Within 2.x.x
+? Evaluate if change thread functions to return void is worthwhile. 
+- New device driver models: Clock, Systick, RTC, WDG, DAC, Power Monitor.
+- Add UART4 support to the STM32 UART driver (CL line only, HD has a nasty
+  shared interrupt).
+- STM32 OTG USB cell support for CL devices.
+- Add ADC3 support to the STM32 ADC driver.
+- Shared DMA channels support in the STM8L HAL.
 - Device drivers for STM8/STM8L (ADC, PWM, bring them on par with STM32).
 - Device drivers for LPC1xxx (ADC, PWM, bring them on par with STM32).
 - Implement USB Mass Storage Class support and demo using the MMC_SPI driver
   as back-end.
-X File System infrastructure.
-  - Official FatFs wrapper using the new infrastructure, dedicated test suite.
-X Transactional flash file system implementation.
-X I2C device driver class support and at least one implementation.
-X Shared DMA channels support in the STM32/STM8L HALs.
-? RAM ISR vectors support in the STM32 HAL.
-- New device driver models: Clock, Systick, RTC, WDG, DAC, Power Monitor.
-
-Later but within 2.x.x
 - Batch testing of the ARM7/ARMCMx port using OpenOCD, with reports.
 - Debug-related features and tools.
+X Transactional flash file system implementation.
 ? Add a *very simple* ADC API for single one shot sampling (implement it as
   an injected conversion on the STM32).
 - Improved Makefile system.
