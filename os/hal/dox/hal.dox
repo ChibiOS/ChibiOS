@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -19,16 +20,17 @@
 
 /**
  * @defgroup HAL HAL Driver
- * @brief Hardware Abstraction Layer.
- * @details The HAL driver performs the system initialization and includes
- * the platform support code shared by the other drivers. This driver does
- * contain any API function except for a general initialization function
- * @p halInit() that must be invoked before any HAL service can be used,
- * usually the HAL initialization should be performed immediately before the
- * kernel initialization.<br>
- * Some HAL driver implementations also offer a custom early clock
- * setum function that can be invoked before the C runtime initialization
- * in order to accellerate the startup time.
+ * @brief   Hardware Abstraction Layer.
+ * @details The HAL (Hardware Abstraction Layer) driver performs the system
+ *          initialization and includes the platform support code shared by
+ *          the other drivers. This driver does contain any API function
+ *          except for a general initialization function @p halInit() that
+ *          must be invoked before any HAL service can be used, usually the
+ *          HAL initialization should be performed immediately before the
+ *          kernel initialization.<br>
+ *          Some HAL driver implementations also offer a custom early clock
+ *          setup function that can be invoked before the C runtime
+ *          initialization in order to accelerate the startup time.
  *
  * @ingroup IO
  */

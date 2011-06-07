@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -205,8 +206,7 @@ Thread *chThdCreateStatic(void *wsp, size_t size,
 tprio_t chThdSetPriority(tprio_t newprio) {
   tprio_t oldprio;
 
-  chDbgCheck((newprio >= LOWPRIO) && (newprio <= HIGHPRIO),
-              "chThdSetPriority");
+  chDbgCheck(newprio <= HIGHPRIO, "chThdSetPriority");
 
   chSysLock();
 #if CH_USE_MUTEXES
@@ -273,16 +273,14 @@ void chThdTerminate(Thread *tp) {
  *                      handled as follow:
  *                      - @a TIME_INFINITE the thread enters an infinite sleep
  *                        state.
- *                      - @a TIME_IMMEDIATE this value is accepted but
- *                        interpreted as a normal time specification not as an
- *                        immediate timeout specification.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
  *                      .
  *
  * @api
  */
 void chThdSleep(systime_t time) {
 
-  chDbgCheck(time != TIME_INFINITE, "chThdSleep");
+  chDbgCheck(time != TIME_IMMEDIATE, "chThdSleep");
 
   chSysLock();
   chThdSleepS(time);

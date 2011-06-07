@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -71,10 +72,10 @@ void macInit(void) {
  */
 void macObjectInit(MACDriver *macp) {
 
-  chSemInit(&macp->md_tdsem, 0);
-  chSemInit(&macp->md_rdsem, 0);
+  chSemInit(&macp->tdsem, 0);
+  chSemInit(&macp->rdsem, 0);
 #if CH_USE_EVENTS
-  chEvtInit(&macp->md_rdevent);
+  chEvtInit(&macp->rdevent);
 #endif
 }
 
@@ -123,8 +124,10 @@ msg_t macWaitTransmitDescriptor(MACDriver *macp,
          (time > 0)) {
     chSysLock();
     systime_t now = chTimeNow();
-    if ((msg = chSemWaitTimeoutS(&macp->md_tdsem, time)) == RDY_TIMEOUT)
+    if ((msg = chSemWaitTimeoutS(&macp->tdsem, time)) == RDY_TIMEOUT) {
+      chSysUnlock();
       break;
+    }
     if (time != TIME_INFINITE)
       time -= (chTimeNow() - now);
     chSysUnlock();
@@ -173,8 +176,10 @@ msg_t macWaitReceiveDescriptor(MACDriver *macp,
          (time > 0)) {
     chSysLock();
     systime_t now = chTimeNow();
-    if ((msg = chSemWaitTimeoutS(&macp->md_rdsem, time)) == RDY_TIMEOUT)
+    if ((msg = chSemWaitTimeoutS(&macp->rdsem, time)) == RDY_TIMEOUT) {
+      chSysUnlock();
       break;
+    }
     if (time != TIME_INFINITE)
       time -= (chTimeNow() - now);
     chSysUnlock();

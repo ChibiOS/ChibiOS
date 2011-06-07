@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -44,7 +45,7 @@ ReadyList rlist;
  *
  * @notapi
  */
-void scheduler_init(void) {
+void _scheduler_init(void) {
 
   queue_init(&rlist.r_queue);
   rlist.r_prio = NOPRIO;
@@ -129,11 +130,15 @@ static void wakeup(void *p) {
     /* Handling the special case where the thread has been made ready by
        another thread with higher priority.*/
     return;
-#if CH_USE_SEMAPHORES || (CH_USE_CONDVARS && CH_USE_CONDVARS_TIMEOUT)
+#if CH_USE_SEMAPHORES || CH_USE_QUEUES ||                                   \
+    (CH_USE_CONDVARS && CH_USE_CONDVARS_TIMEOUT)
 #if CH_USE_SEMAPHORES
   case THD_STATE_WTSEM:
     chSemFastSignalI((Semaphore *)tp->p_u.wtobjp);
     /* Falls into, intentional. */
+#endif
+#if CH_USE_QUEUES
+  case THD_STATE_WTQUEUE:
 #endif
 #if CH_USE_CONDVARS && CH_USE_CONDVARS_TIMEOUT
   case THD_STATE_WTCOND:
@@ -160,9 +165,7 @@ static void wakeup(void *p) {
  *                      - @a TIME_INFINITE the thread enters an infinite sleep
  *                        state, this is equivalent to invoking
  *                        @p chSchGoSleepS() but, of course, less efficient.
- *                      - @a TIME_IMMEDIATE this value is accepted but
- *                        interpreted as a normal time specification not as an
- *                        immediate timeout specification.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
  *                      .
  * @return              The wakeup message.
  * @retval RDY_TIMEOUT if a timeout occurs.

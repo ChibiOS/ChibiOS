@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -80,7 +81,7 @@ void can_lld_start(CANDriver *canp) {
 void can_lld_stop(CANDriver *canp) {
 
   /* If in ready state then disables the CAN peripheral.*/
-  if (canp->cd_state == CAN_READY) {
+  if (canp->state == CAN_READY) {
 
   }
 }

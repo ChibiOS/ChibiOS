@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -122,15 +123,16 @@ static const ShellConfig shell_cfg2 = {
 /*
  * Console print server done using synchronous messages. This makes the access
  * to the C printf() thread safe and the print operation atomic among threads.
- * In this example the message is the zero termitated string itself.
+ * In this example the message is the zero terminated string itself.
  */
 static msg_t console_thread(void *arg) {
 
   (void)arg;
   while (!chThdShouldTerminate()) {
-    puts((char *)chMsgWait());
+    Thread *tp = chMsgWait();
+    puts((char *)chMsgGet(tp));
     fflush(stdout);
-    chMsgRelease(RDY_OK);
+    chMsgRelease(tp, RDY_OK);
   }
   return 0;
 }

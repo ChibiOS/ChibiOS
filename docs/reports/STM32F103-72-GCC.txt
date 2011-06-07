@@ -1,14 +1,15 @@
 ***************************************************************************
-Options:  -O2 -fomit-frame-pointer -mabi=apcs-gnu -falign-functions=16
+Options:  -O2 -fomit-frame-pointer -falign-functions=16
 Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 ***************************************************************************
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.3.0unstable
-*** GCC Version:  4.5.2
+*** Kernel:       2.3.4unstable
+*** Compiler:     GCC 4.5.2
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
+*** Port Info:    Advanced kernel mode
 *** Platform:     STM32 Performance Line Medium Density
 *** Test Board:   Olimex STM32-P103
 
@@ -98,15 +99,15 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 248573 msgs/S, 497146 ctxswc/S
+--- Score : 248569 msgs/S, 497138 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 201227 msgs/S, 402454 ctxswc/S
+--- Score : 198998 msgs/S, 397996 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 201227 msgs/S, 402454 ctxswc/S
+--- Score : 198998 msgs/S, 397996 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
@@ -126,11 +127,11 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 478120 ctxswc/S
+--- Score : 478124 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 465772 bytes/S
+--- Score : 592560 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
@@ -146,7 +147,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)
---- System: 360 bytes
+--- System: 368 bytes
 --- Thread: 68 bytes
 --- Timer : 20 bytes
 --- Semaph: 12 bytes

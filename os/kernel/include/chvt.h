@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -120,7 +121,7 @@ extern VTList vtlist;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void vt_init(void);
+  void _vt_init(void);
   void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par);
   void chVTResetI(VirtualTimer *vtp);
   bool_t chTimeIsWithin(systime_t start, systime_t end);

@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -43,7 +44,7 @@
  */
 
 /**
- * @defgroup LPC214x_PAL LPC214x FIO Support
+ * @defgroup LPC214x_PAL LPC214x PAL Support
  * @details The LPC214x PAL driver uses the FIO peripherals.
  *
  * @section lpc214x_pal_1 Supported HW resources
@@ -74,26 +75,7 @@
  */
 
 /**
- * @defgroup LPC214x_SPI LPC214x SSP Support
- * @details The SPI driver supports the LPC214x SSP peripheral in an interrupt
- *          driven implementation.
- * @note    Being the SPI a fast peripheral, much care must be taken to
- *          not saturate the CPU bandwidth with an excessive IRQ rate. The
- *          maximum transfer bit rate is likely limited by the IRQ
- *          handling.
- *
- * @section lpc214x_spi_1 Supported HW resources
- * - SSP (SPI0).
- * .
- * @section lpc214x_spi_2 LPC214x SPI driver implementation features
- * - Clock stop for reduced power usage when the driver is in stop state.
- * - Programmable interrupt priority level.
- * .
- * @ingroup LPC214x
- */
-
-/**
- * @defgroup LPC214x_SERIAL LPC214x UART Support (buffered)
+ * @defgroup LPC214x_SERIAL LPC214x Serial Support
  * @details The LPC214x Serial driver uses the UART peripherals in a
  *          buffered, interrupt driven, implementation. The serial driver
  *          also takes advantage of the LPC214x UARTs deep hardware buffers.
@@ -108,6 +90,25 @@
  * - Fully interrupt driven.
  * - Programmable interrupt priority levels for each UART.
  * - Takes advantage of the input and output FIFOs.
+ * .
+ * @ingroup LPC214x
+ */
+
+/**
+ * @defgroup LPC214x_SPI LPC214x SPI Support
+ * @details The SPI driver supports the LPC214x SSP peripheral in an interrupt
+ *          driven implementation.
+ * @note    Being the SPI a fast peripheral, much care must be taken to
+ *          not saturate the CPU bandwidth with an excessive IRQ rate. The
+ *          maximum transfer bit rate is likely limited by the IRQ
+ *          handling.
+ *
+ * @section lpc214x_spi_1 Supported HW resources
+ * - SSP (SPI0).
+ * .
+ * @section lpc214x_spi_2 LPC214x SPI driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Programmable interrupt priority level.
  * .
  * @ingroup LPC214x
  */

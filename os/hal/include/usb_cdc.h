@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -17,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
+/*-*
  * @file    usb_cdc.h
  * @brief   USB Communication Device Class support header.
  *
@@ -27,6 +28,10 @@
 
 #ifndef _USB_CDC_H_
 #define _USB_CDC_H_
+
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
 
 #define CDC_SEND_ENCAPSULATED_COMMAND   0x00
 #define CDC_GET_ENCAPSULATED_RESPONSE   0x01
@@ -48,6 +53,49 @@
 #define CDC_SET_OPERATION_PARMS         0x32
 #define CDC_GET_OPERATION_PARMS         0x33
 
+#define LC_STOP_1                       0
+#define LC_STOP_1P5                     1
+#define LC_STOP_2                       2
+
+#define LC_PARITY_NONE                  0
+#define LC_PARITY_ODD                   1
+#define LC_PARITY_EVEN                  2
+#define LC_PARITY_MARK                  3
+#define LC_PARITY_SPACE                 4
+
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/**
+ * @brief   Endpoint number for bulk IN.
+ */
+#if !defined(DATA_REQUEST_EP) || defined(__DOXYGEN__)
+#define DATA_REQUEST_EP         1
+#endif
+
+/**
+ * @brief   Endpoint number for interrupt IN.
+ */
+#if !defined(INTERRUPT_REQUEST_EP) || defined(__DOXYGEN__)
+#define INTERRUPT_REQUEST_EP    2
+#endif
+
+/**
+ * @brief   Endpoint number for bulk OUT.
+ */
+#if !defined(DATA_AVAILABLE_EP) || defined(__DOXYGEN__)
+#define DATA_AVAILABLE_EP       3
+#endif
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
+
 /**
  * @brief   Type of Line Coding structure.
  */
@@ -58,15 +106,13 @@ typedef struct {
   uint8_t                       bDataBits;
 } cdc_linecoding_t;
 
-#define LC_STOP_1                       0
-#define LC_STOP_1P5                     1
-#define LC_STOP_2                       2
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
 
-#define LC_PARITY_NONE                  0
-#define LC_PARITY_ODD                   1
-#define LC_PARITY_EVEN                  2
-#define LC_PARITY_MARK                  3
-#define LC_PARITY_SPACE                 4
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #endif /* _USB_CDC_H_ */
 

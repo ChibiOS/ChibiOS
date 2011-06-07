@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -48,13 +49,13 @@
  * @note    Not all functions accept @p TIME_IMMEDIATE as timeout parameter,
  *          see the specific function documentation.
  */
-#define TIME_IMMEDIATE  ((systime_t)-1)
+#define TIME_IMMEDIATE  ((systime_t)0)
 
 /**
  * @brief   Infinite time specification for all the syscalls with a timeout
  *          specification.
  */
-#define TIME_INFINITE   ((systime_t)0)
+#define TIME_INFINITE   ((systime_t)-1)
 
 /**
  * @brief   Returns the priority of the first thread on the given ready list.
@@ -83,10 +84,8 @@ typedef struct {
 #if CH_TIME_QUANTUM > 0
   cnt_t                 r_preempt;  /**< @brief Round robin counter.        */
 #endif
-#ifndef CH_CURRP_REGISTER_CACHE
   Thread                *r_current; /**< @brief The currently running
                                                 thread.                     */
-#endif
 } ReadyList;
 #endif /* !defined(PORT_OPTIMIZED_READYLIST_STRUCT) */
 
@@ -102,11 +101,7 @@ extern ReadyList rlist;
  *          (currp = something), use @p setcurrp() instead.
  */
 #if !defined(PORT_OPTIMIZED_CURRP) || defined(__DOXYGEN__)
-#if !defined(CH_CURRP_REGISTER_CACHE) || defined(__DOXYGEN__)
 #define currp rlist.r_current
-#else /* defined(CH_CURRP_REGISTER_CACHE) */
-register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
-#endif /* defined(CH_CURRP_REGISTER_CACHE) */
 #endif /* !defined(PORT_OPTIMIZED_CURRP) */
 
 /**
@@ -126,7 +121,7 @@ register Thread *currp asm(CH_CURRP_REGISTER_CACHE);
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void scheduler_init(void);
+  void _scheduler_init(void);
 #if !defined(PORT_OPTIMIZED_READYI)
   Thread *chSchReadyI(Thread *tp);
 #endif

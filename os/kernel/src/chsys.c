@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -34,11 +35,12 @@
 
 #include "ch.h"
 
+#if !CH_NO_IDLE_THREAD || defined(__DOXYGEN__)
 /**
  * @brief   Idle thread working area.
- * @see     IDLE_THREAD_STACK_SIZE
+ * @see     PORT_IDLE_THREAD_STACK_SIZE
  */
-WORKING_AREA(_idle_thread_wa, IDLE_THREAD_STACK_SIZE);
+WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
 
 /**
  * @brief   This function implements the idle thread infinite loop.
@@ -58,6 +60,7 @@ void _idle_thread(void *p) {
     IDLE_LOOP_HOOK();
   }
 }
+#endif /* CH_NO_IDLE_THREAD */
 
 /**
  * @brief   ChibiOS/RT initialization.
@@ -75,16 +78,16 @@ void chSysInit(void) {
   static Thread mainthread;
 
   port_init();
-  scheduler_init();
-  vt_init();
+  _scheduler_init();
+  _vt_init();
 #if CH_USE_MEMCORE
-  core_init();
+  _core_init();
 #endif
 #if CH_USE_HEAP
-  heap_init();
+  _heap_init();
 #endif
 #if CH_DBG_ENABLE_TRACE
-  trace_init();
+  _trace_init();
 #endif
 
   /* Now this instructions flow becomes the main thread.*/
@@ -92,11 +95,13 @@ void chSysInit(void) {
   currp->p_state = THD_STATE_CURRENT;
   chSysEnable();
 
+#if !CH_NO_IDLE_THREAD
   /* This thread has the lowest priority in the system, its role is just to
      serve interrupts in its context while keeping the lowest energy saving
      mode compatible with the system status.*/
   chThdCreateStatic(_idle_thread_wa, sizeof(_idle_thread_wa), IDLEPRIO,
                     (tfunc_t)_idle_thread, NULL);
+#endif
 }
 
 /**

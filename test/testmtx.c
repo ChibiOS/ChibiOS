@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -59,7 +60,7 @@
  * @brief Mutexes and CondVars test header file
  */
 
-#if CH_USE_MUTEXES
+#if CH_USE_MUTEXES || defined(__DOXYGEN__)
 
 #define ALLOWED_DELAY 5
 
@@ -70,7 +71,7 @@
  */
 static MUTEX_DECL(m1);
 static MUTEX_DECL(m2);
-#if CH_USE_CONDVARS
+#if CH_USE_CONDVARS || defined(__DOXYGEN__)
 static CONDVAR_DECL(c1);
 #endif
 
@@ -119,7 +120,7 @@ ROMCONST struct testcase testmtx1 = {
   mtx1_execute
 };
 
-#if CH_DBG_THREADS_PROFILING
+#if CH_DBG_THREADS_PROFILING || defined(__DOXYGEN__)
 /**
  * @page test_mtx_002 Priority inheritance, simple case
  *
@@ -466,7 +467,7 @@ ROMCONST struct testcase testmtx5 = {
   mtx5_execute
 };
 
-#if CH_USE_CONDVARS
+#if CH_USE_CONDVARS || defined(__DOXYGEN__)
 /**
  * @page test_mtx_006 Condition Variable signal test
  *
@@ -577,7 +578,7 @@ static msg_t thread11(void *p) {
 
   chMtxLock(&m2);
   chMtxLock(&m1);
-#if CH_USE_CONDVARS_TIMEOUT
+#if CH_USE_CONDVARS_TIMEOUT || defined(__DOXYGEN__)
   chCondWaitTimeout(&c1, TIME_INFINITE);
 #else
   chCondWait(&c1);
@@ -621,15 +622,15 @@ ROMCONST struct testcase testmtx8 = {
  * @brief   Test sequence for mutexes.
  */
 ROMCONST struct testcase * ROMCONST patternmtx[] = {
-#if CH_USE_MUTEXES
+#if CH_USE_MUTEXES || defined(__DOXYGEN__)
   &testmtx1,
-#if CH_DBG_THREADS_PROFILING
+#if CH_DBG_THREADS_PROFILING || defined(__DOXYGEN__)
   &testmtx2,
   &testmtx3,
 #endif
   &testmtx4,
   &testmtx5,
-#if CH_USE_CONDVARS
+#if CH_USE_CONDVARS || defined(__DOXYGEN__)
   &testmtx6,
   &testmtx7,
   &testmtx8,

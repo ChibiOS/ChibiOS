@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -46,7 +47,7 @@
  */
 #define GPIOA_BUTTON            0
 
-#define GPIOC_DISC              11
+#define GPIOC_USB_DISC          11
 #define GPIOC_LED               12
 
 /*

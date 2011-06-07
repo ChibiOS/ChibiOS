@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -69,7 +70,7 @@ static size_t network_device_read(void) {
 
   if (macWaitReceiveDescriptor(&ETH1, &rd, TIME_IMMEDIATE) != RDY_OK)
     return 0;
-  size = rd.rd_size;
+  size = rd.size;
   macReadReceiveDescriptor(&rd, uip_buf, size);
   macReleaseReceiveDescriptor(&rd);
   return size;

@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -193,11 +194,10 @@ typedef FIO * ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_writegroup(port, mask, offset, bits) {                  \
-  (port)->FIO_MASK = ~((mask) << (offset));                             \
-  (port)->FIO_PIN = (bits) << (offset);                                 \
-  (port)->FIO_MASK = 0;                                                 \
-}
+#define pal_lld_writegroup(port, mask, offset, bits)                    \
+  ((port)->FIO_MASK = ~((mask) << (offset)),                            \
+   (port)->FIO_PIN = (bits) << (offset),                                \
+   (port)->FIO_MASK = 0)
 
 /**
  * @brief   Pads group mode setup.
@@ -235,9 +235,7 @@ typedef FIO * ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_lpc214x_set_direction(port, dir) {                      \
-  (port)->FIO_DIR = (dir);                                              \
-}
+#define pal_lld_lpc214x_set_direction(port, dir) ((port)->FIO_DIR = (dir))
 
 extern const PALConfig pal_default_config;
 

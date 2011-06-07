@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -128,10 +129,9 @@ typedef sim_vio_port_t *ioportid_t;
  *
  * @param[in] config    architecture-dependent ports configuration
  */
-#define pal_lld_init(config) {                                              \
-  vio_port_1 = (config)->VP1Data;                                           \
-  vio_port_2 = (config)->VP2Data;                                           \
-}
+#define pal_lld_init(config)                                                \
+  (vio_port_1 = (config)->VP1Data,                                          \
+   vio_port_2 = (config)->VP2Data)
 
 /**
  * @brief   Reads the physical I/O port states.
@@ -177,7 +177,7 @@ typedef sim_vio_port_t *ioportid_t;
  * @param[in] mask      group mask
  * @param[in] mode      group mode
  */
-#define pal_lld_setgroupmode(port, mask, mode) \
+#define pal_lld_setgroupmode(port, mask, mode)                              \
   _pal_lld_setgroupmode(port, mask, mode)
 
 #if !defined(__DOXYGEN__)

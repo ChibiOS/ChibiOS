@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -72,7 +73,7 @@
  *          over the TX channel.
  */
 #if !defined(STM32_SPI_SPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_DMA_PRIORITY         2
+#define STM32_SPI_SPI1_DMA_PRIORITY         1
 #endif
 
 /**
@@ -82,7 +83,7 @@
  *          over the TX channel.
  */
 #if !defined(STM32_SPI_SPI2_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_DMA_PRIORITY         2
+#define STM32_SPI_SPI2_DMA_PRIORITY         1
 #endif
 
 /**
@@ -92,7 +93,7 @@
  *          over the TX channel.
  */
 #if !defined(STM32_SPI_SPI3_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_DMA_PRIORITY         2
+#define STM32_SPI_SPI3_DMA_PRIORITY         1
 #endif
 
 /**
@@ -117,30 +118,12 @@
 #endif
 
 /**
- * @brief   SPI1 DMA error hook.
- * @note    The default action for DMA errors is a system halt because DMA error
- *          can only happen because programming errors.
+ * @brief   SPI DMA error hook.
+ * @note    The default action for DMA errors is a system halt because DMA
+ *          error can only happen because programming errors.
  */
-#if !defined(STM32_SPI_SPI1_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_DMA_ERROR_HOOK()     chSysHalt()
-#endif
-
-/**
- * @brief   SPI2 DMA error hook.
- * @note    The default action for DMA errors is a system halt because DMA error
- *          can only happen because programming errors.
- */
-#if !defined(STM32_SPI_SPI2_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_DMA_ERROR_HOOK()     chSysHalt()
-#endif
-
-/**
- * @brief   SPI3 DMA error hook.
- * @note    The default action for DMA errors is a system halt because DMA error
- *          can only happen because programming errors.
- */
-#if !defined(STM32_SPI_SPI3_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_DMA_ERROR_HOOK()     chSysHalt()
+#if !defined(STM32_SPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_SPI_DMA_ERROR_HOOK(spip)      chSysHalt()
 #endif
 
 /*===========================================================================*/
@@ -161,6 +144,10 @@
 
 #if !STM32_SPI_USE_SPI1 && !STM32_SPI_USE_SPI2 && !STM32_SPI_USE_SPI3
 #error "SPI driver activated but no SPI peripheral assigned"
+#endif
+
+#if !defined(STM32_DMA_REQUIRED)
+#define STM32_DMA_REQUIRED
 #endif
 
 /*===========================================================================*/
@@ -187,20 +174,20 @@ typedef struct {
   /**
    * @brief Operation complete callback or @p NULL.
    */
-  spicallback_t         spc_endcb;
+  spicallback_t         end_cb;
   /* End of the mandatory fields.*/
   /**
    * @brief The chip select line port.
    */
-  ioportid_t            spc_ssport;
+  ioportid_t            ssport;
   /**
    * @brief The chip select line pad number.
    */
-  uint16_t              spc_sspad;
+  uint16_t              sspad;
   /**
    * @brief SPI initialization data.
    */
-  uint16_t              spc_cr1;
+  uint16_t              cr1;
 } SPIConfig;
 
 /**
@@ -210,25 +197,25 @@ struct SPIDriver{
   /**
    * @brief Driver state.
    */
-  spistate_t            spd_state;
+  spistate_t            state;
   /**
    * @brief Current configuration data.
    */
-  const SPIConfig       *spd_config;
+  const SPIConfig       *config;
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
   /**
    * @brief Waiting thread.
    */
-  Thread                *spd_thread;
+  Thread                *thread;
 #endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief Mutex protecting the bus.
    */
-  Mutex                 spd_mutex;
+  Mutex                 mutex;
 #elif CH_USE_SEMAPHORES
-  Semaphore             spd_semaphore;
+  Semaphore             semaphore;
 #endif
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
 #if defined(SPI_DRIVER_EXT_FIELDS)
@@ -238,19 +225,19 @@ struct SPIDriver{
   /**
    * @brief Pointer to the SPIx registers block.
    */
-  SPI_TypeDef           *spd_spi;
+  SPI_TypeDef           *spi;
   /**
    * @brief Pointer to the receive DMA channel registers block.
    */
-  stm32_dma_channel_t   *spd_dmarx;
+  stm32_dma_channel_t   *dmarx;
   /**
    * @brief Pointer to the transmit DMA channel registers block.
    */
-  stm32_dma_channel_t   *spd_dmatx;
+  stm32_dma_channel_t   *dmatx;
   /**
    * @brief DMA priority bit mask.
    */
-  uint32_t              spd_dmaccr;
+  uint32_t              dmaccr;
 };
 
 /*===========================================================================*/

@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -45,7 +46,7 @@ TraceBuffer trace_buffer;
  * @brief   Trace circular buffer subsystem initialization.
  * @note    Internal use only.
  */
-void trace_init(void) {
+void _trace_init(void) {
 
   trace_buffer.tb_size = TRACE_BUFFER_SIZE;
   trace_buffer.tb_ptr = &trace_buffer.tb_buffer[0];

@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -64,9 +65,9 @@
 ioportmask_t palReadBus(IOBus *bus) {
 
   chDbgCheck((bus != NULL) &&
-             (bus->bus_offset > PAL_IOPORTS_WIDTH), "palReadBus");
+             (bus->offset < PAL_IOPORTS_WIDTH), "palReadBus");
 
-  return palReadGroup(bus->bus_portid, bus->bus_mask, bus->bus_offset);
+  return palReadGroup(bus->portid, bus->mask, bus->offset);
 }
 
 /**
@@ -89,9 +90,9 @@ ioportmask_t palReadBus(IOBus *bus) {
 void palWriteBus(IOBus *bus, ioportmask_t bits) {
 
   chDbgCheck((bus != NULL) &&
-             (bus->bus_offset > PAL_IOPORTS_WIDTH), "palWriteBus");
+             (bus->offset < PAL_IOPORTS_WIDTH), "palWriteBus");
 
-  palWriteGroup(bus->bus_portid, bus->bus_mask, bus->bus_offset, bits);
+  palWriteGroup(bus->portid, bus->mask, bus->offset, bits);
 }
 
 /**
@@ -112,9 +113,9 @@ void palWriteBus(IOBus *bus, ioportmask_t bits) {
 void palSetBusMode(IOBus *bus, uint_fast8_t mode) {
 
   chDbgCheck((bus != NULL) &&
-             (bus->bus_offset > PAL_IOPORTS_WIDTH), "palSetBusMode");
+             (bus->offset < PAL_IOPORTS_WIDTH), "palSetBusMode");
 
-  palSetGroupMode(bus->bus_portid, bus->bus_mask, mode);
+  palSetGroupMode(bus->portid, bus->mask, mode);
 }
 
 #endif /* HAL_USE_PAL */

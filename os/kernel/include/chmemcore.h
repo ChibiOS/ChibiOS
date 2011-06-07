@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -36,14 +37,24 @@
 typedef void *(*memgetfunc_t)(size_t size);
 
 /**
+ * @brief   Alignment size constant.
+ */
+#define MEM_ALIGN_SIZE      sizeof(stkalign_t)
+
+/**
  * @brief   Alignment mask constant.
  */
-#define MEM_ALIGN_MASK      (sizeof(stkalign_t) - 1)
+#define MEM_ALIGN_MASK      (MEM_ALIGN_SIZE - 1)
 
 /**
  * @brief   Alignment helper macro.
  */
-#define MEM_ALIGN_SIZE(p)   (((size_t)(p) + MEM_ALIGN_MASK) & ~MEM_ALIGN_MASK)
+#define MEM_ALIGN_PREV(p)   ((size_t)(p) & ~MEM_ALIGN_MASK)
+
+/**
+ * @brief   Alignment helper macro.
+ */
+#define MEM_ALIGN_NEXT(p)   MEM_ALIGN_PREV((size_t)(p) + MEM_ALIGN_MASK)
 
 /**
  * @brief   Returns whatever a pointer or memory size is aligned to
@@ -56,7 +67,7 @@ typedef void *(*memgetfunc_t)(size_t size);
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void core_init(void);
+  void _core_init(void);
   void *chCoreAlloc(size_t size);
   void *chCoreAllocI(size_t size);
   size_t chCoreStatus(void);

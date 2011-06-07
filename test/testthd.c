@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -141,7 +142,7 @@ static void thd3_execute(void) {
   test_assert(4, chThdGetPriority() == prio,
               "unexpected priority level");
 
-#if CH_USE_MUTEXES
+#if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /* Simulates a priority boost situation (p_prio > p_realprio).*/
   chSysLock();
   chThdSelf()->p_prio += 2;

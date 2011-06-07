@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -154,9 +155,7 @@ typedef AT91PS_PIO ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_writeport(port, bits) {                                 \
-  (port)->PIO_ODSR = (bits);                                            \
-}
+#define pal_lld_writeport(port, bits) ((port)->PIO_ODSR = (bits))
 
 /**
  * @brief   Sets a bits mask on a I/O port.
@@ -168,9 +167,7 @@ typedef AT91PS_PIO ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_setport(port, bits) {                                   \
-  (port)->PIO_SODR = (bits);                                            \
-}
+#define pal_lld_setport(port, bits) ((port)->PIO_SODR = (bits))
 
 /**
  * @brief   Clears a bits mask on a I/O port.
@@ -182,9 +179,7 @@ typedef AT91PS_PIO ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_clearport(port, bits) {                                 \
-  (port)->PIO_CODR = (bits);                                            \
-}
+#define pal_lld_clearport(port, bits) ((port)->PIO_CODR = (bits))
 
 /**
  * @brief   Writes a group of bits.
@@ -200,11 +195,10 @@ typedef AT91PS_PIO ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_writegroup(port, mask, offset, bits) {                  \
-  (port)->PIO_OWER = (mask) << (offset);                                \
-  (port)->PIO_ODSR = (bits) << (offset);                                \
-  (port)->PIO_OWDR = (mask) << (offset);                                \
-}
+#define pal_lld_writegroup(port, mask, offset, bits)                    \
+  ((port)->PIO_OWER = (mask) << (offset),                               \
+   (port)->PIO_ODSR = (bits) << (offset),                               \
+   (port)->PIO_OWDR = (mask) << (offset))
 
 /**
  * @brief   Pads group mode setup.

@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -20,7 +21,8 @@
 /**
  * @defgroup CAN CAN Driver
  * @brief Generic CAN Driver.
- * @details This module implements a generic CAN driver.
+ * @details This module implements a generic CAN (Controller Area Network)
+ *          driver allowing the exchange of information at frame level.
  * @pre     In order to use the CAN driver the @p HAL_USE_CAN option
  *          must be enabled in @p halconf.h.
  *

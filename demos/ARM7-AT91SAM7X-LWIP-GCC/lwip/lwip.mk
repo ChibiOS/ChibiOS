@@ -1,44 +1,47 @@
 # List of the required lwIP files.
+LWIP = 	${CHIBIOS}/ext/lwip-1.4.0
+
 LWNETIFSRC = \
-        ${CHIBIOS}/ext/lwip/src/netif/etharp.c \
-        ${CHIBIOS}/ext/lwip/src/netif/loopif.c
+        ${LWIP}/src/netif/etharp.c
 
 LWCORESRC = \
-        ${CHIBIOS}/ext/lwip/src/core/dhcp.c \
-        ${CHIBIOS}/ext/lwip/src/core/dns.c \
-        ${CHIBIOS}/ext/lwip/src/core/init.c \
-        ${CHIBIOS}/ext/lwip/src/core/mem.c \
-        ${CHIBIOS}/ext/lwip/src/core/memp.c \
-        ${CHIBIOS}/ext/lwip/src/core/netif.c \
-        ${CHIBIOS}/ext/lwip/src/core/pbuf.c \
-        ${CHIBIOS}/ext/lwip/src/core/raw.c \
-        ${CHIBIOS}/ext/lwip/src/core/stats.c \
-        ${CHIBIOS}/ext/lwip/src/core/sys.c \
-        ${CHIBIOS}/ext/lwip/src/core/tcp.c \
-        ${CHIBIOS}/ext/lwip/src/core/tcp_in.c \
-        ${CHIBIOS}/ext/lwip/src/core/tcp_out.c \
-        ${CHIBIOS}/ext/lwip/src/core/udp.c
+        ${LWIP}/src/core/dhcp.c \
+        ${LWIP}/src/core/dns.c \
+        ${LWIP}/src/core/init.c \
+        ${LWIP}/src/core/mem.c \
+        ${LWIP}/src/core/memp.c \
+        ${LWIP}/src/core/netif.c \
+        ${LWIP}/src/core/pbuf.c \
+        ${LWIP}/src/core/raw.c \
+        ${LWIP}/src/core/stats.c \
+        ${LWIP}/src/core/sys.c \
+        ${LWIP}/src/core/tcp.c \
+        ${LWIP}/src/core/tcp_in.c \
+        ${LWIP}/src/core/tcp_out.c \
+        ${LWIP}/src/core/udp.c
 
 LWIPV4SRC = \
-        ${CHIBIOS}/ext/lwip/src/core/ipv4/autoip.c \
-        ${CHIBIOS}/ext/lwip/src/core/ipv4/icmp.c \
-        ${CHIBIOS}/ext/lwip/src/core/ipv4/igmp.c \
-        ${CHIBIOS}/ext/lwip/src/core/ipv4/inet.c \
-        ${CHIBIOS}/ext/lwip/src/core/ipv4/inet_chksum.c \
-        ${CHIBIOS}/ext/lwip/src/core/ipv4/ip.c \
-        ${CHIBIOS}/ext/lwip/src/core/ipv4/ip_addr.c \
-        ${CHIBIOS}/ext/lwip/src/core/ipv4/ip_frag.c
+        ${LWIP}/src/core/ipv4/autoip.c \
+        ${LWIP}/src/core/ipv4/icmp.c \
+        ${LWIP}/src/core/ipv4/igmp.c \
+        ${LWIP}/src/core/ipv4/inet.c \
+        ${LWIP}/src/core/ipv4/inet_chksum.c \
+        ${LWIP}/src/core/ipv4/ip.c \
+        ${LWIP}/src/core/ipv4/ip_addr.c \
+        ${LWIP}/src/core/ipv4/ip_frag.c \
+        ${LWIP}/src/core/def.c \
+        ${LWIP}/src/core/timers.c
 
 LWAPISRC = \
-        ${CHIBIOS}/ext/lwip/src/api/api_lib.c \
-        ${CHIBIOS}/ext/lwip/src/api/api_msg.c \
-        ${CHIBIOS}/ext/lwip/src/api/err.c \
-        ${CHIBIOS}/ext/lwip/src/api/netbuf.c \
-        ${CHIBIOS}/ext/lwip/src/api/netdb.c \
-        ${CHIBIOS}/ext/lwip/src/api/netifapi.c \
-        ${CHIBIOS}/ext/lwip/src/api/sockets.c \
-        ${CHIBIOS}/ext/lwip/src/api/tcpip.c
+        ${LWIP}/src/api/api_lib.c \
+        ${LWIP}/src/api/api_msg.c \
+        ${LWIP}/src/api/err.c \
+        ${LWIP}/src/api/netbuf.c \
+        ${LWIP}/src/api/netdb.c \
+        ${LWIP}/src/api/netifapi.c \
+        ${LWIP}/src/api/sockets.c \
+        ${LWIP}/src/api/tcpip.c
 
 LWINC = \
-        ${CHIBIOS}/ext/lwip/src/include \
-        ${CHIBIOS}/ext/lwip/src/include/ipv4
+        ${LWIP}/src/include \
+        ${LWIP}/src/include/ipv4

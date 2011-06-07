@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -53,7 +54,7 @@
  * @brief I/O Queues test header file
  */
 
-#if CH_USE_QUEUES
+#if CH_USE_QUEUES || defined(__DOXYGEN__)
 
 #define TEST_QUEUES_SIZE 4
 
@@ -223,7 +224,7 @@ ROMCONST struct testcase testqueues2 = {
  * @brief   Test sequence for queues.
  */
 ROMCONST struct testcase * ROMCONST patternqueues[] = {
-#if CH_USE_QUEUES
+#if CH_USE_QUEUES || defined(__DOXYGEN__)
   &testqueues1,
   &testqueues2,
 #endif

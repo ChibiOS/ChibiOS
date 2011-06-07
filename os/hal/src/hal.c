@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -66,8 +67,14 @@ void halInit(void) {
 #if HAL_USE_CAN || defined(__DOXYGEN__)
   canInit();
 #endif
+#if HAL_USE_GPT || defined(__DOXYGEN__)
+  gptInit();
+#endif
 #if HAL_USE_I2C || defined(__DOXYGEN__)
   i2cInit();
+#endif
+#if HAL_USE_ICU || defined(__DOXYGEN__)
+  icuInit();
 #endif
 #if HAL_USE_MAC || defined(__DOXYGEN__)
   macInit();
@@ -77,6 +84,9 @@ void halInit(void) {
 #endif
 #if HAL_USE_SERIAL || defined(__DOXYGEN__)
   sdInit();
+#endif
+#if HAL_USE_SDC || defined(__DOXYGEN__)
+  sdcInit();
 #endif
 #if HAL_USE_SPI || defined(__DOXYGEN__)
   spiInit();

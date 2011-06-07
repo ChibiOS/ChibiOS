@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -67,19 +68,19 @@ void adcInit(void) {
  */
 void adcObjectInit(ADCDriver *adcp) {
 
-  adcp->ad_state    = ADC_STOP;
-  adcp->ad_config   = NULL;
-  adcp->ad_samples  = NULL;
-  adcp->ad_depth    = 0;
-  adcp->ad_grpp     = NULL;
+  adcp->state    = ADC_STOP;
+  adcp->config   = NULL;
+  adcp->samples  = NULL;
+  adcp->depth    = 0;
+  adcp->grpp     = NULL;
 #if ADC_USE_WAIT
-  adcp->ad_thread   = NULL;
+  adcp->thread   = NULL;
 #endif /* ADC_USE_WAIT */
 #if ADC_USE_MUTUAL_EXCLUSION
 #if CH_USE_MUTEXES
-  chMtxInit(&adcp->ad_mutex);
+  chMtxInit(&adcp->mutex);
 #else
-  chSemInit(&adcp->ad_semaphore, 1);
+  chSemInit(&adcp->semaphore, 1);
 #endif
 #endif /* ADC_USE_MUTUAL_EXCLUSION */
 #if defined(ADC_DRIVER_EXT_INIT_HOOK)
@@ -101,11 +102,11 @@ void adcStart(ADCDriver *adcp, const ADCConfig *config) {
   chDbgCheck(adcp != NULL, "adcStart");
 
   chSysLock();
-  chDbgAssert((adcp->ad_state == ADC_STOP) || (adcp->ad_state == ADC_READY),
+  chDbgAssert((adcp->state == ADC_STOP) || (adcp->state == ADC_READY),
               "adcStart(), #1", "invalid state");
-  adcp->ad_config = config;
+  adcp->config = config;
   adc_lld_start(adcp);
-  adcp->ad_state = ADC_READY;
+  adcp->state = ADC_READY;
   chSysUnlock();
 }
 
@@ -121,10 +122,10 @@ void adcStop(ADCDriver *adcp) {
   chDbgCheck(adcp != NULL, "adcStop");
 
   chSysLock();
-  chDbgAssert((adcp->ad_state == ADC_STOP) || (adcp->ad_state == ADC_READY),
+  chDbgAssert((adcp->state == ADC_STOP) || (adcp->state == ADC_READY),
               "adcStop(), #1", "invalid state");
   adc_lld_stop(adcp);
-  adcp->ad_state = ADC_STOP;
+  adcp->state = ADC_STOP;
   chSysUnlock();
 }
 
@@ -179,13 +180,13 @@ void adcStartConversionI(ADCDriver *adcp,
              ((depth == 1) || ((depth & 1) == 0)),
              "adcStartConversionI");
 
-  chDbgAssert((adcp->ad_state == ADC_READY) ||
-              (adcp->ad_state == ADC_COMPLETE),
+  chDbgAssert((adcp->state == ADC_READY) ||
+              (adcp->state == ADC_COMPLETE),
               "adcStartConversionI(), #1", "not ready");
-  adcp->ad_samples  = samples;
-  adcp->ad_depth    = depth;
-  adcp->ad_grpp     = grpp;
-  adcp->ad_state    = ADC_ACTIVE;
+  adcp->samples  = samples;
+  adcp->depth    = depth;
+  adcp->grpp     = grpp;
+  adcp->state    = ADC_ACTIVE;
   adc_lld_start_conversion(adcp);
 }
 
@@ -204,13 +205,13 @@ void adcStopConversion(ADCDriver *adcp) {
   chDbgCheck(adcp != NULL, "adcStopConversion");
 
   chSysLock();
-  chDbgAssert((adcp->ad_state == ADC_READY) ||
-              (adcp->ad_state == ADC_ACTIVE),
+  chDbgAssert((adcp->state == ADC_READY) ||
+              (adcp->state == ADC_ACTIVE),
               "adcStopConversion(), #1", "invalid state");
-  if (adcp->ad_state != ADC_READY) {
+  if (adcp->state != ADC_READY) {
     adc_lld_stop_conversion(adcp);
-    adcp->ad_grpp  = NULL;
-    adcp->ad_state = ADC_READY;
+    adcp->grpp  = NULL;
+    adcp->state = ADC_READY;
     _adc_reset_s(adcp);
   }
   chSysUnlock();
@@ -230,14 +231,14 @@ void adcStopConversionI(ADCDriver *adcp) {
 
   chDbgCheck(adcp != NULL, "adcStopConversionI");
 
-  chDbgAssert((adcp->ad_state == ADC_READY) ||
-              (adcp->ad_state == ADC_ACTIVE) ||
-              (adcp->ad_state == ADC_COMPLETE),
+  chDbgAssert((adcp->state == ADC_READY) ||
+              (adcp->state == ADC_ACTIVE) ||
+              (adcp->state == ADC_COMPLETE),
               "adcStopConversionI(), #1", "invalid state");
-  if (adcp->ad_state != ADC_READY) {
+  if (adcp->state != ADC_READY) {
     adc_lld_stop_conversion(adcp);
-    adcp->ad_grpp  = NULL;
-    adcp->ad_state = ADC_READY;
+    adcp->grpp  = NULL;
+    adcp->state = ADC_READY;
     _adc_reset_i(adcp);
   }
 }
@@ -271,9 +272,9 @@ msg_t adcConvert(ADCDriver *adcp,
   msg_t msg;
 
   chSysLock();
-  chDbgAssert(grpp->acg_endcb == NULL, "adcConvert(), #1", "has callback");
+  chDbgAssert(adcp->thread == NULL, "adcConvert(), #1", "already waiting");
   adcStartConversionI(adcp, grpp, samples, depth);
-  (adcp)->ad_thread = chThdSelf();
+  (adcp)->thread = chThdSelf();
   chSchGoSleepS(THD_STATE_SUSPENDED);
   msg = chThdSelf()->p_u.rdymsg;
   chSysUnlock();
@@ -286,8 +287,8 @@ msg_t adcConvert(ADCDriver *adcp,
  * @brief   Gains exclusive access to the ADC peripheral.
  * @details This function tries to gain ownership to the ADC bus, if the bus
  *          is already being used then the invoking thread is queued.
- * @pre     In order to use this function the option @p ADC_USE_MUTUAL_EXCLUSION
- *          must be enabled.
+ * @pre     In order to use this function the option
+ *          @p ADC_USE_MUTUAL_EXCLUSION must be enabled.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  *
@@ -298,16 +299,16 @@ void adcAcquireBus(ADCDriver *adcp) {
   chDbgCheck(adcp != NULL, "adcAcquireBus");
 
 #if CH_USE_MUTEXES
-  chMtxLock(&adcp->ad_mutex);
+  chMtxLock(&adcp->mutex);
 #elif CH_USE_SEMAPHORES
-  chSemWait(&adcp->ad_semaphore);
+  chSemWait(&adcp->semaphore);
 #endif
 }
 
 /**
  * @brief   Releases exclusive access to the ADC peripheral.
- * @pre     In order to use this function the option @p ADC_USE_MUTUAL_EXCLUSION
- *          must be enabled.
+ * @pre     In order to use this function the option
+ *          @p ADC_USE_MUTUAL_EXCLUSION must be enabled.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  *
@@ -321,7 +322,7 @@ void adcReleaseBus(ADCDriver *adcp) {
   (void)adcp;
   chMtxUnlock();
 #elif CH_USE_SEMAPHORES
-  chSemSignal(&adcp->ad_semaphore);
+  chSemSignal(&adcp->semaphore);
 #endif
 }
 #endif /* ADC_USE_MUTUAL_EXCLUSION */

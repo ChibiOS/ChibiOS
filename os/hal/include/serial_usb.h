@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -53,8 +54,9 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !HAL_USE_USB && !CH_USE_EVENTS
-#error "Serial over USB Driver requires HAL_USE_USB and CH_USE_EVENTS"
+#if !HAL_USE_USB && !CH_USE_QUEUES && !CH_USE_EVENTS
+#error "Serial over USB Driver requires HAL_USE_USB, CH_USE_QUEUES, "
+       "CH_USE_EVENTS"
 #endif
 
 /*===========================================================================*/
@@ -84,23 +86,11 @@ typedef struct {
   /**
    * @brief   USB driver to use.
    */
-  USBDriver                     *usbp;
+  USBDriver                 *usbp;
   /**
    * @brief   USB driver configuration structure.
    */
-  USBConfig                     usb_config;
-  /*
-   * @brief   Endpoint used for data transmission.
-   */
-  usbep_t                       data_request_ep;
-  /*
-   * @brief   Endpoint used for data reception.
-   */
-  usbep_t                       data_available_ep;
-  /*
-   * @brief   Endpoint used for interrupt request.
-   */
-  usbep_t                       interrupt_request_ep;
+  USBConfig                 usb_config;
 } SerialUSBConfig;
 
 /**
@@ -114,9 +104,9 @@ typedef struct {
   InputQueue                iqueue;                                         \
   /* Output queue.*/                                                        \
   OutputQueue               oqueue;                                         \
-  /* Input circular buffer.*/                                               \
+  /* Input buffer.*/                                                        \
   uint8_t                   ib[SERIAL_USB_BUFFERS_SIZE];                    \
-  /* Output circular buffer.*/                                              \
+  /* Output buffer.*/                                                       \
   uint8_t                   ob[SERIAL_USB_BUFFERS_SIZE];                    \
   /* End of the mandatory fields.*/                                         \
   /* Current configuration data.*/                                          \
@@ -164,9 +154,9 @@ extern "C" {
   void sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config);
   void sduStop(SerialUSBDriver *sdup);
   bool_t sduRequestsHook(USBDriver *usbp);
-  void sduDataRequest(USBDriver *usbp, usbep_t ep);
-  void sduDataAvailable(USBDriver *usbp, usbep_t ep);
-  void sduInterruptRequest(USBDriver *usbp, usbep_t ep);
+  void sduDataTransmitted(USBDriver *usbp, usbep_t ep);
+  void sduDataReceived(USBDriver *usbp, usbep_t ep);
+  void sduInterruptTransmitted(USBDriver *usbp, usbep_t ep);
 #ifdef __cplusplus
 }
 #endif

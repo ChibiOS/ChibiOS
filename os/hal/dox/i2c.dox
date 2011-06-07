@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -19,8 +20,9 @@
 
 /**
  * @defgroup I2C I2C Driver
- * @brief Generic I2C Driver.
- * @details This module implements a generic I2C driver.
+ * @brief   Generic I2C Driver.
+ * @details This module implements a generic I2C (Inter-Integrated Circuit)
+ *          driver.
  * @pre     In order to use the I2C driver the @p HAL_USE_I2C option
  *          must be enabled in @p halconf.h.
  *

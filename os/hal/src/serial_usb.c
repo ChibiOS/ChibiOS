@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -58,44 +59,44 @@ static cdc_linecoding_t linecoding = {
 
 static size_t writes(void *ip, const uint8_t *bp, size_t n) {
 
-  return chOQWriteTimeout(&((SerialDriver *)ip)->oqueue, bp,
+  return chOQWriteTimeout(&((SerialUSBDriver *)ip)->oqueue, bp,
                           n, TIME_INFINITE);
 }
 
 static size_t reads(void *ip, uint8_t *bp, size_t n) {
 
-  return chIQReadTimeout(&((SerialDriver *)ip)->iqueue, bp,
+  return chIQReadTimeout(&((SerialUSBDriver *)ip)->iqueue, bp,
                          n, TIME_INFINITE);
 }
 
 static bool_t putwouldblock(void *ip) {
 
-  return chOQIsFullI(&((SerialDriver *)ip)->oqueue);
+  return chOQIsFullI(&((SerialUSBDriver *)ip)->oqueue);
 }
 
 static bool_t getwouldblock(void *ip) {
 
-  return chIQIsEmptyI(&((SerialDriver *)ip)->iqueue);
+  return chIQIsEmptyI(&((SerialUSBDriver *)ip)->iqueue);
 }
 
 static msg_t putt(void *ip, uint8_t b, systime_t timeout) {
 
-  return chOQPutTimeout(&((SerialDriver *)ip)->oqueue, b, timeout);
+  return chOQPutTimeout(&((SerialUSBDriver *)ip)->oqueue, b, timeout);
 }
 
 static msg_t gett(void *ip, systime_t timeout) {
 
-  return chIQGetTimeout(&((SerialDriver *)ip)->iqueue, timeout);
+  return chIQGetTimeout(&((SerialUSBDriver *)ip)->iqueue, timeout);
 }
 
 static size_t writet(void *ip, const uint8_t *bp, size_t n, systime_t time) {
 
-  return chOQWriteTimeout(&((SerialDriver *)ip)->oqueue, bp, n, time);
+  return chOQWriteTimeout(&((SerialUSBDriver *)ip)->oqueue, bp, n, time);
 }
 
 static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t time) {
 
-  return chIQReadTimeout(&((SerialDriver *)ip)->iqueue, bp, n, time);
+  return chIQReadTimeout(&((SerialUSBDriver *)ip)->iqueue, bp, n, time);
 }
 
 static ioflags_t getflags(void *ip) {
@@ -119,11 +120,14 @@ static void inotify(GenericQueue *qp) {
      emptied, then a whole packet is loaded in the queue.*/
   if (chIQIsEmptyI(&sdup->iqueue)) {
 
-    n = usbReadI(sdup->config->usbp, sdup->config->data_available_ep,
-                 sdup->iqueue.q_buffer, SERIAL_USB_BUFFERS_SIZE);
-    if (n > 0) {
+    n = usbReadPacketI(sdup->config->usbp, DATA_AVAILABLE_EP,
+                       sdup->iqueue.q_buffer, SERIAL_USB_BUFFERS_SIZE);
+    if (n != USB_ENDPOINT_BUSY) {
+      chIOAddFlagsI(sdup, IO_INPUT_AVAILABLE);
       sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
-      chSemSetCounterI(&sdup->iqueue.q_sem, n);
+      sdup->iqueue.q_counter = n;
+      while (notempty(&sdup->iqueue.q_waiting))
+        chSchReadyI(fifo_remove(&sdup->iqueue.q_waiting))->p_u.rdymsg = Q_OK;
     }
   }
 }
@@ -133,15 +137,19 @@ static void inotify(GenericQueue *qp) {
  */
 static void onotify(GenericQueue *qp) {
   SerialUSBDriver *sdup = (SerialUSBDriver *)qp->q_rdptr;
-  size_t n;
+  size_t w, n;
 
   /* If there is any data in the output queue then it is sent within a
      single packet and the queue is emptied.*/
-  n = usbWriteI(sdup->config->usbp, sdup->config->data_request_ep,
-                sdup->oqueue.q_buffer, chOQGetFullI(&sdup->oqueue));
-  if (n > 0) {
+  n = chOQGetFullI(&sdup->oqueue);
+  w = usbWritePacketI(sdup->config->usbp, DATA_REQUEST_EP,
+                      sdup->oqueue.q_buffer, n);
+  if (w != USB_ENDPOINT_BUSY) {
+    chIOAddFlagsI(sdup, IO_OUTPUT_EMPTY);
     sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
-    chSemSetCounterI(&sdup->oqueue.q_sem, SERIAL_USB_BUFFERS_SIZE);
+    sdup->oqueue.q_counter = chQSizeI(&sdup->oqueue);
+    while (notempty(&sdup->oqueue.q_waiting))
+      chSchReadyI(fifo_remove(&sdup->oqueue.q_waiting))->p_u.rdymsg = Q_OK;
   }
 }
 
@@ -165,12 +173,6 @@ void sduInit(void) {
  *          outside, usually in the hardware initialization code.
  *
  * @param[out] sdup     pointer to a @p SerialUSBDriver structure
- * @param[in] inotify   pointer to a callback function that is invoked when
- *                      some data is read from the Queue. The value can be
- *                      @p NULL.
- * @param[in] onotify   pointer to a callback function that is invoked when
- *                      some data is written in the Queue. The value can be
- *                      @p NULL.
  *
  * @init
  */
@@ -206,7 +208,7 @@ void sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config) {
               "invalid state");
   sdup->config = config;
   usbStart(config->usbp, &config->usb_config);
-  config->usbp->usb_param = sdup;
+  config->usbp->param = sdup;
   sdup->state = SDU_READY;
   chSysUnlock();
 }
@@ -242,11 +244,16 @@ void sduStop(SerialUSBDriver *sdup) {
  *          - CDC_SET_LINE_CODING.
  *          - CDC_SET_CONTROL_LINE_STATE.
  *          .
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @return              The hook status.
+ * @retval TRUE         Message handled internally.
+ * @retval FALSE        Message not handled.
  */
 bool_t sduRequestsHook(USBDriver *usbp) {
 
-  if ((usbp->usb_setup[0] & USB_RTYPE_TYPE_MASK) == USB_RTYPE_TYPE_CLASS) {
-    switch (usbp->usb_setup[1]) {
+  if ((usbp->setup[0] & USB_RTYPE_TYPE_MASK) == USB_RTYPE_TYPE_CLASS) {
+    switch (usbp->setup[1]) {
     case CDC_GET_LINE_CODING:
       usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding), NULL);
       return TRUE;
@@ -265,36 +272,44 @@ bool_t sduRequestsHook(USBDriver *usbp) {
 }
 
 /**
- * @brief   Default data request callback.
+ * @brief   Default data transmitted callback.
  * @details The application must use this function as callback for the IN
  *          data endpoint.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
  */
-void sduDataRequest(USBDriver *usbp, usbep_t ep) {
-  SerialUSBDriver *sdup = usbp->usb_param;
-  size_t n;
+void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
+  SerialUSBDriver *sdup = usbp->param;
+  size_t n, w;
 
   chSysLockFromIsr();
   /* If there is any data in the output queue then it is sent within a
      single packet and the queue is emptied.*/
   n = chOQGetFullI(&sdup->oqueue);
   if (n > 0) {
-    n = usbWriteI(usbp, ep, sdup->oqueue.q_buffer, n);
-    if (n > 0) {
-      sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
-      chSemSetCounterI(&sdup->oqueue.q_sem, SERIAL_USB_BUFFERS_SIZE);
+    w = usbWritePacketI(usbp, ep, sdup->oqueue.q_buffer, n);
+    if (w != USB_ENDPOINT_BUSY) {
       chIOAddFlagsI(sdup, IO_OUTPUT_EMPTY);
+      sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
+      sdup->oqueue.q_counter = chQSizeI(&sdup->oqueue);
+      while (notempty(&sdup->oqueue.q_waiting))
+        chSchReadyI(fifo_remove(&sdup->oqueue.q_waiting))->p_u.rdymsg = Q_OK;
     }
   }
   chSysUnlockFromIsr();
 }
 
 /**
- * @brief   Default data available callback.
+ * @brief   Default data received callback.
  * @details The application must use this function as callback for the OUT
  *          data endpoint.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
  */
-void sduDataAvailable(USBDriver *usbp, usbep_t ep) {
-  SerialUSBDriver *sdup = usbp->usb_param;
+void sduDataReceived(USBDriver *usbp, usbep_t ep) {
+  SerialUSBDriver *sdup = usbp->param;
 
   chSysLockFromIsr();
   /* Writes to the input queue can only happen when the queue has been
@@ -302,11 +317,14 @@ void sduDataAvailable(USBDriver *usbp, usbep_t ep) {
   if (chIQIsEmptyI(&sdup->iqueue)) {
     size_t n;
 
-    n = usbReadI(usbp, ep, sdup->iqueue.q_buffer, SERIAL_USB_BUFFERS_SIZE);
-    if (n > 0) {
-      sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
-      chSemSetCounterI(&sdup->iqueue.q_sem, n);
+    n = usbReadPacketI(usbp, ep, sdup->iqueue.q_buffer,
+                       SERIAL_USB_BUFFERS_SIZE);
+    if (n != USB_ENDPOINT_BUSY) {
       chIOAddFlagsI(sdup, IO_INPUT_AVAILABLE);
+      sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
+      sdup->iqueue.q_counter = n;
+      while (notempty(&sdup->iqueue.q_waiting))
+        chSchReadyI(fifo_remove(&sdup->iqueue.q_waiting))->p_u.rdymsg = Q_OK;
     }
   }
   chSysUnlockFromIsr();
@@ -316,8 +334,11 @@ void sduDataAvailable(USBDriver *usbp, usbep_t ep) {
  * @brief   Default data received callback.
  * @details The application must use this function as callback for the IN
  *          interrupt endpoint.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
  */
-void sduInterruptRequest(USBDriver *usbp, usbep_t ep) {
+void sduInterruptTransmitted(USBDriver *usbp, usbep_t ep) {
 
   (void)usbp;
   (void)ep;

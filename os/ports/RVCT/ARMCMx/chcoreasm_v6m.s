@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -18,15 +19,15 @@
 */
 
 /*
- * Imports the Cortex-Mx parameters header and performs the same calculations
- * done in chcore.h.
+ * Imports the Cortex-Mx configuration headers.
  */
-#include "cmparams.h"
-
-#define CORTEX_PRIORITY_MASK(n) ((n) << (8 - CORTEX_PRIORITY_BITS))
+#define _FROM_ASM_
+#include "chconf.h"
+#include "chcore.h"
 
 EXTCTX_SIZE     EQU     32
 CONTEXT_OFFSET  EQU     12
+SCB_ICSR        EQU     0xE000ED04
 
                 PRESERVE8
                 THUMB
@@ -35,8 +36,6 @@ CONTEXT_OFFSET  EQU     12
                 IMPORT  chThdExit
                 IMPORT  chSchIsRescRequiredExI
                 IMPORT  chSchDoRescheduleI
-                IMPORT  _port_saved_pc
-                IMPORT  _port_irq_nesting
 
 /*
  * Performs a context switch between two threads.
@@ -74,27 +73,54 @@ _port_thread_start PROC
                 ENDP
 
 /*
+ * NMI vector.
+ * The NMI vector is used for exception mode re-entering after a context
+ * switch.
+ */
+#if !CORTEX_ALTERNATE_SWITCH
+                EXPORT  NMIVector
+NMIVector       PROC
+                mrs     r3, PSP
+                adds    r3, r3, #32
+                msr     PSP, r3
+                cpsie   i
+                bx      lr
+                ENDP
+#endif
+
+/*
+ * PendSV vector.
+ * The PendSV vector is used for exception mode re-entering after a context
+ * switch.
+ */
+#if CORTEX_ALTERNATE_SWITCH
+                EXPORT  PendSVVector
+PendSVVector       PROC
+                mrs     r3, PSP
+                adds    r3, r3, #32
+                msr     PSP, r3
+                bx      lr
+                ENDP
+#endif
+
+/*
  * Post-IRQ switch code.
  * Exception handlers return here for context switching.
  */
                 EXPORT  _port_switch_from_isr
 _port_switch_from_isr PROC
-                /* Note, saves r4 to make space for the PC.*/
-                push    {r0, r1, r2, r3, r4}
-                mrs     r0, APSR
-                mov     r1, r12
-                push    {r0, r1, lr}
-                ldr     r0, =_port_saved_pc
-                ldr     r0, [r0]
-                adds    r0, r0, #1
-                str     r0, [sp, #28]
                 bl      chSchDoRescheduleI
-                pop     {r0, r1, r2}
-                mov     r12, r1
-                msr     APSR, r0
-                mov     lr, r2
+                ldr     r2, =SCB_ICSR
+                movs    r3, #128
+#if CORTEX_ALTERNATE_SWITCH
+                lsls    r3, r3, #21
+                str     r3, [r2, #0]
                 cpsie   i
-                pop     {r0, r1, r2, r3, pc}
+#else
+                lsls    r3, r3, #24
+                str     r3, [r2, #0]
+#endif
+waithere        b       waithere
                 ENDP
 
 /*
@@ -102,29 +128,26 @@ _port_switch_from_isr PROC
  */
                 EXPORT  _port_irq_epilogue
 _port_irq_epilogue PROC
-                push    {r4, lr}
+                push    {r3, lr}
+                adds    r0, r0, #15
+                beq     stillnested
                 cpsid   i
-                ldr     r2, =_port_irq_nesting
-                ldr     r3, [r2]
-                subs    r3, r3, #1
-                str     r3, [r2]
-                cmp     r3, #0
-                beq     skipexit
-notrequired
-                cpsie   i
-                pop     {r4, pc}
-skipexit
                 bl      chSchIsRescRequiredExI
                 cmp     r0, #0
-                beq     notrequired
-                mrs     r1, PSP
-                ldr     r2, =_port_saved_pc
-                ldr     r3, [r1, #24]
-                str     r3, [r2]
-                ldr     r3, =_port_switch_from_isr
-                str     r3, [r1, #24]
-                pop     {r4, pc}
-                nop
+                bne     doresch
+                cpsie   i
+stillnested
+                pop     {r3, pc}
+doresch
+                mrs     r3, PSP
+                subs    r3, r3, #32
+                msr     PSP, r3
+                ldr     r2, =_port_switch_from_isr
+                str     r2, [r3, #24]
+                movs    r2, #128
+                lsls     r2, r2, #17
+                str     r2, [r3, #28]
+                pop     {r3, pc}
                 ENDP
 
                 END

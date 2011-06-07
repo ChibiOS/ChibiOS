@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -67,11 +68,11 @@ struct XXXDriver {
   /**
    * @brief Driver state.
    */
-  xxxstate_t                xxx_state;
+  xxxstate_t                state;
   /**
    * @brief Current configuration data.
    */
-  const XXXConfig           *xxx_config;
+  const XXXConfig           *config;
   /* End of the mandatory fields.*/
 };
 

@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -108,9 +109,14 @@ typedef struct {
 #define STM32_USB               ((stm32_usb_t *)STM32_USB_BASE)
 
 /**
- * @brief Pointer to the USB RAM.
+ * @brief   Pointer to the USB RAM.
  */
 #define STM32_USBRAM            ((uint32_t *)STM32_USBRAM_BASE)
+
+/**
+ * @brief   Size of the dedicated packet memory.
+ */
+#define USB_PMA_SIZE            512
 
 /**
  * @brief   Mask of all the toggling bits in the EPR register.

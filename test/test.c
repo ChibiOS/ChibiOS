@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -327,15 +328,19 @@ msg_t TestThread(void *p) {
   test_println("***");
   test_print("*** Kernel:       ");
   test_println(CH_KERNEL_VERSION);
-#ifdef __GNUC__
-  test_print("*** GCC Version:  ");
-  test_println(__VERSION__);
+#ifdef CH_COMPILER_NAME
+  test_print("*** Compiler:     ");
+  test_println(CH_COMPILER_NAME);
 #endif
   test_print("*** Architecture: ");
   test_println(CH_ARCHITECTURE_NAME);
 #ifdef CH_CORE_VARIANT_NAME
   test_print("*** Core Variant: ");
   test_println(CH_CORE_VARIANT_NAME);
+#endif
+#ifdef CH_PORT_INFO
+  test_print("*** Port Info:    ");
+  test_println(CH_PORT_INFO);
 #endif
 #ifdef PLATFORM_NAME
   test_print("*** Platform:     ");

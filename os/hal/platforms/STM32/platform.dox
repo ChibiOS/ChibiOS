@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -61,7 +62,7 @@
  * - Programmable ADC interrupt priority level.
  * - Programmable DMA bus priority for each DMA channel.
  * - Programmable DMA interrupt priority for each DMA channel.
- * - Programmable DMA error hook for each DMA channel.
+ * - Programmable DMA error hook.
  * .
  * @ingroup STM32_DRIVERS
  */
@@ -100,7 +101,45 @@
  */
 
 /**
- * @defgroup STM32_PAL STM32 GPIO Support
+ * @defgroup STM32_GPT STM32 GPT Support
+ * @details The STM32 GPT driver uses the TIMx peripherals.
+ *
+ * @section stm32_gpt_1 Supported HW resources
+ * - TIM1.
+ * - TIM2.
+ * - TIM3.
+ * - TIM4.
+ * - TIM5.
+ * .
+ * @section stm32_gpt_2 STM32 GPT driver implementation features
+ * - Each timer can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Programmable TIMx interrupts priority level.
+ * .
+ * @ingroup STM32_DRIVERS
+ */
+
+/**
+ * @defgroup STM32_ICU STM32 ICU Support
+ * @details The STM32 ICU driver uses the TIMx peripherals.
+ *
+ * @section stm32_icu_1 Supported HW resources
+ * - TIM1.
+ * - TIM2.
+ * - TIM3.
+ * - TIM4.
+ * - TIM5.
+ * .
+ * @section stm32_icu_2 STM32 ICU driver implementation features
+ * - Each timer can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Programmable TIMx interrupts priority level.
+ * .
+ * @ingroup STM32_DRIVERS
+ */
+
+/**
+ * @defgroup STM32_PAL STM32 PAL Support
  * @details The STM32 PAL driver uses the GPIO peripherals.
  *
  * @section stm32_pal_1 Supported HW resources
@@ -158,12 +197,53 @@
  * - TIM2.
  * - TIM3.
  * - TIM4.
+ * - TIM5.
  * .
  * @section stm32_pwm_2 STM32 PWM driver implementation features
  * - Each timer can be independently enabled and programmed. Unused
  *   peripherals are left in low power mode.
  * - Four independent PWM channels per timer.
  * - Programmable TIMx interrupts priority level.
+ * .
+ * @ingroup STM32_DRIVERS
+ */
+
+/**
+ * @defgroup STM32_SDC STM32 SDC Support
+ * @details The STM32 SDC driver uses the SDIO peripheral.
+ *
+ * @section stm32_sdc_1 Supported HW resources
+ * - SDIO.
+ * - DMA2.
+ * .
+ * @section stm32_sdc_2 STM32 SDC driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Programmable interrupt priority.
+ * - DMA is used for receiving and transmitting.
+ * - Programmable DMA bus priority for each DMA channel.
+ * .
+ * @ingroup STM32_DRIVERS
+ */
+
+/**
+ * @defgroup STM32_SERIAL STM32 Serial Support
+ * @details The STM32 Serial driver uses the USART/UART peripherals in a
+ *          buffered, interrupt driven, implementation.
+ *
+ * @section stm32_serial_1 Supported HW resources
+ * The serial driver can support any of the following hardware resources:
+ * - USART1.
+ * - USART2.
+ * - USART3 (where present).
+ * - UART4 (where present).
+ * - UART5 (where present).
+ * .
+ * @section stm32_serial_2 STM32 Serial driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Each UART/USART can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Fully interrupt driven.
+ * - Programmable priority levels for each UART/USART.
  * .
  * @ingroup STM32_DRIVERS
  */
@@ -188,36 +268,13 @@
  * - DMA is used for receiving and transmitting.
  * - Programmable DMA bus priority for each DMA channel.
  * - Programmable DMA interrupt priority for each DMA channel.
- * - Programmable DMA error hook for each DMA channel.
+ * - Programmable DMA error hook.
  * .
  * @ingroup STM32_DRIVERS
  */
 
 /**
- * @defgroup STM32_SERIAL STM32 USART Support (buffered)
- * @details The STM32 Serial driver uses the USART/UART peripherals in a
- *          buffered, interrupt driven, implementation.
- *
- * @section stm32_serial_1 Supported HW resources
- * The serial driver can support any of the following hardware resources:
- * - USART1.
- * - USART2.
- * - USART3 (where present).
- * - UART4 (where present).
- * - UART5 (where present).
- * .
- * @section stm32_serial_2 STM32 Serial driver implementation features
- * - Clock stop for reduced power usage when the driver is in stop state.
- * - Each UART/USART can be independently enabled and programmed. Unused
- *   peripherals are left in low power mode.
- * - Fully interrupt driven.
- * - Programmable priority levels for each UART/USART.
- * .
- * @ingroup STM32_DRIVERS
- */
-
-/**
- * @defgroup STM32_UART STM32 USART Support (unbuffered)
+ * @defgroup STM32_UART STM32 UART Support
  * @details The UART driver supports the STM32 USART peripherals using DMA
  *          channels for maximum performance.
  *
@@ -226,6 +283,7 @@
  * - USART1.
  * - USART2.
  * - USART3 (where present).
+ * - UART4 (where present).
  * - DMA1.
  * - DMA2 (where present).
  * .
@@ -237,7 +295,23 @@
  * - DMA is used for receiving and transmitting.
  * - Programmable DMA bus priority for each DMA channel.
  * - Programmable DMA interrupt priority for each DMA channel.
- * - Programmable DMA error hook for each DMA channel.
+ * - Programmable DMA error hook.
+ * .
+ * @ingroup STM32_DRIVERS
+ */
+
+/**
+ * @defgroup STM32_USB STM32 USB Support
+ * @details The USB driver supports the STM32 USB peripheral.
+ *
+ * @section stm32_usb_1 Supported HW resources
+ * The USB driver can support any of the following hardware resources:
+ * - USB.
+ * .
+ * @section stm32_usb_2 STM32 USB driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Programmable interrupt priority levels.
+ * - Each endpoint programmable in Control, Bulk and Interrupt modes.
  * .
  * @ingroup STM32_DRIVERS
  */

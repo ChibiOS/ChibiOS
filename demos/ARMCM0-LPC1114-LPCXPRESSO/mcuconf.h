@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -44,6 +45,18 @@
 /*
  * CAN driver system settings.
  */
+
+/*
+ * GPT driver system settings.
+ */
+#define LPC11xx_GPT_USE_CT16B0              TRUE
+#define LPC11xx_GPT_USE_CT16B1              TRUE
+#define LPC11xx_GPT_USE_CT32B0              TRUE
+#define LPC11xx_GPT_USE_CT32B1              TRUE
+#define LPC11xx_GPT_CT16B0_IRQ_PRIORITY     2
+#define LPC11xx_GPT_CT16B1_IRQ_PRIORITY     2
+#define LPC11xx_GPT_CT32B0_IRQ_PRIORITY     2
+#define LPC11xx_GPT_CT32B1_IRQ_PRIORITY     2
 
 /*
  * PWM driver system settings.

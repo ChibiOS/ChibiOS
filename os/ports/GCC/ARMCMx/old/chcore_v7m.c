@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -53,7 +54,6 @@ void SysTickVector(void) {
   chSysUnlockFromIsr();
 }
 
-#if !defined(CH_CURRP_REGISTER_CACHE)
 #define PUSH_CONTEXT(sp, prio) {                                        \
   asm volatile ("mrs     %0, PSP                                \n\t"   \
                 "stmdb   %0!, {r3-r11,lr}" :                            \
@@ -66,20 +66,6 @@ void SysTickVector(void) {
                 "msr     BASEPRI, r3                            \n\t"   \
                 "bx      lr" : "=r" (sp) : "r" (sp));                   \
 }
-#else /* defined(CH_CURRP_REGISTER_CACHE) */
-#define PUSH_CONTEXT(sp, prio) {                                        \
-  asm volatile ("mrs     %0, PSP                                \n\t"   \
-                "stmdb   %0!, {r3-r6,r8-r11, lr}" :                     \
-                "=r" (sp) : "r" (sp), "r" (prio));                      \
-}
-
-#define POP_CONTEXT(sp) {                                               \
-  asm volatile ("ldmia   %0!, {r3-r6,r8-r11, lr}                \n\t"   \
-                "msr     PSP, %0                                \n\t"   \
-                "msr     BASEPRI, r3                            \n\t"   \
-                "bx      lr" : "=r" (sp) : "r" (sp));                   \
-}
-#endif /* defined(CH_CURRP_REGISTER_CACHE) */
 
 /**
  * @brief   SVC vector.

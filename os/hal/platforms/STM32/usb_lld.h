@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -41,6 +42,11 @@
  */
 #define USB_MAX_ENDPOINTS                   USB_ENDOPOINTS_NUMBER
 
+/**
+ * @brief   This device requires the address change after the status packet.
+ */
+#define USB_SET_ADDRESS_MODE                USB_LATE_SET_ADDRESS
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -52,6 +58,13 @@
  */
 #if !defined(STM32_USB_USE_USB1) || defined(__DOXYGEN__)
 #define STM32_USB_USE_USB1                  TRUE
+#endif
+
+/**
+ * @brief   Enables the USB device low power mode on suspend.
+ */
+#if !defined(STM32_USB_LOW_POWER_ON_SUSPEND) || defined(__DOXYGEN__)
+#define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
 #endif
 
 /**
@@ -89,84 +102,105 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of an USB Endpoint configuration structure.
- * @note    Platform specific restrictions may apply to endpoints.
+ * @brief   Type of an endpoint state structure.
  */
 typedef struct {
   /**
-   * @brief   IN endpoint notification callback.
+   * @brief   Pointer to the transmission buffer.
    */
-  usbepcallback_t               uepc_in_cb;
+  const uint8_t                 *txbuf;
   /**
-   * @brief   OUT endpoint notification callback.
+   * @brief   Requested transmit transfer size.
    */
-  usbepcallback_t               uepc_out_cb;
+  size_t                        txsize;
   /**
-   * @brief   IN endpoint maximum packet size.
+   * @brief   Transmitted bytes so far.
    */
-  uint16_t                      uepc_in_maxsize;
-  /**
-   * @brief   OUT endpoint maximum packet size.
-   */
-  uint16_t                      uepc_out_maxsize;
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   EPxR register initialization value.
-   * @note    Do not specify the EA field, leave it to zero.
-   */
-  uint16_t                      uepc_epr;
-  /**
-   * @brief   Endpoint IN buffer address as offset in the PMA.
-   */
-  uint16_t                      uepc_inaddr;
-  /**
-   * @brief   Endpoint OUT buffer address as offset in the PMA.
-   */
-  uint16_t                      uepc_outaddr;
-} USBEndpointConfig;
-
+  size_t                        txcnt;
+} USBInEndpointState;
 
 /**
  * @brief   Type of an endpoint state structure.
  */
 typedef struct {
   /**
-   * @brief   Configuration associated to the endpoint.
+   * @brief   Number of packets to receive.
    */
-  const USBEndpointConfig       *uep_config;
-  /**
-   * @brief   Pointer to the transmission buffer.
-   */
-  const uint8_t                 *uep_txbuf;
+  uint16_t                      rxpkts;
   /**
    * @brief   Pointer to the receive buffer.
    */
-  uint8_t                       *uep_rxbuf;
-  /**
-   * @brief   Requested transmit transfer size.
-   */
-  size_t                        uep_txsize;
+  uint8_t                       *rxbuf;
   /**
    * @brief   Requested receive transfer size.
-    */
-  size_t                        uep_rxsize;
-  /**
-   * @brief   Transmitted bytes so far.
    */
-  size_t                        uep_txcnt;
+  size_t                        rxsize;
   /**
    * @brief   Received bytes so far.
-    */
-  size_t                        uep_rxcnt;
-  /**
-   * @brief   @p TRUE if transmitting else @p FALSE.
    */
-  uint8_t                       uep_transmitting;
+  size_t                        rxcnt;
+} USBOutEndpointState;
+
+/**
+ * @brief   Type of an USB endpoint configuration structure.
+ * @note    Platform specific restrictions may apply to endpoints.
+ */
+typedef struct {
   /**
-   * @brief   @p TRUE if receiving else @p FALSE.
+   * @brief   Type and mode of the endpoint.
    */
-  uint8_t                       uep_receiving;
-} USBEndpointState;
+  uint32_t                      ep_mode;
+  /**
+   * @brief   Setup packet notification callback.
+   * @details This callback is invoked when a setup packet has been
+   *          received.
+   * @post    The application must immediately call @p usbReadPacket() in
+   *          order to access the received packet.
+   * @note    This field is only valid for @p USB_EP_MODE_TYPE_CTRL
+   *          endpoints, it should be set to @p NULL for other endpoint
+   *          types.
+   */
+  usbepcallback_t               setup_cb;
+  /**
+   * @brief   IN endpoint notification callback.
+   * @details This field must be set to @p NULL if the IN endpoint is not
+   *          used.
+   */
+  usbepcallback_t               in_cb;
+  /**
+   * @brief   OUT endpoint notification callback.
+   * @details This field must be set to @p NULL if the OUT endpoint is not
+   *          used.
+   */
+  usbepcallback_t               out_cb;
+  /**
+   * @brief   IN endpoint maximum packet size.
+   * @details This field must be set to zero if the IN endpoint is not
+   *          used.
+   */
+  uint16_t                      in_maxsize;
+  /**
+   * @brief   OUT endpoint maximum packet size.
+   * @details This field must be set to zero if the OUT endpoint is not
+   *          used.
+   */
+  uint16_t                      out_maxsize;
+  /**
+   * @brief   @p USBEndpointState associated to the IN endpoint.
+   * @details This structure maintains the state of the IN endpoint when
+   *          the endpoint is not in packet mode. Endpoints configured in
+   *          packet mode must set this field to @p NULL.
+   */
+  USBInEndpointState            *in_state;
+  /**
+   * @brief   @p USBEndpointState associated to the OUT endpoint.
+   * @details This structure maintains the state of the OUT endpoint when
+   *          the endpoint is not in packet mode. Endpoints configured in
+   *          packet mode must set this field to @p NULL.
+   */
+  USBOutEndpointState           *out_state;
+  /* End of the mandatory fields.*/
+} USBEndpointConfig;
 
 /**
  * @brief   Type of an USB driver configuration structure.
@@ -176,22 +210,22 @@ typedef struct {
    * @brief   USB events callback.
    * @details This callback is invoked when an USB driver event is registered.
    */
-  usbeventcb_t                  uc_event_cb;
+  usbeventcb_t                  event_cb;
   /**
    * @brief   Device GET_DESCRIPTOR request callback.
    * @note    This callback is mandatory and cannot be set to @p NULL.
    */
-  usbgetdescriptor_t            uc_get_descriptor_cb;
+  usbgetdescriptor_t            get_descriptor_cb;
   /**
    * @brief   Requests hook callback.
    * @details This hook allows to be notified of standard requests or to
    *          handle non standard requests.
    */
-  usbreqhandler_t               uc_requests_hook_cb;
+  usbreqhandler_t               requests_hook_cb;
   /**
    * @brief   Start Of Frame callback.
    */
-  usbcallback_t                 uc_sof_cb;
+  usbcallback_t                 sof_cb;
   /* End of the mandatory fields.*/
 } USBConfig;
 
@@ -202,61 +236,68 @@ struct USBDriver {
   /**
    * @brief   Driver state.
    */
-  usbstate_t                    usb_state;
+  usbstate_t                    state;
   /**
    * @brief   Current configuration data.
    */
-  const USBConfig               *usb_config;
+  const USBConfig               *config;
   /**
    * @brief   Field available to user, it can be used to associate an
    *          application-defined handler to the USB driver.
    */
-  void                          *usb_param;
+  void                          *param;
+  /**
+   * @brief   Bit map of the transmitting IN endpoints.
+   */
+  uint16_t                      transmitting;
+  /**
+   * @brief   Bit map of the receiving OUT endpoints.
+   */
+  uint16_t                      receiving;
   /**
    * @brief   Active endpoints configurations.
    */
-  USBEndpointState              *usb_ep[USB_MAX_ENDPOINTS + 1];
+  const USBEndpointConfig       *epc[USB_MAX_ENDPOINTS + 1];
   /**
    * @brief   Endpoint 0 state.
    */
-  usbep0state_t                 usb_ep0state;
+  usbep0state_t                 ep0state;
   /**
    * @brief   Next position in the buffer to be transferred through endpoint 0.
    */
-  uint8_t                       *usb_ep0next;
+  uint8_t                       *ep0next;
   /**
-   * @brief   Maximum number of bytes to be tranferred through endpoint 0.
+   * @brief   Number of bytes yet to be transferred through endpoint 0.
    */
-  size_t                        usb_ep0max;
-  /**
-   * @brief   Number of bytes yet to be tranferred through endpoint 0.
-   */
-  size_t                        usb_ep0n;
-  /**
-   * @brief   Size of the last packet transferred through endpoint 0.
-   */
-  size_t                        usb_ep0lastsize;
+  size_t                        ep0n;
   /**
    * @brief   Endpoint 0 end transaction callback.
    */
-  usbcallback_t                 usb_ep0endcb;
+  usbcallback_t                 ep0endcb;
   /**
    * @brief   Setup packet buffer.
    */
-  uint8_t                       usb_setup[8];
+  uint8_t                       setup[8];
   /**
    * @brief   Current USB device status.
    */
-  uint16_t                      usb_status;
+  uint16_t                      status;
   /**
    * @brief   Assigned USB address.
    */
-  uint8_t                       usb_address;
+  uint8_t                       address;
   /**
    * @brief   Current USB device configuration.
    */
-  uint8_t                       usb_configuration;
+  uint8_t                       configuration;
+#if defined(USB_DRIVER_EXT_FIELDS)
+  USB_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
+  /**
+   * @brief   Pointer to the next address in the packet memory.
+   */
+  uint32_t                      pmnext;
 };
 
 /*===========================================================================*/
@@ -270,7 +311,7 @@ struct USBDriver {
  *
  * @notapi
  */
-#define usb_lld_fetch_word(p) (*(uint16_t *)p)
+#define usb_lld_fetch_word(p) (*(uint16_t *)(p))
 
 /**
  * @brief   Returns the current frame number.
@@ -282,20 +323,43 @@ struct USBDriver {
  */
 #define usb_lld_get_frame_number(usbp) (STM32_USB->FNR & FNR_FN_MASK)
 
+/**
+ * @brief   Returns the exact size of a receive transaction.
+ * @details The received size can be different from the size specified in
+ *          @p usbStartReceiveI() because the last packet could have a size
+ *          different from the expected one.
+ * @pre     The OUT endpoint must have been configured in transaction mode
+ *          in order to use this function.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @return              Received data size.
+ *
+ * @notapi
+ */
+#define usb_lld_get_transaction_size(usbp, ep)                              \
+  ((usbp)->epc[ep]->out_state->rxcnt)
+
+/**
+ * @brief   Returns the exact size of a received packet.
+ * @pre     The OUT endpoint must have been configured in packet mode
+ *          in order to use this function.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @return              Received data size.
+ *
+ * @notapi
+ */
+#define  usb_lld_get_packet_size(usbp, ep)                                  \
+  ((size_t)USB_GET_DESCRIPTOR(ep)->RXCOUNT & RXCOUNT_COUNT_MASK)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
 #if STM32_USB_USE_USB1 && !defined(__DOXYGEN__)
 extern USBDriver USBD1;
-#endif
-
-#if !defined(__DOXYGEN__)
-extern const USBEndpointConfig usb_lld_ep0config;
-#endif
-
-#if !defined(__DOXYGEN__)
-extern USBEndpointState usb_lld_ep0state;
 #endif
 
 #ifdef __cplusplus
@@ -305,20 +369,24 @@ extern "C" {
   void usb_lld_start(USBDriver *usbp);
   void usb_lld_stop(USBDriver *usbp);
   void usb_lld_reset(USBDriver *usbp);
-  void usb_lld_set_address(USBDriver *usbp, uint8_t addr);
+  void usb_lld_set_address(USBDriver *usbp);
   void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep);
   void usb_lld_disable_endpoints(USBDriver *usbp);
-  size_t usb_lld_get_readable(USBDriver *usbp, usbep_t ep);
-  size_t usb_lld_read(USBDriver *usbp, usbep_t ep,
-                      uint8_t *buf, size_t n);
-  size_t usb_lld_write(USBDriver *usbp, usbep_t ep,
-                       const uint8_t *buf, size_t n);
   usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep);
   usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep);
+  void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf);
+  size_t usb_lld_read_packet(USBDriver *usbp, usbep_t ep,
+                             uint8_t *buf, size_t n);
+  void usb_lld_write_packet(USBDriver *usbp, usbep_t ep,
+                            const uint8_t *buf, size_t n);
+  void usb_lld_start_out(USBDriver *usbp, usbep_t ep,
+                         uint8_t *buf, size_t n);
+  void usb_lld_start_in(USBDriver *usbp, usbep_t ep,
+                        const uint8_t *buf, size_t n);
   void usb_lld_stall_in(USBDriver *usbp, usbep_t ep);
   void usb_lld_stall_out(USBDriver *usbp, usbep_t ep);
-  void usb_lld_clear_in(USBDriver *usbp, usbep_t ep);
   void usb_lld_clear_out(USBDriver *usbp, usbep_t ep);
+  void usb_lld_clear_in(USBDriver *usbp, usbep_t ep);
 #ifdef __cplusplus
 }
 #endif

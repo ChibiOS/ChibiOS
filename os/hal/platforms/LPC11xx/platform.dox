@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -43,7 +44,25 @@
  */
 
 /**
- * @defgroup LPC11xx_PAL LPC11xx GPIO Support
+ * @defgroup LPC11xx_GPT LPC11xx GPT Support
+ * @details The LPC11xx GPT driver uses the CTxxBy peripherals.
+ *
+ * @section lpc11xx_gpt_1 Supported HW resources
+ * - CT16B0.
+ * - CT16B1.
+ * - CT32B0.
+ * - CT32B1.
+ * .
+ * @section lpc11xx_gpt_2 LPC11xx GPT driver implementation features
+ * - Each timer can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Programmable CTxxBy interrupts priority level.
+ * .
+ * @ingroup LPC11xx
+ */
+
+/**
+ * @defgroup LPC11xx_PAL LPC11xx PAL Support
  * @details The LPC11xx PAL driver uses the GPIO peripherals.
  *
  * @section lpc11xx_pal_1 Supported HW resources
@@ -79,7 +98,26 @@
  */
 
 /**
- * @defgroup LPC11xx_SPI LPC11xx SSP Support
+ * @defgroup LPC11xx_SERIAL LPC11xx Serial Support
+ * @details The LPC11xx Serial driver uses the UART peripheral in a
+ *          buffered, interrupt driven, implementation. The serial driver
+ *          also takes advantage of the LPC11xx UARTs deep hardware buffers.
+ *
+ * @section lpc11xx_serial_1 Supported HW resources
+ * The serial driver can support any of the following hardware resources:
+ * - UART.
+ * .
+ * @section lpc11xx_serial_2 LPC11xx Serial driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Fully interrupt driven.
+ * - Programmable priority level.
+ * - Takes advantage of the input and output FIFOs.
+ * .
+ * @ingroup LPC11xx
+ */
+
+/**
+ * @defgroup LPC11xx_SPI LPC11xx SPI Support
  * @details The SPI driver supports the LPC11xx SSP peripherals in an interrupt
  *          driven implementation.
  * @note    Being the SPI a fast peripheral, much care must be taken to
@@ -97,25 +135,6 @@
  *   peripherals are left in low power mode.
  * - Fully interrupt driven.
  * - Programmable interrupt priority levels for each SSP.
- * .
- * @ingroup LPC11xx
- */
-
-/**
- * @defgroup LPC11xx_SERIAL LPC11xx UART Support (buffered)
- * @details The LPC11xx Serial driver uses the UART peripheral in a
- *          buffered, interrupt driven, implementation. The serial driver
- *          also takes advantage of the LPC11xx UARTs deep hardware buffers.
- *
- * @section lpc11xx_serial_1 Supported HW resources
- * The serial driver can support any of the following hardware resources:
- * - UART.
- * .
- * @section lpc11xx_serial_2 LPC11xx Serial driver implementation features
- * - Clock stop for reduced power usage when the driver is in stop state.
- * - Fully interrupt driven.
- * - Programmable priority level.
- * - Takes advantage of the input and output FIFOs.
  * .
  * @ingroup LPC11xx
  */

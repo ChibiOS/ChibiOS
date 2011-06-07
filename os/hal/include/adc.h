@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -92,9 +93,9 @@ typedef enum {
  * @notapi
  */
 #define _adc_reset_i(adcp) {                                                \
-  if ((adcp)->ad_thread != NULL) {                                          \
-    Thread *tp = (adcp)->ad_thread;                                         \
-    (adcp)->ad_thread = NULL;                                               \
+  if ((adcp)->thread != NULL) {                                             \
+    Thread *tp = (adcp)->thread;                                            \
+    (adcp)->thread = NULL;                                                  \
     tp->p_u.rdymsg  = RDY_RESET;                                            \
     chSchReadyI(tp);                                                        \
   }                                                                         \
@@ -108,9 +109,9 @@ typedef enum {
  * @notapi
  */
 #define _adc_reset_s(adcp) {                                                \
-  if ((adcp)->ad_thread != NULL) {                                          \
-    Thread *tp = (adcp)->ad_thread;                                         \
-    (adcp)->ad_thread = NULL;                                               \
+  if ((adcp)->thread != NULL) {                                             \
+    Thread *tp = (adcp)->thread;                                            \
+    (adcp)->thread = NULL;                                                  \
     chSchWakeupS(tp, RDY_RESET);                                            \
   }                                                                         \
 }
@@ -123,10 +124,11 @@ typedef enum {
  * @notapi
  */
 #define _adc_wakeup_isr(adcp) {                                             \
-  if ((adcp)->ad_thread != NULL) {                                          \
-    Thread *tp = (adcp)->ad_thread;                                         \
-    (adcp)->ad_thread = NULL;                                               \
+  if ((adcp)->thread != NULL) {                                             \
+    Thread *tp;                                                             \
     chSysLockFromIsr();                                                     \
+    tp = (adcp)->thread;                                                    \
+    (adcp)->thread = NULL;                                                  \
     tp->p_u.rdymsg = RDY_OK;                                                \
     chSchReadyI(tp);                                                        \
     chSysUnlockFromIsr();                                                   \
@@ -152,9 +154,8 @@ typedef enum {
  * @notapi
  */
 #define _adc_isr_half_code(adcp) {                                          \
-  if ((adcp)->ad_grpp->acg_endcb != NULL) {                                 \
-    (adcp)->ad_grpp->acg_endcb(adcp, (adcp)->ad_samples,                    \
-                               (adcp)->ad_depth / 2);                       \
+  if ((adcp)->grpp->end_cb != NULL) {                                       \
+    (adcp)->grpp->end_cb(adcp, (adcp)->samples, (adcp)->depth / 2);         \
   }                                                                         \
 }
 
@@ -173,40 +174,40 @@ typedef enum {
  * @notapi
  */
 #define _adc_isr_full_code(adcp) {                                          \
-  if ((adcp)->ad_grpp->acg_circular) {                                      \
+  if ((adcp)->grpp->circular) {                                             \
     /* Callback handling.*/                                                 \
-    if ((adcp)->ad_grpp->acg_endcb != NULL) {                               \
-      if ((adcp)->ad_depth > 1) {                                           \
+    if ((adcp)->grpp->end_cb != NULL) {                                     \
+      if ((adcp)->depth > 1) {                                              \
         /* Invokes the callback passing the 2nd half of the buffer.*/       \
-        size_t half = (adcp)->ad_depth / 2;                                 \
-        (adcp)->ad_grpp->acg_endcb(adcp, (adcp)->ad_samples + half, half);  \
+        size_t half = (adcp)->depth / 2;                                    \
+        (adcp)->grpp->end_cb(adcp, (adcp)->samples + half, half);           \
       }                                                                     \
       else {                                                                \
         /* Invokes the callback passing the whole buffer.*/                 \
-        (adcp)->ad_grpp->acg_endcb(adcp, (adcp)->ad_samples,                \
-                                   (adcp)->ad_depth);                       \
+        (adcp)->grpp->end_cb(adcp, (adcp)->samples, (adcp)->depth);         \
       }                                                                     \
     }                                                                       \
   }                                                                         \
   else {                                                                    \
     /* End conversion.*/                                                    \
     adc_lld_stop_conversion(adcp);                                          \
-    if ((adcp)->ad_grpp->acg_endcb != NULL) {                               \
-      (adcp)->ad_state = ADC_COMPLETE;                                      \
-      if ((adcp)->ad_depth > 1) {                                           \
+    if ((adcp)->grpp->end_cb != NULL) {                                     \
+      (adcp)->state = ADC_COMPLETE;                                         \
+      if ((adcp)->depth > 1) {                                              \
         /* Invokes the callback passing the 2nd half of the buffer.*/       \
-        size_t half = (adcp)->ad_depth / 2;                                 \
-        (adcp)->ad_grpp->acg_endcb(adcp, (adcp)->ad_samples + half, half);  \
+        size_t half = (adcp)->depth / 2;                                    \
+        (adcp)->grpp->end_cb(adcp, (adcp)->samples + half, half);           \
       }                                                                     \
       else {                                                                \
         /* Invokes the callback passing the whole buffer.*/                 \
-        (adcp)->ad_grpp->acg_endcb(adcp, (adcp)->ad_samples,                \
-                                   (adcp)->ad_depth);                       \
+        (adcp)->grpp->end_cb(adcp, (adcp)->samples, (adcp)->depth);         \
       }                                                                     \
-      if ((adcp)->ad_state == ADC_COMPLETE)                                 \
-        (adcp)->ad_state = ADC_READY;                                       \
+      if ((adcp)->state == ADC_COMPLETE)                                    \
+        (adcp)->state = ADC_READY;                                          \
     }                                                                       \
-    (adcp)->ad_grpp = NULL;                                                 \
+    else                                                                    \
+      (adcp)->state = ADC_READY;                                            \
+    (adcp)->grpp = NULL;                                                    \
     _adc_wakeup_isr(adcp);                                                  \
   }                                                                         \
 }

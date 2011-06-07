@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -40,7 +41,7 @@
  */
 
 /**
- * @defgroup STM8S_PAL STM8S GPIO Support
+ * @defgroup STM8S_PAL STM8S PAL Support
  * @details The STM8S PAL driver uses the GPIO peripherals.
  *
  * @section stm8s_pal_1 Supported HW resources
@@ -83,26 +84,7 @@
  */
 
 /**
- * @defgroup STM8S_SPI STM8S SPI Support
- * @details The SPI driver supports the STM8S SPI peripheral in an interrupt
- *          driven implementation.
- * @note    Being the SPI a fast peripheral, much care must be taken to
- *          not saturate the CPU bandwidth with an excessive IRQ rate. The
- *          maximum transfer bit rate is likely limited by the IRQ
- *          handling.
- *
- * @section stm8s_spi_1 Supported HW resources
- * - SPI.
- * .
- * @section stm8s_spi_2 STM8S SPI driver implementation features
- * - Clock stop for reduced power usage when the driver is in stop state.
- * - Fully interrupt driven.
- * .
- * @ingroup STM8S
- */
-
-/**
- * @defgroup STM8S_SERIAL STM8S UART Support (buffered)
+ * @defgroup STM8S_SERIAL STM8S Serial Support
  * @details The STM8S Serial driver uses the UART peripherals in a
  *          buffered, interrupt driven, implementation.
  *
@@ -116,6 +98,25 @@
  * - Clock stop for reduced power usage when the driver is in stop state.
  * - Each UART can be independently enabled and programmed. Unused
  *   peripherals are left in low power mode.
+ * - Fully interrupt driven.
+ * .
+ * @ingroup STM8S
+ */
+
+/**
+ * @defgroup STM8S_SPI STM8S SPI Support
+ * @details The SPI driver supports the STM8S SPI peripheral in an interrupt
+ *          driven implementation.
+ * @note    Being the SPI a fast peripheral, much care must be taken to
+ *          not saturate the CPU bandwidth with an excessive IRQ rate. The
+ *          maximum transfer bit rate is likely limited by the IRQ
+ *          handling.
+ *
+ * @section stm8s_spi_1 Supported HW resources
+ * - SPI.
+ * .
+ * @section stm8s_spi_2 STM8S SPI driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
  * - Fully interrupt driven.
  * .
  * @ingroup STM8S

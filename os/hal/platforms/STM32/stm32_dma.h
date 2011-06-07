@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -35,11 +36,11 @@
 /*===========================================================================*/
 
 /** @brief DMA1 identifier.*/
-#define DMA1_ID 0
+#define STM32_DMA1_ID 0
 
 /** @brief DMA2 identifier.*/
 #if STM32_HAS_DMA2 || defined(__DOXYGEN__)
-#define DMA2_ID 1
+#define STM32_DMA2_ID 1
 #endif
 
 /*===========================================================================*/
@@ -55,7 +56,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   STM32 DMA channel memory structure.
+ * @brief   STM32 DMA channel memory structure type.
  */
 typedef struct {
   volatile uint32_t     CCR;
@@ -66,7 +67,7 @@ typedef struct {
 } stm32_dma_channel_t;
 
 /**
- * @brief   STM32 DMA subsystem memory structure.
+ * @brief   STM32 DMA subsystem memory structure type.
  * @note    This structure has been redefined here because it is convenient to
  *          have the channels organized as an array, the ST header does not
  *          do that.
@@ -76,6 +77,14 @@ typedef struct {
   volatile uint32_t     IFCR;
   stm32_dma_channel_t   channels[7];
 } stm32_dma_t;
+
+/**
+ * @brief   STM32 DMA ISR function type.
+ *
+ * @param[in] p         parameter for the registered function
+ * @param[in] flags     pre-shifted content of the ISR register
+ */
+typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -127,11 +136,12 @@ typedef struct {
 
 /**
  * @brief   Associates a peripheral data register to a DMA channel.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
  * @param[in] cpar      value to be written in the CPAR register
  *
- * @api
+ * @special
  */
 #define dmaChannelSetPeripheral(dmachp, cpar) {                             \
   (dmachp)->CPAR  = (uint32_t)(cpar);                                       \
@@ -142,13 +152,14 @@ typedef struct {
  * @note    This macro does not change the CPAR register because that register
  *          value does not change frequently, it usually points to a peripheral
  *          data register.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
  * @param[in] cndtr     value to be written in the CNDTR register
  * @param[in] cmar      value to be written in the CMAR register
  * @param[in] ccr       value to be written in the CCR register
  *
- * @api
+ * @special
  */
 #define dmaChannelSetup(dmachp, cndtr, cmar, ccr) {                         \
   (dmachp)->CNDTR = (uint32_t)(cndtr);                                      \
@@ -158,10 +169,11 @@ typedef struct {
 
 /**
  * @brief   DMA channel enable by channel pointer.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
  *
- * @api
+ * @special
  */
 #define dmaChannelEnable(dmachp) {                                          \
   (dmachp)->CCR |= DMA_CCR1_EN;                                             \
@@ -170,10 +182,11 @@ typedef struct {
 
 /**
  * @brief   DMA channel disable by channel pointer.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
  *
- * @api
+ * @special
  */
 #define dmaChannelDisable(dmachp) {                                         \
   (dmachp)->CCR = 0;                                                        \
@@ -186,6 +199,7 @@ typedef struct {
  *          data register.
  * @note    Channels are numbered from 0 to 6, use the appropriate macro
  *          as parameter.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmap      pointer to a stm32_dma_t structure
  * @param[in] ch        channel number
@@ -193,7 +207,7 @@ typedef struct {
  * @param[in] cmar      value to be written in the CMAR register
  * @param[in] ccr       value to be written in the CCR register
  *
- * @api
+ * @special
  */
 #define dmaSetupChannel(dmap, ch, cndtr, cmar, ccr) {                       \
   dmaChannelSetup(&(dmap)->channels[ch], (cndtr), (cmar), (ccr));           \
@@ -203,11 +217,12 @@ typedef struct {
  * @brief   DMA channel enable by channel ID.
  * @note    Channels are numbered from 0 to 6, use the appropriate macro
  *          as parameter.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmap      pointer to a stm32_dma_t structure
  * @param[in] ch        channel number
  *
- * @api
+ * @special
  */
 #define dmaEnableChannel(dmap, ch) {                                        \
   dmaChannelEnable(&(dmap)->channels[ch]);                                  \
@@ -217,11 +232,12 @@ typedef struct {
  * @brief   DMA channel disable by channel ID.
  * @note    Channels are numbered from 0 to 6, use the appropriate macro
  *          as parameter.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmap      pointer to a stm32_dma_t structure
  * @param[in] ch        channel number
  *
- * @api
+ * @special
  */
 #define dmaDisableChannel(dmap, ch) {                                       \
   dmaChannelDisable(&(dmap)->channels[ch]);                                 \
@@ -233,11 +249,12 @@ typedef struct {
  *          withdraw all the pending interrupt bits from the ISR register.
  * @note    Channels are numbered from 0 to 6, use the appropriate macro
  *          as parameter.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmap      pointer to a stm32_dma_t structure
  * @param[in] ch        channel number
  *
- * @api
+ * @special
  */
 #define dmaClearChannel(dmap, ch){                                          \
   (dmap)->IFCR = 1 << ((ch) * 4);                                           \
@@ -251,8 +268,9 @@ typedef struct {
 extern "C" {
 #endif
   void dmaInit(void);
-  void dmaEnable(uint32_t dma);
-  void dmaDisable(uint32_t dma);
+  void dmaAllocate(uint32_t dma, uint32_t channel,
+                   stm32_dmaisr_t func, void *param);
+  void dmaRelease(uint32_t dma, uint32_t channel);
 #ifdef __cplusplus
 }
 #endif

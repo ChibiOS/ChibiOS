@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -47,7 +48,7 @@
  * @brief Heap header file
  */
 
-#if CH_USE_HEAP
+#if (CH_USE_HEAP && !CH_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
 
 #define SIZE 16
 
@@ -155,7 +156,7 @@ ROMCONST struct testcase testheap1 = {
  * @brief   Test sequence for heap.
  */
 ROMCONST struct testcase * ROMCONST patternheap[] = {
-#if CH_USE_HEAP
+#if (CH_USE_HEAP && !CH_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
   &testheap1,
 #endif
   NULL

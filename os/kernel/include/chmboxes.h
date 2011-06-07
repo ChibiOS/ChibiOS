@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -60,10 +61,13 @@ extern "C" {
   void chMBReset(Mailbox *mbp);
   msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t timeout);
   msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t timeout);
+  msg_t chMBPostI(Mailbox *mbp, msg_t msg);
   msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t timeout);
   msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t timeout);
+  msg_t chMBPostAheadI(Mailbox *mbp, msg_t msg);
   msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t timeout);
   msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t timeout);
+  msg_t chMBFetchI(Mailbox *mbp, msg_t *msgp);
 #ifdef __cplusplus
 }
 #endif

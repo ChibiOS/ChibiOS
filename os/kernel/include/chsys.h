@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -28,8 +29,11 @@
 #ifndef _CHSYS_H_
 #define _CHSYS_H_
 
+#if !CH_NO_IDLE_THREAD || defined(__DOXYGEN__)
 /**
  * @brief   Returns a pointer to the idle thread.
+ * @pre     In order to use this function the option @p CH_NO_IDLE_THREAD
+ *          must be disabled.
  * @note    The reference counter of the idle thread is not incremented but
  *          it is not strictly required being the idle thread a static
  *          object.
@@ -39,6 +43,7 @@
  * @api
  */
 #define chSysGetIdleThread() ((Thread *)_idle_thread_wa)
+#endif
 
 /**
  * @brief   Halts the system.

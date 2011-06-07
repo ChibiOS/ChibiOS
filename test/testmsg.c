@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -48,7 +49,7 @@
  * @brief Messages header file
  */
 
-#if CH_USE_MESSAGES
+#if CH_USE_MESSAGES || defined(__DOXYGEN__)
 
 /**
  * @page test_msg_001 Messages Server loop
@@ -64,11 +65,11 @@ static msg_t thread(void *p) {
   chMsgSend(p, 'A');
   chMsgSend(p, 'B');
   chMsgSend(p, 'C');
-  chMsgSend(p, 'D');
   return 0;
 }
 
 static void msg1_execute(void) {
+  Thread *tp;
   msg_t msg;
 
   /*
@@ -76,29 +77,19 @@ static void msg1_execute(void) {
    */
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() + 1,
                                  thread, chThdSelf());
-  chMsgRelease(msg = chMsgWait());
+  tp = chMsgWait();
+  msg = chMsgGet(tp);
+  chMsgRelease(tp, msg);
   test_emit_token(msg);
-  chMsgRelease(msg = chMsgWait());
+  tp = chMsgWait();
+  msg = chMsgGet(tp);
+  chMsgRelease(tp, msg);
   test_emit_token(msg);
-  chMsgRelease(msg = chMsgWait());
+  tp = chMsgWait();
+  msg = chMsgGet(tp);
+  chMsgRelease(tp, msg);
   test_emit_token(msg);
   test_assert_sequence(1, "ABC");
-
-  /*
-   * Testing message fetch using chMsgGet().
-   * Note, the following is valid because the sender has higher priority than
-   * the receiver.
-   */
-  msg = chMsgGet();
-  test_assert(1, msg != 0, "no message");
-  chMsgRelease(0);
-  test_assert(2, msg == 'D', "wrong message");
-
-  /*
-   * Must not have pending messages.
-   */
-  msg = chMsgGet();
-  test_assert(3, msg == 0, "unknown message");
 }
 
 ROMCONST struct testcase testmsg1 = {
@@ -114,7 +105,7 @@ ROMCONST struct testcase testmsg1 = {
  * @brief   Test sequence for messages.
  */
 ROMCONST struct testcase * ROMCONST patternmsg[] = {
-#if CH_USE_MESSAGES
+#if CH_USE_MESSAGES || defined(__DOXYGEN__)
   &testmsg1,
 #endif
   NULL

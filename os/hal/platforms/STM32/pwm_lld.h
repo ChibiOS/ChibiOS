@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -37,15 +38,55 @@
 /**
  * @brief   Number of PWM channels per PWM driver.
  */
-#define PWM_CHANNELS                        4
+#define PWM_CHANNELS                            4
+
+/**
+ * @brief   Complementary output modes mask.
+ * @note    This is an STM32-specific setting.
+ */
+#define PWM_COMPLEMENTARY_OUTPUT_MASK           0xF0
+
+/**
+ * @brief   Complementary output not driven.
+ * @note    This is an STM32-specific setting.
+ */
+#define PWM_COMPLEMENTARY_OUTPUT_DISABLED       0x00
+
+/**
+ * @brief   Complementary output, active is logic level one.
+ * @note    This is an STM32-specific setting.
+ * @note    This setting is only available if the configuration option
+ *          @p STM32_PWM_USE_ADVANCED is set to TRUE and only for advanced
+ *          timers TIM1 and TIM8.
+ */
+#define PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH    0x10
+
+/**
+ * @brief   Complementary output, active is logic level zero.
+ * @note    This is an STM32-specific setting.
+ * @note    This setting is only available if the configuration option
+ *          @p STM32_PWM_USE_ADVANCED is set to TRUE and only for advanced
+ *          timers TIM1 and TIM8.
+ */
+#define PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW     0x20
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
 /**
- * @brief   PWM1 driver enable switch.
- * @details If set to @p TRUE the support for PWM1 is included.
+ * @brief   If advanced timer features switch.
+ * @details If set to @p TRUE the advanced features for TIM1 and TIM8 are
+ *          enabled.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_PWM_USE_ADVANCED) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_ADVANCED              TRUE
+#endif
+
+/**
+ * @brief   PWMD1 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD1 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM1) || defined(__DOXYGEN__)
@@ -53,8 +94,8 @@
 #endif
 
 /**
- * @brief   PWM2 driver enable switch.
- * @details If set to @p TRUE the support for PWM2 is included.
+ * @brief   PWMD2 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD2 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM2) || defined(__DOXYGEN__)
@@ -62,8 +103,8 @@
 #endif
 
 /**
- * @brief   PWM3 driver enable switch.
- * @details If set to @p TRUE the support for PWM3 is included.
+ * @brief   PWMD3 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD3 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM3) || defined(__DOXYGEN__)
@@ -71,8 +112,8 @@
 #endif
 
 /**
- * @brief   PWM4 driver enable switch.
- * @details If set to @p TRUE the support for PWM4 is included.
+ * @brief   PWMD4 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD4 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM4) || defined(__DOXYGEN__)
@@ -80,8 +121,8 @@
 #endif
 
 /**
- * @brief   PWM5 driver enable switch.
- * @details If set to @p TRUE the support for PWM5 is included.
+ * @brief   PWMD5 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD5 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM5) || defined(__DOXYGEN__)
@@ -89,35 +130,35 @@
 #endif
 
 /**
- * @brief   PWM1 interrupt priority level setting.
+ * @brief   PWMD1 interrupt priority level setting.
  */
 #if !defined(STM32_PWM_TIM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM_TIM1_IRQ_PRIORITY         7
 #endif
 
 /**
- * @brief   PWM2 interrupt priority level setting.
+ * @brief   PWMD2 interrupt priority level setting.
  */
 #if !defined(STM32_PWM_TIM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM_TIM2_IRQ_PRIORITY         7
 #endif
 
 /**
- * @brief   PWM3 interrupt priority level setting.
+ * @brief   PWMD3 interrupt priority level setting.
  */
 #if !defined(STM32_PWM_TIM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM_TIM3_IRQ_PRIORITY         7
 #endif
 
 /**
- * @brief   PWM4 interrupt priority level setting.
+ * @brief   PWMD4 interrupt priority level setting.
  */
 #if !defined(STM32_PWM_TIM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM_TIM4_IRQ_PRIORITY         7
 #endif
 
 /**
- * @brief   PWM5 interrupt priority level setting.
+ * @brief   PWMD5 interrupt priority level setting.
  */
 #if !defined(STM32_PWM_TIM5_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM_TIM5_IRQ_PRIORITY         7
@@ -153,9 +194,18 @@
 #error "PWM driver activated but no TIM peripheral assigned"
 #endif
 
+#if STM32_PWM_USE_ADVANCED && !STM32_PWM_USE_TIM1
+#error "advanced mode selected but no advanced timer assigned"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief PWM mode type.
+ */
+typedef uint32_t pwmmode_t;
 
 /**
  * @brief   PWM channel type.
@@ -168,31 +218,19 @@ typedef uint8_t pwmchannel_t;
 typedef uint16_t pwmcnt_t;
 
 /**
- * @brief   Type of a structure representing an PWM driver.
- */
-typedef struct PWMDriver PWMDriver;
-
-/**
- * @brief   PWM notification callback type.
- *
- * @param[in] pwmp      pointer to a @p PWMDriver object
- */
-typedef void (*pwmcallback_t)(PWMDriver *pwmp);
-
-/**
  * @brief   PWM driver channel configuration structure.
  */
 typedef struct {
   /**
    * @brief Channel active logic level.
    */
-  pwmmode_t                 pcc_mode;
+  pwmmode_t                 mode;
   /**
    * @brief Channel callback pointer.
    * @note  This callback is invoked on the channel compare event. If set to
    *        @p NULL then the callback is disabled.
    */
-  pwmcallback_t             pcc_callback;
+  pwmcallback_t             callback;
   /* End of the mandatory fields.*/
 } PWMChannelConfig;
 
@@ -201,29 +239,40 @@ typedef struct {
  */
 typedef struct {
   /**
+   * @brief   Timer clock in Hz.
+   * @note    The low level can use assertions in order to catch invalid
+   *          frequency specifications.
+   */
+  uint32_t                  frequency;
+  /**
+   * @brief   PWM period in ticks.
+   * @note    The low level can use assertions in order to catch invalid
+   *          period specifications.
+   */
+  pwmcnt_t                  period;
+  /**
    * @brief Periodic callback pointer.
    * @note  This callback is invoked on PWM counter reset. If set to
    *        @p NULL then the callback is disabled.
    */
-  pwmcallback_t             pc_callback;
+  pwmcallback_t             callback;
   /**
    * @brief Channels configurations.
    */
-  PWMChannelConfig          pc_channels[PWM_CHANNELS];
+  PWMChannelConfig          channels[PWM_CHANNELS];
   /* End of the mandatory fields.*/
-  /**
-   * @brief TIM PSC (pre-scaler) register initialization data.
-   */
-  uint16_t                  pc_psc;
-  /**
-   * @brief TIM ARR (auto-reload) register initialization data.
-   */
-  uint16_t                  pc_arr;
   /**
    * @brief TIM CR2 register initialization data.
    * @note  The value of this field should normally be equal to zero.
    */
-  uint16_t                  pc_cr2;
+  uint16_t                  cr2;
+#if STM32_PWM_USE_ADVANCED || defined(__DOXYGEN__)
+  /**
+   * @brief TIM BDTR (break & dead-time) register initialization data.
+   * @note  The value of this field should normally be equal to zero.
+   */                                                                     \
+  uint16_t                  bdtr;
+#endif
 } PWMConfig;
 
 /**
@@ -233,23 +282,23 @@ struct PWMDriver {
   /**
    * @brief Driver state.
    */
-  pwmstate_t                pd_state;
+  pwmstate_t                state;
   /**
    * @brief Current driver configuration data.
    */
-  const PWMConfig           *pd_config;
+  const PWMConfig           *config;
+  /**
+   * @brief   Current PWM period in ticks.
+   */
+  pwmcnt_t                  period;
 #if defined(PWM_DRIVER_EXT_FIELDS)
   PWM_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
   /**
-   * @brief Bit mask of the enabled channels.
-   */
-  uint32_t                  pd_enabled_channels;
-  /**
    * @brief Pointer to the TIMx registers block.
    */
-  TIM_TypeDef               *pd_tim;
+  TIM_TypeDef               *tim;
 };
 
 /*===========================================================================*/
@@ -257,88 +306,23 @@ struct PWMDriver {
 /*===========================================================================*/
 
 /**
- * @brief   PWM clock prescaler initialization utility.
- * @note    The real clock value is rounded to the lower valid value, please
- *          make sure that the source clock frequency is a multiple of the
- *          requested PWM clock frequency.
- * @note    The calculated value must fit into an unsigned 16 bits integer.
- *
- * @param[in] clksrc    clock source frequency, depending on the target timer
- *                      cell it can be one of:
- *                      - STM32_TIMCLK1
- *                      - STM32_TIMCLK2
- *                      .
- *                      Please refer to the STM32 HAL driver documentation
- *                      and/or the STM32 Reference Manual for the right clock
- *                      source.
- * @param[in] pwmclk    PWM clock frequency in cycles
- * @return              The value to be stored in the @p pc_psc field of the
- *                      @p PWMConfig structure.
- */
-#define PWM_COMPUTE_PSC(clksrc, pwmclk)                                     \
-  ((uint16_t)(((clksrc) / (pwmclk)) - 1))
-
-/**
- * @brief   PWM cycle period initialization utility.
- * @note    The calculated value must fit into an unsigned 16 bits integer.
- *
- * @param[in] pwmclk    PWM clock frequency in cycles
- * @param[in] pwmperiod PWM cycle period in nanoseconds
- * @return              The value to be stored in the @p pc_arr field of the
- *                      @p PWMConfig structure.
- */
-#define PWM_COMPUTE_ARR(pwmclk, pwmperiod)                                  \
-  ((uint16_t)(((pwmclk) / (1000000000 / (pwmperiod))) - 1))
-
-/**
- * @brief   Converts from fraction to pulse width.
- * @note    Be careful with rounding errors, this is integer math not magic.
- *          You can specify tenths of thousandth but make sure you have the
- *          proper hardware resolution by carefully choosing the clock source
- *          and prescaler settings, see @p PWM_COMPUTE_PSC.
+ * @brief   Changes the period the PWM peripheral.
+ * @details This function changes the period of a PWM unit that has already
+ *          been activated using @p pwmStart().
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ * @post    The PWM unit period is changed to the new value.
+ * @note    The function has effect at the next cycle start.
+ * @note    If a period is specified that is shorter than the pulse width
+ *          programmed in one of the channels then the behavior is not
+ *          guaranteed.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] numerator numerator of the fraction
- * @param[in] denominator percentage as an integer between 0 and numerator
- * @return              The pulse width to be passed to @p pwmEnableChannel().
+ * @param[in] period    new cycle time in ticks
  *
- * @api
+ * @notapi
  */
-#define PWM_FRACTION_TO_WIDTH(pwmp, numerator, denominator)                 \
-  ((uint16_t)((((uint32_t)(pwmp)->pd_config->pc_arr + 1UL) *                \
-               (uint32_t)(denominator)) / (uint32_t)(numerator)))
-
-/**
- * @brief   Converts from degrees to pulse width.
- * @note    Be careful with rounding errors, this is integer math not magic.
- *          You can specify hundredths of degrees but make sure you have the
- *          proper hardware resolution by carefully choosing the clock source
- *          and prescaler settings, see @p PWM_COMPUTE_PSC.
- *
- * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] degrees   degrees as an integer between 0 and 36000
- * @return              The pulse width to be passed to @p pwmEnableChannel().
- *
- * @api
- */
-#define PWM_DEGREES_TO_WIDTH(pwmp, degrees)                                 \
-  PWM_FRACTION_TO_WIDTH(pwmp, 36000, degrees)
-
-/**
- * @brief   Converts from percentage to pulse width.
- * @note    Be careful with rounding errors, this is integer math not magic.
- *          You can specify tenths of thousandth but make sure you have the
- *          proper hardware resolution by carefully choosing the clock source
- *          and prescaler settings, see @p PWM_COMPUTE_PSC.
- *
- * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] percentage percentage as an integer between 0 and 10000
- * @return              The pulse width to be passed to @p pwmEnableChannel().
- *
- * @api
- */
-#define PWM_PERCENTAGE_TO_WIDTH(pwmp, percentage)                           \
-  PWM_FRACTION_TO_WIDTH(pwmp, 10000, percentage)
+#define pwm_lld_change_period(pwmp, period)                                 \
+  ((pwmp)->tim->ARR = (uint16_t)((period) - 1))
 
 /*===========================================================================*/
 /* External declarations.                                                    */

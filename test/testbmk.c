@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -60,16 +61,19 @@
  */
 
 static Semaphore sem1;
-#if CH_USE_MUTEXES
+#if CH_USE_MUTEXES || defined(__DOXYGEN__)
 static Mutex mtx1;
 #endif
 
 static msg_t thread1(void *p) {
+  Thread *tp;
   msg_t msg;
 
   (void)p;
   do {
-    chMsgRelease(msg = chMsgWait());
+    tp = chMsgWait();
+    msg = chMsgGet(tp);
+    chMsgRelease(tp, msg);
   } while (msg);
   return 0;
 }
@@ -573,7 +577,7 @@ ROMCONST struct testcase testbmk11 = {
   bmk11_execute
 };
 
-#if CH_USE_MUTEXES
+#if CH_USE_MUTEXES || defined(__DOXYGEN__)
 /**
  * @page test_benchmarks_012 Mutexes lock/unlock performance
  *
@@ -631,9 +635,11 @@ ROMCONST struct testcase testbmk12 = {
 static void bmk13_execute(void) {
 
   test_print("--- System: ");
-  test_printn(sizeof(ReadyList) + sizeof(VTList) + IDLE_THREAD_STACK_SIZE +
-              (sizeof(Thread) + sizeof(struct intctx) + sizeof(struct extctx) +
-               INT_REQUIRED_STACK) * 2);
+  test_printn(sizeof(ReadyList) + sizeof(VTList) +
+              PORT_IDLE_THREAD_STACK_SIZE +
+              (sizeof(Thread) + sizeof(struct intctx) +
+               sizeof(struct extctx) +
+               PORT_INT_REQUIRED_STACK) * 2);
   test_println(" bytes");
   test_print("--- Thread: ");
   test_printn(sizeof(Thread));
@@ -644,7 +650,7 @@ static void bmk13_execute(void) {
   test_print("--- Semaph: ");
   test_printn(sizeof(Semaphore));
   test_println(" bytes");
-#if CH_USE_EVENTS
+#if CH_USE_EVENTS || defined(__DOXYGEN__)
   test_print("--- EventS: ");
   test_printn(sizeof(EventSource));
   test_println(" bytes");
@@ -652,22 +658,22 @@ static void bmk13_execute(void) {
   test_printn(sizeof(EventListener));
   test_println(" bytes");
 #endif
-#if CH_USE_MUTEXES
+#if CH_USE_MUTEXES || defined(__DOXYGEN__)
   test_print("--- Mutex : ");
   test_printn(sizeof(Mutex));
   test_println(" bytes");
 #endif
-#if CH_USE_CONDVARS
+#if CH_USE_CONDVARS || defined(__DOXYGEN__)
   test_print("--- CondV.: ");
   test_printn(sizeof(CondVar));
   test_println(" bytes");
 #endif
-#if CH_USE_QUEUES
+#if CH_USE_QUEUES || defined(__DOXYGEN__)
   test_print("--- Queue : ");
   test_printn(sizeof(GenericQueue));
   test_println(" bytes");
 #endif
-#if CH_USE_MAILBOXES
+#if CH_USE_MAILBOXES || defined(__DOXYGEN__)
   test_print("--- MailB.: ");
   test_printn(sizeof(Mailbox));
   test_println(" bytes");
@@ -697,7 +703,7 @@ ROMCONST struct testcase * ROMCONST patternbmk[] = {
   &testbmk9,
   &testbmk10,
   &testbmk11,
-#if CH_USE_MUTEXES
+#if CH_USE_MUTEXES || defined(__DOXYGEN__)
   &testbmk12,
 #endif
   &testbmk13,

@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -29,9 +30,9 @@ static msg_t Thread1(void *arg) {
 
   (void)arg;
   while (TRUE) {
-    palClearPad(IOPORT3, GPIOC_LED);
+    palClearPad(GPIOC, GPIOC_LED);
     chThdSleepMilliseconds(500);
-    palSetPad(IOPORT3, GPIOC_LED);
+    palSetPad(GPIOC, GPIOC_LED);
     chThdSleepMilliseconds(500);
   }
 }
@@ -66,7 +67,7 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
-    if (palReadPad(IOPORT1, GPIOA_BUTTON))
+    if (palReadPad(GPIOA, GPIOA_BUTTON))
       TestThread(&SD2);
     chThdSleepMilliseconds(500);
   }

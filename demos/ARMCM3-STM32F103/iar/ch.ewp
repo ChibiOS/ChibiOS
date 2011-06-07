@@ -523,6 +523,7 @@
         </option>
         <option>
           <name>AUserIncludes</name>
+          <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32</state>
           <state>$PROJ_DIR$\..\..\..\boards\OLIMEX_STM32_P103</state>
         </option>
@@ -1387,6 +1388,7 @@
         </option>
         <option>
           <name>AUserIncludes</name>
+          <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32</state>
           <state>$PROJ_DIR$\..\..\..\boards\OLIMEX_STM32_P103</state>
         </option>

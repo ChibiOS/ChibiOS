@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -35,7 +36,7 @@
  * @brief   Enables the use of a wait state in the idle thread loop.
  */
 #ifndef ENABLE_WFI_IDLE
-#define ENABLE_WFI_IDLE         0
+#define ENABLE_WFI_IDLE                 0
 #endif
 
 /**
@@ -46,12 +47,22 @@
 /**
  * @brief   Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME "MSP430"
+#define CH_ARCHITECTURE_NAME            "MSP430"
 
 /**
  * @brief   Name of the architecture variant (optional).
  */
-#define CH_CORE_VARIANT_NAME "MSP430"
+#define CH_CORE_VARIANT_NAME            "MSP430"
+
+/**
+ * @brief   Name of the compiler supported by this port.
+ */
+#define CH_COMPILER_NAME                "GCC "__VERSION__
+
+/**
+ * @brief   Port-specific information string.
+ */
+#define CH_PORT_INFO                    "None"
 
 /**
  * @brief   16 bits stack and memory alignment enforcement.
@@ -121,10 +132,10 @@ struct context {
  * @brief   Stack size for the system idle thread.
  * @details This size depends on the idle thread implementation, usually
  *          the idle thread should take no more space than those reserved
- *          by @p INT_REQUIRED_STACK.
+ *          by @p PORT_INT_REQUIRED_STACK.
  */
-#ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE      0
+#ifndef PORT_IDLE_THREAD_STACK_SIZE
+#define PORT_IDLE_THREAD_STACK_SIZE     0
 #endif
 
 /**
@@ -136,8 +147,8 @@ struct context {
  *          @p extctx is known to be zero.
  * @note    In this port the default is 32 bytes per thread.
  */
-#ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK          32
+#ifndef PORT_INT_REQUIRED_STACK
+#define PORT_INT_REQUIRED_STACK         32
 #endif
 
 /**
@@ -151,7 +162,7 @@ struct context {
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
                                    sizeof(struct intctx) +              \
                                    sizeof(struct extctx) +              \
-                                  (n) + (INT_REQUIRED_STACK))
+                                  (n) + (PORT_INT_REQUIRED_STACK))
 
 /**
  * @brief   Static working area allocation.

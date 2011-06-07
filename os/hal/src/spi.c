@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -67,16 +68,16 @@ void spiInit(void) {
  */
 void spiObjectInit(SPIDriver *spip) {
 
-  spip->spd_state = SPI_STOP;
-  spip->spd_config = NULL;
+  spip->state = SPI_STOP;
+  spip->config = NULL;
 #if SPI_USE_WAIT
-  spip->spd_thread = NULL;
+  spip->thread = NULL;
 #endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION
 #if CH_USE_MUTEXES
-  chMtxInit(&spip->spd_mutex);
+  chMtxInit(&spip->mutex);
 #else
-  chSemInit(&spip->spd_semaphore, 1);
+  chSemInit(&spip->semaphore, 1);
 #endif
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
 #if defined(SPI_DRIVER_EXT_INIT_HOOK)
@@ -97,11 +98,11 @@ void spiStart(SPIDriver *spip, const SPIConfig *config) {
   chDbgCheck((spip != NULL) && (config != NULL), "spiStart");
 
   chSysLock();
-  chDbgAssert((spip->spd_state == SPI_STOP) || (spip->spd_state == SPI_READY),
+  chDbgAssert((spip->state == SPI_STOP) || (spip->state == SPI_READY),
               "spiStart(), #1", "invalid state");
-  spip->spd_config = config;
+  spip->config = config;
   spi_lld_start(spip);
-  spip->spd_state = SPI_READY;
+  spip->state = SPI_READY;
   chSysUnlock();
 }
 
@@ -119,11 +120,11 @@ void spiStop(SPIDriver *spip) {
   chDbgCheck(spip != NULL, "spiStop");
 
   chSysLock();
-  chDbgAssert((spip->spd_state == SPI_STOP) || (spip->spd_state == SPI_READY),
+  chDbgAssert((spip->state == SPI_STOP) || (spip->state == SPI_READY),
               "spiStop(), #1", "invalid state");
   spi_lld_unselect(spip);
   spi_lld_stop(spip);
-  spip->spd_state = SPI_STOP;
+  spip->state = SPI_STOP;
   chSysUnlock();
 }
 
@@ -139,8 +140,7 @@ void spiSelect(SPIDriver *spip) {
   chDbgCheck(spip != NULL, "spiSelect");
 
   chSysLock();
-  chDbgAssert(spip->spd_state == SPI_READY,
-              "spiSelect(), #1", "not ready");
+  chDbgAssert(spip->state == SPI_READY, "spiSelect(), #1", "not ready");
   spiSelectI(spip);
   chSysUnlock();
 }
@@ -158,8 +158,7 @@ void spiUnselect(SPIDriver *spip) {
   chDbgCheck(spip != NULL, "spiUnselect");
 
   chSysLock();
-  chDbgAssert(spip->spd_state == SPI_READY,
-              "spiUnselect(), #1", "not ready");
+  chDbgAssert(spip->state == SPI_READY, "spiUnselect(), #1", "not ready");
   spiUnselectI(spip);
   chSysUnlock();
 }
@@ -182,8 +181,7 @@ void spiStartIgnore(SPIDriver *spip, size_t n) {
   chDbgCheck((spip != NULL) && (n > 0), "spiStartIgnore");
 
   chSysLock();
-  chDbgAssert(spip->spd_state == SPI_READY,
-              "spiStartIgnore(), #1", "not ready");
+  chDbgAssert(spip->state == SPI_READY, "spiStartIgnore(), #1", "not ready");
   spiStartIgnoreI(spip, n);
   chSysUnlock();
 }
@@ -212,8 +210,7 @@ void spiStartExchange(SPIDriver *spip, size_t n,
              "spiStartExchange");
 
   chSysLock();
-  chDbgAssert(spip->spd_state == SPI_READY,
-              "spiStartExchange(), #1", "not ready");
+  chDbgAssert(spip->state == SPI_READY, "spiStartExchange(), #1", "not ready");
   spiStartExchangeI(spip, n, txbuf, rxbuf);
   chSysUnlock();
 }
@@ -239,8 +236,7 @@ void spiStartSend(SPIDriver *spip, size_t n, const void *txbuf) {
              "spiStartSend");
 
   chSysLock();
-  chDbgAssert(spip->spd_state == SPI_READY,
-              "spiStartSend(), #1", "not ready");
+  chDbgAssert(spip->state == SPI_READY, "spiStartSend(), #1", "not ready");
   spiStartSendI(spip, n, txbuf);
   chSysUnlock();
 }
@@ -266,8 +262,7 @@ void spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf) {
              "spiStartReceive");
 
   chSysLock();
-  chDbgAssert(spip->spd_state == SPI_READY,
-              "spiStartReceive(), #1", "not ready");
+  chDbgAssert(spip->state == SPI_READY, "spiStartReceive(), #1", "not ready");
   spiStartReceiveI(spip, n, rxbuf);
   chSysUnlock();
 }
@@ -280,7 +275,7 @@ void spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf) {
  * @pre     In order to use this function the option @p SPI_USE_WAIT must be
  *          enabled.
  * @pre     In order to use this function the driver must have been configured
- *          without callbacks (@p spc_endcb = @p NULL).
+ *          without callbacks (@p end_cb = @p NULL).
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
@@ -292,10 +287,8 @@ void spiIgnore(SPIDriver *spip, size_t n) {
   chDbgCheck((spip != NULL) && (n > 0), "spiIgnoreWait");
 
   chSysLock();
-  chDbgAssert(spip->spd_state == SPI_READY,
-              "spiIgnore(), #1", "not ready");
-  chDbgAssert(spip->spd_config->spc_endcb == NULL,
-              "spiIgnore(), #2", "has callback");
+  chDbgAssert(spip->state == SPI_READY, "spiIgnore(), #1", "not ready");
+  chDbgAssert(spip->config->end_cb == NULL, "spiIgnore(), #2", "has callback");
   spiStartIgnoreI(spip, n);
   _spi_wait_s(spip);
   chSysUnlock();
@@ -308,7 +301,7 @@ void spiIgnore(SPIDriver *spip, size_t n) {
  * @pre     In order to use this function the option @p SPI_USE_WAIT must be
  *          enabled.
  * @pre     In order to use this function the driver must have been configured
- *          without callbacks (@p spc_endcb = @p NULL).
+ *          without callbacks (@p end_cb = @p NULL).
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -326,9 +319,8 @@ void spiExchange(SPIDriver *spip, size_t n,
              "spiExchange");
 
   chSysLock();
-  chDbgAssert(spip->spd_state == SPI_READY,
-              "spiExchange(), #1", "not ready");
-  chDbgAssert(spip->spd_config->spc_endcb == NULL,
+  chDbgAssert(spip->state == SPI_READY, "spiExchange(), #1", "not ready");
+  chDbgAssert(spip->config->end_cb == NULL,
               "spiExchange(), #2", "has callback");
   spiStartExchangeI(spip, n, txbuf, rxbuf);
   _spi_wait_s(spip);
@@ -341,7 +333,7 @@ void spiExchange(SPIDriver *spip, size_t n,
  * @pre     In order to use this function the option @p SPI_USE_WAIT must be
  *          enabled.
  * @pre     In order to use this function the driver must have been configured
- *          without callbacks (@p spc_endcb = @p NULL).
+ *          without callbacks (@p end_cb = @p NULL).
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -353,14 +345,11 @@ void spiExchange(SPIDriver *spip, size_t n,
  */
 void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
 
-  chDbgCheck((spip != NULL) && (n > 0) && (txbuf != NULL),
-             "spiSend");
+  chDbgCheck((spip != NULL) && (n > 0) && (txbuf != NULL), "spiSend");
 
   chSysLock();
-  chDbgAssert(spip->spd_state == SPI_READY,
-              "spiSend(), #1", "not ready");
-  chDbgAssert(spip->spd_config->spc_endcb == NULL,
-              "spiSend(), #2", "has callback");
+  chDbgAssert(spip->state == SPI_READY, "spiSend(), #1", "not ready");
+  chDbgAssert(spip->config->end_cb == NULL, "spiSend(), #2", "has callback");
   spiStartSendI(spip, n, txbuf);
   _spi_wait_s(spip);
   chSysUnlock();
@@ -372,7 +361,7 @@ void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
  * @pre     In order to use this function the option @p SPI_USE_WAIT must be
  *          enabled.
  * @pre     In order to use this function the driver must have been configured
- *          without callbacks (@p spc_endcb = @p NULL).
+ *          without callbacks (@p end_cb = @p NULL).
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -388,9 +377,8 @@ void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
              "spiReceive");
 
   chSysLock();
-  chDbgAssert(spip->spd_state == SPI_READY,
-              "spiReceive(), #1", "not ready");
-  chDbgAssert(spip->spd_config->spc_endcb == NULL,
+  chDbgAssert(spip->state == SPI_READY, "spiReceive(), #1", "not ready");
+  chDbgAssert(spip->config->end_cb == NULL,
               "spiReceive(), #2", "has callback");
   spiStartReceiveI(spip, n, rxbuf);
   _spi_wait_s(spip);
@@ -415,9 +403,9 @@ void spiAcquireBus(SPIDriver *spip) {
   chDbgCheck(spip != NULL, "spiAcquireBus");
 
 #if CH_USE_MUTEXES
-  chMtxLock(&spip->spd_mutex);
+  chMtxLock(&spip->mutex);
 #elif CH_USE_SEMAPHORES
-  chSemWait(&spip->spd_semaphore);
+  chSemWait(&spip->semaphore);
 #endif
 }
 
@@ -438,7 +426,7 @@ void spiReleaseBus(SPIDriver *spip) {
   (void)spip;
   chMtxUnlock();
 #elif CH_USE_SEMAPHORES
-  chSemSignal(&spip->spd_semaphore);
+  chSemSignal(&spip->semaphore);
 #endif
 }
 #endif /* SPI_USE_MUTUAL_EXCLUSION */

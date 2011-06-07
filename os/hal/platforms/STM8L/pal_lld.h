@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -174,7 +175,7 @@ typedef GPIO_TypeDef *ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_init(config)    *IOPORTS = *(config)
+#define pal_lld_init(config) (*IOPORTS = *(config))
 
 /**
  * @brief   Reads the physical I/O port states.
@@ -214,7 +215,6 @@ typedef GPIO_TypeDef *ioportid_t;
  */
 #define pal_lld_writeport(port, bits) ((port)->ODR = (bits))
 
-
 /**
  * @brief   Pads group mode setup.
  * @details This function programs a pads group belonging to the same port
@@ -230,7 +230,7 @@ typedef GPIO_TypeDef *ioportid_t;
  * @notapi
  */
 #define pal_lld_setgroupmode(port, mask, mode)                              \
-    _pal_lld_setgroupmode(port, mask, mode)
+  _pal_lld_setgroupmode(port, mask, mode)
 
 extern ROMCONST PALConfig pal_default_config;
 

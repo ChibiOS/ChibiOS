@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -29,13 +30,79 @@
 #define _CHCORE_V6M_H_
 
 /*===========================================================================*/
-/* Port implementation part.                                                 */
+/* Port constants.                                                           */
 /*===========================================================================*/
 
 /**
- * @brief   Cortex-Mx exception context.
+ * @brief   PendSV priority level.
+ * @note    This priority is enforced to be equal to @p 0,
+ *          this handler always have the highest priority that cannot preempt
+ *          the kernel.
  */
-struct cmxctx {
+#define CORTEX_PRIORITY_PENDSV          0
+
+/*===========================================================================*/
+/* Port configurable parameters.                                             */
+/*===========================================================================*/
+
+/**
+ * @brief   Alternate preemption method.
+ * @details Activating this option will make the Kernel use the PendSV
+ *          handler for preemption instead of the NMI handler.
+ */
+#ifndef CORTEX_ALTERNATE_SWITCH
+#define CORTEX_ALTERNATE_SWITCH         FALSE
+#endif
+
+/*===========================================================================*/
+/* Port derived parameters.                                                  */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Port exported info.                                                       */
+/*===========================================================================*/
+
+/**
+ * @brief   Macro defining the specific ARM architecture.
+ */
+#define CH_ARCHITECTURE_ARM_v6M
+
+/**
+ * @brief   Name of the implemented architecture.
+ */
+#define CH_ARCHITECTURE_NAME            "ARMv6-M"
+
+/**
+ * @brief   Name of the architecture variant.
+ */
+#if (CORTEX_MODEL == CORTEX_M0) || defined(__DOXYGEN__)
+#define CH_CORE_VARIANT_NAME            "Cortex-M0"
+#elif (CORTEX_MODEL == CORTEX_M1)
+#define CH_CORE_VARIANT_NAME            "Cortex-M1"
+#endif
+
+/**
+ * @brief   Port-specific information string.
+ */
+#if !CORTEX_ALTERNATE_SWITCH || defined(__DOXYGEN__)
+#define CH_PORT_INFO                    "Preemption through NMI"
+#else
+#define CH_PORT_INFO                    "Preemption through PendSV"
+#endif
+
+/*===========================================================================*/
+/* Port implementation part.                                                 */
+/*===========================================================================*/
+
+#if !defined(_FROM_ASM_)
+
+/**
+ * @brief   Generic ARM register.
+ */
+typedef void *regarm_t;
+
+#if !defined(__DOXYGEN__)
+struct extctx {
   regarm_t      r0;
   regarm_t      r1;
   regarm_t      r2;
@@ -44,18 +111,6 @@ struct cmxctx {
   regarm_t      lr_thd;
   regarm_t      pc;
   regarm_t      xpsr;
-};
-
-#if !defined(__DOXYGEN__)
-struct extctx {
-  regarm_t      xpsr;
-  regarm_t      r12;
-  regarm_t      lr;
-  regarm_t      r0;
-  regarm_t      r1;
-  regarm_t      r2;
-  regarm_t      r3;
-  regarm_t      pc;
 };
 
 struct intctx {
@@ -72,64 +127,18 @@ struct intctx {
 #endif
 
 /**
- * @brief   Platform dependent part of the @p chThdInit() API.
- * @details This code usually setup the context switching frame represented
- *          by an @p intctx structure.
- */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
-  tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +                  \
-                                     wsize -                                \
-                                     sizeof(struct intctx));                \
-  tp->p_ctx.r13->r4 = (void *)pf;                                           \
-  tp->p_ctx.r13->r5 = arg;                                                  \
-  tp->p_ctx.r13->lr = (void *)_port_thread_start;                           \
-}
-
-/**
- * @brief   Stack size for the system idle thread.
- * @details This size depends on the idle thread implementation, usually
- *          the idle thread should take no more space than those reserved
- *          by @p INT_REQUIRED_STACK.
- * @note    In this port it is set to 8 because the idle thread does have
- *          a stack frame when compiling without optimizations. You may
- *          reduce this value to zero when compiling with optimizations.
- */
-#ifndef IDLE_THREAD_STACK_SIZE
-#define IDLE_THREAD_STACK_SIZE      8
-#endif
-
-/**
- * @brief   Per-thread stack overhead for interrupts servicing.
- * @details This constant is used in the calculation of the correct working
- *          area size.
- *          This value can be zero on those architecture where there is a
- *          separate interrupt stack and the stack space between @p intctx and
- *          @p extctx is known to be zero.
- * @note    In this port it is conservatively set to 16 because the function
- *          @p chSchDoRescheduleI() can have a stack frame, expecially with
- *          compiler optimizations disabled.
- */
-#ifndef INT_REQUIRED_STACK
-#define INT_REQUIRED_STACK          16
-#endif
-
-/**
  * @brief   IRQ prologue code.
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_PROLOGUE() {                                               \
-  port_lock_from_isr();                                                     \
-  _port_irq_nesting++;                                                      \
-  port_unlock_from_isr();                                                   \
-}
+#define PORT_IRQ_PROLOGUE() regarm_t _saved_lr = (regarm_t)__return_address()
 
 /**
  * @brief   IRQ epilogue code.
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() _port_irq_epilogue()
+#define PORT_IRQ_EPILOGUE() _port_irq_epilogue(_saved_lr)
 
 /**
  * @brief   IRQ handler function declaration.
@@ -149,8 +158,9 @@ struct intctx {
  * @brief   Port-related initialization code.
  */
 #define port_init() {                                                       \
-  _port_irq_nesting = 0;                                                    \
   SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);                            \
+  NVICSetSystemHandlerPriority(HANDLER_PENDSV,                              \
+    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_PENDSV));                          \
   NVICSetSystemHandlerPriority(HANDLER_SYSTICK,                             \
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));                         \
 }
@@ -226,11 +236,15 @@ struct intctx {
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  */
+#if !defined(CH_DBG_ENABLE_STACK_CHECK) || defined(__DOXYGEN__)
 #define port_switch(ntp, otp) _port_switch(ntp, otp)
-
-#if !defined(__DOXYGEN__)
-extern regarm_t _port_saved_pc;
-extern unsigned _port_irq_nesting;
+#else
+#define port_switch(ntp, otp) {                                             \
+  struct intctx *r13 = (struct intctx *)__current_sp();                     \
+  if ((void *)(r13 - 1) < (void *)(otp + 1))                                \
+    chDbgPanic("stack overflow");                                           \
+  _port_switch(ntp, otp);                                                   \
+}
 #endif
 
 #ifdef __cplusplus
@@ -238,12 +252,14 @@ extern "C" {
 #endif
   void port_halt(void);
   void _port_switch(Thread *ntp, Thread *otp);
-  void _port_irq_epilogue(void);
+  void _port_irq_epilogue(regarm_t lr);
   void _port_switch_from_isr(void);
   void _port_thread_start(void);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* _FROM_ASM_ */
 
 #endif /* _CHCORE_V6M_H_ */
 

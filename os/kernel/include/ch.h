@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -39,7 +40,7 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "2.3.0unstable"
+#define CH_KERNEL_VERSION       "2.3.4unstable"
 
 /**
  * @brief   Kernel version major number.
@@ -54,7 +55,7 @@
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         0
+#define CH_KERNEL_PATCH         4
 
 /*
  * Common values.
@@ -94,7 +95,7 @@
 #include "chdebug.h"
 
 #if !defined(__DOXYGEN__)
-extern WORKING_AREA(_idle_thread_wa, IDLE_THREAD_STACK_SIZE);
+extern WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
 #endif
 
 #ifdef __cplusplus

@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -73,6 +74,112 @@
 #define USB_FEATURE_DEVICE_REMOTE_WAKEUP    1
 #define USB_FEATURE_TEST_MODE               2
 
+#define USB_EARLY_SET_ADDRESS               0
+#define USB_LATE_SET_ADDRESS                1
+
+/**
+ * @brief   Helper macro for index values into descriptor strings.
+ */
+#define USB_DESC_INDEX(i) ((uint8_t)(i))
+
+/**
+ * @brief   Helper macro for byte values into descriptor strings.
+ */
+#define USB_DESC_BYTE(b) ((uint8_t)(b))
+
+/**
+ * @brief   Helper macro for word values into descriptor strings.
+ */
+#define USB_DESC_WORD(w)                                                    \
+  (uint8_t)((w) & 255),                                                     \
+  (uint8_t)(((w) >> 8) & 255)
+
+/**
+ * @brief   Helper macro for BCD values into descriptor strings.
+ */
+#define USB_DESC_BCD(bcd)                                                  \
+  (uint8_t)((bcd) & 255),                                                   \
+  (uint8_t)(((bcd) >> 8) & 255)
+
+/**
+ * @brief   Device Descriptor helper macro.
+ */
+#define USB_DESC_DEVICE(bcdUSB, bDeviceClass, bDeviceSubClass,              \
+                        bDeviceProtocol, bMaxPacketSize, idVendor,          \
+                        idProduct, bcdDevice, iManufacturer,                \
+                        iProduct, iSerialNumber, bNumConfigurations)        \
+  USB_DESC_BYTE(18),                                                        \
+  USB_DESC_BYTE(USB_DESCRIPTOR_DEVICE),                                     \
+  USB_DESC_BCD(bcdUSB),                                                     \
+  USB_DESC_BYTE(bDeviceClass),                                              \
+  USB_DESC_BYTE(bDeviceSubClass),                                           \
+  USB_DESC_BYTE(bDeviceProtocol),                                           \
+  USB_DESC_BYTE(bMaxPacketSize),                                            \
+  USB_DESC_WORD(idVendor),                                                  \
+  USB_DESC_WORD(idProduct),                                                 \
+  USB_DESC_BCD(bcdDevice),                                                  \
+  USB_DESC_INDEX(iManufacturer),                                            \
+  USB_DESC_INDEX(iProduct),                                                 \
+  USB_DESC_INDEX(iSerialNumber),                                            \
+  USB_DESC_BYTE(bNumConfigurations)
+
+/**
+ * @brief   Configuration Descriptor helper macro.
+ */
+#define USB_DESC_CONFIGURATION(wTotalLength, bNumInterfaces,                \
+                               bConfigurationValue, iConfiguration,         \
+                               bmAttributes, bMaxPower)                     \
+  USB_DESC_BYTE(9),                                                         \
+  USB_DESC_BYTE(USB_DESCRIPTOR_CONFIGURATION),                              \
+  USB_DESC_WORD(wTotalLength),                                              \
+  USB_DESC_BYTE(bNumInterfaces),                                            \
+  USB_DESC_BYTE(bConfigurationValue),                                       \
+  USB_DESC_INDEX(iConfiguration),                                           \
+  USB_DESC_BYTE(bmAttributes),                                              \
+  USB_DESC_BYTE(bMaxPower)
+
+/**
+ * @brief   Interface Descriptor helper macro.
+ */
+#define USB_DESC_INTERFACE(bInterfaceNumber, bAlternateSetting,             \
+                           bNumEndpoints, bInterfaceClass,                  \
+                           bInterfaceSubClass, bInterfaceProtocol,          \
+                           iInterface)                                      \
+  USB_DESC_BYTE(9),                                                         \
+  USB_DESC_BYTE(USB_DESCRIPTOR_INTERFACE),                                  \
+  USB_DESC_BYTE(bInterfaceNumber),                                          \
+  USB_DESC_BYTE(bAlternateSetting),                                         \
+  USB_DESC_BYTE(bNumEndpoints),                                             \
+  USB_DESC_BYTE(bInterfaceClass),                                           \
+  USB_DESC_BYTE(bInterfaceSubClass),                                        \
+  USB_DESC_BYTE(bInterfaceProtocol),                                        \
+  USB_DESC_INDEX(iInterface)
+
+/**
+ * @brief   Endpoint Descriptor helper macro.
+ */
+#define USB_DESC_ENDPOINT(bEndpointAddress, bmAttributes, wMaxPacketSize,   \
+                          bInterval)                                        \
+  USB_DESC_BYTE(7),                                                         \
+  USB_DESC_BYTE(USB_DESCRIPTOR_ENDPOINT),                                   \
+  USB_DESC_BYTE(bEndpointAddress),                                          \
+  USB_DESC_BYTE(bmAttributes),                                              \
+  USB_DESC_WORD(wMaxPacketSize),                                            \
+  USB_DESC_BYTE(bInterval)
+
+/**
+ * @brief   Returned by some functions to report a busy endpoint.
+ */
+#define USB_ENDPOINT_BUSY                   ((size_t)0xFFFFFFFF)
+
+#define USB_EP_MODE_TYPE                0x0003  /**< Endpoint type mask.    */
+#define USB_EP_MODE_TYPE_CTRL           0x0000  /**< Control endpoint.      */
+#define USB_EP_MODE_TYPE_ISOC           0x0001  /**< Isochronous endpoint.  */
+#define USB_EP_MODE_TYPE_BULK           0x0002  /**< Bulk endpoint.         */
+#define USB_EP_MODE_TYPE_INTR           0x0003  /**< Interrupt endpoint.    */
+#define USB_EP_MODE_TRANSACTION         0x0000  /**< Transaction mode.      */
+#define USB_EP_MODE_PACKET              0x0010  /**< Packet mode enabled.   */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -107,20 +214,10 @@ typedef enum {
 } usbstate_t;
 
 /**
- * @brief   Type of an endpoint type.
- */
-typedef enum {
-  EP_TYPE_CTRL = 0,                     /**< Control endpoint.              */
-  EP_TYPE_ISOC = 1,                     /**< Isochronous endpoint.          */
-  EP_TYPE_BULK = 2,                     /**< Bulk endpoint.                 */
-  EP_TYPE_INTR = 3                      /**< Interrupt endpoint.            */
-} usbeptype_t;
-
-/**
  * @brief   Type of an endpoint status.
  */
 typedef enum {
-  EP_STATUS_DISABLED = 0,               /**< Endpoint not opened.           */
+  EP_STATUS_DISABLED = 0,               /**< Endpoint not active.           */
   EP_STATUS_STALLED = 1,                /**< Endpoint opened but stalled.   */
   EP_STATUS_ACTIVE = 2                  /**< Active endpoint.               */
 } usbepstatus_t;
@@ -133,7 +230,8 @@ typedef enum {
   USB_EP0_TX,                           /**< Trasmitting.                   */
   USB_EP0_WAITING_STS,                  /**< Waiting status.                */
   USB_EP0_RX,                           /**< Receiving.                     */
-  USB_EP0_SENDING_STS                   /**< Sending status.                */
+  USB_EP0_SENDING_STS,                  /**< Sending status.                */
+  USB_EP0_ERROR                         /**< Error, EP0 stalled.            */
 } usbep0state_t;
 
 /**
@@ -144,7 +242,7 @@ typedef enum {
   USB_EVENT_ADDRESS = 1,                /**< Address assigned.              */
   USB_EVENT_CONFIGURED = 2,             /**< Configuration selected.        */
   USB_EVENT_SUSPEND = 3,                /**< Entering suspend mode.         */
-  USB_EVENT_RESUME = 4,                 /**< Leaving suspend mode.          */
+  USB_EVENT_WAKEUP = 4,                 /**< Leaving suspend mode.          */
   USB_EVENT_STALLED = 5,                /**< Endpoint 0 error, stalled.     */
 } usbevent_t;
 
@@ -219,70 +317,66 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @param[in] usbp      pointer to the @p USBDriver object
  * @return              The current frame number.
  *
- * @notapi
+ * @api
  */
 #define usbGetFrameNumber(usbp) usb_lld_get_frame_number(usbp)
 
 /**
- * @brief   Returns the number of bytes readable from the receive packet
- *          buffer.
+ * @brief   Returns the status of an IN endpoint.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
- * @return              The number of bytes that are effectively available.
- * @retval 0            Data not yet available.
+ * @return              The operation status.
+ * @retval FALSE        Endpoint ready.
+ * @retval TRUE         Endpoint transmitting.
  *
  * @iclass
  */
-#define usbGetReadableI(usbp, ep) usb_lld_get_readable(usbp, ep)
+#define usbGetTransmitStatusI(usbp, ep) ((usbp)->transmitting & (1 << (ep)))
 
 /**
- * @brief   Endpoint read.
- * @details The buffered packet is copied into the user buffer and then
- *          the endpoint is brought to the valid state in order to allow
- *          reception of more data.
+ * @brief   Returns the status of an OUT endpoint.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
- * @param[out] buf      buffer where to copy the endpoint data
- * @param[in] n         maximum number of bytes to copy
- * @return              The number of bytes that were effectively available.
- * @retval 0            Data not yet available.
+ * @return              The operation status.
+ * @retval FALSE        Endpoint ready.
+ * @retval TRUE         Endpoint receiving.
  *
  * @iclass
  */
-#define usbReadI(usbp, ep, buf, n) usb_lld_read(usbp, ep, buf, n)
+#define usbGetReceiveStatusI(usbp, ep) ((usbp)->receiving & (1 << (ep)))
 
 /**
- * @brief   Returns the number of bytes writeable to the transmit packet
- *          buffer.
+ * @brief   Returns the exact size of a receive transaction.
+ * @details The received size can be different from the size specified in
+ *          @p usbStartReceiveI() because the last packet could have a size
+ *          different from the expected one.
+ * @pre     The OUT endpoint must have been configured in transaction mode
+ *          in order to use this function.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
- * @return              The number of bytes that can be written.
- * @retval 0            Endpoint not ready for transmission.
+ * @return              Received data size.
  *
  * @iclass
  */
-#define usbGetWriteableI(usbp, ep) usb_lld_get_readable(usbp, ep)
+#define usbGetReceiveTransactionSizeI(usbp, ep)                             \
+  usb_lld_get_transaction_size(usbp, ep)
 
 /**
- * @brief   Endpoint write.
- * @details The user data is copied in the packer memory and then
- *          the endpoint is brought to the valid state in order to allow
- *          transmission.
+ * @brief   Returns the exact size of a received packet.
+ * @pre     The OUT endpoint must have been configured in packet mode
+ *          in order to use this function.
  *
- * @param[in] usbp      pointer to the @p USBDriver object triggering the
- *                      callback
+ * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
- * @param[in] buf       buffer where to copy the endpoint data
- * @param[in] n         maximum number of bytes to copy
- * @return              The number of bytes that were effectively written.
- * @retval 0            Endpoint not ready for transmission.
+ * @return              Received data size.
  *
  * @iclass
  */
-#define usbWriteI(usbp, ep, buf, n) usb_lld_write(usbp, ep, buf, n)
+#define usbGetReceivePacketSizeI(usbp, ep)                                  \
+  usb_lld_get_packet_size(usbp, ep)
 
 /**
  * @brief   Request transfer setup.
@@ -292,14 +386,93 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] buf       pointer to a buffer for the transaction data
  * @param[in] n         number of bytes to be transferred
- * @param[in] endcb     transfer complete callback
+ * @param[in] endcb     callback to be invoked after the transfer or @p NULL
  *
  * @api
  */
 #define usbSetupTransfer(usbp, buf, n, endcb) {                             \
-  (usbp)->usb_ep0next  = (buf);                                             \
-  (usbp)->usb_ep0n     = (n);                                               \
-  (usbp)->usb_ep0endcb = (endcb);                                           \
+  (usbp)->ep0next  = (buf);                                                 \
+  (usbp)->ep0n     = (n);                                                   \
+  (usbp)->ep0endcb = (endcb);                                               \
+}
+
+/**
+ * @brief   Reads a setup packet from the dedicated packet buffer.
+ * @details This function must be invoked in the context of the @p setup_cb
+ *          callback in order to read the received setup packet.
+ * @pre     In order to use this function the endpoint must have been
+ *          initialized as a control endpoint.
+ * @post    The endpoint is ready to accept another packet.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[out] buf      buffer where to copy the packet data
+ *
+ * @special
+ */
+#define usbReadSetup(usbp, ep, buf) usb_lld_read_setup(usbp, ep, buf)
+
+/**
+ * @brief   Common ISR code, usb event callback.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] evt       USB event code
+ *
+ * @notapi
+ */
+#define _usb_isr_invoke_event_cb(usbp, evt) {                               \
+  if (((usbp)->config->event_cb) != NULL)                                   \
+    (usbp)->config->event_cb(usbp, evt);                                    \
+}
+
+/**
+ * @brief   Common ISR code, SOF callback.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ *
+ * @notapi
+ */
+#define _usb_isr_invoke_sof_cb(usbp) {                                      \
+  if (((usbp)->config->sof_cb) != NULL)                                     \
+    (usbp)->config->sof_cb(usbp);                                           \
+}
+
+/**
+ * @brief   Common ISR code, setup packet callback.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ *
+ * @notapi
+ */
+#define _usb_isr_invoke_setup_cb(usbp, ep) {                                \
+  (usbp)->epc[ep]->setup_cb(usbp, ep);                                      \
+}
+
+/**
+ * @brief   Common ISR code, IN endpoint callback.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ *
+ * @notapi
+ */
+#define _usb_isr_invoke_in_cb(usbp, ep) {                                   \
+  (usbp)->transmitting &= ~(1 << (ep));                                     \
+  (usbp)->epc[ep]->in_cb(usbp, ep);                                         \
+}
+
+/**
+ * @brief   Common ISR code, OUT endpoint event.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ *
+ * @notapi
+ */
+#define _usb_isr_invoke_out_cb(usbp, ep) {                                  \
+  (usbp)->receiving &= ~(1 << (ep));                                        \
+  (usbp)->epc[ep]->out_cb(usbp, ep);                                        \
 }
 
 /*===========================================================================*/
@@ -313,9 +486,22 @@ extern "C" {
   void usbObjectInit(USBDriver *usbp);
   void usbStart(USBDriver *usbp, const USBConfig *config);
   void usbStop(USBDriver *usbp);
-  void usbInitEndpointI(USBDriver *usbp, usbep_t ep, USBEndpointState *epp,
+  void usbInitEndpointI(USBDriver *usbp, usbep_t ep,
                         const USBEndpointConfig *epcp);
+  void usbDisableEndpointsI(USBDriver *usbp);
+  void usbReadSetupI(USBDriver *usbp, usbep_t ep, uint8_t *buf);
+  size_t usbReadPacketI(USBDriver *usbp, usbep_t ep,
+                        uint8_t *buf, size_t n);
+  size_t usbWritePacketI(USBDriver *usbp, usbep_t ep,
+                         const uint8_t *buf, size_t n);
+  bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep,
+                          uint8_t *buf, size_t n);
+  bool_t usbStartTransmitI(USBDriver *usbp, usbep_t ep,
+                           const uint8_t *buf, size_t n);
+  bool_t usbStallReceiveI(USBDriver *usbp, usbep_t ep);
+  bool_t usbStallTransmitI(USBDriver *usbp, usbep_t ep);
   void _usb_reset(USBDriver *usbp);
+  void _usb_ep0setup(USBDriver *usbp, usbep_t ep);
   void _usb_ep0in(USBDriver *usbp, usbep_t ep);
   void _usb_ep0out(USBDriver *usbp, usbep_t ep);
 #ifdef __cplusplus

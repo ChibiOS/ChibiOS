@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -68,21 +69,21 @@
 /**
  * @brief   USART1 interrupt priority level setting.
  */
-#if !defined(STM32_UART_USART1_IRQ_PRIO) || defined(__DOXYGEN__)
+#if !defined(STM32_UART_USART1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART1_IRQ_PRIORITY      12
 #endif
 
 /**
  * @brief   USART2 interrupt priority level setting.
  */
-#if !defined(STM32_UART_USART2_IRQ_PRIO) || defined(__DOXYGEN__)
+#if !defined(STM32_UART_USART2_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART2_IRQ_PRIORITY      12
 #endif
 
 /**
  * @brief   USART3 interrupt priority level setting.
  */
-#if !defined(STM32_UART_USART3_IRQ_PRIO) || defined(__DOXYGEN__)
+#if !defined(STM32_UART_USART3_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART3_IRQ_PRIORITY      12
 #endif
 
@@ -92,7 +93,7 @@
  *          because of the channels ordering the RX channel has always priority
  *          over the TX channel.
  */
-#if !defined(STM32_UART_USART1_DMA_PRIO) || defined(__DOXYGEN__)
+#if !defined(STM32_UART_USART1_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART1_DMA_PRIORITY      0
 #endif
 
@@ -102,7 +103,7 @@
  *          because of the channels ordering the RX channel has always priority
  *          over the TX channel.
  */
-#if !defined(STM32_UART_USART2_DMA_PRIO) || defined(__DOXYGEN__)
+#if !defined(STM32_UART_USART2_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART2_DMA_PRIORITY      0
 #endif
 /**
@@ -111,35 +112,17 @@
  *          because of the channels ordering the RX channel has always priority
  *          over the TX channel.
  */
-#if !defined(STM32_UART_USART3_DMA_PRIO) || defined(__DOXYGEN__)
+#if !defined(STM32_UART_USART3_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART3_DMA_PRIORITY      0
 #endif
 
 /**
  * @brief   USART1 DMA error hook.
- * @note    The default action for DMA errors is a system halt because DMA error
- *          can only happen because programming errors.
+ * @note    The default action for DMA errors is a system halt because DMA
+ *          error can only happen because programming errors.
  */
-#if !defined(STM32_UART_USART1_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_UART_USART1_DMA_ERROR_HOOK()  chSysHalt()
-#endif
-
-/**
- * @brief   USART2 DMA error hook.
- * @note    The default action for DMA errors is a system halt because DMA error
- *          can only happen because programming errors.
- */
-#if !defined(STM32_UART_USART2_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_UART_USART2_DMA_ERROR_HOOK()  chSysHalt()
-#endif
-
-/**
- * @brief   USART3 DMA error hook.
- * @note    The default action for DMA errors is a system halt because DMA error
- *          can only happen because programming errors.
- */
-#if !defined(STM32_UART_USART3_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_UART_USART3_DMA_ERROR_HOOK()  chSysHalt()
+#if !defined(STM32_UART_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_UART_DMA_ERROR_HOOK(uartp)    chSysHalt()
 #endif
 
 /*===========================================================================*/
@@ -158,13 +141,13 @@
 #error "USART3 not present in the selected device"
 #endif
 
-#if STM32_UART_USE_UART4 && !STM32_HAS_UART4
-#error "UART4 not present in the selected device"
+#if !STM32_UART_USE_USART1 && !STM32_UART_USE_USART2 &&                     \
+    !STM32_UART_USE_USART3
+#error "UART driver activated but no USART/UART peripheral assigned"
 #endif
 
-#if !STM32_UART_USE_USART1 && !STM32_UART_USE_USART2 &&                     \
-    !STM32_UART_USE_USART3 && !STM32_UART_USE_UART4
-#error "UART driver activated but no USART/UART peripheral assigned"
+#if !defined(STM32_DMA_REQUIRED)
+#define STM32_DMA_REQUIRED
 #endif
 
 /*===========================================================================*/
@@ -212,40 +195,40 @@ typedef struct {
   /**
    * @brief End of transmission buffer callback.
    */
-  uartcb_t                  uc_txend1;
+  uartcb_t                  txend1_cb;
   /**
    * @brief Physical end of transmission callback.
    */
-  uartcb_t                  uc_txend2;
+  uartcb_t                  txend2_cb;
   /**
    * @brief Receive buffer filled callback.
    */
-  uartcb_t                  uc_rxend;
+  uartcb_t                  rxend_cb;
   /**
    * @brief Character received while out if the @p UART_RECEIVE state.
    */
-  uartccb_t                 uc_rxchar;
+  uartccb_t                 rxchar_cb;
   /**
    * @brief Receive error callback.
    */
-  uartecb_t                 uc_rxerr;
+  uartecb_t                 rxerr_cb;
   /* End of the mandatory fields.*/
   /**
    * @brief Bit rate.
    */
-  uint32_t                  uc_speed;
+  uint32_t                  speed;
   /**
    * @brief Initialization value for the CR1 register.
    */
-  uint16_t                  uc_cr1;
+  uint16_t                  cr1;
   /**
    * @brief Initialization value for the CR2 register.
    */
-  uint16_t                  uc_cr2;
+  uint16_t                  cr2;
   /**
    * @brief Initialization value for the CR3 register.
    */
-  uint16_t                  uc_cr3;
+  uint16_t                  cr3;
 } UARTConfig;
 
 /**
@@ -255,19 +238,19 @@ struct UARTDriver {
   /**
    * @brief Driver state.
    */
-  uartstate_t               ud_state;
+  uartstate_t               state;
   /**
    * @brief Transmitter state.
    */
-  uarttxstate_t             ud_txstate;
+  uarttxstate_t             txstate;
   /**
    * @brief Receiver state.
    */
-  uartrxstate_t             ud_rxstate;
+  uartrxstate_t             rxstate;
   /**
    * @brief Current configuration data.
    */
-  const UARTConfig          *ud_config;
+  const UARTConfig          *config;
 #if defined(UART_DRIVER_EXT_FIELDS)
   UART_DRIVER_EXT_FIELDS
 #endif
@@ -275,27 +258,27 @@ struct UARTDriver {
   /**
    * @brief Pointer to the USART registers block.
    */
-  USART_TypeDef             *ud_usart;
+  USART_TypeDef             *usart;
   /**
    * @brief Pointer to the DMA registers block.
    */
-  stm32_dma_t               *ud_dmap;
+  stm32_dma_t               *dmap;
   /**
    * @brief DMA priority bit mask.
    */
-  uint32_t                  ud_dmaccr;
+  uint32_t                  dmaccr;
   /**
    * @brief Receive DMA channel.
    */
-  uint8_t                   ud_dmarx;
+  uint8_t                   dmarx;
   /**
    * @brief Transmit DMA channel.
    */
-  uint8_t                   ud_dmatx;
+  uint8_t                   dmatx;
   /**
    * @brief Default receive buffer while into @p UART_RX_IDLE state.
    */
-  volatile uint16_t         ud_rxbuf;
+  volatile uint16_t         rxbuf;
 };
 
 /*===========================================================================*/

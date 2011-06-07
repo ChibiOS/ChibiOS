@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -105,7 +106,7 @@ typedef struct {
  * @brief   Macro for baud rate computation.
  * @note    Make sure the final baud rate is within tolerance.
  */
-#define UBRR(b) ((F_CPU / (b << 4)) - 1)
+#define UBRR(b) (((F_CPU / b) >> 4) - 1)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

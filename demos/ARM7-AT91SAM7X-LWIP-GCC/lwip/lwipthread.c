@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -141,7 +142,7 @@ static struct pbuf *low_level_input(struct netif *netif) {
 
   (void)netif;
   if (macWaitReceiveDescriptor(&ETH1, &rd, TIME_IMMEDIATE) == RDY_OK) {
-    len = (u16_t)rd.rd_size;
+    len = (u16_t)rd.size;
 
 #if ETH_PAD_SIZE
     len += ETH_PAD_SIZE;        /* allow room for Ethernet padding */
