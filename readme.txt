@@ -70,11 +70,17 @@
 *** Releases                                                              ***
 *****************************************************************************
 
-*** 2.3.4 ***
+*** 2.3.3 ***
 - FIX: Fixed wrong macro check in STM32 UART driver (bug 3311999)(backported
   to 2.2.6).
 - FIX: Fixed wrong macro definition in ARMv6-M architecture files (bug
   3310084).
+- FIX: Fixed race condition in output queues (bug 3303908)(backported
+  to 2.2.4).
+- FIX: Fixed CH_USE_HEAP and CH_USE_MALLOC_HEAP conflict (bug 3303841)
+  (backported to 2.2.4).
+- FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
+  (backported to 2.2.4).
 - NEW: lwIP 1.4.0 has been integrated, this new version does not require
   custom hooks into the Thread structure and is thus much lighter.
 - NEW: FatFs demo for the STM32F103ZG using the SDC driver.
@@ -85,14 +91,6 @@
   IAR and RVCT ports support the new Compact mode.
 - NEW: Added to the ARMv6-M sub-port an option to use the PendSV exception
   instead of NMI for preemption (backported to 2.2.5).
-
-*** 2.3.3 ***
-- FIX: Fixed race condition in output queues (bug 3303908)(backported
-  to 2.2.4).
-- FIX: Fixed CH_USE_HEAP and CH_USE_MALLOC_HEAP conflict (bug 3303841)
-  (backported to 2.2.4).
-- FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
-  (backported to 2.2.4).
 - NEW: Reorganization of the Cortex-Mx ports in order to reduced code and
   comments duplication in the various headers (backported to 2.2.5).
 - NEW: Improved the ARMv7-M sub-port now there are two modes: Compact and
