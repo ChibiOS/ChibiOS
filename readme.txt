@@ -75,6 +75,8 @@
   to 2.2.6).
 - FIX: Fixed wrong macro definition in ARMv6-M architecture files (bug
   3310084).
+- NEW: lwIP 1.4.0 has been integrated, this new version does not require
+  custom hooks into the Thread structure and is thus much lighter.
 - NEW: FatFs demo for the STM32F103ZG using the SDC driver.
 - NEW: Now the STM32 SDC driver supports unaligned buffers transparently.
   Optimized the driver for single block read and write operations. Optimized
