@@ -19,7 +19,7 @@
 */
 
 /*
- * STM32 drivers configuration.
+ * STM32L1xx drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
@@ -35,14 +35,15 @@
 /*
  * HAL driver system settings.
  */
+#define STM32_VOS                           STM32_VOS_1P8
+#define STM32_MSIRANGE                      STM32_MSIRANGE_2M
 #define STM32_SW                            STM32_SW_PLL
-#define STM32_PLLSRC                        STM32_PLLSRC_HSE
-#define STM32_PLLXTPRE                      STM32_PLLXTPRE_DIV1
-#define STM32_PLLMUL_VALUE                  3
+#define STM32_PLLSRC                        STM32_PLLSRC_HSI
+#define STM32_PLLMUL_VALUE                  6
+#define STM32_PLLDIV_VALUE                  3
 #define STM32_HPRE                          STM32_HPRE_DIV1
 #define STM32_PPRE1                         STM32_PPRE1_DIV1
 #define STM32_PPRE2                         STM32_PPRE2_DIV1
-#define STM32_ADCPRE                        STM32_ADCPRE_DIV2
 #define STM32_MCO                           STM32_MCO_NOCLOCK
 
 /*

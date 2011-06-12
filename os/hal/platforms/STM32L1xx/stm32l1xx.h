@@ -191,7 +191,7 @@ typedef enum IRQn
   */
 
 #include "core_cm3.h"
-#include "system_stm32l1xx.h"
+/*#include "system_stm32l1xx.h"*/
 #include <stdint.h>
 
 /** @addtogroup Exported_types
