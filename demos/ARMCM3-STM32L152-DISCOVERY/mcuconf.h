@@ -35,7 +35,14 @@
 /*
  * HAL driver system settings.
  */
+#define STM32_NO_INIT                       FALSE
 #define STM32_VOS                           STM32_VOS_1P8
+#define STM32_HSI_ENABLED                   TRUE
+#define STM32_LSI_ENABLED                   TRUE
+#define STM32_HSE_ENABLED                   FALSE
+#define STM32_LSE_ENABLED                   TRUE
+#define STM32_ADC_CLOCK_ENABLED             TRUE
+#define STM32_USB_CLOCK_ENABLED             TRUE
 #define STM32_MSIRANGE                      STM32_MSIRANGE_2M
 #define STM32_SW                            STM32_SW_PLL
 #define STM32_PLLSRC                        STM32_PLLSRC_HSI
@@ -44,7 +51,10 @@
 #define STM32_HPRE                          STM32_HPRE_DIV1
 #define STM32_PPRE1                         STM32_PPRE1_DIV1
 #define STM32_PPRE2                         STM32_PPRE2_DIV1
-#define STM32_MCO                           STM32_MCO_NOCLOCK
+#define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
+#define STM32_MCOPRE                        STM32_MCOPRE_DIV1
+#define STM32_RTCSEL                        STM32_RTCSEL_LSE
+#define STM32_RTCPRE                        STM32_RTCPRE_DIV2
 
 /*
  * ADC driver system settings.

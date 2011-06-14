@@ -79,7 +79,7 @@ void hal_lld_init(void) {
 /**
  * @brief   STM32 clocks and PLL initialization.
  * @note    All the involved constants come from the file @p board.h.
- * @note    This function must be invoked only after the system reset.
+ * @note    This function should be invoked just after the system reset.
  *
  * @special
  */
@@ -134,7 +134,7 @@ void stm32_clock_init(void) {
   /* Flash setup and final clock selection.   */
   FLASH->ACR = STM32_FLASHBITS; /* Flash wait states depending on clock.    */
 
-  /* Switching on the configured clock source if it is different from HSI.*/
+  /* Switching to the configured clock source if it is different from HSI.*/
 #if (STM32_SW != STM32_SW_HSI)
   RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
@@ -207,7 +207,7 @@ void stm32_clock_init(void) {
   /* Flash setup and final clock selection.   */
   FLASH->ACR = STM32_FLASHBITS; /* Flash wait states depending on clock.    */
 
-  /* Switching on the configured clock source if it is different from HSI.*/
+  /* Switching to the configured clock source if it is different from HSI.*/
 #if (STM32_SW != STM32_SW_HSI)
   RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))

@@ -36,7 +36,7 @@
  * NOTE: The HSE crystal is not fitted by default on the board.
  */
 #define STM32_LSECLK            32768
-#define STM32_HSECLK            8000000
+#define STM32_HSECLK            0
 
 /*
  * MCU type as defined in the ST header file stm32l1xx.h.
