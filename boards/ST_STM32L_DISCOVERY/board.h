@@ -29,29 +29,27 @@
  * Board identifier.
  */
 #define BOARD_ST_STM32VL_DISCOVERY
-#define BOARD_NAME              "ST STM32VL-Discovery"
+#define BOARD_NAME              "ST STM32L-Discovery"
 
 /*
  * Board frequencies.
+ * NOTE: The HSE crystal is not fitted by default on the board.
  */
 #define STM32_LSECLK            32768
 #define STM32_HSECLK            8000000
 
 /*
- * MCU type, supported types are defined in ./os/hal/platforms/hal_lld.h.
+ * MCU type as defined in the ST header file stm32l1xx.h.
  */
-#define STM32F10X_MD_VL
+#define STM32L1XX_MD
 
 /*
  * IO pins assignments.
  */
 #define GPIOA_BUTTON            0
-#define GPIOA_SPI1NSS           4
 
-#define GPIOB_SPI2NSS           12
-
-#define GPIOC_LED4              8
-#define GPIOC_LED3              9
+#define GPIOB_LED4              6
+#define GPIOB_LED3              7
 
 /*
  * I/O ports initial setup, this configuration is established soon after reset

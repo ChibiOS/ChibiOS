@@ -27,14 +27,14 @@
  *          This variable is used by the HAL when initializing the PAL driver.
  */
 #if HAL_USE_PAL || defined(__DOXYGEN__)
-const PALConfig pal_default_config =
+/*const PALConfig pal_default_config =
 {
   {VAL_GPIOAODR, VAL_GPIOACRL, VAL_GPIOACRH},
   {VAL_GPIOBODR, VAL_GPIOBCRL, VAL_GPIOBCRH},
   {VAL_GPIOCODR, VAL_GPIOCCRL, VAL_GPIOCCRH},
   {VAL_GPIODODR, VAL_GPIODCRL, VAL_GPIODCRH},
   {VAL_GPIOEODR, VAL_GPIOECRL, VAL_GPIOECRH},
-};
+};*/
 #endif
 
 /*
