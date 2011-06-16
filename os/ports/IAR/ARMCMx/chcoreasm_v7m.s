@@ -82,7 +82,10 @@ _port_thread_start:
  */
         PUBLIC  _port_switch_from_isr
 _port_switch_from_isr:
+        bl      chSchIsRescRequiredExI
+        cbz     r0, .L2
         bl      chSchDoRescheduleI
+.L2:
 #if CORTEX_SIMPLIFIED_PRIORITY
         mov     r3, #LWRD SCB_ICSR
         movt    r3, #HWRD SCB_ICSR
@@ -108,20 +111,16 @@ _port_irq_epilogue:
         mov     r3, #LWRD SCB_ICSR
         movt    r3, #HWRD SCB_ICSR
         ldr     r3, [r3, #0]
-        tst     r3, #ICSR_RETTOBASE
-        bne     .L7
+        ands    r3, r3, #ICSR_RETTOBASE
+        bne     .L8
 #if CORTEX_SIMPLIFIED_PRIORITY
         cpsie   i
 #else
-        movs    r3, #CORTEX_BASEPRI_DISABLED
+        /* Note, R3 is already zero.*/
         msr     BASEPRI, r3
 #endif
         bx      lr
-.L7:
-        push    {r3, lr}
-        bl      chSchIsRescRequiredExI
-        cmp     r0, #0
-        beq     .L4
+.L8:
         mrs     r3, PSP
         subs    r3, r3, #EXTCTX_SIZE
         msr     PSP, r3
@@ -129,15 +128,7 @@ _port_irq_epilogue:
         str     r2, [r3, #24]
         mov     r2, #0x01000000
         str     r2, [r3, #28]
-        pop     {r3, pc}
-.L4:
-#if CORTEX_SIMPLIFIED_PRIORITY
-        cpsie   i
-#else
-        movs    r3, #CORTEX_BASEPRI_DISABLED
-        msr     BASEPRI, r3
-#endif
-        pop     {r3, pc}
+        bx      lr
 
 /*
  * SVC vector.

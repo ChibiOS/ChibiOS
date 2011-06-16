@@ -79,7 +79,10 @@ _port_thread_start PROC
  */
                 EXPORT  _port_switch_from_isr
 _port_switch_from_isr PROC
+                bl      chSchIsRescRequiredExI
+                cbz     r0, noreschedule
                 bl      chSchDoRescheduleI
+noreschedule
 #if CORTEX_SIMPLIFIED_PRIORITY
                 mov     r3, #SCB_ICSR :AND: 0xFFFF
                 movt    r3, #SCB_ICSR :SHR: 16
@@ -106,20 +109,16 @@ _port_irq_epilogue PROC
                 mov     r3, #SCB_ICSR :AND: 0xFFFF
                 movt    r3, #SCB_ICSR :SHR: 16
                 ldr     r3, [r3, #0]
-                tst     r3, #ICSR_RETTOBASE
+                ands    r3, r3, #ICSR_RETTOBASE
                 bne     skipexit
 #if CORTEX_SIMPLIFIED_PRIORITY
                 cpsie   i
 #else
-                movs    r3, #CORTEX_BASEPRI_DISABLED
+                /* Note, R3 is already zero.*/
                 msr     BASEPRI, r3
 #endif
                 bx      lr
 skipexit
-                push    {r3, lr}
-                bl      chSchIsRescRequiredExI
-                cmp     r0, #0
-                beq     noreschedule
                 mrs     r3, PSP
                 subs    r3, r3, #EXTCTX_SIZE
                 msr     PSP, r3
@@ -127,15 +126,7 @@ skipexit
                 str     r2, [r3, #24]
                 mov     r2, #0x01000000
                 str     r2, [r3, #28]
-                pop     {r3, pc}
-noreschedule
-#if CORTEX_SIMPLIFIED_PRIORITY
-                cpsie   i
-#else
-                movs    r3, #CORTEX_BASEPRI_DISABLED
-                msr     BASEPRI, r3
-#endif
-                pop     {r3, pc}
+                bx      lr
                 ENDP
 
 /*
@@ -152,6 +143,7 @@ SVCallVector    PROC
                 movs    r3, #CORTEX_BASEPRI_DISABLED
                 msr     BASEPRI, r3
                 bx      lr
+                nop
                 ENDP
 #endif
 

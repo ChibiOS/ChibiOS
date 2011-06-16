@@ -128,12 +128,12 @@ void PendSVVector(void) {
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
 
 /**
- * @brief   Reschedule verification and setup after an IRQ.
+ * @brief   Exception exit redirection to _port_switch_from_isr().
  */
 void _port_irq_epilogue(void) {
 
   port_lock_from_isr();
-  if ((SCB_ICSR & ICSR_RETTOBASE) && chSchIsRescRequiredExI()) {
+  if ((SCB_ICSR & ICSR_RETTOBASE)) {
     register struct extctx *ctxp;
 
     /* Adding an artificial exception return context, there is no need to
@@ -147,7 +147,6 @@ void _port_irq_epilogue(void) {
        order to keep the rest of the context switching atomic.*/
     return;
   }
-  /* ISR exit without context switching.*/
   port_unlock_from_isr();
 }
 
@@ -160,7 +159,8 @@ __attribute__((naked))
 #endif
 void _port_switch_from_isr(void) {
 
-  chSchDoRescheduleI();
+  if (chSchIsRescRequiredExI())
+    chSchDoRescheduleI();
 #if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
   asm volatile ("svc     #0");
 #else /* CORTEX_SIMPLIFIED_PRIORITY */

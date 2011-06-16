@@ -116,7 +116,11 @@ PendSVVector:
  */
         PUBLIC  _port_switch_from_isr
 _port_switch_from_isr:
+        bl      chSchIsRescRequiredExI
+        cmp     r0, #0
+        beq     noresch
         bl      chSchDoRescheduleI
+noresch:
         ldr     r2, =SCB_ICSR
         movs    r3, #128
 #if CORTEX_ALTERNATE_SWITCH
@@ -135,25 +139,19 @@ waithere:
  */
         PUBLIC  _port_irq_epilogue
 _port_irq_epilogue:
-        push    {r3, lr}
+        push    {lr}
         adds    r0, r0, #15
-        beq     stillnested
+        beq     skipexit
         cpsid   i
-        bl      chSchIsRescRequiredExI
-        cmp     r0, #0
-        bne     doresch
-        cpsie   i
-stillnested
-        pop     {r3, pc}
-doresch
         mrs     r3, PSP
         subs    r3, r3, #32
         msr     PSP, r3
         ldr     r2, =_port_switch_from_isr
         str     r2, [r3, #24]
         movs    r2, #128
-        lsls     r2, r2, #17
+        lsls    r2, r2, #17
         str     r2, [r3, #28]
-        pop     {r3, pc}
+skipexit:
+        pop     {pc}
 
         END
