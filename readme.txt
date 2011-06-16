@@ -71,6 +71,8 @@
 *****************************************************************************
 
 *** 2.3.3 ***
+- FIX: Fixed race condition in Cortex-Mx ports (bug 3317500)(backported
+  to 2.2.6).
 - FIX: Fixed wrong macro check in STM32 UART driver (bug 3311999)(backported
   to 2.2.6).
 - FIX: Fixed wrong macro definition in ARMv6-M architecture files (bug
