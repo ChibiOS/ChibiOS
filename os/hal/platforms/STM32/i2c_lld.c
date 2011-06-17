@@ -106,7 +106,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       /* Disable ITEVT In order to not have again a BTF IT */
       dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
       /* send restart and begin reading operations */
-      i2c_lld_master_transceive(i2cp);
+      i2c_lld_master_receive(i2cp);
     }
     break;
 
@@ -524,12 +524,16 @@ void i2c_lld_master_transmit(I2CDriver *i2cp) {
 
   switch(i2cp->id_slave_config->nbit_address){
   case 7:
-    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr <<1) & 0x00FE);    // LSB = 0 -> write
+    // LSB = 0 -> write
+    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr <<1) & 0x00FE);
     break;
   case 10:
-    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr >>7) & 0x0006);  // add the two msb of 10-bit address to the header
-    i2cp->slave_addr1 |= 0xF0;                        // add the header bits with LSB = 0 -> write
-    i2cp->slave_addr2 = i2cp->id_slave_config->slave_addr & 0x00FF;          // the remaining 8 bit of 10-bit address
+    // add the two msb of 10-bit address to the header
+    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr >>7) & 0x0006);
+    // add the header bits with LSB = 0 -> write
+    i2cp->slave_addr1 |= 0xF0;
+    // the remaining 8 bit of 10-bit address
+    i2cp->slave_addr2 = i2cp->id_slave_config->slave_addr & 0x00FF;
     break;
   }
 
@@ -539,7 +543,8 @@ void i2c_lld_master_transmit(I2CDriver *i2cp) {
   i2cp->id_i2c->CR1 |= I2C_CR1_START;               // send start bit
 
 #if !I2C_USE_WAIT
-  /* Wait until the START condition is generated on the bus: the START bit is cleared by hardware */
+  /* Wait until the START condition is generated on the bus:
+   * the START bit is cleared by hardware */
   uint32_t timeout = 0xfffff;
   while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
     ;
@@ -561,12 +566,16 @@ void i2c_lld_master_receive(I2CDriver *i2cp){
 
   switch(i2cp->id_slave_config->nbit_address){
   case 7:
-    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr <<1) | 0x01);  // LSB = 1 -> receive
+    // LSB = 1 -> receive
+    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr <<1) | 0x01);
     break;
   case 10:
-    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr >>7) & 0x0006);  // add the two msb of 10-bit address to the header
-    i2cp->slave_addr1 |= 0xF0;                        // add the header bits (the LSB -> 1 will be add to second
-    i2cp->slave_addr2 = i2cp->id_slave_config->slave_addr & 0x00FF;          // the remaining 8 bit of 10-bit address
+    // add the two msb of 10-bit address to the header
+    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr >>7) & 0x0006);
+    // add the header bits (the LSB -> 1 will be add to second
+    i2cp->slave_addr1 |= 0xF0;
+    // the remaining 8 bit of 10-bit address
+    i2cp->slave_addr2 = i2cp->id_slave_config->slave_addr & 0x00FF;
     break;
   }
 
@@ -586,55 +595,8 @@ void i2c_lld_master_receive(I2CDriver *i2cp){
   i2cp->id_i2c->CR1 |= I2C_CR1_START;            // send start bit
 
 #if !I2C_USE_WAIT
-  /* Wait until the START condition is generated on the bus: the START bit is cleared by hardware */
-  uint32_t timeout = 0xfffff;
-  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
-    ;
-#endif /* I2C_USE_WAIT */
-}
-
-
-
-/**
- * @brief
- *
- * @param[in] i2cp          pointer to the @p I2CDriver object
- *
- */
-void i2c_lld_master_transceive(I2CDriver *i2cp){
-  // enable ERR, EVT & BUF ITs
-  i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
-  i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                 // acknowledge returned
-  i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
-
-  switch(i2cp->id_slave_config->nbit_address){
-  case 7:
-    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr <<1) | 0x01);  // LSB = 1 -> receive
-    break;
-  case 10:
-    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr >>7) & 0x0006);  // add the two msb of 10-bit address to the header
-    i2cp->slave_addr1 |= 0xF0;                        // add the header bits (the LSB -> 1 will be add to second
-    i2cp->slave_addr2 = i2cp->id_slave_config->slave_addr & 0x00FF;          // the remaining 8 bit of 10-bit address
-    break;
-  }
-
-  i2cp->id_slave_config->flags = I2C_FLG_MASTER_RECEIVER;
-  i2cp->id_slave_config->errors = 0;
-
-  // Only one byte to be received
-  if(i2cp->id_slave_config->rxbytes == 1) {
-    i2cp->id_slave_config->flags |= I2C_FLG_1BTR;
-  }
-  // Only two bytes to be received
-  else if(i2cp->id_slave_config->rxbytes == 2) {
-    i2cp->id_slave_config->flags |= I2C_FLG_2BTR;
-    i2cp->id_i2c->CR1 |= I2C_CR1_POS;            // Acknowledge Position
-  }
-
-  i2cp->id_i2c->CR1 |= I2C_CR1_START;            // send start bit
-
-#if !I2C_USE_WAIT
-  /* Wait until the START condition is generated on the bus: the START bit is cleared by hardware */
+  /* Wait until the START condition is generated on the bus:
+   * the START bit is cleared by hardware */
   uint32_t timeout = 0xfffff;
   while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
     ;
