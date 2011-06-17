@@ -13,6 +13,9 @@
 // Data buffers
 static i2cblock_t max1236_rx_data[MAX1236_RX_DEPTH];
 static i2cblock_t max1236_tx_data[MAX1236_TX_DEPTH];
+// ADC results
+static uint16_t ch1 = 0, ch2 = 0, ch3 = 0, ch4 = 0;
+
 
 /* Error trap */
 static void i2c_max1236_error_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
@@ -25,17 +28,7 @@ static void i2c_max1236_error_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 
 /* This callback raise up when transfer finished */
 static void i2c_max1236_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
-  uint16_t ch1 = 0;
-  uint16_t ch2 = 0;
-  uint16_t ch3 = 0;
-  uint16_t ch4 = 0;
-
-  /* send stop */
-  i2cMasterStop(i2cp);
-
-  /* unlock bus */
-  i2cReleaseBus(&I2CD2);
-
+  (void)*i2cp;
   /* get ADC data */
   ch1 = ((i2cscfg->rxbuf[0] & 0xF) << 8) + i2cscfg->rxbuf[1];
   ch2 = ((i2cscfg->rxbuf[2] & 0xF) << 8) + i2cscfg->rxbuf[3];
@@ -45,19 +38,19 @@ static void i2c_max1236_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 
 
 // ADC maxim MAX1236 config
+
 static I2CSlaveConfig max1236 = {
-  NULL, // first set to NULL. We will set this pointer to the function later.
-  i2c_max1236_error_cb,
-  max1236_rx_data,
-  MAX1236_RX_DEPTH,
-  0,
-  0,
-  max1236_tx_data,
-  MAX1236_TX_DEPTH,
-  0,
-  0,
-  0b0110100,
-  FALSE,
+    NULL,
+    i2c_max1236_error_cb,
+    0,
+    0,
+    max1236_rx_data,
+    max1236_tx_data,
+    0b0110100,
+    7,
+    0,
+    0,
+    {NULL},
 };
 
 
@@ -66,41 +59,30 @@ static I2CSlaveConfig max1236 = {
  * how to initialize ADC.
  */
 void init_max1236(void){
-  /* lock bus */
-  i2cAcquireBus(&I2CD2);
-
-  /* this data we must send to IC to setup ADC settings */
-  max1236.txbufhead = 0;
+  /* this data we must send via IC to setup ADC */
+  max1236.rxbytes = 0;
   max1236.txbytes = 2; // total 2 bytes to be sent
   max1236.txbuf[0] = 0b10000011; // config register content. Consult datasheet
   max1236.txbuf[1] = 0b00000111; // config register content. Consult datasheet
 
-  // transmit out 2 bytes
-  i2cMasterTransmit(&I2CD2, &max1236);
-  while(I2CD2.id_state != I2C_READY) // wait
-      chThdSleepMilliseconds(1);
 
+  // transmit out 2 bytes
+  i2cAcquireBus(&I2CD2);
+  i2cMasterTransmit(&I2CD2, &max1236);
+  while(I2CD2.id_state != I2C_READY){
+    chThdSleepMilliseconds(1);
+  }
   /* now add pointer to callback function */
   max1236.id_callback = i2c_max1236_cb;
-
-  /*clear transmitting structures */
-  max1236.txbytes = 0;
-  max1236.txbufhead = 0;
-
-  /* unlock bus */
   i2cReleaseBus(&I2CD2);
 }
 
 
 /* Now simply read 8 bytes to get all 4 ADC channels */
 void read_max1236(void){
-  /* tune receive buffer */
-  max1236.rxbufhead = 0;
+  max1236.txbytes = 0;
   max1236.rxbytes = 8;
-
-  /* lock bus */
   i2cAcquireBus(&I2CD2);
-
-  /* start reading */
   i2cMasterReceive(&I2CD2, &max1236);
+  i2cReleaseBus(&I2CD2);
 }

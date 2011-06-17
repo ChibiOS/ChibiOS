@@ -55,10 +55,24 @@
 #endif
 
 /**
+ * @brief   Enables the GPT subsystem.
+ */
+#if !defined(HAL_USE_GPT) || defined(__DOXYGEN__)
+#define HAL_USE_GPT                 FALSE
+#endif
+
+/**
  * @brief   Enables the I2C subsystem.
  */
 #if !defined(HAL_USE_I2C) || defined(__DOXYGEN__)
 #define HAL_USE_I2C                 TRUE
+#endif
+
+/**
+ * @brief   Enables the ICU subsystem.
+ */
+#if !defined(HAL_USE_ICU) || defined(__DOXYGEN__)
+#define HAL_USE_ICU                 FALSE
 #endif
 
 /**
@@ -83,10 +97,24 @@
 #endif
 
 /**
+ * @brief   Enables the SDC subsystem.
+ */
+#if !defined(HAL_USE_SDC) || defined(__DOXYGEN__)
+#define HAL_USE_SDC                 FALSE
+#endif
+
+/**
  * @brief   Enables the SERIAL subsystem.
  */
 #if !defined(HAL_USE_SERIAL) || defined(__DOXYGEN__)
-#define HAL_USE_SERIAL              FALSE
+#define HAL_USE_SERIAL              TRUE
+#endif
+
+/**
+ * @brief   Enables the SERIAL over USB subsystem.
+ */
+#if !defined(HAL_USE_SERIAL_USB) || defined(__DOXYGEN__)
+#define HAL_USE_SERIAL_USB          FALSE
 #endif
 
 /**
@@ -100,7 +128,14 @@
  * @brief   Enables the UART subsystem.
  */
 #if !defined(HAL_USE_UART) || defined(__DOXYGEN__)
-#define HAL_USE_UART                TRUE
+#define HAL_USE_UART                FALSE
+#endif
+
+/**
+ * @brief   Enables the USB subsystem.
+ */
+#if !defined(HAL_USE_USB) || defined(__DOXYGEN__)
+#define HAL_USE_USB                 FALSE
 #endif
 
 /*===========================================================================*/
@@ -207,6 +242,36 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
+/* SDC driver related settings.                                              */
+/*===========================================================================*/
+/**
+ * @brief   Number of initialization attempts before rejecting the card.
+ * @note    Attempts are performed at 10mS intevals.
+ */
+#if !defined(SDC_INIT_RETRY) || defined(__DOXYGEN__)
+#define SDC_INIT_RETRY              100
+#endif
+
+/**
+ * @brief   Include support for MMC cards.
+ * @note    MMC support is not yet implemented so this option must be kept
+ *          at @p FALSE.
+ */
+#if !defined(SDC_MMC_SUPPORT) || defined(__DOXYGEN__)
+#define SDC_MMC_SUPPORT             FALSE
+#endif
+
+/**
+ * @brief   Delays insertions.
+ * @details If enabled this options inserts delays into the MMC waiting
+ *          routines releasing some extra CPU time for the threads with
+ *          lower priority, this may slow down the driver a bit however.
+ */
+#if !defined(SDC_NICE_WAITING) || defined(__DOXYGEN__)
+#define SDC_NICE_WAITING            TRUE
+#endif
+
+/*===========================================================================*/
 /* SERIAL driver related settings.                                           */
 /*===========================================================================*/
 
@@ -216,7 +281,7 @@
  *          default configuration.
  */
 #if !defined(SERIAL_DEFAULT_BITRATE) || defined(__DOXYGEN__)
-#define SERIAL_DEFAULT_BITRATE      38400
+#define SERIAL_DEFAULT_BITRATE      57600
 #endif
 
 /**
@@ -227,7 +292,7 @@
  *          buffers.
  */
 #if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define SERIAL_BUFFERS_SIZE         16
+#define SERIAL_BUFFERS_SIZE         256
 #endif
 
 /*===========================================================================*/

@@ -15,6 +15,8 @@
 // input buffer
 static i2cblock_t tmp75_rx_data[TMP75_RX_DEPTH];
 static i2cblock_t tmp75_tx_data[TMP75_TX_DEPTH];
+// temperature value
+static int16_t temperature = 0;
 
 // Simple error trap
 static void i2c_tmp75_error_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
@@ -26,47 +28,34 @@ static void i2c_tmp75_error_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 
 /* This callback raise up when transfer finished */
 static void i2c_tmp75_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
-  int16_t temperature = 0;
-
-  /* Manually send stop signal to the bus. This is important! */
-  i2cMasterStop(i2cp);
-  /* unlock bus */
-  i2cReleaseBus(&I2CD2);
-
+  (void)*i2cp;
   /* store temperature value */
   temperature = (i2cscfg->rxbuf[0] << 8) + i2cscfg->rxbuf[1];
-
 }
 
 // Fill TMP75 config.
 static I2CSlaveConfig tmp75 = {
     i2c_tmp75_cb,
     i2c_tmp75_error_cb,
+    0,
+    0,
     tmp75_rx_data,
-    TMP75_RX_DEPTH,
-    0,
-    0,
     tmp75_tx_data,
-    TMP75_TX_DEPTH,
-    0,
-    0,
     0b1001000,
-    FALSE,
+    7,
+    0,
+    0,
+    {NULL},
 };
 
 /* This is main function. */
 void request_temperature(void){
-  tmp75.txbytes = 0;  // set to zero just to be safe
+  tmp75.txbytes = 0;  // set to zero because we need only reading
+  tmp75.rxbytes = 2;  // we need to read 2 bytes
 
-  /* tune receiving buffer */
-  tmp75.rxbufhead = 0;// point to beginig of buffer
-  tmp75.rxbytes = 2;  // we need read 2 bytes
-
-  /* get exclusive access to the bus */
   i2cAcquireBus(&I2CD2);
-
-  /* start receiving process in background and return */
   i2cMasterReceive(&I2CD2, &tmp75);
+  i2cReleaseBus(&I2CD2);
 }
 
 

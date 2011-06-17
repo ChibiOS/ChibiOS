@@ -78,8 +78,8 @@ CSRC = $(PORTSRC) \
        main.c \
        i2c_pns.c \
 	   lis3.c\
-	   tmp75.c\
 	   max1236.c\
+	   tmp75.c\
        
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

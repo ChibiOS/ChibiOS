@@ -89,6 +89,23 @@
 #define CH_MEMCORE_SIZE                 0
 #endif
 
+/**
+ * @brief   Idle thread automatic spawn suppression.
+ * @details When this option is activated the function @p chSysInit()
+ *          does not spawn the idle thread automatically. The application has
+ *          then the responsibility to do one of the following:
+ *          - Spawn a custom idle thread at priority @p IDLEPRIO.
+ *          - Change the main() thread priority to @p IDLEPRIO then enter
+ *            an endless loop. In this scenario the @p main() thread acts as
+ *            the idle thread.
+ *          .
+ * @note    Unless an idle thread is spawned the @p main() thread must not
+ *          enter a sleep state.
+ */
+#if !defined(CH_NO_IDLE_THREAD) || defined(__DOXYGEN__)
+#define CH_NO_IDLE_THREAD               FALSE
+#endif
+
 /*===========================================================================*/
 /* Performance options.                                                      */
 /*===========================================================================*/
@@ -103,26 +120,6 @@
  */
 #if !defined(CH_OPTIMIZE_SPEED) || defined(__DOXYGEN__)
 #define CH_OPTIMIZE_SPEED               FALSE
-#endif
-
-/**
- * @brief   Exotic optimization.
- * @details If defined then a CPU register is used as storage for the global
- *          @p currp variable. Caching this variable in a register greatly
- *          improves both space and time OS efficiency. A side effect is that
- *          one less register has to be saved during the context switch
- *          resulting in lower RAM usage and faster context switch.
- *
- * @note    This option is only usable with the GCC compiler and is only useful
- *          on processors with many registers like ARM cores.
- * @note    If this option is enabled then ALL the libraries linked to the
- *          ChibiOS/RT code <b>must</b> be recompiled with the GCC option @p
- *          -ffixed-@<reg@>.
- * @note    This option must be enabled in the Makefile, it is listed here for
- *          documentation only.
- */
-#if defined(__DOXYGEN__)
-#define CH_CURRP_REGISTER_CACHE         "reg"
 #endif
 
 /*===========================================================================*/
