@@ -163,9 +163,8 @@ struct I2CDriver{
    */
   I2CSlaveConfig        *id_slave_config;
 
-  uint8_t               slave_addr1;    // 7-bit address of the slave
-  uint8_t               slave_addr2;    // used in 10-bit address mode
-  uint8_t               nbit_addr;
+  uint8_t               slave_addr1; /*!< 7-bit address of the slave with r\w bit.*/
+  uint8_t               slave_addr2; /*!< used in 10-bit address mode. */
 
 
   /*********** End of the mandatory fields. **********************************/
