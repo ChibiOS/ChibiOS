@@ -35,7 +35,6 @@ static I2CSlaveConfig lis3 = {
   accel_rx_data,
   accel_tx_data,
   0b0011101,
-  7,
   0,
   0,
   {NULL},

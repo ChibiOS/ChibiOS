@@ -42,7 +42,6 @@ static I2CSlaveConfig tmp75 = {
     tmp75_rx_data,
     tmp75_tx_data,
     0b1001000,
-    7,
     0,
     0,
     {NULL},

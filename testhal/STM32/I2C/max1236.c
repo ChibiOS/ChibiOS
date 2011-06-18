@@ -47,7 +47,6 @@ static I2CSlaveConfig max1236 = {
     max1236_rx_data,
     max1236_tx_data,
     0b0110100,
-    7,
     0,
     0,
     {NULL},
