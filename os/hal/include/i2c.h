@@ -96,11 +96,7 @@ typedef enum {
 /**
  * @brief   I2C notification callback type.
  * @details This callback invoked when byte transfer finish event occurs,
- *          No matter sending or reading. This function designed
- *          for sending (re)start or stop events to I2C bus from user level.
- *
- *          If callback function is set to NULL - driver atomaticcaly
- *          generate stop condition after the transfer finish.
+ *          No matter sending or reading.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object triggering the
  *                      callback
@@ -135,8 +131,7 @@ typedef uint8_t i2cblock_t;
 struct I2CSlaveConfig{
   /**
    * @brief Callback pointer.
-   * @note  Transfer finished callback. Invoke when all data transferred, or
-   *        by DMA buffer events
+   * @note  Transfer finished callback. Invoke when all data transferred.
    *        If set to @p NULL then the callback is disabled.
    */
   i2ccallback_t         id_callback;
@@ -154,8 +149,8 @@ struct I2CSlaveConfig{
   i2cblock_t            *txbuf;       /*!< Pointer to transmit buffer.*/
   uint16_t              slave_addr;   /*!< Slave device address.*/
   uint8_t               nbit_addr;    /*!< Length of address (must be 7 or 10).*/
-  i2cflags_t            errors;
-  i2cflags_t            flags;
+  i2cflags_t            errors;       /*!< Error flags.*/
+  i2cflags_t            flags;        /*!< State flags.*/
   /* Status Change @p EventSource.*/
   EventSource           sevent;
 };
@@ -212,7 +207,7 @@ struct I2CSlaveConfig{
  *          - Callback invocation.
  *          - Waiting thread wakeup, if any.
  *          - Driver state transitions.
- *          .
+ *
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.
  *
@@ -236,7 +231,7 @@ extern "C" {
 #endif
   void i2cInit(void);
   void i2cObjectInit(I2CDriver *i2cp);
-  void i2cStart(I2CDriver *i2cp, I2CConfig *config);
+  void i2cStart(I2CDriver *i2cp, const I2CConfig *config);
   void i2cStop(I2CDriver *i2cp);
   void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
   void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);

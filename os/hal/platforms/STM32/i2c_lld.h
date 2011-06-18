@@ -157,15 +157,11 @@ struct I2CDriver{
   /**
    * @brief Current configuration data.
    */
-  I2CConfig             *id_config;
+  const I2CConfig       *id_config;
   /**
    * @brief Current slave configuration data.
    */
   I2CSlaveConfig        *id_slave_config;
-  /**
-   * @brief RW-bit sent to slave.
-   */
-  uint8_t               rw_bit;
 
   uint8_t               slave_addr1;    // 7-bit address of the slave
   uint8_t               slave_addr2;    // used in 10-bit address mode
@@ -194,7 +190,7 @@ struct I2CDriver{
  */
 #define i2c_lld_wait_bus_free(i2cp) {                                       \
   uint32_t tmo = 0xffff;                                                    \
-  while((i2cp->id_i2c->SR2 & I2C_SR2_BUSY) && tmo--)                  \
+  while((i2cp->id_i2c->SR2 & I2C_SR2_BUSY) && tmo--)                        \
     ;                                                                       \
 }
 

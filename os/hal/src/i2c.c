@@ -96,7 +96,7 @@ void i2cObjectInit(I2CDriver *i2cp) {
  *
  * @api
  */
-void i2cStart(I2CDriver *i2cp, I2CConfig *config) {
+void i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
 
   chDbgCheck((i2cp != NULL) && (config != NULL), "i2cStart");
 
