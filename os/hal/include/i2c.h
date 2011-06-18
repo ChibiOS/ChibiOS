@@ -147,8 +147,16 @@ struct I2CSlaveConfig{
   size_t                rxbytes;      /*!< Number of bytes to received. */
   i2cblock_t            *rxbuf;       /*!< Pointer to receive buffer. */
   i2cblock_t            *txbuf;       /*!< Pointer to transmit buffer.*/
-  uint16_t              slave_addr;   /*!< Slave device address.*/
-  uint8_t               nbit_addr;    /*!< Length of address (must be 7 or 10).*/
+  /**
+   * @brief Slave device address.
+   * @details Bits 0-9 contain slave device address.
+   *
+   *    			Bit 15 must be set to 1 if 10-bit addressing modes used. Otherwise
+   * 					keep it cleared.
+   *
+   * 					Bits 10-14 unused.
+   */
+  uint16_t              slave_addr;
   i2cflags_t            errors;       /*!< Error flags.*/
   i2cflags_t            flags;        /*!< State flags.*/
   /* Status Change @p EventSource.*/

@@ -522,19 +522,17 @@ void i2c_lld_master_transmit(I2CDriver *i2cp) {
   i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 
-  switch(i2cp->id_slave_config->nbit_addr){
-  case 7:
-    // LSB = 0 -> write
-    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr <<1) & 0x00FE);
-    break;
-  case 10:
-    // add the two msb of 10-bit address to the header
-    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr >>7) & 0x0006);
-    // add the header bits with LSB = 0 -> write
-    i2cp->slave_addr1 |= 0xF0;
-    // the remaining 8 bit of 10-bit address
-    i2cp->slave_addr2 = i2cp->id_slave_config->slave_addr & 0x00FF;
-    break;
+  if(i2cp->id_slave_config->slave_addr & 0x8000){// 10-bit mode used
+  	// add the two msb of 10-bit address to the header
+		i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr >>7) & 0x0006);
+		// add the header bits with LSB = 0 -> write
+		i2cp->slave_addr1 |= 0xF0;
+		// the remaining 8 bit of 10-bit address
+		i2cp->slave_addr2 = i2cp->id_slave_config->slave_addr & 0x00FF;
+  }
+  else{
+  	// LSB = 0 -> write
+   	i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr <<1) & 0x00FE);
   }
 
   i2cp->id_slave_config->flags = 0;
@@ -564,19 +562,17 @@ void i2c_lld_master_receive(I2CDriver *i2cp){
   i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                 // acknowledge returned
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 
-  switch(i2cp->id_slave_config->nbit_addr){
-  case 7:
+  if(i2cp->id_slave_config->slave_addr & 0x8000){// 10-bit mode used
+		// add the two msb of 10-bit address to the header
+		i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr >>7) & 0x0006);
+		// add the header bits (the LSB -> 1 will be add to second
+		i2cp->slave_addr1 |= 0xF0;
+		// the remaining 8 bit of 10-bit address
+		i2cp->slave_addr2 = i2cp->id_slave_config->slave_addr & 0x00FF;
+  }
+  else{
     // LSB = 1 -> receive
     i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr <<1) | 0x01);
-    break;
-  case 10:
-    // add the two msb of 10-bit address to the header
-    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr >>7) & 0x0006);
-    // add the header bits (the LSB -> 1 will be add to second
-    i2cp->slave_addr1 |= 0xF0;
-    // the remaining 8 bit of 10-bit address
-    i2cp->slave_addr2 = i2cp->id_slave_config->slave_addr & 0x00FF;
-    break;
   }
 
   i2cp->id_slave_config->flags = I2C_FLG_MASTER_RECEIVER;
