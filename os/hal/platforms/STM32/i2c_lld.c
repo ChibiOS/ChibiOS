@@ -360,8 +360,8 @@ void i2c_lld_reset(I2CDriver *i2cp){
 void i2c_lld_set_clock(I2CDriver *i2cp) {
   volatile uint16_t regCCR, regCR2, freq, clock_div;
   volatile uint16_t pe_bit_saved;
-  int32_t clock_speed = i2cp->id_config->ClockSpeed;
-  I2C_DutyCycle_t duty = i2cp->id_config->FastModeDutyCycle;
+  int32_t clock_speed = i2cp->id_config->clock_speed;
+  i2cdutycycle_t duty = i2cp->id_config->duty_cycle;
 
   chDbgCheck((i2cp != NULL) && (clock_speed > 0) && (clock_speed <= 4000000),
              "i2c_lld_set_clock");
@@ -389,7 +389,7 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
   clock_div = I2C_CCR_CCR;
   /* Configure clock_div in standard mode */
   if (clock_speed <= 100000) {
-    chDbgAssert(duty == stdDutyCycle,
+    chDbgAssert(duty == STD_DUTY_CYCLE,
                 "i2c_lld_set_clock(), #1", "Invalid standard mode duty cycle");
     /* Standard mode clock_div calculate: Tlow/Thigh = 1/1 */
     clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 2));
@@ -402,13 +402,13 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
   }
   /* Configure clock_div in fast mode */
   else if(clock_speed <= 400000) {
-    chDbgAssert((duty == fastDutyCycle_2) || (duty == fastDutyCycle_16_9),
+    chDbgAssert((duty == FAST_DUTY_CYCLE_2) || (duty == FAST_DUTY_CYCLE_16_9),
                 "i2c_lld_set_clock(), #2", "Invalid fast mode duty cycle");
-    if(duty == fastDutyCycle_2) {
+    if(duty == FAST_DUTY_CYCLE_2) {
       /* Fast mode clock_div calculate: Tlow/Thigh = 2/1 */
       clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 3));
     }
-    else if(duty == fastDutyCycle_16_9) {
+    else if(duty == FAST_DUTY_CYCLE_16_9) {
       /* Fast mode clock_div calculate: Tlow/Thigh = 16/9 */
       clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 25));
       /* Set DUTY bit */
@@ -437,21 +437,21 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
  * @param[in] i2cp      pointer to the @p I2CDriver object
  */
 void i2c_lld_set_opmode(I2CDriver *i2cp) {
-  I2C_opMode_t opmode = i2cp->id_config->opMode;
+  i2copmode_t opmode = i2cp->id_config->op_mode;
   uint16_t regCR1;
 
   /*---------------------------- CR1 Configuration ------------------------*/
   /* Get the I2Cx CR1 value */
   regCR1 = i2cp->id_i2c->CR1;
   switch(opmode){
-  case opmodeI2C:
+  case OPMODE_I2C:
     regCR1 &= (uint16_t)~(I2C_CR1_SMBUS|I2C_CR1_SMBTYPE);
     break;
-  case opmodeSMBusDevice:
+  case OPMODE_SMBUS_DEVICE:
     regCR1 |= I2C_CR1_SMBUS;
     regCR1 &= (uint16_t)~(I2C_CR1_SMBTYPE);
     break;
-  case opmodeSMBusHost:
+  case OPMODE_SMBUS_HOST:
     regCR1 |= (I2C_CR1_SMBUS|I2C_CR1_SMBTYPE);
     break;
   }
@@ -470,15 +470,15 @@ void i2c_lld_set_own_address(I2CDriver *i2cp) {
   /*---------------------------- OAR1 Configuration -----------------------*/
   i2cp->id_i2c->OAR1 |= 1 << 14;
 
-  if (&(i2cp->id_config->OwnAddress10) == NULL){// only 7-bit address
+  if (&(i2cp->id_config->own_addr_10) == NULL){// only 7-bit address
     i2cp->id_i2c->OAR1 &= (~I2C_OAR1_ADDMODE);
-    i2cp->id_i2c->OAR1 |= i2cp->id_config->OwnAddress7 << 1;
+    i2cp->id_i2c->OAR1 |= i2cp->id_config->own_addr_7 << 1;
   }
   else {
-    chDbgAssert((i2cp->id_config->OwnAddress10 < 1024),
+    chDbgAssert((i2cp->id_config->own_addr_10 < 1024),
         "i2c_lld_set_own_address(), #1", "10-bit address longer then 10 bit")
     i2cp->id_i2c->OAR1 |= I2C_OAR1_ADDMODE;
-    i2cp->id_i2c->OAR1 |= i2cp->id_config->OwnAddress10;
+    i2cp->id_i2c->OAR1 |= i2cp->id_config->own_addr_10;
   }
 }
 
@@ -522,7 +522,7 @@ void i2c_lld_master_transmit(I2CDriver *i2cp) {
   i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 
-  switch(i2cp->id_slave_config->nbit_address){
+  switch(i2cp->id_slave_config->nbit_addr){
   case 7:
     // LSB = 0 -> write
     i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr <<1) & 0x00FE);
@@ -564,7 +564,7 @@ void i2c_lld_master_receive(I2CDriver *i2cp){
   i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                 // acknowledge returned
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 
-  switch(i2cp->id_slave_config->nbit_address){
+  switch(i2cp->id_slave_config->nbit_addr){
   case 7:
     // LSB = 1 -> receive
     i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr <<1) | 0x01);

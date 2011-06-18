@@ -95,28 +95,28 @@
 typedef uint32_t i2cflags_t;
 
 typedef enum {
-  opmodeI2C,
-  opmodeSMBusDevice,
-  opmodeSMBusHost,
-} I2C_opMode_t;
+  OPMODE_I2C = 1,
+  OPMODE_SMBUS_DEVICE = 2,
+  OPMODE_SMBUS_HOST = 3,
+} i2copmode_t;
 
 typedef enum {
-  stdDutyCycle,
-  fastDutyCycle_2,
-  fastDutyCycle_16_9,
-} I2C_DutyCycle_t;
+  STD_DUTY_CYCLE = 1,
+  FAST_DUTY_CYCLE_2 = 2,
+  FAST_DUTY_CYCLE_16_9 = 3,
+} i2cdutycycle_t;
 
 /**
  * @brief Driver configuration structure.
  */
 typedef struct {
-  I2C_opMode_t    opMode;           /*!< Specifies the I2C mode.*/
-  uint32_t        ClockSpeed;       /*!< Specifies the clock frequency. Must be set to a value lower than 400kHz */
-  I2C_DutyCycle_t FastModeDutyCycle;/*!< Specifies the I2C fast mode duty cycle */
-  uint8_t         OwnAddress7;      /*!< Specifies the first device 7-bit own address. */
-  uint16_t        OwnAddress10;     /*!< Specifies the second part of device own address in 10-bit mode. Set to NULL if not used. */
-  uint16_t        Ack;              /*!< Enables or disables the acknowledgement. */
-  uint8_t         nBitAddress;      /*!< Specifies if 7-bit or 10-bit address is acknowledged */
+  i2copmode_t     op_mode;       /*!< Specifies the I2C mode.*/
+  uint32_t        clock_speed;   /*!< Specifies the clock frequency. Must be set to a value lower than 400kHz */
+  i2cdutycycle_t  duty_cycle;    /*!< Specifies the I2C fast mode duty cycle */
+  uint8_t         own_addr_7;    /*!< Specifies the first device 7-bit own address. */
+  uint16_t        own_addr_10;   /*!< Specifies the second part of device own address in 10-bit mode. Set to NULL if not used. */
+  uint16_t        ack;           /*!< Enables or disables the acknowledgement. */
+  uint8_t         nbit_own_addr; /*!< Specifies if 7-bit or 10-bit address is acknowledged */
 } I2CConfig;
 
 
@@ -169,7 +169,7 @@ struct I2CDriver{
 
   uint8_t               slave_addr1;    // 7-bit address of the slave
   uint8_t               slave_addr2;    // used in 10-bit address mode
-  uint8_t               nbit_address;
+  uint8_t               nbit_addr;
 
 
   /*********** End of the mandatory fields. **********************************/

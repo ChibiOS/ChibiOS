@@ -144,7 +144,7 @@ void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
   uint8_t nbit_addr;
 
   txbuf = i2cscfg->txbuf;
-  nbit_addr = i2cscfg->nbit_address;
+  nbit_addr = i2cscfg->nbit_addr;
   n = i2cscfg->txbytes;
 
   chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) && \
@@ -194,7 +194,7 @@ void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 
   rxbuf = i2cscfg->rxbuf;
   n = i2cscfg->rxbytes;
-  nbit_addr = i2cscfg->nbit_address;
+  nbit_addr = i2cscfg->nbit_addr;
 
   chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) && (n > 0) && \
       ((nbit_addr == 7) || (nbit_addr == 10)) && (rxbuf != NULL),

@@ -9,18 +9,22 @@
 
 /* I2C1 */
 static I2CConfig i2cfg1 = {
-    opmodeI2C,
+    OPMODE_I2C,
     100000,
-    stdDutyCycle,
+    STD_DUTY_CYCLE,
+    0,
+    0,
     0,
     0,
 };
 
 /* I2C2 */
 static I2CConfig i2cfg2 = {
-    opmodeI2C,
+    OPMODE_I2C,
     100000,
-    stdDutyCycle,
+    STD_DUTY_CYCLE,
+    0,
+    0,
     0,
     0,
 };

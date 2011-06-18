@@ -148,15 +148,12 @@ struct I2CSlaveConfig{
    */
   i2cerrorcallback_t    id_err_callback;
 
-  /**
-   * @brief Receive and transmit buffers.
-   */
-  size_t                txbytes;
-  size_t                rxbytes;
+  size_t                txbytes;      /*!< Number of bytes to transmitted. */
+  size_t                rxbytes;      /*!< Number of bytes to received. */
   i2cblock_t            *rxbuf;       /*!< Pointer to receive buffer. */
   i2cblock_t            *txbuf;       /*!< Pointer to transmit buffer.*/
-  uint16_t              slave_addr;
-  uint8_t               nbit_address; /*!< Length of address (must be 7 or 10).*/
+  uint16_t              slave_addr;   /*!< Slave device address.*/
+  uint8_t               nbit_addr;    /*!< Length of address (must be 7 or 10).*/
   i2cflags_t            errors;
   i2cflags_t            flags;
   /* Status Change @p EventSource.*/
