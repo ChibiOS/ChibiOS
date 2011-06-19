@@ -90,6 +90,9 @@ void hal_lld_init(void) {
 void stm32_clock_init(void) {
 
 #if !STM32_NO_INIT
+  /* PWR clock enable.*/
+  RCC->APB1ENR = RCC_APB1ENR_PWREN;
+
   /* Core voltage setup.*/
   while ((PWR->CSR & PWR_CSR_VOSF) != 0)
     ;                           /* Waits until regulator is stable.         */

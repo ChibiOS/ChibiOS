@@ -59,9 +59,9 @@
 
 /* PWR_CR register bits definitions.*/
 #define STM32_VOS_MASK          (3 << 11)   /**< Core voltage mask.         */
-#define STM32_VOS_1P2           (1 << 11)   /**< Core voltage 1.2 Volts.    */
+#define STM32_VOS_1P8           (1 << 11)   /**< Core voltage 1.8 Volts.    */
 #define STM32_VOS_1P5           (2 << 11)   /**< Core voltage 1.5 Volts.    */
-#define STM32_VOS_1P8           (3 << 11)   /**< Core voltage 1.8 Volts.    */
+#define STM32_VOS_1P2           (3 << 11)   /**< Core voltage 1.2 Volts.    */
 
 /* RCC_CR register bits definitions.*/
 #define STM32_RTCPRE_MASK       (3 << 29)   /**< RTCPRE mask.               */
