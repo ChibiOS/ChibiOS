@@ -28,12 +28,17 @@
  */
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
-  static uint32_t seconds_counter;
 
   (void)arg;
   while (TRUE) {
-    chThdSleepMilliseconds(1000);
-    seconds_counter++;
+    palSetPad(GPIOB, GPIOB_LED3);
+    chThdSleepMilliseconds(250);
+    palClearPad(GPIOB, GPIOB_LED3);
+    chThdSleepMilliseconds(250);
+    palSetPad(GPIOB, GPIOB_LED4);
+    chThdSleepMilliseconds(250);
+    palClearPad(GPIOB, GPIOB_LED4);
+    chThdSleepMilliseconds(250);
   }
 }
 

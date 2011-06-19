@@ -145,7 +145,13 @@ typedef struct {
   volatile uint32_t     PUPDR;
   volatile uint32_t     IDR;
   volatile uint32_t     ODR;
-  volatile uint32_t     BSRR;
+  volatile union {
+    uint32_t            W;
+    struct {
+      uint16_t          set;
+      uint16_t          clear;
+    } H;
+  } BSRR;
   volatile uint32_t     LCKR;
   volatile uint32_t     AFRL;
   volatile uint32_t     AFRH;
@@ -357,11 +363,11 @@ typedef GPIO_TypeDef * ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_setport(port, bits) ((port)->BSRR = (bits))
+#define pal_lld_setport(port, bits) ((port)->BSRR.H.set = (uint16_t)(bits))
 
 /**
  * @brief   Clears a bits mask on a I/O port.
- * @details This function is implemented by writing the GPIO BRR register, the
+ * @details This function is implemented by writing the GPIO BSRR register, the
  *          implementation has no side effects.
  * @note    This function is not meant to be invoked directly by the
  *          application code.
@@ -374,7 +380,7 @@ typedef GPIO_TypeDef * ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_clearport(port, bits) ((port)->BRR = (bits))
+#define pal_lld_clearport(port, bits) ((port)->BSRR.H.clear = (uint16_t)(bits))
 
 /**
  * @brief   Writes a group of bits.
@@ -395,8 +401,8 @@ typedef GPIO_TypeDef * ioportid_t;
  * @notapi
  */
 #define pal_lld_writegroup(port, mask, offset, bits)                        \
-  ((port)->BSRR = ((~(bits) & (mask)) << (16 + (offset))) |                 \
-                 (((bits) & (mask)) << (offset)))
+  ((port)->BSRR.W = ((~(bits) & (mask)) << (16 + (offset))) |               \
+                     (((bits) & (mask)) << (offset)))
 
 /**
  * @brief   Pads group mode setup.
