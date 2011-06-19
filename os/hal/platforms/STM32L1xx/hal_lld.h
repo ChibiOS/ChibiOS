@@ -133,6 +133,68 @@
 #define STM32_RTCSEL_LSI        (2 << 16)   /**< RTC source is LSI.         */
 #define STM32_RTCSEL_HSEDIV     (3 << 16)   /**< RTC source is HSE divided. */
 
+/* STM32L1xx capabilities.*/
+#define STM32_HAS_ADC1          TRUE
+#define STM32_HAS_ADC2          FALSE
+#define STM32_HAS_ADC3          FALSE
+
+#define STM32_HAS_CAN1          FALSE
+#define STM32_HAS_CAN2          FALSE
+
+#define STM32_HAS_DAC           TRUE
+
+#define STM32_HAS_DMA1          TRUE
+#define STM32_HAS_DMA2          FALSE
+
+#define STM32_HAS_ETH           FALSE
+
+#define STM32_HAS_GPIOA         TRUE
+#define STM32_HAS_GPIOB         TRUE
+#define STM32_HAS_GPIOC         TRUE
+#define STM32_HAS_GPIOD         TRUE
+#define STM32_HAS_GPIOE         TRUE
+#define STM32_HAS_GPIOF         FALSE
+#define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         TRUE
+
+#define STM32_HAS_I2C1          TRUE
+#define STM32_HAS_I2C2          TRUE
+
+#define STM32_HAS_RTC           TRUE
+
+#define STM32_HAS_SDIO          FALSE
+
+#define STM32_HAS_SPI1          TRUE
+#define STM32_HAS_SPI2          TRUE
+#define STM32_HAS_SPI3          FALSE
+
+#define STM32_HAS_TIM1          FALSE
+#define STM32_HAS_TIM2          TRUE
+#define STM32_HAS_TIM3          TRUE
+#define STM32_HAS_TIM4          TRUE
+#define STM32_HAS_TIM5          FALSE
+#define STM32_HAS_TIM6          TRUE
+#define STM32_HAS_TIM7          TRUE
+#define STM32_HAS_TIM8          FALSE
+#define STM32_HAS_TIM9          TRUE
+#define STM32_HAS_TIM10         TRUE
+#define STM32_HAS_TIM11         TRUE
+#define STM32_HAS_TIM12         FALSE
+#define STM32_HAS_TIM13         FALSE
+#define STM32_HAS_TIM14         FALSE
+#define STM32_HAS_TIM15         FALSE
+#define STM32_HAS_TIM16         FALSE
+#define STM32_HAS_TIM17         FALSE
+
+#define STM32_HAS_USART1        TRUE
+#define STM32_HAS_USART2        TRUE
+#define STM32_HAS_USART3        TRUE
+#define STM32_HAS_UART3         FALSE
+#define STM32_HAS_UART4         FALSE
+
+#define STM32_HAS_USB           TRUE
+#define STM32_HAS_OTG1          FALSE
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/

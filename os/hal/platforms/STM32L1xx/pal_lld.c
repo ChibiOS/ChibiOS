@@ -58,6 +58,17 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static void initgpio(GPIO_TypeDef *gpiop, const stm32_gpio_setup_t *config) {
+
+  gpiop->MODER   = config->moder;
+  gpiop->OTYPER  = config->otyper;
+  gpiop->OSPEEDR = config->ospeedr;
+  gpiop->PUPDR   = config->pupdr;
+  gpiop->ODR     = config->odr;
+  gpiop->AFRL    = 0;
+  gpiop->AFRH    = 0;
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -79,37 +90,31 @@ void _pal_lld_init(const PALConfig *config) {
   /*
    * Enables the GPIO related clocks.
    */
-  RCC->APB2ENR |= APB2_EN_MASK;
+  RCC->AHBENR   |= RCC_AHBENR_GPIOAEN | RCC_AHBENR_GPIOBEN |
+                   RCC_AHBENR_GPIOCEN | RCC_AHBENR_GPIODEN |
+                   RCC_AHBENR_GPIOEEN | RCC_AHBENR_GPIOHEN;
+  RCC->AHBLPENR |= RCC_AHBLPENR_GPIOALPEN | RCC_AHBLPENR_GPIOBLPEN |
+                   RCC_AHBLPENR_GPIOCLPEN | RCC_AHBLPENR_GPIODLPEN |
+                   RCC_AHBLPENR_GPIOELPEN | RCC_AHBLPENR_GPIOHLPEN;
 
   /*
    * Initial GPIO setup.
    */
-  GPIOA->ODR = config->PAData.odr;
-  GPIOA->CRH = config->PAData.crh;
-  GPIOA->CRL = config->PAData.crl;
-  GPIOB->ODR = config->PBData.odr;
-  GPIOB->CRH = config->PBData.crh;
-  GPIOB->CRL = config->PBData.crl;
-  GPIOC->ODR = config->PCData.odr;
-  GPIOC->CRH = config->PCData.crh;
-  GPIOC->CRL = config->PCData.crl;
-  GPIOD->ODR = config->PDData.odr;
-  GPIOD->CRH = config->PDData.crh;
-  GPIOD->CRL = config->PDData.crl;
-#if STM32_HAS_GPIOE || defined(__DOXYGEN__)
-  GPIOE->ODR = config->PEData.odr;
-  GPIOE->CRH = config->PEData.crh;
-  GPIOE->CRL = config->PEData.crl;
-#if STM32_HAS_GPIOF || defined(__DOXYGEN__)
-  GPIOF->ODR = config->PFData.odr;
-  GPIOF->CRH = config->PFData.crh;
-  GPIOF->CRL = config->PFData.crl;
-#if STM32_HAS_GPIOG || defined(__DOXYGEN__)
-  GPIOG->ODR = config->PGData.odr;
-  GPIOG->CRH = config->PGData.crh;
-  GPIOG->CRL = config->PGData.crl;
+  initgpio(GPIOA, &config->PAData);
+  initgpio(GPIOB, &config->PBData);
+  initgpio(GPIOC, &config->PCData);
+  initgpio(GPIOD, &config->PDData);
+#if STM32_HAS_GPIOE
+  initgpio(GPIOE, &config->PEData);
 #endif
+#if STM32_HAS_GPIOF
+  initgpio(GPIOF, &config->PFData);
 #endif
+#if STM32_HAS_GPIOG
+  initgpio(GPIOG, &config->PGData);
+#endif
+#if STM32_HAS_GPIOH
+  initgpio(GPIOH, &config->PHData);
 #endif
 }
 
@@ -133,7 +138,8 @@ void _pal_lld_init(const PALConfig *config) {
 void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,
                            uint_fast8_t mode) {
-  static const uint8_t cfgtab[] = {
+#if 0
+                             static const uint8_t cfgtab[] = {
     4,          /* PAL_MODE_RESET, implemented as input.*/
     2,          /* PAL_MODE_UNCONNECTED, implemented as push pull output 2MHz.*/
     4,          /* PAL_MODE_INPUT */
@@ -179,6 +185,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
   }
   port->CRH = (port->CRH & mh) | crh;
   port->CRL = (port->CRL & ml) | crl;
+#endif
 }
 
 #endif /* HAL_USE_PAL */

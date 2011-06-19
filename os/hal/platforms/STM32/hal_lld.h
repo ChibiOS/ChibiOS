@@ -89,6 +89,7 @@
 #define STM32_HAS_GPIOE         TRUE
 #define STM32_HAS_GPIOF         FALSE
 #define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          FALSE
@@ -156,6 +157,7 @@
 #define STM32_HAS_GPIOE         TRUE
 #define STM32_HAS_GPIOF         FALSE
 #define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE
@@ -223,6 +225,7 @@
 #define STM32_HAS_GPIOE         FALSE
 #define STM32_HAS_GPIOF         FALSE
 #define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          FALSE
@@ -290,6 +293,7 @@
 #define STM32_HAS_GPIOE         TRUE
 #define STM32_HAS_GPIOF         FALSE
 #define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE
@@ -357,6 +361,7 @@
 #define STM32_HAS_GPIOE         TRUE
 #define STM32_HAS_GPIOF         TRUE
 #define STM32_HAS_GPIOG         TRUE
+#define STM32_HAS_GPIOH         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE
@@ -424,6 +429,7 @@
 #define STM32_HAS_GPIOE         TRUE
 #define STM32_HAS_GPIOF         TRUE
 #define STM32_HAS_GPIOG         TRUE
+#define STM32_HAS_GPIOH         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE
@@ -491,6 +497,7 @@
 #define STM32_HAS_GPIOE         TRUE
 #define STM32_HAS_GPIOF         FALSE
 #define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE

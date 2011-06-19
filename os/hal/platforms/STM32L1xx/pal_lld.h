@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM32/pal_lld.h
- * @brief   STM32 GPIO low level driver header.
+ * @file    STM32L1xx/pal_lld.h
+ * @brief   STM32L1xx GPIO low level driver header.
  *
  * @addtogroup PAL
  * @{
@@ -135,19 +135,36 @@
 /*===========================================================================*/
 
 /**
+ * @brief   STM32 GPIO registers block.
+ */
+typedef struct {
+
+  volatile uint32_t     MODER;
+  volatile uint32_t     OTYPER;
+  volatile uint32_t     OSPEEDR;
+  volatile uint32_t     PUPDR;
+  volatile uint32_t     IDR;
+  volatile uint32_t     ODR;
+  volatile uint32_t     BSRR;
+  volatile uint32_t     LCKR;
+  volatile uint32_t     AFRL;
+  volatile uint32_t     AFRH;
+} GPIO_TypeDef;
+
+/**
  * @brief   GPIO port setup info.
  */
 typedef struct {
   /** Initial value for MODER register.*/
-  uint32_t      moder;
+  uint32_t              moder;
   /** Initial value for OTYPER register.*/
-  uint32_t      otyper;
+  uint32_t              otyper;
   /** Initial value for OSPEEDR register.*/
-  uint32_t      ospeedr;
+  uint32_t              ospeedr;
   /** Initial value for PUPDR register.*/
-  uint32_t      pupdr;
+  uint32_t              pupdr;
   /** Initial value for ODR register.*/
-  uint32_t      odr;
+  uint32_t              odr;
 } stm32_gpio_setup_t;
 
 /**
@@ -166,21 +183,21 @@ typedef struct {
   stm32_gpio_setup_t    PCData;
   /** @brief Port D setup data.*/
   stm32_gpio_setup_t    PDData;
-#if STM32_HAS_GPIOE || defined(__DOXYGEN__)
+#if STM32_HAS_GPIOE
   /** @brief Port E setup data.*/
   stm32_gpio_setup_t    PEData;
 #endif
-#if STM32_HAS_GPIOF || defined(__DOXYGEN__)
+#if STM32_HAS_GPIOF
   /** @brief Port F setup data.*/
   stm32_gpio_setup_t    PFData;
 #endif
-#if STM32_HAS_GPIOG || defined(__DOXYGEN__)
+#if STM32_HAS_GPIOG
   /** @brief Port G setup data.*/
   stm32_gpio_setup_t    PGData;
 #endif
-#if STM32_HAS_GPIOH || defined(__DOXYGEN__)
+#if STM32_HAS_GPIOH
   /** @brief Port H setup data.*/
-  stm32_gpio_setup_t    PGData;
+  stm32_gpio_setup_t    PHData;
 #endif
 } PALConfig;
 

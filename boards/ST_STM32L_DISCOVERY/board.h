@@ -108,7 +108,7 @@
                                        PIN_PUDR_FLOATING(4) |               \
                                        PIN_PUDR_FLOATING(GPIOB_LED4) |      \
                                        PIN_PUDR_FLOATING(GPIOB_LED3)))
-#define VAL_GPIOB_ODR               0xFFFFFFFF
+#define VAL_GPIOB_ODR               0xFFFFFF3F
 
 /*
  * Port C setup.

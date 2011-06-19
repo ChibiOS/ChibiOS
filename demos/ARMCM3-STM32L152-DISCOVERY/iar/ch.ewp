@@ -2038,6 +2038,12 @@
         <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32L1xx\hal_lld.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32L1xx\pal_lld.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32L1xx\pal_lld.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32L1xx\stm32_dma.c</name>
       </file>
       <file>
