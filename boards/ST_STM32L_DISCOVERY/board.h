@@ -54,83 +54,104 @@
 /*
  * I/O ports initial setup, this configuration is established soon after reset
  * in the initialization code.
- *
- * The digits have the following meaning:
- *   0 - Analog input.
- *   1 - Push Pull output 10MHz.
- *   2 - Push Pull output 2MHz.
- *   3 - Push Pull output 50MHz.
- *   4 - Digital input.
- *   5 - Open Drain output 10MHz.
- *   6 - Open Drain output 2MHz.
- *   7 - Open Drain output 50MHz.
- *   8 - Digital input with PullUp or PullDown resistor depending on ODR.
- *   9 - Alternate Push Pull output 10MHz.
- *   A - Alternate Push Pull output 2MHz.
- *   B - Alternate Push Pull output 50MHz.
- *   C - Reserved.
- *   D - Alternate Open Drain output 10MHz.
- *   E - Alternate Open Drain output 2MHz.
- *   F - Alternate Open Drain output 50MHz.
  * Please refer to the STM32 Reference Manual for details.
  */
+#define PIN_MODE_INPUT(n)           (0 << ((n) * 2))
+#define PIN_MODE_OUTPUT(n)          (1 << ((n) * 2))
+#define PIN_MODE_ALTERNATE(n)       (2 << ((n) * 2))
+#define PIN_MODE_ANALOG(n)          (3 << ((n) * 2))
+#define PIN_OTYPE_PUSHPULL(n)       (0 << (n))
+#define PIN_OTYPE_OPENDRAIN(n)      (1 << (n))
+#define PIN_OSPEED_400K(n)          (0 << ((n) * 2))
+#define PIN_OSPEED_2M(n)            (1 << ((n) * 2))
+#define PIN_OSPEED_10M(n)           (2 << ((n) * 2))
+#define PIN_OSPEED_40M(n)           (3 << ((n) * 2))
+#define PIN_PUDR_FLOATING(n)        (0 << ((n) * 2))
+#define PIN_PUDR_PULLUP(n)          (1 << ((n) * 2))
+#define PIN_PUDR_PULLDOWN(n)        (2 << ((n) * 2))
 
 /*
  * Port A setup.
- * Everything input with pull-up except:
- * PA0  - Normal input      (BUTTON).
- * PA2  - Alternate output  (USART2 TX).
- * PA3  - Normal input      (USART2 RX).
- * PA4  - Push pull output  (SPI1 NSS), initially high state.
- * PA5  - Alternate output  (SPI1 SCK).
- * PA6  - Normal input      (SPI1 MISO).
- * PA7  - Alternate output  (SPI1 MOSI).
- * PA9  - Alternate output  (USART1 TX).
- * PA10 - Normal input      (USART1 RX).
+ * All input with pull-up except:
+ * PA0  - GPIOA_BUTTON  (input floating).
+ * PA13 - JTMS/SWDAT    (alternate 0).
+ * PA14 - JTCK/SWCLK    (alternate 0).
+ * PA15 - JTDI          (alternate 0).
  */
-#define VAL_GPIOACRL            0xB4B34B84      /*  PA7...PA0 */
-#define VAL_GPIOACRH            0x888884B8      /* PA15...PA8 */
-#define VAL_GPIOAODR            0xFFFFFFFF
+#define VAL_GPIOA_MODER             (PIN_MODE_INPUT(GPIOA_BUTTON) |         \
+                                     PIN_MODE_ALTERNATE(13) |               \
+                                     PIN_MODE_ALTERNATE(14) |               \
+                                     PIN_MODE_ALTERNATE(15))
+#define VAL_GPIOA_OTYPER            0x00000000
+#define VAL_GPIOA_OSPEEDR           0xFFFFFFFF
+#define VAL_GPIOA_PUPDR             (~(PIN_PUDR_FLOATING(GPIOA_BUTTON) |    \
+                                       PIN_PUDR_FLOATING(13) |              \
+                                       PIN_PUDR_FLOATING(14) |              \
+                                       PIN_PUDR_FLOATING(15)))
+#define VAL_GPIOA_ODR               0xFFFFFFFF
 
 /*
  * Port B setup.
- * Everything input with pull-up except:
- * PB12 - Push pull output  (SPI2 NSS), initially high state.
- * PB13 - Alternate output  (SPI2 SCK).
- * PB14 - Normal input      (SPI2 MISO).
- * PB15 - Alternate output  (SPI2 MOSI).
+ * All input with pull-up except:
+ * PB3  - JTDO          (alternate 0).
+ * PB4  - JNTRST        (alternate 0).
+ * PB6  - GPIOB_LED4    (output push-pull).
+ * PB7  - GPIOB_LED3    (output push-pull).
  */
-#define VAL_GPIOBCRL            0x88888888      /*  PB7...PB0 */
-#define VAL_GPIOBCRH            0xB4B38888      /* PB15...PB8 */
-#define VAL_GPIOBODR            0xFFFFFFFF
+#define VAL_GPIOB_MODER             (PIN_MODE_ALTERNATE(3) |                \
+                                     PIN_MODE_ALTERNATE(4) |                \
+                                     PIN_MODE_OUTPUT(GPIOB_LED4) |          \
+                                     PIN_MODE_OUTPUT(GPIOB_LED3))
+#define VAL_GPIOB_OTYPER            0x00000000
+#define VAL_GPIOB_OSPEEDR           0xFFFFFFFF
+#define VAL_GPIOB_PUPDR             (~(PIN_PUDR_FLOATING(3) |               \
+                                       PIN_PUDR_FLOATING(4) |               \
+                                       PIN_PUDR_FLOATING(GPIOB_LED4) |      \
+                                       PIN_PUDR_FLOATING(GPIOB_LED3)))
+#define VAL_GPIOB_ODR               0xFFFFFFFF
 
 /*
  * Port C setup.
- * Everything input with pull-up except:
- * PC8  - Push-pull output (LED4), initially low state.
- * PC9  - Push-pull output (LED3), initially low state.
+ * All input with pull-up except:
+ * PC13 - OSC32_OUT     (input floating).
+ * PC14 - OSC32_IN      (input floating).
  */
-#define VAL_GPIOCCRL            0x88888888      /*  PC7...PC0 */
-#define VAL_GPIOCCRH            0x88888833      /* PC15...PC8 */
-#define VAL_GPIOCODR            0xFFFFFCFF
+#define VAL_GPIOC_MODER             0x00000000
+#define VAL_GPIOC_OTYPER            0x00000000
+#define VAL_GPIOC_OSPEEDR           0xFFFFFFFF
+#define VAL_GPIOC_PUPDR             (~(PIN_PUDR_FLOATING(15) |              \
+                                       PIN_PUDR_FLOATING(14)))
+#define VAL_GPIOC_ODR               0xFFFFFFFF
 
 /*
  * Port D setup.
- * Everything input with pull-up except:
- * PD0  - Normal input (XTAL).
- * PD1  - Normal input (XTAL).
+ * All input with pull-up.
  */
-#define VAL_GPIODCRL            0x88888844      /*  PD7...PD0 */
-#define VAL_GPIODCRH            0x88888888      /* PD15...PD8 */
-#define VAL_GPIODODR            0xFFFFFFFF
+#define VAL_GPIOD_MODER             0x00000000
+#define VAL_GPIOD_OTYPER            0x00000000
+#define VAL_GPIOD_OSPEEDR           0xFFFFFFFF
+#define VAL_GPIOD_PUPDR             0xFFFFFFFF
+#define VAL_GPIOD_ODR               0xFFFFFFFF
 
 /*
  * Port E setup.
- * Everything input with pull-up except:
+ * All input with pull-up.
  */
-#define VAL_GPIOECRL            0x88888888      /*  PE7...PE0 */
-#define VAL_GPIOECRH            0x88888888      /* PE15...PE8 */
-#define VAL_GPIOEODR            0xFFFFFFFF
+#define VAL_GPIOE_MODER             0x00000000
+#define VAL_GPIOE_OTYPER            0x00000000
+#define VAL_GPIOE_OSPEEDR           0xFFFFFFFF
+#define VAL_GPIOE_PUPDR             0xFFFFFFFF
+#define VAL_GPIOE_ODR               0xFFFFFFFF
+
+/*
+ * Port H setup.
+ * All input with pull-up.
+ */
+#define VAL_GPIOH_MODER             0x00000000
+#define VAL_GPIOH_OTYPER            0x00000000
+#define VAL_GPIOH_OSPEEDR           0xFFFFFFFF
+#define VAL_GPIOH_PUPDR             0xFFFFFFFF
+#define VAL_GPIOH_ODR               0xFFFFFFFF
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus

@@ -59,10 +59,10 @@
 void hal_lld_init(void) {
 
   /* Reset of all peripherals.*/
-  RCC->APB1RSTR = 0xFFFFFFFF;
-  RCC->APB2RSTR = 0xFFFFFFFF;
-  RCC->APB1RSTR = 0;
-  RCC->APB2RSTR = 0;
+//  RCC->APB1RSTR = 0xFFFFFFFF;
+//  RCC->APB2RSTR = 0xFFFFFFFF;
+//  RCC->APB1RSTR = 0;
+//  RCC->APB2RSTR = 0;
 
   /* SysTick initialization using the system clock.*/
   SysTick->LOAD = STM32_HCLK / CH_FREQUENCY - 1;
@@ -129,8 +129,12 @@ void stm32_clock_init(void) {
 #endif
 
 #if STM32_LSE_ENABLED
-  /* LSE activation.*/
-  RCC->CSR |= RCC_CSR_LSEON;
+  /* LSE activation, have to unlock the register.*/
+  if ((RCC->CSR & RCC_CSR_LSEON) == 0) {
+    PWR->CR |= PWR_CR_DBP;
+    RCC->CSR |= RCC_CSR_LSEON;
+    PWR->CR &= ~PWR_CR_DBP;
+  }
   while ((RCC->CSR & RCC_CSR_LSERDY) == 0)
     ;                           /* Waits until LSE is stable.               */
 #endif

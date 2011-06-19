@@ -63,6 +63,7 @@
 #define STM32_VOS_1P5           (2 << 11)   /**< Core voltage 1.5 Volts.    */
 #define STM32_VOS_1P8           (3 << 11)   /**< Core voltage 1.8 Volts.    */
 
+/* RCC_CR register bits definitions.*/
 #define STM32_RTCPRE_MASK       (3 << 29)   /**< RTCPRE mask.               */
 #define STM32_RTCPRE_DIV2       (0 << 29)   /**< HSE divided by 2.          */
 #define STM32_RTCPRE_DIV4       (1 << 29)   /**< HSE divided by 4.          */

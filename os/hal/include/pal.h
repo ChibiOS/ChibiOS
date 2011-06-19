@@ -36,13 +36,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Bits in a mode word dedicated as mode selector.
- * @details The other bits are not defined and may be used as device-specific
- *          option bits.
- */
-#define PAL_MODE_MASK                   0x1F
-
-/**
  * @brief   After reset state.
  * @details The state itself is not specified and is architecture dependent,
  *          it is guaranteed to be equal to the after-reset state. It is
@@ -516,7 +509,7 @@ extern "C" {
 #endif
   ioportmask_t palReadBus(IOBus *bus);
   void palWriteBus(IOBus *bus, ioportmask_t bits);
-  void palSetBusMode(IOBus *bus, uint_fast8_t mode);
+  void palSetBusMode(IOBus *bus, iomode_t mode);
 #ifdef __cplusplus
 }
 #endif
