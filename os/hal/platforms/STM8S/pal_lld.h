@@ -85,6 +85,11 @@ typedef struct {
 typedef uint8_t ioportmask_t;
 
 /**
+ * @brief   Digital I/O modes.
+ */
+typedef uint8_t iomode_t;
+
+/**
  * @brief   Port Identifier.
  */
 typedef GPIO_TypeDef *ioportid_t;
