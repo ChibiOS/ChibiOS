@@ -42,13 +42,9 @@ static void i2c_max1236_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 static I2CSlaveConfig max1236 = {
     NULL,
     i2c_max1236_error_cb,
-    0,
-    0,
     max1236_rx_data,
     max1236_tx_data,
     0b0110100,
-    0,
-    0,
     {NULL},
 };
 
@@ -59,29 +55,34 @@ static I2CSlaveConfig max1236 = {
  */
 void init_max1236(void){
   /* this data we must send via IC to setup ADC */
-  max1236.rxbytes = 0;
-  max1236.txbytes = 2; // total 2 bytes to be sent
+#define RXBYTES 0
+#define TXBYTES 2
   max1236.txbuf[0] = 0b10000011; // config register content. Consult datasheet
   max1236.txbuf[1] = 0b00000111; // config register content. Consult datasheet
 
 
   // transmit out 2 bytes
   i2cAcquireBus(&I2CD2);
-  i2cMasterTransmit(&I2CD2, &max1236);
+  i2cMasterTransmit(&I2CD2, &max1236, TXBYTES, RXBYTES);
   while(I2CD2.id_state != I2C_READY){
     chThdSleepMilliseconds(1);
   }
   /* now add pointer to callback function */
   max1236.id_callback = i2c_max1236_cb;
   i2cReleaseBus(&I2CD2);
+#undef RXBYTES
+#undef TXBYTES
 }
 
 
 /* Now simply read 8 bytes to get all 4 ADC channels */
 void read_max1236(void){
-  max1236.txbytes = 0;
-  max1236.rxbytes = 8;
+#define TXBYTES 0
+#define RXBYTES 8
+
   i2cAcquireBus(&I2CD2);
-  i2cMasterReceive(&I2CD2, &max1236);
+  i2cMasterReceive(&I2CD2, &max1236, RXBYTES);
   i2cReleaseBus(&I2CD2);
+#undef RXBYTES
+#undef TXBYTES
 }

@@ -137,10 +137,10 @@ void i2cStop(I2CDriver *i2cp) {
  * @param[in] i2cscfg        pointer to the @p I2C slave config
  *
  */
-void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
+void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, size_t txbytes, size_t rxbytes) {
 
   chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) &&\
-  		(i2cscfg->txbytes > 0) &&\
+  		(txbytes > 0) &&\
   		(i2cscfg->txbuf != NULL),
   		"i2cMasterTransmit");
 
@@ -162,7 +162,7 @@ void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
               "i2cMasterTransmit(), #1", "not ready");
 
   i2cp->id_state = I2C_ACTIVE;
-  i2c_lld_master_transmit(i2cp);
+  i2c_lld_master_transmit(i2cp, txbytes, rxbytes);
   _i2c_wait_s(i2cp);
 #if !I2C_USE_WAIT
   i2c_lld_wait_bus_free(i2cp);
@@ -179,10 +179,10 @@ void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
  * @param[in] i2cscfg        pointer to the @p I2C slave config
  *
  */
-void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
+void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, size_t rxbytes){
 
   chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) &&\
-  		(i2cscfg->rxbytes > 0) && \
+  		(rxbytes > 0) && \
   		(i2cscfg->rxbuf != NULL),
       "i2cMasterReceive");
 
@@ -204,7 +204,7 @@ void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
               "i2cMasterReceive(), #1", "not ready");
 
   i2cp->id_state = I2C_ACTIVE;
-  i2c_lld_master_receive(i2cp);
+  i2c_lld_master_receive(i2cp, rxbytes);
   _i2c_wait_s(i2cp);
 #if !I2C_USE_WAIT
   i2c_lld_wait_bus_free(i2cp);
@@ -215,11 +215,11 @@ void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 }
 
 
-uint16_t i2cSMBusAlertResponse(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
-
-  i2cMasterReceive(i2cp, i2cscfg);
-  return i2cp->id_slave_config->slave_addr;
-}
+//uint16_t i2cSMBusAlertResponse(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
+//
+//  i2cMasterReceive(i2cp, i2cscfg);
+//  return i2cp->id_slave_config->slave_addr;
+//}
 
 
 /**
@@ -236,7 +236,7 @@ void i2cAddFlagsI(I2CDriver *i2cp, i2cflags_t mask) {
 
   chDbgCheck(i2cp != NULL, "i2cAddFlagsI");
 
-  i2cp->id_slave_config->errors |= mask;
+  i2cp->errors |= mask;
   chEvtBroadcastI(&i2cp->id_slave_config->sevent);
 }
 
@@ -255,8 +255,8 @@ i2cflags_t i2cGetAndClearFlags(I2CDriver *i2cp) {
   chDbgCheck(i2cp != NULL, "i2cGetAndClearFlags");
 
   chSysLock();
-  mask = i2cp->id_slave_config->errors;
-  i2cp->id_slave_config->errors = I2CD_NO_ERROR;
+  mask = i2cp->errors;
+  i2cp->errors = I2CD_NO_ERROR;
   chSysUnlock();
   return mask;
 }
@@ -279,7 +279,7 @@ void i2cAcquireBus(I2CDriver *i2cp) {
   chDbgCheck(i2cp != NULL, "i2cAcquireBus");
 
 #if CH_USE_MUTEXES
-  chMtxLock(&i2cp->mutex);
+  chMtxLock(&i2cp->id_mutex);
 #elif CH_USE_SEMAPHORES
   chSemWait(&i2cp->id_semaphore);
 #endif

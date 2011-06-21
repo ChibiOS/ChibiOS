@@ -30,13 +30,9 @@ static void i2c_lis3_error_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 static I2CSlaveConfig lis3 = {
   NULL,
   i2c_lis3_error_cb,
-  0,
-  0,
   accel_rx_data,
   accel_tx_data,
   0b0011101,
-  0,
-  0,
   {NULL},
 };
 
@@ -109,19 +105,22 @@ int init_lis3(void){
   while (i2c_accel_tp == NULL)
     chThdSleepMilliseconds(1);
 
-  lis3.rxbytes = 0; //set to 0 because we need only transmit
+#define RXBYTES 0 //set to 0 because we need only transmit
+#define TXBYTES 4
 
   /* configure accelerometer */
-  lis3.txbytes = 4;
   lis3.txbuf[0] = ACCEL_CTRL_REG1 | AUTO_INCREMENT_BIT; // register address
   lis3.txbuf[1] = 0b11100111;
   lis3.txbuf[2] = 0b01000001;
   lis3.txbuf[3] = 0b00000000;
 
   /* sending */
-  i2cMasterTransmit(&I2CD1, &lis3);
+  i2cMasterTransmit(&I2CD1, &lis3, TXBYTES, RXBYTES);
   chThdSleepMilliseconds(1);
   lis3.id_callback = i2c_lis3_cb;
+
+#undef RXBYTES
+#undef TXBYTES
 
   return 0;
 }
@@ -130,11 +129,13 @@ int init_lis3(void){
  *
  */
 void request_acceleration_data(void){
+#define RXBYTES 6
+#define TXBYTES 1
   lis3.txbuf[0] = ACCEL_OUT_DATA | AUTO_INCREMENT_BIT; // register address
-  lis3.txbytes = 1;
-  lis3.rxbytes = 6;
   i2cAcquireBus(&I2CD1);
-  i2cMasterTransmit(&I2CD1, &lis3);
+  i2cMasterTransmit(&I2CD1, &lis3, TXBYTES, RXBYTES);
   i2cReleaseBus(&I2CD1);
+#undef RXBYTES
+#undef TXBYTES
 }
 

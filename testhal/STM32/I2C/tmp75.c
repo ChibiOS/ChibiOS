@@ -37,23 +37,19 @@ static void i2c_tmp75_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 static I2CSlaveConfig tmp75 = {
     i2c_tmp75_cb,
     i2c_tmp75_error_cb,
-    0,
-    0,
     tmp75_rx_data,
     tmp75_tx_data,
     0b1001000,
-    0,
-    0,
     {NULL},
 };
 
 /* This is main function. */
 void request_temperature(void){
-  tmp75.txbytes = 0;  // set to zero because we need only reading
-  tmp75.rxbytes = 2;  // we need to read 2 bytes
+#define TXBYTES 0  // set to zero because we need only reading
+#define RXBYTES 2  // we need to read 2 bytes
 
   i2cAcquireBus(&I2CD2);
-  i2cMasterReceive(&I2CD2, &tmp75);
+  i2cMasterReceive(&I2CD2, &tmp75, RXBYTES);
   i2cReleaseBus(&I2CD2);
 }
 

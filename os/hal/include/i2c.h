@@ -143,8 +143,8 @@ struct I2CSlaveConfig{
    */
   i2cerrorcallback_t    id_err_callback;
 
-  size_t                txbytes;      /*!< Number of bytes to transmitted. */
-  size_t                rxbytes;      /*!< Number of bytes to received. */
+//  size_t                txbytes;      /*!< Number of bytes to transmitted. */
+//  size_t                rxbytes;      /*!< Number of bytes to received. */
   i2cblock_t            *rxbuf;       /*!< Pointer to receive buffer. */
   i2cblock_t            *txbuf;       /*!< Pointer to transmit buffer.*/
   /**
@@ -157,8 +157,7 @@ struct I2CSlaveConfig{
    * 					Bits 10-14 unused.
    */
   uint16_t              slave_addr;
-  i2cflags_t            errors;       /*!< Error flags.*/
-  i2cflags_t            flags;        /*!< State flags.*/
+
   /* Status Change @p EventSource.*/
   EventSource           sevent;
 };
@@ -241,8 +240,8 @@ extern "C" {
   void i2cObjectInit(I2CDriver *i2cp);
   void i2cStart(I2CDriver *i2cp, const I2CConfig *config);
   void i2cStop(I2CDriver *i2cp);
-  void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
-  void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
+  void i2cMasterTransmit(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, size_t txbytes, size_t rxbytes);
+  void i2cMasterReceive(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg, size_t rxbytes);
   void i2cMasterStart(I2CDriver *i2cp);
   void i2cMasterStop(I2CDriver *i2cp);
   void i2cAddFlagsI(I2CDriver *i2cp, i2cflags_t mask);
