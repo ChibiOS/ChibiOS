@@ -106,7 +106,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       /* Disable ITEVT In order to not have again a BTF IT */
       dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
       /* send restart and begin reading operations */
-      i2c_lld_master_receive(i2cp, i2cp->rxbytes);
+      i2c_lld_master_receive(i2cp, i2cp->slave_addr, i2cp->rxbytes);
     }
     break;
 
@@ -514,9 +514,16 @@ void i2c_lld_stop(I2CDriver *i2cp) {
  * @brief Transmits data ever the I2C bus as master.
  *
  * @param[in] i2cp          pointer to the @p I2CDriver object
+ * @param[in] slave_addr     Slave device address. Bits 0-9 contain slave
+ * 													 device address. Bit 15 must be set to 1 if 10-bit
+ * 													 addressing modes used. Otherwise	keep it cleared.
+ * 													 Bits 10-14 unused.
+ * @param[in] txbytes				 number of bytes to be transmited
+ * @param[in] rxbytes				 number of bytes to be received
  *
  */
-void i2c_lld_master_transmit(I2CDriver *i2cp, size_t txbytes, size_t rxbytes) {
+void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr, size_t txbytes, size_t rxbytes) {
+	i2cp->slave_addr = slave_addr;
 	i2cp->txbytes = txbytes;
 	i2cp->rxbytes = rxbytes;
 
@@ -524,17 +531,17 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, size_t txbytes, size_t rxbytes) {
   i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 
-  if(i2cp->id_slave_config->slave_addr & 0x8000){// 10-bit mode used
+  if(slave_addr & 0x8000){// 10-bit mode used
   	// add the two msb of 10-bit address to the header
-		i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr >>7) & 0x0006);
+		i2cp->slave_addr1 = ((slave_addr >>7) & 0x0006);
 		// add the header bits with LSB = 0 -> write
 		i2cp->slave_addr1 |= 0xF0;
 		// the remaining 8 bit of 10-bit address
-		i2cp->slave_addr2 = i2cp->id_slave_config->slave_addr & 0x00FF;
+		i2cp->slave_addr2 = slave_addr & 0x00FF;
   }
   else{
   	// LSB = 0 -> write
-   	i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr <<1) & 0x00FE);
+   	i2cp->slave_addr1 = ((slave_addr <<1) & 0x00FE);
   }
 
   i2cp->flags = 0;
@@ -556,9 +563,16 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, size_t txbytes, size_t rxbytes) {
  * @brief Receives data from the I2C bus.
  *
  * @param[in] i2cp          pointer to the @p I2CDriver object
+ * @param[in] slave_addr     Slave device address. Bits 0-9 contain slave
+ * 													 device address. Bit 15 must be set to 1 if 10-bit
+ * 													 addressing modes used. Otherwise	keep it cleared.
+ * 													 Bits 10-14 unused.
+ * @param[in] txbytes				 number of bytes to be transmited
+ * @param[in] rxbytes				 number of bytes to be received
  *
  */
-void i2c_lld_master_receive(I2CDriver *i2cp, size_t rxbytes){
+void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr, size_t rxbytes){
+	i2cp->slave_addr = slave_addr;
 	i2cp->rxbytes = rxbytes;
 
   // enable ERR, EVT & BUF ITs
@@ -566,17 +580,17 @@ void i2c_lld_master_receive(I2CDriver *i2cp, size_t rxbytes){
   i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                 // acknowledge returned
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 
-  if(i2cp->id_slave_config->slave_addr & 0x8000){// 10-bit mode used
+  if(slave_addr & 0x8000){// 10-bit mode used
 		// add the two msb of 10-bit address to the header
-		i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr >>7) & 0x0006);
+		i2cp->slave_addr1 = ((slave_addr >>7) & 0x0006);
 		// add the header bits (the LSB -> 1 will be add to second
 		i2cp->slave_addr1 |= 0xF0;
 		// the remaining 8 bit of 10-bit address
-		i2cp->slave_addr2 = i2cp->id_slave_config->slave_addr & 0x00FF;
+		i2cp->slave_addr2 = slave_addr & 0x00FF;
   }
   else{
     // LSB = 1 -> receive
-    i2cp->slave_addr1 = ((i2cp->id_slave_config->slave_addr <<1) | 0x01);
+    i2cp->slave_addr1 = ((slave_addr <<1) | 0x01);
   }
 
   i2cp->flags = I2C_FLG_MASTER_RECEIVER;

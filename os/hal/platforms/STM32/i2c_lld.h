@@ -161,16 +161,17 @@ struct I2CDriver{
   /**
    * @brief Current slave configuration data.
    */
-  I2CSlaveConfig        *id_slave_config;
+  const I2CSlaveConfig  *id_slave_config;
 
-  uint8_t               slave_addr1; /*!< 7-bit address of the slave with r\w bit.*/
-  uint8_t               slave_addr2; /*!< used in 10-bit address mode. */
-
-  size_t								rxbytes;
-  size_t								txbytes;
+	size_t                txbytes;      /*!< Number of bytes to transmitted. */
+	size_t                rxbytes;      /*!< Number of bytes to received. */
 
   i2cflags_t            errors;       /*!< Error flags.*/
   i2cflags_t            flags;        /*!< State flags.*/
+
+  uint16_t 							slave_addr;  /*!< Current slave address. */
+  uint8_t               slave_addr1; /*!< 7-bit address of the slave with r\w bit.*/
+  uint8_t               slave_addr2; /*!< Used in 10-bit address mode. */
 
   /*********** End of the mandatory fields. **********************************/
 
@@ -222,8 +223,8 @@ void i2c_lld_set_opmode(I2CDriver *i2cp);
 void i2c_lld_set_own_address(I2CDriver *i2cp);
 void i2c_lld_start(I2CDriver *i2cp);
 void i2c_lld_stop(I2CDriver *i2cp);
-void i2c_lld_master_transmit(I2CDriver *i2cp, size_t txbytes, size_t rxbytes);
-void i2c_lld_master_receive(I2CDriver *i2cp, size_t rxbytes);
+void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr, size_t txbytes, size_t rxbytes);
+void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr, size_t rxbytes);
 
 #ifdef __cplusplus
 }

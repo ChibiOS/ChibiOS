@@ -34,14 +34,15 @@ static void i2c_tmp75_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 }
 
 // Fill TMP75 config.
-static I2CSlaveConfig tmp75 = {
+static const I2CSlaveConfig tmp75 = {
     i2c_tmp75_cb,
     i2c_tmp75_error_cb,
     tmp75_rx_data,
     tmp75_tx_data,
-    0b1001000,
     {NULL},
 };
+
+#define tmp75_addr 0b1001000
 
 /* This is main function. */
 void request_temperature(void){
@@ -49,7 +50,7 @@ void request_temperature(void){
 #define RXBYTES 2  // we need to read 2 bytes
 
   i2cAcquireBus(&I2CD2);
-  i2cMasterReceive(&I2CD2, &tmp75, RXBYTES);
+  i2cMasterReceive(&I2CD2, &tmp75, tmp75_addr, RXBYTES);
   i2cReleaseBus(&I2CD2);
 }
 

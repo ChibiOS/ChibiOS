@@ -39,15 +39,15 @@ static void i2c_max1236_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 
 // ADC maxim MAX1236 config
 
-static I2CSlaveConfig max1236 = {
-    NULL,
+static const I2CSlaveConfig max1236 = {
+		i2c_max1236_cb,
     i2c_max1236_error_cb,
     max1236_rx_data,
     max1236_tx_data,
-    0b0110100,
     {NULL},
 };
 
+#define max1236_addr 0b0110100
 
 /**
  * Initilization routine. See datasheet on page 13 to understand
@@ -63,12 +63,10 @@ void init_max1236(void){
 
   // transmit out 2 bytes
   i2cAcquireBus(&I2CD2);
-  i2cMasterTransmit(&I2CD2, &max1236, TXBYTES, RXBYTES);
+  i2cMasterTransmit(&I2CD2, &max1236, max1236_addr, TXBYTES, RXBYTES);
   while(I2CD2.id_state != I2C_READY){
     chThdSleepMilliseconds(1);
   }
-  /* now add pointer to callback function */
-  max1236.id_callback = i2c_max1236_cb;
   i2cReleaseBus(&I2CD2);
 #undef RXBYTES
 #undef TXBYTES
@@ -81,7 +79,7 @@ void read_max1236(void){
 #define RXBYTES 8
 
   i2cAcquireBus(&I2CD2);
-  i2cMasterReceive(&I2CD2, &max1236, RXBYTES);
+  i2cMasterReceive(&I2CD2, &max1236, max1236_addr, RXBYTES);
   i2cReleaseBus(&I2CD2);
 #undef RXBYTES
 #undef TXBYTES

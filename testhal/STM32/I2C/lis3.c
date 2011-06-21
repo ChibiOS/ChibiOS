@@ -26,20 +26,6 @@ static void i2c_lis3_error_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
   while(TRUE);
 }
 
-// Accelerometer lis3lv02dq config
-static I2CSlaveConfig lis3 = {
-  NULL,
-  i2c_lis3_error_cb,
-  accel_rx_data,
-  accel_tx_data,
-  0b0011101,
-  {NULL},
-};
-
-
-
-
-
 /**
  * This treading need for convenient realize
  * "read through write" process.
@@ -53,7 +39,7 @@ static msg_t I2CAccelThread(void *arg) {
   int16_t acceleration_y = 0;
   int16_t acceleration_z = 0;
 
-  I2CDriver *i2cp;
+  I2CSlaveConfig *i2cscfg;
   msg_t msg;
 
   while (TRUE) {
@@ -65,29 +51,41 @@ static msg_t I2CAccelThread(void *arg) {
     chSysUnlock();
 
     /***************** Perform processing here. ***************************/
-    i2cp = (I2CDriver *)msg;
+    i2cscfg = (I2CSlaveConfig *)msg;
 
     /* collect measured data */
-    acceleration_x = lis3.rxbuf[0] + (lis3.rxbuf[1] << 8);
-    acceleration_y = lis3.rxbuf[2] + (lis3.rxbuf[3] << 8);
-    acceleration_z = lis3.rxbuf[4] + (lis3.rxbuf[5] << 8);
+    acceleration_x = i2cscfg->rxbuf[0] + (i2cscfg->rxbuf[1] << 8);
+    acceleration_y = i2cscfg->rxbuf[2] + (i2cscfg->rxbuf[3] << 8);
+    acceleration_z = i2cscfg->rxbuf[4] + (i2cscfg->rxbuf[5] << 8);
   }
   return 0;
 }
 
-
-
 /* This callback raise up when transfer finished */
 static void i2c_lis3_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
-  (void) i2cscfg;
-
+  (void) i2cp;
   // only wake up processing thread
   if (i2c_accel_tp != NULL) {
-    i2c_accel_tp->p_msg = (msg_t)i2cp;
+    i2c_accel_tp->p_msg = (msg_t)i2cscfg;
     chSchReadyI(i2c_accel_tp);
     i2c_accel_tp = NULL;
   }
 }
+
+
+// Accelerometer lis3lv02dq config
+static const I2CSlaveConfig lis3 = {
+	i2c_lis3_cb,
+  i2c_lis3_error_cb,
+  accel_rx_data,
+  accel_tx_data,
+  {NULL},
+};
+
+
+#define lis3_addr 0b0011101
+
+
 
 /**
  * Init function. Here we will also start personal serving thread.
@@ -105,8 +103,8 @@ int init_lis3(void){
   while (i2c_accel_tp == NULL)
     chThdSleepMilliseconds(1);
 
-#define RXBYTES 0 //set to 0 because we need only transmit
 #define TXBYTES 4
+#define RXBYTES 0 //set to 0 because we need only transmit
 
   /* configure accelerometer */
   lis3.txbuf[0] = ACCEL_CTRL_REG1 | AUTO_INCREMENT_BIT; // register address
@@ -115,9 +113,8 @@ int init_lis3(void){
   lis3.txbuf[3] = 0b00000000;
 
   /* sending */
-  i2cMasterTransmit(&I2CD1, &lis3, TXBYTES, RXBYTES);
+  i2cMasterTransmit(&I2CD1, &lis3, lis3_addr, TXBYTES, RXBYTES);
   chThdSleepMilliseconds(1);
-  lis3.id_callback = i2c_lis3_cb;
 
 #undef RXBYTES
 #undef TXBYTES
@@ -133,7 +130,7 @@ void request_acceleration_data(void){
 #define TXBYTES 1
   lis3.txbuf[0] = ACCEL_OUT_DATA | AUTO_INCREMENT_BIT; // register address
   i2cAcquireBus(&I2CD1);
-  i2cMasterTransmit(&I2CD1, &lis3, TXBYTES, RXBYTES);
+  i2cMasterTransmit(&I2CD1, &lis3, lis3_addr, TXBYTES, RXBYTES);
   i2cReleaseBus(&I2CD1);
 #undef RXBYTES
 #undef TXBYTES
