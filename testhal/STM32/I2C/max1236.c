@@ -18,7 +18,7 @@ static uint16_t ch1 = 0, ch2 = 0, ch3 = 0, ch4 = 0;
 
 
 /* Error trap */
-static void i2c_max1236_error_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
+static void i2c_max1236_error_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
   (void)i2cscfg;
   int status = 0;
   status = i2cp->id_i2c->SR1;
@@ -27,7 +27,7 @@ static void i2c_max1236_error_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 
 
 /* This callback raise up when transfer finished */
-static void i2c_max1236_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
+static void i2c_max1236_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
   (void)*i2cp;
   /* get ADC data */
   ch1 = ((i2cscfg->rxbuf[0] & 0xF) << 8) + i2cscfg->rxbuf[1];

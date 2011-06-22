@@ -19,7 +19,7 @@ static i2cblock_t tmp75_tx_data[TMP75_TX_DEPTH];
 static int16_t temperature = 0;
 
 // Simple error trap
-static void i2c_tmp75_error_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
+static void i2c_tmp75_error_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
   (void)i2cscfg;
   int status = 0;
   status = i2cp->id_i2c->SR1;
@@ -27,7 +27,7 @@ static void i2c_tmp75_error_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
 }
 
 /* This callback raise up when transfer finished */
-static void i2c_tmp75_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
+static void i2c_tmp75_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
   (void)*i2cp;
   /* store temperature value */
   temperature = (i2cscfg->rxbuf[0] << 8) + i2cscfg->rxbuf[1];

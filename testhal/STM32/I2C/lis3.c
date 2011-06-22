@@ -19,7 +19,7 @@ static i2cblock_t accel_rx_data[ACCEL_RX_DEPTH];
 static i2cblock_t accel_tx_data[ACCEL_TX_DEPTH];
 
 /* Error trap */
-static void i2c_lis3_error_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
+static void i2c_lis3_error_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
   (void)i2cscfg;
   int status = 0;
   status = i2cp->id_i2c->SR1;
@@ -62,7 +62,7 @@ static msg_t I2CAccelThread(void *arg) {
 }
 
 /* This callback raise up when transfer finished */
-static void i2c_lis3_cb(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg){
+static void i2c_lis3_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
   (void) i2cp;
   // only wake up processing thread
   if (i2c_accel_tp != NULL) {
