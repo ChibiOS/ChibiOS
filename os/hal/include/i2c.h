@@ -147,7 +147,7 @@ struct I2CSlaveConfig{
   i2cblock_t            *txbuf;       /*!< Pointer to transmit buffer.*/
 
   /* Status Change @p EventSource.*/
-  EventSource           sevent;
+  EventSource           *sevent;
 };
 
 

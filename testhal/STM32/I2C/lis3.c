@@ -79,7 +79,7 @@ static const I2CSlaveConfig lis3 = {
   i2c_lis3_error_cb,
   accel_rx_data,
   accel_tx_data,
-  {NULL},
+  NULL,
 };
 
 

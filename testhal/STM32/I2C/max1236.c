@@ -44,7 +44,7 @@ static const I2CSlaveConfig max1236 = {
     i2c_max1236_error_cb,
     max1236_rx_data,
     max1236_tx_data,
-    {NULL},
+    NULL,
 };
 
 #define max1236_addr 0b0110100
