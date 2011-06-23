@@ -152,7 +152,7 @@ void i2cMasterTransmit(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg, uint16_t 
   		(i2cscfg->txbuf != NULL),
   		"i2cMasterTransmit");
 
-  // init slave config field in driver
+  /* init slave config field in driver */
   i2cp->id_slave_config = i2cscfg;
 
 #if I2C_USE_WAIT
@@ -199,7 +199,7 @@ void i2cMasterReceive(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg, uint16_t s
   		(i2cscfg->rxbuf != NULL),
       "i2cMasterReceive");
 
-  // init slave config field in driver
+  /* init slave config field in driver */
   i2cp->id_slave_config = i2cscfg;
 
 #if I2C_USE_WAIT
@@ -228,13 +228,12 @@ void i2cMasterReceive(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg, uint16_t s
 }
 
 
-// FIXME: I do not know what this function must do. And can not test it
-//uint16_t i2cSMBusAlertResponse(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
-//
-//  i2cMasterReceive(i2cp, i2cscfg);
-//  return i2cp->id_slave_config->slave_addr;
-//}
-
+/* FIXME: I do not know what this function must do. And can not test it
+uint16_t i2cSMBusAlertResponse(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
+  i2cMasterReceive(i2cp, i2cscfg);
+  return i2cp->id_slave_config->slave_addr;
+}
+*/
 
 /**
  * @brief   Handles communication events/errors.

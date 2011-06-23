@@ -78,13 +78,14 @@
  * @brief   Driver state machine possible states.
  */
 typedef enum {
+  /* master part */
   I2C_UNINIT = 0,   /**< @brief Not initialized.        */
   I2C_STOP = 1,     /**< @brief Stopped.                */
   I2C_READY = 2,    /**< @brief Ready.                  */
   I2C_ACTIVE = 3,   /**< @brief In communication.          */
   I2C_COMPLETE = 4, /**< @brief Asynchronous operation complete.   */
 
-  // slave part
+  /* slave part */
   I2C_SACTIVE = 10,
   I2C_STRANSMIT = 11,
   I2C_SRECEIVE = 12,

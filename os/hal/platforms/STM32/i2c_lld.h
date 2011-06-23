@@ -72,9 +72,9 @@
 #define I2C_EV9_MASTER_ADDR_10BIT           ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_ADD10))  /* BUSY, MSL and ADD10 flags */
 #define I2C_EV_MASK                         0x00FFFFFF
 
-#define I2C_FLG_1BTR            0x01 // Single byte to be received and processed
-#define I2C_FLG_2BTR            0x02 // Two bytes to be received and processed
-#define I2C_FLG_3BTR            0x04 // Last three received bytes to be processed
+#define I2C_FLG_1BTR            0x01 /* Single byte to be received and processed */
+#define I2C_FLG_2BTR            0x02 /* Two bytes to be received and processed */
+#define I2C_FLG_3BTR            0x04 /* Last three received bytes to be processed */
 #define I2C_FLG_MASTER_RECEIVER 0x10
 #define I2C_FLG_HEADER_SENT     0x80
 
@@ -235,6 +235,6 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr, size_t rxbytes
 #endif
 /** @endcond*/
 
-#endif // CH_HAL_USE_I2C
+#endif /* CH_HAL_USE_I2C  */
 
-#endif // _I2C_LLD_H_
+#endif /* _I2C_LLD_H_ */
