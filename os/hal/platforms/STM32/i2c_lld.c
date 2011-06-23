@@ -42,7 +42,8 @@ static uint32_t i2c_get_event(I2CDriver *i2cp){
 }
 
 static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
-  static __IO uint8_t *txBuffp, *rxBuffp, *datap;
+#define txBuffp (i2cp->txBuffp)
+#define rxBuffp (i2cp->rxBuffp)
 
   I2C_TypeDef *dp = i2cp->id_i2c;
 
@@ -71,26 +72,24 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     }
     //Initialize the transmit buffer pointer
     txBuffp = (uint8_t*)i2cp->id_slave_config->txbuf;
-    datap = txBuffp;
-    txBuffp++;
     i2cp->txbytes--;
     /* If no further data to be sent, disable the I2C ITBUF in order to not have a TxE interrupt */
     if(i2cp->txbytes == 0) {
       dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
     }
     //EV8_1 write the first data
-    dp->DR = *datap;
+    dp->DR = *txBuffp;
+    txBuffp++;
     break;
   case I2C_EV8_MASTER_BYTE_TRANSMITTING:
     if(i2cp->txbytes > 0) {
-      datap = txBuffp;
-      txBuffp++;
       i2cp->txbytes--;
       if(i2cp->txbytes == 0) {
         /* If no further data to be sent, disable the ITBUF in order to not have a TxE interrupt */
         dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
       }
-      dp->DR = *datap;
+      dp->DR = *txBuffp;
+      txBuffp++;
     }
     break;
   case I2C_EV8_2_MASTER_BYTE_TRANSMITTED:
@@ -195,6 +194,8 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     }
     break;
   }
+#undef rxBuffp
+#undef txBuffp
 }
 
 static void i2c_serve_error_interrupt(I2CDriver *i2cp) {

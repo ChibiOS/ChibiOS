@@ -69,6 +69,8 @@ void i2cObjectInit(I2CDriver *i2cp) {
 
   i2cp->id_state  = I2C_STOP;
   i2cp->id_config = NULL;
+  i2cp->rxBuffp = NULL;
+  i2cp->txBuffp = NULL;
   i2cp->id_slave_config = NULL;
 
 #if I2C_USE_WAIT
