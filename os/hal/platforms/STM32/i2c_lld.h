@@ -165,8 +165,8 @@ struct I2CDriver{
 
   size_t                txbytes;    /*!< Number of bytes to be transmitted. */
   size_t                rxbytes;    /*!< Number of bytes to be received. */
-  uint8_t               *rxBuffp;   /*!< Pointer to the current byte in slave rx buffer. */
-  uint8_t               *txBuffp;   /*!< Pointer to the current byte in slave tx buffer. */
+  uint8_t               *rxbuff_p;   /*!< Pointer to the current byte in slave rx buffer. */
+  uint8_t               *txbuff_p;   /*!< Pointer to the current byte in slave tx buffer. */
 
   i2cflags_t            errors;     /*!< Error flags.*/
   i2cflags_t            flags;      /*!< State flags.*/
@@ -227,8 +227,10 @@ void i2c_lld_set_opmode(I2CDriver *i2cp);
 void i2c_lld_set_own_address(I2CDriver *i2cp);
 void i2c_lld_start(I2CDriver *i2cp);
 void i2c_lld_stop(I2CDriver *i2cp);
-void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr, size_t txbytes, size_t rxbytes);
-void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr, size_t rxbytes);
+void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
+    size_t txbytes, size_t rxbytes);
+void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
+    size_t rxbytes);
 
 #ifdef __cplusplus
 }

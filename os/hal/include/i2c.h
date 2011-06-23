@@ -115,7 +115,8 @@ typedef void (*i2ccallback_t)(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg);
  * @param[in] i2cscfg   pointer to the @p I2CSlaveConfig object triggering the
  *                      callback
  */
-typedef void (*i2cerrorcallback_t)(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg);
+typedef void (*i2cerrorcallback_t)(I2CDriver *i2cp,
+                                   const I2CSlaveConfig *i2cscfg);
 
 
 /**
@@ -227,8 +228,10 @@ extern "C" {
   void i2cObjectInit(I2CDriver *i2cp);
   void i2cStart(I2CDriver *i2cp, const I2CConfig *config);
   void i2cStop(I2CDriver *i2cp);
-  void i2cMasterTransmit(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg, uint16_t slave_addr, size_t txbytes, size_t rxbytes);
-  void i2cMasterReceive(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg, uint16_t slave_addr, size_t rxbytes);
+  void i2cMasterTransmit(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg,
+      uint16_t slave_addr, size_t txbytes, size_t rxbytes);
+  void i2cMasterReceive(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg,
+      uint16_t slave_addr, size_t rxbytes);
   void i2cMasterStart(I2CDriver *i2cp);
   void i2cMasterStop(I2CDriver *i2cp);
   void i2cAddFlagsI(I2CDriver *i2cp, i2cflags_t mask);

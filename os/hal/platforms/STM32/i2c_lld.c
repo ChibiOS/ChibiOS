@@ -42,8 +42,8 @@ static uint32_t i2c_get_event(I2CDriver *i2cp){
 }
 
 static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
-#define txBuffp (i2cp->txBuffp)
-#define rxBuffp (i2cp->rxBuffp)
+#define txBuffp (i2cp->txbuff_p)
+#define rxBuffp (i2cp->rxbuff_p)
 
   I2C_TypeDef *dp = i2cp->id_i2c;
 

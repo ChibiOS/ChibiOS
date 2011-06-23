@@ -69,8 +69,8 @@ void i2cObjectInit(I2CDriver *i2cp) {
 
   i2cp->id_state  = I2C_STOP;
   i2cp->id_config = NULL;
-  i2cp->rxBuffp = NULL;
-  i2cp->txBuffp = NULL;
+  i2cp->rxbuff_p = NULL;
+  i2cp->txbuff_p = NULL;
   i2cp->id_slave_config = NULL;
 
 #if I2C_USE_WAIT
@@ -144,7 +144,11 @@ void i2cStop(I2CDriver *i2cp) {
  * @param[in] txbytes     number of bytes to be transmited
  * @param[in] rxbytes     number of bytes to be received
  */
-void i2cMasterTransmit(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg, uint16_t slave_addr, size_t txbytes, size_t rxbytes) {
+void i2cMasterTransmit(I2CDriver *i2cp,
+                      const I2CSlaveConfig *i2cscfg,
+                      uint16_t slave_addr,
+                      size_t txbytes,
+                      size_t rxbytes) {
 
   chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) &&\
   		(slave_addr != 0) &&\
@@ -191,7 +195,10 @@ void i2cMasterTransmit(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg, uint16_t 
  *                        Bits 10-14 unused.
  * @param[in] txbytes     number of bytes to be transmited
  */
-void i2cMasterReceive(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg, uint16_t slave_addr, size_t rxbytes){
+void i2cMasterReceive(I2CDriver *i2cp,
+                      const I2CSlaveConfig *i2cscfg,
+                      uint16_t slave_addr,
+                      size_t rxbytes){
 
   chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) &&\
   		(slave_addr != 0) &&\
