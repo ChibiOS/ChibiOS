@@ -135,14 +135,14 @@ void i2cStop(I2CDriver *i2cp) {
 /**
  * @brief Sends data ever the I2C bus.
  *
- * @param[in] i2cp           pointer to the @p I2CDriver object
- * @param[in] i2cscfg        pointer to the @p I2C slave config
- * @param[in] slave_addr     Slave device address. Bits 0-9 contain slave
- * 													 device address. Bit 15 must be set to 1 if 10-bit
- * 													 addressing modes used. Otherwise	keep it cleared.
- * 													 Bits 10-14 unused.
- * @param[in] txbytes				 number of bytes to be transmited
- * @param[in] rxbytes				 number of bytes to be received
+ * @param[in] i2cp        pointer to the @p I2CDriver object
+ * @param[in] i2cscfg     pointer to the @p I2C slave config
+ * @param[in] slave_addr  Slave device address. Bits 0-9 contain slave
+ *                        device address. Bit 15 must be set to 1 if 10-bit
+ *                        addressing modes used. Otherwise	keep it cleared.
+ *                        Bits 10-14 unused.
+ * @param[in] txbytes     number of bytes to be transmited
+ * @param[in] rxbytes     number of bytes to be received
  */
 void i2cMasterTransmit(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg, uint16_t slave_addr, size_t txbytes, size_t rxbytes) {
 
@@ -183,13 +183,13 @@ void i2cMasterTransmit(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg, uint16_t 
 /**
  * @brief Receives data from the I2C bus.
  *
- * @param[in] i2cp           pointer to the @p I2CDriver object
- * @param[in] i2cscfg        pointer to the @p I2C slave config
- * @param[in] slave_addr     Slave device address. Bits 0-9 contain slave
- * 													 device address. Bit 15 must be set to 1 if 10-bit
- * 													 addressing modes used. Otherwise	keep it cleared.
- * 													 Bits 10-14 unused.
- * @param[in] txbytes				 number of bytes to be transmited
+ * @param[in] i2cp        pointer to the @p I2CDriver object
+ * @param[in] i2cscfg     pointer to the @p I2C slave config
+ * @param[in] slave_addr  Slave device address. Bits 0-9 contain slave
+ *                        device address. Bit 15 must be set to 1 if 10-bit
+ *                        addressing modes used. Otherwise	keep it cleared.
+ *                        Bits 10-14 unused.
+ * @param[in] txbytes     number of bytes to be transmited
  */
 void i2cMasterReceive(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg, uint16_t slave_addr, size_t rxbytes){
 
@@ -251,7 +251,7 @@ void i2cAddFlagsI(I2CDriver *i2cp, i2cflags_t mask) {
   chDbgCheck(i2cp != NULL, "i2cAddFlagsI");
 
   i2cp->errors |= mask;
-  chEvtBroadcastI(&i2cp->id_slave_config->sevent);
+  chEvtBroadcastI(&i2cp->sevent);
 }
 
 /**

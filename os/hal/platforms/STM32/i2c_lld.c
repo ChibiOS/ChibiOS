@@ -514,35 +514,35 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 /**
  * @brief Transmits data ever the I2C bus as master.
  *
- * @param[in] i2cp          pointer to the @p I2CDriver object
- * @param[in] slave_addr     Slave device address. Bits 0-9 contain slave
- * 													 device address. Bit 15 must be set to 1 if 10-bit
- * 													 addressing modes used. Otherwise	keep it cleared.
- * 													 Bits 10-14 unused.
- * @param[in] txbytes				 number of bytes to be transmited
- * @param[in] rxbytes				 number of bytes to be received
+ * @param[in] i2cp        pointer to the @p I2CDriver object
+ * @param[in] slave_addr  Slave device address. Bits 0-9 contain slave
+ *                        device address. Bit 15 must be set to 1 if 10-bit
+ *                        addressing modes used. Otherwise	keep it cleared.
+ *                        Bits 10-14 unused.
+ * @param[in] txbytes     number of bytes to be transmited
+ * @param[in] rxbytes     number of bytes to be received
  *
  */
 void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr, size_t txbytes, size_t rxbytes) {
-	i2cp->slave_addr = slave_addr;
-	i2cp->txbytes = txbytes;
-	i2cp->rxbytes = rxbytes;
+  i2cp->slave_addr = slave_addr;
+  i2cp->txbytes = txbytes;
+  i2cp->rxbytes = rxbytes;
 
   // enable ERR, EVT & BUF ITs
   i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 
   if(slave_addr & 0x8000){// 10-bit mode used
-  	// add the two msb of 10-bit address to the header
-		i2cp->slave_addr1 = ((slave_addr >>7) & 0x0006);
-		// add the header bits with LSB = 0 -> write
-		i2cp->slave_addr1 |= 0xF0;
-		// the remaining 8 bit of 10-bit address
-		i2cp->slave_addr2 = slave_addr & 0x00FF;
+    // add the two msb of 10-bit address to the header
+    i2cp->slave_addr1 = ((slave_addr >>7) & 0x0006);
+    // add the header bits with LSB = 0 -> write
+    i2cp->slave_addr1 |= 0xF0;
+    // the remaining 8 bit of 10-bit address
+    i2cp->slave_addr2 = slave_addr & 0x00FF;
   }
   else{
-  	// LSB = 0 -> write
-   	i2cp->slave_addr1 = ((slave_addr <<1) & 0x00FE);
+    // LSB = 0 -> write
+    i2cp->slave_addr1 = ((slave_addr <<1) & 0x00FE);
   }
 
   i2cp->flags = 0;
@@ -563,13 +563,13 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr, size_t txbyte
 /**
  * @brief Receives data from the I2C bus.
  *
- * @param[in] i2cp          pointer to the @p I2CDriver object
- * @param[in] slave_addr     Slave device address. Bits 0-9 contain slave
- * 													 device address. Bit 15 must be set to 1 if 10-bit
- * 													 addressing modes used. Otherwise	keep it cleared.
- * 													 Bits 10-14 unused.
- * @param[in] txbytes				 number of bytes to be transmited
- * @param[in] rxbytes				 number of bytes to be received
+ * @param[in] i2cp        pointer to the @p I2CDriver object
+ * @param[in] slave_addr  Slave device address. Bits 0-9 contain slave
+ *                        device address. Bit 15 must be set to 1 if 10-bit
+ *                        addressing modes used. Otherwise	keep it cleared.
+ *                        Bits 10-14 unused.
+ * @param[in] txbytes     number of bytes to be transmited
+ * @param[in] rxbytes     number of bytes to be received
  *
  */
 void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr, size_t rxbytes){
@@ -582,12 +582,12 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr, size_t rxbytes
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 
   if(slave_addr & 0x8000){// 10-bit mode used
-		// add the two msb of 10-bit address to the header
-		i2cp->slave_addr1 = ((slave_addr >>7) & 0x0006);
-		// add the header bits (the LSB -> 1 will be add to second
-		i2cp->slave_addr1 |= 0xF0;
-		// the remaining 8 bit of 10-bit address
-		i2cp->slave_addr2 = slave_addr & 0x00FF;
+    // add the two msb of 10-bit address to the header
+    i2cp->slave_addr1 = ((slave_addr >>7) & 0x0006);
+    // add the header bits (the LSB -> 1 will be add to second
+    i2cp->slave_addr1 |= 0xF0;
+    // the remaining 8 bit of 10-bit address
+    i2cp->slave_addr2 = slave_addr & 0x00FF;
   }
   else{
     // LSB = 1 -> receive

@@ -163,17 +163,17 @@ struct I2CDriver{
    */
   const I2CSlaveConfig  *id_slave_config;
 
-	size_t                txbytes;      /*!< Number of bytes to be transmitted. */
-	size_t                rxbytes;      /*!< Number of bytes to be received. */
-  uint8_t 							*rxBuffp;     /*!< Pointer to the current byte in slave rx buffer. */
-  uint8_t 							*txBuffp;     /*!< Pointer to the current byte in slave tx buffer. */
+  size_t                txbytes;    /*!< Number of bytes to be transmitted. */
+  size_t                rxbytes;    /*!< Number of bytes to be received. */
+  uint8_t               *rxBuffp;   /*!< Pointer to the current byte in slave rx buffer. */
+  uint8_t               *txBuffp;   /*!< Pointer to the current byte in slave tx buffer. */
 
-  i2cflags_t            errors;       /*!< Error flags.*/
-  i2cflags_t            flags;        /*!< State flags.*/
+  i2cflags_t            errors;     /*!< Error flags.*/
+  i2cflags_t            flags;      /*!< State flags.*/
 
-  uint16_t 							slave_addr;  /*!< Current slave address. */
-  uint8_t               slave_addr1; /*!< 7-bit address of the slave with r\w bit.*/
-  uint8_t               slave_addr2; /*!< Used in 10-bit address mode. */
+  uint16_t              slave_addr; /*!< Current slave address. */
+  uint8_t               slave_addr1;/*!< 7-bit address of the slave with r\w bit.*/
+  uint8_t               slave_addr2;/*!< Used in 10-bit address mode. */
 
   /*********** End of the mandatory fields. **********************************/
 
