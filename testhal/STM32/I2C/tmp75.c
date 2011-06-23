@@ -39,7 +39,6 @@ static const I2CSlaveConfig tmp75 = {
     i2c_tmp75_error_cb,
     tmp75_rx_data,
     tmp75_tx_data,
-    NULL,
 };
 
 #define tmp75_addr 0b1001000
