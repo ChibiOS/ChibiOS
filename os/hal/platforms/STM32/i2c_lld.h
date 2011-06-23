@@ -175,6 +175,8 @@ struct I2CDriver{
   uint8_t               slave_addr1;/*!< 7-bit address of the slave with r\w bit.*/
   uint8_t               slave_addr2;/*!< Used in 10-bit address mode. */
 
+  EventSource           sevent;     /*!< Status Change @p EventSource.*/
+
   /*********** End of the mandatory fields. **********************************/
 
   /**

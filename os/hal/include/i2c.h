@@ -146,7 +146,6 @@ struct I2CSlaveConfig{
   i2cblock_t            *rxbuf;       /*!< Pointer to receive buffer. */
   i2cblock_t            *txbuf;       /*!< Pointer to transmit buffer.*/
 
-  EventSource           *sevent;     /*!< Status Change @p EventSource.*/
 };
 
 
