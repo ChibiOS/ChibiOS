@@ -10,10 +10,10 @@
 
 #include "max1236.h"
 
-// Data buffers
+/* Data buffers */
 static i2cblock_t max1236_rx_data[MAX1236_RX_DEPTH];
 static i2cblock_t max1236_tx_data[MAX1236_TX_DEPTH];
-// ADC results
+/* ADC results */
 static uint16_t ch1 = 0, ch2 = 0, ch3 = 0, ch4 = 0;
 
 
@@ -37,7 +37,7 @@ static void i2c_max1236_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
 }
 
 
-// ADC maxim MAX1236 config
+/* ADC maxim MAX1236 config */
 
 static const I2CSlaveConfig max1236 = {
 		i2c_max1236_cb,
@@ -56,11 +56,11 @@ void init_max1236(void){
   /* this data we must send via IC to setup ADC */
 #define RXBYTES 0
 #define TXBYTES 2
-  max1236.txbuf[0] = 0b10000011; // config register content. Consult datasheet
-  max1236.txbuf[1] = 0b00000111; // config register content. Consult datasheet
+  max1236.txbuf[0] = 0b10000011; /* config register content. Consult datasheet */
+  max1236.txbuf[1] = 0b00000111; /* config register content. Consult datasheet */
 
 
-  // transmit out 2 bytes
+  /* transmit out 2 bytes */
   i2cAcquireBus(&I2CD2);
   i2cMasterTransmit(&I2CD2, &max1236, max1236_addr, TXBYTES, RXBYTES);
   while(I2CD2.id_state != I2C_READY){

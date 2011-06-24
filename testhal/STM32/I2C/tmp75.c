@@ -12,13 +12,13 @@
 #include "tmp75.h"
 
 
-// input buffer
+/* input buffer */
 static i2cblock_t tmp75_rx_data[TMP75_RX_DEPTH];
 static i2cblock_t tmp75_tx_data[TMP75_TX_DEPTH];
-// temperature value
+/* temperature value */
 static int16_t temperature = 0;
 
-// Simple error trap
+/* Simple error trap */
 static void i2c_tmp75_error_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
   (void)i2cscfg;
   int status = 0;
@@ -33,7 +33,7 @@ static void i2c_tmp75_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
   temperature = (i2cscfg->rxbuf[0] << 8) + i2cscfg->rxbuf[1];
 }
 
-// Fill TMP75 config.
+/* Fill TMP75 config. */
 static const I2CSlaveConfig tmp75 = {
     i2c_tmp75_cb,
     i2c_tmp75_error_cb,
@@ -45,8 +45,8 @@ static const I2CSlaveConfig tmp75 = {
 
 /* This is main function. */
 void request_temperature(void){
-#define TXBYTES 0  // set to zero because we need only reading
-#define RXBYTES 2  // we need to read 2 bytes
+#define TXBYTES 0  /* set to zero because we need only reading */
+#define RXBYTES 2  /* we need to read 2 bytes */
 
   i2cAcquireBus(&I2CD2);
   i2cMasterReceive(&I2CD2, &tmp75, tmp75_addr, RXBYTES);

@@ -14,7 +14,7 @@
 #include "lis3.h"
 
 
-// buffers
+/* buffers */
 static i2cblock_t accel_rx_data[ACCEL_RX_DEPTH];
 static i2cblock_t accel_tx_data[ACCEL_TX_DEPTH];
 
@@ -64,7 +64,7 @@ static msg_t I2CAccelThread(void *arg) {
 /* This callback raise up when transfer finished */
 static void i2c_lis3_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
   (void) i2cp;
-  // only wake up processing thread
+  /* only wake up processing thread */
   if (i2c_accel_tp != NULL) {
     i2c_accel_tp->p_msg = (msg_t)i2cscfg;
     chSchReadyI(i2c_accel_tp);
@@ -73,7 +73,7 @@ static void i2c_lis3_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
 }
 
 
-// Accelerometer lis3lv02dq config
+/* Accelerometer lis3lv02dq config */
 static const I2CSlaveConfig lis3 = {
 	i2c_lis3_cb,
   i2c_lis3_error_cb,
@@ -103,10 +103,10 @@ int init_lis3(void){
     chThdSleepMilliseconds(1);
 
 #define TXBYTES 4
-#define RXBYTES 0 //set to 0 because we need only transmit
+#define RXBYTES 0 /* set to 0 because we need only transmit */
 
   /* configure accelerometer */
-  lis3.txbuf[0] = ACCEL_CTRL_REG1 | AUTO_INCREMENT_BIT; // register address
+  lis3.txbuf[0] = ACCEL_CTRL_REG1 | AUTO_INCREMENT_BIT; /* register address */
   lis3.txbuf[1] = 0b11100111;
   lis3.txbuf[2] = 0b01000001;
   lis3.txbuf[3] = 0b00000000;

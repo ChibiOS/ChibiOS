@@ -165,8 +165,8 @@ struct I2CDriver{
 
   size_t                txbytes;    /*!< Number of bytes to be transmitted. */
   size_t                rxbytes;    /*!< Number of bytes to be received. */
-  uint8_t               *rxbuff_p;   /*!< Pointer to the current byte in slave rx buffer. */
-  uint8_t               *txbuff_p;   /*!< Pointer to the current byte in slave tx buffer. */
+  uint8_t               *rxbuff_p;  /*!< Pointer to the current byte in slave rx buffer. */
+  uint8_t               *txbuff_p;  /*!< Pointer to the current byte in slave tx buffer. */
 
   i2cflags_t            errors;     /*!< Error flags.*/
   i2cflags_t            flags;      /*!< State flags.*/
