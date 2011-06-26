@@ -38,25 +38,25 @@ Platform : ARM Cortex-M3
 OS Setup : Full kernel
 Compiler : arm-none-eabi-gcc (GCC) 4.5.2
 Options  : -O2 -mthumb -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 6288
+Kernel Size = 6280
 
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
 Compiler : arm-none-eabi-gcc (GCC) 4.5.2
 Options  : -O2 -mthumb -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 5748
+Kernel Size = 5744
 
 Platform : ARM Cortex-M3
 OS Setup : Minimal kernel
 Compiler : arm-none-eabi-gcc (GCC) 4.5.2
 Options  : -O2 -mthumb
-Kernel Size = 1440
+Kernel Size = 1432
 
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
 Compiler : arm-none-eabi-gcc (GCC) 4.5.2
 Options  : -Os -mthumb -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 5672
+Kernel Size = 5668
 
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
@@ -68,7 +68,7 @@ Platform : ARM Cortex-M3
 OS Setup : Minimal kernel
 Compiler : arm-none-eabi-gcc (GCC) 4.5.2
 Options  : -Os -mthumb
-Kernel Size = 1260
+Kernel Size = 1256
 
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
@@ -92,37 +92,37 @@ Platform : ARM Cortex-M0
 OS Setup : Full kernel
 Compiler : arm-none-eabi-gcc (GCC) 4.5.2
 Options  : -O2 -mthumb -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 5492
+Kernel Size = 5512
 
 Platform : ARM Cortex-M0
 OS Setup : Full kernel
 Compiler : arm-none-eabi-gcc (GCC) 4.5.2
 Options  : -O2 -mthumb -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 5292
+Kernel Size = 5312
 
 Platform : ARM Cortex-M0
 OS Setup : Minimal kernel
 Compiler : arm-none-eabi-gcc (GCC) 4.5.2
 Options  : -O2 -mthumb
-Kernel Size = 1288
+Kernel Size = 1308
 
 Platform : ARM Cortex-M0
 OS Setup : Full kernel
 Compiler : arm-none-eabi-gcc (GCC) 4.5.2
 Options  : -Os -mthumb -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 5108
+Kernel Size = 5104
 
 Platform : ARM Cortex-M0
 OS Setup : Full kernel
 Compiler : arm-none-eabi-gcc (GCC) 4.5.2
 Options  : -Os -mthumb -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 4936
+Kernel Size = 4932
 
 Platform : ARM Cortex-M0
 OS Setup : Minimal kernel
 Compiler : arm-none-eabi-gcc (GCC) 4.5.2
 Options  : -Os -mthumb
-Kernel Size = 1164
+Kernel Size = 1160
 
 Platform : ARM7TDMI (ARM mode)
 OS Setup : Full kernel
