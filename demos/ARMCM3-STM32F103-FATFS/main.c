@@ -18,7 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
 #include <string.h>
 
 #include "ch.h"
@@ -26,6 +25,7 @@
 #include "test.h"
 #include "shell.h"
 #include "evtimer.h"
+#include "chprintf.h"
 
 #include "ff.h"
 
@@ -62,7 +62,7 @@ static bool_t mmc_is_protected(void) {return !palReadPad(IOPORT3, GPIOC_MMCWP);}
 /* Generic large buffer.*/
 uint8_t fbuff[1024];
 
-static FRESULT scan_files(char *path)
+static FRESULT scan_files(BaseChannel *chp, char *path)
 {
   FRESULT res;
   FILINFO fno;
@@ -81,14 +81,15 @@ static FRESULT scan_files(char *path)
         continue;
       fn = fno.fname;
       if (fno.fattrib & AM_DIR) {
-        siprintf(&path[i], "/%s", fn);
-        res = scan_files(path);
+        path[i++] = '/';
+        strcpy(&path[i], fn);
+        res = scan_files(chp, path);
         if (res != FR_OK)
           break;
         path[i] = 0;
       }
       else {
-        iprintf("%s/%s\r\n", path, fn);
+        chprintf(chp, "%s/%s\r\n", path, fn);
       }
     }
   }
@@ -104,7 +105,6 @@ static FRESULT scan_files(char *path)
 
 static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
   size_t n, size;
-  char buf[52];
 
   (void)argv;
   if (argc > 0) {
@@ -112,12 +112,9 @@ static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
     return;
   }
   n = chHeapStatus(NULL, &size);
-  siprintf(buf, "core free memory : %u bytes", chCoreStatus());
-  shellPrintLine(chp, buf);
-  siprintf(buf, "heap fragments   : %u", n);
-  shellPrintLine(chp, buf);
-  siprintf(buf, "heap free total  : %u bytes", size);
-  shellPrintLine(chp, buf);
+  chprintf(chp, "core free memory : %u bytes\r\n", chCoreStatus());
+  chprintf(chp, "heap fragments   : %u\r\n", n);
+  chprintf(chp, "heap free total  : %u bytes\r\n", size);
 }
 
 static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
@@ -138,7 +135,6 @@ static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
     "FINAL"
   };
   Thread *tp;
-  char buf[60];
 
   (void)argv;
   if (argc > 0) {
@@ -148,11 +144,10 @@ static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
   shellPrintLine(chp, "    addr    stack prio refs     state time");
   tp = chRegFirstThread();
   do {
-    siprintf(buf, "%8lx %8lx %4u %4i %9s %u",
-             (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
-             (unsigned int)tp->p_prio, tp->p_refs - 1,
-             states[tp->p_state], (unsigned int)tp->p_time);
-    shellPrintLine(chp, buf);
+    chprintf(chp, "%.8lx %.8lx %4lu %4lu %9s %lu\r\n",
+            (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
+            (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
+            states[tp->p_state], (uint32_t)tp->p_time);
     tp = chRegNextThread(tp);
   } while (tp != NULL);
 }
@@ -193,13 +188,12 @@ static void cmd_tree(BaseChannel *chp, int argc, char *argv[]) {
     shellPrintLine(chp, "FS: f_getfree() failed");
     return;
   }
-  siprintf((void *)fbuff,
-           "FS: %lu free clusters, %lu sectors per cluster, %lu bytes free",
+  chprintf(chp,
+           "FS: %lu free clusters, %lu sectors per cluster, %lu bytes free\r\n",
            clusters, (uint32_t)MMC_FS.csize,
            clusters * (uint32_t)MMC_FS.csize * (uint32_t)MMC_SECTOR_SIZE);
-  shellPrintLine(chp, (void *)fbuff);
   fbuff[0] = 0;
-  scan_files((char *)fbuff);
+  scan_files(chp, (char *)fbuff);
 }
 
 static const ShellCommand commands[] = {

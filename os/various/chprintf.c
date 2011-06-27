@@ -1,83 +1,57 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
-                 2011 Giovanni Di Sirio.
+ ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+ 2011 Giovanni Di Sirio.
 
-    This file is part of ChibiOS/RT.
+ This file is part of ChibiOS/RT.
 
-    ChibiOS/RT is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+ ChibiOS/RT is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 3 of the License, or
+ (at your option) any later version.
 
-    ChibiOS/RT is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ ChibiOS/RT is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include <stdarg.h>
 
 #include "ch.h"
 
-#define	MAXDIG		11
-
-static char *itoa(char *p, int num, unsigned radix) {
-  int i;
-  char *q;
-
-  q = p + MAXDIG;
-  do {
-    i = (int)(num % radix);
-    i += '0';
-    if (i > '9')
-    i += 'A' - '0' - 10;
-    *--q = i;
-  } while ((num /= radix) != 0);
-
-  i = (int)(p + MAXDIG - q);
-  do
-    *p++ = *q++;
-  while (--i);
-
-  return p;
-}
-
-#ifndef NO_LONGD
+#define MAX_FILLER 11
 
 static char *ltoa(char *p, long num, unsigned radix) {
   int i;
   char *q;
 
-  q = p + MAXDIG;
+  q = p + MAX_FILLER;
   do {
     i = (int)(num % radix);
     i += '0';
     if (i > '9')
-    i += 'A' - '0' - 10;
+      i += 'A' - '0' - 10;
     *--q = i;
   } while ((num /= radix) != 0);
 
-  i = (int)(p + MAXDIG - q);
+  i = (int)(p + MAX_FILLER - q);
   do
     *p++ = *q++;
   while (--i);
 
   return p;
 }
-#endif
 
 void chprintf(BaseChannel *chp, const char *fmt, ...) {
   va_list ap;
-  char buf[MAXDIG + 1];
-  char *p, *s;
-  int c, i, width, ndigit, ndfnd, ljust, zfill;
-#ifndef NO_LONGD
-  int lflag;
+  char buf[MAX_FILLER + 1];
+  char *p, *s, c, filler;
+  int i, n, width;
+  bool_t lflag, ljust;
   long l;
-#endif
 
   va_start(ap, fmt);
   while (TRUE) {
@@ -92,15 +66,15 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
     }
     p = buf;
     s = buf;
-    ljust = 0;
+    ljust = FALSE;
     if (*fmt == '-') {
       fmt++;
-      ljust++;
+      ljust = TRUE;
     }
-    zfill = ' ';
-    if (*fmt == '0') {
+    filler = ' ';
+    if (*fmt == '.') {
       fmt++;
-      zfill = '0';
+      filler = '0';
     }
     for (width = 0;;) {
       c = *fmt++;
@@ -113,8 +87,7 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
       width *= 10;
       width += c;
     }
-    ndfnd = 0;
-    ndigit = 0;
+    n = 0;
     if (c == '.') {
       for (;;) {
         c = *fmt++;
@@ -124,89 +97,61 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
           c = va_arg(ap, int);
         else
           break;
-        ndigit *= 10;
-        ndigit += c;
-        ndfnd++;
+        n *= 10;
+        n += c;
       }
     }
-#ifndef NO_LONGD
-    lflag = 0;
-#endif
+    lflag = FALSE;
     if (c == 'l' || c == 'L') {
-#ifndef NO_LONGD
       lflag++;
-#endif
       if (*fmt)
         c = *fmt++;
     }
     switch (c) {
     case 'X':
-#ifndef NO_LONGD
-      lflag++;
-#endif
+      lflag = TRUE;
     case 'x':
       c = 16;
       goto oxu;
     case 'U':
-#ifndef NO_LONGD
-      lflag++;
-#endif
+      lflag = TRUE;
     case 'u':
       c = 10;
       goto oxu;
     case 'O':
-#ifndef NO_LONGD
-      lflag++;
-#endif
+      lflag = TRUE;
     case 'o':
       c = 8;
-      oxu:
-#ifndef NO_LONGD
-      if (lflag) {
-        p = ltoa(p, va_arg(ap, long), c);
-        break;
-      }
-#endif
-      p = itoa(p, va_arg(ap, int), c);
+      oxu: if (lflag)
+        l = va_arg(ap, long);
+      else
+        l = va_arg(ap, int);
+      p = ltoa(p, l, c);
       break;
     case 'D':
-#ifndef NO_LONGD
-      lflag++;
-#endif
+      lflag = TRUE;
     case 'd':
-#ifndef NO_LONGD
-      if (lflag) {
-        if ((l = va_arg(ap, long)) < 0) {
-          *p++ = '-';
-          l = -l;
-        }
-        p = ltoa(p, l, 10);
-        break;
-      }
-#endif
-      if ((i = va_arg(ap, int)) < 0) {
+      if (lflag)
+        l = va_arg(ap, long);
+      else
+        l = va_arg(ap, int);
+      if (l < 0) {
         *p++ = '-';
-        i = -i;
+        l = -l;
       }
-      p = itoa(p, i, 10);
+      p = ltoa(p, l, 10);
       break;
-/*    case 'e':
-    case 'f':
-    case 'g':
-      zfill = ' ';
-      *p++ = '?';
-      break;*/
     case 'c':
-      zfill = ' ';
+      filler = ' ';
       *p++ = va_arg(ap, int);
       break;
     case 's':
-      zfill = ' ';
+      filler = ' ';
       if ((s = va_arg(ap, char *)) == 0)
         s = "(null)";
-      if (ndigit == 0)
-        ndigit = 32767;
-      for (p = s; *p && --ndigit >= 0; p++)
+      if (n == 0)
+        n = 32767;
+      for (p = s; *p && --n >= 0; p++)
         ;
       break;
     default:
@@ -216,22 +161,22 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
     i = (int)(p - s);
     if ((width -= i) < 0)
       width = 0;
-    if (ljust == 0)
+    if (ljust == FALSE)
       width = -width;
     if (width < 0) {
-      if (*s == '-' && zfill == '0') {
+      if (*s == '-' && filler == '0') {
         chIOPut(chp, (uint8_t)*s++);
         i--;
       }
       do
-        chIOPut(chp, (uint8_t)zfill);
+        chIOPut(chp, (uint8_t)filler);
       while (++width != 0);
     }
     while (--i >= 0)
       chIOPut(chp, (uint8_t)*s++);
 
     while (width) {
-      chIOPut(chp, (uint8_t)zfill);
+      chIOPut(chp, (uint8_t)filler);
       width--;
     }
   }
