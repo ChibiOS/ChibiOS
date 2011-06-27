@@ -19,46 +19,24 @@
 */
 
 /**
- * @file    evtimer.h
- * @brief   Events Generator Timer structures and macros.
+ * @file    chprintf.h
+ * @brief   Mini printf-like functionality.
  *
  * @addtogroup event_timer
  * @{
  */
 
-#ifndef _EVTIMER_H_
-#define _EVTIMER_H_
-
-/**
- * @brief Event timer structure.
- */
-typedef struct {
-  VirtualTimer  et_vt;
-  EventSource   et_es;
-  systime_t     et_interval;
-} EvTimer;
+#ifndef _CHPRINTF_H_
+#define _CHPRINTF_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void evtStart(EvTimer *etp);
-  void evtStop(EvTimer *etp);
+  void chprintf(BaseChannel *chp, const char *fmt, ...);
 #ifdef __cplusplus
 }
 #endif
 
-/**
- * @brief Initializes an @p EvTimer structure.
- *
- * @param etp the EvTimer structure to be initialized
- * @param time the interval in system ticks
- */
-#define evtInit(etp, time) {                                            \
-  chEvtInit(&(etp)->et_es);                                             \
-  (etp)->et_vt.vt_func = NULL;                                          \
-  (etp)->et_interval = (time);                                          \
-}
-
-#endif /* _EVTIMER_H_ */
+#endif /* _CHPRINTF_H_ */
 
 /** @} */
