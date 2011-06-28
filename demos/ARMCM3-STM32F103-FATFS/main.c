@@ -62,8 +62,7 @@ static bool_t mmc_is_protected(void) {return !palReadPad(IOPORT3, GPIOC_MMCWP);}
 /* Generic large buffer.*/
 uint8_t fbuff[1024];
 
-static FRESULT scan_files(BaseChannel *chp, char *path)
-{
+static FRESULT scan_files(BaseChannel *chp, char *path) {
   FRESULT res;
   FILINFO fno;
   DIR dir;

@@ -26,6 +26,7 @@
 #include "test.h"
 #include "shell.h"
 #include "evtimer.h"
+#include "chprintf.h"
 
 #include "ff.h"
 
@@ -138,8 +139,7 @@ static bool_t fs_ready = FALSE;
 /* Generic large buffer.*/
 uint8_t fbuff[1024];
 
-static FRESULT scan_files(char *path)
-{
+static FRESULT scan_files(BaseChannel *chp, char *path) {
   FRESULT res;
   FILINFO fno;
   DIR dir;
@@ -157,20 +157,20 @@ static FRESULT scan_files(char *path)
         continue;
       fn = fno.fname;
       if (fno.fattrib & AM_DIR) {
-        siprintf(&path[i], "/%s", fn);
-        res = scan_files(path);
+        path[i++] = '/';
+        strcpy(&path[i], fn);
+        res = scan_files(chp, path);
         if (res != FR_OK)
           break;
         path[i] = 0;
       }
       else {
-        iprintf("%s/%s\r\n", path, fn);
+        chprintf(chp, "%s/%s\r\n", path, fn);
       }
     }
   }
   return res;
 }
-
 
 /*===========================================================================*/
 /* Command line related.                                                     */
@@ -181,20 +181,16 @@ static FRESULT scan_files(char *path)
 
 static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
   size_t n, size;
-  char buf[52];
 
   (void)argv;
   if (argc > 0) {
-    shellPrintLine(chp, "Usage: mem");
+    chprintf(chp, "Usage: mem\r\n");
     return;
   }
   n = chHeapStatus(NULL, &size);
-  siprintf(buf, "core free memory : %u bytes", chCoreStatus());
-  shellPrintLine(chp, buf);
-  siprintf(buf, "heap fragments   : %u", n);
-  shellPrintLine(chp, buf);
-  siprintf(buf, "heap free total  : %u bytes", size);
-  shellPrintLine(chp, buf);
+  chprintf(chp, "core free memory : %u bytes\r\n", chCoreStatus());
+  chprintf(chp, "heap fragments   : %u\r\n", n);
+  chprintf(chp, "heap free total  : %u bytes\r\n", size);
 }
 
 static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
@@ -215,21 +211,19 @@ static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
     "FINAL"
   };
   Thread *tp;
-  char buf[60];
 
   (void)argv;
   if (argc > 0) {
-    shellPrintLine(chp, "Usage: threads");
+    chprintf(chp, "Usage: threads\r\n");
     return;
   }
-  shellPrintLine(chp, "    addr    stack prio refs     state time");
+  chprintf(chp, "    addr    stack prio refs     state time\r\n");
   tp = chRegFirstThread();
   do {
-    siprintf(buf, "%8lx %8lx %4u %4i %9s %u",
-             (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
-             (unsigned int)tp->p_prio, tp->p_refs - 1,
-             states[tp->p_state], (unsigned int)tp->p_time);
-    shellPrintLine(chp, buf);
+    chprintf(chp, "%.8lx %.8lx %4lu %4lu %9s %lu\r\n",
+            (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
+            (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
+            states[tp->p_state], (uint32_t)tp->p_time);
     tp = chRegNextThread(tp);
   } while (tp != NULL);
 }
@@ -239,13 +233,13 @@ static void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc > 0) {
-    shellPrintLine(chp, "Usage: test");
+    chprintf(chp, "Usage: test\r\n");
     return;
   }
   tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriority(),
                            TestThread, chp);
   if (tp == NULL) {
-    shellPrintLine(chp, "out of memory");
+    chprintf(chp, "out of memory\r\n");
     return;
   }
   chThdWait(tp);
@@ -253,30 +247,29 @@ static void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
 
 static void cmd_tree(BaseChannel *chp, int argc, char *argv[]) {
   FRESULT err;
-  DWORD clusters;
+  uint32_t clusters;
   FATFS *fsp;
 
   (void)argv;
   if (argc > 0) {
-    shellPrintLine(chp, "Usage: tree");
+    chprintf(chp, "Usage: tree\r\n");
     return;
   }
   if (!fs_ready) {
-    shellPrintLine(chp, "File System not mounted");
+    chprintf(chp, "File System not mounted\r\n");
     return;
   }
   err = f_getfree("/", &clusters, &fsp);
   if (err != FR_OK) {
-    shellPrintLine(chp, "FS: f_getfree() failed");
+    chprintf(chp, "FS: f_getfree() failed\r\n");
     return;
   }
-  siprintf((void *)fbuff,
-           "FS: %lu free clusters, %lu sectors per cluster, %lu bytes free",
+  chprintf(chp,
+           "FS: %lu free clusters, %lu sectors per cluster, %lu bytes free\r\n",
            clusters, (uint32_t)SDC_FS.csize,
            clusters * (uint32_t)SDC_FS.csize * (uint32_t)SDC_BLOCK_SIZE);
-  shellPrintLine(chp, (void *)fbuff);
   fbuff[0] = 0;
-  scan_files((char *)fbuff);
+  scan_files(chp, (char *)fbuff);
 }
 
 static const ShellCommand commands[] = {
