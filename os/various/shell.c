@@ -19,8 +19,9 @@
 */
 
 /**
- * @file shell.c
- * @brief Simple CLI shell code.
+ * @file    shell.c
+ * @brief   Simple CLI shell code.
+ *
  * @addtogroup SHELL
  * @{
  */
@@ -31,6 +32,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "shell.h"
+#include "chprintf.h"
 
 #if SHELL_USE_IPRINTF
 #define sprintf siprintf
@@ -65,15 +67,13 @@ static char *strtok_r(char *str, const char *delim, char **saveptr) {
 
 static void usage(BaseChannel *chp, char *p) {
 
-  shellPrint(chp, "Usage: ");
-  shellPrintLine(chp, p);
+  chprintf(chp, "Usage: %s\r\n", p);
 }
 
 static void list_commands(BaseChannel *chp, const ShellCommand *scp) {
 
   while (scp->sc_name != NULL) {
-    shellPrint(chp, scp->sc_name);
-    shellPrint(chp, " ");
+    chprintf(chp, "%s ", scp->sc_name);
     scp++;
   }
 }
@@ -86,38 +86,33 @@ static void cmd_info(BaseChannel *chp, int argc, char *argv[]) {
     return;
   }
 
-  shellPrint(chp, "Kernel version: ");
-  shellPrintLine(chp, CH_KERNEL_VERSION);
-#ifdef __GNUC__
-  shellPrint(chp, "GCC Version:    ");
-  shellPrintLine(chp, __VERSION__);
+  chprintf(chp, "Kernel:       %s\r\n", CH_KERNEL_VERSION);
+#ifdef CH_COMPILER_NAME
+  chprintf(chp, "Compiler:     %s\r\n", CH_COMPILER_NAME);
 #endif
-  shellPrint(chp, "Architecture:   ");
-  shellPrintLine(chp, CH_ARCHITECTURE_NAME);
+  chprintf(chp, "Architecture: %s\r\n", CH_ARCHITECTURE_NAME);
 #ifdef CH_CORE_VARIANT_NAME
-  shellPrint(chp, "Core Variant:   ");
-  shellPrintLine(chp, CH_CORE_VARIANT_NAME);
+  chprintf(chp, "Core Variant: %s\r\n", CH_CORE_VARIANT_NAME);
+#endif
+#ifdef CH_PORT_INFO
+  chprintf(chp, "Port Info:    %s\r\n", CH_PORT_INFO);
 #endif
 #ifdef PLATFORM_NAME
-  shellPrint(chp, "Platform:       ");
-  shellPrintLine(chp, PLATFORM_NAME);
+  chprintf(chp, "Platform:     %s\r\n", PLATFORM_NAME);
 #endif
 #ifdef BOARD_NAME
-  shellPrint(chp, "Board:          ");
-  shellPrintLine(chp, BOARD_NAME);
+  chprintf(chp, "Board:        %s\r\n", BOARD_NAME);
 #endif
 }
 
 static void cmd_systime(BaseChannel *chp, int argc, char *argv[]) {
-  char buf[12];
 
   (void)argv;
   if (argc > 0) {
     usage(chp, "systime");
     return;
   }
-  sprintf(buf, "%lu", (unsigned long)chTimeNow());
-  shellPrintLine(chp, buf);
+  chprintf(chp, "%lu\r\n", (unsigned long)chTimeNow());
 }
 
 /**
@@ -158,12 +153,11 @@ static msg_t shell_thread(void *p) {
   char *lp, *cmd, *tokp, line[SHELL_MAX_LINE_LENGTH];
   char *args[SHELL_MAX_ARGUMENTS + 1];
 
-  shellPrintLine(chp, "");
-  shellPrintLine(chp, "ChibiOS/RT Shell");
+  chprintf(chp, "\r\nChibiOS/RT Shell\r\n");
   while (TRUE) {
-    shellPrint(chp, "ch> ");
+    chprintf(chp, "ch> ");
     if (shellGetLine(chp, line, sizeof(line))) {
-      shellPrint(chp, "\nlogout");
+      chprintf(chp, "\r\nlogout");
       break;
     }
     lp = strtok_r(line, " \009", &tokp);
@@ -171,7 +165,7 @@ static msg_t shell_thread(void *p) {
     n = 0;
     while ((lp = strtok_r(NULL, " \009", &tokp)) != NULL) {
       if (n >= SHELL_MAX_ARGUMENTS) {
-        shellPrintLine(chp, "too many arguments");
+        chprintf(chp, "too many arguments\r\n");
         cmd = NULL;
         break;
       }
@@ -180,23 +174,27 @@ static msg_t shell_thread(void *p) {
     args[n] = NULL;
     if (cmd != NULL) {
       if (strcasecmp(cmd, "exit") == 0) {
-        if (n > 0)
+        if (n > 0) {
           usage(chp, "exit");
+          continue;
+        }
         break;
       }
       else if (strcasecmp(cmd, "help") == 0) {
-        if (n > 0)
+        if (n > 0) {
           usage(chp, "help");
-        shellPrint(chp, "Commands: help exit ");
+          continue;
+        }
+        chprintf(chp, "Commands: help exit ");
         list_commands(chp, local_commands);
         if (scp != NULL)
           list_commands(chp, scp);
-        shellPrintLine(chp, "");
+        chprintf(chp, "\r\n");
       }
       else if (cmdexec(local_commands, chp, cmd, n, args) &&
           ((scp == NULL) || cmdexec(scp, chp, cmd, n, args))) {
-        shellPrint(chp, cmd);
-        shellPrintLine(chp, " ?");
+        chprintf(chp, "%s", cmd);
+        chprintf(chp, " ?\r\n");
       }
     }
   }
@@ -229,30 +227,6 @@ Thread *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio) {
 }
 
 /**
- * @brief Prints a string.
- *
- * @param[in] chp pointer to a @p BaseChannel object
- * @param[in] msg pointer to the string
- */
-void shellPrint(BaseChannel *chp, const char *msg) {
-
-  while (*msg)
-    chIOPut(chp, *msg++);
-}
-
-/**
- * @brief Prints a string with a final newline.
- *
- * @param[in] chp pointer to a @p BaseChannel object
- * @param[in] msg pointer to the string
- */
-void shellPrintLine(BaseChannel *chp, const char *msg) {
-
-  shellPrint(chp, msg);
-  shellPrint(chp, "\r\n");
-}
-
-/**
  * @brief Reads a whole line from the input channel.
  *
  * @param[in] chp pointer to a @p BaseChannel object
@@ -271,7 +245,7 @@ bool_t shellGetLine(BaseChannel *chp, char *line, unsigned size) {
     if (c < 0)
       return TRUE;
     if (c == 4) {
-      shellPrintLine(chp, "^D");
+      chprintf(chp, "^D");
       return TRUE;
     }
     if (c == 8) {
@@ -284,7 +258,7 @@ bool_t shellGetLine(BaseChannel *chp, char *line, unsigned size) {
       continue;
     }
     if (c == '\r') {
-      shellPrintLine(chp, "");
+      chprintf(chp, "\r\n");
       *p = 0;
       return FALSE;
     }

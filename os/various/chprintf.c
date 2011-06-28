@@ -45,6 +45,29 @@ static char *ltoa(char *p, long num, unsigned radix) {
   return p;
 }
 
+/**
+ * @brief   System formatted output function.
+ * @details This function implements a minimal @p printf() like functionality
+ *          with output on a @p BaseChannel.
+ *          The general parameters format is: %[.][width|*][l|L]p.
+ *          The following parameter types (p) are supported:
+ *          - <b>x</b> hexadecimal integer.
+ *          - <b>X</b> hexadecimal long.
+ *          - <b>o</b> octal integer.
+ *          - <b>O</b> octal long.
+ *          - <b>d</b> decimal signed integer.
+ *          - <b>D</b> decimal signed long.
+ *          - <b>u</b> decimal unsigned integer.
+ *          - <b>U</b> decimal unsigned long.
+ *          - <b>c</b> character.
+ *          - <b>s</b> string.
+ *          .
+ * @note    Floating point types are not implemented, this function is meant
+ *          as a system utility and not a full implementation.
+ *
+ * @param[in] chp       pointer to a @p BaseChannel implementing object
+ * @param[in] fmt       formatting string
+ */
 void chprintf(BaseChannel *chp, const char *fmt, ...) {
   va_list ap;
   char buf[MAX_FILLER + 1];
@@ -84,8 +107,7 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
         c = va_arg(ap, int);
       else
         break;
-      width *= 10;
-      width += c;
+      width = width * 10 + c;
     }
     n = 0;
     if (c == '.') {
@@ -122,7 +144,8 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
       lflag = TRUE;
     case 'o':
       c = 8;
-      oxu: if (lflag)
+oxu:
+      if (lflag)
         l = va_arg(ap, long);
       else
         l = va_arg(ap, int);

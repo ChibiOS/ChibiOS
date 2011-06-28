@@ -83,6 +83,11 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Added a chprintf() function to ./os/various, it can print on any
+  BaseChannel.
+- NEW: Improved the mini shell, enhanced info command, optimizations and
+  removed the shellPrint() and shellPrintLine() functions, now it uses
+  chprintf() for output.
 - NEW: lwIP 1.4.0 has been integrated, this new version does not require
   custom hooks into the Thread structure and is thus much lighter.
 - NEW: FatFs demo for the STM32F103ZG using the SDC driver.

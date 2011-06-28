@@ -108,7 +108,7 @@ static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc > 0) {
-    shellPrintLine(chp, "Usage: mem");
+    chprintf(chp, "Usage: mem\r\n");
     return;
   }
   n = chHeapStatus(NULL, &size);
@@ -138,10 +138,10 @@ static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc > 0) {
-    shellPrintLine(chp, "Usage: threads");
+    chprintf(chp, "Usage: threads\r\n");
     return;
   }
-  shellPrintLine(chp, "    addr    stack prio refs     state time");
+  chprintf(chp, "    addr    stack prio refs     state time\r\n");
   tp = chRegFirstThread();
   do {
     chprintf(chp, "%.8lx %.8lx %4lu %4lu %9s %lu\r\n",
@@ -157,13 +157,13 @@ static void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc > 0) {
-    shellPrintLine(chp, "Usage: test");
+    chprintf(chp, "Usage: test\r\n");
     return;
   }
   tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriority(),
                            TestThread, chp);
   if (tp == NULL) {
-    shellPrintLine(chp, "out of memory");
+    chprintf(chp, "out of memory\r\n");
     return;
   }
   chThdWait(tp);
@@ -176,16 +176,16 @@ static void cmd_tree(BaseChannel *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc > 0) {
-    shellPrintLine(chp, "Usage: tree");
+    chprintf(chp, "Usage: tree\r\n");
     return;
   }
   if (!fs_ready) {
-    shellPrintLine(chp, "File System not mounted");
+    chprintf(chp, "File System not mounted\r\n");
     return;
   }
   err = f_getfree("/", &clusters, &fsp);
   if (err != FR_OK) {
-    shellPrintLine(chp, "FS: f_getfree() failed");
+    chprintf(chp, "FS: f_getfree() failed\r\n");
     return;
   }
   chprintf(chp,

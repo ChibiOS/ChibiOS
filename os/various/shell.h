@@ -19,8 +19,9 @@
 */
 
 /**
- * @file shell.h
- * @brief Simple CLI shell header.
+ * @file    shell.h
+ * @brief   Simple CLI shell header.
+ *
  * @addtogroup SHELL
  * @{
  */
@@ -79,8 +80,6 @@ extern "C" {
 #endif
   void shellInit(void);
   Thread *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio);
-  void shellPrint(BaseChannel *chp, const char *msg);
-  void shellPrintLine(BaseChannel *chp, const char *msg);
   bool_t shellGetLine(BaseChannel *chp, char *line, unsigned size);
 #ifdef __cplusplus
 }
