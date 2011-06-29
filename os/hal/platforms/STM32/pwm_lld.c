@@ -31,18 +31,6 @@
 
 #if HAL_USE_PWM || defined(__DOXYGEN__)
 
-/* There are differences in vector names in the ST header for devices
-   including TIM15, TIM16, TIM17.*/
-#if STM32_HAS_TIM15
-#define TIM1_BRK_IRQn       TIM1_BRK_TIM15_IRQn
-#endif
-#if STM32_HAS_TIM16
-#define TIM1_UP_IRQn        TIM1_UP_TIM16_IRQn
-#endif
-#if STM32_HAS_TIM17
-#define TIM1_TRG_COM_IRQn   TIM1_TRG_COM_TIM17_IRQn
-#endif
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -85,6 +73,14 @@ PWMDriver PWMD4;
  */
 #if STM32_PWM_USE_TIM5 || defined(__DOXYGEN__)
 PWMDriver PWMD5;
+#endif
+
+/**
+ * @brief   PWMD8 driver identifier.
+ * @note    The driver PWMD5 allocates the timer TIM5 when enabled.
+ */
+#if STM32_PWM_USE_TIM8 || defined(__DOXYGEN__)
+PWMDriver PWMD8;
 #endif
 
 /*===========================================================================*/
@@ -240,6 +236,53 @@ CH_IRQ_HANDLER(TIM5_IRQHandler) {
 }
 #endif /* STM32_PWM_USE_TIM5 */
 
+#if STM32_PWM_USE_TIM8
+/**
+ * @brief   TIM8 update interrupt handler.
+ * @note    It is assumed that this interrupt is only activated if the callback
+ *          pointer is not equal to @p NULL in order to not perform an extra
+ *          check in a potentially critical interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(TIM8_UP_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  TIM8->SR = ~TIM_SR_UIF;
+  PWMD1.config->callback(&PWMD8);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   TIM1 compare interrupt handler.
+ * @note    It is assumed that the various sources are only activated if the
+ *          associated callback pointer is not equal to @p NULL in order to not
+ *          perform an extra check in a potentially critical interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(TIM8_CC_IRQHandler) {
+  uint16_t sr;
+
+  CH_IRQ_PROLOGUE();
+
+  sr = TIM8->SR & TIM8->DIER;
+  TIM8->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC3IF | TIM_SR_CC4IF);
+  if ((sr & TIM_SR_CC1IF) != 0)
+    PWMD8.config->channels[0].callback(&PWMD8);
+  if ((sr & TIM_SR_CC2IF) != 0)
+    PWMD8.config->channels[1].callback(&PWMD8);
+  if ((sr & TIM_SR_CC3IF) != 0)
+    PWMD8.config->channels[2].callback(&PWMD8);
+  if ((sr & TIM_SR_CC4IF) != 0)
+    PWMD8.config->channels[3].callback(&PWMD8);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* STM32_PWM_USE_TIM8 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -279,6 +322,12 @@ void pwm_lld_init(void) {
   /* Driver initialization.*/
   pwmObjectInit(&PWMD5);
   PWMD5.tim = TIM5;
+#endif
+
+#if STM32_PWM_USE_TIM8
+  /* Driver initialization.*/
+  pwmObjectInit(&PWMD8);
+  PWMD5.tim = TIM8;
 #endif
 }
 
@@ -350,6 +399,18 @@ void pwm_lld_start(PWMDriver *pwmp) {
       clock = STM32_TIMCLK1;
     }
 #endif
+#if STM32_PWM_USE_TIM8
+    if (&PWMD8 == pwmp) {
+      RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
+      RCC->APB2RSTR = RCC_APB2RSTR_TIM8RST;
+      RCC->APB2RSTR = 0;
+      NVICEnableVector(TIM8_UP_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM8_IRQ_PRIORITY));
+      NVICEnableVector(TIM8_CC_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM8_IRQ_PRIORITY));
+      clock = STM32_TIMCLK2;
+    }
+#endif
 
     /* All channels configured in PWM1 mode with preload enabled and will
        stay that way until the driver is stopped.*/
@@ -418,7 +479,15 @@ void pwm_lld_start(PWMDriver *pwmp) {
     ;
   }
 #if STM32_PWM_USE_ADVANCED
+#if STM32_PWM_USE_TIM1 && !STM32_PWM_USE_TIM8
   if (&PWMD1 == pwmp) {
+#endif
+#if !STM32_PWM_USE_TIM1 && STM32_PWM_USE_TIM8
+  if (&PWMD8 == pwmp) {
+#endif
+#if STM32_PWM_USE_TIM1 && STM32_PWM_USE_TIM8
+  if ((&PWMD1 == pwmp) || (&PWMD8 == pwmp)) {
+#endif
     switch (pwmp->config->channels[0].mode & PWM_COMPLEMENTARY_OUTPUT_MASK) {
     case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW:
       ccer |= TIM_CCER_CC1NP;
@@ -504,6 +573,13 @@ void pwm_lld_stop(PWMDriver *pwmp) {
     if (&PWMD5 == pwmp) {
       NVICDisableVector(TIM5_IRQn);
       RCC->APB1ENR &= ~RCC_APB1ENR_TIM5EN;
+    }
+#endif
+#if STM32_PWM_USE_TIM8
+    if (&PWMD8 == pwmp) {
+      NVICDisableVector(TIM8_UP_IRQn);
+      NVICDisableVector(TIM8_CC_IRQn);
+      RCC->APB2ENR &= ~RCC_APB2ENR_TIM8EN;
     }
 #endif
   }

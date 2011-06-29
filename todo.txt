@@ -6,11 +6,16 @@ X = In progress, some work done.
 N = Decided against.
 
 Current Pipeline (2.3.x):
-X lwIP 1.4.0 integration and test.
-- STM32L support.
+* lwIP 1.4.0 integration and test.
+X STM32L support.
 - STM32L-Discovery demo and article.
-- FatFs 0.8x integration.
-- FatFs wrapper.
+- Named threads.
+- Improved stack overflow checking, support main() thread, add guard pages
+  support.
+- Eclipse plugin.
+X File System infrastructure.
+- Test suite overhaul, the API should be more generic in order to be used
+  with different subsystems and not just the kernel.
 - STM32 USB support for double buffering.
 - Add a CH_THREAD macro for threads declaration in order to hide
   compiler-specific optimizations for thread functions. All demos will have
@@ -18,18 +23,14 @@ X lwIP 1.4.0 integration and test.
 - LPC17xx support.
 X Implement the "transmission end" serial driver event on those platforms
   supporting the feature, so far only done in STM32 driver.
-- Improved stack overflow checking, support main() thread, add guard pages
-  support.
-- Test suite overhaul, the API should be more generic in order to be used
-  with different subsystems and not just the kernel.
-X File System infrastructure.
-  - Official FatFs wrapper using the new infrastructure, dedicated test suite.
 X I2C device driver class support and at least one implementation.
 - Kernel-only demos for users not interested in HAL.
 - Reduce number of demos globally, add demos to a repository or on web site.
   Required in order to reduce support effort.
 
 Within 2.x.x
+- FatFs 0.8x integration.
+- FatFs wrapper.
 ? Evaluate if change thread functions to return void is worthwhile. 
 - New device driver models: Clock, Systick, RTC, WDG, DAC, Power Monitor.
 - Add UART4 support to the STM32 UART driver (CL line only, HD has a nasty

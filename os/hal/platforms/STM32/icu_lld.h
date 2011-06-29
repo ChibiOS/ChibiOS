@@ -85,6 +85,15 @@
 #endif
 
 /**
+ * @brief   ICUD8 driver enable switch.
+ * @details If set to @p TRUE the support for ICUD8 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_ICU_USE_TIM8) || defined(__DOXYGEN__)
+#define STM32_ICU_USE_TIM8                  TRUE
+#endif
+
+/**
  * @brief   ICUD1 interrupt priority level setting.
  */
 #if !defined(STM32_ICU_TIM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -119,6 +128,13 @@
 #define STM32_ICU_TIM5_IRQ_PRIORITY         7
 #endif
 
+/**
+ * @brief   ICUD8 interrupt priority level setting.
+ */
+#if !defined(STM32_ICU_TIM8_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ICU_TIM8_IRQ_PRIORITY         7
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -143,9 +159,13 @@
 #error "TIM5 not present in the selected device"
 #endif
 
+#if STM32_ICU_USE_TIM8 && !STM32_HAS_TIM8
+#error "TIM8 not present in the selected device"
+#endif
+
 #if !STM32_ICU_USE_TIM1 && !STM32_ICU_USE_TIM2 &&                           \
     !STM32_ICU_USE_TIM3 && !STM32_ICU_USE_TIM4 &&                           \
-    !STM32_ICU_USE_TIM5
+    !STM32_ICU_USE_TIM5 && !STM32_ICU_USE_TIM8
 #error "ICU driver activated but no TIM peripheral assigned"
 #endif
 
@@ -269,6 +289,10 @@ extern ICUDriver ICUD4;
 
 #if STM32_ICU_USE_TIM5 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD5;
+#endif
+
+#if STM32_ICU_USE_TIM8 && !defined(__DOXYGEN__)
+extern ICUDriver ICUD8;
 #endif
 
 #ifdef __cplusplus

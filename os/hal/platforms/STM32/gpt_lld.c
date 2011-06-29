@@ -31,18 +31,6 @@
 
 #if HAL_USE_GPT || defined(__DOXYGEN__)
 
-/* There are differences in vector names in the ST header for devices
-   including TIM15, TIM16, TIM17.*/
-#if STM32_HAS_TIM15
-#define TIM1_BRK_IRQn       TIM1_BRK_TIM15_IRQn
-#endif
-#if STM32_HAS_TIM16
-#define TIM1_UP_IRQn        TIM1_UP_TIM16_IRQn
-#endif
-#if STM32_HAS_TIM17
-#define TIM1_TRG_COM_IRQn   TIM1_TRG_COM_TIM17_IRQn
-#endif
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -85,6 +73,14 @@ GPTDriver GPTD4;
  */
 #if STM32_GPT_USE_TIM5 || defined(__DOXYGEN__)
 GPTDriver GPTD5;
+#endif
+
+/**
+ * @brief   GPTD8 driver identifier.
+ * @note    The driver GPTD8 allocates the timer TIM8 when enabled.
+ */
+#if STM32_GPT_USE_TIM8 || defined(__DOXYGEN__)
+GPTDriver GPTD8;
 #endif
 
 /*===========================================================================*/
@@ -194,6 +190,22 @@ CH_IRQ_HANDLER(TIM5_IRQHandler) {
 }
 #endif /* STM32_GPT_USE_TIM5 */
 
+#if STM32_GPT_USE_TIM8
+/**
+ * @brief   TIM5 interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(TIM8_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  gpt_lld_serve_interrupt(&GPTD8);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* STM32_GPT_USE_TIM8 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -233,6 +245,12 @@ void gpt_lld_init(void) {
   /* Driver initialization.*/
   GPTD5.tim = TIM5;
   gptObjectInit(&GPTD5);
+#endif
+
+#if STM32_GPT_USE_TIM8
+  /* Driver initialization.*/
+  GPTD5.tim = TIM8;
+  gptObjectInit(&GPTD8);
 #endif
 }
 
@@ -299,6 +317,17 @@ void gpt_lld_start(GPTDriver *gptp) {
       gptp->clock = STM32_TIMCLK1;
     }
 #endif
+
+#if STM32_GPT_USE_TIM8
+    if (&GPTD8 == gptp) {
+      RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
+      RCC->APB2RSTR = RCC_APB2RSTR_TIM8RST;
+      RCC->APB2RSTR = 0;
+      NVICEnableVector(TIM8_UP_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_GPT_TIM8_IRQ_PRIORITY));
+      gptp->clock = STM32_TIMCLK2;
+    }
+#endif
   }
 
   /* Prescaler value calculation.*/
@@ -355,6 +384,12 @@ void gpt_lld_stop(GPTDriver *gptp) {
     if (&GPTD5 == gptp) {
       NVICDisableVector(TIM5_IRQn);
       RCC->APB1ENR &= ~RCC_APB1ENR_TIM5EN;
+    }
+#endif
+#if STM32_GPT_USE_TIM8
+    if (&GPTD8 == gptp) {
+      NVICDisableVector(TIM8_UP_IRQn);
+      RCC->APB2ENR &= ~RCC_APB2ENR_TIM8EN;
     }
 #endif
   }

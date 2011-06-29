@@ -83,6 +83,9 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Added TIM8 support to the STM32 GPT, ICU and PWM drivers.
+- NEW: Updated the STM32 header file to the latest version 3.5.0 and fixed
+  it in order to correct several bugs related to the XL family.
 - NEW: Added a chprintf() function to ./os/various, it can print on any
   BaseChannel.
 - NEW: Improved the mini shell, enhanced info command, optimizations and
