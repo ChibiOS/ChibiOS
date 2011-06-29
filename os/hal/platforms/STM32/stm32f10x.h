@@ -459,6 +459,7 @@ typedef enum IRQn
   */
 
 #include "core_cm3.h"
+/* CHIBIOS FIX */
 /*#include "system_stm32f10x.h"*/
 #include <stdint.h>
 
@@ -2004,6 +2005,8 @@ typedef struct
 #define  RCC_AHBENR_FLITFEN                  ((uint16_t)0x0010)            /*!< FLITF clock enable */
 #define  RCC_AHBENR_CRCEN                    ((uint16_t)0x0040)            /*!< CRC clock enable */
 
+/* CHIBIOS FIX */
+//#if defined (STM32F10X_HD) || defined  (STM32F10X_CL) || defined  (STM32F10X_HD_VL)
 #if defined (STM32F10X_HD) || defined  (STM32F10X_CL) || defined  (STM32F10X_HD_VL) || defined  (STM32F10X_XL)
  #define  RCC_AHBENR_DMA2EN                  ((uint16_t)0x0002)            /*!< DMA2 clock enable */
 #endif
@@ -2089,11 +2092,15 @@ typedef struct
  #define  RCC_APB1ENR_I2C2EN                 ((uint32_t)0x00400000)        /*!< I2C 2 clock enable */
 #endif /* STM32F10X_LD && STM32F10X_LD_VL */
 
-#if defined (STM32F10X_HD) || defined (STM32F10X_MD) || defined  (STM32F10X_LD)
+/* CHIBIOS FIX */
+//#if defined (STM32F10X_HD) || defined (STM32F10X_MD) || defined  (STM32F10X_LD)
+#if defined (STM32F10X_XL) || defined (STM32F10X_HD) || defined (STM32F10X_MD) || defined  (STM32F10X_LD)
  #define  RCC_APB1ENR_USBEN                  ((uint32_t)0x00800000)        /*!< USB Device clock enable */
 #endif
 
-#if defined (STM32F10X_HD) || defined  (STM32F10X_CL)
+/* CHIBIOS FIX */
+//#if defined (STM32F10X_HD) || defined  (STM32F10X_CL)
+#if defined (STM32F10X_XL) || defined (STM32F10X_HD) || defined  (STM32F10X_CL)
  #define  RCC_APB1ENR_TIM5EN                 ((uint32_t)0x00000008)        /*!< Timer 5 clock enable */
  #define  RCC_APB1ENR_TIM6EN                 ((uint32_t)0x00000010)        /*!< Timer 6 clock enable */
  #define  RCC_APB1ENR_TIM7EN                 ((uint32_t)0x00000020)        /*!< Timer 7 clock enable */
