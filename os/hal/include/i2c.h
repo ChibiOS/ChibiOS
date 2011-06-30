@@ -144,10 +144,6 @@ struct I2CSlaveConfig{
    *        If set to @p NULL then the callback is disabled.
    */
   i2cerrorcallback_t    id_err_callback;
-
-  i2cblock_t            *rxbuf;       /*!< Pointer to receive buffer. */
-  i2cblock_t            *txbuf;       /*!< Pointer to transmit buffer.*/
-
 };
 
 
@@ -229,9 +225,11 @@ extern "C" {
   void i2cStart(I2CDriver *i2cp, const I2CConfig *config);
   void i2cStop(I2CDriver *i2cp);
   void i2cMasterTransmit(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg,
-      uint16_t slave_addr, size_t txbytes, size_t rxbytes);
+      uint16_t slave_addr,
+      uint8_t *txbuf, size_t txbytes,
+      uint8_t *rxbuf, size_t rxbytes);
   void i2cMasterReceive(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg,
-      uint16_t slave_addr, size_t rxbytes);
+      uint16_t slave_addr, uint8_t *rxbuf, size_t rxbytes);
   void i2cMasterStart(I2CDriver *i2cp);
   void i2cMasterStop(I2CDriver *i2cp);
   void i2cAddFlagsI(I2CDriver *i2cp, i2cflags_t mask);

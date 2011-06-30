@@ -70,7 +70,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       break;
     }
     /* Initialize the transmit buffer pointer */
-    txBuffp = (uint8_t*)i2cp->id_slave_config->txbuf;
+    txBuffp = (uint8_t*)i2cp->txbuf;
     i2cp->txbytes--;
     /* If no further data to be sent, disable the I2C ITBUF in order
      * to not have a TxE interrupt */
@@ -107,7 +107,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       /* Disable ITEVT In order to not have again a BTF IT */
       dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
       /* send restart and begin reading operations */
-      i2c_lld_master_receive(i2cp, i2cp->slave_addr, i2cp->rxbytes);
+      i2c_lld_master_receive(i2cp, i2cp->slave_addr, i2cp->rxbuf, i2cp->rxbytes);
     }
     break;
 
@@ -133,7 +133,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     }
     chSysUnlockFromIsr();
     /* Initialize receive buffer pointer */
-    rxBuffp = i2cp->id_slave_config->rxbuf;
+    rxBuffp = i2cp->rxbuf;
     break;
   case I2C_EV7_MASTER_REC_BYTE_RECEIVED:
     if(i2cp->rxbytes != 3) {
@@ -530,10 +530,14 @@ void i2c_lld_stop(I2CDriver *i2cp) {
  * @param[in] rxbytes     number of bytes to be received
  *
  */
-void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr, size_t txbytes, size_t rxbytes) {
+void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
+    uint8_t *txbuf, size_t txbytes, uint8_t *rxbuf, size_t rxbytes) {
+
   i2cp->slave_addr = slave_addr;
   i2cp->txbytes = txbytes;
   i2cp->rxbytes = rxbytes;
+  i2cp->txbuf = txbuf;
+  i2cp->rxbuf = rxbuf;
 
   /* enable ERR, EVT & BUF ITs */
   i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
@@ -579,9 +583,12 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr, size_t txbyte
  * @param[in] rxbytes     number of bytes to be received
  *
  */
-void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr, size_t rxbytes){
+void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
+    uint8_t *rxbuf, size_t rxbytes){
+
 	i2cp->slave_addr = slave_addr;
 	i2cp->rxbytes = rxbytes;
+	i2cp->rxbuf = rxbuf;
 
   /* enable ERR, EVT & BUF ITs */
   i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);

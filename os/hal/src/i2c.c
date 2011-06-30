@@ -141,19 +141,23 @@ void i2cStop(I2CDriver *i2cp) {
  *                        device address. Bit 15 must be set to 1 if 10-bit
  *                        addressing modes used. Otherwise	keep it cleared.
  *                        Bits 10-14 unused.
- * @param[in] txbytes     number of bytes to be transmited
+ * @param[in] txbytes     number of bytes to be transmitted
+ * @param[in] txbuf       pointer to transmit buffer
  * @param[in] rxbytes     number of bytes to be received
+ * @param[in] rxbuf       pointer to receive buffer
  */
 void i2cMasterTransmit(I2CDriver *i2cp,
                       const I2CSlaveConfig *i2cscfg,
                       uint16_t slave_addr,
+                      uint8_t *txbuf,
                       size_t txbytes,
+                      uint8_t *rxbuf,
                       size_t rxbytes) {
 
   chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) &&\
   		(slave_addr != 0) &&\
   		(txbytes > 0) &&\
-  		(i2cscfg->txbuf != NULL),
+  		(txbuf != NULL),
   		"i2cMasterTransmit");
 
   /* init slave config field in driver */
@@ -174,7 +178,7 @@ void i2cMasterTransmit(I2CDriver *i2cp,
               "i2cMasterTransmit(), #1", "not ready");
 
   i2cp->id_state = I2C_ACTIVE;
-  i2c_lld_master_transmit(i2cp, slave_addr, txbytes, rxbytes);
+  i2c_lld_master_transmit(i2cp, slave_addr, txbuf, txbytes, rxbuf, rxbytes);
   _i2c_wait_s(i2cp);
 #if !I2C_USE_WAIT
   i2c_lld_wait_bus_free(i2cp);
@@ -198,12 +202,13 @@ void i2cMasterTransmit(I2CDriver *i2cp,
 void i2cMasterReceive(I2CDriver *i2cp,
                       const I2CSlaveConfig *i2cscfg,
                       uint16_t slave_addr,
+                      uint8_t *rxbuf,
                       size_t rxbytes){
 
   chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) &&\
   		(slave_addr != 0) &&\
   		(rxbytes > 0) && \
-  		(i2cscfg->rxbuf != NULL),
+  		(rxbuf != NULL),
       "i2cMasterReceive");
 
   /* init slave config field in driver */
@@ -224,7 +229,7 @@ void i2cMasterReceive(I2CDriver *i2cp,
               "i2cMasterReceive(), #1", "not ready");
 
   i2cp->id_state = I2C_ACTIVE;
-  i2c_lld_master_receive(i2cp, slave_addr, rxbytes);
+  i2c_lld_master_receive(i2cp, slave_addr, rxbuf, rxbytes);
   _i2c_wait_s(i2cp);
 #if !I2C_USE_WAIT
   i2c_lld_wait_bus_free(i2cp);
