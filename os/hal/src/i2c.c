@@ -71,6 +71,8 @@ void i2cObjectInit(I2CDriver *i2cp) {
   i2cp->id_config = NULL;
   i2cp->rxbuff_p = NULL;
   i2cp->txbuff_p = NULL;
+  i2cp->rxbuf = NULL;
+  i2cp->txbuf = NULL;
   i2cp->id_slave_config = NULL;
 
 #if I2C_USE_WAIT
@@ -154,6 +156,8 @@ void i2cMasterTransmit(I2CDriver *i2cp,
                       uint8_t *rxbuf,
                       size_t rxbytes) {
 
+  i2cAcquireBus(i2cp);
+
   chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) &&\
   		(slave_addr != 0) &&\
   		(txbytes > 0) &&\
@@ -180,11 +184,6 @@ void i2cMasterTransmit(I2CDriver *i2cp,
   i2cp->id_state = I2C_ACTIVE;
   i2c_lld_master_transmit(i2cp, slave_addr, txbuf, txbytes, rxbuf, rxbytes);
   _i2c_wait_s(i2cp);
-#if !I2C_USE_WAIT
-  i2c_lld_wait_bus_free(i2cp);
-#endif
-  if (i2cp->id_state == I2C_COMPLETE)
-    i2cp->id_state = I2C_READY;
   chSysUnlock();
 }
 
@@ -204,6 +203,8 @@ void i2cMasterReceive(I2CDriver *i2cp,
                       uint16_t slave_addr,
                       uint8_t *rxbuf,
                       size_t rxbytes){
+
+  i2cAcquireBus(i2cp);
 
   chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) &&\
   		(slave_addr != 0) &&\
@@ -231,11 +232,6 @@ void i2cMasterReceive(I2CDriver *i2cp,
   i2cp->id_state = I2C_ACTIVE;
   i2c_lld_master_receive(i2cp, slave_addr, rxbuf, rxbytes);
   _i2c_wait_s(i2cp);
-#if !I2C_USE_WAIT
-  i2c_lld_wait_bus_free(i2cp);
-#endif
-  if (i2cp->id_state == I2C_COMPLETE)
-    i2cp->id_state = I2C_READY;
   chSysUnlock();
 }
 
