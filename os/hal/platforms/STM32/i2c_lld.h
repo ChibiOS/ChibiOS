@@ -142,7 +142,7 @@ struct I2CDriver{
   /**
    * @brief Thread waiting for I/O completion.
    */
-  Thread                *thread;
+  Thread                *id_thread;
 #endif /* I2C_USE_WAIT */
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)

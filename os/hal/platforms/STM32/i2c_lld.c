@@ -561,13 +561,16 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
 
   i2cp->id_i2c->CR1 |= I2C_CR1_START;               /* send start bit */
 
-#if !I2C_USE_WAIT
-  /* Wait until the START condition is generated on the bus:
-   * the START bit is cleared by hardware */
-  uint32_t timeout = 0xfffff;
-  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
-    ;
-#endif /* I2C_USE_WAIT */
+//#if !I2C_USE_WAIT
+//  /* Wait until the START condition is generated on the bus:
+//   * the START bit is cleared by hardware */
+//  uint32_t timeout = 0xfffff;
+//  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
+//    ;
+//#endif /* I2C_USE_WAIT */
+    uint32_t timeout = 0xfffff;
+    while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
+      ;
 }
 
 
@@ -623,13 +626,16 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
 
   i2cp->id_i2c->CR1 |= I2C_CR1_START;            /* send start bit */
 
-#if !I2C_USE_WAIT
-  /* Wait until the START condition is generated on the bus:
-   * the START bit is cleared by hardware */
-  uint32_t timeout = 0xfffff;
-  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
-    ;
-#endif /* I2C_USE_WAIT */
+//#if !I2C_USE_WAIT
+//  /* Wait until the START condition is generated on the bus:
+//   * the START bit is cleared by hardware */
+//  uint32_t timeout = 0xfffff;
+//  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
+//    ;
+//#endif /* I2C_USE_WAIT */
+    uint32_t timeout = 0xfffff;
+    while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
+      ;
 }
 
 

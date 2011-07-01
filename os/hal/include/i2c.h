@@ -165,9 +165,9 @@ struct I2CSlaveConfig{
  * @notapi
  */
 #define _i2c_wait_s(i2cp) {                                                 \
-  chDbgAssert((i2cp)->thread == NULL,                                       \
+  chDbgAssert((i2cp)->id_thread == NULL,                                       \
               "_i2c_wait(), #1", "already waiting");                        \
-  (i2cp)->thread = chThdSelf();                                             \
+  (i2cp)->id_thread = chThdSelf();                                             \
   chSchGoSleepS(THD_STATE_SUSPENDED);                                       \
 }
 
@@ -179,9 +179,9 @@ struct I2CSlaveConfig{
  * @notapi
  */
 #define _i2c_wakeup_isr(i2cp) {                                             \
-  if ((i2cp)->thread != NULL) {                                             \
-    Thread *tp = (i2cp)->thread;                                            \
-    (i2cp)->thread = NULL;                                                  \
+  if ((i2cp)->id_thread != NULL) {                                             \
+    Thread *tp = (i2cp)->id_thread;                                            \
+    (i2cp)->id_thread = NULL;                                                  \
     chSysLockFromIsr();                                                     \
     chSchReadyI(tp);                                                        \
     chSysUnlockFromIsr();                                                   \
@@ -216,7 +216,6 @@ struct I2CSlaveConfig{
   else                                                                 \
     (i2cp)->id_state = I2C_READY;                                      \
   _i2c_wakeup_isr(i2cp);                                               \
-  i2cReleaseBus(i2cp);                                                 \
 }
 
 
