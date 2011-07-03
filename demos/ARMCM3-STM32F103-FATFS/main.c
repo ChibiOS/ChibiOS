@@ -131,6 +131,7 @@ static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
     "SNDMSGQ",
     "SNDMSG",
     "WTMSG",
+    "WTQUEUE",
     "FINAL"
   };
   Thread *tp;
