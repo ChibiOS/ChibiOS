@@ -174,6 +174,14 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Enables synchronous APIs.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(I2C_USE_WAIT) || defined(__DOXYGEN__)
+#define I2C_USE_WAIT                TRUE
+#endif
+
+/**
  * @brief   Enables the mutual exclusion APIs on the I2C bus.
  */
 #if !defined(I2C_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)

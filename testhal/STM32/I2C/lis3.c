@@ -54,9 +54,9 @@ static msg_t I2CAccelThread(void *arg) {
     i2cscfg = (I2CSlaveConfig *)msg;
 
     /* collect measured data */
-    acceleration_x = i2cscfg->rxbuf[0] + (i2cscfg->rxbuf[1] << 8);
-    acceleration_y = i2cscfg->rxbuf[2] + (i2cscfg->rxbuf[3] << 8);
-    acceleration_z = i2cscfg->rxbuf[4] + (i2cscfg->rxbuf[5] << 8);
+    acceleration_x = accel_rx_data[0] + (accel_rx_data[1] << 8);
+    acceleration_y = accel_rx_data[2] + (accel_rx_data[3] << 8);
+    acceleration_z = accel_rx_data[4] + (accel_rx_data[5] << 8);
   }
   return 0;
 }
@@ -77,8 +77,6 @@ static void i2c_lis3_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
 static const I2CSlaveConfig lis3 = {
 	i2c_lis3_cb,
   i2c_lis3_error_cb,
-  accel_rx_data,
-  accel_tx_data,
 };
 
 
@@ -106,13 +104,13 @@ int init_lis3(void){
 #define RXBYTES 0 /* set to 0 because we need only transmit */
 
   /* configure accelerometer */
-  lis3.txbuf[0] = ACCEL_CTRL_REG1 | AUTO_INCREMENT_BIT; /* register address */
-  lis3.txbuf[1] = 0b11100111;
-  lis3.txbuf[2] = 0b01000001;
-  lis3.txbuf[3] = 0b00000000;
+  accel_tx_data[0] = ACCEL_CTRL_REG1 | AUTO_INCREMENT_BIT; /* register address */
+  accel_tx_data[1] = 0b11100111;
+  accel_tx_data[2] = 0b01000001;
+  accel_tx_data[3] = 0b00000000;
 
   /* sending */
-  i2cMasterTransmit(&I2CD1, &lis3, lis3_addr, TXBYTES, RXBYTES);
+  i2cMasterTransmit(&I2CD1, &lis3, lis3_addr, accel_tx_data, TXBYTES, accel_rx_data, RXBYTES);
   chThdSleepMilliseconds(1);
 
 #undef RXBYTES
@@ -127,9 +125,9 @@ int init_lis3(void){
 void request_acceleration_data(void){
 #define RXBYTES 6
 #define TXBYTES 1
-  lis3.txbuf[0] = ACCEL_OUT_DATA | AUTO_INCREMENT_BIT; // register address
+  accel_tx_data[0] = ACCEL_OUT_DATA | AUTO_INCREMENT_BIT; // register address
   i2cAcquireBus(&I2CD1);
-  i2cMasterTransmit(&I2CD1, &lis3, lis3_addr, TXBYTES, RXBYTES);
+  i2cMasterTransmit(&I2CD1, &lis3, lis3_addr, accel_tx_data, TXBYTES, accel_rx_data, RXBYTES);
   i2cReleaseBus(&I2CD1);
 #undef RXBYTES
 #undef TXBYTES

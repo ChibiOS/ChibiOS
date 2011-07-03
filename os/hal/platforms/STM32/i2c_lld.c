@@ -94,20 +94,20 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     }
     break;
   case I2C_EV8_2_MASTER_BYTE_TRANSMITTED:
+    /* Disable ITEVT In order to not have again a BTF IT */
+    dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
     /* if nothing to read then generate stop */
     if (i2cp->rxbytes == 0){
       dp->CR1 |= I2C_CR1_STOP;
-      /* Disable ITEVT In order to not have again a BTF IT */
-      dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
       /* Portable I2C ISR code defined in the high level driver,
        * note, it is a macro.*/
       _i2c_isr_code(i2cp, i2cp->id_slave_config);
     }
     else{
-      /* Disable ITEVT In order to not have again a BTF IT */
-      dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
       /* send restart and begin reading operations */
-      i2c_lld_master_receive(i2cp, i2cp->slave_addr, i2cp->rxbuf, i2cp->rxbytes);
+      chSysLockFromIsr();
+      i2c_lld_master_transceive(i2cp);
+      chSysUnlockFromIsr();
     }
     break;
 
@@ -242,10 +242,10 @@ static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
 
   if(flags != I2CD_NO_ERROR) {
     /* send communication end signal */
-    _i2c_isr_code(i2cp, i2cp->id_slave_config);
     chSysLockFromIsr();
     i2cAddFlagsI(i2cp, flags);
     chSysUnlockFromIsr();
+    _i2c_isr_err_code(i2cp, i2cp->id_slave_config);
   }
 }
 
@@ -539,10 +539,6 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
   i2cp->txbuf = txbuf;
   i2cp->rxbuf = rxbuf;
 
-  /* enable ERR, EVT & BUF ITs */
-  i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
-  i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
-
   if(slave_addr & 0x8000){/* 10-bit mode used */
     /* add the two msb of 10-bit address to the header */
     i2cp->slave_addr1 = ((slave_addr >>7) & 0x0006);
@@ -568,9 +564,18 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
 //  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
 //    ;
 //#endif /* I2C_USE_WAIT */
-    uint32_t timeout = 0xfffff;
-    while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
-      ;
+
+
+  uint32_t timeout = I2C_START_TIMEOUT;
+  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
+    ;
+  /* is timeout overflows? */
+  chDbgAssert(timeout < I2C_START_TIMEOUT,
+      "i2c_lld_master_transmit(), #1", "time is out");
+
+  /* enable ERR, EVT & BUF ITs */
+  i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
+  i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 }
 
 
@@ -592,11 +597,6 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
 	i2cp->slave_addr = slave_addr;
 	i2cp->rxbytes = rxbytes;
 	i2cp->rxbuf = rxbuf;
-
-  /* enable ERR, EVT & BUF ITs */
-  i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
-  i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                 /* acknowledge returned */
-  i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 
   if(slave_addr & 0x8000){/* 10-bit mode used */
     /* add the two msb of 10-bit address to the header */
@@ -633,9 +633,62 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
 //  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
 //    ;
 //#endif /* I2C_USE_WAIT */
-    uint32_t timeout = 0xfffff;
-    while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
-      ;
+
+
+  uint32_t timeout = I2C_START_TIMEOUT;
+  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
+    ;
+  /* is timeout overflows? */
+  chDbgAssert(timeout < I2C_START_TIMEOUT,
+      "i2c_lld_master_receive(), #1", "time is out");
+
+  /* enable ERR, EVT & BUF ITs */
+  i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
+  i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                 /* acknowledge returned */
+  i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
+}
+
+
+
+void i2c_lld_master_transceive(I2CDriver *i2cp){
+
+  i2cp->flags = I2C_FLG_MASTER_RECEIVER;
+  i2cp->errors = 0;
+
+  i2cp->slave_addr1 |= 0x01;
+
+  /* Only one byte to be received */
+  if(i2cp->rxbytes == 1) {
+    i2cp->flags |= I2C_FLG_1BTR;
+  }
+  /* Only two bytes to be received */
+  else if(i2cp->rxbytes == 2) {
+    i2cp->flags |= I2C_FLG_2BTR;
+    i2cp->id_i2c->CR1 |= I2C_CR1_POS;            /* Acknowledge Position */
+  }
+
+  i2cp->id_i2c->CR1 |= I2C_CR1_START;            /* send start bit */
+
+//#if !I2C_USE_WAIT
+//  /* Wait until the START condition is generated on the bus:
+//   * the START bit is cleared by hardware */
+//  uint32_t timeout = 0xfffff;
+//  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
+//    ;
+//#endif /* I2C_USE_WAIT */
+
+
+  uint32_t timeout = I2C_START_TIMEOUT;
+  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
+    ;
+  /* is timeout overflows? */
+  chDbgAssert(timeout < I2C_START_TIMEOUT,
+      "i2c_lld_master_receive(), #1", "time is out");
+
+  /* enable ERR, EVT & BUF ITs */
+  i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
+  i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                 /* acknowledge returned */
+  i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 }
 
 

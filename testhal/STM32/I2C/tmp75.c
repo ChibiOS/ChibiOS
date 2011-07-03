@@ -14,7 +14,6 @@
 
 /* input buffer */
 static i2cblock_t tmp75_rx_data[TMP75_RX_DEPTH];
-static i2cblock_t tmp75_tx_data[TMP75_TX_DEPTH];
 /* temperature value */
 static int16_t temperature = 0;
 
@@ -29,16 +28,15 @@ static void i2c_tmp75_error_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
 /* This callback raise up when transfer finished */
 static void i2c_tmp75_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
   (void)*i2cp;
+  (void)*i2cscfg;
   /* store temperature value */
-  temperature = (i2cscfg->rxbuf[0] << 8) + i2cscfg->rxbuf[1];
+  temperature = (tmp75_rx_data[0] << 8) + tmp75_rx_data[1];
 }
 
 /* Fill TMP75 config. */
 static const I2CSlaveConfig tmp75 = {
     i2c_tmp75_cb,
     i2c_tmp75_error_cb,
-    tmp75_rx_data,
-    tmp75_tx_data,
 };
 
 #define tmp75_addr 0b1001000
@@ -49,7 +47,7 @@ void request_temperature(void){
 #define RXBYTES 2  /* we need to read 2 bytes */
 
   i2cAcquireBus(&I2CD2);
-  i2cMasterReceive(&I2CD2, &tmp75, tmp75_addr, RXBYTES);
+  i2cMasterReceive(&I2CD2, &tmp75, tmp75_addr, tmp75_rx_data, RXBYTES);
   i2cReleaseBus(&I2CD2);
 }
 

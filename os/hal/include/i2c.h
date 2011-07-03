@@ -165,9 +165,9 @@ struct I2CSlaveConfig{
  * @notapi
  */
 #define _i2c_wait_s(i2cp) {                                                 \
-  chDbgAssert((i2cp)->id_thread == NULL,                                       \
+  chDbgAssert((i2cp)->id_thread == NULL,                                    \
               "_i2c_wait(), #1", "already waiting");                        \
-  (i2cp)->id_thread = chThdSelf();                                             \
+  (i2cp)->id_thread = chThdSelf();                                          \
   chSchGoSleepS(THD_STATE_SUSPENDED);                                       \
 }
 
@@ -179,9 +179,9 @@ struct I2CSlaveConfig{
  * @notapi
  */
 #define _i2c_wakeup_isr(i2cp) {                                             \
-  if ((i2cp)->id_thread != NULL) {                                             \
-    Thread *tp = (i2cp)->id_thread;                                            \
-    (i2cp)->id_thread = NULL;                                                  \
+  if ((i2cp)->id_thread != NULL) {                                          \
+    Thread *tp = (i2cp)->id_thread;                                         \
+    (i2cp)->id_thread = NULL;                                               \
     chSysLockFromIsr();                                                     \
     chSchReadyI(tp);                                                        \
     chSysUnlockFromIsr();                                                   \
@@ -218,6 +218,31 @@ struct I2CSlaveConfig{
   _i2c_wakeup_isr(i2cp);                                               \
 }
 
+/**
+ * @brief   Error ISR code.
+ * @details This code handles the portable part of the ISR code:
+ *          - Error callback invocation.
+ *          - Waiting thread wakeup, if any.
+ *          - Driver state transitions.
+ *
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
+ * @notapi
+ */
+#define _i2c_isr_err_code(i2cp, i2cscfg) {                             \
+  (i2cp)->id_state = I2C_COMPLETE;                                     \
+  if(((i2cp)->id_slave_config)->id_err_callback) {                     \
+    ((i2cp)->id_slave_config)->id_err_callback(i2cp, i2cscfg);         \
+    if((i2cp)->id_state == I2C_COMPLETE)                               \
+      (i2cp)->id_state = I2C_READY;                                    \
+  }                                                                    \
+  else                                                                 \
+    (i2cp)->id_state = I2C_READY;                                      \
+  _i2c_wakeup_isr(i2cp);                                               \
+}
 
 /*===========================================================================*/
 /* External declarations.                                                    */

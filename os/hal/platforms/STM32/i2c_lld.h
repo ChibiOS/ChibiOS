@@ -13,6 +13,7 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
+#define I2C_START_TIMEOUT 0xFFFF
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -233,6 +234,7 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
     uint8_t *txbuf, size_t txbytes, uint8_t *rxbuf, size_t rxbytes);
 void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
     uint8_t *rxbuf, size_t rxbytes);
+void i2c_lld_master_transceive(I2CDriver *i2cp);
 
 #ifdef __cplusplus
 }

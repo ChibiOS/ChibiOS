@@ -29,6 +29,23 @@
 
 
 
+/*
+ * Red LEDs blinker thread, times are in milliseconds.
+ */
+static WORKING_AREA(BlinkWA, 128);
+static msg_t Blink(void *arg) {
+  (void)arg;
+  while (TRUE) {
+    palClearPad(IOPORT3, GPIOC_LED);
+    chThdSleepMilliseconds(500);
+    palSetPad(IOPORT3, GPIOC_LED);
+    chThdSleepMilliseconds(500);
+  }
+  return 0;
+}
+
+
+
 /* Temperature polling thread */
 static WORKING_AREA(PollTmp75ThreadWA, 128);
 static msg_t PollTmp75Thread(void *arg) {
@@ -110,6 +127,8 @@ int main(void) {
           PollAccelThread,
           NULL);
 
+  /* Creates the blinker thread. */
+  chThdCreateStatic(BlinkWA, sizeof(BlinkWA), LOWPRIO, Blink, NULL);
 
   /* main loop that do nothing */
   while (TRUE) {
