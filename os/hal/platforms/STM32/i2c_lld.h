@@ -198,7 +198,8 @@ struct I2CDriver{
 
 
 /* Wait until BUSY flag is reset: a STOP has been generated on the bus
- * signaling the end of transmission
+ * signaling the end of transmission. Normally this wait function
+ * does not block thread, only if slave not response it does.
  */
 #define i2c_lld_wait_bus_free(i2cp) {                                       \
   uint32_t tmo = 0xffff;                                                    \

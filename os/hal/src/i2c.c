@@ -165,18 +165,18 @@ void i2cMasterTransmit(I2CDriver *i2cp,
   /* init slave config field in driver */
   i2cp->id_slave_config = i2cscfg;
 
-#if I2C_USE_WAIT
+#if CH_DBG_ENABLE_ASSERTS
   i2c_lld_wait_bus_free(i2cp);
-  if(i2c_lld_bus_is_busy(i2cp)) {
+  if(i2c_lld_bus_is_busy(i2cp)) { /* Probably slave locks up and need reset. */
 #ifdef PRINTTRACE
     print("I2C Bus busy!\n");
     return;
 #else
-    /* the time is out */
+    /* the time is out. Probably slave locks up. */
     chDbgAssert(FALSE, "i2cMasterTransmit(), #1", "time is out");
-#endif
+#endif /* PRINTTRACE */
   };
-#endif
+#endif /* CH_DBG_ENABLE_ASSERTS */
 
   chSysLock();
   chDbgAssert(i2cp->id_state == I2C_READY,
@@ -214,18 +214,17 @@ void i2cMasterReceive(I2CDriver *i2cp,
   /* init slave config field in driver */
   i2cp->id_slave_config = i2cscfg;
 
-#if I2C_USE_WAIT
+#if CH_DBG_ENABLE_ASSERTS
   i2c_lld_wait_bus_free(i2cp);
   if(i2c_lld_bus_is_busy(i2cp)) {
 #ifdef PRINTTRACE
     print("I2C Bus busy!\n");
     return;
 #else
-    /* the time is out */
     chDbgAssert(FALSE, "i2cMasterReceive(), #1", "time is out");
-#endif
+#endif /* PRINTTRACE */
   };
-#endif
+#endif /* CH_DBG_ENABLE_ASSERTS */
 
   chSysLock();
   chDbgAssert(i2cp->id_state == I2C_READY,
