@@ -590,7 +590,7 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
   while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
     ;
   /* is timeout overflows? */
-  chDbgAssert(timeout < I2C_START_TIMEOUT,
+  chDbgAssert(timeout <= I2C_START_TIMEOUT,
       "i2c_lld_master_transmit(), #1", "time is out");
 
 
@@ -663,7 +663,7 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
   while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
     ;
   /* is timeout overflows? */
-  chDbgAssert(timeout < I2C_START_TIMEOUT,
+  chDbgAssert(timeout <= I2C_START_TIMEOUT,
       "i2c_lld_master_receive(), #1", "time is out");
 }
 
@@ -706,7 +706,7 @@ void i2c_lld_master_transceive(I2CDriver *i2cp){
   while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
     ;
   /* is timeout overflows? */
-  chDbgAssert(timeout < I2C_START_TIMEOUT,
+  chDbgAssert(timeout <= I2C_START_TIMEOUT,
       "i2c_lld_master_receive(), #1", "time is out");
 }
 
