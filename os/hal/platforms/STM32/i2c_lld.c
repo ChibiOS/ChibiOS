@@ -48,10 +48,6 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
 #define txBuffp (i2cp->txbuff_p)
 #define rxBuffp (i2cp->rxbuff_p)
 
-  /* debug variables */
-  uint16_t sr1 = 0;
-  uint16_t sr2 = 0;
-
   I2C_TypeDef *dp = i2cp->id_i2c;
 
   switch(i2c_get_event(i2cp)) {
@@ -206,14 +202,24 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       /* Portable I2C ISR code defined in the high level driver, note, it is a macro.*/
       _i2c_isr_code(i2cp, i2cp->id_slave_config);
       break;
+    case I2C_FLG_MASTER_RECEIVER:
+      /* Here we trapped in case of interrupt "lost" when 2 bytes received.
+       * because STM32 I2C has ORed interrupt sources */
+      if (i2cp->rxbytes > 4){
+        *rxBuffp = dp->DR;
+        rxBuffp++;
+        /* Decrement the number of readed bytes */
+        (i2cp->rxbytes)--;
+      }
+      else{
+        /* something going too wrong*/
+        port_halt();
+      }
+      break;
     }
     break;
-  default:
-    sr1 = regSR1;
-    sr2 = regSR2;
-//    chDbgAssert(FALSE, "i2c_serve_event_interrupt(), #1", "unhandled flags");
-    break;
   }
+
 #undef rxBuffp
 #undef txBuffp
 }
@@ -668,7 +674,7 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
 }
 
 
-/* TODO: doxy strings or remove this redundant function */
+/** TODO: doxy strings or remove this redundant function */
 void i2c_lld_master_transceive(I2CDriver *i2cp){
 
   i2cp->flags = I2C_FLG_MASTER_RECEIVER;

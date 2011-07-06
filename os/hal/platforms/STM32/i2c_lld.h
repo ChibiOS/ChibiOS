@@ -63,7 +63,7 @@
 #define I2C_EV6_MASTER_TRA_MODE_SELECTED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY|I2C_SR2_TRA)<< 16)|I2C_SR1_ADDR|I2C_SR1_TXE))  /* BUSY, MSL, ADDR, TXE and TRA flags */
 #define I2C_EV6_MASTER_REC_MODE_SELECTED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_ADDR))  /* BUSY, MSL and ADDR flags */
 /** @brief  EV7 */
-#define I2C_EV7_MASTER_REC_BYTE_RECEIVED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_RXNE))  /* BUSY, MSL and RXNE flags */
+#define I2C_EV7_MASTER_REC_BYTE_RECEIVED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_RXNE))             /* BUSY, MSL and RXNE flags */
 #define I2C_EV7_MASTER_REC_BYTE_QUEUED      ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_BTF|I2C_SR1_RXNE)) /* BUSY, MSL, RXNE and BTF flags*/
 /** @brief  EV8 */
 #define I2C_EV8_MASTER_BYTE_TRANSMITTING    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY|I2C_SR2_TRA)<< 16)|I2C_SR1_TXE))   /* TRA, BUSY, MSL, TXE flags */
@@ -71,7 +71,7 @@
 #define I2C_EV8_2_MASTER_BYTE_TRANSMITTED   ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY|I2C_SR2_TRA)<< 16)|I2C_SR1_BTF|I2C_SR1_TXE))  /* TRA, BUSY, MSL, TXE and BTF flags */
 /** @brief  EV9 */
 #define I2C_EV9_MASTER_ADDR_10BIT           ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_ADD10))  /* BUSY, MSL and ADD10 flags */
-#define I2C_EV_MASK                         0x00FFFFFF
+#define I2C_EV_MASK                         0x00FFFFFF  /* First byte zeroed because there is no need of PEC register part from SR2 */
 
 #define I2C_FLG_1BTR            0x01 /* Single byte to be received and processed */
 #define I2C_FLG_2BTR            0x02 /* Two bytes to be received and processed */
@@ -164,15 +164,15 @@ struct I2CDriver{
    */
   const I2CSlaveConfig  *id_slave_config;
 
-  size_t                txbytes;    /*!< Number of bytes to be transmitted. */
-  size_t                rxbytes;    /*!< Number of bytes to be received. */
+  __IO size_t           txbytes;    /*!< Number of bytes to be transmitted. */
+  __IO size_t           rxbytes;    /*!< Number of bytes to be received. */
   uint8_t               *rxbuf;     /*!< Pointer to receive buffer. */
   uint8_t               *txbuf;     /*!< Pointer to transmit buffer.*/
   uint8_t               *rxbuff_p;  /*!< Pointer to the current byte in slave rx buffer. */
   uint8_t               *txbuff_p;  /*!< Pointer to the current byte in slave tx buffer. */
 
-  i2cflags_t            errors;     /*!< Error flags.*/
-  i2cflags_t            flags;      /*!< State flags.*/
+  __IO i2cflags_t       errors;     /*!< Error flags.*/
+  __IO i2cflags_t       flags;      /*!< State flags.*/
 
   uint16_t              slave_addr; /*!< Current slave address. */
   uint8_t               slave_addr1;/*!< 7-bit address of the slave with r\w bit.*/
