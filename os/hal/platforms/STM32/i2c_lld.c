@@ -152,6 +152,10 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       case 0:
         dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
         dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
+
+        regSR1 = dp->SR1;
+        regSR2 = dp->SR2;
+
         /* Portable I2C ISR code defined in the high level driver, note, it is a macro.*/
         _i2c_isr_code(i2cp, i2cp->id_slave_config);
         break;
@@ -186,19 +190,31 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       break;
     case I2C_EV7_3_MASTER_REC_2BYTES_TO_PROCESS: /* only for case of two bytes to be received */
       /* DataN-1 and DataN are received */
-      chSysLockFromIsr();
+//      chSysLockFromIsr();
       dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
       dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
       /* Program the STOP */
       dp->CR1 |= I2C_CR1_STOP;
       /* Read the DataN-1*/
       *rxBuffp = dp->DR;
-      chSysUnlockFromIsr();
       rxBuffp++;
       /* Read the DataN*/
       *rxBuffp = dp->DR;
       i2cp->rxbytes = 0;
       i2cp->flags = 0;
+
+      while(dp->CR1 & I2C_CR1_STOP){
+        ;
+      }
+
+      regSR1 = dp->SR1;
+      regSR2 = dp->SR2;
+
+      if((regSR1 + regSR2) > 0){
+        chDbgPanic("i2c_lld_master_receive");
+      }
+
+//      chSysUnlockFromIsr();
       /* Portable I2C ISR code defined in the high level driver, note, it is a macro.*/
       _i2c_isr_code(i2cp, i2cp->id_slave_config);
       break;
@@ -577,8 +593,6 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
   i2cp->flags = 0;
   i2cp->errors = 0;
 
-  /* enable ERR, EVT & BUF ITs */
-  i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 
   i2cp->id_i2c->CR1 |= I2C_CR1_START;               /* send start bit */
@@ -592,14 +606,15 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
 //#endif /* I2C_USE_WAIT */
 
 
-  uint32_t timeout = I2C_START_TIMEOUT;
-  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
-    ;
-  /* is timeout overflows? */
-  chDbgAssert(timeout <= I2C_START_TIMEOUT,
-      "i2c_lld_master_transmit(), #1", "time is out");
-
-
+//  uint32_t timeout = I2C_START_TIMEOUT;
+//  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
+//    ;
+//  /* is timeout overflows? */
+//  chDbgAssert(timeout <= I2C_START_TIMEOUT,
+//      "i2c_lld_master_transmit(), #1", "time is out");
+//
+//  /* enable ERR, EVT & BUF ITs */
+//  i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
 }
 
 
@@ -618,6 +633,10 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
  */
 void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
     uint8_t *rxbuf, size_t rxbytes){
+
+  if(i2cp->id_i2c->SR1 + i2cp->id_i2c->SR2 > 0){
+    chDbgPanic("i2c_lld_master_receive");
+  }
 
 	i2cp->slave_addr = slave_addr;
 	i2cp->rxbytes = rxbytes;
@@ -639,8 +658,6 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
   i2cp->flags = I2C_FLG_MASTER_RECEIVER;
   i2cp->errors = 0;
 
-  /* enable ERR, EVT & BUF ITs */
-  i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
   i2cp->id_i2c->CR1 |= I2C_CR1_ACK;              /* acknowledge returned */
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 
@@ -665,12 +682,17 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
 //#endif /* I2C_USE_WAIT */
 
 
+
   uint32_t timeout = I2C_START_TIMEOUT;
   while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
     ;
   /* is timeout overflows? */
   chDbgAssert(timeout <= I2C_START_TIMEOUT,
       "i2c_lld_master_receive(), #1", "time is out");
+
+  /* enable ERR, EVT & BUF ITs */
+  i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);
+
 }
 
 
@@ -708,12 +730,12 @@ void i2c_lld_master_transceive(I2CDriver *i2cp){
 //#endif /* I2C_USE_WAIT */
 
 
-  uint32_t timeout = I2C_START_TIMEOUT;
-  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
-    ;
-  /* is timeout overflows? */
-  chDbgAssert(timeout <= I2C_START_TIMEOUT,
-      "i2c_lld_master_receive(), #1", "time is out");
+//  uint32_t timeout = I2C_START_TIMEOUT;
+//  while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
+//    ;
+//  /* is timeout overflows? */
+//  chDbgAssert(timeout <= I2C_START_TIMEOUT,
+//      "i2c_lld_master_receive(), #1", "time is out");
 }
 
 

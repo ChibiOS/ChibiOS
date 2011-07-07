@@ -167,8 +167,10 @@ struct I2CSlaveConfig{
 #define _i2c_wait_s(i2cp) {                                                 \
   chDbgAssert((i2cp)->id_thread == NULL,                                    \
               "_i2c_wait(), #1", "already waiting");                        \
+  chSysLock();                                                              \
   (i2cp)->id_thread = chThdSelf();                                          \
   chSchGoSleepS(THD_STATE_SUSPENDED);                                       \
+  chSysUnlock();                                                            \
 }
 
 /**
