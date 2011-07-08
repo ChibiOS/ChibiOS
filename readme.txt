@@ -84,6 +84,9 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Added a new functionality to the registry subsystem, now it is possible
+  to associate a name to the threads using chRegSetThreadName. The main and
+  idle threads have their name assigned by default.
 - NEW: Added TIM8 support to the STM32 GPT, ICU and PWM drivers.
 - NEW: Updated the STM32 header file to the latest version 3.5.0 and fixed
   it in order to correct several bugs related to the XL family.

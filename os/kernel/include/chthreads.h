@@ -49,6 +49,12 @@ struct Thread {
   Thread                *p_older;   /**< @brief Older registry element.     */
 #endif
   /* End of the fields shared with the ReadyList structure. */
+#if CH_USE_REGISTRY
+  /**
+   * @brief Thread name or @p NULL.
+   */
+  const char            *p_name;
+#endif
   /**
    * @brief Current thread state.
    */
@@ -197,36 +203,10 @@ struct Thread {
 #define THD_MEM_MODE_MEMPOOL    2   /**< @brief Thread memory mode: pool.   */
 #define THD_TERMINATE           4   /**< @brief Termination requested.      */
 
-/** @brief Thread function.*/
-typedef msg_t (*tfunc_t)(void *);
-
-/*
- * Threads APIs.
+/**
+ * @brief Thread function.
  */
-#ifdef __cplusplus
-extern "C" {
-#endif
-  Thread *_thread_init(Thread *tp, tprio_t prio);
-#if CH_DBG_FILL_THREADS
-  void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v);
-#endif
-  Thread *chThdCreateI(void *wsp, size_t size,
-                       tprio_t prio, tfunc_t pf, void *arg);
-  Thread *chThdCreateStatic(void *wsp, size_t size,
-                            tprio_t prio, tfunc_t pf, void *arg);
-  tprio_t chThdSetPriority(tprio_t newprio);
-  Thread *chThdResume(Thread *tp);
-  void chThdTerminate(Thread *tp);
-  void chThdSleep(systime_t time);
-  void chThdSleepUntil(systime_t time);
-  void chThdYield(void);
-  void chThdExit(msg_t msg);
-#if CH_USE_WAITEXIT
-  msg_t chThdWait(Thread *tp);
-#endif
-#ifdef __cplusplus
-}
-#endif
+typedef msg_t (*tfunc_t)(void *);
 
 /**
  * @brief   Returns a pointer to the current @p Thread.
@@ -341,6 +321,34 @@ extern "C" {
  * @api
  */
 #define chThdSleepMicroseconds(usec) chThdSleep(US2ST(usec))
+
+/*
+ * Threads APIs.
+ */
+#ifdef __cplusplus
+extern "C" {
+#endif
+  Thread *_thread_init(Thread *tp, tprio_t prio);
+#if CH_DBG_FILL_THREADS
+  void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v);
+#endif
+  Thread *chThdCreateI(void *wsp, size_t size,
+                       tprio_t prio, tfunc_t pf, void *arg);
+  Thread *chThdCreateStatic(void *wsp, size_t size,
+                            tprio_t prio, tfunc_t pf, void *arg);
+  tprio_t chThdSetPriority(tprio_t newprio);
+  Thread *chThdResume(Thread *tp);
+  void chThdTerminate(Thread *tp);
+  void chThdSleep(systime_t time);
+  void chThdSleepUntil(systime_t time);
+  void chThdYield(void);
+  void chThdExit(msg_t msg);
+#if CH_USE_WAITEXIT
+  msg_t chThdWait(Thread *tp);
+#endif
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _CHTHREADS_H_ */
 
