@@ -329,6 +329,7 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   (void)arg;
+  chRegSetThreadName("blinker");
   while (TRUE) {
     palClearPad(GPIOF, GPIOF_LED4);
     palSetPad(GPIOF, GPIOF_LED1);
