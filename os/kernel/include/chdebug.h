@@ -32,15 +32,15 @@
 /**
  * @brief Trace buffer entries.
  */
-#ifndef TRACE_BUFFER_SIZE
-#define TRACE_BUFFER_SIZE       64
+#ifndef CH_TRACE_BUFFER_SIZE
+#define CH_TRACE_BUFFER_SIZE        64
 #endif
 
 /**
  * @brief Fill value for thread stack area in debug mode.
  */
-#ifndef STACK_FILL_VALUE
-#define STACK_FILL_VALUE        0x55
+#ifndef CH_STACK_FILL_VALUE
+#define CH_STACK_FILL_VALUE         0x55
 #endif
 
 /**
@@ -50,38 +50,33 @@
  *          a debugger. A uninitialized field is not an error in itself but it
  *          better to know it.
  */
-#ifndef THREAD_FILL_VALUE
-#define THREAD_FILL_VALUE       0xFF
+#ifndef CH_THREAD_FILL_VALUE
+#define CH_THREAD_FILL_VALUE        0xFF
 #endif
+
+#define __QUOTE_THIS(p) #p
 
 #if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
 /**
  * @brief Trace buffer record.
  */
 typedef struct {
-  void                  *cse_wtobjp;    /**< @brief Object where going to
-                                                    sleep.                  */
-  systime_t             cse_time;       /**< @brief Time of the switch
-                                                    event.                  */
-  uint16_t              cse_state: 4;   /**< @brief Switched out thread
-                                                    state.                  */
-  uint16_t              cse_tid: 12;    /**< @brief Switched in thread id.  */
-} CtxSwcEvent;
+  systime_t             se_time;    /**< @brief Time of the switch event.   */
+  Thread                *se_tp;     /**< @brief Switched in thread.         */
+  void                  *se_wtobjp; /**< @brief Object where going to sleep.*/
+  uint8_t               se_state;   /**< @brief Switched out thread state.  */
+} ch_swc_event_t;
 
 /**
  * @brief Trace buffer header.
  */
 typedef struct {
-  unsigned              tb_size;        /**< @brief Trace buffer size
-                                                    (entries).              */
-  CtxSwcEvent           *tb_ptr;        /**< @brief Pointer to the ring buffer
-                                                    front.                  */
+  unsigned              tb_size;    /**< @brief Trace buffer size (entries).*/
+  ch_swc_event_t        *tb_ptr;    /**< @brief Pointer to the buffer front.*/
   /** @brief Ring buffer.*/
-  CtxSwcEvent           tb_buffer[TRACE_BUFFER_SIZE];
-} TraceBuffer;
+  ch_swc_event_t        tb_buffer[CH_TRACE_BUFFER_SIZE];
+} ch_trace_buffer_t;
 #endif /* CH_DBG_ENABLE_TRACE */
-
-#define __QUOTE_THIS(p) #p
 
 #if CH_DBG_ENABLE_CHECKS || defined(__DOXYGEN__)
 /**
@@ -150,12 +145,12 @@ typedef struct {
 extern "C" {
 #endif
 #if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
-  extern TraceBuffer trace_buffer;
+  extern ch_trace_buffer_t ch_dbg_trace_buffer;
   void _trace_init(void);
   void chDbgTrace(Thread *otp);
 #endif
 #if CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK
-  extern char *panic_msg;
+  extern char *ch_dbg_panic_msg;
   void chDbgPanic(char *msg);
 #endif
 #ifdef __cplusplus
