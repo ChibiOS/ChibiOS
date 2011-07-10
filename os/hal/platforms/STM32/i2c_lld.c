@@ -98,9 +98,7 @@ void _i2c_ev6_master_rec_mode_selected(I2CDriver *i2cp){
     /* Clear ACK */
     dp->CR1 &= (uint16_t)~I2C_CR1_ACK;
     /* Disable the ITBUF in order to have only the BTF interrupt */
-    chSysLockFromIsr();
     dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
-    chSysUnlockFromIsr();
     break;
 
   default: /* more than 2 bytes to receive */
@@ -121,11 +119,9 @@ void _i2c_ev7_master_rec_byte_qued(I2CDriver *i2cp){
 
   switch(i2cp->flags & EV7_SUBEV_MASK) {
 
-  case I2C_EV7_2_MASTER_REC_3BYTES_TO_PROCESS:
+  case I2C_EV7_2_MASTER_REC_3BYTES_TO_PROCESS:/* only for case of three bytes to be received */
     /* DataN-2 and DataN-1 are received */
-    chSysLockFromIsr();
     dp->CR2 |= I2C_CR2_ITBUFEN;
-    chSysUnlockFromIsr();
     /* Clear ACK */
     dp->CR1 &= (uint16_t)~I2C_CR1_ACK;
     /* Read the DataN-2
@@ -148,10 +144,8 @@ void _i2c_ev7_master_rec_byte_qued(I2CDriver *i2cp){
 
   case I2C_EV7_3_MASTER_REC_2BYTES_TO_PROCESS: /* only for case of two bytes to be received */
     /* DataN-1 and DataN are received */
-    chSysLockFromIsr();
     dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
     dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
-    chSysUnlockFromIsr();
     /* Program the STOP */
     dp->CR1 |= I2C_CR1_STOP;
     /* Read the DataN-1*/
@@ -163,26 +157,18 @@ void _i2c_ev7_master_rec_byte_qued(I2CDriver *i2cp){
     i2cp->flags = 0;
     while(dp->CR1 & I2C_CR1_STOP)
       ;
-    chDbgAssert(((dp->SR1) + (dp->SR2)) == 0,
-        "i2c_serve_event_interrupt(), #1",
-        "interrupt source(s) not resetted");
     /* Portable I2C ISR code defined in the high level driver, note, it is a macro.*/
     _i2c_isr_code(i2cp, i2cp->id_slave_config);
     break;
 
-  case I2C_FLG_MASTER_RECEIVER:
-    /* Here we trapped in case of one interrupt "lost" when 2 bytes received.
-     * That is possible because STM32 I2C has OR'ed interrupt sources. */
-    if (i2cp->rxbytes > 4){
+  case I2C_FLG_MASTER_RECEIVER: /* some time in hi loaded cases */
+    if (i2cp->rxbytes > 3){
       *rxBuffp = dp->DR;
       rxBuffp++;
-      /* Decrement the number of readed bytes */
       (i2cp->rxbytes)--;
     }
-    else{
-      /* something going too wrong*/
-      port_halt();
-    }
+    else
+      _i2c_unhandled_case(i2cp);
     break;
 
   default:
@@ -232,9 +218,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     /* If no further data to be sent, disable the I2C ITBUF in order
      * to not have a TxE interrupt */
     if(i2cp->txbytes == 0) {
-      chSysLockFromIsr();
       dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
-      chSysUnlockFromIsr();
     }
     /* EV8_1 write the first data */
     dp->DR = *txBuffp;
@@ -247,9 +231,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       if(i2cp->txbytes == 0) {
         /* If no further data to be sent, disable the ITBUF in order to
          * not have a TxE interrupt */
-        chSysLockFromIsr();
         dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
-        chSysUnlockFromIsr();
       }
       dp->DR = *txBuffp;
       txBuffp++;
@@ -258,9 +240,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
 
   case I2C_EV8_2_MASTER_BYTE_TRANSMITTED:
     /* Disable ITEVT In order to not have again a BTF IT */
-    chSysLockFromIsr();
     dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
-    chSysUnlockFromIsr();
     /* if nothing to read then generate stop */
     if (i2cp->rxbytes == 0){
       dp->CR1 |= I2C_CR1_STOP;
@@ -271,8 +251,10 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       _i2c_isr_code(i2cp, i2cp->id_slave_config);
     }
     else{
+      chSysLockFromIsr();
       /* send restart and begin reading operations */
       i2c_lld_master_transceive(i2cp);
+      chSysUnlockFromIsr();
     }
     break;
 
@@ -294,20 +276,21 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       switch(i2cp->rxbytes){
       case 3:
         /* Disable the ITBUF in order to have only the BTF interrupt */
-        chSysLockFromIsr();
         dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
-        chSysUnlockFromIsr();
         i2cp->flags |= I2C_FLG_3BTR;
         break;
       case 0:
-        chSysLockFromIsr();
         dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
         dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
-        chSysUnlockFromIsr();
         /* Portable I2C ISR code defined in the high level driver, note, it is a macro.*/
         _i2c_isr_code(i2cp, i2cp->id_slave_config);
         break;
       }
+    }
+    else{
+      /* Disable the ITBUF in order to have only the BTF interrupt */
+      dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
+      i2cp->flags |= I2C_FLG_3BTR;
     }
     /* when remaining 3 bytes do nothing, wait until RXNE and BTF
      * are set (until 2 bytes are received) */
@@ -317,16 +300,16 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     _i2c_ev7_master_rec_byte_qued(i2cp);
     break;
 
-  default: /* only 1 byte to read from data register */
+  default: /* only 1 byte must to be read to complete trasfer. Stop already sent to bus. */
+    chDbgAssert((i2cp->rxbytes) == 1,
+          "i2c_serve_event_interrupt(), #1",
+          "more than 1 byte to be received");
     /* Read the data register */
     *rxBuffp = dp->DR;
-    rxBuffp++;
-    i2cp->rxbytes--;
+    i2cp->rxbytes = 0;
     /* disable interrupts */
-    chSysLockFromIsr();
     dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
     dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
-    chSysUnlockFromIsr();
     /* Portable I2C ISR code defined in the high level driver, note, it is a macro.*/
     _i2c_isr_code(i2cp, i2cp->id_slave_config);
     break;
@@ -728,10 +711,9 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
 void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
     uint8_t *rxbuf, size_t rxbytes){
 
-  /* check interrupt sources */
-  if(i2cp->id_i2c->SR1 + i2cp->id_i2c->SR2 > 0){
-    chDbgPanic("i2c_lld_master_receive");
-  }
+  chDbgAssert((i2cp->id_i2c->SR1 + i2cp->id_i2c->SR2) == 0,
+        "i2c_lld_master_receive(), #1",
+        "some interrupt sources not clear");
 
 	i2cp->slave_addr = slave_addr;
 	i2cp->rxbytes = rxbytes;
@@ -783,6 +765,14 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
 /** TODO: doxy strings or remove this redundant function */
 void i2c_lld_master_transceive(I2CDriver *i2cp){
 
+  chDbgAssert((i2cp != NULL) && (i2cp->slave_addr1 != 0) &&\
+      (i2cp->rxbytes > 0) && (i2cp->rxbuf != NULL),
+      "i2c_lld_master_transceive(), #1",
+      "");
+
+  /* first send start bit to reduce blocking time */
+  i2cp->id_i2c->CR1 |= I2C_CR1_START;
+
   i2cp->flags = I2C_FLG_MASTER_RECEIVER;
   i2cp->errors = 0;
 
@@ -800,8 +790,6 @@ void i2c_lld_master_transceive(I2CDriver *i2cp){
 
   i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                 /* acknowledge returned */
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
-
-  i2cp->id_i2c->CR1 |= I2C_CR1_START;               /* send start bit */
 
   uint32_t timeout = I2C_START_TIMEOUT;
   while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout--)
