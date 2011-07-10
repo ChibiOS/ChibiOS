@@ -228,6 +228,7 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   (void)arg;
+  chRegSetThreadName("blinker1");
   while (TRUE) {
     palTogglePad(IOPORT1, PIOA_LED1);
     if (fs_ready)
@@ -245,6 +246,7 @@ static WORKING_AREA(waThread2, 64);
 static msg_t Thread2(void *p) {
 
   (void)p;
+  chRegSetThreadName("blinker2");
   while (TRUE) {
     palSetPad(IOPORT1, PIOA_LED2);
     chThdSleepMilliseconds(100);

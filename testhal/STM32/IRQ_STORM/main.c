@@ -70,6 +70,8 @@ static msg_t WorkerThread(void *arg) {
   unsigned r;
   msg_t msg;
 
+  chRegSetThreadName("worker");
+
   /* Work loop.*/
   while (TRUE) {
     /* Waiting for a message.*/

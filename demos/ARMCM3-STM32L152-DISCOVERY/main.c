@@ -30,6 +30,7 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   (void)arg;
+  chRegSetThreadName("blinker");
   while (TRUE) {
     palSetPad(GPIOB, GPIOB_LED3);
     chThdSleepMilliseconds(250);
