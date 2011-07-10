@@ -85,7 +85,7 @@
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
 - NEW: Improvements to the trace buffer, now it stores a full thread pointer
-  and event time, changed names of debug variables by addin the "ch_dbg_"
+  and event time, changed names to debug variables by adding the "dbg_"
   prefix.
 - NEW: Added a new functionality to the registry subsystem, now it is possible
   to associate a name to the threads using chRegSetThreadName. The main and

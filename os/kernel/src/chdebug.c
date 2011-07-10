@@ -40,7 +40,7 @@
 /**
  * @brief   Public trace buffer.
  */
-ch_trace_buffer_t ch_dbg_trace_buffer;
+ch_trace_buffer_t dbg_trace_buffer;
 
 /**
  * @brief   Trace circular buffer subsystem initialization.
@@ -48,8 +48,8 @@ ch_trace_buffer_t ch_dbg_trace_buffer;
  */
 void _trace_init(void) {
 
-  ch_dbg_trace_buffer.tb_size = CH_TRACE_BUFFER_SIZE;
-  ch_dbg_trace_buffer.tb_ptr = &ch_dbg_trace_buffer.tb_buffer[0];
+  dbg_trace_buffer.tb_size = CH_TRACE_BUFFER_SIZE;
+  dbg_trace_buffer.tb_ptr = &dbg_trace_buffer.tb_buffer[0];
 }
 
 /**
@@ -61,13 +61,13 @@ void _trace_init(void) {
  */
 void chDbgTrace(Thread *otp) {
 
-  ch_dbg_trace_buffer.tb_ptr->se_time   = chTimeNow();
-  ch_dbg_trace_buffer.tb_ptr->se_tp     = currp;
-  ch_dbg_trace_buffer.tb_ptr->se_wtobjp = otp->p_u.wtobjp;
-  ch_dbg_trace_buffer.tb_ptr->se_state  = (uint8_t)otp->p_state;
-  if (++ch_dbg_trace_buffer.tb_ptr >=
-      &ch_dbg_trace_buffer.tb_buffer[CH_TRACE_BUFFER_SIZE])
-    ch_dbg_trace_buffer.tb_ptr = &ch_dbg_trace_buffer.tb_buffer[0];
+  dbg_trace_buffer.tb_ptr->se_time   = chTimeNow();
+  dbg_trace_buffer.tb_ptr->se_tp     = currp;
+  dbg_trace_buffer.tb_ptr->se_wtobjp = otp->p_u.wtobjp;
+  dbg_trace_buffer.tb_ptr->se_state  = (uint8_t)otp->p_state;
+  if (++dbg_trace_buffer.tb_ptr >=
+      &dbg_trace_buffer.tb_buffer[CH_TRACE_BUFFER_SIZE])
+    dbg_trace_buffer.tb_ptr = &dbg_trace_buffer.tb_buffer[0];
 }
 #endif /* CH_DBG_ENABLE_TRACE */
 
@@ -79,7 +79,7 @@ void chDbgTrace(Thread *otp) {
  *          written once and then the system is halted. This variable can be
  *          set to @p NULL if the halt is caused by a stack overflow.
  */
-char *ch_dbg_panic_msg;
+char *dbg_panic_msg;
 
 /**
  * @brief   Prints a panic message on the console and then halts the system.
@@ -88,7 +88,7 @@ char *ch_dbg_panic_msg;
  */
 void chDbgPanic(char *msg) {
 
-  ch_dbg_panic_msg = msg;
+  dbg_panic_msg = msg;
   chSysHalt();
 }
 #endif /* CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK */
