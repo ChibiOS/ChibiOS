@@ -154,8 +154,9 @@ void _i2c_ev7_master_rec_byte_qued(I2CDriver *i2cp){
     break;
 
   case I2C_FLG_MASTER_RECEIVER:
-    /* some time in hi load cases possible to miss interrupt
-     * ??? TODO: really?*/
+    /* Some times in hi load scenarions it is possible to "miss" interrupt
+     * because STM32 I2C has OR'ed interrupt sources. This case handle that
+     * scenario. */
     if (i2cp->rxbytes > 3){
       *rxBuffp = dp->DR;
       rxBuffp++;
