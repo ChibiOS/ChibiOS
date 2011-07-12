@@ -79,13 +79,12 @@
  */
 typedef enum {
   /* master part */
-  I2C_UNINIT = 0,   /**< @brief Not initialized.        */
-  I2C_STOP = 1,     /**< @brief Stopped.                */
-  I2C_READY = 2,    /**< @brief Ready.                  */
-  I2C_ACTIVE = 3,   /**< @brief In communication.          */
-  I2C_COMPLETE = 4, /**< @brief Asynchronous operation complete.   */
+  I2C_UNINIT = 0,   /**< @brief Not initialized.                    */
+  I2C_STOP = 1,     /**< @brief Stopped.                            */
+  I2C_READY = 2,    /**< @brief Ready.                              */
+  I2C_ACTIVE = 3,   /**< @brief In communication.                   */
 
-  /* slave part */
+  /* Slave part. Not realized. */
   I2C_SACTIVE = 10,
   I2C_STRANSMIT = 11,
   I2C_SRECEIVE = 12,
@@ -209,11 +208,9 @@ struct I2CSlaveConfig{
  * @notapi
  */
 #define _i2c_isr_code(i2cp, i2cscfg) {                                 \
-  (i2cp)->id_state = I2C_COMPLETE;                                     \
   if(((i2cp)->id_slave_config)->id_callback) {                         \
     ((i2cp)->id_slave_config)->id_callback(i2cp, i2cscfg);             \
-    if((i2cp)->id_state == I2C_COMPLETE)                               \
-      (i2cp)->id_state = I2C_READY;                                    \
+    (i2cp)->id_state = I2C_READY;                                      \
   }                                                                    \
   else                                                                 \
     (i2cp)->id_state = I2C_READY;                                      \
@@ -235,11 +232,9 @@ struct I2CSlaveConfig{
  * @notapi
  */
 #define _i2c_isr_err_code(i2cp, i2cscfg) {                             \
-  (i2cp)->id_state = I2C_COMPLETE;                                     \
   if(((i2cp)->id_slave_config)->id_err_callback) {                     \
     ((i2cp)->id_slave_config)->id_err_callback(i2cp, i2cscfg);         \
-    if((i2cp)->id_state == I2C_COMPLETE)                               \
-      (i2cp)->id_state = I2C_READY;                                    \
+    (i2cp)->id_state = I2C_READY;                                      \
   }                                                                    \
   else                                                                 \
     (i2cp)->id_state = I2C_READY;                                      \

@@ -1,7 +1,7 @@
 /**
  * @file STM32/i2c_lld.h
  * @brief STM32 I2C subsystem low level driver header.
- * @addtogroup STM32_I2C
+ * @addtogroup I2C
  * @{
  */
 
@@ -111,13 +111,13 @@ typedef enum {
  * @brief Driver configuration structure.
  */
 typedef struct {
-  i2copmode_t     op_mode;       /*!< Specifies the I2C mode.*/
-  uint32_t        clock_speed;   /*!< Specifies the clock frequency. Must be set to a value lower than 400kHz */
-  i2cdutycycle_t  duty_cycle;    /*!< Specifies the I2C fast mode duty cycle */
-  uint8_t         own_addr_7;    /*!< Specifies the first device 7-bit own address. */
-  uint16_t        own_addr_10;   /*!< Specifies the second part of device own address in 10-bit mode. Set to NULL if not used. */
-  uint16_t        ack;           /*!< Enables or disables the acknowledgement. */
-  uint8_t         nbit_own_addr; /*!< Specifies if 7-bit or 10-bit address is acknowledged */
+  i2copmode_t     op_mode;       /**< @brief Specifies the I2C mode.*/
+  uint32_t        clock_speed;   /**< @brief Specifies the clock frequency. Must be set to a value lower than 400kHz */
+  i2cdutycycle_t  duty_cycle;    /**< @brief Specifies the I2C fast mode duty cycle */
+  uint8_t         own_addr_7;    /**< @brief Specifies the first device 7-bit own address. */
+  uint16_t        own_addr_10;   /**< @brief Specifies the second part of device own address in 10-bit mode. Set to NULL if not used. */
+  uint16_t        ack;           /**< @brief Enables or disables the acknowledgment. */
+  uint8_t         nbit_own_addr; /**< @brief Specifies if 7-bit or 10-bit address is acknowledged */
 } I2CConfig;
 
 
@@ -164,21 +164,21 @@ struct I2CDriver{
    */
   const I2CSlaveConfig  *id_slave_config;
 
-  __IO size_t           txbytes;    /*!< Number of bytes to be transmitted. */
-  __IO size_t           rxbytes;    /*!< Number of bytes to be received. */
-  uint8_t               *rxbuf;     /*!< Pointer to receive buffer. */
-  uint8_t               *txbuf;     /*!< Pointer to transmit buffer.*/
-  uint8_t               *rxbuff_p;  /*!< Pointer to the current byte in slave rx buffer. */
-  uint8_t               *txbuff_p;  /*!< Pointer to the current byte in slave tx buffer. */
+  __IO size_t           txbytes;    /*!< @brief Number of bytes to be transmitted. */
+  __IO size_t           rxbytes;    /*!< @brief Number of bytes to be received. */
+  uint8_t               *rxbuf;     /*!< @brief Pointer to receive buffer. */
+  uint8_t               *txbuf;     /*!< @brief Pointer to transmit buffer.*/
+  uint8_t               *rxbuff_p;  /*!< @brief Pointer to the current byte in slave rx buffer. */
+  uint8_t               *txbuff_p;  /*!< @brief Pointer to the current byte in slave tx buffer. */
 
-  __IO i2cflags_t       errors;     /*!< Error flags.*/
-  __IO i2cflags_t       flags;      /*!< State flags.*/
+  __IO i2cflags_t       errors;     /*!< @brief Error flags.*/
+  __IO i2cflags_t       flags;      /*!< @brief State flags.*/
 
-  uint16_t              slave_addr; /*!< Current slave address. */
-  uint8_t               slave_addr1;/*!< 7-bit address of the slave with r\w bit.*/
-  uint8_t               slave_addr2;/*!< Used in 10-bit address mode. */
+  uint16_t              slave_addr; /*!< @brief Current slave address. */
+  uint8_t               slave_addr1;/*!< @brief 7-bit address of the slave with r\w bit.*/
+  uint8_t               slave_addr2;/*!< @brief Used in 10-bit address mode. */
 
-  EventSource           sevent;     /*!< Status Change @p EventSource.*/
+  EventSource           sevent;     /*!< @brief Status Change @p EventSource.*/
 
   /*********** End of the mandatory fields. **********************************/
 

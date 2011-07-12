@@ -1,7 +1,7 @@
 /**
  * @file STM32/i2c_lld.c
  * @brief STM32 I2C subsystem low level driver source. Slave mode not implemented.
- * @addtogroup STM32_I2C
+ * @addtogroup I2C
  * @{
  */
 
