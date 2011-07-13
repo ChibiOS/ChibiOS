@@ -490,15 +490,18 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
 
   if (clock_speed <= 100000) {                                  /* Configure clock_div in standard mode */
     chDbgAssert(duty == STD_DUTY_CYCLE,
-                "i2c_lld_set_clock(), #1", "Invalid standard mode duty cycle");
+                "i2c_lld_set_clock(), #1",
+                "Invalid standard mode duty cycle");
     clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 2));    /* Standard mode clock_div calculate: Tlow/Thigh = 1/1 */
     if (clock_div < 0x04) clock_div = 0x04;                     /* Test if CCR value is under 0x4, and set the minimum allowed value */
     regCCR |= (clock_div & I2C_CCR_CCR);                        /* Set clock_div value for standard mode */
     i2cp->id_i2c->TRISE = freq + 1;                             /* Set Maximum Rise Time for standard mode */
   }
   else if(clock_speed <= 400000) {                              /* Configure clock_div in fast mode */
-    chDbgAssert((duty == FAST_DUTY_CYCLE_2) || (duty == FAST_DUTY_CYCLE_16_9),
-                "i2c_lld_set_clock(), #2", "Invalid fast mode duty cycle");
+    chDbgAssert((duty == FAST_DUTY_CYCLE_2) ||
+                (duty == FAST_DUTY_CYCLE_16_9),
+                "i2c_lld_set_clock(), #2",
+                "Invalid fast mode duty cycle");
     if(duty == FAST_DUTY_CYCLE_2) {
       clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 3));  /* Fast mode clock_div calculate: Tlow/Thigh = 2/1 */
     }
