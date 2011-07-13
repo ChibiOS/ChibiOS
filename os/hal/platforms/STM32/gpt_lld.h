@@ -85,6 +85,15 @@
 #endif
 
 /**
+ * @brief   GPTD8 driver enable switch.
+ * @details If set to @p TRUE the support for GPTD8 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_GPT_USE_TIM8) || defined(__DOXYGEN__)
+#define STM32_GPT_USE_TIM8                  TRUE
+#endif
+
+/**
  * @brief   GPTD1 interrupt priority level setting.
  */
 #if !defined(STM32_GPT_TIM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -119,6 +128,13 @@
 #define STM32_GPT_TIM5_IRQ_PRIORITY         7
 #endif
 
+/**
+ * @brief   GPTD5 interrupt priority level setting.
+ */
+#if !defined(STM32_GPT_TIM8_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_GPT_TIM8_IRQ_PRIORITY         7
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -143,9 +159,13 @@
 #error "TIM5 not present in the selected device"
 #endif
 
+#if STM32_GPT_USE_TIM8 && !STM32_HAS_TIM8
+#error "TIM8 not present in the selected device"
+#endif
+
 #if !STM32_GPT_USE_TIM1 && !STM32_GPT_USE_TIM2 &&                           \
     !STM32_GPT_USE_TIM3 && !STM32_GPT_USE_TIM4 &&                           \
-    !STM32_GPT_USE_TIM5
+    !STM32_GPT_USE_TIM5 && !STM32_GPT_USE_TIM8
 #error "GPT driver activated but no TIM peripheral assigned"
 #endif
 
@@ -234,6 +254,10 @@ extern GPTDriver GPTD4;
 
 #if STM32_GPT_USE_TIM5 && !defined(__DOXYGEN__)
 extern GPTDriver GPTD5;
+#endif
+
+#if STM32_GPT_USE_TIM8 && !defined(__DOXYGEN__)
+extern GPTDriver GPTD8;
 #endif
 
 #ifdef __cplusplus

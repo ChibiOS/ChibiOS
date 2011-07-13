@@ -89,6 +89,7 @@
 #define STM32_HAS_GPIOE         TRUE
 #define STM32_HAS_GPIOF         FALSE
 #define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          FALSE
@@ -156,6 +157,7 @@
 #define STM32_HAS_GPIOE         TRUE
 #define STM32_HAS_GPIOF         FALSE
 #define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE
@@ -223,6 +225,7 @@
 #define STM32_HAS_GPIOE         FALSE
 #define STM32_HAS_GPIOF         FALSE
 #define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          FALSE
@@ -290,6 +293,7 @@
 #define STM32_HAS_GPIOE         TRUE
 #define STM32_HAS_GPIOF         FALSE
 #define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE
@@ -357,6 +361,7 @@
 #define STM32_HAS_GPIOE         TRUE
 #define STM32_HAS_GPIOF         TRUE
 #define STM32_HAS_GPIOG         TRUE
+#define STM32_HAS_GPIOH         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE
@@ -377,12 +382,12 @@
 #define STM32_HAS_TIM6          TRUE
 #define STM32_HAS_TIM7          TRUE
 #define STM32_HAS_TIM8          TRUE
-#define STM32_HAS_TIM9          FALSE
-#define STM32_HAS_TIM10         FALSE
-#define STM32_HAS_TIM11         FALSE
-#define STM32_HAS_TIM12         FALSE
-#define STM32_HAS_TIM13         FALSE
-#define STM32_HAS_TIM14         FALSE
+#define STM32_HAS_TIM9          TRUE
+#define STM32_HAS_TIM10         TRUE
+#define STM32_HAS_TIM11         TRUE
+#define STM32_HAS_TIM12         TRUE
+#define STM32_HAS_TIM13         TRUE
+#define STM32_HAS_TIM14         TRUE
 #define STM32_HAS_TIM15         FALSE
 #define STM32_HAS_TIM16         FALSE
 #define STM32_HAS_TIM17         FALSE
@@ -424,6 +429,7 @@
 #define STM32_HAS_GPIOE         TRUE
 #define STM32_HAS_GPIOF         TRUE
 #define STM32_HAS_GPIOG         TRUE
+#define STM32_HAS_GPIOH         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE
@@ -491,6 +497,7 @@
 #define STM32_HAS_GPIOE         TRUE
 #define STM32_HAS_GPIOF         FALSE
 #define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE
@@ -532,6 +539,23 @@
 
 #else
 #error "unspecified, unsupported or invalid STM32 platform"
+#endif
+
+/* There are differences in vector names in the various sub-families,
+   normalizing.*/
+#if defined(STM32F10X_XL)
+#define TIM1_BRK_IRQn       TIM1_BRK_TIM9_IRQn
+#define TIM1_UP_IRQn        TIM1_UP_TIM10_IRQn
+#define TIM1_TRG_COM_IRQn   TIM1_TRG_COM_TIM11_IRQn
+#define TIM8_BRK_IRQn       TIM8_BRK_TIM12_IRQn
+#define TIM8_UP_IRQn        TIM8_UP_TIM13_IRQn
+#define TIM8_TRG_COM_IRQn   TIM8_TRG_COM_TIM14_IRQn
+
+#elif defined(STM32F10X_LD_VL)|| defined(STM32F10X_MD_VL) ||                \
+      defined(STM32F10X_HD_VL)
+#define TIM1_BRK_IRQn       TIM1_BRK_TIM15_IRQn
+#define TIM1_UP_IRQn        TIM1_UP_TIM16_IRQn
+#define TIM1_TRG_COM_IRQn   TIM1_TRG_COM_TIM17_IRQn
 #endif
 
 /*===========================================================================*/

@@ -626,7 +626,7 @@
 #endif
 
 /**
- * @brief   Timer 1 clock.
+ * @brief   Timers 1, 8 clock.
  */
 #if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK2               (STM32_PCLK2 * 1)

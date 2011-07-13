@@ -70,11 +70,38 @@
 *** Releases                                                              ***
 *****************************************************************************
 
-*** 2.3.4 ***
+*** 2.3.3 ***
+- FIX: Fixed missing state in shell demos (bug 3351556)(backported to 2.2.7).
+- FIX: Fixed race condition in Cortex-Mx ports (bug 3317500)(backported
+  to 2.2.6).
 - FIX: Fixed wrong macro check in STM32 UART driver (bug 3311999)(backported
   to 2.2.6).
 - FIX: Fixed wrong macro definition in ARMv6-M architecture files (bug
   3310084).
+- FIX: Fixed race condition in output queues (bug 3303908)(backported
+  to 2.2.4).
+- FIX: Fixed CH_USE_HEAP and CH_USE_MALLOC_HEAP conflict (bug 3303841)
+  (backported to 2.2.4).
+- FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
+  (backported to 2.2.4).
+- NEW: Added a custom rule to the various rules.mk files, now it is possible
+  to add an user rule into the Makefiles.
+- NEW: Improvements to the trace buffer, now it stores a full thread pointer
+  and event time, changed names to debug variables by adding the "dbg_"
+  prefix.
+- NEW: Added a new functionality to the registry subsystem, now it is possible
+  to associate a name to the threads using chRegSetThreadName. The main and
+  idle threads have their name assigned by default.
+- NEW: Added TIM8 support to the STM32 GPT, ICU and PWM drivers.
+- NEW: Updated the STM32 header file to the latest version 3.5.0 and fixed
+  it in order to correct several bugs related to the XL family.
+- NEW: Added a chprintf() function to ./os/various, it can print on any
+  BaseChannel.
+- NEW: Improved the mini shell, enhanced info command, optimizations and
+  removed the shellPrint() and shellPrintLine() functions, now it uses
+  chprintf() for output.
+- NEW: lwIP 1.4.0 has been integrated, this new version does not require
+  custom hooks into the Thread structure and is thus much lighter.
 - NEW: FatFs demo for the STM32F103ZG using the SDC driver.
 - NEW: Now the STM32 SDC driver supports unaligned buffers transparently.
   Optimized the driver for single block read and write operations. Optimized
@@ -83,14 +110,6 @@
   IAR and RVCT ports support the new Compact mode.
 - NEW: Added to the ARMv6-M sub-port an option to use the PendSV exception
   instead of NMI for preemption (backported to 2.2.5).
-
-*** 2.3.3 ***
-- FIX: Fixed race condition in output queues (bug 3303908)(backported
-  to 2.2.4).
-- FIX: Fixed CH_USE_HEAP and CH_USE_MALLOC_HEAP conflict (bug 3303841)
-  (backported to 2.2.4).
-- FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
-  (backported to 2.2.4).
 - NEW: Reorganization of the Cortex-Mx ports in order to reduced code and
   comments duplication in the various headers (backported to 2.2.5).
 - NEW: Improved the ARMv7-M sub-port now there are two modes: Compact and

@@ -110,7 +110,7 @@ void palWriteBus(IOBus *bus, ioportmask_t bits) {
  *
  * @api
  */
-void palSetBusMode(IOBus *bus, uint_fast8_t mode) {
+void palSetBusMode(IOBus *bus, iomode_t mode) {
 
   chDbgCheck((bus != NULL) &&
              (bus->offset < PAL_IOPORTS_WIDTH), "palSetBusMode");

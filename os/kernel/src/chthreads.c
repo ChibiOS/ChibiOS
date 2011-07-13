@@ -89,14 +89,15 @@ Thread *_thread_init(Thread *tp, tprio_t prio) {
 #if CH_USE_DYNAMIC
   tp->p_refs = 1;
 #endif
+#if CH_USE_REGISTRY
+  tp->p_name = NULL;
+  REG_INSERT(tp);
+#endif
 #if CH_USE_WAITEXIT
   list_init(&tp->p_waiting);
 #endif
 #if CH_USE_MESSAGES
   queue_init(&tp->p_msgqueue);
-#endif
-#if CH_USE_REGISTRY
-  REG_INSERT(tp);
 #endif
 #if defined(THREAD_EXT_INIT_HOOK)
   THREAD_EXT_INIT_HOOK(tp);
@@ -180,10 +181,10 @@ Thread *chThdCreateStatic(void *wsp, size_t size,
 #if CH_DBG_FILL_THREADS
   _thread_memfill((uint8_t *)wsp,
                   (uint8_t *)wsp + sizeof(Thread),
-                  THREAD_FILL_VALUE);
+                  CH_THREAD_FILL_VALUE);
   _thread_memfill((uint8_t *)wsp + sizeof(Thread),
                   (uint8_t *)wsp + size,
-                  STACK_FILL_VALUE);
+                  CH_STACK_FILL_VALUE);
 #endif
   chSysLock();
   chSchWakeupS(tp = chThdCreateI(wsp, size, prio, pf, arg), RDY_OK);

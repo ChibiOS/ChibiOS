@@ -69,6 +69,11 @@ typedef struct {
 typedef uint32_t ioportmask_t;
 
 /**
+ * @brief   Digital I/O modes.
+ */
+typedef uint32_t iomode_t;
+
+/**
  * @brief   Port Identifier.
  * @details This type can be a scalar or some kind of pointer, do not make
  *          any assumption about it, use the provided macros when populating

@@ -184,7 +184,7 @@ bool_t sdcConnect(SDCDriver *sdcp) {
 
   /* V2.0 cards detection.*/
   if (!sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_IF_COND,
-                                  SDC_CMD8_PATTERN, resp))
+                                  SDC_CMD8_PATTERN, resp)) {
     sdcp->cardmode = SDC_MODE_CARDTYPE_SDV20;
     /* Voltage verification.*/
     if (((resp[0] >> 8) & 0xF) != 1)
@@ -192,6 +192,7 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp) ||
         SDC_R1_ERROR(resp[0]))
       goto failed;
+  }
   else {
 #if SDC_MMC_SUPPORT
     /* MMC or SD V1.1 detection.*/

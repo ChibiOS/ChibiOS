@@ -75,6 +75,14 @@ ICUDriver ICUD4;
 ICUDriver ICUD5;
 #endif
 
+/**
+ * @brief   ICUD8 driver identifier.
+ * @note    The driver ICUD8 allocates the timer TIM8 when enabled.
+ */
+#if STM32_ICU_USE_TIM8 || defined(__DOXYGEN__)
+ICUDriver ICUD8;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -198,6 +206,25 @@ CH_IRQ_HANDLER(TIM5_IRQHandler) {
 }
 #endif /* STM32_ICU_USE_TIM5 */
 
+#if STM32_ICU_USE_TIM8
+/**
+ * @brief   TIM8 compare interrupt handler.
+ * @note    It is assumed that the various sources are only activated if the
+ *          associated callback pointer is not equal to @p NULL in order to not
+ *          perform an extra check in a potentially critical interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(TIM8_CC_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  icu_lld_serve_interrupt(&ICUD8);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* STM32_ICU_USE_TIM8 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -237,6 +264,12 @@ void icu_lld_init(void) {
   /* Driver initialization.*/
   icuObjectInit(&ICUD5);
   ICUD5.tim = TIM5;
+#endif
+
+#if STM32_ICU_USE_TIM8
+  /* Driver initialization.*/
+  icuObjectInit(&ICUD8);
+  ICUD5.tim = TIM8;
 #endif
 }
 
@@ -303,6 +336,16 @@ void icu_lld_start(ICUDriver *icup) {
       clock = STM32_TIMCLK1;
     }
 #endif
+#if STM32_ICU_USE_TIM8
+    if (&ICUD8 == icup) {
+      RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
+      RCC->APB2RSTR = RCC_APB2RSTR_TIM8RST;
+      RCC->APB2RSTR = 0;
+      NVICEnableVector(TIM8_CC_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM8_IRQ_PRIORITY));
+      clock = STM32_TIMCLK2;
+    }
+#endif
   }
   else {
     /* Driver re-configuration scenario, it must be stopped first.*/
@@ -362,7 +405,6 @@ void icu_lld_stop(ICUDriver *icup) {
       RCC->APB2ENR &= ~RCC_APB2ENR_TIM1EN;
     }
 #endif
-  }
 #if STM32_ICU_USE_TIM2
     if (&ICUD2 == icup) {
       NVICDisableVector(TIM2_IRQn);
@@ -385,6 +427,13 @@ void icu_lld_stop(ICUDriver *icup) {
     if (&ICUD5 == icup) {
       NVICDisableVector(TIM5_IRQn);
       RCC->APB1ENR &= ~RCC_APB1ENR_TIM5EN;
+    }
+#endif
+  }
+#if STM32_ICU_USE_TIM8
+    if (&ICUD8 == icup) {
+      NVICDisableVector(TIM8_CC_IRQn);
+      RCC->APB2ENR &= ~RCC_APB2ENR_TIM8EN;
     }
 #endif
 }

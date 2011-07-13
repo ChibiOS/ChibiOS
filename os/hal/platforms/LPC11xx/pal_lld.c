@@ -89,7 +89,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,
                            uint_fast8_t mode) {
 
-  switch (mode & PAL_MODE_MASK) {
+  switch (mode) {
   case PAL_MODE_RESET:
   case PAL_MODE_INPUT:
     port->DIR &= ~mask;

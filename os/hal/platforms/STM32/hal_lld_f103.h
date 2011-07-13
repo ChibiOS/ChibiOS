@@ -260,6 +260,7 @@
     (STM32_PLLXTPRE != STM32_PLLXTPRE_DIV2)
 #error "invalid STM32_PLLXTPRE value specified"
 #endif
+
 /**
  * @brief   PLLMUL field.
  */

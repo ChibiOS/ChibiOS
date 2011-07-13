@@ -90,6 +90,11 @@ typedef struct {
 typedef uint32_t ioportmask_t;
 
 /**
+ * @brief   Digital I/O modes.
+ */
+typedef uint32_t iomode_t;
+
+/**
  * @brief   Port Identifier.
  */
 typedef FIO * ioportid_t;
