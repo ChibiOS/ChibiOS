@@ -12,6 +12,19 @@
 #if HAL_USE_I2C || defined(__DOXYGEN__)
 
 /*===========================================================================*/
+/* Datasheet notes.                                                          */
+/*===========================================================================*/
+/**
+ * From RM0008.pdf
+ *
+ * Note:
+ * When the STOP, START or PEC bit is set, the software must NOT perform
+ * any write access to I2C_CR1 before this bit is cleared by hardware.
+ * Otherwise there is a risk of setting a second STOP, START or PEC request.
+ */
+
+
+/*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
@@ -100,6 +113,8 @@ void _i2c_ev6_master_rec_mode_selected(I2CDriver *i2cp){
   case I2C_EV6_3_MASTER_REC_1BTR_MODE_SELECTED: /* only an single byte to receive */
     dp->CR1 &= (uint16_t)~I2C_CR1_ACK;          /* Clear ACK */
     dp->CR1 |= I2C_CR1_STOP;                    /* Program the STOP */
+    while(dp->CR1 & I2C_CR1_STOP)
+      ;
     break;
 
   case I2C_EV6_1_MASTER_REC_2BTR_MODE_SELECTED: /* only two bytes to receive */
@@ -137,6 +152,8 @@ void _i2c_ev7_master_rec_byte_qued(I2CDriver *i2cp){
     i2cp->rxbytes -= 2;                 /* Decrement the number of readed bytes */
     i2cp->flags = 0;
     dp->CR2 |= I2C_CR2_ITBUFEN;         /* ready for read DataN. Enable interrupt for next (and last) RxNE event*/
+    while(dp->CR1 & I2C_CR1_STOP)
+      ;
     break;
 
   case I2C_EV7_3_MASTER_REC_2BYTES_TO_PROCESS:
@@ -151,6 +168,8 @@ void _i2c_ev7_master_rec_byte_qued(I2CDriver *i2cp){
     i2cp->rxbytes = 0;
     i2cp->flags = 0;
     _i2c_isr_code(i2cp, i2cp->id_slave_config); /* Portable I2C ISR code defined in the high level driver. */
+    while(dp->CR1 & I2C_CR1_STOP)
+      ;
     break;
 
   case I2C_FLG_MASTER_RECEIVER:
@@ -231,6 +250,8 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     if (i2cp->rxbytes == 0){                      /* if nothing to read then generate stop */
       dp->CR1 |= I2C_CR1_STOP;
       _i2c_isr_code(i2cp, i2cp->id_slave_config); /* Portable I2C ISR code defined in the high level driver. */
+      while(dp->CR1 & I2C_CR1_STOP)
+        ;
     }
     else{                                         /* start reading operation */
       i2c_lld_master_transceive(i2cp);
@@ -297,6 +318,8 @@ static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
   if(reg->SR1 & I2C_SR1_AF) {                  /* Acknowledge fail */
     reg->SR1 &= ~I2C_SR1_AF;
     reg->CR1 |= I2C_CR1_STOP;                  /* setting stop bit */
+    while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
+      ;
     flags |= I2CD_ACK_FAILURE;
   }
   if(reg->SR1 & I2C_SR1_OVR) {                 /* Overrun */
