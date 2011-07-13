@@ -97,7 +97,9 @@ CPPFLAGS += -MD -MP -MF .dep/$(@F).d
 # Makefile rules
 #
 
-all: $(ENSUREBUILDDIR) $(OBJS) $(OUTFILES)
+all: $(ENSUREBUILDDIR) $(OBJS) $(OUTFILES) MAKE_ALL_RULE_HOOK
+
+MAKE_ALL_RULE_HOOK:
 
 $(ACPPOBJS) : %.o : %.cpp
 	@echo
