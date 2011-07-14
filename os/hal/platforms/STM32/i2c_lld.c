@@ -48,11 +48,22 @@ static volatile uint16_t dbgSR1 = 0;
 static volatile uint16_t dbgSR2 = 0;
 static volatile uint16_t dbgCR1 = 0;
 static volatile uint16_t dbgCR2 = 0;
+
+static uint32_t polling_time_worst = 0;
+static uint32_t polling_time_begin = 0;
+static uint32_t polling_time_delta = 0;
+
 #endif /* CH_DBG_ENABLE_ASSERTS */
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+#if STM32_I2C_USE_POLLING_WAIT
+#else
+VirtualTimer i2c_waiting_vt;
+#endif /* STM32_I2C_USE_POLLING_WAIT */
+
 
 /* defines for convenience purpose */
 #define txBuffp (i2cp->txbuff_p)
@@ -113,8 +124,6 @@ void _i2c_ev6_master_rec_mode_selected(I2CDriver *i2cp){
   case I2C_EV6_3_MASTER_REC_1BTR_MODE_SELECTED: /* only an single byte to receive */
     dp->CR1 &= (uint16_t)~I2C_CR1_ACK;          /* Clear ACK */
     dp->CR1 |= I2C_CR1_STOP;                    /* Program the STOP */
-    while(dp->CR1 & I2C_CR1_STOP)
-      ;
     break;
 
   case I2C_EV6_1_MASTER_REC_2BTR_MODE_SELECTED: /* only two bytes to receive */
@@ -146,14 +155,14 @@ void _i2c_ev7_master_rec_byte_qued(I2CDriver *i2cp){
     dp->CR1 &= (uint16_t)~I2C_CR1_ACK;  /* Clear ACK */
     *rxBuffp = dp->DR;                  /* Read the DataN-2. This clear the RXE & BFT flags and launch the DataN exception in the shift register (ending the SCL stretch) */
     rxBuffp++;
+    chSysLockFromIsr();
     dp->CR1 |= I2C_CR1_STOP;            /* Program the STOP */
     *rxBuffp = dp->DR;                  /* Read the DataN-1 */
+    chSysUnlockFromIsr();
     rxBuffp++;
     i2cp->rxbytes -= 2;                 /* Decrement the number of readed bytes */
     i2cp->flags = 0;
     dp->CR2 |= I2C_CR2_ITBUFEN;         /* ready for read DataN. Enable interrupt for next (and last) RxNE event*/
-    while(dp->CR1 & I2C_CR1_STOP)
-      ;
     break;
 
   case I2C_EV7_3_MASTER_REC_2BYTES_TO_PROCESS:
@@ -161,15 +170,15 @@ void _i2c_ev7_master_rec_byte_qued(I2CDriver *i2cp){
      * DataN-1 and DataN are received */
     dp->CR2 &= (uint16_t)~I2C_CR2_ITEVTEN;
     dp->CR2 &= (uint16_t)~I2C_CR2_ITBUFEN;
+    chSysLockFromIsr();
     dp->CR1 |= I2C_CR1_STOP;                    /* Program the STOP */
     *rxBuffp = dp->DR;                          /* Read the DataN-1*/
     rxBuffp++;
     *rxBuffp = dp->DR;                          /* Read the DataN*/
+    chSysUnlockFromIsr();
     i2cp->rxbytes = 0;
     i2cp->flags = 0;
     _i2c_isr_code(i2cp, i2cp->id_slave_config); /* Portable I2C ISR code defined in the high level driver. */
-    while(dp->CR1 & I2C_CR1_STOP)
-      ;
     break;
 
   case I2C_FLG_MASTER_RECEIVER:
@@ -250,8 +259,6 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     if (i2cp->rxbytes == 0){                      /* if nothing to read then generate stop */
       dp->CR1 |= I2C_CR1_STOP;
       _i2c_isr_code(i2cp, i2cp->id_slave_config); /* Portable I2C ISR code defined in the high level driver. */
-      while(dp->CR1 & I2C_CR1_STOP)
-        ;
     }
     else{                                         /* start reading operation */
       i2c_lld_master_transceive(i2cp);
@@ -629,6 +636,17 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
   i2cp->flags = 0;
   i2cp->errors = 0;
 
+  #if CH_DBG_ENABLE_ASSERTS
+    polling_time_begin = PWMD4.tim->CNT;
+  #endif
+  while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
+    ;
+  #if CH_DBG_ENABLE_ASSERTS
+    polling_time_delta = PWMD4.tim->CNT - polling_time_begin;
+    if (polling_time_delta > polling_time_worst)
+      polling_time_worst = polling_time_delta;
+  #endif
+
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
   i2cp->id_i2c->CR1 |= I2C_CR1_START;                         /* send start bit */
   i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN); /* enable ERR, EVT & BUF ITs */
@@ -668,6 +686,18 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
 
   i2cp->flags = I2C_FLG_MASTER_RECEIVER;
   i2cp->errors = 0;
+
+  #if CH_DBG_ENABLE_ASSERTS
+    polling_time_begin = PWMD4.tim->CNT;
+  #endif
+  while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
+    ;
+  #if CH_DBG_ENABLE_ASSERTS
+    polling_time_delta = PWMD4.tim->CNT - polling_time_begin;
+    if (polling_time_delta > polling_time_worst)
+      polling_time_worst = polling_time_delta;
+  #endif
+
   i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                   /* acknowledge returned */
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
 

@@ -20,6 +20,17 @@
 /*===========================================================================*/
 
 /**
+ * @brief Waiting method switch.
+ * @details If set to @p TRUE than waiting of STOP generation will use
+ *          while() loop polling. Otherwise -- virtual timer will be used.
+ * @note The default is @p TRUE.
+ * @note Virtual timer resolution is 1/@p CH_FREQUENCY seconds.
+ */
+#if !defined(STM32_I2C_USE_POLLING_WAIT) || defined(__DOXYGEN__)
+#define STM32_I2C_USE_POLLING_WAIT       TRUE
+#endif
+
+/**
  * @brief I2C1 driver enable switch.
  * @details If set to @p TRUE the support for I2C1 is included.
  * @note The default is @p TRUE.
