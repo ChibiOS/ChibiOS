@@ -137,55 +137,7 @@ void _pal_lld_init(const PALConfig *config) {
  */
 void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,
-                           uint_fast8_t mode) {
-#if 0
-                             static const uint8_t cfgtab[] = {
-    4,          /* PAL_MODE_RESET, implemented as input.*/
-    2,          /* PAL_MODE_UNCONNECTED, implemented as push pull output 2MHz.*/
-    4,          /* PAL_MODE_INPUT */
-    8,          /* PAL_MODE_INPUT_PULLUP */
-    8,          /* PAL_MODE_INPUT_PULLDOWN */
-    0,          /* PAL_MODE_INPUT_ANALOG */
-    3,          /* PAL_MODE_OUTPUT_PUSHPULL, 50MHz.*/
-    7,          /* PAL_MODE_OUTPUT_OPENDRAIN, 50MHz.*/
-    8,          /* Reserved.*/
-    8,          /* Reserved.*/
-    8,          /* Reserved.*/
-    8,          /* Reserved.*/
-    8,          /* Reserved.*/
-    8,          /* Reserved.*/
-    8,          /* Reserved.*/
-    8,          /* Reserved.*/
-    0xB,        /* PAL_MODE_STM32_ALTERNATE_PUSHPULL, 50MHz.*/
-    0xF,        /* PAL_MODE_STM32_ALTERNATE_OPENDRAIN, 50MHz.*/
-  };
-  uint32_t mh, ml, crh, crl, cfg;
-  unsigned i;
-
-  if (mode == PAL_MODE_INPUT_PULLUP)
-    port->BSRR = mask;
-  else if (mode == PAL_MODE_INPUT_PULLDOWN)
-    port->BRR = mask;
-  cfg = cfgtab[mode];
-  mh = ml = crh = crl = 0;
-  for (i = 0; i < 8; i++) {
-    ml <<= 4;
-    mh <<= 4;
-    crl <<= 4;
-    crh <<= 4;
-    if ((mask & 0x0080) == 0)
-      ml |= 0xf;
-    else
-      crl |= cfg;
-    if ((mask & 0x8000) == 0)
-      mh |= 0xf;
-    else
-      crh |= cfg;
-    mask <<= 1;
-  }
-  port->CRH = (port->CRH & mh) | crh;
-  port->CRL = (port->CRL & ml) | crl;
-#endif
+                           iomode_t mode) {
 }
 
 #endif /* HAL_USE_PAL */

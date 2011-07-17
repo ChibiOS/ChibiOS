@@ -79,7 +79,7 @@ sim_vio_port_t vio_port_2;
  */
 void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,
-                           uint_fast8_t mode) {
+                           iomode_t mode) {
 
   switch (mode) {
   case PAL_MODE_RESET:

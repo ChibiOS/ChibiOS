@@ -132,7 +132,7 @@ void _pal_lld_init(const PALConfig *config) {
  */
 void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,
-                           uint_fast8_t mode) {
+                           iomode_t mode) {
   static const uint8_t cfgtab[] = {
     4,          /* PAL_MODE_RESET, implemented as input.*/
     2,          /* PAL_MODE_UNCONNECTED, implemented as push pull output 2MHz.*/
