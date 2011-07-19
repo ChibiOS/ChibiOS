@@ -69,6 +69,7 @@
 *****************************************************************************
 
 *** 2.2.7 ***
+- FIX: Fixed wrong APB1 frequency check (bug 3361039).
 - FIX: Fixed missing state in shell demos (bug 3351556).
 
 *** 2.2.6 ***

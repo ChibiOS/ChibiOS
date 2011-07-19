@@ -349,7 +349,7 @@
 #endif
 
 /* APB1 frequency check.*/
-#if STM32_PCLK2 > 24000000
+#if STM32_PCLK1 > 24000000
 #error "STM32_PCLK1 exceeding maximum frequency (24MHz)"
 #endif
 
