@@ -79,10 +79,11 @@
  */
 typedef enum {
   /* master part */
-  I2C_UNINIT = 0,   /**< @brief Not initialized.                    */
-  I2C_STOP = 1,     /**< @brief Stopped.                            */
-  I2C_READY = 2,    /**< @brief Ready.                              */
-  I2C_ACTIVE = 3,   /**< @brief In communication.                   */
+  I2C_UNINIT = 0,         /**< @brief Not initialized.                    */
+  I2C_STOP = 1,           /**< @brief Stopped.                            */
+  I2C_READY = 2,          /**< @brief Ready.                              */
+  I2C_ACTIVE_TRANSMIT = 3,/**< @brief Transmit in progress.               */
+  I2C_ACTIVE_RECEIVE = 4, /**< @brief Receive in progress.                */
 
   /* Slave part. Not realized. */
   I2C_SACTIVE = 10,

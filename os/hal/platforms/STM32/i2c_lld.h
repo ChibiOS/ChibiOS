@@ -20,15 +20,44 @@
 /*===========================================================================*/
 
 /**
- * @brief Waiting method switch.
+ * @brief TODO!!!!!!!!
  * @details If set to @p TRUE than waiting of STOP generation will use
  *          while() loop polling. Otherwise -- virtual timer will be used.
  * @note The default is @p TRUE.
  * @note Virtual timer resolution is 1/@p CH_FREQUENCY seconds.
  */
-#if !defined(STM32_I2C_USE_POLLING_WAIT) || defined(__DOXYGEN__)
-#define STM32_I2C_USE_POLLING_WAIT       TRUE
+#if !defined(STM32_I2C_I2C1_USE_GPT_TIM1)       || \
+    !defined(STM32_I2C_I2C1_USE_GPT_TIM2)       || \
+    !defined(STM32_I2C_I2C1_USE_GPT_TIM3)       || \
+    !defined(STM32_I2C_I2C1_USE_GPT_TIM4)       || \
+    !defined(STM32_I2C_I2C1_USE_GPT_TIM5)       || \
+    !defined(STM32_I2C_I2C1_USE_GPT_TIM8)       || \
+    !defined(STM32_I2C_I2C1_USE_VIRTUAL_TIMER)  || \
+    !defined(STM32_I2C_I2C1_USE_POLLING_WAIT)   || \
+    defined(__DOXYGEN__)
+#define STM32_I2C_I2C1_USE_POLLING_WAIT     TRUE
 #endif
+
+
+
+#if !defined(STM32_I2C_I2C2_USE_GPT_TIM1)       || \
+    !defined(STM32_I2C_I2C2_USE_GPT_TIM2)       || \
+    !defined(STM32_I2C_I2C2_USE_GPT_TIM3)       || \
+    !defined(STM32_I2C_I2C2_USE_GPT_TIM4)       || \
+    !defined(STM32_I2C_I2C2_USE_GPT_TIM5)       || \
+    !defined(STM32_I2C_I2C2_USE_GPT_TIM8)       || \
+    !defined(STM32_I2C_I2C2_USE_VIRTUAL_TIMER)  || \
+    !defined(STM32_I2C_I2C2_USE_POLLING_WAIT)   || \
+    defined(__DOXYGEN__)
+#define STM32_I2C_I2C2_USE_POLLING_WAIT     TRUE
+#endif
+
+
+
+
+
+
+
 
 /**
  * @brief I2C1 driver enable switch.
@@ -89,6 +118,7 @@
 #define I2C_FLG_3BTR            0x04 /* Last three received bytes to be processed */
 #define I2C_FLG_MASTER_RECEIVER 0x10
 #define I2C_FLG_HEADER_SENT     0x80
+#define I2C_FLG_TIMER_ARMED     0x40 /* Used to check locks on the bus */
 
 #define EV6_SUBEV_MASK  (I2C_FLG_1BTR|I2C_FLG_2BTR|I2C_FLG_MASTER_RECEIVER)
 #define EV7_SUBEV_MASK  (I2C_FLG_2BTR|I2C_FLG_3BTR|I2C_FLG_MASTER_RECEIVER)
@@ -197,6 +227,17 @@ struct I2CDriver{
    * @brief Pointer to the I2Cx registers block.
    */
   I2C_TypeDef           *id_i2c;
+
+  /**
+   * @brief Timer for waiting STOP condition on the bus.
+   * @details Workaround for STM32 buggy I2C cell.
+   */
+  GPTDriver             *timer;
+
+  /**
+   * @brief Config for workaround timer.
+   */
+  const GPTConfig             *timer_cfg;
 } ;
 
 

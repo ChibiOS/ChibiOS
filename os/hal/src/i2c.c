@@ -176,7 +176,7 @@ void i2cMasterTransmit(I2CDriver *i2cp,
   chDbgAssert(i2cp->id_state == I2C_READY,
               "i2cMasterTransmit(), #1", "not ready");
 
-  i2cp->id_state = I2C_ACTIVE;
+  i2cp->id_state = I2C_ACTIVE_TRANSMIT;
   i2c_lld_master_transmit(i2cp, slave_addr, txbuf, txbytes, rxbuf, rxbytes);
   _i2c_wait_s(i2cp);
 }
@@ -214,7 +214,7 @@ void i2cMasterReceive(I2CDriver *i2cp,
   chDbgAssert(i2cp->id_state == I2C_READY,
               "i2cMasterReceive(), #1", "not ready");
 
-  i2cp->id_state = I2C_ACTIVE;
+  i2cp->id_state = I2C_ACTIVE_RECEIVE;
   i2c_lld_master_receive(i2cp, slave_addr, rxbuf, rxbytes);
   _i2c_wait_s(i2cp);
 }

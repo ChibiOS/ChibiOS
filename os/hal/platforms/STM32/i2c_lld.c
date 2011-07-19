@@ -23,6 +23,11 @@
  * Otherwise there is a risk of setting a second STOP, START or PEC request.
  */
 
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+#define I2C_STOP_GPT_TIMEOUT  50    /* waiting timer value */
+#define I2C_START_GPT_TIMEOUT 50    /* waiting timer value */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -48,12 +53,11 @@ static volatile uint16_t dbgSR1 = 0;
 static volatile uint16_t dbgSR2 = 0;
 static volatile uint16_t dbgCR1 = 0;
 static volatile uint16_t dbgCR2 = 0;
-
-static uint32_t polling_time_worst = 0;
-static uint32_t polling_time_begin = 0;
-static uint32_t polling_time_delta = 0;
-
 #endif /* CH_DBG_ENABLE_ASSERTS */
+
+/* defines for convenience purpose */
+#define txBuffp (i2cp->txbuff_p)
+#define rxBuffp (i2cp->rxbuff_p)
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -61,13 +65,70 @@ static uint32_t polling_time_delta = 0;
 
 #if STM32_I2C_USE_POLLING_WAIT
 #else
-VirtualTimer i2c_waiting_vt;
+/*
+ * GPT1 callback.
+ */
+static void gpt1cb(GPTDriver *gptp) {
+  (void)gptp;
+  I2CDriver *i2cp = &I2CD1;
+
+  chSysLockFromIsr();
+  i2cp->flags &= ~I2C_FLG_TIMER_ARMED;
+
+  switch(i2cp->id_state){
+  case I2C_ACTIVE_TRANSMIT:
+    i2c_lld_master_transmit(i2cp, i2cp->slave_addr, i2cp->txbuf, i2cp->txbytes, i2cp->rxbuf, i2cp->rxbytes);
+  break;
+
+  case I2C_ACTIVE_RECEIVE:
+    i2c_lld_master_receive(i2cp, i2cp->slave_addr, i2cp->rxbuf, i2cp->rxbytes);
+  break;
+
+  default:
+  break;
+  }
+  chSysUnlockFromIsr();
+}
+
+
+
+/*
+ * GPT2 callback.
+ */
+static void gpt2cb(GPTDriver *gptp) {
+  (void)gptp;
+  I2CDriver *i2cp = &I2CD2;
+
+  chSysLockFromIsr();
+  i2cp->flags &= ~I2C_FLG_TIMER_ARMED;
+
+  switch(i2cp->id_state){
+  case I2C_ACTIVE_TRANSMIT:
+    i2c_lld_master_transmit(i2cp, i2cp->slave_addr, i2cp->txbuf, i2cp->txbytes, i2cp->rxbuf, i2cp->rxbytes);
+  break;
+
+  case I2C_ACTIVE_RECEIVE:
+    i2c_lld_master_receive(i2cp, i2cp->slave_addr, i2cp->rxbuf, i2cp->rxbytes);
+  break;
+
+  default:
+  break;
+  }
+  chSysUnlockFromIsr();
+}
+
+/* GPT1 configuration. */
+static const GPTConfig gpt1cfg = {
+  1000000,  /* 1MHz timer clock.*/
+  gpt1cb    /* Timer callback.*/
+};
+
+/* GPT2 configuration. */
+static const GPTConfig gpt2cfg = {
+  1000000,  /* 1MHz timer clock.*/
+  gpt2cb    /* Timer callback.*/
+};
 #endif /* STM32_I2C_USE_POLLING_WAIT */
-
-
-/* defines for convenience purpose */
-#define txBuffp (i2cp->txbuff_p)
-#define rxBuffp (i2cp->rxbuff_p)
 
 /**
  * @brief   Function for I2C debugging purpose.
@@ -408,15 +469,33 @@ void i2c_lld_init(void) {
   RCC->APB1RSTR     = RCC_APB1RSTR_I2C1RST; /* reset I2C 1 */
   RCC->APB1RSTR     = 0;
   i2cObjectInit(&I2CD1);
-  I2CD1.id_i2c     = I2C1;
-#endif
+  I2CD1.id_i2c      = I2C1;
+
+#if !(STM32_I2C_I2C1_USE_POLLING_WAIT)
+  I2CD1.timer       = &GPTD1;//TODO: remove hardcode
+  I2CD1.timer_cfg   = &gpt1cfg;//TODO: remove hardcode
+#else
+  I2CD1.timer       = NULL;
+  I2CD1.timer_cfg   = NULL;
+#endif /* !(STM32_I2C_I2C1_USE_POLLING_WAIT) */
+
+#endif /* STM32_I2C_USE_I2C */
 
 #if STM32_I2C_USE_I2C2
   RCC->APB1RSTR     = RCC_APB1RSTR_I2C2RST; /* reset I2C 2 */
   RCC->APB1RSTR     = 0;
   i2cObjectInit(&I2CD2);
-  I2CD2.id_i2c     = I2C2;
-#endif
+  I2CD2.id_i2c      = I2C2;
+
+#if !(STM32_I2C_I2C2_USE_POLLING_WAIT)
+  I2CD2.timer       = &GPTD2;//TODO: remove hardcode
+  I2CD2.timer_cfg   = &gpt2cfg;//TODO: remove hardcode
+#else
+  I2CD2.timer       = NULL;
+  I2CD2.timer_cfg   = NULL;
+#endif /* !(STM32_I2C_I2C2_USE_POLLING_WAIT) */
+
+#endif /* STM32_I2C_USE_I2C2 */
 }
 
 /**
@@ -425,6 +504,9 @@ void i2c_lld_init(void) {
  * @param[in] i2cp      pointer to the @p I2CDriver object
  */
 void i2c_lld_start(I2CDriver *i2cp) {
+  if (i2cp->timer != NULL || i2cp->timer_cfg != NULL)
+    gptStart(i2cp->timer, i2cp->timer_cfg);
+
   if (i2cp->id_state == I2C_STOP) {         /* If in stopped state then enables the I2C clock.*/
 #if STM32_I2C_USE_I2C1
     if (&I2CD1 == i2cp) {
@@ -633,22 +715,22 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
     i2cp->slave_addr1 = ((slave_addr <<1) & 0x00FE);          /* LSB = 0 -> write */
   }
 
+  chDbgAssert(!(i2cp->flags & I2C_FLG_TIMER_ARMED),
+      "i2c_lld_master_transmit(), #1", "time to STOP is out");
+  if ((i2cp->id_i2c->CR1 & I2C_CR1_STOP) && i2cp->timer != NULL && i2cp->timer_cfg != NULL){
+    gptStartOneShot(i2cp->timer, I2C_STOP_GPT_TIMEOUT);
+    i2cp->flags |= I2C_FLG_TIMER_ARMED;
+    return;
+  }
+  else{
+    while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
+      ;
+  }
+
   i2cp->flags = 0;
   i2cp->errors = 0;
-
-  #if CH_DBG_ENABLE_ASSERTS
-    polling_time_begin = PWMD4.tim->CNT;
-  #endif
-  while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
-    ;
-  #if CH_DBG_ENABLE_ASSERTS
-    polling_time_delta = PWMD4.tim->CNT - polling_time_begin;
-    if (polling_time_delta > polling_time_worst)
-      polling_time_worst = polling_time_delta;
-  #endif
-
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
-  i2cp->id_i2c->CR1 |= I2C_CR1_START;                         /* send start bit */
+  i2cp->id_i2c->CR1 |= I2C_CR1_START;
   i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN); /* enable ERR, EVT & BUF ITs */
 }
 
@@ -675,6 +757,7 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
 	i2cp->rxbytes = rxbytes;
 	i2cp->rxbuf = rxbuf;
 
+
   if(slave_addr & 0x8000){                            /* 10-bit mode used */
     i2cp->slave_addr1 = ((slave_addr >>7) & 0x0006);  /* add the two msb of 10-bit address to the header */
     i2cp->slave_addr1 |= 0xF0;                        /* add the header bits (the LSB -> 1 will be add to second */
@@ -684,19 +767,22 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
     i2cp->slave_addr1 = ((slave_addr <<1) | 0x01);    /* LSB = 1 -> receive */
   }
 
-  i2cp->flags = I2C_FLG_MASTER_RECEIVER;
-  i2cp->errors = 0;
 
-  #if CH_DBG_ENABLE_ASSERTS
-    polling_time_begin = PWMD4.tim->CNT;
-  #endif
-  while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
-    ;
-  #if CH_DBG_ENABLE_ASSERTS
-    polling_time_delta = PWMD4.tim->CNT - polling_time_begin;
-    if (polling_time_delta > polling_time_worst)
-      polling_time_worst = polling_time_delta;
-  #endif
+  chDbgAssert(!(i2cp->flags & I2C_FLG_TIMER_ARMED),
+      "i2c_lld_master_receive(), #1", "time to STOP is out");
+  if ((i2cp->id_i2c->CR1 & I2C_CR1_STOP) && i2cp->timer != NULL && i2cp->timer_cfg != NULL){
+    gptStartOneShot(i2cp->timer, I2C_STOP_GPT_TIMEOUT);
+    i2cp->flags |= I2C_FLG_TIMER_ARMED;
+    return;
+  }
+  else{
+    while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
+      ;
+  }
+
+
+  i2cp->flags |= I2C_FLG_MASTER_RECEIVER;
+  i2cp->errors = 0;
 
   i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                   /* acknowledge returned */
   i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
@@ -728,11 +814,6 @@ void i2c_lld_master_transceive(I2CDriver *i2cp){
       "i2c_lld_master_transceive(), #1",
       "");
 
-  i2cp->flags = I2C_FLG_MASTER_RECEIVER;
-  i2cp->errors = 0;
-  i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                       /* acknowledge returned */
-  i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
-
   if(i2cp->slave_addr & 0x8000){                          /* 10-bit mode used */
     i2cp->slave_addr1 = ((i2cp->slave_addr >>7) & 0x0006);/* add the two msb of 10-bit address to the header */
     i2cp->slave_addr1 |= 0xF0;                            /* add the header bits (the LSB -> 1 will be add to second */
@@ -742,6 +823,14 @@ void i2c_lld_master_transceive(I2CDriver *i2cp){
     i2cp->slave_addr1 |= 0x01;
   }
 
+
+
+
+  i2cp->flags |= I2C_FLG_MASTER_RECEIVER;
+  i2cp->errors = 0;
+  i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                       /* acknowledge returned */
+  i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
+
   if(i2cp->rxbytes == 1) {                                /* Only one byte to be received */
     i2cp->flags |= I2C_FLG_1BTR;
   }
@@ -749,6 +838,9 @@ void i2c_lld_master_transceive(I2CDriver *i2cp){
     i2cp->flags |= I2C_FLG_2BTR;
     i2cp->id_i2c->CR1 |= I2C_CR1_POS;                     /* Acknowledge Position */
   }
+
+
+//TODO: use timer here also!!
 
   i2cp->id_i2c->CR1 |= I2C_CR1_START;                     /* send start bit */
 
