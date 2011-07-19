@@ -71,6 +71,7 @@
 *****************************************************************************
 
 *** 2.3.3 ***
+- FIX: Fixed wrong APB1 frequency check (bug 3361039)(backported to 2.2.7).
 - FIX: Fixed missing state in shell demos (bug 3351556)(backported to 2.2.7).
 - FIX: Fixed race condition in Cortex-Mx ports (bug 3317500)(backported
   to 2.2.6).
