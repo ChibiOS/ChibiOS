@@ -20,44 +20,24 @@
 /*===========================================================================*/
 
 /**
- * @brief TODO!!!!!!!!
- * @details If set to @p TRUE than waiting of STOP generation will use
- *          while() loop polling. Otherwise -- virtual timer will be used.
- * @note The default is @p TRUE.
- * @note Virtual timer resolution is 1/@p CH_FREQUENCY seconds.
+ * @brief I2C1 driver synchronization choice between GPT and polling.
+ * @note The default is polling wait.
  */
-#if !defined(STM32_I2C_I2C1_USE_GPT_TIM1)       || \
-    !defined(STM32_I2C_I2C1_USE_GPT_TIM2)       || \
-    !defined(STM32_I2C_I2C1_USE_GPT_TIM3)       || \
-    !defined(STM32_I2C_I2C1_USE_GPT_TIM4)       || \
-    !defined(STM32_I2C_I2C1_USE_GPT_TIM5)       || \
-    !defined(STM32_I2C_I2C1_USE_GPT_TIM8)       || \
-    !defined(STM32_I2C_I2C1_USE_VIRTUAL_TIMER)  || \
-    !defined(STM32_I2C_I2C1_USE_POLLING_WAIT)   || \
+#if !defined(STM32_I2C_I2C1_USE_GPT_TIM)       || \
+    !defined(STM32_I2C_I2C1_USE_POLLING_WAIT)  || \
     defined(__DOXYGEN__)
 #define STM32_I2C_I2C1_USE_POLLING_WAIT     TRUE
 #endif
 
-
-
-#if !defined(STM32_I2C_I2C2_USE_GPT_TIM1)       || \
-    !defined(STM32_I2C_I2C2_USE_GPT_TIM2)       || \
-    !defined(STM32_I2C_I2C2_USE_GPT_TIM3)       || \
-    !defined(STM32_I2C_I2C2_USE_GPT_TIM4)       || \
-    !defined(STM32_I2C_I2C2_USE_GPT_TIM5)       || \
-    !defined(STM32_I2C_I2C2_USE_GPT_TIM8)       || \
-    !defined(STM32_I2C_I2C2_USE_VIRTUAL_TIMER)  || \
-    !defined(STM32_I2C_I2C2_USE_POLLING_WAIT)   || \
+/**
+ * @brief I2C2 driver synchronization choice between GPT and polling.
+ * @note The default is polling wait.
+ */
+#if !defined(STM32_I2C_I2C2_USE_GPT_TIM)       || \
+    !defined(STM32_I2C_I2C2_USE_POLLING_WAIT)  || \
     defined(__DOXYGEN__)
 #define STM32_I2C_I2C2_USE_POLLING_WAIT     TRUE
 #endif
-
-
-
-
-
-
-
 
 /**
  * @brief I2C1 driver enable switch.
@@ -127,6 +107,7 @@
 #define I2C_EV6_3_MASTER_REC_1BTR_MODE_SELECTED (I2C_FLG_1BTR|I2C_FLG_MASTER_RECEIVER)
 #define I2C_EV7_2_MASTER_REC_3BYTES_TO_PROCESS  (I2C_FLG_3BTR|I2C_FLG_MASTER_RECEIVER)
 #define I2C_EV7_3_MASTER_REC_2BYTES_TO_PROCESS  (I2C_FLG_2BTR|I2C_FLG_MASTER_RECEIVER)
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -237,7 +218,7 @@ struct I2CDriver{
   /**
    * @brief Config for workaround timer.
    */
-  const GPTConfig             *timer_cfg;
+  const GPTConfig       *timer_cfg;
 } ;
 
 
