@@ -171,7 +171,7 @@ static size_t read_packet(usbep_t ep, uint8_t *buf, size_t n){
  *
  * @isr
  */
-CH_IRQ_HANDLER(USB_HP_IRQHandler) {
+CH_IRQ_HANDLER(Vector8C) {
 
   CH_IRQ_PROLOGUE();
 
@@ -183,7 +183,7 @@ CH_IRQ_HANDLER(USB_HP_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(USB_LP_IRQHandler) {
+CH_IRQ_HANDLER(Vector90) {
   uint32_t istr;
   size_t n;
   USBDriver *usbp = &USBD1;
@@ -335,9 +335,9 @@ void usb_lld_start(USBDriver *usbp) {
       STM32_USB->CNTR = CNTR_FRES;
       /* Enabling the USB IRQ vectors, this also gives enough time to allow
          the transceiver power up (1uS).*/
-      NVICEnableVector(USB_HP_CAN1_TX_IRQn,
+      NVICEnableVector(19,
                        CORTEX_PRIORITY_MASK(STM32_USB_USB1_HP_IRQ_PRIORITY));
-      NVICEnableVector(USB_LP_CAN1_RX0_IRQn,
+      NVICEnableVector(20,
                        CORTEX_PRIORITY_MASK(STM32_USB_USB1_LP_IRQ_PRIORITY));
       /* Releases the USB reset.*/
       STM32_USB->CNTR = 0;
@@ -362,8 +362,8 @@ void usb_lld_stop(USBDriver *usbp) {
   if (usbp->state == USB_STOP) {
 #if STM32_ADC_USE_ADC1
     if (&USBD1 == usbp) {
-      NVICDisableVector(USB_HP_CAN1_TX_IRQn);
-      NVICDisableVector(USB_LP_CAN1_RX0_IRQn);
+      NVICDisableVector(19);
+      NVICDisableVector(20);
       STM32_USB->CNTR = CNTR_PDWN | CNTR_FRES;
       RCC->APB1ENR &= ~RCC_APB1ENR_USBEN;
     }
