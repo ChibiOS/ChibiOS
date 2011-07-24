@@ -58,7 +58,7 @@ LDSCRIPT= ch.ld
 # Imported source files
 CHIBIOS = ../../..
 include $(CHIBIOS)/boards/OLIMEX_STM32_P103/board.mk
-include $(CHIBIOS)/os/hal/platforms/STM32/platform.mk
+include $(CHIBIOS)/os/hal/platforms/STM32F1xx/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
