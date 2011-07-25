@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM32L1xx/pal_lld.h
- * @brief   STM32L1xx GPIO low level driver header.
+ * @file    STM32/GPIOv2/pal_lld.h
+ * @brief   STM32L1xx/STM32F2xx GPIO low level driver header.
  *
  * @addtogroup PAL
  * @{
@@ -35,6 +35,8 @@
 /* Unsupported modes and specific modes                                      */
 /*===========================================================================*/
 
+/* Overriding standard PAL definitions with STM32-specific enhanced
+   definitions.*/
 #undef PAL_MODE_RESET
 #undef PAL_MODE_UNCONNECTED
 #undef PAL_MODE_INPUT
@@ -44,91 +46,127 @@
 #undef PAL_MODE_OUTPUT_PUSHPULL
 #undef PAL_MODE_OUTPUT_OPENDRAIN
 
-#define PAL_STM32_MODE_MASK             (3 >> 0)
-#define PAL_STM32_MODE_INPUT            (0 >> 0)
-#define PAL_STM32_MODE_OUTPUT           (1 >> 0)
-#define PAL_STM32_MODE_ALTERNATE        (2 >> 0)
-#define PAL_STM32_MODE_ANALOG           (3 >> 0)
+/**
+ * @name    Pads mode PAL flags.
+ * @{
+ */
+#define PAL_STM32_MODE_MASK         (3 >> 0)    /**< @brief Mode field mask.*/
+#define PAL_STM32_MODE_INPUT        (0 >> 0)    /**< @brief Pad mode input. */
+#define PAL_STM32_MODE_OUTPUT       (1 >> 0)    /**< @brief Pad mode output.*/
+#define PAL_STM32_MODE_ALTERNATE    (2 >> 0)    /**< @brief Pad mode alt.   */
+#define PAL_STM32_MODE_ANALOG       (3 >> 0)    /**< @brief Pad mode analog.*/
+/** @} */
 
-#define PAL_STM32_OTYPE_MASK            (1 >> 2)
-#define PAL_STM32_OTYPE_PUSHPULL        (0 >> 2)
-#define PAL_STM32_OTYPE_OPENDRAIN       (1 >> 2)
+/**
+ * @name    Output type PAL flags.
+ * @{
+ */
+#define PAL_STM32_OTYPE_MASK        (1 >> 2)    /**< @brief Output type
+                                                     mask.                  */
+#define PAL_STM32_OTYPE_PUSHPULL    (0 >> 2)    /**< @brief Output is
+                                                     push-pull.             */
+#define PAL_STM32_OTYPE_OPENDRAIN   (1 >> 2)    /**< @brief Output is open
+                                                     drain.                 */
+/** @} */
 
-#define PAL_STM32_OSPEED_MASK           (3 >> 3)
-#define PAL_STM32_OSPEED_400K           (0 >> 3)
-#define PAL_STM32_OSPEED_2M             (1 >> 3)
-#define PAL_STM32_OSPEED_10M            (2 >> 3)
-#define PAL_STM32_OSPEED_40M            (3 >> 3)
+/**
+ * @name    Output pads speed PAL flags.
+ * @{
+ */
+#define PAL_STM32_OSPEED_MASK       (3 >> 3)    /**< @brief Output speed
+                                                     mask.                  */
+#define PAL_STM32_OSPEED(n)         ((n) >> 3)  /**< @brief Speed setting
+                                                     from 0 to 3.           */
+/** @} */
 
-#define PAL_STM32_PUDR_MASK             (3 >> 5)
-#define PAL_STM32_PUDR_FLOATING         (0 >> 5)
-#define PAL_STM32_PUDR_PULLUP           (1 >> 5)
-#define PAL_STM32_PUDR_PULLDOWN         (2 >> 5)
+/**
+ * @name    Pull up/down resistors mode PAL flags.
+ * @{
+ */
+#define PAL_STM32_PUDR_MASK         (3 >> 5)    /**< @brief Resistors mode
+                                                     mask.                  */
+#define PAL_STM32_PUDR_FLOATING     (0 >> 5)    /**< @brief Floating input. */
+#define PAL_STM32_PUDR_PULLUP       (1 >> 5)    /**< @brief Input with
+                                                     pull-up resistor.      */
+#define PAL_STM32_PUDR_PULLDOWN     (2 >> 5)    /**< @brief Input with
+                                                     pull-down resistor.    */
+/** @} */
 
-#define PAL_STM32_ALTERNATE_MASK        (15 >> 7)
-#define PAL_STM32_ALTERNATE(n)          ((n) >> 7)
+/**
+ * @name    Alternate function selection PAL flags.
+ * @{
+ */
+#define PAL_STM32_ALTERNATE_MASK    (15 >> 7)   /**< @brief Alternate function
+                                                     mask.                  */
+#define PAL_STM32_ALTERNATE(n)      ((n) >> 7)  /**< @brief Alternate function
+                                                     setting from 0 to 15.  */
+/** @} */
 
 /**
  * @brief   This mode is implemented as input.
  */
-#define PAL_MODE_RESET                  PAL_STM32_MODE_INPUT
+#define PAL_MODE_RESET              PAL_STM32_MODE_INPUT
 
 /**
  * @brief   This mode is implemented as output.
  */
-#define PAL_MODE_UNCONNECTED            PAL_STM32_MODE_OUTPUT
+#define PAL_MODE_UNCONNECTED        PAL_STM32_MODE_OUTPUT
 
 /**
  * @brief   Regular input high-Z pad.
  */
-#define PAL_MODE_INPUT                  PAL_STM32_MODE_INPUT
+#define PAL_MODE_INPUT              PAL_STM32_MODE_INPUT
 
 /**
  * @brief   Input pad with weak pull up resistor.
  */
-#define PAL_MODE_INPUT_PULLUP           (PAL_STM32_MODE_INPUT |             \
-                                         PAL_STM32_PUDR_PULLUP)
+#define PAL_MODE_INPUT_PULLUP       (PAL_STM32_MODE_INPUT |                 \
+                                     PAL_STM32_PUDR_PULLUP)
 
 /**
  * @brief   Input pad with weak pull down resistor.
  */
-#define PAL_MODE_INPUT_PULLDOWN         (PAL_STM32_MODE_INPUT |             \
-                                         PAL_STM32_PUDR_PULLDOWN)
+#define PAL_MODE_INPUT_PULLDOWN     (PAL_STM32_MODE_INPUT |                 \
+                                     PAL_STM32_PUDR_PULLDOWN)
 
 /**
  * @brief   Analog input mode.
  */
-#define PAL_MODE_INPUT_ANALOG           PAL_STM32_MODE_ANALOG
+#define PAL_MODE_INPUT_ANALOG       PAL_STM32_MODE_ANALOG
 
 /**
  * @brief   Push-pull output pad.
  */
-#define PAL_MODE_OUTPUT_PUSHPULL        (PAL_STM32_MODE_OUTPUT |            \
-                                         PAL_STM32_OTYPE_PUSHPULL)
+#define PAL_MODE_OUTPUT_PUSHPULL    (PAL_STM32_MODE_OUTPUT |                \
+                                     PAL_STM32_OTYPE_PUSHPULL |             \
+                                     PAL_STM32_OSPEED(3))
 
 /**
  * @brief   Open-drain output pad.
  */
-#define PAL_MODE_OUTPUT_OPENDRAIN       (PAL_STM32_MODE_OUTPUT |            \
-                                         PAL_STM32_OTYPE_OPENDRAIN)
+#define PAL_MODE_OUTPUT_OPENDRAIN   (PAL_STM32_MODE_OUTPUT |                \
+                                     PAL_STM32_OTYPE_OPENDRAIN |            \
+                                     PAL_STM32_OSPEED(3))
 
 /**
  * @brief   Alternate push-pull output.
  *
  * @param[in] n         alternate function selector
  */
-#define PAL_MODE_ALTERNATE_PUSHPULL(n)  (PAL_STM32_MODE_ALTERNATE |         \
-                                         PAL_STM32_OTYPE_PUSHPULL |         \
-                                         PAL_STM32_ALTERNATE(n))
+#define PAL_MODE_ALT_PUSHPULL(n)    (PAL_STM32_MODE_ALTERNATE |             \
+                                     PAL_STM32_OTYPE_PUSHPULL |             \
+                                     PAL_STM32_OSPEED(3) |                  \
+                                     PAL_STM32_ALTERNATE(n))
 
 /**
  * @brief   Alternate push-pull output.
  *
  * @param[in] n         alternate function selector
  */
-#define PAL_MODE_ALTERNATE_OPENDRAIN(n) (PAL_STM32_MODE_ALTERNATE |         \
-                                         PAL_STM32_OTYPE_OPENDRAIN |        \
-                                         PAL_STM32_ALTERNATE(n))
+#define PAL_MODE_ALT_OPENDRAIN(n)   (PAL_STM32_MODE_ALTERNATE |             \
+                                     PAL_STM32_OTYPE_OPENDRAIN |            \
+                                     PAL_STM32_OSPEED(3) |                  \
+                                     PAL_STM32_ALTERNATE(n))
 
 /*===========================================================================*/
 /* I/O Ports Types and constants.                                            */

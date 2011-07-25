@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM32/pal_lld.c
- * @brief   STM32 GPIO low level driver code.
+ * @file    STM32/GPIOv2/pal_lld.c
+ * @brief   STM32L1xx/STM32F2xx GPIO low level driver code.
  *
  * @addtogroup PAL
  * @{
@@ -31,19 +31,27 @@
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)
 
-#if STM32_HAS_GPIOG
-#define APB2_EN_MASK  (RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN |            \
-                       RCC_APB2ENR_IOPCEN | RCC_APB2ENR_IOPDEN |            \
-                       RCC_APB2ENR_IOPEEN | RCC_APB2ENR_IOPFEN |            \
-                       RCC_APB2ENR_IOPGEN | RCC_APB2ENR_AFIOEN)
+#if STM32_HAS_GPIOH
+#define AHB_EN_MASK     (RCC_APBENR_IOPAEN | RCC_APBENR_IOPBEN |            \
+                         RCC_APBENR_IOPCEN | RCC_APBENR_IOPDEN |            \
+                         RCC_APBENR_IOPEEN | RCC_APBENR_IOPFEN |            \
+                         RCC_APBENR_IOPGEN | RCC_APBENR_IOPHEN)
+#define AHB_LPEN_MASK   AHB_EN_MASK
+#elif STM32_HAS_GPIOG
+#define AHB_EN_MASK     (RCC_APBENR_IOPAEN | RCC_APBENR_IOPBEN |            \
+                         RCC_APBENR_IOPCEN | RCC_APBENR_IOPDEN |            \
+                         RCC_APBENR_IOPEEN | RCC_APBENR_IOPFEN |            \
+                         RCC_APBENR_IOPGEN)
+#define AHB_LPEN_MASK   AHB_EN_MASK
 #elif STM32_HAS_GPIOE
-#define APB2_EN_MASK  (RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN |            \
-                       RCC_APB2ENR_IOPCEN | RCC_APB2ENR_IOPDEN |            \
-                       RCC_APB2ENR_IOPEEN | RCC_APB2ENR_AFIOEN)
+#define AHB_EN_MASK     (RCC_APBENR_IOPAEN | RCC_APBENR_IOPBEN |            \
+                         RCC_APBENR_IOPCEN | RCC_APBENR_IOPDEN |            \
+                         RCC_APBENR_IOPEEN)
+#define AHB_LPEN_MASK   AHB_EN_MASK
 #else
-#define APB2_EN_MASK  (RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN |            \
-                       RCC_APB2ENR_IOPCEN | RCC_APB2ENR_IOPDEN |            \
-                       RCC_APB2ENR_AFIOEN)
+#define AHB_EN_MASK     (RCC_APBENR_IOPAEN | RCC_APBENR_IOPBEN |            \
+                         RCC_APBENR_IOPCEN | RCC_APBENR_IOPDEN)
+#define AHB_LPEN_MASK   AHB_EN_MASK
 #endif
 
 /*===========================================================================*/
@@ -58,6 +66,12 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Initializes a GPIO peripheral.
+ *
+ * @param[in] gpiop     pointer to the GPIO registers block
+ * @param[in] config    pointer to the configuration structure
+ */
 static void initgpio(GPIO_TypeDef *gpiop, const stm32_gpio_setup_t *config) {
 
   gpiop->MODER   = config->moder;
@@ -79,7 +93,7 @@ static void initgpio(GPIO_TypeDef *gpiop, const stm32_gpio_setup_t *config) {
 
 /**
  * @brief   STM32 I/O ports configuration.
- * @details Ports A-D(E, F, G) clocks enabled, AFIO clock enabled.
+ * @details Ports A-D(E, F, G, H) clocks enabled.
  *
  * @param[in] config    the STM32 ports configuration
  *
@@ -90,12 +104,8 @@ void _pal_lld_init(const PALConfig *config) {
   /*
    * Enables the GPIO related clocks.
    */
-  RCC->AHBENR   |= RCC_AHBENR_GPIOAEN | RCC_AHBENR_GPIOBEN |
-                   RCC_AHBENR_GPIOCEN | RCC_AHBENR_GPIODEN |
-                   RCC_AHBENR_GPIOEEN | RCC_AHBENR_GPIOHEN;
-  RCC->AHBLPENR |= RCC_AHBLPENR_GPIOALPEN | RCC_AHBLPENR_GPIOBLPEN |
-                   RCC_AHBLPENR_GPIOCLPEN | RCC_AHBLPENR_GPIODLPEN |
-                   RCC_AHBLPENR_GPIOELPEN | RCC_AHBLPENR_GPIOHLPEN;
+  RCC->AHBENR   |= AHB_EN_MASK;
+  RCC->AHBLPENR |= AHB_LPEN_MASK;
 
   /*
    * Initial GPIO setup.
@@ -124,10 +134,8 @@ void _pal_lld_init(const PALConfig *config) {
  *          with the specified mode.
  * @note    This function is not meant to be invoked directly by the
  *          application code.
- * @note    @p PAL_MODE_UNCONNECTED is implemented as push pull output at 2MHz.
- * @note    Writing on pads programmed as pull-up or pull-down has the side
- *          effect to modify the resistor setting because the output latched
- *          data is used for the resistor selection.
+ * @note    @p PAL_MODE_UNCONNECTED is implemented as push pull at minimum
+ *          speed.
  *
  * @param[in] port      the port identifier
  * @param[in] mask      the group mask
