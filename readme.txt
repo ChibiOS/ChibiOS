@@ -85,6 +85,9 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Added provisional support for STM32L1xx and STM32F2xx. Because of this
+  some directories related to the STM32 have been renamed, your makefiles may
+  require adjustments.
 - NEW: Added a custom rule to the various rules.mk files, now it is possible
   to add an user rule into the Makefiles.
 - NEW: Improvements to the trace buffer, now it stores a full thread pointer

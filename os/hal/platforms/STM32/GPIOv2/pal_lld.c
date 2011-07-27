@@ -31,27 +31,14 @@
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)
 
-#if STM32_HAS_GPIOH
-#define AHB_EN_MASK     (RCC_APBENR_IOPAEN | RCC_APBENR_IOPBEN |            \
-                         RCC_APBENR_IOPCEN | RCC_APBENR_IOPDEN |            \
-                         RCC_APBENR_IOPEEN | RCC_APBENR_IOPFEN |            \
-                         RCC_APBENR_IOPGEN | RCC_APBENR_IOPHEN)
+#if defined(STM32L1XX_MD)
+#define AHB_EN_MASK     (RCC_AHBENR_GPIOAEN | RCC_AHBENR_GPIOBEN |           \
+                         RCC_AHBENR_GPIOCEN | RCC_AHBENR_GPIODEN |           \
+                         RCC_AHBENR_GPIOEEN | RCC_AHBENR_GPIOHEN)
 #define AHB_LPEN_MASK   AHB_EN_MASK
-#elif STM32_HAS_GPIOG
-#define AHB_EN_MASK     (RCC_APBENR_IOPAEN | RCC_APBENR_IOPBEN |            \
-                         RCC_APBENR_IOPCEN | RCC_APBENR_IOPDEN |            \
-                         RCC_APBENR_IOPEEN | RCC_APBENR_IOPFEN |            \
-                         RCC_APBENR_IOPGEN)
-#define AHB_LPEN_MASK   AHB_EN_MASK
-#elif STM32_HAS_GPIOE
-#define AHB_EN_MASK     (RCC_APBENR_IOPAEN | RCC_APBENR_IOPBEN |            \
-                         RCC_APBENR_IOPCEN | RCC_APBENR_IOPDEN |            \
-                         RCC_APBENR_IOPEEN)
-#define AHB_LPEN_MASK   AHB_EN_MASK
+#elif defined(STM32F2XX)
 #else
-#define AHB_EN_MASK     (RCC_APBENR_IOPAEN | RCC_APBENR_IOPBEN |            \
-                         RCC_APBENR_IOPCEN | RCC_APBENR_IOPDEN)
-#define AHB_LPEN_MASK   AHB_EN_MASK
+#error "missing or usupported platform for GPIOv2 PAL driver"
 #endif
 
 /*===========================================================================*/
@@ -66,12 +53,6 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-/**
- * @brief   Initializes a GPIO peripheral.
- *
- * @param[in] gpiop     pointer to the GPIO registers block
- * @param[in] config    pointer to the configuration structure
- */
 static void initgpio(GPIO_TypeDef *gpiop, const stm32_gpio_setup_t *config) {
 
   gpiop->MODER   = config->moder;
@@ -79,8 +60,8 @@ static void initgpio(GPIO_TypeDef *gpiop, const stm32_gpio_setup_t *config) {
   gpiop->OSPEEDR = config->ospeedr;
   gpiop->PUPDR   = config->pupdr;
   gpiop->ODR     = config->odr;
-  gpiop->AFRL    = 0;
-  gpiop->AFRH    = 0;
+  gpiop->AFRL    = config->afrl;
+  gpiop->AFRH    = config->afrh;
 }
 
 /*===========================================================================*/
@@ -104,8 +85,11 @@ void _pal_lld_init(const PALConfig *config) {
   /*
    * Enables the GPIO related clocks.
    */
+#if defined(STM32L1XX_MD)
   RCC->AHBENR   |= AHB_EN_MASK;
   RCC->AHBLPENR |= AHB_LPEN_MASK;
+#elif defined(STM32F2XX)
+#endif
 
   /*
    * Initial GPIO setup.
@@ -125,6 +109,9 @@ void _pal_lld_init(const PALConfig *config) {
 #endif
 #if STM32_HAS_GPIOH
   initgpio(GPIOH, &config->PHData);
+#endif
+#if STM32_HAS_GPIOI
+  initgpio(GPIOI, &config->PIData);
 #endif
 }
 
