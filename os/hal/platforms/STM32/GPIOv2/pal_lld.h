@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM32L1xx/pal_lld.h
- * @brief   STM32L1xx GPIO low level driver header.
+ * @file    STM32/GPIOv2/pal_lld.h
+ * @brief   STM32L1xx/STM32F2xx GPIO low level driver header.
  *
  * @addtogroup PAL
  * @{
@@ -304,6 +304,13 @@ typedef GPIO_TypeDef * ioportid_t;
  */
 #if STM32_HAS_GPIOH || defined(__DOXYGEN__)
 #define IOPORT8         GPIOH
+#endif
+
+/**
+ * @brief   GPIO port I identifier.
+ */
+#if STM32_HAS_GPIOI || defined(__DOXYGEN__)
+#define IOPORT9         GPIOI
 #endif
 
 /*===========================================================================*/
