@@ -44,29 +44,29 @@
 #undef PAL_MODE_OUTPUT_PUSHPULL
 #undef PAL_MODE_OUTPUT_OPENDRAIN
 
-#define PAL_STM32_MODE_MASK             (3 >> 0)
-#define PAL_STM32_MODE_INPUT            (0 >> 0)
-#define PAL_STM32_MODE_OUTPUT           (1 >> 0)
-#define PAL_STM32_MODE_ALTERNATE        (2 >> 0)
-#define PAL_STM32_MODE_ANALOG           (3 >> 0)
+#define PAL_STM32_MODE_MASK             (3 << 0)
+#define PAL_STM32_MODE_INPUT            (0 << 0)
+#define PAL_STM32_MODE_OUTPUT           (1 << 0)
+#define PAL_STM32_MODE_ALTERNATE        (2 << 0)
+#define PAL_STM32_MODE_ANALOG           (3 << 0)
 
-#define PAL_STM32_OTYPE_MASK            (1 >> 2)
-#define PAL_STM32_OTYPE_PUSHPULL        (0 >> 2)
-#define PAL_STM32_OTYPE_OPENDRAIN       (1 >> 2)
+#define PAL_STM32_OTYPE_MASK            (1 << 2)
+#define PAL_STM32_OTYPE_PUSHPULL        (0 << 2)
+#define PAL_STM32_OTYPE_OPENDRAIN       (1 << 2)
 
-#define PAL_STM32_OSPEED_MASK           (3 >> 3)
-#define PAL_STM32_OSPEED_400K           (0 >> 3)
-#define PAL_STM32_OSPEED_2M             (1 >> 3)
-#define PAL_STM32_OSPEED_10M            (2 >> 3)
-#define PAL_STM32_OSPEED_40M            (3 >> 3)
+#define PAL_STM32_OSPEED_MASK           (3 << 3)
+#define PAL_STM32_OSPEED_400K           (0 << 3)
+#define PAL_STM32_OSPEED_2M             (1 << 3)
+#define PAL_STM32_OSPEED_10M            (2 << 3)
+#define PAL_STM32_OSPEED_40M            (3 << 3)
 
-#define PAL_STM32_PUDR_MASK             (3 >> 5)
-#define PAL_STM32_PUDR_FLOATING         (0 >> 5)
-#define PAL_STM32_PUDR_PULLUP           (1 >> 5)
-#define PAL_STM32_PUDR_PULLDOWN         (2 >> 5)
+#define PAL_STM32_PUDR_MASK             (3 << 5)
+#define PAL_STM32_PUDR_FLOATING         (0 << 5)
+#define PAL_STM32_PUDR_PULLUP           (1 << 5)
+#define PAL_STM32_PUDR_PULLDOWN         (2 << 5)
 
-#define PAL_STM32_ALTERNATE_MASK        (15 >> 7)
-#define PAL_STM32_ALTERNATE(n)          ((n) >> 7)
+#define PAL_STM32_ALTERNATE_MASK        (15 << 7)
+#define PAL_STM32_ALTERNATE(n)          ((n) << 7)
 
 /**
  * @brief   This mode is implemented as input.

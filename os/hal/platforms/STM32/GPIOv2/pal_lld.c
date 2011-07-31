@@ -137,11 +137,83 @@ void _pal_lld_init(const PALConfig *config) {
  * @param[in] mode      the mode
  *
  * @notapi
+ *
+ * n * 1 +
+ * n * 4 +
+ * n * 16 +
+ * n * 64 +
+ * n * 256 +
+ * n * 1024 +
+ * n * 4096 +
+ * n * 16384
  */
+#if 1
 void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,
                            iomode_t mode) {
+
+  uint32_t m1 = (uint32_t)mask;
+  uint32_t m2 = 0;
+  uint32_t m4l = 0;
+  uint32_t m4h = 0;
+  uint32_t moder = (((mode & PAL_STM32_MODE_MASK) >> 0) & 3) * 0x5555;
+  uint32_t otyper = (((mode & PAL_STM32_OTYPE_MASK) >> 2) & 1) * 0xffff;
+  uint32_t ospeedr = (((mode & PAL_STM32_OSPEED_MASK) >> 3) & 3) * 0x5555;
+  uint32_t pupdr = (((mode & PAL_STM32_PUDR_MASK) >> 5) & 3) * 0x5555;
+  uint32_t afr = (((mode & PAL_STM32_ALTERNATE_MASK) >> 7) & 15) * 0x0f0f;
+  uint32_t bit = 0;
+  while (mask) {
+    if ((mask & 1) != 0) {
+      m2 |= 3 << (bit * 2);
+      if (bit < 8)
+        m4l |= 15 << ((bit & 7) * 4);
+      else
+        m4h |= 15 << ((bit & 7) * 4);
+    }
+    bit++;
+    mask >>= 1;
+  }
+  port->AFRL    = (port->AFRL & ~m4l) | afr;
+  port->AFRH    = (port->AFRH & ~m4h) | afr;
+  port->OSPEEDR = (port->OSPEEDR & ~m2) | ospeedr;
+  port->OTYPER  = (port->OTYPER & ~m1) | otyper;
+  port->PUPDR   = (port->PUPDR & ~m2) | pupdr;
+  port->MODER   = (port->MODER & ~m2) | moder;
 }
+
+#else
+void _pal_lld_setgroupmode(ioportid_t port,
+                           ioportmask_t mask,
+                           iomode_t mode) {
+
+  uint32_t modemask = ((mode & PAL_STM32_MODE_MASK) >> 0) & 3;
+  uint32_t otypemask = ((mode & PAL_STM32_OTYPE_MASK) >> 2) & 1;
+  uint32_t ospeedmask = ((mode & PAL_STM32_OSPEED_MASK) >> 3) & 3;
+  uint32_t pupdrmask = ((mode & PAL_STM32_PUDR_MASK) >> 5) & 15;
+  uint32_t bit = 0;
+  while (mask) {
+    if ((mask & 1) != 0) {
+      uint32_t m4 = 15 < ((bit & 7) * 4);
+      uint32_t altmask = ((mode & PAL_STM32_ALTERNATE_MASK) >> 7) <<
+                         ((bit & 7) * 4);
+      if (bit < 8)
+        port->AFRL = (port->AFRL & ~m4) | altmask;
+      else
+        port->AFRH = (port->AFRH & ~m4) | altmask;
+      port->OTYPER  = (port->OTYPER & ~(1 << bit)) | otypemask;
+      port->OSPEEDR = (port->OSPEEDR & ~(3 << (bit * 2))) | ospeedmask;
+      port->PUPDR   = (port->PUPDR & ~(3 << (bit * 2))) | pupdrmask;
+      port->MODER   = (port->MODER & ~(3 << (bit * 2))) | modemask;
+    }
+    modemask <<= 2;
+    otypemask <<= 1;
+    ospeedmask <<= 2;
+    pupdrmask <<= 2;
+    bit++;
+    mask >>= 1;
+  }
+}
+#endif
 
 #endif /* HAL_USE_PAL */
 
