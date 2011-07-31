@@ -164,16 +164,6 @@
 #define STM32_I2C_I2C2_USE_GPT_TIM          GPTD2
 #define STM32_I2C_I2C2_USE_POLLING_WAIT     FALSE
 
-/*
- * EXTI system settings.
- */
-#define STM32_EXTI0_PRIORITY        5
-#define STM32_EXTI1_PRIORITY        5
-#define STM32_EXTI2_PRIORITY        5
-#define STM32_EXTI3_PRIORITY        5
-#define STM32_EXTI4_PRIORITY        5
-#define STM32_EXTI9_5_PRIORITY      5
-#define STM32_EXTI15_10_PRIORITY    5
 
 /*
  * USB driver system settings.

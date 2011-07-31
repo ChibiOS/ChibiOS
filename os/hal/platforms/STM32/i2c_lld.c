@@ -26,8 +26,10 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
-#define I2C_STOP_GPT_TIMEOUT  50    /* waiting timer value */
-#define I2C_START_GPT_TIMEOUT 50    /* waiting timer value */
+/* TODO: may be? move this defines in i2c_lld.h and mcuconf.h */
+#define I2C_STOP_GPT_TIMEOUT  50     /* waiting timer value */
+#define I2C_START_GPT_TIMEOUT 50     /* waiting timer value */
+#define I2C_POLLING_TIMEOUT   0xFFFF /* timeout for syncronouse driver */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -705,17 +707,20 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
     uint8_t *txbuf, size_t txbytes, uint8_t *rxbuf, size_t rxbytes) {
 
   /* "waiting" for STOP bit routine*/
-  chDbgAssert(!(i2cp->flags & I2C_FLG_TIMER_ARMED),
-      "i2c_lld_master_transmit(), #1", "time to STOP is out");
-  if ((i2cp->id_i2c->CR1 & I2C_CR1_STOP) && i2cp->timer != NULL && i2cp->timer_cfg != NULL){
-    gptStartOneShot(i2cp->timer, I2C_STOP_GPT_TIMEOUT);
-    i2cp->flags |= I2C_FLG_TIMER_ARMED;
-    return;
-  }
-  else{
-    while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
-      ;
-  }
+  #if STM32_I2C_I2C1_USE_POLLING_WAIT
+    uint32_t timeout = I2C_POLLING_TIMEOUT;
+    /* TODO: timeout and Assert here */
+    while((i2cp->id_i2c->CR1 & I2C_CR1_STOP) && timeout)
+      timeout--;
+    chDbgAssert((timeout > 0), "i2c_lld_master_transmit(), #1", "time to STOP is out");
+  #else
+    chDbgAssert(!(i2cp->flags & I2C_FLG_TIMER_ARMED), "i2c_lld_master_transmit(), #1", "time to STOP is out");
+    if ((i2cp->id_i2c->CR1 & I2C_CR1_STOP) && i2cp->timer != NULL && i2cp->timer_cfg != NULL){
+      gptStartOneShot(i2cp->timer, I2C_STOP_GPT_TIMEOUT);
+      i2cp->flags |= I2C_FLG_TIMER_ARMED;
+      return;
+    }
+  #endif /* STM32_I2C_I2C1_USE_POLLING_WAIT */
 
   /* init driver fields */
   i2cp->slave_addr = slave_addr;
@@ -762,17 +767,19 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
         "some interrupt sources not clear");
 
   /* "waiting" for STOP bit routine*/
-  chDbgAssert(!(i2cp->flags & I2C_FLG_TIMER_ARMED),
-      "i2c_lld_master_receive(), #1", "time to STOP is out");
-  if ((i2cp->id_i2c->CR1 & I2C_CR1_STOP) && i2cp->timer != NULL && i2cp->timer_cfg != NULL){
-    gptStartOneShot(i2cp->timer, I2C_STOP_GPT_TIMEOUT);
-    i2cp->flags |= I2C_FLG_TIMER_ARMED;
-    return;
-  }
-  else{
-    while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
-      ;
-  }
+  #if STM32_I2C_I2C1_USE_POLLING_WAIT
+    uint32_t timeout = I2C_POLLING_TIMEOUT;
+    while((i2cp->id_i2c->CR1 & I2C_CR1_STOP) && timeout)
+      timeout--;
+    chDbgAssert((timeout > 0), "i2c_lld_master_receive(), #1", "time to STOP is out");
+  #else
+    chDbgAssert(!(i2cp->flags & I2C_FLG_TIMER_ARMED), "i2c_lld_master_receive(), #1", "time to STOP is out");
+    if ((i2cp->id_i2c->CR1 & I2C_CR1_STOP) && i2cp->timer != NULL && i2cp->timer_cfg != NULL){
+      gptStartOneShot(i2cp->timer, I2C_STOP_GPT_TIMEOUT);
+      i2cp->flags |= I2C_FLG_TIMER_ARMED;
+      return;
+    }
+  #endif /* STM32_I2C_I2C1_USE_POLLING_WAIT */
 
   /* init driver fields */
 	i2cp->slave_addr = slave_addr;
@@ -826,17 +833,19 @@ void i2c_lld_master_transceive(I2CDriver *i2cp){
   i2cp->id_state = I2C_ACTIVE_TRANSCEIVE;
 
   /* "waiting" for START bit routine*/
-  chDbgAssert(!(i2cp->flags & I2C_FLG_TIMER_ARMED),
-      "i2c_lld_master_transceive(), #1", "time to START is out");
-  if ((i2cp->id_i2c->CR1 & I2C_CR1_START) && i2cp->timer != NULL && i2cp->timer_cfg != NULL){
-    gptStartOneShot(i2cp->timer, I2C_START_GPT_TIMEOUT);
-    i2cp->flags |= I2C_FLG_TIMER_ARMED;
-    return;
-  }
-  else{
-    while(i2cp->id_i2c->CR1 & I2C_CR1_START)
-      ;
-  }
+  #if STM32_I2C_I2C1_USE_POLLING_WAIT
+    uint32_t timeout = I2C_POLLING_TIMEOUT;
+    while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout);
+      timeout--;
+    chDbgAssert((timeout > 0), "i2c_lld_master_transceive(), #1", "time to START is out");
+  #else
+    chDbgAssert(!(i2cp->flags & I2C_FLG_TIMER_ARMED), "i2c_lld_master_transceive(), #1", "time to START is out");
+    if ((i2cp->id_i2c->CR1 & I2C_CR1_START) && i2cp->timer != NULL && i2cp->timer_cfg != NULL){
+      gptStartOneShot(i2cp->timer, I2C_START_GPT_TIMEOUT);
+      i2cp->flags |= I2C_FLG_TIMER_ARMED;
+      return;
+    }
+  #endif /* STM32_I2C_I2C1_USE_POLLING_WAIT */
 
   /* init address fields */
   if(i2cp->slave_addr & 0x8000){                          /* 10-bit mode used */

@@ -113,7 +113,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   Serial Driver condition flags type.
+ * @brief   I2C Driver condition flags type.
  */
 typedef uint32_t i2cflags_t;
 
@@ -211,7 +211,7 @@ struct I2CDriver{
 
   /**
    * @brief Timer for waiting STOP condition on the bus.
-   * @details Workaround for STM32 buggy I2C cell.
+   * @details This is workaround for STM32 buggy I2C cell.
    */
   GPTDriver             *timer;
 
