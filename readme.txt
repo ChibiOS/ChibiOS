@@ -61,10 +61,12 @@
   +--test/              - Kernel test suite source code.
   |  +--coverage/       - Code coverage project.
   +--testhal/           - HAL integration test demos.
-     +--LPC11xx/        - LPC11xx HAL test demos.
-     +--LPC13xx/        - LPC13xx HAL test demos.
-     +--STM32/          - STM32 HAL test demos.
-     +--STM8S/          - STM8S HAL test demos.
+  |  +--LPC11xx/        - LPC11xx HAL test demos.
+  |  +--LPC13xx/        - LPC13xx HAL test demos.
+  |  +--STM32/          - STM32 HAL test demos.
+  |  +--STM8S/          - STM8S HAL test demos.
+  +--tools              - Various tools.
+     +--eclipse         - Eclipse enhancements.
 
 *****************************************************************************
 *** Releases                                                              ***
@@ -85,6 +87,12 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Added debug plugin for Eclipse under ./tools/eclipse (backported to
+  2.2.7).
+- NEW: The debug macros chDbgCheck() and chDbgAssert() now can be externally
+  redefined. The macro chDbgCheck() no more includes the line number in the
+  description because incompatibility with the Cosmic compiler (backported to
+  2.2.7).
 - NEW: Added provisional support for STM32L1xx and STM32F2xx. Because of this
   some directories related to the STM32 have been renamed, your makefiles may
   require adjustments.
@@ -92,10 +100,10 @@
   to add an user rule into the Makefiles.
 - NEW: Improvements to the trace buffer, now it stores a full thread pointer
   and event time, changed names to debug variables by adding the "dbg_"
-  prefix.
+  prefix (backported to 2.2.7).
 - NEW: Added a new functionality to the registry subsystem, now it is possible
   to associate a name to the threads using chRegSetThreadName. The main and
-  idle threads have their name assigned by default.
+  idle threads have their name assigned by default (backported to 2.2.7).
 - NEW: Added TIM8 support to the STM32 GPT, ICU and PWM drivers.
 - NEW: Updated the STM32 header file to the latest version 3.5.0 and fixed
   it in order to correct several bugs related to the XL family.

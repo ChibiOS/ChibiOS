@@ -90,13 +90,15 @@ typedef struct {
  *
  * @api
  */
+#if !defined(chDbgCheck)
 #define chDbgCheck(c, func) {                                           \
   if (!(c))                                                             \
-    chDbgPanic(__QUOTE_THIS(func)"(), line "__QUOTE_THIS(__LINE__));    \
+    chDbgPanic(__QUOTE_THIS(func)"()");                                 \
 }
+#endif /* !defined(chDbgCheck) */
 #else /* !CH_DBG_ENABLE_CHECKS */
 #define chDbgCheck(c, func) {                                           \
-  (void)(c), (void)__QUOTE_THIS(func)"(), line "__QUOTE_THIS(__LINE__); \
+  (void)(c), (void)__QUOTE_THIS(func)"()";                              \
 }
 #endif /* !CH_DBG_ENABLE_CHECKS */
 
@@ -118,10 +120,12 @@ typedef struct {
  *
  * @api
  */
+#if !defined(chDbgAssert)
 #define chDbgAssert(c, m, r) {                                          \
   if (!(c))                                                             \
     chDbgPanic(m);                                                      \
 }
+#endif /* !defined(chDbgAssert) */
 #else /* !CH_DBG_ENABLE_ASSERTS */
 #define chDbgAssert(c, m, r) {(void)(c);}
 #endif /* !CH_DBG_ENABLE_ASSERTS */
