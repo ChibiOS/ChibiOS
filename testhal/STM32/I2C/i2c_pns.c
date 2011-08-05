@@ -32,7 +32,6 @@ static const I2CConfig i2cfg2 = {
 
 
 void I2CInit_pns(void){
-
   i2cInit();
 
   i2cStart(&I2CD1, &i2cfg1);
@@ -46,13 +45,12 @@ void I2CInit_pns(void){
   palSetPadMode(IOPORT2, 10, PAL_MODE_STM32_ALTERNATE_OPENDRAIN);
   palSetPadMode(IOPORT2, 11, PAL_MODE_STM32_ALTERNATE_OPENDRAIN);
 
-
   /* startups. Pauses added just to be safe */
+  chThdSleepMilliseconds(1000);
   init_max1236();
-  chThdSleepMilliseconds(100);
-
+  chThdSleepMilliseconds(1000);
   init_lis3();
-  chThdSleepMilliseconds(100);
+  chThdSleepMilliseconds(1000);
 }
 
 

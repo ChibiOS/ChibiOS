@@ -68,7 +68,7 @@ static msg_t PollMax1236Thread(void *arg) {
   systime_t time = chTimeNow();
 
   while (TRUE) {
-    time += MS2ST(20);
+    time += MS2ST(200);
     /* Call reading function */
     read_max1236();
     chThdSleepUntil(time);
@@ -83,7 +83,7 @@ static msg_t PollAccelThread(void *arg) {
   systime_t time = chTimeNow();
 
   while (TRUE) {
-    time += MS2ST(2);
+    time += MS2ST(20);
     request_acceleration_data();
     chThdSleepUntil(time);
   }

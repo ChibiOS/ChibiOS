@@ -270,6 +270,7 @@ extern "C" {
   void i2cAcquireBus(I2CDriver *i2cp);
   void i2cReleaseBus(I2CDriver *i2cp);
 #endif /* I2C_USE_MUTUAL_EXCLUSION */
+
 #ifdef __cplusplus
 }
 #endif

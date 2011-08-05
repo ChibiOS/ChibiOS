@@ -178,7 +178,11 @@ void i2cMasterTransmit(I2CDriver *i2cp,
 
   i2cp->id_state = I2C_ACTIVE_TRANSMIT;
   i2c_lld_master_transmit(i2cp, slave_addr, txbuf, txbytes, rxbuf, rxbytes);
+#if I2C_SUPPORTS_CALLBACKS
   _i2c_wait_s(i2cp);
+#else
+  i2cp->id_state = I2C_READY;
+#endif /* I2C_SUPPORTS_CALLBACKS */
 }
 
 /**
@@ -216,7 +220,11 @@ void i2cMasterReceive(I2CDriver *i2cp,
 
   i2cp->id_state = I2C_ACTIVE_RECEIVE;
   i2c_lld_master_receive(i2cp, slave_addr, rxbuf, rxbytes);
+#if I2C_SUPPORTS_CALLBACKS
   _i2c_wait_s(i2cp);
+#else
+  i2cp->id_state = I2C_READY;
+#endif /* I2C_SUPPORTS_CALLBACKS */
 }
 
 

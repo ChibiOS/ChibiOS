@@ -178,7 +178,7 @@
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(I2C_USE_WAIT) || defined(__DOXYGEN__)
-#define I2C_USE_WAIT                TRUE
+#define I2C_USE_WAIT                FALSE
 #endif
 
 /**
@@ -186,6 +186,13 @@
  */
 #if !defined(I2C_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define I2C_USE_MUTUAL_EXCLUSION    TRUE
+#endif
+
+/**
+ * @brief   Switch to asynchronouse driver with callbacks.
+ */
+#if !defined(I2C_SUPPORTS_CALLBACKS) || defined(__DOXYGEN__)
+#define I2C_SUPPORTS_CALLBACKS      TRUE
 #endif
 
 /*===========================================================================*/

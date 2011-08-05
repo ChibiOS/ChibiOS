@@ -13,11 +13,17 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
-#define I2C_START_TIMEOUT 0xFFFF
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+/**
+ * @brief Switch between callback based and synchronouse driver.
+ * @note  The default is synchronouse.
+ */
+#if !defined(I2C_SUPPORTS_CALLBACKS) || defined(__DOXYGEN__)
+#define I2C_SUPPORTS_CALLBACKS              FALSE
+#endif
 
 /**
  * @brief I2C1 driver synchronization choice between GPT and polling.
@@ -161,6 +167,7 @@ struct I2CDriver{
    * @brief Driver state.
    */
   i2cstate_t            id_state;
+
 #if I2C_USE_WAIT
   /**
    * @brief Thread waiting for I/O completion.
@@ -177,6 +184,7 @@ struct I2CDriver{
   Semaphore             id_semaphore;
 #endif
 #endif /* I2C_USE_MUTUAL_EXCLUSION */
+
   /**
    * @brief Current configuration data.
    */
@@ -198,7 +206,7 @@ struct I2CDriver{
 
   uint16_t              slave_addr; /*!< @brief Current slave address. */
   uint8_t               slave_addr1;/*!< @brief 7-bit address of the slave with r\w bit.*/
-  uint8_t               slave_addr2;/*!< @brief Used in 10-bit address mode. */
+  uint8_t               slave_addr2;/*!< @brief Uses in 10-bit address mode. */
 
   EventSource           sevent;     /*!< @brief Status Change @p EventSource.*/
 
@@ -209,6 +217,8 @@ struct I2CDriver{
    */
   I2C_TypeDef           *id_i2c;
 
+#if !(STM32_I2C_I2C1_USE_POLLING_WAIT)
+  /* TODO: capability to switch this GPT fields off */
   /**
    * @brief Timer for waiting STOP condition on the bus.
    * @details This is workaround for STM32 buggy I2C cell.
@@ -219,7 +229,8 @@ struct I2CDriver{
    * @brief Config for workaround timer.
    */
   const GPTConfig       *timer_cfg;
-} ;
+#endif /* !(STM32_I2C_I2C1_USE_POLLING_WAIT) */
+};
 
 
 /*===========================================================================*/
@@ -235,7 +246,7 @@ struct I2CDriver{
  * does not block thread, only if slave not response it does.
  */
 #define i2c_lld_wait_bus_free(i2cp) {                                       \
-  uint32_t tmo = 0xffff;                                                    \
+  uint32_t tmo = 0xfffff;                                                   \
   while((i2cp->id_i2c->SR2 & I2C_SR2_BUSY) && tmo--)                        \
     ;                                                                       \
 }
