@@ -145,6 +145,9 @@ struct I2CSlaveConfig{
    *        If set to @p NULL then the callback is disabled.
    */
   i2cerrorcallback_t    id_err_callback;
+#if defined(I2C_SLAVECONFIG_EXT_FIELDS)
+  I2C_SLAVECONFIG_EXT_FIELDS
+#endif
 };
 
 
