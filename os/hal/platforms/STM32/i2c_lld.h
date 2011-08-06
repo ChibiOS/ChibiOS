@@ -22,7 +22,7 @@
  * @note  The default is synchronouse.
  */
 #if !defined(I2C_SUPPORTS_CALLBACKS) || defined(__DOXYGEN__)
-#define I2C_SUPPORTS_CALLBACKS              FALSE
+#define I2C_SUPPORTS_CALLBACKS              TRUE
 #endif
 
 /**
