@@ -77,6 +77,9 @@ void _idle_thread(void *p) {
  */
 void chSysInit(void) {
   static Thread mainthread;
+#if CH_DBG_ENABLE_STACK_CHECK
+  extern stkalign_t __main_thread_stack_base__;
+#endif
 
   port_init();
   _scheduler_init();
@@ -94,6 +97,9 @@ void chSysInit(void) {
   /* Now this instructions flow becomes the main thread.*/
   setcurrp(_thread_init(&mainthread, NORMALPRIO));
   currp->p_state = THD_STATE_CURRENT;
+#if CH_DBG_ENABLE_STACK_CHECK
+  currp->p_stklimit = &__main_thread_stack_base__;
+#endif
   chSysEnable();
 
   chRegSetThreadName("main");

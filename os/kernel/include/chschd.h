@@ -76,12 +76,12 @@ typedef struct {
                                                 initialized to zero.        */
   struct context        r_ctx;      /**< @brief Not used, present because
                                                 offsets.                    */
-#if CH_USE_REGISTRY
+#if CH_USE_REGISTRY || defined(__DOXYGEN__)
   Thread                *r_newer;   /**< @brief Newer registry element.     */
   Thread                *r_older;   /**< @brief Older registry element.     */
 #endif
   /* End of the fields shared with the Thread structure.*/
-#if CH_TIME_QUANTUM > 0
+#if (CH_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
   cnt_t                 r_preempt;  /**< @brief Round robin counter.        */
 #endif
   Thread                *r_current; /**< @brief The currently running

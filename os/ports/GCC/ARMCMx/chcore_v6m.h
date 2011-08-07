@@ -242,8 +242,8 @@ struct intctx {
 #define port_switch(ntp, otp) _port_switch(ntp, otp)
 #else
 #define port_switch(ntp, otp) {                                             \
-  register struct intctx *r13 asm ("r13");                                  \
-  if ((void *)(r13 - 1) < (void *)(otp + 1))                                \
+    register struct intctx *r13 asm ("r13");                                \
+  if ((stkalign_t *)(r13 - 1) < otp->p_stklimit)                            \
     chDbgPanic("stack overflow");                                           \
   _port_switch(ntp, otp);                                                   \
 }

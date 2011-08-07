@@ -23,7 +23,6 @@
  */
 __main_stack_size__     = 0x0400;
 __process_stack_size__  = 0x0400;
-__stacks_total_size__   = __main_stack_size__ + __process_stack_size__;
 
 MEMORY
 {
@@ -98,6 +97,21 @@ SECTIONS
     _etext = .;
     _textdata = _etext;
 
+    .stacks :
+    {
+        . = ALIGN(8);
+        __main_stack_base__ = .;
+        . += __main_stack_size__;
+        . = ALIGN(8);
+        __main_stack_end__ = .;
+        __process_stack_base__ = .;
+        __main_thread_stack_base__ = .;
+        . += __process_stack_size__;
+        . = ALIGN(8);
+        __process_stack_end__ = .;
+        __main_thread_stack_end__ = .;
+    } > ram
+
     .data :
     {
         PROVIDE(_data = .);
@@ -127,4 +141,4 @@ PROVIDE(end = .);
 _end            = .;
 
 __heap_base__   = _end;
-__heap_end__    = __ram_end__ - __stacks_total_size__;
+__heap_end__    = __ram_end__;

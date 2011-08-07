@@ -73,28 +73,11 @@ typedef funcp_t * funcpp_t;
 #define SYMVAL(sym) (uint32_t)(((uint8_t *)&(sym)) - ((uint8_t *)0))
 
 /**
- * @brief   Ram end.
+ * @brief   Main thread stack initial position.
  * @details This symbol must be exported by the linker script and represents
- *          the location after the last RAM location.
+ *          the main thread stack initial position.
  */
-extern uint8_t __ram_end__;
-
-/**
- * @brief   Main stack size.
- * @details This symbol must be exported by the linker script and represents
- *          the main stack size.
- * @note    The main stack is the stack where interrupts and exceptions are
- *          processed.
- */
-extern uint8_t __main_stack_size__;
-
-/**
- * @brief   Process stack size.
- * @details This symbol must be exported by the linker script and represents
- *          the process stack size.
- * @note    The process stack is the stack used by the @p main() function.
- */
-extern uint8_t __process_stack_size__;
+extern uint8_t __process_stack_end__;
 
 /**
  * @brief   ROM image of the data segment start.
@@ -206,7 +189,7 @@ void ResetHandler(void) {
      main stack is assumed to be allocated starting from @p __ram_end__
      extending downward.*/
   asm volatile ("cpsid   i");
-  psp = SYMVAL(__ram_end__) - SYMVAL(__main_stack_size__);
+  psp = SYMVAL(__process_stack_end__);
   asm volatile ("msr     PSP, %0" : : "r" (psp));
 
   ctl = CRT0_CONTROL_INIT;

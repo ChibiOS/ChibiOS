@@ -44,16 +44,22 @@ struct Thread {
   /* End of the fields shared with the ThreadsQueue structure. */
   tprio_t               p_prio;     /**< @brief Thread priority.            */
   struct context        p_ctx;      /**< @brief Processor context.          */
-#if CH_USE_REGISTRY
+#if CH_USE_REGISTRY || defined(__DOXYGEN__)
   Thread                *p_newer;   /**< @brief Newer registry element.     */
   Thread                *p_older;   /**< @brief Older registry element.     */
 #endif
   /* End of the fields shared with the ReadyList structure. */
-#if CH_USE_REGISTRY
+#if CH_USE_REGISTRY || defined(__DOXYGEN__)
   /**
    * @brief Thread name or @p NULL.
    */
   const char            *p_name;
+#endif
+#if CH_DBG_ENABLE_STACK_CHECK || defined(__DOXYGEN__)
+  /**
+   * @brief Thread stack boundary.
+   */
+  stkalign_t            *p_stklimit;
 #endif
   /**
    * @brief Current thread state.
@@ -63,19 +69,19 @@ struct Thread {
    * @brief Various thread flags.
    */
   tmode_t               p_flags;
-#if CH_USE_DYNAMIC
+#if CH_USE_DYNAMIC || defined(__DOXYGEN__)
   /**
    * @brief References to this thread.
    */
   trefs_t               p_refs;
 #endif
-#if CH_USE_NESTED_LOCKS
+#if CH_USE_NESTED_LOCKS || defined(__DOXYGEN__)
   /**
    * @brief Number of nested locks.
    */
   cnt_t                 p_locks;
 #endif
-#if CH_DBG_THREADS_PROFILING
+#if CH_DBG_THREADS_PROFILING || defined(__DOXYGEN__)
   /**
    * @brief Thread consumed time in ticks.
    * @note This field can overflow.
@@ -109,22 +115,22 @@ struct Thread {
      *        states.
      */
     void                *wtobjp;
-#if CH_USE_EVENTS
+#if CH_USE_EVENTS || defined(__DOXYGEN__)
     /**
      * @brief Enabled events mask.
-     * @note  This field is only valied while the thread is in the
+     * @note  This field is only valid while the thread is in the
      *        @p THD_STATE_WTOREVT or @p THD_STATE_WTANDEVT states.
      */
     eventmask_t         ewmask;
 #endif
   }                     p_u;
-#if CH_USE_WAITEXIT
+#if CH_USE_WAITEXIT || defined(__DOXYGEN__)
   /**
    * @brief Termination waiting list.
    */
   ThreadsList           p_waiting;
 #endif
-#if CH_USE_MESSAGES
+#if CH_USE_MESSAGES || defined(__DOXYGEN__)
   /**
    * @brief Messages queue.
    */
@@ -134,13 +140,13 @@ struct Thread {
    */
   msg_t                 p_msg;
 #endif
-#if CH_USE_EVENTS
+#if CH_USE_EVENTS || defined(__DOXYGEN__)
   /**
    * @brief Pending events mask.
    */
   eventmask_t           p_epending;
 #endif
-#if CH_USE_MUTEXES
+#if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief List of the mutexes owned by this thread.
    * @note  The list is terminated by a @p NULL in this field.
@@ -151,7 +157,7 @@ struct Thread {
    */
   tprio_t               p_realprio;
 #endif
-#if CH_USE_DYNAMIC && CH_USE_MEMPOOLS
+#if (CH_USE_DYNAMIC && CH_USE_MEMPOOLS) || defined(__DOXYGEN__)
   /**
    * @brief Memory Pool where the thread workspace is returned.
    */
