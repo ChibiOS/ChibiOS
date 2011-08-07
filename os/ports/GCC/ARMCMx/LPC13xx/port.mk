@@ -9,3 +9,5 @@ PORTASM =
 
 PORTINC = ${CHIBIOS}/os/ports/GCC/ARMCMx \
           ${CHIBIOS}/os/ports/GCC/ARMCMx/LPC13xx
+
+PORTLD  = ${CHIBIOS}/os/ports/GCC/ARMCMx/LPC13xx/ld

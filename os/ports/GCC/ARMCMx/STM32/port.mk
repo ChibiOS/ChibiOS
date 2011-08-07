@@ -11,4 +11,3 @@ PORTINC = ${CHIBIOS}/os/ports/GCC/ARMCMx \
           ${CHIBIOS}/os/ports/GCC/ARMCMx/STM32
 
 PORTLD  = ${CHIBIOS}/os/ports/GCC/ARMCMx/STM32/ld
-
