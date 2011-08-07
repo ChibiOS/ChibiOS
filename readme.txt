@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 2.3.3 ***
+- FIX: Fixed wrong check on CH_DBG_ENABLE_STACK_CHECK setting (bug 3387671)
+  (backported to 2.2.7).
 - FIX: Fixed wrong APB1 frequency check (bug 3361039)(backported to 2.2.7).
 - FIX: Fixed missing state in shell demos (bug 3351556)(backported to 2.2.7).
 - FIX: Fixed race condition in Cortex-Mx ports (bug 3317500)(backported
