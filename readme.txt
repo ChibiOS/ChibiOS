@@ -89,9 +89,9 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
-- Removed all the ch.ld files from the ARMCMx demos, now the makefiles point
-  to common ld files under the various ports. Less duplication and easier
-  maintenance.
+- NEW: Removed all the ch.ld files from the ARMCMx demos, now the makefiles
+  point to common ld files under the various ports. Less duplication and
+  easier maintenance.
   (do this to the other GCC ports too)
 - NEW: Improved stack checking and reorganized memory map for the Cortex-Mx
   demos. Now stacks are allocated at the start of the RAM, an overflow of the
