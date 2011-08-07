@@ -19,15 +19,15 @@
 */
 
 /*
- * LPC1343 memory setup.
+ * ST32L1152xB memory setup.
  */
-__main_stack_size__     = 0x0100;
-__process_stack_size__  = 0x0100;
+__main_stack_size__     = 0x0400;
+__process_stack_size__  = 0x0400;
 
 MEMORY
 {
-    flash : org = 0x00000000, len = 32k
-    ram : org = 0x10000000, len = 8k
+    flash : org = 0x08000000, len = 128k
+    ram : org = 0x20000000, len = 16k
 }
 
 __ram_start__           = ORIGIN(ram);
