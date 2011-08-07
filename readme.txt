@@ -69,6 +69,7 @@
 *****************************************************************************
 
 *** 2.2.7 ***
+- FIX: Fixed wrong check on CH_DBG_ENABLE_STACK_CHECK setting (bug 3387671).
 - FIX: Fixed wrong APB1 frequency check (bug 3361039).
 - FIX: Fixed missing state in shell demos (bug 3351556).
 
@@ -206,7 +207,7 @@
 
 *** 2.0.5 ***
 - FIX: Incorrect AT91SAM7X initialization, thanks Leszek (bug 3075354).
-- FIX: Fixed race condition in function chSchGoSleepTimeoutS, thanks Balázs
+- FIX: Fixed race condition in function chSchGoSleepTimeoutS, thanks Balï¿½zs
   (bug 3074984).
 - FIX: Fixed race condition in threads creation (bug 3069854).
 - FIX: Fixed broken CH_DBG_ENABLE_STACK_CHECK option in legacy CM3 port (bug
