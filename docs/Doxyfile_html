@@ -647,10 +647,11 @@ INPUT                  = ../docs/src \
                          ../os/kernel/templates \
                          ../os/ports \
                          ../os/ports/GCC/ARM \
-                         ../os/ports/GCC/ARM\LPC214x \
-                         ../os/ports/GCC/ARM\AT91SAM7 \
+                         ../os/ports/GCC/ARM/LPC214x \
+                         ../os/ports/GCC/ARM/AT91SAM7 \
                          ../os/ports/GCC/ARMCMx \
-                         ../os/ports/GCC/ARMCMx/STM32 \
+                         ../os/ports/GCC/ARMCMx/STM32F1xx \
+                         ../os/ports/GCC/ARMCMx/STM32L1xx \
                          ../os/ports/GCC/ARMCMx/LPC11xx \
                          ../os/ports/GCC/ARMCMx/LPC13xx \
                          ../os/ports/GCC/PPC \
@@ -679,7 +680,8 @@ INPUT                  = ../docs/src \
                          ../os/hal/platforms/LPC214x/platform.dox \
                          ../os/hal/platforms/MSP430/platform.dox \
                          ../os/hal/platforms/SPC56x/platform.dox \
-                         ../os/hal/platforms/STM32/platform.dox \
+                         ../os/hal/platforms/STM32F1xx/platform.dox \
+                         ../os/hal/platforms/STM32L1xx/platform.dox \
                          ../os/hal/platforms/STM8L/platform.dox \
                          ../os/hal/platforms/STM8S/platform.dox \
                          ../os/various \
@@ -742,7 +744,8 @@ RECURSIVE              = NO
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = ../os/hal/platforms/STM32/stm32f10x.h \
+EXCLUDE                = ../os/hal/platforms/STM32F1xx/stm32f10x.h \
+                         ../os/hal/platforms/STM32L1xx/stm32l10x.h \
                          ../os/hal/platforms/STM8/stm8s.h \
                          ../os/hal/platforms/STM8/stm8s_type.h \
                          ../os/hal/platforms/LPC11xx/LPC11xx.h \

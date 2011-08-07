@@ -1,6 +1,6 @@
 # List of the ChibiOS/RT Cortex-M3 STM32 port files.
 PORTSRC = $(CHIBIOS)/os/ports/GCC/ARMCMx/crt0.c \
-          $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32/vectors.c \
+          $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F1xx/vectors.c \
           ${CHIBIOS}/os/ports/GCC/ARMCMx/chcore.c \
           ${CHIBIOS}/os/ports/GCC/ARMCMx/chcore_v7m.c \
           ${CHIBIOS}/os/ports/GCC/ARMCMx/nvic.c
@@ -8,6 +8,6 @@ PORTSRC = $(CHIBIOS)/os/ports/GCC/ARMCMx/crt0.c \
 PORTASM =
 
 PORTINC = ${CHIBIOS}/os/ports/GCC/ARMCMx \
-          ${CHIBIOS}/os/ports/GCC/ARMCMx/STM32
+          ${CHIBIOS}/os/ports/GCC/ARMCMx/STM32F1xx
 
-PORTLD  = ${CHIBIOS}/os/ports/GCC/ARMCMx/STM32/ld
+PORTLD  = ${CHIBIOS}/os/ports/GCC/ARMCMx/STM32F1xx/ld

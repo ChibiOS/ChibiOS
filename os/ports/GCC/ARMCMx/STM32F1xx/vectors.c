@@ -19,12 +19,12 @@
 */
 
 /**
- * @file    GCC/ARMCMx/STM32/vectors.c
- * @brief   Interrupt vectors for the STM32 family.
+ * @file    GCC/ARMCMx/STM32F1xx/vectors.c
+ * @brief   Interrupt vectors for the STM32F1xx family.
  *
- * @defgroup ARMCMx_STM32_VECTORS STM32 Interrupt Vectors
+ * @defgroup ARMCMx_STM32F1xx_VECTORS STM32F1xx Interrupt Vectors
  * @ingroup ARMCMx_SPECIFIC
- * @details Interrupt vectors for the STM32 family.
+ * @details Interrupt vectors for the STM32F1xx family.
  * @{
  */
 
