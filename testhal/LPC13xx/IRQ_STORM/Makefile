@@ -47,10 +47,7 @@ endif
 # Define project name here
 PROJECT = ch
 
-# Define linker script file here
-LDSCRIPT= ch.ld
-
-# Imported source files
+# Imported source files and paths
 CHIBIOS = ../../..
 include $(CHIBIOS)/boards/EA_LPCXPRESSO_BB_1343/board.mk
 include $(CHIBIOS)/os/hal/platforms/LPC13xx/platform.mk
@@ -58,6 +55,9 @@ include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/LPC13xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 include $(CHIBIOS)/test/test.mk
+
+# Define linker script file here
+LDSCRIPT= $(PORTLD)/LPC1343.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

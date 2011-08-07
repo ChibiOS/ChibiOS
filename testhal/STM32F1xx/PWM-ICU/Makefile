@@ -52,10 +52,7 @@ endif
 # Define project name here
 PROJECT = ch
 
-# Define linker script file here
-LDSCRIPT= ch.ld
-
-# Imported source files
+# Imported source files and paths
 CHIBIOS = ../../..
 include $(CHIBIOS)/boards/OLIMEX_STM32_P103/board.mk
 include $(CHIBIOS)/os/hal/platforms/STM32/platform.mk
