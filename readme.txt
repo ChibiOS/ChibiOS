@@ -89,6 +89,9 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Added the new CMSIS 2.1 headers, now CMSIS resides into a shared
+  location: ./os/ports/common/ARMCMx/CMSIS. Old CMSIS files have been
+  removed from the various platforms.
 - NEW: Removed all the ch.ld files from the ARMCMx demos, now the makefiles
   point to common ld files under the various ports. Less duplication and
   easier maintenance.
