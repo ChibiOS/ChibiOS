@@ -8,12 +8,14 @@ N = Decided against.
 Current Pipeline (2.3.x):
 * lwIP 1.4.0 integration and test.
 * Named threads.
+* Improved stack overflow checking, support main() thread.
+  * Move main stack to low memory in ARMCMx ports.
+  - Add guard pages support.
 X Eclipse plugin.
 X STM32L support.
 X STM32L-Discovery demo and article.
-- Improved stack overflow checking, support main() thread, add guard pages
-  support.
 X File System infrastructure.
+X STM32F2xx support.
 - Test suite overhaul, the API should be more generic in order to be used
   with different subsystems and not just the kernel.
 - STM32 USB support for double buffering.

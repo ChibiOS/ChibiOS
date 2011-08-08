@@ -98,7 +98,6 @@
   exception stack now triggers an exception (it could went unnoticed before).
   The process stack is organized to be checked on context switch like other
   threads. Now all threads have an explicit stack boundary pointer.
-  (to be completed, most demos have to be edited)
   (documentation to be updated)
   (change to be ported to IAR and Keil ports)
   (change to be ported to ARM and other ports)

@@ -39,17 +39,17 @@ endif
 # Define project name here
 PROJECT = ch
 
-# Define linker script file here
-LDSCRIPT = ch.ld
-
-# Imported source files
+# Imported source files and paths
 CHIBIOS = ../..
 include $(CHIBIOS)/boards/OLIMEX_LPC_P2148/board.mk
 include $(CHIBIOS)/os/hal/platforms/LPC214x/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/ports/GCC/ARM/port.mk
+include $(CHIBIOS)/os/ports/GCC/ARM/LPC214x/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 include $(CHIBIOS)/test/test.mk
+
+# Define linker script file here
+LDSCRIPT= $(PORTLD)/LPC2148.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -86,13 +86,11 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC = $(PORTASM) \
-         $(CHIBIOS)/os/ports/GCC/ARM/LPC214x/vectors.s
+ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
-         $(CHIBIOS)/os/various \
-         $(CHIBIOS)/os/ports/GCC/ARM/LPC214x
+         $(CHIBIOS)/os/various
 
 #
 # Project, sources and paths
