@@ -7,7 +7,8 @@ PORTSRC = $(CHIBIOS)/os/ports/GCC/ARMCMx/crt0.c \
 
 PORTASM =
 
-PORTINC = ${CHIBIOS}/os/ports/GCC/ARMCMx \
+PORTINC = ${CHIBIOS}/os/ports/common/ARMCMx/CMSIS/include \
+          ${CHIBIOS}/os/ports/GCC/ARMCMx \
           ${CHIBIOS}/os/ports/GCC/ARMCMx/STM32F1xx
 
 PORTLD  = ${CHIBIOS}/os/ports/GCC/ARMCMx/STM32F1xx/ld
