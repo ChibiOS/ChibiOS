@@ -92,7 +92,6 @@
 - NEW: Removed all the ch.ld files from the ARMCMx demos, now the makefiles
   point to common ld files under the various ports. Less duplication and
   easier maintenance.
-  (do this to the other GCC ports too)
 - NEW: Improved stack checking and reorganized memory map for the Cortex-Mx
   demos. Now stacks are allocated at the start of the RAM, an overflow of the
   exception stack now triggers an exception (it could went unnoticed before).
@@ -100,7 +99,6 @@
   threads. Now all threads have an explicit stack boundary pointer.
   (documentation to be updated)
   (change to be ported to IAR and Keil ports)
-  (change to be ported to ARM and other ports)
 - NEW: Added debug plugin for Eclipse under ./tools/eclipse (backported to
   2.2.7).
 - NEW: The debug macros chDbgCheck() and chDbgAssert() now can be externally

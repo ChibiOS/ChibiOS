@@ -438,14 +438,10 @@ struct context {
 #ifdef THUMB
 #if CH_DBG_ENABLE_STACK_CHECK
 #define port_switch(ntp, otp) {                                             \
-  register Thread *_ntp asm ("r0") = (ntp);                                 \
-  register Thread *_otp asm ("r1") = (otp);                                 \
-  register char *sp asm ("sp");                                             \
-  if (sp - sizeof(struct intctx) - sizeof(Thread) < (char *)_otp)           \
-    asm volatile ("mov     r0, #0                               \n\t"       \
-                  "ldr     r1, =chDbgPanic                      \n\t"       \
-                  "bx      r1");                                            \
-    _port_switch_thumb(_ntp, _otp);                                         \
+  register struct intctx *r13 asm ("r13");                                  \
+  if ((stkalign_t *)(r13 - 1) < otp->p_stklimit)                            \
+    chDbgPanic("stack overflow");                                           \
+  _port_switch_thumb(ntp, otp);                                             \
 }
 #else /* !CH_DBG_ENABLE_STACK_CHECK */
 #define port_switch(ntp, otp) _port_switch_thumb(ntp, otp)
@@ -453,13 +449,10 @@ struct context {
 #else /* !THUMB */
 #if CH_DBG_ENABLE_STACK_CHECK
 #define port_switch(ntp, otp) {                                             \
-  register Thread *_ntp asm ("r0") = (ntp);                                 \
-  register Thread *_otp asm ("r1") = (otp);                                 \
-  register char *sp asm ("sp");                                             \
-  if (sp - sizeof(struct intctx) - sizeof(Thread) < (char *)_otp)           \
-    asm volatile ("mov     r0, #0                               \n\t"       \
-                  "b       chDbgPanic");                                    \
-  _port_switch_arm(_ntp, _otp);                                             \
+  register struct intctx *r13 asm ("r13");                                  \
+  if ((stkalign_t *)(r13 - 1) < otp->p_stklimit)                            \
+    chDbgPanic("stack overflow");                                           \
+  _port_switch_arm(ntp, otp);                                               \
 }
 #else /* !CH_DBG_ENABLE_STACK_CHECK */
 #define port_switch(ntp, otp) _port_switch_arm(ntp, otp)
