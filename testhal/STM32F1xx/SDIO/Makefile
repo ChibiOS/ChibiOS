@@ -52,18 +52,20 @@ endif
 # Define project name here
 PROJECT = ch
 
+# Define linker script file here
+LDSCRIPT= ch.ld
+
 # Imported source files and paths
-CHIBIOS = ../..
-include $(CHIBIOS)/boards/OLIMEX_STM32_P103/board.mk
+CHIBIOS = ../../..
+include $(CHIBIOS)/boards/ST_STM3210E_EVAL/board.mk
 include $(CHIBIOS)/os/hal/platforms/STM32F1xx/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F1xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
-include $(CHIBIOS)/test/test.mk
-include $(CHIBIOS)/ext/fatfs/fatfs.mk
+#include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here
-LDSCRIPT= $(PORTLD)/STM32F103xB.ld
+LDSCRIPT= $(PORTLD)/STM32F103xE.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -73,10 +75,8 @@ CSRC = $(PORTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       $(FATFSSRC) \
-       $(CHIBIOS)/os/various/shell.c \
+       $(CHIBIOS)/os/various/evtimer.c \
        $(CHIBIOS)/os/various/syscalls.c \
-       $(CHIBIOS)/os/various/chprintf.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -108,7 +108,6 @@ ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
-         $(FATFSINC) \
          $(CHIBIOS)/os/various
 
 #
@@ -157,7 +156,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all default C defines here, like -D_DEBUG=1
-DDEFS = -DSTDOUT_SD=SD2 -DSTDIN_SD=SD2
+DDEFS =
 
 # List all default ASM defines here, like -D_DEBUG=1
 DADEFS =
@@ -205,4 +204,4 @@ ifeq ($(USE_FWLIB),yes)
   USE_OPT += -DUSE_STDPERIPH_DRIVER
 endif
 
-include $(CHIBIOS)/os/ports/GCC/ARMCMx/rules.mk
+include $(CHIBIOS)/os/ports/GCC/ARM/rules.mk

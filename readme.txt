@@ -61,16 +61,21 @@
   +--test/              - Kernel test suite source code.
   |  +--coverage/       - Code coverage project.
   +--testhal/           - HAL integration test demos.
-     +--LPC11xx/        - LPC11xx HAL test demos.
-     +--LPC13xx/        - LPC13xx HAL test demos.
-     +--STM32/          - STM32 HAL test demos.
-     +--STM8S/          - STM8S HAL test demos.
+  |  +--LPC11xx/        - LPC11xx HAL test demos.
+  |  +--LPC13xx/        - LPC13xx HAL test demos.
+  |  +--STM32/          - STM32 HAL test demos.
+  |  +--STM8S/          - STM8S HAL test demos.
+  +--tools              - Various tools.
+     +--eclipse         - Eclipse enhancements.
 
 *****************************************************************************
 *** Releases                                                              ***
 *****************************************************************************
 
 *** 2.3.3 ***
+- FIX: Fixed wrong check on CH_DBG_ENABLE_STACK_CHECK setting (bug 3387671)
+  (backported to 2.2.7).
+- FIX: Fixed wrong APB1 frequency check (bug 3361039)(backported to 2.2.7).
 - FIX: Fixed missing state in shell demos (bug 3351556)(backported to 2.2.7).
 - FIX: Fixed race condition in Cortex-Mx ports (bug 3317500)(backported
   to 2.2.6).
@@ -84,14 +89,37 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Added the new CMSIS 2.1 headers, now CMSIS resides into a shared
+  location: ./os/ports/common/ARMCMx/CMSIS. Old CMSIS files have been
+  removed from the various platforms.
+- NEW: Removed all the ch.ld files from the ARMCMx demos, now the makefiles
+  point to common ld files under the various ports. Less duplication and
+  easier maintenance.
+- NEW: Improved stack checking and reorganized memory map for the Cortex-Mx
+  demos. Now stacks are allocated at the start of the RAM, an overflow of the
+  exception stack now triggers an exception (it could went unnoticed before).
+  The process stack is organized to be checked on context switch like other
+  threads. Now all threads have an explicit stack boundary pointer.
+  (documentation to be updated)
+  (change to be ported to IAR and Keil ports)
+- NEW: Added debug plugin for Eclipse under ./tools/eclipse (backported to
+  2.2.7).
+- NEW: The debug macros chDbgCheck() and chDbgAssert() now can be externally
+  redefined. The macro chDbgCheck() no more includes the line number in the
+  description because incompatibility with the Cosmic compiler (backported to
+  2.2.7).
+- NEW: Added provisional support for STM32L1xx and STM32F2xx. Because of this
+  some directories related to the STM32 have been renamed, your makefiles may
+  require adjustments.
+  (change to be ported to IAR and Keil build files)
 - NEW: Added a custom rule to the various rules.mk files, now it is possible
   to add an user rule into the Makefiles.
 - NEW: Improvements to the trace buffer, now it stores a full thread pointer
   and event time, changed names to debug variables by adding the "dbg_"
-  prefix.
+  prefix (backported to 2.2.7).
 - NEW: Added a new functionality to the registry subsystem, now it is possible
   to associate a name to the threads using chRegSetThreadName. The main and
-  idle threads have their name assigned by default.
+  idle threads have their name assigned by default (backported to 2.2.7).
 - NEW: Added TIM8 support to the STM32 GPT, ICU and PWM drivers.
 - NEW: Updated the STM32 header file to the latest version 3.5.0 and fixed
   it in order to correct several bugs related to the XL family.
@@ -438,7 +466,7 @@
   (backported to 2.0.6).
 - FIX: Incorrect AT91SAM7X initialization, thanks Leszek (bug 3075354)
   (backported to 2.0.5).
-- FIX: Fixed race condition in function chSchGoSleepTimeoutS(), thanks Balázs
+- FIX: Fixed race condition in function chSchGoSleepTimeoutS(), thanks Balï¿½zs
   (bug 3074984)(backported to 2.0.5).
 - FIX: Fixed race condition in threads creation (bug 3069854)(backported
   to 2.0.5).

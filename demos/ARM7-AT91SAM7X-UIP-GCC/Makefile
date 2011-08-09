@@ -39,17 +39,17 @@ endif
 # Define project name here
 PROJECT = ch
 
-# Define linker script file here
-LDSCRIPT= ch.ld
-
-# Imported source files
+# Imported source files and paths
 CHIBIOS = ../..
 include $(CHIBIOS)/boards/OLIMEX_SAM7_EX256/board.mk
 include $(CHIBIOS)/os/hal/platforms/AT91SAM7/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/ports/GCC/ARM/port.mk
+include $(CHIBIOS)/os/ports/GCC/ARM/AT91SAM7/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 include $(CHIBIOS)/test/test.mk
+
+# Define linker script file here
+LDSCRIPT= $(PORTLD)/AT91SAM7X256.ld
 
 # List of the required uIP source files.
 USRC = $(CHIBIOS)/ext/uip-1.0/uip/uip_arp.c \
@@ -99,14 +99,14 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC = $(PORTASM) \
-         $(CHIBIOS)/os/ports/GCC/ARM/AT91SAM7/vectors.s
+ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
          $(CHIBIOS)/os/various \
-         $(CHIBIOS)/os/ports/GCC/ARM/AT91SAM7 \
-         ./web $(CHIBIOS)/ext/uip-1.0/uip $(CHIBIOS)/ext/uip-1.0/apps/webserver
+         $(CHIBIOS)/ext/uip-1.0/uip \
+         $(CHIBIOS)/ext/uip-1.0/apps/webserver \
+         ./web
 
 #
 # Project, sources and paths
