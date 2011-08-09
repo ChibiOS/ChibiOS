@@ -54,16 +54,16 @@ endif
 PROJECT = ch
 
 # Define linker script file here
-LDSCRIPT= ch.ld
+LDSCRIPT= $(PORTLD)/STM32F103xB.ld
 
 # Imported source files
 CHIBIOS = ../../..
 include $(CHIBIOS)/boards/OLIMEX_STM32_P103/board.mk
-include $(CHIBIOS)/os/hal/platforms/STM32/platform.mk
+include $(CHIBIOS)/os/hal/platforms/STM32F1xx/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32/port.mk
+include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F1xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
-include $(CHIBIOS)/test/test.mk
+#include $(CHIBIOS)/test/test.mk
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
