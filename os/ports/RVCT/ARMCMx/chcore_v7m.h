@@ -234,6 +234,7 @@ struct intctx {
 /**
  * @brief   Kernel-lock action from an interrupt handler.
  * @details This function is invoked before invoking I-class APIs from
+
  *          interrupt handlers. The implementation is architecture dependent,
  *          in its simplest form it is void.
  * @note    Same as @p port_lock() in this port.
@@ -309,7 +310,7 @@ struct intctx {
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  */
-#if !defined(CH_DBG_ENABLE_STACK_CHECK) || defined(__DOXYGEN__)
+#if !CH_DBG_ENABLE_STACK_CHECK || defined(__DOXYGEN__)
 #define port_switch(ntp, otp) _port_switch(ntp, otp)
 #else
 #define port_switch(ntp, otp) {                                             \

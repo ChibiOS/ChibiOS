@@ -519,10 +519,12 @@ void pwm_lld_start(PWMDriver *pwmp) {
   pwmp->tim->EGR  = TIM_EGR_UG;             /* Update event.                */
   pwmp->tim->DIER = pwmp->config->callback == NULL ? 0 : TIM_DIER_UIE;
   pwmp->tim->SR   = 0;                      /* Clear pending IRQs.          */
+#if STM32_PWM_USE_TIM1 || STM32_PWM_USE_TIM8
 #if STM32_PWM_USE_ADVANCED
   pwmp->tim->BDTR = pwmp->config->bdtr | TIM_BDTR_MOE;
 #else
   pwmp->tim->BDTR = TIM_BDTR_MOE;
+#endif
 #endif
   /* Timer configured and started.*/
   pwmp->tim->CR1  = TIM_CR1_ARPE | TIM_CR1_URS | TIM_CR1_CEN;
@@ -542,7 +544,9 @@ void pwm_lld_stop(PWMDriver *pwmp) {
     pwmp->tim->CR1  = 0;                    /* Timer disabled.              */
     pwmp->tim->DIER = 0;                    /* All IRQs disabled.           */
     pwmp->tim->SR   = 0;                    /* Clear eventual pending IRQs. */
+#if STM32_PWM_USE_TIM1 || STM32_PWM_USE_TIM8
     pwmp->tim->BDTR  = 0;
+#endif
 
 #if STM32_PWM_USE_TIM1
     if (&PWMD1 == pwmp) {

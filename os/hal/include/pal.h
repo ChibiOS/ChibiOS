@@ -127,7 +127,7 @@ typedef struct {
   /**
    * @brief Offset, within the port, of the least significant bit of the bus.
    */
-  uint_fast8_t          offset;
+  iomode_t          offset;
 } IOBus;
 
 /*===========================================================================*/

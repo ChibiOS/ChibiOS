@@ -367,7 +367,7 @@
 /**
  * @brief   Maximum HSECLK at current voltage setting.
  */
-#define STM32_HSECLK_MAX            32000000
+#define STM32_HSECLK_MAX            32000000#if
 
 /**
  * @brief   Maximum SYSCLK at current voltage setting.
@@ -430,7 +430,7 @@
 #if (STM32_HSECLK < 1000000) || (STM32_HSECLK > STM32_HSECLK_MAX)
 #error "STM32_HSECLK outside acceptable range (1MHz...STM32_HSECLK_MAX)"
 #endif
-#else /* !#if STM32_HSE_ENABLED */
+#else /* !STM32_HSE_ENABLED */
 #if (STM32_SW == STM32_SW_HSE) ||                                           \
     ((STM32_SW == STM32_SW_PLL) &&                                          \
      (STM32_PLLSRC == STM32_PLLSRC_HSE)) ||                                 \
@@ -440,7 +440,7 @@
     (STM_RTC_SOURCE == STM32_RTCSEL_HSEDIV)
 #error "required HSE clock is not enabled"
 #endif
-#endif /* !#if STM32_HSE_ENABLED */
+#endif /* !STM32_HSE_ENABLED */
 
 /* LSI related checks.*/
 #if STM32_LSI_ENABLED

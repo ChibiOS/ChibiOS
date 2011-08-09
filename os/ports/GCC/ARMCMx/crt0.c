@@ -25,7 +25,7 @@
  * @{
  */
 
-#include "chtypes.h"
+#include <stdint.h>
 
 #define FALSE   0
 #define TRUE    (!FALSE)
@@ -39,62 +39,80 @@ typedef funcp_t * funcpp_t;
  *          stack (dual stack mode).
  */
 #if !defined(CRT0_CONTROL_INIT) || defined(__DOXYGEN__)
-#define CRT0_CONTROL_INIT       0x00000002
+#define CRT0_CONTROL_INIT           0x00000002
+#endif
+
+/**
+ * @brief   Stack segments initialization switch.
+ */
+#if !defined(CRT0_STACKS_FILL_PATTERN) || defined(__DOXYGEN__)
+#define CRT0_STACKS_FILL_PATTERN    0x55555555
+#endif
+
+/**
+ * @brief   Stack segments initialization switch.
+ */
+#if !defined(CRT0_INIT_STACKS) || defined(__DOXYGEN__)
+#define CRT0_INIT_STACKS            TRUE
 #endif
 
 /**
  * @brief   DATA segment initialization switch.
  */
 #if !defined(CRT0_INIT_DATA) || defined(__DOXYGEN__)
-#define CRT0_INIT_DATA          TRUE
+#define CRT0_INIT_DATA              TRUE
 #endif
 
 /**
  * @brief   BSS segment initialization switch.
  */
 #if !defined(CRT0_INIT_BSS) || defined(__DOXYGEN__)
-#define CRT0_INIT_BSS           TRUE
+#define CRT0_INIT_BSS               TRUE
 #endif
 
 /**
  * @brief   Constructors invocation switch.
  */
 #if !defined(CRT0_CALL_CONSTRUCTORS) || defined(__DOXYGEN__)
-#define CRT0_CALL_CONSTRUCTORS  TRUE
+#define CRT0_CALL_CONSTRUCTORS      TRUE
 #endif
 
 /**
  * @brief   Destructors invocation switch.
  */
 #if !defined(CRT0_CALL_DESTRUCTORS) || defined(__DOXYGEN__)
-#define CRT0_CALL_DESTRUCTORS   TRUE
+#define CRT0_CALL_DESTRUCTORS       TRUE
 #endif
 
 #define SYMVAL(sym) (uint32_t)(((uint8_t *)&(sym)) - ((uint8_t *)0))
 
 /**
- * @brief   Ram end.
+ * @brief   Main stack lower boundary.
  * @details This symbol must be exported by the linker script and represents
- *          the location after the last RAM location.
+ *          the main stack lower boundary.
  */
-extern uint8_t __ram_end__;
+extern uint32_t __main_stack_base__;
 
 /**
- * @brief   Main stack size.
+ * @brief   Main stack initial position.
  * @details This symbol must be exported by the linker script and represents
- *          the main stack size.
- * @note    The main stack is the stack where interrupts and exceptions are
- *          processed.
+ *          the main stack initial position.
  */
-extern uint8_t __main_stack_size__;
+extern uint32_t __main_stack_end__;
 
 /**
- * @brief   Process stack size.
+ * @brief   Process stack lower boundary.
  * @details This symbol must be exported by the linker script and represents
- *          the process stack size.
- * @note    The process stack is the stack used by the @p main() function.
+ *          the process stack lower boundary.
  */
-extern uint8_t __process_stack_size__;
+extern uint32_t __process_stack_base__;
+
+/**
+ * @brief   Process stack initial position.
+ * @details This symbol must be exported by the linker script and represents
+ *          the process stack initial position.
+ */
+extern uint32_t __process_stack_end__;
 
 /**
  * @brief   ROM image of the data segment start.
@@ -194,6 +212,19 @@ void _default_exit(void) {
 }
 
 /**
+ * @brief   Memory fill.
+ *
+ * @param[in] start     fill area start
+ * @param[in] end       fill area end
+ * @param[in] filler    filler pattern
+ */
+static void fill32(uint32_t *start, uint32_t *end, uint32_t filler) {
+
+  while (start < end)
+    *start++ = filler;
+}
+
+/**
  * @brief   Reset vector.
  */
 #if !defined(__DOXYGEN__)
@@ -206,7 +237,7 @@ void ResetHandler(void) {
      main stack is assumed to be allocated starting from @p __ram_end__
      extending downward.*/
   asm volatile ("cpsid   i");
-  psp = SYMVAL(__ram_end__) - SYMVAL(__main_stack_size__);
+  psp = SYMVAL(__process_stack_end__);
   asm volatile ("msr     PSP, %0" : : "r" (psp));
 
   ctl = CRT0_CONTROL_INIT;
@@ -215,6 +246,16 @@ void ResetHandler(void) {
 
   /* Early initialization hook invocation.*/
   __early_init();
+
+#if CRT0_INIT_STACKS
+  /* Main and Process stacks initialization.*/
+  fill32(&__main_stack_base__,
+         &__main_stack_end__,
+         CRT0_STACKS_FILL_PATTERN);
+  fill32(&__process_stack_base__,
+         &__process_stack_end__,
+         CRT0_STACKS_FILL_PATTERN);
+#endif
 
 #if CRT0_INIT_DATA
   /* DATA segment initialization.*/
@@ -230,13 +271,7 @@ void ResetHandler(void) {
 
 #if CRT0_INIT_BSS
   /* BSS segment initialization.*/
-  {
-    uint32_t *bp;
-
-    bp = &_bss_start;
-    while (bp < &_bss_end)
-      *bp++ = 0;
-  }
+  fill32(&_bss_start, &_bss_end, 0);
 #endif
 
   /* Late initialization hook invocation.*/

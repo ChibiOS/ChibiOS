@@ -99,6 +99,9 @@ Thread *_thread_init(Thread *tp, tprio_t prio) {
 #if CH_USE_MESSAGES
   queue_init(&tp->p_msgqueue);
 #endif
+#if CH_DBG_ENABLE_STACK_CHECK
+  tp->p_stklimit = (stkalign_t *)(tp + 1);
+#endif
 #if defined(THREAD_EXT_INIT_HOOK)
   THREAD_EXT_INIT_HOOK(tp);
 #endif
