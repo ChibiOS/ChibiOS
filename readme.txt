@@ -89,6 +89,7 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Added Eclipse ChibiOS/RT debugger plugin 1.0.4 under ./tools/eclipse.
 - NEW: The ARMCMx startup file (crt0.c) now is able to fill the stack areas
   with a filler (default behavior). This is required in order to easily assess
   the stack usage at runtime.
