@@ -90,8 +90,12 @@ __attribute__((naked))
 #endif
 void _port_switch_from_isr(void) {
 
+  /* The calls to the debug functions are required in order to simulate the
+     correct call protocol from this peculiar code zone.*/
+  dbg_check_lock();
   if (chSchIsRescRequiredExI())
     chSchDoRescheduleI();
+  dbg_check_unlock();
 #if CORTEX_ALTERNATE_SWITCH
   SCB_ICSR = ICSR_PENDSVSET;
   port_unlock();
@@ -176,7 +180,7 @@ void _port_irq_epilogue(regarm_t lr) {
  */
 void _port_thread_start(void) {
 
-  port_unlock();
+  chSysUnlock();
   asm volatile ("mov     r0, r5                                 \n\t"
                 "blx     r4                                     \n\t"
                 "bl      chThdExit");

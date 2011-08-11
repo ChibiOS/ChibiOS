@@ -33,7 +33,10 @@
 #define _CHCONF_H_
 
 /*===========================================================================*/
-/* Kernel parameters.                                                        */
+/**
+ * @name Kernel parameters and options
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -58,21 +61,6 @@
  */
 #if !defined(CH_TIME_QUANTUM) || defined(__DOXYGEN__)
 #define CH_TIME_QUANTUM                 10
-#endif
-
-/**
- * @brief   Nested locks.
- * @details If enabled then the use of nested @p chSysLock() / @p chSysUnlock()
- *          operations is allowed.<br>
- *          For performance and code size reasons the recommended setting
- *          is to leave this option disabled.<br>
- *          You may use this option if you need to merge ChibiOS/RT with
- *          external libraries that require nested lock/unlock operations.
- *
- * @note    The default is @p FALSE.
- */
-#if !defined(CH_USE_NESTED_LOCKS) || defined(__DOXYGEN__)
-#define CH_USE_NESTED_LOCKS             FALSE
 #endif
 
 /**
@@ -107,8 +95,13 @@
 #define CH_NO_IDLE_THREAD               FALSE
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Performance options.                                                      */
+/**
+ * @name Performance options
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -123,8 +116,13 @@
 #define CH_OPTIMIZE_SPEED               FALSE
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Subsystem options.                                                        */
+/**
+ * @name Subsystem options
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -346,9 +344,25 @@
 #define CH_USE_DYNAMIC                  TRUE
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Debug options.                                                            */
+/**
+ * @name Debug options
+ * @{
+ */
 /*===========================================================================*/
+
+/**
+ * @brief   Debug option, system state check.
+ * @details If enabled the correct call protocol for system APIs is checked
+ *          at runtime.
+ *
+ * @note    The default is @p FALSE.
+ */
+#if !defined(CH_DBG_SYSTEM_STATE_CHECK) || defined(__DOXYGEN__)
+#define CH_DBG_SYSTEM_STATE_CHECK       FALSE
+#endif
 
 /**
  * @brief   Debug option, parameters checks.
@@ -423,8 +437,13 @@
 #define CH_DBG_THREADS_PROFILING        TRUE
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Kernel hooks.                                                             */
+/**
+ * @name Kernel hooks
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -494,6 +513,8 @@
   /* System halt code here.*/                                               \
 }
 #endif
+
+/** @} */
 
 /*===========================================================================*/
 /* Port-specific settings (override port settings defaulted in chcore.h).    */

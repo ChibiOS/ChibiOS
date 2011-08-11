@@ -126,19 +126,6 @@
  *   stack where all the interrupts and exceptions are processed.
  * - The threads are started in thread-privileged mode.
  * - Interrupt nesting and the other advanced core/NVIC features are supported.
- * - When using an STM32 one of the following macros must be defined on the
- *   compiler command line or in a file named <tt>board.h</tt>:
- *   - @p STM32F10X_LD
- *   - @p STM32F10X_LD_VL
- *   - @p STM32F10X_MD
- *   - @p STM32F10X_MD_VL
- *   - @p STM32F10X_HD
- *   - @p STM32F10X_XL
- *   - @p STM32F10X_CL
- *   .
- *   This is required in order to include a vectors table with the correct
- *   length for the STM32 model, see the file
- *   <tt>./os/ports/GCC/ARMCMx/STM32/vectors.c</tt>.
  * - The Cortex-Mx port is perfectly generic, support for more devices can be
  *   easily added by adding a subdirectory under <tt>./os/ports/GCC/ARMCMx</tt>
  *   and giving it the name of the new device, then copy the files from another
@@ -211,25 +198,27 @@
  * @section ARMCMx_STARTUP_1 Startup Process
  * The startup process, as implemented, is the following:
  * -# Interrupts are masked globally.
- * -# The two stacks are initialized by assigning them the sizes defined in the
- *    linker script (usually named @p ch.ld). Stack areas are allocated from
- *    the highest RAM location downward.
+ * -# The two stacks are initialized by assigning them the sizes defined in
+ *    the linker script (also known as scatter file).
  * -# The CPU state is switched to Privileged and the PSP stack is used.
  * -# An early initialization routine @p __early_init() is invoked, if the
  *    symbol is not defined then an empty default routine is executed
  *    (weak symbol).
  * -# DATA and BSS segments are initialized.
+ * -# Constructors are invoked.
  * -# The @p main() function is invoked with no parameters.
- * -# Should the @p main() function return a branch is performed to the weak
- *    symbol _main_exit_handler. The default code is an endless empty loop.
+ * -# Destructors are invoked.
+ * -# A branch is performed to the weak symbol @p _default_exit(). The
+ *    default code is an endless empty loop.
  * .
  * @section ARMCMx_STARTUP_2 Expected linker symbols
  * The startup code starts at the symbol @p ResetHandler and expects the
  * following symbols to be defined in the linker script:
  * - @p __ram_end__ End of RAM.
- * - @p __main_stack_size__ Exception stack size.
- * - @p __process_stack_size__ Process stack size. This is the stack area used
- *      by the @p main() function.
+ * - @p __main_stack_base__ Main stack lower boundary.
+ * - @p __main_stack_end__ Main stack initial position.
+ * - @p __process_stack_base__ Process stack lower boundary.
+ * - @p __process_stack_end__ Process stack initial position.
  * - @p _textdata Address of the data segment source read only data.
  * - @p _data Start of the data segment.
  * - @p _edata End of the data segment end location.

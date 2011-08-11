@@ -157,6 +157,7 @@ void chMtxLockS(Mutex *mp) {
 #endif
         /* Re-enqueues tp with its new priority on the ready list.*/
         chSchReadyI(dequeue(tp));
+        break;
       }
       break;
     }

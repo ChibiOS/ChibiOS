@@ -33,6 +33,15 @@
 typedef void (*funcp_t)(void);
 typedef funcp_t * funcpp_t;
 
+#define SYMVAL(sym) (uint32_t)(((uint8_t *)&(sym)) - ((uint8_t *)0))
+
+/*===========================================================================*/
+/**
+ * @name    Startup settings
+ * @{
+ */
+/*===========================================================================*/
+
 /**
  * @brief   Control special register initialization value.
  * @details The system is setup to run in privileged mode using the PSP
@@ -84,7 +93,13 @@ typedef funcp_t * funcpp_t;
 #define CRT0_CALL_DESTRUCTORS       TRUE
 #endif
 
-#define SYMVAL(sym) (uint32_t)(((uint8_t *)&(sym)) - ((uint8_t *)0))
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name    Symbols from the scatter file
+ */
+/*===========================================================================*/
 
 /**
  * @brief   Main stack lower boundary.
@@ -94,6 +109,7 @@ typedef funcp_t * funcpp_t;
 extern uint32_t __main_stack_base__;
 
 /**
+ *
  * @brief   Main stack initial position.
  * @details This symbol must be exported by the linker script and represents
  *          the main stack initial position.
@@ -167,6 +183,8 @@ extern funcp_t __fini_array_start;
  * @pre     The symbol must be aligned to a 32 bits boundary.
  */
 extern funcp_t __fini_array_end;
+
+/** @} */
 
 /**
  * @brief   Application @p main() function.

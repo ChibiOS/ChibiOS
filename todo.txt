@@ -8,10 +8,11 @@ N = Decided against.
 Current Pipeline (2.3.x):
 * lwIP 1.4.0 integration and test.
 * Named threads.
+* Call protocol check debug option.
 * Improved stack overflow checking, support main() thread.
   * Move main stack to low memory in ARMCMx ports.
   - Add guard pages support.
-X Eclipse plugin.
+* Eclipse plugin.
 X STM32L support.
 X STM32L-Discovery demo and article.
 X File System infrastructure.

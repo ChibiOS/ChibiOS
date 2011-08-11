@@ -113,7 +113,6 @@ void chSchGoSleepS(tstate_t newstate) {
 #endif
   setcurrp(fifo_remove(&rlist.r_queue));
   currp->p_state = THD_STATE_CURRENT;
-  chDbgTrace(otp);
   chSysSwitchI(currp, otp);
 }
 #endif /* !defined(PORT_OPTIMIZED_GOSLEEPS) */
@@ -222,7 +221,6 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
 #endif
     setcurrp(ntp);
     ntp->p_state = THD_STATE_CURRENT;
-    chDbgTrace(otp);
     chSysSwitchI(ntp, otp);
   }
 }
@@ -247,7 +245,6 @@ void chSchDoRescheduleI(void) {
   setcurrp(fifo_remove(&rlist.r_queue));
   currp->p_state = THD_STATE_CURRENT;
   chSchReadyI(otp);
-  chDbgTrace(otp);
   chSysSwitchI(currp, otp);
 }
 #endif /* !defined(PORT_OPTIMIZED_DORESCHEDULEI) */

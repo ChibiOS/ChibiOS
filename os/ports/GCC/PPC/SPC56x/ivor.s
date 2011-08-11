@@ -71,7 +71,7 @@ IVOR10:
         lis         %r3, 0x0800             /* DIS bit mask.                */
         mtspr       336, %r3                /* TSR register.                */
 
-        /* System tick handler invokation.*/
+        /* System tick handler invocation.*/
         bl          chSysTimerHandlerI
         bl          chSchIsRescRequiredExI
         cmpli       cr0, %r3, 0
