@@ -86,6 +86,7 @@ void chCondSignal(CondVar *cp) {
  */
 void chCondSignalI(CondVar *cp) {
 
+  chDbgCheckClassI();
   chDbgCheck(cp != NULL, "chCondSignalI");
 
   if (notempty(&cp->c_queue))
@@ -120,6 +121,7 @@ void chCondBroadcast(CondVar *cp) {
  */
 void chCondBroadcastI(CondVar *cp) {
 
+  chDbgCheckClassI();
   chDbgCheck(cp != NULL, "chCondBroadcastI");
 
   /* Empties the condition variable queue and inserts all the Threads into the
@@ -177,6 +179,7 @@ msg_t chCondWaitS(CondVar *cp) {
   Mutex *mp;
   msg_t msg;
 
+  chDbgCheckClassS();
   chDbgCheck(cp != NULL, "chCondWaitS");
   chDbgAssert(ctp->p_mtxlist != NULL,
               "chCondWaitS(), #1",
@@ -261,6 +264,7 @@ msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time) {
   Mutex *mp;
   msg_t msg;
 
+  chDbgCheckClassS();
   chDbgCheck((cp != NULL) && (time != TIME_IMMEDIATE), "chCondWaitTimeoutS");
   chDbgAssert(currp->p_mtxlist != NULL,
               "chCondWaitTimeoutS(), #1",

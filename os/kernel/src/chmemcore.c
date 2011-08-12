@@ -105,6 +105,8 @@ void *chCoreAlloc(size_t size) {
 void *chCoreAllocI(size_t size) {
   void *p;
 
+  chDbgCheckClassI();
+
   size = MEM_ALIGN_NEXT(size);
   if ((size_t)(endmem - nextmem) < size)
     return NULL;

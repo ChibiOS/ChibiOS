@@ -114,6 +114,7 @@ void chMtxLock(Mutex *mp) {
 void chMtxLockS(Mutex *mp) {
   Thread *ctp = currp;
 
+  chDbgCheckClassS();
   chDbgCheck(mp != NULL, "chMtxLockS");
 
   /* Ia the mutex already locked? */
@@ -225,6 +226,7 @@ bool_t chMtxTryLock(Mutex *mp) {
  */
 bool_t chMtxTryLockS(Mutex *mp) {
 
+  chDbgCheckClassS();
   chDbgCheck(mp != NULL, "chMtxTryLockS");
 
   if (mp->m_owner != NULL)
@@ -309,6 +311,7 @@ Mutex *chMtxUnlockS(void) {
   Thread *ctp = currp;
   Mutex *ump, *mp;
 
+  chDbgCheckClassS();
   chDbgAssert(ctp->p_mtxlist != NULL,
               "chMtxUnlockS(), #1",
               "owned mutexes list empty");

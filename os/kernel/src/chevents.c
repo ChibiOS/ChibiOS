@@ -185,6 +185,7 @@ void chEvtSignalFlags(Thread *tp, eventmask_t mask) {
  */
 void chEvtSignalFlagsI(Thread *tp, eventmask_t mask) {
 
+  chDbgCheckClassI();
   chDbgCheck(tp != NULL, "chEvtSignalI");
 
   tp->p_epending |= mask;
@@ -237,6 +238,7 @@ void chEvtBroadcastFlags(EventSource *esp, eventmask_t mask) {
 void chEvtBroadcastFlagsI(EventSource *esp, eventmask_t mask) {
   EventListener *elp;
 
+  chDbgCheckClassI();
   chDbgCheck(esp != NULL, "chEvtBroadcastMaskI");
 
   elp = esp->es_next;

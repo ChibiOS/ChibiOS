@@ -128,6 +128,8 @@ void chSysInit(void) {
  */
 void chSysTimerHandlerI(void) {
 
+  chDbgCheckClassI();
+
 #if CH_TIME_QUANTUM > 0
   /* Running thread has not used up quantum yet? */
   if (rlist.r_preempt > 0)

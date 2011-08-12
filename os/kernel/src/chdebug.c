@@ -35,6 +35,8 @@
  *            - SV#7, misplaced @p chSysUnlockFromIsr().
  *            - SV#8, misplaced @p CH_IRQ_PROLOGUE().
  *            - SV#9, misplaced @p CH_IRQ_EPILOGUE().
+ *            - SV#10, misplaced I-class function.
+ *            - SV#11, misplaced S-class function.
  *            .
  *          - Trace buffer.
  *          - Parameters check.
@@ -153,7 +155,7 @@ void dbg_check_unlock_from_isr(void) {
 void dbg_check_enter_isr(void) {
 
   port_lock_from_isr();
-  if (dbg_isr_cnt < 0)
+  if ((dbg_isr_cnt < 0) || (dbg_lock_cnt != 0))
     chDbgPanic("SV#8");
   dbg_isr_cnt++;
   port_unlock_from_isr();
@@ -167,10 +169,38 @@ void dbg_check_enter_isr(void) {
 void dbg_check_leave_isr(void) {
 
   port_lock_from_isr();
-  if (dbg_isr_cnt <= 0)
+  if ((dbg_isr_cnt <= 0) || (dbg_lock_cnt != 0))
     chDbgPanic("SV#9");
   dbg_isr_cnt--;
   port_unlock_from_isr();
+}
+
+/**
+ * @brief   I-class functions context check.
+ * @details Verifies that the system is in an appropriate state for invoking
+ *          an I-class API function. A panic is generated if the state is
+ *          not compatible.
+ *
+ * @api
+ */
+void chDbgCheckClassI(void) {
+
+  if ((dbg_isr_cnt < 0) || (dbg_lock_cnt <= 0))
+    chDbgPanic("SV#10");
+}
+
+/**
+ * @brief   S-class functions context check.
+ * @details Verifies that the system is in an appropriate state for invoking
+ *          an S-class API function. A panic is generated if the state is
+ *          not compatible.
+ *
+ * @api
+ */
+void chDbgCheckClassS(void) {
+
+  if ((dbg_isr_cnt != 0) || (dbg_lock_cnt <= 0))
+    chDbgPanic("SV#11");
 }
 
 #endif /* CH_DBG_SYSTEM_STATE_CHECK */

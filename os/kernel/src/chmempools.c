@@ -72,6 +72,7 @@ void chPoolInit(MemoryPool *mp, size_t size, memgetfunc_t provider) {
 void *chPoolAllocI(MemoryPool *mp) {
   void *objp;
 
+  chDbgCheckClassI();
   chDbgCheck(mp != NULL, "chPoolAllocI");
 
   if ((objp = mp->mp_next) != NULL)
@@ -114,6 +115,7 @@ void *chPoolAlloc(MemoryPool *mp) {
 void chPoolFreeI(MemoryPool *mp, void *objp) {
   struct pool_header *php = objp;
 
+  chDbgCheckClassI();
   chDbgCheck((mp != NULL) && (objp != NULL) && MEM_IS_ALIGNED(objp),
              "chPoolFreeI");
 

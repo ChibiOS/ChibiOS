@@ -75,7 +75,8 @@ void _scheduler_init(void) {
 Thread *chSchReadyI(Thread *tp) {
   Thread *cp;
 
-  /* Integrity check.*/
+  /* Integrity checks.*/
+  chDbgCheckClassI();
   chDbgAssert((tp->p_state != THD_STATE_READY) &&
               (tp->p_state != THD_STATE_FINAL),
               "chSchReadyI(), #1",
@@ -106,6 +107,8 @@ Thread *chSchReadyI(Thread *tp) {
 #if !defined(PORT_OPTIMIZED_GOSLEEPS) || defined(__DOXYGEN__)
 void chSchGoSleepS(tstate_t newstate) {
   Thread *otp;
+
+  chDbgCheckClassS();
 
   (otp = currp)->p_state = newstate;
 #if CH_TIME_QUANTUM > 0
@@ -173,6 +176,8 @@ static void wakeup(void *p) {
  */
 msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
 
+  chDbgCheckClassS();
+
   if (TIME_INFINITE != time) {
     VirtualTimer vt;
 
@@ -207,6 +212,8 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
 #if !defined(PORT_OPTIMIZED_WAKEUPS) || defined(__DOXYGEN__)
 void chSchWakeupS(Thread *ntp, msg_t msg) {
 
+  chDbgCheckClassS();
+
   ntp->p_u.rdymsg = msg;
   /* If the waken thread has a not-greater priority than the current
      one then it is just inserted in the ready list else it made
@@ -237,6 +244,8 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
 void chSchDoRescheduleI(void) {
   Thread *otp;
 
+  chDbgCheckClassI();
+
 #if CH_TIME_QUANTUM > 0
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
@@ -258,6 +267,8 @@ void chSchDoRescheduleI(void) {
  */
 #if !defined(PORT_OPTIMIZED_RESCHEDULES) || defined(__DOXYGEN__)
 void chSchRescheduleS(void) {
+
+  chDbgCheckClassS();
 
   if (chSchIsRescRequiredI())
     chSchDoRescheduleI();

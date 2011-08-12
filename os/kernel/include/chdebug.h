@@ -86,6 +86,8 @@
 #define dbg_check_unlock_from_isr()
 #define dbg_check_enter_isr()
 #define dbg_check_leave_isr()
+#define chDbgCheckClassI();
+#define chDbgCheckClassS();
 #endif
 
 /*===========================================================================*/
@@ -211,6 +213,8 @@ extern "C" {
   void dbg_check_unlock_from_isr(void);
   void dbg_check_enter_isr(void);
   void dbg_check_leave_isr(void);
+  void chDbgCheckClassI(void);
+  void chDbgCheckClassS(void);
 #endif
 #if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
   void _trace_init(void);
