@@ -98,7 +98,7 @@
   the Cortex-Mx GCC ports only in this moment.
   (TODO: port to IAR and RVCT compilers)
   (TODO: port to other architectures)
-- NEW: Added Eclipse ChibiOS/RT debugger plugin 1.0.4 under ./tools/eclipse.
+- NEW: Added Eclipse ChibiOS/RT debugger plugin 1.0.5 under ./tools/eclipse.
 - NEW: The ARMCMx startup file (crt0.c) now is able to fill the stack areas
   with a filler (default behavior). This is required in order to easily assess
   the stack usage at runtime.
