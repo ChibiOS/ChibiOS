@@ -66,14 +66,15 @@
 
 /**
  * @brief   Performs a context switch.
- * @note    This function should nevel be used from user code directly.
+ * @note    Not a user function, it is meant to be invoked by the scheduler
+ *          itself or from within the port layer.
  *
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  *
  * @special
  */
-#define chSysSwitchI(ntp, otp) {                                            \
+#define chSysSwitch(ntp, otp) {                                             \
   dbg_trace(otp);                                                           \
   port_switch(ntp, otp);                                                    \
 }
@@ -180,6 +181,8 @@
  * @brief   IRQ handler enter code.
  * @note    Usually IRQ handlers functions are also declared naked.
  * @note    On some architectures this macro can be empty.
+ *
+ * @special
  */
 #define CH_IRQ_PROLOGUE() {                                                 \
   PORT_IRQ_PROLOGUE();                                                      \
@@ -190,7 +193,9 @@
  * @brief   IRQ handler exit code.
  * @note    Usually IRQ handlers function are also declared naked.
  * @note    This macro usually performs the final reschedule by using
- *          @p chSchRescRequiredI() and @p chSchDoRescheduleI().
+ *          @p chSchIsPreemptionRequired() and @p chSchDoReschedule().
+ *
+ * @special
  */
 #define CH_IRQ_EPILOGUE() {                                                 \
   dbg_check_leave_isr();                                                    \
@@ -201,6 +206,8 @@
  * @brief   Standard normal IRQ handler declaration.
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
+ *
+ * @special
  */
 #define CH_IRQ_HANDLER(id) PORT_IRQ_HANDLER(id)
 
@@ -209,6 +216,8 @@
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  * @note    Not all architectures support fast interrupts.
+ *
+ * @special
  */
 #define CH_FAST_IRQ_HANDLER(id) PORT_FAST_IRQ_HANDLER(id)
 

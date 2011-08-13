@@ -73,10 +73,10 @@ IVOR10:
 
         /* System tick handler invocation.*/
         bl          chSysTimerHandlerI
-        bl          chSchIsRescRequiredExI
+        bl          chSchIsPreemptionRequired
         cmpli       cr0, %r3, 0
         beq         cr0, .ctxrestore
-        bl          chSchDoRescheduleI
+        bl          chSchDoReschedule
         b           .ctxrestore
 
         /*
@@ -138,10 +138,10 @@ IVOR4:
         stw         %r3, 0(%r3)             /* Writing any value should do. */
 
         /* Verifies if a reschedule is required.*/
-        bl          chSchIsRescRequiredExI
+        bl          chSchIsPreemptionRequired
         cmpli       cr0, %r3, 0
         beq         cr0, .ctxrestore
-        bl          chSchDoRescheduleI
+        bl          chSchDoReschedule
 
         /* Context restore.*/
 .ctxrestore:

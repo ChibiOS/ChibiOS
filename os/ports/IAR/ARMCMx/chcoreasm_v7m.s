@@ -39,8 +39,8 @@ ICSR_PENDSVSET  SET 0x10000000
         SECTION .text:CODE:NOROOT(2)
 
         EXTERN  chThdExit
-        EXTERN  chSchIsRescRequiredExI
-        EXTERN  chSchDoRescheduleI
+        EXTERN  chSchIsPreemptionRequired
+        EXTERN  chSchDoReschedule
 
         THUMB
 
@@ -76,9 +76,9 @@ _port_thread_start:
  */
         PUBLIC  _port_switch_from_isr
 _port_switch_from_isr:
-        bl      chSchIsRescRequiredExI
+        bl      chSchIsPreemptionRequired
         cbz     r0, .L2
-        bl      chSchDoRescheduleI
+        bl      chSchDoReschedule
 .L2:
 #if CORTEX_SIMPLIFIED_PRIORITY
         mov     r3, #LWRD SCB_ICSR

@@ -36,8 +36,8 @@ ICSR_PENDSVSET  EQU     0x10000000
                 AREA    |.text|, CODE, READONLY
 
                 IMPORT  chThdExit
-                IMPORT  chSchIsRescRequiredExI
-                IMPORT  chSchDoRescheduleI
+                IMPORT  chSchIsPreemptionRequired
+                IMPORT  chSchDoReschedule
 
 /*
  * Performs a context switch between two threads.
@@ -73,9 +73,9 @@ _port_thread_start PROC
  */
                 EXPORT  _port_switch_from_isr
 _port_switch_from_isr PROC
-                bl      chSchIsRescRequiredExI
+                bl      chSchIsPreemptionRequired
                 cbz     r0, noreschedule
-                bl      chSchDoRescheduleI
+                bl      chSchDoReschedule
 noreschedule
 #if CORTEX_SIMPLIFIED_PRIORITY
                 mov     r3, #SCB_ICSR :AND: 0xFFFF

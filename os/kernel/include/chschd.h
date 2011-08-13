@@ -134,14 +134,14 @@ extern "C" {
 #if !defined(PORT_OPTIMIZED_WAKEUPS)
   void chSchWakeupS(Thread *tp, msg_t msg);
 #endif
-#if !defined(PORT_OPTIMIZED_DORESCHEDULEI)
-  void chSchDoRescheduleI(void);
-#endif
 #if !defined(PORT_OPTIMIZED_RESCHEDULES)
   void chSchRescheduleS(void);
 #endif
-#if !defined(PORT_OPTIMIZED_ISRESCHREQUIREDEXI)
-  bool_t chSchIsRescRequiredExI(void);
+#if !defined(PORT_OPTIMIZED_ISPREEMPTIONREQUIRED)
+  bool_t chSchIsPreemptionRequired(void);
+#endif
+#if !defined(PORT_OPTIMIZED_DORESCHEDULE)
+  void chSchDoReschedule(void);
 #endif
 #ifdef __cplusplus
 }
@@ -179,9 +179,36 @@ extern "C" {
 #if !defined(PORT_OPTIMIZED_DOYIELDS) || defined(__DOXYGEN__)
 #define chSchDoYieldS() {                                                   \
   if (chSchCanYieldS())                                                     \
-    chSchDoRescheduleI();                                                   \
+    chSchDoReschedule();                                                    \
 }
 #endif /* !defined(PORT_OPTIMIZED_DOYIELDS) */
+
+/**
+ * @brief   Inlineable preemption code.
+ * @details This is the common preemption code, this function must be invoked
+ *          exclusively from the port layer.
+ *
+ * @special
+ */
+#if (CH_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
+#define chSchPreemption() {                                                 \
+  tprio_t p1 = firstprio(&rlist.r_queue);                                   \
+  tprio_t p2 = currp->p_prio;                                               \
+  if (rlist.r_preempt) {                                                    \
+    if (p1 > p2)                                                            \
+      chSchDoReschedule();                                                  \
+  }                                                                         \
+  else {                                                                    \
+    if (p1 >= p2)                                                           \
+      chSchDoReschedule();                                                  \
+  }                                                                         \
+}
+#else /* CH_TIME_QUANTUM == 0 */
+#define chSchPreemption() {                                                 \
+  if (p1 >= p2)                                                             \
+    chSchDoReschedule();                                                    \
+}
+#endif /* CH_TIME_QUANTUM == 0 */
 
 #endif /* _CHSCHD_H_ */
 

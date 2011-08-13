@@ -34,8 +34,8 @@ SCB_ICSR        EQU     0xE000ED04
                 AREA    |.text|, CODE, READONLY
 
                 IMPORT  chThdExit
-                IMPORT  chSchIsRescRequiredExI
-                IMPORT  chSchDoRescheduleI
+                IMPORT  chSchIsPreemptionRequired
+                IMPORT  chSchDoReschedule
 
 /*
  * Performs a context switch between two threads.
@@ -109,10 +109,10 @@ PendSVVector       PROC
  */
                 EXPORT  _port_switch_from_isr
 _port_switch_from_isr PROC
-                bl      chSchIsRescRequiredExI
+                bl      chSchIsPreemptionRequired
                 cmp     r0, #0
                 beq     noresch
-                bl      chSchDoRescheduleI
+                bl      chSchDoReschedule
 noresch
                 ldr     r2, =SCB_ICSR
                 movs    r3, #128

@@ -184,8 +184,8 @@ struct context {
  *          enabled to invoke system APIs.
  */
 #define PORT_IRQ_EPILOGUE() {                                           \
-  if (chSchIsRescRequiredExI())                                         \
-    chSchDoRescheduleI();                                               \
+  if (chSchIsPreemptionRequired())                                      \
+    chSchDoReschedule();                                                \
 }
 
 /**

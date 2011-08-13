@@ -116,7 +116,7 @@
  *          separate interrupt stack and the stack space between @p intctx and
  *          @p extctx is known to be zero.
  * @note    In this port it is conservatively set to 16 because the function
- *          @p chSchDoRescheduleI() can have a stack frame, expecially with
+ *          @p chSchDoReschedule() can have a stack frame, expecially with
  *          compiler optimizations disabled.
  */
 #ifndef PORT_INT_REQUIRED_STACK
@@ -227,6 +227,7 @@ struct intctx {
 
 /**
  * @brief   Platform dependent part of the @p Thread structure.
+
  * @details In this port the structure just holds a pointer to the @p intctx
  *          structure representing the stack pointer at context switch time.
  */

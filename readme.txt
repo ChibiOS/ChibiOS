@@ -94,10 +94,7 @@
   useful.
 - NEW: Added a new debug option CH_DBG_SYSTEM_STATE_CHECK that ensures the
   correct API call protocol. If an API is invoked out of the correct context
-  then the kernel panics with a debug message. The extension is functional on
-  the Cortex-Mx GCC ports only in this moment.
-  (TODO: port to IAR and RVCT compilers)
-  (TODO: port to other architectures)
+  then the kernel panics with a debug message.
 - NEW: Added Eclipse ChibiOS/RT debugger plugin 1.0.5 under ./tools/eclipse.
 - NEW: The ARMCMx startup file (crt0.c) now is able to fill the stack areas
   with a filler (default behavior). This is required in order to easily assess
@@ -160,6 +157,10 @@
   not support fast interrupts (backported to 2.2.5).
 - NEW: Now the port layer exports info regarding the compiler and the port
   options. The info are printed into the test reports.
+- CHANGE: Renamed the scheduler functions chSchIsRescRequiredExI() to
+  chSchIsPreemptionRequired(), chSchDoRescheduleI() to chSchDoReschedule(),
+  chSysSwitchI() to chSysSwitch(). All those functions were special cases
+  and not regular I-class APIs.
 - CHANGE: Renamed the macros IDLE_THREAD_STACK_SIZE and INT_REQUIRED_STACK
   to PORT_IDLE_THREAD_STACK_SIZE and PORT_INT_REQUIRED_STACK for consistency.
 - CHANGE: Removed the "old" Cortex-M3 port from the code, the current port

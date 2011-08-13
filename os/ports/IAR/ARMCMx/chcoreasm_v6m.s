@@ -37,8 +37,8 @@ SCB_ICSR        SET     0xE000ED04
         SECTION .text:CODE:NOROOT(2)
 
         EXTERN  chThdExit
-        EXTERN  chSchIsRescRequiredExI
-        EXTERN  chSchDoRescheduleI
+        EXTERN  chSchIsPreemptionRequired
+        EXTERN  chSchDoReschedule
 
         THUMB
 
@@ -110,10 +110,10 @@ PendSVVector:
  */
         PUBLIC  _port_switch_from_isr
 _port_switch_from_isr:
-        bl      chSchIsRescRequiredExI
+        bl      chSchIsPreemptionRequired
         cmp     r0, #0
         beq     noresch
-        bl      chSchDoRescheduleI
+        bl      chSchDoReschedule
 noresch:
         ldr     r2, =SCB_ICSR
         movs    r3, #128
