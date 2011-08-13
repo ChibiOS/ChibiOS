@@ -483,6 +483,16 @@
 #endif
 
 /**
+ * @brief   Context switch hook.
+ * @details This hook is invoked just before switching between threads.
+ */
+#if !defined(THREAD_CONTEXT_SWITCH_HOOK) || defined(__DOXYGEN__)
+#define THREAD_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
+  /* System halt code here.*/                                               \
+}
+#endif
+
+/**
  * @brief   Idle Loop hook.
  * @details This hook is continuously invoked by the idle thread loop.
  */
@@ -502,6 +512,7 @@
   /* System tick event code here.*/                                         \
 }
 #endif
+
 
 /**
  * @brief   System halt hook.

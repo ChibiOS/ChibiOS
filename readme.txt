@@ -89,9 +89,9 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
-- NEW: Removed the option CH_USE_NESTED_LOCK, lwIP no more requires it and it
-  would have conflicted with CH_DBG_SYSTEM_STATE_CHECK that is far more
-  useful.
+- NEW: Added a new hook THREAD_CONTEXT_SWITCH_HOOK() that allows to insert
+  code just before a context switch. For example this hook could be used
+  in oder to implement advanced power management schemes.
 - NEW: Added a new debug option CH_DBG_SYSTEM_STATE_CHECK that ensures the
   correct API call protocol. If an API is invoked out of the correct context
   then the kernel panics with a debug message.
@@ -157,6 +157,9 @@
   not support fast interrupts (backported to 2.2.5).
 - NEW: Now the port layer exports info regarding the compiler and the port
   options. The info are printed into the test reports.
+- CHANGE: Removed the option CH_USE_NESTED_LOCK, lwIP no more requires it and
+  it would have conflicted with CH_DBG_SYSTEM_STATE_CHECK which is far more
+  useful.
 - CHANGE: Renamed the scheduler functions chSchIsRescRequiredExI() to
   chSchIsPreemptionRequired(), chSchDoRescheduleI() to chSchDoReschedule(),
   chSysSwitchI() to chSysSwitch(). All those functions were special cases

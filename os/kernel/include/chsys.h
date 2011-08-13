@@ -76,6 +76,7 @@
  */
 #define chSysSwitch(ntp, otp) {                                             \
   dbg_trace(otp);                                                           \
+  THREAD_CONTEXT_SWITCH_HOOK(ntp, otp);                                     \
   port_switch(ntp, otp);                                                    \
 }
 
