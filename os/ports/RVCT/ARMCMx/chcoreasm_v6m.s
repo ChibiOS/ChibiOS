@@ -36,6 +36,10 @@ SCB_ICSR        EQU     0xE000ED04
                 IMPORT  chThdExit
                 IMPORT  chSchIsPreemptionRequired
                 IMPORT  chSchDoReschedule
+#if CH_DBG_SYSTEM_STATE_CHECK
+                IMPORT  dbg_check_unlock
+                IMPORT  dbg_check_lock
+#endif
 
 /*
  * Performs a context switch between two threads.
@@ -66,6 +70,9 @@ _port_switch    PROC
  */
                 EXPORT  _port_thread_start
 _port_thread_start PROC
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      dbg_check_unlock
+#endif
                 cpsie   i
                 mov     r0, r5
                 blx     r4
@@ -109,11 +116,17 @@ PendSVVector       PROC
  */
                 EXPORT  _port_switch_from_isr
 _port_switch_from_isr PROC
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      dbg_check_lock
+#endif
                 bl      chSchIsPreemptionRequired
                 cmp     r0, #0
-                beq     noresch
+                beq     noreschedule
                 bl      chSchDoReschedule
-noresch
+noreschedule
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      dbg_check_unlock
+#endif
                 ldr     r2, =SCB_ICSR
                 movs    r3, #128
 #if CORTEX_ALTERNATE_SWITCH

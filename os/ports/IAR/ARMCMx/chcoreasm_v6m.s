@@ -39,6 +39,10 @@ SCB_ICSR        SET     0xE000ED04
         EXTERN  chThdExit
         EXTERN  chSchIsPreemptionRequired
         EXTERN  chSchDoReschedule
+#if CH_DBG_SYSTEM_STATE_CHECK
+        EXTERN  dbg_check_unlock
+        EXTERN  dbg_check_lock
+#endif
 
         THUMB
 
@@ -70,6 +74,9 @@ _port_switch:
  */
         PUBLIC  _port_thread_start
 _port_thread_start:
+#if CH_DBG_SYSTEM_STATE_CHECK
+        bl      dbg_check_unlock
+#endif
         cpsie   i
         mov     r0, r5
         blx     r4
@@ -110,11 +117,17 @@ PendSVVector:
  */
         PUBLIC  _port_switch_from_isr
 _port_switch_from_isr:
+#if CH_DBG_SYSTEM_STATE_CHECK
+        bl      dbg_check_lock
+#endif
         bl      chSchIsPreemptionRequired
         cmp     r0, #0
         beq     noresch
         bl      chSchDoReschedule
 noresch:
+#if CH_DBG_SYSTEM_STATE_CHECK
+        bl      dbg_check_unlock
+#endif
         ldr     r2, =SCB_ICSR
         movs    r3, #128
 #if CORTEX_ALTERNATE_SWITCH
