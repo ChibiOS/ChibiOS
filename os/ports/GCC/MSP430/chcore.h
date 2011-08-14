@@ -119,13 +119,13 @@ struct context {
  * @details This code usually setup the context switching frame represented
  *          by an @p intctx structure.
  */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
-  tp->p_ctx.sp = (struct intctx *)((uint8_t *)workspace +               \
-                                   wsize -                              \
-                                   sizeof(struct intctx));              \
-  tp->p_ctx.sp->r10 = pf;                                               \
-  tp->p_ctx.sp->r11 = arg;                                              \
-  tp->p_ctx.sp->pc = _port_thread_start;                                \
+#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
+  tp->p_ctx.sp = (struct intctx *)((uint8_t *)workspace +                   \
+                                   wsize -                                  \
+                                   sizeof(struct intctx));                  \
+  tp->p_ctx.sp->r10 = pf;                                                   \
+  tp->p_ctx.sp->r11 = arg;                                                  \
+  tp->p_ctx.sp->pc = _port_thread_start;                                    \
 }
 
 /**
@@ -159,10 +159,10 @@ struct context {
 /**
  * @brief   Computes the thread working area global size.
  */
-#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
-                                   sizeof(struct intctx) +              \
-                                   sizeof(struct extctx) +              \
-                                  (n) + (PORT_INT_REQUIRED_STACK))
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                         \
+                                   sizeof(struct intctx) +                  \
+                                   sizeof(struct extctx) +                  \
+                                   (n) + (PORT_INT_REQUIRED_STACK))
 
 /**
  * @brief   Static working area allocation.
@@ -183,9 +183,11 @@ struct context {
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() {                                           \
-  if (chSchIsPreemptionRequired())                                      \
-    chSchDoReschedule();                                                \
+#define PORT_IRQ_EPILOGUE() {                                               \
+  dbg_check_lock();                                                         \
+  if (chSchIsPreemptionRequired())                                          \
+    chSchDoReschedule();                                                    \
+  dbg_check_unlock();                                                       \
 }
 
 /**
@@ -220,7 +222,11 @@ struct context {
 /**
  * @brief   Kernel-lock action from an interrupt handler.
  * @details This function is invoked before invoking I-class APIs from
- *          interrupt handlers. The implementation is architecture dependent,
+ *          interrupt handlers. The implementation is architecture dependen#define PORT_IRQ_EPILOGUE() {                                           \
+  if (chSchIsPreemptionRequired())                                      \
+    chSchDoReschedule();                                                \
+}
+ *          t,
  *          in its simplest form it is void.
  * @note    This function is empty in this port.
  */
@@ -270,8 +276,8 @@ struct context {
  */
 #if ENABLE_WFI_IDLE != 0
 #ifndef port_wait_for_interrupt
-#define port_wait_for_interrupt() {                                     \
-  asm volatile ("nop" : : : "memory");                                  \
+#define port_wait_for_interrupt() {                                         \
+  asm volatile ("nop" : : : "memory");                                      \
 }
 #endif
 #else

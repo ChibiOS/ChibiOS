@@ -206,8 +206,10 @@ struct stm8_startctx {
  *          enabled to invoke system APIs.
  */
 #define PORT_IRQ_EPILOGUE() {                                               \
+  dbg_check_lock();                                                         \
   if (chSchIsPreemptionRequired())                                          \
     chSchDoReschedule();                                                    \
+  dbg_check_unlock();                                                       \
 }
 
 /**

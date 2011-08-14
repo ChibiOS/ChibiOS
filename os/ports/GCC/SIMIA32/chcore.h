@@ -144,7 +144,7 @@ struct context {
                                    sizeof(void *) * 4 +                 \
                                    sizeof(struct intctx) +              \
                                    sizeof(struct extctx) +              \
-                                  (n) + (PORT_INT_REQUIRED_STACK))
+                                   (n) + (PORT_INT_REQUIRED_STACK))
 
 /**
  * Macro used to allocate a thread working area aligned as both position and
