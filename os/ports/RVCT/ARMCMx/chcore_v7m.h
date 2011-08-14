@@ -314,8 +314,8 @@ struct intctx {
 #define port_switch(ntp, otp) _port_switch(ntp, otp)
 #else
 #define port_switch(ntp, otp) {                                             \
-  struct intctx *r13 = (struct intctx *)__current_sp();                     \
-  if ((void *)(r13 - 1) < (void *)(otp + 1))                                \
+  uint8_t *r13 = (uint8_t *)__current_sp();                                 \
+  if ((stkalign_t *)(r13 - sizeof(struct intctx)) < otp->p_stklimit)        \
     chDbgPanic("stack overflow");                                           \
   _port_switch(ntp, otp);                                                   \
 }

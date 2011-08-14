@@ -111,7 +111,6 @@
   The process stack is organized to be checked on context switch like other
   threads. Now all threads have an explicit stack boundary pointer.
   (TODO: documentation to be updated)
-  (TODO: change to be ported to IAR and Keil ports)
 - NEW: Added debug plugin for Eclipse under ./tools/eclipse (backported to
   2.2.7).
 - NEW: The debug macros chDbgCheck() and chDbgAssert() now can be externally
