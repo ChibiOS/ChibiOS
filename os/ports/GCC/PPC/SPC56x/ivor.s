@@ -25,8 +25,13 @@
  * @addtogroup PPC_CORE
  * @{
  */
-/** @cond never */
 
+#include "chconf.h"
+
+#define FALSE 0
+#define TRUE 1
+
+#if !defined(__DOXYGEN__)
         /*
          * INTC registers address.
          */
@@ -72,6 +77,9 @@ IVOR10:
         mtspr       336, %r3                /* TSR register.                */
 
         /* System tick handler invocation.*/
+#if CH_DBG_SYSTEM_STATE_CHECK
+        bl          dbg_check_lock
+#endif
         bl          chSysTimerHandlerI
         bl          chSchIsPreemptionRequired
         cmpli       cr0, %r3, 0
@@ -138,6 +146,9 @@ IVOR4:
         stw         %r3, 0(%r3)             /* Writing any value should do. */
 
         /* Verifies if a reschedule is required.*/
+#if CH_DBG_SYSTEM_STATE_CHECK
+        bl          dbg_check_lock
+#endif
         bl          chSchIsPreemptionRequired
         cmpli       cr0, %r3, 0
         beq         cr0, .ctxrestore
@@ -145,6 +156,9 @@ IVOR4:
 
         /* Context restore.*/
 .ctxrestore:
+#if CH_DBG_SYSTEM_STATE_CHECK
+        bl          dbg_check_unlock
+#endif
         lwz         %r3, 36(%sp)            /* Restores GPR3...GPR12.       */
         lwz         %r4, 40(%sp)
         lwz         %r5, 44(%sp)
@@ -171,5 +185,6 @@ IVOR4:
         addi        %sp, %sp, 80            /* Back to the previous frame.  */
         rfi
 
-/** @endcond */
+#endif /* !defined(__DOXYGEN__) */
+
 /** @} */

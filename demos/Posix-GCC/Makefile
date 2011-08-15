@@ -72,6 +72,7 @@ SRC  = ${PORTSRC} \
        ${PLATFORMSRC} \
        $(BOARDSRC) \
        ${CHIBIOS}/os/various/shell.c \
+       ${CHIBIOS}/os/various/chprintf.c \
        main.c
 
 # List ASM source files here
