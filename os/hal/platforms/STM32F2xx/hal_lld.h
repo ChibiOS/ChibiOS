@@ -153,6 +153,7 @@
 #define STM32_HAS_GPIOF         TRUE
 #define STM32_HAS_GPIOG         TRUE
 #define STM32_HAS_GPIOH         TRUE
+#define STM32_HAS_GPIOI         TRUE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE
@@ -277,12 +278,12 @@
 #define I2C3_ER_IRQHandler      Vector164   /**< I2C3 Error.                */
 #define OTG_HS_EP1_OUT_IRQHandler Vector168 /**< USB OTG HS End Point 1 Out.*/
 #define OTG_HS_EP1_IN_IRQHandler Vector16C  /**< USB OTG HS End Point 1 In. */                                                 
-#define OTG_HS_WKUP_IRQHandler  Vector168   /**< USB OTG HS Wakeup through
+#define OTG_HS_WKUP_IRQHandler  Vector170   /**< USB OTG HS Wakeup through
                                                  EXTI line.                 */
-#define OTG_HS_IRQHandler       Vector16C   /**< USB OTG HS.                */ 
-#define DCMI_IRQHandler         Vector16C   /**< DCMI.                      */ 
-#define CRYP_IRQHandler         Vector16C   /**< CRYP.                      */ 
-#define HASH_RNG_IRQHandler     Vector16C   /**< Hash and Rng.              */ 
+#define OTG_HS_IRQHandler       Vector174   /**< USB OTG HS.                */ 
+#define DCMI_IRQHandler         Vector178   /**< DCMI.                      */ 
+#define CRYP_IRQHandler         Vector17C   /**< CRYP.                      */ 
+#define HASH_RNG_IRQHandler     Vector180   /**< Hash and Rng.              */ 
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
