@@ -13,7 +13,7 @@ The currently included items are:
 2. lwip-1.4.0, lightweight TCP/IP stack: http://savannah.nongnu.org/projects/lwip/
 3. STM32 firmware library 3.5.0 (partial, library only) the full download is
    available from http://www.st.com
-4. FatFS 0.7e (patched), the original version is available from
+4. FatFS 0.8b (patched), the original version is available from
    http://elm-chan.org/fsw/ff/00index_e.html
 
 The above files are included packed as downloaded from the original repository

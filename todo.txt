@@ -12,6 +12,7 @@ Current Pipeline (2.3.x):
 * Improved stack overflow checking, support main() thread.
   * Move main stack to low memory in ARMCMx ports.
 * Eclipse plugin.
+* FatFs 0.8x integration.
 X STM32L support.
 X STM32L-Discovery demo and article.
 X File System infrastructure.
@@ -33,7 +34,6 @@ X I2C device driver class support and at least one implementation.
 Within 2.x.x
 - Improved Makefile system.
 - MAC driver for STM32F107.
-- FatFs 0.8x integration.
 - FatFs wrapper.
 - New device driver models: Clock, Systick, RTC, WDG, DAC, Power Monitor.
 - Add UART4 support to the STM32 UART driver (CL line only, HD has a nasty

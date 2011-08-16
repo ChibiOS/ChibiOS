@@ -89,6 +89,7 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Integrated new FatFs version 0.8b.
 - NEW: Added a new hook THREAD_CONTEXT_SWITCH_HOOK() that allows to insert
   code just before a context switch. For example this hook could be used
   in oder to implement advanced power management schemes.
