@@ -22,7 +22,7 @@ under ./ext as:
 
 ./ext/uip-1.0
 ./ext/lwip-1.4.0
-./ext/stm32lib
+./ext/stm32lib (you also need to copy stm32f10x_conf.h in your project)
 ./ext/fatfs
 
 Some patches are also present:
