@@ -208,7 +208,9 @@ struct I2CDriver{
   uint8_t               slave_addr1;/*!< @brief 7-bit address of the slave with r\w bit.*/
   uint8_t               slave_addr2;/*!< @brief Uses in 10-bit address mode. */
 
+#if CH_USE_EVENTS
   EventSource           sevent;     /*!< @brief Status Change @p EventSource.*/
+#endif
 
   /*********** End of the mandatory fields. **********************************/
 
