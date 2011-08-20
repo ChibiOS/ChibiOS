@@ -80,9 +80,6 @@ Thread *_thread_init(Thread *tp, tprio_t prio) {
 #if CH_USE_EVENTS
   tp->p_epending = 0;
 #endif
-#if CH_USE_NESTED_LOCKS
-  tp->p_locks = 0;
-#endif
 #if CH_DBG_THREADS_PROFILING
   tp->p_time = 0;
 #endif
