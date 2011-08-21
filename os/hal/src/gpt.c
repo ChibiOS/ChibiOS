@@ -137,8 +137,11 @@ void gptStartContinuous(GPTDriver *gptp, gptcnt_t interval) {
  */
 void gptStartContinuousI(GPTDriver *gptp, gptcnt_t interval) {
 
+  chDbgCheckClassI();
+  chDbgCheck(gptp != NULL, "gptStartContinuousI");
   chDbgAssert(gptp->state == GPT_READY,
               "gptStartContinuousI(), #1", "invalid state");
+
   gptp->state = GPT_CONTINUOUS;
   gpt_lld_start_timer(gptp, interval);
 }
@@ -168,8 +171,11 @@ void gptStartOneShot(GPTDriver *gptp, gptcnt_t interval) {
  */
 void gptStartOneShotI(GPTDriver *gptp, gptcnt_t interval) {
 
+  chDbgCheckClassI();
+  chDbgCheck(gptp != NULL, "gptStartOneShotI");
   chDbgAssert(gptp->state == GPT_READY,
               "gptStartOneShotI(), #1", "invalid state");
+
   gptp->state = GPT_ONESHOT;
   gpt_lld_start_timer(gptp, interval);
 }
@@ -197,9 +203,12 @@ void gptStopTimer(GPTDriver *gptp) {
  */
 void gptStopTimerI(GPTDriver *gptp) {
 
+  chDbgCheckClassI();
+  chDbgCheck(gptp != NULL, "gptStopTimerI");
   chDbgAssert((gptp->state == GPT_READY) || (gptp->state == GPT_CONTINUOUS) ||
               (gptp->state == GPT_ONESHOT),
               "gptStopTimerI(), #1", "invalid state");
+
   gptp->state = GPT_READY;
   gpt_lld_stop_timer(gptp);
 }
@@ -220,6 +229,7 @@ void gptPolledDelay(GPTDriver *gptp, gptcnt_t interval) {
 
   chDbgAssert(gptp->state == GPT_READY,
               "gptPolledDelay(), #1", "invalid state");
+
   gptp->state = GPT_ONESHOT;
   gpt_lld_polled_delay(gptp, interval);
 }

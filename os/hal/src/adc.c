@@ -176,13 +176,14 @@ void adcStartConversionI(ADCDriver *adcp,
                          adcsample_t *samples,
                          size_t depth) {
 
+  chDbgCheckClassI();
   chDbgCheck((adcp != NULL) && (grpp != NULL) && (samples != NULL) &&
              ((depth == 1) || ((depth & 1) == 0)),
              "adcStartConversionI");
-
   chDbgAssert((adcp->state == ADC_READY) ||
               (adcp->state == ADC_COMPLETE),
               "adcStartConversionI(), #1", "not ready");
+
   adcp->samples  = samples;
   adcp->depth    = depth;
   adcp->grpp     = grpp;
@@ -229,12 +230,13 @@ void adcStopConversion(ADCDriver *adcp) {
  */
 void adcStopConversionI(ADCDriver *adcp) {
 
+  chDbgCheckClassI();
   chDbgCheck(adcp != NULL, "adcStopConversionI");
-
   chDbgAssert((adcp->state == ADC_READY) ||
               (adcp->state == ADC_ACTIVE) ||
               (adcp->state == ADC_COMPLETE),
               "adcStopConversionI(), #1", "invalid state");
+
   if (adcp->state != ADC_READY) {
     adc_lld_stop_conversion(adcp);
     adcp->grpp  = NULL;

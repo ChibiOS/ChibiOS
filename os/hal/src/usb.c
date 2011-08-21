@@ -301,6 +301,8 @@ void usbStop(USBDriver *usbp) {
 void usbInitEndpointI(USBDriver *usbp, usbep_t ep,
                       const USBEndpointConfig *epcp) {
 
+  chDbgCheckClassI();
+  chDbgCheck((usbp != NULL) && (epcp != NULL), "usbInitEndpointI");
   chDbgAssert(usbp->state == USB_ACTIVE,
               "usbEnableEndpointI(), #1", "invalid state");
   chDbgAssert(usbp->epc[ep] != NULL,
@@ -331,6 +333,8 @@ void usbInitEndpointI(USBDriver *usbp, usbep_t ep,
 void usbDisableEndpointsI(USBDriver *usbp) {
   unsigned i;
 
+  chDbgCheckClassI();
+  chDbgCheck(usbp != NULL, "usbDisableEndpointsI");
   chDbgAssert(usbp->state == USB_SELECTED,
               "usbDisableEndpointsI(), #1", "invalid state");
 
@@ -364,6 +368,9 @@ void usbDisableEndpointsI(USBDriver *usbp) {
 size_t usbReadPacketI(USBDriver *usbp, usbep_t ep,
                       uint8_t *buf, size_t n) {
 
+  chDbgCheckClassI();
+  chDbgCheck((usbp != NULL) && (buf != NULL), "usbReadPacketI");
+
   if (usbGetReceiveStatusI(usbp, ep))
     return USB_ENDPOINT_BUSY;
 
@@ -390,6 +397,9 @@ size_t usbReadPacketI(USBDriver *usbp, usbep_t ep,
  */
 size_t usbWritePacketI(USBDriver *usbp, usbep_t ep,
                        const uint8_t *buf, size_t n) {
+
+  chDbgCheckClassI();
+  chDbgCheck((usbp != NULL) && (buf != NULL), "usbWritePacketI");
 
   if (usbGetTransmitStatusI(usbp, ep))
     return USB_ENDPOINT_BUSY;
@@ -419,6 +429,9 @@ size_t usbWritePacketI(USBDriver *usbp, usbep_t ep,
 bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep,
                         uint8_t *buf, size_t n) {
 
+  chDbgCheckClassI();
+  chDbgCheck((usbp != NULL) && (buf != NULL), "usbStartReceiveI");
+
   if (usbGetReceiveStatusI(usbp, ep))
     return TRUE;
 
@@ -447,6 +460,9 @@ bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep,
 bool_t usbStartTransmitI(USBDriver *usbp, usbep_t ep,
                          const uint8_t *buf, size_t n) {
 
+  chDbgCheckClassI();
+  chDbgCheck((usbp != NULL) && (buf != NULL), "usbStartTransmitI");
+
   if (usbGetTransmitStatusI(usbp, ep))
     return TRUE;
 
@@ -468,6 +484,9 @@ bool_t usbStartTransmitI(USBDriver *usbp, usbep_t ep,
  */
 bool_t usbStallReceiveI(USBDriver *usbp, usbep_t ep) {
 
+  chDbgCheckClassI();
+  chDbgCheck(usbp != NULL, "usbStallReceiveI");
+
   if (usbGetReceiveStatusI(usbp, ep))
     return TRUE;
 
@@ -487,6 +506,9 @@ bool_t usbStallReceiveI(USBDriver *usbp, usbep_t ep) {
  * @iclass
  */
 bool_t usbStallTransmitI(USBDriver *usbp, usbep_t ep) {
+
+  chDbgCheckClassI();
+  chDbgCheck(usbp != NULL, "usbStallTransmitI");
 
   if (usbGetTransmitStatusI(usbp, ep))
     return TRUE;

@@ -121,6 +121,8 @@ void icuStop(ICUDriver *icup) {
  */
 void icuEnable(ICUDriver *icup) {
 
+  chDbgCheck(icup != NULL, "icuEnable");
+
   chSysLock();
   chDbgAssert(icup->state == ICU_READY, "icuEnable(), #1", "invalid state");
   icu_lld_enable(icup);
@@ -136,6 +138,8 @@ void icuEnable(ICUDriver *icup) {
  * @api
  */
 void icuDisable(ICUDriver *icup) {
+
+  chDbgCheck(icup != NULL, "icuDisable");
 
   chSysLock();
   chDbgAssert((icup->state == ICU_READY) || (icup->state == ICU_WAITING) ||
