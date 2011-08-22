@@ -89,6 +89,8 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Now an error is generated at compile time when trying to enable the
+  options CH_DBG_ENABLE_STACK_CHECK on ports that do not support it.
 - NEW: Added a kernel-only Cortex-Mx demo as reference project for users not
   interested in the HAL but just want to use the ChibiOS/RT kernel.
   The demo is named ARMCM3-GENERIC-KERNEL and is defaulted to the STM32, in

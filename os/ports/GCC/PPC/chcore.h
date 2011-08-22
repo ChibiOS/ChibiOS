@@ -29,6 +29,10 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
+#if CH_DBG_ENABLE_STACK_CHECK
+#error "option CH_DBG_ENABLE_STACK_CHECK not supported by this port"
+#endif
+
 /*
  * Port-related configuration parameters.
  */
