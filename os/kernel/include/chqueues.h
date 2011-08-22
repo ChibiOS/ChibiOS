@@ -31,16 +31,16 @@
 
 #if CH_USE_QUEUES || defined(__DOXYGEN__)
 
-/** @brief Returned by the queue functions if the operation is successful.*/
-#define Q_OK            RDY_OK
-/** @brief Returned by the queue functions if a timeout occurs.*/
-#define Q_TIMEOUT       RDY_TIMEOUT
-/** @brief Returned by the queue functions if the queue has been reset.*/
-#define Q_RESET         RDY_RESET
-/** @brief Returned by the queue functions if the queue is empty.*/
-#define Q_EMPTY         -3
-/** @brief Returned by the queue functions if the queue is full.*/
-#define Q_FULL          -4
+/**
+ * @name    Queue functions returned status value
+ * @{
+ */
+#define Q_OK            RDY_OK      /**< @brief Operation successful.       */
+#define Q_TIMEOUT       RDY_TIMEOUT /**< @brief Timeout condition.          */
+#define Q_RESET         RDY_RESET   /**< @brief Queue has been reset.       */
+#define Q_EMPTY         -3          /**< @brief Queue empty.                */
+#define Q_FULL          -4          /**< @brief Queue full,                 */
+/** @} */
 
 /**
  * @brief   Type of a generic I/O queue structure.

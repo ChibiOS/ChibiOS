@@ -37,6 +37,9 @@
 typedef void *(*memgetfunc_t)(size_t size);
 
 /**
+ * @name    Alignment support macros
+ */
+/**
  * @brief   Alignment size constant.
  */
 #define MEM_ALIGN_SIZE      sizeof(stkalign_t)
@@ -61,6 +64,7 @@ typedef void *(*memgetfunc_t)(size_t size);
  *          the type @p align_t.
  */
 #define MEM_IS_ALIGNED(p)   (((size_t)(p) & MEM_ALIGN_MASK) == 0)
+/** @} */
 
 #if CH_USE_MEMCORE || defined(__DOXYGEN__)
 
