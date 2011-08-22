@@ -13,6 +13,7 @@ Current Pipeline (2.3.x):
   * Move main stack to low memory in ARMCMx ports.
 * Eclipse plugin.
 * FatFs 0.8x integration.
+* Kernel-only demo for users not interested in HAL (Cortex-Mx only).
 X STM32L support.
 X STM32L-Discovery demo and article.
 X File System infrastructure.
@@ -26,7 +27,6 @@ X Implement the "transmission end" serial driver event on those platforms
 X I2C device driver class support and at least one implementation.
 - Reduce number of demos globally, add demos to a repository or on web site.
   Required in order to reduce support effort.
-- Kernel-only demos for users not interested in HAL.
 - Add a CH_THREAD macro for threads declaration in order to hide
   compiler-specific optimizations for thread functions. All demos will have
   to be updated.

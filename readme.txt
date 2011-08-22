@@ -89,6 +89,11 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Added a kernel-only Cortex-Mx demo as reference project for users not
+  interested in the HAL but just want to use the ChibiOS/RT kernel.
+  The demo is named ARMCM3-GENERIC-KERNEL and is defaulted to the STM32, in
+  order to use it on other families or on the ARM Cortex-M0 just change the
+  inclusion paths in the makefile.
 - NEW: Integrated new FatFs version 0.8b.
 - NEW: Added a new hook THREAD_CONTEXT_SWITCH_HOOK() that allows to insert
   code just before a context switch. For example this hook could be used
