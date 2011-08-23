@@ -36,6 +36,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    PWM output mode macros
+ * @{
+ */
+/**
  * @brief   Standard output modes mask.
  */
 #define PWM_OUTPUT_MASK                         0x0F
@@ -54,6 +58,7 @@
  * @brief   Inverse PWM logic, active is logic level zero.
  */
 #define PWM_OUTPUT_ACTIVE_LOW                   0x02
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -94,6 +99,10 @@ typedef void (*pwmcallback_t)(PWMDriver *pwmp);
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @name    PWM duty cycle conversion
+ * @{
+ */
 /**
  * @brief   Converts from fraction to pulse width.
  * @note    Be careful with rounding errors, this is integer math not magic.
@@ -143,7 +152,12 @@ typedef void (*pwmcallback_t)(PWMDriver *pwmp);
  */
 #define PWM_PERCENTAGE_TO_WIDTH(pwmp, percentage)                           \
   PWM_FRACTION_TO_WIDTH(pwmp, 10000, percentage)
+/** @} */
 
+/**
+ * @name    Macro Functions
+ * @{
+ */
 /**
  * @brief   Changes the period the PWM peripheral.
  * @details This function changes the period of a PWM unit that has already
@@ -197,6 +211,7 @@ typedef void (*pwmcallback_t)(PWMDriver *pwmp);
  */
 #define pwmDisableChannelI(pwmp, channel)                                   \
   pwm_lld_disable_channel(pwmp, channel)
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

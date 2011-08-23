@@ -54,7 +54,7 @@
  *
  * @notapi
  */
-bool_t sdc_wait_for_transfer_state(SDCDriver *sdcp) {
+bool_t _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
   uint32_t resp[1];
 
   while (TRUE) {
@@ -314,7 +314,7 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
   chSysUnlock();
 
   /* Waits for eventual pending operations completion.*/
-  if (sdc_wait_for_transfer_state(sdcp))
+  if (_sdc_wait_for_transfer_state(sdcp))
     return TRUE;
 
   /* Card clock stopped.*/

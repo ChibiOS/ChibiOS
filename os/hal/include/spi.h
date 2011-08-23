@@ -40,6 +40,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    SPI configuration options
+ * @{
+ */
+/**
  * @brief   Enables synchronous APIs.
  * @note    Disabling this option saves both code and data space.
  */
@@ -54,6 +58,7 @@
 #if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define SPI_USE_MUTUAL_EXCLUSION    TRUE
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -84,6 +89,10 @@ typedef enum {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @name    Macro Functions
+ * @{
+ */
 /**
  * @brief   Asserts the slave select signal and prepares for transfers.
  *
@@ -201,7 +210,12 @@ typedef enum {
  * @return              The received data frame from the SPI bus.
  */
 #define spiPolledExchange(spip, frame) spi_lld_polled_exchange(spip, frame)
+/** @} */
 
+/**
+ * @name    Low Level driver helper macros
+ * @{
+ */
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
 /**
  * @brief   Waits for operation completion.
@@ -268,6 +282,7 @@ typedef enum {
     (spip)->state = SPI_READY;                                              \
   _spi_wakeup_isr(spip);                                                    \
 }
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

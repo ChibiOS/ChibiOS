@@ -40,6 +40,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    SERIAL_USB configuration options
+ * @{
+ */
+/**
  * @brief   Serial over USB buffers size.
  * @details Configuration parameter, the buffer size must be a multiple of
  *          the USB data endpoint maximum packet size.
@@ -49,6 +53,7 @@
 #if !defined(SERIAL_USB_BUFFERS_SIZE) || defined(__DOXYGEN__)
 #define SERIAL_USB_BUFFERS_SIZE     64
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -119,6 +124,8 @@ typedef struct {
   _base_asynchronous_channel_methods
 
 /**
+ * @extends BaseAsynchronousChannelVMT
+ *
  * @brief   @p SerialDriver virtual methods table.
  */
 struct SerialUSBDriverVMT {

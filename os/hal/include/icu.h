@@ -78,6 +78,10 @@ typedef void (*icucallback_t)(ICUDriver *icup);
 /*===========================================================================*/
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Enables the input capture.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
@@ -118,7 +122,12 @@ typedef void (*icucallback_t)(ICUDriver *icup);
  * @iclass
  */
 #define icuGetPeriodI(icup) icu_lld_get_period(icup)
+/** @} */
 
+/**
+ * @name    Low Level driver helper macros
+ * @{
+ */
 /**
  * @brief   Common ISR code, ICU width event.
  *
@@ -144,6 +153,7 @@ typedef void (*icucallback_t)(ICUDriver *icup);
   if (previous_state != ICU_WAITING)                                        \
     (icup)->config->period_cb(icup);                                        \
 }
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

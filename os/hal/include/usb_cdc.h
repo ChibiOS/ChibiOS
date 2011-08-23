@@ -68,6 +68,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    USB_CDC configuration options
+ * @{
+ */
+/**
  * @brief   Endpoint number for bulk IN.
  */
 #if !defined(DATA_REQUEST_EP) || defined(__DOXYGEN__)
@@ -87,6 +91,7 @@
 #if !defined(DATA_AVAILABLE_EP) || defined(__DOXYGEN__)
 #define DATA_AVAILABLE_EP       3
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

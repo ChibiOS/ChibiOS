@@ -35,6 +35,10 @@
 #include "mcuconf.h"
 
 /**
+ * @name    Drivers enable switches
+ * @{
+ */
+/**
  * @brief   Enables the PAL subsystem.
  */
 #if !defined(HAL_USE_PAL) || defined(__DOXYGEN__)
@@ -138,9 +142,13 @@
 #if !defined(HAL_USE_USB) || defined(__DOXYGEN__)
 #define HAL_USE_USB                 TRUE
 #endif
+/** @} */
 
 /*===========================================================================*/
-/* ADC driver related settings.                                              */
+/**
+ * @name ADC driver related setting
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -158,9 +166,13 @@
 #if !defined(ADC_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define ADC_USE_MUTUAL_EXCLUSION    TRUE
 #endif
+/** @} */
 
 /*===========================================================================*/
-/* CAN driver related settings.                                              */
+/**
+ * @name CAN driver related setting
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -169,9 +181,13 @@
 #if !defined(CAN_USE_SLEEP_MODE) || defined(__DOXYGEN__)
 #define CAN_USE_SLEEP_MODE          TRUE
 #endif
+/** @} */
 
 /*===========================================================================*/
-/* I2C driver related settings.                                              */
+/**
+ * @name I2C driver related setting
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -180,13 +196,21 @@
 #if !defined(I2C_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define I2C_USE_MUTUAL_EXCLUSION    TRUE
 #endif
+/** @} */
 
 /*===========================================================================*/
-/* MAC driver related settings.                                              */
+/**
+ * @name MAC driver related setting
+ * @{
+ */
 /*===========================================================================*/
+/** @} */
 
 /*===========================================================================*/
-/* MMC_SPI driver related settings.                                          */
+/**
+ * @name MMC_SPI driver related setting
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -233,17 +257,29 @@
 #if !defined(MMC_USE_SPI_POLLING) || defined(__DOXYGEN__)
 #define MMC_USE_SPI_POLLING         TRUE
 #endif
+/** @} */
 
 /*===========================================================================*/
-/* PAL driver related settings.                                              */
+/**
+ * @name PAL driver related setting
+ * @{
+ */
 /*===========================================================================*/
+/** @} */
 
 /*===========================================================================*/
-/* PWM driver related settings.                                              */
+/**
+ * @name PWM driver related setting
+ * @{
+ */
 /*===========================================================================*/
+/** @} */
 
 /*===========================================================================*/
-/* SDC driver related settings.                                              */
+/**
+ * @name SDC driver related setting
+ * @{
+ */
 /*===========================================================================*/
 /**
  * @brief   Number of initialization attempts before rejecting the card.
@@ -271,9 +307,13 @@
 #if !defined(SDC_NICE_WAITING) || defined(__DOXYGEN__)
 #define SDC_NICE_WAITING            TRUE
 #endif
+/** @} */
 
 /*===========================================================================*/
-/* SERIAL driver related settings.                                           */
+/**
+ * @name SERIAL driver related setting
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -295,9 +335,32 @@
 #if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
 #define SERIAL_BUFFERS_SIZE         16
 #endif
+/** @} */
+
 
 /*===========================================================================*/
-/* SPI driver related settings.                                              */
+/**
+ * @name SERIAL_USB driver related setting
+ * @{
+ */
+/*===========================================================================*/
+/**
+ * @brief   Serial over USB buffers size.
+ * @details Configuration parameter, the buffer size must be a multiple of
+ *          the USB data endpoint maximum packet size.
+ * @note    The default is 64 bytes for both the transmission and receive
+ *          buffers.
+ */
+#if !defined(SERIAL_USB_BUFFERS_SIZE) || defined(__DOXYGEN__)
+#define SERIAL_USB_BUFFERS_SIZE     64
+#endif
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name SPI driver related setting
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -315,10 +378,15 @@
 #if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define SPI_USE_MUTUAL_EXCLUSION    TRUE
 #endif
+/** @} */
 
 /*===========================================================================*/
-/* UART driver related settings.                                             */
+/**
+ * @name UART driver related setting
+ * @{
+ */
 /*===========================================================================*/
+/** @} */
 
 #endif /* _HALCONF_H_ */
 

@@ -57,6 +57,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Returns the received frames event source.
  *
  * @param[in] macp      pointer to the @p MACDriver object
@@ -98,6 +102,7 @@
  */
 #define macReadReceiveDescriptor(rdp, buf, size)                            \
     mac_lld_read_receive_descriptor(rdp, buf, size)
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

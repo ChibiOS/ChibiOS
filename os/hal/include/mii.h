@@ -18,12 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
- * Parts of this file have been borrowed from the Linux include file
- * linux/mii.h:
- * Copyright (C) 1996, 1999, 2001 David S. Miller (davem@redhat.com)
- */
-
 /*-*
  * @file    mii.h
  * @brief   MII Driver macros and structures.

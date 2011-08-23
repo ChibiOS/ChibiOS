@@ -36,6 +36,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    Pads mode constants
+ * @{
+ */
+/**
  * @brief   After reset state.
  * @details The state itself is not specified and is architecture dependent,
  *          it is guaranteed to be equal to the after-reset state. It is
@@ -81,7 +85,12 @@
  * @brief   Open-drain output pad.
  */
 #define PAL_MODE_OUTPUT_OPENDRAIN       7
+/** @} */
 
+/**
+ * @name    Logic level constants
+ * @{
+ */
 /**
  * @brief   Logical low state.
  */
@@ -91,6 +100,7 @@
  * @brief   Logical high state.
  */
 #define PAL_HIGH 1
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -177,6 +187,10 @@ typedef struct {
 #define IOBUS_DECL(name, port, width, offset)                           \
   IOBus name = _IOBUS_DATA(name, port, width, offset)
 
+/**
+ * @name    Macro Functions
+ * @{
+ */
 /**
  * @brief   PAL subsystem initialization.
  * @note    This function is implicitly invoked by @p halInit(), there is
@@ -499,6 +513,7 @@ typedef struct {
 #else
 #define palSetPadMode(port, pad, mode) pal_lld_setpadmode(port, pad, mode)
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
