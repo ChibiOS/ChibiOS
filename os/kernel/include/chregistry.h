@@ -31,6 +31,10 @@
 
 #if CH_USE_REGISTRY || defined(__DOXYGEN__)
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Sets the current thread name.
  * @pre     This function only stores the pointer to the name if the option
  *          @p CH_USE_REGISTRY is enabled else no action is performed.
@@ -52,13 +56,13 @@
  * @retval NULL         if the thread name has not been set.
  */
 #define chRegGetThreadName(tp) ((tp)->p_name)
+/** @} */
 #else /* !CH_USE_REGISTRY */
 #define chRegSetThreadName(p)
 #define chRegGetThreadName(tp) NULL
 #endif /* !CH_USE_REGISTRY */
 
 #if CH_USE_REGISTRY || defined(__DOXYGEN__)
-
 /**
  * @brief   Removes a thread from the registry list.
  * @note    This macro is not meant for use in application code.

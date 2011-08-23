@@ -132,7 +132,10 @@ extern ch_trace_buffer_t dbg_trace_buffer;
 /*===========================================================================*/
 
 #if CH_DBG_ENABLE_CHECKS || defined(__DOXYGEN__)
-
+/**
+ * @name    Macro Functions
+ * @{
+ */
 /**
  * @brief   Function parameter check.
  * @details If the condition check fails then the kernel panics and halts.
@@ -150,6 +153,7 @@ extern ch_trace_buffer_t dbg_trace_buffer;
     chDbgPanic(__QUOTE_THIS(func)"()");                                 \
 }
 #endif /* !defined(chDbgCheck) */
+/** @} */
 #else /* !CH_DBG_ENABLE_CHECKS */
 #define chDbgCheck(c, func) {                                           \
   (void)(c), (void)__QUOTE_THIS(func)"()";                              \
@@ -161,6 +165,10 @@ extern ch_trace_buffer_t dbg_trace_buffer;
 /*===========================================================================*/
 
 #if CH_DBG_ENABLE_ASSERTS || defined(__DOXYGEN__)
+/**
+ * @name    Macro Functions
+ * @{
+ */
 /**
  * @brief   Condition assertion.
  * @details If the condition check fails then the kernel panics with the
@@ -184,6 +192,7 @@ extern ch_trace_buffer_t dbg_trace_buffer;
     chDbgPanic(m);                                                      \
 }
 #endif /* !defined(chDbgAssert) */
+/** @} */
 #else /* !CH_DBG_ENABLE_ASSERTS */
 #define chDbgAssert(c, m, r) {(void)(c);}
 #endif /* !CH_DBG_ENABLE_ASSERTS */

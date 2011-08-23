@@ -85,6 +85,10 @@ typedef struct  {
   BinarySemaphore name = _BSEMAPHORE_DATA(name, taken)
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Initializes a binary semaphore.
  *
  * @param[out] bsp      pointer to a @p BinarySemaphore structure
@@ -238,6 +242,7 @@ typedef struct  {
  * @iclass
  */
 #define chBSemGetStateI(bsp) ((bsp)->bs_sem.s_cnt > 0 ? FALSE : TRUE)
+/** @} */
 
 #endif /* CH_USE_SEMAPHORES */
 

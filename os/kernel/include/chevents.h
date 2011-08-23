@@ -89,6 +89,10 @@ typedef void (*evhandler_t)(eventid_t);
 #define EVENT_MASK(eid) ((eventmask_t)(1 << (eid)))
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Registers an Event Listener on an Event Source.
  * @note    Multiple Event Listeners can use the same event identifier, the
  *          listener will share the callback function.
@@ -151,6 +155,7 @@ typedef void (*evhandler_t)(eventid_t);
  * @iclass
  */
 #define chEvtBroadcastI(esp) chEvtBroadcastFlagsI(esp, 0)
+/** @} */
 
 #ifdef __cplusplus
 extern "C" {

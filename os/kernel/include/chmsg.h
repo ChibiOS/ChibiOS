@@ -32,6 +32,10 @@
 #if CH_USE_MESSAGES || defined(__DOXYGEN__)
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Evaluates to TRUE if the thread has pending messages.
  *
  * @iclass
@@ -74,6 +78,7 @@
  * @sclass
  */
 #define chMsgReleaseS(tp, msg) chSchWakeupS(tp, msg)
+/** @} */
 
 #ifdef __cplusplus
 extern "C" {

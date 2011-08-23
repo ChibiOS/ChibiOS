@@ -59,9 +59,10 @@
  */
 #define THD_MEM_MODE_MASK       3   /**< @brief Thread memory mode mask.    */
 #define THD_MEM_MODE_STATIC     0   /**< @brief Static thread.              */
-#define THD_MEM_MODE_HEAP       1   /**< @brief Thread allocated from Heap. */
-#define THD_MEM_MODE_MEMPOOL    2   /**< @brief Thread allocated from Memory
-                                         Pool.                              */
+#define THD_MEM_MODE_HEAP       1   /**< @brief Thread allocated from a
+                                         Memory Heap.                       */
+#define THD_MEM_MODE_MEMPOOL    2   /**< @brief Thread allocated from a
+                                         Memory Pool.                       */
 #define THD_TERMINATE           4   /**< @brief Termination requested flag. */
 /** @} */
 
@@ -205,6 +206,10 @@ struct Thread {
 typedef msg_t (*tfunc_t)(void *);
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Returns a pointer to the current @p Thread.
  *
  * @api
@@ -258,7 +263,7 @@ typedef msg_t (*tfunc_t)(void *);
 #define chThdShouldTerminate() (currp->p_flags & THD_TERMINATE)
 
 /**
- * @brief   Resumes a thread created with @p chThdInit().
+ * @brief   Resumes a thread created with @p chThdCreateI().
  *
  * @param[in] tp        pointer to the thread
  *
@@ -317,6 +322,7 @@ typedef msg_t (*tfunc_t)(void *);
  * @api
  */
 #define chThdSleepMicroseconds(usec) chThdSleep(US2ST(usec))
+/** @} */
 
 /*
  * Threads APIs.

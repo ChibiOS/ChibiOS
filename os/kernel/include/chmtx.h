@@ -77,12 +77,17 @@ extern "C" {
 #define MUTEX_DECL(name) Mutex name = _MUTEX_DATA(name)
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Returns @p TRUE if the mutex queue contains at least a waiting
  *          thread.
  *
  * @sclass
  */
 #define chMtxQueueNotEmptyS(mp) notempty(&(mp)->m_queue)
+/** @} */
 
 #endif /* CH_USE_MUTEXES */
 

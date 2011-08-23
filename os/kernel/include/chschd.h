@@ -162,6 +162,10 @@ extern "C" {
 #endif
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Determines if the current thread must reschedule.
  * @details This function returns @p TRUE if there is a ready thread with
  *          higher priority.
@@ -223,6 +227,7 @@ extern "C" {
     chSchDoReschedule();                                                    \
 }
 #endif /* CH_TIME_QUANTUM == 0 */
+/** @} */
 
 #endif /* _CHSCHD_H_ */
 

@@ -34,21 +34,21 @@
  * @{
  */
 /**
- * @brief   Time conversion utility.
+ * @brief   Seconds to system ticks.
  * @details Converts from seconds to system ticks number.
  * @note    The result is rounded upward to the next tick boundary.
  */
 #define S2ST(sec)   ((systime_t)((sec) * CH_FREQUENCY))
 
 /**
- * @brief   Time conversion utility.
+ * @brief   Milliseconds t0 system ticks.
  * @details Converts from milliseconds to system ticks number.
  * @note    The result is rounded upward to the next tick boundary.
  */
 #define MS2ST(msec) ((systime_t)(((((msec) - 1L) * CH_FREQUENCY) / 1000L) + 1L))
 
 /**
- * @brief   Time conversion utility.
+ * @brief   Microseconds to system ticks.
  * @details Converts from microseconds to system ticks number.
  * @note    The result is rounded upward to the next tick boundary.
  */
@@ -100,6 +100,10 @@ typedef struct {
 extern VTList vtlist;
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Virtual timers ticker.
  *
  * @iclass
@@ -139,6 +143,7 @@ extern VTList vtlist;
  * @api
  */
 #define chTimeNow() (vtlist.vt_systime)
+/** @} */
 
 /*
  * Virtual Timers APIs.

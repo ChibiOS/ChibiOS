@@ -73,6 +73,10 @@ extern "C" {
 #endif
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Returns the mailbox buffer size.
  *
  * @param[in] mbp       the pointer to an initialized Mailbox object
@@ -120,6 +124,7 @@ extern "C" {
  * @iclass
  */
 #define chMBPeekI(mbp) (*(mbp)->mb_rdptr)
+/** @} */
 
 /**
  * @brief   Data part of a static mailbox initializer.
