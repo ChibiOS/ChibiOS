@@ -26,7 +26,6 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
-/* TODO: may be? move this defines in i2c_lld.h and mcuconf.h */
 #define I2C_STOP_GPT_TIMEOUT  50     /* waiting timer value */
 #define I2C_START_GPT_TIMEOUT 50     /* waiting timer value */
 #define I2C_POLLING_TIMEOUT   0xFFFF

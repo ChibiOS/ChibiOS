@@ -28,6 +28,10 @@
  *          block function that starts transfer.
  * @note    If you decide to use polling wait -- do NOT start transmit or
  *          receive from callback because it run in ISR context.
+ * @note    You must set I2C interrupts priority to highest level in the
+ *          system. 
+ * @note    If you use GPT than set GPT interrupts priority level over I2C
+ *          interrupts priority level.
  * @pre     In order to use the I2C driver the @p HAL_USE_I2C option
  *          must be enabled in @p halconf.h.
  *

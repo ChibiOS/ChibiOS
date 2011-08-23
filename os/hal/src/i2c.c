@@ -147,7 +147,7 @@ void i2cStop(I2CDriver *i2cp) {
  *
  * @details Function designed to realize "read-through-write" transfer
  *          paradigm. If you want transmit data without any further read,
- *          than set @b rxbuf field to 0.
+ *          than set @b rxbytes field to 0.
  *
  * @param[in] i2cp        pointer to the @p I2CDriver object
  * @param[in] i2cscfg     pointer to the @p I2C slave config
