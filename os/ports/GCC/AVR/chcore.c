@@ -123,7 +123,7 @@ void port_halt(void) {
  */
 void _port_thread_start(void) {
 
-  asm volatile ("sei");
+  chSysUnlock();
   asm volatile ("movw    r24, r4");
   asm volatile ("movw    r30, r2");
   asm volatile ("icall");

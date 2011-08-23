@@ -78,8 +78,8 @@ void ChkIntSources(void) {
 
 #if HAL_USE_SERIAL
   if (sd_lld_interrupt_pending()) {
-    if (chSchIsRescRequiredExI())
-      chSchDoRescheduleI();
+    if (chSchIsPreemptionRequired())
+      chSchDoReschedule();
     return;
   }
 #endif
@@ -88,8 +88,8 @@ void ChkIntSources(void) {
   if (timercmp(&tv, &nextcnt, >=)) {
     timeradd(&nextcnt, &tick, &nextcnt);
     chSysTimerHandlerI();
-    if (chSchIsRescRequiredExI())
-      chSchDoRescheduleI();
+    if (chSchIsPreemptionRequired())
+      chSchDoReschedule();
   }
 }
 

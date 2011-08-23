@@ -93,8 +93,8 @@ void port_halt(void) {
  */
 void _port_thread_start(void) {
 
-  asm volatile ("eint                                           \n\t" \
-                "mov     r11, r15                               \n\t" \
+  chSysUnlock();
+  asm volatile ("mov     r11, r15                               \n\t" \
                 "call    r10                                    \n\t" \
                 "call    #chThdExit");
 }

@@ -33,7 +33,10 @@
 #define _CHCONF_H_
 
 /*===========================================================================*/
-/* Kernel parameters.                                                        */
+/**
+ * @name Kernel parameters and options
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -58,21 +61,6 @@
  */
 #if !defined(CH_TIME_QUANTUM) || defined(__DOXYGEN__)
 #define CH_TIME_QUANTUM                 20
-#endif
-
-/**
- * @brief   Nested locks.
- * @details If enabled then the use of nested @p chSysLock() / @p chSysUnlock()
- *          operations is allowed.<br>
- *          For performance and code size reasons the recommended setting
- *          is to leave this option disabled.<br>
- *          You may use this option if you need to merge ChibiOS/RT with
- *          external libraries that require nested lock/unlock operations.
- *
- * @note    The default is @p FALSE.
- */
-#if !defined(CH_USE_NESTED_LOCKS) || defined(__DOXYGEN__)
-#define CH_USE_NESTED_LOCKS             FALSE
 #endif
 
 /**
@@ -107,8 +95,13 @@
 #define CH_NO_IDLE_THREAD               FALSE
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Performance options.                                                      */
+/**
+ * @name Performance options
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -123,8 +116,13 @@
 #define CH_OPTIMIZE_SPEED               TRUE
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Subsystem options.                                                        */
+/**
+ * @name Subsystem options
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -346,9 +344,25 @@
 #define CH_USE_DYNAMIC                  TRUE
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Debug options.                                                            */
+/**
+ * @name Debug options
+ * @{
+ */
 /*===========================================================================*/
+
+/**
+ * @brief   Debug option, system state check.
+ * @details If enabled the correct call protocol for system APIs is checked
+ *          at runtime.
+ *
+ * @note    The default is @p FALSE.
+ */
+#if !defined(CH_DBG_SYSTEM_STATE_CHECK) || defined(__DOXYGEN__)
+#define CH_DBG_SYSTEM_STATE_CHECK       TRUE
+#endif
 
 /**
  * @brief   Debug option, parameters checks.
@@ -358,7 +372,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_ENABLE_CHECKS) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_CHECKS            FALSE
+#define CH_DBG_ENABLE_CHECKS            TRUE
 #endif
 
 /**
@@ -370,7 +384,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_ENABLE_ASSERTS) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_ASSERTS           FALSE
+#define CH_DBG_ENABLE_ASSERTS           TRUE
 #endif
 
 /**
@@ -381,7 +395,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_ENABLE_TRACE) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_TRACE             FALSE
+#define CH_DBG_ENABLE_TRACE             TRUE
 #endif
 
 /**
@@ -395,7 +409,7 @@
  *          @p panic_msg variable set to @p NULL.
  */
 #if !defined(CH_DBG_ENABLE_STACK_CHECK) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_STACK_CHECK       FALSE
+#define CH_DBG_ENABLE_STACK_CHECK       TRUE
 #endif
 
 /**
@@ -407,7 +421,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_FILL_THREADS) || defined(__DOXYGEN__)
-#define CH_DBG_FILL_THREADS             FALSE
+#define CH_DBG_FILL_THREADS             TRUE
 #endif
 
 /**
@@ -423,8 +437,13 @@
 #define CH_DBG_THREADS_PROFILING        TRUE
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Kernel hooks.                                                             */
+/**
+ * @name Kernel hooks
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -464,6 +483,16 @@
 #endif
 
 /**
+ * @brief   Context switch hook.
+ * @details This hook is invoked just before switching between threads.
+ */
+#if !defined(THREAD_CONTEXT_SWITCH_HOOK) || defined(__DOXYGEN__)
+#define THREAD_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
+  /* System halt code here.*/                                               \
+}
+#endif
+
+/**
  * @brief   Idle Loop hook.
  * @details This hook is continuously invoked by the idle thread loop.
  */
@@ -494,6 +523,8 @@
   /* System halt code here.*/                                               \
 }
 #endif
+
+/** @} */
 
 /*===========================================================================*/
 /* Port-specific settings (override port settings defaulted in chcore.h).    */

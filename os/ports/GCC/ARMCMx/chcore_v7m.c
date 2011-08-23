@@ -141,8 +141,10 @@ __attribute__((naked))
 #endif
 void _port_switch_from_isr(void) {
 
-  if (chSchIsRescRequiredExI())
-    chSchDoRescheduleI();
+  dbg_check_lock();
+  if (chSchIsPreemptionRequired())
+    chSchDoReschedule();
+  dbg_check_unlock();
 #if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
   asm volatile ("svc     #0");
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
@@ -183,7 +185,7 @@ void _port_switch(Thread *ntp, Thread *otp) {
  */
 void _port_thread_start(void) {
 
-  port_unlock();
+  chSysUnlock();
   asm volatile ("mov     r0, r5                                 \n\t"
                 "blx     r4                                     \n\t"
                 "bl      chThdExit");

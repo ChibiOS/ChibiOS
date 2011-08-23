@@ -108,6 +108,8 @@ void chIQInit(InputQueue *iqp, uint8_t *bp, size_t size, qnotify_t infy) {
  */
 void chIQResetI(InputQueue *iqp) {
 
+  chDbgCheckClassI();
+
   iqp->q_rdptr = iqp->q_wrptr = iqp->q_buffer;
   iqp->q_counter = 0;
   while (notempty(&iqp->q_waiting))
@@ -128,6 +130,8 @@ void chIQResetI(InputQueue *iqp) {
  * @iclass
  */
 msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
+
+  chDbgCheckClassI();
 
   if (chIQIsFullI(iqp))
     return Q_FULL;
@@ -284,6 +288,8 @@ void chOQInit(OutputQueue *oqp, uint8_t *bp, size_t size, qnotify_t onfy) {
  */
 void chOQResetI(OutputQueue *oqp) {
 
+  chDbgCheckClassI();
+
   oqp->q_rdptr = oqp->q_wrptr = oqp->q_buffer;
   oqp->q_counter = chQSizeI(oqp);
   while (notempty(&oqp->q_waiting))
@@ -348,6 +354,8 @@ msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time) {
  */
 msg_t chOQGetI(OutputQueue *oqp) {
   uint8_t b;
+
+  chDbgCheckClassI();
 
   if (chOQIsEmptyI(oqp))
     return Q_EMPTY;

@@ -75,12 +75,6 @@ struct Thread {
    */
   trefs_t               p_refs;
 #endif
-#if CH_USE_NESTED_LOCKS || defined(__DOXYGEN__)
-  /**
-   * @brief Number of nested locks.
-   */
-  cnt_t                 p_locks;
-#endif
 #if CH_DBG_THREADS_PROFILING || defined(__DOXYGEN__)
   /**
    * @brief Thread consumed time in ticks.

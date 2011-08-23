@@ -143,6 +143,7 @@ msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t time) {
 msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
 
+  chDbgCheckClassS();
   chDbgCheck(mbp != NULL, "chMBPostS");
 
   rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, time);
@@ -172,6 +173,7 @@ msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t time) {
  */
 msg_t chMBPostI(Mailbox *mbp, msg_t msg) {
 
+  chDbgCheckClassI();
   chDbgCheck(mbp != NULL, "chMBPostI");
 
   if (chSemGetCounterI(&mbp->mb_emptysem) <= 0)
@@ -234,6 +236,7 @@ msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t time) {
 msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
 
+  chDbgCheckClassS();
   chDbgCheck(mbp != NULL, "chMBPostAheadS");
 
   rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, time);
@@ -263,6 +266,7 @@ msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t time) {
  */
 msg_t chMBPostAheadI(Mailbox *mbp, msg_t msg) {
 
+  chDbgCheckClassI();
   chDbgCheck(mbp != NULL, "chMBPostAheadI");
 
   if (chSemGetCounterI(&mbp->mb_emptysem) <= 0)
@@ -325,6 +329,7 @@ msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t time) {
 msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t time) {
   msg_t rdymsg;
 
+  chDbgCheckClassS();
   chDbgCheck((mbp != NULL) && (msgp != NULL), "chMBFetchS");
 
   rdymsg = chSemWaitTimeoutS(&mbp->mb_fullsem, time);
@@ -354,6 +359,7 @@ msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t time) {
  */
 msg_t chMBFetchI(Mailbox *mbp, msg_t *msgp) {
 
+  chDbgCheckClassI();
   chDbgCheck((mbp != NULL) && (msgp != NULL), "chMBFetchI");
 
   if (chSemGetCounterI(&mbp->mb_fullsem) <= 0)

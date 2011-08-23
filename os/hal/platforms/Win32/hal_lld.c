@@ -83,8 +83,8 @@ void ChkIntSources(void) {
 
 #if HAL_USE_SERIAL
   if (sd_lld_interrupt_pending()) {
-    if (chSchIsRescRequiredExI())
-      chSchDoRescheduleI();
+    if (chSchIsPreemptionRequired())
+      chSchDoReschedule();
     return;
   }
 #endif
@@ -94,8 +94,8 @@ void ChkIntSources(void) {
   if (n.QuadPart > nextcnt.QuadPart) {
     nextcnt.QuadPart += slice.QuadPart;
     chSysTimerHandlerI();
-    if (chSchIsRescRequiredExI())
-      chSchDoRescheduleI();
+    if (chSchIsPreemptionRequired())
+      chSchDoReschedule();
   }
 }
 

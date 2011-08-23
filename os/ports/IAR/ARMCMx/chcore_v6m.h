@@ -240,7 +240,7 @@ struct intctx {
 #define port_switch(ntp, otp) _port_switch(ntp, otp)
 #else
 #define port_switch(ntp, otp) {                                             \
-  if ((void *)(__get_SP() - sizeof(struct intctx)) < (void *)(otp + 1))     \
+  if ((stkalign_t *)(__get_SP() - sizeof(struct intctx)) < otp->p_stklimit) \
     chDbgPanic("stack overflow");                                           \
   _port_switch(ntp, otp);                                                   \
 }

@@ -29,15 +29,31 @@
 #ifndef _CHDEBUG_H_
 #define _CHDEBUG_H_
 
+#if CH_DBG_ENABLE_ASSERTS     || CH_DBG_ENABLE_CHECKS      ||               \
+    CH_DBG_ENABLE_STACK_CHECK || CH_DBG_SYSTEM_STATE_CHECK
+#define CH_DBG_ENABLED              TRUE
+#else
+#define CH_DBG_ENABLED              FALSE
+#endif
+
+#define __QUOTE_THIS(p) #p
+
+/*===========================================================================*/
 /**
- * @brief Trace buffer entries.
+ * @name    Debug related settings
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Trace buffer entries.
  */
 #ifndef CH_TRACE_BUFFER_SIZE
 #define CH_TRACE_BUFFER_SIZE        64
 #endif
 
 /**
- * @brief Fill value for thread stack area in debug mode.
+ * @brief   Fill value for thread stack area in debug mode.
  */
 #ifndef CH_STACK_FILL_VALUE
 #define CH_STACK_FILL_VALUE         0x55
@@ -54,11 +70,33 @@
 #define CH_THREAD_FILL_VALUE        0xFF
 #endif
 
-#define __QUOTE_THIS(p) #p
+/** @} */
+
+/*===========================================================================*/
+/* System state checker related code and variables.                          */
+/*===========================================================================*/
+
+#if !CH_DBG_SYSTEM_STATE_CHECK
+#define dbg_check_disable()
+#define dbg_check_suspend()
+#define dbg_check_enable()
+#define dbg_check_lock()
+#define dbg_check_unlock()
+#define dbg_check_lock_from_isr()
+#define dbg_check_unlock_from_isr()
+#define dbg_check_enter_isr()
+#define dbg_check_leave_isr()
+#define chDbgCheckClassI();
+#define chDbgCheckClassS();
+#endif
+
+/*===========================================================================*/
+/* Trace related structures and macros.                                      */
+/*===========================================================================*/
 
 #if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
 /**
- * @brief Trace buffer record.
+ * @brief   Trace buffer record.
  */
 typedef struct {
   systime_t             se_time;    /**< @brief Time of the switch event.   */
@@ -68,7 +106,7 @@ typedef struct {
 } ch_swc_event_t;
 
 /**
- * @brief Trace buffer header.
+ * @brief   Trace buffer header.
  */
 typedef struct {
   unsigned              tb_size;    /**< @brief Trace buffer size (entries).*/
@@ -76,9 +114,25 @@ typedef struct {
   /** @brief Ring buffer.*/
   ch_swc_event_t        tb_buffer[CH_TRACE_BUFFER_SIZE];
 } ch_trace_buffer_t;
+
+#if !defined(__DOXYGEN__)
+extern ch_trace_buffer_t dbg_trace_buffer;
+#endif
+
 #endif /* CH_DBG_ENABLE_TRACE */
 
+#if !CH_DBG_ENABLE_TRACE
+/* When the trace feature is disabled this function is replaced by an empty
+   macro.*/
+#define dbg_trace(otp)
+#endif
+
+/*===========================================================================*/
+/* Parameters checking related macros.                                       */
+/*===========================================================================*/
+
 #if CH_DBG_ENABLE_CHECKS || defined(__DOXYGEN__)
+
 /**
  * @brief   Function parameter check.
  * @details If the condition check fails then the kernel panics and halts.
@@ -101,6 +155,10 @@ typedef struct {
   (void)(c), (void)__QUOTE_THIS(func)"()";                              \
 }
 #endif /* !CH_DBG_ENABLE_CHECKS */
+
+/*===========================================================================*/
+/* Assertions related macros.                                                */
+/*===========================================================================*/
 
 #if CH_DBG_ENABLE_ASSERTS || defined(__DOXYGEN__)
 /**
@@ -130,37 +188,44 @@ typedef struct {
 #define chDbgAssert(c, m, r) {(void)(c);}
 #endif /* !CH_DBG_ENABLE_ASSERTS */
 
-#if !(CH_DBG_ENABLE_ASSERTS ||                                          \
-      CH_DBG_ENABLE_CHECKS ||                                           \
-      CH_DBG_ENABLE_STACK_CHECK)
+extern char *dbg_panic_msg;
+
+/*===========================================================================*/
+/* Panic related macros.                                                     */
+/*===========================================================================*/
+
+#if !CH_DBG_ENABLED
 /* When the debug features are disabled this function is replaced by an empty
    macro.*/
 #define chDbgPanic(msg) {}
 #endif
 
-#if !CH_DBG_ENABLE_TRACE
-/* When the trace feature is disabled this function is replaced by an empty
-   macro.*/
-#define chDbgTrace(otp) {}
-#endif
-
-#if !defined(__DOXYGEN__)
 #ifdef __cplusplus
 extern "C" {
 #endif
-#if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
-  extern ch_trace_buffer_t dbg_trace_buffer;
-  void _trace_init(void);
-  void chDbgTrace(Thread *otp);
+#if CH_DBG_SYSTEM_STATE_CHECK
+  void dbg_check_disable(void);
+  void dbg_check_suspend(void);
+  void dbg_check_enable(void);
+  void dbg_check_lock(void);
+  void dbg_check_unlock(void);
+  void dbg_check_lock_from_isr(void);
+  void dbg_check_unlock_from_isr(void);
+  void dbg_check_enter_isr(void);
+  void dbg_check_leave_isr(void);
+  void chDbgCheckClassI(void);
+  void chDbgCheckClassS(void);
 #endif
-#if CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK
-  extern char *dbg_panic_msg;
+#if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
+  void _trace_init(void);
+  void dbg_trace(Thread *otp);
+#endif
+#if CH_DBG_ENABLED
   void chDbgPanic(char *msg);
 #endif
 #ifdef __cplusplus
 }
 #endif
-#endif /* !defined(__DOXYGEN__) */
 
 #endif /* _CHDEBUG_H_ */
 

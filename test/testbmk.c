@@ -465,10 +465,12 @@ static void bmk9_execute(void) {
   test_wait_tick();
   test_start_timer(1000);
   do {
+    chSysLock();
     chIQPutI(&iq, 0);
     chIQPutI(&iq, 1);
     chIQPutI(&iq, 2);
     chIQPutI(&iq, 3);
+    chSysUnlock();
     (void)chIQGet(&iq);
     (void)chIQGet(&iq);
     (void)chIQGet(&iq);

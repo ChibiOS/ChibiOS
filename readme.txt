@@ -89,6 +89,14 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Integrated new FatFs version 0.8b.
+- NEW: Added a new hook THREAD_CONTEXT_SWITCH_HOOK() that allows to insert
+  code just before a context switch. For example this hook could be used
+  in oder to implement advanced power management schemes.
+- NEW: Added a new debug option CH_DBG_SYSTEM_STATE_CHECK that ensures the
+  correct API call protocol. If an API is invoked out of the correct context
+  then the kernel panics with a debug message.
+- NEW: Added Eclipse ChibiOS/RT debugger plugin 1.0.5 under ./tools/eclipse.
 - NEW: The ARMCMx startup file (crt0.c) now is able to fill the stack areas
   with a filler (default behavior). This is required in order to easily assess
   the stack usage at runtime.
@@ -103,8 +111,7 @@
   exception stack now triggers an exception (it could went unnoticed before).
   The process stack is organized to be checked on context switch like other
   threads. Now all threads have an explicit stack boundary pointer.
-  (documentation to be updated)
-  (change to be ported to IAR and Keil ports)
+  (TODO: documentation to be updated)
 - NEW: Added debug plugin for Eclipse under ./tools/eclipse (backported to
   2.2.7).
 - NEW: The debug macros chDbgCheck() and chDbgAssert() now can be externally
@@ -114,7 +121,7 @@
 - NEW: Added provisional support for STM32L1xx and STM32F2xx. Because of this
   some directories related to the STM32 have been renamed, your makefiles may
   require adjustments.
-  (change to be ported to IAR and Keil build files)
+  (TODO: change to be ported to IAR and Keil build files)
 - NEW: Added a custom rule to the various rules.mk files, now it is possible
   to add an user rule into the Makefiles.
 - NEW: Improvements to the trace buffer, now it stores a full thread pointer
@@ -150,6 +157,13 @@
   not support fast interrupts (backported to 2.2.5).
 - NEW: Now the port layer exports info regarding the compiler and the port
   options. The info are printed into the test reports.
+- CHANGE: Removed the option CH_USE_NESTED_LOCK, lwIP no more requires it and
+  it would have conflicted with CH_DBG_SYSTEM_STATE_CHECK which is far more
+  useful.
+- CHANGE: Renamed the scheduler functions chSchIsRescRequiredExI() to
+  chSchIsPreemptionRequired(), chSchDoRescheduleI() to chSchDoReschedule(),
+  chSysSwitchI() to chSysSwitch(). All those functions were special cases
+  and not regular I-class APIs.
 - CHANGE: Renamed the macros IDLE_THREAD_STACK_SIZE and INT_REQUIRED_STACK
   to PORT_IDLE_THREAD_STACK_SIZE and PORT_INT_REQUIRED_STACK for consistency.
 - CHANGE: Removed the "old" Cortex-M3 port from the code, the current port

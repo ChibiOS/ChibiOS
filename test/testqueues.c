@@ -96,46 +96,54 @@ static void queues1_execute(void) {
   size_t n;
 
   /* Initial empty state */
-  test_assert(1, chIQIsEmptyI(&iq), "not empty");
+  test_assert_lock(1, chIQIsEmptyI(&iq), "not empty");
 
   /* Queue filling */
+  chSysLock();
   for (i = 0; i < TEST_QUEUES_SIZE; i++)
     chIQPutI(&iq, 'A' + i);
-  test_assert(2, chIQIsFullI(&iq), "still has space");
-  test_assert(3, chIQPutI(&iq, 0) == Q_FULL, "failed to report Q_FULL");
+  chSysUnlock();
+  test_assert_lock(2, chIQIsFullI(&iq), "still has space");
+  test_assert_lock(3, chIQPutI(&iq, 0) == Q_FULL, "failed to report Q_FULL");
 
   /* Queue emptying */
   for (i = 0; i < TEST_QUEUES_SIZE; i++)
     test_emit_token(chIQGet(&iq));
-  test_assert(4, chIQIsEmptyI(&iq), "still full");
+  test_assert_lock(4, chIQIsEmptyI(&iq), "still full");
   test_assert_sequence(5, "ABCD");
 
   /* Queue filling again */
+  chSysLock();
   for (i = 0; i < TEST_QUEUES_SIZE; i++)
     chIQPutI(&iq, 'A' + i);
+  chSysUnlock();
 
   /* Reading the whole thing */
   n = chIQReadTimeout(&iq, wa[1], TEST_QUEUES_SIZE * 2, TIME_IMMEDIATE);
   test_assert(6, n == TEST_QUEUES_SIZE, "wrong returned size");
-  test_assert(7, chIQIsEmptyI(&iq), "still full");
+  test_assert_lock(7, chIQIsEmptyI(&iq), "still full");
 
   /* Queue filling again */
+  chSysLock();
   for (i = 0; i < TEST_QUEUES_SIZE; i++)
     chIQPutI(&iq, 'A' + i);
+  chSysUnlock();
 
   /* Partial reads */
   n = chIQReadTimeout(&iq, wa[1], TEST_QUEUES_SIZE / 2, TIME_IMMEDIATE);
   test_assert(8, n == TEST_QUEUES_SIZE / 2, "wrong returned size");
   n = chIQReadTimeout(&iq, wa[1], TEST_QUEUES_SIZE / 2, TIME_IMMEDIATE);
   test_assert(9, n == TEST_QUEUES_SIZE / 2, "wrong returned size");
-  test_assert(10, chIQIsEmptyI(&iq), "still full");
+  test_assert_lock(10, chIQIsEmptyI(&iq), "still full");
 
   /* Testing reset */
+  chSysLock();
   chIQPutI(&iq, 0);
   chIQResetI(&iq);
-  test_assert(11, chIQGetFullI(&iq) == 0, "still full");
+  chSysUnlock();
+  test_assert_lock(11, chIQGetFullI(&iq) == 0, "still full");
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread1, NULL);
-  test_assert(12, chIQGetFullI(&iq) == 0, "not empty");
+  test_assert_lock(12, chIQGetFullI(&iq) == 0, "not empty");
   test_wait_threads();
 
   /* Timeout */
@@ -175,38 +183,46 @@ static void queues2_execute(void) {
   size_t n;
 
   /* Initial empty state */
-  test_assert(1, chOQIsEmptyI(&oq), "not empty");
+  test_assert_lock(1, chOQIsEmptyI(&oq), "not empty");
 
   /* Queue filling */
   for (i = 0; i < TEST_QUEUES_SIZE; i++)
     chOQPut(&oq, 'A' + i);
-  test_assert(2, chOQIsFullI(&oq), "still has space");
+  test_assert_lock(2, chOQIsFullI(&oq), "still has space");
 
   /* Queue emptying */
-  for (i = 0; i < TEST_QUEUES_SIZE; i++)
-    test_emit_token(chOQGetI(&oq));
-  test_assert(3, chOQIsEmptyI(&oq), "still full");
+  for (i = 0; i < TEST_QUEUES_SIZE; i++) {
+    char c;
+
+    chSysLock();
+    c = chOQGetI(&oq);
+    chSysUnlock();
+    test_emit_token(c);
+  }
+  test_assert_lock(3, chOQIsEmptyI(&oq), "still full");
   test_assert_sequence(4, "ABCD");
-  test_assert(5, chOQGetI(&oq) == Q_EMPTY, "failed to report Q_EMPTY");
+  test_assert_lock(5, chOQGetI(&oq) == Q_EMPTY, "failed to report Q_EMPTY");
 
   /* Writing the whole thing */
   n = chOQWriteTimeout(&oq, wa[1], TEST_QUEUES_SIZE * 2, TIME_IMMEDIATE);
   test_assert(6, n == TEST_QUEUES_SIZE, "wrong returned size");
-  test_assert(7, chOQIsFullI(&oq), "not full");
+  test_assert_lock(7, chOQIsFullI(&oq), "not full");
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread2, NULL);
-  test_assert(8, chOQGetFullI(&oq) == TEST_QUEUES_SIZE, "not empty");
+  test_assert_lock(8, chOQGetFullI(&oq) == TEST_QUEUES_SIZE, "not empty");
   test_wait_threads();
 
   /* Testing reset */
+  chSysLock();
   chOQResetI(&oq);
-  test_assert(9, chOQGetFullI(&oq) == 0, "still full");
+  chSysUnlock();
+  test_assert_lock(9, chOQGetFullI(&oq) == 0, "still full");
 
   /* Partial writes */
   n = chOQWriteTimeout(&oq, wa[1], TEST_QUEUES_SIZE / 2, TIME_IMMEDIATE);
   test_assert(10, n == TEST_QUEUES_SIZE / 2, "wrong returned size");
   n = chOQWriteTimeout(&oq, wa[1], TEST_QUEUES_SIZE / 2, TIME_IMMEDIATE);
   test_assert(11, n == TEST_QUEUES_SIZE / 2, "wrong returned size");
-  test_assert(12, chOQIsFullI(&oq), "not full");
+  test_assert_lock(12, chOQIsFullI(&oq), "not full");
 
   /* Timeout */
   test_assert(13, chOQPutTimeout(&oq, 0, 10) == Q_TIMEOUT, "wrong timeout return");

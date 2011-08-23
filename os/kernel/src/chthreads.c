@@ -154,6 +154,8 @@ Thread *chThdCreateI(void *wsp, size_t size,
   /* Thread structure is layed out in the lower part of the thread workspace */
   Thread *tp = wsp;
 
+  chDbgCheckClassI();
+
   chDbgCheck((wsp != NULL) && (size >= THD_WA_SIZE(0)) &&
              (prio <= HIGHPRIO) && (pf != NULL),
              "chThdCreateI");

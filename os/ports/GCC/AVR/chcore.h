@@ -142,15 +142,15 @@ struct context {
  * @details This code usually setup the context switching frame represented
  *          by an @p intctx structure.
  */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
-  tp->p_ctx.sp = (struct intctx*)((uint8_t *)workspace + wsize  -       \
-                                  sizeof(struct intctx));               \
-  tp->p_ctx.sp->r2  = (int)pf;                                          \
-  tp->p_ctx.sp->r3  = (int)pf >> 8;                                     \
-  tp->p_ctx.sp->r4  = (int)arg;                                         \
-  tp->p_ctx.sp->r5  = (int)arg >> 8;                                    \
-  tp->p_ctx.sp->pcl = (int)_port_thread_start >> 8;                     \
-  tp->p_ctx.sp->pch = (int)_port_thread_start;                          \
+#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
+  tp->p_ctx.sp = (struct intctx*)((uint8_t *)workspace + wsize  -           \
+                                  sizeof(struct intctx));                   \
+  tp->p_ctx.sp->r2  = (int)pf;                                              \
+  tp->p_ctx.sp->r3  = (int)pf >> 8;                                         \
+  tp->p_ctx.sp->r4  = (int)arg;                                             \
+  tp->p_ctx.sp->r5  = (int)arg >> 8;                                        \
+  tp->p_ctx.sp->pcl = (int)_port_thread_start >> 8;                         \
+  tp->p_ctx.sp->pch = (int)_port_thread_start;                              \
 }
 
 /**
@@ -185,9 +185,9 @@ struct context {
 /**
  * @brief   Computes the thread working area global size.
  */
-#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
-                                   (sizeof(struct intctx) - 1) +        \
-                                   (sizeof(struct extctx) - 1) +        \
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                         \
+                                   (sizeof(struct intctx) - 1) +            \
+                                   (sizeof(struct extctx) - 1) +            \
                                    (n) + (PORT_INT_REQUIRED_STACK))
 
 /**
@@ -204,9 +204,9 @@ struct context {
  * @note    This code tricks the compiler to save all the specified registers
  *          by "touching" them.
  */
-#define PORT_IRQ_PROLOGUE() {                                           \
-  asm ("" : : : "r18", "r19", "r20", "r21", "r22", "r23", "r24",        \
-                "r25", "r26", "r27", "r30", "r31");                     \
+#define PORT_IRQ_PROLOGUE() {                                               \
+  asm ("" : : : "r18", "r19", "r20", "r21", "r22", "r23", "r24",            \
+                "r25", "r26", "r27", "r30", "r31");                         \
 }
 
 /**
@@ -214,9 +214,11 @@ struct context {
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() {                                           \
-  if (chSchIsRescRequiredExI())                                         \
-    chSchDoRescheduleI();                                               \
+#define PORT_IRQ_EPILOGUE() {                                               \
+  dbg_check_lock();                                                         \
+  if (chSchIsPreemptionRequired())                                          \
+    chSchDoReschedule();                                                    \
+  dbg_check_unlock();                                                       \
 }
 
 /**

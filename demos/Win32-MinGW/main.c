@@ -22,6 +22,7 @@
 #include "hal.h"
 #include "test.h"
 #include "shell.h"
+#include "chprintf.h"
 
 #define SHELL_WA_SIZE       THD_WA_SIZE(4096)
 #define CONSOLE_WA_SIZE     THD_WA_SIZE(4096)
@@ -35,20 +36,16 @@ static Thread *shelltp2;
 
 static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
   size_t n, size;
-  char buf[52];
 
   (void)argv;
   if (argc > 0) {
-    shellPrintLine(chp, "Usage: mem");
+    chprintf(chp, "Usage: mem\r\n");
     return;
   }
   n = chHeapStatus(NULL, &size);
-  sprintf(buf, "core free memory : %i bytes", chCoreStatus());
-  shellPrintLine(chp, buf);
-  sprintf(buf, "heap fragments   : %i", n);
-  shellPrintLine(chp, buf);
-  sprintf(buf, "heap free total  : %i bytes", size);
-  shellPrintLine(chp, buf);
+  chprintf(chp, "core free memory : %u bytes\r\n", chCoreStatus());
+  chprintf(chp, "heap fragments   : %u\r\n", n);
+  chprintf(chp, "heap free total  : %u bytes\r\n", size);
 }
 
 static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
@@ -63,25 +60,26 @@ static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
     "WTEXIT",
     "WTOREVT",
     "WTANDEVT",
+    "SNDMSGQ",
     "SNDMSG",
     "WTMSG",
+    "WTQUEUE",
     "FINAL"
   };
   Thread *tp;
-  char buf[60];
 
   (void)argv;
   if (argc > 0) {
-    shellPrintLine(chp, "Usage: threads");
+    chprintf(chp, "Usage: threads\r\n");
     return;
   }
-  shellPrintLine(chp, "    addr    stack prio refs     state time");
+  chprintf(chp, "    addr    stack prio refs     state time\r\n");
   tp = chRegFirstThread();
   do {
-    sprintf(buf, "%8p %8p %4i %4i %9s %i",
-            tp, tp->p_ctx.esp, tp->p_prio, tp->p_refs - 1,
-            states[tp->p_state], tp->p_time);
-    shellPrintLine(chp, buf);
+    chprintf(chp, "%.8lx %.8lx %4lu %4lu %9s %lu\r\n",
+            (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
+            (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
+            states[tp->p_state], (uint32_t)tp->p_time);
     tp = chRegNextThread(tp);
   } while (tp != NULL);
 }
@@ -91,13 +89,13 @@ static void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc > 0) {
-    shellPrintLine(chp, "Usage: test");
+    chprintf(chp, "Usage: test\r\n");
     return;
   }
   tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriority(),
                            TestThread, chp);
   if (tp == NULL) {
-    shellPrintLine(chp, "out of memory");
+    chprintf(chp, "out of memory\r\n");
     return;
   }
   chThdWait(tp);

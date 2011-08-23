@@ -221,10 +221,10 @@ struct context {
 /**
  * @brief   Computes the thread working area global size.
  */
-#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
-                                   sizeof(struct intctx) +              \
-                                   sizeof(struct extctx) +              \
-                                  (n) + (PORT_INT_REQUIRED_STACK))
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                         \
+                                   sizeof(struct intctx) +                  \
+                                   sizeof(struct extctx) +                  \
+                                   (n) + (PORT_INT_REQUIRED_STACK))
 
 /**
  * @brief   Static working area allocation.
@@ -307,8 +307,8 @@ struct context {
  */
 #if ENABLE_WFI_IDLE != 0
 #ifndef port_wait_for_interrupt
-#define port_wait_for_interrupt() {                                     \
-  asm volatile ("wait" : : : "memory");                                                         \
+#define port_wait_for_interrupt() {                                         \
+  asm volatile ("wait" : : : "memory");                                     \
 }
 #endif
 #else

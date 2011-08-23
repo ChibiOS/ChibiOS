@@ -25,6 +25,18 @@
  * @defgroup ARMCMx_STM32F1xx_VECTORS STM32F1xx Interrupt Vectors
  * @ingroup ARMCMx_SPECIFIC
  * @details Interrupt vectors for the STM32F1xx family.
+ *          One of the following macros must be defined on the
+ *          compiler command line or in a file named <tt>board.h</tt>:
+ *          - @p STM32F10X_LD
+ *          - @p STM32F10X_LD_VL
+ *          - @p STM32F10X_MD
+ *          - @p STM32F10X_MD_VL
+ *          - @p STM32F10X_HD
+ *          - @p STM32F10X_XL
+ *          - @p STM32F10X_CL
+ *          .
+ *          This is required in order to include a vectors table with
+ *          the correct length for the specified STM32 model.
  * @{
  */
 

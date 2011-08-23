@@ -54,8 +54,8 @@ void _port_switch(Thread *otp) {
  */
 void _port_thread_start(void) {
 
+  chSysUnlock();
 #pragma ASM
-        RIM
         POPW    X
 #pragma ENDASM
 }

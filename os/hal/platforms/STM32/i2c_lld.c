@@ -514,10 +514,6 @@ void i2c_lld_init(void) {
  * @param[in] i2cp      pointer to the @p I2CDriver object
  */
 void i2c_lld_start(I2CDriver *i2cp) {
-#if (!(STM32_I2C_I2C2_USE_POLLING_WAIT) && I2C_SUPPORTS_CALLBACKS)
-    gptStart(i2cp->timer, i2cp->timer_cfg);
-#endif /* !(STM32_I2C_I2C2_USE_POLLING_WAIT) */
-
   if (i2cp->id_state == I2C_STOP) {         /* If in stopped state then enables the I2C clock.*/
 #if STM32_I2C_USE_I2C1
     if (&I2CD1 == i2cp) {
@@ -726,7 +722,7 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
   #else
     chDbgAssert(!(i2cp->flags & I2C_FLG_TIMER_ARMED), "i2c_lld_master_transmit(), #1", "time to STOP is out");
     if ((i2cp->id_i2c->CR1 & I2C_CR1_STOP) && i2cp->timer != NULL && i2cp->timer_cfg != NULL){
-      gptStartOneShot(i2cp->timer, I2C_STOP_GPT_TIMEOUT);
+      gptStartOneShotI(i2cp->timer, I2C_STOP_GPT_TIMEOUT);
       i2cp->flags |= I2C_FLG_TIMER_ARMED;
       return;
     }
@@ -784,7 +780,7 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
   #else
     chDbgAssert(!(i2cp->flags & I2C_FLG_TIMER_ARMED), "i2c_lld_master_receive(), #1", "time to STOP is out");
     if ((i2cp->id_i2c->CR1 & I2C_CR1_STOP) && i2cp->timer != NULL && i2cp->timer_cfg != NULL){
-      gptStartOneShot(i2cp->timer, I2C_STOP_GPT_TIMEOUT);
+      gptStartOneShotI(i2cp->timer, I2C_STOP_GPT_TIMEOUT);
       i2cp->flags |= I2C_FLG_TIMER_ARMED;
       return;
     }
@@ -850,7 +846,7 @@ void i2c_lld_master_transceive(I2CDriver *i2cp){
   #else
     chDbgAssert(!(i2cp->flags & I2C_FLG_TIMER_ARMED), "i2c_lld_master_transceive(), #1", "time to START is out");
     if ((i2cp->id_i2c->CR1 & I2C_CR1_START) && i2cp->timer != NULL && i2cp->timer_cfg != NULL){
-      gptStartOneShot(i2cp->timer, I2C_START_GPT_TIMEOUT);
+      gptStartOneShotI(i2cp->timer, I2C_START_GPT_TIMEOUT);
       i2cp->flags |= I2C_FLG_TIMER_ARMED;
       return;
     }

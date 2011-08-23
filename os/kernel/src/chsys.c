@@ -98,6 +98,8 @@ void chSysInit(void) {
   setcurrp(_thread_init(&mainthread, NORMALPRIO));
   currp->p_state = THD_STATE_CURRENT;
 #if CH_DBG_ENABLE_STACK_CHECK
+  /* This is a special case because the main thread Thread structure is not
+     adjacent to its stack area.*/
   currp->p_stklimit = &__main_thread_stack_base__;
 #endif
   chSysEnable();
@@ -126,6 +128,8 @@ void chSysInit(void) {
  */
 void chSysTimerHandlerI(void) {
 
+  chDbgCheckClassI();
+
 #if CH_TIME_QUANTUM > 0
   /* Running thread has not used up quantum yet? */
   if (rlist.r_preempt > 0)
@@ -140,25 +144,5 @@ void chSysTimerHandlerI(void) {
   SYSTEM_TICK_EVENT_HOOK();
 #endif
 }
-
-#if CH_USE_NESTED_LOCKS && !CH_OPTIMIZE_SPEED
-void chSysLock(void) {
-
-  chDbgAssert(currp->p_locks >= 0,
-              "chSysLock(), #1",
-              "negative nesting counter");
-  if (currp->p_locks++ == 0)
-    port_lock();
-}
-
-void chSysUnlock(void) {
-
-  chDbgAssert(currp->p_locks > 0,
-              "chSysUnlock(), #1",
-              "non-positive nesting counter");
-  if (--currp->p_locks == 0)
-    port_unlock();
-}
-#endif /* CH_USE_NESTED_LOCKS && !CH_OPTIMIZE_SPEED */
 
 /** @} */

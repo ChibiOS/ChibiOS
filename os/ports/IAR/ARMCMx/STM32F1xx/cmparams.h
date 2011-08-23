@@ -19,13 +19,13 @@
 */
 
 /**
- * @file    RVCT/ARMCMx/STM32/cmparams.h
- * @brief   ARM Cortex-M3 parameters for the STM32.
+ * @file    IAR/ARMCMx/STM32F1xx/cmparams.h
+ * @brief   ARM Cortex-M3 parameters for the STM32F1xx.
  *
- * @defgroup RVCT_ARMCMx_STM32 STM32 Specific Parameters
- * @ingroup RVCT_ARMCMx_SPECIFIC
+ * @defgroup IAR_ARMCMx_STM32F1xx STM32F1xx Specific Parameters
+ * @ingroup IAR_ARMCMx_SPECIFIC
  * @details This file contains the Cortex-M3 specific parameters for the
- *          STM32 platform.
+ *          STM32F1xx platform.
  * @{
  */
 

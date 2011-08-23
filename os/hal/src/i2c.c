@@ -103,11 +103,15 @@ void i2cObjectInit(I2CDriver *i2cp) {
 void i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
 
   chDbgCheck((i2cp != NULL) && (config != NULL), "i2cStart");
-
-  chSysLock();
   chDbgAssert((i2cp->id_state == I2C_STOP) || (i2cp->id_state == I2C_READY),
               "i2cStart(), #1",
               "invalid state");
+
+#if (!(STM32_I2C_I2C2_USE_POLLING_WAIT) && I2C_SUPPORTS_CALLBACKS)
+    gptStart(i2cp->timer, i2cp->timer_cfg);
+#endif /* !(STM32_I2C_I2C2_USE_POLLING_WAIT) */
+
+  chSysLock();
   i2cp->id_config = config;
   i2c_lld_start(i2cp);
   i2cp->id_state = I2C_READY;
@@ -124,11 +128,15 @@ void i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
 void i2cStop(I2CDriver *i2cp) {
 
   chDbgCheck(i2cp != NULL, "i2cStop");
-
-  chSysLock();
   chDbgAssert((i2cp->id_state == I2C_STOP) || (i2cp->id_state == I2C_READY),
               "i2cStop(), #1",
               "invalid state");
+
+#if (!(STM32_I2C_I2C2_USE_POLLING_WAIT) && I2C_SUPPORTS_CALLBACKS)
+    gptStop(i2cp->timer);
+#endif /* !(STM32_I2C_I2C2_USE_POLLING_WAIT) */
+
+  chSysLock();
   i2c_lld_stop(i2cp);
   i2cp->id_state = I2C_STOP;
   chSysUnlock();

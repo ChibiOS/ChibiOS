@@ -81,7 +81,8 @@ void port_switch(Thread *ntp, Thread *otp) {
  *          invoked.
  */
 void _port_thread_start(void) {
-  asm ("wrteei      1");
+
+  chSysUnlock();
   asm ("mr          %r3, %r31");        /* Thread parameter.                */
   asm ("mtctr       %r30");
   asm ("bctrl");                        /* Invoke thread function.          */

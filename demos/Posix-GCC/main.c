@@ -24,6 +24,7 @@
 #include "hal.h"
 #include "test.h"
 #include "shell.h"
+#include "chprintf.h"
 
 #define SHELL_WA_SIZE       THD_WA_SIZE(4096)
 #define CONSOLE_WA_SIZE     THD_WA_SIZE(4096)
@@ -35,24 +36,76 @@ static Thread *cdtp;
 static Thread *shelltp1;
 static Thread *shelltp2;
 
-void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
+static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
+  size_t n, size;
+
+  (void)argv;
+  if (argc > 0) {
+    chprintf(chp, "Usage: mem\r\n");
+    return;
+  }
+  n = chHeapStatus(NULL, &size);
+  chprintf(chp, "core free memory : %u bytes\r\n", chCoreStatus());
+  chprintf(chp, "heap fragments   : %u\r\n", n);
+  chprintf(chp, "heap free total  : %u bytes\r\n", size);
+}
+
+static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
+  static const char *states[] = {
+    "READY",
+    "CURRENT",
+    "SUSPENDED",
+    "WTSEM",
+    "WTMTX",
+    "WTCOND",
+    "SLEEPING",
+    "WTEXIT",
+    "WTOREVT",
+    "WTANDEVT",
+    "SNDMSGQ",
+    "SNDMSG",
+    "WTMSG",
+    "WTQUEUE",
+    "FINAL"
+  };
   Thread *tp;
 
   (void)argv;
   if (argc > 0) {
-    shellPrintLine(chp, "Usage: test");
+    chprintf(chp, "Usage: threads\r\n");
+    return;
+  }
+  chprintf(chp, "    addr    stack prio refs     state time\r\n");
+  tp = chRegFirstThread();
+  do {
+    chprintf(chp, "%.8lx %.8lx %4lu %4lu %9s %lu\r\n",
+            (uint32_t)tp, (uint32_t)tp->p_ctx.esp,
+            (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
+            states[tp->p_state], (uint32_t)tp->p_time);
+    tp = chRegNextThread(tp);
+  } while (tp != NULL);
+}
+
+static void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
+  Thread *tp;
+
+  (void)argv;
+  if (argc > 0) {
+    chprintf(chp, "Usage: test\r\n");
     return;
   }
   tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriority(),
                            TestThread, chp);
   if (tp == NULL) {
-    shellPrintLine(chp, "out of memory");
+    chprintf(chp, "out of memory\r\n");
     return;
   }
   chThdWait(tp);
 }
 
 static const ShellCommand commands[] = {
+  {"mem", cmd_mem},
+  {"threads", cmd_threads},
   {"test", cmd_test},
   {NULL, NULL}
 };
@@ -76,9 +129,10 @@ static msg_t console_thread(void *arg) {
 
   (void)arg;
   while (!chThdShouldTerminate()) {
-    puts((char *)chMsgWait());
+    Thread *tp = chMsgWait();
+    puts((char *)chMsgGet(tp));
     fflush(stdout);
-    chMsgRelease(RDY_OK);
+    chMsgRelease(tp, RDY_OK);
   }
   return 0;
 }

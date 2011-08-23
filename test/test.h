@@ -127,6 +127,22 @@ extern "C" {
 }
 
 /**
+ * @brief   Test assertion with lock.
+ *
+ * @param[in] point     numeric assertion identifier
+ * @param[in] condition a boolean expression that must be verified to be true
+ * @param[in] msg       failure message
+ */
+#define test_assert_lock(point, condition, msg) {                           \
+  chSysLock();                                                              \
+  if (_test_assert(point, condition)) {                                     \
+    chSysUnlock();                                                          \
+    return;                                                                 \
+  }                                                                         \
+  chSysUnlock();                                                            \
+}
+
+/**
  * @brief   Test sequence assertion.
  *
  * @param[in] point     numeric assertion identifier

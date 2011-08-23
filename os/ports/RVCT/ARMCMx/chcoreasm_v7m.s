@@ -36,8 +36,12 @@ ICSR_PENDSVSET  EQU     0x10000000
                 AREA    |.text|, CODE, READONLY
 
                 IMPORT  chThdExit
-                IMPORT  chSchIsRescRequiredExI
-                IMPORT  chSchDoRescheduleI
+                IMPORT  chSchIsPreemptionRequired
+                IMPORT  chSchDoReschedule
+#if CH_DBG_SYSTEM_STATE_CHECK
+                IMPORT  dbg_check_unlock
+                IMPORT  dbg_check_lock
+#endif
 
 /*
  * Performs a context switch between two threads.
@@ -56,6 +60,9 @@ _port_switch    PROC
  */
                 EXPORT  _port_thread_start
 _port_thread_start PROC
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      dbg_check_unlock
+#endif
 #if CORTEX_SIMPLIFIED_PRIORITY
                 cpsie   i
 #else
@@ -73,10 +80,16 @@ _port_thread_start PROC
  */
                 EXPORT  _port_switch_from_isr
 _port_switch_from_isr PROC
-                bl      chSchIsRescRequiredExI
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      dbg_check_lock
+#endif
+                bl      chSchIsPreemptionRequired
                 cbz     r0, noreschedule
-                bl      chSchDoRescheduleI
+                bl      chSchDoReschedule
 noreschedule
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      dbg_check_unlock
+#endif
 #if CORTEX_SIMPLIFIED_PRIORITY
                 mov     r3, #SCB_ICSR :AND: 0xFFFF
                 movt    r3, #SCB_ICSR :SHR: 16

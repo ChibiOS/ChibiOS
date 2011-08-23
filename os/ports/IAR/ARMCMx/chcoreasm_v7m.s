@@ -39,8 +39,12 @@ ICSR_PENDSVSET  SET 0x10000000
         SECTION .text:CODE:NOROOT(2)
 
         EXTERN  chThdExit
-        EXTERN  chSchIsRescRequiredExI
-        EXTERN  chSchDoRescheduleI
+        EXTERN  chSchIsPreemptionRequired
+        EXTERN  chSchDoReschedule
+#if CH_DBG_SYSTEM_STATE_CHECK
+        EXTERN  dbg_check_unlock
+        EXTERN  dbg_check_lock
+#endif
 
         THUMB
 
@@ -60,6 +64,9 @@ _port_switch:
  */
         PUBLIC  _port_thread_start
 _port_thread_start:
+#if CH_DBG_SYSTEM_STATE_CHECK
+        bl      dbg_check_unlock
+#endif
 #if CORTEX_SIMPLIFIED_PRIORITY
         cpsie   i
 #else
@@ -76,10 +83,16 @@ _port_thread_start:
  */
         PUBLIC  _port_switch_from_isr
 _port_switch_from_isr:
-        bl      chSchIsRescRequiredExI
+#if CH_DBG_SYSTEM_STATE_CHECK
+        bl      dbg_check_lock
+#endif
+        bl      chSchIsPreemptionRequired
         cbz     r0, .L2
-        bl      chSchDoRescheduleI
+        bl      chSchDoReschedule
 .L2:
+#if CH_DBG_SYSTEM_STATE_CHECK
+        bl      dbg_check_unlock
+#endif
 #if CORTEX_SIMPLIFIED_PRIORITY
         mov     r3, #LWRD SCB_ICSR
         movt    r3, #HWRD SCB_ICSR
