@@ -22,7 +22,7 @@
  * @file    stm32_dma.h
  * @brief   STM32 DMA helper driver header.
  * @note    This file requires definitions from the ST STM32 header file
- *          stm3232f10x.h.
+ *          stm32f10x.h.
  *
  * @addtogroup STM32_DMA
  * @{
@@ -154,7 +154,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  *          data register.
  * @note    This function can be invoked in both ISR or thread context.
  *
- * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
+ * @param[in] dmachp    pointer to a stm32_dma_channel_t structure
  * @param[in] cndtr     value to be written in the CNDTR register
  * @param[in] cmar      value to be written in the CMAR register
  * @param[in] ccr       value to be written in the CCR register
@@ -171,7 +171,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @brief   DMA channel enable by channel pointer.
  * @note    This function can be invoked in both ISR or thread context.
  *
- * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
+ * @param[in] dmachp    pointer to a stm32_dma_channel_t structure
  *
  * @special
  */
@@ -179,12 +179,11 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
   (dmachp)->CCR |= DMA_CCR1_EN;                                             \
 }
 
-
 /**
  * @brief   DMA channel disable by channel pointer.
  * @note    This function can be invoked in both ISR or thread context.
  *
- * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
+ * @param[in] dmachp    pointer to a stm32_dma_channel_t structure
  *
  * @special
  */
@@ -256,7 +255,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  *
  * @special
  */
-#define dmaClearChannel(dmap, ch){                                          \
+#define dmaClearChannel(dmap, ch) {                                         \
   (dmap)->IFCR = 1 << ((ch) * 4);                                           \
 }
 

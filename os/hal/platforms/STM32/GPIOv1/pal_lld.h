@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM32/pal_lld.h
- * @brief   STM32 GPIO low level driver header.
+ * @file    STM32/GPIOv1/pal_lld.h
+ * @brief   STM32F1xx GPIO low level driver header.
  *
  * @addtogroup PAL
  * @{

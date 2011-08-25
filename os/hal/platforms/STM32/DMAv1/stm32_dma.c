@@ -366,16 +366,11 @@ void dmaInit(void) {
  * @param[in] channel   requested channel id
  * @param[in] func      handling function pointer, can be @p NULL
  * @param[in] param     a parameter to be passed to the handling function
- * @return              The operation status.
- * @retval FALSE        operation successfully allocated.
- * @retval TRUE         the channel was already in use.
  *
  * @special
  */
 void dmaAllocate(uint32_t dma, uint32_t channel,
                  stm32_dmaisr_t func, void *param) {
-
-  chDbgCheck(func != NULL, "dmaAllocate");
 
 #if STM32_HAS_DMA2
   switch (dma) {
