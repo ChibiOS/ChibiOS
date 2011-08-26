@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    stm32_dma.h
+ * @file    DMAv1/stm32_dma.h
  * @brief   STM32 DMA helper driver header.
  * @note    This file requires definitions from the ST STM32 header file
  *          stm32f10x.h.

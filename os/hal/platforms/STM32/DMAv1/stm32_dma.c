@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    stm32_dma.c
+ * @file    DMAv1/stm32_dma.c
  * @brief   STM32 DMA helper driver code.
  *
  * @addtogroup STM32_DMA

@@ -19,10 +19,12 @@
 */
 
 /**
- * @file    DMAv2/stm32_dma.h
- * @brief   Enhanced-DMA helper driver header.
- * @note    This file requires definitions from the ST STM32F2xx header file
- *          stm32f2xx.h.
+ * @file    DMAv1/stm32_dma.h
+ * @brief   DMA helper driver header.
+ * @note    This file requires definitions from the ST header files
+ *          stm32f10x.h or stm32l1xx.h.
+ * @note    This driver uses the new naming convention used for the STM32F2xx
+ *          so the "DMA channels" are referred as "DMA streams".
  *
  * @addtogroup STM32_DMA
  * @{
@@ -39,104 +41,75 @@
  * @brief   Total number of DMA streams.
  * @note    This is the total number of streams among all the DMA units.
  */
-#define STM32_DMA_STREAMS           16
+#if STM32_HAS_DMA2 || defined(__DOXYGEN__)
+#define STM32_DMA_STREAMS           12
+#else
+#define STM32_DMA_STREAMS           7
+#endif
 
 /**
  * @brief   Mask of the ISR bits passed to the DMA callback functions.
  */
-#define STM32_DMA_ISR_MASK          0x3D
+#define STM32_DMA_ISR_MASK          0x0F
 
 /**
  * @name    DMA streams identifiers
  * @{
  */
-#define STM32_DMA1_STREAM0          (&_stm32_dma_streams[0])
-#define STM32_DMA1_STREAM1          (&_stm32_dma_streams[1])
-#define STM32_DMA1_STREAM2          (&_stm32_dma_streams[2])
-#define STM32_DMA1_STREAM3          (&_stm32_dma_streams[3])
-#define STM32_DMA1_STREAM4          (&_stm32_dma_streams[4])
-#define STM32_DMA1_STREAM5          (&_stm32_dma_streams[5])
-#define STM32_DMA1_STREAM6          (&_stm32_dma_streams[6])
-#define STM32_DMA1_STREAM7          (&_stm32_dma_streams[7])
-#define STM32_DMA2_STREAM0          (&_stm32_dma_streams[8])
-#define STM32_DMA2_STREAM1          (&_stm32_dma_streams[9])
-#define STM32_DMA2_STREAM2          (&_stm32_dma_streams[10])
-#define STM32_DMA2_STREAM3          (&_stm32_dma_streams[11])
-#define STM32_DMA2_STREAM4          (&_stm32_dma_streams[12])
-#define STM32_DMA2_STREAM5          (&_stm32_dma_streams[13])
-#define STM32_DMA2_STREAM6          (&_stm32_dma_streams[14])
-#define STM32_DMA2_STREAM7          (&_stm32_dma_streams[15])
+#define STM32_DMA1_STREAM1          (&_stm32_dma_streams[0])
+#define STM32_DMA1_STREAM2          (&_stm32_dma_streams[1])
+#define STM32_DMA1_STREAM3          (&_stm32_dma_streams[2])
+#define STM32_DMA1_STREAM4          (&_stm32_dma_streams[3])
+#define STM32_DMA1_STREAM5          (&_stm32_dma_streams[4])
+#define STM32_DMA1_STREAM6          (&_stm32_dma_streams[5])
+#define STM32_DMA1_STREAM7          (&_stm32_dma_streams[6])
+#define STM32_DMA2_STREAM1          (&_stm32_dma_streams[8])
+#define STM32_DMA2_STREAM2          (&_stm32_dma_streams[9])
+#define STM32_DMA2_STREAM3          (&_stm32_dma_streams[10])
+#define STM32_DMA2_STREAM4          (&_stm32_dma_streams[11])
+#define STM32_DMA2_STREAM5          (&_stm32_dma_streams[12])
 /** @} */
 
 /**
  * @name    CR register constants common to all DMA types
  */
-#define STM32_DMA_CR_EN             DMA_SxCR_EN
-#define STM32_DMA_CR_TEIE           DMA_SxCR_TEIE
-#define STM32_DMA_CR_HTIE           DMA_SxCR_HTIE
-#define STM32_DMA_CR_TCIE           DMA_SxCR_TCIE
-#define STM32_DMA_CR_DIR_MASK       DMA_SxCR_DIR
+#define STM32_DMA_CR_EN             DMA_CCR1_EN
+#define STM32_DMA_CR_TEIE           DMA_CCR1_TEIE
+#define STM32_DMA_CR_HTIE           DMA_CCR1_HTIE
+#define STM32_DMA_CR_TCIE           DMA_CCR1_TCIE
+#define STM32_DMA_CR_DIR_MASK       (DMA_CCR1_DIR | DMA_CCR1_MEM2MEM)
 #define STM32_DMA_CR_DIR_P2M        0
-#define STM32_DMA_CR_DIR_M2P        DMA_SxCR_DIR_0
-#define STM32_DMA_CR_DIR_M2M        DMA_SxCR_DIR_1
-#define STM32_DMA_CR_CIRC           DMA_SxCR_CIRC
-#define STM32_DMA_CR_PINC           DMA_SxCR_PINC
-#define STM32_DMA_CR_MINC           DMA_SxCR_MINC
-#define STM32_DMA_CR_PSIZE_MASK     DMA_SxCR_PSIZE
+#define STM32_DMA_CR_DIR_M2P        DMA_CCR1_DIR
+#define STM32_DMA_CR_DIR_M2M        DMA_CCR1_MEM2MEM
+#define STM32_DMA_CR_CIRC           DMA_CCR1_CIRC
+#define STM32_DMA_CR_PINC           DMA_CCR1_PINC
+#define STM32_DMA_CR_MINC           DMA_CCR1_MINC
+#define STM32_DMA_CR_PSIZE_MASK     DMA_CCR1_PSIZE
 #define STM32_DMA_CR_PSIZE_BYTE     0
-#define STM32_DMA_CR_PSIZE_HWORD    DMA_SxCR_PSIZE_0
-#define STM32_DMA_CR_PSIZE_WORD     DMA_SxCR_PSIZE_1
-#define STM32_DMA_CR_MSIZE_MASK     DMA_SxCR_MSIZE
+#define STM32_DMA_CR_PSIZE_HWORD    DMA_CCR1_PSIZE_0
+#define STM32_DMA_CR_PSIZE_WORD     DMA_CCR1_PSIZE_1
+#define STM32_DMA_CR_MSIZE_MASK     DMA_CCR1_MSIZE
 #define STM32_DMA_CR_MSIZE_BYTE     0
-#define STM32_DMA_CR_MSIZE_HWORD    DMA_SxCR_MSIZE_0
-#define STM32_DMA_CR_MSIZE_WORD     DMA_SxCR_MSIZE_1
-#define STM32_DMA_CR_PL_MASK        DMA_SxCR_PL
+#define STM32_DMA_CR_MSIZE_HWORD    DMA_CCR1_MSIZE_0
+#define STM32_DMA_CR_MSIZE_WORD     DMA_CCR1_MSIZE_1
+#define STM32_DMA_CR_PL_MASK        DMA_CCR1_PL
 #define STM32_DMA_CR_PL(n)          ((n) << 16)
 /** @} */
-
 /**
- * @name    CR register constants only found in STM32F2xx
+ * @name    CR register constants only found in enhanced DMA
  */
-#define STM32_DMA_CR_DMEIE          DMA_SxCR_DMEIE
-#define STM32_DMA_CR_PFCTRL         DMA_SxCR_PFCTRL
-#define STM32_DMA_CR_PINCOS         DMA_SxCR_PINCOS
-#define STM32_DMA_CR_DBM            DMA_SxCR_DBM
-#define STM32_DMA_CR_CT             DMA_SxCR_CT
-#define STM32_DMA_CR_PBURST_MASK    DMA_SxCR_PBURST
-#define STM32_DMA_CR_PBURST_SINGLE  0
-#define STM32_DMA_CR_PBURST_INCR4   DMA_SxCR_PBURST_0
-#define STM32_DMA_CR_PBURST_INCR8   DMA_SxCR_PBURST_1
-#define STM32_DMA_CR_PBURST_INCR16  (DMA_SxCR_PBURST_0 | DMA_SxCR_PBURST_1)
-#define STM32_DMA_CR_MBURST_MASK    DMA_SxCR_MBURST
-#define STM32_DMA_CR_MBURST_SINGLE  0
-#define STM32_DMA_CR_MBURST_INCR4   DMA_SxCR_MBURST_0
-#define STM32_DMA_CR_MBURST_INCR8   DMA_SxCR_MBURST_1
-#define STM32_DMA_CR_MBURST_INCR16  (DMA_SxCR_MBURST_0 | DMA_SxCR_MBURST_1)
-#define STM32_DMA_CR_CHSEL_MASK     DMA_SxCR_CHSEL
-#define STM32_DMA_CR_CHSEL(n)       ((n) << 25)
-/** @} */
-
-/**
- * @name    FCR register constants only found in STM32F2xx
- */
-#define STM32_DMA_FCR_FEIE          DMA_SxFCR_FEIE
-#define STM32_DMA_FCR_FS_MASK       DMA_SxFCR_FS
-#define STM32_DMA_FCR_DMDIS         DMA_SxFCR_DMDIS
-#define STM32_DMA_FCR_FTH_MASK      DMA_SxFCR_FTH
-#define STM32_DMA_FCR_FTH_1Q        0
-#define STM32_DMA_FCR_FTH_HALF      DMA_SxFCR_FTH_0
-#define STM32_DMA_FCR_FTH_3Q        DMA_SxFCR_FTH_1
-#define STM32_DMA_FCR_FTH_FULL      (DMA_SxFCR_FTH_0 | DMA_SxFCR_FTH_1)
+#define STM32_DMA_CR_CHSEL_MASK     0   /**< @brief Ignored by normal DMA.  */
+#define STM32_DMA_CR_CHSEL(n)       0   /**< @brief Ignored by normal DMA.  */
 /** @} */
 
 /**
  * @name    Status flags passed to the ISR callbacks
  */
-#define STM32_DMA_ISR_FEIF          DMA_LISR_FEIF0
-#define STM32_DMA_ISR_DMEIF         DMA_LISR_DMEIF0
-#define STM32_DMA_ISR_TEIF          DMA_LISR_TEIF0
-#define STM32_DMA_ISR_HTIF          DMA_LISR_HTIF0
-#define STM32_DMA_ISR_TCIF          DMA_LISR_TCIF0
+#define STM32_DMA_ISR_FEIF          0
+#define STM32_DMA_ISR_DMEIF         0
+#define STM32_DMA_ISR_TEIF          DMA_ISR_TEIF1
+#define STM32_DMA_ISR_HTIF          DMA_ISR_HTIF1
+#define STM32_DMA_ISR_TCIF          DMA_ISR_TCIF1
 /** @} */
 
 /*===========================================================================*/
@@ -157,18 +130,17 @@
 typedef struct {
   uint32_t              selfindex;      /**< @brief Index to self in array. */
   DMA_TypeDef           *dma;           /**< @brief Associated DMA unit.    */
-  DMA_Stream_TypeDef    *stream;        /**< @brief Associated DMA stream.  */
-  volatile uint32_t     *isr;           /**< @brief Associated xISR reg.    */
-  volatile uint32_t     *ifcr;          /**< @brief Associated xIFCR reg.   */
+  DMA_Channel_TypeDef   *channel;       /**< @brief Associated DMA channel. */
+  volatile uint32_t     *ifcr;          /**< @brief Associated IFCR reg.    */
   uint32_t              ishift;         /**< @brief Bits offset in xIFCR
-                                             registers.                     */
+                                             register.                      */
 } stm32_dma_stream_t;
 
 /**
  * @brief   STM32 DMA ISR function type.
  *
  * @param[in] p         parameter for the registered function
- * @param[in] flags     pre-shifted content of the xISR register, the bits
+ * @param[in] flags     pre-shifted content of the ISR register, the bits
  *                      are aligned to bit zero
  */
 typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
@@ -182,12 +154,12 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
- * @param[in] addr      value to be written in the PAR register
+ * @param[in] addr      value to be written in the CPAR register
  *
  * @special
  */
 #define dmaStreamSetPeripheral(dmastp, addr) {                              \
-  (dmastp)->stream->PAR  = (uint32_t)(addr);                                \
+  (dmastp)->channel->CPAR  = (uint32_t)(addr);                              \
 }
 
 /**
@@ -195,12 +167,12 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
- * @param[in] addr      value to be written in the M0AR register
+ * @param[in] addr      value to be written in the CMAR register
  *
  * @special
  */
 #define dmaStreamSetMemory0(dmastp, addr) {                                 \
-  (dmastp)->stream->M0AR  = (uint32_t)(addr);                               \
+  (dmastp)->channel->CMAR  = (uint32_t)(addr);                              \
 }
 
 /**
@@ -208,25 +180,12 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
- * @param[in] addr      value to be written in the M1AR register
- *
- * @special
- */
-#define dmaStreamSetMemory1(dmastp, addr) {                                 \
-  (dmastp)->stream->M1AR  = (uint32_t)(addr);                               \
-}
-
-/**
- * @brief   Associates an alternate memory destination to a DMA stream.
- * @note    This function can be invoked in both ISR or thread context.
- *
- * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
- * @param[in] size      value to be written in the NDTR register
+ * @param[in] size      value to be written in the CNDTR register
  *
  * @special
  */
 #define dmaStreamSetTransactionSize(dmastp, size) {                         \
-  (dmastp)->stream->NDTR  = (uint32_t)(size);                               \
+  (dmastp)->channel->CNDTR  = (uint32_t)(size);                             \
 }
 
 /**
@@ -234,25 +193,12 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
- * @param[in] mode      value to be written in the CR register
+ * @param[in] mode      value to be written in the CCR register
  *
  * @special
  */
 #define dmaStreamSetMode(dmastp, mode) {                                    \
-  (dmastp)->stream->CR  = (uint32_t)(mode2);                                \
-}
-
-/**
- * @brief   Programs the stream FIFO settings.
- * @note    This function can be invoked in both ISR or thread context.
- *
- * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
- * @param[in] mode      value to be written in the FCR register
- *
- * @special
- */
-#define dmaStreamSetFIFO(dmastp, mode) {                                    \
-  (dmastp)->stream->FCR = (uint32_t)(mode);                                 \
+  (dmastp)->channel->CCR  = (uint32_t)(mode2);                              \
 }
 
 /**
@@ -264,7 +210,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @special
  */
 #define dmaStreamEnable(dmachp) {                                           \
-  (dmastp)->stream->CR |= STM32_DMA_CR_EN;                                  \
+  (dmastp)->channel->CCR |= STM32_DMA_CR_EN;                                \
 }
 
 /**
@@ -276,7 +222,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @special
  */
 #define dmaStreamDisable(dmastp) {                                          \
-  (dmastp)->stream->CR &= ~STM32_DMA_CR_EN;                                 \
+  (dmastp)->channel->CCR &= ~STM32_DMA_CR_EN;                               \
 }
 
 /**

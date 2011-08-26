@@ -20,7 +20,7 @@
 
 /**
  * @file    DMAv2/stm32_dma.c
- * @brief   STM32F2xx Enhanced DMA helper driver code.
+ * @brief   Enhanced DMA helper driver code.
  *
  * @addtogroup STM32_DMA
  * @details DMA sharing helper driver. In the STM32 the DMA streams are a
@@ -41,6 +41,20 @@
 #if defined(STM32_DMA_REQUIRED) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
+/* Driver local definitions.                                                 */
+/*===========================================================================*/
+
+/**
+ * @brief   Mask of the DMA1 streams in @p dma_streams_mask.
+ */
+#define STM32_DMA1_STREAMS_MASK     0x000000FF
+
+/**
+ * @brief   Mask of the DMA2 streams in @p dma_streams_mask.
+ */
+#define STM32_DMA2_STREAMS_MASK     0x0000FF00
+
+/*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
@@ -51,23 +65,23 @@
  * @note    Don't use this array directly, use the appropriate wrapper macros
  *          instead: @p STM32_DMA1_STREAM0, @p STM32_DMA1_STREAM1 etc.
  */
-const stm32_dma_stream_t _stm32_dma_streams[16] = {
-  {0, DMA1, DMA1_Stream0, &DMA1->LISR, &DMA1->LIFCR, 0},
-  {1, DMA1, DMA1_Stream1, &DMA1->LISR, &DMA1->LIFCR, 6},
-  {2, DMA1, DMA1_Stream2, &DMA1->LISR, &DMA1->LIFCR, 16},
-  {3, DMA1, DMA1_Stream3, &DMA1->LISR, &DMA1->LIFCR, 22},
-  {4, DMA1, DMA1_Stream4, &DMA1->HISR, &DMA1->HIFCR, 0},
-  {5, DMA1, DMA1_Stream5, &DMA1->HISR, &DMA1->HIFCR, 6},
-  {6, DMA1, DMA1_Stream6, &DMA1->HISR, &DMA1->HIFCR, 16},
-  {7, DMA1, DMA1_Stream7, &DMA1->HISR, &DMA1->HIFCR, 22},
-  {8, DMA2, DMA2_Stream0, &DMA2->LISR, &DMA2->LIFCR, 0},
-  {9, DMA2, DMA2_Stream1, &DMA2->LISR, &DMA2->LIFCR, 6},
-  {10, DMA2, DMA2_Stream2, &DMA2->LISR, &DMA2->LIFCR, 16},
-  {11, DMA2, DMA2_Stream3, &DMA2->LISR, &DMA2->LIFCR, 22},
-  {12, DMA2, DMA2_Stream4, &DMA2->HISR, &DMA2->HIFCR, 0},
-  {13, DMA2, DMA2_Stream5, &DMA2->HISR, &DMA2->HIFCR, 6},
-  {14, DMA2, DMA2_Stream6, &DMA2->HISR, &DMA2->HIFCR, 16},
-  {15, DMA2, DMA2_Stream7, &DMA2->HISR, &DMA2->HIFCR, 22},
+const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS] = {
+  {0, DMA1, DMA1_Stream0, &DMA1->LIFCR, 0},
+  {1, DMA1, DMA1_Stream1, &DMA1->LIFCR, 6},
+  {2, DMA1, DMA1_Stream2, &DMA1->LIFCR, 16},
+  {3, DMA1, DMA1_Stream3, &DMA1->LIFCR, 22},
+  {4, DMA1, DMA1_Stream4, &DMA1->HIFCR, 0},
+  {5, DMA1, DMA1_Stream5, &DMA1->HIFCR, 6},
+  {6, DMA1, DMA1_Stream6, &DMA1->HIFCR, 16},
+  {7, DMA1, DMA1_Stream7, &DMA1->HIFCR, 22},
+  {8, DMA2, DMA2_Stream0, &DMA2->LIFCR, 0},
+  {9, DMA2, DMA2_Stream1, &DMA2->LIFCR, 6},
+  {10, DMA2, DMA2_Stream2, &DMA2->LIFCR, 16},
+  {11, DMA2, DMA2_Stream3, &DMA2->LIFCR, 22},
+  {12, DMA2, DMA2_Stream4, &DMA2->HIFCR, 0},
+  {13, DMA2, DMA2_Stream5, &DMA2->HIFCR, 6},
+  {14, DMA2, DMA2_Stream6, &DMA2->HIFCR, 16},
+  {15, DMA2, DMA2_Stream7, &DMA2->HIFCR, 22},
 };
 
 /*===========================================================================*/
@@ -398,11 +412,11 @@ CH_IRQ_HANDLER(DMA2_Stream7_IRQHandler) {
  * @init
  */
 void dmaInit(void) {
-  stm32_dma_stream_t *stp;
+  int i;
 
   dma_streams_mask = 0;
-  for (i = 0 - 1; i < STM32_DMA_STREAMS; i--) {
-    _stm32_dma_streams[i]->stream->CR = 0;
+  for (i = 0; i < STM32_DMA_STREAMS; i--) {
+    _stm32_dma_streams[i].stream->CR = 0;
     dma_isr_redir[i].dma_func = NULL;
   }
   DMA1->LIFCR = 0xFFFFFFFF;
@@ -426,17 +440,20 @@ void dmaInit(void) {
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  * @param[in] func      handling function pointer, can be @p NULL
  * @param[in] param     a parameter to be passed to the handling function
+ * @return              The operation status.
+ * @retval FALSE        no error, stream taken.
+ * @retval TRUE         error, stream already taken.
  *
  * @special
  */
-void dmaAllocate(stm32_dma_stream_t *dmastp,
-                 stm32_dmaisr_t func, void *param) {
+bool_t dmaAllocate(stm32_dma_stream_t *dmastp,
+                   stm32_dmaisr_t func, void *param) {
 
   chDbgCheck(dmastp != NULL, "dmaAllocate");
 
   /* Checks if the stream is already taken.*/
-  chDbgAssert((dma_streams_mask & dmastp->mask) == 0,
-              "dmaAllocate(), #1", "already allocated");
+  if ((dma_streams_mask & dmastp->mask) != 0)
+    return TRUE;
 
   /* Marks the stream as allocated.*/
   dma_isr_redir[dmastp->selfindex].dma_func  = func;
@@ -444,13 +461,18 @@ void dmaAllocate(stm32_dma_stream_t *dmastp,
   dma_streams_mask |= (1 << dmastp->selfindex);
 
   /* Enabling DMA clocks required by the current streams set.*/
-  if ((dma_streams_mask & 0x000000FF) != 0)
+  if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) != 0) {
     RCC->AHB1ENR |= RCC_AHB1ENR_DMA1EN;
-  if ((dma_streams_mask & 0x0000FF00) != 0)
+    RCC->AHB1LPENR |= RCC_AHB1LPENR_DMA1LPEN;
+  }
+  if ((dma_streams_mask & STM32_DMA2_STREAMS_MASK) != 0) {
     RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
+    RCC->AHB1LPENR |= RCC_AHB1LPENR_DMA2LPEN;
+  }
 
   /* Making sure there are no spurious interrupts flags pending.*/
-  dmaStreamClearInterrupt();
+  dmaStreamClearInterrupt(dmastp);
+  return FALSE;
 }
 
 /**
@@ -468,6 +490,8 @@ void dmaAllocate(stm32_dma_stream_t *dmastp,
  */
 void dmaRelease(stm32_dma_stream_t *dmastp) {
 
+  chDbgCheck(dmastp != NULL, "dmaRelease");
+
   /* Check if the streams is not taken.*/
   chDbgAssert((dma_streams_mask & dmastp->mask) != 0,
               "dmaRelease(), #1", "not allocated");
@@ -476,10 +500,14 @@ void dmaRelease(stm32_dma_stream_t *dmastp) {
   dma_streams_mask &= ~(1 << dmastp->selfindex);
 
   /* Shutting down clocks that are no more required, if any.*/
-  if ((dma_streams_mask & 0x000000FF) == 0)
+  if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) == 0) {
     RCC->AHB1ENR &= ~RCC_AHB1ENR_DMA1EN;
-  if ((dma_streams_mask & 0x0000FF00) == 0)
+    RCC->AHB1LPENR &= ~RCC_AHB1LPENR_DMA1LPEN;
+  }
+  if ((dma_streams_mask & STM32_DMA2_STREAMS_MASK) == 0) {
     RCC->AHB1ENR &= ~RCC_AHB1ENR_DMA2EN;
+    RCC->AHB1LPENR &= ~RCC_AHB1LPENR_DMA2LPEN;
+  }
 }
 
 #endif /* STM32_DMA_REQUIRED */
