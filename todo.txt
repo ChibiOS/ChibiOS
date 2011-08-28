@@ -18,6 +18,8 @@ X STM32L support.
 X STM32L-Discovery demo and article.
 X File System infrastructure.
 X STM32F2xx support.
+- USB and USB_SERIAL APIs reclassification (if needed), incorporate the USB
+  bus attach/detach handling in usbStart()/usbStop().
 - MMC_SPI driver revision and speedup.
 - Test suite overhaul, the API should be more generic in order to be used
   with different subsystems and not just the kernel.
