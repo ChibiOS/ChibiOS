@@ -20,9 +20,11 @@
 
 /**
  * @file    DMAv1/stm32_dma.h
- * @brief   STM32 DMA helper driver header.
- * @note    This file requires definitions from the ST STM32 header file
- *          stm32f10x.h.
+ * @brief   DMA helper driver header.
+ * @note    This file requires definitions from the ST header files
+ *          stm32f10x.h or stm32l1xx.h.
+ * @note    This driver uses the new naming convention used for the STM32F2xx
+ *          so the "DMA channels" are referred as "DMA streams".
  *
  * @addtogroup STM32_DMA
  * @{
@@ -35,13 +37,80 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/** @brief DMA1 identifier.*/
-#define STM32_DMA1_ID 0
-
-/** @brief DMA2 identifier.*/
+/**
+ * @brief   Total number of DMA streams.
+ * @note    This is the total number of streams among all the DMA units.
+ */
 #if STM32_HAS_DMA2 || defined(__DOXYGEN__)
-#define STM32_DMA2_ID 1
+#define STM32_DMA_STREAMS           12
+#else
+#define STM32_DMA_STREAMS           7
 #endif
+
+/**
+ * @brief   Mask of the ISR bits passed to the DMA callback functions.
+ */
+#define STM32_DMA_ISR_MASK          0x0F
+
+/**
+ * @name    DMA streams identifiers
+ * @{
+ */
+#define STM32_DMA1_STREAM1          (&_stm32_dma_streams[0])
+#define STM32_DMA1_STREAM2          (&_stm32_dma_streams[1])
+#define STM32_DMA1_STREAM3          (&_stm32_dma_streams[2])
+#define STM32_DMA1_STREAM4          (&_stm32_dma_streams[3])
+#define STM32_DMA1_STREAM5          (&_stm32_dma_streams[4])
+#define STM32_DMA1_STREAM6          (&_stm32_dma_streams[5])
+#define STM32_DMA1_STREAM7          (&_stm32_dma_streams[6])
+#define STM32_DMA2_STREAM1          (&_stm32_dma_streams[8])
+#define STM32_DMA2_STREAM2          (&_stm32_dma_streams[9])
+#define STM32_DMA2_STREAM3          (&_stm32_dma_streams[10])
+#define STM32_DMA2_STREAM4          (&_stm32_dma_streams[11])
+#define STM32_DMA2_STREAM5          (&_stm32_dma_streams[12])
+/** @} */
+
+/**
+ * @name    CR register constants common to all DMA types
+ */
+#define STM32_DMA_CR_EN             DMA_CCR1_EN
+#define STM32_DMA_CR_TEIE           DMA_CCR1_TEIE
+#define STM32_DMA_CR_HTIE           DMA_CCR1_HTIE
+#define STM32_DMA_CR_TCIE           DMA_CCR1_TCIE
+#define STM32_DMA_CR_DIR_MASK       (DMA_CCR1_DIR | DMA_CCR1_MEM2MEM)
+#define STM32_DMA_CR_DIR_P2M        0
+#define STM32_DMA_CR_DIR_M2P        DMA_CCR1_DIR
+#define STM32_DMA_CR_DIR_M2M        DMA_CCR1_MEM2MEM
+#define STM32_DMA_CR_CIRC           DMA_CCR1_CIRC
+#define STM32_DMA_CR_PINC           DMA_CCR1_PINC
+#define STM32_DMA_CR_MINC           DMA_CCR1_MINC
+#define STM32_DMA_CR_PSIZE_MASK     DMA_CCR1_PSIZE
+#define STM32_DMA_CR_PSIZE_BYTE     0
+#define STM32_DMA_CR_PSIZE_HWORD    DMA_CCR1_PSIZE_0
+#define STM32_DMA_CR_PSIZE_WORD     DMA_CCR1_PSIZE_1
+#define STM32_DMA_CR_MSIZE_MASK     DMA_CCR1_MSIZE
+#define STM32_DMA_CR_MSIZE_BYTE     0
+#define STM32_DMA_CR_MSIZE_HWORD    DMA_CCR1_MSIZE_0
+#define STM32_DMA_CR_MSIZE_WORD     DMA_CCR1_MSIZE_1
+#define STM32_DMA_CR_PL_MASK        DMA_CCR1_PL
+#define STM32_DMA_CR_PL(n)          ((n) << 12)
+/** @} */
+/**
+ * @name    CR register constants only found in enhanced DMA
+ */
+#define STM32_DMA_CR_CHSEL_MASK     0   /**< @brief Ignored by normal DMA.  */
+#define STM32_DMA_CR_CHSEL(n)       0   /**< @brief Ignored by normal DMA.  */
+/** @} */
+
+/**
+ * @name    Status flags passed to the ISR callbacks
+ */
+#define STM32_DMA_ISR_FEIF          0
+#define STM32_DMA_ISR_DMEIF         0
+#define STM32_DMA_ISR_TEIF          DMA_ISR_TEIF1
+#define STM32_DMA_ISR_HTIF          DMA_ISR_HTIF1
+#define STM32_DMA_ISR_TCIF          DMA_ISR_TCIF1
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -56,33 +125,23 @@
 /*===========================================================================*/
 
 /**
- * @brief   STM32 DMA channel memory structure type.
+ * @brief   STM32 DMA stream descriptor structure.
  */
 typedef struct {
-  volatile uint32_t     CCR;
-  volatile uint32_t     CNDTR;
-  volatile uint32_t     CPAR;
-  volatile uint32_t     CMAR;
-  volatile uint32_t     dummy;
-} stm32_dma_channel_t;
-
-/**
- * @brief   STM32 DMA subsystem memory structure type.
- * @note    This structure has been redefined here because it is convenient to
- *          have the channels organized as an array, the ST header does not
- *          do that.
- */
-typedef struct {
-  volatile uint32_t     ISR;
-  volatile uint32_t     IFCR;
-  stm32_dma_channel_t   channels[7];
-} stm32_dma_t;
+  DMA_Channel_TypeDef   *channel;       /**< @brief Associated DMA channel. */
+  volatile uint32_t     *ifcr;          /**< @brief Associated IFCR reg.    */
+  uint8_t               ishift;         /**< @brief Bits offset in xIFCR
+                                             register.                      */
+  uint8_t               selfindex;      /**< @brief Index to self in array. */
+  uint8_t               vector;         /**< @brief Associated IRQ vector.  */
+} stm32_dma_stream_t;
 
 /**
  * @brief   STM32 DMA ISR function type.
  *
  * @param[in] p         parameter for the registered function
- * @param[in] flags     pre-shifted content of the ISR register
+ * @param[in] flags     pre-shifted content of the ISR register, the bits
+ *                      are aligned to bit zero
  */
 typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 
@@ -90,186 +149,122 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
-/** DMA1 registers block numeric address.*/
-#define STM32_DMA1_BASE         (AHBPERIPH_BASE + 0x0000)
-/** Pointer to the DMA1 registers block.*/
-#define STM32_DMA1              ((stm32_dma_t *)STM32_DMA1_BASE)
-/** Pointer to the DMA1 channel 1 registers block.*/
-#define STM32_DMA1_CH1          (&STM32_DMA1->channels[0])
-/** Pointer to the DMA1 channel 2 registers block.*/
-#define STM32_DMA1_CH2          (&STM32_DMA1->channels[1])
-/** Pointer to the DMA1 channel 3 registers block.*/
-#define STM32_DMA1_CH3          (&STM32_DMA1->channels[2])
-/** Pointer to the DMA1 channel 4 registers block.*/
-#define STM32_DMA1_CH4          (&STM32_DMA1->channels[3])
-/** Pointer to the DMA1 channel 5 registers block.*/
-#define STM32_DMA1_CH5          (&STM32_DMA1->channels[4])
-/** Pointer to the DMA1 channel 6 registers block.*/
-#define STM32_DMA1_CH6          (&STM32_DMA1->channels[5])
-/** Pointer to the DMA1 channel 7 registers block.*/
-#define STM32_DMA1_CH7          (&STM32_DMA1->channels[6])
-
-#if STM32_HAS_DMA2 || defined(__DOXYGEN__)
-/** DMA2 registers block numeric address.*/
-#define STM32_DMA2_BASE         (AHBPERIPH_BASE + 0x0400)
-/** Pointer to the DMA2 registers block.*/
-#define STM32_DMA2              ((stm32_dma_t *)STM32_DMA2_BASE)
-/** Pointer to the DMA2 channel 1 registers block.*/
-#define STM32_DMA2_CH1          (&STM32_DMA2->channels[0])
-/** Pointer to the DMA2 channel 2 registers block.*/
-#define STM32_DMA2_CH2          (&STM32_DMA2->channels[1])
-/** Pointer to the DMA2 channel 3 registers block.*/
-#define STM32_DMA2_CH3          (&STM32_DMA2->channels[2])
-/** Pointer to the DMA2 channel 4 registers block.*/
-#define STM32_DMA2_CH4          (&STM32_DMA2->channels[3])
-/** Pointer to the DMA2 channel 5 registers block.*/
-#define STM32_DMA2_CH5          (&STM32_DMA2->channels[4])
-#endif
-
-#define STM32_DMA_CHANNEL_1     0       /**< @brief DMA channel 1.          */
-#define STM32_DMA_CHANNEL_2     1       /**< @brief DMA channel 2.          */
-#define STM32_DMA_CHANNEL_3     2       /**< @brief DMA channel 3.          */
-#define STM32_DMA_CHANNEL_4     3       /**< @brief DMA channel 4.          */
-#define STM32_DMA_CHANNEL_5     4       /**< @brief DMA channel 5.          */
-#define STM32_DMA_CHANNEL_6     5       /**< @brief DMA channel 6.          */
-#define STM32_DMA_CHANNEL_7     6       /**< @brief DMA channel 7.          */
-
 /**
- * @brief   Associates a peripheral data register to a DMA channel.
+ * @brief   Associates a peripheral data register to a DMA stream.
  * @note    This function can be invoked in both ISR or thread context.
  *
- * @param[in] dmachp    dmachp to a stm32_dma_channel_t structure
- * @param[in] cpar      value to be written in the CPAR register
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
+ * @param[in] addr      value to be written in the CPAR register
  *
  * @special
  */
-#define dmaChannelSetPeripheral(dmachp, cpar) {                             \
-  (dmachp)->CPAR  = (uint32_t)(cpar);                                       \
+#define dmaStreamSetPeripheral(dmastp, addr) {                              \
+  (dmastp)->channel->CPAR  = (uint32_t)(addr);                              \
 }
 
 /**
- * @brief   DMA channel setup by channel pointer.
- * @note    This macro does not change the CPAR register because that register
- *          value does not change frequently, it usually points to a peripheral
- *          data register.
+ * @brief   Associates a memory destination to a DMA stream.
  * @note    This function can be invoked in both ISR or thread context.
  *
- * @param[in] dmachp    pointer to a stm32_dma_channel_t structure
- * @param[in] cndtr     value to be written in the CNDTR register
- * @param[in] cmar      value to be written in the CMAR register
- * @param[in] ccr       value to be written in the CCR register
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
+ * @param[in] addr      value to be written in the CMAR register
  *
  * @special
  */
-#define dmaChannelSetup(dmachp, cndtr, cmar, ccr) {                         \
-  (dmachp)->CNDTR = (uint32_t)(cndtr);                                      \
-  (dmachp)->CMAR  = (uint32_t)(cmar);                                       \
-  (dmachp)->CCR   = (uint32_t)(ccr);                                        \
+#define dmaStreamSetMemory0(dmastp, addr) {                                 \
+  (dmastp)->channel->CMAR  = (uint32_t)(addr);                              \
 }
 
 /**
- * @brief   DMA channel enable by channel pointer.
+ * @brief   Sets the number of transfers to be performed.
  * @note    This function can be invoked in both ISR or thread context.
  *
- * @param[in] dmachp    pointer to a stm32_dma_channel_t structure
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
+ * @param[in] size      value to be written in the CNDTR register
  *
  * @special
  */
-#define dmaChannelEnable(dmachp) {                                          \
-  (dmachp)->CCR |= DMA_CCR1_EN;                                             \
+#define dmaStreamSetTransactionSize(dmastp, size) {                         \
+  (dmastp)->channel->CNDTR  = (uint32_t)(size);                             \
 }
 
 /**
- * @brief   DMA channel disable by channel pointer.
+ * @brief   Returns the number of transfers to be performed.
  * @note    This function can be invoked in both ISR or thread context.
  *
- * @param[in] dmachp    pointer to a stm32_dma_channel_t structure
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
+ * @return              The number of transfers to be performed.
  *
  * @special
  */
-#define dmaChannelDisable(dmachp) {                                         \
-  (dmachp)->CCR = 0;                                                        \
+#define dmaStreamGetTransactionSize(dmastp) ((size_t)((dmastp)->channel->CNDTR))
+
+/**
+ * @brief   Programs the stream mode settings.
+ * @note    This function can be invoked in both ISR or thread context.
+ *
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
+ * @param[in] mode      value to be written in the CCR register
+ *
+ * @special
+ */
+#define dmaStreamSetMode(dmastp, mode) {                                    \
+  (dmastp)->channel->CCR  = (uint32_t)(mode);                               \
 }
 
 /**
- * @brief   DMA channel setup by channel ID.
- * @note    This macro does not change the CPAR register because that register
- *          value does not change frequently, it usually points to a peripheral
- *          data register.
- * @note    Channels are numbered from 0 to 6, use the appropriate macro
- *          as parameter.
+ * @brief   DMA stream enable.
  * @note    This function can be invoked in both ISR or thread context.
  *
- * @param[in] dmap      pointer to a stm32_dma_t structure
- * @param[in] ch        channel number
- * @param[in] cndtr     value to be written in the CNDTR register
- * @param[in] cmar      value to be written in the CMAR register
- * @param[in] ccr       value to be written in the CCR register
+ * @param[in] dmachp    pointer to a stm32_dma_stream_t structure
  *
  * @special
  */
-#define dmaSetupChannel(dmap, ch, cndtr, cmar, ccr) {                       \
-  dmaChannelSetup(&(dmap)->channels[ch], (cndtr), (cmar), (ccr));           \
+#define dmaStreamEnable(dmastp) {                                           \
+  (dmastp)->channel->CCR |= STM32_DMA_CR_EN;                                \
 }
 
 /**
- * @brief   DMA channel enable by channel ID.
- * @note    Channels are numbered from 0 to 6, use the appropriate macro
- *          as parameter.
+ * @brief   DMA stream disable.
  * @note    This function can be invoked in both ISR or thread context.
  *
- * @param[in] dmap      pointer to a stm32_dma_t structure
- * @param[in] ch        channel number
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  *
  * @special
  */
-#define dmaEnableChannel(dmap, ch) {                                        \
-  dmaChannelEnable(&(dmap)->channels[ch]);                                  \
+#define dmaStreamDisable(dmastp) {                                          \
+  (dmastp)->channel->CCR &= ~STM32_DMA_CR_EN;                               \
 }
 
 /**
- * @brief   DMA channel disable by channel ID.
- * @note    Channels are numbered from 0 to 6, use the appropriate macro
- *          as parameter.
+ * @brief   DMA stream interrupt sources clear.
  * @note    This function can be invoked in both ISR or thread context.
  *
- * @param[in] dmap      pointer to a stm32_dma_t structure
- * @param[in] ch        channel number
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  *
  * @special
  */
-#define dmaDisableChannel(dmap, ch) {                                       \
-  dmaChannelDisable(&(dmap)->channels[ch]);                                 \
-}
-
-/**
- * @brief   DMA channel interrupt sources clear.
- * @details Sets the appropriate CGIF bit into the IFCR register in order to
- *          withdraw all the pending interrupt bits from the ISR register.
- * @note    Channels are numbered from 0 to 6, use the appropriate macro
- *          as parameter.
- * @note    This function can be invoked in both ISR or thread context.
- *
- * @param[in] dmap      pointer to a stm32_dma_t structure
- * @param[in] ch        channel number
- *
- * @special
- */
-#define dmaClearChannel(dmap, ch) {                                         \
-  (dmap)->IFCR = 1 << ((ch) * 4);                                           \
+#define dmaStreamClearInterrupt(dmastp) {                                   \
+  *(dmastp)->ifcr = STM32_DMA_ISR_MASK << (dmastp)->ishift;                 \
 }
 
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+#if !defined(__DOXYGEN__)
+extern const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS];
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
   void dmaInit(void);
-  void dmaAllocate(uint32_t dma, uint32_t channel,
-                   stm32_dmaisr_t func, void *param);
-  void dmaRelease(uint32_t dma, uint32_t channel);
+  bool_t dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
+                           uint32_t priority,
+                           stm32_dmaisr_t func,
+                           void *param);
+  void dmaStreamRelease(const stm32_dma_stream_t *dmastp);
 #ifdef __cplusplus
 }
 #endif
