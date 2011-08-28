@@ -155,13 +155,12 @@
  * @brief   STM32 DMA stream descriptor structure.
  */
 typedef struct {
-  uint32_t              selfindex;      /**< @brief Index to self in array. */
-  DMA_TypeDef           *dma;           /**< @brief Associated DMA unit.    */
-  DMA_Stream_TypeDef    *stream;        /**< @brief Associated DMA stream.  */
-  volatile uint32_t     *isr;           /**< @brief Associated xISR reg.    */
-  volatile uint32_t     *ifcr;          /**< @brief Associated xIFCR reg.   */
-  uint32_t              ishift;         /**< @brief Bits offset in xIFCR
-                                             registers.                     */
+  DMA_Channel_TypeDef   *channel;       /**< @brief Associated DMA channel. */
+  volatile uint32_t     *ifcr;          /**< @brief Associated IFCR reg.    */
+  uint8_t               ishift;         /**< @brief Bits offset in xIFCR
+                                             register.                      */
+  uint8_t               selfindex;      /**< @brief Index to self in array. */
+  uint8_t               vector;         /**< @brief Associated IRQ vector.  */
 } stm32_dma_stream_t;
 
 /**
@@ -250,7 +249,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @special
  */
 #define dmaStreamSetMode(dmastp, mode) {                                    \
-  (dmastp)->stream->CR  = (uint32_t)(mode2);                                \
+  (dmastp)->stream->CR  = (uint32_t)(mode);                                 \
 }
 
 /**
@@ -314,9 +313,11 @@ extern const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS];
 extern "C" {
 #endif
   void dmaInit(void);
-  bool_t dmaAllocate(const stm32_dma_stream_t *dmastp,
-                     stm32_dmaisr_t func, void *param);
-  void dmaRelease(const stm32_dma_stream_t *dmastp);
+  bool_t dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
+                           uint32_t priority,
+                           stm32_dmaisr_t func,
+                           void *param);
+  void dmaStreamRelease(const stm32_dma_stream_t *dmastp);
 #ifdef __cplusplus
 }
 #endif

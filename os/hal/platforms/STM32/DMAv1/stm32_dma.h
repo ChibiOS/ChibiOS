@@ -95,6 +95,7 @@
 #define STM32_DMA_CR_PL_MASK        DMA_CCR1_PL
 #define STM32_DMA_CR_PL(n)          ((n) << 12)
 /** @} */
+
 /**
  * @name    CR register constants only found in enhanced DMA
  */

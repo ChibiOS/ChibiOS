@@ -54,6 +54,16 @@
  */
 #define STM32_DMA2_STREAMS_MASK     0x0000FF00
 
+/**
+ * @brief   Post-reset value of the stream CR register.
+ */
+#define STM32_DMA_CR_RESET_VALUE    0x00000000
+
+/**
+ * @brief   Post-reset value of the stream FCR register.
+ */
+#define STM32_DMA_FCR_RESET_VALUE   0x00000021
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -428,13 +438,15 @@ void dmaInit(void) {
 /**
  * @brief   Allocates a DMA stream.
  * @details The stream is allocated and, if required, the DMA clock enabled.
- *          Trying to allocate a stream already allocated is an illegal
- *          operation and is trapped if assertions are enabled.
- * @pre     The stream must not be already in use.
+ *          The function also enables the IRQ vector associated to the stream
+ *          and initializes its priority.
+ * @pre     The stream must not be already in use or an error is returned.
  * @post    The stream is allocated and the default ISR handler redirected
  *          to the specified function.
- * @post    The stream must be freed using @p dmaRelease() before it can
+ * @post    The stream ISR vector is enabled and its priority configured.
+ * @post    The stream must be freed using @p dmaStreamRelease() before it can
  *          be reused with another peripheral.
+ * @post    The stream is in its post-reset state.
  * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
@@ -446,8 +458,10 @@ void dmaInit(void) {
  *
  * @special
  */
-bool_t dmaAllocate(const stm32_dma_stream_t *dmastp,
-                   stm32_dmaisr_t func, void *param) {
+bool_t dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
+                         uint32_t priority,
+                         stm32_dmaisr_t func,
+                         void *param) {
 
   chDbgCheck(dmastp != NULL, "dmaAllocate");
 
@@ -470,8 +484,15 @@ bool_t dmaAllocate(const stm32_dma_stream_t *dmastp,
     RCC->AHB1LPENR |= RCC_AHB1LPENR_DMA2LPEN;
   }
 
-  /* Making sure there are no spurious interrupts flags pending.*/
+  /* Putting the stream in a safe state.*/
+  dmaStreamDisable(dmastp);
   dmaStreamClearInterrupt(dmastp);
+  dmastp->channel->CCR = STM32_DMA_CCR_RESET_VALUE;
+
+  /* Enables the associated IRQ vector if a callback is defined.*/
+  if (func != NULL)
+    NVICEnableVector(dmastp->vector, CORTEX_PRIORITY_MASK(priority));
+
   return FALSE;
 }
 
@@ -480,7 +501,7 @@ bool_t dmaAllocate(const stm32_dma_stream_t *dmastp,
  * @details The stream is freed and, if required, the DMA clock disabled.
  *          Trying to release a unallocated stream is an illegal operation
  *          and is trapped if assertions are enabled.
- * @pre     The stream must have been allocated using @p dmaRequest().
+ * @pre     The stream must have been allocated using @p dmaStreamAllocate().
  * @post    The stream is again available.
  * @note    This function can be invoked in both ISR or thread context.
  *
@@ -488,13 +509,16 @@ bool_t dmaAllocate(const stm32_dma_stream_t *dmastp,
  *
  * @special
  */
-void dmaRelease(const stm32_dma_stream_t *dmastp) {
+void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
 
   chDbgCheck(dmastp != NULL, "dmaRelease");
 
   /* Check if the streams is not taken.*/
   chDbgAssert((dma_streams_mask & dmastp->mask) != 0,
               "dmaRelease(), #1", "not allocated");
+
+  /* Disables the associated IRQ vector.*/
+  NVICDisableVector(dmastp->vector);
 
   /* Marks the stream as not allocated.*/
   dma_streams_mask &= ~(1 << dmastp->selfindex);
