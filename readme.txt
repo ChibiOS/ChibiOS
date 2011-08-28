@@ -89,6 +89,9 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: New DMA helper driver for STM32, it simplifies the use of the DMA
+  resources and hides most differences with the new enhanced DMA units
+  found in the STM32F2xx sub-family.
 - NEW: Now an error is generated at compile time when trying to enable the
   options CH_DBG_ENABLE_STACK_CHECK on ports that do not support it.
 - NEW: Added a kernel-only Cortex-Mx demo as reference project for users not

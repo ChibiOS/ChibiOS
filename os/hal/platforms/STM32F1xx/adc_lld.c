@@ -58,17 +58,17 @@ static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
 
   /* DMA errors handling.*/
 #if defined(STM32_ADC_DMA_ERROR_HOOK)
-  if ((flags & DMA_ISR_TEIF1) != 0) {
+  if ((flags & STM32_DMA_ISR_TEIF) != 0) {
     STM32_ADC_DMA_ERROR_HOOK(spip);
   }
 #else
   (void)flags;
 #endif
-  if ((flags & DMA_ISR_HTIF1) != 0) {
+  if ((flags & STM32_DMA_ISR_HTIF) != 0) {
     /* Half transfer processing.*/
     _adc_isr_half_code(adcp);
   }
-  if ((flags & DMA_ISR_TCIF1) != 0) {
+  if ((flags & STM32_DMA_ISR_TCIF) != 0) {
     /* Transfer complete processing.*/
     _adc_isr_full_code(adcp);
   }
@@ -93,10 +93,11 @@ void adc_lld_init(void) {
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
   ADCD1.adc = ADC1;
-  ADCD1.dmachp = STM32_DMA1_CH1;
-  ADCD1.dmaccr = (STM32_ADC_ADC1_DMA_PRIORITY << 12) |
-                    DMA_CCR1_EN   | DMA_CCR1_MSIZE_0 | DMA_CCR1_PSIZE_0 |
-                    DMA_CCR1_MINC | DMA_CCR1_TCIE    | DMA_CCR1_TEIE;
+  ADCD1.dmastp  = STM32_DMA1_STREAM1;
+  ADCD1.dmamode = STM32_DMA_CR_PL(STM32_ADC_ADC1_DMA_PRIORITY) |
+                  STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
+                  STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
+                  STM32_DMA_CR_TEIE        | STM32_DMA_CR_EN;
 
   /* Temporary activation.*/
   RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
@@ -132,11 +133,13 @@ void adc_lld_start(ADCDriver *adcp) {
   if (adcp->state == ADC_STOP) {
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
-      dmaAllocate(STM32_DMA1_ID, STM32_DMA_CHANNEL_1,
-                  (stm32_dmaisr_t)adc_lld_serve_rx_interrupt, (void *)adcp);
-      NVICEnableVector(DMA1_Channel1_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_ADC_ADC1_IRQ_PRIORITY));
-      dmaChannelSetPeripheral(adcp->dmachp, &ADC1->DR);
+      bool_t b;
+      b = dmaStreamAllocate(adcp->dmastp,
+                            STM32_ADC_ADC1_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
+                            (void *)adcp);
+      chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
+      dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
       RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
     }
 #endif
@@ -163,8 +166,7 @@ void adc_lld_stop(ADCDriver *adcp) {
     if (&ADCD1 == adcp) {
       ADC1->CR1 = 0;
       ADC1->CR2 = 0;
-      NVICDisableVector(DMA1_Channel1_IRQn);
-      dmaRelease(STM32_DMA1_ID, STM32_DMA_CHANNEL_1);
+      dmaStreamRelease(adcp->dmastp);
       RCC->APB2ENR &= ~RCC_APB2ENR_ADC1EN;
     }
 #endif
@@ -179,27 +181,28 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
-  uint32_t ccr, n;
+  uint32_t mode, n;
   const ADCConversionGroup *grpp = adcp->grpp;
 
   /* DMA setup.*/
-  ccr = adcp->dmaccr;
+  mode = adcp->dmamode;
   if (grpp->circular)
-    ccr |= DMA_CCR1_CIRC;
+    mode |= STM32_DMA_CR_CIRC;
   if (adcp->depth > 1) {
     /* If the buffer depth is greater than one then the half transfer interrupt
        interrupt is enabled in order to allows streaming processing.*/
-    ccr |= DMA_CCR1_HTIE;
+    mode |= STM32_DMA_CR_HTIE;
     n = (uint32_t)grpp->num_channels * (uint32_t)adcp->depth;
   }
   else
     n = (uint32_t)grpp->num_channels;
-  dmaChannelSetup(adcp->dmachp, n, adcp->samples, ccr);
+  dmaStreamSetMemory0(adcp->dmastp, adcp->samples);
+  dmaStreamSetTransactionSize(adcp->dmastp, n);
+  dmaStreamSetMode(adcp->dmastp, mode);
 
   /* ADC setup.*/
   adcp->adc->CR1   = grpp->cr1 | ADC_CR1_SCAN;
-  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_DMA |
-                        ADC_CR2_CONT | ADC_CR2_ADON;
+  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_DMA | ADC_CR2_CONT | ADC_CR2_ADON;
   adcp->adc->SMPR1 = grpp->smpr1;
   adcp->adc->SMPR2 = grpp->smpr2;
   adcp->adc->SQR1  = grpp->sqr1;
@@ -207,8 +210,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   adcp->adc->SQR3  = grpp->sqr3;
 
   /* ADC start by writing ADC_CR2_ADON a second time.*/
-  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_DMA |
-                        ADC_CR2_CONT | ADC_CR2_ADON;
+  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_DMA | ADC_CR2_CONT | ADC_CR2_ADON;
 }
 
 /**
@@ -220,7 +222,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
  */
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 
-  dmaChannelDisable(adcp->dmachp);
+  dmaStreamDisable(adcp->dmastp);
   adcp->adc->CR2 = 0;
 }
 

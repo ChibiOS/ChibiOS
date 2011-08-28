@@ -217,17 +217,28 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 }
 
 /**
- * @brief   Associates an alternate memory destination to a DMA stream.
+ * @brief   Sets the number of transfers to be performed.
  * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
- * @param[in] size      value to be written in the NDTR register
+ * @param[in] size      value to be written in the CNDTR register
  *
  * @special
  */
 #define dmaStreamSetTransactionSize(dmastp, size) {                         \
   (dmastp)->stream->NDTR  = (uint32_t)(size);                               \
 }
+
+/**
+ * @brief   Returns the number of transfers to be performed.
+ * @note    This function can be invoked in both ISR or thread context.
+ *
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
+ * @return              The number of transfers to be performed.
+ *
+ * @special
+ */
+#define dmaStreamGetTransactionSize(dmastp) ((size_t)((dmastp)->stream->NDTR))
 
 /**
  * @brief   Programs the stream mode settings.
@@ -303,9 +314,9 @@ extern const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS];
 extern "C" {
 #endif
   void dmaInit(void);
-  bool_t dmaAllocate(stm32_dma_stream_t *dmastp,
+  bool_t dmaAllocate(const stm32_dma_stream_t *dmastp,
                      stm32_dmaisr_t func, void *param);
-  void dmaRelease(stm32_dma_stream_t *dmastp);
+  void dmaRelease(const stm32_dma_stream_t *dmastp);
 #ifdef __cplusplus
 }
 #endif

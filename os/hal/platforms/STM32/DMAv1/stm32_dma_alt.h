@@ -93,7 +93,7 @@
 #define STM32_DMA_CR_MSIZE_HWORD    DMA_CCR1_MSIZE_0
 #define STM32_DMA_CR_MSIZE_WORD     DMA_CCR1_MSIZE_1
 #define STM32_DMA_CR_PL_MASK        DMA_CCR1_PL
-#define STM32_DMA_CR_PL(n)          ((n) << 16)
+#define STM32_DMA_CR_PL(n)          ((n) << 12)
 /** @} */
 /**
  * @name    CR register constants only found in enhanced DMA
@@ -128,12 +128,12 @@
  * @brief   STM32 DMA stream descriptor structure.
  */
 typedef struct {
-  uint32_t              selfindex;      /**< @brief Index to self in array. */
-  DMA_TypeDef           *dma;           /**< @brief Associated DMA unit.    */
   DMA_Channel_TypeDef   *channel;       /**< @brief Associated DMA channel. */
   volatile uint32_t     *ifcr;          /**< @brief Associated IFCR reg.    */
-  uint32_t              ishift;         /**< @brief Bits offset in xIFCR
+  uint8_t               ishift;         /**< @brief Bits offset in xIFCR
                                              register.                      */
+  uint8_t               selfindex;      /**< @brief Index to self in array. */
+  uint8_t               vector;         /**< @brief Associated IRQ vector.  */
 } stm32_dma_stream_t;
 
 /**
@@ -176,7 +176,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 }
 
 /**
- * @brief   Associates an alternate memory destination to a DMA stream.
+ * @brief   Sets the number of transfers to be performed.
  * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
@@ -189,6 +189,17 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 }
 
 /**
+ * @brief   Returns the number of transfers to be performed.
+ * @note    This function can be invoked in both ISR or thread context.
+ *
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
+ * @return              The number of transfers to be performed.
+ *
+ * @special
+ */
+#define dmaStreamGetTransactionSize(dmastp) ((size_t)((dmastp)->channel->CNDTR))
+
+/**
  * @brief   Programs the stream mode settings.
  * @note    This function can be invoked in both ISR or thread context.
  *
@@ -198,7 +209,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @special
  */
 #define dmaStreamSetMode(dmastp, mode) {                                    \
-  (dmastp)->channel->CCR  = (uint32_t)(mode2);                              \
+  (dmastp)->channel->CCR  = (uint32_t)(mode);                               \
 }
 
 /**
@@ -209,7 +220,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  *
  * @special
  */
-#define dmaStreamEnable(dmachp) {                                           \
+#define dmaStreamEnable(dmastp) {                                           \
   (dmastp)->channel->CCR |= STM32_DMA_CR_EN;                                \
 }
 
@@ -249,9 +260,11 @@ extern const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS];
 extern "C" {
 #endif
   void dmaInit(void);
-  bool_t dmaAllocate(stm32_dma_stream_t *dmastp,
-                     stm32_dmaisr_t func, void *param);
-  void dmaRelease(stm32_dma_stream_t *dmastp);
+  bool_t dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
+                           uint32_t priority,
+                           stm32_dmaisr_t func,
+                           void *param);
+  void dmaStreamRelease(const stm32_dma_stream_t *dmastp);
 #ifdef __cplusplus
 }
 #endif

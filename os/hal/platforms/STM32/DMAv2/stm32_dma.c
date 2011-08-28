@@ -415,7 +415,7 @@ void dmaInit(void) {
   int i;
 
   dma_streams_mask = 0;
-  for (i = 0; i < STM32_DMA_STREAMS; i--) {
+  for (i = 0; i < STM32_DMA_STREAMS; i++) {
     _stm32_dma_streams[i].stream->CR = 0;
     dma_isr_redir[i].dma_func = NULL;
   }
@@ -446,7 +446,7 @@ void dmaInit(void) {
  *
  * @special
  */
-bool_t dmaAllocate(stm32_dma_stream_t *dmastp,
+bool_t dmaAllocate(const stm32_dma_stream_t *dmastp,
                    stm32_dmaisr_t func, void *param) {
 
   chDbgCheck(dmastp != NULL, "dmaAllocate");
@@ -488,7 +488,7 @@ bool_t dmaAllocate(stm32_dma_stream_t *dmastp,
  *
  * @special
  */
-void dmaRelease(stm32_dma_stream_t *dmastp) {
+void dmaRelease(const stm32_dma_stream_t *dmastp) {
 
   chDbgCheck(dmastp != NULL, "dmaRelease");
 

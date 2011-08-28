@@ -174,20 +174,20 @@ typedef struct {
   /**
    * @brief Operation complete callback or @p NULL.
    */
-  spicallback_t         end_cb;
+  spicallback_t             end_cb;
   /* End of the mandatory fields.*/
   /**
    * @brief The chip select line port.
    */
-  ioportid_t            ssport;
+  ioportid_t                ssport;
   /**
    * @brief The chip select line pad number.
    */
-  uint16_t              sspad;
+  uint16_t                  sspad;
   /**
    * @brief SPI initialization data.
    */
-  uint16_t              cr1;
+  uint16_t                  cr1;
 } SPIConfig;
 
 /**
@@ -197,25 +197,25 @@ struct SPIDriver{
   /**
    * @brief Driver state.
    */
-  spistate_t            state;
+  spistate_t                state;
   /**
    * @brief Current configuration data.
    */
-  const SPIConfig       *config;
+  const SPIConfig           *config;
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
   /**
    * @brief Waiting thread.
    */
-  Thread                *thread;
+  Thread                    *thread;
 #endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief Mutex protecting the bus.
    */
-  Mutex                 mutex;
+  Mutex                     mutex;
 #elif CH_USE_SEMAPHORES
-  Semaphore             semaphore;
+  Semaphore                 semaphore;
 #endif
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
 #if defined(SPI_DRIVER_EXT_FIELDS)
@@ -225,19 +225,19 @@ struct SPIDriver{
   /**
    * @brief Pointer to the SPIx registers block.
    */
-  SPI_TypeDef           *spi;
+  SPI_TypeDef               *spi;
   /**
-   * @brief Pointer to the receive DMA channel registers block.
+   * @brief Receive DMA channel.
    */
-  stm32_dma_channel_t   *dmarx;
+  const stm32_dma_stream_t  *dmarx;
   /**
-   * @brief Pointer to the transmit DMA channel registers block.
+   * @brief Transmit DMA channel.
    */
-  stm32_dma_channel_t   *dmatx;
+  const stm32_dma_stream_t  *dmatx;
   /**
-   * @brief DMA priority bit mask.
+   * @brief DMA mode bit mask.
    */
-  uint32_t              dmaccr;
+  uint32_t                  dmamode;
 };
 
 /*===========================================================================*/

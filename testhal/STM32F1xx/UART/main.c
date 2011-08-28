@@ -26,9 +26,7 @@ static VirtualTimer vt1, vt2;
 static void restart(void *p) {
 
   (void)p;
-  chSysLockFromIsr();
   uartStartSendI(&UARTD2, 14, "Hello World!\r\n");
-  chSysUnlockFromIsr();
 }
 
 static void ledoff(void *p) {
@@ -48,7 +46,7 @@ static void txend1(UARTDriver *uartp) {
 }
 
 /*
- * This callback is invoked when a transmission has phisically completed.
+ * This callback is invoked when a transmission has physically completed.
  */
 static void txend2(UARTDriver *uartp) {
 
