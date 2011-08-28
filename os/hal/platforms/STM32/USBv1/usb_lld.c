@@ -105,7 +105,7 @@ static uint32_t pm_alloc(USBDriver *usbp, size_t size) {
 
   next = usbp->pmnext;
   usbp->pmnext += size;
-  chDbgAssert(usbp->pmnext > USB_PMA_SIZE, "pm_alloc(), #1", "PMA overflow");
+  chDbgAssert(usbp->pmnext <= USB_PMA_SIZE, "pm_alloc(), #1", "PMA overflow");
   return next;
 }
 

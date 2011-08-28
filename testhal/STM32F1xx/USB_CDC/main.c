@@ -114,7 +114,7 @@ static const uint8_t vcom_configuration_descriptor_data[67] = {
   USB_DESC_BYTE         (0x01),         /* bSlaveInterface0 (Data Class
                                            Interface).                      */
   /* Endpoint 2 Descriptor.*/
-  USB_DESC_ENDPOINT     (INTERRUPT_REQUEST_EP|0x80, /* bEndpointAddress.    */
+  USB_DESC_ENDPOINT     (USB_CDC_INTERRUPT_REQUEST_EP|0x80,
                          0x03,          /* bmAttributes (Interrupt).        */
                          0x0008,        /* wMaxPacketSize.                  */
                          0xFF),         /* bInterval.                       */
@@ -130,12 +130,12 @@ static const uint8_t vcom_configuration_descriptor_data[67] = {
                                            4.7).                            */
                          0x00),         /* iInterface.                      */
   /* Endpoint 3 Descriptor.*/
-  USB_DESC_ENDPOINT     (DATA_AVAILABLE_EP,         /* bEndpointAddress.    */
+  USB_DESC_ENDPOINT     (USB_CDC_DATA_AVAILABLE_EP,     /* bEndpointAddress.*/
                          0x02,          /* bmAttributes (Bulk).             */
                          0x0040,        /* wMaxPacketSize.                  */
                          0x00),         /* bInterval.                       */
   /* Endpoint 1 Descriptor.*/
-  USB_DESC_ENDPOINT     (DATA_REQUEST_EP|0x80,      /* bEndpointAddress.    */
+  USB_DESC_ENDPOINT     (USB_CDC_DATA_REQUEST_EP|0x80,  /* bEndpointAddress.*/
                          0x02,          /* bmAttributes (Bulk).             */
                          0x0040,        /* wMaxPacketSize.                  */
                          0x00)          /* bInterval.                       */
@@ -282,9 +282,9 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
        Note, this callback is invoked from an ISR so I-Class functions
        must be used.*/
     chSysLockFromIsr();
-    usbInitEndpointI(usbp, DATA_REQUEST_EP, &ep1config);
-    usbInitEndpointI(usbp, INTERRUPT_REQUEST_EP, &ep2config);
-    usbInitEndpointI(usbp, DATA_AVAILABLE_EP, &ep3config);
+    usbInitEndpointI(usbp, USB_CDC_DATA_REQUEST_EP, &ep1config);
+    usbInitEndpointI(usbp, USB_CDC_INTERRUPT_REQUEST_EP, &ep2config);
+    usbInitEndpointI(usbp, USB_CDC_DATA_AVAILABLE_EP, &ep3config);
     chSysUnlockFromIsr();
     return;
   case USB_EVENT_SUSPEND:

@@ -124,7 +124,7 @@ static void inotify(GenericQueue *qp) {
      emptied, then a whole packet is loaded in the queue.*/
   if (chIQIsEmptyI(&sdup->iqueue)) {
 
-    n = usbReadPacketI(sdup->config->usbp, DATA_AVAILABLE_EP,
+    n = usbReadPacketI(sdup->config->usbp, USB_CDC_DATA_AVAILABLE_EP,
                        sdup->iqueue.q_buffer, SERIAL_USB_BUFFERS_SIZE);
     if (n != USB_ENDPOINT_BUSY) {
       chIOAddFlagsI(sdup, IO_INPUT_AVAILABLE);
@@ -146,7 +146,7 @@ static void onotify(GenericQueue *qp) {
   /* If there is any data in the output queue then it is sent within a
      single packet and the queue is emptied.*/
   n = chOQGetFullI(&sdup->oqueue);
-  w = usbWritePacketI(sdup->config->usbp, DATA_REQUEST_EP,
+  w = usbWritePacketI(sdup->config->usbp, USB_CDC_DATA_REQUEST_EP,
                       sdup->oqueue.q_buffer, n);
   if (w != USB_ENDPOINT_BUSY) {
     chIOAddFlagsI(sdup, IO_OUTPUT_EMPTY);
@@ -211,10 +211,10 @@ void sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config) {
               "sduStart(), #1",
               "invalid state");
   sdup->config = config;
-  usbStart(config->usbp, &config->usb_config);
   config->usbp->param = sdup;
   sdup->state = SDU_READY;
   chSysUnlock();
+  usbStart(config->usbp, &config->usb_config);
 }
 
 /**
