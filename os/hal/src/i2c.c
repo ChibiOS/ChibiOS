@@ -59,7 +59,6 @@
  * @init
  */
 void i2cInit(void) {
-
   i2c_lld_init();
 }
 
@@ -72,8 +71,26 @@ void i2cInit(void) {
  */
 void i2cObjectInit(I2CDriver *i2cp) {
 
-  i2cp->i2c_state  = I2C_STOP;
-  i2cp->i2c_config = NULL;
+  i2cp->id_state  = I2C_STOP;
+  i2cp->id_config = NULL;
+  i2cp->rxbuff_p = NULL;
+  i2cp->txbuff_p = NULL;
+  i2cp->rxbuf = NULL;
+  i2cp->txbuf = NULL;
+  i2cp->id_slave_config = NULL;
+
+#if I2C_USE_WAIT
+  i2cp->id_thread   = NULL;
+#endif /* I2C_USE_WAIT */
+
+#if I2C_USE_MUTUAL_EXCLUSION
+#if CH_USE_MUTEXES
+  chMtxInit(&i2cp->id_mutex);
+#else
+  chSemInit(&i2cp->id_semaphore, 1);
+#endif /* CH_USE_MUTEXES */
+#endif /* I2C_USE_MUTUAL_EXCLUSION */
+
 #if defined(I2C_DRIVER_EXT_INIT_HOOK)
   I2C_DRIVER_EXT_INIT_HOOK(i2cp);
 #endif
@@ -90,14 +107,18 @@ void i2cObjectInit(I2CDriver *i2cp) {
 void i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
 
   chDbgCheck((i2cp != NULL) && (config != NULL), "i2cStart");
-
-  chSysLock();
-  chDbgAssert((i2cp->i2c_state == I2C_STOP) || (i2cp->i2c_state == I2C_READY),
+  chDbgAssert((i2cp->id_state == I2C_STOP) || (i2cp->id_state == I2C_READY),
               "i2cStart(), #1",
               "invalid state");
-  i2cp->i2c_config = config;
+
+#if (!(STM32_I2C_I2C2_USE_POLLING_WAIT) && I2C_SUPPORTS_CALLBACKS)
+    gptStart(i2cp->timer, i2cp->timer_cfg);
+#endif /* !(STM32_I2C_I2C2_USE_POLLING_WAIT) */
+
+  chSysLock();
+  i2cp->id_config = config;
   i2c_lld_start(i2cp);
-  i2cp->i2c_state = I2C_READY;
+  i2cp->id_state = I2C_READY;
   chSysUnlock();
 }
 
@@ -111,133 +132,172 @@ void i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
 void i2cStop(I2CDriver *i2cp) {
 
   chDbgCheck(i2cp != NULL, "i2cStop");
-
-  chSysLock();
-  chDbgAssert((i2cp->i2c_state == I2C_STOP) || (i2cp->i2c_state == I2C_READY),
+  chDbgAssert((i2cp->id_state == I2C_STOP) || (i2cp->id_state == I2C_READY),
               "i2cStop(), #1",
               "invalid state");
+
+#if (!(STM32_I2C_I2C2_USE_POLLING_WAIT) && I2C_SUPPORTS_CALLBACKS)
+    gptStop(i2cp->timer);
+#endif /* !(STM32_I2C_I2C2_USE_POLLING_WAIT) */
+
+  chSysLock();
   i2c_lld_stop(i2cp);
-  i2cp->i2c_state = I2C_STOP;
+  i2cp->id_state = I2C_STOP;
   chSysUnlock();
 }
 
 /**
- * @brief   Initiates a master bus transaction.
- * @details This function sends a start bit followed by an one or two bytes
- *          header.
+ * @brief Sends data via the I2C bus.
  *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] header    transaction header
- * @param[in] callback  operation complete callback
+ * @details Function designed to realize "read-through-write" transfer
+ *          paradigm. If you want transmit data without any further read,
+ *          than set @b rxbytes field to 0.
  *
- * @iclass
+ * @param[in] i2cp        pointer to the @p I2CDriver object
+ * @param[in] i2cscfg     pointer to the @p I2C slave config
+ * @param[in] slave_addr  Slave device address. Bits 0-9 contain slave
+ *                        device address. Bit 15 must be set to 1 if 10-bit
+ *                        addressing mode used. Otherwise	keep it cleared.
+ *                        Bits 10-14 unused.
+ * @param[in] txbuf       pointer to transmit buffer
+ * @param[in] txbytes     number of bytes to be transmitted
+ * @param[in] rxbuf       pointer to receive buffer
+ * @param[in] rxbytes     number of bytes to be received, set it to 0 if
+ *                        you want transmit only
  */
-void i2cMasterStartI(I2CDriver *i2cp,
-                     uint16_t header,
-                     i2ccallback_t callback) {
+void i2cMasterTransmit(I2CDriver *i2cp,
+                      const I2CSlaveConfig *i2cscfg,
+                      uint16_t slave_addr,
+                      uint8_t *txbuf,
+                      size_t txbytes,
+                      uint8_t *rxbuf,
+                      size_t rxbytes) {
 
-  chDbgCheck((i2cp != NULL) && (callback != NULL), "i2cMasterStartI");
-  chDbgAssert(i2cp->i2c_state == I2C_READY,
-              "i2cMasterStartI(), #1", "invalid state");
+  chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) &&\
+  		(slave_addr != 0) &&\
+  		(txbytes > 0) &&\
+  		(txbuf != NULL),
+  		"i2cMasterTransmit");
 
-  i2cp->id_callback = callback;
-  i2c_lld_master_start(i2cp, header);
+  /* init slave config field in driver */
+  i2cp->id_slave_config = i2cscfg;
+
+  i2c_lld_wait_bus_free(i2cp);
+  chDbgAssert(!(i2c_lld_bus_is_busy(i2cp)), "i2cMasterReceive(), #1", "time is out");
+
+  chDbgAssert(i2cp->id_state == I2C_READY,
+              "i2cMasterTransmit(), #1", "not ready");
+
+  i2cp->id_state = I2C_ACTIVE_TRANSMIT;
+  i2c_lld_master_transmit(i2cp, slave_addr, txbuf, txbytes, rxbuf, rxbytes);
+#if I2C_SUPPORTS_CALLBACKS
+  _i2c_wait_s(i2cp);
+#else
+  i2cp->id_state = I2C_READY;
+#endif /* I2C_SUPPORTS_CALLBACKS */
 }
 
 /**
- * @brief   Terminates a master bus transaction.
+ * @brief Receives data from the I2C bus.
  *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] callback  operation complete callback
- *
- * @iclass
+ * @param[in] i2cp        pointer to the @p I2CDriver object
+ * @param[in] i2cscfg     pointer to the @p I2C slave config
+ * @param[in] slave_addr  Slave device address. Bits 0-9 contain slave
+ *                        device address. Bit 15 must be set to 1 if 10-bit
+ *                        addressing mode used. Otherwise	keep it cleared.
+ *                        Bits 10-14 unused.
+ * @param[in] rxbytes     number of bytes to be received
+ * @param[in] rxbuf       pointer to receive buffer
  */
-void i2cMasterStopI(I2CDriver *i2cp, i2ccallback_t callback) {
+void i2cMasterReceive(I2CDriver *i2cp,
+                      const I2CSlaveConfig *i2cscfg,
+                      uint16_t slave_addr,
+                      uint8_t *rxbuf,
+                      size_t rxbytes){
 
-  chDbgCheck((i2cp != NULL) && (callback != NULL), "i2cMasterStopI");
-  chDbgAssert(i2cp->i2c_state == I2C_MREADY,
-              "i2cMasterStopI(), #1", "invalid state");
+  chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) &&\
+  		(slave_addr != 0) &&\
+  		(rxbytes > 0) && \
+  		(rxbuf != NULL),
+      "i2cMasterReceive");
 
-  i2cp->id_callback = callback;
-  i2c_lld_master_stop(i2cp);
+  /* init slave config field in driver */
+  i2cp->id_slave_config = i2cscfg;
+
+  i2c_lld_wait_bus_free(i2cp);
+  chDbgAssert(!(i2c_lld_bus_is_busy(i2cp)), "i2cMasterReceive(), #1", "time is out");
+
+  chDbgAssert(i2cp->id_state == I2C_READY,
+              "i2cMasterReceive(), #1", "not ready");
+
+  i2cp->id_state = I2C_ACTIVE_RECEIVE;
+  i2c_lld_master_receive(i2cp, slave_addr, rxbuf, rxbytes);
+#if I2C_SUPPORTS_CALLBACKS
+  _i2c_wait_s(i2cp);
+#else
+  i2cp->id_state = I2C_READY;
+#endif /* I2C_SUPPORTS_CALLBACKS */
 }
 
+
+/* FIXME: I do not know what this function must do. And can not test it
+uint16_t i2cSMBusAlertResponse(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
+  i2cMasterReceive(i2cp, i2cscfg);
+  return i2cp->id_slave_config->slave_addr;
+}
+*/
 
 /**
- * @brief   Sends a restart bit.
- * @details Restart bits are required by some types of I2C transactions.
+ * @brief   Handles communication events/errors.
+ * @details Must be called from the I/O interrupt service routine in order to
+ *          notify I/O conditions as errors, signals change etc.
  *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] callback  operation complete callback
+ * @param[in] i2cp      pointer to a @p I2CDriver structure
+ * @param[in] mask      condition flags to be added to the mask
  *
  * @iclass
  */
-void i2cMasterRestartI(I2CDriver *i2cp, i2ccallback_t callback) {
+void i2cAddFlagsI(I2CDriver *i2cp, i2cflags_t mask) {
 
-  chDbgCheck((i2cp != NULL) && (callback != NULL), "i2cMasterRestartI");
-  chDbgAssert(i2cp->i2c_state == I2C_MREADY,
-              "i2cMasterRestartI(), #1", "invalid state");
+  chDbgCheck(i2cp != NULL, "i2cAddFlagsI");
 
-  i2cp->id_callback = callback;
-  i2c_lld_master_restart(i2cp);
+  i2cp->errors |= mask;
+  chEvtBroadcastI(&i2cp->sevent);
 }
 
 /**
- * @brief   Master transmission.
+ * @brief   Returns and clears the errors mask associated to the driver.
  *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] n         number of bytes to be transmitted
- * @param[in] txbuf     transmit data buffer pointer
- * @param[in] callback  operation complete callback
+ * @param[in] i2cp      pointer to a @p I2CDriver structure
+ * @return              The condition flags modified since last time this
+ *                      function was invoked.
  *
- * @iclass
+ * @api
  */
-void i2cMasterTransmitI(I2CDriver *i2cp, size_t n, const uint8_t *txbuf,
-                        i2ccallback_t callback) {
+i2cflags_t i2cGetAndClearFlags(I2CDriver *i2cp) {
+  i2cflags_t mask;
 
-  chDbgCheck((i2cp != NULL) && (n > 0) &&
-             (txbuf != NULL) && (callback != NULL), "i2cMasterTransmitI");
-  chDbgAssert(i2cp->i2c_state == I2C_MREADY,
-              "i2cMasterTransmitI(), #1", "invalid state");
+  chDbgCheck(i2cp != NULL, "i2cGetAndClearFlags");
 
-  i2cp->id_callback = callback;
-  i2c_lld_master_transmit(i2cp, n, txbuf);
+  chSysLock();
+  mask = i2cp->errors;
+  i2cp->errors = I2CD_NO_ERROR;
+  chSysUnlock();
+  return mask;
 }
 
-/**
- * @brief   Master receive.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] n         number of bytes to be transmitted
- * @param[in] rxbuf     receive data buffer pointer
- * @param[in] callback  operation complete callback
- *
- * @iclass
- */
-void i2cMasterReceiveI(I2CDriver *i2cp, size_t n, uint8_t *rxbuf,
-                       i2ccallback_t callback) {
 
-  chDbgCheck((i2cp != NULL) && (n > 0) &&
-             (rxbuf != NULL) && (callback != NULL), "i2cMasterReceiveI");
-  chDbgAssert(i2cp->i2c_state == I2C_MREADY,
-              "i2cMasterReceiveI(), #1", "invalid state");
-
-  i2cp->id_callback = callback;
-  i2c_lld_master_receive(i2cp, n, rxbuf);
-}
 
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 /**
- * @brief   Gains exclusive access to the I2C bus.
+ * @brief Gains exclusive access to the I2C bus.
  * @details This function tries to gain ownership to the I2C bus, if the bus
  *          is already being used then the invoking thread is queued.
- * @pre     In order to use this function the option @p I2C_USE_MUTUAL_EXCLUSION
- *          must be enabled.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  *
- * @api
- *
+ * @note This function is only available when the @p I2C_USE_MUTUAL_EXCLUSION
+ *       option is set to @p TRUE.
  */
 void i2cAcquireBus(I2CDriver *i2cp) {
 
@@ -251,13 +311,12 @@ void i2cAcquireBus(I2CDriver *i2cp) {
 }
 
 /**
- * @brief   Releases exclusive access to the I2C bus.
- * @pre     In order to use this function the option @p I2C_USE_MUTUAL_EXCLUSION
- *          must be enabled.
+ * @brief Releases exclusive access to the I2C bus.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  *
- * @api
+ * @note This function is only available when the @p I2C_USE_MUTUAL_EXCLUSION
+ *       option is set to @p TRUE.
  */
 void i2cReleaseBus(I2CDriver *i2cp) {
 
