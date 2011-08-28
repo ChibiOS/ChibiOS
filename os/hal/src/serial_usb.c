@@ -234,9 +234,9 @@ void sduStop(SerialUSBDriver *sdup) {
   chDbgAssert((sdup->state == SDU_STOP) || (sdup->state == SDU_READY),
               "sduStop(), #1",
               "invalid state");
-  usbStop(sdup->config->usbp);
   sdup->state = SDU_STOP;
   chSysUnlock();
+  usbStop(sdup->config->usbp);
 }
 
 /**
