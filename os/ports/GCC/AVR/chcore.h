@@ -32,6 +32,10 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#if CH_DBG_ENABLE_STACK_CHECK
+#error "option CH_DBG_ENABLE_STACK_CHECK not supported by this port"
+#endif
+
 /**
  * @brief   If enabled allows the idle thread to enter a low power mode.
  */

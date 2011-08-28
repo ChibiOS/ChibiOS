@@ -78,12 +78,20 @@ typedef void (*evhandler_t)(eventid_t);
  */
 #define EVENTSOURCE_DECL(name) EventSource name = _EVENTSOURCE_DATA(name)
 
-/** All events allowed mask.*/
+/**
+ * @brief   All events allowed mask.
+ */
 #define ALL_EVENTS      ((eventmask_t)-1)
 
-/** Returns the event mask from the event identifier.*/
+/**
+ * @brief   Returns an event mask from an event identifier.
+ */
 #define EVENT_MASK(eid) ((eventmask_t)(1 << (eid)))
 
+/**
+ * @name    Macro Functions
+ * @{
+ */
 /**
  * @brief   Registers an Event Listener on an Event Source.
  * @note    Multiple Event Listeners can use the same event identifier, the
@@ -147,6 +155,7 @@ typedef void (*evhandler_t)(eventid_t);
  * @iclass
  */
 #define chEvtBroadcastI(esp) chEvtBroadcastFlagsI(esp, 0)
+/** @} */
 
 #ifdef __cplusplus
 extern "C" {

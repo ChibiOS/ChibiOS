@@ -29,22 +29,35 @@
 #ifndef _CHSCHD_H_
 #define _CHSCHD_H_
 
-/** @brief Default thread wakeup low level message.*/
-#define RDY_OK          0
-/** @brief Low level message sent to a thread awakened by a timeout.*/
-#define RDY_TIMEOUT     -1
-/** @brief Low level message sent to a thread awakened by a reset operation.*/
-#define RDY_RESET       -2
+/**
+ * @name    Wakeup status codes
+ * @{
+ */
+#define RDY_OK          0           /**< @brief Normal wakeup message.      */
+#define RDY_TIMEOUT     -1          /**< @brief Wakeup caused by a timeout
+                                         condition.                         */
+#define RDY_RESET       -2          /**< @brief Wakeup caused by a reset
+                                         condition.                         */
+/** @} */
 
+/**
+ * @name    Priority constants
+ * @{
+ */
 #define NOPRIO          0           /**< @brief Ready list header priority. */
 #define IDLEPRIO        1           /**< @brief Idle thread priority.       */
 #define LOWPRIO         2           /**< @brief Lowest user priority.       */
 #define NORMALPRIO      64          /**< @brief Normal user priority.       */
 #define HIGHPRIO        127         /**< @brief Highest user priority.      */
 #define ABSPRIO         255         /**< @brief Greatest possible priority. */
+/** @} */
 
 /**
- * @brief   Zero time specification for some syscalls with a timeout
+ * @name    Special time constants
+ * @{
+ */
+/**
+ * @brief   Zero time specification for some functions with a timeout
  *          specification.
  * @note    Not all functions accept @p TIME_IMMEDIATE as timeout parameter,
  *          see the specific function documentation.
@@ -52,10 +65,11 @@
 #define TIME_IMMEDIATE  ((systime_t)0)
 
 /**
- * @brief   Infinite time specification for all the syscalls with a timeout
+ * @brief   Infinite time specification for all functions with a timeout
  *          specification.
  */
 #define TIME_INFINITE   ((systime_t)-1)
+/** @} */
 
 /**
  * @brief   Returns the priority of the first thread on the given ready list.
@@ -148,6 +162,10 @@ extern "C" {
 #endif
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Determines if the current thread must reschedule.
  * @details This function returns @p TRUE if there is a ready thread with
  *          higher priority.
@@ -209,6 +227,7 @@ extern "C" {
     chSchDoReschedule();                                                    \
 }
 #endif /* CH_TIME_QUANTUM == 0 */
+/** @} */
 
 #endif /* _CHSCHD_H_ */
 

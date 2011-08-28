@@ -54,6 +54,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    MMC_SPI configuration options
+ * @{
+ */
+/**
  * @brief   Block size for MMC transfers.
  */
 #if !defined(MMC_SECTOR_SIZE) || defined(__DOXYGEN__)
@@ -86,6 +90,7 @@
 #if !defined(MMC_POLLING_DELAY) || defined(__DOXYGEN__)
 #define MMC_POLLING_DELAY           10
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -182,6 +187,10 @@ typedef struct {
 /*===========================================================================*/
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Returns the driver state.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
@@ -202,6 +211,7 @@ typedef struct {
  * @api
  */
 #define mmcIsWriteProtected(mmcp) ((mmcp)->is_protected())
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

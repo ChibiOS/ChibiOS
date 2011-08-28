@@ -32,6 +32,10 @@
 #include <iomacros.h>
 #include <msp430/common.h>
 
+#if CH_DBG_ENABLE_STACK_CHECK
+#error "option CH_DBG_ENABLE_STACK_CHECK not supported by this port"
+#endif
+
 /**
  * @brief   Enables the use of a wait state in the idle thread loop.
  */

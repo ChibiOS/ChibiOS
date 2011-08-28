@@ -30,6 +30,43 @@
 #define _CHTHREADS_H_
 
 /**
+ * @name    Thread states
+ * @{
+ */
+#define THD_STATE_READY         0   /**< @brief Waiting on the ready list.  */
+#define THD_STATE_CURRENT       1   /**< @brief Currently running.          */
+#define THD_STATE_SUSPENDED     2   /**< @brief Created in suspended state. */
+#define THD_STATE_WTSEM         3   /**< @brief Waiting on a semaphore.     */
+#define THD_STATE_WTMTX         4   /**< @brief Waiting on a mutex.         */
+#define THD_STATE_WTCOND        5   /**< @brief Waiting on a condition
+                                         variable.                          */
+#define THD_STATE_SLEEPING      6   /**< @brief Waiting in @p chThdSleep()
+                                         or @p chThdSleepUntil().           */
+#define THD_STATE_WTEXIT        7   /**< @brief Waiting in @p chThdWait().  */
+#define THD_STATE_WTOREVT       8   /**< @brief Waiting for an event.       */
+#define THD_STATE_WTANDEVT      9   /**< @brief Waiting for several events. */
+#define THD_STATE_SNDMSGQ       10  /**< @brief Sending a message, in queue.*/
+#define THD_STATE_SNDMSG        11  /**< @brief Sent a message, waiting
+                                         answer.                            */
+#define THD_STATE_WTMSG         12  /**< @brief Waiting for a message.      */
+#define THD_STATE_WTQUEUE       13  /**< @brief Waiting on an I/O queue.    */
+#define THD_STATE_FINAL         14  /**< @brief Thread terminated.          */
+/** @} */
+
+/**
+ * @name    Thread flags and attributes
+ * @{
+ */
+#define THD_MEM_MODE_MASK       3   /**< @brief Thread memory mode mask.    */
+#define THD_MEM_MODE_STATIC     0   /**< @brief Static thread.              */
+#define THD_MEM_MODE_HEAP       1   /**< @brief Thread allocated from a
+                                         Memory Heap.                       */
+#define THD_MEM_MODE_MEMPOOL    2   /**< @brief Thread allocated from a
+                                         Memory Pool.                       */
+#define THD_TERMINATE           4   /**< @brief Termination requested flag. */
+/** @} */
+
+/**
  * @extends ThreadsQueue
  *
  * @brief   Structure representing a thread.
@@ -163,51 +200,15 @@ struct Thread {
 #endif
 };
 
-/** @brief Thread state: Ready to run, waiting on the ready list.*/
-#define THD_STATE_READY         0
-/** @brief Thread state: Currently running.*/
-#define THD_STATE_CURRENT       1
-/** @brief Thread state: Thread created in suspended state.*/
-#define THD_STATE_SUSPENDED     2
-/** @brief Thread state: Waiting on a semaphore.*/
-#define THD_STATE_WTSEM         3
-/** @brief Thread state: Waiting on a mutex.*/
-#define THD_STATE_WTMTX         4
-/** @brief Thread state: Waiting in @p chCondWait().*/
-#define THD_STATE_WTCOND        5
-/** @brief Thread state: Waiting in @p chThdSleep() or @p chThdSleepUntil().*/
-#define THD_STATE_SLEEPING      6
-/** @brief Thread state: Waiting in @p chThdWait().*/
-#define THD_STATE_WTEXIT        7
-/** @brief Thread state: Waiting in @p chEvtWaitXXX().*/
-#define THD_STATE_WTOREVT       8
-/** @brief Thread state: Waiting in @p chEvtWaitAllTimeout().*/
-#define THD_STATE_WTANDEVT      9
-/** @brief Thread state: Waiting in @p chMsgSend() (queued).*/
-#define THD_STATE_SNDMSGQ       10
-/** @brief Thread state: Waiting in @p chMsgSend() (not queued).*/
-#define THD_STATE_SNDMSG        11
-/** @brief Thread state: Waiting in @p chMsgWait().*/
-#define THD_STATE_WTMSG         12
-/** @brief Thread state: Waiting on an I/O queue.*/
-#define THD_STATE_WTQUEUE       13
-/** @brief Thread state: After termination.*/
-#define THD_STATE_FINAL         14
-
-/*
- * Various flags into the thread p_flags field.
- */
-#define THD_MEM_MODE_MASK       3   /**< @brief Thread memory mode mask.    */
-#define THD_MEM_MODE_STATIC     0   /**< @brief Thread memory mode: static. */
-#define THD_MEM_MODE_HEAP       1   /**< @brief Thread memory mode: heap.   */
-#define THD_MEM_MODE_MEMPOOL    2   /**< @brief Thread memory mode: pool.   */
-#define THD_TERMINATE           4   /**< @brief Termination requested.      */
-
 /**
  * @brief Thread function.
  */
 typedef msg_t (*tfunc_t)(void *);
 
+/**
+ * @name    Macro Functions
+ * @{
+ */
 /**
  * @brief   Returns a pointer to the current @p Thread.
  *
@@ -262,7 +263,7 @@ typedef msg_t (*tfunc_t)(void *);
 #define chThdShouldTerminate() (currp->p_flags & THD_TERMINATE)
 
 /**
- * @brief   Resumes a thread created with @p chThdInit().
+ * @brief   Resumes a thread created with @p chThdCreateI().
  *
  * @param[in] tp        pointer to the thread
  *
@@ -321,6 +322,7 @@ typedef msg_t (*tfunc_t)(void *);
  * @api
  */
 #define chThdSleepMicroseconds(usec) chThdSleep(US2ST(usec))
+/** @} */
 
 /*
  * Threads APIs.

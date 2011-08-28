@@ -36,6 +36,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    CAN status flags
+ * @{
+ */
+/**
  * @brief   Errors rate warning.
  */
 #define CAN_LIMIT_WARNING           1
@@ -55,17 +59,26 @@
  * @brief   Overflow in receive queue.
  */
 #define CAN_OVERFLOW_ERROR          16
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
 /**
+ * @name    CAN configuration options
+ * @{
+ */
+/**
  * @brief   Sleep mode related APIs inclusion switch.
+ * @details This option can only be enabled if the CAN implementation supports
+ *          the sleep mode, see the macro @p CAN_SUPPORTS_SLEEP exported by
+ *          the underlying implementation.
  */
 #if !defined(CAN_USE_SLEEP_MODE) || defined(__DOXYGEN__)
 #define CAN_USE_SLEEP_MODE          TRUE
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -97,6 +110,10 @@ typedef enum {
 /*===========================================================================*/
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Adds some flags to the CAN status mask.
  *
  * @param[in] canp      pointer to the @p CANDriver object
@@ -105,6 +122,7 @@ typedef enum {
  * @iclass
  */
 #define canAddFlagsI(canp, mask) ((canp)->status |= (mask))
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

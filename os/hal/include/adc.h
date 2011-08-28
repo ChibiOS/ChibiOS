@@ -40,6 +40,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    ADC configuration options
+ * @{
+ */
+/**
  * @brief   Enables synchronous APIs.
  * @note    Disabling this option saves both code and data space.
  */
@@ -54,6 +58,7 @@
 #if !defined(ADC_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define ADC_USE_MUTUAL_EXCLUSION    TRUE
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -84,6 +89,10 @@ typedef enum {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @name    Low Level driver helper macros
+ * @{
+ */
 #if ADC_USE_WAIT || defined(__DOXYGEN__)
 /**
  * @brief   Resumes a thread waiting for a conversion completion.
@@ -211,6 +220,7 @@ typedef enum {
     _adc_wakeup_isr(adcp);                                                  \
   }                                                                         \
 }
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

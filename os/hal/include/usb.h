@@ -78,6 +78,10 @@
 #define USB_LATE_SET_ADDRESS                1
 
 /**
+ * @name    Helper macros for USB descriptors
+ * @{
+ */
+/**
  * @brief   Helper macro for index values into descriptor strings.
  */
 #define USB_DESC_INDEX(i) ((uint8_t)(i))
@@ -166,12 +170,17 @@
   USB_DESC_BYTE(bmAttributes),                                              \
   USB_DESC_WORD(wMaxPacketSize),                                            \
   USB_DESC_BYTE(bInterval)
+/** @} */
 
 /**
  * @brief   Returned by some functions to report a busy endpoint.
  */
 #define USB_ENDPOINT_BUSY                   ((size_t)0xFFFFFFFF)
 
+/**
+ * @name    Endpoint types and settings
+ * @{
+ */
 #define USB_EP_MODE_TYPE                0x0003  /**< Endpoint type mask.    */
 #define USB_EP_MODE_TYPE_CTRL           0x0000  /**< Control endpoint.      */
 #define USB_EP_MODE_TYPE_ISOC           0x0001  /**< Isochronous endpoint.  */
@@ -179,6 +188,7 @@
 #define USB_EP_MODE_TYPE_INTR           0x0003  /**< Interrupt endpoint.    */
 #define USB_EP_MODE_TRANSACTION         0x0000  /**< Transaction mode.      */
 #define USB_EP_MODE_PACKET              0x0010  /**< Packet mode enabled.   */
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -311,6 +321,11 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @name    Macro Functions
+ * @{
+ */
 /**
  * @brief   Returns the current frame number.
  *
@@ -411,7 +426,12 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @special
  */
 #define usbReadSetup(usbp, ep, buf) usb_lld_read_setup(usbp, ep, buf)
+/** @} */
 
+/**
+ * @name    Low Level driver helper macros
+ * @{
+ */
 /**
  * @brief   Common ISR code, usb event callback.
  *
@@ -474,6 +494,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
   (usbp)->receiving &= ~(1 << (ep));                                        \
   (usbp)->epc[ep]->out_cb(usbp, ep);                                        \
 }
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

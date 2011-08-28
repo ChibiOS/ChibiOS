@@ -74,6 +74,8 @@ typedef uint32_t fileoffset_t;
   _base_sequential_stream_data
 
 /**
+ * @extends BaseSequentialStreamVMT
+ *
  * @brief   @p BaseFileStream virtual methods table.
  */
 struct BaseFilelStreamVMT {
@@ -92,6 +94,10 @@ typedef struct {
   _base_file_stream_data
 } BaseFileStream;
 
+/**
+ * @name    Macro Functions (BaseFileStream)
+ * @{
+ */
 /**
  * @brief   Base file Stream close.
  * @details The function closes a file stream.
@@ -138,6 +144,7 @@ typedef struct {
  * @api
  */
 #define chFileStreamSeek ((ip)->vmt->lseek(ip, offset))
+/** @} */
 
 #endif /* _CHFILES_H_ */
 

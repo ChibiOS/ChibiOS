@@ -152,7 +152,7 @@ struct SDCDriver {
   uint32_t                  rca;
   /* End of the mandatory fields.*/
   /**
-   * @brief Tthread waiting for I/O completion IRQ.
+   * @brief Thread waiting for I/O completion IRQ.
    */
   Thread                    *thread;
 };

@@ -109,7 +109,7 @@ Thread *chMsgWait(void) {
 }
 
 /**
- * @brief   Releases the thread waiting on top of the messages queue.
+ * @brief   Releases a sender thread specifying a response message.
  * @pre     Invoke this function only after a message has been received
  *          using @p chMsgWait().
  *

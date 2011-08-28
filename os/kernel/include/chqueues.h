@@ -31,16 +31,16 @@
 
 #if CH_USE_QUEUES || defined(__DOXYGEN__)
 
-/** @brief Returned by the queue functions if the operation is successful.*/
-#define Q_OK            RDY_OK
-/** @brief Returned by the queue functions if a timeout occurs.*/
-#define Q_TIMEOUT       RDY_TIMEOUT
-/** @brief Returned by the queue functions if the queue has been reset.*/
-#define Q_RESET         RDY_RESET
-/** @brief Returned by the queue functions if the queue is empty.*/
-#define Q_EMPTY         -3
-/** @brief Returned by the queue functions if the queue is full.*/
-#define Q_FULL          -4
+/**
+ * @name    Queue functions returned status value
+ * @{
+ */
+#define Q_OK            RDY_OK      /**< @brief Operation successful.       */
+#define Q_TIMEOUT       RDY_TIMEOUT /**< @brief Timeout condition.          */
+#define Q_RESET         RDY_RESET   /**< @brief Queue has been reset.       */
+#define Q_EMPTY         -3          /**< @brief Queue empty.                */
+#define Q_FULL          -4          /**< @brief Queue full,                 */
+/** @} */
 
 /**
  * @brief   Type of a generic I/O queue structure.
@@ -71,6 +71,10 @@ struct GenericQueue {
 };
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Returns the queue's buffer size.
  *
  * @param[in] qp        pointer to a @p GenericQueue structure.
@@ -90,7 +94,8 @@ struct GenericQueue {
  *
  * @iclass
  */
-#define chQSpaceI(qp) ((size_t)((qp)->q_counter))
+#define chQSpaceI(qp) ((qp)->q_counter)
+/** @} */
 
 /**
  * @extends GenericQueue
@@ -105,6 +110,10 @@ struct GenericQueue {
  */
 typedef GenericQueue InputQueue;
 
+/**
+ * @name    Macro Functions
+ * @{
+ */
 /**
  * @brief   Returns the filled space into an input queue.
  *
@@ -165,6 +174,7 @@ typedef GenericQueue InputQueue;
  * @api
  */
 #define chIQGet(iqp) chIQGetTimeout(iqp, TIME_INFINITE)
+/** @} */
 
 /**
  * @brief   Data part of a static input queue initializer.
@@ -212,15 +222,19 @@ typedef GenericQueue InputQueue;
  */
 typedef GenericQueue OutputQueue;
 
- /**
-  * @brief   Returns the filled space into an output queue.
-  *
-  * @param[in] oqp       pointer to an @p OutputQueue structure
-  * @return              The number of full bytes in the queue.
-  * @retval 0            if the queue is empty.
-  *
-  * @iclass
-  */
+/**
+ * @name    Macro Functions
+ * @{
+ */
+/**
+ * @brief   Returns the filled space into an output queue.
+ *
+ * @param[in] oqp       pointer to an @p OutputQueue structure
+ * @return              The number of full bytes in the queue.
+ * @retval 0            if the queue is empty.
+ *
+ * @iclass
+ */
 #define chOQGetFullI(oqp) (chQSizeI(oqp) - chQSpaceI(oqp))
 
 /**
@@ -274,6 +288,7 @@ typedef GenericQueue OutputQueue;
  * @api
  */
 #define chOQPut(oqp, b) chOQPutTimeout(oqp, b, TIME_INFINITE)
+ /** @} */
 
 /**
  * @brief   Data part of a static output queue initializer.

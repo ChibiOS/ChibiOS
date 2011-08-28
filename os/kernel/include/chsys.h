@@ -29,6 +29,10 @@
 #ifndef _CHSYS_H_
 #define _CHSYS_H_
 
+/**
+ * @name    Macro Functions
+ * @{
+ */
 #if !CH_NO_IDLE_THREAD || defined(__DOXYGEN__)
 /**
  * @brief   Returns a pointer to the idle thread.
@@ -177,7 +181,11 @@
   dbg_check_unlock_from_isr();                                              \
   port_unlock_from_isr();                                                   \
 }
+/** @} */
 
+/**
+ * @name    ISRs abstraction macros
+ */
 /**
  * @brief   IRQ handler enter code.
  * @note    Usually IRQ handlers functions are also declared naked.
@@ -211,7 +219,11 @@
  * @special
  */
 #define CH_IRQ_HANDLER(id) PORT_IRQ_HANDLER(id)
+/** @} */
 
+/**
+ * @name    Fast ISRs abstraction macros
+ */
 /**
  * @brief   Standard fast IRQ handler declaration.
  * @note    @p id can be a function name or a vector number depending on the
@@ -221,6 +233,7 @@
  * @special
  */
 #define CH_FAST_IRQ_HANDLER(id) PORT_FAST_IRQ_HANDLER(id)
+/** @} */
 
 #ifdef __cplusplus
 extern "C" {

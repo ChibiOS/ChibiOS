@@ -83,6 +83,10 @@ extern "C" {
 #define SEMAPHORE_DECL(name, n) Semaphore name = _SEMAPHORE_DATA(name, n)
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Decreases the semaphore counter.
  * @details This macro can be used when the counter is known to be positive.
  *
@@ -105,6 +109,7 @@ extern "C" {
  * @iclass
  */
 #define chSemGetCounterI(sp)    ((sp)->s_cnt)
+/** @} */
 
 #endif /* CH_USE_SEMAPHORES */
 

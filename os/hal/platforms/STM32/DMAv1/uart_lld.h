@@ -260,21 +260,17 @@ struct UARTDriver {
    */
   USART_TypeDef             *usart;
   /**
-   * @brief Pointer to the DMA registers block.
+   * @brief DMA mode bit mask.
    */
-  stm32_dma_t               *dmap;
-  /**
-   * @brief DMA priority bit mask.
-   */
-  uint32_t                  dmaccr;
+  uint32_t                  dmamode;
   /**
    * @brief Receive DMA channel.
    */
-  uint8_t                   dmarx;
+  const stm32_dma_stream_t  *dmarx;
   /**
    * @brief Transmit DMA channel.
    */
-  uint8_t                   dmatx;
+  const stm32_dma_stream_t  *dmatx;
   /**
    * @brief Default receive buffer while into @p UART_RX_IDLE state.
    */

@@ -31,6 +31,10 @@
 
 #include <intrins.h>
 
+#if CH_DBG_ENABLE_STACK_CHECK
+#error "option CH_DBG_ENABLE_STACK_CHECK not supported by this port"
+#endif
+
 /*===========================================================================*/
 /* Port configurable parameters.                                             */
 /*===========================================================================*/

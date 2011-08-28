@@ -139,6 +139,7 @@
       <files visible="yes" title=""/>
       <functions title=""/>
       <variables title=""/>
+      <membergroups visible="yes"/>
       <defines title=""/>
       <typedefs title=""/>
       <enums title=""/>
@@ -150,7 +151,6 @@
       <events title=""/>
       <properties title=""/>
       <friends title=""/>
-      <membergroups visible="yes"/>
     </memberdecl>
     <memberdef>
       <pagedocs/>

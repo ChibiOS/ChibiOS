@@ -33,6 +33,10 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    CDC specific messages.
+ * @{
+ */
 #define CDC_SEND_ENCAPSULATED_COMMAND   0x00
 #define CDC_GET_ENCAPSULATED_RESPONSE   0x01
 #define CDC_SET_COMM_FEATURE            0x02
@@ -52,7 +56,12 @@
 #define CDC_GET_RINGER_PARMS            0x31
 #define CDC_SET_OPERATION_PARMS         0x32
 #define CDC_GET_OPERATION_PARMS         0x33
+/** @} */
 
+/**
+ * @name    Line Control bit definitions.
+ * @{
+ */
 #define LC_STOP_1                       0
 #define LC_STOP_1P5                     1
 #define LC_STOP_2                       2
@@ -62,31 +71,37 @@
 #define LC_PARITY_EVEN                  2
 #define LC_PARITY_MARK                  3
 #define LC_PARITY_SPACE                 4
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
 /**
+ * @name    USB_CDC configuration options
+ * @{
+ */
+/**
  * @brief   Endpoint number for bulk IN.
  */
-#if !defined(DATA_REQUEST_EP) || defined(__DOXYGEN__)
-#define DATA_REQUEST_EP         1
+#if !defined(USB_CDC_DATA_REQUEST_EP) || defined(__DOXYGEN__)
+#define USB_CDC_DATA_REQUEST_EP         1
 #endif
 
 /**
  * @brief   Endpoint number for interrupt IN.
  */
-#if !defined(INTERRUPT_REQUEST_EP) || defined(__DOXYGEN__)
-#define INTERRUPT_REQUEST_EP    2
+#if !defined(USB_CDC_INTERRUPT_REQUEST_EP) || defined(__DOXYGEN__)
+#define USB_CDC_INTERRUPT_REQUEST_EP    2
 #endif
 
 /**
  * @brief   Endpoint number for bulk OUT.
  */
-#if !defined(DATA_AVAILABLE_EP) || defined(__DOXYGEN__)
-#define DATA_AVAILABLE_EP       3
+#if !defined(USB_CDC_DATA_AVAILABLE_EP) || defined(__DOXYGEN__)
+#define USB_CDC_DATA_AVAILABLE_EP       3
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

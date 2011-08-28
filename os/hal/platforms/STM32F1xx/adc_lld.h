@@ -268,13 +268,13 @@ struct ADCDriver {
    */
   ADC_TypeDef               *adc;
   /**
-   * @brief Pointer to the DMA registers block.
+   * @brief Pointer to associated SMA channel.
    */
-  stm32_dma_channel_t       *dmachp;
+  const stm32_dma_stream_t  *dmastp;
   /**
-   * @brief DMA CCR register bit mask.
+   * @brief DMA mode bit mask.
    */
-  uint32_t                  dmaccr;
+  uint32_t                  dmamode;
 };
 
 /*===========================================================================*/

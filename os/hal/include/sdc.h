@@ -42,11 +42,16 @@
  */
 #define SDC_CMD8_PATTERN                0x000001AA
 
+/**
+ * @name    SD cart types
+ * @{
+ */
 #define SDC_MODE_CARDTYPE_MASK          0xF     /**< @brief Card type mask. */
 #define SDC_MODE_CARDTYPE_SDV11         0       /**< @brief Card is SD V1.1.*/
 #define SDC_MODE_CARDTYPE_SDV20         1       /**< @brief Card is SD V2.0.*/
 #define SDC_MODE_CARDTYPE_MMC           2       /**< @brief Card is MMC.    */
 #define SDC_MODE_HIGH_CAPACITY          0x10    /**< @brief High cap.card.  */
+/** @} */
 
 /**
  * @brief   Mask of error bits in R1 responses.
@@ -88,6 +93,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    SDC configuration options
+ * @{
+ */
+/**
  * @brief   Number of initialization attempts before rejecting the card.
  * @note    Attempts are performed at 10mS intevals.
  */
@@ -113,6 +122,7 @@
 #if !defined(SDC_NICE_WAITING) || defined(__DOXYGEN__)
 #define SDC_NICE_WAITING                TRUE
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -143,6 +153,10 @@ typedef enum {
 /*===========================================================================*/
 
 /**
+ * @name    R1 response utilities
+ * @{
+ */
+/**
  * @brief   Evaluates to @p TRUE if the R1 response contains error flags.
  *
  * @param[in] r1        the r1 response
@@ -162,7 +176,12 @@ typedef enum {
  * @param[in] r1        the r1 response
  */
 #define SDC_R1_IS_CARD_LOCKED(r1)       (((r1) >> 21) & 1)
+/** @} */
 
+/**
+ * @name    Macro Functions
+ * @{
+ */
 /**
  * @brief   Returns the driver state.
  *
@@ -204,6 +223,7 @@ typedef enum {
  * @api
  */
 #define sdcIsWriteProtected(sdcp) (sdc_lld_is_write_protected(sdcp))
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -222,7 +242,7 @@ extern "C" {
                  uint8_t *buffer, uint32_t n);
   bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
                   const uint8_t *buffer, uint32_t n);
-  bool_t sdc_wait_for_transfer_state(SDCDriver *sdcp);
+  bool_t _sdc_wait_for_transfer_state(SDCDriver *sdcp);
 #ifdef __cplusplus
 }
 #endif

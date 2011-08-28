@@ -13,10 +13,14 @@ Current Pipeline (2.3.x):
   * Move main stack to low memory in ARMCMx ports.
 * Eclipse plugin.
 * FatFs 0.8x integration.
+* Kernel-only demo for users not interested in HAL (Cortex-Mx only).
 X STM32L support.
 X STM32L-Discovery demo and article.
 X File System infrastructure.
 X STM32F2xx support.
+- USB and USB_SERIAL APIs reclassification (if needed), incorporate the USB
+  bus attach/detach handling in usbStart()/usbStop().
+- MMC_SPI driver revision and speedup.
 - Test suite overhaul, the API should be more generic in order to be used
   with different subsystems and not just the kernel.
 - STM32 USB support for double buffering.
@@ -26,7 +30,6 @@ X Implement the "transmission end" serial driver event on those platforms
 X I2C device driver class support and at least one implementation.
 - Reduce number of demos globally, add demos to a repository or on web site.
   Required in order to reduce support effort.
-- Kernel-only demos for users not interested in HAL.
 - Add a CH_THREAD macro for threads declaration in order to hide
   compiler-specific optimizations for thread functions. All demos will have
   to be updated.
