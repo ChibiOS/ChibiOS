@@ -49,6 +49,7 @@
 #include "usb.h"
 #include "mmc_spi.h"
 #include "serial_usb.h"
+#include "rtc.h"
 
 /*===========================================================================*/
 /* External declarations.                                                    */

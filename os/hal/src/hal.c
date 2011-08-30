@@ -107,6 +107,9 @@ void halInit(void) {
 #if HAL_USE_SERIAL_USB || defined(__DOXYGEN__)
   sduInit();
 #endif
+#if HAL_USE_RTC || defined(__DOXYGEN__)
+  rtcInit();
+#endif
   /* Board specific initialization.*/
   boardInit();
 }
