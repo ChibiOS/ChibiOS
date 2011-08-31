@@ -78,17 +78,22 @@ struct RTCDriver{
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+extern RTCDriver RTCD;
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
   void rtc_lld_init(void);
 #if RTC_SUPPORTS_CALLBACKS
-  void rtc_lld_start(RTCDriver *rtcp, RTCConfig *rtccfgp);
+  void rtc_lld_start(RTCDriver *rtcp, const RTCConfig *rtccfgp);
   void rtc_lld_stop(void);
 #endif /* RTC_SUPPORTS_CALLBACKS */
   void rtc_lld_set_time(uint32_t tv_sec);
   uint32_t rtc_lld_get_sec(void);
   uint16_t rtc_lld_get_msec(void);
+  uint32_t rtc_lld_get_alarm(void);
+  void rtc_lld_set_alarm(uint32_t);
 #ifdef __cplusplus
 }
 #endif

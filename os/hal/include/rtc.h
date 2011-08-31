@@ -59,7 +59,7 @@ extern "C" {
 #endif
   void rtcInit(void);
 #if RTC_SUPPORTS_CALLBACKS
-  void rtcStart(RTCDriver *rtcp, RTCConfig *rtccfgp);
+  void rtcStart(RTCDriver *rtcp, const RTCConfig *rtccfgp);
   void rtcStop(void);
 #endif /* RTC_SUPPORTS_CALLBACKS */
   void rtcSetTime(uint32_t tv_sec);

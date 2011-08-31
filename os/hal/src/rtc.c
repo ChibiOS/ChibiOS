@@ -9,6 +9,7 @@
 #include "ch.h"
 #include "hal.h"
 
+#include "rtc_lld.h"
 
 #if HAL_USE_RTC || defined(__DOXYGEN__)
 
@@ -45,7 +46,7 @@ void rtcInit(void){
  * @param[in] rtcp - pointer to RTC driver structure.
  * @param[in] rtccfgp - pointer to RTC config structure.
  */
-void rtcStart(RTCDriver *rtcp, RTCConfig *rtccfgp){
+void rtcStart(RTCDriver *rtcp, const RTCConfig *rtccfgp){
   chDbgCheck(((rtcp != NULL) && (rtccfgp != NULL)), "rtcStart");
   rtc_lld_start(rtcp, rtccfgp);
 }

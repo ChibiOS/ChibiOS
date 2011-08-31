@@ -48,6 +48,7 @@ register must be set to 1 (refer to Section 4.4.1: Power control register
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
+/** @brief RTC driver identifier.*/
 RTCDriver RTCD;
 
 
@@ -69,15 +70,21 @@ RTCDriver RTCD;
 static void rtc_lld_serve_interrupt(RTCDriver *rtcp){
   chSysLockFromIsr();
 //TODO: do not forget to reset flags manually
-  if (RTC->CRL & RTC_CRL_SECF){
+  if ((RTC->CRH & RTC_CRH_SECIE) && \
+      (RTC->CRL & RTC_CRL_SECF) && \
+      (rtcp->config->second_cb != NULL)){
     rtcp->config->second_cb(rtcp);
     RTC->CRL &= ~RTC_CRL_SECF;
   }
-  if (RTC->CRL & RTC_CRL_ALRF){
+  if ((RTC->CRH & RTC_CRH_ALRIE) && \
+      (RTC->CRL & RTC_CRL_ALRF) && \
+      (rtcp->config->alarm_cb != NULL)){
     rtcp->config->alarm_cb(rtcp);
     RTC->CRL &= ~RTC_CRL_ALRF;
   }
-  if (RTC->CRL & RTC_CRL_OWF){
+  if ((RTC->CRH & RTC_CRH_OWIE) && \
+      (RTC->CRL & RTC_CRL_OWF) && \
+      (rtcp->config->overflow_cb != NULL)){
     rtcp->config->overflow_cb(rtcp);
     RTC->CRL &= ~RTC_CRL_OWF;
   }
@@ -128,6 +135,8 @@ void rtc_lld_init(void){
   RTC->CRL &= ~(RTC_CRL_RSF);
   while (!(RTC->CRL & RTC_CRL_RSF))
     ;
+
+  RTCD.config = NULL;
 }
 
 /**
@@ -137,23 +146,24 @@ void rtc_lld_init(void){
  * @param[in] rtccfgp pointer to a @p RTCDriver config object
  */
 #if RTC_SUPPORTS_CALLBACKS
-void rtc_lld_start(RTCDriver *rtcp, RTCConfig *rtccfgp){
-  uint16_t flags = 0;
+void rtc_lld_start(RTCDriver *rtcp, const RTCConfig *rtccfgp){
+  uint16_t isr_flags = 0;
 
   NVICEnableVector(RTC_IRQn, CORTEX_PRIORITY_MASK(STM32_RTC_IRQ_PRIORITY));
 
   rtcp->config = rtccfgp;
   if (rtcp->config->overflow_cb != NULL){
-    flags |= RTC_CRH_OWIE;
+    isr_flags |= RTC_CRH_OWIE;
   }
   if (rtcp->config->alarm_cb != NULL){
-    flags |= RTC_CRH_ALRIE;
+    isr_flags |= RTC_CRH_ALRIE;
   }
   if (rtcp->config->second_cb != NULL){
-    flags |= RTC_CRH_SECIE;
+    isr_flags |= RTC_CRH_SECIE;
   }
 
-  RTC->CRH |= flags;
+  RTC->CRL &= ~(RTC_CRL_SECF | RTC_CRL_ALRF | RTC_CRL_OWF); /* clear all even flags*/
+  RTC->CRH |= isr_flags;
 }
 
 /**
