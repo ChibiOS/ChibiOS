@@ -37,16 +37,6 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
-/* TODO: move this to hal_lld_f103.h & mcuconf.h */
-#define STM32_LSECLK             32768       /**< Low speed external clock.  */
-
-
-/* RCC_CFGR register bits definitions.*/
-#define STM32_RTC_NONE           (0 << 8)    /**< */
-#define STM32_RTC_LSE            (1 << 8)    /**< LSE oscillator clock used as RTC clock */
-#define STM32_RTC_LSI            (2 << 8)    /**< LSI oscillator clock used as RTC clock */
-#define STM32_RTC_HSE            (3 << 8)    /**< HSE oscillator clock divided by 128 used as RTC clock */
-
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

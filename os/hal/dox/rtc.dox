@@ -24,6 +24,8 @@
  * @details This module defines an abstract interface for Real Time Clock cell.
  *          If you do not need callback functionality than disable 
  *          @p RTC_SUPPORTS_CALLBACKS option in @p halconf.h.
+ *          In @p halconf.h you also can select clock source for RTC in
+ *          @p RTC_CLOCK_SOURCE option.
  *
  * @pre     In order to use the RTC driver the @p HAL_USE_RTC option
  *          must be enabled in @p halconf.h. 

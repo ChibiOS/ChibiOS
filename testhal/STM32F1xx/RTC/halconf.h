@@ -212,6 +212,13 @@
 #define RTC_SUPPORTS_CALLBACKS      FALSE
 #endif
 
+/**
+ * @brief   Clock source selecting. LSE by default.
+ */
+#if !defined(RTC_CLOCK_SOURCE) || defined(__DOXYGEN__)
+#define RTC_CLOCK_SOURCE            RCC_BDCR_RTCSEL_LSE
+#endif
+
 /*===========================================================================*/
 /* MAC driver related settings.                                              */
 /*===========================================================================*/

@@ -47,6 +47,14 @@
 #define RTC_SUPPORTS_CALLBACKS              TRUE
 #endif
 
+/**
+ * @brief   Clock source selecting. LSE by default.
+ */
+#if !defined(RTC_CLOCK_SOURCE) || defined(__DOXYGEN__)
+#define RTC_CLOCK_SOURCE                    RCC_BDCR_RTCSEL_LSE
+#endif
+
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/

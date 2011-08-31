@@ -30,31 +30,6 @@
 #include "hal.h"
 
 
-// TODO: defines look in 4492 stm32f10x.h
-
-
-/** The RTCCLK clock source can be either the HSE/128, LSE or LSI clocks. This is selected
-by programming the RTCSEL[1:0] bits in the Backup domain control register (RCC_BDCR).
-This selection
-CANNOT
-be modified without resetting the Backup domain.
-
-The LSE clock is in the Backup domain, whereas the HSE and LSI clocks are not.
-Consequently:
-* If LSE is selected as RTC clock:
-– The RTC continues to work even if the VDD supply is switched off, provided the
-VBAT supply is maintained.
-* If LSI is selected as Auto-Wakeup unit (AWU) clock:
-– The AWU state is not guaranteed if the VDD supply is powered off. Refer to
-Section 6.2.5: LSI clock on page 87 for more details on LSI calibration.
-* If the HSE clock divided by 128 is used as the RTC clock:
-– The RTC state is not guaranteed if the VDD supply is powered off or if the internal
-voltage regulator is powered off (removing power from the 1.8 V domain).
-– The DPB bit (Disable backup domain write protection) in the Power controller
-register must be set to 1 (refer to Section 4.4.1: Power control register
-(PWR_CR)).
-*/
-
 #if HAL_USE_RTC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
@@ -137,11 +112,35 @@ void rtc_lld_init(void){
   PWR->CR |= PWR_CR_DBP;                                    /* enable access */
 
   if (!(RCC->BDCR & (RCC_BDCR_RTCEN | RCC_BDCR_LSEON))){    /* BKP domain was reseted */
-    RCC->BDCR |= STM32_RTC_LSE;                             /* select clocking from LSE */
+    RCC->BDCR |= RTC_CLOCK_SOURCE;                          /* select clocking from LSE */
     RCC->BDCR |= RCC_BDCR_LSEON;                            /* switch LSE on */
     while(!(RCC->BDCR & RCC_BDCR_LSEON))                    /* wait for stabilization */
       ;
     RCC->BDCR |= RCC_BDCR_RTCEN;                            /* run clock */
+  }
+
+  #if defined(RTC_CLOCK_SOURCE) == defined(RCC_BDCR_RTCSEL_LSE)
+    uint32_t preload = STM32_LSECLK - 1UL;
+  #elif defined(RTC_CLOCK_SOURCE) == defined(RCC_BDCR_RTCSEL_LSI)
+    uint32_t preload = STM32_LSICLK - 1UL;
+  #elif defined(RTC_CLOCK_SOURCE) == defined(RCC_BDCR_RTCSEL_HSE)
+    uint32_t preload = (STM32_HSICLK / 128UL) - 1UL;
+  #else
+    #error "RTC clock source not selected"
+  #endif /* RTC_CLOCK_SOURCE == RCC_BDCR_RTCSEL_LSE */
+
+  /* Write preload register only if value changed */
+  if (preload != (((uint32_t)(RTC->PRLH)) << 16) + RTC->PRLH){
+    while(!(RTC->CRL & RTC_CRL_RTOFF))
+      ;
+
+    RTC->CRL |= RTC_CRL_CNF;                            /* switch on configure mode */
+    RTC->PRLH = (uint16_t)((preload >> 16) & 0b1111);   /* write preloader */
+    RTC->PRLL = (uint16_t)(preload & 0xFFFF);
+    RTC->CRL &= ~RTC_CRL_CNF;                           /* switch off configure mode */
+
+    while(!(RTC->CRL & RTC_CRL_RTOFF))                  /* wait for completion */
+      ;
   }
 
   /* Ensure that RTC_CNT and RTC_DIV contain actual values after enabling
@@ -181,7 +180,8 @@ void rtc_lld_start(RTCDriver *rtcp, const RTCConfig *rtccfgp){
     isr_flags |= RTC_CRH_SECIE;
   }
 
-  RTC->CRL &= ~(RTC_CRL_SECF | RTC_CRL_ALRF | RTC_CRL_OWF); /* clear all even flags*/
+  /* clear all event flags just to be safe */
+  RTC->CRL &= ~(RTC_CRL_SECF | RTC_CRL_ALRF | RTC_CRL_OWF);
   RTC->CRH |= isr_flags;
 }
 
@@ -201,14 +201,11 @@ void rtc_lld_stop(void){
  * @param[in] tv_sec     time value in UNIX notation.
  */
 void rtc_lld_set_time(uint32_t tv_sec){
-  uint32_t preload = STM32_LSECLK - 1UL;
 
   while(!(RTC->CRL & RTC_CRL_RTOFF))
     ;
 
   RTC->CRL |= RTC_CRL_CNF;                            /* switch on configure mode */
-  RTC->PRLH = (uint16_t)((preload >> 16) & 0b1111);   /* write preloader */
-  RTC->PRLL = (uint16_t)(preload & 0xFFFF);
   RTC->CNTH = (uint16_t)((tv_sec >> 16) & 0xFFFF);    /* write time */
   RTC->CNTL = (uint16_t)(tv_sec & 0xFFFF);
   RTC->CRL &= ~RTC_CRL_CNF;                           /* switch off configure mode */

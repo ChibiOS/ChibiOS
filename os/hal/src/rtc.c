@@ -92,14 +92,14 @@ void rtcSetTime(uint32_t tv_sec){
 /**
  * @brief Return current time in UNIX notation.
  */
-uint32_t rtcGetSec(void){
+inline uint32_t rtcGetSec(void){
   return rtc_lld_get_sec();
 }
 
 /**
  * @brief Return fractional part of current time (milliseconds).
  */
-uint16_t rtcGetMsec(void){
+inline uint16_t rtcGetMsec(void){
   return rtc_lld_get_msec();
 }
 
@@ -113,7 +113,7 @@ void rtcSetAlarm(uint32_t tv_alarm){
 /**
  * @brief Get current alarm date in UNIX notation.
  */
-uint32_t rtcGetAlarm(void){
+inline uint32_t rtcGetAlarm(void){
   return rtc_lld_get_alarm();
 }
 
