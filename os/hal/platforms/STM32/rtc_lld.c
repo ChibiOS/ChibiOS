@@ -1,3 +1,23 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /**
  * @file    STM32/rtc_lld.c
  * @brief   STM32 RTC subsystem low level driver header.
@@ -139,6 +159,7 @@ void rtc_lld_init(void){
 
 /**
  * @brief     Configure and start interrupt servicing routines.
+ *            This function do nothing if callbacks disabled.
  *
  * @param[in] rtcp    pointer to a @p RTCDriver object
  * @param[in] rtccfgp pointer to a @p RTCDriver config object
@@ -174,7 +195,6 @@ void rtc_lld_stop(void){
 #endif /* RTC_SUPPORTS_CALLBACKS */
 
 
-
 /**
  * @brief     Set current time.
  *
@@ -200,14 +220,14 @@ void rtc_lld_set_time(uint32_t tv_sec){
 /**
  * @brief Return current time in UNIX notation.
  */
-uint32_t rtc_lld_get_sec(void){
+inline uint32_t rtc_lld_get_sec(void){
   return ((RTC->CNTH << 16) + RTC->CNTL);
 }
 
 /**
  * @brief Return fractional part of current time (milliseconds).
  */
-uint16_t rtc_lld_get_msec(void){
+inline uint16_t rtc_lld_get_msec(void){
   uint32_t time_frac = 0;
   time_frac = (((uint32_t)RTC->DIVH) << 16) + (RTC->DIVL);
   return(((STM32_LSECLK - time_frac) * 1000) / STM32_LSECLK);
@@ -234,7 +254,7 @@ void rtc_lld_set_alarm(uint32_t tv_alarm){
  * @brief Get current alarm date in UNIX notation.
  * @note  Default value after reset is 0xFFFFFFFF
  */
-uint32_t rtc_lld_get_alarm(void){
+inline uint32_t rtc_lld_get_alarm(void){
   return ((RTC->ALRH << 16) + RTC->ALRL);
 }
 

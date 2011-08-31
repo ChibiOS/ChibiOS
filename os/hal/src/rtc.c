@@ -1,3 +1,23 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /**
  * @file    rtc.c
  * @brief   Real Time Clock Abstraction Layer code.
@@ -40,12 +60,14 @@ void rtcInit(void){
   rtc_lld_init();
 }
 
-#if RTC_SUPPORTS_CALLBACKS
 /**
- * @brief   Configure and start interrupt servicing routines.
+ * @brief     Configure and start interrupt servicing routines.
+ *            This function do nothing if callbacks disabled.
+ *
  * @param[in] rtcp - pointer to RTC driver structure.
  * @param[in] rtccfgp - pointer to RTC config structure.
  */
+#if RTC_SUPPORTS_CALLBACKS
 void rtcStart(RTCDriver *rtcp, const RTCConfig *rtccfgp){
   chDbgCheck(((rtcp != NULL) && (rtccfgp != NULL)), "rtcStart");
   rtc_lld_start(rtcp, rtccfgp);
@@ -95,14 +117,7 @@ uint32_t rtcGetAlarm(void){
   return rtc_lld_get_alarm();
 }
 
-
-
-
-
-
 #endif /* HAL_USE_RTC */
-
-
 
 /** @} */
 
