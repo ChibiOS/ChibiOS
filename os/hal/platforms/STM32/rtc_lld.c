@@ -10,14 +10,7 @@
 #include "hal.h"
 
 
-
-
-
-
 // TODO: defines look in 4492 stm32f10x.h
-
-
-
 
 
 /** The RTCCLK clock source can be either the HSE/128, LSE or LSI clocks. This is selected
@@ -69,7 +62,7 @@ RTCDriver RTCD;
 
 static void rtc_lld_serve_interrupt(RTCDriver *rtcp){
   chSysLockFromIsr();
-//TODO: do not forget to reset flags manually
+
   if ((RTC->CRH & RTC_CRH_SECIE) && \
       (RTC->CRL & RTC_CRL_SECF) && \
       (rtcp->config->second_cb != NULL)){
@@ -88,6 +81,7 @@ static void rtc_lld_serve_interrupt(RTCDriver *rtcp){
     rtcp->config->overflow_cb(rtcp);
     RTC->CRL &= ~RTC_CRL_OWF;
   }
+
   chSysUnlockFromIsr();
 }
 #endif /* RTC_SUPPORTS_CALLBACKS */
@@ -135,6 +129,10 @@ void rtc_lld_init(void){
   RTC->CRL &= ~(RTC_CRL_RSF);
   while (!(RTC->CRL & RTC_CRL_RSF))
     ;
+
+  /* disable all interrupts and clear all even flags just to be safe */
+  RTC->CRH &= ~(RTC_CRH_OWIE | RTC_CRH_ALRIE | RTC_CRH_SECIE);
+  RTC->CRL &= ~(RTC_CRL_SECF | RTC_CRL_ALRF | RTC_CRL_OWF);
 
   RTCD.config = NULL;
 }
