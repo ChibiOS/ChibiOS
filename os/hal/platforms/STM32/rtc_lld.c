@@ -245,6 +245,11 @@ void rtc_lld_set_alarm(uint32_t tv_alarm){
 
   while(!(RTC->CRL & RTC_CRL_RTOFF))                  /* wait for completion */
     ;
+
+#if !(RTC_SUPPORTS_CALLBACKS)
+  RTC->CRL &= ~RTC_CRL_ALRF;
+  RTC->CRH |= RTC_CRH_ALRIE;
+#endif /* !(RTC_SUPPORTS_CALLBACKS) */
 }
 
 /**
