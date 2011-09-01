@@ -21,7 +21,46 @@
 #include "ch.h"
 #include "hal.h"
 
+#define TEST_DEEPSLEEP_ENABLE
 
+#ifdef TEST_DEEPSLEEP_ENABLE
+
+static WORKING_AREA(blinkWA, 128);
+static msg_t blink_thd(void *arg){
+  (void)arg;
+  while (TRUE) {
+    chThdSleepMilliseconds(500);
+    palTogglePad(IOPORT3, GPIOC_LED);
+  }
+  return 0;
+}
+
+
+
+
+int main(void) {
+  halInit();
+  chSysInit();
+
+  chThdCreateStatic(blinkWA, sizeof(blinkWA), NORMALPRIO, blink_thd, NULL);
+  /* set alarm in near future */
+  rtcSetAlarm(rtcGetSec() + 60);
+
+  while (TRUE){
+      chThdSleepSeconds(10);
+      chSysLock();
+
+      /* going to anabiosis*/
+      PWR->CR |= (PWR_CR_PDDS | PWR_CR_LPDS | PWR_CR_CSBF | PWR_CR_CWUF);
+      SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+      __WFI();
+  }
+  return 0;
+}
+
+
+
+#else /* TEST_DEEPSLEEP_ENABLE */
 
 static void my_secondcb(RTCDriver *rtcp){
   (void)rtcp;
@@ -46,8 +85,6 @@ static const RTCConfig rtccfg={
     my_alarmcb,
 };
 
-
-
 int main(void) {
   halInit();
   chSysInit();
@@ -60,3 +97,4 @@ int main(void) {
   }
   return 0;
 }
+#endif /* TEST_DEEPSLEEP_ENABLE */
