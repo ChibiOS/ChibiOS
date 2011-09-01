@@ -163,7 +163,6 @@ void rtc_lld_init(void){
  * @param[in] rtcp    pointer to a @p RTCDriver object
  * @param[in] rtccfgp pointer to a @p RTCDriver config object
  */
-#if RTC_SUPPORTS_CALLBACKS
 void rtc_lld_start(RTCDriver *rtcp, const RTCConfig *rtccfgp){
   uint16_t isr_flags = 0;
 
@@ -192,7 +191,6 @@ void rtc_lld_stop(void){
   NVICDisableVector(RTC_IRQn);
   RTC->CRH = 0;
 }
-#endif /* RTC_SUPPORTS_CALLBACKS */
 
 
 /**

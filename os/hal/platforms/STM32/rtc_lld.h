@@ -112,13 +112,8 @@ extern RTCDriver RTCD;
 extern "C" {
 #endif
   void rtc_lld_init(void);
-  #if RTC_SUPPORTS_CALLBACKS
-    void rtc_lld_start(RTCDriver *rtcp, const RTCConfig *rtccfgp);
-    void rtc_lld_stop(void);
-  #else /* RTC_SUPPORTS_CALLBACKS */
-    #define rtc_lld_start(rtcp, rtccfgp){;}
-    #define rtc_lld_stop(){;}
-  #endif /* RTC_SUPPORTS_CALLBACKS */
+  void rtc_lld_start(RTCDriver *rtcp, const RTCConfig *rtccfgp);
+  void rtc_lld_stop(void);
   void rtc_lld_set_time(uint32_t tv_sec);
   uint32_t rtc_lld_get_sec(void);
   uint16_t rtc_lld_get_msec(void);
