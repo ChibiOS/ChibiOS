@@ -68,7 +68,8 @@ void rtcInit(void){
  * @param[in] rtccfgp - pointer to RTC config structure.
  */
 #if RTC_SUPPORTS_CALLBACKS
-void rtcStart(RTCDriver *rtcp, const RTCConfig *rtccfgp){
+void rtcStartI(RTCDriver *rtcp, const RTCConfig *rtccfgp){
+  chDbgCheckClassI();
   chDbgCheck(((rtcp != NULL) && (rtccfgp != NULL)), "rtcStart");
   rtc_lld_start(rtcp, rtccfgp);
 }
@@ -76,7 +77,8 @@ void rtcStart(RTCDriver *rtcp, const RTCConfig *rtccfgp){
 /**
  * @brief   Stop interrupt servicing routines.
  */
-void rtcStop(void){
+void rtcStopI(void){
+  chDbgCheckClassI();
   rtc_lld_stop();
 }
 #endif /* RTC_SUPPORTS_CALLBACKS */
