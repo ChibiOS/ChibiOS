@@ -52,6 +52,8 @@ RTCDriver RTCD;
  * @brief   Shared IRQ handler.
  *
  * @param[in] rtcp    pointer to a @p RTCDriver object
+ *
+ * @notapi
  */
 #if RTC_SUPPORTS_CALLBACKS
 
@@ -106,6 +108,8 @@ CH_IRQ_HANDLER(RTC_IRQHandler) {
 /**
  * @brief   Enable access to registers and initialize RTC if BKP domain
  *          was previously reseted.
+ *
+ * @notapi
  */
 void rtc_lld_init(void){
   RCC->APB1ENR |= (RCC_APB1ENR_PWREN | RCC_APB1ENR_BKPEN);  /* enable clocking */
@@ -162,6 +166,8 @@ void rtc_lld_init(void){
  *
  * @param[in] rtcp    pointer to a @p RTCDriver object
  * @param[in] rtccfgp pointer to a @p RTCDriver config object
+ *
+ * @notapi
  */
 void rtc_lld_start(RTCDriver *rtcp, const RTCConfig *rtccfgp){
   uint16_t isr_flags = 0;
@@ -186,6 +192,8 @@ void rtc_lld_start(RTCDriver *rtcp, const RTCConfig *rtccfgp){
 
 /**
  * @brief   Disable interrupt servicing routines.
+ *
+ * @notapi
  */
 void rtc_lld_stop(void){
   NVICDisableVector(RTC_IRQn);
@@ -197,6 +205,8 @@ void rtc_lld_stop(void){
  * @brief     Set current time.
  *
  * @param[in] tv_sec     time value in UNIX notation.
+ *
+ * @notapi
  */
 void rtc_lld_set_time(uint32_t tv_sec){
 
@@ -214,6 +224,8 @@ void rtc_lld_set_time(uint32_t tv_sec){
 
 /**
  * @brief Return current time in UNIX notation.
+ *
+ * @notapi
  */
 inline uint32_t rtc_lld_get_sec(void){
   return ((RTC->CNTH << 16) + RTC->CNTL);
@@ -221,6 +233,8 @@ inline uint32_t rtc_lld_get_sec(void){
 
 /**
  * @brief Return fractional part of current time (milliseconds).
+ *
+ * @notapi
  */
 inline uint16_t rtc_lld_get_msec(void){
   uint32_t time_frac = 0;
@@ -230,6 +244,9 @@ inline uint16_t rtc_lld_get_msec(void){
 
 /**
  * @brief Set alarm date in UNIX notation.
+ * @note  Default value after BKP domain reset is 0xFFFFFFFF
+ *
+ * @notapi
  */
 void rtc_lld_set_alarm(uint32_t tv_alarm){
 
@@ -252,7 +269,9 @@ void rtc_lld_set_alarm(uint32_t tv_alarm){
 
 /**
  * @brief Get current alarm date in UNIX notation.
- * @note  Default value after reset is 0xFFFFFFFF
+ * @note  Default value after BKP domain reset is 0xFFFFFFFF
+ *
+ * @notapi
  */
 inline uint32_t rtc_lld_get_alarm(void){
   return ((RTC->ALRH << 16) + RTC->ALRL);
