@@ -19,15 +19,19 @@
 */
 
 /**
- * @file    hal.c
- * @brief   HAL subsystem code.
+ * @file    rtc.c
+ * @brief   Real Time Clock Abstraction Layer code.
  *
- * @addtogroup HAL
+ * @addtogroup RTC
  * @{
  */
 
 #include "ch.h"
 #include "hal.h"
+
+#include "rtc_lld.h"
+
+#if HAL_USE_RTC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -48,70 +52,75 @@
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
-
 /**
- * @brief   HAL initialization.
- * @details This function invokes the low level initialization code then
- *          initializes all the drivers enabled in the HAL. Finally the
- *          board-specific initialization is performed by invoking
- *          @p boardInit() (usually defined in @p board.c).
- *
- * @init
+ * @brief   Enable access to registers and initialize RTC if BKP doamin
+ *          was previously reseted.
  */
-void halInit(void) {
-
-  hal_lld_init();
-
-#if HAL_USE_PAL || defined(__DOXYGEN__)
-  palInit(&pal_default_config);
-#endif
-#if HAL_USE_ADC || defined(__DOXYGEN__)
-  adcInit();
-#endif
-#if HAL_USE_CAN || defined(__DOXYGEN__)
-  canInit();
-#endif
-#if HAL_USE_GPT || defined(__DOXYGEN__)
-  gptInit();
-#endif
-#if HAL_USE_I2C || defined(__DOXYGEN__)
-  i2cInit();
-#endif
-#if HAL_USE_ICU || defined(__DOXYGEN__)
-  icuInit();
-#endif
-#if HAL_USE_MAC || defined(__DOXYGEN__)
-  macInit();
-#endif
-#if HAL_USE_PWM || defined(__DOXYGEN__)
-  pwmInit();
-#endif
-#if HAL_USE_SERIAL || defined(__DOXYGEN__)
-  sdInit();
-#endif
-#if HAL_USE_SDC || defined(__DOXYGEN__)
-  sdcInit();
-#endif
-#if HAL_USE_SPI || defined(__DOXYGEN__)
-  spiInit();
-#endif
-#if HAL_USE_UART || defined(__DOXYGEN__)
-  uartInit();
-#endif
-#if HAL_USE_USB || defined(__DOXYGEN__)
-  usbInit();
-#endif
-#if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
-  mmcInit();
-#endif
-#if HAL_USE_SERIAL_USB || defined(__DOXYGEN__)
-  sduInit();
-#endif
-#if HAL_USE_RTC || defined(__DOXYGEN__)
-  rtcInit();
-#endif
-  /* Board specific initialization.*/
-  boardInit();
+void rtcInit(void){
+  rtc_lld_init();
 }
 
+/**
+ * @brief     Configure and start interrupt servicing routines.
+ *            This function do nothing if callbacks disabled.
+ *
+ * @param[in] rtcp - pointer to RTC driver structure.
+ * @param[in] rtccfgp - pointer to RTC config structure.
+ */
+#if RTC_SUPPORTS_CALLBACKS
+void rtcStartI(RTCDriver *rtcp, const RTCConfig *rtccfgp){
+  chDbgCheckClassI();
+  chDbgCheck(((rtcp != NULL) && (rtccfgp != NULL)), "rtcStart");
+  rtc_lld_start(rtcp, rtccfgp);
+}
+
+/**
+ * @brief   Stop interrupt servicing routines.
+ */
+void rtcStopI(void){
+  chDbgCheckClassI();
+  rtc_lld_stop();
+}
+#endif /* RTC_SUPPORTS_CALLBACKS */
+
+/**
+ * @brief     Set current time.
+ * @param[in] tv_sec - time value in UNIX notation.
+ */
+void rtcSetTime(uint32_t tv_sec){
+  rtc_lld_set_time(tv_sec);
+}
+
+/**
+ * @brief Return current time in UNIX notation.
+ */
+inline uint32_t rtcGetSec(void){
+  return rtc_lld_get_sec();
+}
+
+/**
+ * @brief Return fractional part of current time (milliseconds).
+ */
+inline uint16_t rtcGetMsec(void){
+  return rtc_lld_get_msec();
+}
+
+/**
+ * @brief Set alarm date in UNIX notation.
+ */
+void rtcSetAlarm(uint32_t tv_alarm){
+  rtc_lld_set_alarm(tv_alarm);
+}
+
+/**
+ * @brief Get current alarm date in UNIX notation.
+ */
+inline uint32_t rtcGetAlarm(void){
+  return rtc_lld_get_alarm();
+}
+
+#endif /* HAL_USE_RTC */
+
 /** @} */
+
+
