@@ -89,6 +89,14 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: New I2C driver model and STM32 implementation.
+  (evaluate the option to change the API to a synchronous model)
+- NEW: New RTC driver model and STM32 implementation.
+  (API and functionality review)
+- NEW: Improved MAC driver model, it now follows the same template of other
+  drivers.
+  (uIP demo to be adapted)
+  (implement macStop() in AT91SAM7X implementation)
 - NEW: New DMA helper driver for STM32, it simplifies the use of the DMA
   resources and hides most differences with the new enhanced DMA units
   found in the STM32F2xx sub-family.

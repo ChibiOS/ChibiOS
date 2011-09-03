@@ -64,7 +64,6 @@ MACDriver ETH1;
 /*===========================================================================*/
 
 #ifndef __DOXYGEN__
-static bool_t link_up;
 
 static uint8_t default_mac[] = {0xAA, 0x55, 0x13, 0x37, 0x01, 0x10};
 
@@ -102,7 +101,7 @@ static void serve_interrupt(void) {
     if (rsr & AT91C_EMAC_REC) {
       chSysLockFromIsr();
       chSemResetI(&ETH1.rdsem, 0);
-#if CH_USE_EVENTS
+#if MAC_USE_EVENTS
       chEvtBroadcastI(&ETH1.rdevent);
 #endif
       chSysUnlockFromIsr();
@@ -135,6 +134,19 @@ static void cleanup(EMACDescriptor *from) {
   }
 }
 
+/**
+ * @brief   MAC address setup.
+ *
+ * @param[in] p         pointer to a six bytes buffer containing the MAC
+ *                      address
+ */
+static void set_address(const uint8_t *p) {
+
+  AT91C_BASE_EMAC->EMAC_SA1L = (AT91_REG)((p[3] << 24) | (p[2] << 16) |
+                                          (p[1] << 8) | p[0]);
+  AT91C_BASE_EMAC->EMAC_SA1H = (AT91_REG)((p[5] << 8) | p[4]);
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -163,10 +175,33 @@ CH_IRQ_HANDLER(irq_handler) {
  * @notapi
  */
 void mac_lld_init(void) {
-  unsigned i;
 
   miiInit();
   macObjectInit(&ETH1);
+
+  /*
+   * Associated PHY initialization.
+   */
+  miiReset(&ETH1);
+
+  /*
+   * EMAC pins setup. Note, PB18 is not included because it is
+   * used as #PD control and not as EF100.
+   */
+  AT91C_BASE_PIOB->PIO_ASR = EMAC_PIN_MASK;
+  AT91C_BASE_PIOB->PIO_PDR = EMAC_PIN_MASK;
+  AT91C_BASE_PIOB->PIO_PPUDR = EMAC_PIN_MASK;
+}
+
+/**
+ * @brief   Configures and activates the MAC peripheral.
+ *
+ * @param[in] macp      pointer to the @p MACDriver object
+ *
+ * @notapi
+ */
+void mac_lld_start(MACDriver *macp) {
+  unsigned i;
 
   /*
    * Buffers initialization.
@@ -185,18 +220,9 @@ void mac_lld_init(void) {
   txptr = td;
 
   /*
-   * Associated PHY initialization.
-   */
-  miiReset(&ETH1);
-
-  /*
-   * EMAC pins setup and clock enable. Note, PB18 is not included because it is
-   * used as #PD control and not as EF100.
+   * EMAC clock enable.
    */
   AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_EMAC;
-  AT91C_BASE_PIOB->PIO_ASR = EMAC_PIN_MASK;
-  AT91C_BASE_PIOB->PIO_PDR = EMAC_PIN_MASK;
-  AT91C_BASE_PIOB->PIO_PPUDR = EMAC_PIN_MASK;
 
   /*
    * EMAC Initial setup.
@@ -213,7 +239,10 @@ void mac_lld_init(void) {
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TE |
                                AT91C_EMAC_RE |
                                AT91C_EMAC_CLRSTAT;/* Initial NCR settings.*/
-  mac_lld_set_address(&ETH1, default_mac);
+  if (macp->config->mac_address == NULL)
+    set_address(default_mac);
+  else
+    set_address(macp->config->mac_address);
 
   /*
    * PHY device identification.
@@ -235,22 +264,15 @@ void mac_lld_init(void) {
 }
 
 /**
- * @brief   Low level MAC address setup.
+ * @brief   Deactivates the MAC peripheral.
  *
  * @param[in] macp      pointer to the @p MACDriver object
- * @param[in] p         pointer to a six bytes buffer containing the MAC
- *                      address. If this parameter is set to @p NULL then
- *                      a system default MAC is used. The MAC address must
- *                      be aligned with the most significant byte first.
  *
  * @notapi
  */
-void mac_lld_set_address(MACDriver *macp, const uint8_t *p) {
+void mac_lld_stop(MACDriver *macp) {
 
   (void)macp;
-  AT91C_BASE_EMAC->EMAC_SA1L = (AT91_REG)((p[3] << 24) | (p[2] << 16) |
-                                          (p[1] << 8) | p[0]);
-  AT91C_BASE_EMAC->EMAC_SA1H = (AT91_REG)((p[5] << 8) | p[4]);
 }
 
 /**
@@ -272,7 +294,7 @@ msg_t max_lld_get_transmit_descriptor(MACDriver *macp,
 
   (void)macp;
 
-  if (!link_up)
+  if (!macp->link_up)
     return RDY_TIMEOUT;
 
   chSysLock();
@@ -505,7 +527,7 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
   bmsr = miiGet(macp, MII_BMSR);
   if (!(bmsr & BMSR_LSTATUS)) {
     AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
-    return link_up = FALSE;
+    return macp->link_up = FALSE;
   }
 
   ncfgr = AT91C_BASE_EMAC->EMAC_NCFGR & ~(AT91C_EMAC_SPD | AT91C_EMAC_FD);
@@ -525,7 +547,7 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
   }
   AT91C_BASE_EMAC->EMAC_NCFGR = ncfgr;
   AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
-  return link_up = TRUE;
+  return macp->link_up = TRUE;
 }
 
 #endif /* HAL_USE_MAC */
