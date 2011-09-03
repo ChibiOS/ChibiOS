@@ -53,6 +53,9 @@
 /**
  * @brief   Enable access to registers and initialize RTC if BKP doamin
  *          was previously reseted.
+ *
+ * @note    This function is implicitly invoked by @p halInit(), there is
+ *          no need to explicitly initialize the driver.
  */
 void rtcInit(void){
   rtc_lld_init();
