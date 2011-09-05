@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    templates/mac_lld.h
- * @brief   MAC Driver subsystem low level driver header template.
+ * @file    STM32/mac_lld.h
+ * @brief   STM32 low level MAC driver header.
  *
  * @addtogroup MAC
  * @{
@@ -39,6 +39,27 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Number of available transmit buffers.
+ */
+#if !defined(MAC_TRANSMIT_BUFFERS) || defined(__DOXYGEN__)
+#define MAC_TRANSMIT_BUFFERS        2
+#endif
+
+/**
+ * @brief   Number of available receive buffers.
+ */
+#if !defined(MAC_RECEIVE_BUFFERS) || defined(__DOXYGEN__)
+#define MAC_RECEIVE_BUFFERS         2
+#endif
+
+/**
+ * @brief   Maximum supported frame size.
+ */
+#if !defined(MAC_BUFFERS_SIZE) || defined(__DOXYGEN__)
+#define MAC_BUFFERS_SIZE            1518
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -46,6 +67,26 @@
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Type of an STM32 Ethernet receive descriptor.
+ */
+typedef struct {
+  volatile uint32_t     rdes0;
+  volatile uint32_t     rdes1;
+  volatile uint32_t     rdes2;
+  volatile uint32_t     rdes3;
+} stm32_eth_rx_descriptor_t;
+
+/**
+ * @brief   Type of an STM32 Ethernet transmit descriptor.
+ */
+typedef struct {
+  volatile uint32_t     tdes0;
+  volatile uint32_t     tdes1;
+  volatile uint32_t     tdes2;
+  volatile uint32_t     tdes3;
+} stm32_eth_tx_descriptor_t;
 
 /**
  * @brief   Driver configuration structure.

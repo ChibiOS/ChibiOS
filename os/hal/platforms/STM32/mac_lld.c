@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    templates/mac_lld.c
- * @brief   MAC Driver subsystem low level driver source template.
+ * @file    STM32/mac_lld.c
+ * @brief   STM32 low level MAC driver code.
  *
  * @addtogroup MAC
  * @{
@@ -28,12 +28,15 @@
 
 #include "ch.h"
 #include "hal.h"
-
+#include "mii.h"
+#
 #if HAL_USE_MAC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
+
+#define BUFFER_SLICE ((((MAC_BUFFERS_SIZE - 1) | 3) + 1) / 4)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -47,6 +50,15 @@ MACDriver ETH1;
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
+
+static stm32_eth_rx_descriptor_t *rxptr;
+static stm32_eth_tx_descriptor_t *txptr;
+
+static stm32_eth_rx_descriptor_t rd[MAC_RECEIVE_BUFFERS];
+static stm32_eth_tx_descriptor_t td[MAC_TRANSMIT_BUFFERS];
+
+static uint32_t rb[MAC_RECEIVE_BUFFERS * BUFFER_SLICE];
+static uint32_t tb[MAC_TRANSMIT_BUFFERS * BUFFER_SLICE];
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -66,7 +78,24 @@ MACDriver ETH1;
  * @notapi
  */
 void mac_lld_init(void) {
+  unsigned i;
 
+  macObjectInit(&ETH1);
+
+  /* Descriptor tables are initialized in linked mode, note that the first
+     word is not initialized here but in mac_lld_start().*/
+  for (i = 0; i < MAC_RECEIVE_BUFFERS; i++) {
+    rd[i].rdes1 = RDES1_RCH | MAC_BUFFERS_SIZE;
+    rd[i].rdes2 = (uint32_t)&rb[i * BUFFER_SLICE];
+    rd[i].rdes3 = (uint32_t)&rb[((i + 1) % MAC_RECEIVE_BUFFERS) *
+                                BUFFER_SLICE];
+  }
+  for (i = 0; i < MAC_TRANSMIT_BUFFERS; i++) {
+    td[i].tdes1 = 0;
+    td[i].tdes2 = (uint32_t)&tb[i * BUFFER_SLICE];
+    td[i].tdes3 = (uint32_t)&tb[((i + 1) % MAC_TRANSMIT_BUFFERS) *
+                                BUFFER_SLICE];
+  }
 }
 
 /**
@@ -77,7 +106,26 @@ void mac_lld_init(void) {
  * @notapi
  */
 void mac_lld_start(MACDriver *macp) {
+  unsigned i;
 
+  /* Resets the state of all descriptors.*/
+  for (i = 0; i < MAC_RECEIVE_BUFFERS; i++)
+    rd[i].rdes0 = RDES0_OWN;
+  rxptr = (stm32_eth_rx_descriptor_t *)rd;
+  for (i = 0; i < MAC_TRANSMIT_BUFFERS; i++)
+    td[i].tdes0 = TDES0_TCH;
+  txptr = (stm32_eth_tx_descriptor_t *)td;
+
+  /* Soft reset of the MAC core and wait until the reset is complete.*/
+  ETH->DMABMR |= ETH_DMABMR_SR;
+  while (ETH->DMABMR & ETH_DMABMR_SR)
+    ;
+
+  /* Descriptor chains pointers.*/
+  ETH->DMARDLAR = (uint32_t)rd;
+  ETH->DMATDLAR = (uint32_t)rd;
+
+  /* Clear DMA status.*/
 }
 
 /**
