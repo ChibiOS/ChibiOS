@@ -29,7 +29,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "mii.h"
-#
+
 #if HAL_USE_MAC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
@@ -37,6 +37,20 @@
 /*===========================================================================*/
 
 #define BUFFER_SLICE ((((MAC_BUFFERS_SIZE - 1) | 3) + 1) / 4)
+
+/* MII divider optimal value.*/
+#if (STM32_HCLK >= 60000000)
+#define MACMIIDR_CR     ETH_MACMIIAR_CR_Div42
+#elif (STM32_HCLK >= 35000000)
+#define MACMIIDR_CR     ETH_MACMIIAR_CR_Div26
+#elif (STM32_HCLK >= 20000000)
+#define MACMIIDR_CR     ETH_MACMIIAR_CR_Div16
+#else
+#error "STM32_HCLK below minimum frequency for ETH operations (20MHz)"
+#endif
+
+/* PHY address.*/
+#define MACMIIDR_PA     (32 << 11)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -63,6 +77,55 @@ static uint32_t tb[MAC_TRANSMIT_BUFFERS * BUFFER_SLICE];
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+/**
+ * @brief   Writes a PHY register.
+ *
+ * @param[in] reg       register number
+ * @param[in] value     new register value
+ */
+static void mii_write_phy(uint16_t reg, uint16_t value) {
+  uint32_t miiar;
+
+  miiar = ETH->MACMIIAR | ETH_MACMIIAR_MW | ETH_MACMIIAR_MB;
+  miiar = (miiar & ~ETH_MACMIIAR_MR) | (reg << 6);
+  ETH->MACMIIDR = value;
+  ETH->MACMIIAR = miiar;
+  while ((ETH->MACMIIAR & ETH_MACMIIAR_MB) != 0)
+    ;
+}
+
+/**
+ * @brief   Reads a PHY register.
+ *
+ * @param[in] reg       register number
+ */
+static uint16_t mii_read_phy(uint16_t reg) {
+  uint32_t miiar;
+
+  miiar = ETH->MACMIIAR | ETH_MACMIIAR_MB;
+  miiar = (miiar & ~(ETH_MACMIIAR_MR | ETH_MACMIIAR_MW)) | (reg << 6);
+  ETH->MACMIIAR = miiar;
+  while ((ETH->MACMIIAR & ETH_MACMIIAR_MB) != 0)
+    ;
+  return (uint16_t)ETH->MACMIIDR;
+}
+
+/**
+ * @brief   MII/RMII interface initialization.
+ */
+static void mii_init(void) {
+  uint32_t i;
+
+  for (i = 0; i < 31; i++) {
+    ETH->MACMIIDR = (i << 6) | MACMIIDR_CR;
+    if ((mii_read_phy(MII_PHYSID1) == (PHY_ID >> 16)) &&
+        (mii_read_phy(MII_PHYSID2) == (PHY_ID & 0xFFF0)))
+      return;
+  }
+  /* Wrong or defective board.*/
+  chSysHalt();
+}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -120,6 +183,9 @@ void mac_lld_start(MACDriver *macp) {
   ETH->DMABMR |= ETH_DMABMR_SR;
   while (ETH->DMABMR & ETH_DMABMR_SR)
     ;
+
+  /* MII initialization.*/
+  mii_init();
 
   /* Descriptor chains pointers.*/
   ETH->DMARDLAR = (uint32_t)rd;
