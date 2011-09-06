@@ -103,6 +103,11 @@ static void cmd_info(BaseChannel *chp, int argc, char *argv[]) {
 #ifdef BOARD_NAME
   chprintf(chp, "Board:        %s\r\n", BOARD_NAME);
 #endif
+#ifdef __DATE__
+#ifdef __TIME__
+  chprintf(chp, "Build time:   %s%s%s\r\n", __DATE__, " - ", __TIME__);
+#endif
+#endif
 }
 
 static void cmd_systime(BaseChannel *chp, int argc, char *argv[]) {
