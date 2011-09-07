@@ -209,7 +209,7 @@
  * @brief   Switch to TRUE if you need callbacks from RTC.
  */
 #if !defined(RTC_SUPPORTS_CALLBACKS) || defined(__DOXYGEN__)
-#define RTC_SUPPORTS_CALLBACKS      FALSE
+#define RTC_SUPPORTS_CALLBACKS      TRUE
 #endif
 
 /**

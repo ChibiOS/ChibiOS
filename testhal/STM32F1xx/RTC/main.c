@@ -21,7 +21,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#define TEST_DEEPSLEEP_ENABLE
+//#define TEST_DEEPSLEEP_ENABLE
 
 #ifdef TEST_DEEPSLEEP_ENABLE
 
@@ -62,6 +62,12 @@ int main(void) {
 
 #else /* TEST_DEEPSLEEP_ENABLE */
 
+static void my_overflowcb(RTCDriver *rtcp){
+  (void)rtcp;
+  palTogglePad(IOPORT3, GPIOC_LED);
+  rtcSetAlarm(rtcGetSec() + 10);
+}
+
 static void my_secondcb(RTCDriver *rtcp){
   (void)rtcp;
   //palTogglePad(IOPORT3, GPIOC_LED);
@@ -73,25 +79,13 @@ static void my_alarmcb(RTCDriver *rtcp){
   rtcSetAlarm(rtcGetSec() + 10);
 }
 
-static void my_overflowcb(RTCDriver *rtcp){
-  (void)rtcp;
-  palTogglePad(IOPORT3, GPIOC_LED);
-  rtcSetAlarm(rtcGetSec() + 10);
-}
-
-static const RTCConfig rtccfg={
-    my_overflowcb,
-    my_secondcb,
-    my_alarmcb,
-};
 
 int main(void) {
   halInit();
   chSysInit();
 
   rtcSetAlarm(rtcGetSec() + 10);
-  rtcStart(&RTCD, &rtccfg);
-
+  rtcSetCallback(&RTCD, NULL, my_secondcb, my_alarmcb);
   while (TRUE){
     chThdSleepMilliseconds(500);
   }
