@@ -62,20 +62,20 @@ static void rtc_lld_serve_interrupt(RTCDriver *rtcp){
 
   if ((RTC->CRH & RTC_CRH_SECIE) && \
       (RTC->CRL & RTC_CRL_SECF) && \
-      (rtcp->config->second_cb != NULL)){
-    rtcp->config->second_cb(rtcp);
+      (rtcp->second_cb != NULL)){
+    rtcp->second_cb(rtcp);
     RTC->CRL &= ~RTC_CRL_SECF;
   }
   if ((RTC->CRH & RTC_CRH_ALRIE) && \
       (RTC->CRL & RTC_CRL_ALRF) && \
-      (rtcp->config->alarm_cb != NULL)){
-    rtcp->config->alarm_cb(rtcp);
+      (rtcp->alarm_cb != NULL)){
+    rtcp->alarm_cb(rtcp);
     RTC->CRL &= ~RTC_CRL_ALRF;
   }
   if ((RTC->CRH & RTC_CRH_OWIE) && \
       (RTC->CRL & RTC_CRL_OWF) && \
-      (rtcp->config->overflow_cb != NULL)){
-    rtcp->config->overflow_cb(rtcp);
+      (rtcp->overflow_cb != NULL)){
+    rtcp->overflow_cb(rtcp);
     RTC->CRL &= ~RTC_CRL_OWF;
   }
 
@@ -157,49 +157,72 @@ void rtc_lld_init(void){
   RTC->CRH &= ~(RTC_CRH_OWIE | RTC_CRH_ALRIE | RTC_CRH_SECIE);
   RTC->CRL &= ~(RTC_CRL_SECF | RTC_CRL_ALRF | RTC_CRL_OWF);
 
-  RTCD.config = NULL;
+#if RTC_SUPPORTS_CALLBACKS
+  RTCD.alarm_cb    = NULL;
+  RTCD.overflow_cb = NULL;
+  RTCD.second_cb   = NULL;
+#endif /* RTC_SUPPORTS_CALLBACKS */
 }
 
 /**
- * @brief     Configure and start interrupt servicing routines.
- *            This function do nothing if callbacks disabled.
+ * @brief     Enables and disables callbacks on the fly.
  *
- * @param[in] rtcp    pointer to a @p RTCDriver object
- * @param[in] rtccfgp pointer to a @p RTCDriver config object
+ * @details   Pass callback function(s) in argument(s) to enable callback(s).
+ *            Pass NULL to disable callback.
+ *
+ * @pre       To use this function you must set @p RTC_SUPPORTS_CALLBACKS
+ *            to @p TRUE.
+ *
+ * @param[in] rtcp         pointer to RTC driver structure.
+ * @param[in] overflowcb   overflow callback function.
+ * @param[in] secondcb     every second callback function.
+ * @param[in] alarmcb      alarm callback function.
  *
  * @notapi
  */
-void rtc_lld_start(RTCDriver *rtcp, const RTCConfig *rtccfgp){
+#if RTC_SUPPORTS_CALLBACKS
+void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t overflowcb,
+                          rtccb_t secondcb, rtccb_t alarmcb){
+
   uint16_t isr_flags = 0;
 
-  NVICEnableVector(RTC_IRQn, CORTEX_PRIORITY_MASK(STM32_RTC_IRQ_PRIORITY));
-
-  rtcp->config = rtccfgp;
-  if (rtcp->config->overflow_cb != NULL){
+  if (overflowcb != NULL){
+    rtcp->overflow_cb = *overflowcb;
     isr_flags |= RTC_CRH_OWIE;
   }
-  if (rtcp->config->alarm_cb != NULL){
+  else{
+    rtcp->overflow_cb = NULL;
+    isr_flags &= ~RTC_CRH_OWIE;
+  }
+
+  if (alarmcb != NULL){
+    rtcp->alarm_cb = *alarmcb;
     isr_flags |= RTC_CRH_ALRIE;
   }
-  if (rtcp->config->second_cb != NULL){
-    isr_flags |= RTC_CRH_SECIE;
+  else{
+    rtcp->alarm_cb = NULL;
+    isr_flags &= ~RTC_CRH_ALRIE;
   }
 
-  /* clear all event flags just to be safe */
-  RTC->CRL &= ~(RTC_CRL_SECF | RTC_CRL_ALRF | RTC_CRL_OWF);
-  RTC->CRH |= isr_flags;
-}
+  if (secondcb != NULL){
+    rtcp->second_cb = *secondcb;
+    isr_flags |= RTC_CRH_SECIE;
+  }
+  else{
+    rtcp->second_cb = NULL;
+    isr_flags &= ~RTC_CRH_SECIE;
+  }
 
-/**
- * @brief   Disable interrupt servicing routines.
- *
- * @notapi
- */
-void rtc_lld_stop(void){
-  NVICDisableVector(RTC_IRQn);
-  RTC->CRH = 0;
+  if(isr_flags != 0){
+    NVICEnableVector(RTC_IRQn, CORTEX_PRIORITY_MASK(STM32_RTC_IRQ_PRIORITY));
+    RTC->CRH |= isr_flags;
+  }
+  else{
+    NVICDisableVector(RTC_IRQn);
+    RTC->CRH = 0;
+  }
 }
-
+#endif /* RTC_SUPPORTS_CALLBACKS */
 
 /**
  * @brief     Set current time.

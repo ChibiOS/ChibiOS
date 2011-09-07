@@ -70,11 +70,8 @@ extern "C" {
   void rtcInit(void);
 
   #if RTC_SUPPORTS_CALLBACKS
-    void rtcStart(RTCDriver *rtcp, const RTCConfig *rtccfgp);
-    void rtcStop(void);
-  #else /* RTC_SUPPORTS_CALLBACKS */
-    #define rtcStart(rtcp, rtccfgp)
-    #define rtcStop()
+    void rtcSetCallback(RTCDriver *rtcp, rtccb_t overflowcb,
+                        rtccb_t secondcb, rtccb_t alarmcb);
   #endif /* RTC_SUPPORTS_CALLBACKS */
 
   void rtcSetTime(uint32_t tv_sec);

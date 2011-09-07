@@ -66,10 +66,12 @@
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
 /**
- * @brief Structure representing an RTC driver config.
+ * @brief Structure representing an RTC driver.
  */
-typedef struct {
+struct RTCDriver{
+#if RTC_SUPPORTS_CALLBACKS
   /**
    * @brief Overflow callback. Set it to NULL if not used.
    */
@@ -84,17 +86,7 @@ typedef struct {
    * @brief Alarm callback. Set it to NULL if not used.
    */
   rtccb_t           alarm_cb;
-}RTCConfig;
-
-
-/**
- * @brief Structure representing an RTC driver.
- */
-struct RTCDriver{
-  /**
-   * @brief Pointer to RCT config.
-   */
-  const RTCConfig       *config;
+#endif /* RTC_SUPPORTS_CALLBACKS */
 };
 
 /*===========================================================================*/
@@ -112,8 +104,8 @@ extern RTCDriver RTCD;
 extern "C" {
 #endif
   void rtc_lld_init(void);
-  void rtc_lld_start(RTCDriver *rtcp, const RTCConfig *rtccfgp);
-  void rtc_lld_stop(void);
+  void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t overflow_cb,
+                            rtccb_t second_cb, rtccb_t alarm_cb);
   void rtc_lld_set_time(uint32_t tv_sec);
   uint32_t rtc_lld_get_sec(void);
   uint16_t rtc_lld_get_msec(void);

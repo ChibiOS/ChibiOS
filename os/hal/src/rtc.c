@@ -61,26 +61,23 @@ void rtcInit(void){
   rtc_lld_init();
 }
 
+#if RTC_SUPPORTS_CALLBACKS
 /**
- * @brief     Configure and start interrupt servicing routines.
- *            This function do nothing if callbacks disabled.
+ * @brief     Enables and disables callbacks on the fly.
+ * @details   Pass callback function(s) in argument(s) to enable callback(s).
+ *            Pass NULL to disable callback.
+ * @pre       To use this function you must set @p RTC_SUPPORTS_CALLBACKS
+ *            to @p TRUE.
  *
  * @param[in] rtcp - pointer to RTC driver structure.
- * @param[in] rtccfgp - pointer to RTC config structure.
+ * @param[in] overflowcb - overflow callback function.
+ * @param[in] secondcb - every second callback function.
+ * @param[in] alarmcb - alarm callback function.
  */
-#if RTC_SUPPORTS_CALLBACKS
-void rtcStartI(RTCDriver *rtcp, const RTCConfig *rtccfgp){
-  chDbgCheckClassI();
-  chDbgCheck(((rtcp != NULL) && (rtccfgp != NULL)), "rtcStart");
-  rtc_lld_start(rtcp, rtccfgp);
-}
-
-/**
- * @brief   Stop interrupt servicing routines.
- */
-void rtcStopI(void){
-  chDbgCheckClassI();
-  rtc_lld_stop();
+void rtcSetCallback(RTCDriver *rtcp, rtccb_t overflowcb,
+                    rtccb_t secondcb, rtccb_t alarmcb){
+  chDbgCheck((rtcp != NULL), "rtcStart");
+  rtc_lld_set_callback(rtcp, overflowcb, secondcb, alarmcb);
 }
 #endif /* RTC_SUPPORTS_CALLBACKS */
 
