@@ -69,6 +69,7 @@
 
 /**
  * @brief Structure representing an RTC driver.
+ * @note  This driver if dummy when callbacks disabled.
  */
 struct RTCDriver{
 #if RTC_SUPPORTS_CALLBACKS
