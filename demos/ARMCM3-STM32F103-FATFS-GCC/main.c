@@ -228,6 +228,7 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   (void)arg;
+  chRegSetThreadName("blinker");
   while (TRUE) {
     palTogglePad(IOPORT3, GPIOC_LED);
     if (fs_ready)

@@ -69,9 +69,13 @@
 *****************************************************************************
 
 *** 2.2.7 ***
+- NEW: Added a new functionality to the registry subsystem, now it is possible
+  to associate a name to the threads using chRegSetThreadName. The main and
+  idle threads have their name assigned by default.
 - FIX: Fixed wrong check on CH_DBG_ENABLE_STACK_CHECK setting (bug 3387671).
 - FIX: Fixed wrong APB1 frequency check (bug 3361039).
 - FIX: Fixed missing state in shell demos (bug 3351556).
+- CHANGE: Removed todo.txt file, it does not belong to the stable version.
 
 *** 2.2.6 ***
 - FIX: Fixed race condition in Cortex-Mx ports (bug 3317500).

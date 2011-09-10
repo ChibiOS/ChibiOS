@@ -49,6 +49,7 @@ static msg_t can_rx(void *p) {
   CANRxFrame rxmsg;
 
   (void)p;
+  chRegSetThreadName("receiver");
   chEvtRegister(&CAND1.cd_rxfull_event, &el, 0);
   while(!chThdShouldTerminate()) {
     if (chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(100)) == 0)
@@ -70,6 +71,7 @@ static msg_t can_tx(void * p) {
   CANTxFrame txmsg;
 
   (void)p;
+  chRegSetThreadName("transmitter");
   txmsg.cf_IDE = CAN_IDE_EXT;
   txmsg.cf_EID = 0x01234567;
   txmsg.cf_RTR = CAN_RTR_DATA;

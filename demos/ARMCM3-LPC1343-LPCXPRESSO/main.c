@@ -58,6 +58,7 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   (void)arg;
+  chRegSetThreadName("blinker1");
   while (TRUE) {
     palClearPad(GPIO0, GPIO0_LED2);
     chThdSleepMilliseconds(500);
@@ -73,6 +74,7 @@ static WORKING_AREA(waThread2, 128);
 static msg_t Thread2(void *arg) {
 
   (void)arg;
+  chRegSetThreadName("blinker2");
   while (TRUE) {
     palClearPort(GPIO1, PAL_PORT_BIT(GPIO1_LED3B) |
                         PAL_PORT_BIT(GPIO1_LED3R) |

@@ -95,14 +95,15 @@ Thread *_thread_init(Thread *tp, tprio_t prio) {
 #if CH_USE_DYNAMIC
   tp->p_refs = 1;
 #endif
+#if CH_USE_REGISTRY
+  tp->p_name = NULL;
+  REG_INSERT(tp);
+#endif
 #if CH_USE_WAITEXIT
   list_init(&tp->p_waiting);
 #endif
 #if CH_USE_MESSAGES
   queue_init(&tp->p_msgqueue);
-#endif
-#if CH_USE_REGISTRY
-  REG_INSERT(tp);
 #endif
 #if defined(THREAD_EXT_INIT_HOOK)
   THREAD_EXT_INIT_HOOK(tp);

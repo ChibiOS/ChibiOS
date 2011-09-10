@@ -60,6 +60,7 @@ static WORKING_AREA(spi_thread_1_wa, 256);
 static msg_t spi_thread_1(void *p) {
 
   (void)p;
+  chRegSetThreadName("SPI thread 1");
   while (TRUE) {
     spiAcquireBus(&SPID1);              /* Acquire ownership of the bus.    */
     palClearPad(IOPORT3, GPIOC_LED);    /* LED ON.                          */
@@ -80,6 +81,7 @@ static WORKING_AREA(spi_thread_2_wa, 256);
 static msg_t spi_thread_2(void *p) {
 
   (void)p;
+  chRegSetThreadName("SPI thread 2");
   while (TRUE) {
     spiAcquireBus(&SPID1);              /* Acquire ownership of the bus.    */
     palSetPad(IOPORT3, GPIOC_LED);      /* LED OFF.                         */

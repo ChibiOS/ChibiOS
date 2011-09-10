@@ -61,6 +61,7 @@ WORKING_AREA(_idle_thread_wa, IDLE_THREAD_STACK_SIZE);
 void _idle_thread(void *p) {
 
   (void)p;
+  chRegSetThreadName("idle");
   while (TRUE) {
     port_wait_for_interrupt();
     IDLE_LOOP_HOOK();
@@ -100,6 +101,8 @@ void chSysInit(void) {
   setcurrp(_thread_init(&mainthread, NORMALPRIO));
   currp->p_state = THD_STATE_CURRENT;
   chSysEnable();
+
+  chRegSetThreadName("main");
 
 #if !CH_NO_IDLE_THREAD
   /* This thread has the lowest priority in the system, its role is just to

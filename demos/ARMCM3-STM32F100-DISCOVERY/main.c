@@ -163,6 +163,7 @@ static msg_t Thread1(void *arg) {
   static uint32_t seconds_counter;
 
   (void)arg;
+  chRegSetThreadName("counter");
   while (TRUE) {
     chThdSleepMilliseconds(1000);
     seconds_counter++;

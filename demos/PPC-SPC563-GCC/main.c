@@ -125,6 +125,7 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   (void)arg;
+  chRegSetThreadName("blinker");
 
   SIU.GPDO[GPIO_LED1].R = 1;
   SIU.GPDO[GPIO_LED2].R = 1;

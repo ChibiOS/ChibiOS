@@ -35,6 +35,7 @@ static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   (void)arg;
+  chRegSetThreadName("blinker");
   while (TRUE) {
     palClearPad(IOPORT4, 7);
     chThdSleepMilliseconds(500);

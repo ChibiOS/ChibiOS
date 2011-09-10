@@ -55,6 +55,12 @@ struct Thread {
   Thread                *p_older;   /**< @brief Older registry element.     */
 #endif
   /* End of the fields shared with the ReadyList structure. */
+#if CH_USE_REGISTRY || defined(__DOXYGEN__)
+  /**
+   * @brief Thread name or @p NULL.
+   */
+  const char            *p_name;
+#endif
   /**
    * @brief Current thread state.
    */
