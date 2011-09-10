@@ -69,6 +69,7 @@
 *****************************************************************************
 
 *** 2.2.7 ***
+- NEW: Added debug plugin for Eclipse under ./tools/eclipse.
 - NEW: The debug macros chDbgCheck() and chDbgAssert() now can be externally
   redefined. The macro chDbgCheck() no more includes the line number in the
   description because incompatibility with the Cosmic compiler.
