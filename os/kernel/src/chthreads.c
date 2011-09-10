@@ -187,10 +187,10 @@ Thread *chThdCreateStatic(void *wsp, size_t size,
 #if CH_DBG_FILL_THREADS
   _thread_memfill((uint8_t *)wsp,
                   (uint8_t *)wsp + sizeof(Thread),
-                  THREAD_FILL_VALUE);
+                  CH_THREAD_FILL_VALUE);
   _thread_memfill((uint8_t *)wsp + sizeof(Thread),
                   (uint8_t *)wsp + size,
-                  STACK_FILL_VALUE);
+                  CH_STACK_FILL_VALUE);
 #endif
   chSysLock();
   chSchWakeupS(tp = chThdCreateI(wsp, size, prio, pf, arg), RDY_OK);

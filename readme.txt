@@ -69,6 +69,9 @@
 *****************************************************************************
 
 *** 2.2.7 ***
+- NEW: The debug macros chDbgCheck() and chDbgAssert() now can be externally
+  redefined. The macro chDbgCheck() no more includes the line number in the
+  description because incompatibility with the Cosmic compiler.
 - NEW: Added a new functionality to the registry subsystem, now it is possible
   to associate a name to the threads using chRegSetThreadName. The main and
   idle threads have their name assigned by default.

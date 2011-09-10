@@ -138,7 +138,7 @@ void PendSVVector(void) {
   /* Set the round-robin time quantum.*/
   rlist.r_preempt = CH_TIME_QUANTUM;
 #endif
-  chDbgTrace(otp);
+  dbg_trace(otp);
   sp_thd = ntp->p_ctx.r13;
 
   POP_CONTEXT(sp_thd)

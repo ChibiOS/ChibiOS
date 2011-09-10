@@ -46,7 +46,7 @@
 /**
  * @brief   Public trace buffer.
  */
-TraceBuffer trace_buffer;
+ch_trace_buffer_t dbg_trace_buffer;
 
 /**
  * @brief   Trace circular buffer subsystem initialization.
@@ -54,8 +54,8 @@ TraceBuffer trace_buffer;
  */
 void trace_init(void) {
 
-  trace_buffer.tb_size = TRACE_BUFFER_SIZE;
-  trace_buffer.tb_ptr = &trace_buffer.tb_buffer[0];
+  dbg_trace_buffer.tb_size = CH_TRACE_BUFFER_SIZE;
+  dbg_trace_buffer.tb_ptr = &dbg_trace_buffer.tb_buffer[0];
 }
 
 /**
@@ -65,14 +65,15 @@ void trace_init(void) {
  *
  * @notapi
  */
-void chDbgTrace(Thread *otp) {
+void dbg_trace(Thread *otp) {
 
-  trace_buffer.tb_ptr->cse_wtobjp = otp->p_u.wtobjp;
-  trace_buffer.tb_ptr->cse_time = chTimeNow();
-  trace_buffer.tb_ptr->cse_state = otp->p_state;
-  trace_buffer.tb_ptr->cse_tid = (unsigned)currp >> 6;
-  if (++trace_buffer.tb_ptr >= &trace_buffer.tb_buffer[TRACE_BUFFER_SIZE])
-    trace_buffer.tb_ptr = &trace_buffer.tb_buffer[0];
+  dbg_trace_buffer.tb_ptr->se_time   = chTimeNow();
+  dbg_trace_buffer.tb_ptr->se_tp     = currp;
+  dbg_trace_buffer.tb_ptr->se_wtobjp = otp->p_u.wtobjp;
+  dbg_trace_buffer.tb_ptr->se_state  = (uint8_t)otp->p_state;
+  if (++dbg_trace_buffer.tb_ptr >=
+      &dbg_trace_buffer.tb_buffer[CH_TRACE_BUFFER_SIZE])
+    dbg_trace_buffer.tb_ptr = &dbg_trace_buffer.tb_buffer[0];
 }
 #endif /* CH_DBG_ENABLE_TRACE */
 
@@ -81,10 +82,9 @@ void chDbgTrace(Thread *otp) {
 /**
  * @brief   Pointer to the panic message.
  * @details This pointer is meant to be accessed through the debugger, it is
- *          written once and then the system is halted. This variable can be
- *          set to @p NULL if the halt is caused by a stack overflow.
+ *          written once and then the system is halted.
  */
-char *panic_msg;
+char *dbg_panic_msg;
 
 /**
  * @brief   Prints a panic message on the console and then halts the system.
@@ -93,7 +93,7 @@ char *panic_msg;
  */
 void chDbgPanic(char *msg) {
 
-  panic_msg = msg;
+  dbg_panic_msg = msg;
   chSysHalt();
 }
 #endif /* CH_DBG_ENABLE_ASSERTS || CH_DBG_ENABLE_CHECKS || CH_DBG_ENABLE_STACK_CHECK */
