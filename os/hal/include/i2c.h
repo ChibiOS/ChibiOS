@@ -105,7 +105,7 @@ typedef enum {
  * @param[in] i2cscfg   pointer to the @p I2CSlaveConfig object triggering the
  *                      callback
  */
-typedef void (*i2ccallback_t)(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg);
+typedef void (*i2ccallback_t)(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
 
 
 /**
@@ -116,8 +116,7 @@ typedef void (*i2ccallback_t)(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg);
  * @param[in] i2cscfg   pointer to the @p I2CSlaveConfig object triggering the
  *                      callback
  */
-typedef void (*i2cerrorcallback_t)(I2CDriver *i2cp,
-                                   const I2CSlaveConfig *i2cscfg);
+typedef void (*i2cerrorcallback_t)(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg);
 
 
 /**
