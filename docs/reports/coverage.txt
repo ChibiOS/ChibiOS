@@ -1,7 +1,7 @@
 mkdir gcov
 gcov -u ..\..\os\kernel\src\chsys.c ..\..\os\kernel\src\chdebug.c ..\..\os\kernel\src\chlists.c ..\..\os\kernel\src\chvt.c ..\..\os\kernel\src\chschd.c ..\..\os\kernel\src\chthreads.c ..\..\os\kernel\src\chdynamic.c ..\..\os\kernel\src\chregistry.c ..\..\os\kernel\src\chsem.c ..\..\os\kernel\src\chmtx.c ..\..\os\kernel\src\chcond.c ..\..\os\kernel\src\chevents.c ..\..\os\kernel\src\chmsg.c ..\..\os\kernel\src\chmboxes.c ..\..\os\kernel\src\chqueues.c ..\..\os\kernel\src\chmemcore.c ..\..\os\kernel\src\chheap.c ..\..\os\kernel\src\chmempools.c
 File `../../os/kernel/src/chsys.c'
-Lines executed:100.00% of 27
+Lines executed:100.00% of 29
 ../../os/kernel/src/chsys.c:creating `chsys.c.gcov'
 
 File `../../os/kernel/src/chdebug.c'
@@ -21,7 +21,7 @@ Lines executed:100.00% of 68
 ../../os/kernel/src/chschd.c:creating `chschd.c.gcov'
 
 File `../../os/kernel/src/chthreads.c'
-Lines executed:100.00% of 87
+Lines executed:100.00% of 88
 ../../os/kernel/src/chthreads.c:creating `chthreads.c.gcov'
 
 File `../../os/kernel/src/chdynamic.c'

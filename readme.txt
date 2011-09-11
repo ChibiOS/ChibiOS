@@ -69,6 +69,7 @@
 *****************************************************************************
 
 *** 2.2.7 ***
+- INFO: GCC test runs performed with YAGARTO 4.6.0.
 - NEW: Added debug plugin for Eclipse under ./tools/eclipse.
 - NEW: The debug macros chDbgCheck() and chDbgAssert() now can be externally
   redefined. The macro chDbgCheck() no more includes the line number in the
