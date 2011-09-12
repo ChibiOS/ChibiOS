@@ -21,28 +21,70 @@
 #include "ch.h"
 #include "hal.h"
 
-static const EXTConfig extcfg = {
-  {
-    {EXT_CH_MODE_DISABLED, NULL},
-  },
-  EXT_MODE_EXTI(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-};
+static VirtualTimer vt;
 
-/*
- * Red LED blinker thread, times are in milliseconds.
- */
-static WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+/* LED set to OFF after 200mS.*/
+static void ledoff(void *arg) {
 
   (void)arg;
-  chRegSetThreadName("blinker");
-  while (TRUE) {
-    palClearPad(GPIOC, GPIOC_LED);
-    chThdSleepMilliseconds(500);
-    palSetPad(GPIOC, GPIOC_LED);
-    chThdSleepMilliseconds(500);
-  }
+  palSetPad(GPIOC, GPIOC_LED);
 }
+
+/* Triggered when the button is pressed or released. The LED is set to ON.*/
+static void extcb1(EXTDriver *extp, expchannel_t channel) {
+
+  (void)extp;
+  (void)channel;
+  palClearPad(GPIOC, GPIOC_LED);
+  chSysLockFromIsr();
+  if (!chVTIsArmedI(&vt))
+    chVTSetI(&vt, MS2ST(200), ledoff, NULL);
+  chSysUnlockFromIsr();
+}
+
+/* Triggered when the LED goes OFF.*/
+static void extcb2(EXTDriver *extp, expchannel_t channel) {
+
+  (void)extp;
+  (void)channel;
+}
+
+static const EXTConfig extcfg = {
+  {
+   {EXT_CH_MODE_BOTH_EDGES, extcb1},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_RISING_EDGE, extcb2},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+  },
+  EXT_MODE_EXTI(EXT_MODE_GPIOA,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                EXT_MODE_GPIOC,
+                0,
+                0,
+                0)
+};
 
 /*
  * Application entry point.
@@ -63,11 +105,6 @@ int main(void) {
    * Activates the EXT driver 1.
    */
   extStart(&EXTD1, &extcfg);
-
-  /*
-   * Creates the blinker thread.
-   */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
