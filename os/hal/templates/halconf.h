@@ -60,6 +60,13 @@
 #endif
 
 /**
+ * @brief   Enables the EXT subsystem.
+ */
+#if !defined(HAL_USE_EXT) || defined(__DOXYGEN__)
+#define HAL_USE_EXT                 FALSE
+#endif
+
+/**
  * @brief   Enables the GPT subsystem.
  */
 #if !defined(HAL_USE_GPT) || defined(__DOXYGEN__)
@@ -185,6 +192,22 @@
 
 /*===========================================================================*/
 /**
+ * @name EXT driver related setting
+ * @{
+ */
+/*===========================================================================*/
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name GPT driver related setting
+ * @{
+ */
+/*===========================================================================*/
+/** @} */
+
+/*===========================================================================*/
+/**
  * @name I2C driver related setting
  * @{
  */
@@ -204,6 +227,13 @@
  * @{
  */
 /*===========================================================================*/
+
+/**
+ * @brief   Enables an event sources for incoming packets.
+ */
+#if !defined(MAC_USE_EVENTS) || defined(__DOXYGEN__)
+#define MAC_USE_EVENTS              TRUE
+#endif
 /** @} */
 
 /*===========================================================================*/

@@ -56,6 +56,13 @@
 #endif
 
 /**
+ * @brief   Enables the EXT subsystem.
+ */
+#if !defined(HAL_USE_EXT) || defined(__DOXYGEN__)
+#define HAL_USE_EXT                 FALSE
+#endif
+
+/**
  * @brief   Enables the GPT subsystem.
  */
 #if !defined(HAL_USE_GPT) || defined(__DOXYGEN__)
@@ -185,6 +192,13 @@
 /* MAC driver related settings.                                              */
 /*===========================================================================*/
 
+/**
+ * @brief   Enables an event sources for incoming packets.
+ */
+#if !defined(MAC_USE_EVENTS) || defined(__DOXYGEN__)
+#define MAC_USE_EVENTS              TRUE
+#endif
+
 /*===========================================================================*/
 /* MMC_SPI driver related settings.                                          */
 /*===========================================================================*/
@@ -233,14 +247,6 @@
 #if !defined(MMC_USE_SPI_POLLING) || defined(__DOXYGEN__)
 #define MMC_USE_SPI_POLLING         TRUE
 #endif
-
-/*===========================================================================*/
-/* PAL driver related settings.                                              */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* PWM driver related settings.                                              */
-/*===========================================================================*/
 
 /*===========================================================================*/
 /* SDC driver related settings.                                              */
