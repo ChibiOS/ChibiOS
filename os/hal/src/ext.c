@@ -19,15 +19,17 @@
 */
 
 /**
- * @file    hal.c
- * @brief   HAL subsystem code.
+ * @file    ext.c
+ * @brief   EXT Driver code.
  *
- * @addtogroup HAL
+ * @addtogroup EXT
  * @{
  */
 
 #include "ch.h"
 #include "hal.h"
+
+#if HAL_USE_EXT || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -50,71 +52,70 @@
 /*===========================================================================*/
 
 /**
- * @brief   HAL initialization.
- * @details This function invokes the low level initialization code then
- *          initializes all the drivers enabled in the HAL. Finally the
- *          board-specific initialization is performed by invoking
- *          @p boardInit() (usually defined in @p board.c).
+ * @brief   EXT Driver initialization.
+ * @note    This function is implicitly invoked by @p halInit(), there is
+ *          no need to explicitly initialize the driver.
  *
  * @init
  */
-void halInit(void) {
+void extInit(void) {
 
-  hal_lld_init();
-
-#if HAL_USE_PAL || defined(__DOXYGEN__)
-  palInit(&pal_default_config);
-#endif
-#if HAL_USE_ADC || defined(__DOXYGEN__)
-  adcInit();
-#endif
-#if HAL_USE_CAN || defined(__DOXYGEN__)
-  canInit();
-#endif
-#if HAL_USE_EXT || defined(__DOXYGEN__)
-  extInit();
-#endif
-#if HAL_USE_GPT || defined(__DOXYGEN__)
-  gptInit();
-#endif
-#if HAL_USE_I2C || defined(__DOXYGEN__)
-  i2cInit();
-#endif
-#if HAL_USE_ICU || defined(__DOXYGEN__)
-  icuInit();
-#endif
-#if HAL_USE_MAC || defined(__DOXYGEN__)
-  macInit();
-#endif
-#if HAL_USE_PWM || defined(__DOXYGEN__)
-  pwmInit();
-#endif
-#if HAL_USE_SERIAL || defined(__DOXYGEN__)
-  sdInit();
-#endif
-#if HAL_USE_SDC || defined(__DOXYGEN__)
-  sdcInit();
-#endif
-#if HAL_USE_SPI || defined(__DOXYGEN__)
-  spiInit();
-#endif
-#if HAL_USE_UART || defined(__DOXYGEN__)
-  uartInit();
-#endif
-#if HAL_USE_USB || defined(__DOXYGEN__)
-  usbInit();
-#endif
-#if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
-  mmcInit();
-#endif
-#if HAL_USE_SERIAL_USB || defined(__DOXYGEN__)
-  sduInit();
-#endif
-#if HAL_USE_RTC || defined(__DOXYGEN__)
-  rtcInit();
-#endif
-  /* Board specific initialization.*/
-  boardInit();
+  ext_lld_init();
 }
+
+/**
+ * @brief   Initializes the standard part of a @p EXTDriver structure.
+ *
+ * @param[out] extp     pointer to the @p EXTDriver object
+ *
+ * @init
+ */
+void extObjectInit(EXTDriver *extp) {
+
+  extp->state  = EXT_STOP;
+  extp->config = NULL;
+}
+
+/**
+ * @brief   Configures and activates the EXT peripheral.
+ *
+ * @param[in] extp      pointer to the @p EXTDriver object
+ * @param[in] config    pointer to the @p EXTConfig object
+ *
+ * @api
+ */
+void extStart(EXTDriver *extp, const EXTConfig *config) {
+
+  chDbgCheck((extp != NULL) && (config != NULL), "extStart");
+
+  chSysLock();
+  chDbgAssert((extp->state == EXT_STOP) || (extp->state == EXT_ACTIVE),
+              "extStart(), #1", "invalid state");
+  extp->config = config;
+  ext_lld_start(extp);
+  extp->state = EXT_ACTIVE;
+  chSysUnlock();
+}
+
+/**
+ * @brief   Deactivates the EXT peripheral.
+ *
+ * @param[in] extp      pointer to the @p EXTDriver object
+ *
+ * @api
+ */
+void extStop(EXTDriver *extp) {
+
+  chDbgCheck(extp != NULL, "extStop");
+
+  chSysLock();
+  chDbgAssert((extp->state == EXT_STOP) || (extp->state == EXT_ACTIVE),
+              "extStop(), #1", "invalid state");
+  ext_lld_stop(extp);
+  extp->state = EXT_STOP;
+  chSysUnlock();
+}
+
+#endif /* HAL_USE_EXT */
 
 /** @} */

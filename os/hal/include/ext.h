@@ -1,0 +1,101 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @file    ext.h
+ * @brief   EXT Driver macros and structures.
+ *
+ * @addtogroup EXT
+ * @{
+ */
+
+#ifndef _EXT_H_
+#define _EXT_H_
+
+#if HAL_USE_EXT || defined(__DOXYGEN__)
+
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
+/**
+ * @name    EXT channels modes
+ * @{
+ */
+#define EXT_CH_MODE_DISABLED        0   /**< @brief Channel disabled.       */
+#define EXT_CH_MODE_RISING_EDGE     1   /**< @brief Rising edge callback.   */
+#define EXT_CH_MODE_FALLING_EDGE    2   /**< @brief Falling edge callback.  */
+/** @brief Both edges callback.*/
+#define EXT_CH_MODE_BOTH_EDGES      (EXT_CH_MODE_RISING_EDGE |              \
+                                     EXT_CH_MODE_FALLING_EDGE)
+/** @} */
+
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
+
+/**
+ * @brief   Driver state machine possible states.
+ */
+typedef enum {
+  EXT_UNINIT = 0,                   /**< Not initialized.                   */
+  EXT_STOP = 1,                     /**< Stopped.                           */
+  EXT_ACTIVE = 2,                   /**< Active.                            */
+} extstate_t;
+
+/**
+ * @brief   Type of a structure representing a EXT driver.
+ */
+typedef struct EXTDriver EXTDriver;
+
+#include "ext_lld.h"
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void extInit(void);
+  void extObjectInit(EXTDriver *extp);
+  void extStart(EXTDriver *extp, const EXTConfig *config);
+  void extStop(EXTDriver *extp);
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* HAL_USE_EXT */
+
+#endif /* _EXT_H_ */
+
+/** @} */

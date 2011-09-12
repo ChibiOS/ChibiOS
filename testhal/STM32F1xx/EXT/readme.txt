@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/RT HAL - UART driver demo for STM32.                            **
+** ChibiOS/RT HAL - EXT driver demo for STM32.                             **
 *****************************************************************************
 
 ** TARGET **
@@ -8,7 +8,7 @@ The demo runs on an Olimex STM32-P103 board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32 UART driver.
+The application demonstrates the use of the STM32 EXT driver.
 
 ** Build Procedure **
 
