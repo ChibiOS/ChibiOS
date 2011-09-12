@@ -40,7 +40,7 @@
  * Note:
  * When the STOP, START or PEC bit is set, the software must NOT perform
  * any write access to I2C_CR1 before this bit is cleared by hardware.
- * Otherwise there is a risk of setting a second STOP, START or PEC request.
+ * Otherwise there is a  risk of setting a second STOP, START or PEC request.
  */
 
 /*===========================================================================*/

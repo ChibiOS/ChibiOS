@@ -212,7 +212,7 @@ struct I2CDriver{
   /**
    * @brief Current slave configuration data.
    */
-  I2CSlaveConfig        *id_slave_config;
+  const I2CSlaveConfig  *id_slave_config;
 
   __IO size_t           txbytes;    /*!< @brief Number of bytes to be transmitted. */
   __IO size_t           rxbytes;    /*!< @brief Number of bytes to be received. */
