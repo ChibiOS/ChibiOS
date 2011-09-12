@@ -251,6 +251,7 @@
 /*===========================================================================*/
 /* SDC driver related settings.                                              */
 /*===========================================================================*/
+
 /**
  * @brief   Number of initialization attempts before rejecting the card.
  * @note    Attempts are performed at 10mS intevals.
@@ -321,10 +322,6 @@
 #if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define SPI_USE_MUTUAL_EXCLUSION    TRUE
 #endif
-
-/*===========================================================================*/
-/* UART driver related settings.                                             */
-/*===========================================================================*/
 
 #endif /* _HALCONF_H_ */
 

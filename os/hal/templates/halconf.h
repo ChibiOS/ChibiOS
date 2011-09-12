@@ -223,6 +223,14 @@
 
 /*===========================================================================*/
 /**
+ * @name ICU driver related setting
+ * @{
+ */
+/*===========================================================================*/
+/** @} */
+
+/*===========================================================================*/
+/**
  * @name MAC driver related setting
  * @{
  */
@@ -311,6 +319,7 @@
  * @{
  */
 /*===========================================================================*/
+
 /**
  * @brief   Number of initialization attempts before rejecting the card.
  * @note    Attempts are performed at 10mS intevals.
@@ -367,13 +376,13 @@
 #endif
 /** @} */
 
-
 /*===========================================================================*/
 /**
  * @name SERIAL_USB driver related setting
  * @{
  */
 /*===========================================================================*/
+
 /**
  * @brief   Serial over USB buffers size.
  * @details Configuration parameter, the buffer size must be a multiple of
