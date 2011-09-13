@@ -78,6 +78,8 @@ void extObjectInit(EXTDriver *extp) {
 
 /**
  * @brief   Configures and activates the EXT peripheral.
+ * @post    After activation all EXT channels are in the disabled state,
+ *          use @p extChannelEnable() in order to activate them.
  *
  * @param[in] extp      pointer to the @p EXTDriver object
  * @param[in] config    pointer to the @p EXTConfig object
@@ -113,6 +115,50 @@ void extStop(EXTDriver *extp) {
               "extStop(), #1", "invalid state");
   ext_lld_stop(extp);
   extp->state = EXT_STOP;
+  chSysUnlock();
+}
+
+/**
+ * @brief   Enables an EXT channel.
+ *
+ * @param[in] extp      pointer to the @p EXTDriver object
+ * @param[in] channel   channel to be enabled
+ *
+ * @api
+ */
+void extChannelEnable(EXTDriver *extp, expchannel_t channel) {
+
+  chDbgCheck((extp != NULL) &&
+             (channel < EXT_MAX_CHANNELS) &&
+             (extp->config->channels[channel].mode != EXT_CH_MODE_DISABLED),
+             "extChannelEnable");
+
+  chSysLock();
+  chDbgAssert(extp->state == EXT_ACTIVE,
+              "extChannelEnable(), #1", "invalid state");
+  extChannelEnableI(extp, channel);
+  chSysUnlock();
+}
+
+/**
+ * @brief   Disables an EXT channel.
+ *
+ * @param[in] extp      pointer to the @p EXTDriver object
+ * @param[in] channel   channel to be disabled
+ *
+ * @api
+ */
+void extChannelDisable(EXTDriver *extp, expchannel_t channel) {
+
+  chDbgCheck((extp != NULL) &&
+             (channel < EXT_MAX_CHANNELS) &&
+             (extp->config->channels[channel].mode != EXT_CH_MODE_DISABLED),
+             "extChannelDisable");
+
+  chSysLock();
+  chDbgAssert(extp->state == EXT_ACTIVE,
+              "extChannelDisable(), #1", "invalid state");
+  extChannelDisableI(extp, channel);
   chSysUnlock();
 }
 

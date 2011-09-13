@@ -51,7 +51,7 @@ static void extcb2(EXTDriver *extp, expchannel_t channel) {
 
 static const EXTConfig extcfg = {
   {
-   {EXT_CH_MODE_BOTH_EDGES, extcb1},
+   {EXT_CH_MODE_BOTH_EDGES | EXT_CH_MODE_AUTOSTART, extcb1},
    {EXT_CH_MODE_DISABLED, NULL},
    {EXT_CH_MODE_DISABLED, NULL},
    {EXT_CH_MODE_DISABLED, NULL},
@@ -63,7 +63,7 @@ static const EXTConfig extcfg = {
    {EXT_CH_MODE_DISABLED, NULL},
    {EXT_CH_MODE_DISABLED, NULL},
    {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_RISING_EDGE, extcb2},
+   {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART, extcb2},
    {EXT_CH_MODE_DISABLED, NULL},
    {EXT_CH_MODE_DISABLED, NULL},
    {EXT_CH_MODE_DISABLED, NULL},
@@ -107,10 +107,13 @@ int main(void) {
   extStart(&EXTD1, &extcfg);
 
   /*
-   * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the button state.
+   * Normal main() thread activity, in this demo it enables and disables the
+   * button EXT channel using 5 seconds intervals.
    */
   while (TRUE) {
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(5000);
+    extChannelDisable(&EXTD1, 0);
+    chThdSleepMilliseconds(5000);
+    extChannelEnable(&EXTD1, 0);
   }
 }

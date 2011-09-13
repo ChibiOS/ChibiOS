@@ -328,7 +328,7 @@ void ext_lld_start(EXTDriver *extp) {
   /* Configuration.*/
   imr = emr = rtsr = ftsr = 0;
   for (i = 0; i < EXT_MAX_CHANNELS; i++) {
-    if (extp->config->channels[i].mode != EXT_CH_MODE_DISABLED) {
+    if (extp->config->channels[i].mode & EXT_CH_MODE_AUTOSTART) {
       if (extp->config->channels[i].cb != NULL)
         imr |= (1 << i);
       else
@@ -344,11 +344,11 @@ void ext_lld_start(EXTDriver *extp) {
   AFIO->EXTICR[2] = extp->config->exti[2];
   AFIO->EXTICR[3] = extp->config->exti[3];
   EXTI->SWIER = 0;
-  EXTI->RTSR = rtsr;
-  EXTI->FTSR = ftsr;
-  EXTI->PR = EXT_CHANNELS_MASK;
-  EXTI->EMR = emr;
-  EXTI->IMR = imr;
+  EXTI->RTSR  = rtsr;
+  EXTI->FTSR  = ftsr;
+  EXTI->PR    = EXT_CHANNELS_MASK;
+  EXTI->EMR   = emr;
+  EXTI->IMR   = imr;
 }
 
 /**
@@ -383,6 +383,45 @@ void ext_lld_stop(EXTDriver *extp) {
   EXTI->EMR = 0;
   EXTI->IMR = 0;
   EXTI->PR = EXT_CHANNELS_MASK;
+}
+
+/**
+ * @brief   Enables an EXT channel.
+ *
+ * @param[in] extp      pointer to the @p EXTDriver object
+ * @param[in] channel   channel to be enabled
+ *
+ * @notapi
+ */
+void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
+
+  if (extp->config->channels[channel].cb != NULL)
+    EXTI->IMR |= (1 << channel);
+  else
+    EXTI->EMR |= (1 << channel);
+  if (extp->config->channels[channel].mode & EXT_CH_MODE_RISING_EDGE)
+    EXTI->RTSR |= (1 << channel);
+  if (extp->config->channels[channel].mode & EXT_CH_MODE_FALLING_EDGE)
+    EXTI->FTSR |= (1 << channel);
+}
+
+/**
+ * @brief   Disables an EXT channel.
+ *
+ * @param[in] extp      pointer to the @p EXTDriver object
+ * @param[in] channel   channel to be disabled
+ *
+ * @notapi
+ */
+void ext_lld_channel_disable(EXTDriver *extp, expchannel_t channel) {
+
+  (void)extp;
+
+  EXTI->IMR  &= ~(1 << channel);
+  EXTI->EMR  &= ~(1 << channel);
+  EXTI->RTSR &= ~(1 << channel);
+  EXTI->FTSR &= ~(1 << channel);
+  EXTI->PR    = (1 << channel);
 }
 
 #endif /* HAL_USE_EXT */

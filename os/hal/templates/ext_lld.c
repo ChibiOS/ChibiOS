@@ -94,6 +94,30 @@ void ext_lld_stop(EXTDriver *extp) {
   }
 }
 
+/**
+ * @brief   Enables an EXT channel.
+ *
+ * @param[in] extp      pointer to the @p EXTDriver object
+ * @param[in] channel   channel to be enabled
+ *
+ * @notapi
+ */
+void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
+
+}
+
+/**
+ * @brief   Disables an EXT channel.
+ *
+ * @param[in] extp      pointer to the @p EXTDriver object
+ * @param[in] channel   channel to be disabled
+ *
+ * @notapi
+ */
+void ext_lld_channel_disable(EXTDriver *extp, expchannel_t channel) {
+
+}
+
 #endif /* HAL_USE_EXT */
 
 /** @} */

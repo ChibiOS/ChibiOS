@@ -39,12 +39,14 @@
  * @name    EXT channels modes
  * @{
  */
+#define EXT_CH_MODE_EDGES_MASK      3   /**< @brief Mask of edges field.    */
 #define EXT_CH_MODE_DISABLED        0   /**< @brief Channel disabled.       */
 #define EXT_CH_MODE_RISING_EDGE     1   /**< @brief Rising edge callback.   */
 #define EXT_CH_MODE_FALLING_EDGE    2   /**< @brief Falling edge callback.  */
-/** @brief Both edges callback.*/
-#define EXT_CH_MODE_BOTH_EDGES      (EXT_CH_MODE_RISING_EDGE |              \
-                                     EXT_CH_MODE_FALLING_EDGE)
+#define EXT_CH_MODE_BOTH_EDGES      3   /**< @brief Both edges callback.    */
+
+#define EXT_CH_MODE_AUTOSTART       4   /**< @brief Channel started
+                                             automatically on driver start. */
 /** @} */
 
 /*===========================================================================*/
@@ -79,6 +81,26 @@ typedef struct EXTDriver EXTDriver;
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Enables an EXT channel.
+ *
+ * @param[in] extp      pointer to the @p EXTDriver object
+ * @param[in] channel   channel to be enabled
+ *
+ * @iclass
+ */
+#define extChannelEnableI(extp, channel) ext_lld_channel_enable(extp, channel)
+
+/**
+ * @brief   Disables an EXT channel.
+ *
+ * @param[in] extp      pointer to the @p EXTDriver object
+ * @param[in] channel   channel to be disabled
+ *
+ * @iclass
+ */
+#define extChannelDisableI(extp, channel) ext_lld_channel_disable(extp, channel)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -90,6 +112,8 @@ extern "C" {
   void extObjectInit(EXTDriver *extp);
   void extStart(EXTDriver *extp, const EXTConfig *config);
   void extStop(EXTDriver *extp);
+  void extChannelEnable(EXTDriver *extp, expchannel_t channel);
+  void extChannelDisable(EXTDriver *extp, expchannel_t channel);
 #ifdef __cplusplus
 }
 #endif

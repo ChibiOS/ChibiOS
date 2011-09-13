@@ -114,6 +114,8 @@ extern "C" {
   void ext_lld_init(void);
   void ext_lld_start(EXTDriver *extp);
   void ext_lld_stop(EXTDriver *extp);
+  void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel);
+  void ext_lld_channel_disable(EXTDriver *extp, expchannel_t channel);
 #ifdef __cplusplus
 }
 #endif
