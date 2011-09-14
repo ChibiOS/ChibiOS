@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM32/adc_lld.h
- * @brief   STM32 ADC subsystem low level driver header.
+ * @file    STM32F1xx/adc_lld.h
+ * @brief   STM32F1xx ADC subsystem low level driver header.
  *
  * @addtogroup ADC
  * @{

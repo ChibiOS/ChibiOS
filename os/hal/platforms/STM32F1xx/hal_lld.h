@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM32/hal_lld.h
- * @brief   STM32 HAL subsystem low level driver header.
+ * @file    STM32F1xx/hal_lld.h
+ * @brief   STM32F1xx HAL subsystem low level driver header.
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - STM32_LSECLK.
