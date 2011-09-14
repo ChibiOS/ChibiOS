@@ -49,9 +49,6 @@
 #error "STM32_HCLK below minimum frequency for ETH operations (20MHz)"
 #endif
 
-/* PHY address.*/
-#define MACMIIDR_PA     (32 << 11)
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -83,14 +80,14 @@ static uint32_t tb[MAC_TRANSMIT_BUFFERS * BUFFER_SLICE];
  *
  * @param[in] reg       register number
  * @param[in] value     new register value
+ *
+ * @notapi
  */
-static void mii_write_phy(uint16_t reg, uint16_t value) {
-  uint32_t miiar;
+void _stm32_eth_write_phy(uint32_t reg, uint32_t value) {
 
-  miiar = ETH->MACMIIAR | ETH_MACMIIAR_MW | ETH_MACMIIAR_MB;
-  miiar = (miiar & ~ETH_MACMIIAR_MR) | (reg << 6);
   ETH->MACMIIDR = value;
-  ETH->MACMIIAR = miiar;
+  ETH->MACMIIAR = BOARD_PHY_ADDR | (reg << 6) | MACMIIDR_CR |
+                  ETH_MACMIIAR_MW | ETH_MACMIIAR_MB;
   while ((ETH->MACMIIAR & ETH_MACMIIAR_MB) != 0)
     ;
 }
@@ -99,21 +96,23 @@ static void mii_write_phy(uint16_t reg, uint16_t value) {
  * @brief   Reads a PHY register.
  *
  * @param[in] reg       register number
+ *
+ * @notapi
  */
-static uint16_t mii_read_phy(uint16_t reg) {
-  uint32_t miiar;
+static uint32_t _stm32_eth_read_phy(uint32_t reg) {
 
-  miiar = ETH->MACMIIAR | ETH_MACMIIAR_MB;
-  miiar = (miiar & ~(ETH_MACMIIAR_MR | ETH_MACMIIAR_MW)) | (reg << 6);
-  ETH->MACMIIAR = miiar;
+  ETH->MACMIIAR = BOARD_PHY_ADDR | (reg << 6) | MACMIIDR_CR |
+                  ETH_MACMIIAR_MB;
   while ((ETH->MACMIIAR & ETH_MACMIIAR_MB) != 0)
     ;
-  return (uint16_t)ETH->MACMIIDR;
+  return ETH->MACMIIDR;
 }
+
 
 /**
  * @brief   MII/RMII interface initialization.
  */
+#if 0
 static void mii_init(void) {
   uint32_t i;
 
@@ -126,6 +125,7 @@ static void mii_init(void) {
   /* Wrong or defective board.*/
   chSysHalt();
 }
+#endif
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -148,7 +148,7 @@ void mac_lld_init(void) {
   /* Descriptor tables are initialized in linked mode, note that the first
      word is not initialized here but in mac_lld_start().*/
   for (i = 0; i < MAC_RECEIVE_BUFFERS; i++) {
-    rd[i].rdes1 = RDES1_RCH | MAC_BUFFERS_SIZE;
+    rd[i].rdes1 = STM32_RDES1_RCH | MAC_BUFFERS_SIZE;
     rd[i].rdes2 = (uint32_t)&rb[i * BUFFER_SLICE];
     rd[i].rdes3 = (uint32_t)&rb[((i + 1) % MAC_RECEIVE_BUFFERS) *
                                 BUFFER_SLICE];
@@ -173,10 +173,10 @@ void mac_lld_start(MACDriver *macp) {
 
   /* Resets the state of all descriptors.*/
   for (i = 0; i < MAC_RECEIVE_BUFFERS; i++)
-    rd[i].rdes0 = RDES0_OWN;
+    rd[i].rdes0 = STM32_RDES0_OWN;
   rxptr = (stm32_eth_rx_descriptor_t *)rd;
   for (i = 0; i < MAC_TRANSMIT_BUFFERS; i++)
-    td[i].tdes0 = TDES0_TCH;
+    td[i].tdes0 = STM32_TDES0_TCH;
   txptr = (stm32_eth_tx_descriptor_t *)td;
 
   /* Soft reset of the MAC core and wait until the reset is complete.*/
@@ -185,7 +185,7 @@ void mac_lld_start(MACDriver *macp) {
     ;
 
   /* MII initialization.*/
-  mii_init();
+//  mii_init();
 
   /* Descriptor chains pointers.*/
   ETH->DMARDLAR = (uint32_t)rd;
