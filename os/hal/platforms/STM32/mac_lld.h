@@ -242,7 +242,7 @@ typedef struct {
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
-extern MACDriver ETH1;
+extern MACDriver ETHD1;
 #endif
 
 #ifdef __cplusplus

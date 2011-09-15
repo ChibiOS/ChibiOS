@@ -43,6 +43,11 @@
 #define STM32F10X_CL
 
 /*
+ * Ethernet PHY type.
+ */
+#define BOARD_PHY_ID            MII_STE101P_ID
+
+/*
  * IO pins assignments.
  */
 #define GPIOA_SWITCH_WKUP       0

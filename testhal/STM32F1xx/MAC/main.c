@@ -21,71 +21,6 @@
 #include "ch.h"
 #include "hal.h"
 
-static VirtualTimer vt;
-
-/* LED set to OFF after 200mS.*/
-static void ledoff(void *arg) {
-
-  (void)arg;
-  palSetPad(GPIOC, GPIOC_LED);
-}
-
-/* Triggered when the button is pressed or released. The LED is set to ON.*/
-static void extcb1(EXTDriver *extp, expchannel_t channel) {
-
-  (void)extp;
-  (void)channel;
-  palClearPad(GPIOC, GPIOC_LED);
-  chSysLockFromIsr();
-  if (!chVTIsArmedI(&vt))
-    chVTSetI(&vt, MS2ST(200), ledoff, NULL);
-  chSysUnlockFromIsr();
-}
-
-/* Triggered when the LED goes OFF.*/
-static void extcb2(EXTDriver *extp, expchannel_t channel) {
-
-  (void)extp;
-  (void)channel;
-}
-
-static const EXTConfig extcfg = {
-  {
-   {EXT_CH_MODE_BOTH_EDGES | EXT_CH_MODE_AUTOSTART, extcb1},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART, extcb2},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-  },
-  EXT_MODE_EXTI(EXT_MODE_GPIOA,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                EXT_MODE_GPIOC,
-                0,
-                0,
-                0)
-};
-
 /*
  * Application entry point.
  */
@@ -104,16 +39,13 @@ int main(void) {
   /*
    * Activates the EXT driver 1.
    */
-  extStart(&EXTD1, &extcfg);
+/*  macStart(&ETHD1, NULL);*/
 
   /*
    * Normal main() thread activity, in this demo it enables and disables the
    * button EXT channel using 5 seconds intervals.
    */
   while (TRUE) {
-    chThdSleepMilliseconds(5000);
-    extChannelDisable(&EXTD1, 0);
-    chThdSleepMilliseconds(5000);
-    extChannelEnable(&EXTD1, 0);
+    chThdSleepMilliseconds(500);
   }
 }

@@ -56,11 +56,13 @@
 /**
  * @brief   Ethernet driver 1.
  */
-MACDriver ETH1;
+MACDriver ETHD1;
 
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
+
+static uint32_t phyaddr;
 
 static stm32_eth_rx_descriptor_t *rxptr;
 static stm32_eth_tx_descriptor_t *txptr;
@@ -80,13 +82,11 @@ static uint32_t tb[MAC_TRANSMIT_BUFFERS * BUFFER_SLICE];
  *
  * @param[in] reg       register number
  * @param[in] value     new register value
- *
- * @notapi
  */
-void _stm32_eth_write_phy(uint32_t reg, uint32_t value) {
+static void mii_write_phy(uint32_t reg, uint32_t value) {
 
   ETH->MACMIIDR = value;
-  ETH->MACMIIAR = BOARD_PHY_ADDR | (reg << 6) | MACMIIDR_CR |
+  ETH->MACMIIAR = phyaddr | (reg << 6) | MACMIIDR_CR |
                   ETH_MACMIIAR_MW | ETH_MACMIIAR_MB;
   while ((ETH->MACMIIAR & ETH_MACMIIAR_MB) != 0)
     ;
@@ -96,12 +96,10 @@ void _stm32_eth_write_phy(uint32_t reg, uint32_t value) {
  * @brief   Reads a PHY register.
  *
  * @param[in] reg       register number
- *
- * @notapi
  */
-static uint32_t _stm32_eth_read_phy(uint32_t reg) {
+static uint32_t mii_read_phy(uint32_t reg) {
 
-  ETH->MACMIIAR = BOARD_PHY_ADDR | (reg << 6) | MACMIIDR_CR |
+  ETH->MACMIIAR = phyaddr | (reg << 6) | MACMIIDR_CR |
                   ETH_MACMIIAR_MB;
   while ((ETH->MACMIIAR & ETH_MACMIIAR_MB) != 0)
     ;
@@ -110,22 +108,22 @@ static uint32_t _stm32_eth_read_phy(uint32_t reg) {
 
 
 /**
- * @brief   MII/RMII interface initialization.
+ * @brief   PHY address detection.
  */
-#if 0
-static void mii_init(void) {
+static void mii_find_phy(void) {
   uint32_t i;
 
   for (i = 0; i < 31; i++) {
     ETH->MACMIIDR = (i << 6) | MACMIIDR_CR;
-    if ((mii_read_phy(MII_PHYSID1) == (PHY_ID >> 16)) &&
-        (mii_read_phy(MII_PHYSID2) == (PHY_ID & 0xFFF0)))
+    if ((mii_read_phy(MII_PHYSID1) == (BOARD_PHY_ID >> 16)) &&
+        (mii_read_phy(MII_PHYSID2) == (BOARD_PHY_ID & 0xFFF0))) {
+      phyaddr = i << 11;
       return;
+    }
   }
   /* Wrong or defective board.*/
   chSysHalt();
 }
-#endif
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -143,7 +141,7 @@ static void mii_init(void) {
 void mac_lld_init(void) {
   unsigned i;
 
-  macObjectInit(&ETH1);
+  macObjectInit(&ETHD1);
 
   /* Descriptor tables are initialized in linked mode, note that the first
      word is not initialized here but in mac_lld_start().*/
@@ -159,6 +157,36 @@ void mac_lld_init(void) {
     td[i].tdes3 = (uint32_t)&tb[((i + 1) % MAC_TRANSMIT_BUFFERS) *
                                 BUFFER_SLICE];
   }
+
+  /* MAC clocks activation.*/
+  RCC->AHBENR |= RCC_AHBENR_ETHMACEN |
+                 RCC_AHBENR_ETHMACTXEN |
+                 RCC_AHBENR_ETHMACRXEN;
+
+  /* Reset of the MAC core.*/
+  RCC->AHBRSTR = RCC_AHBRSTR_ETHMACRST;
+  RCC->AHBRSTR = 0;
+
+  /* Find PHY address.*/
+  mii_find_phy();
+
+#if defined(BOARD_PHY_RESET)
+  /* PHY board-specific reset procedure.*/
+  BOARD_PHY_RESET();
+#else
+  /* PHY soft reset procedure.*/
+  mii_write_phy(MII_BMCR, BMCR_RESET);
+  while (mii_read_phy(MII_BMCR) & BMCR_RESET)
+    ;
+#endif
+
+  /* PHY in power down mode until the driver will be started.*/
+  mii_write_phy(MII_BMCR, BMCR_PDOWN);
+
+  /* MAC clocks stopped again.*/
+  RCC->AHBENR &= ~(RCC_AHBENR_ETHMACEN |
+                   RCC_AHBENR_ETHMACTXEN |
+                   RCC_AHBENR_ETHMACRXEN);
 }
 
 /**
@@ -179,19 +207,28 @@ void mac_lld_start(MACDriver *macp) {
     td[i].tdes0 = STM32_TDES0_TCH;
   txptr = (stm32_eth_tx_descriptor_t *)td;
 
-  /* Soft reset of the MAC core and wait until the reset is complete.*/
-  ETH->DMABMR |= ETH_DMABMR_SR;
-  while (ETH->DMABMR & ETH_DMABMR_SR)
-    ;
-
-  /* MII initialization.*/
-//  mii_init();
+  /* MAC clocks activation.*/
+  RCC->AHBENR |= RCC_AHBENR_ETHMACEN |
+                 RCC_AHBENR_ETHMACTXEN |
+                 RCC_AHBENR_ETHMACRXEN;
 
   /* Descriptor chains pointers.*/
   ETH->DMARDLAR = (uint32_t)rd;
   ETH->DMATDLAR = (uint32_t)rd;
 
-  /* Clear DMA status.*/
+  /* MAC configuration:
+       ETH_MACCR_TE     - Transmitter enable.
+       ETH_MACCR_RE     - Receiver enable.
+     Note that the complete setup of the MAC is performed when the link
+     status is detected.*/
+  ETH->MACCR = ETH_MACCR_TE | ETH_MACCR_TE;
+
+  ETH->MACFFR    = 0;
+  ETH->MACHTHR   = 0;
+  ETH->MACHTLR   = 0;
+  ETH->MACHTLR   = 0;
+  ETH->MACFCR    = 0;
+  ETH->MACVLANTR = 0;
 }
 
 /**
@@ -203,6 +240,10 @@ void mac_lld_start(MACDriver *macp) {
  */
 void mac_lld_stop(MACDriver *macp) {
 
+  /* MAC clocks stopped.*/
+  RCC->AHBENR &= ~(RCC_AHBENR_ETHMACEN |
+                   RCC_AHBENR_ETHMACTXEN |
+                   RCC_AHBENR_ETHMACRXEN);
 }
 
 /**
