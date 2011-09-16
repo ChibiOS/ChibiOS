@@ -376,35 +376,35 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
   if (sdp->state == SD_STOP) {
 #if STM32_SERIAL_USE_USART1
     if (&SD1 == sdp) {
-      RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+      rccEnableUSART1(FALSE);
       NVICEnableVector(USART1_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_USART1_PRIORITY));
     }
 #endif
 #if STM32_SERIAL_USE_USART2
     if (&SD2 == sdp) {
-      RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+      rccEnableUSART2(FALSE);
       NVICEnableVector(USART2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_USART2_PRIORITY));
     }
 #endif
 #if STM32_SERIAL_USE_USART3
     if (&SD3 == sdp) {
-      RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
+      rccEnableUSART3(FALSE);
       NVICEnableVector(USART3_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_USART3_PRIORITY));
     }
 #endif
 #if STM32_SERIAL_USE_UART4
     if (&SD4 == sdp) {
-      RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
+      rccEnableUART4(FALSE);
       NVICEnableVector(UART4_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_UART4_PRIORITY));
     }
 #endif
 #if STM32_SERIAL_USE_UART5
     if (&SD5 == sdp) {
-      RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
+      rccEnableUART5(FALSE);
       NVICEnableVector(UART5_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_UART5_PRIORITY));
     }
@@ -428,35 +428,35 @@ void sd_lld_stop(SerialDriver *sdp) {
     usart_deinit(sdp->usart);
 #if STM32_SERIAL_USE_USART1
     if (&SD1 == sdp) {
-      RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
+      rccDisableUSART1(FALSE);
       NVICDisableVector(USART1_IRQn);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_USART2
     if (&SD2 == sdp) {
-      RCC->APB1ENR &= ~RCC_APB1ENR_USART2EN;
+      rccDisableUSART2(FALSE);
       NVICDisableVector(USART2_IRQn);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_USART3
     if (&SD3 == sdp) {
-      RCC->APB1ENR &= ~RCC_APB1ENR_USART3EN;
+      rccDisableUSART3(FALSE);
       NVICDisableVector(USART3_IRQn);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_UART4
     if (&SD4 == sdp) {
-      RCC->APB1ENR &= ~RCC_APB1ENR_UART4EN;
+      rccDisableUART4(FALSE);
       NVICDisableVector(UART4_IRQn);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_UART5
     if (&SD5 == sdp) {
-      RCC->APB1ENR &= ~RCC_APB1ENR_UART5EN;
+      rccDisableUART5(FALSE);
       NVICDisableVector(UART5_IRQn);
       return;
     }

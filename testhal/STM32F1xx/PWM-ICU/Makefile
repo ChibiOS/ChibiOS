@@ -61,6 +61,9 @@ include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F1xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 #include $(CHIBIOS)/test/test.mk
 
+# Define linker script file here
+LDSCRIPT= $(PORTLD)/STM32F103xB.ld
+
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = $(PORTSRC) \

@@ -100,7 +100,7 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_TEIE        | STM32_DMA_CR_EN;
 
   /* Temporary activation.*/
-  RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
+  rccEnableADC1(FALSE);
   ADC1->CR1 = 0;
   ADC1->CR2 = ADC_CR2_ADON;
 
@@ -116,7 +116,7 @@ void adc_lld_init(void) {
 
   /* Return the ADC in low power mode.*/
   ADC1->CR2 = 0;
-  RCC->APB2ENR &= ~RCC_APB2ENR_ADC1EN;
+  rccDisableADC1(FALSE);
 #endif
 }
 
@@ -140,7 +140,7 @@ void adc_lld_start(ADCDriver *adcp) {
                             (void *)adcp);
       chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
-      RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
+      rccEnableADC1(FALSE);
     }
 #endif
 
@@ -167,7 +167,7 @@ void adc_lld_stop(ADCDriver *adcp) {
       ADC1->CR1 = 0;
       ADC1->CR2 = 0;
       dmaStreamRelease(adcp->dmastp);
-      RCC->APB2ENR &= ~RCC_APB2ENR_ADC1EN;
+      rccDisableADC1(FALSE);
     }
 #endif
   }

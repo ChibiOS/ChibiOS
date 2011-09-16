@@ -497,8 +497,6 @@ CH_IRQ_HANDLER(VectorC8) {
 void i2c_lld_init(void) {
 
 #if STM32_I2C_USE_I2C1
-  RCC->APB1RSTR     = RCC_APB1RSTR_I2C1RST; /* reset I2C 1 */
-  RCC->APB1RSTR     = 0;
   i2cObjectInit(&I2CD1);
   I2CD1.id_i2c      = I2C1;
 
@@ -512,8 +510,6 @@ void i2c_lld_init(void) {
 #endif /* STM32_I2C_USE_I2C */
 
 #if STM32_I2C_USE_I2C2
-  RCC->APB1RSTR     = RCC_APB1RSTR_I2C2RST; /* reset I2C 2 */
-  RCC->APB1RSTR     = 0;
   i2cObjectInit(&I2CD2);
   I2CD2.id_i2c      = I2C2;
 
@@ -542,7 +538,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
 #endif /* I2C_SUPPORTS_CALLBACKS */
       NVICEnableVector(I2C1_ER_IRQn,
           CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
-      RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;   /* I2C 1 clock enable */
+      rccEnableI2C1(FALSE);
     }
 #endif
 #if STM32_I2C_USE_I2C2
@@ -553,7 +549,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
 #endif /* I2C_SUPPORTS_CALLBACKS */
       NVICEnableVector(I2C2_ER_IRQn,
           CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
-      RCC->APB1ENR |= RCC_APB1ENR_I2C2EN;   /* I2C 2 clock enable */
+      rccEnableI2C2(FALSE);
     }
 #endif
   }
@@ -569,8 +565,7 @@ void i2c_lld_reset(I2CDriver *i2cp){
   chDbgCheck((i2cp->id_state == I2C_STOP)||(i2cp->id_state == I2C_READY),
              "i2c_lld_reset: invalid state");
 
-  RCC->APB1RSTR     = RCC_APB1RSTR_I2C1RST; /* reset I2C 1 */
-  RCC->APB1RSTR     = 0;
+  rccResetI2C1();
 }
 
 
@@ -699,14 +694,14 @@ void i2c_lld_stop(I2CDriver *i2cp) {
     if (&I2CD1 == i2cp) {
       NVICDisableVector(I2C1_EV_IRQn);
       NVICDisableVector(I2C1_ER_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_I2C1EN;
+      rccDisableI2C1(FALSE);
     }
 #endif
 #if STM32_I2C_USE_I2C2
     if (&I2CD2 == i2cp) {
       NVICDisableVector(I2C2_EV_IRQn);
       NVICDisableVector(I2C2_ER_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_I2C2EN;
+      rccDisableI2C2(FALSE);
     }
 #endif
   }

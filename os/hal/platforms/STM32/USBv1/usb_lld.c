@@ -330,7 +330,7 @@ void usb_lld_start(USBDriver *usbp) {
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
       /* USB clock enabled.*/
-      RCC->APB1ENR |= RCC_APB1ENR_USBEN;
+      rccEnableUSB(FALSE);
       /* Powers up the transceiver while holding the USB in reset state.*/
       STM32_USB->CNTR = CNTR_FRES;
       /* Enabling the USB IRQ vectors, this also gives enough time to allow
@@ -360,12 +360,12 @@ void usb_lld_stop(USBDriver *usbp) {
 
   /* If in ready state then disables the USB clock.*/
   if (usbp->state == USB_STOP) {
-#if STM32_ADC_USE_ADC1
+#if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
       NVICDisableVector(19);
       NVICDisableVector(20);
       STM32_USB->CNTR = CNTR_PDWN | CNTR_FRES;
-      RCC->APB1ENR &= ~RCC_APB1ENR_USBEN;
+      rccDisableUSB(FALSE);
     }
 #endif
   }

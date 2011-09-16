@@ -192,7 +192,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       chDbgAssert(!b, "spi_lld_start(), #2", "stream already allocated");
-      RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
+      rccEnableSPI1(FALSE);
     }
 #endif
 #if STM32_SPI_USE_SPI2
@@ -208,7 +208,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       chDbgAssert(!b, "spi_lld_start(), #4", "stream already allocated");
-      RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
+      rccEnableSPI2(FALSE);
     }
 #endif
 #if STM32_SPI_USE_SPI3
@@ -224,7 +224,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       chDbgAssert(!b, "spi_lld_start(), #6", "stream already allocated");
-      RCC->APB1ENR |= RCC_APB1ENR_SPI3EN;
+      rccEnableSPI3(FALSE);
     }
 #endif
 
@@ -272,21 +272,21 @@ void spi_lld_stop(SPIDriver *spip) {
     if (&SPID1 == spip) {
       dmaStreamRelease(STM32_DMA1_STREAM2);
       dmaStreamRelease(STM32_DMA1_STREAM3);
-      RCC->APB2ENR &= ~RCC_APB2ENR_SPI1EN;
+      rccDisableSPI1(FALSE);
     }
 #endif
 #if STM32_SPI_USE_SPI2
     if (&SPID2 == spip) {
       dmaStreamRelease(STM32_DMA1_STREAM4);
       dmaStreamRelease(STM32_DMA1_STREAM5);
-      RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN;
+      rccDisableSPI2(FALSE);
     }
 #endif
 #if STM32_SPI_USE_SPI3
     if (&SPID3 == spip) {
       dmaStreamRelease(STM32_DMA1_STREAM1);
       dmaStreamRelease(STM32_DMA1_STREAM2);
-      RCC->APB1ENR &= ~RCC_APB1ENR_SPI3EN;
+      rccDisableSPI3(FALSE);
     }
 #endif
   }

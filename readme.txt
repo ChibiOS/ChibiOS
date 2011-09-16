@@ -97,6 +97,9 @@
   drivers.
   (uIP demo to be adapted)
   (implement macStop() in AT91SAM7X implementation)
+- NEW: New RCC helper driver for STM32F1xx and STM32L1xx, it simplifies
+  the use of the RCC resources and hides most differences found among the
+  various STM32 sub-families.
 - NEW: New DMA helper driver for STM32, it simplifies the use of the DMA
   resources and hides most differences with the new enhanced DMA units
   found in the STM32F2xx sub-family.

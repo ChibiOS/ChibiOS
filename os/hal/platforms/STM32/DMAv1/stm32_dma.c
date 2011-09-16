@@ -437,10 +437,10 @@ bool_t dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
 
   /* Enabling DMA clocks required by the current streams set.*/
   if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) != 0)
-    RCC->AHBENR |= RCC_AHBENR_DMA1EN;
+    rccEnableDMA1(FALSE);
 #if STM32_HAS_DMA2
   if ((dma_streams_mask & STM32_DMA2_STREAMS_MASK) != 0)
-    RCC->AHBENR |= RCC_AHBENR_DMA2EN;
+    rccEnableDMA2(FALSE);
 #endif
 
   /* Putting the stream in a safe state.*/
@@ -484,10 +484,10 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
 
   /* Shutting down clocks that are no more required, if any.*/
   if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) == 0)
-    RCC->AHBENR &= ~RCC_AHBENR_DMA1EN;
+    rccDisableDMA1(FALSE);
 #if STM32_HAS_DMA2
   if ((dma_streams_mask & STM32_DMA2_STREAMS_MASK) == 0)
-    RCC->AHBENR &= ~RCC_AHBENR_DMA2EN;
+    rccDisableDMA2(FALSE);
 #endif
 }
 

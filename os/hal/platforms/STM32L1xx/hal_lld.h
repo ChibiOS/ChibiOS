@@ -787,8 +787,9 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/* STM32 DMA support code.*/
+/* STM32 DMA and RCC helpers.*/
 #include "stm32_dma.h"
+#include "stm32_rcc.h"
 
 #ifdef __cplusplus
 extern "C" {

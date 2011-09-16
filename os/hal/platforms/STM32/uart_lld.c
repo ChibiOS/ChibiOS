@@ -362,7 +362,7 @@ void uart_lld_start(UARTDriver *uartp) {
                             (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
                             (void *)uartp);
       chDbgAssert(!b, "uart_lld_start(), #2", "stream already allocated");
-      RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+      rccEnableUSART1(FALSE);
       NVICEnableVector(USART1_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_UART_USART1_IRQ_PRIORITY));
     }
@@ -381,7 +381,7 @@ void uart_lld_start(UARTDriver *uartp) {
                             (stm32_dmaisr_t)uart_lld_serve_tx_end_irq,
                             (void *)uartp);
       chDbgAssert(!b, "uart_lld_start(), #4", "stream already allocated");
-      RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+      rccEnableUSART2(FALSE);
       NVICEnableVector(USART2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_UART_USART2_IRQ_PRIORITY));
     }
@@ -400,7 +400,7 @@ void uart_lld_start(UARTDriver *uartp) {
                             (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
                             (void *)uartp);
       chDbgAssert(!b, "uart_lld_start(), #6", "stream already allocated");
-      RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
+      rccEnableUSART3(FALSE);
       NVICEnableVector(USART3_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_UART_USART3_IRQ_PRIORITY));
     }
@@ -438,7 +438,7 @@ void uart_lld_stop(UARTDriver *uartp) {
       dmaStreamRelease(STM32_DMA1_STREAM4);
       dmaStreamRelease(STM32_DMA1_STREAM5);
       NVICDisableVector(USART1_IRQn);
-      RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
+      rccDisableUSART1(FALSE);
       return;
     }
 #endif
@@ -448,7 +448,7 @@ void uart_lld_stop(UARTDriver *uartp) {
       dmaStreamRelease(STM32_DMA1_STREAM6);
       dmaStreamRelease(STM32_DMA1_STREAM7);
       NVICDisableVector(USART2_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_USART2EN;
+      rccDisableUSART2(FALSE);
       return;
     }
 #endif
@@ -458,7 +458,7 @@ void uart_lld_stop(UARTDriver *uartp) {
       dmaStreamRelease(STM32_DMA1_STREAM2);
       dmaStreamRelease(STM32_DMA1_STREAM3);
       NVICDisableVector(USART3_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_USART3EN;
+      rccDisableUSART3(FALSE);
       return;
     }
 #endif

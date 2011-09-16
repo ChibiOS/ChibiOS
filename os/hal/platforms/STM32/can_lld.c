@@ -192,7 +192,7 @@ void can_lld_start(CANDriver *canp) {
                      CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
     NVICEnableVector(CAN1_SCE_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
-    RCC->APB1ENR |= RCC_APB1ENR_CAN1EN;
+    rccEnableCAN1(FALSE);
   }
 #endif
 
@@ -276,7 +276,7 @@ void can_lld_stop(CANDriver *canp) {
       NVICDisableVector(USB_LP_CAN1_RX0_IRQn);
       NVICDisableVector(CAN1_RX1_IRQn);
       NVICDisableVector(CAN1_SCE_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_CAN1EN;
+      rccDisableCAN1(FALSE);
     }
 #endif
   }

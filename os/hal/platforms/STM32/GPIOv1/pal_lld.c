@@ -79,7 +79,7 @@ void _pal_lld_init(const PALConfig *config) {
   /*
    * Enables the GPIO related clocks.
    */
-  RCC->APB2ENR |= APB2_EN_MASK;
+  rccEnableAPB2(APB2_EN_MASK, FALSE);
 
   /*
    * Initial GPIO setup.

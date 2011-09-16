@@ -443,7 +443,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
     dmaStreamSetPeripheral(STM32_DMA2_STREAM4, &SDIO->FIFO);
     NVICEnableVector(SDIO_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_SDC_SDIO_IRQ_PRIORITY));
-    RCC->AHBENR |= RCC_AHBENR_SDIOEN;
+    rccEnableSDIO(FALSE);
   }
   /* Configuration, card clock is initially stopped.*/
   SDIO->POWER  = 0;
@@ -470,6 +470,7 @@ void sdc_lld_stop(SDCDriver *sdcp) {
     /* Clock deactivation.*/
     NVICDisableVector(SDIO_IRQn);
     dmaStreamRelease(STM32_DMA2_STREAM4);
+    rccDisableSDIO(FALSE);
   }
 }
 

@@ -159,13 +159,10 @@ void mac_lld_init(void) {
   }
 
   /* MAC clocks activation.*/
-  RCC->AHBENR |= RCC_AHBENR_ETHMACEN |
-                 RCC_AHBENR_ETHMACTXEN |
-                 RCC_AHBENR_ETHMACRXEN;
+  rccEnableETH(FALSE);
 
   /* Reset of the MAC core.*/
-  RCC->AHBRSTR = RCC_AHBRSTR_ETHMACRST;
-  RCC->AHBRSTR = 0;
+  rccResetETH();
 
   /* Find PHY address.*/
   mii_find_phy();
@@ -184,9 +181,7 @@ void mac_lld_init(void) {
   mii_write_phy(MII_BMCR, BMCR_PDOWN);
 
   /* MAC clocks stopped again.*/
-  RCC->AHBENR &= ~(RCC_AHBENR_ETHMACEN |
-                   RCC_AHBENR_ETHMACTXEN |
-                   RCC_AHBENR_ETHMACRXEN);
+  rccDisableETH(FALSE);
 }
 
 /**
@@ -208,9 +203,7 @@ void mac_lld_start(MACDriver *macp) {
   txptr = (stm32_eth_tx_descriptor_t *)td;
 
   /* MAC clocks activation.*/
-  RCC->AHBENR |= RCC_AHBENR_ETHMACEN |
-                 RCC_AHBENR_ETHMACTXEN |
-                 RCC_AHBENR_ETHMACRXEN;
+  rccEnableETH(FALSE);
 
   /* Descriptor chains pointers.*/
   ETH->DMARDLAR = (uint32_t)rd;
@@ -241,9 +234,7 @@ void mac_lld_start(MACDriver *macp) {
 void mac_lld_stop(MACDriver *macp) {
 
   /* MAC clocks stopped.*/
-  RCC->AHBENR &= ~(RCC_AHBENR_ETHMACEN |
-                   RCC_AHBENR_ETHMACTXEN |
-                   RCC_AHBENR_ETHMACRXEN);
+  rccDisableETH(FALSE);
 }
 
 /**
