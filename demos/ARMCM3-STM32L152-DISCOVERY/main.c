@@ -61,7 +61,7 @@ int main(void) {
   /*
    * Activates the serial driver 1 using the driver default configuration.
    */
-//  sdStart(&SD1, NULL);
+  sdStart(&SD1, NULL);
 
   /*
    * If the user button is pressed after the reset then the test suite is

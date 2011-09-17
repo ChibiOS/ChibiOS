@@ -105,8 +105,8 @@
                                        PIN_PUDR_FLOATING(14) |              \
                                        PIN_PUDR_FLOATING(15)))
 #define VAL_GPIOA_ODR               0xFFFFFFFF
-#define VAL_GPIOA_AFRL				0x00000000
-#define VAL_GPIOA_AFRH				0x00000000
+#define VAL_GPIOA_AFRL              0x00000000
+#define VAL_GPIOA_AFRH              0x00000000
 
 /*
  * Port B setup.
@@ -127,8 +127,8 @@
                                        PIN_PUDR_FLOATING(GPIOB_LED4) |      \
                                        PIN_PUDR_FLOATING(GPIOB_LED3)))
 #define VAL_GPIOB_ODR               0xFFFFFF3F
-#define VAL_GPIOB_AFRL				0x00000000
-#define VAL_GPIOB_AFRH				0x00000000
+#define VAL_GPIOB_AFRL              0x00000000
+#define VAL_GPIOB_AFRH              0x00000000
 
 /*
  * Port C setup.
@@ -142,8 +142,8 @@
 #define VAL_GPIOC_PUPDR             (~(PIN_PUDR_FLOATING(15) |              \
                                        PIN_PUDR_FLOATING(14)))
 #define VAL_GPIOC_ODR               0xFFFFFFFF
-#define VAL_GPIOC_AFRL				0x00000000
-#define VAL_GPIOC_AFRH				0x00000000
+#define VAL_GPIOC_AFRL              0x00000000
+#define VAL_GPIOC_AFRH              0x00000000
 
 /*
  * Port D setup.
@@ -154,8 +154,8 @@
 #define VAL_GPIOD_OSPEEDR           0xFFFFFFFF
 #define VAL_GPIOD_PUPDR             0xFFFFFFFF
 #define VAL_GPIOD_ODR               0xFFFFFFFF
-#define VAL_GPIOD_AFRL				0x00000000
-#define VAL_GPIOD_AFRH				0x00000000
+#define VAL_GPIOD_AFRL              0x00000000
+#define VAL_GPIOD_AFRH              0x00000000
 
 /*
  * Port E setup.
@@ -166,8 +166,8 @@
 #define VAL_GPIOE_OSPEEDR           0xFFFFFFFF
 #define VAL_GPIOE_PUPDR             0xFFFFFFFF
 #define VAL_GPIOE_ODR               0xFFFFFFFF
-#define VAL_GPIOE_AFRL				0x00000000
-#define VAL_GPIOE_AFRH				0x00000000
+#define VAL_GPIOE_AFRL              0x00000000
+#define VAL_GPIOE_AFRH              0x00000000
 
 /*
  * Port H setup.
@@ -178,8 +178,8 @@
 #define VAL_GPIOH_OSPEEDR           0xFFFFFFFF
 #define VAL_GPIOH_PUPDR             0xFFFFFFFF
 #define VAL_GPIOH_ODR               0xFFFFFFFF
-#define VAL_GPIOH_AFRL				0x00000000
-#define VAL_GPIOH_AFRH				0x00000000
+#define VAL_GPIOH_AFRL              0x00000000
+#define VAL_GPIOH_AFRH              0x00000000
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus
