@@ -80,6 +80,8 @@ extern "C" {
 #endif
   void shellInit(void);
   Thread *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio);
+  Thread *shellCreateStatic(const ShellConfig *scp, void *wsp,
+                            size_t size, tprio_t prio);
   bool_t shellGetLine(BaseChannel *chp, char *line, unsigned size);
 #ifdef __cplusplus
 }

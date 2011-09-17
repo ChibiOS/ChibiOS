@@ -220,6 +220,8 @@ void shellInit(void) {
 /**
  * @brief Spawns a new shell.
  *
+ * @pre   @p CH_USE_MALLOC_HEAP and @p CH_USE_DYNAMIC must be enabled.
+ *
  * @param[in] scp pointer to a @p ShellConfig object
  * @param[in] size size of the shell working area to be allocated
  * @param[in] prio the priority level for the new shell
@@ -227,10 +229,34 @@ void shellInit(void) {
  * @return A pointer to the shell thread.
  * @retval NULL thread creation failed because memory allocation.
  */
+#if CH_USE_HEAP && CH_USE_DYNAMIC
 Thread *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio) {
 
   return chThdCreateFromHeap(NULL, size, prio, shell_thread, (void *)scp);
 }
+#endif
+
+/**
+ * @brief Create statically allocated shell thread.
+ *
+ * @param[in] scp pointer to a @p ShellConfig object
+ * @param[in] wsp pointer to a working area dedicated to the shell thread stack
+ * @param[in] size size of the shell working area to be allocated
+ * @param[in] prio the priority level for the new shell
+ *
+ * @return A pointer to the shell thread.
+ */
+Thread *shellCreateStatic(const ShellConfig *scp, void *wsp,
+                          size_t size, tprio_t prio) {
+
+  return chThdCreateStatic(wsp, size, prio, shell_thread, (void *)scp);
+}
+
+
+
+
+
+
 
 /**
  * @brief Reads a whole line from the input channel.
