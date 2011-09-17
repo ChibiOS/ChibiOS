@@ -55,10 +55,10 @@
 #define PAL_STM32_OTYPE_OPENDRAIN       (1 << 2)
 
 #define PAL_STM32_OSPEED_MASK           (3 << 3)
-#define PAL_STM32_OSPEED_400K           (0 << 3)
-#define PAL_STM32_OSPEED_2M             (1 << 3)
-#define PAL_STM32_OSPEED_10M            (2 << 3)
-#define PAL_STM32_OSPEED_40M            (3 << 3)
+#define PAL_STM32_OSPEED_LOWEST         (0 << 3)
+#define PAL_STM32_OSPEED_MID1           (1 << 3)
+#define PAL_STM32_OSPEED_MID2           (2 << 3)
+#define PAL_STM32_OSPEED_HIGHEST        (3 << 3)
 
 #define PAL_STM32_PUDR_MASK             (3 << 5)
 #define PAL_STM32_PUDR_FLOATING         (0 << 5)
