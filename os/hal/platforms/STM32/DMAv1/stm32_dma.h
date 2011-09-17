@@ -63,11 +63,11 @@
 #define STM32_DMA1_STREAM5          (&_stm32_dma_streams[4])
 #define STM32_DMA1_STREAM6          (&_stm32_dma_streams[5])
 #define STM32_DMA1_STREAM7          (&_stm32_dma_streams[6])
-#define STM32_DMA2_STREAM1          (&_stm32_dma_streams[8])
-#define STM32_DMA2_STREAM2          (&_stm32_dma_streams[9])
-#define STM32_DMA2_STREAM3          (&_stm32_dma_streams[10])
-#define STM32_DMA2_STREAM4          (&_stm32_dma_streams[11])
-#define STM32_DMA2_STREAM5          (&_stm32_dma_streams[12])
+#define STM32_DMA2_STREAM1          (&_stm32_dma_streams[7])
+#define STM32_DMA2_STREAM2          (&_stm32_dma_streams[8])
+#define STM32_DMA2_STREAM3          (&_stm32_dma_streams[9])
+#define STM32_DMA2_STREAM4          (&_stm32_dma_streams[10])
+#define STM32_DMA2_STREAM5          (&_stm32_dma_streams[11])
 /** @} */
 
 /**

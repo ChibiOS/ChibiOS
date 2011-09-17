@@ -32,7 +32,7 @@ static void restart(void *p) {
 static void ledoff(void *p) {
 
   (void)p;
-  palSetPad(GPIOB, GPIOB_LED4);
+  palClearPad(GPIOB, GPIOB_LED4);
 }
 
 /*
@@ -42,7 +42,7 @@ static void ledoff(void *p) {
 static void txend1(UARTDriver *uartp) {
 
   (void)uartp;
-  palClearPad(GPIOB, GPIOB_LED4);
+  palSetPad(GPIOB, GPIOB_LED4);
 }
 
 /*
@@ -51,7 +51,7 @@ static void txend1(UARTDriver *uartp) {
 static void txend2(UARTDriver *uartp) {
 
   (void)uartp;
-  palSetPad(GPIOB, GPIOB_LED4);
+  palClearPad(GPIOB, GPIOB_LED4);
   chSysLockFromIsr();
   if (chVTIsArmedI(&vt1))
     chVTResetI(&vt1);
@@ -78,7 +78,7 @@ static void rxchar(UARTDriver *uartp, uint16_t c) {
   (void)uartp;
   (void)c;
   /* Flashing the LED each time a character is received.*/
-  palClearPad(GPIOB, GPIOB_LED4);
+  palSetPad(GPIOB, GPIOB_LED4);
   chSysLockFromIsr();
   if (chVTIsArmedI(&vt2))
     chVTResetI(&vt2);
@@ -143,5 +143,4 @@ int main(void) {
   while (TRUE) {
     chThdSleepMilliseconds(500);
   }
-  return 0;
 }
