@@ -36,7 +36,7 @@ static const SPIConfig hs_spicfg = {
  */
 static const SPIConfig ls_spicfg = {
   NULL,
-  GPIOA,
+  GPIOB,
   12,
   SPI_CR1_BR_2 | SPI_CR1_BR_1
 };
@@ -56,14 +56,14 @@ static msg_t spi_thread_1(void *p) {
   (void)p;
   chRegSetThreadName("SPI thread 1");
   while (TRUE) {
-    spiAcquireBus(&SPID1);              /* Acquire ownership of the bus.    */
+    spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
     palClearPad(GPIOB, GPIOB_LED4);     /* LED ON.                          */
-    spiStart(&SPID1, &hs_spicfg);       /* Setup transfer parameters.       */
-    spiSelect(&SPID1);                  /* Slave Select assertion.          */
-    spiExchange(&SPID1, 512,
+    spiStart(&SPID2, &hs_spicfg);       /* Setup transfer parameters.       */
+    spiSelect(&SPID2);                  /* Slave Select assertion.          */
+    spiExchange(&SPID2, 512,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
-    spiUnselect(&SPID1);                /* Slave Select de-assertion.       */
-    spiReleaseBus(&SPID1);              /* Ownership release.               */
+    spiUnselect(&SPID2);                /* Slave Select de-assertion.       */
+    spiReleaseBus(&SPID2);              /* Ownership release.               */
   }
   return 0;
 }
@@ -77,14 +77,14 @@ static msg_t spi_thread_2(void *p) {
   (void)p;
   chRegSetThreadName("SPI thread 2");
   while (TRUE) {
-    spiAcquireBus(&SPID1);              /* Acquire ownership of the bus.    */
+    spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
     palSetPad(GPIOB, GPIOB_LED4);       /* LED OFF.                         */
-    spiStart(&SPID1, &ls_spicfg);       /* Setup transfer parameters.       */
-    spiSelect(&SPID1);                  /* Slave Select assertion.          */
-    spiExchange(&SPID1, 512,
+    spiStart(&SPID2, &ls_spicfg);       /* Setup transfer parameters.       */
+    spiSelect(&SPID2);                  /* Slave Select assertion.          */
+    spiExchange(&SPID2, 512,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
-    spiUnselect(&SPID1);                /* Slave Select de-assertion.       */
-    spiReleaseBus(&SPID1);              /* Ownership release.               */
+    spiUnselect(&SPID2);                /* Slave Select de-assertion.       */
+    spiReleaseBus(&SPID2);              /* Ownership release.               */
   }
   return 0;
 }
@@ -112,8 +112,7 @@ int main(void) {
                            PAL_STM32_OSPEED_HIGHEST);           /* NSS.     */
   palSetPadMode(GPIOB, 13, PAL_MODE_ALT_OUTPUT_PUSHPULL(5) |
                            PAL_STM32_OSPEED_HIGHEST);           /* SCK.     */
-  palSetPadMode(GPIOB, 14, PAL_MODE_ALT_INPUT(5) |
-                           PAL_STM32_OSPEED_HIGHEST);           /* MISO.    */
+  palSetPadMode(GPIOB, 14, PAL_MODE_ALT_INPUT(5));              /* MISO.    */
   palSetPadMode(GPIOB, 15, PAL_MODE_ALT_OUTPUT_PUSHPULL(5) |
                            PAL_STM32_OSPEED_HIGHEST);           /* MOSI.    */
   palSetPad(GPIOB, 12);
