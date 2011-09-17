@@ -60,16 +60,19 @@ int main(void) {
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
+   * PA9 and PA10 are routed to USART1.
    */
   sdStart(&SD1, NULL);
+  palSetPadMode(GPIOA, 9, PAL_MODE_ALT_OUTPUT_PUSHPULL(7));
+  palSetPadMode(GPIOA, 10, PAL_MODE_ALT_INPUT(7));
 
   /*
    * If the user button is pressed after the reset then the test suite is
    * executed immediately before activating the various device drivers in
    * order to not alter the benchmark scores.
    */
-//  if (palReadPad(GPIOA, GPIOA_BUTTON))
-//    TestThread(&SD1);
+  if (palReadPad(GPIOA, GPIOA_BUTTON))
+    TestThread(&SD1);
 
   /*
    * Initializes the SPI driver 1.
@@ -106,8 +109,8 @@ int main(void) {
    * driver 1.
    */
   while (TRUE) {
-//    if (palReadPad(GPIOA, GPIOA_BUTTON))
-//      TestThread(&SD1);
+    if (palReadPad(GPIOA, GPIOA_BUTTON))
+      TestThread(&SD1);
     chThdSleepMilliseconds(500);
   }
 }
