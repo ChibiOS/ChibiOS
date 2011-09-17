@@ -63,8 +63,8 @@ int main(void) {
    * PA9 and PA10 are routed to USART1.
    */
   sdStart(&SD1, NULL);
-  palSetPadMode(GPIOA, 9, PAL_MODE_ALT_OUTPUT_PUSHPULL(7));
-  palSetPadMode(GPIOA, 10, PAL_MODE_ALT_INPUT(7));
+  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));
+  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));
 
   /*
    * If the user button is pressed after the reset then the test suite is

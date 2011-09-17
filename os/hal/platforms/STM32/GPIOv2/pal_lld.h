@@ -96,32 +96,6 @@
                                          PAL_STM32_PUDR_PULLDOWN)
 
 /**
- * @brief   Alternate input high-Z pad.
- *
- * @param[in] n         alternate function selector
- */
-#define PAL_MODE_ALT_INPUT(n)           (PAL_STM32_MODE_INPUT |             \
-                                         PAL_STM32_ALTERNATE(n))
-
-/**
- * @brief   Alternate input pad with weak pull up resistor.
- *
- * @param[in] n         alternate function selector
- */
-#define PAL_MODE_ALT_INPUT_PULLUP(n)    (PAL_STM32_MODE_INPUT |             \
-                                         PAL_STM32_PUDR_PULLUP |            \
-                                         PAL_STM32_ALTERNATE(n))
-
-/**
- * @brief   Alternate input pad with weak pull down resistor.
- *
- * @param[in] n         alternate function selector
- */
-#define PAL_MODE_ALT_INPUT_PULLDOWN(n)  (PAL_STM32_MODE_INPUT |             \
-                                         PAL_STM32_PUDR_PULLDOWN |          \
-                                         PAL_STM32_ALTERNATE(n))
-
-/**
  * @brief   Analog input mode.
  */
 #define PAL_MODE_INPUT_ANALOG           PAL_STM32_MODE_ANALOG
@@ -139,21 +113,11 @@
                                          PAL_STM32_OTYPE_OPENDRAIN)
 
 /**
- * @brief   Alternate push-pull output.
+ * @brief   Alternate function.
  *
  * @param[in] n         alternate function selector
  */
-#define PAL_MODE_ALT_OUTPUT_PUSHPULL(n) (PAL_STM32_MODE_ALTERNATE |         \
-                                         PAL_STM32_OTYPE_PUSHPULL |         \
-                                         PAL_STM32_ALTERNATE(n))
-
-/**
- * @brief   Alternate push-pull output.
- *
- * @param[in] n         alternate function selector
- */
-#define PAL_MODE_ALT_OUTPUT_OPENDRAIN(n) (PAL_STM32_MODE_ALTERNATE |        \
-                                         PAL_STM32_OTYPE_OPENDRAIN |        \
+#define PAL_MODE_ALTERNATE(n)           (PAL_STM32_MODE_ALTERNATE |         \
                                          PAL_STM32_ALTERNATE(n))
 
 /*===========================================================================*/

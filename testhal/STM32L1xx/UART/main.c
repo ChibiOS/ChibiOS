@@ -129,8 +129,8 @@ int main(void) {
    * PA9 and PA10 are routed to USART1.
    */
   uartStart(&UARTD1, &uart_cfg_1);
-  palSetPadMode(GPIOA, 9, PAL_MODE_ALT_OUTPUT_PUSHPULL(7));
-  palSetPadMode(GPIOA, 10, PAL_MODE_ALT_INPUT(7));
+  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));
+  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));
 
   /*
    * Starts the transmission, it will be handled entirely in background.

@@ -110,10 +110,10 @@ int main(void) {
    */
   palSetPadMode(GPIOB, 12, PAL_MODE_OUTPUT_PUSHPULL |
                            PAL_STM32_OSPEED_HIGHEST);           /* NSS.     */
-  palSetPadMode(GPIOB, 13, PAL_MODE_ALT_OUTPUT_PUSHPULL(5) |
+  palSetPadMode(GPIOB, 13, PAL_MODE_ALTERNATE(5) |
                            PAL_STM32_OSPEED_HIGHEST);           /* SCK.     */
-  palSetPadMode(GPIOB, 14, PAL_MODE_ALT_INPUT(5));              /* MISO.    */
-  palSetPadMode(GPIOB, 15, PAL_MODE_ALT_OUTPUT_PUSHPULL(5) |
+  palSetPadMode(GPIOB, 14, PAL_MODE_ALTERNATE(5));              /* MISO.    */
+  palSetPadMode(GPIOB, 15, PAL_MODE_ALTERNATE(5) |
                            PAL_STM32_OSPEED_HIGHEST);           /* MOSI.    */
   palSetPad(GPIOB, 12);
 
