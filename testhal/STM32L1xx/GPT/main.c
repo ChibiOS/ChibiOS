@@ -86,8 +86,12 @@ int main(void) {
    * five seconds.
    */
   while (TRUE) {
+    palSetPad(GPIOB, GPIOB_LED3);
+    gptStopTimer(&GPTD2);
     gptStartContinuous(&GPTD2, 5000);
     chThdSleepMilliseconds(5000);
+    palClearPad(GPIOB, GPIOB_LED3);
+    gptStopTimer(&GPTD2);
     gptStartContinuous(&GPTD2, 2500);
     chThdSleepMilliseconds(5000);
   }
