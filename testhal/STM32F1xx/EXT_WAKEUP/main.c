@@ -17,7 +17,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #include "ch.h"
 #include "hal.h"
 
@@ -87,7 +86,7 @@ static void cmd_reboot(BaseChannel *chp, int argc, char *argv[]){
     return;
   }
   chprintf(chp, "rebooting...\r\n");
-  SCB->SCR |= SCB_AIRCR_SYSRESETREQ_Msk;
+  NVIC_SystemReset();
 }
 
 static void cmd_sleep(BaseChannel *chp, int argc, char *argv[]){
@@ -96,9 +95,9 @@ static void cmd_sleep(BaseChannel *chp, int argc, char *argv[]){
     chprintf(chp, "Usage: sleep\r\n");
     return;
   }
-  chprintf(chp, "going to sleep...\r\ntype any character to wake up...");
+  chprintf(chp, "Going to sleep. Type any character to wake up.\r\n");
 
-  chThdSleepMilliseconds(200); // timeout to print message in terminal
+  chThdSleepMilliseconds(200); // time to print out message in terminal
   extChannelEnable(&EXTD1, 10);
   chThdSleepMilliseconds(5);
 
@@ -154,8 +153,10 @@ int main(void) {
    * Normal main() thread activity, in this demo it enables and disables the
    * button EXT channel using 5 seconds intervals.
    */
+  
+  chThdSleepMilliseconds(2000); // timeuot to differ reboot and wake up from sleep
   while (TRUE) {
-    chThdSleepMilliseconds(250);
+    chThdSleepMilliseconds(100);
     palTogglePad(IOPORT3, GPIOC_LED);
   }
 }
