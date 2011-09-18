@@ -32,7 +32,7 @@ static void extcb2(EXTDriver *extp, expchannel_t channel) {
   (void)channel;
 
   chSysLockFromIsr();
-  /* we MUST reinit clocks after waking up*/
+  /* we MUST reinit clocks after waking up if use HSE or HSI+PLL */
   stm32_clock_init();
 
   extChannelDisableI(&EXTD1, 10);
