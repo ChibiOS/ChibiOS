@@ -203,6 +203,38 @@
 /** @} */
 
 /**
+ * @brief   Bakup domain interface specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the BKP interface clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableBKP(lp) rccEnableAPB1(RCC_APB1ENR_BKPEN, lp);
+
+/**
+ * @brief   Disables BKP interface clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableBKP(lp) rccDisableAPB1(RCC_APB1ENR_BKPEN, lp);
+
+/**
+ * @brief   Resets the Backup Domain.
+ *
+ * @api
+ */
+#define rccResetBKP(lp) rccResetAPB1(RCC_APB1ENR_BKPRST);
+/** @} */
+
+/**
  * @brief   CAN peripherals specific RCC operations
  * @{
  */

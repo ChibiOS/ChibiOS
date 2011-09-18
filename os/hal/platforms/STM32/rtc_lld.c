@@ -112,7 +112,7 @@ CH_IRQ_HANDLER(RTC_IRQHandler) {
  * @notapi
  */
 void rtc_lld_init(void){
-  RCC->APB1ENR |= (RCC_APB1ENR_PWREN | RCC_APB1ENR_BKPEN);  /* enable clocking */
+  rccEnableBKP(FALSE);                                      /* enable interface clocking */
   PWR->CR |= PWR_CR_DBP;                                    /* enable access */
 
   if (!(RCC->BDCR & (RCC_BDCR_RTCEN | RCC_BDCR_LSEON))){    /* BKP domain was reseted */
