@@ -35,21 +35,21 @@
 /*
  * HAL driver system settings.
  */
-#define STM32_SW                            STM32_SW_PLL
-#define STM32_PLLSRC                        STM32_PLLSRC_HSE
-#define STM32_PLLXTPRE                      STM32_PLLXTPRE_DIV1
-#define STM32_PLLMUL_VALUE                  9
+#define STM32_SW                            STM32_SW_HSI
+//#define STM32_PLLSRC                        STM32_PLLSRC_HSE
+//#define STM32_PLLXTPRE                      STM32_PLLXTPRE_DIV1
+//#define STM32_PLLMUL_VALUE                  9
 #define STM32_HPRE                          STM32_HPRE_DIV1
-#define STM32_PPRE1                         STM32_PPRE1_DIV2
-#define STM32_PPRE2                         STM32_PPRE2_DIV2
+#define STM32_PPRE1                         STM32_PPRE1_DIV1
+#define STM32_PPRE2                         STM32_PPRE2_DIV1
 #define STM32_ADCPRE                        STM32_ADCPRE_DIV4
-#define STM32_USBPRE                        STM32_USBPRE_DIV1P5
+//#define STM32_USBPRE                        STM32_USBPRE_DIV1P5
 #define STM32_MCO                           STM32_MCO_NOCLOCK
 
 /*
  * ADC driver system settings.
  */
-#define STM32_ADC_USE_ADC1                  TRUE
+#define STM32_ADC_USE_ADC1                  FALSE
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
 #define STM32_ADC_ADC1_IRQ_PRIORITY         5
 #define STM32_ADC_DMA_ERROR_HOOK(adcp)      chSysHalt()
@@ -57,7 +57,7 @@
 /*
  * CAN driver system settings.
  */
-#define STM32_CAN_USE_CAN1                  TRUE
+#define STM32_CAN_USE_CAN1                  FALSE
 #define STM32_CAN_CAN1_IRQ_PRIORITY         11
 
 /*
@@ -163,7 +163,7 @@
 /*
  * USB driver system settings.
  */
-#define STM32_USB_USE_USB1                  TRUE
+#define STM32_USB_USE_USB1                  FALSE
 #define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
 #define STM32_USB_USB1_HP_IRQ_PRIORITY      6
 #define STM32_USB_USB1_LP_IRQ_PRIORITY      14

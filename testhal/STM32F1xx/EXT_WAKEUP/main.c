@@ -86,6 +86,7 @@ static void cmd_reboot(BaseChannel *chp, int argc, char *argv[]){
     return;
   }
   chprintf(chp, "rebooting...\r\n");
+  chThdSleepMilliseconds(100); // time to print out message in terminal
   NVIC_SystemReset();
 }
 
