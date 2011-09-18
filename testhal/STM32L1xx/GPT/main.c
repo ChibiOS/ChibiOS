@@ -22,7 +22,7 @@
 #include "hal.h"
 
 /*
- * GPT1 callback.
+ * GPT2 callback.
  */
 static void gpt2cb(GPTDriver *gptp) {
 
@@ -34,7 +34,7 @@ static void gpt2cb(GPTDriver *gptp) {
 }
 
 /*
- * GPT2 callback.
+ * GPT3 callback.
  */
 static void gpt3cb(GPTDriver *gptp) {
 
