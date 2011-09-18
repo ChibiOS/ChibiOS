@@ -24,31 +24,23 @@
 /*
  * GPT1 callback.
  */
-static void gpt1cb(GPTDriver *gptp) {
+static void gpt2cb(GPTDriver *gptp) {
 
   (void)gptp;
-  palClearPad(IOPORT3, GPIOC_LED);
+  palSetPad(GPIOB, GPIOB_LED4);
   chSysLockFromIsr();
-  gptStartOneShotI(&GPTD2, 200);   /* 0.02 second pulse.*/
+  gptStartOneShotI(&GPTD3, 200);   /* 0.02 second pulse.*/
   chSysUnlockFromIsr();
 }
 
 /*
  * GPT2 callback.
  */
-static void gpt2cb(GPTDriver *gptp) {
+static void gpt3cb(GPTDriver *gptp) {
 
   (void)gptp;
-  palSetPad(IOPORT3, GPIOC_LED);
+  palClearPad(GPIOB, GPIOB_LED4);
 }
-
-/*
- * GPT1 configuration.
- */
-static const GPTConfig gpt1cfg = {
-  10000,    /* 10KHz timer clock.*/
-  gpt1cb    /* Timer callback.*/
-};
 
 /*
  * GPT2 configuration.
@@ -56,6 +48,14 @@ static const GPTConfig gpt1cfg = {
 static const GPTConfig gpt2cfg = {
   10000,    /* 10KHz timer clock.*/
   gpt2cb    /* Timer callback.*/
+};
+
+/*
+ * GPT3 configuration.
+ */
+static const GPTConfig gpt3cfg = {
+  10000,    /* 10KHz timer clock.*/
+  gpt3cb    /* Timer callback.*/
 };
 
 /*
@@ -74,22 +74,21 @@ int main(void) {
   chSysInit();
 
   /*
-   * Initializes the GPT drivers 1 and 2.
+   * Initializes the GPT drivers 2 and 3.
    */
-  gptStart(&GPTD1, &gpt1cfg);
-  gptPolledDelay(&GPTD1, 10); /* Small delay.*/
   gptStart(&GPTD2, &gpt2cfg);
   gptPolledDelay(&GPTD2, 10); /* Small delay.*/
+  gptStart(&GPTD3, &gpt3cfg);
+  gptPolledDelay(&GPTD3, 10); /* Small delay.*/
 
   /*
    * Normal main() thread activity, it changes the GPT1 period every
    * five seconds.
    */
   while (TRUE) {
-    gptStartContinuous(&GPTD1, 5000);
+    gptStartContinuous(&GPTD2, 5000);
     chThdSleepMilliseconds(5000);
-    gptStartContinuous(&GPTD1, 2500);
+    gptStartContinuous(&GPTD2, 2500);
     chThdSleepMilliseconds(5000);
   }
-  return 0;
 }
