@@ -68,6 +68,10 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.2.8 ***
+- FIX: Some ARMCMx makefiles refer the file rules.mk in the ARM7 port (bug
+  3411180).
+
 *** 2.2.7 ***
 - INFO: GCC test runs performed with YAGARTO 4.6.0.
 - NEW: Added debug plugin for Eclipse under ./tools/eclipse.
