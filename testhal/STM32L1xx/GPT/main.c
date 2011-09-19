@@ -87,12 +87,12 @@ int main(void) {
    */
   while (TRUE) {
     palSetPad(GPIOB, GPIOB_LED3);
-    gptStopTimer(&GPTD2);
     gptStartContinuous(&GPTD2, 5000);
     chThdSleepMilliseconds(5000);
-    palClearPad(GPIOB, GPIOB_LED3);
     gptStopTimer(&GPTD2);
+    palClearPad(GPIOB, GPIOB_LED3);
     gptStartContinuous(&GPTD2, 2500);
     chThdSleepMilliseconds(5000);
+    gptStopTimer(&GPTD2);
   }
 }
