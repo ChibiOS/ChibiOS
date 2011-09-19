@@ -214,7 +214,8 @@
  *
  * @api
  */
-#define rccEnableBKP(lp) rccEnableAPB1(RCC_APB1ENR_BKPEN, lp);
+#define rccEnableBKP(lp) \
+  rccEnableAPB1((RCC_APB1ENR_BKPEN | RCC_APB1ENR_PWREN), lp);
 
 /**
  * @brief   Disables BKP interface clock.
@@ -224,7 +225,8 @@
  *
  * @api
  */
-#define rccDisableBKP(lp) rccDisableAPB1(RCC_APB1ENR_BKPEN, lp);
+#define rccDisableBKP(lp) \
+    rccDisableAPB1((RCC_APB1ENR_BKPEN | RCC_APB1ENR_PWREN), lp);
 
 /**
  * @brief   Resets the Backup Domain.
