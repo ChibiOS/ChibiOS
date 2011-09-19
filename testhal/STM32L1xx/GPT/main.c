@@ -29,7 +29,7 @@ static void gpt2cb(GPTDriver *gptp) {
   (void)gptp;
   palSetPad(GPIOB, GPIOB_LED4);
   chSysLockFromIsr();
-  gptStartOneShotI(&GPTD3, 200);   /* 0.02 second pulse.*/
+  gptStartOneShotI(&GPTD3, 1000);   /* 0.02 second pulse.*/
   chSysUnlockFromIsr();
 }
 

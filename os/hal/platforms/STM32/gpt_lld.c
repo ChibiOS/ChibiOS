@@ -401,6 +401,10 @@ void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval) {
 
   gptp->tim->ARR  = interval - 1;           /* Time constant.               */
   gptp->tim->EGR  = TIM_EGR_UG;             /* Update event.                */
+  gptp->tim->CNT  = 0;                      /* Reset counter.               */
+  /* NOTE: After generating the UG event it takes several clock cycles before
+     SR bit 0 goes to 1. This is because the clearing of CNT has been inserted
+     before the clearing of SR, to give it some time.*/
   gptp->tim->SR   = 0;                      /* Clear pending IRQs (if any). */
   gptp->tim->DIER = TIM_DIER_UIE;           /* Update Event IRQ enabled.    */
   gptp->tim->CR1  = TIM_CR1_URS | TIM_CR1_CEN;
