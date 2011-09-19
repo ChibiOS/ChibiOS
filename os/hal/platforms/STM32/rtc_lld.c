@@ -112,29 +112,42 @@ CH_IRQ_HANDLER(RTC_IRQHandler) {
  * @notapi
  */
 void rtc_lld_init(void){
-  rccEnableBKP(FALSE);                                      /* enable interface clocking */
-  PWR->CR |= PWR_CR_DBP;                                    /* enable access */
+  rccEnableBKPInterface(FALSE);
 
-  if (!(RCC->BDCR & (RCC_BDCR_RTCEN | RCC_BDCR_LSEON))){    /* BKP domain was reseted */
-    RCC->BDCR |= RTC_CLOCK_SOURCE;                          /* select clocking from LSE */
-    RCC->BDCR |= RCC_BDCR_LSEON;                            /* switch LSE on */
-    while(!(RCC->BDCR & RCC_BDCR_LSEON))                    /* wait for stabilization */
+  /* Ensure that RTC_CNT and RTC_DIV contain actual values after enabling
+   * clocking on APB1, because these values only update when APB1 functioning.*/
+  RTC->CRL &= ~(RTC_CRL_RSF);
+  while (!(RTC->CRL & RTC_CRL_RSF))
+    ;
+
+  /* enable access to BKP registers */
+  PWR->CR |= PWR_CR_DBP;
+
+  if (! ((RCC->BDCR & RCC_BDCR_RTCEN) || (RCC->BDCR & RCC_BDCR_LSEON))){
+    RCC->BDCR |= RTC_CLOCK_SOURCE;
+
+    /* for LSE source we must wait until source became stable */
+    #if defined(RTC_CLOCK_SOURCE) == defined(RCC_BDCR_RTCSEL_LSE)
+    RCC->BDCR |= RCC_BDCR_LSEON;
+    while(!(RCC->BDCR & RCC_BDCR_LSERDY))
       ;
-    RCC->BDCR |= RCC_BDCR_RTCEN;                            /* run clock */
+    #endif
+
+    RCC->BDCR |= RCC_BDCR_RTCEN;
   }
 
   #if defined(RTC_CLOCK_SOURCE) == defined(RCC_BDCR_RTCSEL_LSE)
-    uint32_t preload = STM32_LSECLK - 1UL;
+    uint32_t preload = STM32_LSECLK - 1;
   #elif defined(RTC_CLOCK_SOURCE) == defined(RCC_BDCR_RTCSEL_LSI)
-    uint32_t preload = STM32_LSICLK - 1UL;
+    uint32_t preload = STM32_LSICLK - 1;
   #elif defined(RTC_CLOCK_SOURCE) == defined(RCC_BDCR_RTCSEL_HSE)
-    uint32_t preload = (STM32_HSICLK / 128UL) - 1UL;
+    uint32_t preload = (STM32_HSICLK / 128) - 1;
   #else
     #error "RTC clock source not selected"
   #endif /* RTC_CLOCK_SOURCE == RCC_BDCR_RTCSEL_LSE */
 
   /* Write preload register only if value changed */
-  if (preload != (((uint32_t)(RTC->PRLH)) << 16) + RTC->PRLH){
+  if (preload != ((((uint32_t)(RTC->PRLH)) << 16) + RTC->PRLL)){
     while(!(RTC->CRL & RTC_CRL_RTOFF))
       ;
 
@@ -146,12 +159,6 @@ void rtc_lld_init(void){
     while(!(RTC->CRL & RTC_CRL_RTOFF))                  /* wait for completion */
       ;
   }
-
-  /* Ensure that RTC_CNT and RTC_DIV contain actual values after enabling
-   * clocking on APB1, because these values only update when APB1 functioning.*/
-  RTC->CRL &= ~(RTC_CRL_RSF);
-  while (!(RTC->CRL & RTC_CRL_RSF))
-    ;
 
   /* disable all interrupts and clear all even flags just to be safe */
   RTC->CRH &= ~(RTC_CRH_OWIE | RTC_CRH_ALRIE | RTC_CRH_SECIE);

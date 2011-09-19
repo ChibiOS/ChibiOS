@@ -30,5 +30,14 @@
  * @pre     In order to use the RTC driver the @p HAL_USE_RTC option
  *          must be enabled in @p halconf.h. 
  *
+ * @note    STM32 Errata notes:
+ *          Description
+ *          When the LSIRDY flag is set, the clock may still be out of the 
+ *          specified frequency range (fLSI parameter, see LSI oscillator 
+ *          characteristics in the product datasheet).
+ *          Workaround
+ *          To have a fully stabilized clock in the specified range, a 
+ *          software temporization of 100 uS should be added.
+ *          
  * @ingroup IO
  */

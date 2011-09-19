@@ -203,7 +203,7 @@
 /** @} */
 
 /**
- * @brief   Bakup domain interface specific RCC operations
+ * @brief   Backup domain interface specific RCC operations
  * @{
  */
 /**
@@ -214,7 +214,7 @@
  *
  * @api
  */
-#define rccEnableBKP(lp) \
+#define rccEnableBKPInterface(lp) \
   rccEnableAPB1((RCC_APB1ENR_BKPEN | RCC_APB1ENR_PWREN), lp);
 
 /**
@@ -225,15 +225,22 @@
  *
  * @api
  */
-#define rccDisableBKP(lp) \
+#define rccDisableBKPInterface(lp) \
     rccDisableAPB1((RCC_APB1ENR_BKPEN | RCC_APB1ENR_PWREN), lp);
 
 /**
- * @brief   Resets the Backup Domain.
+ * @brief   Resets the Backup Domain interface.
  *
  * @api
  */
-#define rccResetBKP(lp) rccResetAPB1(RCC_APB1ENR_BKPRST);
+#define rccResetBKPInterface() rccResetAPB1(RCC_APB1ENR_BKPRST);
+
+/**
+ * @brief   Resets the entire Backup Domain.
+ *
+ * @api
+ */
+#define rccResetBKP() (RCC->BDCR |= RCC_BDCR_BDRST);
 /** @} */
 
 /**
