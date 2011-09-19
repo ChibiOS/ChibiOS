@@ -10,6 +10,10 @@ The demo will on an STMicroelectronics STM32L-Discovery board.
 
 The application demonstrates the use of the STM32L1xx GPT driver.
 
+** Board Setup **
+
+None required.
+
 ** Build Procedure **
 
 The demo has been tested by using the free Codesourcery GCC-based toolchain

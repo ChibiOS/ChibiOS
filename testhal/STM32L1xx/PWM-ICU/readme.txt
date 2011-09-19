@@ -1,19 +1,19 @@
 *****************************************************************************
-** ChibiOS/RT HAL - SPI driver demo for STM32L1xx.                         **
+** ChibiOS/RT HAL - PWM-ICU drivers demo for STM32L1xx.                    **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an STMicroelectronics STM32L-Discovery board.
+The demo will on an STMicroelectronics STM32L-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32L1xx SPI driver.
+The application demonstrates the use of the STM32L1xx PWM-ICU drivers.
 
 ** Board Setup **
 
 - Remove the LCD module.
-- Connect PB14 and PB15 together for SPI loop-back.
+- Connect PA15 and PC6 together.
 
 ** Build Procedure **
 

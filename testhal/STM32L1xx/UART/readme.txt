@@ -10,6 +10,12 @@ The demo runs on an STMicroelectronics STM32L-Discovery board.
 
 The application demonstrates the use of the STM32L1xx UART driver.
 
+** Board Setup **
+
+- Remove the LCD module.
+- Connect an RS232 transceiver to pins PA9(TX) and PA10(RX).
+- Connect a terminal emulator to the transceiver (38400-N-8-1).
+
 ** Build Procedure **
 
 The demo has been tested by using the free Codesourcery GCC-based toolchain
