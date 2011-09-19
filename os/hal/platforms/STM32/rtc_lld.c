@@ -112,6 +112,8 @@ CH_IRQ_HANDLER(RTC_IRQHandler) {
  * @notapi
  */
 void rtc_lld_init(void){
+  uint32_t preload = 0;
+
   rccEnableBKPInterface(FALSE);
 
   /* Ensure that RTC_CNT and RTC_DIV contain actual values after enabling
@@ -122,29 +124,39 @@ void rtc_lld_init(void){
 
   /* enable access to BKP registers */
   PWR->CR |= PWR_CR_DBP;
+  /* select clock source */
+  RCC->BDCR |= RTC_CLOCK_SOURCE;
 
-  if (! ((RCC->BDCR & RCC_BDCR_RTCEN) || (RCC->BDCR & RCC_BDCR_LSEON))){
-    RCC->BDCR |= RTC_CLOCK_SOURCE;
+  chDbgCheck(((RTC_CLOCK_SOURCE == RCC_BDCR_RTCSEL_LSE) &&\
+              (RTC_CLOCK_SOURCE == RCC_BDCR_RTCSEL_LSI) &&\
+              (RTC_CLOCK_SOURCE == RCC_BDCR_RTCSEL_HSE)), "No clock source selected");
 
-    /* for LSE source we must wait until source became stable */
-    #if defined(RTC_CLOCK_SOURCE) == defined(RCC_BDCR_RTCSEL_LSE)
-    RCC->BDCR |= RCC_BDCR_LSEON;
-    while(!(RCC->BDCR & RCC_BDCR_LSERDY))
-      ;
-    #endif
-
-    RCC->BDCR |= RCC_BDCR_RTCEN;
+  if (RTC_CLOCK_SOURCE == RCC_BDCR_RTCSEL_LSE){
+    if (! ((RCC->BDCR & RCC_BDCR_RTCEN) || (RCC->BDCR & RCC_BDCR_LSEON))){
+      RCC->BDCR |= RCC_BDCR_LSEON;
+      while(!(RCC->BDCR & RCC_BDCR_LSERDY))
+        ;
+      RCC->BDCR |= RCC_BDCR_RTCEN;
+    }
+    preload = STM32_LSECLK - 1;
   }
-
-  #if defined(RTC_CLOCK_SOURCE) == defined(RCC_BDCR_RTCSEL_LSE)
-    uint32_t preload = STM32_LSECLK - 1;
-  #elif defined(RTC_CLOCK_SOURCE) == defined(RCC_BDCR_RTCSEL_LSI)
-    uint32_t preload = STM32_LSICLK - 1;
-  #elif defined(RTC_CLOCK_SOURCE) == defined(RCC_BDCR_RTCSEL_HSE)
-    uint32_t preload = (STM32_HSICLK / 128) - 1;
-  #else
-    #error "RTC clock source not selected"
-  #endif /* RTC_CLOCK_SOURCE == RCC_BDCR_RTCSEL_LSE */
+  else if (RTC_CLOCK_SOURCE == RCC_BDCR_RTCSEL_LSI){
+    RCC->CSR  |= RCC_CSR_LSION;
+    while(!(RCC->CSR & RCC_CSR_LSIRDY))
+      ;
+    /* According to errata notes we must wait additional 100 uS for stabilization */
+    uint32_t tmo = (STM32_SYSCLK / 1000000 ) * 100;
+    while(tmo--)
+      ;
+    RCC->BDCR |= RCC_BDCR_RTCEN;
+    preload = STM32_LSICLK - 1;
+  }
+  else if (RTC_CLOCK_SOURCE == RCC_BDCR_RTCSEL_HSE){
+    preload = (STM32_HSICLK / 128) - 1;
+  }
+  else{
+    chDbgPanic("Wrong");
+  }
 
   /* Write preload register only if value changed */
   if (preload != ((((uint32_t)(RTC->PRLH)) << 16) + RTC->PRLL)){
