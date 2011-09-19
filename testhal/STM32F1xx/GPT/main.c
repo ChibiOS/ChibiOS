@@ -86,12 +86,12 @@ int main(void) {
    * five seconds.
    */
   while (TRUE) {
-    gptStopTimer(&GPTD1);
     gptStartContinuous(&GPTD1, 5000);
     chThdSleepMilliseconds(5000);
     gptStopTimer(&GPTD1);
     gptStartContinuous(&GPTD1, 2500);
     chThdSleepMilliseconds(5000);
+    gptStopTimer(&GPTD1);
   }
   return 0;
 }
