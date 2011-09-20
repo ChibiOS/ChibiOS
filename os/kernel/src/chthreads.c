@@ -339,9 +339,29 @@ void chThdYield(void) {
  * @api
  */
 void chThdExit(msg_t msg) {
-  Thread *tp = currp;
 
   chSysLock();
+  chThdExitS(msg);
+  /* The thread never returns here.*/
+}
+
+/**
+ * @brief   Terminates the current thread.
+ * @details The thread goes in the @p THD_STATE_FINAL state holding the
+ *          specified exit status code, other threads can retrieve the
+ *          exit status code by invoking the function @p chThdWait().
+ * @post    Eventual code after this function will never be executed,
+ *          this function never returns. The compiler has no way to
+ *          know this so do not assume that the compiler would remove
+ *          the dead code.
+ *
+ * @param[in] msg       thread exit code
+ *
+ * @sclass
+ */
+void chThdExitS(msg_t msg) {
+  Thread *tp = currp;
+
   tp->p_u.exitcode = msg;
 #if defined(THREAD_EXT_EXIT_HOOK)
   THREAD_EXT_EXIT_HOOK(tp);
@@ -357,6 +377,8 @@ void chThdExit(msg_t msg) {
     REG_REMOVE(tp);
 #endif
   chSchGoSleepS(THD_STATE_FINAL);
+  /* The thread never returns here.*/
+  chDbgAssert(FALSE, "chThdExitS(), #1", "zombies apocalypse");
 }
 
 #if CH_USE_WAITEXIT || defined(__DOXYGEN__)

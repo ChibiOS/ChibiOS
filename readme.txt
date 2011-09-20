@@ -69,6 +69,8 @@
 *****************************************************************************
 
 *** 2.2.8 ***
+- FIX: The function chThdExit() triggers an error on shell return when the
+  system state checker is enabled (bug 3411207).
 - FIX: Some ARMCMx makefiles refer the file rules.mk in the ARM7 port (bug
   3411180).
 

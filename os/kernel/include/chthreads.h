@@ -231,6 +231,7 @@ extern "C" {
   void chThdSleepUntil(systime_t time);
   void chThdYield(void);
   void chThdExit(msg_t msg);
+  void chThdExitS(msg_t msg);
 #if CH_USE_WAITEXIT
   msg_t chThdWait(Thread *tp);
 #endif
