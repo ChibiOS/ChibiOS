@@ -17,6 +17,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+/**
+ * This program demonstrate how to use interrupt from EXTI line for waking
+ * up MCU from stop mode. EXTI line connected to UART RX pin and generate
+ * interrupt on falling edge of start bit.
+ */
+
 #include "ch.h"
 #include "hal.h"
 
@@ -32,7 +39,7 @@ static void extcb2(EXTDriver *extp, expchannel_t channel) {
   (void)channel;
 
   chSysLockFromIsr();
-  /* we MUST reinit clocks after waking up if use HSE or HSI+PLL */
+  /* we must reinit clocks after waking up ESPECIALLY if use HSE or HSI+PLL */
   stm32_clock_init();
 
   extChannelDisableI(&EXTD1, 10);
@@ -142,23 +149,19 @@ int main(void) {
   /* Activates the serial driver using the driver default configuration. */
   sdStart(&SD1, NULL);
 
-  /* Shell manager initialization. */
-  shellInit();
+  /* Setting up ports. */
   palSetPadMode(IOPORT1, 9, PAL_MODE_STM32_ALTERNATE_PUSHPULL);
   palSetPadMode(IOPORT1, 10, PAL_MODE_INPUT);
 
+  /* Shell manager initialization. */
+  shellInit();
   static WORKING_AREA(waShell, 512);
   shellCreateStatic(&shell_cfg1, waShell, sizeof(waShell), NORMALPRIO);
 
-  /*
-   * Normal main() thread activity, in this demo it enables and disables the
-   * button EXT channel using 5 seconds intervals.
-   */
-  
+  /* Start blink indicating. */
   chThdSleepMilliseconds(2000); // timeuot to differ reboot and wake up from sleep
   while (TRUE) {
     chThdSleepMilliseconds(100);
     palTogglePad(IOPORT3, GPIOC_LED);
-    chThdExit(0);
   }
 }
