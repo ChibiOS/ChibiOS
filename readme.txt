@@ -71,6 +71,8 @@
 *** 2.2.8 ***
 - NEW: Added new API chThdExitS() in order to allow atomic operations on
   thead exit.
+- FIX: Fixed misplaced chRegSetThreadName() in ARM7-AT91SAM7S-FATFS-GCC demo
+  (bug 3411780).
 - FIX: Fixed missing UART5 definition in STM32 HAL (bug 3411774).
 - FIX: The function chThdExit() triggers an error on shell return when the
   system state checker is enabled (bug 3411207).

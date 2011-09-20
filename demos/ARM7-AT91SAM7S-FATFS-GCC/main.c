@@ -257,8 +257,8 @@ static WORKING_AREA(waThread2, 64);
 static msg_t Thread2(void *p) {
 
   (void)p;
-  while (TRUE) {
   chRegSetThreadName("blinker2");
+  while (TRUE) {
     palSetPad(IOPORT1, PIOA_LED2);
     chThdSleepMilliseconds(100);
     palClearPad(IOPORT1, PIOA_LED2);
