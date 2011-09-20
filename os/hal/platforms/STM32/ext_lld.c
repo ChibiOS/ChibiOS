@@ -141,7 +141,7 @@ CH_IRQ_HANDLER(EXTI9_5_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  pr = EXTI->PR;
+  pr = EXTI->PR & ((1 << 5) | (1 << 6) | (1 << 7) | (1 << 8) | (1 << 9));
   EXTI->PR = pr;
   if (pr & (1 << 5))
     EXTD1.config->channels[5].cb(&EXTD1, 5);
@@ -167,7 +167,8 @@ CH_IRQ_HANDLER(EXTI15_10_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  pr = EXTI->PR;
+  pr = EXTI->PR & ((1 << 10) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) |
+                   (1 << 15));
   EXTI->PR = pr;
   if (pr & (1 << 10))
     EXTD1.config->channels[10].cb(&EXTD1, 10);
@@ -215,13 +216,13 @@ CH_IRQ_HANDLER(RTCAlarm_IRQHandler) {
   CH_IRQ_EPILOGUE();
 }
 
-#if STM32_HAS_USB || defined(__DOXYGEN__)
+#if defined(STM32L1XX_MD)
 /**
- * @brief   EXTI[18] interrupt handler (USB).
+ * @brief   EXTI[18] interrupt handler (USB_FS_WKUP).
  *
  * @isr
  */
-CH_IRQ_HANDLER(USBWakeUp_IRQHandler) {
+CH_IRQ_HANDLER(USB_FS_WKUP_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -230,11 +231,60 @@ CH_IRQ_HANDLER(USBWakeUp_IRQHandler) {
 
   CH_IRQ_EPILOGUE();
 }
-#endif /* STM32_HAS_USB */
 
-#if STM32_HAS_OTG1 || defined(__DOXYGEN__)
 /**
- * @brief   EXTI[18] interrupt handler (OTG1).
+ * @brief   EXTI[19] interrupt handler (TAMPER_STAMP).
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(TAMPER_STAMP_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  EXTI->PR = (1 << 19);
+  EXTD1.config->channels[19].cb(&EXTD1, 19);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   EXTI[20] interrupt handler (RTC_WKUP).
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(RTC_WKUP_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  EXTI->PR = (1 << 20);
+  EXTD1.config->channels[20].cb(&EXTD1, 20);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   EXTI[21]...EXTI[22] interrupt handler (COMP).
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(COMP_IRQHandler) {
+  uint32_t pr;
+
+  CH_IRQ_PROLOGUE();
+
+  pr = EXTI->PR & ((1 << 21) | (1 << 22));
+  EXTI->PR = pr;
+  if (pr & (1 << 21))
+    EXTD1.config->channels[21].cb(&EXTD1, 21);
+  if (pr & (1 << 22))
+    EXTD1.config->channels[22].cb(&EXTD1, 22);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#elif defined(STM32F2XX)
+/**
+ * @brief   EXTI[18] interrupt handler (OTG_FS_WKUP).
  *
  * @isr
  */
@@ -247,11 +297,9 @@ CH_IRQ_HANDLER(OTG_FS_WKUP_IRQHandler) {
 
   CH_IRQ_EPILOGUE();
 }
-#endif /* STM32_HAS_OTG1 */
 
-#if STM32_HAS_ETH || defined(__DOXYGEN__)
 /**
- * @brief   EXTI[19] interrupt handler (ETH).
+ * @brief   EXTI[19] interrupt handler (ETH_WKUP).
  *
  * @isr
  */
@@ -264,7 +312,99 @@ CH_IRQ_HANDLER(ETH_WKUP_IRQHandler) {
 
   CH_IRQ_EPILOGUE();
 }
-#endif /* STM32_HAS_ETH */
+
+/**
+ * @brief   EXTI[20] interrupt handler (OTG_HS_WKUP).
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(OTG_HS_WKUP_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  EXTI->PR = (1 << 20);
+  EXTD1.config->channels[20].cb(&EXTD1, 20);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   EXTI[21] interrupt handler (TAMPER_STAMP).
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(TAMPER_STAMP_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  EXTI->PR = (1 << 21);
+  EXTD1.config->channels[21].cb(&EXTD1, 21);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   EXTI[22] interrupt handler (RTC_WKUP).
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(RTC_WKUP_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  EXTI->PR = (1 << 22);
+  EXTD1.config->channels[22].cb(&EXTD1, 22);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#elif defined(STM32F10X_CL)
+/**
+ * @brief   EXTI[18] interrupt handler (OTG_FS_WKUP).
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(OTG_FS_WKUP_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  EXTI->PR = (1 << 18);
+  EXTD1.config->channels[18].cb(&EXTD1, 18);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   EXTI[19] interrupt handler (ETH_WKUP).
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(ETH_WKUP_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  EXTI->PR = (1 << 19);
+  EXTD1.config->channels[19].cb(&EXTD1, 19);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#else
+/**
+ * @brief   EXTI[18] interrupt handler (USB_FS_WKUP).
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(USB_FS_WKUP_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  EXTI->PR = (1 << 18);
+  EXTD1.config->channels[18].cb(&EXTD1, 18);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -312,17 +452,38 @@ void ext_lld_start(EXTDriver *extp) {
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI16_IRQ_PRIORITY));
     NVICEnableVector(RTC_Alarm_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI17_IRQ_PRIORITY));
-#if STM32_HAS_USB
+#if defined(STM32L1XX_MD)
+    /* EXTI vectors specific to STM32L1xx.*/
     NVICEnableVector(USB_FS_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
-#endif
-#if STM32_HAS_OTG1
+    NVICEnableVector(TAMPER_STAMP_IRQn,
+                     CORTEX_PRIORITY_MASK(STM32_EXT_EXTI19_IRQ_PRIORITY));
+    NVICEnableVector(RTC_WKUP_IRQn,
+                     CORTEX_PRIORITY_MASK(STM32_EXT_EXTI20_IRQ_PRIORITY));
+    NVICEnableVector(COMP_IRQn,
+                     CORTEX_PRIORITY_MASK(STM32_EXT_EXTI21_IRQ_PRIORITY));
+#elif defined(STM32F2XX)
+    /* EXTI vectors specific to STM32F2xx.*/
     NVICEnableVector(OTG_FS_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
-#endif
-#if STM32_HAS_ETH
     NVICEnableVector(ETH_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI19_IRQ_PRIORITY));
+    NVICEnableVector(OTG_HS_WKUP_IRQn,
+                     CORTEX_PRIORITY_MASK(STM32_EXT_EXTI20_IRQ_PRIORITY));
+    NVICEnableVector(TAMPER_STAMP_IRQn,
+                     CORTEX_PRIORITY_MASK(STM32_EXT_EXTI21_IRQ_PRIORITY));
+    NVICEnableVector(RTC_WKUP_IRQn,
+                     CORTEX_PRIORITY_MASK(STM32_EXT_EXTI22_IRQ_PRIORITY));
+#elif defined(STM32F10X_CL)
+    /* EXTI vectors specific to STM32F1xx Connectivity Line.*/
+    NVICEnableVector(OTG_FS_WKUP_IRQn,
+                     CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
+    NVICEnableVector(ETH_WKUP_IRQn,
+                     CORTEX_PRIORITY_MASK(STM32_EXT_EXTI19_IRQ_PRIORITY));
+#else
+    /* EXTI vectors specific to STM32F1xx except Connectivity Line.*/
+    NVICEnableVector(USB_FS_WKUP_IRQn,
+                     CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
 #endif
   }
   /* Configuration.*/
@@ -339,10 +500,17 @@ void ext_lld_start(EXTDriver *extp) {
         ftsr |= (1 << i);
     }
   }
+#if defined(STM32L1XX_MD) || defined(STM32F2XX)
+  SYSCFG->EXTICR[0] = extp->config->exti[0];
+  SYSCFG->EXTICR[1] = extp->config->exti[1];
+  SYSCFG->EXTICR[2] = extp->config->exti[2];
+  SYSCFG->EXTICR[3] = extp->config->exti[3];
+#else /* STM32F1XX */
   AFIO->EXTICR[0] = extp->config->exti[0];
   AFIO->EXTICR[1] = extp->config->exti[1];
   AFIO->EXTICR[2] = extp->config->exti[2];
   AFIO->EXTICR[3] = extp->config->exti[3];
+#endif /* STM32F1XX */
   EXTI->SWIER = 0;
   EXTI->RTSR  = rtsr;
   EXTI->FTSR  = ftsr;
@@ -369,15 +537,27 @@ void ext_lld_stop(EXTDriver *extp) {
     NVICDisableVector(EXTI9_5_IRQn);
     NVICDisableVector(EXTI15_10_IRQn);
     NVICDisableVector(PVD_IRQn);
-    NVICDisableVector(RTC_Alarm_IRQn );
-#if STM32_HAS_USB
+    NVICDisableVector(RTC_Alarm_IRQn);
+#if defined(STM32L1XX_MD)
+    /* EXTI vectors specific to STM32L1xx.*/
     NVICDisableVector(USB_FS_WKUP_IRQn);
-#endif
-#if STM32_HAS_OTG1
+    NVICDisableVector(TAMPER_STAMP_IRQn);
+    NVICDisableVector(RTC_WKUP_IRQn);
+    NVICDisableVector(COMP_IRQn);
+#elif defined(STM32F2XX)
+    /* EXTI vectors specific to STM32F2xx.*/
     NVICDisableVector(OTG_FS_WKUP_IRQn);
-#endif
-#if STM32_HAS_ETH
     NVICDisableVector(ETH_WKUP_IRQn);
+    NVICDisableVector(OTG_HS_WKUP_IRQn);
+    NVICDisableVector(TAMPER_STAMP_IRQn);
+    NVICDisableVector(RTC_WKUP_IRQn);
+#elif defined(STM32F10X_CL)
+    /* EXTI vectors specific to STM32F1xx Connectivity Line.*/
+    NVICDisableVector(OTG_FS_WKUP_IRQn);
+    NVICDisableVector(ETH_WKUP_IRQn);
+#else
+    /* EXTI vectors specific to STM32F1xx except Connectivity Line.*/
+    NVICDisableVector(USB_FS_WKUP_IRQn);
 #endif
   }
   EXTI->EMR = 0;

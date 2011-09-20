@@ -37,21 +37,8 @@
 
 /**
  * @brief   Available number of EXT channels.
- * @note    The number of available channels varies depending on the STM32
- *          subfamily:
- *          - STM32F10X_CL, 20 channels.
- *          - STM32F2XX, 23 channels.
- *          - STM32L1XX_MD, 23 channels.
- *          - All other STM32F10X_xx, 19 channels.
- *          .
  */
-#if defined(STM32F10X_CL) || defined(__DOXYGEN__)
-#define EXT_MAX_CHANNELS    20
-#elif defined(STM32F2XX)
-#define EXT_MAX_CHANNELS    23
-#else
-#define EXT_MAX_CHANNELS    19
-#endif
+#define EXT_MAX_CHANNELS    STM32_EXTI_NUM_CHANNELS
 
 /**
  * @brief   Mask of the available channels.
@@ -140,31 +127,52 @@
 #endif
 
 /**
- * @brief   EXTI16 (PVD) interrupt priority level setting.
+ * @brief   EXTI16 interrupt priority level setting.
  */
 #if !defined(STM32_EXT_EXTI16_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_EXT_EXTI16_IRQ_PRIORITY       6
 #endif
 
 /**
- * @brief   EXTI17 (RTC) interrupt priority level setting.
+ * @brief   EXTI17 interrupt priority level setting.
  */
 #if !defined(STM32_EXT_EXTI17_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_EXT_EXTI17_IRQ_PRIORITY       6
 #endif
 
 /**
- * @brief   EXTI18 (USB) interrupt priority level setting.
+ * @brief   EXTI18 interrupt priority level setting.
  */
 #if !defined(STM32_EXT_EXTI18_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_EXT_EXTI18_IRQ_PRIORITY       6
 #endif
 
 /**
- * @brief   EXTI19 (ETH) interrupt priority level setting.
+ * @brief   EXTI19 interrupt priority level setting.
  */
 #if !defined(STM32_EXT_EXTI19_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_EXT_EXTI19_IRQ_PRIORITY       6
+#endif
+
+/**
+ * @brief   EXTI20 interrupt priority level setting.
+ */
+#if !defined(STM32_EXT_EXTI20_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_EXT_EXTI20_IRQ_PRIORITY       6
+#endif
+
+/**
+ * @brief   EXTI21 interrupt priority level setting.
+ */
+#if !defined(STM32_EXT_EXTI21_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_EXT_EXTI21_IRQ_PRIORITY       6
+#endif
+
+/**
+ * @brief   EXTI22 interrupt priority level setting.
+ */
+#if !defined(STM32_EXT_EXTI22_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_EXT_EXTI22_IRQ_PRIORITY       6
 #endif
 
 /*===========================================================================*/
