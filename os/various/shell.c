@@ -206,6 +206,7 @@ static msg_t shell_thread(void *p) {
   }
   chSysLock();
   chEvtBroadcastI(&shell_terminated);
+  chSysUnlock();
   return msg;
 }
 

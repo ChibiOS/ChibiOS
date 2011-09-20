@@ -353,6 +353,7 @@ void chThdExit(msg_t msg) {
     REG_REMOVE(tp);
 #endif
   chSchGoSleepS(THD_STATE_FINAL);
+  chSysUnlock();
 }
 
 #if CH_USE_WAITEXIT || defined(__DOXYGEN__)
