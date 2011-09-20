@@ -128,8 +128,8 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        FALSE
-#define STM32_HAS_UART3         FALSE
 #define STM32_HAS_UART4         FALSE
+#define STM32_HAS_UART5         FALSE
 
 #define STM32_HAS_USB           FALSE
 #define STM32_HAS_OTG1          FALSE
@@ -195,8 +195,8 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        TRUE
-#define STM32_HAS_UART3         FALSE
 #define STM32_HAS_UART4         FALSE
+#define STM32_HAS_UART5         FALSE
 
 #define STM32_HAS_USB           FALSE
 #define STM32_HAS_OTG1          FALSE
@@ -262,8 +262,8 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        FALSE
-#define STM32_HAS_UART3         FALSE
 #define STM32_HAS_UART4         FALSE
+#define STM32_HAS_UART5         FALSE
 
 #define STM32_HAS_USB           FALSE
 #define STM32_HAS_OTG1          FALSE
@@ -329,8 +329,8 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        TRUE
-#define STM32_HAS_UART3         FALSE
 #define STM32_HAS_UART4         FALSE
+#define STM32_HAS_UART5         FALSE
 
 #define STM32_HAS_USB           TRUE
 #define STM32_HAS_OTG1          FALSE
@@ -396,8 +396,8 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        TRUE
-#define STM32_HAS_UART3         TRUE
 #define STM32_HAS_UART4         TRUE
+#define STM32_HAS_UART5         TRUE
 
 #define STM32_HAS_USB           TRUE
 #define STM32_HAS_OTG1          FALSE
@@ -463,8 +463,8 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        TRUE
-#define STM32_HAS_UART3         TRUE
 #define STM32_HAS_UART4         TRUE
+#define STM32_HAS_UART5         TRUE
 
 #define STM32_HAS_USB           TRUE
 #define STM32_HAS_OTG1          FALSE
@@ -530,8 +530,8 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        TRUE
-#define STM32_HAS_UART3         TRUE
 #define STM32_HAS_UART4         TRUE
+#define STM32_HAS_UART5         TRUE
 
 #define STM32_HAS_USB           FALSE
 #define STM32_HAS_OTG1          TRUE

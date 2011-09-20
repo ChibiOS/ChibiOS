@@ -71,6 +71,7 @@
 *** 2.2.8 ***
 - NEW: Added new API chThdExitS() in order to allow atomic operations on
   thead exit.
+- FIX: Fixed missing UART5 definition in STM32 HAL (bug 3411774).
 - FIX: The function chThdExit() triggers an error on shell return when the
   system state checker is enabled (bug 3411207).
 - FIX: Some ARMCMx makefiles refer the file rules.mk in the ARM7 port (bug
