@@ -102,7 +102,8 @@ static void cmd_sleep(BaseChannel *chp, int argc, char *argv[]){
   extChannelEnable(&EXTD1, 10);
   chThdSleepMilliseconds(5);
 
-  PWR->CR |= (PWR_CR_CSBF | PWR_CR_CWUF);
+  PWR->CR |= (PWR_CR_LPDS | PWR_CR_CSBF | PWR_CR_CWUF);
+  PWR->CR &= ~PWR_CR_PDDS; // explicit clear PDDS, just to be safe
   SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
   __WFI();
 }
