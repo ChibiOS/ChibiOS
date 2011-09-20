@@ -204,9 +204,10 @@ static msg_t shell_thread(void *p) {
       }
     }
   }
+  /* Atomically broadcasting the event source and terminating the thread,
+     there is not a chSysUnlock() because the thread terminates upon return.*/
   chSysLock();
   chEvtBroadcastI(&shell_terminated);
-  chSysUnlock();
   return msg;
 }
 
