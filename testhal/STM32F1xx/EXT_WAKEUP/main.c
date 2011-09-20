@@ -100,7 +100,6 @@ static void cmd_sleep(BaseChannel *chp, int argc, char *argv[]){
 
   chThdSleepMilliseconds(200); // time to print out message in terminal
   extChannelEnable(&EXTD1, 10);
-  chThdSleepMilliseconds(5);
 
   PWR->CR |= (PWR_CR_LPDS | PWR_CR_CSBF | PWR_CR_CWUF);
   PWR->CR &= ~PWR_CR_PDDS; // explicit clear PDDS, just to be safe
@@ -160,5 +159,6 @@ int main(void) {
   while (TRUE) {
     chThdSleepMilliseconds(100);
     palTogglePad(IOPORT3, GPIOC_LED);
+    chThdExit(0);
   }
 }
