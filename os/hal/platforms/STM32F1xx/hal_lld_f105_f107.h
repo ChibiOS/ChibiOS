@@ -317,6 +317,13 @@
 #define STM32_MCO                   STM32_MCO_NOCLOCK
 #endif
 
+/**
+ * @brief   Clock source selecting. LSI by default.
+ */
+#if !defined(STM32_RTC) || defined(__DOXYGEN__)
+#define STM32_RTC                   STM32_RTC_LSI
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
