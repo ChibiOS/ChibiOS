@@ -310,10 +310,10 @@ void ext_lld_start(EXTDriver *extp) {
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI10_15_IRQ_PRIORITY));
     NVICEnableVector(PVD_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI16_IRQ_PRIORITY));
-    NVICEnableVector(RTCAlarm_IRQn,
+    NVICEnableVector(RTC_Alarm_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI17_IRQ_PRIORITY));
 #if STM32_HAS_USB
-    NVICEnableVector(USBWakeUp_IRQn,
+    NVICEnableVector(USB_FS_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
 #endif
 #if STM32_HAS_OTG1
@@ -369,9 +369,9 @@ void ext_lld_stop(EXTDriver *extp) {
     NVICDisableVector(EXTI9_5_IRQn);
     NVICDisableVector(EXTI15_10_IRQn);
     NVICDisableVector(PVD_IRQn);
-    NVICDisableVector(RTCAlarm_IRQn);
+    NVICDisableVector(RTC_Alarm_IRQn );
 #if STM32_HAS_USB
-    NVICDisableVector(USBWakeUp_IRQn);
+    NVICDisableVector(USB_FS_WKUP_IRQn);
 #endif
 #if STM32_HAS_OTG1
     NVICDisableVector(OTG_FS_WKUP_IRQn);
