@@ -93,6 +93,8 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Added new API chThdExitS() in order to allow atomic operations on
+  thead exit (backported to 2.2.8).
 - NEW: New I2C driver model and STM32 implementation.
   (evaluate the option to change the API to a synchronous model)
 - NEW: New RTC driver model and STM32 implementation.
