@@ -291,7 +291,7 @@ typedef msg_t (*tfunc_t)(void *);
  *          system clock.
  * @note    The maximum specified value is implementation dependent.
  *
- * @param[in] sec       time in seconds
+ * @param[in] sec       time in seconds, must be different from zero
  *
  * @api
  */
@@ -304,7 +304,7 @@ typedef msg_t (*tfunc_t)(void *);
  *          system clock.
  * @note    The maximum specified value is implementation dependent.
  *
- * @param[in] msec      time in milliseconds
+ * @param[in] msec      time in milliseconds, must be different from zero
  *
  * @api
  */
@@ -317,7 +317,7 @@ typedef msg_t (*tfunc_t)(void *);
  *          system clock.
  * @note    The maximum specified value is implementation dependent.
  *
- * @param[in] usec      time in microseconds
+ * @param[in] usec      time in microseconds, must be different from zero
  *
  * @api
  */
