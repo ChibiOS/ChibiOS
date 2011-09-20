@@ -95,8 +95,11 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: STM32L1xx sub-family support, all STM32 drivers adapted and retested
+  on the new platform except ADC that will need a specific implementation. 
 - NEW: Added new API chThdExitS() in order to allow atomic operations on
   thead exit (backported to 2.2.8).
+- NEW: New EXT driver model and STM32 implementation.
 - NEW: New I2C driver model and STM32 implementation.
   (evaluate the option to change the API to a synchronous model)
 - NEW: New RTC driver model and STM32 implementation.
@@ -147,8 +150,8 @@
   redefined. The macro chDbgCheck() no more includes the line number in the
   description because incompatibility with the Cosmic compiler (backported to
   2.2.7).
-- NEW: Added provisional support for STM32L1xx and STM32F2xx. Because of this
-  some directories related to the STM32 have been renamed, your makefiles may
+- NEW: Added provisional support for STM32F2xx. Because of this some
+  directories related to the STM32 have been renamed, your makefiles may
   require adjustments.
   (TODO: change to be ported to IAR and Keil build files)
 - NEW: Added a custom rule to the various rules.mk files, now it is possible
