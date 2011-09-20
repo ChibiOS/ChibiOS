@@ -358,7 +358,6 @@ void chThdExit(msg_t msg) {
 void chThdExitS(msg_t msg) {
   Thread *tp = currp;
 
-  chSysLock();
   tp->p_u.exitcode = msg;
 #if defined(THREAD_EXT_EXIT_HOOK)
   THREAD_EXT_EXIT_HOOK(tp);
