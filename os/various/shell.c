@@ -34,10 +34,6 @@
 #include "shell.h"
 #include "chprintf.h"
 
-#if SHELL_USE_IPRINTF
-#define sprintf siprintf
-#endif
-
 /**
  * @brief Shell termination event source.
  */
