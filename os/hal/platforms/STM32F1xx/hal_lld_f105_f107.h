@@ -92,6 +92,11 @@
 #define STM32_MCO_XT1           (10 << 24)  /**< XT1 clock on MCO pin.      */
 #define STM32_MCO_PLL3          (11 << 24)  /**< PLL3 clock on MCO pin.     */
 
+#define STM32_RTC_NOCLOCK       (0 << 8)    /**< No clock */
+#define STM32_RTC_LSE           (1 << 8)    /**< LSE used as RTC clock */
+#define STM32_RTC_LSI           (2 << 8)    /**< LSI used as RTC clock */
+#define STM32_RTC_HSE           (3 << 8)    /**< HSE divided by 128 used as RTC clock */
+
 /* RCC_CFGR2 register bits definitions.*/
 #define STM32_PREDIV1SRC_HSE    (0 << 16)   /**< PREDIV1 source is HSE.     */
 #define STM32_PREDIV1SRC_PLL2   (1 << 16)   /**< PREDIV1 source is PLL2.    */
