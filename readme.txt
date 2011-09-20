@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 2.3.3 ***
+- FIX: Fixed missing UART5 definition in STM32 HAL (bug 3411774)(backported
+  to 2.2.8).
 - FIX: The function chThdExit() triggers an error on shell return when the
   system state checker is enabled (bug 3411207)(backported to 2.2.8).
 - FIX: Some ARMCMx makefiles refer the file rules.mk in the ARM7 port (bug

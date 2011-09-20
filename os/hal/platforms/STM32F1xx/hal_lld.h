@@ -82,6 +82,8 @@
 
 #define STM32_HAS_ETH           FALSE
 
+#define STM32_EXTI_NUM_CHANNELS 19
+
 #define STM32_HAS_GPIOA         TRUE
 #define STM32_HAS_GPIOB         TRUE
 #define STM32_HAS_GPIOC         TRUE
@@ -123,8 +125,9 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        FALSE
-#define STM32_HAS_UART3         FALSE
 #define STM32_HAS_UART4         FALSE
+#define STM32_HAS_UART5         FALSE
+#define STM32_HAS_USART6        FALSE
 
 #define STM32_HAS_USB           FALSE
 #define STM32_HAS_OTG1          FALSE
@@ -149,6 +152,8 @@
 #define STM32_HAS_DMA2          FALSE
 
 #define STM32_HAS_ETH           FALSE
+
+#define STM32_EXTI_NUM_CHANNELS 19
 
 #define STM32_HAS_GPIOA         TRUE
 #define STM32_HAS_GPIOB         TRUE
@@ -191,8 +196,9 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        TRUE
-#define STM32_HAS_UART3         FALSE
 #define STM32_HAS_UART4         FALSE
+#define STM32_HAS_UART5         FALSE
+#define STM32_HAS_USART6        FALSE
 
 #define STM32_HAS_USB           FALSE
 #define STM32_HAS_OTG1          FALSE
@@ -217,6 +223,8 @@
 #define STM32_HAS_DMA2          FALSE
 
 #define STM32_HAS_ETH           FALSE
+
+#define STM32_EXTI_NUM_CHANNELS 19
 
 #define STM32_HAS_GPIOA         TRUE
 #define STM32_HAS_GPIOB         TRUE
@@ -259,8 +267,9 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        FALSE
-#define STM32_HAS_UART3         FALSE
 #define STM32_HAS_UART4         FALSE
+#define STM32_HAS_UART5         FALSE
+#define STM32_HAS_USART6        FALSE
 
 #define STM32_HAS_USB           FALSE
 #define STM32_HAS_OTG1          FALSE
@@ -285,6 +294,8 @@
 #define STM32_HAS_DMA2          FALSE
 
 #define STM32_HAS_ETH           FALSE
+
+#define STM32_EXTI_NUM_CHANNELS 19
 
 #define STM32_HAS_GPIOA         TRUE
 #define STM32_HAS_GPIOB         TRUE
@@ -327,8 +338,9 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        TRUE
-#define STM32_HAS_UART3         FALSE
 #define STM32_HAS_UART4         FALSE
+#define STM32_HAS_UART5         FALSE
+#define STM32_HAS_USART6        FALSE
 
 #define STM32_HAS_USB           TRUE
 #define STM32_HAS_OTG1          FALSE
@@ -353,6 +365,8 @@
 #define STM32_HAS_DMA2          TRUE
 
 #define STM32_HAS_ETH           FALSE
+
+#define STM32_EXTI_NUM_CHANNELS 19
 
 #define STM32_HAS_GPIOA         TRUE
 #define STM32_HAS_GPIOB         TRUE
@@ -395,8 +409,9 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        TRUE
-#define STM32_HAS_UART3         TRUE
 #define STM32_HAS_UART4         TRUE
+#define STM32_HAS_UART5         TRUE
+#define STM32_HAS_USART6        FALSE
 
 #define STM32_HAS_USB           TRUE
 #define STM32_HAS_OTG1          FALSE
@@ -421,6 +436,8 @@
 #define STM32_HAS_DMA2          TRUE
 
 #define STM32_HAS_ETH           FALSE
+
+#define STM32_EXTI_NUM_CHANNELS 19
 
 #define STM32_HAS_GPIOA         TRUE
 #define STM32_HAS_GPIOB         TRUE
@@ -463,8 +480,9 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        TRUE
-#define STM32_HAS_UART3         TRUE
 #define STM32_HAS_UART4         TRUE
+#define STM32_HAS_UART5         TRUE
+#define STM32_HAS_USART6        FALSE
 
 #define STM32_HAS_USB           TRUE
 #define STM32_HAS_OTG1          FALSE
@@ -489,6 +507,8 @@
 #define STM32_HAS_DMA2          TRUE
 
 #define STM32_HAS_ETH           TRUE
+
+#define STM32_EXTI_NUM_CHANNELS 20
 
 #define STM32_HAS_GPIOA         TRUE
 #define STM32_HAS_GPIOB         TRUE
@@ -531,8 +551,9 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        TRUE
-#define STM32_HAS_UART3         TRUE
 #define STM32_HAS_UART4         TRUE
+#define STM32_HAS_UART5         TRUE
+#define STM32_HAS_USART6        FALSE
 
 #define STM32_HAS_USB           FALSE
 #define STM32_HAS_OTG1          TRUE

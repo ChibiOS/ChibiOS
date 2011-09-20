@@ -148,6 +148,8 @@
 
 #define STM32_HAS_ETH           FALSE
 
+#define STM32_EXTI_NUM_CHANNELS 23
+
 #define STM32_HAS_GPIOA         TRUE
 #define STM32_HAS_GPIOB         TRUE
 #define STM32_HAS_GPIOC         TRUE
@@ -189,8 +191,9 @@
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        TRUE
-#define STM32_HAS_UART3         FALSE
 #define STM32_HAS_UART4         FALSE
+#define STM32_HAS_UART5         FALSE
+#define STM32_HAS_USART6        FALSE
 
 #define STM32_HAS_USB           TRUE
 #define STM32_HAS_OTG1          FALSE
@@ -201,8 +204,10 @@
 #define WWDG_IRQHandler         Vector40    /**< Window Watchdog.           */
 #define PVD_IRQHandler          Vector44    /**< PVD through EXTI Line
                                                  detect.                    */
-#define TAMPER_IRQHandler       Vector48    /**< Tamper.                    */
-#define RTC_IRQHandler          Vector4C    /**< RTC.                       */
+#define TAMPER_STAMP_IRQHandler Vector48    /**< Tamper and Time Stamp
+                                                 through EXTI.              */
+#define RTC_WKUP_IRQHandler     Vector4C    /**< RTC Wakeup Timer through
+                                                 EXTI.                      */
 #define FLASH_IRQHandler        Vector50    /**< Flash.                     */
 #define RCC_IRQHandler          Vector54    /**< RCC.                       */
 #define EXTI0_IRQHandler        Vector58    /**< EXTI Line 0.               */
@@ -221,7 +226,7 @@
 #define USB_HP_IRQHandler       Vector8C    /**< USB High Priority.         */
 #define USB_LP_IRQHandler       Vector90    /**< USB Low Priority.          */
 #define DAC_IRQHandler          Vector94    /**< DAC.                       */
-#define COMP_IRQHandler         Vector98    /**< COMP.                      */
+#define COMP_IRQHandler         Vector98    /**< Comparator through EXTI.   */
 #define EXTI9_5_IRQHandler      Vector9C    /**< EXTI Line 9..5.            */
 #define TIM9_IRQHandler         VectorA0    /**< TIM9.                      */
 #define TIM10_IRQHandler        VectorA4    /**< TIM10.                     */
@@ -240,8 +245,8 @@
 #define USART2_IRQHandler       VectorD8    /**< USART2.                    */
 #define USART3_IRQHandler       VectorDC    /**< USART3.                    */
 #define EXTI15_10_IRQHandler    VectorE0    /**< EXTI Line 15..10.          */
-#define RTCAlarm_IRQHandler     VectorE4    /**< RTC Alarm through EXTI.    */
-#define USBWakeUp_IRQHandler    VectorE8    /**< USB Wakeup from suspend.   */
+#define RTC_Alarm_IRQHandler    VectorE4    /**< RTC Alarm through EXTI.    */
+#define USB_FS_WKUP_IRQHandler  VectorE8    /**< USB Wakeup from suspend.   */
 #define TIM6_IRQHandler         VectorEC    /**< TIM6.                      */
 #define TIM7_IRQHandler         VectorF0    /**< TIM7.                      */
 /** @} */

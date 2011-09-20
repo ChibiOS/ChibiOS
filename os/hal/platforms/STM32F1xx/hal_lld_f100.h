@@ -87,10 +87,11 @@
 #define STM32_MCO_HSE           (6 << 24)   /**< HSE clock on MCO pin.      */
 #define STM32_MCO_PLLDIV2       (7 << 24)   /**< PLL/2 clock on MCO pin.    */
 
-#define STM32_RTC_NOCLOCK       (0 << 8)    /**< No clock */
-#define STM32_RTC_LSE           (1 << 8)    /**< LSE used as RTC clock */
-#define STM32_RTC_LSI           (2 << 8)    /**< LSI used as RTC clock */
-#define STM32_RTC_HSE           (3 << 8)    /**< HSE divided by 128 used as RTC clock */
+#define STM32_RTC_NOCLOCK       (0 << 8)    /**< No clock.                  */
+#define STM32_RTC_LSE           (1 << 8)    /**< LSE used as RTC clock.     */
+#define STM32_RTC_LSI           (2 << 8)    /**< LSI used as RTC clock.     */
+#define STM32_RTC_HSE           (3 << 8)    /**< HSE divided by 128 used as
+                                                 RTC clock.                 */
 
 /*===========================================================================*/
 /* Platform specific friendly IRQ names.                                     */
@@ -143,8 +144,8 @@
 #define USART3_IRQHandler       VectorDC    /**< USART3.                    */
 #endif
 #define EXTI15_10_IRQHandler    VectorE0    /**< EXTI Line 15..10.          */
-#define RTCAlarm_IRQHandler     VectorE4    /**< RTC Alarm through EXTI.    */
-#define CEC_IRQHandler          VectorE8    /**< CEC.                      */
+#define RTC_Alarm_IRQHandler    VectorE4    /**< RTC Alarm through EXTI.    */
+#define CEC_IRQHandler          VectorE8    /**< CEC.                       */
 #define TIM12_IRQHandler        VectorEC    /**< TIM12.                     */
 #define TIM13_IRQHandler        VectorF0    /**< TIM13.                     */
 #define TIM14_IRQHandler        VectorF4    /**< TIM14.                     */
