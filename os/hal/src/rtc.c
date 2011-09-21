@@ -90,17 +90,15 @@ void rtcSetTime(uint32_t tv_sec){
 }
 
 /**
- * @brief Return current time in UNIX notation.
+ * @brief Return return seconds since UNIX epoch.
+ *
+ * @param[in] msec     pointer to variable for storing fractional part of
+ *                     time (milliseconds).
+ *
+ * @notapi
  */
-inline uint32_t rtcGetSec(void){
-  return rtc_lld_get_sec();
-}
-
-/**
- * @brief Return fractional part of current time (milliseconds).
- */
-inline uint16_t rtcGetMsec(void){
-  return rtc_lld_get_msec();
+inline uint32_t rtcGetTime(uint16_t *msec){
+  return rtc_lld_get_time(msec);
 }
 
 /**

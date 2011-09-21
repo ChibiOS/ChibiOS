@@ -125,6 +125,7 @@ void rtc_lld_init(void){
 #if STM32_RTC == STM32_RTC_LSE
     if (! ((RCC->BDCR & RCC_BDCR_RTCEN) || (RCC->BDCR & RCC_BDCR_LSEON))){
       RCC->BDCR |= RCC_BDCR_LSEON;
+      /* Note: cold start time of LSE oscillator on STM32 is about 3 seconds. */
       while(!(RCC->BDCR & RCC_BDCR_LSERDY))
         ;
       RCC->BDCR |= RCC_BDCR_RTCEN;
@@ -262,23 +263,20 @@ void rtc_lld_set_time(uint32_t tv_sec){
 }
 
 /**
- * @brief Return current time in UNIX notation.
+ * @brief Return return seconds since UNIX epoch.
+ *
+ * @param[in] msec     pointer to variable for storing fractional part of
+ *                     time (milliseconds).
  *
  * @notapi
  */
-inline uint32_t rtc_lld_get_sec(void){
-  return ((RTC->CNTH << 16) + RTC->CNTL);
-}
-
-/**
- * @brief Return fractional part of current time (milliseconds).
- *
- * @notapi
- */
-inline uint16_t rtc_lld_get_msec(void){
+inline uint32_t rtc_lld_get_time(uint16_t *msec){
   uint32_t time_frac = 0;
-  time_frac = (((uint32_t)RTC->DIVH) << 16) + (RTC->DIVL);
-  return(((STM32_LSECLK - time_frac) * 1000) / STM32_LSECLK);
+  if(msec != NULL){
+    time_frac = (((uint32_t)RTC->DIVH) << 16) + (RTC->DIVL);
+    *msec = (uint16_t)(((STM32_LSECLK - time_frac) * 1000) / STM32_LSECLK);
+  }
+  return ((RTC->CNTH << 16) + RTC->CNTL);
 }
 
 /**

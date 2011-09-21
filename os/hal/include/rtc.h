@@ -75,8 +75,7 @@ extern "C" {
   #endif /* RTC_SUPPORTS_CALLBACKS */
 
   void rtcSetTime(uint32_t tv_sec);
-  uint32_t rtcGetSec(void);
-  uint16_t rtcGetMsec(void);
+  uint32_t rtcGetTime(uint16_t *msec);
   void rtcSetAlarm(uint32_t tv_alarm);
   uint32_t rtcGetAlarm(void);
 #ifdef __cplusplus
