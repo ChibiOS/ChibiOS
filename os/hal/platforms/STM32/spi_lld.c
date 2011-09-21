@@ -214,12 +214,12 @@ void spi_lld_start(SPIDriver *spip) {
 #if STM32_SPI_USE_SPI3
     if (&SPID3 == spip) {
       bool_t b;
-      b = dmaStreamAllocate(STM32_DMA1_STREAM1,
+      b = dmaStreamAllocate(STM32_DMA2_STREAM1,
                             STM32_SPI_SPI3_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
                             (void *)spip);
       chDbgAssert(!b, "spi_lld_start(), #5", "stream already allocated");
-      b = dmaStreamAllocate(STM32_DMA1_STREAM2,
+      b = dmaStreamAllocate(STM32_DMA2_STREAM2,
                             STM32_SPI_SPI3_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
