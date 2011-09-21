@@ -109,13 +109,15 @@ CH_IRQ_HANDLER(RTC_IRQHandler) {
  * @brief   Enable access to registers and initialize RTC if BKP domain
  *          was previously reseted.
  *
+ * @note:   Cold start time of LSE oscillator on STM32 platform 
+ *          takes about 3 seconds.
+ *
  * @notapi
  */
 void rtc_lld_init(void){
   uint32_t preload = 0;
 
   rccEnableBKPInterface(FALSE);
-  //RCC->APB1ENR |= (RCC_APB1ENR_BKPEN | RCC_APB1ENR_PWREN);
 
   /* enable access to BKP registers */
   PWR->CR |= PWR_CR_DBP;
@@ -124,8 +126,7 @@ void rtc_lld_init(void){
 
 #if STM32_RTC == STM32_RTC_LSE
     if (! ((RCC->BDCR & RCC_BDCR_RTCEN) || (RCC->BDCR & RCC_BDCR_LSEON))){
-      RCC->BDCR |= RCC_BDCR_LSEON;
-      /* Note: cold start time of LSE oscillator on STM32 is about 3 seconds. */
+      RCC->BDCR |= RCC_BDCR_LSEON; 
       while(!(RCC->BDCR & RCC_BDCR_LSERDY))
         ;
       RCC->BDCR |= RCC_BDCR_RTCEN;
