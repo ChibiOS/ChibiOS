@@ -284,8 +284,8 @@ void spi_lld_stop(SPIDriver *spip) {
 #endif
 #if STM32_SPI_USE_SPI3
     if (&SPID3 == spip) {
-      dmaStreamRelease(STM32_DMA1_STREAM1);
-      dmaStreamRelease(STM32_DMA1_STREAM2);
+      dmaStreamRelease(STM32_DMA2_STREAM1);
+      dmaStreamRelease(STM32_DMA2_STREAM2);
       rccDisableSPI3(FALSE);
     }
 #endif
