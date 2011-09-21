@@ -52,9 +52,9 @@
  *   the tests. Speed and size benchmarks for all the supported architectures
  *   are performed, both size and speed regressions are <b>monitored</b>.
  * - <b>HAL</b>. The HAL high level code and device drivers implementations
- *   are tested by use in the various demos and/or by users.
+ *   are tested through specific test applications under ./testhal.
  * - <b>Various</b>. The miscellaneous code is tested by use in the various
- *   demos and/or by users.
+ *   demos.
  * - <b>External Code</b>. Not tested, external libraries or components are
  *   used as-is or with minor patching where required, problems are usually
  *   reported upstream.
@@ -65,7 +65,7 @@
  * subsystems and can report a failure/success status and/or a performance
  * index as the test suite output.<br>
  * The test suite is usually activated in the demo applications by pressing a
- * button on the target board, see the readme into the various demos
+ * button on the target board, see the readme file into the various demos
  * directories. The test suite output is usually sent through a serial port
  * and can be examined by using a terminal emulator program.
  *

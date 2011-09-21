@@ -423,7 +423,7 @@
 /**
  * @brief   Maximum HSECLK at current voltage setting.
  */
-#define STM32_HSECLK_MAX            32000000#if
+#define STM32_HSECLK_MAX            32000000
 
 /**
  * @brief   Maximum SYSCLK at current voltage setting.

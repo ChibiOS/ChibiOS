@@ -106,8 +106,8 @@
   (API and functionality review)
 - NEW: Improved MAC driver model, it now follows the same template of other
   drivers.
-  (uIP demo to be adapted)
-  (implement macStop() in AT91SAM7X implementation)
+  (TODO: uIP demo to be adapted)
+  (TODO: implement macStop() in AT91SAM7X implementation)
 - NEW: New RCC helper driver for STM32F1xx and STM32L1xx, it simplifies
   the use of the RCC resources and hides most differences found among the
   various STM32 sub-families.
@@ -140,7 +140,7 @@
   easier maintenance.
 - NEW: Improved stack checking and reorganized memory map for the Cortex-Mx
   demos. Now stacks are allocated at the start of the RAM, an overflow of the
-  exception stack now triggers an exception (it could went unnoticed before).
+  exception stack now triggers an exception (it could go unnoticed before).
   The process stack is organized to be checked on context switch like other
   threads. Now all threads have an explicit stack boundary pointer.
   (TODO: documentation to be updated)

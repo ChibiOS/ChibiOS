@@ -1,5 +1,6 @@
 # List of all the STM32L1xx platform files.
 PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/STM32L1xx/hal_lld.c \
+              ${CHIBIOS}/os/hal/platforms/STM32L1xx/adc_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/GPIOv2/pal_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/ext_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/gpt_lld.c \

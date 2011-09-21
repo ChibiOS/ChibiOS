@@ -70,8 +70,7 @@
  *   not globally masked but only interrupts with higher priority can preempt
  *   the current handler. The processor is running in exception-privileged
  *   mode.
- * - <b>Serving Fast Interrupt</b>. This state is not implemented in the
- *   ARMv6-M implementation.
+ * - <b>Serving Fast Interrupt</b>. Not implemented in compact kernel mode.
  * - <b>Serving Non-Maskable Interrupt</b>. The Cortex-Mx has a specific
  *   asynchronous NMI vector and several synchronous fault vectors that can
  *   be considered belonging to this category.
@@ -109,9 +108,13 @@
  *   not globally masked but only interrupts with higher priority can preempt
  *   the current handler. The processor is running in exception-privileged
  *   mode.
- * - <b>Serving Fast Interrupt</b>. It is basically the same of the SRI state
- *   but it is not possible to switch to the I-Locked state because fast
- *   interrupts can preempt the kernel critical zone.
+ * - <b>Serving Fast Interrupt</b>. Fast interrupts are defined as interrupt
+ *   sources having higher priority level than the kernel
+ *   (@p CORTEX_BASEPRI_KERNEL). In this state is not possible to switch to
+ *   the I-Locked state because fast interrupts can preempt the kernel
+ *   critical zone.<br>
+ *   This state is not implemented in the ARMv6-M implementation because
+ *   priority masking is not present in this architecture.
  * - <b>Serving Non-Maskable Interrupt</b>. The Cortex-Mx has a specific
  *   asynchronous NMI vector and several synchronous fault vectors that can
  *   be considered belonging to this category.
@@ -214,20 +217,28 @@
  * @section ARMCMx_STARTUP_2 Expected linker symbols
  * The startup code starts at the symbol @p ResetHandler and expects the
  * following symbols to be defined in the linker script:
- * - @p __ram_end__ End of RAM.
- * - @p __main_stack_base__ Main stack lower boundary.
- * - @p __main_stack_end__ Main stack initial position.
- * - @p __process_stack_base__ Process stack lower boundary.
- * - @p __process_stack_end__ Process stack initial position.
- * - @p _textdata Address of the data segment source read only data.
- * - @p _data Start of the data segment.
- * - @p _edata End of the data segment end location.
- * - @p _bss_start Start of the BSS.
- * - @p _bss_end End of the BSS segment.
- * - @p __init_array_start Start of the constructors array.
- * - @p __init_array_end End of the constructors array.
- * - @p __fini_array_start Start of the destructors array.
- * - @p __fini_array_end End of the destructors array.
+ * - @p __ram_end__, end of RAM.
+ * - @p __main_stack_base__, main stack lower boundary.
+ * - @p __main_stack_end__, main stack initial position.
+ * - @p __process_stack_base__, process stack lower boundary.
+ * - @p __process_stack_end__, process stack initial position.
+ * - @p _textdata, address of the data segment source read only data.
+ * - @p _data, start of the data segment.
+ * - @p _edata, end of the data segment end location.
+ * - @p _bss_start, start of the BSS.
+ * - @p _bss_end, end of the BSS segment.
+ * - @p __init_array_start, start of the constructors array.
+ * - @p __init_array_end, end of the constructors array.
+ * - @p __fini_array_start, start of the destructors array.
+ * - @p __fini_array_end, end of the destructors array.
+ * .
+ * Additionally the kernel expects the following symbols:
+ * - @p __main_thread_stack_base__, this symbol is required when the
+ *   stack checking is enabled (<tt>CH_DBG_ENABLE_STACK_CHECK==TRUE</tt>),
+ *   it is an alias of @p __process_stack_base__ in this port.
+ * - @p __heap_base__ and @p __heap_end__, those symbols are required
+ *   if the memory core manager is enabled (<tt>CH_USE_MEMCORE==TRUE</tt>)
+ *   with a default core size set to zero (<tt>CH_MEMCORE_SIZE==0</tt>).
  * .
  * @ingroup ARMCMx
  */
