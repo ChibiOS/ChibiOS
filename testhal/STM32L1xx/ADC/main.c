@@ -41,6 +41,12 @@ static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
   }
 }
 
+static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
+
+  (void)adcp;
+  (void)err;
+}
+
 /*
  * ADC conversion group.
  * Mode:        Streaming, continuous, 16 samples of 8 channels, SW triggered.
@@ -50,6 +56,7 @@ static const ADCConversionGroup adcgrpcfg = {
   TRUE,
   ADC_GRP1_NUM_CHANNELS,
   adccallback,
+  adcerrorcallback,
   0, 0,         /* CR1, CR2 */
   0, 0, 0,      /* SMPR1...SMPR3 */
   ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),

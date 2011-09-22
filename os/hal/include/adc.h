@@ -80,7 +80,8 @@ typedef enum {
   ADC_STOP = 1,                             /**< Stopped.                   */
   ADC_READY = 2,                            /**< Ready.                     */
   ADC_ACTIVE = 3,                           /**< Converting.                */
-  ADC_COMPLETE = 4                          /**< Conversion complete.       */
+  ADC_COMPLETE = 4,                         /**< Conversion complete.       */
+  ADC_ERROR = 5                             /**< Conversion complete.       */
 } adcstate_t;
 
 #include "adc_lld.h"
@@ -144,10 +145,30 @@ typedef enum {
   }                                                                         \
 }
 
+/**
+ * @brief   Wakes up the waiting thread with a timeout message.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
+ */
+#define _adc_timeout_isr(adcp) {                                            \
+  if ((adcp)->thread != NULL) {                                             \
+    Thread *tp;                                                             \
+    chSysLockFromIsr();                                                     \
+    tp = (adcp)->thread;                                                    \
+    (adcp)->thread = NULL;                                                  \
+    tp->p_u.rdymsg = RDY_TIMEOUT;                                           \
+    chSchReadyI(tp);                                                        \
+    chSysUnlockFromIsr();                                                   \
+  }                                                                         \
+}
+
 #else /* !ADC_USE_WAIT */
 #define _adc_reset_i(adcp)
 #define _adc_reset_s(adcp)
 #define _adc_wakeup_isr(adcp)
+#define _adc_timeout_isr(adcp)
 #endif /* !ADC_USE_WAIT */
 
 /**
@@ -219,6 +240,32 @@ typedef enum {
     (adcp)->grpp = NULL;                                                    \
     _adc_wakeup_isr(adcp);                                                  \
   }                                                                         \
+}
+
+/**
+ * @brief   Common ISR code, error event.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          - Waiting thread timeout signaling, if any.
+ *          - Driver state transitions.
+ *          .
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
+ */
+#define _adc_isr_error_code(adcp, err) {                                    \
+  adc_lld_stop_conversion(adcp);                                            \
+  if ((adcp)->grpp->error_cb != NULL) {                                     \
+    (adcp)->state = ADC_ERROR;                                              \
+    (adcp)->grpp->error_cb(adcp, err);                                      \
+    if ((adcp)->state == ADC_ERROR)                                         \
+      (adcp)->state = ADC_READY;                                            \
+  }                                                                         \
+  (adcp)->grpp = NULL;                                                      \
+  _adc_timeout_isr(adcp);                                                   \
 }
 /** @} */
 

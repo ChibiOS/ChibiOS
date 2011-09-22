@@ -95,7 +95,12 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
-- NEW: STM32L1xx sub-family support, all STM32 drivers adapted and retested
+- NEW: STM32L ADC driver implementation.
+  (TODO: To be tested.)
+- NEW: Improved ADC driver model, now it is possible to handle error
+  conditions during the conversion process.
+  (TODO: Modify existing STM32 ADC implementation).
+- NEW: STM32L1xx sub-family support, all STM32 drivers adapted and re-tested
   on the new platform except ADC that will need a specific implementation. 
 - NEW: Added new API chThdExitS() in order to allow atomic operations on
   thead exit (backported to 2.2.8).

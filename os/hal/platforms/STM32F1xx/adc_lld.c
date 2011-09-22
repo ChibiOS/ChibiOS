@@ -57,20 +57,20 @@ ADCDriver ADCD1;
 static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
 
   /* DMA errors handling.*/
-#if defined(STM32_ADC_DMA_ERROR_HOOK)
   if ((flags & STM32_DMA_ISR_TEIF) != 0) {
-    STM32_ADC_DMA_ERROR_HOOK(spip);
+    /* DMA, this could help only if the DMA tries to access an unmapped
+       address space or violates alignment rules.*/
+    _adc_isr_error_code(adcp, ADC_ERR_DMAFAILURE);
   }
-#else
-  (void)flags;
-#endif
-  if ((flags & STM32_DMA_ISR_HTIF) != 0) {
-    /* Half transfer processing.*/
-    _adc_isr_half_code(adcp);
-  }
-  if ((flags & STM32_DMA_ISR_TCIF) != 0) {
-    /* Transfer complete processing.*/
-    _adc_isr_full_code(adcp);
+  else {
+    if ((flags & STM32_DMA_ISR_HTIF) != 0) {
+      /* Half transfer processing.*/
+      _adc_isr_half_code(adcp);
+    }
+    if ((flags & STM32_DMA_ISR_TCIF) != 0) {
+      /* Transfer complete processing.*/
+      _adc_isr_full_code(adcp);
+    }
   }
 }
 
@@ -146,7 +146,7 @@ void adc_lld_start(ADCDriver *adcp) {
 
     /* ADC setup, the calibration procedure has already been performed
        during initialization.*/
-    adcp->adc->CR1 = ADC_CR1_SCAN;
+    adcp->adc->CR1 = 0;
     adcp->adc->CR2 = 0;
   }
 }

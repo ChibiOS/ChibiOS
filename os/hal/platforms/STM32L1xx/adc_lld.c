@@ -57,26 +57,49 @@ ADCDriver ADCD1;
 static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
 
   /* DMA errors handling.*/
-#if defined(STM32_ADC_DMA_ERROR_HOOK)
   if ((flags & STM32_DMA_ISR_TEIF) != 0) {
-    STM32_ADC_DMA_ERROR_HOOK(spip);
+    /* DMA, this could help only if the DMA tries to access an unmapped
+       address space or violates alignment rules.*/
+    _adc_isr_error_code(adcp, ADC_ERR_DMAFAILURE);
   }
-#else
-  (void)flags;
-#endif
-  if ((flags & STM32_DMA_ISR_HTIF) != 0) {
-    /* Half transfer processing.*/
-    _adc_isr_half_code(adcp);
-  }
-  if ((flags & STM32_DMA_ISR_TCIF) != 0) {
-    /* Transfer complete processing.*/
-    _adc_isr_full_code(adcp);
+  else {
+    if ((flags & STM32_DMA_ISR_HTIF) != 0) {
+      /* Half transfer processing.*/
+      _adc_isr_half_code(adcp);
+    }
+    if ((flags & STM32_DMA_ISR_TCIF) != 0) {
+      /* Transfer complete processing.*/
+      _adc_isr_full_code(adcp);
+    }
   }
 }
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
+
+#if STM32_ADC_USE_ADC1 || defined(__DOXYGEN__)
+/**
+ * @brief   ADC1 interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(UART5_IRQHandler) {
+  uint32_t sr;
+
+  CH_IRQ_PROLOGUE();
+
+  sr = ADC1->SR;
+  ADC1->SR = 0;
+  if (sr & ADC_SR_OVR) {
+    /* ADC overflow condition, this could happen only if the DMA is unable
+       to read data fast enough.*/
+    _adc_isr_error_code(&ADCD1, ADC_ERR_OVERFLOW);
+  }
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -145,6 +168,7 @@ void adc_lld_stop(ADCDriver *adcp) {
   if (adcp->state == ADC_READY) {
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
+      ADC1->CR1 = 0;
       ADC1->CR2 = 0;
       dmaStreamRelease(adcp->dmastp);
       rccDisableADC1(FALSE);
@@ -182,7 +206,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   /* ADC setup.*/
   adcp->adc->SR    = 0;
-  adcp->adc->CR1   = grpp->cr1 | ADC_CR1_SCAN;
+  adcp->adc->CR1   = grpp->cr1 | ADC_CR1_OVRIE | ADC_CR1_SCAN;
   adcp->adc->SMPR1 = grpp->smpr1;       /* Writing SMPRx requires ADON=0.   */
   adcp->adc->SMPR2 = grpp->smpr2;
   adcp->adc->SMPR3 = grpp->smpr3;
@@ -211,6 +235,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 
   dmaStreamDisable(adcp->dmastp);
+  adcp->adc->CR1 = 0;
   adcp->adc->CR2 = 0;
 }
 

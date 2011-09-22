@@ -39,8 +39,7 @@
  * @name    Triggers selection
  * @{
  */
-#define ADC_CR2_EXTSEL_SRC(n)   ((n) << 17) /**< @brief Trigger source.     */
-#define ADC_CR2_EXTSEL_SWSTART  (7 << 17)   /**< @brief Software trigger.   */
+#define ADC_CR2_EXTSEL_SRC(n)   ((n) << 24) /**< @brief Trigger source.     */
 /** @} */
 
 /**
@@ -136,15 +135,6 @@
 #define STM32_ADC_ADC1_IRQ_PRIORITY         5
 #endif
 
-/**
- * @brief   ADC DMA error hook.
- * @note    The default action for DMA errors is a system halt because DMA
- *          error can only happen because programming errors.
- */
-#if !defined(STM32_ADC_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_ADC_DMA_ERROR_HOOK(adcp)      chSysHalt()
-#endif
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -176,6 +166,16 @@ typedef uint16_t adcsample_t;
 typedef uint16_t adc_channels_num_t;
 
 /**
+ * @brief   Possible ADC failure causes.
+ * @note    Error codes are architecture dependent and should not relied
+ *          upon.
+ */
+typedef enum {
+  ADC_ERR_DMAFAILURE = 0,                   /**< DMA operations failure.    */
+  ADC_ERR_OVERFLOW = 1                      /**< ADC overflow condition.    */
+} adcerror_t;
+
+/**
  * @brief   Type of a structure representing an ADC driver.
  */
 typedef struct ADCDriver ADCDriver;
@@ -189,6 +189,14 @@ typedef struct ADCDriver ADCDriver;
  * @param[in] n         number of buffer rows available starting from @p buffer
  */
 typedef void (*adccallback_t)(ADCDriver *adcp, adcsample_t *buffer, size_t n);
+
+/**
+ * @brief   ADC error callback type.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object triggering the
+ *                      callback
+ */
+typedef void (*adcerrorcallback_t)(ADCDriver *adcp, adcerror_t err);
 
 /**
  * @brief   Conversion group configuration structure.
@@ -211,6 +219,10 @@ typedef struct {
    * @brief   Callback function associated to the group or @p NULL.
    */
   adccallback_t             end_cb;
+  /**
+   * @brief   Error callback or @p NULL.
+   */
+  adcerrorcallback_t        error_cb;
   /* End of the mandatory fields.*/
   /**
    * @brief   ADC CR1 register initialization data.
