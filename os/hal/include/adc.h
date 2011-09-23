@@ -253,6 +253,7 @@ typedef enum {
  *          implementation only.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
+ * @param[in] err       platform dependent error code
  *
  * @notapi
  */

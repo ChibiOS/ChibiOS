@@ -30,33 +30,26 @@
 #define _SHELL_H_
 
 /**
- * @brief Shell maximum input line length.
+ * @brief   Shell maximum input line length.
  */
 #if !defined(SHELL_MAX_LINE_LENGTH) || defined(__DOXYGEN__)
 #define SHELL_MAX_LINE_LENGTH       64
 #endif
 
 /**
- * @brief Shell maximum arguments per command.
+ * @brief   Shell maximum arguments per command.
  */
 #if !defined(SHELL_MAX_ARGUMENTS) || defined(__DOXYGEN__)
 #define SHELL_MAX_ARGUMENTS         4
 #endif
 
 /**
- * @brief Enforces the use of iprintf() on newlib.
- */
-#if !defined(SHELL_USE_IPRINTF) || defined(__DOXYGEN__)
-#define SHELL_USE_IPRINTF           TRUE
-#endif
-
-/**
- * @brief Command handler function type.
+ * @brief   Command handler function type.
  */
 typedef void (*shellcmd_t)(BaseChannel *chp, int argc, char *argv[]);
 
 /**
- * @brief Custom command entry type.
+ * @brief   Custom command entry type.
  */
 typedef struct {
   const char            *sc_name;           /**< @brief Command name.       */
@@ -64,7 +57,7 @@ typedef struct {
 } ShellCommand;
 
 /**
- * @brief Shell descriptor type.
+ * @brief   Shell descriptor type.
  */
 typedef struct {
   BaseChannel           *sc_channel;        /**< @brief I/O channel associated
@@ -73,7 +66,9 @@ typedef struct {
                                                  table.                     */
 } ShellConfig;
 
+#if !defined(__DOXYGEN__)
 extern EventSource shell_terminated;
+#endif
 
 #ifdef __cplusplus
 extern "C" {

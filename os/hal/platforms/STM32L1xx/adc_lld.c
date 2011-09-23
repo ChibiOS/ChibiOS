@@ -84,7 +84,7 @@ static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(UART5_IRQHandler) {
+CH_IRQ_HANDLER(ADC1_IRQHandler) {
   uint32_t sr;
 
   CH_IRQ_PROLOGUE();
@@ -96,6 +96,7 @@ CH_IRQ_HANDLER(UART5_IRQHandler) {
        to read data fast enough.*/
     _adc_isr_error_code(&ADCD1, ADC_ERR_OVERFLOW);
   }
+  /* TODO: Add here analog watchdog handling.*/
 
   CH_IRQ_EPILOGUE();
 }
@@ -146,6 +147,8 @@ void adc_lld_start(ADCDriver *adcp) {
       chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
       rccEnableADC1(FALSE);
+      NVICEnableVector(ADC1_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_ADC_ADC1_IRQ_PRIORITY));
     }
 #endif
 

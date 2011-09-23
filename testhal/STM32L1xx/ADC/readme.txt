@@ -12,7 +12,8 @@ The application demonstrates the use of the STM32L1xx ADC driver.
 
 ** Board Setup **
 
-None required.
+- Remove the LCD module.
+- Connect PC0 to 3.3V and PC1 to GND for analog measurements.
 
 ** Build Procedure **
 

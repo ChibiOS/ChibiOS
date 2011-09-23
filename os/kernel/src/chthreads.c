@@ -32,8 +32,6 @@
  *          area. In this scenario static variables are shared among all
  *          threads while automatic variables are local to the thread.<br>
  *          Operations defined for threads:
- *          - <b>Init</b>, a thread is prepared and put in the suspended
- *            state.
  *          - <b>Create</b>, a thread is started on the specified thread
  *            function. This operation is available in multiple variants,
  *            both static and dynamic.

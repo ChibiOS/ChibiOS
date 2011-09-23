@@ -20,7 +20,7 @@
 
 /**
  * @defgroup STM32L1xx_DRIVERS STM32L1xx Drivers
- * @details This section describes all the supported drivers on the STM32F1xx
+ * @details This section describes all the supported drivers on the STM32L1xx
  *          platform and the implementation details of the single drivers.
  *
  * @ingroup platforms
@@ -47,6 +47,26 @@
  */
 
 /**
+ * @defgroup STM32L1xx_ADC STM32L1xx ADC Support
+ * @details The STM32L1xx ADC driver supports the ADC peripherals using DMA
+ *          channels for maximum performance.
+ *
+ * @section stm32l1xx_adc_1 Supported HW resources
+ * - ADC1.
+ * - DMA1.
+ * .
+ * @section stm32l1xx_adc_2 STM32L1xx ADC driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Streaming conversion using DMA for maximum performance.
+ * - Programmable ADC interrupt priority level.
+ * - Programmable DMA bus priority for each DMA channel.
+ * - Programmable DMA interrupt priority for each DMA channel.
+ * - DMA and ADC errors detection.
+ * .
+ * @ingroup STM32L1xx_DRIVERS
+ */
+
+/**
  * @defgroup STM32L1xx_DMA STM32L1xx DMA Support
  * @details This DMA helper driver is used by the other drivers in order to
  *          access the shared DMA resources in a consistent way.
@@ -56,9 +76,25 @@
  * - DMA1.
  * .
  * @section stm32l1xx_dma_2 STM32L1xx DMA driver implementation features
- * - Automatic DMA clock stop when not in use by other drivers.
  * - Exports helper functions/macros to the other drivers that share the
  *   DMA resource.
+ * - Automatic DMA clock stop when not in use by any driver.
+ * - DMA streams and interrupt vectors sharing among multiple drivers.
+ * .
+ * @ingroup STM32L1xx_DRIVERS
+ */
+
+/**
+ * @defgroup STM32L1xx_EXT STM32L1xx EXT Support
+ * @details The STM32L1xx EXT driver uses the EXTI peripheral.
+ *
+ * @section stm32l1xx_ext_1 Supported HW resources
+ * - EXTI.
+ * .
+ * @section stm32l1xx_ext_2 STM32L1xx EXT driver implementation features
+ * - Each EXTI channel can be independently enabled and programmed.
+ * - Programmable EXTI interrupts priority level.
+ * - Capability to work as event sources (WFE) rather than interrupt sources.
  * .
  * @ingroup STM32L1xx_DRIVERS
  */

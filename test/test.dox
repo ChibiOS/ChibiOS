@@ -46,13 +46,13 @@
  *   for this execution test, it is done automatically by a script because
  *   the entire sequence can take hours).<br>
  *   All the tests results are included as reports in the OS distribution
- *   under @p ./docs/reports.
+ *   under <tt>./docs/reports</tt>.
  * - <b>Ports</b>. The port code is tested by executing the kernel test
  *   suite on the target hardware. A port is validated only if it passes all
  *   the tests. Speed and size benchmarks for all the supported architectures
  *   are performed, both size and speed regressions are <b>monitored</b>.
  * - <b>HAL</b>. The HAL high level code and device drivers implementations
- *   are tested through specific test applications under ./testhal.
+ *   are tested through specific test applications under <tt>./testhal</tt>.
  * - <b>Various</b>. The miscellaneous code is tested by use in the various
  *   demos.
  * - <b>External Code</b>. Not tested, external libraries or components are

@@ -73,8 +73,9 @@
 *****************************************************************************
 
 *** 2.3.3 ***
-- FIX: Fixed missing UART5 definition in STM32 HAL (bug 3411774)(backported
-  to 2.2.8).
+- FIX: Fixed wrong parameter passed to the DMA error hook in STM32 ADC driver,
+  the DMA error hook has been removed entirely in the new ADC driver model
+  (bug 3413214)(to be fixed in 2.2.8).
 - FIX: The function chThdExit() triggers an error on shell return when the
   system state checker is enabled (bug 3411207)(backported to 2.2.8).
 - FIX: Some ARMCMx makefiles refer the file rules.mk in the ARM7 port (bug
@@ -95,11 +96,14 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Added Eclipse project files to all makefile-based demos in order to
+  allow an easier import. The Eclipse workspace is assumed to be created
+  inside the ChibiOS/RT main directory.
 - NEW: STM32L ADC driver implementation.
   (TODO: To be tested.)
 - NEW: Improved ADC driver model, now it is possible to handle error
   conditions during the conversion process.
-  (TODO: Modify existing STM32 ADC implementation).
+  (TODO: To be tested.)
 - NEW: STM32L1xx sub-family support, all STM32 drivers adapted and re-tested
   on the new platform except ADC that will need a specific implementation. 
 - NEW: Added new API chThdExitS() in order to allow atomic operations on
@@ -193,7 +197,8 @@
   is new and makes the kernel *much* smaller and generally faster but does
   not support fast interrupts (backported to 2.2.5).
 - NEW: Now the port layer exports info regarding the compiler and the port
-  options. The info are printed into the test reports.
+  options. The info are printed into the test reports. Date and time also
+  added.
 - CHANGE: Removed the option CH_USE_NESTED_LOCK, lwIP no more requires it and
   it would have conflicted with CH_DBG_SYSTEM_STATE_CHECK which is far more
   useful.

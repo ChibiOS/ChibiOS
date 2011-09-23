@@ -39,6 +39,11 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   EXTD1 driver identifier.
+ */
+EXTDriver EXTD1;
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -62,6 +67,8 @@
  */
 void ext_lld_init(void) {
 
+  /* Driver initialization.*/
+  extObjectInit(&EXTD1);
 }
 
 /**

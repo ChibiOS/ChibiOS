@@ -63,14 +63,23 @@ typedef uint32_t expchannel_t;
  * @param[in] extp      pointer to the @p EXPDriver object triggering the
  *                      callback
  */
-typedef void (*extcallback_t)(EXTDriver *extp);
+typedef void (*extcallback_t)(EXTDriver *extp, expchannel_t channel);
 
 /**
  * @brief   Channel configuration structure.
  */
 typedef struct {
-  uint32_t              mode;           /**< @brief Channel mode.           */
-  extcallback_t         cb;             /**< @brief Channel callback.       */
+  /**
+   * @brief Channel mode.
+   */
+  uint32_t              mode;
+  /**
+   * @brief Channel callback.
+   * @details  In the STM32 implementation a @p NULL callback pointer is
+   *           valid and configures the channel as an event sources instead
+   *           of an interrupt source.
+   */
+  extcallback_t         cb;
 } EXTChannelConfig;
 
 /**
@@ -107,6 +116,10 @@ struct EXTDriver {
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+#if !defined(__DOXYGEN__)
+extern EXTDriver EXTD1;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
