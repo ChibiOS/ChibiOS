@@ -81,7 +81,6 @@ static msg_t Thread1(void *arg) {
     palSetPad(GPIOB, GPIOB_LED4);
     chThdSleepMilliseconds(500);
   }
-  return 0;
 }
 
 /*
@@ -127,5 +126,4 @@ int main(void) {
     }
     chThdSleepMilliseconds(500);
   }
-  return 0;
 }
