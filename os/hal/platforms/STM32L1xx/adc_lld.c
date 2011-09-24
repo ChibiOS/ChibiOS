@@ -188,15 +188,13 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
-  uint32_t mode, cr2;
+  uint32_t mode;
   const ADCConversionGroup *grpp = adcp->grpp;
 
   /* DMA setup.*/
   mode = adcp->dmamode;
-  cr2 = grpp->cr2;
   if (grpp->circular) {
     mode |= STM32_DMA_CR_CIRC;
-    cr2 |= ADC_CR2_CONT;
   }
   if (adcp->depth > 1) {
     /* If the buffer depth is greater than one then the half transfer interrupt
@@ -214,7 +212,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   adcp->adc->SMPR1 = grpp->smpr1;       /* Writing SMPRx requires ADON=0.   */
   adcp->adc->SMPR2 = grpp->smpr2;
   adcp->adc->SMPR3 = grpp->smpr3;
-  adcp->adc->CR2   = cr2 | ADC_CR2_DMA | ADC_CR2_DDS | ADC_CR2_ADON;
+  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_CONT | ADC_CR2_DMA | ADC_CR2_DDS |
+                                 ADC_CR2_ADON;
   adcp->adc->SQR1  = grpp->sqr1;
   adcp->adc->SQR2  = grpp->sqr2;
   adcp->adc->SQR3  = grpp->sqr3;
@@ -225,8 +224,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   while ((adcp->adc->SR & ADC_SR_ADONS) == 0)
     ;
   /* ADC start by raising ADC_CR2_SWSTART.*/
-  adcp->adc->CR2   = cr2 | ADC_CR2_SWSTART | ADC_CR2_DMA | ADC_CR2_DDS |
-                           ADC_CR2_ADON;
+  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_SWSTART | ADC_CR2_CONT | ADC_CR2_DMA |
+                                 ADC_CR2_DDS | ADC_CR2_ADON;
 }
 
 /**
