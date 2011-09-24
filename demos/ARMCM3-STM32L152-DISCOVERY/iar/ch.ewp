@@ -2084,6 +2084,12 @@
     <group>
       <name>platform</name>
       <file>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32L1xx\adc_lld.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32L1xx\adc_lld.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32L1xx\hal_lld.c</name>
       </file>
       <file>
@@ -2096,10 +2102,22 @@
         <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\GPIOv2\pal_lld.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\pwm_lld.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\pwm_lld.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\serial_lld.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\serial_lld.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\spi_lld.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\spi_lld.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\DMAv1\stm32_dma.c</name>
