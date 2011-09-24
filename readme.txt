@@ -100,7 +100,6 @@
   allow an easier import. The Eclipse workspace is assumed to be created
   inside the ChibiOS/RT main directory.
 - NEW: STM32L ADC driver implementation.
-  (TODO: To be tested.)
 - NEW: Improved ADC driver model, now it is possible to handle error
   conditions during the conversion process.
   (TODO: To be tested.)
@@ -152,7 +151,6 @@
   exception stack now triggers an exception (it could go unnoticed before).
   The process stack is organized to be checked on context switch like other
   threads. Now all threads have an explicit stack boundary pointer.
-  (TODO: documentation to be updated)
 - NEW: Added debug plugin for Eclipse under ./tools/eclipse (backported to
   2.2.7).
 - NEW: The debug macros chDbgCheck() and chDbgAssert() now can be externally
@@ -162,7 +160,7 @@
 - NEW: Added provisional support for STM32F2xx. Because of this some
   directories related to the STM32 have been renamed, your makefiles may
   require adjustments.
-  (TODO: change to be ported to IAR and Keil build files)
+  (TODO: change to be ported to Keil build files)
 - NEW: Added a custom rule to the various rules.mk files, now it is possible
   to add an user rule into the Makefiles.
 - NEW: Improvements to the trace buffer, now it stores a full thread pointer
