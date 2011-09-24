@@ -52,7 +52,6 @@
 #define STM32_ADC_USE_ADC1                  FALSE
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
 #define STM32_ADC_ADC1_IRQ_PRIORITY         5
-#define STM32_ADC_DMA_ERROR_HOOK(adcp)      chSysHalt()
 
 /*
  * CAN driver system settings.
