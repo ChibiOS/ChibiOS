@@ -99,7 +99,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>STM32L151xB	ST STM32L151xB</state>
+          <state>STM32L152xB	ST STM32L152xB</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -1840,10 +1840,19 @@
           <name>$PROJ_DIR$\..\..\..\os\hal\include\can.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\ext.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\gpt.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\hal.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\i2c.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\icu.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\mac.h</name>
@@ -1861,13 +1870,28 @@
           <name>$PROJ_DIR$\..\..\..\os\hal\include\pwm.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\rtc.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\sdc.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\serial.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\serial_usb.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\spi.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\uart.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\usb.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\usb_cdc.h</name>
         </file>
       </group>
       <group>
@@ -1879,10 +1903,19 @@
           <name>$PROJ_DIR$\..\..\..\os\hal\src\can.c</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\src\ext.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\src\gpt.c</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\hal.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\i2c.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\src\icu.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\mac.c</name>
@@ -1897,13 +1930,25 @@
           <name>$PROJ_DIR$\..\..\..\os\hal\src\pwm.c</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\src\rtc.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\src\sdc.c</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\serial.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\src\serial_usb.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\spi.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\uart.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\src\usb.c</name>
         </file>
       </group>
     </group>

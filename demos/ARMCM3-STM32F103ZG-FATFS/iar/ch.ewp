@@ -12,7 +12,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>18</version>
+        <version>21</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -29,7 +29,7 @@
         </option>
         <option>
           <name>Variant</name>
-          <version>17</version>
+          <version>19</version>
           <state>37</state>
         </option>
         <option>
@@ -38,8 +38,8 @@
         </option>
         <option>
           <name>Input variant</name>
-          <version>1</version>
-          <state>3</state>
+          <version>3</version>
+          <state>6</state>
         </option>
         <option>
           <name>Input description</name>
@@ -47,8 +47,8 @@
         </option>
         <option>
           <name>Output variant</name>
-          <version>0</version>
-          <state>3</state>
+          <version>2</version>
+          <state>7</state>
         </option>
         <option>
           <name>Output description</name>
@@ -60,7 +60,7 @@
         </option>
         <option>
           <name>FPU</name>
-          <version>1</version>
+          <version>2</version>
           <state>0</state>
         </option>
         <option>
@@ -87,7 +87,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.10.1.52170</state>
+          <state>6.20.2.52635</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -135,18 +135,36 @@
           <name>RTConfigPath2</name>
           <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
         </option>
+        <option>
+          <name>GFPUCoreSlave</name>
+          <version>19</version>
+          <state>37</state>
+        </option>
+        <option>
+          <name>GBECoreSlave</name>
+          <version>19</version>
+          <state>37</state>
+        </option>
+        <option>
+          <name>OGUseCmsis</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OGUseCmsisDspLib</name>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>26</version>
+        <version>28</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state>SHELL_USE_IPRINTF=FALSE</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -277,13 +295,18 @@
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\os\kernel\include</state>
+          <state>$PROJ_DIR$\..\..\..\os\ports\common\ARMCMx\CMSIS\include</state>
           <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx</state>
-          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32</state>
+          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32F1xx</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\include</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32</state>
+          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\DMAv1</state>
+          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\GPIOv1</state>
+          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\USBv1</state>
+          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F1xx</state>
           <state>$PROJ_DIR$\..\..\..\os\various</state>
-          <state>$PROJ_DIR$\..\..\..\boards\ST_STM3210E_EVAL</state>
           <state>$PROJ_DIR$\..\..\..\ext\fatfs\src</state>
+          <state>$PROJ_DIR$\..\..\..\boards\ST_STM3210E_EVAL</state>
           <state>$PROJ_DIR$\..\..\..\test</state>
         </option>
         <option>
@@ -366,11 +389,15 @@
           <state>1</state>
         </option>
         <option>
-          <name>IccRelaxedFpPrecision</name>
+          <name>IccCppInlineSemantics</name>
           <state>0</state>
         </option>
         <option>
-          <name>IccCppInlineSemantics</name>
+          <name>IccCmsis</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccFloatSemantics</name>
           <state>0</state>
         </option>
       </data>
@@ -525,8 +552,8 @@
         </option>
         <option>
           <name>AUserIncludes</name>
-          <state>$PROJ_DIR$\..\</state>
-          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32</state>
+          <state>$PROJ_DIR$\..</state>
+          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32F1xx</state>
           <state>$PROJ_DIR$\..\..\..\boards\ST_STM3210E_EVAL</state>
         </option>
         <option>
@@ -594,7 +621,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>11</version>
+        <version>13</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -840,6 +867,22 @@
           <name>IlinkOptExceptionsForce</name>
           <state>0</state>
         </option>
+        <option>
+          <name>IlinkCmsis</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptMergeDuplSections</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkOptUseVfe</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptForceVfe</name>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -879,7 +922,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>18</version>
+        <version>21</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -896,7 +939,7 @@
         </option>
         <option>
           <name>Variant</name>
-          <version>17</version>
+          <version>19</version>
           <state>37</state>
         </option>
         <option>
@@ -905,8 +948,8 @@
         </option>
         <option>
           <name>Input variant</name>
-          <version>1</version>
-          <state>3</state>
+          <version>3</version>
+          <state>6</state>
         </option>
         <option>
           <name>Input description</name>
@@ -914,8 +957,8 @@
         </option>
         <option>
           <name>Output variant</name>
-          <version>0</version>
-          <state>3</state>
+          <version>2</version>
+          <state>7</state>
         </option>
         <option>
           <name>Output description</name>
@@ -927,7 +970,7 @@
         </option>
         <option>
           <name>FPU</name>
-          <version>1</version>
+          <version>2</version>
           <state>0</state>
         </option>
         <option>
@@ -954,7 +997,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.10.1.52170</state>
+          <state>6.20.2.52635</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1002,19 +1045,36 @@
           <name>RTConfigPath2</name>
           <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
         </option>
+        <option>
+          <name>GFPUCoreSlave</name>
+          <version>19</version>
+          <state>37</state>
+        </option>
+        <option>
+          <name>GBECoreSlave</name>
+          <version>19</version>
+          <state>37</state>
+        </option>
+        <option>
+          <name>OGUseCmsis</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OGUseCmsisDspLib</name>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>26</version>
+        <version>28</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
-          <state>SHELL_USE_IPRINTF=FALSE</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1145,13 +1205,18 @@
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\os\kernel\include</state>
+          <state>$PROJ_DIR$\..\..\..\os\ports\common\ARMCMx\CMSIS\include</state>
           <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx</state>
-          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32</state>
+          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32F1xx</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\include</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32</state>
+          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\DMAv1</state>
+          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\GPIOv1</state>
+          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\USBv1</state>
+          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F1xx</state>
           <state>$PROJ_DIR$\..\..\..\os\various</state>
-          <state>$PROJ_DIR$\..\..\..\boards\ST_STM3210E_EVAL</state>
           <state>$PROJ_DIR$\..\..\..\ext\fatfs\src</state>
+          <state>$PROJ_DIR$\..\..\..\boards\ST_STM3210E_EVAL</state>
           <state>$PROJ_DIR$\..\..\..\test</state>
         </option>
         <option>
@@ -1177,7 +1242,7 @@
         <option>
           <name>CCOptStrategy</name>
           <version>0</version>
-          <state>1</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCOptLevelSlave</name>
@@ -1234,11 +1299,15 @@
           <state>1</state>
         </option>
         <option>
-          <name>IccRelaxedFpPrecision</name>
+          <name>IccCppInlineSemantics</name>
           <state>0</state>
         </option>
         <option>
-          <name>IccCppInlineSemantics</name>
+          <name>IccCmsis</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccFloatSemantics</name>
           <state>0</state>
         </option>
       </data>
@@ -1393,8 +1462,8 @@
         </option>
         <option>
           <name>AUserIncludes</name>
-          <state>$PROJ_DIR$\..\</state>
-          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32</state>
+          <state>$PROJ_DIR$\..</state>
+          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32F1xx</state>
           <state>$PROJ_DIR$\..\..\..\boards\ST_STM3210E_EVAL</state>
         </option>
         <option>
@@ -1462,7 +1531,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>11</version>
+        <version>13</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1708,6 +1777,22 @@
           <name>IlinkOptExceptionsForce</name>
           <state>0</state>
         </option>
+        <option>
+          <name>IlinkCmsis</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptMergeDuplSections</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkOptUseVfe</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptForceVfe</name>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -1783,6 +1868,9 @@
           <name>$PROJ_DIR$\..\..\..\os\hal\include\can.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\ext.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\gpt.h</name>
         </file>
         <file>
@@ -1808,6 +1896,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\pwm.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\rtc.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\sdc.h</name>
@@ -1840,6 +1931,9 @@
           <name>$PROJ_DIR$\..\..\..\os\hal\src\can.c</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\src\ext.c</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\gpt.c</name>
         </file>
         <file>
@@ -1862,6 +1956,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\pwm.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\src\rtc.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\sdc.c</name>
@@ -1891,9 +1988,6 @@
           <name>$PROJ_DIR$\..\..\..\os\kernel\include\ch.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\os\kernel\include\chbsem.h</name>
-        </file>
-        <file>
           <name>$PROJ_DIR$\..\..\..\os\kernel\include\chcond.h</name>
         </file>
         <file>
@@ -1904,9 +1998,6 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\kernel\include\chevents.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\..\os\kernel\include\chfiles.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\kernel\include\chheap.h</name>
@@ -2021,58 +2112,25 @@
     <group>
       <name>platform</name>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\adc_lld.c</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F1xx\hal_lld.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\adc_lld.h</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F1xx\hal_lld.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\can_lld.c</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F1xx\hal_lld_f100.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\can_lld.h</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F1xx\hal_lld_f103.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\core_cm3.h</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F1xx\hal_lld_f105_f107.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\gpt_lld.c</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\GPIOv1\pal_lld.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\gpt_lld.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\hal_lld.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\hal_lld.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\hal_lld_f100.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\hal_lld_f103.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\hal_lld_f105_f107.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\icu_lld.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\icu_lld.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\pal_lld.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\pal_lld.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\pwm_lld.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\pwm_lld.h</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\GPIOv1\pal_lld.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\sdc_lld.c</name>
@@ -2087,45 +2145,27 @@
         <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\serial_lld.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\spi_lld.c</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\DMAv1\stm32_dma.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\spi_lld.h</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\DMAv1\stm32_dma.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\stm32_dma.c</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F1xx\stm32_rcc.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\stm32_dma.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\stm32_usb.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\stm32f10x.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\uart_lld.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\uart_lld.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\usb_lld.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\usb_lld.h</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F1xx\stm32f10x.h</name>
       </file>
     </group>
     <group>
       <name>port</name>
       <group>
-        <name>STM32</name>
+        <name>STM32F1xx</name>
         <file>
-          <name>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32\cmparams.h</name>
+          <name>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32F1xx\cmparams.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32\vectors.s</name>
+          <name>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32F1xx\vectors.s</name>
         </file>
       </group>
       <file>
@@ -2158,6 +2198,12 @@
     </group>
     <group>
       <name>various</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\os\various\chprintf.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\os\various\chprintf.h</name>
+      </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\os\various\shell.c</name>
       </file>
