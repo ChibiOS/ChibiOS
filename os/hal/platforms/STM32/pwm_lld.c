@@ -341,7 +341,7 @@ void pwm_lld_init(void) {
  * @notapi
  */
 void pwm_lld_start(PWMDriver *pwmp) {
-  uint32_t clock, psc;
+  uint32_t psc;
   uint16_t ccer;
 
   if (pwmp->state == PWM_STOP) {
@@ -354,7 +354,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM1_IRQ_PRIORITY));
       NVICEnableVector(TIM1_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM1_IRQ_PRIORITY));
-      clock = STM32_TIMCLK2;
+      pwmp->clock = STM32_TIMCLK2;
     }
 #endif
 #if STM32_PWM_USE_TIM2
@@ -363,7 +363,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
       rccResetTIM2();
       NVICEnableVector(TIM2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM2_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      pwmp->clock = STM32_TIMCLK1;
     }
 #endif
 #if STM32_PWM_USE_TIM3
@@ -372,7 +372,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
       rccResetTIM3();
       NVICEnableVector(TIM3_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM3_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      pwmp->clock = STM32_TIMCLK1;
     }
 #endif
 #if STM32_PWM_USE_TIM4
@@ -381,7 +381,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
       rccResetTIM4();
       NVICEnableVector(TIM4_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM4_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      pwmp->clock = STM32_TIMCLK1;
     }
 #endif
 
@@ -391,7 +391,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
       rccResetTIM5();
       NVICEnableVector(TIM5_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM5_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      pwmp->clock = STM32_TIMCLK1;
     }
 #endif
 #if STM32_PWM_USE_TIM8
@@ -402,7 +402,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM8_IRQ_PRIORITY));
       NVICEnableVector(TIM8_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM8_IRQ_PRIORITY));
-      clock = STM32_TIMCLK2;
+      pwmp->clock = STM32_TIMCLK2;
     }
 #endif
 
@@ -430,9 +430,9 @@ void pwm_lld_start(PWMDriver *pwmp) {
   }
 
   /* Timer configuration.*/
-  psc = (clock / pwmp->config->frequency) - 1;
+  psc = (pwmp->clock / pwmp->config->frequency) - 1;
   chDbgAssert((psc <= 0xFFFF) &&
-              ((psc + 1) * pwmp->config->frequency) == clock,
+              ((psc + 1) * pwmp->config->frequency) == pwmp->clock,
               "pwm_lld_start(), #1", "invalid frequency");
   pwmp->tim->PSC  = (uint16_t)psc;
   pwmp->tim->ARR  = (uint16_t)(pwmp->period - 1);

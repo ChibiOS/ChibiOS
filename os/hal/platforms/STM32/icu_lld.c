@@ -281,7 +281,7 @@ void icu_lld_init(void) {
  * @notapi
  */
 void icu_lld_start(ICUDriver *icup) {
-  uint32_t clock, psc;
+  uint32_t psc;
 
   if (icup->state == ICU_STOP) {
     /* Clock activation and timer reset.*/
@@ -291,7 +291,7 @@ void icu_lld_start(ICUDriver *icup) {
       rccResetTIM1();
       NVICEnableVector(TIM1_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM1_IRQ_PRIORITY));
-      clock = STM32_TIMCLK2;
+      icup->clock = STM32_TIMCLK2;
     }
 #endif
 #if STM32_ICU_USE_TIM2
@@ -300,7 +300,7 @@ void icu_lld_start(ICUDriver *icup) {
       rccResetTIM2();
       NVICEnableVector(TIM2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM2_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      icup->clock = STM32_TIMCLK1;
     }
 #endif
 #if STM32_ICU_USE_TIM3
@@ -309,7 +309,7 @@ void icu_lld_start(ICUDriver *icup) {
       rccResetTIM3();
       NVICEnableVector(TIM3_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM3_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      icup->clock = STM32_TIMCLK1;
     }
 #endif
 #if STM32_ICU_USE_TIM4
@@ -318,7 +318,7 @@ void icu_lld_start(ICUDriver *icup) {
       rccResetTIM4();
       NVICEnableVector(TIM4_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM4_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      icup->clock = STM32_TIMCLK1;
     }
 #endif
 
@@ -328,7 +328,7 @@ void icu_lld_start(ICUDriver *icup) {
       rccResetTIM5();
       NVICEnableVector(TIM5_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM5_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      icup->clock = STM32_TIMCLK1;
     }
 #endif
 #if STM32_ICU_USE_TIM8
@@ -337,7 +337,7 @@ void icu_lld_start(ICUDriver *icup) {
       rccResetTIM5();
       NVICEnableVector(TIM8_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM8_IRQ_PRIORITY));
-      clock = STM32_TIMCLK2;
+      icup->clock = STM32_TIMCLK2;
     }
 #endif
   }
@@ -352,9 +352,9 @@ void icu_lld_start(ICUDriver *icup) {
   }
 
   /* Timer configuration.*/
-  psc = (clock / icup->config->frequency) - 1;
+  psc = (icup->clock / icup->config->frequency) - 1;
   chDbgAssert((psc <= 0xFFFF) &&
-              ((psc + 1) * icup->config->frequency) == clock,
+              ((psc + 1) * icup->config->frequency) == icup->clock,
               "icu_lld_start(), #1", "invalid frequency");
   icup->tim->PSC  = (uint16_t)psc;
   icup->tim->ARR   = 0xFFFF;

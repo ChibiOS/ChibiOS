@@ -316,6 +316,10 @@ struct PWMDriver {
 #endif
   /* End of the mandatory fields.*/
   /**
+   * @brief Timer base clock.
+   */
+  uint32_t                  clock;
+  /**
    * @brief Pointer to the TIMx registers block.
    */
   TIM_TypeDef               *tim;
