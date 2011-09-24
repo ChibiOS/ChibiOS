@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define>__heap_base__=Image$$RW_IRAM1$$ZI$$Limit __heap_end__=Image$$RW_IRAM2$$Base</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\os\kernel\include;..\..\..\os\ports\RVCT\ARMCMx;..\..\..\os\ports\RVCT\ARMCMx\STM32;..\..\..\os\hal\include;..\..\..\os\hal\platforms\STM32;..\..\..\os\various;..\..\..\boards\OLIMEX_STM32_P107;..\..\..\test</IncludePath>
+              <IncludePath>..\;..\..\..\os\kernel\include;..\..\..\os\ports\RVCT\ARMCMx;..\..\..\os\ports\RVCT\ARMCMx\STM32F1xx;..\..\..\os\hal\include;..\..\..\os\hal\platforms\STM32;..\..\..\os\hal\platforms\STM32F1xx;..\..\..\os\hal\platforms\STM32\GPIOv1;..\..\..\os\hal\platforms\STM32\DMAv1;..\..\..\os\various;..\..\..\boards\OLIMEX_STM32_P107;..\..\..\test</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -361,7 +361,7 @@
               <MiscControls>--cpreproc</MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\boards\OLIMEX_STM32_P107;..\..\..\os\ports\RVCT\ARMCMx\STM32</IncludePath>
+              <IncludePath>..\;..\..\..\boards\OLIMEX_STM32_P107;..\..\..\os\ports\RVCT\ARMCMx\STM32F1xx</IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -409,7 +409,7 @@
             <File>
               <FileName>vectors.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\os\ports\RVCT\ARMCMx\STM32\vectors.s</FilePath>
+              <FilePath>D:\Progetti\ChibiOS-RT\os\ports\RVCT\ARMCMx\STM32F1xx\vectors.s</FilePath>
             </File>
             <File>
               <FileName>chcoreasm_v7m.s</FileName>
@@ -816,35 +816,60 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\os\hal\include\usb.h</FilePath>
             </File>
+            <File>
+              <FileName>ext.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\include\ext.h</FilePath>
+            </File>
+            <File>
+              <FileName>icu.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\include\icu.h</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\include\rtc.h</FilePath>
+            </File>
+            <File>
+              <FileName>sdc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\include\sdc.h</FilePath>
+            </File>
+            <File>
+              <FileName>usb_cdc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\include\usb_cdc.h</FilePath>
+            </File>
+            <File>
+              <FileName>ext.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\ext.c</FilePath>
+            </File>
+            <File>
+              <FileName>icu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\icu.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\sdc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>platform</GroupName>
           <Files>
             <File>
-              <FileName>adc_lld.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\adc_lld.c</FilePath>
-            </File>
-            <File>
-              <FileName>can_lld.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\can_lld.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_lld.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\hal_lld.c</FilePath>
-            </File>
-            <File>
-              <FileName>pal_lld.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\pal_lld.c</FilePath>
-            </File>
-            <File>
-              <FileName>pwm_lld.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\pwm_lld.c</FilePath>
+              <FileName>serial_lld.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32\serial_lld.h</FilePath>
             </File>
             <File>
               <FileName>serial_lld.c</FileName>
@@ -852,79 +877,59 @@
               <FilePath>..\..\..\os\hal\platforms\STM32\serial_lld.c</FilePath>
             </File>
             <File>
-              <FileName>spi_lld.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\spi_lld.c</FilePath>
+              <FileName>stm32_dma.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32\DMAv1\stm32_dma.h</FilePath>
             </File>
             <File>
               <FileName>stm32_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\stm32_dma.c</FilePath>
-            </File>
-            <File>
-              <FileName>uart_lld.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\uart_lld.c</FilePath>
-            </File>
-            <File>
-              <FileName>adc_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\adc_lld.h</FilePath>
-            </File>
-            <File>
-              <FileName>can_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\can_lld.h</FilePath>
-            </File>
-            <File>
-              <FileName>core_cm3.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\core_cm3.h</FilePath>
-            </File>
-            <File>
-              <FileName>hal_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\hal_lld.h</FilePath>
-            </File>
-            <File>
-              <FileName>hal_lld_f103.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\hal_lld_f103.h</FilePath>
+              <FilePath>..\..\..\os\hal\platforms\STM32\DMAv1\stm32_dma.c</FilePath>
             </File>
             <File>
               <FileName>pal_lld.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\pal_lld.h</FilePath>
+              <FilePath>..\..\..\os\hal\platforms\STM32\GPIOv1\pal_lld.h</FilePath>
             </File>
             <File>
-              <FileName>pwm_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\pwm_lld.h</FilePath>
-            </File>
-            <File>
-              <FileName>serial_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\serial_lld.h</FilePath>
-            </File>
-            <File>
-              <FileName>spi_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\spi_lld.h</FilePath>
-            </File>
-            <File>
-              <FileName>stm32_dma.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\stm32_dma.h</FilePath>
+              <FileName>pal_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32\GPIOv1\pal_lld.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\stm32f10x.h</FilePath>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\stm32f10x.h</FilePath>
             </File>
             <File>
-              <FileName>uart_lld.h</FileName>
+              <FileName>hal_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\hal_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_lld.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\uart_lld.h</FilePath>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\hal_lld.h</FilePath>
+            </File>
+            <File>
+              <FileName>hal_lld_f100.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\hal_lld_f100.h</FilePath>
+            </File>
+            <File>
+              <FileName>hal_lld_f103.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\hal_lld_f103.h</FilePath>
+            </File>
+            <File>
+              <FileName>hal_lld_f105_f107.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\hal_lld_f105_f107.h</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_rcc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\stm32_rcc.h</FilePath>
             </File>
           </Files>
         </Group>
