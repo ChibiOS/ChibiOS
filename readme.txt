@@ -160,7 +160,7 @@
 - NEW: Added provisional support for STM32F2xx. Because of this some
   directories related to the STM32 have been renamed, your makefiles may
   require adjustments.
-  (TODO: change to be ported to Keil build files)
+  (TODO: change to be ported to IAR and Keil build files)
 - NEW: Added a custom rule to the various rules.mk files, now it is possible
   to add an user rule into the Makefiles.
 - NEW: Improvements to the trace buffer, now it stores a full thread pointer
