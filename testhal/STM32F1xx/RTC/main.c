@@ -21,22 +21,26 @@
 #include "ch.h"
 #include "hal.h"
 
-//#define TEST_DEEPSLEEP_ENABLE
 
-#ifdef TEST_DEEPSLEEP_ENABLE
+RTCDateTime timespec;
+RTCDateTime alarmspec;
 
+#define TEST_ALARM_WAKEUP FALSE
+
+
+
+#if TEST_ALARM_WAKEUP
+
+/* sleep indicator thread */
 static WORKING_AREA(blinkWA, 128);
 static msg_t blink_thd(void *arg){
   (void)arg;
   while (TRUE) {
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(100);
     palTogglePad(IOPORT3, GPIOC_LED);
   }
   return 0;
 }
-
-
-
 
 int main(void) {
   halInit();
@@ -44,7 +48,9 @@ int main(void) {
 
   chThdCreateStatic(blinkWA, sizeof(blinkWA), NORMALPRIO, blink_thd, NULL);
   /* set alarm in near future */
-  rtcSetAlarm(rtcGetSec() + 60);
+  rtcGetTime(&timespec);
+  alarmspec.tv_sec = timespec.tv_sec + 60;
+  rtcSetAlarm(&alarmspec);
 
   while (TRUE){
       chThdSleepSeconds(10);
@@ -60,12 +66,11 @@ int main(void) {
 
 
 
-#else /* TEST_DEEPSLEEP_ENABLE */
+#else /* TEST_ALARM_WAKEUP */
 
 static void my_overflowcb(RTCDriver *rtcp){
   (void)rtcp;
   palTogglePad(IOPORT3, GPIOC_LED);
-  rtcSetAlarm(rtcGetSec() + 10);
 }
 
 static void my_secondcb(RTCDriver *rtcp){
@@ -76,7 +81,9 @@ static void my_secondcb(RTCDriver *rtcp){
 static void my_alarmcb(RTCDriver *rtcp){
   (void)rtcp;
   palTogglePad(IOPORT3, GPIOC_LED);
-  rtcSetAlarm(rtcGetSec() + 10);
+  rtcGetTime(&timespec);
+  alarmspec.tv_sec = timespec.tv_sec + 10;
+  rtcSetAlarm(&alarmspec);
 }
 
 
@@ -84,11 +91,14 @@ int main(void) {
   halInit();
   chSysInit();
 
-  rtcSetAlarm(rtcGetSec() + 10);
-  rtcSetCallback(&RTCD, NULL, my_secondcb, my_alarmcb);
+  rtcGetTime(&timespec);
+  alarmspec.tv_sec = timespec.tv_sec + 10;
+  rtcSetAlarm(&alarmspec);
+
+  rtcSetCallback(&RTCD, my_overflowcb, my_secondcb, my_alarmcb);
   while (TRUE){
     chThdSleepMilliseconds(500);
   }
   return 0;
 }
-#endif /* TEST_DEEPSLEEP_ENABLE */
+#endif /* TEST_ALARM_WAKEUP */

@@ -76,7 +76,7 @@ void rtcInit(void){
  */
 void rtcSetCallback(RTCDriver *rtcp, rtccb_t overflowcb,
                     rtccb_t secondcb, rtccb_t alarmcb){
-  chDbgCheck((rtcp != NULL), "rtcStart");
+  chDbgCheck((rtcp != NULL), "rtcSetCallback");
   rtc_lld_set_callback(rtcp, overflowcb, secondcb, alarmcb);
 }
 #endif /* RTC_SUPPORTS_CALLBACKS */
