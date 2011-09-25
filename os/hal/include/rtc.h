@@ -74,10 +74,20 @@ extern "C" {
                         rtccb_t secondcb, rtccb_t alarmcb);
   #endif /* RTC_SUPPORTS_CALLBACKS */
 
-  void rtcSetTime(uint32_t tv_sec);
-  uint32_t rtcGetTime(uint16_t *msec);
-  void rtcSetAlarm(uint32_t tv_alarm);
-  uint32_t rtcGetAlarm(void);
+  void rtcSetTime(RTCDateTime *timespec);
+  void rtcGetTime(RTCDateTime *timespec);
+
+
+
+
+  void rtcSetAlarm(RTCDateTime *timespec);
+  void rtcGetAlarm(RTCDateTime *timespec);
+
+
+
+
+
+
 #ifdef __cplusplus
 }
 #endif

@@ -15,11 +15,12 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/STM32F1xx/hal_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/GPIOv1/pal_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/DMAv1/stm32_dma.c \
               ${CHIBIOS}/os/hal/platforms/STM32/USBv1/usb_lld.c \
-              ${CHIBIOS}/os/hal/platforms/STM32/rtc_lld.c
+              ${CHIBIOS}/os/hal/platforms/STM32/RTCv1/rtc_lld.c
 
 # Required include directories
 PLATFORMINC = ${CHIBIOS}/os/hal/platforms/STM32F1xx \
               ${CHIBIOS}/os/hal/platforms/STM32 \
               ${CHIBIOS}/os/hal/platforms/STM32/GPIOv1 \
               ${CHIBIOS}/os/hal/platforms/STM32/DMAv1 \
-              ${CHIBIOS}/os/hal/platforms/STM32/USBv1
+              ${CHIBIOS}/os/hal/platforms/STM32/USBv1 \
+              ${CHIBIOS}/os/hal/platforms/STM32/RTCv1

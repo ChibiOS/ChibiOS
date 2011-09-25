@@ -245,18 +245,20 @@ void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t overflowcb,
 /**
  * @brief     Set current time.
  *
- * @param[in] tv_sec     time value in UNIX notation.
+ * @param[in] timespec     pointer to variable storing time.
  *
+ * @note      Fractional part will be silently ignored. There is no possibility
+ *            to change it on STM32F1xx platform.
  * @notapi
  */
-void rtc_lld_set_time(uint32_t tv_sec){
+void rtc_lld_set_time(RTCDateTime *timespec){
 
   while(!(RTC->CRL & RTC_CRL_RTOFF))
     ;
 
   RTC->CRL |= RTC_CRL_CNF;                            /* switch on configure mode */
-  RTC->CNTH = (uint16_t)((tv_sec >> 16) & 0xFFFF);    /* write time */
-  RTC->CNTL = (uint16_t)(tv_sec & 0xFFFF);
+  RTC->CNTH = (uint16_t)((timespec->tv_sec >> 16) & 0xFFFF);
+  RTC->CNTL = (uint16_t)(timespec->tv_sec & 0xFFFF);
   RTC->CRL &= ~RTC_CRL_CNF;                           /* switch off configure mode */
 
   while(!(RTC->CRL & RTC_CRL_RTOFF))                  /* wait for completion */
@@ -264,36 +266,41 @@ void rtc_lld_set_time(uint32_t tv_sec){
 }
 
 /**
- * @brief Return return seconds since UNIX epoch.
+ * @brief     Get current time.
  *
  * @param[in] msec     pointer to variable for storing fractional part of
  *                     time (milliseconds).
  *
  * @notapi
  */
-inline uint32_t rtc_lld_get_time(uint16_t *msec){
+inline void rtc_lld_get_time(RTCDateTime *timespec){
   uint32_t time_frac = 0;
-  if(msec != NULL){
-    time_frac = (((uint32_t)RTC->DIVH) << 16) + (RTC->DIVL);
-    *msec = (uint16_t)(((STM32_LSECLK - time_frac) * 1000) / STM32_LSECLK);
-  }
-  return ((RTC->CNTH << 16) + RTC->CNTL);
+  time_frac = (((uint32_t)RTC->DIVH) << 16) + (RTC->DIVL);
+
+  timespec->tv_msec = (uint16_t)(((STM32_LSECLK - time_frac) * 1000) / STM32_LSECLK);
+  timespec->tv_sec = (RTC->CNTH << 16) + RTC->CNTL;
 }
 
 /**
- * @brief Set alarm date in UNIX notation.
- * @note  Default value after BKP domain reset is 0xFFFFFFFF
+ * @brief     Set alarm time.
+ *
+ * @param[in] timespec     pointer to variable storing time of alarm.
+ *
+ * @note      Fractional part will be silently ignored. There is no possibility
+ *            to change it on STM32F1xx platform.
+ *
+ * @note      Default value after BKP domain reset is 0xFFFFFFFF
  *
  * @notapi
  */
-void rtc_lld_set_alarm(uint32_t tv_alarm){
+void rtc_lld_set_alarm(RTCDateTime *timespec){
 
   while(!(RTC->CRL & RTC_CRL_RTOFF))
     ;
 
   RTC->CRL |= RTC_CRL_CNF;                            /* switch on configure mode */
-  RTC->ALRH = (uint16_t)((tv_alarm >> 16) & 0xFFFF);  /* write time */
-  RTC->ALRL = (uint16_t)(tv_alarm & 0xFFFF);
+  RTC->ALRH = (uint16_t)((timespec->tv_sec >> 16) & 0xFFFF);
+  RTC->ALRL = (uint16_t)(timespec->tv_sec & 0xFFFF);
   RTC->CRL &= ~RTC_CRL_CNF;                           /* switch off configure mode */
 
 #if !(RTC_SUPPORTS_CALLBACKS)
@@ -306,13 +313,19 @@ void rtc_lld_set_alarm(uint32_t tv_alarm){
 }
 
 /**
- * @brief Get current alarm date in UNIX notation.
- * @note  Default value after BKP domain reset is 0xFFFFFFFF
+ * @brief Get current alarm time.
+ *
+ * @param[in] timespec     pointer to variable storing time of alarm.
+ *
+ * @note      Fractional part will be silently ignored. There is no possibility
+ *            to change it on STM32F1xx platform.
+ *
+ * @note      Default value after BKP domain reset is 0xFFFFFFFF
  *
  * @notapi
  */
-inline uint32_t rtc_lld_get_alarm(void){
-  return ((RTC->ALRH << 16) + RTC->ALRL);
+inline void rtc_lld_get_alarm(RTCDateTime *timespec){
+  timespec->tv_sec = ((RTC->ALRH << 16) + RTC->ALRL);
 }
 
 

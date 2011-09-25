@@ -83,36 +83,42 @@ void rtcSetCallback(RTCDriver *rtcp, rtccb_t overflowcb,
 
 /**
  * @brief     Set current time.
- * @param[in] tv_sec - time value in UNIX notation.
- */
-void rtcSetTime(uint32_t tv_sec){
-  rtc_lld_set_time(tv_sec);
-}
-
-/**
- * @brief Return return seconds since UNIX epoch.
  *
- * @param[in] msec     pointer to variable for storing fractional part of
- *                     time (milliseconds).
+ * @param[in] timespec     pointer to variable storing time.
+ */
+void rtcSetTime(RTCDateTime *timespec){
+  chDbgCheck((timespec != NULL), "rtcSetTime");
+  rtc_lld_set_time(timespec);
+}
+
+/**
+ * @brief     Get current time.
  *
- * @notapi
+ * @param[in] timespec     pointer to variable storing time.
  */
-inline uint32_t rtcGetTime(uint16_t *msec){
-  return rtc_lld_get_time(msec);
+void rtcGetTime(RTCDateTime *timespec){
+  chDbgCheck((timespec != NULL), "rtcGetTime");
+  rtc_lld_get_time(timespec);
 }
 
 /**
- * @brief Set alarm date in UNIX notation.
+ * @brief Set alarm time.
+ *
+ * @param[in] timespec     pointer to variable storing time of alarm.
  */
-void rtcSetAlarm(uint32_t tv_alarm){
-  rtc_lld_set_alarm(tv_alarm);
+void rtcSetAlarm(RTCDateTime *timespec){
+  chDbgCheck((timespec != NULL), "rtcSetAlarm");
+  rtc_lld_set_alarm(timespec);
 }
 
 /**
- * @brief Get current alarm date in UNIX notation.
+ * @brief Get current alarm.
+ *
+ * @param[in] timespec     pointer to variable to store alarm time.
  */
-inline uint32_t rtcGetAlarm(void){
-  return rtc_lld_get_alarm();
+void rtcGetAlarm(RTCDateTime *timespec){
+  chDbgCheck((timespec != NULL), "rtcGetAlarm");
+  rtc_lld_get_alarm(timespec);
 }
 
 #endif /* HAL_USE_RTC */

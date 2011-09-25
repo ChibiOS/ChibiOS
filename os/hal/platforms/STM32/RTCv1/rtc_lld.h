@@ -59,6 +59,21 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+
+
+
+
+typedef struct {
+  uint32_t tv_sec;
+  uint32_t tv_msec;
+}RTCDateTime;
+
+
+
+
+
+
+
 /**
  * @brief Structure representing an RTC driver.
  * @note  This driver if dummy when callbacks disabled.
@@ -99,10 +114,12 @@ extern "C" {
   void rtc_lld_init(void);
   void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t overflow_cb,
                             rtccb_t second_cb, rtccb_t alarm_cb);
-  void rtc_lld_set_time(uint32_t tv_sec);
-  uint32_t rtc_lld_get_time(uint16_t *msec);
-  uint32_t rtc_lld_get_alarm(void);
-  void rtc_lld_set_alarm(uint32_t);
+
+  void rtc_lld_set_time(RTCDateTime *timespec);
+  void rtc_lld_get_time(RTCDateTime *timespec);
+
+  void rtc_lld_get_alarm(RTCDateTime *timespec);
+  void rtc_lld_set_alarm(RTCDateTime *timespec);
 #ifdef __cplusplus
 }
 #endif
