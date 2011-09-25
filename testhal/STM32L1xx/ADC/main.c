@@ -63,7 +63,7 @@ static const ADCConversionGroup adcgrpcfg1 = {
   adcerrorcallback,
   0, 0,         /* CR1, CR2 */
   0,            /* SMPR1 */
-  ADC_SMPR2_SMP_AN10(ADC_SAMPLE_9),
+  ADC_SMPR2_SMP_AN10(ADC_SAMPLE_4),
   0,            /* SMPR3 */
   ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),
   0, 0, 0,      /* SQR2, SQR3, SQR4 */

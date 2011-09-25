@@ -21,10 +21,14 @@
 #include "ch.h"
 #include "hal.h"
 
-#define ADC_GRP1_NUM_CHANNELS   8
-#define ADC_GRP1_BUF_DEPTH      16
+#define ADC_GRP1_NUM_CHANNELS   1
+#define ADC_GRP1_BUF_DEPTH      8
 
-static adcsample_t samples[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
+#define ADC_GRP2_NUM_CHANNELS   8
+#define ADC_GRP2_BUF_DEPTH      16
+
+static adcsample_t samples1[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
+static adcsample_t samples2[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
 
 /*
  * ADC streaming callback.
@@ -33,7 +37,7 @@ size_t nx = 0, ny = 0;
 static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
 
   (void)adcp;
-  if (samples == buffer) {
+  if (samples2 == buffer) {
     nx += n;
   }
   else {
@@ -49,19 +53,38 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
 
 /*
  * ADC conversion group.
- * Mode:        Streaming, continuous, 16 samples of 8 channels, SW triggered.
+ * Mode:        Linear buffer, 16 samples of 8 channels, SW triggered.
  * Channels:    IN10, IN11, IN10, IN11, IN10, IN11, Sensor, VRef.
  */
-static const ADCConversionGroup adcgrpcfg = {
-  TRUE,
+static const ADCConversionGroup adcgrpcfg1 = {
+  FALSE,
   ADC_GRP1_NUM_CHANNELS,
+  NULL,
+  adcerrorcallback,
+  0, 0,                         /* CR1, CR2 */
+  ADC_SMPR1_SMP_AN10(ADC_SAMPLE_1P5),
+  0,                            /* SMPR2 */
+  ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),
+  0,                            /* SQR2 */
+  ADC_SQR3_SQ1_N(ADC_CHANNEL_IN10)
+};
+
+/*
+ * ADC conversion group.
+ * Mode:        Continuous, 16 samples of 8 channels, SW triggered.
+ * Channels:    IN10, IN11, IN10, IN11, IN10, IN11, Sensor, VRef.
+ */
+static const ADCConversionGroup adcgrpcfg2 = {
+  TRUE,
+  ADC_GRP2_NUM_CHANNELS,
   adccallback,
   adcerrorcallback,
-  0,
-  ADC_CR2_TSVREFE,
-  0,
-  0,
-  ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),
+  0, ADC_CR2_TSVREFE,           /* CR1, CR2 */
+  ADC_SMPR1_SMP_AN10(ADC_SAMPLE_41P5) |
+  ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_239P5) |
+  ADC_SMPR1_SMP_VREF(ADC_SAMPLE_239P5),
+  0,                            /* SMPR2 */
+  ADC_SQR1_NUM_CH(ADC_GRP2_NUM_CHANNELS),
   ADC_SQR2_SQ8_N(ADC_CHANNEL_SENSOR) | ADC_SQR2_SQ7_N(ADC_CHANNEL_VREFINT),
   ADC_SQR3_SQ6_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ5_N(ADC_CHANNEL_IN10) |
   ADC_SQR3_SQ4_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ3_N(ADC_CHANNEL_IN10) |
@@ -112,10 +135,20 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
-   * Starts an ADC continuous conversion.
+   * Activates the ADC1 driver and the thermal sensor.
    */
   adcStart(&ADCD1, NULL);
-  adcStartConversion(&ADCD1, &adcgrpcfg, samples, ADC_GRP1_BUF_DEPTH);
+
+  /*
+   * Linear conversion.
+   */
+  adcConvert(&ADCD1, &adcgrpcfg1, samples1, ADC_GRP1_BUF_DEPTH);
+  chThdSleepMilliseconds(1000);
+
+  /*
+   * Starts an ADC continuous conversion.
+   */
+  adcStartConversion(&ADCD1, &adcgrpcfg2, samples2, ADC_GRP2_BUF_DEPTH);
 
   /*
    * Normal main() thread activity, in this demo it does nothing.

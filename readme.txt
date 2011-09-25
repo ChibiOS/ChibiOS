@@ -103,7 +103,6 @@
 - NEW: STM32L ADC driver implementation.
 - NEW: Improved ADC driver model, now it is possible to handle error
   conditions during the conversion process.
-  (TODO: To be tested.)
 - NEW: STM32L1xx sub-family support, all STM32 drivers adapted and re-tested
   on the new platform except ADC that will need a specific implementation. 
 - NEW: Added new API chThdExitS() in order to allow atomic operations on
