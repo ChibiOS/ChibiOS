@@ -171,7 +171,7 @@
  */
 
 /**
- * @defgroup STM32_MAC STM32 MAC Support
+ * @defgroup STM32_MAC STM32F1xx MAC Support
  * @details The STM32 MAC driver supports the ETH peripheral.
  *
  * @section at91sam7_mac_1 Supported HW resources
