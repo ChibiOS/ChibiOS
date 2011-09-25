@@ -26,7 +26,7 @@
  */
 
 /**
- * @file    STM32/hal_lld_f103.h
+ * @file    STM32F1xx/hal_lld_f103.h
  * @brief   STM32F103 Performance Line HAL subsystem low level driver header.
  *
  * @addtogroup STM32F103_HAL

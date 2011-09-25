@@ -26,7 +26,7 @@
  */
 
 /**
- * @file    STM32/hal_lld_f100.h
+ * @file    STM32F1xx/hal_lld_f100.h
  * @brief   STM32F100 Value Line HAL subsystem low level driver header.
  *
  * @addtogroup STM32F100_HAL

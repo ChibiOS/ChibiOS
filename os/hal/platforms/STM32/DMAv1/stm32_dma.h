@@ -217,7 +217,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @brief   DMA stream enable.
  * @note    This function can be invoked in both ISR or thread context.
  *
- * @param[in] dmachp    pointer to a stm32_dma_stream_t structure
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  *
  * @special
  */

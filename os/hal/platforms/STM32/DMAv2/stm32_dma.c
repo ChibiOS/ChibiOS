@@ -450,6 +450,7 @@ void dmaInit(void) {
  * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
+ * @param[in] priority  IRQ priority mask for the DMA stream
  * @param[in] func      handling function pointer, can be @p NULL
  * @param[in] param     a parameter to be passed to the handling function
  * @return              The operation status.

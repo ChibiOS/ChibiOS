@@ -26,7 +26,7 @@
  */
 
 /**
- * @file    STM32/hal_lld_f105_f107.h
+ * @file    STM32F1xx/hal_lld_f105_f107.h
  * @brief   STM32F10x Connectivity Line HAL subsystem low level driver header.
  *
  * @addtogroup STM32F10X_CL_HAL
