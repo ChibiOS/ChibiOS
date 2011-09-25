@@ -59,24 +59,24 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-
-
-
-
+/**
+ * @brief Structure representing an RTC time value.
+ */
 typedef struct {
+  /**
+   * @brief Seconds sins UNIX epoch.
+   */
   uint32_t tv_sec;
+  /**
+   * @brief Fractional part.
+   */
   uint32_t tv_msec;
 }RTCDateTime;
 
 
-
-
-
-
-
 /**
  * @brief Structure representing an RTC driver.
- * @note  This driver if dummy when callbacks disabled.
+ * @note  This driver is dummy when callbacks disabled.
  */
 struct RTCDriver{
 #if RTC_SUPPORTS_CALLBACKS
