@@ -99,9 +99,6 @@
   (backported to 2.2.4).
 - NEW: Added AVR implementation of the PAL driver contributed by Leszek.
   (TODO: Update demos to use it)
-- NEW: Added Eclipse project files to all makefile-based demos in order to
-  allow an easier import. The Eclipse workspace is assumed to be created
-  inside the ChibiOS/RT main directory.
 - NEW: STM32L ADC driver implementation.
 - NEW: Improved ADC driver model, now it is possible to handle error
   conditions during the conversion process.
