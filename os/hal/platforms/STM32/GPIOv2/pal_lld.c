@@ -125,8 +125,6 @@ void _pal_lld_init(const PALConfig *config) {
  * @brief   Pads mode setup.
  * @details This function programs a pads group belonging to the same port
  *          with the specified mode.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  * @note    @p PAL_MODE_UNCONNECTED is implemented as push pull at minimum
  *          speed.
  *

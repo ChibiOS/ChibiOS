@@ -97,6 +97,8 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Added AVR implementation of the PAL driver contributed by Leszek.
+  (TODO: Update demos to use it)
 - NEW: Added Eclipse project files to all makefile-based demos in order to
   allow an easier import. The Eclipse workspace is assumed to be created
   inside the ChibiOS/RT main directory.

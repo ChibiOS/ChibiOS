@@ -36,6 +36,20 @@
  */
 
 /**
+ * @defgroup AVR_PAL AVR PAL Support
+ * @details The AVR PAL driver uses the GPIO peripherals.
+ *
+ * @section avr_pal_1 Supported HW resources
+ * - GPIOA.
+ * - GPIOB.
+ * - GPIOC.
+ * - GPIOD.
+ * - GPIOE.
+ * .
+ * @ingroup AVR_DRIVERS
+ */
+
+/**
  * @defgroup AVR_SERIAL AVR Serial Support
  * @details The AVR Serial driver uses the USART peripherals in a
  *          buffered, interrupt driven, implementation.

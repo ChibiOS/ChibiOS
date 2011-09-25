@@ -27,10 +27,12 @@
 								<option id="org.eclipse.cdt.build.core.settings.holder.undef.incpaths.180845835" name="Undefined Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.undef.incpaths" valueType="undefIncludePath">
 									<listOptionValue builtIn="false" value="C:/Programmi/MinGW/include"/>
 									<listOptionValue builtIn="false" value="C:/Programmi/MinGW/lib/gcc/mingw32/3.4.5/include"/>
-									<listOptionValue builtIn="false" value="C:/Projects/ChibiOS-RT/ports/AVR"/>
-									<listOptionValue builtIn="false" value="C:/Projects/ChibiOS-RT/src/include"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/src/lib"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/os/io/platforms/AVR"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/ports/AVR"/>
 									<listOptionValue builtIn="false" value="C:/Programmi/MinGW/lib/gcc/mingw32/3.4.2/include"/>
-									<listOptionValue builtIn="false" value="C:/Projects/ChibiOS-RT/src/lib"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/os/io"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/src/include"/>
 								</option>
 								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1302832296" languageId="org.eclipse.cdt.core.assembly" languageName="Assembly" sourceContentType="org.eclipse.cdt.core.asmSource" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 							</tool>
@@ -38,10 +40,12 @@
 								<option id="org.eclipse.cdt.build.core.settings.holder.undef.incpaths.1703575141" name="Undefined Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.undef.incpaths" valueType="undefIncludePath">
 									<listOptionValue builtIn="false" value="C:/Programmi/MinGW/include"/>
 									<listOptionValue builtIn="false" value="C:/Programmi/MinGW/lib/gcc/mingw32/3.4.5/include"/>
-									<listOptionValue builtIn="false" value="C:/Projects/ChibiOS-RT/ports/AVR"/>
-									<listOptionValue builtIn="false" value="C:/Projects/ChibiOS-RT/src/include"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/src/lib"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/os/io/platforms/AVR"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/ports/AVR"/>
 									<listOptionValue builtIn="false" value="C:/Programmi/MinGW/lib/gcc/mingw32/3.4.2/include"/>
-									<listOptionValue builtIn="false" value="C:/Projects/ChibiOS-RT/src/lib"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/os/io"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/src/include"/>
 								</option>
 								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.240275561" languageId="org.eclipse.cdt.core.g++" languageName="GNU C++" sourceContentType="org.eclipse.cdt.core.cxxSource,org.eclipse.cdt.core.cxxHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 							</tool>
@@ -49,10 +53,12 @@
 								<option id="org.eclipse.cdt.build.core.settings.holder.undef.incpaths.1471311358" name="Undefined Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.undef.incpaths" valueType="undefIncludePath">
 									<listOptionValue builtIn="false" value="C:/Programmi/MinGW/include"/>
 									<listOptionValue builtIn="false" value="C:/Programmi/MinGW/lib/gcc/mingw32/3.4.5/include"/>
-									<listOptionValue builtIn="false" value="C:/Projects/ChibiOS-RT/ports/AVR"/>
-									<listOptionValue builtIn="false" value="C:/Projects/ChibiOS-RT/src/include"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/src/lib"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/os/io/platforms/AVR"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/ports/AVR"/>
 									<listOptionValue builtIn="false" value="C:/Programmi/MinGW/lib/gcc/mingw32/3.4.2/include"/>
-									<listOptionValue builtIn="false" value="C:/Projects/ChibiOS-RT/src/lib"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/os/io"/>
+									<listOptionValue builtIn="false" value="D:/Progetti/ChibiOS-RT/src/include"/>
 								</option>
 								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1548585203" languageId="org.eclipse.cdt.core.gcc" languageName="GNU C" sourceContentType="org.eclipse.cdt.core.cSource,org.eclipse.cdt.core.cHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 							</tool>

@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM8L/pal_lld.c
- * @brief   STM8L GPIO low level driver code.
+ * @file    AVR/pal_lld.c
+ * @brief   AVR GPIO low level driver code.
  *
  * @addtogroup PAL
  * @{
@@ -52,16 +52,59 @@
 /*===========================================================================*/
 
 /**
+ * @brief   AVR GPIO ports configuration.
+ * @details GPIO registers initialization.
+ *
+ * @param[in] config    the AVR ports configuration
+ *
+ * @notapi
+ */
+void _pal_lld_init(const PALConfig *config) {
+
+#if defined(PORTA) || defined(__DOXYGEN__)
+  PORTA = config->porta.out;
+  DDRA = config->porta.dir;
+#endif
+
+#if defined(PORTB) || defined(__DOXYGEN__)
+  PORTB = config->portb.out;
+  DDRB = config->portb.dir;
+#endif
+
+#if defined(PORTC) || defined(__DOXYGEN__)
+  PORTC = config->portc.out;
+  DDRC = config->portc.dir;
+#endif
+
+#if defined(PORTD) || defined(__DOXYGEN__)
+  PORTD = config->portd.out;
+  DDRD = config->portd.dir;
+#endif
+
+#if defined(PORTE) || defined(__DOXYGEN__)
+  PORTE = config->porte.out;
+  DDRE = config->porte.dir;
+#endif
+}
+
+/**
  * @brief   Pads mode setup.
  * @details This function programs a pads group belonging to the same port
  *          with the specified mode.
- * @note    @p PAL_MODE_UNCONNECTED is implemented as push pull output at 2MHz.
  *
- * @param[in] port      the port identifier
- * @param[in] mask      the group mask
- * @param[in] mode      the mode
+ * @param[in] port the port identifier
+ * @param[in] mask the group mask
+ * @param[in] mode the mode
+ *
+ * @note This function is not meant to be invoked directly by the application
+ *       code.
+ * @note @p PAL_MODE_UNCONNECTED is implemented as output as recommended by
+ *       the AVR Family User's Guide. Unconnected pads are set to input
+ *       with pull-up by default.
  *
  * @notapi
+ *
+ * TODO: check PAL_MODE_UNCONNECTED mode recommended for AVR
  */
 void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,
@@ -69,37 +112,19 @@ void _pal_lld_setgroupmode(ioportid_t port,
 
   switch (mode) {
   case PAL_MODE_RESET:
-  case PAL_MODE_INPUT_PULLUP:
-    port->DDR &= ~mask;
-    port->CR1 |=  mask;
-    port->CR2 &= ~mask;
-    break;
   case PAL_MODE_INPUT:
+    port->dir &= ~mask;
+    break;
   case PAL_MODE_INPUT_ANALOG:
-    port->DDR &= ~mask;
-    port->CR1 &= ~mask;
-    port->CR2 &= ~mask;
-    break;
+    port->dir &= ~mask;
+    port->out &= ~mask;
+	break;
   case PAL_MODE_UNCONNECTED:
-  case PAL_MODE_OUTPUT_PUSHPULL_SLOW:
-    port->DDR |=  mask;
-    port->CR1 |=  mask;
-    port->CR2 &= ~mask;
-    break;
+  case PAL_MODE_INPUT_PULLUP:
+    port->dir &= ~mask;
+    port->out |= mask;
   case PAL_MODE_OUTPUT_PUSHPULL:
-    port->DDR |=  mask;
-    port->CR1 |=  mask;
-    port->CR2 |=  mask;
-    break;
-  case PAL_MODE_OUTPUT_OPENDRAIN_SLOW:
-    port->DDR |=  mask;
-    port->CR1 &= ~mask;
-    port->CR2 &= ~mask;
-    break;
-  case PAL_MODE_OUTPUT_OPENDRAIN:
-    port->DDR |=  mask;
-    port->CR1 &= ~mask;
-    port->CR2 |=  mask;
+    port->dir |= mask;
     break;
   }
 }

@@ -347,8 +347,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Writes on a I/O port.
  * @details This function is implemented by writing the GPIO ODR register, the
  *          implementation has no side effects.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  * @note    Writing on pads programmed as pull-up or pull-down has the side
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
@@ -364,8 +362,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Sets a bits mask on a I/O port.
  * @details This function is implemented by writing the GPIO BSRR register, the
  *          implementation has no side effects.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  * @note    Writing on pads programmed as pull-up or pull-down has the side
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
@@ -381,8 +377,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Clears a bits mask on a I/O port.
  * @details This function is implemented by writing the GPIO BSRR register, the
  *          implementation has no side effects.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  * @note    Writing on pads programmed as pull-up or pull-down has the side
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
@@ -398,8 +392,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Writes a group of bits.
  * @details This function is implemented by writing the GPIO BSRR register, the
  *          implementation has no side effects.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  * @note    Writing on pads programmed as pull-up or pull-down has the side
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
@@ -420,8 +412,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Pads group mode setup.
  * @details This function programs a pads group belonging to the same port
  *          with the specified mode.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  * @note    Writing on pads programmed as pull-up or pull-down has the side
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
@@ -437,8 +427,6 @@ typedef GPIO_TypeDef * ioportid_t;
 
 /**
  * @brief   Writes a logical state on an output pad.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  * @note    Writing on pads programmed as pull-up or pull-down has the side
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
