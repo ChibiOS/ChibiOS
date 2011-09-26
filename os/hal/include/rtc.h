@@ -26,11 +26,8 @@
  * @{
  */
 
-
 #ifndef _RTC_H_
 #define _RTC_H_
-
-
 
 #if HAL_USE_RTC || defined(__DOXYGEN__)
 
@@ -50,8 +47,14 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of a structure representing an RTC driver.
+ */
 typedef struct RTCDriver RTCDriver;
 
+/**
+ * @brief   Type of an RTC callback.
+ */
 typedef void (*rtccb_t)(RTCDriver *rtcp);
 
 #include "rtc_lld.h"
@@ -68,26 +71,14 @@ typedef void (*rtccb_t)(RTCDriver *rtcp);
 extern "C" {
 #endif
   void rtcInit(void);
-
-  #if RTC_SUPPORTS_CALLBACKS
-    void rtcSetCallback(RTCDriver *rtcp, rtccb_t overflowcb,
-                        rtccb_t secondcb, rtccb_t alarmcb);
-  #endif /* RTC_SUPPORTS_CALLBACKS */
-
+#if RTC_SUPPORTS_CALLBACKS
+  void rtcSetCallback(RTCDriver *rtcp, rtccb_t overflowcb,
+                      rtccb_t secondcb, rtccb_t alarmcb);
+#endif /* RTC_SUPPORTS_CALLBACKS */
   void rtcSetTime(RTCDateTime *timespec);
   void rtcGetTime(RTCDateTime *timespec);
-
-
-
-
   void rtcSetAlarm(RTCDateTime *timespec);
   void rtcGetAlarm(RTCDateTime *timespec);
-
-
-
-
-
-
 #ifdef __cplusplus
 }
 #endif

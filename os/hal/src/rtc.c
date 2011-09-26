@@ -20,7 +20,7 @@
 
 /**
  * @file    rtc.c
- * @brief   Real Time Clock Abstraction Layer code.
+ * @brief   RTC Driver code.
  *
  * @addtogroup RTC
  * @{
@@ -50,74 +50,85 @@
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
+
 /**
- * @brief   Enable access to registers and initialize RTC if BKP doamin
- *          was previously reseted.
- *
+ * @brief   Enable access to registers and initialize RTC if BKP domain
+ *          was previously reset.
  * @note    This function is implicitly invoked by @p halInit(), there is
  *          no need to explicitly initialize the driver.
+ *
+ * @init
  */
-void rtcInit(void){
+void rtcInit(void) {
   rtc_lld_init();
 }
 
-#if RTC_SUPPORTS_CALLBACKS
+#if RTC_SUPPORTS_CALLBACKS || defined(__DOXYGEN__)
 /**
- * @brief     Enables and disables callbacks on the fly.
- * @details   Pass callback function(s) in argument(s) to enable callback(s).
- *            Pass NULL to disable callback.
- * @pre       To use this function you must set @p RTC_SUPPORTS_CALLBACKS
- *            to @p TRUE.
+ * @brief   Enables or disables callbacks.
+ * @details This function enables or disables callbacks, use a @p NULL pointer
+ *          in order to disable a callback.
+ * @pre     To use this function you must set @p RTC_SUPPORTS_CALLBACKS
+ *          to @p TRUE.
  *
- * @param[in] rtcp - pointer to RTC driver structure.
- * @param[in] overflowcb - overflow callback function.
- * @param[in] secondcb - every second callback function.
- * @param[in] alarmcb - alarm callback function.
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] overflowcb overflow callback function
+ * @param[in] secondcb  every second callback function
+ * @param[in] alarmcb   alarm callback function
  */
 void rtcSetCallback(RTCDriver *rtcp, rtccb_t overflowcb,
-                    rtccb_t secondcb, rtccb_t alarmcb){
+                    rtccb_t secondcb, rtccb_t alarmcb) {
+
   chDbgCheck((rtcp != NULL), "rtcSetCallback");
+
   rtc_lld_set_callback(rtcp, overflowcb, secondcb, alarmcb);
 }
 #endif /* RTC_SUPPORTS_CALLBACKS */
 
 /**
- * @brief     Set current time.
+ * @brief   Set current time.
  *
- * @param[in] timespec     pointer to variable storing time.
+ * @param[in] timespec  pointer to a @p RTCDateTime structure
  */
-void rtcSetTime(RTCDateTime *timespec){
+void rtcSetTime(RTCDateTime *timespec) {
+
   chDbgCheck((timespec != NULL), "rtcSetTime");
+
   rtc_lld_set_time(timespec);
 }
 
 /**
- * @brief     Get current time.
+ * @brief   Get current time.
  *
- * @param[in] timespec     pointer to variable storing time.
+ * @param[in] timespec  pointer to a @p RTCDateTime structure
  */
-void rtcGetTime(RTCDateTime *timespec){
+void rtcGetTime(RTCDateTime *timespec) {
+
   chDbgCheck((timespec != NULL), "rtcGetTime");
   rtc_lld_get_time(timespec);
 }
 
 /**
- * @brief Set alarm time.
+ * @brief   Set alarm time.
  *
- * @param[in] timespec     pointer to variable storing time of alarm.
+ * @param[in] timespec  pointer to a @p RTCDateTime structure
  */
-void rtcSetAlarm(RTCDateTime *timespec){
+void rtcSetAlarm(RTCDateTime *timespec) {
+
   chDbgCheck((timespec != NULL), "rtcSetAlarm");
+
   rtc_lld_set_alarm(timespec);
 }
 
 /**
- * @brief Get current alarm.
+ * @brief   Get current alarm.
  *
- * @param[in] timespec     pointer to variable to store alarm time.
+ * @param[in] timespec  pointer to a @p RTCDateTime structure
  */
 void rtcGetAlarm(RTCDateTime *timespec){
+
   chDbgCheck((timespec != NULL), "rtcGetAlarm");
+
   rtc_lld_get_alarm(timespec);
 }
 
