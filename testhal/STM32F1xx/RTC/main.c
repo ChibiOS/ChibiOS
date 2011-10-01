@@ -21,13 +21,10 @@
 #include "ch.h"
 #include "hal.h"
 
-
-RTCDateTime timespec;
-RTCDateTime alarmspec;
+RTCTime timespec;
+RTCAlarm alarmspec;
 
 #define TEST_ALARM_WAKEUP FALSE
-
-
 
 #if TEST_ALARM_WAKEUP
 
@@ -64,38 +61,37 @@ int main(void) {
   return 0;
 }
 
-
-
 #else /* TEST_ALARM_WAKEUP */
 
-static void my_overflowcb(RTCDriver *rtcp){
-  (void)rtcp;
-  palTogglePad(IOPORT3, GPIOC_LED);
-}
+static void my_cb(RTCDriver *rtcp, rtcevent_t event) {
 
-static void my_secondcb(RTCDriver *rtcp){
   (void)rtcp;
-  //palTogglePad(IOPORT3, GPIOC_LED);
-}
 
-static void my_alarmcb(RTCDriver *rtcp){
-  (void)rtcp;
-  palTogglePad(IOPORT3, GPIOC_LED);
-  rtcGetTime(&timespec);
-  alarmspec.tv_sec = timespec.tv_sec + 10;
-  rtcSetAlarm(&alarmspec);
+  switch (event) {
+  case RTC_EVENT_OVERFLOW:
+    palTogglePad(GPIOC, GPIOC_LED);
+    break;
+  case RTC_EVENT_SECOND:
+    //palTogglePad(GPIOC, GPIOC_LED);
+    break;
+  case RTC_EVENT_ALARM:
+    palTogglePad(GPIOC, GPIOC_LED);
+    rtcGetTime(&RTCD1, &timespec);
+    alarmspec.tv_sec = timespec.tv_sec + 10;
+    rtcSetAlarm(&RTCD1, 0, &alarmspec);
+    break;
+  }
 }
-
 
 int main(void) {
   halInit();
   chSysInit();
 
-  rtcGetTime(&timespec);
+  rtcGetTime(&RTCD1, &timespec);
   alarmspec.tv_sec = timespec.tv_sec + 10;
-  rtcSetAlarm(&alarmspec);
+  rtcSetAlarm(&RTCD1, 0, &alarmspec);
 
-  rtcSetCallback(&RTCD, my_overflowcb, my_secondcb, my_alarmcb);
+  rtcSetCallback(&RTCD1, my_cb);
   while (TRUE){
     chThdSleepMilliseconds(500);
   }

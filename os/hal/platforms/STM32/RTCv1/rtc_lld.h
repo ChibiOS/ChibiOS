@@ -35,17 +35,19 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   This RTC implementation supports callbacks.
+ */
+#define RTC_SUPPORTS_CALLBACKS      TRUE
+
+/**
+ * @brief   One alarm comparator available.
+ */
+#define RTC_ALARMS                  1
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
-/**
- * @brief   Switch to TRUE if you need callbacks from RTC. Switch to FALSE
- *          if you need only time keeping.
- * @note    Default is true.
- */
-#if !defined(RTC_SUPPORTS_CALLBACKS) || defined(__DOXYGEN__)
-#define RTC_SUPPORTS_CALLBACKS              TRUE
-#endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -55,46 +57,71 @@
 #error "RTC not present in the selected device"
 #endif
 
+#if !(STM32_RTC == STM32_RTC_LSE) && !(STM32_RTC == STM32_RTC_LSI) &&       \
+    !(STM32_RTC == STM32_RTC_HSE)
+#error "invalid source selected for RTC clock"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
 /**
- * @brief Structure representing an RTC time value.
+ * @brief   Type of a structure representing an RTC alarm stamp.
  */
-typedef struct {
+typedef struct RTCAlarm RTCAlarm;
+
+/**
+ * @brief   Type of an RTC alarm.
+ */
+typedef uint32_t rtcalarm_t;
+
+/**
+ * @brief   Type of an RTC event.
+ */
+typedef enum {
+  RTC_EVENT_SECOND = 0,                 /** Triggered every second.         */
+  RTC_EVENT_ALARM = 1,                  /** Triggered on alarm.             */
+  RTC_EVENT_OVERFLOW = 2                /** Triggered on counter overflow.  */
+} rtcevent_t;
+
+/**
+ * @brief   Type of a generic RTC callback.
+ */
+typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
+
+/**
+ * @brief   Structure representing an RTC time stamp.
+ */
+struct RTCTime {
   /**
-   * @brief Seconds sins UNIX epoch.
+   * @brief Seconds since UNIX epoch.
    */
   uint32_t tv_sec;
   /**
    * @brief Fractional part.
    */
   uint32_t tv_msec;
-}RTCDateTime;
-
+};
 
 /**
- * @brief Structure representing an RTC driver.
- * @note  This driver is dummy when callbacks disabled.
+ * @brief   Structure representing an RTC alarm specification.
+ */
+struct RTCAlarm {
+  /**
+   * @brief Seconds since UNIX epoch.
+   */
+  uint32_t tv_sec;
+};
+
+/**
+ * @brief   Structure representing an RTC driver.
  */
 struct RTCDriver{
-#if RTC_SUPPORTS_CALLBACKS
   /**
-   * @brief Overflow callback. Set it to NULL if not used.
+   * @brief Callback pointer.
    */
-  rtccb_t           overflow_cb;
-
-  /**
-   * @brief Every second callback. Set it to NULL if not used.
-   */
-  rtccb_t           second_cb;
-
-  /**
-   * @brief Alarm callback. Set it to NULL if not used.
-   */
-  rtccb_t           alarm_cb;
-#endif /* RTC_SUPPORTS_CALLBACKS */
+  rtccb_t           rtc_cb;
 };
 
 /*===========================================================================*/
@@ -105,27 +132,29 @@ struct RTCDriver{
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern RTCDriver RTCD;
-
+#if !defined(__DOXYGEN__)
+extern RTCDriver RTCD1;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void rtc_lld_init(void);
-  void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t overflow_cb,
-                            rtccb_t second_cb, rtccb_t alarm_cb);
-
-  void rtc_lld_set_time(RTCDateTime *timespec);
-  void rtc_lld_get_time(RTCDateTime *timespec);
-
-  void rtc_lld_get_alarm(RTCDateTime *timespec);
-  void rtc_lld_set_alarm(RTCDateTime *timespec);
+  void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec);
+  void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec);
+  void rtc_lld_set_alarm(RTCDriver *rtcp,
+                         rtcalarm_t alarm,
+                         const RTCAlarm *alarmspec);
+  void rtc_lld_get_alarm(RTCDriver *rtcp,
+                         rtcalarm_t alarm,
+                         RTCAlarm *alarmspec);
+  void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback);
 #ifdef __cplusplus
 }
 #endif
 
-
 #endif /* HAL_USE_RTC */
+
 #endif /* _RTC_LLD_H_ */
 
 /** @} */

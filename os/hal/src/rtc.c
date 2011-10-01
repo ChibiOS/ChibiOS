@@ -52,88 +52,107 @@
 /*===========================================================================*/
 
 /**
- * @brief   Enable access to registers and initialize RTC if BKP domain
- *          was previously reset.
+ * @brief   RTC Driver initialization.
  * @note    This function is implicitly invoked by @p halInit(), there is
  *          no need to explicitly initialize the driver.
  *
  * @init
  */
 void rtcInit(void) {
+
   rtc_lld_init();
 }
-
-#if RTC_SUPPORTS_CALLBACKS || defined(__DOXYGEN__)
-/**
- * @brief   Enables or disables callbacks.
- * @details This function enables or disables callbacks, use a @p NULL pointer
- *          in order to disable a callback.
- * @pre     To use this function you must set @p RTC_SUPPORTS_CALLBACKS
- *          to @p TRUE.
- *
- * @param[in] rtcp      pointer to RTC driver structure
- * @param[in] overflowcb overflow callback function
- * @param[in] secondcb  every second callback function
- * @param[in] alarmcb   alarm callback function
- */
-void rtcSetCallback(RTCDriver *rtcp, rtccb_t overflowcb,
-                    rtccb_t secondcb, rtccb_t alarmcb) {
-
-  chDbgCheck((rtcp != NULL), "rtcSetCallback");
-
-  rtc_lld_set_callback(rtcp, overflowcb, secondcb, alarmcb);
-}
-#endif /* RTC_SUPPORTS_CALLBACKS */
 
 /**
  * @brief   Set current time.
  *
- * @param[in] timespec  pointer to a @p RTCDateTime structure
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] timespec  pointer to a @p RTCTime structure
+ *
+ * @api
  */
-void rtcSetTime(RTCDateTime *timespec) {
+void rtcSetTime(RTCDriver *rtcp, const RTCTime *timespec) {
 
-  chDbgCheck((timespec != NULL), "rtcSetTime");
+  chDbgCheck((rtcp != NULL) && (timespec != NULL), "rtcSetTime");
 
-  rtc_lld_set_time(timespec);
+  rtc_lld_set_time(rtcp, timespec);
 }
 
 /**
  * @brief   Get current time.
  *
- * @param[in] timespec  pointer to a @p RTCDateTime structure
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[out] timespec pointer to a @p RTCTime structure
+ *
+ * @api
  */
-void rtcGetTime(RTCDateTime *timespec) {
+void rtcGetTime(RTCDriver *rtcp, RTCTime *timespec) {
 
-  chDbgCheck((timespec != NULL), "rtcGetTime");
-  rtc_lld_get_time(timespec);
+  chDbgCheck((rtcp != NULL) && (timespec != NULL), "rtcGetTime");
+
+  rtc_lld_get_time(rtcp, timespec);
 }
 
+#if (RTC_ALARMS > 0) || defined(__DOXYGEN__)
 /**
  * @brief   Set alarm time.
  *
- * @param[in] timespec  pointer to a @p RTCDateTime structure
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] alarm     alarm identifier
+ * @param[in] alarmspec pointer to a @p RTCAlarm structure or @p NULL
+ *
+ * @api
  */
-void rtcSetAlarm(RTCDateTime *timespec) {
+void rtcSetAlarm(RTCDriver *rtcp,
+                 rtcalarm_t alarm,
+                 const RTCAlarm *alarmspec) {
 
-  chDbgCheck((timespec != NULL), "rtcSetAlarm");
+  chDbgCheck((rtcp != NULL) && (alarm < RTC_ALARMS), "rtcSetAlarm");
 
-  rtc_lld_set_alarm(timespec);
+  rtc_lld_set_alarm(rtcp, alarm, alarmspec);
 }
 
 /**
  * @brief   Get current alarm.
+ * @note    If an alarm has not been set then the returned alarm specification
+ *          is not meaningful.
  *
- * @param[in] timespec  pointer to a @p RTCDateTime structure
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] alarm     alarm identifier
+ * @param[out] alarmspec pointer to a @p RTCAlarm structure
+ *
+ * @api
  */
-void rtcGetAlarm(RTCDateTime *timespec){
+void rtcGetAlarm(RTCDriver *rtcp,
+                 rtcalarm_t alarm,
+                 RTCAlarm *alarmspec) {
 
-  chDbgCheck((timespec != NULL), "rtcGetAlarm");
+  chDbgCheck((rtcp != NULL) && (alarm < RTC_ALARMS) && (alarmspec != NULL),
+             "rtcGetAlarm");
 
-  rtc_lld_get_alarm(timespec);
+  rtc_lld_get_alarm(rtcp, alarm, alarmspec);
 }
+#endif /* RTC_ALARMS > 0 */
+
+#if RTC_SUPPORTS_CALLBACKS || defined(__DOXYGEN__)
+/**
+ * @brief   Enables or disables RTC callbacks.
+ * @details This function enables or disables callbacks, use a @p NULL pointer
+ *          in order to disable a callback.
+ *
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] callback  callback function pointer or @p NULL
+ *
+ * @api
+ */
+void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback) {
+
+  chDbgCheck((rtcp != NULL), "rtcSetCallback");
+
+  rtc_lld_set_callback(rtcp, callback);
+}
+#endif /* RTC_SUPPORTS_CALLBACKS */
 
 #endif /* HAL_USE_RTC */
 
 /** @} */
-
-

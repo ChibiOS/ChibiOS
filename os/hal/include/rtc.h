@@ -35,6 +35,18 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Date/Time bit masks
+ * @{
+ */
+#define RTC_TIME_SECONDS_MASK   0x0000001F  /* @brief Seconds mask.         */
+#define RTC_TIME_MINUTES_MASK   0x000007E0  /* @brief Minutes mask.         */
+#define RTC_TIME_HOURS_MASK     0x0000F800  /* @brief Hours mask.           */
+#define RTC_DATE_DAYS_MASK      0x001F0000  /* @brief Days mask.            */
+#define RTC_DATE_MONTHS_MASK    0x01E00000  /* @brief Months mask.          */
+#define RTC_DATE_YEARS_MASK     0xFE000000  /* @brief Years mask.           */
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -53,9 +65,9 @@
 typedef struct RTCDriver RTCDriver;
 
 /**
- * @brief   Type of an RTC callback.
+ * @brief   Type of a structure representing an RTC time stamp.
  */
-typedef void (*rtccb_t)(RTCDriver *rtcp);
+typedef struct RTCTime RTCTime;
 
 #include "rtc_lld.h"
 
@@ -71,14 +83,17 @@ typedef void (*rtccb_t)(RTCDriver *rtcp);
 extern "C" {
 #endif
   void rtcInit(void);
+  void rtcSetTime(RTCDriver *rtcp, const RTCTime *timespec);
+  void rtcGetTime(RTCDriver *rtcp, RTCTime *timespec);
+#if RTC_ALARMS > 0
+  void rtcSetAlarm(RTCDriver *rtcp,
+                   rtcalarm_t alarm,
+                   const RTCAlarm *alarmspec);
+  void rtcGetAlarm(RTCDriver *rtcp, rtcalarm_t alarm, RTCAlarm *alarmspec);
+#endif
 #if RTC_SUPPORTS_CALLBACKS
-  void rtcSetCallback(RTCDriver *rtcp, rtccb_t overflowcb,
-                      rtccb_t secondcb, rtccb_t alarmcb);
-#endif /* RTC_SUPPORTS_CALLBACKS */
-  void rtcSetTime(RTCDateTime *timespec);
-  void rtcGetTime(RTCDateTime *timespec);
-  void rtcSetAlarm(RTCDateTime *timespec);
-  void rtcGetAlarm(RTCDateTime *timespec);
+  void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback);
+#endif
 #ifdef __cplusplus
 }
 #endif

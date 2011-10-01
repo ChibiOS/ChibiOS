@@ -514,11 +514,11 @@
 #if (STM32_LSECLK < 1000) || (STM32_LSECLK > 1000000)
 #error "STM32_LSECLK outside acceptable range (1...1000KHz)"
 #endif
-#else /* !#if STM32_LSE_ENABLED */
+#else /* !STM32_LSE_ENABLED */
 #if STM_RTCCLK == STM32_LSECLK
 #error "required LSE clock is not enabled"
 #endif
-#endif /* !#if STM32_LSE_ENABLED */
+#endif /* !STM32_LSE_ENABLED */
 
 /* PLL related checks.*/
 #if STM32_USB_CLOCK_ENABLED ||                                              \
