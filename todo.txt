@@ -1,0 +1,85 @@
+Status:
+- = Planned.
+X = In progress, some work done.
+* = Done.
+? = Not sure if worth the effort or useful at all.
+N = Decided against.
+
+Current Pipeline (2.3.x):
+* lwIP 1.4.0 integration and test.
+* Named threads.
+* Call protocol check debug option.
+* Improved stack overflow checking, support main() thread.
+  * Move main stack to low memory in ARMCMx ports.
+* Eclipse plugin.
+* FatFs 0.8x integration.
+* Kernel-only demo for users not interested in HAL (Cortex-Mx only).
+- USB and USB_SERIAL APIs reclassification (if needed), incorporate the USB
+  bus attach/detach handling in usbStart()/usbStop().
+- USB double buffering support for STM32 implementation.
+X STM32L1xx support (verify and test existing STM32F1xx drivers).
+  - Specific ADC driver for STM32L1xx.
+  X STM32L-Discovery demo and article.
+X STM32F2xx support (adapt and re-verify all drivers).
+  * New STM32 DMA helper driver abstracting differences between STM32F2xx and
+    other sub-families.
+  ? Specific ADC driver for STM32F2xx.
+- MMC_SPI driver revision and speedup.
+X Implement the "transmission end" serial driver event on those platforms
+  supporting the feature, so far only done in STM32 driver.
+X I2C device driver class support and at least one implementation.
+X Evaluate a modified I2C API where the synchronous mode is default and the
+  callback mode optional. This would allow a portable I2C driver based on
+  a GPT instance.
+  - Software I2C implementation.
+- Add a CH_THREAD macro for threads declaration in order to hide
+  compiler-specific optimizations for thread functions. All demos will have
+  to be updated.
+- LPC17xx support.
+
+Within 2.x.x
+X File System infrastructure.
+- Test suite overhaul, the API should be more generic in order to be used
+  with different subsystems and not just the kernel.
+- Reduce number of demos globally, add demos to a repository or on web site.
+  Required in order to reduce support effort.
+- Improved Makefile system.
+- MAC driver for STM32F107.
+- FatFs wrapper.
+- New device driver models: Clock, Systick, RTC, WDG, DAC, Power Monitor.
+- Add UART4 support to the STM32 UART driver (CL line only, HD has a nasty
+  shared interrupt).
+- STM32 OTG USB cell support for CL devices.
+- Add ADC3 support to the STM32 ADC driver.
+- Shared DMA channels support in the STM8L HAL.
+- Device drivers for STM8/STM8L (ADC, PWM, bring them on par with STM32).
+- Device drivers for LPC1xxx (ADC, PWM, bring them on par with STM32).
+- Implement USB Mass Storage Class support and demo using the MMC_SPI driver
+  as back-end.
+- Batch testing of the ARM7/ARMCMx port using OpenOCD, with reports.
+X Transactional flash file system implementation.
+- Serial over UART complex driver driver, evaluate from the performance
+  results if to make obsolete the current dedicated Serial driver.
+- Official segmented interrupts support and abstraction in CMx port.
+- MAC driver revision in order to support copy-less operations, this will
+  require changes to lwIP or a new TCP/IP stack however.
+- Update C++ wrapper (Heap, Pools, Mailboxes and any new feature).
+- Threads Pools manager in the library.
+- Dedicated TCP/IP stack.
+? Evaluate if change thread functions to return void is worthwhile. 
+? Add a *very simple* ADC API for single one shot sampling (implement it as
+  an injected conversion on the STM32).
+? Add a switch to enable/disable the priority inheritance algorithm in mutexes.
+? ISO7816 driver over UART driver, both reader and card side.
+? Merge the Coldfire branch in mainline (hardware missing).
+? Merge the H8S branch in mainline (hardware missing).
+
+Ideas for 3.x.x:
+- MMU/MPU support.
+- High resolution timers and tickless kernel.
+- Multicore support.
+
+Side projects:
+X ChibiOS Wizard, UML modeling and ChibiOS applications code and
+  documentation generator.
+- Visual debugger/monitor interfaced through OpenOCD.

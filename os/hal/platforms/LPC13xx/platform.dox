@@ -1,0 +1,140 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @defgroup LPC13xx LPC13xx Drivers
+ * @details This section describes all the supported drivers on the LPC13xx
+ *          platform and the implementation details of the single drivers.
+ *
+ * @ingroup platforms
+ */
+
+/**
+ * @defgroup LPC13xx_HAL LPC13xx Initialization Support
+ * @details The LPC13xx HAL support is responsible for system initialization.
+ *
+ * @section lpc13xx_hal_1 Supported HW resources
+ * - SYSCON.
+ * - Flash.
+ * .
+ * @section lpc13xx_hal_2 LPC13xx HAL driver implementation features
+ * - Clock tree initialization.
+ * - Clock source selection.
+ * - Flash controller initialization.
+ * - SYSTICK initialization based on current clock and kernel required rate.
+ * .
+ * @ingroup LPC13xx
+ */
+
+/**
+ * @defgroup LPC13xx_GPT LPC13xx GPT Support
+ * @details The LPC13xx GPT driver uses the CTxxBy peripherals.
+ *
+ * @section lpc13xx_gpt_1 Supported HW resources
+ * - CT16B0.
+ * - CT16B1.
+ * - CT32B0.
+ * - CT32B1.
+ * .
+ * @section lpc13xx_gpt_2 LPC13xx GPT driver implementation features
+ * - Each timer can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Programmable CTxxBy interrupts priority level.
+ * .
+ * @ingroup LPC13xx
+ */
+
+/**
+ * @defgroup LPC13xx_PAL LPC13xx PAL Support
+ * @details The LPC13xx PAL driver uses the GPIO peripherals.
+ *
+ * @section lpc13xx_pal_1 Supported HW resources
+ * - GPIO0.
+ * - GPIO1.
+ * - GPIO2.
+ * - GPIO3.
+ * .
+ * @section lpc13xx_pal_2 LPC13xx PAL driver implementation features
+ * - 12 bits wide ports.
+ * - Atomic set/reset functions.
+ * - Atomic set+reset function (atomic bus operations).
+ * - Output latched regardless of the pad setting.
+ * - Direct read of input pads regardless of the pad setting.
+ * .
+ * @section lpc13xx_pal_3 Supported PAL setup modes
+ * - @p PAL_MODE_RESET.
+ * - @p PAL_MODE_UNCONNECTED.
+ * - @p PAL_MODE_INPUT.
+ * - @p PAL_MODE_OUTPUT_PUSHPULL.
+ * .
+ * Any attempt to setup an invalid mode is ignored.
+ *
+ * @section lpc13xx_pal_4 Suboptimal behavior
+ * Some GPIO features are less than optimal:
+ * - Pad/port toggling operations are not atomic.
+ * - Pull-up and Pull-down resistors cannot be programmed through the PAL
+ *   driver and must be programmed separately using the IOCON peripheral.
+ * - Reading of the output latch for pads programmed as input is not possible,
+ *   the input pin value is returned instead.
+ * .
+ * @ingroup LPC13xx
+ */
+
+/**
+ * @defgroup LPC13xx_SERIAL LPC13xx Serial Support
+ * @details The LPC13xx Serial driver uses the UART peripheral in a
+ *          buffered, interrupt driven, implementation. The serial driver
+ *          also takes advantage of the LPC13xx UARTs deep hardware buffers.
+ *
+ * @section lpc13xx_serial_1 Supported HW resources
+ * The serial driver can support any of the following hardware resources:
+ * - UART.
+ * .
+ * @section lpc13xx_serial_2 LPC13xx Serial driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Fully interrupt driven.
+ * - Programmable priority level.
+ * - Takes advantage of the input and output FIFOs.
+ * .
+ * @ingroup LPC13xx
+ */
+
+/**
+ * @defgroup LPC13xx_SPI LPC13xx SPI Support
+ * @details The SPI driver supports the LPC13xx SSP peripherals in an interrupt
+ *          driven implementation.
+ * @note    Being the SPI a fast peripheral, much care must be taken to
+ *          not saturate the CPU bandwidth with an excessive IRQ rate. The
+ *          maximum transfer bit rate is likely limited by the IRQ
+ *          handling.
+ *
+ * @section lpc13xx_spi_1 Supported HW resources
+ * - SSP0.
+ * - SSP1 (where present).
+ * .
+ * @section lpc13xx_spi_2 LPC13xx SPI driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Each SSP can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Fully interrupt driven.
+ * - Programmable interrupt priority levels for each SSP.
+ * .
+ * @ingroup LPC13xx
+ */
