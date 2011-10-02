@@ -83,25 +83,6 @@
  */
 
 /**
- * @defgroup STM32F1xx_DMA STM32F1xx DMA Support
- * @details This DMA helper driver is used by the other drivers in order to
- *          access the shared DMA resources in a consistent way.
- *
- * @section stm32f1xx_dma_1 Supported HW resources
- * The DMA driver can support any of the following hardware resources:
- * - DMA1.
- * - DMA2 (where present).
- * .
- * @section stm32f1xx_dma_2 STM32F1xx DMA driver implementation features
- * - Exports helper functions/macros to the other drivers that share the
- *   DMA resource.
- * - Automatic DMA clock stop when not in use by any driver.
- * - DMA streams and interrupt vectors sharing among multiple drivers.
- * .
- * @ingroup STM32F1xx_DRIVERS
- */
-
-/**
  * @defgroup STM32F1xx_EXT STM32F1xx EXT Support
  * @details The STM32F1xx EXT driver uses the EXTI peripheral.
  *
@@ -251,22 +232,6 @@
  */
 
 /**
- * @defgroup STM32F1xx_RCC STM32F1xx RCC Support
- * @details This RCC helper driver is used by the other drivers in order to
- *          access the shared RCC resources in a consistent way.
- *
- * @section stm32f1xx_rcc_1 Supported HW resources
- * - RCC.
- * .
- * @section stm32f1xx_rcc_2 STM32F1xx RCC driver implementation features
- * - Peripherals reset.
- * - Peripherals clock enable.
- * - Periplerals clock disable.
- * .
- * @ingroup STM32F1xx_DRIVERS
- */
-
-/**
  * @defgroup STM32F1xx_RTC STM32F1xx RTC Support
  * @details The STM32F1xx RTC driver uses the RTC peripheral.
  *
@@ -382,4 +347,48 @@
  * - Each endpoint programmable in Control, Bulk and Interrupt modes.
  * .
  * @ingroup STM32F1xx_DRIVERS
+ */
+
+/**
+ * @defgroup STM32F1xx_PLATFORM_DRIVERS STM32F1xx Platform Drivers
+ * @details Platform support drivers. Platform drivers do not implement HAL
+ *          standard driver templates, their role is to support platform
+ *          specific functionalities.
+ *
+ * @ingroup STM32F1xx_DRIVERS
+ */
+
+/**
+ * @defgroup STM32F1xx_DMA STM32F1xx DMA Support
+ * @details This DMA helper driver is used by the other drivers in order to
+ *          access the shared DMA resources in a consistent way.
+ *
+ * @section stm32f1xx_dma_1 Supported HW resources
+ * The DMA driver can support any of the following hardware resources:
+ * - DMA1.
+ * - DMA2 (where present).
+ * .
+ * @section stm32f1xx_dma_2 STM32F1xx DMA driver implementation features
+ * - Exports helper functions/macros to the other drivers that share the
+ *   DMA resource.
+ * - Automatic DMA clock stop when not in use by any driver.
+ * - DMA streams and interrupt vectors sharing among multiple drivers.
+ * .
+ * @ingroup STM32F1xx_PLATFORM_DRIVERS
+ */
+
+/**
+ * @defgroup STM32F1xx_RCC STM32F1xx RCC Support
+ * @details This RCC helper driver is used by the other drivers in order to
+ *          access the shared RCC resources in a consistent way.
+ *
+ * @section stm32f1xx_rcc_1 Supported HW resources
+ * - RCC.
+ * .
+ * @section stm32f1xx_rcc_2 STM32F1xx RCC driver implementation features
+ * - Peripherals reset.
+ * - Peripherals clock enable.
+ * - Periplerals clock disable.
+ * .
+ * @ingroup STM32F1xx_PLATFORM_DRIVERS
  */

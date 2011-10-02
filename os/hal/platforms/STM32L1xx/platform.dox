@@ -67,24 +67,6 @@
  */
 
 /**
- * @defgroup STM32L1xx_DMA STM32L1xx DMA Support
- * @details This DMA helper driver is used by the other drivers in order to
- *          access the shared DMA resources in a consistent way.
- *
- * @section stm32l1xx_dma_1 Supported HW resources
- * The DMA driver can support any of the following hardware resources:
- * - DMA1.
- * .
- * @section stm32l1xx_dma_2 STM32L1xx DMA driver implementation features
- * - Exports helper functions/macros to the other drivers that share the
- *   DMA resource.
- * - Automatic DMA clock stop when not in use by any driver.
- * - DMA streams and interrupt vectors sharing among multiple drivers.
- * .
- * @ingroup STM32L1xx_DRIVERS
- */
-
-/**
  * @defgroup STM32L1xx_EXT STM32L1xx EXT Support
  * @details The STM32L1xx EXT driver uses the EXTI peripheral.
  *
@@ -198,22 +180,6 @@
  */
 
 /**
- * @defgroup STM32L1xx_RCC STM32L1xx RCC Support
- * @details This RCC helper driver is used by the other drivers in order to
- *          access the shared RCC resources in a consistent way.
- *
- * @section stm32f1xx_rcc_1 Supported HW resources
- * - RCC.
- * .
- * @section stm32l1xx_rcc_2 STM32L1xx RCC driver implementation features
- * - Peripherals reset.
- * - Peripherals clock enable.
- * - Periplerals clock disable.
- * .
- * @ingroup STM32L1xx_DRIVERS
- */
-
-/**
  * @defgroup STM32L1xx_SERIAL STM32L1xx Serial Support
  * @details The STM32L1xx Serial driver uses the USART/UART peripherals in a
  *          buffered, interrupt driven, implementation.
@@ -302,4 +268,47 @@
  * - Each endpoint programmable in Control, Bulk and Interrupt modes.
  * .
  * @ingroup STM32L1xx_DRIVERS
+ */
+
+/**
+ * @defgroup STM32L1xx_PLATFORM_DRIVERS STM32L1xx Platform Drivers
+ * @details Platform support drivers. Platform drivers do not implement HAL
+ *          standard driver templates, their role is to support platform
+ *          specific functionalities.
+ *
+ * @ingroup STM32L1xx_DRIVERS
+ */
+
+/**
+ * @defgroup STM32L1xx_DMA STM32L1xx DMA Support
+ * @details This DMA helper driver is used by the other drivers in order to
+ *          access the shared DMA resources in a consistent way.
+ *
+ * @section stm32l1xx_dma_1 Supported HW resources
+ * The DMA driver can support any of the following hardware resources:
+ * - DMA1.
+ * .
+ * @section stm32l1xx_dma_2 STM32L1xx DMA driver implementation features
+ * - Exports helper functions/macros to the other drivers that share the
+ *   DMA resource.
+ * - Automatic DMA clock stop when not in use by any driver.
+ * - DMA streams and interrupt vectors sharing among multiple drivers.
+ * .
+ * @ingroup STM32L1xx_PLATFORM_DRIVERS
+ */
+
+/**
+ * @defgroup STM32L1xx_RCC STM32L1xx RCC Support
+ * @details This RCC helper driver is used by the other drivers in order to
+ *          access the shared RCC resources in a consistent way.
+ *
+ * @section stm32f1xx_rcc_1 Supported HW resources
+ * - RCC.
+ * .
+ * @section stm32l1xx_rcc_2 STM32L1xx RCC driver implementation features
+ * - Peripherals reset.
+ * - Peripherals clock enable.
+ * - Periplerals clock disable.
+ * .
+ * @ingroup STM32L1xx_PLATFORM_DRIVERS
  */
