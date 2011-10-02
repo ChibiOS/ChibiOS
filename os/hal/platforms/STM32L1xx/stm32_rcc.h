@@ -24,7 +24,7 @@
  * @note    This file requires definitions from the ST header file
  *          @p stm32l1xx.h.
  *
- * @addtogroup STM32_RCC
+ * @addtogroup STM32L1xx_RCC
  * @{
  */
 
