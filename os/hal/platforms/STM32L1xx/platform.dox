@@ -164,8 +164,7 @@
  * - @p PAL_MODE_INPUT_ANALOG.
  * - @p PAL_MODE_OUTPUT_PUSHPULL.
  * - @p PAL_MODE_OUTPUT_OPENDRAIN.
- * - @p PAL_MODE_STM32_ALTERNATE_PUSHPULL (non standard).
- * - @p PAL_MODE_STM32_ALTERNATE_OPENDRAIN (non standard).
+ * - @p PAL_MODE_ALTERNATE (non standard).
  * .
  * Any attempt to setup an invalid mode is ignored.
  *
