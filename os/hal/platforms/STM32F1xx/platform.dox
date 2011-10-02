@@ -19,7 +19,7 @@
 */
 
 /**
- * @defgroup STM32_DRIVERS STM32F1xx Drivers
+ * @defgroup STM32F1xx_DRIVERS STM32F1xx Drivers
  * @details This section describes all the supported drivers on the STM32F1xx
  *          platform and the implementation details of the single drivers.
  *
@@ -27,7 +27,7 @@
  */
 
 /**
- * @defgroup STM32_HAL STM32F1xx Initialization Support
+ * @defgroup STM32F1xx_HAL STM32F1xx Initialization Support
  * @details The STM32F1xx HAL support is responsible for system initialization.
  *
  * @section stm32f1xx_hal_1 Supported HW resources
@@ -44,11 +44,11 @@
  * - SYSTICK initialization based on current clock and kernel required rate.
  * - DMA support initialization.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_ADC STM32F1xx ADC Support
+ * @defgroup STM32F1xx_ADC STM32F1xx ADC Support
  * @details The STM32F1xx ADC driver supports the ADC peripherals using DMA
  *          channels for maximum performance.
  *
@@ -64,11 +64,11 @@
  * - Programmable DMA interrupt priority for each DMA channel.
  * - DMA errors detection.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_CAN STM32F1xx CAN Support
+ * @defgroup STM32F1xx_CAN STM32F1xx CAN Support
  * @details The STM32F1xx CAN driver uses the CAN peripherals.
  *
  * @section stm32f1xx_can_1 Supported HW resources
@@ -79,11 +79,11 @@
  * - Support for bxCAN sleep mode.
  * - Programmable bxCAN interrupts priority level.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_DMA STM32F1xx DMA Support
+ * @defgroup STM32F1xx_DMA STM32F1xx DMA Support
  * @details This DMA helper driver is used by the other drivers in order to
  *          access the shared DMA resources in a consistent way.
  *
@@ -98,11 +98,11 @@
  * - Automatic DMA clock stop when not in use by any driver.
  * - DMA streams and interrupt vectors sharing among multiple drivers.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_EXT STM32F1xx EXT Support
+ * @defgroup STM32F1xx_EXT STM32F1xx EXT Support
  * @details The STM32F1xx EXT driver uses the EXTI peripheral.
  *
  * @section stm32f1xx_ext_1 Supported HW resources
@@ -113,11 +113,11 @@
  * - Programmable EXTI interrupts priority level.
  * - Capability to work as event sources (WFE) rather than interrupt sources.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_GPT STM32F1xx GPT Support
+ * @defgroup STM32F1xx_GPT STM32F1xx GPT Support
  * @details The STM32F1xx GPT driver uses the TIMx peripherals.
  *
  * @section stm32f1xx_gpt_1 Supported HW resources
@@ -132,11 +132,11 @@
  *   peripherals are left in low power mode.
  * - Programmable TIMx interrupts priority level.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_I2C STM32F1xx I2C Support
+ * @defgroup STM32F1xx_I2C STM32F1xx I2C Support
  * @details The STM32F1xx I2C driver uses the I2Cx peripherals.
  *
  * @section stm32f1xx_i2c_1 Supported HW resources
@@ -148,11 +148,11 @@
  *   peripherals are left in low power mode.
  * - Programmable I2Cx interrupts priority level.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_ICU STM32F1xx ICU Support
+ * @defgroup STM32F1xx_ICU STM32F1xx ICU Support
  * @details The STM32F1xx ICU driver uses the TIMx peripherals.
  *
  * @section stm32f1xx_icu_1 Supported HW resources
@@ -167,21 +167,21 @@
  *   peripherals are left in low power mode.
  * - Programmable TIMx interrupts priority level.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_MAC STM32F1xx MAC Support
+ * @defgroup STM32F1xx_MAC STM32F1xx MAC Support
  * @details The STM32 MAC driver supports the ETH peripheral.
  *
  * @section at91sam7_mac_1 Supported HW resources
  * - ETH.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_PAL STM32F1xx PAL Support
+ * @defgroup STM32F1xx_PAL STM32F1xx PAL Support
  * @details The STM32F1xx PAL driver uses the GPIO peripherals.
  *
  * @section stm32f1xx_pal_1 Supported HW resources
@@ -213,8 +213,8 @@
  * - @p PAL_MODE_INPUT_ANALOG.
  * - @p PAL_MODE_OUTPUT_PUSHPULL.
  * - @p PAL_MODE_OUTPUT_OPENDRAIN.
- * - @p PAL_MODE_STM32_ALTERNATE_PUSHPULL (non standard).
- * - @p PAL_MODE_STM32_ALTERNATE_OPENDRAIN (non standard).
+ * - @p PAL_MODE_STM32F1xx_ALTERNATE_PUSHPULL (non standard).
+ * - @p PAL_MODE_STM32F1xx_ALTERNATE_OPENDRAIN (non standard).
  * .
  * Any attempt to setup an invalid mode is ignored.
  *
@@ -227,11 +227,11 @@
  *   resistor can change the resistor setting because the output latch is
  *   used for resistor selection.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_PWM STM32F1xx PWM Support
+ * @defgroup STM32F1xx_PWM STM32F1xx PWM Support
  * @details The STM32F1xx PWM driver uses the TIMx peripherals.
  *
  * @section stm32f1xx_pwm_1 Supported HW resources
@@ -247,11 +247,11 @@
  * - Four independent PWM channels per timer.
  * - Programmable TIMx interrupts priority level.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_RCC STM32F1xx RCC Support
+ * @defgroup STM32F1xx_RCC STM32F1xx RCC Support
  * @details This RCC helper driver is used by the other drivers in order to
  *          access the shared RCC resources in a consistent way.
  *
@@ -263,21 +263,21 @@
  * - Peripherals clock enable.
  * - Periplerals clock disable.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_RTC STM32F1xx RTC Support
+ * @defgroup STM32F1xx_RTC STM32F1xx RTC Support
  * @details The STM32F1xx RTC driver uses the RTC peripheral.
  *
  * @section stm32f1xx_rtc_1 Supported HW resources
  * - RTC.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_SDC STM32F1xx SDC Support
+ * @defgroup STM32F1xx_SDC STM32F1xx SDC Support
  * @details The STM32F1xx SDC driver uses the SDIO peripheral.
  *
  * @section stm32f1xx_sdc_1 Supported HW resources
@@ -290,11 +290,11 @@
  * - DMA is used for receiving and transmitting.
  * - Programmable DMA bus priority for each DMA channel.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_SERIAL STM32F1xx Serial Support
+ * @defgroup STM32F1xx_SERIAL STM32F1xx Serial Support
  * @details The STM32F1xx Serial driver uses the USART/UART peripherals in a
  *          buffered, interrupt driven, implementation.
  *
@@ -313,11 +313,11 @@
  * - Fully interrupt driven.
  * - Programmable priority levels for each UART/USART.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_SPI STM32F1xx SPI Support
+ * @defgroup STM32F1xx_SPI STM32F1xx SPI Support
  * @details The SPI driver supports the STM32F1xx SPI peripherals using DMA
  *          channels for maximum performance.
  *
@@ -338,11 +338,11 @@
  * - Programmable DMA interrupt priority for each DMA channel.
  * - Programmable DMA error hook.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_UART STM32F1xx UART Support
+ * @defgroup STM32F1xx_UART STM32F1xx UART Support
  * @details The UART driver supports the STM32F1xx USART peripherals using DMA
  *          channels for maximum performance.
  *
@@ -365,11 +365,11 @@
  * - Programmable DMA interrupt priority for each DMA channel.
  * - Programmable DMA error hook.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
 
 /**
- * @defgroup STM32_USB STM32F1xx USB Support
+ * @defgroup STM32F1xx_USB STM32F1xx USB Support
  * @details The USB driver supports the STM32F1xx USB peripheral.
  *
  * @section stm32f1xx_usb_1 Supported HW resources
@@ -381,5 +381,5 @@
  * - Programmable interrupt priority levels.
  * - Each endpoint programmable in Control, Bulk and Interrupt modes.
  * .
- * @ingroup STM32_DRIVERS
+ * @ingroup STM32F1xx_DRIVERS
  */
