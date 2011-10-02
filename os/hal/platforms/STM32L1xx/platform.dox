@@ -198,6 +198,22 @@
  */
 
 /**
+ * @defgroup STM32_RCC STM32F1xx RCC Support
+ * @details This RCC helper driver is used by the other drivers in order to
+ *          access the shared RCC resources in a consistent way.
+ *
+ * @section stm32f1xx_rcc_1 Supported HW resources
+ * - RCC.
+ * .
+ * @section stm32f1xx_rcc_2 STM32F1xx RCC driver implementation features
+ * - Peripherals reset.
+ * - Peripherals clock enable.
+ * - Periplerals clock disable.
+ * .
+ * @ingroup STM32_DRIVERS
+ */
+
+/**
  * @defgroup STM32_SERIAL STM32L1xx Serial Support
  * @details The STM32L1xx Serial driver uses the USART/UART peripherals in a
  *          buffered, interrupt driven, implementation.
