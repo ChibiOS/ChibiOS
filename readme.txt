@@ -72,6 +72,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.3.4 ***
+- FIX: Fixed broken TIM8 support in STM32 PWM driver (bug 3418620).
+
 *** 2.3.3 ***
 - FIX: Fixed uninitialized variable in STM32 PWM and ICU drivers (bug 3413558).
 - FIX: Fixed wrong parameter passed to the DMA error hook in STM32 ADC driver,

@@ -327,7 +327,7 @@ void pwm_lld_init(void) {
 #if STM32_PWM_USE_TIM8
   /* Driver initialization.*/
   pwmObjectInit(&PWMD8);
-  PWMD5.tim = TIM8;
+  PWMD8.tim = TIM8;
 #endif
 }
 
