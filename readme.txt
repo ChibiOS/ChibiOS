@@ -74,6 +74,7 @@
 
 *** 2.3.4 ***
 - FIX: Fixed broken TIM8 support in STM32 PWM driver (bug 3418620).
+- FIX: Fixed halconf.h file corrupted in some STM32 demos (bug 3418626).
 
 *** 2.3.3 ***
 - FIX: Fixed uninitialized variable in STM32 PWM and ICU drivers (bug 3413558).
