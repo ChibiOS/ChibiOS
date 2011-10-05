@@ -6,39 +6,31 @@ X = In progress, some work done.
 N = Decided against.
 
 Current Pipeline (2.3.x):
-* lwIP 1.4.0 integration and test.
-* Named threads.
-* Call protocol check debug option.
-* Improved stack overflow checking, support main() thread.
-  * Move main stack to low memory in ARMCMx ports.
-* Eclipse plugin.
-* FatFs 0.8x integration.
-* Kernel-only demo for users not interested in HAL (Cortex-Mx only).
-- USB and USB_SERIAL APIs reclassification (if needed), incorporate the USB
-  bus attach/detach handling in usbStart()/usbStop().
-- USB double buffering support for STM32 implementation.
-X STM32L1xx support (verify and test existing STM32F1xx drivers).
-  - Specific ADC driver for STM32L1xx.
-  X STM32L-Discovery demo and article.
-X STM32F2xx support (adapt and re-verify all drivers).
-  * New STM32 DMA helper driver abstracting differences between STM32F2xx and
-    other sub-families.
-  ? Specific ADC driver for STM32F2xx.
+- USB driver enhancements.
+  - USB and USB_SERIAL APIs reclassification.
+  - Incorporate the USB bus attach/detach handling in usbStart()/usbStop().
+  - Fix zero size packets handling in USB_SERIAL driver.
+  - USB double buffering support for STM32 implementation.
+  - Evaluate using DMA channels for buffer copy.
+X I2C device driver class support and at least one implementation.
+  X Evaluate a modified I2C API where the synchronous mode is default and the
+    callback mode optional.
+    - Software I2C implementation using a GPT instance for timings.
+X STM32F2xx/STM32F4xx support (adapt and re-verify all drivers).
+  * New STM32 DMA helper driver abstracting differences between
+    STM32F2xx/STM32F4xx and other sub-families.
+  - Specific ADC driver for STM32F2xx/STM32F4xx.
 - MMC_SPI driver revision and speedup.
+- FatFs 0.9x integration.
+
+Within 2.x.x
+X File System infrastructure.
 X Implement the "transmission end" serial driver event on those platforms
   supporting the feature, so far only done in STM32 driver.
-X I2C device driver class support and at least one implementation.
-X Evaluate a modified I2C API where the synchronous mode is default and the
-  callback mode optional. This would allow a portable I2C driver based on
-  a GPT instance.
-  - Software I2C implementation.
 - Add a CH_THREAD macro for threads declaration in order to hide
   compiler-specific optimizations for thread functions. All demos will have
   to be updated.
 - LPC17xx support.
-
-Within 2.x.x
-X File System infrastructure.
 - Test suite overhaul, the API should be more generic in order to be used
   with different subsystems and not just the kernel.
 - Reduce number of demos globally, add demos to a repository or on web site.

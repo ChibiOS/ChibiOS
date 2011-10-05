@@ -63,7 +63,8 @@
   +--testhal/           - HAL integration test demos.
   |  +--LPC11xx/        - LPC11xx HAL test demos.
   |  +--LPC13xx/        - LPC13xx HAL test demos.
-  |  +--STM32/          - STM32 HAL test demos.
+  |  +--STM32F1xx/      - STM32F1xx HAL test demos.
+  |  +--STM32L1xx/      - STM32L1xx HAL test demos.
   |  +--STM8S/          - STM8S HAL test demos.
   +--tools              - Various tools.
      +--eclipse         - Eclipse enhancements.
@@ -75,6 +76,7 @@
 *** 2.3.4 ***
 - FIX: Fixed broken TIM8 support in STM32 PWM driver (bug 3418620).
 - FIX: Fixed halconf.h file corrupted in some STM32 demos (bug 3418626).
+- NEW: Added memory copy functionality to the STM32 DMA driver.
 
 *** 2.3.3 ***
 - FIX: Fixed uninitialized variable in STM32 PWM and ICU drivers (bug 3413558).
