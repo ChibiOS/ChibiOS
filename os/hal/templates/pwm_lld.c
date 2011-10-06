@@ -93,22 +93,6 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 }
 
 /**
- * @brief   Determines whatever the PWM channel is already enabled.
- *
- * @param[in] pwmp      pointer to the @p PWMDriver object
- * @param[in] channel   PWM channel identifier
- * @return              The PWM channel status.
- * @retval FALSE        the channel is not enabled.
- * @retval TRUE         the channel is enabled.
- *
- * @notapi
- */
-bool_t pwm_lld_is_enabled(PWMDriver *pwmp, pwmchannel_t channel) {
-
-  return FALSE;
-}
-
-/**
  * @brief   Enables a PWM channel.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
