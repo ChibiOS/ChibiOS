@@ -82,6 +82,8 @@
   together with sources. Also implemented a simplified output log mode.
   Now makefiles and load script files are requirements and trigger a
   rebuild if touched.
+- CHANGE: Moved the STM32 DMA helper driver files under the sub-family
+  specific directory because documentation issues.
 
 *** 2.3.3 ***
 - FIX: Fixed uninitialized variable in STM32 PWM and ICU drivers (bug 3413558).
