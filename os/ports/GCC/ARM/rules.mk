@@ -25,8 +25,8 @@ else
   ACSRC += $(CSRC)
   ACPPSRC += $(CPPSRC)
 endif
-ASRC	  = $(ACSRC) $(ACPPSRC)
-TSRC	  = $(TCSRC) $(TCPPSRC)
+ASRC	  = $(ACSRC)$(ACPPSRC)
+TSRC	  = $(TCSRC)$(TCPPSRC)
 SRCPATHS  = $(sort $(dir $(ASMSRC)) $(dir $(ASRC)) $(dir $(TSRC)))
 
 # Various directories
