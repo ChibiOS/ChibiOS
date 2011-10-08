@@ -1,26 +1,23 @@
 # ARM Cortex-Mx common makefile scripts and rules.
 
-# Output
-OUTFILES = $(BUILDDIR)/$(PROJECT).elf $(BUILDDIR)/$(PROJECT).hex $(BUILDDIR)/$(PROJECT).bin $(BUILDDIR)/$(PROJECT).dmp
+# Output directory and files
 ifeq ($(BUILDDIR),)
-  BUILDDIR = .
-  CLEANDIR =
-else
-  CLEANDIR = $(BUILDDIR)
+  BUILDDIR = build
 endif
-ENSUREBUILDDIR = $(shell test -d $(BUILDDIR) || mkdir $(BUILDDIR))
+ifeq ($(BUILDDIR),.)
+  BUILDDIR = build
+endif
+OUTFILES = $(BUILDDIR)/$(PROJECT).elf $(BUILDDIR)/$(PROJECT).hex \
+           $(BUILDDIR)/$(PROJECT).bin $(BUILDDIR)/$(PROJECT).dmp
 
 # Automatic compiler options
 OPT = $(USE_OPT)
 CPPOPT = $(USE_CPPOPT)
-ifeq ($(USE_CURRP_CACHING),yes)
-  OPT += -ffixed-r7 -DCH_CURRP_REGISTER_CACHE='"r7"'
-endif
 ifeq ($(USE_LINK_GC),yes)
   OPT += -ffunction-sections -fdata-sections
 endif
 
-# Source files groups
+# Source files groups and paths
 ifeq ($(USE_THUMB),yes)
   TCSRC += $(CSRC)
   TCPPSRC += $(CPPSRC)
@@ -28,35 +25,39 @@ else
   ACSRC += $(CSRC)
   ACPPSRC += $(CPPSRC)
 endif
-ASRC	 = $(ACSRC)$(ACPPSRC)
-TSRC	 = $(TCSRC)$(TCPPSRC)
-SRC	     = $(ASRC)$(TSRC)
+ASRC	  = $(ACSRC) $(ACPPSRC)
+TSRC	  = $(TCSRC) $(TCPPSRC)
+SRCPATHS  = $(sort $(dir $(ASMSRC)) $(dir $(ASRC)) $(dir $(TSRC)))
+
+# Various directories
+OBJDIR    = $(BUILDDIR)/obj
+LSTDIR    = $(BUILDDIR)/lst
 
 # Object files groups
-ACOBJS   = $(ACSRC:.c=.o)
-ACPPOBJS = $(ACPPSRC:.cpp=.o)
-TCOBJS   = $(TCSRC:.c=.o)
-TCPPOBJS = $(TCPPSRC:.cpp=.o)
-ASMOBJS  = $(ASMSRC:.s=.o)
-OBJS	 = $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS)
+ACOBJS    = $(addprefix $(OBJDIR)/, $(notdir $(ACSRC:.c=.o)))
+ACPPOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(ACPPSRC:.cpp=.o)))
+TCOBJS    = $(addprefix $(OBJDIR)/, $(notdir $(TCSRC:.c=.o)))
+TCPPOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(TCPPSRC:.cpp=.o)))
+ASMOBJS   = $(addprefix $(OBJDIR)/, $(notdir $(ASMSRC:.s=.o)))
+OBJS	  = $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS)
 
 # Paths
-IINCDIR = $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR))
-LLIBDIR = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
+IINCDIR   = $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR))
+LLIBDIR   = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
 
 # Macros
-DEFS    = $(DDEFS) $(UDEFS)
-ADEFS   = $(DADEFS) $(UADEFS)
+DEFS      = $(DDEFS) $(UDEFS)
+ADEFS 	  = $(DADEFS) $(UADEFS)
 
 # Libs
-LIBS    = $(DLIBS) $(ULIBS)
+LIBS      = $(DLIBS) $(ULIBS)
 
 # Various settings
-MCFLAGS = -mcpu=$(MCU)
-ODFLAGS	= -x --syms
-ASFLAGS = $(MCFLAGS) -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
-CFLAGS   = $(MCFLAGS) $(OPT) $(CWARN) -Wa,-alms=$(<:.c=.lst) $(DEFS)
-CPPFLAGS = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(<:.cpp=.lst) $(DEFS)
+MCFLAGS   = -mcpu=$(MCU)
+ODFLAGS	  = -x --syms
+ASFLAGS   = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.s=.lst)) $(ADEFS)
+CFLAGS    = $(MCFLAGS) $(OPT) $(CWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
+CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)
 ifeq ($(USE_LINK_GC),yes)
   LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--gc-sections $(LLIBDIR)
 else
@@ -65,80 +66,140 @@ endif
 
 # Thumb interwork enabled only if needed because it kills performance.
 ifneq ($(TSRC),)
-  CFLAGS += -DTHUMB_PRESENT
+  CFLAGS   += -DTHUMB_PRESENT
   CPPFLAGS += -DTHUMB_PRESENT
-  ASFLAGS += -DTHUMB_PRESENT
+  ASFLAGS  += -DTHUMB_PRESENT
   ifneq ($(ASRC),)
     # Mixed ARM and THUMB mode.
-    CFLAGS += -mthumb-interwork
+    CFLAGS   += -mthumb-interwork
     CPPFLAGS += -mthumb-interwork
-    ASFLAGS += -mthumb-interwork
-    LDFLAGS += -mthumb-interwork
+    ASFLAGS  += -mthumb-interwork
+    LDFLAGS  += -mthumb-interwork
   else
     # Pure THUMB mode, THUMB C code cannot be called by ARM asm code directly.
-    CFLAGS += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING
+    CFLAGS   += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING
     CPPFLAGS += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING
-    ASFLAGS += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING -mthumb
-    LDFLAGS += -mno-thumb-interwork -mthumb
+    ASFLAGS  += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING -mthumb
+    LDFLAGS  += -mno-thumb-interwork -mthumb
   endif
 else
   # Pure ARM mode
-  CFLAGS += -mno-thumb-interwork
+  CFLAGS   += -mno-thumb-interwork
   CPPFLAGS += -mno-thumb-interwork
-  ASFLAGS += -mno-thumb-interwork
-  LDFLAGS += -mno-thumb-interwork
+  ASFLAGS  += -mno-thumb-interwork
+  LDFLAGS  += -mno-thumb-interwork
 endif
 
 # Generate dependency information
-CFLAGS += -MD -MP -MF .dep/$(@F).d
+CFLAGS   += -MD -MP -MF .dep/$(@F).d
 CPPFLAGS += -MD -MP -MF .dep/$(@F).d
+
+# Paths where to search for sources
+VPATH     = $(SRCPATHS)
 
 #
 # Makefile rules
 #
 
-all: $(ENSUREBUILDDIR) $(OBJS) $(OUTFILES) MAKE_ALL_RULE_HOOK
+all: $(OBJS) $(OUTFILES) MAKE_ALL_RULE_HOOK
 
 MAKE_ALL_RULE_HOOK:
 
-$(ACPPOBJS) : %.o : %.cpp
+$(OBJS): | $(BUILDDIR) $(OBJDIR) $(LSTDIR)
+
+$(BUILDDIR):
+	@echo $(SRCPATHS)
+	mkdir $(BUILDDIR)
+
+$(OBJDIR):
+	mkdir $(OBJDIR)
+
+$(LSTDIR):
+	mkdir $(LSTDIR)
+
+$(ACPPOBJS) : $(OBJDIR)/%.o : %.cpp Makefile
+ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CPPC) -c $(CPPFLAGS) $(AOPT) -I . $(IINCDIR) $< -o $@
+else
+	@echo Compiling $<
+	@$(CPPC) -c $(CPPFLAGS) $(AOPT) -I . $(IINCDIR) $< -o $@
+endif
 
-$(TCPPOBJS) : %.o : %.cpp
+$(TCPPOBJS) : $(OBJDIR)/%.o : %.cpp Makefile
+ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CPPC) -c $(CPPFLAGS) $(TOPT) -I . $(IINCDIR) $< -o $@
+else
+	@echo Compiling $<
+	@$(CPPC) -c $(CPPFLAGS) $(TOPT) -I . $(IINCDIR) $< -o $@
+endif
 
-$(ACOBJS) : %.o : %.c
+$(ACOBJS) : $(OBJDIR)/%.o : %.c Makefile
+ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CC) -c $(CFLAGS) $(AOPT) -I . $(IINCDIR) $< -o $@
+else
+	@echo Compiling $<
+	@$(CC) -c $(CFLAGS) $(AOPT) -I . $(IINCDIR) $< -o $@
+endif
 
-$(TCOBJS) : %.o : %.c
+$(TCOBJS) : $(OBJDIR)/%.o : %.c Makefile
+ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CC) -c $(CFLAGS) $(TOPT) -I . $(IINCDIR) $< -o $@
+else
+	@echo Compiling $<
+	@$(CC) -c $(CFLAGS) $(TOPT) -I . $(IINCDIR) $< -o $@
+endif
 
-$(ASMOBJS) : %.o : %.s
+$(ASMOBJS) : $(OBJDIR)/%.o : %.s Makefile
+ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(AS) -c $(ASFLAGS) -I . $(IINCDIR) $< -o $@
+else
+	@echo Compiling $<
+	@$(AS) -c $(ASFLAGS) -I . $(IINCDIR) $< -o $@
+endif
 
-%elf: $(OBJS)
+%.elf: $(OBJS) $(LDSCRIPT)
+ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(LD) $(OBJS) $(LDFLAGS) $(LIBS) -o $@
+else
+	@echo Linking $@
+	@$(LD) $(OBJS) $(LDFLAGS) $(LIBS) -o $@
+endif
 
-%hex: %elf
+%.hex: %.elf $(LDSCRIPT)
+ifeq ($(USE_VERBOSE_COMPILE),yes)
 	$(HEX) $< $@
+else
+	@echo Creating $@
+	@$(HEX) $< $@
+endif
 
-%bin: %elf
+%.bin: %.elf $(LDSCRIPT)
+ifeq ($(USE_VERBOSE_COMPILE),yes)
 	$(BIN) $< $@
+else
+	@echo Creating $@
+	@$(BIN) $< $@
+endif
 
-%dmp: %elf
+%.dmp: %.elf $(LDSCRIPT)
+ifeq ($(USE_VERBOSE_COMPILE),yes)
 	$(OD) $(ODFLAGS) $< > $@
+else
+	@echo Creating $@
+	@$(OD) $(ODFLAGS) $< > $@
+	@echo Done
+endif
 
 clean:
-	-rm -f $(OBJS)
-	-rm -f $(ACSRC:.c=.lst) $(TCSRC:.c=.lst) $(ACPPSRC:.cpp=.lst) $(TCPPSRC:.cpp=.lst) $(ASMSRC:.s=.lst)
-	-rm -f $(OUTFILES) $(BUILDDIR)/$(PROJECT).map
-	-rm -fR .dep $(CLEANDIR)
+	@echo Cleaning
+	-rm -fR .dep $(BUILDDIR)
+	@echo Done
 
 #
 # Include the dependency files, should be the last of the makefile

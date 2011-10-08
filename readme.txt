@@ -77,6 +77,11 @@
 - FIX: Fixed broken TIM8 support in STM32 PWM driver (bug 3418620).
 - FIX: Fixed halconf.h file corrupted in some STM32 demos (bug 3418626).
 - NEW: Added memory copy functionality to the STM32 DMA driver.
+- NEW: Implemented new makefile system for ARM GCC ports, now objects,
+  listings and out files are generated into a "build" directory and not
+  together with sources. Also implemented a simplified output log mode.
+  Now makefiles and load stript files are requirements and trigger a
+  rebuild if touched.
 
 *** 2.3.3 ***
 - FIX: Fixed uninitialized variable in STM32 PWM and ICU drivers (bug 3413558).

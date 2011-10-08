@@ -1,8 +1,5 @@
-# Board directory path
-BOARDPATH = ${CHIBIOS}/boards/OLIMEX_LPC_P2148/
-
 # List of all the mandatory board related files.
-BOARDSRC = ${BOARDPATH}/board.c
+BOARDSRC = ${CHIBIOS}/boards/OLIMEX_LPC_P2148/board.c
 
 # Required include directories
-BOARDINC = ${BOARDPATH}
+BOARDINC = ${CHIBIOS}/boards/OLIMEX_LPC_P2148

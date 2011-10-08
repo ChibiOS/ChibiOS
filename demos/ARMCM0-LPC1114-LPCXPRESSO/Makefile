@@ -23,9 +23,9 @@ ifeq ($(USE_THUMB),)
   USE_THUMB = yes
 endif
 
-# Enable register caching optimization (read documentation).
-ifeq ($(USE_CURRP_CACHING),)
-  USE_CURRP_CACHING = no
+# Enable this if you want to see the full log while compiling.
+ifeq ($(USE_VERBOSE_COMPILE),)
+  USE_VERBOSE_COMPILE = no
 endif
 
 #

@@ -6,6 +6,7 @@ X = In progress, some work done.
 N = Decided against.
 
 Current Pipeline (2.3.x):
+* Improved Makefile system.
 - USB driver enhancements.
   - USB and USB_SERIAL APIs reclassification.
   - Incorporate the USB bus attach/detach handling in usbStart()/usbStop().
@@ -35,7 +36,6 @@ X Implement the "transmission end" serial driver event on those platforms
   with different subsystems and not just the kernel.
 - Reduce number of demos globally, add demos to a repository or on web site.
   Required in order to reduce support effort.
-- Improved Makefile system.
 - MAC driver for STM32F107.
 - FatFs wrapper.
 - New device driver models: Clock, Systick, RTC, WDG, DAC, Power Monitor.
