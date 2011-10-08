@@ -104,6 +104,13 @@
 #endif
 
 /**
+ * @brief   Enables the RTC subsystem.
+ */
+#if !defined(HAL_USE_RTC) || defined(__DOXYGEN__)
+#define HAL_USE_RTC                 TRUE
+#endif
+
+/**
  * @brief   Enables the SDC subsystem.
  */
 #if !defined(HAL_USE_SDC) || defined(__DOXYGEN__)
@@ -143,13 +150,6 @@
  */
 #if !defined(HAL_USE_USB) || defined(__DOXYGEN__)
 #define HAL_USE_USB                 FALSE
-#endif
-
-/**
- * @brief   Enables the USB subsystem.
- */
-#if !defined(HAL_USE_RTC) || defined(__DOXYGEN__)
-#define HAL_USE_RTC                 TRUE
 #endif
 
 /*===========================================================================*/

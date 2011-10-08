@@ -38,7 +38,7 @@
  * @brief   Enables the PAL subsystem.
  */
 #if !defined(HAL_USE_PAL) || defined(__DOXYGEN__)
-#define HAL_USE_PAL                 FALSE
+#define HAL_USE_PAL                 TRUE
 #endif
 
 /**
@@ -102,6 +102,13 @@
  */
 #if !defined(HAL_USE_PWM) || defined(__DOXYGEN__)
 #define HAL_USE_PWM                 FALSE
+#endif
+
+/**
+ * @brief   Enables the RTC subsystem.
+ */
+#if !defined(HAL_USE_RTC) || defined(__DOXYGEN__)
+#define HAL_USE_RTC                 FALSE
 #endif
 
 /**
