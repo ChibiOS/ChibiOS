@@ -19,13 +19,13 @@
 */
 
 /**
- * @file    STM32F1xx/stm32_dma.h
+ * @file    STM32L1xx/stm32_dma.h
  * @brief   DMA helper driver header.
  * @note    This file requires definitions from the ST header file stm32f10x.h.
  * @note    This driver uses the new naming convention used for the STM32F2xx
  *          so the "DMA channels" are referred as "DMA streams".
  *
- * @addtogroup STM32F1xx_DMA
+ * @addtogroup STM32L1xx_DMA
  * @{
  */
 
@@ -40,11 +40,7 @@
  * @brief   Total number of DMA streams.
  * @note    This is the total number of streams among all the DMA units.
  */
-#if STM32_HAS_DMA2 || defined(__DOXYGEN__)
-#define STM32_DMA_STREAMS           12
-#else
 #define STM32_DMA_STREAMS           7
-#endif
 
 /**
  * @brief   Mask of the ISR bits passed to the DMA callback functions.
@@ -62,11 +58,6 @@
 #define STM32_DMA1_STREAM5          (&_stm32_dma_streams[4])
 #define STM32_DMA1_STREAM6          (&_stm32_dma_streams[5])
 #define STM32_DMA1_STREAM7          (&_stm32_dma_streams[6])
-#define STM32_DMA2_STREAM1          (&_stm32_dma_streams[7])
-#define STM32_DMA2_STREAM2          (&_stm32_dma_streams[8])
-#define STM32_DMA2_STREAM3          (&_stm32_dma_streams[9])
-#define STM32_DMA2_STREAM4          (&_stm32_dma_streams[10])
-#define STM32_DMA2_STREAM5          (&_stm32_dma_streams[11])
 /** @} */
 
 /**

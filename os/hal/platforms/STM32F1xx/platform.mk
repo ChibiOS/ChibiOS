@@ -21,6 +21,5 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/STM32F1xx/stm32_dma.c \
 PLATFORMINC = ${CHIBIOS}/os/hal/platforms/STM32F1xx \
               ${CHIBIOS}/os/hal/platforms/STM32 \
               ${CHIBIOS}/os/hal/platforms/STM32/GPIOv1 \
-              ${CHIBIOS}/os/hal/platforms/STM32/DMAv1 \
               ${CHIBIOS}/os/hal/platforms/STM32/USBv1 \
               ${CHIBIOS}/os/hal/platforms/STM32/RTCv1

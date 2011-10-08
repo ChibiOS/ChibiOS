@@ -80,7 +80,7 @@
 - NEW: Implemented new makefile system for ARM GCC ports, now objects,
   listings and out files are generated into a "build" directory and not
   together with sources. Also implemented a simplified output log mode.
-  Now makefiles and load stript files are requirements and trigger a
+  Now makefiles and load script files are requirements and trigger a
   rebuild if touched.
 
 *** 2.3.3 ***

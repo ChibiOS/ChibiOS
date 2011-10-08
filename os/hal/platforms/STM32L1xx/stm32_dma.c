@@ -19,10 +19,10 @@
 */
 
 /**
- * @file    STM32F1xx/stm32_dma.c
+ * @file    STM32L1xx/stm32_dma.c
  * @brief   DMA helper driver code.
  *
- * @addtogroup STM32F1xx_DMA
+ * @addtogroup STM32L1xx_DMA
  * @details DMA sharing helper driver. In the STM32 the DMA streams are a
  *          shared resource, this driver allows to allocate and free DMA
  *          streams at runtime in order to allow all the other device
@@ -77,19 +77,7 @@ const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS] = {
   {DMA1_Channel4, &DMA1->IFCR, 12, 3, DMA1_Channel4_IRQn},
   {DMA1_Channel5, &DMA1->IFCR, 16, 4, DMA1_Channel5_IRQn},
   {DMA1_Channel6, &DMA1->IFCR, 20, 5, DMA1_Channel6_IRQn},
-  {DMA1_Channel7, &DMA1->IFCR, 24, 6, DMA1_Channel7_IRQn},
-#if STM32_HAS_DMA2 || defined(__DOXYGEN__)
-  {DMA2_Channel1, &DMA2->IFCR, 0, 7, DMA2_Channel1_IRQn},
-  {DMA2_Channel2, &DMA2->IFCR, 4, 8, DMA2_Channel2_IRQn},
-  {DMA2_Channel3, &DMA2->IFCR, 8, 9, DMA2_Channel3_IRQn},
-#if defined(STM32F10X_CL) || defined(__DOXYGEN__)
-  {DMA2_Channel4, &DMA2->IFCR, 12, 10, DMA2_Channel4_IRQn},
-  {DMA2_Channel5, &DMA2->IFCR, 16, 11, DMA2_Channel5_IRQn},
-#else /* !STM32F10X_CL */
-  {DMA2_Channel4, &DMA2->IFCR, 12, 10, DMA2_Channel4_5_IRQn},
-  {DMA2_Channel5, &DMA2->IFCR, 16, 11, DMA2_Channel4_5_IRQn},
-#endif /* !STM32F10X_CL */
-#endif /* STM32_HAS_DMA2 */
+  {DMA1_Channel7, &DMA1->IFCR, 24, 6, DMA1_Channel7_IRQn}
 };
 
 /*===========================================================================*/
@@ -248,131 +236,6 @@ CH_IRQ_HANDLER(DMA1_Ch7_IRQHandler) {
   CH_IRQ_EPILOGUE();
 }
 
-#if STM32_HAS_DMA2 || defined(__DOXYGEN__)
-/**
- * @brief   DMA2 stream 1 shared interrupt handler.
- *
- * @isr
- */
-CH_IRQ_HANDLER(DMA2_Ch1_IRQHandler) {
-  uint32_t flags;
-
-  CH_IRQ_PROLOGUE();
-
-  flags = (DMA2->ISR >> 0) & STM32_DMA_ISR_MASK;
-  DMA2->IFCR = STM32_DMA_ISR_MASK << 0;
-  if (dma_isr_redir[7].dma_func)
-    dma_isr_redir[7].dma_func(dma_isr_redir[7].dma_param, flags);
-
-  CH_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   DMA2 stream 2 shared interrupt handler.
- *
- * @isr
- */
-CH_IRQ_HANDLER(DMA2_Ch2_IRQHandler) {
-  uint32_t flags;
-
-  CH_IRQ_PROLOGUE();
-
-  flags = (DMA2->ISR >> 4) & STM32_DMA_ISR_MASK;
-  DMA2->IFCR = STM32_DMA_ISR_MASK << 4;
-  if (dma_isr_redir[8].dma_func)
-    dma_isr_redir[8].dma_func(dma_isr_redir[8].dma_param, flags);
-
-  CH_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   DMA2 stream 3 shared interrupt handler.
- *
- * @isr
- */
-CH_IRQ_HANDLER(DMA2_Ch3_IRQHandler) {
-  uint32_t flags;
-
-  CH_IRQ_PROLOGUE();
-
-  flags = (DMA2->ISR >> 8) & STM32_DMA_ISR_MASK;
-  DMA2->IFCR = STM32_DMA_ISR_MASK << 8;
-  if (dma_isr_redir[9].dma_func)
-    dma_isr_redir[9].dma_func(dma_isr_redir[9].dma_param, flags);
-
-  CH_IRQ_EPILOGUE();
-}
-
-#if defined(STM32F10X_CL) || defined(__DOXYGEN__)
-/**
- * @brief   DMA2 stream 4 shared interrupt handler.
- *
- * @isr
- */
-CH_IRQ_HANDLER(DMA2_Ch4_IRQHandler) {
-  uint32_t flags;
-
-  CH_IRQ_PROLOGUE();
-
-  flags = (DMA2->ISR >> 12) & STM32_DMA_ISR_MASK;
-  DMA2->IFCR = STM32_DMA_ISR_MASK << 12;
-  if (dma_isr_redir[10].dma_func)
-    dma_isr_redir[10].dma_func(dma_isr_redir[10].dma_param, flags);
-
-  CH_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   DMA2 stream 5 shared interrupt handler.
- *
- * @isr
- */
-CH_IRQ_HANDLER(DMA2_Ch5_IRQHandler) {
-  uint32_t flags;
-
-  CH_IRQ_PROLOGUE();
-
-  flags = (DMA2->ISR >> 16) & STM32_DMA_ISR_MASK;
-  DMA2->IFCR = STM32_DMA_ISR_MASK << 16;
-  if (dma_isr_redir[11].dma_func)
-    dma_isr_redir[11].dma_func(dma_isr_redir[11].dma_param, flags);
-
-  CH_IRQ_EPILOGUE();
-}
-#else /* !STM32F10X_CL */
-/**
- * @brief   DMA2 streams 4 and 5 shared interrupt handler.
- * @note    This IRQ is shared between DMA2 channels 4 and 5 so it is a
- *          bit less efficient because an extra check.
- *
- * @isr
- */
-CH_IRQ_HANDLER(DMA2_Ch4_5_IRQHandler) {
-  uint32_t flags;
-
-  CH_IRQ_PROLOGUE();
-
-  /* Check on channel 4.*/
-  flags = (DMA2->ISR >> 12) & STM32_DMA_ISR_MASK;
-  if (flags & STM32_DMA_ISR_MASK) {
-    DMA2->IFCR = STM32_DMA_ISR_MASK << 12;
-    if (dma_isr_redir[10].dma_func)
-      dma_isr_redir[10].dma_func(dma_isr_redir[10].dma_param, flags);
-  }
-
-  /* Check on channel 5.*/
-  flags = (DMA2->ISR >> 16) & STM32_DMA_ISR_MASK;
-  if (flags & STM32_DMA_ISR_MASK) {
-    DMA2->IFCR = STM32_DMA_ISR_MASK << 16;
-    if (dma_isr_redir[11].dma_func)
-      dma_isr_redir[11].dma_func(dma_isr_redir[11].dma_param, flags);
-  }
-
-  CH_IRQ_EPILOGUE();
-}
-#endif /* !STM32F10X_CL */
-#endif /* STM32_HAS_DMA2 */
-
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -391,9 +254,6 @@ void dmaInit(void) {
     dma_isr_redir[i].dma_func = NULL;
   }
   DMA1->IFCR = 0xFFFFFFFF;
-#if STM32_HAS_DMA2
-  DMA2->IFCR = 0xFFFFFFFF;
-#endif
 }
 
 /**
@@ -439,10 +299,6 @@ bool_t dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
   /* Enabling DMA clocks required by the current streams set.*/
   if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) != 0)
     rccEnableDMA1(FALSE);
-#if STM32_HAS_DMA2
-  if ((dma_streams_mask & STM32_DMA2_STREAMS_MASK) != 0)
-    rccEnableDMA2(FALSE);
-#endif
 
   /* Putting the stream in a safe state.*/
   dmaStreamDisable(dmastp);
@@ -486,10 +342,6 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
   /* Shutting down clocks that are no more required, if any.*/
   if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) == 0)
     rccDisableDMA1(FALSE);
-#if STM32_HAS_DMA2
-  if ((dma_streams_mask & STM32_DMA2_STREAMS_MASK) == 0)
-    rccDisableDMA2(FALSE);
-#endif
 }
 
 #endif /* STM32_DMA_REQUIRED */
