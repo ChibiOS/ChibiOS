@@ -78,8 +78,8 @@
 - FIX: Fixed halconf.h file corrupted in some STM32 demos (bug 3418626).
 - NEW: Added memory copy functionality to the STM32 DMA driver.
 - NEW: Implemented new makefile system for ARM GCC ports, now objects,
-  listings and out files are generated into a "build" directory and not
-  together with sources. Also implemented a simplified output log mode.
+  listings and output files are generated into a "build" directory and not
+  together with sources, also implemented a simplified output log mode.
   Now makefiles and load script files are requirements and trigger a
   rebuild if touched.
 - CHANGE: Moved the STM32 DMA helper drivers files under the sub-family
