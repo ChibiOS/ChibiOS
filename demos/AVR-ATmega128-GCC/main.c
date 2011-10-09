@@ -28,8 +28,8 @@ static WORKING_AREA(waThread1, 32);
 static msg_t Thread1(void *arg) {
 
   while (TRUE) {
-    if (!(PINA & PORTA_BUTTON2))
-      PORTA ^= PORTA_RELAY;
+    if (!palReadPad(IOPORT1, PORTA_BUTTON2))
+      palTogglePad(IOPORT1, PORTA_RELAY);
     chThdSleepMilliseconds(1000);
   }
   return 0;
@@ -38,7 +38,7 @@ static msg_t Thread1(void *arg) {
 static void TimerHandler(eventid_t id) {
   msg_t TestThread(void *p);
 
-  if (!(PINA & PORTA_BUTTON1))
+  if (!palReadPad(IOPORT1, PORTA_BUTTON1))
     TestThread(&SD2);
 }
 
