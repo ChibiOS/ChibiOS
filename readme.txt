@@ -82,6 +82,7 @@
   together with sources, also implemented a simplified output log mode.
   Now makefiles and load script files are requirements and trigger a
   rebuild if touched.
+- NEW: Updated AVR demos to use the new PAL driver.
 - CHANGE: Moved the STM32 DMA helper drivers files under the sub-family
   specific directories because documentation issues.
 

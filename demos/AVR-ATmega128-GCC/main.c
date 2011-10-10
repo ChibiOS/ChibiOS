@@ -20,7 +20,7 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "evtimer.h"
+#include "test.h"
 
 #include "lcd.h"
 
@@ -35,22 +35,10 @@ static msg_t Thread1(void *arg) {
   return 0;
 }
 
-static void TimerHandler(eventid_t id) {
-  msg_t TestThread(void *p);
-
-  if (!palReadPad(IOPORT1, PORTA_BUTTON1))
-    TestThread(&SD2);
-}
-
 /*
  * Application entry point.
  */
 int main(void) {
-  static EvTimer evt;
-  static evhandler_t handlers[1] = {
-    TimerHandler
-  };
-  static EventListener el0;
 
   /*
    * System initializations.
@@ -77,19 +65,13 @@ int main(void) {
   lcdPuts(LCD_LINE2, "  Hello World!  ");
 
   /*
-   * Event Timer initialization.
-   */
-  evtInit(&evt, MS2ST(500));            /* Initializes an event timer object.   */
-  evtStart(&evt);                       /* Starts the event timer.              */
-  chEvtRegister(&evt.et_es, &el0, 0);   /* Registers on the timer event source. */
-
-  /*
    * Starts the LED blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-  while(TRUE)
-    chEvtDispatch(handlers, chEvtWaitOne(ALL_EVENTS));
-
-  return 0;
+  while(TRUE) {
+    if (!palReadPad(IOPORT1, PORTA_BUTTON1))
+      TestThread(&SD2);
+    chThdSleepMilliseconds(500);
+  }
 }

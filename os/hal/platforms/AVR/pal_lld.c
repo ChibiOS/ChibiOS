@@ -103,8 +103,6 @@ void _pal_lld_init(const PALConfig *config) {
  *       with pull-up by default.
  *
  * @notapi
- *
- * TODO: check PAL_MODE_UNCONNECTED mode recommended for AVR
  */
 void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,
@@ -113,8 +111,6 @@ void _pal_lld_setgroupmode(ioportid_t port,
   switch (mode) {
   case PAL_MODE_RESET:
   case PAL_MODE_INPUT:
-    port->dir &= ~mask;
-    break;
   case PAL_MODE_INPUT_ANALOG:
     port->dir &= ~mask;
     port->out &= ~mask;
