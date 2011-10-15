@@ -83,6 +83,7 @@
   Now makefiles and load script files are requirements and trigger a
   rebuild if touched.
 - NEW: Updated AVR demos to use the new PAL driver.
+- NEW: Added Keil build files to the STM32L-Discovery demo.
 - CHANGE: Moved the STM32 DMA helper drivers files under the sub-family
   specific directories because documentation issues.
 

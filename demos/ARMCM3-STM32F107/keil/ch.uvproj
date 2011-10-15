@@ -877,16 +877,6 @@
               <FilePath>..\..\..\os\hal\platforms\STM32\serial_lld.c</FilePath>
             </File>
             <File>
-              <FileName>stm32_dma.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\DMAv1\stm32_dma.h</FilePath>
-            </File>
-            <File>
-              <FileName>stm32_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\DMAv1\stm32_dma.c</FilePath>
-            </File>
-            <File>
               <FileName>pal_lld.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\os\hal\platforms\STM32\GPIOv1\pal_lld.h</FilePath>
@@ -930,6 +920,16 @@
               <FileName>stm32_rcc.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\os\hal\platforms\STM32F1xx\stm32_rcc.h</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\stm32_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_dma.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\stm32_dma.h</FilePath>
             </File>
           </Files>
         </Group>
