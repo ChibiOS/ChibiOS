@@ -5,8 +5,8 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.3.3unstable
-*** Compiled:     Oct  8 2011 - 15:05:49
+*** Kernel:       2.3.4unstable
+*** Compiled:     Oct 15 2011 - 19:06:16
 *** Compiler:     GCC 4.6.0
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
@@ -128,7 +128,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 468656 ctxswc/S
+--- Score : 468652 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
