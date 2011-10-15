@@ -37,14 +37,49 @@
 
 /**
  * @defgroup AVR_PAL AVR PAL Support
- * @details The AVR PAL driver uses the GPIO peripherals.
+ * @details The AVR PAL driver uses the PORT peripherals.
  *
  * @section avr_pal_1 Supported HW resources
- * - GPIOA.
- * - GPIOB.
- * - GPIOC.
- * - GPIOD.
- * - GPIOE.
+ * - PORTA.
+ * - PORTB.
+ * - PORTC.
+ * - PORTD.
+ * - PORTE.
+ * - PORTF.
+ * - PORTG.
+ * .
+ * @section avr_pal_2 AVR PAL driver implementation features
+ * The AVR PAL driver implementation fully supports the following hardware
+ * capabilities:
+ * - 8 bits wide ports.
+ * - Atomic set/reset functions.
+ * - Output latched regardless of the pad setting.
+ * - Direct read of input pads regardless of the pad setting.
+ * .
+ * @section avr_pal_3 Supported PAL setup modes
+ * The AVR PAL driver supports the following I/O modes:
+ * - @p PAL_MODE_RESET.
+ * - @p PAL_MODE_UNCONNECTED.
+ * - @p PAL_MODE_INPUT.
+ * - @p PAL_MODE_INPUT_PULLUP.
+ * - @p PAL_MODE_INPUT_ANALOG.
+ * - @p PAL_MODE_OUTPUT_PUSHPULL.
+ * .
+ * Any attempt to setup an invalid mode is ignored.
+ *
+ * @section avr_pal_4 Suboptimal behavior
+ * The AVR PORT is less than optimal in several areas, the limitations
+ * should be taken in account while using the PAL driver:
+ * - Pad/port toggling operations are not atomic.
+ * - Pad/group mode setup is not atomic.
+ * - Group set+reset function is not atomic.
+ * - Writing on pads/groups/ports programmed as input with pull-up
+ *   resistor changes the resistor setting because the output latch is
+ *   used for resistor selection.
+ * - The PORT registers layout on some devices is not regular (it does
+ *   not have contiguous PIN, DDR, PORT registers in this order), such
+ *   ports cannot be accessed using the PAL driver. For example, PORT F
+ *   on ATmega128. Verify the user manual of your device.
  * .
  * @ingroup AVR_DRIVERS
  */

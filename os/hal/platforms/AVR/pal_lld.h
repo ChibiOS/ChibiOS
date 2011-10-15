@@ -43,24 +43,30 @@
 /*===========================================================================*/
 
 /**
- * @brief Width, in bits, of an I/O port.
+ * @brief   Width, in bits, of an I/O port.
  */
 #define PAL_IOPORTS_WIDTH 8
 
 /**
- * @brief Whole port mask.
- * @brief This macro specifies all the valid bits into a port.
+ * @brief   Whole port mask.
+ * @details This macro specifies all the valid bits into a port.
  */
 #define PAL_WHOLE_PORT ((ioportmask_t)0xFF)
 
 /**
- * @brief AVR setup registers.
+ * @brief   AVR setup registers.
  */
 typedef struct  {
   uint8_t  out;
   uint8_t  dir;
 } avr_gpio_setup_t;
 
+/**
+ * @brief   AVR registers block.
+ * @note    On some devices registers do not follow this layout on some
+ *          ports, the ports with abnormal layout cannot be used through
+ *          the PAL driver. Example: PORT F on Mega128.
+ */
 typedef struct  {
   volatile uint8_t  in;
   volatile uint8_t  dir;
@@ -89,6 +95,12 @@ typedef struct {
 #endif
 #if defined(PORTE) || defined(__DOXYGEN__)
   avr_gpio_setup_t porte;
+#endif
+#if defined(PORTF) || defined(__DOXYGEN__)
+  avr_gpio_setup_t portf;
+#endif
+#if defined(PORTG) || defined(__DOXYGEN__)
+  avr_gpio_setup_t portg;
 #endif
 } PALConfig;
 
@@ -147,6 +159,20 @@ typedef avr_gpio_registers_t *ioportid_t;
  * @brief   GPIO port E identifier.
  */
 #define IOPORT5			((volatile avr_gpio_registers_t *)&PINE)
+#endif
+
+#if defined(PORTF) || defined(__DOXYGEN__)
+/**
+ * @brief   GPIO port F identifier.
+ */
+#define IOPORT6			((volatile avr_gpio_registers_t *)&PINF)
+#endif
+
+#if defined(PORTG) || defined(__DOXYGEN__)
+/**
+ * @brief   GPIO port G identifier.
+ */
+#define IOPORT7			((volatile avr_gpio_registers_t *)&PING)
 #endif
 
 /*===========================================================================*/

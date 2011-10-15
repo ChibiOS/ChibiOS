@@ -44,6 +44,12 @@ const PALConfig pal_default_config =
 #if defined(PORTE)
   {VAL_PORTE, VAL_DDRE},
 #endif
+#if defined(PORTF)
+  {VAL_PORTF, VAL_DDRF},
+#endif
+#if defined(PORTG)
+  {VAL_PORTG, VAL_DDRG},
+#endif
 };
 #endif /* HAL_USE_PAL */
 

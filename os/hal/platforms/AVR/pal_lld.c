@@ -85,6 +85,16 @@ void _pal_lld_init(const PALConfig *config) {
   PORTE = config->porte.out;
   DDRE = config->porte.dir;
 #endif
+
+#if defined(PORTF) || defined(__DOXYGEN__)
+  PORTF = config->portf.out;
+  DDRF = config->portf.dir;
+#endif
+
+#if defined(PORTG) || defined(__DOXYGEN__)
+  PORTG = config->portg.out;
+  DDRG = config->portg.dir;
+#endif
 }
 
 /**
