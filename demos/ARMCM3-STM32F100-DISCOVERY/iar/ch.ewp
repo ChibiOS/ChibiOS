@@ -995,7 +995,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.20.2.52635</state>
+          <state>6.21.4.52945</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -2129,10 +2129,10 @@
         <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\spi_lld.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\DMAv1\stm32_dma.c</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F1xx\stm32_dma.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\DMAv1\stm32_dma.h</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F1xx\stm32_dma.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F1xx\stm32_rcc.h</name>
