@@ -32,16 +32,16 @@ const PALConfig pal_default_config =
 #if defined(PORTA)
   {VAL_PORTA, VAL_DDRA},
 #endif
-#if defined(PORTA)
+#if defined(PORTB)
   {VAL_PORTB, VAL_DDRB},
 #endif
-#if defined(PORTA)
+#if defined(PORTC)
   {VAL_PORTC, VAL_DDRC},
 #endif
-#if defined(PORTA)
+#if defined(PORTD)
   {VAL_PORTD, VAL_DDRD},
 #endif
-#if defined(PORTA)
+#if defined(PORTE)
   {VAL_PORTE, VAL_DDRE},
 #endif
 };
