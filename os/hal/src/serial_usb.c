@@ -118,21 +118,26 @@ static const struct SerialUSBDriverVMT vmt = {
  */
 static void inotify(GenericQueue *qp) {
   SerialUSBDriver *sdup = (SerialUSBDriver *)qp->q_wrptr;
-  size_t n;
 
   /* Writes to the input queue can only happen when the queue has been
      emptied, then a whole packet is loaded in the queue.*/
-  if (chIQIsEmptyI(&sdup->iqueue)) {
+  if (!usbGetReceiveStatusI(sdup->config->usbp, USB_CDC_DATA_AVAILABLE_EP) &&
+      chIQIsEmptyI(&sdup->iqueue)) {
+    chSysUnlock();
 
-    n = usbReadPacketI(sdup->config->usbp, USB_CDC_DATA_AVAILABLE_EP,
-                       sdup->iqueue.q_buffer, SERIAL_USB_BUFFERS_SIZE);
-    if (n != USB_ENDPOINT_BUSY) {
-      chIOAddFlagsI(sdup, IO_INPUT_AVAILABLE);
-      sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
-      sdup->iqueue.q_counter = n;
-      while (notempty(&sdup->iqueue.q_waiting))
-        chSchReadyI(fifo_remove(&sdup->iqueue.q_waiting))->p_u.rdymsg = Q_OK;
-    }
+    /* Unlocked to make the potentially long read operation preemptable.*/
+    size_t n = usbReadPacketBuffer(sdup->config->usbp,
+                                   USB_CDC_DATA_AVAILABLE_EP,
+                                   sdup->iqueue.q_buffer,
+                                   SERIAL_USB_BUFFERS_SIZE);
+
+    chSysLock();
+    usbStartReceiveI(sdup->config->usbp, USB_CDC_DATA_AVAILABLE_EP);
+    chIOAddFlagsI(sdup, IO_INPUT_AVAILABLE);
+    sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
+    sdup->iqueue.q_counter = n;
+    while (notempty(&sdup->iqueue.q_waiting))
+      chSchReadyI(fifo_remove(&sdup->iqueue.q_waiting))->p_u.rdymsg = Q_OK;
   }
 }
 
@@ -141,14 +146,20 @@ static void inotify(GenericQueue *qp) {
  */
 static void onotify(GenericQueue *qp) {
   SerialUSBDriver *sdup = (SerialUSBDriver *)qp->q_rdptr;
-  size_t w, n;
+  size_t n;
 
   /* If there is any data in the output queue then it is sent within a
      single packet and the queue is emptied.*/
   n = chOQGetFullI(&sdup->oqueue);
-  w = usbWritePacketI(sdup->config->usbp, USB_CDC_DATA_REQUEST_EP,
-                      sdup->oqueue.q_buffer, n);
-  if (w != USB_ENDPOINT_BUSY) {
+  if (!usbGetTransmitStatusI(sdup->config->usbp, USB_CDC_DATA_REQUEST_EP)) {
+    chSysUnlock();
+
+    /* Unlocked to make the potentially long write operation preemptable.*/
+    usbWritePacketBuffer(sdup->config->usbp, USB_CDC_DATA_REQUEST_EP,
+                         sdup->oqueue.q_buffer, n);
+
+    chSysLock();
+    usbStartTransmitI(sdup->config->usbp, USB_CDC_DATA_REQUEST_EP);
     chIOAddFlagsI(sdup, IO_OUTPUT_EMPTY);
     sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
     sdup->oqueue.q_counter = chQSizeI(&sdup->oqueue);
@@ -285,21 +296,27 @@ bool_t sduRequestsHook(USBDriver *usbp) {
  */
 void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
   SerialUSBDriver *sdup = usbp->param;
-  size_t n, w;
+  size_t n;
 
   chSysLockFromIsr();
   /* If there is any data in the output queue then it is sent within a
      single packet and the queue is emptied.*/
   n = chOQGetFullI(&sdup->oqueue);
   if (n > 0) {
-    w = usbWritePacketI(usbp, ep, sdup->oqueue.q_buffer, n);
-    if (w != USB_ENDPOINT_BUSY) {
-      chIOAddFlagsI(sdup, IO_OUTPUT_EMPTY);
-      sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
-      sdup->oqueue.q_counter = chQSizeI(&sdup->oqueue);
-      while (notempty(&sdup->oqueue.q_waiting))
-        chSchReadyI(fifo_remove(&sdup->oqueue.q_waiting))->p_u.rdymsg = Q_OK;
-    }
+    /* The endpoint cannot be busy, we are in the context of the callback,
+       so it is safe to transmit without a check.*/
+    chSysUnlockFromIsr();
+
+    /* Unlocked to make the potentially long write operation preemptable.*/
+    usbWritePacketBuffer(usbp, ep, sdup->oqueue.q_buffer, n);
+
+    chSysLockFromIsr();
+    usbStartTransmitI(usbp, ep);
+    chIOAddFlagsI(sdup, IO_OUTPUT_EMPTY);
+    sdup->oqueue.q_wrptr = sdup->oqueue.q_buffer;
+    sdup->oqueue.q_counter = chQSizeI(&sdup->oqueue);
+    while (notempty(&sdup->oqueue.q_waiting))
+      chSchReadyI(fifo_remove(&sdup->oqueue.q_waiting))->p_u.rdymsg = Q_OK;
   }
   chSysUnlockFromIsr();
 }
@@ -319,17 +336,23 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
   /* Writes to the input queue can only happen when the queue has been
      emptied, then a whole packet is loaded in the queue.*/
   if (chIQIsEmptyI(&sdup->iqueue)) {
+    /* The endpoint cannot be busy, we are in the context of the callback,
+       so a packet is in the buffer for sure.*/
     size_t n;
 
-    n = usbReadPacketI(usbp, ep, sdup->iqueue.q_buffer,
-                       SERIAL_USB_BUFFERS_SIZE);
-    if (n != USB_ENDPOINT_BUSY) {
-      chIOAddFlagsI(sdup, IO_INPUT_AVAILABLE);
-      sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
-      sdup->iqueue.q_counter = n;
-      while (notempty(&sdup->iqueue.q_waiting))
-        chSchReadyI(fifo_remove(&sdup->iqueue.q_waiting))->p_u.rdymsg = Q_OK;
-    }
+    chSysUnlockFromIsr();
+
+    /* Unlocked to make the potentially long write operation preemptable.*/
+    n = usbReadPacketBuffer(usbp, ep, sdup->iqueue.q_buffer,
+                            SERIAL_USB_BUFFERS_SIZE);
+
+    chSysLockFromIsr();
+    usbStartReceiveI(usbp, ep);
+    chIOAddFlagsI(sdup, IO_INPUT_AVAILABLE);
+    sdup->iqueue.q_rdptr = sdup->iqueue.q_buffer;
+    sdup->iqueue.q_counter = n;
+    while (notempty(&sdup->iqueue.q_waiting))
+      chSchReadyI(fifo_remove(&sdup->iqueue.q_waiting))->p_u.rdymsg = Q_OK;
   }
   chSysUnlockFromIsr();
 }

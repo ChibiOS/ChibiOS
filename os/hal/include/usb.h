@@ -173,11 +173,6 @@
 /** @} */
 
 /**
- * @brief   Returned by some functions to report a busy endpoint.
- */
-#define USB_ENDPOINT_BUSY                   ((size_t)0xFFFFFFFF)
-
-/**
  * @name    Endpoint types and settings
  * @{
  */
@@ -363,6 +358,75 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 #define usbGetReceiveStatusI(usbp, ep) ((usbp)->receiving & (1 << (ep)))
 
 /**
+ * @brief   Reads from a dedicated packet buffer.
+ * @pre     In order to use this function he endpoint must have been
+ *          initialized in packet mode.
+ * @note    This function can be invoked both in thread and IRQ context.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[out] buf      buffer where to copy the packet data
+ * @param[in] n         maximum number of bytes to copy. This value must
+ *                      not exceed the maximum packet size for this endpoint.
+ * @return              The received packet size regardless the specified
+ *                      @p n parameter.
+ * @retval 0            Zero size packet received.
+ *
+ * @special
+ */
+#define usbReadPacketBuffer(usbp, ep, buf, n)                               \
+  usb_lld_read_packet_buffer(usbp, ep, buf, n)
+
+/**
+ * @brief   Writes to a dedicated packet buffer.
+ * @pre     In order to use this function he endpoint must have been
+ *          initialized in packet mode.
+ * @note    This function can be invoked both in thread and IRQ context.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] buf       buffer where to fetch the packet data
+ * @param[in] n         maximum number of bytes to copy. This value must
+ *                      not exceed the maximum packet size for this endpoint.
+ *
+ * @special
+ */
+#define usbWritePacketBuffer(usbp, ep, buf, n)                              \
+  usb_lld_write_packet_buffer(usbp, ep, buf, n)
+
+/**
+ * @brief   Prepares for a receive transaction on an OUT endpoint.
+ * @pre     In order to use this function he endpoint must have been
+ *          initialized in transaction mode.
+ * @post    The endpoint is ready for @p usbStartReceiveI().
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[out] buf      buffer where to copy the received data
+ * @param[in] n         maximum number of bytes to copy
+ *
+ * @special
+ */
+#define usbPrepareReceive(usbp, ep, buf, n)                                 \
+  usb_lld_prepare_receive(usbp, ep, buf, n)
+
+/**
+ * @brief   Prepares for a transmit transaction on an IN endpoint.
+ * @pre     In order to use this function he endpoint must have been
+ *          initialized in transaction mode.
+ * @post    The endpoint is ready for @p usbStartTransmitI().
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] buf       buffer where to fetch the data to be transmitted
+ * @param[in] n         maximum number of bytes to copy
+ *
+ * @special
+ */
+#define usbPrepareTransmit(usbp, ep, buf, n)                                \
+  usb_lld_prepare_transmit(usbp, ep, buf, n)
+
+/**
  * @brief   Returns the exact size of a receive transaction.
  * @details The received size can be different from the size specified in
  *          @p usbStartReceiveI() because the last packet could have a size
@@ -417,7 +481,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  *          callback in order to read the received setup packet.
  * @pre     In order to use this function the endpoint must have been
  *          initialized as a control endpoint.
- * @post    The endpoint is ready to accept another packet.
+ * @note    This function can be invoked both in thread and IRQ context.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
@@ -511,14 +575,8 @@ extern "C" {
                         const USBEndpointConfig *epcp);
   void usbDisableEndpointsI(USBDriver *usbp);
   void usbReadSetupI(USBDriver *usbp, usbep_t ep, uint8_t *buf);
-  size_t usbReadPacketI(USBDriver *usbp, usbep_t ep,
-                        uint8_t *buf, size_t n);
-  size_t usbWritePacketI(USBDriver *usbp, usbep_t ep,
-                         const uint8_t *buf, size_t n);
-  bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep,
-                          uint8_t *buf, size_t n);
-  bool_t usbStartTransmitI(USBDriver *usbp, usbep_t ep,
-                           const uint8_t *buf, size_t n);
+  bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep);
+  bool_t usbStartTransmitI(USBDriver *usbp, usbep_t ep);
   bool_t usbStallReceiveI(USBDriver *usbp, usbep_t ep);
   bool_t usbStallTransmitI(USBDriver *usbp, usbep_t ep);
   void _usb_reset(USBDriver *usbp);

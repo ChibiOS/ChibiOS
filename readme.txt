@@ -76,6 +76,11 @@
 *** 2.3.4 ***
 - FIX: Fixed broken TIM8 support in STM32 PWM driver (bug 3418620).
 - FIX: Fixed halconf.h file corrupted in some STM32 demos (bug 3418626).
+- NEW: Updated USB driver model and STM32 implementation. Updated the
+  SERIAL_USB driver to match the new API. Fixed several problems in
+  both drivers.
+- NEW: Added a macro THD_STATE_NAMES to chthreads.h. This macro is an
+  initializer for string arrays containing thread state names.
 - NEW: Added memory copy functionality to the STM32 DMA driver.
 - NEW: Implemented new makefile system for ARM GCC ports, now objects,
   listings and output files are generated into a "build" directory and not
@@ -84,6 +89,9 @@
   rebuild if touched.
 - NEW: Updated AVR demos to use the new PAL driver.
 - NEW: Added Keil build files to the STM32L-Discovery demo.
+- CHANGE: Now the callback associated to input queues is invoked before
+  reading each character. Previously it was invoked only before going
+  to sleep into the THD_STATE_WTQUEUE state.
 - CHANGE: Moved the STM32 DMA helper drivers files under the sub-family
   specific directories because documentation issues.
 
