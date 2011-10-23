@@ -421,6 +421,7 @@ int main(void) {
    */
   sduObjectInit(&SDU1);
   sduStart(&SDU1, &serusbcfg);
+  usbConnectBus(serusbcfg.usbp);
   palClearPad(GPIOC, GPIOC_USB_DISC);
 
   /*

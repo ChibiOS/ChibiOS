@@ -76,9 +76,15 @@
 *** 2.3.4 ***
 - FIX: Fixed broken TIM8 support in STM32 PWM driver (bug 3418620).
 - FIX: Fixed halconf.h file corrupted in some STM32 demos (bug 3418626).
-- NEW: Updated USB driver model and STM32 implementation. Updated the
-  SERIAL_USB driver to match the new API. Fixed several problems in
-  both drivers.
+- NEW: Updated USB driver model and STM32 implementation and fixed several
+  problems.
+  - Changed the API to move buffer copy operations out of critical zones.
+  - Added usbConnectBus() and usbDisconnectBus() functions.
+  - Fixed problems with incorrect assertions.
+- NEW Updated the SERIAL_USB driver to match the new USB API, also fixed
+  some problems.
+  - Fixed incorrect use of input queues, the change required a change in
+    input queues too.
 - NEW: Added a macro THD_STATE_NAMES to chthreads.h. This macro is an
   initializer for string arrays containing thread state names.
 - NEW: Added memory copy functionality to the STM32 DMA driver.

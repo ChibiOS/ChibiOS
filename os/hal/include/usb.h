@@ -322,6 +322,16 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @{
  */
 /**
+ * @brief   Connects the USB device.
+ */
+#define usbConnectBus(usbp) usb_lld_connect_bus(usbp)
+
+/**
+ * @brief   Disconnect the USB device.
+ */
+#define usbDisconnectBus(usbp) usb_lld_disconnect_bus(usbp)
+
+/**
  * @brief   Returns the current frame number.
  *
  * @param[in] usbp      pointer to the @p USBDriver object

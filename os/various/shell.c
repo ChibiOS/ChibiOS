@@ -204,7 +204,7 @@ static msg_t shell_thread(void *p) {
      there is not a chSysUnlock() because the thread terminates upon return.*/
   chSysLock();
   chEvtBroadcastI(&shell_terminated);
-  return msg;
+  chThdExitS(msg);
 }
 
 /**
