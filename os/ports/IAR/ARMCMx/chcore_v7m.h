@@ -215,7 +215,7 @@ struct intctx {
 
 /**
  * @brief   Kernel-unlock action.
- * @details Usually this function just disables interrupts but may perform
+ * @details Usually this function just enables interrupts but may perform
  *          more actions.
  * @note    In this port this it lowers the base priority to user level.
  */

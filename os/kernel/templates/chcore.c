@@ -50,7 +50,7 @@ void port_lock(void) {
 
 /**
  * @brief   Kernel-unlock action.
- * @details Usually this function just disables interrupts but may perform more
+ * @details Usually this function just enables interrupts but may perform more
  *          actions.
  */
 void port_unlock(void) {
