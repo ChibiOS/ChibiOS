@@ -277,8 +277,9 @@ void _i2c_ev7_master_rec_byte_qued(I2CDriver *i2cp){
       rxBuffp++;
       (i2cp->rxbytes)--;
     }
-    else
+    else{
       _i2c_unhandled_case(i2cp);
+    }
     break;
 
   default:
