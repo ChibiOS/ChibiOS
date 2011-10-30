@@ -140,6 +140,7 @@ typedef struct {
 #define EPR_STAT_TX_NAK         0x0020
 #define EPR_STAT_TX_VALID       0x0030
 #define EPR_DTOG_TX             0x0040
+#define EPR_SWBUF_RX            0x0040
 #define EPR_CTR_TX              0x0080
 #define EPR_EP_KIND             0x0100
 #define EPR_EP_TYPE_MASK        0x0600
@@ -154,6 +155,7 @@ typedef struct {
 #define EPR_STAT_RX_NAK         0x2000
 #define EPR_STAT_RX_VALID       0x3000
 #define EPR_DTOG_RX             0x4000
+#define EPR_SWBUF_TX            0x4000
 #define EPR_CTR_RX              0x8000
 
 #define CNTR_FRES               0x0001
