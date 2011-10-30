@@ -76,6 +76,8 @@
 *** 2.3.4 ***
 - FIX: Fixed broken TIM8 support in STM32 PWM driver (bug 3418620).
 - FIX: Fixed halconf.h file corrupted in some STM32 demos (bug 3418626).
+- NEW: Added EXT driver implementation for AT91SAM7x contributed by Florian.
+  (TODO: Test application missing).
 - NEW: Updated USB driver model and STM32 implementation and fixed several
   problems.
   - Changed the API to move buffer copy operations out of critical zones.
