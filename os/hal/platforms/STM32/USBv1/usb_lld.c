@@ -195,7 +195,7 @@ CH_IRQ_HANDLER(Vector90) {
       }
       else {
         /* Transaction mode.*/
-        n = USB_GET_DESCRIPTOR(ep)->TXCOUNT;
+        n = (size_t)USB_GET_DESCRIPTOR(ep)->TXCOUNT0;
         epcp->in_state->txbuf  += n;
         epcp->in_state->txcnt  += n;
         epcp->in_state->txsize -= n;
@@ -419,10 +419,10 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   else
     nblocks = ((((epcp->out_maxsize - 1) | 1) + 1) / 2) << 10;
   dp = USB_GET_DESCRIPTOR(ep);
-  dp->TXCOUNT = 0;
-  dp->RXCOUNT = nblocks;
-  dp->TXADDR  = pm_alloc(usbp, epcp->in_maxsize);
-  dp->RXADDR  = pm_alloc(usbp, epcp->out_maxsize);
+  dp->TXCOUNT0 = 0;
+  dp->RXCOUNT0 = nblocks;
+  dp->TXADDR   = pm_alloc(usbp, epcp->in_maxsize);
+  dp->RXADDR   = pm_alloc(usbp, epcp->out_maxsize);
 }
 
 /**
@@ -549,7 +549,7 @@ size_t usb_lld_read_packet_buffer(USBDriver *usbp, usbep_t ep,
   (void)usbp;
   udp = USB_GET_DESCRIPTOR(ep);
   pmap = USB_ADDR2PTR(udp->RXADDR);
-  count = udp->RXCOUNT & RXCOUNT_COUNT_MASK;
+  count = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
   if (n > count)
     n = count;
   n = (n + 1) / 2;
@@ -583,7 +583,7 @@ void usb_lld_write_packet_buffer(USBDriver *usbp, usbep_t ep,
   (void)usbp;
   udp = USB_GET_DESCRIPTOR(ep);
   pmap = USB_ADDR2PTR(udp->TXADDR);
-  udp->TXCOUNT = n;
+  udp->TXCOUNT0 = (uint16_t)n;
   n = (n + 1) / 2;
   while (n > 0) {
     *pmap++ = *(uint16_t *)buf;

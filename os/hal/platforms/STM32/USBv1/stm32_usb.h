@@ -80,17 +80,25 @@ typedef struct {
    */
   volatile uint32_t     TXADDR;
   /**
-   * @brief   TX counter register.
+   * @brief   TX counter register 0.
    */
-  volatile uint32_t     TXCOUNT;
+  volatile uint16_t     TXCOUNT0;
+  /**
+   * @brief   TX counter register 1.
+   */
+  volatile uint16_t     TXCOUNT1;
   /**
    * @brief   RX buffer offset register.
    */
   volatile uint32_t     RXADDR;
   /**
-   * @brief   RX counter register.
+   * @brief   RX counter register 0.
    */
-  volatile uint32_t     RXCOUNT;
+  volatile uint16_t     RXCOUNT0;
+  /**
+   * @brief   RX counter register 1.
+   */
+  volatile uint16_t     RXCOUNT1;
 } stm32_usb_descriptor_t;
 
 /**
