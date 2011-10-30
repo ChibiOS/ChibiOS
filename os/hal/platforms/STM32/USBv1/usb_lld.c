@@ -696,6 +696,7 @@ void usb_lld_stall_out(USBDriver *usbp, usbep_t ep) {
 void usb_lld_stall_in(USBDriver *usbp, usbep_t ep) {
 
   (void)usbp;
+
   EPR_SET_STAT_TX(ep, EPR_STAT_TX_STALL);
 }
 
