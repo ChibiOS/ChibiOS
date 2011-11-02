@@ -22,13 +22,13 @@
 #define _BOARD_H_
 
 /*
- * Setup for STMicroelectronics STM32VL-Discovery board.
+ * Setup for STMicroelectronics STM32L-Discovery board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_ST_STM32VL_DISCOVERY
+#define BOARD_ST_STM32L_DISCOVERY
 #define BOARD_NAME              "ST STM32L-Discovery"
 
 /*
@@ -69,22 +69,7 @@
 #define PIN_PUDR_FLOATING(n)        (0U << ((n) * 2))
 #define PIN_PUDR_PULLUP(n)          (1U << ((n) * 2))
 #define PIN_PUDR_PULLDOWN(n)        (2U << ((n) * 2))
-#define PIN_AFIO_AF0(n)             (0U << ((n % 8) * 4))
-#define PIN_AFIO_AF1(n)             (1U << ((n % 8) * 4))
-#define PIN_AFIO_AF2(n)             (2U << ((n % 8) * 4))
-#define PIN_AFIO_AF3(n)             (3U << ((n % 8) * 4))
-#define PIN_AFIO_AF4(n)             (4U << ((n % 8) * 4))
-#define PIN_AFIO_AF5(n)             (5U << ((n % 8) * 4))
-#define PIN_AFIO_AF6(n)             (6U << ((n % 8) * 4))
-#define PIN_AFIO_AF7(n)             (7U << ((n % 8) * 4))
-#define PIN_AFIO_AF8(n)             (8U << ((n % 8) * 4))
-#define PIN_AFIO_AF9(n)             (9U << ((n % 8) * 4))
-#define PIN_AFIO_AF10(n)            (10U << ((n % 8) * 4))
-#define PIN_AFIO_AF11(n)            (11U << ((n % 8) * 4))
-#define PIN_AFIO_AF12(n)            (12U << ((n % 8) * 4))
-#define PIN_AFIO_AF13(n)            (13U << ((n % 8) * 4))
-#define PIN_AFIO_AF14(n)            (14U << ((n % 8) * 4))
-#define PIN_AFIO_AF15(n)            (15U << ((n % 8) * 4))
+#define PIN_AFIO_AF(n, v)           ((v)U << ((n % 8) * 4))
 
 /*
  * Port A setup.
