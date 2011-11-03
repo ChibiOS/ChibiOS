@@ -205,6 +205,7 @@ static msg_t shell_thread(void *p) {
   chSysLock();
   chEvtBroadcastI(&shell_terminated);
   chThdExitS(msg);
+  return 0; /* Never executed.*/
 }
 
 /**
