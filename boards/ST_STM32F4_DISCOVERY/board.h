@@ -233,7 +233,7 @@
                                      PIN_MODE_INPUT(9) |                    \
                                      PIN_MODE_ALTERNATE(GPIOC_SCLK) |       \
                                      PIN_MODE_INPUT(11) |                   \
-                                     PIN_MODE_ALTERNATE(GPIOC_SDIN))        \
+                                     PIN_MODE_ALTERNATE(GPIOC_SDIN) |       \
                                      PIN_MODE_INPUT(13) |                   \
                                      PIN_MODE_INPUT(14) |                   \
                                      PIN_MODE_INPUT(15))
@@ -242,16 +242,16 @@
 #define VAL_GPIOC_PUPDR             (PIN_PUDR_FLOATING(GPIOC_OTG_FS_POWER_ON) |\
                                      PIN_PUDR_PULLUP(1) |                   \
                                      PIN_PUDR_PULLUP(2) |                   \
-                                     PIN_PUDR_FLOATING(GPIOC_DOUT)) |       \
+                                     PIN_PUDR_FLOATING(GPIOC_DOUT)  |       \
                                      PIN_PUDR_PULLUP(4) |                   \
                                      PIN_PUDR_PULLUP(5) |                   \
                                      PIN_PUDR_PULLUP(6) |                   \
-                                     PIN_PUDR_FLOATING(GPIOC_MCLK)) |       \
+                                     PIN_PUDR_FLOATING(GPIOC_MCLK)  |       \
                                      PIN_PUDR_PULLUP(8) |                   \
                                      PIN_PUDR_PULLUP(9) |                   \
-                                     PIN_PUDR_FLOATING(GPIOC_SCLK)) |       \
+                                     PIN_PUDR_FLOATING(GPIOC_SCLK)  |       \
                                      PIN_PUDR_PULLUP(11) |                  \
-                                     PIN_PUDR_FLOATING(GPIOC_SDIN)) |       \
+                                     PIN_PUDR_FLOATING(GPIOC_SDIN)  |       \
                                      PIN_PUDR_PULLUP(13) |                  \
                                      PIN_PUDR_PULLUP(14) |                  \
                                      PIN_PUDR_PULLUP(15))
