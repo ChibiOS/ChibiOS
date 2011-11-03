@@ -421,8 +421,8 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   dp = USB_GET_DESCRIPTOR(ep);
   dp->TXCOUNT0 = 0;
   dp->RXCOUNT0 = nblocks;
-  dp->TXADDR   = pm_alloc(usbp, epcp->in_maxsize);
-  dp->RXADDR   = pm_alloc(usbp, epcp->out_maxsize);
+  dp->TXADDR0  = pm_alloc(usbp, epcp->in_maxsize);
+  dp->RXADDR0  = pm_alloc(usbp, epcp->out_maxsize);
 }
 
 /**
@@ -516,7 +516,7 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
 
   (void)usbp;
   udp = USB_GET_DESCRIPTOR(ep);
-  pmap = USB_ADDR2PTR(udp->RXADDR);
+  pmap = USB_ADDR2PTR(udp->RXADDR0);
   for (n = 0; n < 4; n++) {
     *(uint16_t *)buf = (uint16_t)*pmap++;
     buf += 2;
@@ -548,7 +548,7 @@ size_t usb_lld_read_packet_buffer(USBDriver *usbp, usbep_t ep,
 
   (void)usbp;
   udp = USB_GET_DESCRIPTOR(ep);
-  pmap = USB_ADDR2PTR(udp->RXADDR);
+  pmap = USB_ADDR2PTR(udp->RXADDR0);
   count = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
   if (n > count)
     n = count;
@@ -582,7 +582,7 @@ void usb_lld_write_packet_buffer(USBDriver *usbp, usbep_t ep,
 
   (void)usbp;
   udp = USB_GET_DESCRIPTOR(ep);
-  pmap = USB_ADDR2PTR(udp->TXADDR);
+  pmap = USB_ADDR2PTR(udp->TXADDR0);
   udp->TXCOUNT0 = (uint16_t)n;
   n = (n + 1) / 2;
   while (n > 0) {
