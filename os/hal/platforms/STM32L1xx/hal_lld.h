@@ -50,27 +50,45 @@
 /*===========================================================================*/
 
 /**
- * @brief   Platform name.
+ * @name    Platform identification
+ * @{
  */
 #define PLATFORM_NAME           "STM32L Ultra Low Power Medium Density"
+/** @} */
 
+/**
+ * @name    Internal clock sources
+ * @{
+ */
 #define STM32_HSICLK            16000000    /**< High speed internal clock. */
 #define STM32_LSICLK            38000       /**< Low speed internal clock.  */
+/** @} */
 
-/* PWR_CR register bits definitions.*/
+/**
+ * @name    PWR_CR register bits definitions
+ * @{
+ */
 #define STM32_VOS_MASK          (3 << 11)   /**< Core voltage mask.         */
 #define STM32_VOS_1P8           (1 << 11)   /**< Core voltage 1.8 Volts.    */
 #define STM32_VOS_1P5           (2 << 11)   /**< Core voltage 1.5 Volts.    */
 #define STM32_VOS_1P2           (3 << 11)   /**< Core voltage 1.2 Volts.    */
+/** @} */
 
-/* RCC_CR register bits definitions.*/
+/**
+ * @name    RCC_CR register bits definitions
+ * @{
+ */
 #define STM32_RTCPRE_MASK       (3 << 29)   /**< RTCPRE mask.               */
 #define STM32_RTCPRE_DIV2       (0 << 29)   /**< HSE divided by 2.          */
 #define STM32_RTCPRE_DIV4       (1 << 29)   /**< HSE divided by 4.          */
 #define STM32_RTCPRE_DIV8       (2 << 29)   /**< HSE divided by 2.          */
 #define STM32_RTCPRE_DIV16      (3 << 29)   /**< HSE divided by 16.         */
+/** @} */
 
-/* RCC_CFGR register bits definitions.*/
+/**
+ * @name    RCC_CFGR register bits definitions
+ * @{
+ */
 #define STM32_SW_MSI            (0 << 0)    /**< SYSCLK source is MSI.      */
 #define STM32_SW_HSI            (1 << 0)    /**< SYSCLK source is HSI.      */
 #define STM32_SW_HSE            (2 << 0)    /**< SYSCLK source is HSE.      */
@@ -115,8 +133,12 @@
 #define STM32_MCOPRE_DIV4       (2 << 28)   /**< MCO divided by 1.          */
 #define STM32_MCOPRE_DIV8       (3 << 28)   /**< MCO divided by 1.          */
 #define STM32_MCOPRE_DIV16      (4 << 28)   /**< MCO divided by 1.          */
+/** @} */
 
-/* RCC_ICSCR register bits definitions.*/
+/**
+ * @name    RCC_ICSCR register bits definitions
+ * @{
+ */
 #define STM32_MSIRANGE_MASK     (7 << 13)   /**< MSIRANGE field mask.       */
 #define STM32_MSIRANGE_64K      (0 << 13)   /**< 64KHz nominal.             */
 #define STM32_MSIRANGE_128K     (1 << 13)   /**< 128KHz nominal.            */
@@ -125,15 +147,27 @@
 #define STM32_MSIRANGE_1M       (4 << 13)   /**< 1MHz nominal.              */
 #define STM32_MSIRANGE_2M       (5 << 13)   /**< 2MHz nominal.              */
 #define STM32_MSIRANGE_4M       (6 << 13)   /**< 4MHz nominal               */
+/** @} */
 
-/* RCC_CSR register bits definitions.*/
+/**
+ * @name    RCC_CSR register bits definitions
+ * @{
+ */
 #define STM32_RTCSEL_MASK       (3 << 16)   /**< RTC source mask.           */
 #define STM32_RTCSEL_NOCLOCK    (0 << 16)   /**< No RTC source.             */
 #define STM32_RTCSEL_LSE        (1 << 16)   /**< RTC source is LSE.         */
 #define STM32_RTCSEL_LSI        (2 << 16)   /**< RTC source is LSI.         */
 #define STM32_RTCSEL_HSEDIV     (3 << 16)   /**< RTC source is HSE divided. */
+/** @} */
 
-/* STM32L1xx capabilities.*/
+/*===========================================================================*/
+/* Platform capabilities.                                                    */
+/*===========================================================================*/
+
+/**
+ * @name    STM32L1xx capabilities
+ * @{
+ */
 #define STM32_HAS_ADC1          TRUE
 #define STM32_HAS_ADC2          FALSE
 #define STM32_HAS_ADC3          FALSE
@@ -158,9 +192,11 @@
 #define STM32_HAS_GPIOF         FALSE
 #define STM32_HAS_GPIOG         FALSE
 #define STM32_HAS_GPIOH         TRUE
+#define STM32_HAS_GPIOI         FALSE
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE
+#define STM32_HAS_I2C3          FALSE
 
 #define STM32_HAS_RTC           TRUE
 
@@ -197,9 +233,16 @@
 
 #define STM32_HAS_USB           TRUE
 #define STM32_HAS_OTG1          FALSE
+#define STM32_HAS_OTG2          FALSE
+/** @} */
+
+/*===========================================================================*/
+/* Platform specific friendly IRQ names.                                     */
+/*===========================================================================*/
 
 /**
- * @name  Platform specific friendly IRQ names
+ * @name  IRQ VECTOR names
+ * @{
  */
 #define WWDG_IRQHandler         Vector40    /**< Window Watchdog.           */
 #define PVD_IRQHandler          Vector44    /**< PVD through EXTI Line

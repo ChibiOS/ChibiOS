@@ -40,10 +40,42 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Platform identification
+ * @{
+ */
+#if defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32 Performance Line"
+
+#elif defined(STM32F10X_LD)
+#define PLATFORM_NAME           "STM32 Performance Line Low Density"
+
+#elif defined(STM32F10X_MD)
+#define PLATFORM_NAME           "STM32 Performance Line Medium Density"
+
+#elif defined(STM32F10X_HD)
+#define PLATFORM_NAME           "STM32 Performance Line High Density"
+
+#elif defined(STM32F10X_XL)
+#define PLATFORM_NAME           "STM32 Performance Line eXtra Density"
+
+#else
+#error "unsupported STM32 Performance Line member"
+#endif
+/** @} */
+
+/**
+ * @name    Internal clock sources
+ * @{
+ */
 #define STM32_HSICLK            8000000     /**< High speed internal clock. */
 #define STM32_LSICLK            40000       /**< Low speed internal clock.  */
+/** @} */
 
-/* RCC_CFGR register bits definitions.*/
+/**
+ * @name    RCC_CFGR register bits definitions
+ * @{
+ */
 #define STM32_SW_HSI            (0 << 0)    /**< SYSCLK source is HSI.      */
 #define STM32_SW_HSE            (1 << 0)    /**< SYSCLK source is HSE.      */
 #define STM32_SW_PLL            (2 << 0)    /**< SYSCLK source is PLL.      */
@@ -95,11 +127,316 @@
 #define STM32_RTC_LSI           (2 << 8)    /**< LSI used as RTC clock.     */
 #define STM32_RTC_HSE           (3 << 8)    /**< HSE divided by 128 used as
                                                  RTC clock.                 */
+/** @} */
+
+/*===========================================================================*/
+/* Platform capabilities.                                                    */
+/*===========================================================================*/
+
+#if defined(STM32F10X_LD) || defined(__DOXYGEN__)
+/**
+ * @name    STM32F103 LD capabilities
+ * @{
+ */
+#define STM32_HAS_ADC1          TRUE
+#define STM32_HAS_ADC2          TRUE
+#define STM32_HAS_ADC3          FALSE
+
+#define STM32_HAS_CAN1          TRUE
+#define STM32_HAS_CAN2          FALSE
+
+#define STM32_HAS_DAC           FALSE
+
+#define STM32_HAS_DMA1          TRUE
+#define STM32_HAS_DMA2          FALSE
+
+#define STM32_HAS_ETH           FALSE
+
+#define STM32_EXTI_NUM_CHANNELS 19
+
+#define STM32_HAS_GPIOA         TRUE
+#define STM32_HAS_GPIOB         TRUE
+#define STM32_HAS_GPIOC         TRUE
+#define STM32_HAS_GPIOD         TRUE
+#define STM32_HAS_GPIOE         FALSE
+#define STM32_HAS_GPIOF         FALSE
+#define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
+#define STM32_HAS_GPIOI         FALSE
+
+#define STM32_HAS_I2C1          TRUE
+#define STM32_HAS_I2C2          FALSE
+#define STM32_HAS_I2C3          FALSE
+
+#define STM32_HAS_RTC           TRUE
+
+#define STM32_HAS_SDIO          FALSE
+
+#define STM32_HAS_SPI1          TRUE
+#define STM32_HAS_SPI2          FALSE
+#define STM32_HAS_SPI3          FALSE
+
+#define STM32_HAS_TIM1          TRUE
+#define STM32_HAS_TIM2          TRUE
+#define STM32_HAS_TIM3          TRUE
+#define STM32_HAS_TIM4          FALSE
+#define STM32_HAS_TIM5          FALSE
+#define STM32_HAS_TIM6          FALSE
+#define STM32_HAS_TIM7          FALSE
+#define STM32_HAS_TIM8          FALSE
+#define STM32_HAS_TIM9          FALSE
+#define STM32_HAS_TIM10         FALSE
+#define STM32_HAS_TIM11         FALSE
+#define STM32_HAS_TIM12         FALSE
+#define STM32_HAS_TIM13         FALSE
+#define STM32_HAS_TIM14         FALSE
+#define STM32_HAS_TIM15         FALSE
+#define STM32_HAS_TIM16         FALSE
+#define STM32_HAS_TIM17         FALSE
+
+#define STM32_HAS_USART1        TRUE
+#define STM32_HAS_USART2        TRUE
+#define STM32_HAS_USART3        FALSE
+#define STM32_HAS_UART4         FALSE
+#define STM32_HAS_UART5         FALSE
+#define STM32_HAS_USART6        FALSE
+
+#define STM32_HAS_USB           FALSE
+#define STM32_HAS_OTG1          FALSE
+#define STM32_HAS_OTG2          FALSE
+/** @} */
+#endif /* defined(STM32F10X_LD) */
+
+#if defined(STM32F10X_MD) || defined(__DOXYGEN__)
+/**
+ * @name    STM32F103 MD capabilities
+ * @{
+ */
+#define STM32_HAS_ADC1          TRUE
+#define STM32_HAS_ADC2          TRUE
+#define STM32_HAS_ADC3          FALSE
+
+#define STM32_HAS_CAN1          TRUE
+#define STM32_HAS_CAN2          FALSE
+
+#define STM32_HAS_DAC           FALSE
+
+#define STM32_HAS_DMA1          TRUE
+#define STM32_HAS_DMA2          FALSE
+
+#define STM32_HAS_ETH           FALSE
+
+#define STM32_EXTI_NUM_CHANNELS 19
+
+#define STM32_HAS_GPIOA         TRUE
+#define STM32_HAS_GPIOB         TRUE
+#define STM32_HAS_GPIOC         TRUE
+#define STM32_HAS_GPIOD         TRUE
+#define STM32_HAS_GPIOE         TRUE
+#define STM32_HAS_GPIOF         FALSE
+#define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
+#define STM32_HAS_GPIOI         FALSE
+
+#define STM32_HAS_I2C1          TRUE
+#define STM32_HAS_I2C2          TRUE
+#define STM32_HAS_I2C3          FALSE
+
+#define STM32_HAS_RTC           TRUE
+
+#define STM32_HAS_SDIO          FALSE
+
+#define STM32_HAS_SPI1          TRUE
+#define STM32_HAS_SPI2          TRUE
+#define STM32_HAS_SPI3          FALSE
+
+#define STM32_HAS_TIM1          TRUE
+#define STM32_HAS_TIM2          TRUE
+#define STM32_HAS_TIM3          TRUE
+#define STM32_HAS_TIM4          TRUE
+#define STM32_HAS_TIM5          FALSE
+#define STM32_HAS_TIM6          FALSE
+#define STM32_HAS_TIM7          FALSE
+#define STM32_HAS_TIM8          FALSE
+#define STM32_HAS_TIM9          FALSE
+#define STM32_HAS_TIM10         FALSE
+#define STM32_HAS_TIM11         FALSE
+#define STM32_HAS_TIM12         FALSE
+#define STM32_HAS_TIM13         FALSE
+#define STM32_HAS_TIM14         FALSE
+#define STM32_HAS_TIM15         FALSE
+#define STM32_HAS_TIM16         FALSE
+#define STM32_HAS_TIM17         FALSE
+
+#define STM32_HAS_USART1        TRUE
+#define STM32_HAS_USART2        TRUE
+#define STM32_HAS_USART3        TRUE
+#define STM32_HAS_UART4         FALSE
+#define STM32_HAS_UART5         FALSE
+#define STM32_HAS_USART6        FALSE
+
+#define STM32_HAS_USB           TRUE
+#define STM32_HAS_OTG1          FALSE
+#define STM32_HAS_OTG2          FALSE
+/** @} */
+#endif /* defined(STM32F10X_MD) */
+
+#if defined(STM32F10X_HD) || defined(__DOXYGEN__)
+/**
+ * @name    STM32F103 HD capabilities
+ * @{
+ */
+#define STM32_HAS_ADC1          TRUE
+#define STM32_HAS_ADC2          TRUE
+#define STM32_HAS_ADC3          TRUE
+
+#define STM32_HAS_CAN1          TRUE
+#define STM32_HAS_CAN2          FALSE
+
+#define STM32_HAS_DAC           TRUE
+
+#define STM32_HAS_DMA1          TRUE
+#define STM32_HAS_DMA2          TRUE
+
+#define STM32_HAS_ETH           FALSE
+
+#define STM32_EXTI_NUM_CHANNELS 19
+
+#define STM32_HAS_GPIOA         TRUE
+#define STM32_HAS_GPIOB         TRUE
+#define STM32_HAS_GPIOC         TRUE
+#define STM32_HAS_GPIOD         TRUE
+#define STM32_HAS_GPIOE         TRUE
+#define STM32_HAS_GPIOF         TRUE
+#define STM32_HAS_GPIOG         TRUE
+#define STM32_HAS_GPIOH         FALSE
+#define STM32_HAS_GPIOI         FALSE
+
+#define STM32_HAS_I2C1          TRUE
+#define STM32_HAS_I2C2          TRUE
+#define STM32_HAS_I2C3          FALSE
+
+#define STM32_HAS_RTC           TRUE
+
+#define STM32_HAS_SDIO          TRUE
+
+#define STM32_HAS_SPI1          TRUE
+#define STM32_HAS_SPI2          TRUE
+#define STM32_HAS_SPI3          TRUE
+
+#define STM32_HAS_TIM1          TRUE
+#define STM32_HAS_TIM2          TRUE
+#define STM32_HAS_TIM3          TRUE
+#define STM32_HAS_TIM4          TRUE
+#define STM32_HAS_TIM5          TRUE
+#define STM32_HAS_TIM6          TRUE
+#define STM32_HAS_TIM7          TRUE
+#define STM32_HAS_TIM8          TRUE
+#define STM32_HAS_TIM9          TRUE
+#define STM32_HAS_TIM10         TRUE
+#define STM32_HAS_TIM11         TRUE
+#define STM32_HAS_TIM12         TRUE
+#define STM32_HAS_TIM13         TRUE
+#define STM32_HAS_TIM14         TRUE
+#define STM32_HAS_TIM15         FALSE
+#define STM32_HAS_TIM16         FALSE
+#define STM32_HAS_TIM17         FALSE
+
+#define STM32_HAS_USART1        TRUE
+#define STM32_HAS_USART2        TRUE
+#define STM32_HAS_USART3        TRUE
+#define STM32_HAS_UART4         TRUE
+#define STM32_HAS_UART5         TRUE
+#define STM32_HAS_USART6        FALSE
+
+#define STM32_HAS_USB           TRUE
+#define STM32_HAS_OTG1          FALSE
+#define STM32_HAS_OTG2          FALSE
+/** @} */
+#endif /* defined(STM32F10X_HD) */
+
+#if defined(STM32F10X_XL) || defined(__DOXYGEN__)
+/**
+ * @name    STM32F103 XL capabilities
+ * @{
+ */
+#define STM32_HAS_ADC1          TRUE
+#define STM32_HAS_ADC2          TRUE
+#define STM32_HAS_ADC3          TRUE
+
+#define STM32_HAS_CAN1          TRUE
+#define STM32_HAS_CAN2          FALSE
+
+#define STM32_HAS_DAC           TRUE
+
+#define STM32_HAS_DMA1          TRUE
+#define STM32_HAS_DMA2          TRUE
+
+#define STM32_HAS_ETH           FALSE
+
+#define STM32_EXTI_NUM_CHANNELS 19
+
+#define STM32_HAS_GPIOA         TRUE
+#define STM32_HAS_GPIOB         TRUE
+#define STM32_HAS_GPIOC         TRUE
+#define STM32_HAS_GPIOD         TRUE
+#define STM32_HAS_GPIOE         TRUE
+#define STM32_HAS_GPIOF         TRUE
+#define STM32_HAS_GPIOG         TRUE
+#define STM32_HAS_GPIOH         FALSE
+#define STM32_HAS_GPIOI         FALSE
+
+#define STM32_HAS_I2C1          TRUE
+#define STM32_HAS_I2C2          TRUE
+#define STM32_HAS_I2C3          FALSE
+
+#define STM32_HAS_RTC           TRUE
+
+#define STM32_HAS_SDIO          TRUE
+
+#define STM32_HAS_SPI1          TRUE
+#define STM32_HAS_SPI2          TRUE
+#define STM32_HAS_SPI3          TRUE
+
+#define STM32_HAS_TIM1          TRUE
+#define STM32_HAS_TIM2          TRUE
+#define STM32_HAS_TIM3          TRUE
+#define STM32_HAS_TIM4          TRUE
+#define STM32_HAS_TIM5          TRUE
+#define STM32_HAS_TIM6          TRUE
+#define STM32_HAS_TIM7          TRUE
+#define STM32_HAS_TIM8          TRUE
+#define STM32_HAS_TIM9          FALSE
+#define STM32_HAS_TIM10         FALSE
+#define STM32_HAS_TIM11         FALSE
+#define STM32_HAS_TIM12         FALSE
+#define STM32_HAS_TIM13         FALSE
+#define STM32_HAS_TIM14         FALSE
+#define STM32_HAS_TIM15         FALSE
+#define STM32_HAS_TIM16         FALSE
+#define STM32_HAS_TIM17         FALSE
+
+#define STM32_HAS_USART1        TRUE
+#define STM32_HAS_USART2        TRUE
+#define STM32_HAS_USART3        TRUE
+#define STM32_HAS_UART4         TRUE
+#define STM32_HAS_UART5         TRUE
+#define STM32_HAS_USART6        FALSE
+
+#define STM32_HAS_USB           TRUE
+#define STM32_HAS_OTG1          FALSE
+#define STM32_HAS_OTG2          FALSE
+/** @} */
+#endif /* defined(STM32F10X_XL) */
 
 /*===========================================================================*/
 /* Platform specific friendly IRQ names.                                     */
 /*===========================================================================*/
 
+/**
+ * @name  IRQ VECTOR names
+ * @{
+ */
 #define WWDG_IRQHandler         Vector40    /**< Window Watchdog.           */
 #define PVD_IRQHandler          Vector44    /**< PVD through EXTI Line
                                                  detect.                    */
@@ -165,6 +502,7 @@
 #define DMA2_Ch2_IRQHandler     Vector124   /**< DMA2 Channel2.             */
 #define DMA2_Ch3_IRQHandler     Vector128   /**< DMA2 Channel3.             */
 #define DMA2_Ch4_5_IRQHandler   Vector12C   /**< DMA2 Channel4 & Channel5.  */
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

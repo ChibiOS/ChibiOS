@@ -40,10 +40,25 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Platform identification
+ * @{
+ */
+#define PLATFORM_NAME           "STM32 Connectivity Line"
+/** @} */
+
+/**
+ * @name    Internal clock sources
+ * @{
+ */
 #define STM32_HSICLK            8000000     /**< High speed internal clock. */
 #define STM32_LSICLK            40000       /**< Low speed internal clock.  */
+/** @} */
 
-/* RCC_CFGR register bits definitions.*/
+/**
+ * @name    RCC_CFGR register bits definitions
+ * @{
+ */
 #define STM32_SW_HSI            (0 << 0)    /**< SYSCLK source is HSI.      */
 #define STM32_SW_HSE            (1 << 0)    /**< SYSCLK source is HSE.      */
 #define STM32_SW_PLL            (2 << 0)    /**< SYSCLK source is PLL.      */
@@ -97,15 +112,100 @@
 #define STM32_RTC_LSI           (2 << 8)    /**< LSI used as RTC clock.     */
 #define STM32_RTC_HSE           (3 << 8)    /**< HSE divided by 128 used as
                                                  RTC clock.                 */
+/** @} */
 
-/* RCC_CFGR2 register bits definitions.*/
+/**
+ * @name    RCC_CFGR2 register bits definitions
+ * @{
+ */
 #define STM32_PREDIV1SRC_HSE    (0 << 16)   /**< PREDIV1 source is HSE.     */
 #define STM32_PREDIV1SRC_PLL2   (1 << 16)   /**< PREDIV1 source is PLL2.    */
+/** @} */
+
+/*===========================================================================*/
+/* Platform capabilities.                                                    */
+/*===========================================================================*/
+
+/**
+ * @name    STM32F105/F107 CL capabilities
+ * @{
+ */
+#define STM32_HAS_ADC1          TRUE
+#define STM32_HAS_ADC2          TRUE
+#define STM32_HAS_ADC3          FALSE
+
+#define STM32_HAS_CAN1          TRUE
+#define STM32_HAS_CAN2          TRUE
+
+#define STM32_HAS_DAC           TRUE
+
+#define STM32_HAS_DMA1          TRUE
+#define STM32_HAS_DMA2          TRUE
+
+#define STM32_HAS_ETH           TRUE
+
+#define STM32_EXTI_NUM_CHANNELS 20
+
+#define STM32_HAS_GPIOA         TRUE
+#define STM32_HAS_GPIOB         TRUE
+#define STM32_HAS_GPIOC         TRUE
+#define STM32_HAS_GPIOD         TRUE
+#define STM32_HAS_GPIOE         TRUE
+#define STM32_HAS_GPIOF         FALSE
+#define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
+#define STM32_HAS_GPIOI         FALSE
+
+#define STM32_HAS_I2C1          TRUE
+#define STM32_HAS_I2C2          TRUE
+#define STM32_HAS_I2C3          FALSE
+
+#define STM32_HAS_RTC           TRUE
+
+#define STM32_HAS_SDIO          FALSE
+
+#define STM32_HAS_SPI1          TRUE
+#define STM32_HAS_SPI2          TRUE
+#define STM32_HAS_SPI3          TRUE
+
+#define STM32_HAS_TIM1          TRUE
+#define STM32_HAS_TIM2          TRUE
+#define STM32_HAS_TIM3          TRUE
+#define STM32_HAS_TIM4          TRUE
+#define STM32_HAS_TIM5          TRUE
+#define STM32_HAS_TIM6          TRUE
+#define STM32_HAS_TIM7          TRUE
+#define STM32_HAS_TIM8          FALSE
+#define STM32_HAS_TIM9          FALSE
+#define STM32_HAS_TIM10         FALSE
+#define STM32_HAS_TIM11         FALSE
+#define STM32_HAS_TIM12         FALSE
+#define STM32_HAS_TIM13         FALSE
+#define STM32_HAS_TIM14         FALSE
+#define STM32_HAS_TIM15         FALSE
+#define STM32_HAS_TIM16         FALSE
+#define STM32_HAS_TIM17         FALSE
+
+#define STM32_HAS_USART1        TRUE
+#define STM32_HAS_USART2        TRUE
+#define STM32_HAS_USART3        TRUE
+#define STM32_HAS_UART4         TRUE
+#define STM32_HAS_UART5         TRUE
+#define STM32_HAS_USART6        FALSE
+
+#define STM32_HAS_USB           FALSE
+#define STM32_HAS_OTG1          TRUE
+#define STM32_HAS_OTG2          FALSE
+/** @} */
 
 /*===========================================================================*/
 /* Platform specific friendly IRQ names.                                     */
 /*===========================================================================*/
 
+/**
+ * @name  IRQ VECTOR names
+ * @{
+ */
 #define WWDG_IRQHandler         Vector40    /**< Window Watchdog.           */
 #define PVD_IRQHandler          Vector44    /**< PVD through EXTI Line
                                                  detect.                    */
@@ -172,7 +272,8 @@
 #define CAN2_RX1_IRQHandler     Vector144   /**< CAN2 RX1.                  */
 #define CAN2_SCE_IRQHandler     Vector148   /**< CAN2 SCE.                  */
 #define OTG_FS_IRQHandler       Vector14C   /**< USB OTG FS.                */
-                                   
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/

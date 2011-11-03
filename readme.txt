@@ -76,7 +76,11 @@
 *** 2.3.4 ***
 - FIX: Fixed broken TIM8 support in STM32 PWM driver (bug 3418620).
 - FIX: Fixed halconf.h file corrupted in some STM32 demos (bug 3418626).
-- NEW: Added EXT driver implementation for AT91SAM7x contributed by Florian.
+- NEW: Reorganized the STM32F1xx hal_lld_xxx.h files in order to distribute
+  the capability macros into the appropriate file (previously those were all
+  in the common hal_lld.h).
+- NEW: Added USE_COPT setting to all makefiles, contributed by Mabl.
+- NEW: Added EXT driver implementation for AT91SAM7x, contributed by Florian.
   (TODO: Test application missing).
 - NEW: Updated USB driver model and STM32 implementation and fixed several
   problems.

@@ -44,14 +44,24 @@
 /*===========================================================================*/
 
 /**
- * @brief   Platform name.
+ * @name    Platform identification
+ * @{
  */
 #define PLATFORM_NAME           "STM32F2 High performance"
+/** @} */
 
+/**
+ * @name    Internal clock sources
+ * @{
+ */
 #define STM32_HSICLK            16000000    /**< High speed internal clock. */
 #define STM32_LSICLK            38000       /**< Low speed internal clock.  */
+/** @} */
 
-/* RCC_PLLCFGR register bits definitions.*/
+/**
+ * @name    RCC_PLLCFGR register bits definitions
+ * @{
+ */
 #define STM32_PLLP_MASK			(3 << 16)	/**< PLLP mask.                 */
 #define STM32_PLLP_DIV2			(0 << 16)	/**< PLL clock divided by 2.    */
 #define STM32_PLLP_DIV4			(1 << 16)	/**< PLL clock divided by 4.    */
@@ -60,8 +70,12 @@
 
 #define STM32_PLLSRC_HSI        (0 << 22)   /**< PLL clock source is HSI.   */
 #define STM32_PLLSRC_HSE        (1 << 22)   /**< PLL clock source is HSE.   */
+/** @} */
 
-/* RCC_CFGR register bits definitions.*/
+/**
+ * @name    RCC_CFGR register bits definitions
+ * @{
+ */
 #define STM32_SW_MASK           (3 << 0)    /**< SW mask.                   */
 #define STM32_SW_HSI            (0 << 0)    /**< SYSCLK source is HSI.      */
 #define STM32_SW_HSE            (1 << 0)    /**< SYSCLK source is HSE.      */
@@ -120,11 +134,22 @@
 #define STM32_MCO2SEL_HSE       (2 << 30)   /**< HSE clock on MCO2 pin.     */
 #define STM32_MCO2SEL_PLL       (3 << 30)   /**< PLL clock on MCO2 pin.     */
 
-/* RCC_PLLI2SCFGR register bits definitions.*/
+/**
+ * @name    RCC_PLLI2SCFGR register bits definitions
+ * @{
+ */
 #define STM32_PLLI2SN_MASK      (511 << 6)  /**< PLLI2SN mask.              */
 #define STM32_PLLI2SR_MASK      (7 << 28)   /**< PLLI2SR mask.              */
+/** @} */
 
-/* STM32F2xx capabilities.*/
+/*===========================================================================*/
+/* Platform capabilities.                                                    */
+/*===========================================================================*/
+
+/**
+ * @name    STM32F4xx capabilities
+ * @{
+ */
 #define STM32_HAS_ADC1          TRUE
 #define STM32_HAS_ADC2          TRUE
 #define STM32_HAS_ADC3          TRUE
@@ -153,6 +178,7 @@
 
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE
+#define STM32_HAS_I2C3          TRUE
 
 #define STM32_HAS_RTC           TRUE
 
@@ -189,11 +215,17 @@
 
 #define STM32_HAS_USB           FALSE
 #define STM32_HAS_OTG1          TRUE
+#define STM32_HAS_OTG2          TRUE
+/** @} */
 
 /*===========================================================================*/
 /* Platform specific friendly IRQ names.                                     */
 /*===========================================================================*/
 
+/**
+ * @name    IRQ VECTOR names
+ * @{
+ */
 #define WWDG_IRQHandler         Vector40    /**< Window Watchdog.           */
 #define PVD_IRQHandler          Vector44    /**< PVD through EXTI Line
                                                  detect.                    */
@@ -281,6 +313,8 @@
 #define DCMI_IRQHandler         Vector178   /**< DCMI.                      */ 
 #define CRYP_IRQHandler         Vector17C   /**< CRYP.                      */ 
 #define HASH_RNG_IRQHandler     Vector180   /**< Hash and Rng.              */ 
+#define FPU_IRQHandler          Vector184   /**< Floating Point Unit.       */
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -322,25 +356,11 @@
 #endif
 
 /**
- * @brief   ADC clock setting.
- */
-#if !defined(STM32_ADC_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_ADC_CLOCK_ENABLED     TRUE
-#endif
-
-/**
- * @brief   USB clock setting.
- */
-#if !defined(STM32_USB_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_USB_CLOCK_ENABLED     TRUE
-#endif
-
-/**
  * @brief   Main clock source selection.
  * @note    If the selected clock source is not the PLL then the PLL is not
  *          initialized and started.
- * @note    The default value is calculated for a 32MHz system clock from
- *          the internal 16MHz HSI clock.
+ * @note    The default value is calculated for a 168MHz system clock from
+ *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
 #define STM32_SW                    STM32_SW_PLL
@@ -350,8 +370,8 @@
  * @brief   Clock source for the PLL.
  * @note    This setting has only effect if the PLL is selected as the
  *          system clock source.
- * @note    The default value is calculated for a 120MHz system clock from
- *          the external 25MHz HSE clock.
+ * @note    The default value is calculated for a 168MHz system clock from
+ *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
 #define STM32_PLLSRC                STM32_PLLSRC_HSE
@@ -360,8 +380,8 @@
 /**
  * @brief   PLLM divider value.
  * @note    The allowed values are 2..63.
- * @note    The default value is calculated for a 120MHz system clock from
- *          an external 25MHz HSE clock.
+ * @note    The default value is calculated for a 168MHz system clock from
+ *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLM_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLM_VALUE          25
@@ -370,8 +390,8 @@
 /**
  * @brief   PLLN multiplier value.
  * @note    The allowed values are 192..432.
- * @note    The default value is calculated for a 120MHz system clock from
- *          an external 25MHz HSE clock.
+ * @note    The default value is calculated for a 168MHz system clock from
+ *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLN_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLN_VALUE          240
@@ -380,8 +400,8 @@
 /**
  * @brief   PLLP multiplier value.
  * @note    The allowed values are DIV2, DIV4, DIV6, DIV8.
- * @note    The default value is calculated for a 120MHz system clock from
- *          an external 25MHz HSE clock.
+ * @note    The default value is calculated for a 168MHz system clock from
+ *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLP_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLP_VALUE          2
@@ -390,8 +410,8 @@
 /**
  * @brief   PLLQ multiplier value.
  * @note    The allowed values are 4..15.
- * @note    The default value is calculated for a 120MHz system clock from
- *          an external 25MHz HSE clock.
+ * @note    The default value is calculated for a 168MHz system clock from
+ *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLQ_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLQ_VALUE          5
@@ -399,8 +419,8 @@
 
 /**
  * @brief   AHB prescaler value.
- * @note    The default value is calculated for a 120MHz system clock from
- *          an external 25MHz HSE clock.
+ * @note    The default value is calculated for a 168MHz system clock from
+ *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_HPRE) || defined(__DOXYGEN__)
 #define STM32_HPRE                  STM32_HPRE_DIV1
