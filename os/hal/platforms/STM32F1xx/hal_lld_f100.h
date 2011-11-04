@@ -45,13 +45,13 @@
  * @{
  */
 #if defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32 Value Line"
+#define PLATFORM_NAME           "STM32F1 Value Line"
 
 #elif defined(STM32F10X_LD_VL)
-#define PLATFORM_NAME           "STM32 Value Line Low Density"
+#define PLATFORM_NAME           "STM32F1 Value Line Low Density"
 
 #elif defined(STM32F10X_MD_VL)
-#define PLATFORM_NAME           "STM32 Value Line Medium Density"
+#define PLATFORM_NAME           "STM32F1 Value Line Medium Density"
 #else
 #error "unsupported STM32 Value Line member"
 #endif

@@ -39,6 +39,12 @@
 #define STM32_HSECLK            8000000
 
 /*
+ * Board voltages.
+ * Required for performance limits calculation.
+ */
+#define STM32_VDD               300
+
+/*
  * MCU type as defined in the ST header file stm32l1xx.h.
  */
 #define STM32F4XX
