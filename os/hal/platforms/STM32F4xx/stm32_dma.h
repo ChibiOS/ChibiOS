@@ -155,7 +155,7 @@
  * @brief   STM32 DMA stream descriptor structure.
  */
 typedef struct {
-  DMA_Channel_TypeDef   *channel;       /**< @brief Associated DMA channel. */
+  DMA_Stream_TypeDef    *stream;       /**< @brief Associated DMA channel. */
   volatile uint32_t     *ifcr;          /**< @brief Associated IFCR reg.    */
   uint8_t               ishift;         /**< @brief Bits offset in xIFCR
                                              register.                      */

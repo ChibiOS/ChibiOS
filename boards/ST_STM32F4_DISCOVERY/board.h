@@ -56,7 +56,7 @@
 #define GPIOA_LRCK              4
 #define GPIOA_SPC               5
 #define GPIOA_SDO               6
-#define GPIOA_SDA_SDI_SDO       7
+#define GPIOA_SDI               7
 #define GPIOA_VBUS_FS           9
 #define GPIOA_OTG_FS_ID         10
 #define GPIOA_OTG_FS_DM         11
@@ -107,7 +107,7 @@
 #define PIN_PUDR_FLOATING(n)        (0U << ((n) * 2))
 #define PIN_PUDR_PULLUP(n)          (1U << ((n) * 2))
 #define PIN_PUDR_PULLDOWN(n)        (2U << ((n) * 2))
-#define PIN_AFIO_AF(n, v)           ((v)U << ((n % 8) * 4))
+#define PIN_AFIO_AF(n, v)           ((v##U) << ((n % 8) * 4))
 
 /*
  * Port A setup.
@@ -206,7 +206,7 @@
                                      PIN_PUDR_PULLUP(7) |                   \
                                      PIN_PUDR_PULLUP(8) |                   \
                                      PIN_PUDR_FLOATING(GPIOB_SDA) |         \
-                                     PIN_PUDR_FLOATING(GPIOB_SCK |          \
+                                     PIN_PUDR_FLOATING(GPIOB_SCK) |         \
                                      PIN_PUDR_PULLUP(11) |                  \
                                      PIN_PUDR_PULLUP(12) |                  \
                                      PIN_PUDR_PULLUP(13) |                  \
@@ -340,7 +340,7 @@
                                      PIN_MODE_INPUT(15))
 #define VAL_GPIOE_OTYPER            0x00000000
 #define VAL_GPIOE_OSPEEDR           0xFFFFFFFF
-#define VAL_GPIOE_PUPDR             (PIN_PUDR_FLOATING(0GPIOE_INT1) |       \
+#define VAL_GPIOE_PUPDR             (PIN_PUDR_FLOATING(GPIOE_INT1) |       \
                                      PIN_PUDR_FLOATING(GPIOE_INT2) |        \
                                      PIN_PUDR_PULLUP(2) |                   \
                                      PIN_PUDR_FLOATING(GPIOE_CS_SPI) |      \

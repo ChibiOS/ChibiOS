@@ -781,13 +781,13 @@
 #error "STM32_LSECLK outside acceptable range (STM32_LSECLK_MIN...STM32_LSECLK_MAX)"
 #endif
 
-#else /* !#if STM32_LSE_ENABLED */
+#else /* !STM32_LSE_ENABLED */
 
 #if STM32_RTCSEL == STM32_RTCSEL_LSE
 #error "LSE not enabled, required by STM32_RTCSEL"
 #endif
 
-#endif /* !#if STM32_LSE_ENABLED */
+#endif /* !STM32_LSE_ENABLED */
 
 /**
  * @brief   STM32_PLLM field.
@@ -1208,8 +1208,9 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/* STM32 DMA support code.*/
+/* STM32 DMA and RCC helpers.*/
 #include "stm32_dma.h"
+#include "stm32_rcc.h"
 
 #ifdef __cplusplus
 extern "C" {

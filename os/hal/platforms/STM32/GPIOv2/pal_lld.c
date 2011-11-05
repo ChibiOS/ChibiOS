@@ -40,7 +40,14 @@
                          RCC_AHB1ENR_GPIOCEN | RCC_AHB1ENR_GPIODEN |        \
                          RCC_AHB1ENR_GPIOEEN | RCC_AHB1ENR_GPIOFEN |        \
                          RCC_AHB1ENR_GPIOGEN | RCC_AHB1ENR_GPIOHEN |        \
-					     RCC_AHB1ENR_GPIOIEN)
+                         RCC_AHB1ENR_GPIOIEN)
+#define AHB1_LPEN_MASK  AHB1_EN_MASK
+#elif defined(STM32F4XX)
+#define AHB1_EN_MASK    (RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOBEN |        \
+                         RCC_AHB1ENR_GPIOCEN | RCC_AHB1ENR_GPIODEN |        \
+                         RCC_AHB1ENR_GPIOEEN | RCC_AHB1ENR_GPIOFEN |        \
+                         RCC_AHB1ENR_GPIOGEN | RCC_AHB1ENR_GPIOHEN |        \
+                         RCC_AHB1ENR_GPIOIEN)
 #define AHB1_LPEN_MASK  AHB1_EN_MASK
 #else
 #error "missing or usupported platform for GPIOv2 PAL driver"

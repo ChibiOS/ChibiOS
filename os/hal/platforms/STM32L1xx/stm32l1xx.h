@@ -411,6 +411,7 @@ typedef struct
 /**
   * @brief General Purpose IO
   */
+/* CHIBIOS FIX */
 #if 0
 typedef struct
 {
@@ -428,6 +429,7 @@ typedef struct
   __IO uint32_t LCKR;
   __IO uint32_t AFR[2];
 } GPIO_TypeDef;
+#endif
 #endif
 
 /**
