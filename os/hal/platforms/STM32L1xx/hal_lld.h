@@ -464,19 +464,34 @@
 /* Voltage related limits.*/
 #if (STM32_VOS == STM32_VOS_1P8) || defined(__DOXYGEN__)
 /**
- * @brief   Maximum HSECLK at current voltage setting.
+ * @brief   Maximum HSE clock frequency at current voltage setting.
  */
 #define STM32_HSECLK_MAX            32000000
 
 /**
- * @brief   Maximum SYSCLK at current voltage setting.
+ * @brief   Maximum SYSCLK clock frequency at current voltage setting.
  */
 #define STM32_SYSCLK_MAX            32000000
 
 /**
- * @brief   Maximum PLLCLKOUT at current voltage setting.
+ * @brief   Maximum VCO clock frequency at current voltage setting.
  */
-#define STM32_PLLCLKOUT_MAX         96000000
+#define STM32_PLLVCO_MAX            96000000
+
+/**
+ * @brief   Minimum VCO clock frequency at current voltage setting.
+ */
+#define STM32_PLLVCO_MIN            6000000
+
+/**
+ * @brief   Maximum APB1 clock frequency.
+ */
+#define STM32_PCLK1_MAX             32000000
+
+/**
+ * @brief   Maximum APB2 clock frequency.
+ */
+#define STM32_PCLK2_MAX             32000000
 
 /**
  * @brief   Maximum frequency not requiring a wait state for flash accesses.
@@ -491,13 +506,19 @@
 #elif STM32_VOS == STM32_VOS_1P5
 #define STM32_HSECLK_MAX            16000000
 #define STM32_SYSCLK_MAX            16000000
-#define STM32_PLLCLKOUT_MAX         48000000
+#define STM32_PLLVCO_MAX            48000000
+#define STM32_PLLVCO_MIN            6000000
+#define STM32_PCLK1_MAX             16000000
+#define STM32_PCLK2_MAX             16000000
 #define STM32_0WS_THRESHOLD         8000000
 #define STM32_HSI_AVAILABLE         TRUE
 #elif STM32_VOS == STM32_VOS_1P2
 #define STM32_HSECLK_MAX            4000000
 #define STM32_SYSCLK_MAX            4000000
-#define STM32_PLLCLKOUT_MAX         24000000
+#define STM32_PLLVCO_MAX            24000000
+#define STM32_PLLVCO_MIN            6000000
+#define STM32_PCLK1_MAX             4000000
+#define STM32_PCLK2_MAX             4000000
 #define STM32_0WS_THRESHOLD         2000000
 #define STM32_HSI_AVAILABLE         FALSE
 #else
@@ -636,8 +657,8 @@
 #define STM32_PLLVCO                (STM32_PLLCLKIN * STM32_PLLMUL_VALUE)
 
 /* PLL output frequency range check.*/
-#if (STM32_PLLVCO < 6000000) || (STM32_PLLVCO > 96000000)
-#error "STM32_PLLVCO outside acceptable range (6...96MHz)"
+#if (STM32_PLLVCO < STM32_PLLVCO_MIN) || (STM32_PLLVCO > STM32_PLLVCO_MAX)
+#error "STM32_PLLVCO outside acceptable range (STM32_PLLVCO_MIN...STM32_PLLVCO_MAX)"
 #endif
 
 /**
@@ -742,8 +763,8 @@
 #endif
 
 /* APB1 frequency check.*/
-#if STM32_PCLK2 > STM32_SYSCLK_MAX
-#error "STM32_PCLK1 exceeding maximum frequency (STM32_SYSCLK_MAX)"
+#if STM32_PCLK1 > STM32_PCLK1_MAX
+#error "STM32_PCLK1 exceeding maximum frequency (STM32_PCLK1_MAX)"
 #endif
 
 /**
@@ -764,8 +785,8 @@
 #endif
 
 /* APB2 frequency check.*/
-#if STM32_PCLK2 > STM32_SYSCLK_MAX
-#error "STM32_PCLK2 exceeding maximum frequency (STM32_SYSCLK_MAX)"
+#if STM32_PCLK2 > STM32_PCLK2_MAX
+#error "STM32_PCLK2 exceeding maximum frequency (STM32_PCLK2_MAX)"
 #endif
 
 /**
@@ -810,13 +831,13 @@
  * @brief   HSE divider toward RTC clock.
  */
 #if (STM32_RTCPRE == STM32_RTCPRE_DIV2) || defined(__DOXYGEN__)
-#define STM32_HSEDIVCLK             (HSECLK / 2)
+#define STM32_HSEDIVCLK             (STM32_HSECLK / 2)
 #elif (STM32_RTCPRE == STM32_RTCPRE_DIV4) || defined(__DOXYGEN__)
-#define STM32_HSEDIVCLK             (HSECLK / 4)
+#define STM32_HSEDIVCLK             (STM32_HSECLK / 4)
 #elif (STM32_RTCPRE == STM32_RTCPRE_DIV8) || defined(__DOXYGEN__)
-#define STM32_HSEDIVCLK             (HSECLK / 8)
+#define STM32_HSEDIVCLK             (STM32_HSECLK / 8)
 #elif (STM32_RTCPRE == STM32_RTCPRE_DIV16) || defined(__DOXYGEN__)
-#define STM32_HSEDIVCLK             (HSECLK / 16)
+#define STM32_HSEDIVCLK             (STM32_HSECLK / 16)
 #else
 #error "invalid STM32_RTCPRE value specified"
 #endif
