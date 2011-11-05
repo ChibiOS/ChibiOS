@@ -76,22 +76,22 @@
 #define STM32_LSECLK_MIN            1000
 
 /**
- * @brief   Maximum PLL input clock frequency.
+ * @brief   Maximum PLLs input clock frequency.
  */
 #define STM32_PLLIN_MAX             2000000
 
 /**
- * @brief   Maximum PLL input clock frequency.
+ * @brief   Maximum PLLs input clock frequency.
  */
 #define STM32_PLLIN_MIN             950000
 
 /**
- * @brief   Maximum PLLCLKOUT clock frequency.
+ * @brief   Maximum PLLs VCO clock frequency.
  */
 #define STM32_PLLVCO_MAX            432000000
 
 /**
- * @brief   Maximum PLLCLKOUT clock frequency.
+ * @brief   Maximum PLLs VCO clock frequency.
  */
 #define STM32_PLLVCO_MIN            192000000
 
@@ -114,6 +114,11 @@
  * @brief   Maximum APB2 clock frequency.
  */
 #define STM32_PCLK2_MAX             84000000
+
+/**
+ * @brief   Maximum SPI/I2S clock frequency.
+ */
+#define STM32_SPII2S_MAX            37500000
 /** @} */
 
 /**
@@ -458,15 +463,8 @@
 /**
  * @brief   USB clock setting.
  */
-#if !defined(STM32_USB_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_USB_CLOCK_ENABLED     TRUE
-#endif
-
-/**
- * @brief   Enables or disables the I2S clock source.
- */
-#if !defined(STM32_I2S_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_I2S_CLOCK_ENABLED     FALSE
+#if !defined(STM32_CLOCK48_REQUIRED) || defined(__DOXYGEN__)
+#define STM32_CLOCK48_REQUIRED      TRUE
 #endif
 
 /**
@@ -601,17 +599,10 @@
 #endif
 
 /**
- * @brief   Enables or disables the I2S clock source.
- */
-#if !defined(STM32_I2S_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_I2S_CLOCK_ENABLED           FALSE
-#endif
-
-/**
  * @brief   I2S clock source.
  */
 #if !defined(STM32_I2SSRC) || defined(__DOXYGEN__)
-#define STM32_I2SSRC                STM32_I2CSRC_PLLI2S
+#define STM32_I2SSRC                STM32_I2CSRC_CKIN
 #endif
 
 /**
@@ -714,10 +705,9 @@
 #error "HSI not enabled, required by STM32_MCO2SEL"
 #endif
 
-#if STM32_I2S_CLOCK_ENABLED &&                                                    \
-    (STM32_I2SSRC == STM32_I2CSRC_PLLI2S) &&                                \
+#if (STM32_I2SSRC == STM32_I2CSRC_PLLI2S) &&                                \
     (STM32_PLLSRC == STM32_PLLSRC_HSI)
-#error "HSI not enabled, required by STM32_I2S_CLOCK_ENABLED and STM32_I2SSRC"
+#error "HSI not enabled, required by STM32_I2SSRC"
 #endif
 
 #endif /* !STM32_HSI_ENABLED */
@@ -755,10 +745,9 @@
 #error "HSE not enabled, required by STM32_MCO2SEL"
 #endif
 
-#if STM32_I2S_CLOCK_ENABLED &&                                                    \
-    (STM32_I2SSRC == STM32_I2CSRC_PLLI2S) &&                                \
+#if (STM32_I2SSRC == STM32_I2CSRC_PLLI2S) &&                                \
     (STM32_PLLSRC == STM32_PLLSRC_HSE)
-#error "HSE not enabled, required by STM32_I2S_CLOCK_ENABLED and STM32_I2SSRC"
+#error "HSE not enabled, required by STM32_I2SSRC"
 #endif
 
 #if STM32_RTCSEL == STM32_RTCSEL_HSEDIV
@@ -800,10 +789,38 @@
 
 #endif /* !#if STM32_LSE_ENABLED */
 
-/*
- * PLL related checks.
+/**
+ * @brief   STM32_PLLM field.
  */
-#if STM32_USB_CLOCK_ENABLED ||                                              \
+#if ((STM32_PLLM_VALUE >= 2) && (STM32_PLLM_VALUE <= 63)) ||                \
+    defined(__DOXYGEN__)
+#define STM32_PLLM                  (STM32_PLLM_VALUE << 0)
+#else
+#error "invalid STM32_PLLM_VALUE value specified"
+#endif
+
+/**
+ * @brief   PLLs input clock frequency.
+ */
+#if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
+#define STM32_PLLCLKIN              (STM32_HSECLK / STM32_PLLM_VALUE)
+#elif STM32_PLLSRC == STM32_PLLSRC_HSI
+#define STM32_PLLCLKIN              (STM32_HSICLK / STM32_PLLM_VALUE)
+#else
+#error "invalid STM32_PLLSRC value specified"
+#endif
+
+/*
+ * PLLs input frequency range check.
+ */
+#if (STM32_PLLCLKIN < STM32_PLLIN_MIN) || (STM32_PLLCLKIN > STM32_PLLIN_MAX)
+#error "STM32_PLLCLKIN outside acceptable range (STM32_PLLIN_MIN...STM32_PLLIN_MAX)"
+#endif
+
+/*
+ * PLL enable check.
+ */
+#if STM32_CLOCK48_REQUIRED ||                                               \
     (STM32_SW == STM32_SW_PLL) ||                                           \
     (STM32_MCO1SEL == STM32_MCO1SEL_PLL) ||                                 \
     (STM32_MCO2SEL == STM32_MCO2SEL_PLL) ||                                 \
@@ -814,16 +831,6 @@
 #define STM32_ACTIVATE_PLL          TRUE
 #else
 #define STM32_ACTIVATE_PLL          FALSE
-#endif
-
-/**
- * @brief   STM32_PLLM field.
- */
-#if ((STM32_PLLM_VALUE >= 2) && (STM32_PLLM_VALUE <= 63)) ||                \
-    defined(__DOXYGEN__)
-#define STM32_PLLM                  (STM32_PLLM_VALUE << 0)
-#else
-#error "invalid STM32_PLLM_VALUE value specified"
 #endif
 
 /**
@@ -854,7 +861,7 @@
 /**
  * @brief   STM32_PLLQ field.
  */
-#if ((STM32_PLLQ_VALUE >= 4) && (STM32_PLLQ_VALUE <= 15)) || \
+#if ((STM32_PLLQ_VALUE >= 4) && (STM32_PLLQ_VALUE <= 15)) ||                \
     defined(__DOXYGEN__)
 #define STM32_PLLQ                  (STM32_PLLQ_VALUE << 24)
 #else
@@ -862,31 +869,14 @@
 #endif
 
 /**
- * @brief   PLL input clock frequency.
- */
-#if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
-#define STM32_PLLCLKIN              (STM32_HSECLK / STM32_PLLM_VALUE)
-#elif STM32_PLLSRC == STM32_PLLSRC_HSI
-#define STM32_PLLCLKIN              (STM32_HSICLK / STM32_PLLM_VALUE)
-#else
-#error "invalid STM32_PLLSRC value specified"
-#endif
-
-/* PLL input frequency range check.*/
-#if (STM32_PLLCLKIN < STM32_PLLIN_MIN) || (STM32_PLLCLKIN > STM32_PLLIN_MAX)
-#error "STM32_PLLCLKIN outside acceptable range (STM32_PLLIN_MIN...STM32_PLLIN_MAX)"
-#endif
-
-/**
  * @brief   PLL VCO frequency.
  */
-#define STM32_PLLVCO              (STM32_PLLCLKIN * STM32_PLLN_VALUE)
+#define STM32_PLLVCO                (STM32_PLLCLKIN * STM32_PLLN_VALUE)
 
 /*
- * PLL output frequency range check.
+ * PLL VCO frequency range check.
  */
 #if (STM32_PLLVCO < STM32_PLLVCO_MIN) || (STM32_PLLVCO > STM32_PLLVCO_MAX)
-#error STM32_PLLVCO
 #error "STM32_PLLVCO outside acceptable range (STM32_PLLVCO_MIN...STM32_PLLVCO_MAX)"
 #endif
 
@@ -895,7 +885,9 @@
  */
 #define STM32_PLLCLKOUT             (STM32_PLLVCO / STM32_PLLP_VALUE)
 
-/* PLL output frequency range check.*/
+/*
+ * PLL output frequency range check.
+ */
 #if (STM32_PLLCLKOUT < STM32_PLLOUT_MIN) || (STM32_PLLCLKOUT > STM32_PLLOUT_MAX)
 #error "STM32_PLLCLKOUT outside acceptable range (STM32_PLLOUT_MIN...STM32_PLLOUT_MAX)"
 #endif
@@ -1000,14 +992,61 @@
 #error "STM32_PCLK2 exceeding maximum frequency (STM32_PCLK2_MAX)"
 #endif
 
-/**
- * @brief   RTC frequency.
+/*
+ * PLLI2S enable check.
  */
-#if ((STM32_RTCPRE_VALUE >= 2) && (STM32_RTCPRE_VALUE <= 31)) ||             \
-    defined(__DOXYGEN__)
-#define STM32_RTCPRE                  (STM32_RTCPRE_VALUE << 16)
+#if (STM32_I2CSRC == STM32_I2CSRC_PLLI2S) || defined(__DOXYGEN__)
+/**
+ * @brief   PLL activation flag.
+ */
+#define STM32_ACTIVATE_PLLI2S       TRUE
 #else
-#error "invalid STM32_RTCPRE value specified"
+#define STM32_ACTIVATE_PLLI2S       FALSE
+#endif
+
+/**
+ * @brief   STM32_PLLI2SN field.
+ */
+#if ((STM32_PLLI2SN_VALUE >= 192) && (STM32_PLLI2SN_VALUE <= 432)) ||       \
+    defined(__DOXYGEN__)
+#define STM32_PLLI2SN               (STM32_PLLI2SN_VALUE << 6)
+#else
+#error "invalid STM32_PLLI2SN_VALUE value specified"
+#endif
+
+/**
+ * @brief   STM32_PLLI2SR field.
+ */
+#if ((STM32_PLLI2SR_VALUE >= 2) && (STM32_PLLI2SR_VALUE <= 7)) ||           \
+    defined(__DOXYGEN__)
+#define STM32_PLLI2SR               (STM32_PLLI2SR_VALUE << 28)
+#else
+#error "invalid STM32_PLLI2SR_VALUE value specified"
+#endif
+
+/**
+ * @brief   PLL VCO frequency.
+ */
+#define STM32_PLLI2SVCO             (STM32_PLLCLKIN * STM32_PLLI2SN_VALUE)
+
+/*
+ * PLLI2S VCO frequency range check.
+ */
+#if (STM32_PLLI2SVCO < STM32_PLLVCO_MIN) ||                                 \
+    (STM32_PLLI2SVCO > STM32_PLLVCO_MAX)
+#error "STM32_PLLI2SVCO outside acceptable range (STM32_PLLVCO_MIN...STM32_PLLVCO_MAX)"
+#endif
+
+/**
+ * @brief   PLLI2S output clock frequency.
+ */
+#define STM32_PLLI2SCLKOUT          (STM32_PLLI2SVCO / STM32_PLLI2SR)
+
+/*
+ * PLLI2S output frequency range check.
+ */
+#if STM32_PLLI2SCLKOUT > STM32_SPII2S_MAX
+#error "STM32_PLLI2SCLKOUT outside acceptable range (STM32_SPII2S_MAX)"
 #endif
 
 /**
@@ -1085,6 +1124,16 @@
 #endif
 
 /**
+ * @brief   RTC HSE divider setting.
+ */
+#if ((STM32_RTCPRE_VALUE >= 2) && (STM32_RTCPRE_VALUE <= 31)) ||            \
+    defined(__DOXYGEN__)
+#define STM32_RTCPRE                (STM32_RTCPRE_VALUE << 16)
+#else
+#error "invalid STM32_RTCPRE value specified"
+#endif
+
+/**
  * @brief   RTC clock.
  */
 #if (STM32_RTCSEL == STM32_RTCSEL_NOCLOCK) || defined(__DOXYGEN__)
@@ -1100,9 +1149,13 @@
 #endif
 
 /**
- * @brief   OTG frequency.
+ * @brief   48MHz frequency.
  */
-#define STM32_OTGFSCLK              (STM32_PLLVCO / STM32_PLLQ_VALUE)
+#if STM32_CLOCK48_REQUIRED || defined(__DOXYGEN__)
+#define STM32_PLL48CLK              (STM32_PLLVCO / STM32_PLLQ_VALUE)
+#else
+#define STM32_PLL48CLK              0
+#endif
 
 /**
  * @brief   Timers 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14 clock.
@@ -1156,7 +1209,7 @@
 /*===========================================================================*/
 
 /* STM32 DMA support code.*/
-//#include "stm32_dma.h"
+#include "stm32_dma.h"
 
 #ifdef __cplusplus
 extern "C" {
