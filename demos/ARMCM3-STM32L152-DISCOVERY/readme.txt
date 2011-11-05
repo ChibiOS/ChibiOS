@@ -4,7 +4,7 @@
 
 ** TARGET **
 
-The demo runs on an ST STM32VL-Discovery board.
+The demo runs on an ST STM32L-Discovery board.
 
 ** The Demo **
 
