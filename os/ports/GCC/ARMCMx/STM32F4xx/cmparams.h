@@ -19,13 +19,13 @@
 */
 
 /**
- * @file    GCC/ARMCMx/STM32F1xx/cmparams.h
- * @brief   ARM Cortex-M3 parameters for the STM32F1xx.
+ * @file    GCC/ARMCMx/STM32F4xx/cmparams.h
+ * @brief   ARM Cortex-M3 parameters for the STM32F4xx.
  *
- * @defgroup ARMCMx_STM32F1xx STM32F1xx Specific Parameters
+ * @defgroup ARMCMx_STM32F4xx STM32F4xx Specific Parameters
  * @ingroup ARMCMx_SPECIFIC
  * @details This file contains the Cortex-M3 specific parameters for the
- *          STM32F1xx platform.
+ *          STM32F4xx platform.
  * @{
  */
 
