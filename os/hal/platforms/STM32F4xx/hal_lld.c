@@ -58,11 +58,12 @@
  */
 void hal_lld_init(void) {
 
-  /* Reset of all peripherals.*/
-//  RCC->APB1RSTR = 0xFFFFFFFF;
-//  RCC->APB2RSTR = 0xFFFFFFFF;
-//  RCC->APB1RSTR = 0;
-//  RCC->APB2RSTR = 0;
+  /* Reset of all peripherals. AHB3 is not reseted because it could have
+     been initialized in the board initialization file (board.c).*/
+  rccResetAHB1(!0);
+  rccResetAHB2(!0);
+  rccResetAPB1(!RCC_APB1RSTR_PWRRST);
+  rccResetAPB2(!RCC_APB2RSTR_SYSCFGRST);
 
   /* SysTick initialization using the system clock.*/
   SysTick->LOAD = STM32_HCLK / CH_FREQUENCY - 1;
@@ -70,8 +71,6 @@ void hal_lld_init(void) {
   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
                   SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
-
-  
 
 #if defined(STM32_DMA_REQUIRED)
   dmaInit();
