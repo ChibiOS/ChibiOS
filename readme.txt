@@ -74,11 +74,15 @@
 *****************************************************************************
 
 *** 2.3.4 ***
+- FIX: Fixed broken support for UART5 in STM32 serial driver (bug 3434094)
+  (backported to 2.2.8).
 - FIX: Fixed broken TIM8 support in STM32 PWM driver (bug 3418620).
 - FIX: Fixed halconf.h file corrupted in some STM32 demos (bug 3418626).
 - NEW: Reorganized the STM32F1xx hal_lld_xxx.h files in order to distribute
   the capability macros into the appropriate file (previously those were all
   in the common hal_lld.h).
+- NEW: Added HAL support for the STM32F4xx sub-family.
+- NEW: Added handling of USART6 to the STM32 serial driver.
 - NEW: Added USE_COPT setting to all makefiles, contributed by Mabl.
 - NEW: Added EXT driver implementation for AT91SAM7x, contributed by Florian.
   (TODO: Test application missing).
@@ -111,7 +115,7 @@
 - FIX: Fixed uninitialized variable in STM32 PWM and ICU drivers (bug 3413558).
 - FIX: Fixed wrong parameter passed to the DMA error hook in STM32 ADC driver,
   the DMA error hook has been removed entirely in the new ADC driver model
-  (bug 3413214)(to be fixed in 2.2.8).
+  (bug 3413214).
 - FIX: The function chThdExit() triggers an error on shell return when the
   system state checker is enabled (bug 3411207)(backported to 2.2.8).
 - FIX: Some ARMCMx makefiles refer the file rules.mk in the ARM7 port (bug

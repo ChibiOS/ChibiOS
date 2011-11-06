@@ -60,6 +60,11 @@ SerialDriver SD4;
 SerialDriver SD5;
 #endif
 
+/** @brief USART6 serial driver identifier.*/
+#if STM32_SERIAL_USE_USART6 || defined(__DOXYGEN__)
+SerialDriver SD6;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -127,7 +132,7 @@ static void usart_deinit(USART_TypeDef *u) {
 
 #if STM32_SERIAL_USE_USART1 || STM32_SERIAL_USE_USART2 ||                   \
     STM32_SERIAL_USE_USART3 || STM32_SERIAL_USE_UART4  ||                   \
-    USE_STM32_USART5
+    STM32_SERIAL_USE_UART5  || STM32_SERIAL_USE_USART6
 /**
  * @brief   Error handling routine.
  *
@@ -241,6 +246,14 @@ static void notify5(GenericQueue *qp) {
 }
 #endif
 
+#if STM32_SERIAL_USE_USART6 || defined(__DOXYGEN__)
+static void notify6(GenericQueue *qp) {
+
+  (void)qp;
+  USART6->CR1 |= USART_CR1_TXEIE;
+}
+#endif
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -325,6 +338,22 @@ CH_IRQ_HANDLER(UART5_IRQHandler) {
 }
 #endif
 
+#if STM32_SERIAL_USE_USART6 || defined(__DOXYGEN__)
+/**
+ * @brief   USART1 interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(USART6_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  serve_interrupt(&SD6);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -359,6 +388,11 @@ void sd_lld_init(void) {
 #if STM32_SERIAL_USE_UART5
   sdObjectInit(&SD5, NULL, notify5);
   SD5.usart = UART5;
+#endif
+
+#if STM32_SERIAL_USE_USART6
+  sdObjectInit(&SD6, NULL, notify6);
+  SD6.usart = USART6;
 #endif
 }
 
@@ -413,6 +447,13 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_UART5_PRIORITY));
     }
 #endif
+#if STM32_SERIAL_USE_USART6
+    if (&SD6 == sdp) {
+      rccEnableUSART6(FALSE);
+      NVICEnableVector(USART6_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_SERIAL_USART6_PRIORITY));
+    }
+#endif
   }
   usart_init(sdp, config);
 }
@@ -462,6 +503,13 @@ void sd_lld_stop(SerialDriver *sdp) {
     if (&SD5 == sdp) {
       rccDisableUART5(FALSE);
       NVICDisableVector(UART5_IRQn);
+      return;
+    }
+#endif
+#if STM32_SERIAL_USE_USART6
+    if (&SD6 == sdp) {
+      rccDisableUSART6(FALSE);
+      NVICDisableVector(USART6_IRQn);
       return;
     }
 #endif
