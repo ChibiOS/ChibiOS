@@ -129,7 +129,7 @@ static void usart_deinit(USART_TypeDef *u) {
 
 #if STM32_SERIAL_USE_USART1 || STM32_SERIAL_USE_USART2 ||                   \
     STM32_SERIAL_USE_USART3 || STM32_SERIAL_USE_UART4  ||                   \
-    USE_STM32_USART5
+    STM32_SERIAL_USE_UART5
 /**
  * @brief   Error handling routine.
  *

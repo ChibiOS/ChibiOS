@@ -71,6 +71,7 @@
 *** 2.2.8 ***
 - NEW: Added new API chThdExitS() in order to allow atomic operations on
   thead exit.
+- FIX: Fixed broken support for UART5 in STM32 serial driver (bug 3434094).
 - FIX: Fixed misplaced chRegSetThreadName() in ARM7-AT91SAM7S-FATFS-GCC demo
   (bug 3411780).
 - FIX: Fixed missing UART5 definition in STM32 HAL (bug 3411774).
