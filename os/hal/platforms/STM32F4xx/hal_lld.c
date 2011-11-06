@@ -142,7 +142,8 @@ void stm32_clock_init(void) {
                STM32_RTCPRE | STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;
 
   /* Flash setup.*/
-  FLASH->ACR = FLASH_ACR_PRFTEN | FLASH_ACR_ICEN | FLASH_ACR_DCEN | STM32_FLASHBITS;
+  FLASH->ACR = FLASH_ACR_PRFTEN | FLASH_ACR_ICEN | FLASH_ACR_DCEN |
+               STM32_FLASHBITS;
 
   /* Switching to the configured clock source if it is different from MSI.*/
 #if (STM32_SW != STM32_SW_HSI)
