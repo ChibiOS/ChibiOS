@@ -159,6 +159,7 @@ static void spicb(SPIDriver *spip) {
  * a seconds counter.
  */
 static WORKING_AREA(waThread1, 128);
+#if 0
 static msg_t Thread1(void *arg) {
   static uint32_t seconds_counter;
 
@@ -169,6 +170,19 @@ static msg_t Thread1(void *arg) {
     seconds_counter++;
   }
 }
+#else
+static msg_t Thread1(void *arg) {
+
+  (void)arg;
+  chRegSetThreadName("blinker");
+  while (TRUE) {
+    palSetPad(GPIOD, GPIOD_LED5);
+    chThdSleepMilliseconds(500);
+    palClearPad(GPIOD, GPIOD_LED5);
+    chThdSleepMilliseconds(500);
+  }
+}
+#endif
 
 /*
  * Application entry point.

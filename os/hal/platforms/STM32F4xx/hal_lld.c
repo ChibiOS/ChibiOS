@@ -84,10 +84,6 @@ void hal_lld_init(void) {
  *
  * @special
  */
-#if defined(STM32F2XX) || defined(__DOXYGEN__)
-/**
- * @brief   Clocks and internal voltage initialization.
- */
 void stm32_clock_init(void) {
 
 #if !STM32_NO_INIT
@@ -135,7 +131,7 @@ void stm32_clock_init(void) {
 
 #if STM32_ACTIVATE_PLLI2S
   /* PLLI2S activation.*/
-  RCC->PLLI2SCFGR = STM32_PLI2SR_VALUE | STM32_PLLI2SN_VALUE;
+  RCC->PLLI2SCFGR = STM32_PLLI2SR_VALUE | STM32_PLLI2SN_VALUE;
   RCC->CR |= RCC_CR_PLLI2SON;
   while (!(RCC->CR & RCC_CR_PLLI2SRDY))
     ;                           /* Waits until PLLI2S is stable.            */
@@ -145,19 +141,16 @@ void stm32_clock_init(void) {
   RCC->CFGR |= STM32_MCO2PRE | STM32_MCO2SEL | STM32_MCO1PRE | STM32_MCO1SEL |
                STM32_RTCPRE | STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;
 
-  /* Flash setup.                                                           */
+  /* Flash setup.*/
   FLASH->ACR = FLASH_ACR_PRFTEN | FLASH_ACR_ICEN | FLASH_ACR_DCEN | STM32_FLASHBITS;
 
-  /* Switching to the configured clock source if it is different from MSI.  */
+  /* Switching to the configured clock source if it is different from MSI.*/
 #if (STM32_SW != STM32_SW_HSI)
-  RCC->CFGR |= STM32_SW; /* Switches on the selected clock source.          */
+  RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
     ;
 #endif
 #endif /* STM32_NO_INIT */
 }
-#else
-void stm32_clock_init(void) {}
-#endif
 
 /** @} */
