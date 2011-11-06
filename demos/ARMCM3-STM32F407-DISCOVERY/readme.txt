@@ -13,7 +13,7 @@ APIs. The ADC samples two channels (temperature sensor and PC0) and modulates
 the PWM using the sampled values. The sample data is also transmitted using
 the SPI port 1.
 By pressing the button located on the board the test procedure is activated
-with output on the serial port COM1 (USART1).
+with output on the serial port SD2 (USART2).
 
 ** Build Procedure **
 
