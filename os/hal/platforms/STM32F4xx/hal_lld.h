@@ -40,6 +40,10 @@
 
 #include "stm32f4xx.h"
 
+/* STM32 DMA and RCC helpers.*/
+#include "stm32_dma.h"
+#include "stm32_rcc.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -58,67 +62,67 @@
 /**
  * @brief   Maximum HSE  clock frequency.
  */
-#define STM32_HSECLK_MAX            26000000
+#define STM32_HSECLK_MAX        26000000
 
 /**
  * @brief   Minimum HSE  clock frequency.
  */
-#define STM32_HSECLK_MIN            1000000
+#define STM32_HSECLK_MIN        1000000
 
 /**
  * @brief   Maximum LSE  clock frequency.
  */
-#define STM32_LSECLK_MAX            1000000
+#define STM32_LSECLK_MAX        1000000
 
 /**
  * @brief   Minimum LSE  clock frequency.
  */
-#define STM32_LSECLK_MIN            1000
+#define STM32_LSECLK_MIN        1000
 
 /**
  * @brief   Maximum PLLs input clock frequency.
  */
-#define STM32_PLLIN_MAX             2000000
+#define STM32_PLLIN_MAX         2000000
 
 /**
  * @brief   Maximum PLLs input clock frequency.
  */
-#define STM32_PLLIN_MIN             950000
+#define STM32_PLLIN_MIN         950000
 
 /**
  * @brief   Maximum PLLs VCO clock frequency.
  */
-#define STM32_PLLVCO_MAX            432000000
+#define STM32_PLLVCO_MAX        432000000
 
 /**
  * @brief   Maximum PLLs VCO clock frequency.
  */
-#define STM32_PLLVCO_MIN            192000000
+#define STM32_PLLVCO_MIN        192000000
 
 /**
  * @brief   Maximum PLL output clock frequency.
  */
-#define STM32_PLLOUT_MAX            168000000
+#define STM32_PLLOUT_MAX        168000000
 
 /**
  * @brief   Maximum PLL output clock frequency.
  */
-#define STM32_PLLOUT_MIN            24000000
+#define STM32_PLLOUT_MIN        24000000
 
 /**
  * @brief   Maximum APB1 clock frequency.
  */
-#define STM32_PCLK1_MAX             42000000
+#define STM32_PCLK1_MAX         42000000
 
 /**
  * @brief   Maximum APB2 clock frequency.
  */
-#define STM32_PCLK2_MAX             84000000
+#define STM32_PCLK2_MAX         84000000
 
 /**
  * @brief   Maximum SPI/I2S clock frequency.
  */
-#define STM32_SPII2S_MAX            37500000
+#define STM32_SPII2S_MAX        37500000
 /** @} */
 
 /**
@@ -245,22 +249,30 @@
  * @name    STM32F4xx capabilities
  * @{
  */
+/* ADC attributes.*/
 #define STM32_HAS_ADC1          TRUE
 #define STM32_HAS_ADC2          TRUE
 #define STM32_HAS_ADC3          TRUE
 
+/* CAN attributes.*/
 #define STM32_HAS_CAN1          TRUE
 #define STM32_HAS_CAN2          TRUE
 
+/* DAC attributes.*/
 #define STM32_HAS_DAC           TRUE
 
+/* DMA attributes.*/
+#define STM32_ADVANCED_DMA      TRUE
 #define STM32_HAS_DMA1          TRUE
 #define STM32_HAS_DMA2          TRUE
 
+/* ETH attributes.*/
 #define STM32_HAS_ETH           TRUE
 
+/* EXTI attributes.*/
 #define STM32_EXTI_NUM_CHANNELS 23
 
+/* GPIO attributes.*/
 #define STM32_HAS_GPIOA         TRUE
 #define STM32_HAS_GPIOB         TRUE
 #define STM32_HAS_GPIOC         TRUE
@@ -271,18 +283,41 @@
 #define STM32_HAS_GPIOH         TRUE
 #define STM32_HAS_GPIOI         TRUE
 
+/* I2C attributes.*/
 #define STM32_HAS_I2C1          TRUE
 #define STM32_HAS_I2C2          TRUE
 #define STM32_HAS_I2C3          TRUE
 
+/* RTC attributes.*/
 #define STM32_HAS_RTC           TRUE
 
+/* SDIO attributes.*/
 #define STM32_HAS_SDIO          TRUE
 
+/* SPI attributes.*/
 #define STM32_HAS_SPI1          TRUE
-#define STM32_HAS_SPI2          TRUE
-#define STM32_HAS_SPI3          TRUE
+#define STM32_SPI1_RX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(2, 0) |            \
+                                 STM32_DMA_STREAM_ID_MSK(2, 2))
+#define STM32_SPI1_RX_DMA_CHN   0x00000303
+#define STM32_SPI1_TX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(2, 3) |            \
+                                 STM32_DMA_STREAM_ID_MSK(2, 5))
+#define STM32_SPI1_TX_DMA_CHN   0x00303000
 
+#define STM32_HAS_SPI2          TRUE
+#define STM32_SPI2_RX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(1, 3))
+#define STM32_SPI2_RX_DMA_CHN   0x00000000
+#define STM32_SPI2_TX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(1, 4))
+#define STM32_SPI2_TX_DMA_CHN   0x00000000
+
+#define STM32_HAS_SPI3          TRUE
+#define STM32_SPI3_RX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(1, 0) |            \
+                                 STM32_DMA_STREAM_ID_MSK(1, 2))
+#define STM32_SPI3_RX_DMA_CHN   0x00000000
+#define STM32_SPI3_TX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(1, 5) |            \
+                                 STM32_DMA_STREAM_ID_MSK(1, 7))
+#define STM32_SPI3_TX_DMA_CHN   0x00000000
+
+/* TIM attributes.*/
 #define STM32_HAS_TIM1          TRUE
 #define STM32_HAS_TIM2          TRUE
 #define STM32_HAS_TIM3          TRUE
@@ -301,6 +336,7 @@
 #define STM32_HAS_TIM16         FALSE
 #define STM32_HAS_TIM17         FALSE
 
+/* USART attributes.*/
 #define STM32_HAS_USART1        TRUE
 #define STM32_HAS_USART2        TRUE
 #define STM32_HAS_USART3        TRUE
@@ -308,6 +344,7 @@
 #define STM32_HAS_UART5         TRUE
 #define STM32_HAS_USART6        TRUE
 
+/* USB attributes.*/
 #define STM32_HAS_USB           FALSE
 #define STM32_HAS_OTG1          TRUE
 #define STM32_HAS_OTG2          TRUE
@@ -415,6 +452,10 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Configuration options
+ * @{
+ */
 /**
  * @brief   Disables the PWR/RCC initialization in the HAL.
  */
@@ -620,6 +661,7 @@
 #if !defined(STM32_PLLI2SR_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLI2SR_VALUE         5
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -1207,10 +1249,6 @@
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
-
-/* STM32 DMA and RCC helpers.*/
-#include "stm32_dma.h"
-#include "stm32_rcc.h"
 
 #ifdef __cplusplus
 extern "C" {

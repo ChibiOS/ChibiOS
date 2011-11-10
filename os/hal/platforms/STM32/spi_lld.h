@@ -40,6 +40,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    Configuration options
+ * @{
+ */
+/**
  * @brief   SPI1 driver enable switch.
  * @details If set to @p TRUE the support for SPI1 is included.
  * @note    The default is @p TRUE.
@@ -68,9 +72,9 @@
 
 /**
  * @brief   SPI1 DMA priority (0..3|lowest..highest).
- * @note    The priority level is used for both the TX and RX DMA channels but
- *          because of the channels ordering the RX channel has always priority
- *          over the TX channel.
+ * @note    The priority level is used for both the TX and RX DMA streams but
+ *          because of the streams ordering the RX stream has always priority
+ *          over the TX stream.
  */
 #if !defined(STM32_SPI_SPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_SPI_SPI1_DMA_PRIORITY         1
@@ -78,9 +82,9 @@
 
 /**
  * @brief   SPI2 DMA priority (0..3|lowest..highest).
- * @note    The priority level is used for both the TX and RX DMA channels but
- *          because of the channels ordering the RX channel has always priority
- *          over the TX channel.
+ * @note    The priority level is used for both the TX and RX DMA streams but
+ *          because of the streams ordering the RX stream has always priority
+ *          over the TX stream.
  */
 #if !defined(STM32_SPI_SPI2_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_SPI_SPI2_DMA_PRIORITY         1
@@ -88,9 +92,9 @@
 
 /**
  * @brief   SPI3 DMA priority (0..3|lowest..highest).
- * @note    The priority level is used for both the TX and RX DMA channels but
- *          because of the channels ordering the RX channel has always priority
- *          over the TX channel.
+ * @note    The priority level is used for both the TX and RX DMA streams but
+ *          because of the streams ordering the RX stream has always priority
+ *          over the TX stream.
  */
 #if !defined(STM32_SPI_SPI3_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_SPI_SPI3_DMA_PRIORITY         1
@@ -119,12 +123,63 @@
 
 /**
  * @brief   SPI DMA error hook.
- * @note    The default action for DMA errors is a system halt because DMA
- *          error can only happen because programming errors.
  */
 #if !defined(STM32_SPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
 #define STM32_SPI_DMA_ERROR_HOOK(spip)      chSysHalt()
 #endif
+
+#if STM32_ADVANCED_DMA || defined(__DOXYGEN__)
+
+/**
+ * @brief   DMA stream used for SPI1 RX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_SPI_SPI1_RX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 0)
+#endif
+
+/**
+ * @brief   DMA stream used for SPI1 TX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_SPI_SPI1_TX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 3)
+#endif
+
+/**
+ * @brief   DMA stream used for SPI2 RX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_SPI_SPI2_RX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
+#endif
+
+/**
+ * @brief   DMA stream used for SPI2 TX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_SPI_SPI2_TX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
+#endif
+
+/**
+ * @brief   DMA stream used for SPI3 RX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_SPI_SPI3_RX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 0)
+#endif
+
+/**
+ * @brief   DMA stream used for SPI3 TX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_SPI_SPI3_TX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
+#endif
+
+#endif /* STM32_ADVANCED_DMA*/
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -145,6 +200,53 @@
 #if !STM32_SPI_USE_SPI1 && !STM32_SPI_USE_SPI2 && !STM32_SPI_USE_SPI3
 #error "SPI driver activated but no SPI peripheral assigned"
 #endif
+
+#if STM32_ADVANCED_DMA
+
+/* Checks to be performed only on platforms using the advanced DMA
+   peripheral.*/
+#if STM32_SPI_USE_SPI1 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI1_RX_DMA_STREAM, STM32_SPI1_RX_DMA_MSK)
+#error "invalid DMA stream associated to SPI1 RX"
+#endif
+
+#if STM32_SPI_USE_SPI1 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI1_TX_DMA_STREAM, STM32_SPI1_TX_DMA_MSK)
+#error "invalid DMA stream associated to SPI1 TX"
+#endif
+
+#if STM32_SPI_USE_SPI2 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI2_RX_DMA_STREAM, STM32_SPI2_RX_DMA_MSK)
+#error "invalid DMA stream associated to SPI2 RX"
+#endif
+
+#if STM32_SPI_USE_SPI2 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI2_TX_DMA_STREAM, STM32_SPI2_TX_DMA_MSK)
+#error "invalid DMA stream associated to SPI2 TX"
+#endif
+
+#if STM32_SPI_USE_SPI3 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI3_RX_DMA_STREAM, STM32_SPI3_RX_DMA_MSK)
+#error "invalid DMA stream associated to SPI3 RX"
+#endif
+
+#if STM32_SPI_USE_SPI3 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI3_TX_DMA_STREAM, STM32_SPI3_TX_DMA_MSK)
+#error "invalid DMA stream associated to SPI3 TX"
+#endif
+
+#else /* !STM32_ADVANCED_DMA */
+
+/* Fixed streams for platforms using the old DMA peripheral, the values are
+   valid for both STM32F1xx and STM32L1xx.*/
+#define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
+#define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
+#define STM32_SPI_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
+#define STM32_SPI_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
+#define STM32_SPI_SPI3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 5)
+#define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 6)
+
+#endif /* !STM32_ADVANCED_DMA */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
@@ -227,17 +329,21 @@ struct SPIDriver{
    */
   SPI_TypeDef               *spi;
   /**
-   * @brief Receive DMA channel.
+   * @brief Receive DMA stream.
    */
   const stm32_dma_stream_t  *dmarx;
   /**
-   * @brief Transmit DMA channel.
+   * @brief Transmit DMA stream.
    */
   const stm32_dma_stream_t  *dmatx;
   /**
-   * @brief DMA mode bit mask.
+   * @brief RX DMA mode bit mask.
    */
-  uint32_t                  dmamode;
+  uint32_t                  rxdmamode;
+  /**
+   * @brief TX DMA mode bit mask.
+   */
+  uint32_t                  txdmamode;
 };
 
 /*===========================================================================*/

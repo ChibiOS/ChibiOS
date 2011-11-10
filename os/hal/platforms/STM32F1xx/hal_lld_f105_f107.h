@@ -279,6 +279,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    Configuration options
+ * @{
+ */
+/**
  * @brief   PLL1 main switch.
  * @note    If this constant is set to @p TRUE then the PLL1 is initialized
  *          and started.
@@ -430,6 +434,7 @@
 #if !defined(STM32_RTC) || defined(__DOXYGEN__)
 #define STM32_RTC                   STM32_RTC_LSI
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

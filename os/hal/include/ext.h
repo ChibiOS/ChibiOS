@@ -82,6 +82,10 @@ typedef struct EXTDriver EXTDriver;
 /*===========================================================================*/
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Enables an EXT channel.
  *
  * @param[in] extp      pointer to the @p EXTDriver object
@@ -100,6 +104,7 @@ typedef struct EXTDriver EXTDriver;
  * @iclass
  */
 #define extChannelDisableI(extp, channel) ext_lld_channel_disable(extp, channel)
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

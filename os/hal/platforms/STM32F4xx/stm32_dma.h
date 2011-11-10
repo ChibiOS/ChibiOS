@@ -47,29 +47,80 @@
 #define STM32_DMA_ISR_MASK          0x3D
 
 /**
+ * @brief   Returns the channel associated to the specified stream.
+ *
+ * @param[in] id        the unique numeric stream identifier
+ * @param[in] c         a stream/channel association word, one channel per
+ *                      nibble
+ * @return              Returns the channel associated to the stream.
+ */
+#define STM32_DMA_GETCHANNEL(id, c) ((c) >> (((id) & 7) * 4))
+
+/**
+ * @brief   Returns an unique numeric identifier for a DMA stream.
+ *
+ * @param[in] dma       the DMA unit number
+ * @param[in] stream    the stream number
+ * @return              An unique numeric stream identifier.
+ */
+#define STM32_DMA_STREAM_ID(dma, stream) ((((dma) - 1) * 8) + (stream))
+
+/**
+ * @brief   Returns a DMA stream identifier mask.
+ *
+ *
+ * @param[in] dma       the DMA unit number
+ * @param[in] stream    the stream number
+ * @return              A DMA stream identifier mask.
+ */
+#define STM32_DMA_STREAM_ID_MSK(dma, stream)                                \
+  (1 << STM32_DMA_STREAM_ID(dma, stream))
+
+/**
+ * @brief   Checks if a DMA stream unique identifier belongs to a mask.
+ * @param[in] id        the stream numeric identifier
+ * @param[in] mask      the stream numeric identifiers mask
+ *
+ * @retval              The check result.
+ * @retval FALSE        id does not belong to the mask.
+ * @retval TRUE         id belongs to the mask.
+ */
+#define STM32_DMA_IS_VALID_ID(id, mask) (((1 << (id)) & (mask)))
+
+/**
  * @name    DMA streams identifiers
  * @{
  */
-#define STM32_DMA1_STREAM0          (&_stm32_dma_streams[0])
-#define STM32_DMA1_STREAM1          (&_stm32_dma_streams[1])
-#define STM32_DMA1_STREAM2          (&_stm32_dma_streams[2])
-#define STM32_DMA1_STREAM3          (&_stm32_dma_streams[3])
-#define STM32_DMA1_STREAM4          (&_stm32_dma_streams[4])
-#define STM32_DMA1_STREAM5          (&_stm32_dma_streams[5])
-#define STM32_DMA1_STREAM6          (&_stm32_dma_streams[6])
-#define STM32_DMA1_STREAM7          (&_stm32_dma_streams[7])
-#define STM32_DMA2_STREAM0          (&_stm32_dma_streams[8])
-#define STM32_DMA2_STREAM1          (&_stm32_dma_streams[9])
-#define STM32_DMA2_STREAM2          (&_stm32_dma_streams[10])
-#define STM32_DMA2_STREAM3          (&_stm32_dma_streams[11])
-#define STM32_DMA2_STREAM4          (&_stm32_dma_streams[12])
-#define STM32_DMA2_STREAM5          (&_stm32_dma_streams[13])
-#define STM32_DMA2_STREAM6          (&_stm32_dma_streams[14])
-#define STM32_DMA2_STREAM7          (&_stm32_dma_streams[15])
+/**
+ * @brief   Returns a pointer to a stm32_dma_stream_t structure.
+ *
+ * @param[in] id        the stream numeric identifier
+ * @return              A pointer to the stm32_dma_stream_t constant structure
+ *                      associated to the DMA stream.
+ */
+#define STM32_DMA_STREAM(id)        (&_stm32_dma_streams[id])
+
+#define STM32_DMA1_STREAM0          STM32_DMA_STREAM(0)
+#define STM32_DMA1_STREAM1          STM32_DMA_STREAM(1)
+#define STM32_DMA1_STREAM2          STM32_DMA_STREAM(2)
+#define STM32_DMA1_STREAM3          STM32_DMA_STREAM(3)
+#define STM32_DMA1_STREAM4          STM32_DMA_STREAM(4)
+#define STM32_DMA1_STREAM5          STM32_DMA_STREAM(5)
+#define STM32_DMA1_STREAM6          STM32_DMA_STREAM(6)
+#define STM32_DMA1_STREAM7          STM32_DMA_STREAM(7)
+#define STM32_DMA2_STREAM0          STM32_DMA_STREAM(8)
+#define STM32_DMA2_STREAM1          STM32_DMA_STREAM(9)
+#define STM32_DMA2_STREAM2          STM32_DMA_STREAM(10)
+#define STM32_DMA2_STREAM3          STM32_DMA_STREAM(11)
+#define STM32_DMA2_STREAM4          STM32_DMA_STREAM(12)
+#define STM32_DMA2_STREAM5          STM32_DMA_STREAM(13)
+#define STM32_DMA2_STREAM6          STM32_DMA_STREAM(14)
+#define STM32_DMA2_STREAM7          STM32_DMA_STREAM(15)
 /** @} */
 
 /**
  * @name    CR register constants common to all DMA types
+ * @{
  */
 #define STM32_DMA_CR_EN             DMA_SxCR_EN
 #define STM32_DMA_CR_TEIE           DMA_SxCR_TEIE
@@ -90,12 +141,15 @@
 #define STM32_DMA_CR_MSIZE_BYTE     0
 #define STM32_DMA_CR_MSIZE_HWORD    DMA_SxCR_MSIZE_0
 #define STM32_DMA_CR_MSIZE_WORD     DMA_SxCR_MSIZE_1
+#define STM32_DMA_CR_SIZE_MASK      (STM32_DMA_CR_MSIZE_MASK |              \
+                                     STM32_DMA_CR_MSIZE_MASK)
 #define STM32_DMA_CR_PL_MASK        DMA_SxCR_PL
 #define STM32_DMA_CR_PL(n)          ((n) << 16)
 /** @} */
 
 /**
  * @name    CR register constants only found in STM32F2xx/STM32F4xx
+ * @{
  */
 #define STM32_DMA_CR_DMEIE          DMA_SxCR_DMEIE
 #define STM32_DMA_CR_PFCTRL         DMA_SxCR_PFCTRL
@@ -118,6 +172,7 @@
 
 /**
  * @name    FCR register constants only found in STM32F2xx
+ * @{
  */
 #define STM32_DMA_FCR_FEIE          DMA_SxFCR_FEIE
 #define STM32_DMA_FCR_FS_MASK       DMA_SxFCR_FS
@@ -176,6 +231,10 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @name    Macro Functions
+ * @{
+ */
 /**
  * @brief   Associates a peripheral data register to a DMA stream.
  * @note    This function can be invoked in both ISR or thread context.
@@ -357,6 +416,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 #define dmaWaitCompletion(dmastp)                                           \
   while (((dmastp)->stream->CNDTR > 0) &&                                   \
          ((dmastp)->stream->CCR & STM32_DMA_CR_EN))
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

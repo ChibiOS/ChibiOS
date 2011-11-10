@@ -115,6 +115,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    Configuration options
+ * @{
+ */
+/**
  * @brief   Number of available transmit buffers.
  */
 #if !defined(MAC_TRANSMIT_BUFFERS) || defined(__DOXYGEN__)
@@ -134,6 +138,7 @@
 #if !defined(MAC_BUFFERS_SIZE) || defined(__DOXYGEN__)
 #define MAC_BUFFERS_SIZE            1518
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

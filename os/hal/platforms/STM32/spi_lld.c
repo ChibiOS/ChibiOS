@@ -32,6 +32,34 @@
 #if HAL_USE_SPI || defined(__DOXYGEN__)
 
 /*===========================================================================*/
+/* Driver local definitions.                                                 */
+/*===========================================================================*/
+
+#define SPI1_RX_DMA_CHANNEL                                                 \
+  STM32_DMA_GETCHANNEL(STM32_SPI_SPI1_RX_DMA_STREAM,                        \
+                       STM32_SPI1_RX_DMA_CHN)
+
+#define SPI1_TX_DMA_CHANNEL                                                 \
+  STM32_DMA_GETCHANNEL(STM32_SPI_SPI1_TX_DMA_STREAM,                        \
+                       STM32_SPI1_TX_DMA_CHN)
+
+#define SPI2_RX_DMA_CHANNEL                                                 \
+  STM32_DMA_GETCHANNEL(STM32_SPI_SPI2_RX_DMA_STREAM,                        \
+                       STM32_SPI2_RX_DMA_CHN)
+
+#define SPI2_TX_DMA_CHANNEL                                                 \
+  STM32_DMA_GETCHANNEL(STM32_SPI_SPI2_TX_DMA_STREAM,                        \
+                       STM32_SPI2_TX_DMA_CHN)
+
+#define SPI3_RX_DMA_CHANNEL                                                 \
+  STM32_DMA_GETCHANNEL(STM32_SPI_SPI3_RX_DMA_STREAM,                        \
+                       STM32_SPI3_RX_DMA_CHN)
+
+#define SPI3_TX_DMA_CHANNEL                                                 \
+  STM32_DMA_GETCHANNEL(STM32_SPI_SPI3_TX_DMA_STREAM,                        \
+                       STM32_SPI3_TX_DMA_CHN)
+
+/*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
@@ -62,26 +90,6 @@ static uint16_t dummyrx;
 /*===========================================================================*/
 
 /**
- * @brief   Stops the SPI DMA channels.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- */
-#define dma_stop(spip) {                                                    \
-  dmaStreamDisable(spip->dmatx);                                            \
-  dmaStreamDisable(spip->dmarx);                                            \
-}
-
-/**
- * @brief   Starts the SPI DMA channels.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- */
-#define dma_start(spip) {                                                   \
-  dmaChannelEnable((spip)->dmarx);                                          \
-  dmaChannelEnable((spip)->dmatx);                                          \
-}
-
-/**
  * @brief   Shared end-of-rx service routine.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
@@ -99,7 +107,8 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
 #endif
 
   /* Stop everything.*/
-  dma_stop(spip);
+  dmaStreamDisable(spip->dmatx);
+  dmaStreamDisable(spip->dmarx);
 
   /* Portable SPI ISR code defined in the high level driver, note, it is
      a macro.*/
@@ -145,26 +154,50 @@ void spi_lld_init(void) {
 
 #if STM32_SPI_USE_SPI1
   spiObjectInit(&SPID1);
-  SPID1.thread  = NULL;
-  SPID1.spi     = SPI1;
-  SPID1.dmarx   = STM32_DMA1_STREAM2;
-  SPID1.dmatx   = STM32_DMA1_STREAM3;
+  SPID1.spi       = SPI1;
+  SPID1.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI1_RX_DMA_STREAM);
+  SPID1.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI1_TX_DMA_STREAM);
+  SPID1.rxdmamode = STM32_DMA_CR_CHSEL(SPI1_RX_DMA_CHANNEL) |
+                    STM32_DMA_CR_PL(STM32_SPI_SPI1_DMA_PRIORITY) |
+                    STM32_DMA_CR_DIR_P2M |
+                    STM32_DMA_CR_TCIE |
+                    STM32_DMA_CR_TEIE;
+  SPID1.txdmamode = STM32_DMA_CR_CHSEL(SPI1_TX_DMA_CHANNEL) |
+                    STM32_DMA_CR_PL(STM32_SPI_SPI1_DMA_PRIORITY) |
+                    STM32_DMA_CR_DIR_M2P |
+                    STM32_DMA_CR_TEIE;
 #endif
 
 #if STM32_SPI_USE_SPI2
   spiObjectInit(&SPID2);
-  SPID2.thread  = NULL;
-  SPID2.spi     = SPI2;
-  SPID2.dmarx   = STM32_DMA1_STREAM4;
-  SPID2.dmatx   = STM32_DMA1_STREAM5;
+  SPID2.spi       = SPI2;
+  SPID2.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI2_RX_DMA_STREAM);
+  SPID2.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI2_TX_DMA_STREAM);
+  SPID2.rxdmamode = STM32_DMA_CR_CHSEL(SPI2_RX_DMA_CHANNEL) |
+                    STM32_DMA_CR_PL(STM32_SPI_SPI2_DMA_PRIORITY) |
+                    STM32_DMA_CR_DIR_P2M |
+                    STM32_DMA_CR_TCIE |
+                    STM32_DMA_CR_TEIE;
+  SPID2.txdmamode = STM32_DMA_CR_CHSEL(SPI2_TX_DMA_CHANNEL) |
+                    STM32_DMA_CR_PL(STM32_SPI_SPI2_DMA_PRIORITY) |
+                    STM32_DMA_CR_DIR_M2P |
+                    STM32_DMA_CR_TEIE;
 #endif
 
 #if STM32_SPI_USE_SPI3
   spiObjectInit(&SPID3);
-  SPID3.thread  = NULL;
-  SPID3.spi     = SPI3;
-  SPID3.dmarx   = STM32_DMA2_STREAM1;
-  SPID3.dmatx   = STM32_DMA2_STREAM2;
+  SPID3.spi       = SPI3;
+  SPID3.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI3_RX_DMA_STREAM);
+  SPID3.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI3_TX_DMA_STREAM);
+  SPID3.rxdmamode = STM32_DMA_CR_CHSEL(SPI3_RX_DMA_CHANNEL) |
+                    STM32_DMA_CR_PL(STM32_SPI_SPI3_DMA_PRIORITY) |
+                    STM32_DMA_CR_DIR_P2M |
+                    STM32_DMA_CR_TCIE |
+                    STM32_DMA_CR_TEIE;
+  SPID3.txdmamode = STM32_DMA_CR_CHSEL(SPI3_TX_DMA_CHANNEL) |
+                    STM32_DMA_CR_PL(STM32_SPI_SPI3_DMA_PRIORITY) |
+                    STM32_DMA_CR_DIR_M2P |
+                    STM32_DMA_CR_TEIE;
 #endif
 }
 
@@ -182,12 +215,12 @@ void spi_lld_start(SPIDriver *spip) {
 #if STM32_SPI_USE_SPI1
     if (&SPID1 == spip) {
       bool_t b;
-      b = dmaStreamAllocate(STM32_DMA1_STREAM2,
+      b = dmaStreamAllocate(spip->dmarx,
                             STM32_SPI_SPI1_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
                             (void *)spip);
       chDbgAssert(!b, "spi_lld_start(), #1", "stream already allocated");
-      b = dmaStreamAllocate(STM32_DMA1_STREAM3,
+      b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI1_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
@@ -198,12 +231,12 @@ void spi_lld_start(SPIDriver *spip) {
 #if STM32_SPI_USE_SPI2
     if (&SPID2 == spip) {
       bool_t b;
-      b = dmaStreamAllocate(STM32_DMA1_STREAM4,
+      b = dmaStreamAllocate(spip->dmarx,
                             STM32_SPI_SPI2_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
                             (void *)spip);
       chDbgAssert(!b, "spi_lld_start(), #3", "stream already allocated");
-      b = dmaStreamAllocate(STM32_DMA1_STREAM5,
+      b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI2_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
@@ -214,12 +247,12 @@ void spi_lld_start(SPIDriver *spip) {
 #if STM32_SPI_USE_SPI3
     if (&SPID3 == spip) {
       bool_t b;
-      b = dmaStreamAllocate(STM32_DMA2_STREAM1,
+      b = dmaStreamAllocate(spip->dmarx,
                             STM32_SPI_SPI3_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
                             (void *)spip);
       chDbgAssert(!b, "spi_lld_start(), #5", "stream already allocated");
-      b = dmaStreamAllocate(STM32_DMA2_STREAM2,
+      b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI3_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
@@ -233,18 +266,19 @@ void spi_lld_start(SPIDriver *spip) {
     dmaStreamSetPeripheral(spip->dmatx, &spip->spi->DR);
   }
 
-  /* More DMA setup.*/
-  if ((spip->config->cr1 & SPI_CR1_DFF) == 0)
-    spip->dmamode = STM32_DMA_CR_PL(STM32_SPI_SPI2_DMA_PRIORITY) |
-                    STM32_DMA_CR_TEIE |
-                    STM32_DMA_CR_PSIZE_BYTE |
-                    STM32_DMA_CR_MSIZE_BYTE;        /* 8 bits transfers.    */
-  else
-    spip->dmamode = STM32_DMA_CR_PL(STM32_SPI_SPI2_DMA_PRIORITY) |
-                    STM32_DMA_CR_TEIE |
-                    STM32_DMA_CR_PSIZE_HWORD |
-                    STM32_DMA_CR_MSIZE_HWORD;       /* 16 bits transfers.   */
-
+  /* Configuration-specific DMA setup.*/
+  if ((spip->config->cr1 & SPI_CR1_DFF) == 0) {     /* 8 bits transfers.    */
+    spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
+                      STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
+    spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
+                      STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
+  }
+  else {                                            /* 16 bits transfers.   */
+    spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
+                      STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
+    spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
+                      STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
+  }
   /* SPI setup and enable.*/
   spip->spi->CR1  = 0;
   spip->spi->CR1  = spip->config->cr1 | SPI_CR1_MSTR | SPI_CR1_SSM |
@@ -267,27 +301,20 @@ void spi_lld_stop(SPIDriver *spip) {
 
     /* SPI disable.*/
     spip->spi->CR1 = 0;
+    dmaStreamRelease(spip->dmarx);
+    dmaStreamRelease(spip->dmatx);
 
 #if STM32_SPI_USE_SPI1
-    if (&SPID1 == spip) {
-      dmaStreamRelease(STM32_DMA1_STREAM2);
-      dmaStreamRelease(STM32_DMA1_STREAM3);
+    if (&SPID1 == spip)
       rccDisableSPI1(FALSE);
-    }
 #endif
 #if STM32_SPI_USE_SPI2
-    if (&SPID2 == spip) {
-      dmaStreamRelease(STM32_DMA1_STREAM4);
-      dmaStreamRelease(STM32_DMA1_STREAM5);
+    if (&SPID2 == spip)
       rccDisableSPI2(FALSE);
-    }
 #endif
 #if STM32_SPI_USE_SPI3
-    if (&SPID3 == spip) {
-      dmaStreamRelease(STM32_DMA2_STREAM1);
-      dmaStreamRelease(STM32_DMA2_STREAM2);
+    if (&SPID3 == spip)
       rccDisableSPI3(FALSE);
-    }
 #endif
   }
 }
@@ -332,12 +359,10 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
 
   dmaStreamSetMemory0(spip->dmarx, &dummyrx);
   dmaStreamSetTransactionSize(spip->dmarx, n);
-  dmaStreamSetMode(spip->dmarx, spip->dmamode | STM32_DMA_CR_DIR_P2M |
-                                STM32_DMA_CR_TCIE | STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmarx, spip->rxdmamode | STM32_DMA_CR_EN);
   dmaStreamSetMemory0(spip->dmatx, &dummytx);
   dmaStreamSetTransactionSize(spip->dmatx, n);
-  dmaStreamSetMode(spip->dmatx, spip->dmamode | STM32_DMA_CR_DIR_M2P |
-                                STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmatx, spip->txdmamode | STM32_DMA_CR_EN);
 }
 
 /**
@@ -360,13 +385,12 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
 
   dmaStreamSetMemory0(spip->dmarx, rxbuf);
   dmaStreamSetTransactionSize(spip->dmarx, n);
-  dmaStreamSetMode(spip->dmarx, spip->dmamode | STM32_DMA_CR_DIR_P2M |
-                                STM32_DMA_CR_TCIE | STM32_DMA_CR_MINC |
-                                STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmarx, spip->rxdmamode| STM32_DMA_CR_MINC |
+                                                 STM32_DMA_CR_EN);
   dmaStreamSetMemory0(spip->dmatx, txbuf);
   dmaStreamSetTransactionSize(spip->dmatx, n);
-  dmaStreamSetMode(spip->dmatx, spip->dmamode | STM32_DMA_CR_DIR_M2P |
-                                STM32_DMA_CR_MINC | STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmatx, spip->txdmamode | STM32_DMA_CR_MINC |
+                                                  STM32_DMA_CR_EN);
 }
 
 /**
@@ -386,12 +410,11 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
   dmaStreamSetMemory0(spip->dmarx, &dummyrx);
   dmaStreamSetTransactionSize(spip->dmarx, n);
-  dmaStreamSetMode(spip->dmarx, spip->dmamode | STM32_DMA_CR_DIR_P2M |
-                                STM32_DMA_CR_TCIE | STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmarx, spip->rxdmamode | STM32_DMA_CR_EN);
   dmaStreamSetMemory0(spip->dmatx, txbuf);
   dmaStreamSetTransactionSize(spip->dmatx, n);
-  dmaStreamSetMode(spip->dmatx, spip->dmamode | STM32_DMA_CR_DIR_M2P |
-                                STM32_DMA_CR_MINC | STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmatx, spip->txdmamode | STM32_DMA_CR_MINC |
+                                                  STM32_DMA_CR_EN);
 }
 
 /**
@@ -411,13 +434,11 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   dmaStreamSetMemory0(spip->dmarx, rxbuf);
   dmaStreamSetTransactionSize(spip->dmarx, n);
-  dmaStreamSetMode(spip->dmarx, spip->dmamode | STM32_DMA_CR_DIR_P2M |
-                                STM32_DMA_CR_TCIE | STM32_DMA_CR_MINC |
-                                STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmarx, spip->rxdmamode | STM32_DMA_CR_MINC |
+                                                  STM32_DMA_CR_EN);
   dmaStreamSetMemory0(spip->dmatx, &dummytx);
   dmaStreamSetTransactionSize(spip->dmatx, n);
-  dmaStreamSetMode(spip->dmatx, spip->dmamode | STM32_DMA_CR_DIR_M2P |
-                                STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmatx, spip->txdmamode | STM32_DMA_CR_EN);
 }
 
 /**

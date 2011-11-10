@@ -37,6 +37,11 @@
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @name    Configuration options
+ * @{
+ */
 /**
  * @brief Switch between callback based and synchronouse driver.
  * @note  The default is synchronouse.
@@ -98,6 +103,7 @@
 #if !defined(STM32_I2C_I2C2_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_I2C_I2C2_IRQ_PRIORITY     0xA0
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

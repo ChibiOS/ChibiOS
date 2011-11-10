@@ -40,6 +40,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    Configuration options
+ * @{
+ */
+/**
  * @brief   USART1 driver enable switch.
  * @details If set to @p TRUE the support for USART1 is included.
  * @note    The default is @p TRUE.
@@ -134,6 +138,7 @@
 #if !defined(STM32_SERIAL_USART6_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_SERIAL_USART6_PRIORITY        12
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

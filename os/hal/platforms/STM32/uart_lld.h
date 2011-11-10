@@ -40,6 +40,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    Configuration options
+ * @{
+ */
+/**
  * @brief   UART driver on USART1 enable switch.
  * @details If set to @p TRUE the support for USART1 is included.
  * @note    The default is @p FALSE.
@@ -124,6 +128,7 @@
 #if !defined(STM32_UART_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
 #define STM32_UART_DMA_ERROR_HOOK(uartp)    chSysHalt()
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

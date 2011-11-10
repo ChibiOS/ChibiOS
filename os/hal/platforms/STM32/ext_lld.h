@@ -78,6 +78,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    Configuration options
+ * @{
+ */
+/**
  * @brief   EXTI0 interrupt priority level setting.
  */
 #if !defined(STM32_EXT_EXTI0_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -174,6 +178,7 @@
 #if !defined(STM32_EXT_EXTI22_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_EXT_EXTI22_IRQ_PRIORITY       6
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

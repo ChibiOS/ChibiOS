@@ -299,6 +299,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    Configuration options
+ * @{
+ */
+/**
  * @brief   Disables the PWR/RCC initialization in the HAL.
  */
 #if !defined(STM32_NO_INIT) || defined(__DOXYGEN__)
@@ -456,6 +460,7 @@
 #if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
 #define STM32_RTCPRE                STM32_RTCPRE_DIV2
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

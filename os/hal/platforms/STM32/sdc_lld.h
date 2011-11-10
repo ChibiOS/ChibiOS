@@ -41,6 +41,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    Configuration options
+ * @{
+ */
+/**
  * @brief   SDIO data timeout in SDIO clock cycles.
  */
 #if !defined(STM32_SDC_DATATIMEOUT) || defined(__DOXYGEN__)
@@ -67,6 +71,7 @@
 #if !defined(STM32_SDC_UNALIGNED_SUPPORT) || defined(__DOXYGEN__)
 #define STM32_SDC_UNALIGNED_SUPPORT         TRUE
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

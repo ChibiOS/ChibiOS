@@ -430,7 +430,6 @@ typedef struct
   __IO uint32_t AFR[2];
 } GPIO_TypeDef;
 #endif
-#endif
 
 /**
   * @brief SysTem Configuration

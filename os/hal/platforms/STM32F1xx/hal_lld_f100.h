@@ -338,6 +338,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    Configuration options
+ * @{
+ */
+/**
  * @brief   Main clock source selection.
  * @note    If the selected clock source is not the PLL then the PLL is not
  *          initialized and started.
@@ -423,6 +427,7 @@
 #if !defined(STM32_RTC) || defined(__DOXYGEN__)
 #define STM32_RTC                   STM32_RTC_LSI
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

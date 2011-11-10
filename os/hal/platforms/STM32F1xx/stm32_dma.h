@@ -52,25 +52,55 @@
 #define STM32_DMA_ISR_MASK          0x0F
 
 /**
+ * @brief   Returns the channel associated to the specified stream.
+ *
+ * @param[in] n         the stream number (0...STM32_DMA_STREAMS-1)
+ * @param[in] c         a stream/channel association word, one channel per
+ *                      nibble, not associated channels must be set to 0xF
+ * @return              Always zero, in this platform there is no dynamic
+ *                      association between streams and channels.
+ */
+#define STM32_DMA_GETCHANNEL(n, c)  0
+
+/**
  * @name    DMA streams identifiers
  * @{
  */
-#define STM32_DMA1_STREAM1          (&_stm32_dma_streams[0])
-#define STM32_DMA1_STREAM2          (&_stm32_dma_streams[1])
-#define STM32_DMA1_STREAM3          (&_stm32_dma_streams[2])
-#define STM32_DMA1_STREAM4          (&_stm32_dma_streams[3])
-#define STM32_DMA1_STREAM5          (&_stm32_dma_streams[4])
-#define STM32_DMA1_STREAM6          (&_stm32_dma_streams[5])
-#define STM32_DMA1_STREAM7          (&_stm32_dma_streams[6])
-#define STM32_DMA2_STREAM1          (&_stm32_dma_streams[7])
-#define STM32_DMA2_STREAM2          (&_stm32_dma_streams[8])
-#define STM32_DMA2_STREAM3          (&_stm32_dma_streams[9])
-#define STM32_DMA2_STREAM4          (&_stm32_dma_streams[10])
-#define STM32_DMA2_STREAM5          (&_stm32_dma_streams[11])
+/**
+ * @brief   Returns an unique numeric identifier for a DMA stream.
+ *
+ * @param[in] dma       the DMA unit number
+ * @param[in] stream    the stream number
+ * @return              An unique numeric stream identifier.
+ */
+#define STM32_DMA_STREAM_ID(dma, stream) ((((dma) - 1) * 7) + ((stream) - 1))
+
+/**
+ * @brief   Returns a pointer to a stm32_dma_stream_t structure.
+ *
+ * @param[in] n         the stream numeric identifier
+ * @return              A pointer to the stm32_dma_stream_t constant structure
+ *                      associated to the DMA stream.
+ */
+#define STM32_DMA_STREAM(n)         (&_stm32_dma_streams[n])
+
+#define STM32_DMA1_STREAM1          STM32_DMA_STREAM(0)
+#define STM32_DMA1_STREAM2          STM32_DMA_STREAM(1)
+#define STM32_DMA1_STREAM3          STM32_DMA_STREAM(2)
+#define STM32_DMA1_STREAM4          STM32_DMA_STREAM(3)
+#define STM32_DMA1_STREAM5          STM32_DMA_STREAM(4)
+#define STM32_DMA1_STREAM6          STM32_DMA_STREAM(5)
+#define STM32_DMA1_STREAM7          STM32_DMA_STREAM(6)
+#define STM32_DMA2_STREAM1          STM32_DMA_STREAM(7)
+#define STM32_DMA2_STREAM2          STM32_DMA_STREAM(8)
+#define STM32_DMA2_STREAM3          STM32_DMA_STREAM(9)
+#define STM32_DMA2_STREAM4          STM32_DMA_STREAM(10)
+#define STM32_DMA2_STREAM5          STM32_DMA_STREAM(11)
 /** @} */
 
 /**
  * @name    CR register constants common to all DMA types
+ * @{
  */
 #define STM32_DMA_CR_EN             DMA_CCR1_EN
 #define STM32_DMA_CR_TEIE           DMA_CCR1_TEIE
@@ -97,6 +127,7 @@
 
 /**
  * @name    CR register constants only found in enhanced DMA
+ * @{
  */
 #define STM32_DMA_CR_CHSEL_MASK     0   /**< @brief Ignored by normal DMA.  */
 #define STM32_DMA_CR_CHSEL(n)       0   /**< @brief Ignored by normal DMA.  */
@@ -104,6 +135,7 @@
 
 /**
  * @name    Status flags passed to the ISR callbacks
+ * @{
  */
 #define STM32_DMA_ISR_FEIF          0
 #define STM32_DMA_ISR_DMEIF         0
@@ -149,6 +181,10 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @name    Macro Functions
+ * @{
+ */
 /**
  * @brief   Associates a peripheral data register to a DMA stream.
  * @note    This function can be invoked in both ISR or thread context.
@@ -302,6 +338,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 #define dmaWaitCompletion(dmastp)                                           \
   while (((dmastp)->channel->CNDTR > 0) &&                                  \
          ((dmastp)->channel->CCR & STM32_DMA_CR_EN))
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

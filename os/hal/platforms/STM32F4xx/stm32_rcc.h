@@ -27,7 +27,6 @@
  * @addtogroup STM32F4xx_RCC
  * @{
  */
-
 #ifndef _STM32_RCC_
 #define _STM32_RCC_
 
@@ -347,7 +346,7 @@
  *
  * @api
  */
-#define rccEnableDMA1(lp) rccEnableAHB(RCC_AHB1ENR_DMA1EN, lp)
+#define rccEnableDMA1(lp) rccEnableAHB1(RCC_AHB1ENR_DMA1EN, lp)
 
 /**
  * @brief   Disables the DMA1 peripheral clock.
@@ -356,14 +355,14 @@
  *
  * @api
  */
-#define rccDisableDMA1(lp) rccDisableAHB(RCC_AHB1ENR_DMA1EN, lp)
+#define rccDisableDMA1(lp) rccDisableAHB1(RCC_AHB1ENR_DMA1EN, lp)
 
 /**
  * @brief   Resets the DMA1 peripheral.
  *
  * @api
  */
-#define rccResetDMA1() rccResetAHB(RCC_AHB1RSTR_DMA1RST)
+#define rccResetDMA1() rccResetAHB1(RCC_AHB1RSTR_DMA1RST)
 
 /**
  * @brief   Enables the DMA2 peripheral clock.
@@ -372,7 +371,7 @@
  *
  * @api
  */
-#define rccEnableDMA2(lp) rccEnableAHB(RCC_AHB1ENR_DMA2EN, lp)
+#define rccEnableDMA2(lp) rccEnableAHB1(RCC_AHB1ENR_DMA2EN, lp)
 
 /**
  * @brief   Disables the DMA2 peripheral clock.
@@ -381,14 +380,14 @@
  *
  * @api
  */
-#define rccDisableDMA2(lp) rccDisableAHB(RCC_AHB1ENR_DMA2EN, lp)
+#define rccDisableDMA2(lp) rccDisableAHB1(RCC_AHB1ENR_DMA2EN, lp)
 
 /**
  * @brief   Resets the DMA2 peripheral.
  *
  * @api
  */
-#define rccResetDMA2() rccResetAHB(RCC_AHB1RSTR_DMA2RST)
+#define rccResetDMA2() rccResetAHB1(RCC_AHB1RSTR_DMA2RST)
 /** @} */
 
 /**
