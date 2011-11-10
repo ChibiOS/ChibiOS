@@ -74,11 +74,11 @@
 /**
  * @brief   Returns a pointer to a stm32_dma_stream_t structure.
  *
- * @param[in] n         the stream numeric identifier
+ * @param[in] id        the stream numeric identifier
  * @return              A pointer to the stm32_dma_stream_t constant structure
  *                      associated to the DMA stream.
  */
-#define STM32_DMA_STREAM(n)         (&_stm32_dma_streams[n))
+#define STM32_DMA_STREAM(id)        (&_stm32_dma_streams[id])
 
 #define STM32_DMA1_STREAM1          STM32_DMA_STREAM(0)
 #define STM32_DMA1_STREAM2          STM32_DMA_STREAM(1)
@@ -112,6 +112,8 @@
 #define STM32_DMA_CR_MSIZE_BYTE     0
 #define STM32_DMA_CR_MSIZE_HWORD    DMA_CCR1_MSIZE_0
 #define STM32_DMA_CR_MSIZE_WORD     DMA_CCR1_MSIZE_1
+#define STM32_DMA_CR_SIZE_MASK      (STM32_DMA_CR_MSIZE_MASK |              \
+                                     STM32_DMA_CR_MSIZE_MASK)
 #define STM32_DMA_CR_PL_MASK        DMA_CCR1_PL
 #define STM32_DMA_CR_PL(n)          ((n) << 12)
 /** @} */
