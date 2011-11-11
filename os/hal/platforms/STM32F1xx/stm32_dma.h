@@ -63,6 +63,28 @@
 #define STM32_DMA_GETCHANNEL(n, c)  0
 
 /**
+ * @brief   Returns a DMA stream identifier mask.
+ *
+ *
+ * @param[in] dma       the DMA unit number
+ * @param[in] stream    the stream number
+ * @return              A DMA stream identifier mask.
+ */
+#define STM32_DMA_STREAM_ID_MSK(dma, stream)                                \
+  (1 << STM32_DMA_STREAM_ID(dma, stream))
+
+/**
+ * @brief   Checks if a DMA stream unique identifier belongs to a mask.
+ * @param[in] id        the stream numeric identifier
+ * @param[in] mask      the stream numeric identifiers mask
+ *
+ * @retval              The check result.
+ * @retval FALSE        id does not belong to the mask.
+ * @retval TRUE         id belongs to the mask.
+ */
+#define STM32_DMA_IS_VALID_ID(id, mask) (((1 << (id)) & (mask)))
+
+/**
  * @name    DMA streams identifiers
  * @{
  */
