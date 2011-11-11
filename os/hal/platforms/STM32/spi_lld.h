@@ -178,7 +178,18 @@
 #define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
 #endif
 
-#endif /* STM32_ADVANCED_DMA*/
+#else /* !STM32_ADVANCED_DMA */
+
+/* Fixed streams for platforms using the old DMA peripheral, the values are
+   valid for both STM32F1xx and STM32L1xx.*/
+#define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
+#define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
+#define STM32_SPI_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
+#define STM32_SPI_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
+#define STM32_SPI_SPI3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 5)
+#define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 6)
+
+#endif /* !STM32_ADVANCED_DMA*/
 /** @} */
 
 /*===========================================================================*/
@@ -201,10 +212,6 @@
 #error "SPI driver activated but no SPI peripheral assigned"
 #endif
 
-#if STM32_ADVANCED_DMA
-
-/* Checks to be performed only on platforms using the advanced DMA
-   peripheral.*/
 #if STM32_SPI_USE_SPI1 &&                                                   \
     !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI1_RX_DMA_STREAM, STM32_SPI1_RX_DMA_MSK)
 #error "invalid DMA stream associated to SPI1 RX"
@@ -234,19 +241,6 @@
     !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI3_TX_DMA_STREAM, STM32_SPI3_TX_DMA_MSK)
 #error "invalid DMA stream associated to SPI3 TX"
 #endif
-
-#else /* !STM32_ADVANCED_DMA */
-
-/* Fixed streams for platforms using the old DMA peripheral, the values are
-   valid for both STM32F1xx and STM32L1xx.*/
-#define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
-#define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
-#define STM32_SPI_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
-#define STM32_SPI_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
-#define STM32_SPI_SPI3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 5)
-#define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 6)
-
-#endif /* !STM32_ADVANCED_DMA */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
