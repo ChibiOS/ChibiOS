@@ -8,7 +8,11 @@ The demo runs on an ST STM32F4-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32 SPI driver.
+The application demonstrates the use of the STM32F4xx SPI driver.
+
+** Board Setup **
+
+- Connect PB14 and PB15 together for SPI loop-back.
 
 ** Build Procedure **
 

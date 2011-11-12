@@ -159,15 +159,15 @@
                                      PIN_PUDR_PULLDOWN(GPIOA_SWCLK) |       \
                                      PIN_PUDR_PULLUP(15))
 #define VAL_GPIOA_ODR               0xFFFFFFFF
-#define VAL_GPIOA_AFRL              (PIN_AFIO_AF(4, 6) |                    \
-                                     PIN_AFIO_AF(5, 5) |                    \
-                                     PIN_AFIO_AF(6, 5) |                    \
-                                     PIN_AFIO_AF(7, 5))
-#define VAL_GPIOA_AFRH              (PIN_AFIO_AF(10, 10) |                  \
-                                     PIN_AFIO_AF(11, 10) |                  \
-                                     PIN_AFIO_AF(12, 10) |                  \
-                                     PIN_AFIO_AF(13, 0) |                   \
-                                     PIN_AFIO_AF(14, 0))
+#define VAL_GPIOA_AFRL              (PIN_AFIO_AF(GPIOA_LRCK, 6) |           \
+                                     PIN_AFIO_AF(GPIOA_SPC, 5) |            \
+                                     PIN_AFIO_AF(GPIOA_SDO, 5) |            \
+                                     PIN_AFIO_AF(GPIOA_SDI, 5))
+#define VAL_GPIOA_AFRH              (PIN_AFIO_AF(GPIOA_OTG_FS_ID, 10) |     \
+                                     PIN_AFIO_AF(GPIOA_OTG_FS_DM, 10) |     \
+                                     PIN_AFIO_AF(GPIOA_OTG_FS_DP, 10) |     \
+                                     PIN_AFIO_AF(GPIOA_SWDIO, 0) |          \
+                                     PIN_AFIO_AF(GPIOA_SWCLK, 0))
 
 /*
  * Port B setup.
@@ -175,7 +175,6 @@
  * PB3  - GPIOB_SWO             (alternate 0).
  * PB6  - GPIOB_SCL             (alternate 4).
  * PB9  - GPIOB_SDA             (alternate 4).
- * PB10 - GPIOB_SCK             (alternate 5).
  */
 #define VAL_GPIOB_MODER             (PIN_MODE_INPUT(0) |                    \
                                      PIN_MODE_INPUT(1) |                    \
@@ -187,7 +186,7 @@
                                      PIN_MODE_INPUT(7) |                    \
                                      PIN_MODE_INPUT(8) |                    \
                                      PIN_MODE_ALTERNATE(GPIOB_SDA) |        \
-                                     PIN_MODE_ALTERNATE(GPIOB_SCK) |        \
+                                     PIN_MODE_INPUT(10) |                   \
                                      PIN_MODE_INPUT(11) |                   \
                                      PIN_MODE_INPUT(12) |                   \
                                      PIN_MODE_INPUT(13) |                   \
@@ -206,23 +205,21 @@
                                      PIN_PUDR_PULLUP(7) |                   \
                                      PIN_PUDR_PULLUP(8) |                   \
                                      PIN_PUDR_FLOATING(GPIOB_SDA) |         \
-                                     PIN_PUDR_FLOATING(GPIOB_SCK) |         \
+                                     PIN_PUDR_PULLUP(10) |                  \
                                      PIN_PUDR_PULLUP(11) |                  \
                                      PIN_PUDR_PULLUP(12) |                  \
                                      PIN_PUDR_PULLUP(13) |                  \
                                      PIN_PUDR_PULLUP(14) |                  \
                                      PIN_PUDR_PULLUP(15))
 #define VAL_GPIOB_ODR               0xFFFFFFFF
-#define VAL_GPIOB_AFRL              (PIN_AFIO_AF(3, 0) |                    \
-                                     PIN_AFIO_AF(6, 4))
-#define VAL_GPIOB_AFRH              (PIN_AFIO_AF(9, 4) |                    \
-                                     PIN_AFIO_AF(10, 5))
+#define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_SWO, 0) |            \
+                                     PIN_AFIO_AF(GPIOB_SCL, 4))
+#define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_SDA, 4))
 
 /*
  * Port C setup.
  * All input with pull-up except:
  * PC0  - GPIOC_OTG_FS_POWER_ON (output push-pull).
- * PC3  - GPIOC_DOUT            (alternate 5).
  * PC7  - GPIOC_MCLK            (alternate 6).
  * PC10 - GPIOC_SCLK            (alternate 6).
  * PC12 - GPIOC_SDIN            (alternate 6).
@@ -230,7 +227,7 @@
 #define VAL_GPIOC_MODER             (PIN_MODE_OUTPUT(GPIOC_OTG_FS_POWER_ON) |\
                                      PIN_MODE_INPUT(1) |                    \
                                      PIN_MODE_INPUT(2) |                    \
-                                     PIN_MODE_ALTERNATE(GPIOC_DOUT) |       \
+                                     PIN_MODE_INPUT(3) |                    \
                                      PIN_MODE_INPUT(4) |                    \
                                      PIN_MODE_INPUT(5) |                    \
                                      PIN_MODE_INPUT(6) |                    \
@@ -248,7 +245,7 @@
 #define VAL_GPIOC_PUPDR             (PIN_PUDR_FLOATING(GPIOC_OTG_FS_POWER_ON) |\
                                      PIN_PUDR_PULLUP(1) |                   \
                                      PIN_PUDR_PULLUP(2) |                   \
-                                     PIN_PUDR_FLOATING(GPIOC_DOUT)  |       \
+                                     PIN_PUDR_PULLUP(3) |                   \
                                      PIN_PUDR_PULLUP(4) |                   \
                                      PIN_PUDR_PULLUP(5) |                   \
                                      PIN_PUDR_PULLUP(6) |                   \
@@ -262,10 +259,9 @@
                                      PIN_PUDR_PULLUP(14) |                  \
                                      PIN_PUDR_PULLUP(15))
 #define VAL_GPIOC_ODR               0xFFFFFFFF
-#define VAL_GPIOC_AFRL              (PIN_AFIO_AF(3, 5) |                    \
-                                     PIN_AFIO_AF(7, 6))
-#define VAL_GPIOC_AFRH              (PIN_AFIO_AF(10, 6) |                   \
-                                     PIN_AFIO_AF(12, 6))
+#define VAL_GPIOC_AFRL              (PIN_AFIO_AF(GPIOC_MCLK, 6))
+#define VAL_GPIOC_AFRH              (PIN_AFIO_AF(GPIOC_SCLK, 6) |           \
+                                     PIN_AFIO_AF(GPIOC_SDIN, 6))
 
 /*
  * Port D setup.
