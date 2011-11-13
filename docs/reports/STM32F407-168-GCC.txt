@@ -6,10 +6,10 @@ Settings: SYSCLK=168, ACR=0x705 (5 wait states)
 *** ChibiOS/RT test suite
 ***
 *** Kernel:       2.3.4unstable
-*** Compiled:     Nov  6 2011 - 12:43:29
+*** Compiled:     Nov 13 2011 - 12:07:02
 *** Compiler:     GCC 4.6.0
-*** Architecture: ARMv7-M
-*** Core Variant: Cortex-M3
+*** Architecture: ARMv7-ME
+*** Core Variant: Cortex-M4
 *** Port Info:    Advanced kernel mode
 *** Platform:     STM32F4 High Performance & DSP
 *** Test Board:   ST STM32F4-Discovery

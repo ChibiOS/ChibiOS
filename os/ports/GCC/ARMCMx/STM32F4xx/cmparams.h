@@ -35,7 +35,7 @@
 /**
  * @brief   Cortex core model.
  */
-#define CORTEX_MODEL            CORTEX_M3
+#define CORTEX_MODEL            CORTEX_M4
 
 /**
  * @brief   Systick unit presence.
@@ -46,6 +46,11 @@
  * @brief   Memory Protection unit presence.
  */
 #define CORTEX_HAS_MPU          TRUE
+
+/**
+ * @brief   Floating Point unit presence.
+ */
+#define CORTEX_HAS_FPU          TRUE
 
 /**
  * @brief   Number of bits in priority masks.

@@ -48,6 +48,11 @@
 #define CORTEX_HAS_MPU          FALSE
 
 /**
+ * @brief   Floating Point unit presence.
+ */
+#define CORTEX_HAS_FPU          FALSE
+
+/**
  * @brief   Number of bits in priority masks.
  */
 #define CORTEX_PRIORITY_BITS    4
