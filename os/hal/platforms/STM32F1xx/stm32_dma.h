@@ -153,6 +153,7 @@
  * @name    CR register constants only found in enhanced DMA
  * @{
  */
+#define STM32_DMA_CR_DMEIE          0   /**< @brief Ignored by normal DMA.  */
 #define STM32_DMA_CR_CHSEL_MASK     0   /**< @brief Ignored by normal DMA.  */
 #define STM32_DMA_CR_CHSEL(n)       0   /**< @brief Ignored by normal DMA.  */
 /** @} */

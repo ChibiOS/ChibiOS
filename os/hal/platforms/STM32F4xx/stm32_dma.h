@@ -171,7 +171,7 @@
 /** @} */
 
 /**
- * @name    FCR register constants only found in STM32F2xx
+ * @name    FCR register constants only found in STM32F2xx/STM32F4xx
  * @{
  */
 #define STM32_DMA_FCR_FEIE          DMA_SxFCR_FEIE
