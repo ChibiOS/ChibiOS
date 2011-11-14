@@ -201,7 +201,7 @@ int main(void) {
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
-   * PA2(TX) and PA3(RX) are routed to USART1.
+   * PA2(TX) and PA3(RX) are routed to USART2.
    */
   sdStart(&SD2, NULL);
   palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
