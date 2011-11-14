@@ -84,6 +84,9 @@
   (backported to 2.2.8).
 - FIX: Fixed broken TIM8 support in STM32 PWM driver (bug 3418620).
 - FIX: Fixed halconf.h file corrupted in some STM32 demos (bug 3418626).
+- NEW: Added initialization of the NVIC VTOR register to all Cortex-Mx (v7M)
+  ports. Also added a port option CORTEX_VTOR_INIT to enforce a different
+  default value into the register.
 - NEW: Removed the warning about the "untested M4 platform", now it is
   tested and officially supported.
 - NEW: Reorganized the STM32F1xx hal_lld_xxx.h files in order to distribute
