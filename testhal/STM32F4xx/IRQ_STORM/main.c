@@ -112,7 +112,7 @@ static msg_t WorkerThread(void *arg) {
       /* Provides a visual feedback about the system.*/
       if (++cnt >= 500) {
         cnt = 0;
-        palTogglePad(GPIOB, GPIOB_LED4);
+        palTogglePad(GPIOD, GPIOD_LED5);
       }
     }
   }
@@ -170,29 +170,29 @@ static const GPTConfig gpt3cfg = {
 static void print(char *p) {
 
   while (*p) {
-    chIOPut(&SD1, *p++);
+    chIOPut(&SD2, *p++);
   }
 }
 
 static void println(char *p) {
 
   while (*p) {
-    chIOPut(&SD1, *p++);
+    chIOPut(&SD2, *p++);
   }
-  chIOWriteTimeout(&SD1, (uint8_t *)"\r\n", 2, TIME_INFINITE);
+  chIOWriteTimeout(&SD2, (uint8_t *)"\r\n", 2, TIME_INFINITE);
 }
 
 static void printn(uint32_t n) {
   char buf[16], *p;
 
   if (!n)
-    chIOPut(&SD1, '0');
+    chIOPut(&SD2, '0');
   else {
     p = buf;
     while (n)
       *p++ = (n % 10) + '0', n /= 10;
     while (p > buf)
-      chIOPut(&SD1, *--p);
+      chIOPut(&SD2, *--p);
   }
 }
 
@@ -214,9 +214,9 @@ int main(void) {
   chSysInit();
 
   /*
-   * Prepares the Serial driver 1 and GPT drivers 2 and 3.
+   * Prepares the Serial driver 2 and GPT drivers 2 and 3.
    */
-  sdStart(&SD1, NULL);          /* Default is 38400-8-N-1.*/
+  sdStart(&SD2, NULL);          /* Default is 38400-8-N-1.*/
   palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));
   palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));
   gptStart(&GPTD2, &gpt2cfg);

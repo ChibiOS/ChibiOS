@@ -8,8 +8,12 @@ The demo runs on an Olimex STM32-P103 board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32 GPT, PAL and Serial drivers
-in order to implement a system stress demo.
+The application demonstrates the use of the STM32F1xx GPT, PAL and Serial
+drivers in order to implement a system stress demo.
+
+** Board Setup **
+
+None.
 
 ** Build Procedure **
 

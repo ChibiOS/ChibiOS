@@ -27,7 +27,7 @@
 static void gpt2cb(GPTDriver *gptp) {
 
   (void)gptp;
-  palSetPad(GPIOB, GPIOB_LED4);
+  palSetPad(GPIOD, GPIOD_LED5);
   chSysLockFromIsr();
   gptStartOneShotI(&GPTD3, 1000);   /* 0.1 second pulse.*/
   chSysUnlockFromIsr();
@@ -39,7 +39,7 @@ static void gpt2cb(GPTDriver *gptp) {
 static void gpt3cb(GPTDriver *gptp) {
 
   (void)gptp;
-  palClearPad(GPIOB, GPIOB_LED4);
+  palClearPad(GPIOD, GPIOD_LED5);
 }
 
 /*
@@ -86,11 +86,11 @@ int main(void) {
    * five seconds.
    */
   while (TRUE) {
-    palSetPad(GPIOB, GPIOB_LED3);
+    palSetPad(GPIOD, GPIOD_LED4);
     gptStartContinuous(&GPTD2, 5000);
     chThdSleepMilliseconds(5000);
     gptStopTimer(&GPTD2);
-    palClearPad(GPIOB, GPIOB_LED3);
+    palClearPad(GPIOD, GPIOD_LED4);
     gptStartContinuous(&GPTD2, 2500);
     chThdSleepMilliseconds(5000);
     gptStopTimer(&GPTD2);

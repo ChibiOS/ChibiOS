@@ -1238,6 +1238,15 @@
 #define STM32_FLASHBITS             0x00000007
 #endif
 
+/* There are differences in vector names in the various sub-families,
+   normalizing.*/
+#define TIM1_BRK_IRQn       TIM1_BRK_TIM9_IRQn
+#define TIM1_UP_IRQn        TIM1_UP_TIM10_IRQn
+#define TIM1_TRG_COM_IRQn   TIM1_TRG_COM_TIM11_IRQn
+#define TIM8_BRK_IRQn       TIM8_BRK_TIM12_IRQn
+#define TIM8_UP_IRQn        TIM8_UP_TIM13_IRQn
+#define TIM8_TRG_COM_IRQn   TIM8_TRG_COM_TIM14_IRQn
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/

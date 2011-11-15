@@ -36,25 +36,30 @@
  * HAL driver system settings.
  */
 #define STM32_NO_INIT                       FALSE
-#define STM32_VOS                           STM32_VOS_1P8
+#define STM32_VOS                           STM32_VOS_HIGH
 #define STM32_HSI_ENABLED                   TRUE
 #define STM32_LSI_ENABLED                   TRUE
-#define STM32_HSE_ENABLED                   FALSE
-#define STM32_LSE_ENABLED                   TRUE
-#define STM32_ADC_CLOCK_ENABLED             TRUE
-#define STM32_USB_CLOCK_ENABLED             TRUE
-#define STM32_MSIRANGE                      STM32_MSIRANGE_2M
+#define STM32_HSE_ENABLED                   TRUE
+#define STM32_LSE_ENABLED                   FALSE
+#define STM32_CLOCK48_REQUIRED              TRUE
 #define STM32_SW                            STM32_SW_PLL
-#define STM32_PLLSRC                        STM32_PLLSRC_HSI
-#define STM32_PLLMUL_VALUE                  6
-#define STM32_PLLDIV_VALUE                  3
+#define STM32_PLLSRC                        STM32_PLLSRC_HSE
+#define STM32_PLLM_VALUE                    8
+#define STM32_PLLN_VALUE                    336
+#define STM32_PLLP_VALUE                    2
+#define STM32_PLLQ_VALUE                    7
 #define STM32_HPRE                          STM32_HPRE_DIV1
-#define STM32_PPRE1                         STM32_PPRE1_DIV1
-#define STM32_PPRE2                         STM32_PPRE2_DIV1
-#define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
-#define STM32_MCOPRE                        STM32_MCOPRE_DIV1
-#define STM32_RTCSEL                        STM32_RTCSEL_LSE
-#define STM32_RTCPRE                        STM32_RTCPRE_DIV2
+#define STM32_PPRE1                         STM32_PPRE1_DIV4
+#define STM32_PPRE2                         STM32_PPRE2_DIV2
+#define STM32_RTCSEL                        STM32_RTCSEL_LSI
+#define STM32_RTCPRE_VALUE                  8
+#define STM32_MCO1SEL                       STM32_MCO1SEL_HSI
+#define STM32_MCO1PRE                       STM32_MCO1PRE_DIV1
+#define STM32_MCO2SEL                       STM32_MCO2SEL_SYSCLK
+#define STM32_MCO2PRE                       STM32_MCO2PRE_DIV5
+#define STM32_I2SSRC                        STM32_I2CSRC_CKIN
+#define STM32_PLLI2SN_VALUE                 192
+#define STM32_PLLI2SR_VALUE                 5
 
 /*
  * ADC driver system settings.
@@ -136,8 +141,8 @@
 /*
  * SERIAL driver system settings.
  */
-#define STM32_SERIAL_USE_USART1             TRUE
-#define STM32_SERIAL_USE_USART2             FALSE
+#define STM32_SERIAL_USE_USART1             FALSE
+#define STM32_SERIAL_USE_USART2             TRUE
 #define STM32_SERIAL_USE_USART3             FALSE
 #define STM32_SERIAL_USE_UART4              FALSE
 #define STM32_SERIAL_USE_UART5              FALSE
@@ -154,7 +159,13 @@
  */
 #define STM32_SPI_USE_SPI1                  TRUE
 #define STM32_SPI_USE_SPI2                  TRUE
-#define STM32_SPI_USE_SPI3                  FALSE
+#define STM32_SPI_USE_SPI3                  TRUE
+#define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 0)
+#define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 3)
+#define STM32_SPI_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
+#define STM32_SPI_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
+#define STM32_SPI_SPI3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 0)
+#define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
 #define STM32_SPI_SPI1_DMA_PRIORITY         1
 #define STM32_SPI_SPI2_DMA_PRIORITY         1
 #define STM32_SPI_SPI3_DMA_PRIORITY         1

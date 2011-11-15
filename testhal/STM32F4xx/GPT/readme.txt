@@ -1,19 +1,18 @@
 *****************************************************************************
-** ChibiOS/RT HAL - PWM-ICU drivers demo for STM32L1xx.                    **
+** ChibiOS/RT HAL - GPT driver demo for STM32F4xx.                         **
 *****************************************************************************
 
 ** TARGET **
 
-The demo will on an STMicroelectronics STM32L-Discovery board.
+The demo will on an STMicroelectronics STM32F4-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32L1xx GPT, PAL and Serial
-drivers in order to implement a system stress demo.
+The application demonstrates the use of the STM32F4xx GPT driver.
 
 ** Board Setup **
 
-None.
+None required.
 
 ** Build Procedure **
 
