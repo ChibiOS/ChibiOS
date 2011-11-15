@@ -217,8 +217,8 @@ int main(void) {
    * Prepares the Serial driver 2 and GPT drivers 2 and 3.
    */
   sdStart(&SD2, NULL);          /* Default is 38400-8-N-1.*/
-  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));
-  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));
+  palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
+  palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
   gptStart(&GPTD2, &gpt2cfg);
   gptStart(&GPTD3, &gpt3cfg);
 
