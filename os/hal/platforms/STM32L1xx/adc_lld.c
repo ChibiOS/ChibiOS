@@ -219,7 +219,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   adcp->adc->SQR3  = grpp->sqr3;
   adcp->adc->SQR4  = grpp->sqr4;
   adcp->adc->SQR5  = grpp->sqr5;
-  /* Must wait the ADC to be ready for conversion, see 9.3.6 "Timing diagram"
+  /* Must wait the ADC to be ready for conversion, see 10.3.6 "Timing diagram"
      in the Reference Manual.*/
   while ((adcp->adc->SR & ADC_SR_ADONS) == 0)
     ;
