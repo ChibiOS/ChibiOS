@@ -251,8 +251,19 @@
  */
 /* ADC attributes.*/
 #define STM32_HAS_ADC1          TRUE
+#define STM32_ADC1_DMA_MSK      (STM32_DMA_STREAM_ID_MSK(2, 0) |            \
+                                 STM32_DMA_STREAM_ID_MSK(2, 4))
+#define STM32_ADC1_DMA_CHN      0x00000000
+
 #define STM32_HAS_ADC2          TRUE
+#define STM32_ADC2_DMA_MSK      (STM32_DMA_STREAM_ID_MSK(2, 2) |            \
+                                 STM32_DMA_STREAM_ID_MSK(2, 3))
+#define STM32_ADC2_DMA_CHN      0x00001100
+
 #define STM32_HAS_ADC3          TRUE
+#define STM32_ADC3_DMA_MSK      (STM32_DMA_STREAM_ID_MSK(2, 0) |            \
+                                 STM32_DMA_STREAM_ID_MSK(2, 1))
+#define STM32_ADC3_DMA_CHN      0x00000022
 
 /* CAN attributes.*/
 #define STM32_HAS_CAN1          TRUE
