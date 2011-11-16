@@ -53,8 +53,8 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
 
 /*
  * ADC conversion group.
- * Mode:        Linear buffer, 16 samples of 8 channels, SW triggered.
- * Channels:    IN10, IN11, IN10, IN11, IN10, IN11, Sensor, VRef.
+ * Mode:        Linear buffer, 8 samples of 1 channel, SW triggered.
+ * Channels:    IN10.
  */
 static const ADCConversionGroup adcgrpcfg1 = {
   FALSE,
@@ -82,8 +82,8 @@ static const ADCConversionGroup adcgrpcfg2 = {
   adcerrorcallback,
   0, 0,         /* CR1, CR2 */
   0,            /* SMPR1 */
-  ADC_SMPR2_SMP_AN10(ADC_SAMPLE_48) | ADC_SMPR2_SMP_SENSOR(ADC_SAMPLE_192) |
-  ADC_SMPR2_SMP_VREF(ADC_SAMPLE_192),
+  ADC_SMPR2_SMP_AN11(ADC_SAMPLE_48) | ADC_SMPR2_SMP_AN10(ADC_SAMPLE_48) |
+  ADC_SMPR2_SMP_SENSOR(ADC_SAMPLE_192) | ADC_SMPR2_SMP_VREF(ADC_SAMPLE_192),
   0,            /* SMPR3 */
   ADC_SQR1_NUM_CH(ADC_GRP2_NUM_CHANNELS),
   0, 0,         /* SQR2, SQR3 */
