@@ -170,9 +170,11 @@ void adc_lld_init(void) {
   ADCD1.dmastp  = STM32_DMA_STREAM(STM32_ADC_ADC1_DMA_STREAM);
   ADCD1.dmamode = STM32_DMA_CR_CHSEL(ADC1_DMA_CHANNEL) |
                   STM32_DMA_CR_PL(STM32_ADC_ADC1_DMA_PRIORITY) |
+                  STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
-                  STM32_DMA_CR_TEIE        | STM32_DMA_CR_EN;
+                  STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE        |
+                  STM32_DMA_CR_EN;
 #endif
 
 #if STM32_ADC_USE_ADC2
@@ -182,9 +184,11 @@ void adc_lld_init(void) {
   ADCD2.dmastp  = STM32_DMA_STREAM(STM32_ADC_ADC2_DMA_STREAM);
   ADCD2.dmamode = STM32_DMA_CR_CHSEL(ADC2_DMA_CHANNEL) |
                   STM32_DMA_CR_PL(STM32_ADC_ADC2_DMA_PRIORITY) |
+                  STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
-                  STM32_DMA_CR_TEIE        | STM32_DMA_CR_EN;
+                  STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE        |
+                  STM32_DMA_CR_EN;
 #endif
 
 #if STM32_ADC_USE_ADC3
@@ -194,9 +198,11 @@ void adc_lld_init(void) {
   ADCD3.dmastp  = STM32_DMA_STREAM(STM32_ADC_ADC3_DMA_STREAM);
   ADCD3.dmamode = STM32_DMA_CR_CHSEL(ADC3_DMA_CHANNEL) |
                   STM32_DMA_CR_PL(STM32_ADC_ADC3_DMA_PRIORITY) |
+                  STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
-                  STM32_DMA_CR_TEIE        | STM32_DMA_CR_EN;
+                  STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE        |
+                  STM32_DMA_CR_EN;
 #endif
 
   /* The shared vector is initialized on driver initialization and never

@@ -134,15 +134,15 @@ typedef enum {
  * @notapi
  */
 #define _adc_wakeup_isr(adcp) {                                             \
+  chSysLockFromIsr();                                                       \
   if ((adcp)->thread != NULL) {                                             \
     Thread *tp;                                                             \
-    chSysLockFromIsr();                                                     \
     tp = (adcp)->thread;                                                    \
     (adcp)->thread = NULL;                                                  \
     tp->p_u.rdymsg = RDY_OK;                                                \
     chSchReadyI(tp);                                                        \
-    chSysUnlockFromIsr();                                                   \
   }                                                                         \
+  chSysUnlockFromIsr();                                                     \
 }
 
 /**
@@ -153,15 +153,15 @@ typedef enum {
  * @notapi
  */
 #define _adc_timeout_isr(adcp) {                                            \
+  chSysLockFromIsr();                                                       \
   if ((adcp)->thread != NULL) {                                             \
     Thread *tp;                                                             \
-    chSysLockFromIsr();                                                     \
     tp = (adcp)->thread;                                                    \
     (adcp)->thread = NULL;                                                  \
     tp->p_u.rdymsg = RDY_TIMEOUT;                                           \
     chSchReadyI(tp);                                                        \
-    chSysUnlockFromIsr();                                                   \
   }                                                                         \
+  chSysUnlockFromIsr();                                                     \
 }
 
 #else /* !ADC_USE_WAIT */
