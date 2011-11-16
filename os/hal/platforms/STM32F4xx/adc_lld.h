@@ -556,6 +556,8 @@ extern "C" {
   void adc_lld_stop_conversion(ADCDriver *adcp);
   void adcSTM32EnableTSVREFE(void);
   void adcSTM32DisableTSVREFE(void);
+  void adcSTM32EnableVBATE(void);
+  void adcSTM32DisableVBATE(void);
 #ifdef __cplusplus
 }
 #endif

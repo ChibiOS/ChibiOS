@@ -321,17 +321,16 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   /* ADC setup.*/
   adcp->adc->SR    = 0;
   adcp->adc->CR1   = grpp->cr1 | ADC_CR1_OVRIE | ADC_CR1_SCAN;
-  adcp->adc->SMPR1 = grpp->smpr1;       /* Writing SMPRx requires ADON=0.   */
-  adcp->adc->SMPR2 = grpp->smpr2;
   adcp->adc->CR2   = grpp->cr2 | ADC_CR2_CONT | ADC_CR2_DMA | ADC_CR2_DDS |
                                  ADC_CR2_ADON;
+  adcp->adc->SMPR1 = grpp->smpr1;
+  adcp->adc->SMPR2 = grpp->smpr2;
   adcp->adc->SQR1  = grpp->sqr1;
   adcp->adc->SQR2  = grpp->sqr2;
   adcp->adc->SQR3  = grpp->sqr3;
-  /* Must wait the ADC to be ready for conversion, see 9.3.6 "Timing diagram"
-     in the Reference Manual.*/
-  while ((adcp->adc->SR & ADC_SR_ADONS) == 0)
-    ;
+  /* TODO: According to section 10.3.6 of the reference manual there should
+     be a 2uS delay between the ADC activation and conversion start.*/
+
   /* ADC start by raising ADC_CR2_SWSTART.*/
   adcp->adc->CR2   = grpp->cr2 | ADC_CR2_SWSTART | ADC_CR2_CONT | ADC_CR2_DMA |
                                  ADC_CR2_DDS | ADC_CR2_ADON;
@@ -371,6 +370,26 @@ void adcSTM32EnableTSVREFE(void) {
 void adcSTM32DisableTSVREFE(void) {
 
   ADC->CCR &= ~ADC_CCR_TSVREFE;
+}
+
+/**
+ * @brief   Enables the VBATE bit.
+ * @details The VBATE bit is required in order to sample the VBAT channel.
+ * @note    This is an STM32-only functionality.
+ */
+void adcSTM32EnableVBATE(void) {
+
+  ADC->CCR |= ADC_CCR_VBATE;
+}
+
+/**
+ * @brief   Disables the VBATE bit.
+ * @details The VBATE bit is required in order to sample the VBAT channel.
+ * @note    This is an STM32-only functionality.
+ */
+void adcSTM32DisableVBATE(void) {
+
+  ADC->CCR &= ~ADC_CCR_VBATE;
 }
 
 #endif /* HAL_USE_ADC */

@@ -53,8 +53,8 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
 
 /*
  * ADC conversion group.
- * Mode:        Linear buffer, 16 samples of 8 channels, SW triggered.
- * Channels:    IN10, IN11, IN10, IN11, IN10, IN11, Sensor, VRef.
+ * Mode:        Linear buffer, 16 samples of 1 channel, SW triggered.
+ * Channels:    IN10.
  */
 static const ADCConversionGroup adcgrpcfg1 = {
   FALSE,
@@ -62,12 +62,11 @@ static const ADCConversionGroup adcgrpcfg1 = {
   NULL,
   adcerrorcallback,
   0, 0,         /* CR1, CR2 */
-  0,            /* SMPR1 */
-  ADC_SMPR2_SMP_AN10(ADC_SAMPLE_4),
-  0,            /* SMPR3 */
+  ADC_SMPR1_SMP_AN10(ADC_SAMPLE_3),
+  0,            /* SMPR2 */
   ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),
-  0, 0, 0,      /* SQR2, SQR3, SQR4 */
-  ADC_SQR5_SQ1_N(ADC_CHANNEL_IN10)
+  0,            /* SQR2 */
+  ADC_SQR3_SQ1_N(ADC_CHANNEL_IN10)
 };
 
 /*
@@ -81,16 +80,14 @@ static const ADCConversionGroup adcgrpcfg2 = {
   adccallback,
   adcerrorcallback,
   0, 0,         /* CR1, CR2 */
-  0,            /* SMPR1 */
-  ADC_SMPR2_SMP_AN10(ADC_SAMPLE_48) | ADC_SMPR2_SMP_SENSOR(ADC_SAMPLE_192) |
-  ADC_SMPR2_SMP_VREF(ADC_SAMPLE_192),
-  0,            /* SMPR3 */
+  ADC_SMPR1_SMP_AN11(ADC_SAMPLE_56) | ADC_SMPR1_SMP_AN10(ADC_SAMPLE_56) |
+  ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_144) | ADC_SMPR1_SMP_VREF(ADC_SAMPLE_144),
+  0,            /* SMPR2 */
   ADC_SQR1_NUM_CH(ADC_GRP2_NUM_CHANNELS),
-  0, 0,         /* SQR2, SQR3 */
-  ADC_SQR4_SQ8_N(ADC_CHANNEL_SENSOR) | ADC_SQR4_SQ7_N(ADC_CHANNEL_VREFINT),
-  ADC_SQR5_SQ6_N(ADC_CHANNEL_IN11)   | ADC_SQR5_SQ5_N(ADC_CHANNEL_IN10) |
-  ADC_SQR5_SQ4_N(ADC_CHANNEL_IN11)   | ADC_SQR5_SQ3_N(ADC_CHANNEL_IN10) |
-  ADC_SQR5_SQ2_N(ADC_CHANNEL_IN11)   | ADC_SQR5_SQ1_N(ADC_CHANNEL_IN10)
+  ADC_SQR2_SQ8_N(ADC_CHANNEL_SENSOR) | ADC_SQR2_SQ7_N(ADC_CHANNEL_VREFINT),
+  ADC_SQR3_SQ6_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ5_N(ADC_CHANNEL_IN10) |
+  ADC_SQR3_SQ4_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ3_N(ADC_CHANNEL_IN10) |
+  ADC_SQR3_SQ2_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ1_N(ADC_CHANNEL_IN10)
 };
 
 /*
@@ -102,9 +99,9 @@ static msg_t Thread1(void *arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (TRUE) {
-    palSetPad(GPIOB, GPIOB_LED4);
+    palSetPad(GPIOD, GPIOD_LED5);
     chThdSleepMilliseconds(500);
-    palClearPad(GPIOB, GPIOB_LED4);
+    palClearPad(GPIOD, GPIOD_LED5);
     chThdSleepMilliseconds(500);
   }
 }
