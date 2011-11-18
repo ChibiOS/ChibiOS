@@ -1,7 +1,7 @@
-# List of all the STM32L1xx platform files.
-PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/STM32L1xx/stm32_dma.c \
+# List of all the STM32F4xx platform files.
+PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/STM32F4xx/stm32_dma.c \
               ${CHIBIOS}/os/hal/platforms/STM32F4xx/hal_lld.c \
-              ${CHIBIOS}/os/hal/platforms/STM32/adc_lld.c \
+              ${CHIBIOS}/os/hal/platforms/STM32F4xx/adc_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/ext_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/gpt_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/icu_lld.c \
