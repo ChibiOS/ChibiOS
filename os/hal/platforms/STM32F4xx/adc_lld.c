@@ -116,7 +116,9 @@ CH_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
 #if STM32_ADC_USE_ADC1
   sr = ADC1->SR;
   ADC1->SR = 0;
-  if (sr & ADC_SR_OVR) {
+  /* Note, an overflow may occur after the conversion ended before the driver
+     is able to stop the ADC, this is why the DMA channel is checked too.*/
+  if ((sr & ADC_SR_OVR) && (dmaStreamGetTransactionSize(ADCD1.dmastp) > 0)) {
     /* ADC overflow condition, this could happen only if the DMA is unable
        to read data fast enough.*/
     _adc_isr_error_code(&ADCD1, ADC_ERR_OVERFLOW);
@@ -127,7 +129,9 @@ CH_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
 #if STM32_ADC_USE_ADC2
   sr = ADC2->SR;
   ADC2->SR = 0;
-  if (sr & ADC_SR_OVR) {
+  /* Note, an overflow may occur after the conversion ended before the driver
+     is able to stop the ADC, this is why the DMA channel is checked too.*/
+  if ((sr & ADC_SR_OVR) && (dmaStreamGetTransactionSize(ADCD2.dmastp) > 0)) {
     /* ADC overflow condition, this could happen only if the DMA is unable
        to read data fast enough.*/
     _adc_isr_error_code(&ADCD2, ADC_ERR_OVERFLOW);
@@ -138,7 +142,9 @@ CH_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
 #if STM32_ADC_USE_ADC3
   sr = ADC3->SR;
   ADC3->SR = 0;
-  if (sr & ADC_SR_OVR) {
+  /* Note, an overflow may occur after the conversion ended before the driver
+     is able to stop the ADC, this is why the DMA channel is checked too.*/
+  if ((sr & ADC_SR_OVR) && (dmaStreamGetTransactionSize(ADCD3.dmastp) > 0)) {
     /* ADC overflow condition, this could happen only if the DMA is unable
        to read data fast enough.*/
     _adc_isr_error_code(&ADCD3, ADC_ERR_OVERFLOW);

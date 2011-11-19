@@ -338,7 +338,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 #define dmaStartMemCopy(dmastp, mode, src, dst, n) {                        \
   dmaStreamSetPeripheral(dmastp, src);                                      \
   dmaStreamSetMemory0(dmastp, dst);                                         \
-  dmaStreamGetTransactionSize(dmastp, n);                                   \
+  dmaStreamSetTransactionSize(dmastp, n);                                   \
   dmaStreamSetMode(dmastp, (mode) |                                         \
                            STM32_DMA_CR_MINC | STM32_DMA_CR_PINC |          \
                            STM32_DMA_CR_DIR_M2M | STM32_DMA_CR_EN);         \
