@@ -12,7 +12,7 @@ The application demonstrates the use of the STM32L1xx ADC driver.
 
 ** Board Setup **
 
-- Connect PC0 to 3.3V and PC1 to GND for analog measurements.
+- Connect PC1 to 3.3V and PC2 to GND for analog measurements.
 
 ** Build Procedure **
 

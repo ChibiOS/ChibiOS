@@ -266,9 +266,9 @@ void adc_lld_start(ADCDriver *adcp) {
     }
 #endif /* STM32_ADC_USE_ADC3 */
 
-    /* ADC initial setup, just resetting control registers in this case.*/
+    /* ADC initial setup, starting the analog part.*/
     adcp->adc->CR1 = 0;
-    adcp->adc->CR2 = 0;
+    adcp->adc->CR2 = ADC_CR2_ADON;
   }
 }
 
@@ -332,19 +332,16 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   /* ADC setup.*/
   adcp->adc->SR    = 0;
-  adcp->adc->CR1   = grpp->cr1 | ADC_CR1_OVRIE | ADC_CR1_SCAN;
-  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_CONT | ADC_CR2_DMA | ADC_CR2_DDS |
-                                 ADC_CR2_ADON;
   adcp->adc->SMPR1 = grpp->smpr1;
   adcp->adc->SMPR2 = grpp->smpr2;
   adcp->adc->SQR1  = grpp->sqr1;
   adcp->adc->SQR2  = grpp->sqr2;
   adcp->adc->SQR3  = grpp->sqr3;
-  /* TODO: According to section 10.3.6 of the reference manual there should
-     be a 2uS delay between the ADC activation and conversion start.*/
 
-  /* ADC start by raising ADC_CR2_SWSTART.*/
-  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_SWSTART | ADC_CR2_CONT | ADC_CR2_DMA |
+  /* ADC configuration and start, the start is performed using the method
+     specified in the CR2 configuration, usually ADC_CR2_SWSTART.*/
+  adcp->adc->CR1   = grpp->cr1 | ADC_CR1_OVRIE | ADC_CR1_SCAN;
+  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_CONT | ADC_CR2_DMA |
                                  ADC_CR2_DDS | ADC_CR2_ADON;
 }
 
@@ -360,6 +357,7 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
   dmaStreamDisable(adcp->dmastp);
   adcp->adc->CR1 = 0;
   adcp->adc->CR2 = 0;
+  adcp->adc->CR2 = ADC_CR2_ADON;
 }
 
 /**

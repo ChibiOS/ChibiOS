@@ -54,40 +54,42 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
 /*
  * ADC conversion group.
  * Mode:        Linear buffer, 8 samples of 1 channel, SW triggered.
- * Channels:    IN10.
+ * Channels:    IN11.
  */
 static const ADCConversionGroup adcgrpcfg1 = {
   FALSE,
   ADC_GRP1_NUM_CHANNELS,
   NULL,
   adcerrorcallback,
-  0, 0,         /* CR1, CR2 */
-  ADC_SMPR1_SMP_AN10(ADC_SAMPLE_3),
-  0,            /* SMPR2 */
+  0,                        /* CR1 */
+  ADC_CR2_SWSTART,          /* CR2 */
+  ADC_SMPR1_SMP_AN11(ADC_SAMPLE_3),
+  0,                        /* SMPR2 */
   ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),
-  0,            /* SQR2 */
-  ADC_SQR3_SQ1_N(ADC_CHANNEL_IN10)
+  0,                        /* SQR2 */
+  ADC_SQR3_SQ1_N(ADC_CHANNEL_IN11)
 };
 
 /*
  * ADC conversion group.
  * Mode:        Continuous, 16 samples of 8 channels, SW triggered.
- * Channels:    IN10, IN11, IN10, IN11, IN10, IN11, Sensor, VRef.
+ * Channels:    IN11, IN12, IN11, IN12, IN11, IN12, Sensor, VRef.
  */
 static const ADCConversionGroup adcgrpcfg2 = {
   TRUE,
   ADC_GRP2_NUM_CHANNELS,
   adccallback,
   adcerrorcallback,
-  0, 0,         /* CR1, CR2 */
-  ADC_SMPR1_SMP_AN11(ADC_SAMPLE_56) | ADC_SMPR1_SMP_AN10(ADC_SAMPLE_56) |
+  0,                        /* CR1 */
+  ADC_CR2_SWSTART,          /* CR2 */
+  ADC_SMPR1_SMP_AN12(ADC_SAMPLE_56) | ADC_SMPR1_SMP_AN11(ADC_SAMPLE_56) |
   ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_144) | ADC_SMPR1_SMP_VREF(ADC_SAMPLE_144),
-  0,            /* SMPR2 */
+  0,                        /* SMPR2 */
   ADC_SQR1_NUM_CH(ADC_GRP2_NUM_CHANNELS),
   ADC_SQR2_SQ8_N(ADC_CHANNEL_SENSOR) | ADC_SQR2_SQ7_N(ADC_CHANNEL_VREFINT),
-  ADC_SQR3_SQ6_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ5_N(ADC_CHANNEL_IN10) |
-  ADC_SQR3_SQ4_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ3_N(ADC_CHANNEL_IN10) |
-  ADC_SQR3_SQ2_N(ADC_CHANNEL_IN11)   | ADC_SQR3_SQ1_N(ADC_CHANNEL_IN10)
+  ADC_SQR3_SQ6_N(ADC_CHANNEL_IN12)   | ADC_SQR3_SQ5_N(ADC_CHANNEL_IN11) |
+  ADC_SQR3_SQ4_N(ADC_CHANNEL_IN12)   | ADC_SQR3_SQ3_N(ADC_CHANNEL_IN11) |
+  ADC_SQR3_SQ2_N(ADC_CHANNEL_IN12)   | ADC_SQR3_SQ1_N(ADC_CHANNEL_IN11)
 };
 
 /*
@@ -124,7 +126,7 @@ int main(void) {
   /*
    * Setting up analog inputs used by the demo.
    */
-  palSetGroupMode(GPIOC, PAL_PORT_BIT(0) | PAL_PORT_BIT(1),
+  palSetGroupMode(GPIOC, PAL_PORT_BIT(1) | PAL_PORT_BIT(2),
                   PAL_MODE_INPUT_ANALOG);
 
   /*
