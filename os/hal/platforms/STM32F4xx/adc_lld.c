@@ -86,13 +86,17 @@ static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
     _adc_isr_error_code(adcp, ADC_ERR_DMAFAILURE);
   }
   else {
-    if ((flags & STM32_DMA_ISR_HTIF) != 0) {
-      /* Half transfer processing.*/
-      _adc_isr_half_code(adcp);
-    }
-    if ((flags & STM32_DMA_ISR_TCIF) != 0) {
-      /* Transfer complete processing.*/
-      _adc_isr_full_code(adcp);
+    /* It is possible that the conversion group has already be reset by the
+       ADC error handler, in this case this interrupt is spurious.*/
+    if (adcp->grpp != NULL) {
+      if ((flags & STM32_DMA_ISR_HTIF) != 0) {
+        /* Half transfer processing.*/
+        _adc_isr_half_code(adcp);
+      }
+      if ((flags & STM32_DMA_ISR_TCIF) != 0) {
+        /* Transfer complete processing.*/
+        _adc_isr_full_code(adcp);
+      }
     }
   }
 }
@@ -121,7 +125,8 @@ CH_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
   if ((sr & ADC_SR_OVR) && (dmaStreamGetTransactionSize(ADCD1.dmastp) > 0)) {
     /* ADC overflow condition, this could happen only if the DMA is unable
        to read data fast enough.*/
-    _adc_isr_error_code(&ADCD1, ADC_ERR_OVERFLOW);
+    if (ADCD1.grpp != NULL)
+      _adc_isr_error_code(&ADCD1, ADC_ERR_OVERFLOW);
   }
   /* TODO: Add here analog watchdog handling.*/
 #endif /* STM32_ADC_USE_ADC1 */
@@ -134,7 +139,8 @@ CH_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
   if ((sr & ADC_SR_OVR) && (dmaStreamGetTransactionSize(ADCD2.dmastp) > 0)) {
     /* ADC overflow condition, this could happen only if the DMA is unable
        to read data fast enough.*/
-    _adc_isr_error_code(&ADCD2, ADC_ERR_OVERFLOW);
+    if (ADCD2.grpp != NULL)
+      _adc_isr_error_code(&ADCD2, ADC_ERR_OVERFLOW);
   }
   /* TODO: Add here analog watchdog handling.*/
 #endif /* STM32_ADC_USE_ADC2 */
@@ -147,7 +153,8 @@ CH_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
   if ((sr & ADC_SR_OVR) && (dmaStreamGetTransactionSize(ADCD3.dmastp) > 0)) {
     /* ADC overflow condition, this could happen only if the DMA is unable
        to read data fast enough.*/
-    _adc_isr_error_code(&ADCD3, ADC_ERR_OVERFLOW);
+    if (ADCD3.grpp != NULL)
+      _adc_isr_error_code(&ADCD3, ADC_ERR_OVERFLOW);
   }
   /* TODO: Add here analog watchdog handling.*/
 #endif /* STM32_ADC_USE_ADC3 */
@@ -342,8 +349,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   /* ADC configuration and start, the start is performed using the method
      specified in the CR2 configuration, usually ADC_CR2_SWSTART.*/
   adcp->adc->CR1   = grpp->cr1 | ADC_CR1_OVRIE | ADC_CR1_SCAN;
-  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_CONT | ADC_CR2_DMA |
-                                 ADC_CR2_DDS | ADC_CR2_ADON;
+  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_CONT  | ADC_CR2_DMA |
+                                 ADC_CR2_DDS   | ADC_CR2_ADON;
 }
 
 /**
