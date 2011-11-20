@@ -84,6 +84,7 @@
   (backported to 2.2.8).
 - FIX: Fixed broken TIM8 support in STM32 PWM driver (bug 3418620).
 - FIX: Fixed halconf.h file corrupted in some STM32 demos (bug 3418626).
+- NEW: Added demo for the ST STM32F4-Discovery kit.
 - NEW: STM32F4xx ADC driver implementation.
   TODO: Backport the new solutions implemented in this ADC driver to the
   STM32L1xx ADC driver.

@@ -128,11 +128,11 @@ void adccb(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
     /* Changes the channels pulse width, the change will be effective
        starting from the next cycle.*/
     pwmEnableChannelI(&PWMD4, 0, PWM_FRACTION_TO_WIDTH(&PWMD4, 4096, avg_ch1));
-//    pwmEnableChannelI(&PWMD4, 3, PWM_FRACTION_TO_WIDTH(&PWMD4, 4096, avg_ch2));
+    pwmEnableChannelI(&PWMD4, 3, PWM_FRACTION_TO_WIDTH(&PWMD4, 4096, avg_ch2));
 
     /* SPI slave selection and transmission start.*/
-//    spiSelectI(&SPID2);
-//    spiStartSendI(&SPID2, ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH, samples);
+    spiSelectI(&SPID2);
+    spiStartSendI(&SPID2, ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH, samples);
 
     chSysUnlockFromIsr();
   }

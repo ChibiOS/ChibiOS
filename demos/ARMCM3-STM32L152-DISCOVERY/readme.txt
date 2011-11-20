@@ -11,7 +11,7 @@ The demo runs on an ST STM32L-Discovery board.
 The demo shows how to use the ADC, PWM and SPI drivers using asynchronous
 APIs. The ADC samples two channels (temperature sensor and PC0) and modulates
 the PWM using the sampled values. The sample data is also transmitted using
-the SPI port 1.
+the SPI port 2 (NSS=PB12, SCK=PB13, MISO=PB14, MOSI=PB15).
 By pressing the button located on the board the test procedure is activated
 with output on the serial port COM1 (USART1).
 

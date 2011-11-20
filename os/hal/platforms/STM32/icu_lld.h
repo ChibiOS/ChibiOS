@@ -262,7 +262,7 @@ struct ICUDriver {
  *
  * @notapi
  */
-#define icu_lld_get_width(icup) ((icup)->tim->CCR2 + 1)
+#define icu_lld_get_width(icup) ((icup)->tim->CCR[1] + 1)
 
 /**
  * @brief   Returns the width of the latest cycle.
@@ -274,7 +274,7 @@ struct ICUDriver {
  *
  * @notapi
  */
-#define icu_lld_get_period(icup) ((icup)->tim->CCR1 + 1)
+#define icu_lld_get_period(icup) ((icup)->tim->CCR[0] + 1)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
