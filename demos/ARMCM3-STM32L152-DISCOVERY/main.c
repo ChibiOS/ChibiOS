@@ -63,7 +63,7 @@ static const ADCConversionGroup adcgrpcfg = {
 
 /*
  * PWM configuration structure.
- * Cyclic callback enabled, channels 3 and 4 enabled without callbacks,
+ * Cyclic callback enabled, channels 1 and 2 enabled without callbacks,
  * the active state is a logic one.
  */
 static PWMConfig pwmcfg = {

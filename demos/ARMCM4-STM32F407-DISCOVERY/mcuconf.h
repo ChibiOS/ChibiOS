@@ -64,9 +64,20 @@
 /*
  * ADC driver system settings.
  */
+#define STM32_ADC_ADCPRE                    ADC_CCR_ADCPRE_DIV2
 #define STM32_ADC_USE_ADC1                  TRUE
+#define STM32_ADC_USE_ADC2                  TRUE
+#define STM32_ADC_USE_ADC3                  TRUE
+#define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID(2, 4)
+#define STM32_ADC_ADC2_DMA_STREAM           STM32_DMA_STREAM_ID(2, 2)
+#define STM32_ADC_ADC3_DMA_STREAM           STM32_DMA_STREAM_ID(2, 1)
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
-#define STM32_ADC_ADC1_IRQ_PRIORITY         5
+#define STM32_ADC_ADC2_DMA_PRIORITY         2
+#define STM32_ADC_ADC3_DMA_PRIORITY         2
+#define STM32_ADC_IRQ_PRIORITY              5
+#define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     5
+#define STM32_ADC_ADC2_DMA_IRQ_PRIORITY     5
+#define STM32_ADC_ADC3_DMA_IRQ_PRIORITY     5
 
 /*
  * CAN driver system settings.
@@ -160,6 +171,12 @@
 #define STM32_SPI_USE_SPI1                  FALSE
 #define STM32_SPI_USE_SPI2                  TRUE
 #define STM32_SPI_USE_SPI3                  FALSE
+#define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 0)
+#define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 3)
+#define STM32_SPI_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
+#define STM32_SPI_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
+#define STM32_SPI_SPI3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 0)
+#define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
 #define STM32_SPI_SPI1_DMA_PRIORITY         1
 #define STM32_SPI_SPI2_DMA_PRIORITY         1
 #define STM32_SPI_SPI3_DMA_PRIORITY         1

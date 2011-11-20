@@ -22,7 +22,6 @@
 #include "hal.h"
 #include "test.h"
 
-#if 0
 static void pwmpcb(PWMDriver *pwmp);
 static void adccb(ADCDriver *adcp, adcsample_t *buffer, size_t n);
 static void spicb(SPIDriver *spip);
@@ -41,7 +40,7 @@ static adcsample_t samples[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 /*
  * ADC conversion group.
  * Mode:        Linear buffer, 4 samples of 2 channels, SW triggered.
- * Channels:    IN10   (48 cycles sample time)
+ * Channels:    IN11   (48 cycles sample time)
  *              Sensor (192 cycles sample time)
  */
 static const ADCConversionGroup adcgrpcfg = {
@@ -51,20 +50,17 @@ static const ADCConversionGroup adcgrpcfg = {
   NULL,
   /* HW dependent part.*/
   0,
-  0,
-  0,
-  ADC_SMPR2_SMP_AN10(ADC_SAMPLE_48) | ADC_SMPR2_SMP_SENSOR(ADC_SAMPLE_192),
+  ADC_CR2_SWSTART,
+  ADC_SMPR1_SMP_AN11(ADC_SAMPLE_56) | ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_144),
   0,
   ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),
   0,
-  0,
-  0,
-  ADC_SQR5_SQ2_N(ADC_CHANNEL_IN10) | ADC_SQR5_SQ1_N(ADC_CHANNEL_SENSOR)
+  ADC_SQR3_SQ2_N(ADC_CHANNEL_IN11) | ADC_SQR3_SQ1_N(ADC_CHANNEL_SENSOR)
 };
 
 /*
  * PWM configuration structure.
- * Cyclic callback enabled, channels 3 and 4 enabled without callbacks,
+ * Cyclic callback enabled, channels 1 and 4 enabled without callbacks,
  * the active state is a logic one.
  */
 static PWMConfig pwmcfg = {
@@ -73,9 +69,9 @@ static PWMConfig pwmcfg = {
   pwmpcb,
   {
     {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-    {PWM_OUTPUT_ACTIVE_HIGH, NULL},
     {PWM_OUTPUT_DISABLED, NULL},
-    {PWM_OUTPUT_DISABLED, NULL}
+    {PWM_OUTPUT_DISABLED, NULL},
+    {PWM_OUTPUT_ACTIVE_HIGH, NULL}
   },
   /* HW dependent part.*/
   0
@@ -132,11 +128,11 @@ void adccb(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
     /* Changes the channels pulse width, the change will be effective
        starting from the next cycle.*/
     pwmEnableChannelI(&PWMD4, 0, PWM_FRACTION_TO_WIDTH(&PWMD4, 4096, avg_ch1));
-    pwmEnableChannelI(&PWMD4, 1, PWM_FRACTION_TO_WIDTH(&PWMD4, 4096, avg_ch2));
+//    pwmEnableChannelI(&PWMD4, 3, PWM_FRACTION_TO_WIDTH(&PWMD4, 4096, avg_ch2));
 
     /* SPI slave selection and transmission start.*/
-    spiSelectI(&SPID2);
-    spiStartSendI(&SPID2, ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH, samples);
+//    spiSelectI(&SPID2);
+//    spiStartSendI(&SPID2, ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH, samples);
 
     chSysUnlockFromIsr();
   }
@@ -152,37 +148,23 @@ static void spicb(SPIDriver *spip) {
   spiUnselectI(spip);
   chSysUnlockFromIsr();
 }
-#endif
 
 /*
- * This is a periodic thread that does absolutely nothing except increasing
- * a seconds counter.
+ * This is a periodic thread that does absolutely nothing except flashing
+ * a LED.
  */
 static WORKING_AREA(waThread1, 128);
-#if 0
-static msg_t Thread1(void *arg) {
-  static uint32_t seconds_counter;
-
-  (void)arg;
-  chRegSetThreadName("counter");
-  while (TRUE) {
-    chThdSleepMilliseconds(1000);
-    seconds_counter++;
-  }
-}
-#else
 static msg_t Thread1(void *arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
   while (TRUE) {
-    palSetPad(GPIOD, GPIOD_LED5);
+    palSetPad(GPIOD, GPIOD_LED3);       /* Orange.  */
     chThdSleepMilliseconds(500);
-    palClearPad(GPIOD, GPIOD_LED5);
+    palClearPad(GPIOD, GPIOD_LED3);     /* Orange.  */
     chThdSleepMilliseconds(500);
   }
 }
-#endif
 
 /*
  * Application entry point.
@@ -222,7 +204,6 @@ int main(void) {
    * PB14 - MISO.
    * PB15 - MOSI.
    */
-#if 0
   spiStart(&SPID2, &spicfg);
   palSetPad(GPIOB, 12);
   palSetPadMode(GPIOB, 12, PAL_MODE_OUTPUT_PUSHPULL |
@@ -239,15 +220,14 @@ int main(void) {
    */
   adcStart(&ADCD1, NULL);
   adcSTM32EnableTSVREFE();
-  palSetPadMode(GPIOC, 0, PAL_MODE_INPUT_ANALOG);
+  palSetPadMode(GPIOC, 1, PAL_MODE_INPUT_ANALOG);
 
   /*
    * Initializes the PWM driver 4, routes the TIM4 outputs to the board LEDs.
    */
   pwmStart(&PWMD4, &pwmcfg);
-  palSetPadMode(GPIOB, GPIOB_LED4, PAL_MODE_ALTERNATE(2));
-  palSetPadMode(GPIOB, GPIOB_LED3, PAL_MODE_ALTERNATE(2));
-#endif
+  palSetPadMode(GPIOD, GPIOD_LED4, PAL_MODE_ALTERNATE(2));  /* Green.   */
+  palSetPadMode(GPIOD, GPIOD_LED6, PAL_MODE_ALTERNATE(2));  /* Blue.    */
 
   /*
    * Creates the example thread.
