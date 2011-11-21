@@ -238,7 +238,7 @@ int main(void) {
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state, when the button is
    * pressed the test procedure is launched with output on the serial
-   * driver 1.
+   * driver 2.
    */
   while (TRUE) {
     if (palReadPad(GPIOA, GPIOA_BUTTON))
