@@ -19,7 +19,7 @@
 */
 
 /*
- * STM32L1xx drivers configuration.
+ * STM32F4xx drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
@@ -187,11 +187,3 @@
 #define STM32_UART_USART2_DMA_PRIORITY      0
 #define STM32_UART_USART3_DMA_PRIORITY      0
 #define STM32_UART_DMA_ERROR_HOOK(uartp)    chSysHalt()
-
-/*
- * USB driver system settings.
- */
-#define STM32_USB_USE_USB1                  TRUE
-#define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
-#define STM32_USB_USB1_HP_IRQ_PRIORITY      6
-#define STM32_USB_USB1_LP_IRQ_PRIORITY      14
