@@ -26,13 +26,13 @@ static VirtualTimer vt1, vt2;
 static void restart(void *p) {
 
   (void)p;
-  uartStartSendI(&UARTD1, 14, "Hello World!\r\n");
+  uartStartSendI(&UARTD2, 14, "Hello World!\r\n");
 }
 
 static void ledoff(void *p) {
 
   (void)p;
-  palClearPad(GPIOB, GPIOB_LED4);
+  palClearPad(GPIOD, GPIOD_LED4);
 }
 
 /*
@@ -42,7 +42,7 @@ static void ledoff(void *p) {
 static void txend1(UARTDriver *uartp) {
 
   (void)uartp;
-  palSetPad(GPIOB, GPIOB_LED4);
+  palSetPad(GPIOD, GPIOD_LED4);
 }
 
 /*
@@ -51,7 +51,7 @@ static void txend1(UARTDriver *uartp) {
 static void txend2(UARTDriver *uartp) {
 
   (void)uartp;
-  palClearPad(GPIOB, GPIOB_LED4);
+  palClearPad(GPIOD, GPIOD_LED4);
   chSysLockFromIsr();
   if (chVTIsArmedI(&vt1))
     chVTResetI(&vt1);
@@ -78,7 +78,7 @@ static void rxchar(UARTDriver *uartp, uint16_t c) {
   (void)uartp;
   (void)c;
   /* Flashing the LED each time a character is received.*/
-  palSetPad(GPIOB, GPIOB_LED4);
+  palSetPad(GPIOD, GPIOD_LED4);
   chSysLockFromIsr();
   if (chVTIsArmedI(&vt2))
     chVTResetI(&vt2);
@@ -125,16 +125,16 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 1, PA9 and PA10 are routed to USART1.
+   * Activates the UART driver 2, PA2 and PA3 are routed to USART2.
    */
-  uartStart(&UARTD1, &uart_cfg_1);
-  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));
-  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));
+  uartStart(&UARTD2, &uart_cfg_1);
+  palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
+  palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
 
   /*
    * Starts the transmission, it will be handled entirely in background.
    */
-  uartStartSend(&UARTD1, 13, "Starting...\r\n");
+  uartStartSend(&UARTD2, 13, "Starting...\r\n");
 
   /*
    * Normal main() thread activity, in this demo it does nothing.

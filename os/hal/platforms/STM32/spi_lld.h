@@ -71,6 +71,27 @@
 #endif
 
 /**
+ * @brief   SPI1 interrupt priority level setting.
+ */
+#if !defined(STM32_SPI_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI1_IRQ_PRIORITY         10
+#endif
+
+/**
+ * @brief   SPI2 interrupt priority level setting.
+ */
+#if !defined(STM32_SPI_SPI2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI2_IRQ_PRIORITY         10
+#endif
+
+/**
+ * @brief   SPI3 interrupt priority level setting.
+ */
+#if !defined(STM32_SPI_SPI3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI3_IRQ_PRIORITY         10
+#endif
+
+/**
  * @brief   SPI1 DMA priority (0..3|lowest..highest).
  * @note    The priority level is used for both the TX and RX DMA streams but
  *          because of the streams ordering the RX stream has always priority
@@ -98,27 +119,6 @@
  */
 #if !defined(STM32_SPI_SPI3_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_SPI_SPI3_DMA_PRIORITY         1
-#endif
-
-/**
- * @brief   SPI1 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_IRQ_PRIORITY         10
-#endif
-
-/**
- * @brief   SPI2 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_IRQ_PRIORITY         10
-#endif
-
-/**
- * @brief   SPI3 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_IRQ_PRIORITY         10
 #endif
 
 /**
@@ -175,7 +175,7 @@
  * @note    This option is only available on platforms with enhanced DMA.
  */
 #if !defined(STM32_SPI_SPI3_TX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
+#define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 7)
 #endif
 
 #else /* !STM32_ADVANCED_DMA */

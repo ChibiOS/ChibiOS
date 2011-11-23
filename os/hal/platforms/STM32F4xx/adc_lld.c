@@ -80,7 +80,7 @@ ADCDriver ADCD3;
 static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
 
   /* DMA errors handling.*/
-  if ((flags & STM32_DMA_ISR_TEIF) != 0) {
+  if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
     /* DMA, this could help only if the DMA tries to access an unmapped
        address space or violates alignment rules.*/
     _adc_isr_error_code(adcp, ADC_ERR_DMAFAILURE);

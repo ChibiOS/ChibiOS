@@ -110,6 +110,7 @@
 #if !defined(STM32_UART_USART2_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART2_DMA_PRIORITY      0
 #endif
+
 /**
  * @brief   USART3 DMA priority (0..3|lowest..highest).
  * @note    The priority level is used for both the TX and RX DMA channels but
@@ -128,6 +129,69 @@
 #if !defined(STM32_UART_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
 #define STM32_UART_DMA_ERROR_HOOK(uartp)    chSysHalt()
 #endif
+
+#if STM32_ADVANCED_DMA || defined(__DOXYGEN__)
+
+/**
+ * @brief   DMA stream used for USART1 RX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_UART_USART1_RX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(2, 5)
+#endif
+
+/**
+ * @brief   DMA stream used for USART1 TX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_UART_USART1_TX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_UART_USART1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(2, 7)
+#endif
+
+/**
+ * @brief   DMA stream used for USART2 RX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_UART_USART2_RX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_UART_USART2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
+#endif
+
+/**
+ * @brief   DMA stream used for USART2 TX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_UART_USART2_TX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_UART_USART2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 6)
+#endif
+
+/**
+ * @brief   DMA stream used for USART3 RX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_UART_USART3_RX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_UART_USART3_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 1)
+#endif
+
+/**
+ * @brief   DMA stream used for USART3 TX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_UART_USART3_TX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_UART_USART3_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 3)
+#endif
+
+#else /* !STM32_ADVANCED_DMA */
+
+/* Fixed streams for platforms using the old DMA peripheral, the values are
+   valid for both STM32F1xx and STM32L1xx.*/
+#define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
+#define STM32_UART_USART1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
+#define STM32_UART_USART2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 6)
+#define STM32_UART_USART2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 7)
+#define STM32_UART_USART3_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 3)
+#define STM32_UART_USART3_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 2)
+
+#endif /* !STM32_ADVANCED_DMA*/
 /** @} */
 
 /*===========================================================================*/
@@ -149,6 +213,42 @@
 #if !STM32_UART_USE_USART1 && !STM32_UART_USE_USART2 &&                     \
     !STM32_UART_USE_USART3
 #error "UART driver activated but no USART/UART peripheral assigned"
+#endif
+
+#if STM32_UART_USE_USART1 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_UART_USART1_RX_DMA_STREAM,                 \
+                           STM32_USART1_RX_DMA_MSK)
+#error "invalid DMA stream associated to USART1 RX"
+#endif
+
+#if STM32_UART_USE_USART1 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_UART_USART1_TX_DMA_STREAM,                 \
+                           STM32_USART1_TX_DMA_MSK)
+#error "invalid DMA stream associated to USART1 TX"
+#endif
+
+#if STM32_UART_USE_USART2 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_UART_USART2_RX_DMA_STREAM,                 \
+                           STM32_USART2_RX_DMA_MSK)
+#error "invalid DMA stream associated to USART2 RX"
+#endif
+
+#if STM32_UART_USE_USART2 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_UART_USART2_TX_DMA_STREAM,                 \
+                           STM32_USART2_TX_DMA_MSK)
+#error "invalid DMA stream associated to USART2 TX"
+#endif
+
+#if STM32_UART_USE_USART3 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_UART_USART3_RX_DMA_STREAM,                 \
+                           STM32_USART3_RX_DMA_MSK)
+#error "invalid DMA stream associated to USART3 RX"
+#endif
+
+#if STM32_UART_USE_USART3 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_UART_USART3_TX_DMA_STREAM,                 \
+                           STM32_USART3_TX_DMA_MSK)
+#error "invalid DMA stream associated to USART3 TX"
 #endif
 
 #if !defined(STM32_DMA_REQUIRED)

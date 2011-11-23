@@ -1,19 +1,18 @@
 *****************************************************************************
-** ChibiOS/RT HAL - UART driver demo for STM32L1xx.                        **
+** ChibiOS/RT HAL - UART driver demo for STM32F4xx.                        **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an STMicroelectronics STM32L-Discovery board.
+The demo runs on an STMicroelectronics STM32F4-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32L1xx UART driver.
+The application demonstrates the use of the STM32F4xx UART driver.
 
 ** Board Setup **
 
-- Remove the LCD module.
-- Connect an RS232 transceiver to pins PA9(TX) and PA10(RX).
+- Connect an RS232 transceiver to pins PA2(TX) and PA10(9).
 - Connect a terminal emulator to the transceiver (38400-N-8-1).
 
 ** Build Procedure **

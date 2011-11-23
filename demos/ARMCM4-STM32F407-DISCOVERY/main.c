@@ -182,7 +182,7 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 1 using the driver default configuration.
+   * Activates the serial driver 2 using the driver default configuration.
    * PA2(TX) and PA3(RX) are routed to USART2.
    */
   sdStart(&SD2, NULL);
