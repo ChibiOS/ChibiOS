@@ -162,10 +162,10 @@ void adc_lld_start(ADCDriver *adcp) {
     }
 #endif /* STM32_ADC_USE_ADC1 */
 
-
     /* ADC initial setup, starting the analog part here in order to reduce
        the latency when starting a conversion.*/
     adcp->adc->CR1 = 0;
+    adcp->adc->CR2 = 0;
     adcp->adc->CR2 = ADC_CR2_ADON;
   }
 }
