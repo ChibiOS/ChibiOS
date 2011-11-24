@@ -282,7 +282,7 @@ CH_IRQ_HANDLER(COMP_IRQHandler) {
   CH_IRQ_EPILOGUE();
 }
 
-#elif defined(STM32F2XX)
+#elif defined(STM32F2XX) || defined(STM32F4XX)
 /**
  * @brief   EXTI[18] interrupt handler (OTG_FS_WKUP).
  *
@@ -462,15 +462,15 @@ void ext_lld_start(EXTDriver *extp) {
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI20_IRQ_PRIORITY));
     NVICEnableVector(COMP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI21_IRQ_PRIORITY));
-#elif defined(STM32F2XX)
-    /* EXTI vectors specific to STM32F2xx.*/
+#elif defined(STM32F2XX) || defined(STM32F4XX)
+    /* EXTI vectors specific to STM32F2xx/STM32F4xx.*/
     NVICEnableVector(OTG_FS_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
     NVICEnableVector(ETH_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI19_IRQ_PRIORITY));
     NVICEnableVector(OTG_HS_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI20_IRQ_PRIORITY));
-    NVICEnableVector(TAMPER_STAMP_IRQn,
+    NVICEnableVector(TAMP_STAMP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI21_IRQ_PRIORITY));
     NVICEnableVector(RTC_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI22_IRQ_PRIORITY));
@@ -500,7 +500,7 @@ void ext_lld_start(EXTDriver *extp) {
         ftsr |= (1 << i);
     }
   }
-#if defined(STM32L1XX_MD) || defined(STM32F2XX)
+#if defined(STM32L1XX_MD) || defined(STM32F2XX) || defined(STM32F4XX)
   SYSCFG->EXTICR[0] = extp->config->exti[0];
   SYSCFG->EXTICR[1] = extp->config->exti[1];
   SYSCFG->EXTICR[2] = extp->config->exti[2];
@@ -544,12 +544,12 @@ void ext_lld_stop(EXTDriver *extp) {
     NVICDisableVector(TAMPER_STAMP_IRQn);
     NVICDisableVector(RTC_WKUP_IRQn);
     NVICDisableVector(COMP_IRQn);
-#elif defined(STM32F2XX)
-    /* EXTI vectors specific to STM32F2xx.*/
+#elif defined(STM32F2XX) || defined(STM32F4XX)
+    /* EXTI vectors specific to STM32F2xx/STM32F4xx.*/
     NVICDisableVector(OTG_FS_WKUP_IRQn);
     NVICDisableVector(ETH_WKUP_IRQn);
     NVICDisableVector(OTG_HS_WKUP_IRQn);
-    NVICDisableVector(TAMPER_STAMP_IRQn);
+    NVICDisableVector(TAMP_STAMP_IRQn);
     NVICDisableVector(RTC_WKUP_IRQn);
 #elif defined(STM32F10X_CL)
     /* EXTI vectors specific to STM32F1xx Connectivity Line.*/

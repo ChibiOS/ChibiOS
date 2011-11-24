@@ -86,8 +86,6 @@
 - FIX: Fixed halconf.h file corrupted in some STM32 demos (bug 3418626).
 - NEW: Added demo for the ST STM32F4-Discovery kit.
 - NEW: STM32F4xx ADC driver implementation.
-  TODO: Backport the new solutions implemented in this ADC driver to the
-  STM32L1xx ADC driver.
 - NEW: Added initialization of the NVIC VTOR register to all Cortex-Mx (v7M)
   ports. Also added a port option CORTEX_VTOR_INIT to enforce a different
   default value into the register.

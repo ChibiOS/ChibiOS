@@ -57,19 +57,23 @@ ADCDriver ADCD1;
 static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
 
   /* DMA errors handling.*/
-  if ((flags & STM32_DMA_ISR_TEIF) != 0) {
+  if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
     /* DMA, this could help only if the DMA tries to access an unmapped
        address space or violates alignment rules.*/
     _adc_isr_error_code(adcp, ADC_ERR_DMAFAILURE);
   }
   else {
-    if ((flags & STM32_DMA_ISR_HTIF) != 0) {
-      /* Half transfer processing.*/
-      _adc_isr_half_code(adcp);
-    }
-    if ((flags & STM32_DMA_ISR_TCIF) != 0) {
-      /* Transfer complete processing.*/
-      _adc_isr_full_code(adcp);
+    /* It is possible that the conversion group has already be reset by the
+       ADC error handler, in this case this interrupt is spurious.*/
+    if (adcp->grpp != NULL) {
+      if ((flags & STM32_DMA_ISR_HTIF) != 0) {
+        /* Half transfer processing.*/
+        _adc_isr_half_code(adcp);
+      }
+      if ((flags & STM32_DMA_ISR_TCIF) != 0) {
+        /* Transfer complete processing.*/
+        _adc_isr_full_code(adcp);
+      }
     }
   }
 }
@@ -80,7 +84,7 @@ static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
 
 #if STM32_ADC_USE_ADC1 || defined(__DOXYGEN__)
 /**
- * @brief   ADC1 interrupt handler.
+ * @brief   ADC interrupt handler.
  *
  * @isr
  */
@@ -91,10 +95,13 @@ CH_IRQ_HANDLER(ADC1_IRQHandler) {
 
   sr = ADC1->SR;
   ADC1->SR = 0;
-  if (sr & ADC_SR_OVR) {
+  /* Note, an overflow may occur after the conversion ended before the driver
+     is able to stop the ADC, this is why the DMA channel is checked too.*/
+  if ((sr & ADC_SR_OVR) && (dmaStreamGetTransactionSize(ADCD1.dmastp) > 0)) {
     /* ADC overflow condition, this could happen only if the DMA is unable
        to read data fast enough.*/
-    _adc_isr_error_code(&ADCD1, ADC_ERR_OVERFLOW);
+    if (ADCD1.grpp != NULL)
+      _adc_isr_error_code(&ADCD1, ADC_ERR_OVERFLOW);
   }
   /* TODO: Add here analog watchdog handling.*/
 
@@ -119,11 +126,16 @@ void adc_lld_init(void) {
   ADCD1.adc = ADC1;
   ADCD1.dmastp  = STM32_DMA1_STREAM1;
   ADCD1.dmamode = STM32_DMA_CR_PL(STM32_ADC_ADC1_DMA_PRIORITY) |
+                  STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
-                  STM32_DMA_CR_TEIE        | STM32_DMA_CR_EN;
-  ADC->CCR = STM32_ADC_ADCPRE;
+                  STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE        |
+                  STM32_DMA_CR_EN;
 #endif
+
+  /* The shared vector is initialized on driver initialization and never
+     disabled.*/
+  NVICEnableVector(ADC1_IRQn, CORTEX_PRIORITY_MASK(STM32_ADC_IRQ_PRIORITY));
 }
 
 /**
@@ -141,20 +153,20 @@ void adc_lld_start(ADCDriver *adcp) {
     if (&ADCD1 == adcp) {
       bool_t b;
       b = dmaStreamAllocate(adcp->dmastp,
-                            STM32_ADC_ADC1_IRQ_PRIORITY,
+                            STM32_ADC_ADC1_DMA_IRQ_PRIORITY,
                             (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
                             (void *)adcp);
       chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
       rccEnableADC1(FALSE);
-      NVICEnableVector(ADC1_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_ADC_ADC1_IRQ_PRIORITY));
     }
-#endif
+#endif /* STM32_ADC_USE_ADC1 */
 
-    /* ADC initial setup, just resetting control registers in this case.*/
+
+    /* ADC initial setup, starting the analog part here in order to reduce
+       the latency when starting a conversion.*/
     adcp->adc->CR1 = 0;
-    adcp->adc->CR2 = 0;
+    adcp->adc->CR2 = ADC_CR2_ADON;
   }
 }
 
@@ -167,15 +179,15 @@ void adc_lld_start(ADCDriver *adcp) {
  */
 void adc_lld_stop(ADCDriver *adcp) {
 
-  /* If in ready state then disables the ADC clock.*/
+  /* If in ready state then disables the ADC clock and analog part.*/
   if (adcp->state == ADC_READY) {
+    dmaStreamRelease(adcp->dmastp);
+    adcp->adc->CR1 = 0;
+    adcp->adc->CR2 = 0;
+
 #if STM32_ADC_USE_ADC1
-    if (&ADCD1 == adcp) {
-      ADC1->CR1 = 0;
-      ADC1->CR2 = 0;
-      dmaStreamRelease(adcp->dmastp);
+    if (&ADCD1 == adcp)
       rccDisableADC1(FALSE);
-    }
 #endif
   }
 }
@@ -208,24 +220,20 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   /* ADC setup.*/
   adcp->adc->SR    = 0;
-  adcp->adc->CR1   = grpp->cr1 | ADC_CR1_OVRIE | ADC_CR1_SCAN;
-  adcp->adc->SMPR1 = grpp->smpr1;       /* Writing SMPRx requires ADON=0.   */
+  adcp->adc->SMPR1 = grpp->smpr1;
   adcp->adc->SMPR2 = grpp->smpr2;
   adcp->adc->SMPR3 = grpp->smpr3;
-  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_CONT | ADC_CR2_DMA | ADC_CR2_DDS |
-                                 ADC_CR2_ADON;
   adcp->adc->SQR1  = grpp->sqr1;
   adcp->adc->SQR2  = grpp->sqr2;
   adcp->adc->SQR3  = grpp->sqr3;
   adcp->adc->SQR4  = grpp->sqr4;
   adcp->adc->SQR5  = grpp->sqr5;
-  /* Must wait the ADC to be ready for conversion, see 10.3.6 "Timing diagram"
-     in the Reference Manual.*/
-  while ((adcp->adc->SR & ADC_SR_ADONS) == 0)
-    ;
-  /* ADC start by raising ADC_CR2_SWSTART.*/
-  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_SWSTART | ADC_CR2_CONT | ADC_CR2_DMA |
-                                 ADC_CR2_DDS | ADC_CR2_ADON;
+
+  /* ADC configuration and start, the start is performed using the method
+     specified in the CR2 configuration, usually ADC_CR2_SWSTART.*/
+  adcp->adc->CR1   = grpp->cr1 | ADC_CR1_OVRIE | ADC_CR1_SCAN;
+  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_CONT  | ADC_CR2_DMA |
+                                 ADC_CR2_DDS   | ADC_CR2_ADON;
 }
 
 /**
@@ -240,6 +248,7 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
   dmaStreamDisable(adcp->dmastp);
   adcp->adc->CR1 = 0;
   adcp->adc->CR2 = 0;
+  adcp->adc->CR2 = ADC_CR2_ADON;
 }
 
 /**
