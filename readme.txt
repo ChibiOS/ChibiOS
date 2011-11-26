@@ -102,7 +102,7 @@
 - NEW: Added handling of USART6 to the STM32 serial driver.
 - NEW: Added USE_COPT setting to all makefiles, contributed by Mabl.
 - NEW: Added EXT driver implementation for AT91SAM7x, contributed by Florian.
-  (TODO: Test application missing).
+  TODO: Test application missing.
 - NEW: Updated USB driver model and STM32 implementation and fixed several
   problems.
   - Changed the API to move buffer copy operations out of critical zones.
@@ -154,7 +154,6 @@
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
 - NEW: Added AVR implementation of the PAL driver contributed by Leszek.
-  (TODO: Update demos to use it)
 - NEW: STM32L ADC driver implementation.
 - NEW: Improved ADC driver model, now it is possible to handle error
   conditions during the conversion process.
@@ -169,8 +168,8 @@
   (API and functionality review)
 - NEW: Improved MAC driver model, it now follows the same template of other
   drivers.
-  (TODO: uIP demo to be adapted)
-  (TODO: implement macStop() in AT91SAM7X implementation)
+  TODO: uIP demo to be adapted.
+  TODO: implement macStop() in AT91SAM7X implementation.
 - NEW: New RCC helper driver for STM32F1xx and STM32L1xx, it simplifies
   the use of the RCC resources and hides most differences found among the
   various STM32 sub-families.
