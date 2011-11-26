@@ -19,11 +19,11 @@
 */
 
 /**
- * @file    IAR/ARMCMx/STM32F4xx/cmparams.h
+ * @file    RVCT/ARMCMx/STM32F4xx/cmparams.h
  * @brief   ARM Cortex-M3 parameters for the STM32F4xx.
  *
- * @defgroup IAR_ARMCMx_STM32F4xx STM32F4xx Specific Parameters
- * @ingroup IAR_ARMCMx_SPECIFIC
+ * @defgroup RVCT_ARMCMx_STM32F4xx STM32F4xx Specific Parameters
+ * @ingroup RVCT_ARMCMx_SPECIFIC
  * @details This file contains the Cortex-M4 specific parameters for the
  *          STM32F4xx platform.
  * @{

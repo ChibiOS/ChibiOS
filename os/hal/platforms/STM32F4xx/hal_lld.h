@@ -212,11 +212,11 @@
 #define STM32_MCO2PRE_DIV4      (6 << 27)   /**< MCO2 divided by 4.         */
 #define STM32_MCO2PRE_DIV5      (7 << 27)   /**< MCO2 divided by 5.         */
 
-#define STM32_MCO2SEL_MASK      (3 << 30)   /**< MCO2 mask.                 */
-#define STM32_MCO2SEL_SYSCLK    (0 << 30)   /**< SYSCLK clock on MCO2 pin.  */
-#define STM32_MCO2SEL_PLLI2S    (1 << 30)   /**< PLLI2S clock on MCO2 pin.  */
-#define STM32_MCO2SEL_HSE       (2 << 30)   /**< HSE clock on MCO2 pin.     */
-#define STM32_MCO2SEL_PLL       (3 << 30)   /**< PLL clock on MCO2 pin.     */
+#define STM32_MCO2SEL_MASK      (3U << 30)  /**< MCO2 mask.                 */
+#define STM32_MCO2SEL_SYSCLK    (0U << 30)  /**< SYSCLK clock on MCO2 pin.  */
+#define STM32_MCO2SEL_PLLI2S    (1U << 30)  /**< PLLI2S clock on MCO2 pin.  */
+#define STM32_MCO2SEL_HSE       (2U << 30)  /**< HSE clock on MCO2 pin.     */
+#define STM32_MCO2SEL_PLL       (3U << 30)  /**< PLL clock on MCO2 pin.     */
 
 /**
  * @name    RCC_PLLI2SCFGR register bits definitions

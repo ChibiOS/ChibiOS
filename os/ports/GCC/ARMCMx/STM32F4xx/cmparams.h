@@ -24,7 +24,7 @@
  *
  * @defgroup ARMCMx_STM32F4xx STM32F4xx Specific Parameters
  * @ingroup ARMCMx_SPECIFIC
- * @details This file contains the Cortex-M3 specific parameters for the
+ * @details This file contains the Cortex-M4 specific parameters for the
  *          STM32F4xx platform.
  * @{
  */
