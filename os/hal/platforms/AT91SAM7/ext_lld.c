@@ -21,8 +21,8 @@
  */
 
 /**
- * @file    STM32/ext_lld.c
- * @brief   STM32 EXT subsystem low level driver source.
+ * @file    AT91SAM7/ext_lld.c
+ * @brief   AT91SAM7 EXT subsystem low level driver source.
  *
  * @addtogroup EXT
  * @{
