@@ -44,6 +44,10 @@
 #undef PAL_MODE_OUTPUT_PUSHPULL
 #undef PAL_MODE_OUTPUT_OPENDRAIN
 
+/**
+ * @name    STM32-specific I/O mode flags
+ * @{
+ */
 #define PAL_STM32_MODE_MASK             (3 << 0)
 #define PAL_STM32_MODE_INPUT            (0 << 0)
 #define PAL_STM32_MODE_OUTPUT           (1 << 0)
@@ -68,6 +72,19 @@
 #define PAL_STM32_ALTERNATE_MASK        (15 << 7)
 #define PAL_STM32_ALTERNATE(n)          ((n) << 7)
 
+/**
+ * @brief   Alternate function.
+ *
+ * @param[in] n         alternate function selector
+ */
+#define PAL_MODE_ALTERNATE(n)           (PAL_STM32_MODE_ALTERNATE |         \
+                                         PAL_STM32_ALTERNATE(n))
+/** @} */
+
+/**
+ * @name    Standard I/O mode flags
+ * @{
+ */
 /**
  * @brief   This mode is implemented as input.
  */
@@ -111,14 +128,7 @@
  */
 #define PAL_MODE_OUTPUT_OPENDRAIN       (PAL_STM32_MODE_OUTPUT |            \
                                          PAL_STM32_OTYPE_OPENDRAIN)
-
-/**
- * @brief   Alternate function.
- *
- * @param[in] n         alternate function selector
- */
-#define PAL_MODE_ALTERNATE(n)           (PAL_STM32_MODE_ALTERNATE |         \
-                                         PAL_STM32_ALTERNATE(n))
+/** @} */
 
 /*===========================================================================*/
 /* I/O Ports Types and constants.                                            */
