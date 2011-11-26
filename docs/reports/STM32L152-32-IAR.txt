@@ -1,6 +1,6 @@
 ***************************************************************************
 Options:  -Ohs
-Settings: SYSCLK=24, ACR=0x10 (no wait states)
+Settings: SYSCLK=32, ACR=0x11 (1 wait state)
 Compiler: IAR C/C++ Compiler for ARM 6.21.4.2946
 ***************************************************************************
 

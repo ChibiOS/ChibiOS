@@ -2082,6 +2082,12 @@
     <group>
       <name>platform</name>
       <file>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F4xx\adc_lld.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F4xx\adc_lld.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F4xx\hal_lld.c</name>
       </file>
       <file>

@@ -1,6 +1,6 @@
 ***************************************************************************
 Options:  -O3 -Otime --apcs=interwork
-Settings: SYSCLK=24, ACR=0x10 (no wait states)
+Settings: SYSCLK=32, ACR=0x11 (1 wait state)
 Compiler: RealView C/C++ Compiler V4.1.0.791 [Evaluation].
 ***************************************************************************
 
