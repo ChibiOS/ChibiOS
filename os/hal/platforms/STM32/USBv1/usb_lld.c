@@ -658,8 +658,6 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
- * @param[in] buf       buffer where to fetch the endpoint data
- * @param[in] n         maximum number of bytes to copy
  *
  * @notapi
  */
