@@ -230,7 +230,7 @@ struct GPTDriver {
   /**
    * @brief Pointer to the TIMx registers block.
    */
-  TIM_TypeDef               *tim;
+  stm32_tim_t               *tim;
 };
 
 /*===========================================================================*/

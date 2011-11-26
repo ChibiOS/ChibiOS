@@ -237,8 +237,8 @@ typedef enum IRQn
   * @}
   */
 
-  /* CHIBIOS FIX */
 #include "core_cm4.h"             /* Cortex-M4 processor and core peripherals */
+/* CHIBIOS FIX */
 /*#include "system_stm32f4xx.h"*/
 #include <stdint.h>
 
@@ -868,8 +868,6 @@ typedef struct
   * @brief TIM
   */
 
-/* CHIBIOS FIX */
-#if 0
 typedef struct
 {
   __IO uint16_t CR1;         /*!< TIM control register 1,              Address offset: 0x00 */
@@ -909,7 +907,6 @@ typedef struct
   __IO uint16_t OR;          /*!< TIM option register,                 Address offset: 0x50 */
   uint16_t      RESERVED14;  /*!< Reserved, 0x52                                            */
 } TIM_TypeDef;
-#endif
 
 /** 
   * @brief Universal Synchronous Asynchronous Receiver Transmitter

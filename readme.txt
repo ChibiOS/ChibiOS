@@ -84,6 +84,8 @@
   (backported to 2.2.8).
 - FIX: Fixed broken TIM8 support in STM32 PWM driver (bug 3418620).
 - FIX: Fixed halconf.h file corrupted in some STM32 demos (bug 3418626).
+- NEW: Added an unified registers file for STM32: stm32.h. This file includes
+  the appropriate vendor file then adds its own additional definitions.
 - NEW: Added demo for the ST STM32F4-Discovery kit.
 - NEW: STM32F4xx ADC driver implementation.
 - NEW: Added initialization of the NVIC VTOR register to all Cortex-Mx (v7M)
@@ -94,7 +96,9 @@
 - NEW: Reorganized the STM32F1xx hal_lld_xxx.h files in order to distribute
   the capability macros into the appropriate file (previously those were all
   in the common hal_lld.h).
-- NEW: Added HAL, Serial, SPI support for the STM32F4xx sub-family.
+- NEW: Added HAL, Serial, ADC, EXT, GPT, ICU, PWM, SPI and UART support for
+  the STM32F4xx sub-family.
+  TODO: Add CAN and SDC, the drivers need to be ported and tested.
 - NEW: Added handling of USART6 to the STM32 serial driver.
 - NEW: Added USE_COPT setting to all makefiles, contributed by Mabl.
 - NEW: Added EXT driver implementation for AT91SAM7x, contributed by Florian.

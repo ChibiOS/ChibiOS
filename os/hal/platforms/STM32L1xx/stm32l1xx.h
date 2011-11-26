@@ -191,6 +191,7 @@ typedef enum IRQn
   */
 
 #include "core_cm3.h"
+/* CHIBIOS FIX */
 /*#include "system_stm32l1xx.h"*/
 #include <stdint.h>
 
@@ -615,8 +616,6 @@ typedef struct
   * @brief TIM
   */
 
-/* CHIBIOS FIX */
-#if 0
 typedef struct
 {
   __IO uint16_t CR1;
@@ -660,7 +659,6 @@ typedef struct
   __IO uint16_t OR;
   uint16_t  RESERVED20;
 } TIM_TypeDef;
-#endif
 
 /**
   * @brief Universal Synchronous Asynchronous Receiver Transmitter

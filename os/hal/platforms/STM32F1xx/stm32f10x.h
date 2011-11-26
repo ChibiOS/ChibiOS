@@ -1198,8 +1198,6 @@ typedef struct
   * @brief TIM
   */
 
-/* CHIBIOS FIX */
-#if 0
 typedef struct
 {
   __IO uint16_t CR1;
@@ -1243,7 +1241,6 @@ typedef struct
   __IO uint16_t DMAR;
   uint16_t  RESERVED19;
 } TIM_TypeDef;
-#endif
 
 /** 
   * @brief Universal Synchronous Asynchronous Receiver Transmitter

@@ -192,7 +192,7 @@ CH_IRQ_HANDLER(TIM5_IRQHandler) {
 
 #if STM32_GPT_USE_TIM8
 /**
- * @brief   TIM5 interrupt handler.
+ * @brief   TIM8 interrupt handler.
  *
  * @isr
  */
@@ -219,37 +219,37 @@ void gpt_lld_init(void) {
 
 #if STM32_GPT_USE_TIM1
   /* Driver initialization.*/
-  GPTD1.tim = TIM1;
+  GPTD1.tim = STM32_TIM1;
   gptObjectInit(&GPTD1);
 #endif
 
 #if STM32_GPT_USE_TIM2
   /* Driver initialization.*/
-  GPTD2.tim = TIM2;
+  GPTD2.tim = STM32_TIM2;
   gptObjectInit(&GPTD2);
 #endif
 
 #if STM32_GPT_USE_TIM3
   /* Driver initialization.*/
-  GPTD3.tim = TIM3;
+  GPTD3.tim = STM32_TIM3;
   gptObjectInit(&GPTD3);
 #endif
 
 #if STM32_GPT_USE_TIM4
   /* Driver initialization.*/
-  GPTD4.tim = TIM4;
+  GPTD4.tim = STM32_TIM4;
   gptObjectInit(&GPTD4);
 #endif
 
 #if STM32_GPT_USE_TIM5
   /* Driver initialization.*/
-  GPTD5.tim = TIM5;
+  GPTD5.tim = STM32_TIM5;
   gptObjectInit(&GPTD5);
 #endif
 
 #if STM32_GPT_USE_TIM8
   /* Driver initialization.*/
-  GPTD5.tim = TIM8;
+  GPTD5.tim = STM32_TIM8;
   gptObjectInit(&GPTD8);
 #endif
 }

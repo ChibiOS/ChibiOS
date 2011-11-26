@@ -297,37 +297,37 @@ void pwm_lld_init(void) {
 #if STM32_PWM_USE_TIM1
   /* Driver initialization.*/
   pwmObjectInit(&PWMD1);
-  PWMD1.tim = TIM1;
+  PWMD1.tim = STM32_TIM1;
 #endif
 
 #if STM32_PWM_USE_TIM2
   /* Driver initialization.*/
   pwmObjectInit(&PWMD2);
-  PWMD2.tim = TIM2;
+  PWMD2.tim = STM32_TIM2;
 #endif
 
 #if STM32_PWM_USE_TIM3
   /* Driver initialization.*/
   pwmObjectInit(&PWMD3);
-  PWMD3.tim = TIM3;
+  PWMD3.tim = STM32_TIM3;
 #endif
 
 #if STM32_PWM_USE_TIM4
   /* Driver initialization.*/
   pwmObjectInit(&PWMD4);
-  PWMD4.tim = TIM4;
+  PWMD4.tim = STM32_TIM4;
 #endif
 
 #if STM32_PWM_USE_TIM5
   /* Driver initialization.*/
   pwmObjectInit(&PWMD5);
-  PWMD5.tim = TIM5;
+  PWMD5.tim = STM32_TIM5;
 #endif
 
 #if STM32_PWM_USE_TIM8
   /* Driver initialization.*/
   pwmObjectInit(&PWMD8);
-  PWMD8.tim = TIM8;
+  PWMD8.tim = STM32_TIM8;
 #endif
 }
 

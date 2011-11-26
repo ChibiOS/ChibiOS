@@ -239,37 +239,37 @@ void icu_lld_init(void) {
 #if STM32_ICU_USE_TIM1
   /* Driver initialization.*/
   icuObjectInit(&ICUD1);
-  ICUD1.tim = TIM1;
+  ICUD1.tim = STM32_TIM1;
 #endif
 
 #if STM32_ICU_USE_TIM2
   /* Driver initialization.*/
   icuObjectInit(&ICUD2);
-  ICUD2.tim = TIM2;
+  ICUD2.tim = STM32_TIM2;
 #endif
 
 #if STM32_ICU_USE_TIM3
   /* Driver initialization.*/
   icuObjectInit(&ICUD3);
-  ICUD3.tim = TIM3;
+  ICUD3.tim = STM32_TIM3;
 #endif
 
 #if STM32_ICU_USE_TIM4
   /* Driver initialization.*/
   icuObjectInit(&ICUD4);
-  ICUD4.tim = TIM4;
+  ICUD4.tim = STM32_TIM4;
 #endif
 
 #if STM32_ICU_USE_TIM5
   /* Driver initialization.*/
   icuObjectInit(&ICUD5);
-  ICUD5.tim = TIM5;
+  ICUD5.tim = STM32_TIM5;
 #endif
 
 #if STM32_ICU_USE_TIM8
   /* Driver initialization.*/
   icuObjectInit(&ICUD8);
-  ICUD5.tim = TIM8;
+  ICUD5.tim = STM32_TIM8;
 #endif
 }
 
