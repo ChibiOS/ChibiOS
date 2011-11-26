@@ -24,7 +24,7 @@
  * @note    This file requires definitions from the ST STM32F4xx header file
  *          stm32f4xx.h.
  *
- * @addtogroup STM32_DMA
+ * @addtogroup STM32F4xx_DMA
  * @{
  */
 
