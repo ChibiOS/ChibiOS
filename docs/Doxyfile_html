@@ -683,6 +683,7 @@ INPUT                  = ../docs/src \
                          ../os/hal/platforms/MSP430/platform.dox \
                          ../os/hal/platforms/SPC56x/platform.dox \
                          ../os/hal/platforms/STM32F1xx/platform.dox \
+                         ../os/hal/platforms/STM32F4xx/platform.dox \
                          ../os/hal/platforms/STM32L1xx/platform.dox \
                          ../os/hal/platforms/STM8L/platform.dox \
                          ../os/hal/platforms/STM8S/platform.dox \
