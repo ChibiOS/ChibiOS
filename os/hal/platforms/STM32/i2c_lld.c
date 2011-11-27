@@ -590,8 +590,13 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
   regCR2 = i2cp->id_i2c->CR2;                   /* Get the I2Cx CR2 value */
   regCR2 &= (uint16_t)~I2C_CR2_FREQ;            /* Clear frequency FREQ[5:0] bits */
   freq = (uint16_t)(STM32_PCLK1 / 1000000);     /* Set frequency bits depending on pclk1 value */
+#ifdef STM32F4XX
+  chDbgCheck((freq >= 2) && (freq <= 42),
+                "i2c_lld_set_clock() : Peripheral clock freq. out of range");
+#else
   chDbgCheck((freq >= 2) && (freq <= 36),
               "i2c_lld_set_clock() : Peripheral clock freq. out of range");
+#endif
   regCR2 |= freq;
   i2cp->id_i2c->CR2 = regCR2;
 
