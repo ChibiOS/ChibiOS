@@ -56,6 +56,13 @@
 #endif
 
 /**
+ * @brief   Enables the EXT subsystem.
+ */
+#if !defined(HAL_USE_EXT) || defined(__DOXYGEN__)
+#define HAL_USE_EXT                 FALSE
+#endif
+
+/**
  * @brief   Enables the GPT subsystem.
  */
 #if !defined(HAL_USE_GPT) || defined(__DOXYGEN__)
@@ -95,6 +102,13 @@
  */
 #if !defined(HAL_USE_PWM) || defined(__DOXYGEN__)
 #define HAL_USE_PWM                 FALSE
+#endif
+
+/**
+ * @brief   Enables the RTC subsystem.
+ */
+#if !defined(HAL_USE_RTC) || defined(__DOXYGEN__)
+#define HAL_USE_RTC                 FALSE
 #endif
 
 /**
@@ -235,16 +249,9 @@
 #endif
 
 /*===========================================================================*/
-/* PAL driver related settings.                                              */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* PWM driver related settings.                                              */
-/*===========================================================================*/
-
-/*===========================================================================*/
 /* SDC driver related settings.                                              */
 /*===========================================================================*/
+
 /**
  * @brief   Number of initialization attempts before rejecting the card.
  * @note    Attempts are performed at 10mS intevals.
@@ -315,10 +322,6 @@
 #if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define SPI_USE_MUTUAL_EXCLUSION    TRUE
 #endif
-
-/*===========================================================================*/
-/* UART driver related settings.                                             */
-/*===========================================================================*/
 
 #endif /* _HALCONF_H_ */
 

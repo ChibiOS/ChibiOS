@@ -70,8 +70,7 @@
  *   not globally masked but only interrupts with higher priority can preempt
  *   the current handler. The processor is running in exception-privileged
  *   mode.
- * - <b>Serving Fast Interrupt</b>. This state is not implemented in the
- *   ARMv6-M implementation.
+ * - <b>Serving Fast Interrupt</b>. Not implemented in compact kernel mode.
  * - <b>Serving Non-Maskable Interrupt</b>. The Cortex-Mx has a specific
  *   asynchronous NMI vector and several synchronous fault vectors that can
  *   be considered belonging to this category.
@@ -109,9 +108,13 @@
  *   not globally masked but only interrupts with higher priority can preempt
  *   the current handler. The processor is running in exception-privileged
  *   mode.
- * - <b>Serving Fast Interrupt</b>. It is basically the same of the SRI state
- *   but it is not possible to switch to the I-Locked state because fast
- *   interrupts can preempt the kernel critical zone.
+ * - <b>Serving Fast Interrupt</b>. Fast interrupts are defined as interrupt
+ *   sources having higher priority level than the kernel
+ *   (@p CORTEX_BASEPRI_KERNEL). In this state is not possible to switch to
+ *   the I-Locked state because fast interrupts can preempt the kernel
+ *   critical zone.<br>
+ *   This state is not implemented in the ARMv6-M implementation because
+ *   priority masking is not present in this architecture.
  * - <b>Serving Non-Maskable Interrupt</b>. The Cortex-Mx has a specific
  *   asynchronous NMI vector and several synchronous fault vectors that can
  *   be considered belonging to this category.
@@ -126,19 +129,6 @@
  *   stack where all the interrupts and exceptions are processed.
  * - The threads are started in thread-privileged mode.
  * - Interrupt nesting and the other advanced core/NVIC features are supported.
- * - When using an STM32 one of the following macros must be defined on the
- *   compiler command line or in a file named <tt>board.h</tt>:
- *   - @p STM32F10X_LD
- *   - @p STM32F10X_LD_VL
- *   - @p STM32F10X_MD
- *   - @p STM32F10X_MD_VL
- *   - @p STM32F10X_HD
- *   - @p STM32F10X_XL
- *   - @p STM32F10X_CL
- *   .
- *   This is required in order to include a vectors table with the correct
- *   length for the STM32 model, see the file
- *   <tt>./os/ports/IAR/ARMCMx/STM32/vectors.s</tt>.
  * - The Cortex-Mx port is perfectly generic, support for more devices can be
  *   easily added by adding a subdirectory under <tt>./os/ports/IAR/ARMCMx</tt>
  *   and giving it the name of the new device, then copy the files from another

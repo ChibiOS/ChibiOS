@@ -174,7 +174,7 @@ struct intctx {
 
 /**
  * @brief   Kernel-unlock action.
- * @details Usually this function just disables interrupts but may perform
+ * @details Usually this function just enables interrupts but may perform
  *          more actions.
  */
 #define port_unlock() __enable_interrupt()

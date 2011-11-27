@@ -1,3 +1,23 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /**
  * @file STM32/i2c_lld.c
  * @brief STM32 I2C subsystem low level driver source. Slave mode not implemented.
@@ -20,7 +40,7 @@
  * Note:
  * When the STOP, START or PEC bit is set, the software must NOT perform
  * any write access to I2C_CR1 before this bit is cleared by hardware.
- * Otherwise there is a risk of setting a second STOP, START or PEC request.
+ * Otherwise there is a  risk of setting a second STOP, START or PEC request.
  */
 
 /*===========================================================================*/
@@ -66,7 +86,7 @@ static volatile uint16_t dbgCR2 = 0;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 #if I2C_SUPPORTS_CALLBACKS
-#if !(STM32_I2C_I2C1_USE_POLLING_WAIT)
+#if (!(STM32_I2C_I2C1_USE_POLLING_WAIT)) && STM32_I2C_USE_I2C1
 /* I2C1 GPT callback. */
 static void i2c1gptcb(GPTDriver *gptp) {
   (void)gptp;
@@ -100,7 +120,7 @@ static const GPTConfig i2c1gptcfg = {
 };
 #endif /* STM32_I2C_I2C1_USE_POLLING_WAIT */
 
-#if !(STM32_I2C_I2C2_USE_POLLING_WAIT)
+#if (!(STM32_I2C_I2C2_USE_POLLING_WAIT)) && STM32_I2C_USE_I2C2
 /* I2C2 GPT callback. */
 static void i2c2gptcb(GPTDriver *gptp) {
   (void)gptp;
@@ -257,8 +277,9 @@ void _i2c_ev7_master_rec_byte_qued(I2CDriver *i2cp){
       rxBuffp++;
       (i2cp->rxbytes)--;
     }
-    else
+    else{
       _i2c_unhandled_case(i2cp);
+    }
     break;
 
   default:
@@ -477,8 +498,6 @@ CH_IRQ_HANDLER(VectorC8) {
 void i2c_lld_init(void) {
 
 #if STM32_I2C_USE_I2C1
-  RCC->APB1RSTR     = RCC_APB1RSTR_I2C1RST; /* reset I2C 1 */
-  RCC->APB1RSTR     = 0;
   i2cObjectInit(&I2CD1);
   I2CD1.id_i2c      = I2C1;
 
@@ -492,8 +511,6 @@ void i2c_lld_init(void) {
 #endif /* STM32_I2C_USE_I2C */
 
 #if STM32_I2C_USE_I2C2
-  RCC->APB1RSTR     = RCC_APB1RSTR_I2C2RST; /* reset I2C 2 */
-  RCC->APB1RSTR     = 0;
   i2cObjectInit(&I2CD2);
   I2CD2.id_i2c      = I2C2;
 
@@ -522,7 +539,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
 #endif /* I2C_SUPPORTS_CALLBACKS */
       NVICEnableVector(I2C1_ER_IRQn,
           CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
-      RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;   /* I2C 1 clock enable */
+      rccEnableI2C1(FALSE);
     }
 #endif
 #if STM32_I2C_USE_I2C2
@@ -533,7 +550,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
 #endif /* I2C_SUPPORTS_CALLBACKS */
       NVICEnableVector(I2C2_ER_IRQn,
           CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
-      RCC->APB1ENR |= RCC_APB1ENR_I2C2EN;   /* I2C 2 clock enable */
+      rccEnableI2C2(FALSE);
     }
 #endif
   }
@@ -549,8 +566,7 @@ void i2c_lld_reset(I2CDriver *i2cp){
   chDbgCheck((i2cp->id_state == I2C_STOP)||(i2cp->id_state == I2C_READY),
              "i2c_lld_reset: invalid state");
 
-  RCC->APB1RSTR     = RCC_APB1RSTR_I2C1RST; /* reset I2C 1 */
-  RCC->APB1RSTR     = 0;
+  rccResetI2C1();
 }
 
 
@@ -679,14 +695,14 @@ void i2c_lld_stop(I2CDriver *i2cp) {
     if (&I2CD1 == i2cp) {
       NVICDisableVector(I2C1_EV_IRQn);
       NVICDisableVector(I2C1_ER_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_I2C1EN;
+      rccDisableI2C1(FALSE);
     }
 #endif
 #if STM32_I2C_USE_I2C2
     if (&I2CD2 == i2cp) {
       NVICDisableVector(I2C2_EV_IRQn);
       NVICDisableVector(I2C2_ER_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_I2C2EN;
+      rccDisableI2C2(FALSE);
     }
 #endif
   }

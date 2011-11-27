@@ -87,8 +87,8 @@
 #define VAL_DDRG  0x00
 #define VAL_PORTG 0x07
 
-#define PORTE_LED               (1 << 4)
-#define PORTE_BUTTON            (1 << 5)
+#define PORTE_LED               4
+#define PORTE_BUTTON            5
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus

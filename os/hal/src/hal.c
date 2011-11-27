@@ -71,6 +71,9 @@ void halInit(void) {
 #if HAL_USE_CAN || defined(__DOXYGEN__)
   canInit();
 #endif
+#if HAL_USE_EXT || defined(__DOXYGEN__)
+  extInit();
+#endif
 #if HAL_USE_GPT || defined(__DOXYGEN__)
   gptInit();
 #endif
@@ -106,6 +109,9 @@ void halInit(void) {
 #endif
 #if HAL_USE_SERIAL_USB || defined(__DOXYGEN__)
   sduInit();
+#endif
+#if HAL_USE_RTC || defined(__DOXYGEN__)
+  rtcInit();
 #endif
   /* Board specific initialization.*/
   boardInit();

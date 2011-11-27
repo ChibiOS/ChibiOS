@@ -60,6 +60,13 @@
 #endif
 
 /**
+ * @brief   Enables the EXT subsystem.
+ */
+#if !defined(HAL_USE_EXT) || defined(__DOXYGEN__)
+#define HAL_USE_EXT                 FALSE
+#endif
+
+/**
  * @brief   Enables the GPT subsystem.
  */
 #if !defined(HAL_USE_GPT) || defined(__DOXYGEN__)
@@ -99,6 +106,13 @@
  */
 #if !defined(HAL_USE_PWM) || defined(__DOXYGEN__)
 #define HAL_USE_PWM                 TRUE
+#endif
+
+/**
+ * @brief   Enables the RTC subsystem.
+ */
+#if !defined(HAL_USE_RTC) || defined(__DOXYGEN__)
+#define HAL_USE_RTC                 FALSE
 #endif
 
 /**
@@ -185,6 +199,22 @@
 
 /*===========================================================================*/
 /**
+ * @name EXT driver related setting
+ * @{
+ */
+/*===========================================================================*/
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name GPT driver related setting
+ * @{
+ */
+/*===========================================================================*/
+/** @} */
+
+/*===========================================================================*/
+/**
  * @name I2C driver related setting
  * @{
  */
@@ -200,10 +230,25 @@
 
 /*===========================================================================*/
 /**
+ * @name ICU driver related setting
+ * @{
+ */
+/*===========================================================================*/
+/** @} */
+
+/*===========================================================================*/
+/**
  * @name MAC driver related setting
  * @{
  */
 /*===========================================================================*/
+
+/**
+ * @brief   Enables an event sources for incoming packets.
+ */
+#if !defined(MAC_USE_EVENTS) || defined(__DOXYGEN__)
+#define MAC_USE_EVENTS              TRUE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -281,6 +326,7 @@
  * @{
  */
 /*===========================================================================*/
+
 /**
  * @brief   Number of initialization attempts before rejecting the card.
  * @note    Attempts are performed at 10mS intevals.
@@ -337,13 +383,13 @@
 #endif
 /** @} */
 
-
 /*===========================================================================*/
 /**
  * @name SERIAL_USB driver related setting
  * @{
  */
 /*===========================================================================*/
+
 /**
  * @brief   Serial over USB buffers size.
  * @details Configuration parameter, the buffer size must be a multiple of

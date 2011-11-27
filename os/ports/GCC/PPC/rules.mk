@@ -2,6 +2,7 @@
 
 # Automatic compiler options
 OPT = $(USE_OPT)
+COPT = $(USE_COPT)
 CPPOPT = $(USE_CPPOPT)
 ifeq ($(USE_CURRP_CACHING),yes)
   OPT += -ffixed-r7 -DCH_CURRP_REGISTER_CACHE='"r7"'
@@ -33,7 +34,7 @@ LIBS    = $(DLIBS) $(ULIBS)
 MCFLAGS = -mcpu=$(MCU)
 ODFLAGS	= -x --syms
 ASFLAGS = $(MCFLAGS) -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
-CPFLAGS = $(MCFLAGS) $(OPT) $(CWARN) -Wa,-alms=$(<:.c=.lst) $(DEFS)
+CPFLAGS = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(<:.c=.lst) $(DEFS)
 ifeq ($(LINK_GC),yes)
   LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch,--gc-sections $(LLIBDIR)
 else

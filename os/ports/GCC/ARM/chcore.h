@@ -347,7 +347,7 @@ struct context {
 
 /**
  * @brief   Kernel-unlock action.
- * @details Usually this function just disables interrupts but may perform
+ * @details Usually this function just enables interrupts but may perform
  *          more actions.
  * @note    In this port it enables both the IRQ and FIQ sources.
  */

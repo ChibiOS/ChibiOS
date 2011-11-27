@@ -3,6 +3,7 @@
 HALSRC = ${CHIBIOS}/os/hal/src/hal.c \
          ${CHIBIOS}/os/hal/src/adc.c \
          ${CHIBIOS}/os/hal/src/can.c \
+         ${CHIBIOS}/os/hal/src/ext.c \
          ${CHIBIOS}/os/hal/src/gpt.c \
          ${CHIBIOS}/os/hal/src/i2c.c \
          ${CHIBIOS}/os/hal/src/icu.c \
@@ -15,7 +16,8 @@ HALSRC = ${CHIBIOS}/os/hal/src/hal.c \
          ${CHIBIOS}/os/hal/src/uart.c \
          ${CHIBIOS}/os/hal/src/usb.c \
          ${CHIBIOS}/os/hal/src/mmc_spi.c \
-         ${CHIBIOS}/os/hal/src/serial_usb.c
+         ${CHIBIOS}/os/hal/src/serial_usb.c \
+         ${CHIBIOS}/os/hal/src/rtc.c
 
 # Required include directories
 HALINC = ${CHIBIOS}/os/hal/include

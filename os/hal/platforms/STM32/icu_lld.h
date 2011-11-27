@@ -40,6 +40,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    Configuration options
+ * @{
+ */
+/**
  * @brief   ICUD1 driver enable switch.
  * @details If set to @p TRUE the support for ICUD1 is included.
  * @note    The default is @p TRUE.
@@ -134,6 +138,7 @@
 #if !defined(STM32_ICU_TIM8_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_ICU_TIM8_IRQ_PRIORITY         7
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -234,9 +239,13 @@ struct ICUDriver {
 #endif
   /* End of the mandatory fields.*/
   /**
+   * @brief Timer base clock.
+   */
+  uint32_t                  clock;
+  /**
    * @brief Pointer to the TIMx registers block.
    */
-  TIM_TypeDef               *tim;
+  stm32_tim_t               *tim;
 };
 
 /*===========================================================================*/
@@ -253,7 +262,7 @@ struct ICUDriver {
  *
  * @notapi
  */
-#define icu_lld_get_width(icup) ((icup)->tim->CCR2 + 1)
+#define icu_lld_get_width(icup) ((icup)->tim->CCR[1] + 1)
 
 /**
  * @brief   Returns the width of the latest cycle.
@@ -265,7 +274,7 @@ struct ICUDriver {
  *
  * @notapi
  */
-#define icu_lld_get_period(icup) ((icup)->tim->CCR1 + 1)
+#define icu_lld_get_period(icup) ((icup)->tim->CCR[0] + 1)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -9,6 +9,11 @@ ifeq ($(USE_OPT),)
   #USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -Wall -Wextra
 endif
 
+# C specific options here (added to USE_OPT).
+ifeq ($(USE_COPT),)
+  USE_COPT = 
+endif
+
 # C++ specific options here (added to USE_OPT).
 ifeq ($(USE_CPPOPT),)
   USE_CPPOPT = -fno-rtti
@@ -24,9 +29,9 @@ ifeq ($(USE_THUMB),)
   USE_THUMB = yes
 endif
 
-# Enable register caching optimization (read documentation).
-ifeq ($(USE_CURRP_CACHING),)
-  USE_CURRP_CACHING = no
+# Enable this if you want to see the full log while compiling.
+ifeq ($(USE_VERBOSE_COMPILE),)
+  USE_VERBOSE_COMPILE = no
 endif
 
 #
@@ -122,7 +127,7 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
 # Compiler settings
 #
 
-# -lm добавлен именно здесь, потому что больше некуда
+# -lm пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 MCU  = cortex-m3
 
 #TRGT = arm-elf-

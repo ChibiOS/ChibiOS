@@ -162,6 +162,8 @@ void adcStartConversion(ADCDriver *adcp,
 /**
  * @brief   Starts an ADC conversion.
  * @details Starts an asynchronous conversion operation.
+ * @post    The callbacks associated to the conversion group will be invoked
+ *          on buffer fill and error events.
  * @note    The buffer is organized as a matrix of M*N elements where M is the
  *          channels number configured into the conversion group and N is the
  *          buffer depth. The samples are sequentially written into the buffer
@@ -185,7 +187,8 @@ void adcStartConversionI(ADCDriver *adcp,
              ((depth == 1) || ((depth & 1) == 0)),
              "adcStartConversionI");
   chDbgAssert((adcp->state == ADC_READY) ||
-              (adcp->state == ADC_COMPLETE),
+              (adcp->state == ADC_COMPLETE) ||
+              (adcp->state == ADC_ERROR),
               "adcStartConversionI(), #1", "not ready");
 
   adcp->samples  = samples;
@@ -268,6 +271,8 @@ void adcStopConversionI(ADCDriver *adcp) {
  * @retval RDY_RESET    The conversion has been stopped using
  *                      @p acdStopConversion() or @p acdStopConversionI(),
  *                      the result buffer may contain incorrect data.
+ * @retval RDY_TIMEOUT  The conversion has been stopped because an hardware
+ *                      error.
  *
  * @api
  */

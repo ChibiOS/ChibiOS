@@ -41,6 +41,8 @@ main_stack_mem  SPACE   main_stack_size
 __initial_msp
 
                 AREA    CSTACK, NOINIT, READWRITE, ALIGN=3
+__main_thread_stack_base__
+                EXPORT  __main_thread_stack_base__
 proc_stack_mem  SPACE   proc_stack_size
                 EXPORT  __initial_sp
 __initial_sp

@@ -62,7 +62,7 @@
  * - Programmable ADC interrupt priority level.
  * - Programmable DMA bus priority for each DMA channel.
  * - Programmable DMA interrupt priority for each DMA channel.
- * - Programmable DMA error hook.
+ * - DMA errors detection.
  * .
  * @ingroup STM32F1xx_DRIVERS
  */
@@ -83,19 +83,16 @@
  */
 
 /**
- * @defgroup STM32F1xx_DMA STM32F1xx DMA Support
- * @details This DMA helper driver is used by the other drivers in order to
- *          access the shared DMA resources in a consistent way.
+ * @defgroup STM32F1xx_EXT STM32F1xx EXT Support
+ * @details The STM32F1xx EXT driver uses the EXTI peripheral.
  *
- * @section stm32f1xx_dma_1 Supported HW resources
- * The DMA driver can support any of the following hardware resources:
- * - DMA1.
- * - DMA2 (where present).
+ * @section stm32f1xx_ext_1 Supported HW resources
+ * - EXTI.
  * .
- * @section stm32f1xx_dma_2 STM32F1xx DMA driver implementation features
- * - Automatic DMA clock stop when not in use by other drivers.
- * - Exports helper functions/macros to the other drivers that share the
- *   DMA resource.
+ * @section stm32f1xx_ext_2 STM32F1xx EXT driver implementation features
+ * - Each EXTI channel can be independently enabled and programmed.
+ * - Programmable EXTI interrupts priority level.
+ * - Capability to work as event sources (WFE) rather than interrupt sources.
  * .
  * @ingroup STM32F1xx_DRIVERS
  */
@@ -120,6 +117,22 @@
  */
 
 /**
+ * @defgroup STM32F1xx_I2C STM32F1xx I2C Support
+ * @details The STM32F1xx I2C driver uses the I2Cx peripherals.
+ *
+ * @section stm32f1xx_i2c_1 Supported HW resources
+ * - I2C1.
+ * - I2C2.
+ * .
+ * @section stm32f1xx_i2c_2 STM32F1xx I2C driver implementation features
+ * - Each I2C port can be independently enabled and programmed. Unused
+ *   peripherals are left in low power mode.
+ * - Programmable I2Cx interrupts priority level.
+ * .
+ * @ingroup STM32F1xx_DRIVERS
+ */
+
+/**
  * @defgroup STM32F1xx_ICU STM32F1xx ICU Support
  * @details The STM32F1xx ICU driver uses the TIMx peripherals.
  *
@@ -134,6 +147,16 @@
  * - Each timer can be independently enabled and programmed. Unused
  *   peripherals are left in low power mode.
  * - Programmable TIMx interrupts priority level.
+ * .
+ * @ingroup STM32F1xx_DRIVERS
+ */
+
+/**
+ * @defgroup STM32F1xx_MAC STM32F1xx MAC Support
+ * @details The STM32 MAC driver supports the ETH peripheral.
+ *
+ * @section at91sam7_mac_1 Supported HW resources
+ * - ETH.
  * .
  * @ingroup STM32F1xx_DRIVERS
  */
@@ -204,6 +227,16 @@
  *   peripherals are left in low power mode.
  * - Four independent PWM channels per timer.
  * - Programmable TIMx interrupts priority level.
+ * .
+ * @ingroup STM32F1xx_DRIVERS
+ */
+
+/**
+ * @defgroup STM32F1xx_RTC STM32F1xx RTC Support
+ * @details The STM32F1xx RTC driver uses the RTC peripheral.
+ *
+ * @section stm32f1xx_rtc_1 Supported HW resources
+ * - RTC.
  * .
  * @ingroup STM32F1xx_DRIVERS
  */
@@ -314,4 +347,48 @@
  * - Each endpoint programmable in Control, Bulk and Interrupt modes.
  * .
  * @ingroup STM32F1xx_DRIVERS
+ */
+
+/**
+ * @defgroup STM32F1xx_PLATFORM_DRIVERS STM32F1xx Platform Drivers
+ * @details Platform support drivers. Platform drivers do not implement HAL
+ *          standard driver templates, their role is to support platform
+ *          specific functionalities.
+ *
+ * @ingroup STM32F1xx_DRIVERS
+ */
+
+/**
+ * @defgroup STM32F1xx_DMA STM32F1xx DMA Support
+ * @details This DMA helper driver is used by the other drivers in order to
+ *          access the shared DMA resources in a consistent way.
+ *
+ * @section stm32f1xx_dma_1 Supported HW resources
+ * The DMA driver can support any of the following hardware resources:
+ * - DMA1.
+ * - DMA2 (where present).
+ * .
+ * @section stm32f1xx_dma_2 STM32F1xx DMA driver implementation features
+ * - Exports helper functions/macros to the other drivers that share the
+ *   DMA resource.
+ * - Automatic DMA clock stop when not in use by any driver.
+ * - DMA streams and interrupt vectors sharing among multiple drivers.
+ * .
+ * @ingroup STM32F1xx_PLATFORM_DRIVERS
+ */
+
+/**
+ * @defgroup STM32F1xx_RCC STM32F1xx RCC Support
+ * @details This RCC helper driver is used by the other drivers in order to
+ *          access the shared RCC resources in a consistent way.
+ *
+ * @section stm32f1xx_rcc_1 Supported HW resources
+ * - RCC.
+ * .
+ * @section stm32f1xx_rcc_2 STM32F1xx RCC driver implementation features
+ * - Peripherals reset.
+ * - Peripherals clock enable.
+ * - Periplerals clock disable.
+ * .
+ * @ingroup STM32F1xx_PLATFORM_DRIVERS
  */

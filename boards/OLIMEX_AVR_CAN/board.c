@@ -21,6 +21,38 @@
 #include "ch.h"
 #include "hal.h"
 
+/**
+ * @brief   PAL setup.
+ * @details Digital I/O ports static configuration as defined in @p board.h.
+ *          This variable is used by the HAL when initializing the PAL driver.
+ */
+#if HAL_USE_PAL || defined(__DOXYGEN__)
+const PALConfig pal_default_config =
+{
+#if defined(PORTA)
+  {VAL_PORTA, VAL_DDRA},
+#endif
+#if defined(PORTB)
+  {VAL_PORTB, VAL_DDRB},
+#endif
+#if defined(PORTC)
+  {VAL_PORTC, VAL_DDRC},
+#endif
+#if defined(PORTD)
+  {VAL_PORTD, VAL_DDRD},
+#endif
+#if defined(PORTE)
+  {VAL_PORTE, VAL_DDRE},
+#endif
+#if defined(PORTF)
+  {VAL_PORTF, VAL_DDRF},
+#endif
+#if defined(PORTG)
+  {VAL_PORTG, VAL_DDRG},
+#endif
+};
+#endif /* HAL_USE_PAL */
+
 CH_IRQ_HANDLER(TIMER0_COMP_vect) {
 
   CH_IRQ_PROLOGUE();
@@ -36,24 +68,6 @@ CH_IRQ_HANDLER(TIMER0_COMP_vect) {
  * Board-specific initialization code.
  */
 void boardInit(void) {
-
-  /*
-   * I/O ports setup.
-   */
-  DDRA   = VAL_DDRA;
-  PORTA  = VAL_PORTA;
-  DDRB   = VAL_DDRB;
-  PORTB  = VAL_PORTB;
-  DDRC   = VAL_DDRC;
-  PORTC  = VAL_PORTC;
-  DDRD   = VAL_DDRD;
-  PORTD  = VAL_PORTD;
-  DDRE   = VAL_DDRE;
-  PORTE  = VAL_PORTE;
-  DDRF   = VAL_DDRF;
-  PORTF  = VAL_PORTF;
-  DDRG   = VAL_DDRG;
-  PORTG  = VAL_PORTG;
 
   /*
    * External interrupts setup, all disabled initially.

@@ -332,22 +332,7 @@ static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
 }
 
 static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
-  static const char *states[] = {
-    "READY",
-    "CURRENT",
-    "SUSPENDED",
-    "WTSEM",
-    "WTMTX",
-    "WTCOND",
-    "SLEEPING",
-    "WTEXIT",
-    "WTOREVT",
-    "WTANDEVT",
-    "SNDMSGQ",
-    "SNDMSG",
-    "WTMSG",
-    "FINAL"
-  };
+  static const char *states[] = {THD_STATE_NAMES};
   Thread *tp;
 
   (void)argv;
@@ -436,6 +421,7 @@ int main(void) {
    */
   sduObjectInit(&SDU1);
   sduStart(&SDU1, &serusbcfg);
+  usbConnectBus(serusbcfg.usbp);
   palClearPad(GPIOC, GPIOC_USB_DISC);
 
   /*

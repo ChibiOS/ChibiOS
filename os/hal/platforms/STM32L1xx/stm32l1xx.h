@@ -191,6 +191,7 @@ typedef enum IRQn
   */
 
 #include "core_cm3.h"
+/* CHIBIOS FIX */
 /*#include "system_stm32l1xx.h"*/
 #include <stdint.h>
 
@@ -411,6 +412,7 @@ typedef struct
 /**
   * @brief General Purpose IO
   */
+/* CHIBIOS FIX */
 #if 0
 typedef struct
 {

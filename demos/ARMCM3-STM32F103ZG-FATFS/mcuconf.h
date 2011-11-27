@@ -52,13 +52,27 @@
 #define STM32_ADC_USE_ADC1                  TRUE
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
 #define STM32_ADC_ADC1_IRQ_PRIORITY         5
-#define STM32_ADC_DMA_ERROR_HOOK(adcp)      chSysHalt()
 
 /*
  * CAN driver system settings.
  */
 #define STM32_CAN_USE_CAN1                  TRUE
 #define STM32_CAN_CAN1_IRQ_PRIORITY         11
+
+/*
+ * EXT driver system settings.
+ */
+#define STM32_EXT_EXTI0_IRQ_PRIORITY        6
+#define STM32_EXT_EXTI1_IRQ_PRIORITY        6
+#define STM32_EXT_EXTI2_IRQ_PRIORITY        6
+#define STM32_EXT_EXTI3_IRQ_PRIORITY        6
+#define STM32_EXT_EXTI4_IRQ_PRIORITY        6
+#define STM32_EXT_EXTI5_9_IRQ_PRIORITY      6
+#define STM32_EXT_EXTI10_15_IRQ_PRIORITY    6
+#define STM32_EXT_EXTI16_IRQ_PRIORITY       6
+#define STM32_EXT_EXTI17_IRQ_PRIORITY       6
+#define STM32_EXT_EXTI18_IRQ_PRIORITY       6
+#define STM32_EXT_EXTI19_IRQ_PRIORITY       6
 
 /*
  * GPT driver system settings.
@@ -124,11 +138,13 @@
 #define STM32_SERIAL_USE_USART3             FALSE
 #define STM32_SERIAL_USE_UART4              FALSE
 #define STM32_SERIAL_USE_UART5              FALSE
+#define STM32_SERIAL_USE_USART6             FALSE
 #define STM32_SERIAL_USART1_PRIORITY        12
 #define STM32_SERIAL_USART2_PRIORITY        12
 #define STM32_SERIAL_USART3_PRIORITY        12
 #define STM32_SERIAL_UART4_PRIORITY         12
 #define STM32_SERIAL_UART5_PRIORITY         12
+#define STM32_SERIAL_USART6_PRIORITY        12
 
 /*
  * SPI driver system settings.

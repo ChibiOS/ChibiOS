@@ -1,3 +1,23 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /**
  * @file STM32/i2c_lld.h
  * @brief STM32 I2C subsystem low level driver header.
@@ -17,6 +37,11 @@
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @name    Configuration options
+ * @{
+ */
 /**
  * @brief Switch between callback based and synchronouse driver.
  * @note  The default is synchronouse.
@@ -78,6 +103,7 @@
 #if !defined(STM32_I2C_I2C2_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_I2C_I2C2_IRQ_PRIORITY     0xA0
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -144,7 +170,6 @@ typedef struct {
   i2cdutycycle_t  duty_cycle;    /**< @brief Specifies the I2C fast mode duty cycle */
   uint8_t         own_addr_7;    /**< @brief Specifies the first device 7-bit own address. */
   uint16_t        own_addr_10;   /**< @brief Specifies the second part of device own address in 10-bit mode. Set to NULL if not used. */
-  uint16_t        ack;           /**< @brief Enables or disables the acknowledgment. */
   uint8_t         nbit_own_addr; /**< @brief Specifies if 7-bit or 10-bit address is acknowledged */
 } I2CConfig;
 

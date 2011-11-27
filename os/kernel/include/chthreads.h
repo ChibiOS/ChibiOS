@@ -51,6 +51,16 @@
 #define THD_STATE_WTMSG         12  /**< @brief Waiting for a message.      */
 #define THD_STATE_WTQUEUE       13  /**< @brief Waiting on an I/O queue.    */
 #define THD_STATE_FINAL         14  /**< @brief Thread terminated.          */
+
+/**
+ * @brief   Thread states as array of strings.
+ * @details Each element in an array initialized with this macro can be
+ *          indexed using the numeric thread state values.
+ */
+#define THD_STATE_NAMES                                                     \
+  "READY", "CURRENT", "SUSPENDED", "WTSEM", "WTMTX", "WTCOND", "SLEEPING",  \
+  "WTEXIT", "WTOREVT", "WTANDEVT", "SNDMSGQ", "SNDMSG", "WTMSG", "WTQUEUE", \
+  "FINAL"
 /** @} */
 
 /**
@@ -291,7 +301,7 @@ typedef msg_t (*tfunc_t)(void *);
  *          system clock.
  * @note    The maximum specified value is implementation dependent.
  *
- * @param[in] sec       time in seconds
+ * @param[in] sec       time in seconds, must be different from zero
  *
  * @api
  */
@@ -304,7 +314,7 @@ typedef msg_t (*tfunc_t)(void *);
  *          system clock.
  * @note    The maximum specified value is implementation dependent.
  *
- * @param[in] msec      time in milliseconds
+ * @param[in] msec      time in milliseconds, must be different from zero
  *
  * @api
  */
@@ -317,7 +327,7 @@ typedef msg_t (*tfunc_t)(void *);
  *          system clock.
  * @note    The maximum specified value is implementation dependent.
  *
- * @param[in] usec      time in microseconds
+ * @param[in] usec      time in microseconds, must be different from zero
  *
  * @api
  */
@@ -345,6 +355,7 @@ extern "C" {
   void chThdSleepUntil(systime_t time);
   void chThdYield(void);
   void chThdExit(msg_t msg);
+  void chThdExitS(msg_t msg);
 #if CH_USE_WAITEXIT
   msg_t chThdWait(Thread *tp);
 #endif

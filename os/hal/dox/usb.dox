@@ -132,9 +132,9 @@
     receiving [label="EP_BUSY\nReceiving Packet"];
     idle [label="EP_IDLE\nPacket in Buffer"];
 
-    disabled -> receiving [label="\usbInitEndpointI()"];
+    disabled -> receiving [label="\nusbInitEndpointI()"];
     receiving -> idle [label="\npacket received\n>out_cb<"];
-    idle -> receiving [label="\nusbReadPacketI()"];
+    idle -> receiving [label="\nusbReadPacketBuffer()\nusbStartReceiveI()"];
     receiving -> disabled [label="\nUSB RESET\nusbDisableEndpointsI()"];
     idle -> disabled [label="\nUSB RESET\nusbDisableEndpointsI()"];
   }
@@ -152,8 +152,8 @@
     transmitting [label="EP_BUSY\nSending Packet"];
     idle [label="EP_IDLE\nBuffer Empty"];
 
-    disabled -> idle [label="\usbInitEndpointI()"];
-    idle -> transmitting [label="\nusbWritePacketI()"];
+    disabled -> idle [label="\nusbInitEndpointI()"];
+    idle -> transmitting [label="\nusbWritePacketBuffer()\nusbStartTransmitI()"];
     transmitting -> idle [label="\npacket sent\n>in_cb<"];
     transmitting -> disabled [label="\nUSB RESET\nusbDisableEndpointsI()"];
     idle -> disabled [label="\nUSB RESET\nusbDisableEndpointsI()"];
@@ -176,8 +176,8 @@
     receiving [label="EP_BUSY\nReceiving"];
     idle [label="EP_IDLE\nReady"];
 
-    disabled -> idle [label="\usbInitEndpointI()"];
-    idle -> receiving [label="\usbStartReceiveI()"];
+    disabled -> idle [label="\nusbInitEndpointI()"];
+    idle -> receiving [label="\nusbPrepareReceive()\nusbStartReceiveI()"];
     receiving -> receiving [label="\nmore packets"];
     receiving -> idle [label="\nreception end\n>out_cb<"];
     receiving -> disabled [label="\nUSB RESET\nusbDisableEndpointsI()"];
@@ -198,7 +198,7 @@
     idle [label="EP_IDLE\nReady"];
 
     disabled -> idle [label="\usbInitEndpointI()"];
-    idle -> transmitting [label="\nusbStartTransmitI()"];
+    idle -> transmitting [label="\nusbPrepareTransmit()\nusbStartTransmitI()"];
     transmitting -> transmitting [label="\nmore packets"];
     transmitting -> idle [label="\ntransmission end\n>in_cb<"];
     transmitting -> disabled [label="\nUSB RESET\nusbDisableEndpointsI()"];

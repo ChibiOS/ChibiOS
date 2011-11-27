@@ -20,7 +20,7 @@
 
 /**
  * @file    STM32/GPIOv2/pal_lld.h
- * @brief   STM32L1xx/STM32F2xx GPIO low level driver header.
+ * @brief   STM32L1xx/STM32F2xx/STM32F4xx GPIO low level driver header.
  *
  * @addtogroup PAL
  * @{
@@ -44,6 +44,10 @@
 #undef PAL_MODE_OUTPUT_PUSHPULL
 #undef PAL_MODE_OUTPUT_OPENDRAIN
 
+/**
+ * @name    STM32-specific I/O mode flags
+ * @{
+ */
 #define PAL_STM32_MODE_MASK             (3 << 0)
 #define PAL_STM32_MODE_INPUT            (0 << 0)
 #define PAL_STM32_MODE_OUTPUT           (1 << 0)
@@ -55,10 +59,10 @@
 #define PAL_STM32_OTYPE_OPENDRAIN       (1 << 2)
 
 #define PAL_STM32_OSPEED_MASK           (3 << 3)
-#define PAL_STM32_OSPEED_400K           (0 << 3)
-#define PAL_STM32_OSPEED_2M             (1 << 3)
-#define PAL_STM32_OSPEED_10M            (2 << 3)
-#define PAL_STM32_OSPEED_40M            (3 << 3)
+#define PAL_STM32_OSPEED_LOWEST         (0 << 3)
+#define PAL_STM32_OSPEED_MID1           (1 << 3)
+#define PAL_STM32_OSPEED_MID2           (2 << 3)
+#define PAL_STM32_OSPEED_HIGHEST        (3 << 3)
 
 #define PAL_STM32_PUDR_MASK             (3 << 5)
 #define PAL_STM32_PUDR_FLOATING         (0 << 5)
@@ -68,6 +72,19 @@
 #define PAL_STM32_ALTERNATE_MASK        (15 << 7)
 #define PAL_STM32_ALTERNATE(n)          ((n) << 7)
 
+/**
+ * @brief   Alternate function.
+ *
+ * @param[in] n         alternate function selector
+ */
+#define PAL_MODE_ALTERNATE(n)           (PAL_STM32_MODE_ALTERNATE |         \
+                                         PAL_STM32_ALTERNATE(n))
+/** @} */
+
+/**
+ * @name    Standard I/O mode flags
+ * @{
+ */
 /**
  * @brief   This mode is implemented as input.
  */
@@ -111,24 +128,7 @@
  */
 #define PAL_MODE_OUTPUT_OPENDRAIN       (PAL_STM32_MODE_OUTPUT |            \
                                          PAL_STM32_OTYPE_OPENDRAIN)
-
-/**
- * @brief   Alternate push-pull output.
- *
- * @param[in] n         alternate function selector
- */
-#define PAL_MODE_ALTERNATE_PUSHPULL(n)  (PAL_STM32_MODE_ALTERNATE |         \
-                                         PAL_STM32_OTYPE_PUSHPULL |         \
-                                         PAL_STM32_ALTERNATE(n))
-
-/**
- * @brief   Alternate push-pull output.
- *
- * @param[in] n         alternate function selector
- */
-#define PAL_MODE_ALTERNATE_OPENDRAIN(n) (PAL_STM32_MODE_ALTERNATE |         \
-                                         PAL_STM32_OTYPE_OPENDRAIN |        \
-                                         PAL_STM32_ALTERNATE(n))
+/** @} */
 
 /*===========================================================================*/
 /* I/O Ports Types and constants.                                            */
@@ -357,8 +357,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Writes on a I/O port.
  * @details This function is implemented by writing the GPIO ODR register, the
  *          implementation has no side effects.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  * @note    Writing on pads programmed as pull-up or pull-down has the side
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
@@ -374,8 +372,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Sets a bits mask on a I/O port.
  * @details This function is implemented by writing the GPIO BSRR register, the
  *          implementation has no side effects.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  * @note    Writing on pads programmed as pull-up or pull-down has the side
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
@@ -391,8 +387,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Clears a bits mask on a I/O port.
  * @details This function is implemented by writing the GPIO BSRR register, the
  *          implementation has no side effects.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  * @note    Writing on pads programmed as pull-up or pull-down has the side
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
@@ -408,8 +402,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Writes a group of bits.
  * @details This function is implemented by writing the GPIO BSRR register, the
  *          implementation has no side effects.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  * @note    Writing on pads programmed as pull-up or pull-down has the side
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
@@ -430,8 +422,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Pads group mode setup.
  * @details This function programs a pads group belonging to the same port
  *          with the specified mode.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  * @note    Writing on pads programmed as pull-up or pull-down has the side
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
@@ -447,8 +437,6 @@ typedef GPIO_TypeDef * ioportid_t;
 
 /**
  * @brief   Writes a logical state on an output pad.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  * @note    Writing on pads programmed as pull-up or pull-down has the side
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.

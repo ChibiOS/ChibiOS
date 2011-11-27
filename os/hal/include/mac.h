@@ -38,17 +38,47 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    MAC configuration options
+ * @{
+ */
+/**
+ * @brief   Enables an event sources for incoming packets.
+ */
+#if !defined(MAC_USE_EVENTS) || defined(__DOXYGEN__)
+#define MAC_USE_EVENTS          TRUE
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 #if !CH_USE_SEMAPHORES || !CH_USE_EVENTS
-#error "the MAC driver requires CH_USE_SEMAPHORES and CH_USE_EVENTS"
+#error "the MAC driver requires CH_USE_SEMAPHORES"
+#endif
+
+#if MAC_USE_EVENTS && !CH_USE_EVENTS
+#error "the MAC driver requires CH_USE_EVENTS"
 #endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Driver state machine possible states.
+ */
+typedef enum {
+  MAC_UNINIT = 0,                   /**< Not initialized.                   */
+  MAC_STOP = 1,                     /**< Stopped.                           */
+  MAC_ACTIVE = 2,                   /**< Active.                            */
+} macstate_t;
+
+/**
+ * @brief   Type of a structure representing a MAC driver.
+ */
+typedef struct MACDriver MACDriver;
 
 #include "mac_lld.h"
 
@@ -68,7 +98,7 @@
  *
  * @api
  */
-#if CH_USE_EVENTS || defined(__DOXYGEN__)
+#if MAC_USE_EVENTS || defined(__DOXYGEN__)
 #define macGetReceiveEventSource(macp)  (&(macp)->rdevent)
 #endif
 
@@ -113,6 +143,8 @@ extern "C" {
 #endif
   void macInit(void);
   void macObjectInit(MACDriver *macp);
+  void macStart(MACDriver *macp, const MACConfig *config);
+  void macStop(MACDriver *macp);
   void macSetAddress(MACDriver *macp, const uint8_t *p);
   msg_t macWaitTransmitDescriptor(MACDriver *macp,
                                   MACTransmitDescriptor *tdp,

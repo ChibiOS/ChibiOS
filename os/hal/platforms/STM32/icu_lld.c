@@ -239,37 +239,37 @@ void icu_lld_init(void) {
 #if STM32_ICU_USE_TIM1
   /* Driver initialization.*/
   icuObjectInit(&ICUD1);
-  ICUD1.tim = TIM1;
+  ICUD1.tim = STM32_TIM1;
 #endif
 
 #if STM32_ICU_USE_TIM2
   /* Driver initialization.*/
   icuObjectInit(&ICUD2);
-  ICUD2.tim = TIM2;
+  ICUD2.tim = STM32_TIM2;
 #endif
 
 #if STM32_ICU_USE_TIM3
   /* Driver initialization.*/
   icuObjectInit(&ICUD3);
-  ICUD3.tim = TIM3;
+  ICUD3.tim = STM32_TIM3;
 #endif
 
 #if STM32_ICU_USE_TIM4
   /* Driver initialization.*/
   icuObjectInit(&ICUD4);
-  ICUD4.tim = TIM4;
+  ICUD4.tim = STM32_TIM4;
 #endif
 
 #if STM32_ICU_USE_TIM5
   /* Driver initialization.*/
   icuObjectInit(&ICUD5);
-  ICUD5.tim = TIM5;
+  ICUD5.tim = STM32_TIM5;
 #endif
 
 #if STM32_ICU_USE_TIM8
   /* Driver initialization.*/
   icuObjectInit(&ICUD8);
-  ICUD5.tim = TIM8;
+  ICUD5.tim = STM32_TIM8;
 #endif
 }
 
@@ -281,86 +281,80 @@ void icu_lld_init(void) {
  * @notapi
  */
 void icu_lld_start(ICUDriver *icup) {
-  uint32_t clock, psc;
+  uint32_t psc;
 
   if (icup->state == ICU_STOP) {
     /* Clock activation and timer reset.*/
 #if STM32_ICU_USE_TIM1
     if (&ICUD1 == icup) {
-      RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
-      RCC->APB2RSTR = RCC_APB2RSTR_TIM1RST;
-      RCC->APB2RSTR = 0;
+      rccEnableTIM1(FALSE);
+      rccResetTIM1();
       NVICEnableVector(TIM1_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM1_IRQ_PRIORITY));
-      clock = STM32_TIMCLK2;
+      icup->clock = STM32_TIMCLK2;
     }
 #endif
 #if STM32_ICU_USE_TIM2
     if (&ICUD2 == icup) {
-      RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-      RCC->APB1RSTR = RCC_APB1RSTR_TIM2RST;
-      RCC->APB1RSTR = 0;
+      rccEnableTIM2(FALSE);
+      rccResetTIM2();
       NVICEnableVector(TIM2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM2_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      icup->clock = STM32_TIMCLK1;
     }
 #endif
 #if STM32_ICU_USE_TIM3
     if (&ICUD3 == icup) {
-      RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
-      RCC->APB1RSTR = RCC_APB1RSTR_TIM3RST;
-      RCC->APB1RSTR = 0;
+      rccEnableTIM3(FALSE);
+      rccResetTIM3();
       NVICEnableVector(TIM3_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM3_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      icup->clock = STM32_TIMCLK1;
     }
 #endif
 #if STM32_ICU_USE_TIM4
     if (&ICUD4 == icup) {
-      RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
-      RCC->APB1RSTR = RCC_APB1RSTR_TIM4RST;
-      RCC->APB1RSTR = 0;
+      rccEnableTIM4(FALSE);
+      rccResetTIM4();
       NVICEnableVector(TIM4_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM4_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      icup->clock = STM32_TIMCLK1;
     }
 #endif
 
 #if STM32_ICU_USE_TIM5
     if (&ICUD5 == icup) {
-      RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
-      RCC->APB1RSTR = RCC_APB1RSTR_TIM5RST;
-      RCC->APB1RSTR = 0;
+      rccEnableTIM5(FALSE);
+      rccResetTIM5();
       NVICEnableVector(TIM5_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM5_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      icup->clock = STM32_TIMCLK1;
     }
 #endif
 #if STM32_ICU_USE_TIM8
     if (&ICUD8 == icup) {
-      RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
-      RCC->APB2RSTR = RCC_APB2RSTR_TIM8RST;
-      RCC->APB2RSTR = 0;
+      rccEnableTIM5(FALSE);
+      rccResetTIM5();
       NVICEnableVector(TIM8_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM8_IRQ_PRIORITY));
-      clock = STM32_TIMCLK2;
+      icup->clock = STM32_TIMCLK2;
     }
 #endif
   }
   else {
     /* Driver re-configuration scenario, it must be stopped first.*/
-    icup->tim->CR1  = 0;                    /* Timer disabled.              */
-    icup->tim->DIER = 0;                    /* All IRQs disabled.           */
-    icup->tim->SR   = 0;                    /* Clear eventual pending IRQs. */
-    icup->tim->CCR1 = 0;                    /* Comparator 1 disabled.       */
-    icup->tim->CCR2 = 0;                    /* Comparator 2 disabled.       */
-    icup->tim->CNT  = 0;                    /* Counter reset to zero.       */
+    icup->tim->CR1    = 0;                  /* Timer disabled.              */
+    icup->tim->DIER   = 0;                  /* All IRQs disabled.           */
+    icup->tim->SR     = 0;                  /* Clear eventual pending IRQs. */
+    icup->tim->CCR[0] = 0;                  /* Comparator 1 disabled.       */
+    icup->tim->CCR[1] = 0;                  /* Comparator 2 disabled.       */
+    icup->tim->CNT    = 0;                  /* Counter reset to zero.       */
   }
 
   /* Timer configuration.*/
-  psc = (clock / icup->config->frequency) - 1;
+  psc = (icup->clock / icup->config->frequency) - 1;
   chDbgAssert((psc <= 0xFFFF) &&
-              ((psc + 1) * icup->config->frequency) == clock,
+              ((psc + 1) * icup->config->frequency) == icup->clock,
               "icu_lld_start(), #1", "invalid frequency");
   icup->tim->PSC  = (uint16_t)psc;
   icup->tim->ARR   = 0xFFFF;
@@ -402,38 +396,38 @@ void icu_lld_stop(ICUDriver *icup) {
 #if STM32_ICU_USE_TIM1
     if (&ICUD1 == icup) {
       NVICDisableVector(TIM1_CC_IRQn);
-      RCC->APB2ENR &= ~RCC_APB2ENR_TIM1EN;
+      rccDisableTIM1(FALSE);
     }
 #endif
 #if STM32_ICU_USE_TIM2
     if (&ICUD2 == icup) {
       NVICDisableVector(TIM2_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_TIM2EN;
+      rccDisableTIM2(FALSE);
     }
 #endif
 #if STM32_ICU_USE_TIM3
     if (&ICUD3 == icup) {
       NVICDisableVector(TIM3_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_TIM3EN;
+      rccDisableTIM3(FALSE);
     }
 #endif
 #if STM32_ICU_USE_TIM4
     if (&ICUD4 == icup) {
       NVICDisableVector(TIM4_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_TIM4EN;
+      rccDisableTIM4(FALSE);
     }
 #endif
 #if STM32_ICU_USE_TIM5
     if (&ICUD5 == icup) {
       NVICDisableVector(TIM5_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_TIM5EN;
+      rccDisableTIM5(FALSE);
     }
 #endif
   }
 #if STM32_ICU_USE_TIM8
     if (&ICUD8 == icup) {
       NVICDisableVector(TIM8_CC_IRQn);
-      RCC->APB2ENR &= ~RCC_APB2ENR_TIM8EN;
+      rccDisableTIM8(FALSE);
     }
 #endif
 }

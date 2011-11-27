@@ -48,38 +48,72 @@
 /*===========================================================================*/
 
 /**
- * @brief   Structure representing a MAC driver.
- * @note    Implementations may extend this structure to contain more,
- *          architecture dependent, fields.
+ * @brief   Driver configuration structure.
  */
 typedef struct {
-  Semaphore             tdsem;              /**< Transmit semaphore.        */
-  Semaphore             rdsem;              /**< Receive semaphore.         */
-#if CH_USE_EVENTS
-  EventSource           rdevent;            /**< Receive event source.      */
+  /**
+   * @brief MAC address.
+   */
+  uint8_t               *mac_address;
+  /* End of the mandatory fields.*/
+} MACConfig;
+
+/**
+ * @brief   Structure representing a MAC driver.
+ */
+struct MACDriver {
+  /**
+   * @brief Driver state.
+   */
+  macstate_t            state;
+  /**
+   * @brief Current configuration data.
+   */
+  const MACConfig       *config;
+  /**
+   * @brief Transmit semaphore.
+   */
+  Semaphore             tdsem;
+  /**
+   * @brief Receive semaphore.
+   */
+  Semaphore             rdsem;
+#if MAC_USE_EVENTS || defined(__DOXYGEN__)
+  /**
+   * @brief Receive event.
+   */
+  EventSource           rdevent;
 #endif
   /* End of the mandatory fields.*/
-} MACDriver;
+};
 
 /**
  * @brief   Structure representing a transmit descriptor.
- * @note    Implementations may extend this structure to contain more,
- *          architecture dependent, fields.
  */
 typedef struct {
-  size_t                offset;             /**< Current write offset.      */
-  size_t                size;               /**< Available space size.      */
+  /**
+   * @brief Current write offset.
+   */
+  size_t                offset;
+  /**
+   * @brief Available space size.
+   */
+  size_t                size;
   /* End of the mandatory fields.*/
 } MACTransmitDescriptor;
 
 /**
  * @brief   Structure representing a receive descriptor.
- * @note    Implementations may extend this structure to contain more,
- *          architecture dependent, fields.
  */
 typedef struct {
-  size_t                offset;             /**< Current read offset.       */
-  size_t                size;               /**< Available data size.       */
+  /**
+   * @brief Current read offset.
+   */
+  size_t                offset;
+  /**
+   * @brief Available data size.
+   */
+  size_t                size;
   /* End of the mandatory fields.*/
 } MACReceiveDescriptor;
 
@@ -91,11 +125,16 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+#if !defined(__DOXYGEN__)
+extern MACDriver ETH1;
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
   void mac_lld_init(void);
-  void mac_lld_set_address(MACDriver *macp, const uint8_t *p);
+  void mac_lld_start(MACDriver *macp);
+  void mac_lld_stop(MACDriver *macp);
   msg_t max_lld_get_transmit_descriptor(MACDriver *macp,
                                         MACTransmitDescriptor *tdp);
   size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,

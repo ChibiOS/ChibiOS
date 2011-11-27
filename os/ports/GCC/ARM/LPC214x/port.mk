@@ -5,9 +5,7 @@ PORTASM = ${CHIBIOS}/os/ports/GCC/ARM/crt0.s \
           ${CHIBIOS}/os/ports/GCC/ARM/chcoreasm.s \
           ${CHIBIOS}/os/ports/GCC/ARM/LPC214x/vectors.s
 
-
 PORTINC = ${CHIBIOS}/os/ports/GCC/ARM \
           ${CHIBIOS}/os/ports/GCC/ARM/LPC214x
 
 PORTLD  = ${CHIBIOS}/os/ports/GCC/ARM/LPC214x/ld
-
