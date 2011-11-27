@@ -1,0 +1,109 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @defgroup SDC SDC Driver
+ * @brief   Generic SD Card Driver.
+ * @details This module implements a generic SDC (Secure Digital Card) driver.
+ * @pre     In order to use the SDC driver the @p HAL_USE_SDC option
+ *          must be enabled in @p halconf.h.
+ *
+ * @section sdc_1 Driver State Machine
+ * The driver implements a state machine internally, not all the driver
+ * functionalities can be used in any moment, any transition not explicitly
+ * shown in the following diagram has to be considered an error and shall
+ * be captured by an assertion (if enabled).
+ * @if LATEX_PDF
+ * @dot
+  digraph example {
+    size="5, 7";
+    rankdir="LR";
+
+    node [shape=circle, fontname=Sans, fontsize=8, fixedsize="true", width="0.9", height="0.9"];
+    edge [fontname=Sans, fontsize=8];
+
+    stop  [label="SDC_STOP\nLow Power"];
+    uninit [label="SDC_UNINIT", style="bold"];
+    ready [label="SDC_READY\nClock Enabled"];
+    connecting [label="SDC_CONN.ING\nConnecting"];
+    disconnecting [label="SDC_DISC.ING\nDisconnecting"];
+    active [label="SDC_ACTIVE\nCard Ready"];
+    reading [label="SDC_READING\nReading"];
+    writing [label="SDC_WRITING\nWriting"];
+
+    uninit -> stop [label=" sdcInit()", constraint=false];
+    stop -> stop [label="\nsdcStop()"];
+    stop -> ready [label="\nsdcStart()"];
+    ready -> stop [label="\nsdcStop()"];
+    ready -> ready [label="\nsdcStart()\nsdcDisconnect()"];
+    ready -> connecting [label="\nsdcConnect()"];
+    connecting -> active [label="\nconnection\nsuccessful"];
+    connecting -> active [label="\nsdcConnect()", dir="back"];
+    connecting -> ready [label="\nconnection\nfailed"];
+    disconnecting -> active [label="\nsdcDisconnect()", dir="back"];
+    ready -> disconnecting [label="\ndisconnection\nfinished", dir="back"];
+    active -> reading [label="\nsdcRead()"];
+    reading -> active [label="\nread finished\nread error"];
+    active -> writing [label="\nsdcWrite()"];
+    writing -> active [label="\nwrite finished\nwrite error"];
+  }
+ * @enddot
+ * @else
+ * @dot
+  digraph example {
+    rankdir="LR";
+
+    node [shape=circle, fontname=Sans, fontsize=8, fixedsize="true", width="0.9", height="0.9"];
+    edge [fontname=Sans, fontsize=8];
+
+    stop  [label="SDC_STOP\nLow Power"];
+    uninit [label="SDC_UNINIT", style="bold"];
+    ready [label="SDC_READY\nClock Enabled"];
+    connecting [label="SDC_CONN.ING\nConnecting"];
+    disconnecting [label="SDC_DISC.ING\nDisconnecting"];
+    active [label="SDC_ACTIVE\nCard Ready"];
+    reading [label="SDC_READING\nReading"];
+    writing [label="SDC_WRITING\nWriting"];
+
+    uninit -> stop [label=" sdcInit()", constraint=false];
+    stop -> stop [label="\nsdcStop()"];
+    stop -> ready [label="\nsdcStart()"];
+    ready -> stop [label="\nsdcStop()"];
+    ready -> ready [label="\nsdcStart()\nsdcDisconnect()"];
+    ready -> connecting [label="\nsdcConnect()"];
+    connecting -> active [label="\nconnection\nsuccessful"];
+    connecting -> active [label="\nsdcConnect()", dir="back"];
+    connecting -> ready [label="\nconnection\nfailed"];
+    disconnecting -> active [label="\nsdcDisconnect()", dir="back"];
+    ready -> disconnecting [label="\ndisconnection\nfinished", dir="back"];
+    active -> reading [label="\nsdcRead()"];
+    reading -> active [label="\nread finished\nread error"];
+    active -> writing [label="\nsdcWrite()"];
+    writing -> active [label="\nwrite finished\nwrite error"];
+  }
+ * @enddot
+ * @endif
+ *
+ * @section sdc_2 SDC Operations.
+ * This driver allows to read or write single or multiple 512 bytes blocks
+ * on a SD Card.
+ *
+ * @ingroup IO
+ */
