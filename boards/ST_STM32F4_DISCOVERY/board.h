@@ -45,7 +45,7 @@
 #define STM32_VDD               300
 
 /*
- * MCU type as defined in the ST header file stm32l1xx.h.
+ * MCU type as defined in the ST header file stm32f4xx.h.
  */
 #define STM32F4XX
 
