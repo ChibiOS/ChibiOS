@@ -86,7 +86,7 @@ static volatile uint16_t dbgCR2 = 0;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 #if I2C_SUPPORTS_CALLBACKS
-#if !(STM32_I2C_I2C1_USE_POLLING_WAIT)
+#if (!(STM32_I2C_I2C1_USE_POLLING_WAIT)) && STM32_I2C_USE_I2C1
 /* I2C1 GPT callback. */
 static void i2c1gptcb(GPTDriver *gptp) {
   (void)gptp;
@@ -120,7 +120,7 @@ static const GPTConfig i2c1gptcfg = {
 };
 #endif /* STM32_I2C_I2C1_USE_POLLING_WAIT */
 
-#if !(STM32_I2C_I2C2_USE_POLLING_WAIT)
+#if (!(STM32_I2C_I2C2_USE_POLLING_WAIT)) && STM32_I2C_USE_I2C2
 /* I2C2 GPT callback. */
 static void i2c2gptcb(GPTDriver *gptp) {
   (void)gptp;
