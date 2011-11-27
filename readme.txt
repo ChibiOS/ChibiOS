@@ -129,6 +129,8 @@
   specific directories because documentation issues.
 
 *** 2.3.3 ***
+- FIX: Fixed missing UART5 definition in STM32 HAL (bug 3411774)(backported
+  to 2.2.8).
 - FIX: Fixed uninitialized variable in STM32 PWM and ICU drivers (bug 3413558).
 - FIX: Fixed wrong parameter passed to the DMA error hook in STM32 ADC driver,
   the DMA error hook has been removed entirely in the new ADC driver model
