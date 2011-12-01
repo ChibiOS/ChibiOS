@@ -182,6 +182,7 @@ void i2cMasterTransmit(I2CDriver *i2cp,
   /* init slave config field in driver */
   i2cp->id_slave_config = i2cscfg;
 
+  // TODO: remove this loop. Do only 1 check because mutual exclusion resolve collisions
   i2c_lld_wait_bus_free(i2cp);
   chDbgAssert(!(i2c_lld_bus_is_busy(i2cp)), "i2cMasterReceive(), #1", "time is out");
 
@@ -224,6 +225,7 @@ void i2cMasterReceive(I2CDriver *i2cp,
   /* init slave config field in driver */
   i2cp->id_slave_config = i2cscfg;
 
+  // TODO: remove this loop. Do only 1 check because mutual exclusion resolve collisions
   i2c_lld_wait_bus_free(i2cp);
   chDbgAssert(!(i2c_lld_bus_is_busy(i2cp)), "i2cMasterReceive(), #1", "time is out");
 
