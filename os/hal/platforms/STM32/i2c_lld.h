@@ -42,33 +42,6 @@
  * @name    Configuration options
  * @{
  */
-/**
- * @brief Switch between callback based and synchronouse driver.
- * @note  The default is synchronouse.
- */
-#if !defined(I2C_SUPPORTS_CALLBACKS) || defined(__DOXYGEN__)
-#define I2C_SUPPORTS_CALLBACKS              TRUE
-#endif
-
-/**
- * @brief I2C1 driver synchronization choice between GPT and polling.
- * @note The default is polling wait.
- */
-#if !defined(STM32_I2C_I2C1_USE_GPT_TIM)       || \
-    !defined(STM32_I2C_I2C1_USE_POLLING_WAIT)  || \
-    defined(__DOXYGEN__)
-#define STM32_I2C_I2C1_USE_POLLING_WAIT     TRUE
-#endif
-
-/**
- * @brief I2C2 driver synchronization choice between GPT and polling.
- * @note The default is polling wait.
- */
-#if !defined(STM32_I2C_I2C2_USE_GPT_TIM)       || \
-    !defined(STM32_I2C_I2C2_USE_POLLING_WAIT)  || \
-    defined(__DOXYGEN__)
-#define STM32_I2C_I2C2_USE_POLLING_WAIT     TRUE
-#endif
 
 /**
  * @brief I2C1 driver enable switch.
@@ -238,25 +211,22 @@ struct I2CDriver{
 #endif
 
   /*********** End of the mandatory fields. **********************************/
-
+  /**
+   * @brief DMA mode bit mask.
+   */
+  uint32_t                  dmamode;
+  /**
+   * @brief Receive DMA channel.
+   */
+  const stm32_dma_stream_t  *dmarx;
+  /**
+   * @brief Transmit DMA channel.
+   */
+  const stm32_dma_stream_t  *dmatx;
   /**
    * @brief Pointer to the I2Cx registers block.
    */
   I2C_TypeDef           *id_i2c;
-
-#if !(STM32_I2C_I2C1_USE_POLLING_WAIT)
-  /* TODO: capability to switch this GPT fields off */
-  /**
-   * @brief Timer for waiting STOP condition on the bus.
-   * @details This is workaround for STM32 buggy I2C cell.
-   */
-  GPTDriver             *timer;
-
-  /**
-   * @brief Config for workaround timer.
-   */
-  const GPTConfig       *timer_cfg;
-#endif /* !(STM32_I2C_I2C1_USE_POLLING_WAIT) */
 };
 
 
@@ -307,9 +277,6 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
 void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
     uint8_t *rxbuf, size_t rxbytes);
 void i2c_lld_master_transceive(I2CDriver *i2cp);
-
-void i2c_lld_master_transmit_dma(I2CDriver *i2cp, uint16_t slave_addr,
-    uint8_t *txbuf, size_t txbytes, uint8_t *rxbuf, size_t rxbytes);
 
 #ifdef __cplusplus
 }

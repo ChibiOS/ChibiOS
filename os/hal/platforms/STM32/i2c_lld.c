@@ -82,6 +82,12 @@ static volatile uint16_t dbgCR2 = 0;
 /*===========================================================================*/
 
 
+static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
+
+}
+
+
+
 static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
   i2cflags_t flags;
   I2C_TypeDef *reg;
@@ -132,33 +138,39 @@ static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
 }
 
 
+static void i2c_lld_serve_rx_end_irq(UARTDriver *i2cp, uint32_t flags) {
+
+}
+
+static void i2c_lld_serve_tx_end_irq(UARTDriver *i2cp, uint32_t flags) {
+
+}
+
+
+
 #if STM32_I2C_USE_I2C1 || defined(__DOXYGEN__)
 #error "Unrealized yet"
 #endif /* STM32_I2C_USE_I2C1 */
-
 
 #if STM32_I2C_USE_I2C2 || defined(__DOXYGEN__)
 /**
  * @brief I2C2 event interrupt handler.
  */
-#if I2C_SUPPORTS_CALLBACKS
-CH_IRQ_HANDLER(VectorC4) {
-
+CH_IRQ_HANDLER(I2C2_EV_IRQHandler) {
   CH_IRQ_PROLOGUE();
   i2c_serve_event_interrupt(&I2CD2);
   CH_IRQ_EPILOGUE();
 }
-#endif /* I2C_SUPPORTS_CALLBACKS */
 /**
  * @brief I2C2 error interrupt handler.
  */
-CH_IRQ_HANDLER(VectorC8) {
-
+CH_IRQ_HANDLER(I2C2_ER_IRQHandler) {
   CH_IRQ_PROLOGUE();
   i2c_serve_error_interrupt(&I2CD2);
   CH_IRQ_EPILOGUE();
 }
 #endif /* STM32_I2C_USE_I2C2 */
+
 
 /**
  * @brief Low level I2C driver initialization.
@@ -166,29 +178,14 @@ CH_IRQ_HANDLER(VectorC8) {
 void i2c_lld_init(void) {
 
 #if STM32_I2C_USE_I2C1
-  i2cObjectInit(&I2CD1);
-  I2CD1.id_i2c      = I2C1;
-
-#if I2C_SUPPORTS_CALLBACKS
-#if !(STM32_I2C_I2C1_USE_POLLING_WAIT)
-  I2CD1.timer       = &(STM32_I2C_I2C1_USE_GPT_TIM);
-  I2CD1.timer_cfg   = &i2c1gptcfg;
-#endif /* !(STM32_I2C_I2C1_USE_POLLING_WAIT) */
-#endif /* I2C_SUPPORTS_CALLBACKS */
-
+#error "Unrealized yet"
 #endif /* STM32_I2C_USE_I2C */
 
 #if STM32_I2C_USE_I2C2
   i2cObjectInit(&I2CD2);
-  I2CD2.id_i2c      = I2C2;
-
-#if I2C_SUPPORTS_CALLBACKS
-#if !(STM32_I2C_I2C2_USE_POLLING_WAIT)
-  I2CD2.timer       = &(STM32_I2C_I2C2_USE_GPT_TIM);
-  I2CD2.timer_cfg   = &i2c2gptcfg;
-#endif /* !(STM32_I2C_I2C2_USE_POLLING_WAIT) */
-#endif /* I2C_SUPPORTS_CALLBACKS */
-
+  I2CD2.id_i2c = I2C2;
+  I2CD2.dmarx  = STM32_DMA_STREAM(STM32_I2C_I2C2_RX_DMA_STREAM);
+  I2CD2.dmatx  = STM32_DMA_STREAM(STM32_I2C_I2C2_TX_DMA_STREAM);
 #endif /* STM32_I2C_USE_I2C2 */
 }
 
@@ -198,30 +195,49 @@ void i2c_lld_init(void) {
  * @param[in] i2cp      pointer to the @p I2CDriver object
  */
 void i2c_lld_start(I2CDriver *i2cp) {
+  i2cp->dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+
   if (i2cp->id_state == I2C_STOP) {         /* If in stopped state then enables the I2C clock.*/
 #if STM32_I2C_USE_I2C1
-    if (&I2CD1 == i2cp) {
-#if I2C_SUPPORTS_CALLBACKS
-      NVICEnableVector(I2C1_EV_IRQn,
-          CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
-#endif /* I2C_SUPPORTS_CALLBACKS */
-      NVICEnableVector(I2C1_ER_IRQn,
-          CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
-      rccEnableI2C1(FALSE);
-    }
+//    if (&I2CD1 == i2cp) {
+//      NVICEnableVector(I2C1_EV_IRQn,
+//          CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
+//      NVICEnableVector(I2C1_ER_IRQn,
+//          CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
+//      rccEnableI2C1(FALSE);
+//    }
+#error "Unrealized yet"
 #endif
+
 #if STM32_I2C_USE_I2C2
     if (&I2CD2 == i2cp) {
-#if I2C_SUPPORTS_CALLBACKS
+
+      bool_t b;
+      b = dmaStreamAllocate(i2cp->dmarx,
+                            STM32_I2C_I2C2_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)i2c_lld_serve_rx_end_irq,
+                            (void *)i2cp);
+      chDbgAssert(!b, "uart_lld_start(), #3", "stream already allocated");
+      b = dmaStreamAllocate(i2cp->dmatx,
+                            STM32_I2C_I2C2_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)i2c_lld_serve_tx_end_irq,
+                            (void *)i2cp);
+      chDbgAssert(!b, "uart_lld_start(), #4", "stream already allocated");
+      rccEnableI2C2(FALSE);
       NVICEnableVector(I2C2_EV_IRQn,
           CORTEX_PRIORITY_MASK(STM32_I2C_I2C2_IRQ_PRIORITY));
-#endif /* I2C_SUPPORTS_CALLBACKS */
       NVICEnableVector(I2C2_ER_IRQn,
           CORTEX_PRIORITY_MASK(STM32_I2C_I2C2_IRQ_PRIORITY));
-      rccEnableI2C2(FALSE);
+
+      //i2cp->dmamode |= STM32_DMA_CR_CHSEL(USART2_RX_DMA_CHANNEL) | STM32_DMA_CR_PL(STM32_UART_USART2_DMA_PRIORITY);
+      // TODO: remove hardcoded "7"
+      i2cp->dmamode |= STM32_DMA_CR_CHSEL(7) | STM32_DMA_CR_PL(STM32_I2C_I2C2_DMA_PRIORITY);
     }
-#endif
+#endif /* STM32_I2C_USE_I2C2 */
   }
+  i2cp->dmamode |= STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
+  dmaStreamSetPeripheral(i2cp->dmarx, &i2cp->id_i2c->DR);
+  dmaStreamSetPeripheral(i2cp->dmatx, &i2cp->id_i2c->DR);
 
   i2cp->id_i2c->CR1 = I2C_CR1_SWRST;        /* reset i2c peripherial */
   i2cp->id_i2c->CR1 = 0;
@@ -229,6 +245,9 @@ void i2c_lld_start(I2CDriver *i2cp) {
   i2c_lld_set_opmode(i2cp);
   i2cp->id_i2c->CR1 |= 1;                   /* enable interface */
 }
+
+
+
 
 void i2c_lld_reset(I2CDriver *i2cp){
   chDbgCheck((i2cp->id_state == I2C_STOP)||(i2cp->id_state == I2C_READY),
@@ -386,9 +405,6 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 }
 
 
-#if I2C_SUPPORTS_CALLBACKS
-
-
 /**
  * @brief Transmits data via the I2C bus as master.
  *
@@ -402,390 +418,18 @@ void i2c_lld_stop(I2CDriver *i2cp) {
  * @param[in] rxbuf       pointer to the receive buffer
  * @param[in] rxbytes     number of bytes to be received
  */
-void i2c_lld_master_transmit_dma(I2CDriver *i2cp, uint16_t slave_addr,
-    uint8_t *txbuf, size_t txbytes, uint8_t *rxbuf, size_t rxbytes) {
-
-}
-
-
-
-
-/**
- * @brief Transmits data via the I2C bus as master.
- *
- * @param[in] i2cp        pointer to the @p I2CDriver object
- * @param[in] slave_addr  Slave device address. Bits 0-9 contain slave
- *                        device address. Bit 15 must be set to 1 if 10-bit
- *                        addressing modes used. Otherwise	keep it cleared.
- *                        Bits 10-14 unused.
- * @param[in] txbuf       pointer to the transmit buffer
- * @param[in] txbytes     number of bytes to be transmitted
- * @param[in] rxbuf       pointer to the receive buffer
- * @param[in] rxbytes     number of bytes to be received
- */
 void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
     uint8_t *txbuf, size_t txbytes, uint8_t *rxbuf, size_t rxbytes) {
 
-  /* "waiting" for STOP bit routine*/
-  #if STM32_I2C_I2C1_USE_POLLING_WAIT
-    uint32_t timeout = I2C_POLLING_TIMEOUT;
-    while((i2cp->id_i2c->CR1 & I2C_CR1_STOP) && timeout)
-      timeout--;
-    chDbgAssert((timeout > 0), "i2c_lld_master_transmit(), #1", "time to STOP is out");
-  #else
-    chDbgAssert(!(i2cp->flags & I2C_FLG_TIMER_ARMED), "i2c_lld_master_transmit(), #1", "time to STOP is out");
-    if ((i2cp->id_i2c->CR1 & I2C_CR1_STOP) && i2cp->timer != NULL && i2cp->timer_cfg != NULL){
-      chSysLockFromIsr();
-      gptStartOneShotI(i2cp->timer, I2C_STOP_GPT_TIMEOUT);
-      i2cp->flags |= I2C_FLG_TIMER_ARMED;
-      chSysUnlockFromIsr();
-      return;
-    }
-  #endif /* STM32_I2C_I2C1_USE_POLLING_WAIT */
-
-  /* init driver fields */
-  i2cp->slave_addr = slave_addr;
-  i2cp->txbytes = txbytes;
-  i2cp->rxbytes = rxbytes;
-  i2cp->txbuf = txbuf;
-  i2cp->rxbuf = rxbuf;
-
-  /* init address fields */
-  if(slave_addr & 0x8000){                                    /* 10-bit mode used */
-    i2cp->slave_addr1 = ((slave_addr >>7) & 0x0006);          /* add the two msb of 10-bit address to the header */
-    i2cp->slave_addr1 |= 0xF0;                                /* add the header bits with LSB = 0 -> write */
-    i2cp->slave_addr2 = slave_addr & 0x00FF;                  /* the remaining 8 bit of 10-bit address */
-  }
-  else{
-    i2cp->slave_addr1 = ((slave_addr <<1) & 0x00FE);          /* LSB = 0 -> write */
-  }
-
-  /* setting flags and register bits */
-  i2cp->flags = 0;
-  i2cp->errors = 0;
-  i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
-  i2cp->id_i2c->CR1 |= I2C_CR1_START;
-  i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN); /* enable ERR, EVT & BUF ITs */
 }
 
-/**
- * @brief Receives data from the I2C bus.
- *
- * @param[in] i2cp        pointer to the @p I2CDriver object
- * @param[in] slave_addr  Slave device address. Bits 0-9 contain slave
- *                        device address. Bit 15 must be set to 1 if 10-bit
- *                        addressing modes used. Otherwise	keep it cleared.
- *                        Bits 10-14 unused.
- * @param[in] rxbuf       pointer to the receive buffer
- * @param[in] rxbytes     number of bytes to be received
- */
 void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
     uint8_t *rxbuf, size_t rxbytes){
-
-  chDbgAssert((i2cp->id_i2c->SR1 + i2cp->id_i2c->SR2) == 0,
-        "i2c_lld_master_receive(), #1",
-        "some interrupt sources not clear");
-
-  /* "waiting" for STOP bit routine*/
-  #if STM32_I2C_I2C1_USE_POLLING_WAIT
-    uint32_t timeout = I2C_POLLING_TIMEOUT;
-    while((i2cp->id_i2c->CR1 & I2C_CR1_STOP) && timeout)
-      timeout--;
-    chDbgAssert((timeout > 0), "i2c_lld_master_receive(), #1", "time to STOP is out");
-  #else
-    chDbgAssert(!(i2cp->flags & I2C_FLG_TIMER_ARMED), "i2c_lld_master_receive(), #1", "time to STOP is out");
-    if ((i2cp->id_i2c->CR1 & I2C_CR1_STOP) && i2cp->timer != NULL && i2cp->timer_cfg != NULL){
-      chSysLockFromIsr();
-      gptStartOneShotI(i2cp->timer, I2C_STOP_GPT_TIMEOUT);
-      i2cp->flags |= I2C_FLG_TIMER_ARMED;
-      chSysUnlockFromIsr();
-      return;
-    }
-  #endif /* STM32_I2C_I2C1_USE_POLLING_WAIT */
-
-  /* init driver fields */
-	i2cp->slave_addr = slave_addr;
-	i2cp->rxbytes = rxbytes;
-	i2cp->rxbuf = rxbuf;
-
-	/* init address fields */
-  if(slave_addr & 0x8000){                            /* 10-bit mode used */
-    i2cp->slave_addr1 = ((slave_addr >>7) & 0x0006);  /* add the two msb of 10-bit address to the header */
-    i2cp->slave_addr1 |= 0xF0;                        /* add the header bits (the LSB -> 1 will be add to second */
-    i2cp->slave_addr2 = slave_addr & 0x00FF;          /* the remaining 8 bit of 10-bit address */
-  }
-  else{
-    i2cp->slave_addr1 = ((slave_addr <<1) | 0x01);    /* LSB = 1 -> receive */
-  }
-
-  /* setting flags and register bits */
-  i2cp->flags |= I2C_FLG_MASTER_RECEIVER;
-  i2cp->errors = 0;
-
-  i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                   /* acknowledge returned */
-  i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
-
-  if(i2cp->rxbytes == 1) {                            /* Only one byte to be received */
-    i2cp->flags |= I2C_FLG_1BTR;
-  }
-  else if(i2cp->rxbytes == 2) {                       /* Only two bytes to be received */
-    i2cp->flags |= I2C_FLG_2BTR;
-    i2cp->id_i2c->CR1 |= I2C_CR1_POS;                 /* Acknowledge Position */
-  }
-
-  i2cp->id_i2c->CR1 |= I2C_CR1_START;                 /* send start bit */
-  i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN); /* enable ERR, EVT & BUF ITs */
 }
 
-
-/**
- * @brief Realize read-though-write behavior.
- *
- * @param[in] i2cp        pointer to the @p I2CDriver object
- *
- * @notapi
- */
 void i2c_lld_master_transceive(I2CDriver *i2cp){
 
-  chDbgAssert((i2cp != NULL) && (i2cp->slave_addr1 != 0) &&\
-      (i2cp->rxbytes > 0) && (i2cp->rxbuf != NULL),
-      "i2c_lld_master_transceive(), #1",
-      "");
-
-  i2cp->id_state = I2C_ACTIVE_TRANSCEIVE;
-
-  /* "waiting" for START bit routine*/
-  #if STM32_I2C_I2C1_USE_POLLING_WAIT
-    uint32_t timeout = I2C_POLLING_TIMEOUT;
-    while((i2cp->id_i2c->CR1 & I2C_CR1_START) && timeout);
-      timeout--;
-    chDbgAssert((timeout > 0), "i2c_lld_master_transceive(), #1", "time to START is out");
-  #else
-    chDbgAssert(!(i2cp->flags & I2C_FLG_TIMER_ARMED), "i2c_lld_master_transceive(), #1", "time to START is out");
-    if ((i2cp->id_i2c->CR1 & I2C_CR1_START) && i2cp->timer != NULL && i2cp->timer_cfg != NULL){
-      chSysLockFromIsr();
-      gptStartOneShotI(i2cp->timer, I2C_START_GPT_TIMEOUT);
-      i2cp->flags |= I2C_FLG_TIMER_ARMED;
-      chSysUnlockFromIsr();
-      return;
-    }
-  #endif /* STM32_I2C_I2C1_USE_POLLING_WAIT */
-
-  /* init address fields */
-  if(i2cp->slave_addr & 0x8000){                          /* 10-bit mode used */
-    i2cp->slave_addr1 = ((i2cp->slave_addr >>7) & 0x0006);/* add the two msb of 10-bit address to the header */
-    i2cp->slave_addr1 |= 0xF0;                            /* add the header bits (the LSB -> 1 will be add to second */
-    i2cp->slave_addr2 = i2cp->slave_addr & 0x00FF;        /* the remaining 8 bit of 10-bit address */
-  }
-  else{
-    i2cp->slave_addr1 |= 0x01;
-  }
-
-  /* setting flags and register bits */
-  i2cp->flags |= I2C_FLG_MASTER_RECEIVER;
-  i2cp->errors = 0;
-  i2cp->id_i2c->CR1 |= I2C_CR1_ACK;                       /* acknowledge returned */
-  i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
-
-  if(i2cp->rxbytes == 1) {                                /* Only one byte to be received */
-    i2cp->flags |= I2C_FLG_1BTR;
-  }
-  else if(i2cp->rxbytes == 2) {                           /* Only two bytes to be received */
-    i2cp->flags |= I2C_FLG_2BTR;
-    i2cp->id_i2c->CR1 |= I2C_CR1_POS;                     /* Acknowledge Position */
-  }
-
-  i2cp->id_i2c->CR2 |= (I2C_CR2_ITERREN|I2C_CR2_ITEVTEN|I2C_CR2_ITBUFEN);  /* enable ERR, EVT & BUF ITs */
 }
-
-#else /*I2C_SUPPORTS_CALLBACKS*/
-
-/**
- * @brief Synchronously transmits data via the I2C bus as master.
- *
- * @param[in] i2cp        pointer to the @p I2CDriver object
- * @param[in] slave_addr  Slave device address. Bits 0-9 contain slave
- *                        device address. Bit 15 must be set to 1 if 10-bit
- *                        addressing modes used. Otherwise  keep it cleared.
- *                        Bits 10-14 unused.
- * @param[in] txbuf       pointer to the transmit buffer
- * @param[in] txbytes     number of bytes to be transmitted
- * @param[in] rxbuf       pointer to the receive buffer
- * @param[in] rxbytes     number of bytes to be received
- */
-void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
-    uint8_t *txbuf, size_t txbytes, uint8_t *rxbuf, size_t rxbytes) {
-
-  /* init driver fields */
-  i2cp->slave_addr = slave_addr;
-  i2cp->txbytes = txbytes;
-  i2cp->rxbytes = rxbytes;
-  i2cp->txbuf = txbuf;
-  i2cp->rxbuf = rxbuf;
-
-  /* init address fields */
-  if(slave_addr & 0x8000){                                    /* 10-bit mode used */
-    i2cp->slave_addr1 = ((slave_addr >>7) & 0x0006);          /* add the two msb of 10-bit address to the header */
-    i2cp->slave_addr1 |= 0xF0;                                /* add the header bits with LSB = 0 -> write */
-    i2cp->slave_addr2 = slave_addr & 0x00FF;                  /* the remaining 8 bit of 10-bit address */
-  }
-  else{
-    i2cp->slave_addr1 = ((slave_addr <<1) & 0x00FE);          /* LSB = 0 -> write */
-  }
-
-  i2cp->flags = 0;
-  i2cp->errors = 0;
-  i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
-  i2cp->id_i2c->CR2 &= ~I2C_CR2_ITEVTEN;                      /* disable event interrupts */
-  i2cp->id_i2c->CR2 |= I2C_CR2_ITERREN;                       /* enable error interrupts */
-
-  i2cp->id_i2c->CR1 |= I2C_CR1_START;
-  while (!(i2cp->id_i2c->SR1 & I2C_SR1_SB))
-    ;
-  i2cp->id_i2c->DR = i2cp->slave_addr1;
-  while (!(i2cp->id_i2c->SR1 & I2C_SR1_ADDR))
-    ;
-  while (!(i2cp->id_i2c->SR2 & I2C_SR2_BUSY))
-    ;
-  i2cp->id_i2c->DR = *txbuf;
-  txbuf++;
-  i2cp->txbytes--;
-  while(i2cp->txbytes > 0){
-    while(!(i2cp->id_i2c->SR1 & I2C_SR1_BTF))
-      ;
-    i2cp->id_i2c->DR = *txbuf;
-    txbuf++;
-    i2cp->txbytes--;
-  }
-  while(!(i2cp->id_i2c->SR1 & I2C_SR1_BTF))
-    ;
-  if(rxbytes == 0){
-    i2cp->id_i2c->CR1 |= I2C_CR1_STOP;
-    while (i2cp->id_i2c->CR1 & I2C_CR1_STOP)
-      ;
-    }
-  else{
-    i2c_lld_master_receive(i2cp, slave_addr, rxbuf, rxbytes);
-  }
-}
-
-
-/**
- * @brief Synchronously receives data from the I2C bus.
- *
- * @param[in] i2cp        pointer to the @p I2CDriver object
- * @param[in] slave_addr  Slave device address. Bits 0-9 contain slave
- *                        device address. Bit 15 must be set to 1 if 10-bit
- *                        addressing modes used. Otherwise  keep it cleared.
- *                        Bits 10-14 unused.
- * @param[in] rxbuf       pointer to the receive buffer
- * @param[in] rxbytes     number of bytes to be received
- */
-void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
-    uint8_t *rxbuf, size_t rxbytes){
-
-  /* init driver fields */
-  i2cp->slave_addr = slave_addr;
-  i2cp->rxbytes = rxbytes;
-  i2cp->rxbuf = rxbuf;
-
-  /* init address fields */
-  if(slave_addr & 0x8000){                            /* 10-bit mode used */
-    i2cp->slave_addr1 = ((slave_addr >>7) & 0x0006);  /* add the two msb of 10-bit address to the header */
-    i2cp->slave_addr1 |= 0xF0;                        /* add the header bits (the LSB -> 1 will be add to second */
-    i2cp->slave_addr2 = slave_addr & 0x00FF;          /* the remaining 8 bit of 10-bit address */
-  }
-  else{
-    i2cp->slave_addr1 = ((slave_addr <<1) | 0x01);    /* LSB = 1 -> receive */
-  }
-
-
-  /* setting flags and register bits */
-  i2cp->flags = 0;
-  i2cp->errors = 0;
-  i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
-  i2cp->id_i2c->CR2 &= ~I2C_CR2_ITEVTEN;              /* disable event interrupts */
-  i2cp->id_i2c->CR2 |= I2C_CR2_ITERREN;               /* enable error interrupts */
-
-  i2cp->id_i2c->CR1 |= I2C_CR1_START;
-  while (!(i2cp->id_i2c->SR1 & I2C_SR1_SB))
-    ;
-
-  i2cp->id_i2c->DR = i2cp->slave_addr1;
-  while (!(i2cp->id_i2c->SR1 & I2C_SR1_ADDR))
-    ;
-
-  if(i2cp->rxbytes >= 3){                             /* more than 2 bytes receiving procedure */
-    while(!(i2cp->id_i2c->SR2 & I2C_SR2_BUSY))        /* to clear ADDR bit */
-      ;
-    while(i2cp->rxbytes > 3){
-      while(!(i2cp->id_i2c->SR1 & I2C_SR1_BTF))
-        ;
-      *rxbuf = i2cp->id_i2c->DR;
-      rxbuf++;
-      i2cp->rxbytes--;
-    }
-    while(!(i2cp->id_i2c->SR1 & I2C_SR1_BTF))          /* stopping procedure */
-      ;
-    i2cp->id_i2c->CR1 &= ~I2C_CR1_ACK;
-    chSysLock();
-    i2cp->id_i2c->CR1 |= I2C_CR1_STOP;
-    *rxbuf = i2cp->id_i2c->DR;
-    rxbuf++;
-    i2cp->rxbytes--;
-    chSysUnlock();
-    while(!(i2cp->id_i2c->SR1 & I2C_SR1_RXNE))
-      ;
-    *rxbuf = i2cp->id_i2c->DR;
-    rxbuf++;
-    i2cp->rxbytes--;
-    while (i2cp->id_i2c->CR1 & I2C_CR1_STOP)
-      ;
-    i2cp->id_i2c->CR1 |= I2C_CR1_ACK;
-  }
-  else{                                                 /* 1 or 2 bytes receiving procedure */
-    if(i2cp->rxbytes == 2){
-      i2cp->id_i2c->CR1 |= I2C_CR1_POS;
-      chSysLock();
-      while(!(i2cp->id_i2c->SR2 & I2C_SR2_BUSY))        /* to clear ADDR bit */
-        ;
-      i2cp->id_i2c->CR1 &= ~I2C_CR1_ACK;
-      chSysUnlock();
-      while(!(i2cp->id_i2c->SR1 & I2C_SR1_BTF))
-        ;
-      chSysLock();
-      i2cp->id_i2c->CR1 |= I2C_CR1_STOP;
-      *rxbuf = i2cp->id_i2c->DR;
-      rxbuf++;
-      i2cp->rxbytes--;
-      chSysUnlock();
-      *rxbuf = i2cp->id_i2c->DR;
-      rxbuf++;
-      i2cp->rxbytes--;
-      while (i2cp->id_i2c->CR1 & I2C_CR1_STOP)
-        ;
-      i2cp->id_i2c->CR1 &= ~I2C_CR1_POS;
-      i2cp->id_i2c->CR1 |= I2C_CR1_ACK;
-    }
-    else{ /* 1 byte */
-      i2cp->id_i2c->CR1 &= ~I2C_CR1_ACK;
-      chSysLock();
-      while(!(i2cp->id_i2c->SR2 & I2C_SR2_BUSY))       /* to clear ADDR bit */
-        ;
-      i2cp->id_i2c->CR1 |= I2C_CR1_STOP;
-      chSysUnlock();
-      while(!(i2cp->id_i2c->SR1 & I2C_SR1_RXNE))
-        ;
-      *rxbuf = i2cp->id_i2c->DR;
-      rxbuf++;
-      i2cp->rxbytes--;
-      while (i2cp->id_i2c->CR1 & I2C_CR1_STOP)
-        ;
-      i2cp->id_i2c->CR1 |= I2C_CR1_ACK;
-    }
-  }
-}
-#endif /* I2C_SUPPORTS_CALLBACKS */
 
 #undef rxBuffp
 #undef txBuffp
