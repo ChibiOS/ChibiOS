@@ -210,7 +210,7 @@ void i2cMasterReceive(I2CDriver *i2cp,
 
   chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) &&\
   		(slave_addr != 0) &&\
-  		(rxbytes > 0) && \
+  		(rxbytes > 1) && \
   		(rxbuf != NULL),
       "i2cMasterReceive");
 
