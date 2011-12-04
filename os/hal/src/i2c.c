@@ -73,8 +73,6 @@ void i2cObjectInit(I2CDriver *i2cp) {
 
   i2cp->id_state  = I2C_STOP;
   i2cp->id_config = NULL;
-  i2cp->rxbuff_p = NULL;
-  i2cp->txbuff_p = NULL;
   i2cp->rxbuf = NULL;
   i2cp->txbuf = NULL;
   i2cp->id_slave_config = NULL;
@@ -145,12 +143,12 @@ void i2cStop(I2CDriver *i2cp) {
  *          paradigm. If you want transmit data without any further read,
  *          than set @b rxbytes field to 0.
  *
+ * @details Number of receiving byts must be 0 or more than 1 because of stm32
+ *          hardware restrictions.
+ *
  * @param[in] i2cp        pointer to the @p I2CDriver object
  * @param[in] i2cscfg     pointer to the @p I2C slave config
- * @param[in] slave_addr  Slave device address. Bits 0-9 contain slave
- *                        device address. Bit 15 must be set to 1 if 10-bit
- *                        addressing mode used. Otherwise	keep it cleared.
- *                        Bits 10-14 unused.
+ * @param[in] slave_addr  Slave device address (7 bits) without R/W bit
  * @param[in] txbuf       pointer to transmit buffer
  * @param[in] txbytes     number of bytes to be transmitted
  * @param[in] rxbuf       pointer to receive buffer
@@ -159,7 +157,7 @@ void i2cStop(I2CDriver *i2cp) {
  */
 void i2cMasterTransmit(I2CDriver *i2cp,
                       const I2CSlaveConfig *i2cscfg,
-                      uint16_t slave_addr,
+                      uint8_t slave_addr,
                       uint8_t *txbuf,
                       size_t txbytes,
                       uint8_t *rxbuf,
@@ -168,7 +166,8 @@ void i2cMasterTransmit(I2CDriver *i2cp,
   chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) &&\
   		(slave_addr != 0) &&\
   		(txbytes > 0) &&\
-  		(txbuf != NULL),
+  		(txbuf != NULL) &&\
+  		((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))),
   		"i2cMasterTransmit");
 
   /* init slave config field in driver */
@@ -183,28 +182,23 @@ void i2cMasterTransmit(I2CDriver *i2cp,
 
   i2cp->id_state = I2C_ACTIVE_TRANSMIT;
   i2c_lld_master_transmit(i2cp, slave_addr, txbuf, txbytes, rxbuf, rxbytes);
-#if I2C_SUPPORTS_CALLBACKS
   _i2c_wait_s(i2cp);
-#else
-  i2cp->id_state = I2C_READY;
-#endif /* I2C_SUPPORTS_CALLBACKS */
 }
 
 /**
  * @brief Receives data from the I2C bus.
+ * @details Number of receiving byts must be more than 1 because of stm32
+ *          hardware restrictions.
  *
  * @param[in] i2cp        pointer to the @p I2CDriver object
  * @param[in] i2cscfg     pointer to the @p I2C slave config
- * @param[in] slave_addr  Slave device address. Bits 0-9 contain slave
- *                        device address. Bit 15 must be set to 1 if 10-bit
- *                        addressing mode used. Otherwise	keep it cleared.
- *                        Bits 10-14 unused.
+ * @param[in] slave_addr  slave device address (7 bits) without R/W bit
  * @param[in] rxbytes     number of bytes to be received
  * @param[in] rxbuf       pointer to receive buffer
  */
 void i2cMasterReceive(I2CDriver *i2cp,
                       const I2CSlaveConfig *i2cscfg,
-                      uint16_t slave_addr,
+                      uint8_t slave_addr,
                       uint8_t *rxbuf,
                       size_t rxbytes){
 
@@ -226,20 +220,8 @@ void i2cMasterReceive(I2CDriver *i2cp,
 
   i2cp->id_state = I2C_ACTIVE_RECEIVE;
   i2c_lld_master_receive(i2cp, slave_addr, rxbuf, rxbytes);
-#if I2C_SUPPORTS_CALLBACKS
   _i2c_wait_s(i2cp);
-#else
-  i2cp->id_state = I2C_READY;
-#endif /* I2C_SUPPORTS_CALLBACKS */
 }
-
-
-/* FIXME: I do not know what this function must do. And can not test it
-uint16_t i2cSMBusAlertResponse(I2CDriver *i2cp, I2CSlaveConfig *i2cscfg) {
-  i2cMasterReceive(i2cp, i2cscfg);
-  return i2cp->id_slave_config->slave_addr;
-}
-*/
 
 /**
  * @brief   Handles communication events/errors.

@@ -66,6 +66,13 @@
 #define I2C_USE_MUTUAL_EXCLUSION    TRUE
 #endif
 
+/**
+ * @brief   Enables the mutual exclusion APIs on the I2C bus.
+ */
+#if !defined(I2C_USE_WAIT) || defined(__DOXYGEN__)
+#define I2C_USE_WAIT                TRUE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -87,7 +94,6 @@ typedef enum {
   I2C_READY = 2,                            /**< Ready.                     */
   I2C_ACTIVE_TRANSMIT = 3,                  /**< Transmitting.              */
   I2C_ACTIVE_RECEIVE = 4,                   /**< Receiving.                 */
-  I2C_ACTIVE_TRANSCEIVE = 5,                /**< Receiving after transmit.  */
 } i2cstate_t;
 
 #include "i2c_lld.h"
@@ -114,11 +120,6 @@ typedef void (*i2ccallback_t)(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg);
  */
 typedef void (*i2cerrorcallback_t)(I2CDriver *i2cp,
                                    const I2CSlaveConfig *i2cscfg);
-
-/**
- * @brief   I2C transmission data block size.
- */
-typedef uint8_t i2cblock_t;
 
 /**
  * @brief   Structure representing an I2C slave configuration.
@@ -252,11 +253,11 @@ extern "C" {
   void i2cStart(I2CDriver *i2cp, const I2CConfig *config);
   void i2cStop(I2CDriver *i2cp);
   void i2cMasterTransmit(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg,
-                         uint16_t slave_addr,
+                         uint8_t slave_addr,
                          uint8_t *txbuf, size_t txbytes,
                          uint8_t *rxbuf, size_t rxbytes);
   void i2cMasterReceive(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg,
-                        uint16_t slave_addr, uint8_t *rxbuf, size_t rxbytes);
+                        uint8_t slave_addr, uint8_t *rxbuf, size_t rxbytes);
   void i2cMasterStart(I2CDriver *i2cp);
   void i2cMasterStop(I2CDriver *i2cp);
   void i2cAddFlagsI(I2CDriver *i2cp, i2cflags_t mask);

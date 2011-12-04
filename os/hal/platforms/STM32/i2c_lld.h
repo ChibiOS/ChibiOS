@@ -83,35 +83,13 @@
 /*===========================================================================*/
 
 /** @brief  EV5 */
-#define I2C_EV5_MASTER_MODE_SELECT          ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_SB))  /* BUSY, MSL and SB flag */
-/** @brief  EV6 */
-#define I2C_EV6_MASTER_TRA_MODE_SELECTED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY|I2C_SR2_TRA)<< 16)|I2C_SR1_ADDR|I2C_SR1_TXE))  /* BUSY, MSL, ADDR, TXE and TRA flags */
-#define I2C_EV6_MASTER_REC_MODE_SELECTED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_ADDR))  /* BUSY, MSL and ADDR flags */
-/** @brief  EV7 */
-#define I2C_EV7_MASTER_REC_BYTE_RECEIVED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_RXNE))             /* BUSY, MSL and RXNE flags */
-#define I2C_EV7_MASTER_REC_BYTE_QUEUED      ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_BTF|I2C_SR1_RXNE)) /* BUSY, MSL, RXNE and BTF flags*/
-/** @brief  EV8 */
-#define I2C_EV8_MASTER_BYTE_TRANSMITTING    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY|I2C_SR2_TRA)<< 16)|I2C_SR1_TXE))   /* TRA, BUSY, MSL, TXE flags */
-/** @brief  EV8_2 */
-#define I2C_EV8_2_MASTER_BYTE_TRANSMITTED   ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY|I2C_SR2_TRA)<< 16)|I2C_SR1_BTF|I2C_SR1_TXE))  /* TRA, BUSY, MSL, TXE and BTF flags */
-/** @brief  EV9 */
-#define I2C_EV9_MASTER_ADDR_10BIT           ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_ADD10))  /* BUSY, MSL and ADD10 flags */
+#define I2C_EV5_MASTER_MODE_SELECT          ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY) << 16) | I2C_SR1_SB))  /* BUSY, MSL and SB flag */
+#define I2C_EV8_2_MASTER_BYTE_TRANSMITTED   ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY | I2C_SR2_TRA) << 16) | I2C_SR1_BTF | I2C_SR1_TXE))  /* TRA, BUSY, MSL, TXE and BTF flags */
 #define I2C_EV_MASK                         0x00FFFFFF  /* First byte zeroed because there is no need of PEC register part from SR2 */
 
-#define I2C_FLG_1BTR            0x01 /* Single byte to be received and processed */
-#define I2C_FLG_2BTR            0x02 /* Two bytes to be received and processed */
-#define I2C_FLG_3BTR            0x04 /* Last three received bytes to be processed */
 #define I2C_FLG_MASTER_RECEIVER 0x10
 #define I2C_FLG_HEADER_SENT     0x80
-#define I2C_FLG_TIMER_ARMED     0x40 /* Used to check locks on the bus */
 
-#define EV6_SUBEV_MASK  (I2C_FLG_1BTR|I2C_FLG_2BTR|I2C_FLG_MASTER_RECEIVER)
-#define EV7_SUBEV_MASK  (I2C_FLG_2BTR|I2C_FLG_3BTR|I2C_FLG_MASTER_RECEIVER)
-
-#define I2C_EV6_1_MASTER_REC_2BTR_MODE_SELECTED (I2C_FLG_2BTR|I2C_FLG_MASTER_RECEIVER)
-#define I2C_EV6_3_MASTER_REC_1BTR_MODE_SELECTED (I2C_FLG_1BTR|I2C_FLG_MASTER_RECEIVER)
-#define I2C_EV7_2_MASTER_REC_3BYTES_TO_PROCESS  (I2C_FLG_3BTR|I2C_FLG_MASTER_RECEIVER)
-#define I2C_EV7_3_MASTER_REC_2BYTES_TO_PROCESS  (I2C_FLG_2BTR|I2C_FLG_MASTER_RECEIVER)
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -141,9 +119,6 @@ typedef struct {
   i2copmode_t     op_mode;       /**< @brief Specifies the I2C mode.*/
   uint32_t        clock_speed;   /**< @brief Specifies the clock frequency. Must be set to a value lower than 400kHz */
   i2cdutycycle_t  duty_cycle;    /**< @brief Specifies the I2C fast mode duty cycle */
-  uint8_t         own_addr_7;    /**< @brief Specifies the first device 7-bit own address. */
-  uint16_t        own_addr_10;   /**< @brief Specifies the second part of device own address in 10-bit mode. Set to NULL if not used. */
-  uint8_t         nbit_own_addr; /**< @brief Specifies if 7-bit or 10-bit address is acknowledged */
 } I2CConfig;
 
 
@@ -186,47 +161,33 @@ struct I2CDriver{
   /**
    * @brief Current configuration data.
    */
-  const I2CConfig       *id_config;
+  const I2CConfig           *id_config;
   /**
    * @brief Current slave configuration data.
    */
-  const I2CSlaveConfig  *id_slave_config;
+  const I2CSlaveConfig      *id_slave_config;
 
-  __IO size_t           txbytes;    /*!< @brief Number of bytes to be transmitted. */
-  __IO size_t           rxbytes;    /*!< @brief Number of bytes to be received. */
-  uint8_t               *rxbuf;     /*!< @brief Pointer to receive buffer. */
-  uint8_t               *txbuf;     /*!< @brief Pointer to transmit buffer.*/
-  uint8_t               *rxbuff_p;  /*!< @brief Pointer to the current byte in slave rx buffer. */
-  uint8_t               *txbuff_p;  /*!< @brief Pointer to the current byte in slave tx buffer. */
+  __IO size_t               txbytes;    /*!< @brief Number of bytes to be transmitted. */
+  __IO size_t               rxbytes;    /*!< @brief Number of bytes to be received. */
+  uint8_t                   *rxbuf;     /*!< @brief Pointer to receive buffer. */
+  uint8_t                   *txbuf;     /*!< @brief Pointer to transmit buffer.*/
 
-  __IO i2cflags_t       errors;     /*!< @brief Error flags.*/
-  __IO i2cflags_t       flags;      /*!< @brief State flags.*/
+  __IO i2cflags_t           errors;     /*!< @brief Error flags.*/
+  __IO i2cflags_t           flags;      /*!< @brief State flags.*/
 
-  uint16_t              slave_addr; /*!< @brief Current slave address. */
-  uint8_t               slave_addr1;/*!< @brief 7-bit address of the slave with r\w bit.*/
-  uint8_t               slave_addr2;/*!< @brief Uses in 10-bit address mode. */
+  uint8_t                   slave_addr; /*!< @brief Current slave address without R/W bit. */
 
 #if CH_USE_EVENTS
-  EventSource           sevent;     /*!< @brief Status Change @p EventSource.*/
+  EventSource               sevent;     /*!< @brief Status Change @p EventSource.*/
 #endif
 
   /*********** End of the mandatory fields. **********************************/
-  /**
-   * @brief DMA mode bit mask.
-   */
-  uint32_t                  dmamode;
-  /**
-   * @brief Receive DMA channel.
-   */
-  const stm32_dma_stream_t  *dmarx;
-  /**
-   * @brief Transmit DMA channel.
-   */
-  const stm32_dma_stream_t  *dmatx;
-  /**
-   * @brief Pointer to the I2Cx registers block.
-   */
-  I2C_TypeDef           *id_i2c;
+
+  uint32_t                  dmamode;    /*!< @brief DMA mode bit mask.*/
+  const stm32_dma_stream_t  *dmarx;     /*!< @brief Receive DMA channel.*/
+  const stm32_dma_stream_t  *dmatx;     /*!< @brief Transmit DMA channel.*/
+
+  I2C_TypeDef           *id_i2c;        /*!< @brief Pointer to the I2Cx registers block. */
 };
 
 
@@ -261,6 +222,10 @@ extern I2CDriver I2CD1;
 extern I2CDriver I2CD2;
 #endif
 
+#if STM32_I2C_USE_I2C3
+extern I2CDriver I2CD3;
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -269,14 +234,12 @@ void i2c_lld_init(void);
 void i2c_lld_reset(I2CDriver *i2cp);
 void i2c_lld_set_clock(I2CDriver *i2cp);
 void i2c_lld_set_opmode(I2CDriver *i2cp);
-void i2c_lld_set_own_address(I2CDriver *i2cp);
 void i2c_lld_start(I2CDriver *i2cp);
 void i2c_lld_stop(I2CDriver *i2cp);
-void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
+void i2c_lld_master_transmit(I2CDriver *i2cp, uint8_t slave_addr,
     uint8_t *txbuf, size_t txbytes, uint8_t *rxbuf, size_t rxbytes);
-void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
+void i2c_lld_master_receive(I2CDriver *i2cp, uint8_t slave_addr,
     uint8_t *rxbuf, size_t rxbytes);
-void i2c_lld_master_transceive(I2CDriver *i2cp);
 
 #ifdef __cplusplus
 }
