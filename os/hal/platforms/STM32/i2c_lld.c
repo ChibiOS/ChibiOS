@@ -126,9 +126,11 @@ static uint32_t i2c_get_event(I2CDriver *i2cp){
 }
 
 
-
-
-
+/**
+ * @brief I2C interrupts handler.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ */
 static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
   I2C_TypeDef *dp = i2cp->id_i2c;
 
@@ -160,8 +162,11 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
 }
 
 
-
-
+/**
+ * @brief DMA rx end IRQ handler.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ */
 static void i2c_lld_serve_rx_end_irq(I2CDriver *i2cp){
   dmaStreamDisable(i2cp->dmarx);
 
@@ -173,16 +178,21 @@ static void i2c_lld_serve_rx_end_irq(I2CDriver *i2cp){
 }
 
 
-
-
-
+/**
+ * @brief DMA tx enr IRQ handler.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ */
 static void i2c_lld_serve_tx_end_irq(I2CDriver *i2cp){
   dmaStreamDisable(i2cp->dmatx);
 }
 
 
-
-
+/**
+ * @brief I2C error handler.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ */
 static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
   i2cflags_t flags;
   I2C_TypeDef *reg;
@@ -231,10 +241,23 @@ static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
 }
 
 
-
-
 #if STM32_I2C_USE_I2C1 || defined(__DOXYGEN__)
-#error "Unrealized yet"
+/**
+ * @brief I2C1 event interrupt handler.
+ */
+CH_IRQ_HANDLER(I2C1_EV_IRQHandler) {
+  CH_IRQ_PROLOGUE();
+  i2c_serve_event_interrupt(&I2CD1);
+  CH_IRQ_EPILOGUE();
+}
+/**
+ * @brief I2C1 error interrupt handler.
+ */
+CH_IRQ_HANDLER(I2C1_ER_IRQHandler) {
+  CH_IRQ_PROLOGUE();
+  i2c_serve_error_interrupt(&I2CD1);
+  CH_IRQ_EPILOGUE();
+}
 #endif /* STM32_I2C_USE_I2C1 */
 
 #if STM32_I2C_USE_I2C2 || defined(__DOXYGEN__)
@@ -257,9 +280,23 @@ CH_IRQ_HANDLER(I2C2_ER_IRQHandler) {
 #endif /* STM32_I2C_USE_I2C2 */
 
 #if STM32_I2C_USE_I2C3 || defined(__DOXYGEN__)
-#error "Unrealized yet"
+/**
+ * @brief I2C3 event interrupt handler.
+ */
+CH_IRQ_HANDLER(I2C3_EV_IRQHandler) {
+  CH_IRQ_PROLOGUE();
+  i2c_serve_event_interrupt(&I2CD3);
+  CH_IRQ_EPILOGUE();
+}
+/**
+ * @brief I2C3 error interrupt handler.
+ */
+CH_IRQ_HANDLER(I2C3_ER_IRQHandler) {
+  CH_IRQ_PROLOGUE();
+  i2c_serve_error_interrupt(&I2CD3);
+  CH_IRQ_EPILOGUE();
+}
 #endif /* STM32_I2C_USE_I2C3 */
-
 
 
 /**
@@ -268,8 +305,11 @@ CH_IRQ_HANDLER(I2C2_ER_IRQHandler) {
 void i2c_lld_init(void) {
 
 #if STM32_I2C_USE_I2C1
-#error "Unrealized yet"
-#endif /* STM32_I2C_USE_I2C */
+  i2cObjectInit(&I2CD1);
+  I2CD1.id_i2c = I2C1;
+  I2CD1.dmarx  = STM32_DMA_STREAM(STM32_I2C_I2C1_RX_DMA_STREAM);
+  I2CD1.dmatx  = STM32_DMA_STREAM(STM32_I2C_I2C1_TX_DMA_STREAM);
+#endif /* STM32_I2C_USE_I2C1 */
 
 #if STM32_I2C_USE_I2C2
   i2cObjectInit(&I2CD2);
@@ -277,13 +317,14 @@ void i2c_lld_init(void) {
   I2CD2.dmarx  = STM32_DMA_STREAM(STM32_I2C_I2C2_RX_DMA_STREAM);
   I2CD2.dmatx  = STM32_DMA_STREAM(STM32_I2C_I2C2_TX_DMA_STREAM);
 #endif /* STM32_I2C_USE_I2C2 */
-}
 
 #if STM32_I2C_USE_I2C3
-#error "Unrealized yet"
-#endif /* STM32_I2C_USE_I2C */
-
-
+  i2cObjectInit(&I2CD3);
+  I2CD3.id_i2c = I2C3;
+  I2CD3.dmarx  = STM32_DMA_STREAM(STM32_I2C_I2C3_RX_DMA_STREAM);
+  I2CD3.dmatx  = STM32_DMA_STREAM(STM32_I2C_I2C3_TX_DMA_STREAM);
+#endif /* STM32_I2C_USE_I2C3 */
+}
 
 
 /**
@@ -296,15 +337,29 @@ void i2c_lld_start(I2CDriver *i2cp) {
 
   if (i2cp->id_state == I2C_STOP) {         /* If in stopped state then enables the I2C clock.*/
 #if STM32_I2C_USE_I2C1
-//    if (&I2CD1 == i2cp) {
-//      NVICEnableVector(I2C1_EV_IRQn,
-//          CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
-//      NVICEnableVector(I2C1_ER_IRQn,
-//          CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
-//      rccEnableI2C1(FALSE);
-//    }
-#error "Unrealized yet"
-#endif
+    if (&I2CD1 == i2cp) {
+
+      bool_t b;
+      b = dmaStreamAllocate(i2cp->dmarx,
+                            STM32_I2C_I2C1_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)i2c_lld_serve_rx_end_irq,
+                            (void *)i2cp);
+      chDbgAssert(!b, "uart_lld_start(), #3", "stream already allocated");
+      b = dmaStreamAllocate(i2cp->dmatx,
+                            STM32_I2C_I2C1_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)i2c_lld_serve_tx_end_irq,
+                            (void *)i2cp);
+      chDbgAssert(!b, "uart_lld_start(), #4", "stream already allocated");
+      rccEnableI2C1(FALSE);
+      NVICEnableVector(I2C1_EV_IRQn,
+          CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
+      NVICEnableVector(I2C1_ER_IRQn,
+          CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
+
+      i2cp->dmamode |= STM32_DMA_CR_CHSEL(I2C1_RX_DMA_CHANNEL) |
+                            STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY);
+    }
+#endif /* STM32_I2C_USE_I2C1 */
 
 #if STM32_I2C_USE_I2C2
     if (&I2CD2 == i2cp) {
@@ -330,6 +385,32 @@ void i2c_lld_start(I2CDriver *i2cp) {
                             STM32_DMA_CR_PL(STM32_I2C_I2C2_DMA_PRIORITY);
     }
 #endif /* STM32_I2C_USE_I2C2 */
+
+#if STM32_I2C_USE_I2C3
+    if (&I2CD3 == i2cp) {
+
+      bool_t b;
+      b = dmaStreamAllocate(i2cp->dmarx,
+                            STM32_I2C_I2C3_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)i2c_lld_serve_rx_end_irq,
+                            (void *)i2cp);
+      chDbgAssert(!b, "uart_lld_start(), #3", "stream already allocated");
+      b = dmaStreamAllocate(i2cp->dmatx,
+                            STM32_I2C_I2C3_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)i2c_lld_serve_tx_end_irq,
+                            (void *)i2cp);
+      chDbgAssert(!b, "uart_lld_start(), #4", "stream already allocated");
+      rccEnableI2C3(FALSE);
+      NVICEnableVector(I2C3_EV_IRQn,
+          CORTEX_PRIORITY_MASK(STM32_I2C_I2C3_IRQ_PRIORITY));
+      NVICEnableVector(I2C3_ER_IRQn,
+          CORTEX_PRIORITY_MASK(STM32_I2C_I2C3_IRQ_PRIORITY));
+
+      i2cp->dmamode |= STM32_DMA_CR_CHSEL(I2C3_RX_DMA_CHANNEL) |
+                            STM32_DMA_CR_PL(STM32_I2C_I2C3_DMA_PRIORITY);
+    }
+#endif /* STM32_I2C_USE_I2C2 */
+
   }
   i2cp->dmamode |= STM32_DMA_CR_PSIZE_BYTE |
                    STM32_DMA_CR_MSIZE_BYTE |
@@ -346,20 +427,10 @@ void i2c_lld_start(I2CDriver *i2cp) {
   i2cp->id_i2c->CR1 |= 1;                   /* enable interface */
 }
 
-#if STM32_I2C_USE_I2C3
-//    if (&I2CD1 == i2cp) {
-//      NVICEnableVector(I2C1_EV_IRQn,
-//          CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
-//      NVICEnableVector(I2C1_ER_IRQn,
-//          CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
-//      rccEnableI2C1(FALSE);
-//    }
-#error "Unrealized yet"
-#endif /* STM32_I2C_USE_I2C3 */
 
-
-
-
+/**
+ * @brief Reset interface via RCC.
+ */
 void i2c_lld_reset(I2CDriver *i2cp){
   chDbgCheck((i2cp->id_state == I2C_STOP)||(i2cp->id_state == I2C_READY),
              "i2c_lld_reset: invalid state");
@@ -381,11 +452,14 @@ void i2c_lld_reset(I2CDriver *i2cp){
 }
 
 
-
-
-
-
-
+/**
+ * @brief Receive data via the I2C bus as master.
+ *
+ * @param[in] i2cp        pointer to the @p I2CDriver object
+ * @param[in] slave_addr  slave device address
+ * @param[in] rxbuf       pointer to the receive buffer
+ * @param[in] rxbytes     number of bytes to be received
+ */
 void i2c_lld_master_receive(I2CDriver *i2cp, uint8_t slave_addr,
                             uint8_t *rxbuf, size_t rxbytes){
 
@@ -412,10 +486,6 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint8_t slave_addr,
   i2cp->id_i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN;
   i2cp->id_i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
 }
-
-
-
-
 
 
 /**
@@ -456,8 +526,6 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint8_t slave_addr,
   i2cp->id_i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN;
   i2cp->id_i2c->CR1 |= I2C_CR1_START;
 }
-
-
 
 
 /**
