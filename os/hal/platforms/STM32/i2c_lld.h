@@ -194,20 +194,6 @@
 #error "I2C driver activated but no I2C peripheral assigned"
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #if STM32_I2C_USE_I2C1 &&                                                \
     !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C1_RX_DMA_STREAM,                 \
                            STM32_I2C1_RX_DMA_MSK)
