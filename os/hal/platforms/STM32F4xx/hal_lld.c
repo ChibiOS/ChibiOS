@@ -62,8 +62,9 @@ void hal_lld_init(void) {
      been initialized in the board initialization file (board.c).*/
   rccResetAHB1(!0);
   rccResetAHB2(!0);
+  rccResetAHB3(!0);
   rccResetAPB1(!RCC_APB1RSTR_PWRRST);
-  rccResetAPB2(!RCC_APB2RSTR_SYSCFGRST);
+  rccResetAPB2(!0);
 
   /* SysTick initialization using the system clock.*/
   SysTick->LOAD = STM32_HCLK / CH_FREQUENCY - 1;
@@ -152,6 +153,10 @@ void stm32_clock_init(void) {
     ;
 #endif
 #endif /* STM32_NO_INIT */
+
+  /* SYSCFG clock enabled here because it is a multi-functional unit shared
+     among multiple drivers.*/
+  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, TRUE);
 }
 
 /** @} */

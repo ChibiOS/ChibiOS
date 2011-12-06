@@ -63,21 +63,6 @@
 #include "stm32l1xx.h"
 #endif
 
-#undef TIM1
-#undef TIM2
-#undef TIM3
-#undef TIM4
-#undef TIM5
-#undef TIM6
-#undef TIM7
-#undef TIM8
-#undef TIM9
-#undef TIM10
-#undef TIM11
-#undef TIM12
-#undef TIM13
-#undef TIM14
-
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/

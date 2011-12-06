@@ -360,7 +360,7 @@ void icu_lld_start(ICUDriver *icup) {
   icup->tim->ARR   = 0xFFFF;
 
   /* CCMR1_CC1S = 01 = CH1 Input on TI1.
-     CCMR1_CC2S = 10 = CH2 Input on TI2.*/
+     CCMR1_CC2S = 10 = CH2 Input on TI1.*/
   icup->tim->CCMR1 = TIM_CCMR1_CC1S_0 |
                      TIM_CCMR1_CC2S_1;
   /* SMCR_TS  = 101, input is TI1FP1.
