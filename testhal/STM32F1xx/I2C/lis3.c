@@ -58,7 +58,9 @@ int init_lis3(void){
   accel_tx_data[3] = 0b00000000;
 
   /* sending */
+  i2cAcquireBus(&I2CD1);
   i2cMasterTransmit(&I2CD1, &lis3, lis3_addr, accel_tx_data, 4, accel_rx_data, 0);
+  i2cReleaseBus(&I2CD1);
   return 0;
 }
 

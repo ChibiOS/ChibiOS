@@ -68,6 +68,7 @@ int main(void) {
   halInit();
   chSysInit();
 
+  chThdSleepMilliseconds(1000);
   I2CInit_pns();
 
   /* Create accelerometer thread */

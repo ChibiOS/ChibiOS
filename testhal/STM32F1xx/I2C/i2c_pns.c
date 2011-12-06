@@ -8,8 +8,8 @@
 /* I2C1 */
 static const I2CConfig i2cfg1 = {
     OPMODE_I2C,
-    100000,
-    STD_DUTY_CYCLE,
+    400000,
+    FAST_DUTY_CYCLE_16_9,
 };
 
 
