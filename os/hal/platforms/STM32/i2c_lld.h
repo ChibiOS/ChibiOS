@@ -62,6 +62,15 @@
 #endif
 
 /**
+ * @brief I2C3 driver enable switch.
+ * @details If set to @p TRUE the support for I2C3 is included.
+ * @note The default is @p TRUE.
+ */
+#if !defined(STM32_I2C_USE_I2C3) || defined(__DOXYGEN__)
+#define STM32_I2C_USE_I2C3              TRUE
+#endif
+
+/**
  * @brief I2C1 interrupt priority level setting.
  * @note @p BASEPRI_KERNEL >= @p STM32_I2C_I2C1_IRQ_PRIORITY > @p PRIORITY_PENDSV.
  */
@@ -75,6 +84,14 @@
  */
 #if !defined(STM32_I2C_I2C2_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_I2C_I2C2_IRQ_PRIORITY     0xA0
+#endif
+
+/**
+ * @brief I2C2 interrupt priority level setting.
+ * @note @p BASEPRI_KERNEL >= @p STM32_I2C_I2C2_IRQ_PRIORITY > @p PRIORITY_PENDSV.
+ */
+#if !defined(STM32_I2C_I2C3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C3_IRQ_PRIORITY     0xA0
 #endif
 /** @} */
 
