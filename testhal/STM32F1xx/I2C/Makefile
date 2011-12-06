@@ -82,8 +82,6 @@ CSRC = $(PORTSRC) \
        $(CHIBIOS)/os/various/syscalls.c \
        main.c \
        i2c_pns.c \
-       tmp75.c\
-  	   max1236.c\
   	   lis3.c\
 
 	   
@@ -127,7 +125,6 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
 # Compiler settings
 #
 
-# -lm �������� ������ �����, ������ ��� ������ ������
 MCU  = cortex-m3
 
 #TRGT = arm-elf-

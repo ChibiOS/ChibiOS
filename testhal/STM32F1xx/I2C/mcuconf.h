@@ -174,13 +174,6 @@
 #define STM32_I2C_I2C2_DMA_PRIORITY         4
 #define STM32_I2C_I2C1_DMA_ERROR_HOOK()     chSysHalt()
 #define STM32_I2C_I2C2_DMA_ERROR_HOOK()     chSysHalt()
-/* I2C1 */
-#define STM32_I2C_I2C1_USE_GPT_TIM          GPTD1
-#define STM32_I2C_I2C1_USE_POLLING_WAIT     TRUE
-/* I2C2 */
-#define STM32_I2C_I2C2_USE_GPT_TIM          GPTD2
-#define STM32_I2C_I2C2_USE_POLLING_WAIT     TRUE
-
 
 /*
  * USB driver system settings.

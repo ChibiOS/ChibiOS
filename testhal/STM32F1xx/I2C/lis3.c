@@ -18,8 +18,8 @@
 
 
 /* buffers */
-static i2cblock_t accel_rx_data[ACCEL_RX_DEPTH];
-static i2cblock_t accel_tx_data[ACCEL_TX_DEPTH];
+static uint8_t accel_rx_data[ACCEL_RX_DEPTH];
+static uint8_t accel_tx_data[ACCEL_TX_DEPTH];
 
 static int16_t acceleration_x = 0;
 static int16_t acceleration_y = 0;
@@ -42,8 +42,8 @@ static void i2c_lis3_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
 
 /* Accelerometer lis3lv02dq config */
 static const I2CSlaveConfig lis3 = {
-	i2c_lis3_cb,
-  i2c_lis3_error_cb,
+		i2c_lis3_cb,
+		i2c_lis3_error_cb,
 };
 
 
@@ -67,9 +67,9 @@ int init_lis3(void){
  */
 void request_acceleration_data(void){
   accel_tx_data[0] = ACCEL_OUT_DATA | AUTO_INCREMENT_BIT; // register address
-  //i2cAcquireBus(&I2CD1);
+  i2cAcquireBus(&I2CD1);
   i2cMasterTransmit(&I2CD1, &lis3, lis3_addr, accel_tx_data, 1, accel_rx_data, 6);
-  //i2cReleaseBus(&I2CD1);
+  i2cReleaseBus(&I2CD1);
 
   acceleration_x = accel_rx_data[0] + (accel_rx_data[1] << 8);
   acceleration_y = accel_rx_data[2] + (accel_rx_data[3] << 8);
