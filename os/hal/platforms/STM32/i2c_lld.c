@@ -141,6 +141,16 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     dp->DR = i2cp->slave_addr;
     break;
 
+  case I2C_EV6_MASTER_REC_MODE_SELECTED:
+    dmaStreamEnable(i2cp->dmarx);
+    i2cp->id_i2c->CR2 |= I2C_CR2_DMAEN | I2C_CR2_LAST;
+    break;
+
+  case I2C_EV6_MASTER_TRA_MODE_SELECTED:
+    dmaStreamEnable(i2cp->dmatx);
+    i2cp->id_i2c->CR2 |= I2C_CR2_DMAEN | I2C_CR2_LAST;
+    break;
+
   case I2C_EV8_2_MASTER_BYTE_TRANSMITTED:
     /* catch BTF event after the end of trasmission */
     if (i2cp->rxbytes > 1){
@@ -196,6 +206,14 @@ static void i2c_lld_serve_tx_end_irq(I2CDriver *i2cp){
 static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
   i2cflags_t flags;
   I2C_TypeDef *reg;
+
+  chSysLockFromIsr();
+  /* clear interrupt falgs just to be safe */
+  dmaStreamClearInterrupt(i2cp->dmatx);
+  dmaStreamClearInterrupt(i2cp->dmarx);
+  dmaStreamDisable(i2cp->dmatx);
+  dmaStreamDisable(i2cp->dmarx);
+  chSysUnlockFromIsr();
 
   reg = i2cp->id_i2c;
   flags = I2CD_NO_ERROR;
@@ -481,9 +499,7 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint8_t slave_addr,
   dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
   dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
   dmaStreamSetMode(i2cp->dmarx, ((i2cp->dmamode) | mode));
-  dmaStreamEnable(i2cp->dmarx);
 
-  i2cp->id_i2c->CR2 |= I2C_CR2_DMAEN | I2C_CR2_LAST;
   i2cp->id_i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN;
   i2cp->id_i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
 }
@@ -521,9 +537,7 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint8_t slave_addr,
   dmaStreamSetMemory0(i2cp->dmatx, txbuf);
   dmaStreamSetTransactionSize(i2cp->dmatx, txbytes);
   dmaStreamSetMode(i2cp->dmatx, ((i2cp->dmamode) | mode));
-  dmaStreamEnable(i2cp->dmatx);
 
-  i2cp->id_i2c->CR2 |= I2C_CR2_DMAEN | I2C_CR2_LAST;
   i2cp->id_i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN;
   i2cp->id_i2c->CR1 |= I2C_CR1_START;
 }

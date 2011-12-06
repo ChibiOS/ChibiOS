@@ -171,12 +171,15 @@
 
 /** @brief  flags for interrupt handling */
 #define I2C_EV5_MASTER_MODE_SELECT          ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY) << 16) | I2C_SR1_SB))  /* BUSY, MSL and SB flag */
+#define I2C_EV6_MASTER_TRA_MODE_SELECTED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY|I2C_SR2_TRA)<< 16)|I2C_SR1_ADDR|I2C_SR1_TXE))  /* BUSY, MSL, ADDR, TXE and TRA flags */
+#define I2C_EV6_MASTER_REC_MODE_SELECTED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_ADDR))  /* BUSY, MSL and ADDR flags */
 #define I2C_EV8_2_MASTER_BYTE_TRANSMITTED   ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY | I2C_SR2_TRA) << 16) | I2C_SR1_BTF | I2C_SR1_TXE))  /* TRA, BUSY, MSL, TXE and BTF flags */
 #define I2C_EV_MASK                         0x00FFFFFF  /* First byte zeroed because there is no need of PEC register part from SR2 */
 
 #define I2C_FLG_MASTER_RECEIVER 			0x10
 #define I2C_FLG_HEADER_SENT     			0x80
 
+/** @brief  error checks */
 #if STM32_I2C_USE_I2C1 && !STM32_HAS_I2C1
 #error "I2C1 not present in the selected device"
 #endif
@@ -197,56 +200,38 @@
 #if STM32_I2C_USE_I2C1 &&                                                \
     !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C1_RX_DMA_STREAM,                 \
                            STM32_I2C1_RX_DMA_MSK)
-#error "invalid DMA stream associated to USART1 RX"
+#error "invalid DMA stream associated to I2C1 RX"
 #endif
 
 #if STM32_I2C_USE_I2C1 &&                                                \
     !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C1_TX_DMA_STREAM,                 \
                            STM32_I2C1_TX_DMA_MSK)
-#error "invalid DMA stream associated to USART1 TX"
+#error "invalid DMA stream associated to I2C1 TX"
 #endif
 
 #if STM32_I2C_USE_I2C2 &&                                                \
     !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C2_RX_DMA_STREAM,                 \
                            STM32_I2C2_RX_DMA_MSK)
-#error "invalid DMA stream associated to USART2 RX"
+#error "invalid DMA stream associated to I2C2 RX"
 #endif
 
 #if STM32_I2C_USE_I2C2 &&                                                \
     !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C2_TX_DMA_STREAM,                 \
                            STM32_I2C2_TX_DMA_MSK)
-#error "invalid DMA stream associated to USART2 TX"
+#error "invalid DMA stream associated to I2C2 TX"
 #endif
 
 #if STM32_I2C_USE_I2C3 &&                                                \
     !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C3_RX_DMA_STREAM,                 \
                            STM32_I2C3_RX_DMA_MSK)
-#error "invalid DMA stream associated to USART3 RX"
+#error "invalid DMA stream associated to I2C3 RX"
 #endif
 
 #if STM32_I2C_USE_I2C3 &&                                                \
     !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C3_TX_DMA_STREAM,                 \
                            STM32_I2C3_TX_DMA_MSK)
-#error "invalid DMA stream associated to USART3 TX"
+#error "invalid DMA stream associated to I2C3 TX"
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
@@ -300,22 +285,22 @@ struct I2CDriver{
   /**
    * @brief Driver state.
    */
-  i2cstate_t            id_state;
+  i2cstate_t                id_state;
 
 #if I2C_USE_WAIT
   /**
    * @brief Thread waiting for I/O completion.
    */
-  Thread                *id_thread;
+  Thread                    *id_thread;
 #endif /* I2C_USE_WAIT */
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief Mutex protecting the bus.
    */
-  Mutex                 id_mutex;
+  Mutex                     id_mutex;
 #elif CH_USE_SEMAPHORES
-  Semaphore             id_semaphore;
+  Semaphore                 id_semaphore;
 #endif
 #endif /* I2C_USE_MUTUAL_EXCLUSION */
 
@@ -338,17 +323,13 @@ struct I2CDriver{
 
   uint8_t                   slave_addr; /*!< @brief Current slave address without R/W bit. */
 
-#if CH_USE_EVENTS
-  EventSource               sevent;     /*!< @brief Status Change @p EventSource.*/
-#endif
-
   /*********** End of the mandatory fields. **********************************/
 
   uint32_t                  dmamode;    /*!< @brief DMA mode bit mask.*/
   const stm32_dma_stream_t  *dmarx;     /*!< @brief Receive DMA channel.*/
   const stm32_dma_stream_t  *dmatx;     /*!< @brief Transmit DMA channel.*/
 
-  I2C_TypeDef           *id_i2c;        /*!< @brief Pointer to the I2Cx registers block. */
+  I2C_TypeDef               *id_i2c;    /*!< @brief Pointer to the I2Cx registers block. */
 };
 
 

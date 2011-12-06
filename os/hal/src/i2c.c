@@ -238,7 +238,6 @@ void i2cAddFlagsI(I2CDriver *i2cp, i2cflags_t mask) {
   chDbgCheck(i2cp != NULL, "i2cAddFlagsI");
 
   i2cp->errors |= mask;
-  chEvtBroadcastI(&i2cp->sevent);
 }
 
 /**
