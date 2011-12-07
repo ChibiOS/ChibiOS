@@ -25,27 +25,6 @@ static int16_t acceleration_x = 0;
 static int16_t acceleration_y = 0;
 static int16_t acceleration_z = 0;
 
-/* Error trap */
-static void i2c_lis3_error_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
-  (void)i2cscfg;
-  int status = 0;
-  status = i2cp->id_i2c->SR1;
-  while(TRUE);
-}
-
-/* This callback raise up when transfer finished */
-static void i2c_lis3_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
-  (void)i2cp;
-  (void)i2cscfg;
-}
-
-
-/* Accelerometer lis3lv02dq config */
-static const I2CSlaveConfig lis3 = {
-		i2c_lis3_cb,
-		i2c_lis3_error_cb,
-};
-
 
 /**
  * Init function. Here we will also start personal serving thread.
@@ -59,7 +38,7 @@ int init_lis3(void){
 
   /* sending */
   i2cAcquireBus(&I2CD1);
-  i2cMasterTransmit(&I2CD1, &lis3, lis3_addr, accel_tx_data, 4, accel_rx_data, 0);
+  i2cMasterTransmit(&I2CD1, lis3_addr, accel_tx_data, 4, accel_rx_data, 0);
   i2cReleaseBus(&I2CD1);
   return 0;
 }
@@ -70,7 +49,7 @@ int init_lis3(void){
 void request_acceleration_data(void){
   accel_tx_data[0] = ACCEL_OUT_DATA | AUTO_INCREMENT_BIT; // register address
   i2cAcquireBus(&I2CD1);
-  i2cMasterTransmit(&I2CD1, &lis3, lis3_addr, accel_tx_data, 1, accel_rx_data, 6);
+  i2cMasterTransmit(&I2CD1, lis3_addr, accel_tx_data, 1, accel_rx_data, 6);
   i2cReleaseBus(&I2CD1);
 
   acceleration_x = accel_rx_data[0] + (accel_rx_data[1] << 8);

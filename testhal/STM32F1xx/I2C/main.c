@@ -57,6 +57,22 @@ static msg_t PollAccelThread(void *arg) {
 }
 
 
+/*
+ * Accelerometer thread
+ */
+static WORKING_AREA(PollAccelThreadWA, 128);
+static msg_t PollAccelThread(void *arg) {
+  (void)arg;
+  systime_t time = chTimeNow();
+
+  while (TRUE) {
+    time += MS2ST(20);
+    request_acceleration_data();
+    chThdSleepUntil(time);
+  }
+  return 0;
+}
+
 
 
 /*
