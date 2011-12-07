@@ -185,8 +185,6 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     }
     else
       i2cp->id_i2c->CR1 |= I2C_CR1_STOP;
-      while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
-        ;
       _i2c_isr_code(i2cp, i2cp->id_slave_config);
     break;
 
@@ -205,8 +203,6 @@ static void i2c_lld_serve_rx_end_irq(I2CDriver *i2cp){
   dmaStreamDisable(i2cp->dmarx);
 
   i2cp->id_i2c->CR1 |= I2C_CR1_STOP;
-  while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
-    ;
   _i2c_isr_code(i2cp, i2cp->id_slave_config);
 }
 
@@ -227,7 +223,7 @@ static void i2c_lld_serve_tx_end_irq(I2CDriver *i2cp){
  * @param[in] i2cp      pointer to the @p I2CDriver object
  */
 static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
-  i2cflags_t flags;
+  i2cflags_t errors;
   I2C_TypeDef *reg;
 
   chSysLockFromIsr();
@@ -239,43 +235,41 @@ static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
   chSysUnlockFromIsr();
 
   reg = i2cp->id_i2c;
-  flags = I2CD_NO_ERROR;
+  errors = I2CD_NO_ERROR;
 
   if(reg->SR1 & I2C_SR1_BERR) {                /* Bus error */
     reg->SR1 &= ~I2C_SR1_BERR;
-    flags |= I2CD_BUS_ERROR;
+    errors |= I2CD_BUS_ERROR;
   }
   if(reg->SR1 & I2C_SR1_ARLO) {                /* Arbitration lost */
     reg->SR1 &= ~I2C_SR1_ARLO;
-    flags |= I2CD_ARBITRATION_LOST;
+    errors |= I2CD_ARBITRATION_LOST;
   }
   if(reg->SR1 & I2C_SR1_AF) {                  /* Acknowledge fail */
     reg->SR1 &= ~I2C_SR1_AF;
     reg->CR1 |= I2C_CR1_STOP;                  /* setting stop bit */
-    while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
-      ;
-    flags |= I2CD_ACK_FAILURE;
+    errors |= I2CD_ACK_FAILURE;
   }
   if(reg->SR1 & I2C_SR1_OVR) {                 /* Overrun */
     reg->SR1 &= ~I2C_SR1_OVR;
-    flags |= I2CD_OVERRUN;
+    errors |= I2CD_OVERRUN;
   }
   if(reg->SR1 & I2C_SR1_PECERR) {              /* PEC error */
     reg->SR1 &= ~I2C_SR1_PECERR;
-    flags |= I2CD_PEC_ERROR;
+    errors |= I2CD_PEC_ERROR;
   }
   if(reg->SR1 & I2C_SR1_TIMEOUT) {             /* SMBus Timeout */
     reg->SR1 &= ~I2C_SR1_TIMEOUT;
-    flags |= I2CD_TIMEOUT;
+    errors |= I2CD_TIMEOUT;
   }
   if(reg->SR1 & I2C_SR1_SMBALERT) {            /* SMBus alert */
     reg->SR1 &= ~I2C_SR1_SMBALERT;
-    flags |= I2CD_SMB_ALERT;
+    errors |= I2CD_SMB_ALERT;
   }
 
-  if(flags != I2CD_NO_ERROR) {                /* send communication end signal */
+  if(errors != I2CD_NO_ERROR) {                /* send communication end signal */
     chSysLockFromIsr();
-    i2cAddFlagsI(i2cp, flags);
+    i2cAddFlagsI(i2cp, errors);
     chSysUnlockFromIsr();
     _i2c_isr_err_code(i2cp, i2cp->id_slave_config);
   }
@@ -523,6 +517,10 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint8_t slave_addr,
   dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
   dmaStreamSetMode(i2cp->dmarx, ((i2cp->dmamode) | mode));
 
+  /* wait stop bit from previouse transaction*/
+  while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
+    ;
+
   i2cp->id_i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN;
   i2cp->id_i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
 }
@@ -560,6 +558,10 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint8_t slave_addr,
   dmaStreamSetMemory0(i2cp->dmatx, txbuf);
   dmaStreamSetTransactionSize(i2cp->dmatx, txbytes);
   dmaStreamSetMode(i2cp->dmatx, ((i2cp->dmamode) | mode));
+
+  /* wait stop bit from previouse transaction*/
+  while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
+    ;
 
   i2cp->id_i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN;
   i2cp->id_i2c->CR1 |= I2C_CR1_START;

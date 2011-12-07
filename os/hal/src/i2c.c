@@ -75,11 +75,7 @@ void i2cObjectInit(I2CDriver *i2cp) {
   i2cp->id_config = NULL;
   i2cp->rxbuf = NULL;
   i2cp->txbuf = NULL;
-  i2cp->id_slave_config = NULL;
-
-#if I2C_USE_WAIT
   i2cp->id_thread   = NULL;
-#endif /* I2C_USE_WAIT */
 
 #if I2C_USE_MUTUAL_EXCLUSION
 #if CH_USE_MUTEXES
@@ -147,7 +143,6 @@ void i2cStop(I2CDriver *i2cp) {
  *          hardware restrictions.
  *
  * @param[in] i2cp        pointer to the @p I2CDriver object
- * @param[in] i2cscfg     pointer to the @p I2C slave config
  * @param[in] slave_addr  Slave device address (7 bits) without R/W bit
  * @param[in] txbuf       pointer to transmit buffer
  * @param[in] txbytes     number of bytes to be transmitted
@@ -156,24 +151,19 @@ void i2cStop(I2CDriver *i2cp) {
  *                        you want transmit only
  */
 void i2cMasterTransmit(I2CDriver *i2cp,
-                      const I2CSlaveConfig *i2cscfg,
                       uint8_t slave_addr,
                       uint8_t *txbuf,
                       size_t txbytes,
                       uint8_t *rxbuf,
                       size_t rxbytes) {
 
-  chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) &&\
+  chDbgCheck((i2cp != NULL) &&\
   		(slave_addr != 0) &&\
   		(txbytes > 0) &&\
   		(txbuf != NULL) &&\
   		((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))),
   		"i2cMasterTransmit");
 
-  /* init slave config field in driver */
-  i2cp->id_slave_config = i2cscfg;
-
-  // TODO: remove this loop. Do only 1 check because mutual exclusion resolve collisions
   i2c_lld_wait_bus_free(i2cp);
   chDbgAssert(!(i2c_lld_bus_is_busy(i2cp)), "i2cMasterReceive(), #1", "time is out");
 
@@ -191,27 +181,21 @@ void i2cMasterTransmit(I2CDriver *i2cp,
  *          hardware restrictions.
  *
  * @param[in] i2cp        pointer to the @p I2CDriver object
- * @param[in] i2cscfg     pointer to the @p I2C slave config
  * @param[in] slave_addr  slave device address (7 bits) without R/W bit
  * @param[in] rxbytes     number of bytes to be received
  * @param[in] rxbuf       pointer to receive buffer
  */
 void i2cMasterReceive(I2CDriver *i2cp,
-                      const I2CSlaveConfig *i2cscfg,
                       uint8_t slave_addr,
                       uint8_t *rxbuf,
                       size_t rxbytes){
 
-  chDbgCheck((i2cp != NULL) && (i2cscfg != NULL) &&\
+  chDbgCheck((i2cp != NULL) &&\
   		(slave_addr != 0) &&\
   		(rxbytes > 1) && \
   		(rxbuf != NULL),
       "i2cMasterReceive");
 
-  /* init slave config field in driver */
-  i2cp->id_slave_config = i2cscfg;
-
-  // TODO: remove this loop. Do only 1 check because mutual exclusion resolve collisions
   i2c_lld_wait_bus_free(i2cp);
   chDbgAssert(!(i2c_lld_bus_is_busy(i2cp)), "i2cMasterReceive(), #1", "time is out");
 
@@ -298,7 +282,6 @@ void i2cReleaseBus(I2CDriver *i2cp) {
   chDbgCheck(i2cp != NULL, "i2cReleaseBus");
 
 #if CH_USE_MUTEXES
-  (void)i2cp;
   chMtxUnlock();
 #elif CH_USE_SEMAPHORES
   chSemSignal(&i2cp->id_semaphore);

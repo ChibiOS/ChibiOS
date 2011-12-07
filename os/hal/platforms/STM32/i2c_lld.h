@@ -274,11 +274,6 @@ typedef struct {
 typedef struct I2CDriver I2CDriver;
 
 /**
- * @brief   Type of a structure representing an I2C slave config.
- */
-typedef struct I2CSlaveConfig I2CSlaveConfig;
-
-/**
  * @brief Structure representing an I2C driver.
  */
 struct I2CDriver{
@@ -287,12 +282,11 @@ struct I2CDriver{
    */
   i2cstate_t                id_state;
 
-#if I2C_USE_WAIT
   /**
    * @brief Thread waiting for I/O completion.
    */
   Thread                    *id_thread;
-#endif /* I2C_USE_WAIT */
+
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
@@ -308,10 +302,6 @@ struct I2CDriver{
    * @brief Current configuration data.
    */
   const I2CConfig           *id_config;
-  /**
-   * @brief Current slave configuration data.
-   */
-  const I2CSlaveConfig      *id_slave_config;
 
   __IO size_t               txbytes;    /*!< @brief Number of bytes to be transmitted. */
   __IO size_t               rxbytes;    /*!< @brief Number of bytes to be received. */
@@ -341,8 +331,7 @@ struct I2CDriver{
   (i2cp->id_i2c->SR2 & I2C_SR2_BUSY)
 
 
-/* Wait until BUSY flag is reset: a STOP has been generated on the bus
- * signaling the end of transmission. Normally this wait function
+/* Wait until BUSY flag is reset. Normally this wait function
  * does not block thread, only if slave not response it does.
  */
 #define i2c_lld_wait_bus_free(i2cp) {                                       \

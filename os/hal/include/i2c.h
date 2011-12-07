@@ -66,13 +66,6 @@
 #define I2C_USE_MUTUAL_EXCLUSION    TRUE
 #endif
 
-/**
- * @brief   Enables the mutual exclusion APIs on the I2C bus.
- */
-#if !defined(I2C_USE_WAIT) || defined(__DOXYGEN__)
-#define I2C_USE_WAIT                TRUE
-#endif
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -98,57 +91,11 @@ typedef enum {
 
 #include "i2c_lld.h"
 
-/**
- * @brief   I2C notification callback type.
- * @details This callback invoked when byte transfer finish event occurs,
- *          no matter if sending or reading.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object triggering the
- *                      callback
- * @param[in] i2cscfg   pointer to the @p I2CSlaveConfig object triggering the
- *                      callback
- */
-typedef void (*i2ccallback_t)(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg);
-
-/**
- * @brief   I2C error notification callback type.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object triggering the
- *                      callback
- * @param[in] i2cscfg   pointer to the @p I2CSlaveConfig object triggering the
- *                      callback
- */
-typedef void (*i2cerrorcallback_t)(I2CDriver *i2cp,
-                                   const I2CSlaveConfig *i2cscfg);
-
-/**
- * @brief   Structure representing an I2C slave configuration.
- * @details Each slave device has its own config structure with input and
- *          output buffers for temporally storing data.
- */
-struct I2CSlaveConfig{
-  /**
-   * @brief Callback pointer.
-   * @note  Transfer finished callback. Invoke when all data transferred.
-   *        If set to @p NULL then the callback is disabled.
-   */
-  i2ccallback_t         id_callback;
-  /**
-   * @brief Callback pointer.
-   * @note  This callback will be invoked when error condition occur.
-   *        If set to @p NULL then the callback is disabled.
-   */
-  i2cerrorcallback_t    id_err_callback;
-#if defined(I2C_SLAVECONFIG_EXT_FIELDS)
-  I2C_SLAVECONFIG_EXT_FIELDS
-#endif
-};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
-#if I2C_USE_WAIT || defined(__DOXYGEN__)
 /**
  * @brief   Waits for operation completion.
  * @details This function waits for the driver to complete the current
@@ -186,60 +133,40 @@ struct I2CSlaveConfig{
     chSysUnlockFromIsr();                                                   \
   }                                                                         \
 }
-#else /* !I2C_USE_WAIT */
-#define _i2c_wait_s(i2cp)
-#define _i2c_wakeup_isr(i2cp)
-#endif /* !I2C_USE_WAIT */
 
 /**
  * @brief   Common ISR code.
  * @details This code handles the portable part of the ISR code:
- *          - Callback invocation.
- *          - Waiting thread wakeup, if any.
+ *          - Waiting thread wakeup.
  *          - Driver state transitions.
  *
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] i2cscfg   pointer to the @p I2CSlaveConfig object
  *
  * @notapi
  */
 #define _i2c_isr_code(i2cp, i2cscfg) {                                      \
-  if(((i2cp)->id_slave_config)->id_callback) {                              \
-    ((i2cp)->id_slave_config)->id_callback(i2cp, i2cscfg);                  \
-    (i2cp)->id_state = I2C_READY;                                           \
-  }                                                                         \
-  else{                                                                     \
-    (i2cp)->id_state = I2C_READY;                                           \
-  }																			\
+  (i2cp)->id_state = I2C_READY;                                             \
   _i2c_wakeup_isr(i2cp);                                                    \
 }
 
 /**
  * @brief   Error ISR code.
  * @details This code handles the portable part of the ISR code:
- *          - Error callback invocation.
- *          - Waiting thread wakeup, if any.
+ *          - Waiting thread wakeup.
  *          - Driver state transitions.
  *
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] i2cscfg   pointer to the @p I2CSlaveConfig object
  *
  * @notapi
  */
 #define _i2c_isr_err_code(i2cp, i2cscfg) {                                  \
-  if(((i2cp)->id_slave_config)->id_err_callback) {                          \
-    ((i2cp)->id_slave_config)->id_err_callback(i2cp, i2cscfg);              \
-    (i2cp)->id_state = I2C_READY;                                           \
-  }                                                                         \
-  else{                                                                     \
-    (i2cp)->id_state = I2C_READY;                                           \
-  }																			\
+  (i2cp)->id_state = I2C_READY;                                             \
   _i2c_wakeup_isr(i2cp);                                                    \
 }
 
@@ -254,11 +181,11 @@ extern "C" {
   void i2cObjectInit(I2CDriver *i2cp);
   void i2cStart(I2CDriver *i2cp, const I2CConfig *config);
   void i2cStop(I2CDriver *i2cp);
-  void i2cMasterTransmit(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg,
+  void i2cMasterTransmit(I2CDriver *i2cp,
                          uint8_t slave_addr,
                          uint8_t *txbuf, size_t txbytes,
                          uint8_t *rxbuf, size_t rxbytes);
-  void i2cMasterReceive(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg,
+  void i2cMasterReceive(I2CDriver *i2cp,
                         uint8_t slave_addr, uint8_t *rxbuf, size_t rxbytes);
   void i2cMasterStart(I2CDriver *i2cp);
   void i2cMasterStop(I2CDriver *i2cp);
