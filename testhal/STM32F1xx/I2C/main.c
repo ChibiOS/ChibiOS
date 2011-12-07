@@ -17,12 +17,15 @@
  * amount of time.
  */
 
+#include <stdlib.h>
+
 #include "ch.h"
 #include "hal.h"
 
 #include "i2c_pns.h"
 #include "lis3.h"
-
+#include "tmp75.h"
+#include "fake.h"
 
 
 /*
@@ -45,34 +48,44 @@ static msg_t Blink(void *arg) {
  */
 static WORKING_AREA(PollAccelThreadWA, 128);
 static msg_t PollAccelThread(void *arg) {
+  chRegSetThreadName("PollAccel");
   (void)arg;
-  systime_t time = chTimeNow();
-
   while (TRUE) {
-    time += MS2ST(20);
+//    chThdSleepMilliseconds(rand() & 31);
+    chThdSleepMilliseconds(32);
     request_acceleration_data();
-    chThdSleepUntil(time);
   }
   return 0;
 }
 
 
-/*
- * Accelerometer thread
- */
-static WORKING_AREA(PollAccelThreadWA, 128);
-static msg_t PollAccelThread(void *arg) {
+/* Temperature polling thread */
+static WORKING_AREA(PollTmp75ThreadWA, 128);
+static msg_t PollTmp75Thread(void *arg) {
+  chRegSetThreadName("PollTmp75");
   (void)arg;
-  systime_t time = chTimeNow();
-
   while (TRUE) {
-    time += MS2ST(20);
-    request_acceleration_data();
-    chThdSleepUntil(time);
+//    chThdSleepMilliseconds(rand() & 31);
+    chThdSleepMilliseconds(15);
+    /* Call reading function */
+    request_temperature();
   }
   return 0;
 }
 
+
+/* Temperature polling thread */
+static WORKING_AREA(PollFakeThreadWA, 128);
+static msg_t PollFakeThread(void *arg) {
+  chRegSetThreadName("PollFake");
+  (void)arg;
+  while (TRUE) {
+    chThdSleepMilliseconds(16);
+    /* Call reading function */
+    request_fake();
+  }
+  return 0;
+}
 
 
 /*
@@ -84,18 +97,32 @@ int main(void) {
   halInit();
   chSysInit();
 
-  chThdSleepMilliseconds(1000);
+  chThdSleepMilliseconds(200);
   I2CInit_pns();
 
   /* Create accelerometer thread */
   chThdCreateStatic(PollAccelThreadWA,
           sizeof(PollAccelThreadWA),
-          HIGHPRIO,
+          NORMALPRIO,
           PollAccelThread,
           NULL);
 
+  /* Create temperature thread */
+  chThdCreateStatic(PollTmp75ThreadWA,
+          sizeof(PollTmp75ThreadWA),
+          NORMALPRIO,
+          PollTmp75Thread,
+          NULL);
+
+  /* Create not responding thread */
+  chThdCreateStatic(PollFakeThreadWA,
+          sizeof(PollFakeThreadWA),
+          NORMALPRIO,
+          PollFakeThread,
+          NULL);
+
   /* Creates the blinker thread. */
-  chThdCreateStatic(BlinkWA, sizeof(BlinkWA), LOWPRIO, Blink, NULL);
+  chThdCreateStatic(BlinkWA, sizeof(BlinkWA), HIGHPRIO, Blink, NULL);
 
   /* main loop that do nothing */
   while (TRUE) {

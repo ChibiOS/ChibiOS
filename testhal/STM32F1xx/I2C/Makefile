@@ -82,7 +82,9 @@ CSRC = $(PORTSRC) \
        $(CHIBIOS)/os/various/syscalls.c \
        main.c \
        i2c_pns.c \
-  	   lis3.c\
+  	   lis3.c \
+  	   tmp75.c \
+  	   fake.c
 
 	   
        
