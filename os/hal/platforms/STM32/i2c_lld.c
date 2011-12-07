@@ -44,6 +44,30 @@
  */
 
 /*===========================================================================*/
+/* Knowledge base.                                                            */
+/*===========================================================================*/
+/*
+Not all system functions are usable in a given context.
+
+The most restrictive type are the i-class, an I-class function is a function that must:
+- Not access the "current" thread in any way (from an ISR the current thread
+is random so it is meaningless).
+- Not reschedule internally (from an ISR the reschedule is done at the end of
+the ISR chain, rescheduling from within an ISR is forbidden because would
+leave the IRQ stack not empty with all kind of funny consequences.
+- Not try to change state for the current thread.
+- Must be invoked between a lock() and an unlock() but never lock/unlock internally.
+
+A bit less restrictive are the S-class that must simply:
+- Be invoked between a lock() and an unlock() but never lock/unlock internally.
+S-class can reschedule internally, access the current thread implicitly and
+also change state so are not eligible for ISR context.
+
+Normal functions can be invoked from thread context only but have no internal
+restrictions.
+*/
+
+/*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 #define I2C1_RX_DMA_CHANNEL                                                 \
@@ -155,12 +179,12 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     /* catch BTF event after the end of trasmission */
     if (i2cp->rxbytes > 1){
       /* start "read after write" operation */
-      i2c_lld_master_receive(i2cp, (i2cp->slave_addr >> 1), i2cp->rxbuf, i2cp->rxbytes);
+      i2c_lld_master_receive(i2cp, (i2cp->slave_addr >> 1),
+                            i2cp->rxbuf, i2cp->rxbytes);
       return;
     }
     else
       i2cp->id_i2c->CR1 |= I2C_CR1_STOP;
-      // FIXME: change this polling to something else
       while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
         ;
       _i2c_isr_code(i2cp, i2cp->id_slave_config);
@@ -181,7 +205,6 @@ static void i2c_lld_serve_rx_end_irq(I2CDriver *i2cp){
   dmaStreamDisable(i2cp->dmarx);
 
   i2cp->id_i2c->CR1 |= I2C_CR1_STOP;
-  // FIXME: change this polling to something else
   while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
     ;
   _i2c_isr_code(i2cp, i2cp->id_slave_config);
@@ -209,10 +232,10 @@ static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
 
   chSysLockFromIsr();
   /* clear interrupt falgs just to be safe */
-  dmaStreamClearInterrupt(i2cp->dmatx);
-  dmaStreamClearInterrupt(i2cp->dmarx);
   dmaStreamDisable(i2cp->dmatx);
   dmaStreamDisable(i2cp->dmarx);
+  dmaStreamClearInterrupt(i2cp->dmatx);
+  dmaStreamClearInterrupt(i2cp->dmarx);
   chSysUnlockFromIsr();
 
   reg = i2cp->id_i2c;
@@ -344,13 +367,13 @@ void i2c_lld_init(void) {
 #endif /* STM32_I2C_USE_I2C3 */
 }
 
-
 /**
  * @brief Configures and activates the I2C peripheral.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  */
 void i2c_lld_start(I2CDriver *i2cp) {
+
   i2cp->dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
 
   if (i2cp->id_state == I2C_STOP) {         /* If in stopped state then enables the I2C clock.*/
@@ -641,15 +664,21 @@ void i2c_lld_set_opmode(I2CDriver *i2cp) {
 }
 
 
-
-
 /**
  * @brief Deactivates the I2C peripheral.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  */
 void i2c_lld_stop(I2CDriver *i2cp) {
-  if (i2cp->id_state == I2C_READY) {  /* If in ready state then disables the I2C clock.*/
+
+  if (i2cp->id_state != I2C_STOP) {  /* If in ready state then disables the I2C clock.*/
+
+  dmaStreamDisable(i2cp->dmatx);
+  dmaStreamDisable(i2cp->dmarx);
+  dmaStreamClearInterrupt(i2cp->dmatx);
+  dmaStreamClearInterrupt(i2cp->dmarx);
+  dmaStreamRelease(i2cp->dmatx);
+  dmaStreamRelease(i2cp->dmarx);
 
 #if STM32_I2C_USE_I2C1
     if (&I2CD1 == i2cp) {
