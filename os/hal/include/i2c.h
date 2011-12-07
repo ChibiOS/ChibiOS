@@ -181,15 +181,16 @@ extern "C" {
   void i2cObjectInit(I2CDriver *i2cp);
   void i2cStart(I2CDriver *i2cp, const I2CConfig *config);
   void i2cStop(I2CDriver *i2cp);
-  void i2cMasterTransmit(I2CDriver *i2cp,
+  i2cflags_t i2cMasterTransmit(I2CDriver *i2cp,
                          uint8_t slave_addr,
                          uint8_t *txbuf, size_t txbytes,
                          uint8_t *rxbuf, size_t rxbytes);
-  void i2cMasterReceive(I2CDriver *i2cp,
+  i2cflags_t i2cMasterReceive(I2CDriver *i2cp,
                         uint8_t slave_addr, uint8_t *rxbuf, size_t rxbytes);
   void i2cMasterStart(I2CDriver *i2cp);
   void i2cMasterStop(I2CDriver *i2cp);
   void i2cAddFlagsI(I2CDriver *i2cp, i2cflags_t mask);
+  i2cflags_t i2cGetAndClearFlags(I2CDriver *i2cp);
 
 #if I2C_USE_MUTUAL_EXCLUSION
   void i2cAcquireBus(I2CDriver *i2cp);

@@ -149,8 +149,10 @@ void i2cStop(I2CDriver *i2cp) {
  * @param[in] rxbuf       pointer to receive buffer
  * @param[in] rxbytes     number of bytes to be received, set it to 0 if
  *                        you want transmit only
+ *
+ * @return                Zero if no errors, otherwise return error code.
  */
-void i2cMasterTransmit(I2CDriver *i2cp,
+i2cflags_t i2cMasterTransmit(I2CDriver *i2cp,
                       uint8_t slave_addr,
                       uint8_t *txbuf,
                       size_t txbytes,
@@ -173,6 +175,8 @@ void i2cMasterTransmit(I2CDriver *i2cp,
   i2cp->id_state = I2C_ACTIVE_TRANSMIT;
   i2c_lld_master_transmit(i2cp, slave_addr, txbuf, txbytes, rxbuf, rxbytes);
   _i2c_wait_s(i2cp);
+
+  return i2cGetAndClearFlags(i2cp);
 }
 
 /**
@@ -184,8 +188,10 @@ void i2cMasterTransmit(I2CDriver *i2cp,
  * @param[in] slave_addr  slave device address (7 bits) without R/W bit
  * @param[in] rxbytes     number of bytes to be received
  * @param[in] rxbuf       pointer to receive buffer
+ *
+ * @return                Zero if no errors, otherwise return error code.
  */
-void i2cMasterReceive(I2CDriver *i2cp,
+i2cflags_t i2cMasterReceive(I2CDriver *i2cp,
                       uint8_t slave_addr,
                       uint8_t *rxbuf,
                       size_t rxbytes){
@@ -205,6 +211,8 @@ void i2cMasterReceive(I2CDriver *i2cp,
   i2cp->id_state = I2C_ACTIVE_RECEIVE;
   i2c_lld_master_receive(i2cp, slave_addr, rxbuf, rxbytes);
   _i2c_wait_s(i2cp);
+
+  return i2cGetAndClearFlags(i2cp);
 }
 
 /**
