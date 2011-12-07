@@ -95,7 +95,7 @@ SECTIONS
         *(.eh_frame)
     } > flash
 
-    . = ALIGN(4);
+    . = ALIGN(8);
     _etext = .;
     _textdata = _etext;
 
