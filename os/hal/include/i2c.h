@@ -211,8 +211,9 @@ struct I2CSlaveConfig{
     ((i2cp)->id_slave_config)->id_callback(i2cp, i2cscfg);                  \
     (i2cp)->id_state = I2C_READY;                                           \
   }                                                                         \
-  else                                                                      \
+  else{                                                                     \
     (i2cp)->id_state = I2C_READY;                                           \
+  }																			\
   _i2c_wakeup_isr(i2cp);                                                    \
 }
 
@@ -236,8 +237,9 @@ struct I2CSlaveConfig{
     ((i2cp)->id_slave_config)->id_err_callback(i2cp, i2cscfg);              \
     (i2cp)->id_state = I2C_READY;                                           \
   }                                                                         \
-  else                                                                      \
+  else{                                                                     \
     (i2cp)->id_state = I2C_READY;                                           \
+  }																			\
   _i2c_wakeup_isr(i2cp);                                                    \
 }
 
