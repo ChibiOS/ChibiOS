@@ -249,7 +249,7 @@ void gpt_lld_init(void) {
 
 #if STM32_GPT_USE_TIM8
   /* Driver initialization.*/
-  GPTD5.tim = STM32_TIM8;
+  GPTD8.tim = STM32_TIM8;
   gptObjectInit(&GPTD8);
 #endif
 }
