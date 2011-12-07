@@ -292,8 +292,25 @@
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1          TRUE
+#define STM32_I2C1_RX_DMA_MSK ((STM32_DMA_STREAM_ID_MSK(1, 0) |             \
+                               STM32_DMA_STREAM_ID_MSK(1, 5)))
+#define STM32_I2C1_RX_DMA_CHN 0x00100001
+#define STM32_I2C1_TX_DMA_MSK ((STM32_DMA_STREAM_ID_MSK(1, 7)) |            \
+                              (STM32_DMA_STREAM_ID_MSK(1, 6)))
+#define STM32_I2C1_TX_DMA_CHN 0x10000000
+
 #define STM32_HAS_I2C2          TRUE
+#define STM32_I2C2_RX_DMA_MSK ((STM32_DMA_STREAM_ID_MSK(1, 2) |             \
+                               STM32_DMA_STREAM_ID_MSK(1, 3)))
+#define STM32_I2C2_RX_DMA_CHN 0x00007700
+#define STM32_I2C2_TX_DMA_MSK (STM32_DMA_STREAM_ID_MSK(1, 7))
+#define STM32_I2C2_TX_DMA_CHN 0x70000000
+
 #define STM32_HAS_I2C3          TRUE
+#define STM32_I2C3_RX_DMA_MSK (STM32_DMA_STREAM_ID_MSK(1, 2))
+#define STM32_I2C3_RX_DMA_CHN 0x00000300
+#define STM32_I2C3_TX_DMA_MSK (STM32_DMA_STREAM_ID_MSK(1, 4))
+#define STM32_I2C3_TX_DMA_CHN 0x00030000
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC           TRUE
@@ -330,8 +347,8 @@
 #define STM32_HAS_TIM3          TRUE
 #define STM32_HAS_TIM4          TRUE
 #define STM32_HAS_TIM5          TRUE
-#define STM32_HAS_TIM6          FALSE
-#define STM32_HAS_TIM7          FALSE
+#define STM32_HAS_TIM6          TRUE
+#define STM32_HAS_TIM7          TRUE
 #define STM32_HAS_TIM8          TRUE
 #define STM32_HAS_TIM9          TRUE
 #define STM32_HAS_TIM10         TRUE
