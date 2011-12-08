@@ -46,7 +46,19 @@
  * @brief   Simplified priority handling flag.
  * @details Activating this option will make the Kernel work in compact mode.
  */
-#ifndef CORTEX_SIMPLIFIED_PRIORITY
+#if !defined(CORTEX_USE_FPU)
+#define CORTEX_USE_FPU                  FALSE/*CORTEX_HAS_FPU*/
+#elif CORTEX_USE_FPU && !CORTEX_HAS_FPU
+/* This setting requires an FPU presence check in case it is externally
+   redefined.*/
+#error "the selected core does not have an FPU"
+#endif
+
+/**
+ * @brief   Simplified priority handling flag.
+ * @details Activating this option will make the Kernel work in compact mode.
+ */
+#if !defined(CORTEX_SIMPLIFIED_PRIORITY)
 #define CORTEX_SIMPLIFIED_PRIORITY      FALSE
 #endif
 
@@ -57,13 +69,11 @@
  *          @p CORTEX_MAXIMUM_PRIORITY priority level as fast interrupts
  *          priority level.
  */
-#ifndef CORTEX_PRIORITY_SVCALL
+#if !defined(CORTEX_PRIORITY_SVCALL)
 #define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY + 1)
-#else
+#elif !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SVCALL)
 /* If it is externally redefined then better perform a validity check on it.*/
-#if !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SVCALL)
 #error "invalid priority level specified for CORTEX_PRIORITY_SVCALL"
-#endif
 #endif
 
 /**
