@@ -490,6 +490,8 @@ void i2c_lld_reset(I2CDriver *i2cp){
 
 /**
  * @brief Receive data via the I2C bus as master.
+ * @details Number of receiving bytes must be more than 1 because of stm32
+ *          hardware restrictions.
  *
  * @param[in] i2cp        pointer to the @p I2CDriver object
  * @param[in] slave_addr  slave device address
@@ -500,6 +502,8 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint8_t slave_addr,
                             uint8_t *rxbuf, size_t rxbytes){
 
   uint32_t mode = 0;
+
+  chDbgCheck((rxbytes > 1), "i2c_lld_master_receive");
 
   /* init driver fields */
   i2cp->slave_addr = (slave_addr << 1) | 0x01;    /* LSB = 1 -> receive */
@@ -529,6 +533,9 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint8_t slave_addr,
 /**
  * @brief Transmits data via the I2C bus as master.
  *
+ * @details Number of receiving bytes must be 0 or more than 1 because of stm32
+ *          hardware restrictions.
+ *
  * @param[in] i2cp        pointer to the @p I2CDriver object
  * @param[in] slave_addr  slave device address
  * @param[in] txbuf       pointer to the transmit buffer
@@ -541,6 +548,9 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint8_t slave_addr,
                              uint8_t *rxbuf, size_t rxbytes){
 
   uint32_t mode = 0;
+
+  chDbgCheck(((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))),
+      "i2cMasterTransmit");
 
   /* init driver fields */
   i2cp->slave_addr = (slave_addr << 1) & 0x00FE;         /* LSB = 0 -> write */

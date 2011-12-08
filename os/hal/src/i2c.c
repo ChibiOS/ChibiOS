@@ -137,8 +137,6 @@ void i2cStop(I2CDriver *i2cp) {
  * @details Function designed to realize "read-through-write" transfer
  *          paradigm. If you want transmit data without any further read,
  *          than set @b rxbytes field to 0.
- *          Number of receiving byts must be 0 or more than 1 because of stm32
- *          hardware restrictions.
  *
  * @param[in] i2cp        pointer to the @p I2CDriver object
  * @param[in] slave_addr  Slave device address (7 bits) without R/W bit
@@ -159,7 +157,7 @@ i2cflags_t i2cMasterTransmit(I2CDriver *i2cp,
 
   chDbgCheck((i2cp != NULL) && (slave_addr != 0) &&
              (txbytes > 0) && (txbuf != NULL) &&
-             ((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))),
+             ((rxbytes == 0) || ((rxbytes > 0) && (rxbuf != NULL))),
              "i2cMasterTransmit");
 
   i2c_lld_wait_bus_free(i2cp);
@@ -178,8 +176,6 @@ i2cflags_t i2cMasterTransmit(I2CDriver *i2cp,
 
 /**
  * @brief   Receives data from the I2C bus.
- *          Number of receiving byts must be more than 1 because of stm32
- *          hardware restrictions.
  *
  * @param[in] i2cp        pointer to the @p I2CDriver object
  * @param[in] slave_addr  slave device address (7 bits) without R/W bit
@@ -194,7 +190,7 @@ i2cflags_t i2cMasterReceive(I2CDriver *i2cp,
                             size_t rxbytes){
 
   chDbgCheck((i2cp != NULL) && (slave_addr != 0) &&
-             (rxbytes > 1) && (rxbuf != NULL),
+             (rxbytes > 0) && (rxbuf != NULL),
              "i2cMasterReceive");
 
   i2c_lld_wait_bus_free(i2cp);
