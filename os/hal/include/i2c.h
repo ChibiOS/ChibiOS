@@ -43,16 +43,16 @@
  * @name    I2C bus error conditions
  * @{
  */
-#define  I2CD_NO_ERROR              0x00    /**< @brief No error.           */
-#define  I2CD_BUS_ERROR             0x01    /**< @brief Bus Error.          */
-#define  I2CD_ARBITRATION_LOST      0x02    /**< @brief Arbitration Lost
-                                                 (master mode).             */
-#define  I2CD_ACK_FAILURE           0x04    /**< @brief Acknowledge Failure.*/
-#define  I2CD_OVERRUN               0x08    /**< @brief Overrun/Underrun.   */
-#define  I2CD_PEC_ERROR             0x10    /**< @brief PEC Error in
-                                                 reception.                 */
-#define  I2CD_TIMEOUT               0x20    /**< @brief Timeout Error.      */
-#define  I2CD_SMB_ALERT             0x40    /**< @brief SMBus Alert.        */
+#define I2CD_NO_ERROR               0x00   /**< @brief No error.            */
+#define I2CD_BUS_ERROR              0x01   /**< @brief Bus Error.           */
+#define I2CD_ARBITRATION_LOST       0x02   /**< @brief Arbitration Lost
+                                                (master mode).              */
+#define I2CD_ACK_FAILURE            0x04   /**< @brief Acknowledge Failure. */
+#define I2CD_OVERRUN                0x08   /**< @brief Overrun/Underrun.    */
+#define I2CD_PEC_ERROR              0x10   /**< @brief PEC Error in
+                                                reception.                  */
+#define I2CD_TIMEOUT                0x20   /**< @brief Timeout Error.       */
+#define I2CD_SMB_ALERT              0x40   /**< @brief SMBus Alert.         */
 /** @} */
 
 /*===========================================================================*/
@@ -187,8 +187,6 @@ extern "C" {
                          uint8_t *rxbuf, size_t rxbytes);
   i2cflags_t i2cMasterReceive(I2CDriver *i2cp,
                         uint8_t slave_addr, uint8_t *rxbuf, size_t rxbytes);
-  void i2cMasterStart(I2CDriver *i2cp);
-  void i2cMasterStop(I2CDriver *i2cp);
   void i2cAddFlagsI(I2CDriver *i2cp, i2cflags_t mask);
   i2cflags_t i2cGetAndClearFlags(I2CDriver *i2cp);
 

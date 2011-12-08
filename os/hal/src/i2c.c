@@ -133,13 +133,11 @@ void i2cStop(I2CDriver *i2cp) {
 }
 
 /**
- * @brief Sends data via the I2C bus.
- *
+ * @brief   Sends data via the I2C bus.
  * @details Function designed to realize "read-through-write" transfer
  *          paradigm. If you want transmit data without any further read,
  *          than set @b rxbytes field to 0.
- *
- * @details Number of receiving byts must be 0 or more than 1 because of stm32
+ *          Number of receiving byts must be 0 or more than 1 because of stm32
  *          hardware restrictions.
  *
  * @param[in] i2cp        pointer to the @p I2CDriver object
@@ -153,22 +151,21 @@ void i2cStop(I2CDriver *i2cp) {
  * @return                Zero if no errors, otherwise return error code.
  */
 i2cflags_t i2cMasterTransmit(I2CDriver *i2cp,
-                      uint8_t slave_addr,
-                      uint8_t *txbuf,
-                      size_t txbytes,
-                      uint8_t *rxbuf,
-                      size_t rxbytes) {
+                             uint8_t slave_addr,
+                             uint8_t *txbuf,
+                             size_t txbytes,
+                             uint8_t *rxbuf,
+                             size_t rxbytes) {
 
-  chDbgCheck((i2cp != NULL) &&\
-  		(slave_addr != 0) &&\
-  		(txbytes > 0) &&\
-  		(txbuf != NULL) &&\
-  		((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))),
-  		"i2cMasterTransmit");
+  chDbgCheck((i2cp != NULL) && (slave_addr != 0) &&
+             (txbytes > 0) && (txbuf != NULL) &&
+             ((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))),
+             "i2cMasterTransmit");
 
   i2c_lld_wait_bus_free(i2cp);
-  chDbgAssert(!(i2c_lld_bus_is_busy(i2cp)), "i2cMasterReceive(), #1", "time is out");
 
+  chDbgAssert(!(i2c_lld_bus_is_busy(i2cp)),
+              "i2cMasterReceive(), #1", "time is out");
   chDbgAssert(i2cp->id_state == I2C_READY,
               "i2cMasterTransmit(), #1", "not ready");
 
@@ -180,8 +177,8 @@ i2cflags_t i2cMasterTransmit(I2CDriver *i2cp,
 }
 
 /**
- * @brief Receives data from the I2C bus.
- * @details Number of receiving byts must be more than 1 because of stm32
+ * @brief   Receives data from the I2C bus.
+ *          Number of receiving byts must be more than 1 because of stm32
  *          hardware restrictions.
  *
  * @param[in] i2cp        pointer to the @p I2CDriver object
@@ -192,19 +189,18 @@ i2cflags_t i2cMasterTransmit(I2CDriver *i2cp,
  * @return                Zero if no errors, otherwise return error code.
  */
 i2cflags_t i2cMasterReceive(I2CDriver *i2cp,
-                      uint8_t slave_addr,
-                      uint8_t *rxbuf,
-                      size_t rxbytes){
+                            uint8_t slave_addr,
+                            uint8_t *rxbuf,
+                            size_t rxbytes){
 
-  chDbgCheck((i2cp != NULL) &&\
-  		(slave_addr != 0) &&\
-  		(rxbytes > 1) && \
-  		(rxbuf != NULL),
-      "i2cMasterReceive");
+  chDbgCheck((i2cp != NULL) && (slave_addr != 0) &&
+             (rxbytes > 1) && (rxbuf != NULL),
+             "i2cMasterReceive");
 
   i2c_lld_wait_bus_free(i2cp);
-  chDbgAssert(!(i2c_lld_bus_is_busy(i2cp)), "i2cMasterReceive(), #1", "time is out");
 
+  chDbgAssert(!(i2c_lld_bus_is_busy(i2cp)),
+              "i2cMasterReceive(), #1", "time is out");
   chDbgAssert(i2cp->id_state == I2C_READY,
               "i2cMasterReceive(), #1", "not ready");
 
@@ -252,8 +248,6 @@ i2cflags_t i2cGetAndClearFlags(I2CDriver *i2cp) {
   chSysUnlock();
   return mask;
 }
-
-
 
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 /**
