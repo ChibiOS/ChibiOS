@@ -40,6 +40,8 @@
 static uint8_t accel_rx_data[ACCEL_RX_DEPTH];
 static uint8_t accel_tx_data[ACCEL_TX_DEPTH];
 
+static i2cflags_t errors = 0;
+
 static int16_t acceleration_x = 0;
 static int16_t acceleration_y = 0;
 static int16_t acceleration_z = 0;
@@ -57,7 +59,7 @@ int init_lis3(void){
 
   /* sending */
   i2cAcquireBus(&I2CD1);
-  i2cMasterTransmit(&I2CD1, lis3_addr, accel_tx_data, 4, accel_rx_data, 0);
+  i2cMasterTransmit(&I2CD1, lis3_addr, accel_tx_data, 4, accel_rx_data, 0, &errors, TIME_INFINITE);
   i2cReleaseBus(&I2CD1);
   return 0;
 }
@@ -68,7 +70,7 @@ int init_lis3(void){
 void request_acceleration_data(void){
   accel_tx_data[0] = ACCEL_OUT_DATA | AUTO_INCREMENT_BIT; // register address
   i2cAcquireBus(&I2CD1);
-  i2cMasterTransmit(&I2CD1, lis3_addr, accel_tx_data, 1, accel_rx_data, 6);
+  i2cMasterTransmit(&I2CD1, lis3_addr, accel_tx_data, 1, accel_rx_data, 6, &errors, TIME_INFINITE);
   i2cReleaseBus(&I2CD1);
 
   acceleration_x = accel_rx_data[0] + (accel_rx_data[1] << 8);

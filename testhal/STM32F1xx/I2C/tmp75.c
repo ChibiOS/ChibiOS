@@ -38,6 +38,7 @@ static uint8_t tmp75_rx_data[TMP75_RX_DEPTH];
 /* temperature value */
 static int16_t temperature = 0;
 
+static i2cflags_t errors = 0;
 
 #define tmp75_addr 0b1001000
 
@@ -46,7 +47,7 @@ void request_temperature(void){
   int16_t t_int = 0, t_frac = 0;
 
   i2cAcquireBus(&I2CD1);
-  i2cMasterReceive(&I2CD1, tmp75_addr, tmp75_rx_data, 2);
+  i2cMasterReceive(&I2CD1, tmp75_addr, tmp75_rx_data, 2, &errors, TIME_INFINITE);
   i2cReleaseBus(&I2CD1);
 
   t_int = tmp75_rx_data[0] * 100;
