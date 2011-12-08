@@ -29,6 +29,6 @@
  *
  * @pre     In order to use the RTC driver the @p HAL_USE_RTC option
  *          must be enabled in @p halconf.h. 
- *
+ *          
  * @ingroup IO
  */

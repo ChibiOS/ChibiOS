@@ -92,8 +92,12 @@ SECTIONS
     {
         *(.eh_frame)
     } > flash
+    
+    .textalign : ONLY_IF_RO
+    {
+        . = ALIGN(8);
+    } > flash
 
-    . = ALIGN(4);
     _etext = .;
     _textdata = _etext;
 
@@ -114,6 +118,7 @@ SECTIONS
 
     .data :
     {
+        . = ALIGN(4);
         PROVIDE(_data = .);
         *(.data)
         . = ALIGN(4);
@@ -126,6 +131,7 @@ SECTIONS
 
     .bss :
     {
+        . = ALIGN(4);
         PROVIDE(_bss_start = .);
         *(.bss)
         . = ALIGN(4);

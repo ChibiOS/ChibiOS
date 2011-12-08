@@ -34,12 +34,8 @@
 #include "shell.h"
 #include "chprintf.h"
 
-#if SHELL_USE_IPRINTF
-#define sprintf siprintf
-#endif
-
 /**
- * @brief Shell termination event source.
+ * @brief   Shell termination event source.
  */
 EventSource shell_terminated;
 
@@ -103,6 +99,11 @@ static void cmd_info(BaseChannel *chp, int argc, char *argv[]) {
 #ifdef BOARD_NAME
   chprintf(chp, "Board:        %s\r\n", BOARD_NAME);
 #endif
+#ifdef __DATE__
+#ifdef __TIME__
+  chprintf(chp, "Build time:   %s%s%s\r\n", __DATE__, " - ", __TIME__);
+#endif
+#endif
 }
 
 static void cmd_systime(BaseChannel *chp, int argc, char *argv[]) {
@@ -116,7 +117,7 @@ static void cmd_systime(BaseChannel *chp, int argc, char *argv[]) {
 }
 
 /**
- * @brief Array of the default commands.
+ * @brief   Array of the default commands.
  */
 static ShellCommand local_commands[] = {
   {"info", cmd_info},
@@ -138,12 +139,12 @@ static bool_t cmdexec(const ShellCommand *scp, BaseChannel *chp,
 }
 
 /**
- * @brief Shell thread function.
+ * @brief   Shell thread function.
  *
- * @param[in] p pointer to a @p BaseChannel object
- * @return Termination reason.
- * @retval RDY_OK terminated by command.
- * @retval RDY_RESET terminated by reset condition on the I/O channel.
+ * @param[in] p         pointer to a @p BaseChannel object
+ * @return              Termination reason.
+ * @retval RDY_OK       terminated by command.
+ * @retval RDY_RESET    terminated by reset condition on the I/O channel.
  */
 static msg_t shell_thread(void *p) {
   int n;
@@ -199,13 +200,16 @@ static msg_t shell_thread(void *p) {
       }
     }
   }
+  /* Atomically broadcasting the event source and terminating the thread,
+     there is not a chSysUnlock() because the thread terminates upon return.*/
   chSysLock();
   chEvtBroadcastI(&shell_terminated);
-  return msg;
+  chThdExitS(msg);
+  return 0; /* Never executed.*/
 }
 
 /**
- * @brief Shell manager initialization.
+ * @brief   Shell manager initialization.
  */
 void shellInit(void) {
 
@@ -213,30 +217,46 @@ void shellInit(void) {
 }
 
 /**
- * @brief Spawns a new shell.
+ * @brief   Spawns a new shell.
+ * @pre     @p CH_USE_MALLOC_HEAP and @p CH_USE_DYNAMIC must be enabled.
  *
- * @param[in] scp pointer to a @p ShellConfig object
- * @param[in] size size of the shell working area to be allocated
- * @param[in] prio the priority level for the new shell
- *
- * @return A pointer to the shell thread.
- * @retval NULL thread creation failed because memory allocation.
+ * @param[in] scp       pointer to a @p ShellConfig object
+ * @param[in] size      size of the shell working area to be allocated
+ * @param[in] prio      priority level for the new shell
+ * @return              A pointer to the shell thread.
+ * @retval NULL         thread creation failed because memory allocation.
  */
+#if CH_USE_HEAP && CH_USE_DYNAMIC
 Thread *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio) {
 
   return chThdCreateFromHeap(NULL, size, prio, shell_thread, (void *)scp);
 }
+#endif
 
 /**
- * @brief Reads a whole line from the input channel.
+ * @brief   Create statically allocated shell thread.
  *
- * @param[in] chp pointer to a @p BaseChannel object
- * @param[in] line pointer to the line buffer
- * @param[in] size buffer maximum length
+ * @param[in] scp       pointer to a @p ShellConfig object
+ * @param[in] wsp       pointer to a working area dedicated to the shell thread stack
+ * @param[in] size      size of the shell working area
+ * @param[in] prio      priority level for the new shell
+ * @return              A pointer to the shell thread.
+ */
+Thread *shellCreateStatic(const ShellConfig *scp, void *wsp,
+                          size_t size, tprio_t prio) {
+
+  return chThdCreateStatic(wsp, size, prio, shell_thread, (void *)scp);
+}
+
+/**
+ * @brief   Reads a whole line from the input channel.
  *
- * @return The operation status.
- * @retval TRUE the channel was reset or CTRL-D pressed.
- * @retval FALSE operation successful.
+ * @param[in] chp       pointer to a @p BaseChannel object
+ * @param[in] line      pointer to the line buffer
+ * @param[in] size      buffer maximum length
+ * @return              The operation status.
+ * @retval TRUE         the channel was reset or CTRL-D pressed.
+ * @retval FALSE        operation successful.
  */
 bool_t shellGetLine(BaseChannel *chp, char *line, unsigned size) {
   char *p = line;

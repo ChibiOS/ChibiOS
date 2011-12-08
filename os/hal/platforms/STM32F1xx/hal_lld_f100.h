@@ -26,7 +26,7 @@
  */
 
 /**
- * @file    STM32/hal_lld_f100.h
+ * @file    STM32F1xx/hal_lld_f100.h
  * @brief   STM32F100 Value Line HAL subsystem low level driver header.
  *
  * @addtogroup STM32F100_HAL
@@ -40,10 +40,35 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Platform identification
+ * @{
+ */
+#if defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F1 Value Line"
+
+#elif defined(STM32F10X_LD_VL)
+#define PLATFORM_NAME           "STM32F1 Value Line Low Density"
+
+#elif defined(STM32F10X_MD_VL)
+#define PLATFORM_NAME           "STM32F1 Value Line Medium Density"
+#else
+#error "unsupported STM32 Value Line member"
+#endif
+/** @} */
+
+/**
+ * @name    Internal clock sources
+ * @{
+ */
 #define STM32_HSICLK            8000000     /**< High speed internal clock. */
 #define STM32_LSICLK            40000       /**< Low speed internal clock.  */
+/** @} */
 
-/* RCC_CFGR register bits definitions.*/
+/**
+ * @name    RCC_CFGR register bits definitions
+ * @{
+ */
 #define STM32_SW_HSI            (0 << 0)    /**< SYSCLK source is HSI.      */
 #define STM32_SW_HSE            (1 << 0)    /**< SYSCLK source is HSE.      */
 #define STM32_SW_PLL            (2 << 0)    /**< SYSCLK source is PLL.      */
@@ -87,10 +112,287 @@
 #define STM32_MCO_HSE           (6 << 24)   /**< HSE clock on MCO pin.      */
 #define STM32_MCO_PLLDIV2       (7 << 24)   /**< PLL/2 clock on MCO pin.    */
 
+#define STM32_RTC_NOCLOCK       (0 << 8)    /**< No clock.                  */
+#define STM32_RTC_LSE           (1 << 8)    /**< LSE used as RTC clock.     */
+#define STM32_RTC_LSI           (2 << 8)    /**< LSI used as RTC clock.     */
+#define STM32_RTC_HSE           (3 << 8)    /**< HSE divided by 128 used as
+                                                 RTC clock.                 */
+/** @} */
+
+/*===========================================================================*/
+/* Platform capabilities.                                                    */
+/*===========================================================================*/
+
+#if defined(STM32F10X_LD_VL) || defined(__DOXYGEN__)
+/**
+ * @name    STM32F100 LD capabilities
+ * @{
+ */
+/* ADC attributes.*/
+#define STM32_HAS_ADC1          TRUE
+#define STM32_HAS_ADC2          FALSE
+#define STM32_HAS_ADC3          FALSE
+
+/* CAN attributes.*/
+#define STM32_HAS_CAN1          FALSE
+#define STM32_HAS_CAN2          FALSE
+
+/* DAC attributes.*/
+#define STM32_HAS_DAC           TRUE
+
+/* DMA attributes.*/
+#define STM32_ADVANCED_DMA      FALSE
+#define STM32_HAS_DMA1          TRUE
+#define STM32_HAS_DMA2          FALSE
+
+/* ETH attributes.*/
+#define STM32_HAS_ETH           FALSE
+
+/* EXTI attributes.*/
+#define STM32_EXTI_NUM_CHANNELS 19
+
+/* GPIO attributes.*/
+#define STM32_HAS_GPIOA         TRUE
+#define STM32_HAS_GPIOB         TRUE
+#define STM32_HAS_GPIOC         TRUE
+#define STM32_HAS_GPIOD         TRUE
+#define STM32_HAS_GPIOE         TRUE
+#define STM32_HAS_GPIOF         FALSE
+#define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
+#define STM32_HAS_GPIOI         FALSE
+
+/* I2C attributes.*/
+#define STM32_HAS_I2C1          TRUE
+#define STM32_I2C1_RX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(1, 7))
+#define STM32_I2C1_RX_DMA_CHN   0x00000000
+#define STM32_I2C1_TX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(1, 6))
+#define STM32_I2C1_TX_DMA_CHN   0x00000000
+
+#define STM32_HAS_I2C2          FALSE
+#define STM32_I2C2_RX_DMA_MSK   0
+#define STM32_I2C2_RX_DMA_CHN   0x00000000
+#define STM32_I2C2_TX_DMA_MSK   0
+#define STM32_I2C2_TX_DMA_CHN   0x00000000
+
+#define STM32_HAS_I2C3          FALSE
+#define STM32_SPI3_RX_DMA_MSK   0
+#define STM32_SPI3_RX_DMA_CHN   0x00000000
+#define STM32_SPI3_TX_DMA_MSK   0
+#define STM32_SPI3_TX_DMA_CHN   0x00000000
+
+#define STM32_HAS_RTC           TRUE
+
+/* SDIO attributes.*/
+#define STM32_HAS_SDIO          FALSE
+
+/* SPI attributes.*/
+#define STM32_HAS_SPI1          TRUE
+#define STM32_SPI1_RX_DMA_MSK   STM32_DMA_STREAM_ID_MSK(1, 2)
+#define STM32_SPI1_RX_DMA_CHN   0x00000000
+#define STM32_SPI1_TX_DMA_MSK   STM32_DMA_STREAM_ID_MSK(1, 3)
+#define STM32_SPI1_TX_DMA_CHN   0x00000000
+
+#define STM32_HAS_SPI2          FALSE
+#define STM32_SPI2_RX_DMA_MSK   0
+#define STM32_SPI2_RX_DMA_CHN   0x00000000
+#define STM32_SPI2_TX_DMA_MSK   0
+#define STM32_SPI2_TX_DMA_CHN   0x00000000
+
+#define STM32_HAS_SPI3          FALSE
+#define STM32_SPI3_RX_DMA_MSK   0
+#define STM32_SPI3_RX_DMA_CHN   0x00000000
+#define STM32_SPI3_TX_DMA_MSK   0
+#define STM32_SPI3_TX_DMA_CHN   0x00000000
+
+/* TIM attributes.*/
+#define STM32_HAS_TIM1          TRUE
+#define STM32_HAS_TIM2          TRUE
+#define STM32_HAS_TIM3          TRUE
+#define STM32_HAS_TIM4          FALSE
+#define STM32_HAS_TIM5          FALSE
+#define STM32_HAS_TIM6          TRUE
+#define STM32_HAS_TIM7          TRUE
+#define STM32_HAS_TIM8          FALSE
+#define STM32_HAS_TIM9          FALSE
+#define STM32_HAS_TIM10         FALSE
+#define STM32_HAS_TIM11         FALSE
+#define STM32_HAS_TIM12         FALSE
+#define STM32_HAS_TIM13         FALSE
+#define STM32_HAS_TIM14         FALSE
+#define STM32_HAS_TIM15         TRUE
+#define STM32_HAS_TIM16         TRUE
+#define STM32_HAS_TIM17         TRUE
+
+/* USART attributes.*/
+#define STM32_HAS_USART1        TRUE
+#define STM32_USART1_RX_DMA_MSK (STM32_DMA_STREAM_ID_MSK(1, 5))
+#define STM32_USART1_RX_DMA_CHN 0x00000000
+#define STM32_USART1_TX_DMA_MSK (STM32_DMA_STREAM_ID_MSK(1, 4))
+#define STM32_USART1_TX_DMA_CHN 0x00000000
+
+#define STM32_HAS_USART2        TRUE
+#define STM32_USART2_RX_DMA_MSK (STM32_DMA_STREAM_ID_MSK(1, 6))
+#define STM32_USART2_RX_DMA_CHN 0x00000000
+#define STM32_USART2_TX_DMA_MSK (STM32_DMA_STREAM_ID_MSK(1, 7))
+#define STM32_USART2_TX_DMA_CHN 0x00000000
+
+#define STM32_HAS_USART3        FALSE
+#define STM32_USART3_RX_DMA_MSK 0
+#define STM32_USART3_RX_DMA_CHN 0x00000000
+#define STM32_USART3_TX_DMA_MSK 0
+#define STM32_USART3_TX_DMA_CHN 0x00000000
+
+#define STM32_HAS_UART4         FALSE
+#define STM32_UART4_RX_DMA_MSK  0
+#define STM32_UART4_RX_DMA_CHN  0x00000000
+#define STM32_UART4_TX_DMA_MSK  0
+#define STM32_UART4_TX_DMA_CHN  0x00000000
+
+#define STM32_HAS_UART5         FALSE
+#define STM32_UART5_RX_DMA_MSK  0
+#define STM32_UART5_RX_DMA_CHN  0x00000000
+#define STM32_UART5_TX_DMA_MSK  0
+#define STM32_UART5_TX_DMA_CHN  0x00000000
+
+#define STM32_HAS_USART6        FALSE
+#define STM32_USART6_RX_DMA_MSK 0
+#define STM32_USART6_RX_DMA_CHN 0x00000000
+#define STM32_USART6_TX_DMA_MSK 0
+#define STM32_USART6_TX_DMA_CHN 0x00000000
+
+/* USB attributes.*/
+#define STM32_HAS_USB           FALSE
+#define STM32_HAS_OTG1          FALSE
+#define STM32_HAS_OTG2          FALSE
+/** @} */
+#endif /* defined(STM32F10X_LD_VL) */
+
+#if defined(STM32F10X_MD_VL) || defined(__DOXYGEN__)
+/**
+ * @name    STM32F100 MD capabilities
+ * @{
+ */
+/* ADC attributes.*/
+#define STM32_HAS_ADC1          TRUE
+#define STM32_HAS_ADC2          FALSE
+#define STM32_HAS_ADC3          FALSE
+
+/* CAN attributes.*/
+#define STM32_HAS_CAN1          FALSE
+#define STM32_HAS_CAN2          FALSE
+
+/* DAC attributes.*/
+#define STM32_HAS_DAC           TRUE
+
+/* DMA attributes.*/
+#define STM32_ADVANCED_DMA      FALSE
+#define STM32_HAS_DMA1          TRUE
+#define STM32_HAS_DMA2          FALSE
+
+/* ETH attributes.*/
+#define STM32_HAS_ETH           FALSE
+
+/* EXTI attributes.*/
+#define STM32_EXTI_NUM_CHANNELS 19
+
+/* GPIO attributes.*/
+#define STM32_HAS_GPIOA         TRUE
+#define STM32_HAS_GPIOB         TRUE
+#define STM32_HAS_GPIOC         TRUE
+#define STM32_HAS_GPIOD         TRUE
+#define STM32_HAS_GPIOE         TRUE
+#define STM32_HAS_GPIOF         FALSE
+#define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOH         FALSE
+#define STM32_HAS_GPIOI         FALSE
+
+/* I2C attributes.*/
+#define STM32_HAS_I2C1          TRUE
+#define STM32_I2C1_RX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(1, 7))
+#define STM32_I2C1_RX_DMA_CHN   0x00000000
+#define STM32_I2C1_TX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(1, 6))
+#define STM32_I2C1_TX_DMA_CHN   0x00000000
+
+#define STM32_HAS_I2C2          TRUE
+#define STM32_I2C2_RX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(1, 5))
+#define STM32_I2C2_RX_DMA_CHN   0x00000000
+#define STM32_I2C2_TX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(1, 4))
+#define STM32_I2C2_TX_DMA_CHN   0x00000000
+
+#define STM32_HAS_I2C3          FALSE
+#define STM32_I2C3_RX_DMA_MSK   0
+#define STM32_I2C3_RX_DMA_CHN   0x00000000
+#define STM32_I2C3_TX_DMA_MSK   0
+#define STM32_I2C3_TX_DMA_CHN   0x00000000
+
+/* RTC attributes.*/
+#define STM32_HAS_RTC           TRUE
+
+/* SDIO attributes.*/
+#define STM32_HAS_SDIO          FALSE
+
+/* SPI attributes.*/
+#define STM32_HAS_SPI1          TRUE
+#define STM32_SPI1_RX_DMA_MSK   STM32_DMA_STREAM_ID_MSK(1, 2)
+#define STM32_SPI1_RX_DMA_CHN   0x00000000
+#define STM32_SPI1_TX_DMA_MSK   STM32_DMA_STREAM_ID_MSK(1, 3)
+#define STM32_SPI1_TX_DMA_CHN   0x00000000
+
+#define STM32_HAS_SPI2          TRUE
+#define STM32_SPI2_RX_DMA_MSK   STM32_DMA_STREAM_ID_MSK(1, 4)
+#define STM32_SPI2_RX_DMA_CHN   0x00000000
+#define STM32_SPI2_TX_DMA_MSK   STM32_DMA_STREAM_ID_MSK(1, 5)
+#define STM32_SPI2_TX_DMA_CHN   0x00000000
+
+#define STM32_HAS_SPI3          FALSE
+#define STM32_SPI3_RX_DMA_MSK   0
+#define STM32_SPI3_RX_DMA_CHN   0x00000000
+#define STM32_SPI3_TX_DMA_MSK   0
+#define STM32_SPI3_TX_DMA_CHN   0x00000000
+
+/* TIM attributes.*/
+#define STM32_HAS_TIM1          TRUE
+#define STM32_HAS_TIM2          TRUE
+#define STM32_HAS_TIM3          TRUE
+#define STM32_HAS_TIM4          TRUE
+#define STM32_HAS_TIM5          FALSE
+#define STM32_HAS_TIM6          TRUE
+#define STM32_HAS_TIM7          TRUE
+#define STM32_HAS_TIM8          FALSE
+#define STM32_HAS_TIM9          FALSE
+#define STM32_HAS_TIM10         FALSE
+#define STM32_HAS_TIM11         FALSE
+#define STM32_HAS_TIM12         FALSE
+#define STM32_HAS_TIM13         FALSE
+#define STM32_HAS_TIM14         FALSE
+#define STM32_HAS_TIM15         TRUE
+#define STM32_HAS_TIM16         TRUE
+#define STM32_HAS_TIM17         TRUE
+
+/* USART attributes.*/
+#define STM32_HAS_USART1        TRUE
+#define STM32_HAS_USART2        TRUE
+#define STM32_HAS_USART3        TRUE
+#define STM32_HAS_UART4         FALSE
+#define STM32_HAS_UART5         FALSE
+#define STM32_HAS_USART6        FALSE
+
+/* USB attributes.*/
+#define STM32_HAS_USB           FALSE
+#define STM32_HAS_OTG1          FALSE
+#define STM32_HAS_OTG2          FALSE
+/** @} */
+#endif /* defined(STM32F10X_MD_VL) */
+
 /*===========================================================================*/
 /* Platform specific friendly IRQ names.                                     */
 /*===========================================================================*/
 
+/**
+ * @name  IRQ VECTOR names
+ * @{
+ */
 #define WWDG_IRQHandler         Vector40    /**< Window Watchdog.           */
 #define PVD_IRQHandler          Vector44    /**< PVD through EXTI Line
                                                  detect.                    */
@@ -138,16 +440,21 @@
 #define USART3_IRQHandler       VectorDC    /**< USART3.                    */
 #endif
 #define EXTI15_10_IRQHandler    VectorE0    /**< EXTI Line 15..10.          */
-#define RTCAlarm_IRQHandler     VectorE4    /**< RTC Alarm through EXTI.    */
-#define CEC_IRQHandler          VectorE8    /**< CEC.                      */
+#define RTC_Alarm_IRQHandler    VectorE4    /**< RTC Alarm through EXTI.    */
+#define CEC_IRQHandler          VectorE8    /**< CEC.                       */
 #define TIM12_IRQHandler        VectorEC    /**< TIM12.                     */
 #define TIM13_IRQHandler        VectorF0    /**< TIM13.                     */
 #define TIM14_IRQHandler        VectorF4    /**< TIM14.                     */
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Configuration options
+ * @{
+ */
 /**
  * @brief   Main clock source selection.
  * @note    If the selected clock source is not the PLL then the PLL is not
@@ -227,6 +534,14 @@
 #if !defined(STM32_MCO) || defined(__DOXYGEN__)
 #define STM32_MCO                   STM32_MCO_NOCLOCK
 #endif
+
+/**
+ * @brief   Clock source selecting. LSI by default.
+ */
+#if !defined(STM32_RTC) || defined(__DOXYGEN__)
+#define STM32_RTC                   STM32_RTC_LSI
+#endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

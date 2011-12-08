@@ -55,6 +55,13 @@
 #endif
 
 /**
+ * @brief   Enables the EXT subsystem.
+ */
+#if !defined(HAL_USE_EXT) || defined(__DOXYGEN__)
+#define HAL_USE_EXT                 FALSE
+#endif
+
+/**
  * @brief   Enables the GPT subsystem.
  */
 #if !defined(HAL_USE_GPT) || defined(__DOXYGEN__)
@@ -97,6 +104,13 @@
 #endif
 
 /**
+ * @brief   Enables the RTC subsystem.
+ */
+#if !defined(HAL_USE_RTC) || defined(__DOXYGEN__)
+#define HAL_USE_RTC                 TRUE
+#endif
+
+/**
  * @brief   Enables the SDC subsystem.
  */
 #if !defined(HAL_USE_SDC) || defined(__DOXYGEN__)
@@ -136,13 +150,6 @@
  */
 #if !defined(HAL_USE_USB) || defined(__DOXYGEN__)
 #define HAL_USE_USB                 FALSE
-#endif
-
-/**
- * @brief   Enables the USB subsystem.
- */
-#if !defined(HAL_USE_RTC) || defined(__DOXYGEN__)
-#define HAL_USE_RTC                 TRUE
 #endif
 
 /*===========================================================================*/
@@ -205,23 +212,17 @@
 /*===========================================================================*/
 /* RTC driver related settings.                                              */
 /*===========================================================================*/
-/**
- * @brief   Switch to TRUE if you need callbacks from RTC.
- */
-#if !defined(RTC_SUPPORTS_CALLBACKS) || defined(__DOXYGEN__)
-#define RTC_SUPPORTS_CALLBACKS      FALSE
-#endif
-
-/**
- * @brief   Clock source selecting. LSE by default.
- */
-#if !defined(RTC_CLOCK_SOURCE) || defined(__DOXYGEN__)
-#define RTC_CLOCK_SOURCE            RCC_BDCR_RTCSEL_LSE
-#endif
 
 /*===========================================================================*/
 /* MAC driver related settings.                                              */
 /*===========================================================================*/
+
+/**
+ * @brief   Enables an event sources for incoming packets.
+ */
+#if !defined(MAC_USE_EVENTS) || defined(__DOXYGEN__)
+#define MAC_USE_EVENTS              TRUE
+#endif
 
 /*===========================================================================*/
 /* MMC_SPI driver related settings.                                          */
@@ -273,16 +274,9 @@
 #endif
 
 /*===========================================================================*/
-/* PAL driver related settings.                                              */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* PWM driver related settings.                                              */
-/*===========================================================================*/
-
-/*===========================================================================*/
 /* SDC driver related settings.                                              */
 /*===========================================================================*/
+
 /**
  * @brief   Number of initialization attempts before rejecting the card.
  * @note    Attempts are performed at 10mS intevals.
@@ -353,10 +347,6 @@
 #if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define SPI_USE_MUTUAL_EXCLUSION    FALSE
 #endif
-
-/*===========================================================================*/
-/* UART driver related settings.                                             */
-/*===========================================================================*/
 
 #endif /* _HALCONF_H_ */
 

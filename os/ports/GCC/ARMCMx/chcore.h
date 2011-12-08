@@ -50,8 +50,9 @@
 #include "cmparams.h"
 
 /* Cortex model check, only M0 and M3 supported right now.*/
-#if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M3)
-#elif (CORTEX_MODEL == CORTEX_M1) || (CORTEX_MODEL == CORTEX_M4)
+#if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M3) ||           \
+    (CORTEX_MODEL == CORTEX_M4)
+#elif (CORTEX_MODEL == CORTEX_M1)
 #warning "untested Cortex-M model"
 #else
 #error "unknown or unsupported Cortex-M model"
@@ -104,7 +105,7 @@
  *          a stack frame when compiling without optimizations. You may
  *          reduce this value to zero when compiling with optimizations.
  */
-#ifndef PORT_IDLE_THREAD_STACK_SIZE
+#if !defined(PORT_IDLE_THREAD_STACK_SIZE)
 #define PORT_IDLE_THREAD_STACK_SIZE     16
 #endif
 
@@ -119,14 +120,14 @@
  *          @p chSchDoReschedule() can have a stack frame, expecially with
  *          compiler optimizations disabled.
  */
-#ifndef PORT_INT_REQUIRED_STACK
+#if !defined(PORT_INT_REQUIRED_STACK)
 #define PORT_INT_REQUIRED_STACK         16
 #endif
 
 /**
  * @brief   Enables the use of the WFI instruction in the idle thread loop.
  */
-#ifndef CORTEX_ENABLE_WFI_IDLE
+#if !defined(CORTEX_ENABLE_WFI_IDLE)
 #define CORTEX_ENABLE_WFI_IDLE          FALSE
 #endif
 
@@ -135,13 +136,11 @@
  * @note    The default SYSTICK handler priority is calculated as the priority
  *          level in the middle of the numeric priorities range.
  */
-#ifndef CORTEX_PRIORITY_SYSTICK
+#if !defined(CORTEX_PRIORITY_SYSTICK)
 #define CORTEX_PRIORITY_SYSTICK         (CORTEX_PRIORITY_LEVELS >> 1)
-#else
+#elif !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SYSTICK)
 /* If it is externally redefined then better perform a validity check on it.*/
-#if !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SYSTICK)
 #error "invalid priority level specified for CORTEX_PRIORITY_SYSTICK"
-#endif
 #endif
 
 /**
@@ -151,7 +150,7 @@
  *          binary compatibility with EABI compiled libraries.
  * @note    Allowed values are 32 or 64.
  */
-#ifndef CORTEX_STACK_ALIGNMENT
+#if !defined(CORTEX_STACK_ALIGNMENT)
 #define CORTEX_STACK_ALIGNMENT          64
 #endif
 

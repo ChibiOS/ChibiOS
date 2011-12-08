@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    STM32/usb_lld.c
+ * @file    STM32/USBv1/usb_lld.c
  * @brief   STM32 USB subsystem low level driver source.
  *
  * @addtogroup USB
@@ -109,58 +109,6 @@ static uint32_t pm_alloc(USBDriver *usbp, size_t size) {
   return next;
 }
 
-/**
- * @brief   Copies a packet from memory into a packet buffer.
- *
- * @param[in] ep        endpoint number
- * @param[in] buf       buffer where to fetch the endpoint data
- * @param[in] n         maximum number of bytes to copy
- */
-static void write_packet(usbep_t ep, const uint8_t *buf, size_t n){
-  uint32_t *pmap;
-  stm32_usb_descriptor_t *udp;
-  size_t count;
-
-  udp = USB_GET_DESCRIPTOR(ep);
-  pmap = USB_ADDR2PTR(udp->TXADDR);
-  udp->TXCOUNT = n;
-  count = (n + 1) / 2;
-  while (count) {
-    *pmap++ = *(uint16_t *)buf;
-    buf += 2;
-    count--;
-  }
-  EPR_SET_STAT_TX(ep, EPR_STAT_TX_VALID);
-}
-
-/**
- * @brief   Copies a packet from a packet buffer into memory.
- *
- * @param[in] ep        endpoint number
- * @param[in] buf       buffer where to copy the endpoint data
- * @param[in] n         maximum number of bytes to copy
- * @return              The packet size.
- * @retval 0            Special case, zero sized packet.
- */
-static size_t read_packet(usbep_t ep, uint8_t *buf, size_t n){
-  uint32_t *pmap;
-  stm32_usb_descriptor_t *udp;
-  size_t count;
-
-  udp = USB_GET_DESCRIPTOR(ep);
-  pmap = USB_ADDR2PTR(udp->RXADDR);
-  count = udp->RXCOUNT & RXCOUNT_COUNT_MASK;
-  if (n > count)
-    n = count;
-  count = (n + 1) / 2;
-  while (count) {
-    *(uint16_t *)buf = (uint16_t)*pmap++;
-    buf += 2;
-    count--;
-  }
-  return n;
-}
-
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -247,7 +195,7 @@ CH_IRQ_HANDLER(Vector90) {
       }
       else {
         /* Transaction mode.*/
-        n = USB_GET_DESCRIPTOR(ep)->TXCOUNT;
+        n = (size_t)USB_GET_DESCRIPTOR(ep)->TXCOUNT0;
         epcp->in_state->txbuf  += n;
         epcp->in_state->txcnt  += n;
         epcp->in_state->txsize -= n;
@@ -257,7 +205,8 @@ CH_IRQ_HANDLER(Vector90) {
             n = epcp->in_maxsize;
           else
             n = epcp->in_state->txsize;
-          write_packet(ep, epcp->in_state->txbuf, n);
+          usb_lld_write_packet_buffer(usbp, ep, epcp->in_state->txbuf, n);
+          usb_lld_start_in(usbp, ep);
         }
         else {
           /* Transfer completed, invokes the callback.*/
@@ -279,7 +228,10 @@ CH_IRQ_HANDLER(Vector90) {
       }
       else {
         /* Transaction mode.*/
-        n = read_packet(ep, epcp->out_state->rxbuf, epcp->out_state->rxsize);
+        n = usb_lld_read_packet_buffer(usbp, ep,
+                                       epcp->out_state->rxbuf,
+                                       epcp->out_state->rxsize);
+        usb_lld_start_out(usbp, ep);
         epcp->out_state->rxbuf  += n;
         epcp->out_state->rxcnt  += n;
         epcp->out_state->rxsize -= n;
@@ -330,7 +282,7 @@ void usb_lld_start(USBDriver *usbp) {
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
       /* USB clock enabled.*/
-      RCC->APB1ENR |= RCC_APB1ENR_USBEN;
+      rccEnableUSB(FALSE);
       /* Powers up the transceiver while holding the USB in reset state.*/
       STM32_USB->CNTR = CNTR_FRES;
       /* Enabling the USB IRQ vectors, this also gives enough time to allow
@@ -360,12 +312,12 @@ void usb_lld_stop(USBDriver *usbp) {
 
   /* If in ready state then disables the USB clock.*/
   if (usbp->state == USB_STOP) {
-#if STM32_ADC_USE_ADC1
+#if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
       NVICDisableVector(19);
       NVICDisableVector(20);
       STM32_USB->CNTR = CNTR_PDWN | CNTR_FRES;
-      RCC->APB1ENR &= ~RCC_APB1ENR_USBEN;
+      rccDisableUSB(FALSE);
     }
 #endif
   }
@@ -467,10 +419,10 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   else
     nblocks = ((((epcp->out_maxsize - 1) | 1) + 1) / 2) << 10;
   dp = USB_GET_DESCRIPTOR(ep);
-  dp->TXCOUNT = 0;
-  dp->RXCOUNT = nblocks;
-  dp->TXADDR  = pm_alloc(usbp, epcp->in_maxsize);
-  dp->RXADDR  = pm_alloc(usbp, epcp->out_maxsize);
+  dp->TXCOUNT0 = 0;
+  dp->RXCOUNT0 = nblocks;
+  dp->TXADDR0  = pm_alloc(usbp, epcp->in_maxsize);
+  dp->RXADDR0  = pm_alloc(usbp, epcp->out_maxsize);
 }
 
 /**
@@ -564,19 +516,18 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
 
   (void)usbp;
   udp = USB_GET_DESCRIPTOR(ep);
-  pmap = USB_ADDR2PTR(udp->RXADDR);
+  pmap = USB_ADDR2PTR(udp->RXADDR0);
   for (n = 0; n < 4; n++) {
     *(uint16_t *)buf = (uint16_t)*pmap++;
     buf += 2;
   }
-  EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
 }
 
 /**
- * @brief   Reads a packet from the dedicated packet buffer.
+ * @brief   Reads from a dedicated packet buffer.
  * @pre     In order to use this function he endpoint must have been
  *          initialized in packet mode.
- * @post    The endpoint is ready to accept another packet.
+ * @note    This function can be invoked both in thread and IRQ context.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
@@ -589,16 +540,16 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
  *
  * @notapi
  */
-size_t usb_lld_read_packet(USBDriver *usbp, usbep_t ep,
-                           uint8_t *buf, size_t n) {
+size_t usb_lld_read_packet_buffer(USBDriver *usbp, usbep_t ep,
+                                  uint8_t *buf, size_t n) {
   uint32_t *pmap;
   stm32_usb_descriptor_t *udp;
   size_t count;
 
   (void)usbp;
   udp = USB_GET_DESCRIPTOR(ep);
-  pmap = USB_ADDR2PTR(udp->RXADDR);
-  count = udp->RXCOUNT & RXCOUNT_COUNT_MASK;
+  pmap = USB_ADDR2PTR(udp->RXADDR0);
+  count = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
   if (n > count)
     n = count;
   n = (n + 1) / 2;
@@ -607,15 +558,14 @@ size_t usb_lld_read_packet(USBDriver *usbp, usbep_t ep,
     buf += 2;
     n--;
   }
-  EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
   return count;
 }
 
 /**
- * @brief   Writes a packet to the dedicated packet buffer.
+ * @brief   Writes to a dedicated packet buffer.
  * @pre     In order to use this function he endpoint must have been
  *          initialized in packet mode.
- * @post    The endpoint is ready to transmit the packet.
+ * @note    This function can be invoked both in thread and IRQ context.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
@@ -625,36 +575,35 @@ size_t usb_lld_read_packet(USBDriver *usbp, usbep_t ep,
  *
  * @notapi
  */
-void usb_lld_write_packet(USBDriver *usbp, usbep_t ep,
-                          const uint8_t *buf, size_t n) {
+void usb_lld_write_packet_buffer(USBDriver *usbp, usbep_t ep,
+                                 const uint8_t *buf, size_t n) {
   uint32_t *pmap;
   stm32_usb_descriptor_t *udp;
 
   (void)usbp;
   udp = USB_GET_DESCRIPTOR(ep);
-  pmap = USB_ADDR2PTR(udp->TXADDR);
-  udp->TXCOUNT = n;
+  pmap = USB_ADDR2PTR(udp->TXADDR0);
+  udp->TXCOUNT0 = (uint16_t)n;
   n = (n + 1) / 2;
   while (n > 0) {
     *pmap++ = *(uint16_t *)buf;
     buf += 2;
     n--;
   }
-  EPR_SET_STAT_TX(ep, EPR_STAT_TX_VALID);
 }
 
 /**
- * @brief   Starts a receive operation on an OUT endpoint.
+ * @brief   Prepares for a receive operation.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
- * @param[out] buf      buffer where to copy the endpoint data
- * @param[in] n         maximum number of bytes to copy in the buffer
+ * @param[out] buf      buffer where to copy the received data
+ * @param[in] n         maximum number of bytes to copy
  *
  * @notapi
  */
-void usb_lld_start_out(USBDriver *usbp, usbep_t ep,
-                       uint8_t *buf, size_t n) {
+void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep,
+                             uint8_t *buf, size_t n) {
   USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
   osp->rxbuf  = buf;
@@ -665,6 +614,42 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep,
   else
     osp->rxpkts = (uint16_t)((n + usbp->epc[ep]->out_maxsize - 1) /
                              usbp->epc[ep]->out_maxsize);
+}
+
+/**
+ * @brief   Prepares for a transmit operation.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] buf       buffer where to fetch the data to be transmitted
+ * @param[in] n         maximum number of bytes to copy
+ *
+ * @notapi
+ */
+void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
+                              const uint8_t *buf, size_t n) {
+  USBInEndpointState *isp = usbp->epc[ep]->in_state;
+
+  isp->txbuf  = buf;
+  isp->txsize = n;
+  isp->txcnt  = 0;
+  if (n > (size_t)usbp->epc[ep]->in_maxsize)
+    n = (size_t)usbp->epc[ep]->in_maxsize;
+  usb_lld_write_packet_buffer(usbp, ep, buf, n);
+}
+
+/**
+ * @brief   Starts a receive operation on an OUT endpoint.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ *
+ * @notapi
+ */
+void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
+
+  (void)usbp;
+
   EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
 }
 
@@ -673,21 +658,14 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep,
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
- * @param[in] buf       buffer where to fetch the endpoint data
- * @param[in] n         maximum number of bytes to copy
  *
  * @notapi
  */
-void usb_lld_start_in(USBDriver *usbp, usbep_t ep,
-                      const uint8_t *buf, size_t n) {
-  USBInEndpointState *isp = usbp->epc[ep]->in_state;
+void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
 
-  isp->txbuf  = buf;
-  isp->txsize = n;
-  isp->txcnt  = 0;
-  if (n > (size_t)usbp->epc[ep]->in_maxsize)
-    n = (size_t)usbp->epc[ep]->in_maxsize;
-  write_packet(ep, buf, n);
+  (void)usbp;
+
+  EPR_SET_STAT_TX(ep, EPR_STAT_TX_VALID);
 }
 
 /**
@@ -701,6 +679,7 @@ void usb_lld_start_in(USBDriver *usbp, usbep_t ep,
 void usb_lld_stall_out(USBDriver *usbp, usbep_t ep) {
 
   (void)usbp;
+
   EPR_SET_STAT_RX(ep, EPR_STAT_RX_STALL);
 }
 
@@ -715,6 +694,7 @@ void usb_lld_stall_out(USBDriver *usbp, usbep_t ep) {
 void usb_lld_stall_in(USBDriver *usbp, usbep_t ep) {
 
   (void)usbp;
+
   EPR_SET_STAT_TX(ep, EPR_STAT_TX_STALL);
 }
 

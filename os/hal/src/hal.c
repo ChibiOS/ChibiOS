@@ -71,6 +71,9 @@ void halInit(void) {
 #if HAL_USE_CAN || defined(__DOXYGEN__)
   canInit();
 #endif
+#if HAL_USE_EXT || defined(__DOXYGEN__)
+  extInit();
+#endif
 #if HAL_USE_GPT || defined(__DOXYGEN__)
   gptInit();
 #endif

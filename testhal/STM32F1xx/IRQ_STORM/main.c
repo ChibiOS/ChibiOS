@@ -237,15 +237,21 @@ int main(void) {
   println("***");
   print("*** Kernel:       ");
   println(CH_KERNEL_VERSION);
-#ifdef __GNUC__
-  print("*** GCC Version:  ");
-  println(__VERSION__);
+  print("*** Compiled:     ");
+  println(__DATE__ " - " __TIME__);
+#ifdef CH_COMPILER_NAME
+  print("*** Compiler:     ");
+  println(CH_COMPILER_NAME);
 #endif
   print("*** Architecture: ");
   println(CH_ARCHITECTURE_NAME);
 #ifdef CH_CORE_VARIANT_NAME
   print("*** Core Variant: ");
   println(CH_CORE_VARIANT_NAME);
+#endif
+#ifdef CH_PORT_INFO
+  print("*** Port Info:    ");
+  println(CH_PORT_INFO);
 #endif
 #ifdef PLATFORM_NAME
   print("*** Platform:     ");

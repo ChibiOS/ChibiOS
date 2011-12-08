@@ -21,10 +21,10 @@
 /**
  * @file    stm32_usb.h
  * @brief   STM32 USB registers layout header.
- * @note    This file requires definitions from the ST STM32 header file
- *          stm3232f10x.h.
+ * @note    This file requires definitions from the ST STM32 header files
+ *          stm32f10x.h or stm32l1xx.h.
  *
- * @addtogroup STM32_USB
+ * @addtogroup USB
  * @{
  */
 
@@ -78,20 +78,36 @@ typedef struct {
   /**
    * @brief   TX buffer offset register.
    */
-  volatile uint32_t     TXADDR;
+  volatile uint32_t     TXADDR0;
   /**
-   * @brief   TX counter register.
+   * @brief   TX counter register 0.
    */
-  volatile uint32_t     TXCOUNT;
+  volatile uint16_t     TXCOUNT0;
+  /**
+   * @brief   TX counter register 1.
+   */
+  volatile uint16_t     TXCOUNT1;
   /**
    * @brief   RX buffer offset register.
    */
-  volatile uint32_t     RXADDR;
+  volatile uint32_t     RXADDR0;
   /**
-   * @brief   RX counter register.
+   * @brief   RX counter register 0.
    */
-  volatile uint32_t     RXCOUNT;
+  volatile uint16_t     RXCOUNT0;
+  /**
+   * @brief   RX counter register 1.
+   */
+  volatile uint16_t     RXCOUNT1;
 } stm32_usb_descriptor_t;
+
+/**
+ * @name    Register aliases
+ * @{
+ */
+#define RXADDR1         TXADDR0
+#define TXADDR1         RXADDR0
+/** @} */
 
 /**
  * @brief USB registers block numeric address.
@@ -132,8 +148,11 @@ typedef struct {
 #define EPR_STAT_TX_NAK         0x0020
 #define EPR_STAT_TX_VALID       0x0030
 #define EPR_DTOG_TX             0x0040
+#define EPR_SWBUF_RX            EPR_DTOG_TX
 #define EPR_CTR_TX              0x0080
 #define EPR_EP_KIND             0x0100
+#define EPR_EP_DBL_BUF          EPR_EP_KIND
+#define EPR_EP_STATUS_OUT       EPR_EP_KIND
 #define EPR_EP_TYPE_MASK        0x0600
 #define EPR_EP_TYPE_BULK        0x0000
 #define EPR_EP_TYPE_CONTROL     0x0200
@@ -146,6 +165,7 @@ typedef struct {
 #define EPR_STAT_RX_NAK         0x2000
 #define EPR_STAT_RX_VALID       0x3000
 #define EPR_DTOG_RX             0x4000
+#define EPR_SWBUF_TX            EPR_DTOG_RX
 #define EPR_CTR_RX              0x8000
 
 #define CNTR_FRES               0x0001

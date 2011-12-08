@@ -227,6 +227,7 @@ typedef enum IRQn
   */
 
 #include "core_cm3.h"
+/* CHIBIOS FIX */
 /* #include "system_stm32f2xx.h" */
 #include <stdint.h>
 
@@ -634,6 +635,7 @@ typedef struct
 /** 
   * @brief General Purpose I/O
   */
+/* CHIBIOS FIX */
 #if 0
 typedef struct
 {
@@ -649,6 +651,7 @@ typedef struct
   __IO uint32_t AFR[2];   /*!< GPIO alternate function registers,     Address offset: 0x24-0x28 */
 } GPIO_TypeDef;
 #endif
+
 /** 
   * @brief System configuration controller
   */

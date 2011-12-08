@@ -60,6 +60,11 @@ SerialDriver SD4;
 SerialDriver SD5;
 #endif
 
+/** @brief USART6 serial driver identifier.*/
+#if STM32_SERIAL_USE_USART6 || defined(__DOXYGEN__)
+SerialDriver SD6;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -90,7 +95,11 @@ static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
   /*
    * Baud rate setting.
    */
+#if STM32_HAS_USART6
+  if ((sdp->usart == USART1) || (sdp->usart == USART6))
+#else
   if (sdp->usart == USART1)
+#endif
     u->BRR = STM32_PCLK2 / config->sc_speed;
   else
     u->BRR = STM32_PCLK1 / config->sc_speed;
@@ -123,7 +132,7 @@ static void usart_deinit(USART_TypeDef *u) {
 
 #if STM32_SERIAL_USE_USART1 || STM32_SERIAL_USE_USART2 ||                   \
     STM32_SERIAL_USE_USART3 || STM32_SERIAL_USE_UART4  ||                   \
-    USE_STM32_USART5
+    STM32_SERIAL_USE_UART5  || STM32_SERIAL_USE_USART6
 /**
  * @brief   Error handling routine.
  *
@@ -237,6 +246,14 @@ static void notify5(GenericQueue *qp) {
 }
 #endif
 
+#if STM32_SERIAL_USE_USART6 || defined(__DOXYGEN__)
+static void notify6(GenericQueue *qp) {
+
+  (void)qp;
+  USART6->CR1 |= USART_CR1_TXEIE;
+}
+#endif
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -321,6 +338,22 @@ CH_IRQ_HANDLER(UART5_IRQHandler) {
 }
 #endif
 
+#if STM32_SERIAL_USE_USART6 || defined(__DOXYGEN__)
+/**
+ * @brief   USART1 interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(USART6_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  serve_interrupt(&SD6);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -356,6 +389,11 @@ void sd_lld_init(void) {
   sdObjectInit(&SD5, NULL, notify5);
   SD5.usart = UART5;
 #endif
+
+#if STM32_SERIAL_USE_USART6
+  sdObjectInit(&SD6, NULL, notify6);
+  SD6.usart = USART6;
+#endif
 }
 
 /**
@@ -376,37 +414,44 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
   if (sdp->state == SD_STOP) {
 #if STM32_SERIAL_USE_USART1
     if (&SD1 == sdp) {
-      RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+      rccEnableUSART1(FALSE);
       NVICEnableVector(USART1_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_USART1_PRIORITY));
     }
 #endif
 #if STM32_SERIAL_USE_USART2
     if (&SD2 == sdp) {
-      RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+      rccEnableUSART2(FALSE);
       NVICEnableVector(USART2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_USART2_PRIORITY));
     }
 #endif
 #if STM32_SERIAL_USE_USART3
     if (&SD3 == sdp) {
-      RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
+      rccEnableUSART3(FALSE);
       NVICEnableVector(USART3_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_USART3_PRIORITY));
     }
 #endif
 #if STM32_SERIAL_USE_UART4
     if (&SD4 == sdp) {
-      RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
+      rccEnableUART4(FALSE);
       NVICEnableVector(UART4_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_UART4_PRIORITY));
     }
 #endif
 #if STM32_SERIAL_USE_UART5
     if (&SD5 == sdp) {
-      RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
+      rccEnableUART5(FALSE);
       NVICEnableVector(UART5_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_UART5_PRIORITY));
+    }
+#endif
+#if STM32_SERIAL_USE_USART6
+    if (&SD6 == sdp) {
+      rccEnableUSART6(FALSE);
+      NVICEnableVector(USART6_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_SERIAL_USART6_PRIORITY));
     }
 #endif
   }
@@ -428,36 +473,43 @@ void sd_lld_stop(SerialDriver *sdp) {
     usart_deinit(sdp->usart);
 #if STM32_SERIAL_USE_USART1
     if (&SD1 == sdp) {
-      RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
+      rccDisableUSART1(FALSE);
       NVICDisableVector(USART1_IRQn);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_USART2
     if (&SD2 == sdp) {
-      RCC->APB1ENR &= ~RCC_APB1ENR_USART2EN;
+      rccDisableUSART2(FALSE);
       NVICDisableVector(USART2_IRQn);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_USART3
     if (&SD3 == sdp) {
-      RCC->APB1ENR &= ~RCC_APB1ENR_USART3EN;
+      rccDisableUSART3(FALSE);
       NVICDisableVector(USART3_IRQn);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_UART4
     if (&SD4 == sdp) {
-      RCC->APB1ENR &= ~RCC_APB1ENR_UART4EN;
+      rccDisableUART4(FALSE);
       NVICDisableVector(UART4_IRQn);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_UART5
     if (&SD5 == sdp) {
-      RCC->APB1ENR &= ~RCC_APB1ENR_UART5EN;
+      rccDisableUART5(FALSE);
       NVICDisableVector(UART5_IRQn);
+      return;
+    }
+#endif
+#if STM32_SERIAL_USE_USART6
+    if (&SD6 == sdp) {
+      rccDisableUSART6(FALSE);
+      NVICDisableVector(USART6_IRQn);
       return;
     }
 #endif

@@ -56,6 +56,11 @@ typedef enum {
   XXX_READY = 2,                    /**< Ready.                             */
 } xxxstate_t;
 
+/**
+ * @brief   Type of a structure representing a XXX driver.
+ */
+typedef struct XXXDriver XXXDriver;
+
 #include "xxx_lld.h"
 
 /*===========================================================================*/

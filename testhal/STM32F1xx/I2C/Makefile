@@ -9,6 +9,11 @@ ifeq ($(USE_OPT),)
   #USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -Wall -Wextra
 endif
 
+# C specific options here (added to USE_OPT).
+ifeq ($(USE_COPT),)
+  USE_COPT = 
+endif
+
 # C++ specific options here (added to USE_OPT).
 ifeq ($(USE_CPPOPT),)
   USE_CPPOPT = -fno-rtti
@@ -24,9 +29,9 @@ ifeq ($(USE_THUMB),)
   USE_THUMB = yes
 endif
 
-# Enable register caching optimization (read documentation).
-ifeq ($(USE_CURRP_CACHING),)
-  USE_CURRP_CACHING = no
+# Enable this if you want to see the full log while compiling.
+ifeq ($(USE_VERBOSE_COMPILE),)
+  USE_VERBOSE_COMPILE = no
 endif
 
 #
@@ -58,7 +63,7 @@ LDSCRIPT= $(PORTLD)/STM32F103xB.ld
 
 # Imported source files
 CHIBIOS = ../../..
-include $(CHIBIOS)/boards/OLIMEX_STM32_P103/board.mk
+include $(CHIBIOS)/boards/OLIMEX_STM32_103STK/board.mk
 include $(CHIBIOS)/os/hal/platforms/STM32F1xx/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F1xx/port.mk
@@ -77,9 +82,9 @@ CSRC = $(PORTSRC) \
        $(CHIBIOS)/os/various/syscalls.c \
        main.c \
        i2c_pns.c \
-       tmp75.c\
-  	   max1236.c\
-  	   lis3.c\
+  	   lis3.c \
+  	   tmp75.c \
+  	   fake.c
 
 	   
        
@@ -122,7 +127,6 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
 # Compiler settings
 #
 
-# -lm добавлен именно здесь, потому что больше некуда
 MCU  = cortex-m3
 
 #TRGT = arm-elf-

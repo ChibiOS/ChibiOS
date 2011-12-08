@@ -169,8 +169,6 @@ typedef GPIO_TypeDef *ioportid_t;
 
 /**
  * @brief   Reads the physical I/O port states.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  *
  * @param[in] port      port identifier
  * @return              The port bits.
@@ -183,8 +181,6 @@ typedef GPIO_TypeDef *ioportid_t;
  * @brief   Reads the output latch.
  * @details The purpose of this function is to read back the latched output
  *          value.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  *
  * @param[in] port      port identifier
  * @return              The latched logical states.
@@ -195,8 +191,6 @@ typedef GPIO_TypeDef *ioportid_t;
 
 /**
  * @brief   Writes a bits mask on a I/O port.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  *
  * @param[in] port      port identifier
  * @param[in] bits      bits to be written on the specified port
@@ -209,8 +203,6 @@ typedef GPIO_TypeDef *ioportid_t;
  * @brief   Pads group mode setup.
  * @details This function programs a pads group belonging to the same port
  *          with the specified mode.
- * @note    This function is not meant to be invoked directly by the
- *          application code.
  * @note    Programming an unknown or unsupported mode is silently ignored.
  *
  * @param[in] port      port identifier

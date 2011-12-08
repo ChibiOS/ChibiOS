@@ -20,7 +20,7 @@
 
 /**
  * @defgroup STM32L1xx_DRIVERS STM32L1xx Drivers
- * @details This section describes all the supported drivers on the STM32F1xx
+ * @details This section describes all the supported drivers on the STM32L1xx
  *          platform and the implementation details of the single drivers.
  *
  * @ingroup platforms
@@ -47,18 +47,36 @@
  */
 
 /**
- * @defgroup STM32L1xx_DMA STM32L1xx DMA Support
- * @details This DMA helper driver is used by the other drivers in order to
- *          access the shared DMA resources in a consistent way.
+ * @defgroup STM32L1xx_ADC STM32L1xx ADC Support
+ * @details The STM32L1xx ADC driver supports the ADC peripherals using DMA
+ *          channels for maximum performance.
  *
- * @section stm32l1xx_dma_1 Supported HW resources
- * The DMA driver can support any of the following hardware resources:
+ * @section stm32l1xx_adc_1 Supported HW resources
+ * - ADC1.
  * - DMA1.
  * .
- * @section stm32l1xx_dma_2 STM32L1xx DMA driver implementation features
- * - Automatic DMA clock stop when not in use by other drivers.
- * - Exports helper functions/macros to the other drivers that share the
- *   DMA resource.
+ * @section stm32l1xx_adc_2 STM32L1xx ADC driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Streaming conversion using DMA for maximum performance.
+ * - Programmable ADC interrupt priority level.
+ * - Programmable DMA bus priority for each DMA channel.
+ * - Programmable DMA interrupt priority for each DMA channel.
+ * - DMA and ADC errors detection.
+ * .
+ * @ingroup STM32L1xx_DRIVERS
+ */
+
+/**
+ * @defgroup STM32L1xx_EXT STM32L1xx EXT Support
+ * @details The STM32L1xx EXT driver uses the EXTI peripheral.
+ *
+ * @section stm32l1xx_ext_1 Supported HW resources
+ * - EXTI.
+ * .
+ * @section stm32l1xx_ext_2 STM32L1xx EXT driver implementation features
+ * - Each EXTI channel can be independently enabled and programmed.
+ * - Programmable EXTI interrupts priority level.
+ * - Capability to work as event sources (WFE) rather than interrupt sources.
  * .
  * @ingroup STM32L1xx_DRIVERS
  */
@@ -128,8 +146,7 @@
  * - @p PAL_MODE_INPUT_ANALOG.
  * - @p PAL_MODE_OUTPUT_PUSHPULL.
  * - @p PAL_MODE_OUTPUT_OPENDRAIN.
- * - @p PAL_MODE_STM32L1xx_ALTERNATE_PUSHPULL (non standard).
- * - @p PAL_MODE_STM32L1xx_ALTERNATE_OPENDRAIN (non standard).
+ * - @p PAL_MODE_ALTERNATE (non standard).
  * .
  * Any attempt to setup an invalid mode is ignored.
  *
@@ -151,7 +168,6 @@
  * - TIM2.
  * - TIM3.
  * - TIM4.
- * - TIM5.
  * .
  * @section stm32l1xx_pwm_2 STM32L1xx PWM driver implementation features
  * - Each timer can be independently enabled and programmed. Unused
@@ -220,9 +236,7 @@
  * - USART1.
  * - USART2.
  * - USART3 (where present).
- * - UART4 (where present).
  * - DMA1.
- * - DMA2 (where present).
  * .
  * @section stm32l1xx_uart_2 STM32L1xx UART driver implementation features
  * - Clock stop for reduced power usage when the driver is in stop state.
@@ -251,4 +265,47 @@
  * - Each endpoint programmable in Control, Bulk and Interrupt modes.
  * .
  * @ingroup STM32L1xx_DRIVERS
+ */
+
+/**
+ * @defgroup STM32L1xx_PLATFORM_DRIVERS STM32L1xx Platform Drivers
+ * @details Platform support drivers. Platform drivers do not implement HAL
+ *          standard driver templates, their role is to support platform
+ *          specific functionalities.
+ *
+ * @ingroup STM32L1xx_DRIVERS
+ */
+
+/**
+ * @defgroup STM32L1xx_DMA STM32L1xx DMA Support
+ * @details This DMA helper driver is used by the other drivers in order to
+ *          access the shared DMA resources in a consistent way.
+ *
+ * @section stm32l1xx_dma_1 Supported HW resources
+ * The DMA driver can support any of the following hardware resources:
+ * - DMA1.
+ * .
+ * @section stm32l1xx_dma_2 STM32L1xx DMA driver implementation features
+ * - Exports helper functions/macros to the other drivers that share the
+ *   DMA resource.
+ * - Automatic DMA clock stop when not in use by any driver.
+ * - DMA streams and interrupt vectors sharing among multiple drivers.
+ * .
+ * @ingroup STM32L1xx_PLATFORM_DRIVERS
+ */
+
+/**
+ * @defgroup STM32L1xx_RCC STM32L1xx RCC Support
+ * @details This RCC helper driver is used by the other drivers in order to
+ *          access the shared RCC resources in a consistent way.
+ *
+ * @section stm32f1xx_rcc_1 Supported HW resources
+ * - RCC.
+ * .
+ * @section stm32l1xx_rcc_2 STM32L1xx RCC driver implementation features
+ * - Peripherals reset.
+ * - Peripherals clock enable.
+ * - Periplerals clock disable.
+ * .
+ * @ingroup STM32L1xx_PLATFORM_DRIVERS
  */

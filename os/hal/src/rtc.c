@@ -20,7 +20,7 @@
 
 /**
  * @file    rtc.c
- * @brief   Real Time Clock Abstraction Layer code.
+ * @brief   RTC Driver code.
  *
  * @addtogroup RTC
  * @{
@@ -28,8 +28,6 @@
 
 #include "ch.h"
 #include "hal.h"
-
-#include "rtc_lld.h"
 
 #if HAL_USE_RTC || defined(__DOXYGEN__)
 
@@ -52,75 +50,109 @@
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
+
 /**
- * @brief   Enable access to registers and initialize RTC if BKP doamin
- *          was previously reseted.
+ * @brief   RTC Driver initialization.
+ * @note    This function is implicitly invoked by @p halInit(), there is
+ *          no need to explicitly initialize the driver.
+ *
+ * @init
  */
-void rtcInit(void){
+void rtcInit(void) {
+
   rtc_lld_init();
 }
 
 /**
- * @brief     Configure and start interrupt servicing routines.
- *            This function do nothing if callbacks disabled.
+ * @brief   Set current time.
  *
- * @param[in] rtcp - pointer to RTC driver structure.
- * @param[in] rtccfgp - pointer to RTC config structure.
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] timespec  pointer to a @p RTCTime structure
+ *
+ * @api
  */
-#if RTC_SUPPORTS_CALLBACKS
-void rtcStartI(RTCDriver *rtcp, const RTCConfig *rtccfgp){
-  chDbgCheckClassI();
-  chDbgCheck(((rtcp != NULL) && (rtccfgp != NULL)), "rtcStart");
-  rtc_lld_start(rtcp, rtccfgp);
+void rtcSetTime(RTCDriver *rtcp, const RTCTime *timespec) {
+
+  chDbgCheck((rtcp != NULL) && (timespec != NULL), "rtcSetTime");
+
+  rtc_lld_set_time(rtcp, timespec);
 }
 
 /**
- * @brief   Stop interrupt servicing routines.
+ * @brief   Get current time.
+ *
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[out] timespec pointer to a @p RTCTime structure
+ *
+ * @api
  */
-void rtcStopI(void){
-  chDbgCheckClassI();
-  rtc_lld_stop();
+void rtcGetTime(RTCDriver *rtcp, RTCTime *timespec) {
+
+  chDbgCheck((rtcp != NULL) && (timespec != NULL), "rtcGetTime");
+
+  rtc_lld_get_time(rtcp, timespec);
+}
+
+#if (RTC_ALARMS > 0) || defined(__DOXYGEN__)
+/**
+ * @brief   Set alarm time.
+ *
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] alarm     alarm identifier
+ * @param[in] alarmspec pointer to a @p RTCAlarm structure or @p NULL
+ *
+ * @api
+ */
+void rtcSetAlarm(RTCDriver *rtcp,
+                 rtcalarm_t alarm,
+                 const RTCAlarm *alarmspec) {
+
+  chDbgCheck((rtcp != NULL) && (alarm < RTC_ALARMS), "rtcSetAlarm");
+
+  rtc_lld_set_alarm(rtcp, alarm, alarmspec);
+}
+
+/**
+ * @brief   Get current alarm.
+ * @note    If an alarm has not been set then the returned alarm specification
+ *          is not meaningful.
+ *
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] alarm     alarm identifier
+ * @param[out] alarmspec pointer to a @p RTCAlarm structure
+ *
+ * @api
+ */
+void rtcGetAlarm(RTCDriver *rtcp,
+                 rtcalarm_t alarm,
+                 RTCAlarm *alarmspec) {
+
+  chDbgCheck((rtcp != NULL) && (alarm < RTC_ALARMS) && (alarmspec != NULL),
+             "rtcGetAlarm");
+
+  rtc_lld_get_alarm(rtcp, alarm, alarmspec);
+}
+#endif /* RTC_ALARMS > 0 */
+
+#if RTC_SUPPORTS_CALLBACKS || defined(__DOXYGEN__)
+/**
+ * @brief   Enables or disables RTC callbacks.
+ * @details This function enables or disables callbacks, use a @p NULL pointer
+ *          in order to disable a callback.
+ *
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] callback  callback function pointer or @p NULL
+ *
+ * @api
+ */
+void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback) {
+
+  chDbgCheck((rtcp != NULL), "rtcSetCallback");
+
+  rtc_lld_set_callback(rtcp, callback);
 }
 #endif /* RTC_SUPPORTS_CALLBACKS */
-
-/**
- * @brief     Set current time.
- * @param[in] tv_sec - time value in UNIX notation.
- */
-void rtcSetTime(uint32_t tv_sec){
-  rtc_lld_set_time(tv_sec);
-}
-
-/**
- * @brief Return current time in UNIX notation.
- */
-inline uint32_t rtcGetSec(void){
-  return rtc_lld_get_sec();
-}
-
-/**
- * @brief Return fractional part of current time (milliseconds).
- */
-inline uint16_t rtcGetMsec(void){
-  return rtc_lld_get_msec();
-}
-
-/**
- * @brief Set alarm date in UNIX notation.
- */
-void rtcSetAlarm(uint32_t tv_alarm){
-  rtc_lld_set_alarm(tv_alarm);
-}
-
-/**
- * @brief Get current alarm date in UNIX notation.
- */
-inline uint32_t rtcGetAlarm(void){
-  return rtc_lld_get_alarm();
-}
 
 #endif /* HAL_USE_RTC */
 
 /** @} */
-
-

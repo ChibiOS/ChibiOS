@@ -236,6 +236,7 @@ void gptPolledDelay(GPTDriver *gptp, gptcnt_t interval) {
 
   gptp->state = GPT_ONESHOT;
   gpt_lld_polled_delay(gptp, interval);
+  gptp->state = GPT_READY;
 }
 
 #endif /* HAL_USE_GPT */

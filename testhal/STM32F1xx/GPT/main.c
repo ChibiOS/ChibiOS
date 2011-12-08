@@ -77,9 +77,9 @@ int main(void) {
    * Initializes the GPT drivers 1 and 2.
    */
   gptStart(&GPTD1, &gpt1cfg);
-  gptPolledDelay(&GPTD1, 10); /* Small dealy.*/
+  gptPolledDelay(&GPTD1, 10); /* Small delay.*/
   gptStart(&GPTD2, &gpt2cfg);
-  gptPolledDelay(&GPTD2, 10); /* Small dealy.*/
+  gptPolledDelay(&GPTD2, 10); /* Small delay.*/
 
   /*
    * Normal main() thread activity, it changes the GPT1 period every
@@ -88,8 +88,10 @@ int main(void) {
   while (TRUE) {
     gptStartContinuous(&GPTD1, 5000);
     chThdSleepMilliseconds(5000);
+    gptStopTimer(&GPTD1);
     gptStartContinuous(&GPTD1, 2500);
     chThdSleepMilliseconds(5000);
+    gptStopTimer(&GPTD1);
   }
   return 0;
 }

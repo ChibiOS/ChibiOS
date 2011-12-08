@@ -4,7 +4,7 @@
 
 ** TARGET **
 
-The demo will on an Olimex STM32-P103 board.
+The demo runs on an Olimex STM32-P103 board.
 
 ** The Demo **
 

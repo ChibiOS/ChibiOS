@@ -36,10 +36,7 @@
 #include "ch.h"
 
 #if !CH_NO_IDLE_THREAD || defined(__DOXYGEN__)
-/**
- * @brief   Idle thread working area.
- * @see     PORT_IDLE_THREAD_STACK_SIZE
- */
+/* Idle thread working area.*/
 WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
 
 /**

@@ -297,37 +297,37 @@ void pwm_lld_init(void) {
 #if STM32_PWM_USE_TIM1
   /* Driver initialization.*/
   pwmObjectInit(&PWMD1);
-  PWMD1.tim = TIM1;
+  PWMD1.tim = STM32_TIM1;
 #endif
 
 #if STM32_PWM_USE_TIM2
   /* Driver initialization.*/
   pwmObjectInit(&PWMD2);
-  PWMD2.tim = TIM2;
+  PWMD2.tim = STM32_TIM2;
 #endif
 
 #if STM32_PWM_USE_TIM3
   /* Driver initialization.*/
   pwmObjectInit(&PWMD3);
-  PWMD3.tim = TIM3;
+  PWMD3.tim = STM32_TIM3;
 #endif
 
 #if STM32_PWM_USE_TIM4
   /* Driver initialization.*/
   pwmObjectInit(&PWMD4);
-  PWMD4.tim = TIM4;
+  PWMD4.tim = STM32_TIM4;
 #endif
 
 #if STM32_PWM_USE_TIM5
   /* Driver initialization.*/
   pwmObjectInit(&PWMD5);
-  PWMD5.tim = TIM5;
+  PWMD5.tim = STM32_TIM5;
 #endif
 
 #if STM32_PWM_USE_TIM8
   /* Driver initialization.*/
   pwmObjectInit(&PWMD8);
-  PWMD5.tim = TIM8;
+  PWMD8.tim = STM32_TIM8;
 #endif
 }
 
@@ -341,74 +341,68 @@ void pwm_lld_init(void) {
  * @notapi
  */
 void pwm_lld_start(PWMDriver *pwmp) {
-  uint32_t clock, psc;
+  uint32_t psc;
   uint16_t ccer;
 
   if (pwmp->state == PWM_STOP) {
     /* Clock activation and timer reset.*/
 #if STM32_PWM_USE_TIM1
     if (&PWMD1 == pwmp) {
-      RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
-      RCC->APB2RSTR = RCC_APB2RSTR_TIM1RST;
-      RCC->APB2RSTR = 0;
+      rccEnableTIM1(FALSE);
+      rccResetTIM1();
       NVICEnableVector(TIM1_UP_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM1_IRQ_PRIORITY));
       NVICEnableVector(TIM1_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM1_IRQ_PRIORITY));
-      clock = STM32_TIMCLK2;
+      pwmp->clock = STM32_TIMCLK2;
     }
 #endif
 #if STM32_PWM_USE_TIM2
     if (&PWMD2 == pwmp) {
-      RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-      RCC->APB1RSTR = RCC_APB1RSTR_TIM2RST;
-      RCC->APB1RSTR = 0;
+      rccEnableTIM2(FALSE);
+      rccResetTIM2();
       NVICEnableVector(TIM2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM2_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      pwmp->clock = STM32_TIMCLK1;
     }
 #endif
 #if STM32_PWM_USE_TIM3
     if (&PWMD3 == pwmp) {
-      RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
-      RCC->APB1RSTR = RCC_APB1RSTR_TIM3RST;
-      RCC->APB1RSTR = 0;
+      rccEnableTIM3(FALSE);
+      rccResetTIM3();
       NVICEnableVector(TIM3_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM3_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      pwmp->clock = STM32_TIMCLK1;
     }
 #endif
 #if STM32_PWM_USE_TIM4
     if (&PWMD4 == pwmp) {
-      RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
-      RCC->APB1RSTR = RCC_APB1RSTR_TIM4RST;
-      RCC->APB1RSTR = 0;
+      rccEnableTIM4(FALSE);
+      rccResetTIM4();
       NVICEnableVector(TIM4_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM4_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      pwmp->clock = STM32_TIMCLK1;
     }
 #endif
 
 #if STM32_PWM_USE_TIM5
     if (&PWMD5 == pwmp) {
-      RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
-      RCC->APB1RSTR = RCC_APB1RSTR_TIM5RST;
-      RCC->APB1RSTR = 0;
+      rccEnableTIM5(FALSE);
+      rccResetTIM5();
       NVICEnableVector(TIM5_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM5_IRQ_PRIORITY));
-      clock = STM32_TIMCLK1;
+      pwmp->clock = STM32_TIMCLK1;
     }
 #endif
 #if STM32_PWM_USE_TIM8
     if (&PWMD8 == pwmp) {
-      RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
-      RCC->APB2RSTR = RCC_APB2RSTR_TIM8RST;
-      RCC->APB2RSTR = 0;
+      rccEnableTIM8(FALSE);
+      rccResetTIM8();
       NVICEnableVector(TIM8_UP_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM8_IRQ_PRIORITY));
       NVICEnableVector(TIM8_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM8_IRQ_PRIORITY));
-      clock = STM32_TIMCLK2;
+      pwmp->clock = STM32_TIMCLK2;
     }
 #endif
 
@@ -425,20 +419,20 @@ void pwm_lld_start(PWMDriver *pwmp) {
   }
   else {
     /* Driver re-configuration scenario, it must be stopped first.*/
-    pwmp->tim->CR1  = 0;                    /* Timer disabled.              */
-    pwmp->tim->DIER = 0;                    /* All IRQs disabled.           */
-    pwmp->tim->SR   = 0;                    /* Clear eventual pending IRQs. */
-    pwmp->tim->CCR1 = 0;                    /* Comparator 1 disabled.       */
-    pwmp->tim->CCR2 = 0;                    /* Comparator 2 disabled.       */
-    pwmp->tim->CCR3 = 0;                    /* Comparator 3 disabled.       */
-    pwmp->tim->CCR4 = 0;                    /* Comparator 4 disabled.       */
+    pwmp->tim->CR1    = 0;                  /* Timer disabled.              */
+    pwmp->tim->DIER   = 0;                  /* All IRQs disabled.           */
+    pwmp->tim->SR     = 0;                  /* Clear eventual pending IRQs. */
+    pwmp->tim->CCR[0] = 0;                  /* Comparator 1 disabled.       */
+    pwmp->tim->CCR[1] = 0;                  /* Comparator 2 disabled.       */
+    pwmp->tim->CCR[2] = 0;                  /* Comparator 3 disabled.       */
+    pwmp->tim->CCR[3] = 0;                  /* Comparator 4 disabled.       */
     pwmp->tim->CNT  = 0;                    /* Counter reset to zero.       */
   }
 
   /* Timer configuration.*/
-  psc = (clock / pwmp->config->frequency) - 1;
+  psc = (pwmp->clock / pwmp->config->frequency) - 1;
   chDbgAssert((psc <= 0xFFFF) &&
-              ((psc + 1) * pwmp->config->frequency) == clock,
+              ((psc + 1) * pwmp->config->frequency) == pwmp->clock,
               "pwm_lld_start(), #1", "invalid frequency");
   pwmp->tim->PSC  = (uint16_t)psc;
   pwmp->tim->ARR  = (uint16_t)(pwmp->period - 1);
@@ -552,38 +546,38 @@ void pwm_lld_stop(PWMDriver *pwmp) {
     if (&PWMD1 == pwmp) {
       NVICDisableVector(TIM1_UP_IRQn);
       NVICDisableVector(TIM1_CC_IRQn);
-      RCC->APB2ENR &= ~RCC_APB2ENR_TIM1EN;
+      rccDisableTIM1(FALSE);
     }
 #endif
 #if STM32_PWM_USE_TIM2
     if (&PWMD2 == pwmp) {
       NVICDisableVector(TIM2_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_TIM2EN;
+      rccDisableTIM2(FALSE);
     }
 #endif
 #if STM32_PWM_USE_TIM3
     if (&PWMD3 == pwmp) {
       NVICDisableVector(TIM3_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_TIM3EN;
+      rccDisableTIM3(FALSE);
     }
 #endif
 #if STM32_PWM_USE_TIM4
     if (&PWMD4 == pwmp) {
       NVICDisableVector(TIM4_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_TIM4EN;
+      rccDisableTIM4(FALSE);
     }
 #endif
 #if STM32_PWM_USE_TIM5
     if (&PWMD5 == pwmp) {
       NVICDisableVector(TIM5_IRQn);
-      RCC->APB1ENR &= ~RCC_APB1ENR_TIM5EN;
+      rccDisableTIM5(FALSE);
     }
 #endif
 #if STM32_PWM_USE_TIM8
     if (&PWMD8 == pwmp) {
       NVICDisableVector(TIM8_UP_IRQn);
       NVICDisableVector(TIM8_CC_IRQn);
-      RCC->APB2ENR &= ~RCC_APB2ENR_TIM8EN;
+      rccDisableTIM8(FALSE);
     }
 #endif
   }
@@ -605,7 +599,7 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
                             pwmchannel_t channel,
                             pwmcnt_t width) {
 
-  *(&pwmp->tim->CCR1 + (channel * 2)) = width;      /* New duty cycle.      */
+  pwmp->tim->CCR[channel] = width;                  /* New duty cycle.      */
   /* If there is a callback defined for the channel then the associated
      interrupt must be enabled.*/
   if (pwmp->config->channels[channel].callback != NULL) {
@@ -633,7 +627,7 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
  */
 void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
 
-  *(&pwmp->tim->CCR1 + (channel * 2)) = 0;
+  pwmp->tim->CCR[channel] = 0;
   pwmp->tim->DIER &= ~(2 << channel);
 }
 

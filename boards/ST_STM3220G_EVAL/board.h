@@ -84,22 +84,7 @@
 #define PIN_PUDR_FLOATING(n)        (0 << ((n) * 2))
 #define PIN_PUDR_PULLUP(n)          (1 << ((n) * 2))
 #define PIN_PUDR_PULLDOWN(n)        (2 << ((n) * 2))
-#define PIN_AFIO_AF0(n)             (0 << ((n % 8) * 4))
-#define PIN_AFIO_AF1(n)             (1 << ((n % 8) * 4))
-#define PIN_AFIO_AF2(n)             (2 << ((n % 8) * 4))
-#define PIN_AFIO_AF3(n)             (3 << ((n % 8) * 4))
-#define PIN_AFIO_AF4(n)             (4 << ((n % 8) * 4))
-#define PIN_AFIO_AF5(n)             (5 << ((n % 8) * 4))
-#define PIN_AFIO_AF6(n)             (6 << ((n % 8) * 4))
-#define PIN_AFIO_AF7(n)             (7 << ((n % 8) * 4))
-#define PIN_AFIO_AF8(n)             (8 << ((n % 8) * 4))
-#define PIN_AFIO_AF9(n)             (9 << ((n % 8) * 4))
-#define PIN_AFIO_AF10(n)            (10 << ((n % 8) * 4))
-#define PIN_AFIO_AF11(n)            (11 << ((n % 8) * 4))
-#define PIN_AFIO_AF12(n)            (12 << ((n % 8) * 4))
-#define PIN_AFIO_AF13(n)            (13 << ((n % 8) * 4))
-#define PIN_AFIO_AF14(n)            (14 << ((n % 8) * 4))
-#define PIN_AFIO_AF15(n)            (15 << ((n % 8) * 4))
+#define PIN_AFIO_AF(n, v)           ((v##U) << ((n % 8) * 4))
 
 /*
  * Port A setup.
@@ -157,8 +142,8 @@
                                        PIN_PUDR_FLOATING(15)))
 #define VAL_GPIOC_ODR               0xFFFFFFFF
 #define VAL_GPIOC_AFRL				0x00000000
-#define VAL_GPIOC_AFRH				(PIN_AFIO_AF7(10)         | \
-                                     PIN_AFIO_AF7(11))
+#define VAL_GPIOC_AFRH				(PIN_AFIO_AF(7, 10)       | \
+                                     PIN_AFIO_AF(7, 11))
 
 /*
  * Port D setup.

@@ -251,13 +251,14 @@ __attribute__((naked))
 void ResetHandler(void) {
   uint32_t psp, ctl;
 
-  /* Process Stack initialization, it is allocated below the main stack. The
-     main stack is assumed to be allocated starting from @p __ram_end__
-     extending downward.*/
+  /* Process Stack initialization, it is allocated starting from the
+     symbol __process_stack_end__ and its lower limit is the symbol
+     __process_stack_base__.*/
   asm volatile ("cpsid   i");
   psp = SYMVAL(__process_stack_end__);
   asm volatile ("msr     PSP, %0" : : "r" (psp));
 
+  /* CPU mode initialization.*/
   ctl = CRT0_CONTROL_INIT;
   asm volatile ("msr     CONTROL, %0" : : "r" (ctl));
   asm volatile ("isb");

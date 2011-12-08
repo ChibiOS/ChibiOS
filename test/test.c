@@ -328,6 +328,8 @@ msg_t TestThread(void *p) {
   test_println("***");
   test_print("*** Kernel:       ");
   test_println(CH_KERNEL_VERSION);
+  test_print("*** Compiled:     ");
+  test_println(__DATE__ " - " __TIME__);
 #ifdef CH_COMPILER_NAME
   test_print("*** Compiler:     ");
   test_println(CH_COMPILER_NAME);

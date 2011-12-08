@@ -75,6 +75,10 @@
 /*===========================================================================*/
 
 /**
+ * @name    Configuration options
+ * @{
+ */
+/**
  * @brief   If advanced timer features switch.
  * @details If set to @p TRUE the advanced features for TIM1 and TIM8 are
  *          enabled.
@@ -179,6 +183,7 @@
 #if !defined(STM32_PWM_TIM8_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM_TIM8_IRQ_PRIORITY         7
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Configuration checks.                                                     */
@@ -316,9 +321,13 @@ struct PWMDriver {
 #endif
   /* End of the mandatory fields.*/
   /**
+   * @brief Timer base clock.
+   */
+  uint32_t                  clock;
+  /**
    * @brief Pointer to the TIMx registers block.
    */
-  TIM_TypeDef               *tim;
+  stm32_tim_t               *tim;
 };
 
 /*===========================================================================*/

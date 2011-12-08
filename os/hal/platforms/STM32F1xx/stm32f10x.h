@@ -217,8 +217,10 @@ typedef enum IRQn
   USART1_IRQn                 = 37,     /*!< USART1 global Interrupt                              */
   USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
   EXTI15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
-  RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
-  USBWakeUp_IRQn              = 42      /*!< USB Device WakeUp from suspend through EXTI Line Interrupt */    
+  /* CHIBIOS FIX (making it compatible with STM32L and STM32F2 headers).*/
+  RTC_Alarm_IRQn              = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
+  /* CHIBIOS FIX (making it compatible with STM32L and STM32F2 headers).*/
+  USB_FS_WKUP_IRQn            = 42      /*!< USB Device WakeUp from suspend through EXTI Line Interrupt */
 #endif /* STM32F10X_LD */  
 
 #ifdef STM32F10X_LD_VL
@@ -236,7 +238,8 @@ typedef enum IRQn
   USART1_IRQn                 = 37,     /*!< USART1 global Interrupt                              */
   USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
   EXTI15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
-  RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
+  /* CHIBIOS FIX (making it compatible with STM32L and STM32F2 headers).*/
+  RTC_Alarm_IRQn              = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
   CEC_IRQn                    = 42,     /*!< HDMI-CEC Interrupt                                   */
   TIM6_DAC_IRQn               = 54,     /*!< TIM6 and DAC underrun Interrupt                      */
   TIM7_IRQn                   = 55      /*!< TIM7 Interrupt                                       */       
@@ -266,8 +269,10 @@ typedef enum IRQn
   USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
   USART3_IRQn                 = 39,     /*!< USART3 global Interrupt                              */
   EXTI15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
-  RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
-  USBWakeUp_IRQn              = 42      /*!< USB Device WakeUp from suspend through EXTI Line Interrupt */  
+  /* CHIBIOS FIX (making it compatible with STM32L and STM32F2 headers).*/
+  RTC_Alarm_IRQn              = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
+  /* CHIBIOS FIX (making it compatible with STM32L and STM32F2 headers).*/
+  USB_FS_WKUP_IRQn            = 42      /*!< USB Device WakeUp from suspend through EXTI Line Interrupt */
 #endif /* STM32F10X_MD */  
 
 #ifdef STM32F10X_MD_VL
@@ -290,7 +295,8 @@ typedef enum IRQn
   USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
   USART3_IRQn                 = 39,     /*!< USART3 global Interrupt                              */
   EXTI15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
-  RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
+  /* CHIBIOS FIX (making it compatible with STM32L and STM32F2 headers).*/
+  RTC_Alarm_IRQn              = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
   CEC_IRQn                    = 42,     /*!< HDMI-CEC Interrupt                                   */
   TIM6_DAC_IRQn               = 54,     /*!< TIM6 and DAC underrun Interrupt                      */
   TIM7_IRQn                   = 55      /*!< TIM7 Interrupt                                       */       
@@ -320,8 +326,10 @@ typedef enum IRQn
   USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
   USART3_IRQn                 = 39,     /*!< USART3 global Interrupt                              */
   EXTI15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
-  RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
-  USBWakeUp_IRQn              = 42,     /*!< USB Device WakeUp from suspend through EXTI Line Interrupt */
+  /* CHIBIOS FIX (making it compatible with STM32L and STM32F2 headers).*/
+  RTC_Alarm_IRQn              = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
+  /* CHIBIOS FIX (making it compatible with STM32L and STM32F2 headers).*/
+  USB_FS_WKUP_IRQn            = 42,     /*!< USB Device WakeUp from suspend through EXTI Line Interrupt */
   TIM8_BRK_IRQn               = 43,     /*!< TIM8 Break Interrupt                                 */
   TIM8_UP_IRQn                = 44,     /*!< TIM8 Update Interrupt                                */
   TIM8_TRG_COM_IRQn           = 45,     /*!< TIM8 Trigger and Commutation Interrupt               */
@@ -361,7 +369,8 @@ typedef enum IRQn
   USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
   USART3_IRQn                 = 39,     /*!< USART3 global Interrupt                              */
   EXTI15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
-  RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
+  /* CHIBIOS FIX (making it compatible with STM32L and STM32F2 headers).*/
+  RTC_Alarm_IRQn              = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
   CEC_IRQn                    = 42,     /*!< HDMI-CEC Interrupt                                   */
   TIM12_IRQn                  = 43,     /*!< TIM12 global Interrupt                               */
   TIM13_IRQn                  = 44,     /*!< TIM13 global Interrupt                               */
@@ -405,8 +414,10 @@ typedef enum IRQn
   USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
   USART3_IRQn                 = 39,     /*!< USART3 global Interrupt                              */
   EXTI15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
-  RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
-  USBWakeUp_IRQn              = 42,     /*!< USB Device WakeUp from suspend through EXTI Line Interrupt */
+  /* CHIBIOS FIX (making it compatible with STM32L and STM32F2 headers).*/
+  RTC_Alarm_IRQn              = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
+  /* CHIBIOS FIX (making it compatible with STM32L and STM32F2 headers).*/
+  USB_FS_WKUP_IRQn            = 42,     /*!< USB Device WakeUp from suspend through EXTI Line Interrupt */
   TIM8_BRK_TIM12_IRQn         = 43,     /*!< TIM8 Break Interrupt and TIM12 global Interrupt      */
   TIM8_UP_TIM13_IRQn          = 44,     /*!< TIM8 Update Interrupt and TIM13 global Interrupt     */
   TIM8_TRG_COM_TIM14_IRQn     = 45,     /*!< TIM8 Trigger and Commutation Interrupt and TIM14 global interrupt */
@@ -450,7 +461,8 @@ typedef enum IRQn
   USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
   USART3_IRQn                 = 39,     /*!< USART3 global Interrupt                              */
   EXTI15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
-  RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
+  /* CHIBIOS FIX (making it compatible with STM32L and STM32F2 headers).*/
+  RTC_Alarm_IRQn              = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
   OTG_FS_WKUP_IRQn            = 42,     /*!< USB OTG FS WakeUp from suspend through EXTI Line Interrupt */
   TIM5_IRQn                   = 50,     /*!< TIM5 global Interrupt                                */
   SPI3_IRQn                   = 51,     /*!< SPI3 global Interrupt                                */

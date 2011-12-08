@@ -66,6 +66,13 @@
 #endif
 #endif
 
+/**
+ * @brief   NVIC VTOR initialization expression.
+ */
+#if !defined(CORTEX_VTOR_INIT) || defined(__DOXYGEN__)
+#define CORTEX_VTOR_INIT              0x00000000
+#endif
+
 /*===========================================================================*/
 /* Port derived parameters.                                                  */
 /*===========================================================================*/
@@ -192,6 +199,7 @@ struct intctx {
  * @brief   Port-related initialization code.
  */
 #define port_init() {                                                       \
+  SCB_VTOR = CORTEX_VTOR_INIT;                                              \
   SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);                            \
   NVICSetSystemHandlerPriority(HANDLER_SVCALL,                              \
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL));                          \
@@ -218,7 +226,7 @@ struct intctx {
 
 /**
  * @brief   Kernel-unlock action.
- * @details Usually this function just disables interrupts but may perform
+ * @details Usually this function just enables interrupts but may perform
  *          more actions.
  * @note    In this port this it lowers the base priority to user level.
  */

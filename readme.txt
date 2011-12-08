@@ -63,7 +63,8 @@
   +--testhal/           - HAL integration test demos.
   |  +--LPC11xx/        - LPC11xx HAL test demos.
   |  +--LPC13xx/        - LPC13xx HAL test demos.
-  |  +--STM32/          - STM32 HAL test demos.
+  |  +--STM32F1xx/      - STM32F1xx HAL test demos.
+  |  +--STM32L1xx/      - STM32L1xx HAL test demos.
   |  +--STM8S/          - STM8S HAL test demos.
   +--tools              - Various tools.
      +--eclipse         - Eclipse enhancements.
@@ -72,7 +73,81 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.3.5 ***
+- FIX: Fixed SYSCFG clock not started in STM32L1/F4 HALs (bug 3449139).
+- FIX: Fixed wrong definitions in STM32L-Discovery board file (bug 3449076).
+- NEW: Modified the STM32F4-Discovery demo to put critical kernel data
+  structures and stacks in the CCM RAM instead normal RAM. It is done using
+  a special .ld file that can be customized to decide how to allocate data
+  in the various RAM sections.
+- NEW: Improved I2C driver model and STM32 implementation by Barthess.
+
+*** 2.3.4 ***
+- FIX: Fixed Extra initialization in STM32 SPI driver (bug 3436127)
+  (backported to 2.2.8).
+- FIX: Fixed DMA priority setting error in STM32 UART driver (bug 3436125)
+  (backported to 2.2.8).
+- FIX: Fixed DMA priority setting error in STM32 SPI driver (bug 3436124)
+  (backported to 2.2.8).
+- FIX: Fixed broken support for UART5 in STM32 serial driver (bug 3434094)
+  (backported to 2.2.8).
+- FIX: Fixed broken TIM8 support in STM32 PWM driver (bug 3418620).
+- FIX: Fixed halconf.h file corrupted in some STM32 demos (bug 3418626).
+- NEW: Added an unified registers file for STM32: stm32.h. This file includes
+  the appropriate vendor file then adds its own additional definitions.
+- NEW: Added demo for the ST STM32F4-Discovery kit.
+- NEW: STM32F4xx ADC driver implementation.
+- NEW: Added initialization of the NVIC VTOR register to all Cortex-Mx (v7M)
+  ports. Also added a port option CORTEX_VTOR_INIT to enforce a different
+  default value into the register.
+- NEW: Removed the warning about the "untested M4 platform", now it is
+  tested and officially supported.
+- NEW: Reorganized the STM32F1xx hal_lld_xxx.h files in order to distribute
+  the capability macros into the appropriate file (previously those were all
+  in the common hal_lld.h).
+- NEW: Added HAL, Serial, ADC, EXT, GPT, ICU, PWM, SPI and UART support for
+  the STM32F4xx sub-family.
+  TODO: Add CAN and SDC, the drivers need to be ported and tested.
+- NEW: Added handling of USART6 to the STM32 serial driver.
+- NEW: Added USE_COPT setting to all makefiles, contributed by Mabl.
+- NEW: Added EXT driver implementation for AT91SAM7x, contributed by Florian.
+  TODO: Test application missing.
+- NEW: Updated USB driver model and STM32 implementation and fixed several
+  problems.
+  - Changed the API to move buffer copy operations out of critical zones.
+  - Added usbConnectBus() and usbDisconnectBus() functions.
+  - Fixed problems with incorrect assertions.
+- NEW Updated the SERIAL_USB driver to match the new USB API, also fixed
+  some problems.
+  - Fixed incorrect use of input queues, the change required a change in
+    input queues too.
+- NEW: Added a macro THD_STATE_NAMES to chthreads.h. This macro is an
+  initializer for string arrays containing thread state names.
+- NEW: Added memory copy functionality to the STM32 DMA driver.
+- NEW: Implemented new makefile system for ARM GCC ports, now objects,
+  listings and output files are generated into a "build" directory and not
+  together with sources, also implemented a simplified output log mode.
+  Now makefiles and load script files are requirements and trigger a
+  rebuild if touched.
+- NEW: Updated AVR demos to use the new PAL driver.
+- NEW: Added Keil build files to the STM32L-Discovery demo.
+- CHANGE: Now the callback associated to input queues is invoked before
+  reading each character. Previously it was invoked only before going
+  to sleep into the THD_STATE_WTQUEUE state.
+- CHANGE: Moved the STM32 DMA helper drivers files under the sub-family
+  specific directories because documentation issues.
+
 *** 2.3.3 ***
+- FIX: Fixed missing UART5 definition in STM32 HAL (bug 3411774)(backported
+  to 2.2.8).
+- FIX: Fixed uninitialized variable in STM32 PWM and ICU drivers (bug 3413558).
+- FIX: Fixed wrong parameter passed to the DMA error hook in STM32 ADC driver,
+  the DMA error hook has been removed entirely in the new ADC driver model
+  (bug 3413214).
+- FIX: The function chThdExit() triggers an error on shell return when the
+  system state checker is enabled (bug 3411207)(backported to 2.2.8).
+- FIX: Some ARMCMx makefiles refer the file rules.mk in the ARM7 port (bug
+  3411180)(backported to 2.2.8).
 - FIX: Fixed wrong check on CH_DBG_ENABLE_STACK_CHECK setting (bug 3387671)
   (backported to 2.2.7).
 - FIX: Fixed wrong APB1 frequency check (bug 3361039)(backported to 2.2.7).
@@ -89,6 +164,26 @@
   (backported to 2.2.4).
 - FIX: Fixed timeout problem in the lwIP interface layer (bug 3302420)
   (backported to 2.2.4).
+- NEW: Added AVR implementation of the PAL driver contributed by Leszek.
+- NEW: STM32L ADC driver implementation.
+- NEW: Improved ADC driver model, now it is possible to handle error
+  conditions during the conversion process.
+- NEW: STM32L1xx sub-family support, all STM32 drivers adapted and re-tested
+  on the new platform except ADC that will need a specific implementation. 
+- NEW: Added new API chThdExitS() in order to allow atomic operations on
+  thread exit (backported to 2.2.8).
+- NEW: New EXT driver model and STM32 implementation.
+- NEW: New I2C driver model and STM32 implementation.
+  (evaluate the option to change the API to a synchronous model)
+- NEW: New RTC driver model and STM32 implementation.
+  (API and functionality review)
+- NEW: Improved MAC driver model, it now follows the same template of other
+  drivers.
+  TODO: uIP demo to be adapted.
+  TODO: implement macStop() in AT91SAM7X implementation.
+- NEW: New RCC helper driver for STM32F1xx and STM32L1xx, it simplifies
+  the use of the RCC resources and hides most differences found among the
+  various STM32 sub-families.
 - NEW: New DMA helper driver for STM32, it simplifies the use of the DMA
   resources and hides most differences with the new enhanced DMA units
   found in the STM32F2xx sub-family.
@@ -118,20 +213,18 @@
   easier maintenance.
 - NEW: Improved stack checking and reorganized memory map for the Cortex-Mx
   demos. Now stacks are allocated at the start of the RAM, an overflow of the
-  exception stack now triggers an exception (it could went unnoticed before).
+  exception stack now triggers an exception (it could go unnoticed before).
   The process stack is organized to be checked on context switch like other
   threads. Now all threads have an explicit stack boundary pointer.
-  (TODO: documentation to be updated)
 - NEW: Added debug plugin for Eclipse under ./tools/eclipse (backported to
   2.2.7).
 - NEW: The debug macros chDbgCheck() and chDbgAssert() now can be externally
   redefined. The macro chDbgCheck() no more includes the line number in the
   description because incompatibility with the Cosmic compiler (backported to
   2.2.7).
-- NEW: Added provisional support for STM32L1xx and STM32F2xx. Because of this
-  some directories related to the STM32 have been renamed, your makefiles may
+- NEW: Added provisional support for STM32F2xx. Because of this some
+  directories related to the STM32 have been renamed, your makefiles may
   require adjustments.
-  (TODO: change to be ported to IAR and Keil build files)
 - NEW: Added a custom rule to the various rules.mk files, now it is possible
   to add an user rule into the Makefiles.
 - NEW: Improvements to the trace buffer, now it stores a full thread pointer
@@ -166,7 +259,8 @@
   is new and makes the kernel *much* smaller and generally faster but does
   not support fast interrupts (backported to 2.2.5).
 - NEW: Now the port layer exports info regarding the compiler and the port
-  options. The info are printed into the test reports.
+  options. The info are printed into the test reports. Date and time also
+  added.
 - CHANGE: Removed the option CH_USE_NESTED_LOCK, lwIP no more requires it and
   it would have conflicted with CH_DBG_SYSTEM_STATE_CHECK which is far more
   useful.

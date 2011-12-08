@@ -46,7 +46,19 @@
  * @brief   Simplified priority handling flag.
  * @details Activating this option will make the Kernel work in compact mode.
  */
-#ifndef CORTEX_SIMPLIFIED_PRIORITY
+#if !defined(CORTEX_USE_FPU)
+#define CORTEX_USE_FPU                  FALSE/*CORTEX_HAS_FPU*/
+#elif CORTEX_USE_FPU && !CORTEX_HAS_FPU
+/* This setting requires an FPU presence check in case it is externally
+   redefined.*/
+#error "the selected core does not have an FPU"
+#endif
+
+/**
+ * @brief   Simplified priority handling flag.
+ * @details Activating this option will make the Kernel work in compact mode.
+ */
+#if !defined(CORTEX_SIMPLIFIED_PRIORITY)
 #define CORTEX_SIMPLIFIED_PRIORITY      FALSE
 #endif
 
@@ -57,13 +69,18 @@
  *          @p CORTEX_MAXIMUM_PRIORITY priority level as fast interrupts
  *          priority level.
  */
-#ifndef CORTEX_PRIORITY_SVCALL
+#if !defined(CORTEX_PRIORITY_SVCALL)
 #define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY + 1)
-#else
+#elif !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SVCALL)
 /* If it is externally redefined then better perform a validity check on it.*/
-#if !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SVCALL)
 #error "invalid priority level specified for CORTEX_PRIORITY_SVCALL"
 #endif
+
+/**
+ * @brief   NVIC VTOR initialization expression.
+ */
+#if !defined(CORTEX_VTOR_INIT) || defined(__DOXYGEN__)
+#define CORTEX_VTOR_INIT              0x00000000
 #endif
 
 /*===========================================================================*/
@@ -192,6 +209,7 @@ struct intctx {
  * @brief   Port-related initialization code.
  */
 #define port_init() {                                                       \
+  SCB_VTOR = CORTEX_VTOR_INIT;                                              \
   SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);                            \
   NVICSetSystemHandlerPriority(HANDLER_SVCALL,                              \
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL));                          \
@@ -224,7 +242,7 @@ struct intctx {
 
 /**
  * @brief   Kernel-unlock action.
- * @details Usually this function just disables interrupts but may perform
+ * @details Usually this function just enables interrupts but may perform
  *          more actions.
  * @note    In this port this it lowers the base priority to user level.
  */

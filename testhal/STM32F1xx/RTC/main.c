@@ -21,22 +21,23 @@
 #include "ch.h"
 #include "hal.h"
 
-#define TEST_DEEPSLEEP_ENABLE
+RTCTime timespec;
+RTCAlarm alarmspec;
 
-#ifdef TEST_DEEPSLEEP_ENABLE
+#define TEST_ALARM_WAKEUP FALSE
 
+#if TEST_ALARM_WAKEUP
+
+/* sleep indicator thread */
 static WORKING_AREA(blinkWA, 128);
 static msg_t blink_thd(void *arg){
   (void)arg;
   while (TRUE) {
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(100);
     palTogglePad(IOPORT3, GPIOC_LED);
   }
   return 0;
 }
-
-
-
 
 int main(void) {
   halInit();
@@ -44,7 +45,9 @@ int main(void) {
 
   chThdCreateStatic(blinkWA, sizeof(blinkWA), NORMALPRIO, blink_thd, NULL);
   /* set alarm in near future */
-  rtcSetAlarm(rtcGetSec() + 60);
+  rtcGetTime(&timespec);
+  alarmspec.tv_sec = timespec.tv_sec + 60;
+  rtcSetAlarm(&alarmspec);
 
   while (TRUE){
       chThdSleepSeconds(10);
@@ -58,43 +61,40 @@ int main(void) {
   return 0;
 }
 
+#else /* TEST_ALARM_WAKEUP */
 
+static void my_cb(RTCDriver *rtcp, rtcevent_t event) {
 
-#else /* TEST_DEEPSLEEP_ENABLE */
-
-static void my_secondcb(RTCDriver *rtcp){
   (void)rtcp;
-  //palTogglePad(IOPORT3, GPIOC_LED);
-}
 
-static void my_alarmcb(RTCDriver *rtcp){
-  (void)rtcp;
-  palTogglePad(IOPORT3, GPIOC_LED);
-  rtcSetAlarm(rtcGetSec() + 10);
+  switch (event) {
+  case RTC_EVENT_OVERFLOW:
+    palTogglePad(GPIOC, GPIOC_LED);
+    break;
+  case RTC_EVENT_SECOND:
+    //palTogglePad(GPIOC, GPIOC_LED);
+    break;
+  case RTC_EVENT_ALARM:
+    palTogglePad(GPIOC, GPIOC_LED);
+    rtcGetTime(&RTCD1, &timespec);
+    alarmspec.tv_sec = timespec.tv_sec + 10;
+    rtcSetAlarm(&RTCD1, 0, &alarmspec);
+    break;
+  }
 }
-
-static void my_overflowcb(RTCDriver *rtcp){
-  (void)rtcp;
-  palTogglePad(IOPORT3, GPIOC_LED);
-  rtcSetAlarm(rtcGetSec() + 10);
-}
-
-static const RTCConfig rtccfg={
-    my_overflowcb,
-    my_secondcb,
-    my_alarmcb,
-};
 
 int main(void) {
   halInit();
   chSysInit();
 
-  rtcSetAlarm(rtcGetSec() + 10);
-  rtcStart(&RTCD, &rtccfg);
+  rtcGetTime(&RTCD1, &timespec);
+  alarmspec.tv_sec = timespec.tv_sec + 10;
+  rtcSetAlarm(&RTCD1, 0, &alarmspec);
 
+  rtcSetCallback(&RTCD1, my_cb);
   while (TRUE){
     chThdSleepMilliseconds(500);
   }
   return 0;
 }
-#endif /* TEST_DEEPSLEEP_ENABLE */
+#endif /* TEST_ALARM_WAKEUP */

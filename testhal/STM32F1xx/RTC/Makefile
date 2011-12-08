@@ -12,11 +12,16 @@ ifeq ($(USE_OPT),)
 #	If all calls to a given function are integrated, and the function is declared static, then the function is normally not output as assembler code in its own right.
 #	Enabled at level '-O3'.
 
-  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
   #USE_OPT = -O1 -ggdb -fomit-frame-pointer -falign-functions=16 -fno-inline
   #USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -fno-strict-aliasing
   #USE_OPT = -O3 -ggdb -fomit-frame-pointer -falign-functions=16
   #USE_OPT = -Os -ggdb -fomit-frame-pointer -falign-functions=16
+endif
+
+# C specific options here (added to USE_OPT).
+ifeq ($(USE_COPT),)
+  USE_COPT = 
 endif
 
 # C++ specific options here (added to USE_OPT).
@@ -34,9 +39,9 @@ ifeq ($(USE_THUMB),)
   USE_THUMB = yes
 endif
 
-# Enable register caching optimization (read documentation).
-ifeq ($(USE_CURRP_CACHING),)
-  USE_CURRP_CACHING = no
+# Enable this if you want to see the full log while compiling.
+ifeq ($(USE_VERBOSE_COMPILE),)
+  USE_VERBOSE_COMPILE = no
 endif
 
 #
@@ -86,7 +91,6 @@ CSRC = $(PORTSRC) \
        $(CHIBIOS)/os/various/evtimer.c \
        $(CHIBIOS)/os/various/syscalls.c \
        main.c \
-        
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -215,6 +219,3 @@ ifeq ($(USE_FWLIB),yes)
 endif
 
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/rules.mk
-
-
-

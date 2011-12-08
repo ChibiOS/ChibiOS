@@ -25,10 +25,10 @@
 static void e_pulse(void) {
   volatile uint8_t i;
 
-  PORTC |= PORTC_44780_E;
+  PORTC |= PORTC_44780_E_MASK;
   for (i = 0; i < ELOOPVALUE; i++);
     ;
-  PORTC &= ~PORTC_44780_E;
+  PORTC &= ~PORTC_44780_E_MASK;
 }
 
 static void wait_not_busy(void) {
@@ -41,8 +41,9 @@ static void wait_not_busy(void) {
  */
 void lcdInit(void) {
 
-  PORTC = (PORTC & ~(PORTC_44780_DATA | PORTC_44780_RS | PORTC_44780_E | PORTC_44780_RW)) |
-          (LCD_CMD_INIT8 & PORTC_44780_DATA);
+  PORTC = (PORTC & ~(PORTC_44780_DATA_MASK | PORTC_44780_RS_MASK |
+                     PORTC_44780_E_MASK | PORTC_44780_RW_MASK)) |
+          (LCD_CMD_INIT8 & PORTC_44780_DATA_MASK);
   chThdSleep(50);
   e_pulse();
   chThdSleep(10);
@@ -50,8 +51,9 @@ void lcdInit(void) {
   chThdSleep(2);
   e_pulse();
   wait_not_busy();
-  PORTC = (PORTC & ~(PORTC_44780_DATA | PORTC_44780_RS | PORTC_44780_E | PORTC_44780_RW)) |
-          (LCD_CMD_INIT4 & PORTC_44780_DATA);
+  PORTC = (PORTC & ~(PORTC_44780_DATA_MASK | PORTC_44780_RS_MASK |
+                     PORTC_44780_E_MASK | PORTC_44780_RW_MASK)) |
+          (LCD_CMD_INIT4 & PORTC_44780_DATA_MASK);
   e_pulse();
   lcdCmd(LCD_CMD_INIT4);
   lcdCmd(LCD_SET_DM | LCD_DM_DISPLAY_ON);
@@ -64,9 +66,11 @@ void lcdInit(void) {
 void lcdCmd(uint8_t cmd) {
 
   wait_not_busy();
-  PORTC = (PORTC | PORTC_44780_DATA) & (cmd | (0x0F & ~PORTC_44780_RS));
+  PORTC = (PORTC | PORTC_44780_DATA_MASK) & (cmd |
+                                             (0x0F & ~PORTC_44780_RS_MASK));
   e_pulse();
-  PORTC = (PORTC | PORTC_44780_DATA) & ((cmd << 4) | (0x0F & ~PORTC_44780_RS));
+  PORTC = (PORTC | PORTC_44780_DATA_MASK) & ((cmd << 4) |
+                                             (0x0F & ~PORTC_44780_RS_MASK));
   e_pulse();
 }
 
@@ -78,9 +82,11 @@ void lcdPutc(char c) {
 
   wait_not_busy();
   b = c | 0x0F;
-  PORTC = (PORTC | PORTC_44780_DATA | PORTC_44780_RS) & (c | 0x0F);
+  PORTC = (PORTC | PORTC_44780_DATA_MASK | PORTC_44780_RS_MASK) &
+          (c | 0x0F);
   e_pulse();
-  PORTC = (PORTC | PORTC_44780_DATA | PORTC_44780_RS) & ((c << 4) | 0x0F);
+  PORTC = (PORTC | PORTC_44780_DATA_MASK | PORTC_44780_RS_MASK) &
+          ((c << 4) | 0x0F);
   e_pulse();
 }
 
