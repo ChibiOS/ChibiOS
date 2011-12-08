@@ -18,31 +18,41 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * Not responding slave test
+ */
+
 #include <stdlib.h>
+
 #include "ch.h"
+#include "hal.h"
 
-#ifndef LIS3_H_
-#define LIS3_H_
-
-
-
-/* buffers depth */
-#define ACCEL_RX_DEPTH 8
-#define ACCEL_TX_DEPTH 8
-
-/* autoincrement bit position. This bit needs to perform reading of
- * multiple bytes at one request */
-#define AUTO_INCREMENT_BIT (1<<7)
-
-/* slave specific addresses */
-#define ACCEL_STATUS_REG  0x27
-#define ACCEL_CTRL_REG1   0x20
-#define ACCEL_OUT_DATA    0x28
+#include "fake.h"
 
 
+/* input buffer */
+static uint8_t rx_data[2];
 
-inline int init_lis3(void);
-inline void request_acceleration_data(void);
+/* temperature value */
+static int16_t temperature = 0;
 
 
-#endif /* LIS3_H_ */
+#define addr 0b1001100
+
+/* This is main function. */
+void request_fake(void){
+  i2cflags_t errors = 0;
+
+  i2cAcquireBus(&I2CD1);
+  errors = i2cMasterReceive(&I2CD1, addr, rx_data, 2);
+  i2cReleaseBus(&I2CD1);
+
+  if (errors == I2CD_ACK_FAILURE){
+    __NOP();
+  }
+  else{
+    temperature = (rx_data[0] << 8) + rx_data[1];
+  }
+}
+
+

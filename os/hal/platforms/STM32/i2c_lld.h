@@ -42,50 +42,32 @@
  * @name    Configuration options
  * @{
  */
-/**
- * @brief Switch between callback based and synchronouse driver.
- * @note  The default is synchronouse.
- */
-#if !defined(I2C_SUPPORTS_CALLBACKS) || defined(__DOXYGEN__)
-#define I2C_SUPPORTS_CALLBACKS              TRUE
-#endif
-
-/**
- * @brief I2C1 driver synchronization choice between GPT and polling.
- * @note The default is polling wait.
- */
-#if !defined(STM32_I2C_I2C1_USE_GPT_TIM)       || \
-    !defined(STM32_I2C_I2C1_USE_POLLING_WAIT)  || \
-    defined(__DOXYGEN__)
-#define STM32_I2C_I2C1_USE_POLLING_WAIT     TRUE
-#endif
-
-/**
- * @brief I2C2 driver synchronization choice between GPT and polling.
- * @note The default is polling wait.
- */
-#if !defined(STM32_I2C_I2C2_USE_GPT_TIM)       || \
-    !defined(STM32_I2C_I2C2_USE_POLLING_WAIT)  || \
-    defined(__DOXYGEN__)
-#define STM32_I2C_I2C2_USE_POLLING_WAIT     TRUE
-#endif
 
 /**
  * @brief I2C1 driver enable switch.
  * @details If set to @p TRUE the support for I2C1 is included.
- * @note The default is @p TRUE.
+ * @note The default is @p FALSE.
  */
 #if !defined(STM32_I2C_USE_I2C1) || defined(__DOXYGEN__)
-#define STM32_I2C_USE_I2C1              TRUE
+#define STM32_I2C_USE_I2C1              FALSE
 #endif
 
 /**
  * @brief I2C2 driver enable switch.
  * @details If set to @p TRUE the support for I2C2 is included.
- * @note The default is @p TRUE.
+ * @note The default is @p FALSE.
  */
 #if !defined(STM32_I2C_USE_I2C2) || defined(__DOXYGEN__)
-#define STM32_I2C_USE_I2C2              TRUE
+#define STM32_I2C_USE_I2C2              FALSE
+#endif
+
+/**
+ * @brief I2C3 driver enable switch.
+ * @details If set to @p TRUE the support for I2C3 is included.
+ * @note The default is @p FALSE.
+ */
+#if !defined(STM32_I2C_USE_I2C3) || defined(__DOXYGEN__)
+#define STM32_I2C_USE_I2C3              FALSE
 #endif
 
 /**
@@ -103,42 +85,157 @@
 #if !defined(STM32_I2C_I2C2_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_I2C_I2C2_IRQ_PRIORITY     0xA0
 #endif
+
+/**
+ * @brief I2C2 interrupt priority level setting.
+ * @note @p BASEPRI_KERNEL >= @p STM32_I2C_I2C2_IRQ_PRIORITY > @p PRIORITY_PENDSV.
+ */
+#if !defined(STM32_I2C_I2C3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C3_IRQ_PRIORITY     0xA0
+#endif
+
+/**
+ * @brief   I2C1 DMA error hook.
+ * @note    The default action for DMA errors is a system halt because DMA
+ *          error can only happen because programming errors.
+ */
+#if !defined(STM32_I2C_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_I2C_DMA_ERROR_HOOK(uartp)    chSysHalt()
+#endif
+
+#if STM32_ADVANCED_DMA || defined(__DOXYGEN__)
+
+/**
+ * @brief   DMA stream used for I2C1 RX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_I2C_I2C1_RX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 0)
+#endif
+
+/**
+ * @brief   DMA stream used for I2C1 TX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_I2C_I2C1_TX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 6)
+#endif
+
+/**
+ * @brief   DMA stream used for I2C2 RX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_I2C_I2C2_RX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 2)
+#endif
+
+/**
+ * @brief   DMA stream used for I2C2 TX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_I2C_I2C2_TX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 7)
+#endif
+
+/**
+ * @brief   DMA stream used for I2C3 RX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_I2C_I2C3_RX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C3_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 2)
+#endif
+
+/**
+ * @brief   DMA stream used for I2C3 TX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_I2C_I2C3_TX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C3_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
+#endif
+
+#else /* !STM32_ADVANCED_DMA */
+
+/* Fixed streams for platforms using the old DMA peripheral, the values are
+   valid for both STM32F1xx and STM32L1xx.*/
+#define STM32_I2C_I2C1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 7)
+#define STM32_I2C_I2C1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 6)
+#define STM32_I2C_I2C2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
+#define STM32_I2C_I2C2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
+
+#endif /* !STM32_ADVANCED_DMA*/
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/** @brief  EV5 */
-#define I2C_EV5_MASTER_MODE_SELECT          ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_SB))  /* BUSY, MSL and SB flag */
-/** @brief  EV6 */
+/** @brief  flags for interrupt handling */
+#define I2C_EV5_MASTER_MODE_SELECT          ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY) << 16) | I2C_SR1_SB))  /* BUSY, MSL and SB flag */
 #define I2C_EV6_MASTER_TRA_MODE_SELECTED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY|I2C_SR2_TRA)<< 16)|I2C_SR1_ADDR|I2C_SR1_TXE))  /* BUSY, MSL, ADDR, TXE and TRA flags */
 #define I2C_EV6_MASTER_REC_MODE_SELECTED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_ADDR))  /* BUSY, MSL and ADDR flags */
-/** @brief  EV7 */
-#define I2C_EV7_MASTER_REC_BYTE_RECEIVED    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_RXNE))             /* BUSY, MSL and RXNE flags */
-#define I2C_EV7_MASTER_REC_BYTE_QUEUED      ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_BTF|I2C_SR1_RXNE)) /* BUSY, MSL, RXNE and BTF flags*/
-/** @brief  EV8 */
-#define I2C_EV8_MASTER_BYTE_TRANSMITTING    ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY|I2C_SR2_TRA)<< 16)|I2C_SR1_TXE))   /* TRA, BUSY, MSL, TXE flags */
-/** @brief  EV8_2 */
-#define I2C_EV8_2_MASTER_BYTE_TRANSMITTED   ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY|I2C_SR2_TRA)<< 16)|I2C_SR1_BTF|I2C_SR1_TXE))  /* TRA, BUSY, MSL, TXE and BTF flags */
-/** @brief  EV9 */
-#define I2C_EV9_MASTER_ADDR_10BIT           ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16)|I2C_SR1_ADD10))  /* BUSY, MSL and ADD10 flags */
+#define I2C_EV8_2_MASTER_BYTE_TRANSMITTED   ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY | I2C_SR2_TRA) << 16) | I2C_SR1_BTF | I2C_SR1_TXE))  /* TRA, BUSY, MSL, TXE and BTF flags */
 #define I2C_EV_MASK                         0x00FFFFFF  /* First byte zeroed because there is no need of PEC register part from SR2 */
 
-#define I2C_FLG_1BTR            0x01 /* Single byte to be received and processed */
-#define I2C_FLG_2BTR            0x02 /* Two bytes to be received and processed */
-#define I2C_FLG_3BTR            0x04 /* Last three received bytes to be processed */
-#define I2C_FLG_MASTER_RECEIVER 0x10
-#define I2C_FLG_HEADER_SENT     0x80
-#define I2C_FLG_TIMER_ARMED     0x40 /* Used to check locks on the bus */
+#define I2C_FLG_MASTER_RECEIVER 			0x10
+#define I2C_FLG_HEADER_SENT     			0x80
 
-#define EV6_SUBEV_MASK  (I2C_FLG_1BTR|I2C_FLG_2BTR|I2C_FLG_MASTER_RECEIVER)
-#define EV7_SUBEV_MASK  (I2C_FLG_2BTR|I2C_FLG_3BTR|I2C_FLG_MASTER_RECEIVER)
+/** @brief  error checks */
+#if STM32_I2C_USE_I2C1 && !STM32_HAS_I2C1
+#error "I2C1 not present in the selected device"
+#endif
 
-#define I2C_EV6_1_MASTER_REC_2BTR_MODE_SELECTED (I2C_FLG_2BTR|I2C_FLG_MASTER_RECEIVER)
-#define I2C_EV6_3_MASTER_REC_1BTR_MODE_SELECTED (I2C_FLG_1BTR|I2C_FLG_MASTER_RECEIVER)
-#define I2C_EV7_2_MASTER_REC_3BYTES_TO_PROCESS  (I2C_FLG_3BTR|I2C_FLG_MASTER_RECEIVER)
-#define I2C_EV7_3_MASTER_REC_2BYTES_TO_PROCESS  (I2C_FLG_2BTR|I2C_FLG_MASTER_RECEIVER)
+#if STM32_I2C_USE_I2C2 && !STM32_HAS_I2C2
+#error "I2C2 not present in the selected device"
+#endif
+
+#if STM32_I2C_USE_I2C3 && !STM32_HAS_I2C3
+#error "I2C3 not present in the selected device"
+#endif
+
+#if !STM32_I2C_USE_I2C1 && !STM32_I2C_USE_I2C2 &&                     		\
+    !STM32_I2C_USE_I2C3
+#error "I2C driver activated but no I2C peripheral assigned"
+#endif
+
+#if STM32_I2C_USE_I2C1 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C1_RX_DMA_STREAM,                 \
+                           STM32_I2C1_RX_DMA_MSK)
+#error "invalid DMA stream associated to I2C1 RX"
+#endif
+
+#if STM32_I2C_USE_I2C1 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C1_TX_DMA_STREAM,                 \
+                           STM32_I2C1_TX_DMA_MSK)
+#error "invalid DMA stream associated to I2C1 TX"
+#endif
+
+#if STM32_I2C_USE_I2C2 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C2_RX_DMA_STREAM,                 \
+                           STM32_I2C2_RX_DMA_MSK)
+#error "invalid DMA stream associated to I2C2 RX"
+#endif
+
+#if STM32_I2C_USE_I2C2 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C2_TX_DMA_STREAM,                 \
+                           STM32_I2C2_TX_DMA_MSK)
+#error "invalid DMA stream associated to I2C2 TX"
+#endif
+
+#if STM32_I2C_USE_I2C3 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C3_RX_DMA_STREAM,                 \
+                           STM32_I2C3_RX_DMA_MSK)
+#error "invalid DMA stream associated to I2C3 RX"
+#endif
+
+#if STM32_I2C_USE_I2C3 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C3_TX_DMA_STREAM,                 \
+                           STM32_I2C3_TX_DMA_MSK)
+#error "invalid DMA stream associated to I2C3 TX"
+#endif
+
+#if !defined(STM32_DMA_REQUIRED)
+#define STM32_DMA_REQUIRED
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -168,9 +265,6 @@ typedef struct {
   i2copmode_t     op_mode;       /**< @brief Specifies the I2C mode.*/
   uint32_t        clock_speed;   /**< @brief Specifies the clock frequency. Must be set to a value lower than 400kHz */
   i2cdutycycle_t  duty_cycle;    /**< @brief Specifies the I2C fast mode duty cycle */
-  uint8_t         own_addr_7;    /**< @brief Specifies the first device 7-bit own address. */
-  uint16_t        own_addr_10;   /**< @brief Specifies the second part of device own address in 10-bit mode. Set to NULL if not used. */
-  uint8_t         nbit_own_addr; /**< @brief Specifies if 7-bit or 10-bit address is acknowledged */
 } I2CConfig;
 
 
@@ -180,83 +274,52 @@ typedef struct {
 typedef struct I2CDriver I2CDriver;
 
 /**
- * @brief   Type of a structure representing an I2C slave config.
- */
-typedef struct I2CSlaveConfig I2CSlaveConfig;
-
-/**
  * @brief Structure representing an I2C driver.
  */
 struct I2CDriver{
   /**
    * @brief Driver state.
    */
-  i2cstate_t            id_state;
+  i2cstate_t                id_state;
 
-#if I2C_USE_WAIT
   /**
    * @brief Thread waiting for I/O completion.
    */
-  Thread                *id_thread;
-#endif /* I2C_USE_WAIT */
+  Thread                    *id_thread;
+
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief Mutex protecting the bus.
    */
-  Mutex                 id_mutex;
+  Mutex                     id_mutex;
 #elif CH_USE_SEMAPHORES
-  Semaphore             id_semaphore;
+  Semaphore                 id_semaphore;
 #endif
 #endif /* I2C_USE_MUTUAL_EXCLUSION */
 
   /**
    * @brief Current configuration data.
    */
-  const I2CConfig       *id_config;
-  /**
-   * @brief Current slave configuration data.
-   */
-  const I2CSlaveConfig  *id_slave_config;
+  const I2CConfig           *id_config;
 
-  __IO size_t           txbytes;    /*!< @brief Number of bytes to be transmitted. */
-  __IO size_t           rxbytes;    /*!< @brief Number of bytes to be received. */
-  uint8_t               *rxbuf;     /*!< @brief Pointer to receive buffer. */
-  uint8_t               *txbuf;     /*!< @brief Pointer to transmit buffer.*/
-  uint8_t               *rxbuff_p;  /*!< @brief Pointer to the current byte in slave rx buffer. */
-  uint8_t               *txbuff_p;  /*!< @brief Pointer to the current byte in slave tx buffer. */
+  __IO size_t               txbytes;    /*!< @brief Number of bytes to be transmitted. */
+  __IO size_t               rxbytes;    /*!< @brief Number of bytes to be received. */
+  uint8_t                   *rxbuf;     /*!< @brief Pointer to receive buffer. */
+  uint8_t                   *txbuf;     /*!< @brief Pointer to transmit buffer.*/
 
-  __IO i2cflags_t       errors;     /*!< @brief Error flags.*/
-  __IO i2cflags_t       flags;      /*!< @brief State flags.*/
+  __IO i2cflags_t           errors;     /*!< @brief Error flags.*/
+  __IO i2cflags_t           flags;      /*!< @brief State flags.*/
 
-  uint16_t              slave_addr; /*!< @brief Current slave address. */
-  uint8_t               slave_addr1;/*!< @brief 7-bit address of the slave with r\w bit.*/
-  uint8_t               slave_addr2;/*!< @brief Uses in 10-bit address mode. */
-
-#if CH_USE_EVENTS
-  EventSource           sevent;     /*!< @brief Status Change @p EventSource.*/
-#endif
+  uint8_t                   slave_addr; /*!< @brief Current slave address without R/W bit. */
 
   /*********** End of the mandatory fields. **********************************/
 
-  /**
-   * @brief Pointer to the I2Cx registers block.
-   */
-  I2C_TypeDef           *id_i2c;
+  uint32_t                  dmamode;    /*!< @brief DMA mode bit mask.*/
+  const stm32_dma_stream_t  *dmarx;     /*!< @brief Receive DMA channel.*/
+  const stm32_dma_stream_t  *dmatx;     /*!< @brief Transmit DMA channel.*/
 
-#if !(STM32_I2C_I2C1_USE_POLLING_WAIT)
-  /* TODO: capability to switch this GPT fields off */
-  /**
-   * @brief Timer for waiting STOP condition on the bus.
-   * @details This is workaround for STM32 buggy I2C cell.
-   */
-  GPTDriver             *timer;
-
-  /**
-   * @brief Config for workaround timer.
-   */
-  const GPTConfig       *timer_cfg;
-#endif /* !(STM32_I2C_I2C1_USE_POLLING_WAIT) */
+  I2C_TypeDef               *id_i2c;    /*!< @brief Pointer to the I2Cx registers block. */
 };
 
 
@@ -268,8 +331,7 @@ struct I2CDriver{
   (i2cp->id_i2c->SR2 & I2C_SR2_BUSY)
 
 
-/* Wait until BUSY flag is reset: a STOP has been generated on the bus
- * signaling the end of transmission. Normally this wait function
+/* Wait until BUSY flag is reset. Normally this wait function
  * does not block thread, only if slave not response it does.
  */
 #define i2c_lld_wait_bus_free(i2cp) {                                       \
@@ -291,6 +353,10 @@ extern I2CDriver I2CD1;
 extern I2CDriver I2CD2;
 #endif
 
+#if STM32_I2C_USE_I2C3
+extern I2CDriver I2CD3;
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -299,14 +365,12 @@ void i2c_lld_init(void);
 void i2c_lld_reset(I2CDriver *i2cp);
 void i2c_lld_set_clock(I2CDriver *i2cp);
 void i2c_lld_set_opmode(I2CDriver *i2cp);
-void i2c_lld_set_own_address(I2CDriver *i2cp);
 void i2c_lld_start(I2CDriver *i2cp);
 void i2c_lld_stop(I2CDriver *i2cp);
-void i2c_lld_master_transmit(I2CDriver *i2cp, uint16_t slave_addr,
+void i2c_lld_master_transmit(I2CDriver *i2cp, uint8_t slave_addr,
     uint8_t *txbuf, size_t txbytes, uint8_t *rxbuf, size_t rxbytes);
-void i2c_lld_master_receive(I2CDriver *i2cp, uint16_t slave_addr,
+void i2c_lld_master_receive(I2CDriver *i2cp, uint8_t slave_addr,
     uint8_t *rxbuf, size_t rxbytes);
-void i2c_lld_master_transceive(I2CDriver *i2cp);
 
 #ifdef __cplusplus
 }

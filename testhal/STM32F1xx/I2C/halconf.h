@@ -44,7 +44,7 @@
  * @brief   Enables the ADC subsystem.
  */
 #if !defined(HAL_USE_ADC) || defined(__DOXYGEN__)
-#define HAL_USE_ADC                 TRUE
+#define HAL_USE_ADC                 FALSE
 #endif
 
 /**
@@ -100,7 +100,7 @@
  * @brief   Enables the PWM subsystem.
  */
 #if !defined(HAL_USE_PWM) || defined(__DOXYGEN__)
-#define HAL_USE_PWM                 TRUE
+#define HAL_USE_PWM                 FALSE
 #endif
 
 /**
@@ -121,7 +121,7 @@
  * @brief   Enables the SERIAL subsystem.
  */
 #if !defined(HAL_USE_SERIAL) || defined(__DOXYGEN__)
-#define HAL_USE_SERIAL              TRUE
+#define HAL_USE_SERIAL              FALSE
 #endif
 
 /**
@@ -192,7 +192,7 @@
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(I2C_USE_WAIT) || defined(__DOXYGEN__)
-#define I2C_USE_WAIT                FALSE
+#define I2C_USE_WAIT                TRUE
 #endif
 
 /**
@@ -200,13 +200,6 @@
  */
 #if !defined(I2C_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define I2C_USE_MUTUAL_EXCLUSION    TRUE
-#endif
-
-/**
- * @brief   Switch to asynchronouse driver with callbacks.
- */
-#if !defined(I2C_SUPPORTS_CALLBACKS) || defined(__DOXYGEN__)
-#define I2C_SUPPORTS_CALLBACKS      TRUE
 #endif
 
 /*===========================================================================*/

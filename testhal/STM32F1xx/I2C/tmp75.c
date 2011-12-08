@@ -1,3 +1,23 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /**
  * TMP75 is most simple I2C device in our case. It is already useful with
  * default settings after powerup.
@@ -13,40 +33,25 @@
 
 
 /* input buffer */
-static i2cblock_t tmp75_rx_data[TMP75_RX_DEPTH];
+static uint8_t tmp75_rx_data[TMP75_RX_DEPTH];
 
 /* temperature value */
 static int16_t temperature = 0;
 
-/* Simple error trap */
-static void i2c_tmp75_error_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
-  (void)i2cscfg;
-  int status = 0;
-  status = i2cp->id_i2c->SR1;
-  while(TRUE);
-}
-
-/* This callback raise up when transfer finished */
-static void i2c_tmp75_cb(I2CDriver *i2cp, const I2CSlaveConfig *i2cscfg){
-  (void)*i2cp;
-  (void)*i2cscfg;
-  /* store temperature value */
-}
-
-/* Fill TMP75 config. */
-static const I2CSlaveConfig tmp75 = {
-    i2c_tmp75_cb,
-    i2c_tmp75_error_cb,
-};
 
 #define tmp75_addr 0b1001000
 
 /* This is main function. */
 void request_temperature(void){
-  i2cAcquireBus(&I2CD2);
-  i2cMasterReceive(&I2CD2, &tmp75, tmp75_addr, tmp75_rx_data, 2);
-  i2cReleaseBus(&I2CD2);
-  temperature = (tmp75_rx_data[0] << 8) + tmp75_rx_data[1];
+  int16_t t_int = 0, t_frac = 0;
+
+  i2cAcquireBus(&I2CD1);
+  i2cMasterReceive(&I2CD1, tmp75_addr, tmp75_rx_data, 2);
+  i2cReleaseBus(&I2CD1);
+
+  t_int = tmp75_rx_data[0] * 100;
+  t_frac = (tmp75_rx_data[1] * 100) >> 8;
+  temperature = t_int + t_frac;
 }
 
 
