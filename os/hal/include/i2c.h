@@ -108,12 +108,12 @@ typedef enum {
  *
  * @notapi
  */
-#define _i2c_wait_s(i2cp) {                                                 \
+#define _i2c_wait_s(i2cp, timeout, rdymsg) {                                \
   chDbgAssert((i2cp)->id_thread == NULL,                                    \
               "_i2c_wait(), #1", "already waiting");                        \
   chSysLock();                                                              \
   (i2cp)->id_thread = chThdSelf();                                          \
-  chSchGoSleepS(THD_STATE_SUSPENDED);                                       \
+  rdymsg = chSchGoSleepTimeoutS(THD_STATE_SUSPENDED, timeout);              \
   chSysUnlock();                                                            \
 }
 
@@ -181,14 +181,15 @@ extern "C" {
   void i2cObjectInit(I2CDriver *i2cp);
   void i2cStart(I2CDriver *i2cp, const I2CConfig *config);
   void i2cStop(I2CDriver *i2cp);
-  i2cflags_t i2cMasterTransmit(I2CDriver *i2cp,
+  msg_t i2cMasterTransmit(I2CDriver *i2cp,
                          uint8_t slave_addr,
                          uint8_t *txbuf, size_t txbytes,
-                         uint8_t *rxbuf, size_t rxbytes);
-  i2cflags_t i2cMasterReceive(I2CDriver *i2cp,
-                        uint8_t slave_addr, uint8_t *rxbuf, size_t rxbytes);
-  void i2cAddFlagsI(I2CDriver *i2cp, i2cflags_t mask);
-  i2cflags_t i2cGetAndClearFlags(I2CDriver *i2cp);
+                         uint8_t *rxbuf, size_t rxbytes,
+                         i2cflags_t *errors, systime_t timeout);
+  msg_t i2cMasterReceive(I2CDriver *i2cp,
+                         uint8_t slave_addr,
+                         uint8_t *rxbuf, size_t rxbytes,
+                         i2cflags_t *errors, systime_t timeout);
 
 #if I2C_USE_MUTUAL_EXCLUSION
   void i2cAcquireBus(I2CDriver *i2cp);

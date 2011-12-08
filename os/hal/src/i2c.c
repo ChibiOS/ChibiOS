@@ -145,33 +145,40 @@ void i2cStop(I2CDriver *i2cp) {
  * @param[in] rxbuf       pointer to receive buffer
  * @param[in] rxbytes     number of bytes to be received, set it to 0 if
  *                        you want transmit only
+ * @param[in] errors      pointer to variable to store error code, zero means
+ *                        no error.
+ * @param[in] timeout     operation timeout
  *
- * @return                Zero if no errors, otherwise return error code.
+ * @return                timeout status
+ * @retval RDY_OK         if timeout not reached
+ * @retval RDY_TIMEOUT    if a timeout occurs
  */
-i2cflags_t i2cMasterTransmit(I2CDriver *i2cp,
+msg_t i2cMasterTransmit(I2CDriver *i2cp,
                              uint8_t slave_addr,
                              uint8_t *txbuf,
                              size_t txbytes,
                              uint8_t *rxbuf,
-                             size_t rxbytes) {
+                             size_t rxbytes,
+                             i2cflags_t *errors,
+                             systime_t timeout) {
+  msg_t rdymsg;
 
   chDbgCheck((i2cp != NULL) && (slave_addr != 0) &&
              (txbytes > 0) && (txbuf != NULL) &&
-             ((rxbytes == 0) || ((rxbytes > 0) && (rxbuf != NULL))),
+             ((rxbytes == 0) || ((rxbytes > 0) && (rxbuf != NULL))) &&
+             (timeout > TIME_IMMEDIATE) && (errors != NULL),
              "i2cMasterTransmit");
-
-  i2c_lld_wait_bus_free(i2cp);
-
-  chDbgAssert(!(i2c_lld_bus_is_busy(i2cp)),
-              "i2cMasterReceive(), #1", "time is out");
+  i2cp->errors = I2CD_NO_ERROR; /* clear error flags from previous run */
   chDbgAssert(i2cp->id_state == I2C_READY,
               "i2cMasterTransmit(), #1", "not ready");
 
   i2cp->id_state = I2C_ACTIVE_TRANSMIT;
   i2c_lld_master_transmit(i2cp, slave_addr, txbuf, txbytes, rxbuf, rxbytes);
-  _i2c_wait_s(i2cp);
+  _i2c_wait_s(i2cp, timeout, rdymsg);
 
-  return i2cGetAndClearFlags(i2cp);
+  *errors = i2cp->errors;
+
+  return rdymsg;
 }
 
 /**
@@ -181,69 +188,40 @@ i2cflags_t i2cMasterTransmit(I2CDriver *i2cp,
  * @param[in] slave_addr  slave device address (7 bits) without R/W bit
  * @param[in] rxbytes     number of bytes to be received
  * @param[in] rxbuf       pointer to receive buffer
+ * @param[in] errors      pointer to variable to store error code, zero means
+ *                        no error.
+ * @param[in] timeout     operation timeout
  *
- * @return                Zero if no errors, otherwise return error code.
+ * @return                timeout status
+ * @retval RDY_OK         if timeout not reached
+ * @retval RDY_TIMEOUT    if a timeout occurs
  */
-i2cflags_t i2cMasterReceive(I2CDriver *i2cp,
+msg_t i2cMasterReceive(I2CDriver *i2cp,
                             uint8_t slave_addr,
                             uint8_t *rxbuf,
-                            size_t rxbytes){
+                            size_t rxbytes,
+                            i2cflags_t *errors,
+                            systime_t timeout){
+
+  msg_t rdymsg;
 
   chDbgCheck((i2cp != NULL) && (slave_addr != 0) &&
-             (rxbytes > 0) && (rxbuf != NULL),
+             (rxbytes > 0) && (rxbuf != NULL) &&
+             (timeout > TIME_IMMEDIATE) && (errors != NULL),
              "i2cMasterReceive");
-
-  i2c_lld_wait_bus_free(i2cp);
-
-  chDbgAssert(!(i2c_lld_bus_is_busy(i2cp)),
-              "i2cMasterReceive(), #1", "time is out");
+  i2cp->errors = I2CD_NO_ERROR; /* clear error flags from previous run */
   chDbgAssert(i2cp->id_state == I2C_READY,
               "i2cMasterReceive(), #1", "not ready");
 
   i2cp->id_state = I2C_ACTIVE_RECEIVE;
   i2c_lld_master_receive(i2cp, slave_addr, rxbuf, rxbytes);
-  _i2c_wait_s(i2cp);
+  _i2c_wait_s(i2cp, timeout, rdymsg);
 
-  return i2cGetAndClearFlags(i2cp);
+  *errors = i2cp->errors;
+
+  return rdymsg;
 }
 
-/**
- * @brief   Handles communication events/errors.
- * @details Must be called from the I/O interrupt service routine in order to
- *          notify I/O conditions as errors, signals change etc.
- *
- * @param[in] i2cp      pointer to a @p I2CDriver structure
- * @param[in] mask      condition flags to be added to the mask
- *
- * @iclass
- */
-void i2cAddFlagsI(I2CDriver *i2cp, i2cflags_t mask) {
-
-  chDbgCheck(i2cp != NULL, "i2cAddFlagsI");
-
-  i2cp->errors |= mask;
-}
-
-/**
- * @brief   Returns and clears the errors mask associated to the driver.
- *
- * @param[in] i2cp      pointer to a @p I2CDriver structure
- * @return              The condition flags modified since last time this
- *                      function was invoked.
- *
- * @api
- */
-i2cflags_t i2cGetAndClearFlags(I2CDriver *i2cp) {
-  i2cflags_t mask;
-
-  chDbgCheck(i2cp != NULL, "i2cGetAndClearFlags");
-
-  chSysLock();
-  mask = i2cp->errors;
-  i2cp->errors = I2CD_NO_ERROR;
-  chSysUnlock();
-  return mask;
-}
 
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 /**

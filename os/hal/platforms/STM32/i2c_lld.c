@@ -131,7 +131,7 @@ static volatile uint16_t dbgCR2 = 0;
 
 /**
  * @brief   Return the last event value from I2C status registers.
- * @details Important but implicit function is clearing interrpts flags.
+ * @details Important but implicit function is clearing interrupts flags.
  * @note    Internal use only.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
@@ -160,8 +160,6 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
 
   switch(i2c_get_event(i2cp)){
   case I2C_EV5_MASTER_MODE_SELECT:
-    /* catch start generated event */
-    i2cp->flags &= ~I2C_FLG_HEADER_SENT;
     dp->DR = i2cp->slave_addr;
     break;
 
@@ -176,7 +174,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
     break;
 
   case I2C_EV8_2_MASTER_BYTE_TRANSMITTED:
-    /* catch BTF event after the end of trasmission */
+    /* catch BTF event after the end of transmission */
     if (i2cp->rxbytes > 1){
       /* start "read after write" operation */
       i2c_lld_master_receive(i2cp, (i2cp->slave_addr >> 1),
@@ -224,7 +222,6 @@ static void i2c_lld_serve_tx_end_irq(I2CDriver *i2cp){
  */
 static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
   i2cflags_t errors;
-  I2C_TypeDef *reg;
 
   chSysLockFromIsr();
   /* clear interrupt falgs just to be safe */
@@ -234,7 +231,7 @@ static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
   dmaStreamClearInterrupt(i2cp->dmarx);
   chSysUnlockFromIsr();
 
-  reg = i2cp->id_i2c;
+  #define reg (i2cp->id_i2c)
   errors = I2CD_NO_ERROR;
 
   if(reg->SR1 & I2C_SR1_BERR) {                /* Bus error */
@@ -268,11 +265,10 @@ static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
   }
 
   if(errors != I2CD_NO_ERROR) {                /* send communication end signal */
-    chSysLockFromIsr();
-    i2cAddFlagsI(i2cp, errors);
-    chSysUnlockFromIsr();
+    i2cp->errors |= errors;
     _i2c_isr_err_code(i2cp, i2cp->id_slave_config);
   }
+  #undef reg
 }
 
 
@@ -455,7 +451,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
   dmaStreamSetPeripheral(i2cp->dmarx, &i2cp->id_i2c->DR);
   dmaStreamSetPeripheral(i2cp->dmatx, &i2cp->id_i2c->DR);
 
-  i2cp->id_i2c->CR1 = I2C_CR1_SWRST;        /* reset i2c peripherial */
+  i2cp->id_i2c->CR1 = I2C_CR1_SWRST;        /* reset i2c peripheral */
   i2cp->id_i2c->CR1 = 0;
   i2c_lld_set_clock(i2cp);
   i2c_lld_set_opmode(i2cp);
@@ -509,10 +505,6 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint8_t slave_addr,
   i2cp->slave_addr = (slave_addr << 1) | 0x01;    /* LSB = 1 -> receive */
   i2cp->rxbytes = rxbytes;
   i2cp->rxbuf = rxbuf;
-  i2cp->flags = 0;
-
-  /* setting flags and register bits */
-  i2cp->flags |= I2C_FLG_MASTER_RECEIVER;
   i2cp->errors = 0;
 
   mode = STM32_DMA_CR_DIR_P2M;
@@ -521,7 +513,7 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint8_t slave_addr,
   dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
   dmaStreamSetMode(i2cp->dmarx, ((i2cp->dmamode) | mode));
 
-  /* wait stop bit from previouse transaction*/
+  /* wait stop bit from previous transaction*/
   while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
     ;
 
@@ -558,9 +550,6 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint8_t slave_addr,
   i2cp->rxbytes = rxbytes;
   i2cp->txbuf = txbuf;
   i2cp->rxbuf = rxbuf;
-
-  /* setting flags and register bits */
-  i2cp->flags = 0;
   i2cp->errors = 0;
 
   mode = STM32_DMA_CR_DIR_M2P;

@@ -176,9 +176,6 @@
 #define I2C_EV8_2_MASTER_BYTE_TRANSMITTED   ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY | I2C_SR2_TRA) << 16) | I2C_SR1_BTF | I2C_SR1_TXE))  /* TRA, BUSY, MSL, TXE and BTF flags */
 #define I2C_EV_MASK                         0x00FFFFFF  /* First byte zeroed because there is no need of PEC register part from SR2 */
 
-#define I2C_FLG_MASTER_RECEIVER 			0x10
-#define I2C_FLG_HEADER_SENT     			0x80
-
 /** @brief  error checks */
 #if STM32_I2C_USE_I2C1 && !STM32_HAS_I2C1
 #error "I2C1 not present in the selected device"
@@ -309,7 +306,6 @@ struct I2CDriver{
   uint8_t                   *txbuf;     /*!< @brief Pointer to transmit buffer.*/
 
   __IO i2cflags_t           errors;     /*!< @brief Error flags.*/
-  __IO i2cflags_t           flags;      /*!< @brief State flags.*/
 
   uint8_t                   slave_addr; /*!< @brief Current slave address without R/W bit. */
 
@@ -327,16 +323,11 @@ struct I2CDriver{
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
-#define i2c_lld_bus_is_busy(i2cp)                                           \
-  (i2cp->id_i2c->SR2 & I2C_SR2_BUSY)
-
-
-/* Wait until BUSY flag is reset. Normally this wait function
- * does not block thread, only if slave not response it does.
+/**
+ * Wait until BUSY flag is reset.
  */
 #define i2c_lld_wait_bus_free(i2cp) {                                       \
-  uint32_t tmo = 0xfffff;                                                   \
-  while((i2cp->id_i2c->SR2 & I2C_SR2_BUSY) && tmo--)                        \
+  while(i2cp->id_i2c->SR2 & I2C_SR2_BUSY)                                   \
     ;                                                                       \
 }
 
