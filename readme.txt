@@ -76,6 +76,11 @@
 *** 2.3.5 ***
 - FIX: Fixed SYSCFG clock not started in STM32L1/F4 HALs (bug 3449139).
 - FIX: Fixed wrong definitions in STM32L-Discovery board file (bug 3449076).
+- NEW: Modified the STM32F4-Discovery demo to put critical kernel data
+  structures and stacks in the CCM RAM instead normal RAM. It is done using
+  a special .ld file that can be customized to decide how to allocate data
+  in the various RAM sections.
+- NEW: Improved I2C driver model and STM32 implementation by Barthess.
 
 *** 2.3.4 ***
 - FIX: Fixed Extra initialization in STM32 SPI driver (bug 3436127)

@@ -93,12 +93,13 @@ SECTIONS
         *(.eh_frame)
     } > flash
     
-    .endtext : ONLY_IF_RO
+    .textalign : ONLY_IF_RO
     {
         . = ALIGN(8);
-        _etext = .;
-        _textdata = _etext;
     } > flash
+
+    _etext = .;
+    _textdata = _etext;
 
     .stacks :
     {

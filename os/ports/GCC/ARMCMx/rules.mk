@@ -15,7 +15,7 @@ OPT = $(USE_OPT)
 COPT = $(USE_COPT)
 CPPOPT = $(USE_CPPOPT)
 ifeq ($(USE_LINK_GC),yes)
-  OPT += -ffunction-sections -fdata-sections
+  OPT += -ffunction-sections -fdata-sections -fno-common
 endif
 
 # Source files groups and paths
