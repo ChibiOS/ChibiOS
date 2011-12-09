@@ -424,8 +424,9 @@
 #define WWDG_IRQHandler         Vector40    /**< Window Watchdog.           */
 #define PVD_IRQHandler          Vector44    /**< PVD through EXTI Line
                                                  detect.                    */
-#define TAMPER_IRQHandler       Vector48    /**< Tamper.                    */
-#define RTC_IRQHandler          Vector4C    /**< RTC.                       */
+#define TAMP_STAMP_IRQHandler   Vector48    /**< Tamper and TimeStamp
+                                                 through EXTI Line.         */
+#define RTC_WKUP_IRQHandler     Vector4C    /**< RTC wakeup EXTI Line.      */
 #define FLASH_IRQHandler        Vector50    /**< Flash.                     */
 #define RCC_IRQHandler          Vector54    /**< RCC.                       */
 #define EXTI0_IRQHandler        Vector58    /**< EXTI Line 0.               */
@@ -464,8 +465,8 @@
 #define USART2_IRQHandler       VectorD8    /**< USART2.                    */
 #define USART3_IRQHandler       VectorDC    /**< USART3.                    */
 #define EXTI15_10_IRQHandler    VectorE0    /**< EXTI Line 15..10.          */
-#define RTC_Alarm_IRQHandler    VectorE4    /**< RTC alarm through EXTI
-                                                 line.                      */
+#define RTC_Alarm_IRQHandler    VectorE4    /**< RTC alarms (A and B)
+                                                 through EXTI line.         */
 #define OTG_FS_WKUP_IRQHandler  VectorE8    /**< USB OTG FS Wakeup through
                                                  EXTI line.                 */
 #define TIM8_BRK_IRQHandler     VectorEC    /**< TIM8 Break.                */

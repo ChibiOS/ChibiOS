@@ -48,41 +48,9 @@ RTCDriver RTCD1;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-/**
- * @brief   Shared IRQ handler.
- *
- * @param[in] rtcp    pointer to a @p RTCDriver object
- *
- * @notapi
- */
-static void rtc_lld_serve_interrupt(RTCDriver *rtcp) {
-
-  chSysLockFromIsr();
-  rtcp->rtc_cb(rtcp, RTC_EVENT_SECOND);
-  rtcp->rtc_cb(rtcp, RTC_EVENT_ALARM);
-  rtcp->rtc_cb(rtcp, RTC_EVENT_OVERFLOW);
-  chSysUnlockFromIsr();
-}
-
-
-
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
-
-/**
- * @brief   RTC interrupt handler.
- *
- * @isr
- */
-CH_IRQ_HANDLER(RTC_IRQHandler) {
-
-  CH_IRQ_PROLOGUE();
-
-  rtc_lld_serve_interrupt(&RTCD1);
-
-  CH_IRQ_EPILOGUE();
-}
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -137,18 +105,20 @@ void rtc_lld_init(void){
   /* RTC enabled regardless its previous status.*/
   RCC->BDCR |= RCC_BDCR_RTCEN;
 
-  /* Calendar not init yet. */
-  if (!(RTC->ISR & RTC_ISR_INITS)){
+  if (!(RTC->ISR & RTC_ISR_INITS)){/* Calendar not init yet. */
     /* Disable write protection on RTC registers. */
     RTC->WPR = 0xCA;
     RTC->WPR = 0x53;
+
     /* Enter in init mode. */
     RTC->ISR |= RTC_ISR_INIT;
     while(!(RTC->ISR & RTC_ISR_INITF))
       ;
     /* Prescaler registers must be written in by two separate writes. */
-    RTC->PRER = 0;
     RTC->PRER = 0x007F00FF;
+    RTC->PRER = 0x007F00FF;
+    RTC->ISR &= ~RTC_ISR_INIT;
+
     /* Wait until calendar data will updated. */
     while(!(RTC->ISR & RTC_ISR_RSF))
       ;
@@ -174,9 +144,9 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec) {
   RTC->ISR |= RTC_ISR_INIT;
   while(!(RTC->ISR & RTC_ISR_INITF))
     ;
-
   RTC->TR = timespec->tv_time;
   RTC->DR = timespec->tv_date;
+  RTC->ISR &= ~RTC_ISR_INIT;
 
   /* Wait until calendar data will updated. */
   while(!(RTC->ISR & RTC_ISR_RSF))

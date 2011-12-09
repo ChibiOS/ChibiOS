@@ -43,7 +43,7 @@
 /**
  * @brief   One alarm comparator available.
  */
-#define RTC_ALARMS                  1
+#define RTC_ALARMS                  2
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -80,9 +80,11 @@ typedef uint32_t rtcalarm_t;
  * @brief   Type of an RTC event.
  */
 typedef enum {
-  RTC_EVENT_SECOND = 0,                 /** Triggered every second.         */
-  RTC_EVENT_ALARM = 1,                  /** Triggered on alarm.             */
-  RTC_EVENT_OVERFLOW = 2                /** Triggered on counter overflow.  */
+  RTC_EVENT_WAKEUP = 0,           /** Triggered every wakeup event.          */
+  RTC_EVENT_ALARM_A = 1,          /** Triggered on alarm A.                  */
+  RTC_EVENT_ALARM_B = 2,          /** Triggered on alarm B.                  */
+  RTC_EVENT_TAMPER = 3,           /** Triggered on Tamper event.             */
+  RTC_EVENT_TIMESTAMP = 4,        /** Triggered on TimeStamp event.          */
 } rtcevent_t;
 
 /**
@@ -105,16 +107,16 @@ struct RTCTime {
 };
 
 
-
 /**
  * @brief   Structure representing an RTC alarm specification.
  */
 struct RTCAlarm {
   /**
-   * @brief Seconds since UNIX epoch.
+   * @brief Date and time of alarm in BCD.
    */
-  uint32_t tv_sec;
+  uint32_t tv_datetime;
 };
+
 
 /**
  * @brief   Structure representing an RTC driver.
