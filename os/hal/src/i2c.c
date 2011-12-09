@@ -168,6 +168,8 @@ msg_t i2cMasterTransmit(I2CDriver *i2cp,
              ((rxbytes == 0) || ((rxbytes > 0) && (rxbuf != NULL))) &&
              (timeout > TIME_IMMEDIATE) && (errors != NULL),
              "i2cMasterTransmit");
+
+  i2c_lld_wait_bus_free(i2cp);
   i2cp->errors = I2CD_NO_ERROR; /* clear error flags from previous run */
   chDbgAssert(i2cp->id_state == I2C_READY,
               "i2cMasterTransmit(), #1", "not ready");
@@ -209,6 +211,8 @@ msg_t i2cMasterReceive(I2CDriver *i2cp,
              (rxbytes > 0) && (rxbuf != NULL) &&
              (timeout > TIME_IMMEDIATE) && (errors != NULL),
              "i2cMasterReceive");
+
+  i2c_lld_wait_bus_free(i2cp);
   i2cp->errors = I2CD_NO_ERROR; /* clear error flags from previous run */
   chDbgAssert(i2cp->id_state == I2C_READY,
               "i2cMasterReceive(), #1", "not ready");
