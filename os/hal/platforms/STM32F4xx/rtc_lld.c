@@ -58,34 +58,13 @@ RTCDriver RTCD1;
 static void rtc_lld_serve_interrupt(RTCDriver *rtcp) {
 
   chSysLockFromIsr();
-
-  if ((RTC->CRH & RTC_CRH_SECIE) && (RTC->CRL & RTC_CRL_SECF)) {
-    rtcp->rtc_cb(rtcp, RTC_EVENT_SECOND);
-    RTC->CRL &= ~RTC_CRL_SECF;
-  }
-  if ((RTC->CRH & RTC_CRH_ALRIE) && (RTC->CRL & RTC_CRL_ALRF)) {
-    rtcp->rtc_cb(rtcp, RTC_EVENT_ALARM);
-    RTC->CRL &= ~RTC_CRL_ALRF;
-  }
-  if ((RTC->CRH & RTC_CRH_OWIE) && (RTC->CRL & RTC_CRL_OWF)) {
-    rtcp->rtc_cb(rtcp, RTC_EVENT_OVERFLOW);
-    RTC->CRL &= ~RTC_CRL_OWF;
-  }
-
+  rtcp->rtc_cb(rtcp, RTC_EVENT_SECOND);
+  rtcp->rtc_cb(rtcp, RTC_EVENT_ALARM);
+  rtcp->rtc_cb(rtcp, RTC_EVENT_OVERFLOW);
   chSysUnlockFromIsr();
 }
 
-/**
- * @brief   Waits for the previous registers write to finish.
- *
- * @notapi
- */
-static void rtc_lld_wait_write(void) {
 
-  /* Waits registers write completion.*/
-  while (!(RTC->CRL & RTC_CRL_RTOFF))
-    ;
-}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -119,8 +98,6 @@ CH_IRQ_HANDLER(RTC_IRQHandler) {
  */
 void rtc_lld_init(void){
   uint32_t preload;
-
-  rccEnableBKPInterface(FALSE);
 
   /* Enables access to BKP registers.*/
   PWR->CR |= PWR_CR_DBP;
@@ -160,28 +137,22 @@ void rtc_lld_init(void){
   /* RTC enabled regardless its previous status.*/
   RCC->BDCR |= RCC_BDCR_RTCEN;
 
-  /* Ensure that RTC_CNT and RTC_DIV contain actual values after enabling
-     clocking on APB1, because these values only update when APB1
-     functioning.*/
-  RTC->CRL = 0;
-  while (!(RTC->CRL & RTC_CRL_RSF))
-    ;
-
-  /* Write preload register only if its value differs.*/
-  if (preload != ((((uint32_t)(RTC->PRLH)) << 16) + (uint32_t)RTC->PRLL)) {
-
-    rtc_lld_wait_write();
-
-    /* Enters configuration mode and writes PRLx registers then leaves the
-       configuration mode.*/
-    RTC->CRL |= RTC_CRL_CNF;
-    RTC->PRLH = (uint16_t)(preload >> 16);
-    RTC->PRLL = (uint16_t)(preload & 0xFFFF);
-    RTC->CRL &= ~RTC_CRL_CNF;
+  /* Calendar not init yet. */
+  if (!(RTC->ISR & RTC_ISR_INITS)){
+    /* Disable write protection on RTC registers. */
+    RTC->WPR = 0xCA;
+    RTC->WPR = 0x53;
+    /* Enter in init mode. */
+    RTC->ISR |= RTC_ISR_INIT;
+    while(!(RTC->ISR & RTC_ISR_INITF))
+      ;
+    /* Prescaler registers must be written in by two separate writes. */
+    RTC->PRER = 0;
+    RTC->PRER = 0x007F00FF;
+    /* Wait until calendar data will updated. */
+    while(!(RTC->ISR & RTC_ISR_RSF))
+      ;
   }
-
-  /* All interrupts initially disabled.*/
-  RTC->CRH = 0;
 
   /* Callback initially disabled.*/
   RTCD1.rtc_cb = NULL;
@@ -198,15 +169,18 @@ void rtc_lld_init(void){
  * @notapi
  */
 void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec) {
-
   (void)rtcp;
 
-  rtc_lld_wait_write();
+  RTC->ISR |= RTC_ISR_INIT;
+  while(!(RTC->ISR & RTC_ISR_INITF))
+    ;
 
-  RTC->CRL |= RTC_CRL_CNF;
-  RTC->CNTH = (uint16_t)(timespec->tv_sec >> 16);
-  RTC->CNTL = (uint16_t)(timespec->tv_sec & 0xFFFF);
-  RTC->CRL &= ~RTC_CRL_CNF;
+  RTC->TR = timespec->tv_time;
+  RTC->DR = timespec->tv_date;
+
+  /* Wait until calendar data will updated. */
+  while(!(RTC->ISR & RTC_ISR_RSF))
+    ;
 }
 
 /**
@@ -218,14 +192,17 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec) {
  * @notapi
  */
 void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
-  uint32_t time_frac;
-
   (void)rtcp;
 
-  time_frac = (((uint32_t)RTC->DIVH) << 16) + (uint32_t)RTC->DIVL;
-  timespec->tv_msec = (uint16_t)(((STM32_LSECLK - time_frac) * 1000) /
-                                 STM32_LSECLK);
-  timespec->tv_sec = (RTC->CNTH << 16) + RTC->CNTL;
+  /*  TODO: If the frequency of the APB1 clock is less than seven times
+   * the frequency of RTCCLK, BYPSHAD must be set to ‘1’ .*/
+
+  /* Wait until calendar data will updated. */
+    while(!(RTC->ISR & RTC_ISR_RSF))
+      ;
+
+  timespec->tv_time = RTC->TR;
+  timespec->tv_date = RTC->DR;
 }
 
 /**
@@ -245,21 +222,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
 
   (void)rtcp;
   (void)alarm;
-
-  rtc_lld_wait_write();
-
-  /* Enters configuration mode and writes ALRHx registers then leaves the
-     configuration mode.*/
-  RTC->CRL |= RTC_CRL_CNF;
-  if (alarmspec != NULL) {
-    RTC->ALRH = (uint16_t)(alarmspec->tv_sec >> 16);
-    RTC->ALRL = (uint16_t)(alarmspec->tv_sec & 0xFFFF);
-  }
-  else {
-    RTC->ALRH = 0;
-    RTC->ALRL = 0;
-  }
-  RTC->CRL &= ~RTC_CRL_CNF;
+  (void)alarmspec;
 }
 
 /**
@@ -281,8 +244,7 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
 
   (void)rtcp;
   (void)alarm;
-
-  alarmspec->tv_sec = ((RTC->ALRH << 16) + RTC->ALRL);
+  (void)alarmspec;
 }
 
 /**
@@ -296,22 +258,10 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
  * @notapi
  */
 void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
-
   if (callback != NULL) {
     rtcp->rtc_cb = callback;
-    NVICEnableVector(RTC_IRQn, CORTEX_PRIORITY_MASK(STM32_RTC_IRQ_PRIORITY));
-
-    /* Interrupts are enabled only after setting up the callback, this
-       way there is no need to check for the NULL callback pointer inside
-       the IRQ handler.*/
-    RTC->CRL &= ~(RTC_CRL_OWF | RTC_CRL_ALRF | RTC_CRL_SECF);
-    RTC->CRH |= RTC_CRH_OWIE | RTC_CRH_ALRIE | RTC_CRH_SECIE;
   }
-  else {
-    NVICDisableVector(RTC_IRQn);
-    RTC->CRL = 0;
-    RTC->CRH = 0;
-  }
+  return;
 }
 
 #endif /* HAL_USE_RTC */

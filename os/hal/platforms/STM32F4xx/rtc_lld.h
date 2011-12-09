@@ -95,14 +95,16 @@ typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
  */
 struct RTCTime {
   /**
-   * @brief Seconds since UNIX epoch.
+   * @brief RTC date register in BCD format.
    */
-  uint32_t tv_sec;
+  uint32_t tv_date;
   /**
-   * @brief Fractional part.
+   * @brief RTC time register in BCD format.
    */
-  uint32_t tv_msec;
+  uint32_t tv_time;
 };
+
+
 
 /**
  * @brief   Structure representing an RTC alarm specification.
