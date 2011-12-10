@@ -132,6 +132,7 @@ void rtc_lld_init(void){
   }
 
 #if STM32_RTC == STM32_RTC_LSE
+#define RTC_CLK   STM32_LSECLK
   if (!(RCC->BDCR & RCC_BDCR_LSEON)) {
     RCC->BDCR |= RCC_BDCR_LSEON;
     while (!(RCC->BDCR & RCC_BDCR_LSERDY))
@@ -139,6 +140,7 @@ void rtc_lld_init(void){
   }
   preload = STM32_LSECLK - 1;
 #elif STM32_RTC == STM32_RTC_LSI
+#define RTC_CLK   STM32_LSICLK
   /* TODO: Move the LSI clock initialization in the HAL low level driver.*/
   RCC->CSR |= RCC_CSR_LSION;
   while (!(RCC->CSR & RCC_CSR_LSIRDY))
@@ -146,12 +148,13 @@ void rtc_lld_init(void){
   /* According to errata sheet we must wait additional 100 uS for
      stabilization.
      TODO: Change this code, software loops are not reliable.*/
-  uint32_t tmo = (STM32_SYSCLK / 1000000) * 100;
+  volatile uint32_t tmo = (STM32_SYSCLK / 1000000) * 100;
   while (tmo--)
     ;
   preload = STM32_LSICLK - 1;
 #elif STM32_RTC == STM32_RTC_HSE
-  preload = (STM32_HSICLK / 128) - 1;
+#define RTC_CLK   (STM32_HSECLK / 128)
+  preload = (STM32_HSECLK / 128) - 1;
 #endif
 
   /* Selects clock source (previously enabled and stabilized).*/
@@ -213,19 +216,28 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec) {
  * @brief   Get current time.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- * @param[out] timespec pointer to a @p RTCTime structure
+ * @param[in] timespec  pointer to a @p RTCTime structure
  *
  * @notapi
  */
 void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
-  uint32_t time_frac;
-
   (void)rtcp;
 
+  uint32_t time_frac;
+
+READ_REGISTERS:
+  chSysLock();
+  timespec->tv_sec = ((uint32_t)(RTC->CNTH) << 16) + RTC->CNTL;
   time_frac = (((uint32_t)RTC->DIVH) << 16) + (uint32_t)RTC->DIVL;
-  timespec->tv_msec = (uint16_t)(((STM32_LSECLK - time_frac) * 1000) /
-                                 STM32_LSECLK);
-  timespec->tv_sec = (RTC->CNTH << 16) + RTC->CNTL;
+  chSysUnlock();
+
+  /* If second counter updated between reading of integer and fractional parts
+   * we must reread both values. */
+  if((timespec->tv_sec) != (((uint32_t)(RTC->CNTH) << 16) + RTC->CNTL)){
+    goto READ_REGISTERS;
+  }
+
+  timespec->tv_msec = (uint16_t)(((RTC_CLK - 1 - time_frac) * 1000) / RTC_CLK);
 }
 
 /**
