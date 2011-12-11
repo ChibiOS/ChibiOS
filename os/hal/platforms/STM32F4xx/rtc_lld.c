@@ -32,6 +32,24 @@
 #if HAL_USE_RTC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
+/* Notes.                                                                    */
+/*===========================================================================*/
+/*
+This structure is used to hold the values representing a calendar time.
+It contains the following members, with the meanings as shown.
+
+int tm_sec      // seconds after minute [0-61] (61 allows for 2 leap-seconds)
+int tm_min      // minutes after hour [0-59] 
+int tm_hour     // hours after midnight [0-23] 
+int tm_mday     // day of the month [1-31] 
+int tm_mon      // month of year [0-11] 
+int tm_year     // current year-1900 
+int tm_wday     // days since Sunday [0-6] 
+int tm_yday     // days since January 1st [0-365] 
+int tm_isdst    // daylight savings indicator (1 = yes, 0 = no, -1 = unknown)
+*/
+
+/*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
@@ -65,7 +83,11 @@ RTCDriver RTCD1;
  * @notapi
  */
 void rtc_lld_init(void){
-  uint32_t preload;
+  /* Asynchronous part of preloader. Set it to maximum value. */
+  #define PREDIV_A ((uint32_t)0x7F)
+
+  /* Add async part to preload value. */
+  uint32_t preload = PREDIV_A << 16;
 
   /* Enables access to BKP registers.*/
   PWR->CR |= PWR_CR_DBP;
@@ -77,27 +99,26 @@ void rtc_lld_init(void){
   }
 
 #if STM32_RTC == STM32_RTC_LSE
+  #define RTC_CLK   STM32_LSECLK
   if (!(RCC->BDCR & RCC_BDCR_LSEON)) {
     RCC->BDCR |= RCC_BDCR_LSEON;
     while (!(RCC->BDCR & RCC_BDCR_LSERDY))
       ;
   }
-  preload = STM32_LSECLK - 1;
+
 #elif STM32_RTC == STM32_RTC_LSI
+  #define RTC_CLK   STM32_LSICLK
   /* TODO: Move the LSI clock initialization in the HAL low level driver.*/
   RCC->CSR |= RCC_CSR_LSION;
   while (!(RCC->CSR & RCC_CSR_LSIRDY))
     ;
-  /* According to errata sheet we must wait additional 100 uS for
-     stabilization.
-     TODO: Change this code, software loops are not reliable.*/
-  uint32_t tmo = (STM32_SYSCLK / 1000000) * 100;
-  while (tmo--)
-    ;
-  preload = STM32_LSICLK - 1;
+
 #elif STM32_RTC == STM32_RTC_HSE
-  preload = (STM32_HSICLK / 128) - 1;
+  #define RTC_CLK   (STM32_HSICLK / 31)
 #endif
+
+  /* Add sync part to preload value. */
+  preload |= ((RTC_CLK / (PREDIV_A + 1)) - 1) & 0x7FFF;
 
   /* Selects clock source (previously enabled and stabilized).*/
   RCC->BDCR = (RCC->BDCR & ~RCC_BDCR_RTCSEL) | STM32_RTC;
@@ -105,7 +126,8 @@ void rtc_lld_init(void){
   /* RTC enabled regardless its previous status.*/
   RCC->BDCR |= RCC_BDCR_RTCEN;
 
-  if (!(RTC->ISR & RTC_ISR_INITS)){/* Calendar not init yet. */
+  /* If calendar not init yet. */
+  if (!(RTC->ISR & RTC_ISR_INITS)){
     /* Disable write protection on RTC registers. */
     RTC->WPR = 0xCA;
     RTC->WPR = 0x53;
@@ -115,13 +137,9 @@ void rtc_lld_init(void){
     while(!(RTC->ISR & RTC_ISR_INITF))
       ;
     /* Prescaler registers must be written in by two separate writes. */
-    RTC->PRER = 0x007F00FF;
-    RTC->PRER = 0x007F00FF;
+    RTC->PRER = preload;
+    RTC->PRER = preload;
     RTC->ISR &= ~RTC_ISR_INIT;
-
-    /* Wait until calendar data will updated. */
-    while(!(RTC->ISR & RTC_ISR_RSF))
-      ;
   }
 
   /* Callback initially disabled.*/
@@ -147,10 +165,6 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec) {
   RTC->TR = timespec->tv_time;
   RTC->DR = timespec->tv_date;
   RTC->ISR &= ~RTC_ISR_INIT;
-
-  /* Wait until calendar data will updated. */
-  while(!(RTC->ISR & RTC_ISR_RSF))
-    ;
 }
 
 /**
@@ -168,12 +182,18 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
    * the frequency of RTCCLK, BYPSHAD must be set to ‘1’ .*/
 
   /* Wait until calendar data will updated. */
-    while(!(RTC->ISR & RTC_ISR_RSF))
-      ;
+  while(!(RTC->ISR & RTC_ISR_RSF))
+    ;
 
   timespec->tv_time = RTC->TR;
   timespec->tv_date = RTC->DR;
+#if RTC_HAS_SUBSECONDS
+  timespec->tv_msec = ((RTC->PRER & 0x7FFF) - RTC->SSR) / ((RTC->PRER & 0x7FFF) + 1);
+#else
+  timespec->tv_msec = 0;
+#endif /* STM32_RTC_HAS_SUBSECONDS */
 }
+
 
 /**
  * @brief   Set alarm time.
@@ -189,7 +209,6 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
 void rtc_lld_set_alarm(RTCDriver *rtcp,
                        rtcalarm_t alarm,
                        const RTCAlarm *alarmspec) {
-
   (void)rtcp;
   (void)alarm;
   (void)alarmspec;

@@ -41,7 +41,7 @@
 #define RTC_SUPPORTS_CALLBACKS      TRUE
 
 /**
- * @brief   One alarm comparator available.
+ * @brief   Two alarm comparators available on STM32F4x.
  */
 #define RTC_ALARMS                  2
 
@@ -60,6 +60,10 @@
 #if !(STM32_RTC == STM32_RTC_LSE) && !(STM32_RTC == STM32_RTC_LSI) &&       \
     !(STM32_RTC == STM32_RTC_HSE)
 #error "invalid source selected for RTC clock"
+#endif
+
+#if RTC_SUPPORTS_CALLBACKS && !(HAL_USE_EXT)
+#error "interrupts from STM32 RTC works only through EXTI"
 #endif
 
 /*===========================================================================*/
@@ -97,13 +101,18 @@ typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
  */
 struct RTCTime {
   /**
-   * @brief RTC date register in BCD format.
+   * @brief RTC date register in STM32 BCD format.
    */
   uint32_t tv_date;
   /**
-   * @brief RTC time register in BCD format.
+   * @brief RTC time register in STM32 BCD format.
    */
   uint32_t tv_time;
+  /**
+   * @brief Fractional part of time.
+   * @note  If platform does not support subseconds than always zero.
+   */
+  uint16_t tv_msec;
 };
 
 
@@ -112,7 +121,7 @@ struct RTCTime {
  */
 struct RTCAlarm {
   /**
-   * @brief Date and time of alarm in BCD.
+   * @brief Date and time of alarm in STM32 BCD.
    */
   uint32_t tv_datetime;
 };

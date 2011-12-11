@@ -24,7 +24,7 @@
 RTCTime timespec;
 RTCAlarm alarmspec;
 
-#define TEST_ALARM_WAKEUP FALSE
+#define TEST_ALARM_WAKEUP TRUE
 
 #if TEST_ALARM_WAKEUP
 
@@ -45,9 +45,9 @@ int main(void) {
 
   chThdCreateStatic(blinkWA, sizeof(blinkWA), NORMALPRIO, blink_thd, NULL);
   /* set alarm in near future */
-  rtcGetTime(&timespec);
+  rtcGetTime(&RTCD1, &timespec);
   alarmspec.tv_sec = timespec.tv_sec + 60;
-  rtcSetAlarm(&alarmspec);
+  rtcSetAlarm(&RTCD1, 0, &alarmspec);
 
   while (TRUE){
       chThdSleepSeconds(10);
