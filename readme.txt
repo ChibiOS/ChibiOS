@@ -80,6 +80,7 @@
   structures and stacks in the CCM RAM instead normal RAM. It is done using
   a special .ld file that can be customized to decide how to allocate data
   in the various RAM sections.
+- NEW: Added support for the Cortex-M4 FPU (default when the FPU is present).
 - NEW: Improved I2C driver model and STM32 implementation by Barthess.
 
 *** 2.3.4 ***

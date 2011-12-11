@@ -33,9 +33,9 @@
  */
 #if CORTEX_USE_FPU || defined(__DOXYGEN__)
 #define PUSH_CONTEXT() {                                                    \
-  asm volatile ("vpush   {s16-s31}"                                         \
-                : : : "memory");                                            \
   asm volatile ("push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}"            \
+                : : : "memory");                                            \
+  asm volatile ("vpush   {s16-s31}"                                         \
                 : : : "memory");                                            \
 }
 #else /* !CORTEX_USE_FPU */
@@ -50,9 +50,9 @@
  */
 #if CORTEX_USE_FPU || defined(__DOXYGEN__)
 #define POP_CONTEXT() {                                                     \
-  asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}"            \
-                : : : "memory");                                            \
   asm volatile ("vpop    {s16-s31}"                                         \
+                : : : "memory");                                            \
+  asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}"            \
                 : : : "memory");                                            \
 }
 #else /* !CORTEX_USE_FPU */
@@ -99,21 +99,20 @@ CH_IRQ_HANDLER(SysTickVector) {
  */
 void SVCallVector(void) {
   uint32_t *psp;
-  register struct extctx *ctxp;
 
   /* Current PSP value.*/
   asm volatile ("mrs     %0, PSP" : "=r" (psp) : : "memory");
+
+  /* Discarding the current exception context and positioning the stack to
+     point to the real one.*/
+  psp = (uint32_t *)((struct extctx *)psp + 1);
 
 #if CORTEX_USE_FPU
   /* Restoring the special registers SCB_FPCCR and FPCAR.*/
   SCB_FPCAR = *psp++;
   SCB_FPCCR = *psp++;
 #endif
-
-  /* Discarding the current exception context and positioning the stack to
-     point to the real one.*/
-  ctxp = (struct extctx *)psp + 1;
-  asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
+  asm volatile ("msr     PSP, %0" : : "r" (psp) : "memory");
   port_unlock_from_isr();
 }
 #endif /* !CORTEX_SIMPLIFIED_PRIORITY */
@@ -127,21 +126,20 @@ void SVCallVector(void) {
  */
 void PendSVVector(void) {
   uint32_t *psp;
-  register struct extctx *ctxp;
 
   /* Current PSP value.*/
   asm volatile ("mrs     %0, PSP" : "=r" (psp) : : "memory");
+
+  /* Discarding the current exception context and positioning the stack to
+     point to the real one.*/
+  psp = (uint32_t *)((struct extctx *)psp + 1);
 
 #if CORTEX_USE_FPU
   /* Restoring the special registers SCB_FPCCR and FPCAR.*/
   SCB_FPCAR = *psp++;
   SCB_FPCCR = *psp++;
 #endif
-
-  /* Discarding the current exception context and positioning the stack to
-     point to the real one.*/
-  ctxp = (struct extctx *)psp + 1;
-  asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
+  asm volatile ("msr     PSP, %0" : : "r" (psp) : "memory");
 }
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
 
@@ -170,7 +168,7 @@ void _port_init(void) {
   SCB_FPDSCR = reg;
 
   /* Initializing the FPU context save in lazy mode.*/
-  SCB_FPCCR = FPCCR_LSPEN;
+  SCB_FPCCR = FPCCR_ASPEN | FPCCR_LSPEN;
 #endif
 
   /* Initialization of the system vectors used by the port.*/
@@ -210,7 +208,7 @@ void _port_irq_epilogue(void) {
 
     /* Adding an artificial exception return context, there is no need to
        populate it fully.*/
-    ctxp = (struct extctx *)psp - 1;
+    ctxp = ((struct extctx *)psp) - 1;
     asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
     ctxp->pc = _port_switch_from_isr;
     ctxp->xpsr = (regarm_t)0x01000000;

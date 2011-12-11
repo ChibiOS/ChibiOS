@@ -47,7 +47,7 @@
  * @details Activating this option will make the Kernel work in compact mode.
  */
 #if !defined(CORTEX_USE_FPU)
-#define CORTEX_USE_FPU                  FALSE/*CORTEX_HAS_FPU*/
+#define CORTEX_USE_FPU                  CORTEX_HAS_FPU
 #elif CORTEX_USE_FPU && !CORTEX_HAS_FPU
 /* This setting requires an FPU presence check in case it is externally
    redefined.*/
@@ -183,22 +183,12 @@ struct extctx {
   regarm_t      s13;
   regarm_t      s14;
   regarm_t      s15;
-  regarm_t      s16;
   regarm_t      fpscr;
   regarm_t      reserved;
 #endif /* CORTEX_USE_FPU */
 };
 
 struct intctx {
-  regarm_t      r4;
-  regarm_t      r5;
-  regarm_t      r6;
-  regarm_t      r7;
-  regarm_t      r8;
-  regarm_t      r9;
-  regarm_t      r10;
-  regarm_t      r11;
-  regarm_t      lr;
 #if CORTEX_USE_FPU || defined(__DOXYGEN__)
   regarm_t      s16;
   regarm_t      s17;
@@ -217,6 +207,15 @@ struct intctx {
   regarm_t      s30;
   regarm_t      s31;
 #endif /* CORTEX_USE_FPU */
+  regarm_t      r4;
+  regarm_t      r5;
+  regarm_t      r6;
+  regarm_t      r7;
+  regarm_t      r8;
+  regarm_t      r9;
+  regarm_t      r10;
+  regarm_t      r11;
+  regarm_t      lr;
 };
 #endif
 
