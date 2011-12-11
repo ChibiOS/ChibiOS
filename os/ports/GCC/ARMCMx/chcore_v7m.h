@@ -129,7 +129,11 @@
 #elif (CORTEX_MODEL == CORTEX_M4)
 #define CH_ARCHITECTURE_ARM_v7ME
 #define CH_ARCHITECTURE_NAME            "ARMv7-ME"
+#if CORTEX_USE_FPU
+#define CH_CORE_VARIANT_NAME            "Cortex-M4F"
+#else
 #define CH_CORE_VARIANT_NAME            "Cortex-M4"
+#endif
 #endif
 
 /**
@@ -162,6 +166,27 @@ struct extctx {
   regarm_t      lr_thd;
   regarm_t      pc;
   regarm_t      xpsr;
+#if CORTEX_USE_FPU || defined(__DOXYGEN__)
+  regarm_t      s0;
+  regarm_t      s1;
+  regarm_t      s2;
+  regarm_t      s3;
+  regarm_t      s4;
+  regarm_t      s5;
+  regarm_t      s6;
+  regarm_t      s7;
+  regarm_t      s8;
+  regarm_t      s9;
+  regarm_t      s10;
+  regarm_t      s11;
+  regarm_t      s12;
+  regarm_t      s13;
+  regarm_t      s14;
+  regarm_t      s15;
+  regarm_t      s16;
+  regarm_t      fpscr;
+  regarm_t      reserved;
+#endif /* CORTEX_USE_FPU */
 };
 
 struct intctx {
@@ -174,6 +199,24 @@ struct intctx {
   regarm_t      r10;
   regarm_t      r11;
   regarm_t      lr;
+#if CORTEX_USE_FPU || defined(__DOXYGEN__)
+  regarm_t      s16;
+  regarm_t      s17;
+  regarm_t      s18;
+  regarm_t      s19;
+  regarm_t      s20;
+  regarm_t      s21;
+  regarm_t      s22;
+  regarm_t      s23;
+  regarm_t      s24;
+  regarm_t      s25;
+  regarm_t      s26;
+  regarm_t      s27;
+  regarm_t      s28;
+  regarm_t      s29;
+  regarm_t      s30;
+  regarm_t      s31;
+#endif /* CORTEX_USE_FPU */
 };
 #endif
 
@@ -208,16 +251,7 @@ struct intctx {
 /**
  * @brief   Port-related initialization code.
  */
-#define port_init() {                                                       \
-  SCB_VTOR = CORTEX_VTOR_INIT;                                              \
-  SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);                            \
-  NVICSetSystemHandlerPriority(HANDLER_SVCALL,                              \
-    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL));                          \
-  NVICSetSystemHandlerPriority(HANDLER_PENDSV,                              \
-    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_PENDSV));                          \
-  NVICSetSystemHandlerPriority(HANDLER_SYSTICK,                             \
-    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));                         \
-}
+#define port_init() _port_init()
 
 /**
  * @brief   Kernel-lock action.
@@ -357,6 +391,7 @@ struct intctx {
 extern "C" {
 #endif
   void port_halt(void);
+  void _port_init(void);
   void _port_switch(Thread *ntp, Thread *otp);
   void _port_irq_epilogue(void);
   void _port_switch_from_isr(void);

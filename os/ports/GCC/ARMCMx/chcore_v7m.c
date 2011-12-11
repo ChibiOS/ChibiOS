@@ -31,18 +31,36 @@
 /**
  * @brief   Internal context stacking.
  */
+#if CORTEX_USE_FPU || defined(__DOXYGEN__)
+#define PUSH_CONTEXT() {                                                    \
+  asm volatile ("vpush   {s16-s31}"                                         \
+                : : : "memory");                                            \
+  asm volatile ("push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}"            \
+                : : : "memory");                                            \
+}
+#else /* !CORTEX_USE_FPU */
 #define PUSH_CONTEXT() {                                                    \
   asm volatile ("push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}"            \
                 : : : "memory");                                            \
 }
+#endif /* !CORTEX_USE_FPU */
 
 /**
  * @brief   Internal context unstacking.
  */
+#if CORTEX_USE_FPU || defined(__DOXYGEN__)
+#define POP_CONTEXT() {                                                     \
+  asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}"            \
+                : : : "memory");                                            \
+  asm volatile ("vpop    {s16-s31}"                                         \
+                : : : "memory");                                            \
+}
+#else /* !CORTEX_USE_FPU */
 #define POP_CONTEXT() {                                                     \
   asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}"            \
                 : : : "memory");                                            \
 }
+#endif /* !CORTEX_USE_FPU */
 
 #if !CH_OPTIMIZE_SPEED
 void _port_lock(void) {
@@ -80,12 +98,21 @@ CH_IRQ_HANDLER(SysTickVector) {
  * @note    The PendSV vector is only used in advanced kernel mode.
  */
 void SVCallVector(void) {
+  uint32_t *psp;
   register struct extctx *ctxp;
+
+  /* Current PSP value.*/
+  asm volatile ("mrs     %0, PSP" : "=r" (psp) : : "memory");
+
+#if CORTEX_USE_FPU
+  /* Restoring the special registers SCB_FPCCR and FPCAR.*/
+  SCB_FPCAR = *psp++;
+  SCB_FPCCR = *psp++;
+#endif
 
   /* Discarding the current exception context and positioning the stack to
      point to the real one.*/
-  asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : : "memory");
-  ctxp++;
+  ctxp = (struct extctx *)psp + 1;
   asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
   port_unlock_from_isr();
 }
@@ -99,16 +126,61 @@ void SVCallVector(void) {
  * @note    The PendSV vector is only used in compact kernel mode.
  */
 void PendSVVector(void) {
+  uint32_t *psp;
   register struct extctx *ctxp;
+
+  /* Current PSP value.*/
+  asm volatile ("mrs     %0, PSP" : "=r" (psp) : : "memory");
+
+#if CORTEX_USE_FPU
+  /* Restoring the special registers SCB_FPCCR and FPCAR.*/
+  SCB_FPCAR = *psp++;
+  SCB_FPCCR = *psp++;
+#endif
 
   /* Discarding the current exception context and positioning the stack to
      point to the real one.*/
-  asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : : "memory");
-  ctxp++;
+  ctxp = (struct extctx *)psp + 1;
   asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
 }
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
 
+/**
+ * @brief   Port-related initialization code.
+ */
+void _port_init(void) {
+  uint32_t reg;
+
+  /* Initialization of the vector table and priority related settings.*/
+  SCB_VTOR = CORTEX_VTOR_INIT;
+  SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);
+
+#if CORTEX_USE_FPU
+  /* CP10 and CP11 set to full access.*/
+  SCB_CPACR |= 0x00F00000;
+
+  /* Enables FPU context save/restore on exception entry/exit (FPCA bit).*/
+  asm volatile ("mrs     %0, CONTROL" : "=r" (reg) : : "memory");
+  reg |= 4;
+  asm volatile ("msr     CONTROL, %0" : : "r" (reg) : "memory");
+
+  /* FPSCR and FPDSCR initially zero.*/
+  reg = 0;
+  asm volatile ("vmsr    FPSCR, %0" : : "r" (reg) : "memory");
+  SCB_FPDSCR = reg;
+
+  /* Initializing the FPU context save in lazy mode.*/
+  SCB_FPCCR = FPCCR_LSPEN;
+#endif
+
+  /* Initialization of the system vectors used by the port.*/
+  NVICSetSystemHandlerPriority(HANDLER_SVCALL,
+    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL));
+  NVICSetSystemHandlerPriority(HANDLER_PENDSV,
+    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_PENDSV));
+  NVICSetSystemHandlerPriority(HANDLER_SYSTICK,
+    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));
+}
 /**
  * @brief   Exception exit redirection to _port_switch_from_isr().
  */
@@ -116,12 +188,29 @@ void _port_irq_epilogue(void) {
 
   port_lock_from_isr();
   if ((SCB_ICSR & ICSR_RETTOBASE)) {
-    register struct extctx *ctxp;
+    uint32_t *psp;
+    struct extctx *ctxp;
+
+    /* Current PSP value.*/
+    asm volatile ("mrs     %0, PSP" : "=r" (psp) : : "memory");
+
+#if CORTEX_USE_FPU
+    {
+      uint32_t fpccr;
+
+      /* Saving the special registers SCB_FPCCR and FPCAR as extra context.*/
+      *--psp = fpccr = SCB_FPCCR;
+      *--psp = SCB_FPCAR;
+
+      /* Now the FPCCR is modified in order to not restore the FPU status
+         from the artificial return context.*/
+      SCB_FPCCR = fpccr | FPCCR_LSPACT;
+    }
+#endif
 
     /* Adding an artificial exception return context, there is no need to
        populate it fully.*/
-    asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : : "memory");
-    ctxp--;
+    ctxp = (struct extctx *)psp - 1;
     asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
     ctxp->pc = _port_switch_from_isr;
     ctxp->xpsr = (regarm_t)0x01000000;

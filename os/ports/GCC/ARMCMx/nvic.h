@@ -54,11 +54,6 @@ typedef volatile uint32_t IOREG32;      /**< 32 bits I/O register type.     */
 #define NVIC_ITCR               (*((IOREG32 *)0xE000E004))
 
 /**
- * @brief NVIC STIR register.
- */
-#define NVIC_STIR               (*((IOREG32 *)0xE000EF00))
-
-/**
  * @brief Structure representing the SYSTICK I/O space.
  */
 typedef struct {
@@ -66,12 +61,12 @@ typedef struct {
   IOREG32       RVR;
   IOREG32       CVR;
   IOREG32       CBVR;
-} CM3_ST;
+} CMx_ST;
 
 /**
  * @brief SYSTICK peripheral base address.
  */
-#define STBase                  ((CM3_ST *)0xE000E010)
+#define STBase                  ((CMx_ST *)0xE000E010)
 #define ST_CSR                  (STBase->CSR)
 #define ST_RVR                  (STBase->RVR)
 #define ST_CVR                  (STBase->CVR)
@@ -111,18 +106,21 @@ typedef struct {
   IOREG32       IABR[8];
   IOREG32       unused5[56];
   IOREG32       IPR[60];
-} CM3_NVIC;
+  IOREG32       unused6[644];
+  IOREG32       STIR;
+} CMx_NVIC;
 
 /**
  * @brief NVIC peripheral base address.
  */
-#define NVICBase                ((CM3_NVIC *)0xE000E100)
+#define NVICBase                ((CMx_NVIC *)0xE000E100)
 #define NVIC_ISER(n)            (NVICBase->ISER[n])
 #define NVIC_ICER(n)            (NVICBase->ICER[n])
 #define NVIC_ISPR(n)            (NVICBase->ISPR[n])
 #define NVIC_ICPR(n)            (NVICBase->ICPR[n])
 #define NVIC_IABR(n)            (NVICBase->IABR[n])
 #define NVIC_IPR(n)             (NVICBase->IPR[n])
+#define NVIC_STIR               (NVICBase->STIR)
 
 /**
  * @brief Structure representing the System Control Block I/O space.
@@ -142,12 +140,19 @@ typedef struct {
   IOREG32       MMFAR;
   IOREG32       BFAR;
   IOREG32       AFSR;
-} CM3_SCB;
+  IOREG32       PFR[2];
+  IOREG32       DFR;
+  IOREG32       ADR;
+  IOREG32       MMFR[4];
+  IOREG32       SAR[5];
+  IOREG32       unused1[5];
+  IOREG32       CPACR;
+} CMx_SCB;
 
 /**
  * @brief SCB peripheral base address.
  */
-#define SCBBase                 ((CM3_SCB *)0xE000ED00)
+#define SCBBase                 ((CMx_SCB *)0xE000ED00)
 #define SCB_CPUID               (SCBBase->CPUID)
 #define SCB_ICSR                (SCBBase->ICSR)
 #define SCB_VTOR                (SCBBase->VTOR)
@@ -162,6 +167,12 @@ typedef struct {
 #define SCB_MMFAR               (SCBBase->MMFAR)
 #define SCB_BFAR                (SCBBase->BFAR)
 #define SCB_AFSR                (SCBBase->AFSR)
+#define SCB_PFR(n)              (SCBBase->PFR[n])
+#define SCB_DFR                 (SCBBase->DFR)
+#define SCB_ADR                 (SCBBase->ADR)
+#define SCB_MMFR(n)             (SCBBase->MMFR[n])
+#define SCB_SAR(n)              (SCBBase->SAR[n])
+#define SCB_CPACR               (SCBBase->CPACR)
 
 #define ICSR_VECTACTIVE_MASK    (0x1FF << 0)
 #define ICSR_RETTOBASE          (0x1 << 11)
@@ -172,11 +183,45 @@ typedef struct {
 #define ICSR_PENDSTSET          (0x1 << 26)
 #define ICSR_PENDSVCLR          (0x1 << 27)
 #define ICSR_PENDSVSET          (0x1 << 28)
-#define ICSR_NMIPENDSET         (0x1 << 31)
+#define ICSR_NMIPENDSET         (0x1U << 31)
 
 #define AIRCR_VECTKEY           0x05FA0000
 #define AIRCR_PRIGROUP_MASK     (0x7 << 8)
 #define AIRCR_PRIGROUP(n)       ((n) << 8)
+
+typedef struct {
+  IOREG32       unused1[1];
+  IOREG32       FPCCR;
+  IOREG32       FPCAR;
+  IOREG32       FPDSCR;
+  IOREG32       MVFR0;
+  IOREG32       MVFR1;
+} CMx_FPU;
+
+/**
+ * @brief FPU peripheral base address.
+ */
+#define FPUBase                 ((CMx_FPU *)0xE000EF30L)
+#define SCB_FPCCR               (FPUBase->FPCCR)
+#define SCB_FPCAR               (FPUBase->FPCAR)
+#define SCB_FPDSCR              (FPUBase->FPDSCR)
+#define SCB_MVFR0               (FPUBase->MVFR0)
+#define SCB_MVFR1               (FPUBase->MVFR1)
+
+#define FPCCR_ASPEN             (0x1U << 31)
+#define FPCCR_LSPEN             (0x1U << 30)
+#define FPCCR_MONRDY            (0x1U << 8)
+#define FPCCR_BFRDY             (0x1U << 6)
+#define FPCCR_MMRDY             (0x1U << 5)
+#define FPCCR_HFRDY             (0x1U << 4)
+#define FPCCR_THREAD            (0x1U << 3)
+#define FPCCR_USER              (0x1U << 1)
+#define FPCCR_LSPACT            (0x1U << 0)
+
+#define FPDSCR_AHP              (0x1U << 26)
+#define FPDSCR_DN               (0x1U << 25)
+#define FPDSCR_FZ               (0x1U << 24)
+#define FPDSCR_RMODE(n)         ((n) << 22)
 
 #ifdef __cplusplus
 extern "C" {
