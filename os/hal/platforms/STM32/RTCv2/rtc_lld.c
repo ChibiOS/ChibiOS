@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM32/RTCv1/rtc_lld.c
- * @brief   STM32 RTC subsystem low level driver header.
+ * @file    STM32/RTCv2/rtc_lld.c
+ * @brief   STM32L1xx/STM32F2xx/STM32F4xx RTC low level driver header.
  *
  * @addtogroup RTC
  * @{
@@ -83,6 +83,8 @@ RTCDriver RTCD1;
  * @notapi
  */
 void rtc_lld_init(void){
+  RTCD1.id_rtc = RTC;
+
   /* Asynchronous part of preloader. Set it to maximum value. */
   #define PREDIV_A ((uint32_t)0x7F)
 
@@ -129,21 +131,19 @@ void rtc_lld_init(void){
   /* If calendar not init yet. */
   if (!(RTC->ISR & RTC_ISR_INITS)){
     /* Disable write protection on RTC registers. */
-    RTC->WPR = 0xCA;
-    RTC->WPR = 0x53;
+
+    RTCD1.id_rtc->WPR = 0xCA;
+    RTCD1.id_rtc->WPR = 0x53;
 
     /* Enter in init mode. */
-    RTC->ISR |= RTC_ISR_INIT;
+    RTCD1.id_rtc->ISR |= RTC_ISR_INIT;
     while(!(RTC->ISR & RTC_ISR_INITF))
       ;
     /* Prescaler registers must be written in by two separate writes. */
-    RTC->PRER = preload;
-    RTC->PRER = preload;
-    RTC->ISR &= ~RTC_ISR_INIT;
+    RTCD1.id_rtc->PRER = preload;
+    RTCD1.id_rtc->PRER = preload;
+    RTCD1.id_rtc->ISR &= ~RTC_ISR_INIT;
   }
-
-  /* Callback initially disabled.*/
-  RTCD1.rtc_cb = NULL;
 }
 
 /**
@@ -159,12 +159,12 @@ void rtc_lld_init(void){
 void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec) {
   (void)rtcp;
 
-  RTC->ISR |= RTC_ISR_INIT;
+  RTCD1.id_rtc->ISR |= RTC_ISR_INIT;
   while(!(RTC->ISR & RTC_ISR_INITF))
     ;
-  RTC->TR = timespec->tv_time;
-  RTC->DR = timespec->tv_date;
-  RTC->ISR &= ~RTC_ISR_INIT;
+  RTCD1.id_rtc->TR = timespec->tv_time;
+  RTCD1.id_rtc->DR = timespec->tv_date;
+  RTCD1.id_rtc->ISR &= ~RTC_ISR_INIT;
 }
 
 /**
@@ -185,20 +185,49 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
   while(!(RTC->ISR & RTC_ISR_RSF))
     ;
 
-  timespec->tv_time = RTC->TR;
-  timespec->tv_date = RTC->DR;
+  timespec->tv_time = RTCD1.id_rtc->TR;
+  timespec->tv_date = RTCD1.id_rtc->DR;
 #if RTC_HAS_SUBSECONDS
-  timespec->tv_msec = ((RTC->PRER & 0x7FFF) - RTC->SSR) / ((RTC->PRER & 0x7FFF) + 1);
+  timespec->tv_msec = ((RTCD1.id_rtc->PRER & 0x7FFF) - RTCD1.id_rtc->SSR) /
+                      ((RTCD1.id_rtc->PRER & 0x7FFF) + 1);
 #else
   timespec->tv_msec = 0;
 #endif /* STM32_RTC_HAS_SUBSECONDS */
 }
 
+/**
+ * @brief     Set alarm time.
+ *
+ * @note      Default value after BKP domain reset for both comparators is 0.
+ * @note      Function does not performs any checks of alarm time validity.
+ *
+ * @param[in] rtcp      Pointer to RTC driver structure.
+ * @param[in] alarm     Alarm identifier. Can be 1 or 2.
+ * @param[in] alarmspec Pointer to a @p RTCAlarm structure.
+ *
+ * @notapi
+ */
+void rtc_lld_set_alarm(RTCDriver *rtcp,
+                       rtcalarm_t alarm,
+                       const RTCAlarm *alarmspec) {
+  if (alarm == 1){
+    rtcp->id_rtc->CR &= ~RTC_CR_ALRAE;
+    while(!(rtcp->id_rtc->ISR & RTC_ISR_ALRAWF))
+      ;
+    rtcp->id_rtc->ALRMAR = alarmspec->tv_datetime;
+    rtcp->id_rtc->CR |= RTC_CR_ALRAE;
+  }
+  else{
+    rtcp->id_rtc->CR &= ~RTC_CR_ALRBE;
+    while(!(rtcp->id_rtc->ISR & RTC_ISR_ALRBWF))
+      ;
+    rtcp->id_rtc->ALRMAR = alarmspec->tv_datetime;
+    rtcp->id_rtc->CR |= RTC_CR_ALRBE;
+  }
+}
 
 /**
- * @brief   Set alarm time.
- *
- * @note      Default value after BKP domain reset is 0xFFFFFFFF
+ * @brief   Get alarm time.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] alarm     alarm identifier
@@ -206,52 +235,88 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
  *
  * @notapi
  */
-void rtc_lld_set_alarm(RTCDriver *rtcp,
-                       rtcalarm_t alarm,
-                       const RTCAlarm *alarmspec) {
-  (void)rtcp;
-  (void)alarm;
-  (void)alarmspec;
-}
-
-/**
- * @brief   Get current alarm.
- * @note    If an alarm has not been set then the returned alarm specification
- *          is not meaningful.
- *
- * @note    Default value after BKP domain reset is 0xFFFFFFFF.
- *
- * @param[in] rtcp      pointer to RTC driver structure
- * @param[in] alarm     alarm identifier
- * @param[out] alarmspec pointer to a @p RTCAlarm structure
- *
- * @notapi
- */
 void rtc_lld_get_alarm(RTCDriver *rtcp,
                        rtcalarm_t alarm,
                        RTCAlarm *alarmspec) {
-
-  (void)rtcp;
-  (void)alarm;
-  (void)alarmspec;
+  if (alarm == 1)
+    alarmspec->tv_datetime = rtcp->id_rtc->ALRMAR;
+  else
+    alarmspec->tv_datetime = rtcp->id_rtc->ALRMBR;
 }
 
 /**
+ * @brief     Sets time of periodic wakeup.
+ *
+ * @note      Default value after BKP domain reset is 0x0000FFFF
+ *
+ * @param[in] rtcp       pointer to RTC driver structure
+ * @param[in] wakeupspec pointer to a @p RTCWakeup structure
+ *
+ * @notapi
+ */
+void rtc_lld_set_periodic_wakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec){
+  chDbgCheck((wakeupspec->wutr != 0) || ((wakeupspec->wucksel & 0x7) != 3),
+              "rtc_lld_set_periodic_wakeup, forbidden combination");
+
+  rtcp->id_rtc->CR &= ~RTC_CR_WUTE;
+  while(!(rtcp->id_rtc->ISR & RTC_ISR_WUTWF))
+    ;
+  rtcp->id_rtc->WUTR = wakeupspec->wutr & 0xFFFF;
+  rtcp->id_rtc->CR   = wakeupspec->wucksel & 0x7;
+  rtcp->id_rtc->CR |= RTC_CR_WUTE;
+}
+
+/**
+ * @brief     Gets time of periodic wakeup.
+ *
+ * @note      Default value after BKP domain reset is 0x0000FFFF
+ *
+ * @param[in] rtcp       pointer to RTC driver structure
+ * @param[in] wakeupspec pointer to a @p RTCWakeup structure
+ *
+ * @notapi
+ */
+void rtc_lld_get_periodic_wakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec){
+  wakeupspec->wutr    = rtcp->id_rtc->WUTR;
+  wakeupspec->wucksel = rtcp->id_rtc->CR & 0x7;
+}
+
+
+
+
+
+
+
+
+/**
  * @brief   Enables or disables RTC callbacks.
- * @details This function enables or disables callbacks, use a @p NULL pointer
- *          in order to disable a callback.
+ * @details TODO:
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] callback  callback function pointer or @p NULL
  *
  * @notapi
  */
-void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
-  if (callback != NULL) {
-    rtcp->rtc_cb = callback;
-  }
-  return;
+void rtc_lld_set_callback(RTCDriver *rtcp, RTCCallbackConfig *cb_cfg) {
+  (void)rtcp;
+  (void)cb_cfg;
+//  if (callback != NULL) {
+//    rtcp->rtc_cb = callback;
+//    NVICEnableVector(RTC_IRQn, CORTEX_PRIORITY_MASK(STM32_RTC_IRQ_PRIORITY));
+//
+//    /* Interrupts are enabled only after setting up the callback, this
+//       way there is no need to check for the NULL callback pointer inside
+//       the IRQ handler.*/
+//    RTC->CRL &= ~(RTC_CRL_OWF | RTC_CRL_ALRF | RTC_CRL_SECF);
+//    RTC->CRH |= RTC_CRH_OWIE | RTC_CRH_ALRIE | RTC_CRH_SECIE;
+//  }
+//  else {
+//    NVICDisableVector(RTC_IRQn);
+//    RTC->CRL = 0;
+//    RTC->CRH = 0;
+//  }
 }
+
 
 #endif /* HAL_USE_RTC */
 

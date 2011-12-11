@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM32/RTCv1/rtc_lld.h
- * @brief   STM32 RTC subsystem low level driver header.
+ * @file    STM32/RTCv2/rtc_lld.h
+ * @brief   STM32L1xx/STM32F2xx/STM32F4xx RTC low level driver header.
  *
  * @addtogroup RTC
  * @{
@@ -38,7 +38,9 @@
 /**
  * @brief   This RTC implementation supports callbacks.
  */
-#define RTC_SUPPORTS_CALLBACKS      TRUE
+#if !defined(RTC_SUPPORTS_CALLBACKS) || defined(__DOXYGEN__)
+#define RTC_SUPPORTS_CALLBACKS      FALSE
+#endif
 
 /**
  * @brief   Two alarm comparators available on STM32F4x.
@@ -63,7 +65,7 @@
 #endif
 
 #if RTC_SUPPORTS_CALLBACKS && !(HAL_USE_EXT)
-#error "interrupts from STM32 RTC works only through EXTI"
+#error "interrupts from RTC works only through EXTI on this platform"
 #endif
 
 /*===========================================================================*/
@@ -71,12 +73,23 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a structure representing an RTC alarm stamp.
+ * @brief   Type of a structure representing an RTC alarm time stamp.
  */
 typedef struct RTCAlarm RTCAlarm;
 
 /**
+ * @brief   Type of a structure representing an RTC wakeup period.
+ */
+typedef struct RTCWakeup RTCWakeup;
+
+/**
+ * @brief   Type of a structure representing an RTC callbacks config.
+ */
+typedef struct RTCCallbackConfig RTCCallbackConfig;
+
+/**
  * @brief   Type of an RTC alarm.
+ * @details Meaningful on platforms with more than 1 alarm comparator.
  */
 typedef uint32_t rtcalarm_t;
 
@@ -112,12 +125,11 @@ struct RTCTime {
    * @brief Fractional part of time.
    * @note  If platform does not support subseconds than always zero.
    */
-  uint16_t tv_msec;
+  uint32_t tv_msec;
 };
 
-
 /**
- * @brief   Structure representing an RTC alarm specification.
+ * @brief   Structure representing an RTC alarm time stamp.
  */
 struct RTCAlarm {
   /**
@@ -126,15 +138,52 @@ struct RTCAlarm {
   uint32_t tv_datetime;
 };
 
+/**
+ * @brief   Structure representing an RTC periodic wakeup period.
+ */
+struct RTCWakeup {
+  /**
+   * @brief RTC WUTR register.
+   */
+  uint32_t wutr;
+  /**
+   * @brief RTC WUCKSEL bits of CR register.
+   */
+  uint32_t wucksel;
+};
+
+/**
+ * @brief   Structure representing an RTC callbacks config.
+ */
+struct RTCCallbackConfig{
+#if RTC_SUPPORTS_CALLBACKS
+  /**
+   * @brief Alarm callback pointer.
+   */
+  rtccb_t           alarm_cb;
+  /**
+   * @brief Tamper or TimeStamp callback pointer.
+   */
+  rtccb_t           tamper_timestapm_cb;
+  /**
+   * @brief Periodic wakeup callback pointer.
+   */
+  rtccb_t           wakeup_cb;
+#endif /* RTC_SUPPORTS_CALLBACKS */
+};
 
 /**
  * @brief   Structure representing an RTC driver.
  */
 struct RTCDriver{
   /**
-   * @brief Callback pointer.
+   * @brief Pointer to the RTC registers block.
    */
-  rtccb_t           rtc_cb;
+  RTC_TypeDef               *id_rtc;
+  /**
+   * @brief Current configuration data.
+   */
+  const RTCCallbackConfig   *cb_config;
 };
 
 /*===========================================================================*/
@@ -161,7 +210,9 @@ extern "C" {
   void rtc_lld_get_alarm(RTCDriver *rtcp,
                          rtcalarm_t alarm,
                          RTCAlarm *alarmspec);
-  void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback);
+  void rtc_lld_set_periodic_wakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec);
+  void rtc_lld_get_periodic_wakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec);
+  void rtc_lld_set_callback(RTCDriver *rtcp, RTCCallbackConfig *cb_cfg);
 #ifdef __cplusplus
 }
 #endif

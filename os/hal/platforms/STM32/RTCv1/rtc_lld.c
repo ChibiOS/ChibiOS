@@ -282,7 +282,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] alarm     alarm identifier
- * @param[out] alarmspec pointer to a @p RTCAlarm structure
+ * @param[in] alarmspec pointer to a @p RTCAlarm structure
  *
  * @notapi
  */

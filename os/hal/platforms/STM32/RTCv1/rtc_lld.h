@@ -20,7 +20,7 @@
 
 /**
  * @file    STM32/RTCv1/rtc_lld.h
- * @brief   STM32 RTC subsystem low level driver header.
+ * @brief   STM32F1xx RTC subsystem low level driver header.
  *
  * @addtogroup RTC
  * @{
@@ -67,12 +67,18 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a structure representing an RTC alarm stamp.
+ * @brief   Type of a structure representing an RTC alarm time stamp.
  */
 typedef struct RTCAlarm RTCAlarm;
 
 /**
+ * @brief   Type of a structure representing an RTC callbacks config.
+ */
+typedef struct RTCCallbackConfig RTCCallbackConfig;
+
+/**
  * @brief   Type of an RTC alarm.
+ * @details Meaningful on platforms with more than 1 alarm comparator.
  */
 typedef uint32_t rtcalarm_t;
 
@@ -91,6 +97,18 @@ typedef enum {
 typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
 
 /**
+ * @brief   Structure representing an RTC callbacks config.
+ */
+struct RTCCallbackConfig{
+#if RTC_SUPPORTS_CALLBACKS
+  /**
+   * @brief Generic RTC callback pointer.
+   */
+  rtccb_t           rtc_cb;
+#endif /* RTC_SUPPORTS_CALLBACKS */
+};
+
+/**
  * @brief   Structure representing an RTC time stamp.
  */
 struct RTCTime {
@@ -105,7 +123,7 @@ struct RTCTime {
 };
 
 /**
- * @brief   Structure representing an RTC alarm specification.
+ * @brief   Structure representing an RTC alarm time stamp.
  */
 struct RTCAlarm {
   /**
