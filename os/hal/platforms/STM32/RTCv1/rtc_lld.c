@@ -226,10 +226,8 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
   uint32_t time_frac;
 
 READ_REGISTERS:
-  chSysLock();
   timespec->tv_sec = ((uint32_t)(RTC->CNTH) << 16) + RTC->CNTL;
   time_frac = (((uint32_t)RTC->DIVH) << 16) + (uint32_t)RTC->DIVL;
-  chSysUnlock();
 
   /* If second counter updated between reading of integer and fractional parts
    * we must reread both values. */
