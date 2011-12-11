@@ -138,7 +138,6 @@ void rtc_lld_init(void){
     while (!(RCC->BDCR & RCC_BDCR_LSERDY))
       ;
   }
-  preload = STM32_LSECLK - 1;
 #elif STM32_RTC == STM32_RTC_LSI
 #define RTC_CLK   STM32_LSICLK
   /* TODO: Move the LSI clock initialization in the HAL low level driver.*/
@@ -151,11 +150,11 @@ void rtc_lld_init(void){
   volatile uint32_t tmo = (STM32_SYSCLK / 1000000) * 100;
   while (tmo--)
     ;
-  preload = STM32_LSICLK - 1;
 #elif STM32_RTC == STM32_RTC_HSE
 #define RTC_CLK   (STM32_HSECLK / 128)
-  preload = (STM32_HSECLK / 128) - 1;
 #endif
+
+  preload = RTC_CLK - 1;
 
   /* Selects clock source (previously enabled and stabilized).*/
   RCC->BDCR = (RCC->BDCR & ~RCC_BDCR_RTCSEL) | STM32_RTC;
@@ -226,8 +225,10 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
   uint32_t time_frac;
 
 READ_REGISTERS:
+  chSysLock();
   timespec->tv_sec = ((uint32_t)(RTC->CNTH) << 16) + RTC->CNTL;
   time_frac = (((uint32_t)RTC->DIVH) << 16) + (uint32_t)RTC->DIVL;
+  chSysUnlock();
 
   /* If second counter updated between reading of integer and fractional parts
    * we must reread both values. */
