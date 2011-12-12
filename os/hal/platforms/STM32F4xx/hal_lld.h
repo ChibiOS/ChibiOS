@@ -218,6 +218,12 @@
 #define STM32_MCO2SEL_HSE       (2U << 30)  /**< HSE clock on MCO2 pin.     */
 #define STM32_MCO2SEL_PLL       (3U << 30)  /**< PLL clock on MCO2 pin.     */
 
+#define STM32_RTC_NOCLOCK       (0 << 8)    /**< No clock.                  */
+#define STM32_RTC_LSE           (1 << 8)    /**< LSE used as RTC clock.     */
+#define STM32_RTC_LSI           (2 << 8)    /**< LSI used as RTC clock.     */
+#define STM32_RTC_HSE           (3 << 8)    /**< HSE divided by programmable
+                                                 prescaler used as RTC clock*/
+
 /**
  * @name    RCC_PLLI2SCFGR register bits definitions
  * @{
@@ -314,6 +320,7 @@
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC           TRUE
+#define STM32_RTC_HAS_SUBSECONDS TRUE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO          TRUE
@@ -418,8 +425,9 @@
 #define WWDG_IRQHandler         Vector40    /**< Window Watchdog.           */
 #define PVD_IRQHandler          Vector44    /**< PVD through EXTI Line
                                                  detect.                    */
-#define TAMPER_IRQHandler       Vector48    /**< Tamper.                    */
-#define RTC_IRQHandler          Vector4C    /**< RTC.                       */
+#define TAMP_STAMP_IRQHandler   Vector48    /**< Tamper and TimeStamp
+                                                 through EXTI Line.         */
+#define RTC_WKUP_IRQHandler     Vector4C    /**< RTC wakeup EXTI Line.      */
 #define FLASH_IRQHandler        Vector50    /**< Flash.                     */
 #define RCC_IRQHandler          Vector54    /**< RCC.                       */
 #define EXTI0_IRQHandler        Vector58    /**< EXTI Line 0.               */
@@ -458,8 +466,8 @@
 #define USART2_IRQHandler       VectorD8    /**< USART2.                    */
 #define USART3_IRQHandler       VectorDC    /**< USART3.                    */
 #define EXTI15_10_IRQHandler    VectorE0    /**< EXTI Line 15..10.          */
-#define RTC_Alarm_IRQHandler    VectorE4    /**< RTC alarm through EXTI
-                                                 line.                      */
+#define RTC_Alarm_IRQHandler    VectorE4    /**< RTC alarms (A and B)
+                                                 through EXTI line.         */
 #define OTG_FS_WKUP_IRQHandler  VectorE8    /**< USB OTG FS Wakeup through
                                                  EXTI line.                 */
 #define TIM8_BRK_IRQHandler     VectorEC    /**< TIM8 Break.                */

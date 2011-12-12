@@ -180,6 +180,7 @@
 #define STM32_I2C3_TX_DMA_CHN 0x00030000
 
 #define STM32_HAS_RTC           TRUE
+#define STM32_RTC_HAS_SUBSECONDS FALSE
 
 #define STM32_HAS_SDIO          TRUE
 

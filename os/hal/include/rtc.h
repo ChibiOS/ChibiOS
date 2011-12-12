@@ -85,15 +85,18 @@ extern "C" {
   void rtcInit(void);
   void rtcSetTime(RTCDriver *rtcp, const RTCTime *timespec);
   void rtcGetTime(RTCDriver *rtcp, RTCTime *timespec);
+
 #if RTC_ALARMS > 0
   void rtcSetAlarm(RTCDriver *rtcp,
                    rtcalarm_t alarm,
                    const RTCAlarm *alarmspec);
   void rtcGetAlarm(RTCDriver *rtcp, rtcalarm_t alarm, RTCAlarm *alarmspec);
-#endif
+#endif /* RTC_ALARMS > 0 */
+
 #if RTC_SUPPORTS_CALLBACKS
-  void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback);
-#endif
+  void rtcSetCallback(RTCDriver *rtcp, RTCCallbackConfig *cb_cfg);
+#endif /* RTC_SUPPORTS_CALLBACKS */
+
 #ifdef __cplusplus
 }
 #endif
