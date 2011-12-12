@@ -184,7 +184,7 @@ struct extctx {
   regarm_t      s14;
   regarm_t      s15;
   regarm_t      fpscr;
-  regarm_t      reserved;
+  regarm_t      fpccr;
 #endif /* CORTEX_USE_FPU */
 };
 
