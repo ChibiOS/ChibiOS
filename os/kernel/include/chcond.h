@@ -18,8 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /*
-   Concepts and parts of this file are contributed by and Copyright (C) 2008
-   of Leon Woestenberg.
+   Concepts and parts of this file have been contributed by Leon Woestenberg.
  */
 
 /**
