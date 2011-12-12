@@ -89,7 +89,7 @@ void rtc_lld_init(void){
   #define PREDIV_A ((uint32_t)0x7F)
 
   /* Add async part to preload value. */
-  uint32_t preload = PREDIV_A << 16;
+  volatile uint32_t preload = PREDIV_A << 16;
 
   /* Enables access to BKP registers.*/
   PWR->CR |= PWR_CR_DBP;
@@ -128,13 +128,12 @@ void rtc_lld_init(void){
   /* RTC enabled regardless its previous status.*/
   RCC->BDCR |= RCC_BDCR_RTCEN;
 
+  /* Disable write protection on RTC registers. */
+  RTCD1.id_rtc->WPR = 0xCA;
+  RTCD1.id_rtc->WPR = 0x53;
+
   /* If calendar not init yet. */
   if (!(RTC->ISR & RTC_ISR_INITS)){
-    /* Disable write protection on RTC registers. */
-
-    RTCD1.id_rtc->WPR = 0xCA;
-    RTCD1.id_rtc->WPR = 0x53;
-
     /* Enter in init mode. */
     RTCD1.id_rtc->ISR |= RTC_ISR_INIT;
     while(!(RTC->ISR & RTC_ISR_INITF))
@@ -145,6 +144,7 @@ void rtc_lld_init(void){
     RTCD1.id_rtc->ISR &= ~RTC_ISR_INIT;
   }
 }
+
 
 /**
  * @brief   Set current time.
@@ -229,9 +229,9 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
 /**
  * @brief   Get alarm time.
  *
- * @param[in] rtcp      pointer to RTC driver structure
- * @param[in] alarm     alarm identifier
- * @param[in] alarmspec pointer to a @p RTCAlarm structure
+ * @param[in] rtcp       pointer to RTC driver structure
+ * @param[in] alarm      alarm identifier
+ * @param[out] alarmspec pointer to a @p RTCAlarm structure
  *
  * @notapi
  */
@@ -255,14 +255,14 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
  * @notapi
  */
 void rtc_lld_set_periodic_wakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec){
-  chDbgCheck((wakeupspec->wutr != 0) || ((wakeupspec->wucksel & 0x7) != 3),
+  chDbgCheck((wakeupspec->wakeup != 0x30000),
               "rtc_lld_set_periodic_wakeup, forbidden combination");
 
   rtcp->id_rtc->CR &= ~RTC_CR_WUTE;
   while(!(rtcp->id_rtc->ISR & RTC_ISR_WUTWF))
     ;
-  rtcp->id_rtc->WUTR = wakeupspec->wutr & 0xFFFF;
-  rtcp->id_rtc->CR   = wakeupspec->wucksel & 0x7;
+  rtcp->id_rtc->WUTR = wakeupspec->wakeup & 0xFFFF;
+  rtcp->id_rtc->CR   = (wakeupspec->wakeup >> 16) & 0x7;
   rtcp->id_rtc->CR |= RTC_CR_WUTE;
 }
 
@@ -271,20 +271,50 @@ void rtc_lld_set_periodic_wakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec){
  *
  * @note      Default value after BKP domain reset is 0x0000FFFF
  *
- * @param[in] rtcp       pointer to RTC driver structure
- * @param[in] wakeupspec pointer to a @p RTCWakeup structure
+ * @param[in] rtcp        pointer to RTC driver structure
+ * @param[out] wakeupspec pointer to a @p RTCWakeup structure
  *
  * @notapi
  */
 void rtc_lld_get_periodic_wakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec){
-  wakeupspec->wutr    = rtcp->id_rtc->WUTR;
-  wakeupspec->wucksel = rtcp->id_rtc->CR & 0x7;
+  wakeupspec->wakeup  = 0;
+  wakeupspec->wakeup |= rtcp->id_rtc->WUTR;
+  wakeupspec->wakeup |= (((uint32_t)rtcp->id_rtc->CR) & 0x7) << 16;
 }
 
 
+#if RTC_SUPPORTS_CALLBACKS
 
-
-
+static const EXTConfig rtc_extcfg = {
+  {
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_RISING_EDGE, NULL}, //17, RTC alarm
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_RISING_EDGE, NULL}, //21 RTC tamper
+   {EXT_CH_MODE_RISING_EDGE, NULL}  //22 RTC wakeup
+  },
+  EXT_MODE_EXTI(0,
+                0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0)
+};
 
 
 
@@ -293,30 +323,44 @@ void rtc_lld_get_periodic_wakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec){
  * @details TODO:
  *
  * @param[in] rtcp      pointer to RTC driver structure
- * @param[in] callback  callback function pointer or @p NULL
+ * @param[in] cb_cfg    pointer to configuration structure with callbacks
  *
  * @notapi
  */
 void rtc_lld_set_callback(RTCDriver *rtcp, RTCCallbackConfig *cb_cfg) {
-  (void)rtcp;
-  (void)cb_cfg;
-//  if (callback != NULL) {
-//    rtcp->rtc_cb = callback;
-//    NVICEnableVector(RTC_IRQn, CORTEX_PRIORITY_MASK(STM32_RTC_IRQ_PRIORITY));
-//
-//    /* Interrupts are enabled only after setting up the callback, this
-//       way there is no need to check for the NULL callback pointer inside
-//       the IRQ handler.*/
-//    RTC->CRL &= ~(RTC_CRL_OWF | RTC_CRL_ALRF | RTC_CRL_SECF);
-//    RTC->CRH |= RTC_CRH_OWIE | RTC_CRH_ALRIE | RTC_CRH_SECIE;
-//  }
-//  else {
-//    NVICDisableVector(RTC_IRQn);
-//    RTC->CRL = 0;
-//    RTC->CRH = 0;
-//  }
-}
 
+  /* To configure callback we must confugure EXTI interrupt on
+   * corresponding line.
+   * And then enable interrupts in RTC CR register.  */
+
+  if (cb_cfg->alarm_cb != NULL){
+    rtc_extcfg.channels[STM32_RTC_ALARM_EXTI_CH].cb = cb_cfg->alarm_cb;
+    rtcp->id_rtc->CR |= RTC_CR_ALRBIE;
+    rtcp->id_rtc->CR |= RTC_CR_ALRAIE;
+  }
+  else{
+    extChannelDisable(&EXTD1, STM32_RTC_ALARM_EXTI_CH);
+  }
+
+  if (cb_cfg->tamper_timestapm_cb != NULL){
+    rtc_extcfg.channels[STM32_RTC_TAMPER_TIMESTAMP_EXTI_CH].cb = cb_cfg->tamper_timestapm_cb;
+    rtcp->id_rtc->CR |= RTC_CR_TSIE;
+  }
+  else{
+    extChannelDisable(&EXTD1, STM32_RTC_TAMPER_TIMESTAMP_EXTI_CH);
+  }
+
+  if (cb_cfg->wakeup_cb != NULL){
+    rtc_extcfg.channels[STM32_RTC_WAKEUP_EXTI_CH].cb = cb_cfg->wakeup_cb;
+    rtcp->id_rtc->CR |= RTC_CR_WUTIE;
+  }
+  else{
+    extChannelDisable(&EXTD1, STM32_RTC_WAKEUP_EXTI_CH);
+  }
+
+  extStart(&EXTD1, &rtc_extcfg);
+}
+#endif /* RTC_SUPPORTS_CALLBACKS */
 
 #endif /* HAL_USE_RTC */
 

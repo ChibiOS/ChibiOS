@@ -215,7 +215,7 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec) {
  * @brief   Get current time.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- * @param[in] timespec  pointer to a @p RTCTime structure
+ * @param[out] timespec pointer to a @p RTCTime structure
  *
  * @notapi
  */
@@ -280,9 +280,9 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
  *
  * @note    Default value after BKP domain reset is 0xFFFFFFFF.
  *
- * @param[in] rtcp      pointer to RTC driver structure
- * @param[in] alarm     alarm identifier
- * @param[in] alarmspec pointer to a @p RTCAlarm structure
+ * @param[in] rtcp       pointer to RTC driver structure
+ * @param[in] alarm      alarm identifier
+ * @param[out] alarmspec pointer to a @p RTCAlarm structure
  *
  * @notapi
  */

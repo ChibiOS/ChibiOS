@@ -117,8 +117,8 @@ void rtcSetAlarm(RTCDriver *rtcp,
  * @note    If an alarm has not been set then the returned alarm specification
  *          is not meaningful.
  *
- * @param[in] rtcp      pointer to RTC driver structure
- * @param[in] alarm     alarm identifier
+ * @param[in] rtcp       pointer to RTC driver structure
+ * @param[in] alarm      alarm identifier
  * @param[out] alarmspec pointer to a @p RTCAlarm structure
  *
  * @api
@@ -133,12 +133,6 @@ void rtcGetAlarm(RTCDriver *rtcp,
   rtc_lld_get_alarm(rtcp, alarm, alarmspec);
 }
 #endif /* RTC_ALARMS > 0 */
-
-
-
-
-
-
 
 /**
  * @brief   Sets periodic wakeup period.

@@ -47,6 +47,13 @@
  */
 #define RTC_ALARMS                  2
 
+/**
+ * @brief   EXTI channel numbers for different RTC events.
+ */
+#define STM32_RTC_ALARM_EXTI_CH             17
+#define STM32_RTC_TAMPER_TIMESTAMP_EXTI_CH  21
+#define STM32_RTC_WAKEUP_EXTI_CH            22
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -143,13 +150,13 @@ struct RTCAlarm {
  */
 struct RTCWakeup {
   /**
-   * @brief RTC WUTR register.
+   * @brief   RTC WUTR register.
+   * @details Bits [15:0] contain value of WUTR register
+   *          Bits [18:16] contain value of WUCKSEL bits in CR register
+   *
+   * @notes   ((WUTR == 0) || (WUCKSEL == 3)) is forbidden combination.
    */
-  uint32_t wutr;
-  /**
-   * @brief RTC WUCKSEL bits of CR register.
-   */
-  uint32_t wucksel;
+  uint32_t wakeup;
 };
 
 /**
