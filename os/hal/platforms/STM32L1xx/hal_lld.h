@@ -217,7 +217,7 @@
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC           TRUE
-#define RTC_HAS_SUBSECONDS      FALSE
+#define STM32_RTC_HAS_SUBSECONDS FALSE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO          FALSE
