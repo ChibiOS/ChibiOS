@@ -134,26 +134,6 @@ void rtcGetAlarm(RTCDriver *rtcp,
 }
 #endif /* RTC_ALARMS > 0 */
 
-/**
- * @brief   Sets periodic wakeup period.
- */
-void rtcSetPeriodicWakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec) {
-  chDbgCheck((rtcp != NULL) && (wakeupspec != NULL), "rtcSetPeriodicWakeup");
-  rtc_lld_set_periodic_wakeup(rtcp, wakeupspec);
-}
-/**
- * @brief   Gets periodic wakeup period.
- */
-void rtcGetPeriodicWakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec) {
-  chDbgCheck((rtcp != NULL) && (wakeupspec != NULL), "rtcGetPeriodicWakeup");
-  rtc_lld_get_periodic_wakeup(rtcp, wakeupspec);
-}
-
-
-
-
-
-
 
 #if RTC_SUPPORTS_CALLBACKS || defined(__DOXYGEN__)
 /**

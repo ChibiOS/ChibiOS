@@ -60,16 +60,16 @@ static void rtc_lld_serve_interrupt(RTCDriver *rtcp) {
   chSysLockFromIsr();
 
   if ((RTC->CRH & RTC_CRH_SECIE) && (RTC->CRL & RTC_CRL_SECF)) {
+	RTC->CRL &= ~RTC_CRL_SECF;
     rtcp->rtc_cb(rtcp, RTC_EVENT_SECOND);
-    RTC->CRL &= ~RTC_CRL_SECF;
   }
   if ((RTC->CRH & RTC_CRH_ALRIE) && (RTC->CRL & RTC_CRL_ALRF)) {
-    rtcp->rtc_cb(rtcp, RTC_EVENT_ALARM);
-    RTC->CRL &= ~RTC_CRL_ALRF;
+	RTC->CRL &= ~RTC_CRL_ALRF;
+	rtcp->rtc_cb(rtcp, RTC_EVENT_ALARM);
   }
   if ((RTC->CRH & RTC_CRH_OWIE) && (RTC->CRL & RTC_CRL_OWF)) {
+	RTC->CRL &= ~RTC_CRL_OWF;
     rtcp->rtc_cb(rtcp, RTC_EVENT_OVERFLOW);
-    RTC->CRL &= ~RTC_CRL_OWF;
   }
 
   chSysUnlockFromIsr();
@@ -225,10 +225,8 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
   uint32_t time_frac;
 
 READ_REGISTERS:
-  chSysLock();
   timespec->tv_sec = ((uint32_t)(RTC->CNTH) << 16) + RTC->CNTL;
   time_frac = (((uint32_t)RTC->DIVH) << 16) + (uint32_t)RTC->DIVL;
-  chSysUnlock();
 
   /* If second counter updated between reading of integer and fractional parts
    * we must reread both values. */
@@ -306,20 +304,22 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
  *
  * @notapi
  */
-void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
+void rtc_lld_set_callback(RTCDriver *rtcp, RTCCallbackConfig *cb_cfg) {
 
-  if (callback != NULL) {
-    rtcp->rtc_cb = callback;
-    NVICEnableVector(RTC_IRQn, CORTEX_PRIORITY_MASK(STM32_RTC_IRQ_PRIORITY));
-
+  if (cb_cfg->rtc_cb != NULL) {
+    rtcp->rtc_cb = cb_cfg->rtc_cb;
     /* Interrupts are enabled only after setting up the callback, this
-       way there is no need to check for the NULL callback pointer inside
-       the IRQ handler.*/
+	   way there is no need to check for the NULL callback pointer inside
+	   the IRQ handler.*/
+    rtc_lld_wait_write();
     RTC->CRL &= ~(RTC_CRL_OWF | RTC_CRL_ALRF | RTC_CRL_SECF);
+    NVICEnableVector(RTC_IRQn, CORTEX_PRIORITY_MASK(STM32_RTC_IRQ_PRIORITY));
+    rtc_lld_wait_write();
     RTC->CRH |= RTC_CRH_OWIE | RTC_CRH_ALRIE | RTC_CRH_SECIE;
   }
   else {
     NVICDisableVector(RTC_IRQn);
+    rtc_lld_wait_write();
     RTC->CRL = 0;
     RTC->CRH = 0;
   }

@@ -24,7 +24,7 @@
 RTCTime timespec;
 RTCAlarm alarmspec;
 
-#define TEST_ALARM_WAKEUP TRUE
+#define TEST_ALARM_WAKEUP FALSE
 
 #if TEST_ALARM_WAKEUP
 
@@ -63,8 +63,10 @@ int main(void) {
 
 #else /* TEST_ALARM_WAKEUP */
 
+/**
+ * Callback function for RTC.
+ */
 static void my_cb(RTCDriver *rtcp, rtcevent_t event) {
-
   (void)rtcp;
 
   switch (event) {
@@ -77,21 +79,31 @@ static void my_cb(RTCDriver *rtcp, rtcevent_t event) {
   case RTC_EVENT_ALARM:
     palTogglePad(GPIOC, GPIOC_LED);
     rtcGetTime(&RTCD1, &timespec);
-    alarmspec.tv_sec = timespec.tv_sec + 10;
+    alarmspec.tv_sec = timespec.tv_sec + 5;
     rtcSetAlarm(&RTCD1, 0, &alarmspec);
     break;
   }
 }
 
-int main(void) {
+/**
+ * Configuration structure with all callbacks supported by platform.
+ */
+static RTCCallbackConfig rtc_cb_cfg = {
+	my_cb
+};
+
+/**
+ * Main function.
+ */
+int main(void){
   halInit();
   chSysInit();
 
   rtcGetTime(&RTCD1, &timespec);
-  alarmspec.tv_sec = timespec.tv_sec + 10;
+  alarmspec.tv_sec = timespec.tv_sec + 5;
   rtcSetAlarm(&RTCD1, 0, &alarmspec);
 
-  rtcSetCallback(&RTCD1, my_cb);
+  rtcSetCallback(&RTCD1, &rtc_cb_cfg);
   while (TRUE){
     chThdSleepMilliseconds(500);
   }
