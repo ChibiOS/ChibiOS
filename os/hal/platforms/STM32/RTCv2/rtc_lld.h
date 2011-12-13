@@ -48,11 +48,12 @@
 #define RTC_ALARMS                  2
 
 /**
- * @brief   EXTI channel numbers for different RTC events.
+ * @brief   Interrupt enable masks.
  */
-#define STM32_RTC_ALARM_EXTI_CH             17
-#define STM32_RTC_TAMPER_TIMESTAMP_EXTI_CH  21
-#define STM32_RTC_WAKEUP_EXTI_CH            22
+#define ALARMA_INT    0x1
+#define ALARMB_INT    0x2
+#define WAKEUP_INT    0x4
+#define TIMESTAMP_INT 0x8
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -112,11 +113,6 @@ typedef enum {
 } rtcevent_t;
 
 /**
- * @brief   Type of a generic RTC callback.
- */
-typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
-
-/**
  * @brief   Structure representing an RTC time stamp.
  */
 struct RTCTime {
@@ -130,9 +126,10 @@ struct RTCTime {
   uint32_t tv_time;
   /**
    * @brief Fractional part of time.
-   * @note  If platform does not support subseconds than always zero.
    */
+#if STM32_RTC_HAS_SUBSECONDS
   uint32_t tv_msec;
+#endif
 };
 
 /**
@@ -163,20 +160,7 @@ struct RTCWakeup {
  * @brief   Structure representing an RTC callbacks config.
  */
 struct RTCCallbackConfig{
-#if RTC_SUPPORTS_CALLBACKS
-  /**
-   * @brief Alarm callback pointer.
-   */
-  rtccb_t           alarm_cb;
-  /**
-   * @brief Tamper or TimeStamp callback pointer.
-   */
-  rtccb_t           tamper_timestapm_cb;
-  /**
-   * @brief Periodic wakeup callback pointer.
-   */
-  rtccb_t           wakeup_cb;
-#endif /* RTC_SUPPORTS_CALLBACKS */
+  uint32_t cb_cfg;
 };
 
 /**
@@ -188,9 +172,9 @@ struct RTCDriver{
    */
   RTC_TypeDef               *id_rtc;
   /**
-   * @brief Current configuration data.
+   * @brief Current callback confuguration.
    */
-  const RTCCallbackConfig   *cb_config;
+  const RTCCallbackConfig   *cb_cfg;
 };
 
 /*===========================================================================*/

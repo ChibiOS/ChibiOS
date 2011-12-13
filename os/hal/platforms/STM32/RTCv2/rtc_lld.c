@@ -187,11 +187,9 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
 
   timespec->tv_time = RTCD1.id_rtc->TR;
   timespec->tv_date = RTCD1.id_rtc->DR;
-#if RTC_HAS_SUBSECONDS
+#if STM32_RTC_HAS_SUBSECONDS
   timespec->tv_msec = ((RTCD1.id_rtc->PRER & 0x7FFF) - RTCD1.id_rtc->SSR) /
                       ((RTCD1.id_rtc->PRER & 0x7FFF) + 1);
-#else
-  timespec->tv_msec = 0;
 #endif /* STM32_RTC_HAS_SUBSECONDS */
 }
 
@@ -282,45 +280,15 @@ void rtc_lld_get_periodic_wakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec){
   wakeupspec->wakeup |= (((uint32_t)rtcp->id_rtc->CR) & 0x7) << 16;
 }
 
-
 #if RTC_SUPPORTS_CALLBACKS
-
-static const EXTConfig rtc_extcfg = {
-  {
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_RISING_EDGE, NULL}, //17, RTC alarm
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_DISABLED, NULL},
-   {EXT_CH_MODE_RISING_EDGE, NULL}, //21 RTC tamper
-   {EXT_CH_MODE_RISING_EDGE, NULL}  //22 RTC wakeup
-  },
-  EXT_MODE_EXTI(0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0)
-};
-
-
 
 /**
  * @brief   Enables or disables RTC callbacks.
- * @details TODO:
+ * @details To enable interrupt set corresponding bit in @p RTCCallbackConfig
+ *          structure. To disable interrupt clear that bit.
+ * @note    This function just enable/disable interrupts in RTC CR register.
+ *          You must configure callbacks in EXTI driver for corresponding
+ *          interrupts. See documentation for you MCU.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] cb_cfg    pointer to configuration structure with callbacks
@@ -329,36 +297,25 @@ static const EXTConfig rtc_extcfg = {
  */
 void rtc_lld_set_callback(RTCDriver *rtcp, RTCCallbackConfig *cb_cfg) {
 
-  /* To configure callback we must confugure EXTI interrupt on
-   * corresponding line.
-   * And then enable interrupts in RTC CR register.  */
-
-  if (cb_cfg->alarm_cb != NULL){
-    rtc_extcfg.channels[STM32_RTC_ALARM_EXTI_CH].cb = cb_cfg->alarm_cb;
-    rtcp->id_rtc->CR |= RTC_CR_ALRBIE;
+  if (cb_cfg->cb_cfg & ALARMA_INT)
     rtcp->id_rtc->CR |= RTC_CR_ALRAIE;
-  }
-  else{
-    extChannelDisable(&EXTD1, STM32_RTC_ALARM_EXTI_CH);
-  }
+  else
+    rtcp->id_rtc->CR &= ~RTC_CR_ALRAIE;
 
-  if (cb_cfg->tamper_timestapm_cb != NULL){
-    rtc_extcfg.channels[STM32_RTC_TAMPER_TIMESTAMP_EXTI_CH].cb = cb_cfg->tamper_timestapm_cb;
-    rtcp->id_rtc->CR |= RTC_CR_TSIE;
-  }
-  else{
-    extChannelDisable(&EXTD1, STM32_RTC_TAMPER_TIMESTAMP_EXTI_CH);
-  }
+  if (cb_cfg->cb_cfg & ALARMB_INT)
+    rtcp->id_rtc->CR |= RTC_CR_ALRBIE;
+  else
+    rtcp->id_rtc->CR &= ~RTC_CR_ALRBIE;
 
-  if (cb_cfg->wakeup_cb != NULL){
-    rtc_extcfg.channels[STM32_RTC_WAKEUP_EXTI_CH].cb = cb_cfg->wakeup_cb;
+  if (cb_cfg->cb_cfg & WAKEUP_INT)
     rtcp->id_rtc->CR |= RTC_CR_WUTIE;
-  }
-  else{
-    extChannelDisable(&EXTD1, STM32_RTC_WAKEUP_EXTI_CH);
-  }
+  else
+    rtcp->id_rtc->CR &= ~RTC_CR_WUTIE;
 
-  extStart(&EXTD1, &rtc_extcfg);
+  if (cb_cfg->cb_cfg & TIMESTAMP_INT)
+    rtcp->id_rtc->CR |= RTC_CR_TSIE;
+  else
+    rtcp->id_rtc->CR &= ~RTC_CR_TSIE;
 }
 #endif /* RTC_SUPPORTS_CALLBACKS */
 

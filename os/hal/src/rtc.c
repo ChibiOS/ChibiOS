@@ -153,10 +153,6 @@ void rtcSetCallback(RTCDriver *rtcp, RTCCallbackConfig *cb_cfg) {
 }
 #endif /* RTC_SUPPORTS_CALLBACKS */
 
-
-
-
-
 #endif /* HAL_USE_RTC */
 
 /** @} */
