@@ -376,18 +376,18 @@
 /* 0x00000000 */
 #define VAL_GPIOD_OSPEEDR      (PIN_OSPEED_100M(GPIOD_SDIO_CMD))
 /* 0x00000000 */
-#define VAL_GPIOD_PUPDR        (PIN_PUDR_PULLDOWN(GPIOD_PWM1) |              \
-                                PIN_PUDR_PULLDOWN(GPIOD_PWM2) |              \
-                                PIN_PUDR_PULLDOWN(GPIOD_PWM3) |              \
+#define VAL_GPIOD_PUPDR        (PIN_PUDR_PULLDOWN(GPIOD_PWM1) |               \
+                                PIN_PUDR_PULLDOWN(GPIOD_PWM2) |               \
+                                PIN_PUDR_PULLDOWN(GPIOD_PWM3) |               \
                                 PIN_PUDR_PULLDOWN(GPIOD_PWM4))
 /* 0x00000000 */
 #define VAL_GPIOD_ODR           0x00000000
 /* 0x00000000 */
 #define VAL_GPIOD_AFRL         (PIN_AFIO_AF(GPIOD_SDIO_CMD, 12))
 /* 0x00000000 */
-#define VAL_GPIOD_AFRH         (PIN_AFIO_AF(GPIOD_PWM1, 2) |                 \
-                                PIN_AFIO_AF(GPIOD_PWM2, 2) |                 \
-                                PIN_AFIO_AF(GPIOD_PWM3, 2) |                 \
+#define VAL_GPIOD_AFRH         (PIN_AFIO_AF(GPIOD_PWM1, 2) |                  \
+                                PIN_AFIO_AF(GPIOD_PWM2, 2) |                  \
+                                PIN_AFIO_AF(GPIOD_PWM3, 2) |                  \
                                 PIN_AFIO_AF(GPIOD_PWM4, 2))
 
 
@@ -416,7 +416,7 @@
                                 PIN_MODE_OUTPUT(GPIOE_XBEE_RESET) |           \
                                 PIN_MODE_INPUT(GPIOE_SDIO_DETECT) |           \
                                 PIN_MODE_OUTPUT(GPIOE_USB_DISCOVERY) |        \
-                                PIN_MODE_OUTPUT(GPIOE_GPS_PWR_EN) |               \
+                                PIN_MODE_OUTPUT(GPIOE_GPS_PWR_EN) |           \
                                 PIN_MODE_INPUT(GPIOE_BMP085_EOC) |            \
                                 PIN_MODE_INPUT(GPIOE_MAG_INT) |               \
                                 PIN_MODE_INPUT(GPIOE_MMA8451_INT1) |          \
@@ -428,13 +428,13 @@
                                 PIN_MODE_ALTERNATE(GPIOE_PWM8) |              \
                                 PIN_MODE_INPUT(GPIOE_MMA8451_INT2))
 /* 0x00000000 */
-#define VAL_GPIOE_OTYPER       (PIN_OTYPE_PUSHPULL(GPIOE_XBEE_SLEEP) |         \
+#define VAL_GPIOE_OTYPER       (PIN_OTYPE_PUSHPULL(GPIOE_XBEE_SLEEP) |        \
                                 PIN_OTYPE_OPENDRAIN(GPIOE_XBEE_RESET) |       \
-                                PIN_OTYPE_PUSHPULL(GPIOE_USB_DISCOVERY) |      \
-                                PIN_OTYPE_OPENDRAIN(GPIOE_GPS_PWR_EN) |           \
-                                PIN_OTYPE_PUSHPULL(GPIOE_PWM5) |               \
-                                PIN_OTYPE_PUSHPULL(GPIOE_PWM6) |               \
-                                PIN_OTYPE_PUSHPULL(GPIOE_PWM7) |               \
+                                PIN_OTYPE_PUSHPULL(GPIOE_USB_DISCOVERY) |     \
+                                PIN_OTYPE_OPENDRAIN(GPIOE_GPS_PWR_EN) |       \
+                                PIN_OTYPE_PUSHPULL(GPIOE_PWM5) |              \
+                                PIN_OTYPE_PUSHPULL(GPIOE_PWM6) |              \
+                                PIN_OTYPE_PUSHPULL(GPIOE_PWM7) |              \
                                 PIN_OTYPE_PUSHPULL(GPIOE_PWM8))
 /* 0x00000000 */
 #define VAL_GPIOE_OSPEEDR       0x00000000
@@ -444,7 +444,7 @@
                                 PIN_PUDR_PULLUP(GPIOE_XBEE_RESET) |           \
                                 PIN_PUDR_FLOATING(GPIOE_SDIO_DETECT) |        \
                                 PIN_PUDR_FLOATING(GPIOE_USB_DISCOVERY) |      \
-                                PIN_PUDR_FLOATING(GPIOE_GPS_PWR_EN) |             \
+                                PIN_PUDR_FLOATING(GPIOE_GPS_PWR_EN) |         \
                                 PIN_PUDR_FLOATING(GPIOE_BMP085_EOC) |         \
                                 PIN_PUDR_FLOATING(GPIOE_MAG_INT) |            \
                                 PIN_PUDR_FLOATING(GPIOE_MMA8451_INT1) |       \
