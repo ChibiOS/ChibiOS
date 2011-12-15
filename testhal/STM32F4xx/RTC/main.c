@@ -120,28 +120,28 @@ void bcd2tm(struct tm *timp, uint32_t tv_time, uint32_t tv_date){
  * Convert from classical format to STM32 BCD
  */
 void tm2bcd(struct tm *timp, RTCTime *timespec){
-  uint32_t p = 0; // temporal variable
+  uint32_t v = 0; // temporal variable
 
   timespec->tv_date = 0;
   timespec->tv_time = 0;
 
-  p = timp->tm_year - 100;
-  timespec->tv_date |= (((p / 10) & 0xF) << 20) | ((p % 10) << 16);
+  v = timp->tm_year - 100;
+  timespec->tv_date |= (((v / 10) & 0xF) << 20) | ((v % 10) << 16);
   if (timp->tm_wday == 0)
-    p = 7;
+    v = 7;
   else
-    p = timp->tm_wday;
-  timespec->tv_date |= (p & 7) << 13;
-  p = timp->tm_mon + 1;
-  timespec->tv_date |= (((p / 10) & 1) << 12) | ((p % 10) << 8);
-  p = timp->tm_mday;
-  timespec->tv_date |= (((p / 10) & 3) << 4) | (p % 10);
-  p = timp->tm_hour;
-  timespec->tv_time |= (((p / 10) & 3) << 20) | ((p % 10) << 16);
-  p = timp->tm_min;
-  timespec->tv_time |= (((p / 10) & 7) << 12) | ((p % 10) << 8);
-  p = timp->tm_sec;
-  timespec->tv_time |= (((p / 10) & 7) << 4) | (p % 10);
+    v = timp->tm_wday;
+  timespec->tv_date |= (v & 7) << 13;
+  v = timp->tm_mon + 1;
+  timespec->tv_date |= (((v / 10) & 1) << 12) | ((v % 10) << 8);
+  v = timp->tm_mday;
+  timespec->tv_date |= (((v / 10) & 3) << 4) | (v % 10);
+  v = timp->tm_hour;
+  timespec->tv_time |= (((v / 10) & 3) << 20) | ((v % 10) << 16);
+  v = timp->tm_min;
+  timespec->tv_time |= (((v / 10) & 7) << 12) | ((v % 10) << 8);
+  v = timp->tm_sec;
+  timespec->tv_time |= (((v / 10) & 7) << 4) | (v % 10);
 }
 
 
@@ -162,11 +162,23 @@ int main(void){
   bcd2tm(&timp, timespec.tv_time, timespec.tv_date);
   unix_time = mktime(&timp);
 
+  if (unix_time == -1){// incorrect time in RTC cell
+    unix_time = 1000000000;
+  }
 
+  tm2bcd((localtime(&unix_time)), &timespec);
+  rtcSetTime(&RTCD1, &timespec);
 
   while (TRUE){
-    chThdSleepMilliseconds(500);
+    rtcGetTime(&RTCD1, &timespec);
+    bcd2tm(&timp, timespec.tv_time, timespec.tv_date);
+    unix_time = mktime(&timp);
+    chThdSleepMilliseconds(1500);
   }
   return 0;
 }
+
+
+
+
 

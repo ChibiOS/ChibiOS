@@ -12,7 +12,7 @@ ifeq ($(USE_OPT),)
 #	If all calls to a given function are integrated, and the function is declared static, then the function is normally not output as assembler code in its own right.
 #	Enabled at level '-O3'.
 
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O0 -ggdb -fomit-frame-pointer # -mhard-float #-falign-functions=16
   #USE_OPT = -O1 -ggdb -fomit-frame-pointer -falign-functions=16 -fno-inline
   #USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -fno-strict-aliasing
   #USE_OPT = -O3 -ggdb -fomit-frame-pointer -falign-functions=16
@@ -41,7 +41,7 @@ endif
 
 # Enable this if you want to see the full log while compiling.
 ifeq ($(USE_VERBOSE_COMPILE),)
-  USE_VERBOSE_COMPILE = no
+  USE_VERBOSE_COMPILE = yes
 endif
 
 #
