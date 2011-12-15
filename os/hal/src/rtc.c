@@ -135,10 +135,38 @@ void rtcGetAlarm(RTCDriver *rtcp,
 #endif /* RTC_ALARMS > 0 */
 
 
+
+/**
+ * @brief   Set periodic wakeup period.
+ *
+ * @param[in] rtcp       pointer to RTC driver structure
+ * @param[in] wakeupspec pointer to a @p RTCWakeup structure
+ *
+ * @api
+ */
+void rtcSetWakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec) {
+
+  chDbgCheck((rtcp != NULL), "rtcGetAlarm");
+  rtc_lld_set_periodic_wakeup(rtcp, wakeupspec);
+}
+
+/**
+ * @brief   Get periodic wakeup period.
+ *
+ * @param[in] rtcp        pointer to RTC driver structure
+ * @param[out] wakeupspec pointer to a @p RTCWakeup structure
+ *
+ * @api
+ */
+void rtcGetWakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec) {
+
+  chDbgCheck((rtcp != NULL), "rtcGetAlarm");
+  rtc_lld_get_periodic_wakeup(rtcp, wakeupspec);
+}
+
 #if RTC_SUPPORTS_CALLBACKS || defined(__DOXYGEN__)
 /**
  * @brief   Enables or disables RTC callbacks.
- * @details TODO:
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] cb_cfg    callback configuration struct

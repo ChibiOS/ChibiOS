@@ -85,6 +85,8 @@ extern "C" {
   void rtcInit(void);
   void rtcSetTime(RTCDriver *rtcp, const RTCTime *timespec);
   void rtcGetTime(RTCDriver *rtcp, RTCTime *timespec);
+  void rtcSetWakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec);
+  void rtcGetWakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec);
 
 #if RTC_ALARMS > 0
   void rtcSetAlarm(RTCDriver *rtcp,

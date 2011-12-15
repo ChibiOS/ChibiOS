@@ -18,12 +18,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <time.h>
+#include <stdlib.h>
 
 #include "ch.h"
 #include "hal.h"
 
 RTCTime  timespec;
 RTCAlarm alarmspec;
+RTCWakeup wakeupspec;
 RTCCallbackConfig cb_cfg;
 time_t unix_time;
 
@@ -39,17 +41,20 @@ static inline void exti_rtcalarm_cb(EXTDriver *extp, expchannel_t channel){
   if (RTCD1.id_rtc->ISR | RTC_ISR_ALRAF){
     RTCD1.id_rtc->ISR &= ~RTC_ISR_ALRAF;
   }
+  palTogglePad(GPIOB, GPIOB_LED_R);
 }
 
 /**
- * Wakeup callback
+ * Periodic wakeup callback
  */
 static inline void exti_rtcwakeup_cb(EXTDriver *extp, expchannel_t channel){
   (void)extp;
   (void)channel;
+  /* manually clear flags because exti driver does not do that */
   if (RTCD1.id_rtc->ISR | RTC_ISR_WUTF){
     RTCD1.id_rtc->ISR &= ~RTC_ISR_WUTF;
   }
+  palTogglePad(GPIOB, GPIOB_LED_R);
 }
 
 
@@ -72,12 +77,12 @@ static const EXTConfig extcfg = {
     {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_RISING_EDGE, exti_rtcalarm_cb},// RTC alarms
+    {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART, exti_rtcalarm_cb},// RTC alarms
     {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},// timestamp
-    {EXT_CH_MODE_RISING_EDGE, exti_rtcwakeup_cb},// wakeup
+    {EXT_CH_MODE_RISING_EDGE| EXT_CH_MODE_AUTOSTART, exti_rtcwakeup_cb},// wakeup
   },
   EXT_MODE_EXTI(
       0,
@@ -157,6 +162,15 @@ int main(void){
 
   extStart(&EXTD1, &extcfg);
 
+  /* tune wakeup callback */
+  wakeupspec.wakeup = ((uint32_t)4) << 16; // select 1 Hz clock source
+  wakeupspec.wakeup |= 3; // set counter value to 3. Period will be 3+1 seconds.
+  rtcSetWakeup(&RTCD1, &wakeupspec);
+
+  /* enable wakeup callback */
+  cb_cfg.cb_cfg = WAKEUP_CB_FLAG;
+  rtcSetCallback(&RTCD1, &cb_cfg);
+
   /* get current time in unix format */
   rtcGetTime(&RTCD1, &timespec);
   bcd2tm(&timp, timespec.tv_time, timespec.tv_date);
@@ -165,7 +179,7 @@ int main(void){
   if (unix_time == -1){// incorrect time in RTC cell
     unix_time = 1000000000;
   }
-
+  /* set correct time */
   tm2bcd((localtime(&unix_time)), &timespec);
   rtcSetTime(&RTCD1, &timespec);
 

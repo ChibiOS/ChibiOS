@@ -274,7 +274,7 @@
                                 PIN_PUDR_PULLUP(14) |                         \
                                 PIN_PUDR_PULLUP(15))
 /* 0x00000000 */
-#define VAL_GPIOB_ODR           0x000003B0
+#define VAL_GPIOB_ODR           0x000001C0
 /* 0x00000000 */
 #define VAL_GPIOB_AFRL         (PIN_AFIO_AF(GPIOB_RECEIVER_PPM, 0) |          \
                                 PIN_AFIO_AF(GPIOB_JTDO, 0))

@@ -5,14 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-#-fno-inline
-#    Don't pay attention to the inline keyword. Normally this option is used to keep the compiler from expanding any functions inline. Note that if you are not optimizing, no functions can be expanded inline. 
-#-finline-functions
-#	Integrate all simple functions into their callers. The compiler heuristically decides which functions are simple enough to be worth integrating in this way.
-#	If all calls to a given function are integrated, and the function is declared static, then the function is normally not output as assembler code in its own right.
-#	Enabled at level '-O3'.
-
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16
   #USE_OPT = -O1 -ggdb -fomit-frame-pointer -falign-functions=16 -fno-inline
   #USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -fno-strict-aliasing
   #USE_OPT = -O3 -ggdb -fomit-frame-pointer -falign-functions=16
@@ -41,7 +34,7 @@ endif
 
 # Enable this if you want to see the full log while compiling.
 ifeq ($(USE_VERBOSE_COMPILE),)
-  USE_VERBOSE_COMPILE = no
+  USE_VERBOSE_COMPILE = yes
 endif
 
 #

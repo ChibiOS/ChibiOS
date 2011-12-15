@@ -48,12 +48,12 @@
 #define RTC_ALARMS                  2
 
 /**
- * @brief   Interrupt enable masks.
+ * @brief   Callback enable masks.
  */
-#define ALARMA_INT    0x1
-#define ALARMB_INT    0x2
-#define WAKEUP_INT    0x4
-#define TIMESTAMP_INT 0x8
+#define ALARMA_CB_FLAG    0x1
+#define ALARMB_CB_FLAG    0x2
+#define WAKEUP_CB_FLAG    0x4
+#define TIMESTAMP_CB_FLAG 0x8
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -158,6 +158,11 @@ struct RTCWakeup {
 
 /**
  * @brief   Structure representing an RTC callbacks config.
+ * @details It is bitmask. Set bit to enable callback, clear bit to disable.
+ *          bit0 - alarmA
+ *          bit1 - alarmB
+ *          bit2 - wakeup
+ *          bit3 - timestamp
  */
 struct RTCCallbackConfig{
   uint32_t cb_cfg;

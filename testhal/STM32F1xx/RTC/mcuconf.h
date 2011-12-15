@@ -30,7 +30,7 @@
  * DMA priorities:
  * 0...3        Lowest...Highest.
  */
-#include "main.h"
+
 /*
  * HAL driver system settings.
  */

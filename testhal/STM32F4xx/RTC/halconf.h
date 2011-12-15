@@ -156,7 +156,7 @@
  * @brief   Enables the RTC subsystem.
  */
 #if !defined(RTC_SUPPORTS_CALLBACKS) || defined(__DOXYGEN__)
-#define RTC_SUPPORTS_CALLBACKS      FLASE
+#define RTC_SUPPORTS_CALLBACKS      TRUE
 #endif
 
 /*===========================================================================*/
