@@ -316,7 +316,7 @@
                                 PIN_MODE_ALTERNATE(GPIOC_SDIO_D2) |           \
                                 PIN_MODE_ALTERNATE(GPIOC_SDIO_D3) |           \
                                 PIN_MODE_ALTERNATE(GPIOC_SDIO_CK) |           \
-                                PIN_MODE_OUTPUT(GPIOC_TAMPER_RTC) |           \
+                                PIN_MODE_INPUT(GPIOC_TAMPER_RTC) |            \
                                 PIN_MODE_INPUT(GPIOC_OSC32_IN) |              \
                                 PIN_MODE_INPUT(GPIOC_OSC32_OUT))
 

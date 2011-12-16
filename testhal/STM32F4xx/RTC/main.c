@@ -54,6 +54,7 @@ static inline void exti_rtcwakeup_cb(EXTDriver *extp, expchannel_t channel){
   if (RTCD1.id_rtc->ISR | RTC_ISR_WUTF){
     RTCD1.id_rtc->ISR &= ~RTC_ISR_WUTF;
   }
+  palTogglePad(GPIOB, GPIOB_LED_B);
   palTogglePad(GPIOB, GPIOB_LED_R);
 }
 

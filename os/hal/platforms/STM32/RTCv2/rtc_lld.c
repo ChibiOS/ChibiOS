@@ -186,7 +186,7 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
     ;
 
 #if STM32_RTC_HAS_SUBSECONDS
-  timespec->tv_msec = (1000 * (RTCD1.id_rtc->PRER & 0x7FFF) - RTCD1.id_rtc->SSR) /
+  timespec->tv_msec = (1000 * ((RTCD1.id_rtc->PRER & 0x7FFF) - RTCD1.id_rtc->SSR)) /
                       ((RTCD1.id_rtc->PRER & 0x7FFF) + 1);
 #endif /* STM32_RTC_HAS_SUBSECONDS */
   timespec->tv_time = RTCD1.id_rtc->TR;
