@@ -73,6 +73,12 @@ void hal_lld_init(void) {
                   SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
 
+#if STM32_PVD_ENABLE
+  /* Power voltage detector initialization */
+  PWR->CR |= PWR_CR_PVDE;
+  PWR->CR |= STM32_PLS & STM32_PLS_MASK;
+#endif /* STM32_PVD_ENABLE */
+
 #if defined(STM32_DMA_REQUIRED)
   dmaInit();
 #endif

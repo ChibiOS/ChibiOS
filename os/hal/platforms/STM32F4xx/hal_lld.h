@@ -133,9 +133,19 @@
  * @name    PWR_CR register bits definitions
  * @{
  */
-#define STM32_VOS_MASK          (1 << 14)   /**< Core voltage mask.         */
-#define STM32_VOS_LOW           (0 << 14)   /**< Core voltage set to low.   */
-#define STM32_VOS_HIGH          (1 << 14)   /**< Core voltage set to high.  */
+#define STM32_VOS_MASK      (1 << 14)   /**< Core voltage mask.             */
+#define STM32_VOS_LOW       (0 << 14)   /**< Core voltage set to low.       */
+#define STM32_VOS_HIGH      (1 << 14)   /**< Core voltage set to high.      */
+
+#define STM32_PLS_MASK      (7 << 5)    /**< PLS bits mask.                 */
+#define STM32_PLS_LEV0      (0 << 5)    /**< PVD level 0.                   */
+#define STM32_PLS_LEV1      (1 << 5)    /**< PVD level 0.                   */
+#define STM32_PLS_LEV2      (2 << 5)    /**< PVD level 0.                   */
+#define STM32_PLS_LEV3      (3 << 5)    /**< PVD level 0.                   */
+#define STM32_PLS_LEV4      (4 << 5)    /**< PVD level 0.                   */
+#define STM32_PLS_LEV5      (5 << 5)    /**< PVD level 0.                   */
+#define STM32_PLS_LEV6      (6 << 5)    /**< PVD level 0.                   */
+#define STM32_PLS_LEV7      (7 << 5)    /**< PVD level 0.                   */
 /** @} */
 
 /**
@@ -536,6 +546,20 @@
  */
 #if !defined(STM32_VOS) || defined(__DOXYGEN__)
 #define STM32_VOS                   STM32_VOS_HIGH
+#endif
+
+/**
+ * @brief   Enables or disables the power voltage detector.
+ */
+#if !defined(STM32_PVD_ENABLE) || defined(__DOXYGEN__)
+#define STM32_PVD_ENABLE            FALSE
+#endif
+
+/**
+ * @brief   Enables or disables the power voltage detector.
+ */
+#if !defined(STM32_PLS) || defined(__DOXYGEN__)
+#define STM32_PLS                   STM32_PLS_LEV0
 #endif
 
 /**
