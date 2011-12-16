@@ -45,9 +45,9 @@ int main(void) {
 
   chThdCreateStatic(blinkWA, sizeof(blinkWA), NORMALPRIO, blink_thd, NULL);
   /* set alarm in near future */
-  rtcGetTime(&RTCD1, &timespec);
+  rtcGetTime(&timespec);
   alarmspec.tv_sec = timespec.tv_sec + 60;
-  rtcSetAlarm(&RTCD1, 0, &alarmspec);
+  rtcSetAlarm(&alarmspec);
 
   while (TRUE){
       chThdSleepSeconds(10);
@@ -63,10 +63,8 @@ int main(void) {
 
 #else /* TEST_ALARM_WAKEUP */
 
-/**
- * Callback function for RTC.
- */
 static void my_cb(RTCDriver *rtcp, rtcevent_t event) {
+
   (void)rtcp;
 
   switch (event) {
@@ -79,31 +77,21 @@ static void my_cb(RTCDriver *rtcp, rtcevent_t event) {
   case RTC_EVENT_ALARM:
     palTogglePad(GPIOC, GPIOC_LED);
     rtcGetTime(&RTCD1, &timespec);
-    alarmspec.tv_sec = timespec.tv_sec + 5;
+    alarmspec.tv_sec = timespec.tv_sec + 10;
     rtcSetAlarm(&RTCD1, 0, &alarmspec);
     break;
   }
 }
 
-/**
- * Configuration structure with all callbacks supported by platform.
- */
-static RTCCallbackConfig rtc_cb_cfg = {
-	my_cb
-};
-
-/**
- * Main function.
- */
-int main(void){
+int main(void) {
   halInit();
   chSysInit();
 
   rtcGetTime(&RTCD1, &timespec);
-  alarmspec.tv_sec = timespec.tv_sec + 5;
+  alarmspec.tv_sec = timespec.tv_sec + 10;
   rtcSetAlarm(&RTCD1, 0, &alarmspec);
 
-  rtcSetCallback(&RTCD1, &rtc_cb_cfg);
+  rtcSetCallback(&RTCD1, my_cb);
   while (TRUE){
     chThdSleepMilliseconds(500);
   }

@@ -60,16 +60,16 @@ static void rtc_lld_serve_interrupt(RTCDriver *rtcp) {
   chSysLockFromIsr();
 
   if ((RTC->CRH & RTC_CRH_SECIE) && (RTC->CRL & RTC_CRL_SECF)) {
-	RTC->CRL &= ~RTC_CRL_SECF;
     rtcp->rtc_cb(rtcp, RTC_EVENT_SECOND);
+    RTC->CRL &= ~RTC_CRL_SECF;
   }
   if ((RTC->CRH & RTC_CRH_ALRIE) && (RTC->CRL & RTC_CRL_ALRF)) {
-	RTC->CRL &= ~RTC_CRL_ALRF;
-	rtcp->rtc_cb(rtcp, RTC_EVENT_ALARM);
+    rtcp->rtc_cb(rtcp, RTC_EVENT_ALARM);
+    RTC->CRL &= ~RTC_CRL_ALRF;
   }
   if ((RTC->CRH & RTC_CRH_OWIE) && (RTC->CRL & RTC_CRL_OWF)) {
-	RTC->CRL &= ~RTC_CRL_OWF;
     rtcp->rtc_cb(rtcp, RTC_EVENT_OVERFLOW);
+    RTC->CRL &= ~RTC_CRL_OWF;
   }
 
   chSysUnlockFromIsr();
@@ -138,6 +138,7 @@ void rtc_lld_init(void){
     while (!(RCC->BDCR & RCC_BDCR_LSERDY))
       ;
   }
+  preload = STM32_LSECLK - 1;
 #elif STM32_RTC == STM32_RTC_LSI
 #define RTC_CLK   STM32_LSICLK
   /* TODO: Move the LSI clock initialization in the HAL low level driver.*/
@@ -150,11 +151,11 @@ void rtc_lld_init(void){
   volatile uint32_t tmo = (STM32_SYSCLK / 1000000) * 100;
   while (tmo--)
     ;
+  preload = STM32_LSICLK - 1;
 #elif STM32_RTC == STM32_RTC_HSE
 #define RTC_CLK   (STM32_HSECLK / 128)
+  preload = (STM32_HSECLK / 128) - 1;
 #endif
-
-  preload = RTC_CLK - 1;
 
   /* Selects clock source (previously enabled and stabilized).*/
   RCC->BDCR = (RCC->BDCR & ~RCC_BDCR_RTCSEL) | STM32_RTC;
@@ -278,8 +279,8 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
  *
  * @note    Default value after BKP domain reset is 0xFFFFFFFF.
  *
- * @param[in] rtcp       pointer to RTC driver structure
- * @param[in] alarm      alarm identifier
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] alarm     alarm identifier
  * @param[out] alarmspec pointer to a @p RTCAlarm structure
  *
  * @notapi
@@ -304,13 +305,14 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
  *
  * @notapi
  */
-void rtc_lld_set_callback(RTCDriver *rtcp, RTCCallbackConfig *cb_cfg) {
+void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
 
-  if (cb_cfg->rtc_cb != NULL) {
-    rtcp->rtc_cb = cb_cfg->rtc_cb;
+  if (callback != NULL) {
+    rtcp->rtc_cb = callback;
+
     /* Interrupts are enabled only after setting up the callback, this
-	   way there is no need to check for the NULL callback pointer inside
-	   the IRQ handler.*/
+     way there is no need to check for the NULL callback pointer inside
+     the IRQ handler.*/
     rtc_lld_wait_write();
     RTC->CRL &= ~(RTC_CRL_OWF | RTC_CRL_ALRF | RTC_CRL_SECF);
     rtc_lld_wait_write();

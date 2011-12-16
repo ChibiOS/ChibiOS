@@ -117,8 +117,8 @@ void rtcSetAlarm(RTCDriver *rtcp,
  * @note    If an alarm has not been set then the returned alarm specification
  *          is not meaningful.
  *
- * @param[in] rtcp       pointer to RTC driver structure
- * @param[in] alarm      alarm identifier
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] alarm     alarm identifier
  * @param[out] alarmspec pointer to a @p RTCAlarm structure
  *
  * @api
@@ -134,50 +134,22 @@ void rtcGetAlarm(RTCDriver *rtcp,
 }
 #endif /* RTC_ALARMS > 0 */
 
-
-
-/**
- * @brief   Set periodic wakeup period.
- *
- * @param[in] rtcp       pointer to RTC driver structure
- * @param[in] wakeupspec pointer to a @p RTCWakeup structure
- *
- * @api
- */
-void rtcSetWakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec) {
-
-  chDbgCheck((rtcp != NULL), "rtcGetAlarm");
-  rtc_lld_set_periodic_wakeup(rtcp, wakeupspec);
-}
-
-/**
- * @brief   Get periodic wakeup period.
- *
- * @param[in] rtcp        pointer to RTC driver structure
- * @param[out] wakeupspec pointer to a @p RTCWakeup structure
- *
- * @api
- */
-void rtcGetWakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec) {
-
-  chDbgCheck((rtcp != NULL), "rtcGetAlarm");
-  rtc_lld_get_periodic_wakeup(rtcp, wakeupspec);
-}
-
 #if RTC_SUPPORTS_CALLBACKS || defined(__DOXYGEN__)
 /**
  * @brief   Enables or disables RTC callbacks.
+ * @details This function enables or disables callbacks, use a @p NULL pointer
+ *          in order to disable a callback.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- * @param[in] cb_cfg    callback configuration struct
+ * @param[in] callback  callback function pointer or @p NULL
  *
  * @api
  */
-void rtcSetCallback(RTCDriver *rtcp, RTCCallbackConfig *cb_cfg) {
+void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback) {
 
-  chDbgCheck(((rtcp != NULL) && (cb_cfg != NULL)), "rtcSetCallback");
+  chDbgCheck((rtcp != NULL), "rtcSetCallback");
 
-  rtc_lld_set_callback(rtcp, cb_cfg);
+  rtc_lld_set_callback(rtcp, callback);
 }
 #endif /* RTC_SUPPORTS_CALLBACKS */
 
