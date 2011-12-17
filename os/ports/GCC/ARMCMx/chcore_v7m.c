@@ -111,28 +111,31 @@ void PendSVVector(void) {
  * @brief   Port-related initialization code.
  */
 void _port_init(void) {
-  uint32_t reg;
 
   /* Initialization of the vector table and priority related settings.*/
   SCB_VTOR = CORTEX_VTOR_INIT;
   SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);
 
 #if CORTEX_USE_FPU
-  /* CP10 and CP11 set to full access.*/
-  SCB_CPACR |= 0x00F00000;
+  {
+    uint32_t reg;
 
-  /* Enables FPU context save/restore on exception entry/exit (FPCA bit).*/
-  asm volatile ("mrs     %0, CONTROL" : "=r" (reg) : : "memory");
-  reg |= 4;
-  asm volatile ("msr     CONTROL, %0" : : "r" (reg) : "memory");
+    /* CP10 and CP11 set to full access.*/
+    SCB_CPACR |= 0x00F00000;
 
-  /* FPSCR and FPDSCR initially zero.*/
-  reg = 0;
-  asm volatile ("vmsr    FPSCR, %0" : : "r" (reg) : "memory");
-  SCB_FPDSCR = reg;
+    /* Enables FPU context save/restore on exception entry/exit (FPCA bit).*/
+    asm volatile ("mrs     %0, CONTROL" : "=r" (reg) : : "memory");
+    reg |= 4;
+    asm volatile ("msr     CONTROL, %0" : : "r" (reg) : "memory");
 
-  /* Initializing the FPU context save in lazy mode.*/
-  SCB_FPCCR = FPCCR_ASPEN | FPCCR_LSPEN;
+    /* FPSCR and FPDSCR initially zero.*/
+    reg = 0;
+    asm volatile ("vmsr    FPSCR, %0" : : "r" (reg) : "memory");
+    SCB_FPDSCR = reg;
+
+    /* Initializing the FPU context save in lazy mode.*/
+    SCB_FPCCR = FPCCR_ASPEN | FPCCR_LSPEN;
+  }
 #endif
 
   /* Initialization of the system vectors used by the port.*/
@@ -155,6 +158,29 @@ void _port_irq_epilogue(void) {
     /* Current PSP value.*/
     asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : : "memory");
 
+    /* Adding an artificial exception return context, there is no need to
+       populate it fully.*/
+    ctxp--;
+    asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
+    ctxp->xpsr = (regarm_t)0x01000000;
+
+    /* The exit sequence is different depending on if a preemption is
+       required or not.*/
+    if (chSchIsPreemptionRequired()) {
+      /* Preemption is required we need to enforce a context switch.*/
+      ctxp->pc = _port_switch_from_isr;
+#if CORTEX_USE_FPU
+      /* Triggering a lazy FPU state save.*/
+      asm volatile ("vmrs    APSR_nzcv, FPSCR" : : : "memory");
+#endif
+    }
+    else {
+      /* Preemption not required, we just need to exit the exception
+         atomically.*/
+      void _port_exit_from_isr(void);
+      ctxp->pc = _port_exit_from_isr;
+    }
+
 #if CORTEX_USE_FPU
     {
       uint32_t fpccr;
@@ -167,27 +193,6 @@ void _port_irq_epilogue(void) {
       SCB_FPCCR = fpccr | FPCCR_LSPACT;
     }
 #endif
-
-    /* Adding an artificial exception return context, there is no need to
-       populate it fully.*/
-    ctxp--;
-    asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
-    ctxp->xpsr = (regarm_t)0x01000000;
-
-    /* The exit sequence is different depending on if a preemption is
-       required or not.*/
-    if (chSchIsPreemptionRequired()) {
-      /* Preemption is required we need to trigger a lazy FPU state save
-         and enforce a context switch.*/
-      ctxp->pc = _port_switch_from_isr;
-      asm volatile ("vmrs    APSR_nzcv, FPSCR" : : : "memory");
-    }
-    else {
-      /* Preemption not required, we just need to exit the exception
-         atomically.*/
-      void _port_exit_from_isr(void);
-      ctxp->pc = _port_exit_from_isr;
-    }
 
     /* Note, returning without unlocking is intentional, this is done in
        order to keep the rest of the context switching atomic.*/
