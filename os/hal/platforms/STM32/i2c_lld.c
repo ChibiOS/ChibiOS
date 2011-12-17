@@ -587,13 +587,28 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
   regCR2 = i2cp->id_i2c->CR2;                   /* Get the I2Cx CR2 value */
   regCR2 &= (uint16_t)~I2C_CR2_FREQ;            /* Clear frequency FREQ[5:0] bits */
   freq = (uint16_t)(STM32_PCLK1 / 1000000);     /* Set frequency bits depending on pclk1 value */
-#ifdef STM32F4XX
+#if   defined(STM32F4XX)
   chDbgCheck((freq >= 2) && (freq <= 42),
                 "i2c_lld_set_clock() : Peripheral clock freq. out of range");
-#else
+#elif defined(STM32L1XX_MD)
+  chDbgCheck((freq >= 2) && (freq <= 32),
+                "i2c_lld_set_clock() : Peripheral clock freq. out of range");
+#elif defined(STM32F2XX)
+  chDbgCheck((freq >= 2) && (freq <= 30),
+                "i2c_lld_set_clock() : Peripheral clock freq. out of range");
+
+#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) || \
+      defined(STM32F10X_HD_VL)
+  chDbgCheck((freq >= 2) && (freq <= 24),
+                  "i2c_lld_set_clock() : Peripheral clock freq. out of range");
+#elif defined(STM32F10X_LD) || defined(STM32F10X_MD) ||                     \
+      defined(STM32F10X_HD) || defined(STM32F10X_XL) ||                     \
+      defined(STM32F10X_CL)
   chDbgCheck((freq >= 2) && (freq <= 36),
               "i2c_lld_set_clock() : Peripheral clock freq. out of range");
-#endif /* define STM32F4XX */
+#else
+#error "unspecified, unsupported or invalid STM32 platform"
+#endif
   regCR2 |= freq;
   i2cp->id_i2c->CR2 = regCR2;
 
