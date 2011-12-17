@@ -144,6 +144,8 @@ static uint32_t i2c_get_event(I2CDriver *i2cp){
   #if CH_DBG_ENABLE_ASSERTS
     dbgSR1 = regSR1;
     dbgSR2 = regSR2;
+    dbgCR1 = i2cp->id_i2c->CR1;
+    dbgCR2 = i2cp->id_i2c->CR2;
   #endif /* CH_DBG_ENABLE_ASSERTS */
 
   return (I2C_EV_MASK & (regSR1 | (regSR2 << 16)));
@@ -566,15 +568,13 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint8_t slave_addr,
   i2cp->id_i2c->CR1 |= I2C_CR1_START;
 }
 
-
 /**
  * @brief Set clock speed.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  */
 void i2c_lld_set_clock(I2CDriver *i2cp) {
-  volatile uint16_t regCCR, regCR2, freq, clock_div;
-  volatile uint16_t pe_bit_saved;
+  volatile uint16_t regCCR, clock_div;
   int32_t clock_speed = i2cp->id_config->clock_speed;
   i2cdutycycle_t duty = i2cp->id_config->duty_cycle;
 
@@ -584,39 +584,45 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
   /**************************************************************************
    * CR2 Configuration
    */
-  regCR2 = i2cp->id_i2c->CR2;                   /* Get the I2Cx CR2 value */
-  regCR2 &= (uint16_t)~I2C_CR2_FREQ;            /* Clear frequency FREQ[5:0] bits */
-  freq = (uint16_t)(STM32_PCLK1 / 1000000);     /* Set frequency bits depending on pclk1 value */
-#if   defined(STM32F4XX)
-  chDbgCheck((freq >= 2) && (freq <= 42),
-                "i2c_lld_set_clock() : Peripheral clock freq. out of range");
-#elif defined(STM32L1XX_MD)
-  chDbgCheck((freq >= 2) && (freq <= 32),
-                "i2c_lld_set_clock() : Peripheral clock freq. out of range");
-#elif defined(STM32F2XX)
-  chDbgCheck((freq >= 2) && (freq <= 30),
-                "i2c_lld_set_clock() : Peripheral clock freq. out of range");
+#define FREQ    ((STM32_PCLK1) / 1000000)
 
-#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) || \
+#if   defined(STM32F4XX)
+  #if (!(FREQ >= 2) && (FREQ <= 42))
+    #error "Peripheral clock freq. out of range."
+  #endif
+
+#elif defined(STM32L1XX_MD)
+  #if (!(FREQ >= 2) && (FREQ <= 32))
+    #error "Peripheral clock freq. out of range."
+  #endif
+
+#elif defined(STM32F2XX)
+  #if (!(FREQ >= 2) && (FREQ <= 30))
+    #error "Peripheral clock freq. out of range."
+  #endif
+
+#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||                 \
       defined(STM32F10X_HD_VL)
-  chDbgCheck((freq >= 2) && (freq <= 24),
-                  "i2c_lld_set_clock() : Peripheral clock freq. out of range");
-#elif defined(STM32F10X_LD) || defined(STM32F10X_MD) ||                     \
-      defined(STM32F10X_HD) || defined(STM32F10X_XL) ||                     \
+  #if (!(FREQ >= 2) && (FREQ <= 24))
+    #error "Peripheral clock freq. out of range."
+  #endif
+
+#elif defined(STM32F10X_LD) || defined(STM32F10X_MD) ||                       \
+      defined(STM32F10X_HD) || defined(STM32F10X_XL) ||                       \
       defined(STM32F10X_CL)
-  chDbgCheck((freq >= 2) && (freq <= 36),
-              "i2c_lld_set_clock() : Peripheral clock freq. out of range");
+  #if (!(FREQ >= 2) && (FREQ <= 36))
+    #error "Peripheral clock freq. out of range."
+  #endif
+
 #else
 #error "unspecified, unsupported or invalid STM32 platform"
 #endif
-  regCR2 |= freq;
-  i2cp->id_i2c->CR2 = regCR2;
+  i2cp->id_i2c->CR2 &= (uint16_t)~I2C_CR2_FREQ;                 /* Clear frequency FREQ[5:0] bits */
+  i2cp->id_i2c->CR2 |= (uint16_t)FREQ;
 
   /**************************************************************************
    * CCR Configuration
    */
-  pe_bit_saved = (i2cp->id_i2c->CR1 & I2C_CR1_PE);
-  i2cp->id_i2c->CR1 &= (uint16_t)~I2C_CR1_PE;                   /* Disable the selected I2C peripheral to configure TRISE */
   regCCR = 0;                                                   /* Clear F/S, DUTY and CCR[11:0] bits */
   clock_div = I2C_CCR_CCR;
 
@@ -627,7 +633,7 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
     clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 2));    /* Standard mode clock_div calculate: Tlow/Thigh = 1/1 */
     if (clock_div < 0x04) clock_div = 0x04;                     /* Test if CCR value is under 0x4, and set the minimum allowed value */
     regCCR |= (clock_div & I2C_CCR_CCR);                        /* Set clock_div value for standard mode */
-    i2cp->id_i2c->TRISE = freq + 1;                             /* Set Maximum Rise Time for standard mode */
+    i2cp->id_i2c->TRISE = FREQ + 1;                             /* Set Maximum Rise Time for standard mode */
   }
   else if(clock_speed <= 400000) {                              /* Configure clock_div in fast mode */
     chDbgAssert((duty == FAST_DUTY_CYCLE_2) ||
@@ -643,13 +649,14 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
     }
     if(clock_div < 0x01) clock_div = 0x01;                      /* Test if CCR value is under 0x1, and set the minimum allowed value */
     regCCR |= (I2C_CCR_FS | (clock_div & I2C_CCR_CCR));         /* Set clock_div value and F/S bit for fast mode*/
-    i2cp->id_i2c->TRISE = (freq * 300 / 1000) + 1;              /* Set Maximum Rise Time for fast mode */
+    i2cp->id_i2c->TRISE = (FREQ * 300 / 1000) + 1;              /* Set Maximum Rise Time for fast mode */
   }
   chDbgAssert((clock_div <= I2C_CCR_CCR),
       "i2c_lld_set_clock(), #3", "Too low clock clock speed selected");
 
   i2cp->id_i2c->CCR = regCCR;                                   /* Write to I2Cx CCR */
-  i2cp->id_i2c->CR1 |= pe_bit_saved;                            /* restore the I2C peripheral enabled state */
+
+#undef FREQ
 }
 
 
