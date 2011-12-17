@@ -508,7 +508,7 @@ void i2c_lld_master_receive(I2CDriver *i2cp, uint8_t slave_addr,
   i2cp->errors = 0;
 
   mode = STM32_DMA_CR_DIR_P2M;
-  // TODO: DMA error handling
+  /* TODO: DMA error handling */
   dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
   dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
   dmaStreamSetMode(i2cp->dmarx, ((i2cp->dmamode) | mode));
@@ -553,7 +553,7 @@ void i2c_lld_master_transmit(I2CDriver *i2cp, uint8_t slave_addr,
   i2cp->errors = 0;
 
   mode = STM32_DMA_CR_DIR_M2P;
-  // TODO: DMA error handling
+  /* TODO: DMA error handling */
   dmaStreamSetMemory0(i2cp->dmatx, txbuf);
   dmaStreamSetTransactionSize(i2cp->dmatx, txbytes);
   dmaStreamSetMode(i2cp->dmatx, ((i2cp->dmamode) | mode));

@@ -23,6 +23,24 @@
 #include "ch.h"
 #include "hal.h"
 
+/*===========================================================================*/
+/* Notes.                                                                    */
+/*===========================================================================*/
+/*
+This structure is used to hold the values representing a calendar time.
+It contains the following members, with the meanings as shown.
+
+int tm_sec       seconds after minute [0-61] (61 allows for 2 leap-seconds)
+int tm_min       minutes after hour [0-59] 
+int tm_hour      hours after midnight [0-23] 
+int tm_mday      day of the month [1-31] 
+int tm_mon       month of year [0-11] 
+int tm_year      current year-1900 
+int tm_wday      days since Sunday [0-6] 
+int tm_yday      days since January 1st [0-365] 
+int tm_isdst     daylight savings indicator (1 = yes, 0 = no, -1 = unknown)
+*/
+
 RTCTime  timespec;
 RTCAlarm alarmspec;
 RTCWakeup wakeupspec;
@@ -78,12 +96,12 @@ static const EXTConfig extcfg = {
     {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART, exti_rtcalarm_cb},// RTC alarms
+    {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART, exti_rtcalarm_cb},/* RTC alarms */
     {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},// timestamp
-    {EXT_CH_MODE_RISING_EDGE| EXT_CH_MODE_AUTOSTART, exti_rtcwakeup_cb},// wakeup
+    {EXT_CH_MODE_DISABLED, NULL},/* timestamp */
+    {EXT_CH_MODE_RISING_EDGE| EXT_CH_MODE_AUTOSTART, exti_rtcwakeup_cb},/* wakeup */
   },
   EXT_MODE_EXTI(
       0,
@@ -101,7 +119,7 @@ static const EXTConfig extcfg = {
       0,
       0,
       0,
-      0)//15
+      0)/* 15 */
 };
 
 /**
@@ -126,7 +144,7 @@ void bcd2tm(struct tm *timp, uint32_t tv_time, uint32_t tv_date){
  * Convert from classical format to STM32 BCD
  */
 void tm2bcd(struct tm *timp, RTCTime *timespec){
-  uint32_t v = 0; // temporal variable
+  uint32_t v = 0;
 
   timespec->tv_date = 0;
   timespec->tv_time = 0;
@@ -164,8 +182,8 @@ int main(void){
   extStart(&EXTD1, &extcfg);
 
   /* tune wakeup callback */
-  wakeupspec.wakeup = ((uint32_t)4) << 16; // select 1 Hz clock source
-  wakeupspec.wakeup |= 3; // set counter value to 3. Period will be 3+1 seconds.
+  wakeupspec.wakeup = ((uint32_t)4) << 16; /* select 1 Hz clock source */
+  wakeupspec.wakeup |= 3; /* set counter value to 3. Period will be 3+1 seconds. */
   rtcSetWakeup(&RTCD1, &wakeupspec);
 
   /* enable wakeup callback */
@@ -177,7 +195,7 @@ int main(void){
   bcd2tm(&timp, timespec.tv_time, timespec.tv_date);
   unix_time = mktime(&timp);
 
-  if (unix_time == -1){// incorrect time in RTC cell
+  if (unix_time == -1){/* incorrect time in RTC cell */
     unix_time = 1000000000;
   }
   /* set correct time */
