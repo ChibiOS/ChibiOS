@@ -549,14 +549,14 @@
 #endif
 
 /**
- * @brief   Enables or disables the power voltage detector.
+ * @brief   Enables or disables the programmable voltage detector.
  */
 #if !defined(STM32_PVD_ENABLE) || defined(__DOXYGEN__)
 #define STM32_PVD_ENABLE            FALSE
 #endif
 
 /**
- * @brief   Enables or disables the power voltage detector.
+ * @brief   Sets voltage level for programmable voltage detector.
  */
 #if !defined(STM32_PLS) || defined(__DOXYGEN__)
 #define STM32_PLS                   STM32_PLS_LEV0
