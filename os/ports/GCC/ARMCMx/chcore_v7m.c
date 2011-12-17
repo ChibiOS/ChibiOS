@@ -28,40 +28,6 @@
 
 #include "ch.h"
 
-/**
- * @brief   Internal context stacking.
- */
-#if CORTEX_USE_FPU || defined(__DOXYGEN__)
-#define PUSH_CONTEXT() {                                                    \
-  asm volatile ("push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}"            \
-                : : : "memory");                                            \
-  asm volatile ("vpush   {s16-s31}"                                         \
-                : : : "memory");                                            \
-}
-#else /* !CORTEX_USE_FPU */
-#define PUSH_CONTEXT() {                                                    \
-  asm volatile ("push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}"            \
-                : : : "memory");                                            \
-}
-#endif /* !CORTEX_USE_FPU */
-
-/**
- * @brief   Internal context unstacking.
- */
-#if CORTEX_USE_FPU || defined(__DOXYGEN__)
-#define POP_CONTEXT() {                                                     \
-  asm volatile ("vpop    {s16-s31}"                                         \
-                : : : "memory");                                            \
-  asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}"            \
-                : : : "memory");                                            \
-}
-#else /* !CORTEX_USE_FPU */
-#define POP_CONTEXT() {                                                     \
-  asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}"            \
-                : : : "memory");                                            \
-}
-#endif /* !CORTEX_USE_FPU */
-
 #if !CH_OPTIMIZE_SPEED
 void _port_lock(void) {
   register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;
@@ -206,8 +172,23 @@ void _port_irq_epilogue(void) {
        populate it fully.*/
     ctxp--;
     asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
-    ctxp->pc = _port_switch_from_isr;
     ctxp->xpsr = (regarm_t)0x01000000;
+
+    /* The exit sequence is different depending on if a preemption is
+       required or not.*/
+    if (chSchIsPreemptionRequired()) {
+      /* Preemption is required we need to trigger a lazy FPU state save
+         and enforce a context switch.*/
+      ctxp->pc = _port_switch_from_isr;
+      asm volatile ("vmrs    APSR_nzcv, FPSCR" : : : "memory");
+    }
+    else {
+      /* Preemption not required, we just need to exit the exception
+         atomically.*/
+      void _port_exit_from_isr(void);
+      ctxp->pc = _port_exit_from_isr;
+    }
+
     /* Note, returning without unlocking is intentional, this is done in
        order to keep the rest of the context switching atomic.*/
     return;
@@ -225,9 +206,9 @@ __attribute__((naked))
 void _port_switch_from_isr(void) {
 
   dbg_check_lock();
-  if (chSchIsPreemptionRequired())
-    chSchDoReschedule();
+  chSchDoReschedule();
   dbg_check_unlock();
+  asm volatile ("_port_exit_from_isr:" : : : "memory");
 #if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
   asm volatile ("svc     #0");
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
@@ -253,12 +234,20 @@ __attribute__((naked))
 #endif
 void _port_switch(Thread *ntp, Thread *otp) {
 
-  PUSH_CONTEXT();
+  asm volatile ("push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}"
+                : : : "memory");
+#if CORTEX_USE_FPU
+  asm volatile ("vpush   {s16-s31}" : : : "memory");
+#endif
 
   asm volatile ("str     sp, [%1, #12]                          \n\t"
                 "ldr     sp, [%0, #12]" : : "r" (ntp), "r" (otp));
 
-  POP_CONTEXT();
+#if CORTEX_USE_FPU
+  asm volatile ("vpop    {s16-s31}" : : : "memory");
+#endif
+  asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}"
+                : : : "memory");
 }
 
 /**
