@@ -62,8 +62,6 @@
 #define STM32_I2SSRC                        STM32_I2CSRC_CKIN
 #define STM32_PLLI2SN_VALUE                 192
 #define STM32_PLLI2SR_VALUE                 5
-#define STM32_RTC                           STM32_RTC_LSE
-
 
 /*
  * ADC driver system settings.
@@ -100,12 +98,12 @@
 #define STM32_EXT_EXTI5_9_IRQ_PRIORITY      6
 #define STM32_EXT_EXTI10_15_IRQ_PRIORITY    6
 #define STM32_EXT_EXTI16_IRQ_PRIORITY       6
-#define STM32_EXT_EXTI17_IRQ_PRIORITY       15 // RTC alarm
+#define STM32_EXT_EXTI17_IRQ_PRIORITY       15
 #define STM32_EXT_EXTI18_IRQ_PRIORITY       6
 #define STM32_EXT_EXTI19_IRQ_PRIORITY       6
 #define STM32_EXT_EXTI20_IRQ_PRIORITY       6
-#define STM32_EXT_EXTI21_IRQ_PRIORITY       15 // RTC tamper-timestamp
-#define STM32_EXT_EXTI22_IRQ_PRIORITY       15 // RTC wakeup
+#define STM32_EXT_EXTI21_IRQ_PRIORITY       15
+#define STM32_EXT_EXTI22_IRQ_PRIORITY       15
 
 /*
  * GPT driver system settings.
@@ -116,13 +114,6 @@
 #define STM32_GPT_USE_TIM4                  FALSE
 #define STM32_GPT_USE_TIM5                  FALSE
 #define STM32_GPT_USE_TIM8                  FALSE
-#define STM32_GPT_USE_TIM9                  FALSE
-#define STM32_GPT_USE_TIM10                 FALSE
-#define STM32_GPT_USE_TIM11                 FALSE
-#define STM32_GPT_USE_TIM12                 FALSE
-#define STM32_GPT_USE_TIM12                 FALSE
-#define STM32_GPT_USE_TIM14                 FALSE
-
 #define STM32_GPT_TIM1_IRQ_PRIORITY         7
 #define STM32_GPT_TIM2_IRQ_PRIORITY         7
 #define STM32_GPT_TIM3_IRQ_PRIORITY         7
