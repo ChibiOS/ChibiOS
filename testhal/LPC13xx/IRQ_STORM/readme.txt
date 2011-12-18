@@ -13,7 +13,7 @@ in order to implement a system stress demo.
 
 ** Build Procedure **
 
-The demo has been tested by using the free LPCXpresso toolchain but also with
+The demo has been tested using the free LPCXpresso toolchain but also with
 Codesourcery and YAGARTO.
 Just modify the TRGT line in the makefile in order to use different GCC ports.
 

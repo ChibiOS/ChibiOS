@@ -14,7 +14,7 @@ PWM output. The ICU unit will measure the generated PWM.
 
 ** Build Procedure **
 
-The demo has been tested by using the free Codesourcery GCC-based toolchain
+The demo has been tested using the free Codesourcery GCC-based toolchain
 and YAGARTO.
 Just modify the TRGT line in the makefile in order to use different GCC ports.
 

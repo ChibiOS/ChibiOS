@@ -1,19 +1,23 @@
 *****************************************************************************
-** ChibiOS/RT HAL - SPI driver demo for STM32.                             **
+** ChibiOS/RT HAL - PWM-ICU drivers demo for STM32F4xx.                    **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an Olimex STM32-P103 board.
+The demo will on an STMicroelectronics STM32F4-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32 SPI driver.
+The application demonstrates the use of the STM32F4xx GPT, PAL and Serial
+drivers in order to implement a system stress demo involving the FPU.
+
+** Board Setup **
+
+None.
 
 ** Build Procedure **
 
-The demo has been tested using the free Codesourcery GCC-based toolchain
-and YAGARTO.
+The demo has been tested using YAGARTO 4.6.2.
 Just modify the TRGT line in the makefile in order to use different GCC ports.
 
 ** Notes **
