@@ -26,7 +26,6 @@
  * @{
  */
 
-#include <stdio.h>
 #include <string.h>
 
 #include "ch.h"
@@ -39,11 +38,7 @@
  */
 EventSource shell_terminated;
 
-#if defined(WIN32)
-/*
- * MinGW does not seem to have this function...
- */
-static char *strtok_r(char *str, const char *delim, char **saveptr) {
+static char *_strtok(char *str, const char *delim, char **saveptr) {
   char *token;
   if (str)
     *saveptr = str;
@@ -59,7 +54,6 @@ static char *strtok_r(char *str, const char *delim, char **saveptr) {
 
   return *token ? token : NULL;
 }
-#endif
 
 static void usage(BaseChannel *chp, char *p) {
 
@@ -162,10 +156,10 @@ static msg_t shell_thread(void *p) {
       chprintf(chp, "\r\nlogout");
       break;
     }
-    lp = strtok_r(line, " \009", &tokp);
+    lp = _strtok(line, " \009", &tokp);
     cmd = lp;
     n = 0;
-    while ((lp = strtok_r(NULL, " \009", &tokp)) != NULL) {
+    while ((lp = _strtok(NULL, " \009", &tokp)) != NULL) {
       if (n >= SHELL_MAX_ARGUMENTS) {
         chprintf(chp, "too many arguments\r\n");
         cmd = NULL;
