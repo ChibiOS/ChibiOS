@@ -57,7 +57,18 @@ static msg_t WorkerThread(void *arg) {
 
   (void)arg;
 
-  palTogglePad(GPIOD, GPIOD_LED5);
+  while(1) {
+    float f1, f2, f3, f4, f5;
+
+    f1 = ff1(3);
+    f2 = ff1(4);
+    f3 = ff1(5);
+    f5 = f1 + f2 + f3;
+    f4 = ff1(6);
+    f5 = ff2(f5, f4, f5, f4);
+    if (f5 != 324)
+      chSysHalt();
+  }
 }
 
 /*
@@ -175,10 +186,12 @@ int main(void) {
   /*
    * Initializes the mailboxes and creates the worker threads.
    */
-  for (i = 0; i < NUM_THREADS; i++) {
+/*  for (i = 0; i < NUM_THREADS; i++) {
     chThdCreateStatic(waWorkerThread[i], sizeof waWorkerThread[i],
                       NORMALPRIO - 20, WorkerThread, (void *)i);
-  }
+  }*/
+  chThdCreateStatic(waWorkerThread[0], sizeof waWorkerThread[0],
+                    NORMALPRIO - 20, WorkerThread, (void *)0);
 
   /*
    * Test procedure.
