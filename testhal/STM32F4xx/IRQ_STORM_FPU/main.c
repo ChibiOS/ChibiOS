@@ -23,9 +23,9 @@
 #include "ch.h"
 #include "hal.h"
 
-float getfloat(float par);
+float ff1(float par);
 
-float setfloat(float par1, float par2, float par3, float par4);
+float ff2(float par1, float par2, float par3, float par4);
 
 /*===========================================================================*/
 /* Configurable settings.                                                    */
@@ -64,17 +64,17 @@ static msg_t WorkerThread(void *arg) {
  * GPT2 callback.
  */
 static void gpt2cb(GPTDriver *gptp) {
-  float f1, f2, f3, f4, sum;
+  float f1, f2, f3, f4, f5;
 
   (void)gptp;
 
-  f1 = getfloat(2);
-  f2 = getfloat(3);
-  f3 = getfloat(4);
-  sum = f1 + f2 + f3;
-  f4 = getfloat(5);
-  sum = setfloat(sum, f4, sum, f4);
-  if (sum != 196)
+  f1 = ff1(2);
+  f2 = ff1(3);
+  f3 = ff1(4);
+  f5 = f1 + f2 + f3;
+  f4 = ff1(5);
+  f5 = ff2(f5, f4, f5, f4);
+  if (f5 != 196)
     chSysHalt();
 }
 
@@ -82,17 +82,17 @@ static void gpt2cb(GPTDriver *gptp) {
  * GPT3 callback.
  */
 static void gpt3cb(GPTDriver *gptp) {
-  float f1, f2, f3, f4, sum;
+  float f1, f2, f3, f4, f5;
 
   (void)gptp;
 
-  f1 = getfloat(1);
-  f2 = getfloat(2);
-  f3 = getfloat(3);
-  sum = f1 + f2 + f3;
-  f4 = getfloat(4);
-  sum = setfloat(sum, f4, sum, f4);
-  if (sum != 100)
+  f1 = ff1(1);
+  f2 = ff1(2);
+  f3 = ff1(3);
+  f5 = f1 + f2 + f3;
+  f4 = ff1(4);
+  f5 = ff2(f5, f4, f5, f4);
+  if (f5 != 100)
     chSysHalt();
 }
 

@@ -18,10 +18,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-float getfloat(float par) {
+float ff1(float par) {
   return par;
 }
 
-float setfloat(float par1, float par2, float par3, float par4) {
+float ff2(float par1, float par2, float par3, float par4) {
   return (par1 + par2) * (par3 + par4);
 }
