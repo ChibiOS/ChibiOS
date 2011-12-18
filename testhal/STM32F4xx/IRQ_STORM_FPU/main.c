@@ -75,18 +75,19 @@ static msg_t WorkerThread(void *arg) {
  * GPT2 callback.
  */
 static void gpt2cb(GPTDriver *gptp) {
-  float f1, f2, f3, f4, f5;
+/*  float f1, f2, f3, f4, f5;*/
 
   (void)gptp;
 
-  f1 = ff1(2);
+/*  f1 = ff1(2);
   f2 = ff1(3);
   f3 = ff1(4);
   f5 = f1 + f2 + f3;
   f4 = ff1(5);
   f5 = ff2(f5, f4, f5, f4);
   if (f5 != 196)
-    chSysHalt();
+    chSysHalt();*/
+  volatile float f1 = ff1(67);
 }
 
 /*
