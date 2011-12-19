@@ -120,6 +120,9 @@ void _port_init(void) {
   {
     uint32_t reg;
 
+    /* Initializing the FPU context save in lazy mode.*/
+    SCB_FPCCR = FPCCR_ASPEN | FPCCR_LSPEN;
+
     /* CP10 and CP11 set to full access.*/
     SCB_CPACR |= 0x00F00000;
 
@@ -132,9 +135,6 @@ void _port_init(void) {
     reg = 0;
     asm volatile ("vmsr    FPSCR, %0" : : "r" (reg) : "memory");
     SCB_FPDSCR = reg;
-
-    /* Initializing the FPU context save in lazy mode.*/
-    SCB_FPCCR = FPCCR_ASPEN | FPCCR_LSPEN;
   }
 #endif
 
@@ -150,6 +150,9 @@ void _port_init(void) {
  * @brief   Exception exit redirection to _port_switch_from_isr().
  */
 void _port_irq_epilogue(void) {
+#if CORTEX_USE_FPU
+  uint32_t fpccr;
+#endif
 
   port_lock_from_isr();
   if ((SCB_ICSR & ICSR_RETTOBASE)) {
@@ -182,16 +185,14 @@ void _port_irq_epilogue(void) {
     }
 
 #if CORTEX_USE_FPU
-    {
-      uint32_t fpccr;
-
-      /* Saving the special register SCB_FPCCR.*/
-      ctxp->fpccr = (regarm_t)(fpccr = SCB_FPCCR);
-
-      /* Now the FPCCR is modified in order to not restore the FPU status
-         from the artificial return context.*/
-      SCB_FPCCR = fpccr | FPCCR_LSPACT;
-    }
+    /* Saving the special register SCB_FPCCR into the reserved offset of
+       the Cortex-M4 exception frame.*/
+    (ctxp + 1)->fpccr = (regarm_t)(fpccr = SCB_FPCCR);
+#endif
+#if CORTEX_USE_FPU
+    /* Now the FPCCR is modified in order to not restore the FPU status
+       from the artificial return context.*/
+    SCB_FPCCR = fpccr | FPCCR_LSPACT;
 #endif
 
     /* Note, returning without unlocking is intentional, this is done in
