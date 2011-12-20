@@ -138,7 +138,7 @@ CH_IRQ_HANDLER(TIM1_UP_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  TIM1->SR = ~TIM_SR_UIF;
+  STM32_TIM1->SR = ~TIM_SR_UIF;
   PWMD1.config->callback(&PWMD1);
 
   CH_IRQ_EPILOGUE();
@@ -157,8 +157,9 @@ CH_IRQ_HANDLER(TIM1_CC_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  sr = TIM1->SR & TIM1->DIER;
-  TIM1->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC3IF | TIM_SR_CC4IF);
+  sr = STM32_TIM1->SR & STM32_TIM1->DIER;
+  STM32_TIM1->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF |
+                     TIM_SR_CC3IF | TIM_SR_CC4IF);
   if ((sr & TIM_SR_CC1IF) != 0)
     PWMD1.config->channels[0].callback(&PWMD1);
   if ((sr & TIM_SR_CC2IF) != 0)
@@ -249,7 +250,7 @@ CH_IRQ_HANDLER(TIM8_UP_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  TIM8->SR = ~TIM_SR_UIF;
+  STM32_TIM8->SR = ~TIM_SR_UIF;
   PWMD1.config->callback(&PWMD8);
 
   CH_IRQ_EPILOGUE();
@@ -268,8 +269,8 @@ CH_IRQ_HANDLER(TIM8_CC_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  sr = TIM8->SR & TIM8->DIER;
-  TIM8->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC3IF | TIM_SR_CC4IF);
+  sr = STM32_TIM8->SR & STM32_TIM8->DIER;
+  STM32_TIM8->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC3IF | TIM_SR_CC4IF);
   if ((sr & TIM_SR_CC1IF) != 0)
     PWMD8.config->channels[0].callback(&PWMD8);
   if ((sr & TIM_SR_CC2IF) != 0)

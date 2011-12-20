@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 2.3.5 ***
+- FIX: Fixed PWM with TIM1 and TIM8 broken in STM32 HAL (bug 3458947).
 - FIX: Fixed SYSCFG clock not started in STM32L1/F4 HALs (bug 3449139).
 - FIX: Fixed wrong definitions in STM32L-Discovery board file (bug 3449076).
 - NEW: Modified the STM32F4-Discovery demo to put critical kernel data
