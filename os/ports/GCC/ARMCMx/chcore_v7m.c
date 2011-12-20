@@ -76,6 +76,7 @@ void SVCallVector(void) {
 #if CORTEX_USE_FPU
   /* Restoring the special register SCB_FPCCR.*/
   SCB_FPCCR = (uint32_t)ctxp->fpccr;
+  SCB_FPCAR = SCB_FPCAR + sizeof (struct extctx);
 #endif
   asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
   port_unlock_from_isr();
@@ -102,6 +103,7 @@ void PendSVVector(void) {
 #if CORTEX_USE_FPU
   /* Restoring the special register SCB_FPCCR.*/
   SCB_FPCCR = (uint32_t)ctxp->fpccr;
+  SCB_FPCAR = SCB_FPCAR + sizeof (struct extctx);
 #endif
   asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
 }

@@ -39,10 +39,6 @@ float ff2(float par1, float par2, float par3, float par4);
 #define ITERATIONS      100
 #endif
 
-#ifndef NUM_THREADS
-#define NUM_THREADS     4
-#endif
-
 /*===========================================================================*/
 /* Test related code.                                                        */
 /*===========================================================================*/
@@ -50,9 +46,9 @@ float ff2(float par1, float par2, float par3, float par4);
 static bool_t saturated;
 
 /*
- * Test worker threads.
+ * Test worker thread.
  */
-static WORKING_AREA(waWorkerThread[NUM_THREADS], 128);
+static WORKING_AREA(waWorkerThread, 128);
 static msg_t WorkerThread(void *arg) {
 
   (void)arg;
@@ -72,10 +68,33 @@ static msg_t WorkerThread(void *arg) {
 }
 
 /*
+ * Test periodic thread.
+ */
+static WORKING_AREA(waPeriodicThread, 128);
+static msg_t PeriodicThread(void *arg) {
+
+  (void)arg;
+
+  while(1) {
+    float f1, f2, f3, f4, f5;
+
+    f1 = ff1(4);
+    f2 = ff1(5);
+    f3 = ff1(6);
+    f5 = f1 + f2 + f3;
+    f4 = ff1(7);
+    f5 = ff2(f5, f4, f5, f4);
+    if (f5 != 484)
+      chSysHalt();
+    chThdSleepSeconds(1);
+  }
+}
+
+/*
  * GPT2 callback.
  */
 static void gpt2cb(GPTDriver *gptp) {
-/*  float f1, f2, f3, f4, f5;
+  float f1, f2, f3, f4, f5;
 
   (void)gptp;
 
@@ -86,14 +105,14 @@ static void gpt2cb(GPTDriver *gptp) {
   f4 = ff1(5);
   f5 = ff2(f5, f4, f5, f4);
   if (f5 != 196)
-    chSysHalt();*/
+    chSysHalt();
 }
 
 /*
  * GPT3 callback.
  */
 static void gpt3cb(GPTDriver *gptp) {
-/*  float f1, f2, f3, f4, f5;
+  float f1, f2, f3, f4, f5;
 
   (void)gptp;
 
@@ -104,8 +123,7 @@ static void gpt3cb(GPTDriver *gptp) {
   f4 = ff1(4);
   f5 = ff2(f5, f4, f5, f4);
   if (f5 != 100)
-    chSysHalt();*/
-  volatile float f1 = ff1(1);
+    chSysHalt();
 }
 
 /*
@@ -185,14 +203,12 @@ int main(void) {
   gptStart(&GPTD3, &gpt3cfg);
 
   /*
-   * Initializes the mailboxes and creates the worker threads.
+   * Initializes the worker threads.
    */
-/*  for (i = 0; i < NUM_THREADS; i++) {
-    chThdCreateStatic(waWorkerThread[i], sizeof waWorkerThread[i],
-                      NORMALPRIO - 20, WorkerThread, (void *)i);
-  }*/
-  chThdCreateStatic(waWorkerThread[0], sizeof waWorkerThread[0],
-                    NORMALPRIO - 20, WorkerThread, (void *)0);
+  chThdCreateStatic(waWorkerThread, sizeof waWorkerThread,
+                    NORMALPRIO - 20, WorkerThread, NULL);
+  chThdCreateStatic(waPeriodicThread, sizeof waPeriodicThread,
+                    NORMALPRIO - 10, PeriodicThread, NULL);
 
   /*
    * Test procedure.
@@ -235,9 +251,6 @@ int main(void) {
   println("");
   print("*** Randomize:    ");
   printn(RANDOMIZE);
-  println("");
-  print("*** Threads:      ");
-  printn(NUM_THREADS);
   println("");
 
   println("");
