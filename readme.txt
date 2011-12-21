@@ -87,6 +87,8 @@
 - NEW: Added experimental support for the Cortex-M4 FPU (default when the
   FPU is present).
 - NEW: Improved I2C driver model and STM32 implementation by Barthess.
+- CHANGE: Removed the option to change the stack alignment in the GCC
+  Cortex-Mx ports, now alignment is always 64 bits.
 
 *** 2.3.4 ***
 - FIX: Fixed Extra initialization in STM32 SPI driver (bug 3436127)
