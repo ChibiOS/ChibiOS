@@ -87,7 +87,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.20.2.52635</state>
+          <state>6.30.3.53229</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -295,6 +295,7 @@
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\os\kernel\include</state>
+          <state>$PROJ_DIR$\..\..\..\os\ports\common\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\os\ports\common\ARMCMx\CMSIS\include</state>
           <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32F1xx</state>
@@ -619,7 +620,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>13</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -881,6 +882,18 @@
           <name>IlinkOptForceVfe</name>
           <state>0</state>
         </option>
+        <option>
+          <name>IlinkStackAnalysisEnable</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkStackControlFile</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkStackCallGraphFile</name>
+          <state></state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -995,7 +1008,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.21.4.52945</state>
+          <state>6.30.3.53229</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1203,6 +1216,7 @@
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\os\kernel\include</state>
+          <state>$PROJ_DIR$\..\..\..\os\ports\common\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\os\ports\common\ARMCMx\CMSIS\include</state>
           <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32F1xx</state>
@@ -1527,7 +1541,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>13</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1788,6 +1802,18 @@
         <option>
           <name>IlinkOptForceVfe</name>
           <state>0</state>
+        </option>
+        <option>
+          <name>IlinkStackAnalysisEnable</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkStackControlFile</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkStackCallGraphFile</name>
+          <state></state>
         </option>
       </data>
     </settings>
@@ -2156,10 +2182,10 @@
         <name>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\cstartup.s</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\nvic.c</name>
+        <name>$PROJ_DIR$\..\..\..\os\ports\common\ARMCMx\nvic.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\nvic.h</name>
+        <name>$PROJ_DIR$\..\..\..\os\ports\common\ARMCMx\nvic.h</name>
       </file>
     </group>
   </group>
