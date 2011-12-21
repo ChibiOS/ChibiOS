@@ -265,7 +265,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
     if (&SD1 == sdp) {
       LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
       LPC_SYSCON->UARTCLKDIV = LPC11xx_SERIAL_UART0CLKDIV;
-      NVICEnableVector(UART_IRQn,
+      nvicEnableVector(UART_IRQn,
                        CORTEX_PRIORITY_MASK(LPC11xx_SERIAL_UART0_IRQ_PRIORITY));
     }
 #endif
@@ -290,7 +290,7 @@ void sd_lld_stop(SerialDriver *sdp) {
     if (&SD1 == sdp) {
       LPC_SYSCON->UARTCLKDIV = 0;
       LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 12);
-      NVICDisableVector(UART_IRQn);
+      nvicDisableVector(UART_IRQn);
       return;
     }
 #endif

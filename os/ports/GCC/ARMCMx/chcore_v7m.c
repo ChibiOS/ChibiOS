@@ -28,17 +28,9 @@
 
 #include "ch.h"
 
-#if !CH_OPTIMIZE_SPEED
-void _port_lock(void) {
-  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;
-  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp) : "memory");
-}
-
-void _port_unlock(void) {
-  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_DISABLED;
-  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp) : "memory");
-}
-#endif
+/*===========================================================================*/
+/* Port interrupt handlers.                                                  */
+/*===========================================================================*/
 
 /**
  * @brief   System Timer vector.
@@ -109,6 +101,10 @@ void PendSVVector(void) {
 }
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
 
+/*===========================================================================*/
+/* Port exported functions.                                                  */
+/*===========================================================================*/
+
 /**
  * @brief   Port-related initialization code.
  */
@@ -141,20 +137,30 @@ void _port_init(void) {
 #endif
 
   /* Initialization of the system vectors used by the port.*/
-  NVICSetSystemHandlerPriority(HANDLER_SVCALL,
+  nvicSetSystemHandlerPriority(HANDLER_SVCALL,
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL));
-  NVICSetSystemHandlerPriority(HANDLER_PENDSV,
+  nvicSetSystemHandlerPriority(HANDLER_PENDSV,
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_PENDSV));
-  NVICSetSystemHandlerPriority(HANDLER_SYSTICK,
+  nvicSetSystemHandlerPriority(HANDLER_SYSTICK,
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));
 }
+
+#if !CH_OPTIMIZE_SPEED
+void _port_lock(void) {
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp) : "memory");
+}
+
+void _port_unlock(void) {
+  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_DISABLED;
+  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp) : "memory");
+}
+#endif
+
 /**
  * @brief   Exception exit redirection to _port_switch_from_isr().
  */
 void _port_irq_epilogue(void) {
-#if CORTEX_USE_FPU
-  uint32_t fpccr;
-#endif
 
   port_lock_from_isr();
   if ((SCB_ICSR & ICSR_RETTOBASE)) {
@@ -187,14 +193,17 @@ void _port_irq_epilogue(void) {
     }
 
 #if CORTEX_USE_FPU
-    /* Saving the special register SCB_FPCCR into the reserved offset of
-       the Cortex-M4 exception frame.*/
-    (ctxp + 1)->fpccr = (regarm_t)(fpccr = SCB_FPCCR);
-#endif
-#if CORTEX_USE_FPU
-    /* Now the FPCCR is modified in order to not restore the FPU status
-       from the artificial return context.*/
-    SCB_FPCCR = fpccr | FPCCR_LSPACT;
+    {
+      uint32_t fpccr;
+
+      /* Saving the special register SCB_FPCCR into the reserved offset of
+         the Cortex-M4 exception frame.*/
+      (ctxp + 1)->fpccr = (regarm_t)(fpccr = SCB_FPCCR);
+
+      /* Now the FPCCR is modified in order to not restore the FPU status
+         from the artificial return context.*/
+      SCB_FPCCR = fpccr | FPCCR_LSPACT;
+    }
 #endif
 
     /* Note, returning without unlocking is intentional, this is done in

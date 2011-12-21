@@ -396,7 +396,7 @@ void uart_lld_start(UARTDriver *uartp) {
                             (void *)uartp);
       chDbgAssert(!b, "uart_lld_start(), #2", "stream already allocated");
       rccEnableUSART1(FALSE);
-      NVICEnableVector(USART1_IRQn,
+      nvicEnableVector(USART1_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_UART_USART1_IRQ_PRIORITY));
       uartp->dmamode |= STM32_DMA_CR_CHSEL(USART1_RX_DMA_CHANNEL) |
                         STM32_DMA_CR_PL(STM32_UART_USART1_DMA_PRIORITY);
@@ -417,7 +417,7 @@ void uart_lld_start(UARTDriver *uartp) {
                             (void *)uartp);
       chDbgAssert(!b, "uart_lld_start(), #4", "stream already allocated");
       rccEnableUSART2(FALSE);
-      NVICEnableVector(USART2_IRQn,
+      nvicEnableVector(USART2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_UART_USART2_IRQ_PRIORITY));
       uartp->dmamode |= STM32_DMA_CR_CHSEL(USART2_RX_DMA_CHANNEL) |
                         STM32_DMA_CR_PL(STM32_UART_USART2_DMA_PRIORITY);
@@ -438,7 +438,7 @@ void uart_lld_start(UARTDriver *uartp) {
                             (void *)uartp);
       chDbgAssert(!b, "uart_lld_start(), #6", "stream already allocated");
       rccEnableUSART3(FALSE);
-      NVICEnableVector(USART3_IRQn,
+      nvicEnableVector(USART3_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_UART_USART3_IRQ_PRIORITY));
       uartp->dmamode |= STM32_DMA_CR_CHSEL(USART3_RX_DMA_CHANNEL) |
                         STM32_DMA_CR_PL(STM32_UART_USART3_DMA_PRIORITY);
@@ -475,7 +475,7 @@ void uart_lld_stop(UARTDriver *uartp) {
 
 #if STM32_UART_USE_USART1
     if (&UARTD1 == uartp) {
-      NVICDisableVector(USART1_IRQn);
+      nvicDisableVector(USART1_IRQn);
       rccDisableUSART1(FALSE);
       return;
     }
@@ -483,7 +483,7 @@ void uart_lld_stop(UARTDriver *uartp) {
 
 #if STM32_UART_USE_USART2
     if (&UARTD2 == uartp) {
-      NVICDisableVector(USART2_IRQn);
+      nvicDisableVector(USART2_IRQn);
       rccDisableUSART2(FALSE);
       return;
     }
@@ -491,7 +491,7 @@ void uart_lld_stop(UARTDriver *uartp) {
 
 #if STM32_UART_USE_USART3
     if (&UARTD3 == uartp) {
-      NVICDisableVector(USART3_IRQn);
+      nvicDisableVector(USART3_IRQn);
       rccDisableUSART3(FALSE);
       return;
     }

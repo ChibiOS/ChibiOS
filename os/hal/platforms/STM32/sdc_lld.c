@@ -441,7 +441,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
     /* Note, the DMA must be enabled before the IRQs.*/
     dmaStreamAllocate(STM32_DMA2_STREAM4, 0, NULL, NULL);
     dmaStreamSetPeripheral(STM32_DMA2_STREAM4, &SDIO->FIFO);
-    NVICEnableVector(SDIO_IRQn,
+    nvicEnableVector(SDIO_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_SDC_SDIO_IRQ_PRIORITY));
     rccEnableSDIO(FALSE);
   }
@@ -468,7 +468,7 @@ void sdc_lld_stop(SDCDriver *sdcp) {
     SDIO->DTIMER = 0;
 
     /* Clock deactivation.*/
-    NVICDisableVector(SDIO_IRQn);
+    nvicDisableVector(SDIO_IRQn);
     dmaStreamRelease(STM32_DMA2_STREAM4);
     rccDisableSDIO(FALSE);
   }

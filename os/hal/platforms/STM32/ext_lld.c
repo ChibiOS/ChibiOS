@@ -434,55 +434,55 @@ void ext_lld_start(EXTDriver *extp) {
 
   if (extp->state == EXT_STOP) {
     /* Clock activation.*/
-    NVICEnableVector(EXTI0_IRQn,
+    nvicEnableVector(EXTI0_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI0_IRQ_PRIORITY));
-    NVICEnableVector(EXTI1_IRQn,
+    nvicEnableVector(EXTI1_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI1_IRQ_PRIORITY));
-    NVICEnableVector(EXTI2_IRQn,
+    nvicEnableVector(EXTI2_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI2_IRQ_PRIORITY));
-    NVICEnableVector(EXTI3_IRQn,
+    nvicEnableVector(EXTI3_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI3_IRQ_PRIORITY));
-    NVICEnableVector(EXTI4_IRQn,
+    nvicEnableVector(EXTI4_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI4_IRQ_PRIORITY));
-    NVICEnableVector(EXTI9_5_IRQn,
+    nvicEnableVector(EXTI9_5_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI5_9_IRQ_PRIORITY));
-    NVICEnableVector(EXTI15_10_IRQn,
+    nvicEnableVector(EXTI15_10_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI10_15_IRQ_PRIORITY));
-    NVICEnableVector(PVD_IRQn,
+    nvicEnableVector(PVD_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI16_IRQ_PRIORITY));
-    NVICEnableVector(RTC_Alarm_IRQn,
+    nvicEnableVector(RTC_Alarm_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI17_IRQ_PRIORITY));
 #if defined(STM32L1XX_MD)
     /* EXTI vectors specific to STM32L1xx.*/
-    NVICEnableVector(USB_FS_WKUP_IRQn,
+    nvicEnableVector(USB_FS_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
-    NVICEnableVector(TAMPER_STAMP_IRQn,
+    nvicEnableVector(TAMPER_STAMP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI19_IRQ_PRIORITY));
-    NVICEnableVector(RTC_WKUP_IRQn,
+    nvicEnableVector(RTC_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI20_IRQ_PRIORITY));
-    NVICEnableVector(COMP_IRQn,
+    nvicEnableVector(COMP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI21_IRQ_PRIORITY));
 #elif defined(STM32F2XX) || defined(STM32F4XX)
     /* EXTI vectors specific to STM32F2xx/STM32F4xx.*/
-    NVICEnableVector(OTG_FS_WKUP_IRQn,
+    nvicEnableVector(OTG_FS_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
-    NVICEnableVector(ETH_WKUP_IRQn,
+    nvicEnableVector(ETH_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI19_IRQ_PRIORITY));
-    NVICEnableVector(OTG_HS_WKUP_IRQn,
+    nvicEnableVector(OTG_HS_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI20_IRQ_PRIORITY));
-    NVICEnableVector(TAMP_STAMP_IRQn,
+    nvicEnableVector(TAMP_STAMP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI21_IRQ_PRIORITY));
-    NVICEnableVector(RTC_WKUP_IRQn,
+    nvicEnableVector(RTC_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI22_IRQ_PRIORITY));
 #elif defined(STM32F10X_CL)
     /* EXTI vectors specific to STM32F1xx Connectivity Line.*/
-    NVICEnableVector(OTG_FS_WKUP_IRQn,
+    nvicEnableVector(OTG_FS_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
-    NVICEnableVector(ETH_WKUP_IRQn,
+    nvicEnableVector(ETH_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI19_IRQ_PRIORITY));
 #else
     /* EXTI vectors specific to STM32F1xx except Connectivity Line.*/
-    NVICEnableVector(USB_FS_WKUP_IRQn,
+    nvicEnableVector(USB_FS_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
 #endif
   }
@@ -529,35 +529,35 @@ void ext_lld_start(EXTDriver *extp) {
 void ext_lld_stop(EXTDriver *extp) {
 
   if (extp->state == EXT_ACTIVE) {
-    NVICDisableVector(EXTI0_IRQn);
-    NVICDisableVector(EXTI1_IRQn);
-    NVICDisableVector(EXTI2_IRQn);
-    NVICDisableVector(EXTI3_IRQn);
-    NVICDisableVector(EXTI4_IRQn);
-    NVICDisableVector(EXTI9_5_IRQn);
-    NVICDisableVector(EXTI15_10_IRQn);
-    NVICDisableVector(PVD_IRQn);
-    NVICDisableVector(RTC_Alarm_IRQn);
+    nvicDisableVector(EXTI0_IRQn);
+    nvicDisableVector(EXTI1_IRQn);
+    nvicDisableVector(EXTI2_IRQn);
+    nvicDisableVector(EXTI3_IRQn);
+    nvicDisableVector(EXTI4_IRQn);
+    nvicDisableVector(EXTI9_5_IRQn);
+    nvicDisableVector(EXTI15_10_IRQn);
+    nvicDisableVector(PVD_IRQn);
+    nvicDisableVector(RTC_Alarm_IRQn);
 #if defined(STM32L1XX_MD)
     /* EXTI vectors specific to STM32L1xx.*/
-    NVICDisableVector(USB_FS_WKUP_IRQn);
-    NVICDisableVector(TAMPER_STAMP_IRQn);
-    NVICDisableVector(RTC_WKUP_IRQn);
-    NVICDisableVector(COMP_IRQn);
+    nvicDisableVector(USB_FS_WKUP_IRQn);
+    nvicDisableVector(TAMPER_STAMP_IRQn);
+    nvicDisableVector(RTC_WKUP_IRQn);
+    nvicDisableVector(COMP_IRQn);
 #elif defined(STM32F2XX) || defined(STM32F4XX)
     /* EXTI vectors specific to STM32F2xx/STM32F4xx.*/
-    NVICDisableVector(OTG_FS_WKUP_IRQn);
-    NVICDisableVector(ETH_WKUP_IRQn);
-    NVICDisableVector(OTG_HS_WKUP_IRQn);
-    NVICDisableVector(TAMP_STAMP_IRQn);
-    NVICDisableVector(RTC_WKUP_IRQn);
+    nvicDisableVector(OTG_FS_WKUP_IRQn);
+    nvicDisableVector(ETH_WKUP_IRQn);
+    nvicDisableVector(OTG_HS_WKUP_IRQn);
+    nvicDisableVector(TAMP_STAMP_IRQn);
+    nvicDisableVector(RTC_WKUP_IRQn);
 #elif defined(STM32F10X_CL)
     /* EXTI vectors specific to STM32F1xx Connectivity Line.*/
-    NVICDisableVector(OTG_FS_WKUP_IRQn);
-    NVICDisableVector(ETH_WKUP_IRQn);
+    nvicDisableVector(OTG_FS_WKUP_IRQn);
+    nvicDisableVector(ETH_WKUP_IRQn);
 #else
     /* EXTI vectors specific to STM32F1xx except Connectivity Line.*/
-    NVICDisableVector(USB_FS_WKUP_IRQn);
+    nvicDisableVector(USB_FS_WKUP_IRQn);
 #endif
   }
   EXTI->EMR = 0;

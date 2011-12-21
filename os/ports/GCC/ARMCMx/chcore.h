@@ -143,17 +143,6 @@
 #error "invalid priority level specified for CORTEX_PRIORITY_SYSTICK"
 #endif
 
-/**
- * @brief   Stack alignment enforcement.
- * @note    The default value is 64 in order to comply with EABI, reducing
- *          the value to 32 can save some RAM space if you don't care about
- *          binary compatibility with EABI compiled libraries.
- * @note    Allowed values are 32 or 64.
- */
-#if !defined(CORTEX_STACK_ALIGNMENT)
-#define CORTEX_STACK_ALIGNMENT          64
-#endif
-
 /*===========================================================================*/
 /* Port derived parameters (common).                                         */
 /*===========================================================================*/
@@ -189,18 +178,15 @@
 
 /**
  * @brief   Stack and memory alignment enforcement.
+ * @note    In this architecture the stack alignment is enforced to 64 bits,
+ *          32 bits alignment is supported by hardware but deprecated by ARM,
+ *          the implementation choice is to not offer the option.
  */
-#if (CORTEX_STACK_ALIGNMENT == 64) || defined(__DOXYGEN__)
 #if defined(__DOXYGEN__)
 /* Dummy declaration, for Doxygen only.*/
 typedef uint64_t stkalign_t;
 #else
 typedef uint64_t stkalign_t __attribute__ ((aligned (8)));
-#endif
-#elif CORTEX_STACK_ALIGNMENT == 32
-typedef uint32_t stkalign_t __attribute__ ((aligned (4)));
-#else
-#error "invalid stack alignment selected"
 #endif
 
 #if defined(__DOXYGEN__)

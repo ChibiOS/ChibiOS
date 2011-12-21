@@ -209,25 +209,25 @@ void gpt_lld_start(GPTDriver *gptp) {
 #if LPC13xx_GPT_USE_CT16B0
     if (&GPTD1 == gptp) {
       LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 7);
-      NVICEnableVector(TIMER_16_0_IRQn, CORTEX_PRIORITY_MASK(2));
+      nvicEnableVector(TIMER_16_0_IRQn, CORTEX_PRIORITY_MASK(2));
     }
 #endif
 #if LPC13xx_GPT_USE_CT16B1
     if (&GPTD2 == gptp) {
       LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 8);
-      NVICEnableVector(TIMER_16_1_IRQn, CORTEX_PRIORITY_MASK(3));
+      nvicEnableVector(TIMER_16_1_IRQn, CORTEX_PRIORITY_MASK(3));
     }
 #endif
 #if LPC13xx_GPT_USE_CT32B0
     if (&GPTD3 == gptp) {
       LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 9);
-      NVICEnableVector(TIMER_32_0_IRQn, CORTEX_PRIORITY_MASK(2));
+      nvicEnableVector(TIMER_32_0_IRQn, CORTEX_PRIORITY_MASK(2));
     }
 #endif
 #if LPC13xx_GPT_USE_CT32B1
     if (&GPTD4 == gptp) {
       LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 10);
-      NVICEnableVector(TIMER_32_1_IRQn, CORTEX_PRIORITY_MASK(2));
+      nvicEnableVector(TIMER_32_1_IRQn, CORTEX_PRIORITY_MASK(2));
     }
 #endif
   }
@@ -259,25 +259,25 @@ void gpt_lld_stop(GPTDriver *gptp) {
 
 #if LPC13xx_GPT_USE_CT16B0
     if (&GPTD1 == gptp) {
-      NVICDisableVector(TIMER_16_0_IRQn);
+      nvicDisableVector(TIMER_16_0_IRQn);
       LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 7);
     }
 #endif
 #if LPC13xx_GPT_USE_CT16B1
     if (&GPTD2 == gptp) {
-      NVICDisableVector(TIMER_16_1_IRQn);
+      nvicDisableVector(TIMER_16_1_IRQn);
       LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 8);
     }
 #endif
 #if LPC13xx_GPT_USE_CT32B0
     if (&GPTD3 == gptp) {
-      NVICDisableVector(TIMER_32_0_IRQn);
+      nvicDisableVector(TIMER_32_0_IRQn);
       LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 9);
     }
 #endif
 #if LPC13xx_GPT_USE_CT32B1
     if (&GPTD4 == gptp) {
-      NVICDisableVector(TIMER_32_1_IRQn);
+      nvicDisableVector(TIMER_32_1_IRQn);
       LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 10);
     }
 #endif

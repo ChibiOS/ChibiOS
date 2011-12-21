@@ -161,9 +161,9 @@ struct intctx {
  */
 #define port_init() {                                                       \
   SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);                            \
-  NVICSetSystemHandlerPriority(HANDLER_PENDSV,                              \
+  nvicSetSystemHandlerPriority(HANDLER_PENDSV,                              \
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_PENDSV));                          \
-  NVICSetSystemHandlerPriority(HANDLER_SYSTICK,                             \
+  nvicSetSystemHandlerPriority(HANDLER_SYSTICK,                             \
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));                         \
 }
 

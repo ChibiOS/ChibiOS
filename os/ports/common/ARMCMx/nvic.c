@@ -19,10 +19,10 @@
 */
 
 /**
- * @file    GCC/ARMCMx/nvic.c
+ * @file    common/ARMCMx/nvic.c
  * @brief   Cortex-Mx NVIC support code.
  *
- * @addtogroup ARMCMx_NVIC
+ * @addtogroup COMMON_ARMCMx_NVIC
  * @{
  */
 
@@ -30,14 +30,13 @@
 #include "nvic.h"
 
 /**
- * @brief Sets the priority of an interrupt handler and enables it.
+ * @brief   Sets the priority of an interrupt handler and enables it.
+ * @note    The parameters are not tested for correctness.
  *
- * @param n the interrupt number
- * @param prio the interrupt priority mask
- *
- * @note The parameters are not tested for correctness.
+ * @param[in] n         the interrupt number
+ * @param[in] prio      the interrupt priority mask
  */
-void NVICEnableVector(uint32_t n, uint32_t prio) {
+void nvicEnableVector(uint32_t n, uint32_t prio) {
   unsigned sh = (n & 3) << 3;
 
   NVIC_IPR(n >> 2) = (NVIC_IPR(n >> 2) & ~(0xFF << sh)) | (prio << sh);
@@ -46,13 +45,12 @@ void NVICEnableVector(uint32_t n, uint32_t prio) {
 }
 
 /**
- * @brief Disables an interrupt handler.
+ * @brief   Disables an interrupt handler.
+ * @note    The parameters are not tested for correctness.
  *
- * @param n the interrupt number
- *
- * @note The parameters are not tested for correctness.
+ * @param[in] n         the interrupt number
  */
-void NVICDisableVector(uint32_t n) {
+void nvicDisableVector(uint32_t n) {
   unsigned sh = (n & 3) << 3;
 
   NVIC_ICER(n >> 5) = 1 << (n & 0x1F);
@@ -60,13 +58,13 @@ void NVICDisableVector(uint32_t n) {
 }
 
 /**
- * @brief Changes the priority of a system handler.
+ * @brief   Changes the priority of a system handler.
+ * @note    The parameters are not tested for correctness.
  *
- * @param handler the system handler number
- * @param prio the system handler priority mask
- * @note The parameters are not tested for correctness.
+ * @param[in] handler   the system handler number
+ * @param[in] prio      the system handler priority mask
  */
-void NVICSetSystemHandlerPriority(uint32_t handler, uint32_t prio) {
+void nvicSetSystemHandlerPriority(uint32_t handler, uint32_t prio) {
   unsigned sh = (handler & 3) * 8;
 
   SCB_SHPR(handler >> 2) = (SCB_SHPR(handler >> 2) &

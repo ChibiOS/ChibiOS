@@ -135,7 +135,7 @@ void adc_lld_init(void) {
 
   /* The shared vector is initialized on driver initialization and never
      disabled.*/
-  NVICEnableVector(ADC1_IRQn, CORTEX_PRIORITY_MASK(STM32_ADC_IRQ_PRIORITY));
+  nvicEnableVector(ADC1_IRQn, CORTEX_PRIORITY_MASK(STM32_ADC_IRQ_PRIORITY));
 }
 
 /**

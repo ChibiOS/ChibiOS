@@ -215,7 +215,7 @@ void spi_lld_start(SPIDriver *spip) {
       LPC_SYSCON->SSP0CLKDIV = LPC11xx_SPI_SSP0CLKDIV;
       LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 11);
       LPC_SYSCON->PRESETCTRL |= 1;
-      NVICEnableVector(SSP0_IRQn,
+      nvicEnableVector(SSP0_IRQn,
                        CORTEX_PRIORITY_MASK(LPC11xx_SPI_SSP0_IRQ_PRIORITY));
     }
 #endif
@@ -224,7 +224,7 @@ void spi_lld_start(SPIDriver *spip) {
       LPC_SYSCON->SSP1CLKDIV = LPC11xx_SPI_SSP1CLKDIV;
       LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 18);
       LPC_SYSCON->PRESETCTRL |= 4;
-      NVICEnableVector(SSP1_IRQn,
+      nvicEnableVector(SSP1_IRQn,
                        CORTEX_PRIORITY_MASK(LPC11xx_SPI_SSP1_IRQ_PRIORITY));
     }
 #endif
@@ -255,7 +255,7 @@ void spi_lld_stop(SPIDriver *spip) {
       LPC_SYSCON->PRESETCTRL &= ~1;
       LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 11);
       LPC_SYSCON->SSP0CLKDIV = 0;
-      NVICDisableVector(SSP0_IRQn);
+      nvicDisableVector(SSP0_IRQn);
     }
 #endif
 #if LPC11xx_SPI_USE_SSP1
@@ -263,7 +263,7 @@ void spi_lld_stop(SPIDriver *spip) {
       LPC_SYSCON->PRESETCTRL &= ~4;
       LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 18);
       LPC_SYSCON->SSP1CLKDIV = 0;
-      NVICDisableVector(SSP1_IRQn);
+      nvicDisableVector(SSP1_IRQn);
     }
 #endif
   }

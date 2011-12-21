@@ -184,13 +184,13 @@ void can_lld_start(CANDriver *canp) {
   /* Clock activation.*/
 #if STM32_CAN_USE_CAN1
   if (&CAND1 == canp) {
-    NVICEnableVector(USB_HP_CAN1_TX_IRQn,
+    nvicEnableVector(USB_HP_CAN1_TX_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
-    NVICEnableVector(USB_LP_CAN1_RX0_IRQn,
+    nvicEnableVector(USB_LP_CAN1_RX0_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
-    NVICEnableVector(CAN1_RX1_IRQn,
+    nvicEnableVector(CAN1_RX1_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
-    NVICEnableVector(CAN1_SCE_IRQn,
+    nvicEnableVector(CAN1_SCE_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
     rccEnableCAN1(FALSE);
   }
@@ -272,10 +272,10 @@ void can_lld_stop(CANDriver *canp) {
     if (&CAND1 == canp) {
       CAN1->MCR = 0x00010002;                   /* Register reset value.    */
       CAN1->IER = 0x00000000;                   /* All sources disabled.    */
-      NVICDisableVector(USB_HP_CAN1_TX_IRQn);
-      NVICDisableVector(USB_LP_CAN1_RX0_IRQn);
-      NVICDisableVector(CAN1_RX1_IRQn);
-      NVICDisableVector(CAN1_SCE_IRQn);
+      nvicDisableVector(USB_HP_CAN1_TX_IRQn);
+      nvicDisableVector(USB_LP_CAN1_RX0_IRQn);
+      nvicDisableVector(CAN1_RX1_IRQn);
+      nvicDisableVector(CAN1_SCE_IRQn);
       rccDisableCAN1(FALSE);
     }
 #endif

@@ -384,9 +384,9 @@ void i2c_lld_start(I2CDriver *i2cp) {
                             (void *)i2cp);
       chDbgAssert(!b, "uart_lld_start(), #4", "stream already allocated");
       rccEnableI2C1(FALSE);
-      NVICEnableVector(I2C1_EV_IRQn,
+      nvicEnableVector(I2C1_EV_IRQn,
           CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
-      NVICEnableVector(I2C1_ER_IRQn,
+      nvicEnableVector(I2C1_ER_IRQn,
           CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
 
       i2cp->dmamode |= STM32_DMA_CR_CHSEL(I2C1_RX_DMA_CHANNEL) | \
@@ -410,9 +410,9 @@ void i2c_lld_start(I2CDriver *i2cp) {
                             (void *)i2cp);
       chDbgAssert(!b, "uart_lld_start(), #4", "stream already allocated");
       rccEnableI2C2(FALSE);
-      NVICEnableVector(I2C2_EV_IRQn,
+      nvicEnableVector(I2C2_EV_IRQn,
           CORTEX_PRIORITY_MASK(STM32_I2C_I2C2_IRQ_PRIORITY));
-      NVICEnableVector(I2C2_ER_IRQn,
+      nvicEnableVector(I2C2_ER_IRQn,
           CORTEX_PRIORITY_MASK(STM32_I2C_I2C2_IRQ_PRIORITY));
 
       i2cp->dmamode |= STM32_DMA_CR_CHSEL(I2C2_RX_DMA_CHANNEL) |
@@ -435,9 +435,9 @@ void i2c_lld_start(I2CDriver *i2cp) {
                             (void *)i2cp);
       chDbgAssert(!b, "uart_lld_start(), #4", "stream already allocated");
       rccEnableI2C3(FALSE);
-      NVICEnableVector(I2C3_EV_IRQn,
+      nvicEnableVector(I2C3_EV_IRQn,
           CORTEX_PRIORITY_MASK(STM32_I2C_I2C3_IRQ_PRIORITY));
-      NVICEnableVector(I2C3_ER_IRQn,
+      nvicEnableVector(I2C3_ER_IRQn,
           CORTEX_PRIORITY_MASK(STM32_I2C_I2C3_IRQ_PRIORITY));
 
       i2cp->dmamode |= STM32_DMA_CR_CHSEL(I2C3_RX_DMA_CHANNEL) |
@@ -705,24 +705,24 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 
 #if STM32_I2C_USE_I2C1
     if (&I2CD1 == i2cp) {
-      NVICDisableVector(I2C1_EV_IRQn);
-      NVICDisableVector(I2C1_ER_IRQn);
+      nvicDisableVector(I2C1_EV_IRQn);
+      nvicDisableVector(I2C1_ER_IRQn);
       rccDisableI2C1(FALSE);
     }
 #endif
 
 #if STM32_I2C_USE_I2C2
     if (&I2CD2 == i2cp) {
-      NVICDisableVector(I2C2_EV_IRQn);
-      NVICDisableVector(I2C2_ER_IRQn);
+      nvicDisableVector(I2C2_EV_IRQn);
+      nvicDisableVector(I2C2_ER_IRQn);
       rccDisableI2C2(FALSE);
     }
 #endif
 
 #if STM32_I2C_USE_I2C3
     if (&I2CD3 == i2cp) {
-      NVICDisableVector(I2C3_EV_IRQn);
-      NVICDisableVector(I2C3_ER_IRQn);
+      nvicDisableVector(I2C3_EV_IRQn);
+      nvicDisableVector(I2C3_ER_IRQn);
       rccDisableI2C3(FALSE);
     }
 #endif

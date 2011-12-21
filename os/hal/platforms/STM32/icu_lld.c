@@ -289,7 +289,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD1 == icup) {
       rccEnableTIM1(FALSE);
       rccResetTIM1();
-      NVICEnableVector(TIM1_CC_IRQn,
+      nvicEnableVector(TIM1_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM1_IRQ_PRIORITY));
       icup->clock = STM32_TIMCLK2;
     }
@@ -298,7 +298,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD2 == icup) {
       rccEnableTIM2(FALSE);
       rccResetTIM2();
-      NVICEnableVector(TIM2_IRQn,
+      nvicEnableVector(TIM2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM2_IRQ_PRIORITY));
       icup->clock = STM32_TIMCLK1;
     }
@@ -307,7 +307,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD3 == icup) {
       rccEnableTIM3(FALSE);
       rccResetTIM3();
-      NVICEnableVector(TIM3_IRQn,
+      nvicEnableVector(TIM3_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM3_IRQ_PRIORITY));
       icup->clock = STM32_TIMCLK1;
     }
@@ -316,7 +316,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD4 == icup) {
       rccEnableTIM4(FALSE);
       rccResetTIM4();
-      NVICEnableVector(TIM4_IRQn,
+      nvicEnableVector(TIM4_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM4_IRQ_PRIORITY));
       icup->clock = STM32_TIMCLK1;
     }
@@ -326,7 +326,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD5 == icup) {
       rccEnableTIM5(FALSE);
       rccResetTIM5();
-      NVICEnableVector(TIM5_IRQn,
+      nvicEnableVector(TIM5_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM5_IRQ_PRIORITY));
       icup->clock = STM32_TIMCLK1;
     }
@@ -335,7 +335,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD8 == icup) {
       rccEnableTIM5(FALSE);
       rccResetTIM5();
-      NVICEnableVector(TIM8_CC_IRQn,
+      nvicEnableVector(TIM8_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM8_IRQ_PRIORITY));
       icup->clock = STM32_TIMCLK2;
     }
@@ -395,38 +395,38 @@ void icu_lld_stop(ICUDriver *icup) {
 
 #if STM32_ICU_USE_TIM1
     if (&ICUD1 == icup) {
-      NVICDisableVector(TIM1_CC_IRQn);
+      nvicDisableVector(TIM1_CC_IRQn);
       rccDisableTIM1(FALSE);
     }
 #endif
 #if STM32_ICU_USE_TIM2
     if (&ICUD2 == icup) {
-      NVICDisableVector(TIM2_IRQn);
+      nvicDisableVector(TIM2_IRQn);
       rccDisableTIM2(FALSE);
     }
 #endif
 #if STM32_ICU_USE_TIM3
     if (&ICUD3 == icup) {
-      NVICDisableVector(TIM3_IRQn);
+      nvicDisableVector(TIM3_IRQn);
       rccDisableTIM3(FALSE);
     }
 #endif
 #if STM32_ICU_USE_TIM4
     if (&ICUD4 == icup) {
-      NVICDisableVector(TIM4_IRQn);
+      nvicDisableVector(TIM4_IRQn);
       rccDisableTIM4(FALSE);
     }
 #endif
 #if STM32_ICU_USE_TIM5
     if (&ICUD5 == icup) {
-      NVICDisableVector(TIM5_IRQn);
+      nvicDisableVector(TIM5_IRQn);
       rccDisableTIM5(FALSE);
     }
 #endif
   }
 #if STM32_ICU_USE_TIM8
     if (&ICUD8 == icup) {
-      NVICDisableVector(TIM8_CC_IRQn);
+      nvicDisableVector(TIM8_CC_IRQn);
       rccDisableTIM8(FALSE);
     }
 #endif

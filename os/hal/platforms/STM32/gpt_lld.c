@@ -270,7 +270,7 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD1 == gptp) {
       rccEnableTIM1(FALSE);
       rccResetTIM1();
-      NVICEnableVector(TIM1_UP_IRQn,
+      nvicEnableVector(TIM1_UP_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_GPT_TIM1_IRQ_PRIORITY));
       gptp->clock = STM32_TIMCLK2;
     }
@@ -279,7 +279,7 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD2 == gptp) {
       rccEnableTIM2(FALSE);
       rccResetTIM2();
-      NVICEnableVector(TIM2_IRQn,
+      nvicEnableVector(TIM2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_GPT_TIM2_IRQ_PRIORITY));
       gptp->clock = STM32_TIMCLK1;
     }
@@ -288,7 +288,7 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD3 == gptp) {
       rccEnableTIM3(FALSE);
       rccResetTIM3();
-      NVICEnableVector(TIM3_IRQn,
+      nvicEnableVector(TIM3_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_GPT_TIM3_IRQ_PRIORITY));
       gptp->clock = STM32_TIMCLK1;
     }
@@ -297,7 +297,7 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD4 == gptp) {
       rccEnableTIM4(FALSE);
       rccResetTIM4();
-      NVICEnableVector(TIM4_IRQn,
+      nvicEnableVector(TIM4_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_GPT_TIM4_IRQ_PRIORITY));
       gptp->clock = STM32_TIMCLK1;
     }
@@ -307,7 +307,7 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD5 == gptp) {
       rccEnableTIM5(FALSE);
       rccResetTIM5();
-      NVICEnableVector(TIM5_IRQn,
+      nvicEnableVector(TIM5_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_GPT_TIM5_IRQ_PRIORITY));
       gptp->clock = STM32_TIMCLK1;
     }
@@ -317,7 +317,7 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD8 == gptp) {
       rccEnableTIM8(FALSE);
       rccResetTIM8();
-      NVICEnableVector(TIM8_UP_IRQn,
+      nvicEnableVector(TIM8_UP_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_GPT_TIM8_IRQ_PRIORITY));
       gptp->clock = STM32_TIMCLK2;
     }
@@ -352,37 +352,37 @@ void gpt_lld_stop(GPTDriver *gptp) {
 
 #if STM32_GPT_USE_TIM1
     if (&GPTD1 == gptp) {
-      NVICDisableVector(TIM1_UP_IRQn);
+      nvicDisableVector(TIM1_UP_IRQn);
       rccDisableTIM1(FALSE);
     }
 #endif
 #if STM32_GPT_USE_TIM2
     if (&GPTD2 == gptp) {
-      NVICDisableVector(TIM2_IRQn);
+      nvicDisableVector(TIM2_IRQn);
       rccDisableTIM2(FALSE);
     }
 #endif
 #if STM32_GPT_USE_TIM3
     if (&GPTD3 == gptp) {
-      NVICDisableVector(TIM3_IRQn);
+      nvicDisableVector(TIM3_IRQn);
       rccDisableTIM3(FALSE);
     }
 #endif
 #if STM32_GPT_USE_TIM4
     if (&GPTD4 == gptp) {
-      NVICDisableVector(TIM4_IRQn);
+      nvicDisableVector(TIM4_IRQn);
       rccDisableTIM4(FALSE);
     }
 #endif
 #if STM32_GPT_USE_TIM5
     if (&GPTD5 == gptp) {
-      NVICDisableVector(TIM5_IRQn);
+      nvicDisableVector(TIM5_IRQn);
       rccDisableTIM5(FALSE);
     }
 #endif
 #if STM32_GPT_USE_TIM8
     if (&GPTD8 == gptp) {
-      NVICDisableVector(TIM8_UP_IRQn);
+      nvicDisableVector(TIM8_UP_IRQn);
       rccDisableTIM8(FALSE);
     }
 #endif

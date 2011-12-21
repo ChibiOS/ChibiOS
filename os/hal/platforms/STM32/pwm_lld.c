@@ -351,9 +351,9 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD1 == pwmp) {
       rccEnableTIM1(FALSE);
       rccResetTIM1();
-      NVICEnableVector(TIM1_UP_IRQn,
+      nvicEnableVector(TIM1_UP_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM1_IRQ_PRIORITY));
-      NVICEnableVector(TIM1_CC_IRQn,
+      nvicEnableVector(TIM1_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM1_IRQ_PRIORITY));
       pwmp->clock = STM32_TIMCLK2;
     }
@@ -362,7 +362,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD2 == pwmp) {
       rccEnableTIM2(FALSE);
       rccResetTIM2();
-      NVICEnableVector(TIM2_IRQn,
+      nvicEnableVector(TIM2_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM2_IRQ_PRIORITY));
       pwmp->clock = STM32_TIMCLK1;
     }
@@ -371,7 +371,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD3 == pwmp) {
       rccEnableTIM3(FALSE);
       rccResetTIM3();
-      NVICEnableVector(TIM3_IRQn,
+      nvicEnableVector(TIM3_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM3_IRQ_PRIORITY));
       pwmp->clock = STM32_TIMCLK1;
     }
@@ -380,7 +380,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD4 == pwmp) {
       rccEnableTIM4(FALSE);
       rccResetTIM4();
-      NVICEnableVector(TIM4_IRQn,
+      nvicEnableVector(TIM4_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM4_IRQ_PRIORITY));
       pwmp->clock = STM32_TIMCLK1;
     }
@@ -390,7 +390,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD5 == pwmp) {
       rccEnableTIM5(FALSE);
       rccResetTIM5();
-      NVICEnableVector(TIM5_IRQn,
+      nvicEnableVector(TIM5_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM5_IRQ_PRIORITY));
       pwmp->clock = STM32_TIMCLK1;
     }
@@ -399,9 +399,9 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD8 == pwmp) {
       rccEnableTIM8(FALSE);
       rccResetTIM8();
-      NVICEnableVector(TIM8_UP_IRQn,
+      nvicEnableVector(TIM8_UP_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM8_IRQ_PRIORITY));
-      NVICEnableVector(TIM8_CC_IRQn,
+      nvicEnableVector(TIM8_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM8_IRQ_PRIORITY));
       pwmp->clock = STM32_TIMCLK2;
     }
@@ -545,39 +545,39 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 
 #if STM32_PWM_USE_TIM1
     if (&PWMD1 == pwmp) {
-      NVICDisableVector(TIM1_UP_IRQn);
-      NVICDisableVector(TIM1_CC_IRQn);
+      nvicDisableVector(TIM1_UP_IRQn);
+      nvicDisableVector(TIM1_CC_IRQn);
       rccDisableTIM1(FALSE);
     }
 #endif
 #if STM32_PWM_USE_TIM2
     if (&PWMD2 == pwmp) {
-      NVICDisableVector(TIM2_IRQn);
+      nvicDisableVector(TIM2_IRQn);
       rccDisableTIM2(FALSE);
     }
 #endif
 #if STM32_PWM_USE_TIM3
     if (&PWMD3 == pwmp) {
-      NVICDisableVector(TIM3_IRQn);
+      nvicDisableVector(TIM3_IRQn);
       rccDisableTIM3(FALSE);
     }
 #endif
 #if STM32_PWM_USE_TIM4
     if (&PWMD4 == pwmp) {
-      NVICDisableVector(TIM4_IRQn);
+      nvicDisableVector(TIM4_IRQn);
       rccDisableTIM4(FALSE);
     }
 #endif
 #if STM32_PWM_USE_TIM5
     if (&PWMD5 == pwmp) {
-      NVICDisableVector(TIM5_IRQn);
+      nvicDisableVector(TIM5_IRQn);
       rccDisableTIM5(FALSE);
     }
 #endif
 #if STM32_PWM_USE_TIM8
     if (&PWMD8 == pwmp) {
-      NVICDisableVector(TIM8_UP_IRQn);
-      NVICDisableVector(TIM8_CC_IRQn);
+      nvicDisableVector(TIM8_UP_IRQn);
+      nvicDisableVector(TIM8_CC_IRQn);
       rccDisableTIM8(FALSE);
     }
 #endif

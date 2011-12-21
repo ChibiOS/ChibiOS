@@ -307,7 +307,7 @@ bool_t dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
 
   /* Enables the associated IRQ vector if a callback is defined.*/
   if (func != NULL)
-    NVICEnableVector(dmastp->vector, CORTEX_PRIORITY_MASK(priority));
+    nvicEnableVector(dmastp->vector, CORTEX_PRIORITY_MASK(priority));
 
   return FALSE;
 }
@@ -334,7 +334,7 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
               "dmaRelease(), #1", "not allocated");
 
   /* Disables the associated IRQ vector.*/
-  NVICDisableVector(dmastp->vector);
+  nvicDisableVector(dmastp->vector);
 
   /* Marks the stream as not allocated.*/
   dma_streams_mask &= ~(1 << dmastp->selfindex);
