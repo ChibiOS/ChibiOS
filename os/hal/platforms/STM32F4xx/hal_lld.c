@@ -94,6 +94,11 @@ void stm32_clock_init(void) {
   /* PWR clock enable.*/
   RCC->APB1ENR = RCC_APB1ENR_PWREN;
 
+  /* PWR initialization.*/
+  PWR->CR = STM32_VOS;
+  while (PWR->CSR & PWR_CSR_VOSRDY)
+    ;                           /* Waits until power regulator is stable.   */
+
   /* Initial clocks setup and wait for HSI stabilization, the MSI clock is
      always enabled because it is the fallback clock when PLL the fails.*/
   RCC->CR |= RCC_CR_HSION;

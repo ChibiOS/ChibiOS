@@ -19,10 +19,10 @@
 */
 
 /**
- * @file    DMAv2/stm32_dma.c
+ * @file    STM32F2xx/stm32_dma.c
  * @brief   Enhanced DMA helper driver code.
  *
- * @addtogroup STM32_DMA
+ * @addtogroup STM32F2xx_DMA
  * @details DMA sharing helper driver. In the STM32 the DMA streams are a
  *          shared resource, this driver allows to allocate and free DMA
  *          streams at runtime in order to allow all the other device
@@ -76,22 +76,22 @@
  *          instead: @p STM32_DMA1_STREAM0, @p STM32_DMA1_STREAM1 etc.
  */
 const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS] = {
-  {0, DMA1, DMA1_Stream0, &DMA1->LIFCR, 0},
-  {1, DMA1, DMA1_Stream1, &DMA1->LIFCR, 6},
-  {2, DMA1, DMA1_Stream2, &DMA1->LIFCR, 16},
-  {3, DMA1, DMA1_Stream3, &DMA1->LIFCR, 22},
-  {4, DMA1, DMA1_Stream4, &DMA1->HIFCR, 0},
-  {5, DMA1, DMA1_Stream5, &DMA1->HIFCR, 6},
-  {6, DMA1, DMA1_Stream6, &DMA1->HIFCR, 16},
-  {7, DMA1, DMA1_Stream7, &DMA1->HIFCR, 22},
-  {8, DMA2, DMA2_Stream0, &DMA2->LIFCR, 0},
-  {9, DMA2, DMA2_Stream1, &DMA2->LIFCR, 6},
-  {10, DMA2, DMA2_Stream2, &DMA2->LIFCR, 16},
-  {11, DMA2, DMA2_Stream3, &DMA2->LIFCR, 22},
-  {12, DMA2, DMA2_Stream4, &DMA2->HIFCR, 0},
-  {13, DMA2, DMA2_Stream5, &DMA2->HIFCR, 6},
-  {14, DMA2, DMA2_Stream6, &DMA2->HIFCR, 16},
-  {15, DMA2, DMA2_Stream7, &DMA2->HIFCR, 22},
+  {DMA1_Stream0, &DMA1->LIFCR, 0, 0, DMA1_Stream0_IRQn},
+  {DMA1_Stream1, &DMA1->LIFCR, 6, 1, DMA1_Stream1_IRQn},
+  {DMA1_Stream2, &DMA1->LIFCR, 16, 2, DMA1_Stream2_IRQn},
+  {DMA1_Stream3, &DMA1->LIFCR, 22, 3, DMA1_Stream3_IRQn},
+  {DMA1_Stream4, &DMA1->HIFCR, 0, 4, DMA1_Stream4_IRQn},
+  {DMA1_Stream5, &DMA1->HIFCR, 6, 5, DMA1_Stream5_IRQn},
+  {DMA1_Stream6, &DMA1->HIFCR, 16, 6, DMA1_Stream6_IRQn},
+  {DMA1_Stream7, &DMA1->HIFCR, 22, 7, DMA1_Stream7_IRQn},
+  {DMA2_Stream0, &DMA2->LIFCR, 0, 8, DMA2_Stream0_IRQn},
+  {DMA2_Stream1, &DMA2->LIFCR, 6, 9, DMA2_Stream1_IRQn},
+  {DMA2_Stream2, &DMA2->LIFCR, 16, 10, DMA2_Stream2_IRQn},
+  {DMA2_Stream3, &DMA2->LIFCR, 22, 11, DMA2_Stream3_IRQn},
+  {DMA2_Stream4, &DMA2->HIFCR, 0, 12, DMA2_Stream4_IRQn},
+  {DMA2_Stream5, &DMA2->HIFCR, 6, 13, DMA2_Stream5_IRQn},
+  {DMA2_Stream6, &DMA2->HIFCR, 16, 14, DMA2_Stream6_IRQn},
+  {DMA2_Stream7, &DMA2->HIFCR, 22, 15, DMA2_Stream7_IRQn},
 };
 
 /*===========================================================================*/
@@ -102,8 +102,8 @@ const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS] = {
  * @brief   DMA ISR redirector type.
  */
 typedef struct {
-  stm32_dmaisr_t        dma_func;
-  void                  *dma_param;
+  stm32_dmaisr_t        dma_func;       /**< @brief DMA callback function.  */
+  void                  *dma_param;     /**< @brief DMA callback parameter. */
 } dma_isr_redir_t;
 
 /**
@@ -467,7 +467,7 @@ bool_t dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
   chDbgCheck(dmastp != NULL, "dmaAllocate");
 
   /* Checks if the stream is already taken.*/
-  if ((dma_streams_mask & dmastp->mask) != 0)
+  if ((dma_streams_mask & (1 << dmastp->selfindex)) != 0)
     return TRUE;
 
   /* Marks the stream as allocated.*/
@@ -476,20 +476,16 @@ bool_t dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
   dma_streams_mask |= (1 << dmastp->selfindex);
 
   /* Enabling DMA clocks required by the current streams set.*/
-  if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) != 0) {
-    RCC->AHB1ENR |= RCC_AHB1ENR_DMA1EN;
-    RCC->AHB1LPENR |= RCC_AHB1LPENR_DMA1LPEN;
-  }
-  if ((dma_streams_mask & STM32_DMA2_STREAMS_MASK) != 0) {
-    RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
-    RCC->AHB1LPENR |= RCC_AHB1LPENR_DMA2LPEN;
-  }
+  if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) != 0)
+    rccEnableDMA1(FALSE);
+  if ((dma_streams_mask & STM32_DMA2_STREAMS_MASK) != 0)
+    rccEnableDMA2(FALSE);
 
   /* Putting the stream in a safe state.*/
   dmaStreamDisable(dmastp);
   dmaStreamClearInterrupt(dmastp);
-  dmastp->channel->CR = STM32_DMA_CR_RESET_VALUE;
-  dmastp->channel->FCR = STM32_DMA_FCR_RESET_VALUE;
+  dmastp->stream->CR = STM32_DMA_CR_RESET_VALUE;
+  dmastp->stream->FCR = STM32_DMA_FCR_RESET_VALUE;
 
   /* Enables the associated IRQ vector if a callback is defined.*/
   if (func != NULL)
@@ -516,7 +512,7 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
   chDbgCheck(dmastp != NULL, "dmaRelease");
 
   /* Check if the streams is not taken.*/
-  chDbgAssert((dma_streams_mask & dmastp->mask) != 0,
+  chDbgAssert((dma_streams_mask & (1 << dmastp->selfindex)) != 0,
               "dmaRelease(), #1", "not allocated");
 
   /* Disables the associated IRQ vector.*/
@@ -526,14 +522,10 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
   dma_streams_mask &= ~(1 << dmastp->selfindex);
 
   /* Shutting down clocks that are no more required, if any.*/
-  if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) == 0) {
-    RCC->AHB1ENR &= ~RCC_AHB1ENR_DMA1EN;
-    RCC->AHB1LPENR &= ~RCC_AHB1LPENR_DMA1LPEN;
-  }
-  if ((dma_streams_mask & STM32_DMA2_STREAMS_MASK) == 0) {
-    RCC->AHB1ENR &= ~RCC_AHB1ENR_DMA2EN;
-    RCC->AHB1LPENR &= ~RCC_AHB1LPENR_DMA2LPEN;
-  }
+  if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) == 0)
+    rccDisableDMA1(FALSE);
+  if ((dma_streams_mask & STM32_DMA2_STREAMS_MASK) == 0)
+    rccDisableDMA2(FALSE);
 }
 
 #endif /* STM32_DMA_REQUIRED */

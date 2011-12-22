@@ -6,33 +6,31 @@ X = In progress, some work done.
 N = Decided against.
 
 Current Pipeline (2.3.x):
-* Improved Makefile system.
-* USB driver enhancements.
-  * USB and USB_SERIAL APIs reclassification.
-  * Incorporate the USB bus attach/detach handling in usbStart()/usbStop().
-  * Fix zero size packets handling in USB_SERIAL driver.
-  ? USB double buffering support for STM32 implementation.
-  X Evaluate using DMA channels for buffer copy.
 X I2C device driver class support and at least one implementation.
   X Evaluate a modified I2C API where the synchronous mode is default and the
     callback mode optional.
     - Software I2C implementation using a GPT instance for timings.
-* STM32F2xx/STM32F4xx support (adapt and re-verify all drivers).
-  * New STM32 DMA helper driver abstracting differences between
-    STM32F2xx/STM32F4xx and other sub-families.
-  * Specific ADC driver for STM32F2xx/STM32F4xx.
+- STM32F2xx support.
 - MMC_SPI driver revision and speedup.
 - FatFs 0.9x integration.
 - FPU support in CM4 port.
+- STM32F2xx support.
 - Nios II support.
 - LPC17xx support.
+- NUC120 support.
 - Static memory allocation hook macros in kernel code.
-? Revision of scheduling strategy for threads at equal priority.
+- MAC driver for STM32F107, STM32F2xx, STM32F4xx.
+- Update C++ wrapper.
 
 Within 2.x.x
+- USB driver model revision.
+  ? USB double buffering support for STM32 implementation.
+  X Evaluate using DMA channels for buffer copy.
 X File System infrastructure.
 X Implement the "transmission end" serial driver event on those platforms
   supporting the feature, so far only done in STM32 driver.
+- Revision of scheduling strategy for threads at equal priority.
+- Add a chSysIntegrityCheck() API.
 - Add a CH_THREAD macro for threads declaration in order to hide
   compiler-specific optimizations for thread functions. All demos will have
   to be updated.
@@ -40,7 +38,6 @@ X Implement the "transmission end" serial driver event on those platforms
   with different subsystems and not just the kernel.
 - Reduce number of demos globally, add demos to a repository or on web site.
   Required in order to reduce support effort.
-- MAC driver for STM32F107.
 - FatFs wrapper.
 - New device driver models: Clock, Systick, RTC, WDG, DAC, Power Monitor.
 - Add UART4 support to the STM32 UART driver (CL line only, HD has a nasty
@@ -59,7 +56,6 @@ X Transactional flash file system implementation.
 - Official segmented interrupts support and abstraction in CMx port.
 - MAC driver revision in order to support copy-less operations, this will
   require changes to lwIP or a new TCP/IP stack however.
-- Update C++ wrapper (Heap, Pools, Mailboxes and any new feature).
 - Threads Pools manager in the library.
 - Dedicated TCP/IP stack.
 ? Evaluate if change thread functions to return void is worthwhile. 
@@ -78,4 +74,3 @@ Ideas for 3.x.x:
 Side projects:
 X ChibiOS Wizard, UML modeling and ChibiOS applications code and
   documentation generator.
-- Visual debugger/monitor interfaced through OpenOCD.

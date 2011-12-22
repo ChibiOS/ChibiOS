@@ -176,82 +176,34 @@
 
 #include "nvic.h"
 
+/* The following declarations are there just for Doxygen documentation, the
+   real declarations are inside the sub-headers.*/
+#if defined(__DOXYGEN__)
+
 /**
  * @brief   Stack and memory alignment enforcement.
  * @note    In this architecture the stack alignment is enforced to 64 bits,
  *          32 bits alignment is supported by hardware but deprecated by ARM,
  *          the implementation choice is to not offer the option.
  */
-#if defined(__DOXYGEN__)
-/* Dummy declaration, for Doxygen only.*/
 typedef uint64_t stkalign_t;
-#else
-typedef uint64_t stkalign_t __attribute__ ((aligned (8)));
-#endif
 
-#if defined(__DOXYGEN__)
 /**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
  *          preemption-capable interrupt handler.
  * @note    It is implemented to match the Cortex-Mx exception context.
  */
-struct extctx {
-  /* Dummy definition, just for Doxygen.*/
-};
+struct extctx {};
 
 /**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
  *          switching.
  */
-struct intctx {
-  /* Dummy definition, just for Doxygen.*/
-};
-#endif
+struct intctx {};
 
-/**
- * @brief   Platform dependent part of the @p Thread structure.
- * @details In this port the structure just holds a pointer to the @p intctx
- *          structure representing the stack pointer at context switch time.
- */
-struct context {
-  struct intctx *r13;
-};
-
-/**
- * @brief   Platform dependent part of the @p chThdCreateI() API.
- * @details This code usually setup the context switching frame represented
- *          by an @p intctx structure.
- */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
-  tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +                  \
-                                     wsize -                                \
-                                     sizeof(struct intctx));                \
-  tp->p_ctx.r13->r4 = pf;                                                   \
-  tp->p_ctx.r13->r5 = arg;                                                  \
-  tp->p_ctx.r13->lr = _port_thread_start;                                   \
-}
-
-/**
- * @brief   Enforces a correct alignment for a stack area size value.
- */
-#define STACK_ALIGN(n) ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
-
-/**
- * @brief   Computes the thread working area global size.
- */
-#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                         \
-                                   sizeof(struct intctx) +                  \
-                                   sizeof(struct extctx) +                  \
-                                   (n) + (PORT_INT_REQUIRED_STACK))
-
-/**
- * @brief   Static working area allocation.
- * @details This macro is used to allocate a static thread working area
- *          aligned as both position and size.
- */
-#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)]
+#endif /* defined(__DOXYGEN__) */
 
 #endif /* _FROM_ASM_ */
 

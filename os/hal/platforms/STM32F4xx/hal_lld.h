@@ -56,24 +56,24 @@
  * @{
  */
 /**
- * @brief   Maximum HSE  clock frequency.
+ * @brief   Maximum HSE clock frequency.
  */
 #define STM32_HSECLK_MAX        26000000
 
 /**
- * @brief   Minimum HSE  clock frequency.
+ * @brief   Minimum HSE clock frequency.
  */
 #define STM32_HSECLK_MIN        1000000
 
 /**
- * @brief   Maximum LSE  clock frequency.
+ * @brief   Maximum LSE clock frequency.
  */
 #define STM32_LSECLK_MAX        1000000
 
 /**
- * @brief   Minimum LSE  clock frequency.
+ * @brief   Minimum LSE clock frequency.
  */
-#define STM32_LSECLK_MIN        1000
+#define STM32_LSECLK_MIN        32768
 
 /**
  * @brief   Maximum PLLs input clock frequency.
@@ -126,7 +126,7 @@
  * @{
  */
 #define STM32_HSICLK            16000000    /**< High speed internal clock. */
-#define STM32_LSICLK            38000       /**< Low speed internal clock.  */
+#define STM32_LSICLK            32000       /**< Low speed internal clock.  */
 /** @} */
 
 /**
@@ -204,9 +204,9 @@
 #define STM32_MCO1SEL_HSE       (2 << 21)   /**< HSE clock on MCO1 pin.     */
 #define STM32_MCO1SEL_PLL       (3 << 21)   /**< PLL clock on MCO1 pin.     */
 
-#define STM32_I2CSRC_MASK       (1 << 23)   /**< I2CSRC mask.               */
-#define STM32_I2CSRC_PLLI2S     (0 << 23)   /**< I2SSRC is PLLI2S.          */
-#define STM32_I2CSRC_CKIN       (1 << 23)   /**< I2S_CKIN is PLLI2S.        */
+#define STM32_I2SSRC_MASK       (1 << 23)   /**< I2CSRC mask.               */
+#define STM32_I2SSRC_PLLI2S     (0 << 23)   /**< I2SSRC is PLLI2S.          */
+#define STM32_I2SSRC_CKIN       (1 << 23)   /**< I2S_CKIN is PLLI2S.        */
 
 #define STM32_MCO1PRE_MASK      (7 << 24)   /**< MCO1PRE mask.              */
 #define STM32_MCO1PRE_DIV1      (0 << 24)   /**< MCO1 divided by 1.         */
@@ -732,7 +732,7 @@
  * @brief   I2S clock source.
  */
 #if !defined(STM32_I2SSRC) || defined(__DOXYGEN__)
-#define STM32_I2SSRC                STM32_I2CSRC_CKIN
+#define STM32_I2SSRC                STM32_I2SSRC_CKIN
 #endif
 
 /**
@@ -836,7 +836,7 @@
 #error "HSI not enabled, required by STM32_MCO2SEL"
 #endif
 
-#if (STM32_I2SSRC == STM32_I2CSRC_PLLI2S) &&                                \
+#if (STM32_I2SSRC == STM32_I2SSRC_PLLI2S) &&                                \
     (STM32_PLLSRC == STM32_PLLSRC_HSI)
 #error "HSI not enabled, required by STM32_I2SSRC"
 #endif
@@ -876,7 +876,7 @@
 #error "HSE not enabled, required by STM32_MCO2SEL"
 #endif
 
-#if (STM32_I2SSRC == STM32_I2CSRC_PLLI2S) &&                                \
+#if (STM32_I2SSRC == STM32_I2SSRC_PLLI2S) &&                                \
     (STM32_PLLSRC == STM32_PLLSRC_HSE)
 #error "HSE not enabled, required by STM32_I2SSRC"
 #endif
@@ -1126,7 +1126,7 @@
 /*
  * PLLI2S enable check.
  */
-#if (STM32_I2CSRC == STM32_I2CSRC_PLLI2S) || defined(__DOXYGEN__)
+#if (STM32_I2SSRC == STM32_I2SSRC_PLLI2S) || defined(__DOXYGEN__)
 /**
  * @brief   PLL activation flag.
  */

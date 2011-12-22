@@ -42,8 +42,59 @@
 #define CORTEX_PRIORITY_PENDSV          0
 
 /*===========================================================================*/
+/* Port macros.                                                              */
+/*===========================================================================*/
+
+/*===========================================================================*/
 /* Port configurable parameters.                                             */
 /*===========================================================================*/
+
+/**
+ * @brief   Stack size for the system idle thread.
+ * @details This size depends on the idle thread implementation, usually
+ *          the idle thread should take no more space than those reserved
+ *          by @p PORT_INT_REQUIRED_STACK.
+ * @note    In this port it is set to 16 because the idle thread does have
+ *          a stack frame when compiling without optimizations. You may
+ *          reduce this value to zero when compiling with optimizations.
+ */
+#if !defined(PORT_IDLE_THREAD_STACK_SIZE)
+#define PORT_IDLE_THREAD_STACK_SIZE     16
+#endif
+
+/**
+ * @brief   Per-thread stack overhead for interrupts servicing.
+ * @details This constant is used in the calculation of the correct working
+ *          area size.
+ *          This value can be zero on those architecture where there is a
+ *          separate interrupt stack and the stack space between @p intctx and
+ *          @p extctx is known to be zero.
+ * @note    In this port it is conservatively set to 16 because the function
+ *          @p chSchDoReschedule() can have a stack frame, expecially with
+ *          compiler optimizations disabled.
+ */
+#if !defined(PORT_INT_REQUIRED_STACK)
+#define PORT_INT_REQUIRED_STACK         16
+#endif
+
+/**
+ * @brief   Enables the use of the WFI instruction in the idle thread loop.
+ */
+#if !defined(CORTEX_ENABLE_WFI_IDLE)
+#define CORTEX_ENABLE_WFI_IDLE          FALSE
+#endif
+
+/**
+ * @brief   SYSTICK handler priority.
+ * @note    The default SYSTICK handler priority is calculated as the priority
+ *          level in the middle of the numeric priorities range.
+ */
+#if !defined(CORTEX_PRIORITY_SYSTICK)
+#define CORTEX_PRIORITY_SYSTICK         (CORTEX_PRIORITY_LEVELS >> 1)
+#elif !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SYSTICK)
+/* If it is externally redefined then better perform a validity check on it.*/
+#error "invalid priority level specified for CORTEX_PRIORITY_SYSTICK"
+#endif
 
 /**
  * @brief   Alternate preemption method.
@@ -101,7 +152,12 @@
  */
 typedef void *regarm_t;
 
+ /* The documentation of the following declarations is in chconf.h in order
+    to not have duplicated structure names into the documentation.*/
 #if !defined(__DOXYGEN__)
+
+typedef uint64_t stkalign_t __attribute__ ((aligned (8)));
+
 struct extctx {
   regarm_t      r0;
   regarm_t      r1;
@@ -124,7 +180,51 @@ struct intctx {
   regarm_t      r7;
   regarm_t      lr;
 };
-#endif
+
+#endif /* !defined(__DOXYGEN__) */
+
+/**
+ * @brief   Platform dependent part of the @p Thread structure.
+ * @details In this port the structure just holds a pointer to the @p intctx
+ *          structure representing the stack pointer at context switch time.
+ */
+struct context {
+  struct intctx *r13;
+};
+
+/**
+ * @brief   Platform dependent part of the @p chThdCreateI() API.
+ * @details This code usually setup the context switching frame represented
+ *          by an @p intctx structure.
+ */
+#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
+  tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +                  \
+                                     wsize -                                \
+                                     sizeof(struct intctx));                \
+  tp->p_ctx.r13->r4 = pf;                                                   \
+  tp->p_ctx.r13->r5 = arg;                                                  \
+  tp->p_ctx.r13->lr = _port_thread_start;                                   \
+}
+
+/**
+ * @brief   Enforces a correct alignment for a stack area size value.
+ */
+#define STACK_ALIGN(n) ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
+
+/**
+ * @brief   Computes the thread working area global size.
+ */
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                         \
+                                   sizeof(struct intctx) +                  \
+                                   sizeof(struct extctx) +                  \
+                                   (n) + (PORT_INT_REQUIRED_STACK))
+
+/**
+ * @brief   Static working area allocation.
+ * @details This macro is used to allocate a static thread working area
+ *          aligned as both position and size.
+ */
+#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)]
 
 /**
  * @brief   IRQ prologue code.
