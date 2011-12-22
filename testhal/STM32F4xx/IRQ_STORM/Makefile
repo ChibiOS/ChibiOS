@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -mhard-float -mfpu=fpv4-sp-d16
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -mhard-float -mfpu=fpv4-sp-d16 -fsingle-precision-constant
 endif
 
 # C specific options here (added to USE_OPT).

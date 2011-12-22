@@ -56,13 +56,13 @@ static msg_t WorkerThread(void *arg) {
   while(1) {
     float f1, f2, f3, f4, f5;
 
-    f1 = ff1(3);
-    f2 = ff1(4);
-    f3 = ff1(5);
+    f1 = ff1(3.0f);
+    f2 = ff1(4.0f);
+    f3 = ff1(5.0f);
     f5 = f1 + f2 + f3;
-    f4 = ff1(6);
+    f4 = ff1(6.0f);
     f5 = ff2(f5, f4, f5, f4);
-    if (f5 != 324)
+    if (f5 != 324.0f)
       chSysHalt();
   }
 }
@@ -78,13 +78,13 @@ static msg_t PeriodicThread(void *arg) {
   while(1) {
     float f1, f2, f3, f4, f5;
 
-    f1 = ff1(4);
-    f2 = ff1(5);
-    f3 = ff1(6);
+    f1 = ff1(4.0f);
+    f2 = ff1(5.0f);
+    f3 = ff1(6.0f);
     f5 = f1 + f2 + f3;
-    f4 = ff1(7);
+    f4 = ff1(7.0f);
     f5 = ff2(f5, f4, f5, f4);
-    if (f5 != 484)
+    if (f5 != 484.0f)
       chSysHalt();
     chThdSleepSeconds(1);
   }
@@ -98,13 +98,13 @@ static void gpt2cb(GPTDriver *gptp) {
 
   (void)gptp;
 
-  f1 = ff1(2);
-  f2 = ff1(3);
-  f3 = ff1(4);
+  f1 = ff1(2.0f);
+  f2 = ff1(3.0f);
+  f3 = ff1(4.0f);
   f5 = f1 + f2 + f3;
-  f4 = ff1(5);
+  f4 = ff1(5.0f);
   f5 = ff2(f5, f4, f5, f4);
-  if (f5 != 196)
+  if (f5 != 196.0f)
     chSysHalt();
 }
 
@@ -116,13 +116,13 @@ static void gpt3cb(GPTDriver *gptp) {
 
   (void)gptp;
 
-  f1 = ff1(1);
-  f2 = ff1(2);
-  f3 = ff1(3);
+  f1 = ff1(1.0f);
+  f2 = ff1(2.0f);
+  f3 = ff1(3.0f);
   f5 = f1 + f2 + f3;
-  f4 = ff1(4);
+  f4 = ff1(4.0f);
   f5 = ff2(f5, f4, f5, f4);
-  if (f5 != 100)
+  if (f5 != 100.0f)
     chSysHalt();
 }
 
