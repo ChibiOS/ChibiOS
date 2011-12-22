@@ -96,7 +96,7 @@ void stm32_clock_init(void) {
 
   /* PWR initialization.*/
   PWR->CR = STM32_VOS;
-  while (PWR->CSR & PWR_CSR_VOSRDY)
+  while ((PWR->CSR & PWR_CSR_VOSRDY) == 0)
     ;                           /* Waits until power regulator is stable.   */
 
   /* Initial clocks setup and wait for HSI stabilization, the MSI clock is
