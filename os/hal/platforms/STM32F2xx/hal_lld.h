@@ -682,7 +682,7 @@
 /**
  * @brief   RTC HSE prescaler value.
  */
-#if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
+#if !defined(STM32_RTCPRE_VALUE) || defined(__DOXYGEN__)
 #define STM32_RTCPRE_VALUE          8
 #endif
 
