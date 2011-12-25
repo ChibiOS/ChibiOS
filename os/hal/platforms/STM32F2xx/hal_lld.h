@@ -521,7 +521,6 @@
 #define DCMI_IRQHandler         Vector178   /**< DCMI.                      */ 
 #define CRYP_IRQHandler         Vector17C   /**< CRYP.                      */ 
 #define HASH_RNG_IRQHandler     Vector180   /**< Hash and Rng.              */ 
-#define FPU_IRQHandler          Vector184   /**< Floating Point Unit.       */
 /** @} */
 
 /*===========================================================================*/
