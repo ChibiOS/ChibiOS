@@ -163,7 +163,7 @@ void _port_unlock(void) {
 void _port_irq_epilogue(void) {
 
   port_lock_from_isr();
-  if ((SCB_ICSR & ICSR_RETTOBASE)) {
+  if ((SCB_ICSR & ICSR_RETTOBASE) != 0) {
     struct extctx *ctxp;
 
     /* Current PSP value.*/
