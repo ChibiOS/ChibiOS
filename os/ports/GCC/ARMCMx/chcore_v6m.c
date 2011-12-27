@@ -28,6 +28,10 @@
 
 #include "ch.h"
 
+/*===========================================================================*/
+/* Port interrupt handlers.                                                  */
+/*===========================================================================*/
+
 /**
  * @brief   System Timer vector.
  * @details This interrupt is used as system tick.
@@ -78,6 +82,10 @@ void PendSVVector(void) {
   asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
 }
 #endif /* CORTEX_ALTERNATE_SWITCH */
+
+/*===========================================================================*/
+/* Port exported functions.                                                  */
+/*===========================================================================*/
 
 /**
  * @brief   Post-IRQ switch code.
