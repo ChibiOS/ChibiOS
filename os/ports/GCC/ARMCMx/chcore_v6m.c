@@ -173,7 +173,7 @@ void _port_irq_epilogue(regarm_t lr) {
     ctxp->pc = _port_switch_from_isr;
     ctxp->xpsr = (regarm_t)0x01000000;
     /* Note, returning without unlocking is intentional, this is done in
-      order to keep the rest of the context switching atomic.*/
+       order to keep the rest of the context switching atomic.*/
   }
 }
 
