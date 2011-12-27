@@ -94,8 +94,8 @@
 #endif
 
 /**
- * @brief   Simplified priority handling flag.
- * @details Activating this option will make the Kernel work in compact mode.
+ * @brief   FPU support in context switch.
+ * @details Activating this option activates the FPU support in the kernel.
  */
 #if !defined(CORTEX_USE_FPU)
 #define CORTEX_USE_FPU                  CORTEX_HAS_FPU
@@ -107,7 +107,7 @@
 
 /**
  * @brief   Simplified priority handling flag.
- * @details Activating this option will make the Kernel work in compact mode.
+ * @details Activating this option makes the Kernel work in compact mode.
  */
 #if !defined(CORTEX_SIMPLIFIED_PRIORITY)
 #define CORTEX_SIMPLIFIED_PRIORITY      FALSE
