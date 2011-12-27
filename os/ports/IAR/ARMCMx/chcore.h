@@ -105,7 +105,7 @@
  *          a stack frame when compiling without optimizations. You may
  *          reduce this value to zero when compiling with optimizations.
  */
-#ifndef PORT_IDLE_THREAD_STACK_SIZE
+#if !defined(PORT_IDLE_THREAD_STACK_SIZE)
 #define PORT_IDLE_THREAD_STACK_SIZE     16
 #endif
 
@@ -120,14 +120,14 @@
  *          @p chSchDoReschedule() can have a stack frame, expecially with
  *          compiler optimizations disabled.
  */
-#ifndef PORT_INT_REQUIRED_STACK
+#if !defined(PORT_INT_REQUIRED_STACK)
 #define PORT_INT_REQUIRED_STACK         16
 #endif
 
 /**
  * @brief   Enables the use of the WFI instruction in the idle thread loop.
  */
-#ifndef CORTEX_ENABLE_WFI_IDLE
+#if !defined(CORTEX_ENABLE_WFI_IDLE)
 #define CORTEX_ENABLE_WFI_IDLE          FALSE
 #endif
 
@@ -136,24 +136,11 @@
  * @note    The default SYSTICK handler priority is calculated as the priority
  *          level in the middle of the numeric priorities range.
  */
-#ifndef CORTEX_PRIORITY_SYSTICK
+#if !defined(CORTEX_PRIORITY_SYSTICK)
 #define CORTEX_PRIORITY_SYSTICK         (CORTEX_PRIORITY_LEVELS >> 1)
-#else
+#elif !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SYSTICK)
 /* If it is externally redefined then better perform a validity check on it.*/
-#if !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SYSTICK)
 #error "invalid priority level specified for CORTEX_PRIORITY_SYSTICK"
-#endif
-#endif
-
-/**
- * @brief   Stack alignment enforcement.
- * @note    The default value is 64 in order to comply with EABI, reducing
- *          the value to 32 can save some RAM space if you don't care about
- *          binary compatibility with EABI compiled libraries.
- * @note    Allowed values are 32 or 64.
- */
-#ifndef CORTEX_STACK_ALIGNMENT
-#define CORTEX_STACK_ALIGNMENT          64
 #endif
 
 /*===========================================================================*/
@@ -190,80 +177,34 @@
 #include <intrinsics.h>
 #include "nvic.h"
 
+/* The following declarations are there just for Doxygen documentation, the
+   real declarations are inside the sub-headers.*/
+#if defined(__DOXYGEN__)
+
 /**
  * @brief   Stack and memory alignment enforcement.
+ * @note    In this architecture the stack alignment is enforced to 64 bits,
+ *          32 bits alignment is supported by hardware but deprecated by ARM,
+ *          the implementation choice is to not offer the option.
  */
-#if (CORTEX_STACK_ALIGNMENT == 64) || defined(__DOXYGEN__)
 typedef uint64_t stkalign_t;
-#elif CORTEX_STACK_ALIGNMENT == 32
-typedef uint32_t stkalign_t;
-#else
-#error "invalid stack alignment selected"
-#endif
 
-#if defined(__DOXYGEN__)
 /**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
  *          preemption-capable interrupt handler.
  * @note    It is implemented to match the Cortex-Mx exception context.
  */
-struct extctx {
-  /* Dummy definition, just for Doxygen.*/
-};
+struct extctx {};
 
 /**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
  *          switching.
  */
-struct intctx {
-  /* Dummy definition, just for Doxygen.*/
-};
-#endif
+struct intctx {};
 
-/**
- * @brief   Platform dependent part of the @p Thread structure.
- * @details In this port the structure just holds a pointer to the @p intctx
- *          structure representing the stack pointer at context switch time.
- */
-struct context {
-  struct intctx *r13;
-};
-
-/**
- * @brief   Platform dependent part of the @p chThdCreateI() API.
- * @details This code usually setup the context switching frame represented
- *          by an @p intctx structure.
- */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
-  tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +                  \
-                                     wsize -                                \
-                                     sizeof(struct intctx));                \
-  tp->p_ctx.r13->r4 = (void *)pf;                                           \
-  tp->p_ctx.r13->r5 = (void *)arg;                                          \
-  tp->p_ctx.r13->lr = (void *)_port_thread_start;                           \
-}
-
-/**
- * @brief   Enforces a correct alignment for a stack area size value.
- */
-#define STACK_ALIGN(n) ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
-
-/**
- * @brief   Computes the thread working area global size.
- */
-#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                         \
-                                   sizeof(struct intctx) +                  \
-                                   sizeof(struct extctx) +                  \
-                                   (n) + (PORT_INT_REQUIRED_STACK))
-
-/**
- * @brief   Static working area allocation.
- * @details This macro is used to allocate a static thread working area
- *          aligned as both position and size.
- */
-#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)]
+#endif /* defined(__DOXYGEN__) */
 
 #endif /* _FROM_ASM_ */
 

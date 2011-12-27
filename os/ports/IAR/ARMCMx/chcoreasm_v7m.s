@@ -39,7 +39,6 @@ ICSR_PENDSVSET  SET 0x10000000
         SECTION .text:CODE:NOROOT(2)
 
         EXTERN  chThdExit
-        EXTERN  chSchIsPreemptionRequired
         EXTERN  chSchDoReschedule
 #if CH_DBG_SYSTEM_STATE_CHECK
         EXTERN  dbg_check_unlock
@@ -54,8 +53,14 @@ ICSR_PENDSVSET  SET 0x10000000
         PUBLIC _port_switch
 _port_switch:
         push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+#if CORTEX_USE_FPU
+        vpush   {s16-s31}
+#endif
         str     sp, [r1, #CONTEXT_OFFSET]
         ldr     sp, [r0, #CONTEXT_OFFSET]
+#if CORTEX_USE_FPU
+        vpop    {s16-s31}
+#endif
         pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}
 
 /*
@@ -82,17 +87,16 @@ _port_thread_start:
  * Exception handlers return here for context switching.
  */
         PUBLIC  _port_switch_from_isr
+        PUBLIC  _port_exit_from_isr
 _port_switch_from_isr:
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl      dbg_check_lock
 #endif
-        bl      chSchIsPreemptionRequired
-        cbz     r0, .L2
         bl      chSchDoReschedule
-.L2:
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl      dbg_check_unlock
 #endif
+_port_exit_from_isr:
 #if CORTEX_SIMPLIFIED_PRIORITY
         mov     r3, #LWRD SCB_ICSR
         movt    r3, #HWRD SCB_ICSR
@@ -102,69 +106,6 @@ _port_switch_from_isr:
 .L3:    b       .L3
 #else
         svc     #0
-#endif
-
-/*
- * Reschedule verification and setup after an IRQ.
- */
-        PUBLIC  _port_irq_epilogue
-_port_irq_epilogue:
-#if CORTEX_SIMPLIFIED_PRIORITY
-        cpsid   i
-#else
-        movs    r3, #CORTEX_BASEPRI_KERNEL
-        msr     BASEPRI, r3
-#endif
-        mov     r3, #LWRD SCB_ICSR
-        movt    r3, #HWRD SCB_ICSR
-        ldr     r3, [r3, #0]
-        ands    r3, r3, #ICSR_RETTOBASE
-        bne     .L8
-#if CORTEX_SIMPLIFIED_PRIORITY
-        cpsie   i
-#else
-        /* Note, R3 is already zero.*/
-        msr     BASEPRI, r3
-#endif
-        bx      lr
-.L8:
-        mrs     r3, PSP
-        subs    r3, r3, #EXTCTX_SIZE
-        msr     PSP, r3
-        ldr     r2, =_port_switch_from_isr
-        str     r2, [r3, #24]
-        mov     r2, #0x01000000
-        str     r2, [r3, #28]
-        bx      lr
-
-/*
- * SVC vector.
- * Discarding the current exception context and positioning the stack to
- * point to the real one.
- */
-#if !CORTEX_SIMPLIFIED_PRIORITY
-        PUBLIC  SVCallVector
-SVCallVector:
-        mrs     r3, PSP
-        adds    r3, r3, #EXTCTX_SIZE
-        msr     PSP, r3
-        movs    r3, #CORTEX_BASEPRI_DISABLED
-        msr     BASEPRI, r3
-        bx      lr
-#endif
-
-/*
- * PendSV vector.
- * Discarding the current exception context and positioning the stack to
- * point to the real one.
- */
-#if CORTEX_SIMPLIFIED_PRIORITY
-        PUBLIC  PendSVVector
-PendSVVector:
-        mrs     r3, PSP
-        adds    r3, r3, #EXTCTX_SIZE
-        msr     PSP, r3
-        bx      lr
 #endif
 
         END
