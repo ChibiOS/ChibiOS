@@ -8,7 +8,7 @@ The demo will on an STMicroelectronics STM32F4-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32L1xx ADC driver.
+The application demonstrates the use of the STM32F4xx ADC driver.
 
 ** Board Setup **
 

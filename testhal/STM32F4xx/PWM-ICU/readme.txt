@@ -4,11 +4,11 @@
 
 ** TARGET **
 
-The demo will on an STMicroelectronics STM32L-Discovery board.
+The demo will on an STMicroelectronics STM32F4-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32L1xx PWM-ICU drivers.
+The application demonstrates the use of the STM32F4xx PWM-ICU drivers.
 
 ** Board Setup **
 
