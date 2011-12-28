@@ -75,6 +75,14 @@ Reset_Handler   PROC
                 msr     CONTROL, r0
                 isb
                 bl      __early_init
+
+                IF      {CPU} = "Cortex-M4.fp"
+                LDR     R0, =0xE000ED88           ; Enable CP10,CP11
+                LDR     R1, [R0]
+                ORR     R1, R1, #(0xF << 20)
+                STR     R1, [R0]
+                ENDIF
+
                 ldr     r0, =__main
                 bx      r0
                 ENDP

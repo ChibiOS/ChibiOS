@@ -87,7 +87,7 @@
 - NEW: Added a linker script that demonstrates how to put stacks and other
   critical structures in the CCM RAM instead normal RAM.
 - NEW: Added experimental support for the Cortex-M4 FPU (default when the
-  FPU is present).
+  FPU is present but can be disabled).
 - NEW: Improved I2C driver model and STM32 implementation by Barthess.
 - CHANGE: Removed the option to change the stack alignment in the GCC
   Cortex-Mx ports, now alignment is always 64 bits.

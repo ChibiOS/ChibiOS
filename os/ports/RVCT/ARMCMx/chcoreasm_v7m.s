@@ -25,10 +25,8 @@
 #include "chconf.h"
 #include "chcore.h"
 
-EXTCTX_SIZE     EQU     32
 CONTEXT_OFFSET  EQU     12
 SCB_ICSR        EQU     0xE000ED04
-ICSR_RETTOBASE  EQU     0x00000800
 ICSR_PENDSVSET  EQU     0x10000000
 
                 PRESERVE8
@@ -36,7 +34,6 @@ ICSR_PENDSVSET  EQU     0x10000000
                 AREA    |.text|, CODE, READONLY
 
                 IMPORT  chThdExit
-                IMPORT  chSchIsPreemptionRequired
                 IMPORT  chSchDoReschedule
 #if CH_DBG_SYSTEM_STATE_CHECK
                 IMPORT  dbg_check_unlock
@@ -49,8 +46,14 @@ ICSR_PENDSVSET  EQU     0x10000000
                 EXPORT _port_switch
 _port_switch    PROC
                 push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+#if CORTEX_USE_FPU
+                vpush   {s16-s31}
+#endif
                 str     sp, [r1, #CONTEXT_OFFSET]                          
                 ldr     sp, [r0, #CONTEXT_OFFSET]
+#if CORTEX_USE_FPU
+                vpop    {s16-s31}
+#endif
                 pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}
                 ENDP
 
@@ -79,17 +82,16 @@ _port_thread_start PROC
  * Exception handlers return here for context switching.
  */
                 EXPORT  _port_switch_from_isr
+                EXPORT  _port_exit_from_isr
 _port_switch_from_isr PROC
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      dbg_check_lock
 #endif
-                bl      chSchIsPreemptionRequired
-                cbz     r0, noreschedule
                 bl      chSchDoReschedule
-noreschedule
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      dbg_check_unlock
 #endif
+_port_exit_from_isr
 #if CORTEX_SIMPLIFIED_PRIORITY
                 mov     r3, #SCB_ICSR :AND: 0xFFFF
                 movt    r3, #SCB_ICSR :SHR: 16
@@ -101,73 +103,5 @@ waithere        b       waithere
                 svc     #0
 #endif
                 ENDP
-
-/*
- * Reschedule verification and setup after an IRQ.
- */
-                EXPORT  _port_irq_epilogue
-_port_irq_epilogue PROC
-#if CORTEX_SIMPLIFIED_PRIORITY
-                cpsid   i
-#else
-                movs    r3, #CORTEX_BASEPRI_KERNEL
-                msr     BASEPRI, r3
-#endif
-                mov     r3, #SCB_ICSR :AND: 0xFFFF
-                movt    r3, #SCB_ICSR :SHR: 16
-                ldr     r3, [r3, #0]
-                ands    r3, r3, #ICSR_RETTOBASE
-                bne     skipexit
-#if CORTEX_SIMPLIFIED_PRIORITY
-                cpsie   i
-#else
-                /* Note, R3 is already zero.*/
-                msr     BASEPRI, r3
-#endif
-                bx      lr
-skipexit
-                mrs     r3, PSP
-                subs    r3, r3, #EXTCTX_SIZE
-                msr     PSP, r3
-                ldr     r2, =_port_switch_from_isr
-                str     r2, [r3, #24]
-                mov     r2, #0x01000000
-                str     r2, [r3, #28]
-                bx      lr
-                ENDP
-
-/*
- * SVC vector.
- * Discarding the current exception context and positioning the stack to
- * point to the real one.
- */
-#if !CORTEX_SIMPLIFIED_PRIORITY
-                EXPORT  SVCallVector
-SVCallVector    PROC
-                mrs     r3, PSP
-                adds    r3, r3, #EXTCTX_SIZE
-                msr     PSP, r3
-                movs    r3, #CORTEX_BASEPRI_DISABLED
-                msr     BASEPRI, r3
-                bx      lr
-                nop
-                ENDP
-#endif
-
-/*
- * PendSV vector.
- * Discarding the current exception context and positioning the stack to
- * point to the real one.
- */
-#if CORTEX_SIMPLIFIED_PRIORITY
-                EXPORT  PendSVVector
-PendSVVector    PROC
-                mrs     r3, PSP
-                adds    r3, r3, #EXTCTX_SIZE
-                msr     PSP, r3
-                bx      lr
-                nop
-                ENDP
-#endif
 
                 END
