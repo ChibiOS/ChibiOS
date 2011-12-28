@@ -169,8 +169,8 @@ void _port_irq_epilogue(void) {
     if (chSchIsPreemptionRequired()) {
 #if CORTEX_USE_FPU
       /* Triggering a lazy FPU state save.*/
-      register volatile uint32_t fpscr __asm("fpscr");
-      (void)fpscr;
+      register uint32_t fpscr __asm("fpscr");
+      ctxp->r0 = (regarm_t)fpscr;
 #endif
       /* Preemption is required we need to enforce a context switch.*/
       ctxp->pc = (regarm_t)_port_switch_from_isr;
