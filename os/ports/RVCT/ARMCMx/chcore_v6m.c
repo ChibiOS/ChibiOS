@@ -28,6 +28,10 @@
 
 #include "ch.h"
 
+/*===========================================================================*/
+/* Port interrupt handlers.                                                  */
+/*===========================================================================*/
+
 /**
  * @brief   System Timer vector.
  * @details This interrupt is used as system tick.
@@ -42,6 +46,83 @@ CH_IRQ_HANDLER(SysTickVector) {
   chSysUnlockFromIsr();
 
   CH_IRQ_EPILOGUE();
+}
+
+#if !CORTEX_ALTERNATE_SWITCH || defined(__DOXYGEN__)
+/**
+ * @brief   NMI vector.
+ * @details The NMI vector is used for exception mode re-entering after a
+ *          context switch.
+ */
+void NMIVector(void) {
+  register struct extctx *ctxp;
+  register uint32_t psp __asm("psp");
+
+  /* Discarding the current exception context and positioning the stack to
+     point to the real one.*/
+  ctxp = (struct extctx *)psp;
+  ctxp++;
+  psp = (uint32_t)ctxp;
+  port_unlock_from_isr();
+}
+#endif /* !CORTEX_ALTERNATE_SWITCH */
+
+#if CORTEX_ALTERNATE_SWITCH || defined(__DOXYGEN__)
+/**
+ * @brief   PendSV vector.
+ * @details The PendSV vector is used for exception mode re-entering after a
+ *          context switch.
+ */
+void PendSVVector(void) {
+  register struct extctx *ctxp;
+  register uint32_t psp __asm("psp");
+
+  /* Discarding the current exception context and positioning the stack to
+     point to the real one.*/
+  ctxp = (struct extctx *)psp;
+  ctxp++;
+  psp = (uint32_t)ctxp;
+}
+#endif /* CORTEX_ALTERNATE_SWITCH */
+
+/*===========================================================================*/
+/* Port exported functions.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   IRQ epilogue code.
+ *
+ * @param[in] lr        value of the @p LR register on ISR entry
+ */
+void _port_irq_epilogue(regarm_t lr) {
+
+  if (lr != (regarm_t)0xFFFFFFF1) {
+    register struct extctx *ctxp;
+    register uint32_t psp __asm("psp");
+
+    port_lock_from_isr();
+    /* Adding an artificial exception return context, there is no need to
+       populate it fully.*/
+    ctxp = (struct extctx *)psp;
+    ctxp--;
+    psp = (uint32_t)ctxp;
+    ctxp->xpsr = (regarm_t)0x01000000;
+
+    /* The exit sequence is different depending on if a preemption is
+       required or not.*/
+    if (chSchIsPreemptionRequired()) {
+      /* Preemption is required we need to enforce a context switch.*/
+      ctxp->pc = (regarm_t)_port_switch_from_isr;
+    }
+    else {
+      /* Preemption not required, we just need to exit the exception
+         atomically.*/
+      ctxp->pc = (regarm_t)_port_exit_from_isr;
+    }
+
+    /* Note, returning without unlocking is intentional, this is done in
+       order to keep the rest of the context switching atomic.*/
+  }
 }
 
 /** @} */
