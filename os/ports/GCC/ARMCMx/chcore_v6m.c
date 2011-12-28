@@ -180,7 +180,7 @@ void _port_switch(Thread *ntp, Thread *otp) {
                 "mov     r9, r5                                 \n\t"
                 "mov     r10, r6                                \n\t"
                 "mov     r11, r7                                \n\t"
-                "pop     {r4, r5, r6, r7, pc}" : : "r" (sp) : "memory");
+                "pop     {r4, r5, r6, r7, pc}" : : "r" (r13) : "memory");
 }
 
 /**
