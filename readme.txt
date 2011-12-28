@@ -91,6 +91,8 @@
 - NEW: Improved I2C driver model and STM32 implementation by Barthess.
 - CHANGE: Removed the option to change the stack alignment in the GCC
   Cortex-Mx ports, now alignment is always 64 bits.
+- CHANGE: Increased main and process default stack sizes from 0x100 to 0x200
+  in LPC1114 and LPC1343 linker scripts.
 
 *** 2.3.4 ***
 - FIX: Fixed Extra initialization in STM32 SPI driver (bug 3436127)
