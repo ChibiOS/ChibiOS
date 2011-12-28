@@ -116,8 +116,6 @@ void _port_init(void) {
 
 #if CORTEX_USE_FPU
   {
-    uint32_t reg;
-
     /* Initializing the FPU context save in lazy mode.*/
     SCB_FPCCR = FPCCR_ASPEN | FPCCR_LSPEN;
 
@@ -125,7 +123,7 @@ void _port_init(void) {
     SCB_CPACR |= 0x00F00000;
 
     /* Enables FPU context save/restore on exception entry/exit (FPCA bit).*/
-    __set_control(__get_control() | 4);
+    __set_CONTROL(__get_CONTROL() | 4);
 
     /* FPSCR and FPDSCR initially zero.*/
     __set_FPSCR(0);

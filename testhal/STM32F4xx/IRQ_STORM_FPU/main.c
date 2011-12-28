@@ -301,5 +301,4 @@ int main(void) {
   while (TRUE) {
     chThdSleepMilliseconds(5000);
   }
-  return 0;
 }
