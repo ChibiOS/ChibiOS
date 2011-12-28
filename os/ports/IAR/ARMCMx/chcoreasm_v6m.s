@@ -37,7 +37,6 @@ SCB_ICSR        SET     0xE000ED04
         SECTION .text:CODE:NOROOT(2)
 
         EXTERN  chThdExit
-        EXTERN  chSchIsPreemptionRequired
         EXTERN  chSchDoReschedule
 #if CH_DBG_SYSTEM_STATE_CHECK
         EXTERN  dbg_check_unlock
@@ -87,18 +86,16 @@ _port_thread_start:
  * Exception handlers return here for context switching.
  */
         PUBLIC  _port_switch_from_isr
+        PUBLIC  _port_exit_from_isr
 _port_switch_from_isr:
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl      dbg_check_lock
 #endif
-        bl      chSchIsPreemptionRequired
-        cmp     r0, #0
-        beq     noresch
         bl      chSchDoReschedule
-noresch:
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl      dbg_check_unlock
 #endif
+_port_exit_from_isr:
         ldr     r2, =SCB_ICSR
         movs    r3, #128
 #if CORTEX_ALTERNATE_SWITCH

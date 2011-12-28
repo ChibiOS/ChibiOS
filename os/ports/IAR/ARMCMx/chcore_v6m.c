@@ -103,8 +103,20 @@ void _port_irq_epilogue(regarm_t lr) {
     ctxp = (struct extctx *)__get_PSP();
     ctxp--;
     __set_PSP((unsigned long)ctxp);
-    ctxp->pc = (regarm_t)_port_switch_from_isr;
     ctxp->xpsr = (regarm_t)0x01000000;
+
+    /* The exit sequence is different depending on if a preemption is
+       required or not.*/
+    if (chSchIsPreemptionRequired()) {
+      /* Preemption is required we need to enforce a context switch.*/
+      ctxp->pc = (regarm_t)_port_switch_from_isr;
+    }
+    else {
+      /* Preemption not required, we just need to exit the exception
+         atomically.*/
+      ctxp->pc = (regarm_t)_port_exit_from_isr;
+    }
+
     /* Note, returning without unlocking is intentional, this is done in
        order to keep the rest of the context switching atomic.*/
   }

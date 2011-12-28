@@ -7,7 +7,7 @@ Compiler: IAR C/C++ Compiler for ARM 6.30.3.33228
 *** ChibiOS/RT test suite
 ***
 *** Kernel:       2.3.5unstable
-*** Compiled:     Dec 27 2011 - 15:57:01
+*** Compiled:     Dec 28 2011 - 10:01:37
 *** Compiler:     IAR
 *** Architecture: ARMv7-ME
 *** Core Variant: Cortex-M4

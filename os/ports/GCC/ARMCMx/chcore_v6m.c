@@ -133,7 +133,9 @@ __attribute__((naked))
 #endif
 void _port_switch_from_isr(void) {
 
+  dbg_check_lock();
   chSchDoReschedule();
+  dbg_check_unlock();
   asm volatile ("_port_exit_from_isr:" : : : "memory");
 #if CORTEX_ALTERNATE_SWITCH
   SCB_ICSR = ICSR_PENDSVSET;

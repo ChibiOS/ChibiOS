@@ -171,7 +171,6 @@ void _port_irq_epilogue(void) {
     else {
       /* Preemption not required, we just need to exit the exception
          atomically.*/
-      void _port_exit_from_isr(void);
       ctxp->pc = (regarm_t)_port_exit_from_isr;
     }
 
