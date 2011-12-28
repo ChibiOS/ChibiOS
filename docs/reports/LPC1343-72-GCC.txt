@@ -5,10 +5,12 @@ Settings: CLK=72, (3 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.7unstable
-*** GCC Version:  4.3.3
+*** Kernel:       2.3.5unstable
+*** Compiled:     Dec 28 2011 - 11:20:11
+*** Compiler:     GCC 4.6.2
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
+*** Port Info:    Advanced kernel mode
 *** Platform:     LPC13xx
 *** Test Board:   Embedded Artists LPCXpresso Base Board + LPC1343
 
@@ -98,56 +100,56 @@ Settings: CLK=72, (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 241880 msgs/S, 483760 ctxswc/S
+--- Score : 268027 msgs/S, 536054 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 196281 msgs/S, 392562 ctxswc/S
+--- Score : 217012 msgs/S, 434024 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 196281 msgs/S, 392562 ctxswc/S
+--- Score : 217012 msgs/S, 434024 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 806072 ctxswc/S
+--- Score : 974024 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 151247 threads/S
+--- Score : 161791 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 215745 threads/S
+--- Score : 237078 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 63239 reschedules/S, 379434 ctxswc/S
+--- Score : 67574 reschedules/S, 405444 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 473388 ctxswc/S
+--- Score : 512180 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 482836 bytes/S
+--- Score : 623284 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 707908 timers/S
+--- Score : 665126 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 909504 wait+signal/S
+--- Score : 860284 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 588968 lock+unlock/S
+--- Score : 635676 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)
---- System: 360 bytes
---- Thread: 68 bytes
+--- System: 376 bytes
+--- Thread: 72 bytes
 --- Timer : 20 bytes
 --- Semaph: 12 bytes
 --- EventS: 4 bytes
