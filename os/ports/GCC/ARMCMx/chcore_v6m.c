@@ -88,6 +88,41 @@ void PendSVVector(void) {
 /*===========================================================================*/
 
 /**
+ * @brief   IRQ epilogue code.
+ *
+ * @param[in] lr        value of the @p LR register on ISR entry
+ */
+void _port_irq_epilogue(regarm_t lr) {
+
+  if (lr != (regarm_t)0xFFFFFFF1) {
+    register struct extctx *ctxp;
+
+    port_lock_from_isr();
+    /* Adding an artificial exception return context, there is no need to
+       populate it fully.*/
+    asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : : "memory");
+    ctxp--;
+    asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
+    ctxp->xpsr = (regarm_t)0x01000000;
+
+    /* The exit sequence is different depending on if a preemption is
+       required or not.*/
+    if (chSchIsPreemptionRequired()) {
+      /* Preemption is required we need to enforce a context switch.*/
+      ctxp->pc = _port_switch_from_isr;
+    }
+    else {
+      /* Preemption not required, we just need to exit the exception
+         atomically.*/
+      ctxp->pc = _port_exit_from_isr;
+    }
+
+    /* Note, returning without unlocking is intentional, this is done in
+       order to keep the rest of the context switching atomic.*/
+  }
+}
+
+/**
  * @brief   Post-IRQ switch code.
  * @details The switch is performed in thread context then an NMI exception
  *          is enforced in order to return to the exact point before the
@@ -98,8 +133,8 @@ __attribute__((naked))
 #endif
 void _port_switch_from_isr(void) {
 
-  if (chSchIsPreemptionRequired())
-    chSchDoReschedule();
+  chSchDoReschedule();
+  asm volatile ("_port_exit_from_isr:" : : : "memory");
 #if CORTEX_ALTERNATE_SWITCH
   SCB_ICSR = ICSR_PENDSVSET;
   port_unlock();
@@ -110,24 +145,6 @@ void _port_switch_from_isr(void) {
      immediately.*/
   while (TRUE)
     ;
-}
-
-#define PUSH_CONTEXT(sp) {                                                  \
-  asm volatile ("push    {r4, r5, r6, r7, lr}                   \n\t"       \
-                "mov     r4, r8                                 \n\t"       \
-                "mov     r5, r9                                 \n\t"       \
-                "mov     r6, r10                                \n\t"       \
-                "mov     r7, r11                                \n\t"       \
-                "push    {r4, r5, r6, r7}" : : : "memory");                 \
-}
-
-#define POP_CONTEXT(sp) {                                                   \
-  asm volatile ("pop     {r4, r5, r6, r7}                       \n\t"       \
-                "mov     r8, r4                                 \n\t"       \
-                "mov     r9, r5                                 \n\t"       \
-                "mov     r10, r6                                \n\t"       \
-                "mov     r11, r7                                \n\t"       \
-                "pop     {r4, r5, r6, r7, pc}" : : "r" (sp) : "memory");    \
 }
 
 /**
@@ -146,35 +163,22 @@ __attribute__((naked))
 void _port_switch(Thread *ntp, Thread *otp) {
   register struct intctx *r13 asm ("r13");
 
-  PUSH_CONTEXT(r13);
+  asm volatile ("push    {r4, r5, r6, r7, lr}                   \n\t"
+                "mov     r4, r8                                 \n\t"
+                "mov     r5, r9                                 \n\t"
+                "mov     r6, r10                                \n\t"
+                "mov     r7, r11                                \n\t"
+                "push    {r4, r5, r6, r7}" : : : "memory");
 
   otp->p_ctx.r13 = r13;
   r13 = ntp->p_ctx.r13;
 
-  POP_CONTEXT(r13);
-}
-
-/**
- * @brief   IRQ epilogue code.
- *
- * @param[in] lr        value of the @p LR register on ISR entry
- */
-void _port_irq_epilogue(regarm_t lr) {
-
-  if (lr != (regarm_t)0xFFFFFFF1) {
-    register struct extctx *ctxp;
-
-    port_lock_from_isr();
-    /* Adding an artificial exception return context, there is no need to
-       populate it fully.*/
-    asm volatile ("mrs     %0, PSP" : "=r" (ctxp) : : "memory");
-    ctxp--;
-    asm volatile ("msr     PSP, %0" : : "r" (ctxp) : "memory");
-    ctxp->pc = _port_switch_from_isr;
-    ctxp->xpsr = (regarm_t)0x01000000;
-    /* Note, returning without unlocking is intentional, this is done in
-       order to keep the rest of the context switching atomic.*/
-  }
+  asm volatile ("pop     {r4, r5, r6, r7}                       \n\t"
+                "mov     r8, r4                                 \n\t"
+                "mov     r9, r5                                 \n\t"
+                "mov     r10, r6                                \n\t"
+                "mov     r11, r7                                \n\t"
+                "pop     {r4, r5, r6, r7, pc}" : : "r" (sp) : "memory");
 }
 
 /**

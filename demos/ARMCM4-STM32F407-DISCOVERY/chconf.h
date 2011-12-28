@@ -530,7 +530,7 @@
 /* Port-specific settings (override port settings defaulted in chcore.h).    */
 /*===========================================================================*/
 
-#define CORTEX_USE_FPU                FALSE
+#define CORTEX_USE_FPU                  FALSE
 
 #endif  /* _CHCONF_H_ */
 

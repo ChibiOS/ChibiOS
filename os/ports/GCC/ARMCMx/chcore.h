@@ -205,6 +205,24 @@ struct intctx {};
 
 #endif /* defined(__DOXYGEN__) */
 
+
+/**
+ * @brief   Excludes the default @p chSchIsPreemptionRequired()implementation.
+ */
+#define PORT_OPTIMIZED_ISPREEMPTIONREQUIRED
+
+#if (CH_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
+/**
+ * @brief   Inlineable version of this kernel function.
+ */
+#define chSchIsPreemptionRequired()                                         \
+  (rlist.r_preempt ? firstprio(&rlist.r_queue) > currp->p_prio :            \
+                     firstprio(&rlist.r_queue) >= currp->p_prio)
+#else /* CH_TIME_QUANTUM == 0 */
+#define chSchIsPreemptionRequired()                                         \
+  (firstprio(&rlist.r_queue) > currp->p_prio)
+#endif /* CH_TIME_QUANTUM == 0 */
+
 #endif /* _FROM_ASM_ */
 
 #endif /* _CHCORE_H_ */
