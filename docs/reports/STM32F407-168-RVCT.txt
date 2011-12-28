@@ -7,7 +7,7 @@ Compiler: RealView C/C++ Compiler V4.1.0.791 [Evaluation].
 *** ChibiOS/RT test suite
 ***
 *** Kernel:       2.3.5unstable
-*** Compiled:     Dec 28 2011 - 13:36:15
+*** Compiled:     Dec 28 2011 - 17:21:35
 *** Compiler:     RVCT
 *** Architecture: ARMv7-ME
 *** Core Variant: Cortex-M4
@@ -101,7 +101,7 @@ Compiler: RealView C/C++ Compiler V4.1.0.791 [Evaluation].
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 711270 msgs/S, 1422540 ctxswc/S
+--- Score : 711269 msgs/S, 1422538 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
@@ -117,11 +117,11 @@ Compiler: RealView C/C++ Compiler V4.1.0.791 [Evaluation].
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 447628 threads/S
+--- Score : 448826 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 638254 threads/S
+--- Score : 640692 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
@@ -145,7 +145,7 @@ Compiler: RealView C/C++ Compiler V4.1.0.791 [Evaluation].
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 1929428 lock+unlock/S
+--- Score : 1951860 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)
