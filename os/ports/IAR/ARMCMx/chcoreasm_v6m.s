@@ -30,7 +30,6 @@
 #include "chconf.h"
 #include "chcore.h"
 
-EXTCTX_SIZE     SET     32
 CONTEXT_OFFSET  SET     12
 SCB_ICSR        SET     0xE000ED04
 
