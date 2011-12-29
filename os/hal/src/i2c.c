@@ -169,7 +169,8 @@ i2cflags_t i2cGetErrors(I2CDriver *i2cp) {
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  *
- * @return              The number of received bytes or an exit code.
+ * @return              The operation status.
+ * @retval RDY_OK       if the function succeeded.
  * @retval RDY_RESET    if one or more I2C errors occurred, the errors can
  *                      be retrieved using @p i2cGetErrors().
  * @retval RDY_TIMEOUT  if a timeout occurred before operation end.
@@ -218,7 +219,7 @@ msg_t i2cMasterTransmitTimeout(I2CDriver *i2cp,
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  *
- * @return              The number of received bytes or an exit code.
+ * @return              The operation status.
  * @retval RDY_OK       if the function succeeded.
  * @retval RDY_RESET    if one or more I2C errors occurred, the errors can
  *                      be retrieved using @p i2cGetErrors().
