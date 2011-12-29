@@ -8,15 +8,14 @@ N = Decided against.
 Current Pipeline (2.3.x):
 X I2C device driver class support and at least one implementation.
 X STM32F2xx support.
-X FPU support in CM4 port.
+- Nios II support.
+- Update C++ wrapper.
 
 Within 2.x.x
 - FatFs 0.9x integration.
 - Software I2C implementation using a GPT instance for timings.
-- Nios II support.
 - LPC17xx support.
 - NUC120 support.
-- Update C++ wrapper.
 - MMC_SPI driver revision and speedup.
 - Static memory allocation hook macros in kernel code.
 - MAC driver for STM32F107, STM32F2xx, STM32F4xx.
