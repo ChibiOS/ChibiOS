@@ -179,7 +179,7 @@ i2cflags_t i2cGetErrors(I2CDriver *i2cp) {
  */
 msg_t i2cMasterTransmitTimeout(I2CDriver *i2cp,
                                i2caddr_t addr,
-                               const uint8_t *txbuf,
+                               uint8_t *txbuf,
                                size_t txbytes,
                                uint8_t *rxbuf,
                                size_t rxbytes,
@@ -202,7 +202,10 @@ msg_t i2cMasterTransmitTimeout(I2CDriver *i2cp,
                                            rxbuf, rxbytes, timeout);
   i2cp->id_state = I2C_READY;
   chSysUnlock();
-  return rdymsg;
+  if (i2cGetErrors(i2cp) != I2CD_NO_ERROR)
+    return RDY_RESET;
+  else
+    return rdymsg;
 }
 
 /**
@@ -228,7 +231,7 @@ msg_t i2cMasterTransmitTimeout(I2CDriver *i2cp,
  * @api
  */
 msg_t i2cMasterReceiveTimeout(I2CDriver *i2cp,
-                              i2caddr_t slave_addr,
+                              i2caddr_t addr,
                               uint8_t *rxbuf,
                               size_t rxbytes,
                               systime_t timeout){
@@ -249,7 +252,10 @@ msg_t i2cMasterReceiveTimeout(I2CDriver *i2cp,
   rdymsg = i2c_lld_master_receive_timeout(i2cp, addr, rxbuf, rxbytes, timeout);
   i2cp->id_state = I2C_READY;
   chSysUnlock();
-  return rdymsg;
+  if (i2cGetErrors(i2cp) != I2CD_NO_ERROR)
+    return RDY_RESET;
+  else
+    return rdymsg;
 }
 
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)

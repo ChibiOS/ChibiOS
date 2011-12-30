@@ -42,14 +42,17 @@ static i2cflags_t errors = 0;
 
 /* This is main function. */
 void request_fake(void){
+  msg_t status = RDY_OK;
+  systime_t tmo = MS2ST(4);
 
   i2cAcquireBus(&I2CD1);
-  i2cMasterReceive(&I2CD1, addr, rx_data, 2, &errors, TIME_INFINITE);
+  status = i2cMasterReceiveTimeout(&I2CD1, addr, rx_data, 2, tmo);
   i2cReleaseBus(&I2CD1);
 
-  if (errors == I2CD_ACK_FAILURE){
-    __NOP();
+  if (status != RDY_OK){
+    errors = i2cGetErrors(&I2CD1);
   }
+
   else{
     temperature = (rx_data[0] << 8) + rx_data[1];
   }

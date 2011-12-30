@@ -45,10 +45,16 @@ static i2cflags_t errors = 0;
 /* This is main function. */
 void request_temperature(void){
   int16_t t_int = 0, t_frac = 0;
+  msg_t status = RDY_OK;
+  systime_t tmo = MS2ST(4);
 
   i2cAcquireBus(&I2CD1);
-  i2cMasterReceive(&I2CD1, tmp75_addr, tmp75_rx_data, 2, &errors, TIME_INFINITE);
+  status = i2cMasterReceiveTimeout(&I2CD1, tmp75_addr, tmp75_rx_data, 2, tmo);
   i2cReleaseBus(&I2CD1);
+
+  if (status != RDY_OK){
+    errors = i2cGetErrors(&I2CD1);
+  }
 
   t_int = tmp75_rx_data[0] * 100;
   t_frac = (tmp75_rx_data[1] * 100) >> 8;
