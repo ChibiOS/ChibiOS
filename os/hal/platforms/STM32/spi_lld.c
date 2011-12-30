@@ -228,7 +228,6 @@ void spi_lld_init(void) {
   RCC->APB2RSTR     = RCC_APB2RSTR_SPI1RST;
   RCC->APB2RSTR     = 0;
   spiObjectInit(&SPID1);
-  SPID1.spd_thread  = NULL;
   SPID1.spd_spi     = SPI1;
   SPID1.spd_dmarx   = STM32_DMA1_CH2;
   SPID1.spd_dmatx   = STM32_DMA1_CH3;
@@ -238,7 +237,6 @@ void spi_lld_init(void) {
   RCC->APB1RSTR     = RCC_APB1RSTR_SPI2RST;
   RCC->APB1RSTR     = 0;
   spiObjectInit(&SPID2);
-  SPID2.spd_thread  = NULL;
   SPID2.spd_spi     = SPI2;
   SPID2.spd_dmarx   = STM32_DMA1_CH4;
   SPID2.spd_dmatx   = STM32_DMA1_CH5;
@@ -248,7 +246,6 @@ void spi_lld_init(void) {
   RCC->APB1RSTR     = RCC_APB1RSTR_SPI3RST;
   RCC->APB1RSTR     = 0;
   spiObjectInit(&SPID3);
-  SPID3.spd_thread  = NULL;
   SPID3.spd_spi     = SPI3;
   SPID3.spd_dmarx   = STM32_DMA2_CH1;
   SPID3.spd_dmatx   = STM32_DMA2_CH2;

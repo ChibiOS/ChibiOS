@@ -71,6 +71,7 @@
 *** 2.2.8 ***
 - NEW: Added new API chThdExitS() in order to allow atomic operations on
   thead exit.
+- FIX: Fixed Extra initialization in STM32 SPI driver (bug 3436127).
 - FIX: Fixed DMA priority setting error in STM32 UART driver (bug 3436125).
 - FIX: Fixed DMA priority setting error in STM32 SPI driver (bug 3436124).
 - FIX: Fixed broken support for UART5 in STM32 serial driver (bug 3434094).
