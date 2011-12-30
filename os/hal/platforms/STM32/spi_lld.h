@@ -73,33 +73,10 @@
 #endif
 
 /**
- * @brief   SPI1 DMA priority (0..3|lowest..highest).
- * @note    The priority level is used for both the TX and RX DMA channels but
- *          because of the channels ordering the RX channel has always priority
- *          over the TX channel.
+ * @brief   Shared SPIs DMA priority (0..3|lowest..highest).
  */
-#if !defined(STM32_SPI_SPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_DMA_PRIORITY         2
-#endif
-
-/**
- * @brief   SPI2 DMA priority (0..3|lowest..highest).
- * @note    The priority level is used for both the TX and RX DMA channels but
- *          because of the channels ordering the RX channel has always priority
- *          over the TX channel.
- */
-#if !defined(STM32_SPI_SPI2_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_DMA_PRIORITY         2
-#endif
-
-/**
- * @brief   SPI3 DMA priority (0..3|lowest..highest).
- * @note    The priority level is used for both the TX and RX DMA channels but
- *          because of the channels ordering the RX channel has always priority
- *          over the TX channel.
- */
-#if !defined(STM32_SPI_SPI3_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_DMA_PRIORITY         2
+#if !defined(STM32_SPI_SPI_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI_DMA_PRIORITY         2
 #endif
 
 /**

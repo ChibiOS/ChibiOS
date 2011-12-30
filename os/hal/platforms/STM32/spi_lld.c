@@ -304,10 +304,10 @@ void spi_lld_start(SPIDriver *spip) {
 
   /* More DMA setup.*/
   if ((spip->spd_config->spc_cr1 & SPI_CR1_DFF) == 0)
-    spip->spd_dmaccr = (STM32_SPI_SPI2_DMA_PRIORITY << 12) |
+    spip->spd_dmaccr = (STM32_SPI_SPI_DMA_PRIORITY << 12) |
                        DMA_CCR1_TEIE;               /* 8 bits transfers.    */
   else
-    spip->spd_dmaccr = (STM32_SPI_SPI2_DMA_PRIORITY << 12) |
+    spip->spd_dmaccr = (STM32_SPI_SPI_DMA_PRIORITY << 12) |
                        DMA_CCR1_TEIE | DMA_CCR1_MSIZE_0 |
                        DMA_CCR1_PSIZE_0;            /* 16 bits transfers.   */
 

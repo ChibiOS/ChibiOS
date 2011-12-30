@@ -5,8 +5,8 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.2.7
-*** GCC Version:  4.6.0
+*** Kernel:       2.2.8
+*** GCC Version:  4.6.2
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
 *** Platform:     STM32 Performance Line Medium Density
@@ -114,11 +114,11 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 161399 threads/S
+--- Score : 159606 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 240209 threads/S
+--- Score : 236259 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
