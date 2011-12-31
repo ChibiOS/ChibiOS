@@ -563,7 +563,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp,
  * @retval RDY_TIMEOUT    if a timeout occurred before operation end.
  */
 msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, uint8_t slave_addr,
-                                      uint8_t *txbuf, size_t txbytes,
+                                      const uint8_t *txbuf, size_t txbytes,
                                       uint8_t *rxbuf, size_t rxbytes,
                                       systime_t timeout){
 
@@ -578,7 +578,6 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, uint8_t slave_addr,
   i2cp->slave_addr = (slave_addr << 1) & 0x00FE;         /* LSB = 0 -> write */
   i2cp->txbytes = txbytes;
   i2cp->rxbytes = rxbytes;
-  i2cp->txbuf = txbuf;
   i2cp->rxbuf = rxbuf;
   i2cp->errors = 0;
 

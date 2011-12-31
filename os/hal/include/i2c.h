@@ -110,10 +110,10 @@ extern "C" {
   void i2cObjectInit(I2CDriver *i2cp);
   void i2cStart(I2CDriver *i2cp, const I2CConfig *config);
   void i2cStop(I2CDriver *i2cp);
-  inline i2cflags_t i2cGetErrors(I2CDriver *i2cp);
+  i2cflags_t i2cGetErrors(I2CDriver *i2cp);
   msg_t i2cMasterTransmitTimeout(I2CDriver *i2cp,
                                  i2caddr_t addr,
-                                 uint8_t *txbuf, size_t txbytes,
+                                 const uint8_t *txbuf, size_t txbytes,
                                  uint8_t *rxbuf, size_t rxbytes,
                                  systime_t timeout);
   msg_t i2cMasterReceiveTimeout(I2CDriver *i2cp,

@@ -308,7 +308,6 @@ struct I2CDriver{
   __IO size_t               txbytes;    /*!< @brief Number of bytes to be transmitted. */
   __IO size_t               rxbytes;    /*!< @brief Number of bytes to be received. */
   uint8_t                   *rxbuf;     /*!< @brief Pointer to receive buffer. */
-  uint8_t                   *txbuf;     /*!< @brief Pointer to transmit buffer.*/
 
   __IO i2cflags_t           errors;     /*!< @brief Error flags.*/
 
@@ -384,6 +383,7 @@ struct I2CDriver{
     Thread *tp = (i2cp)->id_thread;                                         \
     (i2cp)->id_thread = NULL;                                               \
     chSysLockFromIsr();                                                     \
+    tp->p_u.rdymsg = RDY_RESET;                                             \
     chSchReadyI(tp);                                                        \
     chSysUnlockFromIsr();                                                   \
   }                                                                         \
@@ -448,7 +448,7 @@ void i2c_lld_set_opmode(I2CDriver *i2cp);
 void i2c_lld_start(I2CDriver *i2cp);
 void i2c_lld_stop(I2CDriver *i2cp);
 msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, uint8_t slave_addr,
-                                      uint8_t *txbuf, size_t txbytes,
+                                      const uint8_t *txbuf, size_t txbytes,
                                       uint8_t *rxbuf, size_t rxbytes,
                                       systime_t timeout);
 msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp,
