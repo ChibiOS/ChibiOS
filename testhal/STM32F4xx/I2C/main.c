@@ -17,6 +17,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/*
+   Concepts and parts of this file have been contributed by Uladzimir Pylinsky
+   aka barthess.
+ */
 
 #include <stdlib.h>
 
@@ -128,7 +132,7 @@ int main(void) {
   /**
    * Prepares the accelerometer
    */
-  txbuf[0] = ACCEL_CTRL_REG1; // register address
+  txbuf[0] = ACCEL_CTRL_REG1; /* register address */
   txbuf[1] = 0x1;
   i2cAcquireBus(&I2CD2);
   i2cMasterTransmitTimeout(&I2CD2, mma8451_addr, txbuf, 2, rxbuf, 0, TIME_INFINITE);
@@ -140,7 +144,7 @@ int main(void) {
   while (TRUE) {
     chThdSleepMilliseconds(100);
 
-    txbuf[0] = ACCEL_OUT_DATA; // register address
+    txbuf[0] = ACCEL_OUT_DATA; /* register address */
     i2cAcquireBus(&I2CD2);
     status = i2cMasterTransmitTimeout(&I2CD2, mma8451_addr, txbuf, 1, rxbuf, 6, TIME_INFINITE);
     i2cReleaseBus(&I2CD2);
