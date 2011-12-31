@@ -65,7 +65,7 @@ typedef struct  {
  * @brief   AVR registers block.
  * @note    On some devices registers do not follow this layout on some
  *          ports, the ports with abnormal layout cannot be used through
- *          the PAL driver. Example: PORT F on Mega128.
+ *          PAL driver. Example: PORT F on Mega128.
  */
 typedef struct  {
   volatile uint8_t  in;
@@ -192,7 +192,7 @@ typedef avr_gpio_registers_t *ioportid_t;
 /**
  * @brief   Reads the physical I/O port states.
  *
- * @param[in] port      the port identifier
+ * @param[in] port      port identifier
  * @return              The port bits.
  *
  * @notapi
@@ -204,7 +204,7 @@ typedef avr_gpio_registers_t *ioportid_t;
  * @details The purpose of this function is to read back the latched output
  *          value.
  *
- * @param[in] port      the port identifier
+ * @param[in] port      port identifier
  * @return              The latched logical states.
  *
  * @notapi
@@ -214,8 +214,8 @@ typedef avr_gpio_registers_t *ioportid_t;
 /**
  * @brief   Writes a bits mask on a I/O port.
  *
- * @param[in] port      the port identifier
- * @param[in] bits      the bits to be written on the specified port
+ * @param[in] port      port identifier
+ * @param[in] bits      bits to be written on the specified port
  *
  * @notapi
  */
@@ -227,19 +227,21 @@ typedef avr_gpio_registers_t *ioportid_t;
  *          with the specified mode.
  * @note    Programming an unknown or unsupported mode is silently ignored.
  *
- * @param[in] port      the port identifier
- * @param[in] mask      the group mask
- * @param[in] mode      the mode
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask
+ * @param[in] offset    group bit offset within the port
+ * @param[in] mode      group mode
  *
  * @notapi
  */
-#define pal_lld_setgroupmode(port, mask, mode) _pal_lld_setgroupmode(port, mask, mode)
+#define pal_lld_setgroupmode(port, mask, offset, mode)                      \
+  _pal_lld_setgroupmode(port, mask << offset, mode)
 
 /**
  * @brief   Sets a pad logical state to @p PAL_HIGH.
  *
- * @param[in] port      the port identifier
- * @param[in] pad       the pad number within the port
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
  *
  * @notapi
  */
@@ -256,8 +258,8 @@ __asm__ __volatile__                                                        \
 /**
  * @brief   Clears a pad logical state to @p PAL_LOW.
  *
- * @param[in] port      the port identifier
- * @param[in] pad       the pad number within the port
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
  *
  * @notapi
  */

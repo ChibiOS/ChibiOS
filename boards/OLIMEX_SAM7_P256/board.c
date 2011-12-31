@@ -84,13 +84,14 @@ void boardInit(void) {
   /*
    * buttons setup.
    */
-  palSetGroupMode(IOPORT1, PIOA_B1_MASK | PIOA_B2_MASK, PAL_MODE_INPUT);
+  palSetGroupMode(IOPORT1, PIOA_B1_MASK | PIOA_B2_MASK, 0, PAL_MODE_INPUT);
 
   /*
    * MMC/SD slot setup.
    */
   palSetGroupMode(IOPORT1,
                   PIOA_MMC_WP_MASK | PIOA_MMC_CP_MASK,
+                  0,
                   PAL_MODE_INPUT);
 
   /*

@@ -332,7 +332,7 @@ typedef GPIO_TypeDef * ioportid_t;
  * @note    This function is not meant to be invoked directly by the application
  *          code.
  *
- * @param[in] port      the port identifier
+ * @param[in] port      port identifier
  * @return              The port bits.
  *
  * @notapi
@@ -346,7 +346,7 @@ typedef GPIO_TypeDef * ioportid_t;
  * @note    This function is not meant to be invoked directly by the application
  *          code.
  *
- * @param[in] port      the port identifier
+ * @param[in] port      port identifier
  * @return              The latched logical states.
  *
  * @notapi
@@ -361,8 +361,8 @@ typedef GPIO_TypeDef * ioportid_t;
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
  *
- * @param[in] port      the port identifier
- * @param[in] bits      the bits to be written on the specified port
+ * @param[in] port      port identifier
+ * @param[in] bits      bits to be written on the specified port
  *
  * @notapi
  */
@@ -376,8 +376,8 @@ typedef GPIO_TypeDef * ioportid_t;
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
  *
- * @param[in] port      the port identifier
- * @param[in] bits      the bits to be ORed on the specified port
+ * @param[in] port      port identifier
+ * @param[in] bits      bits to be ORed on the specified port
  *
  * @notapi
  */
@@ -391,8 +391,8 @@ typedef GPIO_TypeDef * ioportid_t;
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
  *
- * @param[in] port      the port identifier
- * @param[in] bits      the bits to be cleared on the specified port
+ * @param[in] port      port identifier
+ * @param[in] bits      bits to be cleared on the specified port
  *
  * @notapi
  */
@@ -406,10 +406,10 @@ typedef GPIO_TypeDef * ioportid_t;
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
  *
- * @param[in] port      the port identifier
- * @param[in] mask      the group mask
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask
  * @param[in] offset    the group bit offset within the port
- * @param[in] bits      the bits to be written. Values exceeding the group
+ * @param[in] bits      bits to be written. Values exceeding the group
  *                      width are masked.
  *
  * @notapi
@@ -426,14 +426,15 @@ typedef GPIO_TypeDef * ioportid_t;
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
  *
- * @param[in] port      the port identifier
- * @param[in] mask      the group mask
- * @param[in] mode      the mode
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask
+ * @param[in] offset    group bit offset within the port
+ * @param[in] mode      group mode
  *
  * @notapi
  */
-#define pal_lld_setgroupmode(port, mask, mode)                              \
-  _pal_lld_setgroupmode(port, mask, mode)
+#define pal_lld_setgroupmode(port, mask, offset, mode)                      \
+  _pal_lld_setgroupmode(port, mask << offset, mode)
 
 /**
  * @brief   Writes a logical state on an output pad.
@@ -441,8 +442,8 @@ typedef GPIO_TypeDef * ioportid_t;
  *          effect to modify the resistor setting because the output latched
  *          data is used for the resistor selection.
  *
- * @param[in] port      the port identifier
- * @param[in] pad       the pad number within the port
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
  * @param[in] bit       logical value, the value must be @p PAL_LOW or
  *                      @p PAL_HIGH
  *

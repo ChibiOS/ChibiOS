@@ -244,12 +244,13 @@ typedef LPC_GPIO_TypeDef *ioportid_t;
  *
  * @param[in] port      port identifier
  * @param[in] mask      group mask
+ * @param[in] offset    group bit offset within the port
  * @param[in] mode      group mode
  *
  * @notapi
  */
-#define pal_lld_setgroupmode(port, mask, mode)                              \
-  _pal_lld_setgroupmode(port, mask, mode)
+#define pal_lld_setgroupmode(port, mask, offset, mode)                      \
+  _pal_lld_setgroupmode(port, mask << offset, mode)
 
 /**
  * @brief   Writes a logical state on an output pad.

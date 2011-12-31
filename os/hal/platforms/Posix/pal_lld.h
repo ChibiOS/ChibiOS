@@ -133,6 +133,8 @@ typedef sim_vio_port_t *ioportid_t;
  * @brief   Low level PAL subsystem initialization.
  *
  * @param[in] config    architecture-dependent ports configuration
+ *
+ * @notapi
  */
 #define pal_lld_init(config)                                                \
   (vio_port_1 = (config)->VP1Data,                                          \
@@ -143,6 +145,8 @@ typedef sim_vio_port_t *ioportid_t;
  *
  * @param[in] port      port identifier
  * @return              The port bits.
+ *
+ * @notapi
  */
 #define pal_lld_readport(port) ((port)->pin)
 
@@ -153,6 +157,8 @@ typedef sim_vio_port_t *ioportid_t;
  *
  * @param[in] port      port identifier
  * @return              The latched logical states.
+ *
+ * @notapi
  */
 #define pal_lld_readlatch(port) ((port)->latch)
 
@@ -161,6 +167,8 @@ typedef sim_vio_port_t *ioportid_t;
  *
  * @param[in] port      port identifier
  * @param[in] bits      bits to be written on the specified port
+ *
+ * @notapi
  */
 #define pal_lld_writeport(port, bits) ((port)->latch = (bits))
 
@@ -168,14 +176,16 @@ typedef sim_vio_port_t *ioportid_t;
  * @brief   Pads group mode setup.
  * @details This function programs a pads group belonging to the same port
  *          with the specified mode.
- * @note    Programming an unknown or unsupported mode is silently ignored.
  *
  * @param[in] port      port identifier
  * @param[in] mask      group mask
+ * @param[in] offset    group bit offset within the port
  * @param[in] mode      group mode
+ *
+ * @notapi
  */
-#define pal_lld_setgroupmode(port, mask, mode)                              \
-  _pal_lld_setgroupmode(port, mask, mode)
+#define pal_lld_setgroupmode(port, mask, offset, mode)                      \
+  _pal_lld_setgroupmode(port, mask << offset, mode)
 
 #if !defined(__DOXYGEN__)
 extern sim_vio_port_t vio_port_1;

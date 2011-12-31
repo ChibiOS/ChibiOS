@@ -231,7 +231,7 @@ typedef msp430_ioport_t *ioportid_t;
  * @details This function is implemented by reading the PxIN register, the
  *          implementation has no side effects.
  *
- * @param[in] port      the port identifier
+ * @param[in] port      port identifier
  * @return              The port bits.
  *
  * @notapi
@@ -243,7 +243,7 @@ typedef msp430_ioport_t *ioportid_t;
  * @details This function is implemented by reading the PxOUT register, the
  *          implementation has no side effects.
  *
- * @param[in] port      the port identifier
+ * @param[in] port      port identifier
  * @return              The latched logical states.
  *
  * @notapi
@@ -255,8 +255,8 @@ typedef msp430_ioport_t *ioportid_t;
  * @details This function is implemented by writing the PxOUT register, the
  *          implementation has no side effects.
  *
- * @param[in] port      the port identifier
- * @param[in] bits      the bits to be written on the specified port
+ * @param[in] port      port identifier
+ * @param[in] bits      bits to be written on the specified port
  *
  * @notapi
  */
@@ -271,14 +271,15 @@ typedef msp430_ioport_t *ioportid_t;
  * @note    This function does not alter the @p PxSEL registers. Alternate
  *          functions setup must be handled by device-specific code.
  *
- * @param[in] port      the port identifier
- * @param[in] mask      the group mask
- * @param[in] mode      the mode
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask
+ * @param[in] offset    group bit offset within the port
+ * @param[in] mode      group mode
  *
  * @notapi
  */
-#define pal_lld_setgroupmode(port, mask, mode) \
-  _pal_lld_setgroupmode(port, mask, mode)
+#define pal_lld_setgroupmode(port, mask, offset, mode)                      \
+  _pal_lld_setgroupmode(port, mask << offset, mode)
 
 extern const PALConfig pal_default_config;
 

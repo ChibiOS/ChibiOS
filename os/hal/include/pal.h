@@ -137,7 +137,7 @@ typedef struct {
   /**
    * @brief Offset, within the port, of the least significant bit of the bus.
    */
-  iomode_t          offset;
+  uint_fast8_t          offset;
 } IOBus;
 
 /*===========================================================================*/
@@ -152,7 +152,6 @@ typedef struct {
  * @return              The bit mask.
  */
 #define PAL_PORT_BIT(n) ((ioportmask_t)(1 << (n)))
-
 
 /**
  * @brief   Bits group mask helper.
@@ -368,14 +367,16 @@ typedef struct {
  *
  * @param[in] port      port identifier
  * @param[in] mask      group mask
+ * @param[in] offset    group bit offset within the port
  * @param[in] mode      group mode
  *
  * @api
  */
 #if !defined(pal_lld_setgroupmode) || defined(__DOXYGEN__)
-#define palSetGroupMode(port, mask, mode)
+#define palSetGroupMode(port, mask, offset, mode)
 #else
-#define palSetGroupMode(port, mask, mode) pal_lld_setgroupmode(port, mask, mode)
+#define palSetGroupMode(port, mask, offset, mode)                           \
+  pal_lld_setgroupmode(port, mask, offset, mode)
 #endif
 
 /**
@@ -509,7 +510,7 @@ typedef struct {
  */
 #if !defined(pal_lld_setpadmode) || defined(__DOXYGEN__)
 #define palSetPadMode(port, pad, mode)                                  \
-  palSetGroupMode(port, PAL_PORT_BIT(pad), mode)
+  palSetGroupMode(port, PAL_PORT_BIT(pad), 0, mode)
 #else
 #define palSetPadMode(port, pad, mode) pal_lld_setpadmode(port, pad, mode)
 #endif

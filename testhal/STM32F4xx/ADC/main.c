@@ -127,7 +127,7 @@ int main(void) {
    * Setting up analog inputs used by the demo.
    */
   palSetGroupMode(GPIOC, PAL_PORT_BIT(1) | PAL_PORT_BIT(2),
-                  PAL_MODE_INPUT_ANALOG);
+                  0, PAL_MODE_INPUT_ANALOG);
 
   /*
    * Creates the blinker thread.

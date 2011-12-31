@@ -123,6 +123,10 @@ typedef AT91PS_PIO ioportid_t;
 
 /**
  * @brief   Low level PAL subsystem initialization.
+ *
+ * @param[in] config    architecture-dependent ports configuration
+ *
+ * @notapi
  */
 #define pal_lld_init(config) _pal_lld_init(config)
 
@@ -131,7 +135,7 @@ typedef AT91PS_PIO ioportid_t;
  * @details This function is implemented by reading the PIO_PDSR register, the
  *          implementation has no side effects.
  *
- * @param[in] port      the port identifier
+ * @param[in] port      port identifier
  * @return              The port bits.
  *
  * @notapi
@@ -143,7 +147,7 @@ typedef AT91PS_PIO ioportid_t;
  * @details This function is implemented by reading the PIO_ODSR register, the
  *          implementation has no side effects.
  *
- * @param[in] port      the port identifier
+ * @param[in] port      port identifier
  * @return              The latched logical states.
  *
  * @notapi
@@ -167,8 +171,8 @@ typedef AT91PS_PIO ioportid_t;
  * @details This function is implemented by writing the PIO_SODR register, the
  *          implementation has no side effects.
  *
- * @param[in] port      the port identifier
- * @param[in] bits      the bits to be ORed on the specified port
+ * @param[in] port      port identifier
+ * @param[in] bits      bits to be ORed on the specified port
  *
  * @notapi
  */
@@ -179,8 +183,8 @@ typedef AT91PS_PIO ioportid_t;
  * @details This function is implemented by writing the PIO_CODR register, the
  *          implementation has no side effects.
  *
- * @param[in] port      the port identifier
- * @param[in] bits      the bits to be cleared on the specified port
+ * @param[in] port      port identifier
+ * @param[in] bits      bits to be cleared on the specified port
  *
  * @notapi
  */
@@ -192,10 +196,10 @@ typedef AT91PS_PIO ioportid_t;
  *          PIO_OWDR registers, the implementation is not atomic because the
  *          multiple accesses.
  *
- * @param[in] port      the port identifier
- * @param[in] mask      the group mask
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask
  * @param[in] offset    the group bit offset within the port
- * @param[in] bits      the bits to be written. Values exceeding the group
+ * @param[in] bits      bits to be written. Values exceeding the group
  *                      width are masked.
  *
  * @notapi
@@ -212,20 +216,21 @@ typedef AT91PS_PIO ioportid_t;
  * @note    @p PAL_MODE_UNCONNECTED is implemented as push pull output with
  *          high state.
  *
- * @param[in] port      the port identifier
- * @param[in] mask      the group mask
- * @param[in] mode      the mode
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask
+ * @param[in] offset    group bit offset within the port
+ * @param[in] mode      group mode
  *
  * @notapi
  */
-#define pal_lld_setgroupmode(port, mask, mode) \
-  _pal_lld_setgroupmode(port, mask, mode)
+#define pal_lld_setgroupmode(port, mask, offset, mode)                      \
+  _pal_lld_setgroupmode(port, mask << offset, mode)
 
 /**
  * @brief   Writes a logical state on an output pad.
  *
- * @param[in] port      the port identifier
- * @param[in] pad       the pad number within the port
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
  * @param[in] bit       logical value, the value must be @p PAL_LOW or
  *                      @p PAL_HIGH
  *

@@ -91,6 +91,8 @@
 - NEW: Improved I2C driver model and STM32 implementation by Barthess.
 - CHANGE: Removed the option to change the stack alignment in the GCC
   Cortex-Mx ports, now alignment is always 64 bits.
+- CHANGE: Modified the function palSetGroupMode() to have an offset parameter
+  in order to make it similar to other functions operating on groups.
 - CHANGE: Increased main and process default stack sizes from 0x100 to 0x200
   in LPC1114 and LPC1343 linker scripts.
 
