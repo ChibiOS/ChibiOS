@@ -210,7 +210,6 @@
 #define STM32_UART_USART3_DMA_PRIORITY      0
 #define STM32_UART_DMA_ERROR_HOOK(uartp)    chSysHalt()
 
-
 /*
  * I2C driver system settings.
  */
