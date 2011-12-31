@@ -48,17 +48,17 @@ static msg_t Blink(void *arg) {
 /*
  * Accelerometer thread
  */
-//static WORKING_AREA(PollAccelThreadWA, 256);
-//static msg_t PollAccelThread(void *arg) {
-//  chRegSetThreadName("PollAccel");
-//  (void)arg;
-//  while (TRUE) {
-////    chThdSleepMilliseconds(rand() & 31);
-//    chThdSleepMilliseconds(32);
-//    request_acceleration_data();
-//  }
-//  return 0;
-//}
+/*static WORKING_AREA(PollAccelThreadWA, 256);
+static msg_t PollAccelThread(void *arg) {
+  chRegSetThreadName("PollAccel");
+  (void)arg;
+  while (TRUE) {
+    chThdSleepMilliseconds(rand() & 31);
+    chThdSleepMilliseconds(32);
+    request_acceleration_data();
+  }
+  return 0;
+}*/
 
 
 /* Temperature polling thread */
@@ -67,7 +67,7 @@ static msg_t PollTmp75Thread(void *arg) {
   chRegSetThreadName("PollTmp75");
   (void)arg;
   while (TRUE) {
-//    chThdSleepMilliseconds(rand() & 31);
+    /*chThdSleepMilliseconds(rand() & 31);*/
     chThdSleepMilliseconds(15);
     /* Call reading function */
     request_temperature();
@@ -103,11 +103,11 @@ int main(void) {
   I2CInit_pns();
 
   /* Create accelerometer thread */
-//  chThdCreateStatic(PollAccelThreadWA,
-//          sizeof(PollAccelThreadWA),
-//          NORMALPRIO,
-//          PollAccelThread,
-//          NULL);
+  /*chThdCreateStatic(PollAccelThreadWA,
+          sizeof(PollAccelThreadWA),
+          NORMALPRIO,
+          PollAccelThread,
+          NULL);*/
 
   /* Create temperature thread */
   chThdCreateStatic(PollTmp75ThreadWA,

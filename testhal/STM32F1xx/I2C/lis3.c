@@ -68,7 +68,7 @@ int init_lis3(void){
  *
  */
 void request_acceleration_data(void){
-  accel_tx_data[0] = ACCEL_OUT_DATA | AUTO_INCREMENT_BIT; // register address
+  accel_tx_data[0] = ACCEL_OUT_DATA | AUTO_INCREMENT_BIT; /* register address */
   i2cAcquireBus(&I2CD1);
   i2cMasterTransmit(&I2CD1, lis3_addr, accel_tx_data, 1, accel_rx_data, 6, &errors, TIME_INFINITE);
   i2cReleaseBus(&I2CD1);
