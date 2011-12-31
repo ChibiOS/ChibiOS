@@ -51,6 +51,9 @@ static int16_t acceleration_z = 0;
  * Init function. Here we will also start personal serving thread.
  */
 int init_lis3(void){
+  msg_t status = RDY_OK;
+  systime_t tmo = MS2ST(4);
+
   /* configure accelerometer */
   accel_tx_data[0] = ACCEL_CTRL_REG1 | AUTO_INCREMENT_BIT; /* register address */
   accel_tx_data[1] = 0b11100111;
@@ -59,8 +62,13 @@ int init_lis3(void){
 
   /* sending */
   i2cAcquireBus(&I2CD1);
-  i2cMasterTransmit(&I2CD1, lis3_addr, accel_tx_data, 4, accel_rx_data, 0, &errors, TIME_INFINITE);
+  status = i2cMasterTransmitTimeout(&I2CD1, lis3_addr, accel_tx_data, 4, accel_rx_data, 0, tmo);
   i2cReleaseBus(&I2CD1);
+
+  if (status != RDY_OK){
+    errors = i2cGetErrors(&I2CD1);
+  }
+
   return 0;
 }
 
@@ -68,10 +76,17 @@ int init_lis3(void){
  *
  */
 void request_acceleration_data(void){
+  msg_t status = RDY_OK;
+  systime_t tmo = MS2ST(4);
+
   accel_tx_data[0] = ACCEL_OUT_DATA | AUTO_INCREMENT_BIT; /* register address */
   i2cAcquireBus(&I2CD1);
-  i2cMasterTransmit(&I2CD1, lis3_addr, accel_tx_data, 1, accel_rx_data, 6, &errors, TIME_INFINITE);
+  status = i2cMasterTransmitTimeout(&I2CD1, lis3_addr, accel_tx_data, 1, accel_rx_data, 6, tmo);
   i2cReleaseBus(&I2CD1);
+
+  if (status != RDY_OK){
+    errors = i2cGetErrors(&I2CD1);
+  }
 
   acceleration_x = accel_rx_data[0] + (accel_rx_data[1] << 8);
   acceleration_y = accel_rx_data[2] + (accel_rx_data[3] << 8);

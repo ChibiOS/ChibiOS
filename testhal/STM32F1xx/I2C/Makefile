@@ -84,7 +84,7 @@ CSRC = $(PORTSRC) \
        i2c_pns.c \
   	   tmp75.c \
   	   fake.c \
-  	   #lis3.c
+  	   lis3.c
   	   
 
 	   

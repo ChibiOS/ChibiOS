@@ -49,8 +49,12 @@ void request_fake(void){
   status = i2cMasterReceiveTimeout(&I2CD1, addr, rx_data, 2, tmo);
   i2cReleaseBus(&I2CD1);
 
-  if (status != RDY_OK){
+  if (status == RDY_RESET){
     errors = i2cGetErrors(&I2CD1);
+    if (errors == I2CD_ACK_FAILURE){
+      /* there is no slave with given address on the bus, or it was die */
+      return;
+    }
   }
 
   else{

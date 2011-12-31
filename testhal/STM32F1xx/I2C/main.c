@@ -48,17 +48,17 @@ static msg_t Blink(void *arg) {
 /*
  * Accelerometer thread
  */
-/*static WORKING_AREA(PollAccelThreadWA, 256);
+static WORKING_AREA(PollAccelThreadWA, 256);
 static msg_t PollAccelThread(void *arg) {
   chRegSetThreadName("PollAccel");
   (void)arg;
   while (TRUE) {
-    chThdSleepMilliseconds(rand() & 31);
+    /*chThdSleepMilliseconds(rand() & 31);*/
     chThdSleepMilliseconds(32);
     request_acceleration_data();
   }
   return 0;
-}*/
+}
 
 
 /* Temperature polling thread */
@@ -103,11 +103,11 @@ int main(void) {
   I2CInit_pns();
 
   /* Create accelerometer thread */
-  /*chThdCreateStatic(PollAccelThreadWA,
+  chThdCreateStatic(PollAccelThreadWA,
           sizeof(PollAccelThreadWA),
           NORMALPRIO,
           PollAccelThread,
-          NULL);*/
+          NULL);
 
   /* Create temperature thread */
   chThdCreateStatic(PollTmp75ThreadWA,

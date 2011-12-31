@@ -45,7 +45,7 @@ void I2CInit_pns(void){
 
   /* startups. Pauses added just to be safe */
   chThdSleepMilliseconds(100);
-  /*init_lis3();*/
+  init_lis3();
 }
 
 
