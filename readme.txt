@@ -78,6 +78,7 @@
 - FIX: Fixed SYSCFG clock not started in STM32L1/F4 HALs (bug 3449139).
 - FIX: Fixed wrong definitions in STM32L-Discovery board file (bug 3449076).
 - OPT: Improved the exception exit code in the GCC Cortex-Mx ports.
+- NEW: Added an utility module to access LIS302DL MEMS using a SPI.
 - NEW: Updated STM32F2xx support by inheriting the work done on the STM32F4xx,
   the whole thing is untested because lack of hardware.
 - NEW: Files nvic.c and nvic.h moved under ./os/ports/common/ARMCMx, removed
