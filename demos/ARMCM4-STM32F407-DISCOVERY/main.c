@@ -266,14 +266,14 @@ int main(void) {
    * driver 2.
    */
   while (TRUE) {
-    uint8_t x, y, z;
+    int8_t x, y, z;
 
     if (palReadPad(GPIOA, GPIOA_BUTTON))
       TestThread(&SD2);
 
-    x = lis302dlReadRegister(&SPID1, LIS302DL_OUTX);
-    y = lis302dlReadRegister(&SPID1, LIS302DL_OUTY);
-    z = lis302dlReadRegister(&SPID1, LIS302DL_OUTZ);
+    x = (int8_t)lis302dlReadRegister(&SPID1, LIS302DL_OUTX);
+    y = (int8_t)lis302dlReadRegister(&SPID1, LIS302DL_OUTY);
+    z = (int8_t)lis302dlReadRegister(&SPID1, LIS302DL_OUTZ);
     chprintf((BaseChannel *)&SD2, "%d, %d, %d\r\n", x, y, z);
     chThdSleepMilliseconds(500);
   }
