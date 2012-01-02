@@ -394,7 +394,6 @@ void i2c_lld_start(I2CDriver *i2cp) {
 
       i2cp->dmamode |= STM32_DMA_CR_CHSEL(I2C1_RX_DMA_CHANNEL) | \
       	  	  	  	  	  STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY);
-      __NOP();
     }
 #endif /* STM32_I2C_USE_I2C1 */
 
