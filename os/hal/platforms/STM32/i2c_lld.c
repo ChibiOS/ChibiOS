@@ -666,7 +666,9 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp,
   dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
   dmaStreamSetMode(i2cp->dmarx, ((i2cp->dmamode) | STM32_DMA_CR_DIR_P2M));
 
-  i2c_lld_wait_bus_free(i2cp);
+  /* Wait until BUSY flag is reset.  */
+  while(i2cp->i2c->SR2 & I2C_SR2_BUSY)
+    ;
 
   /* wait stop bit from previous transaction*/
   while(i2cp->i2c->CR1 & I2C_CR1_STOP)
@@ -675,6 +677,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp,
   i2cp->i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN;
   i2cp->i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
 
+  chSysLock(); /* this lock will be released in high level part */
   i2c_lld_wait_s(i2cp, timeout, rdymsg);
 
   return rdymsg;
@@ -724,7 +727,9 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, uint8_t slave_addr,
   dmaStreamSetTransactionSize(i2cp->dmatx, txbytes);
   dmaStreamSetMode(i2cp->dmatx, ((i2cp->dmamode) | STM32_DMA_CR_DIR_M2P));
 
-  i2c_lld_wait_bus_free(i2cp);
+  /* Wait until BUSY flag is reset.  */
+  while(i2cp->i2c->SR2 & I2C_SR2_BUSY)
+    ;
 
   /* wait stop bit from previous transaction*/
   while(i2cp->i2c->CR1 & I2C_CR1_STOP)
@@ -733,6 +738,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, uint8_t slave_addr,
   i2cp->i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN;
   i2cp->i2c->CR1 |= I2C_CR1_START;
 
+  chSysLock(); /* this lock will be released in high level part */
   i2c_lld_wait_s(i2cp, timeout, rdymsg);
 
   return rdymsg;

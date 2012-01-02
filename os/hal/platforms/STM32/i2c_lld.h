@@ -328,13 +328,6 @@ struct I2CDriver{
 /*===========================================================================*/
 
 /**
- * Wait until BUSY flag is reset.
- */
-#define i2c_lld_wait_bus_free(i2cp) {                                       \
-  while(i2cp->i2c->SR2 & I2C_SR2_BUSY)                                      \
-    ;                                                                       \
-}
-/**
  * @brief   Waits for operation completion.
  * @details This function waits for the driver to complete the current
  *          operation.
@@ -349,7 +342,6 @@ struct I2CDriver{
 #define i2c_lld_wait_s(i2cp, timeout, rdymsg) {                             \
   chDbgAssert((i2cp)->thread == NULL,                                       \
               "_i2c_wait(), #1", "already waiting");                        \
-  chSysLock(); /* this lock will be disarmed in high level part */          \
   (i2cp)->thread = chThdSelf();                                             \
   rdymsg = chSchGoSleepTimeoutS(THD_STATE_SUSPENDED, timeout);              \
 }
@@ -362,13 +354,13 @@ struct I2CDriver{
  * @notapi
  */
 #define i2c_lld_wakeup_isr(i2cp) {                                          \
+  chSysLockFromIsr();                                                       \
   if ((i2cp)->thread != NULL) {                                             \
     Thread *tp = (i2cp)->thread;                                            \
     (i2cp)->thread = NULL;                                                  \
-    chSysLockFromIsr();                                                     \
     chSchReadyI(tp);                                                        \
-    chSysUnlockFromIsr();                                                   \
   }                                                                         \
+  chSysUnlockFromIsr();                                                     \
 }
 
 /**
@@ -379,14 +371,14 @@ struct I2CDriver{
  * @notapi
  */
 #define i2c_lld_error_wakeup_isr(i2cp) {                                    \
+  chSysLockFromIsr();                                                       \
   if ((i2cp)->thread != NULL) {                                             \
     Thread *tp = (i2cp)->thread;                                            \
     (i2cp)->thread = NULL;                                                  \
-    chSysLockFromIsr();                                                     \
     tp->p_u.rdymsg = RDY_RESET;                                             \
     chSchReadyI(tp);                                                        \
-    chSysUnlockFromIsr();                                                   \
   }                                                                         \
+  chSysUnlockFromIsr();                                                     \
 }
 
 /**
