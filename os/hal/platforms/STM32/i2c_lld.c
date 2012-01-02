@@ -95,6 +95,9 @@ restrictions.
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/* Peripheral clock frequency */
+#define I2C_CLK_FREQ  ((STM32_PCLK1) / 1000000)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -235,36 +238,35 @@ static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
   dmaStreamClearInterrupt(i2cp->dmarx);
   chSysUnlockFromIsr();
 
-  #define reg (i2cp->id_i2c)
   errors = I2CD_NO_ERROR;
 
-  if(reg->SR1 & I2C_SR1_BERR) {                /* Bus error */
-    reg->SR1 &= ~I2C_SR1_BERR;
+  if(i2cp->id_i2c->SR1 & I2C_SR1_BERR) {                /* Bus error */
+    i2cp->id_i2c->SR1 &= ~I2C_SR1_BERR;
     errors |= I2CD_BUS_ERROR;
   }
-  if(reg->SR1 & I2C_SR1_ARLO) {                /* Arbitration lost */
-    reg->SR1 &= ~I2C_SR1_ARLO;
+  if(i2cp->id_i2c->SR1 & I2C_SR1_ARLO) {                /* Arbitration lost */
+    i2cp->id_i2c->SR1 &= ~I2C_SR1_ARLO;
     errors |= I2CD_ARBITRATION_LOST;
   }
-  if(reg->SR1 & I2C_SR1_AF) {                  /* Acknowledge fail */
-    reg->SR1 &= ~I2C_SR1_AF;
-    reg->CR1 |= I2C_CR1_STOP;                  /* setting stop bit */
+  if(i2cp->id_i2c->SR1 & I2C_SR1_AF) {                  /* Acknowledge fail */
+    i2cp->id_i2c->SR1 &= ~I2C_SR1_AF;
+    i2cp->id_i2c->CR1 |= I2C_CR1_STOP;                  /* setting stop bit */
     errors |= I2CD_ACK_FAILURE;
   }
-  if(reg->SR1 & I2C_SR1_OVR) {                 /* Overrun */
-    reg->SR1 &= ~I2C_SR1_OVR;
+  if(i2cp->id_i2c->SR1 & I2C_SR1_OVR) {                 /* Overrun */
+    i2cp->id_i2c->SR1 &= ~I2C_SR1_OVR;
     errors |= I2CD_OVERRUN;
   }
-  if(reg->SR1 & I2C_SR1_PECERR) {              /* PEC error */
-    reg->SR1 &= ~I2C_SR1_PECERR;
+  if(i2cp->id_i2c->SR1 & I2C_SR1_PECERR) {              /* PEC error */
+    i2cp->id_i2c->SR1 &= ~I2C_SR1_PECERR;
     errors |= I2CD_PEC_ERROR;
   }
-  if(reg->SR1 & I2C_SR1_TIMEOUT) {             /* SMBus Timeout */
-    reg->SR1 &= ~I2C_SR1_TIMEOUT;
+  if(i2cp->id_i2c->SR1 & I2C_SR1_TIMEOUT) {             /* SMBus Timeout */
+    i2cp->id_i2c->SR1 &= ~I2C_SR1_TIMEOUT;
     errors |= I2CD_TIMEOUT;
   }
-  if(reg->SR1 & I2C_SR1_SMBALERT) {            /* SMBus alert */
-    reg->SR1 &= ~I2C_SR1_SMBALERT;
+  if(i2cp->id_i2c->SR1 & I2C_SR1_SMBALERT) {            /* SMBus alert */
+    i2cp->id_i2c->SR1 &= ~I2C_SR1_SMBALERT;
     errors |= I2CD_SMB_ALERT;
   }
 
@@ -272,7 +274,6 @@ static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
     i2cp->errors |= errors;
     i2c_lld_isr_err_code(i2cp);
   }
-  #undef reg
 }
 
 
@@ -640,33 +641,31 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
   /**************************************************************************
    * CR2 Configuration
    */
-#define FREQ    ((STM32_PCLK1) / 1000000)
-
 #if   defined(STM32F4XX)
-  #if (!(FREQ >= 2) && (FREQ <= 42))
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 42))
     #error "Peripheral clock freq. out of range."
   #endif
 
 #elif defined(STM32L1XX_MD)
-  #if (!(FREQ >= 2) && (FREQ <= 32))
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 32))
     #error "Peripheral clock freq. out of range."
   #endif
 
 #elif defined(STM32F2XX)
-  #if (!(FREQ >= 2) && (FREQ <= 30))
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 30))
     #error "Peripheral clock freq. out of range."
   #endif
 
 #elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||                 \
       defined(STM32F10X_HD_VL)
-  #if (!(FREQ >= 2) && (FREQ <= 24))
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 24))
     #error "Peripheral clock freq. out of range."
   #endif
 
 #elif defined(STM32F10X_LD) || defined(STM32F10X_MD) ||                       \
       defined(STM32F10X_HD) || defined(STM32F10X_XL) ||                       \
       defined(STM32F10X_CL)
-  #if (!(FREQ >= 2) && (FREQ <= 36))
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 36))
     #error "Peripheral clock freq. out of range."
   #endif
 
@@ -674,7 +673,7 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
 #error "unspecified, unsupported or invalid STM32 platform"
 #endif
   i2cp->id_i2c->CR2 &= (uint16_t)~I2C_CR2_FREQ;                 /* Clear frequency FREQ[5:0] bits */
-  i2cp->id_i2c->CR2 |= (uint16_t)FREQ;
+  i2cp->id_i2c->CR2 |= (uint16_t)I2C_CLK_FREQ;
 
   /**************************************************************************
    * CCR Configuration
@@ -689,7 +688,7 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
     clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 2));    /* Standard mode clock_div calculate: Tlow/Thigh = 1/1 */
     if (clock_div < 0x04) clock_div = 0x04;                     /* Test if CCR value is under 0x4, and set the minimum allowed value */
     regCCR |= (clock_div & I2C_CCR_CCR);                        /* Set clock_div value for standard mode */
-    i2cp->id_i2c->TRISE = FREQ + 1;                             /* Set Maximum Rise Time for standard mode */
+    i2cp->id_i2c->TRISE = I2C_CLK_FREQ + 1;                             /* Set Maximum Rise Time for standard mode */
   }
   else if(clock_speed <= 400000) {                              /* Configure clock_div in fast mode */
     chDbgAssert((duty == FAST_DUTY_CYCLE_2) ||
@@ -705,14 +704,12 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
     }
     if(clock_div < 0x01) clock_div = 0x01;                      /* Test if CCR value is under 0x1, and set the minimum allowed value */
     regCCR |= (I2C_CCR_FS | (clock_div & I2C_CCR_CCR));         /* Set clock_div value and F/S bit for fast mode*/
-    i2cp->id_i2c->TRISE = (FREQ * 300 / 1000) + 1;              /* Set Maximum Rise Time for fast mode */
+    i2cp->id_i2c->TRISE = (I2C_CLK_FREQ * 300 / 1000) + 1;              /* Set Maximum Rise Time for fast mode */
   }
   chDbgAssert((clock_div <= I2C_CCR_CCR),
       "i2c_lld_set_clock(), #3", "Too low clock clock speed selected");
 
   i2cp->id_i2c->CCR = regCCR;                                   /* Write to I2Cx CCR */
-
-#undef FREQ
 }
 
 
