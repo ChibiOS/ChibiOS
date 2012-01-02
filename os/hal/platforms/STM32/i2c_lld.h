@@ -443,8 +443,6 @@ extern "C" {
 
 void i2c_lld_init(void);
 void i2c_lld_reset(I2CDriver *i2cp);
-void i2c_lld_set_clock(I2CDriver *i2cp);
-void i2c_lld_set_opmode(I2CDriver *i2cp);
 void i2c_lld_start(I2CDriver *i2cp);
 void i2c_lld_stop(I2CDriver *i2cp);
 msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, uint8_t slave_addr,
@@ -456,7 +454,6 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp,
                                     uint8_t *rxbuf,
                                     size_t rxbytes,
                                     systime_t timeout);
-void i2c_lld_master_transceive(I2CDriver *i2cp);
 
 #ifdef __cplusplus
 }

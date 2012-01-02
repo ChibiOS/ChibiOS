@@ -133,6 +133,144 @@ static volatile uint16_t dbgCR2 = 0;
 /*===========================================================================*/
 
 /**
+ * @brief Set clock speed.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ */
+static void i2c_lld_set_clock(I2CDriver *i2cp) {
+  volatile uint16_t regCCR, clock_div;
+  int32_t clock_speed = i2cp->config->clock_speed;
+  i2cdutycycle_t duty = i2cp->config->duty_cycle;
+
+  chDbgCheck((i2cp != NULL) && (clock_speed > 0) && (clock_speed <= 4000000),
+             "i2c_lld_set_clock");
+  /**
+   * CR2 Configuration
+   */
+#if   defined(STM32F4XX)
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 42))
+    #error "Peripheral clock freq. out of range."
+  #endif
+
+#elif defined(STM32L1XX_MD)
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 32))
+    #error "Peripheral clock freq. out of range."
+  #endif
+
+#elif defined(STM32F2XX)
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 30))
+    #error "Peripheral clock freq. out of range."
+  #endif
+
+#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||                 \
+      defined(STM32F10X_HD_VL)
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 24))
+    #error "Peripheral clock freq. out of range."
+  #endif
+
+#elif defined(STM32F10X_LD) || defined(STM32F10X_MD) ||                       \
+      defined(STM32F10X_HD) || defined(STM32F10X_XL) ||                       \
+      defined(STM32F10X_CL)
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 36))
+    #error "Peripheral clock freq. out of range."
+  #endif
+
+#else
+#error "unspecified, unsupported or invalid STM32 platform"
+#endif
+  i2cp->i2c->CR2 &= (uint16_t)~I2C_CR2_FREQ;                 /* Clear frequency FREQ[5:0] bits */
+  i2cp->i2c->CR2 |= (uint16_t)I2C_CLK_FREQ;
+
+  /**
+   * CCR Configuration
+   */
+  regCCR = 0;                                                   /* Clear F/S, DUTY and CCR[11:0] bits */
+  clock_div = I2C_CCR_CCR;
+
+  if (clock_speed <= 100000) {                                  /* Configure clock_div in standard mode */
+    chDbgAssert(duty == STD_DUTY_CYCLE,
+                "i2c_lld_set_clock(), #1",
+                "Invalid standard mode duty cycle");
+    clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 2));    /* Standard mode clock_div calculate: Tlow/Thigh = 1/1 */
+    if (clock_div < 0x04) clock_div = 0x04;                     /* Test if CCR value is under 0x4, and set the minimum allowed value */
+    regCCR |= (clock_div & I2C_CCR_CCR);                        /* Set clock_div value for standard mode */
+    i2cp->i2c->TRISE = I2C_CLK_FREQ + 1;                             /* Set Maximum Rise Time for standard mode */
+  }
+  else if(clock_speed <= 400000) {                              /* Configure clock_div in fast mode */
+    chDbgAssert((duty == FAST_DUTY_CYCLE_2) ||
+                (duty == FAST_DUTY_CYCLE_16_9),
+                "i2c_lld_set_clock(), #2",
+                "Invalid fast mode duty cycle");
+    if(duty == FAST_DUTY_CYCLE_2) {
+      clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 3));  /* Fast mode clock_div calculate: Tlow/Thigh = 2/1 */
+    }
+    else if(duty == FAST_DUTY_CYCLE_16_9) {
+      clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 25)); /* Fast mode clock_div calculate: Tlow/Thigh = 16/9 */
+      regCCR |= I2C_CCR_DUTY;                                   /* Set DUTY bit */
+    }
+    if(clock_div < 0x01) clock_div = 0x01;                      /* Test if CCR value is under 0x1, and set the minimum allowed value */
+    regCCR |= (I2C_CCR_FS | (clock_div & I2C_CCR_CCR));         /* Set clock_div value and F/S bit for fast mode*/
+    i2cp->i2c->TRISE = (I2C_CLK_FREQ * 300 / 1000) + 1;              /* Set Maximum Rise Time for fast mode */
+  }
+  chDbgAssert((clock_div <= I2C_CCR_CCR),
+      "i2c_lld_set_clock(), #3", "Too low clock clock speed selected");
+
+  i2cp->i2c->CCR = regCCR;                                   /* Write to I2Cx CCR */
+}
+
+
+/**
+ * @brief Set operation mode of I2C hardware.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ */
+static void i2c_lld_set_opmode(I2CDriver *i2cp) {
+  i2copmode_t opmode = i2cp->config->op_mode;
+  uint16_t regCR1;
+
+  regCR1 = i2cp->i2c->CR1;             /* Get the I2Cx CR1 value */
+  switch(opmode){
+  case OPMODE_I2C:
+    regCR1 &= (uint16_t)~(I2C_CR1_SMBUS|I2C_CR1_SMBTYPE);
+    break;
+  case OPMODE_SMBUS_DEVICE:
+    regCR1 |= I2C_CR1_SMBUS;
+    regCR1 &= (uint16_t)~(I2C_CR1_SMBTYPE);
+    break;
+  case OPMODE_SMBUS_HOST:
+    regCR1 |= (I2C_CR1_SMBUS|I2C_CR1_SMBTYPE);
+    break;
+  }
+
+  i2cp->i2c->CR1 = regCR1;             /* Write to I2Cx CR1 */
+}
+
+
+/**
+ * @brief   Receive data via the I2C bus after writing.
+ *
+ * @param[in] i2cp        pointer to the @p I2CDriver object
+ *
+ * @notapi
+ */
+static void i2c_lld_master_transceive(I2CDriver *i2cp){
+  /* There are no checks in this function because:
+     - all values checked earlier
+     - this function calls from ISR */
+
+  /* init driver fields */
+  i2cp->slave_addr |= 0x01;    /* LSB = 1 -> receive */
+
+  /* TODO: DMA error handling */
+  dmaStreamSetMemory0(i2cp->dmarx, i2cp->rxbuf);
+  dmaStreamSetTransactionSize(i2cp->dmarx, i2cp->rxbytes);
+  dmaStreamSetMode(i2cp->dmarx, ((i2cp->dmamode) | STM32_DMA_CR_DIR_P2M));
+
+  i2cp->i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
+}
+
+
+/**
  * @brief   Return the last event value from I2C status registers.
  * @details Important but implicit destination of this function is
  *          clearing interrupts flags.
@@ -598,145 +736,6 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, uint8_t slave_addr,
   i2c_lld_wait_s(i2cp, timeout, rdymsg);
 
   return rdymsg;
-}
-
-
-/**
- * @brief   Receive data via the I2C bus after writing.
- *
- * @param[in] i2cp        pointer to the @p I2CDriver object
- *
- * @notapi
- */
-inline void i2c_lld_master_transceive(I2CDriver *i2cp){
-  /* There are no checks in this function because:
-     - all values checked earlier
-     - this function calls from ISR */
-
-  /* init driver fields */
-  i2cp->slave_addr |= 0x01;    /* LSB = 1 -> receive */
-
-  /* TODO: DMA error handling */
-  dmaStreamSetMemory0(i2cp->dmarx, i2cp->rxbuf);
-  dmaStreamSetTransactionSize(i2cp->dmarx, i2cp->rxbytes);
-  dmaStreamSetMode(i2cp->dmarx, ((i2cp->dmamode) | STM32_DMA_CR_DIR_P2M));
-
-  i2cp->i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
-}
-
-
-/**
- * @brief Set clock speed.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- */
-void i2c_lld_set_clock(I2CDriver *i2cp) {
-  volatile uint16_t regCCR, clock_div;
-  int32_t clock_speed = i2cp->config->clock_speed;
-  i2cdutycycle_t duty = i2cp->config->duty_cycle;
-
-  chDbgCheck((i2cp != NULL) && (clock_speed > 0) && (clock_speed <= 4000000),
-             "i2c_lld_set_clock");
-
-  /**************************************************************************
-   * CR2 Configuration
-   */
-#if   defined(STM32F4XX)
-  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 42))
-    #error "Peripheral clock freq. out of range."
-  #endif
-
-#elif defined(STM32L1XX_MD)
-  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 32))
-    #error "Peripheral clock freq. out of range."
-  #endif
-
-#elif defined(STM32F2XX)
-  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 30))
-    #error "Peripheral clock freq. out of range."
-  #endif
-
-#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||                 \
-      defined(STM32F10X_HD_VL)
-  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 24))
-    #error "Peripheral clock freq. out of range."
-  #endif
-
-#elif defined(STM32F10X_LD) || defined(STM32F10X_MD) ||                       \
-      defined(STM32F10X_HD) || defined(STM32F10X_XL) ||                       \
-      defined(STM32F10X_CL)
-  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 36))
-    #error "Peripheral clock freq. out of range."
-  #endif
-
-#else
-#error "unspecified, unsupported or invalid STM32 platform"
-#endif
-  i2cp->i2c->CR2 &= (uint16_t)~I2C_CR2_FREQ;                 /* Clear frequency FREQ[5:0] bits */
-  i2cp->i2c->CR2 |= (uint16_t)I2C_CLK_FREQ;
-
-  /**************************************************************************
-   * CCR Configuration
-   */
-  regCCR = 0;                                                   /* Clear F/S, DUTY and CCR[11:0] bits */
-  clock_div = I2C_CCR_CCR;
-
-  if (clock_speed <= 100000) {                                  /* Configure clock_div in standard mode */
-    chDbgAssert(duty == STD_DUTY_CYCLE,
-                "i2c_lld_set_clock(), #1",
-                "Invalid standard mode duty cycle");
-    clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 2));    /* Standard mode clock_div calculate: Tlow/Thigh = 1/1 */
-    if (clock_div < 0x04) clock_div = 0x04;                     /* Test if CCR value is under 0x4, and set the minimum allowed value */
-    regCCR |= (clock_div & I2C_CCR_CCR);                        /* Set clock_div value for standard mode */
-    i2cp->i2c->TRISE = I2C_CLK_FREQ + 1;                             /* Set Maximum Rise Time for standard mode */
-  }
-  else if(clock_speed <= 400000) {                              /* Configure clock_div in fast mode */
-    chDbgAssert((duty == FAST_DUTY_CYCLE_2) ||
-                (duty == FAST_DUTY_CYCLE_16_9),
-                "i2c_lld_set_clock(), #2",
-                "Invalid fast mode duty cycle");
-    if(duty == FAST_DUTY_CYCLE_2) {
-      clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 3));  /* Fast mode clock_div calculate: Tlow/Thigh = 2/1 */
-    }
-    else if(duty == FAST_DUTY_CYCLE_16_9) {
-      clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 25)); /* Fast mode clock_div calculate: Tlow/Thigh = 16/9 */
-      regCCR |= I2C_CCR_DUTY;                                   /* Set DUTY bit */
-    }
-    if(clock_div < 0x01) clock_div = 0x01;                      /* Test if CCR value is under 0x1, and set the minimum allowed value */
-    regCCR |= (I2C_CCR_FS | (clock_div & I2C_CCR_CCR));         /* Set clock_div value and F/S bit for fast mode*/
-    i2cp->i2c->TRISE = (I2C_CLK_FREQ * 300 / 1000) + 1;              /* Set Maximum Rise Time for fast mode */
-  }
-  chDbgAssert((clock_div <= I2C_CCR_CCR),
-      "i2c_lld_set_clock(), #3", "Too low clock clock speed selected");
-
-  i2cp->i2c->CCR = regCCR;                                   /* Write to I2Cx CCR */
-}
-
-
-/**
- * @brief Set operation mode of I2C hardware.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- */
-void i2c_lld_set_opmode(I2CDriver *i2cp) {
-  i2copmode_t opmode = i2cp->config->op_mode;
-  uint16_t regCR1;
-
-  regCR1 = i2cp->i2c->CR1;             /* Get the I2Cx CR1 value */
-  switch(opmode){
-  case OPMODE_I2C:
-    regCR1 &= (uint16_t)~(I2C_CR1_SMBUS|I2C_CR1_SMBTYPE);
-    break;
-  case OPMODE_SMBUS_DEVICE:
-    regCR1 |= I2C_CR1_SMBUS;
-    regCR1 &= (uint16_t)~(I2C_CR1_SMBTYPE);
-    break;
-  case OPMODE_SMBUS_HOST:
-    regCR1 |= (I2C_CR1_SMBUS|I2C_CR1_SMBTYPE);
-    break;
-  }
-
-  i2cp->i2c->CR1 = regCR1;             /* Write to I2Cx CR1 */
 }
 
 
