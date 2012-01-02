@@ -305,11 +305,11 @@ struct I2CDriver{
    */
   const I2CConfig           *config;
 
-  __IO size_t               txbytes;    /*!< @brief Number of bytes to be transmitted. */
-  __IO size_t               rxbytes;    /*!< @brief Number of bytes to be received. */
+  size_t                    txbytes;    /*!< @brief Number of bytes to be transmitted. */
+  size_t                    rxbytes;    /*!< @brief Number of bytes to be received. */
   uint8_t                   *rxbuf;     /*!< @brief Pointer to receive buffer. */
 
-  __IO i2cflags_t           errors;     /*!< @brief Error flags.*/
+  i2cflags_t                errors;     /*!< @brief Error flags.*/
 
   i2caddr_t                 slave_addr; /*!< @brief Current slave address without R/W bit. */
 
