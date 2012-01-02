@@ -108,21 +108,16 @@ MAKE_ALL_RULE_HOOK:
 
 $(OBJS): | $(BUILDDIR) $(OBJDIR) $(LSTDIR)
 
-$(BUILDDIR):
+$(BUILDDIR) $(OBJDIR) $(LSTDIR):
 ifneq ($(USE_VERBOSE_COMPILE),yes)
 	@echo Compiler Options
 	@echo $(CC) -c $(CFLAGS) -I. $(IINCDIR) main.c -o main.o
 	@echo
 endif
-	mkdir $(BUILDDIR)
+	mkdir -p $(OBJDIR)
+	mkdir -p $(LSTDIR)
 
-$(OBJDIR): $(BUILDDIR)
-	mkdir $(OBJDIR)
-
-$(LSTDIR): $(BUILDDIR)
-	mkdir $(LSTDIR)
-
-$(ACPPOBJS) : $(OBJDIR)/%.o : %.cpp $(OBJDIR) $(LSTDIR) Makefile
+$(ACPPOBJS) : $(OBJDIR)/%.o : %.cpp Makefile
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CPPC) -c $(CPPFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
@@ -131,7 +126,7 @@ else
 	@$(CPPC) -c $(CPPFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
 endif
 
-$(TCPPOBJS) : $(OBJDIR)/%.o : %.cpp $(OBJDIR) $(LSTDIR) Makefile
+$(TCPPOBJS) : $(OBJDIR)/%.o : %.cpp Makefile
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CPPC) -c $(CPPFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
@@ -140,7 +135,7 @@ else
 	@$(CPPC) -c $(CPPFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 endif
 
-$(ACOBJS) : $(OBJDIR)/%.o : %.c $(OBJDIR) $(LSTDIR) Makefile
+$(ACOBJS) : $(OBJDIR)/%.o : %.c Makefile
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CC) -c $(CFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
@@ -149,7 +144,7 @@ else
 	@$(CC) -c $(CFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
 endif
 
-$(TCOBJS) : $(OBJDIR)/%.o : %.c $(OBJDIR) $(LSTDIR) Makefile
+$(TCOBJS) : $(OBJDIR)/%.o : %.c Makefile
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CC) -c $(CFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
@@ -158,7 +153,7 @@ else
 	@$(CC) -c $(CFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 endif
 
-$(ASMOBJS) : $(OBJDIR)/%.o : %.s $(OBJDIR) $(LSTDIR) Makefile
+$(ASMOBJS) : $(OBJDIR)/%.o : %.s Makefile
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(AS) -c $(ASFLAGS) -I. $(IINCDIR) $< -o $@
