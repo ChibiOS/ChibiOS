@@ -163,6 +163,12 @@
 #define STM32_I2C_I2C2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
 
 #endif /* !STM32_ADVANCED_DMA*/
+
+/**
+ * @brief   Peripheral clock frequency.
+ */
+#define I2C_CLK_FREQ  ((STM32_PCLK1) / 1000000)
+
 /** @} */
 
 /*===========================================================================*/
@@ -232,6 +238,34 @@
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
+#endif
+
+/* Check clock range. */
+#if   defined(STM32F4XX)
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 42))
+    #error "Peripheral clock freq. out of range."
+  #endif
+#elif defined(STM32L1XX_MD)
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 32))
+    #error "Peripheral clock freq. out of range."
+  #endif
+#elif defined(STM32F2XX)
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 30))
+    #error "Peripheral clock freq. out of range."
+  #endif
+#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||                 \
+      defined(STM32F10X_HD_VL)
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 24))
+    #error "Peripheral clock freq. out of range."
+  #endif
+#elif defined(STM32F10X_LD) || defined(STM32F10X_MD) ||                       \
+      defined(STM32F10X_HD) || defined(STM32F10X_XL) ||                       \
+      defined(STM32F10X_CL)
+  #if (!(I2C_CLK_FREQ >= 2) && (I2C_CLK_FREQ <= 36))
+    #error "Peripheral clock freq. out of range."
+  #endif
+#else
+#error "unspecified, unsupported or invalid STM32 platform"
 #endif
 
 /*===========================================================================*/
