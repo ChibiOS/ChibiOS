@@ -109,58 +109,62 @@ MAKE_ALL_RULE_HOOK:
 $(OBJS): | $(BUILDDIR) $(OBJDIR) $(LSTDIR)
 
 $(BUILDDIR):
-	@echo $(SRCPATHS)
+ifneq ($(USE_VERBOSE_COMPILE),yes)
+	@echo Compiler Options
+	@echo $(CC) -c $(CFLAGS) -I. $(IINCDIR) main.c -o main.o
+	@echo
+endif
 	mkdir $(BUILDDIR)
 
-$(OBJDIR):
+$(OBJDIR): $(BUILDDIR)
 	mkdir $(OBJDIR)
 
-$(LSTDIR):
+$(LSTDIR): $(BUILDDIR)
 	mkdir $(LSTDIR)
 
-$(ACPPOBJS) : $(OBJDIR)/%.o : %.cpp Makefile
+$(ACPPOBJS) : $(OBJDIR)/%.o : %.cpp $(OBJDIR) $(LSTDIR) Makefile
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
-	$(CPPC) -c $(CPPFLAGS) $(AOPT) -I . $(IINCDIR) $< -o $@
+	$(CPPC) -c $(CPPFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
 else
 	@echo Compiling $<
-	@$(CPPC) -c $(CPPFLAGS) $(AOPT) -I . $(IINCDIR) $< -o $@
+	@$(CPPC) -c $(CPPFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
 endif
 
-$(TCPPOBJS) : $(OBJDIR)/%.o : %.cpp Makefile
+$(TCPPOBJS) : $(OBJDIR)/%.o : %.cpp $(OBJDIR) $(LSTDIR) Makefile
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
-	$(CPPC) -c $(CPPFLAGS) $(TOPT) -I . $(IINCDIR) $< -o $@
+	$(CPPC) -c $(CPPFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 else
 	@echo Compiling $<
-	@$(CPPC) -c $(CPPFLAGS) $(TOPT) -I . $(IINCDIR) $< -o $@
+	@$(CPPC) -c $(CPPFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 endif
 
-$(ACOBJS) : $(OBJDIR)/%.o : %.c Makefile
+$(ACOBJS) : $(OBJDIR)/%.o : %.c $(OBJDIR) $(LSTDIR) Makefile
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
-	$(CC) -c $(CFLAGS) $(AOPT) -I . $(IINCDIR) $< -o $@
+	$(CC) -c $(CFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
 else
 	@echo Compiling $<
-	@$(CC) -c $(CFLAGS) $(AOPT) -I . $(IINCDIR) $< -o $@
+	@$(CC) -c $(CFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
 endif
 
-$(TCOBJS) : $(OBJDIR)/%.o : %.c Makefile
+$(TCOBJS) : $(OBJDIR)/%.o : %.c $(OBJDIR) $(LSTDIR) Makefile
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
-	$(CC) -c $(CFLAGS) $(TOPT) -I . $(IINCDIR) $< -o $@
+	$(CC) -c $(CFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 else
 	@echo Compiling $<
-	@$(CC) -c $(CFLAGS) $(TOPT) -I . $(IINCDIR) $< -o $@
+	@$(CC) -c $(CFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 endif
 
-$(ASMOBJS) : $(OBJDIR)/%.o : %.s Makefile
+$(ASMOBJS) : $(OBJDIR)/%.o : %.s $(OBJDIR) $(LSTDIR) Makefile
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
-	$(AS) -c $(ASFLAGS) -I . $(IINCDIR) $< -o $@
+	$(AS) -c $(ASFLAGS) -I. $(IINCDIR) $< -o $@
 else
 	@echo Compiling $<
-	@$(AS) -c $(ASFLAGS) -I . $(IINCDIR) $< -o $@
+	@$(AS) -c $(ASFLAGS) -I. $(IINCDIR) $< -o $@
 endif
 
 %.elf: $(OBJS) $(LDSCRIPT)
