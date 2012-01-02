@@ -282,28 +282,28 @@ struct I2CDriver{
   /**
    * @brief Driver state.
    */
-  i2cstate_t                id_state;
+  i2cstate_t                state;
 
   /**
    * @brief Thread waiting for I/O completion.
    */
-  Thread                    *id_thread;
+  Thread                    *thread;
 
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief Mutex protecting the bus.
    */
-  Mutex                     id_mutex;
+  Mutex                     mutex;
 #elif CH_USE_SEMAPHORES
-  Semaphore                 id_semaphore;
+  Semaphore                 semaphore;
 #endif
 #endif /* I2C_USE_MUTUAL_EXCLUSION */
 
   /**
    * @brief Current configuration data.
    */
-  const I2CConfig           *id_config;
+  const I2CConfig           *config;
 
   __IO size_t               txbytes;    /*!< @brief Number of bytes to be transmitted. */
   __IO size_t               rxbytes;    /*!< @brief Number of bytes to be received. */
@@ -319,7 +319,7 @@ struct I2CDriver{
   const stm32_dma_stream_t  *dmarx;     /*!< @brief Receive DMA channel.*/
   const stm32_dma_stream_t  *dmatx;     /*!< @brief Transmit DMA channel.*/
 
-  I2C_TypeDef               *id_i2c;    /*!< @brief Pointer to the I2Cx registers block. */
+  I2C_TypeDef               *i2c;       /*!< @brief Pointer to the I2Cx registers block. */
 };
 
 
@@ -331,7 +331,7 @@ struct I2CDriver{
  * Wait until BUSY flag is reset.
  */
 #define i2c_lld_wait_bus_free(i2cp) {                                       \
-  while(i2cp->id_i2c->SR2 & I2C_SR2_BUSY)                                   \
+  while(i2cp->i2c->SR2 & I2C_SR2_BUSY)                                      \
     ;                                                                       \
 }
 /**
@@ -347,10 +347,10 @@ struct I2CDriver{
  * @notapi
  */
 #define i2c_lld_wait_s(i2cp, timeout, rdymsg) {                             \
-  chDbgAssert((i2cp)->id_thread == NULL,                                    \
+  chDbgAssert((i2cp)->thread == NULL,                                       \
               "_i2c_wait(), #1", "already waiting");                        \
   chSysLock(); /* this lock will be disarmed in high level part */          \
-  (i2cp)->id_thread = chThdSelf();                                          \
+  (i2cp)->thread = chThdSelf();                                             \
   rdymsg = chSchGoSleepTimeoutS(THD_STATE_SUSPENDED, timeout);              \
 }
 
@@ -362,9 +362,9 @@ struct I2CDriver{
  * @notapi
  */
 #define i2c_lld_wakeup_isr(i2cp) {                                          \
-  if ((i2cp)->id_thread != NULL) {                                          \
-    Thread *tp = (i2cp)->id_thread;                                         \
-    (i2cp)->id_thread = NULL;                                               \
+  if ((i2cp)->thread != NULL) {                                             \
+    Thread *tp = (i2cp)->thread;                                            \
+    (i2cp)->thread = NULL;                                                  \
     chSysLockFromIsr();                                                     \
     chSchReadyI(tp);                                                        \
     chSysUnlockFromIsr();                                                   \
@@ -379,9 +379,9 @@ struct I2CDriver{
  * @notapi
  */
 #define i2c_lld_error_wakeup_isr(i2cp) {                                    \
-  if ((i2cp)->id_thread != NULL) {                                          \
-    Thread *tp = (i2cp)->id_thread;                                         \
-    (i2cp)->id_thread = NULL;                                               \
+  if ((i2cp)->thread != NULL) {                                             \
+    Thread *tp = (i2cp)->thread;                                            \
+    (i2cp)->thread = NULL;                                                  \
     chSysLockFromIsr();                                                     \
     tp->p_u.rdymsg = RDY_RESET;                                             \
     chSchReadyI(tp);                                                        \

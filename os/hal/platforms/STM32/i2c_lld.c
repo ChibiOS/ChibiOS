@@ -143,13 +143,13 @@ static volatile uint16_t dbgCR2 = 0;
  * @notapi
  */
 static uint32_t i2c_get_event(I2CDriver *i2cp){
-  uint16_t regSR1 = i2cp->id_i2c->SR1;
-  uint16_t regSR2 = i2cp->id_i2c->SR2;
+  uint16_t regSR1 = i2cp->i2c->SR1;
+  uint16_t regSR2 = i2cp->i2c->SR2;
   #if CH_DBG_ENABLE_ASSERTS
     dbgSR1 = regSR1;
     dbgSR2 = regSR2;
-    dbgCR1 = i2cp->id_i2c->CR1;
-    dbgCR2 = i2cp->id_i2c->CR2;
+    dbgCR1 = i2cp->i2c->CR1;
+    dbgCR2 = i2cp->i2c->CR2;
   #endif /* CH_DBG_ENABLE_ASSERTS */
 
   return (I2C_EV_MASK & (regSR1 | (regSR2 << 16)));
@@ -164,7 +164,7 @@ static uint32_t i2c_get_event(I2CDriver *i2cp){
  * @notapi
  */
 static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
-  I2C_TypeDef *dp = i2cp->id_i2c;
+  I2C_TypeDef *dp = i2cp->i2c;
 
   switch(i2c_get_event(i2cp)){
   case I2C_EV5_MASTER_MODE_SELECT:
@@ -173,12 +173,12 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
 
   case I2C_EV6_MASTER_REC_MODE_SELECTED:
     dmaStreamEnable(i2cp->dmarx);
-    i2cp->id_i2c->CR2 |= I2C_CR2_DMAEN | I2C_CR2_LAST;
+    i2cp->i2c->CR2 |= I2C_CR2_DMAEN | I2C_CR2_LAST;
     break;
 
   case I2C_EV6_MASTER_TRA_MODE_SELECTED:
     dmaStreamEnable(i2cp->dmatx);
-    i2cp->id_i2c->CR2 |= I2C_CR2_DMAEN | I2C_CR2_LAST;
+    i2cp->i2c->CR2 |= I2C_CR2_DMAEN | I2C_CR2_LAST;
     break;
 
   case I2C_EV8_2_MASTER_BYTE_TRANSMITTED:
@@ -189,7 +189,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
       return;
     }
     else
-      i2cp->id_i2c->CR1 |= I2C_CR1_STOP;
+      i2cp->i2c->CR1 |= I2C_CR1_STOP;
       i2c_lld_isr_code(i2cp);
     break;
 
@@ -207,7 +207,7 @@ static void i2c_serve_event_interrupt(I2CDriver *i2cp) {
 static void i2c_lld_serve_rx_end_irq(I2CDriver *i2cp){
   dmaStreamDisable(i2cp->dmarx);
 
-  i2cp->id_i2c->CR1 |= I2C_CR1_STOP;
+  i2cp->i2c->CR1 |= I2C_CR1_STOP;
   i2c_lld_isr_code(i2cp);
 }
 
@@ -240,33 +240,33 @@ static void i2c_serve_error_interrupt(I2CDriver *i2cp) {
 
   errors = I2CD_NO_ERROR;
 
-  if(i2cp->id_i2c->SR1 & I2C_SR1_BERR) {                /* Bus error */
-    i2cp->id_i2c->SR1 &= ~I2C_SR1_BERR;
+  if(i2cp->i2c->SR1 & I2C_SR1_BERR) {                /* Bus error */
+    i2cp->i2c->SR1 &= ~I2C_SR1_BERR;
     errors |= I2CD_BUS_ERROR;
   }
-  if(i2cp->id_i2c->SR1 & I2C_SR1_ARLO) {                /* Arbitration lost */
-    i2cp->id_i2c->SR1 &= ~I2C_SR1_ARLO;
+  if(i2cp->i2c->SR1 & I2C_SR1_ARLO) {                /* Arbitration lost */
+    i2cp->i2c->SR1 &= ~I2C_SR1_ARLO;
     errors |= I2CD_ARBITRATION_LOST;
   }
-  if(i2cp->id_i2c->SR1 & I2C_SR1_AF) {                  /* Acknowledge fail */
-    i2cp->id_i2c->SR1 &= ~I2C_SR1_AF;
-    i2cp->id_i2c->CR1 |= I2C_CR1_STOP;                  /* setting stop bit */
+  if(i2cp->i2c->SR1 & I2C_SR1_AF) {                  /* Acknowledge fail */
+    i2cp->i2c->SR1 &= ~I2C_SR1_AF;
+    i2cp->i2c->CR1 |= I2C_CR1_STOP;                  /* setting stop bit */
     errors |= I2CD_ACK_FAILURE;
   }
-  if(i2cp->id_i2c->SR1 & I2C_SR1_OVR) {                 /* Overrun */
-    i2cp->id_i2c->SR1 &= ~I2C_SR1_OVR;
+  if(i2cp->i2c->SR1 & I2C_SR1_OVR) {                 /* Overrun */
+    i2cp->i2c->SR1 &= ~I2C_SR1_OVR;
     errors |= I2CD_OVERRUN;
   }
-  if(i2cp->id_i2c->SR1 & I2C_SR1_PECERR) {              /* PEC error */
-    i2cp->id_i2c->SR1 &= ~I2C_SR1_PECERR;
+  if(i2cp->i2c->SR1 & I2C_SR1_PECERR) {              /* PEC error */
+    i2cp->i2c->SR1 &= ~I2C_SR1_PECERR;
     errors |= I2CD_PEC_ERROR;
   }
-  if(i2cp->id_i2c->SR1 & I2C_SR1_TIMEOUT) {             /* SMBus Timeout */
-    i2cp->id_i2c->SR1 &= ~I2C_SR1_TIMEOUT;
+  if(i2cp->i2c->SR1 & I2C_SR1_TIMEOUT) {             /* SMBus Timeout */
+    i2cp->i2c->SR1 &= ~I2C_SR1_TIMEOUT;
     errors |= I2CD_TIMEOUT;
   }
-  if(i2cp->id_i2c->SR1 & I2C_SR1_SMBALERT) {            /* SMBus alert */
-    i2cp->id_i2c->SR1 &= ~I2C_SR1_SMBALERT;
+  if(i2cp->i2c->SR1 & I2C_SR1_SMBALERT) {            /* SMBus alert */
+    i2cp->i2c->SR1 &= ~I2C_SR1_SMBALERT;
     errors |= I2CD_SMB_ALERT;
   }
 
@@ -342,21 +342,21 @@ void i2c_lld_init(void) {
 
 #if STM32_I2C_USE_I2C1
   i2cObjectInit(&I2CD1);
-  I2CD1.id_i2c = I2C1;
+  I2CD1.i2c = I2C1;
   I2CD1.dmarx  = STM32_DMA_STREAM(STM32_I2C_I2C1_RX_DMA_STREAM);
   I2CD1.dmatx  = STM32_DMA_STREAM(STM32_I2C_I2C1_TX_DMA_STREAM);
 #endif /* STM32_I2C_USE_I2C1 */
 
 #if STM32_I2C_USE_I2C2
   i2cObjectInit(&I2CD2);
-  I2CD2.id_i2c = I2C2;
+  I2CD2.i2c = I2C2;
   I2CD2.dmarx  = STM32_DMA_STREAM(STM32_I2C_I2C2_RX_DMA_STREAM);
   I2CD2.dmatx  = STM32_DMA_STREAM(STM32_I2C_I2C2_TX_DMA_STREAM);
 #endif /* STM32_I2C_USE_I2C2 */
 
 #if STM32_I2C_USE_I2C3
   i2cObjectInit(&I2CD3);
-  I2CD3.id_i2c = I2C3;
+  I2CD3.i2c = I2C3;
   I2CD3.dmarx  = STM32_DMA_STREAM(STM32_I2C_I2C3_RX_DMA_STREAM);
   I2CD3.dmatx  = STM32_DMA_STREAM(STM32_I2C_I2C3_TX_DMA_STREAM);
 #endif /* STM32_I2C_USE_I2C3 */
@@ -372,7 +372,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
 
   i2cp->dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
 
-  if (i2cp->id_state == I2C_STOP) {         /* If in stopped state then enables the I2C clock.*/
+  if (i2cp->state == I2C_STOP) {         /* If in stopped state then enables the I2C clock.*/
 #if STM32_I2C_USE_I2C1
     if (&I2CD1 == i2cp) {
 
@@ -453,15 +453,15 @@ void i2c_lld_start(I2CDriver *i2cp) {
                    STM32_DMA_CR_MSIZE_BYTE |
                    STM32_DMA_CR_MINC |
                    STM32_DMA_CR_TCIE;
-  dmaStreamSetPeripheral(i2cp->dmarx, &i2cp->id_i2c->DR);
-  dmaStreamSetPeripheral(i2cp->dmatx, &i2cp->id_i2c->DR);
+  dmaStreamSetPeripheral(i2cp->dmarx, &i2cp->i2c->DR);
+  dmaStreamSetPeripheral(i2cp->dmatx, &i2cp->i2c->DR);
 
-  i2cp->id_i2c->CR1 = I2C_CR1_SWRST;        /* reset i2c peripheral */
-  i2cp->id_i2c->CR1 = 0;
+  i2cp->i2c->CR1 = I2C_CR1_SWRST;        /* reset i2c peripheral */
+  i2cp->i2c->CR1 = 0;
   i2c_lld_set_clock(i2cp);
   i2c_lld_set_opmode(i2cp);
 
-  i2cp->id_i2c->CR1 |= 1;                   /* enable interface */
+  i2cp->i2c->CR1 |= 1;                   /* enable interface */
 }
 
 
@@ -469,7 +469,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
  * @brief Reset interface via RCC.
  */
 void i2c_lld_reset(I2CDriver *i2cp){
-  chDbgCheck((i2cp->id_state == I2C_STOP)||(i2cp->id_state == I2C_READY),
+  chDbgCheck((i2cp->state == I2C_STOP)||(i2cp->state == I2C_READY),
              "i2c_lld_reset: invalid state");
 
   #if STM32_I2C_USE_I2C1
@@ -531,11 +531,11 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp,
   i2c_lld_wait_bus_free(i2cp);
 
   /* wait stop bit from previous transaction*/
-  while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
+  while(i2cp->i2c->CR1 & I2C_CR1_STOP)
     ;
 
-  i2cp->id_i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN;
-  i2cp->id_i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
+  i2cp->i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN;
+  i2cp->i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
 
   i2c_lld_wait_s(i2cp, timeout, rdymsg);
 
@@ -589,11 +589,11 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, uint8_t slave_addr,
   i2c_lld_wait_bus_free(i2cp);
 
   /* wait stop bit from previous transaction*/
-  while(i2cp->id_i2c->CR1 & I2C_CR1_STOP)
+  while(i2cp->i2c->CR1 & I2C_CR1_STOP)
     ;
 
-  i2cp->id_i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN;
-  i2cp->id_i2c->CR1 |= I2C_CR1_START;
+  i2cp->i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN;
+  i2cp->i2c->CR1 |= I2C_CR1_START;
 
   i2c_lld_wait_s(i2cp, timeout, rdymsg);
 
@@ -621,7 +621,7 @@ inline void i2c_lld_master_transceive(I2CDriver *i2cp){
   dmaStreamSetTransactionSize(i2cp->dmarx, i2cp->rxbytes);
   dmaStreamSetMode(i2cp->dmarx, ((i2cp->dmamode) | STM32_DMA_CR_DIR_P2M));
 
-  i2cp->id_i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
+  i2cp->i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
 }
 
 
@@ -632,8 +632,8 @@ inline void i2c_lld_master_transceive(I2CDriver *i2cp){
  */
 void i2c_lld_set_clock(I2CDriver *i2cp) {
   volatile uint16_t regCCR, clock_div;
-  int32_t clock_speed = i2cp->id_config->clock_speed;
-  i2cdutycycle_t duty = i2cp->id_config->duty_cycle;
+  int32_t clock_speed = i2cp->config->clock_speed;
+  i2cdutycycle_t duty = i2cp->config->duty_cycle;
 
   chDbgCheck((i2cp != NULL) && (clock_speed > 0) && (clock_speed <= 4000000),
              "i2c_lld_set_clock");
@@ -672,8 +672,8 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
 #else
 #error "unspecified, unsupported or invalid STM32 platform"
 #endif
-  i2cp->id_i2c->CR2 &= (uint16_t)~I2C_CR2_FREQ;                 /* Clear frequency FREQ[5:0] bits */
-  i2cp->id_i2c->CR2 |= (uint16_t)I2C_CLK_FREQ;
+  i2cp->i2c->CR2 &= (uint16_t)~I2C_CR2_FREQ;                 /* Clear frequency FREQ[5:0] bits */
+  i2cp->i2c->CR2 |= (uint16_t)I2C_CLK_FREQ;
 
   /**************************************************************************
    * CCR Configuration
@@ -688,7 +688,7 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
     clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 2));    /* Standard mode clock_div calculate: Tlow/Thigh = 1/1 */
     if (clock_div < 0x04) clock_div = 0x04;                     /* Test if CCR value is under 0x4, and set the minimum allowed value */
     regCCR |= (clock_div & I2C_CCR_CCR);                        /* Set clock_div value for standard mode */
-    i2cp->id_i2c->TRISE = I2C_CLK_FREQ + 1;                             /* Set Maximum Rise Time for standard mode */
+    i2cp->i2c->TRISE = I2C_CLK_FREQ + 1;                             /* Set Maximum Rise Time for standard mode */
   }
   else if(clock_speed <= 400000) {                              /* Configure clock_div in fast mode */
     chDbgAssert((duty == FAST_DUTY_CYCLE_2) ||
@@ -704,12 +704,12 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
     }
     if(clock_div < 0x01) clock_div = 0x01;                      /* Test if CCR value is under 0x1, and set the minimum allowed value */
     regCCR |= (I2C_CCR_FS | (clock_div & I2C_CCR_CCR));         /* Set clock_div value and F/S bit for fast mode*/
-    i2cp->id_i2c->TRISE = (I2C_CLK_FREQ * 300 / 1000) + 1;              /* Set Maximum Rise Time for fast mode */
+    i2cp->i2c->TRISE = (I2C_CLK_FREQ * 300 / 1000) + 1;              /* Set Maximum Rise Time for fast mode */
   }
   chDbgAssert((clock_div <= I2C_CCR_CCR),
       "i2c_lld_set_clock(), #3", "Too low clock clock speed selected");
 
-  i2cp->id_i2c->CCR = regCCR;                                   /* Write to I2Cx CCR */
+  i2cp->i2c->CCR = regCCR;                                   /* Write to I2Cx CCR */
 }
 
 
@@ -719,10 +719,10 @@ void i2c_lld_set_clock(I2CDriver *i2cp) {
  * @param[in] i2cp      pointer to the @p I2CDriver object
  */
 void i2c_lld_set_opmode(I2CDriver *i2cp) {
-  i2copmode_t opmode = i2cp->id_config->op_mode;
+  i2copmode_t opmode = i2cp->config->op_mode;
   uint16_t regCR1;
 
-  regCR1 = i2cp->id_i2c->CR1;             /* Get the I2Cx CR1 value */
+  regCR1 = i2cp->i2c->CR1;             /* Get the I2Cx CR1 value */
   switch(opmode){
   case OPMODE_I2C:
     regCR1 &= (uint16_t)~(I2C_CR1_SMBUS|I2C_CR1_SMBTYPE);
@@ -736,7 +736,7 @@ void i2c_lld_set_opmode(I2CDriver *i2cp) {
     break;
   }
 
-  i2cp->id_i2c->CR1 = regCR1;             /* Write to I2Cx CR1 */
+  i2cp->i2c->CR1 = regCR1;             /* Write to I2Cx CR1 */
 }
 
 
@@ -747,7 +747,7 @@ void i2c_lld_set_opmode(I2CDriver *i2cp) {
  */
 void i2c_lld_stop(I2CDriver *i2cp) {
 
-  if (i2cp->id_state != I2C_STOP) {  /* If in ready state then disables the I2C clock.*/
+  if (i2cp->state != I2C_STOP) {  /* If in ready state then disables the I2C clock.*/
 
   dmaStreamDisable(i2cp->dmatx);
   dmaStreamDisable(i2cp->dmarx);
@@ -781,7 +781,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 #endif
   }
 
-  i2cp->id_state = I2C_STOP;
+  i2cp->state = I2C_STOP;
 }
 
 
