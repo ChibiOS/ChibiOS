@@ -478,6 +478,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
   i2cp->dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
 
   if (i2cp->state == I2C_STOP) {         /* If in stopped state then enables the I2C clock.*/
+    i2c_lld_reset(i2cp);
 #if STM32_I2C_USE_I2C1
     if (&I2CD1 == i2cp) {
 
@@ -695,12 +696,18 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, uint8_t slave_addr,
   dmaStreamSetMode(i2cp->dmatx, ((i2cp->dmamode) | STM32_DMA_CR_DIR_M2P));
 
   /* Wait until BUSY flag is reset.  */
-  while(i2cp->i2c->SR2 & I2C_SR2_BUSY)
-    ;
+  volatile uint32_t tmo = 1 + (STM32_SYSCLK / 1000000) * 20;
+  while((i2cp->i2c->SR2 & I2C_SR2_BUSY) && tmo)
+    tmo--;
+  if (tmo == 0)
+    return RDY_RESET;
 
   /* wait stop bit from previous transaction*/
-  while(i2cp->i2c->CR1 & I2C_CR1_STOP)
-    ;
+  tmo = 1 + (STM32_SYSCLK / 1000000) * 20;
+  while((i2cp->i2c->CR1 & I2C_CR1_STOP) && tmo)
+    tmo--;
+  if (tmo == 0)
+    return RDY_RESET;
 
   i2cp->i2c->CR2 |= I2C_CR2_ITERREN | I2C_CR2_ITEVTEN;
   i2cp->i2c->CR1 |= I2C_CR1_START;
@@ -720,6 +727,8 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, uint8_t slave_addr,
 void i2c_lld_stop(I2CDriver *i2cp) {
 
   if (i2cp->state != I2C_STOP) {  /* If in ready state then disables the I2C clock.*/
+
+  i2c_lld_reset(i2cp);
 
   dmaStreamDisable(i2cp->dmatx);
   dmaStreamDisable(i2cp->dmarx);
