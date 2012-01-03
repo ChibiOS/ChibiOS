@@ -203,7 +203,7 @@ extern "C" {
   void rtc_lld_get_alarm(RTCDriver *rtcp,
                          rtcalarm_t alarm,
                          RTCAlarm *alarmspec);
-  void rtc_lld_set_callback(RTCDriver *rtcp, RTCCallbackConfig *cb_cfg);
+  void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t cb_cfg);
 #ifdef __cplusplus
 }
 #endif
