@@ -244,6 +244,38 @@
 /** @} */
 
 /**
+ * @brief   PWR interface specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the PWR interface clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnablePWRInterface(lp) rccEnableAPB1(RCC_APB1ENR_PWREN, lp)
+
+/**
+ * @brief   Disables PWR interface clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisablePWRInterface(lp) rccDisableAPB1(RCC_APB1ENR_BKPEN, lp)
+
+/**
+ * @brief   Resets the PWR interface.
+ *
+ * @api
+ */
+#define rccResetPWRInterface() rccResetAPB1(RCC_APB1ENR_BKPRST)
+/** @} */
+
+/**
  * @brief   CAN peripherals specific RCC operations
  * @{
  */
