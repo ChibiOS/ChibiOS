@@ -342,14 +342,6 @@ struct I2CDriver{
    */
   Thread                    *thread;
   /**
-   * @brief   Number of bytes to receive in the receive phase.
-   */
-  size_t                    rxbytes;
-  /**
-   * @brief     Pointer to receive buffer.
-   */
-  uint8_t                   *rxbuf;
-  /**
    * @brief     Current slave address without R/W bit.
    */
   i2caddr_t                 addr;

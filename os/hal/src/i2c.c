@@ -29,7 +29,6 @@
  * @addtogroup I2C
  * @{
  */
-
 #include "ch.h"
 #include "hal.h"
 
