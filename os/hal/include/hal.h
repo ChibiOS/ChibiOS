@@ -73,6 +73,52 @@
 /*===========================================================================*/
 
 /**
+ * @name    Time conversion utilities for the realtime counter
+ * @{
+ */
+/**
+ * @brief   Seconds to realtime ticks.
+ * @details Converts from seconds to realtime ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] sec       number of seconds
+ * @return              The number of ticks.
+ *
+ * @api
+ */
+#define S2RTT(sec) (halGetCounterFrequency() * (sec))
+
+/**
+ * @brief   Milliseconds to realtime ticks.
+ * @details Converts from milliseconds to realtime ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] msec      number of milliseconds
+ * @return              The number of ticks.
+ *
+ * @api
+ */
+#define MS2RTT(msec) (((halGetCounterFrequency() + 999UL) / 1000UL) * (msec))
+
+/**
+ * @brief   Microseconds to realtime ticks.
+ * @details Converts from microseconds to realtime ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] usec      number of microseconds
+ * @return              The number of ticks.
+ *
+ * @api
+ */
+#define US2RTT(usec) (((halGetCounterFrequency() + 999999UL) / 1000000UL) * \
+                      (usec))
+/** @} */
+
+/**
+ * @name    Macro Functions
+ * @{
+ */
+/**
  * @brief   Returns the current value of the system free running counter.
  * @note    This is an optional service that could not be implemented in
  *          all HAL implementations.
@@ -94,6 +140,53 @@
  * @api
  */
 #define halGetCounterFrequency() hal_lld_get_counter_frequency()
+
+/**
+ * @brief   Realtime window test.
+ * @details This function verifies if the current realtime counter value
+ *          lies within the specified range or not. The test takes care
+ *          of the realtime counter wrapping to zero on overflow.
+ * @note    When start==end then the function returns always true because the
+ *          whole time range is specified.
+ *
+ * @par Example 1
+ * Example of a guarded loop using the realtime counter. The loop implements
+ * a timeout after one second.
+ * @code
+ *   halrtcnt_t start = halGetCounterValue();
+ *   halrtcnt_t timeout  = start + S2RTT(1);
+ *   while (my_condition) {
+ *     if (!halIsCounterWithin(start, timeout)
+ *       return TIMEOUT;
+ *     // Do something.
+ *   }
+ *   // Continue.
+ * @endcode
+ *
+ * @par Example 2
+ * Example of a loop that lasts exactly 50 microseconds.
+ * @code
+ *   halrtcnt_t start = halGetCounterValue();
+ *   halrtcnt_t timeout  = start + US2RTT(50);
+ *   while (halIsCounterWithin(start, timeout)) {
+ *     // Do something.
+ *   }
+ *   // Continue.
+ * @endcode
+ *
+ * @param[in] start     the start of the time window (inclusive)
+ * @param[in] end       the end of the time window (non inclusive)
+ * @retval TRUE         current time within the specified time window.
+ * @retval FALSE        current time not within the specified time window.
+ *
+ * @api
+ */
+#define halIsCounterWithin(start, end)                                      \
+  (end > start ? (halGetCounterValue() >= start) &&                         \
+                 (halGetCounterValue() < end) :                             \
+                 (halGetCounterValue() >= start) ||                         \
+                 (halGetCounterValue() < end))
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -20,9 +20,10 @@
 
 /**
  * @defgroup various Various
- * @brief Utilities Library.
+ *
+ * @brief   Utilities Library.
  * @details This is a collection of useful library code that is not part of
- * the base kernel services.
+ *          the base kernel services.
  * <h2>Notes</h2>
  * The library code does not follow the same naming convention of the
  * system APIs in order to make very clear that it is not "core" code.<br>
@@ -32,38 +33,54 @@
 
 /**
  * @defgroup cpp_library C++ Wrapper
- * @brief C++ wrapper module.
+ *
+ * @brief   C++ wrapper module.
  * @details This module allows to use the ChibiOS/RT functionalities
- * from C++ as classes and objects rather the traditional "C" APIs.
+ *          from C++ as classes and objects rather the traditional "C" APIs.
  *
  * @ingroup various
  */
 
 /**
  * @defgroup memory_streams Memory Streams
- * @brief Memory Streams.
+ *
+ * @brief   Memory Streams.
  * @details This module allows to use a memory area (RAM or ROM) using a
- * @ref data_streams interface.
+ *          @ref data_streams interface.
  *
  * @ingroup various
  */
 
 /**
  * @defgroup event_timer Periodic Events Timer
- * @brief Periodic Event Timer.
+ *
+ * @brief   Periodic Event Timer.
  * @details This timer generates an event at regular intervals. The
- * listening threads can use the event to perform time related activities.
- * Multiple threads can listen to the same timer.
+ *          listening threads can use the event to perform time related
+ *          activities. Multiple threads can listen to the same timer.
  *
  * @ingroup various
  */
 
 /**
  * @defgroup SHELL Command Shell
- * @brief Small extendible command line shell.
+ *
+ * @brief   Small extendible command line shell.
  * @details This module implements a generic extendible command line interface.
- * The CLI just requires an I/O channel (@p BaseChannel), more commands can be
- * added to the shell using the configuration structure.
+ *          The CLI just requires an I/O channel (@p BaseChannel), more
+ *          commands can be added to the shell using the configuration
+ *          structure.
+ *
+ * @ingroup various
+ */
+
+/**
+ * @defgroup lis302dl Interface module for LIS302DL MEMS.
+ *
+ * @brief   Interface module for LIS302DL MEMS.
+ * @details This module implements a generic interface for the LIS302DL
+ *          STMicroelectronics MEMS device. The communication is performed
+ *          through a standard SPI driver.
  *
  * @ingroup various
  */
