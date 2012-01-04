@@ -132,22 +132,28 @@ static void i2c_lld_set_clock(I2CDriver *i2cp) {
   i2cp->i2c->CR2 |= (uint16_t)I2C_CLK_FREQ;
 
   /* CCR Configuration.*/
-  regCCR = 0;                                                   /* Clear F/S, DUTY and CCR[11:0] bits */
+  regCCR = 0;
   clock_div = I2C_CCR_CCR;
 
-  if (clock_speed <= 100000) {                                  /* Configure clock_div in standard mode */
-
+  if (clock_speed <= 100000) {
+    /* Configure clock_div in standard mode.*/
     chDbgAssert(duty == STD_DUTY_CYCLE,
                 "i2c_lld_set_clock(), #1",
                 "Invalid standard mode duty cycle");
 
-    clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 2));    /* Standard mode clock_div calculate: Tlow/Thigh = 1/1 */
-    if (clock_div < 0x04) clock_div = 0x04;                     /* Test if CCR value is under 0x4, and set the minimum allowed value */
-    regCCR |= (clock_div & I2C_CCR_CCR);                        /* Set clock_div value for standard mode */
-    i2cp->i2c->TRISE = I2C_CLK_FREQ + 1;                             /* Set Maximum Rise Time for standard mode */
-  }
-  else if (clock_speed <= 400000) {                              /* Configure clock_div in fast mode */
+    /* Standard mode clock_div calculate: Tlow/Thigh = 1/1.*/
+    clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 2));
 
+    /* Clock divider values under four are not allowed.*/
+    if (clock_div < 0x04)
+      clock_div = 0x04;
+    regCCR |= (clock_div & I2C_CCR_CCR);
+
+    /* Sets the Maximum Rise Time for standard mode.*/
+    i2cp->i2c->TRISE = I2C_CLK_FREQ + 1;
+  }
+  else if (clock_speed <= 400000) {
+    /* Configure clock_div in fast mode.*/
     chDbgAssert((duty == FAST_DUTY_CYCLE_2) || (duty == FAST_DUTY_CYCLE_16_9),
                 "i2c_lld_set_clock(), #2",
                 "Invalid fast mode duty cycle");
@@ -161,12 +167,17 @@ static void i2c_lld_set_clock(I2CDriver *i2cp) {
       clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 25));
       regCCR |= I2C_CCR_DUTY;
     }
-    if (clock_div < 0x01) clock_div = 0x01;                      /* Test if CCR value is under 0x1, and set the minimum allowed value */
-    regCCR |= (I2C_CCR_FS | (clock_div & I2C_CCR_CCR));         /* Set clock_div value and F/S bit for fast mode*/
-    i2cp->i2c->TRISE = (I2C_CLK_FREQ * 300 / 1000) + 1;              /* Set Maximum Rise Time for fast mode */
+    /* Clock divider values under one are not allowed.*/
+    if (clock_div < 0x01)
+      clock_div = 0x01;
+    regCCR |= (I2C_CCR_FS | (clock_div & I2C_CCR_CCR));
+
+    /* Sets the Maximum Rise Time for fast mode.*/
+    i2cp->i2c->TRISE = (I2C_CLK_FREQ * 300 / 1000) + 1;
   }
+
   chDbgAssert((clock_div <= I2C_CCR_CCR),
-      "i2c_lld_set_clock(), #3", "Too low clock clock speed selected");
+              "i2c_lld_set_clock(), #3", "the selected clock is too low");
 
   i2cp->i2c->CCR = regCCR;
 }
