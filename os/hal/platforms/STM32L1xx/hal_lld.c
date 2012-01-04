@@ -74,6 +74,12 @@ void hal_lld_init(void) {
 #if defined(STM32_DMA_REQUIRED)
   dmaInit();
 #endif
+
+  /* Programmable voltage detector enable. */
+#if STM32_PVD_ENABLE
+  rccEnablePWRInterface(FALSE);
+  PWR->CR |= PWR_CR_PVDE | (STM32_PLS & STM32_PLS_MASK);
+#endif /* STM32_PVD_ENABLE */
 }
 
 /**

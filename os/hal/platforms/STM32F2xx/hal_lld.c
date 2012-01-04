@@ -74,14 +74,15 @@ void hal_lld_init(void) {
   /* DWT cycle counter enable.*/
   DWT_CTRL |= DWT_CTRL_CYCCNTENA;
 
-#if STM32_PVD_ENABLE
-  /* Programmable voltage detector initialization */
-  PWR->CR |= PWR_CR_PVDE | (STM32_PLS & STM32_PLS_MASK);
-#endif /* STM32_PVD_ENABLE */
-
 #if defined(STM32_DMA_REQUIRED)
   dmaInit();
 #endif
+
+  /* Programmable voltage detector enable. */
+#if STM32_PVD_ENABLE
+  rccEnablePWRInterface(FALSE);
+  PWR->CR |= PWR_CR_PVDE | (STM32_PLS & STM32_PLS_MASK);
+#endif /* STM32_PVD_ENABLE */
 }
 
 /**
