@@ -8,10 +8,10 @@ N = Decided against.
 Current Pipeline (2.3.x):
 X I2C device driver class support and at least one implementation.
 X STM32F2xx support.
-- Nios II support.
-- Update C++ wrapper.
 
 Within 2.x.x
+- Nios II support.
+- Update C++ wrapper.
 - FatFs 0.9x integration.
 - Software I2C implementation using a GPT instance for timings.
 - LPC17xx support.
