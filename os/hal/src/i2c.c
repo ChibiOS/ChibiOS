@@ -77,8 +77,6 @@ void i2cObjectInit(I2CDriver *i2cp) {
 
   i2cp->state  = I2C_STOP;
   i2cp->config = NULL;
-  i2cp->rxbuf = NULL;
-  i2cp->thread   = NULL;
 
 #if I2C_USE_MUTUAL_EXCLUSION
 #if CH_USE_MUTEXES
