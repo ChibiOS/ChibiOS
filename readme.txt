@@ -79,6 +79,8 @@
 - FIX: Fixed SYSCFG clock not started in STM32L1/F4 HALs (bug 3449139).
 - FIX: Fixed wrong definitions in STM32L-Discovery board file (bug 3449076).
 - OPT: Improved the exception exit code in the GCC Cortex-Mx ports.
+- NEW: Addred to the HAL driver the handling of an abstract realtime free
+  running counter, added the capability to all the STM32 HALs.
 - NEW: Modified ARM and ARMCMx build rules to allow parallel build. Now the
   log outputs one dummy compilation command in order to allow paths discovery
   by Eclipse.

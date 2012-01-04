@@ -67,6 +67,9 @@ void hal_lld_init(void) {
                   SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
 
+  /* DWT cycle counter enable.*/
+  DWT_CTRL |= DWT_CTRL_CYCCNTENA;
+
 #if defined(STM32_DMA_REQUIRED)
   dmaInit();
 #endif

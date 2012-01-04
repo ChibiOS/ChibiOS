@@ -53,6 +53,46 @@
 #include "rtc.h"
 
 /*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
+
+/**
+ * @brief   Returns the current value of the system free running counter.
+ * @note    This is an optional service that could not be implemented in
+ *          all HAL implementations.
+ *
+ * @return              The value of the system free running counter.
+ *
+ * @api
+ */
+#define halGetCounterValue() hal_lld_get_counter_value()
+
+/**
+ * @brief   Realtime counter frequency.
+ *
+ * @return              The realtime counter frequency of type halclock_t.
+ *
+ * @api
+ */
+#define halGetCounterFrequency() hal_lld_get_counter_frequency()
+
+/*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 

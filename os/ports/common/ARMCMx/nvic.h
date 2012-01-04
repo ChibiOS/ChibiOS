@@ -191,6 +191,9 @@ typedef struct {
 #define AIRCR_PRIGROUP_MASK     (0x7U << 8)
 #define AIRCR_PRIGROUP(n)       ((n##U) << 8)
 
+/**
+ * @brief Structure representing the FPU I/O space.
+ */
 typedef struct {
   IOREG32       unused1[1];
   IOREG32       FPCCR;
@@ -224,6 +227,35 @@ typedef struct {
 #define FPDSCR_DN               (0x1U << 25)
 #define FPDSCR_FZ               (0x1U << 24)
 #define FPDSCR_RMODE(n)         ((n##U) << 22)
+
+/**
+ * @brief Structure representing the DWT I/O space.
+ */
+typedef struct {
+  IOREG32       CTRL;
+  IOREG32       CYCCNT;
+  IOREG32       CPICNT;
+  IOREG32       EXCCNT;
+  IOREG32       SLEEPCNT;
+  IOREG32       LSUCNT;
+  IOREG32       FOLDCNT;
+  IOREG32       PCSR;
+} CMx_DWT;
+
+/**
+ * @brief DWT peripheral base address.
+ */
+#define DWTBase                 ((CMx_DWT *)0xE0001000U)
+#define DWT_CTRL                (DWTBase->CTRL)
+#define DWT_CYCCNT              (DWTBase->CYCCNT)
+#define DWT_CPICNT              (DWTBase->CPICNT)
+#define DWT_EXCCNT              (DWTBase->EXCCNT)
+#define DWT_SLEEPCNT            (DWTBase->SLEEPCNT)
+#define DWT_LSUCNT              (DWTBase->LSUCNT)
+#define DWT_FOLDCNT             (DWTBase->FOLDCNT)
+#define DWT_PCSR                (DWTBase->PCSR)
+
+#define DWT_CTRL_CYCCNTENA      (0x1U << 0)
 
 #ifdef __cplusplus
 extern "C" {

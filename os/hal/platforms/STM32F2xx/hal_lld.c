@@ -71,6 +71,9 @@ void hal_lld_init(void) {
                   SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
 
+  /* DWT cycle counter enable.*/
+  DWT_CTRL |= DWT_CTRL_CYCCNTENA;
+
 #if STM32_PVD_ENABLE
   /* Programmable voltage detector initialization */
   PWR->CR |= PWR_CR_PVDE | (STM32_PLS & STM32_PLS_MASK);
