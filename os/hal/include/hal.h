@@ -77,7 +77,8 @@
  * @note    This is an optional service that could not be implemented in
  *          all HAL implementations.
  *
- * @return              The value of the system free running counter.
+ * @return              The value of the system free running counter of
+ *                      type halrtcnt_t.
  *
  * @api
  */
@@ -85,6 +86,8 @@
 
 /**
  * @brief   Realtime counter frequency.
+ * @note    This is an optional service that could not be implemented in
+ *          all HAL implementations.
  *
  * @return              The realtime counter frequency of type halclock_t.
  *
