@@ -78,7 +78,7 @@ void hal_lld_init(void) {
   dmaInit();
 #endif
 
-  /* Programmable voltage detector enable. */
+  /* Programmable voltage detector enable.*/
 #if STM32_PVD_ENABLE
   rccEnablePWRInterface(FALSE);
   PWR->CR |= PWR_CR_PVDE | (STM32_PLS & STM32_PLS_MASK);

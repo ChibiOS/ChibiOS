@@ -171,7 +171,7 @@
 /** @} */
 
 /**
- * @brief   ADC peripherals specific RCC operations
+ * @name    ADC peripherals specific RCC operations
  * @{
  */
 /**
@@ -203,7 +203,7 @@
 /** @} */
 
 /**
- * @brief   Backup domain interface specific RCC operations
+ * @name    Backup domain interface specific RCC operations
  * @{
  */
 /**
@@ -244,7 +244,7 @@
 /** @} */
 
 /**
- * @brief   PWR interface specific RCC operations
+ * @name    PWR interface specific RCC operations
  * @{
  */
 /**
@@ -276,7 +276,7 @@
 /** @} */
 
 /**
- * @brief   CAN peripherals specific RCC operations
+ * @name    CAN peripherals specific RCC operations
  * @{
  */
 /**
@@ -308,7 +308,7 @@
 /** @} */
 
 /**
- * @brief   DMA peripherals specific RCC operations
+ * @name    DMA peripherals specific RCC operations
  * @{
  */
 /**
@@ -369,7 +369,7 @@
 /** @} */
 
 /**
- * @brief   ETH peripheral specific RCC operations
+ * @name    ETH peripheral specific RCC operations
  * @{
  */
 /**
@@ -405,7 +405,7 @@
 /** @} */
 
 /**
- * @brief   I2C peripherals specific RCC operations
+ * @name    I2C peripherals specific RCC operations
  * @{
  */
 /**
@@ -464,7 +464,7 @@
 /** @} */
 
 /**
- * @brief   SDIO peripheral specific RCC operations
+ * @name    SDIO peripheral specific RCC operations
  * @{
  */
 /**
@@ -497,7 +497,7 @@
 /** @} */
 
 /**
- * @brief   SPI peripherals specific RCC operations
+ * @name    SPI peripherals specific RCC operations
  * @{
  */
 /**
@@ -583,7 +583,7 @@
 /** @} */
 
 /**
- * @brief   TIM peripherals specific RCC operations
+ * @name    TIM peripherals specific RCC operations
  * @{
  */
 /**
@@ -750,7 +750,7 @@
 /** @} */
 
 /**
- * @brief   USART/UART peripherals specific RCC operations
+ * @name    USART/UART peripherals specific RCC operations
  * @{
  */
 /**
@@ -890,7 +890,7 @@
 /** @} */
 
 /**
- * @brief   USB peripheral specific RCC operations
+ * @name    USB peripheral specific RCC operations
  * @{
  */
 /**

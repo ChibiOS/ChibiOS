@@ -52,6 +52,8 @@
 #define STM32_ADCPRE                        STM32_ADCPRE_DIV4
 #define STM32_OTGFSPRE                      STM32_OTGFSPRE_DIV3
 #define STM32_MCO                           STM32_MCO_PLL3
+#define STM32_PVD_ENABLE                    FALSE
+#define STM32_PLS                           STM32_PLS_LEV0
 
 /*
  * ADC driver system settings.

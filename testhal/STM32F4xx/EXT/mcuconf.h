@@ -36,9 +36,6 @@
  * HAL driver system settings.
  */
 #define STM32_NO_INIT                       FALSE
-#define STM32_VOS                           STM32_VOS_HIGH
-#define STM32_PLS                           STM32_PLS_LEV0
-#define STM32_PVD_ENABLE                    TRUE
 #define STM32_HSI_ENABLED                   TRUE
 #define STM32_LSI_ENABLED                   TRUE
 #define STM32_HSE_ENABLED                   TRUE
@@ -62,6 +59,9 @@
 #define STM32_I2SSRC                        STM32_I2SSRC_CKIN
 #define STM32_PLLI2SN_VALUE                 192
 #define STM32_PLLI2SR_VALUE                 5
+#define STM32_VOS                           STM32_VOS_HIGH
+#define STM32_PVD_ENABLE                    TRUE
+#define STM32_PLS                           STM32_PLS_LEV0
 
 /*
  * ADC driver system settings.
