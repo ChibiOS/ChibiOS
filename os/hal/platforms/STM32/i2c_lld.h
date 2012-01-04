@@ -384,6 +384,11 @@ struct I2CDriver{
  *          this function.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @param[out] rdymsg   received message on wakeup
  *
  * @notapi
  */
@@ -499,3 +504,5 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 #endif /* HAL_USE_I2C  */
 
 #endif /* _I2C_LLD_H_ */
+
+/** @} */

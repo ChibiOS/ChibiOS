@@ -160,7 +160,7 @@ i2cflags_t i2cGetErrors(I2CDriver *i2cp) {
  * @param[in] addr      slave device address (7 bits) without R/W bit
  * @param[in] txbuf     pointer to transmit buffer
  * @param[in] txbytes   number of bytes to be transmitted
- * @param[in] rxbuf     pointer to receive buffer
+ * @param[out] rxbuf    pointer to receive buffer
  * @param[in] rxbytes   number of bytes to be received, set it to 0 if
  *                      you want transmit only
  * @param[in] timeout   the number of ticks before the operation timeouts,
@@ -209,10 +209,8 @@ msg_t i2cMasterTransmitTimeout(I2CDriver *i2cp,
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  * @param[in] addr      slave device address (7 bits) without R/W bit
+ * @param[out] rxbuf    pointer to receive buffer
  * @param[in] rxbytes   number of bytes to be received
- * @param[in] rxbuf     pointer to receive buffer
- * @param[in] errors    pointer to variable to store error code, zero means
- *                      no error.
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_INFINITE no timeout.

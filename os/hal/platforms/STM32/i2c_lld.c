@@ -641,6 +641,8 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 /**
  * @brief   Resets the interface via RCC.
  *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
  * @notapi
  */
 void i2c_lld_reset(I2CDriver *i2cp) {
@@ -670,9 +672,12 @@ void i2c_lld_reset(I2CDriver *i2cp) {
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  * @param[in] addr      slave device address
- * @param[in] rxbuf     pointer to the receive buffer
+ * @param[out] rxbuf    pointer to the receive buffer
  * @param[in] rxbytes   number of bytes to be received
- *
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
  * @return              The operation status.
  * @retval RDY_OK       if the function succeeded.
  * @retval RDY_RESET    if one or more I2C errors occurred, the errors can
@@ -684,7 +689,6 @@ void i2c_lld_reset(I2CDriver *i2cp) {
 msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                      uint8_t *rxbuf, size_t rxbytes,
                                      systime_t timeout) {
-
   msg_t rdymsg;
 
   /* Releases the lock from high level driver.*/
@@ -739,7 +743,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
  * @param[in] addr      slave device address
  * @param[in] txbuf     pointer to the transmit buffer
  * @param[in] txbytes   number of bytes to be transmitted
- * @param[in] rxbuf     pointer to the receive buffer
+ * @param[out] rxbuf    pointer to the receive buffer
  * @param[in] rxbytes   number of bytes to be received
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
@@ -804,3 +808,5 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 }
 
 #endif /* HAL_USE_I2C */
+
+/** @} */
