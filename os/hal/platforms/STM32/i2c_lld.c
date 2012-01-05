@@ -785,7 +785,6 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
     return RDY_TIMEOUT;
 
   /* Starts the operation.*/
-  i2cp->i2c->CR2 &= I2C_CR2_FREQ;
   i2cp->i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
 
   /* Waits for the operation completion or a timeout.*/
@@ -869,7 +868,6 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
     return RDY_TIMEOUT;
 
   /* Starts the operation.*/
-  i2cp->i2c->CR2 &= I2C_CR2_FREQ;
   i2cp->i2c->CR1 |= I2C_CR1_START;
 
   /* Waits for the operation completion or a timeout.*/
