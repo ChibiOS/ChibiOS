@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    spi.h
+ * @file    mmc_spi.h
  * @brief   MMC over SPI driver header.
  *
  * @addtogroup MMC_SPI
@@ -37,10 +37,12 @@
 
 #define MMC_CMD0_RETRY              10
 #define MMC_CMD1_RETRY              100
+#define MMC_ACMD41_RETRY            100
 #define MMC_WAIT_DATA               10000
 
 #define MMC_CMDGOIDLE               0
 #define MMC_CMDINIT                 1
+#define MMC_CMDINTERFACE_CONDITION  8
 #define MMC_CMDREADCSD              9
 #define MMC_CMDSTOP                 12
 #define MMC_CMDSETBLOCKLEN          16
@@ -48,6 +50,9 @@
 #define MMC_CMDREADMULTIPLE         18
 #define MMC_CMDWRITE                24
 #define MMC_CMDWRITEMULTIPLE        25
+#define MMC_CMDAPP                  55
+#define MMC_CMDREADOCR              58
+#define MMC_ACMDOPCONDITION         41
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -180,6 +185,10 @@ typedef struct {
    * @brief Insertion counter.
    */
   uint_fast8_t          cnt;
+  /***
+   * @brief Addresses use blocks instead of bytes.
+   */
+  bool_t                block_addresses;
 } MMCDriver;
 
 /*===========================================================================*/

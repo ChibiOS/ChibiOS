@@ -79,6 +79,8 @@
 - FIX: Fixed SYSCFG clock not started in STM32L1/F4 HALs (bug 3449139).
 - FIX: Fixed wrong definitions in STM32L-Discovery board file (bug 3449076).
 - OPT: Improved the exception exit code in the GCC Cortex-Mx ports.
+- NEW: MMC over SPI driver improved to handle high capacity cards, by
+  Matthias Blaicher.
 - NEW: Added PVD support to the HAL of all STM32s, by Barthess.
 - NEW: Added to the HAL driver the handling of an abstract realtime free
   running counter, added the capability to all the STM32 HALs.

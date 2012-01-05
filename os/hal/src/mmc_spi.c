@@ -17,14 +17,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/*
+   Parts of this file have been contributed by Matthias Blaicher.
+ */
 
 /**
- * @file    spi.c
+ * @file    mmc_spi.c
  * @brief   MMC over SPI driver code.
  *
  * @addtogroup MMC_SPI
  * @{
  */
+
+#include <string.h>
 
 #include "ch.h"
 #include "hal.h"
@@ -43,9 +48,52 @@
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Lookup table for CRC-7 ( based on polynomial x^7 + x^3 + 1).
+ */
+static const uint8_t crc7_lookup_table[256] = {
+  0x00, 0x09, 0x12, 0x1b, 0x24, 0x2d, 0x36, 0x3f, 0x48, 0x41, 0x5a, 0x53,
+  0x6c, 0x65, 0x7e, 0x77, 0x19, 0x10, 0x0b, 0x02, 0x3d, 0x34, 0x2f, 0x26,
+  0x51, 0x58, 0x43, 0x4a, 0x75, 0x7c, 0x67, 0x6e, 0x32, 0x3b, 0x20, 0x29,
+  0x16, 0x1f, 0x04, 0x0d, 0x7a, 0x73, 0x68, 0x61, 0x5e, 0x57, 0x4c, 0x45,
+  0x2b, 0x22, 0x39, 0x30, 0x0f, 0x06, 0x1d, 0x14, 0x63, 0x6a, 0x71, 0x78,
+  0x47, 0x4e, 0x55, 0x5c, 0x64, 0x6d, 0x76, 0x7f, 0x40, 0x49, 0x52, 0x5b,
+  0x2c, 0x25, 0x3e, 0x37, 0x08, 0x01, 0x1a, 0x13, 0x7d, 0x74, 0x6f, 0x66,
+  0x59, 0x50, 0x4b, 0x42, 0x35, 0x3c, 0x27, 0x2e, 0x11, 0x18, 0x03, 0x0a,
+  0x56, 0x5f, 0x44, 0x4d, 0x72, 0x7b, 0x60, 0x69, 0x1e, 0x17, 0x0c, 0x05,
+  0x3a, 0x33, 0x28, 0x21, 0x4f, 0x46, 0x5d, 0x54, 0x6b, 0x62, 0x79, 0x70,
+  0x07, 0x0e, 0x15, 0x1c, 0x23, 0x2a, 0x31, 0x38, 0x41, 0x48, 0x53, 0x5a,
+  0x65, 0x6c, 0x77, 0x7e, 0x09, 0x00, 0x1b, 0x12, 0x2d, 0x24, 0x3f, 0x36,
+  0x58, 0x51, 0x4a, 0x43, 0x7c, 0x75, 0x6e, 0x67, 0x10, 0x19, 0x02, 0x0b,
+  0x34, 0x3d, 0x26, 0x2f, 0x73, 0x7a, 0x61, 0x68, 0x57, 0x5e, 0x45, 0x4c,
+  0x3b, 0x32, 0x29, 0x20, 0x1f, 0x16, 0x0d, 0x04, 0x6a, 0x63, 0x78, 0x71,
+  0x4e, 0x47, 0x5c, 0x55, 0x22, 0x2b, 0x30, 0x39, 0x06, 0x0f, 0x14, 0x1d,
+  0x25, 0x2c, 0x37, 0x3e, 0x01, 0x08, 0x13, 0x1a, 0x6d, 0x64, 0x7f, 0x76,
+  0x49, 0x40, 0x5b, 0x52, 0x3c, 0x35, 0x2e, 0x27, 0x18, 0x11, 0x0a, 0x03,
+  0x74, 0x7d, 0x66, 0x6f, 0x50, 0x59, 0x42, 0x4b, 0x17, 0x1e, 0x05, 0x0c,
+  0x33, 0x3a, 0x21, 0x28, 0x5f, 0x56, 0x4d, 0x44, 0x7b, 0x72, 0x69, 0x60,
+  0x0e, 0x07, 0x1c, 0x15, 0x2a, 0x23, 0x38, 0x31, 0x46, 0x4f, 0x54, 0x5d,
+  0x62, 0x6b, 0x70, 0x79
+};
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+/**
+ * @brief Calculate the MMC standard CRC-7 based on a lookup table.
+ *
+ * @param[in] crc       start value for CRC
+ * @param[in] buffer    pointer to data buffer
+ * @param[in] len       length of data
+ * @return              Calculated CRC
+ */
+static uint8_t crc7(uint8_t crc, const uint8_t *buffer, size_t len) {
+
+  while (len--)
+    crc = crc7_lookup_table[(crc << 1) ^ (*buffer++)];
+  return crc;
+}
 
 /**
  * @brief   Inserion monitor timer callback function.
@@ -109,15 +157,15 @@ static void wait(MMCDriver *mmcp) {
  * @brief   Sends a command header.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
- * @param cmd[in]       the command id
- * @param arg[in]       the command argument
+ * @param[in] cmd       the command id
+ * @param[in] arg       the command argument
  *
  * @notapi
  */
 static void send_hdr(MMCDriver *mmcp, uint8_t cmd, uint32_t arg) {
   uint8_t buf[6];
 
-  /* Wait for the bus to become idle if a write operation was in progress. */
+  /* Wait for the bus to become idle if a write operation was in progress.*/
   wait(mmcp);
 
   buf[0] = 0x40 | cmd;
@@ -125,7 +173,9 @@ static void send_hdr(MMCDriver *mmcp, uint8_t cmd, uint32_t arg) {
   buf[2] = arg >> 16;
   buf[3] = arg >> 8;
   buf[4] = arg;
-  buf[5] = 0x95;        /* Valid for CMD0 ignored by other commands. */
+  /* Calculate CRC for command header, shift to right position, add stop bit.*/
+  buf[5] = ((crc7(0, buf, 5) & 0x7F) << 1) | 0x01;
+
   spiSend(mmcp->spip, 6, buf);
 }
 
@@ -151,22 +201,65 @@ static uint8_t recvr1(MMCDriver *mmcp) {
 }
 
 /**
+ * @brief   Receives a three byte response.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ * @param[out] buffer   pointer to four bytes wide buffer
+ * @return              First response byte as an @p uint8_t value.
+ * @retval 0xFF         timed out.
+ *
+ * @notapi
+ */
+static uint8_t recvr3(MMCDriver *mmcp, uint8_t* buffer) {
+  uint8_t r1;
+
+  r1 = recvr1(mmcp);
+  spiReceive(mmcp->spip, 4, buffer);
+
+  return r1;
+}
+
+/**
  * @brief   Sends a command an returns a single byte response.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
- * @param cmd[in]       the command id
- * @param arg[in]       the command argument
+ * @param[in] cmd       the command id
+ * @param[in] arg       the command argument
  * @return              The response as an @p uint8_t value.
  * @retval 0xFF         timed out.
  *
  * @notapi
  */
-static uint8_t send_command(MMCDriver *mmcp, uint8_t cmd, uint32_t arg) {
+static uint8_t send_command_R1(MMCDriver *mmcp, uint8_t cmd, uint32_t arg) {
   uint8_t r1;
 
   spiSelect(mmcp->spip);
   send_hdr(mmcp, cmd, arg);
   r1 = recvr1(mmcp);
+  spiUnselect(mmcp->spip);
+  return r1;
+}
+
+/**
+ * @brief   Sends a command which returns a five bytes response (R3).
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ * @param[in] cmd       the command id
+ * @param[in] arg       the command argument
+ * @param[out] response pointer to four bytes wide uint8_t buffer
+ * @return              The first byte of the response (R1) as an @p
+ *                      uint8_t value.
+ * @retval 0xFF         timed out.
+ *
+ * @notapi
+ */
+static uint8_t send_command_R3(MMCDriver *mmcp, uint8_t cmd, uint32_t arg,
+                               uint8_t *response) {
+  uint8_t r1;
+  
+  spiSelect(mmcp->spip);
+  send_hdr(mmcp, cmd, arg);
+  r1 = recvr3(mmcp, response);
   spiUnselect(mmcp->spip);
   return r1;
 }
@@ -233,6 +326,7 @@ void mmcObjectInit(MMCDriver *mmcp, SPIDriver *spip,
   mmcp->hscfg = hscfg;
   mmcp->is_protected = is_protected;
   mmcp->is_inserted = is_inserted;
+  mmcp->block_addresses = FALSE;
   chEvtInit(&mmcp->inserted_event);
   chEvtInit(&mmcp->removed_event);
 }
@@ -315,17 +409,47 @@ bool_t mmcConnect(MMCDriver *mmcp) {
     /* SPI mode selection.*/
     i = 0;
     while (TRUE) {
-      if (send_command(mmcp, MMC_CMDGOIDLE, 0) == 0x01)
+      if (send_command_R1(mmcp, MMC_CMDGOIDLE, 0) == 0x01)
         break;
       if (++i >= MMC_CMD0_RETRY)
         return TRUE;
       chThdSleepMilliseconds(10);
     }
 
+    /* Try to detect if this is a high capacity card and switch to block
+     * addresses if possible.
+     *
+     * This method is based on "How to support SDC Ver2 and high capacity cards"
+     * by ElmChan.
+     *
+     * */
+    uint8_t r3[4];
+    if(send_command_R3(mmcp, MMC_CMDINTERFACE_CONDITION, 0x01AA, r3) != 0x05){
+
+      /* Switch to SDHC mode */
+      i = 0;
+      while (TRUE) {
+        if ((send_command_R1(mmcp, MMC_CMDAPP, 0) == 0x01) &&
+            (send_command_R3(mmcp, MMC_ACMDOPCONDITION, 0x400001aa, r3) == 0x00))
+          break;
+
+        if (++i >= MMC_ACMD41_RETRY)
+          return TRUE;
+        chThdSleepMilliseconds(10);
+      }
+
+      /* Execute dedicated read on OCR register */
+      send_command_R3(mmcp, MMC_CMDREADOCR, 0, r3);
+
+      /* Check if CCS is set in response. Card operates in block mode if set */
+      if(r3[0] & 0x40)
+        mmcp->block_addresses = TRUE;
+    }
+
     /* Initialization. */
     i = 0;
     while (TRUE) {
-      uint8_t b = send_command(mmcp, MMC_CMDINIT, 0);
+      uint8_t b = send_command_R1(mmcp, MMC_CMDINIT, 0);
       if (b == 0x00)
         break;
       if (b != 0x01)
@@ -339,7 +463,7 @@ bool_t mmcConnect(MMCDriver *mmcp) {
     spiStart(mmcp->spip, mmcp->hscfg);
 
     /* Setting block size.*/
-    if (send_command(mmcp, MMC_CMDSETBLOCKLEN, MMC_SECTOR_SIZE) != 0x00)
+    if (send_command_R1(mmcp, MMC_CMDSETBLOCKLEN, MMC_SECTOR_SIZE) != 0x00)
       return TRUE;
 
     /* Transition to MMC_READY state (if not extracted).*/
@@ -419,7 +543,12 @@ bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
 
   spiStart(mmcp->spip, mmcp->hscfg);
   spiSelect(mmcp->spip);
-  send_hdr(mmcp, MMC_CMDREADMULTIPLE, startblk * MMC_SECTOR_SIZE);
+
+  if(mmcp->block_addresses)
+    send_hdr(mmcp, MMC_CMDREADMULTIPLE, startblk);
+  else
+    send_hdr(mmcp, MMC_CMDREADMULTIPLE, startblk * MMC_SECTOR_SIZE);
+
   if (recvr1(mmcp) != 0x00) {
     spiUnselect(mmcp->spip);
     chSysLock();
@@ -534,7 +663,12 @@ bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk) {
 
   spiStart(mmcp->spip, mmcp->hscfg);
   spiSelect(mmcp->spip);
-  send_hdr(mmcp, MMC_CMDWRITEMULTIPLE, startblk * MMC_SECTOR_SIZE);
+  if(mmcp->block_addresses)
+    send_hdr(mmcp, MMC_CMDWRITEMULTIPLE, startblk);
+  else
+    send_hdr(mmcp, MMC_CMDWRITEMULTIPLE, startblk * MMC_SECTOR_SIZE);
+
+
   if (recvr1(mmcp) != 0x00) {
     spiUnselect(mmcp->spip);
     chSysLock();

@@ -17,6 +17,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/*
+   Concepts and parts of this file have been contributed by Uladzimir Pylinsky
+   aka barthess.
+ */
 
 /**
  * @file    STM32/i2c_lld.h
@@ -368,87 +372,6 @@ struct I2CDriver{
 /*===========================================================================*/
 
 /**
- * @brief   Waits for operation completion.
- * @details This function waits for the driver to complete the current
- *          operation.
- * @pre     An operation must be running while the function is invoked.
- * @note    No more than one thread can wait on a I2C driver using
- *          this function.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_INFINITE no timeout.
- *                      .
- * @param[out] rdymsg   received message on wakeup
- *
- * @notapi
- */
-#define i2c_lld_wait_s(i2cp, timeout, rdymsg) {                             \
-  chDbgAssert((i2cp)->thread == NULL,                                       \
-              "_i2c_wait(), #1", "already waiting");                        \
-  (i2cp)->thread = chThdSelf();                                             \
-  rdymsg = chSchGoSleepTimeoutS(THD_STATE_SUSPENDED, timeout);              \
-}
-
-/**
- * @brief   Wakes up the waiting thread.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- *
- * @notapi
- */
-#define i2c_lld_wakeup_isr(i2cp) {                                          \
-  chSysLockFromIsr();                                                       \
-  if ((i2cp)->thread != NULL) {                                             \
-    Thread *tp = (i2cp)->thread;                                            \
-    (i2cp)->thread = NULL;                                                  \
-    chSchReadyI(tp);                                                        \
-  }                                                                         \
-  chSysUnlockFromIsr();                                                     \
-}
-
-/**
- * @brief   Wakes up the waiting thread in case of errors.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- *
- * @notapi
- */
-#define i2c_lld_error_wakeup_isr(i2cp) {                                    \
-  chSysLockFromIsr();                                                       \
-  if ((i2cp)->thread != NULL) {                                             \
-    Thread *tp = (i2cp)->thread;                                            \
-    (i2cp)->thread = NULL;                                                  \
-    tp->p_u.rdymsg = RDY_RESET;                                             \
-    chSchReadyI(tp);                                                        \
-  }                                                                         \
-  chSysUnlockFromIsr();                                                     \
-}
-
-/**
- * @brief   Common ISR code.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- *
- * @notapi
- */
-#define i2c_lld_isr_code(i2cp) {                                            \
-  i2c_lld_wakeup_isr(i2cp);                                                 \
-}
-
-/**
- * @brief   Error ISR code.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- *
- * @notapi
- */
-#define i2c_lld_isr_err_code(i2cp) {                                        \
-  i2c_lld_error_wakeup_isr(i2cp);                                           \
-}
-
-/**
  * @brief   Get errors from I2C driver.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
@@ -473,22 +396,21 @@ extern I2CDriver I2CD2;
 #if STM32_I2C_USE_I2C3
 extern I2CDriver I2CD3;
 #endif
-#endif
+#endif /* !defined(__DOXYGEN__) */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-void i2c_lld_init(void);
-void i2c_lld_reset(I2CDriver *i2cp);
-void i2c_lld_start(I2CDriver *i2cp);
-void i2c_lld_stop(I2CDriver *i2cp);
-msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
-                                      const uint8_t *txbuf, size_t txbytes,
-                                      uint8_t *rxbuf, size_t rxbytes,
-                                      systime_t timeout);
-msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
-                                     uint8_t *rxbuf, size_t rxbytes,
-                                     systime_t timeout);
+  void i2c_lld_init(void);
+  void i2c_lld_start(I2CDriver *i2cp);
+  void i2c_lld_stop(I2CDriver *i2cp);
+  msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
+                                        const uint8_t *txbuf, size_t txbytes,
+                                        uint8_t *rxbuf, size_t rxbytes,
+                                        systime_t timeout);
+  msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
+                                       uint8_t *rxbuf, size_t rxbytes,
+                                       systime_t timeout);
 #ifdef __cplusplus
 }
 #endif
