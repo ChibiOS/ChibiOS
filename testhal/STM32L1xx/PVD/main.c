@@ -28,10 +28,10 @@ static void extcb(EXTDriver *extp, expchannel_t channel) {
   (void)channel;
 
   if (PWR->CSR & PWR_CSR_PVDO){ /* voltage lover than threshold */
-    palClearPad(GPIOC, GPIOC_LED); /* switch off LED*/
+    palClearPad(GPIOB, GPIOB_LED4); /* switch off LED*/
   }
   else{
-    palSetPad(GPIOC, GPIOC_LED); /* switch on LED*/
+    palSetPad(GPIOB, GPIOB_LED4); /* switch on LED*/
   }
 }
 
@@ -56,6 +56,10 @@ static const EXTConfig extcfg = {
    {EXT_CH_MODE_DISABLED, NULL},
    {EXT_CH_MODE_DISABLED, NULL},
    {EXT_CH_MODE_BOTH_EDGES | EXT_CH_MODE_AUTOSTART, extcb},/* 16 - PVD */
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
+   {EXT_CH_MODE_DISABLED, NULL},
    {EXT_CH_MODE_DISABLED, NULL},
    {EXT_CH_MODE_DISABLED, NULL},
   },
