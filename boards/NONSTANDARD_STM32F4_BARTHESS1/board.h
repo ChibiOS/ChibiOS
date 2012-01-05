@@ -323,11 +323,11 @@
 /* 0x00000000 */
 #define VAL_GPIOC_OTYPER        0x00000000
 /* 0x00000000 */
-#define VAL_GPIOC_OSPEEDR      (PIN_OSPEED_100M(GPIOC_SDIO_D0) |              \
-                                PIN_OSPEED_100M(GPIOC_SDIO_D1) |              \
-                                PIN_OSPEED_100M(GPIOC_SDIO_D2) |              \
-                                PIN_OSPEED_100M(GPIOC_SDIO_D3) |              \
-                                PIN_OSPEED_100M(GPIOC_SDIO_CK) |              \
+#define VAL_GPIOC_OSPEEDR      (PIN_OSPEED_25M(GPIOC_SDIO_D0) |               \
+                                PIN_OSPEED_25M(GPIOC_SDIO_D1) |               \
+                                PIN_OSPEED_25M(GPIOC_SDIO_D2) |               \
+                                PIN_OSPEED_25M(GPIOC_SDIO_D3) |               \
+                                PIN_OSPEED_25M(GPIOC_SDIO_CK) |               \
                                 PIN_OSPEED_2M(GPIOC_TAMPER_RTC))
 /* 0x00000000 */
 #define VAL_GPIOC_PUPDR        (PIN_PUDR_FLOATING(GPIOC_AN_CURRENT_SENS) |    \
@@ -338,11 +338,11 @@
                                 PIN_PUDR_FLOATING(GPIOC_AN33_2) |             \
                                 PIN_PUDR_PULLUP(6) |                          \
                                 PIN_PUDR_PULLUP(7) |                          \
-                                PIN_PUDR_FLOATING(GPIOC_SDIO_D0) |            \
-                                PIN_PUDR_FLOATING(GPIOC_SDIO_D1) |            \
-                                PIN_PUDR_FLOATING(GPIOC_SDIO_D2) |            \
-                                PIN_PUDR_FLOATING(GPIOC_SDIO_D3) |            \
-                                PIN_PUDR_FLOATING(GPIOC_SDIO_CK) |            \
+                                PIN_PUDR_PULLUP(GPIOC_SDIO_D0) |              \
+                                PIN_PUDR_PULLUP(GPIOC_SDIO_D1) |              \
+                                PIN_PUDR_PULLUP(GPIOC_SDIO_D2) |              \
+                                PIN_PUDR_PULLUP(GPIOC_SDIO_D3) |              \
+                                PIN_PUDR_PULLUP(GPIOC_SDIO_CK) |              \
                                 PIN_PUDR_FLOATING(GPIOC_TAMPER_RTC) |         \
                                 PIN_PUDR_FLOATING(GPIOC_OSC32_IN) |           \
                                 PIN_PUDR_FLOATING(GPIOC_OSC32_OUT))
@@ -374,9 +374,10 @@
 /* 0x00000000 */
 #define VAL_GPIOD_OTYPER        0x00000000
 /* 0x00000000 */
-#define VAL_GPIOD_OSPEEDR      (PIN_OSPEED_100M(GPIOD_SDIO_CMD))
+#define VAL_GPIOD_OSPEEDR      (PIN_OSPEED_25M(GPIOD_SDIO_CMD))
 /* 0x00000000 */
-#define VAL_GPIOD_PUPDR        (PIN_PUDR_PULLDOWN(GPIOD_PWM1) |               \
+#define VAL_GPIOD_PUPDR        (PIN_PUDR_PULLUP(GPIOD_SDIO_CMD) |             \
+                                PIN_PUDR_PULLDOWN(GPIOD_PWM1) |               \
                                 PIN_PUDR_PULLDOWN(GPIOD_PWM2) |               \
                                 PIN_PUDR_PULLDOWN(GPIOD_PWM3) |               \
                                 PIN_PUDR_PULLDOWN(GPIOD_PWM4))
