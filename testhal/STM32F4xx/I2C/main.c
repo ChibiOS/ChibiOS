@@ -22,6 +22,10 @@
    aka barthess.
  */
 
+/**
+ * This demo acquire data from accelerometer and prints it in shell.
+ */
+
 #include <stdlib.h>
 
 #include "ch.h"
@@ -103,6 +107,7 @@ int16_t complement2signed(uint8_t msb, uint8_t lsb){
  */
 int main(void) {
   msg_t status = RDY_OK;
+  systime_t tmo = MS2ST(4);
 
   /*
    * System initializations.
@@ -135,18 +140,23 @@ int main(void) {
   txbuf[0] = ACCEL_CTRL_REG1; /* register address */
   txbuf[1] = 0x1;
   i2cAcquireBus(&I2CD2);
-  i2cMasterTransmitTimeout(&I2CD2, mma8451_addr, txbuf, 2, rxbuf, 0, TIME_INFINITE);
+  status = i2cMasterTransmitTimeout(&I2CD2, mma8451_addr, txbuf, 2, rxbuf, 0, tmo);
   i2cReleaseBus(&I2CD2);
+
+  if (status != RDY_OK){
+    errors = i2cGetErrors(&I2CD2);
+  }
 
   /*
    * Normal main() thread activity, nothing in this test.
    */
   while (TRUE) {
+    palTogglePad(GPIOB, GPIOB_LED_B);
     chThdSleepMilliseconds(100);
 
     txbuf[0] = ACCEL_OUT_DATA; /* register address */
     i2cAcquireBus(&I2CD2);
-    status = i2cMasterTransmitTimeout(&I2CD2, mma8451_addr, txbuf, 1, rxbuf, 6, TIME_INFINITE);
+    status = i2cMasterTransmitTimeout(&I2CD2, mma8451_addr, txbuf, 1, rxbuf, 6, tmo);
     i2cReleaseBus(&I2CD2);
 
     if (status != RDY_OK){
