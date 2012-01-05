@@ -147,6 +147,7 @@ static void i2c_lld_abort_operation(I2CDriver *i2cp) {
   /* Stops the I2C peripheral.*/
   i2cp->i2c->CR1 = I2C_CR1_SWRST;
   i2cp->i2c->CR1 = 0;
+  i2cp->i2c->CR2 = 0;
   i2cp->i2c->SR1 = 0;
 
   /* Stops the associated DMA streams.*/
@@ -311,11 +312,9 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
     break;
   case I2C_EV6_MASTER_REC_MODE_SELECTED:
     dmaStreamEnable(i2cp->dmarx);
-    i2cp->i2c->CR2 |= I2C_CR2_DMAEN | I2C_CR2_LAST;
     break;
   case I2C_EV6_MASTER_TRA_MODE_SELECTED:
     dmaStreamEnable(i2cp->dmatx);
-    i2cp->i2c->CR2 |= I2C_CR2_DMAEN | I2C_CR2_LAST;
     break;
   case I2C_EV8_2_MASTER_BYTE_TRANSMITTED:
     /* Catches BTF event after the end of transmission.*/
@@ -669,7 +668,8 @@ void i2c_lld_start(I2CDriver *i2cp) {
   /* Reset i2c peripheral.*/
   i2cp->i2c->CR1 = I2C_CR1_SWRST;
   i2cp->i2c->CR1 = 0;
-  i2cp->i2c->CR2 = I2C_CR2_ITERREN | I2C_CR2_ITEVTEN;
+  i2cp->i2c->CR2 = I2C_CR2_ITERREN | I2C_CR2_ITEVTEN |
+                   I2C_CR2_DMAEN   | I2C_CR2_LAST;
 
   /* Setup I2C parameters.*/
   i2c_lld_set_clock(i2cp);
