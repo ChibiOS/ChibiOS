@@ -154,8 +154,8 @@
 /*
  * UART driver system settings.
  */
-#define STM32_UART_USE_USART1               FALSE // RF link
-#define STM32_UART_USE_USART2               FALSE //GPS
+#define STM32_UART_USE_USART1               FALSE
+#define STM32_UART_USE_USART2               FALSE
 #define STM32_UART_USE_USART3               FALSE
 #define STM32_UART_USART1_IRQ_PRIORITY      12
 #define STM32_UART_USART2_IRQ_PRIORITY      12
