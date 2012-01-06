@@ -255,7 +255,7 @@
                                 PIN_OTYPE_OPENDRAIN(GPIOB_I2C2_SCL) |         \
                                 PIN_OTYPE_OPENDRAIN(GPIOB_I2C2_SDA))
 /* 0x000000C0 */
-#define VAL_GPIOB_OSPEEDR       0xAAAAAAEA
+#define VAL_GPIOB_OSPEEDR       0x000000C0//0xAAAAAAEA
 /* 0x00000100 */
 #define VAL_GPIOB_PUPDR        (PIN_PUDR_PULLDOWN(GPIOB_RECEIVER_PPM) |       \
                                 PIN_PUDR_PULLUP(1) |                          \
