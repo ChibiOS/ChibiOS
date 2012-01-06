@@ -81,14 +81,14 @@ void miiReset(MACDriver *macp) {
   /*
    * PHY power control.
    */
-  AT91C_BASE_PIOB->PIO_OER = PIOB_PHY_PD_MASK;       // Becomes an output.
-  AT91C_BASE_PIOB->PIO_PPUDR = PIOB_PHY_PD_MASK;     // Default pullup disabled.
+  AT91C_BASE_PIOB->PIO_OER = PIOB_PHY_PD_MASK;  /* Becomes an output.       */
+  AT91C_BASE_PIOB->PIO_PPUDR = PIOB_PHY_PD_MASK;/* Default pullup disabled. */
 #if (PHY_HARDWARE == PHY_DAVICOM_9161)
-  AT91C_BASE_PIOB->PIO_CODR = PIOB_PHY_PD_MASK;      // Output to low level.
+  AT91C_BASE_PIOB->PIO_CODR = PIOB_PHY_PD_MASK; /* Output to low level.     */
 #else
-  AT91C_BASE_PIOB->PIO_SODR = PIOB_PHY_PD_MASK;      // Output to high level.
+  AT91C_BASE_PIOB->PIO_SODR = PIOB_PHY_PD_MASK; /* Output to high level.    */
 #endif
-#endif // PIOB_PHY_PD_MASK
+#endif
 
   /*
    * PHY reset by pulsing the NRST pin.

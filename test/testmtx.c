@@ -100,7 +100,7 @@ static msg_t thread1(void *p) {
 
 static void mtx1_execute(void) {
 
-  tprio_t prio = chThdGetPriority(); // Because priority inheritance.
+  tprio_t prio = chThdGetPriority(); /* Because priority inheritance.*/
   chMtxLock(&m1);
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread1, "E");
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread1, "D");
@@ -244,8 +244,8 @@ ROMCONST struct testcase testmtx2 = {
 
 static void mtx3_setup(void) {
 
-  chMtxInit(&m1); // Mutex B
-  chMtxInit(&m2); // Mutex A
+  chMtxInit(&m1); /* Mutex B.*/
+  chMtxInit(&m2); /* Mutex A.*/
 }
 
 /* Lowest priority thread */
@@ -539,7 +539,6 @@ static void mtx7_setup(void) {
 
 static void mtx7_execute(void) {
 
-  // Bacause priority inheritance.
   tprio_t prio = chThdGetPriority();
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread10, "E");
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread10, "D");

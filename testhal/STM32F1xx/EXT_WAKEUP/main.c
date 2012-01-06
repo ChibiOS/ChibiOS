@@ -93,7 +93,7 @@ static void cmd_reboot(BaseChannel *chp, int argc, char *argv[]){
     return;
   }
   chprintf(chp, "rebooting...\r\n");
-  chThdSleepMilliseconds(100); // time to print out message in terminal
+  chThdSleepMilliseconds(100);
   NVIC_SystemReset();
 }
 
@@ -105,11 +105,11 @@ static void cmd_sleep(BaseChannel *chp, int argc, char *argv[]){
   }
   chprintf(chp, "Going to sleep. Type any character to wake up.\r\n");
 
-  chThdSleepMilliseconds(200); // time to print out message in terminal
+  chThdSleepMilliseconds(200);
   extChannelEnable(&EXTD1, 10);
 
   PWR->CR |= (PWR_CR_LPDS | PWR_CR_CSBF | PWR_CR_CWUF);
-  PWR->CR &= ~PWR_CR_PDDS; // explicit clear PDDS, just to be safe
+  PWR->CR &= ~PWR_CR_PDDS;
   SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
   __WFI();
 }
@@ -146,20 +146,20 @@ int main(void) {
    */
   extStart(&EXTD1, &extcfg);
 
-  /* Activates the serial driver using the driver default configuration. */
+  /* Activates the serial driver using the driver default configuration.*/
   sdStart(&SD1, NULL);
 
-  /* Setting up ports. */
+  /* Setting up ports.*/
   palSetPadMode(IOPORT1, 9, PAL_MODE_STM32_ALTERNATE_PUSHPULL);
   palSetPadMode(IOPORT1, 10, PAL_MODE_INPUT);
 
-  /* Shell manager initialization. */
+  /* Shell manager initialization.*/
   shellInit();
   static WORKING_AREA(waShell, 512);
   shellCreateStatic(&shell_cfg1, waShell, sizeof(waShell), NORMALPRIO);
 
-  /* Start blink indicating. */
-  chThdSleepMilliseconds(2000); // timeuot to differ reboot and wake up from sleep
+  /* Start blink indicating.*/
+  chThdSleepMilliseconds(2000);
   while (TRUE) {
     chThdSleepMilliseconds(100);
     palTogglePad(IOPORT3, GPIOC_LED);

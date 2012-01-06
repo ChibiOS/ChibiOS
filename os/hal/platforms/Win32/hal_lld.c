@@ -89,7 +89,7 @@ void ChkIntSources(void) {
   }
 #endif
 
-  // Interrupt Timer simulation (10ms interval).
+  /* Interrupt Timer simulation (10ms interval).*/
   QueryPerformanceCounter(&n);
   if (n.QuadPart > nextcnt.QuadPart) {
     nextcnt.QuadPart += slice.QuadPart;
