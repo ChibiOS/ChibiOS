@@ -22,9 +22,10 @@
  * @defgroup MMC_SPI MMC over SPI Driver
  * @brief Generic MMC driver.
  * @details This module implements a portable MMC/SD driver that uses a SPI
- *          driver as physical layer.
- * @pre     In order to use the MMC_SPI driver the @p HAL_USE_MMC_SPI option
- *          must be enabled in @p halconf.h.
+ *          driver as physical layer. Hot plugging and removal are supported
+ *          through kernel events.
+ * @pre     In order to use the MMC_SPI driver the @p HAL_USE_MMC_SPI and
+ *          @p HAL_USE_SPI options must be enabled in @p halconf.h.
  *
  * @section mmc_spi_1 Driver State Machine
  * The driver implements a state machine internally, not all the driver
@@ -113,10 +114,6 @@
   }
  * @enddot
  * @endif
- *
- * The MMC drivers currently supports only cards with capacity up to 2GB
- * and does not implement CRC checking. Hot plugging and removal are supported
- * through kernel events.
  *
  * @ingroup IO
  */
