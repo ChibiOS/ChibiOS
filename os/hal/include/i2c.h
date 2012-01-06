@@ -89,8 +89,9 @@ typedef enum {
   I2C_UNINIT = 0,                           /**< Not initialized.           */
   I2C_STOP = 1,                             /**< Stopped.                   */
   I2C_READY = 2,                            /**< Ready.                     */
-  I2C_ACTIVE_TRANSMIT = 3,                  /**< Transmitting.              */
-  I2C_ACTIVE_RECEIVE = 4,                   /**< Receiving.                 */
+  I2C_ACTIVE_TX = 3,                        /**< Transmitting.              */
+  I2C_ACTIVE_RX = 4,                        /**< Receiving.                 */
+  I2C_LOCKED = 5                            /**> Bus or driver locked.      */
 } i2cstate_t;
 
 #include "i2c_lld.h"

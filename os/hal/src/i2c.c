@@ -101,7 +101,8 @@ void i2cObjectInit(I2CDriver *i2cp) {
 void i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
 
   chDbgCheck((i2cp != NULL) && (config != NULL), "i2cStart");
-  chDbgAssert((i2cp->state == I2C_STOP) || (i2cp->state == I2C_READY),
+  chDbgAssert((i2cp->state == I2C_STOP) || (i2cp->state == I2C_READY) ||
+              (i2cp->state == I2C_LOCKED),
               "i2cStart(), #1",
               "invalid state");
 
@@ -122,7 +123,8 @@ void i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
 void i2cStop(I2CDriver *i2cp) {
 
   chDbgCheck(i2cp != NULL, "i2cStop");
-  chDbgAssert((i2cp->state == I2C_STOP) || (i2cp->state == I2C_READY),
+  chDbgAssert((i2cp->state == I2C_STOP) || (i2cp->state == I2C_READY) ||
+              (i2cp->state == I2C_LOCKED),
               "i2cStop(), #1",
               "invalid state");
 
@@ -193,10 +195,13 @@ msg_t i2cMasterTransmitTimeout(I2CDriver *i2cp,
 
   chSysLock();
   i2cp->errors = I2CD_NO_ERROR;
-  i2cp->state = I2C_ACTIVE_TRANSMIT;
+  i2cp->state = I2C_ACTIVE_TX;
   rdymsg = i2c_lld_master_transmit_timeout(i2cp, addr, txbuf, txbytes,
                                            rxbuf, rxbytes, timeout);
-  i2cp->state = I2C_READY;
+  if (rdymsg == RDY_TIMEOUT)
+    i2cp->state = I2C_LOCKED;
+  else
+    i2cp->state = I2C_READY;
   chSysUnlock();
   return rdymsg;
 }
@@ -239,9 +244,12 @@ msg_t i2cMasterReceiveTimeout(I2CDriver *i2cp,
 
   chSysLock();
   i2cp->errors = I2CD_NO_ERROR;
-  i2cp->state = I2C_ACTIVE_RECEIVE;
+  i2cp->state = I2C_ACTIVE_RX;
   rdymsg = i2c_lld_master_receive_timeout(i2cp, addr, rxbuf, rxbytes, timeout);
-  i2cp->state = I2C_READY;
+  if (rdymsg == RDY_TIMEOUT)
+    i2cp->state = I2C_LOCKED;
+  else
+    i2cp->state = I2C_READY;
   chSysUnlock();
   return rdymsg;
 }

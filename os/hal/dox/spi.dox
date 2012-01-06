@@ -37,7 +37,8 @@
   digraph example {
     size="5, 7";
     rankdir="LR";
-    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true", width="0.9", height="0.9"];
+    node [shape=circle, fontname=Helvetica, fontsize=8, fixedsize="true",
+          width="0.9", height="0.9"];
     edge [fontname=Helvetica, fontsize=8];
 
     stop  [label="SPI_STOP\nLow Power"];
@@ -57,6 +58,7 @@
     complete -> active [label="\nspiStartXXXI() (async)\nthen\ncallback return"];
     complete -> ready [label="\ncallback return"];
   }
+ * @enddot
  * @else
  * @dot
   digraph example {
