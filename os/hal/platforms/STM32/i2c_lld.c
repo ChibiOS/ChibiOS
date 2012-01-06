@@ -304,14 +304,15 @@ static uint32_t i2c_get_event(I2CDriver *i2cp) {
  * @notapi
  */
 static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
-  I2C_TypeDef *dp = i2cp->i2c;
 
   switch (i2c_get_event(i2cp)) {
   case I2C_EV5_MASTER_MODE_SELECT:
-    dp->DR = i2cp->addr;
+    i2cp->i2c->DR = i2cp->addr;
     break;
   case I2C_EV6_MASTER_REC_MODE_SELECTED:
     dmaStreamEnable(i2cp->dmarx);
+    /* LAST bit needs only during receive phase. */
+    i2cp->i2c->CR2 |= I2C_CR2_LAST;
     break;
   case I2C_EV6_MASTER_TRA_MODE_SELECTED:
     dmaStreamEnable(i2cp->dmatx);
@@ -324,6 +325,7 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
       i2cp->i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
       return;
     }
+    i2cp->i2c->CR2 &= ~I2C_CR2_ITEVTEN;
     i2cp->i2c->CR1 |= I2C_CR1_STOP;
     wakeup_isr(i2cp, RDY_OK);
     break;
@@ -352,6 +354,10 @@ static void i2c_lld_serve_rx_end_irq(I2CDriver *i2cp, uint32_t flags) {
 #endif
 
   dmaStreamDisable(i2cp->dmarx);
+  dmaStreamClearInterrupt(i2cp->dmarx);
+
+  i2cp->i2c->CR2 &= ~(I2C_CR2_LAST | I2C_CR2_ITEVTEN);
+  i2cp->i2c->CR1 &= ~I2C_CR1_ACK;
   i2cp->i2c->CR1 |= I2C_CR1_STOP;
   wakeup_isr(i2cp, RDY_OK);
 }
@@ -375,6 +381,7 @@ static void i2c_lld_serve_tx_end_irq(I2CDriver *i2cp, uint32_t flags) {
 #endif
 
   dmaStreamDisable(i2cp->dmatx);
+  dmaStreamClearInterrupt(i2cp->dmatx);
 }
 
 /**
@@ -407,6 +414,7 @@ static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp) {
   }
   if (i2cp->i2c->SR1 & I2C_SR1_AF) {                /* Acknowledge fail.    */
     i2cp->i2c->SR1 &= ~I2C_SR1_AF;
+    i2cp->i2c->CR2 &= ~I2C_CR2_ITEVTEN;
     i2cp->i2c->CR1 |= I2C_CR1_STOP;                 /* Setting stop bit.    */
     errors |= I2CD_ACK_FAILURE;
   }
@@ -668,8 +676,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
   /* Reset i2c peripheral.*/
   i2cp->i2c->CR1 = I2C_CR1_SWRST;
   i2cp->i2c->CR1 = 0;
-  i2cp->i2c->CR2 = I2C_CR2_ITERREN | I2C_CR2_ITEVTEN |
-                   I2C_CR2_DMAEN   | I2C_CR2_LAST;
+  i2cp->i2c->CR2 = I2C_CR2_ITERREN | I2C_CR2_DMAEN;
 
   /* Setup I2C parameters.*/
   i2c_lld_set_clock(i2cp);
@@ -785,6 +792,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
     return RDY_TIMEOUT;
 
   /* Starts the operation.*/
+  i2cp->i2c->CR2 |= I2C_CR2_ITEVTEN;
   i2cp->i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
 
   /* Waits for the operation completion or a timeout.*/
@@ -868,6 +876,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
     return RDY_TIMEOUT;
 
   /* Starts the operation.*/
+  i2cp->i2c->CR2 |= I2C_CR2_ITEVTEN;
   i2cp->i2c->CR1 |= I2C_CR1_START;
 
   /* Waits for the operation completion or a timeout.*/
