@@ -305,10 +305,9 @@ static uint32_t i2c_get_event(I2CDriver *i2cp) {
  */
 static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
 
-  /* Interrupts disabled just before dmaStreamEnable() because there is no
-   * need of interrupts until next transaction begin. All work
-   * will be done by DMA. */
-
+  /* Interrupts are disabled just before dmaStreamEnable() because there
+     is no need of interrupts until next transaction begin. All the work is
+     done by the DMA.*/
   switch (i2c_get_event(i2cp)) {
   case I2C_EV5_MASTER_MODE_SELECT:
     i2cp->i2c->DR = i2cp->addr;
@@ -316,7 +315,7 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
   case I2C_EV6_MASTER_REC_MODE_SELECTED:
     i2cp->i2c->CR2 &= ~I2C_CR2_ITEVTEN;
     dmaStreamEnable(i2cp->dmarx);
-    i2cp->i2c->CR2 |= I2C_CR2_LAST;                 /* need in receiver mode */
+    i2cp->i2c->CR2 |= I2C_CR2_LAST;             /* Needed in receiver mode. */
     break;
   case I2C_EV6_MASTER_TRA_MODE_SELECTED:
     i2cp->i2c->CR2 &= ~I2C_CR2_ITEVTEN;
@@ -387,9 +386,9 @@ static void i2c_lld_serve_tx_end_irq(I2CDriver *i2cp, uint32_t flags) {
 
   dmaStreamDisable(i2cp->dmatx);
   dmaStreamClearInterrupt(i2cp->dmatx);
-  /* Enable interrupts to catch BTF event meaning transmission part complete.
-   * Interrupt handler will decide to generate STOP or to begin receiving part
-   * of rw transaction itself. */
+  /* Enables interrupts to catch BTF event meaning transmission part complete.
+     Interrupt handler will decide to generate STOP or to begin receiving part
+     of R/W transaction itself.*/
   i2cp->i2c->CR2 |= I2C_CR2_ITEVTEN;
 }
 
