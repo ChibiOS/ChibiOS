@@ -1164,13 +1164,13 @@
  * @brief   MCO1 divider clock.
  */
 #if (STM32_MCO1SEL == STM32_MCO1SEL_HSI) || defined(__DOXYGEN__)
-#define STM_MCO1DIVCLK               STM32_HSICLK
+#define STM32_MCO1DIVCLK             STM32_HSICLK
 #elif STM32_MCO1SEL == STM32_MCO1SEL_LSE
-#define STM_MCO1DIVCLK               STM32_LSECLK
+#define STM32_MCO1DIVCLK             STM32_LSECLK
 #elif STM32_MCO1SEL == STM32_MCO1SEL_HSE
-#define STM_MCO1DIVCLK               STM32_HSECLK
+#define STM32_MCO1DIVCLK             STM32_HSECLK
 #elif STM32_MCO1SEL == STM32_MCO1SEL_PLL
-#define STM_MCO1DIVCLK               STM32_PLLCLKOUT
+#define STM32_MCO1DIVCLK             STM32_PLLCLKOUT
 #else
 #error "invalid STM32_MCO1SEL value specified"
 #endif
@@ -1179,15 +1179,15 @@
  * @brief   MCO1 output pin clock.
  */
 #if (STM32_MCO1PRE == STM32_MCO1PRE_DIV1) || defined(__DOXYGEN__)
-#define STM_MCO1CLK                  STM_MCO1DIVCLK
+#define STM32_MCO1CLK                STM32_MCO1DIVCLK
 #elif STM32_MCO1PRE == STM32_MCO1PRE_DIV2
-#define STM_MCO1CLK                  (STM_MCO1DIVCLK / 2)
+#define STM32_MCO1CLK                (STM32_MCO1DIVCLK / 2)
 #elif STM32_MCO1PRE == STM32_MCO1PRE_DIV3
-#define STM_MCO1CLK                  (STM_MCO1DIVCLK / 3)
+#define STM32_MCO1CLK                (STM32_MCO1DIVCLK / 3)
 #elif STM32_MCO1PRE == STM32_MCO1PRE_DIV4
-#define STM_MCO1CLK                  (STM_MCO1DIVCLK / 4)
+#define STM32_MCO1CLK                (STM32_MCO1DIVCLK / 4)
 #elif STM32_MCO1PRE == STM32_MCO1PRE_DIV5
-#define STM_MCO1CLK                  (STM_MCO1DIVCLK / 5)
+#define STM32_MCO1CLK                (STM32_MCO1DIVCLK / 5)
 #else
 #error "invalid STM32_MCO1PRE value specified"
 #endif
@@ -1196,13 +1196,13 @@
  * @brief   MCO2 divider clock.
  */
 #if (STM32_MCO2SEL == STM32_MCO2SEL_HSE) || defined(__DOXYGEN__)
-#define STM_MCO2DIVCLK               STM32_HSECLK
+#define STM32_MCO2DIVCLK             STM32_HSECLK
 #elif STM32_MCO2SEL == STM32_MCO2SEL_PLL
-#define STM_MCO2DIVCLK               STM32_PLLCLKOUT
+#define STM32_MCO2DIVCLK             STM32_PLLCLKOUT
 #elif STM32_MCO2SEL == STM32_MCO2SEL_SYSCLK
-#define STM_MCO2DIVCLK               STM32_SYSCLK
+#define STM32_MCO2DIVCLK             STM32_SYSCLK
 #elif STM32_MCO2SEL == STM32_MCO2SEL_PLLI2S
-#define STM_MCO2DIVCLK               STM32_PLLI2S
+#define STM32_MCO2DIVCLK             STM32_PLLI2S
 #else
 #error "invalid STM32_MCO2SEL value specified"
 #endif
@@ -1211,15 +1211,15 @@
  * @brief   MCO2 output pin clock.
  */
 #if (STM32_MCO2PRE == STM32_MCO2PRE_DIV1) || defined(__DOXYGEN__)
-#define STM_MCO2CLK                  STM_MCO2DIVCLK
+#define STM32_MCO2CLK                STM32_MCO2DIVCLK
 #elif STM32_MCO2PRE == STM32_MCO2PRE_DIV2
-#define STM_MCO2CLK                  (STM_MCO2DIVCLK / 2)
+#define STM32_MCO2CLK                (STM32_MCO2DIVCLK / 2)
 #elif STM32_MCO2PRE == STM32_MCO2PRE_DIV3
-#define STM_MCO2CLK                  (STM_MCO2DIVCLK / 3)
+#define STM32_MCO2CLK                (STM32_MCO2DIVCLK / 3)
 #elif STM32_MCO2PRE == STM32_MCO2PRE_DIV4
-#define STM_MCO2CLK                  (STM_MCO2DIVCLK / 4)
+#define STM32_MCO2CLK                (STM32_MCO2DIVCLK / 4)
 #elif STM32_MCO2PRE == STM32_MCO2PRE_DIV5
-#define STM_MCO2CLK                  (STM_MCO2DIVCLK / 5)
+#define STM32_MCO2CLK                (STM32_MCO2DIVCLK / 5)
 #else
 #error "invalid STM32_MCO2PRE value specified"
 #endif
@@ -1248,13 +1248,13 @@
  * @brief   RTC clock.
  */
 #if (STM32_RTCSEL == STM32_RTCSEL_NOCLOCK) || defined(__DOXYGEN__)
-#define STM_RTCCLK                  0
+#define STM32_RTCCLK                0
 #elif STM32_RTCSEL == STM32_RTCSEL_LSE
-#define STM_RTCCLK                  STM32_LSECLK
+#define STM32_RTCCLK                STM32_LSECLK
 #elif STM32_RTCSEL == STM32_RTCSEL_LSI
-#define STM_RTCCLK                  STM32_LSICLK
+#define STM32_RTCCLK                STM32_LSICLK
 #elif STM32_RTCSEL == STM32_RTCSEL_HSEDIV
-#define STM_RTCCLK                  STM32_HSEDIVCLK
+#define STM32_RTCCLK                STM32_HSEDIVCLK
 #else
 #error "invalid STM32_RTCSEL value specified"
 #endif
