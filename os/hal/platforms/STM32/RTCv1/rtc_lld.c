@@ -64,15 +64,15 @@ static void rtc_lld_serve_interrupt(RTCDriver *rtcp) {
   chSysLockFromIsr();
 
   if ((RTC->CRH & RTC_CRH_SECIE) && (RTC->CRL & RTC_CRL_SECF)) {
-    rtcp->rtc_cb(rtcp, RTC_EVENT_SECOND);
+    rtcp->callback(rtcp, RTC_EVENT_SECOND);
     RTC->CRL &= ~RTC_CRL_SECF;
   }
   if ((RTC->CRH & RTC_CRH_ALRIE) && (RTC->CRL & RTC_CRL_ALRF)) {
-    rtcp->rtc_cb(rtcp, RTC_EVENT_ALARM);
+    rtcp->callback(rtcp, RTC_EVENT_ALARM);
     RTC->CRL &= ~RTC_CRL_ALRF;
   }
   if ((RTC->CRH & RTC_CRH_OWIE) && (RTC->CRL & RTC_CRL_OWF)) {
-    rtcp->rtc_cb(rtcp, RTC_EVENT_OVERFLOW);
+    rtcp->callback(rtcp, RTC_EVENT_OVERFLOW);
     RTC->CRL &= ~RTC_CRL_OWF;
   }
 
@@ -191,7 +191,7 @@ void rtc_lld_init(void){
   RTC->CRH = 0;
 
   /* Callback initially disabled.*/
-  RTCD1.rtc_cb = NULL;
+  RTCD1.callback = NULL;
 }
 
 /**
@@ -312,7 +312,7 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
 void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
 
   if (callback != NULL) {
-    rtcp->rtc_cb = callback;
+    rtcp->callback = callback;
 
     /* Interrupts are enabled only after setting up the callback, this
      way there is no need to check for the NULL callback pointer inside
