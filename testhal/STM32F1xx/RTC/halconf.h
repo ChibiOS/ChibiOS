@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -169,7 +170,7 @@
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(ADC_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define ADC_USE_MUTUAL_EXCLUSION    FALSE
+#define ADC_USE_MUTUAL_EXCLUSION    TRUE
 #endif
 
 /*===========================================================================*/
@@ -188,30 +189,11 @@
 /*===========================================================================*/
 
 /**
- * @brief   Enables synchronous APIs.
- * @note    Disabling this option saves both code and data space.
- */
-#if !defined(I2C_USE_WAIT) || defined(__DOXYGEN__)
-#define I2C_USE_WAIT                TRUE
-#endif
-
-/**
  * @brief   Enables the mutual exclusion APIs on the I2C bus.
  */
 #if !defined(I2C_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define I2C_USE_MUTUAL_EXCLUSION    TRUE
 #endif
-
-/**
- * @brief   Switch to asynchronouse driver with callbacks.
- */
-#if !defined(I2C_SUPPORTS_CALLBACKS) || defined(__DOXYGEN__)
-#define I2C_SUPPORTS_CALLBACKS      TRUE
-#endif
-
-/*===========================================================================*/
-/* RTC driver related settings.                                              */
-/*===========================================================================*/
 
 /*===========================================================================*/
 /* MAC driver related settings.                                              */
@@ -314,7 +296,7 @@
  *          default configuration.
  */
 #if !defined(SERIAL_DEFAULT_BITRATE) || defined(__DOXYGEN__)
-#define SERIAL_DEFAULT_BITRATE      9600
+#define SERIAL_DEFAULT_BITRATE      38400
 #endif
 
 /**
@@ -345,7 +327,7 @@
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define SPI_USE_MUTUAL_EXCLUSION    FALSE
+#define SPI_USE_MUTUAL_EXCLUSION    TRUE
 #endif
 
 #endif /* _HALCONF_H_ */

@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -104,6 +105,13 @@
 #endif
 
 /**
+ * @brief   Enables the RTC subsystem.
+ */
+#if !defined(HAL_USE_RTC) || defined(__DOXYGEN__)
+#define HAL_USE_RTC                 FALSE
+#endif
+
+/**
  * @brief   Enables the SDC subsystem.
  */
 #if !defined(HAL_USE_SDC) || defined(__DOXYGEN__)
@@ -145,20 +153,6 @@
 #define HAL_USE_USB                 FALSE
 #endif
 
-/**
- * @brief   Enables the RTC subsystem.
- */
-#if !defined(HAL_USE_RTC) || defined(__DOXYGEN__)
-#define HAL_USE_RTC                 TRUE
-#endif
-
-/**
- * @brief   Enables the RTC subsystem.
- */
-#if !defined(RTC_SUPPORTS_CALLBACKS) || defined(__DOXYGEN__)
-#define RTC_SUPPORTS_CALLBACKS      TRUE
-#endif
-
 /*===========================================================================*/
 /* ADC driver related settings.                                              */
 /*===========================================================================*/
@@ -176,7 +170,7 @@
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(ADC_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define ADC_USE_MUTUAL_EXCLUSION    FALSE
+#define ADC_USE_MUTUAL_EXCLUSION    TRUE
 #endif
 
 /*===========================================================================*/
@@ -202,12 +196,15 @@
 #endif
 
 /*===========================================================================*/
-/* RTC driver related settings.                                              */
-/*===========================================================================*/
-
-/*===========================================================================*/
 /* MAC driver related settings.                                              */
 /*===========================================================================*/
+
+/**
+ * @brief   Enables an event sources for incoming packets.
+ */
+#if !defined(MAC_USE_EVENTS) || defined(__DOXYGEN__)
+#define MAC_USE_EVENTS              TRUE
+#endif
 
 /*===========================================================================*/
 /* MMC_SPI driver related settings.                                          */
@@ -259,16 +256,9 @@
 #endif
 
 /*===========================================================================*/
-/* PAL driver related settings.                                              */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* PWM driver related settings.                                              */
-/*===========================================================================*/
-
-/*===========================================================================*/
 /* SDC driver related settings.                                              */
 /*===========================================================================*/
+
 /**
  * @brief   Number of initialization attempts before rejecting the card.
  * @note    Attempts are performed at 10mS intevals.
@@ -306,7 +296,7 @@
  *          default configuration.
  */
 #if !defined(SERIAL_DEFAULT_BITRATE) || defined(__DOXYGEN__)
-#define SERIAL_DEFAULT_BITRATE      9600
+#define SERIAL_DEFAULT_BITRATE      38400
 #endif
 
 /**
@@ -337,12 +327,8 @@
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define SPI_USE_MUTUAL_EXCLUSION    FALSE
+#define SPI_USE_MUTUAL_EXCLUSION    TRUE
 #endif
-
-/*===========================================================================*/
-/* UART driver related settings.                                             */
-/*===========================================================================*/
 
 #endif /* _HALCONF_H_ */
 
