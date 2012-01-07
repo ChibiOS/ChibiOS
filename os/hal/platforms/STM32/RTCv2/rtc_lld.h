@@ -40,11 +40,13 @@
 /*===========================================================================*/
 
 /**
- * @brief   This RTC implementation supports callbacks.
+ * @brief   This RTC implementation doesn't support callbacks.
  */
-#if !defined(RTC_SUPPORTS_CALLBACKS) || defined(__DOXYGEN__)
 #define RTC_SUPPORTS_CALLBACKS      FALSE
-#endif
+
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
 
 /**
  * @brief   Two alarm comparators available on STM32F4x.
@@ -71,8 +73,9 @@
 #error "RTC not present in the selected device"
 #endif
 
-#if !(STM32_RTC == STM32_RTC_LSE) && !(STM32_RTC == STM32_RTC_LSI) &&       \
-    !(STM32_RTC == STM32_RTC_HSE)
+#if !(STM32_RTCSEL == STM32_RTCSEL_LSE) &&                                  \
+    !(STM32_RTCSEL == STM32_RTCSEL_LSI) &&                                  \
+    !(STM32_RTCSEL == STM32_RTCSEL_HSEDIV)
 #error "invalid source selected for RTC clock"
 #endif
 

@@ -109,7 +109,7 @@ void rtc_lld_init(void){
   preload |= ((RTC_CLK / (PREDIV_A + 1)) - 1) & 0x7FFF;
 
   /* Selects clock source (previously enabled and stabilized).*/
-  RCC->BDCR = (RCC->BDCR & ~RCC_BDCR_RTCSEL) | STM32_RTC;
+  RCC->BDCR = (RCC->BDCR & ~RCC_BDCR_RTCSEL) | STM32_RTCSEL;
 
   /* RTC enabled regardless its previous status.*/
   RCC->BDCR |= RCC_BDCR_RTCEN;
