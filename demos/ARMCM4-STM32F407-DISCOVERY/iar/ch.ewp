@@ -304,6 +304,7 @@
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\DMAv1</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\GPIOv2</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F4xx</state>
+          <state>$PROJ_DIR$\..\..\..\os\various</state>
           <state>$PROJ_DIR$\..\..\..\boards\ST_STM32F4_DISCOVERY</state>
           <state>$PROJ_DIR$\..\..\..\test</state>
         </option>
@@ -1224,6 +1225,7 @@
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\DMAv1</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\GPIOv2</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F4xx</state>
+          <state>$PROJ_DIR$\..\..\..\os\various</state>
           <state>$PROJ_DIR$\..\..\..\boards\ST_STM32F4_DISCOVERY</state>
           <state>$PROJ_DIR$\..\..\..\test</state>
         </option>
@@ -2193,6 +2195,15 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\os\ports\common\ARMCMx\nvic.h</name>
+      </file>
+    </group>
+    <group>
+      <name>various</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\os\various\chprintf.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\os\various\lis302dl.c</name>
       </file>
     </group>
   </group>
