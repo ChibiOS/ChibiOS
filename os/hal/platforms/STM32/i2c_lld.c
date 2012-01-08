@@ -32,7 +32,6 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "i2c_lld.h"
 
 #if HAL_USE_I2C || defined(__DOXYGEN__)
 
@@ -294,7 +293,6 @@ static uint32_t i2c_get_event(I2CDriver *i2cp) {
 
   return (I2C_EV_MASK & (regSR1 | (regSR2 << 16)));
 }
-
 
 /**
  * @brief   I2C shared ISR code.

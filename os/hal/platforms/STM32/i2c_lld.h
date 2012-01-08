@@ -370,6 +370,9 @@ struct I2CDriver{
   Semaphore                 semaphore;
 #endif
 #endif /* I2C_USE_MUTUAL_EXCLUSION */
+#if defined(I2C_DRIVER_EXT_FIELDS)
+  I2C_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
   /**
    * @brief   Thread waiting for I/O completion.
