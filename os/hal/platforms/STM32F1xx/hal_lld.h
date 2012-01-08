@@ -50,6 +50,14 @@
 /*===========================================================================*/
 
 /**
+ * @name    Internal clock sources
+ * @{
+ */
+#define STM32_HSICLK            8000000     /**< High speed internal clock. */
+#define STM32_LSICLK            40000       /**< Low speed internal clock.  */
+/** @} */
+
+/**
  * @name    PWR_CR register bits definitions
  * @{
  */
@@ -69,6 +77,17 @@
 /*===========================================================================*/
 
 /**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   Disables the PWR/RCC initialization in the HAL.
+ */
+#if !defined(STM32_NO_INIT) || defined(__DOXYGEN__)
+#define STM32_NO_INIT               FALSE
+#endif
+
+/**
  * @brief   Enables or disables the programmable voltage detector.
  */
 #if !defined(STM32_PVD_ENABLE) || defined(__DOXYGEN__)
@@ -81,6 +100,35 @@
 #if !defined(STM32_PLS) || defined(__DOXYGEN__)
 #define STM32_PLS                   STM32_PLS_LEV0
 #endif
+
+/**
+ * @brief   Enables or disables the HSI clock source.
+ */
+#if !defined(STM32_HSI_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSI_ENABLED           TRUE
+#endif
+
+/**
+ * @brief   Enables or disables the LSI clock source.
+ */
+#if !defined(STM32_LSI_ENABLED) || defined(__DOXYGEN__)
+#define STM32_LSI_ENABLED           FALSE
+#endif
+
+/**
+ * @brief   Enables or disables the HSE clock source.
+ */
+#if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSE_ENABLED           TRUE
+#endif
+
+/**
+ * @brief   Enables or disables the LSE clock source.
+ */
+#if !defined(STM32_LSE_ENABLED) || defined(__DOXYGEN__)
+#define STM32_LSE_ENABLED           FALSE
+#endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -160,13 +208,13 @@ typedef uint32_t halrtcnt_t;
 /**
  * @brief   Realtime counter frequency.
  * @note    The DWT_CYCCNT register is incremented directly by the system
- *          clock so this function returns STM32_SYSCLK.
+ *          clock so this function returns STM32_HCLK.
  *
  * @return              The realtime counter frequency of type halclock_t.
  *
  * @notapi
  */
-#define hal_lld_get_counter_frequency()     STM32_SYSCLK
+#define hal_lld_get_counter_frequency()     STM32_HCLK
 
 /*===========================================================================*/
 /* External declarations.                                                    */
