@@ -1349,13 +1349,13 @@ typedef uint32_t halrtcnt_t;
 /**
  * @brief   Realtime counter frequency.
  * @note    The DWT_CYCCNT register is incremented directly by the system
- *          clock so this function returns STM32_SYSCLK.
+ *          clock so this function returns STM32_HCLK.
  *
  * @return              The realtime counter frequency of type halclock_t.
  *
  * @notapi
  */
-#define hal_lld_get_counter_frequency()     STM32_SYSCLK
+#define hal_lld_get_counter_frequency()     STM32_HCLK
 
 /*===========================================================================*/
 /* External declarations.                                                    */
