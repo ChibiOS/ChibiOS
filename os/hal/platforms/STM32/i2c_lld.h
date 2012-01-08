@@ -101,7 +101,37 @@
 #endif
 
 /**
- * @brief   I2C1 DMA error hook.
+* @brief   I2C1 DMA priority (0..3|lowest..highest).
+* @note    The priority level is used for both the TX and RX DMA streams but
+*          because of the streams ordering the RX stream has always priority
+*          over the TX stream.
+*/
+#if !defined(STM32_I2C_I2C1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C1_DMA_PRIORITY         1
+#endif
+
+/**
+* @brief   I2C2 DMA priority (0..3|lowest..highest).
+* @note    The priority level is used for both the TX and RX DMA streams but
+*          because of the streams ordering the RX stream has always priority
+*          over the TX stream.
+*/
+#if !defined(STM32_I2C_I2C2_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C2_DMA_PRIORITY         1
+#endif
+
+/**
+* @brief   I2C3 DMA priority (0..3|lowest..highest).
+* @note    The priority level is used for both the TX and RX DMA streams but
+*          because of the streams ordering the RX stream has always priority
+*          over the TX stream.
+*/
+#if !defined(STM32_I2C_I2C3_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C3_DMA_PRIORITY         1
+#endif
+
+/**
+ * @brief   I2C DMA error hook.
  * @note    The default action for DMA errors is a system halt because DMA
  *          error can only happen because programming errors.
  */
