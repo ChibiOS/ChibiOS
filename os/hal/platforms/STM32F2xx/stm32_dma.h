@@ -144,7 +144,7 @@
 #define STM32_DMA_CR_SIZE_MASK      (STM32_DMA_CR_MSIZE_MASK |              \
                                      STM32_DMA_CR_MSIZE_MASK)
 #define STM32_DMA_CR_PL_MASK        DMA_SxCR_PL
-#define STM32_DMA_CR_PL(n)          ((n) << 16)
+#define STM32_DMA_CR_PL(n)          (((n) << 16) & (STM32_DMA_CR_PL_MASK))
 /** @} */
 
 /**
