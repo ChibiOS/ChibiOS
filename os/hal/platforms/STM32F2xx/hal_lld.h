@@ -874,7 +874,7 @@
 #else /* !STM32_LSI_ENABLED */
 
 #if STM32_RTCSEL == STM32_RTCSEL_LSI
-#error "required LSI clock is not enabled"
+#error "LSI not enabled, required by STM32_RTCSEL"
 #endif
 
 #endif /* !STM32_LSI_ENABLED */
