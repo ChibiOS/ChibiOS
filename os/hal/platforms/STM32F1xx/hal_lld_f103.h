@@ -1015,7 +1015,7 @@
 #endif
 
 #if STM32_RTCSEL == STM32_RTCSEL_HSEDIV
-#error "HSE not enabled, required by STM32_RTCSELSEL"
+#error "HSE not enabled, required by STM32_RTCSEL"
 #endif
 
 #endif /* !STM32_HSE_ENABLED */
