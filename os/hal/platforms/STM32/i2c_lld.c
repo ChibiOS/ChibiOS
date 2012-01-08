@@ -142,12 +142,13 @@ static volatile uint16_t dbgCR2;
  * @notapi
  */
 static void i2c_lld_abort_operation(I2CDriver *i2cp) {
+  I2C_TypeDef *dp = i2cp->i2c;
 
   /* Stops the I2C peripheral.*/
-  i2cp->i2c->CR1 = I2C_CR1_SWRST;
-  i2cp->i2c->CR1 = 0;
-  i2cp->i2c->CR2 = 0;
-  i2cp->i2c->SR1 = 0;
+  dp->CR1 = I2C_CR1_SWRST;
+  dp->CR1 = 0;
+  dp->CR2 = 0;
+  dp->SR1 = 0;
 
   /* Stops the associated DMA streams.*/
   dmaStreamDisable(i2cp->dmatx);
@@ -181,6 +182,7 @@ static void i2c_lld_safety_timeout(void *p) {
  * @notapi
  */
 static void i2c_lld_set_clock(I2CDriver *i2cp) {
+  I2C_TypeDef *dp = i2cp->i2c;
   uint16_t regCCR, clock_div;
   int32_t clock_speed = i2cp->config->clock_speed;
   i2cdutycycle_t duty = i2cp->config->duty_cycle;
@@ -189,8 +191,8 @@ static void i2c_lld_set_clock(I2CDriver *i2cp) {
              "i2c_lld_set_clock");
 
   /* CR2 Configuration.*/
-  i2cp->i2c->CR2 &= (uint16_t)~I2C_CR2_FREQ;
-  i2cp->i2c->CR2 |= (uint16_t)I2C_CLK_FREQ;
+  dp->CR2 &= (uint16_t)~I2C_CR2_FREQ;
+  dp->CR2 |= (uint16_t)I2C_CLK_FREQ;
 
   /* CCR Configuration.*/
   regCCR = 0;
@@ -211,7 +213,7 @@ static void i2c_lld_set_clock(I2CDriver *i2cp) {
     regCCR |= (clock_div & I2C_CCR_CCR);
 
     /* Sets the Maximum Rise Time for standard mode.*/
-    i2cp->i2c->TRISE = I2C_CLK_FREQ + 1;
+    dp->TRISE = I2C_CLK_FREQ + 1;
   }
   else if (clock_speed <= 400000) {
     /* Configure clock_div in fast mode.*/
@@ -234,13 +236,13 @@ static void i2c_lld_set_clock(I2CDriver *i2cp) {
     regCCR |= (I2C_CCR_FS | (clock_div & I2C_CCR_CCR));
 
     /* Sets the Maximum Rise Time for fast mode.*/
-    i2cp->i2c->TRISE = (I2C_CLK_FREQ * 300 / 1000) + 1;
+    dp->TRISE = (I2C_CLK_FREQ * 300 / 1000) + 1;
   }
 
   chDbgAssert((clock_div <= I2C_CCR_CCR),
               "i2c_lld_set_clock(), #3", "the selected clock is too low");
 
-  i2cp->i2c->CCR = regCCR;
+  dp->CCR = regCCR;
 }
 
 /**
@@ -251,10 +253,11 @@ static void i2c_lld_set_clock(I2CDriver *i2cp) {
  * @notapi
  */
 static void i2c_lld_set_opmode(I2CDriver *i2cp) {
+  I2C_TypeDef *dp = i2cp->i2c;
   i2copmode_t opmode = i2cp->config->op_mode;
   uint16_t regCR1;
 
-  regCR1 = i2cp->i2c->CR1;
+  regCR1 = dp->CR1;
   switch (opmode) {
   case OPMODE_I2C:
     regCR1 &= (uint16_t)~(I2C_CR1_SMBUS|I2C_CR1_SMBTYPE);
@@ -267,7 +270,7 @@ static void i2c_lld_set_opmode(I2CDriver *i2cp) {
     regCR1 |= (I2C_CR1_SMBUS|I2C_CR1_SMBTYPE);
     break;
   }
-  i2cp->i2c->CR1 = regCR1;
+  dp->CR1 = regCR1;
 }
 
 /**
@@ -281,14 +284,15 @@ static void i2c_lld_set_opmode(I2CDriver *i2cp) {
  * @notapi
  */
 static uint32_t i2c_get_event(I2CDriver *i2cp) {
-  uint16_t regSR1 = i2cp->i2c->SR1;
-  uint16_t regSR2 = i2cp->i2c->SR2;
+  I2C_TypeDef *dp = i2cp->i2c;
+  uint16_t regSR1 = dp->SR1;
+  uint16_t regSR2 = dp->SR2;
 
 #if CH_DBG_ENABLE_ASSERTS
   dbgSR1 = regSR1;
   dbgSR2 = regSR2;
-  dbgCR1 = i2cp->i2c->CR1;
-  dbgCR2 = i2cp->i2c->CR2;
+  dbgCR1 = dp->CR1;
+  dbgCR2 = dp->CR2;
 #endif /* CH_DBG_ENABLE_ASSERTS */
 
   return (I2C_EV_MASK & (regSR1 | (regSR2 << 16)));
@@ -302,21 +306,22 @@ static uint32_t i2c_get_event(I2CDriver *i2cp) {
  * @notapi
  */
 static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
+  I2C_TypeDef *dp = i2cp->i2c;
 
   /* Interrupts are disabled just before dmaStreamEnable() because there
      is no need of interrupts until next transaction begin. All the work is
      done by the DMA.*/
   switch (i2c_get_event(i2cp)) {
   case I2C_EV5_MASTER_MODE_SELECT:
-    i2cp->i2c->DR = i2cp->addr;
+    dp->DR = i2cp->addr;
     break;
   case I2C_EV6_MASTER_REC_MODE_SELECTED:
-    i2cp->i2c->CR2 &= ~I2C_CR2_ITEVTEN;
+    dp->CR2 &= ~I2C_CR2_ITEVTEN;
     dmaStreamEnable(i2cp->dmarx);
-    i2cp->i2c->CR2 |= I2C_CR2_LAST;             /* Needed in receiver mode. */
+    dp->CR2 |= I2C_CR2_LAST;                 /* Needed in receiver mode. */
     break;
   case I2C_EV6_MASTER_TRA_MODE_SELECTED:
-    i2cp->i2c->CR2 &= ~I2C_CR2_ITEVTEN;
+    dp->CR2 &= ~I2C_CR2_ITEVTEN;
     dmaStreamEnable(i2cp->dmatx);
     break;
   case I2C_EV8_2_MASTER_BYTE_TRANSMITTED:
@@ -324,11 +329,11 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
     if (dmaStreamGetTransactionSize(i2cp->dmarx) > 0) {
       /* Starts "read after write" operation, LSB = 1 -> receive.*/
       i2cp->addr |= 0x01;
-      i2cp->i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
+      dp->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
       return;
     }
-    i2cp->i2c->CR2 &= ~I2C_CR2_ITEVTEN;
-    i2cp->i2c->CR1 |= I2C_CR1_STOP;
+    dp->CR2 &= ~I2C_CR2_ITEVTEN;
+    dp->CR1 |= I2C_CR1_STOP;
     wakeup_isr(i2cp, RDY_OK);
     break;
   default:
@@ -345,6 +350,7 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
  * @notapi
  */
 static void i2c_lld_serve_rx_end_irq(I2CDriver *i2cp, uint32_t flags) {
+  I2C_TypeDef *dp = i2cp->i2c;
 
   /* DMA errors handling.*/
 #if defined(STM32_I2C_DMA_ERROR_HOOK)
@@ -358,9 +364,9 @@ static void i2c_lld_serve_rx_end_irq(I2CDriver *i2cp, uint32_t flags) {
   dmaStreamDisable(i2cp->dmarx);
   dmaStreamClearInterrupt(i2cp->dmarx);
 
-  i2cp->i2c->CR2 &= ~I2C_CR2_LAST;
-  i2cp->i2c->CR1 &= ~I2C_CR1_ACK;
-  i2cp->i2c->CR1 |= I2C_CR1_STOP;
+  dp->CR2 &= ~I2C_CR2_LAST;
+  dp->CR1 &= ~I2C_CR1_ACK;
+  dp->CR1 |= I2C_CR1_STOP;
   wakeup_isr(i2cp, RDY_OK);
 }
 
@@ -372,6 +378,7 @@ static void i2c_lld_serve_rx_end_irq(I2CDriver *i2cp, uint32_t flags) {
  * @notapi
  */
 static void i2c_lld_serve_tx_end_irq(I2CDriver *i2cp, uint32_t flags) {
+  I2C_TypeDef *dp = i2cp->i2c;
 
   /* DMA errors handling.*/
 #if defined(STM32_I2C_DMA_ERROR_HOOK)
@@ -387,7 +394,7 @@ static void i2c_lld_serve_tx_end_irq(I2CDriver *i2cp, uint32_t flags) {
   /* Enables interrupts to catch BTF event meaning transmission part complete.
      Interrupt handler will decide to generate STOP or to begin receiving part
      of R/W transaction itself.*/
-  i2cp->i2c->CR2 |= I2C_CR2_ITEVTEN;
+  dp->CR2 |= I2C_CR2_ITEVTEN;
 }
 
 /**
@@ -398,10 +405,11 @@ static void i2c_lld_serve_tx_end_irq(I2CDriver *i2cp, uint32_t flags) {
  * @notapi
  */
 static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp) {
+  I2C_TypeDef *dp = i2cp->i2c;
   i2cflags_t errors;
 
-  chSysLockFromIsr();
   /* Clears interrupt flags just to be safe.*/
+  chSysLockFromIsr();
   dmaStreamDisable(i2cp->dmatx);
   dmaStreamDisable(i2cp->dmarx);
   dmaStreamClearInterrupt(i2cp->dmatx);
@@ -410,34 +418,34 @@ static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp) {
 
   errors = I2CD_NO_ERROR;
 
-  if (i2cp->i2c->SR1 & I2C_SR1_BERR) {              /* Bus error.           */
-    i2cp->i2c->SR1 &= ~I2C_SR1_BERR;
+  if (dp->SR1 & I2C_SR1_BERR) {                     /* Bus error.           */
+    dp->SR1 &= ~I2C_SR1_BERR;
     errors |= I2CD_BUS_ERROR;
   }
-  if (i2cp->i2c->SR1 & I2C_SR1_ARLO) {              /* Arbitration lost.    */
-    i2cp->i2c->SR1 &= ~I2C_SR1_ARLO;
+  if (dp->SR1 & I2C_SR1_ARLO) {                     /* Arbitration lost.    */
+    dp->SR1 &= ~I2C_SR1_ARLO;
     errors |= I2CD_ARBITRATION_LOST;
   }
-  if (i2cp->i2c->SR1 & I2C_SR1_AF) {                /* Acknowledge fail.    */
-    i2cp->i2c->SR1 &= ~I2C_SR1_AF;
-    i2cp->i2c->CR2 &= ~I2C_CR2_ITEVTEN;
-    i2cp->i2c->CR1 |= I2C_CR1_STOP;                 /* Setting stop bit.    */
+  if (dp->SR1 & I2C_SR1_AF) {                       /* Acknowledge fail.    */
+    dp->SR1 &= ~I2C_SR1_AF;
+    dp->CR2 &= ~I2C_CR2_ITEVTEN;
+    dp->CR1 |= I2C_CR1_STOP;                        /* Setting stop bit.    */
     errors |= I2CD_ACK_FAILURE;
   }
-  if (i2cp->i2c->SR1 & I2C_SR1_OVR) {               /* Overrun.             */
-    i2cp->i2c->SR1 &= ~I2C_SR1_OVR;
+  if (dp->SR1 & I2C_SR1_OVR) {                      /* Overrun.             */
+    dp->SR1 &= ~I2C_SR1_OVR;
     errors |= I2CD_OVERRUN;
   }
-  if (i2cp->i2c->SR1 & I2C_SR1_PECERR) {            /* PEC error.           */
-    i2cp->i2c->SR1 &= ~I2C_SR1_PECERR;
+  if (dp->SR1 & I2C_SR1_PECERR) {                   /* PEC error.           */
+    dp->SR1 &= ~I2C_SR1_PECERR;
     errors |= I2CD_PEC_ERROR;
   }
-  if (i2cp->i2c->SR1 & I2C_SR1_TIMEOUT) {           /* SMBus Timeout.       */
-    i2cp->i2c->SR1 &= ~I2C_SR1_TIMEOUT;
+  if (dp->SR1 & I2C_SR1_TIMEOUT) {                  /* SMBus Timeout.       */
+    dp->SR1 &= ~I2C_SR1_TIMEOUT;
     errors |= I2CD_TIMEOUT;
   }
-  if (i2cp->i2c->SR1 & I2C_SR1_SMBALERT) {          /* SMBus alert.         */
-    i2cp->i2c->SR1 &= ~I2C_SR1_SMBALERT;
+  if (dp->SR1 & I2C_SR1_SMBALERT) {                 /* SMBus alert.         */
+    dp->SR1 &= ~I2C_SR1_SMBALERT;
     errors |= I2CD_SMB_ALERT;
   }
 
@@ -584,6 +592,7 @@ void i2c_lld_init(void) {
  * @notapi
  */
 void i2c_lld_start(I2CDriver *i2cp) {
+  I2C_TypeDef *dp = i2cp->i2c;
 
   i2cp->dmamode = STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE |
                   STM32_DMA_CR_MINC | STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE |
@@ -676,20 +685,20 @@ void i2c_lld_start(I2CDriver *i2cp) {
   dmaStreamSetMode(i2cp->dmarx, i2cp->dmamode | STM32_DMA_CR_DIR_P2M);
 
   /* I2C registers pointed by the DMA.*/
-  dmaStreamSetPeripheral(i2cp->dmarx, &i2cp->i2c->DR);
-  dmaStreamSetPeripheral(i2cp->dmatx, &i2cp->i2c->DR);
+  dmaStreamSetPeripheral(i2cp->dmarx, &dp->DR);
+  dmaStreamSetPeripheral(i2cp->dmatx, &dp->DR);
 
   /* Reset i2c peripheral.*/
-  i2cp->i2c->CR1 = I2C_CR1_SWRST;
-  i2cp->i2c->CR1 = 0;
-  i2cp->i2c->CR2 = I2C_CR2_ITERREN | I2C_CR2_DMAEN;
+  dp->CR1 = I2C_CR1_SWRST;
+  dp->CR1 = 0;
+  dp->CR2 = I2C_CR2_ITERREN | I2C_CR2_DMAEN;
 
   /* Setup I2C parameters.*/
   i2c_lld_set_clock(i2cp);
   i2c_lld_set_opmode(i2cp);
 
   /* Ready to go.*/
-  i2cp->i2c->CR1 |= I2C_CR1_PE;
+  dp->CR1 |= I2C_CR1_PE;
 }
 
 /**
@@ -761,6 +770,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                      uint8_t *rxbuf, size_t rxbytes,
                                      systime_t timeout) {
+  I2C_TypeDef *dp = i2cp->i2c;
   VirtualTimer vt;
   msg_t rdymsg;
 
@@ -782,7 +792,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
   /* Waits until BUSY flag is reset and the STOP from the previous operation
      is completed, alternatively for a timeout condition.*/
-  while ((i2cp->i2c->SR2 & I2C_SR2_BUSY) || (i2cp->i2c->CR1 & I2C_CR1_STOP)) {
+  while ((dp->SR2 & I2C_SR2_BUSY) || (dp->CR1 & I2C_CR1_STOP)) {
     if (!chVTIsArmedI(&vt)) {
       chSysLock();
       return RDY_TIMEOUT;
@@ -798,8 +808,8 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
     return RDY_TIMEOUT;
 
   /* Starts the operation.*/
-  i2cp->i2c->CR2 |= I2C_CR2_ITEVTEN;
-  i2cp->i2c->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
+  dp->CR2 |= I2C_CR2_ITEVTEN;
+  dp->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
 
   /* Waits for the operation completion or a timeout.*/
   i2cp->thread = chThdSelf();
@@ -840,6 +850,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                       const uint8_t *txbuf, size_t txbytes,
                                       uint8_t *rxbuf, size_t rxbytes,
                                       systime_t timeout) {
+  I2C_TypeDef *dp = i2cp->i2c;
   VirtualTimer vt;
   msg_t rdymsg;
 
@@ -866,7 +877,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
   /* Waits until BUSY flag is reset and the STOP from the previous operation
      is completed, alternatively for a timeout condition.*/
-  while ((i2cp->i2c->SR2 & I2C_SR2_BUSY) || (i2cp->i2c->CR1 & I2C_CR1_STOP)) {
+  while ((dp->SR2 & I2C_SR2_BUSY) || (dp->CR1 & I2C_CR1_STOP)) {
     if (!chVTIsArmedI(&vt)) {
       chSysLock();
       return RDY_TIMEOUT;
@@ -882,8 +893,8 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
     return RDY_TIMEOUT;
 
   /* Starts the operation.*/
-  i2cp->i2c->CR2 |= I2C_CR2_ITEVTEN;
-  i2cp->i2c->CR1 |= I2C_CR1_START;
+  dp->CR2 |= I2C_CR2_ITEVTEN;
+  dp->CR1 |= I2C_CR1_START;
 
   /* Waits for the operation completion or a timeout.*/
   i2cp->thread = chThdSelf();
