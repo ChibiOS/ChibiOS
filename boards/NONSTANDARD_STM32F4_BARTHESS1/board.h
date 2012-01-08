@@ -443,19 +443,19 @@
 #define VAL_GPIOE_PUPDR        (PIN_PUDR_PULLDOWN(GPIOE_GPS_PPS) |            \
                                 PIN_PUDR_PULLUP(GPIOE_XBEE_SLEEP) |           \
                                 PIN_PUDR_PULLUP(GPIOE_XBEE_RESET) |           \
-                                PIN_PUDR_FLOATING(GPIOE_SDIO_DETECT) |        \
+                                PIN_PUDR_PULLUP(GPIOE_SDIO_DETECT) |        \
                                 PIN_PUDR_FLOATING(GPIOE_USB_DISCOVERY) |      \
                                 PIN_PUDR_FLOATING(GPIOE_GPS_PWR_EN) |         \
-                                PIN_PUDR_FLOATING(GPIOE_BMP085_EOC) |         \
-                                PIN_PUDR_FLOATING(GPIOE_MAG_INT) |            \
-                                PIN_PUDR_FLOATING(GPIOE_MMA8451_INT1) |       \
+                                PIN_PUDR_PULLDOWN(GPIOE_BMP085_EOC) |         \
+                                PIN_PUDR_PULLDOWN(GPIOE_MAG_INT) |            \
+                                PIN_PUDR_PULLDOWN(GPIOE_MMA8451_INT1) |       \
                                 PIN_PUDR_PULLDOWN(GPIOE_PWM5) |               \
-                                PIN_PUDR_FLOATING(GPIOE_ITG3200_INT) |        \
+                                PIN_PUDR_PULLDOWN(GPIOE_ITG3200_INT) |        \
                                 PIN_PUDR_PULLDOWN(GPIOE_PWM6) |               \
                                 PIN_PUDR_PULLUP(GPIOE_TACHOMETER) |           \
                                 PIN_PUDR_PULLDOWN(GPIOE_PWM7) |               \
                                 PIN_PUDR_PULLDOWN(GPIOE_PWM8) |               \
-                                PIN_PUDR_FLOATING(GPIOE_MMA8451_INT2))
+                                PIN_PUDR_PULLDOWN(GPIOE_MMA8451_INT2))
 /* 0x00000000 */
 #define VAL_GPIOE_ODR           0x30
 /* 0x00000000 */
