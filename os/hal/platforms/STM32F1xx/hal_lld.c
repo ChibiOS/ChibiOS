@@ -160,7 +160,7 @@ void stm32_clock_init(void) {
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
     ;                                       /* Waits selection complete.    */
 #endif
-#endif /* STM32_NO_INIT */
+#endif /* !STM32_NO_INIT */
 }
 
 #elif defined(STM32F10X_CL)
@@ -169,6 +169,7 @@ void stm32_clock_init(void) {
  */
 void stm32_clock_init(void) {
 
+#if !STM32_NO_INIT
   /* HSI setup.*/
   RCC->CR |= RCC_CR_HSION;                  /* Make sure HSI is ON.         */
   while (!(RCC->CR & RCC_CR_HSIRDY))
@@ -178,16 +179,27 @@ void stm32_clock_init(void) {
   while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI)
     ;                                       /* Wait until HSI is the source.*/
 
-  /* HSE setup, it is only performed if the current configuration uses
-     it somehow.*/
-#if STM32_ACTIVATE_PLL2 ||                                                  \
-    STM32_ACTIVATE_PLL3 ||                                                  \
-    (STM32_SW == STM32_SW_HSE) ||                                           \
-    ((STM32_PREDIV1SRC == STM32_PREDIV1SRC_HSE) &&                          \
-     (STM32_PLLSRC == STM32_PLLSRC_PREDIV1))
+#if STM32_HSE_ENABLED
+  /* HSE activation.*/
   RCC->CR |= RCC_CR_HSEON;
   while (!(RCC->CR & RCC_CR_HSERDY))
     ;                           /* Waits until HSE is stable.               */
+#endif
+
+#if STM32_LSI_ENABLED
+  /* LSI activation.*/
+  RCC->CSR |= RCC_CSR_LSION;
+  while ((RCC->CSR & RCC_CSR_LSIRDY) == 0)
+    ;                                       /* Waits until LSI is stable.   */
+#endif
+
+#if STM32_LSE_ENABLED
+  /* LSE activation, have to unlock the register.*/
+  PWR->CR |= PWR_CR_DBP;
+  RCC->BDCR |= RCC_BDCR_LSEON;
+  while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
+    ;                                       /* Waits until LSE is stable.   */
+  PWR->CR &= ~PWR_CR_DBP;
 #endif
 
   /* Settings of various dividers and multipliers in CFGR2.*/
@@ -218,7 +230,7 @@ void stm32_clock_init(void) {
 
   /* Clock settings.*/
 #if STM32_HAS_OTG1
-  RCC->CFGR = STM32_MCO    | STM32_OTGFSPRE | STM32_PLLMUL | STM32_PLLSRC |
+  RCC->CFGR = STM32_MCOSEL | STM32_OTGFSPRE | STM32_PLLMUL | STM32_PLLSRC |
               STM32_ADCPRE | STM32_PPRE2    | STM32_PPRE1  | STM32_HPRE;
 #else
   RCC->CFGR = STM32_MCO    |                  STM32_PLLMUL | STM32_PLLSRC |
@@ -234,6 +246,7 @@ void stm32_clock_init(void) {
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
     ;
 #endif
+#endif /* !STM32_NO_INIT */
 }
 #else
 void stm32_clock_init(void) {}
