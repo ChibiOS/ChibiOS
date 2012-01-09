@@ -13,7 +13,7 @@ X Revision of the RTCv1 driver implementation.
 X Revision of the RTCv2 driver implementation.
 - Consistency check of all STM32xx mcuconf.h files.
 - Fixing issue with Simulator and CH_DBG_SYSTEM_STATE_CHECK option.
-- SD driver port to STM32F2 and STM32F4.
+- SDC driver port to STM32F2 and STM32F4.
 - CAN driver test on STM32F4.
 - USB driver test on STM32Lxx.
 

@@ -37,6 +37,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Defines the support for realtime counters in the HAL.
+ */
+#define HAL_IMPLEMENTS_COUNTERS FALSE
+
+/**
  * @brief   Platform name.
  */
 #define PLATFORM_NAME   "Win32"
