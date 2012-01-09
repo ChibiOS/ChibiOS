@@ -6,8 +6,16 @@ X = In progress, some work done.
 N = Decided against.
 
 Current Pipeline (2.3.x):
-X I2C device driver class support and at least one implementation.
-X STM32F2xx support.
+* I2C device driver class support and at least one implementation.
+X STM32F2xx validation (so far done testing on STM32F4).
+X Revision of the RTCv1 driver implementation.
+X Revision of the RTCv2 driver implementation.
+- Consistency check of all halconf.h files.
+- Consistency check of all STM32xx mcuconf.h files.
+- Fixing issue with Simulator and CH_DBG_SYSTEM_STATE_CHECK option.
+- SD driver port to STM32F2 and STM32F4.
+- CAN driver test on STM32F4.
+- USB driver test on STM32Lxx.
 
 Within 2.x.x
 - Nios II support.
@@ -16,7 +24,7 @@ Within 2.x.x
 - Software I2C implementation using a GPT instance for timings.
 - LPC17xx support.
 - NUC120 support.
-- MMC_SPI driver revision and speedup.
+- MMC_SPI driver speedup.
 - Static memory allocation hook macros in kernel code.
 - MAC driver for STM32F107, STM32F2xx, STM32F4xx.
 - USB driver model revision.
@@ -35,10 +43,10 @@ X Implement the "transmission end" serial driver event on those platforms
 - Reduce number of demos globally, add demos to a repository or on web site.
   Required in order to reduce support effort.
 - FatFs wrapper.
-- New device driver models: Clock, Systick, RTC, WDG, DAC, Power Monitor.
+- New device driver models: Clock, Systick, WDG, DAC, Power Monitor.
 - Add UART4 support to the STM32 UART driver (CL line only, HD has a nasty
   shared interrupt).
-- STM32 OTG USB cell support for CL devices.
+- STM32 OTG USB cell support for CL, F2, F4 devices.
 - Add ADC3 support to the STM32 ADC driver.
 - Shared DMA channels support in the STM8L HAL.
 - Device drivers for STM8/STM8L (ADC, PWM, bring them on par with STM32).

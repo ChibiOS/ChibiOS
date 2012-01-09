@@ -15,6 +15,7 @@ HALSRC = ${CHIBIOS}/os/hal/src/hal.c \
          ${CHIBIOS}/os/hal/src/spi.c \
          ${CHIBIOS}/os/hal/src/uart.c \
          ${CHIBIOS}/os/hal/src/usb.c \
+         ${CHIBIOS}/os/hal/src/tm.c \
          ${CHIBIOS}/os/hal/src/mmc_spi.c \
          ${CHIBIOS}/os/hal/src/serial_usb.c \
          ${CHIBIOS}/os/hal/src/rtc.c

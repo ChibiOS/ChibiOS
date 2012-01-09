@@ -62,6 +62,9 @@ void halInit(void) {
 
   hal_lld_init();
 
+#if HAL_USE_TM || defined(__DOXYGEN__)
+  tmInit();
+#endif
 #if HAL_USE_PAL || defined(__DOXYGEN__)
   palInit(&pal_default_config);
 #endif

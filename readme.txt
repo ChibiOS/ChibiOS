@@ -79,6 +79,8 @@
 - FIX: Fixed SYSCFG clock not started in STM32L1/F4 HALs (bug 3449139).
 - FIX: Fixed wrong definitions in STM32L-Discovery board file (bug 3449076).
 - OPT: Improved the exception exit code in the GCC Cortex-Mx ports.
+- NEW: Added a Time Measurement driver to the HAL, this generic driver uses
+  the realtime counters abstracted in the HAL driver.
 - NEW: Improved the STM32F1xx HAL driver, it now has the same features and
   configuration options of the newer STM32s.
 - NEW: MMC over SPI driver improved to handle high capacity cards, by

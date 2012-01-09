@@ -34,6 +34,7 @@
 
 #include "hal_lld.h"
 
+#include "tm.h"
 #include "pal.h"
 #include "adc.h"
 #include "can.h"
@@ -43,6 +44,7 @@
 #include "icu.h"
 #include "mac.h"
 #include "pwm.h"
+#include "rtc.h"
 #include "serial.h"
 #include "sdc.h"
 #include "spi.h"
@@ -50,7 +52,6 @@
 #include "usb.h"
 #include "mmc_spi.h"
 #include "serial_usb.h"
-#include "rtc.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -187,6 +188,22 @@
                  (halGetCounterValue() >= start) ||                         \
                  (halGetCounterValue() < end))
 /** @} */
+
+/**
+ * @brief   Polled delay.
+ * @note    The real delays is always few cycles in excess of the specified
+ *          value.
+ *
+ * @param[in] ticks     number of ticks
+ *
+ * @api
+ */
+#define halPolledDelay(ticks) {                                             \
+  halrtcnt_t start = halGetCounterValue();                                  \
+  halrtcnt_t timeout  = start + (ticks);                                    \
+  while (halIsCounterWithin(start, timeout))                                \
+    ;                                                                       \
+}
 
 /*===========================================================================*/
 /* External declarations.                                                    */
