@@ -15,7 +15,6 @@ X Revision of the RTCv2 driver implementation.
 - Fixing issue with Simulator and CH_DBG_SYSTEM_STATE_CHECK option.
 - SDC driver port to STM32F2 and STM32F4.
 - CAN driver test on STM32F4.
-- USB driver test on STM32Lxx.
 
 Within 2.x.x
 - Nios II support.
