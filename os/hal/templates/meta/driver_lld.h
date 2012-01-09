@@ -47,7 +47,6 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-
 /**
  * @brief   Type of a structure representing an XXX driver.
  */

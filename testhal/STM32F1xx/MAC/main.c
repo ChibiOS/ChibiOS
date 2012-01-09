@@ -37,7 +37,7 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the EXT driver 1.
+   * Activates the MAC driver 1.
    */
 /*  macStart(&ETHD1, NULL);*/
 

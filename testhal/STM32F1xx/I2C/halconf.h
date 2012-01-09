@@ -35,6 +35,13 @@
 #include "mcuconf.h"
 
 /**
+ * @brief   Enables the TM subsystem.
+ */
+#if !defined(HAL_USE_TM) || defined(__DOXYGEN__)
+#define HAL_USE_TM                  TRUE
+#endif
+
+/**
  * @brief   Enables the PAL subsystem.
  */
 #if !defined(HAL_USE_PAL) || defined(__DOXYGEN__)
@@ -66,7 +73,7 @@
  * @brief   Enables the GPT subsystem.
  */
 #if !defined(HAL_USE_GPT) || defined(__DOXYGEN__)
-#define HAL_USE_GPT                 TRUE
+#define HAL_USE_GPT                 FALSE
 #endif
 
 /**

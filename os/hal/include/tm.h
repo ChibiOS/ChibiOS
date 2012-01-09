@@ -20,7 +20,7 @@
 
 /**
  * @file    tm.h
- * @brief   Time Measurement unit header.
+ * @brief   Time Measurement driver header.
  *
  * @addtogroup TM
  * @{
@@ -29,7 +29,23 @@
 #ifndef _TM_H_
 #define _TM_H_
 
-#if HAL_USE_TM
+#if HAL_USE_TM || defined(__DOXYGEN__)
+
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
 
 /**
  * @brief   Type of a Time Measurement object.
@@ -56,6 +72,10 @@ struct TimeMeasurement {
   halrtcnt_t           best;            /**< @brief Best measurement.       */
 };
 
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
+
 /**
  * @brief   Starts a measurement.
  * @pre     The @p TimeMeasurement must be initialized.
@@ -77,6 +97,10 @@ struct TimeMeasurement {
  * @special
  */
 #define tmStopMeasurement(tmp) (tmp)->stop(tmp)
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #ifdef __cplusplus
 extern "C" {
