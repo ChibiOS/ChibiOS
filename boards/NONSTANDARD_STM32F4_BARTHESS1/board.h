@@ -366,7 +366,7 @@
 #define GPIOD_PWM4              15
  */
 /* 0x00000000 */
-#define VAL_GPIOD_MODER        (PIN_MODE_OUTPUT(GPIOD_SDIO_CMD) |             \
+#define VAL_GPIOD_MODER        (PIN_MODE_ALTERNATE(GPIOD_SDIO_CMD) |          \
                                 PIN_MODE_ALTERNATE(GPIOD_PWM1) |              \
                                 PIN_MODE_ALTERNATE(GPIOD_PWM2) |              \
                                 PIN_MODE_ALTERNATE(GPIOD_PWM3) |              \
