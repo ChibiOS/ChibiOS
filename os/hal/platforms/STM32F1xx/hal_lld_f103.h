@@ -981,8 +981,9 @@
 #error "HSI not enabled, required by STM32_SW and STM32_PLLSRC"
 #endif
 
-#if (STM32_MCOSEL == STM32_MCOSEL_HSI) ||                                         \
-    ((STM32_MCOSEL == STM32_MCOSEL_PLLDIV2) && (STM32_PLLSRC == STM32_PLLSRC_HSI))
+#if (STM32_MCOSEL == STM32_MCOSEL_HSI) ||                                   \
+    ((STM32_MCOSEL == STM32_MCOSEL_PLLDIV2) &&                              \
+     (STM32_PLLSRC == STM32_PLLSRC_HSI))
 #error "HSI not enabled, required by STM32_MCOSEL"
 #endif
 
@@ -1202,6 +1203,21 @@
 /* APB2 frequency check.*/
 #if STM32_PCLK2 > STM32_PCLK2_MAX
 #error "STM32_PCLK2 exceeding maximum frequency (STM32_PCLK2_MAX)"
+#endif
+
+/**
+ * @brief   RTC clock.
+ */
+#if (STM32_RTCSEL == STM32_RTCSEL_LSE) || defined(__DOXYGEN__)
+#define STM32_RTCCLK                STM32_LSECLK
+#elif STM32_RTCSEL == STM32_RTCSEL_LSI
+#define STM32_RTCCLK                STM32_LSICLK
+#elif STM32_RTCSEL == STM32_RTCSEL_HSEDIV
+#define STM32_RTCCLK                (STM32_HSECLK / 128)
+#elif STM32_RTCSEL == STM32_RTCSEL_NOCLOCK
+#define STM32_RTCCLK                0
+#else
+#error "invalid source selected for RTC clock"
 #endif
 
 /**

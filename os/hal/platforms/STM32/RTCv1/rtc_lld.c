@@ -87,7 +87,7 @@ static void rtc_lld_serve_interrupt(RTCDriver *rtcp) {
 static void rtc_lld_wait_write(void) {
 
   /* Waits registers write completion.*/
-  while (!(RTC->CRL & RTC_CRL_RTOFF))
+  while ((RTC->CRL & RTC_CRL_RTOFF) == 0)
     ;
 }
 
@@ -122,50 +122,6 @@ CH_IRQ_HANDLER(RTC_IRQHandler) {
  * @notapi
  */
 void rtc_lld_init(void){
-  uint32_t preload;
-
-  rccEnableBKPInterface(FALSE);
-
-  /* Enables access to BKP registers.*/
-  PWR->CR |= PWR_CR_DBP;
-
-  /* If the RTC is not enabled then performs a reset of the backup domain.*/
-  if (!(RCC->BDCR & RCC_BDCR_RTCEN)) {
-    RCC->BDCR = RCC_BDCR_BDRST;
-    RCC->BDCR = 0;
-  }
-
-#if STM32_RTC == STM32_RTC_LSE
-#define RTC_CLK   STM32_LSECLK
-  if (!(RCC->BDCR & RCC_BDCR_LSEON)) {
-    RCC->BDCR |= RCC_BDCR_LSEON;
-    while (!(RCC->BDCR & RCC_BDCR_LSERDY))
-      ;
-  }
-  preload = STM32_LSECLK - 1;
-#elif STM32_RTC == STM32_RTC_LSI
-#define RTC_CLK   STM32_LSICLK
-  /* TODO: Move the LSI clock initialization in the HAL low level driver.*/
-  RCC->CSR |= RCC_CSR_LSION;
-  while (!(RCC->CSR & RCC_CSR_LSIRDY))
-    ;
-  /* According to errata sheet we must wait additional 100 uS for
-     stabilization.
-     TODO: Change this code, software loops are not reliable.*/
-  volatile uint32_t tmo = (STM32_SYSCLK / 1000000) * 100;
-  while (tmo--)
-    ;
-  preload = STM32_LSICLK - 1;
-#elif STM32_RTC == STM32_RTC_HSE
-#define RTC_CLK   (STM32_HSECLK / 128)
-  preload = (STM32_HSECLK / 128) - 1;
-#endif
-
-  /* Selects clock source (previously enabled and stabilized).*/
-  RCC->BDCR = (RCC->BDCR & ~RCC_BDCR_RTCSEL) | STM32_RTC;
-
-  /* RTC enabled regardless its previous status.*/
-  RCC->BDCR |= RCC_BDCR_RTCEN;
 
   /* Ensure that RTC_CNT and RTC_DIV contain actual values after enabling
      clocking on APB1, because these values only update when APB1
@@ -175,15 +131,15 @@ void rtc_lld_init(void){
     ;
 
   /* Write preload register only if its value differs.*/
-  if (preload != ((((uint32_t)(RTC->PRLH)) << 16) + (uint32_t)RTC->PRLL)) {
-
-    rtc_lld_wait_write();
+  if (STM32_RTCCLK != (((uint32_t)(RTC->PRLH)) << 16) +
+                       ((uint32_t)RTC->PRLL) + 1) {
 
     /* Enters configuration mode and writes PRLx registers then leaves the
        configuration mode.*/
+    rtc_lld_wait_write();
     RTC->CRL |= RTC_CRL_CNF;
-    RTC->PRLH = (uint16_t)(preload >> 16);
-    RTC->PRLL = (uint16_t)(preload & 0xFFFF);
+    RTC->PRLH = (uint16_t)((STM32_RTCCLK - 1) >> 16);
+    RTC->PRLL = (uint16_t)((STM32_RTCCLK - 1) & 0xFFFF);
     RTC->CRL &= ~RTC_CRL_CNF;
   }
 
@@ -209,7 +165,6 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec) {
   (void)rtcp;
 
   rtc_lld_wait_write();
-
   RTC->CRL |= RTC_CRL_CNF;
   RTC->CNTH = (uint16_t)(timespec->tv_sec >> 16);
   RTC->CNTL = (uint16_t)(timespec->tv_sec & 0xFFFF);
@@ -229,17 +184,15 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
 
   uint32_t time_frac;
 
-READ_REGISTERS:
-  timespec->tv_sec = ((uint32_t)(RTC->CNTH) << 16) + RTC->CNTL;
-  time_frac = (((uint32_t)RTC->DIVH) << 16) + (uint32_t)RTC->DIVL;
+  /* The read is repeated until we are able to do it twice and obtain the
+     same result.*/
+  do {
+    timespec->tv_sec = ((uint32_t)(RTC->CNTH) << 16) + RTC->CNTL;
+    time_frac = (((uint32_t)RTC->DIVH) << 16) + (uint32_t)RTC->DIVL;
+  } while ((timespec->tv_sec) != (((uint32_t)(RTC->CNTH) << 16) + RTC->CNTL));
 
-  /* If second counter updated between reading of integer and fractional parts
-   * we must reread both values. */
-  if((timespec->tv_sec) != (((uint32_t)(RTC->CNTH) << 16) + RTC->CNTL)){
-    goto READ_REGISTERS;
-  }
-
-  timespec->tv_msec = (uint16_t)(((RTC_CLK - 1 - time_frac) * 1000) / RTC_CLK);
+  timespec->tv_msec = (uint16_t)(((STM32_RTCCLK - 1 - time_frac) * 1000) /
+                                 STM32_RTCCLK);
 }
 
 /**
@@ -260,10 +213,10 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
   (void)rtcp;
   (void)alarm;
 
-  rtc_lld_wait_write();
 
   /* Enters configuration mode and writes ALRHx registers then leaves the
      configuration mode.*/
+  rtc_lld_wait_write();
   RTC->CRL |= RTC_CRL_CNF;
   if (alarmspec != NULL) {
     RTC->ALRH = (uint16_t)(alarmspec->tv_sec >> 16);
@@ -315,17 +268,14 @@ void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
     rtcp->callback = callback;
 
     /* Interrupts are enabled only after setting up the callback, this
-     way there is no need to check for the NULL callback pointer inside
-     the IRQ handler.*/
-    rtc_lld_wait_write();
+       way there is no need to check for the NULL callback pointer inside
+       the IRQ handler.*/
     RTC->CRL &= ~(RTC_CRL_OWF | RTC_CRL_ALRF | RTC_CRL_SECF);
-    rtc_lld_wait_write();
     nvicEnableVector(RTC_IRQn, CORTEX_PRIORITY_MASK(STM32_RTC_IRQ_PRIORITY));
     RTC->CRH |= RTC_CRH_OWIE | RTC_CRH_ALRIE | RTC_CRH_SECIE;
   }
   else {
     nvicDisableVector(RTC_IRQn);
-    rtc_lld_wait_write();
     RTC->CRL = 0;
     RTC->CRH = 0;
   }

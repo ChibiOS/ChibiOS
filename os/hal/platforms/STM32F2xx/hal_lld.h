@@ -1230,21 +1230,21 @@
 #endif
 
 /**
- * @brief   HSE divider toward RTC clock.
- */
-#if ((STM32_RTCPRE_VALUE >= 2) && (STM32_RTCPRE_VALUE <= 31))  ||           \
-    defined(__DOXYGEN__)
-#define STM32_HSEDIVCLK             (STM32_HSECLK / STM32_RTCPRE_VALUE)
-#else
-#error "invalid STM32_RTCPRE value specified"
-#endif
-
-/**
  * @brief   RTC HSE divider setting.
  */
 #if ((STM32_RTCPRE_VALUE >= 2) && (STM32_RTCPRE_VALUE <= 31)) ||            \
     defined(__DOXYGEN__)
 #define STM32_RTCPRE                (STM32_RTCPRE_VALUE << 16)
+#else
+#error "invalid STM32_RTCPRE value specified"
+#endif
+
+/**
+ * @brief   HSE divider toward RTC clock.
+ */
+#if ((STM32_RTCPRE_VALUE >= 2) && (STM32_RTCPRE_VALUE <= 31))  ||           \
+    defined(__DOXYGEN__)
+#define STM32_HSEDIVCLK             (STM32_HSECLK / STM32_RTCPRE_VALUE)
 #else
 #error "invalid STM32_RTCPRE value specified"
 #endif

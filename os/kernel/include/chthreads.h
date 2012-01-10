@@ -125,7 +125,7 @@ struct Thread {
 #if CH_DBG_THREADS_PROFILING || defined(__DOXYGEN__)
   /**
    * @brief Thread consumed time in ticks.
-   * @note This field can overflow.
+   * @note  This field can overflow.
    */
   volatile systime_t    p_time;
 #endif

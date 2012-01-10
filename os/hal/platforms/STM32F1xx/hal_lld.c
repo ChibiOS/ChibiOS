@@ -41,6 +41,47 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Initializes the backup domain.
+ */
+static void hal_lld_backup_domain_init(void) {
+
+  /* Backup domain access enabled during initialization.*/
+  PWR->CR |= PWR_CR_DBP;
+
+  /* RTC clock initialization.*/
+#if STM32_RTCSEL == STM32_RTCSEL_NOCLOCK
+  /* RTC clock not required, backup domain reset as initialization.*/
+  RCC->BDCR = RCC_BDCR_BDRST;
+  RCC->BDCR = 0;
+#else /* STM32_RTCSEL != STM32_RTCSEL_NOCLOCK */
+  /* If the backup domain hasn't been initialized yet then proceed with
+     initialization.*/
+  if (!(RCC->BDCR & RCC_BDCR_LSEON)) {
+    /* Backup domain reset.*/
+    RCC->BDCR = RCC_BDCR_BDRST;
+    RCC->BDCR = 0;
+
+    /* If enabled then the LSE is started.*/
+#if STM32_LSE_ENABLED
+    RCC->BDCR |= RCC_BDCR_LSEON;
+    while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
+      ;                                     /* Waits until LSE is stable.   */
+#endif
+
+    /* Selects clock source.*/
+    RCC->BDCR = (RCC->BDCR & ~RCC_BDCR_RTCSEL) | STM32_RTCSEL;
+
+    /* RTC enabled regardless its previous status, this will also prevent
+       successive initializations.*/
+    RCC->BDCR |= RCC_BDCR_RTCEN;
+  }
+#endif /* STM32_RTCSEL != STM32_RTCSEL_NOCLOCK */
+
+  /*  Backup domain access disabled for operations safety.*/
+  PWR->CR &= ~PWR_CR_DBP;
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -70,13 +111,19 @@ void hal_lld_init(void) {
   /* DWT cycle counter enable.*/
   DWT_CTRL |= DWT_CTRL_CYCCNTENA;
 
+  /* PWR and BD clocks enabled.*/
+  rccEnablePWRInterface(FALSE);
+  rccEnableBKPInterface(FALSE);
+
+  /* Initializes the backup domain.*/
+  hal_lld_backup_domain_init();
+
 #if defined(STM32_DMA_REQUIRED)
   dmaInit();
 #endif
 
   /* Programmable voltage detector enable.*/
 #if STM32_PVD_ENABLE
-  rccEnablePWRInterface(FALSE);
   PWR->CR |= PWR_CR_PVDE | (STM32_PLS & STM32_PLS_MASK);
 #endif /* STM32_PVD_ENABLE */
 }
@@ -120,15 +167,6 @@ void stm32_clock_init(void) {
   RCC->CSR |= RCC_CSR_LSION;
   while ((RCC->CSR & RCC_CSR_LSIRDY) == 0)
     ;                                       /* Waits until LSI is stable.   */
-#endif
-
-#if STM32_LSE_ENABLED
-  /* LSE activation, have to unlock the register.*/
-  PWR->CR |= PWR_CR_DBP;
-  RCC->BDCR |= RCC_BDCR_LSEON;
-  while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
-    ;                                       /* Waits until LSE is stable.   */
-  PWR->CR &= ~PWR_CR_DBP;
 #endif
 
 #if STM32_ACTIVATE_PLL
@@ -191,15 +229,6 @@ void stm32_clock_init(void) {
   RCC->CSR |= RCC_CSR_LSION;
   while ((RCC->CSR & RCC_CSR_LSIRDY) == 0)
     ;                                       /* Waits until LSI is stable.   */
-#endif
-
-#if STM32_LSE_ENABLED
-  /* LSE activation, have to unlock the register.*/
-  PWR->CR |= PWR_CR_DBP;
-  RCC->BDCR |= RCC_BDCR_LSEON;
-  while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
-    ;                                       /* Waits until LSE is stable.   */
-  PWR->CR &= ~PWR_CR_DBP;
 #endif
 
   /* Settings of various dividers and multipliers in CFGR2.*/

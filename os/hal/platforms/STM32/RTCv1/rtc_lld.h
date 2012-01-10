@@ -61,9 +61,8 @@
 #error "RTC not present in the selected device"
 #endif
 
-#if !(STM32_RTC == STM32_RTC_LSE) && !(STM32_RTC == STM32_RTC_LSI) &&       \
-    !(STM32_RTC == STM32_RTC_HSE)
-#error "invalid source selected for RTC clock"
+#if STM32_RTCCLK == 0
+#error "RTC clock not enabled"
 #endif
 
 /*===========================================================================*/
