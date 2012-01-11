@@ -61,7 +61,7 @@ static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
   tp = chRegFirstThread();
   do {
     chprintf(chp, "%.8lx %.8lx %4lu %4lu %9s %lu\r\n",
-            (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
+            (uint32_t)tp, (uint32_t)tp->p_ctx.esp,
             (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
             states[tp->p_state], (uint32_t)tp->p_time);
     tp = chRegNextThread(tp);

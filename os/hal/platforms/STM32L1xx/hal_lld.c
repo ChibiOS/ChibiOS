@@ -51,11 +51,12 @@ static void hal_lld_backup_domain_init(void) {
 
   /* If enabled then the LSE is started.*/
 #if STM32_LSE_ENABLED
-  if ((RCC->BDCR & RCC_BDCR_LSEON) == 0) {
+  if ((RCC->CSR & RCC_CSR_LSEON) == 0) {
     /* Backup domain reset.*/
-    RCC->BDCR = RCC_BDCR_BDRST;
-    RCC->BDCR = RCC_BDCR_LSEON;
-    while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
+    RCC->CSR |= RCC_CSR_RTCRST;
+    RCC->CSR &= ~RCC_CSR_RTCRST;
+    RCC->CSR |= RCC_CSR_LSEON;
+    while ((RCC->CSR & RCC_CSR_LSERDY) == 0)
       ;                                     /* Waits until LSE is stable.   */
   }
 #endif
@@ -63,12 +64,12 @@ static void hal_lld_backup_domain_init(void) {
 #if STM32_RTCSEL != STM32_RTCSEL_NOCLOCK
   /* If the backup domain hasn't been initialized yet then proceed with
      initialization.*/
-  if ((RCC->BDCR & RCC_BDCR_RTCEN) == 0) {
+  if ((RCC->CSR & RCC_CSR_RTCEN) == 0) {
     /* Selects clock source.*/
-    RCC->BDCR = (RCC->BDCR & ~RCC_BDCR_RTCSEL) | STM32_RTCSEL;
+    RCC->CSR = (RCC->CSR & ~RCC_CSR_RTCSEL) | STM32_RTCSEL;
 
     /* RTC clock enabled.*/
-    RCC->BDCR |= RCC_BDCR_RTCEN;
+    RCC->CSR |= RCC_CSR_RTCEN;
   }
 #endif /* STM32_RTCSEL != STM32_RTCSEL_NOCLOCK */
 

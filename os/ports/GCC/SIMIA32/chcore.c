@@ -69,17 +69,16 @@ void port_halt(void) {
 }
 
 /**
- * Threads return point, it just invokes @p chThdExit().
+ * @brief   Start a thread by invoking its work function.
+ * @details If the work function returns @p chThdExit() is automatically
+ *          invoked.
  */
-void threadexit(void) {
+__attribute__((cdecl, noreturn))
+void _port_thread_start(msg_t (*pf)(void *), void *p) {
 
-#if defined(WIN32) || defined (__APPLE__)
-  asm volatile ("push    %eax                                   \n\t" \
-                "call    _chThdExit");
-#else
-  asm volatile ("push    %eax                                   \n\t" \
-                "call    chThdExit");
-#endif
+  chSysUnlock();
+  chThdExit(pf(p));
+  while(1);
 }
 
 /** @} */

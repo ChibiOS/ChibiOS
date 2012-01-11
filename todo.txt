@@ -8,11 +8,11 @@ N = Decided against.
 Current Pipeline (2.3.x):
 * I2C device driver class support and at least one implementation.
 * Consistency check of all halconf.h files.
-X STM32F2xx validation (so far done testing on STM32F4).
-X Revision of the RTCv1 driver implementation.
+* Consistency check of all STM32xx mcuconf.h files.
+* Revision of the RTCv1 driver implementation.
+* Fixing issue with Simulator and CH_DBG_SYSTEM_STATE_CHECK option.
+X STM32F2 validation (so far done testing on STM32F4).
 X Revision of the RTCv2 driver implementation.
-- Consistency check of all STM32xx mcuconf.h files.
-- Fixing issue with Simulator and CH_DBG_SYSTEM_STATE_CHECK option.
 - SDC driver port to STM32F2 and STM32F4.
 - CAN driver test on STM32F4.
 

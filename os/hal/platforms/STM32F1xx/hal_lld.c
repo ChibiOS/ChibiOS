@@ -54,6 +54,7 @@ static void hal_lld_backup_domain_init(void) {
   if ((RCC->BDCR & RCC_BDCR_LSEON) == 0) {
     /* Backup domain reset.*/
     RCC->BDCR = RCC_BDCR_BDRST;
+    RCC->BDCR = 0;
     RCC->BDCR = RCC_BDCR_LSEON;
     while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
       ;                                     /* Waits until LSE is stable.   */

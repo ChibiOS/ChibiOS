@@ -105,13 +105,11 @@ struct context {
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
   uint8_t *esp = (uint8_t *)workspace + wsize;                          \
-  APUSH(esp, 0);                                                        \
-  APUSH(esp, 0);                                                        \
-  APUSH(esp, 0);                                                        \
   APUSH(esp, arg);                                                      \
-  APUSH(esp, threadexit);                                               \
+  APUSH(esp, pf);                                                       \
+  APUSH(esp, 0);                                                        \
   esp -= sizeof(struct intctx);                                         \
-  ((struct intctx *)esp)->eip = pf;                                     \
+  ((struct intctx *)esp)->eip = _port_thread_start;                     \
   ((struct intctx *)esp)->ebx = 0;                                      \
   ((struct intctx *)esp)->edi = 0;                                      \
   ((struct intctx *)esp)->esi = 0;                                      \
@@ -224,7 +222,8 @@ extern "C" {
 #endif
   __attribute__((fastcall)) void port_switch(Thread *ntp, Thread *otp);
   __attribute__((fastcall)) void port_halt(void);
-  void threadexit(void);
+  __attribute__((cdecl, noreturn)) void _port_thread_start(msg_t (*pf)(void *),
+                                                           void *p);
   void ChkIntSources(void);
 #ifdef __cplusplus
 }
