@@ -72,6 +72,9 @@ static void hal_lld_backup_domain_init(void) {
     RCC->BDCR |= RCC_BDCR_RTCEN;
   }
 #endif /* STM32_RTCSEL != STM32_RTCSEL_NOCLOCK */
+
+  /*  Backup domain access disabled for operations safety.*/
+  PWR->CR &= ~PWR_CR_DBP;
 }
 
 /*===========================================================================*/
