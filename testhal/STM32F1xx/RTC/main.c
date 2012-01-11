@@ -24,9 +24,15 @@
 RTCTime timespec;
 RTCAlarm alarmspec;
 
-#define TEST_ALARM_WAKEUP FALSE
+#define TEST_ALARM_WAKEUP TRUE
 
 #if TEST_ALARM_WAKEUP
+
+static void my_cb(RTCDriver *rtcp, rtcevent_t event) {
+  (void)rtcp;
+  (void)event;
+  return;
+}
 
 /* sleep indicator thread */
 static WORKING_AREA(blinkWA, 128);
@@ -34,7 +40,7 @@ static msg_t blink_thd(void *arg){
   (void)arg;
   while (TRUE) {
     chThdSleepMilliseconds(100);
-    palTogglePad(IOPORT3, GPIOC_LED);
+    palTogglePad(GPIOC, GPIOC_LED);
   }
   return 0;
 }
@@ -45,23 +51,31 @@ int main(void) {
 
   chThdCreateStatic(blinkWA, sizeof(blinkWA), NORMALPRIO, blink_thd, NULL);
   /* set alarm in near future */
-  rtcGetTime(&timespec);
-  alarmspec.tv_sec = timespec.tv_sec + 60;
-  rtcSetAlarm(&alarmspec);
+  rtcGetTime(&RTCD1, &timespec);
+  alarmspec.tv_sec = timespec.tv_sec + 30;
+  rtcSetAlarm(&RTCD1, 0, &alarmspec);
+
+  /* Needed just to switch interrupts on.*/
+  rtcSetCallback(&RTCD1, my_cb);
 
   while (TRUE){
-      chThdSleepSeconds(10);
-      chSysLock();
+    chThdSleepSeconds(10);
+    chSysLock();
 
-      /* going to anabiosis*/
-      PWR->CR |= (PWR_CR_PDDS | PWR_CR_LPDS | PWR_CR_CSBF | PWR_CR_CWUF);
-      SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-      __WFI();
+    /* going to anabiosis*/
+    PWR->CR |= (PWR_CR_PDDS | PWR_CR_LPDS | PWR_CR_CSBF | PWR_CR_CWUF);
+    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+    __WFI();
   }
   return 0;
 }
 
 #else /* TEST_ALARM_WAKEUP */
+
+/* Manually reloaded test alarm period.*/
+#define RTC_ALARMPERIOD   10
+
+BinarySemaphore alarm_sem;
 
 static void my_cb(RTCDriver *rtcp, rtcevent_t event) {
 
@@ -76,24 +90,36 @@ static void my_cb(RTCDriver *rtcp, rtcevent_t event) {
     break;
   case RTC_EVENT_ALARM:
     palTogglePad(GPIOC, GPIOC_LED);
-    rtcGetTime(&RTCD1, &timespec);
-    alarmspec.tv_sec = timespec.tv_sec + 10;
-    rtcSetAlarm(&RTCD1, 0, &alarmspec);
+    chBSemSignalI(&alarm_sem);
     break;
   }
 }
 
 int main(void) {
+  msg_t status = RDY_TIMEOUT;
+
   halInit();
   chSysInit();
+  chBSemInit(&alarm_sem, TRUE);
 
   rtcGetTime(&RTCD1, &timespec);
-  alarmspec.tv_sec = timespec.tv_sec + 10;
+  alarmspec.tv_sec = timespec.tv_sec + RTC_ALARMPERIOD;
   rtcSetAlarm(&RTCD1, 0, &alarmspec);
 
   rtcSetCallback(&RTCD1, my_cb);
   while (TRUE){
-    chThdSleepMilliseconds(500);
+
+    /* Wait until alarm callback signaled semaphore.*/
+    status = chBSemWaitTimeout(&alarm_sem, S2ST(RTC_ALARMPERIOD + 5));
+
+    if (status == RDY_TIMEOUT){
+      chSysHalt();
+    }
+    else{
+      rtcGetTime(&RTCD1, &timespec);
+      alarmspec.tv_sec = timespec.tv_sec + RTC_ALARMPERIOD;
+      rtcSetAlarm(&RTCD1, 0, &alarmspec);
+    }
   }
   return 0;
 }

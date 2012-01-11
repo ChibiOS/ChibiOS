@@ -80,16 +80,29 @@ static void rtc_lld_serve_interrupt(RTCDriver *rtcp) {
 }
 
 /**
- * @brief   Waits for the previous registers write to finish.
+ * @brief   Acquire atomic write access to RTC registers.
  *
  * @notapi
  */
-static void rtc_lld_wait_write(void) {
+static void rtc_lld_acquire(void) {
 
   /* Waits registers write completion.*/
+BEGIN:
   while ((RTC->CRL & RTC_CRL_RTOFF) == 0)
     ;
+  chSysLock();
+  if ((RTC->CRL & RTC_CRL_RTOFF) == 0){
+    chSysUnlock();
+    goto BEGIN;
+  }
 }
+
+/**
+ * @brief   Release atomic write access to RTC registers.
+ *
+ * @notapi
+ */
+#define rtc_lld_release() {chSysUnlock();}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -130,21 +143,26 @@ void rtc_lld_init(void){
   while (!(RTC->CRL & RTC_CRL_RSF))
     ;
 
-  /* Write preload register only if its value differs.*/
+  /* Write preload register only if its value is not equal to desired value.*/
   if (STM32_RTCCLK != (((uint32_t)(RTC->PRLH)) << 16) +
                        ((uint32_t)RTC->PRLL) + 1) {
 
     /* Enters configuration mode and writes PRLx registers then leaves the
        configuration mode.*/
-    rtc_lld_wait_write();
+    rtc_lld_acquire();
     RTC->CRL |= RTC_CRL_CNF;
     RTC->PRLH = (uint16_t)((STM32_RTCCLK - 1) >> 16);
     RTC->PRLL = (uint16_t)((STM32_RTCCLK - 1) & 0xFFFF);
     RTC->CRL &= ~RTC_CRL_CNF;
+    rtc_lld_release();
   }
 
   /* All interrupts initially disabled.*/
-  RTC->CRH = 0;
+  if (RTC->CRH != 0){
+    rtc_lld_acquire();
+    RTC->CRH = 0;
+    rtc_lld_release();
+  }
 
   /* Callback initially disabled.*/
   RTCD1.callback = NULL;
@@ -164,11 +182,12 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec) {
 
   (void)rtcp;
 
-  rtc_lld_wait_write();
+  rtc_lld_acquire();
   RTC->CRL |= RTC_CRL_CNF;
   RTC->CNTH = (uint16_t)(timespec->tv_sec >> 16);
   RTC->CNTL = (uint16_t)(timespec->tv_sec & 0xFFFF);
   RTC->CRL &= ~RTC_CRL_CNF;
+  rtc_lld_release();
 }
 
 /**
@@ -216,7 +235,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
 
   /* Enters configuration mode and writes ALRHx registers then leaves the
      configuration mode.*/
-  rtc_lld_wait_write();
+  rtc_lld_acquire();
   RTC->CRL |= RTC_CRL_CNF;
   if (alarmspec != NULL) {
     RTC->ALRH = (uint16_t)(alarmspec->tv_sec >> 16);
@@ -227,6 +246,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
     RTC->ALRL = 0;
   }
   RTC->CRL &= ~RTC_CRL_CNF;
+  rtc_lld_release();
 }
 
 /**
@@ -264,6 +284,7 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
  */
 void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
 
+  rtc_lld_acquire();
   if (callback != NULL) {
     rtcp->callback = callback;
 
@@ -276,9 +297,10 @@ void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
   }
   else {
     nvicDisableVector(RTC_IRQn);
-    RTC->CRL = 0;
-    RTC->CRH = 0;
+    RTC->CRL &= ~(RTC_CRL_OWF | RTC_CRL_ALRF | RTC_CRL_SECF);
+    RTC->CRH &= ~(RTC_CRH_OWIE | RTC_CRH_ALRIE | RTC_CRH_SECIE);
   }
+  rtc_lld_release();
 }
 
 #endif /* HAL_USE_RTC */
