@@ -5,38 +5,43 @@ X = In progress, some work done.
 ? = Not sure if worth the effort or useful at all.
 N = Decided against.
 
-Current Pipeline (2.3.x):
-* I2C device driver class support and at least one implementation.
-* Consistency check of all halconf.h files.
-* Consistency check of all STM32xx mcuconf.h files.
-* Revision of the RTCv1 driver implementation.
-* Fixing issue with Simulator and CH_DBG_SYSTEM_STATE_CHECK option.
-X STM32F2 validation (so far done testing on STM32F4).
-X Revision of the RTCv2 driver implementation.
-- SDC driver port to STM32F2 and STM32F4.
-- CAN driver test on STM32F4.
+Current Pipeline (2.4.0):
+X Revision of the RTCv1 driver implementation.
+- Posix simulator tickets and test.
+- Complete test cycle.
+- Complete documentation cycle.
 
-Within 2.x.x
-- Nios II support.
-- Update C++ wrapper.
-- FatFs 0.9x integration.
-- Software I2C implementation using a GPT instance for timings.
-- LPC17xx support.
-- NUC120 support.
-- MMC_SPI driver speedup.
-- Static memory allocation hook macros in kernel code.
-- MAC driver for STM32F107, STM32F2xx, STM32F4xx.
-- USB driver model revision.
-  ? USB double buffering support for STM32 implementation.
-  X Evaluate using DMA channels for buffer copy.
-X File System infrastructure.
-X Implement the "transmission end" serial driver event on those platforms
-  supporting the feature, so far only done in STM32 driver.
+Version 2.4.1
+X STM32F2 validation (so far testing done on STM32F4 only).
+X Revision of the RTCv2 driver implementation.
+X SDC driver port to STM32F2 and STM32F4.
+- CAN2 support and CAN driver test on STM32F2/F4.
+
+Within 2.5.x:
 - Revision of scheduling strategy for threads at equal priority.
-- Add a chSysIntegrityCheck() API.
+- Add a chSysIntegrityCheck() API to the kernel.
 - Add a CH_THREAD macro for threads declaration in order to hide
   compiler-specific optimizations for thread functions. All demos will have
   to be updated.
+- Runtime errors manager in HAL.
+- Critical errors manager in HAL (to replace or complement assertions).
+- MMC_SPI driver speedup.
+- USB driver model revision.
+- MAC driver for STM32F107, STM32F2xx, STM32F4xx.
+- STM32 OTG USB cell support for CL, F2, F4 devices.
+- Add ADC3 support to the STM32 ADC driver.
+- Update C++ wrapper.
+- FatFs 0.9x integration.
+- Nios II support.
+- LPC17xx support.
+- NUC120 support.
+
+Within 2.x.x
+- Software I2C implementation using a GPT instance for timings.
+- Static memory allocation hook macros in kernel code.
+X File System infrastructure.
+X Implement the "transmission end" serial driver event on those platforms
+  supporting the feature, so far only done in STM32 driver.
 - Test suite overhaul, the API should be more generic in order to be used
   with different subsystems and not just the kernel.
 - Reduce number of demos globally, add demos to a repository or on web site.
@@ -45,8 +50,6 @@ X Implement the "transmission end" serial driver event on those platforms
 - New device driver models: Clock, Systick, WDG, DAC, Power Monitor.
 - Add UART4 support to the STM32 UART driver (CL line only, HD has a nasty
   shared interrupt).
-- STM32 OTG USB cell support for CL, F2, F4 devices.
-- Add ADC3 support to the STM32 ADC driver.
 - Shared DMA channels support in the STM8L HAL.
 - Device drivers for STM8/STM8L (ADC, PWM, bring them on par with STM32).
 - Device drivers for LPC1xxx (ADC, PWM, bring them on par with STM32).

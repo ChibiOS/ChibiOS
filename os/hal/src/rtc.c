@@ -141,8 +141,8 @@ void rtcGetAlarm(RTCDriver *rtcp,
 #if RTC_SUPPORTS_CALLBACKS || defined(__DOXYGEN__)
 /**
  * @brief   Enables or disables RTC callbacks.
- * @details This function enables or disables callbacks, use a @p NULL pointer
- *          in order to disable a callback.
+ * @details This function enables or disables the callback, use a @p NULL
+ *          pointer in order to disable it.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] callback  callback function pointer or @p NULL

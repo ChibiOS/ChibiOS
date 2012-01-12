@@ -46,8 +46,8 @@
  */
 static void hal_lld_backup_domain_init(void) {
 
-  /* Backup domain access enabled during initialization.*/
-  PWR->CR |= PWR_CR_DBP;
+  /* Backup domain access enabled and left open.*/
+  PWR->CR = PWR_CR_DBP;
 
   /* If enabled then the LSE is started.*/
 #if STM32_LSE_ENABLED
@@ -72,9 +72,6 @@ static void hal_lld_backup_domain_init(void) {
     RCC->BDCR |= RCC_BDCR_RTCEN;
   }
 #endif /* STM32_RTCSEL != STM32_RTCSEL_NOCLOCK */
-
-  /*  Backup domain access disabled for operations safety.*/
-  PWR->CR &= ~PWR_CR_DBP;
 }
 
 /*===========================================================================*/

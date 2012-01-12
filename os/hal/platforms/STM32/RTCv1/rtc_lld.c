@@ -53,71 +53,44 @@ RTCDriver RTCD1;
 /*===========================================================================*/
 
 /**
- * @brief   Shared IRQ handler.
- *
- * @param[in] rtcp    pointer to a @p RTCDriver object
- *
- * @notapi
- */
-static void rtc_lld_serve_interrupt(RTCDriver *rtcp) {
-
-  PWR->CR |= PWR_CR_DBP;
-  chSysLockFromIsr();
-
-  if ((RTC->CRH & RTC_CRH_SECIE) && (RTC->CRL & RTC_CRL_SECF)) {
-    rtcp->callback(rtcp, RTC_EVENT_SECOND);
-    RTC->CRL &= ~RTC_CRL_SECF;
-  }
-  if ((RTC->CRH & RTC_CRH_ALRIE) && (RTC->CRL & RTC_CRL_ALRF)) {
-    rtcp->callback(rtcp, RTC_EVENT_ALARM);
-    RTC->CRL &= ~RTC_CRL_ALRF;
-  }
-  if ((RTC->CRH & RTC_CRH_OWIE) && (RTC->CRL & RTC_CRL_OWF)) {
-    rtcp->callback(rtcp, RTC_EVENT_OVERFLOW);
-    RTC->CRL &= ~RTC_CRL_OWF;
-  }
-
-  chSysUnlockFromIsr();
-  PWR->CR &= ~PWR_CR_DBP;
-}
-
-/**
- * @brief   Wait for synchronization of RTC registers.
- * @details Ensure that RTC_CNT and RTC_DIV contain actual values after
- *          enabling clocking on APB1, because these values only update
- *          when APB1 functioning.
+ * @brief   Wait for synchronization of RTC registers with APB1 bus.
+ * @details This function must be invoked before trying to read RTC registers
+ *          in the backup domain: DIV, CNT, ALR. CR registers can always
+ *          be read.
  *
  * @notapi
  */
-static void rtc_lld_wait_sync(void) {
-  while (!(RTC->CRL & RTC_CRL_RSF))
+static void rtc_lld_apb1_sync(void) {
+
+  while ((RTC->CRL & RTC_CRL_RSF) == 0)
     ;
 }
 
 /**
- * @brief   Acquire exclusive write access to RTC registers.
+ * @brief   Acquires write access to RTC registers.
+ * @details Before writing to the backup domain RTC registers the previous
+ *          write operation must be completed. Use this function before
+ *          writing to PRL, CNT, ALR registers. CR registers can always
+ *          be written.
  *
  * @notapi
  */
 static void rtc_lld_acquire(void) {
 
-  /* Waits registers write completion.*/
-BEGIN:
   while ((RTC->CRL & RTC_CRL_RTOFF) == 0)
     ;
-  chSysLock();
-  if ((RTC->CRL & RTC_CRL_RTOFF) == 0){
-    chSysUnlock();
-    goto BEGIN;
-  }
+  RTC->CRL |= RTC_CRL_CNF;
 }
 
 /**
- * @brief   Release exclusive write access to RTC registers.
+ * @brief   Releases write access to RTC registers.
  *
  * @notapi
  */
-#define rtc_lld_release() {chSysUnlock();}
+static void  rtc_lld_release(void) {
+
+  RTC->CRL &= ~RTC_CRL_CNF;
+}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -129,10 +102,22 @@ BEGIN:
  * @isr
  */
 CH_IRQ_HANDLER(RTC_IRQHandler) {
+  uint16_t flags;
 
   CH_IRQ_PROLOGUE();
 
-  rtc_lld_serve_interrupt(&RTCD1);
+  /* Mask of all enabled and pending sources.*/
+  flags = RTC->CRH & RTC->CRL;
+  RTC->CRL &= ~(RTC_CRL_SECF | RTC_CRL_ALRF | RTC_CRL_OWF);
+
+  if (flags & RTC_CRL_SECF)
+    RTCD1.callback(&RTCD1, RTC_EVENT_SECOND);
+
+  if (flags & RTC_CRL_ALRF)
+    RTCD1.callback(&RTCD1, RTC_EVENT_ALARM);
+
+  if (flags & RTC_CRL_OWF)
+    RTCD1.callback(&RTCD1, RTC_EVENT_OVERFLOW);
 
   CH_IRQ_EPILOGUE();
 }
@@ -151,36 +136,26 @@ CH_IRQ_HANDLER(RTC_IRQHandler) {
  */
 void rtc_lld_init(void){
 
-  PWR->CR |= PWR_CR_DBP;
+  /* Required because access to PRL.*/
+  rtc_lld_apb1_sync();
 
-  RTC->CRL &= ~(RTC_CRL_OWF | RTC_CRL_ALRF | RTC_CRL_SECF);
-  rtc_lld_wait_sync();
-
-  /* Write preload register only if its value is not equal to desired value.*/
+  /* Writes preload register only if its value is not equal to desired value.*/
   if (STM32_RTCCLK != (((uint32_t)(RTC->PRLH)) << 16) +
                        ((uint32_t)RTC->PRLL) + 1) {
-
-    /* Enters configuration mode and writes PRLx registers then leaves the
-       configuration mode.*/
     rtc_lld_acquire();
-    RTC->CRL |= RTC_CRL_CNF;
     RTC->PRLH = (uint16_t)((STM32_RTCCLK - 1) >> 16);
     RTC->PRLL = (uint16_t)((STM32_RTCCLK - 1) & 0xFFFF);
-    RTC->CRL &= ~RTC_CRL_CNF;
     rtc_lld_release();
   }
 
   /* All interrupts initially disabled.*/
-  if (RTC->CRH != 0){
-    rtc_lld_acquire();
-    RTC->CRH = 0;
-    rtc_lld_release();
-  }
-
-  PWR->CR &= ~PWR_CR_DBP;
+  RTC->CRH = 0;
 
   /* Callback initially disabled.*/
   RTCD1.callback = NULL;
+
+  /* IRQ vector permanently assigned to this driver.*/
+  nvicEnableVector(RTC_IRQn, CORTEX_PRIORITY_MASK(STM32_RTC_IRQ_PRIORITY));
 }
 
 /**
@@ -197,14 +172,10 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec) {
 
   (void)rtcp;
 
-  PWR->CR |= PWR_CR_DBP;
   rtc_lld_acquire();
-  RTC->CRL |= RTC_CRL_CNF;
   RTC->CNTH = (uint16_t)(timespec->tv_sec >> 16);
   RTC->CNTL = (uint16_t)(timespec->tv_sec & 0xFFFF);
-  RTC->CRL &= ~RTC_CRL_CNF;
   rtc_lld_release();
-  PWR->CR &= ~PWR_CR_DBP;
 }
 
 /**
@@ -220,9 +191,10 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
 
   uint32_t time_frac;
 
-  /* The read is repeated until we are able to do it twice and obtain the
-     same result.*/
-  rtc_lld_wait_sync();
+  /* Required because access to CNT and DIV.*/
+  rtc_lld_apb1_sync();
+
+  /* Loops until two consecutive read returning the same value.*/
   do {
     timespec->tv_sec = ((uint32_t)(RTC->CNTH) << 16) + RTC->CNTL;
     time_frac = (((uint32_t)RTC->DIVH) << 16) + (uint32_t)RTC->DIVL;
@@ -250,11 +222,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
   (void)rtcp;
   (void)alarm;
 
-  /* Enters configuration mode and writes ALRHx registers then leaves the
-     configuration mode.*/
-  PWR->CR |= PWR_CR_DBP;
   rtc_lld_acquire();
-  RTC->CRL |= RTC_CRL_CNF;
   if (alarmspec != NULL) {
     RTC->ALRH = (uint16_t)(alarmspec->tv_sec >> 16);
     RTC->ALRL = (uint16_t)(alarmspec->tv_sec & 0xFFFF);
@@ -263,9 +231,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
     RTC->ALRH = 0;
     RTC->ALRL = 0;
   }
-  RTC->CRL &= ~RTC_CRL_CNF;
   rtc_lld_release();
-  PWR->CR &= ~PWR_CR_DBP;
 }
 
 /**
@@ -288,7 +254,9 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
   (void)rtcp;
   (void)alarm;
 
-  rtc_lld_wait_sync();
+  /* Required because access to ALR.*/
+  rtc_lld_apb1_sync();
+
   alarmspec->tv_sec = ((RTC->ALRH << 16) + RTC->ALRL);
 }
 
@@ -304,25 +272,20 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
  */
 void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
 
-  PWR->CR |= PWR_CR_DBP;
-  rtc_lld_acquire();
   if (callback != NULL) {
+
+    /* IRQ sources enabled only after setting up the callback.*/
     rtcp->callback = callback;
 
-    /* Interrupts are enabled only after setting up the callback, this
-       way there is no need to check for the NULL callback pointer inside
-       the IRQ handler.*/
     RTC->CRL &= ~(RTC_CRL_OWF | RTC_CRL_ALRF | RTC_CRL_SECF);
-    nvicEnableVector(RTC_IRQn, CORTEX_PRIORITY_MASK(STM32_RTC_IRQ_PRIORITY));
-    RTC->CRH |= RTC_CRH_OWIE | RTC_CRH_ALRIE | RTC_CRH_SECIE;
+    RTC->CRH = RTC_CRH_OWIE | RTC_CRH_ALRIE | RTC_CRH_SECIE;
   }
   else {
-    nvicDisableVector(RTC_IRQn);
-    RTC->CRL &= ~(RTC_CRL_OWF | RTC_CRL_ALRF | RTC_CRL_SECF);
-    RTC->CRH &= ~(RTC_CRH_OWIE | RTC_CRH_ALRIE | RTC_CRH_SECIE);
+    RTC->CRH = 0;
+
+    /* Callback set to NULL only after disabling the IRQ sources.*/
+    rtcp->callback = NULL;
   }
-  rtc_lld_release();
-  PWR->CR &= ~PWR_CR_DBP;
 }
 
 #endif /* HAL_USE_RTC */

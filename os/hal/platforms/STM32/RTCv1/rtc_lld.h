@@ -103,12 +103,10 @@ typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
  * @brief   Structure representing an RTC callbacks config.
  */
 struct RTCCallbackConfig{
-#if RTC_SUPPORTS_CALLBACKS
   /**
    * @brief Generic RTC callback pointer.
    */
   rtccb_t           callback;
-#endif /* RTC_SUPPORTS_CALLBACKS */
 };
 
 /**
