@@ -82,7 +82,20 @@ static void rtc_lld_serve_interrupt(RTCDriver *rtcp) {
 }
 
 /**
- * @brief   Acquire atomic write access to RTC registers.
+ * @brief   Wait for synchronization of RTC registers.
+ * @details Ensure that RTC_CNT and RTC_DIV contain actual values after
+ *          enabling clocking on APB1, because these values only update
+ *          when APB1 functioning.
+ *
+ * @notapi
+ */
+static void rtc_lld_wait_sync(void) {
+  while (!(RTC->CRL & RTC_CRL_RSF))
+    ;
+}
+
+/**
+ * @brief   Acquire exclusive write access to RTC registers.
  *
  * @notapi
  */
@@ -100,7 +113,7 @@ BEGIN:
 }
 
 /**
- * @brief   Release atomic write access to RTC registers.
+ * @brief   Release exclusive write access to RTC registers.
  *
  * @notapi
  */
@@ -140,12 +153,8 @@ void rtc_lld_init(void){
 
   PWR->CR |= PWR_CR_DBP;
 
-  /* Ensure that RTC_CNT and RTC_DIV contain actual values after enabling
-     clocking on APB1, because these values only update when APB1
-     functioning.*/
   RTC->CRL &= ~(RTC_CRL_OWF | RTC_CRL_ALRF | RTC_CRL_SECF);
-  while (!(RTC->CRL & RTC_CRL_RSF))
-    ;
+  rtc_lld_wait_sync();
 
   /* Write preload register only if its value is not equal to desired value.*/
   if (STM32_RTCCLK != (((uint32_t)(RTC->PRLH)) << 16) +
@@ -213,6 +222,7 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
 
   /* The read is repeated until we are able to do it twice and obtain the
      same result.*/
+  rtc_lld_wait_sync();
   do {
     timespec->tv_sec = ((uint32_t)(RTC->CNTH) << 16) + RTC->CNTL;
     time_frac = (((uint32_t)RTC->DIVH) << 16) + (uint32_t)RTC->DIVL;
@@ -278,6 +288,7 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
   (void)rtcp;
   (void)alarm;
 
+  rtc_lld_wait_sync();
   alarmspec->tv_sec = ((RTC->ALRH << 16) + RTC->ALRL);
 }
 
