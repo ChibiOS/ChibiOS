@@ -105,6 +105,22 @@
 #define STM32_GPT_TIM8_IRQ_PRIORITY         7
 
 /*
+ * I2C driver system settings.
+ */
+#define STM32_I2C_USE_I2C1                  TRUE
+#define STM32_I2C_USE_I2C2                  FALSE
+#define STM32_I2C_USE_I2C3                  FALSE
+#define STM32_I2C_I2C1_IRQ_PRIORITY         6
+#define STM32_I2C_I2C2_IRQ_PRIORITY         6
+#define STM32_I2C_I2C3_IRQ_PRIORITY         6
+#define STM32_I2C_I2C1_DMA_PRIORITY         1
+#define STM32_I2C_I2C2_DMA_PRIORITY         1
+#define STM32_I2C_I2C3_DMA_PRIORITY         1
+#define STM32_I2C_I2C1_DMA_ERROR_HOOK()     chSysHalt()
+#define STM32_I2C_I2C2_DMA_ERROR_HOOK()     chSysHalt()
+#define STM32_I2C_I2C3_DMA_ERROR_HOOK()     chSysHalt()
+
+/*
  * ICU driver system settings.
  */
 #define STM32_ICU_USE_TIM1                  FALSE
@@ -136,6 +152,11 @@
 #define STM32_PWM_TIM4_IRQ_PRIORITY         7
 #define STM32_PWM_TIM5_IRQ_PRIORITY         7
 #define STM32_PWM_TIM8_IRQ_PRIORITY         7
+
+/*
+ * RTC driver system settings.
+ */
+#define STM32_RTC_IRQ_PRIORITY              15
 
 /*
  * SERIAL driver system settings.
