@@ -87,7 +87,7 @@ static void rtc_lld_acquire(void) {
  *
  * @notapi
  */
-static void  rtc_lld_release(void) {
+static void rtc_lld_release(void) {
 
   RTC->CRL &= ~RTC_CRL_CNF;
 }
