@@ -1,5 +1,6 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010 Giovanni Di Sirio.
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -18,7 +19,7 @@
 */
 
 /*
- * STM32 drivers configuration.
+ * STM32F1xx drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
@@ -58,14 +59,13 @@
  * ADC driver system settings.
  */
 #define STM32_ADC_USE_ADC1                  TRUE
-#define STM32_ADC_ADC1_DMA_PRIORITY         3
+#define STM32_ADC_ADC1_DMA_PRIORITY         2
 #define STM32_ADC_ADC1_IRQ_PRIORITY         5
-#define STM32_ADC_ADC1_DMA_ERROR_HOOK()     chSysHalt()
 
 /*
  * CAN driver system settings.
  */
-#define STM32_CAN_USE_CAN1                  FALSE
+#define STM32_CAN_USE_CAN1                  TRUE
 #define STM32_CAN_CAN1_IRQ_PRIORITY         11
 
 /*
@@ -94,10 +94,26 @@
 #define STM32_GPT_USE_TIM8                  FALSE
 #define STM32_GPT_TIM1_IRQ_PRIORITY         7
 #define STM32_GPT_TIM2_IRQ_PRIORITY         7
-#define STM32_GPT_TIM3_IRQ_PRIORITY         15
-#define STM32_GPT_TIM4_IRQ_PRIORITY         15
-#define STM32_GPT_TIM5_IRQ_PRIORITY         15
-#define STM32_GPT_TIM8_IRQ_PRIORITY         15
+#define STM32_GPT_TIM3_IRQ_PRIORITY         7
+#define STM32_GPT_TIM4_IRQ_PRIORITY         7
+#define STM32_GPT_TIM5_IRQ_PRIORITY         7
+#define STM32_GPT_TIM8_IRQ_PRIORITY         7
+
+/*
+ * I2C driver system settings.
+ */
+#define STM32_I2C_USE_I2C1                  FALSE
+#define STM32_I2C_USE_I2C2                  FALSE
+#define STM32_I2C_USE_I2C3                  FALSE
+#define STM32_I2C_I2C1_IRQ_PRIORITY         10
+#define STM32_I2C_I2C2_IRQ_PRIORITY         10
+#define STM32_I2C_I2C3_IRQ_PRIORITY         10
+#define STM32_I2C_I2C1_DMA_PRIORITY         1
+#define STM32_I2C_I2C2_DMA_PRIORITY         1
+#define STM32_I2C_I2C3_DMA_PRIORITY         1
+#define STM32_I2C_I2C1_DMA_ERROR_HOOK()     chSysHalt()
+#define STM32_I2C_I2C2_DMA_ERROR_HOOK()     chSysHalt()
+#define STM32_I2C_I2C3_DMA_ERROR_HOOK()     chSysHalt()
 
 /*
  * ICU driver system settings.
@@ -125,18 +141,23 @@
 #define STM32_PWM_USE_TIM4                  FALSE
 #define STM32_PWM_USE_TIM5                  FALSE
 #define STM32_PWM_USE_TIM8                  FALSE
-#define STM32_PWM_TIM1_IRQ_PRIORITY         2
-#define STM32_PWM_TIM2_IRQ_PRIORITY         2
-#define STM32_PWM_TIM3_IRQ_PRIORITY         2
-#define STM32_PWM_TIM4_IRQ_PRIORITY         2
-#define STM32_PWM_TIM5_IRQ_PRIORITY         2
-#define STM32_PWM_TIM8_IRQ_PRIORITY         2
+#define STM32_PWM_TIM1_IRQ_PRIORITY         7
+#define STM32_PWM_TIM2_IRQ_PRIORITY         7
+#define STM32_PWM_TIM3_IRQ_PRIORITY         7
+#define STM32_PWM_TIM4_IRQ_PRIORITY         7
+#define STM32_PWM_TIM5_IRQ_PRIORITY         7
+#define STM32_PWM_TIM8_IRQ_PRIORITY         7
+
+/*
+ * RTC driver system settings.
+ */
+#define STM32_RTC_IRQ_PRIORITY              15
 
 /*
  * SERIAL driver system settings.
  */
 #define STM32_SERIAL_USE_USART1             FALSE
-#define STM32_SERIAL_USE_USART2             FALSE
+#define STM32_SERIAL_USE_USART2             TRUE
 #define STM32_SERIAL_USE_USART3             FALSE
 #define STM32_SERIAL_USE_UART4              FALSE
 #define STM32_SERIAL_USE_UART5              FALSE
@@ -168,58 +189,18 @@
 #define STM32_UART_USE_USART1               FALSE
 #define STM32_UART_USE_USART2               FALSE
 #define STM32_UART_USE_USART3               FALSE
-#define STM32_UART_USART1_IRQ_PRIORITY      10
-#define STM32_UART_USART2_IRQ_PRIORITY      10
-#define STM32_UART_USART3_IRQ_PRIORITY      10
+#define STM32_UART_USART1_IRQ_PRIORITY      12
+#define STM32_UART_USART2_IRQ_PRIORITY      12
+#define STM32_UART_USART3_IRQ_PRIORITY      12
 #define STM32_UART_USART1_DMA_PRIORITY      0
 #define STM32_UART_USART2_DMA_PRIORITY      0
 #define STM32_UART_USART3_DMA_PRIORITY      0
 #define STM32_UART_DMA_ERROR_HOOK(uartp)    chSysHalt()
 
 /*
- * I2C driver system settings.
- */
-#define STM32_I2C_USE_I2C1                  FALSE
-#define STM32_I2C_USE_I2C2                  FALSE
-#define STM32_I2C_I2C1_IRQ_PRIORITY         8
-#define STM32_I2C_I2C2_IRQ_PRIORITY         8
-#define STM32_I2C_I2C1_DMA_PRIORITY         1
-#define STM32_I2C_I2C2_DMA_PRIORITY         1
-#define STM32_I2C_I2C1_DMA_ERROR_HOOK()     chSysHalt()
-#define STM32_I2C_I2C2_DMA_ERROR_HOOK()     chSysHalt()
-/* I2C1 */
-#define STM32_I2C_I2C1_USE_GPT_TIM          GPTD1
-#define STM32_I2C_I2C1_USE_POLLING_WAIT     FALSE
-/* I2C2 */
-#define STM32_I2C_I2C2_USE_GPT_TIM          GPTD2
-#define STM32_I2C_I2C2_USE_POLLING_WAIT     FALSE
-
-/*
- * EXTI system settings.
- */
-#define STM32_EXTI0_IRQ_PRIORITY            5
-#define STM32_EXTI1_IRQ_PRIORITY            5
-#define STM32_EXTI2_IRQ_PRIORITY            5
-#define STM32_EXTI3_IRQ_PRIORITY            5
-#define STM32_EXTI4_IRQ_PRIORITY            5
-#define STM32_EXTI9_5_IRQ_PRIORITY          5
-#define STM32_EXTI15_10_IRQ_PRIORITY        5
-
-/*
  * USB driver system settings.
  */
-#define STM32_USB_USE_USB1                  FALSE
+#define STM32_USB_USE_USB1                  TRUE
 #define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
 #define STM32_USB_USB1_HP_IRQ_PRIORITY      6
 #define STM32_USB_USB1_LP_IRQ_PRIORITY      14
-
-/*
- * RTC driver system settings.
- */
-#define STM32_RTC_IRQ_PRIORITY              15
-
-
-
-
-
-
