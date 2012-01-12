@@ -61,6 +61,7 @@ RTCDriver RTCD1;
  */
 static void rtc_lld_serve_interrupt(RTCDriver *rtcp) {
 
+  PWR->CR |= PWR_CR_DBP;
   chSysLockFromIsr();
 
   if ((RTC->CRH & RTC_CRH_SECIE) && (RTC->CRL & RTC_CRL_SECF)) {
@@ -77,6 +78,7 @@ static void rtc_lld_serve_interrupt(RTCDriver *rtcp) {
   }
 
   chSysUnlockFromIsr();
+  PWR->CR &= ~PWR_CR_DBP;
 }
 
 /**
@@ -136,10 +138,12 @@ CH_IRQ_HANDLER(RTC_IRQHandler) {
  */
 void rtc_lld_init(void){
 
+  PWR->CR |= PWR_CR_DBP;
+
   /* Ensure that RTC_CNT and RTC_DIV contain actual values after enabling
      clocking on APB1, because these values only update when APB1
      functioning.*/
-  RTC->CRL = 0;
+  RTC->CRL &= ~(RTC_CRL_OWF | RTC_CRL_ALRF | RTC_CRL_SECF);
   while (!(RTC->CRL & RTC_CRL_RSF))
     ;
 
@@ -164,6 +168,8 @@ void rtc_lld_init(void){
     rtc_lld_release();
   }
 
+  PWR->CR &= ~PWR_CR_DBP;
+
   /* Callback initially disabled.*/
   RTCD1.callback = NULL;
 }
@@ -182,12 +188,14 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec) {
 
   (void)rtcp;
 
+  PWR->CR |= PWR_CR_DBP;
   rtc_lld_acquire();
   RTC->CRL |= RTC_CRL_CNF;
   RTC->CNTH = (uint16_t)(timespec->tv_sec >> 16);
   RTC->CNTL = (uint16_t)(timespec->tv_sec & 0xFFFF);
   RTC->CRL &= ~RTC_CRL_CNF;
   rtc_lld_release();
+  PWR->CR &= ~PWR_CR_DBP;
 }
 
 /**
@@ -232,9 +240,9 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
   (void)rtcp;
   (void)alarm;
 
-
   /* Enters configuration mode and writes ALRHx registers then leaves the
      configuration mode.*/
+  PWR->CR |= PWR_CR_DBP;
   rtc_lld_acquire();
   RTC->CRL |= RTC_CRL_CNF;
   if (alarmspec != NULL) {
@@ -247,6 +255,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
   }
   RTC->CRL &= ~RTC_CRL_CNF;
   rtc_lld_release();
+  PWR->CR &= ~PWR_CR_DBP;
 }
 
 /**
@@ -284,6 +293,7 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
  */
 void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
 
+  PWR->CR |= PWR_CR_DBP;
   rtc_lld_acquire();
   if (callback != NULL) {
     rtcp->callback = callback;
@@ -301,6 +311,7 @@ void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
     RTC->CRH &= ~(RTC_CRH_OWIE | RTC_CRH_ALRIE | RTC_CRH_SECIE);
   }
   rtc_lld_release();
+  PWR->CR &= ~PWR_CR_DBP;
 }
 
 #endif /* HAL_USE_RTC */
