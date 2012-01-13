@@ -60,37 +60,32 @@ RTCDriver RTCD1;
  *
  * @notapi
  */
-static void rtc_lld_apb1_sync(void) {
+#define rtc_lld_apb1_sync() {while ((RTC->CRL & RTC_CRL_RSF) == 0);}
 
-  while ((RTC->CRL & RTC_CRL_RSF) == 0)
-    ;
-}
+/**
+ * @brief   Wait for for previous write operation complete.
+ * @details This function must be invoked before writing to any RTC registers
+ *
+ * @notapi
+ */
+#define rtc_lld_wait_write() {while ((RTC->CRL & RTC_CRL_RTOFF) == 0);}
 
 /**
  * @brief   Acquires write access to RTC registers.
  * @details Before writing to the backup domain RTC registers the previous
  *          write operation must be completed. Use this function before
- *          writing to PRL, CNT, ALR registers. CR registers can always
- *          be written.
+ *          writing to PRL, CNT, ALR registers.
  *
  * @notapi
  */
-static void rtc_lld_acquire(void) {
-
-  while ((RTC->CRL & RTC_CRL_RTOFF) == 0)
-    ;
-  RTC->CRL |= RTC_CRL_CNF;
-}
+#define rtc_lld_acquire() {rtc_lld_wait_write(); RTC->CRL |= RTC_CRL_CNF;}
 
 /**
  * @brief   Releases write access to RTC registers.
  *
  * @notapi
  */
-static void rtc_lld_release(void) {
-
-  RTC->CRL &= ~RTC_CRL_CNF;
-}
+#define rtc_lld_release() {RTC->CRL &= ~RTC_CRL_CNF;}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -149,6 +144,7 @@ void rtc_lld_init(void){
   }
 
   /* All interrupts initially disabled.*/
+  rtc_lld_wait_write();
   RTC->CRH = 0;
 
   /* Callback initially disabled.*/
@@ -277,10 +273,12 @@ void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
     /* IRQ sources enabled only after setting up the callback.*/
     rtcp->callback = callback;
 
+    rtc_lld_wait_write();
     RTC->CRL &= ~(RTC_CRL_OWF | RTC_CRL_ALRF | RTC_CRL_SECF);
     RTC->CRH = RTC_CRH_OWIE | RTC_CRH_ALRIE | RTC_CRH_SECIE;
   }
   else {
+    rtc_lld_wait_write();
     RTC->CRH = 0;
 
     /* Callback set to NULL only after disabling the IRQ sources.*/

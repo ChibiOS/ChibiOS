@@ -24,7 +24,7 @@
 RTCTime timespec;
 RTCAlarm alarmspec;
 
-#define TEST_ALARM_WAKEUP TRUE
+#define TEST_ALARM_WAKEUP FALSE
 
 #if TEST_ALARM_WAKEUP
 
@@ -90,7 +90,9 @@ static void my_cb(RTCDriver *rtcp, rtcevent_t event) {
     break;
   case RTC_EVENT_ALARM:
     palTogglePad(GPIOC, GPIOC_LED);
+    chSysLockFromIsr();
     chBSemSignalI(&alarm_sem);
+    chSysUnlockFromIsr();
     break;
   }
 }
