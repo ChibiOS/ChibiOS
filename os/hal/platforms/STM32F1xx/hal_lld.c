@@ -53,6 +53,7 @@ static void hal_lld_backup_domain_init(void) {
 
   /* Reset BKP domain if different clock source selected.*/
   if ((RCC->BDCR & STM32_RTCSEL_MSK) != STM32_RTCSEL){
+    /* Backup domain reset.*/
     RCC->BDCR = RCC_BDCR_BDRST;
     RCC->BDCR = 0;
   }
