@@ -26,13 +26,8 @@ RTCAlarm alarmspec;
 
 #define TEST_ALARM_WAKEUP FALSE
 
-#if TEST_ALARM_WAKEUP
 
-static void my_cb(RTCDriver *rtcp, rtcevent_t event) {
-  (void)rtcp;
-  (void)event;
-  return;
-}
+#if TEST_ALARM_WAKEUP
 
 /* sleep indicator thread */
 static WORKING_AREA(blinkWA, 128);
@@ -54,9 +49,6 @@ int main(void) {
   rtcGetTime(&RTCD1, &timespec);
   alarmspec.tv_sec = timespec.tv_sec + 30;
   rtcSetAlarm(&RTCD1, 0, &alarmspec);
-
-  /* Needed just to switch interrupts on.*/
-  rtcSetCallback(&RTCD1, my_cb);
 
   while (TRUE){
     chThdSleepSeconds(10);

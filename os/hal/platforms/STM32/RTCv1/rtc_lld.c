@@ -101,6 +101,10 @@ CH_IRQ_HANDLER(RTC_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
+  /* This wait works only when AHB1 bus was previously powered off by any
+     reason (standby, reset, etc). In other cases it does nothing.*/
+  rtc_lld_apb1_sync();
+
   /* Mask of all enabled and pending sources.*/
   flags = RTC->CRH & RTC->CRL;
   RTC->CRL &= ~(RTC_CRL_SECF | RTC_CRL_ALRF | RTC_CRL_OWF);

@@ -43,22 +43,25 @@
 
 /**
  * @brief   Initializes the backup domain.
+ * @note    WARNING! Changing clock source impossible without resetting
+ *          of the whole BKP domain.
  */
 static void hal_lld_backup_domain_init(void) {
 
   /* Backup domain access enabled and left open.*/
-  PWR->CR = PWR_CR_DBP;
+  PWR->CR |= PWR_CR_DBP;
+
+  /* Reset BKP domain if different clock source selected.*/
+  if ((RCC->BDCR & STM32_RTCSEL_MSK) != STM32_RTCSEL){
+    RCC->BDCR = RCC_BDCR_BDRST;
+    RCC->BDCR = 0;
+  }
 
   /* If enabled then the LSE is started.*/
 #if STM32_LSE_ENABLED
-  if ((RCC->BDCR & RCC_BDCR_LSEON) == 0) {
-    /* Backup domain reset.*/
-    RCC->BDCR = RCC_BDCR_BDRST;
-    RCC->BDCR = 0;
-    RCC->BDCR = RCC_BDCR_LSEON;
-    while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
-      ;                                     /* Waits until LSE is stable.   */
-  }
+  RCC->BDCR |= RCC_BDCR_LSEON;
+  while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
+    ;                                     /* Waits until LSE is stable.   */
 #endif
 
 #if STM32_RTCSEL != STM32_RTCSEL_NOCLOCK
@@ -66,7 +69,7 @@ static void hal_lld_backup_domain_init(void) {
      initialization.*/
   if ((RCC->BDCR & RCC_BDCR_RTCEN) == 0) {
     /* Selects clock source.*/
-    RCC->BDCR = (RCC->BDCR & ~RCC_BDCR_RTCSEL) | STM32_RTCSEL;
+    RCC->BDCR |= STM32_RTCSEL;
 
     /* RTC clock enabled.*/
     RCC->BDCR |= RCC_BDCR_RTCEN;
@@ -213,7 +216,7 @@ void stm32_clock_init(void) {
   /* HSE activation.*/
   RCC->CR |= RCC_CR_HSEON;
   while (!(RCC->CR & RCC_CR_HSERDY))
-    ;                           /* Waits until HSE is stable.               */
+    ;                                       /* Waits until HSE is stable.   */
 #endif
 
 #if STM32_LSI_ENABLED
@@ -231,14 +234,14 @@ void stm32_clock_init(void) {
 #if STM32_ACTIVATE_PLL2
   RCC->CR |= RCC_CR_PLL2ON;
   while (!(RCC->CR & RCC_CR_PLL2RDY))
-    ;                           /* Waits until PLL2 is stable.              */
+    ;                                        /* Waits until PLL2 is stable. */
 #endif
 
   /* PLL3 setup, if activated.*/
 #if STM32_ACTIVATE_PLL3
   RCC->CR |= RCC_CR_PLL3ON;
   while (!(RCC->CR & RCC_CR_PLL3RDY))
-    ;                           /* Waits until PLL3 is stable.              */
+    ;                                        /* Waits until PLL3 is stable. */
 #endif
 
   /* PLL1 setup, if activated.*/

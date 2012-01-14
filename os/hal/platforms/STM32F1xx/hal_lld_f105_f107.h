@@ -194,6 +194,7 @@
 #define STM32_RTCSEL_LSI        (2 << 8)    /**< LSI used as RTC clock.     */
 #define STM32_RTCSEL_HSEDIV     (3 << 8)    /**< HSE divided by 128 used as
                                                  RTC clock.                 */
+#define STM32_RTCSEL_MSK        (3 << 8)    /**< RTC clock source mask.     */
 /** @} */
 
 /**
