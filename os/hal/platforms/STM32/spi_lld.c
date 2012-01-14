@@ -128,7 +128,7 @@ static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
   /* DMA errors handling.*/
 #if defined(STM32_SPI_DMA_ERROR_HOOK)
   (void)spip;
-  if ((flags & STM32_DMA_ISR_TEIF) != 0) {
+  if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
     STM32_SPI_DMA_ERROR_HOOK(spip);
   }
 #else
