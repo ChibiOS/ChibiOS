@@ -79,7 +79,9 @@ void rtcSetTime(RTCDriver *rtcp, const RTCTime *timespec) {
 
   chDbgCheck((rtcp != NULL) && (timespec != NULL), "rtcSetTime");
 
-  rtc_lld_set_time(rtcp, timespec);
+  chSysLock();
+  rtcSetTimeI(rtcp, timespec);
+  chSysUnlock();
 }
 
 /**
@@ -94,7 +96,9 @@ void rtcGetTime(RTCDriver *rtcp, RTCTime *timespec) {
 
   chDbgCheck((rtcp != NULL) && (timespec != NULL), "rtcGetTime");
 
-  rtc_lld_get_time(rtcp, timespec);
+  chSysLock();
+  rtcGetTimeI(rtcp, timespec);
+  chSysUnlock();
 }
 
 #if (RTC_ALARMS > 0) || defined(__DOXYGEN__)
@@ -113,7 +117,9 @@ void rtcSetAlarm(RTCDriver *rtcp,
 
   chDbgCheck((rtcp != NULL) && (alarm < RTC_ALARMS), "rtcSetAlarm");
 
-  rtc_lld_set_alarm(rtcp, alarm, alarmspec);
+  chSysLock();
+  rtcSetAlarmI(rtcp, alarm, alarmspec);
+  chSysUnlock();
 }
 
 /**
@@ -134,7 +140,9 @@ void rtcGetAlarm(RTCDriver *rtcp,
   chDbgCheck((rtcp != NULL) && (alarm < RTC_ALARMS) && (alarmspec != NULL),
              "rtcGetAlarm");
 
-  rtc_lld_get_alarm(rtcp, alarm, alarmspec);
+  chSysLock();
+  rtcGetAlarmI(rtcp, alarm, alarmspec);
+  chSysUnlock();
 }
 #endif /* RTC_ALARMS > 0 */
 
@@ -153,7 +161,9 @@ void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback) {
 
   chDbgCheck((rtcp != NULL), "rtcSetCallback");
 
-  rtc_lld_set_callback(rtcp, callback);
+  chSysLock();
+  rtcSetCallbackI(rtcp, callback);
+  chSysUnlock();
 }
 #endif /* RTC_SUPPORTS_CALLBACKS */
 
