@@ -6,8 +6,6 @@ X = In progress, some work done.
 N = Decided against.
 
 Current Pipeline (2.4.0):
-X Revision of the RTCv1 driver implementation.
-- Posix simulator tickets and test.
 - Complete test cycle.
 - Complete documentation cycle.
 
