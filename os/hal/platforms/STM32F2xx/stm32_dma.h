@@ -54,7 +54,7 @@
  *                      nibble
  * @return              Returns the channel associated to the stream.
  */
-#define STM32_DMA_GETCHANNEL(id, c) ((c) >> (((id) & 7) * 4))
+#define STM32_DMA_GETCHANNEL(id, c) (((c) >> (((id) & 7) * 4)) & 7)
 
 /**
  * @brief   Returns an unique numeric identifier for a DMA stream.
