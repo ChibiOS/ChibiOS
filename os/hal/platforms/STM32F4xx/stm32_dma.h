@@ -352,6 +352,8 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 
 /**
  * @brief   DMA stream disable.
+ * @details The function disables the specified stream, waits for the disable
+ *          operation to complete and then clears any pending interrupt.
  * @note    This function can be invoked in both ISR or thread context.
  * @pre     The stream must have been allocated using @p dmaStreamAllocate().
  * @post    After use the stream can be released using @p dmaStreamRelease().
@@ -362,6 +364,9 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  */
 #define dmaStreamDisable(dmastp) {                                          \
   (dmastp)->stream->CR &= ~STM32_DMA_CR_EN;                                 \
+  while (((dmastp)->stream->CR & STM32_DMA_CR_EN) != 0)                     \
+    ;                                                                       \
+  dmaStreamClearInterrupt(dmastp);                                          \
 }
 
 /**

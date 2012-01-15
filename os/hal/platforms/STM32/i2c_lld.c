@@ -153,8 +153,6 @@ static void i2c_lld_abort_operation(I2CDriver *i2cp) {
   /* Stops the associated DMA streams.*/
   dmaStreamDisable(i2cp->dmatx);
   dmaStreamDisable(i2cp->dmarx);
-  dmaStreamClearInterrupt(i2cp->dmatx);
-  dmaStreamClearInterrupt(i2cp->dmarx);
 }
 
 /**
@@ -362,7 +360,6 @@ static void i2c_lld_serve_rx_end_irq(I2CDriver *i2cp, uint32_t flags) {
 #endif
 
   dmaStreamDisable(i2cp->dmarx);
-  dmaStreamClearInterrupt(i2cp->dmarx);
 
   dp->CR2 &= ~I2C_CR2_LAST;
   dp->CR1 &= ~I2C_CR1_ACK;
@@ -390,7 +387,6 @@ static void i2c_lld_serve_tx_end_irq(I2CDriver *i2cp, uint32_t flags) {
 #endif
 
   dmaStreamDisable(i2cp->dmatx);
-  dmaStreamClearInterrupt(i2cp->dmatx);
   /* Enables interrupts to catch BTF event meaning transmission part complete.
      Interrupt handler will decide to generate STOP or to begin receiving part
      of R/W transaction itself.*/
@@ -412,8 +408,6 @@ static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp) {
   chSysLockFromIsr();
   dmaStreamDisable(i2cp->dmatx);
   dmaStreamDisable(i2cp->dmarx);
-  dmaStreamClearInterrupt(i2cp->dmatx);
-  dmaStreamClearInterrupt(i2cp->dmarx);
   chSysUnlockFromIsr();
 
   errors = I2CD_NO_ERROR;

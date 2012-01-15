@@ -139,9 +139,7 @@ static void usart_stop(UARTDriver *uartp) {
 
   /* Stops RX and TX DMA channels.*/
   dmaStreamDisable(uartp->dmarx);
-  dmaStreamClearInterrupt(uartp->dmarx);
   dmaStreamDisable(uartp->dmatx);
-  dmaStreamClearInterrupt(uartp->dmatx);
   
   /* Stops USART operations.*/
   uartp->usart->CR1 = 0;
@@ -534,7 +532,6 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
 size_t uart_lld_stop_send(UARTDriver *uartp) {
 
   dmaStreamDisable(uartp->dmatx);
-  dmaStreamClearInterrupt(uartp->dmatx);
   return dmaStreamGetTransactionSize(uartp->dmatx);
 }
 
@@ -553,7 +550,6 @@ void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
 
   /* Stopping previous activity (idle state).*/
   dmaStreamDisable(uartp->dmarx);
-  dmaStreamClearInterrupt(uartp->dmarx);
 
   /* RX DMA channel preparation and start.*/
   dmaStreamSetMemory0(uartp->dmarx, rxbuf);
@@ -578,7 +574,6 @@ size_t uart_lld_stop_receive(UARTDriver *uartp) {
   size_t n;
 
   dmaStreamDisable(uartp->dmarx);
-  dmaStreamClearInterrupt(uartp->dmarx);
   n = dmaStreamGetTransactionSize(uartp->dmarx);
   set_rx_idle_loop(uartp);
   return n;

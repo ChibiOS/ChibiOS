@@ -106,11 +106,9 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
   (void)flags;
 #endif
 
-  /* Stop everything. The status of the TX DMA is cleared here because its
-     handler is only invoked in case of error.*/
+  /* Stop everything.*/
   dmaStreamDisable(spip->dmatx);
   dmaStreamDisable(spip->dmarx);
-  dmaStreamClearInterrupt(spip->dmatx);
 
   /* Portable SPI ISR code defined in the high level driver, note, it is
      a macro.*/

@@ -179,12 +179,12 @@
 #define STM32_MCOSEL_HSE        (6 << 24)   /**< HSE clock on MCO pin.      */
 #define STM32_MCOSEL_PLLDIV2    (7 << 24)   /**< PLL/2 clock on MCO pin.    */
 
+#define STM32_RTCSEL_MASK       (3 << 8)    /**< RTC clock source mask.     */
 #define STM32_RTCSEL_NOCLOCK    (0 << 8)    /**< No clock.                  */
 #define STM32_RTCSEL_LSE        (1 << 8)    /**< LSE used as RTC clock.     */
 #define STM32_RTCSEL_LSI        (2 << 8)    /**< LSI used as RTC clock.     */
 #define STM32_RTCSEL_HSEDIV     (3 << 8)    /**< HSE divided by 128 used as
                                                  RTC clock.                 */
-#define STM32_RTCSEL_MSK        (3 << 8)    /**< RTC clock source mask.     */
 /** @} */
 
 /*===========================================================================*/
