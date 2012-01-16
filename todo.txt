@@ -6,8 +6,9 @@ X = In progress, some work done.
 N = Decided against.
 
 Current Pipeline (2.4.0):
-- Complete test cycle.
-- Complete documentation cycle.
+X Complete test cycle.
+X Complete documentation cycle.
+- Release.
 
 Version 2.4.1
 X STM32F2 validation (so far testing done on STM32F4 only).
@@ -17,6 +18,7 @@ X SDC driver port to STM32F2 and STM32F4.
 
 Within 2.5.x:
 - Revision of scheduling strategy for threads at equal priority.
+- Handling of Virtual Timer callbacks out of critical zone.
 - Add a chSysIntegrityCheck() API to the kernel.
 - Add a CH_THREAD macro for threads declaration in order to hide
   compiler-specific optimizations for thread functions. All demos will have
