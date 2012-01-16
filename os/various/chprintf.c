@@ -70,10 +70,10 @@ static char *ltoa(char *p, long num, unsigned radix) {
  */
 void chprintf(BaseChannel *chp, const char *fmt, ...) {
   va_list ap;
-  char buf[MAX_FILLER + 1];
+  char tmpbuf[MAX_FILLER + 1];
   char *p, *s, c, filler;
   int i, n, width;
-  bool_t lflag, ljust;
+  bool_t is_long, left_just;
   long l;
 
   va_start(ap, fmt);
@@ -87,19 +87,20 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
       chIOPut(chp, (uint8_t)c);
       continue;
     }
-    p = buf;
-    s = buf;
-    ljust = FALSE;
+    p = tmpbuf;
+    s = tmpbuf;
+    left_just = FALSE;
     if (*fmt == '-') {
       fmt++;
-      ljust = TRUE;
+      left_just = TRUE;
     }
     filler = ' ';
     if (*fmt == '.') {
       fmt++;
       filler = '0';
     }
-    for (width = 0;;) {
+    width = 0;
+    while (TRUE) {
       c = *fmt++;
       if (c >= '0' && c <= '9')
         c -= '0';
@@ -111,7 +112,7 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
     }
     n = 0;
     if (c == '.') {
-      for (;;) {
+      while (TRUE) {
         c = *fmt++;
         if (c >= '0' && c <= '9')
           c -= '0';
@@ -123,38 +124,38 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
         n += c;
       }
     }
-    lflag = FALSE;
+    is_long = FALSE;
     if (c == 'l' || c == 'L') {
-      lflag++;
+      is_long++;
       if (*fmt)
         c = *fmt++;
     }
     switch (c) {
     case 'X':
-      lflag = TRUE;
+      is_long = TRUE;
     case 'x':
       c = 16;
-      goto oxu;
+      goto skip;
     case 'U':
-      lflag = TRUE;
+      is_long = TRUE;
     case 'u':
       c = 10;
-      goto oxu;
+      goto skip;
     case 'O':
-      lflag = TRUE;
+      is_long = TRUE;
     case 'o':
       c = 8;
-oxu:
-      if (lflag)
+skip:
+      if (is_long)
         l = va_arg(ap, long);
       else
         l = va_arg(ap, int);
       p = ltoa(p, l, c);
       break;
     case 'D':
-      lflag = TRUE;
+      is_long = TRUE;
     case 'd':
-      if (lflag)
+      if (is_long)
         l = va_arg(ap, long);
       else
         l = va_arg(ap, int);
@@ -184,7 +185,7 @@ oxu:
     i = (int)(p - s);
     if ((width -= i) < 0)
       width = 0;
-    if (ljust == FALSE)
+    if (left_just == FALSE)
       width = -width;
     if (width < 0) {
       if (*s == '-' && filler == '0') {
