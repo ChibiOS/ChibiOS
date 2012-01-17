@@ -118,7 +118,7 @@
  * @note    The effective divider factor is this value plus one.
  */
 #if !defined(SPC563_CLK_PREDIV) || defined(__DOXYGEN__)
-#define SPC563_CLK_PREDIV           2
+#define SPC563_CLK_PREDIV           1
 #endif
 
 /**
