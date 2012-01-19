@@ -19,7 +19,13 @@ X SDC driver port to STM32F2 and STM32F4.
 Within 2.5.x:
 - Revision of scheduling strategy for threads at equal priority.
 - Handling of Virtual Timer callbacks out of critical zone.
+- Add normal API (not iclass) variants of the VT functions.
+- Add the RTC service inside the kernel and port, remove from HAL.
+- Add option to use the RTC counter instead of the systick counter into the
+  trace buffer.
 - Add a chSysIntegrityCheck() API to the kernel.
+- Add guard pages as extra stack checking mechanism. Guard pages should be
+  of the same type of the stack alignment type.
 - Add a CH_THREAD macro for threads declaration in order to hide
   compiler-specific optimizations for thread functions. All demos will have
   to be updated.
