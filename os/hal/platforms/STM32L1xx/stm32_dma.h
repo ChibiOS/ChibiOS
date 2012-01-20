@@ -301,7 +301,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @special
  */
 #define dmaStreamDisable(dmastp) {                                          \
-  (dmastp)->stream->CR &= ~STM32_DMA_CR_EN;                                 \
+  (dmastp)->channel->CCR &= ~STM32_DMA_CR_EN;                               \
   dmaStreamClearInterrupt(dmastp);                                          \
 }
 

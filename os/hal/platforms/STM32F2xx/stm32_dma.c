@@ -483,7 +483,6 @@ bool_t dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
 
   /* Putting the stream in a safe state.*/
   dmaStreamDisable(dmastp);
-  dmaStreamClearInterrupt(dmastp);
   dmastp->stream->CR = STM32_DMA_CR_RESET_VALUE;
   dmastp->stream->FCR = STM32_DMA_FCR_RESET_VALUE;
 

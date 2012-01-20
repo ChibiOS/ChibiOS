@@ -302,7 +302,6 @@ bool_t dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
 
   /* Putting the stream in a safe state.*/
   dmaStreamDisable(dmastp);
-  dmaStreamClearInterrupt(dmastp);
   dmastp->channel->CCR = STM32_DMA_CCR_RESET_VALUE;
 
   /* Enables the associated IRQ vector if a callback is defined.*/
